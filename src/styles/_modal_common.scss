@@ -1,14 +1,16 @@
 /**
  * Application-Specific Modal Patterns
- * 
+ *
  * PURPOSE: Complex modal layouts and content patterns specific to Quorum app
  * CONTAINS: Complex/small modal layouts, content sections, navigation, business logic styling
  * EXCLUDES: Basic modal structure, size variants, core animations (see Modal.scss)
- * 
+ *
  * SEPARATION OF CONCERNS:
  * - Modal.scss (primitive): Reusable modal foundation
  * - _modal_common.scss (app): Application-specific patterns and layouts
  */
+
+@use 'variables' as *;
 
 // Simple Modal Classes (for basic modals like CreateSpace, JoinSpace, etc.)
 .modal-body {
@@ -17,8 +19,8 @@
   flex-direction: column;
   text-align: center;
 
-  @media (max-width: 768px) {
-    gap: 16px;
+  @media (max-width: $screen-md) {
+    gap: $s-4;
   }
 }
 
@@ -27,19 +29,19 @@
 // Standard Button Layout Classes
 .modal-buttons-responsive {
   display: flex;
-  gap: 8px;
+  gap: $s-2;
   justify-content: center;
   flex-wrap: wrap;
 
-  @media (max-width: 640px) {
+  @media (max-width: $screen-sm) {
     flex-direction: column;
-    gap: 12px;
+    gap: $s-3;
   }
 
   .quorum-button {
-    min-width: 120px;
+    min-width: $s-32;
 
-    @media (max-width: 640px) {
+    @media (max-width: $screen-sm) {
       width: 100%;
       min-width: unset;
     }
@@ -49,41 +51,41 @@
 // Consistent Text Size Classes for Modals
 .modal-text-label {
   color: var(--color-text-subtle);
-  margin-bottom: 0.25rem;
+  margin-bottom: $s-1;
   display: block;
-  font-size: 0.875rem;
-  font-weight: 600;
+  font-size: $text-sm;
+  font-weight: $font-semibold;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: $tracking-wider;
 }
 
 .modal-text-section-header {
-  font-size: 18px;
-  font-weight: 700;
+  font-size: $text-lg;
+  font-weight: $font-bold;
 
-  @media (max-width: 640px) {
-    font-size: 16px;
+  @media (max-width: $screen-sm) {
+    font-size: $text-base;
   }
 }
 
 .modal-text-small {
-  font-size: 14px;
+  font-size: $text-sm;
 
-  @media (max-width: 640px) {
-    font-size: 13px;
+  @media (max-width: $screen-sm) {
+    font-size: $text-sm;
   }
 }
 
 // Input field sizing rules
 .modal-input-text {
-  font-size: 16px !important; // Always 16px for user input fields (accessibility)
+  font-size: $text-base !important;
 }
 
 .modal-input-select {
-  font-size: 14px !important; // Smaller for selects/dropdowns since users don't type
+  font-size: $text-sm !important;
 
-  @media (max-width: 640px) {
-    font-size: 13px !important;
+  @media (max-width: $screen-sm) {
+    font-size: $text-sm !important;
   }
 }
 
@@ -91,37 +93,37 @@
 .modal-input-display {
   width: 100%;
   background: var(--color-bg-input);
-  padding: 10px 16px;
-  border-radius: 0.5rem;
+  padding: $s-2-5 $s-4;
+  border-radius: $rounded-lg;
   color: var(--color-text-main);
-  min-height: 40px;
+  min-height: $s-10;
   display: flex;
   align-items: center;
 
-  @media (max-width: 768px) {
-    padding: 12px;
+  @media (max-width: $screen-md) {
+    padding: $s-3;
   }
 }
 
 .modal-icon-section {
-  padding: 20px;
+  padding: $s-5;
 
-  @media (max-width: 768px) {
-    padding: 16px 12px;
+  @media (max-width: $screen-md) {
+    padding: $s-4 $s-3;
   }
 }
 
 .modal-actions {
-  padding-top: 20px;
+  padding-top: $s-5;
   text-align: center;
 
-  @media (max-width: 768px) {
-    padding-top: 16px;
+  @media (max-width: $screen-md) {
+    padding-top: $s-4;
   }
 }
 
 .modal-info {
-  font-size: 12px;
+  font-size: $text-xs;
 }
 
 // Complex Modal System Classes
@@ -132,18 +134,18 @@
   max-width: 800px;
   height: 90vh;
   background: var(--surface-3);
-  border-radius: 0.5rem;
+  border-radius: $rounded-lg;
   color: var(--color-text-main);
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  animation: modalOpen 0.3s ease-out;
+  animation: modalOpen $duration-300 ease-out;
 
-  @media (max-width: 768px) {
+  @media (max-width: $screen-md) {
     width: 95vw;
     height: 85vh;
     max-width: none;
-    border-radius: 0.5rem;
+    border-radius: $rounded-lg;
   }
 }
 
@@ -161,11 +163,10 @@
 .modal-complex-wrapper {
   // Move close button left to avoid scrollbar overlap
   .quorum-modal-close {
-    right: 30px !important;
+    right: $s-8 !important;
 
-    @media (max-width: 768px) {
-      // On mobile, keep closer to edge for easier reach
-      right: 20px !important;
+    @media (max-width: $screen-md) {
+      right: $s-5 !important;
     }
   }
 
@@ -176,13 +177,11 @@
     max-width: 90vw !important;
     max-height: 85vh !important;
 
-    // Desktop: consistent 800px height, max 85vh for very short screens
-    @media (min-width: 768px) {
+    @media (min-width: $screen-md) {
       height: min(800px, 85vh) !important;
     }
 
-    // Mobile/Tablet: fixed 85vh height
-    @media (max-width: 767px) {
+    @media (max-width: calc($screen-md - 1px)) {
       height: 85vh !important;
     }
   }
@@ -212,7 +211,7 @@
   flex-direction: row;
   height: 100%;
 
-  @media (max-width: 768px) {
+  @media (max-width: $screen-md) {
     flex-direction: column;
   }
 }
@@ -223,19 +222,19 @@
   flex-grow: 1;
   min-height: 0; /* This ensures flex item can shrink below content size */
 
-  @media (max-width: 768px) {
+  @media (max-width: $screen-md) {
     flex-direction: column;
   }
 }
 
 .modal-complex-sidebar {
-  padding: 16px;
+  padding: $s-4;
   color: var(--color-text-main);
   width: 200px;
   flex-shrink: 0;
   background-color: var(--color-bg-modal-sidebar);
 
-  @media (max-width: 768px) {
+  @media (max-width: $screen-md) {
     display: none;
   }
 }
@@ -246,10 +245,10 @@
   flex-direction: column;
   flex-grow: 1;
   overflow-y: auto;
-  border-radius: 0px 10px 10px 0px;
+  border-radius: 0px $s-2-5 $s-2-5 0px;
 
-  @media (max-width: 768px) {
-    border-radius: 0px 0px 10px 10px;
+  @media (max-width: $screen-md) {
+    border-radius: 0px 0px $s-2-5 $s-2-5;
   }
 }
 
@@ -259,11 +258,11 @@
   flex-direction: column;
   flex-grow: 1;
   overflow-y: auto;
-  border-radius: 0px 10px 0px 0px;
+  border-radius: 0px $s-2-5 0px 0px;
   min-height: 0; /* This ensures flex item can shrink below content size */
 
-  @media (max-width: 768px) {
-    border-radius: 0px 0px 0px 0px;
+  @media (max-width: $screen-md) {
+    border-radius: 0px;
   }
 }
 
@@ -272,20 +271,20 @@
   display: flex;
   justify-content: flex-end;
   align-items: center;
-  padding: 16px 20px;
+  padding: $s-4 $s-5;
   flex-shrink: 0;
   flex-grow: 1;
 
-  @media (max-width: 768px) {
+  @media (max-width: $screen-md) {
     background-color: var(--color-bg-modal-sidebar);
-    border-radius: 0px 0px 10px 10px;
+    border-radius: 0px 0px $s-2-5 $s-2-5;
     justify-content: flex-end;
-    padding: 16px;
+    padding: $s-4;
   }
 
   .quorum-button {
     height: 38px;
-    font-size: 13px;
+    font-size: $text-sm;
     white-space: nowrap;
   }
 }
@@ -295,7 +294,7 @@
   width: 200px;
   flex-shrink: 0;
 
-  @media (max-width: 768px) {
+  @media (max-width: $screen-md) {
     display: none;
   }
 }
@@ -303,22 +302,22 @@
 
 // Navigation Classes
 .modal-nav-title {
-  font-size: 11px;
-  font-weight: 600;
+  font-size: $text-xs;
+  font-weight: $font-semibold;
   text-transform: uppercase;
   letter-spacing: 0.5px;
   color: var(--color-text-subtle);
-  margin-bottom: 12px;
+  margin-bottom: $s-3;
 }
 
 .modal-nav-category {
-  font-weight: 500;
+  font-weight: $font-medium;
   cursor: pointer;
-  padding: 8px 12px;
-  margin: 4px -8px;
-  border-radius: 0.375rem;
-  font-size: 14px;
-  transition: background-color 0.2s ease;
+  padding: $s-2 $s-3;
+  margin: $s-3 -$s-2;
+  border-radius: $rounded-md;
+  font-size: $text-sm;
+  transition: background-color $duration-200 ease;
 
   &:hover {
     background-color: var(--color-bg-modal-cat-hover);
@@ -334,23 +333,23 @@
 .modal-nav-mobile-single {
   display: none;
 
-  @media (max-width: 768px) {
+  @media (max-width: $screen-md) {
     display: flex;
     flex-direction: column;
-    padding: 40px 16px 8px 16px;
+    padding: $s-10 $s-4 $s-2 $s-4;
     background: var(--surface-3);
-    border-bottom: 1px solid var(--surface-6);
-    border-radius: 0.5rem 0.5rem 0rem 0rem;
-    gap: 1px;
+    border-bottom: $border solid var(--surface-6);
+    border-radius: $rounded-lg $rounded-lg 0rem 0rem;
+    gap: $s-px;
 
     .modal-nav-category {
-      font-weight: 500;
+      font-weight: $font-medium;
       cursor: pointer;
-      padding: 6px 12px;
-      margin: 0.5px 0;
-      border-radius: 0.375rem;
-      font-size: 14px;
-      border-left: 2px solid transparent;
+      padding: $s-1-5 $s-3;
+      margin: 0;
+      border-radius: $rounded-md;
+      font-size: $text-sm;
+      border-left: $border-2 solid transparent;
 
       &:hover {
         background-color: var(--color-bg-modal-cat-hover);
@@ -361,9 +360,9 @@
         border-left-color: var(--accent);
       }
 
-      @media (max-width: 480px) {
-        font-size: 13px;
-        padding: 5px 10px;
+      @media (max-width: $screen-xs) {
+        font-size: $text-sm;
+        padding: $s-1 $s-2-5;
       }
     }
   }
@@ -372,23 +371,24 @@
 .modal-nav-mobile-2col {
   display: none;
 
-  @media (max-width: 768px) {
+  @media (max-width: $screen-md) {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    padding: 40px 16px 8px 16px;
+    padding: $s-10 $s-4 $s-2 $s-4;
     background: var(--surface-3);
-    border-bottom: 1px solid var(--surface-6);
-    border-radius: 0.5rem 0.5rem 0rem 0rem;
-    gap: 2px 16px;
+    border-bottom: $border solid var(--surface-6);
+    border-radius: $rounded-lg $rounded-lg 0rem 0rem;
+    gap: $s-0-5 $s-4;
 
     .modal-nav-category {
-      font-weight: 500;
+      font-weight: $font-medium;
       cursor: pointer;
-      padding: 6px 8px;
-      border-radius: 0.375rem;
-      font-size: 14px;
+      padding: $s-1-5 $s-2;
+      margin: 0;
+      border-radius: $rounded-md;
+      font-size: $text-sm;
       text-align: center;
-      border-left: 2px solid transparent;
+      border-left: $border-2 solid transparent;
 
       &:hover {
         background-color: var(--color-bg-modal-cat-hover);
@@ -399,9 +399,9 @@
         border-left-color: var(--accent);
       }
 
-      @media (max-width: 480px) {
-        font-size: 12px;
-        padding: 5px 6px;
+      @media (max-width: $screen-xs) {
+        font-size: $text-xs;
+        padding: $s-1 $s-1-5;
       }
     }
   }
@@ -411,34 +411,34 @@
 .modal-content-header {
   background: var(--color-bg-modal);
   border-top-left-radius: 0px;
-  border-top-right-radius: 10px;
+  border-top-right-radius: $s-2-5;
   display: flex;
   flex-direction: row;
   user-select: none;
-  padding: 20px 16px;
+  padding: $s-5 $s-4;
   align-items: flex-start;
-  gap: 16px;
+  gap: $s-4;
 
-  @media (max-width: 768px) {
+  @media (max-width: $screen-md) {
     border-top-left-radius: 0px;
     border-top-right-radius: 0px;
-    padding: 16px 12px;
+    padding: $s-4 $s-3;
     min-height: auto;
     flex-direction: column;
-    gap: 12px;
+    gap: $s-3;
     align-items: stretch;
   }
 }
 
 .modal-content-section {
-  padding: 20px;
+  padding: $s-5;
   background-color: var(--color-bg-modal);
   flex-grow: 1;
   display: flex;
   flex-direction: column;
 
-  @media (max-width: 768px) {
-    padding: 16px;
+  @media (max-width: $screen-md) {
+    padding: $s-4;
   }
 
   &:last-child {
@@ -448,27 +448,27 @@
   /* Ensure Save button stays at bottom right for all categories */
   .modal-content-actions {
     margin-top: auto;
-    padding-top: 16px;
+    padding-top: $s-4;
   }
 }
 
 .modal-content-actions {
   display: flex;
   justify-content: right;
-  margin-top: 10px;
-  gap: 8px;
+  margin-top: $s-2-5;
+  gap: $s-2;
   flex-shrink: 0;
 
   .quorum-button {
     height: 38px;
-    font-size: 13px;
+    font-size: $text-sm;
     white-space: nowrap;
   }
 
-  @media (max-width: 768px) {
+  @media (max-width: $screen-md) {
     justify-content: left;
-    margin-top: 16px;
-    margin-bottom: 20px;
+    margin-top: $s-4;
+    margin-bottom: $s-5;
     flex-wrap: wrap;
   }
 }
@@ -479,7 +479,7 @@
   align-self: flex-start;
   flex-shrink: 0;
 
-  @media (max-width: 768px) {
+  @media (max-width: $screen-md) {
     margin-top: 0;
     margin-bottom: 0;
     align-self: stretch;
@@ -489,8 +489,8 @@
     .quorum-button {
       width: 100%;
       text-align: center;
-      min-height: 40px;
-      padding: 8px 12px;
+      min-height: $s-10;
+      padding: $s-2 $s-3;
       box-sizing: border-box;
     }
   }
@@ -498,21 +498,21 @@
 
 // Content Info Classes
 .modal-content-info {
-  font-size: 13px;
-  margin-bottom: 16px;
+  font-size: $text-sm;
+  margin-bottom: $s-4;
 
   // quorum-input styles now handled by Input primitive
 
-  @media (max-width: 768px) {
-    margin-bottom: 12px;
+  @media (max-width: $screen-md) {
+    margin-bottom: $s-3;
   }
 }
 
 .modal-content-section-header {
-  font-weight: 700;
-  border-top: 1px solid var(--color-border-strong);
-  padding-top: 7px;
-  margin-top: 7px;
+  font-weight: $font-bold;
+  border-top: $border solid var(--color-border-strong);
+  padding-top: $s-2;
+  margin-top: $s-2;
 
   &:first-child {
     border-top: 0px none;
@@ -523,7 +523,17 @@
 
 /* === BICOLOR LIST STYLING === */
 .modal-list-item {
-  @apply transition-colors odd:bg-surface-4 even:bg-surface-3;
+  transition-property: color, background-color, border-color, text-decoration-color, fill, stroke;
+  transition-timing-function: $ease-in-out;
+  transition-duration: $duration-150;
+
+  &:nth-child(odd) {
+    background-color: var(--surface-4);
+  }
+
+  &:nth-child(even) {
+    background-color: var(--surface-3);
+  }
 
   &:hover {
     background-color: var(--color-bg-modal);
@@ -539,18 +549,18 @@
   height: auto;
   max-height: 70vh;
   background: var(--surface-3);
-  border-radius: 0.5rem;
+  border-radius: $rounded-lg;
   color: var(--color-text-main);
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  animation: modalOpen 0.3s ease-out;
+  animation: modalOpen $duration-300 ease-out;
 
-  @media (max-width: 768px) {
+  @media (max-width: $screen-md) {
     width: 95vw;
     max-width: none;
     max-height: 60vh;
-    border-radius: 0.5rem;
+    border-radius: $rounded-lg;
   }
 }
 
@@ -558,10 +568,10 @@
 
 .modal-small-close-button {
   position: absolute;
-  top: 8px;
-  right: 8px;
-  width: 28px;
-  height: 28px;
+  top: $s-2;
+  right: $s-2;
+  width: $s-7;
+  height: $s-7;
   border-radius: 50%;
   background: rgba(0, 0, 0, 0.2);
   backdrop-filter: blur(4px);
@@ -570,7 +580,7 @@
   justify-content: center;
   cursor: pointer;
   color: var(--color-text-subtle);
-  transition: all 0.2s ease;
+  transition: all $duration-200 ease;
   z-index: 10;
 
   &:hover {
@@ -579,11 +589,11 @@
     transform: scale(1.1);
   }
 
-  @media (max-width: 768px) {
-    top: 6px;
-    right: 6px;
-    width: 24px;
-    height: 24px;
+  @media (max-width: $screen-md) {
+    top: $s-1-5;
+    right: $s-1-5;
+    width: $s-6;
+    height: $s-6;
   }
 }
 
@@ -598,26 +608,26 @@
   flex-direction: column;
   flex-grow: 1;
   overflow-y: auto;
-  border-radius: 0.5rem;
+  border-radius: $rounded-lg;
 }
 
 .modal-small-actions {
   display: flex;
   justify-content: right;
-  gap: 8px;
-  margin-top: 10px;
+  gap: $s-2;
+  margin-top: $s-2-5;
 
   .quorum-button {
     height: 38px;
-    font-size: 13px;
+    font-size: $text-sm;
   }
 
-  @media (max-width: 768px) {
+  @media (max-width: $screen-md) {
     flex-direction: column;
     justify-content: left;
-    margin-top: 16px;
-    margin-bottom: 20px;
-    gap: 12px;
+    margin-top: $s-4;
+    margin-bottom: $s-5;
+    gap: $s-3;
   }
 }
 
@@ -625,35 +635,35 @@
 .modal-icon {
   width: 82px;
   height: 82px;
-  margin-top: 20px;
-  margin-left: 18px;
-  margin-right: 18px;
+  margin-top: $s-5;
+  margin-left: $s-5;
+  margin-right: $s-5;
   background-position: center;
   background-size: cover;
   border-radius: 41px;
   display: inline-block;
   flex-shrink: 0;
 
-  @media (max-width: 768px) {
+  @media (max-width: $screen-md) {
     width: 70px;
     height: 70px;
-    margin-top: 15px;
-    margin-left: 12px;
-    margin-right: 12px;
+    margin-top: $s-4;
+    margin-left: $s-3;
+    margin-right: $s-3;
     border-radius: 35px;
   }
 }
 
 // Consolidated upload element for all modals
 .avatar-upload {
-  width: 82px;
-  height: 82px;
-  margin-top: 20px;
-  margin-left: 18px;
-  margin-right: 18px;
+  width: $s-20;
+  height: $s-20;
+  margin-top: $s-5;
+  margin-left: $s-5;
+  margin-right: $s-5;
   background-position: center;
   background-size: cover;
-  border-radius: 41px;
+  border-radius: $s-10;
   display: inline-block;
   flex-shrink: 0;
   cursor: pointer;
@@ -661,7 +671,7 @@
 
   // Empty state styling
   &.empty {
-    border: 3px dashed var(--accent-100);
+    border: $s-1 dashed var(--accent-100);
     background-color: var(--accent);
     display: flex;
     align-items: center;
@@ -669,7 +679,7 @@
     color: rgba(255, 255, 255, 0.6);
 
     .icon {
-      font-size: 32px;
+      font-size: $s-8;
     }
 
     &:hover {
@@ -686,27 +696,27 @@
   // Upload "+" icon
   &::after {
     content: '+';
-    width: 24px;
-    height: 24px;
+    width: $s-6;
+    height: $s-6;
     background: var(--color-bg-icon);
     color: var(--accent);
     display: block;
     text-align: center;
-    border-radius: 0.75rem;
-    font-weight: 700;
+    border-radius: $rounded-xl;
+    font-weight: $font-bold;
     position: absolute;
-    top: -4px;
-    right: -4px;
-    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
-    line-height: 24px;
+    top: -$s-1;
+    right: -$s-1;
+    box-shadow: 0px $s-1 $s-1 rgba(0, 0, 0, 0.25);
+    line-height: $s-6;
   }
 
-  @media (max-width: 768px) {
+  @media (max-width: $screen-md) {
     width: 70px;
     height: 70px;
-    margin-top: 15px;
-    margin-left: 12px;
-    margin-right: 12px;
+    margin-top: $s-4;
+    margin-left: $s-3;
+    margin-right: $s-3;
     border-radius: 35px;
   }
 }
@@ -719,11 +729,11 @@
   height: 120px;
   background-position: center;
   background-size: cover;
-  border-radius: 0.5rem;
+  border-radius: $rounded-lg;
   display: block;
-  margin-top: 8px;
+  margin-top: $s-2;
 
-  @media (max-width: 768px) {
+  @media (max-width: $screen-md) {
     height: 100px;
     max-width: 100%;
   }
@@ -740,19 +750,19 @@
   &::after {
     content: '+';
     position: absolute;
-    bottom: 8px;
-    right: 8px;
-    width: 24px;
-    height: 24px;
+    bottom: $s-2;
+    right: $s-2;
+    width: $s-6;
+    height: $s-6;
     background: var(--color-bg-icon);
     color: var(--accent);
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 0.75rem;
-    font-weight: 700;
-    font-size: 14px;
-    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+    border-radius: $rounded-xl;
+    font-weight: $font-bold;
+    font-size: $text-sm;
+    box-shadow: 0px $s-1 $s-1 rgba(0, 0, 0, 0.25);
   }
 }
 
@@ -762,9 +772,9 @@
   justify-content: center;
   flex-grow: 1;
   width: 100%;
-  padding-right: 16px;
+  padding-right: $s-4;
 
-  @media (max-width: 768px) {
+  @media (max-width: $screen-md) {
     width: 100%;
     padding-right: 0;
   }
@@ -772,13 +782,13 @@
 
 // Role Classes
 .modal-role {
-  padding: 2px 10px;
-  border-radius: 9px;
+  padding: $s-0-5 $s-2-5;
+  border-radius: $s-2;
   color: var(--color-text-main);
   background: rgb(var(--success) / 0.5);
   display: inline-block;
-  margin-right: 8px;
-  font-size: 13px;
+  margin-right: $s-2;
+  font-size: $text-sm;
 }
 
 .dark .modal-role {
@@ -791,21 +801,21 @@
   display: flex;
   flex-direction: column;
   user-select: none;
-  padding: 40px 16px 0px 16px;
+  padding: $s-10 $s-4 0px $s-4;
   align-items: center;
-  gap: 32px;
+  gap: $s-8;
 
-  @media (min-width: 769px) {
+  @media (min-width: calc($screen-md + 1px)) {
     flex-direction: row;
     justify-content: center;
-    gap: 32px;
+    gap: $s-8;
   }
 
-  @media (max-width: 768px) {
-    padding: 16px 12px;
+  @media (max-width: $screen-md) {
+    padding: $s-4 $s-3;
     min-height: auto;
     flex-direction: column;
-    gap: 24px;
+    gap: $s-6;
     align-items: center;
   }
 }
@@ -826,23 +836,23 @@
   inset: 0;
   background-color: rgba(0, 0, 0, 0.3);
   backdrop-filter: blur(4px);
-  border-radius: 0.5rem;
+  border-radius: $rounded-lg;
 }
 
 .modal-save-content {
   position: relative;
   display: flex;
   align-items: center;
-  gap: 0.75rem;
+  gap: $s-3;
 
   .modal-save-spinner {
     color: var(--accent);
-    font-size: 24px;
+    font-size: $s-6;
   }
 
   .modal-save-text {
-    font-size: 1.125rem;
-    font-weight: 500;
+    font-size: $text-lg;
+    font-weight: $font-medium;
     color: white;
   }
 }
