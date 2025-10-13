@@ -481,7 +481,7 @@ quorum-desktop/
 | `tutorials/build-message-bot.md` | None (new) | **Create**: Bot tutorial |
 | `tutorials/implement-crypto-wallet.md` | None (new) | **Create**: Crypto feature tutorial |
 
-### Complete Mapping of ALL Existing Docs (34 files)
+### Complete Mapping of ALL Existing Docs (39 files)
 
 **Every existing doc mapped to new documentation structure:**
 
@@ -496,26 +496,28 @@ quorum-desktop/
 | `expo-dev-testing-guide.md` | `mobile/expo-dev-setup.md` | Migrate as-is |
 | `development/unused-dependencies-analysis.md` | *(Internal only - not in public docs)* | Keep in repo, not in docs site |
 
-#### Primitives Documentation (6 files)
+#### Primitives Documentation (7 files)
 
 | Existing Doc | New Location | Action |
 |--------------|--------------|--------|
 | `features/primitives/01-introduction-and-concepts.md` | `ui-architecture/primitives/introduction-concepts.md` | Migrate as-is |
-| `features/primitives/02-primitives-AGENTS.md` | `ui-architecture/primitives/AGENTS.md` | Migrate as-is |
+| `features/primitives/02-primitives-quick-reference.md` | `ui-architecture/primitives/quick-reference.md` | Migrate as-is |
 | `features/primitives/03-when-to-use-primitives.md` | `ui-architecture/primitives/when-to-use.md` | Migrate as-is |
 | `features/primitives/04-web-to-native-migration.md` | `ui-architecture/primitives/web-to-native-migration.md` | Migrate as-is |
 | `features/primitives/05-primitive-styling-guide.md` | `ui-architecture/primitives/styling-guide.md` | Migrate as-is |
+| `features/primitives/API-REFERENCE.md` | `ui-architecture/primitives/api-reference.md` | Migrate as-is |
 | `features/primitives/INDEX.md` | `ui-architecture/primitives/overview.md` | Rename & update links |
 
-#### Space/Permissions Features (3 files)
+#### Space/Permissions Features (4 files)
 
 | Existing Doc | New Location | Action |
 |--------------|--------------|--------|
 | `space-permissions/read-only-channels-system.md` | `core-systems/spaces-channels/read-only-channels.md` | Migrate as-is |
 | `space-permissions/space-permissions-architecture.md` | `core-systems/spaces-channels/permissions-architecture.md` | Migrate as-is |
 | `space-permissions/space-roles-system.md` | `core-systems/spaces-channels/roles-system.md` | Migrate as-is |
+| `features/space-settings-fixes-section.md` | `features/spaces/space-settings-fixes-section.md` | Migrate as-is |
 
-#### Message Features (7 files)
+#### Message Features (8 files)
 
 | Existing Doc | New Location | Action |
 |--------------|--------------|--------|
@@ -526,8 +528,9 @@ quorum-desktop/
 | `features/messages/message-signing-system.md` | `core-systems/messaging/message-signing.md` | Migrate as-is |
 | `features/messages/pinned-messages.md` | `core-systems/messaging/pinned-messages.md` | Migrate as-is |
 | `features/messages/youtube-facade-optimization.md` | `features/media/youtube-facade.md` | Migrate as-is |
+| `features/mention-notification-system.md` | `features/notifications/mention-notification-system.md` | Migrate as-is |
 
-#### UI/UX Features (5 files)
+#### UI/UX Features (7 files)
 
 | Existing Doc | New Location | Action |
 |--------------|--------------|--------|
@@ -536,6 +539,8 @@ quorum-desktop/
 | `features/cross-platform-theming.md` | `ui-architecture/styling/theming-system.md` | Migrate as-is |
 | `features/responsive-layout.md` | `ui-architecture/styling/responsive-layout.md` | Migrate as-is |
 | `features/reacttooltip-mobile.md` | `mobile/platform-differences.md` (section) | Merge into mobile docs |
+| `features/dropdown-panels.md` | `ui-architecture/business-components/dropdown-panels.md` | Migrate as-is |
+| `styling-guidelines.md` | `ui-architecture/styling/styling-guidelines.md` | Migrate as-is |
 
 #### App Features (7 files)
 
