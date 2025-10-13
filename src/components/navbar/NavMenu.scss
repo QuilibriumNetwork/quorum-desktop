@@ -11,19 +11,12 @@ html {
   font-size: $text-sm;
 }
 
-.logo {
-  width: 57px;
-  height: 57px;
-  padding: $s-2;
-  margin-left: $s-2;
-}
-
 header {
   padding: $s-2 0 $s-4 0;
   position: fixed;
   height: 100%;
-  width: 74px;
-  max-width: 74px;
+  width: $nav-header-width;
+  max-width: $nav-header-width;
   z-index: 999;
   display: flex;
   flex-direction: column;
@@ -36,8 +29,8 @@ header {
 
   // Mobile phone optimization - smaller width and icons
   @media (max-width: $screen-xs) {
-    width: 50px;
-    max-width: 50px;
+    width: $nav-header-width-mobile;
+    max-width: $nav-header-width-mobile;
     padding: $s-1-5 0 $s-3 0;
   }
 }
@@ -50,8 +43,8 @@ header {
   align-items: center;
 
   .space-icon {
-    width: $s-12;
-    height: $s-12;
+    width: $nav-space-icon-size;
+    height: $nav-space-icon-size;
     box-sizing: border-box;
     border-radius: $rounded-lg;
     background-position: center;
@@ -68,8 +61,8 @@ header {
   // Mobile phone optimization
   @media (max-width: $screen-xs) {
     .space-icon {
-      width: $s-8;
-      height: $s-8;
+      width: $nav-space-icon-size-mobile;
+      height: $nav-space-icon-size-mobile;
       margin-top: 5px;
       border-radius: $rounded-lg;
       //margin-bottom: 8px;

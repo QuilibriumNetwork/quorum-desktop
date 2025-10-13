@@ -56,7 +56,7 @@ const ExpandableNavMenu: React.FunctionComponent<ExpandableNavMenuProps> = (
         userIcon={user?.currentPasskeyInfo?.pfpUrl}
         displayName={user?.currentPasskeyInfo?.displayName || 'User'}
         address={user?.currentPasskeyInfo?.address || ''}
-        size={40}
+        size={36}
         className="expanded-nav-button-avatar"
         onClick={() => openUserSettings()}
       />

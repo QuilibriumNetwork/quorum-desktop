@@ -2,9 +2,9 @@
 
 .container-unit {
   position: fixed;
-  width: calc(100vw - 72px);
+  width: calc(100vw - $nav-header-width);
   height: calc(100vh - 14px);
-  left: 72px;
+  left: $nav-header-width;
   top: $s-3-5;
   border-top-left-radius: $rounded-xl;
   background-color: var(--color-bg-sidebar);
@@ -15,13 +15,13 @@
 
   // Mobile optimization - full width for chat content
   @media (max-width: 1023px) {
-    width: calc(100vw - 74px);
-    left: 74px;
+    width: calc(100vw - $nav-header-width);
+    left: $nav-header-width;
   }
 
   // Phone-specific optimization for smaller NavMenu
   @media (max-width: $screen-xs) {
-    width: calc(100vw - 50px);
-    left: 50px;
+    width: calc(100vw - $nav-header-width-mobile);
+    left: $nav-header-width-mobile;
   }
 }

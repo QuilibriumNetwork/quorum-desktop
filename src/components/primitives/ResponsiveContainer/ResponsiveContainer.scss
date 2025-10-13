@@ -1,19 +1,19 @@
+@use '@/styles/variables' as *;
+
 /**
  * ResponsiveContainer - Fixed version of Container.scss
  *
  * Key fixes:
- * - Desktop uses 74px (not 72px) to match actual NavMenu width
- * - Tablet uses same 74px as desktop (not different width)
- * - Phone uses 50px as before
+ * - Desktop uses $nav-header-width to match actual NavMenu width
+ * - Tablet uses same width as desktop
+ * - Phone uses $nav-header-width-mobile
  * - Supports NavMenu hiding below 1024px via .nav-menu-hidden modifier
  */
 .responsive-container {
   position: fixed;
-  width: calc(
-    100vw - 74px
-  ); /* Fixed: Desktop & Tablet use 74px (matching NavMenu) */
+  width: calc(100vw - $nav-header-width); /* Desktop & Tablet use NavMenu width */
   height: calc(100vh - 14px);
-  left: 74px; /* Fixed: Match the NavMenu width exactly */
+  left: $nav-header-width; /* Match the NavMenu width exactly */
   top: 14px;
   border-top-left-radius: 0.75rem;
   background-color: var(--color-bg-sidebar);
@@ -26,8 +26,8 @@
 
   /* Phone-specific optimization for smaller NavMenu */
   @media (max-width: 480px) {
-    width: calc(100vw - 50px);
-    left: 50px;
+    width: calc(100vw - $nav-header-width-mobile);
+    left: $nav-header-width-mobile;
   }
 
   /* NavMenu hidden state - only applies below 1024px */

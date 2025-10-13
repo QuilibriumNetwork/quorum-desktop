@@ -34,7 +34,7 @@
     position: fixed;
     top: 0;
     left: calc(
-      74px - var(--sidebar-left-width)
+      $nav-header-width - var(--sidebar-left-width)
     ); // Position so that when translateX(-100%) it's completely hidden
     width: var(--sidebar-left-width);
     height: 100vh;
@@ -61,7 +61,7 @@
 
     // Phone-specific positioning for smaller NavMenu
     @media (max-width: 480px) {
-      left: calc(50px - var(--sidebar-left-width)); // Adjust for smaller navbar
+      left: calc($nav-header-width-mobile - var(--sidebar-left-width)); // Adjust for smaller navbar
 
       &.nav-menu-hidden {
         left: calc(0px - var(--sidebar-left-width));

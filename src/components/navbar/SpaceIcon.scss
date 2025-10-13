@@ -1,8 +1,8 @@
 @use '@/styles/variables' as *;
 
  .space-icon {
-  width: $s-12;
-  height: $s-12;
+  width: $nav-space-icon-size;
+  height: $nav-space-icon-size;
   box-sizing: border-box;
   border-radius: $rounded-full;
   background-position: center;
@@ -16,8 +16,8 @@
 
   // Mobile phone optimization
   @media (max-width: $screen-xs) {
-    width: $s-8;
-    height: $s-8;
+    width: $nav-space-icon-size-mobile;
+    height: $nav-space-icon-size-mobile;
     margin-top: 5px;
     border-radius: $rounded-full;
   }
@@ -29,8 +29,8 @@
 }
 
 .space-icon:hover {
-  border-radius: $rounded-lg;
-  background-color: var(--surface-4);
+  border-radius: $rounded-full;
+  opacity:0.8;
 }
 
 .space-icon-toggle {
@@ -50,16 +50,16 @@
   background: rgb(var(--warning));
   transition: all $duration-100 linear;
 
-  // Mobile phone optimization - adjust positioning for smaller icons
+  // Mobile phone optimization - adjust positioning for larger icons
   @media (max-width: $screen-xs) {
-    margin-left: -12px;
-    margin-top: $s-4-5;
+    margin-left: -11px;
+    margin-top: $s-5;
   }
 }
 
 .space-icon-selected {
-  width: $s-12;
-  height: $s-12;
+  width: $nav-space-icon-size;
+  height: $nav-space-icon-size;
   box-sizing: border-box;
   background-position: center;
   background-size: cover;
@@ -74,8 +74,8 @@
 
   // Mobile phone optimization
   @media (max-width: $screen-xs) {
-    width: $s-8;
-    height: $s-8;
+    width: $nav-space-icon-size-mobile;
+    height: $nav-space-icon-size-mobile;
     margin-top: $s-1;
     border-radius: $rounded-lg;
     box-shadow: none;
@@ -96,11 +96,11 @@
   background: var(--accent-500);
   transition: all $duration-100 linear;
 
-  // Mobile phone optimization - adjust positioning for smaller icons
+  // Mobile phone optimization - adjust positioning for larger icons
   @media (max-width: $screen-xs) {
-    margin-left: -12px;
-    margin-top: 11px;
-    height: $s-4-5;
+    margin-left: -11px;
+    margin-top: 15px;
+    height: $s-5;
   }
 }
 
@@ -127,10 +127,10 @@
   pointer-events: none;
   box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
 
-  // Mobile phone optimization - slightly smaller bubble
+  // Mobile phone optimization - adjust for larger icons
   @media (max-width: $screen-xs) {
-    min-width: $s-4;
-    height: $s-4;
+    min-width: $s-4-5;
+    height: $s-4-5;
     font-size: 11px;
     top: $s-0-5;
     right: -$s-0-5;

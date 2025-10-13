@@ -4,8 +4,8 @@
   font-size: $text-2xl;
   text-align: center;
   padding-top: $s-3;
-  width: 57px;
-  height: 57px;
+  width: $s-14;
+  height: $s-14;
   flex-shrink: 0;
   margin-left: $s-2;
   margin-top: $s-1-5;
@@ -30,7 +30,7 @@
 .expanded-nav-menu {
   text-align: center;
   bottom: 0;
-  width: 57px;
+  width: $nav-space-icon-size;
 
   .quorum-button {
     margin-bottom: $s-2-5;
@@ -61,7 +61,7 @@
   flex-direction: column;
   align-items: center;
   justify-content: flex-end;
-  width: 57px;
+  width: $nav-space-icon-size;
   height: 100vh;
   padding-bottom: $s-10;
   padding-left: $s-4;
@@ -69,7 +69,7 @@
 
   // Mobile phone optimization
   @media (max-width: $screen-xs) {
-    width: $s-10;
+    width: $nav-space-icon-size-mobile;
     padding-bottom: $s-10;
     padding-left: $s-2;
     gap: $s-2;
@@ -96,10 +96,10 @@
     }
   }
 
-  // Mobile phone optimization
+  // Mobile phone optimization - match space icon size
   @media (max-width: $screen-xs) {
-    width: $s-8;
-    height: $s-8;
+    width: $s-10;
+    height: $s-10;
     margin-top: $s-2;
   }
 }
@@ -121,10 +121,10 @@
     }
   }
 
-  // Mobile phone optimization
+  // Mobile phone optimization - match space icon size
   @media (max-width: $screen-xs) {
-    width: $s-8;
-    height: $s-8;
+    width: $s-10;
+    height: $s-10;
     margin-top: $s-2;
   }
 }
