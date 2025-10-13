@@ -7,7 +7,7 @@ import React, {
 } from 'react';
 import { useParams } from 'react-router';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
-import { EmbedMessage, Message as MessageType } from '../../api/quorumApi';
+import { EmbedMessage } from '../../api/quorumApi';
 import './DirectMessage.scss';
 import {
   useRegistration,
@@ -27,7 +27,7 @@ import { t } from '@lingui/core/macro';
 import { i18n } from '@lingui/core';
 import { ClickToCopyContent } from '../ui';
 import { DefaultImages, truncateAddress } from '../../utils';
-import { isTouchDevice } from '../../utils/platform';
+
 import { GlobalSearch } from '../search';
 import { useResponsiveLayoutContext } from '../context/ResponsiveLayoutProvider';
 import { useModalContext } from '../context/ModalProvider';
@@ -38,7 +38,6 @@ import {
   FlexRow,
   FlexColumn,
   Text,
-  Icon,
   Tooltip,
 } from '../primitives';
 
@@ -49,7 +48,7 @@ const DirectMessage: React.FC<{}> = () => {
   const { openConversationSettings } = useModalContext();
   const user = usePasskeysContext();
   const queryClient = useQueryClient();
-  const { messageDB, submitMessage, keyset, getConfig } = useMessageDB();
+  const { submitMessage, keyset, getConfig } = useMessageDB();
 
   // State for message signing
   const [skipSigning, setSkipSigning] = useState<boolean>(false);
@@ -104,7 +103,6 @@ const DirectMessage: React.FC<{}> = () => {
   const {
     messageList,
     acceptChat,
-    fetchNextPage,
     fetchPreviousPage,
     canDeleteMessages,
   } = useDirectMessagesList();

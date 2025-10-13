@@ -89,7 +89,8 @@ type MessageDBContextValue = {
       userKeyset: secureChannel.UserKeyset;
       deviceKeyset: secureChannel.DeviceKeyset;
     },
-    inReplyTo?: string
+    inReplyTo?: string,
+    skipSigning?: boolean
   ) => Promise<void>;
   createSpace: (
     spaceName: string,
