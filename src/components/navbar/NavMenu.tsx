@@ -16,6 +16,7 @@ import {
   useSpaceDragAndDrop,
 } from '../../hooks';
 import { useSpaceMentionCounts } from '../../hooks/business/mentions';
+import { useResponsiveLayoutContext } from '../context/ResponsiveLayoutProvider';
 import './NavMenu.scss';
 
 type NavMenuProps = {
@@ -30,6 +31,7 @@ const NavMenuContent: React.FC<NavMenuProps> = (props) => {
   const { data: config } = useConfig({
     userAddress: user.currentPasskeyInfo!.address,
   });
+  const { navMenuOpen, isDesktop } = useResponsiveLayoutContext();
 
   const { mappedSpaces, setMappedSpaces } = useSpaceOrdering(spaces, config);
   const { handleDragStart, handleDragEnd, sensors } = useSpaceDragAndDrop({
@@ -41,12 +43,22 @@ const NavMenuContent: React.FC<NavMenuProps> = (props) => {
   // Get mention counts for all spaces
   const spaceMentionCounts = useSpaceMentionCounts({ spaces: mappedSpaces });
 
+  // Hide NavMenu below 1024px when navMenuOpen is false
+  const navMenuStyle: React.CSSProperties = {};
+  if (!isDesktop && !navMenuOpen) {
+    navMenuStyle.transform = 'translateX(-100%)';
+    navMenuStyle.transition = 'transform 0.3s ease-in-out';
+  } else if (!isDesktop) {
+    navMenuStyle.transition = 'transform 0.3s ease-in-out';
+  }
+
   return (
     <header
       className={
         //@ts-ignore
         window.electron ? 'electron' : ''
       }
+      style={navMenuStyle}
     >
       {
         //@ts-ignore

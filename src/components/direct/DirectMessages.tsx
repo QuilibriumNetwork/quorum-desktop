@@ -40,6 +40,7 @@ const DirectMessages: React.FunctionComponent<DirectMessagesProps> = (
     leftSidebarOpen,
     closeLeftSidebar,
     openLeftSidebar,
+    navMenuOpen,
   } = useResponsiveLayoutContext();
 
   // Simple context-aware sidebar: set initial state based on route, only on route changes
@@ -65,13 +66,17 @@ const DirectMessages: React.FunctionComponent<DirectMessagesProps> = (
       {(isMobile || isTablet) && leftSidebarOpen && (
         <div
           className="fixed inset-y-0 right-0 bg-overlay z-[997]"
-          style={{ left: window.innerWidth <= 480 ? '50px' : '74px' }}
+          style={{
+            left: navMenuOpen
+              ? (window.innerWidth <= 480 ? '50px' : '74px')
+              : '0px'
+          }}
           onClick={closeLeftSidebar}
         />
       )}
 
       <div
-        className={`direct-messages-container-channels ${leftSidebarOpen && (isMobile || isTablet) ? 'open' : ''}`}
+        className={`direct-messages-container-channels ${leftSidebarOpen && (isMobile || isTablet) ? 'open' : ''} ${!navMenuOpen ? 'nav-menu-hidden' : ''}`}
       >
         <React.Suspense>
           {keyset.deviceKeyset?.inbox_keyset && <DirectMessageContactsList />}

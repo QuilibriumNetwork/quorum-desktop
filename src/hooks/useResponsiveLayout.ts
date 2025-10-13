@@ -8,6 +8,10 @@ export interface ResponsiveLayoutState {
   toggleLeftSidebar: () => void;
   closeLeftSidebar: () => void;
   openLeftSidebar: () => void;
+  navMenuOpen: boolean;
+  toggleNavMenu: () => void;
+  closeNavMenu: () => void;
+  openNavMenu: () => void;
 }
 
 const MOBILE_BREAKPOINT = 768; // Mobile devices only
@@ -17,6 +21,7 @@ export const useResponsiveLayout = (): ResponsiveLayoutState => {
     typeof window !== 'undefined' ? window.innerWidth : 1024
   );
   const [leftSidebarOpen, setLeftSidebarOpen] = useState(false);
+  const [navMenuOpen, setNavMenuOpen] = useState(true);
 
   const isMobile = screenWidth < MOBILE_BREAKPOINT;
   const isTablet = screenWidth >= MOBILE_BREAKPOINT && screenWidth < 1024;
@@ -30,7 +35,12 @@ export const useResponsiveLayout = (): ResponsiveLayoutState => {
     if (newWidth >= 1024 && leftSidebarOpen) {
       setLeftSidebarOpen(false);
     }
-  }, [leftSidebarOpen]);
+
+    // Auto-open NavMenu when switching to desktop
+    if (newWidth >= 1024 && !navMenuOpen) {
+      setNavMenuOpen(true);
+    }
+  }, [leftSidebarOpen, navMenuOpen]);
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
@@ -51,6 +61,18 @@ export const useResponsiveLayout = (): ResponsiveLayoutState => {
     setLeftSidebarOpen(true);
   }, []);
 
+  const toggleNavMenu = useCallback(() => {
+    setNavMenuOpen((prev) => !prev);
+  }, []);
+
+  const closeNavMenu = useCallback(() => {
+    setNavMenuOpen(false);
+  }, []);
+
+  const openNavMenu = useCallback(() => {
+    setNavMenuOpen(true);
+  }, []);
+
   return {
     isMobile,
     isTablet,
@@ -59,5 +81,9 @@ export const useResponsiveLayout = (): ResponsiveLayoutState => {
     toggleLeftSidebar,
     closeLeftSidebar,
     openLeftSidebar,
+    navMenuOpen,
+    toggleNavMenu,
+    closeNavMenu,
+    openNavMenu,
   };
 };

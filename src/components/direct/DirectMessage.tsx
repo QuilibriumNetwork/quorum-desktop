@@ -43,7 +43,7 @@ import {
 } from '../primitives';
 
 const DirectMessage: React.FC<{}> = () => {
-  const { isMobile, isTablet, toggleLeftSidebar } =
+  const { isMobile, isTablet, toggleLeftSidebar, navMenuOpen, toggleNavMenu } =
     useResponsiveLayoutContext();
 
   const { openConversationSettings } = useModalContext();
@@ -351,15 +351,24 @@ const DirectMessage: React.FC<{}> = () => {
         >
           {/* First row on mobile: burger + controls / Single row on desktop */}
           <div className="w-full lg:w-auto flex items-center justify-between lg:contents">
-            {/* Burger menu for mobile only */}
+            {/* Mobile controls - burger + NavMenu toggle */}
             {(isMobile || isTablet) && (
-              <Button
-                type="unstyled"
-                onClick={toggleLeftSidebar}
-                className="header-icon-button lg:hidden"
-                iconName="bars"
-                iconOnly
-              />
+              <FlexRow className="gap-2">
+                <Button
+                  type="unstyled"
+                  onClick={toggleLeftSidebar}
+                  className="header-icon-button lg:hidden"
+                  iconName="bars"
+                  iconOnly
+                />
+                <Button
+                  type="unstyled"
+                  onClick={toggleNavMenu}
+                  className="header-icon-button lg:hidden"
+                  iconName={navMenuOpen ? 'chevron-left' : 'chevron-right'}
+                  iconOnly
+                />
+              </FlexRow>
             )}
 
             {/* User info - hidden on mobile first row, shown on desktop */}

@@ -79,7 +79,7 @@ const Channel: React.FC<ChannelProps> = ({
   kickUserAddress,
   setKickUserAddress,
 }) => {
-  const { isDesktop, toggleLeftSidebar } = useResponsiveLayoutContext();
+  const { isDesktop, toggleLeftSidebar, navMenuOpen, toggleNavMenu } = useResponsiveLayoutContext();
   const { openKickUser } = useModals();
   const queryClient = useQueryClient();
   const user = usePasskeysContext();
@@ -481,15 +481,24 @@ const Channel: React.FC<ChannelProps> = ({
         >
           {/* First row on mobile: burger + controls / Single row on desktop */}
           <div className="w-full lg:w-auto flex items-center justify-between lg:contents">
-            {/* Burger menu for mobile only */}
+            {/* Mobile controls - burger + NavMenu toggle */}
             {!isDesktop && (
-              <Button
-                type="unstyled"
-                onClick={toggleLeftSidebar}
-                className="header-icon-button lg:hidden"
-                iconName="bars"
-                iconOnly
-              />
+              <div className="flex items-center gap-2">
+                <Button
+                  type="unstyled"
+                  onClick={toggleLeftSidebar}
+                  className="header-icon-button lg:hidden"
+                  iconName="bars"
+                  iconOnly
+                />
+                <Button
+                  type="unstyled"
+                  onClick={toggleNavMenu}
+                  className="header-icon-button lg:hidden"
+                  iconName={navMenuOpen ? 'chevron-left' : 'chevron-right'}
+                  iconOnly
+                />
+              </div>
             )}
 
             {/* Channel name - hidden on mobile first row, shown on desktop */}

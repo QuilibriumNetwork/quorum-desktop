@@ -50,9 +50,22 @@
       transform: translateX(100%); // Visible: slide to navbar edge position
     }
 
+    // When NavMenu is hidden, start from left edge (0px)
+    &.nav-menu-hidden {
+      left: calc(0px - var(--sidebar-left-width));
+
+      &.open {
+        transform: translateX(100%); // Still slides to visible position
+      }
+    }
+
     // Phone-specific positioning for smaller NavMenu
     @media (max-width: 480px) {
       left: calc(50px - var(--sidebar-left-width)); // Adjust for smaller navbar
+
+      &.nav-menu-hidden {
+        left: calc(0px - var(--sidebar-left-width));
+      }
     }
   }
 }
