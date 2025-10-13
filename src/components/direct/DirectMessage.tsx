@@ -353,7 +353,7 @@ const DirectMessage: React.FC<{}> = () => {
           <div className="w-full lg:w-auto flex items-center justify-between lg:contents">
             {/* Mobile controls - burger + NavMenu toggle */}
             {(isMobile || isTablet) && (
-              <FlexRow className="gap-2">
+              <FlexRow className="gap-3 sm:gap-2">
                 <Button
                   type="unstyled"
                   onClick={toggleLeftSidebar}
@@ -409,7 +409,7 @@ const DirectMessage: React.FC<{}> = () => {
             </Container>
 
             {/* Controls - right side on both mobile and desktop */}
-            <FlexRow className="items-center gap-2">
+            <FlexRow className="items-center gap-3 sm:gap-2">
               <Tooltip
                 id="dm-settings-toggle"
                 content={t`Conversation settings`}

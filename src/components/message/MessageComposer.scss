@@ -24,6 +24,8 @@
   resize: none;
   /* min-height and max-height removed - now calculated dynamically in JavaScript */
   transition: height $duration-100 ease;
+  vertical-align: middle; /* Ensure consistent vertical alignment */
+  align-self: center; /* Center within flex parent */
 
   /* Override TextArea primitive's focus background color */
   &:focus {
@@ -35,6 +37,13 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+  }
+
+  /* Adjust placeholder vertical position on small screens only */
+  @media (max-width: $screen-md) {
+    &::placeholder {
+      transform: translateY(2px); /* Adjust vertical position to compensate for flex alignment */
+    }
   }
 
   /* Allow more growth on larger screens */
@@ -92,11 +101,12 @@
     .message-composer-sticker-btn,
     .message-composer-signing-btn {
       opacity: 0;
-      transform: scale(0.8);
-      pointer-events: none;
       width: 0;
+      min-width: 0;
+      padding: 0;
+      margin: 0;
+      pointer-events: none;
       overflow: hidden;
-      transition: opacity $duration-200 ease, transform $duration-200 ease, width $duration-200 ease;
     }
   }
 }

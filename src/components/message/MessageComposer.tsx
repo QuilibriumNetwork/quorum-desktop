@@ -97,7 +97,22 @@ export const MessageComposer = forwardRef<
     const [cursorPosition, setCursorPosition] = useState(0);
     const [dropdownOpen, setDropdownOpen] = useState(false);
     const [isTyping, setIsTyping] = useState(false);
+    const [responsivePlaceholder, setResponsivePlaceholder] = useState(placeholder);
     const { isMobile, isDesktop } = useResponsiveLayout();
+
+    // Update placeholder for extra small screens (< 480px)
+    useEffect(() => {
+      const updatePlaceholder = () => {
+        if (window.innerWidth <= 480) {
+          setResponsivePlaceholder(t`Message...`);
+        } else {
+          setResponsivePlaceholder(placeholder);
+        }
+      };
+      updatePlaceholder();
+      window.addEventListener('resize', updatePlaceholder);
+      return () => window.removeEventListener('resize', updatePlaceholder);
+    }, [placeholder]);
 
     useImperativeHandle(ref, () => ({
       focus: () => {
@@ -361,7 +376,7 @@ export const MessageComposer = forwardRef<
               onChange={handleTextareaChange}
               onKeyDown={handleKeyDown}
               onSelect={handleSelect}
-              placeholder={placeholder}
+              placeholder={responsivePlaceholder}
               autoResize={false}
               rows={1}
               variant="filled"
