@@ -120,7 +120,8 @@ type MessageDBContextValue = {
       completedOnboarding: boolean;
     },
     inReplyTo?: string,
-    skipSigning?: boolean
+    skipSigning?: boolean,
+    isSpaceOwner?: boolean
   ) => Promise<void>;
   getConfig: ({
     address,

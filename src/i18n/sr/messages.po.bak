@@ -31,7 +31,7 @@ msgid "No Role - {count}"
 msgstr "Nema uloge - {count}"
 
 #. js-lingui-explicit-id
-#: src/components/space/Channel.tsx:706
+#: src/components/space/Channel.tsx:701
 msgid "Send a message to #{channel_name}"
 msgstr "Pošaljite poruku #{channel_name}"
 
@@ -42,7 +42,7 @@ msgstr "Veličina vaše profilne slike mora biti {maxFileSize} ili manje i mora 
 
 #. js-lingui-explicit-id
 #: src/components/message/MessageComposer.native.tsx:238
-#: src/components/message/MessageComposer.tsx:248
+#: src/components/message/MessageComposer.tsx:263
 msgid "Replying to {user}"
 msgstr "Odgovaram {user}"
 
@@ -67,7 +67,7 @@ msgid "{user} has been kicked"
 msgstr "{user} je izbačen"
 
 #. js-lingui-explicit-id
-#: src/components/direct/DirectMessage.tsx:516
+#: src/components/direct/DirectMessage.tsx:525
 msgid "Send a message to {user}"
 msgstr "Pošaljite poruku {user}"
 
@@ -82,7 +82,7 @@ msgstr "za ažuriranja."
 #: src/components/modals/UserSettingsModal/UserSettingsModal.tsx:101
 #: src/components/onboarding/Onboarding.tsx:223
 msgid "'everyone' is a reserved name."
-msgstr ""
+msgstr "'svi' je rezervisano ime."
 
 #: src/components/message/MessagePreview.tsx:51
 msgid "[Empty message]"
@@ -98,33 +98,31 @@ msgstr "[Poruka]"
 msgid "{0} devices marked for removal. Click \"Save Changes\" to confirm."
 msgstr "{0} uređaja označenih za uklanjanje. Kliknite \"Sačuvaj promene\" da potvrdite."
 
-#: src/components/message/PinnedMessagesPanel.tsx:253
 #~ msgid "{0} pinned message"
 #~ msgstr "{0} zakačena poruka"
 
 #. placeholder {0}: pinnedMessages.length
 #: src/components/message/PinnedMessagesPanel.tsx:253
 msgid "{0} pinned message in this Channel"
-msgstr ""
+msgstr "{0} zakačena poruka u ovom Kanalu"
 
-#: src/components/message/PinnedMessagesPanel.tsx:254
 #~ msgid "{0} pinned messages"
 #~ msgstr "{0} zakačene poruke"
 
 #. placeholder {0}: pinnedMessages.length
 #: src/components/message/PinnedMessagesPanel.tsx:254
 msgid "{0} pinned messages in this Channel"
-msgstr ""
+msgstr "{0} zakačene poruke u ovom Kanalu"
 
 #. placeholder {0}: results.length
 #: src/components/search/SearchResults.tsx:146
 msgid "{0} result"
-msgstr ""
+msgstr "{0} rezultat"
 
 #. placeholder {0}: results.length
 #: src/components/search/SearchResults.tsx:147
 msgid "{0} results"
-msgstr ""
+msgstr "{0} rezultati"
 
 #. placeholder {0}: mentions.length
 #: src/components/notifications/NotificationPanel.tsx:154
@@ -204,7 +202,7 @@ msgstr "Dodajte Space"
 msgid "Add Channel"
 msgstr "Dodaj kanal"
 
-#: src/components/direct/DirectMessages.tsx:95
+#: src/components/direct/DirectMessages.tsx:100
 msgid "Add friend"
 msgstr "Dodaj prijatelja"
 
@@ -217,7 +215,7 @@ msgstr "Dodaj grupu"
 msgid "Add Role"
 msgstr "Dodaj ulogu"
 
-#: src/components/message/MessageComposer.tsx:375
+#: src/components/message/MessageComposer.tsx:390
 msgid "add sticker"
 msgstr "dodaj nalepnicu"
 
@@ -327,7 +325,7 @@ msgstr "Da li ste sigurni da želite da odkačite ovu poruku?"
 msgid "As a space owner, you need to assign yourself a role with delete permissions to delete other users' messages. <0><1>Learn more</1></0>"
 msgstr "Kao vlasnik prostora, potrebno je da dodelite sebi ulogu sa dozvolama za brisanje kako biste obrisali poruke drugih korisnika. <0><1>Saznajte više</1></0>"
 
-#: src/components/message/MessageComposer.tsx:344
+#: src/components/message/MessageComposer.tsx:359
 msgid "attach image"
 msgstr "prikači sliku"
 
@@ -467,7 +465,7 @@ msgstr "Ključ konfiguracije"
 msgid "Connecting"
 msgstr "U povezivanju"
 
-#: src/components/direct/DirectMessage.tsx:406
+#: src/components/direct/DirectMessage.tsx:415
 msgid "Conversation settings"
 msgstr "Podešavanja razgovora"
 
@@ -484,8 +482,8 @@ msgid "Copied!"
 msgstr "Kopirano!"
 
 #: src/components/direct/DirectMessage.tsx:266
-#: src/components/direct/DirectMessage.tsx:387
-#: src/components/direct/DirectMessage.tsx:459
+#: src/components/direct/DirectMessage.tsx:396
+#: src/components/direct/DirectMessage.tsx:468
 #: src/components/modals/UserSettingsModal/General.tsx:118
 #: src/components/user/UserProfile.tsx:108
 #: src/components/user/UserStatus.tsx:48
@@ -506,7 +504,7 @@ msgid "Copy Key & Continue"
 msgstr "Kopiraj ključ i nastavi"
 
 #: src/components/message/MessageActions.tsx:80
-#: src/components/message/MessageActionsDrawer.tsx:154
+#: src/components/message/MessageActionsDrawer.tsx:155
 msgid "Copy message link"
 msgstr "Kopiraj link poruke"
 
@@ -606,7 +604,7 @@ msgstr "Obriši grupu"
 #~ msgstr "Obriši link"
 
 #: src/components/message/MessageActions.tsx:84
-#: src/components/message/MessageActionsDrawer.tsx:181
+#: src/components/message/MessageActionsDrawer.tsx:182
 msgid "Delete message"
 msgstr "Obriši poruku"
 
@@ -650,7 +648,7 @@ msgid "Direct Message"
 msgstr "Direktna poruka"
 
 #: src/components/direct/DirectMessageContactsList.tsx:24
-#: src/components/navbar/NavMenu.tsx:61
+#: src/components/navbar/NavMenu.tsx:73
 msgid "Direct Messages"
 msgstr "Direktne poruke"
 
@@ -664,7 +662,7 @@ msgstr "Prikazano ime"
 msgid "Display name is required"
 msgstr "Ime za prikaz je obavezno"
 
-#: src/components/ui/MobileDrawer.tsx:145
+#: src/components/ui/MobileDrawer.tsx:144
 msgid "Drawer"
 msgstr "Fioka"
 
@@ -1120,8 +1118,8 @@ msgstr "Ručno pravljenje rezervne kopije je potrebno"
 msgid "Mark all as read"
 msgstr "Označi sve kao pročitano"
 
-#: src/components/direct/DirectMessage.tsx:420
-#: src/components/space/Channel.tsx:600
+#: src/components/direct/DirectMessage.tsx:429
+#: src/components/space/Channel.tsx:595
 msgid "Members List"
 msgstr "Lista članova"
 
@@ -1129,19 +1127,23 @@ msgstr "Lista članova"
 msgid "Mention Everyone"
 msgstr "Pominjanja svih"
 
-#: src/components/message/MessageActionsDrawer.tsx:128
+#: src/components/message/MessageActionsDrawer.tsx:129
 msgid "Message actions"
 msgstr "Akcije poruka"
 
-#: src/components/message/Message.tsx:537
+#: src/components/message/Message.tsx:535
 msgid "Message does not have a valid signature, this may not be from the sender"
 msgstr "Poruka nema važeći potpis, ovo možda nije od pošiljaoca"
 
-#: src/components/message/MessageComposer.tsx:391
+#: src/components/message/MessageComposer.tsx:107
+msgid "Message..."
+msgstr ""
+
+#: src/components/message/MessageComposer.tsx:406
 msgid "Messages are NOT signed!"
 msgstr "Poruke NISU potpisane!"
 
-#: src/components/message/MessageComposer.tsx:392
+#: src/components/message/MessageComposer.tsx:407
 msgid "Messages are signed!"
 msgstr "Poruke su potpisane!"
 
@@ -1165,8 +1167,8 @@ msgstr "Još nema zakačenih poruka"
 msgid "No unread mentions"
 msgstr "Nema nepročitanih pominjanja"
 
-#: src/components/space/Channel.tsx:350
-#: src/components/space/Channel.tsx:770
+#: src/components/space/Channel.tsx:342
+#: src/components/space/Channel.tsx:765
 msgid "No users found!"
 msgstr "Nema korisnika!"
 
@@ -1181,7 +1183,7 @@ msgstr "Dozvola za obaveštenja nije odobrena"
 #: src/components/modals/SpaceSettingsModal/Account.tsx:171
 #: src/components/modals/UserSettingsModal/Navigation.tsx:17
 #: src/components/modals/UserSettingsModal/Notifications.tsx:24
-#: src/components/space/Channel.tsx:568
+#: src/components/space/Channel.tsx:569
 msgid "Notifications"
 msgstr "Obaveštenja"
 
@@ -1275,7 +1277,7 @@ msgid "Pin limit reached ({0})"
 msgstr "Dostignut limit za zakačene poruke ({0})"
 
 #: src/components/message/MessageActions.tsx:82
-#: src/components/message/MessageActionsDrawer.tsx:168
+#: src/components/message/MessageActionsDrawer.tsx:169
 msgid "Pin message"
 msgstr "Zakači poruku"
 
@@ -1291,16 +1293,16 @@ msgstr "Zakači poruke"
 msgid "Pin to top"
 msgstr "Zaka na vrh"
 
-#: src/components/message/Message.tsx:525
+#: src/components/message/Message.tsx:523
 msgid "Pinned"
 msgstr "Zakačeno"
 
 #. placeholder {0}: mapSenderToUser(message.pinnedBy)?.displayName || message.pinnedBy
-#: src/components/message/Message.tsx:524
+#: src/components/message/Message.tsx:522
 msgid "Pinned by {0}"
 msgstr "Zakačeno od {0}"
 
-#: src/components/space/Channel.tsx:533
+#: src/components/space/Channel.tsx:534
 msgid "Pinned Messages"
 msgstr "Zakačene poruke"
 
@@ -1326,7 +1328,7 @@ msgstr "Privatnost/Bezbednost"
 msgid "Private key saved to selected folder"
 msgstr "Privatni ključ je sačuvan u izabranom folderu"
 
-#: src/components/message/MessageComposer.tsx:227
+#: src/components/message/MessageComposer.tsx:242
 msgid "Processing image... This may take a moment for large files."
 msgstr "Obrada slike... Ovo može potrajati trenutak za velike datoteke."
 
@@ -1387,7 +1389,7 @@ msgid "Remove"
 msgstr "Ukloni"
 
 #: src/components/message/MessageActions.tsx:76
-#: src/components/message/MessageActionsDrawer.tsx:143
+#: src/components/message/MessageActionsDrawer.tsx:144
 msgid "Reply"
 msgstr "Odgovori"
 
@@ -1468,11 +1470,11 @@ msgstr "Pretraga u ovom Простору-u"
 
 #: src/components/search/SearchResults.tsx:127
 msgid "Search in this Space..."
-msgstr ""
+msgstr "Pretraži u ovom prostoru..."
 
-#: src/components/space/Channel.tsx:618
+#: src/components/space/Channel.tsx:613
 msgid "Search Messages"
-msgstr ""
+msgstr "Pretraži poruke"
 
 #: src/components/search/SearchBar.tsx:36
 msgid "Search messages..."
@@ -1769,8 +1771,8 @@ msgstr "Nepoznat vreme"
 #: src/components/direct/DirectMessage.tsx:129
 #: src/components/direct/DirectMessage.tsx:144
 #: src/components/direct/DirectMessage.tsx:328
-#: src/components/message/MessageComposer.tsx:320
-#: src/components/message/MessageComposer.tsx:327
+#: src/components/message/MessageComposer.tsx:335
+#: src/components/message/MessageComposer.tsx:342
 #: src/components/message/MessagePreview.tsx:41
 #: src/components/message/PinnedMessagesPanel.tsx:106
 #: src/components/message/PinnedMessagesPanel.tsx:119
@@ -1805,7 +1807,7 @@ msgid "Unpin"
 msgstr "Ukloni zakivanje"
 
 #: src/components/message/MessageActions.tsx:82
-#: src/components/message/MessageActionsDrawer.tsx:168
+#: src/components/message/MessageActionsDrawer.tsx:169
 msgid "Unpin message"
 msgstr "Ukloni zakačenu poruku"
 
@@ -1822,7 +1824,7 @@ msgstr "Ukloni ovu objavu"
 msgid "Unpinned!"
 msgstr "Uklonjeno!"
 
-#: src/components/direct/DirectMessage.tsx:504
+#: src/components/direct/DirectMessage.tsx:513
 msgid "Until you reply, this sender will not see your display name or profile picture"
 msgstr "Dok ne odgovorite, ovaj pošiljalac neće videti vaše ime ili profilnu sliku"
 
@@ -1863,8 +1865,8 @@ msgstr "Adresa korisnika ovde"
 msgid "User does not exist."
 msgstr "Korisnik ne postoji."
 
-#: src/components/space/Channel.tsx:337
-#: src/components/space/Channel.tsx:757
+#: src/components/space/Channel.tsx:329
+#: src/components/space/Channel.tsx:752
 msgid "Username or Address"
 msgstr "Korisničko ime ili adresa"
 
@@ -1942,8 +1944,8 @@ msgstr "Možete to kasnije promeniti za ovu konverzaciju klikom na ikonu zaklju�
 msgid "You cannot delete a group that contains channels. Delete all {channelCount} channels in this group first."
 msgstr "Ne možete obrisati grupu koja sadrži kanale. Prvo obrišite svih {channelCount} kanala u ovoj grupi."
 
-#: src/components/message/MessageComposer.tsx:206
-#: src/components/space/Channel.tsx:728
+#: src/components/message/MessageComposer.tsx:221
+#: src/components/space/Channel.tsx:723
 msgid "You cannot post in this channel"
 msgstr "Ne možete postaviti u ovom kanalu"
 

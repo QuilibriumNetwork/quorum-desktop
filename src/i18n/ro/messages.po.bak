@@ -31,7 +31,7 @@ msgid "No Role - {count}"
 msgstr "Fără rol - {count}"
 
 #. js-lingui-explicit-id
-#: src/components/space/Channel.tsx:706
+#: src/components/space/Channel.tsx:701
 msgid "Send a message to #{channel_name}"
 msgstr "Trimite un mesaj către #{channel_name}"
 
@@ -42,7 +42,7 @@ msgstr "Dimensiunea imaginii tale de profil trebuie să fie {maxFileSize} sau ma
 
 #. js-lingui-explicit-id
 #: src/components/message/MessageComposer.native.tsx:238
-#: src/components/message/MessageComposer.tsx:248
+#: src/components/message/MessageComposer.tsx:263
 msgid "Replying to {user}"
 msgstr "Răspunzând lui {user}"
 
@@ -67,7 +67,7 @@ msgid "{user} has been kicked"
 msgstr "{user} a fost dat afară"
 
 #. js-lingui-explicit-id
-#: src/components/direct/DirectMessage.tsx:516
+#: src/components/direct/DirectMessage.tsx:525
 msgid "Send a message to {user}"
 msgstr "Trimite un mesaj lui {user}"
 
@@ -82,7 +82,7 @@ msgstr "pentru actualizări."
 #: src/components/modals/UserSettingsModal/UserSettingsModal.tsx:101
 #: src/components/onboarding/Onboarding.tsx:223
 msgid "'everyone' is a reserved name."
-msgstr ""
+msgstr "'nimeni' este un nume rezervat."
 
 #: src/components/message/MessagePreview.tsx:51
 msgid "[Empty message]"
@@ -98,33 +98,31 @@ msgstr "[Mesaj]"
 msgid "{0} devices marked for removal. Click \"Save Changes\" to confirm."
 msgstr "{0} dispozitive marcate pentru eliminare. Apasă \"Salvează modificările\" pentru a confirma."
 
-#: src/components/message/PinnedMessagesPanel.tsx:253
 #~ msgid "{0} pinned message"
 #~ msgstr "{0} mesaj fixat"
 
 #. placeholder {0}: pinnedMessages.length
 #: src/components/message/PinnedMessagesPanel.tsx:253
 msgid "{0} pinned message in this Channel"
-msgstr ""
+msgstr "{0} mesaj fixat în acest Canal"
 
-#: src/components/message/PinnedMessagesPanel.tsx:254
 #~ msgid "{0} pinned messages"
 #~ msgstr "{0} mesaje fixate"
 
 #. placeholder {0}: pinnedMessages.length
 #: src/components/message/PinnedMessagesPanel.tsx:254
 msgid "{0} pinned messages in this Channel"
-msgstr ""
+msgstr "{0} mesaje fixate în acest Canal"
 
 #. placeholder {0}: results.length
 #: src/components/search/SearchResults.tsx:146
 msgid "{0} result"
-msgstr ""
+msgstr "{0} rezultat"
 
 #. placeholder {0}: results.length
 #: src/components/search/SearchResults.tsx:147
 msgid "{0} results"
-msgstr ""
+msgstr "{0} rezultate"
 
 #. placeholder {0}: mentions.length
 #: src/components/notifications/NotificationPanel.tsx:154
@@ -204,7 +202,7 @@ msgstr "Adaugă un Spațiu"
 msgid "Add Channel"
 msgstr "Adaugă Canal"
 
-#: src/components/direct/DirectMessages.tsx:95
+#: src/components/direct/DirectMessages.tsx:100
 msgid "Add friend"
 msgstr "Adaugă prieten"
 
@@ -217,7 +215,7 @@ msgstr "Adaugă grup"
 msgid "Add Role"
 msgstr "Adaugă rol"
 
-#: src/components/message/MessageComposer.tsx:375
+#: src/components/message/MessageComposer.tsx:390
 msgid "add sticker"
 msgstr "adaugă autocolant"
 
@@ -327,7 +325,7 @@ msgstr "Ești sigur că vrei să desfaci fixarea acestui mesaj?"
 msgid "As a space owner, you need to assign yourself a role with delete permissions to delete other users' messages. <0><1>Learn more</1></0>"
 msgstr "Ca proprietar al spațiului, trebuie să-ți atribui un rol cu permisiuni de ștergere pentru a șterge mesajele altor utilizatori. <0><1>Află mai multe</1></0>"
 
-#: src/components/message/MessageComposer.tsx:344
+#: src/components/message/MessageComposer.tsx:359
 msgid "attach image"
 msgstr "atașează imagine"
 
@@ -467,7 +465,7 @@ msgstr "Cheia de configurare"
 msgid "Connecting"
 msgstr "Conectare"
 
-#: src/components/direct/DirectMessage.tsx:406
+#: src/components/direct/DirectMessage.tsx:415
 msgid "Conversation settings"
 msgstr "Setările conversației"
 
@@ -484,8 +482,8 @@ msgid "Copied!"
 msgstr "Copiat!"
 
 #: src/components/direct/DirectMessage.tsx:266
-#: src/components/direct/DirectMessage.tsx:387
-#: src/components/direct/DirectMessage.tsx:459
+#: src/components/direct/DirectMessage.tsx:396
+#: src/components/direct/DirectMessage.tsx:468
 #: src/components/modals/UserSettingsModal/General.tsx:118
 #: src/components/user/UserProfile.tsx:108
 #: src/components/user/UserStatus.tsx:48
@@ -506,7 +504,7 @@ msgid "Copy Key & Continue"
 msgstr "Copiază Cheia & Continuă"
 
 #: src/components/message/MessageActions.tsx:80
-#: src/components/message/MessageActionsDrawer.tsx:154
+#: src/components/message/MessageActionsDrawer.tsx:155
 msgid "Copy message link"
 msgstr "Copie link mesaj"
 
@@ -606,7 +604,7 @@ msgstr "Șterge grup"
 #~ msgstr "Șterge linkul"
 
 #: src/components/message/MessageActions.tsx:84
-#: src/components/message/MessageActionsDrawer.tsx:181
+#: src/components/message/MessageActionsDrawer.tsx:182
 msgid "Delete message"
 msgstr "Șterge mesaj"
 
@@ -650,7 +648,7 @@ msgid "Direct Message"
 msgstr "Mesaj Direct"
 
 #: src/components/direct/DirectMessageContactsList.tsx:24
-#: src/components/navbar/NavMenu.tsx:61
+#: src/components/navbar/NavMenu.tsx:73
 msgid "Direct Messages"
 msgstr "Mesaje directe"
 
@@ -664,7 +662,7 @@ msgstr "Nume de afișare"
 msgid "Display name is required"
 msgstr "Numele de afișare este necesar"
 
-#: src/components/ui/MobileDrawer.tsx:145
+#: src/components/ui/MobileDrawer.tsx:144
 msgid "Drawer"
 msgstr "Drawer"
 
@@ -1120,8 +1118,8 @@ msgstr "Backup manual necesar"
 msgid "Mark all as read"
 msgstr "Marchează totul ca citit"
 
-#: src/components/direct/DirectMessage.tsx:420
-#: src/components/space/Channel.tsx:600
+#: src/components/direct/DirectMessage.tsx:429
+#: src/components/space/Channel.tsx:595
 msgid "Members List"
 msgstr "Lista membrilor"
 
@@ -1129,19 +1127,23 @@ msgstr "Lista membrilor"
 msgid "Mention Everyone"
 msgstr "Menționează pe toată lumea"
 
-#: src/components/message/MessageActionsDrawer.tsx:128
+#: src/components/message/MessageActionsDrawer.tsx:129
 msgid "Message actions"
 msgstr "Acțiuni mesaj"
 
-#: src/components/message/Message.tsx:537
+#: src/components/message/Message.tsx:535
 msgid "Message does not have a valid signature, this may not be from the sender"
 msgstr "Mesajul nu are o semnătură validă, acesta poate să nu fie de la expeditor"
 
-#: src/components/message/MessageComposer.tsx:391
+#: src/components/message/MessageComposer.tsx:107
+msgid "Message..."
+msgstr ""
+
+#: src/components/message/MessageComposer.tsx:406
 msgid "Messages are NOT signed!"
 msgstr "Mesajele NU sunt semnate!"
 
-#: src/components/message/MessageComposer.tsx:392
+#: src/components/message/MessageComposer.tsx:407
 msgid "Messages are signed!"
 msgstr "Mesajele sunt semnate!"
 
@@ -1165,8 +1167,8 @@ msgstr "Nu sunt încă mesaje fixate"
 msgid "No unread mentions"
 msgstr "Nu sunt mențiuni necitite"
 
-#: src/components/space/Channel.tsx:350
-#: src/components/space/Channel.tsx:770
+#: src/components/space/Channel.tsx:342
+#: src/components/space/Channel.tsx:765
 msgid "No users found!"
 msgstr "Niciun utilizator găsit!"
 
@@ -1181,7 +1183,7 @@ msgstr "Permisiunea pentru notificări nu a fost acordată"
 #: src/components/modals/SpaceSettingsModal/Account.tsx:171
 #: src/components/modals/UserSettingsModal/Navigation.tsx:17
 #: src/components/modals/UserSettingsModal/Notifications.tsx:24
-#: src/components/space/Channel.tsx:568
+#: src/components/space/Channel.tsx:569
 msgid "Notifications"
 msgstr "Notificări"
 
@@ -1275,7 +1277,7 @@ msgid "Pin limit reached ({0})"
 msgstr "Limita de fixare a fost atinsă ({0})"
 
 #: src/components/message/MessageActions.tsx:82
-#: src/components/message/MessageActionsDrawer.tsx:168
+#: src/components/message/MessageActionsDrawer.tsx:169
 msgid "Pin message"
 msgstr "Fixează mesajul"
 
@@ -1291,16 +1293,16 @@ msgstr "Fixează mesajele"
 msgid "Pin to top"
 msgstr "Fixa în sus"
 
-#: src/components/message/Message.tsx:525
+#: src/components/message/Message.tsx:523
 msgid "Pinned"
 msgstr "Fixat"
 
 #. placeholder {0}: mapSenderToUser(message.pinnedBy)?.displayName || message.pinnedBy
-#: src/components/message/Message.tsx:524
+#: src/components/message/Message.tsx:522
 msgid "Pinned by {0}"
 msgstr "Fixat de {0}"
 
-#: src/components/space/Channel.tsx:533
+#: src/components/space/Channel.tsx:534
 msgid "Pinned Messages"
 msgstr "Mesaje fixate"
 
@@ -1326,7 +1328,7 @@ msgstr "Confidențialitate/Securitate"
 msgid "Private key saved to selected folder"
 msgstr "Cheia privată a fost salvată în folderul selectat"
 
-#: src/components/message/MessageComposer.tsx:227
+#: src/components/message/MessageComposer.tsx:242
 msgid "Processing image... This may take a moment for large files."
 msgstr "Se procesează imaginea... Acest lucru poate dura un moment pentru fișiere mari."
 
@@ -1387,7 +1389,7 @@ msgid "Remove"
 msgstr "Elimină"
 
 #: src/components/message/MessageActions.tsx:76
-#: src/components/message/MessageActionsDrawer.tsx:143
+#: src/components/message/MessageActionsDrawer.tsx:144
 msgid "Reply"
 msgstr "Răspunde"
 
@@ -1468,11 +1470,11 @@ msgstr "Caută în acest Spațiu"
 
 #: src/components/search/SearchResults.tsx:127
 msgid "Search in this Space..."
-msgstr ""
+msgstr "Caută în acest Spațiu..."
 
-#: src/components/space/Channel.tsx:618
+#: src/components/space/Channel.tsx:613
 msgid "Search Messages"
-msgstr ""
+msgstr "Caută Mesaje"
 
 #: src/components/search/SearchBar.tsx:36
 msgid "Search messages..."
@@ -1769,8 +1771,8 @@ msgstr "Timp necunoscut"
 #: src/components/direct/DirectMessage.tsx:129
 #: src/components/direct/DirectMessage.tsx:144
 #: src/components/direct/DirectMessage.tsx:328
-#: src/components/message/MessageComposer.tsx:320
-#: src/components/message/MessageComposer.tsx:327
+#: src/components/message/MessageComposer.tsx:335
+#: src/components/message/MessageComposer.tsx:342
 #: src/components/message/MessagePreview.tsx:41
 #: src/components/message/PinnedMessagesPanel.tsx:106
 #: src/components/message/PinnedMessagesPanel.tsx:119
@@ -1805,7 +1807,7 @@ msgid "Unpin"
 msgstr "Defixa"
 
 #: src/components/message/MessageActions.tsx:82
-#: src/components/message/MessageActionsDrawer.tsx:168
+#: src/components/message/MessageActionsDrawer.tsx:169
 msgid "Unpin message"
 msgstr "Dezfixează mesajul"
 
@@ -1822,7 +1824,7 @@ msgstr "Dezfixează această postare"
 msgid "Unpinned!"
 msgstr "Dezfixat!"
 
-#: src/components/direct/DirectMessage.tsx:504
+#: src/components/direct/DirectMessage.tsx:513
 msgid "Until you reply, this sender will not see your display name or profile picture"
 msgstr "Până când răspunzi, acest expeditor nu va vedea numele tău de afișare sau fotografia de profil"
 
@@ -1863,8 +1865,8 @@ msgstr "Adresa utilizatorului aici"
 msgid "User does not exist."
 msgstr "Utilizatorul nu există."
 
-#: src/components/space/Channel.tsx:337
-#: src/components/space/Channel.tsx:757
+#: src/components/space/Channel.tsx:329
+#: src/components/space/Channel.tsx:752
 msgid "Username or Address"
 msgstr "Nume de utilizator sau adresă"
 
@@ -1942,8 +1944,8 @@ msgstr "Poți schimba asta mai târziu pentru această conversație făcând cli
 msgid "You cannot delete a group that contains channels. Delete all {channelCount} channels in this group first."
 msgstr "Nu poți șterge un grup care conține canale. Șterge mai întâi toate cele {channelCount} canale din acest grup."
 
-#: src/components/message/MessageComposer.tsx:206
-#: src/components/space/Channel.tsx:728
+#: src/components/message/MessageComposer.tsx:221
+#: src/components/space/Channel.tsx:723
 msgid "You cannot post in this channel"
 msgstr "Nu poți posta în acest canal"
 

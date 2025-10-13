@@ -198,6 +198,7 @@ const Channel: React.FC<ChannelProps> = ({
       user.currentPasskeyInfo,
       space,
       skipSigning,
+      isSpaceOwner,
     ]
   );
 
@@ -793,14 +794,14 @@ const Channel: React.FC<ChannelProps> = ({
                         >
                           <UserAvatar
                             userIcon={item.userIcon}
-                            displayName={item.displayName}
+                            displayName={item.displayName ?? item.address}
                             address={item.address}
                             size={30}
                             className="opacity-80 group-hover:opacity-100 transition-opacity duration-150"
                           />
                           <div className="flex flex-col ml-2 text-subtle group-hover:text-main transition-colors duration-150">
                             <span className="text-md font-bold">
-                              {item.displayName}
+                              {item.displayName ?? item.address}
                             </span>
                           </div>
                         </div>

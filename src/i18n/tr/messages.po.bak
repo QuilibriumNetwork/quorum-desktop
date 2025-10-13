@@ -31,7 +31,7 @@ msgid "No Role - {count}"
 msgstr "Rol Yok - {count}"
 
 #. js-lingui-explicit-id
-#: src/components/space/Channel.tsx:706
+#: src/components/space/Channel.tsx:701
 msgid "Send a message to #{channel_name}"
 msgstr "#{channel_name} kanalına bir mesaj gönder"
 
@@ -42,7 +42,7 @@ msgstr "Profil resminizin boyutu {maxFileSize} veya daha az olmalı ve PNG, JPG 
 
 #. js-lingui-explicit-id
 #: src/components/message/MessageComposer.native.tsx:238
-#: src/components/message/MessageComposer.tsx:248
+#: src/components/message/MessageComposer.tsx:263
 msgid "Replying to {user}"
 msgstr "{user} ile yanıt veriliyor"
 
@@ -67,7 +67,7 @@ msgid "{user} has been kicked"
 msgstr "{user} atıldı"
 
 #. js-lingui-explicit-id
-#: src/components/direct/DirectMessage.tsx:516
+#: src/components/direct/DirectMessage.tsx:525
 msgid "Send a message to {user}"
 msgstr "{user} ile bir mesaj gönder"
 
@@ -82,7 +82,7 @@ msgstr "güncellemeler için."
 #: src/components/modals/UserSettingsModal/UserSettingsModal.tsx:101
 #: src/components/onboarding/Onboarding.tsx:223
 msgid "'everyone' is a reserved name."
-msgstr ""
+msgstr "'reveryone' ayrılmış bir isimdir."
 
 #: src/components/message/MessagePreview.tsx:51
 msgid "[Empty message]"
@@ -98,33 +98,31 @@ msgstr "[Mesaj]"
 msgid "{0} devices marked for removal. Click \"Save Changes\" to confirm."
 msgstr "{0} cihaz kaldırma için işaretlendi. Değişiklikleri onaylamak için \"Değişiklikleri Kaydet\"e tıklayın."
 
-#: src/components/message/PinnedMessagesPanel.tsx:253
 #~ msgid "{0} pinned message"
 #~ msgstr "{0} sabit mesaj"
 
 #. placeholder {0}: pinnedMessages.length
 #: src/components/message/PinnedMessagesPanel.tsx:253
 msgid "{0} pinned message in this Channel"
-msgstr ""
+msgstr "Bu Kanalda {0} sabitlenmiş mesaj"
 
-#: src/components/message/PinnedMessagesPanel.tsx:254
 #~ msgid "{0} pinned messages"
 #~ msgstr "{0} sabit mesajlar"
 
 #. placeholder {0}: pinnedMessages.length
 #: src/components/message/PinnedMessagesPanel.tsx:254
 msgid "{0} pinned messages in this Channel"
-msgstr ""
+msgstr "Bu Kanalda {0} sabitlenmiş mesajlar"
 
 #. placeholder {0}: results.length
 #: src/components/search/SearchResults.tsx:146
 msgid "{0} result"
-msgstr ""
+msgstr "{0} sonuç"
 
 #. placeholder {0}: results.length
 #: src/components/search/SearchResults.tsx:147
 msgid "{0} results"
-msgstr ""
+msgstr "{0} sonuçlar"
 
 #. placeholder {0}: mentions.length
 #: src/components/notifications/NotificationPanel.tsx:154
@@ -204,7 +202,7 @@ msgstr "Bir Space ekle"
 msgid "Add Channel"
 msgstr "Kanal Ekle"
 
-#: src/components/direct/DirectMessages.tsx:95
+#: src/components/direct/DirectMessages.tsx:100
 msgid "Add friend"
 msgstr "Arkadaş ekle"
 
@@ -217,7 +215,7 @@ msgstr "Grup Ekle"
 msgid "Add Role"
 msgstr "Rol Ekle"
 
-#: src/components/message/MessageComposer.tsx:375
+#: src/components/message/MessageComposer.tsx:390
 msgid "add sticker"
 msgstr "sticker ekle"
 
@@ -328,7 +326,7 @@ msgstr "Bu mesajın sabitlenmesini kaldırmak istediğinize emin misiniz?"
 msgid "As a space owner, you need to assign yourself a role with delete permissions to delete other users' messages. <0><1>Learn more</1></0>"
 msgstr "Bir alan sahibi olarak, diğer kullanıcıların mesajlarını silmek için kendinize silme izinleri olan bir rol atamanız gerekir. <0><1>Daha fazla bilgi edinin</1></0>"
 
-#: src/components/message/MessageComposer.tsx:344
+#: src/components/message/MessageComposer.tsx:359
 msgid "attach image"
 msgstr "görüntü ekle"
 
@@ -468,7 +466,7 @@ msgstr "Yapılandırma Anahtarı"
 msgid "Connecting"
 msgstr "Bağlanıyor"
 
-#: src/components/direct/DirectMessage.tsx:406
+#: src/components/direct/DirectMessage.tsx:415
 msgid "Conversation settings"
 msgstr "Konuşma ayarları"
 
@@ -485,8 +483,8 @@ msgid "Copied!"
 msgstr "Kopyalandı!"
 
 #: src/components/direct/DirectMessage.tsx:266
-#: src/components/direct/DirectMessage.tsx:387
-#: src/components/direct/DirectMessage.tsx:459
+#: src/components/direct/DirectMessage.tsx:396
+#: src/components/direct/DirectMessage.tsx:468
 #: src/components/modals/UserSettingsModal/General.tsx:118
 #: src/components/user/UserProfile.tsx:108
 #: src/components/user/UserStatus.tsx:48
@@ -507,7 +505,7 @@ msgid "Copy Key & Continue"
 msgstr "Anahtarı Kopyala & Devam Et"
 
 #: src/components/message/MessageActions.tsx:80
-#: src/components/message/MessageActionsDrawer.tsx:154
+#: src/components/message/MessageActionsDrawer.tsx:155
 msgid "Copy message link"
 msgstr "Mesaj bağlantısını kopyala"
 
@@ -607,7 +605,7 @@ msgstr "Grubu Sil"
 #~ msgstr "Bağlantıyı Sil"
 
 #: src/components/message/MessageActions.tsx:84
-#: src/components/message/MessageActionsDrawer.tsx:181
+#: src/components/message/MessageActionsDrawer.tsx:182
 msgid "Delete message"
 msgstr "Mesajı Sil"
 
@@ -651,7 +649,7 @@ msgid "Direct Message"
 msgstr "Özel Mesaj"
 
 #: src/components/direct/DirectMessageContactsList.tsx:24
-#: src/components/navbar/NavMenu.tsx:61
+#: src/components/navbar/NavMenu.tsx:73
 msgid "Direct Messages"
 msgstr "Doğrudan Mesajlar"
 
@@ -665,7 +663,7 @@ msgstr "Görünen Ad"
 msgid "Display name is required"
 msgstr "Görüntü adı gereklidir"
 
-#: src/components/ui/MobileDrawer.tsx:145
+#: src/components/ui/MobileDrawer.tsx:144
 msgid "Drawer"
 msgstr "Çekmece"
 
@@ -1121,8 +1119,8 @@ msgstr "Manuel Yedekleme Gerekiyor"
 msgid "Mark all as read"
 msgstr "Hepsini okunmuş olarak işaretle"
 
-#: src/components/direct/DirectMessage.tsx:420
-#: src/components/space/Channel.tsx:600
+#: src/components/direct/DirectMessage.tsx:429
+#: src/components/space/Channel.tsx:595
 msgid "Members List"
 msgstr "Üyeler Listesi"
 
@@ -1130,19 +1128,23 @@ msgstr "Üyeler Listesi"
 msgid "Mention Everyone"
 msgstr "Herkesi Bahset"
 
-#: src/components/message/MessageActionsDrawer.tsx:128
+#: src/components/message/MessageActionsDrawer.tsx:129
 msgid "Message actions"
 msgstr "Mesaj eylemleri"
 
-#: src/components/message/Message.tsx:537
+#: src/components/message/Message.tsx:535
 msgid "Message does not have a valid signature, this may not be from the sender"
 msgstr "Mesajın geçerli bir imzası yok, bu gönderenden gelmiyor olabilir"
 
-#: src/components/message/MessageComposer.tsx:391
+#: src/components/message/MessageComposer.tsx:107
+msgid "Message..."
+msgstr ""
+
+#: src/components/message/MessageComposer.tsx:406
 msgid "Messages are NOT signed!"
 msgstr "Mesajlar İMZALANMAMIŞTIR!"
 
-#: src/components/message/MessageComposer.tsx:392
+#: src/components/message/MessageComposer.tsx:407
 msgid "Messages are signed!"
 msgstr "Mesajlar imzalanmıştır!"
 
@@ -1166,8 +1168,8 @@ msgstr "Henüz sabitlenmiş mesaj yok"
 msgid "No unread mentions"
 msgstr "Okunmamış bahsetme yok"
 
-#: src/components/space/Channel.tsx:350
-#: src/components/space/Channel.tsx:770
+#: src/components/space/Channel.tsx:342
+#: src/components/space/Channel.tsx:765
 msgid "No users found!"
 msgstr "Kullanıcı bulunamadı!"
 
@@ -1182,7 +1184,7 @@ msgstr "Bildirim izni verilmedi"
 #: src/components/modals/SpaceSettingsModal/Account.tsx:171
 #: src/components/modals/UserSettingsModal/Navigation.tsx:17
 #: src/components/modals/UserSettingsModal/Notifications.tsx:24
-#: src/components/space/Channel.tsx:568
+#: src/components/space/Channel.tsx:569
 msgid "Notifications"
 msgstr "Bildirimler"
 
@@ -1276,7 +1278,7 @@ msgid "Pin limit reached ({0})"
 msgstr "Sabitlenme limiti aşıldı ({0})"
 
 #: src/components/message/MessageActions.tsx:82
-#: src/components/message/MessageActionsDrawer.tsx:168
+#: src/components/message/MessageActionsDrawer.tsx:169
 msgid "Pin message"
 msgstr "Mesajı sabitle"
 
@@ -1292,16 +1294,16 @@ msgstr "Mesajları Sabitle"
 msgid "Pin to top"
 msgstr "En üste sabitle"
 
-#: src/components/message/Message.tsx:525
+#: src/components/message/Message.tsx:523
 msgid "Pinned"
 msgstr "Sabitlenmiş"
 
 #. placeholder {0}: mapSenderToUser(message.pinnedBy)?.displayName || message.pinnedBy
-#: src/components/message/Message.tsx:524
+#: src/components/message/Message.tsx:522
 msgid "Pinned by {0}"
 msgstr "{0} tarafından sabitlenmiş"
 
-#: src/components/space/Channel.tsx:533
+#: src/components/space/Channel.tsx:534
 msgid "Pinned Messages"
 msgstr "Sabitlenmiş Mesajlar"
 
@@ -1327,7 +1329,7 @@ msgstr "Gizlilik/Güvenlik"
 msgid "Private key saved to selected folder"
 msgstr "Özel anahtar seçilen klasöre kaydedildi"
 
-#: src/components/message/MessageComposer.tsx:227
+#: src/components/message/MessageComposer.tsx:242
 msgid "Processing image... This may take a moment for large files."
 msgstr "Görüntü işleniyor... Bu, büyük dosyalar için bir süre alabilir."
 
@@ -1388,7 +1390,7 @@ msgid "Remove"
 msgstr "Kaldır"
 
 #: src/components/message/MessageActions.tsx:76
-#: src/components/message/MessageActionsDrawer.tsx:143
+#: src/components/message/MessageActionsDrawer.tsx:144
 msgid "Reply"
 msgstr "Cevapla"
 
@@ -1469,11 +1471,11 @@ msgstr "bu Alan'da ara"
 
 #: src/components/search/SearchResults.tsx:127
 msgid "Search in this Space..."
-msgstr ""
+msgstr "Bu Uzayda Ara..."
 
-#: src/components/space/Channel.tsx:618
+#: src/components/space/Channel.tsx:613
 msgid "Search Messages"
-msgstr ""
+msgstr "Mesajları Ara"
 
 #: src/components/search/SearchBar.tsx:36
 msgid "Search messages..."
@@ -1770,8 +1772,8 @@ msgstr "Bilinmeyen zaman"
 #: src/components/direct/DirectMessage.tsx:129
 #: src/components/direct/DirectMessage.tsx:144
 #: src/components/direct/DirectMessage.tsx:328
-#: src/components/message/MessageComposer.tsx:320
-#: src/components/message/MessageComposer.tsx:327
+#: src/components/message/MessageComposer.tsx:335
+#: src/components/message/MessageComposer.tsx:342
 #: src/components/message/MessagePreview.tsx:41
 #: src/components/message/PinnedMessagesPanel.tsx:106
 #: src/components/message/PinnedMessagesPanel.tsx:119
@@ -1806,7 +1808,7 @@ msgid "Unpin"
 msgstr "Sabitlemeyi kaldır"
 
 #: src/components/message/MessageActions.tsx:82
-#: src/components/message/MessageActionsDrawer.tsx:168
+#: src/components/message/MessageActionsDrawer.tsx:169
 msgid "Unpin message"
 msgstr "Mesajı sabitlemeyi kaldır"
 
@@ -1823,7 +1825,7 @@ msgstr "Bu gönderiyi sabitlemeyi kaldır"
 msgid "Unpinned!"
 msgstr "Sabitlenmemiş!"
 
-#: src/components/direct/DirectMessage.tsx:504
+#: src/components/direct/DirectMessage.tsx:513
 msgid "Until you reply, this sender will not see your display name or profile picture"
 msgstr "Cevap verene kadar, bu gönderici sizin görüntü adınızı veya profil resminizi göremeyecek"
 
@@ -1864,8 +1866,8 @@ msgstr "Kullanıcı adresi burada"
 msgid "User does not exist."
 msgstr "Kullanıcı mevcut değil."
 
-#: src/components/space/Channel.tsx:337
-#: src/components/space/Channel.tsx:757
+#: src/components/space/Channel.tsx:329
+#: src/components/space/Channel.tsx:752
 msgid "Username or Address"
 msgstr "Kullanıcı Adı veya Adres"
 
@@ -1943,8 +1945,8 @@ msgstr "Bu konuşma için bunu daha sonra, Konuşma görünümündeki kilit simg
 msgid "You cannot delete a group that contains channels. Delete all {channelCount} channels in this group first."
 msgstr "Kanal içeren bir grubu silemezsiniz. Önce bu gruptaki tüm {channelCount} kanalları silin."
 
-#: src/components/message/MessageComposer.tsx:206
-#: src/components/space/Channel.tsx:728
+#: src/components/message/MessageComposer.tsx:221
+#: src/components/space/Channel.tsx:723
 msgid "You cannot post in this channel"
 msgstr "Bu kanalda paylaşım yapamazsınız"
 

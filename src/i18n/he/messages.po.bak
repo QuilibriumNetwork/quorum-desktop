@@ -31,7 +31,7 @@ msgid "No Role - {count}"
 msgstr "בלי תפקיד - {count}"
 
 #. js-lingui-explicit-id
-#: src/components/space/Channel.tsx:706
+#: src/components/space/Channel.tsx:701
 msgid "Send a message to #{channel_name}"
 msgstr "שלח הודעה ל-#{channel_name}"
 
@@ -42,7 +42,7 @@ msgstr "גודל תמונת הפרופיל שלך חייב להיות {maxFileSi
 
 #. js-lingui-explicit-id
 #: src/components/message/MessageComposer.native.tsx:238
-#: src/components/message/MessageComposer.tsx:248
+#: src/components/message/MessageComposer.tsx:263
 msgid "Replying to {user}"
 msgstr "עונה ל-{user}"
 
@@ -67,7 +67,7 @@ msgid "{user} has been kicked"
 msgstr "{user} הוקרן"
 
 #. js-lingui-explicit-id
-#: src/components/direct/DirectMessage.tsx:516
+#: src/components/direct/DirectMessage.tsx:525
 msgid "Send a message to {user}"
 msgstr "שלח הודעה ל-{user}"
 
@@ -82,7 +82,7 @@ msgstr "עבור עדכונים."
 #: src/components/modals/UserSettingsModal/UserSettingsModal.tsx:101
 #: src/components/onboarding/Onboarding.tsx:223
 msgid "'everyone' is a reserved name."
-msgstr ""
+msgstr "'הכל' הוא שם שמור."
 
 #: src/components/message/MessagePreview.tsx:51
 msgid "[Empty message]"
@@ -98,33 +98,31 @@ msgstr "[הודעה]"
 msgid "{0} devices marked for removal. Click \"Save Changes\" to confirm."
 msgstr "{0} מכשירים שסומנו למחיקה. לחץ \"שמור שינויים\" כדי לאשר."
 
-#: src/components/message/PinnedMessagesPanel.tsx:253
 #~ msgid "{0} pinned message"
 #~ msgstr "{0} הודעה מוצמדת"
 
 #. placeholder {0}: pinnedMessages.length
 #: src/components/message/PinnedMessagesPanel.tsx:253
 msgid "{0} pinned message in this Channel"
-msgstr ""
+msgstr "{0} הודעה ממוסגרת בערוץ הזה"
 
-#: src/components/message/PinnedMessagesPanel.tsx:254
 #~ msgid "{0} pinned messages"
 #~ msgstr "{0} הודעות מוצמדות"
 
 #. placeholder {0}: pinnedMessages.length
 #: src/components/message/PinnedMessagesPanel.tsx:254
 msgid "{0} pinned messages in this Channel"
-msgstr ""
+msgstr "{0} הודעות ממוסגרות בערוץ הזה"
 
 #. placeholder {0}: results.length
 #: src/components/search/SearchResults.tsx:146
 msgid "{0} result"
-msgstr ""
+msgstr "{0} תוצאה"
 
 #. placeholder {0}: results.length
 #: src/components/search/SearchResults.tsx:147
 msgid "{0} results"
-msgstr ""
+msgstr "{0} תוצאות"
 
 #. placeholder {0}: mentions.length
 #: src/components/notifications/NotificationPanel.tsx:154
@@ -204,7 +202,7 @@ msgstr "הוסף מרחב"
 msgid "Add Channel"
 msgstr "הוסף ערוץ"
 
-#: src/components/direct/DirectMessages.tsx:95
+#: src/components/direct/DirectMessages.tsx:100
 msgid "Add friend"
 msgstr "הוסף חבר"
 
@@ -217,7 +215,7 @@ msgstr "הוסף קבוצה"
 msgid "Add Role"
 msgstr "הוסף תפקיד"
 
-#: src/components/message/MessageComposer.tsx:375
+#: src/components/message/MessageComposer.tsx:390
 msgid "add sticker"
 msgstr "הוסף מדבקה"
 
@@ -328,7 +326,7 @@ msgstr "האם אתה בטוח שאתה רוצה לבטל את ההדבקה של
 msgid "As a space owner, you need to assign yourself a role with delete permissions to delete other users' messages. <0><1>Learn more</1></0>"
 msgstr "כמנהל של המרחב, עליך להעניק לעצמך תפקיד עם הרשאות מחיקה כדי למחוק הודעות של משתמשים אחרים. <0><1>למד עוד</1></0>"
 
-#: src/components/message/MessageComposer.tsx:344
+#: src/components/message/MessageComposer.tsx:359
 msgid "attach image"
 msgstr "הצמד תמונה"
 
@@ -468,7 +466,7 @@ msgstr "מפתח קונפיגורציה"
 msgid "Connecting"
 msgstr "מתחבר"
 
-#: src/components/direct/DirectMessage.tsx:406
+#: src/components/direct/DirectMessage.tsx:415
 msgid "Conversation settings"
 msgstr "הגדרות שיחה"
 
@@ -485,8 +483,8 @@ msgid "Copied!"
 msgstr "נשמר!"
 
 #: src/components/direct/DirectMessage.tsx:266
-#: src/components/direct/DirectMessage.tsx:387
-#: src/components/direct/DirectMessage.tsx:459
+#: src/components/direct/DirectMessage.tsx:396
+#: src/components/direct/DirectMessage.tsx:468
 #: src/components/modals/UserSettingsModal/General.tsx:118
 #: src/components/user/UserProfile.tsx:108
 #: src/components/user/UserStatus.tsx:48
@@ -507,7 +505,7 @@ msgid "Copy Key & Continue"
 msgstr "העתק מפתח והמשך"
 
 #: src/components/message/MessageActions.tsx:80
-#: src/components/message/MessageActionsDrawer.tsx:154
+#: src/components/message/MessageActionsDrawer.tsx:155
 msgid "Copy message link"
 msgstr "להעתיק קישור הודעה"
 
@@ -607,7 +605,7 @@ msgstr "מחוק קבוצה"
 #~ msgstr "מחק קישור"
 
 #: src/components/message/MessageActions.tsx:84
-#: src/components/message/MessageActionsDrawer.tsx:181
+#: src/components/message/MessageActionsDrawer.tsx:182
 msgid "Delete message"
 msgstr "מחוק הודעה"
 
@@ -651,7 +649,7 @@ msgid "Direct Message"
 msgstr "הודעה ישירה"
 
 #: src/components/direct/DirectMessageContactsList.tsx:24
-#: src/components/navbar/NavMenu.tsx:61
+#: src/components/navbar/NavMenu.tsx:73
 msgid "Direct Messages"
 msgstr "הודעות ישירות"
 
@@ -665,7 +663,7 @@ msgstr "שם תצוגה"
 msgid "Display name is required"
 msgstr "שם תצוגה נדרש"
 
-#: src/components/ui/MobileDrawer.tsx:145
+#: src/components/ui/MobileDrawer.tsx:144
 msgid "Drawer"
 msgstr "מגירה"
 
@@ -1121,8 +1119,8 @@ msgstr "גיבוי ידני נדרש"
 msgid "Mark all as read"
 msgstr "סמן הכל כנקרא"
 
-#: src/components/direct/DirectMessage.tsx:420
-#: src/components/space/Channel.tsx:600
+#: src/components/direct/DirectMessage.tsx:429
+#: src/components/space/Channel.tsx:595
 msgid "Members List"
 msgstr "רשימת חברים"
 
@@ -1130,19 +1128,23 @@ msgstr "רשימת חברים"
 msgid "Mention Everyone"
 msgstr "אזכור את כולם"
 
-#: src/components/message/MessageActionsDrawer.tsx:128
+#: src/components/message/MessageActionsDrawer.tsx:129
 msgid "Message actions"
 msgstr "פעולות הודעה"
 
-#: src/components/message/Message.tsx:537
+#: src/components/message/Message.tsx:535
 msgid "Message does not have a valid signature, this may not be from the sender"
 msgstr "ההודעה אינה בעלת חתימה תקפה, ייתכן שהיא לא מהשולח"
 
-#: src/components/message/MessageComposer.tsx:391
+#: src/components/message/MessageComposer.tsx:107
+msgid "Message..."
+msgstr ""
+
+#: src/components/message/MessageComposer.tsx:406
 msgid "Messages are NOT signed!"
 msgstr "ההודעות אינן חתומות!"
 
-#: src/components/message/MessageComposer.tsx:392
+#: src/components/message/MessageComposer.tsx:407
 msgid "Messages are signed!"
 msgstr "ההודעות חתומות!"
 
@@ -1166,8 +1168,8 @@ msgstr "אין הודעות מוצמדות עדיין"
 msgid "No unread mentions"
 msgstr "אין אזכורים שלא נקראו"
 
-#: src/components/space/Channel.tsx:350
-#: src/components/space/Channel.tsx:770
+#: src/components/space/Channel.tsx:342
+#: src/components/space/Channel.tsx:765
 msgid "No users found!"
 msgstr "לא נמצאו משתמשים!"
 
@@ -1182,7 +1184,7 @@ msgstr "הרשאת התראה לא ניתנה"
 #: src/components/modals/SpaceSettingsModal/Account.tsx:171
 #: src/components/modals/UserSettingsModal/Navigation.tsx:17
 #: src/components/modals/UserSettingsModal/Notifications.tsx:24
-#: src/components/space/Channel.tsx:568
+#: src/components/space/Channel.tsx:569
 msgid "Notifications"
 msgstr "התראות"
 
@@ -1276,7 +1278,7 @@ msgid "Pin limit reached ({0})"
 msgstr "הגעת למגבלת ההצמדה ({0})"
 
 #: src/components/message/MessageActions.tsx:82
-#: src/components/message/MessageActionsDrawer.tsx:168
+#: src/components/message/MessageActionsDrawer.tsx:169
 msgid "Pin message"
 msgstr "הצמד הודעה"
 
@@ -1292,16 +1294,16 @@ msgstr "הצמד הודעות"
 msgid "Pin to top"
 msgstr "סיכה למעלה"
 
-#: src/components/message/Message.tsx:525
+#: src/components/message/Message.tsx:523
 msgid "Pinned"
 msgstr "מוצמד"
 
 #. placeholder {0}: mapSenderToUser(message.pinnedBy)?.displayName || message.pinnedBy
-#: src/components/message/Message.tsx:524
+#: src/components/message/Message.tsx:522
 msgid "Pinned by {0}"
 msgstr "מוצמד על ידי {0}"
 
-#: src/components/space/Channel.tsx:533
+#: src/components/space/Channel.tsx:534
 msgid "Pinned Messages"
 msgstr "הודעות מוצמדות"
 
@@ -1327,7 +1329,7 @@ msgstr "פרטיות/אבטחה"
 msgid "Private key saved to selected folder"
 msgstr "המפתח הפרטי נשמר בתיקייה שנבחרה"
 
-#: src/components/message/MessageComposer.tsx:227
+#: src/components/message/MessageComposer.tsx:242
 msgid "Processing image... This may take a moment for large files."
 msgstr "מעבד תמונה... זה עשוי לקחת רגע עבור קבצים גדולים."
 
@@ -1388,7 +1390,7 @@ msgid "Remove"
 msgstr "הסר"
 
 #: src/components/message/MessageActions.tsx:76
-#: src/components/message/MessageActionsDrawer.tsx:143
+#: src/components/message/MessageActionsDrawer.tsx:144
 msgid "Reply"
 msgstr "ענה"
 
@@ -1469,11 +1471,11 @@ msgstr "חפש בחלל הזה"
 
 #: src/components/search/SearchResults.tsx:127
 msgid "Search in this Space..."
-msgstr ""
+msgstr "חפש במרחב הזה..."
 
-#: src/components/space/Channel.tsx:618
+#: src/components/space/Channel.tsx:613
 msgid "Search Messages"
-msgstr ""
+msgstr "חפש הודעות"
 
 #: src/components/search/SearchBar.tsx:36
 msgid "Search messages..."
@@ -1770,8 +1772,8 @@ msgstr "זמן לא ידוע"
 #: src/components/direct/DirectMessage.tsx:129
 #: src/components/direct/DirectMessage.tsx:144
 #: src/components/direct/DirectMessage.tsx:328
-#: src/components/message/MessageComposer.tsx:320
-#: src/components/message/MessageComposer.tsx:327
+#: src/components/message/MessageComposer.tsx:335
+#: src/components/message/MessageComposer.tsx:342
 #: src/components/message/MessagePreview.tsx:41
 #: src/components/message/PinnedMessagesPanel.tsx:106
 #: src/components/message/PinnedMessagesPanel.tsx:119
@@ -1806,7 +1808,7 @@ msgid "Unpin"
 msgstr "הסר סיכה"
 
 #: src/components/message/MessageActions.tsx:82
-#: src/components/message/MessageActionsDrawer.tsx:168
+#: src/components/message/MessageActionsDrawer.tsx:169
 msgid "Unpin message"
 msgstr "הסר הצמדה מההודעה"
 
@@ -1823,7 +1825,7 @@ msgstr "הסר הצמדה מהפוסט הזה"
 msgid "Unpinned!"
 msgstr "הוסר הצמדה!"
 
-#: src/components/direct/DirectMessage.tsx:504
+#: src/components/direct/DirectMessage.tsx:513
 msgid "Until you reply, this sender will not see your display name or profile picture"
 msgstr "עד שתשיב, השולח הזה לא יראה את שם התצוגה או את תמונת הפרופיל שלך"
 
@@ -1864,8 +1866,8 @@ msgstr "כתובת משתמש כאן"
 msgid "User does not exist."
 msgstr "המשתמש אינו קיים."
 
-#: src/components/space/Channel.tsx:337
-#: src/components/space/Channel.tsx:757
+#: src/components/space/Channel.tsx:329
+#: src/components/space/Channel.tsx:752
 msgid "Username or Address"
 msgstr "שם משתמש או כתובת"
 
@@ -1943,8 +1945,8 @@ msgstr "תוכל לשנות זאת מאוחר יותר בשיחה זו על יד
 msgid "You cannot delete a group that contains channels. Delete all {channelCount} channels in this group first."
 msgstr "אינך יכול למחוק קבוצה שמכילה ערוצים. מחק קודם את כל {channelCount} הערוצים בקבוצה זו."
 
-#: src/components/message/MessageComposer.tsx:206
-#: src/components/space/Channel.tsx:728
+#: src/components/message/MessageComposer.tsx:221
+#: src/components/space/Channel.tsx:723
 msgid "You cannot post in this channel"
 msgstr "אינך יכול לפרסם בערוץ זה"
 

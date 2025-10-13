@@ -97,8 +97,8 @@ export function useMessageComposer(options: UseMessageComposerOptions) {
 
   // Simple row calculation - let CSS handle the auto-resize
   const calculateRows = useCallback(() => {
-    // Return 1 for empty, otherwise let CSS grid handle the height
-    return pendingMessage === '' ? 1 : undefined;
+    // Return 1 for empty, otherwise return a default value
+    return pendingMessage === '' ? 1 : 3;
   }, [pendingMessage]);
 
   // Submit message

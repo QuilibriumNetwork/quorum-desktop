@@ -248,14 +248,14 @@ const DirectMessage: React.FC<{}> = () => {
           <div key={s} className="w-full flex flex-row items-center mb-2">
             <UserAvatar
               userIcon={members[s].userIcon}
-              displayName={members[s].displayName}
+              displayName={members[s].displayName ?? members[s].address}
               address={members[s].address || ''}
               size={36}
               className="flex-shrink-0"
             />
             <div className="flex flex-col ml-2">
               <span className="text-md font-bold truncate w-[190px] text-main/90">
-                {members[s].displayName}{' '}
+                {members[s].displayName ?? members[s].address}{' '}
                 {members[s].address === user.currentPasskeyInfo!.address && (
                   <span className="text-xs text-subtle">({t`You`})</span>
                 )}
@@ -377,14 +377,14 @@ const DirectMessage: React.FC<{}> = () => {
                 <FlexColumn className="justify-around">
                   <UserAvatar
                     userIcon={otherUser.userIcon}
-                    displayName={otherUser.displayName}
+                    displayName={otherUser.displayName ?? otherUser.address}
                     address={otherUser.address || ''}
                     size={28}
                   />
                 </FlexColumn>
                 <FlexRow className="pl-2">
                   <FlexColumn className="justify-around font-semibold">
-                    <Text>{otherUser.displayName}</Text>
+                    <Text>{otherUser.displayName ?? otherUser.address}</Text>
                   </FlexColumn>
                   <FlexColumn className="justify-around px-1">
                     <Text className="text-subtle">|</Text>
@@ -449,14 +449,14 @@ const DirectMessage: React.FC<{}> = () => {
               <FlexColumn className="justify-around">
                 <UserAvatar
                   userIcon={otherUser.userIcon}
-                  displayName={otherUser.displayName}
+                  displayName={otherUser.displayName ?? otherUser.address}
                   address={otherUser.address || ''}
                   size={28}
                 />
               </FlexColumn>
               <FlexRow className="pl-2">
                 <FlexColumn className="justify-around font-semibold">
-                  <Text>{otherUser.displayName}</Text>
+                  <Text>{otherUser.displayName ?? otherUser.address}</Text>
                 </FlexColumn>
                 <FlexColumn className="justify-around px-1">
                   <Text className="text-subtle">|</Text>
@@ -523,7 +523,7 @@ const DirectMessage: React.FC<{}> = () => {
                 onChange={composer.setPendingMessage}
                 onKeyDown={composer.handleKeyDown}
                 placeholder={i18n._('Send a message to {user}', {
-                  user: otherUser.displayName,
+                  user: otherUser.displayName ?? otherUser.address,
                 })}
                 calculateRows={composer.calculateRows}
                 getRootProps={composer.getRootProps}
