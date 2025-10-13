@@ -90,7 +90,8 @@ const MessageActionsDrawer: React.FC<MessageActionsDrawerProps> = ({
 
   const handleMoreReactions = () => {
     onMoreReactions();
-    onClose();
+    // Don't call onClose() - the MobileProvider automatically closes this drawer
+    // when OPEN_EMOJI_PICKER action is dispatched
   };
 
   // Quick reactions as header content

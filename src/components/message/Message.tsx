@@ -257,14 +257,12 @@ export const Message = React.memo(({
 
   // Handle more reactions with mobile/desktop logic
   const handleMoreReactions = () => {
-    if (interactions.useMobileDrawer) {
-      openMobileEmojiDrawer({
-        onEmojiClick: messageActions.handleReaction,
-        customEmojis: emojiPicker.customEmojis,
-      });
-    } else {
-      emojiPicker.openMobileEmojiDrawer();
-    }
+    // Always use MobileProvider's emoji drawer (EmojiPickerDrawer)
+    // This is used from MessageActionsDrawer, which is part of the mobile drawer system
+    openMobileEmojiDrawer({
+      onEmojiClick: messageActions.handleReaction,
+      customEmojis: emojiPicker.customEmojis,
+    });
   };
 
   // Handle 3-dots menu click for touch devices

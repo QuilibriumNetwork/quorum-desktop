@@ -75,6 +75,12 @@ function mobileReducer(state: MobileState, action: MobileAction): MobileState {
     case 'OPEN_EMOJI_PICKER':
       return {
         ...state,
+        // Close message actions drawer when opening emoji picker
+        messageActionsDrawer: {
+          isOpen: false,
+          data: undefined,
+          isClosing: false,
+        },
         emojiPickerDrawer: {
           isOpen: true,
           data: action.data,
@@ -190,7 +196,7 @@ export const MobileProvider: React.FC<MobileProviderProps> = ({ children }) => {
       )}
 
       {state.emojiPickerDrawer.isOpen && state.emojiPickerDrawer.data && (
-        <div className="fixed inset-0 z-[9999] flex items-end bg-overlay backdrop-blur">
+        <div className="fixed inset-0 z-[10000] flex items-end bg-overlay backdrop-blur">
           <EmojiPickerDrawer
             isOpen={!state.emojiPickerDrawer.isClosing}
             onClose={handleCloseEmojiPicker}
