@@ -1,20 +1,21 @@
+@use '../../styles/variables' as *;
 @use '../../styles/dropdown-result-item';
 
 // Notification Panel styling
 
 .notification-panel__header {
-  padding: 16px;
-  border-bottom: 1px solid var(--color-border-default);
+  padding: $s-4;
+  border-bottom: $border solid var(--color-border-default);
 }
 
 .notification-panel__title {
-  font-weight: 600;
+  font-weight: $font-semibold;
   color: var(--color-text-strong);
 }
 
 .notification-panel__controls {
-  padding: 4px 16px ;
-  border-bottom: 1px solid var(--surface-3);
+  padding: $s-1 $s-4;
+  border-bottom: $border solid var(--surface-3);
 
   // Ensure filter icon (Select in compact mode) is centered
   .select-container {
@@ -38,7 +39,7 @@
 }
 
 .notification-panel__list {
-  padding: 0 0 16px 0; // Zero horizontal padding for full-width borders, bottom padding for spacing
+  padding: 0 0 $s-4 0; // Zero horizontal padding for full-width borders, bottom padding for spacing
 
   // On desktop, handle own scrolling and limit height
   @media (hover: hover) and (pointer: fine) {

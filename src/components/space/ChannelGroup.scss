@@ -1,19 +1,21 @@
+@use '../../styles/variables' as *;
+
 .channel-group {
-  padding: 10px 15px;
-  line-height: 29px;
+  padding: $s-2-5 $s-4;
+  line-height: $text-2xl-lh;
 }
 
 .channel-group-name {
-  font-weight: 700;
-  font-size: 18px;
+  font-weight: $font-bold;
+  font-size: $text-lg;
 }
 
 .channel-group .channel {
-  padding: 0px 0px 0px 10px;
+  padding: 0 0 0 $s-2-5;
 }
 
 .channel-group .channel-name {
-  font-weight: 300;
+  font-weight: $font-light;
   opacity: 0.8;
   cursor: pointer;
 }
@@ -24,9 +26,9 @@
 
 .channel-group .channel-name:hover {
   background: var(--surface-2);
-  padding: 0px 15px;
-  margin: 0px -15px;
-  border-radius: 0.5rem 0rem 0rem 0.5rem;
+  padding: 0 $s-4;
+  margin: 0 (-$s-4);
+  border-radius: $rounded-lg 0 0 $rounded-lg;
   opacity: 1;
 
   .channel-configure {
@@ -35,12 +37,12 @@
 }
 
 .channel-group .channel-name-focused {
-  font-weight: 700;
+  font-weight: $font-bold;
   background: var(--surface-2);
-  padding: 0px 15px;
-  margin: 0px -15px;
+  padding: 0 $s-4;
+  margin: 0 (-$s-4);
   opacity: 1;
-  border-radius: 0.5rem 0rem 0rem 0.5rem;
+  border-radius: $rounded-lg 0 0 $rounded-lg;
 }
 
 .channel-group .channel-name-focused:hover {
@@ -56,24 +58,24 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 18px;
-  height: 18px;
-  padding: 0 4px;
-  border-radius: 9999px;
-  margin-left: 0px;
-  font-weight: 700;
-  font-size: 12px;
+  min-width: $s-4-5;
+  height: $s-4-5;
+  padding: 0 $s-1;
+  border-radius: $rounded-full;
+  margin-left: 0;
+  font-weight: $font-bold;
+  font-size: $text-xs;
   line-height: 1;
   text-align: center;
   color: white;
   background-color: var(--accent-400);
 
   // Mobile phone optimization - slightly smaller bubble
-  @media (max-width: 480px) {
-    min-width: 16px;
-    height: 16px;
+  @media (max-width: $screen-xs) {
+    min-width: $s-4;
+    height: $s-4;
     font-size: 11px;
-    margin-left: 6px;
+    margin-left: $s-1-5;
     // Ensure centering is maintained on mobile
     display: inline-flex;
     align-items: center;
@@ -94,33 +96,33 @@ html.dark .channel-mentions-bubble {
 
 .channel-pin-overlay {
   position: absolute;
-  top: 4px;
-  right: 8px;
-  width: 12px;
-  height: 12px;
+  top: $s-1;
+  right: $s-2;
+  width: $s-3;
+  height: $s-3;
   z-index: 10;
   background: var(--surface-3);
-  border-radius: 50%;
+  border-radius: $rounded-full;
   display: flex;
   align-items: center;
   justify-content: center;
 
   .pin-icon {
-    font-size: 0.5rem;
+    font-size: $s-2;
   }
 }
 
 // Mobile layout
 @media (max-width: 1023px) {
   .channel-group .channel {
-    padding: 0px 10px;
+    padding: 0 $s-2-5;
   }
 
   .channel-group .channel-name:hover {
-    border-radius: 0.5rem;
+    border-radius: $rounded-lg;
   }
 
   .channel-group .channel-name-focused {
-    border-radius: 0.5rem;
+    border-radius: $rounded-lg;
   }
 }

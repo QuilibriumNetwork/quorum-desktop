@@ -1,25 +1,27 @@
+@use '../../styles/variables' as *;
+
 // Shared dropdown panel styles for search results, pinned messages, etc.
 .dropdown-panel {
   background: var(--surface-0);
-  border-radius: 0.5rem;
+  border-radius: $rounded-lg;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
   z-index: 10001; /* Higher than flex layout containers */
   overflow: hidden;
   font-weight: normal;
-  animation: dropdownPanelOpen 0.2s ease-out;
+  animation: dropdownPanelOpen $duration-200 $ease-out;
 }
 
 // Search results positioning (relative to parent)
 .dropdown-panel--search-results {
   top: 100%;
   left: 0;
-  margin-top: 8px;
+  margin-top: $s-2;
   min-width: 200px;
 }
 
 // Right-aligned positioning (opens to the right side of screen)
 .dropdown-panel--right-aligned {
-  right: 20px;
+  right: $s-5;
   left: auto;
   top: calc(
     var(--header-height, 80px) + 10px
@@ -36,22 +38,22 @@
 }
 
 .dropdown-panel__header {
-  padding: 12px 16px;
-  border-bottom: 1px solid var(--surface-3);
+  padding: $s-3 $s-4;
+  border-bottom: $border solid var(--surface-3);
   background: var(--surface-00);
 }
 
 .dropdown-panel__title {
-  font-size: 12px;
+  font-size: $text-xs;
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
 
 .dropdown-panel__close {
-  padding: 4px;
-  border-radius: 4px;
+  padding: $s-1;
+  border-radius: $rounded;
   color: var(--color-text-muted);
-  transition: all 0.2s ease;
+  transition: all $duration-200 ease;
   background: transparent;
 
   &:hover {
@@ -75,7 +77,7 @@
 @keyframes dropdownPanelOpen {
   from {
     opacity: 0;
-    transform: translateY(-8px);
+    transform: translateY(-$s-2);
   }
   to {
     opacity: 1;
@@ -85,7 +87,7 @@
 
 // Centered panels need different animation
 .dropdown-panel--centered {
-  animation: dropdownPanelOpenCentered 0.2s ease-out;
+  animation: dropdownPanelOpenCentered $duration-200 $ease-out;
 }
 
 @keyframes dropdownPanelOpenCentered {

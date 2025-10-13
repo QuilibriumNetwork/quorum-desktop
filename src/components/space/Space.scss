@@ -1,3 +1,5 @@
+@use '../../styles/variables' as *;
+
 .space-container {
   display: flex;
   flex-direction: row;
@@ -35,18 +37,18 @@
     height: 100vh;
     background-color: var(--color-bg-sidebar);
     z-index: 998;
-    border-top-right-radius: 0px;
-    border-bottom-right-radius: 0px;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
     box-shadow: 2px 0 8px rgba(0, 0, 0, 0.15);
     transform: translateX(-100%); // Hidden: move completely left
-    transition: transform 300ms ease-in-out;
+    transition: transform $duration-300 $ease-in-out;
 
     &.open {
       transform: translateX(100%); // Visible: slide to navbar edge position
     }
 
     // Phone-specific positioning for smaller NavMenu
-    @media (max-width: 480px) {
+    @media (max-width: $screen-xs) {
       left: calc(50px - var(--sidebar-left-width)); // Adjust for smaller navbar
     }
   }

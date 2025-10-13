@@ -1,23 +1,25 @@
+@use '@/styles/variables' as *;
+
  .space-icon {
-  width: 48px;
-  height: 48px;
+  width: $s-12;
+  height: $s-12;
   box-sizing: border-box;
-  border-radius: 24px;
+  border-radius: $rounded-full;
   background-position: center;
   background-size: cover;
   background-color: var(--surface-2);
   background-repeat: no-repeat;
   margin-top: 7px;
   display: inline-block;
-  transition: all 100ms linear;
-  border: 2px none var(--surface-border);
+  transition: all $duration-100 linear;
+  border: $border-2 none var(--surface-border);
 
   // Mobile phone optimization
-  @media (max-width: 480px) {
-    width: 32px;
-    height: 32px;
+  @media (max-width: $screen-xs) {
+    width: $s-8;
+    height: $s-8;
     margin-top: 5px;
-    border-radius: 16px;
+    border-radius: $rounded-full;
   }
 }
 
@@ -27,7 +29,7 @@
 }
 
 .space-icon:hover {
-  border-radius: 24px;
+  border-radius: $rounded-lg;
   background-color: var(--surface-4);
 }
 
@@ -39,66 +41,66 @@
 .space-icon-has-notifs-toggle {
   content: ' ';
   position: absolute;
-  width: 6px;
-  height: 6px;
-  border-radius: 3px;
+  width: $s-1-5;
+  height: $s-1-5;
+  border-radius: $rounded-sm;
   margin-left: -15px;
   margin-top: 28px;
   z-index: 1000;
   background: rgb(var(--warning));
-  transition: all 100ms linear;
+  transition: all $duration-100 linear;
 
   // Mobile phone optimization - adjust positioning for smaller icons
-  @media (max-width: 480px) {
+  @media (max-width: $screen-xs) {
     margin-left: -12px;
-    margin-top: 18px;
+    margin-top: $s-4-5;
   }
 }
 
 .space-icon-selected {
-  width: 48px;
-  height: 48px;
+  width: $s-12;
+  height: $s-12;
   box-sizing: border-box;
   background-position: center;
   background-size: cover;
   background-color: var(--accent-500);
   background-repeat: no-repeat;
-  margin-top: 8px;
+  margin-top: $s-2;
   display: inline-block;
   box-shadow: 0 0 13px 1px var(--accent-500);
   border: none;
-  border-radius: 0.5rem;
-  transition: all 100ms linear;
+  border-radius: $rounded-lg;
+  transition: all $duration-100 linear;
 
   // Mobile phone optimization
-  @media (max-width: 480px) {
-    width: 32px;
-    height: 32px;
-    margin-top: 4px;
-    border-radius: 0.5rem;
+  @media (max-width: $screen-xs) {
+    width: $s-8;
+    height: $s-8;
+    margin-top: $s-1;
+    border-radius: $rounded-lg;
     box-shadow: none;
   }
 }
 
 .space-icon-selected-toggle {
   content: ' ';
-  border: 2px;
-  border-radius: 3px;
+  border: $border-2;
+  border-radius: $rounded-sm;
   border-color: var(--accent-500);
   position: absolute;
-  width: 6px;
-  height: 20px;
+  width: $s-1-5;
+  height: $s-5;
   margin-left: -15px;
   margin-top: 22px;
   z-index: 1000;
   background: var(--accent-500);
-  transition: all 100ms linear;
+  transition: all $duration-100 linear;
 
   // Mobile phone optimization - adjust positioning for smaller icons
-  @media (max-width: 480px) {
+  @media (max-width: $screen-xs) {
     margin-left: -12px;
     margin-top: 11px;
-    height: 18px;
+    height: $s-4-5;
   }
 }
 
@@ -106,17 +108,17 @@
 // Light theme: accent-400, Dark theme: accent-600
 .space-icon-mention-bubble {
   position: absolute;
-  top: 4px;
-  right: -4px;
+  top: $s-1;
+  right: -$s-1;
   display: flex;
   align-items: center;
   justify-content: center;
-  min-width: 18px;
-  height: 18px;
-  padding: 0 4px;
-  border-radius: 9999px;
-  font-weight: 500;
-  font-size: 12px;
+  min-width: $s-4-5;
+  height: $s-4-5;
+  padding: 0 $s-1;
+  border-radius: $rounded-full;
+  font-weight: $font-medium;
+  font-size: $text-xs;
   line-height: 1;
   text-align: center;
   color: white;
@@ -126,12 +128,12 @@
   box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
 
   // Mobile phone optimization - slightly smaller bubble
-  @media (max-width: 480px) {
-    min-width: 16px;
-    height: 16px;
+  @media (max-width: $screen-xs) {
+    min-width: $s-4;
+    height: $s-4;
     font-size: 11px;
-    top: 2px;
-    right: -2px;
+    top: $s-0-5;
+    right: -$s-0-5;
     // Ensure centering is maintained on mobile
     display: flex;
     align-items: center;

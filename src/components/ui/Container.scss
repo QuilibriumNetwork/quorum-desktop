@@ -1,10 +1,12 @@
+@use '../../styles/variables' as *;
+
 .container-unit {
   position: fixed;
   width: calc(100vw - 72px);
   height: calc(100vh - 14px);
   left: 72px;
-  top: 14px;
-  border-top-left-radius: 0.75rem;
+  top: $s-3-5;
+  border-top-left-radius: $rounded-xl;
   background-color: var(--color-bg-sidebar);
 
   @supports (height: 100dvh) {
@@ -18,7 +20,7 @@
   }
 
   // Phone-specific optimization for smaller NavMenu
-  @media (max-width: 480px) {
+  @media (max-width: $screen-xs) {
     width: calc(100vw - 50px);
     left: 50px;
   }

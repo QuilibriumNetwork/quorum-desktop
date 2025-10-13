@@ -245,10 +245,10 @@
   flex-direction: column;
   flex-grow: 1;
   overflow-y: auto;
-  border-radius: 0px $s-2-5 $s-2-5 0px;
+  border-radius: 0 $s-2-5 $s-2-5 0;
 
   @media (max-width: $screen-md) {
-    border-radius: 0px 0px $s-2-5 $s-2-5;
+    border-radius: 0 0 $s-2-5 $s-2-5;
   }
 }
 
@@ -258,11 +258,11 @@
   flex-direction: column;
   flex-grow: 1;
   overflow-y: auto;
-  border-radius: 0px $s-2-5 0px 0px;
+  border-radius: 0 $s-2-5 0 0;
   min-height: 0; /* This ensures flex item can shrink below content size */
 
   @media (max-width: $screen-md) {
-    border-radius: 0px;
+    border-radius: 0;
   }
 }
 
@@ -277,7 +277,7 @@
 
   @media (max-width: $screen-md) {
     background-color: var(--color-bg-modal-sidebar);
-    border-radius: 0px 0px $s-2-5 $s-2-5;
+    border-radius: 0 0 $s-2-5 $s-2-5;
     justify-content: flex-end;
     padding: $s-4;
   }
@@ -339,7 +339,7 @@
     padding: $s-10 $s-4 $s-2 $s-4;
     background: var(--surface-3);
     border-bottom: $border solid var(--surface-6);
-    border-radius: $rounded-lg $rounded-lg 0rem 0rem;
+    border-radius: $rounded-lg $rounded-lg 0 0;
     gap: $s-px;
 
     .modal-nav-category {
@@ -377,7 +377,7 @@
     padding: $s-10 $s-4 $s-2 $s-4;
     background: var(--surface-3);
     border-bottom: $border solid var(--surface-6);
-    border-radius: $rounded-lg $rounded-lg 0rem 0rem;
+    border-radius: $rounded-lg $rounded-lg 0 0;
     gap: $s-0-5 $s-4;
 
     .modal-nav-category {
@@ -410,7 +410,7 @@
 // Content Section Classes
 .modal-content-header {
   background: var(--color-bg-modal);
-  border-top-left-radius: 0px;
+  border-top-left-radius: 0;
   border-top-right-radius: $s-2-5;
   display: flex;
   flex-direction: row;
@@ -420,8 +420,8 @@
   gap: $s-4;
 
   @media (max-width: $screen-md) {
-    border-top-left-radius: 0px;
-    border-top-right-radius: 0px;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
     padding: $s-4 $s-3;
     min-height: auto;
     flex-direction: column;
@@ -442,7 +442,7 @@
   }
 
   &:last-child {
-    border-radius: 0px;
+    border-radius: 0;
   }
 
   /* Ensure Save button stays at bottom right for all categories */
@@ -515,9 +515,9 @@
   margin-top: $s-2;
 
   &:first-child {
-    border-top: 0px none;
-    padding-top: 0px;
-    margin-top: 0px;
+    border-top: 0;
+    padding-top: 0;
+    margin-top: 0;
   }
 }
 
@@ -707,7 +707,7 @@
     position: absolute;
     top: (-$s-1);
     right: (-$s-1);
-    box-shadow: 0px $s-1 $s-1 rgba(0, 0, 0, 0.25);
+    box-shadow: 0 $s-1 $s-1 rgba(0, 0, 0, 0.25);
     line-height: $s-6;
   }
 
@@ -762,7 +762,7 @@
     border-radius: $rounded-xl;
     font-weight: $font-bold;
     font-size: $text-sm;
-    box-shadow: 0px $s-1 $s-1 rgba(0, 0, 0, 0.25);
+    box-shadow: 0 $s-1 $s-1 rgba(0, 0, 0, 0.25);
   }
 }
 
@@ -801,7 +801,7 @@
   display: flex;
   flex-direction: column;
   user-select: none;
-  padding: $s-10 $s-4 0px $s-4;
+  padding: $s-10 $s-4 0 $s-4;
   align-items: center;
   gap: $s-8;
 
@@ -835,7 +835,7 @@
   position: absolute;
   inset: 0;
   background-color: rgba(0, 0, 0, 0.3);
-  backdrop-filter: blur(4px);
+  backdrop-filter: blur($s-1);
   border-radius: $rounded-lg;
 }
 

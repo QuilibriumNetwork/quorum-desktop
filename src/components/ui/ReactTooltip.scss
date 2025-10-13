@@ -1,3 +1,5 @@
+@use '../../styles/variables' as *;
+
 /* Tooltip styling for both light and dark themes.
    - Applies consistent padding, border radius, text styling, and shadows.
    - Uses !important to override third-party styles.
@@ -7,20 +9,20 @@
 @mixin tooltip-box {
   background-color: var(--color-bg-tooltip) !important;
   padding: 7px 11px !important;
-  border-radius: 0.5rem !important;
+  border-radius: $rounded-lg !important;
   color: rgb(var(--color-text-main)) !important;
   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.11) !important;
   opacity: 1 !important;
 }
 
 @mixin reset-text {
-  font-weight: normal !important;
+  font-weight: $font-normal !important;
   font-style: normal !important;
   text-decoration: none !important;
   text-transform: none !important;
   letter-spacing: normal !important;
-  line-height: 1.25rem !important;
-  font-size: 0.875rem !important;
+  line-height: $leading-5 !important;
+  font-size: $text-sm !important;
   font-family: inherit !important;
 }
 
@@ -56,7 +58,7 @@
   word-wrap: break-word !important;
   max-width: 300px !important;
 
-  @media (min-width: 640px) {
+  @media (min-width: $screen-sm) {
     max-width: 400px !important;
   }
 }

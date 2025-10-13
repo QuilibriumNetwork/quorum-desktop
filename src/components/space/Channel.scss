@@ -1,13 +1,14 @@
+@use '../../styles/variables' as *;
 @use '../../styles/chat';
 
 .channel-name {
-  font-weight: 700;
-  font-size: 16px;
+  font-weight: $font-bold;
+  font-size: $text-base;
   user-select: none;
 
   // Responsive layout for mobile/tablet
   @media (max-width: 1023px) {
-    gap: 6px;
+    gap: $s-1-5;
 
     // Ensure search bar + users icon are properly spaced on top
     .channel-search {
@@ -25,7 +26,7 @@
 // Mobile layout - ensure chat container fills available space
 @media (max-width: 1023px) {
   .space-container .chat-container {
-    border-top-left-radius: 0.75rem;
+    border-top-left-radius: $rounded-xl;
     position: relative;
     overflow: hidden;
     flex: 1 1 auto; // Expand to fill available space when sidebar is hidden
@@ -42,8 +43,8 @@
 
 .message {
   display: flex;
-  font-size: 11pt;
-  padding: 8px 11px;
+  font-size: $text-sm;
+  padding: $s-2 $s-3;
 }
 
 .message-editor {

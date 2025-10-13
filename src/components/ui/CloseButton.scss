@@ -1,6 +1,8 @@
+@use '../../styles/variables' as *;
+
 .close-button {
   position: absolute;
   top: 11px;
-  right: 14px;
+  right: $s-3-5;
   width: 13px;
 }

@@ -1,3 +1,4 @@
+@use '../../styles/variables' as *;
 @use '../../styles/modal_common';
 
 .modal-new-direct-message {
@@ -13,7 +14,7 @@
   display: flex;
   justify-content: flex-start;
 
-  @media (max-width: 640px) {
+  @media (max-width: $screen-sm) {
     display: flex;
     justify-content: center;
   }
@@ -25,12 +26,12 @@
 
 .modal-new-direct-message-error {
   color: var(--color-text-danger);
-  font-size: 0.875rem;
-  margin-top: 0.5rem;
+  font-size: $text-sm;
+  margin-top: $s-2;
   text-align: center;
 }
 
-@media (max-width: 640px) {
+@media (max-width: $screen-sm) {
   .modal-new-direct-message-error {
     text-align: center;
   }

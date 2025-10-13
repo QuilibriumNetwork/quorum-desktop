@@ -1,3 +1,5 @@
+@use '../../styles/variables' as *;
+
 .channels-list-wrapper {
   display: flex;
   flex-direction: column;
@@ -15,7 +17,7 @@
   overflow-x: hidden;
   width: var(--sidebar-left-width);
   z-index: 0;
-  margin-right: -10px;
+  margin-right: -$s-2-5;
   scrollbar-width: none;
   flex-grow: 1;
 
@@ -35,13 +37,13 @@
 }
 
 .space-header {
-  padding: 8px 25px 8px 15px;
-  font-weight: 700;
-  font-size: 18px;
+  padding: $s-2 $s-6 $s-2 $s-4;
+  font-weight: $font-bold;
+  font-size: $text-lg;
   background-size: cover;
   background-position: center;
-  border-top-left-radius: 0.75rem;
-  margin-right: -10px;
+  border-top-left-radius: $rounded-xl;
+  margin-right: -$s-2-5;
   height: 120px;
   width: var(--sidebar-left-width);
   color: var(--color-text-main);
@@ -52,16 +54,16 @@
   z-index: 10;
 
   @media (max-width: 1023px) {
-    border-top-left-radius: 0px;
+    border-top-left-radius: 0;
     height: 132px;
-    padding-top: 12px;
+    padding-top: $s-3;
   }
 }
 
 .space-context-menu-toggle-button {
   float: right;
   cursor: pointer;
-  font-size: 14px;
-  margin-top: 2px;
+  font-size: $text-sm;
+  margin-top: $s-0-5;
   filter: drop-shadow(0px 2px 3px rgba(0, 0, 0, 0.3));
 }

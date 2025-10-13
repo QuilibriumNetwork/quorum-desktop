@@ -1,3 +1,5 @@
+@use '../../styles/variables' as *;
+
 .user-status {
   height: 52px;
   background: var(--surface-4);
@@ -22,10 +24,10 @@
 
 .user-status-icon {
   // UserAvatar component handles size and border-radius
-  margin-top: 4px;
-  margin-left: 8px;
-  margin-right: 8px;
-  margin-bottom: 4px; // Match margin-top for symmetry
+  margin-top: $s-1;
+  margin-left: $s-2;
+  margin-right: $s-2;
+  margin-bottom: $s-1; // Match margin-top for symmetry
   display: inline-block;
   vertical-align: middle; // Ensure consistent vertical alignment
 }
@@ -37,12 +39,12 @@
 }
 
 .user-status-username {
-  font-size: 14px;
-  font-weight: 700;
+  font-size: $text-sm;
+  font-weight: $font-bold;
 }
 
 .user-status-info {
-  font-size: 10px;
+  font-size: $s-2-5;
   text-overflow: ellipsis;
   width: 170px;
   overflow: hidden;
