@@ -37,16 +37,6 @@
     text-overflow: ellipsis;
   }
 
-  /* Smaller font and height on smaller screens to match button size */
-  @media (max-width: $screen-md) {
-    /* min-height removed - now calculated dynamically in JavaScript */
-    padding: $s-1;
-  }
-
-  @media (max-width: $screen-sm) {
-    font-size: $text-sm;
-  }
-
   /* Allow more growth on larger screens */
   @media (min-width: $screen-lg) {
     max-height: $s-60; /* ~10 rows on desktop */

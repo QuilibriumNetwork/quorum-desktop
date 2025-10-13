@@ -41,6 +41,7 @@
   top: 0;
   z-index: 10; // Ensure header stays above content when sticky
   border-radius: $rounded-2xl $rounded-2xl 0 0; // Match drawer border-radius for top corners
+  touch-action: none; // Prevent browser pull-to-refresh when dragging the header
 
   // When there's no title AND no headerContent, remove border and reduce padding
   &:has(.mobile-drawer__title-area:empty):not(:has(.mobile-drawer__header-content)) {
