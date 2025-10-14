@@ -517,8 +517,8 @@ const Channel: React.FC<ChannelProps> = ({
                 </span>
                 {channel?.channelTopic && (
                   <>
-                    <span className="text-subtle flex-shrink-0">|</span>
-                    <span className="text-subtle font-light text-sm flex-shrink truncate">
+                    <span className="hidden xs:inline text-subtle flex-shrink-0">|</span>
+                    <span className="hidden xs:inline text-subtle flex-shrink truncate">
                       {channel.channelTopic}
                     </span>
                   </>
@@ -648,8 +648,8 @@ const Channel: React.FC<ChannelProps> = ({
               </span>
               {channel?.channelTopic && (
                 <>
-                  <span className="text-subtle flex-shrink-0">|</span>
-                  <span className="text-subtle font-light text-sm flex-shrink truncate">
+                  <span className="hidden xs:inline text-subtle flex-shrink-0">|</span>
+                  <span className="hidden xs:inline text-subtle font-light text-sm flex-shrink truncate">
                     {channel.channelTopic}
                   </span>
                 </>
