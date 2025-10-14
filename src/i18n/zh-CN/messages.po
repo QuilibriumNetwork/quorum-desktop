@@ -31,15 +31,13 @@ msgid "No Role - {count}"
 msgstr "无角色 - {count}"
 
 #. js-lingui-explicit-id
-#: src/components/space/Channel.tsx:701
+#: src/components/space/Channel.tsx:703
 msgid "Send a message to #{channel_name}"
 msgstr "向 #{channel_name} 发送信息"
 
 #. js-lingui-explicit-id
 #: src/components/onboarding/Onboarding.tsx:256
-msgid ""
-"Your profile image size must be {maxFileSize} or less and must be a PNG, "
-"JPG, or JPEG file extension."
+msgid "Your profile image size must be {maxFileSize} or less and must be a PNG, JPG, or JPEG file extension."
 msgstr "您的个人资料图片大小必须为 {maxFileSize} 或更小，并且必须是 PNG、JPG 或 JPEG 文件扩展名。"
 
 #. js-lingui-explicit-id
@@ -69,14 +67,12 @@ msgid "{user} has been kicked"
 msgstr "{user}已被踢出"
 
 #. js-lingui-explicit-id
-#: src/components/direct/DirectMessage.tsx:525
+#: src/components/direct/DirectMessage.tsx:523
 msgid "Send a message to {user}"
 msgstr "给 {user} 发送信息"
 
 #: src/components/modals/CreateSpaceModal.tsx:107
-msgid ""
-" Default Space settings provide the most typical chat experience, but for "
-"higher privacy guarantees, review the Advanced Settings."
+msgid " Default Space settings provide the most typical chat experience, but for higher privacy guarantees, review the Advanced Settings."
 msgstr "默认的 Space 设置提供最典型的聊天体验，但为了更高的隐私保障，请查看高级设置。"
 
 #: src/components/Maintenance.native.tsx:61
@@ -102,10 +98,16 @@ msgstr "[消息]"
 msgid "{0} devices marked for removal. Click \"Save Changes\" to confirm."
 msgstr "{0} 设备标记为删除。点击 \"保存更改\" 以确认。"
 
+#~ msgid "{0} pinned message"
+#~ msgstr "{0} 条置顶消息"
+
 #. placeholder {0}: pinnedMessages.length
 #: src/components/message/PinnedMessagesPanel.tsx:253
 msgid "{0} pinned message in this Channel"
 msgstr "{0} 在此频道中固定的消息"
+
+#~ msgid "{0} pinned messages"
+#~ msgstr "{0} 条置顶消息"
 
 #. placeholder {0}: pinnedMessages.length
 #: src/components/message/PinnedMessagesPanel.tsx:254
@@ -218,16 +220,11 @@ msgid "add sticker"
 msgstr "添加贴纸"
 
 #: src/components/modals/SpaceSettingsModal/Emojis.tsx:44
-msgid ""
-"Add up to 50 custom emoji. Custom emojis can only be used within a Space. "
-"You can upload PNG, JPG or GIF, max 5MB (automatically optimized)."
-msgstr ""
-"添加最多 50 个自定义 emoji。自定义 emoji 只能在 Space 内使用。您可以上传 PNG、JPG 或 GIF，最大 5MB（自动优化）。"
+msgid "Add up to 50 custom emoji. Custom emojis can only be used within a Space. You can upload PNG, JPG or GIF, max 5MB (automatically optimized)."
+msgstr "添加最多 50 个自定义 emoji。自定义 emoji 只能在 Space 内使用。您可以上传 PNG、JPG 或 GIF，最大 5MB（自动优化）。"
 
 #: src/components/modals/SpaceSettingsModal/Stickers.tsx:44
-msgid ""
-"Add up to 50 custom stickers. Custom stickers can only be used within a "
-"Space. You can upload PNG, JPG or GIF, max 25MB (automatically optimized)."
+msgid "Add up to 50 custom stickers. Custom stickers can only be used within a Space. You can upload PNG, JPG or GIF, max 25MB (automatically optimized)."
 msgstr "添加最多 50 个自定义贴纸。自定义贴纸只能在 Space 内使用。您可以上传 PNG、JPG 或 GIF，最大 25MB（自动优化）。"
 
 #: src/hooks/business/validation/useAddressValidation.native.ts:71
@@ -241,9 +238,7 @@ msgid "Addresses start with \"Qm\"."
 msgstr "地址以 \"Qm\" 开头。"
 
 #: src/components/modals/UserSettingsModal/Privacy.tsx:48
-msgid ""
-"Adjust security-related settings, which may impact user  experience but "
-"increase the security of your Quorum account."
+msgid "Adjust security-related settings, which may impact user  experience but increase the security of your Quorum account."
 msgstr "调整与安全相关的设置，这可能会影响用户体验，但会增加您 Quorum 账户的安全性。"
 
 #: src/components/modals/CreateSpaceModal.tsx:166
@@ -278,15 +273,11 @@ msgid "An error occurred while deleting the Space. Please try again."
 msgstr "删除空间时发生错误。请再试一次。"
 
 #: src/utils/imageProcessing/errors.ts:23
-msgid ""
-"Animated emoji GIFs cannot be larger than 100KB. Please optimize your GIF "
-"for emoji use."
+msgid "Animated emoji GIFs cannot be larger than 100KB. Please optimize your GIF for emoji use."
 msgstr "动画表情 GIF 不能大于 100KB。请优化您的 GIF 以供表情使用。"
 
 #: src/utils/imageProcessing/errors.ts:26
-msgid ""
-"Animated sticker GIFs cannot be larger than 750KB. Please optimize your GIF "
-"for sticker use."
+msgid "Animated sticker GIFs cannot be larger than 750KB. Please optimize your GIF for sticker use."
 msgstr "动画贴纸 GIF 不能大于 750KB。请优化您的 GIF 以供贴纸使用。"
 
 #: src/components/modals/UserSettingsModal/Appearance.tsx:25
@@ -295,9 +286,7 @@ msgid "Appearance"
 msgstr "外观"
 
 #: src/hooks/business/channels/useChannelManagement.ts:228
-msgid ""
-"Are you sure you want to delete this channel? All messages will be lost. "
-"This action cannot be undone."
+msgid "Are you sure you want to delete this channel? All messages will be lost. This action cannot be undone."
 msgstr "您确定要删除此频道吗？所有消息将会丢失。此操作无法撤销。"
 
 #: src/components/modals/ConversationSettingsModal.tsx:55
@@ -319,10 +308,11 @@ msgid "Are you sure you want to delete this role?"
 msgstr "您确定要删除此角色吗？"
 
 #: src/components/modals/LeaveSpaceModal.tsx:40
-msgid ""
-"Are you sure you want to leave this Space? You won't be able to rejoin "
-"unless you are re-invited."
+msgid "Are you sure you want to leave this Space? You won't be able to rejoin unless you are re-invited."
 msgstr "您确定要离开这个空间吗？您将无法重新加入，除非您被重新邀请。"
+
+#~ msgid "Are you sure you want to leave this Space? You won't be able to rejoin unless you are re-invited. Your existing messages will NOT be deleted."
+#~ msgstr "您确定要离开此空间吗？您将无法重新加入，除非您被重新邀请。您现有的消息将不会被删除。"
 
 #: src/hooks/business/messages/usePinnedMessages.ts:231
 msgid "Are you sure you want to pin this message?"
@@ -333,9 +323,7 @@ msgid "Are you sure you want to unpin this message?"
 msgstr "您确定要取消固定此消息吗？"
 
 #: src/components/modals/SpaceSettingsModal/Roles.tsx:51
-msgid ""
-"As a space owner, you need to assign yourself a role with delete permissions"
-" to delete other users' messages. <0><1>Learn more</1></0>"
+msgid "As a space owner, you need to assign yourself a role with delete permissions to delete other users' messages. <0><1>Learn more</1></0>"
 msgstr "作为空间拥有者，您需要为自己分配一个具有删除权限的角色，以删除其他用户的消息。<0><1>了解更多</1></0>"
 
 #: src/components/message/MessageComposer.tsx:359
@@ -387,8 +375,7 @@ msgstr "无法删除带有频道的空间。请先删除所有频道。"
 #. placeholder {0}: Math.min(10, remaining)
 #: src/hooks/business/ui/useCustomAssets.ts:101
 #: src/hooks/business/ui/useCustomAssets.ts:146
-msgid ""
-"Cannot upload more than {0} files at once ({remaining} slots remaining)"
+msgid "Cannot upload more than {0} files at once ({remaining} slots remaining)"
 msgstr "一次无法上传超过 {0} 个文件（剩余 {remaining} 个名额）"
 
 #: src/components/modals/SpaceSettingsModal/Account.tsx:83
@@ -396,9 +383,7 @@ msgid "Change your avatar and name for this Space."
 msgstr "更改您在此空间的头像和名称。"
 
 #: src/components/modals/UserSettingsModal/Appearance.tsx:53
-msgid ""
-"Changes are made automatically, but the active page may not be updated. "
-"Refresh the page to apply the new language."
+msgid "Changes are made automatically, but the active page may not be updated. Refresh the page to apply the new language."
 msgstr "更改会自动进行，但活动页面可能不会更新。刷新页面以应用新语言。"
 
 #: src/components/modals/ChannelEditorModal.tsx:118
@@ -408,6 +393,10 @@ msgstr "频道图标"
 #: src/components/modals/ChannelEditorModal.tsx:156
 msgid "Channel Managers"
 msgstr "频道管理员"
+
+#: src/components/space/Channel.tsx:912
+msgid "Channel members"
+msgstr ""
 
 #: src/components/modals/ChannelEditorModal.tsx:96
 msgid "Channel Name"
@@ -436,7 +425,7 @@ msgstr "选择您在 Quorum 中的首选主题。"
 #: src/components/modals/SpaceSettingsModal/Account.tsx:184
 #: src/components/primitives/Select/Select.native.tsx:37
 #: src/components/primitives/Select/Select.web.tsx:31
-#: src/components/space/IconPicker/IconPicker.web.tsx:140
+#: src/components/space/IconPicker/IconPicker.web.tsx:141
 msgid "Clear"
 msgstr "清除"
 
@@ -462,15 +451,11 @@ msgid "Click on the role name and tag to edit them."
 msgstr "点击角色名称和标签进行编辑。"
 
 #: src/components/onboarding/Onboarding.tsx:161
-msgid ""
-"Click the button below to create a backup of your key info, because once "
-"it's gone, it's gone  forever. You may be prompted to authenticate again."
+msgid "Click the button below to create a backup of your key info, because once it's gone, it's gone  forever. You may be prompted to authenticate again."
 msgstr "点击下面的按钮以创建您关键信息的备份，因为一旦丢失，就永远无法找回。您可能会被提示再次进行身份验证。"
 
 #: src/components/onboarding/Onboarding.native.tsx:259
-msgid ""
-"Click the button below to create a backup of your key info, because once "
-"it's gone, it's gone forever. You may be prompted to authenticate again."
+msgid "Click the button below to create a backup of your key info, because once it's gone, it's gone forever. You may be prompted to authenticate again."
 msgstr "单击下面的按钮以创建您关键信息的备份，因为一旦丢失，就永远无法恢复。您可能会被提示再次进行身份验证。"
 
 #: src/components/ui/ClickToCopyContent.tsx:48
@@ -485,7 +470,7 @@ msgstr "配置密钥"
 msgid "Connecting"
 msgstr "连接"
 
-#: src/components/direct/DirectMessage.tsx:415
+#: src/components/direct/DirectMessage.tsx:413
 msgid "Conversation settings"
 msgstr "对话设置"
 
@@ -501,9 +486,9 @@ msgstr "对话设置"
 msgid "Copied!"
 msgstr "已复制！"
 
-#: src/components/direct/DirectMessage.tsx:266
-#: src/components/direct/DirectMessage.tsx:396
-#: src/components/direct/DirectMessage.tsx:468
+#: src/components/direct/DirectMessage.tsx:264
+#: src/components/direct/DirectMessage.tsx:394
+#: src/components/direct/DirectMessage.tsx:466
 #: src/components/modals/UserSettingsModal/General.tsx:118
 #: src/components/user/UserProfile.tsx:108
 #: src/components/user/UserStatus.tsx:48
@@ -613,9 +598,15 @@ msgstr "删除频道"
 msgid "Delete Conversation"
 msgstr "删除对话"
 
+#~ msgid "Delete Current Link"
+#~ msgstr "删除当前链接"
+
 #: src/components/modals/GroupEditorModal.tsx:125
 msgid "Delete Group"
 msgstr "删除组"
+
+#~ msgid "Delete Link"
+#~ msgstr "删除链接"
 
 #: src/components/message/MessageActions.tsx:84
 #: src/components/message/MessageActionsDrawer.tsx:182
@@ -629,6 +620,9 @@ msgstr "删除消息"
 #: src/components/modals/SpaceSettingsModal/Roles.tsx:159
 msgid "Delete Messages"
 msgstr "删除消息"
+
+#~ msgid "Delete Public Invite Link"
+#~ msgstr "删除公共邀请链接"
 
 #: src/components/modals/SpaceSettingsModal/Roles.tsx:183
 #: src/hooks/business/spaces/useRoleManagement.ts:58
@@ -673,7 +667,7 @@ msgstr "显示名称"
 msgid "Display name is required"
 msgstr "显示名称是必需的"
 
-#: src/components/ui/MobileDrawer.tsx:144
+#: src/components/ui/MobileDrawer.tsx:143
 msgid "Drawer"
 msgstr "抽屉"
 
@@ -753,10 +747,7 @@ msgid "Export"
 msgstr "导出"
 
 #: src/components/modals/UserSettingsModal/Privacy.tsx:176
-msgid ""
-"Export your key to a file by clicking this button. Do not share this file "
-"with anyone else or they can impersonate you or steal your Space's Apex "
-"earnings."
+msgid "Export your key to a file by clicking this button. Do not share this file with anyone else or they can impersonate you or steal your Space's Apex earnings."
 msgstr "通过单击此按钮将您的密钥导出到文件中。不要与其他人分享此文件，否则他们可能会冒充您或窃取您空间的Apex收益。"
 
 #: src/hooks/platform/files/useFileDownload.native.ts:110
@@ -922,16 +913,12 @@ msgid "If skipped, you'll get the default profile image and can set it later"
 msgstr "如果跳过，您将获得默认的个人资料图片，并可以稍后设置。"
 
 #: src/components/onboarding/Onboarding.tsx:147
-msgid ""
-"If you clear your browser storage or switch browsers, your old messages and "
-"keys may disappear."
+msgid "If you clear your browser storage or switch browsers, your old messages and keys may disappear."
 msgstr "如果您清除浏览器存储或切换浏览器，您的旧消息和密钥可能会消失。"
 
 #: src/components/onboarding/Onboarding.native.tsx:254
 #: src/components/onboarding/Onboarding.tsx:154
-msgid ""
-"If you uninstall the app from your device, you will lose your old messages "
-"and keys."
+msgid "If you uninstall the app from your device, you will lose your old messages and keys."
 msgstr "如果您从设备上卸载应用程序，您将失去旧消息和密钥。"
 
 #: src/components/onboarding/Login.native.tsx:115
@@ -955,8 +942,7 @@ msgstr "签名的地址无效"
 
 #: src/hooks/business/validation/useAddressValidation.native.ts:97
 #: src/hooks/business/validation/useAddressValidation.ts:98
-msgid ""
-"Invalid address format. Addresses must use valid alphanumeric characters."
+msgid "Invalid address format. Addresses must use valid alphanumeric characters."
 msgstr "地址格式无效。地址必须使用有效的字母数字字符。"
 
 #: src/components/primitives/FileUpload/FileUpload.web.tsx:63
@@ -967,8 +953,10 @@ msgstr "无效的文件类型。请检查接受的文件格式。"
 #: src/components/context/MessageDB.bak.tsx:4701
 #: src/components/context/MessageDB.bak.tsx:4738
 #: src/components/context/MessageDB.bak.tsx:4809
-#: src/services/InvitationService.ts:490 src/services/InvitationService.ts:501
-#: src/services/InvitationService.ts:534 src/services/InvitationService.ts:603
+#: src/services/InvitationService.ts:490
+#: src/services/InvitationService.ts:501
+#: src/services/InvitationService.ts:534
+#: src/services/InvitationService.ts:603
 msgid "invalid link"
 msgstr "链接无效"
 
@@ -977,14 +965,16 @@ msgstr "链接无效"
 msgid "Invalid message ID"
 msgstr "无效的消息ID"
 
-#: src/components/context/MessageDB.bak.tsx:5180 src/utils/canonicalize.ts:90
+#: src/components/context/MessageDB.bak.tsx:5180
+#: src/utils/canonicalize.ts:90
 msgid "invalid message type"
 msgstr "消息类型无效"
 
 #: src/components/context/MessageDB.bak.tsx:4706
 #: src/components/context/MessageDB.bak.tsx:4772
 #: src/hooks/business/spaces/useInviteValidation.ts:80
-#: src/services/InvitationService.ts:506 src/services/InvitationService.ts:570
+#: src/services/InvitationService.ts:506
+#: src/services/InvitationService.ts:570
 msgid "invalid response"
 msgstr "响应无效"
 
@@ -1079,9 +1069,7 @@ msgstr "离开此空间"
 
 #: src/components/onboarding/Onboarding.native.tsx:312
 #: src/components/onboarding/Onboarding.tsx:196
-msgid ""
-"Let your friends know who you are! Pick a friendly name to display in your "
-"conversations, something easier to read than:"
+msgid "Let your friends know who you are! Pick a friendly name to display in your conversations, something easier to read than:"
 msgstr "让你的朋友知道你是谁！选择一个友好的名字在你的对话中显示，比以下内容更容易阅读:"
 
 #: src/components/onboarding/Onboarding.native.tsx:505
@@ -1109,15 +1097,14 @@ msgstr "正在查找用户..."
 msgid "Lookup"
 msgstr "查找"
 
-#: src/components/Maintenance.native.tsx:42 src/components/Maintenance.tsx:14
+#: src/components/Maintenance.native.tsx:42
+#: src/components/Maintenance.tsx:14
 msgid "Maintenance in Progress"
 msgstr "维护正在进行中"
 
 #: src/components/onboarding/Onboarding.native.tsx:364
 #: src/components/onboarding/Onboarding.tsx:247
-msgid ""
-"Make your account uniquely yours – set a contact photo. This information is "
-"only provided to the Spaces you join."
+msgid "Make your account uniquely yours – set a contact photo. This information is only provided to the Spaces you join."
 msgstr "让您的账户独一无二 - 设置一个联系人照片。此信息仅提供给您加入的空间。"
 
 #: src/components/modals/UserSettingsModal/Notifications.tsx:26
@@ -1125,8 +1112,7 @@ msgid "Manage desktop notification preferences for new messages."
 msgstr "管理新消息的桌面通知偏好设置。"
 
 #: src/components/modals/UserSettingsModal/Privacy.tsx:39
-msgid ""
-"Manage devices, and privacy conditions for messaging and synchronization."
+msgid "Manage devices, and privacy conditions for messaging and synchronization."
 msgstr "管理设备和消息传递及同步的隐私条件。"
 
 #: src/hooks/platform/files/useFileDownload.native.ts:78
@@ -1137,8 +1123,8 @@ msgstr "需要手动备份"
 msgid "Mark all as read"
 msgstr "全部标记为已读"
 
-#: src/components/direct/DirectMessage.tsx:429
-#: src/components/space/Channel.tsx:595
+#: src/components/direct/DirectMessage.tsx:427
+#: src/components/space/Channel.tsx:597
 msgid "Members List"
 msgstr "成员列表"
 
@@ -1151,8 +1137,7 @@ msgid "Message actions"
 msgstr "消息操作"
 
 #: src/components/message/Message.tsx:535
-msgid ""
-"Message does not have a valid signature, this may not be from the sender"
+msgid "Message does not have a valid signature, this may not be from the sender"
 msgstr "消息没有有效的签名，这可能不是发送者发来的"
 
 #: src/components/message/MessageComposer.tsx:107
@@ -1187,7 +1172,9 @@ msgstr "尚无置顶消息"
 msgid "No unread mentions"
 msgstr "没有未读提及"
 
-#: src/components/space/Channel.tsx:342 src/components/space/Channel.tsx:765
+#: src/components/space/Channel.tsx:344
+#: src/components/space/Channel.tsx:767
+#: src/components/space/Channel.tsx:938
 msgid "No users found!"
 msgstr "未找到用户！"
 
@@ -1202,13 +1189,12 @@ msgstr "未授予通知权限"
 #: src/components/modals/SpaceSettingsModal/Account.tsx:171
 #: src/components/modals/UserSettingsModal/Navigation.tsx:17
 #: src/components/modals/UserSettingsModal/Notifications.tsx:24
-#: src/components/space/Channel.tsx:569
+#: src/components/space/Channel.tsx:571
 msgid "Notifications"
 msgstr "通知"
 
 #: src/components/modals/UserSettingsModal/Notifications.tsx:66
-msgid ""
-"Notifications are blocked. Please enable them in your browser settings."
+msgid "Notifications are blocked. Please enable them in your browser settings."
 msgstr "通知被阻止。请在此站点的浏览器设置中启用它们。"
 
 #: src/services/NotificationService.ts:55
@@ -1317,13 +1303,12 @@ msgstr "固定到顶部"
 msgid "Pinned"
 msgstr "已置顶"
 
-#. placeholder {0}: mapSenderToUser(message.pinnedBy)?.displayName ||
-#. message.pinnedBy
+#. placeholder {0}: mapSenderToUser(message.pinnedBy)?.displayName || message.pinnedBy
 #: src/components/message/Message.tsx:522
 msgid "Pinned by {0}"
 msgstr "由 {0} 置顶"
 
-#: src/components/space/Channel.tsx:534
+#: src/components/space/Channel.tsx:536
 msgid "Pinned Messages"
 msgstr "置顶消息"
 
@@ -1358,35 +1343,24 @@ msgid "Public Invite Links"
 msgstr "公开邀请链接"
 
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:151
-msgid ""
-"Public invite links allow anyone with access to the link to join your Space."
-" Consider who you share the link with and where you post it."
+msgid "Public invite links allow anyone with access to the link to join your Space. Consider who you share the link with and where you post it."
 msgstr "公开邀请链接允许任何拥有链接的人加入你的Space。考虑你与谁分享链接以及你在哪里发布它。"
 
 #: src/components/Maintenance.tsx:28
-msgid ""
-"Quorum infrastructure is being deployed at this time. Please try refreshing,"
-" and check <0>https://status.quilibrium.com/</0> for updates."
-msgstr ""
-"目前正在部署 Quorum 基础设施。请尝试刷新，并检查 <0>https://status.quilibrium.com/</0> 是否有更新。"
+msgid "Quorum infrastructure is being deployed at this time. Please try refreshing, and check <0>https://status.quilibrium.com/</0> for updates."
+msgstr "目前正在部署 Quorum 基础设施。请尝试刷新，并检查 <0>https://status.quilibrium.com/</0> 是否有更新。"
 
 #: src/components/Maintenance.native.tsx:47
-msgid ""
-"Quorum infrastructure is being deployed at this time. Please try refreshing."
+msgid "Quorum infrastructure is being deployed at this time. Please try refreshing."
 msgstr "Quorum基础设施正在部署中。请尝试刷新。"
 
 #: src/components/onboarding/Onboarding.native.tsx:249
 #: src/components/onboarding/Onboarding.tsx:135
-msgid ""
-"Quorum is peer-to-peer and end-to-end encrypted. This means your messages "
-"stay private, but equally important, they only live on the network for the "
-"time required to reach you and your recipients."
+msgid "Quorum is peer-to-peer and end-to-end encrypted. This means your messages stay private, but equally important, they only live on the network for the time required to reach you and your recipients."
 msgstr "Quorum 是点对点和端到端加密的。这意味着您的消息保持私密，但同样重要的是，它们仅在网络上存活所需的时间，以便到达您和您的收件人。"
 
 #: src/components/context/RegistrationPersister.tsx:272
-msgid ""
-"Quorum was loaded while the browser was not in focus or a passkey request "
-"was rejected. Please reauthorize to access your messages."
+msgid "Quorum was loaded while the browser was not in focus or a passkey request was rejected. Please reauthorize to access your messages."
 msgstr "Quorum 在浏览器未聚焦或通行证请求被拒绝时加载。请重新授权以访问您的消息。"
 
 #: src/components/modals/ChannelEditorModal.tsx:141
@@ -1410,7 +1384,8 @@ msgstr "重新授权"
 msgid "received config with invalid signature!"
 msgstr "收到无效签名的配置！"
 
-#: src/components/Maintenance.native.tsx:73 src/components/Maintenance.tsx:52
+#: src/components/Maintenance.native.tsx:73
+#: src/components/Maintenance.tsx:52
 #: src/components/modals/UserSettingsModal/Appearance.tsx:61
 msgid "Refresh"
 msgstr "刷新"
@@ -1430,9 +1405,7 @@ msgid "Require Message Signing"
 msgstr "需要消息签名"
 
 #: src/components/modals/CreateSpaceModal.tsx:119
-msgid ""
-"Require messages sent in this Space to be signed by the sender. Technically "
-"speaking, this makes the messages in this Space non-repudiable."
+msgid "Require messages sent in this Space to be signed by the sender. Technically speaking, this makes the messages in this Space non-repudiable."
 msgstr "要求在此空间中发送的消息由发送者签名。从技术上讲，这使得此空间中的消息不可否认。"
 
 #: src/components/modals/AddSpaceModal.tsx:256
@@ -1491,11 +1464,13 @@ msgstr "保存中..."
 msgid "Search failed: {0}"
 msgstr "搜索失败：{0}"
 
-#: src/hooks/useSearchContext.native.ts:102 src/hooks/useSearchContext.ts:94
+#: src/hooks/useSearchContext.native.ts:102
+#: src/hooks/useSearchContext.ts:94
 msgid "Search here"
 msgstr "在这里搜索"
 
-#: src/hooks/useSearchContext.native.ts:100 src/hooks/useSearchContext.ts:92
+#: src/hooks/useSearchContext.native.ts:100
+#: src/hooks/useSearchContext.ts:92
 msgid "Search in this Space"
 msgstr "在此空间中搜索"
 
@@ -1503,13 +1478,17 @@ msgstr "在此空间中搜索"
 msgid "Search in this Space..."
 msgstr "在此空间中搜索..."
 
-#: src/components/space/Channel.tsx:613
+#: src/components/space/Channel.tsx:615
 msgid "Search Messages"
 msgstr "搜索消息"
 
 #: src/components/search/SearchBar.tsx:36
 msgid "Search messages..."
 msgstr "搜索消息..."
+
+#: src/components/space/Channel.tsx:919
+msgid "Search Username or Address"
+msgstr ""
 
 #: src/components/search/SearchResults.tsx:82
 msgid "Searching..."
@@ -1529,12 +1508,8 @@ msgid "Select an option"
 msgstr "选择一个选项"
 
 #: src/components/modals/ChannelEditorModal.tsx:160
-msgid ""
-"Select any existing role as managers for this channel. Managers have post, "
-"delete, and pin permissions on ANY message by default. If no managers are "
-"selected, only the Space owner can manage the channel."
-msgstr ""
-"选择任何现有角色作为此频道的管理员。管理员默认具有对任何消息的发布、删除和固定权限。如果没有选择管理员，只有Space所有者可以管理该频道。"
+msgid "Select any existing role as managers for this channel. Managers have post, delete, and pin permissions on ANY message by default. If no managers are selected, only the Space owner can manage the channel."
+msgstr "选择任何现有角色作为此频道的管理员。管理员默认具有对任何消息的发布、删除和固定权限。如果没有选择管理员，只有Space所有者可以管理该频道。"
 
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:84
 msgid "Select conversation"
@@ -1573,9 +1548,7 @@ msgid "Send Invite"
 msgstr "发送邀请"
 
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:50
-msgid ""
-"Send invites to people you've previously had conversations with. An invite "
-"button will appear in their inbox."
+msgid "Send invites to people you've previously had conversations with. An invite button will appear in their inbox."
 msgstr "向之前与你交谈过的人发送邀请。他们的收件箱中会出现一个邀请按钮。"
 
 #: src/components/user/UserProfile.tsx:192
@@ -1596,10 +1569,7 @@ msgid "Settings"
 msgstr "设置"
 
 #: src/components/modals/UserSettingsModal/Notifications.tsx:39
-msgid ""
-"Show desktop notifications when you receive new messages while Quorum is in "
-"the background. Your browser will ask for permission when you enable this "
-"feature."
+msgid "Show desktop notifications when you receive new messages while Quorum is in the background. Your browser will ask for permission when you enable this feature."
 msgstr "当 Quorum 在后台时，收到新消息时显示桌面通知。启用此功能时，浏览器会请求权限。"
 
 #: src/components/direct/EmptyDirectMessage.tsx:78
@@ -1659,6 +1629,9 @@ msgstr "成功向 {0} 发送邀请"
 msgid "Sync Kick Status"
 msgstr "同步踢出状态"
 
+#~ msgid "Sync kick status for previously kicked users. This verifies kicks without posting visible messages."
+#~ msgstr "同步之前被踢出用户的踢出状态。这将验证踢出而不发布可见消息。"
+
 #: src/components/ui/ThemeRadioGroup.tsx:28
 msgid "System"
 msgstr "系统"
@@ -1682,9 +1655,7 @@ msgid "The invite link has expired or is invalid."
 msgstr "邀请链接已过期或无效。"
 
 #: src/components/modals/SpaceSettingsModal/Danger.tsx:30
-msgid ""
-"This action cannot be undone and will permanently remove all the Space "
-"settings. To delete the Space, you must first delete all Channels."
+msgid "This action cannot be undone and will permanently remove all the Space settings. To delete the Space, you must first delete all Channels."
 msgstr "此操作无法撤消，并将永久删除所有空间设置。要删除空间，您必须先删除所有频道。"
 
 #: src/components/modals/UserSettingsModal/Privacy.tsx:161
@@ -1697,25 +1668,16 @@ msgid "This information is only provided to the Spaces you join."
 msgstr "此信息仅提供给您加入的空间。"
 
 #: src/components/modals/UserSettingsModal/General.tsx:110
-msgid ""
-"This is your public address and is safe to share with anyone you want to "
-"interact with."
+msgid "This is your public address and is safe to share with anyone you want to interact with."
 msgstr "这是您的公共地址，可以安全地与您想要互动的任何人分享。"
 
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:181
-msgid ""
-"This link will not expire, but you can generate a new one at any time, which"
-" will invalidate the old link."
+msgid "This link will not expire, but you can generate a new one at any time, which will invalidate the old link."
 msgstr "此链接不会过期，但你可以随时生成一个新链接，这将使旧链接失效。"
 
 #: src/components/modals/SpaceSettingsModal/Roles.tsx:55
-msgid ""
-"This protects your identity as the space owner. However, if you're the only "
-"one with this role, your identity becomes obvious. Consider having multiple "
-"users (real or fake accounts) with the same role for better privacy "
-"protection."
-msgstr ""
-"这可以保护您作为空间拥有者的身份。然而，如果您是唯一拥有此角色的人，您的身份将变得明显。考虑让多个用户（真实或虚假账户）拥有相同的角色，以更好地保护隐私。"
+msgid "This protects your identity as the space owner. However, if you're the only one with this role, your identity becomes obvious. Consider having multiple users (real or fake accounts) with the same role for better privacy protection."
+msgstr "这可以保护您作为空间拥有者的身份。然而，如果您是唯一拥有此角色的人，您的身份将变得明显。考虑让多个用户（真实或虚假账户）拥有相同的角色，以更好地保护隐私。"
 
 #: src/components/context/MessageDB.bak.tsx:4819
 #: src/components/message/InviteLink.tsx:31
@@ -1728,28 +1690,23 @@ msgid "This user is already a member of this space."
 msgstr "该用户已是此空间的成员。"
 
 #: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:599
-msgid ""
-"This will create a public invite link that anyone can use to join your "
-"Space. Consider who you share this link with."
+msgid "This will create a public invite link that anyone can use to join your Space. Consider who you share this link with."
 msgstr "这将创建一个任何人都可以使用的公共邀请链接以加入您的空间。考虑与谁分享此链接。"
 
 #: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:598
-msgid ""
-"This will generate a new public invite link and invalidate the current one. "
-"Anyone with the old link will no longer be able to use it."
+msgid "This will generate a new public invite link and invalidate the current one. Anyone with the old link will no longer be able to use it."
 msgstr "这将生成一个新的公共邀请链接并使当前链接失效。拥有旧链接的任何人将不再能够使用它。"
+
+#~ msgid "This will permanently delete the current public invite link. Anyone who has this link will no longer be able to use it to join your Space."
+#~ msgstr "这将永久删除当前的公共邀请链接。拥有此链接的任何人将不再能够使用它加入您的空间。"
 
 #: src/components/modals/ConfirmationModal.native.tsx:57
 #: src/components/modals/ConfirmationModal.tsx:77
-msgid ""
-"TIP: Hold down shift when clicking {protipAction} to bypass this "
-"confirmation entirely."
+msgid "TIP: Hold down shift when clicking {protipAction} to bypass this confirmation entirely."
 msgstr "提示：按住shift键点击{protipAction}可以完全绕过此确认。"
 
 #: src/components/modals/UserSettingsModal/Notifications.tsx:72
-msgid ""
-"To disable notifications, please change the setting in your browser "
-"settings. Notifications cannot be disabled programmatically."
+msgid "To disable notifications, please change the setting in your browser settings. Notifications cannot be disabled programmatically."
 msgstr "要禁用通知，请在浏览器设置中更改设置。通知无法通过编程方式禁用。"
 
 #: src/components/message/Message.tsx:223
@@ -1787,9 +1744,7 @@ msgstr "无法复制到剪贴板"
 
 #: src/components/context/MessageDB.bak.tsx:3482
 #: src/services/SpaceService.ts:537
-msgid ""
-"Unable to leave space due to incomplete configuration. The space data may be"
-" corrupted."
+msgid "Unable to leave space due to incomplete configuration. The space data may be corrupted."
 msgstr "由于配置不完整，无法离开Space。空间数据可能已损坏。"
 
 #: src/utils/imageProcessing/errors.ts:33
@@ -1823,9 +1778,9 @@ msgstr "未知时间"
 #: src/components/context/MessageDB.bak.tsx:3043
 #: src/components/context/MessageDB.bak.tsx:4122
 #: src/components/context/MessageDB.bak.tsx:5292
-#: src/components/direct/DirectMessage.tsx:129
-#: src/components/direct/DirectMessage.tsx:144
-#: src/components/direct/DirectMessage.tsx:328
+#: src/components/direct/DirectMessage.tsx:127
+#: src/components/direct/DirectMessage.tsx:142
+#: src/components/direct/DirectMessage.tsx:326
 #: src/components/message/MessageComposer.tsx:335
 #: src/components/message/MessageComposer.tsx:342
 #: src/components/message/MessagePreview.tsx:41
@@ -1845,8 +1800,10 @@ msgstr "未知时间"
 #: src/hooks/business/search/useSearchResultDisplayDM.ts:33
 #: src/hooks/business/search/useSearchResultDisplaySpace.ts:45
 #: src/hooks/queries/userInfo/buildUserInfoFetcher.ts:15
-#: src/services/EncryptionService.ts:138 src/services/MessageService.ts:785
-#: src/services/MessageService.ts:926 src/services/MessageService.ts:945
+#: src/services/EncryptionService.ts:138
+#: src/services/MessageService.ts:785
+#: src/services/MessageService.ts:926
+#: src/services/MessageService.ts:945
 #: src/services/MessageService.ts:2260
 msgid "Unknown User"
 msgstr "未知用户"
@@ -1877,16 +1834,12 @@ msgstr "取消置顶此帖子"
 msgid "Unpinned!"
 msgstr "已取消置顶！"
 
-#: src/components/direct/DirectMessage.tsx:513
-msgid ""
-"Until you reply, this sender will not see your display name or profile "
-"picture"
+#: src/components/direct/DirectMessage.tsx:511
+msgid "Until you reply, this sender will not see your display name or profile picture"
 msgstr "在您回复之前，此发件人将无法看到您的显示名称或个人资料图片"
 
 #: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:442
-msgid ""
-"Update kick records for all members. Use this if kicked users still appear "
-"active to some members."
+msgid "Update kick records for all members. Use this if kicked users still appear active to some members."
 msgstr "更新所有成员的踢出记录。如果被踢的用户仍然在某些成员中显示为活跃，请使用此功能。"
 
 #: src/components/modals/SpaceSettingsModal/Account.tsx:112
@@ -1922,7 +1875,8 @@ msgstr "用户地址在这里"
 msgid "User does not exist."
 msgstr "用户不存在。"
 
-#: src/components/space/Channel.tsx:329 src/components/space/Channel.tsx:752
+#: src/components/space/Channel.tsx:331
+#: src/components/space/Channel.tsx:754
 msgid "Username or Address"
 msgstr "用户名或地址"
 
@@ -1944,19 +1898,11 @@ msgid "What's on your mind today?"
 msgstr "今天你在想什么？"
 
 #: src/components/modals/UserSettingsModal/Privacy.tsx:58
-msgid ""
-"When enabled, synchronizes your user data, Spaces, and Space keys between "
-"devices. Enabling this increases metadata visibility of your account, which "
-"can reveal when you have joined new Spaces, although not the Spaces you have"
-" joined."
-msgstr ""
-"启用时，在设备之间同步您的用户数据、空间和空间密钥。启用此功能会增加您帐户的元数据可见性，这可能会揭示您何时加入新空间，尽管不会显示您已加入的空间。"
+msgid "When enabled, synchronizes your user data, Spaces, and Space keys between devices. Enabling this increases metadata visibility of your account, which can reveal when you have joined new Spaces, although not the Spaces you have joined."
+msgstr "启用时，在设备之间同步您的用户数据、空间和空间密钥。启用此功能会增加您帐户的元数据可见性，这可能会揭示您何时加入新空间，尽管不会显示您已加入的空间。"
 
 #: src/components/modals/SpaceSettingsModal/General.tsx:214
-msgid ""
-"When messages are signed, senders confirm they come from their key. When "
-"messages aren't signed, senders have plausible deniability. This setting "
-"applies to all messages in this Space."
+msgid "When messages are signed, senders confirm they come from their key. When messages aren't signed, senders have plausible deniability. This setting applies to all messages in this Space."
 msgstr "当消息被签名时，发送者确认它们来自他们的密钥。当消息未被签名时，发送者有合理的否认权。此设置适用于此空间中的所有消息。"
 
 #: src/components/modals/SpaceSettingsModal/Account.tsx:194
@@ -1972,42 +1918,26 @@ msgid "When someone mentions you directly"
 msgstr "当有人直接提及您时"
 
 #: src/components/modals/CreateSpaceModal.tsx:142
-msgid ""
-"When this setting is enabled, invite links will automatically allow a user "
-"to join your Space. When it is not enabled, users following an invite link "
-"will send you a request to join your Space that you must manually approve. "
-"Public links require some key material to be present in the link – be aware "
-"that possession of a public Space link can allow anyone with the link to "
-"read messages on the Space for the duration of the link being valid."
-msgstr ""
-"当此设置启用时，邀请链接将自动允许用户加入您的空间。当未启用时，跟随邀请链接的用户将向您发送请求以加入您的空间，您必须手动批准。公共链接要求链接中存在一些关键材料"
-" - 请注意，拥有公共空间链接可以允许任何拥有该链接的人在链接有效期间阅读空间中的消息。"
+msgid "When this setting is enabled, invite links will automatically allow a user to join your Space. When it is not enabled, users following an invite link will send you a request to join your Space that you must manually approve. Public links require some key material to be present in the link – be aware that possession of a public Space link can allow anyone with the link to read messages on the Space for the duration of the link being valid."
+msgstr "当此设置启用时，邀请链接将自动允许用户加入您的空间。当未启用时，跟随邀请链接的用户将向您发送请求以加入您的空间，您必须手动批准。公共链接要求链接中存在一些关键材料 - 请注意，拥有公共空间链接可以允许任何拥有该链接的人在链接有效期间阅读空间中的消息。"
 
 #: src/components/onboarding/Onboarding.tsx:143
-msgid ""
-"When using Quorum on a browser, your messages are saved locally to your "
-"browser."
+msgid "When using Quorum on a browser, your messages are saved locally to your browser."
 msgstr "在浏览器上使用 Quorum 时，您的消息会保存在本地浏览器中。"
 
 #: src/components/modals/ConversationSettingsModal.tsx:184
-msgid ""
-"When you sign a message, you are confirming that it comes from your key. "
-"When you don't sign a message, you have plausible deniability. The default "
-"for all conversations can be changed in User Settings."
+msgid "When you sign a message, you are confirming that it comes from your key. When you don't sign a message, you have plausible deniability. The default for all conversations can be changed in User Settings."
 msgstr "当您签署一条消息时，您确认它来自您的密钥。当您不签署消息时，您有合理的否认权。所有对话的默认设置可以在用户设置中更改。"
 
 #: src/components/modals/UserSettingsModal/Privacy.tsx:77
-msgid ""
-"When you sign a message, you are confirming that it comes from your key. "
-"When you don't sign a message, you have plausible deniability. You can "
-"control this setting for each conversation and message individually."
+msgid "When you sign a message, you are confirming that it comes from your key. When you don't sign a message, you have plausible deniability. You can control this setting for each conversation and message individually."
 msgstr "当您签署一条消息时，您确认它来自您的密钥。当您不签署消息时，您有合理的否认权。您可以单独控制每个对话和消息的此设置。"
 
 #: src/components/message/Message.tsx:226
 msgid "Yesterday at {timeFormatted}"
 msgstr "昨天 {0}"
 
-#: src/components/direct/DirectMessage.tsx:260
+#: src/components/direct/DirectMessage.tsx:258
 #: src/hooks/business/search/useBatchSearchResultsDisplay.ts:139
 msgid "You"
 msgstr "你"
@@ -2017,19 +1947,15 @@ msgid "You are already a member of this Space."
 msgstr "您已经是此空间的成员。"
 
 #: src/components/modals/NewDirectMessageModal.tsx:149
-msgid ""
-"You can change this later for this conversation by clicking the lock icon in"
-" the Conversation view."
+msgid "You can change this later for this conversation by clicking the lock icon in the Conversation view."
 msgstr "您可以通过点击对话视图中的锁图标稍后更改此对话的设置。"
 
 #: src/components/modals/GroupEditorModal.tsx:113
-msgid ""
-"You cannot delete a group that contains channels. Delete all {channelCount} "
-"channels in this group first."
+msgid "You cannot delete a group that contains channels. Delete all {channelCount} channels in this group first."
 msgstr "你不能删除包含频道的组。请先删除该组中的所有{channelCount}个频道。"
 
 #: src/components/message/MessageComposer.tsx:221
-#: src/components/space/Channel.tsx:723
+#: src/components/space/Channel.tsx:725
 msgid "You cannot post in this channel"
 msgstr "你不能在此频道中发布"
 
@@ -2047,9 +1973,7 @@ msgid "You have new unread messages"
 msgstr "你有新的未读消息"
 
 #: src/components/modals/SpaceSettingsModal/Account.tsx:218
-msgid ""
-"You won't be able to rejoin unless you are re-invited. Your existing "
-"messages will NOT be deleted."
+msgid "You won't be able to rejoin unless you are re-invited. Your existing messages will NOT be deleted."
 msgstr "除非您被重新邀请，否则您将无法重新加入。您现有的消息将不会被删除。"
 
 #: src/components/notifications/NotificationPanel.tsx:138
@@ -2062,10 +1986,7 @@ msgid "You're all set. Welcome to Quorum!"
 msgstr "一切就绪 欢迎来到法定人数"
 
 #: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:438
-msgid ""
-"You're not listed in this Space's members. Correcting this will add you to "
-"the Space Members list (stores your profile locally with your inbox "
-"address)."
+msgid "You're not listed in this Space's members. Correcting this will add you to the Space Members list (stores your profile locally with your inbox address)."
 msgstr "您不在此空间的成员列表中。纠正此问题将把您添加到空间成员列表中（将您的个人资料与您的收件箱地址本地存储）。"
 
 #: src/components/message/InviteLink.tsx:47
@@ -2074,27 +1995,19 @@ msgid "You've been invited to join a Space"
 msgstr "你已被邀请加入一个空间"
 
 #: src/hooks/platform/files/useFileDownload.native.ts:79
-msgid ""
-"Your device doesn't support automatic file downloads. Your private key will "
-"be copied to clipboard so you can save it manually."
+msgid "Your device doesn't support automatic file downloads. Your private key will be copied to clipboard so you can save it manually."
 msgstr "您的设备不支持自动文件下载。您的私钥将被复制到剪贴板，以便您手动保存。"
 
 #: src/hooks/platform/files/useFileDownload.native.ts:97
-msgid ""
-"Your private key has been copied to clipboard. Save it as \"AccountID.key\" "
-"(you can find your Account ID in Settings later). NEVER share this key!"
+msgid "Your private key has been copied to clipboard. Save it as \"AccountID.key\" (you can find your Account ID in Settings later). NEVER share this key!"
 msgstr "您的私钥已复制到剪贴板。将其保存为“AccountID.key”（您可以稍后在设置中找到您的帐户 ID）。切勿分享此密钥！"
 
 #: src/utils/imageProcessing/errors.ts:40
-msgid ""
-"Your profile image size must be {maxSize} or less and must be a PNG, JPG, or"
-" JPEG file extension."
+msgid "Your profile image size must be {maxSize} or less and must be a PNG, JPG, or JPEG file extension."
 msgstr "您的个人资料图像大小必须为 {maxSize} 或更小，并且必须是 PNG、JPG 或 JPEG 文件扩展名。"
 
 #: src/components/onboarding/Onboarding.native.tsx:369
-msgid ""
-"Your profile image size must be 2MB or less and must be a PNG, JPG, or JPEG "
-"file extension."
+msgid "Your profile image size must be 2MB or less and must be a PNG, JPG, or JPEG file extension."
 msgstr "您的个人资料图片大小必须为 2MB 或更小，并且必须是 PNG、JPG 或 JPEG 文件扩展名。"
 
 #: src/components/modals/SpaceSettingsModal/Account.tsx:149
@@ -2108,33 +2021,3 @@ msgstr "YouTube 视频"
 #: src/components/ui/YouTubeFacade.tsx:115
 msgid "YouTube Video Thumbnail"
 msgstr "YouTube 视频缩略图"
-
-#~ msgid "{0} pinned message"
-#~ msgstr "{0} 条置顶消息"
-
-#~ msgid "{0} pinned messages"
-#~ msgstr "{0} 条置顶消息"
-
-#~ msgid ""
-#~ "Are you sure you want to leave this Space? You won't be able to rejoin "
-#~ "unless you are re-invited. Your existing messages will NOT be deleted."
-#~ msgstr "您确定要离开此空间吗？您将无法重新加入，除非您被重新邀请。您现有的消息将不会被删除。"
-
-#~ msgid "Delete Current Link"
-#~ msgstr "删除当前链接"
-
-#~ msgid "Delete Link"
-#~ msgstr "删除链接"
-
-#~ msgid "Delete Public Invite Link"
-#~ msgstr "删除公共邀请链接"
-
-#~ msgid ""
-#~ "Sync kick status for previously kicked users. This verifies kicks without "
-#~ "posting visible messages."
-#~ msgstr "同步之前被踢出用户的踢出状态。这将验证踢出而不发布可见消息。"
-
-#~ msgid ""
-#~ "This will permanently delete the current public invite link. Anyone who has "
-#~ "this link will no longer be able to use it to join your Space."
-#~ msgstr "这将永久删除当前的公共邀请链接。拥有此链接的任何人将不再能够使用它加入您的空间。"

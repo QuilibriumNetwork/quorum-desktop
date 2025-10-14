@@ -31,7 +31,7 @@ msgid "No Role - {count}"
 msgstr "No Role - {count}"
 
 #. js-lingui-explicit-id
-#: src/components/space/Channel.tsx:701
+#: src/components/space/Channel.tsx:703
 msgid "Send a message to #{channel_name}"
 msgstr "Send a message to #{channel_name}"
 
@@ -67,7 +67,7 @@ msgid "{user} has been kicked"
 msgstr "{user} has been kicked"
 
 #. js-lingui-explicit-id
-#: src/components/direct/DirectMessage.tsx:525
+#: src/components/direct/DirectMessage.tsx:523
 msgid "Send a message to {user}"
 msgstr "Send a message to {user}"
 
@@ -397,6 +397,10 @@ msgstr "Channel Icon"
 msgid "Channel Managers"
 msgstr "Channel Managers"
 
+#: src/components/space/Channel.tsx:912
+msgid "Channel members"
+msgstr "Channel members"
+
 #: src/components/modals/ChannelEditorModal.tsx:96
 msgid "Channel Name"
 msgstr "Channel Name"
@@ -424,7 +428,7 @@ msgstr "Choose your preferred theme for Quorum."
 #: src/components/modals/SpaceSettingsModal/Account.tsx:184
 #: src/components/primitives/Select/Select.native.tsx:37
 #: src/components/primitives/Select/Select.web.tsx:31
-#: src/components/space/IconPicker/IconPicker.web.tsx:140
+#: src/components/space/IconPicker/IconPicker.web.tsx:141
 msgid "Clear"
 msgstr "Clear"
 
@@ -469,7 +473,7 @@ msgstr "Config Key"
 msgid "Connecting"
 msgstr "Connecting"
 
-#: src/components/direct/DirectMessage.tsx:415
+#: src/components/direct/DirectMessage.tsx:413
 msgid "Conversation settings"
 msgstr "Conversation settings"
 
@@ -485,9 +489,9 @@ msgstr "Conversation Settings"
 msgid "Copied!"
 msgstr "Copied!"
 
-#: src/components/direct/DirectMessage.tsx:266
-#: src/components/direct/DirectMessage.tsx:396
-#: src/components/direct/DirectMessage.tsx:468
+#: src/components/direct/DirectMessage.tsx:264
+#: src/components/direct/DirectMessage.tsx:394
+#: src/components/direct/DirectMessage.tsx:466
 #: src/components/modals/UserSettingsModal/General.tsx:118
 #: src/components/user/UserProfile.tsx:108
 #: src/components/user/UserStatus.tsx:48
@@ -669,7 +673,7 @@ msgstr "Display Name"
 msgid "Display name is required"
 msgstr "Display name is required"
 
-#: src/components/ui/MobileDrawer.tsx:144
+#: src/components/ui/MobileDrawer.tsx:143
 msgid "Drawer"
 msgstr "Drawer"
 
@@ -1125,8 +1129,8 @@ msgstr "Manual Backup Required"
 msgid "Mark all as read"
 msgstr "Mark all as read"
 
-#: src/components/direct/DirectMessage.tsx:429
-#: src/components/space/Channel.tsx:595
+#: src/components/direct/DirectMessage.tsx:427
+#: src/components/space/Channel.tsx:597
 msgid "Members List"
 msgstr "Members List"
 
@@ -1174,8 +1178,9 @@ msgstr "No pinned messages yet"
 msgid "No unread mentions"
 msgstr "No unread mentions"
 
-#: src/components/space/Channel.tsx:342
-#: src/components/space/Channel.tsx:765
+#: src/components/space/Channel.tsx:344
+#: src/components/space/Channel.tsx:767
+#: src/components/space/Channel.tsx:938
 msgid "No users found!"
 msgstr "No users found!"
 
@@ -1190,7 +1195,7 @@ msgstr "Notification permission not granted"
 #: src/components/modals/SpaceSettingsModal/Account.tsx:171
 #: src/components/modals/UserSettingsModal/Navigation.tsx:17
 #: src/components/modals/UserSettingsModal/Notifications.tsx:24
-#: src/components/space/Channel.tsx:569
+#: src/components/space/Channel.tsx:571
 msgid "Notifications"
 msgstr "Notifications"
 
@@ -1309,7 +1314,7 @@ msgstr "Pinned"
 msgid "Pinned by {0}"
 msgstr "Pinned by {0}"
 
-#: src/components/space/Channel.tsx:534
+#: src/components/space/Channel.tsx:536
 msgid "Pinned Messages"
 msgstr "Pinned Messages"
 
@@ -1479,13 +1484,17 @@ msgstr "Search in this Space"
 msgid "Search in this Space..."
 msgstr "Search in this Space..."
 
-#: src/components/space/Channel.tsx:613
+#: src/components/space/Channel.tsx:615
 msgid "Search Messages"
 msgstr "Search Messages"
 
 #: src/components/search/SearchBar.tsx:36
 msgid "Search messages..."
 msgstr "Search messages..."
+
+#: src/components/space/Channel.tsx:919
+msgid "Search Username or Address"
+msgstr "Search Username or Address"
 
 #: src/components/search/SearchResults.tsx:82
 msgid "Searching..."
@@ -1777,9 +1786,9 @@ msgstr "Unknown time"
 #: src/components/context/MessageDB.bak.tsx:3043
 #: src/components/context/MessageDB.bak.tsx:4122
 #: src/components/context/MessageDB.bak.tsx:5292
-#: src/components/direct/DirectMessage.tsx:129
-#: src/components/direct/DirectMessage.tsx:144
-#: src/components/direct/DirectMessage.tsx:328
+#: src/components/direct/DirectMessage.tsx:127
+#: src/components/direct/DirectMessage.tsx:142
+#: src/components/direct/DirectMessage.tsx:326
 #: src/components/message/MessageComposer.tsx:335
 #: src/components/message/MessageComposer.tsx:342
 #: src/components/message/MessagePreview.tsx:41
@@ -1833,7 +1842,7 @@ msgstr "Unpin this post"
 msgid "Unpinned!"
 msgstr "Unpinned!"
 
-#: src/components/direct/DirectMessage.tsx:513
+#: src/components/direct/DirectMessage.tsx:511
 msgid "Until you reply, this sender will not see your display name or profile picture"
 msgstr "Until you reply, this sender will not see your display name or profile picture"
 
@@ -1874,8 +1883,8 @@ msgstr "User address here"
 msgid "User does not exist."
 msgstr "User does not exist."
 
-#: src/components/space/Channel.tsx:329
-#: src/components/space/Channel.tsx:752
+#: src/components/space/Channel.tsx:331
+#: src/components/space/Channel.tsx:754
 msgid "Username or Address"
 msgstr "Username or Address"
 
@@ -1936,7 +1945,7 @@ msgstr "When you sign a message, you are confirming that it comes from your key.
 msgid "Yesterday at {timeFormatted}"
 msgstr "Yesterday at {timeFormatted}"
 
-#: src/components/direct/DirectMessage.tsx:260
+#: src/components/direct/DirectMessage.tsx:258
 #: src/hooks/business/search/useBatchSearchResultsDisplay.ts:139
 msgid "You"
 msgstr "You"
@@ -1954,7 +1963,7 @@ msgid "You cannot delete a group that contains channels. Delete all {channelCoun
 msgstr "You cannot delete a group that contains channels. Delete all {channelCount} channels in this group first."
 
 #: src/components/message/MessageComposer.tsx:221
-#: src/components/space/Channel.tsx:723
+#: src/components/space/Channel.tsx:725
 msgid "You cannot post in this channel"
 msgstr "You cannot post in this channel"
 

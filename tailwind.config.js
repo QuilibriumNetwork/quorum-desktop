@@ -61,7 +61,6 @@ export default {
         warning: withOpacityValue('--warning'),
         success: withOpacityValue('--success'),
         info: withOpacityValue('--info'),
-
       },
 
       // === semantic variables === //

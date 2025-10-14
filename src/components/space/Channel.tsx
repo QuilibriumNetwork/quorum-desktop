@@ -20,6 +20,7 @@ import { useResponsiveLayoutContext } from '../context/ResponsiveLayoutProvider'
 import { useSidebar } from '../context/SidebarProvider';
 import { useModals } from '../context/ModalProvider';
 import { Button, Tooltip, Icon, Input } from '../primitives';
+import { MobileDrawer } from '../ui';
 import { getIconColorHex } from './IconPicker/types';
 import MessageComposer, {
   MessageComposerRef,
@@ -899,6 +900,90 @@ const Channel: React.FC<ChannelProps> = ({
             </div>
           </div>
         </>
+      )}
+
+      {/* Mobile drawer for user list below 1024px */}
+      {!isDesktop && (
+        <MobileDrawer
+          isOpen={showUsers}
+          onClose={() => setShowUsers(false)}
+          showCloseButton={false}
+          enableSwipeToClose={true}
+          ariaLabel={t`Channel members`}
+        >
+          {/* Mobile Search Input - matches search results style */}
+          <div className="sticky top-0 z-10" style={{ backgroundColor: 'var(--surface-0)' }}>
+            <div className="search-mobile-header p-4">
+              <Input
+                type="search"
+                placeholder={t`Search Username or Address`}
+                value={searchInput}
+                onChange={(value: string) => {
+                  setSearchInput(value);
+                }}
+                className="search-mobile-input"
+                autoComplete="off"
+                clearable={true}
+              />
+            </div>
+            {activeSearch && generateSidebarContent().map(section => ({
+              ...section,
+              members: section.members.filter(member =>
+                member.displayName?.toLowerCase().includes(activeSearch.toLowerCase()) ||
+                member.address?.toLowerCase().includes(activeSearch.toLowerCase())
+              )
+            })).filter(section => section.members.length > 0).length === 0 && (
+              <div className="px-4 pb-3 -mt-2">
+                <div className="text-xs text-subtle">
+                  {t`No users found!`}
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* User List */}
+          <div className="overflow-y-auto">
+            {generateSidebarContent().map(section => ({
+              ...section,
+              members: activeSearch
+                ? section.members.filter(member =>
+                    member.displayName?.toLowerCase().includes(activeSearch.toLowerCase()) ||
+                    member.address?.toLowerCase().includes(activeSearch.toLowerCase())
+                  )
+                : section.members
+            })).filter(section => section.members.length > 0).map((section) => (
+              <div className="flex flex-col mb-2" key={section.title}>
+                <div className="mb-3 text-xs pb-1 border-b border-surface-4 px-4 pt-3">
+                  {section.title}
+                </div>
+                {section.members.map((member) => (
+                  <div
+                    key={member.address}
+                    className="w-full flex flex-row items-center mb-2 px-4 cursor-pointer py-1"
+                    onClick={(event) => userProfileModal.handleUserClick({
+                      address: member.address,
+                      displayName: member.displayName,
+                      userIcon: member.userIcon,
+                    }, event)}
+                  >
+                    <UserAvatar
+                      userIcon={member.userIcon}
+                      displayName={member.displayName}
+                      address={member.address}
+                      size={30}
+                      className="opacity-80"
+                    />
+                    <div className="flex flex-col ml-2 text-subtle">
+                      <span className="text-md font-bold">
+                        {member.displayName}
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ))}
+          </div>
+        </MobileDrawer>
       )}
     </div>
   );
