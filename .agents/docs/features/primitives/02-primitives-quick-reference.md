@@ -368,6 +368,45 @@ Fast lookup guide for all primitive components with essential props and examples
 </OverlayBackdrop>
 ```
 
+### Portal
+
+```tsx
+<Portal>
+  {/* Content rendered to document.body, escaping parent constraints */}
+  <div className="fixed bottom-4 right-4">
+    <Callout variant="success">Toast notification</Callout>
+  </div>
+</Portal>
+```
+
+**When to Use:**
+- Toast notifications
+- Right-aligned dropdowns that might be clipped
+- Overlays escaping stacking contexts
+- **NOT for modals** (use ModalProvider/Layout-Level instead)
+
+**Quick Examples:**
+
+```tsx
+// Toast notification
+<Portal>
+  <div className="fixed bottom-4 right-4">
+    <Callout variant="info" autoClose={5}>
+      Changes saved!
+    </Callout>
+  </div>
+</Portal>
+
+// Right-aligned dropdown (escaping overflow: hidden)
+{isOpen && (
+  <Portal>
+    <div style={{ position: 'fixed', top: buttonRect.bottom, right: buttonRect.right }}>
+      <DropdownContent />
+    </div>
+  </Portal>
+)}
+```
+
 ### Tooltip
 
 ```tsx
@@ -669,11 +708,13 @@ theme.colors.utilities.info; // Info
 | `<div style={{ padding: 16 }}>`           | `<Container padding="md">`                               |
 | Manual margin spacing between elements    | `<Spacer size="md" />`                                   |
 | Custom modal backdrop implementation      | `<ModalContainer>` or `<OverlayBackdrop>`                |
+| Using Portal for modals                   | Use ModalProvider or Layout-Level rendering instead      |
 | `style={{ color: '#000' }}` on Text       | `variant="strong"` or `color={theme.colors.text.strong}` |
 | Manual margin/padding for spacing         | Use Flex gap props or semantic components                |
 | CSS classes in React Native               | Use component props                                      |
 | Raw text outside Text components          | Always wrap text in Text components                      |
 | Custom alert/notification components      | `<Callout variant="info\|success\|warning\|error">`      |
+| Direct `createPortal()` usage             | Use `<Portal>` component for consistency                 |
 
 ## 🏗️ **View vs Flex Usage Pattern**
 
@@ -721,7 +762,7 @@ theme.colors.utilities.info; // Info
 
 ---
 
-_Last updated: 2025-09-14 14:30 UTC_
+_Last updated: 2025-10-14 - Added Portal primitive documentation_
 
 ---
 

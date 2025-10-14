@@ -720,6 +720,44 @@ Complete API reference for all primitive components. Use this for quick prop loo
 
 ---
 
+### Portal
+
+**Location**: `src/components/primitives/Portal/Portal.web.tsx`
+
+**Description**: Renders children into a portal at `document.body`, escaping parent container constraints. Used for overlays that need to break out of stacking contexts (toasts, right-aligned dropdowns).
+
+**Props**:
+- `children: ReactNode` - Content to render in portal (required)
+
+**When to Use**:
+- ✅ Toast notifications that need to appear above all content
+- ✅ Right-aligned dropdowns that might be clipped by parent containers with `overflow: hidden`
+- ✅ Overlays that need to escape stacking context issues
+- ❌ **NOT for modals** - Modals use rendering location (ModalProvider, Layout-Level), not portals
+
+**Example**:
+```tsx
+// Toast notification
+<Portal>
+  <div className="fixed bottom-4 right-4">
+    <Callout variant="success">Operation successful!</Callout>
+  </div>
+</Portal>
+
+// Right-aligned dropdown
+{isOpen && (
+  <Portal>
+    <div className="dropdown-panel" style={{ position: 'fixed', top, left }}>
+      {/* Dropdown content */}
+    </div>
+  </Portal>
+)}
+```
+
+**Note**: This is a web-only component. React Native would require a different implementation using a native portal library.
+
+---
+
 ### Tooltip
 
 **Location**: `src/components/primitives/Tooltip/Tooltip.tsx`
@@ -896,4 +934,4 @@ Complete API reference for all primitive components. Use this for quick prop loo
 ---
 
 _Created: 2025-10-08_
-_Last updated: 2025-10-10 - Added compact mode documentation for Select primitive_
+_Last updated: 2025-10-14 - Added Portal primitive documentation_

@@ -120,6 +120,7 @@ export const IconPicker: React.FC<IconPickerProps> = ({
         maxWidth={320}
         maxHeight={340}
         showCloseButton={false}
+        useMobileBottomSheet={false}
         style={{
           top: `${dropdownPosition.top}px`,
           left: `${dropdownPosition.left}px`,
@@ -133,14 +134,14 @@ export const IconPicker: React.FC<IconPickerProps> = ({
           <Button
             type="unstyled"
             onClick={handleClearIcon}
-            className="absolute top-2 right-2 flex items-center gap-1"
+            className="absolute top-2 right-2 flex items-center gap-1 hover:text-main"
             size="small"
           >
             <Icon name="times" />
             <Trans>Clear</Trans>
           </Button>
 
-          <FlexRow gap={3} justify="start" className="pt-8">
+          <FlexRow gap={3} justify="center" className="pt-8">
             {ICON_COLORS.map((colorOption) => (
               <ColorSwatch
                 key={colorOption.value}

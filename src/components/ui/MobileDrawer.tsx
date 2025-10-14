@@ -1,9 +1,8 @@
 // This is for mobile users using the web app, for the native app we have /primitives/Modal/Modal.native.tsx
 
 import React, { useState } from 'react';
-import { createPortal } from 'react-dom';
 import { t } from '@lingui/core/macro';
-import { Text, Button, OverlayBackdrop } from '../primitives';
+import { Text, Button, OverlayBackdrop, Portal } from '../primitives';
 import './MobileDrawer.scss';
 
 export interface MobileDrawerProps {
@@ -125,77 +124,78 @@ const MobileDrawer: React.FC<MobileDrawerProps> = ({
   if (!shouldRender) return null;
 
   // Render to document.body using portal to escape stacking context issues
-  return createPortal(
-    <OverlayBackdrop
-      visible={shouldRender}
-      onBackdropClick={handleClose}
-      zIndex="z-[10000]"
-      blur={false}
-      opacity={0.5}
-      closeOnBackdropClick={true}
-      className={`${isOpen && !isClosing ? 'opacity-100' : 'opacity-0'} transition-opacity duration-300 !items-end !justify-center`}
-    >
-      {/* Drawer */}
-      <div
-        ref={drawerRef}
-        className={`mobile-drawer ${isOpen && !isClosing ? 'mobile-drawer--open' : ''} ${isClosing ? 'mobile-drawer--closing' : ''} ${isDragging ? 'mobile-drawer--dragging' : ''}`}
-        role="dialog"
-        aria-modal="true"
-        aria-label={ariaLabel || title || t`Drawer`}
+  return (
+    <Portal>
+      <OverlayBackdrop
+        visible={shouldRender}
+        onBackdropClick={handleClose}
+        zIndex="z-[10000]"
+        blur={false}
+        opacity={0.5}
+        closeOnBackdropClick={true}
+        className={`${isOpen && !isClosing ? 'opacity-100' : 'opacity-0'} transition-opacity duration-300 !items-end !justify-center`}
       >
-        {/* Header area with handle and close button - touch handlers here for drag-to-close */}
+        {/* Drawer */}
         <div
-          className="mobile-drawer__header-area"
-          onTouchStart={handleTouchStart}
-          onTouchMove={handleTouchMove}
-          onTouchEnd={handleTouchEnd}
+          ref={drawerRef}
+          className={`mobile-drawer ${isOpen && !isClosing ? 'mobile-drawer--open' : ''} ${isClosing ? 'mobile-drawer--closing' : ''} ${isDragging ? 'mobile-drawer--dragging' : ''}`}
+          role="dialog"
+          aria-modal="true"
+          aria-label={ariaLabel || title || t`Drawer`}
         >
-        {/* Swipe handle indicator */}
-        {enableSwipeToClose && (
-          <div className="mobile-drawer__handle" aria-hidden="true" />
-        )}
+          {/* Header area with handle and close button - touch handlers here for drag-to-close */}
+          <div
+            className="mobile-drawer__header-area"
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd}
+          >
+          {/* Swipe handle indicator */}
+          {enableSwipeToClose && (
+            <div className="mobile-drawer__handle" aria-hidden="true" />
+          )}
 
-        {/* Header row with title and close button */}
-        <div className="mobile-drawer__header-row">
-          <div className="mobile-drawer__title-area">
-            {title && (
-              <Text
-                size="sm"
-                className="mobile-drawer__title"
-              >
-                {title}
-              </Text>
+          {/* Header row with title and close button */}
+          <div className="mobile-drawer__header-row">
+            <div className="mobile-drawer__title-area">
+              {title && (
+                <Text
+                  size="sm"
+                  className="mobile-drawer__title"
+                >
+                  {title}
+                </Text>
+              )}
+            </div>
+
+            {showCloseButton && (
+              <Button
+                type="unstyled"
+                onClick={handleClose}
+                iconName="times"
+                iconOnly
+                className="mobile-drawer__close-btn"
+              />
             )}
           </div>
 
-          {showCloseButton && (
-            <Button
-              type="unstyled"
-              onClick={handleClose}
-              iconName="times"
-              iconOnly
-              className="mobile-drawer__close-btn"
-            />
+          {/* Optional custom header content (e.g., emoji reactions) */}
+          {headerContent && (
+            <div className="mobile-drawer__header-content">
+              {headerContent}
+            </div>
           )}
         </div>
 
-        {/* Optional custom header content (e.g., emoji reactions) */}
-        {headerContent && (
-          <div className="mobile-drawer__header-content">
-            {headerContent}
-          </div>
-        )}
+        {/* Content */}
+        <div
+          className={`mobile-drawer__content ${!title ? 'mobile-drawer__content--no-header' : ''}`}
+        >
+          {children}
+        </div>
       </div>
-
-      {/* Content */}
-      <div
-        className={`mobile-drawer__content ${!title ? 'mobile-drawer__content--no-header' : ''}`}
-      >
-        {children}
-      </div>
-    </div>
-    </OverlayBackdrop>,
-    document.body
+      </OverlayBackdrop>
+    </Portal>
   );
 };
 

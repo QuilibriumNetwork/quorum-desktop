@@ -250,7 +250,9 @@ if (isMobile()) {
 
 4. **Primitives vs raw HTML**: Always prefer primitives for cross-platform compatibility
 
-5. **Internationalization**: Always wrap user-facing text in `<Trans>` from `@lingui/macro`
+5. **Portal usage**: Use `<Portal>` for overlays that need to escape parent containers (toasts, right-aligned dropdowns). DON'T use for modals - they use rendering location, not portals.
+
+6. **Internationalization**: Always wrap user-facing text in `<Trans>` from `@lingui/macro`
 
 ---
 
@@ -318,6 +320,7 @@ cmd.exe /c "cd /d D:\GitHub\Quilibrium\quorum-desktop && yarn build"
 | `Button` | Interactive buttons | `src/components/primitives/Button/` |
 | `Input` | Text inputs | `src/components/primitives/Input/` |
 | `Modal` / `ModalContainer` | Modal dialogs | `src/components/primitives/Modal/` |
+| `Portal` | Escape stacking context (toasts, right-aligned dropdowns) | `src/components/primitives/Portal/` |
 | `Callout` | Status messages | `src/components/primitives/Callout/` |
 | `Icon` | Icons | `src/components/primitives/Icon/` |
 | `Container` | Styled wrappers | `src/components/primitives/Container/` |

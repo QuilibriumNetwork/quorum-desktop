@@ -1,8 +1,7 @@
 import * as React from 'react';
 import NavMenu from './navbar/NavMenu';
 import { CloseButton } from './ui';
-import { ResponsiveContainer, Container, Callout } from './primitives';
-import { createPortal } from 'react-dom';
+import { ResponsiveContainer, Container, Callout, Portal } from './primitives';
 import CreateSpaceModal from './modals/CreateSpaceModal';
 import AddSpaceModal from './modals/AddSpaceModal';
 import ConfirmationModal from './modals/ConfirmationModal';
@@ -110,8 +109,8 @@ const Layout: React.FunctionComponent<{
         <ImageModalProvider showImageModal={showImageModal}>
           <ResponsiveContainer>
             {props.children}
-            {kickToast &&
-              createPortal(
+            {kickToast && (
+              <Portal>
                 <div
                   className="fixed bottom-4 right-4 max-w-[360px]"
                   style={{ zIndex: 2147483647 }}
@@ -125,9 +124,9 @@ const Layout: React.FunctionComponent<{
                   >
                     {kickToast.message}
                   </Callout>
-                </div>,
-                document.body
-              )}
+                </div>
+              </Portal>
+            )}
           </ResponsiveContainer>
         </ImageModalProvider>
       </ConfirmationModalProvider>

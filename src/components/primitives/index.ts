@@ -1,6 +1,7 @@
 // Layout Primitives
 export { ModalContainer } from './ModalContainer';
 export { OverlayBackdrop } from './OverlayBackdrop';
+export { Portal } from './Portal';
 export { Container } from './Container';
 export { FlexRow } from './FlexRow';
 export { FlexColumn } from './FlexColumn';

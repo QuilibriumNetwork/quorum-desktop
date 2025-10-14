@@ -7,7 +7,7 @@ Complete guide to the cross-platform primitive component system for React Native
 ### 🚀 **Getting Started**
 
 1. [**01-introduction-and-concepts.md**](./01-introduction-and-concepts.md) - Architecture overview, concepts, and philosophy
-2. [**02-primitives-AGENTS.md**](./02-primitives-AGENTS.md) - Comprehensive component reference with all props and examples
+2. [**02-primitives-quick-reference.md**](./02-primitives-quick-reference.md) - Comprehensive component reference with all props and examples
 3. [**03-when-to-use-primitives.md**](./03-when-to-use-primitives.md) - Decision framework for when to use vs avoid primitives
 
 ### 🔄 **Migration & Advanced**
@@ -25,7 +25,7 @@ Start with [01-introduction-and-concepts.md](./01-introduction-and-concepts.md) 
 
 ### **Need Component Reference?**
 
-Use [API-REFERENCE.md](./API-REFERENCE.md) for quick prop lookups, or [02-primitives-AGENTS.md](./02-primitives-AGENTS.md) for comprehensive component documentation with all props and examples.
+Use [API-REFERENCE.md](./API-REFERENCE.md) for quick prop lookups, or [02-primitives-quick-reference.md](./02-primitives-quick-reference.md) for comprehensive component documentation with all props and examples.
 
 ### **Architecture Decisions?**
 
@@ -144,7 +144,7 @@ Check [05-primitive-styling-guide.md](./05-primitive-styling-guide.md) for color
 
 ### **Modal & Overlay**
 
-- Modal, Tooltip, OverlayBackdrop, ModalContainer
+- Modal, ModalContainer, OverlayBackdrop, Portal, Tooltip
 
 ### **Messaging Components**
 
@@ -182,7 +182,7 @@ Check [05-primitive-styling-guide.md](./05-primitive-styling-guide.md) for color
 
 ---
 
-_Last updated: 2025-10-08_
+_Last updated: 2025-10-14 - Added Portal primitive_
 
 ---
 

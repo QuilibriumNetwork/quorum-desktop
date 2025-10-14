@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { createPortal } from 'react-dom';
 import { WebSelectProps } from './types';
 import { Icon } from '../Icon';
+import { Portal } from '../Portal';
 import { isValidIconName } from '../Icon/iconMapping';
 import { t } from '@lingui/core/macro';
 import './Select.scss';
@@ -91,7 +91,7 @@ const Select: React.FC<WebSelectProps> = ({
       top: `${top}px`,
       left: `${rect.left}px`,
       maxHeight: maxHeight || 240,
-      zIndex: 10001, // Higher than mobile drawer (10000) to ensure visibility
+      zIndex: 10200, // Higher than ModalContainer (10100) to work inside modals
       overflow: 'auto',
     };
 
@@ -346,201 +346,202 @@ const Select: React.FC<WebSelectProps> = ({
           />
         </button>
 
-        {isOpen && createPortal(
-          <div
-            ref={dropdownRef}
-            className="quorum-select__dropdown quorum-select__dropdown--fixed"
-            role="listbox"
-            style={dropdownStyle}
-            aria-label={placeholder}
-          >
-            {/* Select All / Clear All options for multiselect */}
-            {multiple && showSelectAllOption && allOptions.length > 0 && (
-              <div className="quorum-select__actions">
-                <div
-                  className="quorum-select__action"
-                  onClick={handleSelectAll}
-                  role="option"
-                >
-                  <Icon
-                    name="check-square"
-                    size="sm"
-                    className="quorum-select__action-icon"
-                  />
-                  <span>{selectAllLabel}</span>
-                </div>
-                <div
-                  className="quorum-select__action"
-                  onClick={handleClearAll}
-                  role="option"
-                >
-                  <Icon
-                    name="square"
-                    size="sm"
-                    className="quorum-select__action-icon"
-                  />
-                  <span>{clearAllLabel}</span>
-                </div>
-              </div>
-            )}
-            {groups
-              ? // Render grouped options
-                groups.map((group, groupIndex) => (
-                  <div key={groupIndex} className="quorum-select__group">
-                    <div className="quorum-select__group-label">
-                      {group.groupLabel}
-                    </div>
-                    {group.options.map((option) => {
-                      const isSelected = multiple
-                        ? (selectedValue as string[]).includes(option.value)
-                        : option.value === selectedValue;
-
-                      return (
-                        <div
-                          key={option.value}
-                          className={[
-                            'quorum-select__option',
-                            'quorum-select__option--grouped',
-                            isSelected && 'quorum-select__option--selected',
-                            option.disabled &&
-                              'quorum-select__option--disabled',
-                          ]
-                            .filter(Boolean)
-                            .join(' ')}
-                          onClick={() =>
-                            !option.disabled && handleSelect(option.value)
-                          }
-                          role="option"
-                          aria-selected={isSelected}
-                        >
-                          <div className="quorum-select__option-content">
-                            {/* Show checkbox for multiselect */}
-                            {multiple && (
-                              <Icon
-                                name={isSelected ? 'check-square' : 'square'}
-                                size="sm"
-                                className="quorum-select__checkbox"
-                              />
-                            )}
-                            {option.avatar && (
-                              <div
-                                className="quorum-select__option-avatar"
-                                style={{
-                                  backgroundImage: `url(${option.avatar})`,
-                                }}
-                              />
-                            )}
-                            {option.icon &&
-                              !option.avatar &&
-                              (isValidIconName(option.icon) ? (
-                                <Icon
-                                  name={option.icon}
-                                  size="sm"
-                                  className="text-subtle quorum-select__option-icon"
-                                />
-                              ) : (
-                                <span className="quorum-select__option-icon">
-                                  {option.icon}
-                                </span>
-                              ))}
-                            <div className="quorum-select__option-text">
-                              <span className="quorum-select__option-label">
-                                {option.label}
-                              </span>
-                              {option.subtitle && (
-                                <span className="quorum-select__option-subtitle">
-                                  {option.subtitle}
-                                </span>
-                              )}
-                            </div>
-                          </div>
-                          {/* Show checkmark for single select */}
-                          {!multiple && isSelected && (
-                            <Icon
-                              name="check"
-                              size="sm"
-                              className="quorum-select__checkmark"
-                            />
-                          )}
-                        </div>
-                      );
-                    })}
+        {isOpen && (
+          <Portal>
+            <div
+              ref={dropdownRef}
+              className="quorum-select__dropdown quorum-select__dropdown--fixed"
+              role="listbox"
+              style={dropdownStyle}
+              aria-label={placeholder}
+            >
+              {/* Select All / Clear All options for multiselect */}
+              {multiple && showSelectAllOption && allOptions.length > 0 && (
+                <div className="quorum-select__actions">
+                  <div
+                    className="quorum-select__action"
+                    onClick={handleSelectAll}
+                    role="option"
+                  >
+                    <Icon
+                      name="check-square"
+                      size="sm"
+                      className="quorum-select__action-icon"
+                    />
+                    <span>{selectAllLabel}</span>
                   </div>
-                ))
-              : // Render simple options
-                allOptions.map((option) => {
-                  const isSelected = multiple
-                    ? (selectedValue as string[]).includes(option.value)
-                    : option.value === selectedValue;
-
-                  return (
-                    <div
-                      key={option.value}
-                      className={[
-                        'quorum-select__option',
-                        isSelected && 'quorum-select__option--selected',
-                        option.disabled && 'quorum-select__option--disabled',
-                      ]
-                        .filter(Boolean)
-                        .join(' ')}
-                      onClick={() =>
-                        !option.disabled && handleSelect(option.value)
-                      }
-                      role="option"
-                      aria-selected={isSelected}
-                    >
-                      <div className="quorum-select__option-content">
-                        {/* Show checkbox for multiselect */}
-                        {multiple && (
-                          <Icon
-                            name={isSelected ? 'check-square' : 'square'}
-                            size="sm"
-                            className="quorum-select__checkbox"
-                          />
-                        )}
-                        {option.avatar && (
-                          <div
-                            className="quorum-select__option-avatar"
-                            style={{ backgroundImage: `url(${option.avatar})` }}
-                          />
-                        )}
-                        {option.icon &&
-                          !option.avatar &&
-                          (isValidIconName(option.icon) ? (
-                            <Icon
-                              name={option.icon}
-                              size="sm"
-                              className="text-subtle quorum-select__option-icon"
-                            />
-                          ) : (
-                            <span className="quorum-select__option-icon">
-                              {option.icon}
-                            </span>
-                          ))}
-                        <div className="quorum-select__option-text">
-                          <span className="quorum-select__option-label">
-                            {option.label}
-                          </span>
-                          {option.subtitle && (
-                            <span className="quorum-select__option-subtitle">
-                              {option.subtitle}
-                            </span>
-                          )}
-                        </div>
+                  <div
+                    className="quorum-select__action"
+                    onClick={handleClearAll}
+                    role="option"
+                  >
+                    <Icon
+                      name="square"
+                      size="sm"
+                      className="quorum-select__action-icon"
+                    />
+                    <span>{clearAllLabel}</span>
+                  </div>
+                </div>
+              )}
+              {groups
+                ? // Render grouped options
+                  groups.map((group, groupIndex) => (
+                    <div key={groupIndex} className="quorum-select__group">
+                      <div className="quorum-select__group-label">
+                        {group.groupLabel}
                       </div>
-                      {/* Show checkmark for single select */}
-                      {!multiple && isSelected && (
-                        <Icon
-                          name="check"
-                          size="sm"
-                          className="quorum-select__checkmark"
-                        />
-                      )}
+                      {group.options.map((option) => {
+                        const isSelected = multiple
+                          ? (selectedValue as string[]).includes(option.value)
+                          : option.value === selectedValue;
+
+                        return (
+                          <div
+                            key={option.value}
+                            className={[
+                              'quorum-select__option',
+                              'quorum-select__option--grouped',
+                              isSelected && 'quorum-select__option--selected',
+                              option.disabled &&
+                                'quorum-select__option--disabled',
+                            ]
+                              .filter(Boolean)
+                              .join(' ')}
+                            onClick={() =>
+                              !option.disabled && handleSelect(option.value)
+                            }
+                            role="option"
+                            aria-selected={isSelected}
+                          >
+                            <div className="quorum-select__option-content">
+                              {/* Show checkbox for multiselect */}
+                              {multiple && (
+                                <Icon
+                                  name={isSelected ? 'check-square' : 'square'}
+                                  size="sm"
+                                  className="quorum-select__checkbox"
+                                />
+                              )}
+                              {option.avatar && (
+                                <div
+                                  className="quorum-select__option-avatar"
+                                  style={{
+                                    backgroundImage: `url(${option.avatar})`,
+                                  }}
+                                />
+                              )}
+                              {option.icon &&
+                                !option.avatar &&
+                                (isValidIconName(option.icon) ? (
+                                  <Icon
+                                    name={option.icon}
+                                    size="sm"
+                                    className="text-subtle quorum-select__option-icon"
+                                  />
+                                ) : (
+                                  <span className="quorum-select__option-icon">
+                                    {option.icon}
+                                  </span>
+                                ))}
+                              <div className="quorum-select__option-text">
+                                <span className="quorum-select__option-label">
+                                  {option.label}
+                                </span>
+                                {option.subtitle && (
+                                  <span className="quorum-select__option-subtitle">
+                                    {option.subtitle}
+                                  </span>
+                                )}
+                              </div>
+                            </div>
+                            {/* Show checkmark for single select */}
+                            {!multiple && isSelected && (
+                              <Icon
+                                name="check"
+                                size="sm"
+                                className="quorum-select__checkmark"
+                              />
+                            )}
+                          </div>
+                        );
+                      })}
                     </div>
-                  );
-                })}
-          </div>,
-          document.body
+                  ))
+                : // Render simple options
+                  allOptions.map((option) => {
+                    const isSelected = multiple
+                      ? (selectedValue as string[]).includes(option.value)
+                      : option.value === selectedValue;
+
+                    return (
+                      <div
+                        key={option.value}
+                        className={[
+                          'quorum-select__option',
+                          isSelected && 'quorum-select__option--selected',
+                          option.disabled && 'quorum-select__option--disabled',
+                        ]
+                          .filter(Boolean)
+                          .join(' ')}
+                        onClick={() =>
+                          !option.disabled && handleSelect(option.value)
+                        }
+                        role="option"
+                        aria-selected={isSelected}
+                      >
+                        <div className="quorum-select__option-content">
+                          {/* Show checkbox for multiselect */}
+                          {multiple && (
+                            <Icon
+                              name={isSelected ? 'check-square' : 'square'}
+                              size="sm"
+                              className="quorum-select__checkbox"
+                            />
+                          )}
+                          {option.avatar && (
+                            <div
+                              className="quorum-select__option-avatar"
+                              style={{ backgroundImage: `url(${option.avatar})` }}
+                            />
+                          )}
+                          {option.icon &&
+                            !option.avatar &&
+                            (isValidIconName(option.icon) ? (
+                              <Icon
+                                name={option.icon}
+                                size="sm"
+                                className="text-subtle quorum-select__option-icon"
+                              />
+                            ) : (
+                              <span className="quorum-select__option-icon">
+                                {option.icon}
+                              </span>
+                            ))}
+                          <div className="quorum-select__option-text">
+                            <span className="quorum-select__option-label">
+                              {option.label}
+                            </span>
+                            {option.subtitle && (
+                              <span className="quorum-select__option-subtitle">
+                                {option.subtitle}
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                        {/* Show checkmark for single select */}
+                        {!multiple && isSelected && (
+                          <Icon
+                            name="check"
+                            size="sm"
+                            className="quorum-select__checkmark"
+                          />
+                        )}
+                      </div>
+                    );
+                  })}
+            </div>
+          </Portal>
         )}
       </div>
 
