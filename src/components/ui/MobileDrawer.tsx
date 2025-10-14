@@ -130,8 +130,7 @@ const MobileDrawer: React.FC<MobileDrawerProps> = ({
         visible={shouldRender}
         onBackdropClick={handleClose}
         zIndex="z-[10000]"
-        blur={false}
-        opacity={0.5}
+        blur={true}
         closeOnBackdropClick={true}
         className={`${isOpen && !isClosing ? 'opacity-100' : 'opacity-0'} transition-opacity duration-300 !items-end !justify-center`}
       >
