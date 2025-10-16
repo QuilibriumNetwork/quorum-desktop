@@ -82,12 +82,14 @@ export default {
 
         icon: 'var(--color-bg-icon)',
         input: 'var(--color-bg-input)',
+        field: 'var(--color-field-bg)',
         card: 'var(--color-bg-card)',
         tooltip: 'var(--color-bg-tooltip)',
       },
 
       borderColor: {
         DEFAULT: 'var(--color-border-default)',
+        subtle: 'var(--color-border-subtle)',
         strong: 'var(--color-border-strong)',
         stronger: 'var(--color-border-stronger)',
       },

@@ -545,13 +545,13 @@ const Channel: React.FC<ChannelProps> = ({
                   color={iconColor}
                   style={!iconColor ? { color: 'var(--color-text-subtle)' } : undefined}
                 />
-                <span className="text-main font-medium flex-shrink truncate">
+                <span className="text-main font-bold flex-shrink truncate">
                   {channel?.channelName}
                 </span>
                 {channel?.channelTopic && (
                   <>
-                    <span className="hidden xs:inline text-subtle flex-shrink-0">|</span>
-                    <span className="hidden xs:inline text-subtle flex-shrink truncate">
+                    <span className="hidden xs:inline text-subtle flex-shrink-0 font-normal">|</span>
+                    <span className="hidden xs:inline text-subtle flex-shrink truncate font-normal">
                       {channel.channelTopic}
                     </span>
                   </>

@@ -88,6 +88,11 @@
   }
 }
 
+// Light theme only - add border to composer row
+html:not(.dark) .message-composer-row {
+  border: $border solid var(--color-border-subtle);
+}
+
 .message-composer-row.has-reply {
   border-top-left-radius: 0;
   border-top-right-radius: 0;

@@ -69,3 +69,17 @@
     }
   }
 }
+
+// Light theme only - add borders and rounded top-left corner to container
+html:not(.dark) .direct-messages-container-channels {
+  border-top: $border solid var(--color-border-subtle);
+  border-left: $border solid var(--color-border-subtle);
+  border-top-left-radius: $rounded-xl;
+
+  // Remove borders and border-radius on mobile/tablet
+  @media (max-width: 1023px) {
+    border-top: none;
+    border-left: none;
+    border-top-left-radius: 0;
+  }
+}

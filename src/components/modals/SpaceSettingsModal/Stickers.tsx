@@ -74,7 +74,7 @@ const Stickers: React.FunctionComponent<StickersProps> = ({
           </Callout>
         )}
         {stickers.length > 0 && (
-          <ScrollContainer height="md" className="mt-4">
+          <ScrollContainer height="md" className="mt-4 !border-subtle">
             {stickers.map((em, i) => {
             return (
               <div

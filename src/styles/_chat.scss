@@ -2,7 +2,6 @@
 
 .chat-container {
   flex: 1 0;
-  border-top-left-radius: $rounded-xl;
   background: var(--color-bg-chat);
   z-index: 11; /* Higher than sidebar space-header (z-index: 10) */
   display: flex;
@@ -22,6 +21,7 @@
     width: 100%;
     max-width: 100%;
     flex: 1;
+    border-top-left-radius: $rounded-xl;
   }
 
   // Ensure the main flex child (chat content) takes full available space
@@ -30,6 +30,14 @@
     min-width: 0; // Allow shrinking
     min-height: 0; // Allow vertical shrinking so footer doesn't get pushed out
     width: 100%;
+  }
+}
+
+// Light theme only - add borders to chat-container on desktop
+html:not(.dark) .chat-container {
+  @media (min-width: 1024px) {
+    border-top: $border solid var(--color-border-subtle);
+    border-left: $border solid var(--color-border-subtle);
   }
 }
 

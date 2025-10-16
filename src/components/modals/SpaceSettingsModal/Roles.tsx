@@ -76,7 +76,7 @@ const Roles: React.FunctionComponent<RolesProps> = ({
           </Button>
         </div>
         {roles.length > 0 && (
-          <ScrollContainer height="md">
+          <ScrollContainer height="md" className="!border-subtle">
             {roles.map((r, i) => {
             return (
               <div

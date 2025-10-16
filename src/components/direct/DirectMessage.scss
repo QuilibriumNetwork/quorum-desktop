@@ -5,6 +5,7 @@
   font-weight: $font-bold;
   font-size: $text-base;
   border-bottom: $border solid var(--surface-5);
+  border-top-left-radius: 0; // Ensure no rounded corner
 
   // Responsive layout for mobile/tablet
   @media (max-width: 1023px) {

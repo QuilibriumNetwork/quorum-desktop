@@ -74,7 +74,7 @@ const Emojis: React.FunctionComponent<EmojisProps> = ({
           </Callout>
         )}
         {emojis.length > 0 && (
-          <ScrollContainer height="md" className="mt-4">
+          <ScrollContainer height="md" className="mt-4 !border-subtle">
             {emojis.map((em, i) => {
             return (
               <div

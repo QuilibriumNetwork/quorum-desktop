@@ -193,7 +193,7 @@ const Invites: React.FunctionComponent<InvitesProps> = ({
                 <ClickToCopyContent
                   text={space?.inviteUrl || ''}
                   tooltipText={t`Copy invite link to clipboard`}
-                  className="bg-input border-0 rounded-md px-3 py-1.5 text-sm w-full max-w-full overflow-hidden whitespace-nowrap cursor-pointer"
+                  className="bg-field border-0 rounded-md px-3 py-1.5 text-sm w-full max-w-full overflow-hidden whitespace-nowrap cursor-pointer"
                   iconClassName="text-muted hover:text-main"
                   copyOnContentClick
                 >

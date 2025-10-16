@@ -25,7 +25,7 @@
 }
 
 .channel-group .channel-name:hover {
-  background: var(--surface-2);
+  background: var(--color-bg-sidebar-hover);
   padding: 0 $s-4;
   margin: 0 (-$s-4);
   border-radius: $rounded-lg 0 0 $rounded-lg;
@@ -38,7 +38,7 @@
 
 .channel-group .channel-name-focused {
   font-weight: $font-bold;
-  background: var(--surface-2);
+  background: var(--color-bg-sidebar-active);
   padding: 0 $s-4;
   margin: 0 (-$s-4);
   opacity: 1;

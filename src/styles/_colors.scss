@@ -39,20 +39,20 @@
   --color-text-danger: rgb(var(--danger));
 
   /* surface semantic */
-  --color-bg-app: var(--surface-00);
+  --color-bg-app: var(--surface-00); // main bg
+ 
+  --color-bg-sidebar: var(--surface-0); // left sidebar
+  --color-bg-sidebar-hover: var(--surface-1); // sidebar elements
+  --color-bg-sidebar-active: var(--surface-1); // sidebar elements
 
-  --color-bg-sidebar: var(--surface-1);
-  --color-bg-sidebar-hover: var(--surface-4);
-  --color-bg-sidebar-active: var(--surface-3);
+  --color-bg-chat: var(--surface-1); // messages area
+  --color-bg-chat-hover: var(--surface-2);
+  --color-bg-chat-input: var(--surface-00); // main input
 
-  --color-bg-chat: var(--surface-2);
-  --color-bg-chat-hover: var(--surface-3);
-  --color-bg-chat-input: var(--surface-0);
-
-  --color-bg-modal: var(--surface-5);
-  --color-bg-modal-sidebar: var(--surface-3);
-  --color-bg-modal-cat-hover: var(--surface-6);
-  --color-bg-modal-cat-active: var(--surface-5);
+  --color-bg-modal: var(--surface-2);
+  --color-bg-modal-sidebar: var(--surface-1);
+  --color-bg-modal-cat-hover: var(--surface-2);
+  --color-bg-modal-cat-active: var(--surface-2);
 
   --color-bg-overlay: rgba(0, 0, 0, 0.6);
 
@@ -61,14 +61,14 @@
   --color-bg-input: var(--surface-3);
 
   /* === FORM FIELD SEMANTIC COLORS === */
-  /* Field backgrounds - optimized for surface-5 containers */
-  --color-field-bg: var(--surface-3);
-  --color-field-bg-focus: var(--surface-2);
-  --color-field-bg-filled: var(--surface-2);
-  --color-field-bg-filled-focus: var(--surface-1);
-  --color-field-bg-error: var(--surface-3);
+  /* Field backgrounds - optimized for surface-2 containers */
+  --color-field-bg: var(--surface-4);
+  --color-field-bg-focus: var(--surface-3);
+  --color-field-bg-filled: var(--surface-3);
+  --color-field-bg-filled-focus: var(--surface-2);
+  --color-field-bg-error: var(--surface-2);
 
-  /* Field borders - using border-strong for proper contrast on surface-5 */
+  /* Field borders - using border-strong for proper contrast */
   --color-field-border: var(--color-border-strong);
   --color-field-border-hover: var(--color-border-stronger);
   --color-field-border-focus: var(--accent);
@@ -83,15 +83,16 @@
   --color-field-error-focus-shadow: rgb(var(--danger) / 0.1);
 
   /* Field dropdown/options (for Select component) */
-  --color-field-options-bg: var(--surface-1);
-  --color-field-option-hover: var(--surface-3);
-  --color-field-option-selected: var(--surface-2);
+  --color-field-options-bg: var(--surface-0);
+  --color-field-option-hover: var(--surface-2);
+  --color-field-option-selected: var(--surface-1);
   --color-field-option-text: var(--color-text-main);
   --color-field-option-text-selected: var(--accent);
 
-  --color-border-default: var(--surface-6);
-  --color-border-strong: var(--surface-7);
-  --color-border-stronger: var(--surface-8);
+  --color-border-subtle: var(--surface-4);
+  --color-border-default: var(--surface-5);
+  --color-border-strong: var(--surface-6);
+  --color-border-stronger: var(--surface-7);
 
   --color-bg-card: var(--surface-2);
 
@@ -124,8 +125,8 @@ html.dark {
   --surface-9: #a999b3;
   --surface-10: #bfadca;
 
-  --color-bg-sidebar-hover: var(--surface-5);
-  --color-bg-sidebar-active: var(--surface-4);
+  // --color-bg-sidebar-hover: var(--surface-5);
+  // --color-bg-sidebar-active: var(--surface-4);
 
   /* text */
   --color-text-strong: #f8f7fa;
