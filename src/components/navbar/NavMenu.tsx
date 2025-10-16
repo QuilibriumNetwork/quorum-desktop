@@ -16,6 +16,7 @@ import {
   useSpaceDragAndDrop,
 } from '../../hooks';
 import { useSpaceMentionCounts } from '../../hooks/business/mentions';
+import { useSpaceReplyCounts } from '../../hooks/business/replies';
 import { useResponsiveLayoutContext } from '../context/ResponsiveLayoutProvider';
 import './NavMenu.scss';
 
@@ -40,8 +41,9 @@ const NavMenuContent: React.FC<NavMenuProps> = (props) => {
     config,
   });
 
-  // Get mention counts for all spaces
+  // Get mention and reply counts for all spaces
   const spaceMentionCounts = useSpaceMentionCounts({ spaces: mappedSpaces });
+  const spaceReplyCounts = useSpaceReplyCounts({ spaces: mappedSpaces });
 
   // Hide NavMenu below 1024px when navMenuOpen is false
   const navMenuStyle: React.CSSProperties = {};
@@ -87,12 +89,14 @@ const NavMenuContent: React.FC<NavMenuProps> = (props) => {
         >
           <SortableContext items={mappedSpaces}>
             {mappedSpaces.map((space) => {
-              const mentionCount = spaceMentionCounts[space.spaceId];
+              const mentionCount = spaceMentionCounts[space.spaceId] || 0;
+              const replyCount = spaceReplyCounts[space.spaceId] || 0;
+              const totalCount = mentionCount + replyCount;
               return (
                 <SpaceButton
                   key={space.spaceId}
                   space={space}
-                  mentionCount={mentionCount && mentionCount > 0 ? mentionCount : undefined}
+                  mentionCount={totalCount > 0 ? totalCount : undefined}
                 />
               );
             })}

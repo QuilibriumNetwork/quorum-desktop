@@ -1,5 +1,6 @@
 import { channel } from '@quilibrium/quilibrium-js-sdk-channels';
 import { Conversation, Message, Space } from '../api/quorumApi';
+import type { NotificationSettings } from '../types/notifications';
 import MiniSearch from 'minisearch';
 
 export interface EncryptedMessage {
@@ -43,11 +44,8 @@ export type UserConfig = {
       spaceId: string;
     }[];
   }[];
-  mentionSettings?: {
-    [spaceId: string]: {
-      spaceId: string;
-      enabledMentionTypes: string[];
-    };
+  notificationSettings?: {
+    [spaceId: string]: NotificationSettings;
   };
 };
 
@@ -1360,6 +1358,80 @@ export class MessageDB {
           // Note: The calling code will still need to filter by userAddress
           // since we don't have a dedicated mention index yet
           if (message.mentions) {
+            messages.push(message);
+          }
+
+          // Continue only if we haven't reached the limit
+          if (messages.length < limit) {
+            cursor.continue();
+          } else {
+            resolve(messages);
+          }
+        } else {
+          resolve(messages);
+        }
+      };
+
+      request.onerror = () => reject(request.error);
+    });
+  }
+
+  /**
+   * Get unread messages that are replies to a specific user's messages
+   *
+   * This is an optimized query for reply notification counting that:
+   * 1. Only retrieves messages after lastReadTimestamp
+   * 2. Filters for messages with replyMetadata.parentAuthor matching the user
+   * 3. Supports early-exit with limit parameter
+   *
+   * Note: This implementation uses existing indexes and filters in memory.
+   * Reply notifications are stored in the message's replyMetadata field.
+   *
+   * @param spaceId - The space ID
+   * @param channelId - The channel ID
+   * @param userAddress - The user's address to check for replies
+   * @param afterTimestamp - Only get messages created after this timestamp (typically lastReadTimestamp)
+   * @param limit - Maximum number of reply messages to return (default: 10 for early-exit optimization)
+   * @returns Array of messages that are replies to the user
+   */
+  async getUnreadReplies({
+    spaceId,
+    channelId,
+    userAddress,
+    afterTimestamp,
+    limit = 10,
+  }: {
+    spaceId: string;
+    channelId: string;
+    userAddress: string;
+    afterTimestamp: number;
+    limit?: number;
+  }): Promise<Message[]> {
+    await this.init();
+    return new Promise((resolve, reject) => {
+      const transaction = this.db!.transaction('messages', 'readonly');
+      const store = transaction.objectStore('messages');
+      const index = store.index('by_conversation_time');
+
+      // Use existing index to get messages after timestamp
+      const range = IDBKeyRange.bound(
+        [spaceId, channelId, afterTimestamp],
+        [spaceId, channelId, Number.MAX_VALUE],
+        true, // Exclude afterTimestamp itself
+        false
+      );
+
+      const request = index.openCursor(range, 'next');
+      const messages: Message[] = [];
+
+      request.onsuccess = (event) => {
+        const cursor = (event.target as IDBRequest).result;
+
+        if (cursor && messages.length < limit) {
+          const message = cursor.value as Message;
+
+          // Only include messages with replyMetadata that reply to the user
+          if (message.replyMetadata?.parentAuthor === userAddress) {
             messages.push(message);
           }
 

@@ -251,9 +251,12 @@ const SpaceSettingsModal: React.FunctionComponent<{
       // Save mention settings first
       await mentionSettings.saveSettings();
 
-      // Invalidate mention count queries to recalculate with new settings
+      // Invalidate notification count queries to recalculate with new settings
       await queryClient.invalidateQueries({
         queryKey: ['mention-counts', 'channel', spaceId],
+      });
+      await queryClient.invalidateQueries({
+        queryKey: ['reply-counts', 'channel', spaceId],
       });
 
       // Then save profile changes (which dismisses the modal)

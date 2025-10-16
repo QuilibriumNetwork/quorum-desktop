@@ -2,9 +2,8 @@ import { useQuery } from '@tanstack/react-query';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
 import { useMessageDB } from '../../../components/context/useMessageDB';
 import { isMentionedWithSettings } from '../../../utils/mentionUtils';
-import { getDefaultMentionSettings } from '../../../utils/notificationSettingsUtils';
+import { getDefaultNotificationSettings } from '../../../utils/notificationSettingsUtils';
 import type { Message } from '../../../api/quorumApi';
-import type { MentionTypeId } from '../../../types/notifications';
 
 export interface MentionNotification {
   message: Message;
@@ -16,7 +15,7 @@ export interface MentionNotification {
 interface UseAllMentionsProps {
   spaceId: string;
   channelIds: string[];
-  enabledTypes?: MentionTypeId[]; // Filter by mention type
+  enabledTypes?: ('mention-you' | 'mention-everyone' | 'mention-roles')[]; // Filter by mention type (unified format)
 }
 
 /**
@@ -29,7 +28,7 @@ interface UseAllMentionsProps {
  * const { mentions, isLoading } = useAllMentions({
  *   spaceId,
  *   channelIds,
- *   enabledTypes: ['you', 'everyone'] // Optional filter
+ *   enabledTypes: ['mention-you', 'mention-everyone'] // Optional filter (unified format)
  * });
  */
 export function useAllMentions({
@@ -49,12 +48,20 @@ export function useAllMentions({
       const allMentions: MentionNotification[] = [];
 
       try {
-        // Load user's mention notification settings for this space
+        // Load user's notification settings for this space
         const config = await messageDB.getUserConfig({ address: userAddress });
-        const settings = config?.mentionSettings?.[spaceId];
+        const settings = config?.notificationSettings?.[spaceId];
 
-        // Determine which mention types to check
-        const typesToCheck = enabledTypes || settings?.enabledMentionTypes || getDefaultMentionSettings(spaceId).enabledMentionTypes;
+        // Determine which mention types to check (unified format)
+        // If enabledTypes provided, use it; otherwise get from settings
+        let typesToCheck: string[];
+        if (enabledTypes) {
+          typesToCheck = enabledTypes;
+        } else {
+          const allTypes = settings?.enabledNotificationTypes || getDefaultNotificationSettings(spaceId).enabledNotificationTypes;
+          // Filter to only mention types (exclude 'reply')
+          typesToCheck = allTypes.filter(t => t.startsWith('mention-'));
+        }
 
         // If no mention types enabled, return empty
         if (typesToCheck.length === 0) {

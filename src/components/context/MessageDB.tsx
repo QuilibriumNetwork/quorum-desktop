@@ -122,7 +122,8 @@ type MessageDBContextValue = {
     },
     inReplyTo?: string,
     skipSigning?: boolean,
-    isSpaceOwner?: boolean
+    isSpaceOwner?: boolean,
+    parentMessage?: Message
   ) => Promise<void>;
   getConfig: ({
     address,
@@ -901,7 +902,8 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
       },
       inReplyTo?: string,
       skipSigning?: boolean,
-      isSpaceOwner?: boolean
+      isSpaceOwner?: boolean,
+      parentMessage?: Message
     ) => {
       return messageService.submitChannelMessage(
         spaceId,
@@ -911,7 +913,8 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
         currentPasskeyInfo,
         inReplyTo,
         skipSigning,
-        isSpaceOwner
+        isSpaceOwner,
+        parentMessage
       );
     },
     [messageService]

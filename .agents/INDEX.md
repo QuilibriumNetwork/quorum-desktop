@@ -9,7 +9,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Cross-Platform Repository Implementation](docs/cross-platform-repository-implementation.md)
 - [Expo Dev Testing Guide](docs/expo-dev-testing-guide.md)
 - [Quorum Data Management Architecture](docs/data-management-architecture-guide.md)
-- [**Styling Guidelines - Tailwind vs Raw CSS**](docs/styling-guidelines.md) ⭐ NEW
+- [Styling Guidelines](docs/styling-guidelines.md)
 
 ### Development
 - [Unused Dependencies Analysis](docs/development/unused-dependencies-analysis.md)
@@ -22,13 +22,13 @@ This is the main index for all documentation, bug reports, and task management.
 - [Dropdown Panels](docs/features/dropdown-panels.md)
 - [Invite System Documentation](docs/features/invite-system-analysis.md)
 - [Kick User System Documentation](docs/features/kick-user-system.md)
-- [Mention Notification System](docs/features/mention-notification-system.md)
 - [Modal Save Overlay System](docs/features/modal-save-overlay.md)
 - [Modal System Documentation](docs/features/modals.md)
 - [ReactTooltip Mobile Support Documentation](docs/features/reacttooltip-mobile.md)
 - [Responsive Layout System Documentation](docs/features/responsive-layout.md)
 - [Space Settings Modal - Fixes Section](docs/features/space-settings-fixes-section.md)
 - [Touch Long Press System](docs/features/touch-long-press-system.md)
+- [Unified Notification System (Mentions + Replies)](docs/features/mention-notification-system.md)
 - [🔍 Global Message Search - Implementation Guide & Documentation](docs/features/search-feature.md)
 
 ### Features / Messages
@@ -146,6 +146,7 @@ This is the main index for all documentation, bug reports, and task management.
 ## 📋 Completed Tasks
 
 - [AccentColorSwitcher Cross-Platform Migration + Persistence](tasks/.done/accent-color-switcher-cross-platform-migration.md)
+- [Analysis Report & Implementation Plan: Strategic Portal Integration for Overlay Components (v7)](tasks/.done/modal-portal-refactor-analysis.md)
 - [Android 7.0 File Download Fix - Implementation Plan](tasks/.done/FAILED_android-file-download-fix.md)
 - [Callout Primitive Audit Report](tasks/.done/callout-primitive-audit.md)
 - [Callout Primitive System](tasks/.done/callout-primitive-system.md)
@@ -185,10 +186,12 @@ This is the main index for all documentation, bug reports, and task management.
 - [Read-Only Channels with Role Managers](tasks/.done/read-only-channels-with-role-managers.md)
 - [Refactor Modal Placement in Layout.tsx](tasks/.done/refactor-modal-placement.md)
 - [Rename .agents to .agents](tasks/.done/rename-readme-to-agents.md)
+- [Reply Notification System](tasks/.done/reply-notification-system.md)
 - [Responsive Layout Implementation Plan](tasks/.done/responsive-layout.md)
 - [Responsive Layout Requirements](tasks/.done/responsive-layout_requirements.md)
 - [Search Components Primitive Migration](tasks/.done/search-primitive-migration.md)
 - [Space Icon Mention Bubbles](tasks/.done/space-icon-mention-bubbles.md)
+- [Tailwind @apply Conversion Audit](tasks/.done/tailwind-apply-conversion-audit.md)
 - [Task: Improve User Mention System](tasks/.done/improve-user-mention-system.md)
 - [UI Folder Reorganization Task](tasks/.done/ui-folder-reorganization.md)
 - [User Initials Avatars](tasks/.done/user-initials.md)
@@ -198,4 +201,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2025-10-12 11:47:10
+**Last Updated**: 2025-10-16 17:56:03

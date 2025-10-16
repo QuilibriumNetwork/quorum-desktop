@@ -2148,7 +2148,8 @@ export class MessageService {
     },
     inReplyTo?: string,
     skipSigning?: boolean,
-    isSpaceOwner?: boolean
+    isSpaceOwner?: boolean,
+    parentMessage?: Message
   ) {
     this.enqueueOutbound(async () => {
       let outbounds: string[] = [];
@@ -2180,6 +2181,18 @@ export class MessageService {
         mentions = extractMentionsFromText((pendingMessage as any).text, { allowEveryone: canUseEveryone });
       }
 
+      // Populate replyMetadata if replying to a message
+      let replyMetadata: { parentAuthor: string; parentChannelId: string } | undefined;
+      if (inReplyTo && parentMessage) {
+        // Don't create notification for self-replies
+        if (parentMessage.content.senderId !== currentPasskeyInfo.address) {
+          replyMetadata = {
+            parentAuthor: parentMessage.content.senderId,
+            parentChannelId: channelId,
+          };
+        }
+      }
+
       const message = {
         spaceId: spaceId,
         channelId: channelId,
@@ -2202,6 +2215,7 @@ export class MessageService {
                 senderId: currentPasskeyInfo.address,
               },
         mentions: mentions && (mentions.memberIds.length > 0 || mentions.everyone) ? mentions : undefined,
+        replyMetadata,
       } as Message;
 
       let conversationId = spaceId + '/' + channelId;
@@ -2260,6 +2274,12 @@ export class MessageService {
           conversation.conversation?.displayName ?? t`Unknown User`,
       });
       await this.addMessage(queryClient, spaceId, channelId, message);
+
+      // Invalidate reply notification caches if this is a reply
+      if (message.replyMetadata) {
+        await queryClient.invalidateQueries({ queryKey: ['reply-counts', 'channel', spaceId] });
+        await queryClient.invalidateQueries({ queryKey: ['reply-notifications', spaceId] });
+      }
 
       return outbounds;
     });

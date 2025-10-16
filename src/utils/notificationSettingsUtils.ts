@@ -1,65 +1,66 @@
 /**
- * Mention Notification Settings Utilities
+ * Notification Settings Utilities
  *
- * Helper functions for managing mention notification preferences.
- * Part of Phase 4: Mention Notification Settings
+ * Helper functions for managing notification preferences (mentions and replies).
+ * Part of Phase 4: Mention Notification Settings & Reply Notification System
  *
  * @see .agents/tasks/mention-notification-settings-phase4.md
+ * @see .agents/tasks/reply-notification-system.md
  */
 
 import type {
-  MentionNotificationSettings,
-  MentionTypeId,
+  NotificationSettings,
+  NotificationTypeId,
 } from '../types/notifications';
 
 /**
- * Get default mention notification settings for a space
- * By default, all mention types are enabled
+ * Get default notification settings for a space
+ * By default, all notification types are enabled (mentions and replies)
  *
  * @param spaceId - The space ID to create settings for
- * @returns Default settings with all mention types enabled
+ * @returns Default settings with all notification types enabled
  */
-export function getDefaultMentionSettings(
+export function getDefaultNotificationSettings(
   spaceId: string
-): MentionNotificationSettings {
+): NotificationSettings {
   return {
     spaceId,
-    enabledMentionTypes: ['you', 'everyone', 'roles'],
+    enabledNotificationTypes: ['mention-you', 'mention-everyone', 'mention-roles', 'reply'],
   };
 }
 
 /**
- * Check if a specific mention type is enabled in settings
+ * Check if a specific notification type is enabled in settings
  *
- * @param settings - The mention notification settings
- * @param mentionType - The mention type to check
- * @returns true if the mention type is enabled
+ * @param settings - The notification settings
+ * @param notificationType - The notification type to check
+ * @returns true if the notification type is enabled
  */
-export function isMentionTypeEnabled(
-  settings: MentionNotificationSettings | undefined,
-  mentionType: MentionTypeId
+export function isNotificationTypeEnabled(
+  settings: NotificationSettings | undefined,
+  notificationType: NotificationTypeId
 ): boolean {
   if (!settings) {
     // Default: all types enabled
     return true;
   }
 
-  return settings.enabledMentionTypes.includes(mentionType);
+  return settings.enabledNotificationTypes.includes(notificationType);
 }
 
 /**
- * Check if any mention types are enabled
+ * Check if any notification types are enabled
  *
- * @param settings - The mention notification settings
- * @returns true if at least one mention type is enabled
+ * @param settings - The notification settings
+ * @returns true if at least one notification type is enabled
  */
-export function hasEnabledMentionTypes(
-  settings: MentionNotificationSettings | undefined
+export function hasEnabledNotificationTypes(
+  settings: NotificationSettings | undefined
 ): boolean {
   if (!settings) {
     // Default: all types enabled
     return true;
   }
 
-  return settings.enabledMentionTypes.length > 0;
+  return settings.enabledNotificationTypes.length > 0;
 }

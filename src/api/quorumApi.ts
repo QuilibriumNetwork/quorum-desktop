@@ -105,6 +105,10 @@ export type Message = {
     | DeleteConversationMessage;
   reactions: Reaction[];
   mentions: Mentions;
+  replyMetadata?: {
+    parentAuthor: string;
+    parentChannelId: string;
+  };
   publicKey?: string;
   signature?: string;
   isPinned?: boolean;

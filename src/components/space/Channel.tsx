@@ -162,6 +162,20 @@ const Channel: React.FC<ChannelProps> = ({
         setIsDeletionInProgress(true);
       }
 
+      // Fetch parent message if replying (for reply notifications)
+      let parentMessage;
+      if (inReplyTo) {
+        try {
+          parentMessage = await messageDB.getMessage({
+            spaceId,
+            channelId,
+            messageId: inReplyTo,
+          });
+        } catch (error) {
+          console.error('[Channel] Failed to fetch parent message:', error);
+        }
+      }
+
       const effectiveSkip = space?.isRepudiable ? skipSigning : false;
       await submitChannelMessage(
         spaceId,
@@ -171,7 +185,8 @@ const Channel: React.FC<ChannelProps> = ({
         user.currentPasskeyInfo!,
         inReplyTo,
         effectiveSkip,
-        isSpaceOwner
+        isSpaceOwner,
+        parentMessage
       );
 
       // Clear deletion flag after a short delay
@@ -200,12 +215,27 @@ const Channel: React.FC<ChannelProps> = ({
       space,
       skipSigning,
       isSpaceOwner,
+      messageDB,
     ]
   );
 
   // Handle sticker submission
   const handleSubmitSticker = useCallback(
     async (stickerId: string, inReplyTo?: string) => {
+      // Fetch parent message if replying (for reply notifications)
+      let parentMessage;
+      if (inReplyTo) {
+        try {
+          parentMessage = await messageDB.getMessage({
+            spaceId,
+            channelId,
+            messageId: inReplyTo,
+          });
+        } catch (error) {
+          console.error('[Channel] Failed to fetch parent message:', error);
+        }
+      }
+
       const stickerMessage: StickerMessage = {
         senderId: user.currentPasskeyInfo?.address,
         type: 'sticker',
@@ -219,7 +249,8 @@ const Channel: React.FC<ChannelProps> = ({
         user.currentPasskeyInfo!,
         inReplyTo,
         false, // Stickers are always signed
-        isSpaceOwner
+        isSpaceOwner,
+        parentMessage
       );
       // Auto-scroll to bottom after sending sticker
       setTimeout(() => {
@@ -233,6 +264,7 @@ const Channel: React.FC<ChannelProps> = ({
       queryClient,
       user.currentPasskeyInfo,
       isSpaceOwner,
+      messageDB,
     ]
   );
 
@@ -587,8 +619,6 @@ const Channel: React.FC<ChannelProps> = ({
                   spaceId={spaceId}
                   channelIds={space?.groups.flatMap(g => g.channels.map(c => c.channelId)) || []}
                   mapSenderToUser={mapSenderToUser}
-                  virtuosoRef={messageListRef.current?.getVirtuosoRef()}
-                  messageList={messageList}
                 />
               </div>
 

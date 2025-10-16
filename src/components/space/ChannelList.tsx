@@ -9,6 +9,7 @@ import {
   useSpaceGroups,
 } from '../../hooks';
 import { useChannelMentionCounts } from '../../hooks/business/mentions';
+import { useReplyNotificationCounts } from '../../hooks/business/replies';
 import { t } from '@lingui/core/macro';
 import { Button, Container, Icon, Text, Tooltip } from '../primitives';
 
@@ -39,20 +40,25 @@ const ChannelList: React.FC<ChannelListProps> = ({ spaceId }) => {
     [groups]
   );
 
-  // Get mention counts for all channels
+  // Get mention counts and reply counts for all channels
   const mentionCounts = useChannelMentionCounts({ spaceId, channelIds });
+  const replyCounts = useReplyNotificationCounts({ spaceId, channelIds });
 
-  // Merge mention counts into groups
+  // Merge combined notification counts (mentions + replies) into groups
   const groupsWithMentionCounts = React.useMemo(
     () =>
       groups.map((group) => ({
         ...group,
-        channels: group.channels.map((channel) => ({
-          ...channel,
-          mentionCount: mentionCounts[channel.channelId] || 0,
-        })),
+        channels: group.channels.map((channel) => {
+          const mentions = mentionCounts[channel.channelId] || 0;
+          const replies = replyCounts[channel.channelId] || 0;
+          return {
+            ...channel,
+            mentionCount: mentions + replies, // Combined count for single badge
+          };
+        }),
       })),
-    [groups, mentionCounts]
+    [groups, mentionCounts, replyCounts]
   );
 
   return (

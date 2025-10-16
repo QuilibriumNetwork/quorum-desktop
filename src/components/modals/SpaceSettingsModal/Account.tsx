@@ -9,7 +9,7 @@ import { useSpaceLeaving } from '../../../hooks/business/spaces/useSpaceLeaving'
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
 import { useUserRoleDisplay } from '../../../hooks/business/user/useUserRoleDisplay';
 import { Role } from '../../../api/quorumApi';
-import type { MentionTypeId } from '../../../types/notifications';
+import type { NotificationTypeId } from '../../../types/notifications';
 
 interface AccountProps {
   spaceId: string;
@@ -33,9 +33,9 @@ interface AccountProps {
   hasValidationError: boolean;
   onClose: () => void;
   roles?: Role[];
-  // Mention notification settings props (passed from parent)
-  selectedMentionTypes: MentionTypeId[];
-  setSelectedMentionTypes: (types: MentionTypeId[]) => void;
+  // Notification settings props (passed from parent)
+  selectedMentionTypes: NotificationTypeId[];
+  setSelectedMentionTypes: (types: NotificationTypeId[]) => void;
   isMentionSettingsLoading: boolean;
 }
 
@@ -165,18 +165,18 @@ const Account: React.FunctionComponent<AccountProps> = ({
           </>
         )}
 
-        {/* Mention Notification Settings */}
+        {/* Notification Settings */}
         <Spacer size="md" direction="vertical" borderTop={true} />
         <div className="modal-text-label">
           <Trans>Notifications</Trans>
         </div>
         <div className="modal-text-small text-main pt-1">
-          <Trans>Select for which mentions you will receive notifications</Trans>
+          <Trans>Select which types of notifications you want to receive</Trans>
         </div>
         <div className="pt-4">
           <Select
             value={selectedMentionTypes}
-            onChange={(value: string | string[]) => setSelectedMentionTypes(value as MentionTypeId[])}
+            onChange={(value: string | string[]) => setSelectedMentionTypes(value as NotificationTypeId[])}
             multiple={true}
             placeholder={t`Select`}
             showSelectAllOption={true}
@@ -184,20 +184,25 @@ const Account: React.FunctionComponent<AccountProps> = ({
             clearAllLabel={t`Clear`}
             options={[
               {
-                value: 'you',
+                value: 'mention-you',
                 label: t`@you`,
                 subtitle: t`When someone mentions you directly`,
               },
               {
-                value: 'everyone',
+                value: 'mention-everyone',
                 label: t`@everyone`,
                 subtitle: t`When someone mentions @everyone`,
               },
               {
-                value: 'roles',
+                value: 'mention-roles',
                 label: t`@roles`,
                 subtitle: t`When someone mentions a role you have (Coming Soon)`,
-                disabled: true, // Phase 2b - not yet implemented
+                disabled: true, // Not yet implemented
+              },
+              {
+                value: 'reply',
+                label: t`Replies`,
+                subtitle: t`When someone replies to your messages`,
               },
             ]}
             size="medium"

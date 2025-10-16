@@ -5,10 +5,10 @@ import { Container, FlexRow, Text, Icon, Button, Tooltip, FlexCenter, Select } f
 import { DropdownPanel } from '../ui';
 import { NotificationItem } from './NotificationItem';
 import { useAllMentions } from '../../hooks/business/mentions';
-import { useMessageHighlight } from '../../hooks/business/messages/useMessageHighlight';
+import { useAllReplies } from '../../hooks/business/replies';
 import { useMessageDB } from '../context/useMessageDB';
 import { useQueryClient } from '@tanstack/react-query';
-import type { MentionTypeId } from '../../types/notifications';
+import type { NotificationTypeId } from '../../types/notifications';
 import './NotificationPanel.scss';
 
 interface NotificationPanelProps {
@@ -17,8 +17,6 @@ interface NotificationPanelProps {
   spaceId: string;
   channelIds: string[];
   mapSenderToUser: (senderId: string) => any;
-  virtuosoRef?: any; // For scrolling to message
-  messageList?: any[]; // For scrolling to message
   className?: string;
 }
 
@@ -28,41 +26,61 @@ export const NotificationPanel: React.FC<NotificationPanelProps> = ({
   spaceId,
   channelIds,
   mapSenderToUser,
-  virtuosoRef,
-  messageList,
   className,
 }) => {
   const navigate = useNavigate();
   const { messageDB } = useMessageDB();
   const queryClient = useQueryClient();
 
-  // Filter state (you and everyone enabled by default, roles not supported yet)
-  const [selectedTypes, setSelectedTypes] = useState<MentionTypeId[]>(['you', 'everyone']);
+  // Filter state (all types enabled by default)
+  const [selectedTypes, setSelectedTypes] = useState<NotificationTypeId[]>([
+    'mention-you',
+    'mention-everyone',
+    'reply',
+  ]);
+
+  // Derive mention-only filter for useAllMentions (unified format)
+  const mentionTypes = selectedTypes.filter(t => t.startsWith('mention-')) as ('mention-you' | 'mention-everyone' | 'mention-roles')[];
 
   // Fetch mentions with current filter
-  const { mentions, isLoading } = useAllMentions({
+  const { mentions, isLoading: mentionsLoading } = useAllMentions({
     spaceId,
     channelIds,
-    enabledTypes: selectedTypes,
+    enabledTypes: mentionTypes.length > 0 ? mentionTypes : undefined,
   });
 
-  // Use the message highlighting system
-  const { highlightMessage, scrollToMessage } = useMessageHighlight();
+  // Fetch replies (only if 'reply' is selected)
+  const { replies, isLoading: repliesLoading } = useAllReplies({
+    spaceId,
+    channelIds,
+  });
+
+  // Combine mentions and replies based on filter
+  const allNotifications = [
+    ...mentions,
+    ...(selectedTypes.includes('reply') ? replies : []),
+  ].sort((a, b) => b.message.createdDate - a.message.createdDate);
+
+  const isLoading = mentionsLoading || repliesLoading;
 
   // Filter options for Select primitive
   const filterOptions = [
     {
-      value: 'you' as MentionTypeId,
+      value: 'mention-you' as NotificationTypeId,
       label: t`@you`,
     },
     {
-      value: 'everyone' as MentionTypeId,
+      value: 'mention-everyone' as NotificationTypeId,
       label: t`@everyone`,
     },
     {
-      value: 'roles' as MentionTypeId,
+      value: 'mention-roles' as NotificationTypeId,
       label: t`@roles`,
       disabled: true, // Role mentions not supported yet
+    },
+    {
+      value: 'reply' as NotificationTypeId,
+      label: t`Replies`,
     },
   ];
 
@@ -72,7 +90,7 @@ export const NotificationPanel: React.FC<NotificationPanelProps> = ({
       // Don't allow deselecting all
       return;
     }
-    setSelectedTypes(newValues as MentionTypeId[]);
+    setSelectedTypes(newValues as NotificationTypeId[]);
   }, []);
 
   // Handle navigation to message
@@ -80,15 +98,11 @@ export const NotificationPanel: React.FC<NotificationPanelProps> = ({
     // Close the dropdown
     onClose();
 
-    // Navigate to the channel (route pattern is /spaces/:spaceId/:channelId)
-    navigate(`/spaces/${spaceId}/${channelId}`);
-
-    // After navigation, scroll and highlight
-    setTimeout(() => {
-      scrollToMessage(messageId, virtuosoRef, messageList);
-      highlightMessage(messageId, { duration: 6000 }); // 6s for mentions
-    }, 100);
-  }, [navigate, onClose, scrollToMessage, highlightMessage, virtuosoRef, messageList]);
+    // Always use URL hash navigation for consistency and reliability
+    // MessageList already handles #msg- hash by scrolling to the message
+    // Message component applies .message-highlighted class when hash matches
+    navigate(`/spaces/${spaceId}/${channelId}#msg-${messageId}`);
+  }, [navigate, onClose]);
 
   // Handle mark all as read
   const handleMarkAllRead = useCallback(async () => {
@@ -96,10 +110,10 @@ export const NotificationPanel: React.FC<NotificationPanelProps> = ({
       // Get current timestamp
       const now = Date.now();
 
-      // Update last read time for all channels with mentions
-      const channelsWithMentions = new Set(mentions.map(m => m.channelId));
+      // Update last read time for all channels with notifications
+      const channelsWithNotifications = new Set(allNotifications.map(n => n.channelId));
 
-      for (const channelId of channelsWithMentions) {
+      for (const channelId of channelsWithNotifications) {
         const conversationId = `${spaceId}/${channelId}`;
         await messageDB.saveReadTime({
           conversationId,
@@ -107,9 +121,11 @@ export const NotificationPanel: React.FC<NotificationPanelProps> = ({
         });
       }
 
-      // Invalidate mention count caches
+      // Invalidate both mention and reply count caches
       queryClient.invalidateQueries({ queryKey: ['mention-counts', 'channel', spaceId] });
       queryClient.invalidateQueries({ queryKey: ['mention-notifications', spaceId] });
+      queryClient.invalidateQueries({ queryKey: ['reply-counts', 'channel', spaceId] });
+      queryClient.invalidateQueries({ queryKey: ['reply-notifications', spaceId] });
       queryClient.invalidateQueries({ queryKey: ['conversation'] });
 
       // Close dropdown
@@ -117,7 +133,7 @@ export const NotificationPanel: React.FC<NotificationPanelProps> = ({
     } catch (error) {
       console.error('[NotificationPanel] Error marking all as read:', error);
     }
-  }, [mentions, spaceId, messageDB, queryClient, onClose]);
+  }, [allNotifications, spaceId, messageDB, queryClient, onClose]);
 
   // Render empty state
   const renderEmptyState = () => {
@@ -133,7 +149,7 @@ export const NotificationPanel: React.FC<NotificationPanelProps> = ({
     return (
       <FlexCenter className="notification-empty-state">
         <Icon name="bell" className="empty-icon" />
-        <Text className="empty-message">{t`No unread mentions`}</Text>
+        <Text className="empty-message">{t`No unread notifications`}</Text>
         <Text className="empty-hint">
           {t`You're all caught up!`}
         </Text>
@@ -150,15 +166,15 @@ export const NotificationPanel: React.FC<NotificationPanelProps> = ({
       maxWidth={500}
       maxHeight={420}
       title={
-        mentions.length === 1
-          ? t`${mentions.length} unread mention`
-          : t`${mentions.length} unread mentions`
+        allNotifications.length === 1
+          ? t`${allNotifications.length} notification`
+          : t`${allNotifications.length} notifications`
       }
       className={`notification-panel ${className || ''}`}
       showCloseButton={true}
     >
-      {/* Filter controls - only show when there are mentions */}
-      {!isLoading && mentions.length > 0 && (
+      {/* Filter controls - only show when there are notifications */}
+      {!isLoading && allNotifications.length > 0 && (
         <Container className="notification-panel__controls">
           <FlexRow className="items-center justify-between gap-2">
             <Select
@@ -191,11 +207,11 @@ export const NotificationPanel: React.FC<NotificationPanelProps> = ({
       )}
 
       {/* Notification list */}
-      {isLoading || mentions.length === 0 ? (
+      {isLoading || allNotifications.length === 0 ? (
         renderEmptyState()
       ) : (
         <Container className="notification-panel__list">
-          {mentions.map((notification) => {
+          {allNotifications.map((notification) => {
             const sender = mapSenderToUser(notification.message.content?.senderId);
             return (
               <NotificationItem

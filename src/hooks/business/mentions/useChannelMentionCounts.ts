@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
 import { useMessageDB } from '../../../components/context/useMessageDB';
 import { isMentionedWithSettings } from '../../../utils/mentionUtils';
-import { getDefaultMentionSettings } from '../../../utils/notificationSettingsUtils';
+import { getDefaultNotificationSettings } from '../../../utils/notificationSettingsUtils';
 
 interface UseChannelMentionCountsProps {
   spaceId: string;
@@ -50,16 +50,20 @@ export function useChannelMentionCounts({
       const counts: Record<string, number> = {};
 
       try {
-        // Load user's mention notification settings for this space
+        // Load user's notification settings for this space
         const config = await messageDB.getUserConfig({ address: userAddress });
-        const settings = config?.mentionSettings?.[spaceId];
+        const settings = config?.notificationSettings?.[spaceId];
 
-        // If no settings exist, use defaults (all mention types enabled)
-        const enabledTypes = settings?.enabledMentionTypes ||
-          getDefaultMentionSettings(spaceId).enabledMentionTypes;
+        // If no settings exist, use defaults (all notification types enabled)
+        const enabledTypes = settings?.enabledNotificationTypes ||
+          getDefaultNotificationSettings(spaceId).enabledNotificationTypes;
+
+        // Filter to only mention types (exclude 'reply')
+        // e.g., ['mention-you', 'mention-everyone', 'reply'] -> ['mention-you', 'mention-everyone']
+        const mentionTypes = enabledTypes.filter(t => t.startsWith('mention-'));
 
         // If no mention types are enabled, return empty counts
-        if (enabledTypes.length === 0) {
+        if (mentionTypes.length === 0) {
           return {};
         }
 
@@ -86,10 +90,10 @@ export function useChannelMentionCounts({
           // Count mentions with per-message early exit
           let channelMentionCount = 0;
           for (const message of messages) {
-            // Use settings-aware mention check (Phase 4)
+            // Use settings-aware mention check with unified notification format
             if (isMentionedWithSettings(message, {
               userAddress,
-              enabledTypes,
+              enabledTypes: mentionTypes,
             })) {
               channelMentionCount++;
 

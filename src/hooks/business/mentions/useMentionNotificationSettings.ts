@@ -1,18 +1,19 @@
 /**
- * Hook for managing mention notification settings
+ * Hook for managing notification settings (mentions and replies)
  *
- * Provides functions to load, update, and save per-space mention notification preferences.
- * Settings are stored in IndexedDB user_config.mentionSettings[spaceId] and sync across devices.
+ * Provides functions to load, update, and save per-space notification preferences.
+ * Settings are stored in IndexedDB user_config.notificationSettings[spaceId] and sync across devices.
  *
- * Part of Phase 4: Mention Notification Settings
+ * Part of Phase 4: Mention Notification Settings & Reply Notification System
  * @see .agents/tasks/mention-notification-settings-phase4.md
+ * @see .agents/tasks/reply-notification-system.md
  */
 
 import { useState, useEffect, useCallback } from 'react';
 import { useMessageDB } from '../../../components/context/useMessageDB';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
-import type { MentionNotificationSettings, MentionTypeId } from '../../../types/notifications';
-import { getDefaultMentionSettings } from '../../../utils/notificationSettingsUtils';
+import type { NotificationSettings, NotificationTypeId } from '../../../types/notifications';
+import { getDefaultNotificationSettings } from '../../../utils/notificationSettingsUtils';
 
 interface UseMentionNotificationSettingsProps {
   spaceId: string;
@@ -20,11 +21,11 @@ interface UseMentionNotificationSettingsProps {
 
 interface UseMentionNotificationSettingsReturn {
   /** Current settings for this space */
-  settings: MentionNotificationSettings;
-  /** Selected mention types (for multiselect control) */
-  selectedTypes: MentionTypeId[];
+  settings: NotificationSettings;
+  /** Selected notification types (for multiselect control) */
+  selectedTypes: NotificationTypeId[];
   /** Update selected types (doesn't save until saveSettings called) */
-  setSelectedTypes: (types: MentionTypeId[]) => void;
+  setSelectedTypes: (types: NotificationTypeId[]) => void;
   /** Whether settings are being loaded */
   isLoading: boolean;
   /** Save settings to IndexedDB */
@@ -34,7 +35,7 @@ interface UseMentionNotificationSettingsReturn {
 }
 
 /**
- * Hook for managing mention notification settings for a space
+ * Hook for managing notification settings for a space
  *
  * @example
  * const {
@@ -62,10 +63,10 @@ export function useMentionNotificationSettings({
   const { currentPasskeyInfo } = usePasskeysContext();
   const userAddress = currentPasskeyInfo?.address;
 
-  const [settings, setSettings] = useState<MentionNotificationSettings>(() =>
-    getDefaultMentionSettings(spaceId)
+  const [settings, setSettings] = useState<NotificationSettings>(() =>
+    getDefaultNotificationSettings(spaceId)
   );
-  const [selectedTypes, setSelectedTypes] = useState<MentionTypeId[]>([]);
+  const [selectedTypes, setSelectedTypes] = useState<NotificationTypeId[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
 
@@ -80,23 +81,23 @@ export function useMentionNotificationSettings({
       try {
         setIsLoading(true);
         const config = await messageDB.getUserConfig({ address: userAddress });
+        const settings = config?.notificationSettings?.[spaceId];
 
-        if (config?.mentionSettings?.[spaceId]) {
-          const loadedSettings = config.mentionSettings[spaceId];
-          setSettings(loadedSettings);
-          setSelectedTypes(loadedSettings.enabledMentionTypes as MentionTypeId[]);
+        if (settings) {
+          setSettings(settings);
+          setSelectedTypes(settings.enabledNotificationTypes);
         } else {
           // Use defaults for new space
-          const defaults = getDefaultMentionSettings(spaceId);
+          const defaults = getDefaultNotificationSettings(spaceId);
           setSettings(defaults);
-          setSelectedTypes(defaults.enabledMentionTypes);
+          setSelectedTypes(defaults.enabledNotificationTypes);
         }
       } catch (error) {
-        console.error('[MentionSettings] Error loading settings:', error);
+        console.error('[NotificationSettings] Error loading settings:', error);
         // Use defaults on error
-        const defaults = getDefaultMentionSettings(spaceId);
+        const defaults = getDefaultNotificationSettings(spaceId);
         setSettings(defaults);
-        setSelectedTypes(defaults.enabledMentionTypes);
+        setSelectedTypes(defaults.enabledNotificationTypes);
       } finally {
         setIsLoading(false);
       }
@@ -115,16 +116,16 @@ export function useMentionNotificationSettings({
       // Get current config
       const config = await messageDB.getUserConfig({ address: userAddress });
 
-      // Update mention settings for this space
+      // Update notification settings for this space
       const updatedConfig = {
         ...config,
         address: userAddress, // Ensure address is set
         spaceIds: config?.spaceIds || [], // Preserve spaceIds
-        mentionSettings: {
-          ...(config?.mentionSettings || {}),
+        notificationSettings: {
+          ...(config?.notificationSettings || {}),
           [spaceId]: {
             spaceId,
-            enabledMentionTypes: selectedTypes,
+            enabledNotificationTypes: selectedTypes,
           },
         },
       };
@@ -135,13 +136,13 @@ export function useMentionNotificationSettings({
       // Update local state
       setSettings({
         spaceId,
-        enabledMentionTypes: selectedTypes,
+        enabledNotificationTypes: selectedTypes,
       });
 
       // Note: Query invalidation should be done by the modal after calling saveSettings()
       // This allows the modal to batch invalidations if needed
     } catch (error) {
-      console.error('[MentionSettings] Error saving settings:', error);
+      console.error('[NotificationSettings] Error saving settings:', error);
       throw error; // Re-throw so modal can show error
     } finally {
       setIsSaving(false);

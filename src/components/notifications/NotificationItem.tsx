@@ -2,10 +2,11 @@ import React from 'react';
 import { Icon, FlexBetween, FlexRow, Container, Text } from '../primitives';
 import { useSearchResultHighlight, useSearchResultFormatting } from '../../hooks/business/search';
 import type { MentionNotification } from '../../hooks/business/mentions';
+import type { ReplyNotification } from '../../types/notifications';
 import './NotificationItem.scss';
 
 interface NotificationItemProps {
-  notification: MentionNotification;
+  notification: MentionNotification | ReplyNotification;
   onNavigate: (spaceId: string, channelId: string, messageId: string) => void;
   displayName: string; // Message author display name
   mapSenderToUser: (senderId: string) => any; // For rendering mentions with display names
@@ -52,10 +53,13 @@ export const NotificationItem: React.FC<NotificationItemProps> = ({
     onNavigate,
   });
 
-  // Get mention type icon
-  const mentionIcon = notification.mentionType === 'everyone'
+  // Determine notification type and icon
+  const isReply = notification.type === 'reply';
+  const notificationIcon = isReply
+    ? 'reply'
+    : notification.type === 'mention-everyone' || (notification as MentionNotification).mentionType === 'everyone'
     ? 'bullhorn'
-    : notification.mentionType === 'roles'
+    : notification.type === 'mention-roles' || (notification as MentionNotification).mentionType === 'roles'
     ? 'users'
     : 'user';
 
@@ -77,7 +81,7 @@ export const NotificationItem: React.FC<NotificationItemProps> = ({
         <FlexRow className="notification-meta">
           <Icon name="hashtag" className="notification-channel-icon" />
           <Text className="notification-channel mr-2">{channelName}</Text>
-          <Icon name={mentionIcon} className="notification-mention-type-icon" />
+          <Icon name={notificationIcon} className="notification-mention-type-icon" />
           <Text className="notification-sender">{displayName}</Text>
         </FlexRow>
         <FlexRow className="notification-meta">

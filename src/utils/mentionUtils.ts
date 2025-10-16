@@ -104,7 +104,7 @@ export function getMentionType(
  * @param message - The message to check
  * @param options - Configuration for mention checking
  * @param options.userAddress - Current user's address
- * @param options.enabledTypes - Array of enabled mention types (e.g., ['you', 'everyone'])
+ * @param options.enabledTypes - Array of enabled notification types using unified format (e.g., ['mention-you', 'mention-everyone'])
  * @param options.userRoles - Optional: User's role IDs (for future role mention support)
  * @returns true if user is mentioned based on enabled settings
  *
@@ -112,14 +112,14 @@ export function getMentionType(
  * // Check with only personal mentions enabled
  * const mentioned = isMentionedWithSettings(message, {
  *   userAddress: 'QmAbc123',
- *   enabledTypes: ['you']
+ *   enabledTypes: ['mention-you']
  * });
  *
  * @example
  * // Check with all mention types enabled
  * const mentioned = isMentionedWithSettings(message, {
  *   userAddress: 'QmAbc123',
- *   enabledTypes: ['you', 'everyone', 'roles']
+ *   enabledTypes: ['mention-you', 'mention-everyone', 'mention-roles']
  * });
  *
  * @see .agents/tasks/mention-notification-settings-phase4.md
@@ -138,23 +138,21 @@ export function isMentionedWithSettings(
   if (!mentions) return false;
 
   // Check personal mentions (@you)
-  if (enabledTypes.includes('you')) {
+  if (enabledTypes.includes('mention-you')) {
     if (mentions.memberIds?.includes(userAddress)) {
       return true;
     }
   }
 
   // Check @everyone mentions
-  if (enabledTypes.includes('everyone')) {
+  if (enabledTypes.includes('mention-everyone')) {
     if (mentions.everyone === true) {
       return true;
     }
   }
 
   // Check role mentions (@roles - Phase 2b)
-  if (enabledTypes.includes('roles') && mentions.roleIds && userRoles.length > 0) {
-    // TODO: Check if user has any of the mentioned roles
-    // Will be implemented in Phase 2b when role system is complete
+  if (enabledTypes.includes('mention-roles') && mentions.roleIds && userRoles.length > 0) {
     const hasRoleMention = userRoles.some(roleId =>
       mentions.roleIds?.includes(roleId)
     );
