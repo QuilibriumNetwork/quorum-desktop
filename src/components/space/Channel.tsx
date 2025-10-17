@@ -861,33 +861,31 @@ const Channel: React.FC<ChannelProps> = ({
       {composer.showStickers && (
         <>
           <div
-            className="fixed inset-0 top-16 z-[9990]"
+            className="stickers-backdrop"
             onClick={() => composer.setShowStickers(false)}
           />
           <div
-            className={`fixed bottom-20 z-[9999] pointer-events-none ${showUsers ? 'right-[300px]' : 'right-6'} transition-all duration-300`}
+            className={`stickers-panel-wrapper ${showUsers ? 'with-sidebar' : 'without-sidebar'}`}
           >
-            <div className="flex flex-col border border-surface-5 shadow-2xl w-[300px] h-[400px] rounded-lg bg-surface-4 pointer-events-auto">
-              <div className="font-bold p-2 h-[40px] border-b border-surface-5">
+            <div className="stickers-panel">
+              <div className="stickers-panel-header">
                 Stickers
               </div>
-              <div className="grid grid-cols-3 auto-rows-min gap-1 w-[300px] p-4 overflow-y-auto max-h-[359px]">
+              <div className="stickers-panel-grid">
                 {space?.stickers.map((s) => {
                   return (
-                    <Button
+                    <div
                       key={'sticker-' + s.id}
-                      className="flex justify-center items-center w-[80px] h-[80px] hover:bg-surface-6 hover:scale-105 transition-all duration-200 rounded-lg p-1 bg-surface-3"
+                      className="sticker-item"
                       onClick={() => {
                         composer.submitSticker(s.id);
                       }}
-                      type="subtle"
                     >
                       <img
                         src={s.imgUrl}
-                        className="max-w-full max-h-full object-contain rounded-md"
                         alt="sticker"
                       />
-                    </Button>
+                    </div>
                   );
                 })}
               </div>

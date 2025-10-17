@@ -33,6 +33,14 @@
     --sidebar-left-width: calc(100vw - 80px);
   }
 
+  /* === BOX SHADOWS (Light Theme) === */
+  /* Use subtle dark shadows for light backgrounds */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.08);
+  --shadow-md: 0 4px 8px 0 rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 8px 16px 0 rgba(0, 0, 0, 0.12);
+  --shadow-xl: 0 12px 24px 0 rgba(0, 0, 0, 0.15);
+  --shadow-2xl: 0 16px 32px 0 rgba(0, 0, 0, 0.18);
 }
 
 /* === LINKS === */
@@ -73,7 +81,6 @@ mark {
   margin-bottom: $s-1;
   display: block;
   font-size: $text-xs;
-  font-weight: $font-semibold;
   text-transform: uppercase;
   letter-spacing: $tracking-wider;
 }
@@ -108,6 +115,17 @@ mark {
   font-style: normal;
   font-size: $text-sm;
   line-height: $text-sm-lh;
+}
+
+/* === BOX SHADOWS (Dark Theme) === */
+/* Use deeper, more opaque shadows for better visibility on dark backgrounds */
+html.dark {
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+  --shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 4px 8px 0 rgba(0, 0, 0, 0.5);
+  --shadow-lg: 0 8px 16px 0 rgba(0, 0, 0, 0.6);
+  --shadow-xl: 0 12px 24px 0 rgba(0, 0, 0, 0.7);
+  --shadow-2xl: 0 16px 32px 0 rgba(0, 0, 0, 0.8);
 }
 
 html.dark .error-label {

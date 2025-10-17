@@ -1,24 +1,29 @@
 /* === EMOJI PICKER THEMING === */
+@use 'variables' as *;
 
 /* Base theming using CSS variables */
 .EmojiPickerReact {
+  /* Panel styling */
+  box-shadow: $shadow-lg !important;
+
   /* Backgrounds */
-  --epr-bg-color: var(--surface-1) !important;
-  --epr-category-label-bg-color: var(--surface-1) !important;
-  --epr-search-input-bg-color: var(--surface-00) !important;
+  --epr-bg-color: var(--color-bg-modal) !important;
+  --epr-category-label-bg-color: var(--color-bg-modal) !important;
+  --epr-search-input-bg-color: var(--color-field-bg) !important;
   --epr-hover-bg-color: var(--surface-3) !important;
   --epr-focus-bg-color: var(--surface-3) !important;
-  --epr-search-input-bg-color-active: var(--surface-00) !important;
-  --epr-search-input-focus-bg-color: var(--surface-0) !important;
+  --epr-search-input-bg-color-active: var(--color-field-bg) !important;
+  --epr-search-input-focus-bg-color: var(--color-field-bg-focus) !important;
 
   /* Borders */
-  --epr-picker-border-color: var(--surface-5) !important;
-  --epr-search-input-border-color: var(--surface-5) !important;
-  --epr-search-border-color: var(--accent-300) !important;
+  --epr-picker-border-color: var(--color-border-default) !important;
+  --epr-search-input-border-color: var(--color-border-default) !important;
+  --epr-search-border-color: var(--accent) !important;
 
   /* Text */
   --epr-text-color: var(--color-text-main) !important;
-  --epr-search-input-text-color: var(--color-text-main) !important;
+  --epr-search-input-focus-bg-color: var(--color-field-bg-focus) !important;
+  --epr-search-input-placeholder-color: var(--color-text-subtle) !important;
   --epr-category-label-text-color: var(--color-text-subtle) !important;
 
   /* UI sizing - standardized across all instances */
@@ -68,10 +73,11 @@
     }
   }
 
-  // Search input focus
-  .epr-search:focus {
-    border-color: var(--accent-400) !important;
-    outline: none !important;
+  // Search input styling - simple overrides
+  .epr-search {
+    &::placeholder {
+      color: var(--color-field-placeholder) !important;
+    }
   }
 
   // Emoji hover/active/focus states - remove any borders/outlines

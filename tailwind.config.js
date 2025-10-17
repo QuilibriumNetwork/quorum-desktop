@@ -101,6 +101,17 @@ export default {
         danger: 'var(--color-text-danger)',
       },
 
+      boxShadow: {
+        sm: 'var(--shadow-sm)',
+        DEFAULT: 'var(--shadow)',
+        md: 'var(--shadow-md)',
+        lg: 'var(--shadow-lg)',
+        xl: 'var(--shadow-xl)',
+        '2xl': 'var(--shadow-2xl)',
+        inner: 'inset 0 2px 4px 0 rgba(0, 0, 0, 0.06)',
+        none: 'none',
+      },
+
       animation: {
         modalOpen: 'modalOpen 0.3s ease-out',
       },

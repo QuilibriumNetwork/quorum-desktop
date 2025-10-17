@@ -106,10 +106,8 @@
   @extend .dropdown-empty-hint;
 }
 
-// Dark theme adjustments
-.dark .search-results {
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
-}
+// Dark theme adjustments (shadow now handled automatically by CSS variables via DropdownPanel)
+// No need for separate dark theme shadow override
 
 // Animation for opening/closing
 .search-results {

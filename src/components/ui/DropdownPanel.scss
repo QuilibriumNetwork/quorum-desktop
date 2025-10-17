@@ -4,7 +4,7 @@
 .dropdown-panel {
   background: var(--surface-0);
   border-radius: $rounded-lg;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+  box-shadow: $shadow-lg;
   z-index: 10001; /* Higher than flex layout containers */
   overflow: hidden;
   font-weight: normal;
@@ -68,10 +68,8 @@
   max-height: calc(100% - 40px); /* Account for header */
 }
 
-// Dark theme adjustments
-.dark .dropdown-panel {
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
-}
+// Dark theme adjustments (shadow now handled automatically by CSS variables)
+// No need for separate dark theme shadow override
 
 // Animation for opening/closing
 @keyframes dropdownPanelOpen {
