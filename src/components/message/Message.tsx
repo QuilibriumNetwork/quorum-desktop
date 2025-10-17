@@ -301,7 +301,7 @@ export const Message = React.memo(({
       className={
         'text-base relative ' +
         (isTouchDevice()
-          ? 'border-t border-t-surface-0 pt-2' // Add top border for touch devices
+          ? 'border-t border-t-surface-00 pt-2' // Add top border for touch devices
           : 'hover:bg-chat-hover ') + // Only add hover effect on non-touch devices
         // Note: Mentions now use temporary highlight (message-highlighted) instead of permanent background
         // The viewport hook auto-triggers the highlight when mentioned messages enter view

@@ -169,13 +169,9 @@ export function Router({ user, setUser }: RouterProps) {
         <Route
           path="/playground"
           element={
-            <ModalProvider user={user} setUser={setUser}>
-              <MobileProvider>
-                <Suspense fallback={<div>Loading playground...</div>}>
-                  <PrimitivesPlayground />
-                </Suspense>
-              </MobileProvider>
-            </ModalProvider>
+            <Suspense fallback={<div>Loading playground...</div>}>
+              <PrimitivesPlayground />
+            </Suspense>
           }
         />
       )}

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   Container,
   FlexRow,
@@ -7,6 +7,7 @@ import {
   Spacer,
   Callout,
   Icon,
+  Portal,
 } from '@/components/primitives';
 import { ThemeRadioGroup, AccentColorSwitcher } from '@/components/ui';
 import { DevNavMenu } from '../DevNavMenu';
@@ -28,6 +29,7 @@ import {
   SwitchExamples,
   TextExamples,
   TextAreaExamples,
+  ToastExample,
   TooltipExamples,
 } from './examples';
 
@@ -49,6 +51,7 @@ const navigationItems = [
   { id: 'switch-primitive', label: 'Switch', icon: 'sliders' },
   { id: 'text-primitive', label: 'Text', icon: 'pencil' },
   { id: 'textarea-primitive', label: 'TextArea', icon: 'memo' },
+  { id: 'toast-primitive', label: 'Toast', icon: 'bell' },
   { id: 'tooltip-primitive', label: 'Tooltip', icon: 'circle-info' },
 ];
 
@@ -58,6 +61,13 @@ const navigationItems = [
  */
 export const PrimitivesPlayground: React.FC = () => {
   const [activeSection, setActiveSection] = useState('button-primitive');
+
+  // Toast notification state (for testing toast examples in playground)
+  const [toast, setToast] = useState<{
+    message: string;
+    variant?: 'info' | 'success' | 'warning' | 'error';
+  } | null>(null);
+  const toastTimerRef = useRef<NodeJS.Timeout>();
 
   // Scroll to section with offset
   const scrollToSection = (sectionId: string) => {
@@ -102,6 +112,32 @@ export const PrimitivesPlayground: React.FC = () => {
 
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  // Toast event listeners (for testing toast examples)
+  useEffect(() => {
+    const showToast = (message: string, variant: 'info' | 'success' | 'warning' | 'error') => {
+      clearTimeout(toastTimerRef.current);
+      setToast({ message, variant });
+      toastTimerRef.current = setTimeout(() => setToast(null), 5000);
+    };
+
+    const kickHandler = (e: any) => {
+      showToast(`You've been kicked from ${e.detail?.spaceName || 'a space'}`, 'warning');
+    };
+
+    const genericHandler = (e: any) => {
+      showToast(e.detail?.message || 'Notification', e.detail?.variant || 'info');
+    };
+
+    (window as any).addEventListener('quorum:kick-toast', kickHandler);
+    (window as any).addEventListener('quorum:toast', genericHandler);
+
+    return () => {
+      clearTimeout(toastTimerRef.current);
+      (window as any).removeEventListener('quorum:kick-toast', kickHandler);
+      (window as any).removeEventListener('quorum:toast', genericHandler);
+    };
   }, []);
 
   return (
@@ -157,6 +193,9 @@ export const PrimitivesPlayground: React.FC = () => {
                 <SwitchExamples />
                 <TextExamples />
                 <TextAreaExamples />
+                <section id="toast-primitive">
+                  <ToastExample />
+                </section>
                 <TooltipExamples />
               </div>
             </div>
@@ -190,6 +229,29 @@ export const PrimitivesPlayground: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {/* Toast Portal for testing toast examples */}
+      {toast && (
+        <Portal>
+          <div
+            className="fixed bottom-4 right-4 max-w-[360px]"
+            style={{ zIndex: 2147483647 }}
+          >
+            <Callout
+              variant={toast.variant || 'info'}
+              size="sm"
+              dismissible
+              autoClose={0}
+              onClose={() => {
+                clearTimeout(toastTimerRef.current);
+                setToast(null);
+              }}
+            >
+              {toast.message}
+            </Callout>
+          </div>
+        </Portal>
+      )}
     </div>
   );
 };

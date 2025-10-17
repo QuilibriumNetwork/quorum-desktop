@@ -1,7 +1,7 @@
 # Toast System Refactoring
 
 > **⚠️ AI-Generated**: May contain errors. Verify before use.
-> **Status**: Ready for Implementation (reviewed 2025-10-07)
+> **Status**: reviewed 2025-10-07 - HEAVILY OVER-ENGINEREED FOR OUR CURRENT NEEDS!
 
 ## Overview
 
@@ -368,164 +368,310 @@ export const useToast = () => {
 
 ### Phase 5: Integration & Migration
 
-**⚠️ IMPORTANT: Use Phased Rollout, NOT Big Bang**
+STOP HERE AND TEST BEFORE BEGINNING THE MIGRATION
 
-This is a **high-risk migration**. Follow the phased approach to allow rollback if issues arise.
+**⚠️ PRE-PRODUCTION ADVANTAGE: Simplified Direct Migration**
 
-**Step 1: Add ToastProvider Alongside Old System (Week 1)**
+Since the app is **not live yet** and the toast system is only used in **4 files**, we can use a direct migration strategy instead of a complex phased rollout.
 
-File: `/src/components/Layout.tsx` or `/web/main.tsx`
+**Current Toast Usage (Complete Audit):**
+1. `/src/components/Layout.tsx` - Event listeners + display (lines 38-52, 112-129)
+2. `/src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx` - 3 toast dispatches (lines 54-75, 66-76, 269-278)
+3. `/src/services/MessageService.ts` - 1 kick toast dispatch (line 1654)
+4. `/src/hooks/business/spaces/useSpaceProfile.ts` - 1 error toast dispatch (line 216)
+
+**Timeline: 4 Days (~11 hours total)**
+
+---
+
+#### Step 1: Foundation & Testing (Day 1, ~4 hours)
+
+**1a. Implement Core System** (2 hours)
+- Complete Phases 1-4 (types, context, provider, container, hook)
+- Add ToastProvider to app root in `/src/components/Layout.tsx` or `/web/main.tsx`:
 
 ```typescript
 import { ToastProvider } from '@/components/context/ToastProvider';
 
-// ✅ Add new system WITHOUT removing old one yet
+// Wrap children with ToastProvider
 <ToastProvider config={{ position: 'bottom-right', maxVisible: 1 }}>
-  {/* existing app with old toast system still working */}
+  {/* existing app */}
 </ToastProvider>
 ```
 
-**Step 2: Migrate React Components One-by-One (Week 2)**
+**1b. Write Unit Tests** (2 hours)
+```typescript
+// Test timer cleanup (memory leak prevention)
+// Test error boundary catches toast errors
+// Test keyboard support (Escape key dismissal)
+// Test toast queue behavior (maxVisible: 1)
+// Test hook throws error outside provider
+```
 
-**Priority Order (safest first):**
+**Checkpoint:** ✅ All tests pass, new system ready
 
-1. `/src/hooks/business/spaces/useSpaceProfile.ts` (simple hook)
-2. `/src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx` (isolated modal)
-3. Other React components (identify via grep: `quorum:toast`)
+---
 
-**For each file:**
-- [ ] Create feature flag check (optional but recommended)
-- [ ] Migrate to `useToast()`
-- [ ] Test thoroughly
-- [ ] Deploy to production
-- [ ] Monitor for issues before next migration
+#### Step 2: Migrate React Files (Day 2, ~3 hours)
 
-**Step 3: Handle Non-React Code (Week 3)**
-
-**⚠️ CRITICAL: MessageService Migration Strategy**
-
-**Problem:** `/src/services/MessageService.ts` is a **class**, not a React component. It **cannot use hooks**.
-
-**Solution Options:**
-
-**Option A: Hybrid System (RECOMMENDED - Less Risky)**
-
-Keep event dispatch for non-React code, accept hybrid system:
+**Migration Pattern (Same for All React Files):**
 
 ```typescript
-// In MessageService.ts (lines 1637-1642)
-// Keep existing event dispatch - it works fine for non-React code
-if (typeof window !== 'undefined') {
-  window.dispatchEvent(
-    new CustomEvent('quorum:kick-toast', {
-      detail: { message: t`You've been kicked from ${spaceName}`, variant: 'warning' }
+// BEFORE (Old Event System)
+if (typeof window !== 'undefined' && (window as any).dispatchEvent) {
+  (window as any).dispatchEvent(
+    new CustomEvent('quorum:toast', {
+      detail: { message: 'Error message', variant: 'error' }
     })
   );
 }
 
-// In ToastProvider.tsx - Add event listener bridge
+// AFTER (New Hook System)
+import { useToast } from '@/hooks/ui/useToast';
+
+const { showError } = useToast();
+showError('Error message');
+```
+
+**2a. Migrate `useSpaceProfile.ts` (30 min)**
+- Location: Line 216
+- Replace event dispatch with `showError()` hook
+- Test profile update error scenario
+
+**2b. Migrate `SpaceSettingsModal.tsx` (1 hour)**
+- Location: Lines 54-75, 66-76, 269-278 (3 toast dispatches)
+- Replace all 3 event dispatches with appropriate hooks:
+  - Success: `showSuccess()`
+  - Info: `showInfo()`
+  - Error: `showError()`
+- Test all three scenarios (kick sync, no updates, mention settings error)
+
+**2c. Remove Old System from `Layout.tsx` (30 min)**
+- **Delete lines 38-52**: Old event listeners
+  ```typescript
+  // DELETE THIS:
+  const [kickToast, setKickToast] = React.useState<{...} | null>(null);
+  React.useEffect(() => {
+    const kickHandler = (e: any) => {...};
+    const genericHandler = (e: any) => {...};
+    (window as any).addEventListener('quorum:kick-toast', kickHandler);
+    (window as any).addEventListener('quorum:toast', genericHandler);
+    return () => {...};
+  }, []);
+  ```
+
+- **Delete lines 112-129**: Old toast rendering
+  ```typescript
+  // DELETE THIS:
+  {kickToast && (
+    <Portal>
+      <div className="fixed bottom-4 right-4 max-w-[360px]" style={{ zIndex: 2147483647 }}>
+        <Callout variant={kickToast.variant || 'info'} size="sm" dismissible autoClose={5} onClose={() => setKickToast(null)}>
+          {kickToast.message}
+        </Callout>
+      </div>
+    </Portal>
+  )}
+  ```
+
+**2d. Local Testing** (1 hour)
+- [ ] Profile update error toast appears
+- [ ] Space settings toasts work (all 3 types)
+- [ ] Toasts auto-dismiss after 5 seconds
+- [ ] Manual dismiss works (click X)
+- [ ] Keyboard dismiss works (Escape key)
+
+**Checkpoint:** ✅ All React files migrated, old Layout code removed
+
+---
+
+#### Step 3: Handle MessageService.ts (Day 3, ~2 hours)
+
+**⚠️ CRITICAL DECISION: MessageService is Non-React Class (Cannot Use Hooks)**
+
+**RECOMMENDED: Option A - Event Bridge (Minimal Risk)**
+
+**Why Option A:**
+- ✅ Zero changes to MessageService.ts (preserves stability)
+- ✅ Kick event is rare (edge case, low impact)
+- ✅ MessageService handles critical encryption/messaging
+- ✅ Only 15 lines of bridge code vs. major refactor
+- ✅ Can refactor later if needed
+
+**Implementation (30 min):**
+
+Add this to `/src/components/context/ToastProvider.tsx`:
+
+```typescript
+// In ToastProvider component, add after existing useEffect:
+
+// Bridge for MessageService.ts (non-React class) kick notifications
 useEffect(() => {
-  const handleLegacyEvent = (e: CustomEvent) => {
+  const handleKickToast = (e: Event) => {
+    const customEvent = e as CustomEvent;
     showToast({
-      message: e.detail.message,
-      variant: e.detail.variant || 'info',
+      message: customEvent.detail?.message || t`You've been kicked from a space`,
+      variant: 'warning',
     });
   };
 
-  window.addEventListener('quorum:toast', handleLegacyEvent as EventListener);
-  window.addEventListener('quorum:kick-toast', handleLegacyEvent as EventListener);
+  window.addEventListener('quorum:kick-toast', handleKickToast);
 
   return () => {
-    window.removeEventListener('quorum:toast', handleLegacyEvent as EventListener);
-    window.removeEventListener('quorum:kick-toast', handleLegacyEvent as EventListener);
+    window.removeEventListener('quorum:kick-toast', handleKickToast);
   };
 }, [showToast]);
 ```
 
-**Option B: Refactor MessageService (Higher Risk)**
+**No changes needed to MessageService.ts** - it continues dispatching `quorum:kick-toast` events as before.
 
-Pass toast context through dependency injection:
+**Testing (1.5 hours):**
+- [ ] Kick toast appears when kicked from space (requires 2-account test)
+- [ ] Message still visible with correct styling
+- [ ] No breaking changes to message handling
 
-```typescript
-// In MessageServiceDependencies interface
-export interface MessageServiceDependencies {
-  // ... existing
-  showToast: (toast: Omit<Toast, 'id'>) => string; // ✅ NEW
-}
+---
 
-// In Layout.tsx where MessageService is instantiated
-const { showToast } = useToast();
-const messageService = new MessageService({
-  // ... existing deps
-  showToast, // ✅ Pass toast function
-});
-```
+**ALTERNATIVE: Option B - Dependency Injection (NOT Recommended)**
 
-**Choose ONE approach before proceeding.**
+Only consider if you want "pure" new system without events. Requires:
+1. Refactor `MessageServiceDependencies` interface
+2. Pass `showToast` function through constructor
+3. Update all MessageService instantiation sites
+4. Replace event dispatch in MessageService (line 1654)
 
-**Step 3a: Document Decision**
+**Risk:** High - MessageService is critical infrastructure. Not worth refactoring for 1 toast.
 
-Create: `/docs/architecture/toast-system-hybrid.md` explaining chosen approach and rationale.
+---
 
-**Step 4: Remove Old System (Week 4 - Only After All Migrations Succeed)**
+#### Step 4: Final Testing & Documentation (Day 4, ~2 hours)
 
-**Remove from Layout.tsx:**
-- Lines 39-53: Old event listeners (`useEffect` for `quorum:toast` and `quorum:kick-toast`)
-- Lines 113-130: Old toast rendering with `createPortal`
-- State: `const [kickToast, setKickToast] = useState<{...} | null>(null);`
+**4a. Integration Testing** (1 hour)
+- [ ] All toast types work (success, error, warning, info)
+- [ ] Auto-dismiss after 5 seconds
+- [ ] Manual dismiss (click X)
+- [ ] Keyboard dismiss (Escape key)
+- [ ] Kick toast works (MessageService event bridge)
+- [ ] No console errors
+- [ ] No memory leaks (Chrome DevTools → Performance Monitor → check JS Heap)
 
-**Verify all migrations complete:**
+**4b. TypeScript Validation** (15 min)
 ```bash
-# Should return NO results
-grep -r "quorum:toast" src/ --include="*.ts" --include="*.tsx"
+cmd.exe /c "cd /d D:\\GitHub\\Quilibrium\\quorum-desktop && npx tsc --noEmit --jsx react-jsx --skipLibCheck"
+```
+
+**4c. Build Test** (15 min)
+```bash
+cmd.exe /c "cd /d D:\\GitHub\\Quilibrium\\quorum-desktop && yarn build"
+```
+
+**4d. Verify Migration Complete** (5 min)
+```bash
+# Should only show MessageService.ts and ToastProvider.tsx (event bridge)
 grep -r "quorum:kick-toast" src/ --include="*.ts" --include="*.tsx"
+
+# Should return NO results (all generic toasts migrated)
+grep -r "quorum:toast" src/ --include="*.ts" --include="*.tsx" | grep -v "quorum:kick-toast"
 ```
 
-**Step 5: Rollback Plan**
+**4e. Update Documentation** (30 min)
+- Add comment in ToastProvider.tsx explaining event bridge
+- Update this file: Mark Phase 5 complete
+- Note MessageService strategy decision (Option A chosen)
 
-If issues arise:
+**Checkpoint:** ✅ Ready for commit
 
-1. **Phase 1 rollback**: Remove `<ToastProvider>` wrapper, old system still works
-2. **Phase 2 rollback**: Keep new system, but revert individual file migrations
-3. **Phase 3 rollback**: If MessageService breaks, revert to event dispatch (Option A)
+---
 
-**Keep this checklist:**
-- [ ] Old system still works when new provider added
-- [ ] Each migrated file tested independently
-- [ ] Production monitoring shows no toast-related errors
-- [ ] User reports no missing/duplicate toasts
+### Migration Checklist
 
-### Phase 6: Testing
+**Day 1: Foundation**
+- [ ] Phases 1-4 complete (types, context, provider, hook)
+- [ ] ToastProvider added to app
+- [ ] Unit tests written and passing
 
-**Critical Test Cases:**
-- [ ] **Memory leaks**: Verify timeouts cleaned up (Chrome DevTools)
-- [ ] **No double timers**: Only ToastProvider handles auto-dismiss
-- [ ] **Error boundary**: Toast errors don't crash app
-- [ ] **Keyboard**: Escape key dismisses toast
-- [ ] **Accessibility**: ARIA live regions work with screen readers
-- [ ] Auto-dismiss after duration works
-- [ ] Manual dismiss clears timeout
-- [ ] Type safety enforced (invalid variants caught by TS)
-- [ ] Hook throws error outside provider
+**Day 2: React Migration**
+- [ ] useSpaceProfile.ts migrated (line 216)
+- [ ] SpaceSettingsModal.tsx migrated (3 locations)
+- [ ] Layout.tsx old code removed (lines 38-52, 112-129)
+- [ ] Manual testing complete
 
-### Phase 7: Documentation
+**Day 3: MessageService**
+- [ ] Event bridge added to ToastProvider
+- [ ] Kick toast tested with 2 accounts
+- [ ] No MessageService changes needed
 
-Create `/src/components/primitives/Toast/README.md` with:
+**Day 4: Finalization**
+- [ ] All integration tests pass
+- [ ] TypeScript validation clean
+- [ ] Build succeeds
+- [ ] grep verification (only kick-toast in 2 files)
+- [ ] Documentation updated
+- [ ] Single commit created
 
-**Basic Usage:**
-```typescript
-const { showSuccess, showError } = useToast();
-showSuccess('Data saved!');
+### Success Verification
+
+```bash
+# Should show only MessageService.ts (dispatch) and ToastProvider.tsx (bridge)
+grep -r "quorum:kick-toast" src/ --include="*.ts" --include="*.tsx"
+
+# Should return ZERO results (all generic toasts migrated)
+grep -r "quorum:toast" src/ --include="*.ts" --include="*.tsx" | grep -v "quorum:kick-toast"
+
+# Should return ZERO results (old event listeners removed)
+grep -r "addEventListener.*quorum:toast" src/ --include="*.ts" --include="*.tsx" | grep -v ToastProvider
 ```
 
-**API:**
-- `showSuccess/Error/Warning/Info(message, options?)` - Convenience methods
-- `showToast(toast)` - Returns toast ID
-- `dismissToast(id)` / `dismissAll()`
-- `updateToast(id, updates)` - Optional, experimental
+**Final Verification:**
+- ✅ No TypeScript errors
+- ✅ Build succeeds
+- ✅ All toasts display correctly
+- ✅ No console errors
+- ✅ No memory leaks
+- ✅ Keyboard support works (Escape)
 
-**Migration:**
-Replace `window.dispatchEvent(new CustomEvent('quorum:toast', ...))` with `useToast()`
+### Rollback Plan
+
+If issues arise, simple git revert:
+
+```bash
+# Rollback entire migration
+git revert HEAD
+
+# Or rollback specific file
+git checkout HEAD~1 -- src/path/to/file.tsx
+```
+
+**Why Simple Rollback Works:**
+- Single commit migration
+- Pre-production (no user impact)
+- All testing done before commit
+
+---
+
+### Why This Approach vs. Original
+
+**Original Plan:** 4 weeks, hybrid system, phased rollout, 26-36 hours
+**Simplified Plan:** 4 days, direct migration, single commit, ~11 hours
+
+**Key Differences:**
+- ✅ No hybrid system complexity (except minimal event bridge)
+- ✅ No production monitoring between phases
+- ✅ No gradual rollout (all-at-once after testing)
+- ✅ Single PR instead of multiple deployments
+- ✅ 60-70% time savings
+
+**Why Safe:**
+- Pre-production (no users to disrupt)
+- Only 4 files to migrate (known scope)
+- Full testing before commit
+- Simple git revert if issues found
+- MessageService left stable (event bridge)
+
+### Phase 6: Documentation
+
+Update files in `/src/components/primitives/` with the new Toast primitive where applicable.
+
 
 ## Pre-Launch Checklist
 
@@ -599,43 +745,12 @@ This refactoring is considered complete when:
 
 ## References
 
-- `/src/components/Layout.tsx` - Current implementation (lines 39-53, 113-130)
+- `/src/components/Layout.tsx` - Current implementation (lines 38-52, 112-129)
+- `/src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx` - Toast dispatches
+- `/src/hooks/business/spaces/useSpaceProfile.ts` - Toast dispatch
+- `/src/services/MessageService.ts` - Kick toast dispatch (non-React)
 - `/src/components/primitives/Callout/` - Underlying UI component
 - `.agents/tasks/.done/callout-primitive-system.md` - Callout component docs
-
-## Implementation Timeline
-
-### Week 1: Foundation (8-12 hours)
-- [ ] Implement timer cleanup fixes (2 hours)
-- [ ] Create error boundary (1 hour)
-- [ ] Create mobile stub (30 min)
-- [ ] Implement keyboard support (1 hour)
-- [ ] Add ToastProvider alongside old system (2 hours)
-- [ ] Write unit tests for ToastProvider (3-4 hours)
-
-### Week 2: Safe Migration (8-10 hours)
-- [ ] Migrate `useSpaceProfile.ts` (1 hour)
-- [ ] Test in production (monitoring)
-- [ ] Migrate `SpaceSettingsModal.tsx` (1 hour)
-- [ ] Test in production (monitoring)
-- [ ] Identify and migrate remaining React components (4-6 hours)
-- [ ] Document any issues encountered (1 hour)
-
-### Week 3: Non-React Code (6-8 hours)
-- [ ] Decide MessageService approach (hybrid vs refactor) (2 hours)
-- [ ] Implement chosen approach (3-4 hours)
-- [ ] Document decision and rationale (1 hour)
-- [ ] Integration testing (1-2 hours)
-
-### Week 4: Cleanup & Launch (4-6 hours)
-- [ ] Remove old toast system (1 hour)
-- [ ] Verify all grep searches return nothing (30 min)
-- [ ] Final accessibility audit (1 hour)
-- [ ] Performance testing (memory leaks, render time) (1-2 hours)
-- [ ] Production monitoring (48 hours observation)
-- [ ] Update documentation (1 hour)
-
-**Total Estimated Effort:** 26-36 hours (3-4.5 weeks at 8-10 hours/week)
 
 ## Risks & Mitigation
 
@@ -653,4 +768,4 @@ This refactoring is considered complete when:
 ---
 
 _Created: 2025-10-07 by Claude Code_
-_Updated: 2025-10-07 by Claude Code (post-analysis improvements)_
+_Updated: 2025-10-17 by Claude Code (Phase 5 simplified for pre-production app)_

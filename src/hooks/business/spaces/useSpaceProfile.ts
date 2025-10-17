@@ -7,6 +7,7 @@ import { processAvatarImage, FILE_SIZE_LIMITS } from '../../../utils/imageProces
 import { useMessageDB } from '../../../components/context/useMessageDB';
 import { useQueryClient } from '@tanstack/react-query';
 import { buildSpaceMembersKey } from '../../queries';
+import { showError } from '../../../utils/toast';
 
 export interface UseSpaceProfileOptions {
   spaceId: string;
@@ -211,16 +212,7 @@ export const useSpaceProfile = (
       console.error('Failed to update space profile:', error);
 
       // Show error toast
-      if (typeof window !== 'undefined' && (window as any).dispatchEvent) {
-        (window as any).dispatchEvent(
-          new CustomEvent('quorum:toast', {
-            detail: {
-              message: error instanceof Error ? error.message : t`Failed to update profile`,
-              variant: 'error',
-            },
-          })
-        );
-      }
+      showError(error instanceof Error ? error.message : t`Failed to update profile`);
     } finally {
       setIsSaving(false);
     }

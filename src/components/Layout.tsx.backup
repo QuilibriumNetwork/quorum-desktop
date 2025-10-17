@@ -35,46 +35,17 @@ const Layout: React.FunctionComponent<{
     useSidebar();
   useNavigationHotkeys();
 
-  const [toast, setToast] = React.useState<{
-    message: string;
-    variant?: 'info' | 'success' | 'warning' | 'error';
-  } | null>(null);
-
-  // Store timer ref for cleanup (prevents memory leak)
-  const toastTimerRef = React.useRef<NodeJS.Timeout>();
-
+  const [kickToast, setKickToast] = React.useState<{ message: string; variant?: 'info' | 'success' | 'warning' | 'error' } | null>(null);
   React.useEffect(() => {
-    const showToast = (
-      message: string,
-      variant: 'info' | 'success' | 'warning' | 'error'
-    ) => {
-      // Clear any existing timer
-      clearTimeout(toastTimerRef.current);
-
-      // Show new toast
-      setToast({ message, variant });
-
-      // Set new timer with cleanup
-      toastTimerRef.current = setTimeout(() => setToast(null), 5000);
-    };
-
     const kickHandler = (e: any) => {
-      showToast(
-        `You've been kicked from ${e.detail?.spaceName || 'a space'}`,
-        'warning'
-      );
+      setKickToast({ message: `You've been kicked from ${e.detail?.spaceName}`, variant: 'warning' });
     };
-
     const genericHandler = (e: any) => {
-      showToast(e.detail?.message || 'Notification', e.detail?.variant || 'info');
+      setKickToast({ message: e.detail?.message, variant: e.detail?.variant || 'info' });
     };
-
     (window as any).addEventListener('quorum:kick-toast', kickHandler);
     (window as any).addEventListener('quorum:toast', genericHandler);
-
     return () => {
-      // Clean up timer on unmount
-      clearTimeout(toastTimerRef.current);
       (window as any).removeEventListener('quorum:kick-toast', kickHandler);
       (window as any).removeEventListener('quorum:toast', genericHandler);
     };
@@ -138,24 +109,20 @@ const Layout: React.FunctionComponent<{
         <ImageModalProvider showImageModal={showImageModal}>
           <ResponsiveContainer>
             {props.children}
-            {toast && (
+            {kickToast && (
               <Portal>
                 <div
                   className="fixed bottom-4 right-4 max-w-[360px]"
                   style={{ zIndex: 2147483647 }}
                 >
                   <Callout
-                    variant={toast.variant || 'info'}
+                    variant={kickToast.variant || 'info'}
                     size="sm"
                     dismissible
-                    autoClose={0}
-                    onClose={() => {
-                      // Clear timer when manually dismissed
-                      clearTimeout(toastTimerRef.current);
-                      setToast(null);
-                    }}
+                    autoClose={5}
+                    onClose={() => setKickToast(null)}
                   >
-                    {toast.message}
+                    {kickToast.message}
                   </Callout>
                 </div>
               </Portal>

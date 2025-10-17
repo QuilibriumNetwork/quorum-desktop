@@ -16,6 +16,7 @@ import { canonicalize } from '../utils/canonicalize';
 import { QuorumApiClient } from '../api/baseTypes';
 import { extractMentionsFromText } from '../utils/mentionUtils';
 import { hasPermission } from '../utils/permissions';
+import { showWarning } from '../utils/toast';
 
 // Type definitions for the service
 export interface MessageServiceDependencies {
@@ -1649,13 +1650,7 @@ export class MessageService {
                   const spaceId = conversationId.split('/')[0];
                   try {
                     const space = await this.messageDB.getSpace(spaceId);
-                    if (typeof window !== 'undefined' && (window as any).dispatchEvent) {
-                      (window as any).dispatchEvent(
-                        new CustomEvent('quorum:kick-toast', {
-                          detail: { spaceName: space?.spaceName || spaceId },
-                        })
-                      );
-                    }
+                    showWarning(`You've been kicked from ${space?.spaceName || spaceId}`);
                   } catch {}
                   // Immediately navigate away from the space view when kicked
                   this.navigate('/messages', { replace: true, state: { from: 'kicked', spaceId } });

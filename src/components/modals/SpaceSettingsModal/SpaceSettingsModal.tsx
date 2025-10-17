@@ -26,6 +26,7 @@ import {
   useSpaceProfile,
 } from '../../../hooks';
 import { useMentionNotificationSettings } from '../../../hooks/business/mentions';
+import { showSuccess, showInfo, showError } from '../../../utils/toast';
 import Account from './Account';
 import General from './General';
 import Roles from './Roles';
@@ -51,28 +52,10 @@ const SpaceSettingsModal: React.FunctionComponent<{
       if (count > 0) {
         // Optionally, request a members sync shortly after
         await requestSync(space.spaceId);
-        if (typeof window !== 'undefined' && (window as any).dispatchEvent) {
-          (window as any).dispatchEvent(
-            new CustomEvent('quorum:toast', {
-              detail: {
-                message: `Updated records for ${count} users that have been kicked.`,
-                variant: 'success',
-              },
-            })
-          );
-        }
+        showSuccess(`Updated records for ${count} users that have been kicked.`);
       } else {
         // No updates needed
-        if (typeof window !== 'undefined' && (window as any).dispatchEvent) {
-          (window as any).dispatchEvent(
-            new CustomEvent('quorum:toast', {
-              detail: {
-                message: t`All kick records are up to date.`,
-                variant: 'info',
-              },
-            })
-          );
-        }
+        showInfo(t`All kick records are up to date.`);
       }
     } finally {
       setSyncingKicks(false);
@@ -266,16 +249,7 @@ const SpaceSettingsModal: React.FunctionComponent<{
       // spaceProfile.onSave already shows error toasts, so we don't need to duplicate
       // But if mention settings fail, we should show an error
       if (error instanceof Error && error.message.includes('mention')) {
-        if (typeof window !== 'undefined' && (window as any).dispatchEvent) {
-          (window as any).dispatchEvent(
-            new CustomEvent('quorum:toast', {
-              detail: {
-                message: t`Failed to save notification settings`,
-                variant: 'error',
-              },
-            })
-          );
-        }
+        showError(t`Failed to save notification settings`);
       }
       throw error; // Re-throw to prevent modal from closing
     }

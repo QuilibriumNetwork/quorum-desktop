@@ -16,6 +16,7 @@ export { SpacerExamples } from './Spacer';
 export { SwitchExamples } from './Switch';
 export { TextExamples } from './Text';
 export { TextAreaExamples } from './TextArea';
+export { ToastExample } from './ToastExample';
 export { TooltipExamples } from './Tooltip';
 
 // Navigation Metadata (Alphabetically Ordered)
@@ -37,6 +38,7 @@ export const navigationItems = [
   { id: 'switch-primitive', label: 'Switch', component: 'SwitchExamples' },
   { id: 'text-primitive', label: 'Text', component: 'TextExamples' },
   { id: 'textarea-primitive', label: 'TextArea', component: 'TextAreaExamples' },
+  { id: 'toast-primitive', label: 'Toast', component: 'ToastExample' },
   { id: 'tooltip-primitive', label: 'Tooltip', component: 'TooltipExamples' },
 ];
 
@@ -59,5 +61,6 @@ export const componentRegistry = {
   SwitchExamples: () => import('./Switch').then(m => m.SwitchExamples),
   TextExamples: () => import('./Text').then(m => m.TextExamples),
   TextAreaExamples: () => import('./TextArea').then(m => m.TextAreaExamples),
+  ToastExample: () => import('./ToastExample').then(m => m.ToastExample),
   TooltipExamples: () => import('./Tooltip').then(m => m.TooltipExamples),
 };
