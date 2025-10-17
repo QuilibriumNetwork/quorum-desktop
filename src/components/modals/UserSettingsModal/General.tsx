@@ -109,7 +109,7 @@ const General: React.FunctionComponent<GeneralProps> = ({
           <div className="pt-2 mb-4 modal-text-small text-main">
             {t`This is your public address and is safe to share with anyone you want to interact with.`}
           </div>
-          <div className="modal-input-display text-sm lg:text-base">
+          <div className="modal-input-display text-sm lg:text-base bg-field">
             <div className="break-all flex-1 mr-2">
               {currentPasskeyInfo!.address}
             </div>

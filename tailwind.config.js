@@ -81,7 +81,6 @@ export default {
         'chat-input': 'var(--color-bg-chat-input)',
 
         icon: 'var(--color-bg-icon)',
-        input: 'var(--color-bg-input)',
         field: 'var(--color-field-bg)',
         card: 'var(--color-bg-card)',
         tooltip: 'var(--color-bg-tooltip)',

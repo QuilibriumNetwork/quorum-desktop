@@ -60,16 +60,16 @@
   --color-bg-icon: var(--surface-00);
 
   /* === FORM FIELD SEMANTIC COLORS === */
-  /* Field backgrounds - optimized for --color-bg-modal containers */
-  --color-field-bg: var(--surface-0);
-  --color-field-bg-focus: var(--surface-1);
-  --color-field-bg-filled: var(--surface-0);
-  --color-field-bg-filled-focus: var(--surface-1);
-  --color-field-bg-error: var(--surface-1);
+  /* Field backgrounds - optimized for surface-2 containers */
+  --color-field-bg: var(--surface-4);
+  --color-field-bg-focus: var(--surface-3);
+  --color-field-bg-filled: var(--surface-3);
+  --color-field-bg-filled-focus: var(--surface-2);
+  --color-field-bg-error: var(--surface-2);
 
   /* Field borders - using border-strong for proper contrast */
-  --color-field-border: var(--color-border-default);
-  --color-field-border-hover: var(--color-border-strong);
+  --color-field-border: var(--color-border-strong);
+  --color-field-border-hover: var(--color-border-stronger);
   --color-field-border-focus: var(--accent);
   --color-field-border-error: rgb(var(--danger));
 
