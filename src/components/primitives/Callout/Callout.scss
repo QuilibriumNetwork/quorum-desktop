@@ -1,70 +1,70 @@
 // Callout component styles
-// Optimized for display on surface-5 backgrounds (modals/panels)
+// Uses solid opaque colors for better readability
 
 .callout {
   // Base styles handled by Tailwind classes
   // This file provides theme-specific color overrides
 }
 
-// Light theme callout colors - brighter for better visibility on light surfaces
+// Light theme callout colors - solid backgrounds
 :root:not(.dark) {
-  // Info - Brighter blue for better contrast
+  // Info
   .callout-info {
-    --callout-bg: rgba(59, 130, 246, 0.15); 
-    --callout-border: rgba(59, 130, 246, 0.45); 
-    --callout-text: rgb(37, 99, 235); // Slightly darker blue for better contrast
+    --callout-bg: #DAE4F9;
+    --callout-border: #93B8F7;
+    --callout-text: #2563EB;
   }
 
-  // Success - Brighter green
+  // Success
   .callout-success {
-    --callout-bg: rgba(34, 197, 94, 0.15); 
-    --callout-border: rgba(34, 197, 94, 0.45); 
-    --callout-text: rgb(22, 163, 74); 
+    --callout-bg: #D6EEE2;
+    --callout-border: #85DCA6;
+    --callout-text: #16A34A;
   }
 
-  // Warning - Brighter amber
+  // Warning
   .callout-warning {
-    --callout-bg: rgba(245, 158, 11, 0.15); 
-    --callout-border: rgba(245, 158, 11, 0.45); 
-    --callout-text: rgb(217, 119, 6); 
+    --callout-bg: #F6E9D6;
+    --callout-border: #F6C77A;
+    --callout-text: #D97706;
   }
 
-  // Error - Brighter red
+  // Error
   .callout-error {
-    --callout-bg: rgba(239, 68, 68, 0.15); 
-    --callout-border: rgba(239, 68, 68, 0.45); 
-    --callout-text: rgb(220, 38, 38); 
+    --callout-bg: #F5DBDE;
+    --callout-border: #F39798;
+    --callout-text: #DC2626;
   }
 }
 
-// Dark theme callout colors - optimized for dark surface-5
+// Dark theme callout colors - solid backgrounds
 :root.dark {
-  // Info - Much brighter blue for dark theme
+  // Info
   .callout-info {
-    --callout-bg: rgba(96, 165, 250, 0.15); 
-    --callout-border: rgba(96, 165, 250, 0.35);
-    --callout-text: rgb(147, 197, 253); 
+    --callout-bg: #2D3346;
+    --callout-border: #3F5B85;
+    --callout-text: #93C5FD;
   }
 
-  // Success - Brighter green for dark theme
+  // Success
   .callout-success {
-    --callout-bg: rgba(74, 222, 128, 0.12);
-    --callout-border: rgba(74, 222, 128, 0.30);
-    --callout-text: rgb(134, 239, 172); 
+    --callout-bg: #293632;
+    --callout-border: #33694A;
+    --callout-text: #86EFAC;
   }
 
-  // Warning - Brighter amber for dark theme
+  // Warning
   .callout-warning {
-    --callout-bg: rgba(251, 191, 36, 0.12);
-    --callout-border: rgba(251, 191, 36, 0.30);
-    --callout-text: rgb(252, 211, 77);
+    --callout-bg: #3F3226;
+    --callout-border: #775D26;
+    --callout-text: #FCD34D;
   }
 
-  // Error - Brighter red for dark theme
+  // Error
   .callout-error {
-    --callout-bg: rgba(248, 113, 113, 0.12);
-    --callout-border: rgba(248, 113, 113, 0.30);
-    --callout-text: rgb(252, 165, 165);
+    --callout-bg: #3E2930;
+    --callout-border: #763F44;
+    --callout-text: #FCA5A5;
   }
 }
 

@@ -17,31 +17,48 @@ const variantIcons: Record<string, IconName> = {
   error: 'exclamation-triangle',
 };
 
+// Callout colors with solid backgrounds for better readability
 const variantColors = {
-  info: '#3B82F6',
-  success: '#10B981',
-  warning: '#F59E0B',
-  error: '#EF4444',
+  info: {
+    text: '#3B82F6',
+    bg: '#2D3346',
+    border: '#3F5B85',
+  },
+  success: {
+    text: '#10B981',
+    bg: '#293632',
+    border: '#33694A',
+  },
+  warning: {
+    text: '#F59E0B',
+    bg: '#3F3226',
+    border: '#775D26',
+  },
+  error: {
+    text: '#EF4444',
+    bg: '#3E2930',
+    border: '#763F44',
+  },
 };
 
 const getVariantStyles = (variant: string, layout: string) => {
-  const color = variantColors[variant as keyof typeof variantColors];
+  const colors = variantColors[variant as keyof typeof variantColors];
 
   if (layout === 'base') {
     return {
       container: {
-        borderColor: color + '4D', // 30% opacity
-        backgroundColor: color + '1A', // 10% opacity
+        borderColor: colors.border,
+        backgroundColor: colors.bg,
         borderWidth: 1,
         borderRadius: 8,
         paddingHorizontal: 12,
         paddingVertical: 8,
       },
       text: {
-        color: color,
+        color: colors.text,
       },
       icon: {
-        color: color,
+        color: colors.text,
       },
     };
   }
@@ -49,10 +66,10 @@ const getVariantStyles = (variant: string, layout: string) => {
   return {
     container: {},
     text: {
-      color: color,
+      color: colors.text,
     },
     icon: {
-      color: color,
+      color: colors.text,
     },
   };
 };
