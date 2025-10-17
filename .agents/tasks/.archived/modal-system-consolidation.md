@@ -1,6 +1,7 @@
 # Modal System Consolidation via Route Wrapper Component
 
 > **⚠️ AI-Generated**: May contain errors. Verify before use.
+> TESTED, BUT NOT WORTH IT (improvement is small)
 
 **Status**: Proposed (Revised after feature-analyzer review)
 **Priority**: Medium

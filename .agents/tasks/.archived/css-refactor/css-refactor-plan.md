@@ -1,5 +1,7 @@
 # CSS Refactor Plan - Claude Code Execution Strategy
 
+> NOT IMPLEMENTED : instead we removed all @apply from components and cerate a variables.scss to mirror tailwind values, so we cna keep using regular sintax in our scss files but still use tailwind values for size, text etc...
+
 ## 📋 Document Information
 
 **Last Updated:** January 19, 2025  

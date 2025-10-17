@@ -179,8 +179,8 @@ export const IconPicker: React.FC<IconPickerProps> = ({
                 }}
                 className={`w-7 h-7 p-0 rounded-full flex items-center justify-center transition-colors cursor-pointer focus:outline-none ${
                   selectedIcon === iconOption.name
-                    ? 'border-2 border-accent bg-surface-5'
-                    : 'border border-transparent bg-surface-3 hover:bg-surface-5 hover:border-accent focus:border-accent'
+                    ? 'border-2 border-accent bg-surface-2'
+                    : 'border border-transparent bg-surface-2 hover:bg-surface-2 hover:border-accent focus:border-accent'
                 }`}
                 aria-label={`Select ${iconOption.name} icon for ${iconOption.category.toLowerCase()}`}
                 aria-pressed={selectedIcon === iconOption.name}
