@@ -27,6 +27,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [ReactTooltip Mobile Support Documentation](docs/features/reacttooltip-mobile.md)
 - [Responsive Layout System Documentation](docs/features/responsive-layout.md)
 - [Space Settings Modal - Fixes Section](docs/features/space-settings-fixes-section.md)
+- [Toast Notifications](docs/features/toast-notifications.md)
 - [Touch Long Press System](docs/features/touch-long-press-system.md)
 - [Unified Notification System (Mentions + Replies)](docs/features/mention-notification-system.md)
 - [🔍 Global Message Search - Implementation Guide & Documentation](docs/features/search-feature.md)
@@ -95,7 +96,6 @@ This is the main index for all documentation, bug reports, and task management.
 - [Server Folders - Discord-Style Grouping Feature](tasks/server-folders-discord-style.md)
 - [Task: Implement Delete Public Invite Link Feature](tasks/delete-public-invite-link.md)
 - [Test Suite Implementation Plan for Quorum Desktop](tasks/test-suite-plan.md)
-- [Toast System Refactoring](tasks/toast-system-refactoring.md)
 - [User Config Sync on Existing Accounts](tasks/user-config-sync-on-existing-accounts.md)
 - [User Status Feature Implementation Plan](tasks/user-status.md)
 - [🚀 Search Performance Optimization - Revised Implementation Plan](tasks/search-performance-optimization.md)
@@ -193,6 +193,8 @@ This is the main index for all documentation, bug reports, and task management.
 - [Space Icon Mention Bubbles](tasks/.done/space-icon-mention-bubbles.md)
 - [Tailwind @apply Conversion Audit](tasks/.done/tailwind-apply-conversion-audit.md)
 - [Task: Improve User Mention System](tasks/.done/improve-user-mention-system.md)
+- [Toast System - Simple Bug Fixes](tasks/.done/toast-system-simple-fix.md)
+- [Toast System Refactoring](tasks/.done/toast-system-refactoring.md)
 - [UI Folder Reorganization Task](tasks/.done/ui-folder-reorganization.md)
 - [User Initials Avatars](tasks/.done/user-initials.md)
 - [🎯 Objective: Implement Global Message Search](tasks/.done/global-search-plan.md)
@@ -201,4 +203,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2025-10-16 17:56:03
+**Last Updated**: 2025-10-17 15:44:43
