@@ -90,6 +90,7 @@ type MessageProps = {
     userIcon?: string;
   }, event: React.MouseEvent, context?: { type: 'mention' | 'message-avatar'; element: HTMLElement }) => void;
   lastReadTimestamp?: number;
+  spaceRoles?: Role[];
 };
 
 export const Message = React.memo(({
@@ -119,6 +120,7 @@ export const Message = React.memo(({
   setKickUserAddress,
   onUserClick,
   lastReadTimestamp = 0,
+  spaceRoles = [],
 }: MessageProps) => {
   const user = usePasskeysContext();
   const { spaceId } = useParams();
@@ -179,6 +181,7 @@ export const Message = React.memo(({
     stickers,
     mapSenderToUser,
     onImageClick: showImageModal,
+    spaceRoles,
   });
 
   // Pinned messages logic
@@ -560,6 +563,8 @@ export const Message = React.memo(({
                         mapSenderToUser={mapSenderToUser}
                         onUserClick={onUserClick}
                         hasEveryoneMention={message.mentions?.everyone}
+                        roleMentions={message.mentions?.roleIds}
+                        spaceRoles={spaceRoles}
                       />
                     </Container>
                   );

@@ -92,7 +92,6 @@ This is the main index for all documentation, bug reports, and task management.
 - [Docusaurus Developer Documentation Blueprint](tasks/docusaurus-blueprint-v2.md)
 - [Edit Message Feature](tasks/edit-message-feature.md)
 - [Implement Background Sync Queue for User Settings and Async Operations](tasks/background-sync-queue.md)
-- [Modal System Consolidation via Route Wrapper Component](tasks/modal-system-consolidation.md)
 - [Server Folders - Discord-Style Grouping Feature](tasks/server-folders-discord-style.md)
 - [Task: Implement Delete Public Invite Link Feature](tasks/delete-public-invite-link.md)
 - [Test Suite Implementation Plan for Quorum Desktop](tasks/test-suite-plan.md)
@@ -101,6 +100,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [🚀 Search Performance Optimization - Revised Implementation Plan](tasks/search-performance-optimization.md)
 
 ### .Archived
+- [Modal System Consolidation via Route Wrapper Component](tasks/.archived/modal-system-consolidation.md)
 - [Search Performance Optimization - Architecture Analysis Report](tasks/.archived/search-performance-optimization_ANALYSIS.md)
 - [Search Performance Optimization - Executive Summary](tasks/.archived/search-performance-analysis_SUMMARY.md)
 - [Shared Git Hooks Setup](tasks/.archived/shared-git-hooks-setup.md)
@@ -189,6 +189,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Reply Notification System](tasks/.done/reply-notification-system.md)
 - [Responsive Layout Implementation Plan](tasks/.done/responsive-layout.md)
 - [Responsive Layout Requirements](tasks/.done/responsive-layout_requirements.md)
+- [Role Mention Notifications Implementation](tasks/.done/role-mention-notifications.md)
 - [Search Components Primitive Migration](tasks/.done/search-primitive-migration.md)
 - [Space Icon Mention Bubbles](tasks/.done/space-icon-mention-bubbles.md)
 - [Tailwind @apply Conversion Audit](tasks/.done/tailwind-apply-conversion-audit.md)
@@ -203,4 +204,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2025-10-17 15:44:43
+**Last Updated**: 2025-10-18 11:11:31

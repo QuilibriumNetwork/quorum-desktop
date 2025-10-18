@@ -4,7 +4,7 @@ import { t } from '@lingui/core/macro';
 import { i18n } from '@lingui/core';
 import { Buffer } from 'buffer';
 import type { AttachmentProcessingResult } from '../../utils/imageProcessing';
-import { useMentionInput } from '../../hooks/business/mentions';
+import { useMentionInput, type MentionOption } from '../../hooks/business/mentions';
 import { truncateAddress } from '../../utils';
 import { DefaultImages } from '../../utils';
 import { useResponsiveLayout } from '../../hooks/useResponsiveLayout';
@@ -15,6 +15,13 @@ interface User {
   address: string;
   displayName?: string;
   userIcon?: string;
+}
+
+interface Role {
+  roleId: string;
+  displayName: string;
+  roleTag: string;
+  color: string;
 }
 
 interface MessageComposerProps {
@@ -54,6 +61,7 @@ interface MessageComposerProps {
 
   // Mention support
   users?: User[];
+  roles?: Role[];
 }
 
 export interface MessageComposerRef {
@@ -89,6 +97,7 @@ export const MessageComposer = forwardRef<
       disabled = false,
       disabledMessage,
       users = [],
+      roles = [],
     },
     ref
   ) => {
@@ -120,17 +129,28 @@ export const MessageComposer = forwardRef<
       },
     }));
 
-    // Handle mention selection
+    // Handle mention selection (updated for both users and roles)
     const handleMentionSelect = useCallback(
-      (user: User, mentionStart: number, mentionEnd: number) => {
+      (option: MentionOption, mentionStart: number, mentionEnd: number) => {
+        let insertText: string;
+
+        if (option.type === 'user') {
+          // Users: @<address> (with brackets)
+          insertText = `@<${option.data.address}>`;
+        } else {
+          // Roles: @roleTag (NO brackets)
+          insertText = `@${option.data.roleTag}`;
+        }
+
         const newValue =
           value.substring(0, mentionStart) +
-          `@<${user.address}>` +
+          insertText +
           value.substring(mentionEnd);
         onChange(newValue);
+
         // Set cursor position after the mention
         setTimeout(() => {
-          const newPosition = mentionStart + user.address.length + 3; // +3 for @<>
+          const newPosition = mentionStart + insertText.length;
           textareaRef.current?.setSelectionRange(newPosition, newPosition);
           textareaRef.current?.focus();
         }, 0);
@@ -138,11 +158,12 @@ export const MessageComposer = forwardRef<
       [value, onChange]
     );
 
-    // Use mention input hook
+    // Use mention input hook (now supports roles)
     const mentionInput = useMentionInput({
       textValue: value,
       cursorPosition,
       users,
+      roles,
       onMentionSelect: handleMentionSelect,
     });
 
@@ -315,36 +336,57 @@ export const MessageComposer = forwardRef<
         )}
 
         {/* Mention Dropdown - positioned above the input */}
-        {dropdownOpen && mentionInput.filteredUsers.length > 0 && (
+        {dropdownOpen && mentionInput.filteredOptions.length > 0 && (
           <div className="message-composer-mention-dropdown">
             <div className="message-composer-mention-container">
-              {mentionInput.filteredUsers.map((user, index) => (
+              {mentionInput.filteredOptions.map((option, index) => (
                 <div
-                  key={user.address}
+                  key={option.type === 'user' ? option.data.address : option.data.roleId}
                   className={`message-composer-mention-item ${
                     index === mentionInput.selectedIndex ? 'selected' : ''
                   } ${
                     index === 0 ? 'first' : ''
                   } ${
-                    index === mentionInput.filteredUsers.length - 1 ? 'last' : ''
-                  }`}
-                  onClick={() => mentionInput.selectUser(user)}
+                    index === mentionInput.filteredOptions.length - 1 ? 'last' : ''
+                  } ${option.type === 'role' ? 'role-item' : 'user-item'}`}
+                  onClick={() => mentionInput.selectOption(option)}
                 >
-                  <UserAvatar
-                    userIcon={user.userIcon}
-                    displayName={user.displayName || t`Unknown User`}
-                    address={user.address}
-                    size={32}
-                    className="message-composer-mention-avatar"
-                  />
-                  <div className="message-composer-mention-info">
-                    <span className="message-composer-mention-name">
-                      {user.displayName || t`Unknown User`}
-                    </span>
-                    <span className="message-composer-mention-address">
-                      {truncateAddress(user.address)}
-                    </span>
-                  </div>
+                  {option.type === 'user' ? (
+                    <>
+                      <UserAvatar
+                        userIcon={option.data.userIcon}
+                        displayName={option.data.displayName || t`Unknown User`}
+                        address={option.data.address}
+                        size={32}
+                        className="message-composer-mention-avatar"
+                      />
+                      <div className="message-composer-mention-info">
+                        <span className="message-composer-mention-name">
+                          {option.data.displayName || t`Unknown User`}
+                        </span>
+                        <span className="message-composer-mention-address">
+                          {truncateAddress(option.data.address)}
+                        </span>
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <div
+                        className="message-composer-role-badge"
+                        style={{ backgroundColor: option.data.color }}
+                      >
+                        <Icon name="users" size="xs" />
+                      </div>
+                      <div className="message-composer-mention-info">
+                        <span className="message-composer-mention-name">
+                          {option.data.displayName}
+                        </span>
+                        <span className="message-composer-mention-role-tag">
+                          @{option.data.roleTag}
+                        </span>
+                      </div>
+                    </>
+                  )}
                 </div>
               ))}
             </div>

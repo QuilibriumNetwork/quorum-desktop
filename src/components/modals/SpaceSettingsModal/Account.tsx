@@ -196,8 +196,8 @@ const Account: React.FunctionComponent<AccountProps> = ({
               {
                 value: 'mention-roles',
                 label: t`@roles`,
-                subtitle: t`When someone mentions a role you have (Coming Soon)`,
-                disabled: true, // Not yet implemented
+                subtitle: t`When someone mentions a role you have`,
+                disabled: false,
               },
               {
                 value: 'reply',

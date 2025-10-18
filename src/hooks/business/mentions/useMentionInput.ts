@@ -7,11 +7,24 @@ interface User {
   userIcon?: string;
 }
 
+interface Role {
+  roleId: string;
+  displayName: string;
+  roleTag: string;
+  color: string;
+}
+
+// Discriminated union for display
+export type MentionOption =
+  | { type: 'user'; data: User }
+  | { type: 'role'; data: Role };
+
 interface UseMentionInputOptions {
   textValue: string;
   cursorPosition: number;
   users: User[];
-  onMentionSelect: (user: User, mentionStart: number, mentionEnd: number) => void;
+  roles?: Role[]; // NEW - optional roles for autocomplete
+  onMentionSelect: (option: MentionOption, mentionStart: number, mentionEnd: number) => void;
   debounceMs?: number;
   maxDisplayResults?: number;
   minQueryLength?: number;
@@ -20,12 +33,12 @@ interface UseMentionInputOptions {
 interface UseMentionInputReturn {
   showDropdown: boolean;
   dropdownPosition: { x: number; y: number };
-  filteredUsers: User[];
+  filteredOptions: MentionOption[]; // Changed from filteredUsers
   selectedIndex: number;
   mentionQuery: string;
   mentionStart: number;
   handleKeyDown: (e: React.KeyboardEvent) => boolean; // returns true if handled
-  selectUser: (user: User) => void;
+  selectOption: (option: MentionOption) => void; // Changed from selectUser
   dismissDropdown: () => void;
 }
 
@@ -33,6 +46,7 @@ export function useMentionInput({
   textValue,
   cursorPosition,
   users,
+  roles,
   onMentionSelect,
   debounceMs = 100,
   maxDisplayResults = 50,
@@ -42,7 +56,7 @@ export function useMentionInput({
   const [mentionQuery, setMentionQuery] = useState('');
   const [mentionStart, setMentionStart] = useState(-1);
   const [selectedIndex, setSelectedIndex] = useState(0);
-  const [filteredUsers, setFilteredUsers] = useState<User[]>([]);
+  const [filteredOptions, setFilteredOptions] = useState<MentionOption[]>([]);
   const [dropdownPosition] = useState({ x: 0, y: 0 }); // Will be positioned by CSS relative to textarea
 
   // Filter and rank users based on query
@@ -83,15 +97,59 @@ export function useMentionInput({
     [users, minQueryLength, maxDisplayResults]
   );
 
-  // Debounced filter function
+  // NEW: Filter and rank roles based on query
+  const filterRoles = useCallback(
+    (query: string): Role[] => {
+      if (!query || query.length < minQueryLength || !roles) return [];
+
+      const queryLower = query.toLowerCase();
+
+      // Filter roles whose displayName or roleTag matches the query
+      const matches = roles.filter(role => {
+        const name = role.displayName.toLowerCase();
+        const tag = role.roleTag.toLowerCase();
+        return name.includes(queryLower) || tag.includes(queryLower);
+      });
+
+      // Sort by relevance: exact match > starts with > contains
+      const sortedMatches = matches.sort((a, b) => {
+        const aName = a.displayName.toLowerCase();
+        const bName = b.displayName.toLowerCase();
+
+        // Exact match gets highest priority
+        if (aName === queryLower && bName !== queryLower) return -1;
+        if (bName === queryLower && aName !== queryLower) return 1;
+
+        // Starts with gets second priority
+        if (aName.startsWith(queryLower) && !bName.startsWith(queryLower)) return -1;
+        if (bName.startsWith(queryLower) && !aName.startsWith(queryLower)) return 1;
+
+        // Then alphabetical order
+        return aName.localeCompare(bName);
+      });
+
+      return sortedMatches.slice(0, maxDisplayResults);
+    },
+    [roles, minQueryLength, maxDisplayResults]
+  );
+
+  // Debounced filter function - combines users and roles
   const debouncedFilter = useMemo(
     () =>
       debounce((query: string) => {
-        const filtered = filterUsers(query);
-        setFilteredUsers(filtered);
+        const filteredUsers = filterUsers(query);
+        const filteredRoles = filterRoles(query);
+
+        // Combine into discriminated union
+        const combined: MentionOption[] = [
+          ...filteredUsers.map(u => ({ type: 'user' as const, data: u })),
+          ...filteredRoles.map(r => ({ type: 'role' as const, data: r })),
+        ];
+
+        setFilteredOptions(combined);
         setSelectedIndex(0);
       }, debounceMs),
-    [filterUsers, debounceMs]
+    [filterUsers, filterRoles, debounceMs]
   );
 
   // Detect @ mentions and extract query
@@ -146,7 +204,7 @@ export function useMentionInput({
   // Handle keyboard navigation
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent): boolean => {
-      if (!showDropdown || filteredUsers.length === 0) {
+      if (!showDropdown || filteredOptions.length === 0) {
         return false;
       }
 
@@ -154,22 +212,22 @@ export function useMentionInput({
         case 'ArrowDown':
           e.preventDefault();
           setSelectedIndex(prev =>
-            prev < filteredUsers.length - 1 ? prev + 1 : 0
+            prev < filteredOptions.length - 1 ? prev + 1 : 0
           );
           return true;
 
         case 'ArrowUp':
           e.preventDefault();
           setSelectedIndex(prev =>
-            prev > 0 ? prev - 1 : filteredUsers.length - 1
+            prev > 0 ? prev - 1 : filteredOptions.length - 1
           );
           return true;
 
         case 'Enter':
         case 'Tab':
           e.preventDefault();
-          if (filteredUsers[selectedIndex]) {
-            selectUser(filteredUsers[selectedIndex]);
+          if (filteredOptions[selectedIndex]) {
+            selectOption(filteredOptions[selectedIndex]);
           }
           return true;
 
@@ -182,15 +240,15 @@ export function useMentionInput({
           return false;
       }
     },
-    [showDropdown, filteredUsers, selectedIndex]
+    [showDropdown, filteredOptions, selectedIndex]
   );
 
-  // Select a user from the dropdown
-  const selectUser = useCallback(
-    (user: User) => {
+  // Select an option (user or role) from the dropdown
+  const selectOption = useCallback(
+    (option: MentionOption) => {
       if (mentionStart !== -1) {
         const mentionEnd = mentionStart + mentionQuery.length + 1; // +1 for @
-        onMentionSelect(user, mentionStart, mentionEnd);
+        onMentionSelect(option, mentionStart, mentionEnd);
         dismissDropdown();
       }
     },
@@ -203,18 +261,18 @@ export function useMentionInput({
     setMentionQuery('');
     setMentionStart(-1);
     setSelectedIndex(0);
-    setFilteredUsers([]);
+    setFilteredOptions([]);
   }, []);
 
   return {
-    showDropdown: showDropdown && filteredUsers.length > 0,
+    showDropdown: showDropdown && filteredOptions.length > 0,
     dropdownPosition,
-    filteredUsers,
+    filteredOptions,
     selectedIndex,
     mentionQuery,
     mentionStart,
     handleKeyDown,
-    selectUser,
+    selectOption,
     dismissDropdown,
   };
 }

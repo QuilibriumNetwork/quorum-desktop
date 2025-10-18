@@ -412,3 +412,25 @@ html:not(.dark) .message-composer-row {
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+
+/* NEW: Role mention styles */
+.message-composer-role-badge {
+  width: $s-8;
+  height: $s-8;
+  border-radius: $rounded-full;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: $font-semibold;
+  flex-shrink: 0;
+}
+
+.message-composer-mention-role-tag {
+  font-size: $text-xs;
+  color: var(--color-text-subtle);
+  font-family: monospace;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

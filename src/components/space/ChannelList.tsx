@@ -12,11 +12,23 @@ import { useChannelMentionCounts } from '../../hooks/business/mentions';
 import { useReplyNotificationCounts } from '../../hooks/business/replies';
 import { t } from '@lingui/core/macro';
 import { Button, Container, Icon, Text, Tooltip } from '../primitives';
+import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
+import { getUserRoles } from '../../utils/permissions';
+import { Group } from '../../api/quorumApi';
 
 type ChannelListProps = { spaceId: string };
 
+type GroupWithMentionCounts = Group & {
+  channels: Array<
+    Group['channels'][number] & {
+      mentionCount?: number;
+    }
+  >;
+};
+
 const ChannelList: React.FC<ChannelListProps> = ({ spaceId }) => {
   const { data: space } = useSpace({ spaceId });
+  const user = usePasskeysContext();
 
   // Extract business logic into hooks
   const { openNewGroupEditor, openEditGroupEditor } = useGroupEditor(spaceId);
@@ -36,18 +48,25 @@ const ChannelList: React.FC<ChannelListProps> = ({ spaceId }) => {
 
   // Get all channel IDs from all groups
   const channelIds = React.useMemo(
-    () => groups.flatMap((group) => group.channels.map((c) => c.channelId)),
+    () => groups.flatMap((group: Group) => group.channels.map((c) => c.channelId)),
     [groups]
   );
 
+  // Get current user's role IDs for role mention filtering
+  const userRoleIds = React.useMemo(() => {
+    if (!space || !user.currentPasskeyInfo?.address) return [];
+    const userRolesData = getUserRoles(user.currentPasskeyInfo.address, space);
+    return userRolesData.map(r => r.roleId);
+  }, [space, user.currentPasskeyInfo?.address]);
+
   // Get mention counts and reply counts for all channels
-  const mentionCounts = useChannelMentionCounts({ spaceId, channelIds });
+  const mentionCounts = useChannelMentionCounts({ spaceId, channelIds, userRoleIds });
   const replyCounts = useReplyNotificationCounts({ spaceId, channelIds });
 
   // Merge combined notification counts (mentions + replies) into groups
-  const groupsWithMentionCounts = React.useMemo(
+  const groupsWithMentionCounts = React.useMemo<GroupWithMentionCounts[]>(
     () =>
-      groups.map((group) => ({
+      groups.map((group: Group): GroupWithMentionCounts => ({
         ...group,
         channels: group.channels.map((channel) => {
           const mentions = mentionCounts[channel.channelId] || 0;
@@ -91,7 +110,7 @@ const ChannelList: React.FC<ChannelListProps> = ({ spaceId }) => {
         </Container>
       </Container>
       <Container className="channels-list">
-        {groupsWithMentionCounts.map((group: any) => (
+        {groupsWithMentionCounts.map((group: GroupWithMentionCounts) => (
           <ChannelGroup
             onEditGroup={openEditGroupEditor}
             key={group.groupName}

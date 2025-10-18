@@ -7,6 +7,7 @@ import { getDefaultNotificationSettings } from '../../../utils/notificationSetti
 interface UseChannelMentionCountsProps {
   spaceId: string;
   channelIds: string[];
+  userRoleIds?: string[];
 }
 
 // Early-exit threshold: Stop counting after 10 mentions per channel
@@ -34,6 +35,7 @@ const DISPLAY_THRESHOLD = 10;
 export function useChannelMentionCounts({
   spaceId,
   channelIds,
+  userRoleIds = [],
 }: UseChannelMentionCountsProps): Record<string, number> {
   const user = usePasskeysContext();
   const { messageDB } = useMessageDB();
@@ -94,6 +96,7 @@ export function useChannelMentionCounts({
             if (isMentionedWithSettings(message, {
               userAddress,
               enabledTypes: mentionTypes,
+              userRoles: userRoleIds,
             })) {
               channelMentionCount++;
 

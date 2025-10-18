@@ -129,6 +129,7 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
       return (
         <Message
           senderRoles={roles}
+          spaceRoles={roles}
           stickers={stickers}
           emojiPickerOpen={emojiPickerOpen}
           setEmojiPickerOpen={setEmojiPickerOpen}

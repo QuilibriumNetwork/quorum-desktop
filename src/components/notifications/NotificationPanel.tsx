@@ -1,10 +1,10 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { t } from '@lingui/core/macro';
 import { Container, FlexRow, Text, Icon, Button, Tooltip, FlexCenter, Select } from '../primitives';
 import { DropdownPanel } from '../ui';
 import { NotificationItem } from './NotificationItem';
-import { useAllMentions } from '../../hooks/business/mentions';
+import { useAllMentions, useMentionNotificationSettings } from '../../hooks/business/mentions';
 import { useAllReplies } from '../../hooks/business/replies';
 import { useMessageDB } from '../context/useMessageDB';
 import { useQueryClient } from '@tanstack/react-query';
@@ -18,6 +18,7 @@ interface NotificationPanelProps {
   channelIds: string[];
   mapSenderToUser: (senderId: string) => any;
   className?: string;
+  userRoleIds?: string[];
 }
 
 export const NotificationPanel: React.FC<NotificationPanelProps> = ({
@@ -27,17 +28,22 @@ export const NotificationPanel: React.FC<NotificationPanelProps> = ({
   channelIds,
   mapSenderToUser,
   className,
+  userRoleIds = [],
 }) => {
   const navigate = useNavigate();
   const { messageDB } = useMessageDB();
   const queryClient = useQueryClient();
 
-  // Filter state (all types enabled by default)
-  const [selectedTypes, setSelectedTypes] = useState<NotificationTypeId[]>([
-    'mention-you',
-    'mention-everyone',
-    'reply',
-  ]);
+  // Load user's saved notification settings for this space
+  const { selectedTypes: savedTypes, isLoading: settingsLoading } = useMentionNotificationSettings({ spaceId });
+
+  // Local filter state (syncs with saved settings)
+  const [selectedTypes, setSelectedTypes] = useState<NotificationTypeId[]>(savedTypes);
+
+  // Sync local state when saved settings change
+  useEffect(() => {
+    setSelectedTypes(savedTypes);
+  }, [savedTypes]);
 
   // Derive mention-only filter for useAllMentions (unified format)
   const mentionTypes = selectedTypes.filter(t => t.startsWith('mention-')) as ('mention-you' | 'mention-everyone' | 'mention-roles')[];
@@ -47,6 +53,7 @@ export const NotificationPanel: React.FC<NotificationPanelProps> = ({
     spaceId,
     channelIds,
     enabledTypes: mentionTypes.length > 0 ? mentionTypes : undefined,
+    userRoleIds,
   });
 
   // Fetch replies (only if 'reply' is selected)
@@ -61,7 +68,7 @@ export const NotificationPanel: React.FC<NotificationPanelProps> = ({
     ...(selectedTypes.includes('reply') ? replies : []),
   ].sort((a, b) => b.message.createdDate - a.message.createdDate);
 
-  const isLoading = mentionsLoading || repliesLoading;
+  const isLoading = mentionsLoading || repliesLoading || settingsLoading;
 
   // Filter options for Select primitive
   const filterOptions = [
@@ -76,7 +83,7 @@ export const NotificationPanel: React.FC<NotificationPanelProps> = ({
     {
       value: 'mention-roles' as NotificationTypeId,
       label: t`@roles`,
-      disabled: true, // Role mentions not supported yet
+      disabled: false,
     },
     {
       value: 'reply' as NotificationTypeId,

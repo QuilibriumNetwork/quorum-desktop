@@ -1,7 +1,9 @@
 import { useQuery } from '@tanstack/react-query';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
 import { useMessageDB } from '../../../components/context/useMessageDB';
-import { isMentioned } from '../../../utils/mentionUtils';
+import { isMentionedWithSettings } from '../../../utils/mentionUtils';
+import { getDefaultNotificationSettings } from '../../../utils/notificationSettingsUtils';
+import { getUserRoles } from '../../../utils/permissions';
 import type { Space } from '../../../api/quorumApi';
 
 interface UseSpaceMentionCountsProps {
@@ -50,9 +52,29 @@ export function useSpaceMentionCounts({
       const spaceCounts: Record<string, number> = {};
 
       try {
+        // Load user's notification settings
+        const config = await messageDB.getUserConfig({ address: userAddress });
+
         // Process each space
         for (const space of spaces) {
           let spaceTotal = 0;
+
+          // Get user's role IDs for this space
+          const userRolesData = getUserRoles(userAddress, space);
+          const userRoleIds = userRolesData.map(r => r.roleId);
+
+          // Get notification settings for this space
+          const settings = config?.notificationSettings?.[space.spaceId];
+          const enabledTypes = settings?.enabledNotificationTypes ||
+            getDefaultNotificationSettings(space.spaceId).enabledNotificationTypes;
+
+          // Filter to only mention types
+          const mentionTypes = enabledTypes.filter(t => t.startsWith('mention-'));
+
+          // If no mention types enabled, skip this space
+          if (mentionTypes.length === 0) {
+            continue;
+          }
 
           // Get all channel IDs from all groups in this space
           const channelIds = space.groups.flatMap((group) =>
@@ -87,7 +109,11 @@ export function useSpaceMentionCounts({
 
             // Count mentions that are for the current user
             for (const message of messages) {
-              if (isMentioned(message, { userAddress, checkEveryone: true })) {
+              if (isMentionedWithSettings(message, {
+                userAddress,
+                enabledTypes: mentionTypes,
+                userRoles: userRoleIds,
+              })) {
                 spaceTotal++;
 
                 // Early exit if we've hit the display threshold

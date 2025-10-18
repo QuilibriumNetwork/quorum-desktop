@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import * as linkify from 'linkifyjs';
-import { Message as MessageType, Sticker } from '../../../api/quorumApi';
+import { Message as MessageType, Sticker, Role } from '../../../api/quorumApi';
 import { isYouTubeURL, extractYouTubeVideoId, YOUTUBE_URL_REGEX } from '../../../utils/youtubeUtils';
 import { getValidInvitePrefixes } from '../../../utils/inviteDomain';
 
@@ -15,6 +15,7 @@ interface UseMessageFormattingOptions {
   stickers?: { [key: string]: Sticker };
   mapSenderToUser: (senderId: string) => any;
   onImageClick: (imageUrl: string) => void;
+  spaceRoles?: Role[];
 }
 
 // Detect if text contains markdown patterns
@@ -47,7 +48,7 @@ function isInviteLink(token: string): boolean {
 }
 
 export function useMessageFormatting(options: UseMessageFormattingOptions) {
-  const { message, stickers, mapSenderToUser, onImageClick } = options;
+  const { message, stickers, mapSenderToUser, onImageClick, spaceRoles = [] } = options;
 
   // Handle image click with size checking
   const handleImageClick = useCallback(
@@ -151,6 +152,24 @@ export function useMessageFormatting(options: UseMessageFormattingOptions) {
         };
       }
 
+      // Check for role mentions (only style if role exists in message.mentions.roleIds)
+      if (token.match(/^@([a-zA-Z0-9_-]+)$/) && message.mentions?.roleIds && message.mentions.roleIds.length > 0) {
+        const roleTag = token.substring(1);
+
+        // Find the role in spaceRoles to verify it exists and get roleId
+        const role = spaceRoles.find(r => r.roleTag.toLowerCase() === roleTag.toLowerCase());
+
+        // Only render as mention if the role exists AND is in the message's roleIds
+        if (role && message.mentions.roleIds.includes(role.roleId)) {
+          return {
+            type: 'mention' as const,
+            key: `${messageId}-${lineIndex}-${tokenIndex}`,
+            displayName: `@${role.roleTag}`,
+            address: role.roleId,
+          };
+        }
+      }
+
       // Check for YouTube videos using centralized utilities
       if (isYouTubeURL(token)) {
         const videoId = extractYouTubeVideoId(token);
@@ -189,7 +208,7 @@ export function useMessageFormatting(options: UseMessageFormattingOptions) {
         text: token,
       };
     },
-    [mapSenderToUser]
+    [mapSenderToUser, message.mentions, spaceRoles]
   );
 
   return {

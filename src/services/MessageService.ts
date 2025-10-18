@@ -2169,11 +2169,23 @@ export class MessageService {
         isSpaceOwner || false
       );
 
+      // Get space roles for role mention validation
+      const spaceRoles = space?.roles?.map(r => ({
+        roleId: r.roleId,
+        roleTag: r.roleTag,
+      })) || [];
+
       let mentions;
       if (typeof pendingMessage === 'string') {
-        mentions = extractMentionsFromText(pendingMessage, { allowEveryone: canUseEveryone });
+        mentions = extractMentionsFromText(pendingMessage, {
+          allowEveryone: canUseEveryone,
+          spaceRoles,
+        });
       } else if ((pendingMessage as any).text) {
-        mentions = extractMentionsFromText((pendingMessage as any).text, { allowEveryone: canUseEveryone });
+        mentions = extractMentionsFromText((pendingMessage as any).text, {
+          allowEveryone: canUseEveryone,
+          spaceRoles,
+        });
       }
 
       // Populate replyMetadata if replying to a message
@@ -2209,7 +2221,7 @@ export class MessageService {
                 ...(pendingMessage as any),
                 senderId: currentPasskeyInfo.address,
               },
-        mentions: mentions && (mentions.memberIds.length > 0 || mentions.everyone) ? mentions : undefined,
+        mentions: mentions && (mentions.memberIds.length > 0 || mentions.roleIds.length > 0 || mentions.everyone) ? mentions : undefined,
         replyMetadata,
       } as Message;
 

@@ -166,12 +166,13 @@ export function isMentionedWithSettings(
 
 /**
  * Extract mentions from message text
- * Parses @<address> format mentions and returns a Mentions object
+ * Parses @<address> format mentions, @roleTag mentions, and @everyone
  *
  * @param text - The message text to parse
  * @param options - Optional configuration for mention extraction
  * @param options.allowEveryone - Whether the user has permission to use @everyone (default: false)
- * @returns Mentions object with memberIds array populated
+ * @param options.spaceRoles - Array of roles for validation (for role mention extraction)
+ * @returns Mentions object with memberIds, roleIds, and everyone fields populated
  *
  * @example
  * const text = "Hey @<QmAbc123> and @<QmDef456>, check this out!";
@@ -182,10 +183,18 @@ export function isMentionedWithSettings(
  * const text = "Hey @everyone, important announcement!";
  * const mentions = extractMentionsFromText(text, { allowEveryone: true });
  * // Returns: { memberIds: [], roleIds: [], channelIds: [], everyone: true }
+ *
+ * @example
+ * const text = "Hey @moderators and @admins, please review!";
+ * const mentions = extractMentionsFromText(text, { spaceRoles: [...] });
+ * // Returns: { memberIds: [], roleIds: ['role-id-1', 'role-id-2'], channelIds: [] }
  */
 export function extractMentionsFromText(
   text: string,
-  options?: { allowEveryone?: boolean }
+  options?: {
+    allowEveryone?: boolean;
+    spaceRoles?: Array<{ roleId: string; roleTag: string }>;
+  }
 ): Mentions {
   const mentions: Mentions = {
     memberIds: [],
@@ -207,14 +216,40 @@ export function extractMentionsFromText(
     // If allowEveryone is false/undefined, @everyone is ignored (not extracted)
   }
 
-  // Match @<address> pattern in text without code blocks
-  const mentionRegex = /@<([^>]+)>/g;
-  const matches = Array.from(textWithoutCodeBlocks.matchAll(mentionRegex));
+  // Extract user mentions: @<address> (with brackets)
+  const userMentionRegex = /@<([^>]+)>/g;
+  const userMatches = Array.from(textWithoutCodeBlocks.matchAll(userMentionRegex));
 
-  for (const match of matches) {
+  for (const match of userMatches) {
     const address = match[1];
     if (address && !mentions.memberIds.includes(address)) {
       mentions.memberIds.push(address);
+    }
+  }
+
+  // Extract role mentions: @roleTag (NO brackets)
+  if (options?.spaceRoles && options.spaceRoles.length > 0) {
+    // Match @word pattern (alphanumeric + hyphen/underscore)
+    // Negative lookahead (?!\w) ensures word boundary
+    const roleMentionRegex = /@([a-zA-Z0-9_-]+)(?!\w)/g;
+    const roleMatches = Array.from(textWithoutCodeBlocks.matchAll(roleMentionRegex));
+
+    for (const match of roleMatches) {
+      const possibleRoleTag = match[1];
+
+      // Skip 'everyone' (already handled above)
+      if (possibleRoleTag.toLowerCase() === 'everyone') continue;
+
+      // Validate against space roles (case-insensitive)
+      const role = options.spaceRoles.find(
+        r => r.roleTag.toLowerCase() === possibleRoleTag.toLowerCase()
+      );
+
+      // Only add if role exists and not already in list
+      if (role && !mentions.roleIds.includes(role.roleId)) {
+        mentions.roleIds.push(role.roleId);
+      }
+      // If role doesn't exist, @roleTag remains plain text (no extraction)
     }
   }
 

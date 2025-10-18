@@ -32,6 +32,7 @@ import UserProfile from '../user/UserProfile';
 import { useUserProfileModal } from '../../hooks/business/ui/useUserProfileModal';
 import type { Channel, Role } from '../../api/quorumApi';
 import { UserAvatar } from '../user/UserAvatar';
+import { getUserRoles } from '../../utils/permissions';
 
 // Helper function to check if user can post in read-only channel
 function canPostInReadOnlyChannel(
@@ -272,6 +273,13 @@ const Channel: React.FC<ChannelProps> = ({
   const handleUserProfileClose = useCallback(() => {
     userProfileModal.handleClose();
   }, [userProfileModal]);
+
+  // Get current user's role IDs for role mention filtering
+  const userRoleIds = React.useMemo(() => {
+    if (!space || !user.currentPasskeyInfo?.address) return [];
+    const userRolesData = getUserRoles(user.currentPasskeyInfo.address, space);
+    return userRolesData.map(r => r.roleId);
+  }, [space, user.currentPasskeyInfo?.address]);
 
   // Check if user can post in this channel
   const canPost = canPostInReadOnlyChannel(
@@ -619,6 +627,7 @@ const Channel: React.FC<ChannelProps> = ({
                   spaceId={spaceId}
                   channelIds={space?.groups.flatMap(g => g.channels.map(c => c.channelId)) || []}
                   mapSenderToUser={mapSenderToUser}
+                  userRoleIds={userRoleIds}
                 />
               </div>
 
@@ -742,6 +751,7 @@ const Channel: React.FC<ChannelProps> = ({
                 onShowStickers={() => composer.setShowStickers(true)}
                 inReplyTo={composer.inReplyTo}
                 users={Object.values(members)}
+                roles={roles}
                 fileError={composer.fileError}
                 isProcessingImage={composer.isProcessingImage}
                 mapSenderToUser={mapSenderToUser}

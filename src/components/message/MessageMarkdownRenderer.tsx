@@ -16,6 +16,7 @@ import {
   replaceYouTubeURLsInText,
   YOUTUBE_URL_DETECTION_REGEX
 } from '../../utils/youtubeUtils';
+import type { Role } from '../../api/quorumApi';
 
 interface MessageMarkdownRendererProps {
   content: string;
@@ -26,7 +27,9 @@ interface MessageMarkdownRendererProps {
     displayName?: string;
     userIcon?: string;
   }, event: React.MouseEvent, context?: { type: 'mention' | 'message-avatar'; element: HTMLElement }) => void;
-  hasEveryoneMention?: boolean; // Whether the message has mentions.everyone = true
+  hasEveryoneMention?: boolean;
+  roleMentions?: string[];
+  spaceRoles?: Role[];
 }
 
 
@@ -104,6 +107,8 @@ export const MessageMarkdownRenderer: React.FC<MessageMarkdownRendererProps> = (
   mapSenderToUser,
   onUserClick,
   hasEveryoneMention = false,
+  roleMentions = [],
+  spaceRoles = [],
 }) => {
 
   // Convert H1 and H2 headers to H3 since only H3 is allowed
@@ -168,18 +173,47 @@ export const MessageMarkdownRenderer: React.FC<MessageMarkdownRendererProps> = (
     return processedText;
   }, [mapSenderToUser, hasEveryoneMention]);
 
+  // Process role mentions - only render if role exists
+  const processRoleMentions = useCallback((text: string): string => {
+    if (!roleMentions || roleMentions.length === 0 || !spaceRoles || spaceRoles.length === 0) {
+      return text;
+    }
+
+    // Get role data for existing roles only
+    const roleData = roleMentions
+      .map(roleId => {
+        const role = spaceRoles.find(r => r.roleId === roleId);
+        return role ? { roleTag: role.roleTag, displayName: role.displayName } : null;
+      })
+      .filter(Boolean) as Array<{ roleTag: string; displayName: string }>;
+
+    // Replace @roleTag with styled span
+    let processed = text;
+    roleData.forEach(({ roleTag, displayName }) => {
+      const regex = new RegExp(`@${roleTag}(?!\\w)`, 'g');
+      processed = processed.replace(
+        regex,
+        `<span class="message-name-mentions-you" title="${displayName}">@${roleTag}</span>`
+      );
+    });
+
+    return processed;
+  }, [roleMentions, spaceRoles]);
+
   // Simplified processing pipeline with stable dependencies
   const processedContent = useMemo(() => {
     return fixUnclosedCodeBlocks(
       convertHeadersToH3(
         processURLs(
-          processMentions(
-            processStandaloneYouTubeUrls(content)
+          processRoleMentions(
+            processMentions(
+              processStandaloneYouTubeUrls(content)
+            )
           )
         )
       )
     );
-  }, [content, processMentions]); // Include processMentions as dependency
+  }, [content, processMentions, processRoleMentions]);
 
   // Memoize components to prevent re-creation and YouTube component remounting
   const components = useMemo(() => ({

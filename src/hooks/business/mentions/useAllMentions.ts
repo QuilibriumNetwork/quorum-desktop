@@ -15,7 +15,8 @@ export interface MentionNotification {
 interface UseAllMentionsProps {
   spaceId: string;
   channelIds: string[];
-  enabledTypes?: ('mention-you' | 'mention-everyone' | 'mention-roles')[]; // Filter by mention type (unified format)
+  enabledTypes?: ('mention-you' | 'mention-everyone' | 'mention-roles')[];
+  userRoleIds?: string[];
 }
 
 /**
@@ -35,6 +36,7 @@ export function useAllMentions({
   spaceId,
   channelIds,
   enabledTypes,
+  userRoleIds = [],
 }: UseAllMentionsProps) {
   const user = usePasskeysContext();
   const { messageDB } = useMessageDB();
@@ -101,6 +103,7 @@ export function useAllMentions({
             return isMentionedWithSettings(message, {
               userAddress,
               enabledTypes: typesToCheck,
+              userRoles: userRoleIds,
             });
           });
 
