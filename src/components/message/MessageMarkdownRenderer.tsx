@@ -21,7 +21,7 @@ import type { Role } from '../../api/quorumApi';
 interface MessageMarkdownRendererProps {
   content: string;
   className?: string;
-  mapSenderToUser?: (senderId: string) => { displayName?: string };
+  mapSenderToUser?: (senderId: string) => { displayName?: string; userIcon?: string };
   onUserClick?: (user: {
     address: string;
     displayName?: string;
@@ -328,7 +328,7 @@ export const MessageMarkdownRenderer: React.FC<MessageMarkdownRendererProps> = (
 
     // Style tables with proper formatting
     table: ({ children, ...props }: any) => (
-      <div className="overflow-x-auto my-3">
+      <div className="overflow-x-auto my-3 max-w-full min-w-0">
         <table className="min-w-full border-collapse border border-default" {...props}>
           {children}
         </table>
@@ -342,13 +342,13 @@ export const MessageMarkdownRenderer: React.FC<MessageMarkdownRendererProps> = (
     ),
 
     th: ({ children, ...props }: any) => (
-      <th className="border border-default px-3 py-2 text-left font-semibold" {...props}>
+      <th className="border border-default px-3 py-2 text-left font-semibold whitespace-nowrap" {...props}>
         {children}
       </th>
     ),
 
     td: ({ children, ...props }: any) => (
-      <td className="border border-default px-3 py-2" {...props}>
+      <td className="border border-default px-3 py-2 whitespace-nowrap" {...props}>
         {children}
       </td>
     ),
@@ -463,7 +463,7 @@ export const MessageMarkdownRenderer: React.FC<MessageMarkdownRendererProps> = (
   }, [onUserClick]);
 
   return (
-    <div className={`break-words ${className || ''}`} onClick={handleClick}>
+    <div className={`break-words min-w-0 max-w-full overflow-hidden ${className || ''}`} onClick={handleClick}>
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}
         rehypePlugins={[rehypeRaw]}

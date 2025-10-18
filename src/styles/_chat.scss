@@ -114,6 +114,7 @@ html:not(.dark) .chat-container {
   padding-left: $s-2-5;
   width: 100%;
   max-width: none;
+  min-width: 0; // Allow flex child to shrink below content width
   position: relative;
   padding-right: $s-4;
 
@@ -136,6 +137,10 @@ html:not(.dark) .chat-container {
 
 .message-post-content {
   margin-top: $s-0-5;
+  min-width: 0; // Prevent overflow from flex children
+  max-width: 100%; // Constrain to parent width
+  overflow-wrap: break-word; // Break long words
+  word-break: break-word; // Fallback for older browsers
 }
 
 .message-editor {
