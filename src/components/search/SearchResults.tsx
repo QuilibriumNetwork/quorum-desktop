@@ -124,6 +124,7 @@ export const SearchResults: React.FC<SearchResultsProps> = ({
           <div className="search-mobile-header">
             <Input
               type="search"
+              variant="bordered"
               placeholder={t`Search in this Space...`}
               value={query}
               onChange={(value) => {

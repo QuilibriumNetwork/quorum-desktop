@@ -954,6 +954,7 @@ const Channel: React.FC<ChannelProps> = ({
             <div className="search-mobile-header p-4">
               <Input
                 type="search"
+                variant="bordered"
                 placeholder={t`Search Username or Address`}
                 value={searchInput}
                 onChange={(value: string) => {
