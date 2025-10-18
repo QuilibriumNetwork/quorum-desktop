@@ -26,7 +26,7 @@
 
 // Common result meta info (icons, channel, user, date)
 .dropdown-result-meta {
-  font-size: $text-sm;
+  font-size: $text-xs-responsive;
   color: var(--color-text-subtle);
   gap: $s-1-5;
 }
@@ -36,7 +36,8 @@
   margin-bottom: $s-2;
 }
 
-// Common result text styling
+// Common result text styling (message content/preview)
+// Always use text-sm for readability on all devices
 .dropdown-result-text {
   color: var(--color-text-main);
   font-size: $text-sm;
@@ -62,12 +63,12 @@
 .dropdown-result-channel {
   color: var(--color-text-main);
   font-weight: $font-medium;
-  font-size: $text-sm;
+  font-size: $text-xs-responsive;
 }
 
 // Common date styling
 .dropdown-result-date {
-  font-size: $text-sm;
+  font-size: $text-xs-responsive;
   color: var(--color-text-main); // Same color as username
 }
 
@@ -142,7 +143,7 @@
 }
 
 .dropdown-empty-hint {
-  font-size: $text-xs;
+  font-size: $text-xs-responsive;
   color: var(--color-text-subtle);
   margin: 0;
 }
@@ -160,30 +161,4 @@
 
   // On mobile (touch devices in MobileDrawer), no overflow handling
   // MobileDrawer__content handles scrolling, this just grows naturally
-}
-
-// Responsive design - unified sizing for all dropdown panels
-@media (max-width: $screen-sm) {
-  .dropdown-result-item {
-    padding: $s-3 $s-4;
-  }
-
-  // Reduce all text sizes consistently
-  .dropdown-result-meta {
-    font-size: $text-xs;
-    gap: $s-1;
-  }
-
-  .dropdown-result-sender,
-  .dropdown-result-channel {
-    font-size: $text-xs;
-  }
-
-  .dropdown-result-date {
-    font-size: $text-xs;
-  }
-
-  .dropdown-result-text {
-    font-size: $text-xs;
-  }
 }

@@ -34,6 +34,17 @@
   --shadow-xl: 0 12px 24px 0 rgba(0, 0, 0, 0.15);
   --shadow-2xl: 0 16px 32px 0 rgba(0, 0, 0, 0.18);
 
+  /* === RESPONSIVE TEXT SIZES === */
+  /* Mobile-first: text-xs-responsive starts at text-sm for readability on phones */
+  --text-xs-responsive: #{$text-sm}; /* 14px on mobile */
+  --text-xs-responsive-lh: #{$text-sm-lh}; /* 20px line-height on mobile */
+
+  /* Desktop: scale down to text-xs above 480px */
+  @media (min-width: $screen-xs) {
+    --text-xs-responsive: #{$text-xs}; /* 12px on desktop */
+    --text-xs-responsive-lh: #{$text-xs-lh}; /* 16px line-height on desktop */
+  }
+
   @media (max-width: 360px) {
     --sidebar-left-width: calc(100vw - 100px);
   }

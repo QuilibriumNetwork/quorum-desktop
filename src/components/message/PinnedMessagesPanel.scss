@@ -4,23 +4,11 @@
 // Pinned messages panel specific styling
 .pinned-messages-panel {
   // z-index inherited from DropdownPanel (10001) - no override needed
+  // Title font size inherited from DropdownPanel ($text-sm)
 
-  .dropdown-panel__title {
-    font-size: $text-sm !important; // Smaller title font size
-  }
-
-  // Responsive: reduce message preview text to match header text at 640px breakpoint
-  @media (max-width: 639px) {
-    .message-preview-post {
-      font-size: $text-xs !important;
-    }
-  }
-
-  // Override any other responsive rules that might affect text at 768px
-  @media (min-width: 640px) {
-    .message-preview-post {
-      font-size: $text-sm !important;
-    }
+  // Message previews should always be text-sm for readability on all devices
+  .message-preview-post {
+    font-size: $text-sm !important;
   }
 }
 
