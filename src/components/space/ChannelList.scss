@@ -6,7 +6,6 @@
   height: calc(100% - 52px); // Account for UserStatus height
   width: var(--sidebar-left-width);
 
-  // On mobile, UserStatus is hidden so expand to full height
   @media (max-width: 1023px) {
     height: 100%;
   }
@@ -28,25 +27,37 @@
   a:hover {
     text-decoration: none;
   }
+
   user-select: none;
 }
 
-// Light theme only - add borders and rounded top-left corner to container
-html:not(.dark) .channels-list {
-  border-top: $border solid var(--color-border-subtle);
-  border-left: $border solid var(--color-border-subtle);
+html:not(.dark) {
+  // Channels list always has left border and rounded top-left corner
+  .channels-list {
+    border-left: $border solid var(--color-border-subtle);
 
-  // Remove borders and border-radius on mobile/tablet
-  @media (max-width: 1023px) {
-    border-top: none;
-    border-left: none;
-    border-top-left-radius: 0;
+    @media (max-width: 1023px) {
+      border-left: none;
+    }
+  }
+
+  // Space header only has borders when there's no banner
+  .space-header-no-banner {
+    border-top: $border solid var(--color-border-subtle);
+    border-left: $border solid var(--color-border-subtle);
+    border-top-left-radius: $rounded-xl;
+
+    @media (max-width: 1023px) {
+      border-top: none;
+      border-left: none;
+      border-top-left-radius: 0;
+    }
   }
 }
 
 .channels-list::-webkit-scrollbar {
-  width: 0; /* Remove scrollbar space */
-  background: transparent; /* Optional: just make scrollbar invisible */
+  width: 0;
+  background: transparent;
 }
 
 .space-header {
@@ -61,7 +72,7 @@ html:not(.dark) .channels-list {
   width: var(--sidebar-left-width);
   color: var(--color-text-main);
   text-shadow: 0px 2px 3px rgba(0, 0, 0, 0.3);
-  flex-shrink: 0; // Prevent header from shrinking
+  flex-shrink: 0;
   position: sticky;
   top: 0;
   z-index: 10;

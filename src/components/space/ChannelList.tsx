@@ -26,7 +26,7 @@ const ChannelList: React.FC<ChannelListProps> = ({ spaceId }) => {
 
   const {
     headerClassName,
-    headerStyle,
+    bannerStyle,
     hasBanner,
     gradientOverlayStyle,
     spaceName,
@@ -63,7 +63,7 @@ const ChannelList: React.FC<ChannelListProps> = ({ spaceId }) => {
 
   return (
     <Container className="channels-list-wrapper">
-      <Container className={headerClassName} style={headerStyle}>
+      <Container className={headerClassName} style={bannerStyle}>
         {hasBanner && (
           <Container
             className="absolute inset-0 pointer-events-none z-0"
