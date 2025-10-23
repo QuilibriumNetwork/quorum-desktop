@@ -164,7 +164,7 @@ export const SimpleButtonTestScreen: React.FC = () => {
               />
               <Button
                 type="unstyled"
-                iconName="times"
+                iconName="close"
                 iconOnly
                 size="compact"
                 onClick={() => {}}

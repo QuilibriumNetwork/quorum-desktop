@@ -49,7 +49,7 @@ export const ICON_OPTIONS: IconOption[] = [
   { name: 'book', tier: 3, category: 'Documentation' },
   { name: 'tools', tier: 3, category: 'Development' },
   { name: 'code', tier: 3, category: 'Programming' },
-  { name: 'cog', tier: 3, category: 'Settings' },
+  { name: 'settings', tier: 3, category: 'Settings' },
   { name: 'shield', tier: 3, category: 'Security' },
   { name: 'bug', tier: 3, category: 'Issues' },
 
@@ -61,13 +61,13 @@ export const ICON_OPTIONS: IconOption[] = [
 
   // Tier 5: Support & Information
   { name: 'info-circle', tier: 5, category: 'Information' },
-  { name: 'life-ring', tier: 5, category: 'Support' },
+  { name: 'support', tier: 5, category: 'Support' },
   { name: 'question-circle', tier: 5, category: 'FAQ' },
   { name: 'check-circle', tier: 5, category: 'Success' },
   { name: 'warning', tier: 5, category: 'Alerts' },
   { name: 'search', tier: 5, category: 'Research' },
   { name: 'bookmark', tier: 5, category: 'Resources' },
-  { name: 'thumbtack', tier: 5, category: 'Pinned' },
+  { name: 'pin', tier: 5, category: 'Pinned' },
 
   // Tier 6: Specialized Interests
   { name: 'dollar-sign', tier: 6, category: 'Finance' },

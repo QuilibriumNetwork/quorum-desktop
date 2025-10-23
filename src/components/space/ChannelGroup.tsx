@@ -115,7 +115,7 @@ const ChannelGroup: React.FunctionComponent<{
               <Icon
                 key={`group-${props.group.groupName}-${props.group.icon}`}
                 name={props.group.icon as any}
-                size="xs"
+                size="sm"
                 style={{
                   color: getIconColorHex(props.group.iconColor as IconColor)
                 }}
@@ -133,7 +133,7 @@ const ChannelGroup: React.FunctionComponent<{
               onClick={() =>
                 openChannelEditor(spaceId!, props.group.groupName, '')
               }
-              size="xs"
+              size="sm"
             />
           </div>
         )}

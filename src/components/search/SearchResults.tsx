@@ -69,7 +69,7 @@ export const SearchResults: React.FC<SearchResultsProps> = ({
     if (!query.trim()) {
       return (
         <FlexCenter className="search-empty-state">
-          <Icon name="search" className="empty-icon" />
+          <Icon name="search" size="3xl" className="empty-icon" />
           <Text className="empty-message">{t`Start typing to search messages...`}</Text>
         </FlexCenter>
       );
@@ -96,7 +96,7 @@ export const SearchResults: React.FC<SearchResultsProps> = ({
 
     return (
       <FlexCenter className="search-no-results">
-        <Icon name="search" className="empty-icon" />
+        <Icon name="search" size="3xl" className="empty-icon" />
         <Text className="empty-message">{t`No messages found`}</Text>
         <Text className="empty-hint">
           {t`Try different keywords or check your spelling`}

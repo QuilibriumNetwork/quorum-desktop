@@ -6,7 +6,6 @@ export type IconName =
   | 'check-circle'
   | 'check-square'
   | 'square'
-  | 'times'
   | 'close'
   | 'sun'
   | 'moon'
@@ -26,7 +25,6 @@ export type IconName =
   | 'chevron-up'
   | 'chevron-down'
   | 'bars'
-  | 'x'
   | 'compress-alt'
   | 'door-open'
   | 'sliders'
@@ -36,7 +34,6 @@ export type IconName =
   | 'link'
   | 'trash'
   | 'edit'
-  | 'delete'
   | 'copy'
   | 'share'
   | 'download'
@@ -48,76 +45,54 @@ export type IconName =
   | 'send'
   | 'bullhorn'
   | 'dollar-sign'
-  | 'money'
   | 'question-circle'
   | 'leaf'
-  | 'nature'
   | 'paw'
-  | 'animals'
   | 'utensils'
-  | 'food'
   | 'video'
   | 'microphone'
-  | 'mic'
-  | 'audio'
   | 'gamepad'
-  | 'games'
   | 'headset'
-  | 'khanda'
   | 'sword'
-  | 'life-ring'
   | 'support'
-  | 'help'
 
   // User & Social
   | 'user'
   | 'users'
   | 'user-plus'
-  | 'user-xmark'
-  | 'user-kick'
-  | 'user-join'
-  | 'user-leave'
+  | 'user-x'
+  | 'user-minus'
   | 'party'
   | 'gift'
   | 'hand-peace'
-  | 'hand-wave'
   | 'ban'
-  | 'cake-candles'
-  | 'birthday-cake'
-  | 'champagne-glasses'
-  | 'celebration'
+  | 'cake'
+  | 'glass'
   | 'smile'
-  | 'face-smile-beam'
+  | 'mood-happy'
   | 'heart'
   | 'star'
   | 'eye'
-  | 'eye-slash'
+  | 'eye-off'
 
   // Settings & Security
-  | 'cog'
-  | 'gear'
   | 'settings'
   | 'shield'
-  | 'shield-alt'
+  | 'shield-check'
   | 'lock'
   | 'unlock'
-  | 'sign-in'
+  | 'login'
+  | 'logout'
   | 'palette'
   | 'bell'
 
   // Status & Alerts
-  | 'info'
   | 'warning'
-  | 'warning-outline'
   | 'error'
-  | 'success'
-  | 'exclamation-triangle'
-  | 'circle-info'
   | 'spinner'
 
   // Files & Media
   | 'image'
-  | 'file-image'
   | 'tools'
   | 'briefcase'
   | 'hashtag'
@@ -134,8 +109,6 @@ export type IconName =
   | 'filter'
   | 'sort'
   | 'print'
-  | 'download-alt'
-  | 'upload-alt'
   // Test screen icons for emoji replacements
   | 'mobile'
   | 'device'
@@ -144,12 +117,10 @@ export type IconName =
   | 'circle'
   | 'radio'
   | 'target'
-  | 'bullseye'
   | 'pencil'
   | 'memo'
-  | 'thumbtack'
-  | 'thumbtack-slash'
   | 'pin'
+  | 'pin-off'
   | 'badge'
   | 'id-badge'
   | 'certificate'
@@ -182,6 +153,8 @@ export type IconSize =
   | '5xl'
   | number;
 
+export type IconVariant = 'outline' | 'filled';
+
 export interface IconProps {
   name: IconName;
   size?: IconSize;
@@ -192,18 +165,20 @@ export interface IconProps {
   children?: ReactNode;
   id?: string;
   onClick?: () => void;
+  /**
+   * Icon variant style
+   * - 'outline': Stroke-based icon (default)
+   * - 'filled': Solid filled icon
+   * Note: Not all icons have filled variants. If a filled variant doesn't exist,
+   * the component will fall back to the outline version and log a warning.
+   */
+  variant?: IconVariant;
 }
 
 export interface IconWebProps extends IconProps {
-  // Web-specific props (FontAwesome features)
-  rotation?: number;
-  flip?: 'horizontal' | 'vertical' | 'both';
-  spin?: boolean;
-  pulse?: boolean;
-  fixedWidth?: boolean;
+  // Web-specific props can be added here if needed
 }
 
 export interface IconNativeProps extends IconProps {
-  // Native-specific props (react-native-vector-icons features)
-  allowFontScaling?: boolean;
+  // Native-specific props can be added here if needed
 }

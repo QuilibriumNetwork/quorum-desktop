@@ -9,7 +9,7 @@ interface UseModalSaveStateOptions {
   onSaveComplete?: () => void;
   /** Callback to execute on save error */
   onSaveError?: (error: Error) => void;
-  /** Callback to execute when operation times out */
+  /** Callback to execute when operation close out */
   onTimeout?: () => void;
 }
 

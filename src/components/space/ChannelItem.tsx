@@ -47,7 +47,7 @@ const ChannelContent: React.FC<{
   <div className="channel">
     <div
       className={
-        'channel-name flex items-start justify-between' +
+        'channel-name flex items-center justify-between' +
         (channel.channelId === currentChannelId
           ? ' channel-name-focused'
           : '') +
@@ -62,7 +62,7 @@ const ChannelContent: React.FC<{
           <Icon
             key={`channel-${channel.channelId}`}
             name={(channel.icon as any) || "hashtag"}
-            size="xs"
+            size="sm"
             style={{
               color: getIconColorHex(channel.iconColor as IconColor)
             }}
@@ -71,8 +71,9 @@ const ChannelContent: React.FC<{
           {channel.isPinned && isSpaceOwner && (
             <div className="channel-pin-overlay">
               <Icon
-                name="thumbtack"
-                className="pin-icon text-strong"
+                name="pin"
+                variant="filled"
+                className="pin-icon text-subtle hover:text-main"
                 title="Pinned channel"
               />
             </div>
@@ -94,9 +95,9 @@ const ChannelContent: React.FC<{
             e.stopPropagation();
             openChannelEditor(spaceId, groupName, channel.channelId);
           }}
-          className={'channel-configure flex-shrink-0 ml-2'}
+          className={'channel-configure flex-shrink-0 ml-2 flex items-center justify-center'}
         >
-          <Icon name="cog" size="xs" />
+          <Icon name="settings" size="sm" variant="filled" className="text-subtle hover:text-main" />
         </div>
       )}
     </div>

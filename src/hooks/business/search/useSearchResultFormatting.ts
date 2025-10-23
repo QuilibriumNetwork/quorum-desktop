@@ -1,8 +1,7 @@
 import { useMemo, useCallback } from 'react';
-import { t } from '@lingui/core/macro';
-import * as moment from 'moment-timezone';
 import { Message } from '../../../api/quorumApi';
 import { IconName } from '../../../components/primitives/Icon/types';
+import { formatMessageDate } from '../../../utils';
 
 export interface UseSearchResultFormattingProps {
   message: Message;
@@ -24,13 +23,9 @@ export const useSearchResultFormatting = ({
   message,
   onNavigate,
 }: UseSearchResultFormattingProps): UseSearchResultFormattingReturn => {
-  // Format date to match pinned messages format (MMM D, YYYY)
+  // Format date using shared utility (matches Message.tsx format)
   const formattedDate = useMemo(() => {
-    const time = moment.tz(
-      message.createdDate,
-      Intl.DateTimeFormat().resolvedOptions().timeZone
-    );
-    return time.format('MMM D, YYYY');
+    return formatMessageDate(message.createdDate);
   }, [message.createdDate]);
 
   // Get message type icon

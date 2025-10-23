@@ -84,6 +84,7 @@ export const InteractivePropsPanel: React.FC<InteractivePropsPanelProps> = ({
             {config.type === 'select' && config.options && (
               <Select
                 value={currentValues[propName]}
+                variant="bordered"
                 onChange={(value) => handleValueChange(propName, value)}
                 options={config.options.map(option => ({
                   label: String(option),

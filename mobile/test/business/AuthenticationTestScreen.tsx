@@ -70,7 +70,7 @@ export const AuthenticationTestScreen: React.FC<
           <Button
             type="primary"
             size="large"
-            iconName="sign-in"
+            iconName="login"
             onClick={() => setCurrentView('login')}
           >
             Start Authentication Flow

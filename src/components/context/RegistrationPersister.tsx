@@ -13,9 +13,7 @@ import {
   usePasskeysContext,
 } from '@quilibrium/quilibrium-js-sdk-channels';
 import { useUploadRegistration } from '../../hooks/mutations/useUploadRegistration';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faLock } from '@fortawesome/free-solid-svg-icons';
-import { Button } from '../primitives';
+import { Button, Icon } from '../primitives';
 import { useMessageDB } from './useMessageDB';
 import { useQuorumApiClient } from './QuorumApiContext';
 import { t } from '@lingui/core/macro';
@@ -262,7 +260,7 @@ const RegistrationProvider: FC<RegistrationContextProps> = ({ children }) => {
             <div className="flex flex-row justify-center">
               <div className="grow"></div>
               <div className="w-[460px] py-4 text-center">
-                <FontAwesomeIcon size="4x" icon={faLock} />
+                <Icon name="lock" size="4xl" />
               </div>
               <div className="grow"></div>
             </div>

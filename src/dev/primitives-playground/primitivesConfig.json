@@ -58,17 +58,17 @@
     "staticExamples": [
       { "name": "Primary", "props": { "type": "primary" }, "children": "Primary Button" },
       { "name": "Secondary", "props": { "type": "secondary" }, "children": "Secondary Button" },
-      { "name": "Light", "props": { "type": "light" }, "children": "Light Button" },
-      { "name": "Light Outline", "props": { "type": "light-outline" }, "children": "Light Outline" },
       { "name": "Subtle", "props": { "type": "subtle" }, "children": "Subtle Button" },
       { "name": "Subtle Outline", "props": { "type": "subtle-outline" }, "children": "Subtle Outline" },
       { "name": "Danger", "props": { "type": "danger" }, "children": "Danger Button" },
+      { "name": "Danger Outline", "props": { "type": "danger-outline" }, "children": "Danger Outline" },
       { "name": "Primary White", "props": { "type": "primary-white" }, "children": "Primary White" },
       { "name": "Secondary White", "props": { "type": "secondary-white" }, "children": "Secondary White" },
       { "name": "Light White", "props": { "type": "light-white" }, "children": "Light White" },
+      { "name": "Light Outline White", "props": { "type": "light-outline-white" }, "children": "Light Outline White" },
       { "name": "Unstyled", "props": { "type": "unstyled" }, "children": "Unstyled Button" },
       { "name": "With Icon", "props": { "type": "primary", "iconName": "plus" }, "children": "Add Item" },
-      { "name": "Icon Only", "props": { "type": "light", "iconName": "settings", "iconOnly": true }, "children": null },
+      { "name": "Icon Only", "props": { "type": "subtle", "iconName": "settings", "iconOnly": true }, "children": null },
       { "name": "Full Width", "props": { "type": "primary", "fullWidth": true }, "children": "Full Width Button" },
       { "name": "Disabled", "props": { "type": "primary", "disabled": true }, "children": "Disabled" }
     ],
@@ -259,7 +259,7 @@
   "icon": {
     "id": "icon-primitive",
     "title": "Icon",
-    "description": "Cross-platform icon component using FontAwesome",
+    "description": "Cross-platform icon component using Tabler Icons (outline & filled variants)",
     "background": "modal",
     "columns": 4,
     "dynamicProps": {
@@ -276,7 +276,7 @@
       { "name": "user", "props": { "name": "user" }, "children": null },
       { "name": "search", "props": { "name": "search" }, "children": null },
       { "name": "plus", "props": { "name": "plus" }, "children": null },
-      { "name": "times", "props": { "name": "times" }, "children": null },
+      { "name": "close", "props": { "name": "close" }, "children": null },
       { "name": "check", "props": { "name": "check" }, "children": null },
       { "name": "arrow-right", "props": { "name": "arrow-right" }, "children": null },
       { "name": "arrow-left", "props": { "name": "arrow-left" }, "children": null },
@@ -284,19 +284,20 @@
       { "name": "heart", "props": { "name": "heart" }, "children": null },
       { "name": "star", "props": { "name": "star" }, "children": null },
       { "name": "bell", "props": { "name": "bell" }, "children": null },
-      { "name": "mail", "props": { "name": "mail" }, "children": null },
+      { "name": "envelope", "props": { "name": "envelope" }, "children": null },
       { "name": "lock", "props": { "name": "lock" }, "children": null },
       { "name": "eye", "props": { "name": "eye" }, "children": null }
     ],
     "quickTips": [
-      "Use semantic icon names that match FontAwesome icons",
+      "Use semantic icon names that match Tabler icons",
       "Size should match surrounding text for inline usage",
       "Use consistent icon sizing throughout your app",
-      "Colors are controlled via CSS classes, not props"
+      "Use variant='filled' for solid icons (not all icons have filled variants)",
+      "Colors are controlled via CSS classes or color prop"
     ],
     "codeExample": {
       "title": "Icon Usage",
-      "code": "import { Icon } from '@/components/primitives';\n\n<Icon name=\"settings\" size=\"md\" />\n<Icon name=\"check\" size=\"sm\" className=\"text-success\" />\n<Icon name=\"times\" size=\"lg\" className=\"text-danger\" />"
+      "code": "import { Icon } from '@/components/primitives';\n\n// Outline icons (default)\n<Icon name=\"settings\" size=\"md\" />\n<Icon name=\"check\" size=\"sm\" className=\"text-success\" />\n<Icon name=\"close\" size=\"lg\" color=\"red\" />\n\n// Filled variants\n<Icon name=\"star\" size=\"xl\" variant=\"filled\" />\n<Icon name=\"heart\" size=\"lg\" variant=\"filled\" color=\"red\" />"
     }
   },
 
@@ -483,7 +484,7 @@
       { "name": "With Subtitles", "props": { "placeholder": "Select user...", "options": [{"label": "John Doe", "value": "john", "subtitle": "john@example.com"}, {"label": "Jane Smith", "value": "jane", "subtitle": "jane@example.com"}] }, "children": null },
       { "name": "Multiselect", "props": { "placeholder": "Choose multiple...", "multiple": true, "options": [{"label": "React", "value": "react"}, {"label": "Vue", "value": "vue"}, {"label": "Angular", "value": "angular"}, {"label": "Svelte", "value": "svelte"}] }, "children": null },
       { "name": "Compact Filter", "props": { "compactMode": true, "compactIcon": "filter", "multiple": true, "showSelectAllOption": false, "options": [{"label": "You", "value": "you", "subtitle": "Direct @mentions"}, {"label": "Everyone", "value": "everyone", "subtitle": "@everyone mentions"}, {"label": "Roles", "value": "roles", "subtitle": "@role mentions"}] }, "children": null },
-      { "name": "Compact Settings", "props": { "compactMode": true, "compactIcon": "cog", "showSelectionCount": true, "multiple": true, "options": [{"label": "Notifications", "value": "notif"}, {"label": "Privacy", "value": "privacy"}, {"label": "Security", "value": "security"}] }, "children": null },
+      { "name": "Compact Settings", "props": { "compactMode": true, "compactIcon": "settings", "showSelectionCount": true, "multiple": true, "options": [{"label": "Notifications", "value": "notif"}, {"label": "Privacy", "value": "privacy"}, {"label": "Security", "value": "security"}] }, "children": null },
       { "name": "Bordered", "props": { "placeholder": "Bordered select", "variant": "bordered", "options": [{"label": "Option A", "value": "a"}, {"label": "Option B", "value": "b"}] }, "children": null },
       { "name": "Disabled", "props": { "disabled": true, "placeholder": "Disabled select", "options": [{"label": "Option 1", "value": "1"}] }, "children": null },
       { "name": "With Error", "props": { "error": true, "errorMessage": "Please select an option", "placeholder": "Error state", "options": [{"label": "Option 1", "value": "1"}] }, "children": null }

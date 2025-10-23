@@ -59,7 +59,7 @@ export const ModalsTestScreen: React.FC<ModalsTestScreenProps> = ({
       title: 'LeaveSpaceModal',
       description:
         'Confirmation modal for leaving a space with double-click protection and swipe-to-close',
-      icon: 'times',
+      icon: 'close',
       status: 'cross-platform',
       testAction: () => setLeaveSpaceModalVisible(true),
     },
@@ -76,7 +76,7 @@ export const ModalsTestScreen: React.FC<ModalsTestScreenProps> = ({
       id: 'confirm',
       title: 'ConfirmModal',
       description: 'Generic confirmation modal with customizable actions',
-      icon: 'exclamation',
+      icon: 'warning',
       status: 'pending',
       testAction: () => handlePlannedModal('ConfirmModal'),
     },
@@ -85,7 +85,7 @@ export const ModalsTestScreen: React.FC<ModalsTestScreenProps> = ({
       title: 'SettingsModal',
       description:
         'App settings modal with form validation and keyboard avoidance',
-      icon: 'cog',
+      icon: 'settings',
       status: 'pending',
       testAction: () => handlePlannedModal('SettingsModal'),
     },

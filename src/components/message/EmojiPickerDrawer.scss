@@ -8,10 +8,10 @@
 
   // Override emoji picker styles for mobile drawer
   .EmojiPickerReact {
-    border: none;
-    border-radius: 0;
-    box-shadow: none;
-    background: transparent;
+    border: none !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    background: transparent !important;
 
     // Remove excessive header padding
     --epr-header-padding: 0 !important;

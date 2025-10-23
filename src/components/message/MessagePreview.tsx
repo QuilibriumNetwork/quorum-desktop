@@ -1,10 +1,10 @@
 import React from 'react';
 import { Message as MessageType, Sticker } from '../../api/quorumApi';
 import { Container, Text, FlexRow, FlexColumn, Spacer } from '../primitives';
-import moment from 'moment-timezone';
 import { t } from '@lingui/core/macro';
 import { useMessageFormatting } from '../../hooks/business/messages/useMessageFormatting';
 import { YouTubeEmbed } from '../ui/YouTubeEmbed';
+import { formatMessageDate } from '../../utils';
 
 interface MessagePreviewProps {
   message: MessageType;
@@ -41,9 +41,9 @@ export const MessagePreview: React.FC<MessagePreviewProps> = ({
     return t`Unknown User`;
   };
 
-  // Use createdDate (number timestamp) instead of createdAt
+  // Use shared date formatting utility (matches Message.tsx format)
   const formattedTimestamp = message.createdDate
-    ? moment(message.createdDate).format('MMM D, YYYY [at] h:mm A')
+    ? formatMessageDate(message.createdDate)
     : t`Unknown time`;
 
   // Render message content with actual images and stickers

@@ -200,7 +200,7 @@ export const MessageComposer = forwardRef<
               }}
               activeOpacity={0.7}
             >
-              <Icon name="x" size="xs" color={theme.colors.text.main} />
+              <Icon name="close" size="xs" color={theme.colors.text.main} />
             </TouchableOpacity>
           </View>
         </View>
@@ -247,7 +247,7 @@ export const MessageComposer = forwardRef<
                 }}
                 activeOpacity={0.7}
               >
-                <Icon name="times" size="sm" color={theme.colors.text.subtle} />
+                <Icon name="close" size="sm" color={theme.colors.text.subtle} />
               </TouchableOpacity>
             </View>
           )}

@@ -114,7 +114,7 @@ const MessageActionsDrawer: React.FC<MessageActionsDrawerProps> = ({
         <Button
           type="unstyled"
           onClick={handleMoreReactions}
-          iconName="face-smile-beam"
+          iconName="mood-happy"
           iconOnly
           className="quick-reaction-more"
         />
@@ -160,7 +160,7 @@ const MessageActionsDrawer: React.FC<MessageActionsDrawerProps> = ({
             type="unstyled"
             size="normal"
             onClick={handlePin}
-            iconName={message.isPinned ? "thumbtack-slash" : "thumbtack"}
+            iconName={message.isPinned ? "pin-off" : "pin"}
             fullWidth
             className={`action-menu-item ${
               message.isPinned ? 'action-menu-item--danger' : ''

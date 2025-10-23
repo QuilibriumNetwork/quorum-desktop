@@ -1,4 +1,4 @@
-import { IconName } from '../Icon/types';
+import { IconName, IconSize } from '../Icon/types';
 
 export interface BaseButtonProps {
   id?: string;
@@ -21,6 +21,7 @@ export interface BaseButtonProps {
   fullWidth?: boolean; // If true, button takes full width of container
   icon?: boolean; // Legacy prop for existing compatibility
   iconName?: IconName; // FontAwesome icon to display (left of text or icon-only)
+  iconSize?: IconSize; // Custom icon size (overrides size-based default)
   iconOnly?: boolean; // If true, only show icon without text
   className?: string;
   onClick: (event?: React.MouseEvent) => void;

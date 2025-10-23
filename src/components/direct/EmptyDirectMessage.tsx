@@ -27,7 +27,7 @@ export const EmptyDirectMessage = () => {
 
         {/* Main content */}
         <Container className="flex w-full flex-col justify-around flex-1">
-          <Container>
+          <Container className="w-full">
             {showHomeScreen ? (
               <>
                 <FlexRow className="justify-around">
@@ -48,7 +48,7 @@ export const EmptyDirectMessage = () => {
                     className="items-center gap-2 cursor-pointer"
                   >
                     <Icon
-                      name="eye-slash"
+                      name="eye-off"
                       className="text-subtle hover:text-main dark:text-muted dark:hover:text-subtle transition-colors text-sm"
                     />
                     <Text className="text-subtle hover:text-main dark:text-muted dark:hover:text-subtle transition-colors text-sm">{t`hide home screen`}</Text>
@@ -57,16 +57,16 @@ export const EmptyDirectMessage = () => {
               </>
             ) : (
               <>
-                <FlexColumn className="items-center justify-center pt-8">
+                <FlexColumn className="items-center justify-center pt-8 w-full">
                   <Icon
                     name="comment-dots"
-                    size={96}
-                    className="text-accent opacity-70 dark:text-accent mb-4"
+                    size={128}
+                    className="text-accent opacity-70 dark:text-accent mb-4 block mx-auto"
                   />
                   <Container className="text-lg sm:text-2xl text-center mb-8">
                     <Text className="text-lg sm:text-2xl">{t`What's on your mind today?`}</Text>
                   </Container>
-                  <FlexRow className="justify-center">
+                  <FlexRow className="justify-center w-full">
                     <FlexRow
                       onClick={showHomeScreenView}
                       className="items-center gap-2 cursor-pointer"

@@ -171,7 +171,7 @@ const MobileDrawer: React.FC<MobileDrawerProps> = ({
               <Button
                 type="unstyled"
                 onClick={handleClose}
-                iconName="times"
+                iconName="close"
                 iconOnly
                 className="mobile-drawer__close-btn"
               />

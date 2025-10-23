@@ -66,7 +66,7 @@ const Emojis: React.FunctionComponent<EmojisProps> = ({
             <div className="flex items-center justify-between">
               <span>{emojiFileError}</span>
               <Icon
-                name="times"
+                name="close"
                 className="cursor-pointer ml-2 text-sm opacity-70 hover:opacity-100"
                 onClick={clearEmojiFileError}
               />

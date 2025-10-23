@@ -95,7 +95,7 @@ const Privacy: React.FunctionComponent<PrivacyProps> = ({
         <div className="modal-text-label pb-2">Devices</div>
         {removedDevices.length > 0 && (
           <div className="bg-warning/10 border border-warning/20 rounded p-2 mb-2 text-sm text-warning">
-            <Icon name="exclamation-triangle" className="mr-1" />
+            <Icon name="warning" className="mr-1" />
 {removedDevices.length === 1
               ? t`1 device marked for removal. Click "Save Changes" to confirm.`
               : t`${removedDevices.length} devices marked for removal. Click "Save Changes" to confirm.`}

@@ -105,7 +105,7 @@ export const IconPicker: React.FC<IconPickerProps> = ({
                   type="subtle-outline"
                   onClick={handleClearIcon}
                   size="small"
-                  iconName="times"
+                  iconName="close"
                 >
                   Clear
                 </Button>

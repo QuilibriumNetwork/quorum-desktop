@@ -17,7 +17,7 @@ import { t } from '@lingui/core/macro';
 import { usePinnedMessages } from '../../hooks';
 import { useMessageHighlight } from '../../hooks/business/messages/useMessageHighlight';
 import { isTouchDevice } from '../../utils/platform';
-import * as moment from 'moment-timezone';
+import { formatMessageDate } from '../../utils';
 import './PinnedMessagesPanel.scss';
 
 interface PinnedMessagesPanelProps {
@@ -52,14 +52,6 @@ const PinnedMessageItem: React.FC<PinnedMessageItemProps> = ({
 }) => {
   const sender = mapSenderToUser(message.content?.senderId);
 
-  const formatMessageDate = (timestamp: number) => {
-    const time = moment.tz(
-      timestamp,
-      Intl.DateTimeFormat().resolvedOptions().timeZone
-    );
-    return time.format('MMM D, YYYY');
-  };
-
   return (
     <Container
       key={message.messageId}
@@ -90,7 +82,7 @@ const PinnedMessageItem: React.FC<PinnedMessageItemProps> = ({
               <Button
                 type="danger-outline"
                 onClick={(e: React.MouseEvent) => togglePin(e, message)}
-                iconName="times"
+                iconName="close"
                 iconOnly={true}
                 size="small"
               />
@@ -145,7 +137,7 @@ const PinnedMessageItem: React.FC<PinnedMessageItemProps> = ({
                 <Button
                   type="danger-outline"
                   onClick={(e: React.MouseEvent) => togglePin(e, message)}
-                  iconName="times"
+                  iconName="close"
                   iconOnly={true}
                   size="small"
                 />
@@ -229,7 +221,7 @@ export const PinnedMessagesPanel: React.FC<PinnedMessagesPanelProps> = ({
 
     return (
       <FlexCenter className="pinned-empty-state">
-        <Icon name="thumbtack" className="empty-icon" />
+        <Icon name="pin" size="3xl" className="empty-icon" />
         <Text className="empty-message">{t`No pinned messages yet`}</Text>
         <Text className="empty-hint">
           {canPinMessages

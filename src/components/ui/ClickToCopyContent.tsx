@@ -134,6 +134,7 @@ const ClickToCopyContent: React.FunctionComponent<ClickToCopyContentProps> = ({
   const iconElement = (
     <Icon
       name="clipboard"
+      variant="filled"
       size={iconSize}
       className={iconClassName || undefined}
       onClick={!copyOnContentClick ? handleCopy : undefined}

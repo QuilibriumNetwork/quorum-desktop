@@ -1,9 +1,8 @@
 import * as React from 'react';
-import { faGear } from '@fortawesome/free-solid-svg-icons';
 
 import './UserStatus.scss';
 // import UserOnlineStateIndicator from './UserOnlineStateIndicator'; // TODO: Re-enable when online/offline status is implemented
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Icon } from '../primitives';
 import { t } from '@lingui/core/macro';
 import { ClickToCopyContent } from '../ui';
 import { DefaultImages, truncateAddress } from '../../utils';
@@ -50,7 +49,7 @@ const UserStatus: React.FunctionComponent<UserStatusProps> = (props) => {
               iconClassName="text-surface-9 hover:text-surface-10 dark:text-surface-8 dark:hover:text-surface-9"
               textVariant="subtle"
               textSize="xs"
-              iconSize="md"
+              iconSize="xs"
               iconPosition="right"
               copyOnContentClick={true}
               className="flex items-center w-fit"
@@ -60,13 +59,14 @@ const UserStatus: React.FunctionComponent<UserStatusProps> = (props) => {
           </div>
         </div>
         <div className="flex flex-col justify-center pr-2">
-          <FontAwesomeIcon
+          <Icon
+            name="settings"
+            variant="filled"
             onClick={(e) => {
               props.setIsUserSettingsOpen(true);
               e.stopPropagation();
             }}
-            className="p-1 rounded-md hover:bg-[rgba(255,255,255,0.1)] hover:text-main cursor-pointer"
-            icon={faGear}
+            className="text-subtle hover:text-main cursor-pointer"
           />
         </div>
       </div>

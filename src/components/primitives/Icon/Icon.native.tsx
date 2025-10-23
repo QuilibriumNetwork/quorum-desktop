@@ -1,20 +1,18 @@
 import React from 'react';
 import { TouchableOpacity } from 'react-native';
-import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome';
+import * as IconLibrary from '@tabler/icons-react-native';
 import { IconNativeProps, IconSize } from './types';
-import { reactNativeIconMap } from './iconMapping';
+import { iconComponentMap } from './iconMapping';
 import { useTheme } from '../theme';
 
-// Convert semantic size to numeric size for React Native
+// Convert semantic size to pixel size (same as web)
 const getSizeValue = (size: IconSize): number => {
-  if (typeof size === 'number') {
-    return size;
-  }
+  if (typeof size === 'number') return size;
 
   const sizeMap = {
     xs: 12,
-    sm: 14,
-    md: 16,
+    sm: 16,
+    md: 18,
     lg: 20,
     xl: 24,
     '2xl': 32,
@@ -33,18 +31,42 @@ export function Icon({
   className, // Ignored on native - for API consistency
   style = {},
   disabled = false,
-  allowFontScaling = true,
   id, // Ignored on native - for API consistency
   onClick,
+  variant = 'outline',
 }: IconNativeProps) {
   const theme = useTheme();
   const colors = theme.colors;
 
-  const iconName = reactNativeIconMap[name];
+  const iconComponentName = iconComponentMap[name];
 
-  if (!iconName) {
-    console.warn(`Icon "${name}" not found in reactNative mapping`);
+  if (!iconComponentName) {
+    console.warn(`Icon "${name}" not found in icon mapping`);
     return null;
+  }
+
+  // Determine final component name based on variant
+  const finalComponentName = variant === 'filled'
+    ? `${iconComponentName}Filled`
+    : iconComponentName;
+
+  let IconComponent = (IconLibrary as any)[finalComponentName];
+
+  if (!IconComponent) {
+    // If filled variant doesn't exist, try falling back to outline
+    if (variant === 'filled') {
+      console.warn(
+        `Icon "${name}" does not have a filled variant. Falling back to outline.`
+      );
+      IconComponent = (IconLibrary as any)[iconComponentName];
+      if (!IconComponent) {
+        console.warn(`Icon component "${iconComponentName}" not found in icon library`);
+        return null;
+      }
+    } else {
+      console.warn(`Icon component "${finalComponentName}" not found in icon library`);
+      return null;
+    }
   }
 
   const iconSize = getSizeValue(size);
@@ -56,12 +78,10 @@ export function Icon({
   };
 
   const iconComponent = (
-    <FontAwesomeIcon
-      name={iconName}
+    <IconComponent
       size={iconSize}
       color={iconColor}
       style={combinedStyle}
-      allowFontScaling={allowFontScaling}
     />
   );
 

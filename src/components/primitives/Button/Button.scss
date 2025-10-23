@@ -31,50 +31,26 @@
 
 .btn-secondary {
   @extend %btn-base;
-  background-color: transparent;
-  border: $border-2 solid var(--accent-500);
-  cursor: pointer;
-  color: var(--accent-500);
-
-  &:hover {
-    background-color: var(--accent);
-    border-color: var(--accent);
-    color: white;
-  }
-
-  @media (prefers-color-scheme: dark) {
-    border-color: var(--accent-400);
-    color: var(--accent-400);
-  }
-}
-
-.btn-light {
-  @extend %btn-base;
-  background-color: var(--accent-100);
+  background-color: rgba(var(--accent-rgb), 0.3);
   border: $border-2 solid transparent;
   cursor: pointer;
-  color: var(--accent-700);
+  color: var(--accent-600);
 
   &:hover {
-    background-color: transparent;
-    border: $border-2 solid var(--accent-100);
-    color: var(--accent-100);
+    background-color: rgba(var(--accent-rgb), 0.5);
+    border-color: transparent;
+    color: var(--accent);
   }
 }
 
-.btn-light-outline {
-  @extend %btn-base;
-  background-color: transparent;
-  border: $border-2 solid var(--accent-100);
-  cursor: pointer;
+html.dark .btn-secondary {
   color: var(--accent-100);
 
   &:hover {
-    background-color: var(--accent-100);
-    border: $border-2 solid var(--accent-100);
-    color: var(--accent-700);
+    color: white;
   }
 }
+
 
 .btn-subtle {
   @extend %btn-base;

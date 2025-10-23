@@ -75,7 +75,7 @@ const UserProfile: React.FunctionComponent<{
           className="absolute right-3 top-3 cursor-pointer text-subtle hover:text-main z-10"
           onClick={props.dismiss}
         >
-          <Icon name="times" />
+          <Icon name="close" />
         </Container>
       )}
       <Container
@@ -154,7 +154,7 @@ const UserProfile: React.FunctionComponent<{
                     className={'user-profile-role-tag'}
                   >
                     <Icon
-                      name="times"
+                      name="close"
                       className="hover:bg-black hover:bg-opacity-30 rounded-full p-1 cursor-pointer mr-1 text-sm align-middle"
                       onClick={() => removeRole(props.user.address, r.roleId)}
                     />

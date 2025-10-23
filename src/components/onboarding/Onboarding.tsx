@@ -113,7 +113,7 @@ export const Onboarding = ({
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60 pointer-events-none backdrop-blur-sm">
             <div className="flex flex-col p-12 border-2 border-dashed border-accent-500 rounded-2xl bg-white/90 shadow-2xl items-center transform scale-110 transition-all duration-200">
               <Icon
-                name="file-image"
+                name="image"
                 className="text-5xl text-accent-500 mb-6"
               />
               <p className="text-xl">{t`Drop your profile photo here`}</p>
@@ -321,7 +321,7 @@ export const Onboarding = ({
                     maxWidth={300}
                   >
                     <Icon
-                      name="circle-info"
+                      name="info-circle"
                       className="text-white/80 hover:text-white/60 cursor-pointer ml-2"
                       aria-label={t`If skipped, you'll get the default profile image and can set it later`}
                     />
