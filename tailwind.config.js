@@ -20,6 +20,9 @@ export default {
   ],
   theme: {
     extend: {
+      fontFamily: {
+        sans: ['Inter', 'system-ui', 'sans-serif'],
+      },
       screens: {
         xs: '480px', // Mobile breakpoint (matches app's 480px standard)
       },
