@@ -1,6 +1,5 @@
 import React, { useMemo, useState, useCallback } from 'react';
 import { useLocation } from 'react-router-dom';
-import * as moment from 'moment-timezone';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
 import type {
   Emoji,
@@ -48,6 +47,7 @@ import { MessageMarkdownRenderer } from './MessageMarkdownRenderer';
 import { getImageConfig } from '../../utils/imageProcessing/config';
 import { isTouchDevice } from '../../utils/platform';
 import { hapticLight } from '../../utils/haptic';
+import { formatMessageDate } from '../../utils';
 
 // Utility function for robust GIF detection
 const createGifDetector = (url: string, isLargeGif?: boolean) => {
@@ -214,23 +214,7 @@ export const Message = React.memo(({
   );
 
   let sender = mapSenderToUser(message.content?.senderId);
-  const time = moment.tz(
-    message.createdDate,
-    Intl.DateTimeFormat().resolvedOptions().timeZone
-  );
-  const fromNow = time.fromNow();
-  const timeFormatted = time.format('h:mm a');
-
-  const displayedTimestmap = time.calendar(null, {
-    sameDay: function () {
-      return `[${t`Today at ${timeFormatted}`}]`;
-    },
-    lastWeek: 'dddd',
-    lastDay: `[${t`Yesterday at ${timeFormatted}`}]`,
-    sameElse: function () {
-      return `[${fromNow}]`;
-    },
-  });
+  const displayedTimestmap = formatMessageDate(message.createdDate);
 
   const formatEventMessage = (userDisplayName: string, type: string) => {
     switch (type) {

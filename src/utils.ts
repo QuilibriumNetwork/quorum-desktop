@@ -4,6 +4,9 @@ export enum DefaultImages {
   UNKNOWN_USER = '/unknown.png',
 }
 
+// Re-export date formatting utilities
+export { formatMessageDate } from './utils/dateFormatting';
+
 export const getDefaultUserConfig = (address: string): UserConfig => {
   return {
     address: address,

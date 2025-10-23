@@ -17,7 +17,7 @@ import { t } from '@lingui/core/macro';
 import { usePinnedMessages } from '../../hooks';
 import { useMessageHighlight } from '../../hooks/business/messages/useMessageHighlight';
 import { isTouchDevice } from '../../utils/platform';
-import * as moment from 'moment-timezone';
+import { formatMessageDate } from '../../utils';
 import './PinnedMessagesPanel.scss';
 
 interface PinnedMessagesPanelProps {
@@ -51,14 +51,6 @@ const PinnedMessageItem: React.FC<PinnedMessageItemProps> = ({
   stickers,
 }) => {
   const sender = mapSenderToUser(message.content?.senderId);
-
-  const formatMessageDate = (timestamp: number) => {
-    const time = moment.tz(
-      timestamp,
-      Intl.DateTimeFormat().resolvedOptions().timeZone
-    );
-    return time.format('MMM D, YYYY');
-  };
 
   return (
     <Container
