@@ -145,7 +145,7 @@ export const MessageActions: React.FC<MessageActionsProps> = ({
             onMouseEnter={() => setHoveredAction('emoji')}
             className="w-5 mr-2 text-center hover:scale-125 text-surface-9 hover:text-surface-10 transition duration-200 rounded-md flex flex-col justify-around cursor-pointer"
           >
-            <Icon name="face-smile-beam" size="sm" />
+            <Icon name="face-smile-beam" size="sm" variant="filled" />
           </div>
 
           {/* Reply */}
@@ -179,14 +179,14 @@ export const MessageActions: React.FC<MessageActionsProps> = ({
                 className="w-5 text-center text-surface-9 hover:text-surface-10 hover:scale-125 transition duration-200 rounded-md flex flex-col justify-around cursor-pointer"
               >
                 <Icon
-                  name={message.isPinned ? 'thumbtack-slash' : 'thumbtack'}
+                  name={message.isPinned ? 'pin-off' : 'pin'}
                   size="sm"
-                  className={message.isPinned ? 'text-accent' : ''}
+                  variant={message.isPinned ? undefined : 'filled'}
                 />
               </div>
             </>
           )}
-
+ 
           {/* Delete (if user can delete) */}
           {canUserDelete && (
             <>
@@ -199,6 +199,7 @@ export const MessageActions: React.FC<MessageActionsProps> = ({
                 <Icon
                   name="trash"
                   size="sm"
+                  variant="filled"
                   className="text-[rgb(var(--danger))] hover:text-[rgb(var(--danger-hover))] hover:scale-125"
                 />
               </div>

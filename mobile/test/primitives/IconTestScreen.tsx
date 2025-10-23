@@ -39,9 +39,9 @@ export const IconTestScreen: React.FC = () => {
               </Text>
             </FlexColumn>
             <FlexColumn align="center" style={commonTestStyles.iconItem}>
-              <Icon name="times" />
+              <Icon name="close" />
               <Text size="sm" variant="subtle">
-                times
+                close
               </Text>
             </FlexColumn>
             <FlexColumn align="center" style={commonTestStyles.iconItem}>

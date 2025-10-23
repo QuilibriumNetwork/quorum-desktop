@@ -26,7 +26,8 @@ const DirectMessageContactsList: React.FC<{}> = ({}) => {
         <FlexColumn className="justify-around">
           <Icon
             name="user-plus"
-            className="cursor-pointer text-accent hover:text-accent-300 h-4"
+            size="lg"
+            className="cursor-pointer text-accent hover:text-accent-300"
             data-tooltip-id="add-friend-tooltip"
             onClick={openNewDirectMessage}
           />

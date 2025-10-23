@@ -216,7 +216,7 @@ const Modal: React.FC<NativeModalProps> = ({
                 onPress={handleClose}
                 hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
               >
-                <Icon name="times" size="sm" color={colors.text.subtle} />
+                <Icon name="close" size="sm" color={colors.text.subtle} />
               </TouchableOpacity>
             )}
 

@@ -18,12 +18,12 @@ const Navigation: React.FunctionComponent<NavigationProps> = ({
 
   const allCategories = [
     { id: 'account', icon: 'user', label: t`Account`, className: '' },
-    { id: 'general', icon: 'cog', label: t`General`, className: '' },
+    { id: 'general', icon: 'settings', label: t`General`, className: '' },
     { id: 'roles', icon: 'users', label: t`Roles`, className: '' },
     { id: 'emojis', icon: 'smile', label: t`Emojis`, className: '' },
     { id: 'stickers', icon: 'image', label: t`Stickers`, className: '' },
     { id: 'invites', icon: 'user-plus', label: t`Invites`, className: '' },
-    { id: 'danger', icon: 'exclamation-triangle', label: t`Delete Space`, className: 'text-danger' },
+    { id: 'danger', icon: 'warning', label: t`Delete Space`, className: 'text-danger' },
   ];
 
   // Filter categories based on ownership

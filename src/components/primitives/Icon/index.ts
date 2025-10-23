@@ -7,4 +7,5 @@ export type {
   IconName,
   IconSize,
 } from './types';
-export { fontAwesomeIconMap, reactNativeIconMap } from './iconMapping';
+// Export mapping utilities (implementation-agnostic interface)
+export { iconComponentMap as iconNames, isValidIconName, getIconComponentName } from './iconMapping';

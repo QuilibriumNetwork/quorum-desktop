@@ -206,7 +206,7 @@ export function Tooltip({
                     onPress={closeTooltip}
                     hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
                   >
-                    <Icon name="times" size="xs" color={colors.text.subtle} />
+                    <Icon name="close" size="xs" color={colors.text.subtle} />
                   </TouchableOpacity>
                 )}
               </View>

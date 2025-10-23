@@ -418,7 +418,7 @@ const DirectMessage: React.FC<{}> = () => {
                   type="unstyled"
                   onClick={() => openConversationSettings(conversationId)}
                   className="header-icon-button"
-                  iconName="cog"
+                  iconName="settings"
                   iconOnly
                 />
               </Tooltip>

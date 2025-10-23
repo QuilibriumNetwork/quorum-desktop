@@ -237,14 +237,14 @@ export const Message = React.memo(({
       case 'join':
         return (
           <>
-            <Icon name="user-join" size="sm" className="mr-2 text-subtle" />
+            <Icon name="user-plus" size="sm" className="mr-2 text-subtle" />
             {i18n._('{user} has joined', { user: userDisplayName })}
           </>
         );
       case 'leave':
         return (
           <>
-            <Icon name="user-leave" size="sm" className="mr-2 text-subtle" />
+            <Icon name="user-kick" size="sm" className="mr-2 text-subtle" />
             {i18n._('{user} has left', { user: userDisplayName })}
           </>
         );
@@ -516,38 +516,40 @@ export const Message = React.memo(({
                 </Modal>
               )}
 
-            <Text className="message-sender-name">{sender.displayName}</Text>
-            {message.isPinned && (
-              <Tooltip
-                id={`pin-indicator-${message.messageId}`}
-                content={
-                  message.pinnedBy
-                    ? t`Pinned by ${mapSenderToUser(message.pinnedBy)?.displayName || message.pinnedBy}`
-                    : t`Pinned`
-                }
-                showOnTouch={true}
-                autoHideAfter={3000}
-              >
-                <Icon name="thumbtack" size="xs" className="ml-2 text-accent" />
-              </Tooltip>
-            )}
-            <Text className="pl-2">
-              {!message.signature && (
+            <FlexRow align="center" className="items-center">
+              <Text className="message-sender-name">{sender.displayName}</Text>
+              {message.isPinned && (
                 <Tooltip
-                  id={`signature-warning-${message.messageId}`}
-                  content={t`Message does not have a valid signature, this may not be from the sender`}
+                  id={`pin-indicator-${message.messageId}`}
+                  content={
+                    message.pinnedBy
+                      ? t`Pinned by ${mapSenderToUser(message.pinnedBy)?.displayName || message.pinnedBy}`
+                      : t`Pinned`
+                  }
                   showOnTouch={true}
                   autoHideAfter={3000}
                 >
-                  <Icon
-                    name="exclamation-triangle"
-                    size="xs"
-                    className="text-warning"
-                  />
+                  <Icon name="pin" size="sm" className="ml-2 text-accent" />
                 </Tooltip>
               )}
-            </Text>
-            <Text className="message-timestamp">{displayedTimestmap}</Text>
+              <Text className="pl-2">
+                {!message.signature && (
+                  <Tooltip
+                    id={`signature-warning-${message.messageId}`}
+                    content={t`Message does not have a valid signature, this may not be from the sender`}
+                    showOnTouch={true}
+                    autoHideAfter={3000}
+                  >
+                    <Icon
+                      name="warning"
+                      size="xs"
+                      className="text-warning"
+                    />
+                  </Tooltip>
+                )}
+              </Text>
+              <Text className="message-timestamp">{displayedTimestmap}</Text>
+            </FlexRow>
 
             {(() => {
               const contentData = formatting.getContentData();

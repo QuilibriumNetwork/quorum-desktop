@@ -13,8 +13,8 @@ import { IconName } from '../Icon/types';
 const variantIcons: Record<string, IconName> = {
   info: 'info',
   success: 'check',
-  warning: 'exclamation-triangle',
-  error: 'exclamation-triangle',
+  warning: 'warning',
+  error: 'warning',
 };
 
 // Callout colors with solid backgrounds for better readability
@@ -165,7 +165,7 @@ const Callout: React.FC<CalloutNativeProps> = ({
           hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
         >
           <Icon
-            name="times"
+            name="close"
             size={iconSize}
             color={variantStyle.icon.color}
           />

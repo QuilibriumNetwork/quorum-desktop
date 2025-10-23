@@ -39,11 +39,12 @@ const Button: React.FC<WebButtonProps> = (props) => {
           <Icon
             name={props.iconName}
             size={
-              props.size === 'small'
+              props.iconSize ||
+              (props.size === 'small'
                 ? 'sm'
                 : props.size === 'large'
                   ? 'lg'
-                  : 'md'
+                  : 'md')
             }
             className="quorum-button-icon-element"
             style={{ color: 'inherit' }}

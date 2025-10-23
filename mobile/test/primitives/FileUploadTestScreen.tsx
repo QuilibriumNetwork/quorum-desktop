@@ -108,7 +108,7 @@ export const FileUploadTestScreen: React.FC = () => {
                 }}
               >
                 <Icon
-                  name="file-image"
+                  name="image"
                   size="xl"
                   color={theme.colors.text.subtle}
                   style={{ marginBottom: 12 }}
@@ -168,7 +168,7 @@ export const FileUploadTestScreen: React.FC = () => {
                 }}
               >
                 <Icon
-                  name="file-image"
+                  name="image"
                   size="lg"
                   color={theme.colors.text.subtle}
                   style={{ marginBottom: 8 }}
@@ -243,7 +243,7 @@ export const FileUploadTestScreen: React.FC = () => {
                     <FlexColumn gap="xs">
                       <FlexRow gap="sm" align="center">
                         <Icon
-                          name="file-image"
+                          name="image"
                           color={theme.colors.accent.DEFAULT}
                           size="sm"
                         />
@@ -276,7 +276,7 @@ export const FileUploadTestScreen: React.FC = () => {
                 }}
               >
                 <Icon
-                  name="file-image"
+                  name="image"
                   color={theme.colors.text.muted}
                   size="lg"
                   style={{ marginBottom: 8 }}

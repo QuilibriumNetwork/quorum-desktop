@@ -159,7 +159,7 @@ const General: React.FunctionComponent<GeneralProps> = ({
                 <div className="error-label flex items-center justify-between">
                   <span>{iconFileError}</span>
                   <Icon
-                    name="times"
+                    name="close"
                     className="cursor-pointer ml-2 text-sm opacity-70 hover:opacity-100"
                     onClick={clearIconFileError}
                   />
@@ -169,7 +169,7 @@ const General: React.FunctionComponent<GeneralProps> = ({
                 <div className="error-label flex items-center justify-between">
                   <span>{bannerFileError}</span>
                   <Icon
-                    name="times"
+                    name="close"
                     className="cursor-pointer ml-2 text-sm opacity-70 hover:opacity-100"
                     onClick={clearBannerFileError}
                   />

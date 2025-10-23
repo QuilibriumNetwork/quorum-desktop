@@ -258,13 +258,14 @@ const Button: React.FC<NativeButtonProps> = (props) => {
             <Icon
               name={props.iconName}
               size={
-                props.size === 'small'
+                props.iconSize ||
+                (props.size === 'small'
                   ? 'sm'
                   : props.size === 'large'
                     ? 'lg'
                     : props.size === 'compact' && props.iconOnly
                       ? 'lg'
-                      : 'md'
+                      : 'md')
               }
               color={getTextColor()}
             />

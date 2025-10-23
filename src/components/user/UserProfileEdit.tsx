@@ -1,10 +1,8 @@
-import { faTimes } from '@fortawesome/free-solid-svg-icons';
 import { useDropzone } from 'react-dropzone';
 import * as React from 'react';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
-import { Button, Input } from '../primitives';
+import { Button, Input, Icon } from '../primitives';
 import './UserProfile.scss';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useMessageDB } from '../context/useMessageDB';
 import { t } from '@lingui/core/macro';
 import { DefaultImages } from '../../utils';
@@ -61,7 +59,7 @@ const UserProfileEdit: React.FunctionComponent<{
           className="absolute right-3 top-3 cursor-pointer text-subtle hover:text-main z-10"
           onClick={props.dismiss}
         >
-          <FontAwesomeIcon icon={faTimes} />
+          <Icon name="close" />
         </div>
       )}
       <div className="user-profile-header">

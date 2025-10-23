@@ -135,8 +135,8 @@ html:not(.dark) .message-composer-row {
 
 /* Sticker button */
 .message-composer-sticker-btn {
-  width: $s-8;
-  height: $s-8;
+  width: $s-9;
+  height: $s-9;
   padding: 0;
   border-radius: $rounded-md;
   cursor: pointer;
@@ -184,7 +184,7 @@ html:not(.dark) .message-composer-row {
 }
 
 .message-composer-signing-btn.unsigned {
-  color: var(--warning);
+  color: rgb(var(--warning));
 }
 
 .message-composer-signing-btn.signed {

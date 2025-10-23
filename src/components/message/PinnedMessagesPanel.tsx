@@ -90,7 +90,7 @@ const PinnedMessageItem: React.FC<PinnedMessageItemProps> = ({
               <Button
                 type="danger-outline"
                 onClick={(e: React.MouseEvent) => togglePin(e, message)}
-                iconName="times"
+                iconName="close"
                 iconOnly={true}
                 size="small"
               />
@@ -145,7 +145,7 @@ const PinnedMessageItem: React.FC<PinnedMessageItemProps> = ({
                 <Button
                   type="danger-outline"
                   onClick={(e: React.MouseEvent) => togglePin(e, message)}
-                  iconName="times"
+                  iconName="close"
                   iconOnly={true}
                   size="small"
                 />
@@ -229,7 +229,7 @@ export const PinnedMessagesPanel: React.FC<PinnedMessagesPanelProps> = ({
 
     return (
       <FlexCenter className="pinned-empty-state">
-        <Icon name="thumbtack" className="empty-icon" />
+        <Icon name="pin" className="empty-icon" />
         <Text className="empty-message">{t`No pinned messages yet`}</Text>
         <Text className="empty-hint">
           {canPinMessages

@@ -237,7 +237,7 @@ export const MessageComposer = forwardRef<
       return (
         <div className="message-composer-container">
           <div className="message-composer-disabled">
-            <Icon name="lock" size="xs" className="message-composer-disabled-icon" />
+            <Icon name="lock" size="sm" className="message-composer-disabled-icon" />
             <span className="message-composer-disabled-text">
               {disabledMessage || t`You cannot post in this channel`}
             </span>
@@ -287,7 +287,7 @@ export const MessageComposer = forwardRef<
                   })}
                 </span>
                 <Icon
-                  name="times"
+                  name="close"
                   size="sm"
                   className="message-composer-reply-close"
                   onClick={() => {
@@ -309,7 +309,7 @@ export const MessageComposer = forwardRef<
                 size="small"
                 onClick={clearFile}
               >
-                <Icon name="times" size="sm" />
+                <Icon name="close" size="sm" />
               </Button>
               <div className="relative">
                 <img
@@ -435,6 +435,7 @@ export const MessageComposer = forwardRef<
                 className="message-composer-sticker-btn"
                 onClick={onShowStickers}
                 iconName="smile"
+                iconSize="lg"
                 iconOnly
               />
             </Tooltip>
@@ -459,6 +460,7 @@ export const MessageComposer = forwardRef<
                   skipSigning ? 'unsigned' : 'signed'
                 }`}
                 iconName={skipSigning ? 'unlock' : 'lock'}
+                iconSize="lg"
                 iconOnly
               />
             </Tooltip>

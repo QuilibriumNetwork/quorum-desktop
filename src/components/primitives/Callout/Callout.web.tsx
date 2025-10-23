@@ -6,10 +6,10 @@ import { IconName } from '../Icon/types';
 import './Callout.scss';
 
 const variantIcons: Record<string, IconName> = {
-  info: 'info',
+  info: 'info-circle',
   success: 'check',
-  warning: 'exclamation-triangle',
-  error: 'exclamation-triangle',
+  warning: 'warning',
+  error: 'warning',
 };
 
 const variantClasses = {
@@ -110,7 +110,7 @@ const Callout: React.FC<CalloutWebProps> = ({
           )}
           aria-label="Dismiss"
         >
-          <Icon name="times" size={iconSizes[size]} />
+          <Icon name="close" size={iconSizes[size]} />
         </button>
       )}
     </div>

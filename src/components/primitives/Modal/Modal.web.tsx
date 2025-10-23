@@ -38,7 +38,7 @@ const Modal: React.FC<WebModalProps> = ({
               document.dispatchEvent(escEvent);
             }}
           >
-            <Icon name="times" size="md" />
+            <Icon name="close" size="md" />
           </div>
         )}
 

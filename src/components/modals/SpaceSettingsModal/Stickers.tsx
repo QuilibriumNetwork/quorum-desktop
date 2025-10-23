@@ -66,7 +66,7 @@ const Stickers: React.FunctionComponent<StickersProps> = ({
             <div className="flex items-center justify-between">
               <span>{stickerFileError}</span>
               <Icon
-                name="times"
+                name="close"
                 className="cursor-pointer ml-2 text-sm opacity-70 hover:opacity-100"
                 onClick={clearStickerFileError}
               />

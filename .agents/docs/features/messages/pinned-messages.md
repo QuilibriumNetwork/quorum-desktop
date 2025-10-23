@@ -177,8 +177,8 @@ Refactored to use DropdownPanel for consistency:
 
 Added thumbtack-related icons:
 
-- `thumbtack`: Main pin icon (FontAwesome `faThumbtack`)
-- `thumbtack-slash`: Unpin icon (reuses same icon with different styling)
+- `thumbtack`: Main pin icon (`IconPin`)
+- `thumbtack-slash`: Unpin icon (`IconPinOff`)
 - `pin`: Alias for thumbtack
 
 ## Logic Flow

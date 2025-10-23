@@ -180,7 +180,7 @@ export const DropdownPanel: React.FC<DropdownPanelProps> = ({
                 onClick={onClose}
                 className="dropdown-panel__close"
               >
-                <Icon name="times" size="sm" />
+                <Icon name="close" size="sm" />
               </Button>
             )}
           </FlexRow>

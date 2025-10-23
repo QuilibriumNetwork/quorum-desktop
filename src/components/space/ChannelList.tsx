@@ -125,7 +125,7 @@ const ChannelList: React.FC<ChannelListProps> = ({ spaceId }) => {
               onClick={openNewGroupEditor}
               className="w-full justify-center items-center"
             >
-              <Icon name="plus" className="mr-2" />
+              <Icon name="plus" size="sm" className="mr-2" />
               {t`Add Group`}
             </Button>
           </Container>

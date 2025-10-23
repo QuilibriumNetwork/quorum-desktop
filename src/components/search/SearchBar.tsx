@@ -137,7 +137,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
               size="small"
               className="search-clear-button"
               onClick={handleClear}
-              iconName="times"
+              iconName="close"
               iconOnly
               tooltip={t`Clear search`}
             />

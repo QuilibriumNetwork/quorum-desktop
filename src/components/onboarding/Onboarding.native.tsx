@@ -169,7 +169,7 @@ export const Onboarding: React.FC<OnboardingProps> = ({ setUser }) => {
     <Container style={AUTH_CONTAINER_STYLES.dragOverlay}>
       <Container style={AUTH_CONTAINER_STYLES.dragContent}>
         <Icon
-          name="file-image"
+          name="image"
           size="5xl"
           style={{ color: '#3b82f6', marginBottom: 24 }}
         />
@@ -430,7 +430,7 @@ export const Onboarding: React.FC<OnboardingProps> = ({ setUser }) => {
                             >
                               <FlexColumn gap="sm" align="center">
                                 <Icon
-                                  name="file-image"
+                                  name="image"
                                   size="xl"
                                   color="white"
                                 />

@@ -580,7 +580,7 @@ const Channel: React.FC<ChannelProps> = ({
                       type="unstyled"
                       onClick={() => setActivePanel('pinned')}
                       className="relative header-icon-button"
-                      iconName="thumbtack"
+                      iconName="pin"
                       iconOnly
                     >
                       <span className="absolute -top-1 -right-1 bg-accent text-white text-[10px] rounded-full w-4 h-4 flex items-center justify-center">

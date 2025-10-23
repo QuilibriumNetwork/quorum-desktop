@@ -119,7 +119,7 @@ const CustomTitlebar = () => {
             e.target.style.backgroundColor = '#ef4444';
           }}
         >
-          <Icon name="times" size="xs" color="white" />
+          <Icon name="close" size="xs" color="white" />
         </button>
       </div>
     );

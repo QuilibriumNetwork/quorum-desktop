@@ -40,7 +40,7 @@ const ImageModal: React.FC<ImageModalProps> = ({
           onClick={onClose}
           className="absolute top-2 right-2 w-8 h-8 bg-black/50 hover:bg-black/70 rounded-full flex items-center justify-center text-white transition-colors z-10"
         >
-          <Icon name="times" size="sm" />
+          <Icon name="close" size="sm" />
         </button>
       </FlexCenter>
     </Modal>

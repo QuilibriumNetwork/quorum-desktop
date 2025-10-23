@@ -160,7 +160,7 @@ const MessageActionsDrawer: React.FC<MessageActionsDrawerProps> = ({
             type="unstyled"
             size="normal"
             onClick={handlePin}
-            iconName={message.isPinned ? "thumbtack-slash" : "thumbtack"}
+            iconName={message.isPinned ? "pin-off" : "pin"}
             fullWidth
             className={`action-menu-item ${
               message.isPinned ? 'action-menu-item--danger' : ''

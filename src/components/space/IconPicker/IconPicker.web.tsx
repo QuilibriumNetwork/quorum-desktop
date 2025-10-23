@@ -137,7 +137,7 @@ export const IconPicker: React.FC<IconPickerProps> = ({
             className="absolute top-2 right-2 flex items-center gap-1 hover:text-main"
             size="small"
           >
-            <Icon name="times" />
+            <Icon name="close" />
             <Trans>Clear</Trans>
           </Button>
 

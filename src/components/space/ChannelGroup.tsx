@@ -133,7 +133,7 @@ const ChannelGroup: React.FunctionComponent<{
               onClick={() =>
                 openChannelEditor(spaceId!, props.group.groupName, '')
               }
-              size="xs"
+              size="sm"
             />
           </div>
         )}

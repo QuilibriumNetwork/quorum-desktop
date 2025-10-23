@@ -22,6 +22,8 @@
 
 .channel-configure {
   display: none;
+  align-items: center;
+  justify-content: center;
 }
 
 .channel-group .channel-name:hover {
@@ -32,7 +34,7 @@
   opacity: 1;
 
   .channel-configure {
-    display: block !important;
+    display: flex !important;
   }
 }
 
@@ -47,7 +49,7 @@
 
 .channel-group .channel-name-focused:hover {
   .channel-configure {
-    display: block !important;
+    display: flex !important;
   }
 }
 
@@ -96,8 +98,8 @@ html.dark .channel-mentions-bubble {
 
 .channel-pin-overlay {
   position: absolute;
-  top: $s-1;
-  right: $s-2;
+  top: -$s-1;
+  right: $s-3;
   width: $s-3;
   height: $s-3;
   z-index: 10;
@@ -106,6 +108,7 @@ html.dark .channel-mentions-bubble {
   display: flex;
   align-items: center;
   justify-content: center;
+  transform: rotate(-45deg);
 
   .pin-icon {
     font-size: $s-2;

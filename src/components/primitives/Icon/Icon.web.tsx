@@ -1,27 +1,25 @@
 import React from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import * as IconLibrary from '@tabler/icons-react';
 import { IconWebProps, IconSize } from './types';
-import { fontAwesomeIconMap } from './iconMapping';
+import { iconComponentMap } from './iconMapping';
 
-// Convert semantic size to FontAwesome size
-const getSizeValue = (size: IconSize): any => {
-  if (typeof size === 'number') {
-    return { fontSize: `${size}px` };
-  }
+// Convert semantic size to pixel size
+const getSizeValue = (size: IconSize): number => {
+  if (typeof size === 'number') return size;
 
   const sizeMap = {
-    xs: 'xs',
-    sm: 'sm',
-    md: '1x',
-    lg: 'lg',
-    xl: 'xl',
-    '2xl': '2x',
-    '3xl': '3x',
-    '4xl': '4x',
-    '5xl': '5x',
+    xs: 12,
+    sm: 16,
+    md: 18,
+    lg: 20,
+    xl: 24,
+    '2xl': 32,
+    '3xl': 48,
+    '4xl': 64,
+    '5xl': 96,
   };
 
-  return sizeMap[size] || '1x';
+  return sizeMap[size] || 16;
 };
 
 export function Icon({
@@ -31,46 +29,74 @@ export function Icon({
   className = '',
   style = {},
   disabled = false,
-  rotation,
-  flip,
-  spin = false,
-  pulse = false,
-  fixedWidth = false,
   id,
   onClick,
+  variant = 'outline',
 }: IconWebProps) {
-  const fontAwesomeIcon = fontAwesomeIconMap[name];
+  const iconComponentName = iconComponentMap[name];
 
-  if (!fontAwesomeIcon) {
-    console.warn(`Icon "${name}" not found in fontAwesome mapping`);
+  if (!iconComponentName) {
+    console.warn(`Icon "${name}" not found in icon mapping`);
     return null;
   }
 
-  // Handle custom size (number) vs semantic size (string)
-  const sizeStyle = typeof size === 'number' ? getSizeValue(size) : {};
-  const faSize = typeof size === 'string' ? getSizeValue(size) : undefined;
+  // Determine final component name based on variant
+  const finalComponentName = variant === 'filled'
+    ? `${iconComponentName}Filled`
+    : iconComponentName;
 
-  const combinedStyle = {
-    ...sizeStyle,
-    ...(color && { color }),
-    ...(disabled && { opacity: 0.5 }),
-    ...(onClick && { outline: 'none' }),
-    ...style,
-  };
+  const IconComponent = (IconLibrary as any)[finalComponentName];
 
-  return (
-    <FontAwesomeIcon
-      icon={fontAwesomeIcon}
-      size={faSize}
-      className={className}
-      style={combinedStyle}
-      rotation={rotation}
-      flip={flip}
-      spin={spin}
-      pulse={pulse}
-      fixedWidth={fixedWidth}
-      id={id}
-      onClick={onClick}
-    />
-  );
+  if (!IconComponent) {
+    // If filled variant doesn't exist, try falling back to outline
+    if (variant === 'filled') {
+      console.warn(
+        `Icon "${name}" does not have a filled variant. Falling back to outline.`
+      );
+      const OutlineIcon = (IconLibrary as any)[iconComponentName];
+      if (!OutlineIcon) {
+        console.warn(`Icon component "${iconComponentName}" not found in icon library`);
+        return null;
+      }
+      // Use the outline icon as fallback
+      return renderIcon(OutlineIcon);
+    }
+    console.warn(`Icon component "${finalComponentName}" not found in icon library`);
+    return null;
+  }
+
+  return renderIcon(IconComponent);
+
+  function renderIcon(Component: any) {
+    const iconSize = getSizeValue(size);
+
+    // Note: stroke scales proportionally with size (Tabler default behavior)
+    // 24px = 2px stroke (default)
+    // 18px = 1.5px stroke (proportional)
+    // 12px = 1px stroke (proportional)
+
+    const combinedStyle = {
+      ...(disabled && { opacity: 0.5 }),
+      ...(onClick && { cursor: 'pointer' }),
+      ...style,
+    };
+
+    // Use color from style prop if provided, otherwise use color prop, otherwise default to currentColor
+    // Convert 'inherit' to 'currentColor' for SVG compatibility
+    let iconColor = (style && style.color) || color || 'currentColor';
+    if (iconColor === 'inherit') {
+      iconColor = 'currentColor';
+    }
+
+    return (
+      <Component
+        size={iconSize}
+        color={iconColor}
+        className={className}
+        style={combinedStyle}
+        id={id}
+        onClick={onClick}
+      />
+    );
+  }
 }

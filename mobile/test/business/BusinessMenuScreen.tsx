@@ -107,7 +107,7 @@ export const BusinessMenuScreen: React.FC<BusinessMenuScreenProps> = ({
       id: 'settings',
       title: 'User Settings',
       description: 'Profile and app settings using useUserSettings hook',
-      icon: 'cog',
+      icon: 'settings',
       status: 'planned',
       onPress: () => handlePlannedFeature('User Settings'),
     },
