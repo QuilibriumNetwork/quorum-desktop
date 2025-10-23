@@ -52,17 +52,17 @@ msgid "Failed to process image"
 msgstr "Failed to process image"
 
 #. js-lingui-explicit-id
-#: src/components/message/Message.tsx:241
+#: src/components/message/Message.tsx:234
 msgid "{user} has joined"
 msgstr "{user} has joined"
 
 #. js-lingui-explicit-id
-#: src/components/message/Message.tsx:248
+#: src/components/message/Message.tsx:241
 msgid "{user} has left"
 msgstr "{user} has left"
 
 #. js-lingui-explicit-id
-#: src/components/message/Message.tsx:255
+#: src/components/message/Message.tsx:248
 msgid "{user} has been kicked"
 msgstr "{user} has been kicked"
 
@@ -113,7 +113,7 @@ msgstr "{0} notifications"
 #~ msgstr "{0} pinned message"
 
 #. placeholder {0}: pinnedMessages.length
-#: src/components/message/PinnedMessagesPanel.tsx:253
+#: src/components/message/PinnedMessagesPanel.tsx:245
 msgid "{0} pinned message in this Channel"
 msgstr "{0} pinned message in this Channel"
 
@@ -122,7 +122,7 @@ msgstr "{0} pinned message in this Channel"
 #~ msgstr "{0} pinned messages"
 
 #. placeholder {0}: pinnedMessages.length
-#: src/components/message/PinnedMessagesPanel.tsx:254
+#: src/components/message/PinnedMessagesPanel.tsx:246
 msgid "{0} pinned messages in this Channel"
 msgstr "{0} pinned messages in this Channel"
 
@@ -179,7 +179,7 @@ msgstr "@roles"
 msgid "@you"
 msgstr "@you"
 
-#: src/components/direct/DirectMessageContactsList.tsx:53
+#: src/components/direct/DirectMessageContactsList.tsx:56
 msgid "+ Add a friend"
 msgstr "+ Add a friend"
 
@@ -492,8 +492,8 @@ msgstr "Conversation Settings"
 #: src/components/message/MessageActions.tsx:79
 #: src/components/ui/ClickToCopyContent.native.tsx:203
 #: src/components/ui/ClickToCopyContent.native.tsx:275
-#: src/components/ui/ClickToCopyContent.tsx:152
-#: src/components/ui/ClickToCopyContent.tsx:196
+#: src/components/ui/ClickToCopyContent.tsx:153
+#: src/components/ui/ClickToCopyContent.tsx:197
 msgid "Copied!"
 msgstr "Copied!"
 
@@ -502,7 +502,7 @@ msgstr "Copied!"
 #: src/components/direct/DirectMessage.tsx:466
 #: src/components/modals/UserSettingsModal/General.tsx:118
 #: src/components/user/UserProfile.tsx:108
-#: src/components/user/UserStatus.tsx:48
+#: src/components/user/UserStatus.tsx:47
 msgid "Copy address"
 msgstr "Copy address"
 
@@ -945,7 +945,7 @@ msgstr "Import Existing Key"
 msgid "Important first-time user information:"
 msgstr "Important first-time user information:"
 
-#: src/components/message/PinnedMessagesPanel.tsx:237
+#: src/components/message/PinnedMessagesPanel.tsx:229
 msgid "Important messages will be pinned here"
 msgstr "Important messages will be pinned here"
 
@@ -1021,8 +1021,8 @@ msgstr "Joining Space..."
 msgid "Joining..."
 msgstr "Joining..."
 
-#: src/components/message/PinnedMessagesPanel.tsx:81
-#: src/components/message/PinnedMessagesPanel.tsx:136
+#: src/components/message/PinnedMessagesPanel.tsx:73
+#: src/components/message/PinnedMessagesPanel.tsx:128
 msgid "Jump"
 msgstr "Jump"
 
@@ -1099,7 +1099,7 @@ msgstr "Light"
 msgid "Loading notifications..."
 msgstr "Loading notifications..."
 
-#: src/components/message/PinnedMessagesPanel.tsx:225
+#: src/components/message/PinnedMessagesPanel.tsx:217
 msgid "Loading pinned messages..."
 msgstr "Loading pinned messages..."
 
@@ -1150,7 +1150,7 @@ msgstr "Mention Everyone"
 msgid "Message actions"
 msgstr "Message actions"
 
-#: src/components/message/Message.tsx:538
+#: src/components/message/Message.tsx:563
 msgid "Message does not have a valid signature, this may not be from the sender"
 msgstr "Message does not have a valid signature, this may not be from the sender"
 
@@ -1158,11 +1158,11 @@ msgstr "Message does not have a valid signature, this may not be from the sender
 msgid "Message..."
 msgstr "Message..."
 
-#: src/components/message/MessageComposer.tsx:448
+#: src/components/message/MessageComposer.tsx:449
 msgid "Messages are NOT signed!"
 msgstr "Messages are NOT signed!"
 
-#: src/components/message/MessageComposer.tsx:449
+#: src/components/message/MessageComposer.tsx:450
 msgid "Messages are signed!"
 msgstr "Messages are signed!"
 
@@ -1178,7 +1178,7 @@ msgstr "New Direct Message"
 msgid "No messages found"
 msgstr "No messages found"
 
-#: src/components/message/PinnedMessagesPanel.tsx:233
+#: src/components/message/PinnedMessagesPanel.tsx:225
 msgid "No pinned messages yet"
 msgstr "No pinned messages yet"
 
@@ -1291,7 +1291,7 @@ msgstr "Pin"
 msgid "Pin channel to top"
 msgstr "Pin channel to top"
 
-#: src/components/message/PinnedMessagesPanel.tsx:236
+#: src/components/message/PinnedMessagesPanel.tsx:228
 msgid "Pin important messages to keep them easily accessible"
 msgstr "Pin important messages to keep them easily accessible"
 
@@ -1317,12 +1317,12 @@ msgstr "Pin Messages"
 msgid "Pin to top"
 msgstr "Pin to top"
 
-#: src/components/message/Message.tsx:526
+#: src/components/message/Message.tsx:546
 msgid "Pinned"
 msgstr "Pinned"
 
 #. placeholder {0}: mapSenderToUser(message.pinnedBy)?.displayName || message.pinnedBy
-#: src/components/message/Message.tsx:525
+#: src/components/message/Message.tsx:545
 msgid "Pinned by {0}"
 msgstr "Pinned by {0}"
 
@@ -1377,7 +1377,7 @@ msgstr "Quorum infrastructure is being deployed at this time. Please try refresh
 msgid "Quorum is peer-to-peer and end-to-end encrypted. This means your messages stay private, but equally important, they only live on the network for the time required to reach you and your recipients."
 msgstr "Quorum is peer-to-peer and end-to-end encrypted. This means your messages stay private, but equally important, they only live on the network for the time required to reach you and your recipients."
 
-#: src/components/context/RegistrationPersister.tsx:272
+#: src/components/context/RegistrationPersister.tsx:270
 msgid "Quorum was loaded while the browser was not in focus or a passkey request was rejected. Please reauthorize to access your messages."
 msgstr "Quorum was loaded while the browser was not in focus or a passkey request was rejected. Please reauthorize to access your messages."
 
@@ -1389,11 +1389,11 @@ msgstr "Read only"
 msgid "Read only channel"
 msgstr "Read only channel"
 
-#: src/components/direct/DirectMessageContactsList.tsx:46
+#: src/components/direct/DirectMessageContactsList.tsx:49
 msgid "Ready to start a truly private conversation?"
 msgstr "Ready to start a truly private conversation?"
 
-#: src/components/context/RegistrationPersister.tsx:287
+#: src/components/context/RegistrationPersister.tsx:285
 msgid "Reauthorize"
 msgstr "Reauthorize"
 
@@ -1448,7 +1448,7 @@ msgstr "Save"
 #: src/components/modals/GroupEditorModal.tsx:94
 #: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:559
 #: src/components/modals/UserSettingsModal/UserSettingsModal.tsx:251
-#: src/components/user/UserProfileEdit.tsx:160
+#: src/components/user/UserProfileEdit.tsx:158
 msgid "Save Changes"
 msgstr "Save Changes"
 
@@ -1582,7 +1582,7 @@ msgstr "Send invites to people you've previously had conversations with. An invi
 msgid "Send Message"
 msgstr "Send Message"
 
-#: src/components/context/RegistrationPersister.tsx:259
+#: src/components/context/RegistrationPersister.tsx:257
 msgid "Session Encrypted"
 msgstr "Session Encrypted"
 
@@ -1634,7 +1634,7 @@ msgstr "Space Settings"
 msgid "Start typing to search messages..."
 msgstr "Start typing to search messages..."
 
-#: src/components/user/UserProfileEdit.tsx:104
+#: src/components/user/UserProfileEdit.tsx:102
 msgid "Status goes here"
 msgstr "Status goes here"
 
@@ -1738,7 +1738,7 @@ msgstr "TIP: Hold down shift when clicking {protipAction} to bypass this confirm
 msgid "To disable notifications, please change the setting in your browser settings. Notifications cannot be disabled programmatically."
 msgstr "To disable notifications, please change the setting in your browser settings. Notifications cannot be disabled programmatically."
 
-#: src/components/message/Message.tsx:226
+#: src/utils/dateFormatting.ts:27
 msgid "Today at {timeFormatted}"
 msgstr "Today at {timeFormatted}"
 
@@ -1813,8 +1813,8 @@ msgstr "Unknown time"
 #: src/components/message/MessageComposer.tsx:358
 #: src/components/message/MessageComposer.tsx:365
 #: src/components/message/MessagePreview.tsx:41
-#: src/components/message/PinnedMessagesPanel.tsx:106
-#: src/components/message/PinnedMessagesPanel.tsx:119
+#: src/components/message/PinnedMessagesPanel.tsx:98
+#: src/components/message/PinnedMessagesPanel.tsx:111
 #: src/components/modals/ConversationSettingsModal.tsx:95
 #: src/components/modals/NewDirectMessageModal.tsx:66
 #: src/components/notifications/NotificationPanel.tsx:228
@@ -1854,8 +1854,8 @@ msgstr "Unpin message"
 msgid "Unpin Message"
 msgstr "Unpin Message"
 
-#: src/components/message/PinnedMessagesPanel.tsx:86
-#: src/components/message/PinnedMessagesPanel.tsx:141
+#: src/components/message/PinnedMessagesPanel.tsx:78
+#: src/components/message/PinnedMessagesPanel.tsx:133
 msgid "Unpin this post"
 msgstr "Unpin this post"
 
@@ -1970,7 +1970,7 @@ msgstr "When you sign a message, you are confirming that it comes from your key.
 msgid "When you sign a message, you are confirming that it comes from your key. When you don't sign a message, you have plausible deniability. You can control this setting for each conversation and message individually."
 msgstr "When you sign a message, you are confirming that it comes from your key. When you don't sign a message, you have plausible deniability. You can control this setting for each conversation and message individually."
 
-#: src/components/message/Message.tsx:229
+#: src/utils/dateFormatting.ts:30
 msgid "Yesterday at {timeFormatted}"
 msgstr "Yesterday at {timeFormatted}"
 

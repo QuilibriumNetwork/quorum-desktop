@@ -237,14 +237,14 @@ export const Message = React.memo(
         case 'leave':
           return (
             <>
-              <Icon name="user-kick" size="sm" className="mr-2 text-subtle" />
+              <Icon name="logout" size="sm" className="mr-2 text-subtle" />
               {i18n._('{user} has left', { user: userDisplayName })}
             </>
           );
         case 'kick':
           return (
             <>
-              <Icon name="user-kick" size="sm" className="mr-2 text-danger" />
+              <Icon name="ban" size="sm" className="mr-2 text-danger" />
               {i18n._('{user} has been kicked', { user: userDisplayName })}
             </>
           );
@@ -347,7 +347,7 @@ export const Message = React.memo(
               return (
                 <Container
                   key={reply.messageId + 'rplyhd'}
-                  className="message-reply-heading"
+                  className="message-reply-heading  flex items-center"
                   onClick={() =>
                     virtuosoRef?.scrollToIndex({
                       index: replyIndex,

@@ -48,7 +48,7 @@ export const EmptyDirectMessage = () => {
                     className="items-center gap-2 cursor-pointer"
                   >
                     <Icon
-                      name="eye-slash"
+                      name="eye-off"
                       className="text-subtle hover:text-main dark:text-muted dark:hover:text-subtle transition-colors text-sm"
                     />
                     <Text className="text-subtle hover:text-main dark:text-muted dark:hover:text-subtle transition-colors text-sm">{t`hide home screen`}</Text>

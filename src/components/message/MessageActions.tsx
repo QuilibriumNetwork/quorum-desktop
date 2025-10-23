@@ -145,7 +145,7 @@ export const MessageActions: React.FC<MessageActionsProps> = ({
             onMouseEnter={() => setHoveredAction('emoji')}
             className="mr-2 text-center hover:scale-125 text-surface-9 hover:text-surface-10 transition duration-200 rounded-md flex items-center justify-center cursor-pointer"
           >
-            <Icon name="face-smile-beam" size="md" variant="filled" />
+            <Icon name="mood-happy" size="md" variant="filled" />
           </div>
 
           {/* Reply */}

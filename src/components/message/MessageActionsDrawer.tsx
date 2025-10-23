@@ -114,7 +114,7 @@ const MessageActionsDrawer: React.FC<MessageActionsDrawerProps> = ({
         <Button
           type="unstyled"
           onClick={handleMoreReactions}
-          iconName="face-smile-beam"
+          iconName="mood-happy"
           iconOnly
           className="quick-reaction-more"
         />

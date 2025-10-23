@@ -71,19 +71,19 @@
 .message-reply-sender-icon {
   // UserAvatar component handles size and border-radius
   margin: $s-0-5;
+  width: $s-7 !important;
+  height: $s-7 !important;
 }
 
 .message-reply-sender-name {
-  padding-left: $s-0-5;
-  padding-top: $s-0-5;
-  font-size: $text-xs;
+  padding-left: $s-1;
+  font-size: $text-sm;
   font-weight: $font-semibold;
 }
 
 .message-reply-text {
-  padding-left: $s-1;
-  padding-top: $s-0-5;
-  font-size: $text-xs;
+  padding-left: $s-2;
+  font-size: $text-sm;
   white-space: nowrap;
   text-overflow: ellipsis;
   width: 40%;

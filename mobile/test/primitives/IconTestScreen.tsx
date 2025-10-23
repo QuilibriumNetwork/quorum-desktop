@@ -240,9 +240,9 @@ export const IconTestScreen: React.FC = () => {
               </Text>
             </FlexColumn>
             <FlexColumn align="center" style={commonTestStyles.iconItem}>
-              <Icon name="face-smile-beam" />
+              <Icon name="mood-happy" />
               <Text size="xs" variant="subtle">
-                face-smile-beam
+                mood-happy
               </Text>
             </FlexColumn>
             <FlexColumn align="center" style={commonTestStyles.iconItem}>
@@ -252,7 +252,7 @@ export const IconTestScreen: React.FC = () => {
               </Text>
             </FlexColumn>
             <FlexColumn align="center" style={commonTestStyles.iconItem}>
-              <Icon name="eye-slash" />
+              <Icon name="eye-off" />
               <Text size="xs" variant="subtle">
                 eye-slash
               </Text>
