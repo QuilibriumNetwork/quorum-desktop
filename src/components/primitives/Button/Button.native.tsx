@@ -51,22 +51,8 @@ const Button: React.FC<NativeButtonProps> = (props) => {
         break;
       case 'secondary':
         style.push({
-          backgroundColor: 'transparent',
-          borderColor: colors.accent.DEFAULT,
-        });
-        break;
-      case 'light':
-        style.push({
-          backgroundColor: colors.accent[100],
-          borderColor: colors.accent[100],
-        });
-        break;
-      case 'light-outline':
-        style.push({
-          backgroundColor: 'transparent',
-          borderColor: colors.accent[100],
-          shadowOpacity: 0,
-          elevation: 0,
+          backgroundColor: `${colors.accent.DEFAULT}80`, // 50% opacity (80 in hex)
+          borderColor: 'transparent',
         });
         break;
       case 'subtle':
@@ -151,8 +137,6 @@ const Button: React.FC<NativeButtonProps> = (props) => {
 
     // Remove shadows for transparent background types (must come after size styles)
     if (
-      type === 'secondary' ||
-      type === 'light-outline' ||
       type === 'subtle-outline' ||
       type === 'secondary-white' ||
       type === 'light-outline-white' ||
@@ -202,11 +186,8 @@ const Button: React.FC<NativeButtonProps> = (props) => {
     // Get text color based on button type
     switch (type) {
       case 'secondary':
-        return colors.accent.DEFAULT;
-      case 'light':
-        return colors.accent[700];
-      case 'light-outline':
-        return colors.accent[100];
+        // Use accent color in light mode, white in dark mode
+        return colors.isDark ? colors.white : colors.accent.DEFAULT;
       case 'subtle':
         return colors.text.main;
       case 'subtle-outline':
@@ -242,10 +223,23 @@ const Button: React.FC<NativeButtonProps> = (props) => {
 
   return (
     <Pressable
-      style={({ pressed }) => [
-        ...getButtonStyle(),
-        pressed && !props.disabled && styles.pressed,
-      ]}
+      style={({ pressed }) => {
+        const buttonStyle = getButtonStyle();
+        const type = props.type || 'primary';
+
+        // For secondary button, increase opacity on press instead of default pressed style
+        if (pressed && !props.disabled && type === 'secondary') {
+          return [
+            ...buttonStyle,
+            { backgroundColor: `${colors.accent.DEFAULT}CC` }, // 80% opacity (CC in hex)
+          ];
+        }
+
+        return [
+          ...buttonStyle,
+          pressed && !props.disabled && styles.pressed,
+        ];
+      }}
       onPress={handlePress}
       disabled={props.disabled}
       accessibilityLabel={props.accessibilityLabel}
