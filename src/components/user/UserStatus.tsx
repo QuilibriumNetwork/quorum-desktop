@@ -49,7 +49,7 @@ const UserStatus: React.FunctionComponent<UserStatusProps> = (props) => {
               iconClassName="text-surface-9 hover:text-surface-10 dark:text-surface-8 dark:hover:text-surface-9"
               textVariant="subtle"
               textSize="xs"
-              iconSize="sm"
+              iconSize="xs"
               iconPosition="right"
               copyOnContentClick={true}
               className="flex items-center w-fit"

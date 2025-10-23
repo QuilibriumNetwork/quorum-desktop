@@ -155,7 +155,7 @@ export const NotificationPanel: React.FC<NotificationPanelProps> = ({
 
     return (
       <FlexCenter className="notification-empty-state">
-        <Icon name="bell" className="empty-icon" />
+        <Icon name="bell" size="3xl" className="empty-icon" />
         <Text className="empty-message">{t`No unread notifications`}</Text>
         <Text className="empty-hint">
           {t`You're all caught up!`}

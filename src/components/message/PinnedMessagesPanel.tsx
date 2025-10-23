@@ -229,7 +229,7 @@ export const PinnedMessagesPanel: React.FC<PinnedMessagesPanelProps> = ({
 
     return (
       <FlexCenter className="pinned-empty-state">
-        <Icon name="pin" className="empty-icon" />
+        <Icon name="pin" size="3xl" className="empty-icon" />
         <Text className="empty-message">{t`No pinned messages yet`}</Text>
         <Text className="empty-hint">
           {canPinMessages

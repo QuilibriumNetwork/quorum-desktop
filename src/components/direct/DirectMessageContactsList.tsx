@@ -24,12 +24,14 @@ const DirectMessageContactsList: React.FC<{}> = ({}) => {
           <Trans>Direct Messages</Trans>
         </Container>
         <FlexColumn className="justify-around">
-          <Icon
-            name="user-plus"
-            size="lg"
-            className="cursor-pointer text-accent hover:text-accent-300"
-            data-tooltip-id="add-friend-tooltip"
+          <Button
+            type="primary"
+            size="small"
+            iconName="user-plus"
+            iconSize="lg"
+            iconOnly
             onClick={openNewDirectMessage}
+            tooltip="Add a friend"
           />
         </FlexColumn>
       </FlexBetween>
