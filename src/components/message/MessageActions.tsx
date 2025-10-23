@@ -143,25 +143,25 @@ export const MessageActions: React.FC<MessageActionsProps> = ({
               onMoreReactions(e.clientY);
             }}
             onMouseEnter={() => setHoveredAction('emoji')}
-            className="w-5 mr-2 text-center hover:scale-125 text-surface-9 hover:text-surface-10 transition duration-200 rounded-md flex flex-col justify-around cursor-pointer"
+            className="mr-2 text-center hover:scale-125 text-surface-9 hover:text-surface-10 transition duration-200 rounded-md flex items-center justify-center cursor-pointer"
           >
-            <Icon name="face-smile-beam" size="sm" variant="filled" />
+            <Icon name="face-smile-beam" size="md" variant="filled" />
           </div>
 
           {/* Reply */}
           <div
             onClick={onReply}
             onMouseEnter={() => setHoveredAction('reply')}
-            className="w-5 mr-2 text-center text-surface-9 hover:text-surface-10 hover:scale-125 transition duration-200 rounded-md flex flex-col justify-around cursor-pointer"
+            className="mr-2 text-center text-surface-9 hover:text-surface-10 hover:scale-125 transition duration-200 rounded-md flex items-center justify-center cursor-pointer"
           >
-            <Icon name="reply" size="sm" />
+            <Icon name="reply" size="md" />
           </div>
 
           {/* Copy link */}
           <div
             onClick={onCopyLink}
             onMouseEnter={() => setHoveredAction('copy')}
-            className="w-5 text-center text-surface-9 hover:text-surface-10 hover:scale-125 transition duration-200 rounded-md flex flex-col justify-around cursor-pointer"
+            className="text-center text-surface-9 hover:text-surface-10 hover:scale-125 transition duration-200 rounded-md flex items-center justify-center cursor-pointer"
           >
             <Icon name="link" size="sm" />
           </div>
@@ -176,17 +176,17 @@ export const MessageActions: React.FC<MessageActionsProps> = ({
                   handlePinClick(e);
                 }}
                 onMouseEnter={handlePinHover}
-                className="w-5 text-center text-surface-9 hover:text-surface-10 hover:scale-125 transition duration-200 rounded-md flex flex-col justify-around cursor-pointer"
+                className="text-center text-surface-9 hover:text-surface-10 hover:scale-125 transition duration-200 rounded-md flex items-center justify-center cursor-pointer"
               >
                 <Icon
                   name={message.isPinned ? 'pin-off' : 'pin'}
-                  size="sm"
+                  size="md"
                   variant={message.isPinned ? undefined : 'filled'}
                 />
               </div>
             </>
           )}
- 
+
           {/* Delete (if user can delete) */}
           {canUserDelete && (
             <>
@@ -194,11 +194,11 @@ export const MessageActions: React.FC<MessageActionsProps> = ({
               <div
                 onClick={onDelete}
                 onMouseEnter={() => setHoveredAction('delete')}
-                className="w-5 text-center transition duration-200 rounded-md flex flex-col justify-around cursor-pointer"
+                className="text-center transition duration-200 rounded-md flex items-center justify-center cursor-pointer"
               >
                 <Icon
                   name="trash"
-                  size="sm"
+                  size="md"
                   variant="filled"
                   className="text-[rgb(var(--danger))] hover:text-[rgb(var(--danger-hover))] hover:scale-125"
                 />
