@@ -4,6 +4,11 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { UserInitialsProps } from './UserInitials.types';
 import { getInitials, lightenColor, darkenColor } from '../../../utils/avatar';
 
+// Unknown user gradient colors (light theme - matches web CSS)
+// Light theme: surface-10 base (#939399) with +5% / -10% lightness
+const UNKNOWN_GRADIENT_LIGHT = '#9d9da3';
+const UNKNOWN_GRADIENT_DARK = '#7a7a7f';
+
 export function UserInitials({
   name,
   backgroundColor,
@@ -14,11 +19,20 @@ export function UserInitials({
   // Memoize initials calculation for performance
   const initials = useMemo(() => getInitials(name), [name]);
 
+  // Check if this is an unknown user (performance: O(1) string comparison)
+  const isUnknown = initials === '?';
+
   // Memoize gradient colors for performance (only recalculates when backgroundColor changes)
-  const gradientColors = useMemo(() => [
-    lightenColor(backgroundColor, 5),
-    darkenColor(backgroundColor, 10)
-  ] as const, [backgroundColor]);
+  // Use grey gradient for unknown users, colored gradient for known users
+  const gradientColors = useMemo(() => {
+    if (isUnknown) {
+      return [UNKNOWN_GRADIENT_LIGHT, UNKNOWN_GRADIENT_DARK] as const;
+    }
+    return [
+      lightenColor(backgroundColor, 5),
+      darkenColor(backgroundColor, 10)
+    ] as const;
+  }, [backgroundColor, isUnknown]);
 
   // Memoize style object to prevent recreation on every render
   const containerStyle = useMemo(() => ({

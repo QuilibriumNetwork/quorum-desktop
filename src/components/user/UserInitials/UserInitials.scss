@@ -24,6 +24,24 @@
   font-feature-settings: normal;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+
+  // Unknown user gradient colors
+  --unknown-gradient-light: var(--surface-6);
+  --unknown-gradient-dark: var(--surface-8);
+}
+
+html.dark .user-initials {
+  --unknown-gradient-light: var(--surface-6);
+  --unknown-gradient-dark: var(--surface-4);
+}
+
+// Unknown user styling
+.user-initials--unknown {
+  background: linear-gradient(
+    180deg,
+    var(--unknown-gradient-light) 0%,
+    var(--unknown-gradient-dark) 100%
+  ) !important;
 }
 
 // Hover effect for interactive contexts

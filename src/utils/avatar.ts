@@ -1,9 +1,10 @@
 /**
  * Generates initials from a user's display name
  * @param displayName - User's display name (required, always present)
- * @returns Uppercase initials (1-2 characters)
+ * @returns Uppercase initials (1-2 characters), or "?" for "Unknown User"
  *
  * Behavior:
+ * - "Unknown User": Returns "?" (special case)
  * - Regular names: First letter of first 2 words ("John Doe" → "JD")
  * - Names starting with emoji: Only the first character ("😊 John" → "😊")
  *
@@ -12,6 +13,11 @@
  */
 export const getInitials = (displayName: string): string => {
   const trimmed = displayName.trim();
+
+  // Special case: "Unknown User" should show "?" instead of "UU"
+  if (trimmed === "Unknown User") {
+    return "?";
+  }
 
   // Use codePointAt on the original string to properly detect emojis
   // (emojis are often multi-byte UTF-16 surrogate pairs)
