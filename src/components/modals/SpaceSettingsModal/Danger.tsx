@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Button, Callout } from '../../primitives';
-import { Trans, t } from '@lingui/react/macro';
+import { Trans } from '@lingui/react/macro';
 
 interface DangerProps {
   space: any;
@@ -47,7 +47,7 @@ const Danger: React.FunctionComponent<DangerProps> = ({
           )}
           <div className="pt-6">
             <Button
-              type="danger-outline"
+              type="danger"
               className="!w-auto !inline-flex"
               onClick={() => {
                 if (deleteConfirmationStep === 0) {
