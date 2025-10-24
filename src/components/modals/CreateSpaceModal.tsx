@@ -63,7 +63,7 @@ const CreateSpaceModal: React.FunctionComponent<CreateSpaceModalProps> = (
               {...getRootProps()}
             >
               <input {...getInputProps()} />
-              {!fileData && <Icon name="image" className="icon" />}
+              {!fileData && <Icon name="image" size="2xl" className="icon" />}
             </div>
             {!isUploading && !isDragActive && (
               /* Keep ReactTooltip for file upload area - Tooltip primitive conflicts with react-dropzone */

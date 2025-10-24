@@ -104,7 +104,7 @@ const Account: React.FunctionComponent<AccountProps> = ({
             (!currentPasskeyInfo?.pfpUrl ||
               currentPasskeyInfo.pfpUrl.includes(
                 DefaultImages.UNKNOWN_USER
-              )) && <Icon name="image" className="icon" />}
+              )) && <Icon name="image" size="2xl" className="icon" />}
         </div>
         {!isAvatarUploading && !isAvatarDragActive && (
           <ReactTooltip

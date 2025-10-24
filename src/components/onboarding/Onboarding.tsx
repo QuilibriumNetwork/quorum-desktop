@@ -289,7 +289,7 @@ export const Onboarding = ({
                         : {}
                     }
                   >
-                    {!hasValidFile && <Icon name="image" className="icon" />}
+                    {!hasValidFile && <Icon name="image" size="2xl" className="icon" />}
                   </div>
                 </FileUpload>
               </div>

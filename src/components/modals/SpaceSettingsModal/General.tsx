@@ -92,7 +92,7 @@ const General: React.FunctionComponent<GeneralProps> = ({
         >
           <input {...getIconInputProps()} />
           {!iconData && !space?.iconUrl && (
-            <Icon name="image" className="icon" />
+            <Icon name="image" size="2xl" className="icon" />
           )}
         </div>
         {!isIconUploading && !isIconDragActive && (

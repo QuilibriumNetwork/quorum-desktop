@@ -8,19 +8,15 @@ export const Maintenance = () => {
       <div className="flex flex-col grow"></div>
       <div className="flex flex-col select-none ">
         <div className="flex flex-row grow"></div>
+        <div className="flex justify-center py-8">
+          <Icon name="warning" size="4xl" className="text-white" />
+        </div>
         <div className="flex flex-row grow font-semibold text-2xl">
           <div className="flex flex-col grow"></div>
           <div className="flex flex-col text-white">
             <Trans>Maintenance in Progress</Trans>
           </div>
           <div className="flex flex-col grow"></div>
-        </div>
-        <div className="flex flex-row justify-center">
-          <div className="grow"></div>
-          <div className="w-full max-w-[460px] px-4 py-4 text-center text-white">
-            <Icon name="tools" className="text-4xl" />
-          </div>
-          <div className="grow"></div>
         </div>
         <div className="flex flex-row justify-center">
           <div className="grow"></div>
@@ -41,18 +37,14 @@ export const Maintenance = () => {
           </div>
           <div className="grow"></div>
         </div>
-        <div className="flex flex-row justify-center">
-          <div className="grow"></div>
-          <div className="w-full max-w-[460px] px-4 pt-4 text-center">
-            <Button
-              type="secondary-white"
-              className="px-8 w-full sm:w-auto"
-              onClick={() => window.location.reload()}
-            >
-              <Trans>Refresh</Trans>
-            </Button>
-          </div>
-          <div className="grow"></div>
+        <div className="flex justify-center px-4 pt-4">
+          <Button
+            type="secondary-white"
+            className="px-8 w-full sm:w-auto max-w-[460px]"
+            onClick={() => window.location.reload()}
+          >
+            <Trans>Refresh</Trans>
+          </Button>
         </div>
         <div className="flex flex-row grow"></div>
       </div>
