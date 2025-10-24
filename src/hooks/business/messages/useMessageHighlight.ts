@@ -3,7 +3,9 @@ import { isWeb } from '../../../utils/platform';
 
 export interface MessageHighlightState {
   highlightedMessageId: string | null;
+  highlightVariant: 'default' | 'mention';
   isHighlighted: (messageId: string) => boolean;
+  getHighlightVariant: () => 'default' | 'mention';
   highlightMessage: (messageId: string, options?: HighlightOptions) => void;
   clearHighlight: () => void;
   scrollToMessage: (
@@ -15,6 +17,7 @@ export interface MessageHighlightState {
 
 export interface HighlightOptions {
   duration?: number; // Duration in milliseconds, default 2000
+  variant?: 'default' | 'mention'; // Highlight variant, default 'default'
   scrollBehavior?: 'auto' | 'smooth';
   scrollBlock?: 'start' | 'center' | 'end';
 }
@@ -31,6 +34,9 @@ export const useMessageHighlight = (): MessageHighlightState => {
   const [highlightedMessageId, setHighlightedMessageId] = useState<
     string | null
   >(null);
+  const [highlightVariant, setHighlightVariant] = useState<
+    'default' | 'mention'
+  >('default');
   const highlightTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   // Clear any existing timeout when component unmounts
@@ -44,6 +50,7 @@ export const useMessageHighlight = (): MessageHighlightState => {
 
   const clearHighlight = useCallback(() => {
     setHighlightedMessageId(null);
+    setHighlightVariant('default');
     if (highlightTimeoutRef.current) {
       clearTimeout(highlightTimeoutRef.current);
       highlightTimeoutRef.current = null;
@@ -57,19 +64,25 @@ export const useMessageHighlight = (): MessageHighlightState => {
     [highlightedMessageId]
   );
 
+  const getHighlightVariant = useCallback(() => {
+    return highlightVariant;
+  }, [highlightVariant]);
+
   const highlightMessage = useCallback(
     (messageId: string, options: HighlightOptions = {}) => {
-      const { duration = DEFAULT_HIGHLIGHT_DURATION } = options;
+      const { duration = DEFAULT_HIGHLIGHT_DURATION, variant = 'default' } = options;
 
       // Clear any existing highlight first
       clearHighlight();
 
       // Set new highlight
       setHighlightedMessageId(messageId);
+      setHighlightVariant(variant);
 
       // Auto-clear after duration
       highlightTimeoutRef.current = setTimeout(() => {
         setHighlightedMessageId(null);
+        setHighlightVariant('default');
         highlightTimeoutRef.current = null;
       }, duration);
     },
@@ -118,7 +131,9 @@ export const useMessageHighlight = (): MessageHighlightState => {
 
   return {
     highlightedMessageId,
+    highlightVariant,
     isHighlighted,
+    getHighlightVariant,
     highlightMessage,
     clearHighlight,
     scrollToMessage,

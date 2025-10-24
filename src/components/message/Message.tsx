@@ -201,7 +201,7 @@ export const Message = React.memo(
     );
 
     // Message highlighting logic - replaces isHashTarget
-    const { isHighlighted, highlightMessage } = useMessageHighlight();
+    const { isHighlighted, highlightMessage, getHighlightVariant } = useMessageHighlight();
     const isMessageHighlighted = useMemo(() => {
       // Check both URL hash (for backward compatibility) and React state highlighting
       const isUrlTarget = location.hash === `#msg-${message.messageId}`;
@@ -209,7 +209,13 @@ export const Message = React.memo(
       return isUrlTarget || isStateHighlighted;
     }, [message.messageId, location.hash, isHighlighted]);
 
-    // Auto-highlight mentioned messages when they enter viewport (3 second duration)
+    const highlightClassName = useMemo(() => {
+      if (!isMessageHighlighted) return '';
+      const variant = getHighlightVariant();
+      return variant === 'mention' ? 'message-highlighted-mention' : 'message-highlighted';
+    }, [isMessageHighlighted, getHighlightVariant]);
+
+    // Auto-highlight mentioned messages when they enter viewport (60 second duration)
     // Only highlights UNREAD mentions (messages created after last read time)
     const isMentioned = formatting.isMentioned(
       user.currentPasskeyInfo!.address
@@ -309,9 +315,10 @@ export const Message = React.memo(
           (isTouchDevice()
             ? 'border-t border-t-surface-00 pt-2' // Add top border for touch devices
             : 'hover:bg-chat-hover ') + // Only add hover effect on non-touch devices
-          // Note: Mentions now use temporary highlight (message-highlighted) instead of permanent background
+          // Note: Mentions now use 60-second highlight (message-highlighted-mention)
+          // Other highlights (search, pinned, hash) use 6-second highlight (message-highlighted)
           // The viewport hook auto-triggers the highlight when mentioned messages enter view
-          (isMessageHighlighted ? ' message-highlighted' : '')
+          (highlightClassName ? ` ${highlightClassName}` : '')
         }
         // Desktop mouse interaction
         onMouseOver={interactions.handleMouseOver}

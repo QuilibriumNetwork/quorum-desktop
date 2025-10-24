@@ -16,6 +16,23 @@
   animation: flash-highlight 6s ease-out;
 }
 
+/* Mention-specific highlight with longer duration and more subtle background */
+@keyframes flash-highlight-mention {
+  0% {
+    background-color: rgb(var(--warning) / 0.1);
+  }
+  95% {
+    background-color: rgb(var(--warning) / 0.1); /* stay solid for 57s */
+  }
+  100% {
+    background-color: transparent;
+  }
+}
+
+.message-highlighted-mention {
+  animation: flash-highlight-mention 60s ease-out;
+}
+
 /* === RESPONSIVE YOUTUBE EMBEDS === */
 .youtube-embed {
   width: 100%;

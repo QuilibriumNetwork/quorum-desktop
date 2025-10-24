@@ -5,6 +5,7 @@ import { useEffect, useRef } from 'react';
  * Integrates with useMessageHighlight system to maintain consistency
  *
  * Only highlights UNREAD mentions - messages that were created after the last read time
+ * Uses 60-second duration with 'mention' variant for all mention types (@you, @role, @everyone)
  *
  * @param messageId - Unique identifier for the message
  * @param isMentioned - Whether the message mentions the current user
@@ -53,8 +54,8 @@ export function useViewportMentionHighlight(
             // Mark as triggered to prevent re-highlighting
             hasTriggeredRef.current = true;
 
-            // Trigger highlight using existing system (6 second duration to match search/pinned navigation)
-            highlightMessage(messageId, { duration: 6000 });
+            // Trigger highlight using mention variant (60 second duration for all mention types)
+            highlightMessage(messageId, { duration: 60000, variant: 'mention' });
 
             // Stop observing once triggered
             if (observerRef.current) {
