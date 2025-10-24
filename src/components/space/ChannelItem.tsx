@@ -52,7 +52,7 @@ const ChannelContent: React.FC<{
           ? ' channel-name-focused'
           : '') +
         (channel.unreads && channel.unreads > 0
-          ? ' !font-bold !opacity-100'
+          ? ' !font-bold !text-main'
           : '')
       }
     >

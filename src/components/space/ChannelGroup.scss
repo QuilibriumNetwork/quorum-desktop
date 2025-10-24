@@ -15,8 +15,8 @@
 }
 
 .channel-group .channel-name {
-  font-weight: $font-light;
-  opacity: 0.8;
+  font-weight: $font-normal;
+  color: var(--color-text-subtle);
   cursor: pointer;
 }
 
@@ -31,7 +31,7 @@
   padding: 0 $s-4;
   margin: 0 (-$s-4);
   border-radius: $rounded-lg 0 0 $rounded-lg;
-  opacity: 1;
+  color: var(--color-text-main);
 
   .channel-configure {
     display: flex !important;
@@ -43,7 +43,7 @@
   background: var(--color-bg-sidebar-active);
   padding: 0 $s-4;
   margin: 0 (-$s-4);
-  opacity: 1;
+  color: var(--color-text-main);
   border-radius: $rounded-lg 0 0 $rounded-lg;
 }
 
