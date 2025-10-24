@@ -16,9 +16,9 @@ export function UserInitials({
 
   // Memoize gradient colors for performance (only recalculates when backgroundColor changes)
   const gradientColors = useMemo(() => [
-    lightenColor(backgroundColor, 10),
+    lightenColor(backgroundColor, 5),
     darkenColor(backgroundColor, 10)
-  ], [backgroundColor]);
+  ] as const, [backgroundColor]);
 
   // Memoize style object to prevent recreation on every render
   const containerStyle = useMemo(() => ({

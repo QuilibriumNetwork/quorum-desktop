@@ -18,6 +18,7 @@ export { TextExamples } from './Text';
 export { TextAreaExamples } from './TextArea';
 export { ToastExample } from './ToastExample';
 export { TooltipExamples } from './Tooltip';
+export { UserInitialsDemo } from './UserInitialsDemo';
 
 // Navigation Metadata (Alphabetically Ordered)
 export const navigationItems = [

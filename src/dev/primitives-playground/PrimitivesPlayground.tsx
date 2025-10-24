@@ -31,6 +31,7 @@ import {
   TextAreaExamples,
   ToastExample,
   TooltipExamples,
+  UserInitialsDemo,
 } from './examples';
 
 const navigationItems = [
@@ -53,6 +54,7 @@ const navigationItems = [
   { id: 'textarea-primitive', label: 'TextArea', icon: 'memo' },
   { id: 'toast-primitive', label: 'Toast', icon: 'bell' },
   { id: 'tooltip-primitive', label: 'Tooltip', icon: 'circle-info' },
+  { id: 'user-initials-demo', label: 'User Initials', icon: 'user-circle' },
 ];
 
 /**
@@ -197,6 +199,7 @@ export const PrimitivesPlayground: React.FC = () => {
                   <ToastExample />
                 </section>
                 <TooltipExamples />
+                <UserInitialsDemo />
               </div>
             </div>
           </div>

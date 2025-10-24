@@ -56,55 +56,57 @@ export const getInitials = (displayName: string): string => {
  * Uses improved DJB2 hash algorithm for better distribution
  * Privacy: Color is tied to display name, not address, preventing user fingerprinting
  * @param displayName - User's display name (for deterministic color)
- * @returns Hex color string
+ * @returns Hex color string (pre-desaturated by 25% for subtle appearance)
  */
 export const getColorFromDisplayName = (displayName: string): string => {
+  // Pre-calculated desaturated colors (25% less saturation for subtle appearance)
+  // Performance: Zero runtime cost - colors are hardcoded constants
   const colors = [
     // Blues
-    '#3B82F6', // blue-500
-    '#2563EB', // blue-600
-    '#0EA5E9', // sky-500
-    '#0284C7', // sky-600
+    '#5f8eeb', // blue-500 (desaturated)
+    '#4970e0', // blue-600 (desaturated)
+    '#42aad9', // sky-500 (desaturated)
+    '#378dc0', // sky-600 (desaturated)
 
     // Greens
-    '#10B981', // green-500
-    '#059669', // green-600
-    '#14B8A6', // teal-500
-    '#0D9488', // teal-600
-    '#84CC16', // lime-500
-    '#65A30D', // lime-600
+    '#40b589', // green-500 (desaturated)
+    '#357671', // green-600 (desaturated)
+    '#47b0a8', // teal-500 (desaturated)
+    '#3d948e', // teal-600 (desaturated)
+    '#8dbc4b', // lime-500 (desaturated)
+    '#759b3d', // lime-600 (desaturated)
 
     // Purples & Violets
-    '#8B5CF6', // purple-500
-    '#7C3AED', // violet-500
-    '#6366F1', // indigo-500
-    '#4F46E5', // indigo-600
-    '#A855F7', // purple-600
-    '#9333EA', // purple-700
+    '#9673ea', // purple-500 (desaturated)
+    '#8858e1', // violet-500 (desaturated)
+    '#7579e6', // indigo-500 (desaturated)
+    '#6559da', // indigo-600 (desaturated)
+    '#af6cf1', // purple-600 (desaturated)
+    '#9e50dd', // purple-700 (desaturated)
 
     // Pinks & Reds
-    '#EC4899', // pink-500
-    '#DB2777', // pink-600
-    '#F43F5E', // rose-500
-    '#E11D48', // rose-600
-    '#EF4444', // red-500
-    '#DC2626', // red-600
+    '#e4649f', // pink-500 (desaturated)
+    '#d14882', // pink-600 (desaturated)
+    '#e85c76', // rose-500 (desaturated)
+    '#d63e5c', // rose-600 (desaturated)
+    '#e7615d', // red-500 (desaturated)
+    '#d04545', // red-600 (desaturated)
 
     // Oranges & Yellows
-    '#F59E0B', // amber-500
-    '#D97706', // amber-600
-    '#F97316', // orange-500
-    '#EA580C', // orange-600
+    '#eba03f', // amber-500 (desaturated)
+    '#ce8336', // amber-600 (desaturated)
+    '#ec814a', // orange-500 (desaturated)
+    '#dc6738', // orange-600 (desaturated)
 
     // Magentas & Fuchsias
-    '#D946EF', // fuchsia-500
-    '#C026D3', // fuchsia-600
-    '#E879F9', // fuchsia-400
+    '#df65e4', // fuchsia-500 (desaturated)
+    '#c54cc7', // fuchsia-600 (desaturated)
+    '#e594ed', // fuchsia-400 (desaturated)
 
     // Cyans & Aqua
-    '#06B6D4', // cyan-500
-    '#0891B2', // cyan-600
-    '#22D3EE', // cyan-400
+    '#3aafc9', // cyan-500 (desaturated)
+    '#3393ae', // cyan-600 (desaturated)
+    '#5dcce0', // cyan-400 (desaturated)
   ];
 
   // Normalize display name for consistent hashing (case-insensitive)
@@ -258,5 +260,22 @@ export const darkenColor = (hex: string, percent: number): string => {
   const newL = Math.max(0, l - percent);
 
   const [newR, newG, newB] = hslToRgb(h, s, newL);
+  return rgbToHex(newR, newG, newB);
+};
+
+/**
+ * Reduce saturation of a hex color by a percentage
+ * @param hex - Hex color string (e.g., '#3B82F6')
+ * @param percent - Percentage to reduce saturation (0-100)
+ * @returns Desaturated hex color string
+ */
+const desaturateColor = (hex: string, percent: number): string => {
+  const [r, g, b] = hexToRgb(hex);
+  const [h, s, l] = rgbToHsl(r, g, b);
+
+  // Reduce saturation by percentage, capped at 0
+  const newS = Math.max(0, s - percent);
+
+  const [newR, newG, newB] = hslToRgb(h, newS, l);
   return rgbToHex(newR, newG, newB);
 };
