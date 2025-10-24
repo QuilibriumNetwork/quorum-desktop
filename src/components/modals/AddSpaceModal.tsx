@@ -149,7 +149,7 @@ const AddSpaceModal: React.FunctionComponent<AddSpaceModalProps> = (props) => {
             <Container className="flex justify-center">
               <Button
                 type="unstyled"
-                className="text-accent text-sm hover:text-accent-300"
+                className="link text-sm"
                 onClick={() => setManualMode(true)}
               >
                 {t`Enter details manually`}
@@ -205,7 +205,7 @@ const AddSpaceModal: React.FunctionComponent<AddSpaceModalProps> = (props) => {
               <Container className="flex justify-center">
                 <Button
                   type="unstyled"
-                  className="text-accent text-sm hover:text-accent-300"
+                  className="link text-sm"
                   onClick={() => setManualMode(false)}
                 >
                   {t`Back to invite link`}

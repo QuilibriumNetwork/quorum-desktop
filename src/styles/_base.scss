@@ -11,7 +11,7 @@
 /* === BASE STYLES === */
 :root {
   font-family: Inter, sans-serif;
-  font-size-adjust: 0.50; /* Adjust Inter's x-height to appear slightly smaller */
+  font-size-adjust: 0.5; /* Adjust Inter's x-height to appear slightly smaller */
   line-height: $leading-normal;
   font-weight: $font-normal;
 
@@ -57,13 +57,15 @@
 }
 
 /* === LINKS === */
-a {
+a,
+.link {
   font-weight: $font-medium;
-  color: var(--accent);
+  color: var(--color-link);
   text-decoration: inherit;
 }
 
-a:hover {
+a:hover,
+.link:hover {
   color: var(--color-link-hover);
 }
 
