@@ -1,7 +1,8 @@
 import React, { useMemo } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
 import { UserInitialsProps } from './UserInitials.types';
-import { getInitials } from '../../../utils/avatar';
+import { getInitials, lightenColor, darkenColor } from '../../../utils/avatar';
 
 export function UserInitials({
   name,
@@ -13,33 +14,45 @@ export function UserInitials({
   // Memoize initials calculation for performance
   const initials = useMemo(() => getInitials(name), [name]);
 
+  // Memoize gradient colors for performance (only recalculates when backgroundColor changes)
+  const gradientColors = useMemo(() => [
+    lightenColor(backgroundColor, 10),
+    darkenColor(backgroundColor, 10)
+  ], [backgroundColor]);
+
   // Memoize style object to prevent recreation on every render
   const containerStyle = useMemo(() => ({
     width: size,
     height: size,
     borderRadius: size / 2,
-    backgroundColor,
-  }), [size, backgroundColor]);
+  }), [size]);
 
   // Memoize font size for performance
   const textStyle = useMemo(() => ({
     fontSize: size * 0.4
   }), [size]);
 
-  const ViewComponent = onPress ? require('react-native').TouchableOpacity : View;
-
-  return (
-    <ViewComponent
-      testID={testID}
+  const gradientContent = (
+    <LinearGradient
+      colors={gradientColors}
       style={[styles.container, containerStyle]}
-      onPress={onPress}
-      activeOpacity={onPress ? 0.7 : 1}
+      testID={testID}
     >
       <Text style={[styles.text, textStyle]}>
         {initials}
       </Text>
-    </ViewComponent>
+    </LinearGradient>
   );
+
+  if (onPress) {
+    return (
+      <TouchableOpacity onPress={onPress} activeOpacity={0.7}>
+        {gradientContent}
+      </TouchableOpacity>
+    );
+  }
+
+  return gradientContent;
 }
 
 // React Native StyleSheet using dp units

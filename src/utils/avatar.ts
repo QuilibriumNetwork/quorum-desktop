@@ -119,3 +119,144 @@ export const getColorFromDisplayName = (displayName: string): string => {
   // Use unsigned right shift to ensure positive number
   return colors[(hash >>> 0) % colors.length];
 };
+
+/**
+ * Convert hex color to RGB values
+ * @param hex - Hex color string (e.g., '#3B82F6')
+ * @returns RGB values as [r, g, b] where each value is 0-255
+ */
+const hexToRgb = (hex: string): [number, number, number] => {
+  const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+  if (!result) {
+    throw new Error(`Invalid hex color: ${hex}`);
+  }
+  return [
+    parseInt(result[1], 16),
+    parseInt(result[2], 16),
+    parseInt(result[3], 16)
+  ];
+};
+
+/**
+ * Convert RGB to hex color
+ * @param r - Red value (0-255)
+ * @param g - Green value (0-255)
+ * @param b - Blue value (0-255)
+ * @returns Hex color string (e.g., '#3B82F6')
+ */
+const rgbToHex = (r: number, g: number, b: number): string => {
+  const toHex = (n: number) => {
+    const hex = Math.round(Math.max(0, Math.min(255, n))).toString(16);
+    return hex.length === 1 ? '0' + hex : hex;
+  };
+  return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
+};
+
+/**
+ * Convert RGB to HSL
+ * @param r - Red value (0-255)
+ * @param g - Green value (0-255)
+ * @param b - Blue value (0-255)
+ * @returns HSL values as [h, s, l] where h is 0-360, s and l are 0-100
+ */
+const rgbToHsl = (r: number, g: number, b: number): [number, number, number] => {
+  r /= 255;
+  g /= 255;
+  b /= 255;
+
+  const max = Math.max(r, g, b);
+  const min = Math.min(r, g, b);
+  let h = 0;
+  let s = 0;
+  const l = (max + min) / 2;
+
+  if (max !== min) {
+    const d = max - min;
+    s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+
+    switch (max) {
+      case r:
+        h = ((g - b) / d + (g < b ? 6 : 0)) / 6;
+        break;
+      case g:
+        h = ((b - r) / d + 2) / 6;
+        break;
+      case b:
+        h = ((r - g) / d + 4) / 6;
+        break;
+    }
+  }
+
+  return [h * 360, s * 100, l * 100];
+};
+
+/**
+ * Convert HSL to RGB
+ * @param h - Hue (0-360)
+ * @param s - Saturation (0-100)
+ * @param l - Lightness (0-100)
+ * @returns RGB values as [r, g, b] where each value is 0-255
+ */
+const hslToRgb = (h: number, s: number, l: number): [number, number, number] => {
+  h /= 360;
+  s /= 100;
+  l /= 100;
+
+  let r: number, g: number, b: number;
+
+  if (s === 0) {
+    r = g = b = l;
+  } else {
+    const hue2rgb = (p: number, q: number, t: number) => {
+      if (t < 0) t += 1;
+      if (t > 1) t -= 1;
+      if (t < 1 / 6) return p + (q - p) * 6 * t;
+      if (t < 1 / 2) return q;
+      if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6;
+      return p;
+    };
+
+    const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+    const p = 2 * l - q;
+
+    r = hue2rgb(p, q, h + 1 / 3);
+    g = hue2rgb(p, q, h);
+    b = hue2rgb(p, q, h - 1 / 3);
+  }
+
+  return [r * 255, g * 255, b * 255];
+};
+
+/**
+ * Lighten a hex color by a percentage
+ * @param hex - Hex color string (e.g., '#3B82F6')
+ * @param percent - Percentage to lighten (0-100)
+ * @returns Lightened hex color string
+ */
+export const lightenColor = (hex: string, percent: number): string => {
+  const [r, g, b] = hexToRgb(hex);
+  const [h, s, l] = rgbToHsl(r, g, b);
+
+  // Increase lightness, capped at 100
+  const newL = Math.min(100, l + percent);
+
+  const [newR, newG, newB] = hslToRgb(h, s, newL);
+  return rgbToHex(newR, newG, newB);
+};
+
+/**
+ * Darken a hex color by a percentage
+ * @param hex - Hex color string (e.g., '#3B82F6')
+ * @param percent - Percentage to darken (0-100)
+ * @returns Darkened hex color string
+ */
+export const darkenColor = (hex: string, percent: number): string => {
+  const [r, g, b] = hexToRgb(hex);
+  const [h, s, l] = rgbToHsl(r, g, b);
+
+  // Decrease lightness, capped at 0
+  const newL = Math.max(0, l - percent);
+
+  const [newR, newG, newB] = hslToRgb(h, s, newL);
+  return rgbToHex(newR, newG, newB);
+};
