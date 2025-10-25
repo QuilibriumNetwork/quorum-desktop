@@ -108,11 +108,35 @@ export const Text: React.FC<NativeTextProps> = ({
   const theme = useTheme();
   const colors = theme.colors;
 
+  // Map variants to theme colors
+  const getVariantColor = () => {
+    switch (variant) {
+      case 'strong':
+        return colors.text.strong;
+      case 'subtle':
+        return colors.text.subtle;
+      case 'muted':
+        return colors.text.muted;
+      case 'error':
+        return colors.utilities.danger;
+      case 'danger':
+        return colors.text.danger;
+      case 'success':
+        return colors.utilities.success;
+      case 'warning':
+        return colors.utilities.warning;
+      case 'link':
+        return colors.link.default;
+      default:
+        return colors.text.main;
+    }
+  };
+
   // NEW: If typography prop is used, apply semantic styling
   if (typography) {
     const typoStyle = typographyMap[typography];
 
-    // Map colorVariant to actual theme color
+    // Map colorVariant to actual theme color (default from typography)
     const getTypographyColor = () => {
       switch (typoStyle.colorVariant) {
         case 'strong':
@@ -124,11 +148,14 @@ export const Text: React.FC<NativeTextProps> = ({
       }
     };
 
+    // Allow variant prop to override typography's default color
+    const finalColor = variant !== 'default' ? getVariantColor() : getTypographyColor();
+
     const textStyle: TextStyle = {
       fontSize: typoStyle.fontSize,
       fontWeight: typoStyle.fontWeight as any,
       textAlign: alignMap[align] as any,
-      color: color || getTypographyColor(), // Allow color override
+      color: color || finalColor, // color prop > variant > typography default
       lineHeight: lineHeight || typoStyle.fontSize * 1.4,
       marginBottom: marginBottom,
       marginTop: marginTop,
@@ -151,30 +178,6 @@ export const Text: React.FC<NativeTextProps> = ({
       </RNText>
     );
   }
-
-  // Map variants to theme colors
-  const getVariantColor = () => {
-    switch (variant) {
-      case 'strong':
-        return colors.text.strong;
-      case 'subtle':
-        return colors.text.subtle;
-      case 'muted':
-        return colors.text.muted;
-      case 'error':
-        return colors.utilities.danger;
-      case 'danger':
-        return colors.text.danger;
-      case 'success':
-        return colors.utilities.success;
-      case 'warning':
-        return colors.utilities.warning;
-      case 'link':
-        return colors.link.default; // Use link color from theme
-      default:
-        return colors.text.main;
-    }
-  };
 
   // Determine if this is a link and what style to use
   const isLink = !!(href || onPress);
@@ -228,6 +231,17 @@ export const Text: React.FC<NativeTextProps> = ({
     ...style,
   };
 
+  // Handle link functionality in React Native
+  const handlePress = () => {
+    if (href) {
+      Linking.openURL(href).catch((err: any) =>
+        console.error('Failed to open URL:', err)
+      );
+    } else if (onPress) {
+      onPress();
+    }
+  };
+
   const textContent = (
     <RNText
       style={textStyle}
@@ -242,17 +256,6 @@ export const Text: React.FC<NativeTextProps> = ({
       {children}
     </RNText>
   );
-
-  // Handle link functionality in React Native
-  const handlePress = () => {
-    if (href) {
-      Linking.openURL(href).catch((err: any) =>
-        console.error('Failed to open URL:', err)
-      );
-    } else if (onPress) {
-      onPress();
-    }
-  };
 
   // For inline links, we don't want TouchableOpacity wrapper as it can cause layout issues
   // Instead, use onPress directly on the Text component for better inline behavior

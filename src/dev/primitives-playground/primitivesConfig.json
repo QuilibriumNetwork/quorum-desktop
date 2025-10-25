@@ -682,9 +682,11 @@
       { "name": "Small Desktop", "props": { "typography": "small-desktop" }, "children": "Small Desktop" }
     ],
     "quickTips": [
-      "typography prop takes precedence over variant/size/weight",
+      "typography prop sets size/weight/line-height semantically",
+      "Use variant prop to override color: <Text typography=\"body\" variant=\"subtle\">",
       "Works identically on web and native",
       "No className conflicts - clean semantic styling",
+      "Color priority: color prop > variant > typography default",
       "Use typography='body' for main content text",
       "Use typography='title' for modal/section headers",
       "Use typography='label-strong' for form labels"

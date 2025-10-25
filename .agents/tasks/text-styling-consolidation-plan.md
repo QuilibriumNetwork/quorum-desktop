@@ -1,16 +1,18 @@
 # Text Styling Consolidation
 
 **Created:** 2025-10-25
-**Status:** In Progress - Partial migration complete, 13 modals need updates
+**Status:** Text primitive enhanced with color override, 13 modals migrated, 5 high-priority modals remain
 **Updated:** 2025-10-25
 
 ---
 
 ## Summary
 
-Created global typography classes to replace modal-specific text classes and improve mobile readability. Analyzed all 27 modal files - 8 are complete, 13 need migration.
+Created global typography classes and enhanced Text primitive with cross-platform `typography` prop. Successfully migrated 13 modal files using CSS classes. Remaining modals can now use either CSS classes (web-only) or Text primitive with typography prop (cross-platform).
 
-**Key Decision:** Use plain `<div>` with typography classes instead of `<Text>` primitive (conflicts with defaults).
+**Key Decision Update:** Two approaches now available:
+1. **CSS Classes** (web-only, faster): `<div className="text-body">`
+2. **Text Primitive with typography prop** (cross-platform): `<Text typography="body">`
 
 ---
 
@@ -22,21 +24,40 @@ Created global typography classes to replace modal-specific text classes and imp
 - Each consolidates: font-size + weight + line-height + color
 - Fix: Added `rgb()` wrapper to all color variables
 
-### 2. Mobile Readability Fixed
+### 2. Text Primitive Enhanced with Typography Prop ✨
+- **Added `typography` prop** to Text primitive for cross-platform semantic styling
+- **Color override support**: `variant` prop can override typography's default color
+- **Implementation:**
+  - Updated `types.ts` with 9 typography values
+  - `Text.web.tsx`: Applies semantic class + optional variant color override
+  - `Text.native.tsx`: Maps typography values to theme colors + variant override
+- **Color priority**: `color` prop > `variant` prop > `typography` default color
+- **Fully backwards compatible**: Existing variant/size/weight props still work
+- **Documentation updated**: API-REFERENCE.md, primitives-quick-reference.md
+- **Playground updated**: Added typography examples with color override examples
+
+### 3. Mobile Readability Fixed
 - Changed all `$text-xs` → `$text-xs-responsive` in interactive elements
 - Files: Input.scss, _base.scss, _modal_common.scss
 - Result: 14px on mobile (was 12px - too small)
 
-### 3. Modals Fully Migrated (8 files)
+### 4. Modals Fully Migrated (13 files) ✅
+**Using CSS Classes (web-only approach):**
+
 **✅ UserSettingsModal** - All 4 components
 - General.tsx
 - Appearance.tsx
 - Privacy.tsx
 - Notifications.tsx
 
-**✅ SpaceSettingsModal** - 2 components
+**✅ SpaceSettingsModal** - All 7 components
 - General.tsx
 - Account.tsx
+- Roles.tsx
+- Emojis.tsx
+- Stickers.tsx
+- Invites.tsx
+- Danger.tsx
 
 **✅ Other Modals**
 - ChannelEditorModal.tsx
@@ -44,207 +65,194 @@ Created global typography classes to replace modal-specific text classes and imp
 
 ---
 
-## 🔄 Modals Needing Migration (13 files)
+## 🔄 Remaining Modals (5 High-Priority)
 
-### High Priority (User-Facing Text)
+### Recommended Approach: Use Text Primitive with Typography Prop
 
-#### 1. **ConfirmationModal.tsx**
-- **Line 50-52**: `<Text>{message}</Text>` → `<div className="text-body">{message}</div>`
+Now that Text primitive has the `typography` prop, **cross-platform modals** should use it instead of CSS classes.
+
+#### 1. **ConfirmationModal.tsx** (Cross-Platform Candidate)
+```tsx
+// ❌ Before
+<Text>{message}</Text>
+
+// ✅ After (Cross-Platform)
+<Text typography="body">{message}</Text>
+```
+**Why:** Simple modal, likely to be used on mobile
 
 #### 2. **KickUserModal.tsx**
-- **Line 74-76**: `<Text variant="subtle">` → `<div className="text-body">`
+```tsx
+// ❌ Before
+<Text variant="subtle">
+  Use the below button to kick this user out of the Space
+</Text>
+
+// ✅ After
+<Text typography="body">
+  Use the below button to kick this user out of the Space
+</Text>
+```
 
 #### 3. **LeaveSpaceModal.tsx**
-- **Line 39-44**: `<Text variant="subtle">` → `<div className="text-body">`
+```tsx
+// ❌ Before
+<Text variant="subtle">
+  Are you sure you want to leave this Space?
+</Text>
+
+// ✅ After
+<Text typography="body">
+  Are you sure you want to leave this Space?
+</Text>
+```
 
 #### 4. **NewDirectMessageModal.tsx**
-- **Line 93-97**: `<Text className="text-sm text-subtle...">` → `<div className="text-body">`
-- **Line 146**: `text-label` → `text-label-strong`
+```tsx
+// ❌ Before (Line 93-97)
+<Text className="text-sm text-subtle !text-left max-sm:!text-center !block">
+  Enter a user's address to start messaging them.
+</Text>
+
+// ✅ After
+<Text typography="body">
+  Enter a user's address to start messaging them.
+</Text>
+
+// ❌ Before (Line 146)
+<div className="text-label">Always sign messages</div>
+
+// ✅ After
+<Text typography="label-strong">Always sign messages</Text>
+```
 
 #### 5. **CreateSpaceModal.tsx**
-- **Lines 101-105, 106-109**: `text-label` → `text-label-strong`
+```tsx
+// ❌ Before (Lines 101-105, 106-109)
+<div className="text-label">
+  Upload an image and choose a name for your Space.
+</div>
 
----
-
-### Medium Priority (Settings Modals)
-
-#### 6. **SpaceSettingsModal/Roles.tsx**
-- **Line 41**: `text-xl font-bold` → `text-title`
-- **Line 44**: `text-sm text-main` → `text-label-strong`
-
-#### 7. **SpaceSettingsModal/Emojis.tsx**
-- **Line 40**: `text-xl font-bold` → `text-title`
-- **Line 43**: `text-sm text-main` → `text-label-strong`
-
-#### 8. **SpaceSettingsModal/Stickers.tsx**
-- **Line 40**: `text-xl font-bold` → `text-title`
-- **Line 43**: `text-sm text-main` → `text-label-strong`
-
-#### 9. **SpaceSettingsModal/Invites.tsx**
-- **Line 46**: `text-xl font-bold` → `text-title`
-- **Line 49**: `text-sm text-main` → `text-label-strong`
-- **Line 150**: `text-sm text-subtle` → `text-label`
-
-#### 10. **SpaceSettingsModal/Danger.tsx**
-- **Line 26**: `text-xl font-bold text-danger` → `text-title text-danger`
-- **Line 29**: `text-sm text-main` → `text-label-strong`
-
----
-
-### Low Priority
-
-#### 11. **AddSpaceModal.tsx**
-- **Line 273**: `<Text className="px-3 text-subtle text-sm">` → `<div className="px-3 text-label">`
-
----
-
-### ⚠️ Needs Review
-
-#### 12. **JoinSpaceModal.tsx**
-- **Line 124-131**: Uses `<Text variant="strong" size="lg">` for validated space name display
-- **Review**: Special case - displaying space name as prominent element. May be appropriate to keep `<Text>` component here.
-
----
-
-## 📊 Migration Statistics
-
-- **Total Modal Files Analyzed**: 27
-- **✅ Fully Migrated**: 8 files (30%)
-- **🔄 Needs Migration**: 13 files (48%)
-- **⚠️ Needs Review**: 1 file (4%)
-- **No Text Content**: 5 files (18%) - ImageModal, ModalSaveOverlay, Navigation files
+// ✅ After
+<Text typography="label-strong">
+  Upload an image and choose a name for your Space.
+</Text>
+```
 
 ---
 
 ## 📋 Migration Pattern Reference
 
-### Rule: `.text-body` ONLY for text directly below main modal title
+### NEW: Two Approaches Available
+
+#### Option A: CSS Classes (Web-Only, Faster)
+Use for web-only modals that won't be used on mobile:
+```tsx
+<div className="text-title">Modal Title</div>
+<div className="text-body">Description</div>
+<div className="text-label-strong">Label</div>
+```
+
+#### Option B: Text Primitive with Typography Prop (Cross-Platform)
+Use for modals that should work on mobile:
+```tsx
+<Text typography="title">Modal Title</Text>
+<Text typography="body">Description</Text>
+<Text typography="label-strong">Label</Text>
+```
+
+### Typography Values Reference
+
+| Typography | Size | Weight | Color | Use Case |
+|------------|------|--------|-------|----------|
+| `title-large` | 24px | bold | strong | Large page headers |
+| `title` | 20px | bold | strong | Modal/section titles |
+| `subtitle` | 18px | bold | main | Sub-headings |
+| `subtitle-2` | 14px | bold | subtle | Small headers (uppercase) |
+| `body` | 16px | normal | main | Main content (below title) |
+| `label` | 14px | normal | subtle | Subtle labels |
+| `label-strong` | 14px | normal | main | Form labels, emphasized text |
+| `small` | 14px/12px | normal | subtle | Small text (responsive) |
+| `small-desktop` | 12px | normal | subtle | Always small text |
+
+### Rule: `.text-body` or `typography="body"` ONLY for text directly below main modal title
 
 ```tsx
 // ✅ CORRECT - Main description below title
 <Modal title="Settings">
-  <div className="text-body">
+  <Text typography="body">
     Configure your preferences here.
-  </div>
+  </Text>
 </Modal>
 
 // ❌ WRONG - Description below sub-section
-<div className="text-subtitle-2">Advanced</div>
-<div className="text-body">These are advanced options.</div>
-// Should be: <div className="text-label-strong">These are advanced options.</div>
-```
-
-### Common Substitutions
-
-| Pattern | Before | After | Use Case |
-|---------|--------|-------|----------|
-| **Title** | `<div className="text-xl font-bold">` | `<div className="text-title">` | Main section headers |
-| **Sub-title** | `<div className="text-sm font-bold uppercase">` | `<div className="text-subtitle-2">` | Sub-section headers |
-| **Body** | `<Text variant="subtle">` | `<div className="text-body">` | Main description (title only!) |
-| **Label** | `<div className="text-sm text-main">` | `<div className="text-label-strong">` | All other labels/descriptions |
-| **Label** | `<div className="text-label">` | `<div className="text-label-strong">` | Upgrade weak labels |
-| **Text primitive** | `<Text className="...">` | `<div className="...">` | Avoid primitive defaults |
-
-### Complete Examples
-
-**Modal Title + Description:**
-```tsx
-// ❌ Before
-<div className="modal-text-section">
-  <div className="text-xl font-bold">Privacy/Security</div>
-  <div className="pt-2 text-sm text-subtle">
-    Manage your privacy settings.
-  </div>
-</div>
-
-// ✅ After
-<div className="modal-text-section">
-  <div className="text-title">Privacy/Security</div>
-  <div className="pt-2 text-body">
-    Manage your privacy settings.
-  </div>
-</div>
-```
-
-**Sub-section + Description:**
-```tsx
-// ❌ Before
-<div className="text-sm font-bold uppercase">Security</div>
-<div className="pt-2 text-sm text-main">
-  Adjust security-related settings.
-</div>
-
-// ✅ After
-<div className="text-subtitle-2">Security</div>
-<div className="pt-2 text-label-strong">
-  Adjust security-related settings.
-</div>
-```
-
-**Switch Label:**
-```tsx
-// ❌ Before
-<Text className="modal-text-small text-main">
-  Enable notifications
-</Text>
-
-// ✅ After
-<div className="text-label-strong">
-  Enable notifications
-</div>
+<Text typography="subtitle-2">Advanced</Text>
+<Text typography="body">These are advanced options.</Text>
+// Should be: <Text typography="label-strong">These are advanced options.</Text>
 ```
 
 ---
 
 ## Architecture Decisions
 
-### Text Primitive vs Typography Classes
+### Updated: Text Primitive with Typography Prop (Cross-Platform)
 
-**Decision:** Hybrid approach - primitives for layout, classes for text.
+**Decision:** Use Text primitive with `typography` prop for cross-platform modals.
 
-**Use Primitives:**
-- ✅ Layout (FlexRow, Container, Spacer)
-- ✅ Interactive elements (Button, Input, Switch)
-- ✅ Cross-platform code
+**When to Use Typography Prop:**
+- ✅ Cross-platform modals (ConfirmationModal, simple dialogs)
+- ✅ Components that may be used on mobile
+- ✅ New modal development
 
-**Use Typography Classes:**
-- ✅ Text content styling
-- ✅ Semantic patterns (titles, labels, body)
-- ✅ Web-only fine
+**When to Use CSS Classes:**
+- ✅ Web-only complex modals (Settings, advanced features)
+- ✅ Already migrated modals (no need to change)
+- ✅ Performance-critical scenarios
 
-**Don't:**
-- ❌ Mix Text primitive with typography classes (conflicts)
+**Benefits of Typography Prop:**
+- ✅ Cross-platform: Same API works on web and native
+- ✅ No className conflicts: Bypasses Text primitive defaults
+- ✅ Semantic: Clear intent (`typography="body"` vs combining props)
+- ✅ Type-safe: TypeScript autocomplete for typography values
+- ✅ Flexible color: `variant` prop overrides typography's default color
 
-### Why Classes Instead of Text Primitive
-
-Text primitive adds defaults that conflict with typography classes:
-
+**Example Comparison:**
 ```tsx
-<Text className="text-label">  // ❌ Bad
-// Rendered as: <span class="text-main text-base font-normal text-left text-label">
-// Defaults override typography class!
+// CSS Classes (Web-Only)
+<div className="text-body">Description</div>
 
-<div className="text-label">   // ✅ Good
-// Rendered as: <div class="text-label">
-// Clean, no conflicts
+// Typography Prop (Cross-Platform)
+<Text typography="body">Description</Text>
+
+// Typography + Color Override (Cross-Platform)
+<Text typography="body" variant="subtle">Subtle description</Text>
+
+// Legacy (Still Works, Backwards Compatible)
+<Text variant="subtle" size="base">Description</Text>
 ```
+
+**Color Priority:** `color` prop > `variant` prop > `typography` default color
 
 ---
 
 ## Next Steps
 
-### 1. Complete Modal Migration
-Work through the 13 modals in priority order:
-- High priority: ConfirmationModal, KickUserModal, LeaveSpaceModal, NewDirectMessageModal, CreateSpaceModal
-- Medium priority: 5 SpaceSettingsModal components
-- Low priority: AddSpaceModal
-- Review: JoinSpaceModal (edge case)
+### 1. Migrate Remaining 5 High-Priority Modals
+Use **Text primitive with typography prop** for cross-platform support:
+- ConfirmationModal.tsx
+- KickUserModal.tsx
+- LeaveSpaceModal.tsx
+- NewDirectMessageModal.tsx
+- CreateSpaceModal.tsx
 
-### 2. Update Documentation
-- Add entry to `.agents/AGENTS.md` about typography classes
-- Create `.agents/docs/guidelines/when-to-use-primitives.md`
+### 2. Optional: Migrate Already-Completed Modals to Typography Prop
+Consider migrating the 13 CSS-based modals to use `<Text typography="...">` for future mobile compatibility. Low priority since CSS classes work fine on web.
 
-### 3. Optional: Clean Up Old Classes
+### 3. Update Documentation
+- Add entry to `.agents/AGENTS.md` about typography prop
+- Update `.agents/docs/guidelines/when-to-use-primitives.md` with typography prop guidance
+
+### 4. Optional: Clean Up Old Classes
 Once all modals confirmed working:
 - Remove `.modal-text-label` from `_modal_common.scss` (unused)
 - Remove `.modal-text-small` from `_modal_common.scss` (replaced)
@@ -253,21 +261,43 @@ Once all modals confirmed working:
 
 ---
 
-## Files Modified So Far
+## Files Modified
 
 **Created:**
 - `src/styles/_typography.scss`
 
-**Updated:**
+**Enhanced:**
+- `src/components/primitives/Text/types.ts` (added typography prop)
+- `src/components/primitives/Text/Text.web.tsx` (typography support)
+- `src/components/primitives/Text/Text.native.tsx` (typography mappings)
+
+**Documentation:**
+- `.agents/docs/features/primitives/API-REFERENCE.md`
+- `.agents/docs/features/primitives/02-primitives-quick-reference.md`
+- `src/dev/primitives-playground/examples/Text.tsx`
+- `src/dev/primitives-playground/primitivesConfig.json`
+
+**Styling:**
 - `src/index.scss` (import)
 - `src/components/primitives/Input/Input.scss`
 - `src/styles/_base.scss`
 - `src/styles/_modal_common.scss`
+
+**Modals (13 files migrated with CSS classes):**
 - `src/components/modals/UserSettingsModal/` (4 files)
-- `src/components/modals/SpaceSettingsModal/General.tsx`
-- `src/components/modals/SpaceSettingsModal/Account.tsx`
+- `src/components/modals/SpaceSettingsModal/` (7 files)
 - `src/components/modals/ChannelEditorModal.tsx`
 - `src/components/modals/GroupEditorModal.tsx`
+
+---
+
+## Migration Statistics
+
+- **Total Modal Files Analyzed**: 27
+- **✅ Fully Migrated**: 13 files (48%)
+- **🔄 Remaining High-Priority**: 5 files (19%)
+- **⚠️ Low Priority**: 4 files (15%) - AddSpaceModal, JoinSpaceModal, etc.
+- **No Text Content**: 5 files (18%) - ImageModal, ModalSaveOverlay, Navigation files
 
 ---
 

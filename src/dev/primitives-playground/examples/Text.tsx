@@ -41,7 +41,7 @@ export const TextExamples: React.FC = () => {
           quickTips: combinedQuickTips,
           codeExample: {
             title: 'Typography Prop (NEW) vs Legacy Props',
-            code: `import { Text } from '@/components/primitives';\n\n// 🆕 NEW: Cross-platform semantic styling (Recommended)\n<Text typography="title">Modal Title</Text>\n<Text typography="body">Main content text</Text>\n<Text typography="label-strong">Form Label</Text>\n<Text typography="subtitle-2">Section Header</Text>\n\n// Typography values:\n// - title-large, title, subtitle, subtitle-2\n// - body, label, label-strong\n// - small, small-desktop\n\n// 📦 LEGACY: Still works but not cross-platform\n<Text variant="strong" size="lg" weight="semibold">\n  Legacy approach\n</Text>`,
+            code: `import { Text } from '@/components/primitives';\n\n// 🆕 NEW: Cross-platform semantic styling (Recommended)\n<Text typography="title">Modal Title</Text>\n<Text typography="body">Main content text</Text>\n<Text typography="label-strong">Form Label</Text>\n<Text typography="subtitle-2">Section Header</Text>\n\n// Color override with variant prop\n<Text typography="body" variant="subtle">Subtle body text</Text>\n<Text typography="title" variant="subtle">Subtle title</Text>\n\n// Typography values:\n// - title-large, title, subtitle, subtitle-2\n// - body, label, label-strong\n// - small, small-desktop\n\n// Color priority: color prop > variant > typography default\n\n// 📦 LEGACY: Still works but not cross-platform\n<Text variant="strong" size="lg" weight="semibold">\n  Legacy approach\n</Text>`,
           },
         }}
       >

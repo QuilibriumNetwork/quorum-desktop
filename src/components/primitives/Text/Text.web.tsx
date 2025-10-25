@@ -59,8 +59,13 @@ export const Text: React.FC<WebTextProps> = ({
 }) => {
   // NEW: If typography prop is used, apply semantic styling only
   if (typography) {
+    // Allow variant prop to override typography's default color
+    const finalVariant =
+      Component === 'a' && variant === 'default' ? 'link' : variant;
+
     const classes = clsx(
       `text-${typography}`, // e.g., "text-body", "text-title", etc.
+      variant !== 'default' && variantMap[finalVariant], // Override color if variant specified
       className
     );
 
