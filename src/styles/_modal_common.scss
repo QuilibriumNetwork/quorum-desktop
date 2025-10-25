@@ -48,33 +48,10 @@
   }
 }
 
-// Consistent Text Size Classes for Modals
-.modal-text-label {
-  color: var(--color-text-subtle);
-  margin-bottom: $s-1;
-  display: block;
-  font-size: $text-sm;
-  font-weight: $font-semibold;
-  text-transform: uppercase;
-  letter-spacing: $tracking-wider;
-}
-
-.modal-text-section-header {
-  font-size: $text-lg;
-  font-weight: $font-bold;
-
-  @media (max-width: $screen-sm) {
-    font-size: $text-base;
-  }
-}
-
-.modal-text-small {
-  font-size: $text-sm;
-
-  @media (max-width: $screen-sm) {
-    font-size: $text-sm;
-  }
-}
+// Text styling classes removed - use semantic typography classes from _typography.scss instead:
+// - .text-title-large, .text-title, .text-subtitle, .text-subtitle-2
+// - .text-body, .text-label, .text-label-strong
+// - .text-small, .text-small-desktop
 
 // Input field sizing rules
 .modal-input-text {
