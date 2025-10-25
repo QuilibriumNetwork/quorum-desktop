@@ -676,6 +676,7 @@
       { "name": "Subtitle", "props": { "typography": "subtitle" }, "children": "Subtitle" },
       { "name": "Subtitle 2", "props": { "typography": "subtitle-2" }, "children": "Subtitle 2" },
       { "name": "Body", "props": { "typography": "body" }, "children": "Body Text" },
+      { "name": "Body + Subtle", "props": { "typography": "body", "variant": "subtle" }, "children": "Body Subtle" },
       { "name": "Label", "props": { "typography": "label" }, "children": "Label" },
       { "name": "Label Strong", "props": { "typography": "label-strong" }, "children": "Label Strong" },
       { "name": "Small", "props": { "typography": "small" }, "children": "Small Text" },
@@ -693,7 +694,7 @@
     ],
     "codeExample": {
       "title": "Typography Prop Usage",
-      "code": "import { Text } from '@/components/primitives';\n\n// Cross-platform semantic styling\n<Text typography=\"title\">Modal Title</Text>\n<Text typography=\"body\">Main content text</Text>\n<Text typography=\"label-strong\">Form Label</Text>\n<Text typography=\"subtitle-2\">Section Header</Text>\n\n// All typography values:\n// - title-large: 24px, bold, strong color\n// - title: 20px, bold, strong color  \n// - subtitle: 18px, bold, main color\n// - subtitle-2: 14px, bold, subtle, uppercase\n// - body: 16px, normal, main color\n// - label: 14px, normal, subtle color\n// - label-strong: 14px, normal, main color\n// - small: 14px mobile/12px desktop, subtle\n// - small-desktop: 12px, subtle"
+      "code": "import { Text } from '@/components/primitives';\n\n// Cross-platform semantic styling\n<Text typography=\"title\">Modal Title</Text>\n<Text typography=\"body\">Main content text</Text>\n<Text typography=\"label-strong\">Form Label</Text>\n<Text typography=\"subtitle-2\">Section Header</Text>\n\n// Color override with variant prop\n<Text typography=\"body\" variant=\"subtle\">Subtle body text</Text>\n<Text typography=\"title\" variant=\"subtle\">Subtle title</Text>\n\n// Color priority: color prop > variant > typography default\n\n// All typography values:\n// - title-large: 24px, bold, strong color\n// - title: 20px, bold, strong color  \n// - subtitle: 18px, bold, main color\n// - subtitle-2: 14px, bold, subtle, uppercase\n// - body: 16px, normal, main color (default)\n// - label: 14px, normal, subtle color\n// - label-strong: 14px, normal, main color\n// - small: 14px mobile/12px desktop, subtle\n// - small-desktop: 12px, subtle"
     }
   }
 }
