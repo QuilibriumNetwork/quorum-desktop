@@ -98,12 +98,12 @@ const CreateSpaceModal: React.FunctionComponent<CreateSpaceModalProps> = (
             )}
           </div>
         </div>
-        <div className="mt-4 text-label-strong">
+        <div className="mt-4 text-body">
           <Trans>
             Upload an image and choose a name for your Space.
           </Trans>
         </div>
-        <div className="mt-4 text-label-strong">
+        <div className="mt-4 text-label">
           <Trans> Default Space settings provide the most typical chat experience, but for higher privacy guarantees, review the Advanced Settings.
           </Trans>
         </div>

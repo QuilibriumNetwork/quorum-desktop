@@ -37,16 +37,19 @@ const typographyMap = {
   'title-large': {
     fontSize: 24, // text-2xl
     fontWeight: '700', // bold
+    letterSpacing: 0.025, // tracking-wide
     colorVariant: 'strong' as const,
   },
   'title': {
     fontSize: 20, // text-xl
     fontWeight: '700', // bold
+    letterSpacing: 0.025, // tracking-wide
     colorVariant: 'strong' as const,
   },
   'subtitle': {
     fontSize: 18, // text-lg
     fontWeight: '700', // bold
+    letterSpacing: 0.025, // tracking-wide
     colorVariant: 'default' as const,
   },
   'subtitle-2': {
@@ -154,6 +157,7 @@ export const Text: React.FC<NativeTextProps> = ({
     const textStyle: TextStyle = {
       fontSize: typoStyle.fontSize,
       fontWeight: typoStyle.fontWeight as any,
+      letterSpacing: typoStyle.letterSpacing,
       textAlign: alignMap[align] as any,
       color: color || finalColor, // color prop > variant > typography default
       lineHeight: lineHeight || typoStyle.fontSize * 1.4,

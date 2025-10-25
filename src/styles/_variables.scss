@@ -88,6 +88,34 @@ $text-4xl-lh: 2.5rem;    /* line-height: 40px */
 $text-5xl: 3rem;         /* 48px */
 $text-5xl-lh: 1;         /* line-height: 1 */
 
+/* ============================================
+   SEMANTIC FONT SIZE ALIASES
+   ============================================
+
+   Use these in component SCSS files for self-documenting code.
+   These are just aliases pointing to existing variables - no new sizes.
+
+   Examples:
+   - font-size: $font-message (clearer than $text-sm)
+   - font-size: $font-input (clearer intent for input fields)
+
+   ============================================ */
+
+/* === MESSAGING-SPECIFIC ALIASES === */
+
+// Message content - main chat text
+$font-message: $text-sm;              /* 14px - Message text in chat */
+$font-message-lh: $text-sm-lh;        /* 20px - Line height for messages */
+
+// Input fields - CRITICAL for mobile (prevents iOS zoom)
+// NOTE: Input fields must be 16px+ to prevent iOS Safari from zooming
+$font-input: $text-base;              /* 16px - All input fields (prevents iOS zoom) */
+$font-input-lh: $text-base-lh;        /* 24px - Line height for inputs */
+
+// Small labels - responsive for mobile readability
+// Use this for labels, badges, metadata that appears on mobile
+$font-label-small: $text-xs-responsive;  /* 14px mobile → 12px desktop */
+
 /* === FONT WEIGHT SCALE === */
 /* Tailwind's font weight scale */
 
