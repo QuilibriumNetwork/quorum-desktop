@@ -67,19 +67,18 @@ Created global typography classes and enhanced Text primitive with cross-platfor
 
 ## 🔄 Remaining Modals (5 High-Priority)
 
-### Recommended Approach: Use Text Primitive with Typography Prop
+### Use Text Primitive with Typography Prop + Variant Override
 
-Now that Text primitive has the `typography` prop, **cross-platform modals** should use it instead of CSS classes.
+Now that Text primitive supports both `typography` and `variant` props together, use them for cross-platform modals with full control over sizing and color.
 
-#### 1. **ConfirmationModal.tsx** (Cross-Platform Candidate)
+#### 1. **ConfirmationModal.tsx**
 ```tsx
 // ❌ Before
 <Text>{message}</Text>
 
-// ✅ After (Cross-Platform)
+// ✅ After
 <Text typography="body">{message}</Text>
 ```
-**Why:** Simple modal, likely to be used on mobile
 
 #### 2. **KickUserModal.tsx**
 ```tsx
@@ -88,8 +87,8 @@ Now that Text primitive has the `typography` prop, **cross-platform modals** sho
   Use the below button to kick this user out of the Space
 </Text>
 
-// ✅ After
-<Text typography="body">
+// ✅ After (body sizing + subtle color)
+<Text typography="body" variant="subtle">
   Use the below button to kick this user out of the Space
 </Text>
 ```
@@ -101,8 +100,8 @@ Now that Text primitive has the `typography` prop, **cross-platform modals** sho
   Are you sure you want to leave this Space?
 </Text>
 
-// ✅ After
-<Text typography="body">
+// ✅ After (body sizing + subtle color)
+<Text typography="body" variant="subtle">
   Are you sure you want to leave this Space?
 </Text>
 ```
@@ -114,8 +113,8 @@ Now that Text primitive has the `typography` prop, **cross-platform modals** sho
   Enter a user's address to start messaging them.
 </Text>
 
-// ✅ After
-<Text typography="body">
+// ✅ After (body sizing + subtle color)
+<Text typography="body" variant="subtle">
   Enter a user's address to start messaging them.
 </Text>
 
@@ -128,7 +127,7 @@ Now that Text primitive has the `typography` prop, **cross-platform modals** sho
 
 #### 5. **CreateSpaceModal.tsx**
 ```tsx
-// ❌ Before (Lines 101-105, 106-109)
+// ❌ Before
 <div className="text-label">
   Upload an image and choose a name for your Space.
 </div>
@@ -158,13 +157,21 @@ Use for modals that should work on mobile:
 ```tsx
 <Text typography="title">Modal Title</Text>
 <Text typography="body">Description</Text>
+<Text typography="body" variant="subtle">Subtle description</Text>
 <Text typography="label-strong">Label</Text>
+```
+
+**Color Override:** Add `variant` prop to override typography's default color:
+```tsx
+<Text typography="body" variant="subtle">   {/* body size + subtle color */}
+<Text typography="title" variant="subtle">  {/* title size + subtle color */}
+<Text typography="label-strong" color="#fff"> {/* custom color */}
 ```
 
 ### Typography Values Reference
 
-| Typography | Size | Weight | Color | Use Case |
-|------------|------|--------|-------|----------|
+| Typography | Size | Weight | Default Color | Use Case |
+|------------|------|--------|---------------|----------|
 | `title-large` | 24px | bold | strong | Large page headers |
 | `title` | 20px | bold | strong | Modal/section titles |
 | `subtitle` | 18px | bold | main | Sub-headings |
@@ -174,6 +181,8 @@ Use for modals that should work on mobile:
 | `label-strong` | 14px | normal | main | Form labels, emphasized text |
 | `small` | 14px/12px | normal | subtle | Small text (responsive) |
 | `small-desktop` | 12px | normal | subtle | Always small text |
+
+**Note:** Default color can be overridden with `variant` or `color` prop.
 
 ### Rule: `.text-body` or `typography="body"` ONLY for text directly below main modal title
 
