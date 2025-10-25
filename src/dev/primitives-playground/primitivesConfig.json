@@ -662,5 +662,36 @@
       "title": "All Text Props",
       "code": "import { Text } from '@/components/primitives';\n\n<Text\n  // Content\n  children=\"Your text content\"\n  \n  // Visual variants\n  variant=\"default\" // 'default' | 'strong' | 'subtle' | 'muted' | 'error' | 'danger' | 'success' | 'warning' | 'link'\n  \n  // Typography\n  size=\"base\" // 'xs' | 'sm' | 'base' | 'lg' | 'xl' | '2xl' | '3xl'\n  weight=\"normal\" // 'normal' | 'medium' | 'semibold' | 'bold'\n  align=\"left\" // 'left' | 'center' | 'right'\n  \n  // Spacing (mobile-optimized)\n  marginBottom={16}\n  marginTop={8}\n  lineHeight={1.5}\n  \n  // Colors\n  color=\"custom-color\" // Custom color override\n  \n  // Web-specific props\n  as=\"p\" // 'span' | 'p' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'div' | 'a'\n  style={{ fontFamily: 'custom' }}\n  onClick={handleClick}\n  \n  // Link props (when as=\"a\" or variant=\"link\")\n  href=\"https://example.com\"\n  target=\"_blank\"\n  rel=\"noopener noreferrer\"\n  \n  // Styling\n  className=\"custom-class\"\n  \n  // Testing & Accessibility\n  testId=\"text-element\"\n  // Native: accessibilityLabel, accessible, etc.\n>\n  Your text content here\n</Text>"
     }
+  },
+  "text-typography": {
+    "id": "text-typography",
+    "title": "Text Typography (Cross-Platform Semantic Styling)",
+    "description": "NEW: Use the typography prop for semantic text styling that works identically on web and native. Recommended for cross-platform modals.",
+    "background": "surface-1",
+    "columns": 3,
+    "dynamicProps": {},
+    "staticExamples": [
+      { "name": "Title Large", "props": { "typography": "title-large" }, "children": "Title Large" },
+      { "name": "Title", "props": { "typography": "title" }, "children": "Title" },
+      { "name": "Subtitle", "props": { "typography": "subtitle" }, "children": "Subtitle" },
+      { "name": "Subtitle 2", "props": { "typography": "subtitle-2" }, "children": "Subtitle 2" },
+      { "name": "Body", "props": { "typography": "body" }, "children": "Body Text" },
+      { "name": "Label", "props": { "typography": "label" }, "children": "Label" },
+      { "name": "Label Strong", "props": { "typography": "label-strong" }, "children": "Label Strong" },
+      { "name": "Small", "props": { "typography": "small" }, "children": "Small Text" },
+      { "name": "Small Desktop", "props": { "typography": "small-desktop" }, "children": "Small Desktop" }
+    ],
+    "quickTips": [
+      "typography prop takes precedence over variant/size/weight",
+      "Works identically on web and native",
+      "No className conflicts - clean semantic styling",
+      "Use typography='body' for main content text",
+      "Use typography='title' for modal/section headers",
+      "Use typography='label-strong' for form labels"
+    ],
+    "codeExample": {
+      "title": "Typography Prop Usage",
+      "code": "import { Text } from '@/components/primitives';\n\n// Cross-platform semantic styling\n<Text typography=\"title\">Modal Title</Text>\n<Text typography=\"body\">Main content text</Text>\n<Text typography=\"label-strong\">Form Label</Text>\n<Text typography=\"subtitle-2\">Section Header</Text>\n\n// All typography values:\n// - title-large: 24px, bold, strong color\n// - title: 20px, bold, strong color  \n// - subtitle: 18px, bold, main color\n// - subtitle-2: 14px, bold, subtle, uppercase\n// - body: 16px, normal, main color\n// - label: 14px, normal, subtle color\n// - label-strong: 14px, normal, main color\n// - small: 14px mobile/12px desktop, subtle\n// - small-desktop: 12px, subtle"
+    }
   }
 }
