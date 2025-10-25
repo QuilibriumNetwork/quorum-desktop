@@ -170,7 +170,7 @@ const UserProfile: React.FunctionComponent<{
                       onClick={() => {
                         addRole(props.user.address, r.roleId);
                       }}
-                      type="secondary"
+                      type="subtle"
                       size="small"
                       iconName="plus"
                     >

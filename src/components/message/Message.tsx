@@ -619,9 +619,12 @@ export const Message = React.memo(
                         );
 
                         if (tokenData.type === 'mention') {
+                          const mentionClass = tokenData.address === 'everyone'
+                            ? 'message-name-mentions-everyone'
+                            : 'message-name-mentions-you';
                           return (
                             <React.Fragment key={tokenData.key}>
-                              <Text className={'message-name-mentions-you'}>
+                              <Text className={mentionClass}>
                                 {tokenData.displayName}
                               </Text>{' '}
                             </React.Fragment>

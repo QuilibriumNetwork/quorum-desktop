@@ -47,7 +47,7 @@ export const MarkdownViewer: React.FC<MarkdownViewerProps> = ({
         // Inline code
         .replace(/`([^`]+)`/g, '<code class="bg-surface-2 px-1 py-0.5 rounded text-sm font-mono text-accent">$1</code>')
         // Links
-        .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" class="text-accent hover:text-accent-600 underline" target="_blank" rel="noopener noreferrer">$1</a>');
+        .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" class="link" target="_blank" rel="noopener noreferrer">$1</a>');
     };
     
     // Process tables first (before other replacements)
@@ -168,7 +168,7 @@ export const MarkdownViewer: React.FC<MarkdownViewerProps> = ({
 
       // Links (using a function to properly handle replacements)
       .replace(/\[([^\]]+)\]\(([^)]+)\)/g, (match, text, url) => {
-        return `<a href="${url}" class="text-accent hover:text-accent-600 underline" target="_blank" rel="noopener noreferrer">${text}</a>`;
+        return `<a href="${url}" class="link" target="_blank" rel="noopener noreferrer">${text}</a>`;
       })
 
       // Lists (improved) - using function to avoid $2 issues

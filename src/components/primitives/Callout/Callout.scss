@@ -88,3 +88,20 @@
     color: var(--callout-text) !important;
   }
 }
+
+// Links inside callouts should inherit color and be underlined
+.callout {
+  a,
+  .link {
+    color: inherit;
+    text-decoration: underline;
+    cursor: pointer;
+    font-weight: inherit;
+  }
+
+  a:hover,
+  .link:hover {
+    color: inherit;
+    text-decoration: underline;
+  }
+}

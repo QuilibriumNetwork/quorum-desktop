@@ -132,7 +132,7 @@ export const MessagePreview: React.FC<MessagePreviewProps> = ({
                       href={tokenData.url}
                       target="_blank"
                       referrerPolicy="no-referrer"
-                      className="text-accent hover:underline"
+                      className="link"
                       style={{ fontSize: 'inherit' }}
                     >
                       {tokenData.text}

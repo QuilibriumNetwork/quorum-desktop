@@ -43,7 +43,14 @@ html:not(.dark) .chat-container {
 
 .message-name-mentions-you,
 .message-name-mentions-role {
-  font-weight: $font-bold;
+  font-weight: $font-medium;
+  color: var(--color-link);
+  cursor: pointer;
+}
+
+.message-name-mentions-you:hover,
+.message-name-mentions-role:hover {
+  color: var(--color-link-hover);
 }
 
 .message-mentions-you {
@@ -56,12 +63,14 @@ html:not(.dark) .chat-container {
   background: rgb(var(--success) / 0.2);
 }
 
-.message-name-mentions-role {
-  color: rgb(var(--success));
+.message-name-mentions-everyone {
+  font-weight: $font-medium;
+  color: var(--color-link);
+  cursor: default;
 }
 
-.message-name-mentions-you {
-  color: var(--accent);
+.message-name-mentions-everyone:hover {
+  color: var(--color-link);
 }
 
 .message-list {

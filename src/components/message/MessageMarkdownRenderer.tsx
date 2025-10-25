@@ -160,7 +160,7 @@ export const MessageMarkdownRenderer: React.FC<MessageMarkdownRendererProps> = (
 
     // Only style @everyone if the message has mentions.everyone = true
     if (hasEveryoneMention) {
-      processedText = processedText.replace(/@everyone\b/gi, '<span class="message-name-mentions-you">@everyone</span>');
+      processedText = processedText.replace(/@everyone\b/gi, '<span class="message-name-mentions-everyone">@everyone</span>');
     }
 
     // Replace @<address> with styled, clickable @DisplayName
@@ -255,7 +255,7 @@ export const MessageMarkdownRenderer: React.FC<MessageMarkdownRendererProps> = (
             href={href}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-accent hover:underline"
+            className="link"
             {...props}
           >
             {children}

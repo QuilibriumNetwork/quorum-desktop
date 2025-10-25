@@ -62,11 +62,23 @@ a,
   font-weight: $font-medium;
   color: var(--color-link);
   text-decoration: inherit;
+  cursor: pointer;
 }
 
 a:hover,
 .link:hover {
   color: var(--color-link-hover);
+}
+
+.link-subtle {
+  color: inherit;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.link-subtle:hover {
+  color: inherit;
+  text-decoration: underline;
 }
 
 /* === HEADINGS === */
@@ -88,7 +100,7 @@ mark {
 .small-caps {
   font-variant-caps: all-small-caps;
   font-weight: $font-bold;
-  font-size: 1.2rem;
+  font-size: $text-xl;
 }
 
 .input-style-label {
