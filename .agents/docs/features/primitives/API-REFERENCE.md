@@ -51,6 +51,11 @@ The `typography` prop provides semantic text styling that works identically on w
 
 <Text typography="title">Modal Title</Text>
 <Text typography="label-strong">Form Label</Text>
+
+// ✅ Color override with variant prop
+<Text typography="body" variant="subtle">
+  Body-sized text with subtle color
+</Text>
 ```
 
 **Typography Values**:
@@ -64,6 +69,16 @@ The `typography` prop provides semantic text styling that works identically on w
 - `small` - Small text (14px on mobile, 12px on desktop, subtle color)
 - `small-desktop` - Small text (12px, subtle color)
 
+**Color Override**:
+The `variant` prop can override typography's default color:
+```tsx
+<Text typography="body" variant="subtle">    // body size + subtle color
+<Text typography="title" variant="subtle">   // title size + subtle color
+<Text typography="label-strong" color="#fff"> // custom color
+```
+
+**Color Priority**: `color` prop > `variant` prop > `typography` default color
+
 **Legacy Props (Backwards Compatible)**:
 ```tsx
 // ❌ Old way - still works but not cross-platform
@@ -72,7 +87,7 @@ The `typography` prop provides semantic text styling that works identically on w
 </Text>
 ```
 
-**Note**: When `typography` is used, `variant`, `size`, and `weight` props are ignored.
+**Note**: When `typography` is used, `size` and `weight` props are ignored, but `variant` works to override color.
 
 ---
 

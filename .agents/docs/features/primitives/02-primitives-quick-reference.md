@@ -17,15 +17,23 @@ Fast lookup guide for all primitive components with essential props and examples
 <Text typography="title-large|title|subtitle|subtitle-2|body|label|label-strong|small|small-desktop">
   Content
 </Text>
+
+// Color override with variant prop
+<Text typography="body" variant="subtle">
+  Body-sized text with subtle color
+</Text>
 ```
 
 **Examples:**
 ```tsx
-<Text typography="title">Modal Title</Text>             // 20px, bold, strong color
-<Text typography="body">Main content text</Text>        // 16px, normal, main color
-<Text typography="label-strong">Form Label</Text>       // 14px, normal, main color
-<Text typography="subtitle-2">Section Header</Text>     // 14px, bold, subtle, uppercase
+<Text typography="title">Modal Title</Text>                      // 20px, bold, strong color
+<Text typography="body">Main content text</Text>                 // 16px, normal, main color
+<Text typography="body" variant="subtle">Subtle text</Text>      // 16px, normal, subtle color
+<Text typography="label-strong">Form Label</Text>                // 14px, normal, main color
+<Text typography="subtitle-2">Section Header</Text>              // 14px, bold, subtle, uppercase
 ```
+
+**Color Priority**: `color` prop > `variant` prop > `typography` default color
 
 **Legacy Props (Backwards Compatible, Web-Only)**
 ```tsx
@@ -56,8 +64,8 @@ Fast lookup guide for all primitive components with essential props and examples
 
 ### Typography Values Reference
 
-| Typography | Size | Weight | Color | Use Case |
-|------------|------|--------|-------|----------|
+| Typography | Size | Weight | Default Color | Use Case |
+|------------|------|--------|---------------|----------|
 | `title-large` | 24px | bold | strong | Large page headers |
 | `title` | 20px | bold | strong | Modal/section titles |
 | `subtitle` | 18px | bold | main | Sub-headings |
@@ -67,6 +75,8 @@ Fast lookup guide for all primitive components with essential props and examples
 | `label-strong` | 14px | normal | main | Form labels, emphasized text |
 | `small` | 14px/12px | normal | subtle | Small text (responsive) |
 | `small-desktop` | 12px | normal | subtle | Always small text |
+
+**Note**: Default color can be overridden with `variant` or `color` prop.
 
 ---
 
