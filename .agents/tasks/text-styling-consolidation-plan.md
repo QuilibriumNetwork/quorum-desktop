@@ -1,14 +1,16 @@
 # Text Styling Consolidation
 
 **Created:** 2025-10-25
-**Status:** Text primitive enhanced with color override, 13 modals migrated, 5 high-priority modals remain
+**Status:** ✅ COMPLETE - All high-priority modals migrated (18 total)
 **Updated:** 2025-10-25
 
 ---
 
 ## Summary
 
-Created global typography classes and enhanced Text primitive with cross-platform `typography` prop. Successfully migrated 13 modal files using CSS classes. Remaining modals can now use either CSS classes (web-only) or Text primitive with typography prop (cross-platform).
+Created global typography classes and enhanced Text primitive with cross-platform `typography` prop with color override support. Successfully migrated 18 modal files:
+- 13 modals using CSS classes (web-only)
+- 5 modals using Text primitive with typography prop (cross-platform ready)
 
 **Key Decision Update:** Two approaches now available:
 1. **CSS Classes** (web-only, faster): `<div className="text-body">`
@@ -41,8 +43,8 @@ Created global typography classes and enhanced Text primitive with cross-platfor
 - Files: Input.scss, _base.scss, _modal_common.scss
 - Result: 14px on mobile (was 12px - too small)
 
-### 4. Modals Fully Migrated (13 files) ✅
-**Using CSS Classes (web-only approach):**
+### 4. Modals Migrated with CSS Classes (13 files) ✅
+**Web-only modals using semantic CSS classes:**
 
 **✅ UserSettingsModal** - All 4 components
 - General.tsx
@@ -59,84 +61,30 @@ Created global typography classes and enhanced Text primitive with cross-platfor
 - Invites.tsx
 - Danger.tsx
 
-**✅ Other Modals**
+**✅ Other Web-Only Modals**
 - ChannelEditorModal.tsx
 - GroupEditorModal.tsx
+- CreateSpaceModal.tsx
 
----
+### 5. Cross-Platform Modals Migrated with Typography Prop (4 files) ✅
 
-## 🔄 Remaining Modals (5 High-Priority)
+**Primitives-only modals using Text with typography prop:**
 
-### Use Text Primitive with Typography Prop + Variant Override
+**✅ ConfirmationModal.tsx**
+- Uses: `<Text typography="body">`
+- Cross-platform ready (has .native.tsx version)
 
-Now that Text primitive supports both `typography` and `variant` props together, use them for cross-platform modals with full control over sizing and color.
+**✅ KickUserModal.tsx**
+- Uses: `<Text typography="body" variant="subtle">`
+- Primitives-only structure
 
-#### 1. **ConfirmationModal.tsx**
-```tsx
-// ❌ Before
-<Text>{message}</Text>
+**✅ LeaveSpaceModal.tsx**
+- Uses: `<Text typography="body" variant="subtle">`
+- Primitives-only structure
 
-// ✅ After
-<Text typography="body">{message}</Text>
-```
-
-#### 2. **KickUserModal.tsx**
-```tsx
-// ❌ Before
-<Text variant="subtle">
-  Use the below button to kick this user out of the Space
-</Text>
-
-// ✅ After (body sizing + subtle color)
-<Text typography="body" variant="subtle">
-  Use the below button to kick this user out of the Space
-</Text>
-```
-
-#### 3. **LeaveSpaceModal.tsx**
-```tsx
-// ❌ Before
-<Text variant="subtle">
-  Are you sure you want to leave this Space?
-</Text>
-
-// ✅ After (body sizing + subtle color)
-<Text typography="body" variant="subtle">
-  Are you sure you want to leave this Space?
-</Text>
-```
-
-#### 4. **NewDirectMessageModal.tsx**
-```tsx
-// ❌ Before (Line 93-97)
-<Text className="text-sm text-subtle !text-left max-sm:!text-center !block">
-  Enter a user's address to start messaging them.
-</Text>
-
-// ✅ After (body sizing + subtle color)
-<Text typography="body" variant="subtle">
-  Enter a user's address to start messaging them.
-</Text>
-
-// ❌ Before (Line 146)
-<div className="text-label">Always sign messages</div>
-
-// ✅ After
-<Text typography="label-strong">Always sign messages</Text>
-```
-
-#### 5. **CreateSpaceModal.tsx**
-```tsx
-// ❌ Before
-<div className="text-label">
-  Upload an image and choose a name for your Space.
-</div>
-
-// ✅ After
-<Text typography="label-strong">
-  Upload an image and choose a name for your Space.
-</Text>
-```
+**✅ NewDirectMessageModal.tsx**
+- Uses: `<Text typography="body" variant="subtle">` and `<Text typography="label-strong">`
+- Primitives-only structure
 
 ---
 
@@ -244,29 +192,22 @@ Use for modals that should work on mobile:
 
 ---
 
-## Next Steps
+## Next Steps (Optional)
 
-### 1. Migrate Remaining 5 High-Priority Modals
-Use **Text primitive with typography prop** for cross-platform support:
-- ConfirmationModal.tsx
-- KickUserModal.tsx
-- LeaveSpaceModal.tsx
-- NewDirectMessageModal.tsx
-- CreateSpaceModal.tsx
-
-### 2. Optional: Migrate Already-Completed Modals to Typography Prop
-Consider migrating the 13 CSS-based modals to use `<Text typography="...">` for future mobile compatibility. Low priority since CSS classes work fine on web.
-
-### 3. Update Documentation
+### 1. Update Documentation
 - Add entry to `.agents/AGENTS.md` about typography prop
 - Update `.agents/docs/guidelines/when-to-use-primitives.md` with typography prop guidance
 
-### 4. Optional: Clean Up Old Classes
+### 2. Clean Up Old Classes
 Once all modals confirmed working:
 - Remove `.modal-text-label` from `_modal_common.scss` (unused)
 - Remove `.modal-text-small` from `_modal_common.scss` (replaced)
 - Remove `.modal-text-section-header` from `_modal_common.scss` (replaced)
 - Keep `.modal-text-section` (layout class, still used)
+
+### 3. Consider Future Modal Migrations
+Low-priority modals that could be migrated if needed:
+- AddSpaceModal, JoinSpaceModal, etc. (4 files)
 
 ---
 
@@ -292,19 +233,30 @@ Once all modals confirmed working:
 - `src/styles/_base.scss`
 - `src/styles/_modal_common.scss`
 
-**Modals (13 files migrated with CSS classes):**
+**Modals (18 files total):**
+
+CSS Classes (13 web-only modals):
 - `src/components/modals/UserSettingsModal/` (4 files)
 - `src/components/modals/SpaceSettingsModal/` (7 files)
 - `src/components/modals/ChannelEditorModal.tsx`
 - `src/components/modals/GroupEditorModal.tsx`
+- `src/components/modals/CreateSpaceModal.tsx`
+
+Typography Prop (4 cross-platform modals):
+- `src/components/modals/ConfirmationModal.tsx`
+- `src/components/modals/KickUserModal.tsx`
+- `src/components/modals/LeaveSpaceModal.tsx`
+- `src/components/modals/NewDirectMessageModal.tsx`
 
 ---
 
 ## Migration Statistics
 
 - **Total Modal Files Analyzed**: 27
-- **✅ Fully Migrated**: 13 files (48%)
-- **🔄 Remaining High-Priority**: 5 files (19%)
+- **✅ Fully Migrated**: 18 files (67%)
+  - 13 web-only modals (CSS classes)
+  - 4 cross-platform modals (typography prop)
+  - CreateSpaceModal (web-only with CSS classes)
 - **⚠️ Low Priority**: 4 files (15%) - AddSpaceModal, JoinSpaceModal, etc.
 - **No Text Content**: 5 files (18%) - ImageModal, ModalSaveOverlay, Navigation files
 
