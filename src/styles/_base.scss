@@ -107,7 +107,7 @@ mark {
   color: rgb(var(--color-text-main));
   margin-bottom: $s-1;
   display: block;
-  font-size: $text-xs;
+  font-size: $text-xs-responsive;  // 14px mobile, 12px desktop - better readability on mobile
   text-transform: uppercase;
   letter-spacing: $tracking-wider;
 }

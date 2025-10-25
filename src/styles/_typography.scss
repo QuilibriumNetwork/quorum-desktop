@@ -1,0 +1,58 @@
+/**
+ * Global Typography Classes
+ *
+ * PURPOSE: Semantic typography classes for consistent text styling across the app
+ * USAGE: Use these classes for common text patterns instead of combining multiple utilities
+ *
+ */
+
+@use 'variables' as *;
+
+.text-title {
+  font-size: $text-xl;
+  font-weight: $font-bold;
+  line-height: $text-xl-lh;
+  color: var(--color-text-strong);
+}
+
+.text-subtitle {
+  font-size: $text-lg;
+  font-weight: $font-bold;
+  line-height: $text-lg-lh;
+  color: var(--color-text-main);
+}
+
+.text-label {
+  font-size: $text-sm;
+  font-weight: $font-normal;
+  line-height: $text-sm-lh;
+  color: var(--color-text-subtle);
+}
+
+.text-label-emphasis {
+  font-size: $text-sm;
+  font-weight: $font-semibold;
+  line-height: $text-sm-lh;
+  color: var(--color-text-subtle);
+}
+
+.text-body {
+  font-size: $text-base;
+  font-weight: $font-normal;
+  line-height: $text-base-lh;
+  color: var(--color-text-main);
+}
+
+.text-small {
+  font-size: $text-xs-responsive;  // 14px mobile → 12px desktop
+  font-weight: $font-normal;
+  line-height: $text-xs-responsive-lh;
+  color: var(--color-text-muted);
+}
+
+.text-small-desktop {
+  font-size: $text-xs;  // Always 12px
+  font-weight: $font-normal;
+  line-height: $text-xs-lh;
+  color: var(--color-text-muted);
+}

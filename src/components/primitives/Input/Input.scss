@@ -94,7 +94,7 @@
   border-radius: $rounded-lg;
   padding: $s-2-5 $s-4;
   height: $s-10 + $s-0-5;
-  font-size: $s-4;
+  font-size: $font-input;  // 16px - prevents iOS zoom on mobile
   margin: 0;
   color: var(--color-field-text);
   outline: 0 none;
@@ -264,7 +264,7 @@
   border-radius: $rounded-full; // Full pill shape
   padding: $s-2-5 $s-4;
   height: $s-10 + $s-0-5;
-  font-size: $s-4;
+  font-size: $font-input;  // 16px - prevents iOS zoom on mobile
   margin: 0;
   color: #034081; // Brand blue-700 for text
   outline: 0 none;
@@ -332,14 +332,14 @@
 
 .input-helper-text {
   margin-top: $s-1;
-  font-size: $text-xs;
+  font-size: $text-xs-responsive;  // 14px mobile, 12px desktop - better readability on mobile
   color: var(--color-text-subtle);
   text-align: left;
 }
 
 .input-error-message {
   margin-top: $s-1;
-  font-size: $text-xs;
+  font-size: $text-xs-responsive;  // 14px mobile, 12px desktop - better readability on mobile
   color: var(--color-text-danger);
   text-align: left;
 }
