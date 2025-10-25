@@ -90,10 +90,7 @@ const NewDirectMessageModal: React.FunctionComponent<
         margin="auto"
       >
         <Container margin="none" className="mb-4">
-          <Text
-            className="text-sm text-subtle !text-left max-sm:!text-center !block"
-            style={{ textAlign: 'left' }}
-          >
+          <Text typography="body" variant="subtle">
             {t`Enter a user's address to start messaging them.`}
           </Text>
         </Container>
@@ -143,7 +140,7 @@ const NewDirectMessageModal: React.FunctionComponent<
         <Container margin="none">
           <FlexRow className="items-center justify-between">
             <FlexRow className="items-center">
-              <div className="text-label">{t`Always sign messages`}</div>
+              <Text typography="label-strong">{t`Always sign messages`}</Text>
               <Tooltip
                 id="dm-nonrepudiable-tip"
                 content={t`You can change this later for this conversation by clicking the lock icon in the Conversation view.`}

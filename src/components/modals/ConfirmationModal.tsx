@@ -47,7 +47,7 @@ const ConfirmationModal: React.FunctionComponent<ConfirmationModalProps> = ({
       <Container>
         {/* Main message */}
         <Container>
-          <Text>
+          <Text typography="body">
             {message}
           </Text>
         </Container>

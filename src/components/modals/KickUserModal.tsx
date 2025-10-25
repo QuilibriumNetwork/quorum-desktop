@@ -71,7 +71,7 @@ const KickUserModal: React.FunctionComponent<KickUserModalProps> = (props) => {
 
       <Container>
         <Container>
-          <Text variant="subtle">
+          <Text typography="body" variant="subtle">
             {t`Use the below button to kick this user out of the Space`}
           </Text>
         </Container>

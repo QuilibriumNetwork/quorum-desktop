@@ -36,7 +36,7 @@ const LeaveSpaceModal: React.FunctionComponent<LeaveSpaceModalProps> = ({
     >
       <Container>
         <Container>
-          <Text variant="subtle">
+          <Text typography="body" variant="subtle">
             <Trans>
               Are you sure you want to leave this Space? You won't be able to
               rejoin unless you are re-invited.
