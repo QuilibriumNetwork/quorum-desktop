@@ -179,7 +179,7 @@ const General: React.FunctionComponent<GeneralProps> = ({
           )}
         </div>
         <Spacer size="md" direction="vertical" borderTop={true} />
-        <div className="text-subtitle-2">
+        <div className="text-subtitle-2 mb-2">
           <Trans>Default Channel</Trans>
         </div>
         <div className="modal-content-info">
@@ -200,7 +200,7 @@ const General: React.FunctionComponent<GeneralProps> = ({
           />
         </div>
         <Spacer size="md" direction="vertical" borderTop={true} />
-        <div className="text-subtitle-2">
+        <div className="text-subtitle-2 mb-2">
           <Trans>Privacy Settings</Trans>
         </div>
         <div className="modal-content-info">
@@ -232,7 +232,7 @@ const General: React.FunctionComponent<GeneralProps> = ({
         {fixes && fixes.length > 0 && (
           <>
             <Spacer size="md" direction="vertical" borderTop={true} />
-            <div className="text-subtitle-2">
+            <div className="text-subtitle-2 mb-2">
               <Trans>Fixes</Trans>
             </div>
             <div className="modal-content-info">
