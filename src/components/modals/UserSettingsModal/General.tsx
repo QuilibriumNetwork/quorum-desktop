@@ -80,7 +80,7 @@ const General: React.FunctionComponent<GeneralProps> = ({
         )}
         <div className="modal-text-section">
           <Input
-            className="w-full md:w-80 modal-input-text"
+            className="w-full md:w-80"
             value={displayName}
             onChange={setDisplayName}
             label={t`Display Name`}
@@ -105,8 +105,8 @@ const General: React.FunctionComponent<GeneralProps> = ({
           </div>
         )}
         <div className="modal-content-info">
-          <div className="modal-text-label !text-xs !text-main">{t`Account Address`}</div>
-          <div className="pt-2 mb-4 modal-text-small text-main">
+          <div className="text-subtitle-2">{t`Account Address`}</div>
+          <div className="pt-2 mb-4 text-label-strong">
             {t`This is your public address and is safe to share with anyone you want to interact with.`}
           </div>
           <div className="modal-input-display text-sm lg:text-base bg-field">

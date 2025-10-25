@@ -33,10 +33,15 @@
     border: $border solid transparent;
     border-radius: $rounded-lg;
     color: var(--color-field-text);
-    font-size: $text-sm;
+    font-size: $font-input;  // 16px - prevents iOS zoom on mobile
     line-height: $leading-normal;
     cursor: pointer;
     transition: all $duration-150 $ease-in-out;
+
+    // Use smaller text on larger screens for density
+    @media (min-width: $screen-md) {
+      font-size: $text-sm;  // 14px on desktop
+    }
 
     &:hover:not(:disabled) {
       background-color: var(--color-field-bg-focus);

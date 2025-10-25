@@ -1,5 +1,13 @@
 import * as React from 'react';
-import { Button, Input, Icon, Spacer, Callout, Text, Select } from '../../primitives';
+import {
+  Button,
+  Input,
+  Icon,
+  Spacer,
+  Callout,
+  Text,
+  Select,
+} from '../../primitives';
 import { Trans } from '@lingui/react/macro';
 import { t } from '@lingui/core/macro';
 import { DefaultImages } from '../../../utils';
@@ -64,72 +72,80 @@ const Account: React.FunctionComponent<AccountProps> = ({
 }) => {
   const { currentPasskeyInfo: userInfo } = usePasskeysContext();
   const { data: isSpaceOwner } = useSpaceOwner({ spaceId });
-  const { confirmationStep, handleLeaveClick, error: leaveError } = useSpaceLeaving();
+  const {
+    confirmationStep,
+    handleLeaveClick,
+    error: leaveError,
+  } = useSpaceLeaving();
 
   // Get current user's roles
-  const { userRoles } = useUserRoleDisplay(
-    userInfo?.address || '',
-    roles
-  );
+  const { userRoles } = useUserRoleDisplay(userInfo?.address || '', roles);
 
   return (
     <>
       <div className="modal-content-header">
         <div className="modal-text-section">
-          <div className="text-xl font-bold">
-            <Trans>Account Settings for This Space</Trans>
+          <div className="text-title">
+            <Trans>Account Settings</Trans>
           </div>
-          <div className="pt-2 text-sm text-main">
-            <Trans>Change your avatar and name for this Space.</Trans>
+          <div className="pt-2 text-body">
+            <Trans>Manage your settings for this Space.</Trans>
           </div>
-        </div>
-      </div>
-      <div className="modal-content-header-avatar">
-        <div
-          id="space-profile-icon-tooltip-target"
-          className={`avatar-upload ${!fileData && (!currentPasskeyInfo?.pfpUrl || currentPasskeyInfo.pfpUrl.includes(DefaultImages.UNKNOWN_USER)) ? 'empty' : ''}`}
-          style={
-            fileData ||
-            (currentPasskeyInfo?.pfpUrl &&
-              !currentPasskeyInfo.pfpUrl.includes(DefaultImages.UNKNOWN_USER))
-              ? {
-                  backgroundImage: `url(${getProfileImageUrl()})`,
-                }
-              : {}
-          }
-          {...getRootProps()}
-        >
-          <input {...getInputProps()} />
-          {!fileData &&
-            (!currentPasskeyInfo?.pfpUrl ||
-              currentPasskeyInfo.pfpUrl.includes(
-                DefaultImages.UNKNOWN_USER
-              )) && <Icon name="image" size="2xl" className="icon" />}
-        </div>
-        {!isAvatarUploading && !isAvatarDragActive && (
-          <ReactTooltip
-            id="space-profile-icon-tooltip"
-            content={t`Upload an avatar for this Space - PNG or JPG - Optimal ratio 1:1`}
-            place="bottom"
-            className="!w-[400px]"
-            anchorSelect="#space-profile-icon-tooltip-target"
-          />
-        )}
-        <div className="modal-text-section">
-          <Input
-            className="w-full md:w-80 modal-input-text"
-            value={displayName}
-            onChange={setDisplayName}
-            label={t`Display Name`}
-            labelType="static"
-            error={hasValidationError}
-            errorMessage={
-              hasValidationError ? t`Display name is required` : undefined
-            }
-          />
         </div>
       </div>
       <div className="modal-content-section">
+        <div className="text-subtitle-2">
+          <Trans>Your Details</Trans>
+        </div>
+        <div className="text-label-strong pt-1">
+          <Trans>Change your avatar and name for this Space</Trans>
+        </div>
+        <div className="flex items-start gap-4 pt-4">
+          <div
+            id="space-profile-icon-tooltip-target"
+            className={`avatar-upload ${!fileData && (!currentPasskeyInfo?.pfpUrl || currentPasskeyInfo.pfpUrl.includes(DefaultImages.UNKNOWN_USER)) ? 'empty' : ''}`}
+            style={
+              fileData ||
+              (currentPasskeyInfo?.pfpUrl &&
+                !currentPasskeyInfo.pfpUrl.includes(DefaultImages.UNKNOWN_USER))
+                ? {
+                    backgroundImage: `url(${getProfileImageUrl()})`,
+                  }
+                : {}
+            }
+            {...getRootProps()}
+          >
+            <input {...getInputProps()} />
+            {!fileData &&
+              (!currentPasskeyInfo?.pfpUrl ||
+                currentPasskeyInfo.pfpUrl.includes(
+                  DefaultImages.UNKNOWN_USER
+                )) && <Icon name="image" size="2xl" className="icon" />}
+          </div>
+          {!isAvatarUploading && !isAvatarDragActive && (
+            <ReactTooltip
+              id="space-profile-icon-tooltip"
+              content={t`Upload an avatar for this Space - PNG or JPG - Optimal ratio 1:1`}
+              place="bottom"
+              className="!w-[400px]"
+              anchorSelect="#space-profile-icon-tooltip-target"
+            />
+          )}
+          <div className="flex-1">
+            <Input
+              className="w-full md:w-80"
+              value={displayName}
+              onChange={setDisplayName}
+              label={t`Display Name`}
+              labelType="static"
+              error={hasValidationError}
+              errorMessage={
+                hasValidationError ? t`Display name is required` : undefined
+              }
+            />
+          </div>
+        </div>
+        <Spacer size="lg" direction="vertical" />
         {avatarFileError && (
           <div className="mb-4">
             <div className="error-label flex items-center justify-between">
@@ -145,7 +161,7 @@ const Account: React.FunctionComponent<AccountProps> = ({
         {userRoles.length > 0 && (
           <>
             <Spacer size="md" direction="vertical" borderTop={true} />
-            <div className="modal-text-label">
+            <div className="text-subtitle-2">
               <Trans>Your Roles</Trans>
             </div>
             <div className="flex flex-wrap items-start gap-1 pt-2">
@@ -167,16 +183,18 @@ const Account: React.FunctionComponent<AccountProps> = ({
 
         {/* Notification Settings */}
         <Spacer size="md" direction="vertical" borderTop={true} />
-        <div className="modal-text-label">
+        <div className="text-subtitle-2">
           <Trans>Notifications</Trans>
         </div>
-        <div className="modal-text-small text-main pt-1">
+        <div className="text-label-strong pt-1">
           <Trans>Select which types of notifications you want to receive</Trans>
         </div>
         <div className="pt-4">
           <Select
             value={selectedMentionTypes}
-            onChange={(value: string | string[]) => setSelectedMentionTypes(value as NotificationTypeId[])}
+            onChange={(value: string | string[]) =>
+              setSelectedMentionTypes(value as NotificationTypeId[])
+            }
             multiple={true}
             placeholder={t`Select`}
             showSelectAllOption={true}
@@ -221,14 +239,11 @@ const Account: React.FunctionComponent<AccountProps> = ({
               </div>
               <div className="pt-2 text-sm">
                 <Trans>
-                  You won't be able to rejoin unless you are re-invited. Your existing messages will NOT be deleted.
+                  You won't be able to rejoin unless you are re-invited. Your
+                  existing messages will NOT be deleted.
                 </Trans>
               </div>
-              {leaveError && (
-                <div className="pt-4 text-sm">
-                  {leaveError}
-                </div>
-              )}
+              {leaveError && <div className="pt-4 text-sm">{leaveError}</div>}
               <div className="pt-4 pb-2">
                 <Button
                   type="danger-outline"

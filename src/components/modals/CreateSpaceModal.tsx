@@ -98,12 +98,12 @@ const CreateSpaceModal: React.FunctionComponent<CreateSpaceModalProps> = (
             )}
           </div>
         </div>
-        <div className="mt-4 text-sm text-subtle">
+        <div className="mt-4 text-label">
           <Trans>
             Upload an image and choose a name for your Space.
           </Trans>
         </div>
-                <div className="mt-4 text-sm text-subtle">
+        <div className="mt-4 text-label">
           <Trans> Default Space settings provide the most typical chat experience, but for higher privacy guarantees, review the Advanced Settings.
           </Trans>
         </div>
@@ -111,7 +111,7 @@ const CreateSpaceModal: React.FunctionComponent<CreateSpaceModalProps> = (
           <div className="mt-4 pt-5 select-none cursor-default">
             <div className="flex flex-row justify-between pb-2">
               <div className="flex flex-row items-center">
-                <div className="modal-text-small text-main">
+                <div className="text-label-strong">
                   <Trans>Require Message Signing</Trans>
                 </div>
                 <Tooltip
@@ -124,6 +124,7 @@ const CreateSpaceModal: React.FunctionComponent<CreateSpaceModalProps> = (
                   <Icon
                     name="info-circle"
                     className="text-main hover:text-strong cursor-pointer ml-2"
+                    size="sm"
                   />
                 </Tooltip>
               </div>
@@ -134,7 +135,7 @@ const CreateSpaceModal: React.FunctionComponent<CreateSpaceModalProps> = (
             </div>
             <div className="flex flex-row justify-between pb-2">
               <div className="flex flex-row items-center">
-                <div className="modal-text-small text-main">
+                <div className="text-label-strong">
                   Directly joinable by link
                 </div>
                 <Tooltip
@@ -147,6 +148,7 @@ const CreateSpaceModal: React.FunctionComponent<CreateSpaceModalProps> = (
                   <Icon
                     name="info-circle"
                     className="text-main hover:text-strong cursor-pointer ml-2"
+                    size="sm"
                   />
                 </Tooltip>
               </div>

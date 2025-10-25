@@ -43,10 +43,10 @@ const Invites: React.FunctionComponent<InvitesProps> = ({
     <>
       <div className="modal-content-header">
         <div className="modal-text-section">
-          <div className="text-xl font-bold">
+          <div className="text-title">
             <Trans>Invites</Trans>
           </div>
-          <div className="pt-2 text-sm text-main">
+          <div className="pt-2 text-body">
             <Trans>
               Send invites to people you've previously had
               conversations with. An invite button will appear
@@ -118,7 +118,7 @@ const Invites: React.FunctionComponent<InvitesProps> = ({
             direction="vertical"
           />
           <div>
-            <div className="modal-text-label">
+            <div className="text-subtitle-2">
               <Trans>Public Invite Links</Trans>
             </div>
 
@@ -147,7 +147,7 @@ const Invites: React.FunctionComponent<InvitesProps> = ({
             {!space?.inviteUrl && !generating ? (
               // STATE 1: No link exists and not generating - Show generate button
               <div className="mt-4">
-                <div className="text-sm text-subtle mb-4 max-w-[500px]">
+                <div className="text-label mb-4 max-w-[500px]">
                   <Trans>
                     Public invite links allow anyone with access to the link to join your Space.
                     Consider who you share the link with and where you post it.
@@ -185,7 +185,8 @@ const Invites: React.FunctionComponent<InvitesProps> = ({
                   >
                     <Icon
                       name="info-circle"
-                      className="text-main hover:text-strong cursor-pointer ml-2"
+                      className="text-main hover:text-strong cursor-pointer ml-2 -mt-1"
+                      size="sm"
                     />
                   </Tooltip>
                 </div>

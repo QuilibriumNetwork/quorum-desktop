@@ -114,18 +114,18 @@ const ChannelEditorModal: React.FunctionComponent<{
               onIconSelect={handleIconChange}
               defaultIcon="hashtag"
             />
-            <Text className="modal-text-small text-main">
+            <div className="text-label-strong">
               <Trans>Channel Icon</Trans>
-            </Text>
+            </div>
           </FlexRow>
         </Container>
 
         {isEditMode && (
           <Container className="mb-2 max-sm:mb-1">
             <FlexRow className="items-center justify-between">
-              <Text className="modal-text-small text-main">
+              <div className="text-label-strong">
                 <Trans>Pin to top</Trans>
-              </Text>
+              </div>
               <Switch
                 value={isPinned}
                 onChange={handlePinChange}
@@ -137,9 +137,9 @@ const ChannelEditorModal: React.FunctionComponent<{
 
         <Container className="mb-2 max-sm:mb-1">
           <FlexRow className="items-center justify-between">
-            <Text className="modal-text-small text-main">
+            <div className="text-label-strong">
               <Trans>Read only</Trans>
-            </Text>
+            </div>
             <Switch
               value={isReadOnly}
               onChange={handleReadOnlyChange}
@@ -152,9 +152,9 @@ const ChannelEditorModal: React.FunctionComponent<{
           <Container className="mb-4 max-sm:mb-1">
             <FlexRow className="items-center justify-between max-sm:flex-col max-sm:items-stretch">
               <FlexRow className="items-center">
-                <Text className="modal-text-small text-main whitespace-nowrap max-sm:mb-2">
+                <div className="text-label-strong whitespace-nowrap max-sm:mb-2">
                   <Trans>Channel Managers</Trans>
-                </Text>
+                </div>
                 <Tooltip
                   id="channel-managers-tooltip"
                   content={t`Select any existing role as managers for this channel. Managers have post, delete, and pin permissions on ANY message by default. If no managers are selected, only the Space owner can manage the channel.`}

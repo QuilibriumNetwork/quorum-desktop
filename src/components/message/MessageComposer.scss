@@ -249,7 +249,7 @@ html:not(.dark) .message-composer-row {
   padding-top: $s-1;
   padding-bottom: $s-1;
   cursor: pointer;
-  font-size: $text-xs;
+  font-size: $font-label-small;  // 14px mobile, 12px desktop - better readability on mobile
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -406,7 +406,7 @@ html:not(.dark) .message-composer-row {
 }
 
 .message-composer-mention-address {
-  font-size: $text-xs;
+  font-size: $font-label-small;  // 14px mobile, 12px desktop - better readability on mobile
   color: var(--color-text-subtle);
   overflow: hidden;
   text-overflow: ellipsis;
@@ -427,7 +427,7 @@ html:not(.dark) .message-composer-row {
 }
 
 .message-composer-mention-role-tag {
-  font-size: $text-xs;
+  font-size: $font-label-small;  // 14px mobile, 12px desktop - better readability on mobile
   color: var(--color-text-subtle);
   font-family: monospace;
   overflow: hidden;

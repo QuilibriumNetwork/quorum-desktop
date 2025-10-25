@@ -143,7 +143,7 @@ const NewDirectMessageModal: React.FunctionComponent<
         <Container margin="none">
           <FlexRow className="items-center justify-between">
             <FlexRow className="items-center">
-              <Text className="modal-text-small text-subtle">{t`Always sign messages`}</Text>
+              <div className="text-label">{t`Always sign messages`}</div>
               <Tooltip
                 id="dm-nonrepudiable-tip"
                 content={t`You can change this later for this conversation by clicking the lock icon in the Conversation view.`}
@@ -153,7 +153,7 @@ const NewDirectMessageModal: React.FunctionComponent<
               >
                 <Icon
                   name="info-circle"
-                  size="xs"
+                  size="sm"
                   className="text-subtle hover:text-strong cursor-pointer ml-2"
                 />
               </Tooltip>

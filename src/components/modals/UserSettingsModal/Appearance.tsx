@@ -22,8 +22,8 @@ const Appearance: React.FunctionComponent<AppearanceProps> = ({
     <>
       <div className="modal-content-header">
         <div className="modal-text-section">
-          <div className="modal-text-section-header">{t`Appearance`}</div>
-          <div className="pt-2 modal-text-small text-main">
+          <div className="text-title">{t`Appearance`}</div>
+          <div className="pt-2 text-body">
             {t`Choose your preferred theme for Quorum.`}
           </div>
         </div>
@@ -37,7 +37,7 @@ const Appearance: React.FunctionComponent<AppearanceProps> = ({
 
         <div className="mt-8">
           <Spacer size="md" direction="vertical" borderTop={true} />
-          <div className="modal-text-label pb-2">{t`Language`}</div>
+          <div className="text-subtitle-2 pb-2">{t`Language`}</div>
           <div className="flex flex-row gap-2 items-center">
             <Select
               value={language}

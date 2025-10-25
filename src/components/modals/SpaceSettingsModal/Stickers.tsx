@@ -37,10 +37,10 @@ const Stickers: React.FunctionComponent<StickersProps> = ({
     <>
       <div className="modal-content-header">
         <div className="modal-text-section">
-          <div className="text-xl font-bold">
+          <div className="text-title">
             <Trans>Stickers</Trans>
           </div>
-          <div className="pt-2 text-sm text-main">
+          <div className="pt-2 text-body">
             <Trans>
               Add up to 50 custom stickers. Custom stickers can
               only be used within a Space. You can upload PNG,

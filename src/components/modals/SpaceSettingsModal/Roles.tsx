@@ -38,10 +38,10 @@ const Roles: React.FunctionComponent<RolesProps> = ({
     <>
       <div className="modal-content-header">
         <div className="modal-text-section">
-          <div className="text-xl font-bold">
+          <div className="text-title">
             <Trans>Roles</Trans>
           </div>
-          <div className="pt-2 text-sm text-main">
+          <div className="pt-2 text-body">
             <Trans>
               Click on the role name and tag to edit them.
             </Trans>

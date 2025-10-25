@@ -21,8 +21,8 @@ const Notifications: React.FunctionComponent<NotificationsProps> = ({
     <>
       <div className="modal-content-header">
         <div className="modal-text-section">
-          <div className="modal-text-section-header">{t`Notifications`}</div>
-          <div className="pt-2 modal-text-small text-main">
+          <div className="text-title">{t`Notifications`}</div>
+          <div className="pt-2 text-body">
             {t`Manage desktop notification preferences for new messages.`}
           </div>
         </div>
@@ -31,7 +31,7 @@ const Notifications: React.FunctionComponent<NotificationsProps> = ({
         <div className="modal-content-info">
           <div className="flex flex-row justify-between pb-2">
             <div className="flex flex-row items-center">
-              <div className="modal-text-small text-main">
+              <div className="text-label-strong">
                 {t`Desktop Notifications`}
               </div>
               <Tooltip

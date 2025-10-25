@@ -118,7 +118,7 @@ const General: React.FunctionComponent<GeneralProps> = ({
       </div>
       <div className="modal-content-section">
         <Spacer size="md" direction="vertical" borderTop={true} />
-        <div className="modal-text-label">
+        <div className="text-subtitle-2">
           <Trans>Space Banner</Trans>
         </div>
         <div className="modal-content-info">
@@ -179,7 +179,7 @@ const General: React.FunctionComponent<GeneralProps> = ({
           )}
         </div>
         <Spacer size="md" direction="vertical" borderTop={true} />
-        <div className="modal-text-label">
+        <div className="text-subtitle-2">
           <Trans>Default Channel</Trans>
         </div>
         <div className="modal-content-info">
@@ -200,13 +200,13 @@ const General: React.FunctionComponent<GeneralProps> = ({
           />
         </div>
         <Spacer size="md" direction="vertical" borderTop={true} />
-        <div className="modal-text-label">
+        <div className="text-subtitle-2">
           <Trans>Privacy Settings</Trans>
         </div>
         <div className="modal-content-info">
           <div className="flex flex-row justify-between">
             <div className="flex flex-row items-center">
-              <div className="modal-text-small text-main">
+              <div className="text-label-strong">
                 <Trans>Require Message Signing</Trans>
               </div>
               <Tooltip
@@ -232,7 +232,7 @@ const General: React.FunctionComponent<GeneralProps> = ({
         {fixes && fixes.length > 0 && (
           <>
             <Spacer size="md" direction="vertical" borderTop={true} />
-            <div className="modal-text-label">
+            <div className="text-subtitle-2">
               <Trans>Fixes</Trans>
             </div>
             <div className="modal-content-info">

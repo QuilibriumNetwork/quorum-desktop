@@ -37,10 +37,10 @@ const Emojis: React.FunctionComponent<EmojisProps> = ({
     <>
       <div className="modal-content-header">
         <div className="modal-text-section">
-          <div className="text-xl font-bold">
+          <div className="text-title">
             <Trans>Emojis</Trans>
           </div>
-          <div className="pt-2 text-sm text-main">
+          <div className="pt-2 text-body">
             <Trans>
               Add up to 50 custom emoji. Custom emojis can only
               be used within a Space. You can upload PNG, JPG or

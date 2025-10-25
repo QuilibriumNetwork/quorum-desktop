@@ -8,51 +8,68 @@
 
 @use 'variables' as *;
 
+.text-title-large {
+  font-size: $text-2xl;
+  font-weight: $font-bold;
+  line-height: $text-2xl-lh;
+  color: rgb(var(--color-text-strong));
+}
+
 .text-title {
   font-size: $text-xl;
   font-weight: $font-bold;
   line-height: $text-xl-lh;
-  color: var(--color-text-strong);
+  color: rgb(var(--color-text-strong));
 }
 
 .text-subtitle {
   font-size: $text-lg;
   font-weight: $font-bold;
   line-height: $text-lg-lh;
-  color: var(--color-text-main);
+  color: rgb(var(--color-text-main));
 }
 
-.text-label {
+.text-subtitle-2 {
   font-size: $text-sm;
-  font-weight: $font-normal;
+  font-weight: $font-bold;
   line-height: $text-sm-lh;
-  color: var(--color-text-subtle);
-}
-
-.text-label-emphasis {
-  font-size: $text-sm;
-  font-weight: $font-semibold;
-  line-height: $text-sm-lh;
-  color: var(--color-text-subtle);
+  text-transform: uppercase;
+  letter-spacing: $tracking-wider;
+  color: rgb(var(--color-text-subtle));
 }
 
 .text-body {
   font-size: $text-base;
   font-weight: $font-normal;
   line-height: $text-base-lh;
-  color: var(--color-text-main);
+  color: rgb(var(--color-text-main));
+}
+
+.text-label {
+  font-size: $text-sm;
+  font-weight: $font-normal;
+  line-height: $text-sm-lh;
+  color: rgb(var(--color-text-subtle));
+}
+
+// Labels associates with toggles in Modals
+.text-label-strong {
+  font-size: $text-sm;
+  font-weight: $font-normal;
+  line-height: $text-sm-lh;
+  color: rgb(var(--color-text-main)) !important;
 }
 
 .text-small {
-  font-size: $text-xs-responsive;  // 14px mobile → 12px desktop
+  font-size: $text-xs-responsive; // 14px mobile → 12px desktop
   font-weight: $font-normal;
   line-height: $text-xs-responsive-lh;
-  color: var(--color-text-muted);
+  color: rgb(var(--color-text-subtle));
 }
 
 .text-small-desktop {
-  font-size: $text-xs;  // Always 12px
+  font-size: $text-xs; // Always 12px
   font-weight: $font-normal;
   line-height: $text-xs-lh;
-  color: var(--color-text-muted);
+  color: rgb(var(--color-text-subtle));
 }

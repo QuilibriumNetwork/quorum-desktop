@@ -34,23 +34,23 @@ const Privacy: React.FunctionComponent<PrivacyProps> = ({
     <>
       <div className="modal-content-header">
         <div className="modal-text-section">
-          <div className="modal-text-section-header">{t`Privacy/Security`}</div>
-          <div className="pt-2 modal-text-small text-main">
+          <div className="text-title">{t`Privacy/Security`}</div>
+          <div className="pt-2 text-body">
             {t`Manage devices, and privacy conditions for messaging and synchronization.`}
           </div>
         </div>
       </div>
       <div className="modal-content-section">
         <Spacer size="md" direction="vertical" borderTop={true} />
-        <div className="modal-text-label">{t`Security`}</div>
+        <div className="text-subtitle-2">{t`Security`}</div>
 
-        <div className="pt-2 modal-text-small text-main mb-4">
+        <div className="pt-2 text-label-strong mb-4">
           {t`Adjust security-related settings, which may impact user  experience but increase the security of your Quorum account.`}
         </div>
         <div className="modal-content-info">
           <div className="flex flex-row justify-between pb-2">
             <div className="flex flex-row items-center">
-              <div className="modal-text-small text-main">
+              <div className="text-label-strong">
                 {t`Enable sync`}
               </div>
               <Tooltip
@@ -61,6 +61,7 @@ const Privacy: React.FunctionComponent<PrivacyProps> = ({
                 <Icon
                   name="info-circle"
                   className="text-main hover:text-strong cursor-pointer ml-2"
+                  size="sm"
                 />
               </Tooltip>
             </div>
@@ -69,7 +70,7 @@ const Privacy: React.FunctionComponent<PrivacyProps> = ({
           </div>
           <div className="flex flex-row justify-between">
             <div className="flex flex-row items-center">
-              <div className="modal-text-small text-main">
+              <div className="text-label-strong">
                 {t`Always sign Direct Messages`}
               </div>
               <Tooltip
@@ -80,6 +81,7 @@ const Privacy: React.FunctionComponent<PrivacyProps> = ({
                 <Icon
                   name="info-circle"
                   className="text-main hover:text-strong cursor-pointer ml-2"
+                  size="sm"
                 />
               </Tooltip>
             </div>
@@ -92,7 +94,7 @@ const Privacy: React.FunctionComponent<PrivacyProps> = ({
         </div>
 
         <Spacer size="md" direction="vertical" borderTop={true} />
-        <div className="modal-text-label pb-2">Devices</div>
+        <div className="text-subtitle-2 pb-2">Devices</div>
         {removedDevices.length > 0 && (
           <div className="bg-warning/10 border border-warning/20 rounded p-2 mb-2 text-sm text-warning">
             <Icon name="warning" className="mr-1" />
@@ -170,9 +172,9 @@ const Privacy: React.FunctionComponent<PrivacyProps> = ({
 
         <div className="modal-content-info !pt-4">
           <Spacer size="md" direction="vertical" borderTop={true} />
-          <div className="modal-text-label">{t`Key Export`}</div>
+          <div className="text-subtitle-2">{t`Key Export`}</div>
 
-          <div className="pt-2 modal-text-small text-main">
+          <div className="pt-2 text-label-strong">
             {t`Export your key to a file by clicking this button. Do not share this file with anyone else or they can impersonate you or steal your Space's Apex earnings.`}
           </div>
           <div className="pt-4 pb-8 max-w-[100px]">

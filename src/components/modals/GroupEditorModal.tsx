@@ -79,9 +79,9 @@ const GroupEditorModal: React.FunctionComponent<{
               selectedIconColor={iconColor}
               onIconSelect={handleIconChange}
             />
-            <Text className="modal-text-small text-main">
+            <div className="text-label-strong">
               <Trans>Group Icon (optional)</Trans>
-            </Text>
+            </div>
           </FlexRow>
         </Container>
         <FlexRow className="justify-end gap-2 mt-6 max-sm:flex-col max-sm:gap-4">

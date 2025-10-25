@@ -176,9 +176,9 @@ const ConversationSettingsModal: React.FC<ConversationSettingsModalProps> = ({
         <FlexColumn gap="md">
           <FlexBetween align="center">
             <FlexRow gap="sm" align="center">
-              <Text variant="default" size="sm">
+              <div className="text-label-strong">
                 {t`Always sign messages`}
-              </Text>
+              </div>
               <Tooltip
                 id="conv-repudiability-tooltip"
                 content={t`When you sign a message, you are confirming that it comes from your key. When you don't sign a message, you have plausible deniability. The default for all conversations can be changed in User Settings.`}

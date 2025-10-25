@@ -23,10 +23,10 @@ const Danger: React.FunctionComponent<DangerProps> = ({
     <>
       <div className="modal-content-header">
         <div className="modal-text-section">
-          <div className="text-xl font-bold text-danger">
+          <div className="text-title text-danger">
             <Trans>Delete this space</Trans>
           </div>
-          <div className="pt-2 text-sm text-main">
+          <div className="pt-2 text-body">
             <Trans>This action cannot be undone and will permanently remove all the Space settings. To delete the Space, you must first delete all Channels.</Trans>
           </div>
           {deleteError && (
