@@ -10,8 +10,24 @@ Fast lookup guide for all primitive components with essential props and examples
 
 ## 📝 Text & Typography
 
-### Text
+### Text (Cross-Platform)
 
+**NEW: Typography Prop (Recommended for Cross-Platform Modals)**
+```tsx
+<Text typography="title-large|title|subtitle|subtitle-2|body|label|label-strong|small|small-desktop">
+  Content
+</Text>
+```
+
+**Examples:**
+```tsx
+<Text typography="title">Modal Title</Text>             // 20px, bold, strong color
+<Text typography="body">Main content text</Text>        // 16px, normal, main color
+<Text typography="label-strong">Form Label</Text>       // 14px, normal, main color
+<Text typography="subtitle-2">Section Header</Text>     // 14px, bold, subtle, uppercase
+```
+
+**Legacy Props (Backwards Compatible, Web-Only)**
 ```tsx
 <Text
   variant="default|strong|subtle|muted|error|success|warning|link"
@@ -26,7 +42,7 @@ Fast lookup guide for all primitive components with essential props and examples
 </Text>
 ```
 
-### Semantic Typography
+### Semantic Typography Helpers (Native Only)
 
 ```tsx
 <Title>Page Title</Title>                    // size="lg" (24px), weight="bold" (default)
@@ -38,16 +54,19 @@ Fast lookup guide for all primitive components with essential props and examples
 <InlineText>No spacing</InlineText>          // No automatic margins
 ```
 
-### Title Props
+### Typography Values Reference
 
-```tsx
-<Title
-  size="sm|md|lg|xl" // sm=18px, md=20px, lg=24px, xl=30px
-  weight="normal|medium|semibold|bold" // Default: bold
->
-  Title Text
-</Title>
-```
+| Typography | Size | Weight | Color | Use Case |
+|------------|------|--------|-------|----------|
+| `title-large` | 24px | bold | strong | Large page headers |
+| `title` | 20px | bold | strong | Modal/section titles |
+| `subtitle` | 18px | bold | main | Sub-headings |
+| `subtitle-2` | 14px | bold | subtle | Small headers (uppercase) |
+| `body` | 16px | normal | main | Main content (below title) |
+| `label` | 14px | normal | subtle | Subtle labels |
+| `label-strong` | 14px | normal | main | Form labels, emphasized text |
+| `small` | 14px/12px | normal | subtle | Small text (responsive) |
+| `small-desktop` | 12px | normal | subtle | Always small text |
 
 ---
 

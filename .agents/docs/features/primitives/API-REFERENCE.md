@@ -25,6 +25,7 @@ Complete API reference for all primitive components. Use this for quick prop loo
 **Location**: `src/components/primitives/Text/Text.tsx`
 
 **Props**:
+- `typography?: 'title-large' | 'title' | 'subtitle' | 'subtitle-2' | 'body' | 'label' | 'label-strong' | 'small' | 'small-desktop'` - **NEW** Semantic typography style (cross-platform, takes precedence over variant/size/weight)
 - `variant?: 'default' | 'strong' | 'subtle' | 'muted' | 'error' | 'success' | 'warning' | 'link'` - Text style variant
 - `size?: 'xs' | 'sm' | 'base' | 'lg' | 'xl' | '2xl' | '3xl'` - Font size
 - `weight?: 'normal' | 'medium' | 'semibold' | 'bold'` - Font weight
@@ -39,12 +40,39 @@ Complete API reference for all primitive components. Use this for quick prop loo
 - `numberOfLines?: number` - Text truncation (native only)
 - `selectable?: boolean` - Enable text selection (native only)
 
-**Example**:
+**Typography Prop (Recommended for Cross-Platform)**:
+The `typography` prop provides semantic text styling that works identically on web and native:
+
 ```tsx
+// ✅ Cross-platform semantic styling
+<Text typography="body">
+  This text looks the same on web and mobile
+</Text>
+
+<Text typography="title">Modal Title</Text>
+<Text typography="label-strong">Form Label</Text>
+```
+
+**Typography Values**:
+- `title-large` - Large headings (24px, bold, strong color)
+- `title` - Main section headers (20px, bold, strong color)
+- `subtitle` - Sub-headings (18px, bold, main color)
+- `subtitle-2` - Small headers (14px, bold, subtle color, uppercase)
+- `body` - Main content text (16px, normal, main color)
+- `label` - Labels (14px, normal, subtle color)
+- `label-strong` - Emphasized labels (14px, normal, main color)
+- `small` - Small text (14px on mobile, 12px on desktop, subtle color)
+- `small-desktop` - Small text (12px, subtle color)
+
+**Legacy Props (Backwards Compatible)**:
+```tsx
+// ❌ Old way - still works but not cross-platform
 <Text variant="strong" size="lg" weight="semibold">
   Important Text
 </Text>
 ```
+
+**Note**: When `typography` is used, `variant`, `size`, and `weight` props are ignored.
 
 ---
 

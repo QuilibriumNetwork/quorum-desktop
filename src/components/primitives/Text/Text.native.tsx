@@ -31,8 +31,60 @@ const alignMap = {
   right: 'right',
 };
 
+// NEW: Typography mappings for semantic text styles
+// Maps to the same styles as _typography.scss on web
+const typographyMap = {
+  'title-large': {
+    fontSize: 24, // text-2xl
+    fontWeight: '700', // bold
+    colorVariant: 'strong' as const,
+  },
+  'title': {
+    fontSize: 20, // text-xl
+    fontWeight: '700', // bold
+    colorVariant: 'strong' as const,
+  },
+  'subtitle': {
+    fontSize: 18, // text-lg
+    fontWeight: '700', // bold
+    colorVariant: 'default' as const,
+  },
+  'subtitle-2': {
+    fontSize: 14, // text-sm
+    fontWeight: '700', // bold
+    colorVariant: 'subtle' as const,
+    // Note: text-transform uppercase not directly supported in inline styles
+  },
+  'body': {
+    fontSize: 16, // text-base
+    fontWeight: '400', // normal
+    colorVariant: 'default' as const,
+  },
+  'label': {
+    fontSize: 14, // text-sm
+    fontWeight: '400', // normal
+    colorVariant: 'subtle' as const,
+  },
+  'label-strong': {
+    fontSize: 14, // text-sm
+    fontWeight: '400', // normal
+    colorVariant: 'default' as const,
+  },
+  'small': {
+    fontSize: 14, // text-xs-responsive (14px on mobile)
+    fontWeight: '400', // normal
+    colorVariant: 'subtle' as const,
+  },
+  'small-desktop': {
+    fontSize: 12, // text-xs (always 12px)
+    fontWeight: '400', // normal
+    colorVariant: 'subtle' as const,
+  },
+};
+
 export const Text: React.FC<NativeTextProps> = ({
   children,
+  typography,
   variant = 'default',
   size = 'base',
   weight = 'normal',
@@ -55,6 +107,50 @@ export const Text: React.FC<NativeTextProps> = ({
 }) => {
   const theme = useTheme();
   const colors = theme.colors;
+
+  // NEW: If typography prop is used, apply semantic styling
+  if (typography) {
+    const typoStyle = typographyMap[typography];
+
+    // Map colorVariant to actual theme color
+    const getTypographyColor = () => {
+      switch (typoStyle.colorVariant) {
+        case 'strong':
+          return colors.text.strong;
+        case 'subtle':
+          return colors.text.subtle;
+        default:
+          return colors.text.main;
+      }
+    };
+
+    const textStyle: TextStyle = {
+      fontSize: typoStyle.fontSize,
+      fontWeight: typoStyle.fontWeight as any,
+      textAlign: alignMap[align] as any,
+      color: color || getTypographyColor(), // Allow color override
+      lineHeight: lineHeight || typoStyle.fontSize * 1.4,
+      marginBottom: marginBottom,
+      marginTop: marginTop,
+      includeFontPadding: false,
+      ...style,
+    };
+
+    return (
+      <RNText
+        style={textStyle}
+        numberOfLines={numberOfLines}
+        selectable={selectable}
+        accessible={accessible}
+        accessibilityLabel={accessibilityLabel}
+        accessibilityRole={accessibilityRole}
+        testID={testId}
+        onPress={onPress}
+      >
+        {children}
+      </RNText>
+    );
+  }
 
   // Map variants to theme colors
   const getVariantColor = () => {
