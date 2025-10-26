@@ -80,11 +80,12 @@ const PinnedMessageItem: React.FC<PinnedMessageItemProps> = ({
               showOnTouch={false}
             >
               <Button
-                type="danger-outline"
+                type="unstyled"
                 onClick={(e: React.MouseEvent) => togglePin(e, message)}
-                iconName="close"
+                iconName="pin-off"
                 iconOnly={true}
                 size="small"
+                className="text-danger"
               />
             </Tooltip>
           )}
@@ -135,11 +136,13 @@ const PinnedMessageItem: React.FC<PinnedMessageItemProps> = ({
                 showOnTouch={false}
               >
                 <Button
-                  type="danger-outline"
+                  type="unstyled"
                   onClick={(e: React.MouseEvent) => togglePin(e, message)}
-                  iconName="close"
+                  iconName="pin-off"
+                  iconSize="lg"
                   iconOnly={true}
                   size="small"
+                  className="text-danger"
                 />
               </Tooltip>
             )}
