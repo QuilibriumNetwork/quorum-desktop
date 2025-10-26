@@ -56,7 +56,7 @@ export const useSpaceCreation = (
             currentFile.type +
             ';base64,' +
             Buffer.from(fileData).toString('base64')
-          : DefaultImages.UNKNOWN_USER;
+          : null;
 
       const { spaceId, channelId } = await createSpaceAPI(
         name,

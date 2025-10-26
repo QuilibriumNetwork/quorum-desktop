@@ -15,6 +15,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Unused Dependencies Analysis](docs/development/unused-dependencies-analysis.md)
 
 ### Features
+- [Avatar & Initials System](docs/features/avatar-initials-system.md)
 - [Cross-Platform Key Backup Implementation](docs/features/cross-platform-key-backup.md)
 - [Cross-Platform Theming System](docs/features/cross-platform-theming.md)
 - [Delete Confirmation System](docs/features/delete-confirmation-system.md)
@@ -92,6 +93,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Docusaurus Developer Documentation Blueprint](tasks/docusaurus-blueprint-v2.md)
 - [Edit Message Feature](tasks/edit-message-feature.md)
 - [Implement Background Sync Queue for User Settings and Async Operations](tasks/background-sync-queue.md)
+- [Message Highlight System - Complete Analysis & Recommendations](tasks/message-highlight-system-optimization.md)
 - [Server Folders - Discord-Style Grouping Feature](tasks/server-folders-discord-style.md)
 - [Task: Implement Delete Public Invite Link Feature](tasks/delete-public-invite-link.md)
 - [Test Suite Implementation Plan for Quorum Desktop](tasks/test-suite-plan.md)
@@ -100,6 +102,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [🚀 Search Performance Optimization - Revised Implementation Plan](tasks/search-performance-optimization.md)
 
 ### .Archived
+- [Font Size Management Analysis & Recommendations](tasks/.archived/font-size-management-analysis-2025.md)
 - [Modal System Consolidation via Route Wrapper Component](tasks/.archived/modal-system-consolidation.md)
 - [Search Performance Optimization - Architecture Analysis Report](tasks/.archived/search-performance-optimization_ANALYSIS.md)
 - [Search Performance Optimization - Executive Summary](tasks/.archived/search-performance-analysis_SUMMARY.md)
@@ -168,6 +171,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Implementation Plan: Repository Restructure for Cross-Platform Development](tasks/.done/implementation-plan-repo-restructure.md)
 - [Lazy Loading Implementation for Message Lists](tasks/.done/lazy-loading-implementation.md)
 - [Mention Counts Performance Optimization](tasks/.done/mention-counts-performance-optimization.md)
+- [Mention Highlight Duration - Extended to 60 Seconds](tasks/.done/mention-highlight-60s-duration.md)
 - [Mention Notification Settings - Phase 4](tasks/.done/mention-notification-settings-phase4.md)
 - [Mention Notification System - Critical Race Condition Fix](tasks/.done/mention-notification-ux-improvements.md)
 - [Message Handling Report](tasks/.done/messages-report.md)
@@ -186,14 +190,17 @@ This is the main index for all documentation, bug reports, and task management.
 - [Read-Only Channels with Role Managers](tasks/.done/read-only-channels-with-role-managers.md)
 - [Refactor Modal Placement in Layout.tsx](tasks/.done/refactor-modal-placement.md)
 - [Rename .agents to .agents](tasks/.done/rename-readme-to-agents.md)
+- [Replace FontAwesome with Tabler Icons](tasks/.done/replace-fontawesome-with-tabler-icons.md)
 - [Reply Notification System](tasks/.done/reply-notification-system.md)
 - [Responsive Layout Implementation Plan](tasks/.done/responsive-layout.md)
 - [Responsive Layout Requirements](tasks/.done/responsive-layout_requirements.md)
 - [Role Mention Notifications Implementation](tasks/.done/role-mention-notifications.md)
 - [Search Components Primitive Migration](tasks/.done/search-primitive-migration.md)
 - [Space Icon Mention Bubbles](tasks/.done/space-icon-mention-bubbles.md)
+- [Space Initials Fallback - Optional Space Images](tasks/.done/space-initials-fallback.md)
 - [Tailwind @apply Conversion Audit](tasks/.done/tailwind-apply-conversion-audit.md)
 - [Task: Improve User Mention System](tasks/.done/improve-user-mention-system.md)
+- [Text Styling Consolidation](tasks/.done/text-styling-consolidation-plan.md)
 - [Toast System - Simple Bug Fixes](tasks/.done/toast-system-simple-fix.md)
 - [Toast System Refactoring](tasks/.done/toast-system-refactoring.md)
 - [UI Folder Reorganization Task](tasks/.done/ui-folder-reorganization.md)
@@ -204,4 +211,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2025-10-18 11:11:31
+**Last Updated**: 2025-10-26 15:03:37

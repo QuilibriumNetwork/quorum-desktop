@@ -171,7 +171,7 @@ const CreateSpaceModal: React.FunctionComponent<CreateSpaceModalProps> = (
           <Button
             type="primary"
             className="w-full sm:w-auto"
-            disabled={!canCreate || !fileData}
+            disabled={!canCreate}
             onClick={() =>
               createSpace(spaceName, fileData, currentFile, repudiable, pub)
             }

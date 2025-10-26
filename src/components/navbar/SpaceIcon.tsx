@@ -4,6 +4,9 @@ import { Tooltip } from '../primitives';
 import { useImageLoading } from '../../hooks';
 import { useDragStateContext } from '../../context/DragStateContext';
 import { formatMentionCount } from '../../utils/formatMentionCount';
+import { UserInitials } from '../user/UserInitials';
+import { getColorFromDisplayName } from '../../utils/avatar';
+import { DefaultImages } from '../../utils';
 
 type SpaceIconProps = {
   selected: boolean;
@@ -48,6 +51,20 @@ const SpaceIcon: React.FunctionComponent<SpaceIconProps> = (props) => {
   const iconId = React.useMemo(() => {
     return `space-icon-${uniqueId}-${Math.random().toString(36).substr(2, 9)}`;
   }, [uniqueId]);
+
+  // Check if there's a valid image
+  const hasValidImage = backgroundImage &&
+    props.iconUrl &&
+    !props.iconUrl.includes(DefaultImages.UNKNOWN_USER);
+
+  // Generate background color for initials
+  const backgroundColor = React.useMemo(
+    () => getColorFromDisplayName(props.spaceName),
+    [props.spaceName]
+  );
+
+  const size = props.size === 'large' ? 48 : 40;
+
   const iconElement = (
     <div className="relative z-[999]">
       {!props.noToggle && (
@@ -55,13 +72,23 @@ const SpaceIcon: React.FunctionComponent<SpaceIconProps> = (props) => {
           className={`${props.selected ? 'space-icon-selected' : props.notifs ? 'space-icon-has-notifs' : 'space-icon'}-toggle`}
         />
       )}
-      <div
-        className={`${props.selected ? 'space-icon-selected' : 'space-icon'} space-icon-${props.size}`}
-        style={{
-          backgroundImage,
-        }}
-        {...(props.noTooltip ? {} : { id: `${iconId}-anchor` })}
-      />
+      {hasValidImage ? (
+        <div
+          className={`${props.selected ? 'space-icon-selected' : 'space-icon'} space-icon-${props.size}`}
+          style={{
+            backgroundImage,
+          }}
+          {...(props.noTooltip ? {} : { id: `${iconId}-anchor` })}
+        />
+      ) : (
+        <UserInitials
+          name={props.spaceName}
+          backgroundColor={backgroundColor}
+          size={size}
+          className={`${props.selected ? 'space-icon-selected' : 'space-icon'} space-icon-${props.size}`}
+          {...(props.noTooltip ? {} : { id: `${iconId}-anchor` })}
+        />
+      )}
       {props.mentionCount && props.mentionCount > 0 && (
         <span className="space-icon-mention-bubble">
           {formatMentionCount(props.mentionCount, 9)}
