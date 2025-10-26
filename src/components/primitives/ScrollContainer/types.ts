@@ -10,6 +10,7 @@ export interface BaseScrollContainerProps {
   height?: ScrollContainerHeight | string | number;
   maxHeight?: ScrollContainerHeight | string | number;
   showBorder?: boolean;
+  borderColor?: string; // CSS border color class (e.g., 'border-surface-3') or var (e.g., 'var(--color-border-default)')
   borderRadius?: ScrollContainerBorderRadius;
   testId?: string;
 }

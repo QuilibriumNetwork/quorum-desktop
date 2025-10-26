@@ -27,6 +27,7 @@ export const ScrollContainer = React.forwardRef<HTMLDivElement, WebScrollContain
       height = 'auto',
       maxHeight,
       showBorder = true,
+      borderColor,
       borderRadius = 'lg',
       testId,
       onScroll,
@@ -72,16 +73,22 @@ export const ScrollContainer = React.forwardRef<HTMLDivElement, WebScrollContain
     const classes = clsx(
       'overflow-y-auto', // Enable vertical scrolling
       maxHeightClass || heightClass, // Use maxHeight if provided, otherwise height
-      showBorder && 'border border-surface-6', // Standard border from existing patterns
+      showBorder && 'border', // Standard border
+      showBorder && borderColor && borderColor.startsWith('border-') && borderColor, // Tailwind border color class
       borderRadiusClass, // Border radius
       className
     );
+
+    // If borderColor is a CSS variable or custom value, apply via style
+    const containerStyle = borderColor && !borderColor.startsWith('border-')
+      ? { ...style, borderColor }
+      : style;
 
     return (
       <div
         ref={ref}
         className={classes}
-        style={style}
+        style={containerStyle}
         data-testid={testId}
         onScroll={onScroll}
         {...rest}

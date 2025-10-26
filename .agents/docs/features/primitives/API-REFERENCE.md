@@ -597,31 +597,61 @@ The `variant` prop can override typography's default color:
 **Location**: `src/components/primitives/ScrollContainer/ScrollContainer.tsx`
 
 **Props**:
-- `height?: 'auto' | 'fit' | 'full' | string | number` - Container height
-- `borderRadius?: 'none' | 'sm' | 'md' | 'lg' | 'xl' | string | number` - Border radius
+- `height?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'auto' | string | number` - Container height (xs=200px, sm=280px, md=400px, lg=500px, xl=600px, auto=no fixed height)
+- `maxHeight?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'auto' | string | number` - Maximum height (overrides height if both provided)
+- `showBorder?: boolean` - Show border (default: true)
+- `borderColor?: string` - Border color (Tailwind class like 'border-surface-3' or CSS variable like 'var(--color-border-subtle)'). Default: 'var(--color-border-default)'
+- `borderRadius?: 'none' | 'sm' | 'md' | 'lg'` - Border radius (default: 'lg')
 - `className?: string` - CSS classes (web only)
 - `style?: CSSProperties | StyleProp<ViewStyle>` - Additional styles
+- `testId?: string` - Test identifier
 
 **Web-specific props**:
 - `onScroll?: (event: UIEvent) => void` - Scroll handler (web only)
 
 **Native-specific props**:
-- `horizontal?: boolean` - Enable horizontal scrolling (native only)
-- `showsVerticalScrollIndicator?: boolean` - Show vertical scrollbar (native only)
-- `showsHorizontalScrollIndicator?: boolean` - Show horizontal scrollbar (native only)
-- `bounces?: boolean` - Enable bounce effect (native only, iOS)
-- `overScrollMode?: 'auto' | 'always' | 'never'` - Overscroll mode (native only, Android)
-- `scrollEventThrottle?: number` - Scroll event throttle in ms (native only)
-- `onScrollEndDrag?: () => void` - Drag end handler (native only)
-- `onMomentumScrollEnd?: () => void` - Momentum scroll end handler (native only)
-- `refreshControl?: RefreshControl` - Pull-to-refresh control (native only)
+- `showsVerticalScrollIndicator?: boolean` - Show vertical scrollbar (native only, default: true)
+- `showsHorizontalScrollIndicator?: boolean` - Show horizontal scrollbar (native only, default: false)
+- `bounces?: boolean` - Enable bounce effect (native only, default: true)
+- `scrollEnabled?: boolean` - Enable scrolling (native only, default: true)
+- `onScroll?: (event: any) => void` - Scroll handler (native only)
+- `onContentSizeChange?: (contentWidth: number, contentHeight: number) => void` - Content size change handler (native only)
+- `accessible?: boolean` - Enable accessibility (native only)
+- `accessibilityLabel?: string` - Accessibility label (native only)
+- `accessibilityRole?: string` - Accessibility role (native only)
+- `accessibilityHint?: string` - Accessibility hint (native only)
 
-**Example**:
+**Examples**:
+
 ```tsx
-<ScrollContainer height={400} borderRadius="md">
+// Basic usage with preset height
+<ScrollContainer height="md">
   <FlexColumn gap="md">
     {/* Scrollable content */}
   </FlexColumn>
+</ScrollContainer>
+
+// Custom border color (Tailwind class)
+<ScrollContainer
+  height={400}
+  borderColor="border-surface-3"
+  borderRadius="md"
+>
+  <Text>Content with custom border</Text>
+</ScrollContainer>
+
+// Custom border color (CSS variable)
+<ScrollContainer
+  height="lg"
+  borderColor="var(--color-border-subtle)"
+  showBorder={true}
+>
+  <Text>Content with subtle border</Text>
+</ScrollContainer>
+
+// No border
+<ScrollContainer height="sm" showBorder={false}>
+  <Text>Content without border</Text>
 </ScrollContainer>
 ```
 
@@ -977,4 +1007,4 @@ The `variant` prop can override typography's default color:
 ---
 
 _Created: 2025-10-08_
-_Last updated: 2025-10-14 - Added Portal primitive documentation_
+_Last updated: 2025-10-26 - Updated ScrollContainer with borderColor prop and complete prop list_

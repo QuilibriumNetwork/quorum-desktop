@@ -24,6 +24,7 @@ export const ScrollContainer: React.FC<NativeScrollContainerProps> = ({
   height = 'auto',
   maxHeight,
   showBorder = true,
+  borderColor,
   borderRadius = 'lg',
   testId,
   showsVerticalScrollIndicator = true,
@@ -86,7 +87,7 @@ export const ScrollContainer: React.FC<NativeScrollContainerProps> = ({
   const containerStyle: ViewStyle = {
     height: containerMaxHeight || containerHeight,
     borderWidth: showBorder ? 1 : 0,
-    borderColor: showBorder ? 'rgba(255, 255, 255, 0.1)' : 'transparent', // Approximate surface-6 color
+    borderColor: showBorder ? (borderColor || 'rgba(255, 255, 255, 0.1)') : 'transparent', // Use borderColor prop or default
     borderRadius: borderRadiusValue,
     ...style,
   };
