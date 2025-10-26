@@ -19,7 +19,7 @@ export const EmptyDirectMessage = () => {
               <Icon
                 name="bars"
                 onClick={toggleLeftSidebar}
-                className="w-4 p-1 rounded-md cursor-pointer hover:bg-surface-6"
+                className="cursor-pointer text-subtle hover:text-strong"
               />
             )}
           </FlexRow>

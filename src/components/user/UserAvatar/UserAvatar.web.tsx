@@ -40,6 +40,7 @@ export function UserAvatar({
           height: size,
           backgroundPosition: 'center',
           backgroundSize: 'cover',
+          flexShrink: 0,
           ...style
         }}
         onClick={onClick}
