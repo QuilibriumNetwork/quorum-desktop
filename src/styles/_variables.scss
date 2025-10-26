@@ -122,7 +122,6 @@ $font-label-small: $text-xs-responsive;  /* 14px mobile → 12px desktop */
 $font-light: 300;        /* font-light */
 $font-normal: 400;       /* font-normal */
 $font-medium: 500;       /* font-medium */
-$font-semibold: 600;     /* font-semibold */
 $font-bold: 700;         /* font-bold */
 
 /* === LINE HEIGHT SCALE === */
@@ -247,7 +246,7 @@ $container-2xl: 1536px;      /* Container max-width at 2xl breakpoint */
    .heading {
      font-size: $text-2xl;          // text-2xl (24px)
      line-height: $text-2xl-lh;     // leading-8 (32px)
-     font-weight: $font-semibold;   // font-semibold (600)
+     font-weight: $font-bold;       // font-bold (700)
      letter-spacing: $tracking-tight; // tracking-tight
    }
 
