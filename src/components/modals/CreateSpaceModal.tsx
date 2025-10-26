@@ -6,6 +6,7 @@ import { useSpaceCreation, useFileUpload, useSpaceSettings } from '../../hooks';
 import { Trans } from '@lingui/react/macro';
 import { t } from '@lingui/core/macro';
 import { ReactTooltip } from '../ui';
+import ModalSaveOverlay from './ModalSaveOverlay';
 
 type CreateSpaceModalProps = {
   visible: boolean;
@@ -176,10 +177,11 @@ const CreateSpaceModal: React.FunctionComponent<CreateSpaceModalProps> = (
               createSpace(spaceName, fileData, currentFile, repudiable, pub)
             }
           >
-            {creating ? t`Creating Space...` : t`Create Space`}
+            {t`Create Space`}
           </Button>
         </div>
       </div>
+      <ModalSaveOverlay visible={creating} message={t`Creating Space...`} />
     </Modal>
   );
 };
