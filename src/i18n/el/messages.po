@@ -71,7 +71,7 @@ msgstr "{user} έχει αποβληθεί"
 msgid "Send a message to {user}"
 msgstr "Στείλτε ένα μήνυμα στον {user}"
 
-#: src/components/modals/CreateSpaceModal.tsx:107
+#: src/components/modals/CreateSpaceModal.tsx:108
 msgid " Default Space settings provide the most typical chat experience, but for higher privacy guarantees, review the Advanced Settings."
 msgstr "Standaard Space-instellingen bieden de meest typische chatervaring, maar voor hogere privacygaranties, bekijk de Geavanceerde Instellingen."
 
@@ -251,7 +251,7 @@ msgstr "Οι διευθύνσεις ξεκινούν με \"Qm\"."
 msgid "Adjust security-related settings, which may impact user  experience but increase the security of your Quorum account."
 msgstr "Ρυθμίστε τις ρυθμίσεις ασφαλείας, οι οποίες μπορεί να επηρεάσουν την εμπειρία του χρήστη αλλά να αυξήσουν την ασφάλεια του λογαριασμού σας Quorum."
 
-#: src/components/modals/CreateSpaceModal.tsx:168
+#: src/components/modals/CreateSpaceModal.tsx:169
 msgid "Advanced Settings"
 msgstr "Προχωρημένες Ρυθμίσεις"
 
@@ -547,7 +547,7 @@ msgid "Could not verify invite"
 msgstr "Δεν ήταν δυνατή η επαλήθευση της πρόσκλησης"
 
 #: src/components/modals/AddSpaceModal.tsx:283
-#: src/components/modals/CreateSpaceModal.tsx:48
+#: src/components/modals/CreateSpaceModal.tsx:49
 msgid "Create a Space"
 msgstr "Δημιουργία ενός Χώρος"
 
@@ -556,11 +556,11 @@ msgstr "Δημιουργία ενός Χώρος"
 msgid "Create New Account"
 msgstr "Δημιουργία Νέου Λογαριασμού"
 
-#: src/components/modals/CreateSpaceModal.tsx:179
+#: src/components/modals/CreateSpaceModal.tsx:180
 msgid "Create Space"
 msgstr "Δημιουργία Χώρος"
 
-#: src/components/modals/CreateSpaceModal.tsx:179
+#: src/components/modals/CreateSpaceModal.tsx:184
 msgid "Creating Space..."
 msgstr "Δημιουργία Χώρος..."
 
@@ -710,7 +710,7 @@ msgstr "Emojis"
 msgid "Enable sync"
 msgstr "Ενεργοποίηση συγχρονισμού"
 
-#: src/components/modals/CreateSpaceModal.tsx:83
+#: src/components/modals/CreateSpaceModal.tsx:84
 msgid "Enter a name for your new Space"
 msgstr "Εισάγετε ένα όνομα για το νέο σας Χώρος"
 
@@ -1424,12 +1424,12 @@ msgstr "Απαντήσεις"
 msgid "Reply"
 msgstr "Απάντηση"
 
-#: src/components/modals/CreateSpaceModal.tsx:115
+#: src/components/modals/CreateSpaceModal.tsx:116
 #: src/components/modals/SpaceSettingsModal/General.tsx:210
 msgid "Require Message Signing"
 msgstr "Απαιτείται υπογραφή μηνύματος"
 
-#: src/components/modals/CreateSpaceModal.tsx:119
+#: src/components/modals/CreateSpaceModal.tsx:120
 msgid "Require messages sent in this Space to be signed by the sender. Technically speaking, this makes the messages in this Space non-repudiable."
 msgstr "Απαιτείται τα μηνύματα που αποστέλλονται σε αυτό το Space να υπογράφονται από τον αποστολέα. Τεχνικά μιλώντας, αυτό καθιστά τα μηνύματα σε αυτό το Space μη ανακλητά."
 
@@ -1617,7 +1617,7 @@ msgstr "Μπανέρ Χώρου"
 msgid "Space ID"
 msgstr "Αναγνωριστικό Χώρου"
 
-#: src/components/modals/CreateSpaceModal.tsx:85
+#: src/components/modals/CreateSpaceModal.tsx:86
 #: src/components/modals/SpaceSettingsModal/General.tsx:112
 msgid "Space Name"
 msgstr "Όνομα Χώρου"
@@ -1874,7 +1874,7 @@ msgstr "Ενημερώστε τα αρχεία αποβολής για όλα τ
 msgid "Upload an avatar for this Space - PNG or JPG - Optimal ratio 1:1"
 msgstr "Ανεβάστε μια εικόνα προφίλ για αυτό το Space - PNG ή JPG - Βέλτιστος λόγος 1:1"
 
-#: src/components/modals/CreateSpaceModal.tsx:102
+#: src/components/modals/CreateSpaceModal.tsx:103
 msgid "Upload an image and choose a name for your Space."
 msgstr "Ανεβάστε μια εικόνα και επιλέξτε ένα όνομα για τον Χώρο σας."
 
@@ -1952,7 +1952,7 @@ msgstr "Όταν κάποιος σας αναφέρει απευθείας"
 msgid "When someone replies to your messages"
 msgstr "Όταν κάποιος απαντά στα μηνύματά σας"
 
-#: src/components/modals/CreateSpaceModal.tsx:143
+#: src/components/modals/CreateSpaceModal.tsx:144
 msgid "When this setting is enabled, invite links will automatically allow a user to join your Space. When it is not enabled, users following an invite link will send you a request to join your Space that you must manually approve. Public links require some key material to be present in the link – be aware that possession of a public Space link can allow anyone with the link to read messages on the Space for the duration of the link being valid."
 msgstr "Όταν αυτή η ρύθμιση είναι ενεργοποιημένη, οι συνδέσμοι πρόσκλησης θα επιτρέπουν αυτόματα σε έναν χρήστη να ενταχθεί στο Space σου. Όταν δεν είναι ενεργοποιημένη, οι χρήστες που ακολουθούν έναν σύνδεσμο πρόσκλησης θα σου στείλουν ένα αίτημα για να ενταχθούν στο Space σου που πρέπει να εγκρίνεις χειροκίνητα. Οι δημόσιοι σύνδεσμοι απαιτούν κάποια υλικά κλειδιών να είναι παρόντα στον σύνδεσμο – να είσαι προσεκτικός ότι η κατοχή ενός δημόσιου συνδέσμου Space μπορεί να επιτρέψει σε οποιονδήποτε έχει τον σύνδεσμο να διαβάσει μηνύματα στο Space για όσο διάστημα ο σύνδεσμος είναι έγκυρος."
 

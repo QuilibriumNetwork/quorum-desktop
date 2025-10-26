@@ -63,7 +63,8 @@ const SpaceIcon: React.FunctionComponent<SpaceIconProps> = (props) => {
     [props.spaceName]
   );
 
-  const size = props.size === 'large' ? 48 : 40;
+  // Match the CSS sizes: $nav-space-icon-size is 48px, large is 114px
+  const size = props.size === 'large' ? 114 : 48;
 
   const iconElement = (
     <div className="relative z-[999]">

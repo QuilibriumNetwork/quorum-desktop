@@ -16,8 +16,8 @@
 
   // Mobile phone optimization
   @media (max-width: $screen-xs) {
-    width: $nav-space-icon-size-mobile;
-    height: $nav-space-icon-size-mobile;
+    width: $nav-space-icon-size-mobile !important;
+    height: $nav-space-icon-size-mobile !important;
     margin-top: 5px;
     border-radius: $rounded-full;
   }
@@ -74,8 +74,8 @@
 
   // Mobile phone optimization
   @media (max-width: $screen-xs) {
-    width: $nav-space-icon-size-mobile;
-    height: $nav-space-icon-size-mobile;
+    width: $nav-space-icon-size-mobile !important;
+    height: $nav-space-icon-size-mobile !important;
     margin-top: $s-1;
     border-radius: $rounded-lg;
     box-shadow: none;
@@ -96,10 +96,11 @@
   background: var(--accent-500);
   transition: all $duration-100 linear;
 
-  // Mobile phone optimization - adjust positioning for larger icons
+  // Mobile phone optimization - adjust positioning for mobile icon size (40px)
+  // Calculation: icon-margin(4px) + (icon-height(40px) / 2) - (toggle-height(20px) / 2) = 14px
   @media (max-width: $screen-xs) {
     margin-left: -11px;
-    margin-top: 15px;
+    margin-top: 14px;
     height: $s-5;
   }
 }

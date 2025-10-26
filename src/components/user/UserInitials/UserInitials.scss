@@ -53,3 +53,17 @@ html.dark .user-initials {
     transform: scale(1.05);
   }
 }
+
+// When used as space icons, match the display behavior of image-based icons
+// Use inline-flex instead of flex to ensure proper positioning in document flow
+// This ensures the accent toggle indicator is properly centered
+.user-initials.space-icon,
+.user-initials.space-icon-selected {
+  display: inline-flex !important;
+
+  // Override inline fontSize on mobile to match the 40px mobile icon size
+  // Calculation: $nav-space-icon-size-mobile (40px) * 0.4 = 16px
+  @media (max-width: $screen-xs) {
+    font-size: 16px !important;
+  }
+}
