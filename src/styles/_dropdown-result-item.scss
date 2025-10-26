@@ -28,7 +28,7 @@
 .dropdown-result-meta {
   font-size: $text-xs-responsive;
   color: var(--color-text-subtle);
-  gap: $s-1-5;
+  gap: $s-1;
 }
 
 // Common result content area
@@ -47,15 +47,17 @@
 
 // Common icons in result headers
 .dropdown-result-type-icon {
-  font-size: $s-2-5;
-  color: var(--color-text-muted);
+  width: $s-3-5;  // 14px
+  height: $s-3-5; // 14px
+  color: var(--color-text-subtle);
 }
 
-// User and date icons (same muted color)
+// User and date icons (same subtle color)
 .dropdown-result-user-icon,
 .dropdown-result-date-icon {
-  font-size: $s-2-5;
-  color: var(--color-text-muted);
+  width: $s-3-5;  // 14px
+  height: $s-3-5; // 14px
+  color: var(--color-text-subtle);
 }
 
 // Common sender/channel name styling

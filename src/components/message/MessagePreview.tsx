@@ -1,6 +1,6 @@
 import React from 'react';
 import { Message as MessageType, Sticker } from '../../api/quorumApi';
-import { Container, Text, FlexRow, FlexColumn, Spacer } from '../primitives';
+import { Container, Text, FlexRow, FlexColumn, Spacer, Icon } from '../primitives';
 import { t } from '@lingui/core/macro';
 import { useMessageFormatting } from '../../hooks/business/messages/useMessageFormatting';
 import { YouTubeEmbed } from '../ui/YouTubeEmbed';
@@ -198,11 +198,11 @@ export const MessagePreview: React.FC<MessagePreviewProps> = ({
       <FlexColumn gap="sm">
         {/* Message header */}
         {!hideHeader && (
-          <FlexRow align="center" gap="xs">
-            <Text size="sm">{getDisplayName()}</Text>
-            <Text variant="subtle" size="xs">
-              - {formattedTimestamp}
-            </Text>
+          <FlexRow align="center" className="dropdown-result-meta">
+            <Icon name="user" className="dropdown-result-user-icon" />
+            <Text className="dropdown-result-sender mr-4">{getDisplayName()}</Text>
+            <Icon name="calendar-alt" className="dropdown-result-date-icon" />
+            <Text className="dropdown-result-date">{formattedTimestamp}</Text>
           </FlexRow>
         )}
 
