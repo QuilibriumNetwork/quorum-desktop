@@ -179,7 +179,7 @@ const AddSpaceModal: React.FunctionComponent<AddSpaceModalProps> = (props) => {
               {manualSpaceId && manualConfigKey && isValidating && (
                 <Callout variant="warning" size="sm">
                   <div className="flex items-center gap-2">
-                    <Icon name="spinner" spin={true} className="text-warning" />
+                    <Icon name="spinner" className="text-warning icon-spin" />
                     <span>{t`Validating invite...`}</span>
                   </div>
                 </Callout>

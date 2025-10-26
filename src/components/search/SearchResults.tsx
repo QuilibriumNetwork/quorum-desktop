@@ -78,7 +78,7 @@ export const SearchResults: React.FC<SearchResultsProps> = ({
     if (isLoading) {
       return (
         <FlexCenter className="search-loading-state">
-          <Icon name="spinner" className="loading-icon" spin />
+          <Icon name="spinner" className="loading-icon icon-spin" />
           <Text className="loading-message">{t`Searching...`}</Text>
         </FlexCenter>
       );

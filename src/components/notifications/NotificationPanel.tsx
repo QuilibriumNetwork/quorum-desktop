@@ -147,7 +147,7 @@ export const NotificationPanel: React.FC<NotificationPanelProps> = ({
     if (isLoading) {
       return (
         <FlexCenter className="notification-loading-state">
-          <Icon name="spinner" className="loading-icon" spin />
+          <Icon name="spinner" className="loading-icon icon-spin" />
           <Text className="loading-message">{t`Loading notifications...`}</Text>
         </FlexCenter>
       );

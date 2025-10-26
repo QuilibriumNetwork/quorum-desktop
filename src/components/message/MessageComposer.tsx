@@ -259,7 +259,7 @@ export const MessageComposer = forwardRef<
                   size="sm"
                   className="flex items-center gap-2"
                 >
-                  <Icon name="spinner" size="xs" spin={true} />
+                  <Icon name="spinner" size="xs" className="icon-spin" />
                   {t`Processing image... This may take a moment for large files.`}
                 </Callout>
               </div>

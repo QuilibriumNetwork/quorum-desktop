@@ -213,7 +213,7 @@ export const PinnedMessagesPanel: React.FC<PinnedMessagesPanelProps> = ({
     if (isLoading) {
       return (
         <FlexCenter className="pinned-loading-state">
-          <Icon name="spinner" className="loading-icon" spin />
+          <Icon name="spinner" className="loading-icon icon-spin" />
           <Text className="loading-message">{t`Loading pinned messages...`}</Text>
         </FlexCenter>
       );

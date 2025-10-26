@@ -126,7 +126,7 @@ const Invites: React.FunctionComponent<InvitesProps> = ({
             {generating && (
               <Callout variant="warning" size="sm" className="mb-4 mt-4">
                 <div className="flex items-center gap-2">
-                  <Icon name="spinner" spin={true} className="text-warning" />
+                  <Icon name="spinner" className="text-warning icon-spin" />
                   <span>Generating public invite link...</span>
                 </div>
               </Callout>

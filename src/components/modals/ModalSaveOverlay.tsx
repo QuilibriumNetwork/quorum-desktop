@@ -52,8 +52,7 @@ const ModalSaveOverlay: React.FC<ModalSaveOverlayProps> = ({
         <Icon
           name="spinner"
           size={24}
-          spin
-          className="modal-save-spinner"
+          className="modal-save-spinner icon-spin"
         />
         <div className="modal-save-text">{message}</div>
       </div>

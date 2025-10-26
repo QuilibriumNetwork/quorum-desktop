@@ -2,6 +2,7 @@ import React from 'react';
 import * as IconLibrary from '@tabler/icons-react';
 import { IconWebProps, IconSize } from './types';
 import { iconComponentMap } from './iconMapping';
+import './Icon.scss';
 
 // Convert semantic size to pixel size
 const getSizeValue = (size: IconSize): number => {
