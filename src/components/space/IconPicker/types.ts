@@ -105,7 +105,7 @@ export const ICON_COLORS: ColorOption[] = [
   { value: 'fuchsia', label: 'Fuchsia', class: 'text-accent-fuchsia', hex: '#d946ef' },
   { value: 'green', label: 'Green', class: 'text-accent-green', hex: '#22c55e' },
   { value: 'orange', label: 'Orange', class: 'text-accent-orange', hex: '#f97316' },
-  { value: 'yellow', label: 'Yellow', class: 'text-accent-yellow', hex: '#eab308' },
+  { value: 'yellow', label: 'Yellow', class: 'text-accent-yellow', hex: '#ca8a04' },
   { value: 'red', label: 'Red', class: 'text-accent-red', hex: '#ef4444' },
 ];
 
