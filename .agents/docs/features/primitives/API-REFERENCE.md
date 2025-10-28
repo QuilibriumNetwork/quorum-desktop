@@ -895,15 +895,47 @@ The `variant` prop can override typography's default color:
 **Location**: `src/components/primitives/Icon/Icon.tsx`
 
 **Props**:
-- `name: string` - Icon name (required)
-- `size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl'` - Icon size
-- `color?: string` - Icon color
+- `name: IconName` - Icon name (required)
+- `size?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | '3xl' | '4xl' | '5xl' | number` - Icon size (default: 'md')
+- `variant?: 'outline' | 'filled'` - Icon style variant (default: 'outline'). Note: Not all icons have filled variants - falls back to outline with a warning
+- `color?: string` - Icon color (defaults to currentColor on web, theme.colors.text.main on native)
+- `disabled?: boolean` - Disable icon (sets opacity to 0.5)
+- `onClick?: () => void` - Click handler (wraps in TouchableOpacity on native)
+- `className?: string` - CSS classes (web only)
+- `id?: string` - Element ID (web only)
 - `style?: CSSProperties | StyleProp<ViewStyle>` - Additional styles
 - `testID?: string` - Test identifier
 
-**Example**:
+**Size Values**:
+- `xs`: 12px
+- `sm`: 16px
+- `md`: 18px (default)
+- `lg`: 20px
+- `xl`: 24px
+- `2xl`: 32px
+- `3xl`: 48px
+- `4xl`: 64px
+- `5xl`: 96px
+- or custom number in pixels
+
+**Examples**:
 ```tsx
+// Basic icon
 <Icon name="settings" size="lg" color={theme.colors.accent[500]} />
+
+// Filled variant
+<Icon name="heart" variant="filled" color={theme.colors.accent.red} />
+
+// Clickable icon
+<Icon
+  name="trash"
+  size="md"
+  onClick={handleDelete}
+  disabled={isDeleting}
+/>
+
+// Custom size
+<Icon name="star" size={28} variant="filled" />
 ```
 
 ---
@@ -1007,4 +1039,4 @@ The `variant` prop can override typography's default color:
 ---
 
 _Created: 2025-10-08_
-_Last updated: 2025-10-26 - Updated ScrollContainer with borderColor prop and complete prop list_
+_Last updated: 2025-10-28 - Added missing Icon primitive props (variant, disabled, onClick, id, additional size values)_

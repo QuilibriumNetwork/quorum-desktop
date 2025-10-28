@@ -36,7 +36,7 @@ import {
 
 const navigationItems = [
   { id: 'button-primitive', label: 'Button', icon: 'circle' },
-  { id: 'callout-primitive', label: 'Callout', icon: 'info' },
+  { id: 'callout-primitive', label: 'Callout', icon: 'info-circle' },
   { id: 'colorswatch-primitive', label: 'ColorSwatch', icon: 'palette' },
   { id: 'container-primitive', label: 'Container', icon: 'square' },
   { id: 'fileupload-primitive', label: 'FileUpload', icon: 'upload' },
@@ -53,8 +53,8 @@ const navigationItems = [
   { id: 'text-primitive', label: 'Text', icon: 'pencil' },
   { id: 'textarea-primitive', label: 'TextArea', icon: 'memo' },
   { id: 'toast-primitive', label: 'Toast', icon: 'bell' },
-  { id: 'tooltip-primitive', label: 'Tooltip', icon: 'circle-info' },
-  { id: 'user-initials-demo', label: 'User Initials', icon: 'user-circle' },
+  { id: 'tooltip-primitive', label: 'Tooltip', icon: 'comment-dots' },
+  { id: 'user-initials-demo', label: 'User Initials', icon: 'user' },
 ];
 
 /**
