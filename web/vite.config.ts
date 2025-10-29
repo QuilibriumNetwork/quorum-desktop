@@ -17,8 +17,11 @@ export default defineConfig(({ command }) => ({
     rollupOptions: {
       external: (id) => {
         // Exclude dev folder from production builds
-        if (process.env.NODE_ENV === 'production' && id.includes('/dev/')) {
-          return true;
+        // Only match src/dev/ or relative imports containing /dev/, not absolute system paths
+        if (process.env.NODE_ENV === 'production') {
+          if (id.includes('/src/dev/') || (id.startsWith('.') && id.includes('/dev/'))) {
+            return true;
+          }
         }
         return false;
       },
