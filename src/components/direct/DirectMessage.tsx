@@ -25,7 +25,7 @@ import MessageComposer, {
 
 import { t } from '@lingui/core/macro';
 import { i18n } from '@lingui/core';
-import { ClickToCopyContent } from '../ui';
+import { ClickToCopyContent, MobileDrawer } from '../ui';
 import { DefaultImages, truncateAddress } from '../../utils';
 
 import { GlobalSearch } from '../search';
@@ -42,10 +42,14 @@ import {
 } from '../primitives';
 
 const DirectMessage: React.FC<{}> = () => {
-  const { isMobile, isTablet, toggleLeftSidebar, navMenuOpen, toggleNavMenu } =
+  const { isMobile, isTablet, isDesktop, toggleLeftSidebar, navMenuOpen, toggleNavMenu } =
     useResponsiveLayoutContext();
 
   const { openConversationSettings } = useModalContext();
+
+  // Unified panel state for search - ensures only search panel can be open
+  type ActivePanel = 'search' | null;
+  const [activePanel, setActivePanel] = useState<ActivePanel>(null);
   const user = usePasskeysContext();
   const queryClient = useQueryClient();
   const { submitMessage, keyset, getConfig } = useMessageDB();
@@ -143,6 +147,9 @@ const DirectMessage: React.FC<{}> = () => {
     userIcon: DefaultImages.UNKNOWN_USER,
     address: address!,
   };
+
+  // Compute responsive icon size for header icons (lg for desktop ≥1024px, md for mobile/tablet)
+  const headerIconSize = isDesktop ? 'lg' : 'md';
 
   // Sidebar state
   const {
@@ -263,7 +270,7 @@ const DirectMessage: React.FC<{}> = () => {
                   text={members[s].address}
                   tooltipText={t`Copy address`}
                   tooltipLocation="left-start"
-                  iconClassName="text-surface-9 hover:text-surface-10 dark:text-surface-8 dark:hover:text-surface-9"
+                  iconClassName="text-muted hover:text-main"
                   textVariant="subtle"
                   textSize="xs"
                   iconSize="xs"
@@ -419,6 +426,7 @@ const DirectMessage: React.FC<{}> = () => {
                   onClick={() => openConversationSettings(conversationId)}
                   className="header-icon-button"
                   iconName="settings"
+                  iconSize={headerIconSize}
                   iconOnly
                 />
               </Tooltip>
@@ -434,10 +442,35 @@ const DirectMessage: React.FC<{}> = () => {
                   }}
                   className="header-icon-button"
                   iconName="users"
+                  iconSize={headerIconSize}
                   iconOnly
                 />
               </Tooltip>
-              <GlobalSearch className="dm-search ml-2" />
+
+              {/* Search: Desktop shows inline GlobalSearch, Mobile shows search icon */}
+              {!isDesktop ? (
+                <Tooltip
+                  id="dm-search-toggle"
+                  content={t`Search Messages`}
+                  showOnTouch={false}
+                >
+                  <Button
+                    type="unstyled"
+                    onClick={() => setActivePanel('search')}
+                    className="header-icon-button"
+                    iconName="search"
+                    iconSize={headerIconSize}
+                    iconOnly
+                  />
+                </Tooltip>
+              ) : null}
+
+              <GlobalSearch
+                className="dm-search ml-2"
+                isOpen={activePanel === 'search'}
+                onOpen={() => setActivePanel('search')}
+                onClose={() => setActivePanel(null)}
+              />
             </FlexRow>
           </div>
 
@@ -543,13 +576,28 @@ const DirectMessage: React.FC<{}> = () => {
             </div>
           </div>
 
-          {/* Desktop sidebar only - mobile sidebar renders via SidebarProvider at Layout level */}
+          {/* Desktop sidebar only - mobile sidebar renders via MobileDrawer below */}
           {showUsers && (
             <div className="hidden lg:block w-[260px] bg-chat border-l border-default overflow-y-auto flex-shrink-0 p-4">
               {rightSidebarContent}
             </div>
           )}
         </div>
+
+        {/* Mobile drawer for user list below 1024px */}
+        {!isDesktop && (
+          <MobileDrawer
+            isOpen={showUsers}
+            onClose={() => setShowUsers(false)}
+            showCloseButton={false}
+            enableSwipeToClose={true}
+            ariaLabel={t`Members List`}
+          >
+            <div className="p-4">
+              {rightSidebarContent}
+            </div>
+          </MobileDrawer>
+        )}
       </FlexColumn>
     </div>
   );

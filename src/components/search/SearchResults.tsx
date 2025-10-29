@@ -28,6 +28,7 @@ interface SearchResultsProps {
   onQueryChange?: (query: string) => void;
   onClear?: () => void;
   searchContext?: SearchContext;
+  placeholder?: string;
 }
 
 export const SearchResults: React.FC<SearchResultsProps> = ({
@@ -45,6 +46,7 @@ export const SearchResults: React.FC<SearchResultsProps> = ({
   onQueryChange,
   onClear,
   searchContext,
+  placeholder,
 }) => {
   const isTouch = isTouchDevice();
 
@@ -125,7 +127,7 @@ export const SearchResults: React.FC<SearchResultsProps> = ({
             <Input
               type="search"
               variant="bordered"
-              placeholder={t`Search in this Space...`}
+              placeholder={placeholder || t`Search in this Space...`}
               value={query}
               onChange={(value) => {
                 if (value === '') {

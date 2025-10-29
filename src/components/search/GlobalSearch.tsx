@@ -131,6 +131,7 @@ export const GlobalSearch: React.FC<GlobalSearchProps> = ({
         onQueryChange={setQuery}
         onClear={() => clearSearch()}
         searchContext={searchContext}
+        placeholder={placeholder}
       />
     </Container>
   );

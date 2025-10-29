@@ -315,6 +315,9 @@ const Channel: React.FC<ChannelProps> = ({
 
   const { iconName, iconColor } = getChannelIconAndColor();
 
+  // Compute responsive icon size for header icons (lg for desktop ≥1024px, sm for mobile/tablet)
+  const headerIconSize = isDesktop ? 'lg' : 'md';
+
   // Message composer hook
   const composer = useMessageComposer({
     type: 'channel',
@@ -548,7 +551,7 @@ const Channel: React.FC<ChannelProps> = ({
               <div className="flex items-center gap-2 truncate whitespace-nowrap overflow-hidden">
                 <Icon
                   name={iconName as any}
-                  size="sm"
+                  size={headerIconSize}
                   className="flex-shrink-0"
                   color={iconColor}
                   style={!iconColor ? { color: 'var(--color-text-subtle)' } : undefined}
@@ -581,6 +584,7 @@ const Channel: React.FC<ChannelProps> = ({
                       onClick={() => setActivePanel('pinned')}
                       className="relative header-icon-button"
                       iconName="pin"
+                      iconSize={headerIconSize}
                       iconOnly
                     >
                       <span className="absolute -top-1 -right-1 bg-accent text-white text-[10px] rounded-full w-4 h-4 flex items-center justify-center">
@@ -616,6 +620,7 @@ const Channel: React.FC<ChannelProps> = ({
                     onClick={() => setActivePanel('notifications')}
                     className="relative header-icon-button"
                     iconName="bell"
+                    iconSize={headerIconSize}
                     iconOnly
                   />
                 </Tooltip>
@@ -643,6 +648,7 @@ const Channel: React.FC<ChannelProps> = ({
                   }}
                   className="header-icon-button"
                   iconName="users"
+                  iconSize={headerIconSize}
                   iconOnly
                 />
               </Tooltip>
@@ -659,6 +665,7 @@ const Channel: React.FC<ChannelProps> = ({
                     onClick={() => setActivePanel('search')}
                     className="header-icon-button"
                     iconName="search"
+                    iconSize={headerIconSize}
                     iconOnly
                   />
                 </Tooltip>
@@ -678,7 +685,7 @@ const Channel: React.FC<ChannelProps> = ({
             <div className="flex items-center gap-3 sm:gap-2 truncate whitespace-nowrap overflow-hidden">
               <Icon
                 name={iconName as any}
-                size="sm"
+                size={headerIconSize}
                 className="flex-shrink-0"
                 color={iconColor}
                 style={!iconColor ? { color: 'var(--color-text-subtle)' } : undefined}
