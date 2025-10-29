@@ -182,6 +182,10 @@ const ClickToCopyContent: React.FunctionComponent<ClickToCopyContentProps> = ({
         style={{
           userSelect: !copyOnContentClick ? 'text' : 'none',
           flex: copyOnContentClick ? 1 : undefined,
+          // Use responsive text sizing for 'xs': 14px mobile → 12px desktop
+          fontSize: textSize === 'xs' ? 'var(--text-xs-responsive)' : undefined,
+          lineHeight:
+            textSize === 'xs' ? 'var(--text-xs-responsive-lh)' : undefined,
         }}
       >
         {children}

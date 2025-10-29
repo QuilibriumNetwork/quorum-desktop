@@ -400,10 +400,11 @@ const DirectMessage: React.FC<{}> = () => {
                         text={address ?? ''}
                         tooltipText={t`Copy address`}
                         tooltipLocation="right"
-                        className="font-light text-xs text-subtle"
+                        className="text-subtle"
                         iconPosition="right"
                         iconClassName="text-subtle hover:text-surface-7"
                         iconSize="xs"
+                        textSize="xs"
                       >
                         {truncateAddress(address ?? '')}
                       </ClickToCopyContent>
@@ -498,10 +499,11 @@ const DirectMessage: React.FC<{}> = () => {
                       text={address ?? ''}
                       tooltipText={t`Copy address`}
                       tooltipLocation="right"
-                      className="font-light text-xs text-subtle"
+                      className="text-subtle"
                       iconPosition="right"
-                      iconClassName="text-subtle hover:text-surface-7"
+                      iconClassName="text-subtle hover:text-main"
                       iconSize="xs"
+                      textSize="xs"
                     >
                       {truncateAddress(address ?? '')}
                     </ClickToCopyContent>
