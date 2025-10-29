@@ -21,17 +21,17 @@ msgid "File cannot be larger than {maxFileSize}"
 msgstr "File tidak boleh lebih besar dari {maxFileSize}"
 
 #. js-lingui-explicit-id
-#: src/hooks/business/channels/useChannelData.ts:141
+#: src/hooks/business/channels/useChannelData.ts:147
 msgid "{role} - {count}"
 msgstr "{role} - {count}"
 
 #. js-lingui-explicit-id
-#: src/hooks/business/channels/useChannelData.ts:157
+#: src/hooks/business/channels/useChannelData.ts:163
 msgid "No Role - {count}"
 msgstr "Tidak Ada Peran - {count}"
 
 #. js-lingui-explicit-id
-#: src/components/space/Channel.tsx:742
+#: src/components/space/Channel.tsx:749
 msgid "Send a message to #{channel_name}"
 msgstr "Kirim pesan ke #{channel_name}"
 
@@ -67,7 +67,7 @@ msgid "{user} has been kicked"
 msgstr "{user} telah dikeluarkan"
 
 #. js-lingui-explicit-id
-#: src/components/direct/DirectMessage.tsx:523
+#: src/components/direct/DirectMessage.tsx:558
 msgid "Send a message to {user}"
 msgstr "Kirim pesan ke {user}"
 
@@ -112,7 +112,7 @@ msgstr "{0} notifikasi"
 #~ msgstr "{0} pesan yang dipin"
 
 #. placeholder {0}: pinnedMessages.length
-#: src/components/message/PinnedMessagesPanel.tsx:245
+#: src/components/message/PinnedMessagesPanel.tsx:248
 msgid "{0} pinned message in this Channel"
 msgstr "{0} pesan yang disematkan di Channel ini"
 
@@ -120,17 +120,17 @@ msgstr "{0} pesan yang disematkan di Channel ini"
 #~ msgstr "{0} pesan yang dipin"
 
 #. placeholder {0}: pinnedMessages.length
-#: src/components/message/PinnedMessagesPanel.tsx:246
+#: src/components/message/PinnedMessagesPanel.tsx:249
 msgid "{0} pinned messages in this Channel"
 msgstr "{0} pesan yang disematkan di Channel ini"
 
 #. placeholder {0}: results.length
-#: src/components/search/SearchResults.tsx:147
+#: src/components/search/SearchResults.tsx:149
 msgid "{0} result"
 msgstr "{0} hasil"
 
 #. placeholder {0}: results.length
-#: src/components/search/SearchResults.tsx:148
+#: src/components/search/SearchResults.tsx:150
 msgid "{0} results"
 msgstr "{0} hasil"
 
@@ -256,8 +256,8 @@ msgid "Advanced Settings"
 msgstr "Pengaturan Lanjutan"
 
 #: src/components/modals/SpaceSettingsModal/Account.tsx:201
-#: src/components/primitives/Select/Select.native.tsx:36
-#: src/components/primitives/Select/Select.web.tsx:30
+#: src/components/primitives/Select/Select.native.tsx:38
+#: src/components/primitives/Select/Select.web.tsx:32
 msgid "All"
 msgstr "Semua"
 
@@ -408,7 +408,7 @@ msgstr "Ikon Saluran"
 msgid "Channel Managers"
 msgstr "Manajer Saluran"
 
-#: src/components/space/Channel.tsx:950
+#: src/components/space/Channel.tsx:957
 msgid "Channel members"
 msgstr "Anggota saluran"
 
@@ -437,8 +437,8 @@ msgid "Choose your preferred theme for Quorum."
 msgstr "Pilih tema yang Anda inginkan untuk Quorum."
 
 #: src/components/modals/SpaceSettingsModal/Account.tsx:202
-#: src/components/primitives/Select/Select.native.tsx:37
-#: src/components/primitives/Select/Select.web.tsx:31
+#: src/components/primitives/Select/Select.native.tsx:39
+#: src/components/primitives/Select/Select.web.tsx:33
 #: src/components/space/IconPicker/IconPicker.web.tsx:141
 msgid "Clear"
 msgstr "Bersihkan"
@@ -484,7 +484,7 @@ msgstr "Kunci Konfigurasi"
 msgid "Connecting"
 msgstr "Sedang Menghubungkan"
 
-#: src/components/direct/DirectMessage.tsx:413
+#: src/components/direct/DirectMessage.tsx:421
 msgid "Conversation settings"
 msgstr "Pengaturan percakapan"
 
@@ -496,13 +496,13 @@ msgstr "Pengaturan Percakapan"
 #: src/components/ui/ClickToCopyContent.native.tsx:203
 #: src/components/ui/ClickToCopyContent.native.tsx:275
 #: src/components/ui/ClickToCopyContent.tsx:153
-#: src/components/ui/ClickToCopyContent.tsx:197
+#: src/components/ui/ClickToCopyContent.tsx:201
 msgid "Copied!"
 msgstr "Disalin!"
 
-#: src/components/direct/DirectMessage.tsx:264
-#: src/components/direct/DirectMessage.tsx:394
-#: src/components/direct/DirectMessage.tsx:466
+#: src/components/direct/DirectMessage.tsx:271
+#: src/components/direct/DirectMessage.tsx:401
+#: src/components/direct/DirectMessage.tsx:500
 #: src/components/modals/UserSettingsModal/General.tsx:118
 #: src/components/user/UserProfile.tsx:108
 #: src/components/user/UserStatus.tsx:47
@@ -793,7 +793,7 @@ msgstr "Gagal menyimpan pengaturan notifikasi"
 msgid "Failed to select document"
 msgstr "Gagal memilih dokumen"
 
-#: src/hooks/business/spaces/useInviteManagement.ts:142
+#: src/hooks/business/spaces/useInviteManagement.ts:144
 msgid "Failed to send invite. Please try again."
 msgstr "Gagal mengirim undangan. Silakan coba lagi."
 
@@ -900,6 +900,10 @@ msgstr "File GIF tidak boleh lebih besar dari {maxSize}. Silakan gunakan GIF yan
 msgid "Go to conversation"
 msgstr "Pergi ke percakapan"
 
+#: src/components/NotFound.tsx:24
+msgid "Go to Home"
+msgstr ""
+
 #: src/components/modals/GroupEditorModal.tsx:83
 msgid "Group Icon (optional)"
 msgstr "Ikon Grup (opsional)"
@@ -945,7 +949,7 @@ msgstr "Impor Kunci yang Ada"
 msgid "Important first-time user information:"
 msgstr "Informasi penting untuk pengguna baru:"
 
-#: src/components/message/PinnedMessagesPanel.tsx:229
+#: src/components/message/PinnedMessagesPanel.tsx:232
 msgid "Important messages will be pinned here"
 msgstr "Pesan penting akan dipin di sini"
 
@@ -1022,7 +1026,7 @@ msgid "Joining..."
 msgstr "Bergabung..."
 
 #: src/components/message/PinnedMessagesPanel.tsx:73
-#: src/components/message/PinnedMessagesPanel.tsx:128
+#: src/components/message/PinnedMessagesPanel.tsx:129
 msgid "Jump"
 msgstr "Lompat"
 
@@ -1099,7 +1103,7 @@ msgstr "Cahaya"
 msgid "Loading notifications..."
 msgstr "Memuat notifikasi..."
 
-#: src/components/message/PinnedMessagesPanel.tsx:217
+#: src/components/message/PinnedMessagesPanel.tsx:220
 msgid "Loading pinned messages..."
 msgstr "Memuat pesan yang dipin..."
 
@@ -1141,8 +1145,9 @@ msgstr "Cadangan Manual Diperlukan"
 msgid "Mark all as read"
 msgstr "Tandai semua sebagai dibaca"
 
-#: src/components/direct/DirectMessage.tsx:427
-#: src/components/space/Channel.tsx:636
+#: src/components/direct/DirectMessage.tsx:436
+#: src/components/direct/DirectMessage.tsx:596
+#: src/components/space/Channel.tsx:641
 msgid "Members List"
 msgstr "Daftar Anggota"
 
@@ -1178,11 +1183,11 @@ msgstr "Lebih banyak reaksi"
 msgid "New Direct Message"
 msgstr "Pesan Langsung Baru"
 
-#: src/components/search/SearchResults.tsx:100
+#: src/components/search/SearchResults.tsx:102
 msgid "No messages found"
 msgstr "Tidak ada pesan yang ditemukan"
 
-#: src/components/message/PinnedMessagesPanel.tsx:225
+#: src/components/message/PinnedMessagesPanel.tsx:228
 msgid "No pinned messages yet"
 msgstr "Belum ada pesan yang dipin"
 
@@ -1193,9 +1198,9 @@ msgstr "Belum ada pesan yang dipin"
 msgid "No unread notifications"
 msgstr "Tidak ada notifikasi yang belum dibaca"
 
-#: src/components/space/Channel.tsx:384
-#: src/components/space/Channel.tsx:807
-#: src/components/space/Channel.tsx:977
+#: src/components/space/Channel.tsx:387
+#: src/components/space/Channel.tsx:814
+#: src/components/space/Channel.tsx:984
 msgid "No users found!"
 msgstr "Tidak ada pengguna yang ditemukan!"
 
@@ -1210,7 +1215,7 @@ msgstr "Izin notifikasi tidak diberikan"
 #: src/components/modals/SpaceSettingsModal/Account.tsx:187
 #: src/components/modals/UserSettingsModal/Navigation.tsx:17
 #: src/components/modals/UserSettingsModal/Notifications.tsx:24
-#: src/components/space/Channel.tsx:611
+#: src/components/space/Channel.tsx:615
 msgid "Notifications"
 msgstr "Notifikasi"
 
@@ -1250,6 +1255,10 @@ msgstr "Buka video di YouTube"
 #: src/components/modals/AddSpaceModal.tsx:273
 msgid "OR"
 msgstr "ATAU"
+
+#: src/components/NotFound.tsx:15
+msgid "Page Not Found"
+msgstr ""
 
 #: src/components/modals/AddSpaceModal.tsx:141
 msgid "Paste an invite link"
@@ -1294,7 +1303,7 @@ msgstr "Pin"
 msgid "Pin channel to top"
 msgstr "Pin saluran ke atas"
 
-#: src/components/message/PinnedMessagesPanel.tsx:228
+#: src/components/message/PinnedMessagesPanel.tsx:231
 msgid "Pin important messages to keep them easily accessible"
 msgstr "Pin pesan penting untuk menjaga agar mudah diakses"
 
@@ -1329,7 +1338,7 @@ msgstr "Dipin"
 msgid "Pinned by {0}"
 msgstr "Dipin oleh {0}"
 
-#: src/components/space/Channel.tsx:576
+#: src/components/space/Channel.tsx:579
 msgid "Pinned Messages"
 msgstr "Pesan yang Dipin"
 
@@ -1486,7 +1495,7 @@ msgid "Saving..."
 msgstr "Menyimpan..."
 
 #. placeholder {0}: error?.message || 'Unknown error'
-#: src/components/search/SearchResults.tsx:91
+#: src/components/search/SearchResults.tsx:93
 msgid "Search failed: {0}"
 msgstr "Pencarian gagal: {0}"
 
@@ -1500,11 +1509,12 @@ msgstr "Cari di sini"
 msgid "Search in this Space"
 msgstr "Cari di Space ini"
 
-#: src/components/search/SearchResults.tsx:128
+#: src/components/search/SearchResults.tsx:130
 msgid "Search in this Space..."
 msgstr "Cari di Ruang ini..."
 
-#: src/components/space/Channel.tsx:654
+#: src/components/direct/DirectMessage.tsx:455
+#: src/components/space/Channel.tsx:660
 msgid "Search Messages"
 msgstr "Cari Pesan"
 
@@ -1512,11 +1522,11 @@ msgstr "Cari Pesan"
 msgid "Search messages..."
 msgstr "Cari pesan..."
 
-#: src/components/space/Channel.tsx:958
+#: src/components/space/Channel.tsx:965
 msgid "Search Username or Address"
 msgstr "Cari Nama Pengguna atau Alamat"
 
-#: src/components/search/SearchResults.tsx:82
+#: src/components/search/SearchResults.tsx:84
 msgid "Searching..."
 msgstr "Mencari..."
 
@@ -1528,8 +1538,8 @@ msgstr "Keamanan"
 msgid "Select"
 msgstr "Pilih"
 
-#: src/components/primitives/Select/Select.native.tsx:24
-#: src/components/primitives/Select/Select.web.tsx:14
+#: src/components/primitives/Select/Select.native.tsx:26
+#: src/components/primitives/Select/Select.web.tsx:16
 msgid "Select an option"
 msgstr "Pilih opsi"
 
@@ -1632,7 +1642,7 @@ msgstr "Nama Ruang diperlukan"
 msgid "Space Settings"
 msgstr "Pengaturan Ruang"
 
-#: src/components/search/SearchResults.tsx:73
+#: src/components/search/SearchResults.tsx:75
 msgid "Start typing to search messages..."
 msgstr "Mulai mengetik untuk mencari pesan..."
 
@@ -1683,6 +1693,10 @@ msgstr "Format tautan undangan tidak valid."
 msgid "The invite link has expired or is invalid."
 msgstr "Tautan undangan telah kedaluwarsa atau tidak valid."
 
+#: src/components/NotFound.tsx:18
+msgid "The page you're looking for doesn't exist or has been moved. Let's get you back on track."
+msgstr ""
+
 #: src/components/modals/SpaceSettingsModal/Danger.tsx:30
 msgid "This action cannot be undone and will permanently remove all the Space settings. To delete the Space, you must first delete all Channels."
 msgstr "Tindakan ini tidak dapat dibatalkan dan akan menghapus semua pengaturan Ruang secara permanen. Untuk menghapus Ruang, Anda harus terlebih dahulu menghapus semua Saluran."
@@ -1714,7 +1728,7 @@ msgstr "Ini melindungi identitas Anda sebagai pemilik ruang. Namun, jika Anda ad
 msgid "This public invite link is no longer valid."
 msgstr "Tautan undangan publik ini tidak lagi valid."
 
-#: src/hooks/business/spaces/useInviteManagement.ts:126
+#: src/hooks/business/spaces/useInviteManagement.ts:128
 msgid "This user is already a member of this space."
 msgstr "Pengguna ini sudah menjadi anggota Ruang ini."
 
@@ -1746,7 +1760,7 @@ msgstr "Hari ini pada {timeFormatted}"
 msgid "Too many files selected. Please select fewer files."
 msgstr "Terlalu banyak file yang dipilih. Silakan pilih file yang lebih sedikit."
 
-#: src/components/search/SearchResults.tsx:102
+#: src/components/search/SearchResults.tsx:104
 msgid "Try different keywords or check your spelling"
 msgstr "Coba kata kunci yang berbeda atau periksa ejaan Anda"
 
@@ -1807,14 +1821,14 @@ msgstr "Waktu tidak diketahui"
 #: src/components/context/MessageDB.bak.tsx:3043
 #: src/components/context/MessageDB.bak.tsx:4122
 #: src/components/context/MessageDB.bak.tsx:5292
-#: src/components/direct/DirectMessage.tsx:127
-#: src/components/direct/DirectMessage.tsx:142
-#: src/components/direct/DirectMessage.tsx:326
+#: src/components/direct/DirectMessage.tsx:131
+#: src/components/direct/DirectMessage.tsx:146
+#: src/components/direct/DirectMessage.tsx:333
 #: src/components/message/MessageComposer.tsx:358
 #: src/components/message/MessageComposer.tsx:365
 #: src/components/message/MessagePreview.tsx:41
-#: src/components/message/PinnedMessagesPanel.tsx:98
-#: src/components/message/PinnedMessagesPanel.tsx:111
+#: src/components/message/PinnedMessagesPanel.tsx:99
+#: src/components/message/PinnedMessagesPanel.tsx:112
 #: src/components/modals/ConversationSettingsModal.tsx:95
 #: src/components/modals/NewDirectMessageModal.tsx:66
 #: src/components/notifications/NotificationPanel.tsx:228
@@ -1855,7 +1869,7 @@ msgid "Unpin Message"
 msgstr "Unpin Pesan"
 
 #: src/components/message/PinnedMessagesPanel.tsx:78
-#: src/components/message/PinnedMessagesPanel.tsx:133
+#: src/components/message/PinnedMessagesPanel.tsx:134
 msgid "Unpin this post"
 msgstr "Lepaskan pos ini"
 
@@ -1863,7 +1877,7 @@ msgstr "Lepaskan pos ini"
 msgid "Unpinned!"
 msgstr "Tidak dipin!"
 
-#: src/components/direct/DirectMessage.tsx:511
+#: src/components/direct/DirectMessage.tsx:546
 msgid "Until you reply, this sender will not see your display name or profile picture"
 msgstr "Sampai kamu membalas, pengirim ini tidak akan melihat nama tampilan atau foto profilmu"
 
@@ -1904,8 +1918,8 @@ msgstr "Alamat pengguna di sini"
 msgid "User does not exist."
 msgstr "Pengguna tidak ada."
 
-#: src/components/space/Channel.tsx:371
-#: src/components/space/Channel.tsx:794
+#: src/components/space/Channel.tsx:374
+#: src/components/space/Channel.tsx:801
 msgid "Username or Address"
 msgstr "Nama Pengguna atau Alamat"
 
@@ -1973,7 +1987,7 @@ msgstr "Ketika Anda menandatangani pesan, Anda mengonfirmasi bahwa pesan tersebu
 msgid "Yesterday at {timeFormatted}"
 msgstr "kemarin pada {timeFormatted}"
 
-#: src/components/direct/DirectMessage.tsx:258
+#: src/components/direct/DirectMessage.tsx:265
 #: src/hooks/business/search/useBatchSearchResultsDisplay.ts:139
 msgid "You"
 msgstr "Kamu"
@@ -1991,7 +2005,7 @@ msgid "You cannot delete a group that contains channels. Delete all {channelCoun
 msgstr "Anda tidak dapat menghapus grup yang berisi saluran. Hapus semua {channelCount} saluran di grup ini terlebih dahulu."
 
 #: src/components/message/MessageComposer.tsx:242
-#: src/components/space/Channel.tsx:765
+#: src/components/space/Channel.tsx:772
 msgid "You cannot post in this channel"
 msgstr "Anda tidak dapat memposting di saluran ini"
 

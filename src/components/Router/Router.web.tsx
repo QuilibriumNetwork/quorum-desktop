@@ -8,6 +8,7 @@ import Space from '@/components/space/Space';
 import DirectMessages from '@/components/direct/DirectMessages';
 import Connecting from '@/components/Connecting';
 import InviteRoute from '@/components/InviteRoute';
+import NotFound from '@/components/NotFound';
 
 class RouteErrorBoundary extends React.Component<
   { fallback: React.ReactNode; children: React.ReactNode },
@@ -235,6 +236,7 @@ export function Router({ user, setUser }: RouterProps) {
           }
         />
       )}
+      <Route path="*" element={<NotFound />} />
     </Routes>
   );
 }

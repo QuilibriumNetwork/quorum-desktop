@@ -21,17 +21,17 @@ msgid "File cannot be larger than {maxFileSize}"
 msgstr "لا يمكن أن يكون حجم الملف أكبر من {maxFileSize}"
 
 #. js-lingui-explicit-id
-#: src/hooks/business/channels/useChannelData.ts:141
+#: src/hooks/business/channels/useChannelData.ts:147
 msgid "{role} - {count}"
 msgstr "{role} - {count}"
 
 #. js-lingui-explicit-id
-#: src/hooks/business/channels/useChannelData.ts:157
+#: src/hooks/business/channels/useChannelData.ts:163
 msgid "No Role - {count}"
 msgstr "لا دور - {count}"
 
 #. js-lingui-explicit-id
-#: src/components/space/Channel.tsx:742
+#: src/components/space/Channel.tsx:749
 msgid "Send a message to #{channel_name}"
 msgstr "أرسل رسالة إلى #{channel_name}"
 
@@ -67,7 +67,7 @@ msgid "{user} has been kicked"
 msgstr "{user} تم طرده"
 
 #. js-lingui-explicit-id
-#: src/components/direct/DirectMessage.tsx:523
+#: src/components/direct/DirectMessage.tsx:558
 msgid "Send a message to {user}"
 msgstr "أرسل رسالة إلى {user}"
 
@@ -112,7 +112,7 @@ msgstr "إشعارات {0}"
 #~ msgstr "رسالة مثبتة {0}"
 
 #. placeholder {0}: pinnedMessages.length
-#: src/components/message/PinnedMessagesPanel.tsx:245
+#: src/components/message/PinnedMessagesPanel.tsx:248
 msgid "{0} pinned message in this Channel"
 msgstr "{0} رسالة مثبتة في هذه القناة"
 
@@ -120,17 +120,17 @@ msgstr "{0} رسالة مثبتة في هذه القناة"
 #~ msgstr "رسائل مثبتة {0}"
 
 #. placeholder {0}: pinnedMessages.length
-#: src/components/message/PinnedMessagesPanel.tsx:246
+#: src/components/message/PinnedMessagesPanel.tsx:249
 msgid "{0} pinned messages in this Channel"
 msgstr "{0} رسائل مثبتة في هذه القناة"
 
 #. placeholder {0}: results.length
-#: src/components/search/SearchResults.tsx:147
+#: src/components/search/SearchResults.tsx:149
 msgid "{0} result"
 msgstr "{0} نتيجة"
 
 #. placeholder {0}: results.length
-#: src/components/search/SearchResults.tsx:148
+#: src/components/search/SearchResults.tsx:150
 msgid "{0} results"
 msgstr "{0} نتائج"
 
@@ -256,8 +256,8 @@ msgid "Advanced Settings"
 msgstr "إعدادات متقدمة"
 
 #: src/components/modals/SpaceSettingsModal/Account.tsx:201
-#: src/components/primitives/Select/Select.native.tsx:36
-#: src/components/primitives/Select/Select.web.tsx:30
+#: src/components/primitives/Select/Select.native.tsx:38
+#: src/components/primitives/Select/Select.web.tsx:32
 msgid "All"
 msgstr "الكل"
 
@@ -408,7 +408,7 @@ msgstr "أيقونة القناة"
 msgid "Channel Managers"
 msgstr "مدراء القناة"
 
-#: src/components/space/Channel.tsx:950
+#: src/components/space/Channel.tsx:957
 msgid "Channel members"
 msgstr "أعضاء القناة"
 
@@ -437,8 +437,8 @@ msgid "Choose your preferred theme for Quorum."
 msgstr "اختر المظهر المفضل لديك لـ Quorum."
 
 #: src/components/modals/SpaceSettingsModal/Account.tsx:202
-#: src/components/primitives/Select/Select.native.tsx:37
-#: src/components/primitives/Select/Select.web.tsx:31
+#: src/components/primitives/Select/Select.native.tsx:39
+#: src/components/primitives/Select/Select.web.tsx:33
 #: src/components/space/IconPicker/IconPicker.web.tsx:141
 msgid "Clear"
 msgstr "مسح"
@@ -484,7 +484,7 @@ msgstr "مفتاح التكوين"
 msgid "Connecting"
 msgstr "جارٍ الاتصال"
 
-#: src/components/direct/DirectMessage.tsx:413
+#: src/components/direct/DirectMessage.tsx:421
 msgid "Conversation settings"
 msgstr "إعدادات المحادثة"
 
@@ -496,13 +496,13 @@ msgstr "إعدادات المحادثة"
 #: src/components/ui/ClickToCopyContent.native.tsx:203
 #: src/components/ui/ClickToCopyContent.native.tsx:275
 #: src/components/ui/ClickToCopyContent.tsx:153
-#: src/components/ui/ClickToCopyContent.tsx:197
+#: src/components/ui/ClickToCopyContent.tsx:201
 msgid "Copied!"
 msgstr "تم النسخ!"
 
-#: src/components/direct/DirectMessage.tsx:264
-#: src/components/direct/DirectMessage.tsx:394
-#: src/components/direct/DirectMessage.tsx:466
+#: src/components/direct/DirectMessage.tsx:271
+#: src/components/direct/DirectMessage.tsx:401
+#: src/components/direct/DirectMessage.tsx:500
 #: src/components/modals/UserSettingsModal/General.tsx:118
 #: src/components/user/UserProfile.tsx:108
 #: src/components/user/UserStatus.tsx:47
@@ -793,7 +793,7 @@ msgstr "فشل في حفظ إعدادات الإشعارات"
 msgid "Failed to select document"
 msgstr "فشل في اختيار الوثيقة"
 
-#: src/hooks/business/spaces/useInviteManagement.ts:142
+#: src/hooks/business/spaces/useInviteManagement.ts:144
 msgid "Failed to send invite. Please try again."
 msgstr "فشل في إرسال الدعوة. يرجى المحاولة مرة أخرى."
 
@@ -900,6 +900,10 @@ msgstr "لا يمكن أن تكون ملفات GIF أكبر من {maxSize}. ير
 msgid "Go to conversation"
 msgstr "اذهب إلى المحادثة"
 
+#: src/components/NotFound.tsx:24
+msgid "Go to Home"
+msgstr ""
+
 #: src/components/modals/GroupEditorModal.tsx:83
 msgid "Group Icon (optional)"
 msgstr "أيقونة المجموعة (اختياري)"
@@ -945,7 +949,7 @@ msgstr "استيراد المفتاح الموجود"
 msgid "Important first-time user information:"
 msgstr "معلومات مهمة للمستخدمين الجدد:"
 
-#: src/components/message/PinnedMessagesPanel.tsx:229
+#: src/components/message/PinnedMessagesPanel.tsx:232
 msgid "Important messages will be pinned here"
 msgstr "ستُثبت الرسائل المهمة هنا"
 
@@ -1022,7 +1026,7 @@ msgid "Joining..."
 msgstr "جارٍ الانضمام..."
 
 #: src/components/message/PinnedMessagesPanel.tsx:73
-#: src/components/message/PinnedMessagesPanel.tsx:128
+#: src/components/message/PinnedMessagesPanel.tsx:129
 msgid "Jump"
 msgstr "انتقل"
 
@@ -1099,7 +1103,7 @@ msgstr "ضوء"
 msgid "Loading notifications..."
 msgstr "جارٍ تحميل الإشعارات..."
 
-#: src/components/message/PinnedMessagesPanel.tsx:217
+#: src/components/message/PinnedMessagesPanel.tsx:220
 msgid "Loading pinned messages..."
 msgstr "جارٍ تحميل الرسائل المثبتة..."
 
@@ -1141,8 +1145,9 @@ msgstr "نسخة احتياطية يدوية مطلوبة"
 msgid "Mark all as read"
 msgstr "تحديد الكل كمقروء"
 
-#: src/components/direct/DirectMessage.tsx:427
-#: src/components/space/Channel.tsx:636
+#: src/components/direct/DirectMessage.tsx:436
+#: src/components/direct/DirectMessage.tsx:596
+#: src/components/space/Channel.tsx:641
 msgid "Members List"
 msgstr "قائمة الأعضاء"
 
@@ -1178,11 +1183,11 @@ msgstr "مزيد من ردود الفعل"
 msgid "New Direct Message"
 msgstr "رسالة مباشرة جديدة"
 
-#: src/components/search/SearchResults.tsx:100
+#: src/components/search/SearchResults.tsx:102
 msgid "No messages found"
 msgstr "لا توجد رسائل"
 
-#: src/components/message/PinnedMessagesPanel.tsx:225
+#: src/components/message/PinnedMessagesPanel.tsx:228
 msgid "No pinned messages yet"
 msgstr "لا توجد رسائل مثبتة بعد"
 
@@ -1193,9 +1198,9 @@ msgstr "لا توجد رسائل مثبتة بعد"
 msgid "No unread notifications"
 msgstr "لا توجد إشعارات غير مقروءة"
 
-#: src/components/space/Channel.tsx:384
-#: src/components/space/Channel.tsx:807
-#: src/components/space/Channel.tsx:977
+#: src/components/space/Channel.tsx:387
+#: src/components/space/Channel.tsx:814
+#: src/components/space/Channel.tsx:984
 msgid "No users found!"
 msgstr "لم يتم العثور على مستخدمين!"
 
@@ -1210,7 +1215,7 @@ msgstr "لم يتم منح إذن الإشعارات"
 #: src/components/modals/SpaceSettingsModal/Account.tsx:187
 #: src/components/modals/UserSettingsModal/Navigation.tsx:17
 #: src/components/modals/UserSettingsModal/Notifications.tsx:24
-#: src/components/space/Channel.tsx:611
+#: src/components/space/Channel.tsx:615
 msgid "Notifications"
 msgstr "الإشعارات"
 
@@ -1250,6 +1255,10 @@ msgstr "فتح الفيديو على يوتيوب"
 #: src/components/modals/AddSpaceModal.tsx:273
 msgid "OR"
 msgstr "أو"
+
+#: src/components/NotFound.tsx:15
+msgid "Page Not Found"
+msgstr ""
 
 #: src/components/modals/AddSpaceModal.tsx:141
 msgid "Paste an invite link"
@@ -1294,7 +1303,7 @@ msgstr "دبوس"
 msgid "Pin channel to top"
 msgstr "دبوس القناة إلى الأعلى"
 
-#: src/components/message/PinnedMessagesPanel.tsx:228
+#: src/components/message/PinnedMessagesPanel.tsx:231
 msgid "Pin important messages to keep them easily accessible"
 msgstr "قم بتثبيت الرسائل المهمة لتكون سهلة الوصول إليها"
 
@@ -1329,7 +1338,7 @@ msgstr "مثبت"
 msgid "Pinned by {0}"
 msgstr "مثبت بواسطة {0}"
 
-#: src/components/space/Channel.tsx:576
+#: src/components/space/Channel.tsx:579
 msgid "Pinned Messages"
 msgstr "الرسائل المثبتة"
 
@@ -1486,7 +1495,7 @@ msgid "Saving..."
 msgstr "جارٍ الحفظ..."
 
 #. placeholder {0}: error?.message || 'Unknown error'
-#: src/components/search/SearchResults.tsx:91
+#: src/components/search/SearchResults.tsx:93
 msgid "Search failed: {0}"
 msgstr "فشل البحث: {0}"
 
@@ -1500,11 +1509,12 @@ msgstr "ابحث هنا"
 msgid "Search in this Space"
 msgstr "البحث في هذا فضاء"
 
-#: src/components/search/SearchResults.tsx:128
+#: src/components/search/SearchResults.tsx:130
 msgid "Search in this Space..."
 msgstr "ابحث في هذا الفضاء..."
 
-#: src/components/space/Channel.tsx:654
+#: src/components/direct/DirectMessage.tsx:455
+#: src/components/space/Channel.tsx:660
 msgid "Search Messages"
 msgstr "ابحث عن الرسائل"
 
@@ -1512,11 +1522,11 @@ msgstr "ابحث عن الرسائل"
 msgid "Search messages..."
 msgstr "البحث عن الرسائل..."
 
-#: src/components/space/Channel.tsx:958
+#: src/components/space/Channel.tsx:965
 msgid "Search Username or Address"
 msgstr "ابحث عن اسم المستخدم أو العنوان"
 
-#: src/components/search/SearchResults.tsx:82
+#: src/components/search/SearchResults.tsx:84
 msgid "Searching..."
 msgstr "جارٍ البحث..."
 
@@ -1528,8 +1538,8 @@ msgstr "الأمان"
 msgid "Select"
 msgstr "اختر"
 
-#: src/components/primitives/Select/Select.native.tsx:24
-#: src/components/primitives/Select/Select.web.tsx:14
+#: src/components/primitives/Select/Select.native.tsx:26
+#: src/components/primitives/Select/Select.web.tsx:16
 msgid "Select an option"
 msgstr "اختر خيارًا"
 
@@ -1632,7 +1642,7 @@ msgstr "اسم الفضاء مطلوب"
 msgid "Space Settings"
 msgstr "إعدادات الفضاء"
 
-#: src/components/search/SearchResults.tsx:73
+#: src/components/search/SearchResults.tsx:75
 msgid "Start typing to search messages..."
 msgstr "ابدأ الكتابة للبحث عن الرسائل..."
 
@@ -1683,6 +1693,10 @@ msgstr "تنسيق رابط الدعوة غير صالح."
 msgid "The invite link has expired or is invalid."
 msgstr "رابط الدعوة قد انتهت صلاحيته أو غير صالح."
 
+#: src/components/NotFound.tsx:18
+msgid "The page you're looking for doesn't exist or has been moved. Let's get you back on track."
+msgstr ""
+
 #: src/components/modals/SpaceSettingsModal/Danger.tsx:30
 msgid "This action cannot be undone and will permanently remove all the Space settings. To delete the Space, you must first delete all Channels."
 msgstr "لا يمكن التراجع عن هذا الإجراء وسيرفع جميع إعدادات مساحة بشكل دائم. لحذف مساحة، يجب أولاً حذف جميع القنوات."
@@ -1714,7 +1728,7 @@ msgstr "هذا يحمي هويتك كمالك للمساحة. ومع ذلك، إ
 msgid "This public invite link is no longer valid."
 msgstr "رابط الدعوة العامة هذا لم يعد صالحًا."
 
-#: src/hooks/business/spaces/useInviteManagement.ts:126
+#: src/hooks/business/spaces/useInviteManagement.ts:128
 msgid "This user is already a member of this space."
 msgstr "هذا المستخدم هو بالفعل عضو في هذا مساحة."
 
@@ -1746,7 +1760,7 @@ msgstr "اليوم في {timeFormatted}"
 msgid "Too many files selected. Please select fewer files."
 msgstr "تم اختيار عدد كبير جداً من الملفات. يرجى اختيار عدد أقل من الملفات."
 
-#: src/components/search/SearchResults.tsx:102
+#: src/components/search/SearchResults.tsx:104
 msgid "Try different keywords or check your spelling"
 msgstr "حاول كلمات مفتاحية مختلفة أو تحقق من تهجئتك"
 
@@ -1807,14 +1821,14 @@ msgstr "وقت غير معروف"
 #: src/components/context/MessageDB.bak.tsx:3043
 #: src/components/context/MessageDB.bak.tsx:4122
 #: src/components/context/MessageDB.bak.tsx:5292
-#: src/components/direct/DirectMessage.tsx:127
-#: src/components/direct/DirectMessage.tsx:142
-#: src/components/direct/DirectMessage.tsx:326
+#: src/components/direct/DirectMessage.tsx:131
+#: src/components/direct/DirectMessage.tsx:146
+#: src/components/direct/DirectMessage.tsx:333
 #: src/components/message/MessageComposer.tsx:358
 #: src/components/message/MessageComposer.tsx:365
 #: src/components/message/MessagePreview.tsx:41
-#: src/components/message/PinnedMessagesPanel.tsx:98
-#: src/components/message/PinnedMessagesPanel.tsx:111
+#: src/components/message/PinnedMessagesPanel.tsx:99
+#: src/components/message/PinnedMessagesPanel.tsx:112
 #: src/components/modals/ConversationSettingsModal.tsx:95
 #: src/components/modals/NewDirectMessageModal.tsx:66
 #: src/components/notifications/NotificationPanel.tsx:228
@@ -1855,7 +1869,7 @@ msgid "Unpin Message"
 msgstr "إلغاء دبوس الرسالة"
 
 #: src/components/message/PinnedMessagesPanel.tsx:78
-#: src/components/message/PinnedMessagesPanel.tsx:133
+#: src/components/message/PinnedMessagesPanel.tsx:134
 msgid "Unpin this post"
 msgstr "إلغاء تثبيت هذا المنشور"
 
@@ -1863,7 +1877,7 @@ msgstr "إلغاء تثبيت هذا المنشور"
 msgid "Unpinned!"
 msgstr "تم إلغاء التثبيت!"
 
-#: src/components/direct/DirectMessage.tsx:511
+#: src/components/direct/DirectMessage.tsx:546
 msgid "Until you reply, this sender will not see your display name or profile picture"
 msgstr "حتى ترد، لن يرى هذا المرسل اسم العرض أو صورة الملف الشخصي الخاصة بك"
 
@@ -1904,8 +1918,8 @@ msgstr "عنوان المستخدم هنا"
 msgid "User does not exist."
 msgstr "المستخدم غير موجود."
 
-#: src/components/space/Channel.tsx:371
-#: src/components/space/Channel.tsx:794
+#: src/components/space/Channel.tsx:374
+#: src/components/space/Channel.tsx:801
 msgid "Username or Address"
 msgstr "اسم المستخدم أو العنوان"
 
@@ -1973,7 +1987,7 @@ msgstr "عندما تقوم بتوقيع رسالة، فإنك تؤكد أنها
 msgid "Yesterday at {timeFormatted}"
 msgstr "أمس في {timeFormatted}"
 
-#: src/components/direct/DirectMessage.tsx:258
+#: src/components/direct/DirectMessage.tsx:265
 #: src/hooks/business/search/useBatchSearchResultsDisplay.ts:139
 msgid "You"
 msgstr "أنت"
@@ -1991,7 +2005,7 @@ msgid "You cannot delete a group that contains channels. Delete all {channelCoun
 msgstr "لا يمكنك حذف مجموعة تحتوي على قنوات. احذف جميع {channelCount} القنوات في هذه المجموعة أولاً."
 
 #: src/components/message/MessageComposer.tsx:242
-#: src/components/space/Channel.tsx:765
+#: src/components/space/Channel.tsx:772
 msgid "You cannot post in this channel"
 msgstr "لا يمكنك النشر في هذه القناة"
 

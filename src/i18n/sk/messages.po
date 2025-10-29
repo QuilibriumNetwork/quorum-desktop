@@ -21,17 +21,17 @@ msgid "File cannot be larger than {maxFileSize}"
 msgstr "Súbor nemôže byť väčší ako {maxFileSize}"
 
 #. js-lingui-explicit-id
-#: src/hooks/business/channels/useChannelData.ts:141
+#: src/hooks/business/channels/useChannelData.ts:147
 msgid "{role} - {count}"
 msgstr "{role} - {count}"
 
 #. js-lingui-explicit-id
-#: src/hooks/business/channels/useChannelData.ts:157
+#: src/hooks/business/channels/useChannelData.ts:163
 msgid "No Role - {count}"
 msgstr "Bez úlohy - {count}"
 
 #. js-lingui-explicit-id
-#: src/components/space/Channel.tsx:742
+#: src/components/space/Channel.tsx:749
 msgid "Send a message to #{channel_name}"
 msgstr "Poslať správu #{channel_name}"
 
@@ -67,7 +67,7 @@ msgid "{user} has been kicked"
 msgstr "{user} bol vykopnutý"
 
 #. js-lingui-explicit-id
-#: src/components/direct/DirectMessage.tsx:523
+#: src/components/direct/DirectMessage.tsx:558
 msgid "Send a message to {user}"
 msgstr "Poslať správu {user}"
 
@@ -112,7 +112,7 @@ msgstr "{0} oznámenia"
 #~ msgstr "{0} pripnutá správa"
 
 #. placeholder {0}: pinnedMessages.length
-#: src/components/message/PinnedMessagesPanel.tsx:245
+#: src/components/message/PinnedMessagesPanel.tsx:248
 msgid "{0} pinned message in this Channel"
 msgstr "{0} pripnutá správa v tomto kanáli"
 
@@ -120,17 +120,17 @@ msgstr "{0} pripnutá správa v tomto kanáli"
 #~ msgstr "{0} pripnuté správy"
 
 #. placeholder {0}: pinnedMessages.length
-#: src/components/message/PinnedMessagesPanel.tsx:246
+#: src/components/message/PinnedMessagesPanel.tsx:249
 msgid "{0} pinned messages in this Channel"
 msgstr "{0} pripnuté správy v tomto kanáli"
 
 #. placeholder {0}: results.length
-#: src/components/search/SearchResults.tsx:147
+#: src/components/search/SearchResults.tsx:149
 msgid "{0} result"
 msgstr "{0} výsledok"
 
 #. placeholder {0}: results.length
-#: src/components/search/SearchResults.tsx:148
+#: src/components/search/SearchResults.tsx:150
 msgid "{0} results"
 msgstr "{0} výsledky"
 
@@ -256,8 +256,8 @@ msgid "Advanced Settings"
 msgstr "Pokročilé nastavenia"
 
 #: src/components/modals/SpaceSettingsModal/Account.tsx:201
-#: src/components/primitives/Select/Select.native.tsx:36
-#: src/components/primitives/Select/Select.web.tsx:30
+#: src/components/primitives/Select/Select.native.tsx:38
+#: src/components/primitives/Select/Select.web.tsx:32
 msgid "All"
 msgstr "Všetko"
 
@@ -408,7 +408,7 @@ msgstr "Ikona kanála"
 msgid "Channel Managers"
 msgstr "Správcovia kanála"
 
-#: src/components/space/Channel.tsx:950
+#: src/components/space/Channel.tsx:957
 msgid "Channel members"
 msgstr "Členovia kanála"
 
@@ -437,8 +437,8 @@ msgid "Choose your preferred theme for Quorum."
 msgstr "Vyberte si preferovanú tému pre Quorum."
 
 #: src/components/modals/SpaceSettingsModal/Account.tsx:202
-#: src/components/primitives/Select/Select.native.tsx:37
-#: src/components/primitives/Select/Select.web.tsx:31
+#: src/components/primitives/Select/Select.native.tsx:39
+#: src/components/primitives/Select/Select.web.tsx:33
 #: src/components/space/IconPicker/IconPicker.web.tsx:141
 msgid "Clear"
 msgstr "Vymazať"
@@ -484,7 +484,7 @@ msgstr "Konfiguračný kľúč"
 msgid "Connecting"
 msgstr "Pripájanie"
 
-#: src/components/direct/DirectMessage.tsx:413
+#: src/components/direct/DirectMessage.tsx:421
 msgid "Conversation settings"
 msgstr "Nastavenia konverzácie"
 
@@ -496,13 +496,13 @@ msgstr "Nastavenia konverzácie"
 #: src/components/ui/ClickToCopyContent.native.tsx:203
 #: src/components/ui/ClickToCopyContent.native.tsx:275
 #: src/components/ui/ClickToCopyContent.tsx:153
-#: src/components/ui/ClickToCopyContent.tsx:197
+#: src/components/ui/ClickToCopyContent.tsx:201
 msgid "Copied!"
 msgstr "Skopírované!"
 
-#: src/components/direct/DirectMessage.tsx:264
-#: src/components/direct/DirectMessage.tsx:394
-#: src/components/direct/DirectMessage.tsx:466
+#: src/components/direct/DirectMessage.tsx:271
+#: src/components/direct/DirectMessage.tsx:401
+#: src/components/direct/DirectMessage.tsx:500
 #: src/components/modals/UserSettingsModal/General.tsx:118
 #: src/components/user/UserProfile.tsx:108
 #: src/components/user/UserStatus.tsx:47
@@ -793,7 +793,7 @@ msgstr "Uloženie nastavení upozornení zlyhalo"
 msgid "Failed to select document"
 msgstr "Nepodarilo sa vybrať dokument"
 
-#: src/hooks/business/spaces/useInviteManagement.ts:142
+#: src/hooks/business/spaces/useInviteManagement.ts:144
 msgid "Failed to send invite. Please try again."
 msgstr "Nepodarilo sa odoslať pozvánku. Skúste to prosím znova."
 
@@ -900,6 +900,10 @@ msgstr "GIF súbory nemôžu byť väčšie ako {maxSize}. Prosím, použite men
 msgid "Go to conversation"
 msgstr "Prejdite na konverzáciu"
 
+#: src/components/NotFound.tsx:24
+msgid "Go to Home"
+msgstr ""
+
 #: src/components/modals/GroupEditorModal.tsx:83
 msgid "Group Icon (optional)"
 msgstr "Ikona skupiny (voliteľné)"
@@ -945,7 +949,7 @@ msgstr "Importovať existujúci kľúč"
 msgid "Important first-time user information:"
 msgstr "Dôležité informácie pre nových používateľov:"
 
-#: src/components/message/PinnedMessagesPanel.tsx:229
+#: src/components/message/PinnedMessagesPanel.tsx:232
 msgid "Important messages will be pinned here"
 msgstr "Dôležité správy budú pripnuté tu"
 
@@ -1022,7 +1026,7 @@ msgid "Joining..."
 msgstr "Pripojovanie..."
 
 #: src/components/message/PinnedMessagesPanel.tsx:73
-#: src/components/message/PinnedMessagesPanel.tsx:128
+#: src/components/message/PinnedMessagesPanel.tsx:129
 msgid "Jump"
 msgstr "Skákať"
 
@@ -1099,7 +1103,7 @@ msgstr "Svetlo"
 msgid "Loading notifications..."
 msgstr "Načítavam upozornenia..."
 
-#: src/components/message/PinnedMessagesPanel.tsx:217
+#: src/components/message/PinnedMessagesPanel.tsx:220
 msgid "Loading pinned messages..."
 msgstr "Načítavam pripnuté správy..."
 
@@ -1141,8 +1145,9 @@ msgstr "Vyžaduje sa manuálna záloha"
 msgid "Mark all as read"
 msgstr "Označiť všetko ako prečítané"
 
-#: src/components/direct/DirectMessage.tsx:427
-#: src/components/space/Channel.tsx:636
+#: src/components/direct/DirectMessage.tsx:436
+#: src/components/direct/DirectMessage.tsx:596
+#: src/components/space/Channel.tsx:641
 msgid "Members List"
 msgstr "Zoznam členov"
 
@@ -1178,11 +1183,11 @@ msgstr "Viac reakcií"
 msgid "New Direct Message"
 msgstr "Nová priama správa"
 
-#: src/components/search/SearchResults.tsx:100
+#: src/components/search/SearchResults.tsx:102
 msgid "No messages found"
 msgstr "Žiadne správy nenájdené"
 
-#: src/components/message/PinnedMessagesPanel.tsx:225
+#: src/components/message/PinnedMessagesPanel.tsx:228
 msgid "No pinned messages yet"
 msgstr "Zatiaľ žiadne pripnuté správy"
 
@@ -1193,9 +1198,9 @@ msgstr "Zatiaľ žiadne pripnuté správy"
 msgid "No unread notifications"
 msgstr "Žiadne neprečítané oznámenia"
 
-#: src/components/space/Channel.tsx:384
-#: src/components/space/Channel.tsx:807
-#: src/components/space/Channel.tsx:977
+#: src/components/space/Channel.tsx:387
+#: src/components/space/Channel.tsx:814
+#: src/components/space/Channel.tsx:984
 msgid "No users found!"
 msgstr "Žiadni používatelia nenájdení!"
 
@@ -1210,7 +1215,7 @@ msgstr "Povolenie na oznámenia nebolo udelené"
 #: src/components/modals/SpaceSettingsModal/Account.tsx:187
 #: src/components/modals/UserSettingsModal/Navigation.tsx:17
 #: src/components/modals/UserSettingsModal/Notifications.tsx:24
-#: src/components/space/Channel.tsx:611
+#: src/components/space/Channel.tsx:615
 msgid "Notifications"
 msgstr "Oznámenia"
 
@@ -1250,6 +1255,10 @@ msgstr "Otvor video na YouTube"
 #: src/components/modals/AddSpaceModal.tsx:273
 msgid "OR"
 msgstr "ALE"
+
+#: src/components/NotFound.tsx:15
+msgid "Page Not Found"
+msgstr ""
 
 #: src/components/modals/AddSpaceModal.tsx:141
 msgid "Paste an invite link"
@@ -1294,7 +1303,7 @@ msgstr "Pripin"
 msgid "Pin channel to top"
 msgstr "Pripin kanál na vrchol"
 
-#: src/components/message/PinnedMessagesPanel.tsx:228
+#: src/components/message/PinnedMessagesPanel.tsx:231
 msgid "Pin important messages to keep them easily accessible"
 msgstr "Pripnúť dôležité správy, aby boli ľahko prístupné"
 
@@ -1329,7 +1338,7 @@ msgstr "Pripnuté"
 msgid "Pinned by {0}"
 msgstr "Pripnuté od {0}"
 
-#: src/components/space/Channel.tsx:576
+#: src/components/space/Channel.tsx:579
 msgid "Pinned Messages"
 msgstr "Pripnuté správy"
 
@@ -1486,7 +1495,7 @@ msgid "Saving..."
 msgstr "Ukladám..."
 
 #. placeholder {0}: error?.message || 'Unknown error'
-#: src/components/search/SearchResults.tsx:91
+#: src/components/search/SearchResults.tsx:93
 msgid "Search failed: {0}"
 msgstr "Vyhľadávanie zlyhalo: {0}"
 
@@ -1500,11 +1509,12 @@ msgstr "Hľadajte tu"
 msgid "Search in this Space"
 msgstr "Vyhľadávanie v tomto Priestore"
 
-#: src/components/search/SearchResults.tsx:128
+#: src/components/search/SearchResults.tsx:130
 msgid "Search in this Space..."
 msgstr "Hľadať v tomto Space..."
 
-#: src/components/space/Channel.tsx:654
+#: src/components/direct/DirectMessage.tsx:455
+#: src/components/space/Channel.tsx:660
 msgid "Search Messages"
 msgstr "Hľadať správy"
 
@@ -1512,11 +1522,11 @@ msgstr "Hľadať správy"
 msgid "Search messages..."
 msgstr "Vyhľadávanie správ..."
 
-#: src/components/space/Channel.tsx:958
+#: src/components/space/Channel.tsx:965
 msgid "Search Username or Address"
 msgstr "Hľadať používateľské meno alebo adresu"
 
-#: src/components/search/SearchResults.tsx:82
+#: src/components/search/SearchResults.tsx:84
 msgid "Searching..."
 msgstr "Hľadám..."
 
@@ -1528,8 +1538,8 @@ msgstr "Bezpečnosť"
 msgid "Select"
 msgstr "Vybrať"
 
-#: src/components/primitives/Select/Select.native.tsx:24
-#: src/components/primitives/Select/Select.web.tsx:14
+#: src/components/primitives/Select/Select.native.tsx:26
+#: src/components/primitives/Select/Select.web.tsx:16
 msgid "Select an option"
 msgstr "Vyberte možnosť"
 
@@ -1632,7 +1642,7 @@ msgstr "Názov priestoru je povinný"
 msgid "Space Settings"
 msgstr "Nastavenia Espacia"
 
-#: src/components/search/SearchResults.tsx:73
+#: src/components/search/SearchResults.tsx:75
 msgid "Start typing to search messages..."
 msgstr "Začnite písať, aby ste vyhľadali správy..."
 
@@ -1683,6 +1693,10 @@ msgstr "Formát pozývacieho odkazu je neplatný."
 msgid "The invite link has expired or is invalid."
 msgstr "Pozvánkový odkaz vypršal alebo je neplatný."
 
+#: src/components/NotFound.tsx:18
+msgid "The page you're looking for doesn't exist or has been moved. Let's get you back on track."
+msgstr ""
+
 #: src/components/modals/SpaceSettingsModal/Danger.tsx:30
 msgid "This action cannot be undone and will permanently remove all the Space settings. To delete the Space, you must first delete all Channels."
 msgstr "Táto akcia nie je možné zrušiť a natrvalo odstráni všetky nastavenia Space. Aby ste odstránili Space, musíte najprv odstrániť všetky kanály."
@@ -1714,7 +1728,7 @@ msgstr "Toto chráni vašu identitu ako vlastníka priestoru. Avšak, ak ste jed
 msgid "This public invite link is no longer valid."
 msgstr "Tento verejný pozývací odkaz už nie je platný."
 
-#: src/hooks/business/spaces/useInviteManagement.ts:126
+#: src/hooks/business/spaces/useInviteManagement.ts:128
 msgid "This user is already a member of this space."
 msgstr "Tento používateľ je už členom tohto Space."
 
@@ -1746,7 +1760,7 @@ msgstr "Dnes o {timeFormatted}"
 msgid "Too many files selected. Please select fewer files."
 msgstr "Príliš veľa súborov vybraných. Prosím, vyberte menej súborov."
 
-#: src/components/search/SearchResults.tsx:102
+#: src/components/search/SearchResults.tsx:104
 msgid "Try different keywords or check your spelling"
 msgstr "Skúste iné kľúčové slová alebo skontrolujte pravopis"
 
@@ -1807,14 +1821,14 @@ msgstr "Neznámy čas"
 #: src/components/context/MessageDB.bak.tsx:3043
 #: src/components/context/MessageDB.bak.tsx:4122
 #: src/components/context/MessageDB.bak.tsx:5292
-#: src/components/direct/DirectMessage.tsx:127
-#: src/components/direct/DirectMessage.tsx:142
-#: src/components/direct/DirectMessage.tsx:326
+#: src/components/direct/DirectMessage.tsx:131
+#: src/components/direct/DirectMessage.tsx:146
+#: src/components/direct/DirectMessage.tsx:333
 #: src/components/message/MessageComposer.tsx:358
 #: src/components/message/MessageComposer.tsx:365
 #: src/components/message/MessagePreview.tsx:41
-#: src/components/message/PinnedMessagesPanel.tsx:98
-#: src/components/message/PinnedMessagesPanel.tsx:111
+#: src/components/message/PinnedMessagesPanel.tsx:99
+#: src/components/message/PinnedMessagesPanel.tsx:112
 #: src/components/modals/ConversationSettingsModal.tsx:95
 #: src/components/modals/NewDirectMessageModal.tsx:66
 #: src/components/notifications/NotificationPanel.tsx:228
@@ -1855,7 +1869,7 @@ msgid "Unpin Message"
 msgstr "Odpinúť správu"
 
 #: src/components/message/PinnedMessagesPanel.tsx:78
-#: src/components/message/PinnedMessagesPanel.tsx:133
+#: src/components/message/PinnedMessagesPanel.tsx:134
 msgid "Unpin this post"
 msgstr "Odpripnúť tento príspevok"
 
@@ -1863,7 +1877,7 @@ msgstr "Odpripnúť tento príspevok"
 msgid "Unpinned!"
 msgstr "Odpripnuté!"
 
-#: src/components/direct/DirectMessage.tsx:511
+#: src/components/direct/DirectMessage.tsx:546
 msgid "Until you reply, this sender will not see your display name or profile picture"
 msgstr "Pokým neodpíšete, tento odosielateľ neuvidí vaše zobrazené meno ani profilový obrázok"
 
@@ -1904,8 +1918,8 @@ msgstr "Adresa používateľa tu"
 msgid "User does not exist."
 msgstr "Používateľ neexistuje."
 
-#: src/components/space/Channel.tsx:371
-#: src/components/space/Channel.tsx:794
+#: src/components/space/Channel.tsx:374
+#: src/components/space/Channel.tsx:801
 msgid "Username or Address"
 msgstr "Používateľské meno alebo adresa"
 
@@ -1973,7 +1987,7 @@ msgstr "Keď podpíšete správu, potvrdzujete, že pochádza z vášho kľúča
 msgid "Yesterday at {timeFormatted}"
 msgstr "Včera o {timeFormatted}"
 
-#: src/components/direct/DirectMessage.tsx:258
+#: src/components/direct/DirectMessage.tsx:265
 #: src/hooks/business/search/useBatchSearchResultsDisplay.ts:139
 msgid "You"
 msgstr "Vy"
@@ -1991,7 +2005,7 @@ msgid "You cannot delete a group that contains channels. Delete all {channelCoun
 msgstr "Nemôžete odstrániť skupinu, ktorá obsahuje kanály. Najprv odstráňte všetky {channelCount} kanály v tejto skupine."
 
 #: src/components/message/MessageComposer.tsx:242
-#: src/components/space/Channel.tsx:765
+#: src/components/space/Channel.tsx:772
 msgid "You cannot post in this channel"
 msgstr "Nemôžete prispievať v tomto kanáli"
 
