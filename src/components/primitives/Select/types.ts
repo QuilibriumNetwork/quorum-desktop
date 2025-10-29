@@ -3,6 +3,8 @@ export interface SelectOption {
   label: string;
   icon?: string; // Temporary: emoji or Unicode character, will be FontAwesome icon name later
   avatar?: string; // URL for user avatars (for conversation dropdowns)
+  displayName?: string; // Display name for user initials fallback (when avatar is invalid)
+  userAddress?: string; // User address for deterministic color generation in initials
   subtitle?: string; // Secondary text (like user addresses)
   disabled?: boolean;
 }

@@ -15,6 +15,8 @@ import { useTheme } from '../theme';
 import { Icon } from '../Icon';
 import { isValidIconName } from '../Icon/iconMapping';
 import { t } from '@lingui/core/macro';
+import { UserAvatar } from '../../user/UserAvatar';
+import { DefaultImages } from '../../../utils';
 
 const Select: React.FC<NativeSelectProps> = ({
   value,
@@ -262,12 +264,35 @@ const Select: React.FC<NativeSelectProps> = ({
                 displayData.element
               ) : (
             <>
-              {displayData.avatar && (
-                <Image
-                  source={{ uri: displayData.avatar }}
-                  style={styles.selectedAvatar}
-                />
-              )}
+              {(displayData.avatar || displayData.displayName) && (() => {
+                // Check if avatar is valid (not null, not UNKNOWN_USER)
+                const hasValidAvatar = displayData.avatar &&
+                  !displayData.avatar.includes(DefaultImages.UNKNOWN_USER);
+
+                // If valid avatar, render as Image
+                if (hasValidAvatar) {
+                  return (
+                    <Image
+                      source={{ uri: displayData.avatar }}
+                      style={styles.selectedAvatar}
+                    />
+                  );
+                }
+
+                // If no valid avatar but we have displayName, use UserAvatar (shows initials)
+                if (displayData.displayName) {
+                  return (
+                    <UserAvatar
+                      userIcon={null}
+                      displayName={displayData.displayName}
+                      address={displayData.userAddress || displayData.value || ''}
+                      size={24}
+                    />
+                  );
+                }
+
+                return null;
+              })()}
               {displayData.icon && !displayData.avatar && (
                 <View style={styles.icon}>
                   {isValidIconName(displayData.icon) ? (
@@ -478,12 +503,35 @@ const Select: React.FC<NativeSelectProps> = ({
                                       style={styles.checkbox}
                                     />
                                   )}
-                                  {option.avatar && (
-                                    <Image
-                                      source={{ uri: option.avatar }}
-                                      style={styles.optionAvatar}
-                                    />
-                                  )}
+                                  {(option.avatar || option.displayName) && (() => {
+                                    // Check if avatar is valid (not null, not UNKNOWN_USER)
+                                    const hasValidAvatar = option.avatar &&
+                                      !option.avatar.includes(DefaultImages.UNKNOWN_USER);
+
+                                    // If valid avatar, render as Image
+                                    if (hasValidAvatar) {
+                                      return (
+                                        <Image
+                                          source={{ uri: option.avatar }}
+                                          style={styles.optionAvatar}
+                                        />
+                                      );
+                                    }
+
+                                    // If no valid avatar but we have displayName, use UserAvatar (shows initials)
+                                    if (option.displayName) {
+                                      return (
+                                        <UserAvatar
+                                          userIcon={null}
+                                          displayName={option.displayName}
+                                          address={option.userAddress || option.value}
+                                          size={32}
+                                        />
+                                      );
+                                    }
+
+                                    return null;
+                                  })()}
                                   {option.icon && !option.avatar && (
                                     <View style={styles.optionIcon}>
                                       {isValidIconName(option.icon) ? (
@@ -585,12 +633,35 @@ const Select: React.FC<NativeSelectProps> = ({
                                   style={styles.checkbox}
                                 />
                               )}
-                              {option.avatar && (
-                                <Image
-                                  source={{ uri: option.avatar }}
-                                  style={styles.optionAvatar}
-                                />
-                              )}
+                              {(option.avatar || option.displayName) && (() => {
+                                // Check if avatar is valid (not null, not UNKNOWN_USER)
+                                const hasValidAvatar = option.avatar &&
+                                  !option.avatar.includes(DefaultImages.UNKNOWN_USER);
+
+                                // If valid avatar, render as Image
+                                if (hasValidAvatar) {
+                                  return (
+                                    <Image
+                                      source={{ uri: option.avatar }}
+                                      style={styles.optionAvatar}
+                                    />
+                                  );
+                                }
+
+                                // If no valid avatar but we have displayName, use UserAvatar (shows initials)
+                                if (option.displayName) {
+                                  return (
+                                    <UserAvatar
+                                      userIcon={null}
+                                      displayName={option.displayName}
+                                      address={option.userAddress || option.value}
+                                      size={32}
+                                    />
+                                  );
+                                }
+
+                                return null;
+                              })()}
                               {option.icon && !option.avatar && (
                                 <View style={styles.optionIcon}>
                                   {isValidIconName(option.icon) ? (

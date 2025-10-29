@@ -64,7 +64,10 @@ export function useChannelData({ spaceId, channelId }: UseChannelDataProps) {
         Object.assign(prev, {
           [curr.user_address]: {
             address: curr.user_address,
-            userIcon: curr.user_icon,
+            // Filter out invalid avatars (null or UNKNOWN_USER) to enable initials fallback
+            userIcon: curr.user_icon?.includes(DefaultImages.UNKNOWN_USER)
+              ? undefined
+              : curr.user_icon,
             displayName: curr.display_name,
             isKicked: curr.isKicked || false,
           },
@@ -86,7 +89,10 @@ export function useChannelData({ spaceId, channelId }: UseChannelDataProps) {
         Object.assign(prev, {
           [curr.user_address]: {
             address: curr.user_address,
-            userIcon: curr.user_icon,
+            // Filter out invalid avatars (null or UNKNOWN_USER) to enable initials fallback
+            userIcon: curr.user_icon?.includes(DefaultImages.UNKNOWN_USER)
+              ? undefined
+              : curr.user_icon,
             displayName: curr.display_name,
             left: curr.inbox_address === '',
             isKicked: curr.isKicked || false,

@@ -76,7 +76,7 @@ const UserProfileEdit: React.FunctionComponent<{
             }
             displayName={props.user.displayName}
             address={props.user.address}
-            size={49}
+            size={44}
           />
         </div>
         <div className="user-profile-text">

@@ -443,7 +443,7 @@ export const Message = React.memo(
               userIcon={sender.userIcon}
               displayName={sender.displayName}
               address={sender.address}
-              size={49}
+              size={44}
               className="message-sender-icon"
               onClick={
                 isTouchDevice()

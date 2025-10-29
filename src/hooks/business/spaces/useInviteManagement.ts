@@ -85,6 +85,8 @@ export const useInviteManagement = (
         value: conversation.address,
         label: conversation.displayName,
         avatar: conversation.icon,
+        displayName: conversation.displayName,  // For user initials fallback
+        userAddress: conversation.address,      // For deterministic color generation
         subtitle: truncateAddress(conversation.address),
       }));
   }, [conversations]);

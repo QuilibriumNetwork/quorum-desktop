@@ -92,7 +92,7 @@ const UserProfile: React.FunctionComponent<{
           userIcon={props.user.userIcon}
           displayName={props.user.displayName}
           address={props.user.address}
-          size={49}
+          size={44}
           className="user-profile-icon"
         />
         <Container className="user-profile-text">

@@ -5,6 +5,8 @@ import { Portal } from '../Portal';
 import { isValidIconName } from '../Icon/iconMapping';
 import { t } from '@lingui/core/macro';
 import './Select.scss';
+import { UserAvatar } from '../../user/UserAvatar';
+import { DefaultImages } from '../../../utils';
 
 const Select: React.FC<WebSelectProps> = ({
   value,
@@ -423,14 +425,38 @@ const Select: React.FC<WebSelectProps> = ({
                                   className="quorum-select__checkbox"
                                 />
                               )}
-                              {option.avatar && (
-                                <div
-                                  className="quorum-select__option-avatar"
-                                  style={{
-                                    backgroundImage: `url(${option.avatar})`,
-                                  }}
-                                />
-                              )}
+                              {(option.avatar || option.displayName) && (() => {
+                                // Check if avatar is valid (not null, not UNKNOWN_USER)
+                                const hasValidAvatar = option.avatar &&
+                                  !option.avatar.includes(DefaultImages.UNKNOWN_USER);
+
+                                // If valid avatar, render as background image
+                                if (hasValidAvatar) {
+                                  return (
+                                    <div
+                                      className="quorum-select__option-avatar"
+                                      style={{
+                                        backgroundImage: `url(${option.avatar})`,
+                                      }}
+                                    />
+                                  );
+                                }
+
+                                // If no valid avatar but we have displayName, use UserAvatar (shows initials)
+                                if (option.displayName) {
+                                  return (
+                                    <UserAvatar
+                                      userIcon={null}
+                                      displayName={option.displayName}
+                                      address={option.userAddress || option.value}
+                                      size={32}
+                                      className="quorum-select__option-avatar"
+                                    />
+                                  );
+                                }
+
+                                return null;
+                              })()}
                               {option.icon &&
                                 !option.avatar &&
                                 (isValidIconName(option.icon) ? (
@@ -499,12 +525,36 @@ const Select: React.FC<WebSelectProps> = ({
                               className="quorum-select__checkbox"
                             />
                           )}
-                          {option.avatar && (
-                            <div
-                              className="quorum-select__option-avatar"
-                              style={{ backgroundImage: `url(${option.avatar})` }}
-                            />
-                          )}
+                          {(option.avatar || option.displayName) && (() => {
+                            // Check if avatar is valid (not null, not UNKNOWN_USER)
+                            const hasValidAvatar = option.avatar &&
+                              !option.avatar.includes(DefaultImages.UNKNOWN_USER);
+
+                            // If valid avatar, render as background image
+                            if (hasValidAvatar) {
+                              return (
+                                <div
+                                  className="quorum-select__option-avatar"
+                                  style={{ backgroundImage: `url(${option.avatar})` }}
+                                />
+                              );
+                            }
+
+                            // If no valid avatar but we have displayName, use UserAvatar (shows initials)
+                            if (option.displayName) {
+                              return (
+                                <UserAvatar
+                                  userIcon={null}
+                                  displayName={option.displayName}
+                                  address={option.userAddress || option.value}
+                                  size={32}
+                                  className="quorum-select__option-avatar"
+                                />
+                              );
+                            }
+
+                            return null;
+                          })()}
                           {option.icon &&
                             !option.avatar &&
                             (isValidIconName(option.icon) ? (
