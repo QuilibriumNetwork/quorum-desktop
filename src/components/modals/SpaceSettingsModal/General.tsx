@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Button, Select, Switch, Input, Icon, Tooltip, Spacer } from '../../primitives';
+import { Button, Select, Switch, Input, Icon, Tooltip, Spacer, TextArea } from '../../primitives';
 import { Trans } from '@lingui/react/macro';
 import { t } from '@lingui/core/macro';
 import { ReactTooltip } from '../../ui';
@@ -9,6 +9,8 @@ interface GeneralProps {
   space: any;
   spaceName: string;
   setSpaceName: (value: string) => void;
+  description: string;
+  setDescription: (value: string) => void;
   fixes?: { id: string; message: string; actionLabel: string; onFix: () => void; loading?: boolean }[];
   iconData: ArrayBuffer | undefined;
   currentIconFile: File | undefined;
@@ -40,6 +42,8 @@ const General: React.FunctionComponent<GeneralProps> = ({
   space,
   spaceName,
   setSpaceName,
+  description,
+  setDescription,
   fixes,
   iconData,
   currentIconFile,
@@ -117,6 +121,24 @@ const General: React.FunctionComponent<GeneralProps> = ({
         </div>
       </div>
       <div className="modal-content-section">
+        <div className="w-full mb-4">
+          <div className="input-style-label mb-2">
+              <Trans>Description</Trans>
+            </div>
+            <div className="text-label mb-2 max-w-[500px]">
+              <Trans>
+                This description will be visible on invites and shown to people when they look up or join your Space using an invite link.
+              </Trans>
+            </div>
+            <TextArea
+              value={description}
+              onChange={setDescription}
+            placeholder={t`Describe what this Space is about...`}
+            rows={3}
+            variant="filled"
+            className="w-full"
+          />
+        </div>
         <Spacer size="md" direction="vertical" borderTop={true} />
         <div className="text-subtitle-2">
           <Trans>Space Banner</Trans>

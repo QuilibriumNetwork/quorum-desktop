@@ -19,7 +19,8 @@ export interface UseSpaceCreationReturn {
     fileData?: ArrayBuffer,
     currentFile?: File,
     repudiable?: boolean,
-    pub?: boolean
+    pub?: boolean,
+    description?: string
   ) => Promise<void>;
   canCreate: boolean;
 }
@@ -43,7 +44,8 @@ export const useSpaceCreation = (
     fileData?: ArrayBuffer,
     currentFile?: File,
     repudiable: boolean = false,
-    pub: boolean = true
+    pub: boolean = true,
+    description: string = ''
   ) => {
     if (!name || creating) return;
 
@@ -56,9 +58,9 @@ export const useSpaceCreation = (
             currentFile.type +
             ';base64,' +
             Buffer.from(fileData).toString('base64')
-          : null;
+          : '';
 
-      const { spaceId, channelId } = await createSpaceAPI(
+      const result = await createSpaceAPI(
         name,
         iconData,
         keyset,
@@ -66,11 +68,21 @@ export const useSpaceCreation = (
         repudiable,
         pub,
         currentPasskeyInfo?.pfpUrl!,
-        currentPasskeyInfo?.displayName!
+        currentPasskeyInfo?.displayName!,
+        description
       );
+
+      if (!result || !result.spaceId || !result.channelId) {
+        throw new Error('Failed to create space: missing spaceId or channelId');
+      }
+
+      const { spaceId, channelId } = result;
 
       navigate(`/spaces/${spaceId}/${channelId}`);
       options.onSuccess?.();
+    } catch (error) {
+      console.error('Error creating space:', error);
+      throw error;
     } finally {
       setCreating(false);
     }

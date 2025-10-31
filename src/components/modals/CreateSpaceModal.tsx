@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Input, Button, Modal, Switch, Icon, Tooltip, Spacer, Callout } from '../primitives';
+import { Input, Button, Modal, Switch, Icon, Tooltip, Spacer, Callout, TextArea } from '../primitives';
 import './CreateSpaceModal.scss';
 import SpaceIcon from '../navbar/SpaceIcon';
 import { useSpaceCreation, useFileUpload, useSpaceSettings } from '../../hooks';
@@ -21,6 +21,8 @@ const CreateSpaceModal: React.FunctionComponent<CreateSpaceModalProps> = (
     useSpaceCreation({
       onSuccess: props.onClose,
     });
+
+  const [description, setDescription] = React.useState<string>('');
 
   const {
     fileData,
@@ -99,9 +101,27 @@ const CreateSpaceModal: React.FunctionComponent<CreateSpaceModalProps> = (
             )}
           </div>
         </div>
+        <div className="mt-4">
+          <div className="input-style-label mb-2">
+            <Trans>Description</Trans> <span className="text-subtle text-sm">({t`optional`})</span>
+          </div>
+          <div className="text-label mb-2 max-w-[500px]">
+            <Trans>
+              This description will be visible on invites and shown to people when they look up or join your Space using an invite link.
+            </Trans>
+          </div>
+          <TextArea
+            value={description}
+            onChange={setDescription}
+            placeholder={t`Describe what this Space is about...`}
+            rows={3}
+            variant="filled"
+            className="w-full"
+          />
+        </div>
         <div className="mt-4 text-body">
           <Trans>
-            Upload an image and choose a name for your Space.
+            Upload an image, choose a name, and optionally add a description for your Space.
           </Trans>
         </div>
         <div className="mt-4 text-label">
@@ -174,7 +194,7 @@ const CreateSpaceModal: React.FunctionComponent<CreateSpaceModalProps> = (
             className="w-full sm:w-auto"
             disabled={!canCreate}
             onClick={() =>
-              createSpace(spaceName, fileData, currentFile, repudiable, pub)
+              createSpace(spaceName, fileData, currentFile, repudiable, pub, description)
             }
           >
             {t`Create Space`}

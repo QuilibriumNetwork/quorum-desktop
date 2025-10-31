@@ -84,6 +84,11 @@ export const InviteLink = ({ inviteLink }: { inviteLink: string }) => {
                 <Text className="block truncate font-medium text-sm lg:text-base">
                   {space?.spaceName}
                 </Text>
+                {space?.description && (
+                  <Text className="block text-xs lg:text-sm text-subtle mt-1 break-words line-clamp-2">
+                    {space.description}
+                  </Text>
+                )}
               </Container>
             </FlexRow>
             <Container className="flex justify-center w-full lg:w-auto lg:flex-shrink-0">

@@ -130,7 +130,8 @@ export class SpaceService {
     isPublic: boolean,
     userIcon: string,
     userDisplayName: string,
-    queryClient: QueryClient
+    queryClient: QueryClient,
+      description: string = ''
   ) {
     const sp = ch.js_generate_ed448();
     const spacePair = JSON.parse(sp);
@@ -211,7 +212,7 @@ export class SpaceService {
     const space = {
       spaceId: spaceAddress,
       spaceName: spaceName,
-      description: '',
+      description: description || '',
       vanityUrl: '',
       inviteUrl: '',
       iconUrl: spaceIcon,

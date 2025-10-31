@@ -234,6 +234,16 @@ const AddSpaceModal: React.FunctionComponent<AddSpaceModalProps> = (props) => {
               >
                 {validatedSpace.spaceName}
               </Text>
+              {validatedSpace.description && (
+                <Text
+                  variant="default"
+                  size="sm"
+                  align="center"
+                  className="text-subtle mt-2 max-w-md mx-auto"
+                >
+                  {validatedSpace.description}
+                </Text>
+              )}
             </Container>
           )}
 

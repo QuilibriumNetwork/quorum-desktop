@@ -103,7 +103,8 @@ type MessageDBContextValue = {
     isRepudiable: boolean,
     isPublic: boolean,
     userIcon: string,
-    userDisplayName: string
+    userDisplayName: string,
+    description?: string
   ) => Promise<{ spaceId: string; channelId: string }>;
   updateSpace: (space: Space) => Promise<void>;
   createChannel: (spaceId: string) => Promise<string>;
@@ -827,7 +828,8 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
       isRepudiable: boolean,
       isPublic: boolean,
       userIcon: string,
-      userDisplayName: string
+      userDisplayName: string,
+      description: string = ''
     ) => {
       return spaceService.createSpace(
         spaceName,
@@ -838,7 +840,8 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
         isPublic,
         userIcon,
         userDisplayName,
-        queryClient
+        queryClient,
+        description
       );
     },
     [spaceService, queryClient]

@@ -118,6 +118,18 @@ const SpaceSettingsModal: React.FunctionComponent<{
       ?.channels.find((c) => c.channelId === space.defaultChannelId)
   );
 
+  // Description state
+  const [description, setDescription] = React.useState<string>(
+    space?.description || ''
+  );
+
+  // Update description when space changes
+  React.useEffect(() => {
+    if (space?.description !== undefined) {
+      setDescription(space.description || '');
+    }
+  }, [space?.description]);
+
   // Space management hook
   const {
     spaceName,
@@ -328,6 +340,7 @@ const SpaceSettingsModal: React.FunctionComponent<{
         roles,
         emojis,
         stickers,
+        description,
       });
     });
   }, [
@@ -344,6 +357,7 @@ const SpaceSettingsModal: React.FunctionComponent<{
     currentIconFile,
     bannerData,
     currentBannerFile,
+    description,
   ]);
 
   // Determine if current category needs save button
@@ -409,6 +423,8 @@ const SpaceSettingsModal: React.FunctionComponent<{
                           space={space}
                           spaceName={spaceName}
                           setSpaceName={setSpaceName}
+                          description={description}
+                          setDescription={setDescription}
                           // set 'owner-membership' to 'true' to see in frontend
                           fixes={(missingOwnerMembership ? [{
                             id: 'owner-membership',
@@ -553,7 +569,7 @@ const SpaceSettingsModal: React.FunctionComponent<{
                     disabled={
                       selectedCategory === 'account'
                         ? spaceProfile.isSaving || spaceProfile.hasValidationError || mentionSettings.isSaving
-                        : isSaving || !spaceName.trim()
+                        : isSaving || (!spaceName.trim() && selectedCategory === 'general')
                     }
                   >
                     {t`Save Changes`}

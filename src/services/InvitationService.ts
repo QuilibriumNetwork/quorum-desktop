@@ -63,11 +63,31 @@ export class InvitationService {
     let response = await this.messageDB.getEncryptionStates({
       conversationId: spaceId + '/' + spaceId,
     });
+
+    if (!response || response.length === 0) {
+      throw new Error(t`No encryption state found for this space. The space may need to be initialized or you may need to generate a public invite link first.`);
+    }
+
     const sets = response.map((e) => JSON.parse(e.state));
+
+    if (!sets[0] || !sets[0].template) {
+      throw new Error(t`Encryption state is missing required template data. Please generate a public invite link first.`);
+    }
+
+    if (!sets[0].evals || sets[0].evals.length === 0) {
+      throw new Error(t`No invite evaluations available. Please generate a public invite link or ensure the space encryption state is properly initialized.`);
+    }
+
     const state = sets[0].template;
     const ratchet = JSON.parse(state.dkg_ratchet);
     ratchet.id = 10001 - sets[0].evals.length;
-    state.root_key = JSON.parse(sets[0].state).root_key;
+
+    if (!sets[0].state) {
+      throw new Error(t`Encryption state is missing state data. Please generate a public invite link first.`);
+    }
+
+    const parsedState = typeof sets[0].state === 'string' ? JSON.parse(sets[0].state) : sets[0].state;
+    state.root_key = parsedState.root_key;
     state.dkg_ratchet = JSON.stringify(ratchet);
     const template = Buffer.from(JSON.stringify(state), 'utf-8').toString(
       'hex'

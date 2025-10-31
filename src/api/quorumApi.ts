@@ -26,7 +26,7 @@ export type Sticker = {
 export type Space = {
   spaceId: string;
   spaceName: string;
-  description: string;
+  description?: string;
   vanityUrl: string;
   inviteUrl: string;
   iconUrl: string;

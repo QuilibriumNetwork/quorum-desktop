@@ -10,6 +10,7 @@ interface ValidatedSpace {
   iconUrl: string;
   spaceName: string;
   spaceId: string;
+  description?: string;
 }
 
 interface InviteInfo {
@@ -104,6 +105,7 @@ export const useInviteValidation = () => {
           iconUrl: space.iconUrl,
           spaceName: space.spaceName,
           spaceId: space.spaceId,
+          description: space.description,
         });
       } catch (e) {
         setValidationError(t`Could not verify invite`);
