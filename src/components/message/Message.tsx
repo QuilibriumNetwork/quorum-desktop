@@ -1,6 +1,7 @@
-import React, { useMemo, useState, useCallback } from 'react';
+import React, { useMemo, useState, useCallback, useRef, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
+import { useQueryClient } from '@tanstack/react-query';
 import type {
   Emoji,
   Message as MessageType,
@@ -25,6 +26,7 @@ import {
   FlexCenter,
   Icon,
   Tooltip,
+  Button,
 } from '../primitives';
 import { useImageModal } from '../context/ImageModalProvider';
 import './Message.scss';
@@ -48,6 +50,11 @@ import { getImageConfig } from '../../utils/imageProcessing/config';
 import { isTouchDevice } from '../../utils/platform';
 import { hapticLight } from '../../utils/haptic';
 import { formatMessageDate } from '../../utils';
+import { buildMessagesKey } from '../../hooks/queries/messages/buildMessagesKey';
+import { InfiniteData } from '@tanstack/react-query';
+import { useMessageDB } from '../context/useMessageDB';
+import { DefaultImages } from '../../utils';
+import { EditHistoryModal } from '../modals/EditHistoryModal';
 
 // Utility function for robust GIF detection
 const createGifDetector = (url: string, isLargeGif?: boolean) => {
@@ -132,10 +139,16 @@ export const Message = React.memo(
     const user = usePasskeysContext();
     const { spaceId } = useParams();
     const location = useLocation();
+    const queryClient = useQueryClient();
+    const { messageDB } = useMessageDB();
     const { openMobileActionsDrawer, openMobileEmojiDrawer } = useMobile();
 
     // Component state that needs to be available to hooks
     const [showUserProfile, setShowUserProfile] = useState<boolean>(false);
+    const [editingMessageId, setEditingMessageId] = useState<string | null>(null);
+    const [editText, setEditText] = useState<string>('');
+    const editTextareaRef = useRef<HTMLTextAreaElement>(null);
+    const [showEditHistoryModal, setShowEditHistoryModal] = useState<boolean>(false);
 
     // Image modal context
     const { showImageModal } = useImageModal();
@@ -153,6 +166,19 @@ export const Message = React.memo(
       editorRef,
       mapSenderToUser,
       stickers,
+      onEdit: (msg) => {
+        if (msg.content.type === 'post') {
+          // Extract text exactly as stored - no modifications
+          const text = Array.isArray(msg.content.text)
+            ? msg.content.text.join('\n')
+            : msg.content.text || '';
+          setEditText(text);
+          setEditingMessageId(msg.messageId);
+        }
+      },
+      onViewEditHistory: (msg) => {
+        setShowEditHistoryModal(true);
+      },
     });
 
     // Emoji picker business logic
@@ -230,6 +256,7 @@ export const Message = React.memo(
 
     let sender = mapSenderToUser(message.content?.senderId);
     const displayedTimestmap = formatMessageDate(message.createdDate);
+    const isEdited = message.modifiedDate !== message.createdDate;
 
     const formatEventMessage = (userDisplayName: string, type: string) => {
       switch (type) {
@@ -299,7 +326,11 @@ export const Message = React.memo(
           : undefined,
         onReaction: messageActions.handleReaction,
         onMoreReactions: handleMoreReactions,
+        onEdit: messageActions.canUserEdit ? messageActions.handleEdit : undefined,
+        onViewEditHistory: messageActions.canViewEditHistory ? messageActions.handleViewEditHistory : undefined,
         canDelete: messageActions.canUserDelete,
+        canEdit: messageActions.canUserEdit,
+        canViewEditHistory: messageActions.canViewEditHistory,
         canPinMessages: pinnedMessages.canPinMessages,
         userAddress: user.currentPasskeyInfo!.address,
       }),
@@ -473,6 +504,7 @@ export const Message = React.memo(
                   message={message}
                   userAddress={user.currentPasskeyInfo!.address}
                   canUserDelete={messageActions.canUserDelete}
+                  canUserEdit={messageActions.canUserEdit}
                   canPinMessages={
                     canPinMessages !== undefined
                       ? canPinMessages
@@ -485,6 +517,9 @@ export const Message = React.memo(
                   onDelete={messageActions.handleDelete}
                   onPin={(e) => pinnedMessages.togglePin(e, message)}
                   onMoreReactions={messageActions.handleMoreReactions}
+                  onEdit={messageActions.handleEdit}
+                  onViewEditHistory={messageActions.handleViewEditHistory}
+                  canViewEditHistory={messageActions.canViewEditHistory}
                   copiedLinkId={messageActions.copiedLinkId}
                 />
               )}
@@ -580,12 +615,322 @@ export const Message = React.memo(
                     </Tooltip>
                   )}
                 </Text>
-                <Text className="message-timestamp">{displayedTimestmap}</Text>
+                <FlexRow align="center" gap="xs">
+                  <Text className="message-timestamp">{displayedTimestmap}</Text>
+                  {isEdited && (
+                    <Text variant="subtle" size="xs">
+                      {t`(edited)`}
+                    </Text>
+                  )}
+                </FlexRow>
               </FlexRow>
 
               {(() => {
                 const contentData = formatting.getContentData();
                 if (!contentData) return null;
+
+                // Show edit UI if this message is being edited
+                if (editingMessageId === message.messageId && contentData.type === 'post') {
+                  const handleSaveEdit = async () => {
+                    console.time('[Edit] Total handleSaveEdit');
+                    console.time('[Edit] 1. Initial setup');
+
+                    const editNonce = crypto.randomUUID();
+                    const editedAt = Date.now();
+                    const editedTextArray = editText.split('\n');
+                    const editedText = editedTextArray.length === 1 ? editedTextArray[0] : editedTextArray;
+
+                    const currentSpaceId = message.spaceId;
+                    const currentChannelId = message.channelId;
+                    const isDM = currentSpaceId === currentChannelId;
+
+                    console.timeEnd('[Edit] 1. Initial setup');
+                    console.time('[Edit] 2. Build edits array (optimistic - will check saveEditHistory async)');
+
+                    // Preserve current content in edits array before updating
+                    // Note: We'll check saveEditHistory async, but for optimistic update we'll preserve edits
+                    // If saveEditHistory is disabled, we'll clear it in the async section
+                    const currentText = message.content.type === 'post' ? message.content.text : '';
+                    const existingEdits = message.edits || [];
+
+                    // Build edits array optimistically (will be corrected async if saveEditHistory is disabled)
+                    const edits = message.modifiedDate === message.createdDate
+                      ? // First edit: add original content to edits array
+                        [
+                          {
+                            text: currentText,
+                            modifiedDate: message.createdDate,
+                            lastModifiedHash: message.nonce,
+                          },
+                        ]
+                      : existingEdits.length > 0
+                      ? // Subsequent edits: add current version (which is now the previous version)
+                        [
+                          ...existingEdits,
+                          {
+                            text: currentText,
+                            modifiedDate: message.modifiedDate,
+                            lastModifiedHash: message.lastModifiedHash || message.nonce,
+                          },
+                        ]
+                      : // Edge case: edited before but edits array is empty (shouldn't happen, but handle gracefully)
+                        existingEdits;
+
+                    console.timeEnd('[Edit] 2. Build edits array (optimistic - will check saveEditHistory async)');
+                    console.time('[Edit] 3. Create updatedMessage object');
+
+                    // Create updated message object
+                    const updatedMessage: MessageType = {
+                      ...message,
+                      modifiedDate: editedAt,
+                      lastModifiedHash: editNonce,
+                      content: {
+                        ...message.content,
+                        text: editedText,
+                      } as PostMessage,
+                      edits: edits,
+                    };
+
+                    console.timeEnd('[Edit] 3. Create updatedMessage object');
+                    console.time('[Edit] 4. Update React Query cache');
+
+                    // Step 1: Update React Query cache IMMEDIATELY (synchronous - UI updates instantly)
+                    queryClient.setQueryData(
+                      buildMessagesKey({ spaceId: currentSpaceId, channelId: currentChannelId }),
+                      (oldData: InfiniteData<any>) => {
+                        if (!oldData?.pages) return oldData;
+
+                        return {
+                          pageParams: oldData.pageParams,
+                          pages: oldData.pages.map((page) => {
+                            return {
+                              ...page,
+                              messages: [
+                                ...page.messages.map((m: MessageType) => {
+                                  if (m.messageId === message.messageId && m.content.type === 'post') {
+                                    return updatedMessage;
+                                  }
+                                  return m;
+                                }),
+                              ],
+                              nextCursor: page.nextCursor,
+                              prevCursor: page.prevCursor,
+                            };
+                          }),
+                        };
+                      }
+                    );
+
+                    console.timeEnd('[Edit] 4. Update React Query cache');
+                    console.time('[Edit] 5. Close edit UI');
+
+                    // Step 2: Close edit UI IMMEDIATELY (synchronous - UI updates instantly)
+                    setEditingMessageId(null);
+                    setEditText('');
+
+                    console.timeEnd('[Edit] 5. Close edit UI');
+                    console.timeEnd('[Edit] Total handleSaveEdit');
+                    console.log('[Edit] Synchronous operations complete, starting async operations...');
+                    console.log('[Edit] Note: React will re-render asynchronously. Any visible delay is from React\'s render cycle, not JS execution.');
+
+                    // Step 3: Update IndexedDB and send asynchronously (fire-and-forget - don't block UI)
+                    (async () => {
+                      console.time('[Edit] Async: Total async operations');
+                      try {
+                        console.time('[Edit] Async: 0. Check saveEditHistory setting');
+
+                        // Check if saveEditHistory is enabled for this conversation/space
+                        let saveEditHistoryEnabled = false;
+
+                        try {
+                          const conversationId = `${currentSpaceId}/${currentChannelId}`;
+                          if (isDM) {
+                            // For DMs, check conversation setting
+                            const conversationData = await messageDB.getConversation({ conversationId });
+                            saveEditHistoryEnabled = conversationData?.conversation?.saveEditHistory ?? false;
+                          } else {
+                            // For spaces, check space setting
+                            const space = await messageDB.getSpace(currentSpaceId);
+                            saveEditHistoryEnabled = space?.saveEditHistory ?? false;
+                          }
+                        } catch (error) {
+                          console.error('Failed to get saveEditHistory setting:', error);
+                          // Default to false if we can't get the setting
+                          saveEditHistoryEnabled = false;
+                        }
+
+                        // If saveEditHistory is disabled, update the message to clear edits array
+                        if (!saveEditHistoryEnabled && edits.length > 0) {
+                          const correctedMessage: MessageType = {
+                            ...updatedMessage,
+                            edits: [],
+                          };
+
+                          // Update IndexedDB with corrected edits array
+                          await messageDB.saveMessage(
+                            correctedMessage,
+                            message.createdDate,
+                            currentSpaceId,
+                            isDM ? 'direct' : 'group',
+                            DefaultImages.UNKNOWN_USER,
+                            t`Unknown User`
+                          );
+
+                          // Update React Query cache with corrected edits array
+                          queryClient.setQueryData(
+                            buildMessagesKey({ spaceId: currentSpaceId, channelId: currentChannelId }),
+                            (oldData: InfiniteData<any>) => {
+                              if (!oldData?.pages) return oldData;
+                              return {
+                                pageParams: oldData.pageParams,
+                                pages: oldData.pages.map((page) => {
+                                  return {
+                                    ...page,
+                                    messages: [
+                                      ...page.messages.map((m: MessageType) => {
+                                        if (m.messageId === message.messageId && m.content.type === 'post') {
+                                          return correctedMessage;
+                                        }
+                                        return m;
+                                      }),
+                                    ],
+                                    nextCursor: page.nextCursor,
+                                    prevCursor: page.prevCursor,
+                                  };
+                                }),
+                              };
+                            }
+                          );
+                        }
+
+                        console.timeEnd('[Edit] Async: 0. Check saveEditHistory setting');
+                        console.time('[Edit] Async: 1. Get conversation info');
+                        // Get conversation info for saveMessage
+                        let conversationIcon = DefaultImages.UNKNOWN_USER;
+                        let conversationDisplayName = t`Unknown User`;
+
+                        try {
+                          const conversationId = `${currentSpaceId}/${currentChannelId}`;
+                          const conversationData = await messageDB.getConversation({ conversationId });
+                          if (conversationData?.conversation) {
+                            conversationIcon = conversationData.conversation.icon || DefaultImages.UNKNOWN_USER;
+                            conversationDisplayName = conversationData.conversation.displayName || t`Unknown User`;
+                          } else if (isDM) {
+                            // For DMs, use sender info
+                            const senderInfo = mapSenderToUser(message.content.senderId);
+                            conversationIcon = senderInfo.userIcon || DefaultImages.UNKNOWN_USER;
+                            conversationDisplayName = senderInfo.displayName || t`Unknown User`;
+                          }
+                        } catch (error) {
+                          console.error('Failed to get conversation info:', error);
+                          // Use sender info as fallback
+                          const senderInfo = mapSenderToUser(message.content.senderId);
+                          conversationIcon = senderInfo.userIcon || DefaultImages.UNKNOWN_USER;
+                          conversationDisplayName = senderInfo.displayName || t`Unknown User`;
+                        }
+
+                        console.timeEnd('[Edit] Async: 1. Get conversation info');
+                        console.time('[Edit] Async: 2. Save to IndexedDB');
+
+                        // Update IndexedDB
+                        await messageDB.saveMessage(
+                          updatedMessage,
+                          message.createdDate, // Use original createdDate for timestamp
+                          currentSpaceId, // address parameter - spaceId for both DMs and spaces
+                          isDM ? 'direct' : 'group',
+                          conversationIcon,
+                          conversationDisplayName
+                        );
+
+                        console.timeEnd('[Edit] Async: 2. Save to IndexedDB');
+                        console.time('[Edit] Async: 3. Send edit message');
+
+                        // Send edit message
+                        await submitMessage({
+                          type: 'edit-message',
+                          originalMessageId: message.messageId,
+                          editedText,
+                          editedAt,
+                          editNonce,
+                        });
+
+                        console.timeEnd('[Edit] Async: 3. Send edit message');
+                        console.timeEnd('[Edit] Async: Total async operations');
+                      } catch (error) {
+                        console.error('Failed to save/send edit:', error);
+                        // Optionally: revert optimistic update on error
+                      }
+                    })();
+                  };
+
+                  const handleCancelEdit = () => {
+                    setEditingMessageId(null);
+                    setEditText('');
+                  };
+
+                  return (
+                    <Container className="message-edit-container">
+                      <textarea
+                        ref={editTextareaRef}
+                        value={editText}
+                        onChange={(e) => setEditText(e.target.value)}
+                        onFocus={(e) => {
+                          // Move cursor to end of text
+                          const textarea = e.target as HTMLTextAreaElement;
+                          const length = textarea.value.length;
+                          textarea.setSelectionRange(length, length);
+                        }}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter' && !e.shiftKey) {
+                            e.preventDefault();
+                            console.time('[Edit] onKeyDown: Enter pressed to handleSaveEdit complete');
+                            console.log('[Edit] onKeyDown: Enter key pressed, calling handleSaveEdit...');
+                            // Don't await - let handleSaveEdit run without blocking
+                            handleSaveEdit().catch((error) => {
+                              console.error('Failed to save edit:', error);
+                            });
+                            console.timeEnd('[Edit] onKeyDown: Enter pressed to handleSaveEdit complete');
+                          } else if (e.key === 'Escape') {
+                            handleCancelEdit();
+                          }
+                        }}
+                        className="message-edit-textarea"
+                        autoFocus
+                        rows={Math.min(editText.split('\n').length, 10)}
+                      />
+                      <FlexRow className="message-edit-actions" justify="between" align="start">
+                        <Text variant="subtle" size="sm" className="message-edit-hint">
+                          {t`Press Enter to save, Shift+Enter for new line, Esc to cancel`}
+                        </Text>
+                        <FlexRow gap="xs">
+                          <Button
+                            type="secondary"
+                            size="sm"
+                            onClick={handleCancelEdit}
+                          >
+                            {t`Cancel`}
+                          </Button>
+                          <Button
+                            type="primary"
+                            size="sm"
+                            onClick={() => {
+                              console.time('[Edit] onClick: Save button clicked to handleSaveEdit complete');
+                              console.log('[Edit] onClick: Save button clicked, calling handleSaveEdit...');
+                              // Don't await - let handleSaveEdit run without blocking
+                              handleSaveEdit().catch((error) => {
+                                console.error('Failed to save edit:', error);
+                              });
+                              console.timeEnd('[Edit] onClick: Save button clicked to handleSaveEdit complete');
+                            }}
+                            disabled={!editText.trim()}
+                          >
+                            {t`Save`}
+                          </Button>
+                        </FlexRow>
+                      </FlexRow>
+                    </Container>
+                  );
+                }
 
                 if (contentData.type === 'post') {
                   // Check if we should use markdown rendering
@@ -856,6 +1201,13 @@ export const Message = React.memo(
             </Container>
           </FlexRow>
         )}
+
+        {/* Edit History Modal */}
+        <EditHistoryModal
+          visible={showEditHistoryModal}
+          onClose={() => setShowEditHistoryModal(false)}
+          message={message}
+        />
       </FlexColumn>
     );
   },

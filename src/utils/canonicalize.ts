@@ -7,6 +7,7 @@ import type {
   RemoveMessage,
   UpdateProfileMessage,
   StickerMessage,
+  EditMessage,
 } from '../api/quorumApi';
 
 /**
@@ -27,6 +28,7 @@ export function canonicalize(
     | RemoveMessage
     | UpdateProfileMessage
     | StickerMessage
+    | EditMessage
 ): string {
   if (typeof pendingMessage === 'string') {
     return pendingMessage;
@@ -84,6 +86,18 @@ export function canonicalize(
       pendingMessage.type +
       pendingMessage.stickerId +
       (pendingMessage.repliesToMessageId ?? '')
+    );
+  }
+
+  if (pendingMessage.type === 'edit-message') {
+    const editedText = Array.isArray(pendingMessage.editedText)
+      ? pendingMessage.editedText.join('')
+      : pendingMessage.editedText;
+    return (
+      pendingMessage.type +
+      pendingMessage.originalMessageId +
+      editedText +
+      pendingMessage.editNonce
     );
   }
 

@@ -138,6 +138,8 @@ const SpaceSettingsModal: React.FunctionComponent<{
     setSelectedCategory,
     isRepudiable,
     setIsRepudiable,
+    saveEditHistory,
+    setSaveEditHistory,
     handleDeleteSpace,
     deleteError,
     clearDeleteError,
@@ -335,6 +337,7 @@ const SpaceSettingsModal: React.FunctionComponent<{
         spaceName,
         defaultChannelId: defaultChannel?.channelId || space.defaultChannelId,
         isRepudiable,
+        saveEditHistory,
         iconUrl,
         bannerUrl,
         roles,
@@ -350,6 +353,7 @@ const SpaceSettingsModal: React.FunctionComponent<{
     spaceName,
     defaultChannel,
     isRepudiable,
+    saveEditHistory,
     roles,
     emojis,
     stickers,
@@ -454,6 +458,8 @@ const SpaceSettingsModal: React.FunctionComponent<{
                           getChannelGroups={getChannelGroups}
                           isRepudiable={isRepudiable}
                           setIsRepudiable={setIsRepudiable}
+                          saveEditHistory={saveEditHistory}
+                          setSaveEditHistory={setSaveEditHistory}
                           onSave={saveChanges}
                           isSaving={isSaving}
                           hasValidationError={!spaceName.trim()}

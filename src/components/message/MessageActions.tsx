@@ -13,6 +13,8 @@ interface MessageActionsProps {
   message: MessageType;
   userAddress: string;
   canUserDelete: boolean;
+  canUserEdit?: boolean;
+  canViewEditHistory?: boolean;
   canPinMessages?: boolean;
   height: number;
   onReaction: (emoji: string) => void;
@@ -21,6 +23,8 @@ interface MessageActionsProps {
   onDelete: (e: React.MouseEvent) => void;
   onPin?: (e: React.MouseEvent) => void;
   onMoreReactions: (clientY: number) => void;
+  onEdit?: () => void;
+  onViewEditHistory?: () => void;
   copiedLinkId: string | null;
 }
 
@@ -28,6 +32,8 @@ export const MessageActions: React.FC<MessageActionsProps> = ({
   message,
   userAddress,
   canUserDelete,
+  canUserEdit,
+  canViewEditHistory,
   canPinMessages,
   onReaction,
   onReply,
@@ -35,6 +41,8 @@ export const MessageActions: React.FC<MessageActionsProps> = ({
   onDelete,
   onPin,
   onMoreReactions,
+  onEdit,
+  onViewEditHistory,
   copiedLinkId,
 }) => {
   // State for tracking which action is currently hovered
@@ -78,6 +86,10 @@ export const MessageActions: React.FC<MessageActionsProps> = ({
         return copiedLinkId === message.messageId
           ? t`Copied!`
           : t`Copy message link`;
+      case 'edit':
+        return t`Edit message`;
+      case 'history':
+        return t`View edit history`;
       case 'pin':
         return message.isPinned ? t`Unpin message` : t`Pin message`;
       case 'delete':
@@ -165,6 +177,34 @@ export const MessageActions: React.FC<MessageActionsProps> = ({
           >
             <Icon name="link" size="sm" />
           </div>
+
+          {/* Edit (if user can edit) */}
+          {canUserEdit && onEdit && (
+            <>
+              <div className="w-2 mr-2 text-center flex flex-col border-r border-r-1 border-surface-5"></div>
+              <div
+                onClick={onEdit}
+                onMouseEnter={() => setHoveredAction('edit')}
+                className="mr-2 text-center text-surface-9 hover:text-surface-10 hover:scale-125 transition duration-200 rounded-md flex items-center justify-center cursor-pointer"
+              >
+                <Icon name="edit" size="md" />
+              </div>
+            </>
+          )}
+
+          {/* View Edit History (if available) */}
+          {canViewEditHistory && onViewEditHistory && (
+            <>
+              <div className="w-2 mr-2 text-center flex flex-col border-r border-r-1 border-surface-5"></div>
+              <div
+                onClick={onViewEditHistory}
+                onMouseEnter={() => setHoveredAction('history')}
+                className="mr-2 text-center text-surface-9 hover:text-surface-10 hover:scale-125 transition duration-200 rounded-md flex items-center justify-center cursor-pointer"
+              >
+                <Icon name="history" size="md" />
+              </div>
+            </>
+          )}
 
           {/* Pin (if user can pin) */}
           {canPinMessages && onPin && (

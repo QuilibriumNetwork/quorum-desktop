@@ -5,6 +5,7 @@ import { useMessageDB } from '../context/useMessageDB';
 import { useConversation } from '../../hooks/queries/conversation/useConversation';
 import { useConversations } from '../../hooks';
 import { DefaultImages } from '../../utils';
+import { isFeatureEnabled } from '../../utils/platform';
 import {
   Modal,
   Container,
@@ -44,6 +45,10 @@ const ConversationSettingsModal: React.FC<ConversationSettingsModalProps> = ({
   const queryClient = useQueryClient();
 
   const [nonRepudiable, setNonRepudiable] = React.useState<boolean>(true);
+  const [saveEditHistory, setSaveEditHistory] = React.useState<boolean>(false);
+
+  // Feature flag: only show edit history toggle if enabled via environment variable
+  const showEditHistoryToggle = isFeatureEnabled('ENABLE_EDIT_HISTORY');
 
   // Confirmation hook for conversation delete
   const deleteConfirmation = useConfirmation({
@@ -74,12 +79,16 @@ const ConversationSettingsModal: React.FC<ConversationSettingsModalProps> = ({
           });
           setNonRepudiable(cfg?.nonRepudiable ?? true);
         }
+        // Load saveEditHistory setting (defaults to false)
+        setSaveEditHistory(conversation?.conversation?.saveEditHistory ?? false);
       } catch {
         setNonRepudiable(true);
+        setSaveEditHistory(false);
       }
     })();
   }, [
     conversation?.conversation?.isRepudiable,
+    conversation?.conversation?.saveEditHistory,
     conversationId,
     getConfig,
     keyset.userKeyset,
@@ -100,6 +109,7 @@ const ConversationSettingsModal: React.FC<ConversationSettingsModalProps> = ({
       const updatedConv = {
         ...baseConv,
         isRepudiable: !nonRepudiable,
+        saveEditHistory: saveEditHistory,
       };
 
       await messageDB.saveConversation(updatedConv);
@@ -116,6 +126,7 @@ const ConversationSettingsModal: React.FC<ConversationSettingsModalProps> = ({
     }
   }, [
     nonRepudiable,
+    saveEditHistory,
     conversationId,
     messageDB,
     conversation,
@@ -196,6 +207,33 @@ const ConversationSettingsModal: React.FC<ConversationSettingsModalProps> = ({
           </FlexBetween>
 
           <Spacer size="sm" />
+
+          {showEditHistoryToggle && (
+            <>
+              <FlexBetween align="center">
+                <FlexRow gap="sm" align="center">
+                  <div className="text-label-strong">
+                    {t`Save Edit History`}
+                  </div>
+                  <Tooltip
+                    id="conv-save-edit-history-tooltip"
+                    content={t`When enabled, all previous versions of edited messages will be saved. When disabled, only the current edited version is kept.`}
+                    maxWidth={260}
+                    className="!text-left !max-w-[260px]"
+                    place="top"
+                  >
+                    <Icon name="info-circle" size="sm" />
+                  </Tooltip>
+                </FlexRow>
+                <Switch
+                  value={saveEditHistory}
+                  onChange={() => setSaveEditHistory((prev) => !prev)}
+                />
+              </FlexBetween>
+
+              <Spacer size="sm" />
+            </>
+          )}
 
           <FlexRow justify="end">
             <Button type="primary" onClick={saveRepudiability} disabled={deleteConfirmation.isConfirming}>

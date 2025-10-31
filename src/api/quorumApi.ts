@@ -37,6 +37,7 @@ export type Space = {
   modifiedDate: number;
   isRepudiable: boolean;
   isPublic: boolean;
+  saveEditHistory?: boolean;
   groups: Group[];
   roles: Role[];
   emojis: Emoji[];
@@ -78,6 +79,7 @@ export type Conversation = {
   lastReadTimestamp?: number;
   // Not persisted by server, but may be stored client-side for DMs
   isRepudiable?: boolean;
+  saveEditHistory?: boolean;
 };
 
 export type Message = {
@@ -102,7 +104,8 @@ export type Message = {
     | UpdateProfileMessage
     | StickerMessage
     | PinMessage
-    | DeleteConversationMessage;
+    | DeleteConversationMessage
+    | EditMessage;
   reactions: Reaction[];
   mentions: Mentions;
   replyMetadata?: {
@@ -114,6 +117,11 @@ export type Message = {
   isPinned?: boolean;
   pinnedAt?: number;
   pinnedBy?: string;
+  edits?: Array<{
+    text: string | string[];
+    modifiedDate: number;
+    lastModifiedHash: string;
+  }>;
 };
 
 export type PostMessage = {
@@ -201,6 +209,16 @@ export type PinMessage = {
 export type DeleteConversationMessage = {
   senderId: string;
   type: 'delete-conversation';
+};
+
+export type EditMessage = {
+  senderId: string;
+  type: 'edit-message';
+  originalMessageId: string;
+  editedText: string | string[];
+  editedAt: number;
+  editNonce: string;
+  editSignature?: string;
 };
 
 export type Reaction = {

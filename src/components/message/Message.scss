@@ -134,3 +134,86 @@
   }
 }
 
+/* === MESSAGE EDIT UI === */
+.message-edit-container {
+  margin-top: $s-2;
+  padding: $s-3;
+  background-color: rgb(var(--surface-2));
+  border-radius: $rounded-md;
+  border: 1px solid rgb(var(--surface-4));
+}
+
+.message-edit-textarea {
+  width: 100%;
+  min-height: 60px;
+  max-height: 200px;
+  padding: $s-2;
+  background-color: var(--color-field-bg);
+  border: 1px solid var(--color-field-border);
+  border-radius: $rounded-sm;
+  color: var(--color-field-text);
+  font-family: inherit;
+  font-size: inherit;
+  resize: vertical;
+  outline: none;
+  transition: all $duration-150 $ease-in-out;
+
+  &::placeholder {
+    color: var(--color-field-placeholder);
+  }
+
+  &:hover:not(:focus) {
+    background-color: var(--color-field-bg-focus);
+    border-color: var(--color-field-border-hover);
+  }
+
+  &:focus {
+    border-color: var(--color-field-border-focus);
+    background-color: var(--color-field-bg-focus);
+    box-shadow: 0 0 0 $s-1 var(--color-field-focus-shadow);
+  }
+}
+
+.message-edit-actions {
+  margin-top: $s-2;
+}
+
+.message-edit-cancel-button,
+.message-edit-save-button {
+  padding: $s-1 $s-3;
+  border-radius: $rounded-sm;
+  border: none;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all $duration-200 ease;
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+.message-edit-cancel-button {
+  background-color: rgb(var(--surface-3));
+  color: rgb(var(--text-main));
+
+  &:hover:not(:disabled) {
+    background-color: rgb(var(--surface-4));
+  }
+}
+
+.message-edit-save-button {
+  background-color: rgb(var(--primary));
+  color: rgb(var(--text-on-primary));
+
+  &:hover:not(:disabled) {
+    background-color: rgb(var(--primary-hover));
+  }
+}
+
+.message-edit-hint {
+  font-size: 0.75rem;
+  opacity: 0.7;
+}
+

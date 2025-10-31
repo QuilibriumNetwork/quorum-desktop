@@ -107,6 +107,7 @@ export const iconComponentMap: Record<IconName, string> = {
   briefcase: 'IconBriefcase',
   hashtag: 'IconHash',
   'calendar-alt': 'IconCalendar',
+  history: 'IconHistory',
 
   // Common additions
   home: 'IconHome',

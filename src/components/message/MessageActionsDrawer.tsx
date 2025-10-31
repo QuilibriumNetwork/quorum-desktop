@@ -15,7 +15,11 @@ export interface MessageActionsDrawerProps {
   onPin?: () => void;
   onReaction: (emoji: string) => void;
   onMoreReactions: () => void;
+  onEdit?: () => void;
+  onViewEditHistory?: () => void;
   canDelete?: boolean;
+  canEdit?: boolean;
+  canViewEditHistory?: boolean;
   canPinMessages?: boolean;
   userAddress: string;
   onDeleteWithConfirmation?: () => void;
@@ -36,7 +40,11 @@ const MessageActionsDrawer: React.FC<MessageActionsDrawerProps> = ({
   onPin,
   onReaction,
   onMoreReactions,
+  onEdit,
+  onViewEditHistory,
   canDelete = false,
+  canEdit = false,
+  canViewEditHistory = false,
   canPinMessages = false,
   userAddress,
   onDeleteWithConfirmation,
@@ -64,6 +72,20 @@ const MessageActionsDrawer: React.FC<MessageActionsDrawerProps> = ({
   const handleCopyLink = () => {
     onCopyLink();
     onClose();
+  };
+
+  const handleEdit = () => {
+    if (onEdit) {
+      onEdit();
+      onClose();
+    }
+  };
+
+  const handleViewEditHistory = () => {
+    if (onViewEditHistory) {
+      onViewEditHistory();
+      onClose();
+    }
   };
 
   const handleDelete = () => {
@@ -154,6 +176,32 @@ const MessageActionsDrawer: React.FC<MessageActionsDrawerProps> = ({
         >
           {t`Copy message link`}
         </Button>
+
+        {canEdit && onEdit && (
+          <Button
+            type="unstyled"
+            size="normal"
+            onClick={handleEdit}
+            iconName="edit"
+            fullWidth
+            className="action-menu-item"
+          >
+            {t`Edit message`}
+          </Button>
+        )}
+
+        {canViewEditHistory && onViewEditHistory && (
+          <Button
+            type="unstyled"
+            size="normal"
+            onClick={handleViewEditHistory}
+            iconName="history"
+            fullWidth
+            className="action-menu-item"
+          >
+            {t`View edit history`}
+          </Button>
+        )}
 
         {canPinMessages && onPin && (
           <Button

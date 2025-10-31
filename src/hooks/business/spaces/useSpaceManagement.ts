@@ -17,6 +17,8 @@ export interface UseSpaceManagementReturn {
   setIsPublic: (isPublic: boolean) => void;
   isRepudiable: boolean;
   setIsRepudiable: (isRepudiable: boolean) => void;
+  saveEditHistory: boolean;
+  setSaveEditHistory: (saveEditHistory: boolean) => void;
   saving: boolean;
   selectedCategory: string;
   setSelectedCategory: (category: string) => void;
@@ -41,6 +43,7 @@ export const useSpaceManagement = (
   const [spaceName, setSpaceName] = useState('');
   const [isPublic, setIsPublic] = useState(true);
   const [isRepudiable, setIsRepudiable] = useState(false);
+  const [saveEditHistory, setSaveEditHistory] = useState(false);
   const [saving, setSaving] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState('general');
   const [deleteError, setDeleteError] = useState<string | null>(null);
@@ -56,6 +59,7 @@ export const useSpaceManagement = (
     if (space) {
       setSpaceName(space.spaceName || '');
       setIsRepudiable(space.isRepudiable || false);
+      setSaveEditHistory(space.saveEditHistory ?? false);
     }
   }, [space?.spaceId]); // Only run when space ID changes, not when state changes
 
@@ -92,6 +96,7 @@ export const useSpaceManagement = (
           iconUrl,
           bannerUrl,
           isRepudiable,
+          saveEditHistory,
         });
 
         onClose?.();
@@ -101,7 +106,7 @@ export const useSpaceManagement = (
         setSaving(false);
       }
     },
-    [spaceName, space, isRepudiable, updateSpace, onClose]
+    [spaceName, space, isRepudiable, saveEditHistory, updateSpace, onClose]
   );
 
   const handleDeleteSpace = useCallback(async () => {
@@ -157,6 +162,8 @@ export const useSpaceManagement = (
     setIsPublic,
     isRepudiable,
     setIsRepudiable,
+    saveEditHistory,
+    setSaveEditHistory,
     saving,
     selectedCategory,
     setSelectedCategory,

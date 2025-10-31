@@ -17,6 +17,8 @@ interface UseMessageActionsOptions {
   editorRef?: any;
   mapSenderToUser?: (senderId: string) => any;
   stickers?: { [key: string]: any };
+  onEdit?: (message: MessageType) => void;
+  onViewEditHistory?: (message: MessageType) => void;
 }
 
 export function useMessageActions(options: UseMessageActionsOptions) {
@@ -32,6 +34,8 @@ export function useMessageActions(options: UseMessageActionsOptions) {
     editorRef,
     mapSenderToUser,
     stickers,
+    onEdit,
+    onViewEditHistory,
   } = options;
 
   // State for copied link feedback
@@ -43,6 +47,13 @@ export function useMessageActions(options: UseMessageActionsOptions) {
   // Calculate if user can delete this message
   // canDeleteMessages already contains all permission logic including space owner privileges
   const canUserDelete = Boolean(canDeleteMessages);
+
+  // Calculate if user can edit this message
+  // Only original sender can edit, and only within 15 minutes
+  const EDIT_TIME_WINDOW = 15 * 60 * 1000; // 15 minutes in milliseconds
+  const canUserEdit = message.content.senderId === userAddress &&
+    message.content.type === 'post' &&
+    (Date.now() - message.createdDate) <= EDIT_TIME_WINDOW;
 
   // Handle reaction submission
   const handleReaction = useCallback(
@@ -92,13 +103,13 @@ export function useMessageActions(options: UseMessageActionsOptions) {
         removeMessageId: message.messageId,
       });
     };
-    
+
     // Check for Shift+click bypass (desktop only)
     if (e.shiftKey) {
       performDelete();
       return;
     }
-    
+
     // Show confirmation modal
     showConfirmationModal({
       title: t`Delete Message`,
@@ -123,10 +134,31 @@ export function useMessageActions(options: UseMessageActionsOptions) {
     [message.messageId, height, onSetEmojiPickerOpen, onSetEmojiPickerDirection]
   );
 
+  // Handle edit action
+  const handleEdit = useCallback(() => {
+    if (canUserEdit && onEdit) {
+      onEdit(message);
+    }
+  }, [canUserEdit, message, onEdit]);
+
+  // Check if edit history can be viewed (message has edits and is a post)
+  const canViewEditHistory = message.content.type === 'post' &&
+    message.edits &&
+    message.edits.length > 0;
+
+  // Handle view edit history action
+  const handleViewEditHistory = useCallback(() => {
+    if (canViewEditHistory && onViewEditHistory) {
+      onViewEditHistory(message);
+    }
+  }, [canViewEditHistory, message, onViewEditHistory]);
+
   return {
     // State
     copiedLinkId,
     canUserDelete,
+    canUserEdit,
+    canViewEditHistory,
 
     // Actions
     handleReaction,
@@ -134,5 +166,7 @@ export function useMessageActions(options: UseMessageActionsOptions) {
     handleCopyLink,
     handleDelete,
     handleMoreReactions,
+    handleEdit,
+    handleViewEditHistory,
   };
 }

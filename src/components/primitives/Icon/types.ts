@@ -97,6 +97,7 @@ export type IconName =
   | 'briefcase'
   | 'hashtag'
   | 'calendar-alt'
+  | 'history'
 
   // Common additions for future use
   | 'home'

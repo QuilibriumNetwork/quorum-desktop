@@ -4,6 +4,7 @@ import { Trans } from '@lingui/react/macro';
 import { t } from '@lingui/core/macro';
 import { ReactTooltip } from '../../ui';
 import { Channel } from '../../../api/quorumApi';
+import { isFeatureEnabled } from '../../../utils/platform';
 
 interface GeneralProps {
   space: any;
@@ -33,6 +34,8 @@ interface GeneralProps {
   getChannelGroups: any;
   isRepudiable: boolean;
   setIsRepudiable: (value: boolean) => void;
+  saveEditHistory: boolean;
+  setSaveEditHistory: (value: boolean) => void;
   onSave: () => void;
   isSaving: boolean;
   hasValidationError: boolean;
@@ -66,10 +69,15 @@ const General: React.FunctionComponent<GeneralProps> = ({
   getChannelGroups,
   isRepudiable,
   setIsRepudiable,
+  saveEditHistory,
+  setSaveEditHistory,
   onSave,
   isSaving,
   hasValidationError,
 }) => {
+  // Feature flag: only show edit history toggle if enabled via environment variable
+  const showEditHistoryToggle = isFeatureEnabled('ENABLE_EDIT_HISTORY');
+
   return (
     <>
       <div className="modal-content-header-avatar">
@@ -249,6 +257,31 @@ const General: React.FunctionComponent<GeneralProps> = ({
               value={!isRepudiable}
             />
           </div>
+          {showEditHistoryToggle && (
+            <div className="flex flex-row justify-between">
+              <div className="flex flex-row items-center">
+                <div className="text-label-strong">
+                  <Trans>Save Edit History</Trans>
+                </div>
+                <Tooltip
+                  id="save-edit-history-tooltip"
+                  content={t`When enabled, all previous versions of edited messages will be saved. When disabled, only the current edited version is kept.`}
+                  place="bottom"
+                  className="!w-[400px]"
+                  maxWidth={400}
+                >
+                  <Icon
+                    name="info-circle"
+                    className="text-main hover:text-strong cursor-pointer ml-2"
+                  />
+                </Tooltip>
+              </div>
+              <Switch
+                onChange={() => setSaveEditHistory(!saveEditHistory)}
+                value={saveEditHistory}
+              />
+            </div>
+          )}
         </div>
         {/* Fixes section (hidden if none) */}
         {fixes && fixes.length > 0 && (

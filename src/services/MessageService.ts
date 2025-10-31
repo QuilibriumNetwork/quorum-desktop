@@ -2,7 +2,7 @@
 // This service handles message CRUD operations, encryption/decryption, and reactions
 
 import { MessageDB, EncryptionState, EncryptedMessage } from '../db/messages';
-import { Message, ReactionMessage, RemoveReactionMessage, PostMessage, JoinMessage, LeaveMessage, KickMessage, Space } from '../api/quorumApi';
+import { Message, ReactionMessage, RemoveReactionMessage, PostMessage, JoinMessage, LeaveMessage, KickMessage, Space, EditMessage } from '../api/quorumApi';
 import { sha256, base58btc, hexToSpreadArray } from '../utils/crypto';
 import { int64ToBytes } from '../utils/bytes';
 import { QueryClient, InfiniteData } from '@tanstack/react-query';
@@ -266,6 +266,117 @@ export class MessageService {
           // Don't return early - allow addMessage() to update React Query cache
         }
       }
+    } else if (decryptedContent.content.type === 'edit-message') {
+      const editMessage = decryptedContent.content as EditMessage;
+      const targetMessage = await messageDB.getMessage({
+        spaceId,
+        channelId,
+        messageId: editMessage.originalMessageId,
+      });
+
+      if (!targetMessage) {
+        return;
+      }
+
+      // Only original sender can edit their message
+      if (targetMessage.content.senderId !== editMessage.senderId) {
+        return;
+      }
+
+      // Only allow editing post messages
+      if (targetMessage.content.type !== 'post') {
+        return;
+      }
+
+      // Check edit time window (15 minutes = 900000 ms)
+      const editTimeWindow = 15 * 60 * 1000;
+      const timeSinceCreation = Date.now() - targetMessage.createdDate;
+      if (timeSinceCreation > editTimeWindow) {
+        return;
+      }
+
+      // Check if saveEditHistory is enabled for this conversation/space
+      const isDM = spaceId === channelId;
+      let saveEditHistoryEnabled = false;
+
+      if (isDM) {
+        // For DMs, check conversation setting
+        const conversationId = `${spaceId}/${channelId}`;
+        const conversation = await messageDB.getConversation({ conversationId });
+        saveEditHistoryEnabled = conversation?.conversation?.saveEditHistory ?? false;
+      } else {
+        // For spaces, check space setting
+        const space = await messageDB.getSpace(spaceId);
+        saveEditHistoryEnabled = space?.saveEditHistory ?? false;
+      }
+
+      // Check if this edit has already been applied (by comparing lastModifiedHash with editNonce)
+      // This prevents duplicate edits when processing the same edit message multiple times
+      const isAlreadyApplied = targetMessage.lastModifiedHash === editMessage.editNonce;
+
+      // Preserve current content in edits array before updating (only if saveEditHistory is enabled)
+      const currentText = targetMessage.content.type === 'post' ? targetMessage.content.text : '';
+
+      // Create edits array if it doesn't exist
+      const existingEdits = targetMessage.edits || [];
+
+      // Only add to edits if saveEditHistory is enabled AND this edit hasn't been applied yet
+      let edits: Array<{
+        text: string | string[];
+        modifiedDate: number;
+        lastModifiedHash: string;
+      }>;
+
+      if (isAlreadyApplied) {
+        // Edit already applied: use existing edits array (don't modify)
+        edits = existingEdits;
+      } else if (!saveEditHistoryEnabled) {
+        // saveEditHistory disabled: don't preserve edits
+        edits = [];
+      } else if (targetMessage.modifiedDate === targetMessage.createdDate) {
+        // First edit: add original content to edits array
+        edits = [
+          {
+            text: currentText,
+            modifiedDate: targetMessage.createdDate,
+            lastModifiedHash: targetMessage.nonce, // Use original nonce as hash
+          },
+        ];
+      } else if (existingEdits.length > 0) {
+        // Subsequent edits: add current version (which is now the previous version)
+        edits = [
+          ...existingEdits,
+          {
+            text: currentText,
+            modifiedDate: targetMessage.modifiedDate,
+            lastModifiedHash: targetMessage.lastModifiedHash || targetMessage.nonce,
+          },
+        ];
+      } else {
+        // Edge case: edited before but edits array is empty (shouldn't happen, but handle gracefully)
+        edits = existingEdits;
+      }
+
+      // Update the original message with edited text
+      const updatedMessage: Message = {
+        ...targetMessage,
+        modifiedDate: editMessage.editedAt,
+        lastModifiedHash: editMessage.editNonce,
+        content: {
+          ...targetMessage.content,
+          text: editMessage.editedText,
+        } as PostMessage,
+        edits: edits,
+      };
+
+      await messageDB.saveMessage(
+        updatedMessage,
+        0,
+        spaceId,
+        conversationType,
+        updatedUserProfile.user_icon!,
+        updatedUserProfile.display_name!
+      );
     } else if (decryptedContent.content.type === 'update-profile') {
       const participant = await messageDB.getSpaceMember(
         decryptedContent.spaceId,
@@ -413,6 +524,110 @@ export class MessageService {
                         };
                       }
                       return m;
+                    }
+                    return m;
+                  }),
+                ],
+                // Preserve any cursors or other pagination metadata
+                nextCursor: page.nextCursor,
+                prevCursor: page.prevCursor,
+              };
+            }),
+          };
+        }
+      );
+    } else if (decryptedContent.content.type === 'edit-message') {
+      const editMessage = decryptedContent.content as EditMessage;
+
+      // Check if saveEditHistory is enabled for this conversation/space (before the map callback)
+      const isDMForEdit = spaceId === channelId;
+      let saveEditHistoryEnabled = false;
+
+      try {
+        if (isDMForEdit) {
+          // For DMs, check conversation setting
+          const conversationId = `${spaceId}/${channelId}`;
+          const conversation = await this.messageDB.getConversation({ conversationId });
+          saveEditHistoryEnabled = conversation?.conversation?.saveEditHistory ?? false;
+        } else {
+          // For spaces, check space setting
+          const space = await this.messageDB.getSpace(spaceId);
+          saveEditHistoryEnabled = space?.saveEditHistory ?? false;
+        }
+      } catch (error) {
+        console.error('Failed to get saveEditHistory setting:', error);
+        saveEditHistoryEnabled = false;
+      }
+
+      queryClient.setQueryData(
+        buildMessagesKey({ spaceId: spaceId, channelId: channelId }),
+        (oldData: InfiniteData<any>) => {
+          if (!oldData?.pages) return oldData;
+
+          return {
+            pageParams: oldData.pageParams,
+            pages: oldData.pages.map((page) => {
+              return {
+                ...page,
+                messages: [
+                  ...page.messages.map((m: Message) => {
+                    if (m.messageId === editMessage.originalMessageId) {
+                      // Only update if the sender matches (permission check)
+                      if (m.content.senderId !== editMessage.senderId) {
+                        return m;
+                      }
+                      // Only allow editing post messages
+                      if (m.content.type !== 'post') {
+                        return m;
+                      }
+
+                      // Check edit time window (15 minutes)
+                      const editTimeWindow = 15 * 60 * 1000;
+                      const timeSinceCreation = Date.now() - m.createdDate;
+                      if (timeSinceCreation > editTimeWindow) {
+                        return m;
+                      }
+
+                      // Preserve current content in edits array before updating (only if saveEditHistory is enabled)
+                      const currentText = m.content.type === 'post' ? m.content.text : '';
+                      const existingEdits = m.edits || [];
+
+                      // Build edits array: preserve previous versions only if saveEditHistory is enabled
+                      const edits = saveEditHistoryEnabled
+                        ? (m.modifiedDate === m.createdDate
+                          ? // First edit: add original content to edits array
+                            [
+                              {
+                                text: currentText,
+                                modifiedDate: m.createdDate,
+                                lastModifiedHash: m.nonce,
+                              },
+                            ]
+                          : existingEdits.length > 0
+                          ? // Subsequent edits: add current version (which is now the previous version)
+                            [
+                              ...existingEdits,
+                              {
+                                text: currentText,
+                                modifiedDate: m.modifiedDate,
+                                lastModifiedHash: m.lastModifiedHash || m.nonce,
+                              },
+                            ]
+                          : // Edge case: edited before but edits array is empty (shouldn't happen, but handle gracefully)
+                            existingEdits)
+                        : []; // If saveEditHistory is disabled, don't preserve edits
+
+                      // Update the message with edited text
+                      return {
+                        ...m,
+                        modifiedDate: editMessage.editedAt,
+                        lastModifiedHash: editMessage.editNonce,
+                        content: {
+                          ...m.content,
+                          text: editMessage.editedText,
+                        } as PostMessage,
+                        edits: edits,
+                      };
                     }
                     return m;
                   }),
@@ -627,6 +842,189 @@ export class MessageService {
     this.enqueueOutbound(async () => {
       let outbounds: string[] = [];
       const nonce = crypto.randomUUID();
+
+      // Handle edit-message type
+      if (typeof pendingMessage === 'object' && (pendingMessage as any).type === 'edit-message') {
+        const editMessage = pendingMessage as EditMessage;
+        // Verify the original message exists and can be edited
+        const originalMessage = await this.messageDB.getMessage({
+          spaceId: address,
+          channelId: address,
+          messageId: editMessage.originalMessageId,
+        });
+
+        if (!originalMessage) {
+          return outbounds;
+        }
+
+        // Check permissions
+        if (originalMessage.content.senderId !== currentPasskeyInfo.address) {
+          return outbounds;
+        }
+
+        // Only allow editing post messages
+        if (originalMessage.content.type !== 'post') {
+          return outbounds;
+        }
+
+        // Check edit time window (15 minutes)
+        const editTimeWindow = 15 * 60 * 1000;
+        const timeSinceCreation = Date.now() - originalMessage.createdDate;
+        if (timeSinceCreation > editTimeWindow) {
+          return outbounds;
+        }
+
+        // Create the edit message with proper structure
+        const messageId = await crypto.subtle.digest(
+          'SHA-256',
+          Buffer.from(
+            nonce +
+              'edit-message' +
+              currentPasskeyInfo.address +
+              canonicalize(editMessage),
+            'utf-8'
+          )
+        );
+        const message = {
+          channelId: address!,
+          spaceId: address!,
+          messageId: Buffer.from(messageId).toString('hex'),
+          digestAlgorithm: 'SHA-256',
+          nonce: nonce,
+          createdDate: Date.now(),
+          modifiedDate: Date.now(),
+          lastModifiedHash: '',
+          content: {
+            ...editMessage,
+            senderId: currentPasskeyInfo.address,
+          } as EditMessage,
+        } as Message;
+
+        let conversationId = address + '/' + address;
+        const conversation = await this.messageDB.getConversation({
+          conversationId,
+        });
+        let response = await this.messageDB.getEncryptionStates({ conversationId });
+        const inboxes = self.device_registrations
+          .map((d) => d.inbox_registration.inbox_address)
+          .concat(
+            counterparty.device_registrations.map(
+              (d) => d.inbox_registration.inbox_address
+            )
+          )
+          .sort();
+
+        for (const res of response) {
+          if (!inboxes.includes(JSON.parse(res.state).tag)) {
+            await this.messageDB.deleteEncryptionState(res);
+          }
+        }
+
+        response = await this.messageDB.getEncryptionStates({ conversationId });
+        let sets = response.map((e) => JSON.parse(e.state));
+
+        let sessions: secureChannel.SealedMessageAndMetadata[] = [];
+        // Sign DM unless explicitly skipped
+        if (!skipSigning) {
+          try {
+            const sig = ch.js_sign_ed448(
+              Buffer.from(
+                new Uint8Array(keyset.userKeyset.user_key.private_key)
+              ).toString('base64'),
+              Buffer.from(messageId).toString('base64')
+            );
+            message.publicKey = Buffer.from(
+              new Uint8Array(keyset.userKeyset.user_key.public_key)
+            ).toString('hex');
+            message.signature = Buffer.from(JSON.parse(sig), 'base64').toString(
+              'hex'
+            );
+          } catch {}
+        }
+
+        for (const inbox of inboxes.filter(
+          (i) => i !== keyset.deviceKeyset.inbox_keyset.inbox_address
+        )) {
+          const set = sets.find((s) => s.tag === inbox);
+          if (set) {
+            if (set.sending_inbox.inbox_public_key === '') {
+              sessions = [
+                ...sessions,
+                ...secureChannel.DoubleRatchetInboxEncryptForceSenderInit(
+                  keyset.deviceKeyset,
+                  [set],
+                  JSON.stringify(message),
+                  self,
+                  currentPasskeyInfo!.displayName,
+                  currentPasskeyInfo?.pfpUrl
+                ),
+              ];
+            } else {
+              sessions = [
+                ...sessions,
+                ...secureChannel.DoubleRatchetInboxEncrypt(
+                  keyset.deviceKeyset,
+                  [set],
+                  JSON.stringify(message),
+                  self,
+                  currentPasskeyInfo!.displayName,
+                  currentPasskeyInfo?.pfpUrl
+                ),
+              ];
+            }
+          } else {
+            sessions = [
+              ...sessions,
+              ...(await secureChannel.NewDoubleRatchetSenderSession(
+                keyset.deviceKeyset,
+                self.user_address,
+                self.device_registrations
+                  .concat(counterparty.device_registrations)
+                  .find((d) => d.inbox_registration.inbox_address === inbox)!,
+                JSON.stringify(message),
+                currentPasskeyInfo!.displayName,
+                currentPasskeyInfo?.pfpUrl
+              )),
+            ];
+          }
+        }
+
+        for (const session of sessions) {
+          const newEncryptionState: EncryptionState = {
+            state: JSON.stringify({
+              ratchet_state: session.ratchet_state,
+              receiving_inbox: session.receiving_inbox,
+              tag: session.tag,
+              sending_inbox: session.sending_inbox,
+            } as secureChannel.DoubleRatchetStateAndInboxKeys),
+            timestamp: Date.now(),
+            inboxId: session.receiving_inbox.inbox_address,
+            conversationId: address! + '/' + address!,
+            sentAccept: session.sent_accept,
+          };
+          await this.messageDB.saveEncryptionState(newEncryptionState, true);
+          outbounds.push(
+            JSON.stringify({
+              type: 'listen',
+              inbox_addresses: [session.receiving_inbox.inbox_address],
+            })
+          );
+          outbounds.push(
+            JSON.stringify({ type: 'direct', ...session.sealed_message })
+          );
+        }
+
+        await this.saveMessage(message, this.messageDB, address!, address!, 'direct', {
+          user_icon:
+            conversation?.conversation?.icon ?? DefaultImages.UNKNOWN_USER,
+          display_name:
+            conversation?.conversation?.displayName ?? t`Unknown User`,
+        });
+        await this.addMessage(queryClient, address, address, message);
+
+        return outbounds;
+      }
+
       const messageId = await crypto.subtle.digest(
         'SHA-256',
         Buffer.from(
@@ -2150,6 +2548,123 @@ export class MessageService {
       let outbounds: string[] = [];
       const nonce = crypto.randomUUID();
       const space = await this.messageDB.getSpace(spaceId);
+
+      // Handle edit-message type
+      if (typeof pendingMessage === 'object' && (pendingMessage as any).type === 'edit-message') {
+        const editMessage = pendingMessage as EditMessage;
+        // Verify the original message exists and can be edited
+        const originalMessage = await this.messageDB.getMessage({
+          spaceId,
+          channelId,
+          messageId: editMessage.originalMessageId,
+        });
+
+        if (!originalMessage) {
+          return outbounds;
+        }
+
+        // Check permissions
+        if (originalMessage.content.senderId !== currentPasskeyInfo.address) {
+          return outbounds;
+        }
+
+        // Only allow editing post messages
+        if (originalMessage.content.type !== 'post') {
+          return outbounds;
+        }
+
+        // Check edit time window (15 minutes)
+        const editTimeWindow = 15 * 60 * 1000;
+        const timeSinceCreation = Date.now() - originalMessage.createdDate;
+        if (timeSinceCreation > editTimeWindow) {
+          return outbounds;
+        }
+
+        // Create the edit message with proper structure
+        const messageId = await crypto.subtle.digest(
+          'SHA-256',
+          Buffer.from(
+            nonce +
+              'edit-message' +
+              currentPasskeyInfo.address +
+              canonicalize(editMessage),
+            'utf-8'
+          )
+        );
+
+        const message = {
+          spaceId: spaceId,
+          channelId: channelId,
+          messageId: Buffer.from(messageId).toString('hex'),
+          digestAlgorithm: 'SHA-256',
+          nonce: nonce,
+          createdDate: Date.now(),
+          modifiedDate: Date.now(),
+          lastModifiedHash: '',
+          content: {
+            ...editMessage,
+            senderId: currentPasskeyInfo.address,
+          } as EditMessage,
+        } as Message;
+
+        let conversationId = spaceId + '/' + channelId;
+        const conversation = await this.messageDB.getConversation({
+          conversationId,
+        });
+        let response = await this.messageDB.getEncryptionStates({
+          conversationId: spaceId + '/' + spaceId,
+        });
+        const sets = response.map((e) => JSON.parse(e.state));
+
+        // enforce non-repudiability
+        if (
+          !space?.isRepudiable ||
+          (space?.isRepudiable && !skipSigning)
+        ) {
+          const inboxKey = await this.messageDB.getSpaceKey(spaceId, 'inbox');
+          message.publicKey = inboxKey.publicKey;
+          message.signature = Buffer.from(
+            JSON.parse(
+              ch.js_sign_ed448(
+                Buffer.from(inboxKey.privateKey, 'hex').toString('base64'),
+                Buffer.from(messageId).toString('base64')
+              )
+            ),
+            'base64'
+          ).toString('hex');
+        }
+
+        const msg = secureChannel.TripleRatchetEncrypt(
+          JSON.stringify({
+            ratchet_state: sets[0].state,
+            message: [
+              ...new Uint8Array(Buffer.from(JSON.stringify(message), 'utf-8')),
+            ],
+          } as secureChannel.TripleRatchetStateAndMessage)
+        );
+        const result = JSON.parse(
+          msg
+        ) as secureChannel.TripleRatchetStateAndEnvelope;
+        outbounds.push(
+          await this.sendHubMessage(
+            spaceId,
+            JSON.stringify({
+              type: 'message',
+              message: JSON.parse(result.envelope),
+            })
+          )
+        );
+        await this.saveMessage(message, this.messageDB, spaceId, channelId, 'group', {
+          user_icon:
+            conversation.conversation?.icon ?? DefaultImages.UNKNOWN_USER,
+          display_name:
+            conversation.conversation?.displayName ?? t`Unknown User`,
+        });
+        await this.addMessage(queryClient, spaceId, channelId, message);
+
+        return outbounds;
+      }
+
       const messageId = await crypto.subtle.digest(
         'SHA-256',
         Buffer.from(
