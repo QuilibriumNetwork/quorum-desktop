@@ -1,9 +1,8 @@
 import React, { useMemo } from 'react';
 import { t } from '@lingui/core/macro';
-import { Modal, Text, Container, FlexColumn, FlexRow } from '../primitives';
+import { Modal, Text, Container, FlexColumn, FlexRow, ScrollContainer, Spacer } from '../primitives';
 import { Message as MessageType } from '../../api/quorumApi';
 import { formatMessageDate } from '../../utils';
-import './EditHistoryModal.scss';
 
 interface EditHistoryModalProps {
   visible: boolean;
@@ -63,14 +62,25 @@ export const EditHistoryModal: React.FC<EditHistoryModalProps> = ({
       closeOnBackdropClick={true}
       closeOnEscape={true}
     >
-      <Container className="edit-history-modal-content">
-        <FlexColumn gap="sm">
+      <ScrollContainer height="lg" showBorder={false}>
+        <FlexColumn gap="sm" padding="sm" className="pr-3">
           {editHistory.map((item, index) => {
             const text = Array.isArray(item.text) ? item.text.join('\n') : item.text;
             const isOriginal = item.modifiedDate === message.createdDate;
 
             return (
-              <Container key={index} className={`edit-history-item ${item.isCurrent ? 'edit-history-item-current' : ''}`}>
+              <Container
+                key={index}
+                className={`
+                  py-3 px-4
+                  rounded-md
+                  transition-all duration-150 ease-in-out
+                  ${item.isCurrent
+                    ? 'border border-accent bg-surface-0 hover:bg-surface-1'
+                    : 'bg-surface-0 hover:bg-surface-1'
+                  }
+                `}
+              >
                 <FlexColumn gap="xs">
                   <FlexRow gap="sm" alignItems="center">
                     <Text variant="subtle" size="sm" weight="medium">
@@ -84,17 +94,21 @@ export const EditHistoryModal: React.FC<EditHistoryModalProps> = ({
                       {formatMessageDate(item.modifiedDate)}
                     </Text>
                   </FlexRow>
-                  <Container className="edit-history-item-text">
-                    <Text variant="body" size="sm">
-                      {text || t`(empty)`}
-                    </Text>
-                  </Container>
+                  <Spacer
+                    spaceBefore="xs"
+                    spaceAfter="xs"
+                    border={true}
+                    direction="vertical"
+                  />
+                  <Text variant="body" size="sm" className="whitespace-pre-wrap break-words">
+                    {text || t`(empty)`}
+                  </Text>
                 </FlexColumn>
               </Container>
             );
           })}
         </FlexColumn>
-      </Container>
+      </ScrollContainer>
     </Modal>
   );
 };
