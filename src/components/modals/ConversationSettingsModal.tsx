@@ -184,7 +184,7 @@ const ConversationSettingsModal: React.FC<ConversationSettingsModalProps> = ({
       size="small"
     >
       <Container>
-        <FlexColumn gap="md">
+        <FlexColumn gap="sm">
           <FlexBetween align="center">
             <FlexRow gap="sm" align="center">
               <div className="text-label-strong">

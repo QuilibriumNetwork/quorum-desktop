@@ -23,6 +23,8 @@ const CreateSpaceModal: React.FunctionComponent<CreateSpaceModalProps> = (
     });
 
   const [description, setDescription] = React.useState<string>('');
+  const MAX_DESCRIPTION_LENGTH = 300;
+  const descriptionError = description.length > MAX_DESCRIPTION_LENGTH;
 
   const {
     fileData,
@@ -117,6 +119,12 @@ const CreateSpaceModal: React.FunctionComponent<CreateSpaceModalProps> = (
             rows={3}
             variant="filled"
             className="w-full"
+            error={descriptionError}
+            errorMessage={
+              descriptionError
+                ? t`Description must be ${MAX_DESCRIPTION_LENGTH} characters or less`
+                : undefined
+            }
           />
         </div>
         <div className="mt-4 text-body">
@@ -192,7 +200,7 @@ const CreateSpaceModal: React.FunctionComponent<CreateSpaceModalProps> = (
           <Button
             type="primary"
             className="w-full sm:w-auto"
-            disabled={!canCreate}
+            disabled={!canCreate || descriptionError}
             onClick={() =>
               createSpace(spaceName, fileData, currentFile, repudiable, pub, description)
             }

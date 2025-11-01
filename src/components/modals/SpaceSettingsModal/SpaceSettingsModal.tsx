@@ -122,6 +122,8 @@ const SpaceSettingsModal: React.FunctionComponent<{
   const [description, setDescription] = React.useState<string>(
     space?.description || ''
   );
+  const MAX_DESCRIPTION_LENGTH = 300;
+  const descriptionError = description.length > MAX_DESCRIPTION_LENGTH;
 
   // Update description when space changes
   React.useEffect(() => {
@@ -429,6 +431,8 @@ const SpaceSettingsModal: React.FunctionComponent<{
                           setSpaceName={setSpaceName}
                           description={description}
                           setDescription={setDescription}
+                          descriptionError={descriptionError}
+                          maxDescriptionLength={MAX_DESCRIPTION_LENGTH}
                           // set 'owner-membership' to 'true' to see in frontend
                           fixes={(missingOwnerMembership ? [{
                             id: 'owner-membership',
@@ -575,7 +579,7 @@ const SpaceSettingsModal: React.FunctionComponent<{
                     disabled={
                       selectedCategory === 'account'
                         ? spaceProfile.isSaving || spaceProfile.hasValidationError || mentionSettings.isSaving
-                        : isSaving || (!spaceName.trim() && selectedCategory === 'general')
+                        : isSaving || (!spaceName.trim() && selectedCategory === 'general') || (descriptionError && selectedCategory === 'general')
                     }
                   >
                     {t`Save Changes`}

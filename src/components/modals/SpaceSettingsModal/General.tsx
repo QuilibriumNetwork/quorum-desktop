@@ -1,9 +1,18 @@
 import * as React from 'react';
-import { Button, Select, Switch, Input, Icon, Tooltip, Spacer, TextArea } from '../../primitives';
+import {
+  Button,
+  Select,
+  Switch,
+  Input,
+  Icon,
+  Tooltip,
+  Spacer,
+  TextArea,
+} from '../../primitives';
 import { Trans } from '@lingui/react/macro';
 import { t } from '@lingui/core/macro';
 import { ReactTooltip } from '../../ui';
-import { Channel } from '../../../api/quorumApi';
+import { Channel, Group } from '../../../api/quorumApi';
 import { isFeatureEnabled } from '../../../utils/platform';
 
 interface GeneralProps {
@@ -12,7 +21,15 @@ interface GeneralProps {
   setSpaceName: (value: string) => void;
   description: string;
   setDescription: (value: string) => void;
-  fixes?: { id: string; message: string; actionLabel: string; onFix: () => void; loading?: boolean }[];
+  descriptionError: boolean;
+  maxDescriptionLength: number;
+  fixes?: {
+    id: string;
+    message: string;
+    actionLabel: string;
+    onFix: () => void;
+    loading?: boolean;
+  }[];
   iconData: ArrayBuffer | undefined;
   currentIconFile: File | undefined;
   iconFileError: string | null;
@@ -47,6 +64,8 @@ const General: React.FunctionComponent<GeneralProps> = ({
   setSpaceName,
   description,
   setDescription,
+  descriptionError,
+  maxDescriptionLength,
   fixes,
   iconData,
   currentIconFile,
@@ -92,9 +111,7 @@ const General: React.FunctionComponent<GeneralProps> = ({
                       ? 'url(data:' +
                         currentIconFile.type +
                         ';base64,' +
-                        Buffer.from(iconData).toString(
-                          'base64'
-                        ) +
+                        Buffer.from(iconData).toString('base64') +
                         ')'
                       : `url(${space?.iconUrl})`,
                 }
@@ -116,36 +133,40 @@ const General: React.FunctionComponent<GeneralProps> = ({
             anchorSelect="#space-icon-tooltip-target"
           />
         )}
-        <div className="modal-text-section">
-          <Input
-            className="w-full md:w-80 modal-input-text"
-            value={spaceName}
-            onChange={setSpaceName}
-            label={t`Space Name`}
-            labelType="static"
-            error={hasValidationError}
-            errorMessage={hasValidationError ? t`Space name is required` : undefined}
-          />
-        </div>
+        <Input
+          className="w-full modal-input-text"
+          value={spaceName}
+          onChange={setSpaceName}
+          placeholder={t`Space name`}
+          labelType="static"
+          error={hasValidationError}
+          errorMessage={
+            hasValidationError ? t`Space name is required` : undefined
+          }
+        />
       </div>
       <div className="modal-content-section">
-        <div className="w-full mb-4">
-          <div className="input-style-label mb-2">
-              <Trans>Description</Trans>
-            </div>
-            <div className="text-label mb-2 max-w-[500px]">
-              <Trans>
-                This description will be visible on invites and shown to people when they look up or join your Space using an invite link.
-              </Trans>
-            </div>
-            <TextArea
-              value={description}
-              onChange={setDescription}
+        <div className="w-full mb-2">
+          <TextArea
+            value={description}
+            onChange={setDescription}
             placeholder={t`Describe what this Space is about...`}
             rows={3}
             variant="filled"
             className="w-full"
+            error={descriptionError}
+            errorMessage={
+              descriptionError
+                ? t`Description must be ${maxDescriptionLength} characters or less`
+                : undefined
+            }
           />
+        </div>
+        <div className="text-label mb-4 max-w-[500px]">
+          <Trans>
+            This description will be visible on invites and shown to people when
+            they look up or join your Space using an invite link.
+          </Trans>
         </div>
         <Spacer size="md" direction="vertical" borderTop={true} />
         <div className="text-subtitle-2">
@@ -219,8 +240,8 @@ const General: React.FunctionComponent<GeneralProps> = ({
             value={defaultChannel?.channelId || ''}
             onChange={(channelId: string) => {
               const channel = space?.groups
-                .flatMap((g) => g.channels)
-                .find((c) => c.channelId === channelId);
+                ?.flatMap((g: Group) => g.channels)
+                ?.find((c: Channel) => c.channelId === channelId);
               if (channel) {
                 setDefaultChannel(channel);
               }
@@ -234,7 +255,7 @@ const General: React.FunctionComponent<GeneralProps> = ({
           <Trans>Privacy Settings</Trans>
         </div>
         <div className="modal-content-info">
-          <div className="flex flex-row justify-between">
+          <div className="flex flex-row justify-between mb-2">
             <div className="flex flex-row items-center">
               <div className="text-label-strong">
                 <Trans>Require Message Signing</Trans>
@@ -300,7 +321,13 @@ const General: React.FunctionComponent<GeneralProps> = ({
                     <div className="text-sm" style={{ lineHeight: 1.3 }}>
                       {fix.message}
                     </div>
-                    <Button type="secondary" size="small" className="whitespace-nowrap" onClick={fix.onFix} disabled={!!fix.loading}>
+                    <Button
+                      type="secondary"
+                      size="small"
+                      className="whitespace-nowrap"
+                      onClick={fix.onFix}
+                      disabled={!!fix.loading}
+                    >
                       {fix.loading ? t`Fixing...` : fix.actionLabel}
                     </Button>
                   </div>
