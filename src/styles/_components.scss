@@ -74,3 +74,21 @@ div[role='presentation'] {
     color: var(--color-text-main) !important;
   }
 }
+
+/* === ANIMATIONS === */
+
+/* Connecting.tsx */
+@keyframes pulse-zoom {
+  0% {
+    transform: scale(0.5);
+    opacity: 0.2;
+  }
+  50% {
+    transform: scale(0.7);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(0.5);
+    opacity: 0.2;
+  }
+}

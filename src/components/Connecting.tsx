@@ -1,58 +1,18 @@
 import * as React from 'react';
 import { Trans } from '@lingui/react/macro';
 
-import './Connecting.scss';
-
 const Connecting = () => {
   return (
-    <div className="connecting-splash bg-app">
+    <div className="flex flex-col items-center justify-center min-h-screen bg-app text-subtle text-center text-2xl">
       <div
-        className="connecting-icon pulse"
+        className="w-[100px] h-[100px] bg-contain bg-no-repeat bg-center mb-5 animate-[pulse-zoom_2s_ease-in-out_infinite]"
         style={{ backgroundImage: "url('/quorumicon-blue.png')" }}
       ></div>
-      <div className="connecting-message">
+      <div className="font-medium opacity-90">
         <Trans>Connecting</Trans>
       </div>
     </div>
   );
 };
-
-//OLD SPINNER ANIMATION
-// const Connecting = () => {
-//   return (
-//     <div className="connecting-splash">
-//       <div
-//         className="connecting-icon"
-//         style={{ backgroundImage: "url('/quorumicon.png')" }}
-//       ></div>
-//       <div
-//         className="connecting-icon connecting-icon-1"
-//         style={{ backgroundImage: "url('/quorumicon.png')" }}
-//       ></div>
-//       <div
-//         className="connecting-icon connecting-icon-2"
-//         style={{ backgroundImage: "url('/quorumicon.png')" }}
-//       ></div>
-//       <div
-//         className="connecting-icon connecting-icon-3"
-//         style={{ backgroundImage: "url('/quorumicon.png')" }}
-//       ></div>
-//       <div
-//         className="connecting-icon connecting-icon-4"
-//         style={{ backgroundImage: "url('/quorumicon.png')" }}
-//       ></div>
-//       <div
-//         className="connecting-icon connecting-icon-5"
-//         style={{ backgroundImage: "url('/quorumicon.png')" }}
-//       ></div>
-//       <div
-//         className="connecting-icon connecting-icon-6"
-//         style={{ backgroundImage: "url('/quorumicon.png')" }}
-//       ></div>
-//       <br />
-//       <div className="connecting-message">Connecting</div>
-//     </div>
-//   );
-// };
 
 export default Connecting;
