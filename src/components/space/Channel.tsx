@@ -316,7 +316,7 @@ const Channel: React.FC<ChannelProps> = ({
   const { iconName, iconColor } = getChannelIconAndColor();
 
   // Compute responsive icon size for header icons (lg for desktop ≥1024px, sm for mobile/tablet)
-  const headerIconSize = isDesktop ? 'lg' : 'md';
+  const headerIconSize = isDesktop ? 'lg' : 'lg';
 
   // Message composer hook
   const composer = useMessageComposer({
@@ -534,6 +534,7 @@ const Channel: React.FC<ChannelProps> = ({
                   onClick={toggleLeftSidebar}
                   className="header-icon-button lg:hidden"
                   iconName="bars"
+                  iconSize={headerIconSize}
                   iconOnly
                 />
                 <Button
@@ -541,6 +542,7 @@ const Channel: React.FC<ChannelProps> = ({
                   onClick={toggleNavMenu}
                   className="header-icon-button lg:hidden"
                   iconName={navMenuOpen ? 'chevron-left' : 'chevron-right'}
+                  iconSize={headerIconSize}
                   iconOnly
                 />
               </div>

@@ -149,7 +149,7 @@ const DirectMessage: React.FC<{}> = () => {
   };
 
   // Compute responsive icon size for header icons (lg for desktop ≥1024px, md for mobile/tablet)
-  const headerIconSize = isDesktop ? 'lg' : 'md';
+  const headerIconSize = isDesktop ? 'lg' : 'lg';
 
   // Sidebar state
   const {
@@ -365,6 +365,7 @@ const DirectMessage: React.FC<{}> = () => {
                   className="header-icon-button lg:hidden"
                   iconName="bars"
                   iconOnly
+                  iconSize={headerIconSize}
                 />
                 <Button
                   type="unstyled"
@@ -372,6 +373,7 @@ const DirectMessage: React.FC<{}> = () => {
                   className="header-icon-button lg:hidden"
                   iconName={navMenuOpen ? 'chevron-left' : 'chevron-right'}
                   iconOnly
+                  iconSize={headerIconSize}
                 />
               </FlexRow>
             )}
@@ -542,7 +544,7 @@ const DirectMessage: React.FC<{}> = () => {
             {/* Accept chat warning */}
             {!acceptChat && (
               <FlexRow className="justify-center">
-                <Container className="w-auto px-3 py-2 mb-2 text-sm text-center rounded-lg bg-surface-4 text-subtle">
+                <Container className="w-auto mx-4 p-2 sm:px-4 mb-2 text-sm text-center rounded-lg bg-surface-4 text-subtle">
                   {t`Until you reply, this sender will not see your display name or profile picture`}
                 </Container>
               </FlexRow>

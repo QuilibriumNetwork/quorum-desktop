@@ -11,7 +11,6 @@
 /* === BASE STYLES === */
 :root {
   font-family: Inter, sans-serif;
-  font-size-adjust: 0.5; /* Adjust Inter's x-height to appear slightly smaller */
   line-height: $leading-normal;
   font-weight: $font-normal;
 
@@ -40,6 +39,11 @@
   /* Mobile-first: text-xs-responsive starts at text-sm for readability on phones */
   --text-xs-responsive: #{$text-sm}; /* 14px on mobile */
   --text-xs-responsive-lh: #{$text-sm-lh}; /* 20px line-height on mobile */
+
+  @media (min-width: $screen-md) {
+    /* Apply font-size-adjust only on desktop for slightly smaller Inter appearance */
+    font-size-adjust: 0.5;
+  }
 
   /* Desktop: scale down to text-xs above 480px */
   @media (min-width: $screen-xs) {
