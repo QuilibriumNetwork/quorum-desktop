@@ -876,7 +876,7 @@ export const Message = React.memo(
                         onChange={(e) => setEditText(e.target.value)}
                         onFocus={(e) => {
                           // Move cursor to end of text
-                          const textarea = e.target as HTMLTextAreaElement;
+                          const textarea = e.target as HTMLTextAreaElement; 
                           const length = textarea.value.length;
                           textarea.setSelectionRange(length, length);
                         }}
@@ -899,12 +899,12 @@ export const Message = React.memo(
                         rows={Math.min(editText.split('\n').length, 10)}
                       />
                       <FlexRow className="message-edit-actions" justify="between" align="start">
-                        <Text variant="subtle" size="sm" className="message-edit-hint">
+                        <Text variant="muted" size="sm" className="message-edit-hint hidden sm:block">
                           {t`Press Enter to save, Shift+Enter for new line, Esc to cancel`}
                         </Text>
                         <FlexRow gap="xs">
                           <Button
-                            type="secondary"
+                            type="subtle"
                             size="sm"
                             onClick={handleCancelEdit}
                           >

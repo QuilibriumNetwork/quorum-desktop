@@ -150,11 +150,11 @@
   padding: $s-2;
   background-color: var(--color-field-bg);
   border: 1px solid var(--color-field-border);
-  border-radius: $rounded-sm;
+  border-radius: $rounded-md;
   color: var(--color-field-text);
   font-family: inherit;
   font-size: inherit;
-  resize: vertical;
+  resize: none;
   outline: none;
   transition: all $duration-150 $ease-in-out;
 
@@ -210,10 +210,5 @@
   &:hover:not(:disabled) {
     background-color: rgb(var(--primary-hover));
   }
-}
-
-.message-edit-hint {
-  font-size: 0.75rem;
-  opacity: 0.7;
 }
 

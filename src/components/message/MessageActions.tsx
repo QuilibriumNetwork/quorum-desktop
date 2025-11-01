@@ -178,31 +178,33 @@ export const MessageActions: React.FC<MessageActionsProps> = ({
             <Icon name="link" size="sm" />
           </div>
 
-          {/* Edit (if user can edit) */}
-          {canUserEdit && onEdit && (
+          {/* Edit/History section with separator */}
+          {(canUserEdit || canViewEditHistory) && (
             <>
+              {/* Separator before edit/history section */}
               <div className="w-2 mr-2 text-center flex flex-col border-r border-r-1 border-surface-5"></div>
-              <div
-                onClick={onEdit}
-                onMouseEnter={() => setHoveredAction('edit')}
-                className="mr-2 text-center text-surface-9 hover:text-surface-10 hover:scale-125 transition duration-200 rounded-md flex items-center justify-center cursor-pointer"
-              >
-                <Icon name="edit" size="md" />
-              </div>
-            </>
-          )}
 
-          {/* View Edit History (if available) */}
-          {canViewEditHistory && onViewEditHistory && (
-            <>
-              <div className="w-2 mr-2 text-center flex flex-col border-r border-r-1 border-surface-5"></div>
-              <div
-                onClick={onViewEditHistory}
-                onMouseEnter={() => setHoveredAction('history')}
-                className="mr-2 text-center text-surface-9 hover:text-surface-10 hover:scale-125 transition duration-200 rounded-md flex items-center justify-center cursor-pointer"
-              >
-                <Icon name="history" size="md" />
-              </div>
+              {/* Edit (if user can edit) */}
+              {canUserEdit && onEdit && (
+                <div
+                  onClick={onEdit}
+                  onMouseEnter={() => setHoveredAction('edit')}
+                  className="mr-2 text-center text-surface-9 hover:text-surface-10 hover:scale-125 transition duration-200 rounded-md flex items-center justify-center cursor-pointer"
+                >
+                  <Icon name="edit" size="md" />
+                </div>
+              )}
+
+              {/* View Edit History (if available) */}
+              {canViewEditHistory && onViewEditHistory && (
+                <div
+                  onClick={onViewEditHistory}
+                  onMouseEnter={() => setHoveredAction('history')}
+                  className="text-center text-surface-9 hover:text-surface-10 hover:scale-125 transition duration-200 rounded-md flex items-center justify-center cursor-pointer"
+                >
+                  <Icon name="history" size="md" />
+                </div>
+              )}
             </>
           )}
 

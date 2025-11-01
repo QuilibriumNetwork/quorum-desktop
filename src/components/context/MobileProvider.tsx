@@ -181,7 +181,11 @@ export const MobileProvider: React.FC<MobileProviderProps> = ({ children }) => {
             onPin={state.messageActionsDrawer.data.onPin}
             onReaction={state.messageActionsDrawer.data.onReaction}
             onMoreReactions={state.messageActionsDrawer.data.onMoreReactions}
+            onEdit={state.messageActionsDrawer.data.onEdit}
+            onViewEditHistory={state.messageActionsDrawer.data.onViewEditHistory}
             canDelete={state.messageActionsDrawer.data.canDelete}
+            canEdit={state.messageActionsDrawer.data.canEdit}
+            canViewEditHistory={state.messageActionsDrawer.data.canViewEditHistory}
             canPinMessages={state.messageActionsDrawer.data.canPinMessages}
             userAddress={state.messageActionsDrawer.data.userAddress}
             onDeleteWithConfirmation={state.messageActionsDrawer.data.onDeleteWithConfirmation}
