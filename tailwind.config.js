@@ -27,6 +27,9 @@ export default {
         xs: '480px', // Mobile breakpoint (matches app's 480px standard)
       },
       colors: {
+        // brand
+        'quorum-blue': 'var(--quorum-blue)',
+
         // accent color
         accent: {
           50: 'var(--accent-50)',
