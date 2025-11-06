@@ -55,6 +55,9 @@ import { InfiniteData } from '@tanstack/react-query';
 import { useMessageDB } from '../context/useMessageDB';
 import { DefaultImages } from '../../utils';
 import { EditHistoryModal } from '../modals/EditHistoryModal';
+import { MarkdownToolbar } from './MarkdownToolbar';
+import { calculateToolbarPosition } from '../../utils/toolbarPositioning';
+import type { FormatFunction } from '../../utils/markdownFormatting';
 
 // Utility function for robust GIF detection
 const createGifDetector = (url: string, isLargeGif?: boolean) => {

@@ -135,6 +135,12 @@ export type IconName =
   | 'code'
   | 'terminal'
   | 'file-code'
+  // Text formatting icons
+  | 'bold'
+  | 'italic'
+  | 'strikethrough'
+  | 'heading'
+  | 'quote'
   // Nature & sci-fi icons
   | 'tree'
   | 'robot'

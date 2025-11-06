@@ -17,6 +17,8 @@ export const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
       onBlur,
       onFocus,
       onKeyDown,
+      onSelect,
+      onMouseUp,
       rows = 3,
       minRows = 1,
       maxRows = 10,
@@ -98,6 +100,8 @@ export const TextArea = forwardRef<HTMLTextAreaElement, TextAreaProps>(
           onBlur={onBlur}
           onFocus={onFocus}
           onKeyDown={onKeyDown}
+          onSelect={onSelect}
+          onMouseUp={onMouseUp}
           rows={autoResize ? undefined : rows}
           disabled={disabled}
           autoFocus={autoFocus}

@@ -10,6 +10,9 @@ import { DefaultImages } from '../../utils';
 import { useResponsiveLayout } from '../../hooks/useResponsiveLayout';
 import './MessageComposer.scss';
 import { UserAvatar } from '../user/UserAvatar';
+import { MarkdownToolbar } from './MarkdownToolbar';
+import type { FormatFunction } from '../../utils/markdownFormatting';
+import { calculateToolbarPosition } from '../../utils/toolbarPositioning';
 
 interface User {
   address: string;
@@ -109,6 +112,11 @@ export const MessageComposer = forwardRef<
     const [responsivePlaceholder, setResponsivePlaceholder] = useState(placeholder);
     const { isMobile, isDesktop } = useResponsiveLayout();
 
+    // Markdown toolbar state
+    const [showMarkdownToolbar, setShowMarkdownToolbar] = useState(false);
+    const [toolbarPosition, setToolbarPosition] = useState({ top: 0, left: 0 });
+    const [selectionRange, setSelectionRange] = useState({ start: 0, end: 0 });
+
     // Update placeholder for extra small screens (< 480px)
     useEffect(() => {
       const updatePlaceholder = () => {
@@ -199,6 +207,47 @@ export const MessageComposer = forwardRef<
     const handleSelect = useCallback(() => {
       setCursorPosition(textareaRef.current?.selectionStart || 0);
     }, []);
+
+    // Handle text selection for markdown toolbar
+    const handleTextareaMouseUp = useCallback(() => {
+      const textarea = textareaRef.current;
+      if (!textarea) return;
+
+      const start = textarea.selectionStart;
+      const end = textarea.selectionEnd;
+
+      if (end > start) {
+        // Text is selected
+        setSelectionRange({ start, end });
+
+        // Calculate smart position centered above selection
+        const position = calculateToolbarPosition(textarea);
+        if (position) {
+          setToolbarPosition(position);
+          setShowMarkdownToolbar(true);
+        } else {
+          setShowMarkdownToolbar(false);
+        }
+      } else {
+        setShowMarkdownToolbar(false);
+      }
+    }, []);
+
+    // Handle markdown formatting
+    const handleMarkdownFormat = useCallback(
+      (formatFn: FormatFunction) => {
+        const result = formatFn(value, selectionRange.start, selectionRange.end);
+        onChange(result.newText);
+
+        // Restore selection and focus (same pattern as handleMentionSelect)
+        setTimeout(() => {
+          textareaRef.current?.setSelectionRange(result.newStart, result.newEnd);
+          textareaRef.current?.focus();
+          setShowMarkdownToolbar(false);
+        }, 0);
+      },
+      [value, selectionRange, onChange]
+    );
 
     // Manage dropdown open state based on mentionInput
     useEffect(() => {
@@ -393,6 +442,13 @@ export const MessageComposer = forwardRef<
           </div>
         )}
 
+        {/* Markdown Toolbar */}
+        <MarkdownToolbar
+          visible={showMarkdownToolbar}
+          position={toolbarPosition}
+          onFormat={handleMarkdownFormat}
+        />
+
         {/* Message input row */}
         <FlexRow
           ref={composerRef}
@@ -418,6 +474,7 @@ export const MessageComposer = forwardRef<
               onChange={handleTextareaChange}
               onKeyDown={handleKeyDown}
               onSelect={handleSelect}
+              onMouseUp={handleTextareaMouseUp}
               placeholder={responsivePlaceholder}
               autoResize={false}
               rows={1}

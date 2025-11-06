@@ -151,6 +151,13 @@ export const iconComponentMap: Record<IconName, string> = {
   terminal: 'IconTerminal2',
   'file-code': 'IconFileCode',
 
+  // Text formatting icons
+  bold: 'IconBold',
+  italic: 'IconItalic',
+  strikethrough: 'IconStrikethrough',
+  heading: 'IconHeading',
+  quote: 'IconQuote',
+
   // Nature & sci-fi icons
   tree: 'IconTree',
   robot: 'IconRobot',

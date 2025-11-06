@@ -15,6 +15,10 @@ export interface TextAreaProps {
   onFocus?: () => void;
   /** Key down handler */
   onKeyDown?: (e: React.KeyboardEvent<HTMLTextAreaElement>) => void;
+  /** Select handler - fired when text is selected */
+  onSelect?: (e: React.SyntheticEvent<HTMLTextAreaElement>) => void;
+  /** Mouse up handler - fired when mouse button is released */
+  onMouseUp?: (e: React.MouseEvent<HTMLTextAreaElement>) => void;
   /** Number of visible text lines */
   rows?: number;
   /** Minimum number of rows */
