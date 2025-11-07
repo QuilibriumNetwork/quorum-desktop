@@ -21,12 +21,12 @@ msgid "File cannot be larger than {maxFileSize}"
 msgstr "Файл не може бути більшим за {maxFileSize}"
 
 #. js-lingui-explicit-id
-#: src/hooks/business/channels/useChannelData.ts:147
+#: src/hooks/business/channels/useChannelData.ts:151
 msgid "{role} - {count}"
 msgstr "{role} - {count}"
 
 #. js-lingui-explicit-id
-#: src/hooks/business/channels/useChannelData.ts:163
+#: src/hooks/business/channels/useChannelData.ts:167
 msgid "No Role - {count}"
 msgstr "Без ролі - {count}"
 
@@ -37,12 +37,14 @@ msgstr "Надіслати повідомлення #{channel_name}"
 
 #. js-lingui-explicit-id
 #: src/components/onboarding/Onboarding.tsx:256
-msgid ""
-"Your profile image size must be {maxFileSize} or less and must be a PNG, "
-"JPG, or JPEG file extension."
-msgstr ""
-"Розмір вашого профільного зображення має бути {maxFileSize} або менше і "
-"повинен мати розширення PNG, JPG або JPEG."
+msgid "Your profile image size must be {maxFileSize} or less and must be a PNG, JPG, or JPEG file extension."
+msgstr "Розмір вашого профільного зображення має бути {maxFileSize} або менше і повинен мати розширення PNG, JPG або JPEG."
+
+#. js-lingui-explicit-id
+#: src/components/message/MessageComposer.native.tsx:238
+#: src/components/message/MessageComposer.tsx:337
+msgid "Replying to {user}"
+msgstr "Відповідаючи {user}"
 
 #. js-lingui-explicit-id
 #: src/components/message/MessageComposer.native.tsx:134
@@ -50,23 +52,17 @@ msgid "Failed to process image"
 msgstr "Не вдалося обробити зображення"
 
 #. js-lingui-explicit-id
-#: src/components/message/MessageComposer.native.tsx:238
-#: src/components/message/MessageComposer.tsx:284
-msgid "Replying to {user}"
-msgstr "Відповідаючи {user}"
-
-#. js-lingui-explicit-id
-#: src/components/message/Message.tsx:267
+#: src/components/message/Message.tsx:261
 msgid "{user} has joined"
 msgstr "{user} приєднався"
 
 #. js-lingui-explicit-id
-#: src/components/message/Message.tsx:274
+#: src/components/message/Message.tsx:268
 msgid "{user} has left"
 msgstr "{user} покинув"
 
 #. js-lingui-explicit-id
-#: src/components/message/Message.tsx:281
+#: src/components/message/Message.tsx:275
 msgid "{user} has been kicked"
 msgstr "{user} був вигнаний"
 
@@ -76,12 +72,8 @@ msgid "Send a message to {user}"
 msgstr "Надіслати повідомлення {user}"
 
 #: src/components/modals/CreateSpaceModal.tsx:136
-msgid ""
-" Default Space settings provide the most typical chat experience, but for "
-"higher privacy guarantees, review the Advanced Settings."
-msgstr ""
-"Налаштування за замовчуванням Space забезпечують найтиповіший досвід чату, "
-"але для вищих гарантій конфіденційності перегляньте Розширені налаштування."
+msgid " Default Space settings provide the most typical chat experience, but for higher privacy guarantees, review the Advanced Settings."
+msgstr "Налаштування за замовчуванням Space забезпечують найтиповіший досвід чату, але для вищих гарантій конфіденційності перегляньте Розширені налаштування."
 
 #: src/components/Maintenance.native.tsx:61
 msgid " for updates."
@@ -92,7 +84,7 @@ msgstr "для оновлень."
 msgid "'everyone' is a reserved name."
 msgstr "'всі' є зарезервованим ім'ям."
 
-#: src/components/message/Message.tsx:622
+#: src/components/message/Message.tsx:616
 msgid "(edited)"
 msgstr "(відредаговано)"
 
@@ -112,9 +104,7 @@ msgstr "[Повідомлення]"
 #. placeholder {0}: removedDevices.length
 #: src/components/modals/UserSettingsModal/Privacy.tsx:103
 msgid "{0} devices marked for removal. Click \"Save Changes\" to confirm."
-msgstr ""
-"{0} пристроїв, позначених для видалення. Натисніть \"Зберегти зміни\", щоб "
-"підтвердити."
+msgstr "{0} пристроїв, позначених для видалення. Натисніть \"Зберегти зміни\", щоб підтвердити."
 
 #. placeholder {0}: allNotifications.length
 #: src/components/notifications/NotificationPanel.tsx:177
@@ -126,10 +116,16 @@ msgstr "{0} сповіщення"
 msgid "{0} notifications"
 msgstr "{0} сповіщень"
 
+#~ msgid "{0} pinned message"
+#~ msgstr "Закріплене повідомлення {0}"
+
 #. placeholder {0}: pinnedMessages.length
 #: src/components/message/PinnedMessagesPanel.tsx:248
 msgid "{0} pinned message in this Channel"
 msgstr "{0} закріплене повідомлення в цьому Каналі"
+
+#~ msgid "{0} pinned messages"
+#~ msgstr "Закріплені повідомлення {0}"
 
 #. placeholder {0}: pinnedMessages.length
 #: src/components/message/PinnedMessagesPanel.tsx:249
@@ -145,6 +141,12 @@ msgstr "{0} результат"
 #: src/components/search/SearchResults.tsx:150
 msgid "{0} results"
 msgstr "{0} результати"
+
+#~ msgid "{0} unread mention"
+#~ msgstr "{0} непрочитаних згадок"
+
+#~ msgid "{0} unread mentions"
+#~ msgstr "{0} непрочитані згадки"
 
 #: src/components/primitives/FileUpload/FileUpload.web.tsx:13
 msgid "{size} Bytes"
@@ -191,9 +193,7 @@ msgstr "0 байт"
 
 #: src/components/modals/UserSettingsModal/Privacy.tsx:102
 msgid "1 device marked for removal. Click \"Save Changes\" to confirm."
-msgstr ""
-"1 пристрій, позначений для видалення. Натисніть \"Зберегти зміни\", щоб "
-"підтвердити."
+msgstr "1 пристрій, позначений для видалення. Натисніть \"Зберегти зміни\", щоб підтвердити."
 
 #: src/components/modals/SpaceSettingsModal/Navigation.tsx:20
 msgid "Account"
@@ -206,6 +206,9 @@ msgstr "Адреса облікового запису"
 #: src/components/modals/SpaceSettingsModal/Account.tsx:89
 msgid "Account Settings"
 msgstr "Налаштування облікового запису"
+
+#~ msgid "Account Settings for This Space"
+#~ msgstr "Налаштування облікового запису для цього Простору"
 
 #: src/components/modals/AddSpaceModal.tsx:121
 #: src/components/navbar/ExpandableNavMenu.tsx:30
@@ -225,31 +228,21 @@ msgstr "Додати друга"
 msgid "Add Group"
 msgstr "Додати групу"
 
-#: src/components/modals/SpaceSettingsModal/Roles.tsx:75
+#: src/components/modals/SpaceSettingsModal/Roles.tsx:78
 msgid "Add Role"
 msgstr "Додати роль"
 
-#: src/components/message/MessageComposer.tsx:432
+#: src/components/message/MessageComposer.tsx:493
 msgid "add sticker"
 msgstr "додати наліпку"
 
 #: src/components/modals/SpaceSettingsModal/Emojis.tsx:44
-msgid ""
-"Add up to 50 custom emoji. Custom emojis can only be used within a Space. "
-"You can upload PNG, JPG or GIF, max 5MB (automatically optimized)."
-msgstr ""
-"Додайте до 50 користувацьких емодзі. Користувацькі емодзі можна "
-"використовувати лише в Space. Ви можете завантажити PNG, JPG або GIF, макс "
-"5МБ (автоматично оптимізовано)."
+msgid "Add up to 50 custom emoji. Custom emojis can only be used within a Space. You can upload PNG, JPG or GIF, max 5MB (automatically optimized)."
+msgstr "Додайте до 50 користувацьких емодзі. Користувацькі емодзі можна використовувати лише в Space. Ви можете завантажити PNG, JPG або GIF, макс 5МБ (автоматично оптимізовано)."
 
 #: src/components/modals/SpaceSettingsModal/Stickers.tsx:44
-msgid ""
-"Add up to 50 custom stickers. Custom stickers can only be used within a "
-"Space. You can upload PNG, JPG or GIF, max 25MB (automatically optimized)."
-msgstr ""
-"Додайте до 50 користувацьких наліпок. Користувацькі наліпки можна "
-"використовувати лише в Space. Ви можете завантажити PNG, JPG або GIF, макс "
-"25МБ (автоматично оптимізовано)."
+msgid "Add up to 50 custom stickers. Custom stickers can only be used within a Space. You can upload PNG, JPG or GIF, max 25MB (automatically optimized)."
+msgstr "Додайте до 50 користувацьких наліпок. Користувацькі наліпки можна використовувати лише в Space. Ви можете завантажити PNG, JPG або GIF, макс 25МБ (автоматично оптимізовано)."
 
 #: src/hooks/business/validation/useAddressValidation.native.ts:71
 #: src/hooks/business/validation/useAddressValidation.ts:72
@@ -262,12 +255,8 @@ msgid "Addresses start with \"Qm\"."
 msgstr "Адреси починаються з \"Qm\"."
 
 #: src/components/modals/UserSettingsModal/Privacy.tsx:48
-msgid ""
-"Adjust security-related settings, which may impact user  experience but "
-"increase the security of your Quorum account."
-msgstr ""
-"Налаштуйте параметри безпеки, які можуть вплинути на досвід користувача, але"
-" підвищать безпеку вашого облікового запису Quorum."
+msgid "Adjust security-related settings, which may impact user  experience but increase the security of your Quorum account."
+msgstr "Налаштуйте параметри безпеки, які можуть вплинути на досвід користувача, але підвищать безпеку вашого облікового запису Quorum."
 
 #: src/components/modals/CreateSpaceModal.tsx:197
 msgid "Advanced Settings"
@@ -298,24 +287,15 @@ msgstr "Завжди підписуйте повідомлення"
 
 #: src/components/modals/SpaceSettingsModal/Danger.tsx:43
 msgid "An error occurred while deleting the Space. Please try again."
-msgstr ""
-"Сталася помилка під час видалення Простір. Будь ласка, спробуйте ще раз."
+msgstr "Сталася помилка під час видалення Простір. Будь ласка, спробуйте ще раз."
 
 #: src/utils/imageProcessing/errors.ts:23
-msgid ""
-"Animated emoji GIFs cannot be larger than 100KB. Please optimize your GIF "
-"for emoji use."
-msgstr ""
-"Анімовані emoji GIF не можуть бути більшими за 100КБ. Будь ласка, "
-"оптимізуйте свій GIF для використання emoji."
+msgid "Animated emoji GIFs cannot be larger than 100KB. Please optimize your GIF for emoji use."
+msgstr "Анімовані emoji GIF не можуть бути більшими за 100КБ. Будь ласка, оптимізуйте свій GIF для використання emoji."
 
 #: src/utils/imageProcessing/errors.ts:26
-msgid ""
-"Animated sticker GIFs cannot be larger than 750KB. Please optimize your GIF "
-"for sticker use."
-msgstr ""
-"Анімовані стікерні GIF не можуть бути більшими за 750KB. Будь ласка, "
-"оптимізуйте свій GIF для використання стікерів."
+msgid "Animated sticker GIFs cannot be larger than 750KB. Please optimize your GIF for sticker use."
+msgstr "Анімовані стікерні GIF не можуть бути більшими за 750KB. Будь ласка, оптимізуйте свій GIF для використання стікерів."
 
 #: src/components/modals/UserSettingsModal/Appearance.tsx:25
 #: src/components/modals/UserSettingsModal/Navigation.tsx:18
@@ -323,12 +303,8 @@ msgid "Appearance"
 msgstr "Зовнішній вигляд"
 
 #: src/hooks/business/channels/useChannelManagement.ts:228
-msgid ""
-"Are you sure you want to delete this channel? All messages will be lost. "
-"This action cannot be undone."
-msgstr ""
-"Ви впевнені, що хочете видалити цей канал? Усі повідомлення будуть втрачені."
-" Цю дію не можна скасувати."
+msgid "Are you sure you want to delete this channel? All messages will be lost. This action cannot be undone."
+msgstr "Ви впевнені, що хочете видалити цей канал? Усі повідомлення будуть втрачені. Цю дію не можна скасувати."
 
 #: src/components/modals/ConversationSettingsModal.tsx:60
 msgid ""
@@ -343,17 +319,16 @@ msgstr ""
 msgid "Are you sure you want to delete this message?"
 msgstr "Ви впевнені, що хочете видалити це повідомлення?"
 
-#: src/hooks/business/spaces/useRoleManagement.ts:59
+#: src/hooks/business/spaces/useRoleManagement.ts:61
 msgid "Are you sure you want to delete this role?"
 msgstr "Ви впевнені, що хочете видалити цю роль?"
 
 #: src/components/modals/LeaveSpaceModal.tsx:40
-msgid ""
-"Are you sure you want to leave this Space? You won't be able to rejoin "
-"unless you are re-invited."
-msgstr ""
-"Ви впевнені, що хочете покинути цей Space? Ви не зможете приєднатися знову, "
-"якщо вас не запросили знову."
+msgid "Are you sure you want to leave this Space? You won't be able to rejoin unless you are re-invited."
+msgstr "Ви впевнені, що хочете покинути цей Space? Ви не зможете приєднатися знову, якщо вас не запросили знову."
+
+#~ msgid "Are you sure you want to leave this Space? You won't be able to rejoin unless you are re-invited. Your existing messages will NOT be deleted."
+#~ msgstr "Ви впевнені, що хочете покинути цей Простір? Ви не зможете приєднатися знову, якщо вас не запросити. Ваші існуючі повідомлення НЕ будуть видалені."
 
 #: src/hooks/business/messages/usePinnedMessages.ts:231
 msgid "Are you sure you want to pin this message?"
@@ -363,16 +338,11 @@ msgstr "Ви впевнені, що хочете закріпити це пов�
 msgid "Are you sure you want to unpin this message?"
 msgstr "Ви впевнені, що хочете зняти закріплення з цього повідомлення?"
 
-#: src/components/modals/SpaceSettingsModal/Roles.tsx:51
-msgid ""
-"As a space owner, you need to assign yourself a role with delete permissions"
-" to delete other users' messages. <0><1>Learn more</1></0>"
-msgstr ""
-"Як власник простору, вам потрібно призначити собі роль з правами на "
-"видалення, щоб видаляти повідомлення інших користувачів. <0><1>Дізнатися "
-"більше</1></0>"
+#: src/components/modals/SpaceSettingsModal/Roles.tsx:54
+msgid "As a space owner, you need to assign yourself a role with delete permissions to delete other users' messages. <0><1>Learn more</1></0>"
+msgstr "Як власник простору, вам потрібно призначити собі роль з правами на видалення, щоб видаляти повідомлення інших користувачів. <0><1>Дізнатися більше</1></0>"
 
-#: src/components/message/MessageComposer.tsx:401
+#: src/components/message/MessageComposer.tsx:461
 msgid "attach image"
 msgstr "додати зображення"
 
@@ -401,7 +371,7 @@ msgstr "Камера"
 msgid "Camera permission is required to take photos"
 msgstr "Необхідно надати дозвіл на камеру, щоб робити фотографії"
 
-#: src/components/message/Message.tsx:911
+#: src/components/message/MessageEditTextarea.tsx:362
 #: src/components/modals/ConfirmationModal.native.tsx:27
 #: src/components/modals/ConfirmationModal.tsx:29
 #: src/components/modals/ConversationSettingsModal.tsx:63
@@ -409,7 +379,7 @@ msgstr "Необхідно надати дозвіл на камеру, щоб �
 #: src/hooks/business/channels/useChannelManagement.ts:234
 #: src/hooks/business/messages/useMessageActions.ts:119
 #: src/hooks/business/messages/usePinnedMessages.ts:234
-#: src/hooks/business/spaces/useRoleManagement.ts:62
+#: src/hooks/business/spaces/useRoleManagement.ts:64
 #: src/hooks/business/user/useFileUpload.native.ts:48
 #: src/hooks/platform/files/useFileDownload.native.ts:82
 msgid "Cancel"
@@ -422,23 +392,19 @@ msgstr "Не можна видалити Простір з каналами. С�
 #. placeholder {0}: Math.min(10, remaining)
 #: src/hooks/business/ui/useCustomAssets.ts:101
 #: src/hooks/business/ui/useCustomAssets.ts:146
-msgid ""
-"Cannot upload more than {0} files at once ({remaining} slots remaining)"
-msgstr ""
-"Не можна завантажити більше ніж {0} файлів одночасно ({remaining} слоти "
-"залишилися)"
+msgid "Cannot upload more than {0} files at once ({remaining} slots remaining)"
+msgstr "Не можна завантажити більше ніж {0} файлів одночасно ({remaining} слоти залишилися)"
 
 #: src/components/modals/SpaceSettingsModal/Account.tsx:101
 msgid "Change your avatar and name for this Space"
 msgstr "Змініть свій аватар та ім'я для цього Простору"
 
+#~ msgid "Change your avatar and name for this Space."
+#~ msgstr "Змініть свій аватар і ім'я для цього Простору."
+
 #: src/components/modals/UserSettingsModal/Appearance.tsx:53
-msgid ""
-"Changes are made automatically, but the active page may not be updated. "
-"Refresh the page to apply the new language."
-msgstr ""
-"Зміни вносяться автоматично, але активна сторінка може не оновитися. Оновіть"
-" сторінку, щоб застосувати нову мову."
+msgid "Changes are made automatically, but the active page may not be updated. Refresh the page to apply the new language."
+msgstr "Зміни вносяться автоматично, але активна сторінка може не оновитися. Оновіть сторінку, щоб застосувати нову мову."
 
 #: src/components/modals/ChannelEditorModal.tsx:118
 msgid "Channel Icon"
@@ -500,27 +466,17 @@ msgstr "Очищення сповіщень з тегом: {tag}"
 msgid "Click again to confirm"
 msgstr "Натисніть ще раз, щоб підтвердити"
 
-#: src/components/modals/SpaceSettingsModal/Roles.tsx:45
+#: src/components/modals/SpaceSettingsModal/Roles.tsx:48
 msgid "Click on the role name and tag to edit them."
 msgstr "Натисніть на назву ролі та тег, щоб їх редагувати."
 
 #: src/components/onboarding/Onboarding.tsx:161
-msgid ""
-"Click the button below to create a backup of your key info, because once "
-"it's gone, it's gone  forever. You may be prompted to authenticate again."
-msgstr ""
-"Натисніть кнопку нижче, щоб створити резервну копію вашої ключової "
-"інформації, адже як тільки вона зникне, її не повернути назавжди. Можливо, "
-"вам буде запропоновано знову пройти аутентифікацію."
+msgid "Click the button below to create a backup of your key info, because once it's gone, it's gone  forever. You may be prompted to authenticate again."
+msgstr "Натисніть кнопку нижче, щоб створити резервну копію вашої ключової інформації, адже як тільки вона зникне, її не повернути назавжди. Можливо, вам буде запропоновано знову пройти аутентифікацію."
 
 #: src/components/onboarding/Onboarding.native.tsx:259
-msgid ""
-"Click the button below to create a backup of your key info, because once "
-"it's gone, it's gone forever. You may be prompted to authenticate again."
-msgstr ""
-"Натисніть кнопку нижче, щоб створити резервну копію вашої ключової "
-"інформації, адже як тільки вона зникне, вона зникне назавжди. Можливо, вам "
-"буде запропоновано знову пройти аутентифікацію."
+msgid "Click the button below to create a backup of your key info, because once it's gone, it's gone forever. You may be prompted to authenticate again."
+msgstr "Натисніть кнопку нижче, щоб створити резервну копію вашої ключової інформації, адже як тільки вона зникне, вона зникне назавжди. Можливо, вам буде запропоновано знову пройти аутентифікацію."
 
 #: src/components/ui/ClickToCopyContent.tsx:48
 msgid "Click to copy"
@@ -554,7 +510,7 @@ msgstr "Скопійовано!"
 #: src/components/direct/DirectMessage.tsx:403
 #: src/components/direct/DirectMessage.tsx:502
 #: src/components/modals/UserSettingsModal/General.tsx:118
-#: src/components/user/UserProfile.tsx:108
+#: src/components/user/UserProfile.tsx:109
 #: src/components/user/UserStatus.tsx:47
 msgid "Copy address"
 msgstr "Скопіювати адресу"
@@ -652,7 +608,7 @@ msgstr "видалити"
 #: src/components/modals/SpaceSettingsModal/Stickers.tsx:105
 #: src/hooks/business/channels/useChannelManagement.ts:233
 #: src/hooks/business/messages/useMessageActions.ts:118
-#: src/hooks/business/spaces/useRoleManagement.ts:61
+#: src/hooks/business/spaces/useRoleManagement.ts:63
 msgid "Delete"
 msgstr "Видалити"
 
@@ -666,9 +622,15 @@ msgstr "Видалити канал"
 msgid "Delete Conversation"
 msgstr "Видалити розмову"
 
+#~ msgid "Delete Current Link"
+#~ msgstr "Видалити поточне посилання"
+
 #: src/components/modals/GroupEditorModal.tsx:125
 msgid "Delete Group"
 msgstr "Видалити групу"
+
+#~ msgid "Delete Link"
+#~ msgstr "Видалити посилання"
 
 #: src/components/message/MessageActions.tsx:96
 #: src/components/message/MessageActionsDrawer.tsx:230
@@ -679,12 +641,18 @@ msgstr "Видалити повідомлення"
 msgid "Delete Message"
 msgstr "Видалити повідомлення"
 
-#: src/components/modals/SpaceSettingsModal/Roles.tsx:159
+#: src/components/modals/SpaceSettingsModal/Roles.tsx:162
 msgid "Delete Messages"
 msgstr "Видалити повідомлення"
 
-#: src/components/modals/SpaceSettingsModal/Roles.tsx:183
-#: src/hooks/business/spaces/useRoleManagement.ts:58
+#~ msgid "Delete Public Invite Link"
+#~ msgstr "Видалити публічне посилання на запрошення"
+
+#: src/components/modals/SpaceSettingsModal/Roles.tsx:207
+msgid "Delete role"
+msgstr ""
+
+#: src/hooks/business/spaces/useRoleManagement.ts:60
 msgid "Delete Role"
 msgstr "Видалити роль"
 
@@ -791,20 +759,12 @@ msgid "Enable sync"
 msgstr "Увімкнути синхронізацію"
 
 #: src/services/InvitationService.ts:74
-msgid ""
-"Encryption state is missing required template data. Please generate a public"
-" invite link first."
-msgstr ""
-"Стан шифрування не містить необхідних даних шаблону. Будь ласка, спочатку "
-"згенеруйте публічне посилання для запрошення."
+msgid "Encryption state is missing required template data. Please generate a public invite link first."
+msgstr "Стан шифрування не містить необхідних даних шаблону. Будь ласка, спочатку згенеруйте публічне посилання для запрошення."
 
 #: src/services/InvitationService.ts:86
-msgid ""
-"Encryption state is missing state data. Please generate a public invite link"
-" first."
-msgstr ""
-"Стан шифрування не містить даних стану. Будь ласка, спочатку згенеруйте "
-"публічне посилання для запрошення."
+msgid "Encryption state is missing state data. Please generate a public invite link first."
+msgstr "Стан шифрування не містить даних стану. Будь ласка, спочатку згенеруйте публічне посилання для запрошення."
 
 #: src/components/modals/CreateSpaceModal.tsx:88
 msgid "Enter a name for your new Space"
@@ -856,14 +816,8 @@ msgid "Export"
 msgstr "Експорт"
 
 #: src/components/modals/UserSettingsModal/Privacy.tsx:178
-msgid ""
-"Export your key to a file by clicking this button. Do not share this file "
-"with anyone else or they can impersonate you or steal your Space's Apex "
-"earnings."
-msgstr ""
-"Експортуйте свій ключ у файл, натиснувши цю кнопку. Не діліться цим файлом з"
-" іншими, інакше вони можуть видати себе за вас або вкрасти заробіток Apex "
-"вашого Простору."
+msgid "Export your key to a file by clicking this button. Do not share this file with anyone else or they can impersonate you or steal your Space's Apex earnings."
+msgstr "Експортуйте свій ключ у файл, натиснувши цю кнопку. Не діліться цим файлом з іншими, інакше вони можуть видати себе за вас або вкрасти заробіток Apex вашого Простору."
 
 #: src/hooks/platform/files/useFileDownload.native.ts:110
 msgid "Failed to copy to clipboard. Please try again."
@@ -874,11 +828,9 @@ msgstr "Не вдалося скопіювати в буфер обміну. С�
 msgid "Failed to decrypt message with any known state"
 msgstr "Не вдалося розшифрувати повідомлення жодним відомим станом"
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:613
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:615
 msgid "Failed to generate invite link. Please try again."
-msgstr ""
-"Не вдалося згенерувати посилання для запрошення. Будь ласка, спробуйте ще "
-"раз."
+msgstr "Не вдалося згенерувати посилання для запрошення. Будь ласка, спробуйте ще раз."
 
 #: src/components/primitives/FileUpload/FileUpload.native.tsx:105
 msgid "Failed to open image picker"
@@ -888,7 +840,7 @@ msgstr "Не вдалося відкрити вибір зображення"
 msgid "Failed to parse WebSocket message:"
 msgstr "Не вдалося розібрати повідомлення WebSocket:"
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:268
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:269
 msgid "Failed to save notification settings"
 msgstr "Не вдалося зберегти налаштування сповіщень"
 
@@ -954,7 +906,7 @@ msgstr "Розмір файлу занадто малий. Мінімальни�
 msgid "File validation failed. Please try again."
 msgstr "Перевірка файлу не вдалася. Будь ласка, спробуйте ще раз."
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:440
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:441
 msgid "Fix"
 msgstr "Виправити"
 
@@ -981,25 +933,23 @@ msgstr "Загальний"
 msgid "General Chat"
 msgstr "Загальний чат"
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:604
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:606
 msgid "Generate Link"
 msgstr "Згенерувати посилання"
 
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:214
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:604
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:606
 msgid "Generate New Link"
 msgstr "Згенерувати нове посилання"
 
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:162
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:598
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:600
 msgid "Generate Public Invite Link"
 msgstr "Згенерувати публічне посилання на запрошення"
 
 #: src/utils/imageProcessing/errors.ts:20
 msgid "GIF files cannot be larger than {maxSize}. Please use a smaller GIF."
-msgstr ""
-"GIF файли не можуть бути більшими за {maxSize}. Будь ласка, використовуйте "
-"менший GIF."
+msgstr "GIF файли не можуть бути більшими за {maxSize}. Будь ласка, використовуйте менший GIF."
 
 #: src/hooks/business/conversations/useDirectMessageCreation.ts:35
 msgid "Go to conversation"
@@ -1033,26 +983,16 @@ msgstr "Я зберіг це"
 #: src/components/onboarding/Onboarding.tsx:319
 #: src/components/onboarding/Onboarding.tsx:326
 msgid "If skipped, you'll get the default profile image and can set it later"
-msgstr ""
-"Якщо пропустити, ви отримаєте зображення профілю за замовчуванням і зможете "
-"налаштувати його пізніше"
+msgstr "Якщо пропустити, ви отримаєте зображення профілю за замовчуванням і зможете налаштувати його пізніше"
 
 #: src/components/onboarding/Onboarding.tsx:147
-msgid ""
-"If you clear your browser storage or switch browsers, your old messages and "
-"keys may disappear."
-msgstr ""
-"Якщо ви очистите сховище браузера або переключите браузери, ваші старі "
-"повідомлення та ключі можуть зникнути."
+msgid "If you clear your browser storage or switch browsers, your old messages and keys may disappear."
+msgstr "Якщо ви очистите сховище браузера або переключите браузери, ваші старі повідомлення та ключі можуть зникнути."
 
 #: src/components/onboarding/Onboarding.native.tsx:254
 #: src/components/onboarding/Onboarding.tsx:154
-msgid ""
-"If you uninstall the app from your device, you will lose your old messages "
-"and keys."
-msgstr ""
-"Якщо ви видалите додаток зі свого пристрою, ви втратите свої старі "
-"повідомлення та ключі."
+msgid "If you uninstall the app from your device, you will lose your old messages and keys."
+msgstr "Якщо ви видалите додаток зі свого пристрою, ви втратите свої старі повідомлення та ключі."
 
 #: src/components/onboarding/Login.native.tsx:115
 #: src/components/onboarding/Login.tsx:76
@@ -1075,23 +1015,21 @@ msgstr "недійсна адреса для підпису"
 
 #: src/hooks/business/validation/useAddressValidation.native.ts:97
 #: src/hooks/business/validation/useAddressValidation.ts:98
-msgid ""
-"Invalid address format. Addresses must use valid alphanumeric characters."
-msgstr ""
-"Неправильний формат адреси. Адреси повинні використовувати дійсні алфавітно-"
-"цифрові символи."
+msgid "Invalid address format. Addresses must use valid alphanumeric characters."
+msgstr "Неправильний формат адреси. Адреси повинні використовувати дійсні алфавітно-цифрові символи."
 
 #: src/components/primitives/FileUpload/FileUpload.web.tsx:63
 msgid "Invalid file type. Please check accepted file formats."
-msgstr ""
-"Неправильний тип файлу. Будь ласка, перевірте прийнятні формати файлів."
+msgstr "Неправильний тип файлу. Будь ласка, перевірте прийнятні формати файлів."
 
 #: src/components/context/MessageDB.bak.tsx:4690
 #: src/components/context/MessageDB.bak.tsx:4701
 #: src/components/context/MessageDB.bak.tsx:4738
 #: src/components/context/MessageDB.bak.tsx:4809
-#: src/services/InvitationService.ts:510 src/services/InvitationService.ts:521
-#: src/services/InvitationService.ts:554 src/services/InvitationService.ts:623
+#: src/services/InvitationService.ts:510
+#: src/services/InvitationService.ts:521
+#: src/services/InvitationService.ts:554
+#: src/services/InvitationService.ts:623
 msgid "invalid link"
 msgstr "недійсне посилання"
 
@@ -1100,14 +1038,16 @@ msgstr "недійсне посилання"
 msgid "Invalid message ID"
 msgstr "Невірний ID повідомлення"
 
-#: src/components/context/MessageDB.bak.tsx:5180 src/utils/canonicalize.ts:104
+#: src/components/context/MessageDB.bak.tsx:5180
+#: src/utils/canonicalize.ts:104
 msgid "invalid message type"
 msgstr "недійсний тип повідомлення"
 
 #: src/components/context/MessageDB.bak.tsx:4706
 #: src/components/context/MessageDB.bak.tsx:4772
 #: src/hooks/business/spaces/useInviteValidation.ts:81
-#: src/services/InvitationService.ts:526 src/services/InvitationService.ts:590
+#: src/services/InvitationService.ts:526
+#: src/services/InvitationService.ts:590
 msgid "invalid response"
 msgstr "недійсна відповідь"
 
@@ -1162,11 +1102,11 @@ msgid "Key Saved"
 msgstr "Ключ збережено"
 
 #: src/components/modals/KickUserModal.tsx:66
-#: src/components/user/UserProfile.tsx:202
+#: src/components/user/UserProfile.tsx:203
 msgid "Kick User"
 msgstr "Викинути користувача"
 
-#: src/components/modals/SpaceSettingsModal/Roles.tsx:167
+#: src/components/modals/SpaceSettingsModal/Roles.tsx:170
 msgid "Kick Users"
 msgstr "Викинути користувачів"
 
@@ -1174,7 +1114,7 @@ msgstr "Викинути користувачів"
 msgid "Kick!"
 msgstr "Викинути!"
 
-#: src/components/user/UserProfile.tsx:202
+#: src/components/user/UserProfile.tsx:203
 msgid "Kicked!"
 msgstr "Виключено!"
 
@@ -1202,12 +1142,8 @@ msgstr "Покинути цей простір"
 
 #: src/components/onboarding/Onboarding.native.tsx:312
 #: src/components/onboarding/Onboarding.tsx:196
-msgid ""
-"Let your friends know who you are! Pick a friendly name to display in your "
-"conversations, something easier to read than:"
-msgstr ""
-"Дайте своїм друзям знати, хто ви є! Виберіть дружнє ім'я для відображення у "
-"ваших розмовах, щось легше для читання, ніж:"
+msgid "Let your friends know who you are! Pick a friendly name to display in your conversations, something easier to read than:"
+msgstr "Дайте своїм друзям знати, хто ви є! Виберіть дружнє ім'я для відображення у ваших розмовах, щось легше для читання, ніж:"
 
 #: src/components/onboarding/Onboarding.native.tsx:505
 #: src/components/onboarding/Onboarding.tsx:352
@@ -1234,30 +1170,31 @@ msgstr "Шукаю користувача..."
 msgid "Lookup"
 msgstr "Перегляд"
 
-#: src/components/Maintenance.native.tsx:42 src/components/Maintenance.tsx:17
+#: src/components/Maintenance.native.tsx:42
+#: src/components/Maintenance.tsx:17
 msgid "Maintenance in Progress"
 msgstr "Триває обслуговування"
 
+#: src/components/modals/SpaceSettingsModal/Roles.tsx:186
+msgid "Make role invisible"
+msgstr ""
+
+#: src/components/modals/SpaceSettingsModal/Roles.tsx:186
+msgid "Make role public"
+msgstr ""
+
 #: src/components/onboarding/Onboarding.native.tsx:364
 #: src/components/onboarding/Onboarding.tsx:247
-msgid ""
-"Make your account uniquely yours – set a contact photo. This information is "
-"only provided to the Spaces you join."
-msgstr ""
-"Зробіть свій обліковий запис унікальним – встановіть контактне фото. Ця "
-"інформація надається лише просторам, до яких ви приєднуєтеся."
+msgid "Make your account uniquely yours – set a contact photo. This information is only provided to the Spaces you join."
+msgstr "Зробіть свій обліковий запис унікальним – встановіть контактне фото. Ця інформація надається лише просторам, до яких ви приєднуєтеся."
 
 #: src/components/modals/UserSettingsModal/Notifications.tsx:26
 msgid "Manage desktop notification preferences for new messages."
-msgstr ""
-"Керуйте налаштуваннями сповіщень на робочому столі для нових повідомлень."
+msgstr "Керуйте налаштуваннями сповіщень на робочому столі для нових повідомлень."
 
 #: src/components/modals/UserSettingsModal/Privacy.tsx:39
-msgid ""
-"Manage devices, and privacy conditions for messaging and synchronization."
-msgstr ""
-"Керуйте пристроями та умовами конфіденційності для обміну повідомленнями та "
-"синхронізації."
+msgid "Manage devices, and privacy conditions for messaging and synchronization."
+msgstr "Керуйте пристроями та умовами конфіденційності для обміну повідомленнями та синхронізації."
 
 #: src/components/modals/SpaceSettingsModal/Account.tsx:92
 msgid "Manage your settings for this Space."
@@ -1277,7 +1214,7 @@ msgstr "Позначити всі як прочитані"
 msgid "Members List"
 msgstr "Список учасників"
 
-#: src/components/modals/SpaceSettingsModal/Roles.tsx:171
+#: src/components/modals/SpaceSettingsModal/Roles.tsx:174
 msgid "Mention Everyone"
 msgstr "Згадати всіх"
 
@@ -1285,20 +1222,19 @@ msgstr "Згадати всіх"
 msgid "Message actions"
 msgstr "Дії з повідомленнями"
 
-#: src/components/message/Message.tsx:605
-msgid ""
-"Message does not have a valid signature, this may not be from the sender"
+#: src/components/message/Message.tsx:599
+msgid "Message does not have a valid signature, this may not be from the sender"
 msgstr "Повідомлення не має дійсного підпису, це може бути не від відправника"
 
-#: src/components/message/MessageComposer.tsx:116
+#: src/components/message/MessageComposer.tsx:125
 msgid "Message..."
 msgstr "Повідомлення..."
 
-#: src/components/message/MessageComposer.tsx:449
+#: src/components/message/MessageComposer.tsx:510
 msgid "Messages are NOT signed!"
 msgstr "Повідомлення НЕ підписані!"
 
-#: src/components/message/MessageComposer.tsx:450
+#: src/components/message/MessageComposer.tsx:511
 msgid "Messages are signed!"
 msgstr "Повідомлення підписані!"
 
@@ -1311,22 +1247,12 @@ msgid "New Direct Message"
 msgstr "Новий прямий повідомлення"
 
 #: src/services/InvitationService.ts:68
-msgid ""
-"No encryption state found for this space. The space may need to be "
-"initialized or you may need to generate a public invite link first."
-msgstr ""
-"Не знайдено стану шифрування для цього простору. Простір може потребувати "
-"ініціалізації або вам може знадобитися спочатку згенерувати публічне "
-"посилання для запрошення."
+msgid "No encryption state found for this space. The space may need to be initialized or you may need to generate a public invite link first."
+msgstr "Не знайдено стану шифрування для цього простору. Простір може потребувати ініціалізації або вам може знадобитися спочатку згенерувати публічне посилання для запрошення."
 
 #: src/services/InvitationService.ts:78
-msgid ""
-"No invite evaluations available. Please generate a public invite link or "
-"ensure the space encryption state is properly initialized."
-msgstr ""
-"Немає доступних оцінок запрошень. Будь ласка, згенеруйте публічне посилання "
-"для запрошення або переконайтеся, що стан шифрування простору правильно "
-"ініціалізовано."
+msgid "No invite evaluations available. Please generate a public invite link or ensure the space encryption state is properly initialized."
+msgstr "Немає доступних оцінок запрошень. Будь ласка, згенеруйте публічне посилання для запрошення або переконайтеся, що стан шифрування простору правильно ініціалізовано."
 
 #: src/components/search/SearchResults.tsx:102
 msgid "No messages found"
@@ -1336,11 +1262,15 @@ msgstr "Повідомлень не знайдено"
 msgid "No pinned messages yet"
 msgstr "Ще немає закріплених повідомлень"
 
+#~ msgid "No unread mentions"
+#~ msgstr "Немає непрочитаних згадок"
+
 #: src/components/notifications/NotificationPanel.tsx:159
 msgid "No unread notifications"
 msgstr "Немає непрочитаних сповіщень"
 
-#: src/components/space/Channel.tsx:387 src/components/space/Channel.tsx:816
+#: src/components/space/Channel.tsx:387
+#: src/components/space/Channel.tsx:816
 #: src/components/space/Channel.tsx:986
 msgid "No users found!"
 msgstr "Користувачів не знайдено!"
@@ -1361,10 +1291,8 @@ msgid "Notifications"
 msgstr "Сповіщення"
 
 #: src/components/modals/UserSettingsModal/Notifications.tsx:66
-msgid ""
-"Notifications are blocked. Please enable them in your browser settings."
-msgstr ""
-"Сповіщення заблоковані. Будь ласка, увімкніть їх у налаштуваннях браузера."
+msgid "Notifications are blocked. Please enable them in your browser settings."
+msgstr "Сповіщення заблоковані. Будь ласка, увімкніть їх у налаштуваннях браузера."
 
 #: src/services/NotificationService.ts:55
 #: src/services/NotificationService.ts:180
@@ -1423,7 +1351,7 @@ msgstr "Очікує"
 msgid "Pending removal - click Save to confirm"
 msgstr "Очікує на видалення - натисніть Зберегти, щоб підтвердити"
 
-#: src/components/modals/SpaceSettingsModal/Roles.tsx:138
+#: src/components/modals/SpaceSettingsModal/Roles.tsx:141
 #: src/components/space/RolePreview.tsx:34
 msgid "Permissions:"
 msgstr "Дозволи:"
@@ -1440,8 +1368,7 @@ msgstr "Фото бібліотека"
 
 #: src/components/primitives/FileUpload/FileUpload.native.tsx:47
 msgid "Photo library permission is required to select images"
-msgstr ""
-"Необхідно надати дозвіл на доступ до фото бібліотеки для вибору зображень"
+msgstr "Необхідно надати дозвіл на доступ до фото бібліотеки для вибору зображень"
 
 #: src/hooks/business/messages/usePinnedMessages.ts:236
 msgid "pin"
@@ -1473,7 +1400,7 @@ msgstr "Закріпити повідомлення"
 msgid "Pin Message"
 msgstr "Закріпити повідомлення"
 
-#: src/components/modals/SpaceSettingsModal/Roles.tsx:163
+#: src/components/modals/SpaceSettingsModal/Roles.tsx:166
 msgid "Pin Messages"
 msgstr "Закріпити повідомлення"
 
@@ -1481,13 +1408,12 @@ msgstr "Закріпити повідомлення"
 msgid "Pin to top"
 msgstr "Закріпити вгорі"
 
-#: src/components/message/Message.tsx:588
+#: src/components/message/Message.tsx:582
 msgid "Pinned"
 msgstr "Закріплено"
 
-#. placeholder {0}: mapSenderToUser(message.pinnedBy)?.displayName ||
-#. message.pinnedBy
-#: src/components/message/Message.tsx:587
+#. placeholder {0}: mapSenderToUser(message.pinnedBy)?.displayName || message.pinnedBy
+#: src/components/message/Message.tsx:581
 msgid "Pinned by {0}"
 msgstr "Закріплено {0}"
 
@@ -1504,11 +1430,9 @@ msgstr "Закріплено!"
 msgid "PNG, JPG or JPEG • Optimal ratio 1:1"
 msgstr "PNG, JPG або JPEG • Оптимальне співвідношення 1:1"
 
-#: src/components/message/Message.tsx:903
+#: src/components/message/MessageEditTextarea.tsx:354
 msgid "Press Enter to save, Shift+Enter for new line, Esc to cancel"
-msgstr ""
-"Натисніть Enter, щоб зберегти, Shift+Enter для нового рядка, Esc для "
-"скасування"
+msgstr "Натисніть Enter, щоб зберегти, Shift+Enter для нового рядка, Esc для скасування"
 
 #: src/components/modals/SpaceSettingsModal/General.tsx:255
 msgid "Privacy Settings"
@@ -1523,7 +1447,7 @@ msgstr "Конфіденційність/Безпека"
 msgid "Private key saved to selected folder"
 msgstr "Приватний ключ збережено в обрану папку"
 
-#: src/components/message/MessageComposer.tsx:263
+#: src/components/message/MessageComposer.tsx:316
 msgid "Processing image... This may take a moment for large files."
 msgstr "Обробка зображення... Це може зайняти деякий час для великих файлів."
 
@@ -1532,46 +1456,25 @@ msgid "Public Invite Links"
 msgstr "Публічні запрошення"
 
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:151
-msgid ""
-"Public invite links allow anyone with access to the link to join your Space."
-" Consider who you share the link with and where you post it."
-msgstr ""
-"Публічні запрошення дозволяють будь-кому з доступом до посилання приєднатися"
-" до вашого Space. Подумайте, з ким ви ділитеся посиланням і де ви його "
-"публікуєте."
+msgid "Public invite links allow anyone with access to the link to join your Space. Consider who you share the link with and where you post it."
+msgstr "Публічні запрошення дозволяють будь-кому з доступом до посилання приєднатися до вашого Space. Подумайте, з ким ви ділитеся посиланням і де ви його публікуєте."
 
 #: src/components/Maintenance.tsx:24
-msgid ""
-"Quorum infrastructure is being deployed at this time. Please try refreshing,"
-" and check <0>https://status.quilibrium.com/</0> for updates."
-msgstr ""
-"Quorum infrastructure is being deployed at this time. Please try refreshing,"
-" and check <0>https://status.quilibrium.com/</0> for updates."
+msgid "Quorum infrastructure is being deployed at this time. Please try refreshing, and check <0>https://status.quilibrium.com/</0> for updates."
+msgstr "Quorum infrastructure is being deployed at this time. Please try refreshing, and check <0>https://status.quilibrium.com/</0> for updates."
 
 #: src/components/Maintenance.native.tsx:47
-msgid ""
-"Quorum infrastructure is being deployed at this time. Please try refreshing."
-msgstr ""
-"Інфраструктура Quorum наразі розгортається. Будь ласка, спробуйте оновити."
+msgid "Quorum infrastructure is being deployed at this time. Please try refreshing."
+msgstr "Інфраструктура Quorum наразі розгортається. Будь ласка, спробуйте оновити."
 
 #: src/components/onboarding/Onboarding.native.tsx:249
 #: src/components/onboarding/Onboarding.tsx:135
-msgid ""
-"Quorum is peer-to-peer and end-to-end encrypted. This means your messages "
-"stay private, but equally important, they only live on the network for the "
-"time required to reach you and your recipients."
-msgstr ""
-"Quorum is peer-to-peer and end-to-end encrypted. This means your messages "
-"stay private, but equally important, they only live on the network for the "
-"time required to reach you and your recipients."
+msgid "Quorum is peer-to-peer and end-to-end encrypted. This means your messages stay private, but equally important, they only live on the network for the time required to reach you and your recipients."
+msgstr "Quorum is peer-to-peer and end-to-end encrypted. This means your messages stay private, but equally important, they only live on the network for the time required to reach you and your recipients."
 
 #: src/components/context/RegistrationPersister.tsx:270
-msgid ""
-"Quorum was loaded while the browser was not in focus or a passkey request "
-"was rejected. Please reauthorize to access your messages."
-msgstr ""
-"Quorum was loaded while the browser was not in focus or a passkey request "
-"was rejected. Please reauthorize to access your messages."
+msgid "Quorum was loaded while the browser was not in focus or a passkey request was rejected. Please reauthorize to access your messages."
+msgstr "Quorum was loaded while the browser was not in focus or a passkey request was rejected. Please reauthorize to access your messages."
 
 #: src/components/modals/ChannelEditorModal.tsx:141
 msgid "Read only"
@@ -1594,7 +1497,8 @@ msgstr "Повторна авторизація"
 msgid "received config with invalid signature!"
 msgstr "отримано конфігурацію з недійсним підписом!"
 
-#: src/components/Maintenance.native.tsx:73 src/components/Maintenance.tsx:46
+#: src/components/Maintenance.native.tsx:73
+#: src/components/Maintenance.tsx:46
 #: src/components/modals/UserSettingsModal/Appearance.tsx:61
 msgid "Refresh"
 msgstr "Оновити"
@@ -1619,30 +1523,26 @@ msgid "Require Message Signing"
 msgstr "Вимагати підписування повідомлень"
 
 #: src/components/modals/CreateSpaceModal.tsx:148
-msgid ""
-"Require messages sent in this Space to be signed by the sender. Technically "
-"speaking, this makes the messages in this Space non-repudiable."
-msgstr ""
-"Вимагати, щоб повідомлення, надіслані в цьому Space, були підписані "
-"відправником. Технічно це робить повідомлення в цьому Space непідробними."
+msgid "Require messages sent in this Space to be signed by the sender. Technically speaking, this makes the messages in this Space non-repudiable."
+msgstr "Вимагати, щоб повідомлення, надіслані в цьому Space, були підписані відправником. Технічно це робить повідомлення в цьому Space непідробними."
 
 #: src/components/modals/AddSpaceModal.tsx:266
 msgid "Reset"
 msgstr "Скинути"
 
 #: src/components/modals/SpaceSettingsModal/Navigation.tsx:22
-#: src/components/modals/SpaceSettingsModal/Roles.tsx:42
+#: src/components/modals/SpaceSettingsModal/Roles.tsx:45
 msgid "Roles"
 msgstr "Ролі"
 
-#: src/components/message/Message.tsx:927
+#: src/components/message/MessageEditTextarea.tsx:377
 #: src/components/modals/ConversationSettingsModal.tsx:240
 msgid "Save"
 msgstr "Зберегти"
 
 #: src/components/modals/ChannelEditorModal.tsx:189
 #: src/components/modals/GroupEditorModal.tsx:94
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:585
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:587
 #: src/components/modals/UserSettingsModal/UserSettingsModal.tsx:251
 #: src/components/user/UserProfileEdit.tsx:158
 msgid "Save Changes"
@@ -1658,7 +1558,7 @@ msgstr "Зберегти фото контакту"
 msgid "Save Edit History"
 msgstr "Зберегти історію редагувань"
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:570
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:572
 #: src/components/modals/UserSettingsModal/UserSettingsModal.tsx:240
 msgid "Save Failed"
 msgstr "Не вдалося зберегти"
@@ -1688,11 +1588,13 @@ msgstr "Збереження..."
 msgid "Search failed: {0}"
 msgstr "Пошук не вдався: {0}"
 
-#: src/hooks/useSearchContext.native.ts:102 src/hooks/useSearchContext.ts:94
+#: src/hooks/useSearchContext.native.ts:102
+#: src/hooks/useSearchContext.ts:94
 msgid "Search here"
 msgstr "Шукайте тут"
 
-#: src/hooks/useSearchContext.native.ts:100 src/hooks/useSearchContext.ts:92
+#: src/hooks/useSearchContext.native.ts:100
+#: src/hooks/useSearchContext.ts:92
 msgid "Search in this Space"
 msgstr "Пошук у цьому Простір"
 
@@ -1731,15 +1633,8 @@ msgid "Select an option"
 msgstr "Вибрати опцію"
 
 #: src/components/modals/ChannelEditorModal.tsx:160
-msgid ""
-"Select any existing role as managers for this channel. Managers have post, "
-"delete, and pin permissions on ANY message by default. If no managers are "
-"selected, only the Space owner can manage the channel."
-msgstr ""
-"Виберіть будь-яку існуючу роль як менеджерів для цього каналу. Менеджери "
-"мають права на публікацію, видалення та закріплення будь-якого повідомлення "
-"за замовчуванням. Якщо менеджери не вибрані, тільки власник Space може "
-"керувати каналом."
+msgid "Select any existing role as managers for this channel. Managers have post, delete, and pin permissions on ANY message by default. If no managers are selected, only the Space owner can manage the channel."
+msgstr "Виберіть будь-яку існуючу роль як менеджерів для цього каналу. Менеджери мають права на публікацію, видалення та закріплення будь-якого повідомлення за замовчуванням. Якщо менеджери не вибрані, тільки власник Space може керувати каналом."
 
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:84
 msgid "Select conversation"
@@ -1749,11 +1644,14 @@ msgstr "Вибрати розмову"
 msgid "Select default channel"
 msgstr "Вибрати канал за замовчуванням"
 
+#~ msgid "Select for which mentions you will receive notifications"
+#~ msgstr "Вибрати, для яких згадок ви будете отримувати сповіщення"
+
 #: src/components/primitives/FileUpload/FileUpload.native.tsx:161
 msgid "Select Image"
 msgstr "Вибрати зображення"
 
-#: src/components/modals/SpaceSettingsModal/Roles.tsx:154
+#: src/components/modals/SpaceSettingsModal/Roles.tsx:157
 msgid "Select permissions"
 msgstr "Вибрати дозволи"
 
@@ -1778,14 +1676,10 @@ msgid "Send Invite"
 msgstr "Надіслати запрошення"
 
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:50
-msgid ""
-"Send invites to people you've previously had conversations with. An invite "
-"button will appear in their inbox."
-msgstr ""
-"Надсилайте запрошення людям, з якими ви раніше спілкувалися. Кнопка "
-"запрошення з'явиться в їхньому вхідному."
+msgid "Send invites to people you've previously had conversations with. An invite button will appear in their inbox."
+msgstr "Надсилайте запрошення людям, з якими ви раніше спілкувалися. Кнопка запрошення з'явиться в їхньому вхідному."
 
-#: src/components/user/UserProfile.tsx:192
+#: src/components/user/UserProfile.tsx:193
 msgid "Send Message"
 msgstr "Надіслати повідомлення"
 
@@ -1803,14 +1697,8 @@ msgid "Settings"
 msgstr "Налаштування"
 
 #: src/components/modals/UserSettingsModal/Notifications.tsx:39
-msgid ""
-"Show desktop notifications when you receive new messages while Quorum is in "
-"the background. Your browser will ask for permission when you enable this "
-"feature."
-msgstr ""
-"Показувати сповіщення на робочому столі, коли ви отримуєте нові "
-"повідомлення, поки Quorum у фоновому режимі. Ваш браузер запитає дозвіл, "
-"коли ви ввімкнете цю функцію."
+msgid "Show desktop notifications when you receive new messages while Quorum is in the background. Your browser will ask for permission when you enable this feature."
+msgstr "Показувати сповіщення на робочому столі, коли ви отримуєте нові повідомлення, поки Quorum у фоновому режимі. Ваш браузер запитає дозвіл, коли ви ввімкнете цю функцію."
 
 #: src/components/direct/EmptyDirectMessage.tsx:78
 msgid "show home screen"
@@ -1868,9 +1756,12 @@ msgstr "Стікери"
 msgid "Successfully sent invite to {0}"
 msgstr "Успішно надіслано запрошення до {0}"
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:443
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:444
 msgid "Sync Kick Status"
 msgstr "Синхронізувати статус виключення"
+
+#~ msgid "Sync kick status for previously kicked users. This verifies kicks without posting visible messages."
+#~ msgstr "Синхронізуйте статус виключення для раніше виключених користувачів. Це перевіряє виключення без публікації видимих повідомлень."
 
 #: src/components/ui/ThemeRadioGroup.tsx:28
 msgid "System"
@@ -1895,29 +1786,17 @@ msgid "The invite link has expired or is invalid."
 msgstr "Посилання на запрошення закінчилося або є недійсним."
 
 #: src/components/NotFound.tsx:21
-msgid ""
-"The page you're looking for doesn't exist or has been moved. Let's get you "
-"back on track."
-msgstr ""
-"Сторінка, яку ви шукаєте, не існує або була переміщена. Давайте повернемо "
-"вас на правильний шлях."
+msgid "The page you're looking for doesn't exist or has been moved. Let's get you back on track."
+msgstr "Сторінка, яку ви шукаєте, не існує або була переміщена. Давайте повернемо вас на правильний шлях."
 
 #: src/components/modals/SpaceSettingsModal/Danger.tsx:30
-msgid ""
-"This action cannot be undone and will permanently remove all the Space "
-"settings. To delete the Space, you must first delete all Channels."
-msgstr ""
-"Ця дія не може бути скасована і назавжди видалить усі налаштування Простір. "
-"Щоб видалити Простір, спочатку потрібно видалити всі канали."
+msgid "This action cannot be undone and will permanently remove all the Space settings. To delete the Space, you must first delete all Channels."
+msgstr "Ця дія не може бути скасована і назавжди видалить усі налаштування Простір. Щоб видалити Простір, спочатку потрібно видалити всі канали."
 
 #: src/components/modals/CreateSpaceModal.tsx:111
 #: src/components/modals/SpaceSettingsModal/General.tsx:166
-msgid ""
-"This description will be visible on invites and shown to people when they "
-"look up or join your Space using an invite link."
-msgstr ""
-"Цей опис буде видимий у запрошеннях і показаний людям, коли вони шукають або"
-" приєднуються до вашого Простору за допомогою посилання для запрошення."
+msgid "This description will be visible on invites and shown to people when they look up or join your Space using an invite link."
+msgstr "Цей опис буде видимий у запрошеннях і показаний людям, коли вони шукають або приєднуються до вашого Простору за допомогою посилання для запрошення."
 
 #: src/components/modals/UserSettingsModal/Privacy.tsx:163
 msgid "This device"
@@ -1929,32 +1808,16 @@ msgid "This information is only provided to the Spaces you join."
 msgstr "Ця інформація надається лише для Просторів, до яких ви приєднуєтеся."
 
 #: src/components/modals/UserSettingsModal/General.tsx:110
-msgid ""
-"This is your public address and is safe to share with anyone you want to "
-"interact with."
-msgstr ""
-"Це ваша публічна адреса, і її безпечно ділитися з будь-ким, з ким ви хочете "
-"взаємодіяти."
+msgid "This is your public address and is safe to share with anyone you want to interact with."
+msgstr "Це ваша публічна адреса, і її безпечно ділитися з будь-ким, з ким ви хочете взаємодіяти."
 
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:181
-msgid ""
-"This link will not expire, but you can generate a new one at any time, which"
-" will invalidate the old link."
-msgstr ""
-"Це посилання не закінчиться, але ви можете згенерувати нове в будь-який час,"
-" що зробить старе посилання недійсним."
+msgid "This link will not expire, but you can generate a new one at any time, which will invalidate the old link."
+msgstr "Це посилання не закінчиться, але ви можете згенерувати нове в будь-який час, що зробить старе посилання недійсним."
 
-#: src/components/modals/SpaceSettingsModal/Roles.tsx:55
-msgid ""
-"This protects your identity as the space owner. However, if you're the only "
-"one with this role, your identity becomes obvious. Consider having multiple "
-"users (real or fake accounts) with the same role for better privacy "
-"protection."
-msgstr ""
-"Це захищає вашу особистість як власника простору. Однак, якщо ви є єдиним, "
-"хто має цю роль, ваша особистість стає очевидною. Розгляньте можливість мати"
-" кілька користувачів (реальних або фейкових акаунтів) з тією ж роллю для "
-"кращого захисту конфіденційності."
+#: src/components/modals/SpaceSettingsModal/Roles.tsx:58
+msgid "This protects your identity as the space owner. However, if you're the only one with this role, your identity becomes obvious. Consider having multiple users (real or fake accounts) with the same role for better privacy protection."
+msgstr "Це захищає вашу особистість як власника простору. Однак, якщо ви є єдиним, хто має цю роль, ваша особистість стає очевидною. Розгляньте можливість мати кілька користувачів (реальних або фейкових акаунтів) з тією ж роллю для кращого захисту конфіденційності."
 
 #: src/components/context/MessageDB.bak.tsx:4819
 #: src/components/message/InviteLink.tsx:31
@@ -1966,38 +1829,25 @@ msgstr "Це публічне посилання запрошення більш
 msgid "This user is already a member of this space."
 msgstr "Цей користувач вже є учасником цього Простір."
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:602
-msgid ""
-"This will create a public invite link that anyone can use to join your "
-"Space. Consider who you share this link with."
-msgstr ""
-"Це створить публічне запрошення, яке будь-хто може використати для "
-"приєднання до вашого Простір. Подумайте, з ким ви ділитеся цим посиланням."
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:604
+msgid "This will create a public invite link that anyone can use to join your Space. Consider who you share this link with."
+msgstr "Це створить публічне запрошення, яке будь-хто може використати для приєднання до вашого Простір. Подумайте, з ким ви ділитеся цим посиланням."
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:601
-msgid ""
-"This will generate a new public invite link and invalidate the current one. "
-"Anyone with the old link will no longer be able to use it."
-msgstr ""
-"Це згенерує нове публічне запрошення та анулює поточне. Будь-хто зі старим "
-"посиланням більше не зможе його використати."
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:603
+msgid "This will generate a new public invite link and invalidate the current one. Anyone with the old link will no longer be able to use it."
+msgstr "Це згенерує нове публічне запрошення та анулює поточне. Будь-хто зі старим посиланням більше не зможе його використати."
+
+#~ msgid "This will permanently delete the current public invite link. Anyone who has this link will no longer be able to use it to join your Space."
+#~ msgstr "Це назавжди видалить поточне публічне запрошення. Будь-хто, хто має це посилання, більше не зможе його використати для приєднання до вашого Простір."
 
 #: src/components/modals/ConfirmationModal.native.tsx:57
 #: src/components/modals/ConfirmationModal.tsx:77
-msgid ""
-"TIP: Hold down shift when clicking {protipAction} to bypass this "
-"confirmation entirely."
-msgstr ""
-"ПІДКАЗКА: Утримуйте Shift під час натискання {protipAction}, щоб повністю "
-"обійти це підтвердження."
+msgid "TIP: Hold down shift when clicking {protipAction} to bypass this confirmation entirely."
+msgstr "ПІДКАЗКА: Утримуйте Shift під час натискання {protipAction}, щоб повністю обійти це підтвердження."
 
 #: src/components/modals/UserSettingsModal/Notifications.tsx:72
-msgid ""
-"To disable notifications, please change the setting in your browser "
-"settings. Notifications cannot be disabled programmatically."
-msgstr ""
-"Щоб вимкнути сповіщення, будь ласка, змініть налаштування у налаштуваннях "
-"вашого браузера. Сповіщення не можуть бути вимкнені програмно."
+msgid "To disable notifications, please change the setting in your browser settings. Notifications cannot be disabled programmatically."
+msgstr "Щоб вимкнути сповіщення, будь ласка, змініть налаштування у налаштуваннях вашого браузера. Сповіщення не можуть бути вимкнені програмно."
 
 #: src/utils/dateFormatting.ts:27
 msgid "Today at {timeFormatted}"
@@ -2013,9 +1863,7 @@ msgstr "Спробуйте інші ключові слова або перев�
 
 #: src/hooks/business/ui/useCustomAssets.ts:195
 msgid "Unable to compress emoji images. Please use smaller images."
-msgstr ""
-"Не вдалося стиснути зображення емодзі. Будь ласка, використовуйте менші "
-"зображення."
+msgstr "Не вдалося стиснути зображення емодзі. Будь ласка, використовуйте менші зображення."
 
 #: src/hooks/business/spaces/useSpaceProfile.ts:123
 #: src/hooks/business/ui/useFileUpload.ts:96
@@ -2024,14 +1872,11 @@ msgstr ""
 #: src/hooks/business/user/useProfileImage.ts:90
 #: src/hooks/business/user/useWebFileUpload.ts:63
 msgid "Unable to compress image. Please use a smaller image."
-msgstr ""
-"Не вдалося стиснути зображення. Будь ласка, використовуйте менше зображення."
+msgstr "Не вдалося стиснути зображення. Будь ласка, використовуйте менше зображення."
 
 #: src/hooks/business/ui/useCustomAssets.ts:234
 msgid "Unable to compress sticker images. Please use smaller images."
-msgstr ""
-"Не вдалося стиснути зображення наліпок. Будь ласка, використовуйте менші "
-"зображення."
+msgstr "Не вдалося стиснути зображення наліпок. Будь ласка, використовуйте менші зображення."
 
 #: src/components/ui/ClickToCopyContent.native.tsx:167
 msgid "Unable to copy to clipboard"
@@ -2039,29 +1884,20 @@ msgstr "Не вдалося скопіювати в буфер обміну"
 
 #: src/components/context/MessageDB.bak.tsx:3482
 #: src/services/SpaceService.ts:538
-msgid ""
-"Unable to leave space due to incomplete configuration. The space data may be"
-" corrupted."
-msgstr ""
-"Не вдалося залишити Space через неповну конфігурацію. Дані Space можуть бути"
-" пошкоджені."
+msgid "Unable to leave space due to incomplete configuration. The space data may be corrupted."
+msgstr "Не вдалося залишити Space через неповну конфігурацію. Дані Space можуть бути пошкоджені."
 
 #: src/utils/imageProcessing/errors.ts:33
 msgid "Unable to process emoji image. Please use a smaller image."
-msgstr ""
-"Не вдалося обробити зображення emoji. Будь ласка, використовуйте менше "
-"зображення."
+msgstr "Не вдалося обробити зображення emoji. Будь ласка, використовуйте менше зображення."
 
 #: src/utils/imageProcessing/errors.ts:30
 msgid "Unable to process image. Please use a smaller image."
-msgstr ""
-"Не вдалося обробити зображення. Будь ласка, використовуйте менше зображення."
+msgstr "Не вдалося обробити зображення. Будь ласка, використовуйте менше зображення."
 
 #: src/utils/imageProcessing/errors.ts:36
 msgid "Unable to process sticker image. Please use a smaller image."
-msgstr ""
-"Не вдалося обробити зображення стікера. Будь ласка, використовуйте менше "
-"зображення."
+msgstr "Не вдалося обробити зображення стікера. Будь ласка, використовуйте менше зображення."
 
 #: src/components/modals/JoinSpaceModal.tsx:106
 msgid "Unknown"
@@ -2085,13 +1921,13 @@ msgstr "Невідомий час"
 #: src/components/direct/DirectMessage.tsx:131
 #: src/components/direct/DirectMessage.tsx:146
 #: src/components/direct/DirectMessage.tsx:333
-#: src/components/message/Message.tsx:776
-#: src/components/message/Message.tsx:810
-#: src/components/message/Message.tsx:817
-#: src/components/message/Message.tsx:822
-#: src/components/message/Message.tsx:829
-#: src/components/message/MessageComposer.tsx:358
-#: src/components/message/MessageComposer.tsx:365
+#: src/components/message/MessageComposer.tsx:411
+#: src/components/message/MessageComposer.tsx:418
+#: src/components/message/MessageEditTextarea.tsx:224
+#: src/components/message/MessageEditTextarea.tsx:259
+#: src/components/message/MessageEditTextarea.tsx:266
+#: src/components/message/MessageEditTextarea.tsx:270
+#: src/components/message/MessageEditTextarea.tsx:276
 #: src/components/message/MessagePreview.tsx:41
 #: src/components/message/PinnedMessagesPanel.tsx:99
 #: src/components/message/PinnedMessagesPanel.tsx:112
@@ -2109,9 +1945,12 @@ msgstr "Невідомий час"
 #: src/hooks/business/search/useSearchResultDisplayDM.ts:33
 #: src/hooks/business/search/useSearchResultDisplaySpace.ts:45
 #: src/hooks/queries/userInfo/buildUserInfoFetcher.ts:15
-#: src/services/EncryptionService.ts:138 src/services/MessageService.ts:1021
-#: src/services/MessageService.ts:1184 src/services/MessageService.ts:1325
-#: src/services/MessageService.ts:1344 src/services/MessageService.ts:2661
+#: src/services/EncryptionService.ts:138
+#: src/services/MessageService.ts:1021
+#: src/services/MessageService.ts:1184
+#: src/services/MessageService.ts:1325
+#: src/services/MessageService.ts:1344
+#: src/services/MessageService.ts:2661
 #: src/services/MessageService.ts:2796
 msgid "Unknown User"
 msgstr "Невідомий користувач"
@@ -2143,34 +1982,23 @@ msgid "Unpinned!"
 msgstr "Відкріплено!"
 
 #: src/components/direct/DirectMessage.tsx:548
-msgid ""
-"Until you reply, this sender will not see your display name or profile "
-"picture"
-msgstr ""
-"Поки ви не відповісте, цей відправник не побачить ваше ім'я відображення або"
-" профільне зображення"
+msgid "Until you reply, this sender will not see your display name or profile picture"
+msgstr "Поки ви не відповісте, цей відправник не побачить ваше ім'я відображення або профільне зображення"
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:443
-msgid ""
-"Update kick records for all members. Use this if kicked users still appear "
-"active to some members."
-msgstr ""
-"Оновіть записи про вигнання для всіх учасників. Використовуйте це, якщо "
-"вигнані користувачі все ще з'являються активними для деяких учасників."
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:444
+msgid "Update kick records for all members. Use this if kicked users still appear active to some members."
+msgstr "Оновіть записи про вигнання для всіх учасників. Використовуйте це, якщо вигнані користувачі все ще з'являються активними для деяких учасників."
 
 #: src/components/modals/SpaceSettingsModal/Account.tsx:128
 msgid "Upload an avatar for this Space - PNG or JPG - Optimal ratio 1:1"
-msgstr ""
-"Завантажте аватар для цього Простору - PNG або JPG - Оптимальне "
-"співвідношення 1:1"
+msgstr "Завантажте аватар для цього Простору - PNG або JPG - Оптимальне співвідношення 1:1"
+
+#~ msgid "Upload an image and choose a name for your Space."
+#~ msgstr "Завантажте зображення та виберіть назву для вашого Space."
 
 #: src/components/modals/CreateSpaceModal.tsx:131
-msgid ""
-"Upload an image, choose a name, and optionally add a description for your "
-"Space."
-msgstr ""
-"Завантажте зображення, виберіть ім'я та, за бажанням, додайте опис для "
-"вашого Простору."
+msgid "Upload an image, choose a name, and optionally add a description for your Space."
+msgstr "Завантажте зображення, виберіть ім'я та, за бажанням, додайте опис для вашого Простору."
 
 #: src/components/modals/SpaceSettingsModal/Emojis.tsx:59
 msgid "Upload Emoji"
@@ -2197,7 +2025,8 @@ msgstr "Адреса користувача тут"
 msgid "User does not exist."
 msgstr "Користувача не існує."
 
-#: src/components/space/Channel.tsx:374 src/components/space/Channel.tsx:803
+#: src/components/space/Channel.tsx:374
+#: src/components/space/Channel.tsx:803
 msgid "Username or Address"
 msgstr "Ім'я користувача або адреса"
 
@@ -2225,36 +2054,16 @@ msgstr "Що у вас на думці сьогодні?"
 
 #: src/components/modals/ConversationSettingsModal.tsx:220
 #: src/components/modals/SpaceSettingsModal/General.tsx:289
-msgid ""
-"When enabled, all previous versions of edited messages will be saved. When "
-"disabled, only the current edited version is kept."
-msgstr ""
-"Коли функція увімкнена, всі попередні версії відредагованих повідомлень "
-"зберігатимуться. Коли вимкнено, зберігається лише поточна відредагована "
-"версія."
+msgid "When enabled, all previous versions of edited messages will be saved. When disabled, only the current edited version is kept."
+msgstr "Коли функція увімкнена, всі попередні версії відредагованих повідомлень зберігатимуться. Коли вимкнено, зберігається лише поточна відредагована версія."
 
 #: src/components/modals/UserSettingsModal/Privacy.tsx:58
-msgid ""
-"When enabled, synchronizes your user data, Spaces, and Space keys between "
-"devices. Enabling this increases metadata visibility of your account, which "
-"can reveal when you have joined new Spaces, although not the Spaces you have"
-" joined."
-msgstr ""
-"Коли цей параметр увімкнено, синхронізуються ваші дані користувача, Простори"
-" та ключі Простору між пристроями. Увімкнення цього збільшує видимість "
-"метаданих вашого облікового запису, що може виявити, коли ви приєдналися до "
-"нових Просторів, хоча не до Просторів, до яких ви приєдналися."
+msgid "When enabled, synchronizes your user data, Spaces, and Space keys between devices. Enabling this increases metadata visibility of your account, which can reveal when you have joined new Spaces, although not the Spaces you have joined."
+msgstr "Коли цей параметр увімкнено, синхронізуються ваші дані користувача, Простори та ключі Простору між пристроями. Увімкнення цього збільшує видимість метаданих вашого облікового запису, що може виявити, коли ви приєдналися до нових Просторів, хоча не до Просторів, до яких ви приєдналися."
 
 #: src/components/modals/SpaceSettingsModal/General.tsx:265
-msgid ""
-"When messages are signed, senders confirm they come from their key. When "
-"messages aren't signed, senders have plausible deniability. This setting "
-"applies to all messages in this Space."
-msgstr ""
-"Коли повідомлення підписані, відправники підтверджують, що вони походять з "
-"їхнього ключа. Коли повідомлення не підписані, відправники мають "
-"правдоподібне заперечення. Це налаштування застосовується до всіх "
-"повідомлень у цьому Простір."
+msgid "When messages are signed, senders confirm they come from their key. When messages aren't signed, senders have plausible deniability. This setting applies to all messages in this Space."
+msgstr "Коли повідомлення підписані, відправники підтверджують, що вони походять з їхнього ключа. Коли повідомлення не підписані, відправники мають правдоподібне заперечення. Це налаштування застосовується до всіх повідомлень у цьому Простір."
 
 #: src/components/modals/SpaceSettingsModal/Account.tsx:212
 msgid "When someone mentions @everyone"
@@ -2263,6 +2072,9 @@ msgstr "Коли хтось згадує @everyone"
 #: src/components/modals/SpaceSettingsModal/Account.tsx:217
 msgid "When someone mentions a role you have"
 msgstr "Коли хтось згадує роль, яку ви маєте"
+
+#~ msgid "When someone mentions a role you have (Coming Soon)"
+#~ msgstr "Коли хтось згадує роль, яку ви маєте (Скоро)"
 
 #: src/components/modals/SpaceSettingsModal/Account.tsx:207
 msgid "When someone mentions you directly"
@@ -2273,52 +2085,20 @@ msgid "When someone replies to your messages"
 msgstr "Коли хтось відповідає на ваші повідомлення"
 
 #: src/components/modals/CreateSpaceModal.tsx:172
-msgid ""
-"When this setting is enabled, invite links will automatically allow a user "
-"to join your Space. When it is not enabled, users following an invite link "
-"will send you a request to join your Space that you must manually approve. "
-"Public links require some key material to be present in the link – be aware "
-"that possession of a public Space link can allow anyone with the link to "
-"read messages on the Space for the duration of the link being valid."
-msgstr ""
-"Коли цей параметр увімкнено, посилання-запрошення автоматично дозволять "
-"користувачу приєднатися до вашого Простору. Коли він не увімкнений, "
-"користувачі, які слідують за посиланням-запрошенням, надішлють вам запит на "
-"приєднання до вашого Простору, який ви повинні вручну затвердити. Публічні "
-"посилання вимагають, щоб деякі ключові матеріали були присутні в посиланні –"
-" будьте обережні, що володіння публічним посиланням Простору може дозволити "
-"будь-кому з посиланням читати повідомлення в Просторі протягом дії "
-"посилання."
+msgid "When this setting is enabled, invite links will automatically allow a user to join your Space. When it is not enabled, users following an invite link will send you a request to join your Space that you must manually approve. Public links require some key material to be present in the link – be aware that possession of a public Space link can allow anyone with the link to read messages on the Space for the duration of the link being valid."
+msgstr "Коли цей параметр увімкнено, посилання-запрошення автоматично дозволять користувачу приєднатися до вашого Простору. Коли він не увімкнений, користувачі, які слідують за посиланням-запрошенням, надішлють вам запит на приєднання до вашого Простору, який ви повинні вручну затвердити. Публічні посилання вимагають, щоб деякі ключові матеріали були присутні в посиланні – будьте обережні, що володіння публічним посиланням Простору може дозволити будь-кому з посиланням читати повідомлення в Просторі протягом дії посилання."
 
 #: src/components/onboarding/Onboarding.tsx:143
-msgid ""
-"When using Quorum on a browser, your messages are saved locally to your "
-"browser."
-msgstr ""
-"Коли ви використовуєте Quorum у браузері, ваші повідомлення зберігаються "
-"локально у вашому браузері."
+msgid "When using Quorum on a browser, your messages are saved locally to your browser."
+msgstr "Коли ви використовуєте Quorum у браузері, ваші повідомлення зберігаються локально у вашому браузері."
 
 #: src/components/modals/ConversationSettingsModal.tsx:195
-msgid ""
-"When you sign a message, you are confirming that it comes from your key. "
-"When you don't sign a message, you have plausible deniability. The default "
-"for all conversations can be changed in User Settings."
-msgstr ""
-"Коли ви підписуєте повідомлення, ви підтверджуєте, що воно походить з вашого"
-" ключа. Коли ви не підписуєте повідомлення, ви маєте правдоподібне "
-"заперечення. Значення за замовчуванням для всіх розмов можна змінити в "
-"Налаштуваннях користувача."
+msgid "When you sign a message, you are confirming that it comes from your key. When you don't sign a message, you have plausible deniability. The default for all conversations can be changed in User Settings."
+msgstr "Коли ви підписуєте повідомлення, ви підтверджуєте, що воно походить з вашого ключа. Коли ви не підписуєте повідомлення, ви маєте правдоподібне заперечення. Значення за замовчуванням для всіх розмов можна змінити в Налаштуваннях користувача."
 
 #: src/components/modals/UserSettingsModal/Privacy.tsx:78
-msgid ""
-"When you sign a message, you are confirming that it comes from your key. "
-"When you don't sign a message, you have plausible deniability. You can "
-"control this setting for each conversation and message individually."
-msgstr ""
-"Коли ви підписуєте повідомлення, ви підтверджуєте, що воно походить з вашого"
-" ключа. Коли ви не підписуєте повідомлення, ви маєте правдоподібне "
-"заперечення. Ви можете контролювати це налаштування для кожної розмови та "
-"повідомлення окремо."
+msgid "When you sign a message, you are confirming that it comes from your key. When you don't sign a message, you have plausible deniability. You can control this setting for each conversation and message individually."
+msgstr "Коли ви підписуєте повідомлення, ви підтверджуєте, що воно походить з вашого ключа. Коли ви не підписуєте повідомлення, ви маєте правдоподібне заперечення. Ви можете контролювати це налаштування для кожної розмови та повідомлення окремо."
 
 #: src/utils/dateFormatting.ts:30
 msgid "Yesterday at {timeFormatted}"
@@ -2334,22 +2114,14 @@ msgid "You are already a member of this Space."
 msgstr "Ви вже є учасником цього Простір."
 
 #: src/components/modals/NewDirectMessageModal.tsx:146
-msgid ""
-"You can change this later for this conversation by clicking the lock icon in"
-" the Conversation view."
-msgstr ""
-"Ви можете змінити це пізніше для цієї розмови, натиснувши на значок замка в "
-"перегляді розмови."
+msgid "You can change this later for this conversation by clicking the lock icon in the Conversation view."
+msgstr "Ви можете змінити це пізніше для цієї розмови, натиснувши на значок замка в перегляді розмови."
 
 #: src/components/modals/GroupEditorModal.tsx:113
-msgid ""
-"You cannot delete a group that contains channels. Delete all {channelCount} "
-"channels in this group first."
-msgstr ""
-"Ви не можете видалити групу, яка містить канали. Спочатку видаліть усі "
-"{channelCount} канали в цій групі."
+msgid "You cannot delete a group that contains channels. Delete all {channelCount} channels in this group first."
+msgstr "Ви не можете видалити групу, яка містить канали. Спочатку видаліть усі {channelCount} канали в цій групі."
 
-#: src/components/message/MessageComposer.tsx:242
+#: src/components/message/MessageComposer.tsx:295
 #: src/components/space/Channel.tsx:774
 msgid "You cannot post in this channel"
 msgstr "Ви не можете публікувати в цьому каналі"
@@ -2368,12 +2140,8 @@ msgid "You have new unread messages"
 msgstr "У вас нові непрочитані повідомлення"
 
 #: src/components/modals/SpaceSettingsModal/Account.tsx:241
-msgid ""
-"You won't be able to rejoin unless you are re-invited. Your existing "
-"messages will NOT be deleted."
-msgstr ""
-"Ви не зможете повторно приєднатися, якщо вас не запросити знову. Ваші "
-"існуючі повідомлення НЕ будуть видалені."
+msgid "You won't be able to rejoin unless you are re-invited. Your existing messages will NOT be deleted."
+msgstr "Ви не зможете повторно приєднатися, якщо вас не запросити знову. Ваші існуючі повідомлення НЕ будуть видалені."
 
 #: src/components/notifications/NotificationPanel.tsx:161
 msgid "You're all caught up!"
@@ -2384,15 +2152,9 @@ msgstr "Ви все встигли!"
 msgid "You're all set. Welcome to Quorum!"
 msgstr "Ви готові. Ласкаво просимо до Quorum!"
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:439
-msgid ""
-"You're not listed in this Space's members. Correcting this will add you to "
-"the Space Members list (stores your profile locally with your inbox "
-"address)."
-msgstr ""
-"Ви не внесені до списку учасників цього Простір. Виправлення цього додасть "
-"вас до списку учасників Простір (зберігає ваш профіль локально з вашою "
-"адресою поштової скриньки)."
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:440
+msgid "You're not listed in this Space's members. Correcting this will add you to the Space Members list (stores your profile locally with your inbox address)."
+msgstr "Ви не внесені до списку учасників цього Простір. Виправлення цього додасть вас до списку учасників Простір (зберігає ваш профіль локально з вашою адресою поштової скриньки)."
 
 #: src/components/message/InviteLink.tsx:47
 #: src/components/message/InviteLink.tsx:69
@@ -2404,37 +2166,20 @@ msgid "Your Details"
 msgstr "Ваші дані"
 
 #: src/hooks/platform/files/useFileDownload.native.ts:79
-msgid ""
-"Your device doesn't support automatic file downloads. Your private key will "
-"be copied to clipboard so you can save it manually."
-msgstr ""
-"Ваш пристрій не підтримує автоматичне завантаження файлів. Ваш приватний "
-"ключ буде скопійовано в буфер обміну, щоб ви могли зберегти його вручну."
+msgid "Your device doesn't support automatic file downloads. Your private key will be copied to clipboard so you can save it manually."
+msgstr "Ваш пристрій не підтримує автоматичне завантаження файлів. Ваш приватний ключ буде скопійовано в буфер обміну, щоб ви могли зберегти його вручну."
 
 #: src/hooks/platform/files/useFileDownload.native.ts:97
-msgid ""
-"Your private key has been copied to clipboard. Save it as \"AccountID.key\" "
-"(you can find your Account ID in Settings later). NEVER share this key!"
-msgstr ""
-"Ваш приватний ключ був скопійований в буфер обміну. Збережіть його як "
-"\"AccountID.key\" (ви можете знайти свій ідентифікатор облікового запису в "
-"Налаштуваннях пізніше). НІКОЛИ не діліться цим ключем!"
+msgid "Your private key has been copied to clipboard. Save it as \"AccountID.key\" (you can find your Account ID in Settings later). NEVER share this key!"
+msgstr "Ваш приватний ключ був скопійований в буфер обміну. Збережіть його як \"AccountID.key\" (ви можете знайти свій ідентифікатор облікового запису в Налаштуваннях пізніше). НІКОЛИ не діліться цим ключем!"
 
 #: src/utils/imageProcessing/errors.ts:40
-msgid ""
-"Your profile image size must be {maxSize} or less and must be a PNG, JPG, or"
-" JPEG file extension."
-msgstr ""
-"Розмір вашого зображення профілю має бути {maxSize} або менше і має бути у "
-"форматі PNG, JPG або JPEG."
+msgid "Your profile image size must be {maxSize} or less and must be a PNG, JPG, or JPEG file extension."
+msgstr "Розмір вашого зображення профілю має бути {maxSize} або менше і має бути у форматі PNG, JPG або JPEG."
 
 #: src/components/onboarding/Onboarding.native.tsx:369
-msgid ""
-"Your profile image size must be 2MB or less and must be a PNG, JPG, or JPEG "
-"file extension."
-msgstr ""
-"Розмір вашого профільного зображення має бути 2 МБ або менше і повинен мати "
-"розширення файлу PNG, JPG або JPEG."
+msgid "Your profile image size must be 2MB or less and must be a PNG, JPG, or JPEG file extension."
+msgstr "Розмір вашого профільного зображення має бути 2 МБ або менше і повинен мати розширення файлу PNG, JPG або JPEG."
 
 #: src/components/modals/SpaceSettingsModal/Account.tsx:165
 msgid "Your Roles"
@@ -2447,64 +2192,3 @@ msgstr "YouTube Відео"
 #: src/components/ui/YouTubeFacade.tsx:115
 msgid "YouTube Video Thumbnail"
 msgstr "YouTube Відео Мініатюра"
-
-#~ msgid "{0} pinned message"
-#~ msgstr "Закріплене повідомлення {0}"
-
-#~ msgid "{0} pinned messages"
-#~ msgstr "Закріплені повідомлення {0}"
-
-#~ msgid "{0} unread mention"
-#~ msgstr "{0} непрочитаних згадок"
-
-#~ msgid "{0} unread mentions"
-#~ msgstr "{0} непрочитані згадки"
-
-#~ msgid "Account Settings for This Space"
-#~ msgstr "Налаштування облікового запису для цього Простору"
-
-#~ msgid ""
-#~ "Are you sure you want to leave this Space? You won't be able to rejoin "
-#~ "unless you are re-invited. Your existing messages will NOT be deleted."
-#~ msgstr ""
-#~ "Ви впевнені, що хочете покинути цей Простір? Ви не зможете приєднатися "
-#~ "знову, якщо вас не запросити. Ваші існуючі повідомлення НЕ будуть видалені."
-
-#~ msgid "Change your avatar and name for this Space."
-#~ msgstr "Змініть свій аватар і ім'я для цього Простору."
-
-#~ msgid "Delete Current Link"
-#~ msgstr "Видалити поточне посилання"
-
-#~ msgid "Delete Link"
-#~ msgstr "Видалити посилання"
-
-#~ msgid "Delete Public Invite Link"
-#~ msgstr "Видалити публічне посилання на запрошення"
-
-#~ msgid "No unread mentions"
-#~ msgstr "Немає непрочитаних згадок"
-
-#~ msgid "Select for which mentions you will receive notifications"
-#~ msgstr "Вибрати, для яких згадок ви будете отримувати сповіщення"
-
-#~ msgid ""
-#~ "Sync kick status for previously kicked users. This verifies kicks without "
-#~ "posting visible messages."
-#~ msgstr ""
-#~ "Синхронізуйте статус виключення для раніше виключених користувачів. Це "
-#~ "перевіряє виключення без публікації видимих повідомлень."
-
-#~ msgid ""
-#~ "This will permanently delete the current public invite link. Anyone who has "
-#~ "this link will no longer be able to use it to join your Space."
-#~ msgstr ""
-#~ "Це назавжди видалить поточне публічне запрошення. Будь-хто, хто має це "
-#~ "посилання, більше не зможе його використати для приєднання до вашого "
-#~ "Простір."
-
-#~ msgid "Upload an image and choose a name for your Space."
-#~ msgstr "Завантажте зображення та виберіть назву для вашого Space."
-
-#~ msgid "When someone mentions a role you have (Coming Soon)"
-#~ msgstr "Коли хтось згадує роль, яку ви маєте (Скоро)"

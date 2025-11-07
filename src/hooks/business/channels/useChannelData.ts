@@ -120,10 +120,13 @@ export function useChannelData({ spaceId, channelId }: UseChannelDataProps) {
   }, [space, mockUsers]);
 
   const noRoleMembers = useMemo(() => {
-    // Pre-compute set of all role members for O(1) lookup instead of O(n) for each user
-    const allRoleMembers = new Set(roles.flatMap((r) => r.members));
+    // Pre-compute set of all PUBLIC role members for O(1) lookup instead of O(n) for each user
+    // Only consider public roles so users with only private roles appear in "No Role" section
+    const allPublicRoleMembers = new Set(
+      roles.filter((r) => r.isPublic !== false).flatMap((r) => r.members)
+    );
     return Object.keys(activeMembers)
-      .filter((s) => !allRoleMembers.has(s))
+      .filter((s) => !allPublicRoleMembers.has(s))
       .filter((r) => !activeMembers[r].left)
       .filter((r) => !activeMembers[r].isKicked);
   }, [roles, activeMembers]);
@@ -139,6 +142,7 @@ export function useChannelData({ spaceId, channelId }: UseChannelDataProps) {
   const userSections = useMemo(() => {
     const roleSections = roles
       .filter((r) => r.members.length !== 0)
+      .filter((r) => r.isPublic !== false) // Hide private role sections
       .map((role) => {
         const roleMembers = Object.keys(activeMembers).filter((s) =>
           role.members.includes(s)

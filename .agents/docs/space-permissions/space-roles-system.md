@@ -16,9 +16,10 @@ export type Role = {
   color: string; // Visual color for role display
   members: string[]; // Array of user addresses with this role
   permissions: Permission[]; // Array of permissions granted
+  isPublic?: boolean; // Whether the role is visible to other users (defaults to true)
 };
 
-export type Permission = 'message:delete' | 'message:pin' | 'user:kick';
+export type Permission = 'message:delete' | 'message:pin' | 'user:kick' | 'mention:everyone';
 ```
 
 ### Permission Types
@@ -43,6 +44,85 @@ export type Permission = 'message:delete' | 'message:pin' | 'user:kick';
 - **UI Integration**: Controls kick button in user profiles
 - **Processing**: Multi-layer validation with space owner protection
 - **Protection**: Cannot kick space owners (enforced at all levels)
+
+#### **`mention:everyone`**
+
+- **Scope**: Ability to use @everyone mentions in messages
+- **UI Integration**: Controls whether @everyone mentions are allowed
+- **Processing**: Validated when processing message mentions
+- **Restrictions**: Does not work in read-only channels (isolation principle)
+
+## Role Visibility System
+
+**⚠️ Important Note**: Role visibility is a **cosmetic/UI-only feature**. Since this is an open-source application, users can build custom clients that bypass visibility filters. This feature provides privacy convenience, not security enforcement.
+
+### Overview
+
+Roles can be marked as public or private using the `isPublic` field:
+- **Public roles** (`isPublic: true` or `undefined`): Visible to all users viewing profiles
+- **Private roles** (`isPublic: false`): Hidden from public view, visible only to the role holder and space owners
+
+### Visibility Rules
+
+1. **Regular users viewing others**: See only public roles
+2. **Users viewing their own profile**: See ALL their roles (public + private)
+3. **Users in Account Settings**: See ALL their roles (public + private)
+4. **Space owners managing roles**: See ALL roles for any user (public + private)
+
+### Implementation
+
+**`useUserRoleDisplay` Hook** (`src/hooks/business/user/useUserRoleDisplay.ts`):
+
+```typescript
+export const useUserRoleDisplay = (
+  userAddress: string,
+  roles?: Role[],
+  includePrivateRoles: boolean = false
+) => {
+  const userRoles = useMemo(() => {
+    if (!roles) return [];
+    return roles.filter((r) =>
+      r.members.includes(userAddress) &&
+      (includePrivateRoles || r.isPublic !== false)
+    );
+  }, [roles, userAddress, includePrivateRoles]);
+
+  const availableRoles = useMemo(() => {
+    if (!roles) return [];
+    return roles.filter((r) =>
+      !r.members.includes(userAddress) &&
+      (includePrivateRoles || r.isPublic !== false)
+    );
+  }, [roles, userAddress, includePrivateRoles]);
+
+  return { userRoles, availableRoles };
+};
+```
+
+**Usage Examples**:
+
+```typescript
+// Regular user viewing another's profile - only public roles
+const { userRoles } = useUserRoleDisplay(targetAddress, roles, false);
+
+// User viewing their own profile - all roles
+const { userRoles } = useUserRoleDisplay(
+  targetAddress,
+  roles,
+  currentUser.address === targetAddress
+);
+
+// Space owner managing roles - all roles
+const { userRoles } = useUserRoleDisplay(targetAddress, roles, true);
+```
+
+### UI Integration
+
+**Visibility Toggle** (SpaceSettingsModal/Roles.tsx):
+- Eye icon for public roles (visible)
+- Eye-off icon for private roles (hidden)
+- Tooltip: "Make role invisible" / "Make role public"
+- Positioned before the delete button in role management
 
 ## Permission Enforcement
 
@@ -86,7 +166,7 @@ export function getUserPermissions(
   isSpaceOwner: boolean = false
 ): Permission[] {
   if (isSpaceOwner) {
-    return ['message:delete', 'message:pin', 'user:kick'];
+    return ['message:delete', 'message:pin', 'user:kick', 'mention:everyone'];
   }
 
   const permissions = new Set<Permission>();
@@ -130,6 +210,12 @@ export interface UseRoleManagementReturn {
   updateRoleDisplayName: (index: number, displayName: string) => void;
   toggleRolePermission: (index: number, permission: Permission) => void;
   updateRolePermissions: (index: number, permissions: Permission[]) => void;
+  toggleRolePublic: (index: number) => void;
+  deleteConfirmation: {
+    showModal: boolean;
+    setShowModal: (show: boolean) => void;
+    modalConfig?: any;
+  };
 }
 ```
 
@@ -137,14 +223,24 @@ export interface UseRoleManagementReturn {
 
 - Complete CRUD operations for role management
 - Real-time permission toggling with multiselect support
+- Role visibility toggling (public/private)
 - Automatic role ID generation using `crypto.randomUUID()`
+- New roles default to public (`isPublic: true`)
 - Validation preventing empty role names/tags
+- Confirmation modal for role deletion
 
 #### **`useUserRoleManagement`** (`src/hooks/business/user/useUserRoleManagement.ts`)
 
 - User-role assignment operations with immediate UI updates
 - Multi-role assignment support
 - Real-time role change reflection across the application
+
+#### **`useUserRoleDisplay`** (`src/hooks/business/user/useUserRoleDisplay.ts`)
+
+- Filters roles based on visibility settings (`isPublic`)
+- Returns `userRoles` (roles assigned to a user) and `availableRoles` (roles not assigned)
+- Accepts `includePrivateRoles` parameter to bypass visibility filtering
+- Used in UserProfile and Account Settings for role display
 
 ### UI Components
 
@@ -156,6 +252,7 @@ export interface UseRoleManagementReturn {
 
 - **Role Creation**: Add new roles with custom names, tags, and colors
 - **Permission Assignment**: Multiselect dropdown for all available permissions
+- **Visibility Toggle**: Eye/eye-off icon to control role visibility (public/private)
 - **Role Editing**: Inline editing of role properties
 - **Role Deletion**: Remove roles with automatic user unassignment
 - **Validation**: Prevents saving roles with empty required fields
@@ -169,7 +266,8 @@ export interface UseRoleManagementReturn {
   options={[
     { value: 'message:delete', label: 'Delete Messages' },
     { value: 'message:pin', label: 'Pin Messages' },
-    { value: 'user:kick', label: 'Kick Users' }
+    { value: 'user:kick', label: 'Kick Users' },
+    { value: 'mention:everyone', label: 'Mention Everyone' }
   ]}
   onChange={(perms) => updateRolePermissions(index, perms as Permission[])}
   multiple={true}
@@ -177,16 +275,38 @@ export interface UseRoleManagementReturn {
 />
 ```
 
+**Role Grid Layout** (4 columns):
+1. **Role Info**: @roleTag input and displayName badge
+2. **Permissions**: Multiselect dropdown for permissions
+3. **Visibility**: Eye/eye-off icon with tooltip
+4. **Delete**: Trash icon with confirmation modal
+
 #### **UserProfile Role Assignment**
 
 **Location**: `src/components/user/UserProfile.tsx`
 
 **Features**:
 
-- **Role Assignment**: Assign available space roles to users
-- **Role Removal**: Remove assigned roles from users
-- **Multi-Role Display**: Show all roles assigned to a user
+- **Role Assignment**: Assign available space roles to users (space owners only)
+- **Role Removal**: Remove assigned roles from users (space owners only)
+- **Multi-Role Display**: Show roles assigned to a user
+- **Visibility Filtering**: Respects role visibility settings
+  - Regular users: See only public roles of others
+  - Users viewing self: See all their roles (public + private)
+  - Space owners: See all roles for any user (public + private)
 - **Permission-Based Actions**: Show/hide action buttons based on permissions
+- **Conditional Display**: Hides entire "Roles" section if user has no visible roles
+
+#### **Account Settings Role Display**
+
+**Location**: `src/components/modals/SpaceSettingsModal/Account.tsx`
+
+**Features**:
+
+- **User's Roles Display**: Shows all roles assigned to the current user
+- **Full Visibility**: User always sees all their roles (public + private)
+- **Read-Only View**: Roles displayed as badges, not editable
+- **Integrated Settings**: Part of the user's account settings in Space Settings modal
 
 ## Security and Protection Systems
 
@@ -274,11 +394,14 @@ if (spaceId != channelId) {
 - **Message Deletion**: Role-based delete permissions working in regular channels
 - **Message Pinning**: Role-based pin permissions with proper UI integration
 - **User Kicking**: Complete kick system with space owner protection
+- **Mention Everyone**: Role-based @everyone mention permissions
 - **Role Management**: Full CRUD operations with sophisticated UI
+- **Role Visibility**: Public/private role toggle with filtering in UserProfile and Account Settings
 - **Multi-Role Support**: Users can have multiple roles with accumulated permissions
 
 ### ⚠️ Known Limitations
 
+- **Visibility is Cosmetic**: Role visibility is UI-only; custom clients can bypass filters
 - **Mixed Enforcement Patterns**: Some areas use direct role checks instead of `hasPermission()`
 - **Incomplete Server Validation**: Not all permission checks have full server-side enforcement
 - **Limited Permission Scope**: Only covers basic moderation, not channel/space management
@@ -377,6 +500,8 @@ export type Role = {
 - **Space owner behavior**: Verify owners always have all permissions
 - **Permission boundaries**: Test regular vs read-only channel isolation
 - **Security**: Verify space owner protection cannot be bypassed
+- **Role visibility**: Test visibility filtering for different user contexts (self, others, space owners)
+- **Private roles**: Verify users can always see their own private roles in all views
 
 ## Related Documentation
 
@@ -385,5 +510,5 @@ export type Role = {
 
 ---
 
-_Last Updated: 2025-09-11_  
-_Implementation Status: Core features complete, expansion opportunities identified_
+_Last Updated: 2025-01-07_
+_Implementation Status: Core features complete including role visibility system, expansion opportunities identified_

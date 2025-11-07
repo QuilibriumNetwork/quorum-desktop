@@ -159,6 +159,7 @@ const SpaceSettingsModal: React.FunctionComponent<{
     updateRoleDisplayName,
     toggleRolePermission,
     updateRolePermissions,
+    toggleRolePublic,
     deleteConfirmation,
   } = useRoleManagement({
     initialRoles: space?.roles || [],
@@ -478,6 +479,7 @@ const SpaceSettingsModal: React.FunctionComponent<{
                           updateRoleTag={updateRoleTag}
                           updateRoleDisplayName={updateRoleDisplayName}
                           updateRolePermissions={updateRolePermissions}
+                          toggleRolePublic={toggleRolePublic}
                           roleValidationError={roleValidationError}
                           onSave={saveChanges}
                           isSaving={isSaving}

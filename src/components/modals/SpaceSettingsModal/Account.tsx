@@ -78,8 +78,8 @@ const Account: React.FunctionComponent<AccountProps> = ({
     error: leaveError,
   } = useSpaceLeaving();
 
-  // Get current user's roles
-  const { userRoles } = useUserRoleDisplay(userInfo?.address || '', roles);
+  // Get current user's roles (including private roles since user is viewing their own account)
+  const { userRoles } = useUserRoleDisplay(userInfo?.address || '', roles, true);
 
   return (
     <>

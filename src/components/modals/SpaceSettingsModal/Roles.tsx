@@ -9,6 +9,7 @@ interface Role {
   displayName: string;
   color: string;
   permissions: Permission[];
+  isPublic?: boolean;
 }
 
 interface RolesProps {
@@ -18,6 +19,7 @@ interface RolesProps {
   updateRoleTag: (index: number, tag: string) => void;
   updateRoleDisplayName: (index: number, name: string) => void;
   updateRolePermissions: (index: number, permissions: Permission[]) => void;
+  toggleRolePublic: (index: number) => void;
   roleValidationError: string;
   onSave: () => void;
   isSaving: boolean;
@@ -30,6 +32,7 @@ const Roles: React.FunctionComponent<RolesProps> = ({
   updateRoleTag,
   updateRoleDisplayName,
   updateRolePermissions,
+  toggleRolePublic,
   roleValidationError,
   onSave,
   isSaving,
@@ -84,7 +87,7 @@ const Roles: React.FunctionComponent<RolesProps> = ({
                 className="modal-list-item text-main px-3"
               >
                 <div
-                  className="flex flex-col gap-4 py-4 sm:grid sm:grid-cols-[1fr_1fr_auto]"
+                  className="flex flex-col gap-4 py-4 sm:grid sm:grid-cols-[1fr_1fr_auto_auto]"
                 >
                   {/* Cell 1: Role tag and name */}
                   <div className="flex flex-col">
@@ -175,12 +178,33 @@ const Roles: React.FunctionComponent<RolesProps> = ({
                     </div>
                   </div>
 
-                  {/* Cell 3: Delete button */}
+                  {/* Cell 3: Visibility toggle */}
+                  <div className="flex flex-col">
+                    <div className="flex justify-start sm:justify-end">
+                      <Tooltip
+                        id={`toggle-visibility-role-${i}`}
+                        content={r.isPublic !== false ? t`Make role invisible` : t`Make role public`}
+                        place="left"
+                        showOnTouch={false}
+                      >
+                        <Icon
+                          name={r.isPublic !== false ? "eye" : "eye-off"}
+                          className="cursor-pointer text-main hover:text-main-hover"
+                          onClick={() => toggleRolePublic(i)}
+                        />
+                      </Tooltip>
+                    </div>
+                    <div className="mt-1">
+                      {/* Empty space for alignment */}
+                    </div>
+                  </div>
+
+                  {/* Cell 4: Delete button */}
                   <div className="flex flex-col">
                     <div className="flex justify-start sm:justify-end">
                       <Tooltip
                         id={`delete-role-${i}`}
-                        content={t`Delete Role`}
+                        content={t`Delete role`}
                         place="left"
                         showOnTouch={false}
                       >

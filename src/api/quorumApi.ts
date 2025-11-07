@@ -9,6 +9,7 @@ export type Role = {
   color: string;
   members: string[];
   permissions: Permission[];
+  isPublic?: boolean; // Whether the role is visible to other users in UserProfile (defaults to true)
 };
 
 export type Emoji = {

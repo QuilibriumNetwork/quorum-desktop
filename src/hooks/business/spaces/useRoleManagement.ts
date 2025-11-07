@@ -18,6 +18,7 @@ export interface UseRoleManagementReturn {
   updateRoleDisplayName: (index: number, displayName: string) => void;
   toggleRolePermission: (index: number, permission: Permission) => void;
   updateRolePermissions: (index: number, permissions: Permission[]) => void;
+  toggleRolePublic: (index: number) => void;
   deleteConfirmation: {
     showModal: boolean;
     setShowModal: (show: boolean) => void;
@@ -45,6 +46,7 @@ export const useRoleManagement = (
       color: 'rgb(var(--success))',
       members: [],
       permissions: [],
+      isPublic: true, // New roles are public by default
     };
 
     setRoles((prev) => [...prev, newRole]);
@@ -121,6 +123,18 @@ export const useRoleManagement = (
     []
   );
 
+  const toggleRolePublic = useCallback(
+    (index: number) => {
+      setRoles((prev) =>
+        prev.map((role, i) => {
+          if (i !== index) return role;
+          return { ...role, isPublic: role.isPublic === false };
+        })
+      );
+    },
+    []
+  );
+
   return {
     roles,
     setRoles,
@@ -130,6 +144,7 @@ export const useRoleManagement = (
     updateRoleDisplayName,
     toggleRolePermission,
     updateRolePermissions,
+    toggleRolePublic,
     deleteConfirmation,
   };
 };

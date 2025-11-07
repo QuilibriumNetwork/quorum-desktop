@@ -38,7 +38,8 @@ const UserProfile: React.FunctionComponent<{
   });
   const { userRoles, availableRoles } = useUserRoleDisplay(
     props.user.address,
-    props.roles
+    props.roles,
+    props.canEditRoles || currentPasskeyInfo?.address === props.user.address // Space owners and users viewing their own profile see all roles including private ones
   );
 
   // Permission checking
