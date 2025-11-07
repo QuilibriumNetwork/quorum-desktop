@@ -251,8 +251,8 @@ export function MessageEditTextarea({
         console.time('[Edit] Async: 1. Get conversation info');
 
         // Get conversation info for saveMessage
-        let conversationIcon = DefaultImages.UNKNOWN_USER;
-        let conversationDisplayName = t`Unknown User`;
+        let conversationIcon: string = DefaultImages.UNKNOWN_USER;
+        let conversationDisplayName: string = t`Unknown User`;
 
         try {
           const conversationId = `${currentSpaceId}/${currentChannelId}`;
