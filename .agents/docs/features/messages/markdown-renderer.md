@@ -45,10 +45,13 @@ Messages automatically detect markdown patterns and render with enhanced formatt
 ## Key Files
 
 - `src/components/message/MessageMarkdownRenderer.tsx` - Main renderer component
+- `src/components/message/MarkdownToolbar.tsx` - Discord-style formatting toolbar
 - `src/utils/youtubeUtils.ts` - Centralized YouTube URL utilities
 - `src/utils/codeFormatting.ts` - Code block analysis utilities
+- `src/utils/markdownFormatting.ts` - Markdown formatting functions for toolbar
 - `src/hooks/business/messages/useMessageFormatting.ts` - Pattern detection & shouldUseMarkdown()
 - `src/components/message/Message.tsx` - Integration point (markdown vs token-based routing)
+- `src/config/features.ts` - Feature flag configuration (ENABLE_MARKDOWN)
 
 ## Architecture
 
@@ -138,6 +141,66 @@ a: ({ href, children, ...props }: any) => {
 - `YouTubeEmbed` - Video embed integration
 - `youtubeUtils` - Centralized YouTube URL processing
 
+## Markdown Formatting Toolbar
+
+**Location**: `src/components/message/MarkdownToolbar.tsx`
+
+A Discord-style floating toolbar that appears above selected text in the MessageComposer, providing quick access to markdown formatting options.
+
+### **Features**
+- **Heading:** Insert H3 heading (`### Text`)
+- **Bold:** Toggle bold formatting (`**text**`)
+- **Italic:** Toggle italic formatting (`*text*`)
+- **Strikethrough:** Toggle strikethrough (`~~text~~`)
+- **Code:** Wrap in inline code (`` `code` ``)
+- **Blockquote:** Insert blockquote (`> quote`)
+
+### **Behavior**
+- Appears on text selection in MessageComposer
+- Positioned above selected text (floating)
+- One-click formatting application
+- Integrates with `src/utils/markdownFormatting.ts` utility functions
+
+### **Implementation**
+```tsx
+<MarkdownToolbar
+  visible={showToolbar}
+  position={{ top: toolbarTop, left: toolbarLeft }}
+  onFormat={handleFormat}
+/>
+```
+
+## Feature Flag Configuration
+
+**File**: `src/config/features.ts`
+
+The markdown rendering feature can be toggled via the `ENABLE_MARKDOWN` flag:
+
+```typescript
+/**
+ * Markdown Rendering Feature
+ * Controls markdown rendering and formatting toolbar in messages.
+ * When disabled, messages will use plain text rendering.
+ */
+export const ENABLE_MARKDOWN = false; // Default: disabled
+```
+
+### **What the Flag Controls**
+- Markdown renderer (MessageMarkdownRenderer)
+- Markdown formatting toolbar (MarkdownToolbar)
+- Pattern detection for markdown syntax
+- When `false`: Messages use plain text/token-based rendering
+
+### **Usage**
+Import and check the flag before enabling markdown features:
+```typescript
+import { ENABLE_MARKDOWN } from '@/config/features';
+
+if (ENABLE_MARKDOWN && formatting.shouldUseMarkdown()) {
+  // Use markdown renderer
+}
+```
+
 ## Integration Example
 
 ```tsx
@@ -159,5 +222,6 @@ if (contentData.type === 'post') {
 
 
 ---
-**Last Updated**: 2025-01-20
+**Last Updated**: 2025-11-07
 **Performance Optimization**: Complete
+**Recent Additions**: MarkdownToolbar component, feature flag configuration
