@@ -41,28 +41,28 @@ msgid "Your profile image size must be {maxFileSize} or less and must be a PNG, 
 msgstr "Your profile image size must be {maxFileSize} or less and must be a PNG, JPG, or JPEG file extension."
 
 #. js-lingui-explicit-id
-#: src/components/message/MessageComposer.native.tsx:238
-#: src/components/message/MessageComposer.tsx:337
-msgid "Replying to {user}"
-msgstr "Replying to {user}"
-
-#. js-lingui-explicit-id
 #: src/components/message/MessageComposer.native.tsx:134
 msgid "Failed to process image"
 msgstr "Failed to process image"
 
 #. js-lingui-explicit-id
-#: src/components/message/Message.tsx:261
+#: src/components/message/MessageComposer.native.tsx:238
+#: src/components/message/MessageComposer.tsx:338
+msgid "Replying to {user}"
+msgstr "Replying to {user}"
+
+#. js-lingui-explicit-id
+#: src/components/message/Message.tsx:262
 msgid "{user} has joined"
 msgstr "{user} has joined"
 
 #. js-lingui-explicit-id
-#: src/components/message/Message.tsx:268
+#: src/components/message/Message.tsx:269
 msgid "{user} has left"
 msgstr "{user} has left"
 
 #. js-lingui-explicit-id
-#: src/components/message/Message.tsx:275
+#: src/components/message/Message.tsx:276
 msgid "{user} has been kicked"
 msgstr "{user} has been kicked"
 
@@ -72,8 +72,8 @@ msgid "Send a message to {user}"
 msgstr "Send a message to {user}"
 
 #: src/components/modals/CreateSpaceModal.tsx:136
-msgid " Default Space settings provide the most typical chat experience, but for higher privacy guarantees, review the Advanced Settings."
-msgstr " Default Space settings provide the most typical chat experience, but for higher privacy guarantees, review the Advanced Settings."
+#~ msgid " Default Space settings provide the most typical chat experience, but for higher privacy guarantees, review the Advanced Settings."
+#~ msgstr " Default Space settings provide the most typical chat experience, but for higher privacy guarantees, review the Advanced Settings."
 
 #: src/components/Maintenance.native.tsx:61
 msgid " for updates."
@@ -84,7 +84,7 @@ msgstr " for updates."
 msgid "'everyone' is a reserved name."
 msgstr "'everyone' is a reserved name."
 
-#: src/components/message/Message.tsx:616
+#: src/components/message/Message.tsx:617
 msgid "(edited)"
 msgstr "(edited)"
 
@@ -237,7 +237,7 @@ msgstr "Add Group"
 msgid "Add Role"
 msgstr "Add Role"
 
-#: src/components/message/MessageComposer.tsx:493
+#: src/components/message/MessageComposer.tsx:494
 msgid "add sticker"
 msgstr "add sticker"
 
@@ -263,7 +263,7 @@ msgstr "Addresses start with \"Qm\"."
 msgid "Adjust security-related settings, which may impact user  experience but increase the security of your Quorum account."
 msgstr "Adjust security-related settings, which may impact user  experience but increase the security of your Quorum account."
 
-#: src/components/modals/CreateSpaceModal.tsx:197
+#: src/components/modals/CreateSpaceModal.tsx:134
 msgid "Advanced Settings"
 msgstr "Advanced Settings"
 
@@ -349,7 +349,7 @@ msgstr "Are you sure you want to unpin this message?"
 msgid "As a space owner, you need to assign yourself a role with delete permissions to delete other users' messages. <0><1>Learn more</1></0>"
 msgstr "As a space owner, you need to assign yourself a role with delete permissions to delete other users' messages. <0><1>Learn more</1></0>"
 
-#: src/components/message/MessageComposer.tsx:461
+#: src/components/message/MessageComposer.tsx:462
 msgid "attach image"
 msgstr "attach image"
 
@@ -378,7 +378,7 @@ msgstr "Camera"
 msgid "Camera permission is required to take photos"
 msgstr "Camera permission is required to take photos"
 
-#: src/components/message/MessageEditTextarea.tsx:362
+#: src/components/message/MessageEditTextarea.tsx:363
 #: src/components/modals/ConfirmationModal.native.tsx:27
 #: src/components/modals/ConfirmationModal.tsx:29
 #: src/components/modals/ConversationSettingsModal.tsx:63
@@ -571,11 +571,11 @@ msgstr "Create a Space"
 msgid "Create New Account"
 msgstr "Create New Account"
 
-#: src/components/modals/CreateSpaceModal.tsx:208
+#: src/components/modals/CreateSpaceModal.tsx:209
 msgid "Create Space"
 msgstr "Create Space"
 
-#: src/components/modals/CreateSpaceModal.tsx:212
+#: src/components/modals/CreateSpaceModal.tsx:213
 msgid "Creating Space..."
 msgstr "Creating Space..."
 
@@ -604,6 +604,10 @@ msgstr "Decrypted Space with no known hub key"
 #: src/components/modals/SpaceSettingsModal/General.tsx:234
 msgid "Default Channel"
 msgstr "Default Channel"
+
+#: src/components/modals/CreateSpaceModal.tsx:146
+msgid "Default Space settings provide the most typical chat experience, but for higher privacy guarantees, review these advanced settings."
+msgstr "Default Space settings provide the most typical chat experience, but for higher privacy guarantees, review these advanced settings."
 
 #: src/hooks/business/messages/useMessageActions.ts:121
 msgid "delete"
@@ -676,16 +680,15 @@ msgstr "Delete Space"
 msgid "Delete this space"
 msgstr "Delete this space"
 
-#: src/components/modals/CreateSpaceModal.tsx:118
 #: src/components/modals/SpaceSettingsModal/General.tsx:153
 msgid "Describe what this Space is about..."
 msgstr "Describe what this Space is about..."
 
 #: src/components/modals/CreateSpaceModal.tsx:108
-msgid "Description"
-msgstr "Description"
+#~ msgid "Description"
+#~ msgstr "Description"
 
-#: src/components/modals/CreateSpaceModal.tsx:125
+#: src/components/modals/CreateSpaceModal.tsx:116
 msgid "Description must be {MAX_DESCRIPTION_LENGTH} characters or less"
 msgstr "Description must be {MAX_DESCRIPTION_LENGTH} characters or less"
 
@@ -777,9 +780,17 @@ msgstr "Encryption state is missing required template data. Please generate a pu
 msgid "Encryption state is missing state data. Please generate a public invite link first."
 msgstr "Encryption state is missing state data. Please generate a public invite link first."
 
+#: src/components/modals/CreateSpaceModal.tsx:109
+msgid "Enter a description for your Space (optional)"
+msgstr "Enter a description for your Space (optional)"
+
 #: src/components/modals/CreateSpaceModal.tsx:88
-msgid "Enter a name for your new Space"
-msgstr "Enter a name for your new Space"
+#~ msgid "Enter a name for your new Space"
+#~ msgstr "Enter a name for your new Space"
+
+#: src/components/modals/CreateSpaceModal.tsx:88
+msgid "Enter a name for your Space"
+msgstr "Enter a name for your Space"
 
 #: src/components/modals/NewDirectMessageModal.tsx:94
 msgid "Enter a user's address to start messaging them."
@@ -1233,19 +1244,19 @@ msgstr "Mention Everyone"
 msgid "Message actions"
 msgstr "Message actions"
 
-#: src/components/message/Message.tsx:599
+#: src/components/message/Message.tsx:600
 msgid "Message does not have a valid signature, this may not be from the sender"
 msgstr "Message does not have a valid signature, this may not be from the sender"
 
-#: src/components/message/MessageComposer.tsx:125
+#: src/components/message/MessageComposer.tsx:126
 msgid "Message..."
 msgstr "Message..."
 
-#: src/components/message/MessageComposer.tsx:510
+#: src/components/message/MessageComposer.tsx:511
 msgid "Messages are NOT signed!"
 msgstr "Messages are NOT signed!"
 
-#: src/components/message/MessageComposer.tsx:511
+#: src/components/message/MessageComposer.tsx:512
 msgid "Messages are signed!"
 msgstr "Messages are signed!"
 
@@ -1336,8 +1347,8 @@ msgid "Open video on YouTube"
 msgstr "Open video on YouTube"
 
 #: src/components/modals/CreateSpaceModal.tsx:108
-msgid "optional"
-msgstr "optional"
+#~ msgid "optional"
+#~ msgstr "optional"
 
 #: src/components/modals/AddSpaceModal.tsx:283
 msgid "OR"
@@ -1420,12 +1431,12 @@ msgstr "Pin Messages"
 msgid "Pin to top"
 msgstr "Pin to top"
 
-#: src/components/message/Message.tsx:582
+#: src/components/message/Message.tsx:583
 msgid "Pinned"
 msgstr "Pinned"
 
 #. placeholder {0}: mapSenderToUser(message.pinnedBy)?.displayName || message.pinnedBy
-#: src/components/message/Message.tsx:581
+#: src/components/message/Message.tsx:582
 msgid "Pinned by {0}"
 msgstr "Pinned by {0}"
 
@@ -1442,7 +1453,7 @@ msgstr "Pinned!"
 msgid "PNG, JPG or JPEG • Optimal ratio 1:1"
 msgstr "PNG, JPG or JPEG • Optimal ratio 1:1"
 
-#: src/components/message/MessageEditTextarea.tsx:354
+#: src/components/message/MessageEditTextarea.tsx:355
 msgid "Press Enter to save, Shift+Enter for new line, Esc to cancel"
 msgstr "Press Enter to save, Shift+Enter for new line, Esc to cancel"
 
@@ -1459,7 +1470,7 @@ msgstr "Privacy/Security"
 msgid "Private key saved to selected folder"
 msgstr "Private key saved to selected folder"
 
-#: src/components/message/MessageComposer.tsx:316
+#: src/components/message/MessageComposer.tsx:317
 msgid "Processing image... This may take a moment for large files."
 msgstr "Processing image... This may take a moment for large files."
 
@@ -1529,12 +1540,12 @@ msgstr "Replies"
 msgid "Reply"
 msgstr "Reply"
 
-#: src/components/modals/CreateSpaceModal.tsx:144
+#: src/components/modals/CreateSpaceModal.tsx:154
 #: src/components/modals/SpaceSettingsModal/General.tsx:261
 msgid "Require Message Signing"
 msgstr "Require Message Signing"
 
-#: src/components/modals/CreateSpaceModal.tsx:148
+#: src/components/modals/CreateSpaceModal.tsx:158
 msgid "Require messages sent in this Space to be signed by the sender. Technically speaking, this makes the messages in this Space non-repudiable."
 msgstr "Require messages sent in this Space to be signed by the sender. Technically speaking, this makes the messages in this Space non-repudiable."
 
@@ -1547,7 +1558,7 @@ msgstr "Reset"
 msgid "Roles"
 msgstr "Roles"
 
-#: src/components/message/MessageEditTextarea.tsx:377
+#: src/components/message/MessageEditTextarea.tsx:378
 #: src/components/modals/ConversationSettingsModal.tsx:240
 msgid "Save"
 msgstr "Save"
@@ -1735,8 +1746,8 @@ msgid "Space name"
 msgstr "Space name"
 
 #: src/components/modals/CreateSpaceModal.tsx:90
-msgid "Space Name"
-msgstr "Space Name"
+#~ msgid "Space Name"
+#~ msgstr "Space Name"
 
 #: src/components/modals/SpaceSettingsModal/General.tsx:144
 msgid "Space name is required"
@@ -1807,7 +1818,7 @@ msgstr "The page you're looking for doesn't exist or has been moved. Let's get y
 msgid "This action cannot be undone and will permanently remove all the Space settings. To delete the Space, you must first delete all Channels."
 msgstr "This action cannot be undone and will permanently remove all the Space settings. To delete the Space, you must first delete all Channels."
 
-#: src/components/modals/CreateSpaceModal.tsx:111
+#: src/components/modals/CreateSpaceModal.tsx:121
 #: src/components/modals/SpaceSettingsModal/General.tsx:166
 msgid "This description will be visible on invites and shown to people when they look up or join your Space using an invite link."
 msgstr "This description will be visible on invites and shown to people when they look up or join your Space using an invite link."
@@ -1936,13 +1947,13 @@ msgstr "Unknown time"
 #: src/components/direct/DirectMessage.tsx:131
 #: src/components/direct/DirectMessage.tsx:146
 #: src/components/direct/DirectMessage.tsx:333
-#: src/components/message/MessageComposer.tsx:411
-#: src/components/message/MessageComposer.tsx:418
-#: src/components/message/MessageEditTextarea.tsx:224
-#: src/components/message/MessageEditTextarea.tsx:259
-#: src/components/message/MessageEditTextarea.tsx:266
-#: src/components/message/MessageEditTextarea.tsx:270
-#: src/components/message/MessageEditTextarea.tsx:276
+#: src/components/message/MessageComposer.tsx:412
+#: src/components/message/MessageComposer.tsx:419
+#: src/components/message/MessageEditTextarea.tsx:225
+#: src/components/message/MessageEditTextarea.tsx:260
+#: src/components/message/MessageEditTextarea.tsx:267
+#: src/components/message/MessageEditTextarea.tsx:271
+#: src/components/message/MessageEditTextarea.tsx:277
 #: src/components/message/MessagePreview.tsx:41
 #: src/components/message/PinnedMessagesPanel.tsx:99
 #: src/components/message/PinnedMessagesPanel.tsx:112
@@ -2013,8 +2024,8 @@ msgstr "Upload an avatar for this Space - PNG or JPG - Optimal ratio 1:1"
 #~ msgstr "Upload an image and choose a name for your Space."
 
 #: src/components/modals/CreateSpaceModal.tsx:131
-msgid "Upload an image, choose a name, and optionally add a description for your Space."
-msgstr "Upload an image, choose a name, and optionally add a description for your Space."
+#~ msgid "Upload an image, choose a name, and optionally add a description for your Space."
+#~ msgstr "Upload an image, choose a name, and optionally add a description for your Space."
 
 #: src/components/modals/SpaceSettingsModal/Emojis.tsx:59
 msgid "Upload Emoji"
@@ -2101,7 +2112,7 @@ msgstr "When someone mentions you directly"
 msgid "When someone replies to your messages"
 msgstr "When someone replies to your messages"
 
-#: src/components/modals/CreateSpaceModal.tsx:172
+#: src/components/modals/CreateSpaceModal.tsx:182
 msgid "When this setting is enabled, invite links will automatically allow a user to join your Space. When it is not enabled, users following an invite link will send you a request to join your Space that you must manually approve. Public links require some key material to be present in the link – be aware that possession of a public Space link can allow anyone with the link to read messages on the Space for the duration of the link being valid."
 msgstr "When this setting is enabled, invite links will automatically allow a user to join your Space. When it is not enabled, users following an invite link will send you a request to join your Space that you must manually approve. Public links require some key material to be present in the link – be aware that possession of a public Space link can allow anyone with the link to read messages on the Space for the duration of the link being valid."
 
@@ -2138,7 +2149,7 @@ msgstr "You can change this later for this conversation by clicking the lock ico
 msgid "You cannot delete a group that contains channels. Delete all {channelCount} channels in this group first."
 msgstr "You cannot delete a group that contains channels. Delete all {channelCount} channels in this group first."
 
-#: src/components/message/MessageComposer.tsx:295
+#: src/components/message/MessageComposer.tsx:296
 #: src/components/space/Channel.tsx:774
 msgid "You cannot post in this channel"
 msgstr "You cannot post in this channel"
