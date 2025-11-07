@@ -56,6 +56,7 @@ import { useMessageDB } from '../context/useMessageDB';
 import { DefaultImages } from '../../utils';
 import { EditHistoryModal } from '../modals/EditHistoryModal';
 import { MessageEditTextarea } from './MessageEditTextarea';
+import { ENABLE_MARKDOWN } from '../../config/features';
 
 // Utility function for robust GIF detection
 const createGifDetector = (url: string, isLargeGif?: boolean) => {
@@ -643,8 +644,8 @@ export const Message = React.memo(
                 }
 
                 if (contentData.type === 'post') {
-                  // Check if we should use markdown rendering
-                  if (formatting.shouldUseMarkdown()) {
+                  // Check if we should use markdown rendering (disabled for security review)
+                  if (ENABLE_MARKDOWN && formatting.shouldUseMarkdown()) {
                     return (
                       <Container className="message-post-content break-words">
                         <MessageMarkdownRenderer
