@@ -205,6 +205,8 @@ Create documentation when:
 ```markdown
 # Feature Name
 
+> **⚠️ AI-Generated**: May contain errors. Verify before use.
+
 ## Overview
 Brief description of the feature
 
@@ -226,6 +228,8 @@ _Created: YYYY-MM-DD_
 ```markdown
 # Bug Description
 
+> **⚠️ AI-Generated**: May contain errors. Verify before use.
+
 ## Symptoms
 What goes wrong
 
@@ -242,6 +246,28 @@ How to avoid in future
 
 _Created: YYYY-MM-DD_
 ```
+
+### AI-Generated Documentation
+
+**IMPORTANT**: All documentation created by AI agents MUST include a warning disclaimer immediately below the title:
+
+```markdown
+# Document Title
+
+> **⚠️ AI-Generated**: May contain errors. Verify before use.
+
+## Overview
+...
+```
+
+**Why**: AI-generated documentation may contain inaccuracies or outdated information. The warning helps developers know to verify critical details before relying on the documentation.
+
+**Applies to**:
+- ✅ All docs in `.agents/` created by AI
+- ✅ Feature documentation in `docs/features/` created by AI
+- ✅ Bug reports in `bugs/` created by AI
+- ✅ Architecture guides created by AI
+- ❌ Human-written or human-verified documentation (remove the warning after verification)
 
 ### Naming Conventions
 
@@ -487,4 +513,4 @@ cmd.exe /c "cd /d D:\GitHub\Quilibrium\quorum-desktop && yarn lint"
 
 ---
 
-_Created: 2025-10-08_
+_Created: 2025-10-08 | Last updated: 2025-11-07_
