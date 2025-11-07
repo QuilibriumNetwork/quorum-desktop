@@ -87,13 +87,13 @@ This is the main index for all documentation, bug reports, and task management.
 
 ### Pending Tasks
 
+- [ClickToCopyContent Component Analysis](tasks/click-to-copy-content-analysis.md)
 - [Combined Text + Image Messages](tasks/combined-text-image-messages.md)
 - [Conversation Deletion State Synchronization](tasks/conversation-deletion-state-sync.md)
 - [Device Identification Improvement](tasks/device-identification-improvement.md)
 - [Docusaurus Developer Documentation Blueprint](tasks/docusaurus-blueprint-v2.md)
 - [Edit Message Feature](tasks/edit-message-feature.md)
 - [Implement Background Sync Queue for User Settings and Async Operations](tasks/background-sync-queue.md)
-- [Message Highlight System - Complete Analysis & Recommendations](tasks/message-highlight-system-optimization.md)
 - [Server Folders - Discord-Style Grouping Feature](tasks/server-folders-discord-style.md)
 - [Task: Implement Delete Public Invite Link Feature](tasks/delete-public-invite-link.md)
 - [Test Suite Implementation Plan for Quorum Desktop](tasks/test-suite-plan.md)
@@ -104,6 +104,7 @@ This is the main index for all documentation, bug reports, and task management.
 ### .Archived
 - [Font Size Management Analysis & Recommendations](tasks/.archived/font-size-management-analysis-2025.md)
 - [Modal System Consolidation via Route Wrapper Component](tasks/.archived/modal-system-consolidation.md)
+- [Research: Mobile Markdown Formatting Options](tasks/.archived/markdown-toolbar-editor_mobile.md)
 - [Search Performance Optimization - Architecture Analysis Report](tasks/.archived/search-performance-optimization_ANALYSIS.md)
 - [Search Performance Optimization - Executive Summary](tasks/.archived/search-performance-analysis_SUMMARY.md)
 - [Shared Git Hooks Setup](tasks/.archived/shared-git-hooks-setup.md)
@@ -170,11 +171,13 @@ This is the main index for all documentation, bug reports, and task management.
 - [Implement Per-Space Display Names and Avatars with Account Section](tasks/.done/per-space-display-name-avatar.md)
 - [Implementation Plan: Repository Restructure for Cross-Platform Development](tasks/.done/implementation-plan-repo-restructure.md)
 - [Lazy Loading Implementation for Message Lists](tasks/.done/lazy-loading-implementation.md)
+- [Markdown Toolbar Editor](tasks/.done/markdown-toolbar-editor.md)
 - [Mention Counts Performance Optimization](tasks/.done/mention-counts-performance-optimization.md)
 - [Mention Highlight Duration - Extended to 60 Seconds](tasks/.done/mention-highlight-60s-duration.md)
 - [Mention Notification Settings - Phase 4](tasks/.done/mention-notification-settings-phase4.md)
 - [Mention Notification System - Critical Race Condition Fix](tasks/.done/mention-notification-ux-improvements.md)
 - [Message Handling Report](tasks/.done/messages-report.md)
+- [Message Highlight System - Complete Analysis & Recommendations](tasks/.done/message-highlight-system-optimization.md)
 - [Message Markdown Support Implementation](tasks/.done/message-markdown-support.md)
 - [MessageDB Circular Dependency Status](tasks/.done/messagedb-circular-dependecy-status.md)
 - [MessageDB.tsx Refactoring Analysis and TAsk](tasks/.done/DONE_messagedb-refactoring.md)
@@ -211,4 +214,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2025-10-26 15:03:37
+**Last Updated**: 2025-11-07 11:40:05
