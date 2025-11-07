@@ -1,6 +1,7 @@
 import React, { useMemo, useCallback } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import remarkBreaks from 'remark-breaks';
 import rehypeRaw from 'rehype-raw';
 import { ScrollContainer } from '../primitives';
 import ClickToCopyContent from '../ui/ClickToCopyContent';
@@ -465,7 +466,7 @@ export const MessageMarkdownRenderer: React.FC<MessageMarkdownRendererProps> = (
   return (
     <div className={`break-words min-w-0 max-w-full overflow-hidden ${className || ''}`} onClick={handleClick}>
       <ReactMarkdown
-        remarkPlugins={[remarkGfm]}
+        remarkPlugins={[remarkGfm, remarkBreaks]}
         rehypePlugins={[rehypeRaw]}
         components={components}
       >
