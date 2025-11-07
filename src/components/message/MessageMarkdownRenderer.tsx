@@ -2,10 +2,9 @@ import React, { useMemo, useCallback } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import remarkBreaks from 'remark-breaks';
-import rehypeRaw from 'rehype-raw';
 import { ScrollContainer } from '../primitives';
 import ClickToCopyContent from '../ui/ClickToCopyContent';
-import { YouTubeEmbed } from '../ui/YouTubeEmbed';
+import { YouTubeFacade } from '../ui/YouTubeFacade';
 import {
   extractCodeContent,
   shouldUseScrollContainer,
@@ -13,8 +12,8 @@ import {
 } from '../../utils/codeFormatting';
 import {
   isYouTubeURL,
-  convertToYouTubeEmbedURL,
   replaceYouTubeURLsInText,
+  extractYouTubeVideoId,
   YOUTUBE_URL_DETECTION_REGEX
 } from '../../utils/youtubeUtils';
 import type { Role } from '../../api/quorumApi';
@@ -66,22 +65,38 @@ const processURLs = (text: string): string => {
         return url; // Don't modify - already in angle bracket autolink
       }
 
-      return isYouTubeURL(url) ? url : `[${url}](${url})`;
+      // Convert ALL URLs to markdown links (including YouTube URLs)
+      return `[${url}](${url})`;
     });
   });
 };
 
 const processStandaloneYouTubeUrls = (text: string): string => {
-  return replaceYouTubeURLsInText(text, (url) => {
-    // Check if URL is on its own line (standalone)
-    const lines = text.split('\n');
-    const isStandalone = lines.some(line => line.trim() === url);
+  // Split text into lines first
+  const lines = text.split('\n');
 
-    if (isStandalone) {
-      return `<div data-youtube-url="${url}" class="youtube-placeholder"></div>`;
-    }
-    return url; // Keep inline YouTube URLs as-is for link processing
+  // Process each line independently
+  const processedLines = lines.map(line => {
+    const trimmedLine = line.trim();
+
+    // Check if this line contains a YouTube URL
+    return replaceYouTubeURLsInText(line, (url) => {
+      // Check if the line contains ONLY this URL (standalone)
+      const isStandalone = trimmedLine === url.trim();
+
+      if (isStandalone) {
+        const videoId = extractYouTubeVideoId(url);
+        if (videoId) {
+          // Use markdown image syntax as signal for YouTube embed
+          return `![youtube-embed](${videoId})`;
+        }
+      }
+      // Keep inline YouTube URLs as-is for link processing
+      return url;
+    });
   });
+
+  return processedLines.join('\n');
 };
 
 // Reusable copy button component - outside component to prevent re-creation
@@ -161,14 +176,12 @@ export const MessageMarkdownRenderer: React.FC<MessageMarkdownRendererProps> = (
 
     // Only style @everyone if the message has mentions.everyone = true
     if (hasEveryoneMention) {
-      processedText = processedText.replace(/@everyone\b/gi, '<span class="message-name-mentions-everyone">@everyone</span>');
+      processedText = processedText.replace(/@everyone\b/gi, '<<<MENTION_EVERYONE>>>');
     }
 
-    // Replace @<address> with styled, clickable @DisplayName
+    // Replace @<address> with safe placeholder token
     processedText = processedText.replace(/@<(Qm[a-zA-Z0-9]+)>/g, (match, address) => {
-      const user = mapSenderToUser(address);
-      const displayName = user?.displayName || address.substring(0, 8) + '...';
-      return `<span class="message-name-mentions-you cursor-pointer" data-user-address="${address}" data-user-display-name="${displayName || ''}" data-user-icon="${user?.userIcon || ''}">@${displayName}</span>`;
+      return `<<<MENTION_USER:${address}>>>`;
     });
 
     return processedText;
@@ -188,13 +201,13 @@ export const MessageMarkdownRenderer: React.FC<MessageMarkdownRendererProps> = (
       })
       .filter(Boolean) as Array<{ roleTag: string; displayName: string }>;
 
-    // Replace @roleTag with styled span
+    // Replace @roleTag with safe placeholder
     let processed = text;
     roleData.forEach(({ roleTag, displayName }) => {
       const regex = new RegExp(`@${roleTag}(?!\\w)`, 'g');
       processed = processed.replace(
         regex,
-        `<span class="message-name-mentions-you" title="${displayName}">@${roleTag}</span>`
+        `<<<MENTION_ROLE:${roleTag}:${displayName}>>>`
       );
     });
 
@@ -218,6 +231,55 @@ export const MessageMarkdownRenderer: React.FC<MessageMarkdownRendererProps> = (
 
   // Memoize components to prevent re-creation and YouTube component remounting
   const components = useMemo(() => ({
+    // Handle text nodes to render mentions safely
+    text: ({ children, ...props }: any) => {
+      const text = String(children);
+
+      // Handle @everyone mentions
+      if (text === '<<<MENTION_EVERYONE>>>') {
+        return (
+          <span className="message-name-mentions-everyone">
+            @everyone
+          </span>
+        );
+      }
+
+      // Handle user mentions
+      const mentionMatch = text.match(/^<<<MENTION_USER:(Qm[a-zA-Z0-9]+)>>>$/);
+      if (mentionMatch && mapSenderToUser && onUserClick) {
+        const address = mentionMatch[1];
+        const user = mapSenderToUser(address);
+        const displayName = user?.displayName || address.substring(0, 8) + '...';
+
+        return (
+          <span
+            className="message-name-mentions-you cursor-pointer"
+            data-user-address={address}
+            data-user-display-name={displayName}
+            data-user-icon={user?.userIcon || ''}
+          >
+            @{displayName}
+          </span>
+        );
+      }
+
+      // Handle role mentions
+      const roleMatch = text.match(/^<<<MENTION_ROLE:([^:]+):(.+)>>>$/);
+      if (roleMatch) {
+        const [, roleTag, displayName] = roleMatch;
+        return (
+          <span
+            className="message-name-mentions-you"
+            title={displayName}
+          >
+            @{roleTag}
+          </span>
+        );
+      }
+
+      return <>{children}</>;
+    },
+
     // Disable most headers but allow H3
     h1: () => null,
     h2: () => null,
@@ -230,26 +292,9 @@ export const MessageMarkdownRenderer: React.FC<MessageMarkdownRendererProps> = (
     h5: () => null,
     h6: () => null,
 
-    // Handle links - render YouTube embeds for YouTube URLs, regular links for others
+    // Handle links - render all as clickable links (including YouTube)
     a: ({ href, children, ...props }: any) => {
-      if (href && isYouTubeURL(href)) {
-        const embedUrl = convertToYouTubeEmbedURL(href);
-        if (embedUrl) {
-          return (
-            <YouTubeEmbed
-              src={embedUrl}
-              className="rounded-lg youtube-embed"
-              style={{
-                width: '100%',
-                maxWidth: 560,
-                aspectRatio: '16/9',
-              }}
-            />
-          );
-        }
-      }
-
-      // For non-YouTube links, render as regular clickable links
+      // Render ALL links (including YouTube) as clickable links
       if (href) {
         return (
           <a
@@ -266,6 +311,29 @@ export const MessageMarkdownRenderer: React.FC<MessageMarkdownRendererProps> = (
 
       // If no href, just render as plain text
       return <span>{children}</span>;
+    },
+
+    // Handle images - catch YouTube embeds marked with special alt text
+    img: ({ src, alt, ...props }: any) => {
+      // Handle YouTube embeds marked with special alt text
+      if (alt === 'youtube-embed' && src) {
+        return (
+          <div className="my-2">
+            <YouTubeFacade
+              videoId={src}
+              className="rounded-lg youtube-embed"
+              style={{
+                width: '100%',
+                maxWidth: 560,
+                aspectRatio: '16/9',
+              }}
+            />
+          </div>
+        );
+      }
+
+      // Regular images - render normally (or return null if images not supported)
+      return null; // or <img src={src} alt={alt} {...props} /> if you want image support
     },
 
     // Enhanced code block rendering with scroll and copy functionality
@@ -384,41 +452,62 @@ export const MessageMarkdownRenderer: React.FC<MessageMarkdownRendererProps> = (
       <hr className="border-default my-4" {...props} />
     ),
 
-    // Style paragraphs
-    p: ({ children, ...props }: any) => (
-      <p className="mb-2 last:mb-0" {...props}>
-        {children}
-      </p>
-    ),
-
-    // Handle YouTube placeholder divs
-    div: ({ children, className, 'data-youtube-url': youtubeUrl, ...props }: any) => {
-      if (className === 'youtube-placeholder' && youtubeUrl) {
-        if (isYouTubeURL(youtubeUrl)) {
-          const embedUrl = convertToYouTubeEmbedURL(youtubeUrl);
-          if (embedUrl) {
+    // Style paragraphs - process children to handle mentions
+    p: ({ children, ...props }: any) => {
+      // Process children recursively to find and replace mention placeholders
+      const processChild = (child: any): any => {
+        if (typeof child === 'string') {
+          // Handle @everyone mentions
+          if (child === '<<<MENTION_EVERYONE>>>') {
             return (
-              <div className="my-2">
-                <YouTubeEmbed
-                  src={embedUrl}
-                  className="rounded-lg youtube-embed"
-                  style={{
-                    width: '100%',
-                    maxWidth: 560,
-                    aspectRatio: '16/9',
-                  }}
-                />
-              </div>
+              <span className="message-name-mentions-everyone">
+                @everyone
+              </span>
+            );
+          }
+
+          // Handle user mentions
+          const mentionMatch = child.match(/^<<<MENTION_USER:(Qm[a-zA-Z0-9]+)>>>$/);
+          if (mentionMatch && mapSenderToUser && onUserClick) {
+            const address = mentionMatch[1];
+            const user = mapSenderToUser(address);
+            const displayName = user?.displayName || address.substring(0, 8) + '...';
+
+            return (
+              <span
+                className="message-name-mentions-you cursor-pointer"
+                data-user-address={address}
+                data-user-display-name={displayName}
+                data-user-icon={user?.userIcon || ''}
+              >
+                @{displayName}
+              </span>
+            );
+          }
+
+          // Handle role mentions
+          const roleMatch = child.match(/^<<<MENTION_ROLE:([^:]+):(.+)>>>$/);
+          if (roleMatch) {
+            const [, roleTag, displayName] = roleMatch;
+            return (
+              <span
+                className="message-name-mentions-you"
+                title={displayName}
+              >
+                @{roleTag}
+              </span>
             );
           }
         }
-      }
+        return child;
+      };
 
-      // For regular divs, render normally
+      const processedChildren = React.Children.map(children, processChild);
+
       return (
-        <div className={className} {...props}>
-          {children}
-        </div>
+        <p className="mb-2 last:mb-0" {...props}>
+          {processedChildren}
+        </p>
       );
     },
 
@@ -443,7 +532,7 @@ export const MessageMarkdownRenderer: React.FC<MessageMarkdownRendererProps> = (
       </em>
     ),
 
-  }), []); // Empty dependency array since components don't depend on props/state
+  }), [mapSenderToUser, onUserClick]); // Dependencies for text component mention handling
 
   // Handle mention clicks
   const handleClick = useCallback((event: React.MouseEvent) => {
@@ -467,7 +556,7 @@ export const MessageMarkdownRenderer: React.FC<MessageMarkdownRendererProps> = (
     <div className={`break-words min-w-0 max-w-full overflow-hidden ${className || ''}`} onClick={handleClick}>
       <ReactMarkdown
         remarkPlugins={[remarkGfm, remarkBreaks]}
-        rehypePlugins={[rehypeRaw]}
+        rehypePlugins={[]}
         components={components}
       >
         {processedContent}

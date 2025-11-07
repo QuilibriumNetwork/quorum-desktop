@@ -14,4 +14,4 @@
  * @default false - Temporarily disabled for security review
  * To re-enable: Set to true
  */
-export const ENABLE_MARKDOWN = false;
+export const ENABLE_MARKDOWN = true;

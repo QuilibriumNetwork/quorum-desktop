@@ -75,11 +75,15 @@ export function useMessageFormatting(options: UseMessageFormattingOptions) {
   const shouldUseMarkdown = useCallback(() => {
     if (message.content.type !== 'post') return false;
 
-    const text = Array.isArray(message.content.text)
-      ? message.content.text.join('\n')
-      : message.content.text;
+    // Always use markdown renderer (which is now secure after rehype-raw removal)
+    // The markdown renderer handles both markdown content and plain text correctly
+    return true;
 
-    return hasMarkdownPatterns(text);
+    // Old logic: only use markdown if patterns detected
+    // const text = Array.isArray(message.content.text)
+    //   ? message.content.text.join('\n')
+    //   : message.content.text;
+    // return hasMarkdownPatterns(text);
   }, [message]);
 
   // Get processed content data for rendering

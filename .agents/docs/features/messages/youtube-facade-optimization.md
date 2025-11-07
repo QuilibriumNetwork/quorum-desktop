@@ -155,37 +155,66 @@ export const YouTubeFacade: React.FC<YouTubeFacadeProps> = ({
 };
 ```
 
-### Markdown Integration (`src/components/message/MessageMarkdownRenderer.tsx`)
+### Markdown Integration (`src/components/message/MessageMarkdownRenderer.tsx`) - Updated 2025-11-07
 
-YouTube URLs in markdown content are automatically detected and converted:
+YouTube URLs in markdown content are intelligently processed with **standalone vs inline detection**:
 
 ```tsx
-// Stable processing functions prevent component remounting
-const processURLs = (text: string): string => {
-  return text.replace(/https?:\/\/[^\s<>"{}|\\^`[\]]+/g, (url) => {
-    return isYouTubeURL(url) ? url : `[${url}](${url})`;
+// Process YouTube URLs line-by-line to detect standalone vs inline
+const processStandaloneYouTubeUrls = (text: string): string => {
+  const lines = text.split('\n');
+  const processedLines = lines.map(line => {
+    const trimmedLine = line.trim();
+    return replaceYouTubeURLsInText(line, (url) => {
+      // Check if URL is alone on its line (standalone)
+      const isStandalone = trimmedLine === url.trim();
+      if (isStandalone) {
+        const videoId = extractYouTubeVideoId(url);
+        if (videoId) {
+          // Convert to markdown image syntax for embed
+          return `![youtube-embed](${videoId})`;
+        }
+      }
+      // Inline URLs stay as-is (will become links)
+      return url;
+    });
   });
+  return processedLines.join('\n');
 };
 
-// Link component automatically renders YouTube embeds
+// Image component catches YouTube embeds
 const components = useMemo(() => ({
-  a: ({ href, children, ...props }: any) => {
-    if (href && isYouTubeURL(href)) {
-      const embedUrl = convertToYouTubeEmbedURL(href);
-      if (embedUrl) {
-        return (
-          <YouTubeEmbed
-            src={embedUrl}
+  img: ({ src, alt, ...props }: any) => {
+    if (alt === 'youtube-embed' && src) {
+      return (
+        <div className="my-2">
+          <YouTubeFacade
+            videoId={src}
+            className="rounded-lg youtube-embed"
             style={{ width: '100%', maxWidth: 560, aspectRatio: '16/9' }}
           />
-        );
-      }
+        </div>
+      );
     }
-    return <a href={href} target="_blank" rel="noopener noreferrer">{children}</a>;
+    return null;
+  },
+
+  // Link component renders ALL links as clickable (including inline YouTube URLs)
+  a: ({ href, children, ...props }: any) => {
+    if (href) {
+      return (
+        <a href={href} target="_blank" rel="noopener noreferrer" className="link">
+          {children}
+        </a>
+      );
+    }
+    return <span>{children}</span>;
   },
   // ... other components
 }), []); // Stable components prevent YouTube remounting
 ```
+
+**Key Change (2025-11-07)**: Inline YouTube URLs now render as clickable links instead of embeds to avoid cluttering messages.
 
 ### URL Pattern Matching
 
@@ -248,11 +277,18 @@ if (tokenData.type === 'youtube') {
 )}
 ```
 
-### Markdown Messages
+### Markdown Messages (Updated 2025-11-07)
 ```tsx
 // Automatic detection in MessageMarkdownRenderer
-https://www.youtube.com/watch?v=abc123  // ← Becomes interactive video embed
-https://example.com                     // ← Becomes regular clickable link
+
+// Standalone URL (on its own line) - becomes embed
+https://www.youtube.com/watch?v=abc123
+
+// Inline URL (mixed with text) - becomes clickable link
+Check this video https://www.youtube.com/watch?v=abc123 out!
+
+// Regular URLs - always become clickable links
+https://example.com
 ```
 
 ## CSS Styling
@@ -297,5 +333,6 @@ We should implement user preference levels for external content:
 
 ---
 
-**Last Updated**: 2025-09-21
-**File Last Modified**: 2025-09-21 by Claude
+**Last Updated**: 2025-11-07
+**Recent Changes**: Inline vs standalone URL detection, security hardening (rehype-raw removal)
+**File Last Modified**: 2025-11-07 by Claude

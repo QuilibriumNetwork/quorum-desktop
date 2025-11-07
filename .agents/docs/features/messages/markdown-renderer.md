@@ -31,9 +31,10 @@ Messages automatically detect markdown patterns and render with enhanced formatt
 - **Protected contexts:** URLs in code blocks and existing markdown links are preserved
 - **Inline vs standalone:** Different handling for URLs on their own line vs inline
 
-### **Raw HTML Support**
-- **HTML elements:** Basic HTML rendering via `rehype-raw`
-- **YouTube placeholders:** Special `<div>` elements for standalone video processing
+### **Security (Updated 2025-11-07)**
+- **No HTML injection:** The `rehype-raw` plugin has been removed to eliminate critical HTML injection vulnerabilities
+- **Safe mentions:** User mentions use placeholder tokens that React escapes automatically
+- **XSS protection:** All user-controlled content is safely rendered through React components
 
 ## Code Block Features
 
@@ -55,32 +56,60 @@ Messages automatically detect markdown patterns and render with enhanced formatt
 
 ## Architecture
 
-### **Processing Pipeline (Optimized 2025-01-20)**
+### **Processing Pipeline (Security Hardened 2025-11-07)**
 
 ```typescript
 // Stable processing functions (outside component scope)
-const processURLs = (text: string): string => { /* Convert URLs to markdown links */ };
-const processStandaloneYouTubeUrls = (text: string): string => { /* Handle standalone videos */ };
+const processURLs = (text: string): string => {
+  /* Convert ALL URLs (including YouTube) to markdown links */
+};
 
-// Processing pipeline - reduced from 4 steps to 3
+const processStandaloneYouTubeUrls = (text: string): string => {
+  /* Detect standalone YouTube URLs and convert to markdown image syntax */
+  /* Inline YouTube URLs remain as plain URLs for link processing */
+};
+
+const processMentions = (text: string): string => {
+  /* Replace @mentions with safe placeholder tokens: <<<MENTION_USER:address>>> */
+  /* Prevents markdown interpretation and XSS attacks */
+};
+
+const processRoleMentions = (text: string): string => {
+  /* Replace @role mentions with safe placeholders */
+};
+
+// Processing pipeline
 const processedContent = useMemo(() => {
   return fixUnclosedCodeBlocks(
     convertHeadersToH3(
       processURLs(
-        processStandaloneYouTubeUrls(content)
+        processRoleMentions(
+          processMentions(
+            processStandaloneYouTubeUrls(content)
+          )
+        )
       )
     )
   );
-}, [content]); // Only content dependency - functions are stable
+}, [content, processMentions, processRoleMentions]);
 ```
 
-### **Component Rendering Flow**
+### **Component Rendering Flow (Updated 2025-11-07)**
 
-1. **Pattern Detection:** `shouldUseMarkdown()` checks for markdown syntax in useMessageFormatting
-2. **Route Decision:** Message.tsx chooses between MessageMarkdownRenderer vs token-based rendering
-3. **Content Processing:** Stable pipeline transforms content without recreating functions
-4. **Component Rendering:** Memoized components prevent YouTube video remounting
-5. **URL Handling:** Smart detection converts YouTube URLs to embeds, others to links
+1. **Route Decision:** Message.tsx ALWAYS uses MessageMarkdownRenderer (security hardened)
+   - `shouldUseMarkdown()` now returns `true` for all messages
+   - Ensures all content goes through secure rendering path
+   - Token-based rendering is legacy fallback only
+2. **Content Processing:** Secure pipeline transforms content:
+   - YouTube URLs: Standalone → embeds, Inline → clickable links
+   - Mentions: Converted to safe placeholder tokens
+   - URLs: All converted to markdown links for consistent processing
+3. **Component Rendering:** React component handlers process placeholders:
+   - `text` component: Catches mention placeholders in text nodes
+   - `p` component: Catches mention placeholders in paragraphs
+   - `img` component: Renders YouTube embeds from `![youtube-embed](videoId)` syntax
+   - `a` component: Renders all links (including inline YouTube URLs) as clickable links
+4. **Security:** React automatically escapes all attributes, preventing XSS
 
 ### **Performance Optimizations**
 
@@ -98,8 +127,9 @@ const processedContent = useMemo(() => {
 
 Unlike the old implementation, links are now **intelligently processed**:
 
-### **Enabled Link Features**
-- **YouTube URLs:** `https://youtube.com/watch?v=abc123` → Interactive video embed
+### **Enabled Link Features (Updated 2025-11-07)**
+- **Standalone YouTube URLs:** `https://youtube.com/watch?v=abc123` (on its own line) → Interactive video embed
+- **Inline YouTube URLs:** `Check this https://youtube.com/watch?v=abc out` → Clickable link (NOT embed)
 - **Regular URLs:** `https://example.com` → Clickable link with `target="_blank"`
 - **Email links:** `mailto:user@example.com` → Clickable email links
 - **Automatic detection:** URLs in plain text are auto-converted to links
@@ -109,24 +139,53 @@ Unlike the old implementation, links are now **intelligently processed**:
 - **Existing markdown links:** `[text](url)` are preserved and enhanced
 - **Inline code:** URLs inside `` `code` `` remain as plain text
 
-### **Implementation**
-```tsx
-// Link component in MessageMarkdownRenderer
-a: ({ href, children, ...props }: any) => {
-  if (href && isYouTubeURL(href)) {
-    // Render as YouTube embed
-    return <YouTubeEmbed src={convertToYouTubeEmbedURL(href)} />;
-  }
+### **Implementation (Updated 2025-11-07)**
 
-  // Render as regular clickable link
+```tsx
+// Standalone YouTube URLs converted to markdown image syntax
+const processStandaloneYouTubeUrls = (text: string): string => {
+  const lines = text.split('\n');
+  const processedLines = lines.map(line => {
+    const trimmedLine = line.trim();
+    return replaceYouTubeURLsInText(line, (url) => {
+      const isStandalone = trimmedLine === url.trim();
+      if (isStandalone) {
+        const videoId = extractYouTubeVideoId(url);
+        if (videoId) {
+          return `![youtube-embed](${videoId})`; // Markdown image syntax
+        }
+      }
+      return url; // Inline URLs stay as-is
+    });
+  });
+  return processedLines.join('\n');
+};
+
+// Image component catches YouTube embeds
+img: ({ src, alt, ...props }: any) => {
+  if (alt === 'youtube-embed' && src) {
+    return (
+      <div className="my-2">
+        <YouTubeFacade
+          videoId={src}
+          className="rounded-lg youtube-embed"
+          style={{ width: '100%', maxWidth: 560, aspectRatio: '16/9' }}
+        />
+      </div>
+    );
+  }
+  return null; // No regular image support
+},
+
+// Link component renders ALL links as clickable (including YouTube)
+a: ({ href, children, ...props }: any) => {
   if (href) {
     return (
-      <a href={href} target="_blank" rel="noopener noreferrer">
+      <a href={href} target="_blank" rel="noopener noreferrer" className="link">
         {children}
       </a>
     );
   }
-
   return <span>{children}</span>;
 }
 ```
@@ -135,10 +194,11 @@ a: ({ href, children, ...props }: any) => {
 
 - `react-markdown` - Core markdown parser
 - `remark-gfm` - GitHub-flavored markdown support (tables, strikethrough, etc.)
-- `rehype-raw` - HTML element support for YouTube placeholders
+- `remark-breaks` - Line break support
+- ~~`rehype-raw`~~ - **REMOVED 2025-11-07** (security vulnerability)
 - `ScrollContainer` - Long code block scrolling
 - `ClickToCopyContent` - Code copy functionality
-- `YouTubeEmbed` - Video embed integration
+- `YouTubeFacade` - Lightweight video thumbnail with click-to-play (replaces YouTubeEmbed)
 - `youtubeUtils` - Centralized YouTube URL processing
 
 ## Markdown Formatting Toolbar
@@ -221,7 +281,37 @@ if (contentData.type === 'post') {
 
 
 
+## Security Hardening (2025-11-07)
+
+### Critical Vulnerabilities Fixed
+
+1. **HTML Injection via rehype-raw**
+   - **Issue**: `rehype-raw` plugin allowed arbitrary HTML rendering
+   - **Impact**: XSS attacks, phishing, UI spoofing, data exfiltration
+   - **Fix**: Removed `rehype-raw` completely, use markdown image syntax for YouTube embeds
+
+2. **Mention Attribute Injection**
+   - **Issue**: User display names injected directly into HTML attributes without escaping
+   - **Impact**: XSS via malicious display names like `"><script>alert(1)</script>`
+   - **Fix**: Use safe placeholder tokens (<<<MENTION_USER:address>>>) rendered by React components
+
+3. **Role Mention Attribute Injection**
+   - **Issue**: Role display names in title attributes without escaping
+   - **Impact**: XSS via malicious role names
+   - **Fix**: Use placeholder tokens rendered safely by React
+
+### Security Architecture
+
+All user-controlled content now follows this pattern:
+1. Convert to safe placeholder tokens during text processing
+2. React component handlers catch placeholders
+3. React automatically escapes all attributes
+4. No raw HTML injection possible
+
+**Related Task**: `.agents/tasks/remove-rehype-raw-security-fix.md`
+
 ---
 **Last Updated**: 2025-11-07
+**Security Hardening**: Complete (rehype-raw removed, XSS vulnerabilities fixed)
 **Performance Optimization**: Complete
-**Recent Additions**: MarkdownToolbar component, feature flag configuration
+**Recent Changes**: Security fixes, YouTube inline/standalone distinction, mention safety
