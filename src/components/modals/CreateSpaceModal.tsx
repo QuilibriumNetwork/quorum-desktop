@@ -85,9 +85,8 @@ const CreateSpaceModal: React.FunctionComponent<CreateSpaceModalProps> = (
             <Input
               value={spaceName}
               onChange={(value) => setSpaceName(value)}
-              placeholder={t`Enter a name for your new Space`}
+              placeholder={t`Enter a name for your Space`}
               className="w-full"
-              label={t`Space Name`}
               labelType="static"
             />
             {fileError && (
@@ -103,19 +102,11 @@ const CreateSpaceModal: React.FunctionComponent<CreateSpaceModalProps> = (
             )}
           </div>
         </div>
-        <div className="mt-4">
-          <div className="input-style-label mb-2">
-            <Trans>Description</Trans> <span className="text-subtle text-sm">({t`optional`})</span>
-          </div>
-          <div className="text-label mb-2 max-w-[500px]">
-            <Trans>
-              This description will be visible on invites and shown to people when they look up or join your Space using an invite link.
-            </Trans>
-          </div>
+        <div className="mt-6">
           <TextArea
             value={description}
             onChange={setDescription}
-            placeholder={t`Describe what this Space is about...`}
+            placeholder={t`Enter a description for your Space (optional)`}
             rows={3}
             variant="filled"
             className="w-full"
@@ -126,18 +117,37 @@ const CreateSpaceModal: React.FunctionComponent<CreateSpaceModalProps> = (
                 : undefined
             }
           />
+          <div className="text-label mt-2 max-w-[500px]">
+            <Trans>
+              This description will be visible on invites and shown to people when they look up or join your Space using an invite link.
+            </Trans>
+          </div>
         </div>
-        <div className="mt-4 text-body">
-          <Trans>
-            Upload an image, choose a name, and optionally add a description for your Space.
-          </Trans>
+
+        {/* Advanced Settings Toggle */}
+        <div className="mt-4">
+          <Button
+            type="unstyled"
+            onClick={() => setAdvancedMode(!advancedMode)}
+            className="link flex items-center gap-2 p-0"
+          >
+            <span><Trans>Advanced Settings</Trans></span>
+            <Icon
+              name={advancedMode ? "chevron-down" : "chevron-right"}
+              size="sm"
+            />
+          </Button>
         </div>
-        <div className="mt-4 text-label">
-          <Trans> Default Space settings provide the most typical chat experience, but for higher privacy guarantees, review the Advanced Settings.
-          </Trans>
-        </div>
+
+        {/* Advanced Settings Content */}
         {advancedMode && (
-          <div className="mt-4 pt-5 select-none cursor-default">
+          <div className="mt-4 select-none cursor-default">
+            <div className="text-label mb-4 max-w-[500px]">
+              <Trans>
+                Default Space settings provide the most typical chat experience, but for higher privacy guarantees, review these advanced settings.
+              </Trans>
+            </div>
+
             <div className="flex flex-row justify-between pb-2">
               <div className="flex flex-row items-center">
                 <div className="text-label-strong">
@@ -187,16 +197,7 @@ const CreateSpaceModal: React.FunctionComponent<CreateSpaceModalProps> = (
         )}
         {/* <div className="mt-4 py-5 mx-[-26px] px-4 rounded-b-xl bg-surface-4 mb-[-26px] h-16 flex flex-row-reverse justify-between"> Issues with bottom space*/}
         <Spacer spaceBefore="lg" spaceAfter="lg" border={true} direction="vertical" />
-        <div className="rounded-b-xl flex flex-col gap-3 sm:flex-row sm:justify-between sm:items-center">
-          {!advancedMode && (
-            <Button
-              type="secondary"
-              className="w-full sm:w-auto"
-              onClick={() => setAdvancedMode(true)}
-            >
-              {t`Advanced Settings`}
-            </Button>
-          )}
+        <div className="rounded-b-xl flex flex-col gap-3 sm:flex-row sm:justify-end sm:items-center">
           <Button
             type="primary"
             className="w-full sm:w-auto"
