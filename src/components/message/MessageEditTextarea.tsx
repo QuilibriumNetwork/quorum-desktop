@@ -10,6 +10,7 @@ import { t } from '@lingui/core/macro';
 import { buildMessagesKey } from '../../hooks/queries/messages/buildMessagesKey';
 import { useMessageDB } from '../context/useMessageDB';
 import { DefaultImages } from '../../utils';
+import { isTouchDevice } from '../../utils/platform';
 
 interface MessageEditTextareaProps {
   message: MessageType;
@@ -44,6 +45,9 @@ export function MessageEditTextarea({
 
   // Handle text selection for markdown toolbar
   const handleTextareaMouseUp = useCallback(() => {
+    // Skip markdown toolbar on touch devices to avoid conflicts with native selection UI
+    if (isTouchDevice()) return;
+
     const textarea = editTextareaRef.current;
     if (!textarea) return;
 

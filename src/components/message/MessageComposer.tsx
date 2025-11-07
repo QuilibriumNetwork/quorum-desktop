@@ -8,6 +8,7 @@ import { useMentionInput, type MentionOption } from '../../hooks/business/mentio
 import { truncateAddress } from '../../utils';
 import { DefaultImages } from '../../utils';
 import { useResponsiveLayout } from '../../hooks/useResponsiveLayout';
+import { isTouchDevice } from '../../utils/platform';
 import './MessageComposer.scss';
 import { UserAvatar } from '../user/UserAvatar';
 import { MarkdownToolbar } from './MarkdownToolbar';
@@ -210,6 +211,9 @@ export const MessageComposer = forwardRef<
 
     // Handle text selection for markdown toolbar
     const handleTextareaMouseUp = useCallback(() => {
+      // Skip markdown toolbar on touch devices to avoid conflicts with native selection UI
+      if (isTouchDevice()) return;
+
       const textarea = textareaRef.current;
       if (!textarea) return;
 
