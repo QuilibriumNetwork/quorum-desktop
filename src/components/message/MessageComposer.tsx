@@ -14,6 +14,7 @@ import { UserAvatar } from '../user/UserAvatar';
 import { MarkdownToolbar } from './MarkdownToolbar';
 import type { FormatFunction } from '../../utils/markdownFormatting';
 import { calculateToolbarPosition } from '../../utils/toolbarPositioning';
+import { ENABLE_MARKDOWN } from '../../config/features';
 
 interface User {
   address: string;
@@ -211,8 +212,8 @@ export const MessageComposer = forwardRef<
 
     // Handle text selection for markdown toolbar
     const handleTextareaMouseUp = useCallback(() => {
-      // Skip markdown toolbar on touch devices to avoid conflicts with native selection UI
-      if (isTouchDevice()) return;
+      // Skip markdown toolbar if feature is disabled or on touch devices
+      if (!ENABLE_MARKDOWN || isTouchDevice()) return;
 
       const textarea = textareaRef.current;
       if (!textarea) return;
