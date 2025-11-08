@@ -1,9 +1,16 @@
 # Docusaurus Developer Documentation Blueprint
 
 **Created**: 2025-10-03
+**Last Updated**: 2025-11-08
 **Objective**: Create developer-centric documentation that enables developers to understand, extend, and build on top of Quorum's decentralized messenger platform
 
-https://github.com/QuilibriumNetwork/quorum-desktop/issues/87
+**GitHub Issue**: https://github.com/QuilibriumNetwork/quorum-desktop/issues/87
+
+**Implementation Guide**: See [docusaurus-setup-implementation.md](./docusaurus-setup-implementation.md) for detailed setup instructions, configuration, and step-by-step implementation phases.
+
+---
+
+> **Note**: This document is the **strategic blueprint** covering content strategy, structure, and documentation philosophy. For **hands-on setup and implementation**, refer to the implementation guide above.
 
 ---
 
@@ -587,19 +594,29 @@ quorum-desktop/
 
 ---
 
-### ⚠️ Documentation Review Required
+### ⚠️ CRITICAL: Documentation Review Required
 
-**All existing docs were created via LLM and must be reviewed before migration.**
+**All existing docs in `.agents/docs/` were created via LLM and MUST be carefully reviewed and updated before migration to Docusaurus.**
+
+**DO NOT blindly copy docs to Docusaurus without thorough review.**
 
 **Review Process:**
-1. **LLM validation** against current codebase (all 36 docs)
+1. **LLM validation** against current codebase (all 36+ docs)
 2. **Manual review** for critical docs (architecture, security, cross-platform, primitives)
-3. Test code examples and verify accuracy
+3. **Test code examples** - Verify all code snippets work with current codebase
+4. **Check for outdated info** - Code may have changed since doc was written
+5. **Update or rewrite** - Fix any issues found during review
 
 **Priority for manual review:**
-- High: Core architecture, **security**, cross-platform, primitives
-- Medium: Message features, mobile, API reference, **avatar-initials-system**
-- Low: UI/UX features, styling guides, **toast-notifications**
+- **High**: Core architecture, **security**, cross-platform, primitives
+- **Medium**: Message features, mobile, API reference, **avatar-initials-system**
+- **Low**: UI/UX features, styling guides, **toast-notifications**
+
+**Why this matters:**
+- LLM-generated docs can become outdated as code evolves
+- Technical accuracy is critical for developer documentation
+- Code examples must work or developers will lose trust
+- Security docs especially require expert validation
 
 ### Internal Development Artifacts (NOT in Public Docs)
 
@@ -714,14 +731,15 @@ Implementation should follow a phased approach, prioritizing content that enable
 ## Next Steps
 
 1. Review and approve blueprint
-2. Pilot test with 5-10 docs from each section
-3. Get feedback from external developers
-4. Execute phased implementation
-5. Soft launch (internal + selected community)
-6. Public launch
-7. Iterate based on usage
+2. **Follow the [implementation guide](./docusaurus-setup-implementation.md)** to set up Docusaurus
+3. Pilot test with 5-10 docs from each section
+4. Get feedback from external developers
+5. Execute phased implementation (see implementation guide for phases)
+6. Soft launch (internal + selected community)
+7. Public launch
+8. Iterate based on usage
 
 ---
 
 _Document created: 2025-10-03_
-_Last updated: 2025-11-08 (Added 3 new docs + AI-Assisted Development section)_
+_Last updated: 2025-11-08 (Added implementation guide link, strengthened review warning, 3 new docs + AI-Assisted Development section)_
