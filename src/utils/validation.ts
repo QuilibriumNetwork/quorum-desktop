@@ -56,7 +56,7 @@ export const validateNameForXSS = (name: string): boolean => {
  * getXSSValidationError("Space name") // "Space name cannot contain < > \" ' characters"
  */
 export const getXSSValidationError = (fieldName: string = 'Name'): string => {
-  return `${fieldName} cannot contain < > " ' characters`;
+  return `${fieldName} cannot contain special characters`;
 };
 
 /**

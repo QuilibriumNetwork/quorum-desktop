@@ -15,7 +15,7 @@
 
 Implemented a **defense-in-depth** approach to prevent XSS (Cross-Site Scripting) attacks using TWO security layers:
 
-1. **Input Validation** - Block dangerous HTML characters (`< > " '`) at data entry
+1. **Input Validation** - Block dangerous HTML characters (`special`) at data entry
 2. **Placeholder Token System** - Safely render mentions without parsing user HTML
 
 This approach is **secure, simple, and maintainable** - NO `rehypeRaw`, NO `rehypeSanitize`, just React components and input validation.
@@ -32,15 +32,15 @@ This approach is **secure, simple, and maintainable** - NO `rehypeRaw`, NO `rehy
 ### 2. Display Name Attribute Injection (Critical) ✅
 **Issue**: Malicious display names could inject HTML/JavaScript via attributes
 **Attack Vector**: Display name: `"><script>alert('XSS')</script>`
-**Fix**: Input validation blocks `< > " '` + React auto-escaping + placeholder tokens
+**Fix**: Input validation blocks `special` + React auto-escaping + placeholder tokens
 
 ### 3. Space Name Attribute Injection (Critical) ✅
 **Issue**: Space names could contain dangerous characters
-**Fix**: Input validation blocks `< > " '` characters at entry
+**Fix**: Input validation blocks `special` characters at entry
 
 ### 4. Role Name Attribute Injection (Critical) ✅
 **Issue**: Role display names could inject HTML/JavaScript
-**Fix**: Input validation blocks `< > " '` characters at entry
+**Fix**: Input validation blocks `special` characters at entry
 
 ---
 
@@ -50,7 +50,7 @@ This approach is **secure, simple, and maintainable** - NO `rehypeRaw`, NO `rehy
 
 **Block dangerous HTML characters at the source** when users create/edit names.
 
-**Characters Blocked**: `< > " '`
+**Characters Blocked**: `special`
 **Characters Allowed**: Letters (all languages), numbers, spaces, emojis, `&`, `$`, `€`, accented letters, etc.
 
 #### Implementation
@@ -59,7 +59,7 @@ This approach is **secure, simple, and maintainable** - NO `rehypeRaw`, NO `rehy
 ```typescript
 /**
  * Regex pattern for dangerous HTML characters that can be used for XSS attacks
- * Blocks: < > " '
+ * Blocks: special
  * These characters can be used to break out of HTML tags/attributes
  */
 export const DANGEROUS_HTML_CHARS = /[<>"']/;
@@ -99,7 +99,7 @@ export const validateDisplayName = (displayName: string): string | undefined => 
   }
 
   if (!validateNameForXSS(displayName)) {
-    return t`Display name cannot contain < > " ' characters`;
+    return t`Display name cannot contain special characters`;
   }
 
   return undefined;
@@ -121,7 +121,7 @@ export const validateSpaceName = (spaceName: string): string | undefined => {
   }
 
   if (!validateNameForXSS(spaceName)) {
-    return t`Space name cannot contain < > " ' characters`;
+    return t`Space name cannot contain special characters`;
   }
 
   return undefined;
@@ -148,7 +148,7 @@ export const useSpaceNameValidation = () => {
 **User Experience**:
 ```
 User types: Alice"><script>alert(1)</script>
-Error shown: ❌ Display name cannot contain < > " ' characters
+Error shown: ❌ Display name cannot contain special characters
 Result: User cannot save malicious name
 ```
 
@@ -280,7 +280,7 @@ React automatically escapes all JSX attributes, providing an additional safety n
 **Example**:
 ```typescript
 const displayName = user?.displayName || '...';
-// Even if displayName somehow contains < > " ', React escapes it in attributes
+// Even if displayName somehow contains special, React escapes it in attributes
 return <span data-user-display-name={displayName}>@{displayName}</span>;
 ```
 
@@ -567,7 +567,7 @@ Result with rehype-sanitize: ❌ Renders bold (if <strong> whitelisted)
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │ Layer 1: Input Validation                                   │
-│ Block < > " ' at data entry → Prevents XSS at source       │
+│ Block special at data entry → Prevents XSS at source       │
 └─────────────────────────────────────────────────────────────┘
                           ↓
 ┌─────────────────────────────────────────────────────────────┐

@@ -15,7 +15,7 @@ export const useDisplayNameValidation = (displayName: string) => {
       return t`'everyone' is a reserved name.`;
     }
     if (!validateNameForXSS(displayName)) {
-      return t`Display name cannot contain < > " ' characters`;
+      return t`Display name cannot contain special characters`;
     }
     return undefined;
   }, [displayName]);
@@ -37,7 +37,7 @@ export const validateDisplayName = (displayName: string): string | undefined => 
     return t`'everyone' is a reserved name.`;
   }
   if (!validateNameForXSS(displayName)) {
-    return t`Display name cannot contain < > " ' characters`;
+    return t`Display name cannot contain special characters`;
   }
   return undefined;
 };

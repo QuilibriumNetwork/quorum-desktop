@@ -12,7 +12,7 @@ export const useSpaceNameValidation = (spaceName: string) => {
       return t`Space name is required`;
     }
     if (!validateNameForXSS(spaceName)) {
-      return t`Space name cannot contain < > " ' characters`;
+      return t`Space name cannot contain special characters`;
     }
     return undefined;
   }, [spaceName]);
@@ -31,7 +31,7 @@ export const validateSpaceName = (spaceName: string): string | undefined => {
     return t`Space name is required`;
   }
   if (!validateNameForXSS(spaceName)) {
-    return t`Space name cannot contain < > " ' characters`;
+    return t`Space name cannot contain special characters`;
   }
   return undefined;
 };
