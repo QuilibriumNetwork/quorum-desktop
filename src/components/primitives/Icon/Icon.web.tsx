@@ -41,8 +41,17 @@ export function Icon({
     return null;
   }
 
+  // Allow global flag to override variant for quick testing (development only)
+  // Usage: In browser console, run: localStorage.setItem('__FORCE_FILLED_ICONS__', 'true')
+  // To disable: localStorage.removeItem('__FORCE_FILLED_ICONS__')
+  const forceFilledFlag = process.env.NODE_ENV === 'development' &&
+    typeof window !== 'undefined' &&
+    localStorage.getItem('__FORCE_FILLED_ICONS__') === 'true';
+
+  const effectiveVariant = forceFilledFlag ? 'filled' : variant;
+
   // Determine final component name based on variant
-  const finalComponentName = variant === 'filled'
+  const finalComponentName = effectiveVariant === 'filled'
     ? `${iconComponentName}Filled`
     : iconComponentName;
 
@@ -50,7 +59,7 @@ export function Icon({
 
   if (!IconComponent) {
     // If filled variant doesn't exist, try falling back to outline
-    if (variant === 'filled') {
+    if (effectiveVariant === 'filled') {
       console.warn(
         `Icon "${name}" does not have a filled variant. Falling back to outline.`
       );
