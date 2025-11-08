@@ -86,7 +86,9 @@ export const InviteLink = ({ inviteLink }: { inviteLink: string }) => {
                 </Text>
                 {space?.description && (
                   <Text className="block text-xs lg:text-sm text-subtle mt-1 break-words line-clamp-2">
-                    {space.description}
+                    {space.description.length > 100
+                      ? space.description.substring(0, 100) + '...'
+                      : space.description}
                   </Text>
                 )}
               </Container>

@@ -16,7 +16,7 @@ import { t } from '@lingui/core/macro';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
 import { useQueryClient } from '@tanstack/react-query';
 import { buildSpaceMembersKey } from '../../../hooks';
-import { validateSpaceName } from '../../../hooks/business/validation';
+import { validateSpaceName, validateSpaceDescription } from '../../../hooks/business/validation';
 import {
   useSpaceManagement,
   useRoleManagement,
@@ -124,7 +124,7 @@ const SpaceSettingsModal: React.FunctionComponent<{
     space?.description || ''
   );
   const MAX_DESCRIPTION_LENGTH = 300;
-  const descriptionError = description.length > MAX_DESCRIPTION_LENGTH;
+  const descriptionErrors = validateSpaceDescription(description, MAX_DESCRIPTION_LENGTH);
 
   // Update description when space changes
   React.useEffect(() => {
@@ -433,7 +433,7 @@ const SpaceSettingsModal: React.FunctionComponent<{
                           setSpaceName={setSpaceName}
                           description={description}
                           setDescription={setDescription}
-                          descriptionError={descriptionError}
+                          descriptionErrors={descriptionErrors}
                           maxDescriptionLength={MAX_DESCRIPTION_LENGTH}
                           // set 'owner-membership' to 'true' to see in frontend
                           fixes={(missingOwnerMembership ? [{
@@ -582,7 +582,7 @@ const SpaceSettingsModal: React.FunctionComponent<{
                     disabled={
                       selectedCategory === 'account'
                         ? spaceProfile.isSaving || spaceProfile.hasValidationError || mentionSettings.isSaving
-                        : isSaving || (!!validateSpaceName(spaceName) && selectedCategory === 'general') || (descriptionError && selectedCategory === 'general')
+                        : isSaving || (!!validateSpaceName(spaceName) && selectedCategory === 'general') || (descriptionErrors.length > 0 && selectedCategory === 'general')
                     }
                   >
                     {t`Save Changes`}

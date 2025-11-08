@@ -22,7 +22,7 @@ interface GeneralProps {
   setSpaceName: (value: string) => void;
   description: string;
   setDescription: (value: string) => void;
-  descriptionError: boolean;
+  descriptionErrors: string[];
   maxDescriptionLength: number;
   fixes?: {
     id: string;
@@ -65,7 +65,7 @@ const General: React.FunctionComponent<GeneralProps> = ({
   setSpaceName,
   description,
   setDescription,
-  descriptionError,
+  descriptionErrors,
   maxDescriptionLength,
   fixes,
   iconData,
@@ -153,10 +153,10 @@ const General: React.FunctionComponent<GeneralProps> = ({
             rows={3}
             variant="filled"
             className="w-full"
-            error={descriptionError}
+            error={descriptionErrors.length > 0}
             errorMessage={
-              descriptionError
-                ? t`Description must be ${maxDescriptionLength} characters or less`
+              descriptionErrors.length > 0
+                ? descriptionErrors.join('. ')
                 : undefined
             }
           />
