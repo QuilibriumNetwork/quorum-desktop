@@ -187,6 +187,13 @@ quorum-desktop/
 │       ├── Mobile Debugging
 │       └── Performance Debugging
 │
+├── 🤖 AI-Assisted Development
+│   └── Working with AI Agents
+│       ├── Overview (repo optimized for AI agents)
+│       ├── Context Files Reference (AGENTS.md, .agents/ structure)
+│       ├── Reading Order (which files to read first)
+│       └── Maintaining Context (task files, docs, bug reports)
+│
 ├── 🤖 Building with Quorum
 │   ├── Bot Development
 │   │   ├── Bot Architecture Overview
@@ -447,6 +454,12 @@ quorum-desktop/
 | `development-guides/mobile-development/*.md` | docs/expo-dev-testing-guide.md + tasks/mobile-dev/*.md | **Consolidate**: Mobile guides |
 | `development-guides/debugging/*.md` | bugs/*.md (patterns) | **Create**: Based on common issues |
 
+#### AI-Assisted Development Section
+
+| New Location | Source Material | Action |
+|--------------|----------------|--------|
+| `ai-assisted-development/working-with-ai-agents.md` | .agents/AGENTS.md + .agents/agents-workflow.md (reference only) | **Create**: Brief guide pointing to context files in repo |
+
 #### Building with Quorum Section
 
 | New Location | Source Material | Action |
@@ -481,7 +494,7 @@ quorum-desktop/
 | `tutorials/build-message-bot.md` | None (new) | **Create**: Bot tutorial |
 | `tutorials/implement-crypto-wallet.md` | None (new) | **Create**: Crypto feature tutorial |
 
-### Complete Mapping of ALL Existing Docs (39 files)
+### Complete Mapping of ALL Existing Docs (36 files)
 
 **Every existing doc mapped to new documentation structure:**
 
@@ -495,6 +508,12 @@ quorum-desktop/
 | `data-management-architecture-guide.md` | `architecture/data-management.md` | Migrate & split into sub-docs |
 | `expo-dev-testing-guide.md` | `mobile/expo-dev-setup.md` | Migrate as-is |
 | `development/unused-dependencies-analysis.md` | *(Internal only - not in public docs)* | Keep in repo, not in docs site |
+
+#### System Architecture Docs (1 file)
+
+| Existing Doc | New Location | Action |
+|--------------|--------------|--------|
+| `features/security.md` | `system-architecture/security-architecture/security-mechanisms.md` | Migrate as-is |
 
 #### Primitives Documentation (7 files)
 
@@ -530,7 +549,7 @@ quorum-desktop/
 | `features/messages/youtube-facade-optimization.md` | `features/media/youtube-facade.md` | Migrate as-is |
 | `features/mention-notification-system.md` | `features/notifications/mention-notification-system.md` | Migrate as-is |
 
-#### UI/UX Features (7 files)
+#### UI/UX Features (9 files)
 
 | Existing Doc | New Location | Action |
 |--------------|--------------|--------|
@@ -540,6 +559,8 @@ quorum-desktop/
 | `features/responsive-layout.md` | `ui-architecture/styling/responsive-layout.md` | Migrate as-is |
 | `features/reacttooltip-mobile.md` | `mobile/platform-differences.md` (section) | Merge into mobile docs |
 | `features/dropdown-panels.md` | `ui-architecture/business-components/dropdown-panels.md` | Migrate as-is |
+| `features/avatar-initials-system.md` | `ui-architecture/business-components/avatar-initials-system.md` | Migrate as-is |
+| `features/toast-notifications.md` | `ui-architecture/business-components/toast-notifications.md` | Migrate as-is |
 | `styling-guidelines.md` | `ui-architecture/styling/styling-guidelines.md` | Migrate as-is |
 
 #### App Features (7 files)
@@ -555,9 +576,14 @@ quorum-desktop/
 | `features/touch-long-press-system.md` | `mobile/touch-interactions.md` | Migrate as-is |
 
 **Summary**:
-- **33 docs migrate** to public documentation site
+- **36 docs migrate** to public documentation site
 - **1 doc remains internal** (unused-dependencies-analysis)
 - **100% coverage** - every existing doc has a clear new home
+
+**New docs added since blueprint creation (2025-10-03)**:
+- `features/avatar-initials-system.md` (2025-10-26)
+- `features/toast-notifications.md` (2025-10-17)
+- `features/security.md` (2025-11-08)
 
 ---
 
@@ -566,14 +592,14 @@ quorum-desktop/
 **All existing docs were created via LLM and must be reviewed before migration.**
 
 **Review Process:**
-1. **LLM validation** against current codebase (all 33 docs)
+1. **LLM validation** against current codebase (all 36 docs)
 2. **Manual review** for critical docs (architecture, security, cross-platform, primitives)
 3. Test code examples and verify accuracy
 
 **Priority for manual review:**
-- High: Core architecture, security, cross-platform, primitives
-- Medium: Message features, mobile, API reference
-- Low: UI/UX features, styling guides
+- High: Core architecture, **security**, cross-platform, primitives
+- Medium: Message features, mobile, API reference, **avatar-initials-system**
+- Low: UI/UX features, styling guides, **toast-notifications**
 
 ### Internal Development Artifacts (NOT in Public Docs)
 
@@ -622,6 +648,7 @@ Implementation should follow a phased approach, prioritizing content that enable
 - Testing & Quality documentation
 - Mobile Development guides
 - Debugging & Troubleshooting
+- AI-Assisted Development guide (1 concise page)
 
 ### Phase 4: Bot Development (Medium-High Priority)
 - Bot Architecture Overview
@@ -697,4 +724,4 @@ Implementation should follow a phased approach, prioritizing content that enable
 ---
 
 _Document created: 2025-10-03_
-_Last updated: 2025-10-03_
+_Last updated: 2025-11-08 (Added 3 new docs + AI-Assisted Development section)_

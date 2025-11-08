@@ -160,7 +160,7 @@ export const YouTubeFacade: React.FC<YouTubeFacadeProps> = ({
       </div>
 
       {/* External link to YouTube */}
-      <div className="flex justify-end">
+      <div className="flex justify-start">
         <a
           href={`https://www.youtube.com/watch?v=${videoId}`}
           target="_blank"
