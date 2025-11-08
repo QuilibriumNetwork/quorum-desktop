@@ -16,6 +16,8 @@ import {
   extractYouTubeVideoId,
   YOUTUBE_URL_DETECTION_REGEX
 } from '../../utils/youtubeUtils';
+import { getValidInvitePrefixes } from '../../utils/inviteDomain';
+import { InviteLink } from './InviteLink';
 import type { Role } from '../../api/quorumApi';
 
 interface MessageMarkdownRendererProps {
@@ -32,6 +34,24 @@ interface MessageMarkdownRendererProps {
   spaceRoles?: Role[];
 }
 
+
+// Check if a URL is an invite link using dynamic domain validation
+const isInviteLink = (url: string): boolean => {
+  const validPrefixes = getValidInvitePrefixes();
+  return validPrefixes.some(prefix => url.startsWith(prefix));
+};
+
+// Process invite links to convert them to markdown image syntax with special alt text
+const processInviteLinks = (text: string): string => {
+  // Replace invite links with markdown image syntax
+  return text.replace(/https?:\/\/[^\s<>"{}|\\^`[\]]+/g, (url) => {
+    if (isInviteLink(url)) {
+      // Use markdown image syntax with special alt text (similar to YouTube embeds)
+      return `![invite-card](${url})`;
+    }
+    return url;
+  });
+};
 
 // Stable processing functions outside component to prevent re-creation
 const processURLs = (text: string): string => {
@@ -221,7 +241,9 @@ export const MessageMarkdownRenderer: React.FC<MessageMarkdownRendererProps> = (
         processURLs(
           processRoleMentions(
             processMentions(
-              processStandaloneYouTubeUrls(content)
+              processStandaloneYouTubeUrls(
+                processInviteLinks(content)
+              )
             )
           )
         )
@@ -313,7 +335,7 @@ export const MessageMarkdownRenderer: React.FC<MessageMarkdownRendererProps> = (
       return <span>{children}</span>;
     },
 
-    // Handle images - catch YouTube embeds marked with special alt text
+    // Handle images - catch YouTube embeds and invite cards marked with special alt text
     img: ({ src, alt, ...props }: any) => {
       // Handle YouTube embeds marked with special alt text
       if (alt === 'youtube-embed' && src) {
@@ -328,6 +350,15 @@ export const MessageMarkdownRenderer: React.FC<MessageMarkdownRendererProps> = (
                 aspectRatio: '16/9',
               }}
             />
+          </div>
+        );
+      }
+
+      // Handle invite cards marked with special alt text
+      if (alt === 'invite-card' && src) {
+        return (
+          <div className="my-2">
+            <InviteLink inviteLink={src} />
           </div>
         );
       }

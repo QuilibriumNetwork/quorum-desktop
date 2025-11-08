@@ -5,6 +5,7 @@ import {
   useState,
   forwardRef,
   useImperativeHandle,
+  useCallback,
 } from 'react';
 import { useLocation } from 'react-router-dom';
 import * as moment from 'moment-timezone';
@@ -115,14 +116,14 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
       getVirtuosoRef: () => virtuoso.current,
     }));
 
-    const mapSenderToUser = (senderId: string) => {
+    const mapSenderToUser = useCallback((senderId: string) => {
       return (
         members[senderId] || {
           displayName: 'Unknown User',
           userIcon: DefaultImages.UNKNOWN_USER,
         }
       );
-    };
+    }, [members]);
 
     const rowRenderer = (index: number) => {
       const message = messageList[index];

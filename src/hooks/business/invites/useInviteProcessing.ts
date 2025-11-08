@@ -35,7 +35,8 @@ export const useInviteProcessing = (inviteLink: string) => {
     if (inviteLink) {
       processInvite();
     }
-  }, [inviteLink, processInviteLink]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [inviteLink]); // Only re-fetch when inviteLink changes, not when processInviteLink reference changes
 
   return {
     space,

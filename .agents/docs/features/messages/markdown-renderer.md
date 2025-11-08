@@ -54,6 +54,89 @@ Messages automatically detect markdown patterns and render with enhanced formatt
 - `src/components/message/Message.tsx` - Integration point (markdown vs token-based routing)
 - `src/config/features.ts` - Feature flag configuration (ENABLE_MARKDOWN)
 
+## Dual Rendering Architecture
+
+The message rendering system maintains **two independent rendering paths** for reliability and backward compatibility:
+
+### System 1: MessageMarkdownRenderer (Primary Path)
+**Status**: Currently active (default)
+**Location**: `src/components/message/MessageMarkdownRenderer.tsx`
+**Activation**: When `ENABLE_MARKDOWN && shouldUseMarkdown()` returns true
+**Current behavior**: `shouldUseMarkdown()` always returns `true` (all messages use this path)
+
+**Supported Features**:
+- ✅ Markdown formatting (`**bold**`, `*italic*`, code blocks, tables, etc.)
+- ✅ User mentions (`@<address>`) via safe placeholder tokens
+- ✅ Role mentions (`@role`) via safe placeholder tokens
+- ✅ YouTube embeds (standalone URLs) and links (inline URLs)
+- ✅ Regular URL auto-linking
+- ✅ Invite links (via placeholder tokens)
+- ✅ Security hardened (no HTML injection, XSS protection)
+
+**Security Architecture**:
+- Uses placeholder token system (`<<<TOKEN>>>`) for dynamic content
+- React component handlers render tokens safely
+- All attributes auto-escaped by React
+- No raw HTML parsing
+
+### System 2: Token-Based Rendering (Fallback Path)
+**Status**: Inactive (fallback only)
+**Location**: `src/components/message/Message.tsx` (lines 664-744)
+**Activation**: When `ENABLE_MARKDOWN === false` OR `shouldUseMarkdown()` returns false
+**Current behavior**: Unreachable code (kept for emergency fallback)
+
+**Supported Features**:
+- ✅ User mentions (`@<address>`) via React components
+- ✅ Role mentions (`@role`) via React components
+- ✅ YouTube embeds (all URLs)
+- ✅ Regular URL auto-linking
+- ✅ Invite links via `<InviteLink>` component
+- ❌ No markdown formatting support
+
+**Why It's Kept**:
+1. **Emergency fallback**: If markdown rendering has critical issues, can disable via `ENABLE_MARKDOWN = false`
+2. **Backward compatibility**: Existing code path maintained for safety
+3. **Feature completeness**: Includes invite link support that was later added to MessageMarkdownRenderer
+4. **Testing**: Useful for comparing rendering behavior
+
+### Routing Decision Flow
+
+```typescript
+// Message.tsx (simplified)
+if (ENABLE_MARKDOWN && formatting.shouldUseMarkdown()) {
+  // System 1: MessageMarkdownRenderer (PRIMARY)
+  return <MessageMarkdownRenderer content={contentData.fullText} />
+} else {
+  // System 2: Token-based rendering (FALLBACK)
+  return (
+    // Lines 664-744: Token-based rendering
+    // Includes invite link handling at lines 708-715
+  )
+}
+```
+
+**Current State**:
+- `ENABLE_MARKDOWN = true` in `src/config/features.ts`
+- `shouldUseMarkdown()` always returns `true` in `useMessageFormatting.ts`
+- **Result**: All messages use System 1 (MessageMarkdownRenderer)
+- System 2 code exists but is unreachable
+
+### When to Use Each System
+
+**Use System 1 (MessageMarkdownRenderer) - DEFAULT**:
+- Normal operation
+- When users need markdown formatting
+- For maximum security (security-hardened architecture)
+
+**Use System 2 (Token-based) - EMERGENCY ONLY**:
+- If critical bug found in MessageMarkdownRenderer
+- For debugging/comparison purposes
+- Set `ENABLE_MARKDOWN = false` in `src/config/features.ts`
+
+**Trade-offs**:
+- System 1: Full features, markdown support, security hardened
+- System 2: Simpler, no markdown, but all links/embeds still work
+
 ## Architecture
 
 ### **Processing Pipeline (Security Hardened 2025-11-07)**
@@ -311,7 +394,7 @@ All user-controlled content now follows this pattern:
 **Related Task**: `.agents/tasks/remove-rehype-raw-security-fix.md`
 
 ---
-**Last Updated**: 2025-11-07
+**Last Updated**: 2025-11-08
 **Security Hardening**: Complete (rehype-raw removed, XSS vulnerabilities fixed)
 **Performance Optimization**: Complete
-**Recent Changes**: Security fixes, YouTube inline/standalone distinction, mention safety
+**Recent Changes**: Added dual architecture documentation, invite link support, security fixes
