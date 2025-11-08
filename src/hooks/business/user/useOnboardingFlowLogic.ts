@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react';
 import { DefaultImages } from '../../../utils';
+import { validateDisplayName } from '../validation';
 
 export type OnboardingStep =
   | 'key-backup'
@@ -111,9 +112,7 @@ export const useOnboardingFlowLogic = (adapter: OnboardingAdapter) => {
   );
 
   // Validation helpers
-  const canProceedWithName =
-    displayName.trim().length > 0 &&
-    displayName.trim().toLowerCase() !== 'everyone';
+  const canProceedWithName = !validateDisplayName(displayName);
   const isOnboardingComplete =
     exported && currentPasskeyInfo?.displayName && currentPasskeyInfo?.pfpUrl;
 

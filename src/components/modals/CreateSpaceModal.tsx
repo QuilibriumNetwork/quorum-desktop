@@ -3,6 +3,7 @@ import { Input, Button, Modal, Switch, Icon, Tooltip, Spacer, Callout, TextArea 
 import './CreateSpaceModal.scss';
 import SpaceIcon from '../navbar/SpaceIcon';
 import { useSpaceCreation, useFileUpload, useSpaceSettings } from '../../hooks';
+import { validateSpaceName } from '../../hooks/business/validation';
 import { Trans } from '@lingui/react/macro';
 import { t } from '@lingui/core/macro';
 import { ReactTooltip } from '../ui';
@@ -88,6 +89,8 @@ const CreateSpaceModal: React.FunctionComponent<CreateSpaceModalProps> = (
               placeholder={t`Enter a name for your Space`}
               className="w-full"
               labelType="static"
+              error={!!validateSpaceName(spaceName)}
+              errorMessage={validateSpaceName(spaceName)}
             />
             {fileError && (
               <Callout

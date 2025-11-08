@@ -14,6 +14,7 @@ import { t } from '@lingui/core/macro';
 import { ReactTooltip } from '../../ui';
 import { Channel, Group } from '../../../api/quorumApi';
 import { isFeatureEnabled } from '../../../utils/platform';
+import { validateSpaceName } from '../../../hooks/business/validation';
 
 interface GeneralProps {
   space: any;
@@ -140,9 +141,7 @@ const General: React.FunctionComponent<GeneralProps> = ({
           placeholder={t`Space name`}
           labelType="static"
           error={hasValidationError}
-          errorMessage={
-            hasValidationError ? t`Space name is required` : undefined
-          }
+          errorMessage={validateSpaceName(spaceName)}
         />
       </div>
       <div className="modal-content-section">

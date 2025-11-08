@@ -16,6 +16,7 @@ import { t } from '@lingui/core/macro';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
 import { useQueryClient } from '@tanstack/react-query';
 import { buildSpaceMembersKey } from '../../../hooks';
+import { validateSpaceName } from '../../../hooks/business/validation';
 import {
   useSpaceManagement,
   useRoleManagement,
@@ -467,7 +468,7 @@ const SpaceSettingsModal: React.FunctionComponent<{
                           setSaveEditHistory={setSaveEditHistory}
                           onSave={saveChanges}
                           isSaving={isSaving}
-                          hasValidationError={!spaceName.trim()}
+                          hasValidationError={!!validateSpaceName(spaceName)}
                         />
                       );
                     case 'roles':
@@ -581,7 +582,7 @@ const SpaceSettingsModal: React.FunctionComponent<{
                     disabled={
                       selectedCategory === 'account'
                         ? spaceProfile.isSaving || spaceProfile.hasValidationError || mentionSettings.isSaving
-                        : isSaving || (!spaceName.trim() && selectedCategory === 'general') || (descriptionError && selectedCategory === 'general')
+                        : isSaving || (!!validateSpaceName(spaceName) && selectedCategory === 'general') || (descriptionError && selectedCategory === 'general')
                     }
                   >
                     {t`Save Changes`}

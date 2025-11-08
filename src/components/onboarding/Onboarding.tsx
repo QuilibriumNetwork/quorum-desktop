@@ -11,6 +11,8 @@ import { t } from '@lingui/core/macro';
 import { i18n } from '@lingui/core';
 import { Trans } from '@lingui/react/macro';
 import { DefaultImages } from '../../utils';
+import { validateNameForXSS } from '../../utils/validation';
+import { validateDisplayName as getDisplayNameError } from '../../hooks/business/validation';
 
 export const Onboarding = ({
   setUser,
@@ -216,11 +218,8 @@ export const Onboarding = ({
                     value={onboardingFlow.displayName}
                     onChange={onboardingFlow.setDisplayName}
                     placeholder="Bongocat"
-                    error={
-                      onboardingFlow.displayName.trim().toLowerCase() ===
-                      'everyone'
-                    }
-                    errorMessage={t`'everyone' is a reserved name.`}
+                    error={!!getDisplayNameError(onboardingFlow.displayName)}
+                    errorMessage={getDisplayNameError(onboardingFlow.displayName)}
                   />
                 </div>
                 <div className="flex flex-col justify-center sm:min-w-[180px] sm:pl-2">

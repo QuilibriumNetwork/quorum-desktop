@@ -1,0 +1,636 @@
+═══════════════════════════════════════════════════════════════════════════════
+  XSS SECURITY TEST SNIPPETS
+  Safe test cases for validating XSS prevention
+  Created: 2025-11-08
+  Updated: 2025-11-08 - Reflect current implementation (NO rehype-raw/sanitize)
+═══════════════════════════════════════════════════════════════════════════════
+
+⚠️  DISCLAIMER: These are SAFE test snippets designed for local testing only.
+    They use harmless JavaScript like console.log() instead of malicious code.
+    Test in a controlled environment (localhost) only.
+
+📝  CURRENT IMPLEMENTATION:
+    - NO rehype-raw plugin → All user-typed HTML is escaped as literal text
+    - Placeholder tokens (<<<MENTION_USER:address>>>) for safe mention rendering
+    - Input validation blocks < > " ' in display names and space names
+    - ReactMarkdown escapes HTML by default (secure)
+
+═══════════════════════════════════════════════════════════════════════════════
+SECTION 1: DISPLAY NAME / SPACE NAME INPUT VALIDATION TESTS
+═══════════════════════════════════════════════════════════════════════════════
+
+These should be BLOCKED by input validation (error message shown):
+-----------------------------------------------------------------------------
+
+Test 1: Basic Script Tag
+-------------------------
+"><script>console.log('XSS')</script>
+
+Expected: ❌ Validation error: "Display name cannot contain < > " ' characters"
+Reason: Contains < > " '
+
+
+Test 2: Attribute Breaking with Single Quote
+---------------------------------------------
+'><script>console.log('XSS')</script>
+
+Expected: ❌ Validation error
+Reason: Contains < > '
+
+
+Test 3: Image with onerror
+---------------------------
+"><img src=x onerror=console.log('XSS')>
+
+Expected: ❌ Validation error
+Reason: Contains < > " '
+
+
+Test 4: HTML Comment Injection
+-------------------------------
+--><script>console.log('XSS')</script><!--
+
+Expected: ❌ Validation error
+Reason: Contains < > '
+
+
+Test 5: SVG with onload
+------------------------
+"><svg onload=console.log('XSS')>
+
+Expected: ❌ Validation error
+Reason: Contains < > "
+
+
+Test 6: Data URI JavaScript
+----------------------------
+"><a href="javascript:console.log('XSS')">click</a>
+
+Expected: ❌ Validation error
+Reason: Contains < > " '
+
+
+Test 7: Style Tag Injection
+----------------------------
+"><style>body{background:red}</style>
+
+Expected: ❌ Validation error
+Reason: Contains < > "
+
+
+Test 8: Iframe Injection
+-------------------------
+"><iframe src="javascript:console.log('XSS')"></iframe>
+
+Expected: ❌ Validation error
+Reason: Contains < > " '
+
+
+Test 9: Meta Refresh
+---------------------
+"><meta http-equiv="refresh" content="0;url=data:text/html,<script>console.log('XSS')</script>">
+
+Expected: ❌ Validation error
+Reason: Contains < > " '
+
+
+Test 10: Object/Embed Tag
+--------------------------
+"><object data="data:text/html,<script>console.log('XSS')</script>"></object>
+
+Expected: ❌ Validation error
+Reason: Contains < > " '
+
+
+═══════════════════════════════════════════════════════════════════════════════
+
+These should be ALLOWED (safe characters):
+-----------------------------------------------------------------------------
+
+Test 11: Ampersand
+------------------
+Tom & Jerry
+
+Expected: ✅ Accepted
+Reason: & is safe
+
+
+Test 12: Currency Symbols
+--------------------------
+Price: $100 €50 ¥1000 £75
+
+Expected: ✅ Accepted
+Reason: Currency symbols are safe
+
+
+Test 13: Emojis
+----------------
+Cool User 🎉👍🔥
+
+Expected: ✅ Accepted
+Reason: Emojis are safe
+
+
+Test 14: International Characters
+----------------------------------
+José García 北京用户 مستخدم عربي Владимир
+
+Expected: ✅ Accepted
+Reason: All language characters allowed
+
+
+Test 15: Accented Letters
+--------------------------
+Café René Zürich São Paulo
+
+Expected: ✅ Accepted
+Reason: Accented letters are safe
+
+
+Test 16: Special Punctuation
+-----------------------------
+User-Name_123 (Test) [Admin] @company.com #hashtag
+
+Expected: ✅ Accepted
+Reason: These punctuation marks are safe
+
+
+Test 17: Math Symbols
+----------------------
+2+2=4 10%off 5*3=15
+
+Expected: ✅ Accepted
+Reason: Math symbols are safe
+
+
+Test 18: Underscores and Hyphens
+---------------------------------
+Super_User-2024
+
+Expected: ✅ Accepted
+Reason: Common safe characters
+
+
+═══════════════════════════════════════════════════════════════════════════════
+SECTION 2: MESSAGE MARKDOWN RENDERER TESTS (Message.tsx)
+═══════════════════════════════════════════════════════════════════════════════
+
+Type these in a message to test if HTML is escaped as literal text:
+-----------------------------------------------------------------------------
+NOTE: We do NOT use rehype-raw, so ALL user-typed HTML is escaped by default
+
+Test 19: Basic Script Tag in Message
+-------------------------------------
+Hello <script>console.log('XSS from message')</script> World
+
+Expected: ✅ Renders as: "Hello <script>console.log('XSS from message')</script> World"
+Reason: ReactMarkdown escapes HTML by default (no rehype-raw plugin)
+
+
+Test 20: Image with onerror in Message
+---------------------------------------
+Check this out: <img src=x onerror=console.log('XSS')>
+
+Expected: ✅ Renders as: "Check this out: <img src=x onerror=console.log('XSS')>"
+Reason: ReactMarkdown escapes HTML by default
+
+
+Test 21: Iframe Injection in Message
+-------------------------------------
+<iframe src="javascript:console.log('XSS')"></iframe>
+
+Expected: ✅ Renders as: "<iframe src="javascript:console.log('XSS')"></iframe>"
+Reason: ReactMarkdown escapes HTML by default
+
+
+Test 22: SVG with Script
+-------------------------
+<svg><script>console.log('XSS')</script></svg>
+
+Expected: ✅ Renders as: "<svg><script>console.log('XSS')</script></svg>"
+Reason: ReactMarkdown escapes HTML by default
+
+
+Test 23: Div with onclick
+--------------------------
+<div onclick="console.log('XSS')">Click me</div>
+
+Expected: ✅ Renders as: "<div onclick="console.log('XSS')">Click me</div>"
+Reason: ReactMarkdown escapes HTML by default
+
+
+Test 24: Anchor Tag with javascript: URL
+-----------------------------------------
+<a href="javascript:console.log('XSS')">Click here</a>
+
+Expected: ✅ Renders as: "<a href="javascript:console.log('XSS')">Click here</a>"
+Reason: ReactMarkdown escapes HTML by default (NOT clickable link)
+
+
+Test 25: Style Tag
+-------------------
+<style>body{background:red !important;}</style>
+
+Expected: ✅ Renders as: "<style>body{background:red !important;}</style>"
+Reason: ReactMarkdown escapes HTML by default
+
+
+Test 26: Meta Tag
+------------------
+<meta http-equiv="refresh" content="0;url=data:text/html,test">
+
+Expected: ✅ Renders as: "<meta http-equiv="refresh" content="0;url=data:text/html,test">"
+Reason: ReactMarkdown escapes HTML by default
+
+
+Test 27: Object/Embed Tag
+--------------------------
+<object data="data:text/html,test"></object>
+
+Expected: ✅ Renders as: "<object data="data:text/html,test"></object>"
+Reason: ReactMarkdown escapes HTML by default
+
+
+Test 28: Base Tag
+------------------
+<base href="http://evil.com/">
+
+Expected: ✅ Renders as: "<base href="http://evil.com/">"
+Reason: ReactMarkdown escapes HTML by default
+
+
+Test 29: Link Tag
+------------------
+<link rel="stylesheet" href="http://evil.com/style.css">
+
+Expected: ✅ Renders as: "<link rel="stylesheet" href="http://evil.com/style.css">"
+Reason: ReactMarkdown escapes HTML by default
+
+
+Test 30: Form Tag
+-----------------
+<form action="http://evil.com"><input type="password"></form>
+
+Expected: ✅ Renders as: "<form action="http://evil.com"><input type="password"></form>"
+Reason: ReactMarkdown escapes HTML by default
+
+
+Test 31: HTML Comment with XSS
+-------------------------------
+<!-- <script>console.log('XSS')</script> -->
+
+Expected: ✅ Renders as: "<!-- <script>console.log('XSS')</script> -->"
+Reason: ReactMarkdown escapes HTML by default
+
+
+Test 32: Data URI Image
+------------------------
+<img src="data:image/svg+xml,<svg onload=console.log('XSS')>">
+
+Expected: ✅ Renders as: "<img src="data:image/svg+xml,<svg onload=console.log('XSS')>">"
+Reason: ReactMarkdown escapes HTML by default
+
+
+Test 33: Event Handler Attributes
+----------------------------------
+<div onload=console.log('XSS')>Test</div>
+<span onclick=console.log('XSS')>Test</span>
+<p onmouseover=console.log('XSS')>Test</p>
+
+Expected: ✅ All rendered as literal text (not executed)
+Reason: ReactMarkdown escapes HTML by default
+
+
+Test 34: CSS Expression (IE specific)
+--------------------------------------
+<div style="width: expression(console.log('XSS'));">Test</div>
+
+Expected: ✅ Renders as: "<div style="width: expression(console.log('XSS'));">Test</div>"
+Reason: ReactMarkdown escapes HTML by default
+
+
+Test 35: Nested Script Tags
+----------------------------
+<script><script>console.log('XSS')</script></script>
+
+Expected: ✅ Renders as: "<script><script>console.log('XSS')</script></script>"
+Reason: ReactMarkdown escapes HTML by default
+
+
+═══════════════════════════════════════════════════════════════════════════════
+SECTION 3: LEGITIMATE USE CASES (Should Work)
+═══════════════════════════════════════════════════════════════════════════════
+
+Test 36: User Mention
+----------------------
+Hey @<Qm123456789> how are you?
+
+Expected: ✅ Renders with styled mention span
+Reason: Our code generates <span> which is whitelisted
+
+
+Test 37: @everyone Mention
+---------------------------
+@everyone please check this
+
+Expected: ✅ Renders with styled @everyone span
+Reason: Our code generates <span> which is whitelisted
+
+
+Test 38: Role Mention
+----------------------
+@moderators can you help?
+
+Expected: ✅ Renders with styled role mention span
+Reason: Our code generates <span> which is whitelisted
+
+
+Test 39: Regular Markdown
+--------------------------
+**bold** *italic* `code` ~~strikethrough~~
+
+Expected: ✅ Renders with proper markdown formatting
+Reason: Standard markdown is safe
+
+
+Test 40: Code Block
+--------------------
+```javascript
+function test() {
+  console.log("This is code");
+}
+```
+
+Expected: ✅ Renders as formatted code block
+Reason: Code blocks are safe
+
+
+Test 41: Markdown Links
+------------------------
+Check out [this link](https://example.com)
+
+Expected: ✅ Renders as clickable link
+Reason: Markdown links processed safely
+
+
+Test 42: Standalone YouTube URL
+--------------------------------
+https://www.youtube.com/watch?v=dQw4w9WgXcQ
+
+Expected: ✅ Renders as embedded video
+Reason: Our YouTube processing handles this
+
+
+Test 43: Inline YouTube URL
+----------------------------
+Check this video https://www.youtube.com/watch?v=dQw4w9WgXcQ out!
+
+Expected: ✅ Renders as clickable link (not embed)
+Reason: Inline detection works correctly
+
+
+Test 44: Markdown Image (User-typed)
+-------------------------------------
+![my cat](https://example.com/cat.jpg)
+
+Expected: ✅ Renders as nothing (blocked)
+Reason: img handler returns null for non-YouTube images
+
+
+Test 45: Tables in Markdown
+----------------------------
+| Column 1 | Column 2 |
+|----------|----------|
+| Data 1   | Data 2   |
+
+Expected: ✅ Renders as formatted table
+Reason: Tables are safe markdown
+
+
+Test 46: Lists
+--------------
+1. First item
+2. Second item
+3. Third item
+
+- Bullet one
+- Bullet two
+
+Expected: ✅ Renders as formatted lists
+Reason: Lists are safe markdown
+
+
+Test 47: Blockquotes
+--------------------
+> This is a quote
+>
+> Multi-line quote
+
+Expected: ✅ Renders as formatted blockquote
+Reason: Blockquotes are safe
+
+
+Test 48: Headers (H3 only)
+---------------------------
+### This is a header
+
+Expected: ✅ Renders as H3 (H1/H2 converted to H3)
+Reason: Only H3 allowed
+
+
+Test 49: Horizontal Rules
+--------------------------
+Some text
+---
+More text
+
+Expected: ✅ Renders with horizontal line
+Reason: HR is safe
+
+
+Test 50: Mixed Content
+-----------------------
+Hey @<Qm123456> check **this** out:
+
+```
+code here
+```
+
+And also: https://youtube.com/watch?v=test
+
+Expected: ✅ All components render correctly
+Reason: All safe markdown elements
+
+
+═══════════════════════════════════════════════════════════════════════════════
+SECTION 4: EDGE CASES & ADVANCED ATTACKS
+═══════════════════════════════════════════════════════════════════════════════
+
+Test 51: HTML Entity Encoding
+------------------------------
+&lt;script&gt;console.log('XSS')&lt;/script&gt;
+
+Expected: ✅ Renders as literal text (entities decoded but tag stripped)
+Reason: Even if decoded, <script> is stripped by sanitizer
+
+
+Test 52: Unicode Escaping
+--------------------------
+\u003cscript\u003econsole.log('XSS')\u003c/script\u003e
+
+Expected: ✅ Renders as literal text
+Reason: JavaScript unicode escapes don't work in HTML context
+
+
+Test 53: Double Encoding
+-------------------------
+%253Cscript%253Econsole.log('XSS')%253C/script%253E
+
+Expected: ✅ Renders as literal text
+Reason: URL encoding doesn't create HTML tags
+
+
+Test 54: NULL Byte Injection
+-----------------------------
+<scr\x00ipt>console.log('XSS')</script>
+
+Expected: ✅ Tag stripped if parsed, or rendered as text
+Reason: Sanitizer handles malformed tags
+
+
+Test 55: Case Variation
+------------------------
+<ScRiPt>console.log('XSS')</sCrIpT>
+
+Expected: ✅ Tag stripped
+Reason: Sanitizer is case-insensitive
+
+
+Test 56: HTML5 Tags
+--------------------
+<details open><summary>Click</summary><script>console.log('XSS')</script></details>
+
+Expected: ✅ All tags stripped
+Reason: Not in whitelist
+
+
+Test 57: Markdown + HTML Mix
+-----------------------------
+**Bold** <script>console.log('XSS')</script> *italic*
+
+Expected: ✅ Renders as: "Bold <script>console.log('XSS')</script> italic"
+Reason: Markdown works, HTML escaped as literal text
+
+
+Test 58: Nested Attributes
+---------------------------
+<span title="<script>console.log('XSS')</script>">Test</span>
+
+Expected: ✅ Renders as: "<span title="<script>console.log('XSS')</script>">Test</span>"
+Reason: ReactMarkdown escapes HTML by default
+
+
+Test 59: Data Protocol in Image
+--------------------------------
+![test](data:text/html,<script>console.log('XSS')</script>)
+
+Expected: ✅ Nothing renders (blocked)
+Reason: img handler blocks non-YouTube images (returns null)
+
+
+Test 60: Multiple Vectors Combined
+-----------------------------------
+<div><script>console.log('1')</script><img src=x onerror=console.log('2')><style>body{background:red}</style></div>
+
+Expected: ✅ Renders as literal text (all HTML escaped)
+Reason: ReactMarkdown escapes HTML by default
+
+
+═══════════════════════════════════════════════════════════════════════════════
+TESTING CHECKLIST
+═══════════════════════════════════════════════════════════════════════════════
+
+□ Input Validation Layer
+  □ Test 1-10: All blocked by validation (display name / space name inputs)
+  □ Test 11-18: All accepted by validation (safe characters)
+
+□ HTML Escaping Layer (ReactMarkdown without rehype-raw)
+  □ Test 19-35: All HTML tags escaped as literal text in messages
+  □ No console.log() messages appear in browser console
+  □ No layout changes or red backgrounds appear
+  □ HTML appears as visible text (e.g., "<script>alert(1)</script>" shows on screen)
+
+□ Legitimate Functionality
+  □ Test 36-38: Mentions render correctly with styling (via placeholder tokens)
+  □ Test 39-50: All markdown features work as expected
+
+□ Edge Cases
+  □ Test 51-60: Advanced attacks all escaped as literal text
+
+□ Browser Console Check
+  □ Open browser dev tools → Console tab
+  □ Type test messages
+  □ Verify NO "XSS" or attack messages appear in console
+
+□ Network Tab Check
+  □ Open browser dev tools → Network tab
+  □ Verify no unexpected requests to "evil.com" or data URIs
+
+═══════════════════════════════════════════════════════════════════════════════
+HOW TO TEST
+═══════════════════════════════════════════════════════════════════════════════
+
+1. DISPLAY NAME / SPACE NAME TESTS:
+   - Go to User Settings → General
+   - Try pasting Test 1-18 into the display name field
+   - Verify validation errors for Test 1-10
+   - Verify acceptance for Test 11-18
+
+2. MESSAGE TESTS:
+   - Open a space/channel
+   - Type Test 19-60 into the message input
+   - Send the message
+   - Verify expected behavior (stripped HTML, working markdown)
+
+3. VERIFICATION:
+   - Open browser DevTools (F12)
+   - Check Console tab: Should see NO "XSS" messages
+   - Check Network tab: Should see NO requests to evil.com
+   - Check Elements tab: Inspect rendered HTML, should see only <span> from mentions
+
+4. SUCCESS CRITERIA:
+   ✅ All validation tests (1-10) show error messages
+   ✅ All safe characters (11-18) are accepted
+   ✅ All malicious HTML (19-35) is stripped from messages
+   ✅ All legitimate features (36-50) work correctly
+   ✅ All edge cases (51-60) are handled safely
+   ✅ Browser console shows zero XSS attempts executed
+
+═══════════════════════════════════════════════════════════════════════════════
+WHAT TO LOOK FOR (Signs of Successful Attack - Should NOT Happen!)
+═══════════════════════════════════════════════════════════════════════════════
+
+❌ Console logs appearing with "XSS" messages
+❌ Alert boxes popping up
+❌ Background color changing to red
+❌ Network requests to evil.com or unknown domains
+❌ JavaScript execution in attributes
+❌ Ability to inject <script>, <img>, <iframe>, etc. tags
+❌ Ability to use < > " ' characters in display/space names
+
+If ANY of the above happen, the security implementation has failed!
+
+═══════════════════════════════════════════════════════════════════════════════
+NOTES
+═══════════════════════════════════════════════════════════════════════════════
+
+- All test snippets use console.log() instead of alert() for less disruption
+- Tests are designed to be safe for local testing
+- No actual malicious payloads that could cause damage
+- Focus is on validating the security layers work as designed
+- Run tests in localhost only, not in production
+
+═══════════════════════════════════════════════════════════════════════════════
+Document Created: 2025-11-08
+Last Updated: 2025-11-08
+═══════════════════════════════════════════════════════════════════════════════

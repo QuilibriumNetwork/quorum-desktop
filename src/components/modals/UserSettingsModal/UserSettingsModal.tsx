@@ -16,6 +16,7 @@ import {
   useNotificationSettings,
   useModalSaveState,
 } from '../../../hooks';
+import { validateDisplayName } from '../../../hooks/business/validation';
 import General from './General';
 import Privacy from './Privacy';
 import Notifications from './Notifications';
@@ -92,16 +93,6 @@ const UserSettingsModal: React.FunctionComponent<{
     permissionStatus,
     showRevokeMessage,
   } = useNotificationSettings();
-
-  const validateDisplayName = (name: string): string | undefined => {
-    if (!name.trim()) {
-      return t`Display name is required`;
-    }
-    if (name.trim().toLowerCase() === 'everyone') {
-      return t`'everyone' is a reserved name.`;
-    }
-    return undefined;
-  };
 
   const displayNameError = validateDisplayName(displayName);
 
