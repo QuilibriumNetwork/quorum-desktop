@@ -821,7 +821,7 @@ export class MessageDB {
     });
   }
 
-  async getSpace(spaceId: string): Promise<Space | undefined> {
+  async getSpace(spaceId: string): Promise<Space | null> {
     await this.init();
     return new Promise((resolve, reject) => {
       const transaction = this.db!.transaction('spaces', 'readonly');
@@ -829,7 +829,7 @@ export class MessageDB {
 
       const request = store.get(spaceId);
 
-      request.onsuccess = () => resolve(request.result);
+      request.onsuccess = () => resolve(request.result ?? null);
       request.onerror = () => reject(request.error);
     });
   }
