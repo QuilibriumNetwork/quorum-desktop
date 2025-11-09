@@ -688,13 +688,21 @@ msgstr "Describe what this Space is about..."
 #~ msgid "Description"
 #~ msgstr "Description"
 
+#: src/hooks/business/validation/useSpaceNameValidation.ts:54
+msgid "Description cannot contain special characters"
+msgstr "Description cannot contain special characters"
+
 #: src/components/modals/CreateSpaceModal.tsx:119
 msgid "Description must be {MAX_DESCRIPTION_LENGTH} characters or less"
 msgstr "Description must be {MAX_DESCRIPTION_LENGTH} characters or less"
 
 #: src/components/modals/SpaceSettingsModal/General.tsx:159
-msgid "Description must be {maxDescriptionLength} characters or less"
-msgstr "Description must be {maxDescriptionLength} characters or less"
+#~ msgid "Description must be {maxDescriptionLength} characters or less"
+#~ msgstr "Description must be {maxDescriptionLength} characters or less"
+
+#: src/hooks/business/validation/useSpaceNameValidation.ts:58
+msgid "Description must be {maxLength} characters or less"
+msgstr "Description must be {maxLength} characters or less"
 
 #: src/components/modals/UserSettingsModal/Notifications.tsx:35
 msgid "Desktop Notifications"
