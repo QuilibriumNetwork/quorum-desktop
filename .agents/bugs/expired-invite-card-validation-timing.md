@@ -115,27 +115,81 @@ This issue may have been introduced or exacerbated by commit `7d3dfa94`:
 - Expiration validation in `processInviteLink()` (didn't work as expected)
 - Button error disable logic (symptom fix, not root cause)
 
-## Next Steps for Investigation
+## Investigation Findings (2025-11-09)
 
-1. **Verify API Behavior:**
-   - Does `getSpaceInviteEval()` actually return 404 for expired invites?
-   - Or does it return data that we need to interpret?
-   - Check network tab when clicking expired invite
+### API Behavior Analysis
 
-2. **Test Expiration Detection:**
-   - Add console.log in `processInviteLink()` expiration check
-   - Verify it's actually being called
-   - Check if exception is being thrown and caught
+Through console logging and testing, discovered the following behavior:
 
-3. **Review Cache Behavior:**
-   - Check if cache is being cleared/invalidated properly
-   - Verify state initialization from cache
-   - Consider cache TTL or expiration timestamp
+1. **`getSpaceInviteEval()` API Returns:**
+   - During `processInviteLink()`: Returns **200 with valid encrypted data** ✅
+   - During `joinInviteLink()`: Returns **200 with error text** (e.g., "Decryption failed") ❌
 
-4. **Alternative Approach:**
-   - Move expiration validation to separate hook
-   - Run validation in parallel with space data fetch
-   - Use React Query with stale time for better cache control
+2. **Error Pattern:**
+   ```
+   Failed to join space: SyntaxError: Unexpected token 'D', "Decryption"... is not valid JSON
+   at JSON.parse (<anonymous>)
+   at InvitationService.joinInviteLink (InvitationService.ts:707:18)
+   ```
+
+3. **Console Logs Show:**
+   ```
+   [processInviteLink] getSpaceInviteEval succeeded: {data: '{"ciphertext":"..."}', status: 200}
+   [useInviteProcessing] processInviteLink succeeded
+   ```
+   Then on Join click:
+   ```
+   Failed to join space: SyntaxError: Unexpected token 'D', "Decryption"... is not valid JSON
+   ```
+
+### Root Cause Confirmed
+
+**The issue is NOT client-side validation timing.** The API behavior is inconsistent:
+
+1. **Initial processing** (`processInviteLink`): API returns valid encrypted JSON → Space displays with Join button
+2. **Join attempt** (`joinInviteLink`): API returns plain text error → JSON.parse fails
+
+### Why This Happens
+
+Likely causes (from related bug reports):
+
+1. **Single-use invite evals**: First call to `getSpaceInviteEval()` during `processInviteLink` might consume the eval
+2. **Intermittent expiration**: Related to `.agents/bugs/public-invite-link-intermittent-expiration.md`
+3. **API state changes**: Space membership/ratchet ID changes between calls
+4. **Network/timing issues**: Related to `.agents/bugs/joinspacemodal-invalid-json-network-error.md`
+
+### Why Client-Side Fix Won't Work
+
+**Cannot add expiration validation to `processInviteLink()`** because:
+- Calling `getSpaceInviteEval()` during processing might **consume** the invite eval
+- The same invite eval needs to be available for `joinInviteLink()` to actually join
+- API returns 200 with valid data during processing, so no way to detect it will fail later
+
+### Current Behavior is Actually Correct
+
+The existing error handling already:
+- Shows "The invite link has expired or is invalid" message after Join fails ✅
+- Disables the Join button after error ✅
+- Prevents repeated clicking ✅
+
+**The user complaint is about seeing the Join button at all**, but this is unavoidable with current API behavior.
+
+### Next Steps
+
+This requires **server-side/API investigation**, not client-side fixes:
+
+1. **Understand invite eval lifecycle:**
+   - Are invite evals single-use or multi-use?
+   - Why does first call succeed but second fails?
+
+2. **API consistency:**
+   - Should expired invites return 404 instead of 200?
+   - Should error messages be in response body with error status codes?
+
+3. **Alternative API patterns:**
+   - Provide a "validate only" endpoint that doesn't consume the eval
+   - Include expiration timestamp in manifest so client can check without eval
+   - Return consistent error codes (404) instead of 200 with error text
 
 ## Proposed Solution (After Investigation)
 
@@ -183,5 +237,6 @@ const useInviteExpiration = (inviteLink, space) => {
 
 ---
 *Created: 2025-11-09*
-*Status: Under Investigation*
-*Initial Analysis: Validation happens too late (on join) instead of on render*
+*Updated: 2025-11-09*
+*Status: Blocked - Requires Server-Side Investigation*
+*Conclusion: Cannot be fixed client-side due to API behavior. Invite evals appear valid during processing but fail during join. Likely single-use or intermittent API issue.*
