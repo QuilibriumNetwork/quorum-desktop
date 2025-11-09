@@ -6,11 +6,24 @@ import {
 } from '../../hooks';
 import { Trans } from '@lingui/react/macro';
 
-export const InviteLink = ({ inviteLink }: { inviteLink: string }) => {
+export const InviteLink = ({
+  inviteLink,
+  messageSenderId,
+  currentUserAddress,
+}: {
+  inviteLink: string;
+  messageSenderId?: string;
+  currentUserAddress?: string;
+}) => {
   // Extract business logic into focused hooks
   const { space, error, isProcessing } = useInviteProcessing(inviteLink);
   const { joining, joinSpace, joinError } = useInviteJoining(inviteLink);
-  const { buttonText, isButtonDisabled } = useInviteUI(space, joining);
+  const { buttonText, isButtonDisabled } = useInviteUI(
+    space,
+    joining,
+    messageSenderId,
+    currentUserAddress
+  );
 
   // Combine and map errors for display
   const rawError = error || joinError;

@@ -32,6 +32,8 @@ interface MessageMarkdownRendererProps {
   hasEveryoneMention?: boolean;
   roleMentions?: string[];
   spaceRoles?: Role[];
+  messageSenderId?: string;
+  currentUserAddress?: string;
 }
 
 
@@ -145,6 +147,8 @@ export const MessageMarkdownRenderer: React.FC<MessageMarkdownRendererProps> = (
   hasEveryoneMention = false,
   roleMentions = [],
   spaceRoles = [],
+  messageSenderId,
+  currentUserAddress,
 }) => {
 
   // Convert H1 and H2 headers to H3 since only H3 is allowed
@@ -358,7 +362,11 @@ export const MessageMarkdownRenderer: React.FC<MessageMarkdownRendererProps> = (
       if (alt === 'invite-card' && src) {
         return (
           <div className="my-2">
-            <InviteLink inviteLink={src} />
+            <InviteLink
+              inviteLink={src}
+              messageSenderId={messageSenderId}
+              currentUserAddress={currentUserAddress}
+            />
           </div>
         );
       }

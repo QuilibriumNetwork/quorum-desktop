@@ -655,6 +655,8 @@ export const Message = React.memo(
                           hasEveryoneMention={message.mentions?.everyone}
                           roleMentions={message.mentions?.roleIds}
                           spaceRoles={spaceRoles}
+                          messageSenderId={message.content?.senderId}
+                          currentUserAddress={user.currentPasskeyInfo?.address}
                         />
                       </Container>
                     );
