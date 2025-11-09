@@ -4,20 +4,37 @@ import { useMessageDB } from '../../../components/context/useMessageDB';
 import { t } from '@lingui/core/macro';
 
 /**
+ * Module-level cache to persist invite data across component remounts
+ * This prevents showing skeleton state when InviteLink remounts with the same URL
+ */
+const inviteCache = new Map<string, { space?: Space; error?: string }>();
+
+/**
  * Custom hook for processing and validating invite links
  * Handles invite link verification and space data fetching
+ * Uses cache to prevent unnecessary refetching and skeleton flashing on remount
  */
 export const useInviteProcessing = (inviteLink: string) => {
-  const [error, setError] = useState<string>();
-  const [space, setSpace] = useState<Space>();
+  // Initialize state from cache if available
+  const cached = inviteCache.get(inviteLink);
+  const [error, setError] = useState<string | undefined>(cached?.error);
+  const [space, setSpace] = useState<Space | undefined>(cached?.space);
   const { processInviteLink } = useMessageDB();
 
   useEffect(() => {
     const processInvite = async () => {
+      // Skip if we already have cached data for this invite
+      const cached = inviteCache.get(inviteLink);
+      if (cached) {
+        return; // Data already loaded, no need to refetch
+      }
+
       try {
         setError(undefined);
         const spaceData = await processInviteLink(inviteLink);
         setSpace(spaceData);
+        // Cache the successful result
+        inviteCache.set(inviteLink, { space: spaceData });
       } catch (e: any) {
         const raw = e?.message || e?.toString?.() || '';
         // Surface specific, user-friendly errors from known conditions
@@ -29,6 +46,8 @@ export const useInviteProcessing = (inviteLink: string) => {
         }
         setError(friendly);
         setSpace(undefined);
+        // Cache the error result
+        inviteCache.set(inviteLink, { error: friendly });
       }
     };
 
