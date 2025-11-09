@@ -101,225 +101,248 @@ quorum-desktop/
 ## Optimal Documentation Structure
 
 ```
-📖 Quorum Developer Docs
+📖 Quorum Docs
 │
-├── 🚀 Quick Start
-│   ├── 5-Minute Quickstart
-│   ├── Development Environment Setup
-│   ├── Your First Contribution
-│   └── Running Tests & Debugging
+├── 👥 User Guide
+│   ├── Introduction
+│   │   ├── What is Quorum?
+│   │   ├── How Quorum Compares to Other Chat Apps
+│   │   ├── Our Philosophy: Free Speech, Privacy, and Decentralization
+│   │   ├── Frequently Asked Questions (FAQ)
+│   │   └── Getting Support & Reporting Issues
+│   ├── Using Quorum: Core Features
+│   │   ├── Getting Started
+│   │   │   ├── Creating Your Account
+│   │   │   ├── Account Security
+│   │   │   ├── Verifiable Messages
+│   │   │   └── How to Delete Your Account
+│   │   └── Spaces: Your Digital Communities
+│   │       ├── Creating & Customizing Your Own Space
+│   │       └── Managing Your Space
+│   └── Quorum Apex: Premium Features
+│       ├── Introduction to Quorum Apex
+│       ├── Subscribing and Managing Your Subscription
+│       └── How to Sponsor a Space
 │
-├── 💡 Core Concepts
-│   ├── What is Quorum?
-│   ├── Architecture Overview
-│   ├── Decentralized Messaging Fundamentals
-│   ├── Privacy & Encryption Model
-│   ├── Cross-Platform Strategy
-│   └── Technology Stack
-│
-├── 🏗️ System Architecture
-│   ├── High-Level Architecture
-│   ├── Data Flow & State Management
-│   ├── Service-Oriented Architecture
-│   │   ├── Service Layer Overview
-│   │   ├── MessageService Deep Dive
-│   │   ├── SpaceService Deep Dive
-│   │   ├── EncryptionService Deep Dive
-│   │   ├── SyncService Deep Dive
-│   │   └── Other Services
-│   ├── Storage Architecture
-│   │   ├── IndexedDB Schema
-│   │   ├── MessageDB Orchestrator
-│   │   └── Data Persistence Patterns
-│   ├── Real-Time Communication
-│   │   ├── WebSocket Architecture
-│   │   ├── Message Protocol
-│   │   └── Event System
-│   └── Security Architecture
-│       ├── End-to-End Encryption
-│       ├── Key Management
-│       └── Message Signing & Verification
-│
-├── 🎨 UI Architecture (Cross-Platform)
-│   ├── Cross-Platform UI Philosophy
-│   ├── Primitive Component System
-│   │   ├── What Are Primitives?
-│   │   ├── Available Primitives (Quick Ref)
-│   │   ├── Building New Primitives
-│   │   ├── Web Implementation (Tailwind)
-│   │   └── Native Implementation (StyleSheet)
-│   ├── Business Components
-│   │   ├── Component Architecture
-│   │   ├── Modal System
-│   │   ├── Navigation System
-│   │   └── Message Components
-│   ├── Theming & Styling
-│   │   ├── Theme System
-│   │   ├── Responsive Design
-│   │   └── Cross-Platform Styling Guide
-│   └── Platform-Specific UI
-│       ├── Web/Electron UI
-│       ├── Mobile (React Native) UI
-│       └── Platform Detection & Adaptation
-│
-├── 🔧 Development Guides
-│   ├── Contributing to Quorum
-│   │   ├── Contribution Guidelines
-│   │   ├── Code Style & Standards
-│   │   ├── Git Workflow
-│   │   ├── Pull Request Process
-│   │   └── Code Review Guidelines
-│   ├── Building Features
-│   │   ├── Adding a New Feature (Step-by-Step)
-│   │   ├── Creating Cross-Platform Components
-│   │   ├── Working with Hooks
-│   │   ├── Service Layer Development
-│   │   └── State Management Patterns
-│   ├── Testing & Quality
-│   │   ├── Testing Philosophy
-│   │   ├── Unit Testing Guide
-│   │   ├── Component Testing
-│   │   ├── Integration Testing
-│   │   └── Development Playgrounds
-│   ├── Mobile Development
-│   │   ├── Mobile Setup Guide
-│   │   ├── Expo Dev Client
-│   │   ├── Platform Differences
-│   │   ├── Touch Interactions
-│   │   └── Mobile-Specific Features
-│   └── Debugging & Troubleshooting
-│       ├── Common Development Issues
-│       ├── React Hooks Best Practices
-│       ├── WSL/Windows Development
-│       ├── Mobile Debugging
-│       └── Performance Debugging
-│
-├── 🤖 AI-Assisted Development
-│   └── Working with AI Agents
-│       ├── Overview (repo optimized for AI agents)
-│       ├── Context Files Reference (AGENTS.md, .agents/ structure)
-│       ├── Reading Order (which files to read first)
-│       └── Maintaining Context (task files, docs, bug reports)
-│
-├── 🤖 Building with Quorum
-│   ├── Bot Development
-│   │   ├── Bot Architecture Overview
-│   │   ├── Authentication for Bots
-│   │   ├── Sending Messages Programmatically
-│   │   ├── Listening to Events
-│   │   ├── Bot Examples
-│   │   │   ├── Simple Echo Bot
-│   │   │   ├── Notification Bot
-│   │   │   ├── Moderation Bot
-│   │   │   └── Integration Bot (External APIs)
-│   │   └── Bot Deployment Guide
-│   ├── External Integrations
-│   │   ├── REST API Integration
-│   │   ├── WebSocket Integration
-│   │   ├── Webhook Setup
-│   │   └── Third-Party Service Integration
-│   ├── Custom Clients
-│   │   ├── Building a Custom Client
-│   │   ├── Client Authentication
-│   │   ├── Message Protocol Implementation
-│   │   └── Example: CLI Client
-│   └── Extensions & Plugins
-│       ├── Extension Architecture
-│       ├── Creating Custom Services
-│       ├── Hook Development
-│       └── Plugin Examples
-│
-├── 💰 Cryptocurrency Features
-│   ├── Crypto Architecture Overview
-│   ├── Wallet Features
-│   │   ├── Account/Wallet Creation
-│   │   ├── Key Management & Security
-│   │   ├── Multi-Signature Wallets
-│   │   ├── Wallet Backup & Recovery
-│   │   └── HD Wallet Support
-│   ├── Transactions
-│   │   ├── Sending Cryptocurrency
-│   │   ├── Receiving Payments
-│   │   ├── Transaction History
-│   │   ├── Gas/Fee Management
-│   │   └── Transaction Signing
-│   ├── In-App Payments
-│   │   ├── Peer-to-Peer Payments
-│   │   ├── Payment Requests
-│   │   ├── Payment Notifications
-│   │   └── Payment UI Components
-│   ├── Smart Contract Integration
-│   │   ├── Contract Interaction
-│   │   ├── Token Support (ERC20, etc.)
-│   │   └── Custom Contract Integration
-│   └── Blockchain Integration
-│       ├── Quilibrium Network Integration
-│       ├── Node Communication
-│       ├── Network Selection
-│       └── Chain Data Synchronization
-│
-├── 📚 API Reference
-│   ├── Services API
-│   │   ├── MessageService API
-│   │   ├── SpaceService API
-│   │   ├── EncryptionService API
-│   │   ├── SyncService API
-│   │   ├── InvitationService API
-│   │   ├── SearchService API
-│   │   ├── ConfigService API
-│   │   └── NotificationService API
-│   ├── Hooks Reference
-│   │   ├── Business Hooks
-│   │   │   ├── Space Hooks
-│   │   │   ├── Channel Hooks
-│   │   │   ├── Message Hooks
-│   │   │   ├── User Hooks
-│   │   │   └── Search Hooks
-│   │   ├── Query Hooks (TanStack Query)
-│   │   ├── Mutation Hooks
-│   │   └── UI Hooks
-│   ├── Components Reference
-│   │   ├── Primitive Components
-│   │   └── Business Components
-│   ├── Utilities Reference
-│   │   ├── Platform Utilities
-│   │   ├── Crypto Utilities
-│   │   ├── Image Processing
-│   │   └── Helper Functions
-│   ├── Data Models
-│   │   ├── Message Types
-│   │   ├── Space & Channel Models
-│   │   ├── User Models
-│   │   └── Conversation Models
-│   └── REST API
-│       ├── Authentication Endpoints
-│       ├── Space Endpoints
-│       ├── Message Endpoints
-│       ├── User Endpoints
-│       └── Webhook Endpoints
-│
-├── 🌐 Protocol & Specifications
-│   ├── Message Protocol Specification
-│   ├── WebSocket Protocol
-│   ├── Encryption Protocol
-│   ├── Signature Scheme
-│   └── Data Format Specifications
-│
-├── 🎓 Tutorials
-│   ├── Tutorial: Build Your First Feature
-│   ├── Tutorial: Create a Custom Primitive
-│   ├── Tutorial: Build a Message Bot
-│   ├── Tutorial: Implement a Crypto Wallet Feature
-│   ├── Tutorial: Add Cross-Platform Support to a Component
-│   └── Tutorial: Optimize Performance
-│
-└── 📋 Resources
-    ├── Glossary
-    ├── FAQ
-    ├── Changelog
-    ├── Roadmap
-    ├── Community & Support
-    └── External Resources
+└── 👨‍💻 Developer Docs
+    │
+    ├── 🚀 Quick Start
+    │   ├── 5-Minute Quickstart
+    │   ├── Development Environment Setup
+    │   ├── Your First Contribution
+    │   └── Running Tests & Debugging
+    │
+    ├── 💡 Core Concepts
+    │   ├── What is Quorum?
+    │   ├── Architecture Overview
+    │   ├── Decentralized Messaging Fundamentals
+    │   ├── Privacy & Encryption Model
+    │   ├── Cross-Platform Strategy
+    │   └── Technology Stack
+    │
+    ├── 🏗️ System Architecture
+    │   ├── High-Level Architecture
+    │   ├── Data Flow & State Management
+    │   ├── Service-Oriented Architecture
+    │   │   ├── Service Layer Overview
+    │   │   ├── MessageService Deep Dive
+    │   │   ├── SpaceService Deep Dive
+    │   │   ├── EncryptionService Deep Dive
+    │   │   ├── SyncService Deep Dive
+    │   │   └── Other Services
+    │   ├── Storage Architecture
+    │   │   ├── IndexedDB Schema
+    │   │   ├── MessageDB Orchestrator
+    │   │   └── Data Persistence Patterns
+    │   ├── Real-Time Communication
+    │   │   ├── WebSocket Architecture
+    │   │   ├── Message Protocol
+    │   │   └── Event System
+    │   └── Security Architecture
+    │       ├── End-to-End Encryption
+    │       ├── Key Management
+    │       └── Message Signing & Verification
+    │
+    ├── 🎨 UI Architecture (Cross-Platform)
+    │   ├── Cross-Platform UI Philosophy
+    │   ├── Primitive Component System
+    │   │   ├── What Are Primitives?
+    │   │   ├── Available Primitives (Quick Ref)
+    │   │   ├── Building New Primitives
+    │   │   ├── Web Implementation (Tailwind)
+    │   │   └── Native Implementation (StyleSheet)
+    │   ├── Business Components
+    │   │   ├── Component Architecture
+    │   │   ├── Modal System
+    │   │   ├── Navigation System
+    │   │   └── Message Components
+    │   ├── Theming & Styling
+    │   │   ├── Theme System
+    │   │   ├── Responsive Design
+    │   │   └── Cross-Platform Styling Guide
+    │   └── Platform-Specific UI
+    │       ├── Web/Electron UI
+    │       ├── Mobile (React Native) UI
+    │       └── Platform Detection & Adaptation
+    │
+    ├── 🔧 Development Guides
+    │   ├── Contributing to Quorum
+    │   │   ├── Contribution Guidelines
+    │   │   ├── Code Style & Standards
+    │   │   ├── Git Workflow
+    │   │   ├── Pull Request Process
+    │   │   └── Code Review Guidelines
+    │   ├── Building Features
+    │   │   ├── Adding a New Feature (Step-by-Step)
+    │   │   ├── Creating Cross-Platform Components
+    │   │   ├── Working with Hooks
+    │   │   ├── Service Layer Development
+    │   │   └── State Management Patterns
+    │   ├── Testing & Quality
+    │   │   ├── Testing Philosophy
+    │   │   ├── Unit Testing Guide
+    │   │   ├── Component Testing
+    │   │   ├── Integration Testing
+    │   │   └── Development Playgrounds
+    │   ├── Mobile Development
+    │   │   ├── Mobile Setup Guide
+    │   │   ├── Expo Dev Client
+    │   │   ├── Platform Differences
+    │   │   ├── Touch Interactions
+    │   │   └── Mobile-Specific Features
+    │   └── Debugging & Troubleshooting
+    │       ├── Common Development Issues
+    │       ├── React Hooks Best Practices
+    │       ├── WSL/Windows Development
+    │       ├── Mobile Debugging
+    │       └── Performance Debugging
+    │
+    ├── 🤖 AI-Assisted Development
+    │   └── Working with AI Agents
+    │       ├── Overview (repo optimized for AI agents)
+    │       ├── Context Files Reference (AGENTS.md, .agents/ structure)
+    │       ├── Reading Order (which files to read first)
+    │       └── Maintaining Context (task files, docs, bug reports)
+    │
+    ├── 🤖 Building with Quorum
+    │   ├── Bot Development
+    │   │   ├── Bot Architecture Overview
+    │   │   ├── Authentication for Bots
+    │   │   ├── Sending Messages Programmatically
+    │   │   ├── Listening to Events
+    │   │   ├── Bot Examples
+    │   │   │   ├── Simple Echo Bot
+    │   │   │   ├── Notification Bot
+    │   │   │   ├── Moderation Bot
+    │   │   │   └── Integration Bot (External APIs)
+    │   │   │   └── Bot Deployment Guide
+    │   │   ├── External Integrations
+    │   │   │   ├── REST API Integration
+    │   │   │   ├── WebSocket Integration
+    │   │   │   ├── Webhook Setup
+    │   │   │   └── Third-Party Service Integration
+    │   │   ├── Custom Clients
+    │   │   │   ├── Building a Custom Client
+    │   │   │   ├── Client Authentication
+    │   │   │   ├── Message Protocol Implementation
+    │   │   │   └── Example: CLI Client
+    │   │   └── Extensions & Plugins
+    │   │       ├── Extension Architecture
+    │   │       ├── Creating Custom Services
+    │   │       ├── Hook Development
+    │   │       └── Plugin Examples
+    │   │
+    ├── 💰 Cryptocurrency Features
+    │   ├── Crypto Architecture Overview
+    │   ├── Wallet Features
+    │   │   ├── Account/Wallet Creation
+    │   │   ├── Key Management & Security
+    │   │   ├── Multi-Signature Wallets
+    │   │   ├── Wallet Backup & Recovery
+    │   │   └── HD Wallet Support
+    │   ├── Transactions
+    │   │   ├── Sending Cryptocurrency
+    │   │   ├── Receiving Payments
+    │   │   ├── Transaction History
+    │   │   ├── Gas/Fee Management
+    │   │   └── Transaction Signing
+    │   ├── In-App Payments
+    │   │   ├── Peer-to-Peer Payments
+    │   │   ├── Payment Requests
+    │   │   ├── Payment Notifications
+    │   │   └── Payment UI Components
+    │   ├── Smart Contract Integration
+    │   │   ├── Contract Interaction
+    │   │   ├── Token Support (ERC20, etc.)
+    │   │   └── Custom Contract Integration
+    │   └── Blockchain Integration
+    │       ├── Quilibrium Network Integration
+    │       ├── Node Communication
+    │       ├── Network Selection
+    │       └── Chain Data Synchronization
+    │
+    ├── 📚 API Reference
+    │   ├── Services API
+    │   │   ├── MessageService API
+    │   │   ├── SpaceService API
+    │   │   ├── EncryptionService API
+    │   │   ├── SyncService API
+    │   │   ├── InvitationService API
+    │   │   ├── SearchService API
+    │   │   ├── ConfigService API
+    │   │   └── NotificationService API
+    │   ├── Hooks Reference
+    │   │   ├── Business Hooks
+    │   │   │   ├── Space Hooks
+    │   │   │   ├── Channel Hooks
+    │   │   │   ├── Message Hooks
+    │   │   │   ├── User Hooks
+    │   │   │   └── Search Hooks
+    │   │   ├── Query Hooks (TanStack Query)
+    │   │   ├── Mutation Hooks
+    │   │   └── UI Hooks
+    │   ├── Components Reference
+    │   │   ├── Primitive Components
+    │   │   └── Business Components
+    │   ├── Utilities Reference
+    │   │   ├── Platform Utilities
+    │   │   ├── Crypto Utilities
+    │   │   ├── Image Processing
+    │   │   └── Helper Functions
+    │   ├── Data Models
+    │   │   ├── Message Types
+    │   │   ├── Space & Channel Models
+    │   │   ├── User Models
+    │   │   └── Conversation Models
+    │   └── REST API
+    │       ├── Authentication Endpoints
+    │       ├── Space Endpoints
+    │       ├── Message Endpoints
+    │       ├── User Endpoints
+    │       └── Webhook Endpoints
+    │
+    ├── 🌐 Protocol & Specifications
+    │   ├── Message Protocol Specification
+    │   ├── WebSocket Protocol
+    │   ├── Encryption Protocol
+    │   ├── Signature Scheme
+    │   └── Data Format Specifications
+    │
+    ├── 🎓 Tutorials
+    │   ├── Tutorial: Build Your First Feature
+    │   ├── Tutorial: Create a Custom Primitive
+    │   ├── Tutorial: Build a Message Bot
+    │   ├── Tutorial: Implement a Crypto Wallet Feature
+    │   ├── Tutorial: Add Cross-Platform Support to a Component
+    │   └── Tutorial: Optimize Performance
+    │
+    └── 📋 Resources
+        ├── Glossary
+        ├── FAQ
+        ├── Changelog
+        ├── Roadmap
+        ├── Community & Support
+        └── External Resources
 ```
 
 ---
