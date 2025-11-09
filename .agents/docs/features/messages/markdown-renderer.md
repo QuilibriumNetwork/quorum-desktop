@@ -244,7 +244,7 @@ const processStandaloneYouTubeUrls = (text: string): string => {
   return processedLines.join('\n');
 };
 
-// Image component catches YouTube embeds
+// Image component catches YouTube embeds and invite cards
 img: ({ src, alt, ...props }: any) => {
   if (alt === 'youtube-embed' && src) {
     return (
@@ -257,7 +257,25 @@ img: ({ src, alt, ...props }: any) => {
       </div>
     );
   }
+  if (alt === 'invite-card' && src) {
+    return (
+      <div className="my-2">
+        <InviteLink inviteLink={src} />
+      </div>
+    );
+  }
   return null; // No regular image support
+},
+
+// Paragraph component - prevents invalid HTML nesting
+p: ({ children, node, ...props }: any) => {
+  // Block embeds (YouTube, invite cards) render <div> elements
+  // Detect at AST level if paragraph contains only an image node
+  // If so, render as fragment to avoid invalid <p><div> nesting
+  if (node?.children?.length === 1 && node.children[0].tagName === 'img') {
+    return <>{children}</>;
+  }
+  return <p className="mb-2 last:mb-0">{children}</p>;
 },
 
 // Link component renders ALL links as clickable (including YouTube)
@@ -394,7 +412,7 @@ All user-controlled content now follows this pattern:
 **Related Task**: `.agents/tasks/remove-rehype-raw-security-fix.md`
 
 ---
-**Last Updated**: 2025-11-08
+**Last Updated**: 2025-11-09
 **Security Hardening**: Complete (rehype-raw removed, XSS vulnerabilities fixed)
 **Performance Optimization**: Complete
-**Recent Changes**: Added dual architecture documentation, invite link support, security fixes
+**Recent Changes**: Fixed invalid HTML nesting for block-level embeds (YouTube, invite cards)
