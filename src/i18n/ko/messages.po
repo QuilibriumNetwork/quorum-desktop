@@ -538,8 +538,8 @@ msgstr "메시지 링크 복사"
 msgid "Could not add Space"
 msgstr "스페이스를 추가할 수 없습니다"
 
-#: src/components/message/InviteLink.tsx:25
-#: src/hooks/business/invites/useInviteProcessing.ts:28
+#: src/components/message/InviteLink.tsx:38
+#: src/hooks/business/invites/useInviteProcessing.ts:45
 msgid "Could not fetch the Space details. Please try again."
 msgstr "공간 세부정보를 가져올 수 없습니다. 다시 시도하십시오."
 
@@ -548,7 +548,7 @@ msgstr "공간 세부정보를 가져올 수 없습니다. 다시 시도하십�
 msgid "Could not obtain manifest for Space"
 msgstr "스페이스에 대한 매니페스트를 가져올 수 없습니다"
 
-#: src/hooks/business/invites/useInviteProcessing.ts:24
+#: src/hooks/business/invites/useInviteProcessing.ts:41
 #: src/hooks/business/spaces/useInviteValidation.ts:111
 msgid "Could not verify invite"
 msgstr "초대를 확인할 수 없습니다"
@@ -1074,12 +1074,16 @@ msgstr "잘못된 메시지 유형"
 msgid "invalid response"
 msgstr "잘못된 응답"
 
+#: src/hooks/business/invites/useInviteUI.ts:32
+msgid "Invite sent"
+msgstr ""
+
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:47
 #: src/components/modals/SpaceSettingsModal/Navigation.tsx:25
 msgid "Invites"
 msgstr "초대"
 
-#: src/hooks/business/invites/useInviteUI.ts:21
+#: src/hooks/business/invites/useInviteUI.ts:33
 msgid "Join"
 msgstr "참여"
 
@@ -1090,7 +1094,7 @@ msgstr "참여"
 msgid "Join Space"
 msgstr "스페이스 참여"
 
-#: src/hooks/business/invites/useInviteUI.ts:20
+#: src/hooks/business/invites/useInviteUI.ts:31
 msgid "Joined"
 msgstr "참여 완료"
 
@@ -1099,7 +1103,7 @@ msgstr "참여 완료"
 msgid "Joining Space..."
 msgstr "공간에 참여 중..."
 
-#: src/hooks/business/invites/useInviteUI.ts:19
+#: src/hooks/business/invites/useInviteUI.ts:29
 msgid "Joining..."
 msgstr "참여 중..."
 
@@ -1802,13 +1806,13 @@ msgstr "복사하려면 탭하세요"
 msgid "Tap to select"
 msgstr "선택하려면 탭하세요"
 
-#: src/components/message/InviteLink.tsx:21
+#: src/components/message/InviteLink.tsx:34
 #: src/components/modals/AddSpaceModal.tsx:72
-#: src/hooks/business/invites/useInviteProcessing.ts:26
+#: src/hooks/business/invites/useInviteProcessing.ts:43
 msgid "The invite link format is invalid."
 msgstr "초대 링크 형식이 잘못되었습니다."
 
-#: src/components/message/InviteLink.tsx:33
+#: src/components/message/InviteLink.tsx:46
 msgid "The invite link has expired or is invalid."
 msgstr "초대 링크가 만료되었거나 유효하지 않습니다."
 
@@ -1847,7 +1851,7 @@ msgid "This protects your identity as the space owner. However, if you're the on
 msgstr "이것은 공간 소유자로서의 귀하의 신원을 보호합니다. 그러나 이 역할을 가진 유일한 사람이라면 귀하의 신원이 명백해집니다. 더 나은 개인 정보 보호를 위해 동일한 역할을 가진 여러 사용자(실제 또는 가짜 계정)를 두는 것을 고려하십시오."
 
 #: src/components/context/MessageDB.bak.tsx:4819
-#: src/components/message/InviteLink.tsx:31
+#: src/components/message/InviteLink.tsx:44
 #: src/services/InvitationService.ts:633
 msgid "This public invite link is no longer valid."
 msgstr "이 공개 초대 링크는 더 이상 유효하지 않습니다."
@@ -2182,8 +2186,8 @@ msgstr "모든 준비가 완료되었습니다. Quorum에 오신 것을 환영�
 msgid "You're not listed in this Space's members. Correcting this will add you to the Space Members list (stores your profile locally with your inbox address)."
 msgstr "이 공간의 구성원 목록에 없습니다. 이를 수정하면 귀하의 프로필이 귀하의 인박스 주소와 함께 로컬에 저장되어 공간 구성원 목록에 추가됩니다."
 
-#: src/components/message/InviteLink.tsx:47
-#: src/components/message/InviteLink.tsx:69
+#: src/components/message/InviteLink.tsx:60
+#: src/components/message/InviteLink.tsx:82
 msgid "You've been invited to join a Space"
 msgstr "당신은 공간에 가입하라는 초대를 받았습니다."
 

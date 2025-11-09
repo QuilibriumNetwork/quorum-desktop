@@ -537,8 +537,8 @@ msgstr "複製訊息連結"
 msgid "Could not add Space"
 msgstr "無法新增空間"
 
-#: src/components/message/InviteLink.tsx:25
-#: src/hooks/business/invites/useInviteProcessing.ts:28
+#: src/components/message/InviteLink.tsx:38
+#: src/hooks/business/invites/useInviteProcessing.ts:45
 msgid "Could not fetch the Space details. Please try again."
 msgstr "無法獲取空間詳情。請再試一次。"
 
@@ -547,7 +547,7 @@ msgstr "無法獲取空間詳情。請再試一次。"
 msgid "Could not obtain manifest for Space"
 msgstr "無法獲取空間的清單"
 
-#: src/hooks/business/invites/useInviteProcessing.ts:24
+#: src/hooks/business/invites/useInviteProcessing.ts:41
 #: src/hooks/business/spaces/useInviteValidation.ts:111
 msgid "Could not verify invite"
 msgstr "無法驗證邀請"
@@ -1073,12 +1073,16 @@ msgstr "消息類型無效"
 msgid "invalid response"
 msgstr "響應無效"
 
+#: src/hooks/business/invites/useInviteUI.ts:32
+msgid "Invite sent"
+msgstr ""
+
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:47
 #: src/components/modals/SpaceSettingsModal/Navigation.tsx:25
 msgid "Invites"
 msgstr "邀請"
 
-#: src/hooks/business/invites/useInviteUI.ts:21
+#: src/hooks/business/invites/useInviteUI.ts:33
 msgid "Join"
 msgstr "加入"
 
@@ -1089,7 +1093,7 @@ msgstr "加入"
 msgid "Join Space"
 msgstr "加入空間"
 
-#: src/hooks/business/invites/useInviteUI.ts:20
+#: src/hooks/business/invites/useInviteUI.ts:31
 msgid "Joined"
 msgstr "已加入"
 
@@ -1098,7 +1102,7 @@ msgstr "已加入"
 msgid "Joining Space..."
 msgstr "加入空間中..."
 
-#: src/hooks/business/invites/useInviteUI.ts:19
+#: src/hooks/business/invites/useInviteUI.ts:29
 msgid "Joining..."
 msgstr "加入中..."
 
@@ -1801,13 +1805,13 @@ msgstr "點擊以複製"
 msgid "Tap to select"
 msgstr "點擊以選擇"
 
-#: src/components/message/InviteLink.tsx:21
+#: src/components/message/InviteLink.tsx:34
 #: src/components/modals/AddSpaceModal.tsx:72
-#: src/hooks/business/invites/useInviteProcessing.ts:26
+#: src/hooks/business/invites/useInviteProcessing.ts:43
 msgid "The invite link format is invalid."
 msgstr "邀請鏈接格式無效。"
 
-#: src/components/message/InviteLink.tsx:33
+#: src/components/message/InviteLink.tsx:46
 msgid "The invite link has expired or is invalid."
 msgstr "邀請連結已失效或無效。"
 
@@ -1846,7 +1850,7 @@ msgid "This protects your identity as the space owner. However, if you're the on
 msgstr "這可以保護您作為空間擁有者的身份。然而，如果您是唯一擁有此角色的人，您的身份將變得明顯。考慮擁有多個用戶（真實或虛假帳戶）擁有相同的角色，以獲得更好的隱私保護。"
 
 #: src/components/context/MessageDB.bak.tsx:4819
-#: src/components/message/InviteLink.tsx:31
+#: src/components/message/InviteLink.tsx:44
 #: src/services/InvitationService.ts:633
 msgid "This public invite link is no longer valid."
 msgstr "此公共邀請鏈接不再有效。"
@@ -2181,8 +2185,8 @@ msgstr "一切就緒，歡迎使用 Quorum！"
 msgid "You're not listed in this Space's members. Correcting this will add you to the Space Members list (stores your profile locally with your inbox address)."
 msgstr "您未列入此空間的成員。更正此問題將使您添加到空間成員列表（將您的個人資料與您的收件箱地址本地存儲）。"
 
-#: src/components/message/InviteLink.tsx:47
-#: src/components/message/InviteLink.tsx:69
+#: src/components/message/InviteLink.tsx:60
+#: src/components/message/InviteLink.tsx:82
 msgid "You've been invited to join a Space"
 msgstr "你已被邀請加入一個空間"
 

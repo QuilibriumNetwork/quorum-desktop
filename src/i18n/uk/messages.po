@@ -537,8 +537,8 @@ msgstr "Скопіювати посилання на повідомлення"
 msgid "Could not add Space"
 msgstr "Не вдалося додати Простір"
 
-#: src/components/message/InviteLink.tsx:25
-#: src/hooks/business/invites/useInviteProcessing.ts:28
+#: src/components/message/InviteLink.tsx:38
+#: src/hooks/business/invites/useInviteProcessing.ts:45
 msgid "Could not fetch the Space details. Please try again."
 msgstr "Не вдалося отримати деталі Простір. Будь ласка, спробуйте ще раз."
 
@@ -547,7 +547,7 @@ msgstr "Не вдалося отримати деталі Простір. Буд
 msgid "Could not obtain manifest for Space"
 msgstr "Не вдалося отримати маніфест для Простір"
 
-#: src/hooks/business/invites/useInviteProcessing.ts:24
+#: src/hooks/business/invites/useInviteProcessing.ts:41
 #: src/hooks/business/spaces/useInviteValidation.ts:111
 msgid "Could not verify invite"
 msgstr "Не вдалося перевірити запрошення"
@@ -1073,12 +1073,16 @@ msgstr "недійсний тип повідомлення"
 msgid "invalid response"
 msgstr "недійсна відповідь"
 
+#: src/hooks/business/invites/useInviteUI.ts:32
+msgid "Invite sent"
+msgstr ""
+
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:47
 #: src/components/modals/SpaceSettingsModal/Navigation.tsx:25
 msgid "Invites"
 msgstr "Запрошення"
 
-#: src/hooks/business/invites/useInviteUI.ts:21
+#: src/hooks/business/invites/useInviteUI.ts:33
 msgid "Join"
 msgstr "Приєднатися"
 
@@ -1089,7 +1093,7 @@ msgstr "Приєднатися"
 msgid "Join Space"
 msgstr "Приєднатися до Простору"
 
-#: src/hooks/business/invites/useInviteUI.ts:20
+#: src/hooks/business/invites/useInviteUI.ts:31
 msgid "Joined"
 msgstr "Приєднано"
 
@@ -1098,7 +1102,7 @@ msgstr "Приєднано"
 msgid "Joining Space..."
 msgstr "Приєднання до Простір..."
 
-#: src/hooks/business/invites/useInviteUI.ts:19
+#: src/hooks/business/invites/useInviteUI.ts:29
 msgid "Joining..."
 msgstr "Приєднання..."
 
@@ -1801,13 +1805,13 @@ msgstr "Натисніть, щоб скопіювати"
 msgid "Tap to select"
 msgstr "Натисніть, щоб вибрати"
 
-#: src/components/message/InviteLink.tsx:21
+#: src/components/message/InviteLink.tsx:34
 #: src/components/modals/AddSpaceModal.tsx:72
-#: src/hooks/business/invites/useInviteProcessing.ts:26
+#: src/hooks/business/invites/useInviteProcessing.ts:43
 msgid "The invite link format is invalid."
 msgstr "Формат посилання запрошення недійсний."
 
-#: src/components/message/InviteLink.tsx:33
+#: src/components/message/InviteLink.tsx:46
 msgid "The invite link has expired or is invalid."
 msgstr "Посилання на запрошення закінчилося або є недійсним."
 
@@ -1846,7 +1850,7 @@ msgid "This protects your identity as the space owner. However, if you're the on
 msgstr "Це захищає вашу особистість як власника простору. Однак, якщо ви є єдиним, хто має цю роль, ваша особистість стає очевидною. Розгляньте можливість мати кілька користувачів (реальних або фейкових акаунтів) з тією ж роллю для кращого захисту конфіденційності."
 
 #: src/components/context/MessageDB.bak.tsx:4819
-#: src/components/message/InviteLink.tsx:31
+#: src/components/message/InviteLink.tsx:44
 #: src/services/InvitationService.ts:633
 msgid "This public invite link is no longer valid."
 msgstr "Це публічне посилання запрошення більше не дійсне."
@@ -2181,8 +2185,8 @@ msgstr "Ви готові. Ласкаво просимо до Quorum!"
 msgid "You're not listed in this Space's members. Correcting this will add you to the Space Members list (stores your profile locally with your inbox address)."
 msgstr "Ви не внесені до списку учасників цього Простір. Виправлення цього додасть вас до списку учасників Простір (зберігає ваш профіль локально з вашою адресою поштової скриньки)."
 
-#: src/components/message/InviteLink.tsx:47
-#: src/components/message/InviteLink.tsx:69
+#: src/components/message/InviteLink.tsx:60
+#: src/components/message/InviteLink.tsx:82
 msgid "You've been invited to join a Space"
 msgstr "Вас запросили приєднатися до Простору"
 

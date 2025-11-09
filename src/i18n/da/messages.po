@@ -538,8 +538,8 @@ msgstr "Kopier link til besked"
 msgid "Could not add Space"
 msgstr "Kunne ikke tilføje rum"
 
-#: src/components/message/InviteLink.tsx:25
-#: src/hooks/business/invites/useInviteProcessing.ts:28
+#: src/components/message/InviteLink.tsx:38
+#: src/hooks/business/invites/useInviteProcessing.ts:45
 msgid "Could not fetch the Space details. Please try again."
 msgstr "Kunne ikke hente Space detaljer. Prøv venligst igen."
 
@@ -548,7 +548,7 @@ msgstr "Kunne ikke hente Space detaljer. Prøv venligst igen."
 msgid "Could not obtain manifest for Space"
 msgstr "Kunne ikke opnå manifest for rum"
 
-#: src/hooks/business/invites/useInviteProcessing.ts:24
+#: src/hooks/business/invites/useInviteProcessing.ts:41
 #: src/hooks/business/spaces/useInviteValidation.ts:111
 msgid "Could not verify invite"
 msgstr "Kunne ikke bekræfte invitationen"
@@ -1074,12 +1074,16 @@ msgstr "invalid message type"
 msgid "invalid response"
 msgstr "invalid response"
 
+#: src/hooks/business/invites/useInviteUI.ts:32
+msgid "Invite sent"
+msgstr ""
+
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:47
 #: src/components/modals/SpaceSettingsModal/Navigation.tsx:25
 msgid "Invites"
 msgstr "Invitationer"
 
-#: src/hooks/business/invites/useInviteUI.ts:21
+#: src/hooks/business/invites/useInviteUI.ts:33
 msgid "Join"
 msgstr "Bliv medlem"
 
@@ -1090,7 +1094,7 @@ msgstr "Bliv medlem"
 msgid "Join Space"
 msgstr "Kom med i rummet"
 
-#: src/hooks/business/invites/useInviteUI.ts:20
+#: src/hooks/business/invites/useInviteUI.ts:31
 msgid "Joined"
 msgstr "Kom med"
 
@@ -1099,7 +1103,7 @@ msgstr "Kom med"
 msgid "Joining Space..."
 msgstr "Deltager i Space..."
 
-#: src/hooks/business/invites/useInviteUI.ts:19
+#: src/hooks/business/invites/useInviteUI.ts:29
 msgid "Joining..."
 msgstr "Deltager..."
 
@@ -1802,13 +1806,13 @@ msgstr "Tryk for at kopiere"
 msgid "Tap to select"
 msgstr "Tryk for at vælge"
 
-#: src/components/message/InviteLink.tsx:21
+#: src/components/message/InviteLink.tsx:34
 #: src/components/modals/AddSpaceModal.tsx:72
-#: src/hooks/business/invites/useInviteProcessing.ts:26
+#: src/hooks/business/invites/useInviteProcessing.ts:43
 msgid "The invite link format is invalid."
 msgstr "Invite link formatet er ugyldigt."
 
-#: src/components/message/InviteLink.tsx:33
+#: src/components/message/InviteLink.tsx:46
 msgid "The invite link has expired or is invalid."
 msgstr "Invitationslinket er udløbet eller ugyldigt."
 
@@ -1847,7 +1851,7 @@ msgid "This protects your identity as the space owner. However, if you're the on
 msgstr "Dette beskytter din identitet som rum ejer. Men hvis du er den eneste med denne rolle, bliver din identitet åbenlys. Overvej at have flere brugere (ægte eller falske konti) med den samme rolle for bedre beskyttelse af privatliv."
 
 #: src/components/context/MessageDB.bak.tsx:4819
-#: src/components/message/InviteLink.tsx:31
+#: src/components/message/InviteLink.tsx:44
 #: src/services/InvitationService.ts:633
 msgid "This public invite link is no longer valid."
 msgstr "Dette offentlige invite link er ikke længere gyldigt."
@@ -2182,8 +2186,8 @@ msgstr "Så er du klar. Velkommen til Quorum!"
 msgid "You're not listed in this Space's members. Correcting this will add you to the Space Members list (stores your profile locally with your inbox address)."
 msgstr "Du er ikke opført blandt medlemmerne i dette Spaces. At rette dette vil tilføje dig til Space-medlemslisten (gemmer din profil lokalt med din indbakkeadresse)."
 
-#: src/components/message/InviteLink.tsx:47
-#: src/components/message/InviteLink.tsx:69
+#: src/components/message/InviteLink.tsx:60
+#: src/components/message/InviteLink.tsx:82
 msgid "You've been invited to join a Space"
 msgstr "Du er blevet inviteret til at deltage i et Space"
 

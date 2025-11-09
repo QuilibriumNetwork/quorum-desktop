@@ -537,8 +537,8 @@ msgstr "Copie link mesaj"
 msgid "Could not add Space"
 msgstr "Nu s-a putut adăuga Spațiu"
 
-#: src/components/message/InviteLink.tsx:25
-#: src/hooks/business/invites/useInviteProcessing.ts:28
+#: src/components/message/InviteLink.tsx:38
+#: src/hooks/business/invites/useInviteProcessing.ts:45
 msgid "Could not fetch the Space details. Please try again."
 msgstr "Nu s-au putut obține detaliile Espaciului. Te rugăm să încerci din nou."
 
@@ -547,7 +547,7 @@ msgstr "Nu s-au putut obține detaliile Espaciului. Te rugăm să încerci din n
 msgid "Could not obtain manifest for Space"
 msgstr "Nu s-a putut obține manifestul pentru Spațiu"
 
-#: src/hooks/business/invites/useInviteProcessing.ts:24
+#: src/hooks/business/invites/useInviteProcessing.ts:41
 #: src/hooks/business/spaces/useInviteValidation.ts:111
 msgid "Could not verify invite"
 msgstr "Nu s-a putut verifica invitația"
@@ -1073,12 +1073,16 @@ msgstr "tip de mesaj invalid"
 msgid "invalid response"
 msgstr "răspuns invalid"
 
+#: src/hooks/business/invites/useInviteUI.ts:32
+msgid "Invite sent"
+msgstr ""
+
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:47
 #: src/components/modals/SpaceSettingsModal/Navigation.tsx:25
 msgid "Invites"
 msgstr "Invitații"
 
-#: src/hooks/business/invites/useInviteUI.ts:21
+#: src/hooks/business/invites/useInviteUI.ts:33
 msgid "Join"
 msgstr "Alătură-te"
 
@@ -1089,7 +1093,7 @@ msgstr "Alătură-te"
 msgid "Join Space"
 msgstr "Alătură-te Spațiului"
 
-#: src/hooks/business/invites/useInviteUI.ts:20
+#: src/hooks/business/invites/useInviteUI.ts:31
 msgid "Joined"
 msgstr "Alăturat"
 
@@ -1098,7 +1102,7 @@ msgstr "Alăturat"
 msgid "Joining Space..."
 msgstr "Înscriere în Spațiu..."
 
-#: src/hooks/business/invites/useInviteUI.ts:19
+#: src/hooks/business/invites/useInviteUI.ts:29
 msgid "Joining..."
 msgstr "Se alătură..."
 
@@ -1801,13 +1805,13 @@ msgstr "Atinge pentru a copia"
 msgid "Tap to select"
 msgstr "Atinge pentru a selecta"
 
-#: src/components/message/InviteLink.tsx:21
+#: src/components/message/InviteLink.tsx:34
 #: src/components/modals/AddSpaceModal.tsx:72
-#: src/hooks/business/invites/useInviteProcessing.ts:26
+#: src/hooks/business/invites/useInviteProcessing.ts:43
 msgid "The invite link format is invalid."
 msgstr "Formatul linkului de invitație este invalid."
 
-#: src/components/message/InviteLink.tsx:33
+#: src/components/message/InviteLink.tsx:46
 msgid "The invite link has expired or is invalid."
 msgstr "Linkul de invitație a expirat sau este invalid."
 
@@ -1846,7 +1850,7 @@ msgid "This protects your identity as the space owner. However, if you're the on
 msgstr "Aceasta îți protejează identitatea ca proprietar al spațiului. Cu toate acestea, dacă ești singurul cu acest rol, identitatea ta devine evidentă. Ia în considerare să ai mai mulți utilizatori (conturi reale sau false) cu același rol pentru o mai bună protecție a intimității."
 
 #: src/components/context/MessageDB.bak.tsx:4819
-#: src/components/message/InviteLink.tsx:31
+#: src/components/message/InviteLink.tsx:44
 #: src/services/InvitationService.ts:633
 msgid "This public invite link is no longer valid."
 msgstr "Acest link public de invitație nu mai este valabil."
@@ -2181,8 +2185,8 @@ msgstr "Ești pregătit. Bine ai venit la Quorum!"
 msgid "You're not listed in this Space's members. Correcting this will add you to the Space Members list (stores your profile locally with your inbox address)."
 msgstr "Nu ești listat printre membrii acestui Spațiu. Corectarea acestuia te va adăuga pe lista de Membri ai Spațiu-ului (stochează profilul tău local cu adresa ta de inbox)."
 
-#: src/components/message/InviteLink.tsx:47
-#: src/components/message/InviteLink.tsx:69
+#: src/components/message/InviteLink.tsx:60
+#: src/components/message/InviteLink.tsx:82
 msgid "You've been invited to join a Space"
 msgstr "Ai fost invitat să te alături unui Spațiu"
 

@@ -537,8 +537,8 @@ msgstr "Kopírovat odkaz na zprávu"
 msgid "Could not add Space"
 msgstr "Nepodařilo se přidat Prostor"
 
-#: src/components/message/InviteLink.tsx:25
-#: src/hooks/business/invites/useInviteProcessing.ts:28
+#: src/components/message/InviteLink.tsx:38
+#: src/hooks/business/invites/useInviteProcessing.ts:45
 msgid "Could not fetch the Space details. Please try again."
 msgstr "Nepodařilo se načíst detaily Space. Zkuste to prosím znovu."
 
@@ -547,7 +547,7 @@ msgstr "Nepodařilo se načíst detaily Space. Zkuste to prosím znovu."
 msgid "Could not obtain manifest for Space"
 msgstr "Nepodařilo se získat manifest pro Prostor"
 
-#: src/hooks/business/invites/useInviteProcessing.ts:24
+#: src/hooks/business/invites/useInviteProcessing.ts:41
 #: src/hooks/business/spaces/useInviteValidation.ts:111
 msgid "Could not verify invite"
 msgstr "Nepodařilo se ověřit pozvánku"
@@ -1073,12 +1073,16 @@ msgstr "neplatný typ zprávy"
 msgid "invalid response"
 msgstr "neplatná odpověď"
 
+#: src/hooks/business/invites/useInviteUI.ts:32
+msgid "Invite sent"
+msgstr ""
+
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:47
 #: src/components/modals/SpaceSettingsModal/Navigation.tsx:25
 msgid "Invites"
 msgstr "Pozvánky"
 
-#: src/hooks/business/invites/useInviteUI.ts:21
+#: src/hooks/business/invites/useInviteUI.ts:33
 msgid "Join"
 msgstr "Připojit se"
 
@@ -1089,7 +1093,7 @@ msgstr "Připojit se"
 msgid "Join Space"
 msgstr "Vstoupit do Prostor"
 
-#: src/hooks/business/invites/useInviteUI.ts:20
+#: src/hooks/business/invites/useInviteUI.ts:31
 msgid "Joined"
 msgstr "Vstoupeno"
 
@@ -1098,7 +1102,7 @@ msgstr "Vstoupeno"
 msgid "Joining Space..."
 msgstr "Připojuji se k Space..."
 
-#: src/hooks/business/invites/useInviteUI.ts:19
+#: src/hooks/business/invites/useInviteUI.ts:29
 msgid "Joining..."
 msgstr "Připojuji se..."
 
@@ -1801,13 +1805,13 @@ msgstr "Klepněte pro zkopírování"
 msgid "Tap to select"
 msgstr "Klepněte pro výběr"
 
-#: src/components/message/InviteLink.tsx:21
+#: src/components/message/InviteLink.tsx:34
 #: src/components/modals/AddSpaceModal.tsx:72
-#: src/hooks/business/invites/useInviteProcessing.ts:26
+#: src/hooks/business/invites/useInviteProcessing.ts:43
 msgid "The invite link format is invalid."
 msgstr "Formát pozvánkového odkazu je neplatný."
 
-#: src/components/message/InviteLink.tsx:33
+#: src/components/message/InviteLink.tsx:46
 msgid "The invite link has expired or is invalid."
 msgstr "Odkaz na pozvánku vypršel nebo je neplatný."
 
@@ -1846,7 +1850,7 @@ msgid "This protects your identity as the space owner. However, if you're the on
 msgstr "To chrání vaši identitu jako vlastníka prostoru. Pokud však máte tuto roli pouze vy, vaše identita se stává zřejmou. Zvažte mít více uživatelů (skutečných nebo falešných účtů) se stejnou rolí pro lepší ochranu soukromí."
 
 #: src/components/context/MessageDB.bak.tsx:4819
-#: src/components/message/InviteLink.tsx:31
+#: src/components/message/InviteLink.tsx:44
 #: src/services/InvitationService.ts:633
 msgid "This public invite link is no longer valid."
 msgstr "Tento veřejný pozvánkový odkaz již není platný."
@@ -2181,8 +2185,8 @@ msgstr "Jste připraveni. Vítejte v Quorum!"
 msgid "You're not listed in this Space's members. Correcting this will add you to the Space Members list (stores your profile locally with your inbox address)."
 msgstr "Nejsi uveden mezi členy tohoto Space. Oprava tohoto přidá tvůj profil do seznamu členů Space (ukládá tvůj profil lokálně s tvou adresou doručené pošty)."
 
-#: src/components/message/InviteLink.tsx:47
-#: src/components/message/InviteLink.tsx:69
+#: src/components/message/InviteLink.tsx:60
+#: src/components/message/InviteLink.tsx:82
 msgid "You've been invited to join a Space"
 msgstr "Byli jste pozváni k připojení k Prostor"
 

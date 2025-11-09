@@ -537,8 +537,8 @@ msgstr "Скопируйте ссылку на сообщение"
 msgid "Could not add Space"
 msgstr "Не удалось добавить пространство"
 
-#: src/components/message/InviteLink.tsx:25
-#: src/hooks/business/invites/useInviteProcessing.ts:28
+#: src/components/message/InviteLink.tsx:38
+#: src/hooks/business/invites/useInviteProcessing.ts:45
 msgid "Could not fetch the Space details. Please try again."
 msgstr "Не удалось получить данные Пространства. Пожалуйста, попробуйте снова."
 
@@ -547,7 +547,7 @@ msgstr "Не удалось получить данные Пространств
 msgid "Could not obtain manifest for Space"
 msgstr "Не удалось получить манифест для пространства"
 
-#: src/hooks/business/invites/useInviteProcessing.ts:24
+#: src/hooks/business/invites/useInviteProcessing.ts:41
 #: src/hooks/business/spaces/useInviteValidation.ts:111
 msgid "Could not verify invite"
 msgstr "Не удалось проверить приглашение"
@@ -1073,12 +1073,16 @@ msgstr "недействительный тип сообщения"
 msgid "invalid response"
 msgstr "недействительный ответ"
 
+#: src/hooks/business/invites/useInviteUI.ts:32
+msgid "Invite sent"
+msgstr ""
+
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:47
 #: src/components/modals/SpaceSettingsModal/Navigation.tsx:25
 msgid "Invites"
 msgstr "Приглашает"
 
-#: src/hooks/business/invites/useInviteUI.ts:21
+#: src/hooks/business/invites/useInviteUI.ts:33
 msgid "Join"
 msgstr "Присоединиться"
 
@@ -1089,7 +1093,7 @@ msgstr "Присоединиться"
 msgid "Join Space"
 msgstr "Присоединяйтесь к пространству"
 
-#: src/hooks/business/invites/useInviteUI.ts:20
+#: src/hooks/business/invites/useInviteUI.ts:31
 msgid "Joined"
 msgstr "Уже Присоединился"
 
@@ -1098,7 +1102,7 @@ msgstr "Уже Присоединился"
 msgid "Joining Space..."
 msgstr "Присоединение к Пространству..."
 
-#: src/hooks/business/invites/useInviteUI.ts:19
+#: src/hooks/business/invites/useInviteUI.ts:29
 msgid "Joining..."
 msgstr "Присоединение..."
 
@@ -1801,13 +1805,13 @@ msgstr "Нажмите, чтобы скопировать"
 msgid "Tap to select"
 msgstr "Нажмите, чтобы выбрать"
 
-#: src/components/message/InviteLink.tsx:21
+#: src/components/message/InviteLink.tsx:34
 #: src/components/modals/AddSpaceModal.tsx:72
-#: src/hooks/business/invites/useInviteProcessing.ts:26
+#: src/hooks/business/invites/useInviteProcessing.ts:43
 msgid "The invite link format is invalid."
 msgstr "Формат ссылки приглашения недействителен."
 
-#: src/components/message/InviteLink.tsx:33
+#: src/components/message/InviteLink.tsx:46
 msgid "The invite link has expired or is invalid."
 msgstr "Срок действия ссылки на приглашение истек или она недействительна."
 
@@ -1846,7 +1850,7 @@ msgid "This protects your identity as the space owner. However, if you're the on
 msgstr "Это защищает вашу личность как владельца пространства. Однако, если вы единственный с этой ролью, ваша личность становится очевидной. Рассмотрите возможность наличия нескольких пользователей (реальных или фальшивых аккаунтов) с одной и той же ролью для лучшей защиты конфиденциальности."
 
 #: src/components/context/MessageDB.bak.tsx:4819
-#: src/components/message/InviteLink.tsx:31
+#: src/components/message/InviteLink.tsx:44
 #: src/services/InvitationService.ts:633
 msgid "This public invite link is no longer valid."
 msgstr "Эта публичная ссылка приглашения больше не действительна."
@@ -2181,8 +2185,8 @@ msgstr "Все готово. Добро пожаловать в Quorum!"
 msgid "You're not listed in this Space's members. Correcting this will add you to the Space Members list (stores your profile locally with your inbox address)."
 msgstr "Вы не числитесь среди участников этого Пространства. Исправление этого добавит вас в список участников Пространства (сохраняет ваш профиль локально с вашим адресом почты)."
 
-#: src/components/message/InviteLink.tsx:47
-#: src/components/message/InviteLink.tsx:69
+#: src/components/message/InviteLink.tsx:60
+#: src/components/message/InviteLink.tsx:82
 msgid "You've been invited to join a Space"
 msgstr "Вас пригласили присоединиться к Пространство"
 

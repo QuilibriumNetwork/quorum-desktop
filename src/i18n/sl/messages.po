@@ -538,8 +538,8 @@ msgstr "Kopiraj povezavo do sporočila"
 msgid "Could not add Space"
 msgstr "Ni bilo mogoče dodati Prostor"
 
-#: src/components/message/InviteLink.tsx:25
-#: src/hooks/business/invites/useInviteProcessing.ts:28
+#: src/components/message/InviteLink.tsx:38
+#: src/hooks/business/invites/useInviteProcessing.ts:45
 msgid "Could not fetch the Space details. Please try again."
 msgstr "Podrobnosti o Space ni bilo mogoče pridobiti. Poskusite znova."
 
@@ -548,7 +548,7 @@ msgstr "Podrobnosti o Space ni bilo mogoče pridobiti. Poskusite znova."
 msgid "Could not obtain manifest for Space"
 msgstr "Ni bilo mogoče pridobiti manifest za Prostor"
 
-#: src/hooks/business/invites/useInviteProcessing.ts:24
+#: src/hooks/business/invites/useInviteProcessing.ts:41
 #: src/hooks/business/spaces/useInviteValidation.ts:111
 msgid "Could not verify invite"
 msgstr "Ni bilo mogoče preveriti povabila"
@@ -1074,12 +1074,16 @@ msgstr "neveljavna vrsta sporočila"
 msgid "invalid response"
 msgstr "neveljavna odziv"
 
+#: src/hooks/business/invites/useInviteUI.ts:32
+msgid "Invite sent"
+msgstr ""
+
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:47
 #: src/components/modals/SpaceSettingsModal/Navigation.tsx:25
 msgid "Invites"
 msgstr "Povabila"
 
-#: src/hooks/business/invites/useInviteUI.ts:21
+#: src/hooks/business/invites/useInviteUI.ts:33
 msgid "Join"
 msgstr "Pridruži se"
 
@@ -1090,7 +1094,7 @@ msgstr "Pridruži se"
 msgid "Join Space"
 msgstr "Pridruži se prostoru"
 
-#: src/hooks/business/invites/useInviteUI.ts:20
+#: src/hooks/business/invites/useInviteUI.ts:31
 msgid "Joined"
 msgstr "Pridružen"
 
@@ -1099,7 +1103,7 @@ msgstr "Pridružen"
 msgid "Joining Space..."
 msgstr "Pridružitev prostoru..."
 
-#: src/hooks/business/invites/useInviteUI.ts:19
+#: src/hooks/business/invites/useInviteUI.ts:29
 msgid "Joining..."
 msgstr "Pridružujem se..."
 
@@ -1802,13 +1806,13 @@ msgstr "Dotakni se za kopiranje"
 msgid "Tap to select"
 msgstr "Dotakni se za izbiro"
 
-#: src/components/message/InviteLink.tsx:21
+#: src/components/message/InviteLink.tsx:34
 #: src/components/modals/AddSpaceModal.tsx:72
-#: src/hooks/business/invites/useInviteProcessing.ts:26
+#: src/hooks/business/invites/useInviteProcessing.ts:43
 msgid "The invite link format is invalid."
 msgstr "Oblika povezave za povabilo je neveljavna."
 
-#: src/components/message/InviteLink.tsx:33
+#: src/components/message/InviteLink.tsx:46
 msgid "The invite link has expired or is invalid."
 msgstr "Povezava za povabilo je potekla ali je neveljavna."
 
@@ -1847,7 +1851,7 @@ msgid "This protects your identity as the space owner. However, if you're the on
 msgstr "To ščiti tvojo identiteto kot lastnika prostora. Vendar, če si edini s to vlogo, postane tvoja identiteta očitna. Razmisli o tem, da imaš več uporabnikov (pravih ali lažnih računov) z enako vlogo za boljšo zaščito zasebnosti."
 
 #: src/components/context/MessageDB.bak.tsx:4819
-#: src/components/message/InviteLink.tsx:31
+#: src/components/message/InviteLink.tsx:44
 #: src/services/InvitationService.ts:633
 msgid "This public invite link is no longer valid."
 msgstr "Ta javna povezava za povabilo ni več veljavna."
@@ -2182,8 +2186,8 @@ msgstr "Vse je pripravljeno. Dobrodošli v Quorum!"
 msgid "You're not listed in this Space's members. Correcting this will add you to the Space Members list (stores your profile locally with your inbox address)."
 msgstr "Nisi na seznamu članov tega Space. Popravek tega te bo dodal na seznam članov Space (shranjuje tvoj profil lokalno z naslovom tvoje pošte)."
 
-#: src/components/message/InviteLink.tsx:47
-#: src/components/message/InviteLink.tsx:69
+#: src/components/message/InviteLink.tsx:60
+#: src/components/message/InviteLink.tsx:82
 msgid "You've been invited to join a Space"
 msgstr "Bili ste povabljeni, da se pridružite Prostoru"
 

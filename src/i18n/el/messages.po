@@ -537,8 +537,8 @@ msgstr "Αντιγραφή συνδέσμου μηνύματος"
 msgid "Could not add Space"
 msgstr "Δεν ήταν δυνατή η προσθήκη του Χώρος"
 
-#: src/components/message/InviteLink.tsx:25
-#: src/hooks/business/invites/useInviteProcessing.ts:28
+#: src/components/message/InviteLink.tsx:38
+#: src/hooks/business/invites/useInviteProcessing.ts:45
 msgid "Could not fetch the Space details. Please try again."
 msgstr "Αποτυχία λήψης λεπτομερειών Χώρου. Παρακαλώ δοκιμάστε ξανά."
 
@@ -547,7 +547,7 @@ msgstr "Αποτυχία λήψης λεπτομερειών Χώρου. Παρ�
 msgid "Could not obtain manifest for Space"
 msgstr "Δεν ήταν δυνατή η απόκτηση του manifest για το Χώρος"
 
-#: src/hooks/business/invites/useInviteProcessing.ts:24
+#: src/hooks/business/invites/useInviteProcessing.ts:41
 #: src/hooks/business/spaces/useInviteValidation.ts:111
 msgid "Could not verify invite"
 msgstr "Δεν ήταν δυνατή η επαλήθευση της πρόσκλησης"
@@ -1073,12 +1073,16 @@ msgstr "μη έγκυρος τύπος μηνύματος"
 msgid "invalid response"
 msgstr "μη έγκυρη απάντηση"
 
+#: src/hooks/business/invites/useInviteUI.ts:32
+msgid "Invite sent"
+msgstr ""
+
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:47
 #: src/components/modals/SpaceSettingsModal/Navigation.tsx:25
 msgid "Invites"
 msgstr "Προσκλήσεις"
 
-#: src/hooks/business/invites/useInviteUI.ts:21
+#: src/hooks/business/invites/useInviteUI.ts:33
 msgid "Join"
 msgstr "Συμμετοχή"
 
@@ -1089,7 +1093,7 @@ msgstr "Συμμετοχή"
 msgid "Join Space"
 msgstr "Συμμετοχή στο Χώρος"
 
-#: src/hooks/business/invites/useInviteUI.ts:20
+#: src/hooks/business/invites/useInviteUI.ts:31
 msgid "Joined"
 msgstr "Συμμετείχα"
 
@@ -1098,7 +1102,7 @@ msgstr "Συμμετείχα"
 msgid "Joining Space..."
 msgstr "Συμμετοχή στον Χώρο..."
 
-#: src/hooks/business/invites/useInviteUI.ts:19
+#: src/hooks/business/invites/useInviteUI.ts:29
 msgid "Joining..."
 msgstr "Συμμετοχή..."
 
@@ -1801,13 +1805,13 @@ msgstr "Πατήστε για αντιγραφή"
 msgid "Tap to select"
 msgstr "Πατήστε για επιλογή"
 
-#: src/components/message/InviteLink.tsx:21
+#: src/components/message/InviteLink.tsx:34
 #: src/components/modals/AddSpaceModal.tsx:72
-#: src/hooks/business/invites/useInviteProcessing.ts:26
+#: src/hooks/business/invites/useInviteProcessing.ts:43
 msgid "The invite link format is invalid."
 msgstr "Het formaat van de uitnodigingslink is ongeldig."
 
-#: src/components/message/InviteLink.tsx:33
+#: src/components/message/InviteLink.tsx:46
 msgid "The invite link has expired or is invalid."
 msgstr "Ο σύνδεσμος πρόσκλησης έχει λήξει ή είναι άκυρος."
 
@@ -1846,7 +1850,7 @@ msgid "This protects your identity as the space owner. However, if you're the on
 msgstr "Αυτό προστατεύει την ταυτότητά σας ως ιδιοκτήτης του χώρου. Ωστόσο, αν είστε ο μόνος με αυτόν τον ρόλο, η ταυτότητά σας γίνεται προφανής. Σκεφτείτε να έχετε πολλούς χρήστες (πραγματικούς ή ψεύτικους λογαριασμούς) με τον ίδιο ρόλο για καλύτερη προστασία της ιδιωτικότητας."
 
 #: src/components/context/MessageDB.bak.tsx:4819
-#: src/components/message/InviteLink.tsx:31
+#: src/components/message/InviteLink.tsx:44
 #: src/services/InvitationService.ts:633
 msgid "This public invite link is no longer valid."
 msgstr "Deze openbare uitnodigingslink is niet langer geldig."
@@ -2181,8 +2185,8 @@ msgstr "Είσαι έτοιμος. Καλώς ήρθες στο Quorum!"
 msgid "You're not listed in this Space's members. Correcting this will add you to the Space Members list (stores your profile locally with your inbox address)."
 msgstr "Δεν είστε καταχωρημένος στα μέλη αυτού του Χώρου. Η διόρθωση αυτού θα σας προσθέσει στη λίστα μελών Χώρου (αποθηκεύει το προφίλ σας τοπικά με τη διεύθυνση του skrzynki odbiorczej)."
 
-#: src/components/message/InviteLink.tsx:47
-#: src/components/message/InviteLink.tsx:69
+#: src/components/message/InviteLink.tsx:60
+#: src/components/message/InviteLink.tsx:82
 msgid "You've been invited to join a Space"
 msgstr "Έχεις προσκληθεί να ενταχθείς σε έναν Χώρο"
 
