@@ -394,7 +394,7 @@ const Channel: React.FC<ChannelProps> = ({
         <div className="overflow-y-auto">
           {filteredSections.map((section) => (
             <div className="flex flex-col mb-2" key={section.title}>
-              <div className="mb-3 text-xs pb-1 border-b border-default px-3 pt-3">
+              <div className="mb-3 text-xs text-subtle pb-1 px-3 pt-3">
                 {section.title}
               </div>
               {section.members.map((member) => (
@@ -826,7 +826,7 @@ const Channel: React.FC<ChannelProps> = ({
                   if (item.type === 'header') {
                     return (
                       <div className="flex flex-col p-4 pb-0">
-                        <div className="mb-3 text-xs pb-1 border-b border-default">
+                        <div className="mb-1 text-xs text-subtle pb-1">
                           {item.title}
                         </div>
                       </div>
@@ -1001,7 +1001,7 @@ const Channel: React.FC<ChannelProps> = ({
                 : section.members
             })).filter(section => section.members.length > 0).map((section) => (
               <div className="flex flex-col mb-2" key={section.title}>
-                <div className="mb-3 text-xs pb-1 border-b border-surface-4 px-4 pt-3">
+                <div className="mb-1 text-subtle text-xs pb-1 px-4 pt-3">
                   {section.title}
                 </div>
                 {section.members.map((member) => (
