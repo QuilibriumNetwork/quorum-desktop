@@ -27,10 +27,12 @@ This is the main index for all documentation, bug reports, and task management.
 - [Modal System Documentation](docs/features/modals.md)
 - [ReactTooltip Mobile Support Documentation](docs/features/reacttooltip-mobile.md)
 - [Responsive Layout System Documentation](docs/features/responsive-layout.md)
+- [Security Mechanisms](docs/features/security.md)
 - [Space Settings Modal - Fixes Section](docs/features/space-settings-fixes-section.md)
 - [Toast Notifications](docs/features/toast-notifications.md)
 - [Touch Long Press System](docs/features/touch-long-press-system.md)
 - [Unified Notification System (Mentions + Replies)](docs/features/mention-notification-system.md)
+- [Unread Message Visual Indicators](docs/features/unread-message-indicators.md)
 - [🔍 Global Message Search - Implementation Guide & Documentation](docs/features/search-feature.md)
 
 ### Features / Messages
@@ -60,6 +62,7 @@ This is the main index for all documentation, bug reports, and task management.
 ### Active Issues
 - [Brave Browser React Hook Errors - ONGOING INVESTIGATION](bugs/brave-browser-react-hook-errors.md)
 - [DirectMessage Invite Loading Performance Issue](bugs/directmessage-invite-loading-performance.md)
+- [Expired Invite Card Validation Timing Issue](bugs/expired-invite-card-validation-timing.md)
 - [JoinSpaceModal "Invalid JSON" Error Due to Network Issues](bugs/joinspacemodal-invalid-json-network-error.md)
 - [Kick User Button Remains Enabled After User is Kicked](bugs/kick-user-button-state-after-kick.md)
 - [Kick User UX Improvements](bugs/kick-user-ux-improvements.md)
@@ -92,7 +95,8 @@ This is the main index for all documentation, bug reports, and task management.
 - [Conversation Deletion State Synchronization](tasks/conversation-deletion-state-sync.md)
 - [Device Identification Improvement](tasks/device-identification-improvement.md)
 - [Docusaurus Developer Documentation Blueprint](tasks/docusaurus-blueprint-v2.md)
-- [Edit Message Feature](tasks/edit-message-feature.md)
+- [Docusaurus Quorum Users Faq](tasks/docusaurus-quorum-users-faq.md)
+- [Docusaurus Setup & Implementation Task](tasks/docusaurus-setup-implementation.md)
 - [Implement Background Sync Queue for User Settings and Async Operations](tasks/background-sync-queue.md)
 - [Server Folders - Discord-Style Grouping Feature](tasks/server-folders-discord-style.md)
 - [Task: Implement Delete Public Invite Link Feature](tasks/delete-public-invite-link.md)
@@ -165,8 +169,10 @@ This is the main index for all documentation, bug reports, and task management.
 - [Delete Confirmation System Implementation](tasks/.done/delete-confirmation-system.md)
 - [Direct Message Deletion Feature](tasks/.done/dm-message-deletion.md)
 - [Dropdown Panels Consolidation & Mobile Bottom Sheet Implementation](tasks/.done/dropdown-panels-consolidation.md)
+- [Edit Message Feature](tasks/.done/edit-message-feature.md)
 - [Emoji Picker Responsive Design Improvement](tasks/.done/emojipicker-responsive.md)
 - [Expo Go to Expo Dev Client Migration Plan - Simplified](tasks/.done/expo-go-to-dev-client-migration.md)
+- [Fix: React Query "undefined" Error in DM Conversations](tasks/.done/fix-react-query-undefined-error-in-dms.md)
 - [Implement Mention Notification Bubbles](tasks/.done/mention-notification-bubbles.md)
 - [Implement Per-Space Display Names and Avatars with Account Section](tasks/.done/per-space-display-name-avatar.md)
 - [Implementation Plan: Repository Restructure for Cross-Platform Development](tasks/.done/implementation-plan-repo-restructure.md)
@@ -192,6 +198,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [ReactTooltip Mobile Optimization](tasks/.done/reacttoolltip-mobile.md)
 - [Read-Only Channels with Role Managers](tasks/.done/read-only-channels-with-role-managers.md)
 - [Refactor Modal Placement in Layout.tsx](tasks/.done/refactor-modal-placement.md)
+- [Rehype-Raw Security Fix - Complete Recap](tasks/.done/rehype-raw-security-fix-recap-2025-11-07.md)
 - [Rename .agents to .agents](tasks/.done/rename-readme-to-agents.md)
 - [Replace FontAwesome with Tabler Icons](tasks/.done/replace-fontawesome-with-tabler-icons.md)
 - [Reply Notification System](tasks/.done/reply-notification-system.md)
@@ -199,6 +206,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Responsive Layout Requirements](tasks/.done/responsive-layout_requirements.md)
 - [Role Mention Notifications Implementation](tasks/.done/role-mention-notifications.md)
 - [Search Components Primitive Migration](tasks/.done/search-primitive-migration.md)
+- [Security Analysis: MessageMarkdownRenderer Component](tasks/.done/security-analysis-message-markdown-renderer-2025-11-07.md)
 - [Space Icon Mention Bubbles](tasks/.done/space-icon-mention-bubbles.md)
 - [Space Initials Fallback - Optional Space Images](tasks/.done/space-initials-fallback.md)
 - [Tailwind @apply Conversion Audit](tasks/.done/tailwind-apply-conversion-audit.md)
@@ -207,11 +215,13 @@ This is the main index for all documentation, bug reports, and task management.
 - [Toast System - Simple Bug Fixes](tasks/.done/toast-system-simple-fix.md)
 - [Toast System Refactoring](tasks/.done/toast-system-refactoring.md)
 - [UI Folder Reorganization Task](tasks/.done/ui-folder-reorganization.md)
+- [Unread Message Visual Indicators Implementation](tasks/.done/unread-message-visual-indicators.md)
 - [User Initials Avatars](tasks/.done/user-initials.md)
+- [XSS Prevention - Final Implementation](tasks/.done/xss-prevention-final-implementation-2025-11-08.md)
 - [🎯 Objective: Implement Global Message Search](tasks/.done/global-search-plan.md)
 - [🔍 Global Message Search Implementation Plan](tasks/.done/global-search.md)
 - [🔍 Users List Filtering Feature](tasks/.done/users-list-filtering-feature.md)
 
 ---
 
-**Last Updated**: 2025-11-07 15:39:54
+**Last Updated**: 2025-11-10 18:41:49

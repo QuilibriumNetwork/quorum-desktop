@@ -78,18 +78,20 @@ def scan_readme_directory():
             if file.endswith('.md') and file != 'INDEX.md':
                 file_path = os.path.join(root, file)
                 relative_path = os.path.relpath(file_path, readme_root)
+                # Normalize path separators for cross-platform compatibility
+                relative_path_normalized = relative_path.replace('\\', '/')
                 
                 # Extract title and create file info
                 title = extract_title(file_path)
                 file_info = {
                     'title': title,
-                    'path': relative_path.replace('\\', '/'),
+                    'path': relative_path_normalized,
                     'filename': file
                 }
                 
-                # Categorize files based on their path
-                if relative_path.startswith('docs/'):
-                    path_parts = relative_path.split('/')
+                # Categorize files based on their path (use normalized path)
+                if relative_path_normalized.startswith('docs/'):
+                    path_parts = relative_path_normalized.split('/')
                     if len(path_parts) == 2:  # docs/file.md
                         docs_root.append(file_info)
                     else:  # docs/subfolder/... files
@@ -98,11 +100,11 @@ def scan_readme_directory():
                             docs_subfolders[subfolder] = []
                         docs_subfolders[subfolder].append(file_info)
                 
-                elif relative_path.startswith('bugs/'):
-                    path_parts = relative_path.split('/')
+                elif relative_path_normalized.startswith('bugs/'):
+                    path_parts = relative_path_normalized.split('/')
                     
                     # Check if file is in .solved folder
-                    if relative_path.startswith('bugs/.solved/'):
+                    if relative_path_normalized.startswith('bugs/.solved/'):
                         if len(path_parts) == 3:  # bugs/.solved/file.md
                             bugs_solved.append(file_info)
                         else:  # bugs/.solved/subfolder/... files
@@ -118,11 +120,11 @@ def scan_readme_directory():
                             bugs_subfolders[subfolder] = []
                         bugs_subfolders[subfolder].append(file_info)
                 
-                elif relative_path.startswith('tasks/'):
-                    path_parts = relative_path.split('/')
+                elif relative_path_normalized.startswith('tasks/'):
+                    path_parts = relative_path_normalized.split('/')
                     
                     # Check if file is in .done folder
-                    if relative_path.startswith('tasks/.done/'):
+                    if relative_path_normalized.startswith('tasks/.done/'):
                         if len(path_parts) == 3:  # tasks/.done/file.md
                             tasks_done.append(file_info)
                         else:  # tasks/.done/subfolder/... files
