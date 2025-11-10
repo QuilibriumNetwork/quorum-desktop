@@ -32,7 +32,11 @@ interface ChannelItemProps {
   onChannelClick?: () => void;
   onChannelNavigate: (channelId: string) => void;
   closeLeftSidebar: () => void;
-  openChannelEditor: (spaceId: string, groupName: string, channelId: string) => void;
+  openChannelEditor: (
+    spaceId: string,
+    groupName: string,
+    channelId: string
+  ) => void;
 }
 
 const ChannelContent: React.FC<{
@@ -42,29 +46,40 @@ const ChannelContent: React.FC<{
   isTouch: boolean;
   spaceId: string;
   groupName: string;
-  openChannelEditor: (spaceId: string, groupName: string, channelId: string) => void;
-}> = ({ channel, currentChannelId, isSpaceOwner, isTouch, spaceId, groupName, openChannelEditor }) => (
+  openChannelEditor: (
+    spaceId: string,
+    groupName: string,
+    channelId: string
+  ) => void;
+}> = ({
+  channel,
+  currentChannelId,
+  isSpaceOwner,
+  isTouch,
+  spaceId,
+  groupName,
+  openChannelEditor,
+}) => (
   <div className="channel">
     <div
       className={
         'channel-name flex items-center justify-between' +
-        (channel.channelId === currentChannelId
-          ? ' channel-name-focused'
-          : '') +
-        (channel.unreads && channel.unreads > 0
-          ? ' !font-bold !text-main'
-          : '')
+        (channel.channelId === currentChannelId ? ' channel-name-focused' : '')
       }
     >
-      <div className="flex-1 min-w-0 flex items-center gap-2">
+      <div className="flex-1 min-w-0 flex items-center gap-2 relative">
+        {/* Unread dot positioned absolutely to the left without affecting layout */}
+        {!!channel.unreads && (
+          <div className="channel-unread-dot" title="Unread messages" />
+        )}
         {/* Icon stack with base icon + optional pin overlay */}
         <div className="channel-icon-container">
           <Icon
             key={`channel-${channel.channelId}`}
-            name={(channel.icon as any) || "hashtag"}
+            name={(channel.icon as any) || 'hashtag'}
             size="sm"
             style={{
-              color: getIconColorHex(channel.iconColor as IconColor)
+              color: getIconColorHex(channel.iconColor as IconColor),
             }}
             title={`${channel.channelName}`}
           />
@@ -95,9 +110,16 @@ const ChannelContent: React.FC<{
             e.stopPropagation();
             openChannelEditor(spaceId, groupName, channel.channelId);
           }}
-          className={'channel-configure flex-shrink-0 ml-2 flex items-center justify-center'}
+          className={
+            'channel-configure flex-shrink-0 ml-2 flex items-center justify-center'
+          }
         >
-          <Icon name="settings" size="sm" variant="filled" className="text-subtle hover:text-main" />
+          <Icon
+            name="settings"
+            size="sm"
+            variant="filled"
+            className="text-subtle hover:text-main"
+          />
         </div>
       )}
     </div>
@@ -138,7 +160,7 @@ const ChannelItem: React.FC<ChannelItemProps> = ({
       }
     },
     shouldPreventDefault: true,
-    threshold: TOUCH_INTERACTION_TYPES.STANDARD.threshold
+    threshold: TOUCH_INTERACTION_TYPES.STANDARD.threshold,
   });
 
   const channelContent = (

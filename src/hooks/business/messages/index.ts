@@ -6,3 +6,6 @@ export * from './useMessageFormatting';
 export * from './useQuickReactions';
 export * from './usePinnedMessages';
 export * from './useMessageHighlight';
+export * from './useChannelUnreadCounts';
+export * from './useSpaceUnreadCounts';
+export * from './useDirectMessageUnreadCount';

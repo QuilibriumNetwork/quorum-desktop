@@ -89,7 +89,7 @@ html.dark .channel-mentions-bubble {
   background-color: var(--accent-600);
 }
 
-// Channel icon container with pin overlay
+// Channel icon container with pin overlay and unread dot
 .channel-icon-container {
   position: relative;
   display: inline-block;
@@ -112,6 +112,20 @@ html.dark .channel-mentions-bubble {
   .pin-icon {
     font-size: $s-2;
   }
+}
+
+// Channel unread dot indicator - positioned absolutely to the left without affecting layout
+.channel-unread-dot {
+  position: absolute;
+  left: -$s-2; // Position to the left of the channel content
+  top: 50%;
+  transform: translateY(-50%); // Center vertically
+  width: $s-1-5;
+  height: $s-1-5;
+  border-radius: $rounded-full;
+  background: var(--surface-10);
+  z-index: 10;
+  transition: all $duration-100 linear;
 }
 
 // Mobile layout

@@ -10,6 +10,7 @@ import {
 } from '../../hooks';
 import { useChannelMentionCounts } from '../../hooks/business/mentions';
 import { useReplyNotificationCounts } from '../../hooks/business/replies';
+import { useChannelUnreadCounts } from '../../hooks/business/messages';
 import { t } from '@lingui/core/macro';
 import { Button, Container, Icon, Text, Tooltip } from '../primitives';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
@@ -22,6 +23,7 @@ type GroupWithMentionCounts = Group & {
   channels: Array<
     Group['channels'][number] & {
       mentionCount?: number;
+      unreads?: number;
     }
   >;
 };
@@ -48,7 +50,8 @@ const ChannelList: React.FC<ChannelListProps> = ({ spaceId }) => {
 
   // Get all channel IDs from all groups
   const channelIds = React.useMemo(
-    () => groups.flatMap((group: Group) => group.channels.map((c) => c.channelId)),
+    () =>
+      groups.flatMap((group: Group) => group.channels.map((c) => c.channelId)),
     [groups]
   );
 
@@ -56,28 +59,39 @@ const ChannelList: React.FC<ChannelListProps> = ({ spaceId }) => {
   const userRoleIds = React.useMemo(() => {
     if (!space || !user.currentPasskeyInfo?.address) return [];
     const userRolesData = getUserRoles(user.currentPasskeyInfo.address, space);
-    return userRolesData.map(r => r.roleId);
+    return userRolesData.map((r) => r.roleId);
   }, [space, user.currentPasskeyInfo?.address]);
 
   // Get mention counts and reply counts for all channels
-  const mentionCounts = useChannelMentionCounts({ spaceId, channelIds, userRoleIds });
+  const mentionCounts = useChannelMentionCounts({
+    spaceId,
+    channelIds,
+    userRoleIds,
+  });
   const replyCounts = useReplyNotificationCounts({ spaceId, channelIds });
 
-  // Merge combined notification counts (mentions + replies) into groups
+  // Get unread message counts for all channels
+  const unreadCounts = useChannelUnreadCounts({ spaceId, channelIds });
+
+  // Merge combined notification counts (mentions + replies) and unread counts into groups
   const groupsWithMentionCounts = React.useMemo<GroupWithMentionCounts[]>(
     () =>
-      groups.map((group: Group): GroupWithMentionCounts => ({
-        ...group,
-        channels: group.channels.map((channel) => {
-          const mentions = mentionCounts[channel.channelId] || 0;
-          const replies = replyCounts[channel.channelId] || 0;
-          return {
-            ...channel,
-            mentionCount: mentions + replies, // Combined count for single badge
-          };
-        }),
-      })),
-    [groups, mentionCounts, replyCounts]
+      groups.map(
+        (group: Group): GroupWithMentionCounts => ({
+          ...group,
+          channels: group.channels.map((channel) => {
+            const mentions = mentionCounts[channel.channelId] || 0;
+            const replies = replyCounts[channel.channelId] || 0;
+            const unreads = unreadCounts[channel.channelId] || 0;
+            return {
+              ...channel,
+              mentionCount: mentions + replies, // Combined count for single badge
+              unreads: unreads, // Separate unread indicator
+            };
+          }),
+        })
+      ),
+    [groups, mentionCounts, replyCounts, unreadCounts]
   );
 
   return (

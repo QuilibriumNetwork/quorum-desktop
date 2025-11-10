@@ -2,13 +2,32 @@
 // This service handles message CRUD operations, encryption/decryption, and reactions
 
 import { MessageDB, EncryptionState, EncryptedMessage } from '../db/messages';
-import { Message, ReactionMessage, RemoveReactionMessage, PostMessage, JoinMessage, LeaveMessage, KickMessage, Space, EditMessage } from '../api/quorumApi';
+import {
+  Message,
+  ReactionMessage,
+  RemoveReactionMessage,
+  PostMessage,
+  JoinMessage,
+  LeaveMessage,
+  KickMessage,
+  Space,
+  EditMessage,
+} from '../api/quorumApi';
 import { sha256, base58btc, hexToSpreadArray } from '../utils/crypto';
 import { int64ToBytes } from '../utils/bytes';
 import { QueryClient, InfiniteData } from '@tanstack/react-query';
-import { buildMessagesKey, buildSpaceMembersKey, buildSpaceKey, buildConfigKey, buildConversationsKey } from '../hooks';
+import {
+  buildMessagesKey,
+  buildSpaceMembersKey,
+  buildSpaceKey,
+  buildConfigKey,
+  buildConversationsKey,
+} from '../hooks';
 import { buildConversationKey } from '../hooks/queries/conversation/buildConversationKey';
-import { channel as secureChannel, channel_raw as ch } from '@quilibrium/quilibrium-js-sdk-channels';
+import {
+  channel as secureChannel,
+  channel_raw as ch,
+} from '@quilibrium/quilibrium-js-sdk-channels';
 import { t } from '@lingui/core/macro';
 import { DefaultImages } from '../utils';
 import { getInviteUrlBase } from '../utils/inviteDomain';
@@ -41,7 +60,12 @@ export interface MessageServiceDependencies {
   spaceInfo: React.MutableRefObject<{ [key: string]: any }>;
   syncInfo: React.MutableRefObject<{ [key: string]: any }>;
   synchronizeAll: (spaceId: string, inboxAddress: string) => Promise<void>;
-  informSyncData: (spaceId: string, inboxAddress: string, messageCount: number, memberCount: number) => Promise<void>;
+  informSyncData: (
+    spaceId: string,
+    inboxAddress: string,
+    messageCount: number,
+    memberCount: number
+  ) => Promise<void>;
   initiateSync: (spaceId: string) => Promise<void>;
   directSync: (spaceId: string, message: any) => Promise<void>;
   saveConfig: (args: { config: any; keyset: any }) => Promise<void>;
@@ -60,7 +84,9 @@ export class MessageService {
   ) => void;
   // Additional dependencies for handleNewMessage
   private apiClient: QuorumApiClient;
-  private deleteEncryptionStates: (args: { conversationId: string }) => Promise<void>;
+  private deleteEncryptionStates: (args: {
+    conversationId: string;
+  }) => Promise<void>;
   private deleteInboxMessages: (
     inboxKeyset: any,
     timestamps: number[],
@@ -69,8 +95,16 @@ export class MessageService {
   private navigate: (path: string, options?: any) => void;
   private spaceInfo: React.MutableRefObject<{ [key: string]: any }>;
   private syncInfo: React.MutableRefObject<{ [key: string]: any }>;
-  private synchronizeAll: (spaceId: string, inboxAddress: string) => Promise<void>;
-  private informSyncData: (spaceId: string, inboxAddress: string, messageCount: number, memberCount: number) => Promise<void>;
+  private synchronizeAll: (
+    spaceId: string,
+    inboxAddress: string
+  ) => Promise<void>;
+  private informSyncData: (
+    spaceId: string,
+    inboxAddress: string,
+    messageCount: number,
+    memberCount: number
+  ) => Promise<void>;
   private initiateSync: (spaceId: string) => Promise<void>;
   private directSync: (spaceId: string, message: any) => Promise<void>;
   private saveConfig: (args: { config: any; keyset: any }) => Promise<void>;
@@ -205,7 +239,8 @@ export class MessageService {
       // For DMs: Both users store messages with their partner's address as spaceId/channelId
       // So we can't do a direct comparison. Instead, check if both are DMs (spaceId == channelId)
       const isTargetDM = targetMessage.spaceId === targetMessage.channelId;
-      const isRequestDM = decryptedContent.spaceId === decryptedContent.channelId;
+      const isRequestDM =
+        decryptedContent.spaceId === decryptedContent.channelId;
 
       if (isTargetDM && isRequestDM) {
         // Both are DMs - this is valid even if IDs don't match exactly
@@ -262,7 +297,9 @@ export class MessageService {
           ) {
             return;
           }
-          await messageDB.deleteMessage(decryptedContent.content.removeMessageId);
+          await messageDB.deleteMessage(
+            decryptedContent.content.removeMessageId
+          );
           // Don't return early - allow addMessage() to update React Query cache
         }
       }
@@ -302,8 +339,11 @@ export class MessageService {
       if (isDM) {
         // For DMs, check conversation setting
         const conversationId = `${spaceId}/${channelId}`;
-        const conversation = await messageDB.getConversation({ conversationId });
-        saveEditHistoryEnabled = conversation?.conversation?.saveEditHistory ?? false;
+        const conversation = await messageDB.getConversation({
+          conversationId,
+        });
+        saveEditHistoryEnabled =
+          conversation?.conversation?.saveEditHistory ?? false;
       } else {
         // For spaces, check space setting
         const space = await messageDB.getSpace(spaceId);
@@ -312,10 +352,12 @@ export class MessageService {
 
       // Check if this edit has already been applied (by comparing lastModifiedHash with editNonce)
       // This prevents duplicate edits when processing the same edit message multiple times
-      const isAlreadyApplied = targetMessage.lastModifiedHash === editMessage.editNonce;
+      const isAlreadyApplied =
+        targetMessage.lastModifiedHash === editMessage.editNonce;
 
       // Preserve current content in edits array before updating (only if saveEditHistory is enabled)
-      const currentText = targetMessage.content.type === 'post' ? targetMessage.content.text : '';
+      const currentText =
+        targetMessage.content.type === 'post' ? targetMessage.content.text : '';
 
       // Create edits array if it doesn't exist
       const existingEdits = targetMessage.edits || [];
@@ -349,7 +391,8 @@ export class MessageService {
           {
             text: currentText,
             modifiedDate: targetMessage.modifiedDate,
-            lastModifiedHash: targetMessage.lastModifiedHash || targetMessage.nonce,
+            lastModifiedHash:
+              targetMessage.lastModifiedHash || targetMessage.nonce,
           },
         ];
       } else {
@@ -547,8 +590,11 @@ export class MessageService {
         if (isDMForEdit) {
           // For DMs, check conversation setting
           const conversationId = `${spaceId}/${channelId}`;
-          const conversation = await this.messageDB.getConversation({ conversationId });
-          saveEditHistoryEnabled = conversation?.conversation?.saveEditHistory ?? false;
+          const conversation = await this.messageDB.getConversation({
+            conversationId,
+          });
+          saveEditHistoryEnabled =
+            conversation?.conversation?.saveEditHistory ?? false;
         } else {
           // For spaces, check space setting
           const space = await this.messageDB.getSpace(spaceId);
@@ -589,12 +635,13 @@ export class MessageService {
                       }
 
                       // Preserve current content in edits array before updating (only if saveEditHistory is enabled)
-                      const currentText = m.content.type === 'post' ? m.content.text : '';
+                      const currentText =
+                        m.content.type === 'post' ? m.content.text : '';
                       const existingEdits = m.edits || [];
 
                       // Build edits array: preserve previous versions only if saveEditHistory is enabled
                       const edits = saveEditHistoryEnabled
-                        ? (m.modifiedDate === m.createdDate
+                        ? m.modifiedDate === m.createdDate
                           ? // First edit: add original content to edits array
                             [
                               {
@@ -604,17 +651,18 @@ export class MessageService {
                               },
                             ]
                           : existingEdits.length > 0
-                          ? // Subsequent edits: add current version (which is now the previous version)
-                            [
-                              ...existingEdits,
-                              {
-                                text: currentText,
-                                modifiedDate: m.modifiedDate,
-                                lastModifiedHash: m.lastModifiedHash || m.nonce,
-                              },
-                            ]
-                          : // Edge case: edited before but edits array is empty (shouldn't happen, but handle gracefully)
-                            existingEdits)
+                            ? // Subsequent edits: add current version (which is now the previous version)
+                              [
+                                ...existingEdits,
+                                {
+                                  text: currentText,
+                                  modifiedDate: m.modifiedDate,
+                                  lastModifiedHash:
+                                    m.lastModifiedHash || m.nonce,
+                                },
+                              ]
+                            : // Edge case: edited before but edits array is empty (shouldn't happen, but handle gracefully)
+                              existingEdits
                         : []; // If saveEditHistory is disabled, don't preserve edits
 
                       // Update the message with edited text
@@ -802,7 +850,10 @@ export class MessageService {
     }
 
     // Invalidate mention counts when a message with mentions is added
-    if (decryptedContent.mentions?.memberIds && decryptedContent.mentions.memberIds.length > 0) {
+    if (
+      decryptedContent.mentions?.memberIds &&
+      decryptedContent.mentions.memberIds.length > 0
+    ) {
       // Get user address from current passkey (we need to pass this in or get it from context)
       // For now, invalidate for the whole space to catch all potential mentions
       await queryClient.invalidateQueries({
@@ -811,6 +862,13 @@ export class MessageService {
       // Also invalidate notification inbox query
       await queryClient.invalidateQueries({
         queryKey: ['mention-notifications', spaceId],
+      });
+      // Invalidate unread message counts when new messages arrive
+      await queryClient.invalidateQueries({
+        queryKey: ['unread-counts', 'channel', spaceId],
+      });
+      await queryClient.invalidateQueries({
+        queryKey: ['unread-counts', 'space'],
       });
     }
   }
@@ -844,7 +902,10 @@ export class MessageService {
       const nonce = crypto.randomUUID();
 
       // Handle edit-message type
-      if (typeof pendingMessage === 'object' && (pendingMessage as any).type === 'edit-message') {
+      if (
+        typeof pendingMessage === 'object' &&
+        (pendingMessage as any).type === 'edit-message'
+      ) {
         const editMessage = pendingMessage as EditMessage;
         // Verify the original message exists and can be edited
         const originalMessage = await this.messageDB.getMessage({
@@ -904,7 +965,9 @@ export class MessageService {
         const conversation = await this.messageDB.getConversation({
           conversationId,
         });
-        let response = await this.messageDB.getEncryptionStates({ conversationId });
+        let response = await this.messageDB.getEncryptionStates({
+          conversationId,
+        });
         const inboxes = self.device_registrations
           .map((d) => d.inbox_registration.inbox_address)
           .concat(
@@ -1014,12 +1077,19 @@ export class MessageService {
           );
         }
 
-        await this.saveMessage(message, this.messageDB, address!, address!, 'direct', {
-          user_icon:
-            conversation?.conversation?.icon ?? DefaultImages.UNKNOWN_USER,
-          display_name:
-            conversation?.conversation?.displayName ?? t`Unknown User`,
-        });
+        await this.saveMessage(
+          message,
+          this.messageDB,
+          address!,
+          address!,
+          'direct',
+          {
+            user_icon:
+              conversation?.conversation?.icon ?? DefaultImages.UNKNOWN_USER,
+            display_name:
+              conversation?.conversation?.displayName ?? t`Unknown User`,
+          }
+        );
         await this.addMessage(queryClient, address, address, message);
 
         return outbounds;
@@ -1063,7 +1133,9 @@ export class MessageService {
       const conversation = await this.messageDB.getConversation({
         conversationId,
       });
-      let response = await this.messageDB.getEncryptionStates({ conversationId });
+      let response = await this.messageDB.getEncryptionStates({
+        conversationId,
+      });
       const inboxes = self.device_registrations
         .map((d) => d.inbox_registration.inbox_address)
         .concat(
@@ -1177,12 +1249,19 @@ export class MessageService {
         return outbounds;
       }
 
-      await this.saveMessage(message, this.messageDB, address!, address!, 'direct', {
-        user_icon:
-          conversation?.conversation?.icon ?? DefaultImages.UNKNOWN_USER,
-        display_name:
-          conversation?.conversation?.displayName ?? t`Unknown User`,
-      });
+      await this.saveMessage(
+        message,
+        this.messageDB,
+        address!,
+        address!,
+        'direct',
+        {
+          user_icon:
+            conversation?.conversation?.icon ?? DefaultImages.UNKNOWN_USER,
+          display_name:
+            conversation?.conversation?.displayName ?? t`Unknown User`,
+        }
+      );
       await this.addMessage(queryClient, address, address, message);
       this.addOrUpdateConversation(
         queryClient,
@@ -1240,8 +1319,7 @@ export class MessageService {
         let decryptedContent: Message | null = null;
         let newState: any | null = null;
 
-        let conversationId =
-          session.user_address + '/' + session.user_address;
+        let conversationId = session.user_address + '/' + session.user_address;
 
         let updatedUserProfile: secureChannel.UserProfile | undefined;
         decryptedContent = JSON.parse(session.message);
@@ -1319,8 +1397,7 @@ export class MessageService {
             'direct',
             updatedUserProfile ?? {
               user_icon:
-                conversation?.conversation?.icon ??
-                DefaultImages.UNKNOWN_USER,
+                conversation?.conversation?.icon ?? DefaultImages.UNKNOWN_USER,
               display_name:
                 conversation?.conversation?.displayName ?? t`Unknown User`,
             }
@@ -1338,8 +1415,7 @@ export class MessageService {
             0,
             updatedUserProfile ?? {
               user_icon:
-                conversation?.conversation?.icon ??
-                DefaultImages.UNKNOWN_USER,
+                conversation?.conversation?.icon ?? DefaultImages.UNKNOWN_USER,
               display_name:
                 conversation?.conversation?.displayName ?? t`Unknown User`,
             }
@@ -1373,7 +1449,9 @@ export class MessageService {
     }
 
     const conversationId = found.conversationId;
-    const conversation = await this.messageDB.getConversation({ conversationId });
+    const conversation = await this.messageDB.getConversation({
+      conversationId,
+    });
 
     let decryptedContent: Message | null = null;
     let newState: string | null = null;
@@ -1385,11 +1463,10 @@ export class MessageService {
       // secureChannel.DoubleRatchetStateAndInboxKeys
       if (keys.sending_inbox.inbox_public_key === '') {
         try {
-          const result =
-            await secureChannel.ConfirmDoubleRatchetSenderSession(
-              JSON.parse(found.state),
-              JSON.parse(message.encryptedContent)
-            );
+          const result = await secureChannel.ConfirmDoubleRatchetSenderSession(
+            JSON.parse(found.state),
+            JSON.parse(message.encryptedContent)
+          );
           decryptedContent = JSON.parse(result.message);
           newState = JSON.stringify({
             ratchet_state: result.ratchet_state,
@@ -1451,7 +1528,9 @@ export class MessageService {
           }
           decryptedContent = JSON.parse(result.message);
           sentAccept = found.sentAccept;
-          if ((decryptedContent as any)?.content?.type === 'delete-conversation') {
+          if (
+            (decryptedContent as any)?.content?.type === 'delete-conversation'
+          ) {
             await this.deleteEncryptionStates({ conversationId });
             await this.deleteInboxMessages(
               keys.receiving_inbox,
@@ -1595,9 +1674,7 @@ export class MessageService {
                 'utf-8'
               ).toString('base64');
               const result = ch.js_verify_ed448(
-                Buffer.from(participant.inboxPubKey, 'hex').toString(
-                  'base64'
-                ),
+                Buffer.from(participant.inboxPubKey, 'hex').toString('base64'),
                 msg,
                 participant.signature
               );
@@ -1645,9 +1722,8 @@ export class MessageService {
                 };
                 ratchet.peer_id_map = {
                   ...ratchet.peer_id_map,
-                  [Buffer.from(participant.inboxKey, 'hex').toString(
-                    'base64'
-                  )]: participant.id,
+                  [Buffer.from(participant.inboxKey, 'hex').toString('base64')]:
+                    participant.id,
                 };
                 newState = JSON.stringify({
                   ...keys,
@@ -1695,8 +1771,9 @@ export class MessageService {
           } else if (envelope.message.type === 'sync-peer-map') {
             let reg = this.spaceInfo.current[conversationId.split('/')[0]];
             if (!reg) {
-              reg = (await this.apiClient.getSpace(conversationId.split('/')[0]))
-                .data;
+              reg = (
+                await this.apiClient.getSpace(conversationId.split('/')[0])
+              ).data;
               this.spaceInfo.current[conversationId.split('/')[0]] = reg;
             }
 
@@ -1715,10 +1792,9 @@ export class MessageService {
                   Buffer.from(exteriorEnvelope.envelope, 'utf-8').toString(
                     'base64'
                   ),
-                  Buffer.from(
-                    exteriorEnvelope.owner_signature,
-                    'hex'
-                  ).toString('base64')
+                  Buffer.from(exteriorEnvelope.owner_signature, 'hex').toString(
+                    'base64'
+                  )
                 )
               );
               if (verify) {
@@ -1734,8 +1810,9 @@ export class MessageService {
           } else if (envelope.message.type === 'space-manifest') {
             let reg = this.spaceInfo.current[conversationId.split('/')[0]];
             if (!reg) {
-              reg = (await this.apiClient.getSpace(conversationId.split('/')[0]))
-                .data;
+              reg = (
+                await this.apiClient.getSpace(conversationId.split('/')[0])
+              ).data;
               this.spaceInfo.current[conversationId.split('/')[0]] = reg;
             }
             const manifest = envelope.message
@@ -1781,10 +1858,7 @@ export class MessageService {
                           ],
                           ephemeral_public_key: [
                             ...new Uint8Array(
-                              Buffer.from(
-                                manifest.ephemeral_public_key,
-                                'hex'
-                              )
+                              Buffer.from(manifest.ephemeral_public_key, 'hex')
                             ),
                           ],
                           ciphertext: ciphertext,
@@ -1863,9 +1937,11 @@ export class MessageService {
 
                   // Remove leaving user from all roles
                   if (space) {
-                    space.roles = space.roles.map(role => ({
+                    space.roles = space.roles.map((role) => ({
                       ...role,
-                      members: role.members.filter(m => m !== member.user_address)
+                      members: role.members.filter(
+                        (m) => m !== member.user_address
+                      ),
                     }));
                     await this.messageDB.saveSpace(space);
                   }
@@ -1909,14 +1985,13 @@ export class MessageService {
           } else if (envelope.message.type === 'rekey') {
             let reg = this.spaceInfo.current[conversationId.split('/')[0]];
             if (!reg) {
-              reg = (await this.apiClient.getSpace(conversationId.split('/')[0]))
-                .data;
+              reg = (
+                await this.apiClient.getSpace(conversationId.split('/')[0])
+              ).data;
               this.spaceInfo.current[conversationId.split('/')[0]] = reg;
             }
             if (
-              reg.owner_public_keys.includes(
-                exteriorEnvelope.owner_public_key
-              )
+              reg.owner_public_keys.includes(exteriorEnvelope.owner_public_key)
             ) {
               const verify = JSON.parse(
                 ch.js_verify_ed448(
@@ -1927,10 +2002,9 @@ export class MessageService {
                   Buffer.from(exteriorEnvelope.envelope, 'utf-8').toString(
                     'base64'
                   ),
-                  Buffer.from(
-                    exteriorEnvelope.owner_signature,
-                    'hex'
-                  ).toString('base64')
+                  Buffer.from(exteriorEnvelope.owner_signature, 'hex').toString(
+                    'base64'
+                  )
                 )
               );
               if (verify) {
@@ -2019,14 +2093,13 @@ export class MessageService {
           } else if (envelope.message.type === 'kick') {
             let reg = this.spaceInfo.current[conversationId.split('/')[0]];
             if (!reg) {
-              reg = (await this.apiClient.getSpace(conversationId.split('/')[0]))
-                .data;
+              reg = (
+                await this.apiClient.getSpace(conversationId.split('/')[0])
+              ).data;
               this.spaceInfo.current[conversationId.split('/')[0]] = reg;
             }
             if (
-              reg.owner_public_keys.includes(
-                exteriorEnvelope.owner_public_key
-              )
+              reg.owner_public_keys.includes(exteriorEnvelope.owner_public_key)
             ) {
               const verify = JSON.parse(
                 ch.js_verify_ed448(
@@ -2037,10 +2110,9 @@ export class MessageService {
                   Buffer.from(exteriorEnvelope.envelope, 'utf-8').toString(
                     'base64'
                   ),
-                  Buffer.from(
-                    exteriorEnvelope.owner_signature,
-                    'hex'
-                  ).toString('base64')
+                  Buffer.from(exteriorEnvelope.owner_signature, 'hex').toString(
+                    'base64'
+                  )
                 )
               );
               if (verify) {
@@ -2048,11 +2120,19 @@ export class MessageService {
                   const spaceId = conversationId.split('/')[0];
                   try {
                     const space = await this.messageDB.getSpace(spaceId);
-                    showWarning(`You've been kicked from ${space?.spaceName || spaceId}`);
+                    showWarning(
+                      `You've been kicked from ${space?.spaceName || spaceId}`
+                    );
                   } catch {}
                   // Immediately navigate away from the space view when kicked
-                  this.navigate('/messages', { replace: true, state: { from: 'kicked', spaceId } });
-                  const hubKey = await this.messageDB.getSpaceKey(spaceId, 'hub');
+                  this.navigate('/messages', {
+                    replace: true,
+                    state: { from: 'kicked', spaceId },
+                  });
+                  const hubKey = await this.messageDB.getSpaceKey(
+                    spaceId,
+                    'hub'
+                  );
                   const inboxKey = await this.messageDB.getSpaceKey(
                     spaceId,
                     'inbox'
@@ -2227,8 +2307,9 @@ export class MessageService {
           } else if (envelope.message.type === 'sync-members') {
             let reg = this.spaceInfo.current[conversationId.split('/')[0]];
             if (!reg) {
-              reg = (await this.apiClient.getSpace(conversationId.split('/')[0]))
-                .data;
+              reg = (
+                await this.apiClient.getSpace(conversationId.split('/')[0])
+              ).data;
               this.spaceInfo.current[conversationId.split('/')[0]] = reg;
             }
 
@@ -2247,10 +2328,9 @@ export class MessageService {
                   Buffer.from(exteriorEnvelope.envelope, 'utf-8').toString(
                     'base64'
                   ),
-                  Buffer.from(
-                    exteriorEnvelope.owner_signature,
-                    'hex'
-                  ).toString('base64')
+                  Buffer.from(exteriorEnvelope.owner_signature, 'hex').toString(
+                    'base64'
+                  )
                 )
               );
               if (verify) {
@@ -2278,14 +2358,20 @@ export class MessageService {
                   buildSpaceMembersKey({
                     spaceId: conversationId.split('/')[0],
                   }),
-                  (oldData: (secureChannel.UserProfile & { isKicked?: boolean })[]) => {
+                  (
+                    oldData: (secureChannel.UserProfile & {
+                      isKicked?: boolean;
+                    })[]
+                  ) => {
                     const existingMap = new Map(
                       (oldData ?? []).map((m) => [m.user_address, m])
                     );
-                    const merged = (envelope.message.members as any[]).map((m) => {
-                      const prev = existingMap.get(m.user_address);
-                      return { ...m, isKicked: prev?.isKicked ?? false };
-                    });
+                    const merged = (envelope.message.members as any[]).map(
+                      (m) => {
+                        const prev = existingMap.get(m.user_address);
+                        return { ...m, isKicked: prev?.isKicked ?? false };
+                      }
+                    );
                     return [...(oldData ?? []), ...merged];
                   }
                 );
@@ -2295,7 +2381,10 @@ export class MessageService {
             if (Array.isArray(envelope.message.addresses)) {
               const spaceId = conversationId.split('/')[0];
               for (const address of envelope.message.addresses) {
-                const member = await this.messageDB.getSpaceMember(spaceId, address);
+                const member = await this.messageDB.getSpaceMember(
+                  spaceId,
+                  address
+                );
                 if (member) {
                   await this.messageDB.saveSpaceMember(spaceId, {
                     ...member,
@@ -2322,8 +2411,9 @@ export class MessageService {
           } else if (envelope.message.type === 'sync-messages') {
             let reg = this.spaceInfo.current[conversationId.split('/')[0]];
             if (!reg) {
-              reg = (await this.apiClient.getSpace(conversationId.split('/')[0]))
-                .data;
+              reg = (
+                await this.apiClient.getSpace(conversationId.split('/')[0])
+              ).data;
               this.spaceInfo.current[conversationId.split('/')[0]] = reg;
             }
 
@@ -2342,10 +2432,9 @@ export class MessageService {
                   Buffer.from(exteriorEnvelope.envelope, 'utf-8').toString(
                     'base64'
                   ),
-                  Buffer.from(
-                    exteriorEnvelope.owner_signature,
-                    'hex'
-                  ).toString('base64')
+                  Buffer.from(exteriorEnvelope.owner_signature, 'hex').toString(
+                    'base64'
+                  )
                 )
               );
               if (verify) {
@@ -2550,7 +2639,10 @@ export class MessageService {
       const space = await this.messageDB.getSpace(spaceId);
 
       // Handle edit-message type
-      if (typeof pendingMessage === 'object' && (pendingMessage as any).type === 'edit-message') {
+      if (
+        typeof pendingMessage === 'object' &&
+        (pendingMessage as any).type === 'edit-message'
+      ) {
         const editMessage = pendingMessage as EditMessage;
         // Verify the original message exists and can be edited
         const originalMessage = await this.messageDB.getMessage({
@@ -2617,10 +2709,7 @@ export class MessageService {
         const sets = response.map((e) => JSON.parse(e.state));
 
         // enforce non-repudiability
-        if (
-          !space?.isRepudiable ||
-          (space?.isRepudiable && !skipSigning)
-        ) {
+        if (!space?.isRepudiable || (space?.isRepudiable && !skipSigning)) {
           const inboxKey = await this.messageDB.getSpaceKey(spaceId, 'inbox');
           message.publicKey = inboxKey.publicKey;
           message.signature = Buffer.from(
@@ -2654,12 +2743,19 @@ export class MessageService {
             })
           )
         );
-        await this.saveMessage(message, this.messageDB, spaceId, channelId, 'group', {
-          user_icon:
-            conversation.conversation?.icon ?? DefaultImages.UNKNOWN_USER,
-          display_name:
-            conversation.conversation?.displayName ?? t`Unknown User`,
-        });
+        await this.saveMessage(
+          message,
+          this.messageDB,
+          spaceId,
+          channelId,
+          'group',
+          {
+            user_icon:
+              conversation.conversation?.icon ?? DefaultImages.UNKNOWN_USER,
+            display_name:
+              conversation.conversation?.displayName ?? t`Unknown User`,
+          }
+        );
         await this.addMessage(queryClient, spaceId, channelId, message);
 
         return outbounds;
@@ -2685,10 +2781,11 @@ export class MessageService {
       );
 
       // Get space roles for role mention validation
-      const spaceRoles = space?.roles?.map(r => ({
-        roleId: r.roleId,
-        roleTag: r.roleTag,
-      })) || [];
+      const spaceRoles =
+        space?.roles?.map((r) => ({
+          roleId: r.roleId,
+          roleTag: r.roleTag,
+        })) || [];
 
       let mentions;
       if (typeof pendingMessage === 'string') {
@@ -2704,7 +2801,9 @@ export class MessageService {
       }
 
       // Populate replyMetadata if replying to a message
-      let replyMetadata: { parentAuthor: string; parentChannelId: string } | undefined;
+      let replyMetadata:
+        | { parentAuthor: string; parentChannelId: string }
+        | undefined;
       if (inReplyTo && parentMessage) {
         // Don't create notification for self-replies
         if (parentMessage.content.senderId !== currentPasskeyInfo.address) {
@@ -2736,7 +2835,13 @@ export class MessageService {
                 ...(pendingMessage as any),
                 senderId: currentPasskeyInfo.address,
               },
-        mentions: mentions && (mentions.memberIds.length > 0 || mentions.roleIds.length > 0 || mentions.everyone) ? mentions : undefined,
+        mentions:
+          mentions &&
+          (mentions.memberIds.length > 0 ||
+            mentions.roleIds.length > 0 ||
+            mentions.everyone)
+            ? mentions
+            : undefined,
         replyMetadata,
       } as Message;
 
@@ -2789,18 +2894,29 @@ export class MessageService {
           })
         )
       );
-      await this.saveMessage(message, this.messageDB, spaceId, channelId, 'group', {
-        user_icon:
-          conversation.conversation?.icon ?? DefaultImages.UNKNOWN_USER,
-        display_name:
-          conversation.conversation?.displayName ?? t`Unknown User`,
-      });
+      await this.saveMessage(
+        message,
+        this.messageDB,
+        spaceId,
+        channelId,
+        'group',
+        {
+          user_icon:
+            conversation.conversation?.icon ?? DefaultImages.UNKNOWN_USER,
+          display_name:
+            conversation.conversation?.displayName ?? t`Unknown User`,
+        }
+      );
       await this.addMessage(queryClient, spaceId, channelId, message);
 
       // Invalidate reply notification caches if this is a reply
       if (message.replyMetadata) {
-        await queryClient.invalidateQueries({ queryKey: ['reply-counts', 'channel', spaceId] });
-        await queryClient.invalidateQueries({ queryKey: ['reply-notifications', spaceId] });
+        await queryClient.invalidateQueries({
+          queryKey: ['reply-counts', 'channel', spaceId],
+        });
+        await queryClient.invalidateQueries({
+          queryKey: ['reply-notifications', spaceId],
+        });
       }
 
       return outbounds;
@@ -2855,7 +2971,9 @@ export class MessageService {
           const counterparty = await this.apiClient.getUser(spaceId);
 
           if (currentPasskeyInfo?.address) {
-            const self = await this.apiClient.getUser(currentPasskeyInfo?.address!);
+            const self = await this.apiClient.getUser(
+              currentPasskeyInfo?.address!
+            );
             await submitMessage(
               spaceId,
               { type: 'delete-conversation' },
@@ -2871,7 +2989,9 @@ export class MessageService {
         } catch {}
       }
       // Delete encryption states (keys) and latest state
-      const states = await this.messageDB.getEncryptionStates({ conversationId });
+      const states = await this.messageDB.getEncryptionStates({
+        conversationId,
+      });
       for (const state of states) {
         await this.messageDB.deleteEncryptionState(state);
         // Best-effort cleanup of inbox mapping for this inbox

@@ -1,6 +1,6 @@
 @use '@/styles/variables' as *;
 
- .space-icon {
+.space-icon {
   width: $nav-space-icon-size;
   height: $nav-space-icon-size;
   box-sizing: border-box;
@@ -30,7 +30,7 @@
 
 .space-icon:hover {
   border-radius: $rounded-full;
-  opacity:0.8;
+  opacity: 0.8;
 }
 
 .space-icon-toggle {
@@ -47,13 +47,19 @@
   margin-left: -15px;
   margin-top: 28px;
   z-index: 1000;
-  background: rgb(var(--warning));
+  background: var(--accent);
   transition: all $duration-100 linear;
 
-  // Mobile phone optimization - adjust positioning for larger icons
+  // Mobile phone optimization - adjust positioning for narrower NavMenu (54px vs 74px)
   @media (max-width: $screen-xs) {
-    margin-left: -11px;
-    margin-top: $s-5;
+    margin-left: -8px; 
+    margin-top: 22px;
+  }
+
+  // Tablet/larger mobile optimization - intermediate positioning between mobile and desktop
+  @media (min-width: #{$screen-xs + 1px}) and (max-width: $screen-md) {
+    margin-left: -18px;
+    margin-top: 24px;
   }
 }
 
@@ -89,9 +95,9 @@
   border-color: var(--accent-500);
   position: absolute;
   width: $s-1-5;
-  height: $s-5;
+  height: $s-6;
   margin-left: -15px;
-  margin-top: 22px;
+  margin-top: 21px;
   z-index: 1000;
   background: var(--accent-500);
   transition: all $duration-100 linear;
@@ -99,9 +105,14 @@
   // Mobile phone optimization - adjust positioning for mobile icon size (40px)
   // Calculation: icon-margin(4px) + (icon-height(40px) / 2) - (toggle-height(20px) / 2) = 14px
   @media (max-width: $screen-xs) {
-    margin-left: -11px;
+    margin-left: -8px;
     margin-top: 14px;
-    height: $s-5;
+  }
+
+  // Tablet/larger mobile optimization - intermediate positioning between mobile and desktop
+  @media (min-width: #{$screen-xs + 1px}) and (max-width: $screen-md) {
+    margin-left: -18px;
+    margin-top: 17px;
   }
 }
 

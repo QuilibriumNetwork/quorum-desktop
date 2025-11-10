@@ -53,6 +53,21 @@ export function useUpdateReadTime({
       queryClient.invalidateQueries({
         queryKey: ['mention-counts', 'space'],
       });
+
+      // 4. Invalidate channel-level unread counts (updates channel unread dots)
+      queryClient.invalidateQueries({
+        queryKey: ['unread-counts', 'channel', spaceId],
+      });
+
+      // 5. Invalidate space-level unread counts (updates space unread dots)
+      queryClient.invalidateQueries({
+        queryKey: ['unread-counts', 'space'],
+      });
+
+      // 6. Invalidate direct message unread counts (updates DM icon)
+      queryClient.invalidateQueries({
+        queryKey: ['unread-counts', 'direct-messages'],
+      });
     },
     onError: (error) => {
       console.error('[useUpdateReadTime] Failed to update read time:', error);

@@ -545,7 +545,10 @@ export class MessageDB {
 
   async saveSpaceMember(
     spaceId: string,
-    userProfile: channel.UserProfile & { inbox_address: string; isKicked?: boolean }
+    userProfile: channel.UserProfile & {
+      inbox_address: string;
+      isKicked?: boolean;
+    }
   ): Promise<void> {
     await this.init();
     return new Promise((resolve, reject) => {
@@ -561,7 +564,9 @@ export class MessageDB {
   async getSpaceMember(
     spaceId: string,
     user_address: string
-  ): Promise<channel.UserProfile & { inbox_address: string; isKicked?: boolean }> {
+  ): Promise<
+    channel.UserProfile & { inbox_address: string; isKicked?: boolean }
+  > {
     await this.init();
     return new Promise((resolve, reject) => {
       const transaction = this.db!.transaction('space_members', 'readonly');
@@ -578,7 +583,9 @@ export class MessageDB {
 
   async getSpaceMembers(
     spaceId: string
-  ): Promise<(channel.UserProfile & { inbox_address: string; isKicked?: boolean })[]> {
+  ): Promise<
+    (channel.UserProfile & { inbox_address: string; isKicked?: boolean })[]
+  > {
     await this.init();
     return new Promise((resolve, reject) => {
       const transaction = this.db!.transaction('space_members', 'readonly');
@@ -1443,6 +1450,60 @@ export class MessageDB {
           }
         } else {
           resolve(messages);
+        }
+      };
+
+      request.onerror = () => reject(request.error);
+    });
+  }
+
+  /**
+   * Check if there are any unread messages in a channel
+   *
+   * This is an optimized query for unread indicators that:
+   * 1. Only checks if ANY message exists after lastReadTimestamp
+   * 2. Returns immediately on finding the first unread message (early exit)
+   * 3. Much more efficient than counting all unread messages
+   *
+   * @param spaceId - The space ID
+   * @param channelId - The channel ID
+   * @param afterTimestamp - Only check messages created after this timestamp (typically lastReadTimestamp)
+   * @returns Promise<boolean> - true if there are unread messages, false otherwise
+   */
+  async hasUnreadMessages({
+    spaceId,
+    channelId,
+    afterTimestamp,
+  }: {
+    spaceId: string;
+    channelId: string;
+    afterTimestamp: number;
+  }): Promise<boolean> {
+    await this.init();
+    return new Promise((resolve, reject) => {
+      const transaction = this.db!.transaction('messages', 'readonly');
+      const store = transaction.objectStore('messages');
+      const index = store.index('by_conversation_time');
+
+      // Use existing index to check for messages after timestamp
+      const range = IDBKeyRange.bound(
+        [spaceId, channelId, afterTimestamp],
+        [spaceId, channelId, Number.MAX_VALUE],
+        true, // Exclude afterTimestamp itself
+        false
+      );
+
+      const request = index.openCursor(range, 'next');
+
+      request.onsuccess = (event) => {
+        const cursor = (event.target as IDBRequest).result;
+
+        if (cursor) {
+          // Found at least one unread message - return true immediately
+          resolve(true);
+        } else {
+          // No unread messages found
+          resolve(false);
         }
       };
 

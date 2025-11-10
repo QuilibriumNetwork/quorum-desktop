@@ -17,6 +17,10 @@ import {
 } from '../../hooks';
 import { useSpaceMentionCounts } from '../../hooks/business/mentions';
 import { useSpaceReplyCounts } from '../../hooks/business/replies';
+import {
+  useSpaceUnreadCounts,
+  useDirectMessageUnreadCount,
+} from '../../hooks/business/messages';
 import { useResponsiveLayoutContext } from '../context/ResponsiveLayoutProvider';
 import './NavMenu.scss';
 
@@ -45,6 +49,12 @@ const NavMenuContent: React.FC<NavMenuProps> = (props) => {
   const spaceMentionCounts = useSpaceMentionCounts({ spaces: mappedSpaces });
   const spaceReplyCounts = useSpaceReplyCounts({ spaces: mappedSpaces });
 
+  // Get unread message counts for all spaces
+  const spaceUnreadCounts = useSpaceUnreadCounts({ spaces: mappedSpaces });
+
+  // Get total unread direct message conversations count
+  const dmUnreadCount = useDirectMessageUnreadCount();
+
   // Hide NavMenu below 1024px when navMenuOpen is false
   const navMenuStyle: React.CSSProperties = {};
   if (!isDesktop && !navMenuOpen) {
@@ -69,7 +79,7 @@ const NavMenuContent: React.FC<NavMenuProps> = (props) => {
       <div className="nav-menu-logo">
         <Link className="block" to="/messages">
           <SpaceIcon
-            notifs={false}
+            notifs={dmUnreadCount > 0}
             size="regular"
             selected={location.pathname.startsWith('/messages')}
             spaceName={t`Direct Messages`}
@@ -91,11 +101,12 @@ const NavMenuContent: React.FC<NavMenuProps> = (props) => {
             {mappedSpaces.map((space) => {
               const mentionCount = spaceMentionCounts[space.spaceId] || 0;
               const replyCount = spaceReplyCounts[space.spaceId] || 0;
+              const unreadCount = spaceUnreadCounts[space.spaceId] || 0;
               const totalCount = mentionCount + replyCount;
               return (
                 <SpaceButton
                   key={space.spaceId}
-                  space={space}
+                  space={{ ...space, notifs: unreadCount }}
                   mentionCount={totalCount > 0 ? totalCount : undefined}
                 />
               );
