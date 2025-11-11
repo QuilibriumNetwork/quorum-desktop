@@ -6,10 +6,12 @@ import {
   forwardRef,
   useImperativeHandle,
   useCallback,
+  useMemo,
 } from 'react';
 import { useLocation } from 'react-router-dom';
 import * as moment from 'moment-timezone';
 import { Message } from './Message';
+import { DateSeparator } from './DateSeparator';
 import {
   Emoji,
   Message as MessageType,
@@ -22,6 +24,10 @@ import type { VirtuosoHandle } from 'react-virtuoso';
 import React from 'react';
 import { DefaultImages } from '../../utils';
 import { useMessageHighlight } from '../../hooks/business/messages/useMessageHighlight';
+import { shouldShowDateSeparator } from '../../utils/messageGrouping';
+import { useScrollTracking } from '../../hooks/ui/useScrollTracking';
+import { Button } from '../primitives';
+import { Trans } from '@lingui/react/macro';
 
 export interface MessageListRef {
   scrollToBottom: () => void;
@@ -46,11 +52,15 @@ interface MessageListProps {
   kickUserAddress?: string;
   setKickUserAddress?: React.Dispatch<React.SetStateAction<string | undefined>>;
   isDeletionInProgress?: boolean;
-  onUserClick?: (user: {
-    address: string;
-    displayName?: string;
-    userIcon?: string;
-  }, event: React.MouseEvent, context?: { type: 'mention' | 'message-avatar'; element: HTMLElement }) => void;
+  onUserClick?: (
+    user: {
+      address: string;
+      displayName?: string;
+      userIcon?: string;
+    },
+    event: React.MouseEvent,
+    context?: { type: 'mention' | 'message-avatar'; element: HTMLElement }
+  ) => void;
   lastReadTimestamp?: number;
 }
 
@@ -103,6 +113,21 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
     // Message highlighting context - replaces direct DOM manipulation
     const { highlightMessage, scrollToMessage } = useMessageHighlight();
 
+    // Scroll tracking for jump to present button
+    const { handleAtBottomStateChange, shouldShowJumpButton } =
+      useScrollTracking();
+
+    // Jump to present handler
+    const handleJumpToPresent = useCallback(() => {
+      if (virtuoso.current && messageList.length > 0) {
+        virtuoso.current.scrollToIndex({
+          index: messageList.length - 1,
+          align: 'end',
+          behavior: 'auto',
+        });
+      }
+    }, [messageList.length]);
+
     useImperativeHandle(ref, () => ({
       scrollToBottom: () => {
         if (virtuoso.current && messageList.length > 0) {
@@ -116,49 +141,98 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
       getVirtuosoRef: () => virtuoso.current,
     }));
 
-    const mapSenderToUser = useCallback((senderId: string) => {
-      return (
-        members[senderId] || {
-          displayName: 'Unknown User',
-          userIcon: DefaultImages.UNKNOWN_USER,
-        }
-      );
-    }, [members]);
+    const mapSenderToUser = useCallback(
+      (senderId: string) => {
+        return (
+          members[senderId] || {
+            displayName: 'Unknown User',
+            userIcon: DefaultImages.UNKNOWN_USER,
+          }
+        );
+      },
+      [members]
+    );
 
-    const rowRenderer = (index: number) => {
-      const message = messageList[index];
-      return (
-        <Message
-          senderRoles={roles}
-          spaceRoles={roles}
-          stickers={stickers}
-          emojiPickerOpen={emojiPickerOpen}
-          setEmojiPickerOpen={setEmojiPickerOpen}
-          emojiPickerOpenDirection={emojiPickerOpenDirection}
-          setEmojiPickerOpenDirection={setEmojiPickerOpenDirection}
-          message={message}
-          customEmoji={customEmoji}
-          messageList={messageList}
-          virtuosoRef={virtuoso.current}
-          mapSenderToUser={mapSenderToUser}
-          hoverTarget={hoverTarget}
-          setHoverTarget={setHoverTarget}
-          setInReplyTo={setInReplyTo}
-          editorRef={editor.current}
-          repudiability={isRepudiable}
-          height={height}
-          canEditRoles={isSpaceOwner}
-          canDeleteMessages={canDeleteMessages(message)}
-          canPinMessages={canPinMessages ? canPinMessages(message) : undefined}
-          channel={channel}
-          submitMessage={submitMessage}
-          kickUserAddress={kickUserAddress}
-          setKickUserAddress={setKickUserAddress}
-          onUserClick={onUserClick}
-          lastReadTimestamp={lastReadTimestamp}
-        />
-      );
-    };
+    const rowRenderer = useCallback(
+      (index: number) => {
+        const message = messageList[index];
+        const previousMessage = index > 0 ? messageList[index - 1] : null;
+
+        // Check if we need a date separator before this message
+        const needsDateSeparator = shouldShowDateSeparator(
+          message,
+          previousMessage
+        );
+
+        return (
+          <React.Fragment>
+            {needsDateSeparator && (
+              <DateSeparator
+                timestamp={message.createdDate}
+                className="message-date-separator"
+              />
+            )}
+            <Message
+              senderRoles={roles}
+              spaceRoles={roles}
+              stickers={stickers}
+              emojiPickerOpen={emojiPickerOpen}
+              setEmojiPickerOpen={setEmojiPickerOpen}
+              emojiPickerOpenDirection={emojiPickerOpenDirection}
+              setEmojiPickerOpenDirection={setEmojiPickerOpenDirection}
+              message={message}
+              customEmoji={customEmoji}
+              messageList={messageList}
+              virtuosoRef={virtuoso.current}
+              mapSenderToUser={mapSenderToUser}
+              hoverTarget={hoverTarget}
+              setHoverTarget={setHoverTarget}
+              setInReplyTo={setInReplyTo}
+              editorRef={editor.current}
+              repudiability={isRepudiable}
+              height={height}
+              canEditRoles={isSpaceOwner}
+              canDeleteMessages={canDeleteMessages(message)}
+              canPinMessages={
+                canPinMessages ? canPinMessages(message) : undefined
+              }
+              channel={channel}
+              submitMessage={submitMessage}
+              kickUserAddress={kickUserAddress}
+              setKickUserAddress={setKickUserAddress}
+              onUserClick={onUserClick}
+              lastReadTimestamp={lastReadTimestamp}
+            />
+          </React.Fragment>
+        );
+      },
+      [
+        messageList,
+        roles,
+        stickers,
+        emojiPickerOpen,
+        setEmojiPickerOpen,
+        emojiPickerOpenDirection,
+        setEmojiPickerOpenDirection,
+        customEmoji,
+        mapSenderToUser,
+        hoverTarget,
+        setHoverTarget,
+        setInReplyTo,
+        editor,
+        isRepudiable,
+        height,
+        isSpaceOwner,
+        canDeleteMessages,
+        canPinMessages,
+        channel,
+        submitMessage,
+        kickUserAddress,
+        setKickUserAddress,
+        onUserClick,
+        lastReadTimestamp,
+      ]
+    );
 
     useEffect(() => {
       if (!init) {
@@ -221,48 +295,69 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
     }, [location.hash]);
 
     // Stable computeItemKey to prevent unnecessary re-mounts
-    const computeItemKey = React.useCallback((index: number) => {
-      const message = messageList[index];
-      return message?.messageId || `fallback-${index}`;
-    }, [messageList]);
+    const computeItemKey = React.useCallback(
+      (index: number) => {
+        const message = messageList[index];
+        return message?.messageId || `fallback-${index}`;
+      },
+      [messageList]
+    );
 
     return (
-      <Virtuoso
-        ref={virtuoso}
-        overscan={{ main: height, reverse: height }}
-        increaseViewportBy={{ top: height, bottom: height }}
-        atTopThreshold={0}
-        atTopStateChange={(atTop) => {
-          if (!init) {
-            return;
+      <>
+        <Virtuoso
+          ref={virtuoso}
+          style={{ position: 'relative' }}
+          overscan={{ main: height, reverse: height }}
+          increaseViewportBy={{ top: height, bottom: height }}
+          atTopThreshold={0}
+          atTopStateChange={(atTop) => {
+            if (!init) {
+              return;
+            }
+            if (atTop) {
+              fetchPreviousPage();
+            }
+          }}
+          atBottomThreshold={5000}
+          atBottomStateChange={handleAtBottomStateChange}
+          alignToBottom={true}
+          firstItemIndex={0}
+          initialTopMostItemIndex={
+            window.location.hash && window.location.hash.startsWith('#msg-')
+              ? 0 // scroll to top initially, will override with scrollToIndex()
+              : messageList.length - 1
           }
-          if (atTop) {
-            fetchPreviousPage();
-          }
-        }}
-        alignToBottom={true}
-        firstItemIndex={0}
-        initialTopMostItemIndex={
-          window.location.hash && window.location.hash.startsWith('#msg-')
-            ? 0 // scroll to top initially, will override with scrollToIndex()
-            : messageList.length - 1
-        }
-        followOutput={(isAtBottom: boolean) => {
-          // Don't auto-scroll during deletions, even if user is at bottom
-          if (isDeletionInProgress) {
-            return false;
-          }
-          // Original logic for everything else
-          if (isAtBottom) {
-            return 'smooth';
-          } else {
-            return false;
-          }
-        }}
-        totalCount={messageList.length}
-        computeItemKey={computeItemKey}
-        itemContent={rowRenderer}
-      />
+          followOutput={(isAtBottom: boolean) => {
+            // Don't auto-scroll during deletions, even if user is at bottom
+            if (isDeletionInProgress) {
+              return false;
+            }
+            // Original logic for everything else
+            if (isAtBottom) {
+              return 'smooth';
+            } else {
+              return false;
+            }
+          }}
+          totalCount={messageList.length}
+          computeItemKey={computeItemKey}
+          itemContent={rowRenderer}
+        />
+
+        {/* Jump to Present Button */}
+        {shouldShowJumpButton && (
+          <div className="absolute bottom-20 right-6 z-50 bg-chat rounded-full">
+            <Button
+              type="secondary"
+              onClick={handleJumpToPresent}
+              className="shadow-lg"
+            >
+              <Trans>Jump to present</Trans>
+            </Button>
+          </div>
+        )}
+      </>
     );
   }
 );
