@@ -347,7 +347,7 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
 
         {/* Jump to Present Button */}
         {shouldShowJumpButton && (
-          <div className="absolute bottom-20 right-6 z-50 bg-chat rounded-full">
+          <div className="absolute bottom-6 right-6 z-50 bg-chat rounded-full transition-all duration-300">
             <Button
               type="secondary"
               onClick={handleJumpToPresent}

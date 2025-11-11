@@ -81,7 +81,8 @@ const Channel: React.FC<ChannelProps> = ({
   kickUserAddress,
   setKickUserAddress,
 }) => {
-  const { isDesktop, toggleLeftSidebar, navMenuOpen, toggleNavMenu } = useResponsiveLayoutContext();
+  const { isDesktop, toggleLeftSidebar, navMenuOpen, toggleNavMenu } =
+    useResponsiveLayoutContext();
   const { openKickUser } = useModals();
   const queryClient = useQueryClient();
   const user = usePasskeysContext();
@@ -116,8 +117,15 @@ const Channel: React.FC<ChannelProps> = ({
   const messageListRef = useRef<MessageListRef>(null);
 
   // Get channel data
-  const { space, channel, members, roles, stickers, generateSidebarContent, generateVirtualizedUserList } =
-    useChannelData({ spaceId, channelId });
+  const {
+    space,
+    channel,
+    members,
+    roles,
+    stickers,
+    generateSidebarContent,
+    generateVirtualizedUserList,
+  } = useChannelData({ spaceId, channelId });
 
   // Get message handling
   const {
@@ -135,7 +143,8 @@ const Channel: React.FC<ChannelProps> = ({
   // Get last read timestamp for mention highlighting - using React Query
   const conversationId = `${spaceId}/${channelId}`;
   const { data: conversationData } = useConversation({ conversationId });
-  const lastReadTimestamp = conversationData?.conversation?.lastReadTimestamp || 0;
+  const lastReadTimestamp =
+    conversationData?.conversation?.lastReadTimestamp || 0;
 
   // Mutation for updating read time with proper cache invalidation
   const { mutate: updateReadTime } = useUpdateReadTime({ spaceId, channelId });
@@ -278,7 +287,7 @@ const Channel: React.FC<ChannelProps> = ({
   const userRoleIds = React.useMemo(() => {
     if (!space || !user.currentPasskeyInfo?.address) return [];
     const userRolesData = getUserRoles(user.currentPasskeyInfo.address, space);
-    return userRolesData.map(r => r.roleId);
+    return userRolesData.map((r) => r.roleId);
   }, [space, user.currentPasskeyInfo?.address]);
 
   // Check if user can post in this channel
@@ -341,19 +350,25 @@ const Channel: React.FC<ChannelProps> = ({
     let filteredSections = sections;
     if (activeSearch) {
       const term = activeSearch.toLowerCase();
-      filteredSections = sections.map(section => ({
-        ...section,
-        members: section.members.filter(member =>
-          member.displayName?.toLowerCase().includes(term) ||
-          member.address?.toLowerCase().includes(term)
-        )
-      })).filter(section => section.members.length > 0);
+      filteredSections = sections
+        .map((section) => ({
+          ...section,
+          members: section.members.filter(
+            (member) =>
+              member.displayName?.toLowerCase().includes(term) ||
+              member.address?.toLowerCase().includes(term)
+          ),
+        }))
+        .filter((section) => section.members.length > 0);
     }
 
     const sidebarContent = (
       <>
         {/* Mobile Search Input */}
-        <div className="sticky top-0 z-10" style={{ backgroundColor: 'inherit' }}>
+        <div
+          className="sticky top-0 z-10"
+          style={{ backgroundColor: 'inherit' }}
+        >
           <div
             className="flex items-center gap-2 py-3"
             style={{
@@ -365,7 +380,7 @@ const Channel: React.FC<ChannelProps> = ({
             <Icon
               name="search"
               size="sm"
-              className={searchFocused ? "text-accent" : "text-subtle"}
+              className={searchFocused ? 'text-accent' : 'text-subtle'}
               style={{ transition: 'color 0.15s ease-in-out' }}
             />
             <Input
@@ -401,11 +416,16 @@ const Channel: React.FC<ChannelProps> = ({
                 <div
                   key={member.address}
                   className="w-full flex flex-row items-center mb-2 px-3 cursor-pointer hover:bg-surface-2 rounded-md py-1 transition-colors duration-150"
-                  onClick={(event) => userProfileModal.handleUserClick({
-                    address: member.address,
-                    displayName: member.displayName,
-                    userIcon: member.userIcon,
-                  }, event)}
+                  onClick={(event) =>
+                    userProfileModal.handleUserClick(
+                      {
+                        address: member.address,
+                        displayName: member.displayName,
+                        userIcon: member.userIcon,
+                      },
+                      event
+                    )
+                  }
                 >
                   <UserAvatar
                     userIcon={member.userIcon}
@@ -427,7 +447,13 @@ const Channel: React.FC<ChannelProps> = ({
       </>
     );
     setRightSidebarContent(sidebarContent);
-  }, [generateSidebarContent, setRightSidebarContent, searchInput, activeSearch, userProfileModal.handleUserClick]);
+  }, [
+    generateSidebarContent,
+    setRightSidebarContent,
+    searchInput,
+    activeSearch,
+    userProfileModal.handleUserClick,
+  ]);
 
   useEffect(() => {
     if (!init) {
@@ -556,14 +582,20 @@ const Channel: React.FC<ChannelProps> = ({
                   size={headerIconSize}
                   className="flex-shrink-0"
                   color={iconColor}
-                  style={!iconColor ? { color: 'var(--color-text-subtle)' } : undefined}
+                  style={
+                    !iconColor
+                      ? { color: 'var(--color-text-subtle)' }
+                      : undefined
+                  }
                 />
                 <span className="text-main font-bold flex-shrink truncate">
                   {channel?.channelName}
                 </span>
                 {channel?.channelTopic && (
                   <>
-                    <span className="hidden xs:inline text-subtle flex-shrink-0 font-normal">|</span>
+                    <span className="hidden xs:inline text-subtle flex-shrink-0 font-normal">
+                      |
+                    </span>
                     <span className="hidden xs:inline text-subtle flex-shrink truncate font-normal">
                       {channel.channelTopic}
                     </span>
@@ -632,7 +664,11 @@ const Channel: React.FC<ChannelProps> = ({
                   isOpen={activePanel === 'notifications'}
                   onClose={() => setActivePanel(null)}
                   spaceId={spaceId}
-                  channelIds={space?.groups.flatMap(g => g.channels.map(c => c.channelId)) || []}
+                  channelIds={
+                    space?.groups.flatMap((g) =>
+                      g.channels.map((c) => c.channelId)
+                    ) || []
+                  }
                   mapSenderToUser={mapSenderToUser}
                   userRoleIds={userRoleIds}
                 />
@@ -690,14 +726,18 @@ const Channel: React.FC<ChannelProps> = ({
                 size={headerIconSize}
                 className="flex-shrink-0"
                 color={iconColor}
-                style={!iconColor ? { color: 'var(--color-text-subtle)' } : undefined}
+                style={
+                  !iconColor ? { color: 'var(--color-text-subtle)' } : undefined
+                }
               />
               <span className="text-main font-bold flex-shrink truncate">
                 {channel?.channelName}
               </span>
               {channel?.channelTopic && (
                 <>
-                  <span className="hidden xs:inline text-subtle font-light flex-shrink-0">|</span>
+                  <span className="hidden xs:inline text-subtle font-light flex-shrink-0">
+                    |
+                  </span>
                   <span className="hidden xs:inline text-subtle font-normal text-sm flex-shrink truncate">
                     {channel.channelTopic}
                   </span>
@@ -713,7 +753,8 @@ const Channel: React.FC<ChannelProps> = ({
           <div className="flex flex-col flex-1">
             <div
               className={
-                'message-list' + (!showUsers ? ' message-list-expanded' : '')
+                'message-list relative' +
+                (!showUsers ? ' message-list-expanded' : '')
               }
             >
               <MessageList
@@ -794,7 +835,7 @@ const Channel: React.FC<ChannelProps> = ({
                   <Icon
                     name="search"
                     size="sm"
-                    className={searchFocused ? "text-accent" : "text-muted"}
+                    className={searchFocused ? 'text-accent' : 'text-muted'}
                     style={{ transition: 'color 0.15s ease-in-out' }}
                   />
                   <Input
@@ -811,11 +852,12 @@ const Channel: React.FC<ChannelProps> = ({
                   />
                 </div>
                 <div className="pb-3">
-                  {activeSearch && generateVirtualizedUserList(activeSearch).length === 0 && (
-                    <div className="text-xs text-subtle mt-1">
-                      {t`No users found!`}
-                    </div>
-                  )}
+                  {activeSearch &&
+                    generateVirtualizedUserList(activeSearch).length === 0 && (
+                      <div className="text-xs text-subtle mt-1">
+                        {t`No users found!`}
+                      </div>
+                    )}
                 </div>
               </div>
 
@@ -836,11 +878,16 @@ const Channel: React.FC<ChannelProps> = ({
                       <div className="px-4 pb-2">
                         <div
                           className="w-full flex flex-row items-center cursor-pointer hover:bg-surface-2 rounded-md p-1 -m-1 transition-colors duration-150 group"
-                          onClick={(event) => userProfileModal.handleUserClick({
-                            address: item.address,
-                            displayName: item.displayName,
-                            userIcon: item.userIcon,
-                          }, event)}
+                          onClick={(event) =>
+                            userProfileModal.handleUserClick(
+                              {
+                                address: item.address,
+                                displayName: item.displayName,
+                                userIcon: item.userIcon,
+                              },
+                              event
+                            )
+                          }
                         >
                           <UserAvatar
                             userIcon={item.userIcon}
@@ -887,9 +934,7 @@ const Channel: React.FC<ChannelProps> = ({
             className={`stickers-panel-wrapper ${showUsers ? 'with-sidebar' : 'without-sidebar'}`}
           >
             <div className="stickers-panel">
-              <div className="stickers-panel-header">
-                Stickers
-              </div>
+              <div className="stickers-panel-header">Stickers</div>
               <div className="stickers-panel-grid">
                 {space?.stickers.map((s) => {
                   return (
@@ -900,10 +945,7 @@ const Channel: React.FC<ChannelProps> = ({
                         composer.submitSticker(s.id);
                       }}
                     >
-                      <img
-                        src={s.imgUrl}
-                        alt="sticker"
-                      />
+                      <img src={s.imgUrl} alt="sticker" />
                     </div>
                   );
                 })}
@@ -914,40 +956,46 @@ const Channel: React.FC<ChannelProps> = ({
       )}
 
       {/* User Profile Modal - desktop only (≥1024px) */}
-      {userProfileModal.isOpen && userProfileModal.selectedUser && userProfileModal.modalPosition && isDesktop && (
-        <>
-          {/* Background click area - excludes sidebar to allow user switching */}
-          <div
-            className="fixed inset-0 z-[9990]"
-            style={{
-              right: showUsers ? '260px' : '0px',
-            }}
-            onClick={handleUserProfileClose}
-          />
-          <div
-            className="fixed z-[9999] pointer-events-none"
-            style={{
-              top: `${userProfileModal.modalPosition.top}px`,
-              left: userProfileModal.modalPosition.left !== undefined
-                ? `${userProfileModal.modalPosition.left}px`
-                : (showUsers ? `calc(100vw - 260px - 320px)` : `calc(100vw - 320px)`),
-            }}
-          >
-            <div className="pointer-events-auto">
-              <UserProfile
-                key={userProfileModal.selectedUser.address}
-                spaceId={spaceId}
-                canEditRoles={isSpaceOwner}
-                kickUserAddress={kickUserAddress}
-                setKickUserAddress={setKickUserAddress}
-                roles={roles || []}
-                user={userProfileModal.selectedUser}
-                dismiss={handleUserProfileClose}
-              />
+      {userProfileModal.isOpen &&
+        userProfileModal.selectedUser &&
+        userProfileModal.modalPosition &&
+        isDesktop && (
+          <>
+            {/* Background click area - excludes sidebar to allow user switching */}
+            <div
+              className="fixed inset-0 z-[9990]"
+              style={{
+                right: showUsers ? '260px' : '0px',
+              }}
+              onClick={handleUserProfileClose}
+            />
+            <div
+              className="fixed z-[9999] pointer-events-none"
+              style={{
+                top: `${userProfileModal.modalPosition.top}px`,
+                left:
+                  userProfileModal.modalPosition.left !== undefined
+                    ? `${userProfileModal.modalPosition.left}px`
+                    : showUsers
+                      ? `calc(100vw - 260px - 320px)`
+                      : `calc(100vw - 320px)`,
+              }}
+            >
+              <div className="pointer-events-auto">
+                <UserProfile
+                  key={userProfileModal.selectedUser.address}
+                  spaceId={spaceId}
+                  canEditRoles={isSpaceOwner}
+                  kickUserAddress={kickUserAddress}
+                  setKickUserAddress={setKickUserAddress}
+                  roles={roles || []}
+                  user={userProfileModal.selectedUser}
+                  dismiss={handleUserProfileClose}
+                />
+              </div>
             </div>
-          </div>
-        </>
-      )}
+          </>
+        )}
 
       {/* Mobile drawer for user list below 1024px */}
       {!isDesktop && (
@@ -959,7 +1007,10 @@ const Channel: React.FC<ChannelProps> = ({
           ariaLabel={t`Channel members`}
         >
           {/* Mobile Search Input - matches search results style */}
-          <div className="sticky top-0 z-10" style={{ backgroundColor: 'var(--surface-0)' }}>
+          <div
+            className="sticky top-0 z-10"
+            style={{ backgroundColor: 'var(--surface-0)' }}
+          >
             <div className="search-mobile-header p-4">
               <Input
                 type="search"
@@ -974,62 +1025,84 @@ const Channel: React.FC<ChannelProps> = ({
                 clearable={true}
               />
             </div>
-            {activeSearch && generateSidebarContent().map(section => ({
-              ...section,
-              members: section.members.filter(member =>
-                member.displayName?.toLowerCase().includes(activeSearch.toLowerCase()) ||
-                member.address?.toLowerCase().includes(activeSearch.toLowerCase())
-              )
-            })).filter(section => section.members.length > 0).length === 0 && (
-              <div className="px-4 pb-3 -mt-2">
-                <div className="text-xs text-subtle">
-                  {t`No users found!`}
+            {activeSearch &&
+              generateSidebarContent()
+                .map((section) => ({
+                  ...section,
+                  members: section.members.filter(
+                    (member) =>
+                      member.displayName
+                        ?.toLowerCase()
+                        .includes(activeSearch.toLowerCase()) ||
+                      member.address
+                        ?.toLowerCase()
+                        .includes(activeSearch.toLowerCase())
+                  ),
+                }))
+                .filter((section) => section.members.length > 0).length ===
+                0 && (
+                <div className="px-4 pb-3 -mt-2">
+                  <div className="text-xs text-subtle">
+                    {t`No users found!`}
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
           </div>
 
           {/* User List */}
           <div className="overflow-y-auto">
-            {generateSidebarContent().map(section => ({
-              ...section,
-              members: activeSearch
-                ? section.members.filter(member =>
-                    member.displayName?.toLowerCase().includes(activeSearch.toLowerCase()) ||
-                    member.address?.toLowerCase().includes(activeSearch.toLowerCase())
-                  )
-                : section.members
-            })).filter(section => section.members.length > 0).map((section) => (
-              <div className="flex flex-col mb-2" key={section.title}>
-                <div className="mb-1 text-subtle text-xs pb-1 px-4 pt-3">
-                  {section.title}
-                </div>
-                {section.members.map((member) => (
-                  <div
-                    key={member.address}
-                    className="w-full flex flex-row items-center mb-2 px-4 cursor-pointer py-1"
-                    onClick={(event) => userProfileModal.handleUserClick({
-                      address: member.address,
-                      displayName: member.displayName,
-                      userIcon: member.userIcon,
-                    }, event)}
-                  >
-                    <UserAvatar
-                      userIcon={member.userIcon}
-                      displayName={member.displayName}
-                      address={member.address}
-                      size={30}
-                      className="opacity-80"
-                    />
-                    <div className="flex flex-col ml-2 text-subtle">
-                      <span className="text-md font-bold">
-                        {member.displayName}
-                      </span>
-                    </div>
+            {generateSidebarContent()
+              .map((section) => ({
+                ...section,
+                members: activeSearch
+                  ? section.members.filter(
+                      (member) =>
+                        member.displayName
+                          ?.toLowerCase()
+                          .includes(activeSearch.toLowerCase()) ||
+                        member.address
+                          ?.toLowerCase()
+                          .includes(activeSearch.toLowerCase())
+                    )
+                  : section.members,
+              }))
+              .filter((section) => section.members.length > 0)
+              .map((section) => (
+                <div className="flex flex-col mb-2" key={section.title}>
+                  <div className="mb-1 text-subtle text-xs pb-1 px-4 pt-3">
+                    {section.title}
                   </div>
-                ))}
-              </div>
-            ))}
+                  {section.members.map((member) => (
+                    <div
+                      key={member.address}
+                      className="w-full flex flex-row items-center mb-2 px-4 cursor-pointer py-1"
+                      onClick={(event) =>
+                        userProfileModal.handleUserClick(
+                          {
+                            address: member.address,
+                            displayName: member.displayName,
+                            userIcon: member.userIcon,
+                          },
+                          event
+                        )
+                      }
+                    >
+                      <UserAvatar
+                        userIcon={member.userIcon}
+                        displayName={member.displayName}
+                        address={member.address}
+                        size={30}
+                        className="opacity-80"
+                      />
+                      <div className="flex flex-col ml-2 text-subtle">
+                        <span className="text-md font-bold">
+                          {member.displayName}
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ))}
           </div>
         </MobileDrawer>
       )}

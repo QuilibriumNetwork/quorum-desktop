@@ -144,7 +144,7 @@ theme.colors.utilities.danger; // Error color
 Always use Lingui for user-facing text:
 
 ```tsx
-import { Trans } from '@lingui/macro';
+import { Trans } from '@lingui/react/macro';
 
 // Simple text
 <Trans>User-facing text</Trans>
