@@ -223,7 +223,7 @@ msgid "Add friend"
 msgstr "友達を追加"
 
 #: src/components/modals/GroupEditorModal.tsx:58
-#: src/components/space/ChannelList.tsx:129
+#: src/components/space/ChannelList.tsx:143
 msgid "Add Group"
 msgstr "グループを追加"
 
@@ -537,8 +537,8 @@ msgstr "メッセージリンクをコピー"
 msgid "Could not add Space"
 msgstr "スペースを追加できませんでした"
 
-#: src/components/message/InviteLink.tsx:25
-#: src/hooks/business/invites/useInviteProcessing.ts:28
+#: src/components/message/InviteLink.tsx:38
+#: src/hooks/business/invites/useInviteProcessing.ts:45
 msgid "Could not fetch the Space details. Please try again."
 msgstr "スペースの詳細を取得できませんでした。もう一度お試しください。"
 
@@ -547,7 +547,7 @@ msgstr "スペースの詳細を取得できませんでした。もう一度お
 msgid "Could not obtain manifest for Space"
 msgstr "スペースのマニフェストを取得できませんでした"
 
-#: src/hooks/business/invites/useInviteProcessing.ts:24
+#: src/hooks/business/invites/useInviteProcessing.ts:41
 #: src/hooks/business/spaces/useInviteValidation.ts:111
 msgid "Could not verify invite"
 msgstr "招待を確認できませんでした"
@@ -675,13 +675,21 @@ msgstr "このSpaceについて説明してください..."
 #~ msgid "Description"
 #~ msgstr "説明"
 
+#: src/hooks/business/validation/useSpaceNameValidation.ts:54
+msgid "Description cannot contain special characters"
+msgstr ""
+
 #: src/components/modals/CreateSpaceModal.tsx:119
 msgid "Description must be {MAX_DESCRIPTION_LENGTH} characters or less"
 msgstr "説明は{MAX_DESCRIPTION_LENGTH}文字以内である必要があります"
 
 #: src/components/modals/SpaceSettingsModal/General.tsx:159
-msgid "Description must be {maxDescriptionLength} characters or less"
-msgstr "説明は{maxDescriptionLength}文字以内である必要があります"
+#~ msgid "Description must be {maxDescriptionLength} characters or less"
+#~ msgstr "説明は{maxDescriptionLength}文字以内である必要があります"
+
+#: src/hooks/business/validation/useSpaceNameValidation.ts:58
+msgid "Description must be {maxLength} characters or less"
+msgstr ""
 
 #: src/components/modals/UserSettingsModal/Notifications.tsx:35
 msgid "Desktop Notifications"
@@ -698,7 +706,7 @@ msgid "Direct Message"
 msgstr "ダイレクトメッセージ"
 
 #: src/components/direct/DirectMessageContactsList.tsx:24
-#: src/components/navbar/NavMenu.tsx:75
+#: src/components/navbar/NavMenu.tsx:85
 msgid "Direct Messages"
 msgstr "ダイレクトメッセージ"
 
@@ -713,7 +721,7 @@ msgstr "表示名"
 #: src/hooks/business/validation/useDisplayNameValidation.ts:18
 #: src/hooks/business/validation/useDisplayNameValidation.ts:40
 msgid "Display name cannot contain special characters"
-msgstr ""
+msgstr "表示名には特殊文字を含めることはできません"
 
 #: src/components/modals/SpaceSettingsModal/Account.tsx:143
 #: src/hooks/business/validation/useDisplayNameValidation.ts:12
@@ -838,7 +846,7 @@ msgid "Failed to copy to clipboard. Please try again."
 msgstr "クリップボードへのコピーに失敗しました。もう一度お試しください。"
 
 #: src/components/context/MessageDB.bak.tsx:984
-#: src/services/MessageService.ts:1348
+#: src/services/MessageService.ts:1424
 msgid "Failed to decrypt message with any known state"
 msgstr "既知の状態でメッセージを復号化できませんでした"
 
@@ -1023,7 +1031,7 @@ msgid "Important messages will be pinned here"
 msgstr "重要なメッセージはここにピン留めされます"
 
 #: src/components/context/MessageDB.bak.tsx:1184
-#: src/services/MessageService.ts:1544
+#: src/services/MessageService.ts:1623
 msgid "invalid address for signature"
 msgstr "署名用の無効なアドレス"
 
@@ -1065,12 +1073,16 @@ msgstr "無効なメッセージタイプ"
 msgid "invalid response"
 msgstr "無効な応答"
 
+#: src/hooks/business/invites/useInviteUI.ts:32
+msgid "Invite sent"
+msgstr ""
+
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:47
 #: src/components/modals/SpaceSettingsModal/Navigation.tsx:25
 msgid "Invites"
 msgstr "招待"
 
-#: src/hooks/business/invites/useInviteUI.ts:21
+#: src/hooks/business/invites/useInviteUI.ts:33
 msgid "Join"
 msgstr "参加"
 
@@ -1081,7 +1093,7 @@ msgstr "参加"
 msgid "Join Space"
 msgstr "スペースに参加"
 
-#: src/hooks/business/invites/useInviteUI.ts:20
+#: src/hooks/business/invites/useInviteUI.ts:31
 msgid "Joined"
 msgstr "参加済み"
 
@@ -1090,7 +1102,7 @@ msgstr "参加済み"
 msgid "Joining Space..."
 msgstr "スペースに参加中..."
 
-#: src/hooks/business/invites/useInviteUI.ts:19
+#: src/hooks/business/invites/useInviteUI.ts:29
 msgid "Joining..."
 msgstr "参加中..."
 
@@ -1098,6 +1110,10 @@ msgstr "参加中..."
 #: src/components/message/PinnedMessagesPanel.tsx:129
 msgid "Jump"
 msgstr "ジャンプ"
+
+#: src/components/message/MessageList.tsx:356
+msgid "Jump to present"
+msgstr ""
 
 #: src/hooks/platform/files/useFileDownload.native.ts:96
 msgid "Key Copied!"
@@ -1740,7 +1756,7 @@ msgstr "スペース名"
 #: src/hooks/business/validation/useSpaceNameValidation.ts:15
 #: src/hooks/business/validation/useSpaceNameValidation.ts:34
 msgid "Space name cannot contain special characters"
-msgstr ""
+msgstr "スペース名には特殊文字を含めることはできません"
 
 #: src/hooks/business/validation/useSpaceNameValidation.ts:12
 #: src/hooks/business/validation/useSpaceNameValidation.ts:31
@@ -1748,7 +1764,7 @@ msgid "Space name is required"
 msgstr "スペース名は必須です"
 
 #: src/components/modals/SpaceSettingsModal/Navigation.tsx:38
-#: src/components/space/ChannelList.tsx:104
+#: src/components/space/ChannelList.tsx:118
 msgid "Space Settings"
 msgstr "スペース設定"
 
@@ -1793,13 +1809,13 @@ msgstr "コピーするにはタップしてください"
 msgid "Tap to select"
 msgstr "選択するにはタップしてください"
 
-#: src/components/message/InviteLink.tsx:21
+#: src/components/message/InviteLink.tsx:34
 #: src/components/modals/AddSpaceModal.tsx:72
-#: src/hooks/business/invites/useInviteProcessing.ts:26
+#: src/hooks/business/invites/useInviteProcessing.ts:43
 msgid "The invite link format is invalid."
 msgstr "招待リンクの形式が無効です。"
 
-#: src/components/message/InviteLink.tsx:33
+#: src/components/message/InviteLink.tsx:46
 msgid "The invite link has expired or is invalid."
 msgstr "招待リンクは期限切れまたは無効です。"
 
@@ -1838,7 +1854,7 @@ msgid "This protects your identity as the space owner. However, if you're the on
 msgstr "これは、スペースのオーナーとしてのあなたの身元を保護します。しかし、この役割を持っているのがあなた一人だけの場合、あなたの身元は明らかになります。プライバシー保護を向上させるために、同じ役割を持つ複数のユーザー（実際のアカウントまたは偽のアカウント）を持つことを検討してください。"
 
 #: src/components/context/MessageDB.bak.tsx:4819
-#: src/components/message/InviteLink.tsx:31
+#: src/components/message/InviteLink.tsx:44
 #: src/services/InvitationService.ts:633
 msgid "This public invite link is no longer valid."
 msgstr "この公開招待リンクはもはや無効です。"
@@ -1964,12 +1980,12 @@ msgstr "不明な時間"
 #: src/hooks/business/search/useSearchResultDisplaySpace.ts:45
 #: src/hooks/queries/userInfo/buildUserInfoFetcher.ts:15
 #: src/services/EncryptionService.ts:138
-#: src/services/MessageService.ts:1021
-#: src/services/MessageService.ts:1184
-#: src/services/MessageService.ts:1325
-#: src/services/MessageService.ts:1344
-#: src/services/MessageService.ts:2661
-#: src/services/MessageService.ts:2796
+#: src/services/MessageService.ts:1090
+#: src/services/MessageService.ts:1262
+#: src/services/MessageService.ts:1402
+#: src/services/MessageService.ts:1420
+#: src/services/MessageService.ts:2756
+#: src/services/MessageService.ts:2907
 msgid "Unknown User"
 msgstr "不明なユーザー"
 
@@ -2173,8 +2189,8 @@ msgstr "すべて準備完了です。Quorumへようこそ！"
 msgid "You're not listed in this Space's members. Correcting this will add you to the Space Members list (stores your profile locally with your inbox address)."
 msgstr "あなたはこのSpaceのメンバーにリストされていません。これを修正すると、あなたはSpaceメンバーリストに追加されます（あなたのプロフィールがローカルに保存され、受信トレイのアドレスが保存されます）。"
 
-#: src/components/message/InviteLink.tsx:47
-#: src/components/message/InviteLink.tsx:69
+#: src/components/message/InviteLink.tsx:60
+#: src/components/message/InviteLink.tsx:82
 msgid "You've been invited to join a Space"
 msgstr "スペースに参加するよう招待されました"
 

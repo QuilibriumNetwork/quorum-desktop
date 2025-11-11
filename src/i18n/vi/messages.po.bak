@@ -223,7 +223,7 @@ msgid "Add friend"
 msgstr "Thêm bạn"
 
 #: src/components/modals/GroupEditorModal.tsx:58
-#: src/components/space/ChannelList.tsx:129
+#: src/components/space/ChannelList.tsx:143
 msgid "Add Group"
 msgstr "Thêm Nhóm"
 
@@ -537,8 +537,8 @@ msgstr "Sao chép liên kết tin nhắn"
 msgid "Could not add Space"
 msgstr "Không thể thêm Không Gian"
 
-#: src/components/message/InviteLink.tsx:25
-#: src/hooks/business/invites/useInviteProcessing.ts:28
+#: src/components/message/InviteLink.tsx:38
+#: src/hooks/business/invites/useInviteProcessing.ts:45
 msgid "Could not fetch the Space details. Please try again."
 msgstr "Không thể lấy thông tin Không gian. Vui lòng thử lại."
 
@@ -547,7 +547,7 @@ msgstr "Không thể lấy thông tin Không gian. Vui lòng thử lại."
 msgid "Could not obtain manifest for Space"
 msgstr "Không thể lấy manifest cho Không Gian"
 
-#: src/hooks/business/invites/useInviteProcessing.ts:24
+#: src/hooks/business/invites/useInviteProcessing.ts:41
 #: src/hooks/business/spaces/useInviteValidation.ts:111
 msgid "Could not verify invite"
 msgstr "Không thể xác minh lời mời"
@@ -675,13 +675,21 @@ msgstr "Mô tả về Space này..."
 #~ msgid "Description"
 #~ msgstr "Mô tả"
 
+#: src/hooks/business/validation/useSpaceNameValidation.ts:54
+msgid "Description cannot contain special characters"
+msgstr ""
+
 #: src/components/modals/CreateSpaceModal.tsx:119
 msgid "Description must be {MAX_DESCRIPTION_LENGTH} characters or less"
 msgstr "Mô tả phải có {MAX_DESCRIPTION_LENGTH} ký tự trở xuống"
 
 #: src/components/modals/SpaceSettingsModal/General.tsx:159
-msgid "Description must be {maxDescriptionLength} characters or less"
-msgstr "Mô tả phải có {maxDescriptionLength} ký tự trở xuống"
+#~ msgid "Description must be {maxDescriptionLength} characters or less"
+#~ msgstr "Mô tả phải có {maxDescriptionLength} ký tự trở xuống"
+
+#: src/hooks/business/validation/useSpaceNameValidation.ts:58
+msgid "Description must be {maxLength} characters or less"
+msgstr ""
 
 #: src/components/modals/UserSettingsModal/Notifications.tsx:35
 msgid "Desktop Notifications"
@@ -698,7 +706,7 @@ msgid "Direct Message"
 msgstr "Tin nhắn trực tiếp"
 
 #: src/components/direct/DirectMessageContactsList.tsx:24
-#: src/components/navbar/NavMenu.tsx:75
+#: src/components/navbar/NavMenu.tsx:85
 msgid "Direct Messages"
 msgstr "Tin nhắn trực tiếp"
 
@@ -713,7 +721,7 @@ msgstr "Tên hiển thị"
 #: src/hooks/business/validation/useDisplayNameValidation.ts:18
 #: src/hooks/business/validation/useDisplayNameValidation.ts:40
 msgid "Display name cannot contain special characters"
-msgstr ""
+msgstr "Tên hiển thị không được chứa ký tự đặc biệt"
 
 #: src/components/modals/SpaceSettingsModal/Account.tsx:143
 #: src/hooks/business/validation/useDisplayNameValidation.ts:12
@@ -838,7 +846,7 @@ msgid "Failed to copy to clipboard. Please try again."
 msgstr "Không thể sao chép vào clipboard. Vui lòng thử lại."
 
 #: src/components/context/MessageDB.bak.tsx:984
-#: src/services/MessageService.ts:1348
+#: src/services/MessageService.ts:1424
 msgid "Failed to decrypt message with any known state"
 msgstr "Không thể giải mã tin nhắn với bất kỳ trạng thái nào đã biết"
 
@@ -1023,7 +1031,7 @@ msgid "Important messages will be pinned here"
 msgstr "Các tin nhắn quan trọng sẽ được ghim ở đây"
 
 #: src/components/context/MessageDB.bak.tsx:1184
-#: src/services/MessageService.ts:1544
+#: src/services/MessageService.ts:1623
 msgid "invalid address for signature"
 msgstr "địa chỉ không hợp lệ cho chữ ký"
 
@@ -1065,12 +1073,16 @@ msgstr "loại tin nhắn không hợp lệ"
 msgid "invalid response"
 msgstr "phản hồi không hợp lệ"
 
+#: src/hooks/business/invites/useInviteUI.ts:32
+msgid "Invite sent"
+msgstr ""
+
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:47
 #: src/components/modals/SpaceSettingsModal/Navigation.tsx:25
 msgid "Invites"
 msgstr "Các lời mời"
 
-#: src/hooks/business/invites/useInviteUI.ts:21
+#: src/hooks/business/invites/useInviteUI.ts:33
 msgid "Join"
 msgstr "Tham gia"
 
@@ -1081,7 +1093,7 @@ msgstr "Tham gia"
 msgid "Join Space"
 msgstr "Tham gia Không gian"
 
-#: src/hooks/business/invites/useInviteUI.ts:20
+#: src/hooks/business/invites/useInviteUI.ts:31
 msgid "Joined"
 msgstr "Đã tham gia"
 
@@ -1090,7 +1102,7 @@ msgstr "Đã tham gia"
 msgid "Joining Space..."
 msgstr "Tham gia Không gian..."
 
-#: src/hooks/business/invites/useInviteUI.ts:19
+#: src/hooks/business/invites/useInviteUI.ts:29
 msgid "Joining..."
 msgstr "Đang tham gia..."
 
@@ -1098,6 +1110,10 @@ msgstr "Đang tham gia..."
 #: src/components/message/PinnedMessagesPanel.tsx:129
 msgid "Jump"
 msgstr "Nhảy"
+
+#: src/components/message/MessageList.tsx:356
+msgid "Jump to present"
+msgstr ""
 
 #: src/hooks/platform/files/useFileDownload.native.ts:96
 msgid "Key Copied!"
@@ -1740,7 +1756,7 @@ msgstr "Tên Space"
 #: src/hooks/business/validation/useSpaceNameValidation.ts:15
 #: src/hooks/business/validation/useSpaceNameValidation.ts:34
 msgid "Space name cannot contain special characters"
-msgstr ""
+msgstr "Tên không gian không được chứa ký tự đặc biệt"
 
 #: src/hooks/business/validation/useSpaceNameValidation.ts:12
 #: src/hooks/business/validation/useSpaceNameValidation.ts:31
@@ -1748,7 +1764,7 @@ msgid "Space name is required"
 msgstr "Tên không gian là bắt buộc"
 
 #: src/components/modals/SpaceSettingsModal/Navigation.tsx:38
-#: src/components/space/ChannelList.tsx:104
+#: src/components/space/ChannelList.tsx:118
 msgid "Space Settings"
 msgstr "Cài đặt Không gian"
 
@@ -1793,13 +1809,13 @@ msgstr "Nhấn để sao chép"
 msgid "Tap to select"
 msgstr "Nhấn để chọn"
 
-#: src/components/message/InviteLink.tsx:21
+#: src/components/message/InviteLink.tsx:34
 #: src/components/modals/AddSpaceModal.tsx:72
-#: src/hooks/business/invites/useInviteProcessing.ts:26
+#: src/hooks/business/invites/useInviteProcessing.ts:43
 msgid "The invite link format is invalid."
 msgstr "Định dạng liên kết mời không hợp lệ."
 
-#: src/components/message/InviteLink.tsx:33
+#: src/components/message/InviteLink.tsx:46
 msgid "The invite link has expired or is invalid."
 msgstr "Liên kết mời đã hết hạn hoặc không hợp lệ."
 
@@ -1838,7 +1854,7 @@ msgid "This protects your identity as the space owner. However, if you're the on
 msgstr "Điều này bảo vệ danh tính của bạn với tư cách là chủ không gian. Tuy nhiên, nếu bạn là người duy nhất có vai trò này, danh tính của bạn sẽ trở nên rõ ràng. Hãy xem xét việc có nhiều người dùng (tài khoản thật hoặc giả) với cùng một vai trò để bảo vệ quyền riêng tư tốt hơn."
 
 #: src/components/context/MessageDB.bak.tsx:4819
-#: src/components/message/InviteLink.tsx:31
+#: src/components/message/InviteLink.tsx:44
 #: src/services/InvitationService.ts:633
 msgid "This public invite link is no longer valid."
 msgstr "Liên kết mời công khai này không còn hợp lệ."
@@ -1964,12 +1980,12 @@ msgstr "Thời gian không xác định"
 #: src/hooks/business/search/useSearchResultDisplaySpace.ts:45
 #: src/hooks/queries/userInfo/buildUserInfoFetcher.ts:15
 #: src/services/EncryptionService.ts:138
-#: src/services/MessageService.ts:1021
-#: src/services/MessageService.ts:1184
-#: src/services/MessageService.ts:1325
-#: src/services/MessageService.ts:1344
-#: src/services/MessageService.ts:2661
-#: src/services/MessageService.ts:2796
+#: src/services/MessageService.ts:1090
+#: src/services/MessageService.ts:1262
+#: src/services/MessageService.ts:1402
+#: src/services/MessageService.ts:1420
+#: src/services/MessageService.ts:2756
+#: src/services/MessageService.ts:2907
 msgid "Unknown User"
 msgstr "Người dùng không xác định"
 
@@ -2173,8 +2189,8 @@ msgstr "Bạn đã sẵn sàng. Chào mừng đến với Quorum!"
 msgid "You're not listed in this Space's members. Correcting this will add you to the Space Members list (stores your profile locally with your inbox address)."
 msgstr "Bạn không có trong danh sách thành viên của Không gian này. Việc sửa chữa điều này sẽ thêm bạn vào danh sách Thành viên Không gian (lưu hồ sơ của bạn cục bộ với địa chỉ hộp thư đến của bạn)."
 
-#: src/components/message/InviteLink.tsx:47
-#: src/components/message/InviteLink.tsx:69
+#: src/components/message/InviteLink.tsx:60
+#: src/components/message/InviteLink.tsx:82
 msgid "You've been invited to join a Space"
 msgstr "Bạn đã được mời tham gia một Không Gian"
 

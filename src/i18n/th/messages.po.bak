@@ -223,7 +223,7 @@ msgid "Add friend"
 msgstr "เพิ่มเพื่อน"
 
 #: src/components/modals/GroupEditorModal.tsx:58
-#: src/components/space/ChannelList.tsx:129
+#: src/components/space/ChannelList.tsx:143
 msgid "Add Group"
 msgstr "เพิ่มกลุ่ม"
 
@@ -537,8 +537,8 @@ msgstr "คัดลอกลิงก์ข้อความ"
 msgid "Could not add Space"
 msgstr "ไม่สามารถเพิ่ม พื้นที่ ได้"
 
-#: src/components/message/InviteLink.tsx:25
-#: src/hooks/business/invites/useInviteProcessing.ts:28
+#: src/components/message/InviteLink.tsx:38
+#: src/hooks/business/invites/useInviteProcessing.ts:45
 msgid "Could not fetch the Space details. Please try again."
 msgstr "ไม่สามารถดึงรายละเอียดของ Space ได้ กรุณาลองอีกครั้ง"
 
@@ -547,7 +547,7 @@ msgstr "ไม่สามารถดึงรายละเอียดขอ
 msgid "Could not obtain manifest for Space"
 msgstr "ไม่สามารถรับ manifest สำหรับ พื้นที่ ได้"
 
-#: src/hooks/business/invites/useInviteProcessing.ts:24
+#: src/hooks/business/invites/useInviteProcessing.ts:41
 #: src/hooks/business/spaces/useInviteValidation.ts:111
 msgid "Could not verify invite"
 msgstr "ไม่สามารถตรวจสอบเชิญได้"
@@ -675,13 +675,21 @@ msgstr "อธิบายว่า Space นี้เกี่ยวกับ�
 #~ msgid "Description"
 #~ msgstr "คำอธิบาย"
 
+#: src/hooks/business/validation/useSpaceNameValidation.ts:54
+msgid "Description cannot contain special characters"
+msgstr ""
+
 #: src/components/modals/CreateSpaceModal.tsx:119
 msgid "Description must be {MAX_DESCRIPTION_LENGTH} characters or less"
 msgstr "คำอธิบายต้องมีความยาวไม่เกิน {MAX_DESCRIPTION_LENGTH} ตัวอักษร"
 
 #: src/components/modals/SpaceSettingsModal/General.tsx:159
-msgid "Description must be {maxDescriptionLength} characters or less"
-msgstr "คำอธิบายต้องมีความยาวไม่เกิน {maxDescriptionLength} ตัวอักษร"
+#~ msgid "Description must be {maxDescriptionLength} characters or less"
+#~ msgstr "คำอธิบายต้องมีความยาวไม่เกิน {maxDescriptionLength} ตัวอักษร"
+
+#: src/hooks/business/validation/useSpaceNameValidation.ts:58
+msgid "Description must be {maxLength} characters or less"
+msgstr ""
 
 #: src/components/modals/UserSettingsModal/Notifications.tsx:35
 msgid "Desktop Notifications"
@@ -698,7 +706,7 @@ msgid "Direct Message"
 msgstr "ข้อความตรง"
 
 #: src/components/direct/DirectMessageContactsList.tsx:24
-#: src/components/navbar/NavMenu.tsx:75
+#: src/components/navbar/NavMenu.tsx:85
 msgid "Direct Messages"
 msgstr "ข้อความตรง"
 
@@ -713,7 +721,7 @@ msgstr "ชื่อที่แสดง"
 #: src/hooks/business/validation/useDisplayNameValidation.ts:18
 #: src/hooks/business/validation/useDisplayNameValidation.ts:40
 msgid "Display name cannot contain special characters"
-msgstr ""
+msgstr "ชื่อแสดงไม่สามารถมีอักขระพิเศษ"
 
 #: src/components/modals/SpaceSettingsModal/Account.tsx:143
 #: src/hooks/business/validation/useDisplayNameValidation.ts:12
@@ -838,7 +846,7 @@ msgid "Failed to copy to clipboard. Please try again."
 msgstr "ไม่สามารถคัดลอกไปยังคลิปบอร์ดได้ กรุณาลองอีกครั้ง"
 
 #: src/components/context/MessageDB.bak.tsx:984
-#: src/services/MessageService.ts:1348
+#: src/services/MessageService.ts:1424
 msgid "Failed to decrypt message with any known state"
 msgstr "ไม่สามารถถอดรหัสข้อความด้วยสถานะที่รู้จักได้"
 
@@ -1023,7 +1031,7 @@ msgid "Important messages will be pinned here"
 msgstr "ข้อความสำคัญจะถูกปักหมุดที่นี่"
 
 #: src/components/context/MessageDB.bak.tsx:1184
-#: src/services/MessageService.ts:1544
+#: src/services/MessageService.ts:1623
 msgid "invalid address for signature"
 msgstr "ที่อยู่ไม่ถูกต้องสำหรับลายเซ็น"
 
@@ -1065,12 +1073,16 @@ msgstr "ประเภทข้อความไม่ถูกต้อง"
 msgid "invalid response"
 msgstr "การตอบสนองไม่ถูกต้อง"
 
+#: src/hooks/business/invites/useInviteUI.ts:32
+msgid "Invite sent"
+msgstr ""
+
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:47
 #: src/components/modals/SpaceSettingsModal/Navigation.tsx:25
 msgid "Invites"
 msgstr "คำเชิญ"
 
-#: src/hooks/business/invites/useInviteUI.ts:21
+#: src/hooks/business/invites/useInviteUI.ts:33
 msgid "Join"
 msgstr "เข้าร่วม"
 
@@ -1081,7 +1093,7 @@ msgstr "เข้าร่วม"
 msgid "Join Space"
 msgstr "เข้าร่วม พื้นที่"
 
-#: src/hooks/business/invites/useInviteUI.ts:20
+#: src/hooks/business/invites/useInviteUI.ts:31
 msgid "Joined"
 msgstr "เข้าร่วมแล้ว"
 
@@ -1090,7 +1102,7 @@ msgstr "เข้าร่วมแล้ว"
 msgid "Joining Space..."
 msgstr "กำลังเข้าร่วม Space..."
 
-#: src/hooks/business/invites/useInviteUI.ts:19
+#: src/hooks/business/invites/useInviteUI.ts:29
 msgid "Joining..."
 msgstr "กำลังเข้าร่วม..."
 
@@ -1098,6 +1110,10 @@ msgstr "กำลังเข้าร่วม..."
 #: src/components/message/PinnedMessagesPanel.tsx:129
 msgid "Jump"
 msgstr "กระโดด"
+
+#: src/components/message/MessageList.tsx:356
+msgid "Jump to present"
+msgstr ""
 
 #: src/hooks/platform/files/useFileDownload.native.ts:96
 msgid "Key Copied!"
@@ -1740,7 +1756,7 @@ msgstr "ชื่อ Space"
 #: src/hooks/business/validation/useSpaceNameValidation.ts:15
 #: src/hooks/business/validation/useSpaceNameValidation.ts:34
 msgid "Space name cannot contain special characters"
-msgstr ""
+msgstr "ชื่อพื้นที่ไม่สามารถมีอักขระพิเศษ"
 
 #: src/hooks/business/validation/useSpaceNameValidation.ts:12
 #: src/hooks/business/validation/useSpaceNameValidation.ts:31
@@ -1748,7 +1764,7 @@ msgid "Space name is required"
 msgstr "ชื่อพื้นที่ต้องการ"
 
 #: src/components/modals/SpaceSettingsModal/Navigation.tsx:38
-#: src/components/space/ChannelList.tsx:104
+#: src/components/space/ChannelList.tsx:118
 msgid "Space Settings"
 msgstr "การตั้งค่า Space"
 
@@ -1793,13 +1809,13 @@ msgstr "แตะเพื่อคัดลอก"
 msgid "Tap to select"
 msgstr "แตะเพื่อเลือก"
 
-#: src/components/message/InviteLink.tsx:21
+#: src/components/message/InviteLink.tsx:34
 #: src/components/modals/AddSpaceModal.tsx:72
-#: src/hooks/business/invites/useInviteProcessing.ts:26
+#: src/hooks/business/invites/useInviteProcessing.ts:43
 msgid "The invite link format is invalid."
 msgstr "รูปแบบลิงก์เชิญไม่ถูกต้อง"
 
-#: src/components/message/InviteLink.tsx:33
+#: src/components/message/InviteLink.tsx:46
 msgid "The invite link has expired or is invalid."
 msgstr "ลิงก์คำเชิญหมดอายุหรือไม่ถูกต้อง"
 
@@ -1838,7 +1854,7 @@ msgid "This protects your identity as the space owner. However, if you're the on
 msgstr "สิ่งนี้ช่วยปกป้องตัวตนของคุณในฐานะเจ้าของ Space อย่างไรก็ตาม หากคุณเป็นคนเดียวที่มีบทบาทนี้ ตัวตนของคุณจะชัดเจนขึ้น พิจารณามีผู้ใช้หลายคน (บัญชีจริงหรือปลอม) ที่มีบทบาทเดียวกันเพื่อการปกป้องความเป็นส่วนตัวที่ดียิ่งขึ้น"
 
 #: src/components/context/MessageDB.bak.tsx:4819
-#: src/components/message/InviteLink.tsx:31
+#: src/components/message/InviteLink.tsx:44
 #: src/services/InvitationService.ts:633
 msgid "This public invite link is no longer valid."
 msgstr "ลิงก์เชิญสาธารณะนี้ไม่ถูกต้องอีกต่อไป"
@@ -1964,12 +1980,12 @@ msgstr "เวลาที่ไม่รู้จัก"
 #: src/hooks/business/search/useSearchResultDisplaySpace.ts:45
 #: src/hooks/queries/userInfo/buildUserInfoFetcher.ts:15
 #: src/services/EncryptionService.ts:138
-#: src/services/MessageService.ts:1021
-#: src/services/MessageService.ts:1184
-#: src/services/MessageService.ts:1325
-#: src/services/MessageService.ts:1344
-#: src/services/MessageService.ts:2661
-#: src/services/MessageService.ts:2796
+#: src/services/MessageService.ts:1090
+#: src/services/MessageService.ts:1262
+#: src/services/MessageService.ts:1402
+#: src/services/MessageService.ts:1420
+#: src/services/MessageService.ts:2756
+#: src/services/MessageService.ts:2907
 msgid "Unknown User"
 msgstr "ผู้ใช้ที่ไม่ทราบ"
 
@@ -2173,8 +2189,8 @@ msgstr "คุณพร้อมแล้ว ยินดีต้อนรั�
 msgid "You're not listed in this Space's members. Correcting this will add you to the Space Members list (stores your profile locally with your inbox address)."
 msgstr "คุณไม่ได้อยู่ในสมาชิกของ Space นี้ การแก้ไขนี้จะทำให้คุณถูกเพิ่มในรายชื่อสมาชิก Space (เก็บโปรไฟล์ของคุณไว้ในเครื่องพร้อมที่อยู่กล่องจดหมายของคุณ)"
 
-#: src/components/message/InviteLink.tsx:47
-#: src/components/message/InviteLink.tsx:69
+#: src/components/message/InviteLink.tsx:60
+#: src/components/message/InviteLink.tsx:82
 msgid "You've been invited to join a Space"
 msgstr "คุณได้รับเชิญให้เข้าร่วม พื้นที่"
 

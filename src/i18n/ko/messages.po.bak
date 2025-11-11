@@ -223,7 +223,7 @@ msgid "Add friend"
 msgstr "친구 추가"
 
 #: src/components/modals/GroupEditorModal.tsx:58
-#: src/components/space/ChannelList.tsx:129
+#: src/components/space/ChannelList.tsx:143
 msgid "Add Group"
 msgstr "그룹 추가"
 
@@ -538,8 +538,8 @@ msgstr "메시지 링크 복사"
 msgid "Could not add Space"
 msgstr "스페이스를 추가할 수 없습니다"
 
-#: src/components/message/InviteLink.tsx:25
-#: src/hooks/business/invites/useInviteProcessing.ts:28
+#: src/components/message/InviteLink.tsx:38
+#: src/hooks/business/invites/useInviteProcessing.ts:45
 msgid "Could not fetch the Space details. Please try again."
 msgstr "공간 세부정보를 가져올 수 없습니다. 다시 시도하십시오."
 
@@ -548,7 +548,7 @@ msgstr "공간 세부정보를 가져올 수 없습니다. 다시 시도하십�
 msgid "Could not obtain manifest for Space"
 msgstr "스페이스에 대한 매니페스트를 가져올 수 없습니다"
 
-#: src/hooks/business/invites/useInviteProcessing.ts:24
+#: src/hooks/business/invites/useInviteProcessing.ts:41
 #: src/hooks/business/spaces/useInviteValidation.ts:111
 msgid "Could not verify invite"
 msgstr "초대를 확인할 수 없습니다"
@@ -676,13 +676,21 @@ msgstr "이 Space에 대한 설명을 입력하세요..."
 #~ msgid "Description"
 #~ msgstr "설명"
 
+#: src/hooks/business/validation/useSpaceNameValidation.ts:54
+msgid "Description cannot contain special characters"
+msgstr ""
+
 #: src/components/modals/CreateSpaceModal.tsx:119
 msgid "Description must be {MAX_DESCRIPTION_LENGTH} characters or less"
 msgstr "설명은 {MAX_DESCRIPTION_LENGTH}자 이하이어야 합니다"
 
 #: src/components/modals/SpaceSettingsModal/General.tsx:159
-msgid "Description must be {maxDescriptionLength} characters or less"
-msgstr "설명은 {maxDescriptionLength}자 이하이어야 합니다"
+#~ msgid "Description must be {maxDescriptionLength} characters or less"
+#~ msgstr "설명은 {maxDescriptionLength}자 이하이어야 합니다"
+
+#: src/hooks/business/validation/useSpaceNameValidation.ts:58
+msgid "Description must be {maxLength} characters or less"
+msgstr ""
 
 #: src/components/modals/UserSettingsModal/Notifications.tsx:35
 msgid "Desktop Notifications"
@@ -699,7 +707,7 @@ msgid "Direct Message"
 msgstr "다이렉트 메시지"
 
 #: src/components/direct/DirectMessageContactsList.tsx:24
-#: src/components/navbar/NavMenu.tsx:75
+#: src/components/navbar/NavMenu.tsx:85
 msgid "Direct Messages"
 msgstr "다이렉트 메시지"
 
@@ -714,7 +722,7 @@ msgstr "표시 이름"
 #: src/hooks/business/validation/useDisplayNameValidation.ts:18
 #: src/hooks/business/validation/useDisplayNameValidation.ts:40
 msgid "Display name cannot contain special characters"
-msgstr ""
+msgstr "표시 이름에는 특수 문자가 포함될 수 없습니다"
 
 #: src/components/modals/SpaceSettingsModal/Account.tsx:143
 #: src/hooks/business/validation/useDisplayNameValidation.ts:12
@@ -839,7 +847,7 @@ msgid "Failed to copy to clipboard. Please try again."
 msgstr "클립보드에 복사하는 데 실패했습니다. 다시 시도해 주세요."
 
 #: src/components/context/MessageDB.bak.tsx:984
-#: src/services/MessageService.ts:1348
+#: src/services/MessageService.ts:1424
 msgid "Failed to decrypt message with any known state"
 msgstr "알려진 상태로 메시지를 복호화하는 데 실패했습니다"
 
@@ -1024,7 +1032,7 @@ msgid "Important messages will be pinned here"
 msgstr "중요한 메시지는 여기 고정됩니다"
 
 #: src/components/context/MessageDB.bak.tsx:1184
-#: src/services/MessageService.ts:1544
+#: src/services/MessageService.ts:1623
 msgid "invalid address for signature"
 msgstr "서명을 위한 잘못된 주소"
 
@@ -1066,12 +1074,16 @@ msgstr "잘못된 메시지 유형"
 msgid "invalid response"
 msgstr "잘못된 응답"
 
+#: src/hooks/business/invites/useInviteUI.ts:32
+msgid "Invite sent"
+msgstr ""
+
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:47
 #: src/components/modals/SpaceSettingsModal/Navigation.tsx:25
 msgid "Invites"
 msgstr "초대"
 
-#: src/hooks/business/invites/useInviteUI.ts:21
+#: src/hooks/business/invites/useInviteUI.ts:33
 msgid "Join"
 msgstr "참여"
 
@@ -1082,7 +1094,7 @@ msgstr "참여"
 msgid "Join Space"
 msgstr "스페이스 참여"
 
-#: src/hooks/business/invites/useInviteUI.ts:20
+#: src/hooks/business/invites/useInviteUI.ts:31
 msgid "Joined"
 msgstr "참여 완료"
 
@@ -1091,7 +1103,7 @@ msgstr "참여 완료"
 msgid "Joining Space..."
 msgstr "공간에 참여 중..."
 
-#: src/hooks/business/invites/useInviteUI.ts:19
+#: src/hooks/business/invites/useInviteUI.ts:29
 msgid "Joining..."
 msgstr "참여 중..."
 
@@ -1099,6 +1111,10 @@ msgstr "참여 중..."
 #: src/components/message/PinnedMessagesPanel.tsx:129
 msgid "Jump"
 msgstr "점프"
+
+#: src/components/message/MessageList.tsx:356
+msgid "Jump to present"
+msgstr ""
 
 #: src/hooks/platform/files/useFileDownload.native.ts:96
 msgid "Key Copied!"
@@ -1741,7 +1757,7 @@ msgstr "Space 이름"
 #: src/hooks/business/validation/useSpaceNameValidation.ts:15
 #: src/hooks/business/validation/useSpaceNameValidation.ts:34
 msgid "Space name cannot contain special characters"
-msgstr ""
+msgstr "스페이스 이름에는 특수 문자가 포함될 수 없습니다"
 
 #: src/hooks/business/validation/useSpaceNameValidation.ts:12
 #: src/hooks/business/validation/useSpaceNameValidation.ts:31
@@ -1749,7 +1765,7 @@ msgid "Space name is required"
 msgstr "공간 이름은 필수입니다"
 
 #: src/components/modals/SpaceSettingsModal/Navigation.tsx:38
-#: src/components/space/ChannelList.tsx:104
+#: src/components/space/ChannelList.tsx:118
 msgid "Space Settings"
 msgstr "공간 설정"
 
@@ -1794,13 +1810,13 @@ msgstr "복사하려면 탭하세요"
 msgid "Tap to select"
 msgstr "선택하려면 탭하세요"
 
-#: src/components/message/InviteLink.tsx:21
+#: src/components/message/InviteLink.tsx:34
 #: src/components/modals/AddSpaceModal.tsx:72
-#: src/hooks/business/invites/useInviteProcessing.ts:26
+#: src/hooks/business/invites/useInviteProcessing.ts:43
 msgid "The invite link format is invalid."
 msgstr "초대 링크 형식이 잘못되었습니다."
 
-#: src/components/message/InviteLink.tsx:33
+#: src/components/message/InviteLink.tsx:46
 msgid "The invite link has expired or is invalid."
 msgstr "초대 링크가 만료되었거나 유효하지 않습니다."
 
@@ -1839,7 +1855,7 @@ msgid "This protects your identity as the space owner. However, if you're the on
 msgstr "이것은 공간 소유자로서의 귀하의 신원을 보호합니다. 그러나 이 역할을 가진 유일한 사람이라면 귀하의 신원이 명백해집니다. 더 나은 개인 정보 보호를 위해 동일한 역할을 가진 여러 사용자(실제 또는 가짜 계정)를 두는 것을 고려하십시오."
 
 #: src/components/context/MessageDB.bak.tsx:4819
-#: src/components/message/InviteLink.tsx:31
+#: src/components/message/InviteLink.tsx:44
 #: src/services/InvitationService.ts:633
 msgid "This public invite link is no longer valid."
 msgstr "이 공개 초대 링크는 더 이상 유효하지 않습니다."
@@ -1965,12 +1981,12 @@ msgstr "알 수 없는 시간"
 #: src/hooks/business/search/useSearchResultDisplaySpace.ts:45
 #: src/hooks/queries/userInfo/buildUserInfoFetcher.ts:15
 #: src/services/EncryptionService.ts:138
-#: src/services/MessageService.ts:1021
-#: src/services/MessageService.ts:1184
-#: src/services/MessageService.ts:1325
-#: src/services/MessageService.ts:1344
-#: src/services/MessageService.ts:2661
-#: src/services/MessageService.ts:2796
+#: src/services/MessageService.ts:1090
+#: src/services/MessageService.ts:1262
+#: src/services/MessageService.ts:1402
+#: src/services/MessageService.ts:1420
+#: src/services/MessageService.ts:2756
+#: src/services/MessageService.ts:2907
 msgid "Unknown User"
 msgstr "알 수 없는 사용자"
 
@@ -2174,8 +2190,8 @@ msgstr "모든 준비가 완료되었습니다. Quorum에 오신 것을 환영�
 msgid "You're not listed in this Space's members. Correcting this will add you to the Space Members list (stores your profile locally with your inbox address)."
 msgstr "이 공간의 구성원 목록에 없습니다. 이를 수정하면 귀하의 프로필이 귀하의 인박스 주소와 함께 로컬에 저장되어 공간 구성원 목록에 추가됩니다."
 
-#: src/components/message/InviteLink.tsx:47
-#: src/components/message/InviteLink.tsx:69
+#: src/components/message/InviteLink.tsx:60
+#: src/components/message/InviteLink.tsx:82
 msgid "You've been invited to join a Space"
 msgstr "당신은 공간에 가입하라는 초대를 받았습니다."
 

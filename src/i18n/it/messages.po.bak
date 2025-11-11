@@ -223,7 +223,7 @@ msgid "Add friend"
 msgstr "Aggiungi amico"
 
 #: src/components/modals/GroupEditorModal.tsx:58
-#: src/components/space/ChannelList.tsx:129
+#: src/components/space/ChannelList.tsx:143
 msgid "Add Group"
 msgstr "Aggiungi gruppo"
 
@@ -537,8 +537,8 @@ msgstr "Copia link del messaggio"
 msgid "Could not add Space"
 msgstr "Impossibile aggiungere lo Spazio"
 
-#: src/components/message/InviteLink.tsx:25
-#: src/hooks/business/invites/useInviteProcessing.ts:28
+#: src/components/message/InviteLink.tsx:38
+#: src/hooks/business/invites/useInviteProcessing.ts:45
 msgid "Could not fetch the Space details. Please try again."
 msgstr "Impossibile recuperare i dettagli dello Spazio. Riprova."
 
@@ -547,7 +547,7 @@ msgstr "Impossibile recuperare i dettagli dello Spazio. Riprova."
 msgid "Could not obtain manifest for Space"
 msgstr "Impossibile ottenere il manifesto per lo Spazio"
 
-#: src/hooks/business/invites/useInviteProcessing.ts:24
+#: src/hooks/business/invites/useInviteProcessing.ts:41
 #: src/hooks/business/spaces/useInviteValidation.ts:111
 msgid "Could not verify invite"
 msgstr "Impossibile verificare l'invito"
@@ -675,13 +675,21 @@ msgstr "Descrivi di cosa tratta questo Space..."
 #~ msgid "Description"
 #~ msgstr "Descrizione"
 
+#: src/hooks/business/validation/useSpaceNameValidation.ts:54
+msgid "Description cannot contain special characters"
+msgstr ""
+
 #: src/components/modals/CreateSpaceModal.tsx:119
 msgid "Description must be {MAX_DESCRIPTION_LENGTH} characters or less"
 msgstr "La descrizione deve contenere al massimo {MAX_DESCRIPTION_LENGTH} caratteri"
 
 #: src/components/modals/SpaceSettingsModal/General.tsx:159
-msgid "Description must be {maxDescriptionLength} characters or less"
-msgstr "La descrizione deve contenere al massimo {maxDescriptionLength} caratteri"
+#~ msgid "Description must be {maxDescriptionLength} characters or less"
+#~ msgstr "La descrizione deve contenere al massimo {maxDescriptionLength} caratteri"
+
+#: src/hooks/business/validation/useSpaceNameValidation.ts:58
+msgid "Description must be {maxLength} characters or less"
+msgstr ""
 
 #: src/components/modals/UserSettingsModal/Notifications.tsx:35
 msgid "Desktop Notifications"
@@ -698,7 +706,7 @@ msgid "Direct Message"
 msgstr "Messaggio Diretto"
 
 #: src/components/direct/DirectMessageContactsList.tsx:24
-#: src/components/navbar/NavMenu.tsx:75
+#: src/components/navbar/NavMenu.tsx:85
 msgid "Direct Messages"
 msgstr "Messaggi Diretti"
 
@@ -713,7 +721,7 @@ msgstr "Nome Visualizzato"
 #: src/hooks/business/validation/useDisplayNameValidation.ts:18
 #: src/hooks/business/validation/useDisplayNameValidation.ts:40
 msgid "Display name cannot contain special characters"
-msgstr ""
+msgstr "Il nome visualizzato non può contenere caratteri speciali"
 
 #: src/components/modals/SpaceSettingsModal/Account.tsx:143
 #: src/hooks/business/validation/useDisplayNameValidation.ts:12
@@ -838,7 +846,7 @@ msgid "Failed to copy to clipboard. Please try again."
 msgstr "Impossibile copiare negli appunti. Riprova."
 
 #: src/components/context/MessageDB.bak.tsx:984
-#: src/services/MessageService.ts:1348
+#: src/services/MessageService.ts:1424
 msgid "Failed to decrypt message with any known state"
 msgstr "Impossibile decrittare il messaggio con alcuno stato conosciuto"
 
@@ -1023,7 +1031,7 @@ msgid "Important messages will be pinned here"
 msgstr "I messaggi importanti saranno fissati qui"
 
 #: src/components/context/MessageDB.bak.tsx:1184
-#: src/services/MessageService.ts:1544
+#: src/services/MessageService.ts:1623
 msgid "invalid address for signature"
 msgstr "indirizzo non valido per la firma"
 
@@ -1065,12 +1073,16 @@ msgstr "tipo di messaggio non valido"
 msgid "invalid response"
 msgstr "risposta non valida"
 
+#: src/hooks/business/invites/useInviteUI.ts:32
+msgid "Invite sent"
+msgstr ""
+
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:47
 #: src/components/modals/SpaceSettingsModal/Navigation.tsx:25
 msgid "Invites"
 msgstr "Inviti"
 
-#: src/hooks/business/invites/useInviteUI.ts:21
+#: src/hooks/business/invites/useInviteUI.ts:33
 msgid "Join"
 msgstr "Unisciti"
 
@@ -1081,7 +1093,7 @@ msgstr "Unisciti"
 msgid "Join Space"
 msgstr "Unisciti allo Spazio"
 
-#: src/hooks/business/invites/useInviteUI.ts:20
+#: src/hooks/business/invites/useInviteUI.ts:31
 msgid "Joined"
 msgstr "Ti sei unito"
 
@@ -1090,7 +1102,7 @@ msgstr "Ti sei unito"
 msgid "Joining Space..."
 msgstr "Unendosi allo Spazio..."
 
-#: src/hooks/business/invites/useInviteUI.ts:19
+#: src/hooks/business/invites/useInviteUI.ts:29
 msgid "Joining..."
 msgstr "Unendosi..."
 
@@ -1098,6 +1110,10 @@ msgstr "Unendosi..."
 #: src/components/message/PinnedMessagesPanel.tsx:129
 msgid "Jump"
 msgstr "Salta"
+
+#: src/components/message/MessageList.tsx:356
+msgid "Jump to present"
+msgstr ""
 
 #: src/hooks/platform/files/useFileDownload.native.ts:96
 msgid "Key Copied!"
@@ -1740,7 +1756,7 @@ msgstr "Nome dello Space"
 #: src/hooks/business/validation/useSpaceNameValidation.ts:15
 #: src/hooks/business/validation/useSpaceNameValidation.ts:34
 msgid "Space name cannot contain special characters"
-msgstr ""
+msgstr "Il nome dello Spazio non può contenere caratteri speciali"
 
 #: src/hooks/business/validation/useSpaceNameValidation.ts:12
 #: src/hooks/business/validation/useSpaceNameValidation.ts:31
@@ -1748,7 +1764,7 @@ msgid "Space name is required"
 msgstr "Il nome dello Spazio è obbligatorio"
 
 #: src/components/modals/SpaceSettingsModal/Navigation.tsx:38
-#: src/components/space/ChannelList.tsx:104
+#: src/components/space/ChannelList.tsx:118
 msgid "Space Settings"
 msgstr "Impostazioni Spazio"
 
@@ -1793,13 +1809,13 @@ msgstr "Tocca per copiare"
 msgid "Tap to select"
 msgstr "Tocca per selezionare"
 
-#: src/components/message/InviteLink.tsx:21
+#: src/components/message/InviteLink.tsx:34
 #: src/components/modals/AddSpaceModal.tsx:72
-#: src/hooks/business/invites/useInviteProcessing.ts:26
+#: src/hooks/business/invites/useInviteProcessing.ts:43
 msgid "The invite link format is invalid."
 msgstr "Il formato del link di invito non è valido."
 
-#: src/components/message/InviteLink.tsx:33
+#: src/components/message/InviteLink.tsx:46
 msgid "The invite link has expired or is invalid."
 msgstr "Il link di invito è scaduto o non è valido."
 
@@ -1838,7 +1854,7 @@ msgid "This protects your identity as the space owner. However, if you're the on
 msgstr "Questo protegge la tua identità come proprietario dello spazio. Tuttavia, se sei l'unico con questo ruolo, la tua identità diventa ovvia. Considera di avere più utenti (reali o falsi) con lo stesso ruolo per una migliore protezione della privacy."
 
 #: src/components/context/MessageDB.bak.tsx:4819
-#: src/components/message/InviteLink.tsx:31
+#: src/components/message/InviteLink.tsx:44
 #: src/services/InvitationService.ts:633
 msgid "This public invite link is no longer valid."
 msgstr "Questo link di invito pubblico non è più valido."
@@ -1964,12 +1980,12 @@ msgstr "Tempo sconosciuto"
 #: src/hooks/business/search/useSearchResultDisplaySpace.ts:45
 #: src/hooks/queries/userInfo/buildUserInfoFetcher.ts:15
 #: src/services/EncryptionService.ts:138
-#: src/services/MessageService.ts:1021
-#: src/services/MessageService.ts:1184
-#: src/services/MessageService.ts:1325
-#: src/services/MessageService.ts:1344
-#: src/services/MessageService.ts:2661
-#: src/services/MessageService.ts:2796
+#: src/services/MessageService.ts:1090
+#: src/services/MessageService.ts:1262
+#: src/services/MessageService.ts:1402
+#: src/services/MessageService.ts:1420
+#: src/services/MessageService.ts:2756
+#: src/services/MessageService.ts:2907
 msgid "Unknown User"
 msgstr "Utente sconosciuto"
 
@@ -2173,8 +2189,8 @@ msgstr "Hai fatto tutto. Benvenuto in Quorum!"
 msgid "You're not listed in this Space's members. Correcting this will add you to the Space Members list (stores your profile locally with your inbox address)."
 msgstr "Non sei elencato tra i membri di questo Espazio. Correggere questo ti aggiungerà alla lista dei membri dell'Espazio (memorizza il tuo profilo localmente con il tuo indirizzo della casella di posta)."
 
-#: src/components/message/InviteLink.tsx:47
-#: src/components/message/InviteLink.tsx:69
+#: src/components/message/InviteLink.tsx:60
+#: src/components/message/InviteLink.tsx:82
 msgid "You've been invited to join a Space"
 msgstr "Sei stato invitato a unirti a uno Spazio"
 

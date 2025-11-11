@@ -223,7 +223,7 @@ msgid "Add friend"
 msgstr "Pridať priateľa"
 
 #: src/components/modals/GroupEditorModal.tsx:58
-#: src/components/space/ChannelList.tsx:129
+#: src/components/space/ChannelList.tsx:143
 msgid "Add Group"
 msgstr "Pridať skupinu"
 
@@ -538,8 +538,8 @@ msgstr "Skopírovať odkaz na správu"
 msgid "Could not add Space"
 msgstr "Nepodarilo sa pridať Priestor"
 
-#: src/components/message/InviteLink.tsx:25
-#: src/hooks/business/invites/useInviteProcessing.ts:28
+#: src/components/message/InviteLink.tsx:38
+#: src/hooks/business/invites/useInviteProcessing.ts:45
 msgid "Could not fetch the Space details. Please try again."
 msgstr "Nepodarilo sa načítať podrobnosti o Space. Skúste to prosím znova."
 
@@ -548,7 +548,7 @@ msgstr "Nepodarilo sa načítať podrobnosti o Space. Skúste to prosím znova."
 msgid "Could not obtain manifest for Space"
 msgstr "Nepodarilo sa získať manifest pre Priestor"
 
-#: src/hooks/business/invites/useInviteProcessing.ts:24
+#: src/hooks/business/invites/useInviteProcessing.ts:41
 #: src/hooks/business/spaces/useInviteValidation.ts:111
 msgid "Could not verify invite"
 msgstr "Nepodarilo sa overiť pozvánku"
@@ -676,13 +676,21 @@ msgstr "Popíšte, o čom tento Space je..."
 #~ msgid "Description"
 #~ msgstr "Popis"
 
+#: src/hooks/business/validation/useSpaceNameValidation.ts:54
+msgid "Description cannot contain special characters"
+msgstr ""
+
 #: src/components/modals/CreateSpaceModal.tsx:119
 msgid "Description must be {MAX_DESCRIPTION_LENGTH} characters or less"
 msgstr "Popis musí mať {MAX_DESCRIPTION_LENGTH} znakov alebo menej"
 
 #: src/components/modals/SpaceSettingsModal/General.tsx:159
-msgid "Description must be {maxDescriptionLength} characters or less"
-msgstr "Popis musí mať {maxDescriptionLength} znakov alebo menej"
+#~ msgid "Description must be {maxDescriptionLength} characters or less"
+#~ msgstr "Popis musí mať {maxDescriptionLength} znakov alebo menej"
+
+#: src/hooks/business/validation/useSpaceNameValidation.ts:58
+msgid "Description must be {maxLength} characters or less"
+msgstr ""
 
 #: src/components/modals/UserSettingsModal/Notifications.tsx:35
 msgid "Desktop Notifications"
@@ -699,7 +707,7 @@ msgid "Direct Message"
 msgstr "Priama správa"
 
 #: src/components/direct/DirectMessageContactsList.tsx:24
-#: src/components/navbar/NavMenu.tsx:75
+#: src/components/navbar/NavMenu.tsx:85
 msgid "Direct Messages"
 msgstr "Priame správy"
 
@@ -714,7 +722,7 @@ msgstr "Zobrazované meno"
 #: src/hooks/business/validation/useDisplayNameValidation.ts:18
 #: src/hooks/business/validation/useDisplayNameValidation.ts:40
 msgid "Display name cannot contain special characters"
-msgstr ""
+msgstr "Zobrazované meno nemôže obsahovať špeciálne znaky"
 
 #: src/components/modals/SpaceSettingsModal/Account.tsx:143
 #: src/hooks/business/validation/useDisplayNameValidation.ts:12
@@ -839,7 +847,7 @@ msgid "Failed to copy to clipboard. Please try again."
 msgstr "Nepodarilo sa skopírovať do schránky. Skús to znova."
 
 #: src/components/context/MessageDB.bak.tsx:984
-#: src/services/MessageService.ts:1348
+#: src/services/MessageService.ts:1424
 msgid "Failed to decrypt message with any known state"
 msgstr "Nepodarilo sa dešifrovať správu s akýmkoľvek známym stavom"
 
@@ -1024,7 +1032,7 @@ msgid "Important messages will be pinned here"
 msgstr "Dôležité správy budú pripnuté tu"
 
 #: src/components/context/MessageDB.bak.tsx:1184
-#: src/services/MessageService.ts:1544
+#: src/services/MessageService.ts:1623
 msgid "invalid address for signature"
 msgstr "neplatná adresa pre podpis"
 
@@ -1066,12 +1074,16 @@ msgstr "neplatný typ správy"
 msgid "invalid response"
 msgstr "neplatná odpoveď"
 
+#: src/hooks/business/invites/useInviteUI.ts:32
+msgid "Invite sent"
+msgstr ""
+
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:47
 #: src/components/modals/SpaceSettingsModal/Navigation.tsx:25
 msgid "Invites"
 msgstr "Pozvánky"
 
-#: src/hooks/business/invites/useInviteUI.ts:21
+#: src/hooks/business/invites/useInviteUI.ts:33
 msgid "Join"
 msgstr "Pripojiť sa"
 
@@ -1082,7 +1094,7 @@ msgstr "Pripojiť sa"
 msgid "Join Space"
 msgstr "Pridaj sa do Priestoru"
 
-#: src/hooks/business/invites/useInviteUI.ts:20
+#: src/hooks/business/invites/useInviteUI.ts:31
 msgid "Joined"
 msgstr "Pridané"
 
@@ -1091,7 +1103,7 @@ msgstr "Pridané"
 msgid "Joining Space..."
 msgstr "Pridávanie do Space..."
 
-#: src/hooks/business/invites/useInviteUI.ts:19
+#: src/hooks/business/invites/useInviteUI.ts:29
 msgid "Joining..."
 msgstr "Pripojovanie..."
 
@@ -1099,6 +1111,10 @@ msgstr "Pripojovanie..."
 #: src/components/message/PinnedMessagesPanel.tsx:129
 msgid "Jump"
 msgstr "Skákať"
+
+#: src/components/message/MessageList.tsx:356
+msgid "Jump to present"
+msgstr ""
 
 #: src/hooks/platform/files/useFileDownload.native.ts:96
 msgid "Key Copied!"
@@ -1741,7 +1757,7 @@ msgstr "Názov Space"
 #: src/hooks/business/validation/useSpaceNameValidation.ts:15
 #: src/hooks/business/validation/useSpaceNameValidation.ts:34
 msgid "Space name cannot contain special characters"
-msgstr ""
+msgstr "Názov Space nemôže obsahovať špeciálne znaky"
 
 #: src/hooks/business/validation/useSpaceNameValidation.ts:12
 #: src/hooks/business/validation/useSpaceNameValidation.ts:31
@@ -1749,7 +1765,7 @@ msgid "Space name is required"
 msgstr "Názov priestoru je povinný"
 
 #: src/components/modals/SpaceSettingsModal/Navigation.tsx:38
-#: src/components/space/ChannelList.tsx:104
+#: src/components/space/ChannelList.tsx:118
 msgid "Space Settings"
 msgstr "Nastavenia Espacia"
 
@@ -1794,13 +1810,13 @@ msgstr "Klepni na skopírovanie"
 msgid "Tap to select"
 msgstr "Klepni na výber"
 
-#: src/components/message/InviteLink.tsx:21
+#: src/components/message/InviteLink.tsx:34
 #: src/components/modals/AddSpaceModal.tsx:72
-#: src/hooks/business/invites/useInviteProcessing.ts:26
+#: src/hooks/business/invites/useInviteProcessing.ts:43
 msgid "The invite link format is invalid."
 msgstr "Formát pozývacieho odkazu je neplatný."
 
-#: src/components/message/InviteLink.tsx:33
+#: src/components/message/InviteLink.tsx:46
 msgid "The invite link has expired or is invalid."
 msgstr "Pozvánkový odkaz vypršal alebo je neplatný."
 
@@ -1839,7 +1855,7 @@ msgid "This protects your identity as the space owner. However, if you're the on
 msgstr "Toto chráni vašu identitu ako vlastníka priestoru. Avšak, ak ste jediný, kto má túto rolu, vaša identita sa stáva zrejmou. Zvážte mať viacero používateľov (skutočných alebo falošných účtov) s rovnakou rolou pre lepšiu ochranu súkromia."
 
 #: src/components/context/MessageDB.bak.tsx:4819
-#: src/components/message/InviteLink.tsx:31
+#: src/components/message/InviteLink.tsx:44
 #: src/services/InvitationService.ts:633
 msgid "This public invite link is no longer valid."
 msgstr "Tento verejný pozývací odkaz už nie je platný."
@@ -1965,12 +1981,12 @@ msgstr "Neznámy čas"
 #: src/hooks/business/search/useSearchResultDisplaySpace.ts:45
 #: src/hooks/queries/userInfo/buildUserInfoFetcher.ts:15
 #: src/services/EncryptionService.ts:138
-#: src/services/MessageService.ts:1021
-#: src/services/MessageService.ts:1184
-#: src/services/MessageService.ts:1325
-#: src/services/MessageService.ts:1344
-#: src/services/MessageService.ts:2661
-#: src/services/MessageService.ts:2796
+#: src/services/MessageService.ts:1090
+#: src/services/MessageService.ts:1262
+#: src/services/MessageService.ts:1402
+#: src/services/MessageService.ts:1420
+#: src/services/MessageService.ts:2756
+#: src/services/MessageService.ts:2907
 msgid "Unknown User"
 msgstr "Neznámy používateľ"
 
@@ -2174,8 +2190,8 @@ msgstr "Ste pripravení. Vitajte v Quorum!"
 msgid "You're not listed in this Space's members. Correcting this will add you to the Space Members list (stores your profile locally with your inbox address)."
 msgstr "Nie si uvedený medzi členmi tohto Espacia. Oprava tohto pridá vás do zoznamu členov Espacia (ukladá váš profil lokálne s vašou adresou doručenia)."
 
-#: src/components/message/InviteLink.tsx:47
-#: src/components/message/InviteLink.tsx:69
+#: src/components/message/InviteLink.tsx:60
+#: src/components/message/InviteLink.tsx:82
 msgid "You've been invited to join a Space"
 msgstr "Boli ste pozvaní pripojiť sa k Priestoru"
 
