@@ -133,10 +133,10 @@ const Account: React.FunctionComponent<AccountProps> = ({
           )}
           <div className="flex-1">
             <Input
-              className="w-full md:w-80"
+              className="w-full md:w-80 mt-3 ml-1"
               value={displayName}
               onChange={setDisplayName}
-              label={t`Display Name`}
+              placeholder={t`Display Name`}
               labelType="static"
               error={hasValidationError}
               errorMessage={

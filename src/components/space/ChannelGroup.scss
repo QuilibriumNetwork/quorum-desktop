@@ -117,13 +117,13 @@ html.dark .channel-mentions-bubble {
 // Channel unread dot indicator - positioned absolutely to the left without affecting layout
 .channel-unread-dot {
   position: absolute;
-  left: -$s-2; // Position to the left of the channel content
+  left: -$s-3-5; // Position to the left of the channel content
   top: 50%;
   transform: translateY(-50%); // Center vertically
   width: $s-1-5;
   height: $s-1-5;
   border-radius: $rounded-full;
-  background: var(--surface-10);
+  background: var(--accent);
   z-index: 10;
   transition: all $duration-100 linear;
 }
