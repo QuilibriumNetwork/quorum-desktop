@@ -1,14 +1,46 @@
 # Smart Channel Navigation - Core Implementation
 
-**Status**: 🔲 Not Started  
-**Priority**: High  
+**Status**: 🔴 NOT RECOMMENDED - Code Was Implemented and Reverted  
+**Priority**: Low (requires Tasks 02 & 03 to be implemented first)  
 **Type**: UX Enhancement  
 **Complexity**: Medium (2-3 days)  
 **Affects**: Channel navigation, Message loading, Database queries
 
-## Overview
+---
+
+## ⚠️ CRITICAL WARNING: DO NOT IMPLEMENT THIS TASK ALONE
+
+**This task was fully implemented, tested, and then REVERTED after discovering critical UX issues.**
+
+**Why it was reverted**:
+
+- Smart navigation WITHOUT date separators and jump buttons creates **more problems than it solves**
+- Users with scattered unreads (common scenario) either:
+  - Land on old messages without context (confusing)
+  - Land on "today" and miss old unreads (broken)
+- Badge count mismatch causes user confusion
+- Half-implemented navigation is worse than current behavior
+
+**What you MUST do instead**:
+
+1. Implement Tasks 02 (Date Separators) and 03 (Jump to Present) FIRST
+2. Then come back to this task with full UI support
+3. OR implement all three tasks together (10-15 days)
+
+**See complete analysis**: `COMPLETE-ANALYSIS-AND-IMPLEMENTATION-GUIDE.md`
+
+- 50+ pages of edge case analysis
+- Real-world scattered unreads scenarios
+- Why simple AND smart approaches both fail without UI
+- Complete technical implementation (preserved for reference)
+
+---
+
+## Overview (Original Specification)
 
 Implement Discord-style intelligent channel navigation that takes users to the "first message of today" when entering a channel with unread messages. This is the **core functionality only** - UI enhancements are separate tasks.
+
+**NOTE**: The original spec assumed this could work standalone. **Analysis proved this wrong.**
 
 ## Problem Statement
 
@@ -227,18 +259,43 @@ After core implementation is complete and validated:
 
 ---
 
+## 📚 Implementation Details
+
+**This task was fully implemented and tested. The complete implementation is documented in:**
+
+`COMPLETE-ANALYSIS-AND-IMPLEMENTATION-GUIDE.md` - Section "Technical Implementation Details"
+
+**Includes**:
+
+- ✅ Date utility functions (getStartOfDay, getEndOfDay)
+- ✅ Database methods (getFirstMessageOfDay, getFirstUnreadMessage)
+- ✅ Smart cursor determination logic (simple and complex versions)
+- ✅ Integration with buildMessagesFetcher
+- ✅ The "+1 pattern" for cursor positioning
+- ✅ All edge case handling
+
+**Status**: Code was implemented, tested, built successfully, then reverted after UX analysis.
+
+---
+
 **Related Tasks:**
 
-- [02-date-separators.md](./02-date-separators.md) _(Date Separators UI Enhancement)_
-- [03-jump-to-present.md](./03-jump-to-present.md) _(Jump to Present Button)_
+- [02-date-separators.md](./02-date-separators.md) _(MUST implement this first)_
+- [03-jump-to-present.md](./03-jump-to-present.md) _(MUST implement this first)_
+- [COMPLETE-ANALYSIS-AND-IMPLEMENTATION-GUIDE.md](./COMPLETE-ANALYSIS-AND-IMPLEMENTATION-GUIDE.md) _(Full analysis & implementation details)_
 
 **Dependencies:**
 
+- Tasks 02 and 03 MUST be implemented first (or together with this task)
 - Existing unread message system
 - React Query infinite pagination system
 - Cross-platform date/time handling
 
-**Estimated Timeline:** 2-3 days for core functionality only
+**Estimated Timeline:**
 
-_Created: 2025-11-10_
-_Last Updated: 2025-11-10_
+- This task alone: 2-3 days (NOT RECOMMENDED)
+- All 3 tasks together: 10-15 days (RECOMMENDED)
+
+_Created: 2025-11-10_  
+_Last Updated: 2025-11-11_  
+_Status: Reverted after implementation and analysis_
