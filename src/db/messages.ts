@@ -1510,4 +1510,65 @@ export class MessageDB {
       request.onerror = () => reject(request.error);
     });
   }
+
+  /**
+   * Get the first unread message in a channel
+   *
+   * This query is used for auto-jump navigation to help users land at the first
+   * unread message when entering a channel with unreads.
+   *
+   * The query:
+   * 1. Uses the existing by_conversation_time index
+   * 2. Gets the first message after lastReadTimestamp
+   * 3. Returns messageId and timestamp for cursor calculation
+   *
+   * @param spaceId - The space ID
+   * @param channelId - The channel ID
+   * @param afterTimestamp - Only get messages created after this timestamp (typically lastReadTimestamp)
+   * @returns Promise with messageId and timestamp, or null if no unread messages
+   */
+  async getFirstUnreadMessage({
+    spaceId,
+    channelId,
+    afterTimestamp,
+  }: {
+    spaceId: string;
+    channelId: string;
+    afterTimestamp: number;
+  }): Promise<{ messageId: string; timestamp: number } | null> {
+    await this.init();
+    return new Promise((resolve, reject) => {
+      const transaction = this.db!.transaction('messages', 'readonly');
+      const store = transaction.objectStore('messages');
+      const index = store.index('by_conversation_time');
+
+      // Use existing index to get messages after timestamp
+      const range = IDBKeyRange.bound(
+        [spaceId, channelId, afterTimestamp],
+        [spaceId, channelId, Number.MAX_VALUE],
+        true, // Exclude afterTimestamp itself
+        false
+      );
+
+      const request = index.openCursor(range, 'next');
+
+      request.onsuccess = (event) => {
+        const cursor = (event.target as IDBRequest).result;
+
+        if (cursor) {
+          const message = cursor.value as Message;
+          // Return the first unread message
+          resolve({
+            messageId: message.messageId,
+            timestamp: message.createdDate,
+          });
+        } else {
+          // No unread messages found
+          resolve(null);
+        }
+      };
+
+      request.onerror = () => reject(request.error);
+    });
+  }
 }
