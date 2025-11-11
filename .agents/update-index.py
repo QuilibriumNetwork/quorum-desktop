@@ -275,18 +275,18 @@ def scan_readme_directory():
                    len(tasks_pending) + sum(len(files) for files in tasks_subfolders.values()) +
                    len(tasks_done) + sum(len(files) for files in tasks_done_subfolders.values()))
     
-    print(f'✅ Updated {index_path}')
-    print(f'📄 Processed {total_files} markdown files')
-    print(f'📖 Docs: {len(docs_root) + sum(len(files) for files in docs_subfolders.values())} files')
-    print(f'🐛 Bugs: {len(bugs_active) + len(bugs_solved) + sum(len(files) for files in bugs_subfolders.values())} files')
-    print(f'📋 Tasks: {len(tasks_pending) + len(tasks_done) + sum(len(files) for files in tasks_subfolders.values()) + sum(len(files) for files in tasks_done_subfolders.values())} files')
+    print(f'[OK] Updated {index_path}')
+    print(f'[FILES] Processed {total_files} markdown files')
+    print(f'[DOCS] Docs: {len(docs_root) + sum(len(files) for files in docs_subfolders.values())} files')
+    print(f'[BUGS] Bugs: {len(bugs_active) + len(bugs_solved) + sum(len(files) for files in bugs_subfolders.values())} files')
+    print(f'[TASKS] Tasks: {len(tasks_pending) + len(tasks_done) + sum(len(files) for files in tasks_subfolders.values()) + sum(len(files) for files in tasks_done_subfolders.values())} files')
     
     return True
 
 if __name__ == '__main__':
     try:
         scan_readme_directory()
-        print('\n🎉 Index update completed successfully!')
+        print('\n[Index] Index update completed successfully!')
     except Exception as e:
-        print(f'❌ Error updating index: {e}')
+        print(f'[Error] Error updating index: {e}')
         exit(1)
