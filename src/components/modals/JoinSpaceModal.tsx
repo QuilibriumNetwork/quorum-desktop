@@ -6,13 +6,14 @@ import {
   Container,
   FlexCenter,
   Text,
+  Spacer,
 } from '../primitives';
 import SpaceIcon from '../navbar/SpaceIcon';
 import ModalSaveOverlay from './ModalSaveOverlay';
 import './JoinSpaceModal.scss';
 import { useLocation } from 'react-router';
 import { t } from '@lingui/core/macro';
-import { useSpaceJoining, useInviteValidation } from '../../hooks';
+import { useSpaceJoining, useInviteValidation, useSpaces } from '../../hooks';
 import { useModalSaveState } from '../../hooks/business/ui/useModalSaveState';
 import { getInviteDisplayDomain } from '@/utils/inviteDomain';
 
@@ -32,6 +33,7 @@ const JoinSpaceModal: React.FunctionComponent<JoinSpaceModalProps> = (
   const { joinSpace, joining, joinError } = useSpaceJoining();
   const { validatedSpace, validationError, validateInvite } =
     useInviteValidation();
+  const { data: spaces } = useSpaces({});
 
   // Modal save state for joining overlay
   const { isSaving, saveUntilComplete } = useModalSaveState({
@@ -59,6 +61,18 @@ const JoinSpaceModal: React.FunctionComponent<JoinSpaceModalProps> = (
     }
   }, [lookup, validateInvite]);
 
+  // Check if user has already joined this space
+  const isAlreadyMember = React.useMemo(() => {
+    if (!validatedSpace) return false;
+    return spaces.some((s) => s.spaceId === validatedSpace.spaceId);
+  }, [spaces, validatedSpace]);
+
+  const buttonText = React.useMemo(() => {
+    if (joining || isSaving) return t`Joining...`;
+    if (isAlreadyMember) return t`Joined`;
+    return t`Join Space`;
+  }, [joining, isSaving, isAlreadyMember]);
+
   const handleJoin = React.useCallback(async () => {
     if (validatedSpace && lookup) {
       await saveUntilComplete(async () => {
@@ -78,7 +92,7 @@ const JoinSpaceModal: React.FunctionComponent<JoinSpaceModalProps> = (
       title={t`Join Space`}
       visible={props.visible}
       onClose={isSaving ? undefined : props.onClose}
-      closeOnBackdropClick={!isSaving}
+      closeOnBackdropClick={false}
       closeOnEscape={!isSaving}
       size="small"
     >
@@ -90,14 +104,6 @@ const JoinSpaceModal: React.FunctionComponent<JoinSpaceModalProps> = (
       />
 
       <Container className="modal-join-space">
-        <Input
-          className="w-full !text-sm"
-          value={lookup}
-          onChange={(value: string) => setLookup(value)}
-          placeholder={t`Join Space`}
-          error={!!error}
-          errorMessage={error}
-        />
         <Container className="modal-join-space-icon">
           {!validatedSpace ? (
             <SpaceIcon
@@ -122,6 +128,7 @@ const JoinSpaceModal: React.FunctionComponent<JoinSpaceModalProps> = (
                 spaceId={validatedSpace.spaceId}
               />
               <Text
+                as="h3"
                 variant="strong"
                 size="lg"
                 align="center"
@@ -131,10 +138,11 @@ const JoinSpaceModal: React.FunctionComponent<JoinSpaceModalProps> = (
               </Text>
               {validatedSpace.description && (
                 <Text
+                  as="p"
                   variant="default"
                   size="sm"
                   align="center"
-                  className="text-subtle mt-2 max-w-md mx-auto"
+                  className="text-subtle mt-2 max-w-md mx-auto leading-relaxed"
                 >
                   {validatedSpace.description}
                 </Text>
@@ -142,16 +150,25 @@ const JoinSpaceModal: React.FunctionComponent<JoinSpaceModalProps> = (
             </>
           )}
         </Container>
-        <Container className="modal-join-space-actions">
+        <Container className="modal-join-space-actions !-mt-2">
           <Button
             className="w-full sm:w-auto sm:inline-block sm:px-8"
             type="primary"
-            disabled={!validatedSpace || joining || isSaving}
+            disabled={!validatedSpace || joining || isSaving || isAlreadyMember}
             onClick={handleJoin}
           >
-            {t`Join Space`}
+            {buttonText}
           </Button>
         </Container>
+        <Spacer size="xl" />
+        <Input
+          className="w-full !text-sm"
+          value={lookup}
+          onChange={(value: string) => setLookup(value)}
+          placeholder={t`Join Space`}
+          error={!!error}
+          errorMessage={error}
+        />
       </Container>
     </Modal>
   );
