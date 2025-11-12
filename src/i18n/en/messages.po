@@ -31,7 +31,7 @@ msgid "No Role - {count}"
 msgstr "No Role - {count}"
 
 #. js-lingui-explicit-id
-#: src/components/space/Channel.tsx:751
+#: src/components/space/Channel.tsx:851
 msgid "Send a message to #{channel_name}"
 msgstr "Send a message to #{channel_name}"
 
@@ -422,7 +422,7 @@ msgstr "Channel Icon"
 msgid "Channel Managers"
 msgstr "Channel Managers"
 
-#: src/components/space/Channel.tsx:959
+#: src/components/space/Channel.tsx:1066
 msgid "Channel members"
 msgstr "Channel members"
 
@@ -1125,7 +1125,7 @@ msgstr "Joining..."
 msgid "Jump"
 msgstr "Jump"
 
-#: src/components/message/MessageList.tsx:356
+#: src/components/message/MessageList.tsx:409
 msgid "Jump to present"
 msgstr "Jump to present"
 
@@ -1198,6 +1198,10 @@ msgstr "Let's gooooooooo"
 msgid "Light"
 msgstr "Light"
 
+#: src/components/message/MessageList.tsx:420
+msgid "Loading message..."
+msgstr "Loading message..."
+
 #: src/components/notifications/NotificationPanel.tsx:151
 msgid "Loading notifications..."
 msgstr "Loading notifications..."
@@ -1254,7 +1258,7 @@ msgstr "Mark all as read"
 
 #: src/components/direct/DirectMessage.tsx:438
 #: src/components/direct/DirectMessage.tsx:598
-#: src/components/space/Channel.tsx:643
+#: src/components/space/Channel.tsx:732
 msgid "Members List"
 msgstr "Members List"
 
@@ -1314,9 +1318,9 @@ msgstr "No pinned messages yet"
 msgid "No unread notifications"
 msgstr "No unread notifications"
 
-#: src/components/space/Channel.tsx:387
-#: src/components/space/Channel.tsx:816
-#: src/components/space/Channel.tsx:986
+#: src/components/space/Channel.tsx:455
+#: src/components/space/Channel.tsx:917
+#: src/components/space/Channel.tsx:1105
 msgid "No users found!"
 msgstr "No users found!"
 
@@ -1331,7 +1335,7 @@ msgstr "Notification permission not granted"
 #: src/components/modals/SpaceSettingsModal/Account.tsx:187
 #: src/components/modals/UserSettingsModal/Navigation.tsx:17
 #: src/components/modals/UserSettingsModal/Notifications.tsx:24
-#: src/components/space/Channel.tsx:617
+#: src/components/space/Channel.tsx:702
 msgid "Notifications"
 msgstr "Notifications"
 
@@ -1462,7 +1466,7 @@ msgstr "Pinned"
 msgid "Pinned by {0}"
 msgstr "Pinned by {0}"
 
-#: src/components/space/Channel.tsx:581
+#: src/components/space/Channel.tsx:666
 msgid "Pinned Messages"
 msgstr "Pinned Messages"
 
@@ -1648,7 +1652,7 @@ msgid "Search in this Space..."
 msgstr "Search in this Space..."
 
 #: src/components/direct/DirectMessage.tsx:457
-#: src/components/space/Channel.tsx:662
+#: src/components/space/Channel.tsx:751
 msgid "Search Messages"
 msgstr "Search Messages"
 
@@ -1656,7 +1660,11 @@ msgstr "Search Messages"
 msgid "Search messages..."
 msgstr "Search messages..."
 
-#: src/components/space/Channel.tsx:967
+#: src/components/search/SearchResults.tsx:119
+msgid "Search Results"
+msgstr "Search Results"
+
+#: src/components/space/Channel.tsx:1077
 msgid "Search Username or Address"
 msgstr "Search Username or Address"
 
@@ -1749,6 +1757,10 @@ msgstr "Show desktop notifications when you receive new messages while Quorum is
 #: src/components/direct/EmptyDirectMessage.tsx:78
 msgid "show home screen"
 msgstr "show home screen"
+
+#: src/components/search/SearchResults.tsx:180
+msgid "Showing first 500 results. Refine your search for more specific results."
+msgstr "Showing first 500 results. Refine your search for more specific results."
 
 #: src/components/onboarding/Onboarding.native.tsx:461
 #: src/components/onboarding/Onboarding.tsx:314
@@ -2080,8 +2092,8 @@ msgstr "User address here"
 msgid "User does not exist."
 msgstr "User does not exist."
 
-#: src/components/space/Channel.tsx:374
-#: src/components/space/Channel.tsx:803
+#: src/components/space/Channel.tsx:442
+#: src/components/space/Channel.tsx:903
 msgid "Username or Address"
 msgstr "Username or Address"
 
@@ -2178,7 +2190,7 @@ msgid "You cannot delete a group that contains channels. Delete all {channelCoun
 msgstr "You cannot delete a group that contains channels. Delete all {channelCount} channels in this group first."
 
 #: src/components/message/MessageComposer.tsx:296
-#: src/components/space/Channel.tsx:774
+#: src/components/space/Channel.tsx:874
 msgid "You cannot post in this channel"
 msgstr "You cannot post in this channel"
 

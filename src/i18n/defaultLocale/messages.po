@@ -30,7 +30,7 @@ msgid "No Role - {count}"
 msgstr ""
 
 #. js-lingui-explicit-id
-#: src/components/space/Channel.tsx:751
+#: src/components/space/Channel.tsx:851
 msgid "Send a message to #{channel_name}"
 msgstr ""
 
@@ -418,7 +418,7 @@ msgstr ""
 msgid "Channel Managers"
 msgstr ""
 
-#: src/components/space/Channel.tsx:959
+#: src/components/space/Channel.tsx:1066
 msgid "Channel members"
 msgstr ""
 
@@ -1121,7 +1121,7 @@ msgstr ""
 msgid "Jump"
 msgstr ""
 
-#: src/components/message/MessageList.tsx:356
+#: src/components/message/MessageList.tsx:409
 msgid "Jump to present"
 msgstr ""
 
@@ -1194,6 +1194,10 @@ msgstr ""
 msgid "Light"
 msgstr ""
 
+#: src/components/message/MessageList.tsx:420
+msgid "Loading message..."
+msgstr ""
+
 #: src/components/notifications/NotificationPanel.tsx:151
 msgid "Loading notifications..."
 msgstr ""
@@ -1250,7 +1254,7 @@ msgstr ""
 
 #: src/components/direct/DirectMessage.tsx:438
 #: src/components/direct/DirectMessage.tsx:598
-#: src/components/space/Channel.tsx:643
+#: src/components/space/Channel.tsx:732
 msgid "Members List"
 msgstr ""
 
@@ -1310,9 +1314,9 @@ msgstr ""
 msgid "No unread notifications"
 msgstr ""
 
-#: src/components/space/Channel.tsx:387
-#: src/components/space/Channel.tsx:816
-#: src/components/space/Channel.tsx:986
+#: src/components/space/Channel.tsx:455
+#: src/components/space/Channel.tsx:917
+#: src/components/space/Channel.tsx:1105
 msgid "No users found!"
 msgstr ""
 
@@ -1327,7 +1331,7 @@ msgstr ""
 #: src/components/modals/SpaceSettingsModal/Account.tsx:187
 #: src/components/modals/UserSettingsModal/Navigation.tsx:17
 #: src/components/modals/UserSettingsModal/Notifications.tsx:24
-#: src/components/space/Channel.tsx:617
+#: src/components/space/Channel.tsx:702
 msgid "Notifications"
 msgstr ""
 
@@ -1458,7 +1462,7 @@ msgstr ""
 msgid "Pinned by {0}"
 msgstr ""
 
-#: src/components/space/Channel.tsx:581
+#: src/components/space/Channel.tsx:666
 msgid "Pinned Messages"
 msgstr ""
 
@@ -1644,7 +1648,7 @@ msgid "Search in this Space..."
 msgstr ""
 
 #: src/components/direct/DirectMessage.tsx:457
-#: src/components/space/Channel.tsx:662
+#: src/components/space/Channel.tsx:751
 msgid "Search Messages"
 msgstr ""
 
@@ -1652,7 +1656,11 @@ msgstr ""
 msgid "Search messages..."
 msgstr ""
 
-#: src/components/space/Channel.tsx:967
+#: src/components/search/SearchResults.tsx:119
+msgid "Search Results"
+msgstr ""
+
+#: src/components/space/Channel.tsx:1077
 msgid "Search Username or Address"
 msgstr ""
 
@@ -1744,6 +1752,10 @@ msgstr ""
 
 #: src/components/direct/EmptyDirectMessage.tsx:78
 msgid "show home screen"
+msgstr ""
+
+#: src/components/search/SearchResults.tsx:180
+msgid "Showing first 500 results. Refine your search for more specific results."
 msgstr ""
 
 #: src/components/onboarding/Onboarding.native.tsx:461
@@ -2076,8 +2088,8 @@ msgstr ""
 msgid "User does not exist."
 msgstr ""
 
-#: src/components/space/Channel.tsx:374
-#: src/components/space/Channel.tsx:803
+#: src/components/space/Channel.tsx:442
+#: src/components/space/Channel.tsx:903
 msgid "Username or Address"
 msgstr ""
 
@@ -2174,7 +2186,7 @@ msgid "You cannot delete a group that contains channels. Delete all {channelCoun
 msgstr ""
 
 #: src/components/message/MessageComposer.tsx:296
-#: src/components/space/Channel.tsx:774
+#: src/components/space/Channel.tsx:874
 msgid "You cannot post in this channel"
 msgstr ""
 
