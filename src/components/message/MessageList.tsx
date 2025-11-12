@@ -66,6 +66,7 @@ interface MessageListProps {
   lastReadTimestamp?: number;
   onHashMessageNotFound?: (messageId: string) => Promise<void>;
   isLoadingHashMessage?: boolean;
+  scrollToMessageId?: string; // For programmatic scrolling (e.g., auto-jump to first unread)
 }
 
 function useWindowSize() {
@@ -107,6 +108,7 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
       lastReadTimestamp = 0,
       onHashMessageNotFound,
       isLoadingHashMessage,
+      scrollToMessageId,
     } = props;
 
     const [width, height] = useWindowSize();
@@ -270,6 +272,7 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
 
     // Track if we've already processed a hash navigation to prevent re-navigation on messageList changes
     const [hasProcessedHash, setHasProcessedHash] = useState(false);
+    const [hasProcessedScrollTo, setHasProcessedScrollTo] = useState(false);
 
     useEffect(() => {
       if (!init || messageList.length === 0) return;
@@ -323,6 +326,39 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
         }
       }
     }, [init, location.hash, scrollToMessage, highlightMessage, messageList]); // Added new dependencies
+
+    // Handle programmatic scrollToMessageId (e.g., auto-jump to first unread)
+    useEffect(() => {
+      if (!init || messageList.length === 0 || !scrollToMessageId) return;
+
+      // Only process once per scrollToMessageId
+      if (!hasProcessedScrollTo) {
+        const index = messageList.findIndex(
+          (m) => m.messageId === scrollToMessageId
+        );
+
+        if (index !== -1) {
+          setHasProcessedScrollTo(true);
+          setHasJumpedToOldMessage(true); // Disable auto-scroll during pagination
+
+          // Scroll to the message (no highlight - unread line is shown via lastReadTimestamp)
+          setTimeout(() => {
+            scrollToMessage(scrollToMessageId, virtuoso.current, messageList);
+          }, 200);
+        }
+      }
+    }, [
+      init,
+      messageList,
+      scrollToMessageId,
+      hasProcessedScrollTo,
+      scrollToMessage,
+    ]);
+
+    // Reset scrollTo processing flag when scrollToMessageId changes
+    useEffect(() => {
+      setHasProcessedScrollTo(false);
+    }, [scrollToMessageId]);
 
     // Reset hash processing flag when location.hash changes to a new value
     useEffect(() => {

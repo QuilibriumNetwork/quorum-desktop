@@ -116,6 +116,11 @@ const Channel: React.FC<ChannelProps> = ({
   // Hash message loading state
   const [isLoadingHashMessage, setIsLoadingHashMessage] = useState(false);
 
+  // Auto-jump to first unread state
+  const [scrollToMessageId, setScrollToMessageId] = useState<
+    string | undefined
+  >();
+
   // Create refs for textarea (MessageList needs this for scrolling and we need it for focus)
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const messageComposerRef = useRef<MessageComposerRef>(null);
@@ -335,6 +340,86 @@ const Channel: React.FC<ChannelProps> = ({
     },
     [messageDB, spaceId, channelId, queryClient]
   );
+
+  // Auto-jump to first unread message on channel entry
+  useEffect(() => {
+    // Skip if there's a hash navigation in progress
+    if (window.location.hash.startsWith('#msg-')) {
+      return;
+    }
+
+    // Skip if no unread messages
+    if (lastReadTimestamp === 0) {
+      return;
+    }
+
+    // Check for first unread message and load messages around it
+    const jumpToFirstUnread = async () => {
+      try {
+        // Get the first unread message
+        const firstUnread = await messageDB.getFirstUnreadMessage({
+          spaceId,
+          channelId,
+          afterTimestamp: lastReadTimestamp,
+        });
+
+        // If no unread message found, don't jump
+        if (!firstUnread) {
+          return;
+        }
+
+        // Check if the first unread is already in the loaded messages
+        // If it is, we don't need to reload (it will be highlighted via lastReadTimestamp)
+        const isAlreadyLoaded = messageList.some(
+          (m) => m.messageId === firstUnread.messageId
+        );
+
+        if (isAlreadyLoaded) {
+          // Message is already loaded, just scroll to it
+          setScrollToMessageId(firstUnread.messageId);
+          return;
+        }
+
+        // Load messages around the first unread message
+        const { messages, prevCursor, nextCursor } = await loadMessagesAround({
+          messageDB,
+          spaceId,
+          channelId,
+          targetMessageId: firstUnread.messageId,
+          beforeLimit: 40,
+          afterLimit: 40,
+        });
+
+        // Update React Query cache to replace current pages with new data
+        queryClient.setQueryData(
+          buildMessagesKey({ spaceId, channelId }),
+          {
+            pages: [{ messages, prevCursor, nextCursor }],
+            pageParams: [undefined],
+          }
+        );
+
+        // Set the message ID to scroll to
+        setScrollToMessageId(firstUnread.messageId);
+      } catch (error) {
+        console.error('Failed to jump to first unread:', error);
+        // Silently fail - user will see messages from bottom as usual
+      }
+    };
+
+    // Only auto-jump on initial channel mount
+    // We use a small delay to ensure the message list is ready
+    const timer = setTimeout(() => {
+      jumpToFirstUnread();
+    }, 100);
+
+    return () => clearTimeout(timer);
+  }, [channelId, spaceId, lastReadTimestamp, messageDB, messageList, queryClient]);
+
+  // Reset scrollToMessageId when channel changes
+  useEffect(() => {
+    setScrollToMessageId(undefined);
+  }, [channelId]);
 
   // Get current user's role IDs for role mention filtering
   const userRoleIds = React.useMemo(() => {
@@ -832,6 +917,7 @@ const Channel: React.FC<ChannelProps> = ({
                 lastReadTimestamp={lastReadTimestamp}
                 onHashMessageNotFound={handleHashMessageNotFound}
                 isLoadingHashMessage={isLoadingHashMessage}
+                scrollToMessageId={scrollToMessageId}
                 fetchPreviousPage={() => {
                   fetchPreviousPage();
                 }}

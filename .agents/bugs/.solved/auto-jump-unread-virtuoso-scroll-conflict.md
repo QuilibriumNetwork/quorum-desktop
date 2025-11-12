@@ -1,18 +1,53 @@
 # Bug: Auto-Jump to First Unread Message - Blocked by Virtuoso Scroll Positioning
 
-**Status**: 🔴 Blocked - Feature Not Implementable with Current Architecture  
-**Priority**: Medium (UX enhancement, not critical bug)  
-**Type**: Feature Request / Technical Limitation  
-**Component**: MessageList, Virtuoso, Message Loading  
-**Affects**: Channel navigation UX  
-**Created**: 2025-11-11  
-**Last Updated**: 2025-11-11
+**Status**: ✅ RESOLVED
+**Priority**: Medium (UX enhancement, not critical bug)
+**Type**: Feature Request / Technical Limitation
+**Component**: MessageList, Virtuoso, Message Loading
+**Affects**: Channel navigation UX
+**Created**: 2025-11-11
+**Last Updated**: 2025-11-12
+**Resolved**: 2025-11-12
 
 ---
 
-## Summary
+## Resolution (2025-11-12)
 
-Multiple attempts to implement auto-jump to first unread message have failed due to fundamental conflicts with React Virtuoso's scroll positioning system. While the bidirectional message loading implementation works correctly, positioning the viewport at the first unread message after async data loads is not achievable with Virtuoso's current API.
+**Successfully implemented by reusing the hash navigation pattern.**
+
+### Key Insight
+The hash navigation feature (implemented 2025-11-12) already solved the Virtuoso scroll positioning problem. Instead of fighting with `initialTopMostItemIndex` and scroll timing, we:
+
+1. **Load data FIRST** using `loadMessagesAround()` utility
+2. **Update React Query cache** with centered message set
+3. **Scroll AFTER data is loaded** using `scrollToMessage()` helper
+4. **Use programmatic prop** (`scrollToMessageId`) instead of URL hash
+
+This is the exact same pattern as hash navigation, which already works reliably with Virtuoso.
+
+### Implementation
+- Added `scrollToMessageId` prop to MessageList (MessageList.tsx:69,330-356)
+- Added auto-jump logic to Channel.tsx using `getFirstUnreadMessage()` (Channel.tsx:344-422)
+- Reused `loadMessagesAround()`, `scrollToMessage()`, and pagination control flags
+- No flash highlight (unread line indicator is sufficient)
+
+### Why This Works
+The previous attempts failed because they tried to position the viewport **during** or **immediately after** component mount, when Virtuoso's internal state wasn't ready. The hash navigation pattern waits for:
+- Data to load fully
+- React Query cache to update
+- MessageList to re-render with new data
+- **Then** scrolls programmatically
+
+By following the proven hash navigation timing, we bypass all the Virtuoso initialization issues.
+
+### Documentation
+See `.agents/docs/features/messages/auto-jump-first-unread.md` for full implementation details.
+
+---
+
+## Historical Context
+
+Multiple attempts to implement auto-jump to first unread message failed due to fundamental conflicts with React Virtuoso's scroll positioning system. While the bidirectional message loading implementation works correctly, positioning the viewport at the first unread message after async data loads was not achievable until we discovered the hash navigation pattern.
 
 ---
 
@@ -304,47 +339,58 @@ For channels with many unreads:
 
 ---
 
-## Recommendation
+## ~~Recommendation~~ (OBSOLETE - Feature Implemented)
 
-**Do not attempt to implement this feature** without either:
+~~**Do not attempt to implement this feature** without either:~~
 
-1. **Solving the Virtuoso problem**:
-   - Research Virtuoso GitHub issues/discussions
-   - Create minimal reproduction case
-   - Contact Virtuoso maintainers if needed
+~~1. **Solving the Virtuoso problem**:~~
+   ~~- Research Virtuoso GitHub issues/discussions~~
+   ~~- Create minimal reproduction case~~
+   ~~- Contact Virtuoso maintainers if needed~~
 
-2. **Changing virtualization library**:
-   - Major refactor with significant risk
-   - Would need full testing across platforms
+~~2. **Changing virtualization library**:~~
+   ~~- Major refactor with significant risk~~
+   ~~- Would need full testing across platforms~~
 
-3. **Alternative UX approach**:
-   - Manual "jump to unread" button
-   - Different behavior that works with Virtuoso's design
+~~3. **Alternative UX approach**:~~
+   ~~- Manual "jump to unread" button~~
+   ~~- Different behavior that works with Virtuoso's design~~
 
-The bidirectional loading code is solid and can be reused, but the viewport positioning problem is a blocker.
+~~The bidirectional loading code is solid and can be reused, but the viewport positioning problem is a blocker.~~
 
----
-
-## Questions for Future Investigation
-
-1. Does Virtuoso have any undocumented props/APIs for mid-list initial positioning?
-2. Can we delay Virtuoso mount until data is loaded? (May break suspense/loading states)
-3. Is there a way to "trick" Virtuoso into thinking it's at the start when positioned at middle?
-4. Would using `scrollerRef` to directly manipulate DOM scroll work?
-5. Do other apps using Virtuoso have this problem? How do they solve it?
+**UPDATE**: Feature successfully implemented using hash navigation pattern. The key was not to solve Virtuoso's initialization timing, but to work around it by loading data first, then scrolling programmatically after re-render.
 
 ---
 
-**Priority Justification**: Medium priority because:
+## ~~Questions for Future Investigation~~ (ANSWERED)
 
-- ✅ Not a bug - existing functionality works
-- ✅ UX enhancement, not critical feature
-- ✅ Workarounds exist (manual scrolling)
-- ❌ High implementation complexity vs benefit
-- ❌ Multiple failed attempts demonstrate technical barriers
+1. ~~Does Virtuoso have any undocumented props/APIs for mid-list initial positioning?~~
+   - **Answer**: Not needed. The solution was to avoid initial positioning entirely.
 
-**Estimated Effort if Attempted**: 5-10 days (including research, implementation, testing, and potential library migration)
+2. ~~Can we delay Virtuoso mount until data is loaded? (May break suspense/loading states)~~
+   - **Answer**: Not needed. Load data first, mount with initial data, then scroll.
+
+3. ~~Is there a way to "trick" Virtuoso into thinking it's at the start when positioned at middle?~~
+   - **Answer**: Not needed. Let Virtuoso initialize normally at bottom, then scroll programmatically.
+
+4. ~~Would using `scrollerRef` to directly manipulate DOM scroll work?~~
+   - **Answer**: No, but using Virtuoso's `scrollToIndex()` via the scroll helper works perfectly.
+
+5. ~~Do other apps using Virtuoso have this problem? How do they solve it?~~
+   - **Answer**: They likely use the same pattern: load data, mount, then scroll programmatically.
 
 ---
 
-_This bug report consolidates all attempts and learnings. The feature is blocked pending solution to the Virtuoso scroll positioning problem._
+**Priority Justification**: ~~Medium priority because:~~
+
+- ~~✅ Not a bug - existing functionality works~~
+- ~~✅ UX enhancement, not critical feature~~
+- ~~✅ Workarounds exist (manual scrolling)~~
+- ~~❌ High implementation complexity vs benefit~~
+- ~~❌ Multiple failed attempts demonstrate technical barriers~~
+
+**Actual Effort**: ~2 hours (once we discovered the hash navigation pattern could be reused)
+
+---
+
+_This bug report consolidates all attempts and learnings, and documents the successful resolution. The key lesson: when facing seemingly impossible technical barriers, look for proven patterns elsewhere in the codebase that already solve similar problems._
