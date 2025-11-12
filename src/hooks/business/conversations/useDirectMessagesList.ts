@@ -63,19 +63,29 @@ export function useDirectMessagesList(): UseDirectMessagesListReturn {
 
   // Save read time when messages change
   useEffect(() => {
-    messageDB.saveReadTime({
-      conversationId,
-      lastMessageTimestamp: Date.now(),
-    });
-    invalidateConversation({ conversationId });
+    if (messageList.length > 0) {
+      const latestTimestamp = Math.max(
+        ...messageList.map((msg) => msg.createdDate || 0)
+      );
+      messageDB.saveReadTime({
+        conversationId,
+        lastMessageTimestamp: latestTimestamp,
+      });
+      invalidateConversation({ conversationId });
+    }
   }, [messageList, messageDB, conversationId, invalidateConversation]);
 
   const saveReadTime = () => {
-    messageDB.saveReadTime({
-      conversationId,
-      lastMessageTimestamp: Date.now(),
-    });
-    invalidateConversation({ conversationId });
+    if (messageList.length > 0) {
+      const latestTimestamp = Math.max(
+        ...messageList.map((msg) => msg.createdDate || 0)
+      );
+      messageDB.saveReadTime({
+        conversationId,
+        lastMessageTimestamp: latestTimestamp,
+      });
+      invalidateConversation({ conversationId });
+    }
   };
 
   const canDeleteMessages = useCallback(
