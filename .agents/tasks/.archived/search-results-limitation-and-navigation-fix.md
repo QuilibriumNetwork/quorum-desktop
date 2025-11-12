@@ -1,6 +1,6 @@
 # Task: Fix Search Results Limitation and Pagination
 
-**Status**: 📋 Planned
+**Status**: 📋 ARCHIVED
 **Priority**: Medium
 **Type**: Enhancement
 **Component**: Search
@@ -8,6 +8,7 @@
 **Created**: 2025-11-11
 **Updated**: 2025-11-11
 
+> ARCHIVED because redundant compared to the larger optimization task: search-performance-optimization.md
 ---
 
 ## Summary

@@ -659,20 +659,48 @@ export class MessageDB {
       };
       getRequest.onerror = () => reject(getRequest.error);
 
-      transaction.oncomplete = () => resolve();
+      transaction.oncomplete = () => {
+        // Add message to search index after saving
+        this.addMessageToIndex(message).catch((error) => {
+          console.warn('Failed to add message to search index:', error);
+        });
+        resolve();
+      };
       transaction.onerror = () => reject(transaction.error);
     });
   }
 
   async deleteMessage(messageId: string): Promise<void> {
     await this.init();
+
+    // Get message first to extract spaceId and channelId for search index removal
+    const message = await new Promise<Message | undefined>((resolve, reject) => {
+      const transaction = this.db!.transaction(['messages'], 'readonly');
+      const store = transaction.objectStore('messages');
+      const request = store.get(messageId);
+      request.onsuccess = () => resolve(request.result);
+      request.onerror = () => reject(request.error);
+    });
+
     return new Promise((resolve, reject) => {
       const transaction = this.db!.transaction(['messages'], 'readwrite');
       const store = transaction.objectStore('messages');
       const messageRequest = store.delete(messageId);
       messageRequest.onerror = () => reject(messageRequest.error);
 
-      transaction.oncomplete = () => resolve();
+      transaction.oncomplete = () => {
+        // Remove from search index after deleting
+        if (message) {
+          this.removeMessageFromIndex(
+            messageId,
+            message.spaceId,
+            message.channelId
+          ).catch((error) => {
+            console.warn('Failed to remove message from search index:', error);
+          });
+        }
+        resolve();
+      };
       transaction.onerror = () => reject(transaction.error);
     });
   }
@@ -1031,6 +1059,8 @@ export class MessageDB {
       }
     }
 
+    // Sort by relevance score (best match first)
+    // MiniSearch provides well-tuned relevance scoring
     return results.sort((a, b) => b.score - a.score);
   }
 

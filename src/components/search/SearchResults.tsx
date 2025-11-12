@@ -116,7 +116,7 @@ export const SearchResults: React.FC<SearchResultsProps> = ({
       maxWidth={500}
       maxHeight={maxHeight}
       resultsCount={!isTouch ? results.length : undefined}
-      title={!isTouch && searchContext ? `Search ${searchContext.name}` : undefined}
+      title={!isTouch ? t`Search Results` : undefined}
       className={`search-results ${className || ''}`}
       showCloseButton={true}
     >
@@ -157,20 +157,31 @@ export const SearchResults: React.FC<SearchResultsProps> = ({
       {!query.trim() || isLoading || isError || results.length === 0 ? (
         renderEmptyState()
       ) : (
-        <Container className="search-results-list">
-          {/* Staggered loading SearchResultItem components */}
-          {results.map((result, index) => (
-            <SearchResultItem
-              key={`${result.message.messageId}-${index}`}
-              result={result}
-              onNavigate={handleNavigate}
-              highlightTerms={highlightTerms}
-              searchTerms={searchTerms}
-              index={index}
-              displayData={resultsData.get(result.message.messageId)}
-            />
-          ))}
-        </Container>
+        <>
+          <Virtuoso
+            data={results}
+            style={{ height: maxHeight }}
+            className="search-results-list"
+            itemContent={(index, result) => (
+              <SearchResultItem
+                key={`${result.message.messageId}-${index}`}
+                result={result}
+                onNavigate={handleNavigate}
+                highlightTerms={highlightTerms}
+                searchTerms={searchTerms}
+                index={index}
+                displayData={resultsData.get(result.message.messageId)}
+              />
+            )}
+          />
+          {results.length >= 500 && (
+            <Container className="p-3 border-top">
+              <Callout variant="info" className="w-full">
+                {t`Showing first 500 results. Refine your search for more specific results.`}
+              </Callout>
+            </Container>
+          )}
+        </>
       )}
     </DropdownPanel>
   );

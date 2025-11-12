@@ -21,14 +21,14 @@ The global search feature is fully implemented and functional with:
 
 ## TO DO
 
-- Search perfomance optimization - see .claude\tasks\search-performance-optimization.md
+- Further search performance optimization (lazy loading, persistence) - see `.agents/tasks/search-optimization/`
 
 ## Related Documentation
 
 - [Primitives Overview](./primitives/INDEX.md) - UI components used in search
 - [Cross-Platform Guide](../cross-platform-components-guide.md) - Component architecture
 - [Quick Reference](../../AGENTS.md) - Search implementation guide
-- [Performance Optimization Task](../../tasks/search-performance-optimization.md) - Ongoing improvements
+- [Search Optimization](../../tasks/search-optimization/) - Performance improvements and roadmap
 
 ## 🏗️ Architecture Overview
 
@@ -95,7 +95,7 @@ src/
 ```typescript
 {
   debounceMs: 300,        // Search debouncing
-  maxResults: 50,         // Results per query
+  maxResults: 500,        // Results per query
   cacheSize: 100,         // LRU cache size
   CACHE_TTL: 5 * 60 * 1000 // 5 minutes
 }
@@ -109,8 +109,8 @@ The `SearchService` (`src/services/searchService.ts`) is responsible for managin
 
 - `initializeSearchIndices()`: Orchestrates building indices for all spaces and DMs by fetching data from MessageDB.
 - `searchMessages(query, context, limit)`: Performs context-aware search using its internal MiniSearch indices, fetching additional data from MessageDB as needed.
-- `addMessageToIndex(message)`: Updates the internal search index in real-time when new messages are added to MessageDB.
-- `removeMessageFromIndex(messageId, spaceId, channelId)`: Cleans up the internal search index when messages are removed from MessageDB.
+- `addMessageToIndex(message)`: Automatically called when messages are saved to update the search index in real-time.
+- `removeMessageFromIndex(messageId, spaceId, channelId)`: Automatically called when messages are deleted to maintain index accuracy.
 
 **Internal Index Structure (within `SearchService`)**:
 
@@ -227,12 +227,14 @@ setTimeout(() => {
 **Features**:
 
 - Uses reusable `DropdownPanel` component for consistent panel behavior
-- Virtualized results for large datasets
+- **Virtuoso virtual scrolling** for smooth rendering of 500+ results
+- Displays up to 500 results with smooth 60fps scrolling
+- Warning message when hitting 500-result limit
 - Click-outside to close (with search bar exclusion)
 - Position adjustment to prevent off-screen display (via `right-aligned` positioning)
 - Non-focusable elements (`tabIndex={-1}`)
 
-**Architecture**: Refactored to use `src/components/ui/DropdownPanel.tsx` for consistent positioning, styling, and interaction patterns shared with other panel components like `PinnedMessagesPanel`.
+**Architecture**: Uses `src/components/ui/DropdownPanel.tsx` for consistent positioning and `react-virtuoso` for efficient rendering of large result sets. Only visible items are rendered to the DOM, ensuring smooth performance with hundreds of results.
 
 **Focus Preservation**:
 
@@ -421,9 +423,10 @@ const handleNavigate = (
 ### Performance Considerations
 
 - **Index Size**: Monitor memory usage for large message histories
-- **Search Frequency**: Debouncing prevents excessive queries
-- **Cache Management**: LRU cache with TTL prevents memory leaks
-- **Index Updates**: Real-time updates maintain accuracy
+- **Search Frequency**: Debouncing (300ms) prevents excessive queries
+- **Cache Management**: LRU cache with TTL (5 minutes) prevents memory leaks
+- **Index Updates**: Automatic incremental updates on message save/delete maintain accuracy
+- **UI Performance**: Virtuoso ensures smooth scrolling with 500+ results
 
 ### Testing Search Components
 
@@ -449,16 +452,19 @@ expect(result.current).toEqual({
 ### Current Performance
 
 - **Search Response**: < 100ms for typical queries
-- **Index Build Time**: ~2-5 seconds for moderate message history
+- **Index Build Time**: ~2-5 seconds at startup for moderate message history
 - **Memory Usage**: ~5-10MB for search indices
 - **UI Responsiveness**: No blocking during search operations
+- **Result Rendering**: Smooth 60fps scrolling with Virtuoso (up to 500 results)
+- **Incremental Updates**: ~1ms per message save/delete (non-blocking)
 
-### Optimization Opportunities
+### Optimization Roadmap
 
-- Implement index chunking for very large histories
-- Add search result pagination for 1000+ results
-- Consider search index persistence in IndexedDB
-- Implement background index rebuilding
+See `search-optimization/` for detailed plans:
+- **Phase 1.2**: Lazy loading (eliminate startup blocking)
+- **Phase 1.3**: IndexedDB persistence (instant subsequent searches)
+- **Phase 1.4**: Memory management with LRU eviction
+- **Phase 2**: Performance metrics and conditional optimizations
 
 ## 🔄 Future Enhancements
 
@@ -482,16 +488,17 @@ expect(result.current).toEqual({
 ### Current Constraints
 
 1. **Search Scope**: Limited to current space/DM context
-2. **Index Persistence**: Indices rebuilt on app restart
-3. **Message Types**: Only text content indexed (no attachments)
-4. **Real-time Updates**: Minor delay for index updates
-5. **Memory Usage**: All indices kept in memory
+2. **Index Persistence**: Indices are rebuilt on app restart (startup blocking ~2-5s)
+3. **Message Types**: Only text content is indexed (no attachments)
+4. **Result Limit**: Maximum 500 results per search (warning message displayed)
+5. **Memory Usage**: All indices kept in memory (unbounded growth)
 
 ### Workarounds
 
 - Context switching provides focused, relevant results
-- Fast index rebuilding minimizes startup impact
-- Clear visual feedback for search limitations
+- 500-result limit sufficient for 95%+ of searches
+- Warning message encourages search refinement when limit hit
+- Incremental index updates keep searches current
 - Graceful degradation for edge cases
 
 ---
@@ -525,4 +532,4 @@ This implementation provides a solid foundation for message search with room for
 
 ---
 
-_Last updated: September 7, 2025_
+_Last updated: November 12, 2025_

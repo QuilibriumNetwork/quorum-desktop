@@ -30,7 +30,7 @@ export class SearchService {
     this.messageDB = messageDB;
     this.config = {
       debounceMs: 300,
-      maxResults: 50,
+      maxResults: 500,
       cacheSize: 100,
       ...config,
     };
