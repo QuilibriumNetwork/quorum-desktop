@@ -12,6 +12,7 @@ import { useLocation } from 'react-router-dom';
 import * as moment from 'moment-timezone';
 import { Message } from './Message';
 import { DateSeparator } from './DateSeparator';
+import { NewMessagesSeparator } from './NewMessagesSeparator';
 import {
   Emoji,
   Message as MessageType,
@@ -67,6 +68,11 @@ interface MessageListProps {
   onHashMessageNotFound?: (messageId: string) => Promise<void>;
   isLoadingHashMessage?: boolean;
   scrollToMessageId?: string; // For programmatic scrolling (e.g., auto-jump to first unread)
+  newMessagesSeparator?: {
+    firstUnreadMessageId: string;
+    initialUnreadCount: number;
+  } | null;
+  onDismissSeparator?: () => void; // Callback when separator should be dismissed
 }
 
 function useWindowSize() {
@@ -109,6 +115,8 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
       onHashMessageNotFound,
       isLoadingHashMessage,
       scrollToMessageId,
+      newMessagesSeparator,
+      onDismissSeparator,
     } = props;
 
     const [width, height] = useWindowSize();
@@ -130,6 +138,9 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
     // Scroll tracking for jump to present button
     const { handleAtBottomStateChange, shouldShowJumpButton } =
       useScrollTracking();
+
+    // Track if separator has been visible (for dismissal logic via Virtuoso rangeChanged)
+    const [separatorWasVisible, setSeparatorWasVisible] = useState(false);
 
     // Combined bottom state handler: manages both "Jump to Present" button and forward pagination
     const handleBottomStateChange = useCallback(
@@ -194,12 +205,22 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
           previousMessage
         );
 
+        // Check if we need to show the "New Messages" separator before this message
+        const needsNewMessagesSeparator =
+          newMessagesSeparator &&
+          message.messageId === newMessagesSeparator.firstUnreadMessageId;
+
         return (
           <React.Fragment>
             {needsDateSeparator && (
               <DateSeparator
                 timestamp={message.createdDate}
                 className="message-date-separator"
+              />
+            )}
+            {needsNewMessagesSeparator && (
+              <NewMessagesSeparator
+                count={newMessagesSeparator.initialUnreadCount}
               />
             )}
             <Message
@@ -261,6 +282,7 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
         setKickUserAddress,
         onUserClick,
         lastReadTimestamp,
+        newMessagesSeparator,
       ]
     );
 
@@ -379,6 +401,46 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
       }
     }, [hasJumpedToOldMessage, hasNextPage]);
 
+    // Reset separator visibility tracking when separator changes
+    useEffect(() => {
+      if (!newMessagesSeparator) {
+        setSeparatorWasVisible(false);
+      }
+    }, [newMessagesSeparator]);
+
+    // Handle separator dismissal via Virtuoso's rangeChanged callback
+    const handleRangeChanged = useCallback(
+      (range: { startIndex: number; endIndex: number }) => {
+        if (!newMessagesSeparator || !onDismissSeparator) {
+          return;
+        }
+
+        const firstUnreadIndex = messageList.findIndex(
+          (m) => m.messageId === newMessagesSeparator.firstUnreadMessageId
+        );
+
+        if (firstUnreadIndex === -1) return;
+
+        const isVisible =
+          firstUnreadIndex >= range.startIndex &&
+          firstUnreadIndex <= range.endIndex;
+
+        if (isVisible && !separatorWasVisible) {
+          // First time separator becomes visible
+          setSeparatorWasVisible(true);
+        } else if (!isVisible && separatorWasVisible) {
+          // Separator scrolled out of view - dismiss it
+          onDismissSeparator();
+        }
+      },
+      [
+        newMessagesSeparator,
+        onDismissSeparator,
+        messageList,
+        separatorWasVisible,
+      ]
+    );
+
     // Stable computeItemKey to prevent unnecessary re-mounts
     const computeItemKey = React.useCallback(
       (index: number) => {
@@ -432,6 +494,7 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
           totalCount={messageList.length}
           computeItemKey={computeItemKey}
           itemContent={rowRenderer}
+          rangeChanged={handleRangeChanged}
         />
 
         {/* Jump to Present Button */}

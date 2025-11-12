@@ -121,6 +121,12 @@ const Channel: React.FC<ChannelProps> = ({
     string | undefined
   >();
 
+  // New Messages separator state
+  const [newMessagesSeparator, setNewMessagesSeparator] = useState<{
+    firstUnreadMessageId: string;
+    initialUnreadCount: number;
+  } | null>(null);
+
   // Create refs for textarea (MessageList needs this for scrolling and we need it for focus)
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const messageComposerRef = useRef<MessageComposerRef>(null);
@@ -376,7 +382,29 @@ const Channel: React.FC<ChannelProps> = ({
 
         if (isAlreadyLoaded) {
           // Message is already loaded, just scroll to it
+          // Calculate initial unread count (messages after lastReadTimestamp)
+          const unreadCount = messageList.filter(
+            (m) => m.createdDate > lastReadTimestamp
+          ).length;
+
+          // Check if we should show separator (avoid showing during active chatting)
+          const firstUnreadAge = Date.now() - firstUnread.timestamp;
+          const MIN_UNREAD_COUNT = 5; // Show if 5+ unreads
+          const MIN_AGE_MS = 5 * 60 * 1000; // Show if oldest unread is 5+ minutes old
+
+          const shouldShowSeparator =
+            unreadCount >= MIN_UNREAD_COUNT || firstUnreadAge > MIN_AGE_MS;
+
           setScrollToMessageId(firstUnread.messageId);
+
+          // Only set separator if threshold is met
+          if (shouldShowSeparator) {
+            setNewMessagesSeparator({
+              firstUnreadMessageId: firstUnread.messageId,
+              initialUnreadCount: unreadCount,
+            });
+          }
+
           return;
         }
 
@@ -399,8 +427,29 @@ const Channel: React.FC<ChannelProps> = ({
           }
         );
 
+        // Calculate initial unread count from the loaded messages
+        const unreadCount = messages.filter(
+          (m) => m.createdDate > lastReadTimestamp
+        ).length;
+
+        // Check if we should show separator (avoid showing during active chatting)
+        const firstUnreadAge = Date.now() - firstUnread.timestamp;
+        const MIN_UNREAD_COUNT = 5; // Show if 5+ unreads
+        const MIN_AGE_MS = 5 * 60 * 1000; // Show if oldest unread is 5+ minutes old
+
+        const shouldShowSeparator =
+          unreadCount >= MIN_UNREAD_COUNT || firstUnreadAge > MIN_AGE_MS;
+
         // Set the message ID to scroll to
         setScrollToMessageId(firstUnread.messageId);
+
+        // Only set separator if threshold is met
+        if (shouldShowSeparator) {
+          setNewMessagesSeparator({
+            firstUnreadMessageId: firstUnread.messageId,
+            initialUnreadCount: unreadCount,
+          });
+        }
       } catch (error) {
         console.error('Failed to jump to first unread:', error);
         // Silently fail - user will see messages from bottom as usual
@@ -416,9 +465,10 @@ const Channel: React.FC<ChannelProps> = ({
     return () => clearTimeout(timer);
   }, [channelId, spaceId, lastReadTimestamp, messageDB, messageList, queryClient]);
 
-  // Reset scrollToMessageId when channel changes
+  // Reset scrollToMessageId and separator when channel changes
   useEffect(() => {
     setScrollToMessageId(undefined);
+    setNewMessagesSeparator(null);
   }, [channelId]);
 
   // Get current user's role IDs for role mention filtering
@@ -918,6 +968,8 @@ const Channel: React.FC<ChannelProps> = ({
                 onHashMessageNotFound={handleHashMessageNotFound}
                 isLoadingHashMessage={isLoadingHashMessage}
                 scrollToMessageId={scrollToMessageId}
+                newMessagesSeparator={newMessagesSeparator}
+                onDismissSeparator={() => setNewMessagesSeparator(null)}
                 fetchPreviousPage={() => {
                   fetchPreviousPage();
                 }}
