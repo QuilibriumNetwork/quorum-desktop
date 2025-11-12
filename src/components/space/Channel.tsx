@@ -9,6 +9,8 @@ import {
   useConversation,
   useUpdateReadTime,
 } from '../../hooks';
+import { loadMessagesAround } from '../../hooks/queries/messages/loadMessagesAround';
+import { buildMessagesKey } from '../../hooks/queries/messages/buildMessagesKey';
 import { useMessageDB } from '../context/useMessageDB';
 import { useQueryClient } from '@tanstack/react-query';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
@@ -111,6 +113,9 @@ const Channel: React.FC<ChannelProps> = ({
   const headerRef = React.useRef<HTMLDivElement>(null);
   const { submitChannelMessage, messageDB } = useMessageDB();
 
+  // Hash message loading state
+  const [isLoadingHashMessage, setIsLoadingHashMessage] = useState(false);
+
   // Create refs for textarea (MessageList needs this for scrolling and we need it for focus)
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const messageComposerRef = useRef<MessageComposerRef>(null);
@@ -131,6 +136,8 @@ const Channel: React.FC<ChannelProps> = ({
   const {
     messageList,
     fetchPreviousPage,
+    fetchNextPage,
+    hasNextPage,
     canDeleteMessages,
     canPinMessages,
     mapSenderToUser,
@@ -282,6 +289,52 @@ const Channel: React.FC<ChannelProps> = ({
   const handleUserProfileClose = useCallback(() => {
     userProfileModal.handleClose();
   }, [userProfileModal]);
+
+  // Handle hash navigation to messages not in current list
+  const handleHashMessageNotFound = useCallback(
+    async (messageId: string) => {
+      try {
+        setIsLoadingHashMessage(true);
+
+        // Load messages around the target message
+        const { messages, prevCursor, nextCursor } = await loadMessagesAround({
+          messageDB,
+          spaceId,
+          channelId,
+          targetMessageId: messageId,
+          beforeLimit: 40,
+          afterLimit: 40,
+        });
+
+        // Update React Query cache to replace current pages with new data
+        // This creates a single page centered around the target message
+        queryClient.setQueryData(
+          buildMessagesKey({ spaceId, channelId }),
+          {
+            pages: [{ messages, prevCursor, nextCursor }],
+            pageParams: [undefined],
+          }
+        );
+
+        // The MessageList will automatically re-render with the new data
+        // and the existing hash navigation logic will scroll to the message
+      } catch (error) {
+        console.error('Failed to load hash message:', error);
+        // Show error notification (you may want to add a toast/notification here)
+        // For now, just remove the hash to prevent infinite retry
+        setTimeout(() => {
+          window.history.replaceState(
+            null,
+            '',
+            window.location.pathname + window.location.search
+          );
+        }, 100);
+      } finally {
+        setIsLoadingHashMessage(false);
+      }
+    },
+    [messageDB, spaceId, channelId, queryClient]
+  );
 
   // Get current user's role IDs for role mention filtering
   const userRoleIds = React.useMemo(() => {
@@ -777,9 +830,15 @@ const Channel: React.FC<ChannelProps> = ({
                 isDeletionInProgress={isDeletionInProgress}
                 onUserClick={userProfileModal.handleUserClick}
                 lastReadTimestamp={lastReadTimestamp}
+                onHashMessageNotFound={handleHashMessageNotFound}
+                isLoadingHashMessage={isLoadingHashMessage}
                 fetchPreviousPage={() => {
                   fetchPreviousPage();
                 }}
+                fetchNextPage={() => {
+                  fetchNextPage();
+                }}
+                hasNextPage={hasNextPage}
               />
             </div>
 

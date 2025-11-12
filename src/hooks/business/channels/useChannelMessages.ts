@@ -30,7 +30,7 @@ export function useChannelMessages({
   channel,
 }: UseChannelMessagesProps) {
   const user = usePasskeysContext();
-  const { data: messages, fetchPreviousPage } = useMessages({
+  const { data: messages, fetchPreviousPage, fetchNextPage, hasNextPage } = useMessages({
     spaceId,
     channelId,
   });
@@ -152,6 +152,8 @@ export function useChannelMessages({
   return {
     messageList,
     fetchPreviousPage,
+    fetchNextPage,
+    hasNextPage,
     canDeleteMessages,
     canPinMessages,
     mapSenderToUser,

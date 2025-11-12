@@ -38,6 +38,7 @@ This is the main index for all documentation, bug reports, and task management.
 ### Features / Messages
 - [Client-Side Image Compression & Thumbnail System](docs/features/messages/client-side-image-compression.md)
 - [Emoji Picker React - Styling & Customization](docs/features/messages/emoji-picker-react-customization.md)
+- [Hash Navigation to Old Messages](docs/features/messages/hash-navigation-to-old-messages.md)
 - [Markdown Renderer](docs/features/messages/markdown-renderer.md)
 - [Message Signing System](docs/features/messages/message-signing-system.md)
 - [Mobile Message Actions Implementation](docs/features/messages/message-actions-mobile.md)
@@ -61,6 +62,7 @@ This is the main index for all documentation, bug reports, and task management.
 
 ### Active Issues
 - [Brave Browser React Hook Errors - ONGOING INVESTIGATION](bugs/brave-browser-react-hook-errors.md)
+- [Bug: Auto-Jump to First Unread Message - Blocked by Virtuoso Scroll Positioning](bugs/auto-jump-unread-virtuoso-scroll-conflict.md)
 - [DirectMessage Invite Loading Performance Issue](bugs/directmessage-invite-loading-performance.md)
 - [Expired Invite Card Validation Timing Issue](bugs/expired-invite-card-validation-timing.md)
 - [JoinSpaceModal "Invalid JSON" Error Due to Network Issues](bugs/joinspacemodal-invalid-json-network-error.md)
@@ -86,6 +88,9 @@ This is the main index for all documentation, bug reports, and task management.
 - [SOLVED: Modal NavMenu Z-Index Stacking Issue](bugs/.solved/SOLVED_modal-navmenu-zindex-stacking.md)
 - [SOLVED: Right Sidebar Overlay Issue - Navbar Still Visible](bugs/.solved/SOLVED_right-sidebar-overlay.md)
 
+### .Archived
+- [Bug: Auto-jump to First Unread Breaks Initial Message Sync](bugs/.archived/auto-jump-unread-breaks-message-sync.md)
+
 ## 📋 Tasks
 
 ### Pending Tasks
@@ -94,11 +99,9 @@ This is the main index for all documentation, bug reports, and task management.
 - [Combined Text + Image Messages](tasks/combined-text-image-messages.md)
 - [Conversation Deletion State Synchronization](tasks/conversation-deletion-state-sync.md)
 - [Device Identification Improvement](tasks/device-identification-improvement.md)
-- [Docusaurus Developer Documentation Blueprint](tasks/docusaurus-blueprint-v2.md)
-- [Docusaurus Quorum Users Faq](tasks/docusaurus-quorum-users-faq.md)
-- [Docusaurus Setup & Implementation Task](tasks/docusaurus-setup-implementation.md)
 - [Implement Background Sync Queue for User Settings and Async Operations](tasks/background-sync-queue.md)
 - [Server Folders - Discord-Style Grouping Feature](tasks/server-folders-discord-style.md)
+- [Task: Fix Search Results Limitation and Pagination](tasks/search-results-limitation-and-navigation-fix.md)
 - [Task: Implement Delete Public Invite Link Feature](tasks/delete-public-invite-link.md)
 - [Test Suite Implementation Plan for Quorum Desktop](tasks/test-suite-plan.md)
 - [User Config Sync on Existing Accounts](tasks/user-config-sync-on-existing-accounts.md)
@@ -106,6 +109,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [🚀 Search Performance Optimization - Revised Implementation Plan](tasks/search-performance-optimization.md)
 
 ### .Archived
+- [Auto-Jump to First Unread Message + Fix Hash Navigation](tasks/.archived/auto-jump-first-unread.md)
 - [Font Size Management Analysis & Recommendations](tasks/.archived/font-size-management-analysis-2025.md)
 - [Modal System Consolidation via Route Wrapper Component](tasks/.archived/modal-system-consolidation.md)
 - [Research: Mobile Markdown Formatting Options](tasks/.archived/markdown-toolbar-editor_mobile.md)
@@ -118,6 +122,11 @@ This is the main index for all documentation, bug reports, and task management.
 - [CSS Inventory - Complete Codebase Analysis](tasks/.archived/css-refactor/css-inventory.md)
 - [CSS Refactor Analysis Report](tasks/.archived/css-refactor/analysis.md)
 - [CSS Refactor Plan - Claude Code Execution Strategy](tasks/.archived/css-refactor/css-refactor-plan.md)
+
+### Docusaurus
+- [Docusaurus Developer Documentation Blueprint](tasks/docusaurus/docusaurus-blueprint-v2.md)
+- [Docusaurus Quorum Users Faq](tasks/docusaurus/docusaurus-quorum-users-faq.md)
+- [Docusaurus Setup & Implementation Task](tasks/docusaurus/docusaurus-setup-implementation.md)
 
 ### Messagedb
 - [handleNewMessage Integration Tests Guide](tasks/messagedb/handlenewmessage-tests.md)
@@ -166,6 +175,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [CRITICAL: Improve MessageDB Test Coverage for Refactoring Safety](tasks/.done/messagedb-unit-tests.md)
 - [Cross-Platform Component Audit](tasks/.done/components-audit.md)
 - [Cross-Platform Key Backup Implementation](tasks/.done/cross-platform-key-backup.md)
+- [Date Separators UI Enhancement](tasks/.done/date-separators-messages-list.md)
 - [Delete Confirmation System Implementation](tasks/.done/delete-confirmation-system.md)
 - [Direct Message Deletion Feature](tasks/.done/dm-message-deletion.md)
 - [Dropdown Panels Consolidation & Mobile Bottom Sheet Implementation](tasks/.done/dropdown-panels-consolidation.md)
@@ -176,6 +186,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Implement Mention Notification Bubbles](tasks/.done/mention-notification-bubbles.md)
 - [Implement Per-Space Display Names and Avatars with Account Section](tasks/.done/per-space-display-name-avatar.md)
 - [Implementation Plan: Repository Restructure for Cross-Platform Development](tasks/.done/implementation-plan-repo-restructure.md)
+- [Jump to Present Button](tasks/.done/jump-to-present-button-messages-list.md)
 - [Lazy Loading Implementation for Message Lists](tasks/.done/lazy-loading-implementation.md)
 - [Markdown Toolbar Editor](tasks/.done/markdown-toolbar-editor.md)
 - [Mention Counts Performance Optimization](tasks/.done/mention-counts-performance-optimization.md)
@@ -210,6 +221,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Space Icon Mention Bubbles](tasks/.done/space-icon-mention-bubbles.md)
 - [Space Initials Fallback - Optional Space Images](tasks/.done/space-initials-fallback.md)
 - [Tailwind @apply Conversion Audit](tasks/.done/tailwind-apply-conversion-audit.md)
+- [Task: Fix Hash Navigation to Old Messages (#msg-messageId Pattern)](tasks/.done/fix-hash-navigation-to-old-messages.md)
 - [Task: Improve User Mention System](tasks/.done/improve-user-mention-system.md)
 - [Text Styling Consolidation](tasks/.done/text-styling-consolidation-plan.md)
 - [Toast System - Simple Bug Fixes](tasks/.done/toast-system-simple-fix.md)
@@ -224,4 +236,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2025-11-10 18:41:49
+**Last Updated**: 2025-11-12 11:39:46

@@ -1,12 +1,31 @@
 # Task: Fix Hash Navigation to Old Messages (#msg-messageId Pattern)
 
-**Status**: 📋 Planned
+**Status**: ✅ Completed - Moved to Documentation
 **Priority**: High
 **Type**: Bug Fix
 **Component**: MessageList, Channel, useMessages hook
 **Affects**: Search results, Pinned messages, Notifications, Direct URL hashes
 **Created**: 2025-11-11
-**Updated**: 2025-11-11
+**Completed**: 2025-11-12
+
+---
+
+## 📚 Documentation
+
+**This task has been completed and moved to comprehensive documentation:**
+
+👉 **See**: `.agents/docs/features/messages/hash-navigation-to-old-messages.md`
+
+The documentation includes:
+- Complete architecture and implementation details
+- Data flow diagrams
+- Code references with line numbers
+- Comprehensive manual testing guide
+- Performance considerations
+- Error handling strategies
+- Future enhancement opportunities
+
+⚠️ **Testing Status**: Implementation is complete but requires extensive manual testing before being considered production-ready. See documentation for full testing checklist.
 
 ---
 
@@ -482,5 +501,75 @@ This task is **specifically scoped** to avoid the issues that caused previous au
 
 ---
 
+## Implementation Summary (2025-11-12)
+
+### ✅ Completed Components
+
+#### 1. Bidirectional Loading Utility
+**File**: `src/hooks/queries/messages/loadMessagesAround.ts` (new)
+- Created standalone utility function for loading messages around a target message
+- Uses `messageDB.getMessages()` with `direction: 'forward' | 'backward'`
+- Loads 40 messages before and 40 messages after target by default
+- Returns combined message list sorted chronologically with cursor values
+
+#### 2. MessageList Callback Integration
+**File**: `src/components/message/MessageList.tsx`
+- Added `onHashMessageNotFound?: (messageId: string) => Promise<void>` prop
+- Added `isLoadingHashMessage?: boolean` prop for loading state
+- Updated hash navigation effect (lines 279-298) to call callback when message not found
+- Added loading indicator UI (lines 373-383) with spinner and message
+- Maintains backward compatibility: gracefully degrades if callback not provided
+
+#### 3. Channel.tsx Handler Implementation
+**File**: `src/components/space/Channel.tsx`
+- Imported `loadMessagesAround` and `buildMessagesKey` utilities
+- Added `queryClient` initialization for React Query cache management
+- Added `isLoadingHashMessage` state
+- Implemented `handleHashMessageNotFound` callback (lines 292-336):
+  - Loads messages around target using bidirectional utility
+  - Updates React Query cache with new message page centered on target
+  - Shows loading indicator during fetch
+  - Handles errors gracefully with console logging and hash removal
+- Passed callback and loading state to MessageList component (lines 832-833)
+
+### 🎯 How It Works
+
+1. **User clicks link** with `#msg-{messageId}` (from search, pinned, notification, etc.)
+2. **MessageList detects hash** but can't find message in current loaded messages
+3. **MessageList calls callback** `onHashMessageNotFound(messageId)`
+4. **Channel handler loads data**:
+   - Shows loading spinner
+   - Fetches target message to get timestamp
+   - Loads 40 messages before + target + 40 messages after
+   - Updates React Query cache with new page
+5. **MessageList re-renders** with new data, finds message, scrolls to it
+6. **Existing highlight logic** applies highlight animation to target message
+
+### ✅ Type Safety
+- All TypeScript compilation passes for modified files
+- No new type errors introduced
+- Proper typing for async callbacks and React Query cache updates
+
+### 🔄 What Still Needs Testing
+
+**Manual Testing Required**:
+1. Navigation to old messages from search results
+2. Navigation to old pinned messages
+3. Navigation from notification links
+4. Direct URL hashes to old messages
+5. Error handling for deleted/missing messages
+6. Loading indicator visibility during fetch
+7. Interaction with existing infinite scroll
+
+**Edge Cases to Verify**:
+- Messages from months ago
+- Non-existent message IDs
+- Network errors during loading
+- Rapid navigation (multiple clicks)
+- Recent message navigation (should work as before - no regression)
+
+---
+
 *Task created: 2025-11-11*
-*Last updated: 2025-11-11 - Revised with correct architecture and scope*
+*Implementation completed: 2025-11-12*
+*Status: Ready for testing*

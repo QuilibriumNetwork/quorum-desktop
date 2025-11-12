@@ -42,6 +42,8 @@ interface MessageListProps {
   editor: React.RefObject<HTMLTextAreaElement | null>;
   submitMessage: (message: any) => Promise<void>;
   fetchPreviousPage: () => void;
+  fetchNextPage: () => void;
+  hasNextPage?: boolean;
   isSpaceOwner?: boolean;
   canDeleteMessages: (message: MessageType) => boolean;
   canPinMessages?: (message: MessageType) => boolean;
@@ -62,6 +64,8 @@ interface MessageListProps {
     context?: { type: 'mention' | 'message-avatar'; element: HTMLElement }
   ) => void;
   lastReadTimestamp?: number;
+  onHashMessageNotFound?: (messageId: string) => Promise<void>;
+  isLoadingHashMessage?: boolean;
 }
 
 function useWindowSize() {
@@ -87,6 +91,8 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
       editor,
       submitMessage,
       fetchPreviousPage,
+      fetchNextPage,
+      hasNextPage,
       isSpaceOwner,
       canDeleteMessages,
       canPinMessages,
@@ -99,6 +105,8 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
       isDeletionInProgress,
       onUserClick,
       lastReadTimestamp = 0,
+      onHashMessageNotFound,
+      isLoadingHashMessage,
     } = props;
 
     const [width, height] = useWindowSize();
@@ -110,12 +118,30 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
     const [init, setInit] = useState(false);
     const location = useLocation();
 
+    // Track if we've jumped to an old message via hash navigation
+    // This disables auto-scroll during manual pagination
+    const [hasJumpedToOldMessage, setHasJumpedToOldMessage] = useState(false);
+
     // Message highlighting context - replaces direct DOM manipulation
     const { highlightMessage, scrollToMessage } = useMessageHighlight();
 
     // Scroll tracking for jump to present button
     const { handleAtBottomStateChange, shouldShowJumpButton } =
       useScrollTracking();
+
+    // Combined bottom state handler: manages both "Jump to Present" button and forward pagination
+    const handleBottomStateChange = useCallback(
+      (atBottom: boolean) => {
+        // Update jump button visibility
+        handleAtBottomStateChange(atBottom);
+
+        // Fetch next page when scrolling to bottom (for loading newer messages after jumping to old message)
+        if (atBottom && init) {
+          fetchNextPage();
+        }
+      },
+      [handleAtBottomStateChange, fetchNextPage, init]
+    );
 
     // Jump to present handler
     const handleJumpToPresent = useCallback(() => {
@@ -125,6 +151,8 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
           align: 'end',
           behavior: 'auto',
         });
+        // Re-enable auto-scroll when user explicitly jumps to present
+        setHasJumpedToOldMessage(false);
       }
     }, [messageList.length]);
 
@@ -273,16 +301,25 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
             );
           }, 1000);
         } else {
-          // Message not found (possibly deleted) - mark as processed and remove hash
-          // This prevents infinite attempts to find a deleted message
-          setHasProcessedHash(true);
-          setTimeout(() => {
-            history.replaceState(
-              null,
-              '',
-              window.location.pathname + window.location.search
-            );
-          }, 100);
+          // Message not found in current list
+          if (onHashMessageNotFound && !hasProcessedHash) {
+            setHasProcessedHash(true); // Prevent multiple calls
+            setHasJumpedToOldMessage(true); // Disable auto-scroll during pagination
+            onHashMessageNotFound(msgId).catch((error) => {
+              console.error('Failed to load hash message:', error);
+              // Hash will be removed by parent's error handling
+            });
+          } else if (!onHashMessageNotFound) {
+            // Fallback: silently mark as processed if no callback provided
+            setHasProcessedHash(true);
+            setTimeout(() => {
+              history.replaceState(
+                null,
+                '',
+                window.location.pathname + window.location.search
+              );
+            }, 100);
+          }
         }
       }
     }, [init, location.hash, scrollToMessage, highlightMessage, messageList]); // Added new dependencies
@@ -293,6 +330,18 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
         setHasProcessedHash(false);
       }
     }, [location.hash]);
+
+    // Reset jump flag when navigating to a different channel
+    useEffect(() => {
+      setHasJumpedToOldMessage(false);
+    }, [location.pathname]);
+
+    // Automatically reset jump flag when reaching the present (no more pages to load forward)
+    useEffect(() => {
+      if (hasJumpedToOldMessage && hasNextPage === false) {
+        setHasJumpedToOldMessage(false);
+      }
+    }, [hasJumpedToOldMessage, hasNextPage]);
 
     // Stable computeItemKey to prevent unnecessary re-mounts
     const computeItemKey = React.useCallback(
@@ -320,7 +369,7 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
             }
           }}
           atBottomThreshold={5000}
-          atBottomStateChange={handleAtBottomStateChange}
+          atBottomStateChange={handleBottomStateChange}
           alignToBottom={true}
           firstItemIndex={0}
           initialTopMostItemIndex={
@@ -333,12 +382,16 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
             if (isDeletionInProgress) {
               return false;
             }
-            // Original logic for everything else
-            if (isAtBottom) {
-              return 'smooth';
-            } else {
+            // Don't auto-scroll after jumping to old message (prevents scroll during manual pagination)
+            // Only auto-scroll when at the true present (hasNextPage === false)
+            if (hasJumpedToOldMessage) {
               return false;
             }
+            // Only auto-scroll if we're at bottom AND at the true present (no more pages to load)
+            if (isAtBottom && hasNextPage === false) {
+              return 'smooth';
+            }
+            return false;
           }}
           totalCount={messageList.length}
           computeItemKey={computeItemKey}
@@ -355,6 +408,18 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
             >
               <Trans>Jump to present</Trans>
             </Button>
+          </div>
+        )}
+
+        {/* Loading Hash Message Indicator */}
+        {isLoadingHashMessage && (
+          <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50 bg-chat-overlay rounded-lg p-4 shadow-lg">
+            <div className="flex items-center space-x-3">
+              <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-primary" />
+              <span className="text-sm text-primary">
+                <Trans>Loading message...</Trans>
+              </span>
+            </div>
           </div>
         )}
       </>
