@@ -261,49 +261,81 @@ export const MessageMarkdownRenderer: React.FC<MessageMarkdownRendererProps> = (
     text: ({ children, ...props }: any) => {
       const text = String(children);
 
-      // Handle @everyone mentions
-      if (text === '<<<MENTION_EVERYONE>>>') {
-        return (
-          <span className="message-name-mentions-everyone">
-            @everyone
-          </span>
-        );
+      // Check if text contains any mention tokens
+      const hasMentions = text.includes('<<<MENTION_');
+
+      if (!hasMentions) {
+        return <>{children}</>;
       }
 
-      // Handle user mentions
-      const mentionMatch = text.match(/^<<<MENTION_USER:(Qm[a-zA-Z0-9]+)>>>$/);
-      if (mentionMatch && mapSenderToUser && onUserClick) {
-        const address = mentionMatch[1];
-        const user = mapSenderToUser(address);
-        const displayName = user?.displayName || address.substring(0, 8) + '...';
+      // Split text by mention tokens and render each part
+      const parts: React.ReactNode[] = [];
+      let lastIndex = 0;
 
-        return (
-          <span
-            className="message-name-mentions-you cursor-pointer"
-            data-user-address={address}
-            data-user-display-name={displayName}
-            data-user-icon={user?.userIcon || ''}
-          >
-            @{displayName}
-          </span>
-        );
+      // Regex to find all mention tokens (everyone, user, role)
+      const mentionRegex = /<<<MENTION_(EVERYONE|USER:(Qm[a-zA-Z0-9]+)|ROLE:([^:]+):([^>]+))>>>/g;
+      let match;
+
+      while ((match = mentionRegex.exec(text)) !== null) {
+        // Add text before the mention
+        if (match.index > lastIndex) {
+          parts.push(text.substring(lastIndex, match.index));
+        }
+
+        // Determine mention type and render appropriately
+        if (match[1] === 'EVERYONE') {
+          // @everyone mention
+          parts.push(
+            <span key={`mention-${match.index}`} className="message-name-mentions-everyone">
+              @everyone
+            </span>
+          );
+        } else if (match[2]) {
+          // User mention: <<<MENTION_USER:address>>>
+          const address = match[2];
+          if (mapSenderToUser && onUserClick) {
+            const user = mapSenderToUser(address);
+            const displayName = user?.displayName || address.substring(0, 8) + '...';
+
+            parts.push(
+              <span
+                key={`mention-${match.index}`}
+                className="message-name-mentions-you cursor-pointer"
+                data-user-address={address}
+                data-user-display-name={displayName}
+                data-user-icon={user?.userIcon || ''}
+              >
+                @{displayName}
+              </span>
+            );
+          } else {
+            // Fallback if handlers not available
+            parts.push(match[0]);
+          }
+        } else if (match[3] && match[4]) {
+          // Role mention: <<<MENTION_ROLE:roleTag:displayName>>>
+          const roleTag = match[3];
+          const displayName = match[4];
+          parts.push(
+            <span
+              key={`mention-${match.index}`}
+              className="message-name-mentions-you"
+              title={displayName}
+            >
+              @{roleTag}
+            </span>
+          );
+        }
+
+        lastIndex = match.index + match[0].length;
       }
 
-      // Handle role mentions
-      const roleMatch = text.match(/^<<<MENTION_ROLE:([^:]+):(.+)>>>$/);
-      if (roleMatch) {
-        const [, roleTag, displayName] = roleMatch;
-        return (
-          <span
-            className="message-name-mentions-you"
-            title={displayName}
-          >
-            @{roleTag}
-          </span>
-        );
+      // Add remaining text after last mention
+      if (lastIndex < text.length) {
+        parts.push(text.substring(lastIndex));
       }
 
-      return <>{children}</>;
+      return <>{parts}</>;
     },
 
     // Disable most headers but allow H3
@@ -507,47 +539,83 @@ export const MessageMarkdownRenderer: React.FC<MessageMarkdownRendererProps> = (
       // Process children recursively to find and replace mention placeholders
       const processChild = (child: any): any => {
         if (typeof child === 'string') {
-          // Handle @everyone mentions
-          if (child === '<<<MENTION_EVERYONE>>>') {
-            return (
-              <span className="message-name-mentions-everyone">
-                @everyone
-              </span>
-            );
+          const text = child;
+
+          // Check if text contains any mention tokens
+          const hasMentions = text.includes('<<<MENTION_');
+
+          if (!hasMentions) {
+            return child;
           }
 
-          // Handle user mentions
-          const mentionMatch = child.match(/^<<<MENTION_USER:(Qm[a-zA-Z0-9]+)>>>$/);
-          if (mentionMatch && mapSenderToUser && onUserClick) {
-            const address = mentionMatch[1];
-            const user = mapSenderToUser(address);
-            const displayName = user?.displayName || address.substring(0, 8) + '...';
+          // Split text by mention tokens and render each part
+          const parts: React.ReactNode[] = [];
+          let lastIndex = 0;
 
-            return (
-              <span
-                className="message-name-mentions-you cursor-pointer"
-                data-user-address={address}
-                data-user-display-name={displayName}
-                data-user-icon={user?.userIcon || ''}
-              >
-                @{displayName}
-              </span>
-            );
+          // Regex to find all mention tokens (everyone, user, role)
+          const mentionRegex = /<<<MENTION_(EVERYONE|USER:(Qm[a-zA-Z0-9]+)|ROLE:([^:]+):([^>]+))>>>/g;
+          let match;
+
+          while ((match = mentionRegex.exec(text)) !== null) {
+            // Add text before the mention
+            if (match.index > lastIndex) {
+              parts.push(text.substring(lastIndex, match.index));
+            }
+
+            // Determine mention type and render appropriately
+            if (match[1] === 'EVERYONE') {
+              // @everyone mention
+              parts.push(
+                <span key={`mention-p-${match.index}`} className="message-name-mentions-everyone">
+                  @everyone
+                </span>
+              );
+            } else if (match[2]) {
+              // User mention: <<<MENTION_USER:address>>>
+              const address = match[2];
+              if (mapSenderToUser && onUserClick) {
+                const user = mapSenderToUser(address);
+                const displayName = user?.displayName || address.substring(0, 8) + '...';
+
+                parts.push(
+                  <span
+                    key={`mention-p-${match.index}`}
+                    className="message-name-mentions-you cursor-pointer"
+                    data-user-address={address}
+                    data-user-display-name={displayName}
+                    data-user-icon={user?.userIcon || ''}
+                  >
+                    @{displayName}
+                  </span>
+                );
+              } else {
+                // Fallback if handlers not available
+                parts.push(match[0]);
+              }
+            } else if (match[3] && match[4]) {
+              // Role mention: <<<MENTION_ROLE:roleTag:displayName>>>
+              const roleTag = match[3];
+              const displayName = match[4];
+              parts.push(
+                <span
+                  key={`mention-p-${match.index}`}
+                  className="message-name-mentions-you"
+                  title={displayName}
+                >
+                  @{roleTag}
+                </span>
+              );
+            }
+
+            lastIndex = match.index + match[0].length;
           }
 
-          // Handle role mentions
-          const roleMatch = child.match(/^<<<MENTION_ROLE:([^:]+):(.+)>>>$/);
-          if (roleMatch) {
-            const [, roleTag, displayName] = roleMatch;
-            return (
-              <span
-                className="message-name-mentions-you"
-                title={displayName}
-              >
-                @{roleTag}
-              </span>
-            );
+          // Add remaining text after last mention
+          if (lastIndex < text.length) {
+            parts.push(text.substring(lastIndex));
           }
+
+          return <>{parts}</>;
         }
         return child;
       };
