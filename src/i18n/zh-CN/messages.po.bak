@@ -31,7 +31,7 @@ msgid "No Role - {count}"
 msgstr "无角色 - {count}"
 
 #. js-lingui-explicit-id
-#: src/components/space/Channel.tsx:751
+#: src/components/space/Channel.tsx:989
 msgid "Send a message to #{channel_name}"
 msgstr "向 #{channel_name} 发送信息"
 
@@ -41,15 +41,20 @@ msgid "Your profile image size must be {maxFileSize} or less and must be a PNG, 
 msgstr "您的个人资料图片大小必须为 {maxFileSize} 或更小，并且必须是 PNG、JPG 或 JPEG 文件扩展名。"
 
 #. js-lingui-explicit-id
-#: src/components/message/MessageComposer.native.tsx:238
-#: src/components/message/MessageComposer.tsx:338
-msgid "Replying to {user}"
-msgstr "回复 {user}"
+#: src/components/message/NewMessagesSeparator.tsx:69
+msgid "{count} New Messages"
+msgstr ""
 
 #. js-lingui-explicit-id
 #: src/components/message/MessageComposer.native.tsx:134
 msgid "Failed to process image"
 msgstr "无法处理图像"
+
+#. js-lingui-explicit-id
+#: src/components/message/MessageComposer.native.tsx:238
+#: src/components/message/MessageComposer.tsx:338
+msgid "Replying to {user}"
+msgstr "回复 {user}"
 
 #. js-lingui-explicit-id
 #: src/components/message/Message.tsx:262
@@ -67,7 +72,7 @@ msgid "{user} has been kicked"
 msgstr "{user}已被踢出"
 
 #. js-lingui-explicit-id
-#: src/components/direct/DirectMessage.tsx:560
+#: src/components/direct/DirectMessage.tsx:790
 msgid "Send a message to {user}"
 msgstr "给 {user} 发送信息"
 
@@ -182,7 +187,7 @@ msgstr "@roles"
 msgid "@you"
 msgstr "@you"
 
-#: src/components/direct/DirectMessageContactsList.tsx:56
+#: src/components/direct/DirectMessageContactsList.tsx:49
 msgid "+ Add a friend"
 msgstr "添加朋友"
 
@@ -414,7 +419,7 @@ msgstr "频道图标"
 msgid "Channel Managers"
 msgstr "频道管理员"
 
-#: src/components/space/Channel.tsx:959
+#: src/components/space/Channel.tsx:1204
 msgid "Channel members"
 msgstr "频道成员"
 
@@ -490,7 +495,7 @@ msgstr "配置密钥"
 msgid "Connecting"
 msgstr "连接"
 
-#: src/components/direct/DirectMessage.tsx:423
+#: src/components/direct/DirectMessage.tsx:643
 msgid "Conversation settings"
 msgstr "对话设置"
 
@@ -506,9 +511,9 @@ msgstr "对话设置"
 msgid "Copied!"
 msgstr "已复制！"
 
-#: src/components/direct/DirectMessage.tsx:271
-#: src/components/direct/DirectMessage.tsx:403
-#: src/components/direct/DirectMessage.tsx:502
+#: src/components/direct/DirectMessage.tsx:301
+#: src/components/direct/DirectMessage.tsx:623
+#: src/components/direct/DirectMessage.tsx:722
 #: src/components/modals/UserSettingsModal/General.tsx:118
 #: src/components/user/UserProfile.tsx:109
 #: src/components/user/UserStatus.tsx:47
@@ -678,19 +683,18 @@ msgstr "描述此Space的内容..."
 
 #: src/hooks/business/validation/useSpaceNameValidation.ts:54
 msgid "Description cannot contain special characters"
-msgstr ""
+msgstr "描述不能包含特殊字符"
 
 #: src/components/modals/CreateSpaceModal.tsx:119
 msgid "Description must be {MAX_DESCRIPTION_LENGTH} characters or less"
 msgstr "描述必须少于{MAX_DESCRIPTION_LENGTH}个字符"
 
-#: src/components/modals/SpaceSettingsModal/General.tsx:159
 #~ msgid "Description must be {maxDescriptionLength} characters or less"
 #~ msgstr "描述必须少于{maxDescriptionLength}个字符"
 
 #: src/hooks/business/validation/useSpaceNameValidation.ts:58
 msgid "Description must be {maxLength} characters or less"
-msgstr ""
+msgstr "描述必须少于 {maxLength} 个字符"
 
 #: src/components/modals/UserSettingsModal/Notifications.tsx:35
 msgid "Desktop Notifications"
@@ -847,7 +851,7 @@ msgid "Failed to copy to clipboard. Please try again."
 msgstr "复制到剪贴板失败。请再试一次。"
 
 #: src/components/context/MessageDB.bak.tsx:984
-#: src/services/MessageService.ts:1424
+#: src/services/MessageService.ts:1447
 msgid "Failed to decrypt message with any known state"
 msgstr "无法使用任何已知状态解密消息"
 
@@ -1032,7 +1036,7 @@ msgid "Important messages will be pinned here"
 msgstr "重要消息将置顶在这里"
 
 #: src/components/context/MessageDB.bak.tsx:1184
-#: src/services/MessageService.ts:1623
+#: src/services/MessageService.ts:1646
 msgid "invalid address for signature"
 msgstr "签名的地址无效"
 
@@ -1076,7 +1080,7 @@ msgstr "响应无效"
 
 #: src/hooks/business/invites/useInviteUI.ts:32
 msgid "Invite sent"
-msgstr ""
+msgstr "邀请已发送"
 
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:47
 #: src/components/modals/SpaceSettingsModal/Navigation.tsx:25
@@ -1088,21 +1092,23 @@ msgid "Join"
 msgstr "参加"
 
 #: src/components/modals/AddSpaceModal.tsx:259
-#: src/components/modals/JoinSpaceModal.tsx:78
-#: src/components/modals/JoinSpaceModal.tsx:97
-#: src/components/modals/JoinSpaceModal.tsx:152
+#: src/components/modals/JoinSpaceModal.tsx:73
+#: src/components/modals/JoinSpaceModal.tsx:92
+#: src/components/modals/JoinSpaceModal.tsx:168
 msgid "Join Space"
 msgstr "加入空间"
 
+#: src/components/modals/JoinSpaceModal.tsx:72
 #: src/hooks/business/invites/useInviteUI.ts:31
 msgid "Joined"
 msgstr "已加入"
 
 #: src/components/modals/AddSpaceModal.tsx:130
-#: src/components/modals/JoinSpaceModal.tsx:88
+#: src/components/modals/JoinSpaceModal.tsx:102
 msgid "Joining Space..."
 msgstr "加入空间..."
 
+#: src/components/modals/JoinSpaceModal.tsx:71
 #: src/hooks/business/invites/useInviteUI.ts:29
 msgid "Joining..."
 msgstr "加入中..."
@@ -1112,9 +1118,9 @@ msgstr "加入中..."
 msgid "Jump"
 msgstr "跳转"
 
-#: src/components/message/MessageList.tsx:356
+#: src/components/message/MessageList.tsx:508
 msgid "Jump to present"
-msgstr ""
+msgstr "跳转到现在"
 
 #: src/hooks/platform/files/useFileDownload.native.ts:96
 msgid "Key Copied!"
@@ -1185,6 +1191,10 @@ msgstr "我们走吧"
 msgid "Light"
 msgstr "光"
 
+#: src/components/message/MessageList.tsx:519
+msgid "Loading message..."
+msgstr ""
+
 #: src/components/notifications/NotificationPanel.tsx:151
 msgid "Loading notifications..."
 msgstr "正在加载通知..."
@@ -1239,9 +1249,9 @@ msgstr "需要手动备份"
 msgid "Mark all as read"
 msgstr "全部标记为已读"
 
-#: src/components/direct/DirectMessage.tsx:438
-#: src/components/direct/DirectMessage.tsx:598
-#: src/components/space/Channel.tsx:643
+#: src/components/direct/DirectMessage.tsx:658
+#: src/components/direct/DirectMessage.tsx:828
+#: src/components/space/Channel.tsx:867
 msgid "Members List"
 msgstr "成员列表"
 
@@ -1277,6 +1287,10 @@ msgstr "更多反应"
 msgid "New Direct Message"
 msgstr "新的直接消息"
 
+#: src/components/message/NewMessagesSeparator.tsx:64
+msgid "New Messages"
+msgstr ""
+
 #: src/services/InvitationService.ts:68
 msgid "No encryption state found for this space. The space may need to be initialized or you may need to generate a public invite link first."
 msgstr "未找到此空间的加密状态。该空间可能需要初始化，或者您可能需要先生成公共邀请链接。"
@@ -1300,9 +1314,9 @@ msgstr "尚无置顶消息"
 msgid "No unread notifications"
 msgstr "没有未读通知"
 
-#: src/components/space/Channel.tsx:387
-#: src/components/space/Channel.tsx:816
-#: src/components/space/Channel.tsx:986
+#: src/components/space/Channel.tsx:590
+#: src/components/space/Channel.tsx:1055
+#: src/components/space/Channel.tsx:1243
 msgid "No users found!"
 msgstr "未找到用户！"
 
@@ -1317,7 +1331,7 @@ msgstr "未授予通知权限"
 #: src/components/modals/SpaceSettingsModal/Account.tsx:187
 #: src/components/modals/UserSettingsModal/Navigation.tsx:17
 #: src/components/modals/UserSettingsModal/Notifications.tsx:24
-#: src/components/space/Channel.tsx:617
+#: src/components/space/Channel.tsx:837
 msgid "Notifications"
 msgstr "通知"
 
@@ -1447,7 +1461,7 @@ msgstr "已置顶"
 msgid "Pinned by {0}"
 msgstr "由 {0} 置顶"
 
-#: src/components/space/Channel.tsx:581
+#: src/components/space/Channel.tsx:801
 msgid "Pinned Messages"
 msgstr "置顶消息"
 
@@ -1514,7 +1528,7 @@ msgstr "只读"
 msgid "Read only channel"
 msgstr "只读频道"
 
-#: src/components/direct/DirectMessageContactsList.tsx:49
+#: src/components/direct/DirectMessageContactsList.tsx:42
 msgid "Ready to start a truly private conversation?"
 msgstr "准备开始真正私密的对话吗？"
 
@@ -1632,8 +1646,8 @@ msgstr "在此空间中搜索"
 msgid "Search in this Space..."
 msgstr "在此空间中搜索..."
 
-#: src/components/direct/DirectMessage.tsx:457
-#: src/components/space/Channel.tsx:662
+#: src/components/direct/DirectMessage.tsx:677
+#: src/components/space/Channel.tsx:886
 msgid "Search Messages"
 msgstr "搜索消息"
 
@@ -1641,7 +1655,11 @@ msgstr "搜索消息"
 msgid "Search messages..."
 msgstr "搜索消息..."
 
-#: src/components/space/Channel.tsx:967
+#: src/components/search/SearchResults.tsx:119
+msgid "Search Results"
+msgstr ""
+
+#: src/components/space/Channel.tsx:1215
 msgid "Search Username or Address"
 msgstr "搜索用户名或地址"
 
@@ -1733,6 +1751,10 @@ msgstr "当 Quorum 在后台时，收到新消息时显示桌面通知。启用�
 #: src/components/direct/EmptyDirectMessage.tsx:78
 msgid "show home screen"
 msgstr "显示主屏幕"
+
+#: src/components/search/SearchResults.tsx:180
+msgid "Showing first 500 results. Refine your search for more specific results."
+msgstr ""
 
 #: src/components/onboarding/Onboarding.native.tsx:461
 #: src/components/onboarding/Onboarding.tsx:314
@@ -1934,7 +1956,7 @@ msgstr "无法处理图像。请使用更小的图像。"
 msgid "Unable to process sticker image. Please use a smaller image."
 msgstr "无法处理贴纸图像。请使用更小的图像。"
 
-#: src/components/modals/JoinSpaceModal.tsx:106
+#: src/components/modals/JoinSpaceModal.tsx:112
 msgid "Unknown"
 msgstr "未知"
 
@@ -1953,9 +1975,9 @@ msgstr "未知时间"
 #: src/components/context/MessageDB.bak.tsx:3043
 #: src/components/context/MessageDB.bak.tsx:4122
 #: src/components/context/MessageDB.bak.tsx:5292
-#: src/components/direct/DirectMessage.tsx:131
-#: src/components/direct/DirectMessage.tsx:146
-#: src/components/direct/DirectMessage.tsx:333
+#: src/components/direct/DirectMessage.tsx:161
+#: src/components/direct/DirectMessage.tsx:176
+#: src/components/direct/DirectMessage.tsx:519
 #: src/components/message/MessageComposer.tsx:412
 #: src/components/message/MessageComposer.tsx:419
 #: src/components/message/MessageEditTextarea.tsx:225
@@ -1981,12 +2003,12 @@ msgstr "未知时间"
 #: src/hooks/business/search/useSearchResultDisplaySpace.ts:45
 #: src/hooks/queries/userInfo/buildUserInfoFetcher.ts:15
 #: src/services/EncryptionService.ts:138
-#: src/services/MessageService.ts:1090
-#: src/services/MessageService.ts:1262
-#: src/services/MessageService.ts:1402
-#: src/services/MessageService.ts:1420
-#: src/services/MessageService.ts:2756
-#: src/services/MessageService.ts:2907
+#: src/services/MessageService.ts:1113
+#: src/services/MessageService.ts:1285
+#: src/services/MessageService.ts:1425
+#: src/services/MessageService.ts:1443
+#: src/services/MessageService.ts:2779
+#: src/services/MessageService.ts:2930
 msgid "Unknown User"
 msgstr "未知用户"
 
@@ -2016,7 +2038,7 @@ msgstr "取消置顶此帖子"
 msgid "Unpinned!"
 msgstr "已取消置顶！"
 
-#: src/components/direct/DirectMessage.tsx:548
+#: src/components/direct/DirectMessage.tsx:778
 msgid "Until you reply, this sender will not see your display name or profile picture"
 msgstr "在您回复之前，此发件人将无法看到您的显示名称或个人资料图片"
 
@@ -2059,8 +2081,8 @@ msgstr "用户地址在这里"
 msgid "User does not exist."
 msgstr "用户不存在。"
 
-#: src/components/space/Channel.tsx:374
-#: src/components/space/Channel.tsx:803
+#: src/components/space/Channel.tsx:577
+#: src/components/space/Channel.tsx:1041
 msgid "Username or Address"
 msgstr "用户名或地址"
 
@@ -2138,7 +2160,7 @@ msgstr "当您签署一条消息时，您确认它来自您的密钥。当您不
 msgid "Yesterday at {timeFormatted}"
 msgstr "昨天 {0}"
 
-#: src/components/direct/DirectMessage.tsx:265
+#: src/components/direct/DirectMessage.tsx:295
 #: src/hooks/business/search/useBatchSearchResultsDisplay.ts:139
 msgid "You"
 msgstr "你"
@@ -2156,7 +2178,7 @@ msgid "You cannot delete a group that contains channels. Delete all {channelCoun
 msgstr "你不能删除包含频道的组。请先删除该组中的所有{channelCount}个频道。"
 
 #: src/components/message/MessageComposer.tsx:296
-#: src/components/space/Channel.tsx:774
+#: src/components/space/Channel.tsx:1012
 msgid "You cannot post in this channel"
 msgstr "你不能在此频道中发布"
 

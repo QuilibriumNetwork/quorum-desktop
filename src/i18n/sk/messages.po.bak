@@ -31,7 +31,7 @@ msgid "No Role - {count}"
 msgstr "Bez úlohy - {count}"
 
 #. js-lingui-explicit-id
-#: src/components/space/Channel.tsx:751
+#: src/components/space/Channel.tsx:989
 msgid "Send a message to #{channel_name}"
 msgstr "Poslať správu #{channel_name}"
 
@@ -41,15 +41,20 @@ msgid "Your profile image size must be {maxFileSize} or less and must be a PNG, 
 msgstr "Veľkosť vašej profilovej fotografie musí byť {maxFileSize} alebo menej a musí mať príponu PNG, JPG alebo JPEG."
 
 #. js-lingui-explicit-id
-#: src/components/message/MessageComposer.native.tsx:238
-#: src/components/message/MessageComposer.tsx:338
-msgid "Replying to {user}"
-msgstr "Odpovedám {user}"
+#: src/components/message/NewMessagesSeparator.tsx:69
+msgid "{count} New Messages"
+msgstr ""
 
 #. js-lingui-explicit-id
 #: src/components/message/MessageComposer.native.tsx:134
 msgid "Failed to process image"
 msgstr "Nepodarilo sa spracovať obrázok"
+
+#. js-lingui-explicit-id
+#: src/components/message/MessageComposer.native.tsx:238
+#: src/components/message/MessageComposer.tsx:338
+msgid "Replying to {user}"
+msgstr "Odpovedám {user}"
 
 #. js-lingui-explicit-id
 #: src/components/message/Message.tsx:262
@@ -67,7 +72,7 @@ msgid "{user} has been kicked"
 msgstr "{user} bol vykopnutý"
 
 #. js-lingui-explicit-id
-#: src/components/direct/DirectMessage.tsx:560
+#: src/components/direct/DirectMessage.tsx:790
 msgid "Send a message to {user}"
 msgstr "Poslať správu {user}"
 
@@ -182,7 +187,7 @@ msgstr "@roles"
 msgid "@you"
 msgstr "@you"
 
-#: src/components/direct/DirectMessageContactsList.tsx:56
+#: src/components/direct/DirectMessageContactsList.tsx:49
 msgid "+ Add a friend"
 msgstr "Pridať priateľa"
 
@@ -414,7 +419,7 @@ msgstr "Ikona kanála"
 msgid "Channel Managers"
 msgstr "Správcovia kanála"
 
-#: src/components/space/Channel.tsx:959
+#: src/components/space/Channel.tsx:1204
 msgid "Channel members"
 msgstr "Členovia kanála"
 
@@ -490,7 +495,7 @@ msgstr "Konfiguračný kľúč"
 msgid "Connecting"
 msgstr "Pripájanie"
 
-#: src/components/direct/DirectMessage.tsx:423
+#: src/components/direct/DirectMessage.tsx:643
 msgid "Conversation settings"
 msgstr "Nastavenia konverzácie"
 
@@ -506,9 +511,9 @@ msgstr "Nastavenia konverzácie"
 msgid "Copied!"
 msgstr "Skopírované!"
 
-#: src/components/direct/DirectMessage.tsx:271
-#: src/components/direct/DirectMessage.tsx:403
-#: src/components/direct/DirectMessage.tsx:502
+#: src/components/direct/DirectMessage.tsx:301
+#: src/components/direct/DirectMessage.tsx:623
+#: src/components/direct/DirectMessage.tsx:722
 #: src/components/modals/UserSettingsModal/General.tsx:118
 #: src/components/user/UserProfile.tsx:109
 #: src/components/user/UserStatus.tsx:47
@@ -678,19 +683,18 @@ msgstr "Popíšte, o čom tento Space je..."
 
 #: src/hooks/business/validation/useSpaceNameValidation.ts:54
 msgid "Description cannot contain special characters"
-msgstr ""
+msgstr "Popis nemôže obsahovať špeciálne znaky"
 
 #: src/components/modals/CreateSpaceModal.tsx:119
 msgid "Description must be {MAX_DESCRIPTION_LENGTH} characters or less"
 msgstr "Popis musí mať {MAX_DESCRIPTION_LENGTH} znakov alebo menej"
 
-#: src/components/modals/SpaceSettingsModal/General.tsx:159
 #~ msgid "Description must be {maxDescriptionLength} characters or less"
 #~ msgstr "Popis musí mať {maxDescriptionLength} znakov alebo menej"
 
 #: src/hooks/business/validation/useSpaceNameValidation.ts:58
 msgid "Description must be {maxLength} characters or less"
-msgstr ""
+msgstr "Popis musí mať {maxLength} znakov alebo menej"
 
 #: src/components/modals/UserSettingsModal/Notifications.tsx:35
 msgid "Desktop Notifications"
@@ -847,7 +851,7 @@ msgid "Failed to copy to clipboard. Please try again."
 msgstr "Nepodarilo sa skopírovať do schránky. Skús to znova."
 
 #: src/components/context/MessageDB.bak.tsx:984
-#: src/services/MessageService.ts:1424
+#: src/services/MessageService.ts:1447
 msgid "Failed to decrypt message with any known state"
 msgstr "Nepodarilo sa dešifrovať správu s akýmkoľvek známym stavom"
 
@@ -1032,7 +1036,7 @@ msgid "Important messages will be pinned here"
 msgstr "Dôležité správy budú pripnuté tu"
 
 #: src/components/context/MessageDB.bak.tsx:1184
-#: src/services/MessageService.ts:1623
+#: src/services/MessageService.ts:1646
 msgid "invalid address for signature"
 msgstr "neplatná adresa pre podpis"
 
@@ -1076,7 +1080,7 @@ msgstr "neplatná odpoveď"
 
 #: src/hooks/business/invites/useInviteUI.ts:32
 msgid "Invite sent"
-msgstr ""
+msgstr "Pozvánka odoslaná"
 
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:47
 #: src/components/modals/SpaceSettingsModal/Navigation.tsx:25
@@ -1088,21 +1092,23 @@ msgid "Join"
 msgstr "Pripojiť sa"
 
 #: src/components/modals/AddSpaceModal.tsx:259
-#: src/components/modals/JoinSpaceModal.tsx:78
-#: src/components/modals/JoinSpaceModal.tsx:97
-#: src/components/modals/JoinSpaceModal.tsx:152
+#: src/components/modals/JoinSpaceModal.tsx:73
+#: src/components/modals/JoinSpaceModal.tsx:92
+#: src/components/modals/JoinSpaceModal.tsx:168
 msgid "Join Space"
 msgstr "Pridaj sa do Priestoru"
 
+#: src/components/modals/JoinSpaceModal.tsx:72
 #: src/hooks/business/invites/useInviteUI.ts:31
 msgid "Joined"
 msgstr "Pridané"
 
 #: src/components/modals/AddSpaceModal.tsx:130
-#: src/components/modals/JoinSpaceModal.tsx:88
+#: src/components/modals/JoinSpaceModal.tsx:102
 msgid "Joining Space..."
 msgstr "Pridávanie do Space..."
 
+#: src/components/modals/JoinSpaceModal.tsx:71
 #: src/hooks/business/invites/useInviteUI.ts:29
 msgid "Joining..."
 msgstr "Pripojovanie..."
@@ -1112,9 +1118,9 @@ msgstr "Pripojovanie..."
 msgid "Jump"
 msgstr "Skákať"
 
-#: src/components/message/MessageList.tsx:356
+#: src/components/message/MessageList.tsx:508
 msgid "Jump to present"
-msgstr ""
+msgstr "Preskočiť na prítomnosť"
 
 #: src/hooks/platform/files/useFileDownload.native.ts:96
 msgid "Key Copied!"
@@ -1185,6 +1191,10 @@ msgstr "Ideme!"
 msgid "Light"
 msgstr "Svetlo"
 
+#: src/components/message/MessageList.tsx:519
+msgid "Loading message..."
+msgstr ""
+
 #: src/components/notifications/NotificationPanel.tsx:151
 msgid "Loading notifications..."
 msgstr "Načítavam upozornenia..."
@@ -1239,9 +1249,9 @@ msgstr "Vyžaduje sa manuálna záloha"
 msgid "Mark all as read"
 msgstr "Označiť všetko ako prečítané"
 
-#: src/components/direct/DirectMessage.tsx:438
-#: src/components/direct/DirectMessage.tsx:598
-#: src/components/space/Channel.tsx:643
+#: src/components/direct/DirectMessage.tsx:658
+#: src/components/direct/DirectMessage.tsx:828
+#: src/components/space/Channel.tsx:867
 msgid "Members List"
 msgstr "Zoznam členov"
 
@@ -1277,6 +1287,10 @@ msgstr "Viac reakcií"
 msgid "New Direct Message"
 msgstr "Nová priama správa"
 
+#: src/components/message/NewMessagesSeparator.tsx:64
+msgid "New Messages"
+msgstr ""
+
 #: src/services/InvitationService.ts:68
 msgid "No encryption state found for this space. The space may need to be initialized or you may need to generate a public invite link first."
 msgstr "Nebola nájdená žiadna šifrovacia situácia pre tento space. Space môže byť potrebné inicializovať alebo môže byť potrebné najprv vygenerovať verejný pozývací odkaz."
@@ -1300,9 +1314,9 @@ msgstr "Zatiaľ žiadne pripnuté správy"
 msgid "No unread notifications"
 msgstr "Žiadne neprečítané oznámenia"
 
-#: src/components/space/Channel.tsx:387
-#: src/components/space/Channel.tsx:816
-#: src/components/space/Channel.tsx:986
+#: src/components/space/Channel.tsx:590
+#: src/components/space/Channel.tsx:1055
+#: src/components/space/Channel.tsx:1243
 msgid "No users found!"
 msgstr "Žiadni používatelia nenájdení!"
 
@@ -1317,7 +1331,7 @@ msgstr "Povolenie na oznámenia nebolo udelené"
 #: src/components/modals/SpaceSettingsModal/Account.tsx:187
 #: src/components/modals/UserSettingsModal/Navigation.tsx:17
 #: src/components/modals/UserSettingsModal/Notifications.tsx:24
-#: src/components/space/Channel.tsx:617
+#: src/components/space/Channel.tsx:837
 msgid "Notifications"
 msgstr "Oznámenia"
 
@@ -1447,7 +1461,7 @@ msgstr "Pripnuté"
 msgid "Pinned by {0}"
 msgstr "Pripnuté od {0}"
 
-#: src/components/space/Channel.tsx:581
+#: src/components/space/Channel.tsx:801
 msgid "Pinned Messages"
 msgstr "Pripnuté správy"
 
@@ -1514,7 +1528,7 @@ msgstr "Len na čítanie"
 msgid "Read only channel"
 msgstr "Kanál len na čítanie"
 
-#: src/components/direct/DirectMessageContactsList.tsx:49
+#: src/components/direct/DirectMessageContactsList.tsx:42
 msgid "Ready to start a truly private conversation?"
 msgstr "Pripravení začať naozaj súkromnú konverzáciu?"
 
@@ -1632,8 +1646,8 @@ msgstr "Vyhľadávanie v tomto Priestore"
 msgid "Search in this Space..."
 msgstr "Hľadať v tomto Space..."
 
-#: src/components/direct/DirectMessage.tsx:457
-#: src/components/space/Channel.tsx:662
+#: src/components/direct/DirectMessage.tsx:677
+#: src/components/space/Channel.tsx:886
 msgid "Search Messages"
 msgstr "Hľadať správy"
 
@@ -1641,7 +1655,11 @@ msgstr "Hľadať správy"
 msgid "Search messages..."
 msgstr "Vyhľadávanie správ..."
 
-#: src/components/space/Channel.tsx:967
+#: src/components/search/SearchResults.tsx:119
+msgid "Search Results"
+msgstr ""
+
+#: src/components/space/Channel.tsx:1215
 msgid "Search Username or Address"
 msgstr "Hľadať používateľské meno alebo adresu"
 
@@ -1733,6 +1751,10 @@ msgstr "Zobrazujte oznámenia na pracovnej ploche, keď dostanete nové správy,
 #: src/components/direct/EmptyDirectMessage.tsx:78
 msgid "show home screen"
 msgstr "zobraziť domovskú obrazovku"
+
+#: src/components/search/SearchResults.tsx:180
+msgid "Showing first 500 results. Refine your search for more specific results."
+msgstr ""
 
 #: src/components/onboarding/Onboarding.native.tsx:461
 #: src/components/onboarding/Onboarding.tsx:314
@@ -1934,7 +1956,7 @@ msgstr "Nemožno spracovať obrázok. Prosím, použite menší obrázok."
 msgid "Unable to process sticker image. Please use a smaller image."
 msgstr "Nemožno spracovať nálepku obrázok. Prosím, použite menší obrázok."
 
-#: src/components/modals/JoinSpaceModal.tsx:106
+#: src/components/modals/JoinSpaceModal.tsx:112
 msgid "Unknown"
 msgstr "Neznáme"
 
@@ -1953,9 +1975,9 @@ msgstr "Neznámy čas"
 #: src/components/context/MessageDB.bak.tsx:3043
 #: src/components/context/MessageDB.bak.tsx:4122
 #: src/components/context/MessageDB.bak.tsx:5292
-#: src/components/direct/DirectMessage.tsx:131
-#: src/components/direct/DirectMessage.tsx:146
-#: src/components/direct/DirectMessage.tsx:333
+#: src/components/direct/DirectMessage.tsx:161
+#: src/components/direct/DirectMessage.tsx:176
+#: src/components/direct/DirectMessage.tsx:519
 #: src/components/message/MessageComposer.tsx:412
 #: src/components/message/MessageComposer.tsx:419
 #: src/components/message/MessageEditTextarea.tsx:225
@@ -1981,12 +2003,12 @@ msgstr "Neznámy čas"
 #: src/hooks/business/search/useSearchResultDisplaySpace.ts:45
 #: src/hooks/queries/userInfo/buildUserInfoFetcher.ts:15
 #: src/services/EncryptionService.ts:138
-#: src/services/MessageService.ts:1090
-#: src/services/MessageService.ts:1262
-#: src/services/MessageService.ts:1402
-#: src/services/MessageService.ts:1420
-#: src/services/MessageService.ts:2756
-#: src/services/MessageService.ts:2907
+#: src/services/MessageService.ts:1113
+#: src/services/MessageService.ts:1285
+#: src/services/MessageService.ts:1425
+#: src/services/MessageService.ts:1443
+#: src/services/MessageService.ts:2779
+#: src/services/MessageService.ts:2930
 msgid "Unknown User"
 msgstr "Neznámy používateľ"
 
@@ -2016,7 +2038,7 @@ msgstr "Odpripnúť tento príspevok"
 msgid "Unpinned!"
 msgstr "Odpripnuté!"
 
-#: src/components/direct/DirectMessage.tsx:548
+#: src/components/direct/DirectMessage.tsx:778
 msgid "Until you reply, this sender will not see your display name or profile picture"
 msgstr "Pokým neodpíšete, tento odosielateľ neuvidí vaše zobrazené meno ani profilový obrázok"
 
@@ -2059,8 +2081,8 @@ msgstr "Adresa používateľa tu"
 msgid "User does not exist."
 msgstr "Používateľ neexistuje."
 
-#: src/components/space/Channel.tsx:374
-#: src/components/space/Channel.tsx:803
+#: src/components/space/Channel.tsx:577
+#: src/components/space/Channel.tsx:1041
 msgid "Username or Address"
 msgstr "Používateľské meno alebo adresa"
 
@@ -2138,7 +2160,7 @@ msgstr "Keď podpíšete správu, potvrdzujete, že pochádza z vášho kľúča
 msgid "Yesterday at {timeFormatted}"
 msgstr "Včera o {timeFormatted}"
 
-#: src/components/direct/DirectMessage.tsx:265
+#: src/components/direct/DirectMessage.tsx:295
 #: src/hooks/business/search/useBatchSearchResultsDisplay.ts:139
 msgid "You"
 msgstr "Vy"
@@ -2156,7 +2178,7 @@ msgid "You cannot delete a group that contains channels. Delete all {channelCoun
 msgstr "Nemôžete odstrániť skupinu, ktorá obsahuje kanály. Najprv odstráňte všetky {channelCount} kanály v tejto skupine."
 
 #: src/components/message/MessageComposer.tsx:296
-#: src/components/space/Channel.tsx:774
+#: src/components/space/Channel.tsx:1012
 msgid "You cannot post in this channel"
 msgstr "Nemôžete prispievať v tomto kanáli"
 

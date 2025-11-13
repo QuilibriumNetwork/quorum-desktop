@@ -31,7 +31,7 @@ msgid "No Role - {count}"
 msgstr "בלי תפקיד - {count}"
 
 #. js-lingui-explicit-id
-#: src/components/space/Channel.tsx:751
+#: src/components/space/Channel.tsx:989
 msgid "Send a message to #{channel_name}"
 msgstr "שלח הודעה ל-#{channel_name}"
 
@@ -41,15 +41,20 @@ msgid "Your profile image size must be {maxFileSize} or less and must be a PNG, 
 msgstr "גודל תמונת הפרופיל שלך חייב להיות {maxFileSize} או פחות וחייב להיות עם סיומת קובץ PNG, JPG או JPEG."
 
 #. js-lingui-explicit-id
-#: src/components/message/MessageComposer.native.tsx:238
-#: src/components/message/MessageComposer.tsx:338
-msgid "Replying to {user}"
-msgstr "עונה ל-{user}"
+#: src/components/message/NewMessagesSeparator.tsx:69
+msgid "{count} New Messages"
+msgstr ""
 
 #. js-lingui-explicit-id
 #: src/components/message/MessageComposer.native.tsx:134
 msgid "Failed to process image"
 msgstr "לא הצלחנו לעבד את התמונה"
+
+#. js-lingui-explicit-id
+#: src/components/message/MessageComposer.native.tsx:238
+#: src/components/message/MessageComposer.tsx:338
+msgid "Replying to {user}"
+msgstr "עונה ל-{user}"
 
 #. js-lingui-explicit-id
 #: src/components/message/Message.tsx:262
@@ -67,7 +72,7 @@ msgid "{user} has been kicked"
 msgstr "{user} הוקרן"
 
 #. js-lingui-explicit-id
-#: src/components/direct/DirectMessage.tsx:560
+#: src/components/direct/DirectMessage.tsx:790
 msgid "Send a message to {user}"
 msgstr "שלח הודעה ל-{user}"
 
@@ -182,7 +187,7 @@ msgstr "@תפקידים"
 msgid "@you"
 msgstr "@אתה"
 
-#: src/components/direct/DirectMessageContactsList.tsx:56
+#: src/components/direct/DirectMessageContactsList.tsx:49
 msgid "+ Add a friend"
 msgstr "הוסף חבר"
 
@@ -414,7 +419,7 @@ msgstr "אייקון ערוץ"
 msgid "Channel Managers"
 msgstr "מנהלי ערוץ"
 
-#: src/components/space/Channel.tsx:959
+#: src/components/space/Channel.tsx:1204
 msgid "Channel members"
 msgstr "חברי ערוץ"
 
@@ -490,7 +495,7 @@ msgstr "מפתח קונפיגורציה"
 msgid "Connecting"
 msgstr "מתחבר"
 
-#: src/components/direct/DirectMessage.tsx:423
+#: src/components/direct/DirectMessage.tsx:643
 msgid "Conversation settings"
 msgstr "הגדרות שיחה"
 
@@ -506,9 +511,9 @@ msgstr "הגדרות שיחה"
 msgid "Copied!"
 msgstr "נשמר!"
 
-#: src/components/direct/DirectMessage.tsx:271
-#: src/components/direct/DirectMessage.tsx:403
-#: src/components/direct/DirectMessage.tsx:502
+#: src/components/direct/DirectMessage.tsx:301
+#: src/components/direct/DirectMessage.tsx:623
+#: src/components/direct/DirectMessage.tsx:722
 #: src/components/modals/UserSettingsModal/General.tsx:118
 #: src/components/user/UserProfile.tsx:109
 #: src/components/user/UserStatus.tsx:47
@@ -678,19 +683,18 @@ msgstr "תאר על מה ה-Space הזה..."
 
 #: src/hooks/business/validation/useSpaceNameValidation.ts:54
 msgid "Description cannot contain special characters"
-msgstr ""
+msgstr "תיאור לא יכול להכיל תווים מיוחדים"
 
 #: src/components/modals/CreateSpaceModal.tsx:119
 msgid "Description must be {MAX_DESCRIPTION_LENGTH} characters or less"
 msgstr "התיאור חייב להיות באורך של {MAX_DESCRIPTION_LENGTH} תווים או פחות"
 
-#: src/components/modals/SpaceSettingsModal/General.tsx:159
 #~ msgid "Description must be {maxDescriptionLength} characters or less"
 #~ msgstr "התיאור חייב להיות באורך של {maxDescriptionLength} תווים או פחות"
 
 #: src/hooks/business/validation/useSpaceNameValidation.ts:58
 msgid "Description must be {maxLength} characters or less"
-msgstr ""
+msgstr "התיאור חייב להיות {maxLength} תווים או פחות"
 
 #: src/components/modals/UserSettingsModal/Notifications.tsx:35
 msgid "Desktop Notifications"
@@ -847,7 +851,7 @@ msgid "Failed to copy to clipboard. Please try again."
 msgstr "נכשל בהעתקה ללוח. אנא נסה שוב."
 
 #: src/components/context/MessageDB.bak.tsx:984
-#: src/services/MessageService.ts:1424
+#: src/services/MessageService.ts:1447
 msgid "Failed to decrypt message with any known state"
 msgstr "נכשל בפענוח ההודעה עם כל מצב ידוע"
 
@@ -1032,7 +1036,7 @@ msgid "Important messages will be pinned here"
 msgstr "הודעות חשובות יימנעו כאן"
 
 #: src/components/context/MessageDB.bak.tsx:1184
-#: src/services/MessageService.ts:1623
+#: src/services/MessageService.ts:1646
 msgid "invalid address for signature"
 msgstr "כתובת לא חוקית לחתימה"
 
@@ -1076,7 +1080,7 @@ msgstr "תשובה לא חוקית"
 
 #: src/hooks/business/invites/useInviteUI.ts:32
 msgid "Invite sent"
-msgstr ""
+msgstr "הזמנה נשלחה"
 
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:47
 #: src/components/modals/SpaceSettingsModal/Navigation.tsx:25
@@ -1088,21 +1092,23 @@ msgid "Join"
 msgstr "הצטרף"
 
 #: src/components/modals/AddSpaceModal.tsx:259
-#: src/components/modals/JoinSpaceModal.tsx:78
-#: src/components/modals/JoinSpaceModal.tsx:97
-#: src/components/modals/JoinSpaceModal.tsx:152
+#: src/components/modals/JoinSpaceModal.tsx:73
+#: src/components/modals/JoinSpaceModal.tsx:92
+#: src/components/modals/JoinSpaceModal.tsx:168
 msgid "Join Space"
 msgstr "הצטרף לחלל"
 
+#: src/components/modals/JoinSpaceModal.tsx:72
 #: src/hooks/business/invites/useInviteUI.ts:31
 msgid "Joined"
 msgstr "הצטרף"
 
 #: src/components/modals/AddSpaceModal.tsx:130
-#: src/components/modals/JoinSpaceModal.tsx:88
+#: src/components/modals/JoinSpaceModal.tsx:102
 msgid "Joining Space..."
 msgstr "מצטרף למרחב..."
 
+#: src/components/modals/JoinSpaceModal.tsx:71
 #: src/hooks/business/invites/useInviteUI.ts:29
 msgid "Joining..."
 msgstr "מצטרף..."
@@ -1112,9 +1118,9 @@ msgstr "מצטרף..."
 msgid "Jump"
 msgstr "קפיצה"
 
-#: src/components/message/MessageList.tsx:356
+#: src/components/message/MessageList.tsx:508
 msgid "Jump to present"
-msgstr ""
+msgstr "קפיצה להווה"
 
 #: src/hooks/platform/files/useFileDownload.native.ts:96
 msgid "Key Copied!"
@@ -1185,6 +1191,10 @@ msgstr "בוא נלך"
 msgid "Light"
 msgstr "אור"
 
+#: src/components/message/MessageList.tsx:519
+msgid "Loading message..."
+msgstr ""
+
 #: src/components/notifications/NotificationPanel.tsx:151
 msgid "Loading notifications..."
 msgstr "טוען הודעות..."
@@ -1239,9 +1249,9 @@ msgstr "גיבוי ידני נדרש"
 msgid "Mark all as read"
 msgstr "סמן הכל כנקרא"
 
-#: src/components/direct/DirectMessage.tsx:438
-#: src/components/direct/DirectMessage.tsx:598
-#: src/components/space/Channel.tsx:643
+#: src/components/direct/DirectMessage.tsx:658
+#: src/components/direct/DirectMessage.tsx:828
+#: src/components/space/Channel.tsx:867
 msgid "Members List"
 msgstr "רשימת חברים"
 
@@ -1277,6 +1287,10 @@ msgstr "יותר תגובות"
 msgid "New Direct Message"
 msgstr "הודעה ישירה חדשה"
 
+#: src/components/message/NewMessagesSeparator.tsx:64
+msgid "New Messages"
+msgstr ""
+
 #: src/services/InvitationService.ts:68
 msgid "No encryption state found for this space. The space may need to be initialized or you may need to generate a public invite link first."
 msgstr "לא נמצא מצב הצפנה עבור ה-Space הזה. ייתכן שה-Space צריך להיות מאותחל או שתצטרך ליצור קישור הזמנה ציבורי קודם."
@@ -1300,9 +1314,9 @@ msgstr "אין הודעות מוצמדות עדיין"
 msgid "No unread notifications"
 msgstr "אין הודעות לא נקראות"
 
-#: src/components/space/Channel.tsx:387
-#: src/components/space/Channel.tsx:816
-#: src/components/space/Channel.tsx:986
+#: src/components/space/Channel.tsx:590
+#: src/components/space/Channel.tsx:1055
+#: src/components/space/Channel.tsx:1243
 msgid "No users found!"
 msgstr "לא נמצאו משתמשים!"
 
@@ -1317,7 +1331,7 @@ msgstr "הרשאת התראה לא ניתנה"
 #: src/components/modals/SpaceSettingsModal/Account.tsx:187
 #: src/components/modals/UserSettingsModal/Navigation.tsx:17
 #: src/components/modals/UserSettingsModal/Notifications.tsx:24
-#: src/components/space/Channel.tsx:617
+#: src/components/space/Channel.tsx:837
 msgid "Notifications"
 msgstr "התראות"
 
@@ -1447,7 +1461,7 @@ msgstr "מוצמד"
 msgid "Pinned by {0}"
 msgstr "מוצמד על ידי {0}"
 
-#: src/components/space/Channel.tsx:581
+#: src/components/space/Channel.tsx:801
 msgid "Pinned Messages"
 msgstr "הודעות מוצמדות"
 
@@ -1514,7 +1528,7 @@ msgstr "קריאה בלבד"
 msgid "Read only channel"
 msgstr "ערוץ קריאה בלבד"
 
-#: src/components/direct/DirectMessageContactsList.tsx:49
+#: src/components/direct/DirectMessageContactsList.tsx:42
 msgid "Ready to start a truly private conversation?"
 msgstr "מוכן להתחיל שיחה פרטית באמת?"
 
@@ -1632,8 +1646,8 @@ msgstr "חפש בחלל הזה"
 msgid "Search in this Space..."
 msgstr "חפש במרחב הזה..."
 
-#: src/components/direct/DirectMessage.tsx:457
-#: src/components/space/Channel.tsx:662
+#: src/components/direct/DirectMessage.tsx:677
+#: src/components/space/Channel.tsx:886
 msgid "Search Messages"
 msgstr "חפש הודעות"
 
@@ -1641,7 +1655,11 @@ msgstr "חפש הודעות"
 msgid "Search messages..."
 msgstr "חפש הודעות..."
 
-#: src/components/space/Channel.tsx:967
+#: src/components/search/SearchResults.tsx:119
+msgid "Search Results"
+msgstr ""
+
+#: src/components/space/Channel.tsx:1215
 msgid "Search Username or Address"
 msgstr "חפש שם משתמש או כתובת"
 
@@ -1733,6 +1751,10 @@ msgstr "הצג התראות שולחן עבודה כאשר אתה מקבל הו�
 #: src/components/direct/EmptyDirectMessage.tsx:78
 msgid "show home screen"
 msgstr "הצג מסך בית"
+
+#: src/components/search/SearchResults.tsx:180
+msgid "Showing first 500 results. Refine your search for more specific results."
+msgstr ""
 
 #: src/components/onboarding/Onboarding.native.tsx:461
 #: src/components/onboarding/Onboarding.tsx:314
@@ -1934,7 +1956,7 @@ msgstr "לא ניתן לעבד את התמונה. אנא השתמשו בתמונ
 msgid "Unable to process sticker image. Please use a smaller image."
 msgstr "לא ניתן לעבד את תמונת המדבקה. אנא השתמשו בתמונה קטנה יותר."
 
-#: src/components/modals/JoinSpaceModal.tsx:106
+#: src/components/modals/JoinSpaceModal.tsx:112
 msgid "Unknown"
 msgstr "לא ידוע"
 
@@ -1953,9 +1975,9 @@ msgstr "זמן לא ידוע"
 #: src/components/context/MessageDB.bak.tsx:3043
 #: src/components/context/MessageDB.bak.tsx:4122
 #: src/components/context/MessageDB.bak.tsx:5292
-#: src/components/direct/DirectMessage.tsx:131
-#: src/components/direct/DirectMessage.tsx:146
-#: src/components/direct/DirectMessage.tsx:333
+#: src/components/direct/DirectMessage.tsx:161
+#: src/components/direct/DirectMessage.tsx:176
+#: src/components/direct/DirectMessage.tsx:519
 #: src/components/message/MessageComposer.tsx:412
 #: src/components/message/MessageComposer.tsx:419
 #: src/components/message/MessageEditTextarea.tsx:225
@@ -1981,12 +2003,12 @@ msgstr "זמן לא ידוע"
 #: src/hooks/business/search/useSearchResultDisplaySpace.ts:45
 #: src/hooks/queries/userInfo/buildUserInfoFetcher.ts:15
 #: src/services/EncryptionService.ts:138
-#: src/services/MessageService.ts:1090
-#: src/services/MessageService.ts:1262
-#: src/services/MessageService.ts:1402
-#: src/services/MessageService.ts:1420
-#: src/services/MessageService.ts:2756
-#: src/services/MessageService.ts:2907
+#: src/services/MessageService.ts:1113
+#: src/services/MessageService.ts:1285
+#: src/services/MessageService.ts:1425
+#: src/services/MessageService.ts:1443
+#: src/services/MessageService.ts:2779
+#: src/services/MessageService.ts:2930
 msgid "Unknown User"
 msgstr "משתמש לא ידוע"
 
@@ -2016,7 +2038,7 @@ msgstr "הסר הצמדה מהפוסט הזה"
 msgid "Unpinned!"
 msgstr "הוסר הצמדה!"
 
-#: src/components/direct/DirectMessage.tsx:548
+#: src/components/direct/DirectMessage.tsx:778
 msgid "Until you reply, this sender will not see your display name or profile picture"
 msgstr "עד שתשיב, השולח הזה לא יראה את שם התצוגה או את תמונת הפרופיל שלך"
 
@@ -2059,8 +2081,8 @@ msgstr "כתובת משתמש כאן"
 msgid "User does not exist."
 msgstr "המשתמש אינו קיים."
 
-#: src/components/space/Channel.tsx:374
-#: src/components/space/Channel.tsx:803
+#: src/components/space/Channel.tsx:577
+#: src/components/space/Channel.tsx:1041
 msgid "Username or Address"
 msgstr "שם משתמש או כתובת"
 
@@ -2138,7 +2160,7 @@ msgstr "כאשר אתה חותם על הודעה, אתה מאשר שהיא מג�
 msgid "Yesterday at {timeFormatted}"
 msgstr "אתמול ב{timeFormatted}"
 
-#: src/components/direct/DirectMessage.tsx:265
+#: src/components/direct/DirectMessage.tsx:295
 #: src/hooks/business/search/useBatchSearchResultsDisplay.ts:139
 msgid "You"
 msgstr "אתה"
@@ -2156,7 +2178,7 @@ msgid "You cannot delete a group that contains channels. Delete all {channelCoun
 msgstr "אינך יכול למחוק קבוצה שמכילה ערוצים. מחק קודם את כל {channelCount} הערוצים בקבוצה זו."
 
 #: src/components/message/MessageComposer.tsx:296
-#: src/components/space/Channel.tsx:774
+#: src/components/space/Channel.tsx:1012
 msgid "You cannot post in this channel"
 msgstr "אינך יכול לפרסם בערוץ זה"
 

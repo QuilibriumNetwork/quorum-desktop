@@ -31,7 +31,7 @@ msgid "No Role - {count}"
 msgstr "Rol Yok - {count}"
 
 #. js-lingui-explicit-id
-#: src/components/space/Channel.tsx:751
+#: src/components/space/Channel.tsx:989
 msgid "Send a message to #{channel_name}"
 msgstr "#{channel_name} kanalına bir mesaj gönder"
 
@@ -41,15 +41,20 @@ msgid "Your profile image size must be {maxFileSize} or less and must be a PNG, 
 msgstr "Profil resminizin boyutu {maxFileSize} veya daha az olmalı ve PNG, JPG veya JPEG dosya uzantısına sahip olmalıdır."
 
 #. js-lingui-explicit-id
-#: src/components/message/MessageComposer.native.tsx:238
-#: src/components/message/MessageComposer.tsx:338
-msgid "Replying to {user}"
-msgstr "{user} ile yanıt veriliyor"
+#: src/components/message/NewMessagesSeparator.tsx:69
+msgid "{count} New Messages"
+msgstr ""
 
 #. js-lingui-explicit-id
 #: src/components/message/MessageComposer.native.tsx:134
 msgid "Failed to process image"
 msgstr "Görüntü işlenemedi"
+
+#. js-lingui-explicit-id
+#: src/components/message/MessageComposer.native.tsx:238
+#: src/components/message/MessageComposer.tsx:338
+msgid "Replying to {user}"
+msgstr "{user} ile yanıt veriliyor"
 
 #. js-lingui-explicit-id
 #: src/components/message/Message.tsx:262
@@ -67,7 +72,7 @@ msgid "{user} has been kicked"
 msgstr "{user} atıldı"
 
 #. js-lingui-explicit-id
-#: src/components/direct/DirectMessage.tsx:560
+#: src/components/direct/DirectMessage.tsx:790
 msgid "Send a message to {user}"
 msgstr "{user} ile bir mesaj gönder"
 
@@ -182,7 +187,7 @@ msgstr "@roles"
 msgid "@you"
 msgstr "@you"
 
-#: src/components/direct/DirectMessageContactsList.tsx:56
+#: src/components/direct/DirectMessageContactsList.tsx:49
 msgid "+ Add a friend"
 msgstr "Bir arkadaş ekle"
 
@@ -414,7 +419,7 @@ msgstr "Kanal İkonu"
 msgid "Channel Managers"
 msgstr "Kanal Yöneticileri"
 
-#: src/components/space/Channel.tsx:959
+#: src/components/space/Channel.tsx:1204
 msgid "Channel members"
 msgstr "Kanal üyeleri"
 
@@ -490,7 +495,7 @@ msgstr "Yapılandırma Anahtarı"
 msgid "Connecting"
 msgstr "Bağlanıyor"
 
-#: src/components/direct/DirectMessage.tsx:423
+#: src/components/direct/DirectMessage.tsx:643
 msgid "Conversation settings"
 msgstr "Konuşma ayarları"
 
@@ -506,9 +511,9 @@ msgstr "Konuşma Ayarları"
 msgid "Copied!"
 msgstr "Kopyalandı!"
 
-#: src/components/direct/DirectMessage.tsx:271
-#: src/components/direct/DirectMessage.tsx:403
-#: src/components/direct/DirectMessage.tsx:502
+#: src/components/direct/DirectMessage.tsx:301
+#: src/components/direct/DirectMessage.tsx:623
+#: src/components/direct/DirectMessage.tsx:722
 #: src/components/modals/UserSettingsModal/General.tsx:118
 #: src/components/user/UserProfile.tsx:109
 #: src/components/user/UserStatus.tsx:47
@@ -678,19 +683,18 @@ msgstr "Bu Space'in ne hakkında olduğunu tanımlayın..."
 
 #: src/hooks/business/validation/useSpaceNameValidation.ts:54
 msgid "Description cannot contain special characters"
-msgstr ""
+msgstr "Açıklama özel karakterler içermemelidir"
 
 #: src/components/modals/CreateSpaceModal.tsx:119
 msgid "Description must be {MAX_DESCRIPTION_LENGTH} characters or less"
 msgstr "Açıklama {MAX_DESCRIPTION_LENGTH} karakterden az olmalıdır"
 
-#: src/components/modals/SpaceSettingsModal/General.tsx:159
 #~ msgid "Description must be {maxDescriptionLength} characters or less"
 #~ msgstr "Açıklama {maxDescriptionLength} karakterden az olmalıdır"
 
 #: src/hooks/business/validation/useSpaceNameValidation.ts:58
 msgid "Description must be {maxLength} characters or less"
-msgstr ""
+msgstr "Açıklama {maxLength} karakter veya daha az olmalıdır"
 
 #: src/components/modals/UserSettingsModal/Notifications.tsx:35
 msgid "Desktop Notifications"
@@ -847,7 +851,7 @@ msgid "Failed to copy to clipboard. Please try again."
 msgstr "Pano'ya kopyalama başarısız. Lütfen tekrar deneyin."
 
 #: src/components/context/MessageDB.bak.tsx:984
-#: src/services/MessageService.ts:1424
+#: src/services/MessageService.ts:1447
 msgid "Failed to decrypt message with any known state"
 msgstr "Bilinmeyen bir durumla mesajı şifreyi çözemedi"
 
@@ -1032,7 +1036,7 @@ msgid "Important messages will be pinned here"
 msgstr "Önemli mesajlar burada sabitlenecek"
 
 #: src/components/context/MessageDB.bak.tsx:1184
-#: src/services/MessageService.ts:1623
+#: src/services/MessageService.ts:1646
 msgid "invalid address for signature"
 msgstr "imza için geçersiz adres"
 
@@ -1076,7 +1080,7 @@ msgstr "geçersiz yanıt"
 
 #: src/hooks/business/invites/useInviteUI.ts:32
 msgid "Invite sent"
-msgstr ""
+msgstr "Davet gönderildi"
 
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:47
 #: src/components/modals/SpaceSettingsModal/Navigation.tsx:25
@@ -1088,21 +1092,23 @@ msgid "Join"
 msgstr "Katıl"
 
 #: src/components/modals/AddSpaceModal.tsx:259
-#: src/components/modals/JoinSpaceModal.tsx:78
-#: src/components/modals/JoinSpaceModal.tsx:97
-#: src/components/modals/JoinSpaceModal.tsx:152
+#: src/components/modals/JoinSpaceModal.tsx:73
+#: src/components/modals/JoinSpaceModal.tsx:92
+#: src/components/modals/JoinSpaceModal.tsx:168
 msgid "Join Space"
 msgstr "Uzaya Katıl"
 
+#: src/components/modals/JoinSpaceModal.tsx:72
 #: src/hooks/business/invites/useInviteUI.ts:31
 msgid "Joined"
 msgstr "Katıldı"
 
 #: src/components/modals/AddSpaceModal.tsx:130
-#: src/components/modals/JoinSpaceModal.tsx:88
+#: src/components/modals/JoinSpaceModal.tsx:102
 msgid "Joining Space..."
 msgstr "Space'ya Katılıyor..."
 
+#: src/components/modals/JoinSpaceModal.tsx:71
 #: src/hooks/business/invites/useInviteUI.ts:29
 msgid "Joining..."
 msgstr "Katılıyor..."
@@ -1112,9 +1118,9 @@ msgstr "Katılıyor..."
 msgid "Jump"
 msgstr "Atla"
 
-#: src/components/message/MessageList.tsx:356
+#: src/components/message/MessageList.tsx:508
 msgid "Jump to present"
-msgstr ""
+msgstr "Şu ana atla"
 
 #: src/hooks/platform/files/useFileDownload.native.ts:96
 msgid "Key Copied!"
@@ -1185,6 +1191,10 @@ msgstr "Hadi gidelim"
 msgid "Light"
 msgstr "Işık"
 
+#: src/components/message/MessageList.tsx:519
+msgid "Loading message..."
+msgstr ""
+
 #: src/components/notifications/NotificationPanel.tsx:151
 msgid "Loading notifications..."
 msgstr "Bildirimler yükleniyor..."
@@ -1239,9 +1249,9 @@ msgstr "Manuel Yedekleme Gerekiyor"
 msgid "Mark all as read"
 msgstr "Hepsini okunmuş olarak işaretle"
 
-#: src/components/direct/DirectMessage.tsx:438
-#: src/components/direct/DirectMessage.tsx:598
-#: src/components/space/Channel.tsx:643
+#: src/components/direct/DirectMessage.tsx:658
+#: src/components/direct/DirectMessage.tsx:828
+#: src/components/space/Channel.tsx:867
 msgid "Members List"
 msgstr "Üyeler Listesi"
 
@@ -1277,6 +1287,10 @@ msgstr "Daha fazla tepki"
 msgid "New Direct Message"
 msgstr "Yeni Doğrudan Mesaj"
 
+#: src/components/message/NewMessagesSeparator.tsx:64
+msgid "New Messages"
+msgstr ""
+
 #: src/services/InvitationService.ts:68
 msgid "No encryption state found for this space. The space may need to be initialized or you may need to generate a public invite link first."
 msgstr "Bu alan için şifreleme durumu bulunamadı. Alanın başlatılması gerekebilir veya önce bir genel davet bağlantısı oluşturmanız gerekebilir."
@@ -1300,9 +1314,9 @@ msgstr "Henüz sabitlenmiş mesaj yok"
 msgid "No unread notifications"
 msgstr "Yeni okunmamış bildirim yok"
 
-#: src/components/space/Channel.tsx:387
-#: src/components/space/Channel.tsx:816
-#: src/components/space/Channel.tsx:986
+#: src/components/space/Channel.tsx:590
+#: src/components/space/Channel.tsx:1055
+#: src/components/space/Channel.tsx:1243
 msgid "No users found!"
 msgstr "Kullanıcı bulunamadı!"
 
@@ -1317,7 +1331,7 @@ msgstr "Bildirim izni verilmedi"
 #: src/components/modals/SpaceSettingsModal/Account.tsx:187
 #: src/components/modals/UserSettingsModal/Navigation.tsx:17
 #: src/components/modals/UserSettingsModal/Notifications.tsx:24
-#: src/components/space/Channel.tsx:617
+#: src/components/space/Channel.tsx:837
 msgid "Notifications"
 msgstr "Bildirimler"
 
@@ -1447,7 +1461,7 @@ msgstr "Sabitlenmiş"
 msgid "Pinned by {0}"
 msgstr "{0} tarafından sabitlenmiş"
 
-#: src/components/space/Channel.tsx:581
+#: src/components/space/Channel.tsx:801
 msgid "Pinned Messages"
 msgstr "Sabitlenmiş Mesajlar"
 
@@ -1514,7 +1528,7 @@ msgstr "Sadece okunur"
 msgid "Read only channel"
 msgstr "Sadece okunur kanal"
 
-#: src/components/direct/DirectMessageContactsList.tsx:49
+#: src/components/direct/DirectMessageContactsList.tsx:42
 msgid "Ready to start a truly private conversation?"
 msgstr "Gerçekten özel bir sohbete başlamaya hazır mısınız?"
 
@@ -1632,8 +1646,8 @@ msgstr "bu Alan'da ara"
 msgid "Search in this Space..."
 msgstr "Bu Uzayda Ara..."
 
-#: src/components/direct/DirectMessage.tsx:457
-#: src/components/space/Channel.tsx:662
+#: src/components/direct/DirectMessage.tsx:677
+#: src/components/space/Channel.tsx:886
 msgid "Search Messages"
 msgstr "Mesajları Ara"
 
@@ -1641,7 +1655,11 @@ msgstr "Mesajları Ara"
 msgid "Search messages..."
 msgstr "mesajları arıyor..."
 
-#: src/components/space/Channel.tsx:967
+#: src/components/search/SearchResults.tsx:119
+msgid "Search Results"
+msgstr ""
+
+#: src/components/space/Channel.tsx:1215
 msgid "Search Username or Address"
 msgstr "Kullanıcı Adı veya Adres Ara"
 
@@ -1733,6 +1751,10 @@ msgstr "Quorum arka planda olduğunda yeni mesajlar aldığınızda masaüstü b
 #: src/components/direct/EmptyDirectMessage.tsx:78
 msgid "show home screen"
 msgstr "ana ekranı göster"
+
+#: src/components/search/SearchResults.tsx:180
+msgid "Showing first 500 results. Refine your search for more specific results."
+msgstr ""
 
 #: src/components/onboarding/Onboarding.native.tsx:461
 #: src/components/onboarding/Onboarding.tsx:314
@@ -1934,7 +1956,7 @@ msgstr "Görüntüyü işlemek mümkün değil. Lütfen daha küçük bir görü
 msgid "Unable to process sticker image. Please use a smaller image."
 msgstr "Çıkartma görüntüsünü işlemek mümkün değil. Lütfen daha küçük bir görüntü kullanın."
 
-#: src/components/modals/JoinSpaceModal.tsx:106
+#: src/components/modals/JoinSpaceModal.tsx:112
 msgid "Unknown"
 msgstr "Bilinmeyen"
 
@@ -1953,9 +1975,9 @@ msgstr "Bilinmeyen zaman"
 #: src/components/context/MessageDB.bak.tsx:3043
 #: src/components/context/MessageDB.bak.tsx:4122
 #: src/components/context/MessageDB.bak.tsx:5292
-#: src/components/direct/DirectMessage.tsx:131
-#: src/components/direct/DirectMessage.tsx:146
-#: src/components/direct/DirectMessage.tsx:333
+#: src/components/direct/DirectMessage.tsx:161
+#: src/components/direct/DirectMessage.tsx:176
+#: src/components/direct/DirectMessage.tsx:519
 #: src/components/message/MessageComposer.tsx:412
 #: src/components/message/MessageComposer.tsx:419
 #: src/components/message/MessageEditTextarea.tsx:225
@@ -1981,12 +2003,12 @@ msgstr "Bilinmeyen zaman"
 #: src/hooks/business/search/useSearchResultDisplaySpace.ts:45
 #: src/hooks/queries/userInfo/buildUserInfoFetcher.ts:15
 #: src/services/EncryptionService.ts:138
-#: src/services/MessageService.ts:1090
-#: src/services/MessageService.ts:1262
-#: src/services/MessageService.ts:1402
-#: src/services/MessageService.ts:1420
-#: src/services/MessageService.ts:2756
-#: src/services/MessageService.ts:2907
+#: src/services/MessageService.ts:1113
+#: src/services/MessageService.ts:1285
+#: src/services/MessageService.ts:1425
+#: src/services/MessageService.ts:1443
+#: src/services/MessageService.ts:2779
+#: src/services/MessageService.ts:2930
 msgid "Unknown User"
 msgstr "Bilinmeyen Kullanıcı"
 
@@ -2016,7 +2038,7 @@ msgstr "Bu gönderiyi sabitlemeyi kaldır"
 msgid "Unpinned!"
 msgstr "Sabitlenmemiş!"
 
-#: src/components/direct/DirectMessage.tsx:548
+#: src/components/direct/DirectMessage.tsx:778
 msgid "Until you reply, this sender will not see your display name or profile picture"
 msgstr "Cevap verene kadar, bu gönderici sizin görüntü adınızı veya profil resminizi göremeyecek"
 
@@ -2059,8 +2081,8 @@ msgstr "Kullanıcı adresi burada"
 msgid "User does not exist."
 msgstr "Kullanıcı mevcut değil."
 
-#: src/components/space/Channel.tsx:374
-#: src/components/space/Channel.tsx:803
+#: src/components/space/Channel.tsx:577
+#: src/components/space/Channel.tsx:1041
 msgid "Username or Address"
 msgstr "Kullanıcı Adı veya Adres"
 
@@ -2138,7 +2160,7 @@ msgstr "Bir mesajı imzaladığınızda, bunun kendi anahtarınızdan geldiğini
 msgid "Yesterday at {timeFormatted}"
 msgstr "Dün {timeFormatted} tarihinde"
 
-#: src/components/direct/DirectMessage.tsx:265
+#: src/components/direct/DirectMessage.tsx:295
 #: src/hooks/business/search/useBatchSearchResultsDisplay.ts:139
 msgid "You"
 msgstr "Sen"
@@ -2156,7 +2178,7 @@ msgid "You cannot delete a group that contains channels. Delete all {channelCoun
 msgstr "Kanal içeren bir grubu silemezsiniz. Önce bu gruptaki tüm {channelCount} kanalları silin."
 
 #: src/components/message/MessageComposer.tsx:296
-#: src/components/space/Channel.tsx:774
+#: src/components/space/Channel.tsx:1012
 msgid "You cannot post in this channel"
 msgstr "Bu kanalda paylaşım yapamazsınız"
 
