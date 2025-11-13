@@ -387,9 +387,11 @@ const DirectMessage: React.FC<{}> = () => {
         );
 
         if (isAlreadyLoaded) {
-          // Calculate initial unread count
+          // Calculate initial unread count (only count messages from the other party)
+          const currentUserId = user.currentPasskeyInfo!.address;
           const unreadCount = messageList.filter(
-            (m) => m.createdDate > lastReadTimestamp
+            (m) => m.createdDate > lastReadTimestamp &&
+                   m.content.senderId !== currentUserId
           ).length;
 
           // Check if we should show separator (avoid showing during active chatting)
@@ -432,9 +434,11 @@ const DirectMessage: React.FC<{}> = () => {
           }
         );
 
-        // Calculate unread count from loaded messages
+        // Calculate unread count from loaded messages (only count messages from the other party)
+        const currentUserId = user.currentPasskeyInfo!.address;
         const unreadCount = messages.filter(
-          (m) => m.createdDate > lastReadTimestamp
+          (m) => m.createdDate > lastReadTimestamp &&
+                 m.content.senderId !== currentUserId
         ).length;
 
         const firstUnreadAge = Date.now() - firstUnread.timestamp;

@@ -133,7 +133,7 @@ const [newMessagesSeparator, setNewMessagesSeparator] = useState<{
 **State Lifecycle:**
 - Set when auto-jump triggers **and thresholds met**
   - Channels: Channel.tsx:390-406, 435-452
-  - Direct Messages: DirectMessage.tsx:376-397, 421-441
+  - Direct Messages: DirectMessage.tsx:390-411, 437-450
 - Contains snapshot of unread count (doesn't decrease as user reads)
 - Reset to `null` when channel/conversation changes
   - Channels: Channel.tsx:467-470
@@ -144,6 +144,7 @@ const [newMessagesSeparator, setNewMessagesSeparator] = useState<{
 - **Thresholds**: 5+ unreads OR 5+ minutes old (prevents spam during active chat)
 - **Consolidated state**: Single object instead of multiple useState calls
 - **Fixed count**: `initialUnreadCount` captured once, doesn't recalculate
+- **DM-specific logic**: In Direct Messages, only counts messages from the other party (excludes current user's messages)
 
 ### 3. Integration in MessageList (MessageList.tsx)
 
@@ -269,7 +270,14 @@ const handleRangeChanged = useCallback(
 - **Behavior**: Auto-jumps to first unread, but **no separator** shown (prevents spam)
 - **Code**: Threshold checks
   - Channels: Channel.tsx:390-406, 435-452
-  - Direct Messages: DirectMessage.tsx:376-397, 421-441
+  - Direct Messages: DirectMessage.tsx:390-411, 437-450
+
+### Direct Message Sender Filtering
+- **Scenario**: In DMs, user sends messages after having unread messages from the other party
+- **Behavior**: Only counts messages from the other party, not the current user's own messages
+- **Rationale**: In 1-on-1 conversations, user's own messages are not "new" to them
+- **Implementation**: Filters by `m.content.senderId !== currentUserId` in DirectMessage.tsx
+- **Note**: In Spaces/Channels, all unread messages are counted (acceptable UX for group contexts)
 
 ### Hash Navigation Priority
 - **Scenario**: URL contains `#msg-{messageId}`
@@ -288,6 +296,7 @@ const handleRangeChanged = useCallback(
 
 **Unread Count Calculation:**
 - O(n) calculation happens once when auto-jump triggers (Channel.tsx or DirectMessage.tsx)
+- In Direct Messages, includes additional sender ID check (negligible overhead)
 - No additional database queries
 - No recalculation needed (count is fixed snapshot)
 - No memoization needed (count passed as immutable value)
@@ -314,7 +323,7 @@ const handleRangeChanged = useCallback(
 **Modified Files:**
 - `src/components/message/MessageList.tsx:15,71-75,118-119,142-143,207-225,285,405-446,497` - Separator rendering and dismissal logic via Virtuoso
 - `src/components/space/Channel.tsx:124-128,390-406,435-452,467-470,971-972` - State management with thresholds and props passing (Channels)
-- `src/components/direct/DirectMessage.tsx:69-72,376-397,421-441,461-462,720-721` - State management with thresholds and props passing (Direct Messages)
+- `src/components/direct/DirectMessage.tsx:69-72,390-411,437-450,461-462,720-721` - State management with thresholds and props passing (Direct Messages, with sender filtering)
 
 ---
 
@@ -332,6 +341,7 @@ const handleRangeChanged = useCallback(
 2. **Virtuoso `rangeChanged` over Intersection Observer**: More reliable with virtualized lists
 3. **Consolidated state object**: Single `newMessagesSeparator` object instead of multiple useState calls
 4. **Fixed unread count**: Snapshot captured once, doesn't decrease as user reads
+5. **DM sender filtering**: Only count other party's messages in Direct Messages (better UX for 1-on-1 conversations)
 
 **Lessons Learned:**
 - Intersection Observer doesn't work reliably with Virtuoso's virtualization (components unmount when out of view)
@@ -341,4 +351,4 @@ const handleRangeChanged = useCallback(
 
 ---
 
-*Last updated: 2025-11-13*
+*Last updated: 2025-11-13 (DM sender filtering added)*
