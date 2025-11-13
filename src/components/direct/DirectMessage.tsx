@@ -18,6 +18,8 @@ import { useConversation } from '../../hooks/queries/conversation/useConversatio
 import { useMessageDB } from '../context/useMessageDB';
 import { useQueryClient } from '@tanstack/react-query';
 import { useSidebar } from '../context/SidebarProvider';
+import { loadMessagesAround } from '../../hooks/queries/messages/loadMessagesAround';
+import { buildMessagesKey } from '../../hooks/queries/messages/buildMessagesKey';
 import { MessageList, MessageListRef } from '../message/MessageList';
 import MessageComposer, {
   MessageComposerRef,
@@ -52,13 +54,25 @@ const DirectMessage: React.FC<{}> = () => {
   const [activePanel, setActivePanel] = useState<ActivePanel>(null);
   const user = usePasskeysContext();
   const queryClient = useQueryClient();
-  const { submitMessage, keyset, getConfig } = useMessageDB();
+  const { submitMessage, keyset, getConfig, messageDB } = useMessageDB();
 
   // State for message signing
   const [skipSigning, setSkipSigning] = useState<boolean>(false);
   const [nonRepudiable, setNonRepudiable] = useState<boolean>(true);
   const [isDeletionInProgress, setIsDeletionInProgress] = useState(false);
   const headerRef = useRef<HTMLDivElement>(null);
+
+  // Auto-jump to first unread state
+  const [scrollToMessageId, setScrollToMessageId] = useState<string | undefined>();
+
+  // New Messages separator state
+  const [newMessagesSeparator, setNewMessagesSeparator] = useState<{
+    firstUnreadMessageId: string;
+    initialUnreadCount: number;
+  } | null>(null);
+
+  // Hash navigation state
+  const [isLoadingHashMessage, setIsLoadingHashMessage] = useState(false);
 
   // Extract business logic hooks but also get the original data for compatibility
   let { address } = useParams<{ address: string }>();
@@ -72,6 +86,9 @@ const DirectMessage: React.FC<{}> = () => {
   const { data: conversation } = useConversation({
     conversationId: conversationId,
   });
+
+  // Get last read timestamp from conversation
+  const lastReadTimestamp = conversation?.conversation?.lastReadTimestamp || 0;
 
   // Determine default signing behavior: conversation setting overrides user default.
   React.useEffect(() => {
@@ -108,6 +125,8 @@ const DirectMessage: React.FC<{}> = () => {
     messageList,
     acceptChat,
     fetchPreviousPage,
+    fetchNextPage,
+    hasNextPage,
     canDeleteMessages,
   } = useDirectMessagesList();
 
@@ -325,6 +344,162 @@ const DirectMessage: React.FC<{}> = () => {
     }
   }, []);
 
+  // Auto-jump to first unread message on conversation entry
+  useEffect(() => {
+    // Skip if there's a hash navigation in progress
+    if (window.location.hash.startsWith('#msg-')) {
+      return;
+    }
+
+    // Skip if no unread messages
+    if (lastReadTimestamp === 0) {
+      return;
+    }
+
+    const jumpToFirstUnread = async () => {
+      try {
+        // Get the first unread message
+        const firstUnread = await messageDB.getFirstUnreadMessage({
+          spaceId: address!,
+          channelId: address!,
+          afterTimestamp: lastReadTimestamp,
+        });
+
+        // If no unread message found, don't jump
+        if (!firstUnread) {
+          return;
+        }
+
+        // Check if the first unread is already in the loaded messages
+        const isAlreadyLoaded = messageList.some(
+          (m) => m.messageId === firstUnread.messageId
+        );
+
+        if (isAlreadyLoaded) {
+          // Calculate initial unread count
+          const unreadCount = messageList.filter(
+            (m) => m.createdDate > lastReadTimestamp
+          ).length;
+
+          // Check if we should show separator (avoid showing during active chatting)
+          const firstUnreadAge = Date.now() - firstUnread.timestamp;
+          const MIN_UNREAD_COUNT = 5; // Show if 5+ unreads
+          const MIN_AGE_MS = 5 * 60 * 1000; // Show if oldest unread is 5+ minutes old
+
+          const shouldShowSeparator =
+            unreadCount >= MIN_UNREAD_COUNT || firstUnreadAge > MIN_AGE_MS;
+
+          setScrollToMessageId(firstUnread.messageId);
+
+          // Only set separator if threshold is met
+          if (shouldShowSeparator) {
+            setNewMessagesSeparator({
+              firstUnreadMessageId: firstUnread.messageId,
+              initialUnreadCount: unreadCount,
+            });
+          }
+
+          return;
+        }
+
+        // Load messages around the first unread message
+        const { messages, prevCursor, nextCursor } = await loadMessagesAround({
+          messageDB,
+          spaceId: address!,
+          channelId: address!,
+          targetMessageId: firstUnread.messageId,
+          beforeLimit: 40,
+          afterLimit: 40,
+        });
+
+        // Update React Query cache to replace current pages with new data
+        queryClient.setQueryData(
+          buildMessagesKey({ spaceId: address!, channelId: address! }),
+          {
+            pages: [{ messages, prevCursor, nextCursor }],
+            pageParams: [undefined],
+          }
+        );
+
+        // Calculate unread count from loaded messages
+        const unreadCount = messages.filter(
+          (m) => m.createdDate > lastReadTimestamp
+        ).length;
+
+        const firstUnreadAge = Date.now() - firstUnread.timestamp;
+        const MIN_UNREAD_COUNT = 5;
+        const MIN_AGE_MS = 5 * 60 * 1000;
+
+        const shouldShowSeparator =
+          unreadCount >= MIN_UNREAD_COUNT || firstUnreadAge > MIN_AGE_MS;
+
+        // Set the message ID to scroll to
+        setScrollToMessageId(firstUnread.messageId);
+
+        if (shouldShowSeparator) {
+          setNewMessagesSeparator({
+            firstUnreadMessageId: firstUnread.messageId,
+            initialUnreadCount: unreadCount,
+          });
+        }
+      } catch (error) {
+        console.error('Failed to jump to first unread:', error);
+        // Silently fail - user will see messages from bottom as usual
+      }
+    };
+
+    // Only auto-jump on initial conversation mount
+    const timer = setTimeout(() => {
+      jumpToFirstUnread();
+    }, 100);
+
+    return () => clearTimeout(timer);
+  }, [address, lastReadTimestamp, messageDB, messageList, queryClient]);
+
+  // Reset scrollToMessageId and separator when conversation changes
+  useEffect(() => {
+    setScrollToMessageId(undefined);
+    setNewMessagesSeparator(null);
+  }, [address]);
+
+  // Hash navigation handler
+  const handleHashMessageNotFound = useCallback(
+    async (messageId: string) => {
+      try {
+        setIsLoadingHashMessage(true);
+
+        const { messages, prevCursor, nextCursor } = await loadMessagesAround({
+          messageDB,
+          spaceId: address!,
+          channelId: address!,
+          targetMessageId: messageId,
+          beforeLimit: 40,
+          afterLimit: 40,
+        });
+
+        queryClient.setQueryData(
+          buildMessagesKey({ spaceId: address!, channelId: address! }),
+          {
+            pages: [{ messages, prevCursor, nextCursor }],
+            pageParams: [undefined],
+          }
+        );
+      } catch (error) {
+        console.error('Failed to load hash message:', error);
+        setTimeout(() => {
+          window.history.replaceState(
+            null,
+            '',
+            window.location.pathname + window.location.search
+          );
+        }, 100);
+      } finally {
+        setIsLoadingHashMessage(false);
+      }
+    },
+    [messageDB, address, queryClient]
+  );
+
   // Helper function to map sender to user (used by MessageList)
   const mapSenderToUser = useCallback(
     (senderId: string) => {
@@ -522,7 +697,8 @@ const DirectMessage: React.FC<{}> = () => {
           <div className="flex flex-col flex-1 min-w-0">
             <Container
               className={
-                'message-list' + (!showUsers ? ' message-list-expanded' : '')
+                'message-list relative' +
+                (!showUsers ? ' message-list-expanded' : '')
               }
             >
               <MessageList
@@ -536,9 +712,18 @@ const DirectMessage: React.FC<{}> = () => {
                 members={members}
                 submitMessage={submit}
                 isDeletionInProgress={isDeletionInProgress}
+                scrollToMessageId={scrollToMessageId}
+                newMessagesSeparator={newMessagesSeparator}
+                onDismissSeparator={() => setNewMessagesSeparator(null)}
+                onHashMessageNotFound={handleHashMessageNotFound}
+                isLoadingHashMessage={isLoadingHashMessage}
                 fetchPreviousPage={() => {
                   fetchPreviousPage();
                 }}
+                fetchNextPage={() => {
+                  fetchNextPage();
+                }}
+                hasNextPage={hasNextPage}
               />
             </Container>
             {/* Accept chat warning */}

@@ -11,6 +11,7 @@ export interface UseDirectMessagesListReturn {
   acceptChat: boolean;
   fetchNextPage: () => void;
   fetchPreviousPage: () => void;
+  hasNextPage?: boolean;
   saveReadTime: () => void;
   canDeleteMessages: (message: MessageType) => boolean;
 }
@@ -32,6 +33,7 @@ export function useDirectMessagesList(): UseDirectMessagesListReturn {
     data: messages,
     fetchNextPage,
     fetchPreviousPage,
+    hasNextPage,
   } = useMessages({ spaceId: address!, channelId: address! });
 
   // Process message list
@@ -108,6 +110,7 @@ export function useDirectMessagesList(): UseDirectMessagesListReturn {
     acceptChat,
     fetchNextPage,
     fetchPreviousPage,
+    hasNextPage,
     saveReadTime,
     canDeleteMessages,
   };
