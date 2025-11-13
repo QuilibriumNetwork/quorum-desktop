@@ -109,3 +109,37 @@ export function stripMarkdownAndMentions(text: string): string {
 
   return cleaned;
 }
+
+/**
+ * Replaces user mention addresses with display names in plain text.
+ * Does NOT handle markdown or styling - returns plain string.
+ *
+ * Use this for contexts where you want to preserve mentions but show user-friendly display names
+ * (e.g., message reply previews, tooltips, plain text contexts).
+ *
+ * For styled React components with mentions, use NotificationItem's renderTextWithMentions() instead.
+ *
+ * @param text - Text with @<address> patterns
+ * @param mapSenderToUser - Function to resolve addresses to user objects with displayName
+ * @returns Plain text with addresses replaced by display names
+ *
+ * @example
+ * replaceMentionsWithDisplayNames('Hello @<Qm123abc>', mapFn)
+ * // Returns: 'Hello @JohnDoe'
+ *
+ * replaceMentionsWithDisplayNames('Hey @<Qm123> and @everyone', mapFn)
+ * // Returns: 'Hey @JohnDoe and @everyone'
+ */
+export function replaceMentionsWithDisplayNames(
+  text: string,
+  mapSenderToUser: (senderId: string) => { displayName?: string } | undefined
+): string {
+  if (!text) return '';
+
+  // Replace @<address> patterns with @DisplayName
+  return text.replace(/@<(Qm[a-zA-Z0-9]+)>/g, (_match, address) => {
+    const user = mapSenderToUser(address);
+    const displayName = user?.displayName || address.substring(0, 8) + '...';
+    return `@${displayName}`;
+  });
+}

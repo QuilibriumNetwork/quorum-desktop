@@ -57,6 +57,7 @@ import { DefaultImages } from '../../utils';
 import { EditHistoryModal } from '../modals/EditHistoryModal';
 import { MessageEditTextarea } from './MessageEditTextarea';
 import { ENABLE_MARKDOWN } from '../../config/features';
+import { replaceMentionsWithDisplayNames } from '../../utils/markdownStripping';
 
 // Utility function for robust GIF detection
 const createGifDetector = (url: string, isLargeGif?: boolean) => {
@@ -377,6 +378,17 @@ export const Message = React.memo(
             let reply =
               replyIndex !== undefined ? messageList[replyIndex] : undefined;
             if (reply) {
+              // Get reply text and replace mention addresses with display names
+              const replyText = reply.content.type == 'post'
+                ? (Array.isArray(reply.content.text)
+                    ? reply.content.text.join(' ')
+                    : reply.content.text)
+                : '';
+              const replyTextWithNames = replaceMentionsWithDisplayNames(
+                replyText,
+                mapSenderToUser
+              );
+
               return (
                 <Container
                   key={reply.messageId + 'rplyhd'}
@@ -403,7 +415,7 @@ export const Message = React.memo(
                     {mapSenderToUser(reply.content.senderId).displayName}
                   </Text>
                   <Text className="message-reply-text">
-                    {reply.content.type == 'post' && reply.content.text}
+                    {replyTextWithNames}
                   </Text>
                 </Container>
               );
@@ -677,7 +689,10 @@ export const Message = React.memo(
                         );
 
                         if (tokenData.type === 'mention') {
-                          const mentionClass = tokenData.address === 'everyone'
+                          // Check if this is @everyone, a role mention, or a user mention
+                          const isEveryone = tokenData.address === 'everyone';
+                          const isRole = !isEveryone && !tokenData.address.startsWith('Qm');
+                          const mentionClass = (isEveryone || isRole)
                             ? 'message-name-mentions-everyone'
                             : 'message-name-mentions-you';
                           return (

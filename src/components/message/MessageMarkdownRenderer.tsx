@@ -319,7 +319,7 @@ export const MessageMarkdownRenderer: React.FC<MessageMarkdownRendererProps> = (
           parts.push(
             <span
               key={`mention-${match.index}`}
-              className="message-name-mentions-you"
+              className="message-name-mentions-everyone"
               title={displayName}
             >
               @{roleTag}
@@ -599,7 +599,7 @@ export const MessageMarkdownRenderer: React.FC<MessageMarkdownRendererProps> = (
               parts.push(
                 <span
                   key={`mention-p-${match.index}`}
-                  className="message-name-mentions-you"
+                  className="message-name-mentions-everyone"
                   title={displayName}
                 >
                   @{roleTag}
