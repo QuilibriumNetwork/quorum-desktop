@@ -1,16 +1,16 @@
 # Hash Navigation to Old Messages
 
 **Status**: ✅ Fully Implemented
-**Components**: MessageList, Channel, Message Loading
+**Components**: MessageList, Channel, DirectMessage, Message Loading
 **Affects**: Search results, Pinned messages, Notifications, URL hashes
-**Implemented**: 2025-11-12
+**Implemented**: 2025-11-12 (Channels), 2025-11-13 (Direct Messages)
 
 ---
 
 ## Overview
 
 ### Problem
-Clicking links with `#msg-{messageId}` would silently fail if the target message wasn't in the currently loaded ~100 messages. This affected search results, pinned messages, notifications, and direct URL hashes.
+Clicking links with `#msg-{messageId}` would silently fail if the target message wasn't in the currently loaded ~100 messages. This affected search results, pinned messages, notifications, and direct URL hashes in both channels and direct messages.
 
 ### Solution
 Bidirectional message loading automatically fetches messages around the target when clicked. Users can then scroll both directions:
@@ -91,7 +91,10 @@ if (onHashMessageNotFound && !hasProcessedHash) {
 }
 ```
 
-**4. Channel Handler** (Channel.tsx:292-336)
+**4. Parent Component Handler**
+
+**Channels** (Channel.tsx:292-336) and **Direct Messages** (DirectMessage.tsx:465-507) share identical handler:
+
 ```typescript
 const handleHashMessageNotFound = useCallback(async (messageId: string) => {
   setIsLoadingHashMessage(true);
@@ -106,6 +109,8 @@ const handleHashMessageNotFound = useCallback(async (messageId: string) => {
 }, [messageDB, spaceId, channelId, queryClient]);
 ```
 
+Note: For Direct Messages, both `spaceId` and `channelId` are set to the conversation address.
+
 ### State Management
 
 **Jump Flag** - Tracks hash navigation state:
@@ -118,7 +123,7 @@ setHasJumpedToOldMessage(true);
 // Reset when:
 // 1. User reaches present (hasNextPage === false)
 // 2. User clicks "Jump to Present" button
-// 3. User navigates to different channel
+// 3. User navigates to different channel/conversation
 ```
 
 This prevents auto-scroll during manual pagination while allowing it to resume naturally at the present.
@@ -159,14 +164,14 @@ if (!targetMessage) throw new Error('Message not found');
 
 ## Universal Fix
 
-All components using `#msg-{messageId}` benefit automatically:
+All components using `#msg-{messageId}` benefit automatically in both channels and direct messages:
 - ✅ Search results (`SearchResults.tsx`)
 - ✅ Pinned messages (`PinnedMessagesPanel.tsx`)
 - ✅ Notifications (`NotificationPanel.tsx`)
 - ✅ Direct URL hashes (bookmarked/shared links)
 - ✅ Future components using this pattern
 
-No changes required in navigation sources - fix is centralized in MessageList.
+No changes required in navigation sources - fix is centralized in MessageList and works for both channels and DMs.
 
 ---
 
@@ -175,9 +180,9 @@ No changes required in navigation sources - fix is centralized in MessageList.
 ### Key Scenarios
 
 **1. Navigation to Old Messages**
-- Search for message from weeks ago → Click result → Should load and scroll
+- Search for message from weeks ago in channel/DM → Click result → Should load and scroll
 - Click old pinned message → Should load and scroll
-- Click notification for old reply/mention → Should load and scroll
+- Click notification for old reply/mention in channel/DM → Should load and scroll
 
 **2. Bidirectional Scrolling**
 - After jumping to old message:
@@ -193,7 +198,7 @@ No changes required in navigation sources - fix is centralized in MessageList.
 - Non-existent message ID → Error handling, no infinite loading
 - Deleted message → Graceful failure
 - Rapid navigation → Last click wins, no conflicts
-- Large channels (10k+ messages) → Performance acceptable (<2s)
+- Large channels/DM histories (10k+ messages) → Performance acceptable (<2s)
 
 ---
 
@@ -212,7 +217,7 @@ No changes required in navigation sources - fix is centralized in MessageList.
 **Typical Timing**:
 - Best case: 100-300ms
 - Average: 500ms-1s
-- Worst case: 2-3s (slow device, large channel)
+- Worst case: 2-3s (slow device, large channel/DM history)
 
 ---
 
@@ -220,8 +225,10 @@ No changes required in navigation sources - fix is centralized in MessageList.
 
 **Modified Files**:
 - `src/hooks/queries/messages/loadMessagesAround.ts` - New utility
-- `src/hooks/business/channels/useChannelMessages.ts:33,155-156` - Added `fetchNextPage`, `hasNextPage`
-- `src/components/space/Channel.tsx:139-140,292-336,838-841` - Handler + props
+- `src/hooks/business/channels/useChannelMessages.ts:33,155-156` - Added `fetchNextPage`, `hasNextPage` (Channels)
+- `src/hooks/business/conversations/useDirectMessagesList.ts:14,36,113` - Added `hasNextPage` (Direct Messages)
+- `src/components/space/Channel.tsx:139-140,292-336,838-841` - Handler + props (Channels)
+- `src/components/direct/DirectMessage.tsx:75,465-507,722-723` - Handler + props (Direct Messages)
 - `src/components/message/MessageList.tsx:45-46,95,121,303,340-344,380-395` - Props, flag, logic
 
 **Key Functions**:
@@ -241,4 +248,4 @@ No changes required in navigation sources - fix is centralized in MessageList.
 
 ---
 
-*Last updated: 2025-11-12*
+*Last updated: 2025-11-13*

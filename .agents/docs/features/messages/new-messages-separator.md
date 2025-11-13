@@ -1,16 +1,16 @@
 # New Messages Separator
 
 **Status**: ✅ Fully Implemented
-**Components**: NewMessagesSeparator, MessageList, Channel
+**Components**: NewMessagesSeparator, MessageList, Channel, DirectMessage
 **Affects**: Message navigation, Unread message UX
-**Implemented**: 2025-11-12
+**Implemented**: 2025-11-12 (Channels), 2025-11-13 (Direct Messages)
 
 ---
 
 ## Overview
 
 ### Problem
-When auto-jumping to the first unread message in a channel, users need a clear visual indicator marking where the new unread messages begin. The existing subtle unread line was insufficient for drawing attention.
+When auto-jumping to the first unread message in a channel or direct message, users need a clear visual indicator marking where the new unread messages begin. The existing subtle unread line was insufficient for drawing attention.
 
 ### Solution
 Display an accent-colored "New Messages" separator above the first unread message when auto-jumping. The separator shows the count of unread messages and persists until scrolled out of view.
@@ -27,8 +27,8 @@ Display an accent-colored "New Messages" separator above the first unread messag
 
 ### Trigger Flow
 ```
-1. User opens channel with unreads
-2. Auto-jump logic (Channel.tsx) triggers
+1. User opens channel or DM with unreads
+2. Auto-jump logic (Channel.tsx or DirectMessage.tsx) triggers
 3. Checks thresholds: 5+ unreads OR first unread is 5+ minutes old
 4. If threshold met: Sets newMessagesSeparator state + scrolls to first unread
 5. If threshold not met: Only scrolls to first unread (no separator)
@@ -118,7 +118,9 @@ function formatLabel(count?: number): string {
 - Format helper handles large numbers with locale-aware formatting
 - No ref forwarding needed (dismissal handled by Virtuoso)
 
-### 2. State Management (Channel.tsx:124-128)
+### 2. State Management
+
+**Channels** (Channel.tsx:124-128) and **Direct Messages** (DirectMessage.tsx:69-72) share identical state:
 
 ```typescript
 // New Messages separator state (consolidated)
@@ -129,9 +131,13 @@ const [newMessagesSeparator, setNewMessagesSeparator] = useState<{
 ```
 
 **State Lifecycle:**
-- Set when auto-jump triggers **and thresholds met** (Channel.tsx:390-406, 435-452)
+- Set when auto-jump triggers **and thresholds met**
+  - Channels: Channel.tsx:390-406, 435-452
+  - Direct Messages: DirectMessage.tsx:376-397, 421-441
 - Contains snapshot of unread count (doesn't decrease as user reads)
-- Reset to `null` when channel changes (Channel.tsx:467-470)
+- Reset to `null` when channel/conversation changes
+  - Channels: Channel.tsx:467-470
+  - Direct Messages: DirectMessage.tsx:461-462
 - Dismissed when scrolled out of view (via callback from MessageList)
 
 **Key Design Decisions:**
@@ -154,7 +160,7 @@ interface MessageListProps {
 ```
 
 **No Dynamic Count Calculation:**
-- Count is passed directly from parent (Channel.tsx)
+- Count is passed directly from parent (Channel.tsx or DirectMessage.tsx)
 - No `useMemo` needed - count is immutable once set
 - Prevents count from decreasing as user reads messages
 
@@ -247,7 +253,7 @@ const handleRangeChanged = useCallback(
 
 **Dismissal Triggers:**
 - User scrolls separator out of visible range (up or down)
-- User switches to different channel (state reset in Channel.tsx)
+- User switches to different channel/conversation (state reset in Channel.tsx or DirectMessage.tsx)
 
 **Persistence:**
 - Separator stays visible while in Virtuoso's rendered range
@@ -261,7 +267,9 @@ const handleRangeChanged = useCallback(
 ### Active Chatting (Threshold Protection)
 - **Scenario**: User actively chatting, 1-4 new messages < 5 minutes old
 - **Behavior**: Auto-jumps to first unread, but **no separator** shown (prevents spam)
-- **Code**: Threshold check at Channel.tsx:390-406, 435-452
+- **Code**: Threshold checks
+  - Channels: Channel.tsx:390-406, 435-452
+  - Direct Messages: DirectMessage.tsx:376-397, 421-441
 
 ### Hash Navigation Priority
 - **Scenario**: URL contains `#msg-{messageId}`
@@ -279,7 +287,7 @@ const handleRangeChanged = useCallback(
 ## Performance
 
 **Unread Count Calculation:**
-- O(n) calculation happens once when auto-jump triggers (Channel.tsx)
+- O(n) calculation happens once when auto-jump triggers (Channel.tsx or DirectMessage.tsx)
 - No additional database queries
 - No recalculation needed (count is fixed snapshot)
 - No memoization needed (count passed as immutable value)
@@ -305,7 +313,8 @@ const handleRangeChanged = useCallback(
 
 **Modified Files:**
 - `src/components/message/MessageList.tsx:15,71-75,118-119,142-143,207-225,285,405-446,497` - Separator rendering and dismissal logic via Virtuoso
-- `src/components/space/Channel.tsx:124-128,390-406,435-452,467-470,971-972` - State management with thresholds and props passing
+- `src/components/space/Channel.tsx:124-128,390-406,435-452,467-470,971-972` - State management with thresholds and props passing (Channels)
+- `src/components/direct/DirectMessage.tsx:69-72,376-397,421-441,461-462,720-721` - State management with thresholds and props passing (Direct Messages)
 
 ---
 
@@ -332,4 +341,4 @@ const handleRangeChanged = useCallback(
 
 ---
 
-*Last updated: 2025-11-12*
+*Last updated: 2025-11-13*

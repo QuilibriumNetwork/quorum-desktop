@@ -1,19 +1,19 @@
 # Auto-Jump to First Unread Message
 
 **Status**: ✅ Fully Implemented
-**Components**: MessageList, Channel
-**Affects**: Channel navigation, Unread message UX
-**Implemented**: 2025-11-12
+**Components**: MessageList, Channel, DirectMessage
+**Affects**: Channel navigation, Direct Message navigation, Unread message UX
+**Implemented**: 2025-11-12 (Channels), 2025-11-13 (Direct Messages)
 
 ---
 
 ## Overview
 
 ### Problem
-When entering a channel with unread messages, users always landed at the bottom (most recent messages), forcing them to manually scroll up to find where they left off.
+When entering a channel or direct message conversation with unread messages, users always landed at the bottom (most recent messages), forcing them to manually scroll up to find where they left off.
 
 ### Solution
-Automatically jump to the first unread message when entering a channel with unreads. The system loads messages around the first unread, providing context above (for scrolling up) and below (for scrolling down).
+Automatically jump to the first unread message when entering a channel or DM with unreads. The system loads messages around the first unread, providing context above (for scrolling up) and below (for scrolling down).
 
 **Key Behavior:**
 - Loads 40 messages before + first unread + 40 messages after
@@ -27,7 +27,7 @@ Automatically jump to the first unread message when entering a channel with unre
 
 ### Entry Flow
 ```
-1. User opens channel with unreads
+1. User opens channel or DM with unreads
 2. System queries getFirstUnreadMessage(afterTimestamp: lastReadTimestamp)
 3. If first unread not in current 100 messages:
    → Load messages around first unread (40 before + target + 40 after)
@@ -53,7 +53,9 @@ If first unread is within the initial 100 messages, skip loading and just scroll
 
 ## Implementation
 
-### Core Logic (Channel.tsx:344-422)
+### Core Logic
+
+**Channels** (Channel.tsx:344-422) and **Direct Messages** (DirectMessage.tsx:338-454) share identical implementation:
 
 ```typescript
 useEffect(() => {
@@ -128,7 +130,7 @@ useEffect(() => {
 **MessageList.tsx:**
 - `scrollToMessageId?: string` - Triggers programmatic scroll without URL hash
 
-**Channel.tsx:**
+**Channel.tsx & DirectMessage.tsx:**
 - `scrollToMessageId` state - Holds target message ID for auto-jump
 
 ---
@@ -171,7 +173,7 @@ This is identical to hash navigation behavior.
 ## Testing Scenarios
 
 ### 1. Standard Auto-Jump
-- **Setup**: Channel has 200 messages, user last read at message 100
+- **Setup**: Channel or DM has 200 messages, user last read at message 100
 - **Expected**: Jump to message 101 (first unread) with messages 61-141 loaded
 - **Verify**: Can scroll up to see older messages, down to see newer
 
@@ -181,7 +183,7 @@ This is identical to hash navigation behavior.
 - **Verify**: Fast, no loading indicator
 
 ### 3. Hash Navigation Priority
-- **Setup**: Open channel with `#msg-abc123` and also has unreads
+- **Setup**: Open channel or DM with `#msg-abc123` and also has unreads
 - **Expected**: Hash navigation takes priority, auto-jump is skipped
 - **Verify**: Lands on hash message, not first unread
 
@@ -191,7 +193,7 @@ This is identical to hash navigation behavior.
 - **Verify**: Latest messages shown
 
 ### 5. Bidirectional Scrolling
-- **Setup**: Auto-jumped to first unread in middle of channel history
+- **Setup**: Auto-jumped to first unread in middle of channel or DM history
 - **Expected**: Can scroll up/down, auto-scroll disabled, "Jump to Present" button appears
 - **Verify**: Scrolling works smoothly, auto-scroll resumes at present
 
@@ -202,7 +204,7 @@ This is identical to hash navigation behavior.
 **Initial Load:**
 - Best case: ~100-200ms (first unread in recent 100)
 - Average case: ~500ms-1s (database query + cache update)
-- Worst case: ~2-3s (slow device, large channel)
+- Worst case: ~2-3s (slow device, large channel/DM history)
 
 **Message Count:**
 - Loads 81 messages (40 + 1 + 40)
@@ -215,7 +217,9 @@ This is identical to hash navigation behavior.
 
 **Modified Files:**
 - `src/components/message/MessageList.tsx:69,111,330-356,360-362` - Added `scrollToMessageId` prop and scroll logic
-- `src/components/space/Channel.tsx:119-122,344-422,920` - Auto-jump logic and state
+- `src/components/space/Channel.tsx:119-122,344-422,920` - Auto-jump logic and state (Channels)
+- `src/components/direct/DirectMessage.tsx:66,82,338-460,719` - Auto-jump logic and state (Direct Messages)
+- `src/hooks/business/conversations/useDirectMessagesList.ts:14,36,113` - Added `hasNextPage` support for DMs
 
 **Shared Utilities:**
 - `src/hooks/queries/messages/loadMessagesAround.ts` - Bidirectional loading (see hash navigation doc)
@@ -247,4 +251,4 @@ The hash navigation pattern was proven to work with Virtuoso's scroll system. Pr
 
 ---
 
-*Last updated: 2025-11-12*
+*Last updated: 2025-11-13*
