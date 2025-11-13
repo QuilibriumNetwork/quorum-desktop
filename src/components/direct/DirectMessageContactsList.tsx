@@ -38,13 +38,6 @@ const DirectMessageContactsList: React.FC<{}> = ({}) => {
       <Container className="direct-messages-list flex flex-col h-full overflow-y-auto overflow-x-hidden">
         {conversationsList.length === 0 ? (
           <FlexColumn className="justify-center items-center flex-1 px-4">
-            {/* <FlexColumn className="justify-center items-center sm:hidden mb-4">
-              <img
-                src="/stay-connected-stay-invisible.gif"
-                alt="Stay connected, stay invisible"
-                className="w-[200px] max-w-full mb-4"
-              />
-            </FlexColumn> */}
             <Container className="w-full text-center mb-4 text-subtle">
               <Trans>Ready to start a truly private conversation?</Trans>
             </Container>
