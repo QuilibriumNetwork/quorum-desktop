@@ -2,17 +2,32 @@
 
 > **⚠️ AI-Generated**: May contain errors. Verify before use.
 
+https://github.com/QuilibriumNetwork/quorum-desktop/issues/101
+
 Enable space owners to delete public invite links, removing server-side invite evals and returning to private-only mode.
 
 ## Prerequisites
 
-**Backend API required**: `DELETE /invite/evals` endpoint that:
-- Accepts `config_public_key`, `space_address`, `owner_public_key`, `owner_signature`
-- Verifies cryptographic signature for authorization
-- Deletes all invite evals for the config key
-- Supports atomic operations with manifest updates
+**⚠️ BLOCKER: Backend API required first**
+
+Must implement `DELETE /invite/evals` endpoint that:
+- **Accepts**: `config_public_key`, `space_address`, `owner_public_key`, `owner_signature`
+- **Verifies**: Ed448 cryptographic signature for authorization
+- **Deletes**: All invite evals associated with the config key
+- **Returns**:
+  - `200 OK` with `{ status: "deleted", count: N }` on success
+  - `404 Not Found` if config key has no evals
+  - `401 Unauthorized` if signature verification fails
+  - `403 Forbidden` if requester is not space owner
+- **Note**: This is a **hard blocker** - frontend implementation depends on this endpoint
 
 **Current limitation**: "Generate New Link" orphans old server data but can't truly delete it.
+
+**Why this matters**:
+- Users cannot return space to "private-only" mode without generating replacement link
+- Orphaned evals accumulate in backend storage
+- No audit trail for link revocation
+- Privacy concern: old cryptographic material remains indefinitely
 
 ## Implementation Steps
 
@@ -67,43 +82,114 @@ async deleteInviteLink(
   ).toString('hex');
 
   // Delete from server
-  await this.apiClient.deleteSpaceInviteEvals({
-    config_public_key: configKey.publicKey,
-    space_address: spaceId,
-    owner_public_key: ownerKey.publicKey,
-    owner_signature: signature,
-  });
+  try {
+    await this.apiClient.deleteSpaceInviteEvals({
+      config_public_key: configKey.publicKey,
+      space_address: spaceId,
+      owner_public_key: ownerKey.publicKey,
+      owner_signature: signature,
+    });
+  } catch (error) {
+    // If deletion fails, don't update local state
+    console.error('Failed to delete invite evals from server:', error);
+    throw new Error(t`Failed to delete invite link. Please try again.`);
+  }
 
-  // Update local state
+  // Update local state (only after successful server deletion)
+  const oldInviteUrl = space.inviteUrl;
+  const oldIsPublic = space.isPublic;
+
   space.inviteUrl = '';
   space.isPublic = false;
-  await this.messageDB.saveSpace(space);
 
-  // Update manifest
-  const manifest = await this.createSpaceManifest(space);
-  await this.apiClient.postSpaceManifest(spaceId, manifest);
+  try {
+    await this.messageDB.saveSpace(space);
 
-  // Invalidate cache
-  queryClient.invalidateQueries({
-    queryKey: buildSpaceKey({ spaceId }),
-  });
+    // Update manifest
+    const manifest = await this.createSpaceManifest(space);
+    await this.apiClient.postSpaceManifest(spaceId, manifest);
+
+    // Invalidate cache
+    queryClient.invalidateQueries({
+      queryKey: buildSpaceKey({ spaceId }),
+    });
+  } catch (error) {
+    // Rollback local state if manifest update fails
+    space.inviteUrl = oldInviteUrl;
+    space.isPublic = oldIsPublic;
+    await this.messageDB.saveSpace(space);
+
+    console.error('Failed to update space state after deletion:', error);
+    throw new Error(t`Invite link deleted from server but local state update failed. Please refresh.`);
+  }
 }
 ```
 
-#### Hook & UI Components
-- Add `deleteInviteLink()` method to `useInviteManagement.ts`
-- Add delete button back to `Invites.tsx`
-- Add delete confirmation modal to `SpaceSettingsModal.tsx`
-- Add state management (`deleting`, `deletionSuccess`, `errorMessage`)
+#### Hook Implementation (`src/hooks/business/spaces/useInviteManagement.ts`)
+
+Add to interface:
+```typescript
+export interface UseInviteManagementReturn {
+  // ... existing fields
+
+  // Delete invite link
+  deleting: boolean;
+  deleteInviteLink: () => Promise<void>;
+}
+```
+
+Add state and method:
+```typescript
+const [deleting, setDeleting] = useState<boolean>(false);
+
+const deleteInviteLink = useCallback(async () => {
+  if (!space) return;
+
+  setDeleting(true);
+  try {
+    await invitationService.deleteInviteLink(space.spaceId, queryClient);
+  } catch (error) {
+    console.error('Delete invite link error:', error);
+    throw error; // Re-throw for UI error handling
+  } finally {
+    setDeleting(false);
+  }
+}, [space, invitationService, queryClient]);
+```
+
+#### UI Components
+- **`Invites.tsx`**: Add "Delete Link" button next to "Generate New Link"
+- **`SpaceSettingsModal.tsx`**: Add delete confirmation modal with text:
+  - Title: "Delete Public Invite Link?"
+  - Body: "This will permanently delete the public invite link. Anyone with the current link will no longer be able to join. You can generate a new link later if needed."
+  - Actions: "Cancel" and "Delete Link" (destructive style)
+- Add state management: `showDeleteModal`, `deleting`, `deletionSuccess`, `deletionError`
 
 ### 3. Testing
 
-- Delete link removes server evals and updates UI
-- Concurrent joins handled properly
-- Multi-device sync works
-- Network failures rollback gracefully
-- Invalid signatures rejected
-- Can generate private invites after deletion
+**Functional Tests:**
+- Delete link removes server evals and updates UI to show "Generate Public Invite Link" button
+- Space state updated: `inviteUrl = ''` and `isPublic = false`
+- Old link returns 404 when accessed
+- Can generate new public invite after deletion
+- Can send private invites after deletion
+
+**Edge Cases:**
+- **Concurrent joins**: User tries to join with link during deletion
+  - Expected: Join fails with 404 or succeeds before deletion completes
+- **Multi-device sync**: User deletes link on Device A, checks on Device B
+  - Expected: Device B shows deletion after next sync/refresh
+- **Network failures**: Server deletion succeeds but manifest update fails
+  - Expected: Rollback mechanism restores local state with error message
+- **Invalid signatures**: Malicious deletion request with wrong signature
+  - Expected: Backend rejects with 401/403 error
+- **Permission check**: Non-owner tries to delete link
+  - Expected: Backend verifies owner signature and rejects
+
+**Error Handling:**
+- Server error during deletion: Show error, keep link active
+- Partial failure: Server succeeds, local update fails: Show guidance to refresh
+- Network timeout: Show retry option
 
 ## Files to Modify
 
@@ -115,7 +201,16 @@ async deleteInviteLink(
 - `src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx` - Add delete modal
 
 
+## Implementation Sequence
+
+1. ✅ **Backend API** (FIRST - hard blocker)
+2. ⏸️ **Frontend API Client** (after backend ready)
+3. ⏸️ **Service Layer** (after API client)
+4. ⏸️ **Hook Layer** (after service)
+5. ⏸️ **UI Layer** (after hook)
+6. ⏸️ **Testing** (final step)
+
 ---
 
 _Created: 2025-10-04 by Claude Code_
-_Updated: 2025-10-04 - Delete button removed from UI, task documentation created_
+_Updated: 2025-11-13 - Added error handling, rollback strategy, detailed testing scenarios, and clarified prerequisites_

@@ -99,12 +99,11 @@ This is the main index for all documentation, bug reports, and task management.
 
 ### Pending Tasks
 
-- [ClickToCopyContent Component Analysis](tasks/click-to-copy-content-analysis.md)
 - [Combined Text + Image Messages](tasks/combined-text-image-messages.md)
 - [Conversation Deletion State Synchronization](tasks/conversation-deletion-state-sync.md)
 - [Device Identification Improvement](tasks/device-identification-improvement.md)
-- [DM Unread Indicators - Exclude Current User's Messages](tasks/dm-unread-indicators-sender-filtering.md)
 - [Implement Background Sync Queue for User Settings and Async Operations](tasks/background-sync-queue.md)
+- [Passkey Import UX Issue](tasks/passkey-import-ux-issue.md)
 - [Server Folders - Discord-Style Grouping Feature](tasks/server-folders-discord-style.md)
 - [Task: Enhanced Direct Message Conversation List](tasks/dm-conversation-list-preview.md)
 - [Task: Implement Delete Public Invite Link Feature](tasks/delete-public-invite-link.md)
@@ -115,6 +114,7 @@ This is the main index for all documentation, bug reports, and task management.
 ### .Archived
 - [🚀 Search Performance Optimization - Revised Implementation Plan](tasks/.archived/2025-11-12-search-performance-optimization-original.md)
 - [Auto-Jump to First Unread Message + Fix Hash Navigation](tasks/.archived/auto-jump-first-unread.md)
+- [ClickToCopyContent Component Analysis](tasks/.archived/click-to-copy-content-analysis.md)
 - [Font Size Management Analysis & Recommendations](tasks/.archived/font-size-management-analysis-2025.md)
 - [Modal System Consolidation via Route Wrapper Component](tasks/.archived/modal-system-consolidation.md)
 - [Research: Mobile Markdown Formatting Options](tasks/.archived/markdown-toolbar-editor_mobile.md)
@@ -191,6 +191,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Delete Confirmation System Implementation](tasks/.done/delete-confirmation-system.md)
 - [Direct Message Deletion Feature](tasks/.done/dm-message-deletion.md)
 - [Direct Message Features Comparison Analysis](tasks/.done/direct-message-features-comparison.md)
+- [DM Unread Indicators - Exclude Current User's Messages](tasks/.done/dm-unread-indicators-sender-filtering.md)
 - [Dropdown Panels Consolidation & Mobile Bottom Sheet Implementation](tasks/.done/dropdown-panels-consolidation.md)
 - [Edit Message Feature](tasks/.done/edit-message-feature.md)
 - [Emoji Picker Responsive Design Improvement](tasks/.done/emojipicker-responsive.md)
@@ -252,4 +253,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2025-11-13 12:26:22
+**Last Updated**: 2025-11-13 15:32:48
