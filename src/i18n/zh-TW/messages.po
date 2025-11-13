@@ -15,6 +15,11 @@ msgstr ""
 "X-Generator: @lingui/cli\n"
 
 #. js-lingui-explicit-id
+#: src/components/message/NewMessagesSeparator.tsx:69
+msgid "{count} New Messages"
+msgstr ""
+
+#. js-lingui-explicit-id
 #: src/hooks/business/user/useFileUpload.native.ts:107
 #: src/hooks/business/user/useWebFileUpload.ts:34
 msgid "File cannot be larger than {maxFileSize}"
@@ -31,7 +36,7 @@ msgid "No Role - {count}"
 msgstr "無角色 - {count}"
 
 #. js-lingui-explicit-id
-#: src/components/space/Channel.tsx:851
+#: src/components/space/Channel.tsx:989
 msgid "Send a message to #{channel_name}"
 msgstr "傳送訊息至 #{channel_name}"
 
@@ -413,7 +418,7 @@ msgstr "頻道圖示"
 msgid "Channel Managers"
 msgstr "頻道管理員"
 
-#: src/components/space/Channel.tsx:1066
+#: src/components/space/Channel.tsx:1204
 msgid "Channel members"
 msgstr "頻道成員"
 
@@ -1086,21 +1091,23 @@ msgid "Join"
 msgstr "加入"
 
 #: src/components/modals/AddSpaceModal.tsx:259
-#: src/components/modals/JoinSpaceModal.tsx:78
-#: src/components/modals/JoinSpaceModal.tsx:97
-#: src/components/modals/JoinSpaceModal.tsx:152
+#: src/components/modals/JoinSpaceModal.tsx:73
+#: src/components/modals/JoinSpaceModal.tsx:92
+#: src/components/modals/JoinSpaceModal.tsx:168
 msgid "Join Space"
 msgstr "加入空間"
 
+#: src/components/modals/JoinSpaceModal.tsx:72
 #: src/hooks/business/invites/useInviteUI.ts:31
 msgid "Joined"
 msgstr "已加入"
 
 #: src/components/modals/AddSpaceModal.tsx:130
-#: src/components/modals/JoinSpaceModal.tsx:88
+#: src/components/modals/JoinSpaceModal.tsx:102
 msgid "Joining Space..."
 msgstr "加入空間中..."
 
+#: src/components/modals/JoinSpaceModal.tsx:71
 #: src/hooks/business/invites/useInviteUI.ts:29
 msgid "Joining..."
 msgstr "加入中..."
@@ -1110,7 +1117,7 @@ msgstr "加入中..."
 msgid "Jump"
 msgstr "跳轉"
 
-#: src/components/message/MessageList.tsx:409
+#: src/components/message/MessageList.tsx:508
 msgid "Jump to present"
 msgstr "跳到现在"
 
@@ -1183,7 +1190,7 @@ msgstr "開始使用！"
 msgid "Light"
 msgstr "光"
 
-#: src/components/message/MessageList.tsx:420
+#: src/components/message/MessageList.tsx:519
 msgid "Loading message..."
 msgstr ""
 
@@ -1243,7 +1250,7 @@ msgstr "全部標記為已讀"
 
 #: src/components/direct/DirectMessage.tsx:438
 #: src/components/direct/DirectMessage.tsx:598
-#: src/components/space/Channel.tsx:732
+#: src/components/space/Channel.tsx:867
 msgid "Members List"
 msgstr "成員列表"
 
@@ -1279,6 +1286,10 @@ msgstr "更多反應"
 msgid "New Direct Message"
 msgstr "新私訊"
 
+#: src/components/message/NewMessagesSeparator.tsx:64
+msgid "New Messages"
+msgstr ""
+
 #: src/services/InvitationService.ts:68
 msgid "No encryption state found for this space. The space may need to be initialized or you may need to generate a public invite link first."
 msgstr "未找到此空間的加密狀態。該空間可能需要初始化，或者您可能需要先生成公共邀請鏈接。"
@@ -1302,9 +1313,9 @@ msgstr "尚無固定訊息"
 msgid "No unread notifications"
 msgstr "沒有未讀通知"
 
-#: src/components/space/Channel.tsx:455
-#: src/components/space/Channel.tsx:917
-#: src/components/space/Channel.tsx:1105
+#: src/components/space/Channel.tsx:590
+#: src/components/space/Channel.tsx:1055
+#: src/components/space/Channel.tsx:1243
 msgid "No users found!"
 msgstr "找不到使用者！"
 
@@ -1319,7 +1330,7 @@ msgstr "通知權限未授予"
 #: src/components/modals/SpaceSettingsModal/Account.tsx:187
 #: src/components/modals/UserSettingsModal/Navigation.tsx:17
 #: src/components/modals/UserSettingsModal/Notifications.tsx:24
-#: src/components/space/Channel.tsx:702
+#: src/components/space/Channel.tsx:837
 msgid "Notifications"
 msgstr "通知"
 
@@ -1449,7 +1460,7 @@ msgstr "已固定"
 msgid "Pinned by {0}"
 msgstr "由 {0} 固定"
 
-#: src/components/space/Channel.tsx:666
+#: src/components/space/Channel.tsx:801
 msgid "Pinned Messages"
 msgstr "固定訊息"
 
@@ -1635,7 +1646,7 @@ msgid "Search in this Space..."
 msgstr "在此空間中搜尋..."
 
 #: src/components/direct/DirectMessage.tsx:457
-#: src/components/space/Channel.tsx:751
+#: src/components/space/Channel.tsx:886
 msgid "Search Messages"
 msgstr "搜尋消息"
 
@@ -1647,7 +1658,7 @@ msgstr "搜尋訊息..."
 msgid "Search Results"
 msgstr ""
 
-#: src/components/space/Channel.tsx:1077
+#: src/components/space/Channel.tsx:1215
 msgid "Search Username or Address"
 msgstr "搜尋用戶名或地址"
 
@@ -1944,7 +1955,7 @@ msgstr "無法處理圖像。請使用較小的圖像。"
 msgid "Unable to process sticker image. Please use a smaller image."
 msgstr "無法處理貼圖圖像。請使用較小的圖像。"
 
-#: src/components/modals/JoinSpaceModal.tsx:106
+#: src/components/modals/JoinSpaceModal.tsx:112
 msgid "Unknown"
 msgstr "未知"
 
@@ -2069,8 +2080,8 @@ msgstr "用戶地址在這裡"
 msgid "User does not exist."
 msgstr "用戶不存在。"
 
-#: src/components/space/Channel.tsx:442
-#: src/components/space/Channel.tsx:903
+#: src/components/space/Channel.tsx:577
+#: src/components/space/Channel.tsx:1041
 msgid "Username or Address"
 msgstr "用戶名或地址"
 
@@ -2166,7 +2177,7 @@ msgid "You cannot delete a group that contains channels. Delete all {channelCoun
 msgstr "你不能刪除包含頻道的群組。請先刪除此群組中的所有{channelCount}個頻道。"
 
 #: src/components/message/MessageComposer.tsx:296
-#: src/components/space/Channel.tsx:874
+#: src/components/space/Channel.tsx:1012
 msgid "You cannot post in this channel"
 msgstr "你不能在此頻道中發佈"
 

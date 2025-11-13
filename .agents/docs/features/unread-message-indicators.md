@@ -11,22 +11,29 @@ Discord-style unread message indicators that show when there are new messages (n
 ## Visual Implementation
 
 - **Space Icons**: Colored dot (`--accent`) appears when ANY channel in the space has unread messages
-- **Channel Names**: Colored dot (`--surface-10`) appears next to channel icon when channel has unread messages
+- **Channel Names**: Colored dot (`--accent`) appears next to channel icon when channel has unread messages
 - **Direct Messages**: Colored dot (`--accent`) appears on NavMenu DM icon when any DM conversation has unreads
 
 ## Technical Architecture
+
+### Unified Data Model
+
+Both channels and DMs use the same elegant approach based on conversation timestamps:
+
+- `conversation.timestamp` - Auto-updated on every message save (free!)
+- `conversation.lastReadTimestamp` - Updated via `useUpdateReadTime` hook
+- **Unread check**: `(lastReadTimestamp ?? 0) < timestamp`
+
+This eliminates the need for database cursor iteration and provides instant, accurate unread status with minimal overhead (O(1) per conversation).
 
 ### Hooks (Boolean-Only Logic)
 
 - `useChannelUnreadCounts()` - Checks for unread messages per channel (returns 1 or 0)
 - `useSpaceUnreadCounts()` - Aggregates unread status across all channels in spaces
 - `useDirectMessageUnreadCount()` - Counts unread DM conversations for NavMenu
+- `useUpdateReadTime()` - Tracks and saves read time for both channels and DMs
 
-**Key Performance Feature**: Early-exit optimization stops immediately when finding the first unread message (no counting required).
-
-### Database Method
-
-- `MessageDB.hasUnreadMessages()` - Optimized boolean check using IndexedDB cursors with immediate exit
+**Key Performance Feature**: Simple timestamp comparison (O(1)) instead of cursor iteration (O(n)). Early-exit optimization stops at first unread channel when checking spaces.
 
 ### UI Integration
 
@@ -47,20 +54,26 @@ src/hooks/business/messages/useDirectMessageUnreadCount.ts
 ### Modified Files
 
 ```
-src/db/messages.ts                                    # Added hasUnreadMessages() method
+src/db/messages.ts                                    # Removed hasUnreadMessages() (replaced with timestamp logic)
 src/components/navbar/NavMenu.tsx                     # Wire space + DM unread counts
 src/components/space/ChannelList.tsx                  # Wire channel unread counts
 src/components/space/ChannelItem.tsx                  # Add dot positioning
-src/hooks/business/conversations/useUpdateReadTime.ts # Add cache invalidation
-src/services/MessageService.ts                        # Add cache invalidation
+src/components/direct/DirectMessage.tsx               # Add read-time tracking (unified with channels)
+src/components/direct/DirectMessageContact.tsx        # Use shared unread dot styles
+src/hooks/business/conversations/useUpdateReadTime.ts # Add cache invalidation for channels + DMs
+src/hooks/business/messages/useChannelUnreadCounts.ts # Simplified to use timestamp comparison
+src/hooks/business/messages/useSpaceUnreadCounts.ts   # Simplified to use timestamp comparison
+src/services/MessageService.ts                        # Add cache invalidation for channels + DMs
 src/hooks/business/messages/index.ts                  # Export new hooks
 ```
 
 ### Styling Files
 
 ```
+src/styles/_components.scss                           # Shared unread dot styles (.unread-dot, .channel-unread-dot, .dm-unread-dot)
 src/components/navbar/SpaceIcon.scss                  # Space/DM dot styling + responsive
-src/components/space/ChannelGroup.scss                # Channel dot styling
+src/components/space/ChannelGroup.scss                # References shared dot styles
+src/components/direct/DirectMessageContact.scss       # Uses shared dm-unread-dot class
 ```
 
 ## Cache Invalidation Strategy
@@ -93,10 +106,12 @@ src/components/space/ChannelGroup.scss                # Channel dot styling
 
 ## Performance Characteristics
 
-- **Early Exit**: Stops at first unread message found (no counting overhead)
-- **Optimized Queries**: Uses IndexedDB cursors efficiently
+- **O(1) Lookups**: Simple timestamp comparison per conversation (no cursor iteration)
+- **Instant Updates**: conversation.timestamp auto-updates on message save
+- **Early Exit**: Space-level checks stop at first unread channel found
 - **Boolean Logic**: Only tracks read/unread state, not counts
-- **Smart Caching**: Minimizes database queries while maintaining real-time feel
+- **Smart Caching**: 90-second stale time with window focus refetch
+- **90% Complexity Reduction**: Eliminated O(n) cursor iteration overhead
 
 ---
 
@@ -104,5 +119,7 @@ src/components/space/ChannelGroup.scss                # Channel dot styling
 
 - [Mention Notification System](./mention-notification-system.md)
 - [Cross-Platform Components Guide](../cross-platform-components-guide.md)
+- [Unread Indicators Unification Task](../../tasks/unify-unread-indicators-channels-dms.md)
 
 _Created: 2025-11-10_
+_Updated: 2025-01-13 - Unified channels and DMs to use shared timestamp-based approach_

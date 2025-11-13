@@ -7,10 +7,6 @@ interface UseSpaceUnreadCountsProps {
   spaces: Space[];
 }
 
-// Early-exit threshold: Stop checking at first unread channel found
-// (We only need boolean indicator - has unreads vs no unreads)
-const BOOLEAN_THRESHOLD = 1;
-
 /**
  * Hook to check for unread messages across entire spaces
  *
@@ -18,11 +14,14 @@ const BOOLEAN_THRESHOLD = 1;
  * where there are unread messages in ANY channel within that space.
  * Only spaces with unreads are included in the result.
  *
+ * Uses the elegant DM approach: compares conversation.lastReadTimestamp with
+ * conversation.timestamp (which is auto-updated on every message save).
+ * This is O(1) per channel instead of O(n) cursor iteration.
+ *
  * The hook:
  * 1. For each space, gets all channel IDs from all groups
- * 2. For each channel, gets the last read timestamp
- * 3. Queries messages after that timestamp with early exit
- * 4. Returns binary indicator as soon as first unread channel is found
+ * 2. For each channel, compares lastReadTimestamp < timestamp
+ * 3. Returns binary indicator with early exit (stops at first unread)
  *
  * Uses React Query with 90s stale time for performance while maintaining
  * reasonable real-time updates when invalidated.
@@ -70,20 +69,20 @@ export function useSpaceUnreadCounts({
 
             const conversationId = `${space.spaceId}/${channelId}`;
 
-            // Get conversation to find last read timestamp
+            // Get conversation record (single O(1) lookup)
             const { conversation } = await messageDB.getConversation({
               conversationId,
             });
 
-            const lastReadTimestamp = conversation?.lastReadTimestamp || 0;
+            if (!conversation) continue;
 
-            // Use optimized database method to check for unread messages
-            // This is much more efficient than fetching and filtering messages
-            const hasUnreads = await messageDB.hasUnreadMessages({
-              spaceId: space.spaceId,
-              channelId,
-              afterTimestamp: lastReadTimestamp,
-            });
+            // Simple timestamp comparison (DM approach)
+            // conversation.timestamp = auto-updated on every message save
+            // conversation.lastReadTimestamp = updated via useUpdateReadTime
+            const lastReadTimestamp = conversation.lastReadTimestamp || 0;
+            const lastMessageTimestamp = conversation.timestamp;
+
+            const hasUnreads = lastReadTimestamp < lastMessageTimestamp;
 
             if (hasUnreads) {
               spaceHasUnreads = true;

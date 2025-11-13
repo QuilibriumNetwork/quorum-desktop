@@ -13,6 +13,7 @@ import {
   useRegistration,
   useMessageComposer,
   useDirectMessagesList,
+  useUpdateReadTime,
 } from '../../hooks';
 import { useConversation } from '../../hooks/queries/conversation/useConversation';
 import { useMessageDB } from '../context/useMessageDB';
@@ -89,6 +90,16 @@ const DirectMessage: React.FC<{}> = () => {
 
   // Get last read timestamp from conversation
   const lastReadTimestamp = conversation?.conversation?.lastReadTimestamp || 0;
+
+  // Mutation for updating read time with proper cache invalidation
+  const { mutate: updateReadTime } = useUpdateReadTime({
+    spaceId: address!,
+    channelId: address!,
+  });
+
+  // Refs for tracking visible message timestamps (for read-time updates)
+  const latestTimestampRef = useRef<number>(0);
+  const lastSavedTimestampRef = useRef<number>(0);
 
   // Determine default signing behavior: conversation setting overrides user default.
   React.useEffect(() => {
@@ -520,6 +531,40 @@ const DirectMessage: React.FC<{}> = () => {
     },
     [handleSubmitMessage]
   );
+
+  // Update latest timestamp ref whenever messageList changes
+  useEffect(() => {
+    if (messageList && messageList.length > 0) {
+      const latestMessage = messageList[messageList.length - 1];
+      if (latestMessage && latestMessage.createdDate > latestTimestampRef.current) {
+        latestTimestampRef.current = latestMessage.createdDate;
+      }
+    }
+  }, [messageList]);
+
+  // Periodic check to save read time (every 2 seconds)
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      if (
+        latestTimestampRef.current > 0 &&
+        latestTimestampRef.current > lastSavedTimestampRef.current
+      ) {
+        updateReadTime(latestTimestampRef.current);
+        lastSavedTimestampRef.current = latestTimestampRef.current;
+      }
+    }, 2000);
+
+    return () => clearInterval(intervalId);
+  }, [updateReadTime]);
+
+  // Save immediately when leaving DM conversation (component unmount)
+  useEffect(() => {
+    return () => {
+      if (latestTimestampRef.current > lastSavedTimestampRef.current) {
+        updateReadTime(latestTimestampRef.current);
+      }
+    };
+  }, [updateReadTime]);
 
   return (
     <div className="chat-container">

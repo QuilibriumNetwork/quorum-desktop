@@ -15,6 +15,11 @@ msgstr ""
 "X-Generator: @lingui/cli\n"
 
 #. js-lingui-explicit-id
+#: src/components/message/NewMessagesSeparator.tsx:69
+msgid "{count} New Messages"
+msgstr "{count} New Messages"
+
+#. js-lingui-explicit-id
 #: src/hooks/business/user/useFileUpload.native.ts:107
 #: src/hooks/business/user/useWebFileUpload.ts:34
 msgid "File cannot be larger than {maxFileSize}"
@@ -31,7 +36,7 @@ msgid "No Role - {count}"
 msgstr "No Role - {count}"
 
 #. js-lingui-explicit-id
-#: src/components/space/Channel.tsx:851
+#: src/components/space/Channel.tsx:989
 msgid "Send a message to #{channel_name}"
 msgstr "Send a message to #{channel_name}"
 
@@ -422,7 +427,7 @@ msgstr "Channel Icon"
 msgid "Channel Managers"
 msgstr "Channel Managers"
 
-#: src/components/space/Channel.tsx:1066
+#: src/components/space/Channel.tsx:1204
 msgid "Channel members"
 msgstr "Channel members"
 
@@ -1101,21 +1106,23 @@ msgid "Join"
 msgstr "Join"
 
 #: src/components/modals/AddSpaceModal.tsx:259
-#: src/components/modals/JoinSpaceModal.tsx:78
-#: src/components/modals/JoinSpaceModal.tsx:97
-#: src/components/modals/JoinSpaceModal.tsx:152
+#: src/components/modals/JoinSpaceModal.tsx:73
+#: src/components/modals/JoinSpaceModal.tsx:92
+#: src/components/modals/JoinSpaceModal.tsx:168
 msgid "Join Space"
 msgstr "Join Space"
 
+#: src/components/modals/JoinSpaceModal.tsx:72
 #: src/hooks/business/invites/useInviteUI.ts:31
 msgid "Joined"
 msgstr "Joined"
 
 #: src/components/modals/AddSpaceModal.tsx:130
-#: src/components/modals/JoinSpaceModal.tsx:88
+#: src/components/modals/JoinSpaceModal.tsx:102
 msgid "Joining Space..."
 msgstr "Joining Space..."
 
+#: src/components/modals/JoinSpaceModal.tsx:71
 #: src/hooks/business/invites/useInviteUI.ts:29
 msgid "Joining..."
 msgstr "Joining..."
@@ -1125,7 +1132,7 @@ msgstr "Joining..."
 msgid "Jump"
 msgstr "Jump"
 
-#: src/components/message/MessageList.tsx:409
+#: src/components/message/MessageList.tsx:508
 msgid "Jump to present"
 msgstr "Jump to present"
 
@@ -1198,7 +1205,7 @@ msgstr "Let's gooooooooo"
 msgid "Light"
 msgstr "Light"
 
-#: src/components/message/MessageList.tsx:420
+#: src/components/message/MessageList.tsx:519
 msgid "Loading message..."
 msgstr "Loading message..."
 
@@ -1258,7 +1265,7 @@ msgstr "Mark all as read"
 
 #: src/components/direct/DirectMessage.tsx:438
 #: src/components/direct/DirectMessage.tsx:598
-#: src/components/space/Channel.tsx:732
+#: src/components/space/Channel.tsx:867
 msgid "Members List"
 msgstr "Members List"
 
@@ -1294,6 +1301,10 @@ msgstr "More reactions"
 msgid "New Direct Message"
 msgstr "New Direct Message"
 
+#: src/components/message/NewMessagesSeparator.tsx:64
+msgid "New Messages"
+msgstr "New Messages"
+
 #: src/services/InvitationService.ts:68
 msgid "No encryption state found for this space. The space may need to be initialized or you may need to generate a public invite link first."
 msgstr "No encryption state found for this space. The space may need to be initialized or you may need to generate a public invite link first."
@@ -1318,9 +1329,9 @@ msgstr "No pinned messages yet"
 msgid "No unread notifications"
 msgstr "No unread notifications"
 
-#: src/components/space/Channel.tsx:455
-#: src/components/space/Channel.tsx:917
-#: src/components/space/Channel.tsx:1105
+#: src/components/space/Channel.tsx:590
+#: src/components/space/Channel.tsx:1055
+#: src/components/space/Channel.tsx:1243
 msgid "No users found!"
 msgstr "No users found!"
 
@@ -1335,7 +1346,7 @@ msgstr "Notification permission not granted"
 #: src/components/modals/SpaceSettingsModal/Account.tsx:187
 #: src/components/modals/UserSettingsModal/Navigation.tsx:17
 #: src/components/modals/UserSettingsModal/Notifications.tsx:24
-#: src/components/space/Channel.tsx:702
+#: src/components/space/Channel.tsx:837
 msgid "Notifications"
 msgstr "Notifications"
 
@@ -1466,7 +1477,7 @@ msgstr "Pinned"
 msgid "Pinned by {0}"
 msgstr "Pinned by {0}"
 
-#: src/components/space/Channel.tsx:666
+#: src/components/space/Channel.tsx:801
 msgid "Pinned Messages"
 msgstr "Pinned Messages"
 
@@ -1652,7 +1663,7 @@ msgid "Search in this Space..."
 msgstr "Search in this Space..."
 
 #: src/components/direct/DirectMessage.tsx:457
-#: src/components/space/Channel.tsx:751
+#: src/components/space/Channel.tsx:886
 msgid "Search Messages"
 msgstr "Search Messages"
 
@@ -1664,7 +1675,7 @@ msgstr "Search messages..."
 msgid "Search Results"
 msgstr "Search Results"
 
-#: src/components/space/Channel.tsx:1077
+#: src/components/space/Channel.tsx:1215
 msgid "Search Username or Address"
 msgstr "Search Username or Address"
 
@@ -1965,7 +1976,7 @@ msgstr "Unable to process image. Please use a smaller image."
 msgid "Unable to process sticker image. Please use a smaller image."
 msgstr "Unable to process sticker image. Please use a smaller image."
 
-#: src/components/modals/JoinSpaceModal.tsx:106
+#: src/components/modals/JoinSpaceModal.tsx:112
 msgid "Unknown"
 msgstr "Unknown"
 
@@ -2092,8 +2103,8 @@ msgstr "User address here"
 msgid "User does not exist."
 msgstr "User does not exist."
 
-#: src/components/space/Channel.tsx:442
-#: src/components/space/Channel.tsx:903
+#: src/components/space/Channel.tsx:577
+#: src/components/space/Channel.tsx:1041
 msgid "Username or Address"
 msgstr "Username or Address"
 
@@ -2190,7 +2201,7 @@ msgid "You cannot delete a group that contains channels. Delete all {channelCoun
 msgstr "You cannot delete a group that contains channels. Delete all {channelCount} channels in this group first."
 
 #: src/components/message/MessageComposer.tsx:296
-#: src/components/space/Channel.tsx:874
+#: src/components/space/Channel.tsx:1012
 msgid "You cannot post in this channel"
 msgstr "You cannot post in this channel"
 

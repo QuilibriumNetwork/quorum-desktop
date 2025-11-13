@@ -15,6 +15,11 @@ msgstr ""
 "X-Generator: @lingui/cli\n"
 
 #. js-lingui-explicit-id
+#: src/components/message/NewMessagesSeparator.tsx:69
+msgid "{count} New Messages"
+msgstr ""
+
+#. js-lingui-explicit-id
 #: src/hooks/business/user/useFileUpload.native.ts:107
 #: src/hooks/business/user/useWebFileUpload.ts:34
 msgid "File cannot be larger than {maxFileSize}"
@@ -31,7 +36,7 @@ msgid "No Role - {count}"
 msgstr "ไม่มีบทบาท - {count}"
 
 #. js-lingui-explicit-id
-#: src/components/space/Channel.tsx:851
+#: src/components/space/Channel.tsx:989
 msgid "Send a message to #{channel_name}"
 msgstr "ส่งข้อความไปยัง #{channel_name}"
 
@@ -413,7 +418,7 @@ msgstr "ไอคอนช่อง"
 msgid "Channel Managers"
 msgstr "ผู้จัดการช่อง"
 
-#: src/components/space/Channel.tsx:1066
+#: src/components/space/Channel.tsx:1204
 msgid "Channel members"
 msgstr "สมาชิกช่อง"
 
@@ -1086,21 +1091,23 @@ msgid "Join"
 msgstr "เข้าร่วม"
 
 #: src/components/modals/AddSpaceModal.tsx:259
-#: src/components/modals/JoinSpaceModal.tsx:78
-#: src/components/modals/JoinSpaceModal.tsx:97
-#: src/components/modals/JoinSpaceModal.tsx:152
+#: src/components/modals/JoinSpaceModal.tsx:73
+#: src/components/modals/JoinSpaceModal.tsx:92
+#: src/components/modals/JoinSpaceModal.tsx:168
 msgid "Join Space"
 msgstr "เข้าร่วม พื้นที่"
 
+#: src/components/modals/JoinSpaceModal.tsx:72
 #: src/hooks/business/invites/useInviteUI.ts:31
 msgid "Joined"
 msgstr "เข้าร่วมแล้ว"
 
 #: src/components/modals/AddSpaceModal.tsx:130
-#: src/components/modals/JoinSpaceModal.tsx:88
+#: src/components/modals/JoinSpaceModal.tsx:102
 msgid "Joining Space..."
 msgstr "กำลังเข้าร่วม Space..."
 
+#: src/components/modals/JoinSpaceModal.tsx:71
 #: src/hooks/business/invites/useInviteUI.ts:29
 msgid "Joining..."
 msgstr "กำลังเข้าร่วม..."
@@ -1110,7 +1117,7 @@ msgstr "กำลังเข้าร่วม..."
 msgid "Jump"
 msgstr "กระโดด"
 
-#: src/components/message/MessageList.tsx:409
+#: src/components/message/MessageList.tsx:508
 msgid "Jump to present"
 msgstr "กระโดดไปยังปัจจุบัน"
 
@@ -1183,7 +1190,7 @@ msgstr "ไปกันเถอะ"
 msgid "Light"
 msgstr "แสง"
 
-#: src/components/message/MessageList.tsx:420
+#: src/components/message/MessageList.tsx:519
 msgid "Loading message..."
 msgstr ""
 
@@ -1243,7 +1250,7 @@ msgstr "ทำเครื่องหมายทั้งหมดว่าอ
 
 #: src/components/direct/DirectMessage.tsx:438
 #: src/components/direct/DirectMessage.tsx:598
-#: src/components/space/Channel.tsx:732
+#: src/components/space/Channel.tsx:867
 msgid "Members List"
 msgstr "รายชื่อสมาชิก"
 
@@ -1279,6 +1286,10 @@ msgstr "ปฏิกิริยามากขึ้น"
 msgid "New Direct Message"
 msgstr "ข้อความตรงใหม่"
 
+#: src/components/message/NewMessagesSeparator.tsx:64
+msgid "New Messages"
+msgstr ""
+
 #: src/services/InvitationService.ts:68
 msgid "No encryption state found for this space. The space may need to be initialized or you may need to generate a public invite link first."
 msgstr "ไม่พบสถานะการเข้ารหัสสำหรับ Space นี้ Space อาจต้องถูกเริ่มต้นใหม่หรือคุณอาจต้องสร้างลิงก์เชิญสาธารณะก่อน"
@@ -1302,9 +1313,9 @@ msgstr "ยังไม่มีข้อความที่ถูกปัก
 msgid "No unread notifications"
 msgstr "ไม่มีการแจ้งเตือนที่ยังไม่ได้อ่าน"
 
-#: src/components/space/Channel.tsx:455
-#: src/components/space/Channel.tsx:917
-#: src/components/space/Channel.tsx:1105
+#: src/components/space/Channel.tsx:590
+#: src/components/space/Channel.tsx:1055
+#: src/components/space/Channel.tsx:1243
 msgid "No users found!"
 msgstr "ไม่พบผู้ใช้!"
 
@@ -1319,7 +1330,7 @@ msgstr "ไม่ได้รับอนุญาตการแจ้งเต
 #: src/components/modals/SpaceSettingsModal/Account.tsx:187
 #: src/components/modals/UserSettingsModal/Navigation.tsx:17
 #: src/components/modals/UserSettingsModal/Notifications.tsx:24
-#: src/components/space/Channel.tsx:702
+#: src/components/space/Channel.tsx:837
 msgid "Notifications"
 msgstr "การแจ้งเตือน"
 
@@ -1449,7 +1460,7 @@ msgstr "ถูกปักหมุด"
 msgid "Pinned by {0}"
 msgstr "ถูกปักหมุดโดย {0}"
 
-#: src/components/space/Channel.tsx:666
+#: src/components/space/Channel.tsx:801
 msgid "Pinned Messages"
 msgstr "ข้อความที่ถูกปักหมุด"
 
@@ -1635,7 +1646,7 @@ msgid "Search in this Space..."
 msgstr "ค้นหาใน Space นี้..."
 
 #: src/components/direct/DirectMessage.tsx:457
-#: src/components/space/Channel.tsx:751
+#: src/components/space/Channel.tsx:886
 msgid "Search Messages"
 msgstr "ค้นหาข้อความ"
 
@@ -1647,7 +1658,7 @@ msgstr "ค้นหาข้อความ..."
 msgid "Search Results"
 msgstr ""
 
-#: src/components/space/Channel.tsx:1077
+#: src/components/space/Channel.tsx:1215
 msgid "Search Username or Address"
 msgstr "ค้นหาชื่อผู้ใช้หรือที่อยู่"
 
@@ -1944,7 +1955,7 @@ msgstr "ไม่สามารถประมวลผลภาพได้ �
 msgid "Unable to process sticker image. Please use a smaller image."
 msgstr "ไม่สามารถประมวลผลภาพสติกเกอร์ได้ โปรดใช้ภาพที่เล็กกว่า"
 
-#: src/components/modals/JoinSpaceModal.tsx:106
+#: src/components/modals/JoinSpaceModal.tsx:112
 msgid "Unknown"
 msgstr "ไม่ทราบ"
 
@@ -2069,8 +2080,8 @@ msgstr "ที่อยู่ผู้ใช้ที่นี่"
 msgid "User does not exist."
 msgstr "ผู้ใช้ไม่มีอยู่"
 
-#: src/components/space/Channel.tsx:442
-#: src/components/space/Channel.tsx:903
+#: src/components/space/Channel.tsx:577
+#: src/components/space/Channel.tsx:1041
 msgid "Username or Address"
 msgstr "ชื่อผู้ใช้หรือที่อยู่"
 
@@ -2166,7 +2177,7 @@ msgid "You cannot delete a group that contains channels. Delete all {channelCoun
 msgstr "คุณไม่สามารถลบกลุ่มที่มีช่องอยู่ได้ ให้ลบช่อง {channelCount} ทั้งหมดในกลุ่มนี้ก่อน"
 
 #: src/components/message/MessageComposer.tsx:296
-#: src/components/space/Channel.tsx:874
+#: src/components/space/Channel.tsx:1012
 msgid "You cannot post in this channel"
 msgstr "คุณไม่สามารถโพสต์ในช่องนี้"
 

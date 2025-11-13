@@ -29,7 +29,7 @@ const DirectMessageContact: React.FunctionComponent<{
         }
       >
         {props.unread && address !== props.address && (
-          <div className="w-1 h-1 mt-4 absolute ml-[-6pt] bg-accent rounded-full"></div>
+          <div className="dm-unread-dot" title="Unread messages" />
         )}
         <UserAvatar
           userIcon={props.userIcon}

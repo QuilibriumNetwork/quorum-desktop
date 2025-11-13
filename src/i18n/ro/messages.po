@@ -15,6 +15,11 @@ msgstr ""
 "X-Generator: @lingui/cli\n"
 
 #. js-lingui-explicit-id
+#: src/components/message/NewMessagesSeparator.tsx:69
+msgid "{count} New Messages"
+msgstr ""
+
+#. js-lingui-explicit-id
 #: src/hooks/business/user/useFileUpload.native.ts:107
 #: src/hooks/business/user/useWebFileUpload.ts:34
 msgid "File cannot be larger than {maxFileSize}"
@@ -31,7 +36,7 @@ msgid "No Role - {count}"
 msgstr "Fără rol - {count}"
 
 #. js-lingui-explicit-id
-#: src/components/space/Channel.tsx:851
+#: src/components/space/Channel.tsx:989
 msgid "Send a message to #{channel_name}"
 msgstr "Trimite un mesaj către #{channel_name}"
 
@@ -413,7 +418,7 @@ msgstr "Icon canal"
 msgid "Channel Managers"
 msgstr "Manageri de canal"
 
-#: src/components/space/Channel.tsx:1066
+#: src/components/space/Channel.tsx:1204
 msgid "Channel members"
 msgstr "Membrii canalului"
 
@@ -1086,21 +1091,23 @@ msgid "Join"
 msgstr "Alătură-te"
 
 #: src/components/modals/AddSpaceModal.tsx:259
-#: src/components/modals/JoinSpaceModal.tsx:78
-#: src/components/modals/JoinSpaceModal.tsx:97
-#: src/components/modals/JoinSpaceModal.tsx:152
+#: src/components/modals/JoinSpaceModal.tsx:73
+#: src/components/modals/JoinSpaceModal.tsx:92
+#: src/components/modals/JoinSpaceModal.tsx:168
 msgid "Join Space"
 msgstr "Alătură-te Spațiului"
 
+#: src/components/modals/JoinSpaceModal.tsx:72
 #: src/hooks/business/invites/useInviteUI.ts:31
 msgid "Joined"
 msgstr "Alăturat"
 
 #: src/components/modals/AddSpaceModal.tsx:130
-#: src/components/modals/JoinSpaceModal.tsx:88
+#: src/components/modals/JoinSpaceModal.tsx:102
 msgid "Joining Space..."
 msgstr "Înscriere în Spațiu..."
 
+#: src/components/modals/JoinSpaceModal.tsx:71
 #: src/hooks/business/invites/useInviteUI.ts:29
 msgid "Joining..."
 msgstr "Se alătură..."
@@ -1110,7 +1117,7 @@ msgstr "Se alătură..."
 msgid "Jump"
 msgstr "Sari"
 
-#: src/components/message/MessageList.tsx:409
+#: src/components/message/MessageList.tsx:508
 msgid "Jump to present"
 msgstr "Sari la prezent"
 
@@ -1183,7 +1190,7 @@ msgstr "Să mergem!"
 msgid "Light"
 msgstr "Lumină"
 
-#: src/components/message/MessageList.tsx:420
+#: src/components/message/MessageList.tsx:519
 msgid "Loading message..."
 msgstr ""
 
@@ -1243,7 +1250,7 @@ msgstr "Marchează totul ca citit"
 
 #: src/components/direct/DirectMessage.tsx:438
 #: src/components/direct/DirectMessage.tsx:598
-#: src/components/space/Channel.tsx:732
+#: src/components/space/Channel.tsx:867
 msgid "Members List"
 msgstr "Lista membrilor"
 
@@ -1279,6 +1286,10 @@ msgstr "Mai multe reacții"
 msgid "New Direct Message"
 msgstr "Mesaj Direct Nou"
 
+#: src/components/message/NewMessagesSeparator.tsx:64
+msgid "New Messages"
+msgstr ""
+
 #: src/services/InvitationService.ts:68
 msgid "No encryption state found for this space. The space may need to be initialized or you may need to generate a public invite link first."
 msgstr "Nu s-a găsit nicio stare de criptare pentru acest space. Space-ul poate necesita inițializare sau poate fi necesar să generezi mai întâi un link de invitație public."
@@ -1302,9 +1313,9 @@ msgstr "Nu sunt încă mesaje fixate"
 msgid "No unread notifications"
 msgstr "Nu sunt notificări necitite"
 
-#: src/components/space/Channel.tsx:455
-#: src/components/space/Channel.tsx:917
-#: src/components/space/Channel.tsx:1105
+#: src/components/space/Channel.tsx:590
+#: src/components/space/Channel.tsx:1055
+#: src/components/space/Channel.tsx:1243
 msgid "No users found!"
 msgstr "Niciun utilizator găsit!"
 
@@ -1319,7 +1330,7 @@ msgstr "Permisiunea pentru notificări nu a fost acordată"
 #: src/components/modals/SpaceSettingsModal/Account.tsx:187
 #: src/components/modals/UserSettingsModal/Navigation.tsx:17
 #: src/components/modals/UserSettingsModal/Notifications.tsx:24
-#: src/components/space/Channel.tsx:702
+#: src/components/space/Channel.tsx:837
 msgid "Notifications"
 msgstr "Notificări"
 
@@ -1449,7 +1460,7 @@ msgstr "Fixat"
 msgid "Pinned by {0}"
 msgstr "Fixat de {0}"
 
-#: src/components/space/Channel.tsx:666
+#: src/components/space/Channel.tsx:801
 msgid "Pinned Messages"
 msgstr "Mesaje fixate"
 
@@ -1635,7 +1646,7 @@ msgid "Search in this Space..."
 msgstr "Caută în acest Spațiu..."
 
 #: src/components/direct/DirectMessage.tsx:457
-#: src/components/space/Channel.tsx:751
+#: src/components/space/Channel.tsx:886
 msgid "Search Messages"
 msgstr "Caută Mesaje"
 
@@ -1647,7 +1658,7 @@ msgstr "Caută mesaje..."
 msgid "Search Results"
 msgstr ""
 
-#: src/components/space/Channel.tsx:1077
+#: src/components/space/Channel.tsx:1215
 msgid "Search Username or Address"
 msgstr "Caută numele de utilizator sau adresa"
 
@@ -1944,7 +1955,7 @@ msgstr "Imposibil de procesat imaginea. Te rugăm să folosești o imagine mai m
 msgid "Unable to process sticker image. Please use a smaller image."
 msgstr "Imposibil de procesat imaginea cu autocolante. Te rugăm să folosești o imagine mai mică."
 
-#: src/components/modals/JoinSpaceModal.tsx:106
+#: src/components/modals/JoinSpaceModal.tsx:112
 msgid "Unknown"
 msgstr "Necunoscut"
 
@@ -2069,8 +2080,8 @@ msgstr "Adresa utilizatorului aici"
 msgid "User does not exist."
 msgstr "Utilizatorul nu există."
 
-#: src/components/space/Channel.tsx:442
-#: src/components/space/Channel.tsx:903
+#: src/components/space/Channel.tsx:577
+#: src/components/space/Channel.tsx:1041
 msgid "Username or Address"
 msgstr "Nume de utilizator sau adresă"
 
@@ -2166,7 +2177,7 @@ msgid "You cannot delete a group that contains channels. Delete all {channelCoun
 msgstr "Nu poți șterge un grup care conține canale. Șterge mai întâi toate cele {channelCount} canale din acest grup."
 
 #: src/components/message/MessageComposer.tsx:296
-#: src/components/space/Channel.tsx:874
+#: src/components/space/Channel.tsx:1012
 msgid "You cannot post in this channel"
 msgstr "Nu poți posta în acest canal"
 

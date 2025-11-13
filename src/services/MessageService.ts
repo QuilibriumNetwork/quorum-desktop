@@ -871,6 +871,29 @@ export class MessageService {
         queryKey: ['unread-counts', 'space'],
       });
     }
+
+    // Invalidate unread counts for ALL messages (including DMs without mentions)
+    // Check if this is a DM (spaceId === channelId for direct messages)
+    if (spaceId === channelId) {
+      // This is a direct message conversation
+      await queryClient.invalidateQueries({
+        queryKey: ['unread-counts', 'direct-messages'],
+      });
+    } else {
+      // This is a channel message - invalidate channel/space unread counts
+      // (only if not already done above for mentions)
+      if (
+        !decryptedContent.mentions?.memberIds ||
+        decryptedContent.mentions.memberIds.length === 0
+      ) {
+        await queryClient.invalidateQueries({
+          queryKey: ['unread-counts', 'channel', spaceId],
+        });
+        await queryClient.invalidateQueries({
+          queryKey: ['unread-counts', 'space'],
+        });
+      }
+    }
   }
 
   /**

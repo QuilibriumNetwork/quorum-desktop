@@ -76,6 +76,38 @@ div[role='presentation'] {
   }
 }
 
+/* === UNREAD MESSAGE INDICATORS === */
+/* Shared unread dot styling for channels and DMs */
+/* This provides a consistent visual indicator across all conversation types */
+.unread-dot {
+  position: absolute;
+  width: $s-1-5; // 6px
+  height: $s-1-5;
+  border-radius: $rounded-full;
+  background: var(--accent);
+  z-index: 10;
+  transition: all $duration-100 linear;
+}
+
+/* Channel-specific positioning */
+/* Positioned to the left of channel icon, vertically centered */
+.channel-unread-dot {
+  @extend .unread-dot;
+  left: -$s-3-5; // Position to the left of the channel content
+  top: 50%;
+  transform: translateY(-50%); // Center vertically
+}
+
+/* DM contact-specific positioning */
+/* Positioned to the left of contact item, vertically centered */
+.dm-unread-dot {
+  @extend .unread-dot;
+  left: -$s-1; // Position to the left of the DM contact
+  top: 40%;
+  transform: translateY(-50%); // Center vertically
+  margin-top: $s-1; // Fine-tune vertical alignment for DM layout
+}
+
 /* === ANIMATIONS === */
 
 /* Connecting.tsx */

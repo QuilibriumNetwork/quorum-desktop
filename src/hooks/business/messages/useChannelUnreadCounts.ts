@@ -7,22 +7,21 @@ interface UseChannelUnreadCountsProps {
   channelIds: string[];
 }
 
-// Early-exit threshold: Stop counting after 1 unread message
-// (We only need boolean indicator - has unreads vs no unreads)
-const BOOLEAN_THRESHOLD = 1;
-
 /**
  * Hook to check for unread messages in channels
  *
  * Returns a map of channelId -> 1 (has unreads) or 0 (no unreads) for channels
- * where there are unread messages (messages newer than lastReadTimestamp).
+ * where there are unread messages.
  * Only channels with unreads are included in the result.
  *
+ * Uses the elegant DM approach: compares conversation.lastReadTimestamp with
+ * conversation.timestamp (which is auto-updated on every message save).
+ * This is O(1) per channel instead of O(n) cursor iteration.
+ *
  * The hook:
- * 1. Gets the last read timestamp for each channel from conversations
- * 2. Queries messages after that timestamp
+ * 1. Gets conversation record for each channel
+ * 2. Compares lastReadTimestamp < timestamp
  * 3. Returns binary indicator (1 for has unreads, 0 for no unreads)
- * 4. Uses early exit for performance - stops at first unread message found
  *
  * Uses React Query with 90s stale time for performance while maintaining
  * reasonable real-time updates when invalidated.
@@ -58,20 +57,20 @@ export function useChannelUnreadCounts({
         for (const channelId of channelIds) {
           const conversationId = `${spaceId}/${channelId}`;
 
-          // Get conversation to find last read timestamp
+          // Get conversation record (single O(1) lookup)
           const { conversation } = await messageDB.getConversation({
             conversationId,
           });
 
-          const lastReadTimestamp = conversation?.lastReadTimestamp || 0;
+          if (!conversation) continue;
 
-          // Use optimized database method to check for unread messages
-          // This is much more efficient than fetching and filtering messages
-          const hasUnreads = await messageDB.hasUnreadMessages({
-            spaceId,
-            channelId,
-            afterTimestamp: lastReadTimestamp,
-          });
+          // Simple timestamp comparison (DM approach)
+          // conversation.timestamp = auto-updated on every message save
+          // conversation.lastReadTimestamp = updated via useUpdateReadTime
+          const lastReadTimestamp = conversation.lastReadTimestamp || 0;
+          const lastMessageTimestamp = conversation.timestamp;
+
+          const hasUnreads = lastReadTimestamp < lastMessageTimestamp;
 
           // Only include channels with unreads (binary indicator)
           if (hasUnreads) {

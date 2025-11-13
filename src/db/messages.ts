@@ -1500,47 +1500,6 @@ export class MessageDB {
    * @param afterTimestamp - Only check messages created after this timestamp (typically lastReadTimestamp)
    * @returns Promise<boolean> - true if there are unread messages, false otherwise
    */
-  async hasUnreadMessages({
-    spaceId,
-    channelId,
-    afterTimestamp,
-  }: {
-    spaceId: string;
-    channelId: string;
-    afterTimestamp: number;
-  }): Promise<boolean> {
-    await this.init();
-    return new Promise((resolve, reject) => {
-      const transaction = this.db!.transaction('messages', 'readonly');
-      const store = transaction.objectStore('messages');
-      const index = store.index('by_conversation_time');
-
-      // Use existing index to check for messages after timestamp
-      const range = IDBKeyRange.bound(
-        [spaceId, channelId, afterTimestamp],
-        [spaceId, channelId, Number.MAX_VALUE],
-        true, // Exclude afterTimestamp itself
-        false
-      );
-
-      const request = index.openCursor(range, 'next');
-
-      request.onsuccess = (event) => {
-        const cursor = (event.target as IDBRequest).result;
-
-        if (cursor) {
-          // Found at least one unread message - return true immediately
-          resolve(true);
-        } else {
-          // No unread messages found
-          resolve(false);
-        }
-      };
-
-      request.onerror = () => reject(request.error);
-    });
-  }
-
   /**
    * Get the first unread message in a channel
    *
