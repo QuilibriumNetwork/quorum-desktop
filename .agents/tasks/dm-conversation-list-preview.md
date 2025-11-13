@@ -79,7 +79,9 @@ conversationStore.put({
 Also add `getMessage(messageId)` method if missing.
 
 #### 3. Import Markdown Stripping Utility
-**File:** Import from `markdown-stripping-utility.md` task (or implement inline)
+**File:** Import from `.agents\docs\features\messages\markdown-stripping.md` task (or implement inline)
+
+> IMPORTANT: we implemented the Markdown Stripping Utility differently so the below code exmaple could be inaccurate, please check the current utility before proceeding.
 
 ```typescript
 // If utility available:

@@ -36,12 +36,15 @@ This is the main index for all documentation, bug reports, and task management.
 - [🔍 Global Message Search - Implementation Guide & Documentation](docs/features/search-feature.md)
 
 ### Features / Messages
+- [Auto-Jump to First Unread Message](docs/features/messages/auto-jump-first-unread.md)
 - [Client-Side Image Compression & Thumbnail System](docs/features/messages/client-side-image-compression.md)
 - [Emoji Picker React - Styling & Customization](docs/features/messages/emoji-picker-react-customization.md)
 - [Hash Navigation to Old Messages](docs/features/messages/hash-navigation-to-old-messages.md)
 - [Markdown Renderer](docs/features/messages/markdown-renderer.md)
+- [Markdown Stripping](docs/features/messages/markdown-stripping.md)
 - [Message Signing System](docs/features/messages/message-signing-system.md)
 - [Mobile Message Actions Implementation](docs/features/messages/message-actions-mobile.md)
+- [New Messages Separator](docs/features/messages/new-messages-separator.md)
 - [Pinned Messages Feature](docs/features/messages/pinned-messages.md)
 - [YouTube Facade Optimization](docs/features/messages/youtube-facade-optimization.md)
 
@@ -62,7 +65,6 @@ This is the main index for all documentation, bug reports, and task management.
 
 ### Active Issues
 - [Brave Browser React Hook Errors - ONGOING INVESTIGATION](bugs/brave-browser-react-hook-errors.md)
-- [Bug: Auto-Jump to First Unread Message - Blocked by Virtuoso Scroll Positioning](bugs/auto-jump-unread-virtuoso-scroll-conflict.md)
 - [DirectMessage Invite Loading Performance Issue](bugs/directmessage-invite-loading-performance.md)
 - [Expired Invite Card Validation Timing Issue](bugs/expired-invite-card-validation-timing.md)
 - [JoinSpaceModal "Invalid JSON" Error Due to Network Issues](bugs/joinspacemodal-invalid-json-network-error.md)
@@ -72,6 +74,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Message Hash Navigation Conflict Bug](bugs/message-hash-navigation-conflict.md)
 - [MessageDB Context: IndexedDB Platform Compatibility Issue](bugs/messagedb-cross-platform-storage-issue.md)
 - [Modal Gesture Handling Technical Debt](bugs/modal-gesture-handling-technical-debt.md)
+- [New Messages Separator - Intersection Observer Dismissal Issues](bugs/new-messages-separator-intersection-observer-issues.md)
 - [Performance Issue: UserSettingsModal Save Times Scale Poorly with Number of Spaces](bugs/usersettingsmodal-scalability-performance.md)
 - [Pinned Messages Panel Button Clicks Bug](bugs/pinned-messages-panel-clicks-and-message-list-disappearing.md)
 - [Public Invite Link Intermittent Expiration Bug](bugs/public-invite-link-intermittent-expiration.md)
@@ -79,6 +82,7 @@ This is the main index for all documentation, bug reports, and task management.
 
 ### Solved Issues
 - [Android 7.0 File Download Fix - Implementation Plan](bugs/.solved/SOLVED_android-file-download-huawei-p9-lite.md)
+- [Bug: Auto-Jump to First Unread Message - Blocked by Virtuoso Scroll Positioning](bugs/.solved/auto-jump-unread-virtuoso-scroll-conflict.md)
 - [Channel/Group Save Race Condition](bugs/.solved/channel-group-save-race-condition.md)
 - [Icon Color Not Saving Issue](bugs/.solved/icon-color-not-saving-issue.md)
 - [NewDirectMessage Modal: URL-to-State Conversion](bugs/.solved/SOLVED_newdirectmessage-modal-url-to-state-conversion.md)
@@ -99,16 +103,17 @@ This is the main index for all documentation, bug reports, and task management.
 - [Combined Text + Image Messages](tasks/combined-text-image-messages.md)
 - [Conversation Deletion State Synchronization](tasks/conversation-deletion-state-sync.md)
 - [Device Identification Improvement](tasks/device-identification-improvement.md)
+- [DM Unread Indicators - Exclude Current User's Messages](tasks/dm-unread-indicators-sender-filtering.md)
 - [Implement Background Sync Queue for User Settings and Async Operations](tasks/background-sync-queue.md)
 - [Server Folders - Discord-Style Grouping Feature](tasks/server-folders-discord-style.md)
-- [Task: Fix Search Results Limitation and Pagination](tasks/search-results-limitation-and-navigation-fix.md)
+- [Task: Enhanced Direct Message Conversation List](tasks/dm-conversation-list-preview.md)
 - [Task: Implement Delete Public Invite Link Feature](tasks/delete-public-invite-link.md)
 - [Test Suite Implementation Plan for Quorum Desktop](tasks/test-suite-plan.md)
 - [User Config Sync on Existing Accounts](tasks/user-config-sync-on-existing-accounts.md)
 - [User Status Feature Implementation Plan](tasks/user-status.md)
-- [🚀 Search Performance Optimization - Revised Implementation Plan](tasks/search-performance-optimization.md)
 
 ### .Archived
+- [🚀 Search Performance Optimization - Revised Implementation Plan](tasks/.archived/2025-11-12-search-performance-optimization-original.md)
 - [Auto-Jump to First Unread Message + Fix Hash Navigation](tasks/.archived/auto-jump-first-unread.md)
 - [Font Size Management Analysis & Recommendations](tasks/.archived/font-size-management-analysis-2025.md)
 - [Modal System Consolidation via Route Wrapper Component](tasks/.archived/modal-system-consolidation.md)
@@ -117,6 +122,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Search Performance Optimization - Executive Summary](tasks/.archived/search-performance-analysis_SUMMARY.md)
 - [Shared Git Hooks Setup](tasks/.archived/shared-git-hooks-setup.md)
 - [Space/Channel Message Deletion Placeholders](tasks/.archived/space-message-deletion-placeholders.md)
+- [Task: Fix Search Results Limitation and Pagination](tasks/.archived/search-results-limitation-and-navigation-fix.md)
 
 ### .Archived Css Refactor
 - [CSS Inventory - Complete Codebase Analysis](tasks/.archived/css-refactor/css-inventory.md)
@@ -160,6 +166,12 @@ This is the main index for all documentation, bug reports, and task management.
 - [Third-Party Component Migration Report](tasks/mobile-dev/docs/third-party-component-migration-report.md)
 - [Web/Native Repository Structure](tasks/mobile-dev/docs/web-and-native-repo-structure.md)
 
+### Search Optimization
+- [Design Decisions & Rationale](tasks/search-optimization/decisions.md)
+- [Future Search Optimization Phases](tasks/search-optimization/future-phases.md)
+- [Quick Wins - Search Improvements](tasks/search-optimization/quick-wins.md)
+- [Search Performance Optimization](tasks/search-optimization/README.md)
+
 ## 📋 Completed Tasks
 
 - [AccentColorSwitcher Cross-Platform Migration + Persistence](tasks/.done/accent-color-switcher-cross-platform-migration.md)
@@ -178,11 +190,13 @@ This is the main index for all documentation, bug reports, and task management.
 - [Date Separators UI Enhancement](tasks/.done/date-separators-messages-list.md)
 - [Delete Confirmation System Implementation](tasks/.done/delete-confirmation-system.md)
 - [Direct Message Deletion Feature](tasks/.done/dm-message-deletion.md)
+- [Direct Message Features Comparison Analysis](tasks/.done/direct-message-features-comparison.md)
 - [Dropdown Panels Consolidation & Mobile Bottom Sheet Implementation](tasks/.done/dropdown-panels-consolidation.md)
 - [Edit Message Feature](tasks/.done/edit-message-feature.md)
 - [Emoji Picker Responsive Design Improvement](tasks/.done/emojipicker-responsive.md)
 - [Expo Go to Expo Dev Client Migration Plan - Simplified](tasks/.done/expo-go-to-dev-client-migration.md)
 - [Fix: React Query "undefined" Error in DM Conversations](tasks/.done/fix-react-query-undefined-error-in-dms.md)
+- [Implement Dm Unread Features](tasks/.done/implement-dm-unread-features.md)
 - [Implement Mention Notification Bubbles](tasks/.done/mention-notification-bubbles.md)
 - [Implement Per-Space Display Names and Avatars with Account Section](tasks/.done/per-space-display-name-avatar.md)
 - [Implementation Plan: Repository Restructure for Cross-Platform Development](tasks/.done/implementation-plan-repo-restructure.md)
@@ -223,10 +237,12 @@ This is the main index for all documentation, bug reports, and task management.
 - [Tailwind @apply Conversion Audit](tasks/.done/tailwind-apply-conversion-audit.md)
 - [Task: Fix Hash Navigation to Old Messages (#msg-messageId Pattern)](tasks/.done/fix-hash-navigation-to-old-messages.md)
 - [Task: Improve User Mention System](tasks/.done/improve-user-mention-system.md)
+- [Task: Markdown Stripping Utility](tasks/.done/markdown-stripping-utility.md)
 - [Text Styling Consolidation](tasks/.done/text-styling-consolidation-plan.md)
 - [Toast System - Simple Bug Fixes](tasks/.done/toast-system-simple-fix.md)
 - [Toast System Refactoring](tasks/.done/toast-system-refactoring.md)
 - [UI Folder Reorganization Task](tasks/.done/ui-folder-reorganization.md)
+- [Unify Unread Message Indicators: Channels & DMs](tasks/.done/unify-unread-indicators-channels-dms.md)
 - [Unread Message Visual Indicators Implementation](tasks/.done/unread-message-visual-indicators.md)
 - [User Initials Avatars](tasks/.done/user-initials.md)
 - [XSS Prevention - Final Implementation](tasks/.done/xss-prevention-final-implementation-2025-11-08.md)
@@ -236,4 +252,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2025-11-12 11:39:46
+**Last Updated**: 2025-11-13 12:26:22

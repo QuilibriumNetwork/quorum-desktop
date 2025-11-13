@@ -76,6 +76,11 @@
       "folder": "features"
     },
     {
+      "name": "auto-jump-first-unread.md",
+      "path": ".agents/docs/features/messages/auto-jump-first-unread.md",
+      "folder": "messages"
+    },
+    {
       "name": "client-side-image-compression.md",
       "path": ".agents/docs/features/messages/client-side-image-compression.md",
       "folder": "messages"
@@ -96,6 +101,11 @@
       "folder": "messages"
     },
     {
+      "name": "markdown-stripping.md",
+      "path": ".agents/docs/features/messages/markdown-stripping.md",
+      "folder": "messages"
+    },
+    {
       "name": "message-actions-mobile.md",
       "path": ".agents/docs/features/messages/message-actions-mobile.md",
       "folder": "messages"
@@ -103,6 +113,11 @@
     {
       "name": "message-signing-system.md",
       "path": ".agents/docs/features/messages/message-signing-system.md",
+      "folder": "messages"
+    },
+    {
+      "name": "new-messages-separator.md",
+      "path": ".agents/docs/features/messages/new-messages-separator.md",
       "folder": "messages"
     },
     {
@@ -223,6 +238,11 @@
   ],
   "tasks": [
     {
+      "name": "2025-11-12-search-performance-optimization-original.md",
+      "path": ".agents/tasks/.archived/2025-11-12-search-performance-optimization-original.md",
+      "folder": ".archived"
+    },
+    {
       "name": "auto-jump-first-unread.md",
       "path": ".agents/tasks/.archived/auto-jump-first-unread.md",
       "folder": ".archived"
@@ -265,6 +285,11 @@
     {
       "name": "search-performance-optimization_ANALYSIS.md",
       "path": ".agents/tasks/.archived/search-performance-optimization_ANALYSIS.md",
+      "folder": ".archived"
+    },
+    {
+      "name": "search-results-limitation-and-navigation-fix.md",
+      "path": ".agents/tasks/.archived/search-results-limitation-and-navigation-fix.md",
       "folder": ".archived"
     },
     {
@@ -338,6 +363,11 @@
       "folder": ".done"
     },
     {
+      "name": "direct-message-features-comparison.md",
+      "path": ".agents/tasks/.done/direct-message-features-comparison.md",
+      "folder": ".done"
+    },
+    {
       "name": "dm-message-deletion.md",
       "path": ".agents/tasks/.done/dm-message-deletion.md",
       "folder": ".done"
@@ -398,6 +428,11 @@
       "folder": ".done"
     },
     {
+      "name": "implement-dm-unread-features.md",
+      "path": ".agents/tasks/.done/implement-dm-unread-features.md",
+      "folder": ".done"
+    },
+    {
       "name": "implementation-plan-repo-restructure.md",
       "path": ".agents/tasks/.done/implementation-plan-repo-restructure.md",
       "folder": ".done"
@@ -420,6 +455,11 @@
     {
       "name": "lazy-loading-implementation.md",
       "path": ".agents/tasks/.done/lazy-loading-implementation.md",
+      "folder": ".done"
+    },
+    {
+      "name": "markdown-stripping-utility.md",
+      "path": ".agents/tasks/.done/markdown-stripping-utility.md",
       "folder": ".done"
     },
     {
@@ -608,6 +648,11 @@
       "folder": ".done"
     },
     {
+      "name": "unify-unread-indicators-channels-dms.md",
+      "path": ".agents/tasks/.done/unify-unread-indicators-channels-dms.md",
+      "folder": ".done"
+    },
+    {
       "name": "unread-message-visual-indicators.md",
       "path": ".agents/tasks/.done/unread-message-visual-indicators.md",
       "folder": ".done"
@@ -660,6 +705,16 @@
     {
       "name": "device-identification-improvement.md",
       "path": ".agents/tasks/device-identification-improvement.md",
+      "folder": "root"
+    },
+    {
+      "name": "dm-conversation-list-preview.md",
+      "path": ".agents/tasks/dm-conversation-list-preview.md",
+      "folder": "root"
+    },
+    {
+      "name": "dm-unread-indicators-sender-filtering.md",
+      "path": ".agents/tasks/dm-unread-indicators-sender-filtering.md",
       "folder": "root"
     },
     {
@@ -808,14 +863,24 @@
       "folder": "mobile-dev"
     },
     {
-      "name": "search-performance-optimization.md",
-      "path": ".agents/tasks/search-performance-optimization.md",
-      "folder": "root"
+      "name": "decisions.md",
+      "path": ".agents/tasks/search-optimization/decisions.md",
+      "folder": "search-optimization"
     },
     {
-      "name": "search-results-limitation-and-navigation-fix.md",
-      "path": ".agents/tasks/search-results-limitation-and-navigation-fix.md",
-      "folder": "root"
+      "name": "future-phases.md",
+      "path": ".agents/tasks/search-optimization/future-phases.md",
+      "folder": "search-optimization"
+    },
+    {
+      "name": "quick-wins.md",
+      "path": ".agents/tasks/search-optimization/quick-wins.md",
+      "folder": "search-optimization"
+    },
+    {
+      "name": "README.md",
+      "path": ".agents/tasks/search-optimization/README.md",
+      "folder": "search-optimization"
     },
     {
       "name": "server-folders-discord-style.md",
@@ -843,6 +908,11 @@
       "name": "auto-jump-unread-breaks-message-sync.md",
       "path": ".agents/bugs/.archived/auto-jump-unread-breaks-message-sync.md",
       "folder": ".archived"
+    },
+    {
+      "name": "auto-jump-unread-virtuoso-scroll-conflict.md",
+      "path": ".agents/bugs/.solved/auto-jump-unread-virtuoso-scroll-conflict.md",
+      "folder": ".solved"
     },
     {
       "name": "channel-group-save-race-condition.md",
@@ -888,11 +958,6 @@
       "name": "SOLVED_search-results-page-refresh-and-focus-stealing.md",
       "path": ".agents/bugs/.solved/SOLVED_search-results-page-refresh-and-focus-stealing.md",
       "folder": ".solved"
-    },
-    {
-      "name": "auto-jump-unread-virtuoso-scroll-conflict.md",
-      "path": ".agents/bugs/auto-jump-unread-virtuoso-scroll-conflict.md",
-      "folder": "root"
     },
     {
       "name": "brave-browser-react-hook-errors.md",
@@ -942,6 +1007,11 @@
     {
       "name": "modal-gesture-handling-technical-debt.md",
       "path": ".agents/bugs/modal-gesture-handling-technical-debt.md",
+      "folder": "root"
+    },
+    {
+      "name": "new-messages-separator-intersection-observer-issues.md",
+      "path": ".agents/bugs/new-messages-separator-intersection-observer-issues.md",
       "folder": "root"
     },
     {

@@ -3,6 +3,7 @@ import { Icon, FlexBetween, FlexRow, Container, Text } from '../primitives';
 import { useSearchResultHighlight, useSearchResultFormatting } from '../../hooks/business/search';
 import type { MentionNotification } from '../../hooks/business/mentions';
 import type { ReplyNotification } from '../../types/notifications';
+import { stripMarkdown } from '../../utils/markdownStripping';
 import './NotificationItem.scss';
 
 interface NotificationItemProps {
@@ -13,22 +14,64 @@ interface NotificationItemProps {
   className?: string;
 }
 
-// Helper function to replace user mentions with display names
-const replaceMentionsWithDisplayNames = (
+// Helper function to parse text and render mentions with styling
+const renderTextWithMentions = (
   text: string,
   mapSenderToUser: (senderId: string) => any
-): string => {
-  // Match @<address> patterns (same as MessageMarkdownRenderer)
-  const mentionPattern = /@<(Qm[a-zA-Z0-9]+)>/g;
+): React.ReactNode => {
+  // Match @<address> patterns from raw message text
+  const mentionPattern = /@<(Qm[a-zA-Z0-9]+)>|@everyone\b|@\w+/g;
 
-  return text.replace(mentionPattern, (match, address) => {
-    const user = mapSenderToUser(address);
-    if (user?.displayName) {
-      return `@${user.displayName}`;
+  const parts: React.ReactNode[] = [];
+  let lastIndex = 0;
+  let match;
+
+  while ((match = mentionPattern.exec(text)) !== null) {
+    // Add text before the mention
+    if (match.index > lastIndex) {
+      parts.push(text.substring(lastIndex, match.index));
     }
-    // Fallback to shortened address if user not found
-    return `@${address.substring(0, 8)}...`;
-  });
+
+    const matchedText = match[0];
+
+    // Handle user mention @<address>
+    if (match[1]) {
+      const address = match[1];
+      const user = mapSenderToUser(address);
+      const displayName = user?.displayName || address.substring(0, 8) + '...';
+
+      parts.push(
+        <span key={`mention-${match.index}`} className="text-accent-500 font-medium">
+          @{displayName}
+        </span>
+      );
+    }
+    // Handle @everyone
+    else if (matchedText.toLowerCase() === '@everyone') {
+      parts.push(
+        <span key={`mention-${match.index}`} className="text-accent-500 font-medium">
+          @everyone
+        </span>
+      );
+    }
+    // Handle role mentions @roleTag
+    else {
+      parts.push(
+        <span key={`mention-${match.index}`} className="text-accent-500 font-medium">
+          {matchedText}
+        </span>
+      );
+    }
+
+    lastIndex = match.index + matchedText.length;
+  }
+
+  // Add remaining text after last mention
+  if (lastIndex < text.length) {
+    parts.push(text.substring(lastIndex));
+  }
+
+  return parts.length > 0 ? parts : text;
 };
 
 export const NotificationItem: React.FC<NotificationItemProps> = ({
@@ -48,6 +91,9 @@ export const NotificationItem: React.FC<NotificationItemProps> = ({
     maxLength: 200,
   });
 
+  // Strip markdown from snippet for clean display
+  const cleanSnippet = stripMarkdown(contextualSnippet);
+
   const { formattedDate, handleClick, handleKeyDown } = useSearchResultFormatting({
     message,
     onNavigate,
@@ -63,9 +109,9 @@ export const NotificationItem: React.FC<NotificationItemProps> = ({
     ? 'users'
     : 'user';
 
-  // Replace user mentions with display names
-  const textWithDisplayNames = replaceMentionsWithDisplayNames(
-    contextualSnippet,
+  // Render text with styled mentions
+  const renderedText = renderTextWithMentions(
+    cleanSnippet,
     mapSenderToUser
   );
 
@@ -92,7 +138,7 @@ export const NotificationItem: React.FC<NotificationItemProps> = ({
 
       <Container className="notification-content">
         <Container className="notification-text">
-          {textWithDisplayNames}
+          {renderedText}
         </Container>
       </Container>
     </Container>

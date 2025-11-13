@@ -6,6 +6,7 @@ import {
   useSearchResultFormatting,
   BatchSearchResultDisplayData,
 } from '../../hooks';
+import { stripMarkdownAndMentions } from '../../utils/markdownStripping';
 import './SearchResultItem.scss';
 
 interface SearchResultItemProps {
@@ -41,6 +42,9 @@ const DMSearchResultItem: React.FC<SearchResultItemProps> = ({
     searchTerms,
   });
 
+  // Strip markdown and mentions for clean display
+  const cleanSnippet = stripMarkdownAndMentions(contextualSnippet);
+
   const { formattedDate, handleClick, handleKeyDown } =
     useSearchResultFormatting({
       message,
@@ -75,7 +79,7 @@ const DMSearchResultItem: React.FC<SearchResultItemProps> = ({
         <Container
           className="result-text"
           dangerouslySetInnerHTML={{
-            __html: highlightTerms(contextualSnippet),
+            __html: highlightTerms(cleanSnippet),
           }}
         />
       </Container>
@@ -108,6 +112,9 @@ const SpaceSearchResultItem: React.FC<SearchResultItemProps> = ({
     searchTerms,
   });
 
+  // Strip markdown and mentions for clean display
+  const cleanSnippet = stripMarkdownAndMentions(contextualSnippet);
+
   const { formattedDate, messageTypeIcon, handleClick, handleKeyDown } =
     useSearchResultFormatting({
       message,
@@ -139,7 +146,7 @@ const SpaceSearchResultItem: React.FC<SearchResultItemProps> = ({
         <Container
           className="result-text"
           dangerouslySetInnerHTML={{
-            __html: highlightTerms(contextualSnippet),
+            __html: highlightTerms(cleanSnippet),
           }}
         />
       </Container>

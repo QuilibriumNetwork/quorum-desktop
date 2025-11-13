@@ -291,6 +291,47 @@ a: ({ href, children, ...props }: any) => {
 }
 ```
 
+## Special Token System
+
+MessageMarkdownRenderer uses special tokens to safely render dynamic content like embeds and mentions. These tokens are created during text processing and caught by React component handlers.
+
+### YouTube Embeds
+- **Token Pattern**: `![youtube-embed](videoId)`
+- **Creation**: `processStandaloneYouTubeUrls()` converts standalone YouTube URLs
+- **Rendering**: `img` component catches `alt="youtube-embed"` and renders `<YouTubeFacade>`
+- **Example**: `"https://youtube.com/watch?v=abc"` → `"![youtube-embed](abc)"` → Video embed
+
+### Invite Cards
+- **Token Pattern**: `![invite-card](url)`
+- **Creation**: `processInviteLinks()` converts invite URLs to markdown image syntax
+- **Rendering**: `img` component catches `alt="invite-card"` and renders `<InviteLink>`
+- **Example**: `"https://invite.url"` → `"![invite-card](https://invite.url)"` → Invite card
+
+### User Mentions
+- **Token Pattern**: `<<<MENTION_USER:address>>>`
+- **Creation**: `processMentions()` converts `@<Qm...>` to safe tokens
+- **Rendering**: `text` and `p` components catch tokens and render styled spans
+- **Security**: Prevents markdown interpretation and XSS attacks
+- **Example**: `"Hey @<Qm123>"` → `"Hey <<<MENTION_USER:Qm123>>>"` → Styled mention with display name
+
+### Everyone Mentions
+- **Token Pattern**: `<<<MENTION_EVERYONE>>>`
+- **Creation**: `processMentions()` converts `@everyone` to safe token
+- **Rendering**: `text` and `p` components render styled `@everyone` spans
+
+### Role Mentions
+- **Token Pattern**: `<<<MENTION_ROLE:roleTag:displayName>>>`
+- **Creation**: `processRoleMentions()` converts `@roleTag` to safe tokens
+- **Rendering**: `text` and `p` components render styled role mention spans
+
+**Why Tokens?**
+- Prevents markdown parser from interpreting dynamic content incorrectly
+- React components handle tokens safely (automatic attribute escaping)
+- Enables complex rendering (embeds, styled mentions) within markdown flow
+- Security: No raw HTML injection possible
+
+**Related**: See `src/utils/markdownStripping.ts` for token handling in plain text contexts
+
 ## Dependencies
 
 - `react-markdown` - Core markdown parser
