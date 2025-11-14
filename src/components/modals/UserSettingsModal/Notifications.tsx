@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Switch, Icon, Tooltip } from '../../primitives';
+import { Switch, Icon, Tooltip, Callout } from '../../primitives';
 import { t } from '@lingui/core/macro';
 
 interface NotificationsProps {
@@ -72,6 +72,10 @@ const Notifications: React.FunctionComponent<NotificationsProps> = ({
               {t`To disable notifications, please change the setting in your browser settings. Notifications cannot be disabled programmatically.`}
             </div>
           )}
+
+          <Callout variant="info" className="mt-8">
+            {t`You can manage your Space mention notifications in each Space's settings.`}
+          </Callout>
         </div>
       </div>
     </>
