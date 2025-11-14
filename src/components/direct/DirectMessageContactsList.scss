@@ -21,7 +21,6 @@
 }
 
 .direct-messages-list {
-  scrollbar-width: none;
   flex: 1;
   overflow-y: auto;
 
@@ -32,9 +31,4 @@
   a:hover {
     text-decoration: none;
   }
-}
-
-.direct-messages-list::-webkit-scrollbar {
-  width: 0; /* Remove scrollbar space */
-  background: transparent; /* Optional: just make scrollbar invisible */
 }

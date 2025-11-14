@@ -182,3 +182,68 @@ html.dark .error-label {
   background-repeat: repeat, no-repeat, no-repeat, no-repeat;
   background-size: auto, cover, cover, cover;
 }
+
+/* === CUSTOM SCROLLBARS === */
+/* Ultra-thin scrollbars without arrow buttons for modern UI */
+
+/* Default thin scrollbar for all elements */
+*::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+
+*::-webkit-scrollbar-track {
+  background-color: transparent;
+  margin: 4px 0;
+  border-radius: 3px;
+}
+
+*::-webkit-scrollbar-thumb {
+  background-color: var(--color-border-default);
+  border-radius: 3px;
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background-color: var(--color-border-strong);
+}
+
+/* Remove scrollbar arrow buttons */
+*::-webkit-scrollbar-button:vertical:start:decrement,
+*::-webkit-scrollbar-button:vertical:end:increment {
+  display: none;
+  height: 0px;
+}
+
+*::-webkit-scrollbar-button:horizontal:start:decrement,
+*::-webkit-scrollbar-button:horizontal:end:increment {
+  display: none;
+  width: 0px;
+}
+
+*::-webkit-scrollbar-button {
+  display: none;
+}
+
+*::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+/* === COMPONENT-SPECIFIC SCROLLBAR STYLES === */
+
+/* Wider scrollbar for message lists - better for scrolling through long conversations */
+.scrollbar-message-list::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+/* Ultra-thin scrollbar for sidebars and compact lists */
+.scrollbar-thin::-webkit-scrollbar {
+  width: 3px;
+  height: 3px;
+}
+
+/* Medium scrollbar for modals and content areas */
+.scrollbar-medium::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}

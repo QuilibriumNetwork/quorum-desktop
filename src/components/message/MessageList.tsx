@@ -454,6 +454,7 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
       <>
         <Virtuoso
           ref={virtuoso}
+          className="scrollbar-message-list"
           style={{ position: 'relative' }}
           overscan={{ main: height, reverse: height }}
           increaseViewportBy={{ top: height, bottom: height }}
