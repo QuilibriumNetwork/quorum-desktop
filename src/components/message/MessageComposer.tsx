@@ -466,7 +466,8 @@ export const MessageComposer = forwardRef<
                 type="unstyled"
                 onClick={() => {}} // onClick handled by dropzone
                 className="message-composer-upload-btn"
-                iconName="plus"
+                iconName="paperclip"
+                iconSize="lg"
                 iconOnly
               />
             </div>

@@ -98,6 +98,7 @@ export type IconName =
   | 'hashtag'
   | 'calendar-alt'
   | 'history'
+  | 'paperclip'
 
   // Common additions for future use
   | 'home'

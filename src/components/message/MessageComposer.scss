@@ -74,7 +74,7 @@
   margin-top: $s-2;
   margin-bottom: $s-2;
   padding: $s-1-5;
-  border-radius: $rounded-lg;
+  border-radius: $rounded-full;
   background-color: var(--color-bg-chat-input);
 
   /* When textarea grows beyond single line, align buttons to top */
@@ -118,18 +118,19 @@ html:not(.dark) .message-composer-row {
 
 /* File upload button */
 .message-composer-upload-btn {
-  width: $s-7;
-  height: $s-7;
-  border-radius: $rounded-full;
-  background-color: var(--surface-5);
+  width: $s-9;
+  height: $s-9;
+  padding: 0;
+  border-radius: $rounded-md;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+  color: var(--surface-9);
 
   &:hover {
-    background-color: var(--surface-6);
+    color: var(--color-text-main);
   }
 }
 
