@@ -260,7 +260,7 @@ const Modal: React.FC<NativeModalProps> = ({
   );
 };
 
-const styles = StyleSheet.create<any>({
+const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'flex-end',

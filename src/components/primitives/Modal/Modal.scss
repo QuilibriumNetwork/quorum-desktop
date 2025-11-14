@@ -116,6 +116,7 @@
 
 .quorum-modal-close {
   position: absolute;
+  right: $s-7;
   top: $s-7 !important; // Match the right margin for visual balance - !important needed due to .quorum-modal-no-padding specificity
   color: var(--color-text-subtle);
   background-color: var(--surface-00);
@@ -129,6 +130,7 @@
 
   @media (max-width: $screen-md) {
     // Reduce size and margins on mobile
+    right: $s-5;
     top: $s-5 !important;
     padding: $s-2;
     margin: (-$s-2);
