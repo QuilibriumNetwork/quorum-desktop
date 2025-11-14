@@ -187,7 +187,7 @@ msgstr "@peran"
 msgid "@you"
 msgstr "@kamu"
 
-#: src/components/direct/DirectMessageContactsList.tsx:49
+#: src/components/direct/DirectMessageContactsList.tsx:50
 msgid "+ Add a friend"
 msgstr "Tambahkan teman"
 
@@ -250,7 +250,7 @@ msgstr "Tambahkan hingga 50 stiker kustom. Stiker kustom hanya dapat digunakan d
 
 #: src/components/user/UserProfile.tsx:186
 msgid "Adding..."
-msgstr ""
+msgstr "Menambahkan..."
 
 #: src/hooks/business/validation/useAddressValidation.native.ts:71
 #: src/hooks/business/validation/useAddressValidation.ts:72
@@ -714,7 +714,7 @@ msgstr "Notifikasi desktop tidak didukung di browser ini."
 msgid "Direct Message"
 msgstr "Pesan Langsung"
 
-#: src/components/direct/DirectMessageContactsList.tsx:24
+#: src/components/direct/DirectMessageContactsList.tsx:25
 #: src/components/navbar/NavMenu.tsx:85
 msgid "Direct Messages"
 msgstr "Pesan Langsung"
@@ -856,7 +856,7 @@ msgstr "Gagal menyalin ke papan klip. Silakan coba lagi."
 
 #: src/components/modals/CreateSpaceModal.tsx:28
 msgid "Failed to create space. Please try again."
-msgstr ""
+msgstr "Gagal membuat ruang. Silakan coba lagi."
 
 #: src/components/context/MessageDB.bak.tsx:984
 #: src/services/MessageService.ts:1447
@@ -1271,6 +1271,10 @@ msgstr "Sebutkan Semua"
 msgid "Message actions"
 msgstr "Tindakan pesan"
 
+#: src/utils/messagePreview.ts:56
+msgid "Message deleted"
+msgstr ""
+
 #: src/components/message/Message.tsx:612
 msgid "Message does not have a valid signature, this may not be from the sender"
 msgstr "Pesan tidak memiliki tanda tangan yang valid, ini mungkin bukan dari pengirim"
@@ -1378,7 +1382,7 @@ msgstr "Buka video di YouTube"
 
 #: src/components/modals/CreateSpaceModal.tsx:31
 msgid "Operation timed out. Please try again."
-msgstr ""
+msgstr "Operasi telah habis waktu. Silakan coba lagi."
 
 #~ msgid "optional"
 #~ msgstr "opsional"
@@ -1416,6 +1420,11 @@ msgstr "Izin:"
 #: src/components/onboarding/Onboarding.tsx:111
 msgid "Personalize your account"
 msgstr "Personalisasi akunmu"
+
+#: src/utils/messagePreview.ts:37
+#: src/utils/messagePreview.ts:41
+msgid "Photo"
+msgstr ""
 
 #: src/components/primitives/FileUpload/FileUpload.native.tsx:169
 #: src/hooks/business/user/useFileUpload.native.ts:44
@@ -1540,7 +1549,7 @@ msgstr "Hanya baca"
 msgid "Read only channel"
 msgstr "Saluran hanya baca"
 
-#: src/components/direct/DirectMessageContactsList.tsx:42
+#: src/components/direct/DirectMessageContactsList.tsx:43
 msgid "Ready to start a truly private conversation?"
 msgstr "Siap untuk memulai percakapan yang benar-benar pribadi?"
 
@@ -1565,7 +1574,7 @@ msgstr "Hapus"
 
 #: src/components/user/UserProfile.tsx:158
 msgid "Removing..."
-msgstr ""
+msgstr "Menghapus..."
 
 #: src/components/modals/SpaceSettingsModal/Account.tsx:222
 #: src/components/notifications/NotificationPanel.tsx:90
@@ -2024,7 +2033,7 @@ msgstr "Waktu tidak diketahui"
 #: src/services/MessageService.ts:1425
 #: src/services/MessageService.ts:1443
 #: src/services/MessageService.ts:2779
-#: src/services/MessageService.ts:2930
+#: src/services/MessageService.ts:2932
 msgid "Unknown User"
 msgstr "Pengguna Tidak Dikenal"
 
@@ -2172,6 +2181,10 @@ msgstr "Ketika Anda menandatangani pesan, Anda mengonfirmasi bahwa pesan tersebu
 msgid "When you sign a message, you are confirming that it comes from your key. When you don't sign a message, you have plausible deniability. You can control this setting for each conversation and message individually."
 msgstr "Ketika Anda menandatangani pesan, Anda mengonfirmasi bahwa pesan tersebut berasal dari kunci Anda. Ketika Anda tidak menandatangani pesan, Anda memiliki alasan yang dapat diterima. Anda dapat mengontrol pengaturan ini untuk setiap percakapan dan pesan secara individu."
 
+#: src/utils/dateFormatting.ts:55
+msgid "Yesterday"
+msgstr ""
+
 #: src/utils/dateFormatting.ts:30
 msgid "Yesterday at {timeFormatted}"
 msgstr "kemarin pada {timeFormatted}"
@@ -2191,7 +2204,7 @@ msgstr "Anda dapat mengubah ini nanti untuk percakapan ini dengan mengklik ikon 
 
 #: src/components/modals/UserSettingsModal/Notifications.tsx:77
 msgid "You can manage your Space mention notifications in each Space's settings."
-msgstr ""
+msgstr "Anda dapat mengelola pemberitahuan sebutan Ruang Anda di pengaturan setiap Ruang."
 
 #: src/components/modals/GroupEditorModal.tsx:113
 msgid "You cannot delete a group that contains channels. Delete all {channelCount} channels in this group first."

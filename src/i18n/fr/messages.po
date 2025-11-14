@@ -178,7 +178,7 @@ msgstr "@rôles"
 msgid "@you"
 msgstr "@toi"
 
-#: src/components/direct/DirectMessageContactsList.tsx:49
+#: src/components/direct/DirectMessageContactsList.tsx:50
 msgid "+ Add a friend"
 msgstr "Ajouter un ami"
 
@@ -746,7 +746,7 @@ msgstr ""
 msgid "Direct Message"
 msgstr "Message Direct"
 
-#: src/components/direct/DirectMessageContactsList.tsx:24
+#: src/components/direct/DirectMessageContactsList.tsx:25
 #: src/components/navbar/NavMenu.tsx:85
 msgid "Direct Messages"
 msgstr "Messages directs"
@@ -1339,6 +1339,10 @@ msgstr "Mentionner tout le monde"
 msgid "Message actions"
 msgstr "Actions de message"
 
+#: src/utils/messagePreview.ts:56
+msgid "Message deleted"
+msgstr "Message supprimé"
+
 #: src/components/message/Message.tsx:612
 msgid ""
 "Message does not have a valid signature, this may not be from the sender"
@@ -1493,6 +1497,10 @@ msgstr "Autorisations :"
 #: src/components/onboarding/Onboarding.tsx:111
 msgid "Personalize your account"
 msgstr "Personnalisez votre compte"
+
+#: src/utils/messagePreview.ts:37 src/utils/messagePreview.ts:41
+msgid "Photo"
+msgstr "Photo"
 
 #: src/components/primitives/FileUpload/FileUpload.native.tsx:169
 #: src/hooks/business/user/useFileUpload.native.ts:44
@@ -1650,7 +1658,7 @@ msgstr "Lecture seule"
 msgid "Read only channel"
 msgstr "Canal en lecture seule"
 
-#: src/components/direct/DirectMessageContactsList.tsx:42
+#: src/components/direct/DirectMessageContactsList.tsx:43
 msgid "Ready to start a truly private conversation?"
 msgstr "Prêt à commencer une conversation vraiment privée ?"
 
@@ -2204,7 +2212,7 @@ msgstr "Temps inconnu"
 #: src/services/EncryptionService.ts:138 src/services/MessageService.ts:1113
 #: src/services/MessageService.ts:1285 src/services/MessageService.ts:1425
 #: src/services/MessageService.ts:1443 src/services/MessageService.ts:2779
-#: src/services/MessageService.ts:2930
+#: src/services/MessageService.ts:2932
 msgid "Unknown User"
 msgstr "Utilisateur inconnu"
 
@@ -2404,6 +2412,10 @@ msgstr ""
 "Lorsque vous ne signez pas un message, vous avez une dénégation plausible. "
 "Vous pouvez contrôler ce paramètre pour chaque conversation et message "
 "individuellement."
+
+#: src/utils/dateFormatting.ts:55
+msgid "Yesterday"
+msgstr "Hier"
 
 #: src/utils/dateFormatting.ts:30
 msgid "Yesterday at {timeFormatted}"

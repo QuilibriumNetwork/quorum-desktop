@@ -38,6 +38,7 @@ This is the main index for all documentation, bug reports, and task management.
 ### Features / Messages
 - [Auto-Jump to First Unread Message](docs/features/messages/auto-jump-first-unread.md)
 - [Client-Side Image Compression & Thumbnail System](docs/features/messages/client-side-image-compression.md)
+- [DM Conversation List Previews](docs/features/messages/dm-conversation-list-previews.md)
 - [Emoji Picker React - Styling & Customization](docs/features/messages/emoji-picker-react-customization.md)
 - [Hash Navigation to Old Messages](docs/features/messages/hash-navigation-to-old-messages.md)
 - [Markdown Renderer](docs/features/messages/markdown-renderer.md)
@@ -105,7 +106,6 @@ This is the main index for all documentation, bug reports, and task management.
 - [Implement Background Sync Queue for User Settings and Async Operations](tasks/background-sync-queue.md)
 - [Passkey Import UX Issue](tasks/passkey-import-ux-issue.md)
 - [Server Folders - Discord-Style Grouping Feature](tasks/server-folders-discord-style.md)
-- [Task: Enhanced Direct Message Conversation List](tasks/dm-conversation-list-preview.md)
 - [Task: Implement Delete Public Invite Link Feature](tasks/delete-public-invite-link.md)
 - [Test Suite Implementation Plan for Quorum Desktop](tasks/test-suite-plan.md)
 - [User Config Sync on Existing Accounts](tasks/user-config-sync-on-existing-accounts.md)
@@ -236,6 +236,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Space Icon Mention Bubbles](tasks/.done/space-icon-mention-bubbles.md)
 - [Space Initials Fallback - Optional Space Images](tasks/.done/space-initials-fallback.md)
 - [Tailwind @apply Conversion Audit](tasks/.done/tailwind-apply-conversion-audit.md)
+- [Task: Enhanced Direct Message Conversation List](tasks/.done/dm-conversation-list-preview.md)
 - [Task: Fix Hash Navigation to Old Messages (#msg-messageId Pattern)](tasks/.done/fix-hash-navigation-to-old-messages.md)
 - [Task: Improve User Mention System](tasks/.done/improve-user-mention-system.md)
 - [Task: Markdown Stripping Utility](tasks/.done/markdown-stripping-utility.md)
@@ -253,4 +254,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2025-11-13 15:32:48
+**Last Updated**: 2025-11-14 14:53:54

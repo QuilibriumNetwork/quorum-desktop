@@ -178,7 +178,7 @@ msgstr "@peran"
 msgid "@you"
 msgstr "@kamu"
 
-#: src/components/direct/DirectMessageContactsList.tsx:49
+#: src/components/direct/DirectMessageContactsList.tsx:50
 msgid "+ Add a friend"
 msgstr "Tambahkan teman"
 
@@ -742,7 +742,7 @@ msgstr "Notifikasi desktop tidak didukung di browser ini."
 msgid "Direct Message"
 msgstr "Pesan Langsung"
 
-#: src/components/direct/DirectMessageContactsList.tsx:24
+#: src/components/direct/DirectMessageContactsList.tsx:25
 #: src/components/navbar/NavMenu.tsx:85
 msgid "Direct Messages"
 msgstr "Pesan Langsung"
@@ -1329,6 +1329,10 @@ msgstr "Sebutkan Semua"
 msgid "Message actions"
 msgstr "Tindakan pesan"
 
+#: src/utils/messagePreview.ts:56
+msgid "Message deleted"
+msgstr "Pesan dihapus"
+
 #: src/components/message/Message.tsx:612
 msgid ""
 "Message does not have a valid signature, this may not be from the sender"
@@ -1481,6 +1485,10 @@ msgstr "Izin:"
 msgid "Personalize your account"
 msgstr "Personalisasi akunmu"
 
+#: src/utils/messagePreview.ts:37 src/utils/messagePreview.ts:41
+msgid "Photo"
+msgstr "Foto"
+
 #: src/components/primitives/FileUpload/FileUpload.native.tsx:169
 #: src/hooks/business/user/useFileUpload.native.ts:44
 msgid "Photo Library"
@@ -1629,7 +1637,7 @@ msgstr "Hanya baca"
 msgid "Read only channel"
 msgstr "Saluran hanya baca"
 
-#: src/components/direct/DirectMessageContactsList.tsx:42
+#: src/components/direct/DirectMessageContactsList.tsx:43
 msgid "Ready to start a truly private conversation?"
 msgstr "Siap untuk memulai percakapan yang benar-benar pribadi?"
 
@@ -2181,7 +2189,7 @@ msgstr "Waktu tidak diketahui"
 #: src/services/EncryptionService.ts:138 src/services/MessageService.ts:1113
 #: src/services/MessageService.ts:1285 src/services/MessageService.ts:1425
 #: src/services/MessageService.ts:1443 src/services/MessageService.ts:2779
-#: src/services/MessageService.ts:2930
+#: src/services/MessageService.ts:2932
 msgid "Unknown User"
 msgstr "Pengguna Tidak Dikenal"
 
@@ -2379,6 +2387,10 @@ msgstr ""
 "berasal dari kunci Anda. Ketika Anda tidak menandatangani pesan, Anda "
 "memiliki alasan yang dapat diterima. Anda dapat mengontrol pengaturan ini "
 "untuk setiap percakapan dan pesan secara individu."
+
+#: src/utils/dateFormatting.ts:55
+msgid "Yesterday"
+msgstr "Kemarin"
 
 #: src/utils/dateFormatting.ts:30
 msgid "Yesterday at {timeFormatted}"

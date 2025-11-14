@@ -187,7 +187,7 @@ msgstr "@roles"
 msgid "@you"
 msgstr "@you"
 
-#: src/components/direct/DirectMessageContactsList.tsx:49
+#: src/components/direct/DirectMessageContactsList.tsx:50
 msgid "+ Add a friend"
 msgstr "Adicionar um amigo"
 
@@ -250,7 +250,7 @@ msgstr "Adicione até 50 adesivos personalizados. Adesivos personalizados só po
 
 #: src/components/user/UserProfile.tsx:186
 msgid "Adding..."
-msgstr ""
+msgstr "Adicionando..."
 
 #: src/hooks/business/validation/useAddressValidation.native.ts:71
 #: src/hooks/business/validation/useAddressValidation.ts:72
@@ -713,7 +713,7 @@ msgstr "Notificações de desktop não são suportadas neste navegador."
 msgid "Direct Message"
 msgstr "Mensagem Direta"
 
-#: src/components/direct/DirectMessageContactsList.tsx:24
+#: src/components/direct/DirectMessageContactsList.tsx:25
 #: src/components/navbar/NavMenu.tsx:85
 msgid "Direct Messages"
 msgstr "Mensagens Diretas"
@@ -855,7 +855,7 @@ msgstr "Falha ao copiar para a área de transferência. Por favor, tente novamen
 
 #: src/components/modals/CreateSpaceModal.tsx:28
 msgid "Failed to create space. Please try again."
-msgstr ""
+msgstr "Falha ao criar o Space. Por favor, tente novamente."
 
 #: src/components/context/MessageDB.bak.tsx:984
 #: src/services/MessageService.ts:1447
@@ -1270,6 +1270,10 @@ msgstr "Mencionar Todos"
 msgid "Message actions"
 msgstr "Ações de mensagem"
 
+#: src/utils/messagePreview.ts:56
+msgid "Message deleted"
+msgstr ""
+
 #: src/components/message/Message.tsx:612
 msgid "Message does not have a valid signature, this may not be from the sender"
 msgstr "A mensagem não possui uma assinatura válida, isso pode não ser do remetente"
@@ -1377,7 +1381,7 @@ msgstr "Abrir vídeo no YouTube"
 
 #: src/components/modals/CreateSpaceModal.tsx:31
 msgid "Operation timed out. Please try again."
-msgstr ""
+msgstr "Operação expirou. Por favor, tente novamente."
 
 #~ msgid "optional"
 #~ msgstr "opcional"
@@ -1415,6 +1419,11 @@ msgstr "Permissões:"
 #: src/components/onboarding/Onboarding.tsx:111
 msgid "Personalize your account"
 msgstr "Personalize sua conta"
+
+#: src/utils/messagePreview.ts:37
+#: src/utils/messagePreview.ts:41
+msgid "Photo"
+msgstr ""
 
 #: src/components/primitives/FileUpload/FileUpload.native.tsx:169
 #: src/hooks/business/user/useFileUpload.native.ts:44
@@ -1539,7 +1548,7 @@ msgstr "Somente leitura"
 msgid "Read only channel"
 msgstr "Canal somente leitura"
 
-#: src/components/direct/DirectMessageContactsList.tsx:42
+#: src/components/direct/DirectMessageContactsList.tsx:43
 msgid "Ready to start a truly private conversation?"
 msgstr "Pronto para começar uma conversa verdadeiramente privada?"
 
@@ -1564,7 +1573,7 @@ msgstr "Remover"
 
 #: src/components/user/UserProfile.tsx:158
 msgid "Removing..."
-msgstr ""
+msgstr "Removendo..."
 
 #: src/components/modals/SpaceSettingsModal/Account.tsx:222
 #: src/components/notifications/NotificationPanel.tsx:90
@@ -2023,7 +2032,7 @@ msgstr "Hora desconhecida"
 #: src/services/MessageService.ts:1425
 #: src/services/MessageService.ts:1443
 #: src/services/MessageService.ts:2779
-#: src/services/MessageService.ts:2930
+#: src/services/MessageService.ts:2932
 msgid "Unknown User"
 msgstr "Usuário Desconhecido"
 
@@ -2171,6 +2180,10 @@ msgstr "Quando você assina uma mensagem, está confirmando que ela vem de sua c
 msgid "When you sign a message, you are confirming that it comes from your key. When you don't sign a message, you have plausible deniability. You can control this setting for each conversation and message individually."
 msgstr "Quando você assina uma mensagem, está confirmando que ela vem de sua chave. Quando você não assina uma mensagem, tem uma negação plausível. Você pode controlar esta configuração para cada conversa e mensagem individualmente."
 
+#: src/utils/dateFormatting.ts:55
+msgid "Yesterday"
+msgstr ""
+
 #: src/utils/dateFormatting.ts:30
 msgid "Yesterday at {timeFormatted}"
 msgstr "Ontem às {timeFormatted}"
@@ -2190,7 +2203,7 @@ msgstr "Você pode alterar isso mais tarde para esta conversa clicando no ícone
 
 #: src/components/modals/UserSettingsModal/Notifications.tsx:77
 msgid "You can manage your Space mention notifications in each Space's settings."
-msgstr ""
+msgstr "Você pode gerenciar suas notificações de menção do Space nas configurações de cada Space."
 
 #: src/components/modals/GroupEditorModal.tsx:113
 msgid "You cannot delete a group that contains channels. Delete all {channelCount} channels in this group first."

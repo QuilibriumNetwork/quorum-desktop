@@ -174,7 +174,7 @@ msgstr "@roles"
 msgid "@you"
 msgstr "@you"
 
-#: src/components/direct/DirectMessageContactsList.tsx:49
+#: src/components/direct/DirectMessageContactsList.tsx:50
 msgid "+ Add a friend"
 msgstr "添加朋友"
 
@@ -703,7 +703,7 @@ msgstr "此浏览器不支持桌面通知。"
 msgid "Direct Message"
 msgstr "直接消息"
 
-#: src/components/direct/DirectMessageContactsList.tsx:24
+#: src/components/direct/DirectMessageContactsList.tsx:25
 #: src/components/navbar/NavMenu.tsx:85
 msgid "Direct Messages"
 msgstr "直接消息"
@@ -1269,6 +1269,10 @@ msgstr "提及所有人"
 msgid "Message actions"
 msgstr "消息操作"
 
+#: src/utils/messagePreview.ts:56
+msgid "Message deleted"
+msgstr "消息已删除"
+
 #: src/components/message/Message.tsx:612
 msgid ""
 "Message does not have a valid signature, this may not be from the sender"
@@ -1414,6 +1418,10 @@ msgstr "权限："
 msgid "Personalize your account"
 msgstr "个性化您的账户"
 
+#: src/utils/messagePreview.ts:37 src/utils/messagePreview.ts:41
+msgid "Photo"
+msgstr "照片"
+
 #: src/components/primitives/FileUpload/FileUpload.native.tsx:169
 #: src/hooks/business/user/useFileUpload.native.ts:44
 msgid "Photo Library"
@@ -1549,7 +1557,7 @@ msgstr "只读"
 msgid "Read only channel"
 msgstr "只读频道"
 
-#: src/components/direct/DirectMessageContactsList.tsx:42
+#: src/components/direct/DirectMessageContactsList.tsx:43
 msgid "Ready to start a truly private conversation?"
 msgstr "准备开始真正私密的对话吗？"
 
@@ -2052,7 +2060,7 @@ msgstr "未知时间"
 #: src/services/EncryptionService.ts:138 src/services/MessageService.ts:1113
 #: src/services/MessageService.ts:1285 src/services/MessageService.ts:1425
 #: src/services/MessageService.ts:1443 src/services/MessageService.ts:2779
-#: src/services/MessageService.ts:2930
+#: src/services/MessageService.ts:2932
 msgid "Unknown User"
 msgstr "未知用户"
 
@@ -2219,6 +2227,10 @@ msgid ""
 "When you don't sign a message, you have plausible deniability. You can "
 "control this setting for each conversation and message individually."
 msgstr "当您签署一条消息时，您确认它来自您的密钥。当您不签署消息时，您有合理的否认权。您可以单独控制每个对话和消息的此设置。"
+
+#: src/utils/dateFormatting.ts:55
+msgid "Yesterday"
+msgstr "昨天"
 
 #: src/utils/dateFormatting.ts:30
 msgid "Yesterday at {timeFormatted}"

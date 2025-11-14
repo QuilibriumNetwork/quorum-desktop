@@ -178,7 +178,7 @@ msgstr "@vloge"
 msgid "@you"
 msgstr "@ti"
 
-#: src/components/direct/DirectMessageContactsList.tsx:49
+#: src/components/direct/DirectMessageContactsList.tsx:50
 msgid "+ Add a friend"
 msgstr "Dodaj prijatelja"
 
@@ -738,7 +738,7 @@ msgstr "Namizna obvestila v tem brskalniku niso podprta."
 msgid "Direct Message"
 msgstr "Direktna sporočila"
 
-#: src/components/direct/DirectMessageContactsList.tsx:24
+#: src/components/direct/DirectMessageContactsList.tsx:25
 #: src/components/navbar/NavMenu.tsx:85
 msgid "Direct Messages"
 msgstr "Direktna sporočila"
@@ -1325,6 +1325,10 @@ msgstr "Omeni vse"
 msgid "Message actions"
 msgstr "Dejanja sporočila"
 
+#: src/utils/messagePreview.ts:56
+msgid "Message deleted"
+msgstr "Sporočilo je bilo izbrisano"
+
 #: src/components/message/Message.tsx:612
 msgid ""
 "Message does not have a valid signature, this may not be from the sender"
@@ -1475,6 +1479,10 @@ msgstr "Dovoljenja:"
 msgid "Personalize your account"
 msgstr "Personalizuj svoj nalog"
 
+#: src/utils/messagePreview.ts:37 src/utils/messagePreview.ts:41
+msgid "Photo"
+msgstr "Fotografija"
+
 #: src/components/primitives/FileUpload/FileUpload.native.tsx:169
 #: src/hooks/business/user/useFileUpload.native.ts:44
 msgid "Photo Library"
@@ -1621,7 +1629,7 @@ msgstr "Samo za branje"
 msgid "Read only channel"
 msgstr "Kanal samo za branje"
 
-#: src/components/direct/DirectMessageContactsList.tsx:42
+#: src/components/direct/DirectMessageContactsList.tsx:43
 msgid "Ready to start a truly private conversation?"
 msgstr "Pripravljen na začetek resnično zasebnega pogovora?"
 
@@ -2159,7 +2167,7 @@ msgstr "Neznan čas"
 #: src/services/EncryptionService.ts:138 src/services/MessageService.ts:1113
 #: src/services/MessageService.ts:1285 src/services/MessageService.ts:1425
 #: src/services/MessageService.ts:1443 src/services/MessageService.ts:2779
-#: src/services/MessageService.ts:2930
+#: src/services/MessageService.ts:2932
 msgid "Unknown User"
 msgstr "Neznan uporabnik"
 
@@ -2351,6 +2359,10 @@ msgstr ""
 "Ko podpišeš sporočilo, potrjuješ, da prihaja iz tvoje ključe. Ko ne podpišeš"
 " sporočila, imaš verjetno zanikanje. To nastavitev lahko nadzoruješ za vsak "
 "pogovor in sporočilo posebej."
+
+#: src/utils/dateFormatting.ts:55
+msgid "Yesterday"
+msgstr "Včeraj"
 
 #: src/utils/dateFormatting.ts:30
 msgid "Yesterday at {timeFormatted}"

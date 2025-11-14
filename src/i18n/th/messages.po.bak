@@ -187,7 +187,7 @@ msgstr "@roles"
 msgid "@you"
 msgstr "@you"
 
-#: src/components/direct/DirectMessageContactsList.tsx:49
+#: src/components/direct/DirectMessageContactsList.tsx:50
 msgid "+ Add a friend"
 msgstr "เพิ่มเพื่อน"
 
@@ -250,7 +250,7 @@ msgstr "เพิ่มสติกเกอร์ที่กำหนดเอ
 
 #: src/components/user/UserProfile.tsx:186
 msgid "Adding..."
-msgstr ""
+msgstr "กำลังเพิ่ม..."
 
 #: src/hooks/business/validation/useAddressValidation.native.ts:71
 #: src/hooks/business/validation/useAddressValidation.ts:72
@@ -713,7 +713,7 @@ msgstr "การแจ้งเตือนบนเดสก์ท็อปไ
 msgid "Direct Message"
 msgstr "ข้อความตรง"
 
-#: src/components/direct/DirectMessageContactsList.tsx:24
+#: src/components/direct/DirectMessageContactsList.tsx:25
 #: src/components/navbar/NavMenu.tsx:85
 msgid "Direct Messages"
 msgstr "ข้อความตรง"
@@ -855,7 +855,7 @@ msgstr "ไม่สามารถคัดลอกไปยังคลิป
 
 #: src/components/modals/CreateSpaceModal.tsx:28
 msgid "Failed to create space. Please try again."
-msgstr ""
+msgstr "ไม่สามารถสร้าง Space ได้ กรุณาลองอีกครั้ง"
 
 #: src/components/context/MessageDB.bak.tsx:984
 #: src/services/MessageService.ts:1447
@@ -1270,6 +1270,10 @@ msgstr "กล่าวถึงทุกคน"
 msgid "Message actions"
 msgstr "การดำเนินการข้อความ"
 
+#: src/utils/messagePreview.ts:56
+msgid "Message deleted"
+msgstr ""
+
 #: src/components/message/Message.tsx:612
 msgid "Message does not have a valid signature, this may not be from the sender"
 msgstr "ข้อความไม่มีลายเซ็นที่ถูกต้อง อาจไม่ใช่มาจากผู้ส่ง"
@@ -1377,7 +1381,7 @@ msgstr "เปิดวิดีโอบน YouTube"
 
 #: src/components/modals/CreateSpaceModal.tsx:31
 msgid "Operation timed out. Please try again."
-msgstr ""
+msgstr "การดำเนินการหมดเวลา กรุณาลองอีกครั้ง"
 
 #~ msgid "optional"
 #~ msgstr "ไม่บังคับ"
@@ -1415,6 +1419,11 @@ msgstr "สิทธิ์:"
 #: src/components/onboarding/Onboarding.tsx:111
 msgid "Personalize your account"
 msgstr "ปรับแต่งบัญชีของคุณ"
+
+#: src/utils/messagePreview.ts:37
+#: src/utils/messagePreview.ts:41
+msgid "Photo"
+msgstr ""
 
 #: src/components/primitives/FileUpload/FileUpload.native.tsx:169
 #: src/hooks/business/user/useFileUpload.native.ts:44
@@ -1539,7 +1548,7 @@ msgstr "อ่านอย่างเดียว"
 msgid "Read only channel"
 msgstr "ช่องอ่านอย่างเดียว"
 
-#: src/components/direct/DirectMessageContactsList.tsx:42
+#: src/components/direct/DirectMessageContactsList.tsx:43
 msgid "Ready to start a truly private conversation?"
 msgstr "พร้อมที่จะเริ่มการสนทนาที่เป็นส่วนตัวอย่างแท้จริงหรือยัง?"
 
@@ -1564,7 +1573,7 @@ msgstr "ลบ"
 
 #: src/components/user/UserProfile.tsx:158
 msgid "Removing..."
-msgstr ""
+msgstr "กำลังลบ..."
 
 #: src/components/modals/SpaceSettingsModal/Account.tsx:222
 #: src/components/notifications/NotificationPanel.tsx:90
@@ -2023,7 +2032,7 @@ msgstr "เวลาที่ไม่รู้จัก"
 #: src/services/MessageService.ts:1425
 #: src/services/MessageService.ts:1443
 #: src/services/MessageService.ts:2779
-#: src/services/MessageService.ts:2930
+#: src/services/MessageService.ts:2932
 msgid "Unknown User"
 msgstr "ผู้ใช้ที่ไม่ทราบ"
 
@@ -2171,6 +2180,10 @@ msgstr "เมื่อคุณลงนามในข้อความ ค�
 msgid "When you sign a message, you are confirming that it comes from your key. When you don't sign a message, you have plausible deniability. You can control this setting for each conversation and message individually."
 msgstr "เมื่อคุณลงนามในข้อความ คุณกำลังยืนยันว่ามาจากกุญแจของคุณ เมื่อคุณไม่ลงนามในข้อความ คุณมีความสามารถในการปฏิเสธได้ คุณสามารถควบคุมการตั้งค่านี้สำหรับแต่ละการสนทนาและข้อความได้เป็นรายบุคคล"
 
+#: src/utils/dateFormatting.ts:55
+msgid "Yesterday"
+msgstr ""
+
 #: src/utils/dateFormatting.ts:30
 msgid "Yesterday at {timeFormatted}"
 msgstr "เมื่อวานนี้เวลา {timeFormatted}"
@@ -2190,7 +2203,7 @@ msgstr "คุณสามารถเปลี่ยนสิ่งนี้ใ
 
 #: src/components/modals/UserSettingsModal/Notifications.tsx:77
 msgid "You can manage your Space mention notifications in each Space's settings."
-msgstr ""
+msgstr "คุณสามารถจัดการการแจ้งเตือนการกล่าวถึง Space ของคุณได้ในการตั้งค่าของแต่ละ Space."
 
 #: src/components/modals/GroupEditorModal.tsx:113
 msgid "You cannot delete a group that contains channels. Delete all {channelCount} channels in this group first."

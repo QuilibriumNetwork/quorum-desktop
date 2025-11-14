@@ -176,7 +176,7 @@ msgstr "@roles"
 msgid "@you"
 msgstr "@you"
 
-#: src/components/direct/DirectMessageContactsList.tsx:49
+#: src/components/direct/DirectMessageContactsList.tsx:50
 msgid "+ Add a friend"
 msgstr "Thêm một người bạn"
 
@@ -732,7 +732,7 @@ msgstr "Thông báo trên máy tính không được hỗ trợ trong trình duy
 msgid "Direct Message"
 msgstr "Tin nhắn trực tiếp"
 
-#: src/components/direct/DirectMessageContactsList.tsx:24
+#: src/components/direct/DirectMessageContactsList.tsx:25
 #: src/components/navbar/NavMenu.tsx:85
 msgid "Direct Messages"
 msgstr "Tin nhắn trực tiếp"
@@ -1319,6 +1319,10 @@ msgstr "Đề cập đến Mọi người"
 msgid "Message actions"
 msgstr "Hành động tin nhắn"
 
+#: src/utils/messagePreview.ts:56
+msgid "Message deleted"
+msgstr "Tin nhắn đã bị xóa"
+
 #: src/components/message/Message.tsx:612
 msgid ""
 "Message does not have a valid signature, this may not be from the sender"
@@ -1470,6 +1474,10 @@ msgstr "Quyền:"
 msgid "Personalize your account"
 msgstr "Cá nhân hóa tài khoản của bạn"
 
+#: src/utils/messagePreview.ts:37 src/utils/messagePreview.ts:41
+msgid "Photo"
+msgstr "Ảnh"
+
 #: src/components/primitives/FileUpload/FileUpload.native.tsx:169
 #: src/hooks/business/user/useFileUpload.native.ts:44
 msgid "Photo Library"
@@ -1619,7 +1627,7 @@ msgstr "Chỉ đọc"
 msgid "Read only channel"
 msgstr "Kênh chỉ đọc"
 
-#: src/components/direct/DirectMessageContactsList.tsx:42
+#: src/components/direct/DirectMessageContactsList.tsx:43
 msgid "Ready to start a truly private conversation?"
 msgstr "Sẵn sàng để bắt đầu một cuộc trò chuyện thực sự riêng tư?"
 
@@ -2160,7 +2168,7 @@ msgstr "Thời gian không xác định"
 #: src/services/EncryptionService.ts:138 src/services/MessageService.ts:1113
 #: src/services/MessageService.ts:1285 src/services/MessageService.ts:1425
 #: src/services/MessageService.ts:1443 src/services/MessageService.ts:2779
-#: src/services/MessageService.ts:2930
+#: src/services/MessageService.ts:2932
 msgid "Unknown User"
 msgstr "Người dùng không xác định"
 
@@ -2355,6 +2363,10 @@ msgstr ""
 "bạn không ký một tin nhắn, bạn có thể phủ nhận một cách hợp lý. Bạn có thể "
 "kiểm soát cài đặt này cho từng cuộc trò chuyện và tin nhắn một cách riêng "
 "biệt."
+
+#: src/utils/dateFormatting.ts:55
+msgid "Yesterday"
+msgstr "Hôm qua"
 
 #: src/utils/dateFormatting.ts:30
 msgid "Yesterday at {timeFormatted}"

@@ -187,7 +187,7 @@ msgstr "@roles"
 msgid "@you"
 msgstr "@you"
 
-#: src/components/direct/DirectMessageContactsList.tsx:49
+#: src/components/direct/DirectMessageContactsList.tsx:50
 msgid "+ Add a friend"
 msgstr "Додати друга"
 
@@ -250,7 +250,7 @@ msgstr "Додайте до 50 користувацьких наліпок. Ко
 
 #: src/components/user/UserProfile.tsx:186
 msgid "Adding..."
-msgstr ""
+msgstr "Додається..."
 
 #: src/hooks/business/validation/useAddressValidation.native.ts:71
 #: src/hooks/business/validation/useAddressValidation.ts:72
@@ -713,7 +713,7 @@ msgstr "Сповіщення на робочому столі не підтри�
 msgid "Direct Message"
 msgstr "Пряме повідомлення"
 
-#: src/components/direct/DirectMessageContactsList.tsx:24
+#: src/components/direct/DirectMessageContactsList.tsx:25
 #: src/components/navbar/NavMenu.tsx:85
 msgid "Direct Messages"
 msgstr "Прямі повідомлення"
@@ -855,7 +855,7 @@ msgstr "Не вдалося скопіювати в буфер обміну. С�
 
 #: src/components/modals/CreateSpaceModal.tsx:28
 msgid "Failed to create space. Please try again."
-msgstr ""
+msgstr "Не вдалося створити простір. Будь ласка, спробуйте ще раз."
 
 #: src/components/context/MessageDB.bak.tsx:984
 #: src/services/MessageService.ts:1447
@@ -1270,6 +1270,10 @@ msgstr "Згадати всіх"
 msgid "Message actions"
 msgstr "Дії з повідомленнями"
 
+#: src/utils/messagePreview.ts:56
+msgid "Message deleted"
+msgstr ""
+
 #: src/components/message/Message.tsx:612
 msgid "Message does not have a valid signature, this may not be from the sender"
 msgstr "Повідомлення не має дійсного підпису, це може бути не від відправника"
@@ -1377,7 +1381,7 @@ msgstr "Відкрити відео на YouTube"
 
 #: src/components/modals/CreateSpaceModal.tsx:31
 msgid "Operation timed out. Please try again."
-msgstr ""
+msgstr "Час операції вичерпано. Будь ласка, спробуйте ще раз."
 
 #~ msgid "optional"
 #~ msgstr "додатково"
@@ -1415,6 +1419,11 @@ msgstr "Дозволи:"
 #: src/components/onboarding/Onboarding.tsx:111
 msgid "Personalize your account"
 msgstr "Персоналізуйте свій обліковий запис"
+
+#: src/utils/messagePreview.ts:37
+#: src/utils/messagePreview.ts:41
+msgid "Photo"
+msgstr ""
 
 #: src/components/primitives/FileUpload/FileUpload.native.tsx:169
 #: src/hooks/business/user/useFileUpload.native.ts:44
@@ -1539,7 +1548,7 @@ msgstr "Тільки для читання"
 msgid "Read only channel"
 msgstr "Канал тільки для читання"
 
-#: src/components/direct/DirectMessageContactsList.tsx:42
+#: src/components/direct/DirectMessageContactsList.tsx:43
 msgid "Ready to start a truly private conversation?"
 msgstr "Готові почати справжню приватну розмову?"
 
@@ -1564,7 +1573,7 @@ msgstr "Видалити"
 
 #: src/components/user/UserProfile.tsx:158
 msgid "Removing..."
-msgstr ""
+msgstr "Видалення..."
 
 #: src/components/modals/SpaceSettingsModal/Account.tsx:222
 #: src/components/notifications/NotificationPanel.tsx:90
@@ -2023,7 +2032,7 @@ msgstr "Невідомий час"
 #: src/services/MessageService.ts:1425
 #: src/services/MessageService.ts:1443
 #: src/services/MessageService.ts:2779
-#: src/services/MessageService.ts:2930
+#: src/services/MessageService.ts:2932
 msgid "Unknown User"
 msgstr "Невідомий користувач"
 
@@ -2171,6 +2180,10 @@ msgstr "Коли ви підписуєте повідомлення, ви під
 msgid "When you sign a message, you are confirming that it comes from your key. When you don't sign a message, you have plausible deniability. You can control this setting for each conversation and message individually."
 msgstr "Коли ви підписуєте повідомлення, ви підтверджуєте, що воно походить з вашого ключа. Коли ви не підписуєте повідомлення, ви маєте правдоподібне заперечення. Ви можете контролювати це налаштування для кожної розмови та повідомлення окремо."
 
+#: src/utils/dateFormatting.ts:55
+msgid "Yesterday"
+msgstr ""
+
 #: src/utils/dateFormatting.ts:30
 msgid "Yesterday at {timeFormatted}"
 msgstr "Вчора о {timeFormatted}"
@@ -2190,7 +2203,7 @@ msgstr "Ви можете змінити це пізніше для цієї р�
 
 #: src/components/modals/UserSettingsModal/Notifications.tsx:77
 msgid "You can manage your Space mention notifications in each Space's settings."
-msgstr ""
+msgstr "Ви можете керувати сповіщеннями про згадки вашого Простору в налаштуваннях кожного Простору."
 
 #: src/components/modals/GroupEditorModal.tsx:113
 msgid "You cannot delete a group that contains channels. Delete all {channelCount} channels in this group first."

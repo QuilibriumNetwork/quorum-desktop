@@ -178,7 +178,7 @@ msgstr "@roles"
 msgid "@you"
 msgstr "@you"
 
-#: src/components/direct/DirectMessageContactsList.tsx:49
+#: src/components/direct/DirectMessageContactsList.tsx:50
 msgid "+ Add a friend"
 msgstr "Přidat přítele"
 
@@ -736,7 +736,7 @@ msgstr "Oznámení na ploše v tomto prohlížeči nejsou podporována."
 msgid "Direct Message"
 msgstr "Přímá zpráva"
 
-#: src/components/direct/DirectMessageContactsList.tsx:24
+#: src/components/direct/DirectMessageContactsList.tsx:25
 #: src/components/navbar/NavMenu.tsx:85
 msgid "Direct Messages"
 msgstr "Osobní zprávy"
@@ -1323,6 +1323,10 @@ msgstr "Zmínit všechny"
 msgid "Message actions"
 msgstr "Akce zprávy"
 
+#: src/utils/messagePreview.ts:56
+msgid "Message deleted"
+msgstr "Zpráva byla smazána"
+
 #: src/components/message/Message.tsx:612
 msgid ""
 "Message does not have a valid signature, this may not be from the sender"
@@ -1474,6 +1478,10 @@ msgstr "Oprávnění:"
 msgid "Personalize your account"
 msgstr "Personalizuj si svůj účet"
 
+#: src/utils/messagePreview.ts:37 src/utils/messagePreview.ts:41
+msgid "Photo"
+msgstr "Fotografie"
+
 #: src/components/primitives/FileUpload/FileUpload.native.tsx:169
 #: src/hooks/business/user/useFileUpload.native.ts:44
 msgid "Photo Library"
@@ -1620,7 +1628,7 @@ msgstr "Pouze pro čtení"
 msgid "Read only channel"
 msgstr "Pouze pro čtení kanál"
 
-#: src/components/direct/DirectMessageContactsList.tsx:42
+#: src/components/direct/DirectMessageContactsList.tsx:43
 msgid "Ready to start a truly private conversation?"
 msgstr "Připraveni začít skutečně soukromou konverzaci?"
 
@@ -2156,7 +2164,7 @@ msgstr "Neznámý čas"
 #: src/services/EncryptionService.ts:138 src/services/MessageService.ts:1113
 #: src/services/MessageService.ts:1285 src/services/MessageService.ts:1425
 #: src/services/MessageService.ts:1443 src/services/MessageService.ts:2779
-#: src/services/MessageService.ts:2930
+#: src/services/MessageService.ts:2932
 msgid "Unknown User"
 msgstr "Neznámý uživatel"
 
@@ -2349,6 +2357,10 @@ msgstr ""
 "Když podepíšete zprávu, potvrzujete, že pochází z vašeho klíče. Když zprávu "
 "nepodepíšete, máte rozumnou popření. Toto nastavení můžete ovládat pro "
 "každou konverzaci a zprávu jednotlivě."
+
+#: src/utils/dateFormatting.ts:55
+msgid "Yesterday"
+msgstr "Včera"
 
 #: src/utils/dateFormatting.ts:30
 msgid "Yesterday at {timeFormatted}"

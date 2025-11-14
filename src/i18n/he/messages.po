@@ -176,7 +176,7 @@ msgstr "@תפקידים"
 msgid "@you"
 msgstr "@אתה"
 
-#: src/components/direct/DirectMessageContactsList.tsx:49
+#: src/components/direct/DirectMessageContactsList.tsx:50
 msgid "+ Add a friend"
 msgstr "הוסף חבר"
 
@@ -728,7 +728,7 @@ msgstr "התראות שולחן עבודה אינן נתמכות בדפדפן ה
 msgid "Direct Message"
 msgstr "הודעה ישירה"
 
-#: src/components/direct/DirectMessageContactsList.tsx:24
+#: src/components/direct/DirectMessageContactsList.tsx:25
 #: src/components/navbar/NavMenu.tsx:85
 msgid "Direct Messages"
 msgstr "הודעות ישירות"
@@ -1305,6 +1305,10 @@ msgstr "אזכור את כולם"
 msgid "Message actions"
 msgstr "פעולות הודעה"
 
+#: src/utils/messagePreview.ts:56
+msgid "Message deleted"
+msgstr "הודעה נמחקה"
+
 #: src/components/message/Message.tsx:612
 msgid ""
 "Message does not have a valid signature, this may not be from the sender"
@@ -1454,6 +1458,10 @@ msgstr "הרשאות:"
 msgid "Personalize your account"
 msgstr "התאם אישית את החשבון שלך"
 
+#: src/utils/messagePreview.ts:37 src/utils/messagePreview.ts:41
+msgid "Photo"
+msgstr "תמונה"
+
 #: src/components/primitives/FileUpload/FileUpload.native.tsx:169
 #: src/hooks/business/user/useFileUpload.native.ts:44
 msgid "Photo Library"
@@ -1596,7 +1604,7 @@ msgstr "קריאה בלבד"
 msgid "Read only channel"
 msgstr "ערוץ קריאה בלבד"
 
-#: src/components/direct/DirectMessageContactsList.tsx:42
+#: src/components/direct/DirectMessageContactsList.tsx:43
 msgid "Ready to start a truly private conversation?"
 msgstr "מוכן להתחיל שיחה פרטית באמת?"
 
@@ -2124,7 +2132,7 @@ msgstr "זמן לא ידוע"
 #: src/services/EncryptionService.ts:138 src/services/MessageService.ts:1113
 #: src/services/MessageService.ts:1285 src/services/MessageService.ts:1425
 #: src/services/MessageService.ts:1443 src/services/MessageService.ts:2779
-#: src/services/MessageService.ts:2930
+#: src/services/MessageService.ts:2932
 msgid "Unknown User"
 msgstr "משתמש לא ידוע"
 
@@ -2307,6 +2315,10 @@ msgid ""
 msgstr ""
 "כאשר אתה חותם על הודעה, אתה מאשר שהיא מגיעה מהמפתח שלך. כאשר אתה לא חותם על "
 "הודעה, יש לך הכח להכחיש. אתה יכול לשלוט בהגדרה זו עבור כל שיחה והודעה בנפרד."
+
+#: src/utils/dateFormatting.ts:55
+msgid "Yesterday"
+msgstr "אתמול"
 
 #: src/utils/dateFormatting.ts:30
 msgid "Yesterday at {timeFormatted}"

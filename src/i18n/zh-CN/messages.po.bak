@@ -187,7 +187,7 @@ msgstr "@roles"
 msgid "@you"
 msgstr "@you"
 
-#: src/components/direct/DirectMessageContactsList.tsx:49
+#: src/components/direct/DirectMessageContactsList.tsx:50
 msgid "+ Add a friend"
 msgstr "添加朋友"
 
@@ -250,7 +250,7 @@ msgstr "添加最多 50 个自定义贴纸。自定义贴纸只能在 Space 内�
 
 #: src/components/user/UserProfile.tsx:186
 msgid "Adding..."
-msgstr ""
+msgstr "添加中..."
 
 #: src/hooks/business/validation/useAddressValidation.native.ts:71
 #: src/hooks/business/validation/useAddressValidation.ts:72
@@ -714,7 +714,7 @@ msgstr "此浏览器不支持桌面通知。"
 msgid "Direct Message"
 msgstr "直接消息"
 
-#: src/components/direct/DirectMessageContactsList.tsx:24
+#: src/components/direct/DirectMessageContactsList.tsx:25
 #: src/components/navbar/NavMenu.tsx:85
 msgid "Direct Messages"
 msgstr "直接消息"
@@ -856,7 +856,7 @@ msgstr "复制到剪贴板失败。请再试一次。"
 
 #: src/components/modals/CreateSpaceModal.tsx:28
 msgid "Failed to create space. Please try again."
-msgstr ""
+msgstr "创建空间失败。请再试一次。"
 
 #: src/components/context/MessageDB.bak.tsx:984
 #: src/services/MessageService.ts:1447
@@ -1271,6 +1271,10 @@ msgstr "提及所有人"
 msgid "Message actions"
 msgstr "消息操作"
 
+#: src/utils/messagePreview.ts:56
+msgid "Message deleted"
+msgstr ""
+
 #: src/components/message/Message.tsx:612
 msgid "Message does not have a valid signature, this may not be from the sender"
 msgstr "消息没有有效的签名，这可能不是发送者发来的"
@@ -1378,7 +1382,7 @@ msgstr "在YouTube上打开视频"
 
 #: src/components/modals/CreateSpaceModal.tsx:31
 msgid "Operation timed out. Please try again."
-msgstr ""
+msgstr "操作超时。请再试一次。"
 
 #~ msgid "optional"
 #~ msgstr "可选"
@@ -1416,6 +1420,11 @@ msgstr "权限："
 #: src/components/onboarding/Onboarding.tsx:111
 msgid "Personalize your account"
 msgstr "个性化您的账户"
+
+#: src/utils/messagePreview.ts:37
+#: src/utils/messagePreview.ts:41
+msgid "Photo"
+msgstr ""
 
 #: src/components/primitives/FileUpload/FileUpload.native.tsx:169
 #: src/hooks/business/user/useFileUpload.native.ts:44
@@ -1540,7 +1549,7 @@ msgstr "只读"
 msgid "Read only channel"
 msgstr "只读频道"
 
-#: src/components/direct/DirectMessageContactsList.tsx:42
+#: src/components/direct/DirectMessageContactsList.tsx:43
 msgid "Ready to start a truly private conversation?"
 msgstr "准备开始真正私密的对话吗？"
 
@@ -1565,7 +1574,7 @@ msgstr "移除"
 
 #: src/components/user/UserProfile.tsx:158
 msgid "Removing..."
-msgstr ""
+msgstr "正在移除..."
 
 #: src/components/modals/SpaceSettingsModal/Account.tsx:222
 #: src/components/notifications/NotificationPanel.tsx:90
@@ -2024,7 +2033,7 @@ msgstr "未知时间"
 #: src/services/MessageService.ts:1425
 #: src/services/MessageService.ts:1443
 #: src/services/MessageService.ts:2779
-#: src/services/MessageService.ts:2930
+#: src/services/MessageService.ts:2932
 msgid "Unknown User"
 msgstr "未知用户"
 
@@ -2172,6 +2181,10 @@ msgstr "当您签署一条消息时，您确认它来自您的密钥。当您不
 msgid "When you sign a message, you are confirming that it comes from your key. When you don't sign a message, you have plausible deniability. You can control this setting for each conversation and message individually."
 msgstr "当您签署一条消息时，您确认它来自您的密钥。当您不签署消息时，您有合理的否认权。您可以单独控制每个对话和消息的此设置。"
 
+#: src/utils/dateFormatting.ts:55
+msgid "Yesterday"
+msgstr ""
+
 #: src/utils/dateFormatting.ts:30
 msgid "Yesterday at {timeFormatted}"
 msgstr "昨天 {0}"
@@ -2191,7 +2204,7 @@ msgstr "您可以通过点击对话视图中的锁图标稍后更改此对话的
 
 #: src/components/modals/UserSettingsModal/Notifications.tsx:77
 msgid "You can manage your Space mention notifications in each Space's settings."
-msgstr ""
+msgstr "您可以在每个空间的设置中管理您的空间提及通知。"
 
 #: src/components/modals/GroupEditorModal.tsx:113
 msgid "You cannot delete a group that contains channels. Delete all {channelCount} channels in this group first."

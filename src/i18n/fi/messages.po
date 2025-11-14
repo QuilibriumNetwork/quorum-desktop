@@ -178,7 +178,7 @@ msgstr "@roles"
 msgid "@you"
 msgstr "@you"
 
-#: src/components/direct/DirectMessageContactsList.tsx:49
+#: src/components/direct/DirectMessageContactsList.tsx:50
 msgid "+ Add a friend"
 msgstr "Lisää ystävä"
 
@@ -739,7 +739,7 @@ msgstr "Työpöydän ilmoituksia ei tueta tässä selaimessa."
 msgid "Direct Message"
 msgstr "Suora viesti"
 
-#: src/components/direct/DirectMessageContactsList.tsx:24
+#: src/components/direct/DirectMessageContactsList.tsx:25
 #: src/components/navbar/NavMenu.tsx:85
 msgid "Direct Messages"
 msgstr "Suorat viestit"
@@ -1322,6 +1322,10 @@ msgstr "Mainitse kaikki"
 msgid "Message actions"
 msgstr "Viestitoiminnot"
 
+#: src/utils/messagePreview.ts:56
+msgid "Message deleted"
+msgstr "Viesti poistettu"
+
 #: src/components/message/Message.tsx:612
 msgid ""
 "Message does not have a valid signature, this may not be from the sender"
@@ -1473,6 +1477,10 @@ msgstr "Oikeudet:"
 msgid "Personalize your account"
 msgstr "Mukauta tiliäsi"
 
+#: src/utils/messagePreview.ts:37 src/utils/messagePreview.ts:41
+msgid "Photo"
+msgstr "Valokuva"
+
 #: src/components/primitives/FileUpload/FileUpload.native.tsx:169
 #: src/hooks/business/user/useFileUpload.native.ts:44
 msgid "Photo Library"
@@ -1620,7 +1628,7 @@ msgstr "Vain luku"
 msgid "Read only channel"
 msgstr "Vain luku kanava"
 
-#: src/components/direct/DirectMessageContactsList.tsx:42
+#: src/components/direct/DirectMessageContactsList.tsx:43
 msgid "Ready to start a truly private conversation?"
 msgstr "Valmis aloittamaan todella yksityinen keskustelu?"
 
@@ -2158,7 +2166,7 @@ msgstr "Tuntematon aika"
 #: src/services/EncryptionService.ts:138 src/services/MessageService.ts:1113
 #: src/services/MessageService.ts:1285 src/services/MessageService.ts:1425
 #: src/services/MessageService.ts:1443 src/services/MessageService.ts:2779
-#: src/services/MessageService.ts:2930
+#: src/services/MessageService.ts:2932
 msgid "Unknown User"
 msgstr "Tuntematon käyttäjä"
 
@@ -2352,6 +2360,10 @@ msgstr ""
 "Kun allekirjoitat viestin, vahvistat, että se tulee avaimestasi. Kun et "
 "allekirjoita viestiä, sinulla on uskottava kieltäytyminen. Voit hallita tätä"
 " asetusta jokaiselle keskustelulle ja viestille erikseen."
+
+#: src/utils/dateFormatting.ts:55
+msgid "Yesterday"
+msgstr "Eilen"
 
 #: src/utils/dateFormatting.ts:30
 msgid "Yesterday at {timeFormatted}"

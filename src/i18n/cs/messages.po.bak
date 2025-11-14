@@ -187,7 +187,7 @@ msgstr "@roles"
 msgid "@you"
 msgstr "@you"
 
-#: src/components/direct/DirectMessageContactsList.tsx:49
+#: src/components/direct/DirectMessageContactsList.tsx:50
 msgid "+ Add a friend"
 msgstr "Přidat přítele"
 
@@ -250,7 +250,7 @@ msgstr "Přidejte až 50 vlastních nálepek. Vlastní nálepky mohou být použ
 
 #: src/components/user/UserProfile.tsx:186
 msgid "Adding..."
-msgstr ""
+msgstr "Přidávání..."
 
 #: src/hooks/business/validation/useAddressValidation.native.ts:71
 #: src/hooks/business/validation/useAddressValidation.ts:72
@@ -713,7 +713,7 @@ msgstr "Oznámení na ploše v tomto prohlížeči nejsou podporována."
 msgid "Direct Message"
 msgstr "Přímá zpráva"
 
-#: src/components/direct/DirectMessageContactsList.tsx:24
+#: src/components/direct/DirectMessageContactsList.tsx:25
 #: src/components/navbar/NavMenu.tsx:85
 msgid "Direct Messages"
 msgstr "Osobní zprávy"
@@ -855,7 +855,7 @@ msgstr "Kopírování do schránky se nezdařilo. Zkuste to prosím znovu."
 
 #: src/components/modals/CreateSpaceModal.tsx:28
 msgid "Failed to create space. Please try again."
-msgstr ""
+msgstr "Nepodařilo se vytvořit prostor. Zkuste to prosím znovu."
 
 #: src/components/context/MessageDB.bak.tsx:984
 #: src/services/MessageService.ts:1447
@@ -1270,6 +1270,10 @@ msgstr "Zmínit všechny"
 msgid "Message actions"
 msgstr "Akce zprávy"
 
+#: src/utils/messagePreview.ts:56
+msgid "Message deleted"
+msgstr ""
+
 #: src/components/message/Message.tsx:612
 msgid "Message does not have a valid signature, this may not be from the sender"
 msgstr "Zpráva nemá platný podpis, to nemusí být od odesílatele"
@@ -1377,7 +1381,7 @@ msgstr "Otevřít video na YouTube"
 
 #: src/components/modals/CreateSpaceModal.tsx:31
 msgid "Operation timed out. Please try again."
-msgstr ""
+msgstr "Operace vypršela. Zkuste to prosím znovu."
 
 #~ msgid "optional"
 #~ msgstr "volitelný"
@@ -1415,6 +1419,11 @@ msgstr "Oprávnění:"
 #: src/components/onboarding/Onboarding.tsx:111
 msgid "Personalize your account"
 msgstr "Personalizuj si svůj účet"
+
+#: src/utils/messagePreview.ts:37
+#: src/utils/messagePreview.ts:41
+msgid "Photo"
+msgstr ""
 
 #: src/components/primitives/FileUpload/FileUpload.native.tsx:169
 #: src/hooks/business/user/useFileUpload.native.ts:44
@@ -1539,7 +1548,7 @@ msgstr "Pouze pro čtení"
 msgid "Read only channel"
 msgstr "Pouze pro čtení kanál"
 
-#: src/components/direct/DirectMessageContactsList.tsx:42
+#: src/components/direct/DirectMessageContactsList.tsx:43
 msgid "Ready to start a truly private conversation?"
 msgstr "Připraveni začít skutečně soukromou konverzaci?"
 
@@ -1564,7 +1573,7 @@ msgstr "Odebrat"
 
 #: src/components/user/UserProfile.tsx:158
 msgid "Removing..."
-msgstr ""
+msgstr "Odstraňování..."
 
 #: src/components/modals/SpaceSettingsModal/Account.tsx:222
 #: src/components/notifications/NotificationPanel.tsx:90
@@ -2023,7 +2032,7 @@ msgstr "Neznámý čas"
 #: src/services/MessageService.ts:1425
 #: src/services/MessageService.ts:1443
 #: src/services/MessageService.ts:2779
-#: src/services/MessageService.ts:2930
+#: src/services/MessageService.ts:2932
 msgid "Unknown User"
 msgstr "Neznámý uživatel"
 
@@ -2171,6 +2180,10 @@ msgstr "Když podepíšete zprávu, potvrzujete, že pochází z vašeho klíče
 msgid "When you sign a message, you are confirming that it comes from your key. When you don't sign a message, you have plausible deniability. You can control this setting for each conversation and message individually."
 msgstr "Když podepíšete zprávu, potvrzujete, že pochází z vašeho klíče. Když zprávu nepodepíšete, máte rozumnou popření. Toto nastavení můžete ovládat pro každou konverzaci a zprávu jednotlivě."
 
+#: src/utils/dateFormatting.ts:55
+msgid "Yesterday"
+msgstr ""
+
 #: src/utils/dateFormatting.ts:30
 msgid "Yesterday at {timeFormatted}"
 msgstr "Včera v {timeFormatted}"
@@ -2190,7 +2203,7 @@ msgstr "Toto můžete později změnit pro tuto konverzaci kliknutím na ikonu z
 
 #: src/components/modals/UserSettingsModal/Notifications.tsx:77
 msgid "You can manage your Space mention notifications in each Space's settings."
-msgstr ""
+msgstr "Můžete spravovat oznámení o zmínkách ve vašem prostoru v nastavení každého prostoru."
 
 #: src/components/modals/GroupEditorModal.tsx:113
 msgid "You cannot delete a group that contains channels. Delete all {channelCount} channels in this group first."

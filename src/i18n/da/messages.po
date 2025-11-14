@@ -178,7 +178,7 @@ msgstr "@roles"
 msgid "@you"
 msgstr "@you"
 
-#: src/components/direct/DirectMessageContactsList.tsx:49
+#: src/components/direct/DirectMessageContactsList.tsx:50
 msgid "+ Add a friend"
 msgstr "Tilføj en ven"
 
@@ -737,7 +737,7 @@ msgstr "Skrivebordsmeddelelser understøttes ikke i denne browser."
 msgid "Direct Message"
 msgstr "Direkte besked"
 
-#: src/components/direct/DirectMessageContactsList.tsx:24
+#: src/components/direct/DirectMessageContactsList.tsx:25
 #: src/components/navbar/NavMenu.tsx:85
 msgid "Direct Messages"
 msgstr "Direkte beskeder"
@@ -1322,6 +1322,10 @@ msgstr "Nævn Alle"
 msgid "Message actions"
 msgstr "Besked handlinger"
 
+#: src/utils/messagePreview.ts:56
+msgid "Message deleted"
+msgstr "Besked slettet"
+
 #: src/components/message/Message.tsx:612
 msgid ""
 "Message does not have a valid signature, this may not be from the sender"
@@ -1475,6 +1479,10 @@ msgstr "Tilladelser:"
 msgid "Personalize your account"
 msgstr "Gør din konto personlig"
 
+#: src/utils/messagePreview.ts:37 src/utils/messagePreview.ts:41
+msgid "Photo"
+msgstr "Foto"
+
 #: src/components/primitives/FileUpload/FileUpload.native.tsx:169
 #: src/hooks/business/user/useFileUpload.native.ts:44
 msgid "Photo Library"
@@ -1624,7 +1632,7 @@ msgstr "Kun læsning"
 msgid "Read only channel"
 msgstr "Kun læsningskanal"
 
-#: src/components/direct/DirectMessageContactsList.tsx:42
+#: src/components/direct/DirectMessageContactsList.tsx:43
 msgid "Ready to start a truly private conversation?"
 msgstr "Klar til at starte en virkelig privat samtale?"
 
@@ -2164,7 +2172,7 @@ msgstr "Ukendt tid"
 #: src/services/EncryptionService.ts:138 src/services/MessageService.ts:1113
 #: src/services/MessageService.ts:1285 src/services/MessageService.ts:1425
 #: src/services/MessageService.ts:1443 src/services/MessageService.ts:2779
-#: src/services/MessageService.ts:2930
+#: src/services/MessageService.ts:2932
 msgid "Unknown User"
 msgstr "Ukendt bruger"
 
@@ -2358,6 +2366,10 @@ msgstr ""
 "Når du underskriver en besked, bekræfter du, at den kommer fra din nøgle. "
 "Når du ikke underskriver en besked, har du plausibel benægtelse. Du kan "
 "kontrollere denne indstilling for hver samtale og besked individuelt."
+
+#: src/utils/dateFormatting.ts:55
+msgid "Yesterday"
+msgstr "I går"
 
 #: src/utils/dateFormatting.ts:30
 msgid "Yesterday at {timeFormatted}"

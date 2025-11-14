@@ -178,7 +178,7 @@ msgstr "@roles"
 msgid "@you"
 msgstr "@you"
 
-#: src/components/direct/DirectMessageContactsList.tsx:49
+#: src/components/direct/DirectMessageContactsList.tsx:50
 msgid "+ Add a friend"
 msgstr "Adaugă un prieten"
 
@@ -745,7 +745,7 @@ msgstr "Notificările pe desktop nu sunt acceptate în acest browser."
 msgid "Direct Message"
 msgstr "Mesaj Direct"
 
-#: src/components/direct/DirectMessageContactsList.tsx:24
+#: src/components/direct/DirectMessageContactsList.tsx:25
 #: src/components/navbar/NavMenu.tsx:85
 msgid "Direct Messages"
 msgstr "Mesaje directe"
@@ -1340,6 +1340,10 @@ msgstr "Menționează pe toată lumea"
 msgid "Message actions"
 msgstr "Acțiuni mesaj"
 
+#: src/utils/messagePreview.ts:56
+msgid "Message deleted"
+msgstr "Mesaj șters"
+
 #: src/components/message/Message.tsx:612
 msgid ""
 "Message does not have a valid signature, this may not be from the sender"
@@ -1494,6 +1498,10 @@ msgstr "Permisiuni:"
 msgid "Personalize your account"
 msgstr "Personalizează-ți contul"
 
+#: src/utils/messagePreview.ts:37 src/utils/messagePreview.ts:41
+msgid "Photo"
+msgstr "Fotografie"
+
 #: src/components/primitives/FileUpload/FileUpload.native.tsx:169
 #: src/hooks/business/user/useFileUpload.native.ts:44
 msgid "Photo Library"
@@ -1644,7 +1652,7 @@ msgstr "Doar citire"
 msgid "Read only channel"
 msgstr "Canal doar pentru citire"
 
-#: src/components/direct/DirectMessageContactsList.tsx:42
+#: src/components/direct/DirectMessageContactsList.tsx:43
 msgid "Ready to start a truly private conversation?"
 msgstr "Ești gata să începi o conversație cu adevărat privată?"
 
@@ -2197,7 +2205,7 @@ msgstr "Timp necunoscut"
 #: src/services/EncryptionService.ts:138 src/services/MessageService.ts:1113
 #: src/services/MessageService.ts:1285 src/services/MessageService.ts:1425
 #: src/services/MessageService.ts:1443 src/services/MessageService.ts:2779
-#: src/services/MessageService.ts:2930
+#: src/services/MessageService.ts:2932
 msgid "Unknown User"
 msgstr "Utilizator necunoscut"
 
@@ -2391,6 +2399,10 @@ msgstr ""
 "Când semnezi un mesaj, confirmi că provine de la cheia ta. Când nu semnezi "
 "un mesaj, ai o negare plauzibilă. Poți controla această setare pentru "
 "fiecare conversație și mesaj în parte."
+
+#: src/utils/dateFormatting.ts:55
+msgid "Yesterday"
+msgstr "Ieri"
 
 #: src/utils/dateFormatting.ts:30
 msgid "Yesterday at {timeFormatted}"

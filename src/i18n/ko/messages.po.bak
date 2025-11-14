@@ -187,7 +187,7 @@ msgstr "@roles"
 msgid "@you"
 msgstr "@you"
 
-#: src/components/direct/DirectMessageContactsList.tsx:49
+#: src/components/direct/DirectMessageContactsList.tsx:50
 msgid "+ Add a friend"
 msgstr "친구 추가"
 
@@ -250,7 +250,7 @@ msgstr "최대 50개의 사용자 정의 스티커를 추가하세요. 사용자
 
 #: src/components/user/UserProfile.tsx:186
 msgid "Adding..."
-msgstr ""
+msgstr "추가 중..."
 
 #: src/hooks/business/validation/useAddressValidation.native.ts:71
 #: src/hooks/business/validation/useAddressValidation.ts:72
@@ -714,7 +714,7 @@ msgstr "이 브라우저에서는 데스크톱 알림이 지원되지 않습니�
 msgid "Direct Message"
 msgstr "다이렉트 메시지"
 
-#: src/components/direct/DirectMessageContactsList.tsx:24
+#: src/components/direct/DirectMessageContactsList.tsx:25
 #: src/components/navbar/NavMenu.tsx:85
 msgid "Direct Messages"
 msgstr "다이렉트 메시지"
@@ -856,7 +856,7 @@ msgstr "클립보드에 복사하는 데 실패했습니다. 다시 시도해 �
 
 #: src/components/modals/CreateSpaceModal.tsx:28
 msgid "Failed to create space. Please try again."
-msgstr ""
+msgstr "공간을 만들지 못했습니다. 다시 시도해 주세요."
 
 #: src/components/context/MessageDB.bak.tsx:984
 #: src/services/MessageService.ts:1447
@@ -1271,6 +1271,10 @@ msgstr "모두 멘션하기"
 msgid "Message actions"
 msgstr "메시지 작업"
 
+#: src/utils/messagePreview.ts:56
+msgid "Message deleted"
+msgstr ""
+
 #: src/components/message/Message.tsx:612
 msgid "Message does not have a valid signature, this may not be from the sender"
 msgstr "메시지에 유효한 서명이 없습니다. 이는 발신자가 아닐 수 있습니다."
@@ -1378,7 +1382,7 @@ msgstr "YouTube에서 비디오 열기"
 
 #: src/components/modals/CreateSpaceModal.tsx:31
 msgid "Operation timed out. Please try again."
-msgstr ""
+msgstr "작업 시간이 초과되었습니다. 다시 시도해 주세요."
 
 #~ msgid "optional"
 #~ msgstr "선택 사항"
@@ -1416,6 +1420,11 @@ msgstr "권한:"
 #: src/components/onboarding/Onboarding.tsx:111
 msgid "Personalize your account"
 msgstr "계정을 개인화하세요"
+
+#: src/utils/messagePreview.ts:37
+#: src/utils/messagePreview.ts:41
+msgid "Photo"
+msgstr ""
 
 #: src/components/primitives/FileUpload/FileUpload.native.tsx:169
 #: src/hooks/business/user/useFileUpload.native.ts:44
@@ -1540,7 +1549,7 @@ msgstr "읽기 전용"
 msgid "Read only channel"
 msgstr "읽기 전용 채널"
 
-#: src/components/direct/DirectMessageContactsList.tsx:42
+#: src/components/direct/DirectMessageContactsList.tsx:43
 msgid "Ready to start a truly private conversation?"
 msgstr "진정으로 비공식적인 대화를 시작할 준비가 되셨나요?"
 
@@ -1565,7 +1574,7 @@ msgstr "제거"
 
 #: src/components/user/UserProfile.tsx:158
 msgid "Removing..."
-msgstr ""
+msgstr "제거 중..."
 
 #: src/components/modals/SpaceSettingsModal/Account.tsx:222
 #: src/components/notifications/NotificationPanel.tsx:90
@@ -2024,7 +2033,7 @@ msgstr "알 수 없는 시간"
 #: src/services/MessageService.ts:1425
 #: src/services/MessageService.ts:1443
 #: src/services/MessageService.ts:2779
-#: src/services/MessageService.ts:2930
+#: src/services/MessageService.ts:2932
 msgid "Unknown User"
 msgstr "알 수 없는 사용자"
 
@@ -2172,6 +2181,10 @@ msgstr "메시지에 서명하면 해당 메시지가 귀하의 키에서 온 �
 msgid "When you sign a message, you are confirming that it comes from your key. When you don't sign a message, you have plausible deniability. You can control this setting for each conversation and message individually."
 msgstr "메시지에 서명하면 해당 메시지가 귀하의 키에서 온 것임을 확인하는 것입니다. 메시지에 서명하지 않으면 그럴듯한 부인 가능성을 가집니다. 이 설정은 각 대화 및 메시지에 대해 개별적으로 제어할 수 있습니다."
 
+#: src/utils/dateFormatting.ts:55
+msgid "Yesterday"
+msgstr ""
+
 #: src/utils/dateFormatting.ts:30
 msgid "Yesterday at {timeFormatted}"
 msgstr "어제 {timeFormatted}에"
@@ -2191,7 +2204,7 @@ msgstr "대화 보기에서 자물쇠 아이콘을 클릭하여 나중에 이 �
 
 #: src/components/modals/UserSettingsModal/Notifications.tsx:77
 msgid "You can manage your Space mention notifications in each Space's settings."
-msgstr ""
+msgstr "각 공간의 설정에서 공간 멘션 알림을 관리할 수 있습니다."
 
 #: src/components/modals/GroupEditorModal.tsx:113
 msgid "You cannot delete a group that contains channels. Delete all {channelCount} channels in this group first."

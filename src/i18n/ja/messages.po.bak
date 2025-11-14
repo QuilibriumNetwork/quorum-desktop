@@ -187,7 +187,7 @@ msgstr "@roles"
 msgid "@you"
 msgstr "@you"
 
-#: src/components/direct/DirectMessageContactsList.tsx:49
+#: src/components/direct/DirectMessageContactsList.tsx:50
 msgid "+ Add a friend"
 msgstr "友達を追加"
 
@@ -250,7 +250,7 @@ msgstr "最大50個のカスタムステッカーを追加できます。カス�
 
 #: src/components/user/UserProfile.tsx:186
 msgid "Adding..."
-msgstr ""
+msgstr "追加中..."
 
 #: src/hooks/business/validation/useAddressValidation.native.ts:71
 #: src/hooks/business/validation/useAddressValidation.ts:72
@@ -713,7 +713,7 @@ msgstr "このブラウザではデスクトップ通知はサポートされて
 msgid "Direct Message"
 msgstr "ダイレクトメッセージ"
 
-#: src/components/direct/DirectMessageContactsList.tsx:24
+#: src/components/direct/DirectMessageContactsList.tsx:25
 #: src/components/navbar/NavMenu.tsx:85
 msgid "Direct Messages"
 msgstr "ダイレクトメッセージ"
@@ -855,7 +855,7 @@ msgstr "クリップボードへのコピーに失敗しました。もう一度
 
 #: src/components/modals/CreateSpaceModal.tsx:28
 msgid "Failed to create space. Please try again."
-msgstr ""
+msgstr "スペースの作成に失敗しました。もう一度お試しください。"
 
 #: src/components/context/MessageDB.bak.tsx:984
 #: src/services/MessageService.ts:1447
@@ -1270,6 +1270,10 @@ msgstr "全員にメンション"
 msgid "Message actions"
 msgstr "メッセージアクション"
 
+#: src/utils/messagePreview.ts:56
+msgid "Message deleted"
+msgstr ""
+
 #: src/components/message/Message.tsx:612
 msgid "Message does not have a valid signature, this may not be from the sender"
 msgstr "メッセージには有効な署名がありません。これは送信者からのものではない可能性があります"
@@ -1377,7 +1381,7 @@ msgstr "YouTubeで動画を開く"
 
 #: src/components/modals/CreateSpaceModal.tsx:31
 msgid "Operation timed out. Please try again."
-msgstr ""
+msgstr "操作がタイムアウトしました。もう一度お試しください。"
 
 #~ msgid "optional"
 #~ msgstr "オプション"
@@ -1415,6 +1419,11 @@ msgstr "権限:"
 #: src/components/onboarding/Onboarding.tsx:111
 msgid "Personalize your account"
 msgstr "アカウントをパーソナライズ"
+
+#: src/utils/messagePreview.ts:37
+#: src/utils/messagePreview.ts:41
+msgid "Photo"
+msgstr ""
 
 #: src/components/primitives/FileUpload/FileUpload.native.tsx:169
 #: src/hooks/business/user/useFileUpload.native.ts:44
@@ -1539,7 +1548,7 @@ msgstr "読み取り専用"
 msgid "Read only channel"
 msgstr "読み取り専用チャンネル"
 
-#: src/components/direct/DirectMessageContactsList.tsx:42
+#: src/components/direct/DirectMessageContactsList.tsx:43
 msgid "Ready to start a truly private conversation?"
 msgstr "本当にプライベートな会話を始める準備はできていますか？"
 
@@ -1564,7 +1573,7 @@ msgstr "削除"
 
 #: src/components/user/UserProfile.tsx:158
 msgid "Removing..."
-msgstr ""
+msgstr "削除中..."
 
 #: src/components/modals/SpaceSettingsModal/Account.tsx:222
 #: src/components/notifications/NotificationPanel.tsx:90
@@ -2023,7 +2032,7 @@ msgstr "不明な時間"
 #: src/services/MessageService.ts:1425
 #: src/services/MessageService.ts:1443
 #: src/services/MessageService.ts:2779
-#: src/services/MessageService.ts:2930
+#: src/services/MessageService.ts:2932
 msgid "Unknown User"
 msgstr "不明なユーザー"
 
@@ -2171,6 +2180,10 @@ msgstr "メッセージに署名すると、それが自分のキーから来て
 msgid "When you sign a message, you are confirming that it comes from your key. When you don't sign a message, you have plausible deniability. You can control this setting for each conversation and message individually."
 msgstr "メッセージに署名すると、それが自分のキーから来ていることを確認します。メッセージに署名しない場合、信頼性のある否認が可能です。この設定は、各会話とメッセージごとに個別に制御できます。"
 
+#: src/utils/dateFormatting.ts:55
+msgid "Yesterday"
+msgstr ""
+
 #: src/utils/dateFormatting.ts:30
 msgid "Yesterday at {timeFormatted}"
 msgstr "昨日は{timeFormatted}です"
@@ -2190,7 +2203,7 @@ msgstr "会話ビューでロックアイコンをクリックすることで、
 
 #: src/components/modals/UserSettingsModal/Notifications.tsx:77
 msgid "You can manage your Space mention notifications in each Space's settings."
-msgstr ""
+msgstr "各スペースの設定でスペースのメンション通知を管理できます。"
 
 #: src/components/modals/GroupEditorModal.tsx:113
 msgid "You cannot delete a group that contains channels. Delete all {channelCount} channels in this group first."

@@ -178,7 +178,7 @@ msgstr "@roles"
 msgid "@you"
 msgstr "@you"
 
-#: src/components/direct/DirectMessageContactsList.tsx:49
+#: src/components/direct/DirectMessageContactsList.tsx:50
 msgid "+ Add a friend"
 msgstr "Adicionar um amigo"
 
@@ -742,7 +742,7 @@ msgstr "Notificações de desktop não são suportadas neste navegador."
 msgid "Direct Message"
 msgstr "Mensagem Direta"
 
-#: src/components/direct/DirectMessageContactsList.tsx:24
+#: src/components/direct/DirectMessageContactsList.tsx:25
 #: src/components/navbar/NavMenu.tsx:85
 msgid "Direct Messages"
 msgstr "Mensagens Diretas"
@@ -1336,6 +1336,10 @@ msgstr "Mencionar Todos"
 msgid "Message actions"
 msgstr "Ações de mensagem"
 
+#: src/utils/messagePreview.ts:56
+msgid "Message deleted"
+msgstr "Mensagem deletada"
+
 #: src/components/message/Message.tsx:612
 msgid ""
 "Message does not have a valid signature, this may not be from the sender"
@@ -1490,6 +1494,10 @@ msgstr "Permissões:"
 msgid "Personalize your account"
 msgstr "Personalize sua conta"
 
+#: src/utils/messagePreview.ts:37 src/utils/messagePreview.ts:41
+msgid "Photo"
+msgstr "Foto"
+
 #: src/components/primitives/FileUpload/FileUpload.native.tsx:169
 #: src/hooks/business/user/useFileUpload.native.ts:44
 msgid "Photo Library"
@@ -1639,7 +1647,7 @@ msgstr "Somente leitura"
 msgid "Read only channel"
 msgstr "Canal somente leitura"
 
-#: src/components/direct/DirectMessageContactsList.tsx:42
+#: src/components/direct/DirectMessageContactsList.tsx:43
 msgid "Ready to start a truly private conversation?"
 msgstr "Pronto para começar uma conversa verdadeiramente privada?"
 
@@ -2184,7 +2192,7 @@ msgstr "Hora desconhecida"
 #: src/services/EncryptionService.ts:138 src/services/MessageService.ts:1113
 #: src/services/MessageService.ts:1285 src/services/MessageService.ts:1425
 #: src/services/MessageService.ts:1443 src/services/MessageService.ts:2779
-#: src/services/MessageService.ts:2930
+#: src/services/MessageService.ts:2932
 msgid "Unknown User"
 msgstr "Usuário Desconhecido"
 
@@ -2377,6 +2385,10 @@ msgstr ""
 "Quando você assina uma mensagem, está confirmando que ela vem de sua chave. "
 "Quando você não assina uma mensagem, tem uma negação plausível. Você pode "
 "controlar esta configuração para cada conversa e mensagem individualmente."
+
+#: src/utils/dateFormatting.ts:55
+msgid "Yesterday"
+msgstr "Ontem"
 
 #: src/utils/dateFormatting.ts:30
 msgid "Yesterday at {timeFormatted}"

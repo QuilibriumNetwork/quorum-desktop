@@ -1,15 +1,19 @@
 import * as React from 'react';
 import { Link, useParams } from 'react-router-dom';
-import './DirectMessageContact.scss';
 import { truncateAddress } from '../../utils';
 import { useResponsiveLayoutContext } from '../context/ResponsiveLayoutProvider';
 import { UserAvatar } from '../user/UserAvatar';
+import { Icon } from '../primitives';
+import { formatConversationTime } from '../../utils/dateFormatting';
 
 const DirectMessageContact: React.FunctionComponent<{
   unread: boolean;
   address: string;
   displayName?: string;
   userIcon?: string;
+  lastMessagePreview?: string;
+  previewIcon?: string;
+  timestamp?: number;
 }> = (props) => {
   let { address } = useParams<{ address: string }>();
   const { isMobile, isTablet, closeLeftSidebar } = useResponsiveLayoutContext();
@@ -24,8 +28,8 @@ const DirectMessageContact: React.FunctionComponent<{
     <Link to={`/messages/${props.address}`} onClick={handleContactClick}>
       <div
         className={
-          'relative direct-message-contact flex flex-row rounded-lg hover:bg-sidebar-hover' +
-          (address === props.address ? ' bg-sidebar-active' : '')
+          'relative flex flex-row items-center py-3 px-4 hover:bg-sidebar-hover' +
+          (address === props.address ? ' bg-sidebar-active-strong' : '')
         }
       >
         {props.unread && address !== props.address && (
@@ -35,25 +39,61 @@ const DirectMessageContact: React.FunctionComponent<{
           userIcon={props.userIcon}
           displayName={props.displayName || truncateAddress(props.address)}
           address={props.address}
-          size={38}
-          className="direct-message-contact-icon"
+          size={44}
+          className="direct-message-contact-icon flex-shrink-0"
         />
-        <div className="flex flex-col justify-around">
-          <div
-            className={
-              'direct-message-contact-name text-main opacity-90 pl-2 w-[180px] truncate ' +
-              (props.unread && address !== props.address
-                ? '!font-extrabold'
-                : ' ')
-            }
-          >
-            {props.displayName ?? truncateAddress(props.address)}
+        <div className="flex flex-col flex-1 min-w-0 pl-2">
+          {/* Line 1: Name + Time */}
+          <div className="flex items-center justify-between gap-2">
+            <span
+              className={
+                'truncate flex-1 min-w-0 ' +
+                (props.unread && address !== props.address
+                  ? 'font-extrabold'
+                  : 'font-semibold')
+              }
+            >
+              {props.displayName ?? truncateAddress(props.address)}
+            </span>
+            {props.timestamp && (
+              <span
+                className={
+                  'text-xs flex-shrink-0 ' +
+                  (address === props.address ? 'text-subtle' : 'text-muted')
+                }
+              >
+                {formatConversationTime(props.timestamp)}
+              </span>
+            )}
           </div>
-          {props.displayName && (
-            <div className="text-muted pl-2 text-xs w-[180px] truncate">
+
+          {/* Line 2-3: Preview (2 lines max) */}
+          {props.lastMessagePreview ? (
+            <div
+              className={
+                'text-sm line-clamp-2 flex items-center gap-1 ' +
+                (address === props.address ? 'text-subtle' : 'text-muted')
+              }
+            >
+              {props.previewIcon && (
+                <Icon
+                  name={props.previewIcon as any}
+                  size="sm"
+                  className="flex-shrink-0"
+                />
+              )}
+              <span className="min-w-0">{props.lastMessagePreview}</span>
+            </div>
+          ) : props.displayName ? (
+            <div
+              className={
+                'text-xs truncate ' +
+                (address === props.address ? 'text-subtle' : 'text-muted')
+              }
+            >
               {truncateAddress(props.address)}
             </div>
-          )}
+          ) : null}
         </div>
       </div>
     </Link>

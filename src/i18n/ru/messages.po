@@ -178,7 +178,7 @@ msgstr "@roles"
 msgid "@you"
 msgstr "@you"
 
-#: src/components/direct/DirectMessageContactsList.tsx:49
+#: src/components/direct/DirectMessageContactsList.tsx:50
 msgid "+ Add a friend"
 msgstr "Добавить друга"
 
@@ -743,7 +743,7 @@ msgstr "Уведомления на рабочем столе не поддер�
 msgid "Direct Message"
 msgstr "Прямое сообщение"
 
-#: src/components/direct/DirectMessageContactsList.tsx:24
+#: src/components/direct/DirectMessageContactsList.tsx:25
 #: src/components/navbar/NavMenu.tsx:85
 msgid "Direct Messages"
 msgstr "Прямые сообщения"
@@ -1335,6 +1335,10 @@ msgstr "Упомянуть всех"
 msgid "Message actions"
 msgstr "Действия с сообщениями"
 
+#: src/utils/messagePreview.ts:56
+msgid "Message deleted"
+msgstr "Сообщение удалено"
+
 #: src/components/message/Message.tsx:612
 msgid ""
 "Message does not have a valid signature, this may not be from the sender"
@@ -1489,6 +1493,10 @@ msgstr "Разрешения:"
 msgid "Personalize your account"
 msgstr "Персонализируйте свой аккаунт"
 
+#: src/utils/messagePreview.ts:37 src/utils/messagePreview.ts:41
+msgid "Photo"
+msgstr "Фото"
+
 #: src/components/primitives/FileUpload/FileUpload.native.tsx:169
 #: src/hooks/business/user/useFileUpload.native.ts:44
 msgid "Photo Library"
@@ -1640,7 +1648,7 @@ msgstr "Только для чтения"
 msgid "Read only channel"
 msgstr "Канал только для чтения"
 
-#: src/components/direct/DirectMessageContactsList.tsx:42
+#: src/components/direct/DirectMessageContactsList.tsx:43
 msgid "Ready to start a truly private conversation?"
 msgstr "Готовы начать по-настоящему частный разговор?"
 
@@ -2193,7 +2201,7 @@ msgstr "Неизвестное время"
 #: src/services/EncryptionService.ts:138 src/services/MessageService.ts:1113
 #: src/services/MessageService.ts:1285 src/services/MessageService.ts:1425
 #: src/services/MessageService.ts:1443 src/services/MessageService.ts:2779
-#: src/services/MessageService.ts:2930
+#: src/services/MessageService.ts:2932
 msgid "Unknown User"
 msgstr "Неизвестный пользователь"
 
@@ -2394,6 +2402,10 @@ msgstr ""
 "ключа. Когда вы не подписываете сообщение, у вас есть правдоподобное "
 "отрицание. Вы можете контролировать эту настройку для каждого разговора и "
 "сообщения индивидуально."
+
+#: src/utils/dateFormatting.ts:55
+msgid "Yesterday"
+msgstr "Вчера"
 
 #: src/utils/dateFormatting.ts:30
 msgid "Yesterday at {timeFormatted}"

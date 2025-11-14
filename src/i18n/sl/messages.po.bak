@@ -187,7 +187,7 @@ msgstr "@vloge"
 msgid "@you"
 msgstr "@ti"
 
-#: src/components/direct/DirectMessageContactsList.tsx:49
+#: src/components/direct/DirectMessageContactsList.tsx:50
 msgid "+ Add a friend"
 msgstr "Dodaj prijatelja"
 
@@ -250,7 +250,7 @@ msgstr "Dodajte do 50 prilagojenih nalepk. Prilagojene nalepke se lahko uporablj
 
 #: src/components/user/UserProfile.tsx:186
 msgid "Adding..."
-msgstr ""
+msgstr "Dodajanje..."
 
 #: src/hooks/business/validation/useAddressValidation.native.ts:71
 #: src/hooks/business/validation/useAddressValidation.ts:72
@@ -714,7 +714,7 @@ msgstr "Namizna obvestila v tem brskalniku niso podprta."
 msgid "Direct Message"
 msgstr "Direktna sporočila"
 
-#: src/components/direct/DirectMessageContactsList.tsx:24
+#: src/components/direct/DirectMessageContactsList.tsx:25
 #: src/components/navbar/NavMenu.tsx:85
 msgid "Direct Messages"
 msgstr "Direktna sporočila"
@@ -856,7 +856,7 @@ msgstr "Kopiranje v odložišče ni uspelo. Poskusi znova."
 
 #: src/components/modals/CreateSpaceModal.tsx:28
 msgid "Failed to create space. Please try again."
-msgstr ""
+msgstr "Ustvarjanje prostora ni uspelo. Poskusite znova."
 
 #: src/components/context/MessageDB.bak.tsx:984
 #: src/services/MessageService.ts:1447
@@ -1271,6 +1271,10 @@ msgstr "Omeni vse"
 msgid "Message actions"
 msgstr "Dejanja sporočila"
 
+#: src/utils/messagePreview.ts:56
+msgid "Message deleted"
+msgstr ""
+
 #: src/components/message/Message.tsx:612
 msgid "Message does not have a valid signature, this may not be from the sender"
 msgstr "Poruka nema važeći potpis, ovo možda nije od pošiljaoca"
@@ -1378,7 +1382,7 @@ msgstr "Odpri video na YouTubu"
 
 #: src/components/modals/CreateSpaceModal.tsx:31
 msgid "Operation timed out. Please try again."
-msgstr ""
+msgstr "Operacija je potekla. Prosimo, poskusite znova."
 
 #~ msgid "optional"
 #~ msgstr "neobvezno"
@@ -1416,6 +1420,11 @@ msgstr "Dovoljenja:"
 #: src/components/onboarding/Onboarding.tsx:111
 msgid "Personalize your account"
 msgstr "Personalizuj svoj nalog"
+
+#: src/utils/messagePreview.ts:37
+#: src/utils/messagePreview.ts:41
+msgid "Photo"
+msgstr ""
 
 #: src/components/primitives/FileUpload/FileUpload.native.tsx:169
 #: src/hooks/business/user/useFileUpload.native.ts:44
@@ -1540,7 +1549,7 @@ msgstr "Samo za branje"
 msgid "Read only channel"
 msgstr "Kanal samo za branje"
 
-#: src/components/direct/DirectMessageContactsList.tsx:42
+#: src/components/direct/DirectMessageContactsList.tsx:43
 msgid "Ready to start a truly private conversation?"
 msgstr "Pripravljen na začetek resnično zasebnega pogovora?"
 
@@ -1565,7 +1574,7 @@ msgstr "Odstrani"
 
 #: src/components/user/UserProfile.tsx:158
 msgid "Removing..."
-msgstr ""
+msgstr "Odstranjevanje..."
 
 #: src/components/modals/SpaceSettingsModal/Account.tsx:222
 #: src/components/notifications/NotificationPanel.tsx:90
@@ -2024,7 +2033,7 @@ msgstr "Neznan čas"
 #: src/services/MessageService.ts:1425
 #: src/services/MessageService.ts:1443
 #: src/services/MessageService.ts:2779
-#: src/services/MessageService.ts:2930
+#: src/services/MessageService.ts:2932
 msgid "Unknown User"
 msgstr "Neznan uporabnik"
 
@@ -2172,6 +2181,10 @@ msgstr "Ko podpišeš sporočilo, potrjuješ, da prihaja iz tvoje ključe. Ko ne
 msgid "When you sign a message, you are confirming that it comes from your key. When you don't sign a message, you have plausible deniability. You can control this setting for each conversation and message individually."
 msgstr "Ko podpišeš sporočilo, potrjuješ, da prihaja iz tvoje ključe. Ko ne podpišeš sporočila, imaš verjetno zanikanje. To nastavitev lahko nadzoruješ za vsak pogovor in sporočilo posebej."
 
+#: src/utils/dateFormatting.ts:55
+msgid "Yesterday"
+msgstr ""
+
 #: src/utils/dateFormatting.ts:30
 msgid "Yesterday at {timeFormatted}"
 msgstr "Včeraj ob {timeFormatted}"
@@ -2191,7 +2204,7 @@ msgstr "To lahko spremenite kasneje za to pogovor tako, da kliknete ikono zaklep
 
 #: src/components/modals/UserSettingsModal/Notifications.tsx:77
 msgid "You can manage your Space mention notifications in each Space's settings."
-msgstr ""
+msgstr "Upravljate lahko z obvestili o omembah vašega prostora v nastavitvah vsakega prostora."
 
 #: src/components/modals/GroupEditorModal.tsx:113
 msgid "You cannot delete a group that contains channels. Delete all {channelCount} channels in this group first."
