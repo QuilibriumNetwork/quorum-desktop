@@ -1,8 +1,7 @@
 import * as React from 'react';
 import { Input, Button, Modal, Switch, Icon, Tooltip, Spacer, Callout, TextArea } from '../primitives';
 import './CreateSpaceModal.scss';
-import SpaceIcon from '../navbar/SpaceIcon';
-import { useSpaceCreation, useFileUpload, useSpaceSettings } from '../../hooks';
+import { useSpaceCreation, useFileUpload, useSpaceSettings, useModalSaveState } from '../../hooks';
 import { validateSpaceName } from '../../hooks/business/validation';
 import { Trans } from '@lingui/react/macro';
 import { t } from '@lingui/core/macro';
@@ -17,8 +16,24 @@ type CreateSpaceModalProps = {
 const CreateSpaceModal: React.FunctionComponent<CreateSpaceModalProps> = (
   props
 ) => {
+  // Error state for displaying creation errors
+  const [createError, setCreateError] = React.useState<string | undefined>(undefined);
+
+  // Modal save state hook with timeout protection
+  const { isSaving, saveUntilComplete } = useModalSaveState({
+    maxTimeout: 30000, // 30 second timeout for space creation
+    onSaveComplete: props.onClose,
+    onSaveError: (error) => {
+      console.error('Create space error:', error);
+      setCreateError(error.message || t`Failed to create space. Please try again.`);
+    },
+    onTimeout: () => {
+      setCreateError(t`Operation timed out. Please try again.`);
+    },
+  });
+
   // Use our extracted hooks
-  const { spaceName, setSpaceName, creating, createSpace, canCreate } =
+  const { spaceName, setSpaceName, createSpace, canCreate } =
     useSpaceCreation({
       onSuccess: props.onClose,
     });
@@ -47,10 +62,20 @@ const CreateSpaceModal: React.FunctionComponent<CreateSpaceModalProps> = (
     setPublic,
   } = useSpaceSettings();
 
+  // Handler that wraps createSpace with timeout protection
+  const handleCreateSpace = React.useCallback(async () => {
+    setCreateError(undefined); // Clear any previous errors
+    await saveUntilComplete(async () => {
+      await createSpace(spaceName, fileData, currentFile, repudiable, pub, description);
+    });
+  }, [saveUntilComplete, createSpace, spaceName, fileData, currentFile, repudiable, pub, description]);
+
   return (
     <Modal
       visible={props.visible}
-      onClose={props.onClose}
+      onClose={isSaving ? undefined : props.onClose}
+      closeOnBackdropClick={false}
+      closeOnEscape={!isSaving}
       title={t`Create a Space`}
     >
       <div>
@@ -85,7 +110,7 @@ const CreateSpaceModal: React.FunctionComponent<CreateSpaceModalProps> = (
           <div className="flex flex-col flex-1 mt-4 md:mt-0">
             <Input
               value={spaceName}
-              onChange={(value) => setSpaceName(value)}
+              onChange={(value: string) => setSpaceName(value)}
               placeholder={t`Enter a name for your Space`}
               className="w-full"
               labelType="static"
@@ -101,6 +126,17 @@ const CreateSpaceModal: React.FunctionComponent<CreateSpaceModalProps> = (
                 onClose={clearFileError}
               >
                 {fileError}
+              </Callout>
+            )}
+            {createError && (
+              <Callout
+                variant="error"
+                size="sm"
+                className="mt-2"
+                dismissible
+                onClose={() => setCreateError(undefined)}
+              >
+                {createError}
               </Callout>
             )}
           </div>
@@ -204,16 +240,14 @@ const CreateSpaceModal: React.FunctionComponent<CreateSpaceModalProps> = (
           <Button
             type="primary"
             className="w-full sm:w-auto"
-            disabled={!canCreate || descriptionError}
-            onClick={() =>
-              createSpace(spaceName, fileData, currentFile, repudiable, pub, description)
-            }
+            disabled={!canCreate || descriptionError || isSaving}
+            onClick={handleCreateSpace}
           >
             {t`Create Space`}
           </Button>
         </div>
       </div>
-      <ModalSaveOverlay visible={creating} message={t`Creating Space...`} />
+      <ModalSaveOverlay visible={isSaving} message={t`Creating Space...`} />
     </Modal>
   );
 };
