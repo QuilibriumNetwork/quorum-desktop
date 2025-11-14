@@ -71,7 +71,7 @@ const DirectMessageContact: React.FunctionComponent<{
           {props.lastMessagePreview ? (
             <div
               className={
-                'text-sm line-clamp-2 flex items-center gap-1 ' +
+                'text-sm flex items-start gap-1 ' +
                 (address === props.address ? 'text-subtle' : 'text-muted')
               }
             >
@@ -79,10 +79,12 @@ const DirectMessageContact: React.FunctionComponent<{
                 <Icon
                   name={props.previewIcon as any}
                   size="sm"
-                  className="flex-shrink-0"
+                  className="flex-shrink-0 mt-0.5"
                 />
               )}
-              <span className="min-w-0">{props.lastMessagePreview}</span>
+              <span className="line-clamp-2 min-w-0">
+                {props.lastMessagePreview}
+              </span>
             </div>
           ) : props.displayName ? (
             <div
