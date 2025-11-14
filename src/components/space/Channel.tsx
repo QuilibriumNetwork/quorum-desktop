@@ -998,7 +998,7 @@ const Channel: React.FC<ChannelProps> = ({
                 onShowStickers={() => composer.setShowStickers(true)}
                 inReplyTo={composer.inReplyTo}
                 users={Object.values(members)}
-                roles={roles}
+                roles={roles?.filter(role => role.isPublic !== false)}
                 fileError={composer.fileError}
                 isProcessingImage={composer.isProcessingImage}
                 mapSenderToUser={mapSenderToUser}

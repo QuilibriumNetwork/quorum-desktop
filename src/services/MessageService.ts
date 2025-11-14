@@ -2803,12 +2803,14 @@ export class MessageService {
         isSpaceOwner || false
       );
 
-      // Get space roles for role mention validation
+      // Get space roles for role mention validation (filter out hidden roles)
       const spaceRoles =
-        space?.roles?.map((r) => ({
-          roleId: r.roleId,
-          roleTag: r.roleTag,
-        })) || [];
+        space?.roles
+          ?.filter((r) => r.isPublic !== false)
+          .map((r) => ({
+            roleId: r.roleId,
+            roleTag: r.roleTag,
+          })) || [];
 
       let mentions;
       if (typeof pendingMessage === 'string') {
