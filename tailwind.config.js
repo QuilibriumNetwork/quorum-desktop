@@ -76,6 +76,7 @@ export default {
         sidebar: 'var(--color-bg-sidebar)',
         'sidebar-hover': 'var(--color-bg-sidebar-hover)',
         'sidebar-active': 'var(--color-bg-sidebar-active)',
+        'sidebar-active-strong': 'var(--color-bg-sidebar-active-strong)',
 
         modal: 'var(--color-bg-modal)',
         'modal-cat-hover': 'var(--color-bg-modal-cat-hover)',

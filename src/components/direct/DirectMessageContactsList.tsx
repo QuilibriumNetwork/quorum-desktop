@@ -5,16 +5,17 @@ import { Trans } from '@lingui/react/macro';
 import {
   Button,
   Container,
-  FlexRow,
   FlexColumn,
   FlexBetween,
-  Icon,
 } from '../primitives';
 import { useModalContext } from '../context/ModalProvider';
 import { useConversationPolling } from '../../hooks';
+import { useConversationPreviews } from '../../hooks/business/conversations/useConversationPreviews';
 
 const DirectMessageContactsList: React.FC<{}> = ({}) => {
   const { conversations: conversationsList } = useConversationPolling();
+  const { data: conversationsWithPreviews = conversationsList } =
+    useConversationPreviews(conversationsList);
   const { openNewDirectMessage } = useModalContext();
 
   return (
@@ -51,7 +52,7 @@ const DirectMessageContactsList: React.FC<{}> = ({}) => {
           </FlexColumn>
         ) : (
           <Container className="flex-1 overflow-y-auto">
-            {conversationsList.map((c) => {
+            {conversationsWithPreviews.map((c) => {
               return (
                 <DirectMessageContact
                   unread={(c.lastReadTimestamp ?? 0) < c.timestamp}
@@ -59,6 +60,9 @@ const DirectMessageContactsList: React.FC<{}> = ({}) => {
                   address={c.address}
                   userIcon={c.icon}
                   displayName={c.displayName}
+                  lastMessagePreview={c.preview}
+                  previewIcon={c.previewIcon}
+                  timestamp={c.timestamp}
                 />
               );
             })}

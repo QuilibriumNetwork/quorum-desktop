@@ -81,6 +81,7 @@ export type Conversation = {
   // Not persisted by server, but may be stored client-side for DMs
   isRepudiable?: boolean;
   saveEditHistory?: boolean;
+  lastMessageId?: string; // For showing message previews in conversation list
 };
 
 export type Message = {

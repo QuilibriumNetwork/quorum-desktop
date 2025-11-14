@@ -1,4 +1,4 @@
-import * as moment from 'moment-timezone';
+import moment from 'moment-timezone';
 import { t } from '@lingui/core/macro';
 
 /**
@@ -32,4 +32,26 @@ export const formatMessageDate = (timestamp: number): string => {
       return `[${fromNow}]`;
     },
   });
+};
+
+/**
+ * Formats a timestamp for conversation list display (compact format).
+ * Used in DirectMessageContact and similar preview components.
+ *
+ * Format:
+ * - Today: "3:45 PM"
+ * - Yesterday: "Yesterday"
+ * - Older: "11 Nov", "6 Dec"
+ *
+ * @param timestamp - Unix timestamp in milliseconds
+ * @returns Compact formatted time string
+ */
+export const formatConversationTime = (timestamp: number): string => {
+  const time = moment.tz(timestamp, Intl.DateTimeFormat().resolvedOptions().timeZone);
+  const now = moment();
+  const daysDiff = now.diff(time, 'days');
+
+  if (daysDiff === 0) return time.format('h:mm A');
+  if (daysDiff === 1) return t`Yesterday`;
+  return time.format('D MMM'); // "11 Nov"
 };

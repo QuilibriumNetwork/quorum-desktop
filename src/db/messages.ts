@@ -654,6 +654,7 @@ export class MessageDB {
           displayName: displayName,
           type: conversationType,
           timestamp: message.createdDate,
+          lastMessageId: message.messageId, // Track last message for previews
         });
         request.onerror = () => reject(request.error);
       };

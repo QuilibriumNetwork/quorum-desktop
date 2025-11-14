@@ -8,8 +8,13 @@ const useInvalidateConversation = () => {
 
   return useCallback(
     ({ conversationId }: { conversationId: string }) => {
-      return queryClient.invalidateQueries({
+      // Invalidate conversation data
+      queryClient.invalidateQueries({
         queryKey: buildConversationKey({ conversationId }),
+      });
+      // Invalidate conversation previews to refresh message previews
+      queryClient.invalidateQueries({
+        queryKey: ['conversation-previews'],
       });
     },
     [queryClient]
