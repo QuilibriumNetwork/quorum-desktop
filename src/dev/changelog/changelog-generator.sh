@@ -30,27 +30,33 @@ echo "" >> "$OUTPUT"
 echo "✨ NEW FEATURES:" >> "$TEXT_OUTPUT"
 
 # Get major new features - user-facing functionality only
+# Matches: ✨ feat: or traditional "Add/Implement" patterns
 git log --since="$DAYS days ago" --no-merges --pretty=format:"%H|%s" $BRANCH \
-  | grep -iE "\|(Add|Implement).*(search|filtering|compression|overlay|modal system|kick user|encryption|users list)" \
-  | grep -viE "(playground|docs|audit|preview|component complexity|primitive)" \
+  | grep -iE "\|(✨ feat:|Add|Implement)" \
+  | grep -viE "(playground|audit|component complexity|primitive|✅ task:|📝 doc:|🧹 chore:)" \
   | while IFS='|' read -r hash message; do
-    echo "- $message ([${hash:0:7}]($REMOTE_URL/commit/$hash))" >> "$OUTPUT"
-    echo "• $message (${hash:0:7})" >> "$TEXT_OUTPUT"
+    # Strip emoji prefix and type tag (e.g., "✨ feat: " or "🐛 fix: ")
+    clean_message=$(echo "$message" | sed -E 's/^[[:space:]]*(✨|🐛|🎨|🚀|🧹|⚙️|🧪|📦|📝|✅|🈶)[[:space:]]*(feat|fix|style|perf|chore|refactor|test|build|doc|task|i18n):[[:space:]]*//')
+    echo "- $clean_message ([${hash:0:7}]($REMOTE_URL/commit/$hash))" >> "$OUTPUT"
+    echo "• $clean_message (${hash:0:7})" >> "$TEXT_OUTPUT"
   done
 
 echo "" >> "$OUTPUT"
-echo "## 🐛 Bug Fixes" >> "$OUTPUT"
+echo "## 🔧 Bug Fixes" >> "$OUTPUT"
 echo "" >> "$OUTPUT"
 echo "" >> "$TEXT_OUTPUT"
 echo "🔧 BUG FIXES:" >> "$TEXT_OUTPUT"
 
 # Get important bug fixes - user-facing issues only
+# Matches: 🐛 fix: or traditional "Fix" patterns
 git log --since="$DAYS days ago" --no-merges --pretty=format:"%H|%s" $BRANCH \
-  | grep -iE "\|Fix.*(crash|clipping|stacking|alignment|dropdown|modal|profile|display)" \
-  | grep -viE "(typescript|component|primitive|docs)" \
+  | grep -iE "\|(🐛 fix:|Fix)" \
+  | grep -viE "(typescript|component|primitive|✅ task:|📝 doc:|🧹 chore:)" \
   | while IFS='|' read -r hash message; do
-    echo "- $message ([${hash:0:7}]($REMOTE_URL/commit/$hash))" >> "$OUTPUT"
-    echo "• $message (${hash:0:7})" >> "$TEXT_OUTPUT"
+    # Strip emoji prefix and type tag
+    clean_message=$(echo "$message" | sed -E 's/^[[:space:]]*(✨|🐛|🎨|🚀|🧹|⚙️|🧪|📦|📝|✅|🈶)[[:space:]]*(feat|fix|style|perf|chore|refactor|test|build|doc|task|i18n):[[:space:]]*//')
+    echo "- $clean_message ([${hash:0:7}]($REMOTE_URL/commit/$hash))" >> "$OUTPUT"
+    echo "• $clean_message (${hash:0:7})" >> "$TEXT_OUTPUT"
   done
 
 echo "" >> "$OUTPUT"
@@ -60,12 +66,15 @@ echo "" >> "$TEXT_OUTPUT"
 echo "🎨 UX IMPROVEMENTS:" >> "$TEXT_OUTPUT"
 
 # Get significant UX improvements - user-visible changes only
+# Matches: 🎨 style:, 🚀 perf:, or traditional "Improve/Enhance" patterns
 git log --since="$DAYS days ago" --no-merges --pretty=format:"%H|%s" $BRANCH \
-  | grep -iE "\|(Improve|Enhance).*(event message|avatar|layout|settings|UX|icons|styling)" \
-  | grep -viE "(playground|primitive|component|docs)" \
+  | grep -iE "\|(🎨 style:|🚀 perf:|Improve|Enhance)" \
+  | grep -viE "(playground|primitive|component|✅ task:|📝 doc:|🧹 chore:)" \
   | while IFS='|' read -r hash message; do
-    echo "- $message ([${hash:0:7}]($REMOTE_URL/commit/$hash))" >> "$OUTPUT"
-    echo "• $message (${hash:0:7})" >> "$TEXT_OUTPUT"
+    # Strip emoji prefix and type tag
+    clean_message=$(echo "$message" | sed -E 's/^[[:space:]]*(✨|🐛|🎨|🚀|🧹|⚙️|🧪|📦|📝|✅|🈶)[[:space:]]*(feat|fix|style|perf|chore|refactor|test|build|doc|task|i18n):[[:space:]]*//')
+    echo "- $clean_message ([${hash:0:7}]($REMOTE_URL/commit/$hash))" >> "$OUTPUT"
+    echo "• $clean_message (${hash:0:7})" >> "$TEXT_OUTPUT"
   done
 
 # Skip technical improvements section - not relevant for user changelog
