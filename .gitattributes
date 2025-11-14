@@ -1,0 +1,168 @@
+# .gitattributes
+#
+# This file controls how Git handles line endings in the repository.
+# All developers working on this project will get consistent behavior
+# regardless of their OS (Windows, Mac, Linux, WSL).
+#
+# Reference: https://git-scm.com/docs/gitattributes
+
+# =============================================================================
+# AUTO-DETECT TEXT FILES
+# =============================================================================
+# Automatically normalize line endings for all text files to LF
+* text=auto
+
+# =============================================================================
+# SOURCE CODE
+# =============================================================================
+# TypeScript/JavaScript files - always LF
+*.ts text eol=lf
+*.tsx text eol=lf
+*.js text eol=lf
+*.jsx text eol=lf
+*.cjs text eol=lf
+*.mjs text eol=lf
+
+# =============================================================================
+# STYLES
+# =============================================================================
+*.css text eol=lf
+*.scss text eol=lf
+*.sass text eol=lf
+*.less text eol=lf
+
+# =============================================================================
+# CONFIGURATION & DATA
+# =============================================================================
+*.json text eol=lf
+*.jsonc text eol=lf
+*.json5 text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+*.toml text eol=lf
+*.xml text eol=lf
+*.config text eol=lf
+
+# =============================================================================
+# INTERNATIONALIZATION (i18n)
+# =============================================================================
+# Translation files - always LF to prevent spurious diffs
+*.po text eol=lf
+*.pot text eol=lf
+*.mo binary
+
+# =============================================================================
+# DOCUMENTATION
+# =============================================================================
+*.md text eol=lf
+*.mdx text eol=lf
+*.txt text eol=lf
+LICENSE text eol=lf
+AUTHORS text eol=lf
+CHANGELOG text eol=lf
+
+# =============================================================================
+# SHELL SCRIPTS
+# =============================================================================
+# Shell scripts must always use LF (Unix-style)
+*.sh text eol=lf
+*.bash text eol=lf
+*.zsh text eol=lf
+
+# =============================================================================
+# PYTHON
+# =============================================================================
+*.py text eol=lf
+
+# =============================================================================
+# WEB FILES
+# =============================================================================
+*.html text eol=lf
+*.htm text eol=lf
+*.svg text eol=lf
+
+# =============================================================================
+# BUILD & CI/CD
+# =============================================================================
+Dockerfile text eol=lf
+.dockerignore text eol=lf
+Makefile text eol=lf
+*.mk text eol=lf
+
+# GitHub Actions
+.github/**/*.yml text eol=lf
+.github/**/*.yaml text eol=lf
+
+# =============================================================================
+# GIT FILES
+# =============================================================================
+.gitignore text eol=lf
+.gitattributes text eol=lf
+.gitmodules text eol=lf
+
+# =============================================================================
+# EDITOR CONFIG
+# =============================================================================
+.editorconfig text eol=lf
+.eslintrc* text eol=lf
+.prettierrc* text eol=lf
+
+# =============================================================================
+# BINARY FILES (never modify)
+# =============================================================================
+# Images
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.webp binary
+*.bmp binary
+*.tiff binary
+*.tif binary
+*.svg binary
+
+# Fonts
+*.woff binary
+*.woff2 binary
+*.ttf binary
+*.eot binary
+*.otf binary
+
+# Media
+*.mp4 binary
+*.mp3 binary
+*.wav binary
+*.ogg binary
+*.webm binary
+
+# Archives
+*.zip binary
+*.tar binary
+*.gz binary
+*.rar binary
+*.7z binary
+
+# Other binary formats
+*.pdf binary
+*.exe binary
+*.dll binary
+*.so binary
+*.dylib binary
+
+# =============================================================================
+# SPECIAL CASES FOR WINDOWS
+# =============================================================================
+# Windows batch files should use CRLF (Windows-style)
+*.bat text eol=crlf
+*.cmd text eol=crlf
+*.ps1 text eol=crlf
+
+# =============================================================================
+# LOCKFILES (don't normalize - preserve as-is)
+# =============================================================================
+# Package manager lockfiles should not have line endings modified
+# to prevent unnecessary merge conflicts
+package-lock.json -text
+yarn.lock -text
+pnpm-lock.yaml -text
