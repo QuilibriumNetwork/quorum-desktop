@@ -61,17 +61,27 @@
   flex-direction: column;
   align-items: center;
   justify-content: flex-end;
-  width: $nav-space-icon-size;
+  width: $nav-header-width; /* Use full nav header width for proper centering */
   height: 100vh;
   padding-bottom: $s-10;
-  padding-left: $s-4;
+  padding-left: 0; /* Remove left padding for centering */
   gap: $s-2;
+
+  /* Desktop: Move up to accommodate pill-shaped UserStatus */
+  @media (min-width: $screen-lg) {
+    padding-bottom: $s-20; /* Move up to make space for UserStatus pill at bottom */
+  }
+
+  /* Tablet/Mobile: Less bottom space since no UserStatus */
+  @media (max-width: 1023px) {
+    padding-bottom: $s-5; /* Reduced bottom space when UserStatus is hidden */
+  }
 
   // Mobile phone optimization
   @media (max-width: $screen-xs) {
-    width: $nav-space-icon-size-mobile;
-    padding-bottom: $s-10;
-    padding-left: $s-2;
+    width: $nav-header-width-mobile;
+    padding-bottom: $s-6; /* Even less space on mobile */
+    padding-left: 0;
     gap: $s-2;
   }
 }

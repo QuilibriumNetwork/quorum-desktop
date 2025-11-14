@@ -34,11 +34,11 @@ const UserStatus: React.FunctionComponent<UserStatusProps> = (props) => {
           userIcon={props.user.userIcon}
           displayName={props.user.displayName}
           address={props.user.address}
-          size={32}
+          size={36}
           className="user-status-icon"
         />
         <div className="user-status-text">
-          <div className="user-status-username w-[164px] text-ellipsis overflow-hidden whitespace-nowrap">
+          <div className="user-status-username lg:w-auto w-[164px] text-ellipsis overflow-hidden whitespace-nowrap">
             <span>{props.user.displayName}</span>
           </div>
           <div className="user-status-info w-fit">
@@ -58,7 +58,7 @@ const UserStatus: React.FunctionComponent<UserStatusProps> = (props) => {
             </ClickToCopyContent>
           </div>
         </div>
-        <div className="flex flex-col justify-center pr-2">
+        <div className="flex flex-col justify-center lg:pr-0 lg:pl-2 pr-2">
           <Icon
             name="settings"
             variant="filled"
@@ -66,7 +66,7 @@ const UserStatus: React.FunctionComponent<UserStatusProps> = (props) => {
               props.setIsUserSettingsOpen(true);
               e.stopPropagation();
             }}
-            className="text-subtle hover:text-main cursor-pointer"
+            className="text-subtle hover:text-main cursor-pointer lg:w-5 lg:h-5"
           />
         </div>
       </div>

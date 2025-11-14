@@ -3,7 +3,6 @@
 .user-status {
   height: 52px;
   background: var(--surface-3);
-  /*border-top: $border solid var(--color-border-default);*/
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -14,6 +13,27 @@
   bottom: 0;
   left: 0;
   z-index: 10;
+
+  /* Desktop pill-shaped design for 1024px+ */
+  @media (min-width: $screen-lg) {
+    position: fixed;
+    bottom: $s-3; 
+    left: $s-4; 
+    right: calc(100vw - $nav-header-width - var(--sidebar-left-width) + $s-4);
+    width: auto;
+    max-width: none; 
+    height: auto;
+    padding: $s-2 $s-3;
+    border-radius: $rounded-full; /* Pill shape like message composer */
+    background: var(--surface-4);
+    box-shadow: $shadow-lg; 
+    z-index: 20;
+
+    /* Light theme only - add border */
+    html:not(.dark) & {
+      border: $border solid var(--color-border-subtle);
+    }
+  }
 }
 
 @media (max-width: 1023px) {
@@ -31,16 +51,30 @@
   margin-bottom: $s-1; // Match margin-top for symmetry
   display: inline-block;
   vertical-align: middle; // Ensure consistent vertical alignment
+
+  /* Desktop pill design adjustments */
+  @media (min-width: $screen-lg) {
+    margin-top: 0;
+    margin-bottom: 0;
+    margin-left: 0;
+    margin-right: $s-2;
+  }
 }
 
 .user-status-text {
   display: flex;
   flex-direction: column;
   justify-content: center;
+
+  /* Desktop pill design adjustments */
+  @media (min-width: $screen-lg) {
+    flex: 1;
+    min-width: 0; /* Allow text to truncate properly */
+  }
 }
 
 .user-status-username {
-  font-size: $text-sm;
+  font-size: $text-base;
   font-weight: $font-bold;
 }
 

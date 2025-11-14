@@ -114,7 +114,9 @@ const NavMenuContent: React.FC<NavMenuProps> = (props) => {
           </SortableContext>
         </DndContext>
       </div>
-      <ExpandableNavMenu {...props} />
+      <div className="expanded-nav-buttons-container">
+        <ExpandableNavMenu {...props} />
+      </div>
     </header>
   );
 };

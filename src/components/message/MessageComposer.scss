@@ -77,6 +77,12 @@
   border-radius: $rounded-full;
   background-color: var(--color-bg-chat-input);
 
+  /* Desktop: Increase height to match UserStatus */
+  @media (min-width: $screen-lg) {
+    padding: $s-2-5 $s-3; /* Increase vertical padding to match UserStatus height */
+    margin-bottom: $s-3;
+  }
+
   /* When textarea grows beyond single line, align buttons to top */
   &:has(.message-composer-textarea[style*="height: 4"]),
   &:has(.message-composer-textarea[style*="height: 5"]),
