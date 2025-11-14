@@ -15,7 +15,7 @@ import { useQuery } from '@tanstack/react-query';
 import { useMessageDB } from '../context/useMessageDB';
 import { hasPermission, canKickUser } from '../../utils/permissions';
 import { t } from '@lingui/core/macro';
-import { DefaultImages, truncateAddress } from '../../utils';
+import { truncateAddress } from '../../utils';
 import { UserAvatar } from './UserAvatar';
 
 const UserProfile: React.FunctionComponent<{
@@ -31,7 +31,7 @@ const UserProfile: React.FunctionComponent<{
   const { messageDB } = useMessageDB();
 
   // Extract business logic into hooks
-  const { addRole, removeRole } = useUserRoleManagement(props.spaceId);
+  const { addRole, removeRole, loadingRoles } = useUserRoleManagement(props.spaceId);
   const { sendMessage, kickUser } = useUserProfileActions({
     dismiss: props.dismiss,
     setKickUserAddress: props.setKickUserAddress,
@@ -154,12 +154,18 @@ const UserProfile: React.FunctionComponent<{
                     key={'user-profile-role-' + r.roleId}
                     className={'user-profile-role-tag'}
                   >
-                    <Icon
-                      name="close"
-                      className="hover:bg-black hover:bg-opacity-30 rounded-full p-1 cursor-pointer mr-1 text-sm align-middle"
-                      onClick={() => removeRole(props.user.address, r.roleId)}
-                    />
-                    <Text className="text-xs inline">{r.displayName}</Text>
+                    {loadingRoles.has(r.roleId) ? (
+                      <Text className="text-xs">{t`Removing...`}</Text>
+                    ) : (
+                      <>
+                        <Icon
+                          name="close"
+                          className="hover:bg-black hover:bg-opacity-30 rounded-full p-1 cursor-pointer mr-1 text-sm align-middle"
+                          onClick={() => removeRole(props.user.address, r.roleId)}
+                        />
+                        <Text className="text-xs inline">{r.displayName}</Text>
+                      </>
+                    )}
                   </Text>
                 ))}
               {props.canEditRoles &&
@@ -173,9 +179,11 @@ const UserProfile: React.FunctionComponent<{
                       }}
                       type="subtle"
                       size="small"
-                      iconName="plus"
+                      iconName={loadingRoles.has(r.roleId) ? undefined : "plus"}
+                      disabled={loadingRoles.has(r.roleId)}
+                      className="user-profile-role-add-button"
                     >
-                      {r.roleTag}
+                      {loadingRoles.has(r.roleId) ? t`Adding...` : r.roleTag}
                     </Button>
                   </Container>
                 ))}

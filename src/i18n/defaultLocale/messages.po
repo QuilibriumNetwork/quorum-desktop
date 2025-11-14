@@ -45,33 +45,33 @@ msgid "{count} New Messages"
 msgstr ""
 
 #. js-lingui-explicit-id
-#: src/components/message/MessageComposer.native.tsx:134
-msgid "Failed to process image"
-msgstr ""
-
-#. js-lingui-explicit-id
 #: src/components/message/MessageComposer.native.tsx:238
 #: src/components/message/MessageComposer.tsx:338
 msgid "Replying to {user}"
 msgstr ""
 
 #. js-lingui-explicit-id
-#: src/components/message/Message.tsx:262
+#: src/components/message/MessageComposer.native.tsx:134
+msgid "Failed to process image"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/components/message/Message.tsx:263
 msgid "{user} has joined"
 msgstr ""
 
 #. js-lingui-explicit-id
-#: src/components/message/Message.tsx:269
+#: src/components/message/Message.tsx:270
 msgid "{user} has left"
 msgstr ""
 
 #. js-lingui-explicit-id
-#: src/components/message/Message.tsx:276
+#: src/components/message/Message.tsx:277
 msgid "{user} has been kicked"
 msgstr ""
 
 #. js-lingui-explicit-id
-#: src/components/direct/DirectMessage.tsx:790
+#: src/components/direct/DirectMessage.tsx:794
 msgid "Send a message to {user}"
 msgstr ""
 
@@ -88,7 +88,7 @@ msgstr ""
 msgid "'everyone' is a reserved name."
 msgstr ""
 
-#: src/components/message/Message.tsx:617
+#: src/components/message/Message.tsx:629
 msgid "(edited)"
 msgstr ""
 
@@ -251,6 +251,10 @@ msgstr ""
 
 #: src/components/modals/SpaceSettingsModal/Stickers.tsx:44
 msgid "Add up to 50 custom stickers. Custom stickers can only be used within a Space. You can upload PNG, JPG or GIF, max 25MB (automatically optimized)."
+msgstr ""
+
+#: src/components/user/UserProfile.tsx:185
+msgid "Adding..."
 msgstr ""
 
 #: src/hooks/business/validation/useAddressValidation.native.ts:71
@@ -499,7 +503,7 @@ msgstr ""
 msgid "Connecting"
 msgstr ""
 
-#: src/components/direct/DirectMessage.tsx:643
+#: src/components/direct/DirectMessage.tsx:647
 msgid "Conversation settings"
 msgstr ""
 
@@ -516,8 +520,8 @@ msgid "Copied!"
 msgstr ""
 
 #: src/components/direct/DirectMessage.tsx:301
-#: src/components/direct/DirectMessage.tsx:623
-#: src/components/direct/DirectMessage.tsx:722
+#: src/components/direct/DirectMessage.tsx:627
+#: src/components/direct/DirectMessage.tsx:726
 #: src/components/modals/UserSettingsModal/General.tsx:118
 #: src/components/user/UserProfile.tsx:109
 #: src/components/user/UserStatus.tsx:47
@@ -1149,7 +1153,7 @@ msgid "Key Saved"
 msgstr ""
 
 #: src/components/modals/KickUserModal.tsx:66
-#: src/components/user/UserProfile.tsx:203
+#: src/components/user/UserProfile.tsx:210
 msgid "Kick User"
 msgstr ""
 
@@ -1161,7 +1165,7 @@ msgstr ""
 msgid "Kick!"
 msgstr ""
 
-#: src/components/user/UserProfile.tsx:203
+#: src/components/user/UserProfile.tsx:210
 msgid "Kicked!"
 msgstr ""
 
@@ -1259,8 +1263,8 @@ msgstr ""
 msgid "Mark all as read"
 msgstr ""
 
-#: src/components/direct/DirectMessage.tsx:658
-#: src/components/direct/DirectMessage.tsx:828
+#: src/components/direct/DirectMessage.tsx:662
+#: src/components/direct/DirectMessage.tsx:832
 #: src/components/space/Channel.tsx:867
 msgid "Members List"
 msgstr ""
@@ -1273,7 +1277,7 @@ msgstr ""
 msgid "Message actions"
 msgstr ""
 
-#: src/components/message/Message.tsx:600
+#: src/components/message/Message.tsx:612
 msgid "Message does not have a valid signature, this may not be from the sender"
 msgstr ""
 
@@ -1464,12 +1468,12 @@ msgstr ""
 msgid "Pin to top"
 msgstr ""
 
-#: src/components/message/Message.tsx:583
+#: src/components/message/Message.tsx:595
 msgid "Pinned"
 msgstr ""
 
 #. placeholder {0}: mapSenderToUser(message.pinnedBy)?.displayName || message.pinnedBy
-#: src/components/message/Message.tsx:582
+#: src/components/message/Message.tsx:594
 msgid "Pinned by {0}"
 msgstr ""
 
@@ -1561,6 +1565,10 @@ msgstr ""
 
 #: src/components/modals/UserSettingsModal/Privacy.tsx:154
 msgid "Remove"
+msgstr ""
+
+#: src/components/user/UserProfile.tsx:158
+msgid "Removing..."
 msgstr ""
 
 #: src/components/modals/SpaceSettingsModal/Account.tsx:222
@@ -1658,7 +1666,7 @@ msgstr ""
 msgid "Search in this Space..."
 msgstr ""
 
-#: src/components/direct/DirectMessage.tsx:677
+#: src/components/direct/DirectMessage.tsx:681
 #: src/components/space/Channel.tsx:886
 msgid "Search Messages"
 msgstr ""
@@ -1740,7 +1748,7 @@ msgstr ""
 msgid "Send invites to people you've previously had conversations with. An invite button will appear in their inbox."
 msgstr ""
 
-#: src/components/user/UserProfile.tsx:193
+#: src/components/user/UserProfile.tsx:200
 msgid "Send Message"
 msgstr ""
 
@@ -1993,7 +2001,7 @@ msgstr ""
 #: src/components/context/MessageDB.bak.tsx:5292
 #: src/components/direct/DirectMessage.tsx:161
 #: src/components/direct/DirectMessage.tsx:176
-#: src/components/direct/DirectMessage.tsx:519
+#: src/components/direct/DirectMessage.tsx:523
 #: src/components/message/MessageComposer.tsx:412
 #: src/components/message/MessageComposer.tsx:419
 #: src/components/message/MessageEditTextarea.tsx:225
@@ -2054,7 +2062,7 @@ msgstr ""
 msgid "Unpinned!"
 msgstr ""
 
-#: src/components/direct/DirectMessage.tsx:778
+#: src/components/direct/DirectMessage.tsx:782
 msgid "Until you reply, this sender will not see your display name or profile picture"
 msgstr ""
 
