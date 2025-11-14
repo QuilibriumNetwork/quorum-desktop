@@ -137,7 +137,10 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
 
     // Scroll tracking for jump to present button
     const { handleAtBottomStateChange, shouldShowJumpButton } =
-      useScrollTracking();
+      useScrollTracking({
+        messageCount: messageList.length,
+        minMessageCount: 10, // Only show button if there are at least 10 messages
+      });
 
     // Track if separator has been visible (for dismissal logic via Virtuoso rangeChanged)
     const [separatorWasVisible, setSeparatorWasVisible] = useState(false);
