@@ -45,14 +45,14 @@ msgid "{count} New Messages"
 msgstr ""
 
 #. js-lingui-explicit-id
-#: src/components/message/MessageComposer.native.tsx:238
-#: src/components/message/MessageComposer.tsx:338
-msgid "Replying to {user}"
+#: src/components/message/MessageComposer.native.tsx:134
+msgid "Failed to process image"
 msgstr ""
 
 #. js-lingui-explicit-id
-#: src/components/message/MessageComposer.native.tsx:134
-msgid "Failed to process image"
+#: src/components/message/MessageComposer.native.tsx:238
+#: src/components/message/MessageComposer.tsx:338
+msgid "Replying to {user}"
 msgstr ""
 
 #. js-lingui-explicit-id
@@ -241,7 +241,7 @@ msgstr ""
 msgid "Add Role"
 msgstr ""
 
-#: src/components/message/MessageComposer.tsx:494
+#: src/components/message/MessageComposer.tsx:495
 msgid "add sticker"
 msgstr ""
 
@@ -253,7 +253,7 @@ msgstr ""
 msgid "Add up to 50 custom stickers. Custom stickers can only be used within a Space. You can upload PNG, JPG or GIF, max 25MB (automatically optimized)."
 msgstr ""
 
-#: src/components/user/UserProfile.tsx:185
+#: src/components/user/UserProfile.tsx:186
 msgid "Adding..."
 msgstr ""
 
@@ -271,7 +271,7 @@ msgstr ""
 msgid "Adjust security-related settings, which may impact user  experience but increase the security of your Quorum account."
 msgstr ""
 
-#: src/components/modals/CreateSpaceModal.tsx:137
+#: src/components/modals/CreateSpaceModal.tsx:173
 msgid "Advanced Settings"
 msgstr ""
 
@@ -567,7 +567,7 @@ msgid "Could not verify invite"
 msgstr ""
 
 #: src/components/modals/AddSpaceModal.tsx:293
-#: src/components/modals/CreateSpaceModal.tsx:54
+#: src/components/modals/CreateSpaceModal.tsx:79
 msgid "Create a Space"
 msgstr ""
 
@@ -576,11 +576,11 @@ msgstr ""
 msgid "Create New Account"
 msgstr ""
 
-#: src/components/modals/CreateSpaceModal.tsx:212
+#: src/components/modals/CreateSpaceModal.tsx:246
 msgid "Create Space"
 msgstr ""
 
-#: src/components/modals/CreateSpaceModal.tsx:216
+#: src/components/modals/CreateSpaceModal.tsx:250
 msgid "Creating Space..."
 msgstr ""
 
@@ -610,7 +610,7 @@ msgstr ""
 msgid "Default Channel"
 msgstr ""
 
-#: src/components/modals/CreateSpaceModal.tsx:149
+#: src/components/modals/CreateSpaceModal.tsx:185
 msgid "Default Space settings provide the most typical chat experience, but for higher privacy guarantees, review these advanced settings."
 msgstr ""
 
@@ -697,7 +697,7 @@ msgstr ""
 msgid "Description cannot contain special characters"
 msgstr ""
 
-#: src/components/modals/CreateSpaceModal.tsx:119
+#: src/components/modals/CreateSpaceModal.tsx:155
 msgid "Description must be {MAX_DESCRIPTION_LENGTH} characters or less"
 msgstr ""
 
@@ -799,7 +799,7 @@ msgstr ""
 msgid "Encryption state is missing state data. Please generate a public invite link first."
 msgstr ""
 
-#: src/components/modals/CreateSpaceModal.tsx:112
+#: src/components/modals/CreateSpaceModal.tsx:148
 msgid "Enter a description for your Space (optional)"
 msgstr ""
 
@@ -807,7 +807,7 @@ msgstr ""
 #~ msgid "Enter a name for your new Space"
 #~ msgstr ""
 
-#: src/components/modals/CreateSpaceModal.tsx:89
+#: src/components/modals/CreateSpaceModal.tsx:114
 msgid "Enter a name for your Space"
 msgstr ""
 
@@ -862,6 +862,10 @@ msgstr ""
 
 #: src/hooks/platform/files/useFileDownload.native.ts:110
 msgid "Failed to copy to clipboard. Please try again."
+msgstr ""
+
+#: src/components/modals/CreateSpaceModal.tsx:28
+msgid "Failed to create space. Please try again."
 msgstr ""
 
 #: src/components/context/MessageDB.bak.tsx:984
@@ -1153,7 +1157,7 @@ msgid "Key Saved"
 msgstr ""
 
 #: src/components/modals/KickUserModal.tsx:66
-#: src/components/user/UserProfile.tsx:210
+#: src/components/user/UserProfile.tsx:211
 msgid "Kick User"
 msgstr ""
 
@@ -1165,7 +1169,7 @@ msgstr ""
 msgid "Kick!"
 msgstr ""
 
-#: src/components/user/UserProfile.tsx:210
+#: src/components/user/UserProfile.tsx:211
 msgid "Kicked!"
 msgstr ""
 
@@ -1285,11 +1289,11 @@ msgstr ""
 msgid "Message..."
 msgstr ""
 
-#: src/components/message/MessageComposer.tsx:511
+#: src/components/message/MessageComposer.tsx:512
 msgid "Messages are NOT signed!"
 msgstr ""
 
-#: src/components/message/MessageComposer.tsx:512
+#: src/components/message/MessageComposer.tsx:513
 msgid "Messages are signed!"
 msgstr ""
 
@@ -1381,6 +1385,10 @@ msgstr ""
 
 #: src/components/ui/YouTubeFacade.tsx:171
 msgid "Open video on YouTube"
+msgstr ""
+
+#: src/components/modals/CreateSpaceModal.tsx:31
+msgid "Operation timed out. Please try again."
 msgstr ""
 
 #: src/components/modals/CreateSpaceModal.tsx:108
@@ -1581,12 +1589,12 @@ msgstr ""
 msgid "Reply"
 msgstr ""
 
-#: src/components/modals/CreateSpaceModal.tsx:157
+#: src/components/modals/CreateSpaceModal.tsx:193
 #: src/components/modals/SpaceSettingsModal/General.tsx:260
 msgid "Require Message Signing"
 msgstr ""
 
-#: src/components/modals/CreateSpaceModal.tsx:161
+#: src/components/modals/CreateSpaceModal.tsx:197
 msgid "Require messages sent in this Space to be signed by the sender. Technically speaking, this makes the messages in this Space non-repudiable."
 msgstr ""
 
@@ -1748,7 +1756,7 @@ msgstr ""
 msgid "Send invites to people you've previously had conversations with. An invite button will appear in their inbox."
 msgstr ""
 
-#: src/components/user/UserProfile.tsx:200
+#: src/components/user/UserProfile.tsx:201
 msgid "Send Message"
 msgstr ""
 
@@ -1873,7 +1881,7 @@ msgstr ""
 msgid "This action cannot be undone and will permanently remove all the Space settings. To delete the Space, you must first delete all Channels."
 msgstr ""
 
-#: src/components/modals/CreateSpaceModal.tsx:124
+#: src/components/modals/CreateSpaceModal.tsx:160
 #: src/components/modals/SpaceSettingsModal/General.tsx:165
 msgid "This description will be visible on invites and shown to people when they look up or join your Space using an invite link."
 msgstr ""
@@ -2167,7 +2175,7 @@ msgstr ""
 msgid "When someone replies to your messages"
 msgstr ""
 
-#: src/components/modals/CreateSpaceModal.tsx:185
+#: src/components/modals/CreateSpaceModal.tsx:221
 msgid "When this setting is enabled, invite links will automatically allow a user to join your Space. When it is not enabled, users following an invite link will send you a request to join your Space that you must manually approve. Public links require some key material to be present in the link – be aware that possession of a public Space link can allow anyone with the link to read messages on the Space for the duration of the link being valid."
 msgstr ""
 
@@ -2198,6 +2206,10 @@ msgstr ""
 
 #: src/components/modals/NewDirectMessageModal.tsx:146
 msgid "You can change this later for this conversation by clicking the lock icon in the Conversation view."
+msgstr ""
+
+#: src/components/modals/UserSettingsModal/Notifications.tsx:77
+msgid "You can manage your Space mention notifications in each Space's settings."
 msgstr ""
 
 #: src/components/modals/GroupEditorModal.tsx:113
