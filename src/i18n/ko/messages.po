@@ -174,7 +174,7 @@ msgstr "@roles"
 msgid "@you"
 msgstr "@you"
 
-#: src/components/direct/DirectMessageContactsList.tsx:49
+#: src/components/direct/DirectMessageContactsList.tsx:50
 msgid "+ Add a friend"
 msgstr "친구 추가"
 
@@ -712,7 +712,7 @@ msgstr "이 브라우저에서는 데스크톱 알림이 지원되지 않습니�
 msgid "Direct Message"
 msgstr "다이렉트 메시지"
 
-#: src/components/direct/DirectMessageContactsList.tsx:24
+#: src/components/direct/DirectMessageContactsList.tsx:25
 #: src/components/navbar/NavMenu.tsx:85
 msgid "Direct Messages"
 msgstr "다이렉트 메시지"
@@ -1280,6 +1280,10 @@ msgstr "모두 멘션하기"
 msgid "Message actions"
 msgstr "메시지 작업"
 
+#: src/utils/messagePreview.ts:56
+msgid "Message deleted"
+msgstr "메시지가 삭제되었습니다"
+
 #: src/components/message/Message.tsx:612
 msgid ""
 "Message does not have a valid signature, this may not be from the sender"
@@ -1425,6 +1429,10 @@ msgstr "권한:"
 msgid "Personalize your account"
 msgstr "계정을 개인화하세요"
 
+#: src/utils/messagePreview.ts:37 src/utils/messagePreview.ts:41
+msgid "Photo"
+msgstr "사진"
+
 #: src/components/primitives/FileUpload/FileUpload.native.tsx:169
 #: src/hooks/business/user/useFileUpload.native.ts:44
 msgid "Photo Library"
@@ -1565,7 +1573,7 @@ msgstr "읽기 전용"
 msgid "Read only channel"
 msgstr "읽기 전용 채널"
 
-#: src/components/direct/DirectMessageContactsList.tsx:42
+#: src/components/direct/DirectMessageContactsList.tsx:43
 msgid "Ready to start a truly private conversation?"
 msgstr "진정으로 비공식적인 대화를 시작할 준비가 되셨나요?"
 
@@ -2076,7 +2084,7 @@ msgstr "알 수 없는 시간"
 #: src/services/EncryptionService.ts:138 src/services/MessageService.ts:1113
 #: src/services/MessageService.ts:1285 src/services/MessageService.ts:1425
 #: src/services/MessageService.ts:1443 src/services/MessageService.ts:2779
-#: src/services/MessageService.ts:2930
+#: src/services/MessageService.ts:2932
 msgid "Unknown User"
 msgstr "알 수 없는 사용자"
 
@@ -2252,6 +2260,10 @@ msgid ""
 msgstr ""
 "메시지에 서명하면 해당 메시지가 귀하의 키에서 온 것임을 확인하는 것입니다. 메시지에 서명하지 않으면 그럴듯한 부인 가능성을 가집니다. "
 "이 설정은 각 대화 및 메시지에 대해 개별적으로 제어할 수 있습니다."
+
+#: src/utils/dateFormatting.ts:55
+msgid "Yesterday"
+msgstr "어제"
 
 #: src/utils/dateFormatting.ts:30
 msgid "Yesterday at {timeFormatted}"

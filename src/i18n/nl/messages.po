@@ -178,7 +178,7 @@ msgstr "@roles"
 msgid "@you"
 msgstr "@you"
 
-#: src/components/direct/DirectMessageContactsList.tsx:49
+#: src/components/direct/DirectMessageContactsList.tsx:50
 msgid "+ Add a friend"
 msgstr "Voeg een vriend toe"
 
@@ -741,7 +741,7 @@ msgstr "Bureaubladmeldingen worden niet ondersteund in deze browser."
 msgid "Direct Message"
 msgstr "Directe Berichten"
 
-#: src/components/direct/DirectMessageContactsList.tsx:24
+#: src/components/direct/DirectMessageContactsList.tsx:25
 #: src/components/navbar/NavMenu.tsx:85
 msgid "Direct Messages"
 msgstr "Directe Berichten"
@@ -1331,6 +1331,10 @@ msgstr "Vermeld Iedereen"
 msgid "Message actions"
 msgstr "Berichtacties"
 
+#: src/utils/messagePreview.ts:56
+msgid "Message deleted"
+msgstr "Bericht verwijderd"
+
 #: src/components/message/Message.tsx:612
 msgid ""
 "Message does not have a valid signature, this may not be from the sender"
@@ -1484,6 +1488,10 @@ msgstr "Rechten:"
 msgid "Personalize your account"
 msgstr "Personaliseer je account"
 
+#: src/utils/messagePreview.ts:37 src/utils/messagePreview.ts:41
+msgid "Photo"
+msgstr "Foto"
+
 #: src/components/primitives/FileUpload/FileUpload.native.tsx:169
 #: src/hooks/business/user/useFileUpload.native.ts:44
 msgid "Photo Library"
@@ -1636,7 +1644,7 @@ msgstr "Alleen-lezen"
 msgid "Read only channel"
 msgstr "Alleen-lezen kanaal"
 
-#: src/components/direct/DirectMessageContactsList.tsx:42
+#: src/components/direct/DirectMessageContactsList.tsx:43
 msgid "Ready to start a truly private conversation?"
 msgstr "Klaar om een echt privégesprek te beginnen?"
 
@@ -2185,7 +2193,7 @@ msgstr "Onbekende tijd"
 #: src/services/EncryptionService.ts:138 src/services/MessageService.ts:1113
 #: src/services/MessageService.ts:1285 src/services/MessageService.ts:1425
 #: src/services/MessageService.ts:1443 src/services/MessageService.ts:2779
-#: src/services/MessageService.ts:2930
+#: src/services/MessageService.ts:2932
 msgid "Unknown User"
 msgstr "Onbekende gebruiker"
 
@@ -2382,6 +2390,10 @@ msgstr ""
 "Wanneer je een bericht ondertekent, bevestig je dat het van je sleutel komt."
 " Wanneer je een bericht niet ondertekent, heb je plausibele ontkenning. Je "
 "kunt deze instelling voor elk gesprek en bericht afzonderlijk beheren."
+
+#: src/utils/dateFormatting.ts:55
+msgid "Yesterday"
+msgstr "Gisteren"
 
 #: src/utils/dateFormatting.ts:30
 msgid "Yesterday at {timeFormatted}"

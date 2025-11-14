@@ -178,7 +178,7 @@ msgstr "@roles"
 msgid "@you"
 msgstr "@you"
 
-#: src/components/direct/DirectMessageContactsList.tsx:49
+#: src/components/direct/DirectMessageContactsList.tsx:50
 msgid "+ Add a friend"
 msgstr "Προσθήκη φίλου"
 
@@ -747,7 +747,7 @@ msgstr ""
 msgid "Direct Message"
 msgstr "Άμεσο Μήνυμα"
 
-#: src/components/direct/DirectMessageContactsList.tsx:24
+#: src/components/direct/DirectMessageContactsList.tsx:25
 #: src/components/navbar/NavMenu.tsx:85
 msgid "Direct Messages"
 msgstr "Άμεσες Μηνύματα"
@@ -1345,6 +1345,10 @@ msgstr "Αναφορά σε όλους"
 msgid "Message actions"
 msgstr "Ενέργειες μηνυμάτων"
 
+#: src/utils/messagePreview.ts:56
+msgid "Message deleted"
+msgstr "Μήνυμα διαγράφηκε"
+
 #: src/components/message/Message.tsx:612
 msgid ""
 "Message does not have a valid signature, this may not be from the sender"
@@ -1500,6 +1504,10 @@ msgstr "Δικαιώματα:"
 msgid "Personalize your account"
 msgstr "Προσωποποίησε τον λογαριασμό σου"
 
+#: src/utils/messagePreview.ts:37 src/utils/messagePreview.ts:41
+msgid "Photo"
+msgstr "Φωτογραφία"
+
 #: src/components/primitives/FileUpload/FileUpload.native.tsx:169
 #: src/hooks/business/user/useFileUpload.native.ts:44
 msgid "Photo Library"
@@ -1650,7 +1658,7 @@ msgstr "Μόνο για ανάγνωση"
 msgid "Read only channel"
 msgstr "Κανάλι μόνο για ανάγνωση"
 
-#: src/components/direct/DirectMessageContactsList.tsx:42
+#: src/components/direct/DirectMessageContactsList.tsx:43
 msgid "Ready to start a truly private conversation?"
 msgstr "Έτοιμοι να ξεκινήσουμε μια πραγματικά ιδιωτική συνομιλία;"
 
@@ -2198,7 +2206,7 @@ msgstr "Άγνωστη ώρα"
 #: src/services/EncryptionService.ts:138 src/services/MessageService.ts:1113
 #: src/services/MessageService.ts:1285 src/services/MessageService.ts:1425
 #: src/services/MessageService.ts:1443 src/services/MessageService.ts:2779
-#: src/services/MessageService.ts:2930
+#: src/services/MessageService.ts:2932
 msgid "Unknown User"
 msgstr "Άγνωστος Χρήστης"
 
@@ -2400,6 +2408,10 @@ msgstr ""
 "Wanneer je een bericht ondertekent, bevestig je dat het van je sleutel komt."
 " Wanneer je een bericht niet ondertekent, heb je plausibele ontkenning. Je "
 "kunt deze instelling voor elk gesprek en elk bericht afzonderlijk beheren."
+
+#: src/utils/dateFormatting.ts:55
+msgid "Yesterday"
+msgstr "Χθες"
 
 #: src/utils/dateFormatting.ts:30
 msgid "Yesterday at {timeFormatted}"

@@ -176,7 +176,7 @@ msgstr "@roles"
 msgid "@you"
 msgstr "@you"
 
-#: src/components/direct/DirectMessageContactsList.tsx:49
+#: src/components/direct/DirectMessageContactsList.tsx:50
 msgid "+ Add a friend"
 msgstr "Add a mate"
 
@@ -729,7 +729,7 @@ msgstr "Desktop notifications be not supported in this browser."
 msgid "Direct Message"
 msgstr "Direct Message"
 
-#: src/components/direct/DirectMessageContactsList.tsx:24
+#: src/components/direct/DirectMessageContactsList.tsx:25
 #: src/components/navbar/NavMenu.tsx:85
 msgid "Direct Messages"
 msgstr "Whispered Secrets"
@@ -1314,6 +1314,10 @@ msgstr "Mention Everyone"
 msgid "Message actions"
 msgstr "Message actions"
 
+#: src/utils/messagePreview.ts:56
+msgid "Message deleted"
+msgstr "Mensaje deleted"
+
 #: src/components/message/Message.tsx:612
 msgid ""
 "Message does not have a valid signature, this may not be from the sender"
@@ -1464,6 +1468,10 @@ msgstr "Ship's orders:"
 msgid "Personalize your account"
 msgstr "Personalize yer account, matey!"
 
+#: src/utils/messagePreview.ts:37 src/utils/messagePreview.ts:41
+msgid "Photo"
+msgstr "Foto"
+
 #: src/components/primitives/FileUpload/FileUpload.native.tsx:169
 #: src/hooks/business/user/useFileUpload.native.ts:44
 msgid "Photo Library"
@@ -1608,7 +1616,7 @@ msgstr "Read only"
 msgid "Read only channel"
 msgstr "Read only channel"
 
-#: src/components/direct/DirectMessageContactsList.tsx:42
+#: src/components/direct/DirectMessageContactsList.tsx:43
 msgid "Ready to start a truly private conversation?"
 msgstr "Ready to start a truly private conversation?"
 
@@ -2145,7 +2153,7 @@ msgstr "Unknown time"
 #: src/services/EncryptionService.ts:138 src/services/MessageService.ts:1113
 #: src/services/MessageService.ts:1285 src/services/MessageService.ts:1425
 #: src/services/MessageService.ts:1443 src/services/MessageService.ts:2779
-#: src/services/MessageService.ts:2930
+#: src/services/MessageService.ts:2932
 msgid "Unknown User"
 msgstr "Unknown User"
 
@@ -2335,6 +2343,10 @@ msgstr ""
 "When ye sign a message, ye be confirm'n that it comes from yer key. When ye "
 "don't sign a message, ye have plausible deniability. Ye can control this "
 "setting for each conversation and message individually."
+
+#: src/utils/dateFormatting.ts:55
+msgid "Yesterday"
+msgstr "Aye, yesterday"
 
 #: src/utils/dateFormatting.ts:30
 msgid "Yesterday at {timeFormatted}"

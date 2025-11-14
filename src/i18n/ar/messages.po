@@ -176,7 +176,7 @@ msgstr "@الأدوار"
 msgid "@you"
 msgstr "@أنت"
 
-#: src/components/direct/DirectMessageContactsList.tsx:49
+#: src/components/direct/DirectMessageContactsList.tsx:50
 msgid "+ Add a friend"
 msgstr "أضف صديقًا"
 
@@ -728,7 +728,7 @@ msgstr "إشعارات سطح المكتب غير مدعومة في هذا ال�
 msgid "Direct Message"
 msgstr "رسالة مباشرة"
 
-#: src/components/direct/DirectMessageContactsList.tsx:24
+#: src/components/direct/DirectMessageContactsList.tsx:25
 #: src/components/navbar/NavMenu.tsx:85
 msgid "Direct Messages"
 msgstr "الرسائل المباشرة"
@@ -1306,6 +1306,10 @@ msgstr "ذكر الجميع"
 msgid "Message actions"
 msgstr "إجراءات الرسالة"
 
+#: src/utils/messagePreview.ts:56
+msgid "Message deleted"
+msgstr "تم حذف الرسالة"
+
 #: src/components/message/Message.tsx:612
 msgid ""
 "Message does not have a valid signature, this may not be from the sender"
@@ -1455,6 +1459,10 @@ msgstr "الأذونات:"
 msgid "Personalize your account"
 msgstr "خصص حسابك"
 
+#: src/utils/messagePreview.ts:37 src/utils/messagePreview.ts:41
+msgid "Photo"
+msgstr "صورة"
+
 #: src/components/primitives/FileUpload/FileUpload.native.tsx:169
 #: src/hooks/business/user/useFileUpload.native.ts:44
 msgid "Photo Library"
@@ -1598,7 +1606,7 @@ msgstr "للقراءة فقط"
 msgid "Read only channel"
 msgstr "قناة للقراءة فقط"
 
-#: src/components/direct/DirectMessageContactsList.tsx:42
+#: src/components/direct/DirectMessageContactsList.tsx:43
 msgid "Ready to start a truly private conversation?"
 msgstr "هل أنت مستعد لبدء محادثة خاصة حقًا؟"
 
@@ -2128,7 +2136,7 @@ msgstr "وقت غير معروف"
 #: src/services/EncryptionService.ts:138 src/services/MessageService.ts:1113
 #: src/services/MessageService.ts:1285 src/services/MessageService.ts:1425
 #: src/services/MessageService.ts:1443 src/services/MessageService.ts:2779
-#: src/services/MessageService.ts:2930
+#: src/services/MessageService.ts:2932
 msgid "Unknown User"
 msgstr "مستخدم غير معروف"
 
@@ -2314,6 +2322,10 @@ msgstr ""
 "عندما تقوم بتوقيع رسالة، فإنك تؤكد أنها تأتي من مفتاحك. عندما لا تقوم بتوقيع"
 " رسالة، لديك إمكانية الإنكار المعقول. يمكنك التحكم في هذا الإعداد لكل محادثة"
 " ورسالة على حدة."
+
+#: src/utils/dateFormatting.ts:55
+msgid "Yesterday"
+msgstr "أمس"
 
 #: src/utils/dateFormatting.ts:30
 msgid "Yesterday at {timeFormatted}"
