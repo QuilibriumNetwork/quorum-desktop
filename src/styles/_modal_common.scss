@@ -836,3 +836,13 @@
     color: white;
   }
 }
+
+// Space description textarea styling
+.space-description-text {
+  font-size: $text-sm !important;
+  line-height: $text-sm-lh !important;
+
+  &::placeholder {
+    font-size: $text-sm !important;
+  }
+}

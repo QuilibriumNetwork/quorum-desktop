@@ -152,7 +152,7 @@ const General: React.FunctionComponent<GeneralProps> = ({
             placeholder={t`Describe what this Space is about...`}
             rows={3}
             variant="filled"
-            className="w-full"
+            className="w-full space-description-text"
             error={descriptionErrors.length > 0}
             errorMessage={
               descriptionErrors.length > 0

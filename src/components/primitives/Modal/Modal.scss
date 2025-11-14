@@ -116,22 +116,27 @@
 
 .quorum-modal-close {
   position: absolute;
-  right: $s-3-5;
-  top: $s-2-5;
+  top: $s-7 !important; // Match the right margin for visual balance - !important needed due to .quorum-modal-no-padding specificity
   color: var(--color-text-subtle);
-  transition: color $duration-200 $ease-in-out;
+  background-color: var(--surface-00);
+  border-radius: $rounded-full;
+  transition:
+    color $duration-200 $ease-in-out,
+    background-color $duration-200 $ease-in-out;
   // Increase touch target for mobile
   padding: $s-2;
   margin: (-$s-2);
 
   @media (max-width: $screen-md) {
-    // Even larger touch target on mobile (44x44px minimum)
-    padding: $s-3;
-    margin: (-$s-3);
+    // Reduce size and margins on mobile
+    top: $s-5 !important;
+    padding: $s-2;
+    margin: (-$s-2);
   }
 
   &:hover {
     color: var(--color-text-strong);
+    background-color: var(--color-field-bg-focus);
   }
 }
 
