@@ -340,7 +340,7 @@ export const Message = React.memo(
         className={
           'text-base relative ' +
           (isTouchDevice()
-            ? 'border-t border-t-surface-00 pt-2' // Add top border for touch devices
+            ? 'border-t-2 border-t-surface-00 pt-2' // Add thicker top border for touch devices
             : 'hover:bg-chat-hover ') + // Only add hover effect on non-touch devices
           // Note: Mentions now use 60-second highlight (message-highlighted-mention)
           // Other highlights (search, pinned, hash) use 6-second highlight (message-highlighted)

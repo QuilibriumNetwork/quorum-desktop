@@ -696,7 +696,7 @@ const DirectMessage: React.FC<{}> = () => {
           </div>
 
           {/* Second row on mobile: user info / Hidden on desktop (shown above) */}
-          <Container className="w-full lg:hidden">
+          <Container className="w-full lg:hidden mt-3">
             <FlexRow className="items-center min-w-0">
               <FlexColumn className="justify-around flex-shrink-0">
                 <UserAvatar

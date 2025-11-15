@@ -907,7 +907,7 @@ const Channel: React.FC<ChannelProps> = ({
           </div>
 
           {/* Second row on mobile: channel name / Hidden on desktop (shown above) */}
-          <div className="w-full lg:hidden">
+          <div className="w-full lg:hidden mt-3">
             <div className="flex items-center gap-3 sm:gap-2 truncate whitespace-nowrap overflow-hidden">
               <Icon
                 name={iconName as any}
