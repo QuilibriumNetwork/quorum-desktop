@@ -24,6 +24,7 @@ import { useModals } from '../context/ModalProvider';
 import { Button, Tooltip, Icon, Input } from '../primitives';
 import { MobileDrawer } from '../ui';
 import { getIconColorHex } from './IconPicker/types';
+import { isTouchDevice } from '../../utils/platform';
 import MessageComposer, {
   MessageComposerRef,
 } from '../message/MessageComposer';
@@ -879,8 +880,8 @@ const Channel: React.FC<ChannelProps> = ({
                 />
               </Tooltip>
 
-              {/* Search: Desktop shows inline GlobalSearch, Mobile shows search icon */}
-              {!isDesktop ? (
+              {/* Search: Touch devices always show icon, non-touch devices show inline search */}
+              {isTouchDevice() ? (
                 <Tooltip
                   id={`search-${channelId}`}
                   content={t`Search Messages`}

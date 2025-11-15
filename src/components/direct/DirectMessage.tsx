@@ -30,6 +30,7 @@ import { t } from '@lingui/core/macro';
 import { i18n } from '@lingui/core';
 import { ClickToCopyContent, MobileDrawer } from '../ui';
 import { DefaultImages, truncateAddress } from '../../utils';
+import { isTouchDevice } from '../../utils/platform';
 
 import { GlobalSearch } from '../search';
 import { useResponsiveLayoutContext } from '../context/ResponsiveLayoutProvider';
@@ -668,8 +669,8 @@ const DirectMessage: React.FC<{}> = () => {
                 />
               </Tooltip>
 
-              {/* Search: Desktop shows inline GlobalSearch, Mobile shows search icon */}
-              {!isDesktop ? (
+              {/* Search: Touch devices always show icon, non-touch devices show inline search */}
+              {isTouchDevice() ? (
                 <Tooltip
                   id="dm-search-toggle"
                   content={t`Search Messages`}
