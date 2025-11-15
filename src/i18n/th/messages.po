@@ -37,12 +37,8 @@ msgstr "ส่งข้อความไปยัง #{channel_name}"
 
 #. js-lingui-explicit-id
 #: src/components/onboarding/Onboarding.tsx:255
-msgid ""
-"Your profile image size must be {maxFileSize} or less and must be a PNG, "
-"JPG, or JPEG file extension."
-msgstr ""
-"ขนาดภาพโปรไฟล์ของคุณต้องไม่เกิน {maxFileSize} และต้องเป็นไฟล์นามสกุล PNG, "
-"JPG หรือ JPEG."
+msgid "Your profile image size must be {maxFileSize} or less and must be a PNG, JPG, or JPEG file extension."
+msgstr "ขนาดภาพโปรไฟล์ของคุณต้องไม่เกิน {maxFileSize} และต้องเป็นไฟล์นามสกุล PNG, JPG หรือ JPEG."
 
 #. js-lingui-explicit-id
 #: src/components/message/NewMessagesSeparator.tsx:69
@@ -80,6 +76,9 @@ msgstr "{user} ถูกเตะ"
 msgid "Send a message to {user}"
 msgstr "ส่งข้อความไปยัง {user}"
 
+#~ msgid " Default Space settings provide the most typical chat experience, but for higher privacy guarantees, review the Advanced Settings."
+#~ msgstr "การตั้งค่า Space เริ่มต้นให้ประสบการณ์การสนทนาที่เป็นที่นิยมที่สุด แต่เพื่อความเป็นส่วนตัวที่สูงขึ้น ให้ตรวจสอบการตั้งค่าขั้นสูง."
+
 #: src/components/Maintenance.native.tsx:61
 msgid " for updates."
 msgstr "สำหรับการอัปเดต"
@@ -109,9 +108,7 @@ msgstr "[ข้อความ]"
 #. placeholder {0}: removedDevices.length
 #: src/components/modals/UserSettingsModal/Privacy.tsx:103
 msgid "{0} devices marked for removal. Click \"Save Changes\" to confirm."
-msgstr ""
-"{0} อุปกรณ์ที่ถูกทำเครื่องหมายสำหรับการลบ คลิก \"บันทึกการเปลี่ยนแปลง\" "
-"เพื่อยืนยัน"
+msgstr "{0} อุปกรณ์ที่ถูกทำเครื่องหมายสำหรับการลบ คลิก \"บันทึกการเปลี่ยนแปลง\" เพื่อยืนยัน"
 
 #. placeholder {0}: allNotifications.length
 #: src/components/notifications/NotificationPanel.tsx:177
@@ -123,10 +120,16 @@ msgstr "การแจ้งเตือน {0}"
 msgid "{0} notifications"
 msgstr "การแจ้งเตือน {0}"
 
+#~ msgid "{0} pinned message"
+#~ msgstr "ข้อความที่ถูกปักหมุด {0}"
+
 #. placeholder {0}: pinnedMessages.length
 #: src/components/message/PinnedMessagesPanel.tsx:248
 msgid "{0} pinned message in this Channel"
 msgstr "{0} ข้อความที่ปักหมุดในช่องนี้"
+
+#~ msgid "{0} pinned messages"
+#~ msgstr "ข้อความที่ถูกปักหมุด {0} ข้อความ"
 
 #. placeholder {0}: pinnedMessages.length
 #: src/components/message/PinnedMessagesPanel.tsx:249
@@ -142,6 +145,12 @@ msgstr "{0} ผลลัพธ์"
 #: src/components/search/SearchResults.tsx:150
 msgid "{0} results"
 msgstr "{0} ผลลัพธ์"
+
+#~ msgid "{0} unread mention"
+#~ msgstr "{0} การกล่าวถึงที่ยังไม่ได้อ่าน"
+
+#~ msgid "{0} unread mentions"
+#~ msgstr "{0} การกล่าวถึงที่ยังไม่ได้อ่าน"
 
 #: src/components/primitives/FileUpload/FileUpload.web.tsx:13
 msgid "{size} Bytes"
@@ -188,9 +197,7 @@ msgstr "0 ไบต์"
 
 #: src/components/modals/UserSettingsModal/Privacy.tsx:102
 msgid "1 device marked for removal. Click \"Save Changes\" to confirm."
-msgstr ""
-"1 อุปกรณ์ที่ถูกทำเครื่องหมายสำหรับการลบ คลิก \"บันทึกการเปลี่ยนแปลง\" "
-"เพื่อยืนยัน"
+msgstr "1 อุปกรณ์ที่ถูกทำเครื่องหมายสำหรับการลบ คลิก \"บันทึกการเปลี่ยนแปลง\" เพื่อยืนยัน"
 
 #: src/components/modals/SpaceSettingsModal/Navigation.tsx:20
 msgid "Account"
@@ -203,6 +210,9 @@ msgstr "ที่อยู่บัญชี"
 #: src/components/modals/SpaceSettingsModal/Account.tsx:89
 msgid "Account Settings"
 msgstr "การตั้งค่าบัญชี"
+
+#~ msgid "Account Settings for This Space"
+#~ msgstr "การตั้งค่าบัญชีสำหรับพื้นที่นี้"
 
 #: src/components/modals/AddSpaceModal.tsx:121
 #: src/components/navbar/ExpandableNavMenu.tsx:30
@@ -231,22 +241,12 @@ msgid "add sticker"
 msgstr "เพิ่มสติกเกอร์"
 
 #: src/components/modals/SpaceSettingsModal/Emojis.tsx:44
-msgid ""
-"Add up to 50 custom emoji. Custom emojis can only be used within a Space. "
-"You can upload PNG, JPG or GIF, max 5MB (automatically optimized)."
-msgstr ""
-"เพิ่มอีโมจิที่กำหนดเองได้สูงสุด 50 ตัว "
-"อีโมจิที่กำหนดเองสามารถใช้ได้เฉพาะภายใน Space เท่านั้น คุณสามารถอัปโหลด PNG,"
-" JPG หรือ GIF ขนาดสูงสุด 5MB (ปรับให้เหมาะสมโดยอัตโนมัติ)."
+msgid "Add up to 50 custom emoji. Custom emojis can only be used within a Space. You can upload PNG, JPG or GIF, max 5MB (automatically optimized)."
+msgstr "เพิ่มอีโมจิที่กำหนดเองได้สูงสุด 50 ตัว อีโมจิที่กำหนดเองสามารถใช้ได้เฉพาะภายใน Space เท่านั้น คุณสามารถอัปโหลด PNG, JPG หรือ GIF ขนาดสูงสุด 5MB (ปรับให้เหมาะสมโดยอัตโนมัติ)."
 
 #: src/components/modals/SpaceSettingsModal/Stickers.tsx:44
-msgid ""
-"Add up to 50 custom stickers. Custom stickers can only be used within a "
-"Space. You can upload PNG, JPG or GIF, max 25MB (automatically optimized)."
-msgstr ""
-"เพิ่มสติกเกอร์ที่กำหนดเองได้สูงสุด 50 ตัว "
-"สติกเกอร์ที่กำหนดเองสามารถใช้ได้เฉพาะภายใน Space เท่านั้น คุณสามารถอัปโหลด "
-"PNG, JPG หรือ GIF ขนาดสูงสุด 25MB (ปรับให้เหมาะสมโดยอัตโนมัติ)."
+msgid "Add up to 50 custom stickers. Custom stickers can only be used within a Space. You can upload PNG, JPG or GIF, max 25MB (automatically optimized)."
+msgstr "เพิ่มสติกเกอร์ที่กำหนดเองได้สูงสุด 50 ตัว สติกเกอร์ที่กำหนดเองสามารถใช้ได้เฉพาะภายใน Space เท่านั้น คุณสามารถอัปโหลด PNG, JPG หรือ GIF ขนาดสูงสุด 25MB (ปรับให้เหมาะสมโดยอัตโนมัติ)."
 
 #: src/components/user/UserProfile.tsx:186
 msgid "Adding..."
@@ -263,13 +263,8 @@ msgid "Addresses start with \"Qm\"."
 msgstr "Addresses start with \"Qm\"."
 
 #: src/components/modals/UserSettingsModal/Privacy.tsx:48
-msgid ""
-"Adjust security-related settings, which may impact user  experience but "
-"increase the security of your Quorum account."
-msgstr ""
-"ปรับแต่งการตั้งค่าที่เกี่ยวข้องกับความปลอดภัย "
-"ซึ่งอาจส่งผลต่อประสบการณ์ของผู้ใช้ แต่เพิ่มความปลอดภัยให้กับบัญชี Quorum "
-"ของคุณ."
+msgid "Adjust security-related settings, which may impact user  experience but increase the security of your Quorum account."
+msgstr "ปรับแต่งการตั้งค่าที่เกี่ยวข้องกับความปลอดภัย ซึ่งอาจส่งผลต่อประสบการณ์ของผู้ใช้ แต่เพิ่มความปลอดภัยให้กับบัญชี Quorum ของคุณ."
 
 #: src/components/modals/CreateSpaceModal.tsx:173
 msgid "Advanced Settings"
@@ -303,20 +298,12 @@ msgid "An error occurred while deleting the Space. Please try again."
 msgstr "เกิดข้อผิดพลาดขณะลบ Space กรุณาลองอีกครั้ง"
 
 #: src/utils/imageProcessing/errors.ts:23
-msgid ""
-"Animated emoji GIFs cannot be larger than 100KB. Please optimize your GIF "
-"for emoji use."
-msgstr ""
-"GIF อนิเมชันสำหรับอีโมจิไม่สามารถมีขนาดใหญ่กว่า 100KB โปรดปรับขนาด GIF "
-"ของคุณให้เหมาะสมสำหรับการใช้เป็นอีโมจิ"
+msgid "Animated emoji GIFs cannot be larger than 100KB. Please optimize your GIF for emoji use."
+msgstr "GIF อนิเมชันสำหรับอีโมจิไม่สามารถมีขนาดใหญ่กว่า 100KB โปรดปรับขนาด GIF ของคุณให้เหมาะสมสำหรับการใช้เป็นอีโมจิ"
 
 #: src/utils/imageProcessing/errors.ts:26
-msgid ""
-"Animated sticker GIFs cannot be larger than 750KB. Please optimize your GIF "
-"for sticker use."
-msgstr ""
-"GIF อนิเมชันสำหรับสติกเกอร์ไม่สามารถมีขนาดใหญ่กว่า 750KB โปรดปรับขนาด GIF "
-"ของคุณให้เหมาะสมสำหรับการใช้เป็นสติกเกอร์"
+msgid "Animated sticker GIFs cannot be larger than 750KB. Please optimize your GIF for sticker use."
+msgstr "GIF อนิเมชันสำหรับสติกเกอร์ไม่สามารถมีขนาดใหญ่กว่า 750KB โปรดปรับขนาด GIF ของคุณให้เหมาะสมสำหรับการใช้เป็นสติกเกอร์"
 
 #: src/components/modals/UserSettingsModal/Appearance.tsx:25
 #: src/components/modals/UserSettingsModal/Navigation.tsx:18
@@ -324,12 +311,8 @@ msgid "Appearance"
 msgstr "รูปลักษณ์"
 
 #: src/hooks/business/channels/useChannelManagement.ts:228
-msgid ""
-"Are you sure you want to delete this channel? All messages will be lost. "
-"This action cannot be undone."
-msgstr ""
-"คุณแน่ใจหรือไม่ว่าต้องการลบช่องนี้? ข้อความทั้งหมดจะหายไป "
-"การดำเนินการนี้ไม่สามารถย้อนกลับได้."
+msgid "Are you sure you want to delete this channel? All messages will be lost. This action cannot be undone."
+msgstr "คุณแน่ใจหรือไม่ว่าต้องการลบช่องนี้? ข้อความทั้งหมดจะหายไป การดำเนินการนี้ไม่สามารถย้อนกลับได้."
 
 #: src/components/modals/ConversationSettingsModal.tsx:60
 msgid ""
@@ -349,12 +332,11 @@ msgid "Are you sure you want to delete this role?"
 msgstr "คุณแน่ใจหรือไม่ว่าต้องการลบบทบาทนี้?"
 
 #: src/components/modals/LeaveSpaceModal.tsx:40
-msgid ""
-"Are you sure you want to leave this Space? You won't be able to rejoin "
-"unless you are re-invited."
-msgstr ""
-"คุณแน่ใจหรือว่าต้องการออกจาก Space นี้? คุณจะไม่สามารถเข้าร่วมใหม่ได้ "
-"เว้นแต่คุณจะได้รับเชิญอีกครั้ง"
+msgid "Are you sure you want to leave this Space? You won't be able to rejoin unless you are re-invited."
+msgstr "คุณแน่ใจหรือว่าต้องการออกจาก Space นี้? คุณจะไม่สามารถเข้าร่วมใหม่ได้ เว้นแต่คุณจะได้รับเชิญอีกครั้ง"
+
+#~ msgid "Are you sure you want to leave this Space? You won't be able to rejoin unless you are re-invited. Your existing messages will NOT be deleted."
+#~ msgstr "คุณแน่ใจหรือว่าต้องการออกจากพื้นที่นี้? คุณจะไม่สามารถเข้าร่วมอีกครั้งเว้นแต่จะได้รับเชิญใหม่ ข้อความที่มีอยู่ของคุณจะไม่ถูกลบ"
 
 #: src/hooks/business/messages/usePinnedMessages.ts:231
 msgid "Are you sure you want to pin this message?"
@@ -365,13 +347,8 @@ msgid "Are you sure you want to unpin this message?"
 msgstr "คุณแน่ใจหรือไม่ว่าต้องการยกเลิกการปักหมุดข้อความนี้?"
 
 #: src/components/modals/SpaceSettingsModal/Roles.tsx:54
-msgid ""
-"As a space owner, you need to assign yourself a role with delete permissions"
-" to delete other users' messages. <0><1>Learn more</1></0>"
-msgstr ""
-"ในฐานะเจ้าของ Space "
-"คุณต้องกำหนดบทบาทให้กับตัวเองที่มีสิทธิ์ในการลบเพื่อที่จะลบข้อความของผู้ใช้อื่น"
-" <0><1>เรียนรู้เพิ่มเติม</1></0>"
+msgid "As a space owner, you need to assign yourself a role with delete permissions to delete other users' messages. <0><1>Learn more</1></0>"
+msgstr "ในฐานะเจ้าของ Space คุณต้องกำหนดบทบาทให้กับตัวเองที่มีสิทธิ์ในการลบเพื่อที่จะลบข้อความของผู้ใช้อื่น <0><1>เรียนรู้เพิ่มเติม</1></0>"
 
 #: src/components/message/MessageComposer.tsx:462
 msgid "attach image"
@@ -423,24 +400,19 @@ msgstr "ไม่สามารถลบ Space ที่มีช่องไ�
 #. placeholder {0}: Math.min(10, remaining)
 #: src/hooks/business/ui/useCustomAssets.ts:101
 #: src/hooks/business/ui/useCustomAssets.ts:146
-msgid ""
-"Cannot upload more than {0} files at once ({remaining} slots remaining)"
-msgstr ""
-"ไม่สามารถอัปโหลดไฟล์มากกว่า {0} ไฟล์ในครั้งเดียว ({remaining} "
-"ช่องว่างที่เหลือ)"
+msgid "Cannot upload more than {0} files at once ({remaining} slots remaining)"
+msgstr "ไม่สามารถอัปโหลดไฟล์มากกว่า {0} ไฟล์ในครั้งเดียว ({remaining} ช่องว่างที่เหลือ)"
 
 #: src/components/modals/SpaceSettingsModal/Account.tsx:101
 msgid "Change your avatar and name for this Space"
 msgstr "เปลี่ยนรูปโปรไฟล์และชื่อของคุณสำหรับ Space นี้"
 
+#~ msgid "Change your avatar and name for this Space."
+#~ msgstr "เปลี่ยนภาพโปรไฟล์และชื่อของคุณสำหรับพื้นที่นี้"
+
 #: src/components/modals/UserSettingsModal/Appearance.tsx:53
-msgid ""
-"Changes are made automatically, but the active page may not be updated. "
-"Refresh the page to apply the new language."
-msgstr ""
-"การเปลี่ยนแปลงจะถูกทำโดยอัตโนมัติ "
-"แต่หน้าเว็บที่ใช้งานอยู่อาจไม่ได้รับการอัปเดต "
-"รีเฟรชหน้าเว็บเพื่อใช้ภาษาที่ใหม่"
+msgid "Changes are made automatically, but the active page may not be updated. Refresh the page to apply the new language."
+msgstr "การเปลี่ยนแปลงจะถูกทำโดยอัตโนมัติ แต่หน้าเว็บที่ใช้งานอยู่อาจไม่ได้รับการอัปเดต รีเฟรชหน้าเว็บเพื่อใช้ภาษาที่ใหม่"
 
 #: src/components/modals/ChannelEditorModal.tsx:118
 msgid "Channel Icon"
@@ -507,20 +479,12 @@ msgid "Click on the role name and tag to edit them."
 msgstr "คลิกที่ชื่อบทบาทและแท็กเพื่อแก้ไข."
 
 #: src/components/onboarding/Onboarding.tsx:163
-msgid ""
-"Click the button below to create a backup of your key info, because once "
-"it's gone, it's gone  forever. You may be prompted to authenticate again."
-msgstr ""
-"คลิกปุ่มด้านล่างเพื่อสร้างสำเนาสำรองของข้อมูลสำคัญของคุณ เพราะเมื่อมันหายไป "
-"มันจะหายไปตลอดกาล คุณอาจถูกขอให้ยืนยันตัวตนอีกครั้ง."
+msgid "Click the button below to create a backup of your key info, because once it's gone, it's gone  forever. You may be prompted to authenticate again."
+msgstr "คลิกปุ่มด้านล่างเพื่อสร้างสำเนาสำรองของข้อมูลสำคัญของคุณ เพราะเมื่อมันหายไป มันจะหายไปตลอดกาล คุณอาจถูกขอให้ยืนยันตัวตนอีกครั้ง."
 
 #: src/components/onboarding/Onboarding.native.tsx:259
-msgid ""
-"Click the button below to create a backup of your key info, because once "
-"it's gone, it's gone forever. You may be prompted to authenticate again."
-msgstr ""
-"คลิกปุ่มด้านล่างเพื่อสร้างสำรองข้อมูลของข้อมูลสำคัญของคุณ เพราะเมื่อมันหายไป"
-" มันหายไปตลอดกาล คุณอาจถูกขอให้ยืนยันอีกครั้ง"
+msgid "Click the button below to create a backup of your key info, because once it's gone, it's gone forever. You may be prompted to authenticate again."
+msgstr "คลิกปุ่มด้านล่างเพื่อสร้างสำรองข้อมูลของข้อมูลสำคัญของคุณ เพราะเมื่อมันหายไป มันหายไปตลอดกาล คุณอาจถูกขอให้ยืนยันอีกครั้ง"
 
 #: src/components/ui/ClickToCopyContent.tsx:48
 msgid "Click to copy"
@@ -564,7 +528,7 @@ msgstr "คัดลอกที่อยู่"
 msgid "Copy Failed"
 msgstr "การคัดลอกล้มเหลว"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:196
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:428
 msgid "Copy invite link to clipboard"
 msgstr "คัดลอกลิงก์เชิญไปยังคลิปบอร์ด"
 
@@ -619,7 +583,7 @@ msgstr "กำลังสร้าง พื้นที่..."
 msgid "Current"
 msgstr "ปัจจุบัน"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:177
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:409
 msgid "Current Invite Link"
 msgstr "ลิงก์เชิญปัจจุบัน"
 
@@ -642,12 +606,8 @@ msgid "Default Channel"
 msgstr "ช่องทางเริ่มต้น"
 
 #: src/components/modals/CreateSpaceModal.tsx:185
-msgid ""
-"Default Space settings provide the most typical chat experience, but for "
-"higher privacy guarantees, review these advanced settings."
-msgstr ""
-"การตั้งค่า Space เริ่มต้นให้ประสบการณ์การแชทที่เป็นมาตรฐานที่สุด "
-"แต่เพื่อความเป็นส่วนตัวที่สูงขึ้น ให้ตรวจสอบการตั้งค่าขั้นสูงเหล่านี้"
+msgid "Default Space settings provide the most typical chat experience, but for higher privacy guarantees, review these advanced settings."
+msgstr "การตั้งค่า Space เริ่มต้นให้ประสบการณ์การแชทที่เป็นมาตรฐานที่สุด แต่เพื่อความเป็นส่วนตัวที่สูงขึ้น ให้ตรวจสอบการตั้งค่าขั้นสูงเหล่านี้"
 
 #: src/hooks/business/messages/useMessageActions.ts:121
 msgid "delete"
@@ -674,9 +634,15 @@ msgstr "ลบช่องทาง"
 msgid "Delete Conversation"
 msgstr "ลบการสนทนา"
 
+#~ msgid "Delete Current Link"
+#~ msgstr "ลบลิงก์ปัจจุบัน"
+
 #: src/components/modals/GroupEditorModal.tsx:125
 msgid "Delete Group"
 msgstr "ลบกลุ่ม"
+
+#~ msgid "Delete Link"
+#~ msgstr "ลบลิงก์"
 
 #: src/components/message/MessageActions.tsx:96
 #: src/components/message/MessageActionsDrawer.tsx:230
@@ -690,6 +656,9 @@ msgstr "ลบข้อความ"
 #: src/components/modals/SpaceSettingsModal/Roles.tsx:162
 msgid "Delete Messages"
 msgstr "ลบข้อความ"
+
+#~ msgid "Delete Public Invite Link"
+#~ msgstr "ลบลิงก์เชิญสาธารณะ"
 
 #: src/components/modals/SpaceSettingsModal/Roles.tsx:207
 msgid "Delete role"
@@ -712,6 +681,9 @@ msgstr "ลบ Space นี้"
 msgid "Describe what this Space is about..."
 msgstr "อธิบายว่า Space นี้เกี่ยวกับอะไร..."
 
+#~ msgid "Description"
+#~ msgstr "คำอธิบาย"
+
 #: src/hooks/business/validation/useSpaceNameValidation.ts:54
 msgid "Description cannot contain special characters"
 msgstr "คำอธิบายไม่สามารถมีอักขระพิเศษได้"
@@ -719,6 +691,9 @@ msgstr "คำอธิบายไม่สามารถมีอักขร
 #: src/components/modals/CreateSpaceModal.tsx:155
 msgid "Description must be {MAX_DESCRIPTION_LENGTH} characters or less"
 msgstr "คำอธิบายต้องมีความยาวไม่เกิน {MAX_DESCRIPTION_LENGTH} ตัวอักษร"
+
+#~ msgid "Description must be {maxDescriptionLength} characters or less"
+#~ msgstr "คำอธิบายต้องมีความยาวไม่เกิน {maxDescriptionLength} ตัวอักษร"
 
 #: src/hooks/business/validation/useSpaceNameValidation.ts:58
 msgid "Description must be {maxLength} characters or less"
@@ -807,21 +782,19 @@ msgid "Enable sync"
 msgstr "เปิดใช้งานการซิงค์"
 
 #: src/services/InvitationService.ts:74
-msgid ""
-"Encryption state is missing required template data. Please generate a public"
-" invite link first."
-msgstr ""
-"สถานะการเข้ารหัสขาดข้อมูลเทมเพลตที่จำเป็น กรุณาสร้างลิงก์เชิญสาธารณะก่อน"
+msgid "Encryption state is missing required template data. Please generate a public invite link first."
+msgstr "สถานะการเข้ารหัสขาดข้อมูลเทมเพลตที่จำเป็น กรุณาสร้างลิงก์เชิญสาธารณะก่อน"
 
 #: src/services/InvitationService.ts:86
-msgid ""
-"Encryption state is missing state data. Please generate a public invite link"
-" first."
+msgid "Encryption state is missing state data. Please generate a public invite link first."
 msgstr "สถานะการเข้ารหัสขาดข้อมูลสถานะ กรุณาสร้างลิงก์เชิญสาธารณะก่อน"
 
 #: src/components/modals/CreateSpaceModal.tsx:148
 msgid "Enter a description for your Space (optional)"
 msgstr "กรอกคำอธิบายสำหรับ Space ของคุณ (ไม่บังคับ)"
+
+#~ msgid "Enter a name for your new Space"
+#~ msgstr "กรุณาใส่ชื่อสำหรับ พื้นที่ ใหม่ของคุณ"
 
 #: src/components/modals/CreateSpaceModal.tsx:114
 msgid "Enter a name for your Space"
@@ -831,7 +804,7 @@ msgstr "กรอกชื่อสำหรับ Space ของคุณ"
 msgid "Enter a user's address to start messaging them."
 msgstr "กรุณาใส่ที่อยู่ของผู้ใช้เพื่อเริ่มส่งข้อความถึงพวกเขา"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:92
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:289
 msgid "Enter Address Manually"
 msgstr "กรุณาใส่ที่อยู่ด้วยตนเอง"
 
@@ -864,7 +837,7 @@ msgstr "เกิดข้อผิดพลาดในการขออนุ
 msgid "Error showing notification:"
 msgstr "เกิดข้อผิดพลาดในการแสดงการแจ้งเตือน:"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:63
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:258
 msgid "Existing Conversations"
 msgstr "การสนทนาที่มีอยู่"
 
@@ -873,14 +846,8 @@ msgid "Export"
 msgstr "ส่งออก"
 
 #: src/components/modals/UserSettingsModal/Privacy.tsx:178
-msgid ""
-"Export your key to a file by clicking this button. Do not share this file "
-"with anyone else or they can impersonate you or steal your Space's Apex "
-"earnings."
-msgstr ""
-"ส่งออกกุญแจของคุณไปยังไฟล์โดยการคลิกปุ่มนี้ "
-"อย่าแชร์ไฟล์นี้กับใครมิฉะนั้นพวกเขาจะสามารถปลอมตัวคุณหรือขโมยรายได้ Apex ของ"
-" Space ของคุณได้"
+msgid "Export your key to a file by clicking this button. Do not share this file with anyone else or they can impersonate you or steal your Space's Apex earnings."
+msgstr "ส่งออกกุญแจของคุณไปยังไฟล์โดยการคลิกปุ่มนี้ อย่าแชร์ไฟล์นี้กับใครมิฉะนั้นพวกเขาจะสามารถปลอมตัวคุณหรือขโมยรายได้ Apex ของ Space ของคุณได้"
 
 #: src/hooks/platform/files/useFileDownload.native.ts:110
 msgid "Failed to copy to clipboard. Please try again."
@@ -1004,12 +971,12 @@ msgstr "แชททั่วไป"
 msgid "Generate Link"
 msgstr "สร้างลิงก์"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:214
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:446
 #: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:607
 msgid "Generate New Link"
 msgstr "สร้างลิงก์ใหม่"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:162
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:394
 #: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:601
 msgid "Generate Public Invite Link"
 msgstr "สร้างลิงก์เชิญสาธารณะ"
@@ -1053,20 +1020,13 @@ msgid "If skipped, you'll get the default profile image and can set it later"
 msgstr "ถ้าข้ามไป คุณจะได้รับภาพโปรไฟล์เริ่มต้นและสามารถตั้งค่าได้ในภายหลัง"
 
 #: src/components/onboarding/Onboarding.tsx:149
-msgid ""
-"If you clear your browser storage or switch browsers, your old messages and "
-"keys may disappear."
-msgstr ""
-"ถ้าคุณล้างที่เก็บข้อมูลของเบราว์เซอร์หรือเปลี่ยนเบราว์เซอร์ "
-"ข้อความและกุญแจเก่าของคุณอาจหายไป"
+msgid "If you clear your browser storage or switch browsers, your old messages and keys may disappear."
+msgstr "ถ้าคุณล้างที่เก็บข้อมูลของเบราว์เซอร์หรือเปลี่ยนเบราว์เซอร์ ข้อความและกุญแจเก่าของคุณอาจหายไป"
 
 #: src/components/onboarding/Onboarding.native.tsx:254
 #: src/components/onboarding/Onboarding.tsx:156
-msgid ""
-"If you uninstall the app from your device, you will lose your old messages "
-"and keys."
-msgstr ""
-"ถ้าคุณถอนการติดตั้งแอปจากอุปกรณ์ของคุณ คุณจะสูญเสียข้อความและกุญแจเก่าของคุณ"
+msgid "If you uninstall the app from your device, you will lose your old messages and keys."
+msgstr "ถ้าคุณถอนการติดตั้งแอปจากอุปกรณ์ของคุณ คุณจะสูญเสียข้อความและกุญแจเก่าของคุณ"
 
 #: src/components/onboarding/Login.native.tsx:115
 #: src/components/onboarding/Login.tsx:76
@@ -1089,8 +1049,7 @@ msgstr "ที่อยู่ไม่ถูกต้องสำหรับล
 
 #: src/hooks/business/validation/useAddressValidation.native.ts:97
 #: src/hooks/business/validation/useAddressValidation.ts:98
-msgid ""
-"Invalid address format. Addresses must use valid alphanumeric characters."
+msgid "Invalid address format. Addresses must use valid alphanumeric characters."
 msgstr "รูปแบบที่อยู่ไม่ถูกต้อง ที่อยู่ต้องใช้ตัวอักษรที่ถูกต้องและตัวเลข"
 
 #: src/components/primitives/FileUpload/FileUpload.web.tsx:63
@@ -1101,8 +1060,10 @@ msgstr "ประเภทไฟล์ไม่ถูกต้อง กรุ�
 #: src/components/context/MessageDB.bak.tsx:4701
 #: src/components/context/MessageDB.bak.tsx:4738
 #: src/components/context/MessageDB.bak.tsx:4809
-#: src/services/InvitationService.ts:510 src/services/InvitationService.ts:521
-#: src/services/InvitationService.ts:554 src/services/InvitationService.ts:623
+#: src/services/InvitationService.ts:510
+#: src/services/InvitationService.ts:521
+#: src/services/InvitationService.ts:554
+#: src/services/InvitationService.ts:623
 msgid "invalid link"
 msgstr "ลิงก์ไม่ถูกต้อง"
 
@@ -1111,14 +1072,16 @@ msgstr "ลิงก์ไม่ถูกต้อง"
 msgid "Invalid message ID"
 msgstr "รหัสข้อความไม่ถูกต้อง"
 
-#: src/components/context/MessageDB.bak.tsx:5180 src/utils/canonicalize.ts:104
+#: src/components/context/MessageDB.bak.tsx:5180
+#: src/utils/canonicalize.ts:104
 msgid "invalid message type"
 msgstr "ประเภทข้อความไม่ถูกต้อง"
 
 #: src/components/context/MessageDB.bak.tsx:4706
 #: src/components/context/MessageDB.bak.tsx:4772
 #: src/hooks/business/spaces/useInviteValidation.ts:81
-#: src/services/InvitationService.ts:526 src/services/InvitationService.ts:590
+#: src/services/InvitationService.ts:526
+#: src/services/InvitationService.ts:590
 msgid "invalid response"
 msgstr "การตอบสนองไม่ถูกต้อง"
 
@@ -1126,7 +1089,7 @@ msgstr "การตอบสนองไม่ถูกต้อง"
 msgid "Invite sent"
 msgstr "ส่งคำเชิญแล้ว"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:47
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:243
 #: src/components/modals/SpaceSettingsModal/Navigation.tsx:25
 msgid "Invites"
 msgstr "คำเชิญ"
@@ -1162,7 +1125,7 @@ msgstr "กำลังเข้าร่วม..."
 msgid "Jump"
 msgstr "กระโดด"
 
-#: src/components/message/MessageList.tsx:508
+#: src/components/message/MessageList.tsx:512
 msgid "Jump to present"
 msgstr "กระโดดไปยังปัจจุบัน"
 
@@ -1223,12 +1186,8 @@ msgstr "ออกจากพื้นที่นี้"
 
 #: src/components/onboarding/Onboarding.native.tsx:312
 #: src/components/onboarding/Onboarding.tsx:198
-msgid ""
-"Let your friends know who you are! Pick a friendly name to display in your "
-"conversations, something easier to read than:"
-msgstr ""
-"ให้เพื่อนของคุณรู้ว่าคุณคือใคร! เลือกชื่อที่เป็นมิตรเพื่อแสดงในบทสนทนาของคุณ"
-" ซึ่งอ่านง่ายกว่าดังนี้:"
+msgid "Let your friends know who you are! Pick a friendly name to display in your conversations, something easier to read than:"
+msgstr "ให้เพื่อนของคุณรู้ว่าคุณคือใคร! เลือกชื่อที่เป็นมิตรเพื่อแสดงในบทสนทนาของคุณ ซึ่งอ่านง่ายกว่าดังนี้:"
 
 #: src/components/onboarding/Onboarding.native.tsx:505
 #: src/components/onboarding/Onboarding.tsx:351
@@ -1239,7 +1198,7 @@ msgstr "ไปกันเถอะ"
 msgid "Light"
 msgstr "แสง"
 
-#: src/components/message/MessageList.tsx:519
+#: src/components/message/MessageList.tsx:523
 msgid "Loading message..."
 msgstr "กำลังโหลดข้อความ..."
 
@@ -1259,7 +1218,8 @@ msgstr "กำลังค้นหาผู้ใช้..."
 msgid "Lookup"
 msgstr "ค้นหา"
 
-#: src/components/Maintenance.native.tsx:42 src/components/Maintenance.tsx:17
+#: src/components/Maintenance.native.tsx:42
+#: src/components/Maintenance.tsx:17
 msgid "Maintenance in Progress"
 msgstr "กำลังบำรุงรักษา"
 
@@ -1273,22 +1233,20 @@ msgstr "ทำให้บทบาทสาธารณะ"
 
 #: src/components/onboarding/Onboarding.native.tsx:364
 #: src/components/onboarding/Onboarding.tsx:246
-msgid ""
-"Make your account uniquely yours – set a contact photo. This information is "
-"only provided to the Spaces you join."
-msgstr ""
-"ทำให้บัญชีของคุณเป็นเอกลักษณ์ – ตั้งค่าภาพโปรไฟล์ "
-"ติดต่อข้อมูลนี้จะถูกให้เฉพาะกับ Spaces ที่คุณเข้าร่วม"
+msgid "Make your account uniquely yours – set a contact photo. This information is only provided to the Spaces you join."
+msgstr "ทำให้บัญชีของคุณเป็นเอกลักษณ์ – ตั้งค่าภาพโปรไฟล์ ติดต่อข้อมูลนี้จะถูกให้เฉพาะกับ Spaces ที่คุณเข้าร่วม"
 
 #: src/components/modals/UserSettingsModal/Notifications.tsx:26
 msgid "Manage desktop notification preferences for new messages."
 msgstr "จัดการการตั้งค่าการแจ้งเตือนบนเดสก์ท็อปสำหรับข้อความใหม่"
 
 #: src/components/modals/UserSettingsModal/Privacy.tsx:39
-msgid ""
-"Manage devices, and privacy conditions for messaging and synchronization."
+msgid "Manage devices, and privacy conditions for messaging and synchronization."
+msgstr "จัดการอุปกรณ์และเงื่อนไขความเป็นส่วนตัวสำหรับการส่งข้อความและการซิงโครไนซ์"
+
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:246
+msgid "Manage Inivte links and send invites to people you've previously had conversations with."
 msgstr ""
-"จัดการอุปกรณ์และเงื่อนไขความเป็นส่วนตัวสำหรับการส่งข้อความและการซิงโครไนซ์"
 
 #: src/components/modals/SpaceSettingsModal/Account.tsx:92
 msgid "Manage your settings for this Space."
@@ -1321,8 +1279,7 @@ msgid "Message deleted"
 msgstr "ข้อความถูกลบ"
 
 #: src/components/message/Message.tsx:612
-msgid ""
-"Message does not have a valid signature, this may not be from the sender"
+msgid "Message does not have a valid signature, this may not be from the sender"
 msgstr "ข้อความไม่มีลายเซ็นที่ถูกต้อง อาจไม่ใช่มาจากผู้ส่ง"
 
 #: src/components/message/MessageComposer.tsx:126
@@ -1349,22 +1306,17 @@ msgstr "ข้อความตรงใหม่"
 msgid "New Messages"
 msgstr "ข้อความใหม่"
 
-#: src/services/InvitationService.ts:68
-msgid ""
-"No encryption state found for this space. The space may need to be "
-"initialized or you may need to generate a public invite link first."
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:155
+msgid "No conversations found"
 msgstr ""
-"ไม่พบสถานะการเข้ารหัสสำหรับ Space นี้ Space "
-"อาจต้องถูกเริ่มต้นใหม่หรือคุณอาจต้องสร้างลิงก์เชิญสาธารณะก่อน"
+
+#: src/services/InvitationService.ts:68
+msgid "No encryption state found for this space. The space may need to be initialized or you may need to generate a public invite link first."
+msgstr "ไม่พบสถานะการเข้ารหัสสำหรับ Space นี้ Space อาจต้องถูกเริ่มต้นใหม่หรือคุณอาจต้องสร้างลิงก์เชิญสาธารณะก่อน"
 
 #: src/services/InvitationService.ts:78
-msgid ""
-"No invite evaluations available. Please generate a public invite link or "
-"ensure the space encryption state is properly initialized."
-msgstr ""
-"ไม่มีการประเมินเชิญที่มีอยู่ "
-"กรุณาสร้างลิงก์เชิญสาธารณะหรือให้แน่ใจว่าสถานะการเข้ารหัสของ Space "
-"ถูกเริ่มต้นอย่างถูกต้อง"
+msgid "No invite evaluations available. Please generate a public invite link or ensure the space encryption state is properly initialized."
+msgstr "ไม่มีการประเมินเชิญที่มีอยู่ กรุณาสร้างลิงก์เชิญสาธารณะหรือให้แน่ใจว่าสถานะการเข้ารหัสของ Space ถูกเริ่มต้นอย่างถูกต้อง"
 
 #: src/components/search/SearchResults.tsx:102
 msgid "No messages found"
@@ -1374,11 +1326,15 @@ msgstr "ไม่พบข้อความ"
 msgid "No pinned messages yet"
 msgstr "ยังไม่มีข้อความที่ถูกปักหมุด"
 
+#~ msgid "No unread mentions"
+#~ msgstr "ไม่มีการกล่าวถึงที่ยังไม่ได้อ่าน"
+
 #: src/components/notifications/NotificationPanel.tsx:159
 msgid "No unread notifications"
 msgstr "ไม่มีการแจ้งเตือนที่ยังไม่ได้อ่าน"
 
-#: src/components/space/Channel.tsx:590 src/components/space/Channel.tsx:1055
+#: src/components/space/Channel.tsx:590
+#: src/components/space/Channel.tsx:1055
 #: src/components/space/Channel.tsx:1243
 msgid "No users found!"
 msgstr "ไม่พบผู้ใช้!"
@@ -1399,8 +1355,7 @@ msgid "Notifications"
 msgstr "การแจ้งเตือน"
 
 #: src/components/modals/UserSettingsModal/Notifications.tsx:66
-msgid ""
-"Notifications are blocked. Please enable them in your browser settings."
+msgid "Notifications are blocked. Please enable them in your browser settings."
 msgstr "การแจ้งเตือนถูกบล็อก โปรดเปิดใช้งานในการตั้งค่าเบราว์เซอร์ของคุณ"
 
 #: src/services/NotificationService.ts:55
@@ -1436,6 +1391,9 @@ msgstr "เปิดวิดีโอบน YouTube"
 msgid "Operation timed out. Please try again."
 msgstr "การดำเนินการหมดเวลา กรุณาลองอีกครั้ง"
 
+#~ msgid "optional"
+#~ msgstr "ไม่บังคับ"
+
 #: src/components/modals/AddSpaceModal.tsx:283
 msgid "OR"
 msgstr "หรือ"
@@ -1470,7 +1428,8 @@ msgstr "สิทธิ์:"
 msgid "Personalize your account"
 msgstr "ปรับแต่งบัญชีของคุณ"
 
-#: src/utils/messagePreview.ts:37 src/utils/messagePreview.ts:41
+#: src/utils/messagePreview.ts:37
+#: src/utils/messagePreview.ts:41
 msgid "Photo"
 msgstr "ภาพ"
 
@@ -1525,8 +1484,7 @@ msgstr "ปักหมุดไปที่ด้านบน"
 msgid "Pinned"
 msgstr "ถูกปักหมุด"
 
-#. placeholder {0}: mapSenderToUser(message.pinnedBy)?.displayName ||
-#. message.pinnedBy
+#. placeholder {0}: mapSenderToUser(message.pinnedBy)?.displayName || message.pinnedBy
 #: src/components/message/Message.tsx:594
 msgid "Pinned by {0}"
 msgstr "ถูกปักหมุดโดย {0}"
@@ -1565,50 +1523,30 @@ msgstr "คีย์ส่วนตัวถูกบันทึกไปยั
 msgid "Processing image... This may take a moment for large files."
 msgstr "กำลังประมวลผลภาพ... อาจใช้เวลาสักครู่สำหรับไฟล์ขนาดใหญ่"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:122
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:354
 msgid "Public Invite Links"
 msgstr "ลิงก์เชิญสาธารณะ"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:151
-msgid ""
-"Public invite links allow anyone with access to the link to join your Space."
-" Consider who you share the link with and where you post it."
-msgstr ""
-"ลิงก์เชิญสาธารณะอนุญาตให้ใครก็ตามที่เข้าถึงลิงก์เข้าร่วม Space ของคุณ "
-"พิจารณาว่าคุณจะแบ่งปันลิงก์กับใครและที่ไหน"
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:383
+msgid "Public invite links allow anyone with access to the link to join your Space. Consider who you share the link with and where you post it."
+msgstr "ลิงก์เชิญสาธารณะอนุญาตให้ใครก็ตามที่เข้าถึงลิงก์เข้าร่วม Space ของคุณ พิจารณาว่าคุณจะแบ่งปันลิงก์กับใครและที่ไหน"
 
 #: src/components/Maintenance.tsx:24
-msgid ""
-"Quorum infrastructure is being deployed at this time. Please try refreshing,"
-" and check <0>https://status.quilibrium.com/</0> for updates."
-msgstr ""
-"โครงสร้างพื้นฐาน Quorum กำลังถูกติดตั้งในขณะนี้ กรุณาลองรีเฟรช และตรวจสอบ "
-"<0>https://status.quilibrium.com/</0> สำหรับการอัปเดต"
+msgid "Quorum infrastructure is being deployed at this time. Please try refreshing, and check <0>https://status.quilibrium.com/</0> for updates."
+msgstr "โครงสร้างพื้นฐาน Quorum กำลังถูกติดตั้งในขณะนี้ กรุณาลองรีเฟรช และตรวจสอบ <0>https://status.quilibrium.com/</0> สำหรับการอัปเดต"
 
 #: src/components/Maintenance.native.tsx:47
-msgid ""
-"Quorum infrastructure is being deployed at this time. Please try refreshing."
-msgstr ""
-"Quorum infrastructure is being deployed at this time. Please try refreshing."
+msgid "Quorum infrastructure is being deployed at this time. Please try refreshing."
+msgstr "Quorum infrastructure is being deployed at this time. Please try refreshing."
 
 #: src/components/onboarding/Onboarding.native.tsx:249
 #: src/components/onboarding/Onboarding.tsx:137
-msgid ""
-"Quorum is peer-to-peer and end-to-end encrypted. This means your messages "
-"stay private, but equally important, they only live on the network for the "
-"time required to reach you and your recipients."
-msgstr ""
-"Quorum เป็นแบบ peer-to-peer และเข้ารหัสแบบ end-to-end "
-"ซึ่งหมายความว่าข้อความของคุณจะยังคงเป็นส่วนตัว แต่ที่สำคัญไม่แพ้กัน "
-"พวกเขาจะอยู่ในเครือข่ายเพียงระยะเวลาที่จำเป็นเพื่อไปถึงคุณและผู้รับของคุณ"
+msgid "Quorum is peer-to-peer and end-to-end encrypted. This means your messages stay private, but equally important, they only live on the network for the time required to reach you and your recipients."
+msgstr "Quorum เป็นแบบ peer-to-peer และเข้ารหัสแบบ end-to-end ซึ่งหมายความว่าข้อความของคุณจะยังคงเป็นส่วนตัว แต่ที่สำคัญไม่แพ้กัน พวกเขาจะอยู่ในเครือข่ายเพียงระยะเวลาที่จำเป็นเพื่อไปถึงคุณและผู้รับของคุณ"
 
 #: src/components/context/RegistrationPersister.tsx:270
-msgid ""
-"Quorum was loaded while the browser was not in focus or a passkey request "
-"was rejected. Please reauthorize to access your messages."
-msgstr ""
-"Quorum ถูกโหลดในขณะที่เบราว์เซอร์ไม่ได้อยู่ในโฟกัสหรือคำขอรหัสผ่านถูกปฏิเสธ "
-"กรุณาอนุญาตใหม่เพื่อเข้าถึงข้อความของคุณ"
+msgid "Quorum was loaded while the browser was not in focus or a passkey request was rejected. Please reauthorize to access your messages."
+msgstr "Quorum ถูกโหลดในขณะที่เบราว์เซอร์ไม่ได้อยู่ในโฟกัสหรือคำขอรหัสผ่านถูกปฏิเสธ กรุณาอนุญาตใหม่เพื่อเข้าถึงข้อความของคุณ"
 
 #: src/components/modals/ChannelEditorModal.tsx:141
 msgid "Read only"
@@ -1631,7 +1569,8 @@ msgstr "อนุญาตใหม่"
 msgid "received config with invalid signature!"
 msgstr "ได้รับการกำหนดค่าที่มีลายเซ็นไม่ถูกต้อง!"
 
-#: src/components/Maintenance.native.tsx:73 src/components/Maintenance.tsx:46
+#: src/components/Maintenance.native.tsx:73
+#: src/components/Maintenance.tsx:46
 #: src/components/modals/UserSettingsModal/Appearance.tsx:61
 msgid "Refresh"
 msgstr "รีเฟรช"
@@ -1660,12 +1599,8 @@ msgid "Require Message Signing"
 msgstr "ต้องการการลงนามข้อความ"
 
 #: src/components/modals/CreateSpaceModal.tsx:197
-msgid ""
-"Require messages sent in this Space to be signed by the sender. Technically "
-"speaking, this makes the messages in this Space non-repudiable."
-msgstr ""
-"ต้องการให้ข้อความที่ส่งใน พื้นที่ นี้ได้รับการลงนามโดยผู้ส่ง "
-"กล่าวโดยเทคนิคแล้ว สิ่งนี้ทำให้ข้อความใน พื้นที่ นี้ไม่สามารถปฏิเสธได้"
+msgid "Require messages sent in this Space to be signed by the sender. Technically speaking, this makes the messages in this Space non-repudiable."
+msgstr "ต้องการให้ข้อความที่ส่งใน พื้นที่ นี้ได้รับการลงนามโดยผู้ส่ง กล่าวโดยเทคนิคแล้ว สิ่งนี้ทำให้ข้อความใน พื้นที่ นี้ไม่สามารถปฏิเสธได้"
 
 #: src/components/modals/AddSpaceModal.tsx:266
 msgid "Reset"
@@ -1729,11 +1664,13 @@ msgstr "กำลังบันทึก..."
 msgid "Search failed: {0}"
 msgstr "การค้นหาไม่สำเร็จ: {0}"
 
-#: src/hooks/useSearchContext.native.ts:102 src/hooks/useSearchContext.ts:94
+#: src/hooks/useSearchContext.native.ts:102
+#: src/hooks/useSearchContext.ts:94
 msgid "Search here"
 msgstr "ค้นหาที่นี่"
 
-#: src/hooks/useSearchContext.native.ts:100 src/hooks/useSearchContext.ts:92
+#: src/hooks/useSearchContext.native.ts:100
+#: src/hooks/useSearchContext.ts:92
 msgid "Search in this Space"
 msgstr "ค้นหาใน พื้นที่ นี้"
 
@@ -1753,6 +1690,10 @@ msgstr "ค้นหาข้อความ..."
 #: src/components/search/SearchResults.tsx:119
 msgid "Search Results"
 msgstr "ผลการค้นหา"
+
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:141
+msgid "Search username or address"
+msgstr ""
 
 #: src/components/space/Channel.tsx:1215
 msgid "Search Username or Address"
@@ -1776,22 +1717,20 @@ msgid "Select an option"
 msgstr "เลือกตัวเลือก"
 
 #: src/components/modals/ChannelEditorModal.tsx:160
-msgid ""
-"Select any existing role as managers for this channel. Managers have post, "
-"delete, and pin permissions on ANY message by default. If no managers are "
-"selected, only the Space owner can manage the channel."
-msgstr ""
-"เลือกบทบาทที่มีอยู่ใดๆ เป็นผู้จัดการสำหรับช่องนี้ ผู้จัดการมีสิทธิ์โพสต์ ลบ "
-"และปักหมุดข้อความใดๆ โดยค่าเริ่มต้น หากไม่มีผู้จัดการที่เลือก เจ้าของ Space "
-"เท่านั้นที่สามารถจัดการช่องนี้ได้"
+msgid "Select any existing role as managers for this channel. Managers have post, delete, and pin permissions on ANY message by default. If no managers are selected, only the Space owner can manage the channel."
+msgstr "เลือกบทบาทที่มีอยู่ใดๆ เป็นผู้จัดการสำหรับช่องนี้ ผู้จัดการมีสิทธิ์โพสต์ ลบ และปักหมุดข้อความใดๆ โดยค่าเริ่มต้น หากไม่มีผู้จัดการที่เลือก เจ้าของ Space เท่านั้นที่สามารถจัดการช่องนี้ได้"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:84
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:38
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:278
 msgid "Select conversation"
 msgstr "เลือกการสนทนา"
 
 #: src/components/modals/SpaceSettingsModal/General.tsx:248
 msgid "Select default channel"
 msgstr "เลือกช่องทางเริ่มต้น"
+
+#~ msgid "Select for which mentions you will receive notifications"
+#~ msgstr "เลือกสำหรับการกล่าวถึงที่คุณจะได้รับการแจ้งเตือน"
 
 #: src/components/primitives/FileUpload/FileUpload.native.tsx:161
 msgid "Select Image"
@@ -1817,17 +1756,13 @@ msgstr "เลือกประเภทการแจ้งเตือนท
 msgid "Send"
 msgstr "ส่ง"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:236
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:324
 msgid "Send Invite"
 msgstr "ส่งคำเชิญ"
 
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:50
-msgid ""
-"Send invites to people you've previously had conversations with. An invite "
-"button will appear in their inbox."
-msgstr ""
-"ส่งคำเชิญไปยังผู้คนที่คุณเคยสนทนาด้วยก่อนหน้านี้ "
-"ปุ่มคำเชิญจะปรากฏในกล่องจดหมายของพวกเขา"
+#~ msgid "Send invites to people you've previously had conversations with. An invite button will appear in their inbox."
+#~ msgstr "ส่งคำเชิญไปยังผู้คนที่คุณเคยสนทนาด้วยก่อนหน้านี้ ปุ่มคำเชิญจะปรากฏในกล่องจดหมายของพวกเขา"
 
 #: src/components/user/UserProfile.tsx:201
 msgid "Send Message"
@@ -1847,24 +1782,16 @@ msgid "Settings"
 msgstr "การตั้งค่า"
 
 #: src/components/modals/UserSettingsModal/Notifications.tsx:39
-msgid ""
-"Show desktop notifications when you receive new messages while Quorum is in "
-"the background. Your browser will ask for permission when you enable this "
-"feature."
-msgstr ""
-"แสดงการแจ้งเตือนบนเดสก์ท็อปเมื่อคุณได้รับข้อความใหม่ในขณะที่ Quorum "
-"ทำงานอยู่เบื้องหลัง เบราว์เซอร์ของคุณจะขออนุญาตเมื่อคุณเปิดใช้งานฟีเจอร์นี้"
+msgid "Show desktop notifications when you receive new messages while Quorum is in the background. Your browser will ask for permission when you enable this feature."
+msgstr "แสดงการแจ้งเตือนบนเดสก์ท็อปเมื่อคุณได้รับข้อความใหม่ในขณะที่ Quorum ทำงานอยู่เบื้องหลัง เบราว์เซอร์ของคุณจะขออนุญาตเมื่อคุณเปิดใช้งานฟีเจอร์นี้"
 
 #: src/components/direct/EmptyDirectMessage.tsx:78
 msgid "show home screen"
 msgstr "แสดงหน้าจอหลัก"
 
 #: src/components/search/SearchResults.tsx:180
-msgid ""
-"Showing first 500 results. Refine your search for more specific results."
-msgstr ""
-"แสดงผลลัพธ์ 500 รายการแรก "
-"ปรับแต่งการค้นหาของคุณเพื่อผลลัพธ์ที่เฉพาะเจาะจงมากขึ้น."
+msgid "Showing first 500 results. Refine your search for more specific results."
+msgstr "แสดงผลลัพธ์ 500 รายการแรก ปรับแต่งการค้นหาของคุณเพื่อผลลัพธ์ที่เฉพาะเจาะจงมากขึ้น."
 
 #: src/components/onboarding/Onboarding.native.tsx:461
 #: src/components/onboarding/Onboarding.tsx:314
@@ -1882,6 +1809,9 @@ msgstr "Space ID"
 #: src/components/modals/SpaceSettingsModal/General.tsx:141
 msgid "Space name"
 msgstr "ชื่อ Space"
+
+#~ msgid "Space Name"
+#~ msgstr "ชื่อ พื้นที่"
 
 #: src/hooks/business/validation/useSpaceNameValidation.ts:15
 #: src/hooks/business/validation/useSpaceNameValidation.ts:34
@@ -1916,13 +1846,16 @@ msgid "Stickers"
 msgstr "สติกเกอร์"
 
 #. placeholder {0}: selectedUser?.displayName
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:99
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:331
 msgid "Successfully sent invite to {0}"
 msgstr "ส่งคำเชิญไปยัง {0} สำเร็จ"
 
 #: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:445
 msgid "Sync Kick Status"
 msgstr "ซิงค์สถานะการเตะ"
+
+#~ msgid "Sync kick status for previously kicked users. This verifies kicks without posting visible messages."
+#~ msgstr "ซิงค์สถานะการเตะสำหรับผู้ใช้ที่ถูกเตะออกก่อนหน้านี้ นี่จะตรวจสอบการเตะโดยไม่โพสต์ข้อความที่มองเห็นได้"
 
 #: src/components/ui/ThemeRadioGroup.tsx:28
 msgid "System"
@@ -1947,29 +1880,17 @@ msgid "The invite link has expired or is invalid."
 msgstr "ลิงก์คำเชิญหมดอายุหรือไม่ถูกต้อง"
 
 #: src/components/NotFound.tsx:21
-msgid ""
-"The page you're looking for doesn't exist or has been moved. Let's get you "
-"back on track."
-msgstr ""
-"หน้าที่คุณกำลังมองหาไม่มีอยู่หรือถูกย้าย "
-"มาทำให้คุณกลับมาสู่เส้นทางที่ถูกต้อง"
+msgid "The page you're looking for doesn't exist or has been moved. Let's get you back on track."
+msgstr "หน้าที่คุณกำลังมองหาไม่มีอยู่หรือถูกย้าย มาทำให้คุณกลับมาสู่เส้นทางที่ถูกต้อง"
 
 #: src/components/modals/SpaceSettingsModal/Danger.tsx:30
-msgid ""
-"This action cannot be undone and will permanently remove all the Space "
-"settings. To delete the Space, you must first delete all Channels."
-msgstr ""
-"การกระทำนี้ไม่สามารถย้อนกลับได้และจะลบการตั้งค่าทั้งหมดของ Space อย่างถาวร "
-"เพื่อที่จะลบ Space คุณต้องลบช่องทั้งหมดก่อน"
+msgid "This action cannot be undone and will permanently remove all the Space settings. To delete the Space, you must first delete all Channels."
+msgstr "การกระทำนี้ไม่สามารถย้อนกลับได้และจะลบการตั้งค่าทั้งหมดของ Space อย่างถาวร เพื่อที่จะลบ Space คุณต้องลบช่องทั้งหมดก่อน"
 
 #: src/components/modals/CreateSpaceModal.tsx:160
 #: src/components/modals/SpaceSettingsModal/General.tsx:165
-msgid ""
-"This description will be visible on invites and shown to people when they "
-"look up or join your Space using an invite link."
-msgstr ""
-"คำอธิบายนี้จะแสดงในคำเชิญและจะแสดงให้ผู้คนเห็นเมื่อพวกเขาค้นหาหรือเข้าร่วม "
-"Space ของคุณโดยใช้ลิงก์เชิญ"
+msgid "This description will be visible on invites and shown to people when they look up or join your Space using an invite link."
+msgstr "คำอธิบายนี้จะแสดงในคำเชิญและจะแสดงให้ผู้คนเห็นเมื่อพวกเขาค้นหาหรือเข้าร่วม Space ของคุณโดยใช้ลิงก์เชิญ"
 
 #: src/components/modals/UserSettingsModal/Privacy.tsx:163
 msgid "This device"
@@ -1981,31 +1902,16 @@ msgid "This information is only provided to the Spaces you join."
 msgstr "ข้อมูลนี้จะถูกจัดเตรียมเฉพาะสำหรับ พื้นที่s ที่คุณเข้าร่วม"
 
 #: src/components/modals/UserSettingsModal/General.tsx:110
-msgid ""
-"This is your public address and is safe to share with anyone you want to "
-"interact with."
-msgstr ""
-"นี่คือที่อยู่สาธารณะของคุณและปลอดภัยที่จะแชร์กับใครก็ตามที่คุณต้องการติดต่อด้วย"
+msgid "This is your public address and is safe to share with anyone you want to interact with."
+msgstr "นี่คือที่อยู่สาธารณะของคุณและปลอดภัยที่จะแชร์กับใครก็ตามที่คุณต้องการติดต่อด้วย"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:181
-msgid ""
-"This link will not expire, but you can generate a new one at any time, which"
-" will invalidate the old link."
-msgstr ""
-"ลิงก์นี้จะไม่หมดอายุ แต่คุณสามารถสร้างลิงก์ใหม่ได้ทุกเมื่อ "
-"ซึ่งจะทำให้ลิงก์เก่าไม่สามารถใช้งานได้"
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:413
+msgid "This link will not expire, but you can generate a new one at any time, which will invalidate the old link."
+msgstr "ลิงก์นี้จะไม่หมดอายุ แต่คุณสามารถสร้างลิงก์ใหม่ได้ทุกเมื่อ ซึ่งจะทำให้ลิงก์เก่าไม่สามารถใช้งานได้"
 
 #: src/components/modals/SpaceSettingsModal/Roles.tsx:58
-msgid ""
-"This protects your identity as the space owner. However, if you're the only "
-"one with this role, your identity becomes obvious. Consider having multiple "
-"users (real or fake accounts) with the same role for better privacy "
-"protection."
-msgstr ""
-"สิ่งนี้ช่วยปกป้องตัวตนของคุณในฐานะเจ้าของ Space อย่างไรก็ตาม "
-"หากคุณเป็นคนเดียวที่มีบทบาทนี้ ตัวตนของคุณจะชัดเจนขึ้น พิจารณามีผู้ใช้หลายคน"
-" (บัญชีจริงหรือปลอม) "
-"ที่มีบทบาทเดียวกันเพื่อการปกป้องความเป็นส่วนตัวที่ดียิ่งขึ้น"
+msgid "This protects your identity as the space owner. However, if you're the only one with this role, your identity becomes obvious. Consider having multiple users (real or fake accounts) with the same role for better privacy protection."
+msgstr "สิ่งนี้ช่วยปกป้องตัวตนของคุณในฐานะเจ้าของ Space อย่างไรก็ตาม หากคุณเป็นคนเดียวที่มีบทบาทนี้ ตัวตนของคุณจะชัดเจนขึ้น พิจารณามีผู้ใช้หลายคน (บัญชีจริงหรือปลอม) ที่มีบทบาทเดียวกันเพื่อการปกป้องความเป็นส่วนตัวที่ดียิ่งขึ้น"
 
 #: src/components/context/MessageDB.bak.tsx:4819
 #: src/components/message/InviteLink.tsx:44
@@ -2018,36 +1924,24 @@ msgid "This user is already a member of this space."
 msgstr "ผู้ใช้คนนี้เป็นสมาชิกของ Space นี้แล้ว"
 
 #: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:605
-msgid ""
-"This will create a public invite link that anyone can use to join your "
-"Space. Consider who you share this link with."
-msgstr ""
-"สิ่งนี้จะสร้างลิงก์เชิญสาธารณะที่ใครก็สามารถใช้เพื่อเข้าร่วม Space ของคุณ "
-"พิจารณาว่าคุณจะแบ่งปันลิงก์นี้กับใคร"
+msgid "This will create a public invite link that anyone can use to join your Space. Consider who you share this link with."
+msgstr "สิ่งนี้จะสร้างลิงก์เชิญสาธารณะที่ใครก็สามารถใช้เพื่อเข้าร่วม Space ของคุณ พิจารณาว่าคุณจะแบ่งปันลิงก์นี้กับใคร"
 
 #: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:604
-msgid ""
-"This will generate a new public invite link and invalidate the current one. "
-"Anyone with the old link will no longer be able to use it."
-msgstr ""
-"สิ่งนี้จะสร้างลิงก์เชิญสาธารณะใหม่และทำให้ลิงก์ปัจจุบันไม่ถูกต้อง "
-"ใครก็ตามที่มีลิงก์เก่าจะไม่สามารถใช้มันได้อีกต่อไป"
+msgid "This will generate a new public invite link and invalidate the current one. Anyone with the old link will no longer be able to use it."
+msgstr "สิ่งนี้จะสร้างลิงก์เชิญสาธารณะใหม่และทำให้ลิงก์ปัจจุบันไม่ถูกต้อง ใครก็ตามที่มีลิงก์เก่าจะไม่สามารถใช้มันได้อีกต่อไป"
+
+#~ msgid "This will permanently delete the current public invite link. Anyone who has this link will no longer be able to use it to join your Space."
+#~ msgstr "สิ่งนี้จะลบลิงก์เชิญสาธารณะปัจจุบันอย่างถาวร ใครก็ตามที่มีลิงก์นี้จะไม่สามารถใช้มันเพื่อเข้าร่วม Space ของคุณได้อีกต่อไป"
 
 #: src/components/modals/ConfirmationModal.native.tsx:57
 #: src/components/modals/ConfirmationModal.tsx:77
-msgid ""
-"TIP: Hold down shift when clicking {protipAction} to bypass this "
-"confirmation entirely."
-msgstr ""
-"เคล็ดลับ: กดปุ่ม Shift ขณะคลิก {protipAction} เพื่อข้ามการยืนยันนี้ทั้งหมด"
+msgid "TIP: Hold down shift when clicking {protipAction} to bypass this confirmation entirely."
+msgstr "เคล็ดลับ: กดปุ่ม Shift ขณะคลิก {protipAction} เพื่อข้ามการยืนยันนี้ทั้งหมด"
 
 #: src/components/modals/UserSettingsModal/Notifications.tsx:72
-msgid ""
-"To disable notifications, please change the setting in your browser "
-"settings. Notifications cannot be disabled programmatically."
-msgstr ""
-"ในการปิดการแจ้งเตือน กรุณาเปลี่ยนการตั้งค่าในเบราว์เซอร์ของคุณ "
-"การแจ้งเตือนไม่สามารถปิดได้โดยโปรแกรม"
+msgid "To disable notifications, please change the setting in your browser settings. Notifications cannot be disabled programmatically."
+msgstr "ในการปิดการแจ้งเตือน กรุณาเปลี่ยนการตั้งค่าในเบราว์เซอร์ของคุณ การแจ้งเตือนไม่สามารถปิดได้โดยโปรแกรม"
 
 #: src/utils/dateFormatting.ts:27
 msgid "Today at {timeFormatted}"
@@ -2084,12 +1978,8 @@ msgstr "ไม่สามารถคัดลอกไปยังคลิป
 
 #: src/components/context/MessageDB.bak.tsx:3482
 #: src/services/SpaceService.ts:538
-msgid ""
-"Unable to leave space due to incomplete configuration. The space data may be"
-" corrupted."
-msgstr ""
-"ไม่สามารถออกจาก Space ได้เนื่องจากการกำหนดค่าที่ไม่สมบูรณ์ ข้อมูล Space "
-"อาจเสียหาย"
+msgid "Unable to leave space due to incomplete configuration. The space data may be corrupted."
+msgstr "ไม่สามารถออกจาก Space ได้เนื่องจากการกำหนดค่าที่ไม่สมบูรณ์ ข้อมูล Space อาจเสียหาย"
 
 #: src/utils/imageProcessing/errors.ts:33
 msgid "Unable to process emoji image. Please use a smaller image."
@@ -2149,9 +2039,12 @@ msgstr "เวลาที่ไม่รู้จัก"
 #: src/hooks/business/search/useSearchResultDisplayDM.ts:33
 #: src/hooks/business/search/useSearchResultDisplaySpace.ts:45
 #: src/hooks/queries/userInfo/buildUserInfoFetcher.ts:15
-#: src/services/EncryptionService.ts:138 src/services/MessageService.ts:1113
-#: src/services/MessageService.ts:1285 src/services/MessageService.ts:1425
-#: src/services/MessageService.ts:1443 src/services/MessageService.ts:2779
+#: src/services/EncryptionService.ts:138
+#: src/services/MessageService.ts:1113
+#: src/services/MessageService.ts:1285
+#: src/services/MessageService.ts:1425
+#: src/services/MessageService.ts:1443
+#: src/services/MessageService.ts:2779
 #: src/services/MessageService.ts:2932
 msgid "Unknown User"
 msgstr "ผู้ใช้ที่ไม่ทราบ"
@@ -2183,23 +2076,22 @@ msgid "Unpinned!"
 msgstr "ยกเลิกการปักหมุดแล้ว!"
 
 #: src/components/direct/DirectMessage.tsx:782
-msgid ""
-"Until you reply, this sender will not see your display name or profile "
-"picture"
+msgid "Until you reply, this sender will not see your display name or profile picture"
 msgstr "จนกว่าคุณจะตอบกลับ ผู้ส่งนี้จะไม่เห็นชื่อแสดงของคุณหรือรูปโปรไฟล์"
 
 #: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:445
-msgid ""
-"Update kick records for all members. Use this if kicked users still appear "
-"active to some members."
-msgstr ""
-"อัปเดตบันทึกการเตะสำหรับสมาชิกทั้งหมด "
-"ใช้สิ่งนี้หากผู้ใช้ที่ถูกเตะยังปรากฏว่าใช้งานอยู่สำหรับสมาชิกบางคน."
+msgid "Update kick records for all members. Use this if kicked users still appear active to some members."
+msgstr "อัปเดตบันทึกการเตะสำหรับสมาชิกทั้งหมด ใช้สิ่งนี้หากผู้ใช้ที่ถูกเตะยังปรากฏว่าใช้งานอยู่สำหรับสมาชิกบางคน."
 
 #: src/components/modals/SpaceSettingsModal/Account.tsx:128
 msgid "Upload an avatar for this Space - PNG or JPG - Optimal ratio 1:1"
-msgstr ""
-"อัปโหลดภาพโปรไฟล์สำหรับพื้นที่นี้ - PNG หรือ JPG - อัตราส่วนที่เหมาะสม 1:1"
+msgstr "อัปโหลดภาพโปรไฟล์สำหรับพื้นที่นี้ - PNG หรือ JPG - อัตราส่วนที่เหมาะสม 1:1"
+
+#~ msgid "Upload an image and choose a name for your Space."
+#~ msgstr "อัปโหลดภาพและเลือกชื่อสำหรับ Space ของคุณ"
+
+#~ msgid "Upload an image, choose a name, and optionally add a description for your Space."
+#~ msgstr "อัปโหลดภาพ, เลือกชื่อ, และเพิ่มคำอธิบายสำหรับ Space ของคุณได้ตามต้องการ"
 
 #: src/components/modals/SpaceSettingsModal/Emojis.tsx:59
 msgid "Upload Emoji"
@@ -2226,7 +2118,8 @@ msgstr "ที่อยู่ผู้ใช้ที่นี่"
 msgid "User does not exist."
 msgstr "ผู้ใช้ไม่มีอยู่"
 
-#: src/components/space/Channel.tsx:577 src/components/space/Channel.tsx:1041
+#: src/components/space/Channel.tsx:577
+#: src/components/space/Channel.tsx:1041
 msgid "Username or Address"
 msgstr "ชื่อผู้ใช้หรือที่อยู่"
 
@@ -2254,35 +2147,16 @@ msgstr "วันนี้คุณคิดอะไรอยู่?"
 
 #: src/components/modals/ConversationSettingsModal.tsx:220
 #: src/components/modals/SpaceSettingsModal/General.tsx:288
-msgid ""
-"When enabled, all previous versions of edited messages will be saved. When "
-"disabled, only the current edited version is kept."
-msgstr ""
-"เมื่อเปิดใช้งาน, เวอร์ชันก่อนหน้าของข้อความที่แก้ไขทั้งหมดจะถูกบันทึก "
-"เมื่อปิดใช้งาน, จะเก็บเฉพาะเวอร์ชันที่แก้ไขปัจจุบันเท่านั้น"
+msgid "When enabled, all previous versions of edited messages will be saved. When disabled, only the current edited version is kept."
+msgstr "เมื่อเปิดใช้งาน, เวอร์ชันก่อนหน้าของข้อความที่แก้ไขทั้งหมดจะถูกบันทึก เมื่อปิดใช้งาน, จะเก็บเฉพาะเวอร์ชันที่แก้ไขปัจจุบันเท่านั้น"
 
 #: src/components/modals/UserSettingsModal/Privacy.tsx:58
-msgid ""
-"When enabled, synchronizes your user data, Spaces, and Space keys between "
-"devices. Enabling this increases metadata visibility of your account, which "
-"can reveal when you have joined new Spaces, although not the Spaces you have"
-" joined."
-msgstr ""
-"เมื่อเปิดใช้งาน จะซิงโครไนซ์ข้อมูลผู้ใช้ของคุณ Spaces และกุญแจ Space "
-"ระหว่างอุปกรณ์ "
-"การเปิดใช้งานนี้จะเพิ่มความสามารถในการมองเห็นข้อมูลเมตาของบัญชีของคุณ "
-"ซึ่งอาจเปิดเผยเมื่อคุณเข้าร่วม พื้นที่s ใหม่ แม้ว่าจะไม่ใช่ Spaces "
-"ที่คุณเข้าร่วม"
+msgid "When enabled, synchronizes your user data, Spaces, and Space keys between devices. Enabling this increases metadata visibility of your account, which can reveal when you have joined new Spaces, although not the Spaces you have joined."
+msgstr "เมื่อเปิดใช้งาน จะซิงโครไนซ์ข้อมูลผู้ใช้ของคุณ Spaces และกุญแจ Space ระหว่างอุปกรณ์ การเปิดใช้งานนี้จะเพิ่มความสามารถในการมองเห็นข้อมูลเมตาของบัญชีของคุณ ซึ่งอาจเปิดเผยเมื่อคุณเข้าร่วม พื้นที่s ใหม่ แม้ว่าจะไม่ใช่ Spaces ที่คุณเข้าร่วม"
 
 #: src/components/modals/SpaceSettingsModal/General.tsx:264
-msgid ""
-"When messages are signed, senders confirm they come from their key. When "
-"messages aren't signed, senders have plausible deniability. This setting "
-"applies to all messages in this Space."
-msgstr ""
-"เมื่อข้อความถูกลงนาม ผู้ส่งจะยืนยันว่ามาจากกุญแจของตน "
-"เมื่อข้อความไม่ได้ลงนาม ผู้ส่งจะมีความสามารถในการปฏิเสธได้ "
-"สิ่งนี้ใช้กับข้อความทั้งหมดใน Space นี้"
+msgid "When messages are signed, senders confirm they come from their key. When messages aren't signed, senders have plausible deniability. This setting applies to all messages in this Space."
+msgstr "เมื่อข้อความถูกลงนาม ผู้ส่งจะยืนยันว่ามาจากกุญแจของตน เมื่อข้อความไม่ได้ลงนาม ผู้ส่งจะมีความสามารถในการปฏิเสธได้ สิ่งนี้ใช้กับข้อความทั้งหมดใน Space นี้"
 
 #: src/components/modals/SpaceSettingsModal/Account.tsx:212
 msgid "When someone mentions @everyone"
@@ -2291,6 +2165,9 @@ msgstr "เมื่อมีคนกล่าวถึง @everyone"
 #: src/components/modals/SpaceSettingsModal/Account.tsx:217
 msgid "When someone mentions a role you have"
 msgstr "เมื่อมีคนกล่าวถึงบทบาทที่คุณมี"
+
+#~ msgid "When someone mentions a role you have (Coming Soon)"
+#~ msgstr "เมื่อมีคนกล่าวถึงบทบาทที่คุณมี (เร็วๆ นี้)"
 
 #: src/components/modals/SpaceSettingsModal/Account.tsx:207
 msgid "When someone mentions you directly"
@@ -2301,49 +2178,20 @@ msgid "When someone replies to your messages"
 msgstr "เมื่อมีคนตอบกลับข้อความของคุณ"
 
 #: src/components/modals/CreateSpaceModal.tsx:221
-msgid ""
-"When this setting is enabled, invite links will automatically allow a user "
-"to join your Space. When it is not enabled, users following an invite link "
-"will send you a request to join your Space that you must manually approve. "
-"Public links require some key material to be present in the link – be aware "
-"that possession of a public Space link can allow anyone with the link to "
-"read messages on the Space for the duration of the link being valid."
-msgstr ""
-"เมื่อการตั้งค่านี้เปิดใช้งาน ลิงก์เชิญจะอนุญาตให้ผู้ใช้เข้าร่วม พื้นที่ "
-"ของคุณโดยอัตโนมัติ เมื่อไม่ได้เปิดใช้งาน "
-"ผู้ใช้ที่ติดตามลิงก์เชิญจะส่งคำขอให้คุณเข้าร่วม พื้นที่ "
-"ของคุณที่คุณต้องอนุมัติด้วยตนเอง "
-"ลิงก์สาธารณะต้องการให้มีวัสดุสำคัญบางอย่างอยู่ในลิงก์ - "
-"โปรดทราบว่าการมีลิงก์ Space "
-"สาธารณะสามารถอนุญาตให้ใครก็ตามที่มีลิงก์อ่านข้อความใน Space "
-"ได้ในระยะเวลาที่ลิงก์นั้นมีผล"
+msgid "When this setting is enabled, invite links will automatically allow a user to join your Space. When it is not enabled, users following an invite link will send you a request to join your Space that you must manually approve. Public links require some key material to be present in the link – be aware that possession of a public Space link can allow anyone with the link to read messages on the Space for the duration of the link being valid."
+msgstr "เมื่อการตั้งค่านี้เปิดใช้งาน ลิงก์เชิญจะอนุญาตให้ผู้ใช้เข้าร่วม พื้นที่ ของคุณโดยอัตโนมัติ เมื่อไม่ได้เปิดใช้งาน ผู้ใช้ที่ติดตามลิงก์เชิญจะส่งคำขอให้คุณเข้าร่วม พื้นที่ ของคุณที่คุณต้องอนุมัติด้วยตนเอง ลิงก์สาธารณะต้องการให้มีวัสดุสำคัญบางอย่างอยู่ในลิงก์ - โปรดทราบว่าการมีลิงก์ Space สาธารณะสามารถอนุญาตให้ใครก็ตามที่มีลิงก์อ่านข้อความใน Space ได้ในระยะเวลาที่ลิงก์นั้นมีผล"
 
 #: src/components/onboarding/Onboarding.tsx:145
-msgid ""
-"When using Quorum on a browser, your messages are saved locally to your "
-"browser."
-msgstr ""
-"เมื่อใช้ Quorum บนเบราว์เซอร์ ข้อความของคุณจะถูกบันทึกไว้ในเครื่องของคุณ"
+msgid "When using Quorum on a browser, your messages are saved locally to your browser."
+msgstr "เมื่อใช้ Quorum บนเบราว์เซอร์ ข้อความของคุณจะถูกบันทึกไว้ในเครื่องของคุณ"
 
 #: src/components/modals/ConversationSettingsModal.tsx:195
-msgid ""
-"When you sign a message, you are confirming that it comes from your key. "
-"When you don't sign a message, you have plausible deniability. The default "
-"for all conversations can be changed in User Settings."
-msgstr ""
-"เมื่อคุณลงนามในข้อความ คุณกำลังยืนยันว่ามาจากกุญแจของคุณ "
-"เมื่อคุณไม่ลงนามในข้อความ คุณมีความสามารถในการปฏิเสธได้ "
-"ค่าเริ่มต้นสำหรับการสนทนาทั้งหมดสามารถเปลี่ยนแปลงได้ในการตั้งค่าผู้ใช้"
+msgid "When you sign a message, you are confirming that it comes from your key. When you don't sign a message, you have plausible deniability. The default for all conversations can be changed in User Settings."
+msgstr "เมื่อคุณลงนามในข้อความ คุณกำลังยืนยันว่ามาจากกุญแจของคุณ เมื่อคุณไม่ลงนามในข้อความ คุณมีความสามารถในการปฏิเสธได้ ค่าเริ่มต้นสำหรับการสนทนาทั้งหมดสามารถเปลี่ยนแปลงได้ในการตั้งค่าผู้ใช้"
 
 #: src/components/modals/UserSettingsModal/Privacy.tsx:78
-msgid ""
-"When you sign a message, you are confirming that it comes from your key. "
-"When you don't sign a message, you have plausible deniability. You can "
-"control this setting for each conversation and message individually."
-msgstr ""
-"เมื่อคุณลงนามในข้อความ คุณกำลังยืนยันว่ามาจากกุญแจของคุณ "
-"เมื่อคุณไม่ลงนามในข้อความ คุณมีความสามารถในการปฏิเสธได้ "
-"คุณสามารถควบคุมการตั้งค่านี้สำหรับแต่ละการสนทนาและข้อความได้เป็นรายบุคคล"
+msgid "When you sign a message, you are confirming that it comes from your key. When you don't sign a message, you have plausible deniability. You can control this setting for each conversation and message individually."
+msgstr "เมื่อคุณลงนามในข้อความ คุณกำลังยืนยันว่ามาจากกุญแจของคุณ เมื่อคุณไม่ลงนามในข้อความ คุณมีความสามารถในการปฏิเสธได้ คุณสามารถควบคุมการตั้งค่านี้สำหรับแต่ละการสนทนาและข้อความได้เป็นรายบุคคล"
 
 #: src/utils/dateFormatting.ts:55
 msgid "Yesterday"
@@ -2363,26 +2211,16 @@ msgid "You are already a member of this Space."
 msgstr "คุณเป็นสมาชิกของ Space นี้แล้ว"
 
 #: src/components/modals/NewDirectMessageModal.tsx:146
-msgid ""
-"You can change this later for this conversation by clicking the lock icon in"
-" the Conversation view."
-msgstr ""
-"คุณสามารถเปลี่ยนสิ่งนี้ในภายหลังสำหรับการสนทนานี้โดยคลิกที่ไอคอนล็อคในมุมมองการสนทนา"
+msgid "You can change this later for this conversation by clicking the lock icon in the Conversation view."
+msgstr "คุณสามารถเปลี่ยนสิ่งนี้ในภายหลังสำหรับการสนทนานี้โดยคลิกที่ไอคอนล็อคในมุมมองการสนทนา"
 
 #: src/components/modals/UserSettingsModal/Notifications.tsx:77
-msgid ""
-"You can manage your Space mention notifications in each Space's settings."
-msgstr ""
-"คุณสามารถจัดการการแจ้งเตือนการกล่าวถึง Space ของคุณได้ในการตั้งค่าของแต่ละ "
-"Space."
+msgid "You can manage your Space mention notifications in each Space's settings."
+msgstr "คุณสามารถจัดการการแจ้งเตือนการกล่าวถึง Space ของคุณได้ในการตั้งค่าของแต่ละ Space."
 
 #: src/components/modals/GroupEditorModal.tsx:113
-msgid ""
-"You cannot delete a group that contains channels. Delete all {channelCount} "
-"channels in this group first."
-msgstr ""
-"คุณไม่สามารถลบกลุ่มที่มีช่องอยู่ได้ ให้ลบช่อง {channelCount} "
-"ทั้งหมดในกลุ่มนี้ก่อน"
+msgid "You cannot delete a group that contains channels. Delete all {channelCount} channels in this group first."
+msgstr "คุณไม่สามารถลบกลุ่มที่มีช่องอยู่ได้ ให้ลบช่อง {channelCount} ทั้งหมดในกลุ่มนี้ก่อน"
 
 #: src/components/message/MessageComposer.tsx:296
 #: src/components/space/Channel.tsx:1012
@@ -2403,12 +2241,8 @@ msgid "You have new unread messages"
 msgstr "คุณมีข้อความใหม่ที่ยังไม่ได้อ่านหลายข้อความ"
 
 #: src/components/modals/SpaceSettingsModal/Account.tsx:241
-msgid ""
-"You won't be able to rejoin unless you are re-invited. Your existing "
-"messages will NOT be deleted."
-msgstr ""
-"คุณจะไม่สามารถเข้าร่วมใหม่ได้ เว้นแต่จะได้รับเชิญอีกครั้ง "
-"ข้อความที่มีอยู่ของคุณจะไม่ถูกลบ"
+msgid "You won't be able to rejoin unless you are re-invited. Your existing messages will NOT be deleted."
+msgstr "คุณจะไม่สามารถเข้าร่วมใหม่ได้ เว้นแต่จะได้รับเชิญอีกครั้ง ข้อความที่มีอยู่ของคุณจะไม่ถูกลบ"
 
 #: src/components/notifications/NotificationPanel.tsx:161
 msgid "You're all caught up!"
@@ -2420,14 +2254,8 @@ msgid "You're all set. Welcome to Quorum!"
 msgstr "คุณพร้อมแล้ว ยินดีต้อนรับสู่ Quorum!"
 
 #: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:441
-msgid ""
-"You're not listed in this Space's members. Correcting this will add you to "
-"the Space Members list (stores your profile locally with your inbox "
-"address)."
-msgstr ""
-"คุณไม่ได้อยู่ในสมาชิกของ Space นี้ "
-"การแก้ไขนี้จะทำให้คุณถูกเพิ่มในรายชื่อสมาชิก Space "
-"(เก็บโปรไฟล์ของคุณไว้ในเครื่องพร้อมที่อยู่กล่องจดหมายของคุณ)"
+msgid "You're not listed in this Space's members. Correcting this will add you to the Space Members list (stores your profile locally with your inbox address)."
+msgstr "คุณไม่ได้อยู่ในสมาชิกของ Space นี้ การแก้ไขนี้จะทำให้คุณถูกเพิ่มในรายชื่อสมาชิก Space (เก็บโปรไฟล์ของคุณไว้ในเครื่องพร้อมที่อยู่กล่องจดหมายของคุณ)"
 
 #: src/components/message/InviteLink.tsx:60
 #: src/components/message/InviteLink.tsx:82
@@ -2439,36 +2267,20 @@ msgid "Your Details"
 msgstr "รายละเอียดของคุณ"
 
 #: src/hooks/platform/files/useFileDownload.native.ts:79
-msgid ""
-"Your device doesn't support automatic file downloads. Your private key will "
-"be copied to clipboard so you can save it manually."
-msgstr ""
-"อุปกรณ์ของคุณไม่รองรับการดาวน์โหลดไฟล์โดยอัตโนมัติ "
-"กุญแจส่วนตัวของคุณจะถูกคัดลอกไปยังคลิปบอร์ดเพื่อให้คุณสามารถบันทึกด้วยตนเอง"
+msgid "Your device doesn't support automatic file downloads. Your private key will be copied to clipboard so you can save it manually."
+msgstr "อุปกรณ์ของคุณไม่รองรับการดาวน์โหลดไฟล์โดยอัตโนมัติ กุญแจส่วนตัวของคุณจะถูกคัดลอกไปยังคลิปบอร์ดเพื่อให้คุณสามารถบันทึกด้วยตนเอง"
 
 #: src/hooks/platform/files/useFileDownload.native.ts:97
-msgid ""
-"Your private key has been copied to clipboard. Save it as \"AccountID.key\" "
-"(you can find your Account ID in Settings later). NEVER share this key!"
-msgstr ""
-"กุญแจส่วนตัวของคุณถูกคัดลอกไปยังคลิปบอร์ดแล้ว บันทึกเป็น \"AccountID.key\" "
-"(คุณสามารถค้นหาหมายเลขบัญชีของคุณในการตั้งค่าในภายหลัง) ห้ามแชร์กุญแจนี้!"
+msgid "Your private key has been copied to clipboard. Save it as \"AccountID.key\" (you can find your Account ID in Settings later). NEVER share this key!"
+msgstr "กุญแจส่วนตัวของคุณถูกคัดลอกไปยังคลิปบอร์ดแล้ว บันทึกเป็น \"AccountID.key\" (คุณสามารถค้นหาหมายเลขบัญชีของคุณในการตั้งค่าในภายหลัง) ห้ามแชร์กุญแจนี้!"
 
 #: src/utils/imageProcessing/errors.ts:40
-msgid ""
-"Your profile image size must be {maxSize} or less and must be a PNG, JPG, or"
-" JPEG file extension."
-msgstr ""
-"ขนาดภาพโปรไฟล์ของคุณต้องมีขนาด {maxSize} หรือน้อยกว่าและต้องเป็นไฟล์นามสกุล "
-"PNG, JPG หรือ JPEG"
+msgid "Your profile image size must be {maxSize} or less and must be a PNG, JPG, or JPEG file extension."
+msgstr "ขนาดภาพโปรไฟล์ของคุณต้องมีขนาด {maxSize} หรือน้อยกว่าและต้องเป็นไฟล์นามสกุล PNG, JPG หรือ JPEG"
 
 #: src/components/onboarding/Onboarding.native.tsx:369
-msgid ""
-"Your profile image size must be 2MB or less and must be a PNG, JPG, or JPEG "
-"file extension."
-msgstr ""
-"ขนาดภาพโปรไฟล์ของคุณต้องไม่เกิน 2MB และต้องเป็นไฟล์นามสกุล PNG, JPG หรือ "
-"JPEG"
+msgid "Your profile image size must be 2MB or less and must be a PNG, JPG, or JPEG file extension."
+msgstr "ขนาดภาพโปรไฟล์ของคุณต้องไม่เกิน 2MB และต้องเป็นไฟล์นามสกุล PNG, JPG หรือ JPEG"
 
 #: src/components/modals/SpaceSettingsModal/Account.tsx:165
 msgid "Your Roles"
@@ -2481,92 +2293,3 @@ msgstr "วิดีโอ YouTube"
 #: src/components/ui/YouTubeFacade.tsx:115
 msgid "YouTube Video Thumbnail"
 msgstr "ภาพขนาดย่อวิดีโอ YouTube"
-
-#~ msgid ""
-#~ " Default Space settings provide the most typical chat experience, but for "
-#~ "higher privacy guarantees, review the Advanced Settings."
-#~ msgstr ""
-#~ "การตั้งค่า Space เริ่มต้นให้ประสบการณ์การสนทนาที่เป็นที่นิยมที่สุด "
-#~ "แต่เพื่อความเป็นส่วนตัวที่สูงขึ้น ให้ตรวจสอบการตั้งค่าขั้นสูง."
-
-#~ msgid "{0} pinned message"
-#~ msgstr "ข้อความที่ถูกปักหมุด {0}"
-
-#~ msgid "{0} pinned messages"
-#~ msgstr "ข้อความที่ถูกปักหมุด {0} ข้อความ"
-
-#~ msgid "{0} unread mention"
-#~ msgstr "{0} การกล่าวถึงที่ยังไม่ได้อ่าน"
-
-#~ msgid "{0} unread mentions"
-#~ msgstr "{0} การกล่าวถึงที่ยังไม่ได้อ่าน"
-
-#~ msgid "Account Settings for This Space"
-#~ msgstr "การตั้งค่าบัญชีสำหรับพื้นที่นี้"
-
-#~ msgid ""
-#~ "Are you sure you want to leave this Space? You won't be able to rejoin "
-#~ "unless you are re-invited. Your existing messages will NOT be deleted."
-#~ msgstr ""
-#~ "คุณแน่ใจหรือว่าต้องการออกจากพื้นที่นี้? "
-#~ "คุณจะไม่สามารถเข้าร่วมอีกครั้งเว้นแต่จะได้รับเชิญใหม่ "
-#~ "ข้อความที่มีอยู่ของคุณจะไม่ถูกลบ"
-
-#~ msgid "Change your avatar and name for this Space."
-#~ msgstr "เปลี่ยนภาพโปรไฟล์และชื่อของคุณสำหรับพื้นที่นี้"
-
-#~ msgid "Delete Current Link"
-#~ msgstr "ลบลิงก์ปัจจุบัน"
-
-#~ msgid "Delete Link"
-#~ msgstr "ลบลิงก์"
-
-#~ msgid "Delete Public Invite Link"
-#~ msgstr "ลบลิงก์เชิญสาธารณะ"
-
-#~ msgid "Description"
-#~ msgstr "คำอธิบาย"
-
-#~ msgid "Description must be {maxDescriptionLength} characters or less"
-#~ msgstr "คำอธิบายต้องมีความยาวไม่เกิน {maxDescriptionLength} ตัวอักษร"
-
-#~ msgid "Enter a name for your new Space"
-#~ msgstr "กรุณาใส่ชื่อสำหรับ พื้นที่ ใหม่ของคุณ"
-
-#~ msgid "No unread mentions"
-#~ msgstr "ไม่มีการกล่าวถึงที่ยังไม่ได้อ่าน"
-
-#~ msgid "optional"
-#~ msgstr "ไม่บังคับ"
-
-#~ msgid "Select for which mentions you will receive notifications"
-#~ msgstr "เลือกสำหรับการกล่าวถึงที่คุณจะได้รับการแจ้งเตือน"
-
-#~ msgid "Space Name"
-#~ msgstr "ชื่อ พื้นที่"
-
-#~ msgid ""
-#~ "Sync kick status for previously kicked users. This verifies kicks without "
-#~ "posting visible messages."
-#~ msgstr ""
-#~ "ซิงค์สถานะการเตะสำหรับผู้ใช้ที่ถูกเตะออกก่อนหน้านี้ "
-#~ "นี่จะตรวจสอบการเตะโดยไม่โพสต์ข้อความที่มองเห็นได้"
-
-#~ msgid ""
-#~ "This will permanently delete the current public invite link. Anyone who has "
-#~ "this link will no longer be able to use it to join your Space."
-#~ msgstr ""
-#~ "สิ่งนี้จะลบลิงก์เชิญสาธารณะปัจจุบันอย่างถาวร "
-#~ "ใครก็ตามที่มีลิงก์นี้จะไม่สามารถใช้มันเพื่อเข้าร่วม Space ของคุณได้อีกต่อไป"
-
-#~ msgid "Upload an image and choose a name for your Space."
-#~ msgstr "อัปโหลดภาพและเลือกชื่อสำหรับ Space ของคุณ"
-
-#~ msgid ""
-#~ "Upload an image, choose a name, and optionally add a description for your "
-#~ "Space."
-#~ msgstr ""
-#~ "อัปโหลดภาพ, เลือกชื่อ, และเพิ่มคำอธิบายสำหรับ Space ของคุณได้ตามต้องการ"
-
-#~ msgid "When someone mentions a role you have (Coming Soon)"
-#~ msgstr "เมื่อมีคนกล่าวถึงบทบาทที่คุณมี (เร็วๆ นี้)"

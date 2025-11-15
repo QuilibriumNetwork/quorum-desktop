@@ -3,6 +3,8 @@ import { Button, Select, Input, Icon, Tooltip, Spacer, Callout } from '../../pri
 import { Trans } from '@lingui/react/macro';
 import { t } from '@lingui/core/macro';
 import { ClickToCopyContent } from '../../ui';
+import { UserAvatar } from '../../user/UserAvatar';
+import { DefaultImages } from '../../../utils';
 
 interface InvitesProps {
   space: any;
@@ -21,6 +23,197 @@ interface InvitesProps {
   errorMessage: string;
   setShowGenerateModal: (show: boolean) => void;
 }
+
+interface SearchableConversationSelectProps {
+  value: string;
+  options: any[];
+  onChange: (value: string) => void;
+  placeholder?: string;
+}
+
+const SearchableConversationSelect: React.FunctionComponent<SearchableConversationSelectProps> = ({
+  value,
+  options,
+  onChange,
+  placeholder = t`Select conversation`,
+}) => {
+  const [isOpen, setIsOpen] = React.useState(false);
+  const [searchInput, setSearchInput] = React.useState('');
+  const selectRef = React.useRef<HTMLDivElement>(null);
+  const dropdownRef = React.useRef<HTMLDivElement>(null);
+
+  // Filter options based on search
+  const filteredOptions = React.useMemo(() => {
+    if (!searchInput.trim()) return options;
+    const term = searchInput.toLowerCase();
+    return options.filter(option =>
+      option.label?.toLowerCase().includes(term) ||
+      option.value?.toLowerCase().includes(term) ||
+      option.subtitle?.toLowerCase().includes(term)
+    );
+  }, [options, searchInput]);
+
+  // Find selected option for display
+  const selectedOption = options.find(opt => opt.value === value);
+
+  // Close dropdown when clicking outside
+  React.useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as Node;
+      const isInsideComponent = selectRef.current && selectRef.current.contains(target);
+      const isInsideDropdown = dropdownRef.current && dropdownRef.current.contains(target);
+
+      if (!isInsideComponent && !isInsideDropdown) {
+        setIsOpen(false);
+        setSearchInput('');
+      }
+    };
+
+    if (isOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isOpen]);
+
+  const handleSelect = (optionValue: string) => {
+    onChange(optionValue);
+    setIsOpen(false);
+    setSearchInput('');
+  };
+
+  const handleInputKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Escape') {
+      setIsOpen(false);
+      setSearchInput('');
+    } else if (e.key === 'Enter' && filteredOptions.length > 0) {
+      handleSelect(filteredOptions[0].value);
+    }
+  };
+
+  return (
+    <div ref={selectRef} className="relative w-full">
+      {/* Select trigger button */}
+      <button
+        type="button"
+        className="w-full px-3 py-2 bg-[var(--color-field-bg)] border border-transparent rounded-lg text-left flex items-center justify-between hover:bg-[var(--color-field-bg-focus)] transition-colors"
+        onClick={() => setIsOpen(!isOpen)}
+      >
+        <span className="flex items-center gap-2 flex-1">
+          {selectedOption ? (
+            <>
+              {selectedOption.avatar && (
+                <UserAvatar
+                  userIcon={selectedOption.avatar}
+                  displayName={selectedOption.displayName || selectedOption.label}
+                  address={selectedOption.value}
+                  size={24}
+                />
+              )}
+              <span className="text-[var(--color-field-text)]">{selectedOption.label}</span>
+            </>
+          ) : (
+            <span className="text-[var(--color-text-subtle)]">{placeholder}</span>
+          )}
+        </span>
+        <Icon
+          name="chevron-down"
+          size="xs"
+          className={`text-[var(--color-text-subtle)] transition-transform ${isOpen ? 'rotate-180' : ''}`}
+        />
+      </button>
+
+      {/* Dropdown */}
+      {isOpen && (
+        <div
+          ref={dropdownRef}
+          className="absolute top-full left-0 w-full z-[10200] mt-1 bg-[var(--color-field-options-bg)] border-0 rounded-lg shadow-md max-h-60 overflow-hidden"
+        >
+          {/* Search input */}
+          <div className="p-2 border-b border-[var(--color-field-border)]">
+            <div className="flex items-center gap-2 ml-1">
+              <Icon name="search" size="sm" className="text-subtle" />
+              <Input
+                value={searchInput}
+                onChange={setSearchInput}
+                placeholder={t`Search username or address`}
+                variant="minimal"
+                type="search"
+                className="flex-1 border-0 bg-transparent text-sm placeholder:text-sm"
+                onKeyDown={handleInputKeyDown}
+                autoFocus
+              />
+            </div>
+          </div>
+
+          {/* Options list */}
+          <div className="max-h-48 overflow-y-auto overflow-x-hidden">
+            {filteredOptions.length === 0 ? (
+              <div className="p-3 text-subtle text-sm">
+                <Trans>No conversations found</Trans>
+              </div>
+            ) : (
+              filteredOptions.map((option) => {
+                const isSelected = option.value === value;
+                const hasValidAvatar = option.avatar && !option.avatar.includes(DefaultImages.UNKNOWN_USER);
+
+                return (
+                  <div
+                    key={option.value}
+                    className={`flex items-center justify-between p-2 cursor-pointer transition-colors hover:bg-[var(--color-field-option-hover)] min-w-0 ${
+                      isSelected ? 'bg-[var(--color-field-option-selected)] text-[var(--color-accent)]' : ''
+                    }`}
+                    onClick={() => handleSelect(option.value)}
+                  >
+                    <div className="flex items-center gap-3 flex-1 min-w-0">
+                      {/* Avatar */}
+                      {hasValidAvatar ? (
+                        <div
+                          className="w-8 h-8 rounded-full bg-cover bg-center flex-shrink-0"
+                          style={{ backgroundImage: `url(${option.avatar})` }}
+                        />
+                      ) : option.displayName ? (
+                        <UserAvatar
+                          displayName={option.displayName}
+                          address={option.value}
+                          size={32}
+                          className="flex-shrink-0"
+                        />
+                      ) : null}
+
+                      {/* Text content */}
+                      <div className="flex-1 min-w-0">
+                        <div className="text-sm font-medium truncate">
+                          {option.label}
+                        </div>
+                        {option.subtitle && (
+                          <div className="text-xs text-[var(--color-text-subtle)] truncate">
+                            {option.subtitle}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Selected indicator */}
+                    {isSelected && (
+                      <Icon
+                        name="check"
+                        size="sm"
+                        className="text-[var(--color-accent)] flex-shrink-0 ml-2"
+                      />
+                    )}
+                  </div>
+                );
+              })
+            )}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
 
 const Invites: React.FunctionComponent<InvitesProps> = ({
   space,
@@ -41,6 +234,7 @@ const Invites: React.FunctionComponent<InvitesProps> = ({
 }) => {
   // State for showing/hiding manual address field
   const [showManualAddress, setShowManualAddress] = React.useState<boolean>(false);
+
   return (
     <>
       <div className="modal-content-header">
@@ -63,10 +257,9 @@ const Invites: React.FunctionComponent<InvitesProps> = ({
           <div className="input-style-label">
             <Trans>Existing Conversations</Trans>
           </div>
-          <Select
-            fullWidth
-            options={getUserOptions()}
+          <SearchableConversationSelect
             value={selectedUser?.address || ''}
+            options={getUserOptions()}
             onChange={(address: string) => {
               // Find conversation and set selected user
               const allConversations = getUserOptions();
