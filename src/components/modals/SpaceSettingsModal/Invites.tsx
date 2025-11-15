@@ -39,6 +39,8 @@ const Invites: React.FunctionComponent<InvitesProps> = ({
   errorMessage,
   setShowGenerateModal,
 }) => {
+  // State for showing/hiding manual address field
+  const [showManualAddress, setShowManualAddress] = React.useState<boolean>(false);
   return (
     <>
       <div className="modal-content-header">
@@ -48,9 +50,8 @@ const Invites: React.FunctionComponent<InvitesProps> = ({
           </div>
           <div className="pt-2 text-body">
             <Trans>
-              Send invites to people you've previously had
-              conversations with. An invite button will appear
-              in their inbox.
+              Manage Inivte links and send invites to people you've previously had
+              conversations with.
             </Trans>
           </div>
         </div>
@@ -84,14 +85,52 @@ const Invites: React.FunctionComponent<InvitesProps> = ({
             placeholder={t`Select conversation`}
           />
           <Spacer size="md"></Spacer>
-          <Input
-            className="w-full placeholder:text-sm"
-            value={manualAddress}
-            placeholder="Type the address of the user you want to send to"
-            onChange={setManualAddress}
-            label={t`Enter Address Manually`}
-            labelType="static"
-          />
+
+          {/* Manual Address Toggle */}
+          <div>
+            <Button
+              type="unstyled"
+              onClick={() => setShowManualAddress(!showManualAddress)}
+              className="flex items-center gap-2 p-0"
+            >
+              <span><Trans>Enter Address Manually</Trans></span>
+              <Icon
+                name={showManualAddress ? "chevron-down" : "chevron-right"}
+                size="sm"
+              />
+            </Button>
+          </div>
+
+          {/* Manual Address Input - Collapsible */}
+          {showManualAddress && (
+            <div className="mt-2 mb-6">
+              <Input
+                className="w-full placeholder:text-sm"
+                value={manualAddress}
+                placeholder="Type the address of the user you want to send to"
+                onChange={setManualAddress}
+              />
+            </div>
+          )}
+
+          {/* Send Invite Button - Moved here */}
+          <div className="flex gap-2 mt-4">
+            <Button
+              type="primary"
+              disabled={
+                sendingInvite || (!selectedUser && !resolvedUser)
+              }
+              onClick={() => {
+                if (selectedUser) {
+                  invite(selectedUser.address);
+                } else if (resolvedUser) {
+                  invite(resolvedUser.user_address);
+                }
+              }}
+            >
+              <Trans>Send Invite</Trans>
+            </Button>
+          </div>
           {success && (
             <>
               <Spacer size="sm"/>
@@ -217,24 +256,6 @@ const Invites: React.FunctionComponent<InvitesProps> = ({
               </div>
             )}
           </div>
-        </div>
-        <div style={{ marginBottom: '20px' }}></div>
-        <div className="modal-content-actions">
-          <Button
-            type="primary"
-            disabled={
-              sendingInvite || (!selectedUser && !resolvedUser)
-            }
-            onClick={() => {
-              if (selectedUser) {
-                invite(selectedUser.address);
-              } else if (resolvedUser) {
-                invite(resolvedUser.user_address);
-              }
-            }}
-          >
-            <Trans>Send Invite</Trans>
-          </Button>
         </div>
       </div>
     </>
