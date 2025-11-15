@@ -582,8 +582,9 @@ export const Message = React.memo(
                   </Modal>
                 )}
 
-              <FlexRow align="center" className="items-center">
-                <Text className="message-sender-name">
+              {/* Desktop layout: horizontal row with username and timestamp */}
+              <FlexRow align="center" className="items-center min-w-0 hidden xs:flex">
+                <Text className="message-sender-name message-sender-name-responsive">
                   {sender.displayName}
                 </Text>
                 {message.isPinned && (
@@ -631,6 +632,62 @@ export const Message = React.memo(
                   )}
                 </FlexRow>
               </FlexRow>
+
+              {/* Mobile layout: vertical stack with timestamp above username */}
+              <FlexColumn className="xs:hidden items-start">
+                {/* Timestamp row on mobile - aligned to left edge */}
+                <FlexRow align="center" gap="xs" className="mb-1">
+                  <Text className="message-timestamp">{displayedTimestmap}</Text>
+                  {isEdited && (
+                    <Text variant="subtle" size="xs">
+                      {t`(edited)`}
+                    </Text>
+                  )}
+                </FlexRow>
+
+                {/* Username row on mobile */}
+                <FlexRow align="center" className="items-center min-w-0">
+                  <Text className="message-sender-name message-sender-name-responsive">
+                    {sender.displayName}
+                  </Text>
+                  {message.isPinned && (
+                    <Tooltip
+                      id={`pin-indicator-mobile-${message.messageId}`}
+                      content={
+                        message.pinnedBy
+                          ? t`Pinned by ${mapSenderToUser(message.pinnedBy)?.displayName || message.pinnedBy}`
+                          : t`Pinned`
+                      }
+                      showOnTouch={true}
+                      autoHideAfter={3000}
+                    >
+                      <Icon
+                        name="pin"
+                        size="sm"
+                        variant="filled"
+                        className="ml-2 text-accent"
+                      />
+                    </Tooltip>
+                  )}
+                  <Text className="pl-2">
+                    {!message.signature && (
+                      <Tooltip
+                        id={`signature-warning-mobile-${message.messageId}`}
+                        content={t`Message does not have a valid signature, this may not be from the sender`}
+                        showOnTouch={true}
+                        autoHideAfter={3000}
+                      >
+                        <Icon
+                          name="warning"
+                          variant="filled"
+                          size="xs"
+                          className="text-warning"
+                        />
+                      </Tooltip>
+                    )}
+                  </Text>
+                </FlexRow>
+              </FlexColumn>
 
               {(() => {
                 const contentData = formatting.getContentData();

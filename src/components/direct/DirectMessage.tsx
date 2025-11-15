@@ -604,8 +604,8 @@ const DirectMessage: React.FC<{}> = () => {
 
             {/* User info - hidden on mobile first row, shown on desktop */}
             <Container className="hidden lg:flex flex-1 min-w-0">
-              <FlexRow className="items-center">
-                <FlexColumn className="justify-around">
+              <FlexRow className="items-center min-w-0">
+                <FlexColumn className="justify-around flex-shrink-0">
                   <UserAvatar
                     userIcon={otherUser.userIcon}
                     displayName={otherUser.displayName ?? otherUser.address}
@@ -613,30 +613,24 @@ const DirectMessage: React.FC<{}> = () => {
                     size={28}
                   />
                 </FlexColumn>
-                <FlexRow className="pl-2">
-                  <FlexColumn className="justify-around font-semibold">
-                    <Text>{otherUser.displayName ?? otherUser.address}</Text>
-                  </FlexColumn>
-                  <FlexColumn className="justify-around px-1">
-                    <Text className="text-subtle">|</Text>
-                  </FlexColumn>
-                  <FlexColumn className="justify-around">
-                    <FlexRow className="items-center">
-                      <ClickToCopyContent
-                        text={address ?? ''}
-                        tooltipText={t`Copy address`}
-                        tooltipLocation="right"
-                        className="text-subtle"
-                        iconPosition="right"
-                        iconClassName="text-subtle hover:text-surface-7"
-                        iconSize="xs"
-                        textSize="xs"
-                      >
-                        {truncateAddress(address ?? '')}
-                      </ClickToCopyContent>
-                    </FlexRow>
-                  </FlexColumn>
-                </FlexRow>
+                <div className="pl-2 flex items-center gap-2 truncate whitespace-nowrap overflow-hidden min-w-0">
+                  <Text className="font-semibold dm-header-username-responsive">
+                    {otherUser.displayName ?? otherUser.address}
+                  </Text>
+                  <Text className="text-subtle flex-shrink-0">|</Text>
+                  <ClickToCopyContent
+                    text={address ?? ''}
+                    tooltipText={t`Copy address`}
+                    tooltipLocation="right"
+                    className="text-subtle flex-shrink-0"
+                    iconPosition="right"
+                    iconClassName="text-subtle hover:text-surface-7"
+                    iconSize="xs"
+                    textSize="xs"
+                  >
+                    {truncateAddress(address ?? '')}
+                  </ClickToCopyContent>
+                </div>
               </FlexRow>
             </Container>
 
@@ -703,8 +697,8 @@ const DirectMessage: React.FC<{}> = () => {
 
           {/* Second row on mobile: user info / Hidden on desktop (shown above) */}
           <Container className="w-full lg:hidden">
-            <FlexRow className="items-center">
-              <FlexColumn className="justify-around">
+            <FlexRow className="items-center min-w-0">
+              <FlexColumn className="justify-around flex-shrink-0">
                 <UserAvatar
                   userIcon={otherUser.userIcon}
                   displayName={otherUser.displayName ?? otherUser.address}
@@ -712,30 +706,24 @@ const DirectMessage: React.FC<{}> = () => {
                   size={28}
                 />
               </FlexColumn>
-              <FlexRow className="pl-2">
-                <FlexColumn className="justify-around font-semibold">
-                  <Text>{otherUser.displayName ?? otherUser.address}</Text>
-                </FlexColumn>
-                <FlexColumn className="justify-around px-1">
-                  <Text className="text-subtle">|</Text>
-                </FlexColumn>
-                <FlexColumn className="justify-around">
-                  <FlexRow className="items-center">
-                    <ClickToCopyContent
-                      text={address ?? ''}
-                      tooltipText={t`Copy address`}
-                      tooltipLocation="right"
-                      className="text-subtle"
-                      iconPosition="right"
-                      iconClassName="text-subtle hover:text-main"
-                      iconSize="xs"
-                      textSize="xs"
-                    >
-                      {truncateAddress(address ?? '')}
-                    </ClickToCopyContent>
-                  </FlexRow>
-                </FlexColumn>
-              </FlexRow>
+              <div className="pl-2 flex items-center gap-2 truncate whitespace-nowrap overflow-hidden min-w-0">
+                <Text className="font-semibold dm-header-username-responsive">
+                  {otherUser.displayName ?? otherUser.address}
+                </Text>
+                <Text className="text-subtle flex-shrink-0">|</Text>
+                <ClickToCopyContent
+                  text={address ?? ''}
+                  tooltipText={t`Copy address`}
+                  tooltipLocation="right"
+                  className="text-subtle flex-shrink-0"
+                  iconPosition="right"
+                  iconClassName="text-subtle hover:text-main"
+                  iconSize="xs"
+                  textSize="xs"
+                >
+                  {truncateAddress(address ?? '')}
+                </ClickToCopyContent>
+              </div>
             </FlexRow>
           </Container>
         </Container>

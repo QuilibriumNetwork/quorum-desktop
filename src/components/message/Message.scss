@@ -212,3 +212,33 @@
   }
 }
 
+/* === USERNAME TRUNCATION === */
+/* Responsive username truncation with different max-widths per screen size */
+.message-sender-name-responsive {
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+  flex-shrink: 1;
+
+  /* Above 1024px: 400px max-width */
+  max-width: 400px !important;
+
+  /* Below 1024px: 300px max-width - hardcoded truncation */
+  @media (max-width: $screen-lg) {
+    max-width: 300px !important;
+  }
+
+  @media (max-width: $screen-sm) {
+    max-width: 200px !important;
+  }
+
+}
+
+/* === MOBILE TIMESTAMP ALIGNMENT === */
+/* Remove left margin from timestamp on mobile when it's above username */
+@media (max-width: $screen-xs) {
+  .message-timestamp {
+    margin-left: 0 !important;
+  }
+}
+
