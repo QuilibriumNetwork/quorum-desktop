@@ -17,20 +17,59 @@ const DirectMessageContact: React.FunctionComponent<{
 }> = (props) => {
   let { address } = useParams<{ address: string }>();
   const { isMobile, isTablet, closeLeftSidebar } = useResponsiveLayoutContext();
+  const [isPressed, setIsPressed] = React.useState(false);
+  const [isNavigating, setIsNavigating] = React.useState(false);
 
   const handleContactClick = () => {
+    // Set navigating state to maintain accent color during transition
+    setIsNavigating(true);
     if (isMobile || isTablet) {
       closeLeftSidebar();
     }
   };
 
+  const handleMouseDown = () => {
+    setIsPressed(true);
+  };
+
+  const handleMouseUp = () => {
+    setIsPressed(false);
+  };
+
+  const handleMouseLeave = () => {
+    setIsPressed(false);
+  };
+
+  const handleTouchStart = () => {
+    setIsPressed(true);
+  };
+
+  const handleTouchEnd = () => {
+    setIsPressed(false);
+  };
+
+  // Reset navigating state when this contact becomes active
+  React.useEffect(() => {
+    if (address === props.address && isNavigating) {
+      setIsNavigating(false);
+    }
+  }, [address, props.address, isNavigating]);
+
   return (
     <Link to={`/messages/${props.address}`} onClick={handleContactClick}>
       <div
         className={
-          'relative flex flex-row items-center py-3 px-4 hover:bg-sidebar-hover' +
-          (address === props.address ? ' bg-sidebar-active-strong' : '')
+          'relative flex flex-row items-center py-3 px-4' +
+          (address === props.address || isPressed || isNavigating
+            ? ' !bg-sidebar-active-strong'
+            : ' hover:bg-sidebar-hover'
+          )
         }
+        onMouseDown={handleMouseDown}
+        onMouseUp={handleMouseUp}
+        onMouseLeave={handleMouseLeave}
+        onTouchStart={handleTouchStart}
+        onTouchEnd={handleTouchEnd}
       >
         {props.unread && address !== props.address && (
           <div className="dm-unread-dot" title="Unread messages" />
