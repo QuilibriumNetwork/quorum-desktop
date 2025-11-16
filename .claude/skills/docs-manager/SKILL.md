@@ -51,7 +51,15 @@ This skill automates the creation, updating, and organization of documentation f
 - Includes integration details, technical decisions, limitations
 - Cross-references related documentation and components
 
-### 4. Workflow Integration
+### 4. Index Automation
+- **Automatically runs update-index.py** after any file operation
+- **Executes yarn scan-docs** for comprehensive project documentation sync
+- Maintains synchronized INDEX.md reflecting current .agents state
+- Handles file moves between folders (.done, .solved, .archived)
+- Updates cross-references and directory organization
+- Preserves numeric ordering and proper categorization
+
+### 5. Workflow Integration
 - Respects folder structure: bugs/, tasks/, docs/ with .done/.solved/.archived subfolders
 - Maintains consistent naming conventions and templates
 - Preserves completed work and implementation notes
@@ -60,6 +68,8 @@ This skill automates the creation, updating, and organization of documentation f
 ## Instructions
 
 When the user requests documentation management, follow this workflow:
+
+**🔄 IMPORTANT**: Always run the index update script after any file operation to keep INDEX.md synchronized with the current state of the .agents directory.
 
 ### Step 1: Determine Document Type
 Analyze the request to identify:
@@ -75,11 +85,22 @@ Analyze the request to identify:
 - Complex tasks (Medium/High/Critical complexity) should always be analyzed by the feature-analyzer agent before implementation to avoid over-engineering and ensure best practices.
 - Tasks involving security considerations (authentication, encryption, user data, network communications, permissions) should be analyzed by the security-analyst agent before implementation.
 
+**Agent Review Notation**:
+- **Initially**: Create documents with only the basic AI warning: `> **⚠️ AI-Generated**: May contain errors. Verify before use.`
+- **After specialized agent review**: Add the review line: `> **Reviewed by**: [agent-name] agent`
+- **Common reviewing agents**:
+  - `feature-analyzer` - for implementation quality, best practices, over-engineering analysis
+  - `security-analyst` - for security implications, vulnerabilities, privacy concerns
+  - `frontend-style-validator` - for React component styling and cross-platform compliance
+  - Other specialized agents as appropriate
+- **Only add review notation** after the agent has completed its analysis AND any recommended changes have been implemented
+
 #### For Bug Reports (`.agents/bugs/`):
 ```markdown
 # [Clear Bug Description]
 
 > **⚠️ AI-Generated**: May contain errors. Verify before use.
+> **Reviewed by**: [agent-name] agent *(add only after agent review and implementation)*
 
 ## Symptoms
 [What goes wrong - observable behavior]
@@ -108,6 +129,7 @@ Use complexity-appropriate template:
 # [Action-Oriented Title]
 
 > **⚠️ AI-Generated**: May contain errors. Verify before use.
+> **Reviewed by**: [agent-name] agent *(add only after agent review and implementation)*
 
 **Status**: Pending
 **Complexity**: Low
@@ -146,6 +168,7 @@ Use complexity-appropriate template:
 # [Complex Feature Title]
 
 > **⚠️ AI-Generated**: May contain errors. Verify before use.
+> **Reviewed by**: [agent-name] agent *(add only after agent review and implementation)*
 
 **Status**: Pending
 **Complexity**: High
@@ -202,6 +225,7 @@ Use complexity-appropriate template:
 # [Feature Name]
 
 > **⚠️ AI-Generated**: May contain errors. Verify before use.
+> **Reviewed by**: [agent-name] agent *(add only after agent review and implementation)*
 
 ## Overview
 [What the feature does and why it exists]
@@ -264,7 +288,51 @@ _Created: YYYY-MM-DD_
 - Archiving outdated documentation
 - Updating cross-references when files move
 
-### Step 6: Commit Guidelines
+### Step 6: Agent Review Integration
+When creating or updating documents that would benefit from specialized review:
+
+1. **Create initial document** with basic AI warning
+2. **Identify review needs**:
+   - Complex tasks (Medium/High/Critical) → `feature-analyzer` agent
+   - Security-related content → `security-analyst` agent
+   - Frontend components → `frontend-style-validator` agent
+3. **Launch appropriate specialized agent** using Task tool
+4. **Implement agent recommendations** in the document
+5. **Add review notation** to document header: `> **Reviewed by**: [agent-name] agent`
+6. **Update index** to reflect any changes
+
+### Step 7: Index Management
+**CRITICAL: Always update the .agents index after any file operation**
+
+After creating, editing, moving, renaming, or deleting any bug report, task, or documentation file:
+
+1. **Run the index update script**:
+   ```bash
+   python3 /mnt/d/GitHub/Quilibrium/quorum-desktop/.claude/skills/docs-manager/update-index.py
+   ```
+
+2. **Verify the INDEX.md was updated**:
+   - Check that new files appear in the index
+   - Verify that moved files show in correct sections
+   - Confirm deleted files are removed from index
+
+**When to run the index update script**:
+- ✅ After creating any new .md file in .agents/
+- ✅ After moving files between folders (.done, .solved, .archived)
+- ✅ After renaming any .md file in .agents/
+- ✅ After deleting any .md file in .agents/
+- ✅ After editing titles (# headings) in existing files
+
+The script automatically:
+- **Runs yarn scan-docs** to sync project-wide documentation scanning
+- Scans all .md files in .agents/ directory
+- Extracts titles from first # heading
+- Organizes by folder structure (docs → bugs → tasks)
+- Maintains proper subfolder groupings
+- Updates "Last Updated" timestamp
+- Handles numeric prefixes for ordering (01-file.md, 02-file.md)
+
+### Step 8: Commit Guidelines
 - Create descriptive commit message following project conventions
 - Never mention "Claude" or "Anthropic" in commit messages
 - Focus on the "why" rather than the "what"
@@ -290,7 +358,72 @@ _Created: YYYY-MM-DD_
 ### Task Update Example
 **User says**: "Update the authentication task - some file paths have changed"
 
-**Skill response**: Reads existing task, verifies current file locations, updates outdated paths and line numbers, adds discovered edge cases, documents changes in Updates section.
+**Skill response**: Reads existing task, verifies current file locations, updates outdated paths and line numbers, adds discovered edge cases, documents changes in Updates section. Then runs the index update script to reflect any title changes in INDEX.md.
+
+### Index Update Example
+**User says**: "Move the completed auth task to the .done folder"
+
+**Skill response**:
+1. Moves `.agents/tasks/implement-user-authentication.md` to `.agents/tasks/.done/implement-user-authentication.md`
+2. Runs the comprehensive update script: `python3 update-index.py`
+   - Executes `yarn scan-docs` for project-wide documentation sync
+   - Updates INDEX.md with new file location
+3. Verifies the task now appears under "📋 Completed Tasks" instead of "📋 Tasks" in INDEX.md
+4. Reports successful completion with full documentation synchronization
+
+### Agent Review Workflow Examples
+
+#### Example 1: Security-Critical Task
+**User says**: "Create a task for implementing end-to-end encryption"
+
+**Initial creation**:
+```markdown
+# Implement End-to-End Encryption
+
+> **⚠️ AI-Generated**: May contain errors. Verify before use.
+
+**Status**: Pending
+**Complexity**: Critical
+```
+
+**After security-analyst review and implementation**:
+```markdown
+# Implement End-to-End Encryption
+
+> **⚠️ AI-Generated**: May contain errors. Verify before use.
+> **Reviewed by**: security-analyst agent
+
+**Status**: Pending
+**Complexity**: Critical
+```
+
+#### Example 2: Complex Feature Analysis
+**User says**: "Document the new modal system we built"
+
+**After feature-analyzer review**:
+```markdown
+# Modal System Architecture
+
+> **⚠️ AI-Generated**: May contain errors. Verify before use.
+> **Reviewed by**: feature-analyzer agent
+
+## Overview
+[Documentation refined based on agent analysis...]
+```
+
+#### Example 3: Frontend Component Validation
+**User says**: "Create task for new cross-platform Button component"
+
+**After frontend-style-validator review**:
+```markdown
+# Create Cross-Platform Button Component
+
+> **⚠️ AI-Generated**: May contain errors. Verify before use.
+> **Reviewed by**: frontend-style-validator agent
+
+**Status**: Pending
+**Complexity**: Medium
+```
 
 ## Workflow Integration
 
@@ -303,5 +436,11 @@ This skill integrates seamlessly with your existing workflow:
 5. **Cross-references properly** - links to related docs and code
 6. **Follows commit guidelines** - proper messages, no AI mentions
 7. **Updates systematically** - tracks changes and maintains history
+8. **🆕 Comprehensive documentation sync** - runs both yarn scan-docs and update-index.py for complete project-wide synchronization
+9. **🆕 Quality assurance through agent reviews** - integrates specialized agents for enhanced quality and best practices
 
-The skill essentially automates what you would do manually following your `agents-workflow.md`, but with intelligent context awareness and consistent application of your established patterns.
+The skill essentially automates what you would do manually following your `agents-workflow.md`, but with intelligent context awareness, consistent application of your established patterns, **comprehensive documentation synchronization** (both project-wide and .agents-specific), and **integrated quality reviews by specialized agents** to ensure the entire documentation ecosystem is well-maintained and synchronized.
+
+---
+
+_Updated: 2025-11-16_

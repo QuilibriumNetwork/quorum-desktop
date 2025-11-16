@@ -102,8 +102,11 @@ This is the main index for all documentation, bug reports, and task management.
 
 - [Combined Text + Image Messages](tasks/combined-text-image-messages.md)
 - [Conversation Deletion State Synchronization](tasks/conversation-deletion-state-sync.md)
+- [Date Translation with Moment.js Locale Configuration](tasks/i18n-date-translation-moment-locale.md)
 - [Device Identification Improvement](tasks/device-identification-improvement.md)
+- [DirectMessage Navigation State Persistence](tasks/dm-navigation-state-persistence.md)
 - [Implement Background Sync Queue for User Settings and Async Operations](tasks/background-sync-queue.md)
+- [Multi-User Invite Selection Enhancement](tasks/multi-user-invite-selection.md)
 - [Passkey Import UX Issue](tasks/passkey-import-ux-issue.md)
 - [Server Folders - Discord-Style Grouping Feature](tasks/server-folders-discord-style.md)
 - [Task: Implement Delete Public Invite Link Feature](tasks/delete-public-invite-link.md)
@@ -123,6 +126,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Shared Git Hooks Setup](tasks/.archived/shared-git-hooks-setup.md)
 - [Space/Channel Message Deletion Placeholders](tasks/.archived/space-message-deletion-placeholders.md)
 - [Task: Fix Search Results Limitation and Pagination](tasks/.archived/search-results-limitation-and-navigation-fix.md)
+- [Text Primitive Analysis: Typography Prop & Helpers Confusion](tasks/.archived/text-primitive-analysis.md)
 
 ### .Archived Css Refactor
 - [CSS Inventory - Complete Codebase Analysis](tasks/.archived/css-refactor/css-inventory.md)
@@ -254,4 +258,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2025-11-14 14:53:54
+**Last Updated**: 2025-11-16 16:30:23
