@@ -1,10 +1,38 @@
 import React, { useState } from 'react';
 import { ScrollContainer, Text } from '@/components/primitives';
 import { ExampleBox } from '../ExampleBox';
-import primitivesConfig from '../primitivesConfig.json';
+
+const config = {
+  id: "scrollcontainer-primitive",
+  title: "ScrollContainer",
+  description: "Scrollable container with customizable height and styling",
+  background: "modal",
+  columns: 2,
+  dynamicProps: {
+    height: {
+      type: "select",
+      options: ["xs", "sm", "md", "lg", "xl"],
+      default: "md",
+      label: "Height"
+    }
+  },
+  staticExamples: [
+    { name: "Article Content", props: {}, children: "Title and paragraph content" },
+    { name: "Long List", props: {}, children: "Extensive list with 50 items" }
+  ],
+  quickTips: [
+    "Use for long content in limited space",
+    "Height can be preset or custom value",
+    "Supports border and border radius",
+    "Preserves scroll position by default"
+  ],
+  codeExample: {
+    title: "Message List",
+    code: "import { ScrollContainer } from '@/components/primitives';\n\n<ScrollContainer\n  height=\"lg\"\n  showBorder\n  borderRadius=\"md\"\n>\n  {messages.map(msg => (\n    <MessageItem key={msg.id} {...msg} />\n  ))}\n</ScrollContainer>"
+  }
+} as const;
 
 export const ScrollContainerExamples: React.FC = () => {
-  const config = primitivesConfig.scrollcontainer;
   const [dynamicProps, setDynamicProps] = useState<Record<string, any>>({
     height: config.dynamicProps.height?.default || 'md',
   });

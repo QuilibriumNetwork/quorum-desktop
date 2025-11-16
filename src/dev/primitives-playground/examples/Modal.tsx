@@ -1,10 +1,39 @@
 import React, { useState } from 'react';
 import { Modal, Button, Text, FlexColumn, FlexRow } from '@/components/primitives';
 import { ExampleBox } from '../ExampleBox';
-import primitivesConfig from '../primitivesConfig.json';
 
 export const ModalExamples: React.FC = () => {
-  const config = primitivesConfig.modal;
+  const config = {
+    id: "modal-primitive",
+    title: "Modal",
+    description: "Cross-platform modal dialog component",
+    background: "chat",
+    columns: 3,
+    hideLabels: true,
+    dynamicProps: {
+      size: {
+        type: "select" as const,
+        options: ["small", "medium", "large"],
+        default: "medium",
+        label: "Size"
+      }
+    },
+    staticExamples: [
+      { name: "Basic Modal", props: { hideClose: true }, children: "Modal content goes here" },
+      { name: "With Close Button", props: { hideClose: false }, children: "Modal with close button" },
+      { name: "No Backdrop Close", props: { closeOnBackdropClick: false }, children: "Click backdrop won't close this modal" }
+    ],
+    quickTips: [
+      "Use size='medium' for most dialogs",
+      "Always provide a way to close the modal",
+      "Consider closeOnBackdrop=false for critical actions",
+      "Test keyboard navigation (Escape key)"
+    ],
+    codeExample: {
+      title: "All Modal Props",
+      code: "import { Modal } from '@/components/primitives';\n\n<Modal\n  // Required props\n  visible={isOpen}\n  title=\"Modal Title\"\n  onClose={handleClose}\n  children={<div>Modal content</div>}\n  \n  // Sizing\n  size=\"medium\" // 'small' | 'medium' | 'large'\n  \n  // Close behavior\n  hideClose={false} // Hide the X button\n  closeOnBackdropClick={true} // Close when clicking outside\n  closeOnEscape={true} // Close with Escape key\n  \n  // Layout\n  noPadding={false} // Remove default padding\n  titleAlign=\"left\" // 'left' | 'center'\n  \n  // Styling\n  className=\"custom-modal-class\"\n  \n  // Native-specific props\n  // swipeToClose={true} // React Native only\n  // swipeUpToOpen={false} // React Native only\n  // keyboardAvoidingView={true} // React Native only\n>\n  <div>Your modal content here</div>\n</Modal>"
+    }
+  } as const;
   const [dynamicProps, setDynamicProps] = useState<Record<string, any>>({
     size: config.dynamicProps.size?.default || 'medium',
   });

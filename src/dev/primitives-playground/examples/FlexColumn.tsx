@@ -1,10 +1,43 @@
 import React, { useState } from 'react';
 import { FlexColumn } from '@/components/primitives';
 import { ExampleBox } from '../ExampleBox';
-import primitivesConfig from '../primitivesConfig.json';
+
+const config = {
+  id: "flexcolumn-primitive",
+  title: "FlexColumn",
+  description: "Vertical flex layout container",
+  background: "surface-1",
+  columns: 1,
+  dynamicProps: {
+    gap: {
+      type: "select",
+      options: ["none", "xs", "sm", "md", "lg", "xl"],
+      default: "md",
+      label: "Gap"
+    },
+    align: {
+      type: "select",
+      options: ["start", "end", "center", "stretch"],
+      default: "start",
+      label: "Align"
+    }
+  },
+  staticExamples: [
+    { name: "Card Stack", props: {}, children: ["Header", "Content", "Footer"] }
+  ],
+  quickTips: [
+    "Use gap prop for consistent vertical spacing",
+    "align controls horizontal alignment of children",
+    "Perfect for form layouts and card structures",
+    "Use with padding for contained layouts"
+  ],
+  codeExample: {
+    title: "Form Layout",
+    code: "import { FlexColumn, Text, Input, Button } from '@/components/primitives';\n\n<FlexColumn gap=\"md\" align=\"stretch\">\n  <Text variant=\"strong\">Contact Form</Text>\n  <Input placeholder=\"Your name\" />\n  <Input placeholder=\"Your email\" type=\"email\" />\n  <Button type=\"primary\">Submit</Button>\n</FlexColumn>"
+  }
+} as const;
 
 export const FlexColumnExamples: React.FC = () => {
-  const config = primitivesConfig.flexcolumn;
   const [dynamicProps, setDynamicProps] = useState<Record<string, any>>({
     gap: config.dynamicProps.gap?.default || 'md',
     align: config.dynamicProps.align?.default || 'start',

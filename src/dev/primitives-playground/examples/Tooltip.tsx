@@ -1,11 +1,32 @@
 import React from 'react';
 import { Tooltip, Button, FlexRow } from '@/components/primitives';
 import { ExampleBox } from '../ExampleBox';
-import primitivesConfig from '../primitivesConfig.json';
+
+const config = {
+  id: "tooltip-primitive",
+  title: "Tooltip",
+  description: "Cross-platform tooltip component for helpful hints",
+  background: "surface-1",
+  columns: 1,
+  dynamicProps: {},
+  staticExamples: [
+    { name: "Basic Tooltip", props: { id: "basic", content: "This is a helpful tooltip message", place: "top" }, children: "Hover me" },
+    { name: "Custom Width", props: { id: "custom", content: "Short", maxWidth: 80, place: "top" }, children: "Small" },
+    { name: "With Border", props: { id: "bordered", content: "Highlighted tooltip with border", highlighted: true, place: "top" }, children: "Bordered" }
+  ],
+  quickTips: [
+    "Use for providing additional context",
+    "Keep tooltip content concise and helpful",
+    "Consider placement to avoid covering content",
+    "Use variants to indicate message importance"
+  ],
+  codeExample: {
+    title: "Interactive Help",
+    code: "import { Tooltip, Button } from '@/components/primitives';\n\n<Tooltip content=\"This button performs the primary action\" placement=\"top\">\n  <Button type=\"primary\">Submit Form</Button>\n</Tooltip>"
+  }
+} as const;
 
 export const TooltipExamples: React.FC = () => {
-  const config = primitivesConfig.tooltip;
-
   // Define all tooltip placements
   const placements = [
     { id: 'top', place: 'top', label: 'T' },

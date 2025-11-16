@@ -1,10 +1,35 @@
 import React, { useState } from 'react';
 import { Input, Icon, FlexRow } from '@/components/primitives';
 import { ExampleBox } from '../ExampleBox';
-import primitivesConfig from '../primitivesConfig.json';
 
 export const InputExamples: React.FC = () => {
-  const config = primitivesConfig.input;
+  const config = {
+    id: "input-primitive",
+    title: "Input",
+    description: "Cross-platform text input component",
+    background: "modal",
+    columns: 3,
+    dynamicProps: {},
+    staticExamples: [
+      { name: "Default (Filled)", props: { placeholder: "Enter text...", variant: "filled" }, children: null },
+      { name: "Bordered", props: { placeholder: "Bordered input", variant: "bordered" }, children: null },
+      { name: "Minimal Search", props: { placeholder: "Search something...", variant: "minimal", type: "search" }, children: null },
+      { name: "Email Type", props: { placeholder: "email@example.com", type: "email" }, children: null },
+      { name: "Password", props: { placeholder: "Password", type: "password" }, children: null },
+      { name: "With Error", props: { placeholder: "Invalid input", error: true, errorMessage: "This field is required" }, children: null },
+      { name: "Disabled", props: { placeholder: "Disabled input", disabled: true }, children: null }
+    ],
+    quickTips: [
+      "Use variant='bordered' for forms on light backgrounds",
+      "Always provide clear placeholder text",
+      "Use appropriate input types (email, password, number)",
+      "Show error states with clear messages"
+    ],
+    codeExample: {
+      title: "All Input Props",
+      code: "import { Input } from '@/components/primitives';\n\n<Input\n  // Core props\n  value={inputValue}\n  onChange={setInputValue}\n  placeholder=\"Enter text...\"\n  \n  // Variants\n  variant=\"filled\" // 'filled' | 'bordered' | 'minimal' | 'onboarding'\n  \n  // Input types\n  type=\"text\" // 'text' | 'email' | 'password' | 'number' | 'tel' | 'url' | 'search'\n  \n  // States\n  disabled={false}\n  autoFocus={false}\n  noFocusStyle={false}\n  \n  // Error handling\n  error={hasError}\n  errorMessage=\"This field is required\"\n  \n  // Labels\n  label=\"Field Label\"\n  labelType=\"static\" // 'static' | 'floating'\n  required={true}\n  helperText=\"Additional help text\"\n  \n  // Event handlers\n  onFocus={() => console.log('focused')}\n  onBlur={() => console.log('blurred')}\n  onKeyDown={(e) => console.log('key:', e.key)}\n  \n  // Styling\n  className=\"custom-class\"\n  style={{ width: '100%' }}\n  \n  // Accessibility\n  testID=\"input-test-id\"\n  accessibilityLabel=\"Accessible label\"\n/>"
+    }
+  } as const;
   const [inputValues, setInputValues] = useState<Record<string, string>>({});
   const [focusedIndex, setFocusedIndex] = useState<number | null>(null);
 

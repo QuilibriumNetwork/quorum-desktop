@@ -1,10 +1,43 @@
 import React, { useState } from 'react';
 import { Container, Text } from '@/components/primitives';
 import { ExampleBox } from '../ExampleBox';
-import primitivesConfig from '../primitivesConfig.json';
+
+const config = {
+  id: "container-primitive",
+  title: "Container",
+  description: "Cross-platform container with padding and layout control",
+  background: "surface-1",
+  columns: 1,
+  dynamicProps: {
+    padding: {
+      type: "select",
+      options: ["none", "xs", "sm", "md", "lg", "xl"],
+      default: "md",
+      label: "Padding"
+    },
+    maxWidth: {
+      type: "select",
+      options: ["none", "sm", "md", "lg", "xl", "full"],
+      default: "none",
+      label: "Max Width"
+    }
+  },
+  staticExamples: [
+    { name: "Basic Container", props: {}, children: "This content is wrapped in a container. Use the controls above to adjust padding and max width to see how the container adapts." }
+  ],
+  quickTips: [
+    "Use padding prop for consistent spacing",
+    "maxWidth controls responsive container width",
+    "centered prop centers content horizontally",
+    "fullWidth removes max-width constraints"
+  ],
+  codeExample: {
+    title: "Page Layout",
+    code: "import { Container, Text } from '@/components/primitives';\n\n<Container padding=\"lg\" maxWidth=\"md\" centered>\n  <Text variant=\"strong\" size=\"xl\">Page Title</Text>\n  <Text>Your page content goes here...</Text>\n</Container>"
+  }
+} as const;
 
 export const ContainerExamples: React.FC = () => {
-  const config = primitivesConfig.container;
   const [dynamicProps, setDynamicProps] = useState<Record<string, any>>({
     padding: config.dynamicProps.padding?.default || 'md',
     maxWidth: config.dynamicProps.maxWidth?.default || 'none',

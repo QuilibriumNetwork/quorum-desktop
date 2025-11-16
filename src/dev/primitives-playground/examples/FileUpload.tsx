@@ -1,10 +1,37 @@
 import React, { useState } from 'react';
 import { FileUpload, Text, Icon } from '@/components/primitives';
 import { ExampleBox } from '../ExampleBox';
-import primitivesConfig from '../primitivesConfig.json';
+
+const config = {
+  id: "fileupload-primitive",
+  title: "FileUpload",
+  description: "Cross-platform file upload with drag and drop support",
+  background: "surface-1",
+  columns: 2,
+  dynamicProps: {
+    multiple: {
+      type: "boolean",
+      default: false,
+      label: "Multiple Files"
+    }
+  },
+  staticExamples: [
+    { name: "Basic Upload", props: { accept: { "image/*": [".png", ".jpg", ".jpeg", ".gif"] } }, children: "Click or drag files here" },
+    { name: "Multiple Files", props: { multiple: true }, children: "Upload multiple files" }
+  ],
+  quickTips: [
+    "Supports drag and drop on web",
+    "Use accept prop to filter file types",
+    "maxSize prop limits file size",
+    "onFilesSelected receives file array"
+  ],
+  codeExample: {
+    title: "Image Upload",
+    code: "import { FileUpload } from '@/components/primitives';\n\n<FileUpload\n  accept={{ 'image/*': ['.png', '.jpg'] }}\n  maxSize={5242880} // 5MB\n  onFilesSelected={(files) => {\n    console.log('Files:', files);\n  }}\n>\n  <div className=\"border-2 border-dashed p-8\">\n    Drop images here or click to browse\n  </div>\n</FileUpload>"
+  }
+} as const;
 
 export const FileUploadExamples: React.FC = () => {
-  const config = primitivesConfig.fileupload;
   const [dynamicProps, setDynamicProps] = useState<Record<string, any>>({
     multiple: config.dynamicProps.multiple?.default || false,
   });

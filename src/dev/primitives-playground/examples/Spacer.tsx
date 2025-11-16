@@ -1,10 +1,39 @@
 import React, { useState } from 'react';
 import { Spacer, FlexColumn, FlexRow } from '@/components/primitives';
 import { ExampleBox } from '../ExampleBox';
-import primitivesConfig from '../primitivesConfig.json';
+
+const config = {
+  id: "spacer-primitive",
+  title: "Spacer",
+  description: "Cross-platform spacing component for layout control",
+  background: "surface-1",
+  columns: 3,
+  dynamicProps: {
+    size: {
+      type: "select",
+      options: ["xs", "sm", "md", "lg", "xl"],
+      default: "md",
+      label: "Size"
+    }
+  },
+  staticExamples: [
+    { name: "Horizontal Spacing", props: { direction: "horizontal" }, children: null },
+    { name: "Vertical Spacing", props: { direction: "vertical" }, children: null },
+    { name: "With Border", props: {}, children: null }
+  ],
+  quickTips: [
+    "Use for consistent spacing between elements",
+    "Works in both horizontal and vertical layouts",
+    "Size prop controls the amount of space",
+    "Better than manual margins for responsive design"
+  ],
+  codeExample: {
+    title: "Layout Spacing",
+    code: "import { Spacer, Text, Button } from '@/components/primitives';\n\n<FlexColumn>\n  <Text>First section</Text>\n  <Spacer size=\"lg\" />\n  <Text>Second section</Text>\n  <Spacer size=\"md\" />\n  <Button type=\"primary\">Action</Button>\n</FlexColumn>\n\n// SPACER-BORDER-SPACER pattern\n<FlexColumn>\n  <Text>Section 1</Text>\n  <Spacer\n    spaceBefore=\"md\"\n    spaceAfter=\"md\"\n    border={true}\n    direction=\"vertical\"\n  />\n  <Text>Section 2</Text>\n</FlexColumn>"
+  }
+} as const;
 
 export const SpacerExamples: React.FC = () => {
-  const config = primitivesConfig.spacer;
   const [dynamicProps, setDynamicProps] = useState<Record<string, any>>({
     size: config.dynamicProps.size?.default || 'md',
   });

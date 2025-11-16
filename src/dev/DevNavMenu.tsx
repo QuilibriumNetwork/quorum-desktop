@@ -67,7 +67,7 @@ export const DevNavMenu: React.FC<DevNavMenuProps> = ({
                     : 'text-subtle hover:text-main'
                 }`}
               >
-                <Icon name={item.icon} size="sm" variant="filled" />
+                <Icon name={item.icon} size="sm" variant="outline" />
                 {item.name}
               </a>
             );
