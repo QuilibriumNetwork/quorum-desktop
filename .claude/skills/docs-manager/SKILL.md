@@ -21,13 +21,17 @@ This skill automates the creation, updating, and organization of documentation f
 - Following the established .agents workflow
 
 **Automatically triggers on phrases like:**
-- "create a doc/bug report/task..."
+- "create a doc...
+- "create a bug report..."
+- "create a task..."
 - "document this feature..."
 - "track this task..."
 - "file this issue..."
 - "add to .agents..."
 - "move to .done..."
-- "update the doc/bug report/task..."
+- "update the bug report..."
+- "update the doc..."
+- "update the task..."
 
 ## Core Capabilities
 
