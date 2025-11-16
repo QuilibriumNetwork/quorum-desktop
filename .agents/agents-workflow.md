@@ -111,6 +111,24 @@ Before implementing, read relevant docs:
 
 ### Styling Components
 
+**Core Rules:**
+- **Use Tailwind in JSX** for simple styles (< 7 classes)
+- **Use raw CSS in .scss** for complex/shared styles
+- **NEVER use `@apply`** (anti-pattern - loses benefits of both)
+- **Always use `rem`** instead of `px` (follow Tailwind spacing scale)
+- **Always use CSS variables** for colors (never hardcode hex values)
+
+**Theme System:**
+- Light/dark themes controlled via `dark` class on `<html>`
+- Accent colors: `accent-50` → `accent-900` (dynamic theming support)
+- Surface colors: `surface-00` → `surface-10`
+- Text colors: `text-strong`, `text-main`, `text-subtle`, `text-muted`
+
+**Utility Colors (RGB-based):**
+- `danger`, `warning`, `success`, `info`
+- Usage: `rgb(var(--danger))` or `rgb(var(--danger) / 0.5)` for opacity
+- Tailwind classes: `text-danger`, `bg-danger`, `border-danger`
+
 **Steps**:
 1. ✅ Use semantic CSS variables from `src/index.css`
 2. ✅ Apply via Tailwind utilities or component props
@@ -121,7 +139,7 @@ Before implementing, read relevant docs:
 **Key Resources**:
 - [Primitive Styling Guide](docs/features/primitives/05-primitive-styling-guide.md)
 - [Theming System](docs/features/cross-platform-theming.md)
-- [Quick Reference - Styling](../AGENTS.md#styling)
+- [Styling Guidelines](docs/styling-guidelines.md) ⭐ **Complete guide**
 
 ---
 
@@ -153,6 +171,17 @@ Before implementing, read relevant docs:
 | Choose primitive vs HTML | [When to Use Primitives](docs/features/primitives/03-when-to-use-primitives.md) |
 | Migrate web component | [Migration Guide](docs/features/primitives/04-web-to-native-migration.md) |
 | Style component | [Styling Guide](docs/features/primitives/05-primitive-styling-guide.md) |
+
+### Primitives Reference
+
+**Quick lookup** - for complete details see [API Reference](docs/features/primitives/API-REFERENCE.md):
+
+| Component | Use For |
+|-----------|---------|
+| `Button`, `Input`, `Select`, `Switch` | **Always use** - Interactive elements |
+| `Modal`, `ModalContainer` | **Always use** - Modal boundaries |
+| `Text`, `Title`, `Paragraph`, `Label` | **Platform-specific** - See [text guidance](docs/features/primitives/03-when-to-use-primitives.md#text-component-decision-framework) |
+| `FlexRow`, `FlexColumn`, `Container` | **Case-by-case** - Simple layouts |
 
 ### Modal Systems
 
@@ -293,14 +322,24 @@ _Created: YYYY-MM-DD_
 - Read related docs before implementing
 - Check `.done/` and `.solved/` for completed examples
 
-### 2. Use Primitives Everywhere
+### 2. Use Primitives Strategically
 
-**Why**: Ensures cross-platform compatibility
+**Why**: Ensures consistency where it matters, flexibility where it helps
+
+**⚡ Quick Rules:**
+- **Interactive elements**: Always use primitives (Button, Input, Select, Modal, Switch)
+- **Text elements**: Platform-specific approach (helpers for shared, Text+as for web-only)
+- **Layout containers**: Case-by-case evaluation
+
+**📖 Complete Guidance**: See [When to Use Primitives](docs/features/primitives/03-when-to-use-primitives.md)
+- Decision framework (5 questions)
+- Platform-specific text guidance (helpers vs Text+as)
+- Typography vs legacy props coexistence
+- Detailed examples and anti-patterns
 
 **How**:
-- Always check [API Reference](docs/features/primitives/API-REFERENCE.md) first
-- Never use raw HTML (`<div>`, `<button>`, `<input>`)
-- Use `FlexRow`/`FlexColumn` instead of manual flexbox
+- Always check [API Reference](docs/features/primitives/API-REFERENCE.md) first for interactive elements
+- Apply the [decision framework](docs/features/primitives/03-when-to-use-primitives.md#decision-framework) when unsure
 
 ### 3. Think Mobile-First
 
@@ -335,25 +374,16 @@ _Created: YYYY-MM-DD_
 
 ### ❌ Avoid These Mistakes
 
-#### 1. Using Raw HTML Instead of Primitives
+#### 1. Wrong Primitive Usage Decisions
 
-**Bad**:
-```tsx
-<div className="flex">
-  <p>Text</p>
-  <button onClick={handleClick}>Action</button>
-</div>
-```
+**Problem**: Inconsistent primitive usage leads to maintenance issues and platform incompatibility.
 
-**Good**:
-```tsx
-<FlexRow gap="md">
-  <Text>Text</Text>
-  <Button onClick={handleClick}>Action</Button>
-</FlexRow>
-```
+**Solution**: Follow the systematic approach in [When to Use Primitives](docs/features/primitives/03-when-to-use-primitives.md):
+- Always use primitives for interactive elements (Button, Input, etc.)
+- Apply the 5-question decision framework for other components
+- Use platform-specific text approach (helpers vs Text+as)
 
-**Why**: Raw HTML breaks on React Native
+**Examples**: See [practical examples](docs/features/primitives/03-when-to-use-primitives.md#practical-examples) for good vs over-engineered approaches.
 
 ---
 
@@ -438,8 +468,10 @@ yarn lint
 
 **Good**:
 ```bash
-cmd.exe /c "cd /d D:\GitHub\Quilibrium\quorum-desktop && npx tsc --noEmit"
-cmd.exe /c "cd /d D:\GitHub\Quilibrium\quorum-desktop && yarn lint"
+# Convert current path to Windows format and run commands
+WINDOWS_PATH=$(pwd | sed 's|^/mnt/\([a-z]\)/|\U\1:/|' | sed 's|/|\\|g')
+cmd.exe /c "cd /d $WINDOWS_PATH && npx tsc --noEmit"
+cmd.exe /c "cd /d $WINDOWS_PATH && yarn lint"
 ```
 
 **Why**: Node.js is installed on Windows, not WSL
@@ -459,7 +491,8 @@ cmd.exe /c "cd /d D:\GitHub\Quilibrium\quorum-desktop && yarn lint"
 
 ### During Development
 
-- [ ] Use primitives instead of raw HTML/RN elements
+- [ ] Use primitives strategically (always for interactions, case-by-case for layout)
+- [ ] Reference [primitives decision framework](docs/features/primitives/03-when-to-use-primitives.md#decision-framework) when unsure
 - [ ] Think mobile-first (test on mobile)
 - [ ] Follow React Hooks rules (no conditional returns before hooks)
 - [ ] Use semantic CSS variables and theme colors

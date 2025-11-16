@@ -205,6 +205,66 @@ Ask these questions:
 4. **Is the CSS complex/specialized?** → Keep raw HTML + SCSS
 5. **Is this performance-critical?** → Measure first, optimize if needed
 
+## Text Component Decision Framework
+
+### Helper vs Text+as Choice
+
+**CRITICAL: Decision based on component type (file suffix):**
+
+#### ✅ **MUST Use Helpers: Shared Components (Component.tsx)**
+**Components used by both web and mobile platforms**
+```tsx
+// Shared component - mobile needs automatic spacing
+<Title typography="title">Page Title</Title>        // MUST use helper
+<Paragraph typography="body">Content</Paragraph>    // MUST use helper
+<Label typography="label">Form Label</Label>        // MUST use helper
+<Caption typography="small">Help text</Caption>     // MUST use helper
+```
+
+#### ❌ **DON'T Use Helpers: Web-Only Components (Component.web.tsx)**
+**Components with .web.tsx suffix - use Text + as prop**
+```tsx
+// Web-only component - semantic HTML better
+<Text as="h1" typography="title">Page Title</Text>     // DON'T use Title helper
+<Text as="p" typography="body">Content</Text>          // DON'T use Paragraph helper
+<Text as="span" typography="label">Label</Text>        // DON'T use Label helper
+<Text as="p" typography="small">Help text</Text>       // DON'T use Caption helper
+```
+
+#### ✅ **PREFER Helpers: Mobile-Only Components (Component.native.tsx)**
+**Components with .native.tsx suffix - helpers provide optimal spacing**
+```tsx
+// Mobile-only component - helpers provide automatic spacing benefits
+<Title typography="title">Page Title</Title>
+<Paragraph typography="body">Content</Paragraph>
+```
+
+### Typography vs Legacy Props Choice
+
+**Both approaches are valid long-term. NO deprecation planned for legacy props.**
+
+#### ✅ **Use Typography Prop When:**
+- Standard semantic text (titles, body, labels, captions)
+- Want cross-platform design consistency
+- Following established design system patterns
+- New components using modern patterns
+
+```tsx
+<Title typography="title">Standard Page Title</Title>
+<Text as="p" typography="body">Standard content</Text>
+```
+
+#### ✅ **Use Legacy Props When:**
+- Custom sizing not covered by typography scale
+- One-off design requirements
+- Need precise control over appearance
+- Existing components that work well
+
+```tsx
+<Text size="xs" weight="medium" variant="warning">Custom micro-text</Text>
+<Text size="2xl" weight="normal" color="rgba(255,255,255,0.7)">Hero subtitle</Text>
+```
+
 ## Best Practice
 
 **Use primitives where they add value: consistency, reusability, and maintainability. Don't force them everywhere for ideological purity.**
