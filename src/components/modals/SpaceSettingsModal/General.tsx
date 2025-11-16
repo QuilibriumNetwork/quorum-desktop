@@ -145,6 +145,10 @@ const General: React.FunctionComponent<GeneralProps> = ({
         />
       </div>
       <div className="modal-content-section">
+        <Spacer size="md" direction="vertical" borderTop={true} />
+        <div className="text-subtitle-2 mb-2">
+          <Trans>Space Description</Trans>
+        </div>
         <div className="w-full mb-2">
           <TextArea
             value={description}
