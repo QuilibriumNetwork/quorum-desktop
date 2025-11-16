@@ -1,0 +1,50 @@
+📋 QUORUM TECHNICAL CHANGELOG
+🚀 Development Updates - Nov 09 to Nov 16
+
+
+🎉 NEW FEATURES:
+• add message previews to DM list (87069ff)
+• add Space notifications info callout (2dfbb8b)
+• add loading states for role management (545d546)
+• add unread message features to DMs (18358f6)
+• add New Messages separator with smart thresholds (5d097ef)
+• auto-jump to first unread message (7028126)
+• enhance search with virtualization and auto-indexing (6321b71)
+• hash navigation to old messages (a156159)
+• add jump-to-present button for messages (e268c75)
+• add date separators to message lists (42c1775)
+
+✨ ENHANCEMENTS:
+• improve mobile header spacing and borders (2757f95)
+• add custom thin scrollbars globally (6ba3c60)
+• improve modal close button and textarea sizing (2e426ca)
+• redesign UserStatus as pill-shaped component for desktop (a73e064)
+• update message composer with paperclip icon and pill shape (2b540c9)
+• unify unread indicators using timestamp comparison (9b1db90)
+• improve JoinSpaceModal layout and UX (6f42e42)
+• improve display name input spacing (7ff2fb4)
+
+🐛 BUG FIXES:
+• contact click shows accent color instantly (aafc0ca)
+• search field visibility based on touch capability (232d29a)
+• truncate long usernames with responsive breakpoints (565a258)
+• prevent jump button in short conversations (61c4975)
+• DM preview text truncate to 2 lines (91dcb0e)
+• add missing right positioning to modal close button (ad28092)
+• prevent hidden role mentions in UI and backend (266b85f)
+• add timeout protection to CreateSpaceModal (1b565e0)
+• display names in reply previews and role mention styling (adf3f04)
+• render mentions with adjacent text (71aee67)
+• exclude own messages from DM unread count (a129d92)
+• use message timestamp for DM read time tracking (8ea647e)
+
+🌐 LOCALIZATION:
+• update translations for DM previews (e21ff1b)
+• update translations and line endings (277e1d6)
+• update translation catalogs and references (218a795)
+• Translate and compile (2a065af)
+• translate and compile (3ca9621)
+
+---
+35 changes documented (filtered out 29 internal commits)
+Generated 2025-11-16 by changelog-generator skill

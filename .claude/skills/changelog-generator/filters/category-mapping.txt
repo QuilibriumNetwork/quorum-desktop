@@ -1,0 +1,40 @@
+# Category Mapping for User-Friendly Changelogs
+# Maps commit patterns to industry-standard categories
+# Format: pattern|category|description
+
+# New Features - Major new functionality
+✨ feat:|features|🎉 New Features
+feat:|features|🎉 New Features
+
+# Enhancements - UI/UX improvements, performance, polish
+🎨 style:|enhancements|✨ Enhancements
+style:|enhancements|✨ Enhancements
+🚀 perf:|enhancements|✨ Enhancements
+perf:|enhancements|✨ Enhancements
+
+# Bug Fixes - Issues resolved
+🐛 fix:|bugs|🐛 Bug Fixes
+fix:|bugs|🐛 Bug Fixes
+
+# Localization - Translation updates
+🌐 i18n:|localization|🌐 Localization
+i18n:|localization|🌐 Localization
+
+# Maintenance - Technical improvements (technical changelog only)
+🧹 chore:|maintenance|🔧 Maintenance
+chore:|maintenance|🔧 Maintenance
+⚙️ refactor:|maintenance|🔧 Maintenance
+refactor:|maintenance|🔧 Maintenance
+
+# Compatibility - Platform-specific improvements
+responsive|compatibility|📱 Compatibility
+mobile|compatibility|📱 Compatibility
+Mobile|compatibility|📱 Compatibility
+cross-platform|compatibility|📱 Compatibility
+platform|compatibility|📱 Compatibility
+Platform|compatibility|📱 Compatibility
+touch|compatibility|📱 Compatibility
+Touch|compatibility|📱 Compatibility
+
+# Default category for unmatched patterns
+.*|enhancements|✨ Enhancements

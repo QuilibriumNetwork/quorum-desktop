@@ -1,0 +1,112 @@
+# Exclude Patterns for User-Friendly Changelogs
+# These patterns identify commits that should be excluded from user-facing changelogs
+# Focus on internal development work that doesn't affect user experience
+
+# Internal Development Work
+🧹 chore:
+chore:
+⚙️ refactor:
+refactor:
+🧪 test:
+test:
+testing:
+📦 build:
+build:
+🔧 config:
+config:
+configuration:
+
+# Documentation and Tasks (not user-facing)
+📝 doc:
+doc:
+docs:
+documentation:
+✅ task:
+task:
+
+# Development Environment
+playground
+audit
+lint
+linting
+eslint
+prettier
+webpack
+vite
+rollup
+
+# Code Quality (internal)
+cleanup
+clean up
+code review
+cr:
+review:
+formatting
+format
+whitespace
+comments
+comment
+typo
+typos
+
+# Development Workflow
+merge
+rebase
+cherry-pick
+hotfix
+wip
+work in progress
+
+# Dependency Management
+dependency
+dependencies
+deps
+package
+packages
+update.*package
+upgrade.*package
+bump.*version
+version bump
+
+# CI/CD and Deployment
+ci:
+cd:
+deploy:
+deployment:
+pipeline
+workflows
+action
+actions
+
+# Internal Refactoring (no user impact)
+internal
+restructure
+reorganize
+move.*file
+rename.*file
+extract.*function
+split.*component
+
+# Development Tools
+script
+scripts
+tool
+tools
+helper
+helpers
+utility
+utilities
+
+# Testing Infrastructure
+spec
+specs
+mock
+mocks
+stub
+stubs
+fixture
+fixtures
+
+# Component/Primitive Development (internal architecture)
+primitive
+component complexity
