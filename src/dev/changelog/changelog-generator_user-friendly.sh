@@ -15,9 +15,9 @@ echo "📝 Step 1: Collecting commits..."
 git log --since="$DAYS days ago" --no-merges --pretty=format:"%H|%s|%b" $BRANCH > temp_all_commits.txt
 
 # Filter for user-facing changes (exclude technical/dev stuff)
-# Now includes emoji-prefixed commits: ✨ feat:, 🐛 fix:, 🎨 style:, 🚀 perf:
+# Handles both emoji-prefixed (✨ feat:, 🐛 fix:, 🎨 style:, 🚀 perf:) and non-emoji (feat:, fix:, style:, perf:) formats
 echo "🔍 Step 2: Filtering important commits..."
-cat temp_all_commits.txt | grep -iE "\|(✨ feat:|🐛 fix:|🎨 style:|🚀 perf:|Add|Implement|Fix|Improve|Enhance|Update)" | grep -viE "(playground|audit|component complexity|primitive|typescript|build|lint|✅ task:|📝 doc:|🧹 chore:|⚙️ refactor:|🧪 test:|📦 build:)" > important_commits.txt
+cat temp_all_commits.txt | grep -iE "\|(✨ feat:|feat:|🐛 fix:|fix:|🎨 style:|style:|🚀 perf:|perf:|Add|Implement|Fix|Improve|Enhance|Update)" | grep -viE "(playground|audit|component complexity|primitive|typescript|build|lint|✅ task:|task:|📝 doc:|doc:|🧹 chore:|chore:|⚙️ refactor:|refactor:|🧪 test:|test:|📦 build:|build:)" > important_commits.txt
 
 # Create analysis file for Claude
 echo "🤖 Step 3: Preparing analysis for Claude Code..."

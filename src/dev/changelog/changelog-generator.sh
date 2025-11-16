@@ -30,13 +30,13 @@ echo "" >> "$OUTPUT"
 echo "✨ NEW FEATURES:" >> "$TEXT_OUTPUT"
 
 # Get major new features - user-facing functionality only
-# Matches: ✨ feat: or traditional "Add/Implement" patterns
+# Matches: ✨ feat:, feat:, or traditional "Add/Implement" patterns
 git log --since="$DAYS days ago" --no-merges --pretty=format:"%H|%s" $BRANCH \
-  | grep -iE "\|(✨ feat:|Add|Implement)" \
-  | grep -viE "(playground|audit|component complexity|primitive|✅ task:|📝 doc:|🧹 chore:)" \
+  | grep -iE "\|(✨ feat:|feat:|Add|Implement)" \
+  | grep -viE "(playground|audit|component complexity|primitive|✅ task:|📝 doc:|🧹 chore:|task:|doc:|chore:)" \
   | while IFS='|' read -r hash message; do
-    # Strip emoji prefix and type tag (e.g., "✨ feat: " or "🐛 fix: ")
-    clean_message=$(echo "$message" | sed -E 's/^[[:space:]]*(✨|🐛|🎨|🚀|🧹|⚙️|🧪|📦|📝|✅|🈶)[[:space:]]*(feat|fix|style|perf|chore|refactor|test|build|doc|task|i18n):[[:space:]]*//')
+    # Strip emoji prefix and type tag (handles both "✨ feat: " and "feat: " formats)
+    clean_message=$(echo "$message" | sed -E 's/^[[:space:]]*(✨|🐛|🎨|🚀|🧹|⚙️|🧪|📦|📝|✅|🈶)?[[:space:]]*(feat|fix|style|perf|chore|refactor|test|build|doc|task|i18n):[[:space:]]*//')
     echo "- $clean_message ([${hash:0:7}]($REMOTE_URL/commit/$hash))" >> "$OUTPUT"
     echo "• $clean_message (${hash:0:7})" >> "$TEXT_OUTPUT"
   done
@@ -48,13 +48,13 @@ echo "" >> "$TEXT_OUTPUT"
 echo "🔧 BUG FIXES:" >> "$TEXT_OUTPUT"
 
 # Get important bug fixes - user-facing issues only
-# Matches: 🐛 fix: or traditional "Fix" patterns
+# Matches: 🐛 fix:, fix:, or traditional "Fix" patterns
 git log --since="$DAYS days ago" --no-merges --pretty=format:"%H|%s" $BRANCH \
-  | grep -iE "\|(🐛 fix:|Fix)" \
-  | grep -viE "(typescript|component|primitive|✅ task:|📝 doc:|🧹 chore:)" \
+  | grep -iE "\|(🐛 fix:|fix:|Fix)" \
+  | grep -viE "(typescript|component|primitive|✅ task:|📝 doc:|🧹 chore:|task:|doc:|chore:)" \
   | while IFS='|' read -r hash message; do
-    # Strip emoji prefix and type tag
-    clean_message=$(echo "$message" | sed -E 's/^[[:space:]]*(✨|🐛|🎨|🚀|🧹|⚙️|🧪|📦|📝|✅|🈶)[[:space:]]*(feat|fix|style|perf|chore|refactor|test|build|doc|task|i18n):[[:space:]]*//')
+    # Strip emoji prefix and type tag (handles both "🐛 fix: " and "fix: " formats)
+    clean_message=$(echo "$message" | sed -E 's/^[[:space:]]*(✨|🐛|🎨|🚀|🧹|⚙️|🧪|📦|📝|✅|🈶)?[[:space:]]*(feat|fix|style|perf|chore|refactor|test|build|doc|task|i18n):[[:space:]]*//')
     echo "- $clean_message ([${hash:0:7}]($REMOTE_URL/commit/$hash))" >> "$OUTPUT"
     echo "• $clean_message (${hash:0:7})" >> "$TEXT_OUTPUT"
   done
@@ -66,13 +66,13 @@ echo "" >> "$TEXT_OUTPUT"
 echo "🎨 UX IMPROVEMENTS:" >> "$TEXT_OUTPUT"
 
 # Get significant UX improvements - user-visible changes only
-# Matches: 🎨 style:, 🚀 perf:, or traditional "Improve/Enhance" patterns
+# Matches: 🎨 style:, style:, 🚀 perf:, perf:, or traditional "Improve/Enhance" patterns
 git log --since="$DAYS days ago" --no-merges --pretty=format:"%H|%s" $BRANCH \
-  | grep -iE "\|(🎨 style:|🚀 perf:|Improve|Enhance)" \
-  | grep -viE "(playground|primitive|component|✅ task:|📝 doc:|🧹 chore:)" \
+  | grep -iE "\|(🎨 style:|style:|🚀 perf:|perf:|Improve|Enhance)" \
+  | grep -viE "(playground|primitive|component|✅ task:|📝 doc:|🧹 chore:|task:|doc:|chore:)" \
   | while IFS='|' read -r hash message; do
-    # Strip emoji prefix and type tag
-    clean_message=$(echo "$message" | sed -E 's/^[[:space:]]*(✨|🐛|🎨|🚀|🧹|⚙️|🧪|📦|📝|✅|🈶)[[:space:]]*(feat|fix|style|perf|chore|refactor|test|build|doc|task|i18n):[[:space:]]*//')
+    # Strip emoji prefix and type tag (handles both emoji and non-emoji formats)
+    clean_message=$(echo "$message" | sed -E 's/^[[:space:]]*(✨|🐛|🎨|🚀|🧹|⚙️|🧪|📦|📝|✅|🈶)?[[:space:]]*(feat|fix|style|perf|chore|refactor|test|build|doc|task|i18n):[[:space:]]*//')
     echo "- $clean_message ([${hash:0:7}]($REMOTE_URL/commit/$hash))" >> "$OUTPUT"
     echo "• $clean_message (${hash:0:7})" >> "$TEXT_OUTPUT"
   done
