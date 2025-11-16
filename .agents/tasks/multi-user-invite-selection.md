@@ -2,6 +2,8 @@
 
 > **⚠️ AI-Generated**: May contain errors. Verify before use.
 
+Implemneted by Tyler?
+
 ## Overview
 
 Enhance the Space Settings invite modal to support sending invites to multiple users at once through:

@@ -61,7 +61,7 @@ const DirectMessageContact: React.FunctionComponent<{
         className={
           'relative flex flex-row items-center py-3 px-4' +
           (address === props.address || isPressed || isNavigating
-            ? ' !bg-sidebar-active-strong'
+            ? ' !bg-sidebar-active-accent'
             : ' hover:bg-sidebar-hover'
           )
         }

@@ -30,7 +30,7 @@ Shows message previews and timestamps in the DM conversation list, similar to Si
 ### Colors
 
 - **Normal state:** `text-muted` for preview/timestamp
-- **Active state:** `bg-sidebar-active-strong` (accent color @ 20% opacity), `text-subtle` for preview/timestamp
+- **Active state:** `bg-sidebar-active-accent` (accent color @ 20% opacity), `text-subtle` for preview/timestamp
 - **Hover state:** `bg-sidebar-hover`
 
 ## Architecture
@@ -46,7 +46,7 @@ Shows message previews and timestamps in the DM conversation list, similar to Si
 - `src/hooks/business/conversations/useConversationPreviews.ts` - React Query hook
 - `src/components/direct/DirectMessageContact.tsx` - Two-line layout
 - `src/components/direct/DirectMessageContactsList.tsx` - Integrate previews
-- `src/styles/_colors.scss:51` - `--color-bg-sidebar-active-strong` variable
+- `src/styles/_colors.scss:51` - `--color-bg-sidebar-active-accent` variable
 
 ### Message Preview Logic
 
