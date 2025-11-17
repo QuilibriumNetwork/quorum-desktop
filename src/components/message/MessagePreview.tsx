@@ -1,5 +1,5 @@
 import React from 'react';
-import { Message as MessageType, Sticker } from '../../api/quorumApi';
+import { Message as MessageType, Sticker, Role, Channel } from '../../api/quorumApi';
 import { Container, Text, FlexRow, FlexColumn, Spacer, Icon } from '../primitives';
 import { t } from '@lingui/core/macro';
 import { useMessageFormatting } from '../../hooks/business/messages/useMessageFormatting';
@@ -12,6 +12,10 @@ interface MessagePreviewProps {
   stickers?: { [key: string]: Sticker };
   showBackground?: boolean;
   hideHeader?: boolean;
+  spaceRoles?: Role[];
+  spaceChannels?: Channel[];
+  onChannelClick?: (channelId: string) => void;
+  disableMentionInteractivity?: boolean;
 }
 
 export const MessagePreview: React.FC<MessagePreviewProps> = ({
@@ -20,6 +24,10 @@ export const MessagePreview: React.FC<MessagePreviewProps> = ({
   stickers,
   showBackground = true,
   hideHeader = false,
+  spaceRoles = [],
+  spaceChannels = [],
+  onChannelClick,
+  disableMentionInteractivity = false,
 }) => {
   // Extract senderId from the message content based on message type
   const senderId = message.content?.senderId || '';
@@ -31,6 +39,9 @@ export const MessagePreview: React.FC<MessagePreviewProps> = ({
     stickers: stickers || {},
     mapSenderToUser: mapSenderToUser || (() => ({})),
     onImageClick: () => {}, // No-op for message preview - just display images
+    spaceRoles,
+    spaceChannels,
+    disableMentionInteractivity,
   });
 
   // Get display name - prefer sender displayName, fallback to username, then senderId
@@ -120,9 +131,20 @@ export const MessagePreview: React.FC<MessagePreviewProps> = ({
               if (tokenData.type === 'mention') {
                 renderedTokens.push(
                   <React.Fragment key={tokenData.key}>
-                    <Text className="message-name-mentions-you">
+                    <span className="message-name-mentions-you">
                       {tokenData.displayName}
-                    </Text>{' '}
+                    </span>{' '}
+                  </React.Fragment>
+                );
+              } else if (tokenData.type === 'channel-mention') {
+                renderedTokens.push(
+                  <React.Fragment key={tokenData.key}>
+                    <span
+                      className={`message-name-mentions-you ${disableMentionInteractivity ? '' : 'cursor-pointer'}`}
+                      onClick={disableMentionInteractivity ? undefined : () => onChannelClick && onChannelClick(tokenData.channelId)}
+                    >
+                      {tokenData.displayName}
+                    </span>{' '}
                   </React.Fragment>
                 );
               } else if (tokenData.type === 'link') {

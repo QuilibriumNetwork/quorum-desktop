@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Virtuoso } from 'react-virtuoso';
-import type { Message as MessageType, Channel, Sticker } from '../../api/quorumApi';
+import type { Message as MessageType, Channel, Sticker, Role } from '../../api/quorumApi';
 import MessagePreview from './MessagePreview';
 import {
   FlexRow,
@@ -31,6 +31,9 @@ interface PinnedMessagesPanelProps {
   virtuosoRef?: any;
   messageList?: MessageType[];
   stickers?: { [key: string]: any };
+  spaceRoles?: Role[];
+  spaceChannels?: Channel[];
+  onChannelClick?: (channelId: string) => void;
 }
 
 interface PinnedMessageItemProps {
@@ -40,6 +43,9 @@ interface PinnedMessageItemProps {
   canPinMessages: boolean;
   togglePin: (e: React.MouseEvent, message: MessageType) => void;
   stickers?: { [key: string]: Sticker };
+  spaceRoles?: Role[];
+  spaceChannels?: Channel[];
+  onChannelClick?: (channelId: string) => void;
 }
 
 // Extract PinnedMessageItem component for Virtuoso optimization
@@ -50,6 +56,9 @@ const PinnedMessageItem: React.FC<PinnedMessageItemProps> = ({
   canPinMessages,
   togglePin,
   stickers,
+  spaceRoles,
+  spaceChannels,
+  onChannelClick,
 }) => {
   const sender = mapSenderToUser(message.content?.senderId);
 
@@ -110,6 +119,10 @@ const PinnedMessageItem: React.FC<PinnedMessageItemProps> = ({
           stickers={stickers}
           showBackground={false}
           hideHeader={true}
+          spaceRoles={spaceRoles}
+          spaceChannels={spaceChannels}
+          onChannelClick={onChannelClick}
+          disableMentionInteractivity={true}
         />
       </Container>
     </Container>
@@ -126,10 +139,13 @@ export const PinnedMessagesPanel: React.FC<PinnedMessagesPanelProps> = ({
   virtuosoRef,
   messageList,
   stickers,
+  spaceRoles,
+  spaceChannels,
+  onChannelClick,
 }) => {
   const navigate = useNavigate();
   const { pinnedMessages, canPinMessages, isLoading, togglePin } =
-    usePinnedMessages(spaceId, channelId, channel, mapSenderToUser, stickers);
+    usePinnedMessages(spaceId, channelId, channel, mapSenderToUser, stickers, spaceRoles, spaceChannels, onChannelClick);
 
 
   // Use the new React state-based message highlighting
@@ -225,6 +241,9 @@ export const PinnedMessagesPanel: React.FC<PinnedMessagesPanelProps> = ({
                       canPinMessages={canPinMessages}
                       togglePin={togglePin}
                       stickers={stickers}
+                      spaceRoles={spaceRoles}
+                      spaceChannels={spaceChannels}
+                      onChannelClick={onChannelClick}
                     />
                   </div>
                 )}
@@ -243,6 +262,9 @@ export const PinnedMessagesPanel: React.FC<PinnedMessagesPanelProps> = ({
                   canPinMessages={canPinMessages}
                   togglePin={togglePin}
                   stickers={stickers}
+                  spaceRoles={spaceRoles}
+                  spaceChannels={spaceChannels}
+                  onChannelClick={onChannelClick}
                 />
               )}
               className="pinned-messages-list"

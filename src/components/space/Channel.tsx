@@ -840,6 +840,9 @@ const Channel: React.FC<ChannelProps> = ({
                     virtuosoRef={messageListRef.current?.getVirtuosoRef()}
                     messageList={messageList}
                     stickers={stickers}
+                    spaceRoles={roles}
+                    spaceChannels={spaceChannels}
+                    onChannelClick={handleChannelClick}
                   />
                 </div>
               )}

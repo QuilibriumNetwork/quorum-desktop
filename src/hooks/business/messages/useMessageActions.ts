@@ -1,6 +1,6 @@
 import { useCallback, useState } from 'react';
 import React from 'react';
-import { Message as MessageType } from '../../../api/quorumApi';
+import { Message as MessageType, Role, Channel } from '../../../api/quorumApi';
 import { useConfirmationModal } from '../../../components/context/ConfirmationModalProvider';
 import MessagePreview from '../../../components/message/MessagePreview';
 import { extractMessageRawText } from '../../../utils/clipboard';
@@ -21,6 +21,9 @@ interface UseMessageActionsOptions {
   stickers?: { [key: string]: any };
   onEdit?: (message: MessageType) => void;
   onViewEditHistory?: (message: MessageType) => void;
+  spaceRoles?: Role[];
+  spaceChannels?: Channel[];
+  onChannelClick?: (channelId: string) => void;
 }
 
 export function useMessageActions(options: UseMessageActionsOptions) {
@@ -38,6 +41,9 @@ export function useMessageActions(options: UseMessageActionsOptions) {
     stickers,
     onEdit,
     onViewEditHistory,
+    spaceRoles,
+    spaceChannels,
+    onChannelClick,
   } = options;
 
   // State for copied link feedback
@@ -125,7 +131,15 @@ export function useMessageActions(options: UseMessageActionsOptions) {
     showConfirmationModal({
       title: t`Delete Message`,
       message: t`Are you sure you want to delete this message?`,
-      preview: React.createElement(MessagePreview, { message, mapSenderToUser, stickers }),
+      preview: React.createElement(MessagePreview, {
+        message,
+        mapSenderToUser,
+        stickers,
+        spaceRoles,
+        spaceChannels,
+        onChannelClick,
+        disableMentionInteractivity: true,
+      }),
       confirmText: t`Delete`,
       cancelText: t`Cancel`,
       variant: 'danger',

@@ -179,6 +179,9 @@ export const Message = React.memo(
       onViewEditHistory: (msg) => {
         setShowEditHistoryModal(true);
       },
+      spaceRoles,
+      spaceChannels,
+      onChannelClick,
     });
 
     // Emoji picker business logic
@@ -223,7 +226,10 @@ export const Message = React.memo(
       message.channelId || '',
       channel,
       mapSenderToUser,
-      stickers
+      stickers,
+      spaceRoles,
+      spaceChannels,
+      onChannelClick
     );
 
     // Message highlighting logic - replaces isHashTarget
@@ -818,18 +824,18 @@ export const Message = React.memo(
                           );
                         }
 
-                        if (tokenData.type === 'channel') {
+                        if (tokenData.type === 'channel-mention') {
                           return (
                             <React.Fragment key={tokenData.key}>
                               <Text
                                 as="span"
-                                className="message-name-mentions-everyone"
-                                style={{ cursor: 'pointer' }}
-                                onClick={() => {
+                                className="message-name-mentions-you"
+                                style={{ cursor: tokenData.isInteractive ? 'pointer' : 'default' }}
+                                onClick={tokenData.isInteractive ? () => {
                                   if (onChannelClick) {
                                     onChannelClick(tokenData.channelId);
                                   }
-                                }}
+                                } : undefined}
                               >
                                 {tokenData.displayName}
                               </Text>{' '}

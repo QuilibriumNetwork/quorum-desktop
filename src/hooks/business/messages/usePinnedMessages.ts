@@ -1,7 +1,7 @@
 import { useState, useCallback, useEffect } from 'react';
 import React from 'react';
 import { useQueryClient, useMutation, useQuery } from '@tanstack/react-query';
-import type { Message, Channel } from '../../../api/quorumApi';
+import type { Message, Channel, Role } from '../../../api/quorumApi';
 import { useMessageDB } from '../../../components/context/useMessageDB';
 import { useSpaceOwner } from '../../queries/spaceOwner';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
@@ -20,7 +20,10 @@ export const usePinnedMessages = (
   channelId: string,
   channel?: Channel,
   mapSenderToUser?: (senderId: string) => any,
-  stickers?: { [key: string]: any }
+  stickers?: { [key: string]: any },
+  spaceRoles?: Role[],
+  spaceChannels?: Channel[],
+  onChannelClick?: (channelId: string) => void
 ) => {
   const queryClient = useQueryClient();
   const user = usePasskeysContext();
@@ -229,15 +232,23 @@ export const usePinnedMessages = (
         message: message.isPinned 
           ? t`Are you sure you want to unpin this message?` 
           : t`Are you sure you want to pin this message?`,
-        preview: React.createElement(MessagePreview, { message, mapSenderToUser, stickers }),
+        preview: React.createElement(MessagePreview, {
+          message,
+          mapSenderToUser,
+          stickers,
+          spaceRoles,
+          spaceChannels,
+          onChannelClick,
+          disableMentionInteractivity: true,
+        }),
         confirmText: message.isPinned ? t`Unpin` : t`Pin`,
         cancelText: t`Cancel`,
-        variant: message.isPinned ? 'danger' : 'primary',
+        variant: message.isPinned ? 'danger' : 'info',
         protipAction: message.isPinned ? t`unpin` : t`pin`,
         onConfirm: performToggle,
       });
     },
-    [pinMessage, unpinMessage, showConfirmationModal, mapSenderToUser]
+    [pinMessage, unpinMessage, showConfirmationModal, mapSenderToUser, spaceRoles, spaceChannels, onChannelClick]
   );
 
   return {

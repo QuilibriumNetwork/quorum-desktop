@@ -9,6 +9,11 @@
   // Message previews should always be text-sm for readability on all devices
   .message-preview-post {
     font-size: $text-sm !important;
+
+    // Preserve mention styling within message previews
+    .message-name-mentions-you {
+      font-size: $text-sm !important; // Match parent text size, but keep other mention styling
+    }
   }
 }
 

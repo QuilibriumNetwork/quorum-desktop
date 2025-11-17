@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import * as linkify from 'linkifyjs';
-import { Message as MessageType, Sticker, Role } from '../../../api/quorumApi';
+import { Message as MessageType, Sticker, Role, Channel } from '../../../api/quorumApi';
 import { isYouTubeURL, extractYouTubeVideoId, YOUTUBE_URL_REGEX } from '../../../utils/youtubeUtils';
 import { getValidInvitePrefixes } from '../../../utils/inviteDomain';
 
@@ -16,6 +16,8 @@ interface UseMessageFormattingOptions {
   mapSenderToUser: (senderId: string) => any;
   onImageClick: (imageUrl: string) => void;
   spaceRoles?: Role[];
+  spaceChannels?: Channel[];
+  disableMentionInteractivity?: boolean;
 }
 
 // Detect if text contains markdown patterns
@@ -48,7 +50,7 @@ function isInviteLink(token: string): boolean {
 }
 
 export function useMessageFormatting(options: UseMessageFormattingOptions) {
-  const { message, stickers, mapSenderToUser, onImageClick, spaceRoles = [] } = options;
+  const { message, stickers, mapSenderToUser, onImageClick, spaceRoles = [], spaceChannels = [], disableMentionInteractivity = false } = options;
 
 
   // Handle image click with size checking
@@ -142,6 +144,7 @@ export function useMessageFormatting(options: UseMessageFormattingOptions) {
           key: `${messageId}-${lineIndex}-${tokenIndex}`,
           displayName: '@everyone',
           address: 'everyone',
+          isInteractive: !disableMentionInteractivity,
         };
       }
 
@@ -154,6 +157,7 @@ export function useMessageFormatting(options: UseMessageFormattingOptions) {
           key: `${messageId}-${lineIndex}-${tokenIndex}`,
           displayName: mention.displayName || `@${userId.substring(0, 8)}...`,
           address: userId,
+          isInteractive: !disableMentionInteractivity,
         };
       }
 
@@ -171,6 +175,27 @@ export function useMessageFormatting(options: UseMessageFormattingOptions) {
             key: `${messageId}-${lineIndex}-${tokenIndex}`,
             displayName: `@${role.roleTag}`,
             address: role.roleId,
+            isInteractive: !disableMentionInteractivity,
+          };
+        }
+      }
+
+      // Check for channel mentions (only style if channel exists in message.mentions.channelIds)
+      if (token.match(/^#<([^>]+)>$/) && message.mentions?.channelIds && message.mentions.channelIds.length > 0) {
+        const channelId = token.substring(2, token.length - 1);
+
+        // Find the channel in spaceChannels to verify it exists and get channel name
+        const channel = spaceChannels.find(c => c.channelId === channelId);
+
+        // Only render as mention if the channel exists AND is in the message's channelIds
+        if (channel && message.mentions.channelIds.includes(channelId)) {
+          return {
+            type: 'channel-mention' as const,
+            key: `${messageId}-${lineIndex}-${tokenIndex}`,
+            displayName: `#${channel.channelName}`,
+            channelId: channelId,
+            channelName: channel.channelName,
+            isInteractive: !disableMentionInteractivity,
           };
         }
       }
@@ -214,7 +239,7 @@ export function useMessageFormatting(options: UseMessageFormattingOptions) {
         text: token,
       };
     },
-    [mapSenderToUser, message.mentions, spaceRoles]
+    [mapSenderToUser, message.mentions, spaceRoles, spaceChannels, disableMentionInteractivity]
   );
 
   return {

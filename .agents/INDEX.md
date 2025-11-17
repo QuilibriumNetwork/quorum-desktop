@@ -110,6 +110,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Implement Discord-Like Mention Pills in Message Composer](tasks/mention-pills-in-message-textarea.md)
 - [Implement Message Forwarding with Privacy Controls](tasks/message-forwarding-with-privacy-controls.md)
 - [Multi-User Invite Selection Enhancement](tasks/multi-user-invite-selection.md)
+- [Optimize Mention Interactivity Disable Feature](tasks/optimize-mention-interactivity-disable-feature.md)
 - [Passkey Import UX Issue](tasks/passkey-import-ux-issue.md)
 - [Server Folders - Discord-Style Grouping Feature](tasks/server-folders-discord-style.md)
 - [Task: Implement Delete Public Invite Link Feature](tasks/delete-public-invite-link.md)
@@ -263,4 +264,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2025-11-17 18:24:30
+**Last Updated**: 2025-11-17 19:27:35

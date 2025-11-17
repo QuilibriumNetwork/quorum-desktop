@@ -41,7 +41,7 @@ const renderTextWithMentions = (
       const displayName = user?.displayName || address.substring(0, 8) + '...';
 
       parts.push(
-        <span key={`mention-${match.index}`} className="text-accent-500 font-medium">
+        <span key={`mention-${match.index}`} className="message-name-mentions-you">
           @{displayName}
         </span>
       );
@@ -49,7 +49,7 @@ const renderTextWithMentions = (
     // Handle @everyone
     else if (matchedText.toLowerCase() === '@everyone') {
       parts.push(
-        <span key={`mention-${match.index}`} className="text-accent-500 font-medium">
+        <span key={`mention-${match.index}`} className="message-name-mentions-you">
           @everyone
         </span>
       );
@@ -57,7 +57,7 @@ const renderTextWithMentions = (
     // Handle role mentions @roleTag
     else {
       parts.push(
-        <span key={`mention-${match.index}`} className="text-accent-500 font-medium">
+        <span key={`mention-${match.index}`} className="message-name-mentions-you">
           {matchedText}
         </span>
       );
