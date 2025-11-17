@@ -70,13 +70,10 @@ This is the main index for all documentation, bug reports, and task management.
 - [Expired Invite Card Validation Timing Issue](bugs/expired-invite-card-validation-timing.md)
 - [JoinSpaceModal "Invalid JSON" Error Due to Network Issues](bugs/joinspacemodal-invalid-json-network-error.md)
 - [Kick User Button Remains Enabled After User is Kicked](bugs/kick-user-button-state-after-kick.md)
-- [Kick User UX Improvements](bugs/kick-user-ux-improvements.md)
 - [Markdown Line Break Inconsistency](bugs/markdown-line-break-inconsistency.md)
 - [Message Hash Navigation Conflict Bug](bugs/message-hash-navigation-conflict.md)
 - [MessageDB Context: IndexedDB Platform Compatibility Issue](bugs/messagedb-cross-platform-storage-issue.md)
-- [MobileDrawer Virtuoso Double Scroller CSS Issues](bugs/mobiledrawer-virtuoso-double-scroller.md)
 - [Modal Gesture Handling Technical Debt](bugs/modal-gesture-handling-technical-debt.md)
-- [New Messages Separator - Intersection Observer Dismissal Issues](bugs/new-messages-separator-intersection-observer-issues.md)
 - [Performance Issue: UserSettingsModal Save Times Scale Poorly with Number of Spaces](bugs/usersettingsmodal-scalability-performance.md)
 - [Pinned Messages Panel Button Clicks Bug](bugs/pinned-messages-panel-clicks-and-message-list-disappearing.md)
 - [Public Invite Link Intermittent Expiration Bug](bugs/public-invite-link-intermittent-expiration.md)
@@ -87,6 +84,9 @@ This is the main index for all documentation, bug reports, and task management.
 - [Bug: Auto-Jump to First Unread Message - Blocked by Virtuoso Scroll Positioning](bugs/.solved/auto-jump-unread-virtuoso-scroll-conflict.md)
 - [Channel/Group Save Race Condition](bugs/.solved/channel-group-save-race-condition.md)
 - [Icon Color Not Saving Issue](bugs/.solved/icon-color-not-saving-issue.md)
+- [Kick User UX Improvements](bugs/.solved/kick-user-ux-improvements.md)
+- [MobileDrawer Virtuoso Double Scroller CSS Issues](bugs/.solved/mobiledrawer-virtuoso-double-scroller.md)
+- [New Messages Separator - Intersection Observer Dismissal Issues](bugs/.solved/new-messages-separator-intersection-observer-issues.md)
 - [NewDirectMessage Modal: URL-to-State Conversion](bugs/.solved/SOLVED_newdirectmessage-modal-url-to-state-conversion.md)
 - [React Hooks Violation: Conditional Return Before Hooks](bugs/.solved/SOLVED_react-hooks-violation-conditional-return.md)
 - [Solved Search Results Page Refresh And Focus Stealing](bugs/.solved/SOLVED_search-results-page-refresh-and-focus-stealing.md)
@@ -261,4 +261,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2025-11-17 12:11:53
+**Last Updated**: 2025-11-17 13:24:27

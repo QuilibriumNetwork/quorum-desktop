@@ -1,19 +1,25 @@
 #!/usr/bin/env python3
 """
-Index Update Script for .agents directory
+Comprehensive Documentation Update Script for .agents directory
 
-This script automatically updates the INDEX.md file by:
-1. Scanning all markdown files in .agents directory
-2. Extracting titles from files
-3. Organizing files by folder structure (docs -> bugs -> tasks)
-4. Maintaining proper subfolder groupings
-5. Updating the "Last Updated" timestamp
+This script performs complete documentation synchronization by:
+1. Running 'yarn scan-docs' to update the project's markdown files scan
+2. Scanning all markdown files in .agents directory
+3. Extracting titles from files
+4. Organizing files by folder structure (docs -> bugs -> tasks)
+5. Maintaining proper subfolder groupings
+6. Updating the "Last Updated" timestamp in INDEX.md
+
+The script ensures both the project's documentation system and the .agents
+index are synchronized and up-to-date.
 
 Usage: python3 update-index.py
 """
 
 import os
 import re
+import subprocess
+import sys
 from datetime import datetime
 
 def extract_title(file_path):
@@ -56,9 +62,45 @@ def sort_files_smart(file_list):
     return sorted(file_list, key=get_file_sort_key)
 
 
+def run_yarn_scan_docs():
+    """Run yarn scan-docs to update the documentation scan"""
+    try:
+        # Navigate to project root from .agents directory
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+        project_root = os.path.join(script_dir, '..')
+        project_root = os.path.abspath(project_root)
+
+        print('[YARN] Running yarn scan-docs...')
+
+        # Use cmd.exe for Windows compatibility from WSL
+        if os.name == 'posix' and '/mnt/' in project_root:
+            # WSL environment - use cmd.exe to run yarn
+            windows_path = project_root.replace('/mnt/d/', 'D:\\').replace('/', '\\')
+            cmd = f'cmd.exe /c "cd /d {windows_path} && yarn scan-docs"'
+            result = subprocess.run(cmd, shell=True, capture_output=True, text=True, cwd=project_root)
+        else:
+            # Direct yarn execution for other environments
+            result = subprocess.run(['yarn', 'scan-docs'], capture_output=True, text=True, cwd=project_root)
+
+        if result.returncode == 0:
+            print('[YARN] ✅ yarn scan-docs completed successfully')
+            return True
+        else:
+            print(f'[YARN] ⚠️  yarn scan-docs failed with return code {result.returncode}')
+            print(f'[YARN] stdout: {result.stdout}')
+            print(f'[YARN] stderr: {result.stderr}')
+            return False
+
+    except Exception as e:
+        print(f'[YARN] ❌ Error running yarn scan-docs: {e}')
+        return False
+
 def scan_readme_directory():
     """Scan .agents directory and build file structure"""
     readme_root = os.path.dirname(os.path.abspath(__file__))  # Current script directory
+
+    if not os.path.exists(readme_root):
+        raise FileNotFoundError(f".agents directory not found at: {readme_root}")
     
     # Organize by structure - DOCS FIRST, BUGS SECOND, TASKS THIRD
     docs_root = []
@@ -285,8 +327,18 @@ def scan_readme_directory():
 
 if __name__ == '__main__':
     try:
+        # Step 1: Run yarn scan-docs first
+        yarn_success = run_yarn_scan_docs()
+
+        # Step 2: Update INDEX.md regardless of yarn result (INDEX.md is still useful)
         scan_readme_directory()
-        print('\n[Index] Index update completed successfully!')
+
+        # Final status report
+        if yarn_success:
+            print('\n[SUCCESS] ✅ Both yarn scan-docs and index update completed successfully!')
+        else:
+            print('\n[PARTIAL] ⚠️  Index update completed, but yarn scan-docs had issues. Check output above.')
+
     except Exception as e:
-        print(f'[Error] Error updating index: {e}')
+        print(f'\n[ERROR] ❌ Error during execution: {e}')
         exit(1)
