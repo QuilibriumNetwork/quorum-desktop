@@ -140,13 +140,17 @@ const MessageActionsDrawer: React.FC<MessageActionsDrawerProps> = ({
           </Button>
         ))}
         {/* More reactions button with dashed circle */}
-        <Button
-          type="unstyled"
+        <div
           onClick={handleMoreReactions}
-          iconName="mood-happy"
-          iconOnly
           className="quick-reaction-more"
-        />
+        >
+          <Icon
+            name="mood-happy"
+            size="lg"
+            variant="filled"
+            color="var(--color-text-subtle)"
+          />
+        </div>
       </div>
     </div>
   );

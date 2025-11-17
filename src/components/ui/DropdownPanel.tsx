@@ -72,7 +72,7 @@ export const DropdownPanel: React.FC<DropdownPanelProps> = ({
         const targetElement = event.target as Element;
 
         // Check current element and parents for button-related classes/ids
-        let currentElement = targetElement;
+        let currentElement: Element | null = targetElement;
         let isTooltipElement = false;
 
         // Walk up the DOM tree to find button-related elements or Select dropdown
@@ -81,7 +81,7 @@ export const DropdownPanel: React.FC<DropdownPanelProps> = ({
           const elementClassName =
             typeof currentElement.className === 'string'
               ? currentElement.className
-              : currentElement.className?.baseVal || '';
+              : (currentElement.className as any)?.baseVal || '';
 
           isTooltipElement =
             elementId.includes('jump-') ||

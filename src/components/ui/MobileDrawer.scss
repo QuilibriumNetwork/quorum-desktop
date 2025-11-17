@@ -3,7 +3,7 @@
 // Common Mobile Drawer Styles
 // Note: Backdrop is handled by OverlayBackdrop primitive
 .mobile-drawer {
-  background: var(--surface-0); // Match DropdownPanel background
+  background: var(--color-bg-mobile-drawer); // Use semantic mobile drawer background
   border-radius: $rounded-2xl $rounded-2xl 0 0;
   width: 500px; // Fixed width of 500px by default
   box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.3);
@@ -34,8 +34,8 @@
 
 .mobile-drawer__header-area {
   flex-shrink: 0;
-  background: var(--surface-0); // Same as drawer background (better contrast with backdrop)
-  border-bottom: $border solid var(--surface-3); // Full-width border separator
+  background: var(--color-bg-mobile-drawer); // Use semantic mobile drawer background
+  border-bottom: $border solid var(--color-border-mobile-drawer); // Full-width border separator
   padding-bottom: $s-4; // Padding below title/close button
   position: sticky; // Make header sticky when scrolling
   top: 0;
@@ -107,7 +107,7 @@
 .mobile-drawer__content {
   flex: 0 1 auto; // Allow content-based sizing (don't force expansion)
   overflow-y: auto; // Allow vertical scrolling when content exceeds max-height
-  background: var(--surface-0); // Ensure content background matches
+  background: var(--color-bg-mobile-drawer); // Use semantic mobile drawer background
   padding: 0; // No default padding - let child content control spacing
 }
 
@@ -166,7 +166,7 @@
   }
 
   .mobile-drawer__header {
-    border-bottom: $border solid var(--surface-3);
+    border-bottom: $border solid var(--color-border-mobile-drawer);
   }
 
   .mobile-drawer__close {
