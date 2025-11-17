@@ -166,7 +166,7 @@ export function isMentionedWithSettings(
 
 /**
  * Extract mentions from message text
- * Parses @<address> format mentions, @roleTag mentions, @everyone, and #channelname mentions
+ * Parses @<address> format mentions, @roleTag mentions, @everyone, and #<channelId> mentions
  *
  * @param text - The message text to parse
  * @param options - Optional configuration for mention extraction
@@ -191,9 +191,9 @@ export function isMentionedWithSettings(
  * // Returns: { memberIds: [], roleIds: ['role-id-1', 'role-id-2'], channelIds: [] }
  *
  * @example
- * const text = "Check out #general and #announcements for updates!";
+ * const text = "Check out #<ch-abc123> and #<ch-def456> for updates!";
  * const mentions = extractMentionsFromText(text, { spaceChannels: [...] });
- * // Returns: { memberIds: [], roleIds: [], channelIds: ['channel-id-1', 'channel-id-2'] }
+ * // Returns: { memberIds: [], roleIds: [], channelIds: ['ch-abc123', 'ch-def456'] }
  */
 export function extractMentionsFromText(
   text: string,
@@ -260,26 +260,23 @@ export function extractMentionsFromText(
     }
   }
 
-  // Extract channel mentions: #channelname (NO brackets)
+  // Extract channel mentions: only #<channelId> format is supported
   if (options?.spaceChannels && options.spaceChannels.length > 0) {
-    // Match #word pattern (alphanumeric + hyphen/underscore)
-    // Negative lookahead (?!\w) ensures word boundary
-    const channelMentionRegex = /#([a-zA-Z0-9_-]+)(?!\w)/g;
-    const channelMatches = Array.from(textWithoutCodeBlocks.matchAll(channelMentionRegex));
+    // Only Format: #<channelId> - bracket format with IDs only
+    const bracketChannelMentionRegex = /#<([^>]+)>/g;
+    const bracketChannelMatches = Array.from(textWithoutCodeBlocks.matchAll(bracketChannelMentionRegex));
 
-    for (const match of channelMatches) {
-      const possibleChannelName = match[1];
+    for (const match of bracketChannelMatches) {
+      const possibleChannelId = match[1];
 
-      // Validate against space channels (case-insensitive)
-      const channel = options.spaceChannels.find(
-        c => c.channelName.toLowerCase() === possibleChannelName.toLowerCase()
-      );
+      // Match by ID only (exact match for rename-safety)
+      const channel = options.spaceChannels.find(c => c.channelId === possibleChannelId);
 
       // Only add if channel exists and not already in list
       if (channel && !mentions.channelIds.includes(channel.channelId)) {
         mentions.channelIds.push(channel.channelId);
       }
-      // If channel doesn't exist, #channelName remains plain text (no extraction)
+      // If channel doesn't exist, #<channelId> remains plain text (no extraction)
     }
   }
 

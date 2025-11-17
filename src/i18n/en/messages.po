@@ -31,7 +31,7 @@ msgid "No Role - {count}"
 msgstr "No Role - {count}"
 
 #. js-lingui-explicit-id
-#: src/components/space/Channel.tsx:990
+#: src/components/space/Channel.tsx:1015
 msgid "Send a message to #{channel_name}"
 msgstr "Send a message to #{channel_name}"
 
@@ -47,7 +47,7 @@ msgstr "{count} New Messages"
 
 #. js-lingui-explicit-id
 #: src/components/message/MessageComposer.native.tsx:238
-#: src/components/message/MessageComposer.tsx:338
+#: src/components/message/MessageComposer.tsx:351
 msgid "Replying to {user}"
 msgstr "Replying to {user}"
 
@@ -57,17 +57,17 @@ msgid "Failed to process image"
 msgstr "Failed to process image"
 
 #. js-lingui-explicit-id
-#: src/components/message/Message.tsx:263
+#: src/components/message/Message.tsx:267
 msgid "{user} has joined"
 msgstr "{user} has joined"
 
 #. js-lingui-explicit-id
-#: src/components/message/Message.tsx:270
+#: src/components/message/Message.tsx:274
 msgid "{user} has left"
 msgstr "{user} has left"
 
 #. js-lingui-explicit-id
-#: src/components/message/Message.tsx:277
+#: src/components/message/Message.tsx:281
 msgid "{user} has been kicked"
 msgstr "{user} has been kicked"
 
@@ -89,8 +89,8 @@ msgstr " for updates."
 msgid "'everyone' is a reserved name."
 msgstr "'everyone' is a reserved name."
 
-#: src/components/message/Message.tsx:633
-#: src/components/message/Message.tsx:646
+#: src/components/message/Message.tsx:637
+#: src/components/message/Message.tsx:650
 msgid "(edited)"
 msgstr "(edited)"
 
@@ -260,7 +260,7 @@ msgstr "Add Group"
 msgid "Add Role"
 msgstr "Add Role"
 
-#: src/components/message/MessageComposer.tsx:495
+#: src/components/message/MessageComposer.tsx:536
 msgid "add sticker"
 msgstr "add sticker"
 
@@ -376,7 +376,7 @@ msgstr "Are you sure you want to unpin this message?"
 msgid "As a space owner, you need to assign yourself a role with delete permissions to delete other users' messages. <0><1>Learn more</1></0>"
 msgstr "As a space owner, you need to assign yourself a role with delete permissions to delete other users' messages. <0><1>Learn more</1></0>"
 
-#: src/components/message/MessageComposer.tsx:462
+#: src/components/message/MessageComposer.tsx:503
 msgid "attach image"
 msgstr "attach image"
 
@@ -449,7 +449,7 @@ msgstr "Channel Icon"
 msgid "Channel Managers"
 msgstr "Channel Managers"
 
-#: src/components/space/Channel.tsx:1205
+#: src/components/space/Channel.tsx:1233
 msgid "Channel members"
 msgstr "Channel members"
 
@@ -1163,7 +1163,7 @@ msgstr "Joining..."
 msgid "Jump"
 msgstr "Jump"
 
-#: src/components/message/MessageList.tsx:512
+#: src/components/message/MessageList.tsx:520
 msgid "Jump to present"
 msgstr "Jump to present"
 
@@ -1236,7 +1236,7 @@ msgstr "Let's gooooooooo"
 msgid "Light"
 msgstr "Light"
 
-#: src/components/message/MessageList.tsx:523
+#: src/components/message/MessageList.tsx:531
 msgid "Loading message..."
 msgstr "Loading message..."
 
@@ -1300,7 +1300,7 @@ msgstr "Mark all as read"
 
 #: src/components/direct/DirectMessage.tsx:657
 #: src/components/direct/DirectMessage.tsx:821
-#: src/components/space/Channel.tsx:868
+#: src/components/space/Channel.tsx:881
 msgid "Members List"
 msgstr "Members List"
 
@@ -1316,20 +1316,20 @@ msgstr "Message actions"
 msgid "Message deleted"
 msgstr "Message deleted"
 
-#: src/components/message/Message.tsx:616
-#: src/components/message/Message.tsx:679
+#: src/components/message/Message.tsx:620
+#: src/components/message/Message.tsx:683
 msgid "Message does not have a valid signature, this may not be from the sender"
 msgstr "Message does not have a valid signature, this may not be from the sender"
 
-#: src/components/message/MessageComposer.tsx:126
+#: src/components/message/MessageComposer.tsx:131
 msgid "Message..."
 msgstr "Message..."
 
-#: src/components/message/MessageComposer.tsx:512
+#: src/components/message/MessageComposer.tsx:553
 msgid "Messages are NOT signed!"
 msgstr "Messages are NOT signed!"
 
-#: src/components/message/MessageComposer.tsx:513
+#: src/components/message/MessageComposer.tsx:554
 msgid "Messages are signed!"
 msgstr "Messages are signed!"
 
@@ -1365,6 +1365,10 @@ msgstr "No messages found"
 msgid "No pinned messages yet"
 msgstr "No pinned messages yet"
 
+#: src/components/message/MessageComposer.tsx:466
+msgid "No topic"
+msgstr "No topic"
+
 #: src/components/notifications/NotificationPanel.tsx:136
 #~ msgid "No unread mentions"
 #~ msgstr "No unread mentions"
@@ -1373,9 +1377,9 @@ msgstr "No pinned messages yet"
 msgid "No unread notifications"
 msgstr "No unread notifications"
 
-#: src/components/space/Channel.tsx:591
-#: src/components/space/Channel.tsx:1056
-#: src/components/space/Channel.tsx:1244
+#: src/components/space/Channel.tsx:604
+#: src/components/space/Channel.tsx:1084
+#: src/components/space/Channel.tsx:1272
 msgid "No users found!"
 msgstr "No users found!"
 
@@ -1390,7 +1394,7 @@ msgstr "Notification permission not granted"
 #: src/components/modals/SpaceSettingsModal/Account.tsx:187
 #: src/components/modals/UserSettingsModal/Navigation.tsx:17
 #: src/components/modals/UserSettingsModal/Notifications.tsx:24
-#: src/components/space/Channel.tsx:838
+#: src/components/space/Channel.tsx:851
 msgid "Notifications"
 msgstr "Notifications"
 
@@ -1402,6 +1406,10 @@ msgstr "Notifications are blocked. Please enable them in your browser settings."
 #: src/services/NotificationService.ts:180
 msgid "Notifications are not supported in this browser"
 msgstr "Notifications are not supported in this browser"
+
+#: src/components/message/MessageComposer.tsx:480
+msgid "Notify all members"
+msgstr "Notify all members"
 
 #: src/components/user/UserOnlineStateIndicator.tsx:32
 msgid "Offline"
@@ -1521,18 +1529,18 @@ msgstr "Pin Messages"
 msgid "Pin to top"
 msgstr "Pin to top"
 
-#: src/components/message/Message.tsx:599
-#: src/components/message/Message.tsx:662
+#: src/components/message/Message.tsx:603
+#: src/components/message/Message.tsx:666
 msgid "Pinned"
 msgstr "Pinned"
 
 #. placeholder {0}: mapSenderToUser(message.pinnedBy)?.displayName || message.pinnedBy
-#: src/components/message/Message.tsx:598
-#: src/components/message/Message.tsx:661
+#: src/components/message/Message.tsx:602
+#: src/components/message/Message.tsx:665
 msgid "Pinned by {0}"
 msgstr "Pinned by {0}"
 
-#: src/components/space/Channel.tsx:802
+#: src/components/space/Channel.tsx:815
 msgid "Pinned Messages"
 msgstr "Pinned Messages"
 
@@ -1562,7 +1570,7 @@ msgstr "Privacy/Security"
 msgid "Private key saved to selected folder"
 msgstr "Private key saved to selected folder"
 
-#: src/components/message/MessageComposer.tsx:317
+#: src/components/message/MessageComposer.tsx:330
 msgid "Processing image... This may take a moment for large files."
 msgstr "Processing image... This may take a moment for large files."
 
@@ -1722,7 +1730,7 @@ msgid "Search in this Space..."
 msgstr "Search in this Space..."
 
 #: src/components/direct/DirectMessage.tsx:676
-#: src/components/space/Channel.tsx:887
+#: src/components/space/Channel.tsx:900
 msgid "Search Messages"
 msgstr "Search Messages"
 
@@ -1738,7 +1746,7 @@ msgstr "Search Results"
 msgid "Search username or address"
 msgstr "Search username or address"
 
-#: src/components/space/Channel.tsx:1216
+#: src/components/space/Channel.tsx:1244
 msgid "Search Username or Address"
 msgstr "Search Username or Address"
 
@@ -2067,8 +2075,8 @@ msgstr "Unknown time"
 #: src/components/direct/DirectMessage.tsx:162
 #: src/components/direct/DirectMessage.tsx:177
 #: src/components/direct/DirectMessage.tsx:524
-#: src/components/message/MessageComposer.tsx:412
-#: src/components/message/MessageComposer.tsx:419
+#: src/components/message/MessageComposer.tsx:425
+#: src/components/message/MessageComposer.tsx:432
 #: src/components/message/MessageEditTextarea.tsx:225
 #: src/components/message/MessageEditTextarea.tsx:260
 #: src/components/message/MessageEditTextarea.tsx:267
@@ -2097,7 +2105,7 @@ msgstr "Unknown time"
 #: src/services/MessageService.ts:1425
 #: src/services/MessageService.ts:1443
 #: src/services/MessageService.ts:2779
-#: src/services/MessageService.ts:2932
+#: src/services/MessageService.ts:2943
 msgid "Unknown User"
 msgstr "Unknown User"
 
@@ -2171,8 +2179,8 @@ msgstr "User address here"
 msgid "User does not exist."
 msgstr "User does not exist."
 
-#: src/components/space/Channel.tsx:578
-#: src/components/space/Channel.tsx:1042
+#: src/components/space/Channel.tsx:591
+#: src/components/space/Channel.tsx:1070
 msgid "Username or Address"
 msgstr "Username or Address"
 
@@ -2276,8 +2284,8 @@ msgstr "You can manage your Space mention notifications in each Space's settings
 msgid "You cannot delete a group that contains channels. Delete all {channelCount} channels in this group first."
 msgstr "You cannot delete a group that contains channels. Delete all {channelCount} channels in this group first."
 
-#: src/components/message/MessageComposer.tsx:296
-#: src/components/space/Channel.tsx:1013
+#: src/components/message/MessageComposer.tsx:309
+#: src/components/space/Channel.tsx:1039
 msgid "You cannot post in this channel"
 msgstr "You cannot post in this channel"
 

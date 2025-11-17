@@ -107,6 +107,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Device Identification Improvement](tasks/device-identification-improvement.md)
 - [DirectMessage Navigation State Persistence](tasks/dm-navigation-state-persistence.md)
 - [Implement Background Sync Queue for User Settings and Async Operations](tasks/background-sync-queue.md)
+- [Implement Discord-Like Mention Pills in Message Composer](tasks/mention-pills-in-message-textarea.md)
 - [Implement Message Forwarding with Privacy Controls](tasks/message-forwarding-with-privacy-controls.md)
 - [Multi-User Invite Selection Enhancement](tasks/multi-user-invite-selection.md)
 - [Passkey Import UX Issue](tasks/passkey-import-ux-issue.md)
@@ -262,4 +263,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2025-11-17 16:56:54
+**Last Updated**: 2025-11-17 18:24:30

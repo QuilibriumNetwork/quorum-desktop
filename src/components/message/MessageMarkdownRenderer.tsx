@@ -258,12 +258,16 @@ export const MessageMarkdownRenderer: React.FC<MessageMarkdownRendererProps> = (
       })
       .filter(Boolean) as Array<{ channelId: string; channelName: string }>;
 
-    // Replace #channelName with safe placeholder
+    // Replace #<channelId> with safe placeholder
     let processed = text;
     channelData.forEach(({ channelId, channelName }) => {
-      const regex = new RegExp(`#${channelName}(?!\\w)`, 'g');
+      // Escape special regex characters in channel ID
+      const escapedChannelId = channelId.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+      // Only Format: #<channelId> (with brackets) - ID-only format
+      const idRegex = new RegExp(`#<${escapedChannelId}>`, 'g');
       processed = processed.replace(
-        regex,
+        idRegex,
         `<<<MENTION_CHANNEL:${channelId}:${channelName}>>>`
       );
     });

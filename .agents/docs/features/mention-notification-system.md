@@ -81,7 +81,7 @@ Flash-highlight animation (yellow fade, 6s)
 ### Utilities
 
 **`src/utils/mentionUtils.ts`**
-- `extractMentionsFromText(text, options)`: Parses `@<address>`, `@roleTag`, `@everyone`, `#channelname` patterns
+- `extractMentionsFromText(text, options)`: Parses `@<address>`, `@roleTag`, `@everyone`, `#<channelId>` patterns
 - `isMentioned(message, options)`: Checks if user is mentioned
 - `isMentionedWithSettings(message, options)`: Checks mention with user settings and role membership
   - Accepts: `['mention-you', 'mention-everyone', 'mention-roles']`
@@ -172,7 +172,7 @@ Flash-highlight animation (yellow fade, 6s)
 - Mention autocomplete dropdown with user, role, and channel suggestions
 - Users format: `@<address>` (with brackets)
 - Roles format: `@roleTag` (without brackets)
-- Channels format: `#channelname` (hash prefix)
+- Channels format: `#<channelId>` (hash prefix with ID in brackets)
 - Displays role badges with colors and channel icons in dropdown
 - Separate dropdowns for `@` and `#` triggers
 - CSS: `MessageComposer.scss` includes role badge and channel styling
@@ -367,11 +367,11 @@ Users can enable/disable role mention notifications per space:
 
 ### Overview
 
-Channel mentions allow users to reference channels within messages using Discord-like `#channelname` syntax. These mentions are rendered as clickable links that navigate to the referenced channel.
+Channel mentions allow users to reference channels within messages using `#<channelId>` syntax. These mentions are rendered as clickable links that navigate to the referenced channel.
 
 ### Format
 
-- **Channel mentions**: `#channelname` (hash prefix, e.g., `#general`, `#announcements`)
+- **Channel mentions**: `#<channelId>` (hash prefix with ID in brackets, e.g., `#<ch-abc123>`)
 - **Navigation**: Clicking navigates to `/spaces/{spaceId}/{channelId}`
 
 ### Autocomplete
@@ -389,31 +389,31 @@ When typing `#`, the dropdown shows:
 - Filters channels by `channelName`
 - Sorts by relevance (exact match > starts with > contains)
 - Limited to 25 results for better UX
-- Selection inserts `#channelname` format
+- Selection inserts `#<channelId>` format
 
 ### Extraction
 
 **Function**: `extractMentionsFromText(text, { spaceChannels })`
 
 Parses message text and extracts:
-- Channel mentions: `/#([a-zA-Z0-9_-]+)(?!\w)/g` → `mentions.channelIds[]`
+- Channel mentions: `/#<([^>]+)>/g` → `mentions.channelIds[]`
 
 **Validation**:
-- Channel names are validated against `spaceChannels` array using `findChannelByName()`
+- Channel IDs are validated against `spaceChannels` array by ID
 - Only existing channels are extracted (prevents fake mentions)
 - Code blocks are excluded from mention detection
-- Case-insensitive matching for channel names
+- Exact ID matching for rename-safety
 
 ### Rendering
 
 **Web (Markdown)**: `MessageMarkdownRenderer.tsx`
-- Processes `#channelname` patterns in markdown text
+- Processes `#<channelId>` patterns in markdown text
 - Validates against `message.mentions.channelIds` (only style if actually mentioned)
-- Replaces with clickable span: `<span class="message-name-mentions-you" title="{channelName}" onClick={onChannelClick}>#{channelName}</span>`
+- Replaces with clickable span: `<span class="message-name-mentions-you" data-channel-id="{channelId}">#{channelName}</span>`
 - Uses same CSS class as other mentions for consistency
 
 **Web (Token-based)**: `useMessageFormatting.ts`
-- Detects `#channelname` pattern during text token processing
+- Detects `#<channelId>` pattern during text token processing
 - Validates against `spaceChannels` and `message.mentions.channelIds`
 - Returns channel token with click handler for navigation
 
@@ -434,7 +434,7 @@ Parses message text and extracts:
 
 - **Deleted channels**: Channel IDs in `mentions.channelIds` that don't exist in space channels are ignored
 - **Private channels**: All channels in space are mentionable (no permission restrictions)
-- **Code blocks**: `#channelname` in code blocks doesn't trigger extraction
+- **Code blocks**: `#<channelId>` in code blocks doesn't trigger extraction
 - **Cross-space channels**: Only channels within the same space can be mentioned
 
 ---

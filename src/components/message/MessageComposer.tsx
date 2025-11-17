@@ -156,8 +156,8 @@ export const MessageComposer = forwardRef<
           // Roles: @roleTag (NO brackets)
           insertText = `@${option.data.roleTag}`;
         } else if (option.type === 'channel') {
-          // Channels: #channelName (NO brackets)
-          insertText = `#${option.data.channelName}`;
+          // Channels: #<channelId> (with brackets) - store ID for rename-safety
+          insertText = `#<${option.data.channelId}>`;
         } else {
           // @everyone: plain @everyone (NO brackets)
           insertText = '@everyone';
