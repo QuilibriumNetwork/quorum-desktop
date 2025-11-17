@@ -18,7 +18,7 @@ import {
 } from '../../utils/youtubeUtils';
 import { getValidInvitePrefixes } from '../../utils/inviteDomain';
 import { InviteLink } from './InviteLink';
-import type { Role } from '../../api/quorumApi';
+import type { Role, Channel } from '../../api/quorumApi';
 
 interface MessageMarkdownRendererProps {
   content: string;
@@ -29,9 +29,12 @@ interface MessageMarkdownRendererProps {
     displayName?: string;
     userIcon?: string;
   }, event: React.MouseEvent, context?: { type: 'mention' | 'message-avatar'; element: HTMLElement }) => void;
+  onChannelClick?: (channelId: string) => void;
   hasEveryoneMention?: boolean;
   roleMentions?: string[];
+  channelMentions?: string[];
   spaceRoles?: Role[];
+  spaceChannels?: Channel[];
   messageSenderId?: string;
   currentUserAddress?: string;
 }
@@ -144,9 +147,12 @@ export const MessageMarkdownRenderer: React.FC<MessageMarkdownRendererProps> = (
   className = '',
   mapSenderToUser,
   onUserClick,
+  onChannelClick,
   hasEveryoneMention = false,
   roleMentions = [],
+  channelMentions = [],
   spaceRoles = [],
+  spaceChannels = [],
   messageSenderId,
   currentUserAddress,
 }) => {
@@ -238,22 +244,51 @@ export const MessageMarkdownRenderer: React.FC<MessageMarkdownRendererProps> = (
     return processed;
   }, [roleMentions, spaceRoles]);
 
+  // Process channel mentions - only render if channel exists
+  const processChannelMentions = useCallback((text: string): string => {
+    if (!channelMentions || channelMentions.length === 0 || !spaceChannels || spaceChannels.length === 0) {
+      return text;
+    }
+
+    // Get channel data for existing channels only
+    const channelData = channelMentions
+      .map(channelId => {
+        const channel = spaceChannels.find(c => c.channelId === channelId);
+        return channel ? { channelId: channel.channelId, channelName: channel.channelName } : null;
+      })
+      .filter(Boolean) as Array<{ channelId: string; channelName: string }>;
+
+    // Replace #channelName with safe placeholder
+    let processed = text;
+    channelData.forEach(({ channelId, channelName }) => {
+      const regex = new RegExp(`#${channelName}(?!\\w)`, 'g');
+      processed = processed.replace(
+        regex,
+        `<<<MENTION_CHANNEL:${channelId}:${channelName}>>>`
+      );
+    });
+
+    return processed;
+  }, [channelMentions, spaceChannels]);
+
   // Simplified processing pipeline with stable dependencies
   const processedContent = useMemo(() => {
     return fixUnclosedCodeBlocks(
       convertHeadersToH3(
         processURLs(
-          processRoleMentions(
-            processMentions(
-              processStandaloneYouTubeUrls(
-                processInviteLinks(content)
+          processChannelMentions(
+            processRoleMentions(
+              processMentions(
+                processStandaloneYouTubeUrls(
+                  processInviteLinks(content)
+                )
               )
             )
           )
         )
       )
     );
-  }, [content, processMentions, processRoleMentions]);
+  }, [content, processMentions, processRoleMentions, processChannelMentions]);
 
   // Memoize components to prevent re-creation and YouTube component remounting
   const components = useMemo(() => ({
@@ -272,8 +307,8 @@ export const MessageMarkdownRenderer: React.FC<MessageMarkdownRendererProps> = (
       const parts: React.ReactNode[] = [];
       let lastIndex = 0;
 
-      // Regex to find all mention tokens (everyone, user, role)
-      const mentionRegex = /<<<MENTION_(EVERYONE|USER:(Qm[a-zA-Z0-9]+)|ROLE:([^:]+):([^>]+))>>>/g;
+      // Regex to find all mention tokens (everyone, user, role, channel)
+      const mentionRegex = /<<<MENTION_(EVERYONE|USER:(Qm[a-zA-Z0-9]+)|ROLE:([^:]+):([^>]+)|CHANNEL:([^:]+):([^>]+))>>>/g;
       let match;
 
       while ((match = mentionRegex.exec(text)) !== null) {
@@ -323,6 +358,19 @@ export const MessageMarkdownRenderer: React.FC<MessageMarkdownRendererProps> = (
               title={displayName}
             >
               @{roleTag}
+            </span>
+          );
+        } else if (match[5] && match[6]) {
+          // Channel mention: <<<MENTION_CHANNEL:channelId:channelName>>>
+          const channelId = match[5];
+          const channelName = match[6];
+          parts.push(
+            <span
+              key={`mention-${match.index}`}
+              className="message-name-mentions-you cursor-pointer"
+              data-channel-id={channelId}
+            >
+              #{channelName}
             </span>
           );
         }
@@ -552,8 +600,8 @@ export const MessageMarkdownRenderer: React.FC<MessageMarkdownRendererProps> = (
           const parts: React.ReactNode[] = [];
           let lastIndex = 0;
 
-          // Regex to find all mention tokens (everyone, user, role)
-          const mentionRegex = /<<<MENTION_(EVERYONE|USER:(Qm[a-zA-Z0-9]+)|ROLE:([^:]+):([^>]+))>>>/g;
+          // Regex to find all mention tokens (everyone, user, role, channel)
+          const mentionRegex = /<<<MENTION_(EVERYONE|USER:(Qm[a-zA-Z0-9]+)|ROLE:([^:]+):([^>]+)|CHANNEL:([^:]+):([^>]+))>>>/g;
           let match;
 
           while ((match = mentionRegex.exec(text)) !== null) {
@@ -603,6 +651,19 @@ export const MessageMarkdownRenderer: React.FC<MessageMarkdownRendererProps> = (
                   title={displayName}
                 >
                   @{roleTag}
+                </span>
+              );
+            } else if (match[5] && match[6]) {
+              // Channel mention: <<<MENTION_CHANNEL:channelId:channelName>>>
+              const channelId = match[5];
+              const channelName = match[6];
+              parts.push(
+                <span
+                  key={`mention-p-${match.index}`}
+                  className="message-name-mentions-you cursor-pointer"
+                  data-channel-id={channelId}
+                >
+                  #{channelName}
                 </span>
               );
             }
@@ -655,6 +716,8 @@ export const MessageMarkdownRenderer: React.FC<MessageMarkdownRendererProps> = (
   // Handle mention clicks
   const handleClick = useCallback((event: React.MouseEvent) => {
     const target = event.target as HTMLElement;
+
+    // Handle user mention clicks
     if (target.classList.contains('message-name-mentions-you') && onUserClick) {
       const address = target.dataset.userAddress;
       const displayName = target.dataset.userDisplayName;
@@ -668,7 +731,13 @@ export const MessageMarkdownRenderer: React.FC<MessageMarkdownRendererProps> = (
         }, event, { type: 'mention', element: target });
       }
     }
-  }, [onUserClick]);
+
+    // Handle channel mention clicks
+    if (target.dataset.channelId && onChannelClick) {
+      const channelId = target.dataset.channelId;
+      onChannelClick(channelId);
+    }
+  }, [onUserClick, onChannelClick]);
 
   return (
     <div className={`break-words min-w-0 max-w-full overflow-hidden ${className || ''}`} onClick={handleClick}>

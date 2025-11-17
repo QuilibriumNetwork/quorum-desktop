@@ -9,6 +9,7 @@ The Unified Notification System provides real-time visual feedback for mentions 
 - **@you mentions**: Direct user mentions (`@<address>`)
 - **@everyone mentions**: Channel-wide mentions (permission-based)
 - **@role mentions**: Role-based mentions (`@moderators`, `@admins`) with user role checking
+- **#channel mentions**: Channel references (`#general`, `#announcements`) with clickable navigation
 - **Replies**: Notifications when someone replies to your messages
 
 ### Key Design
@@ -80,12 +81,15 @@ Flash-highlight animation (yellow fade, 6s)
 ### Utilities
 
 **`src/utils/mentionUtils.ts`**
-- `extractMentionsFromText(text, options)`: Parses `@<address>`, `@roleTag`, `@everyone` patterns
+- `extractMentionsFromText(text, options)`: Parses `@<address>`, `@roleTag`, `@everyone`, `#channelname` patterns
 - `isMentioned(message, options)`: Checks if user is mentioned
 - `isMentionedWithSettings(message, options)`: Checks mention with user settings and role membership
   - Accepts: `['mention-you', 'mention-everyone', 'mention-roles']`
   - Filters mentions based on enabled notification types and user's roles
 - `getMentionType(message, options)`: Returns mention type for UI
+
+**`src/utils/channelUtils.ts`**
+- `findChannelByName(channelName, channels)`: Locates channel by name for channel mention validation
 
 **`src/utils/notificationSettingsUtils.ts`**
 - `getDefaultNotificationSettings(spaceId)`: Returns default settings
@@ -122,8 +126,9 @@ Flash-highlight animation (yellow fade, 6s)
 
 **`src/hooks/business/mentions/useMentionInput.ts`**
 - Autocomplete hook for mention dropdown in message composer
-- Supports both user and role mentions via discriminated union (`MentionOption`)
-- Filters and ranks suggestions based on query
+- Supports user, role, and channel mentions via discriminated union (`MentionOption`)
+- Separate dropdowns for `@` mentions (users/roles/@everyone) and `#` mentions (channels only)
+- Filters and ranks suggestions based on query with channel limit of 25 results
 - Returns: `{ filteredOptions, showDropdown, selectOption, handleKeyDown }`
 
 **`src/hooks/business/mentions/useMentionNotificationSettings.ts`**
@@ -164,11 +169,13 @@ Flash-highlight animation (yellow fade, 6s)
 ### UI Components
 
 **`src/components/message/MessageComposer.tsx`**
-- Mention autocomplete dropdown with user and role suggestions
+- Mention autocomplete dropdown with user, role, and channel suggestions
 - Users format: `@<address>` (with brackets)
 - Roles format: `@roleTag` (without brackets)
-- Displays role badges with colors in dropdown
-- CSS: `MessageComposer.scss` includes role badge styling
+- Channels format: `#channelname` (hash prefix)
+- Displays role badges with colors and channel icons in dropdown
+- Separate dropdowns for `@` and `#` triggers
+- CSS: `MessageComposer.scss` includes role badge and channel styling
 
 **`src/components/space/ChannelList.tsx`**
 - Calls `useChannelMentionCounts({ spaceId, channelIds, userRoleIds })`
@@ -191,9 +198,11 @@ Flash-highlight animation (yellow fade, 6s)
 **`src/components/message/MessageMarkdownRenderer.tsx`**
 - Renders markdown-formatted messages
 - Processes role mentions: `@roleTag` → styled span
+- Processes channel mentions: `#channelname` → clickable span with navigation
 - Only styles roles that exist in `message.mentions.roleIds`
-- Accepts `roleMentions` and `spaceRoles` props
-- CSS: `.message-name-mentions-you` for consistent styling
+- Only styles channels that exist in `message.mentions.channelIds`
+- Accepts `roleMentions`, `channelMentions`, `spaceRoles`, and `spaceChannels` props
+- CSS: `.message-name-mentions-you` for consistent styling across all mention types
 
 **`src/components/space/Channel.tsx`**
 - Uses `useConversation()` for lastReadTimestamp
@@ -351,6 +360,82 @@ Users can enable/disable role mention notifications per space:
 - **Empty roles**: Roles with no members can be mentioned (0 notifications sent)
 - **Code blocks**: `@roleTag` in code blocks doesn't trigger extraction
 - **Self-mentions**: Users can mention their own roles (intentional)
+
+---
+
+## Channel Mention System
+
+### Overview
+
+Channel mentions allow users to reference channels within messages using Discord-like `#channelname` syntax. These mentions are rendered as clickable links that navigate to the referenced channel.
+
+### Format
+
+- **Channel mentions**: `#channelname` (hash prefix, e.g., `#general`, `#announcements`)
+- **Navigation**: Clicking navigates to `/spaces/{spaceId}/{channelId}`
+
+### Autocomplete
+
+**Component**: `MessageComposer.tsx` + `useMentionInput.ts`
+
+When typing `#`, the dropdown shows:
+- Matching channels (with hashtag icons)
+- Shows all channels immediately when `#` is typed (no minimum query length)
+- Filtered by channel name as user types
+
+**Implementation**:
+- Separate dropdown from `@` mentions (different trigger character)
+- Discriminated union type includes: `{ type: 'channel', data: Channel }`
+- Filters channels by `channelName`
+- Sorts by relevance (exact match > starts with > contains)
+- Limited to 25 results for better UX
+- Selection inserts `#channelname` format
+
+### Extraction
+
+**Function**: `extractMentionsFromText(text, { spaceChannels })`
+
+Parses message text and extracts:
+- Channel mentions: `/#([a-zA-Z0-9_-]+)(?!\w)/g` → `mentions.channelIds[]`
+
+**Validation**:
+- Channel names are validated against `spaceChannels` array using `findChannelByName()`
+- Only existing channels are extracted (prevents fake mentions)
+- Code blocks are excluded from mention detection
+- Case-insensitive matching for channel names
+
+### Rendering
+
+**Web (Markdown)**: `MessageMarkdownRenderer.tsx`
+- Processes `#channelname` patterns in markdown text
+- Validates against `message.mentions.channelIds` (only style if actually mentioned)
+- Replaces with clickable span: `<span class="message-name-mentions-you" title="{channelName}" onClick={onChannelClick}>#{channelName}</span>`
+- Uses same CSS class as other mentions for consistency
+
+**Web (Token-based)**: `useMessageFormatting.ts`
+- Detects `#channelname` pattern during text token processing
+- Validates against `spaceChannels` and `message.mentions.channelIds`
+- Returns channel token with click handler for navigation
+
+### Navigation
+
+**Click Handler**: `onChannelClick(channelId: string)`
+- Navigates to channel using React Router: `navigate(\`/spaces/${spaceId}/${channelId}\`)`
+- Provides seamless channel-to-channel navigation from message content
+
+### Storage
+
+**Database**: `MessageService.ts`
+- Channel mentions stored in `message.mentions.channelIds[]`
+- Array of channel IDs that were mentioned in the message
+- Used for validation during rendering (prevents styling fake mentions)
+
+### Edge Cases
+
+- **Deleted channels**: Channel IDs in `mentions.channelIds` that don't exist in space channels are ignored
+- **Private channels**: All channels in space are mentionable (no permission restrictions)
+- **Code blocks**: `#channelname` in code blocks doesn't trigger extraction
+- **Cross-space channels**: Only channels within the same space can be mentioned
 
 ---
 
@@ -521,6 +606,7 @@ Notifications update across devices
 src/
 ├── utils/
 │   ├── mentionUtils.ts                    # Mention detection/extraction
+│   ├── channelUtils.ts                    # Channel lookup utilities
 │   ├── notificationSettingsUtils.ts       # Settings helpers
 │   └── permissions.ts                     # Role permission utilities
 ├── types/
@@ -577,4 +663,4 @@ src/
 
 ---
 
-*Last updated: 2025-10-18*
+*Last updated: 2025-11-17*

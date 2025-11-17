@@ -50,6 +50,7 @@ function isInviteLink(token: string): boolean {
 export function useMessageFormatting(options: UseMessageFormattingOptions) {
   const { message, stickers, mapSenderToUser, onImageClick, spaceRoles = [] } = options;
 
+
   // Handle image click with size checking
   const handleImageClick = useCallback(
     (e: React.MouseEvent<HTMLImageElement>, imageUrl: string, hasThumbnail?: boolean) => {
@@ -173,6 +174,7 @@ export function useMessageFormatting(options: UseMessageFormattingOptions) {
           };
         }
       }
+
 
       // Check for YouTube videos using centralized utilities
       if (isYouTubeURL(token)) {

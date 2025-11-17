@@ -105,6 +105,8 @@ type MessageProps = {
     event: React.MouseEvent,
     context?: { type: 'mention' | 'message-avatar'; element: HTMLElement }
   ) => void;
+  onChannelClick?: (channelId: string) => void;
+  spaceChannels?: Channel[];
   lastReadTimestamp?: number;
   spaceRoles?: Role[];
 };
@@ -136,6 +138,8 @@ export const Message = React.memo(
     kickUserAddress,
     setKickUserAddress,
     onUserClick,
+    onChannelClick,
+    spaceChannels = [],
     lastReadTimestamp = 0,
     spaceRoles = [],
   }: MessageProps) => {
@@ -724,9 +728,12 @@ export const Message = React.memo(
                           content={contentData.fullText}
                           mapSenderToUser={mapSenderToUser}
                           onUserClick={onUserClick}
+                          onChannelClick={onChannelClick}
                           hasEveryoneMention={message.mentions?.everyone}
                           roleMentions={message.mentions?.roleIds}
+                          channelMentions={message.mentions?.channelIds}
                           spaceRoles={spaceRoles}
+                          spaceChannels={spaceChannels}
                           messageSenderId={message.content?.senderId}
                           currentUserAddress={user.currentPasskeyInfo?.address}
                         />
@@ -806,6 +813,25 @@ export const Message = React.memo(
                                 referrerPolicy="no-referrer"
                               >
                                 {truncatedText}
+                              </Text>{' '}
+                            </React.Fragment>
+                          );
+                        }
+
+                        if (tokenData.type === 'channel') {
+                          return (
+                            <React.Fragment key={tokenData.key}>
+                              <Text
+                                as="span"
+                                className="message-name-mentions-everyone"
+                                style={{ cursor: 'pointer' }}
+                                onClick={() => {
+                                  if (onChannelClick) {
+                                    onChannelClick(tokenData.channelId);
+                                  }
+                                }}
+                              >
+                                {tokenData.displayName}
                               </Text>{' '}
                             </React.Fragment>
                           );

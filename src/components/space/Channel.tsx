@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useCallback, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './Channel.scss';
 import { StickerMessage } from '../../api/quorumApi';
 import {
@@ -84,6 +85,7 @@ const Channel: React.FC<ChannelProps> = ({
   kickUserAddress,
   setKickUserAddress,
 }) => {
+  const navigate = useNavigate();
   const { isDesktop, toggleLeftSidebar, navMenuOpen, toggleNavMenu } =
     useResponsiveLayoutContext();
   const { openKickUser } = useModals();
@@ -478,6 +480,17 @@ const Channel: React.FC<ChannelProps> = ({
     const userRolesData = getUserRoles(user.currentPasskeyInfo.address, space);
     return userRolesData.map((r) => r.roleId);
   }, [space, user.currentPasskeyInfo?.address]);
+
+  // Extract channels for channel mentions
+  const spaceChannels = React.useMemo(() => {
+    if (!space) return [];
+    return space.groups.flatMap(g => g.channels);
+  }, [space]);
+
+  // Handle channel navigation for channel mentions
+  const handleChannelClick = useCallback((targetChannelId: string) => {
+    navigate(`/spaces/${spaceId}/${targetChannelId}`);
+  }, [navigate, spaceId]);
 
   // Check if user can post in this channel
   const canPost = canPostInReadOnlyChannel(
@@ -971,6 +984,8 @@ const Channel: React.FC<ChannelProps> = ({
                 scrollToMessageId={scrollToMessageId}
                 newMessagesSeparator={newMessagesSeparator}
                 onDismissSeparator={() => setNewMessagesSeparator(null)}
+                onChannelClick={handleChannelClick}
+                spaceChannels={spaceChannels}
                 fetchPreviousPage={() => {
                   fetchPreviousPage();
                 }}
@@ -1010,6 +1025,7 @@ const Channel: React.FC<ChannelProps> = ({
                 inReplyTo={composer.inReplyTo}
                 users={Object.values(members)}
                 roles={roles?.filter(role => role.isPublic !== false)}
+                channels={spaceChannels}
                 fileError={composer.fileError}
                 isProcessingImage={composer.isProcessingImage}
                 mapSenderToUser={mapSenderToUser}

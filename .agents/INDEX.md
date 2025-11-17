@@ -107,6 +107,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Device Identification Improvement](tasks/device-identification-improvement.md)
 - [DirectMessage Navigation State Persistence](tasks/dm-navigation-state-persistence.md)
 - [Implement Background Sync Queue for User Settings and Async Operations](tasks/background-sync-queue.md)
+- [Implement Channel Mention Feature (#channelname)](tasks/implement-channel-mention-feature.md)
 - [Implement Copy Message Raw Text Option](tasks/copy-message-text.md)
 - [Implement Message Forwarding with Privacy Controls](tasks/message-forwarding-with-privacy-controls.md)
 - [Multi-User Invite Selection Enhancement](tasks/multi-user-invite-selection.md)
@@ -261,4 +262,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2025-11-17 13:24:27
+**Last Updated**: 2025-11-17 15:54:18

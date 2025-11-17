@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
-import debounce from 'lodash/debounce';
+import type { Channel } from '../../../api/quorumApi';
 
 interface User {
   address: string;
@@ -18,6 +18,7 @@ interface Role {
 export type MentionOption =
   | { type: 'user'; data: User }
   | { type: 'role'; data: Role }
+  | { type: 'channel'; data: Channel }
   | { type: 'everyone' };
 
 interface UseMentionInputOptions {
@@ -25,6 +26,7 @@ interface UseMentionInputOptions {
   cursorPosition: number;
   users: User[];
   roles?: Role[]; // NEW - optional roles for autocomplete
+  channels?: Channel[]; // NEW - optional channels for autocomplete
   canUseEveryone?: boolean; // NEW - permission to use @everyone
   onMentionSelect: (option: MentionOption, mentionStart: number, mentionEnd: number) => void;
   debounceMs?: number;
@@ -49,6 +51,7 @@ export function useMentionInput({
   cursorPosition,
   users,
   roles,
+  channels,
   canUseEveryone = false,
   onMentionSelect,
   debounceMs = 100,
@@ -136,6 +139,43 @@ export function useMentionInput({
     [roles, minQueryLength, maxDisplayResults]
   );
 
+  // NEW: Filter and rank channels based on query
+  const filterChannels = useCallback(
+    (query: string): Channel[] => {
+      // For channels, show immediately when # is typed (no minimum query length)
+      if (!query || !channels) return channels?.slice(0, 25) || [];
+
+      const queryLower = query.toLowerCase();
+
+      // Filter channels whose channelName matches the query
+      const matches = channels.filter(channel => {
+        const name = channel.channelName.toLowerCase();
+        return name.includes(queryLower);
+      });
+
+      // Sort by relevance: exact match > starts with > contains
+      const sortedMatches = matches.sort((a, b) => {
+        const aName = a.channelName.toLowerCase();
+        const bName = b.channelName.toLowerCase();
+
+        // Exact match gets highest priority
+        if (aName === queryLower && bName !== queryLower) return -1;
+        if (bName === queryLower && aName !== queryLower) return 1;
+
+        // Starts with gets second priority
+        if (aName.startsWith(queryLower) && !bName.startsWith(queryLower)) return -1;
+        if (bName.startsWith(queryLower) && !aName.startsWith(queryLower)) return 1;
+
+        // Then alphabetical order
+        return aName.localeCompare(bName);
+      });
+
+      // Limit to 25 results for channels
+      return sortedMatches.slice(0, 25);
+    },
+    [channels]
+  );
+
   // Check if @everyone matches the query
   const checkEveryoneMatch = useCallback(
     (query: string): boolean => {
@@ -150,36 +190,42 @@ export function useMentionInput({
     [canUseEveryone]
   );
 
-  // Debounced filter function - combines users, roles, and @everyone
-  const debouncedFilter = useMemo(
-    () =>
-      debounce((query: string) => {
-        const filteredUsers = filterUsers(query);
-        const filteredRoles = filterRoles(query);
-        const everyoneMatches = checkEveryoneMatch(query);
+  // Filter function - combines users, roles, channels, and @everyone
+  const filterMentions = useCallback((query: string, mentionType: '@' | '#' = '@') => {
+    if (mentionType === '#') {
+      // Channel mentions: only show channels
+      const filteredChannels = filterChannels(query);
+      const combined: MentionOption[] = [
+        ...filteredChannels.map(c => ({ type: 'channel' as const, data: c })),
+      ];
+      setFilteredOptions(combined);
+    } else {
+      // User/role mentions: show users, roles, and @everyone
+      const filteredUsers = filterUsers(query);
+      const filteredRoles = filterRoles(query);
+      const everyoneMatches = checkEveryoneMatch(query);
 
-        // Combine into discriminated union
-        const combined: MentionOption[] = [
-          // Put @everyone first if it matches (most prominent)
-          ...(everyoneMatches ? [{ type: 'everyone' as const }] : []),
-          ...filteredUsers.map(u => ({ type: 'user' as const, data: u })),
-          ...filteredRoles.map(r => ({ type: 'role' as const, data: r })),
-        ];
+      const combined: MentionOption[] = [
+        // Put @everyone first if it matches (most prominent)
+        ...(everyoneMatches ? [{ type: 'everyone' as const }] : []),
+        ...filteredUsers.map(u => ({ type: 'user' as const, data: u })),
+        ...filteredRoles.map(r => ({ type: 'role' as const, data: r })),
+      ];
+      setFilteredOptions(combined);
+    }
+    setSelectedIndex(0);
+  }, [filterUsers, filterRoles, filterChannels, checkEveryoneMatch]);
 
-        setFilteredOptions(combined);
-        setSelectedIndex(0);
-      }, debounceMs),
-    [filterUsers, filterRoles, checkEveryoneMatch, debounceMs]
-  );
-
-  // Detect @ mentions and extract query
+  // Detect @ and # mentions and extract query
   useEffect(() => {
-    // Find the @ before the cursor
-    let atPosition = -1;
+    // Find the @ or # before the cursor
+    let mentionPosition = -1;
+    let mentionChar = '';
     for (let i = cursorPosition - 1; i >= 0; i--) {
       const char = textValue[i];
-      if (char === '@') {
-        atPosition = i;
+      if (char === '@' || char === '#') {
+        mentionPosition = i;
+        mentionChar = char;
         break;
       }
       // Stop if we hit a space or newline (mention ended)
@@ -188,9 +234,9 @@ export function useMentionInput({
       }
     }
 
-    if (atPosition !== -1) {
+    if (mentionPosition !== -1) {
       // Check if this is a raw address mention (starts with @<)
-      if (textValue[atPosition + 1] === '<') {
+      if (mentionChar === '@' && textValue[mentionPosition + 1] === '<') {
         // Don't show dropdown for manual address entry
         setShowDropdown(false);
         setMentionQuery('');
@@ -198,15 +244,21 @@ export function useMentionInput({
         return;
       }
 
-      // Extract the query after @
-      const query = textValue.substring(atPosition + 1, cursorPosition);
+      // Extract the query after @ or #
+      const query = textValue.substring(mentionPosition + 1, cursorPosition);
 
-      // Only show dropdown if we have a query or just typed @
+      // Only show dropdown if we have a query or just typed @ or #
       if (query.length === 0 || !query.includes(' ')) {
         setMentionQuery(query);
-        setMentionStart(atPosition);
+        setMentionStart(mentionPosition);
         setShowDropdown(true);
-        debouncedFilter(query);
+
+        // Debounced filtering using setTimeout
+        const timer = setTimeout(() => {
+          filterMentions(query, mentionChar as '@' | '#');
+        }, debounceMs);
+
+        return () => clearTimeout(timer);
       } else {
         // Query contains space, not a mention anymore
         setShowDropdown(false);
@@ -214,12 +266,12 @@ export function useMentionInput({
         setMentionStart(-1);
       }
     } else {
-      // No @ found
+      // No @ or # found
       setShowDropdown(false);
       setMentionQuery('');
       setMentionStart(-1);
     }
-  }, [textValue, cursorPosition, debouncedFilter]);
+  }, [textValue, cursorPosition, filterMentions, debounceMs]);
 
   // Handle keyboard navigation
   const handleKeyDown = useCallback(

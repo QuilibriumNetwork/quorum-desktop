@@ -5,6 +5,7 @@ import { i18n } from '@lingui/core';
 import { Buffer } from 'buffer';
 import type { AttachmentProcessingResult } from '../../utils/imageProcessing';
 import { useMentionInput, type MentionOption } from '../../hooks/business/mentions';
+import type { Channel } from '../../api/quorumApi';
 import { truncateAddress } from '../../utils';
 import { DefaultImages } from '../../utils';
 import { useResponsiveLayout } from '../../hooks/useResponsiveLayout';
@@ -67,6 +68,7 @@ interface MessageComposerProps {
   // Mention support
   users?: User[];
   roles?: Role[];
+  channels?: Channel[];
   canUseEveryone?: boolean;
 }
 
@@ -104,6 +106,7 @@ export const MessageComposer = forwardRef<
       disabledMessage,
       users = [],
       roles = [],
+      channels = [],
       canUseEveryone = false,
     },
     ref
@@ -152,6 +155,9 @@ export const MessageComposer = forwardRef<
         } else if (option.type === 'role') {
           // Roles: @roleTag (NO brackets)
           insertText = `@${option.data.roleTag}`;
+        } else if (option.type === 'channel') {
+          // Channels: #channelName (NO brackets)
+          insertText = `#${option.data.channelName}`;
         } else {
           // @everyone: plain @everyone (NO brackets)
           insertText = '@everyone';
@@ -179,6 +185,7 @@ export const MessageComposer = forwardRef<
       cursorPosition,
       users,
       roles,
+      channels,
       canUseEveryone,
       onMentionSelect: handleMentionSelect,
     });
@@ -401,14 +408,14 @@ export const MessageComposer = forwardRef<
             <div className="message-composer-mention-container">
               {mentionInput.filteredOptions.map((option, index) => (
                 <div
-                  key={option.type === 'user' ? option.data.address : option.type === 'role' ? option.data.roleId : 'everyone'}
+                  key={option.type === 'user' ? option.data.address : option.type === 'role' ? option.data.roleId : option.type === 'channel' ? option.data.channelId : 'everyone'}
                   className={`message-composer-mention-item ${
                     index === mentionInput.selectedIndex ? 'selected' : ''
                   } ${
                     index === 0 ? 'first' : ''
                   } ${
                     index === mentionInput.filteredOptions.length - 1 ? 'last' : ''
-                  } ${option.type === 'role' ? 'role-item' : option.type === 'everyone' ? 'everyone-item' : 'user-item'}`}
+                  } ${option.type === 'role' ? 'role-item' : option.type === 'everyone' ? 'everyone-item' : option.type === 'channel' ? 'channel-item' : 'user-item'}`}
                   onClick={() => mentionInput.selectOption(option)}
                 >
                   {option.type === 'user' ? (
@@ -443,6 +450,20 @@ export const MessageComposer = forwardRef<
                         </span>
                         <span className="message-composer-mention-role-tag">
                           @{option.data.roleTag}
+                        </span>
+                      </div>
+                    </>
+                  ) : option.type === 'channel' ? (
+                    <>
+                      <div className="message-composer-channel-badge">
+                        <Icon name="hashtag" size="sm" />
+                      </div>
+                      <div className="message-composer-mention-info">
+                        <span className="message-composer-mention-name">
+                          #{option.data.channelName}
+                        </span>
+                        <span className="message-composer-mention-address">
+                          {option.data.channelTopic || t`No topic`}
                         </span>
                       </div>
                     </>

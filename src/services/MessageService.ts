@@ -2812,16 +2812,26 @@ export class MessageService {
             roleTag: r.roleTag,
           })) || [];
 
+      // Get space channels for channel mention validation
+      const spaceChannels = space?.groups?.flatMap(g =>
+        g.channels.map(c => ({
+          channelId: c.channelId,
+          channelName: c.channelName,
+        }))
+      ) || [];
+
       let mentions;
       if (typeof pendingMessage === 'string') {
         mentions = extractMentionsFromText(pendingMessage, {
           allowEveryone: canUseEveryone,
           spaceRoles,
+          spaceChannels,
         });
       } else if ((pendingMessage as any).text) {
         mentions = extractMentionsFromText((pendingMessage as any).text, {
           allowEveryone: canUseEveryone,
           spaceRoles,
+          spaceChannels,
         });
       }
 
@@ -2864,6 +2874,7 @@ export class MessageService {
           mentions &&
           (mentions.memberIds.length > 0 ||
             mentions.roleIds.length > 0 ||
+            mentions.channelIds.length > 0 ||
             mentions.everyone)
             ? mentions
             : undefined,

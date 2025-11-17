@@ -64,6 +64,8 @@ interface MessageListProps {
     event: React.MouseEvent,
     context?: { type: 'mention' | 'message-avatar'; element: HTMLElement }
   ) => void;
+  onChannelClick?: (channelId: string) => void;
+  spaceChannels?: Channel[];
   lastReadTimestamp?: number;
   onHashMessageNotFound?: (messageId: string) => Promise<void>;
   isLoadingHashMessage?: boolean;
@@ -111,6 +113,8 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
       setKickUserAddress,
       isDeletionInProgress,
       onUserClick,
+      onChannelClick,
+      spaceChannels,
       lastReadTimestamp = 0,
       onHashMessageNotFound,
       isLoadingHashMessage,
@@ -255,6 +259,8 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
               kickUserAddress={kickUserAddress}
               setKickUserAddress={setKickUserAddress}
               onUserClick={onUserClick}
+              onChannelClick={onChannelClick}
+              spaceChannels={spaceChannels}
               lastReadTimestamp={lastReadTimestamp}
             />
           </React.Fragment>
@@ -284,6 +290,8 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
         kickUserAddress,
         setKickUserAddress,
         onUserClick,
+        onChannelClick,
+        spaceChannels,
         lastReadTimestamp,
         newMessagesSeparator,
       ]

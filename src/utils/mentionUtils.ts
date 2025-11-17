@@ -166,13 +166,14 @@ export function isMentionedWithSettings(
 
 /**
  * Extract mentions from message text
- * Parses @<address> format mentions, @roleTag mentions, and @everyone
+ * Parses @<address> format mentions, @roleTag mentions, @everyone, and #channelname mentions
  *
  * @param text - The message text to parse
  * @param options - Optional configuration for mention extraction
  * @param options.allowEveryone - Whether the user has permission to use @everyone (default: false)
  * @param options.spaceRoles - Array of roles for validation (for role mention extraction)
- * @returns Mentions object with memberIds, roleIds, and everyone fields populated
+ * @param options.spaceChannels - Array of channels for validation (for channel mention extraction)
+ * @returns Mentions object with memberIds, roleIds, channelIds, and everyone fields populated
  *
  * @example
  * const text = "Hey @<QmAbc123> and @<QmDef456>, check this out!";
@@ -188,12 +189,18 @@ export function isMentionedWithSettings(
  * const text = "Hey @moderators and @admins, please review!";
  * const mentions = extractMentionsFromText(text, { spaceRoles: [...] });
  * // Returns: { memberIds: [], roleIds: ['role-id-1', 'role-id-2'], channelIds: [] }
+ *
+ * @example
+ * const text = "Check out #general and #announcements for updates!";
+ * const mentions = extractMentionsFromText(text, { spaceChannels: [...] });
+ * // Returns: { memberIds: [], roleIds: [], channelIds: ['channel-id-1', 'channel-id-2'] }
  */
 export function extractMentionsFromText(
   text: string,
   options?: {
     allowEveryone?: boolean;
     spaceRoles?: Array<{ roleId: string; roleTag: string }>;
+    spaceChannels?: Array<{ channelId: string; channelName: string }>;
   }
 ): Mentions {
   const mentions: Mentions = {
@@ -250,6 +257,29 @@ export function extractMentionsFromText(
         mentions.roleIds.push(role.roleId);
       }
       // If role doesn't exist, @roleTag remains plain text (no extraction)
+    }
+  }
+
+  // Extract channel mentions: #channelname (NO brackets)
+  if (options?.spaceChannels && options.spaceChannels.length > 0) {
+    // Match #word pattern (alphanumeric + hyphen/underscore)
+    // Negative lookahead (?!\w) ensures word boundary
+    const channelMentionRegex = /#([a-zA-Z0-9_-]+)(?!\w)/g;
+    const channelMatches = Array.from(textWithoutCodeBlocks.matchAll(channelMentionRegex));
+
+    for (const match of channelMatches) {
+      const possibleChannelName = match[1];
+
+      // Validate against space channels (case-insensitive)
+      const channel = options.spaceChannels.find(
+        c => c.channelName.toLowerCase() === possibleChannelName.toLowerCase()
+      );
+
+      // Only add if channel exists and not already in list
+      if (channel && !mentions.channelIds.includes(channel.channelId)) {
+        mentions.channelIds.push(channel.channelId);
+      }
+      // If channel doesn't exist, #channelName remains plain text (no extraction)
     }
   }
 

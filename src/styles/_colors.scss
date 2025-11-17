@@ -34,13 +34,22 @@
   --surface-9: #a2a2aa;
   --surface-10: #939399;
 
+  /* text */
   --color-text-strong: #3b3b3b;
   --color-text-main: 54 54 54;
   --color-text-subtle: #818181;
   --color-text-muted: #b6b6b6;
+  --color-text-danger: rgb(var(--danger));
+
+  /* links */
   --color-link: var(--accent);
   --color-link-hover: var(--accent-300);
-  --color-text-danger: rgb(var(--danger));
+
+  /* mentions */
+  --color-bg-mention: rgba(var(--accent-rgb), 0.2);
+  --color-bg-mention-hover: rgba(var(--accent-rgb), 0.5);
+  --color-link-mention: var(--accent-400);
+  --color-link-mention-hover: var(--accent-150);
 
   /* app general */
   --color-bg-app: var(--surface-00); // main bg - Navmenu
