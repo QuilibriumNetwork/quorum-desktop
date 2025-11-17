@@ -177,6 +177,7 @@ export const MobileProvider: React.FC<MobileProviderProps> = ({ children }) => {
             onClose={handleCloseMessageActions}
             onReply={state.messageActionsDrawer.data.onReply}
             onCopyLink={state.messageActionsDrawer.data.onCopyLink}
+            onCopyMessageText={state.messageActionsDrawer.data.onCopyMessageText}
             onDelete={state.messageActionsDrawer.data.onDelete}
             onPin={state.messageActionsDrawer.data.onPin}
             onReaction={state.messageActionsDrawer.data.onReaction}

@@ -307,6 +307,7 @@ export const Message = React.memo(
         message,
         onReply: messageActions.handleReply,
         onCopyLink: messageActions.handleCopyLink,
+        onCopyMessageText: messageActions.handleCopyMessageText,
         onDelete: messageActions.canUserDelete
           ? () =>
               messageActions.handleDelete({
@@ -521,6 +522,7 @@ export const Message = React.memo(
                   onReaction={messageActions.handleReaction}
                   onReply={messageActions.handleReply}
                   onCopyLink={messageActions.handleCopyLink}
+                  onCopyMessageText={messageActions.handleCopyMessageText}
                   onDelete={messageActions.handleDelete}
                   onPin={(e) => pinnedMessages.togglePin(e, message)}
                   onMoreReactions={messageActions.handleMoreReactions}
@@ -528,6 +530,7 @@ export const Message = React.memo(
                   onViewEditHistory={messageActions.handleViewEditHistory}
                   canViewEditHistory={messageActions.canViewEditHistory}
                   copiedLinkId={messageActions.copiedLinkId}
+                  copiedMessageText={messageActions.copiedMessageText}
                 />
               )}
 

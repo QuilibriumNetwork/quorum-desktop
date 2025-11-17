@@ -11,6 +11,7 @@ export interface MessageActionsDrawerProps {
   onClose: () => void;
   onReply: () => void;
   onCopyLink: () => void;
+  onCopyMessageText: () => void;
   onDelete?: () => void;
   onPin?: () => void;
   onReaction: (emoji: string) => void;
@@ -36,6 +37,7 @@ const MessageActionsDrawer: React.FC<MessageActionsDrawerProps> = ({
   onClose,
   onReply,
   onCopyLink,
+  onCopyMessageText,
   onDelete,
   onPin,
   onReaction,
@@ -71,6 +73,11 @@ const MessageActionsDrawer: React.FC<MessageActionsDrawerProps> = ({
 
   const handleCopyLink = () => {
     onCopyLink();
+    onClose();
+  };
+
+  const handleCopyMessageText = () => {
+    onCopyMessageText();
     onClose();
   };
 
@@ -175,6 +182,17 @@ const MessageActionsDrawer: React.FC<MessageActionsDrawerProps> = ({
           className="action-menu-item"
         >
           {t`Copy message link`}
+        </Button>
+
+        <Button
+          type="unstyled"
+          size="normal"
+          onClick={handleCopyMessageText}
+          iconName="clipboard"
+          fullWidth
+          className="action-menu-item"
+        >
+          {t`Copy message`}
         </Button>
 
         {canEdit && onEdit && (

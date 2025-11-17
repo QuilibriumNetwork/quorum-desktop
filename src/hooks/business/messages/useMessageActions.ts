@@ -3,6 +3,8 @@ import React from 'react';
 import { Message as MessageType } from '../../../api/quorumApi';
 import { useConfirmationModal } from '../../../components/context/ConfirmationModalProvider';
 import MessagePreview from '../../../components/message/MessagePreview';
+import { extractMessageRawText } from '../../../utils/clipboard';
+import { useCopyToClipboard } from '../ui';
 import { t } from '@lingui/core/macro';
 
 interface UseMessageActionsOptions {
@@ -40,6 +42,9 @@ export function useMessageActions(options: UseMessageActionsOptions) {
 
   // State for copied link feedback
   const [copiedLinkId, setCopiedLinkId] = useState<string | null>(null);
+
+  // Clipboard hook for copying message text
+  const { copied: copiedMessageText, copyToClipboard } = useCopyToClipboard();
 
   // Get confirmation modal from context
   const { showConfirmationModal } = useConfirmationModal();
@@ -94,6 +99,12 @@ export function useMessageActions(options: UseMessageActionsOptions) {
       setCopiedLinkId((prev) => (prev === message.messageId ? null : prev));
     }, 1500);
   }, [message.messageId]);
+
+  // Handle copy message text action
+  const handleCopyMessageText = useCallback(async () => {
+    const text = extractMessageRawText(message);
+    await copyToClipboard(text);
+  }, [message, copyToClipboard]);
 
   // Handle delete action with confirmation
   const handleDelete = useCallback((e: React.MouseEvent) => {
@@ -156,6 +167,7 @@ export function useMessageActions(options: UseMessageActionsOptions) {
   return {
     // State
     copiedLinkId,
+    copiedMessageText,
     canUserDelete,
     canUserEdit,
     canViewEditHistory,
@@ -164,6 +176,7 @@ export function useMessageActions(options: UseMessageActionsOptions) {
     handleReaction,
     handleReply,
     handleCopyLink,
+    handleCopyMessageText,
     handleDelete,
     handleMoreReactions,
     handleEdit,

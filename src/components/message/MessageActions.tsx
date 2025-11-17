@@ -20,12 +20,14 @@ interface MessageActionsProps {
   onReaction: (emoji: string) => void;
   onReply: () => void;
   onCopyLink: () => void;
+  onCopyMessageText: () => void;
   onDelete: (e: React.MouseEvent) => void;
   onPin?: (e: React.MouseEvent) => void;
   onMoreReactions: (clientY: number) => void;
   onEdit?: () => void;
   onViewEditHistory?: () => void;
   copiedLinkId: string | null;
+  copiedMessageText: boolean;
 }
 
 export const MessageActions: React.FC<MessageActionsProps> = ({
@@ -38,12 +40,14 @@ export const MessageActions: React.FC<MessageActionsProps> = ({
   onReaction,
   onReply,
   onCopyLink,
+  onCopyMessageText,
   onDelete,
   onPin,
   onMoreReactions,
   onEdit,
   onViewEditHistory,
   copiedLinkId,
+  copiedMessageText,
 }) => {
   // State for tracking which action is currently hovered
   const [hoveredAction, setHoveredAction] = useState<string | null>(null);
@@ -86,6 +90,10 @@ export const MessageActions: React.FC<MessageActionsProps> = ({
         return copiedLinkId === message.messageId
           ? t`Copied!`
           : t`Copy message link`;
+      case 'copyMessage':
+        return copiedMessageText
+          ? t`Copied!`
+          : t`Copy message`;
       case 'edit':
         return t`Edit message`;
       case 'history':
@@ -141,13 +149,10 @@ export const MessageActions: React.FC<MessageActionsProps> = ({
           </div>
           <div
             onClick={() => handleQuickReaction(message, '🔥')}
-            className="w-5 text-center rounded-md flex flex-col justify-around cursor-pointer hover:scale-125 transition duration-200"
+            className="w-5 mr-1 text-center rounded-md flex flex-col justify-around cursor-pointer hover:scale-125 transition duration-200"
           >
             🔥
           </div>
-
-          {/* Separator */}
-          <div className="w-2 mr-2 text-center flex flex-col border-r border-r-1 border-surface-5"></div>
 
           {/* More reactions */}
           <div
@@ -155,10 +160,13 @@ export const MessageActions: React.FC<MessageActionsProps> = ({
               onMoreReactions(e.clientY);
             }}
             onMouseEnter={() => setHoveredAction('emoji')}
-            className="mr-2 text-center hover:scale-125 text-surface-9 hover:text-surface-10 transition duration-200 rounded-md flex items-center justify-center cursor-pointer"
+            className="text-center hover:scale-125 text-surface-9 hover:text-surface-10 transition duration-200 rounded-md flex items-center justify-center cursor-pointer"
           >
             <Icon name="mood-happy" size="md" variant="filled" />
           </div>
+
+          {/* Separator */}
+          <div className="w-2 mr-2 text-center flex flex-col border-r border-r-1 border-surface-5"></div>
 
           {/* Reply */}
           <div
@@ -173,9 +181,18 @@ export const MessageActions: React.FC<MessageActionsProps> = ({
           <div
             onClick={onCopyLink}
             onMouseEnter={() => setHoveredAction('copy')}
-            className="text-center text-surface-9 hover:text-surface-10 hover:scale-125 transition duration-200 rounded-md flex items-center justify-center cursor-pointer"
+            className="mr-2 text-center text-surface-9 hover:text-surface-10 hover:scale-125 transition duration-200 rounded-md flex items-center justify-center cursor-pointer"
           >
             <Icon name="link" size="sm" />
+          </div>
+
+          {/* Copy message */}
+          <div
+            onClick={onCopyMessageText}
+            onMouseEnter={() => setHoveredAction('copyMessage')}
+            className="text-center text-surface-9 hover:text-surface-10 hover:scale-125 transition duration-200 rounded-md flex items-center justify-center cursor-pointer"
+          >
+            <Icon name="clipboard" size="sm" />
           </div>
 
           {/* Edit/History section with separator */}
