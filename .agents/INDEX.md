@@ -107,8 +107,6 @@ This is the main index for all documentation, bug reports, and task management.
 - [Device Identification Improvement](tasks/device-identification-improvement.md)
 - [DirectMessage Navigation State Persistence](tasks/dm-navigation-state-persistence.md)
 - [Implement Background Sync Queue for User Settings and Async Operations](tasks/background-sync-queue.md)
-- [Implement Channel Mention Feature (#channelname)](tasks/implement-channel-mention-feature.md)
-- [Implement Copy Message Raw Text Option](tasks/copy-message-text.md)
 - [Implement Message Forwarding with Privacy Controls](tasks/message-forwarding-with-privacy-controls.md)
 - [Multi-User Invite Selection Enhancement](tasks/multi-user-invite-selection.md)
 - [Passkey Import UX Issue](tasks/passkey-import-ux-issue.md)
@@ -205,6 +203,8 @@ This is the main index for all documentation, bug reports, and task management.
 - [Emoji Picker Responsive Design Improvement](tasks/.done/emojipicker-responsive.md)
 - [Expo Go to Expo Dev Client Migration Plan - Simplified](tasks/.done/expo-go-to-dev-client-migration.md)
 - [Fix: React Query "undefined" Error in DM Conversations](tasks/.done/fix-react-query-undefined-error-in-dms.md)
+- [Implement Channel Mention Feature (#channelname)](tasks/.done/channel-mention-feature.md)
+- [Implement Copy Message Raw Text Option](tasks/.done/copy-message-text.md)
 - [Implement Dm Unread Features](tasks/.done/implement-dm-unread-features.md)
 - [Implement Mention Notification Bubbles](tasks/.done/mention-notification-bubbles.md)
 - [Implement Per-Space Display Names and Avatars with Account Section](tasks/.done/per-space-display-name-avatar.md)
@@ -262,4 +262,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2025-11-17 15:54:18
+**Last Updated**: 2025-11-17 16:56:54
