@@ -67,6 +67,7 @@ interface MessageComposerProps {
   // Mention support
   users?: User[];
   roles?: Role[];
+  canUseEveryone?: boolean;
 }
 
 export interface MessageComposerRef {
@@ -103,6 +104,7 @@ export const MessageComposer = forwardRef<
       disabledMessage,
       users = [],
       roles = [],
+      canUseEveryone = false,
     },
     ref
   ) => {
@@ -139,7 +141,7 @@ export const MessageComposer = forwardRef<
       },
     }));
 
-    // Handle mention selection (updated for both users and roles)
+    // Handle mention selection (updated for users, roles, and @everyone)
     const handleMentionSelect = useCallback(
       (option: MentionOption, mentionStart: number, mentionEnd: number) => {
         let insertText: string;
@@ -147,9 +149,12 @@ export const MessageComposer = forwardRef<
         if (option.type === 'user') {
           // Users: @<address> (with brackets)
           insertText = `@<${option.data.address}>`;
-        } else {
+        } else if (option.type === 'role') {
           // Roles: @roleTag (NO brackets)
           insertText = `@${option.data.roleTag}`;
+        } else {
+          // @everyone: plain @everyone (NO brackets)
+          insertText = '@everyone';
         }
 
         const newValue =
@@ -168,12 +173,13 @@ export const MessageComposer = forwardRef<
       [value, onChange]
     );
 
-    // Use mention input hook (now supports roles)
+    // Use mention input hook (now supports roles and @everyone)
     const mentionInput = useMentionInput({
       textValue: value,
       cursorPosition,
       users,
       roles,
+      canUseEveryone,
       onMentionSelect: handleMentionSelect,
     });
 
@@ -395,14 +401,14 @@ export const MessageComposer = forwardRef<
             <div className="message-composer-mention-container">
               {mentionInput.filteredOptions.map((option, index) => (
                 <div
-                  key={option.type === 'user' ? option.data.address : option.data.roleId}
+                  key={option.type === 'user' ? option.data.address : option.type === 'role' ? option.data.roleId : 'everyone'}
                   className={`message-composer-mention-item ${
                     index === mentionInput.selectedIndex ? 'selected' : ''
                   } ${
                     index === 0 ? 'first' : ''
                   } ${
                     index === mentionInput.filteredOptions.length - 1 ? 'last' : ''
-                  } ${option.type === 'role' ? 'role-item' : 'user-item'}`}
+                  } ${option.type === 'role' ? 'role-item' : option.type === 'everyone' ? 'everyone-item' : 'user-item'}`}
                   onClick={() => mentionInput.selectOption(option)}
                 >
                   {option.type === 'user' ? (
@@ -423,13 +429,13 @@ export const MessageComposer = forwardRef<
                         </span>
                       </div>
                     </>
-                  ) : (
+                  ) : option.type === 'role' ? (
                     <>
                       <div
                         className="message-composer-role-badge"
                         style={{ backgroundColor: option.data.color }}
                       >
-                        <Icon name="users" size="xs" />
+                        <Icon name="users" size="sm" />
                       </div>
                       <div className="message-composer-mention-info">
                         <span className="message-composer-mention-name">
@@ -437,6 +443,20 @@ export const MessageComposer = forwardRef<
                         </span>
                         <span className="message-composer-mention-role-tag">
                           @{option.data.roleTag}
+                        </span>
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <div className="message-composer-everyone-badge">
+                        <Icon name="globe" size="sm" />
+                      </div>
+                      <div className="message-composer-mention-info">
+                        <span className="message-composer-mention-name">
+                          @everyone
+                        </span>
+                        <span className="message-composer-mention-address">
+                          {t`Notify all members`}
                         </span>
                       </div>
                     </>

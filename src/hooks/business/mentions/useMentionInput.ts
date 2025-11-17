@@ -17,13 +17,15 @@ interface Role {
 // Discriminated union for display
 export type MentionOption =
   | { type: 'user'; data: User }
-  | { type: 'role'; data: Role };
+  | { type: 'role'; data: Role }
+  | { type: 'everyone' };
 
 interface UseMentionInputOptions {
   textValue: string;
   cursorPosition: number;
   users: User[];
   roles?: Role[]; // NEW - optional roles for autocomplete
+  canUseEveryone?: boolean; // NEW - permission to use @everyone
   onMentionSelect: (option: MentionOption, mentionStart: number, mentionEnd: number) => void;
   debounceMs?: number;
   maxDisplayResults?: number;
@@ -47,10 +49,11 @@ export function useMentionInput({
   cursorPosition,
   users,
   roles,
+  canUseEveryone = false,
   onMentionSelect,
   debounceMs = 100,
   maxDisplayResults = 50,
-  minQueryLength = 2,
+  minQueryLength = 3,
 }: UseMentionInputOptions): UseMentionInputReturn {
   const [showDropdown, setShowDropdown] = useState(false);
   const [mentionQuery, setMentionQuery] = useState('');
@@ -133,15 +136,32 @@ export function useMentionInput({
     [roles, minQueryLength, maxDisplayResults]
   );
 
-  // Debounced filter function - combines users and roles
+  // Check if @everyone matches the query
+  const checkEveryoneMatch = useCallback(
+    (query: string): boolean => {
+      if (!canUseEveryone) return false;
+
+      // @everyone should show up for empty query or any partial match
+      if (!query || query.length === 0) return true;
+
+      const queryLower = query.toLowerCase();
+      return 'everyone'.startsWith(queryLower);
+    },
+    [canUseEveryone]
+  );
+
+  // Debounced filter function - combines users, roles, and @everyone
   const debouncedFilter = useMemo(
     () =>
       debounce((query: string) => {
         const filteredUsers = filterUsers(query);
         const filteredRoles = filterRoles(query);
+        const everyoneMatches = checkEveryoneMatch(query);
 
         // Combine into discriminated union
         const combined: MentionOption[] = [
+          // Put @everyone first if it matches (most prominent)
+          ...(everyoneMatches ? [{ type: 'everyone' as const }] : []),
           ...filteredUsers.map(u => ({ type: 'user' as const, data: u })),
           ...filteredRoles.map(r => ({ type: 'role' as const, data: r })),
         ];
@@ -149,7 +169,7 @@ export function useMentionInput({
         setFilteredOptions(combined);
         setSelectedIndex(0);
       }, debounceMs),
-    [filterUsers, filterRoles, debounceMs]
+    [filterUsers, filterRoles, checkEveryoneMatch, debounceMs]
   );
 
   // Detect @ mentions and extract query

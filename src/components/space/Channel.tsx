@@ -35,7 +35,7 @@ import UserProfile from '../user/UserProfile';
 import { useUserProfileModal } from '../../hooks/business/ui/useUserProfileModal';
 import type { Channel, Role } from '../../api/quorumApi';
 import { UserAvatar } from '../user/UserAvatar';
-import { getUserRoles } from '../../utils/permissions';
+import { getUserRoles, hasPermission } from '../../utils/permissions';
 
 // Helper function to check if user can post in read-only channel
 function canPostInReadOnlyChannel(
@@ -982,7 +982,17 @@ const Channel: React.FC<ChannelProps> = ({
             </div>
 
             <div className="message-editor-container">
-              <MessageComposer
+              {/* Check @everyone permission */}
+              {(() => {
+                const canUseEveryone = hasPermission(
+                  user.currentPasskeyInfo?.address || '',
+                  'mention:everyone',
+                  space || undefined,
+                  isSpaceOwner || false
+                );
+                return (
+                  <MessageComposer
+                    canUseEveryone={canUseEveryone}
                 ref={messageComposerRef}
                 value={composer.pendingMessage}
                 onChange={composer.setPendingMessage}
@@ -1013,7 +1023,9 @@ const Channel: React.FC<ChannelProps> = ({
                     ? t`You cannot post in this channel`
                     : undefined
                 }
-              />
+                  />
+                );
+              })()}
             </div>
           </div>
 

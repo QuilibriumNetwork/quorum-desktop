@@ -441,3 +441,16 @@ html:not(.dark) .message-composer-row {
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+
+/* NEW: @everyone mention styles */
+.message-composer-everyone-badge {
+  width: $s-8;
+  height: $s-8;
+  border-radius: $rounded-full;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--accent);
+  color: white;
+  flex-shrink: 0;
+}
