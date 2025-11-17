@@ -42,31 +42,37 @@
   --color-link-hover: var(--accent-300);
   --color-text-danger: rgb(var(--danger));
 
-  /* surface semantic */
-  --color-bg-app: var(--surface-00); // main bg
+  /* app general */
+  --color-bg-app: var(--surface-00); // main bg - Navmenu
  
-  --color-bg-sidebar: var(--surface-0); // left sidebar
-  --color-bg-sidebar-hover: var(--surface-1); // sidebar elements
-  --color-bg-sidebar-active: var(--surface-1); // sidebar elements
-  --color-bg-sidebar-active-accent: rgba(var(--accent-rgb), 0.25); // DM active with accent
+  /* left sidebar - DM, Channels */
+  --color-bg-sidebar: var(--surface-0);
+  --color-bg-sidebar-hover: var(--surface-1); 
+  --color-bg-sidebar-active: var(--surface-1);
+  --color-bg-sidebar-active-accent: rgba(var(--accent-rgb), 0.25);
 
-  --color-bg-chat: var(--surface-1); // messages area
+  /* chat area */
+  --color-bg-chat: var(--surface-1);
   --color-bg-chat-hover: var(--surface-2);
-  --color-bg-chat-input: var(--surface-00); // main input
+  --color-bg-chat-input: var(--surface-00); // send message input
 
+  /* modals */
   --color-bg-modal: var(--surface-2);
   --color-bg-modal-sidebar: var(--surface-1);
   --color-bg-modal-cat-hover: var(--surface-2);
   --color-bg-modal-cat-active: var(--surface-2);
 
-  --color-bg-overlay: rgba(0, 0, 0, 0.6);
-
-  --color-bg-tooltip: var(--surface-00);
-  --color-bg-icon: var(--surface-00);
-
-  /* mobile drawer semantic */
+  /* mobile drawer */
   --color-bg-mobile-drawer: var(--surface-0);
   --color-border-mobile-drawer: var(--surface-3);
+  --color-bg-mobile-drawer-item: var(--surface-2);
+  --color-bg-mobile-drawer-item-active: var(--surface-3);
+  --color-border-mobile-drawer-item: var(--surface-0);
+
+  /* utilities */
+  --color-bg-overlay: rgba(0, 0, 0, 0.6);
+  --color-bg-tooltip: var(--surface-00);
+  --color-bg-icon: var(--surface-00);
 
   /* === FORM FIELD SEMANTIC COLORS === */
   /* Field backgrounds - optimized for --color-bg-modal containers */

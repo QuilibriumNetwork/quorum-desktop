@@ -1,12 +1,16 @@
 @use '../../styles/dropdown-result-item';
+@use '../../styles/variables' as *;
 
 // Search result item uses shared styling
 .search-result-item {
   @extend .dropdown-result-item;
 
-  &:focus {
-    outline: none;
-    background-color: var(--surface-2);
+  // Desktop-specific focus state (in addition to hover from shared styles)
+  @media (hover: hover) and (pointer: fine) {
+    &:focus {
+      outline: none;
+      background-color: var(--surface-2);
+    }
   }
 }
 
@@ -58,3 +62,19 @@
 }
 
 // Footer removed - date now in header
+
+// Mobile drawer responsive layout: Let date flow naturally to second row when needed
+.mobile-drawer__item-box {
+  .search-result-item {
+    .result-header {
+      flex-wrap: wrap; // Allow wrapping when content doesn't fit
+      gap: $s-1; // Add gap between wrapped items
+      align-items: flex-start; // Align items to top when wrapped
+
+      // When items wrap, they should align to the left
+      .result-meta:last-child {
+        justify-content: flex-start; // Align left instead of right when wrapped
+      }
+    }
+  }
+}

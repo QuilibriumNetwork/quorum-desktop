@@ -16,12 +16,6 @@
 .pinned-messages-list {
   @extend .dropdown-results-list;
   padding: 0 0 $s-4 0 !important; // Override to ensure zero horizontal padding
-
-  // On mobile (touch devices), Virtuoso needs a height to work
-  // Set to a large value that will be constrained by MobileDrawer's 80vh
-  @media (hover: none) and (pointer: coarse) {
-    height: 70vh !important; // Large height for Virtuoso, MobileDrawer will constrain
-  }
 }
 
 // Use shared item styling with pinned-specific class name
@@ -122,4 +116,21 @@
 
 .empty-hint {
   @extend .dropdown-empty-hint;
+}
+
+// Mobile drawer responsive layout: Let content flow naturally when needed
+// Keep consistent with SearchResults and NotificationItems
+.mobile-drawer__item-box {
+  .pinned-message-item {
+    .result-meta-container {
+      flex-wrap: wrap; // Allow wrapping when content doesn't fit
+      gap: $s-1; // Add gap between wrapped items
+      align-items: flex-start; // Align items to top when wrapped
+
+      // When items wrap, actions should align to the left
+      .message-actions {
+        justify-content: flex-start; // Align left instead of right when wrapped
+      }
+    }
+  }
 }

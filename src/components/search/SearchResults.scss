@@ -1,4 +1,5 @@
 @use '../../styles/dropdown-result-item';
+@use '../../styles/variables' as *;
 
 // Search results specific styling
 .search-results {
@@ -10,18 +11,18 @@
   position: sticky;
   top: 0;
   z-index: 10;
-  background-color: var(--surface-0);
+  background-color: var(--color-bg-mobile-drawer);
 }
 
 // Mobile search header - contains the input field
 .search-mobile-header {
-  padding: 16px;
+  padding: $s-4;
 }
 
 // Mobile search results count - small text below search input
 .search-results-count {
-  padding: 0px 16px 12px 16px;
-  margin-top: -8px;
+  padding: $s-0 $s-4 $s-3 $s-4;
+  margin-top: -$s-2;
 }
 
 .search-mobile-input {
@@ -34,24 +35,23 @@
 
 .search-context-text {
   display: block;
-  margin-top: 8px;
-  padding: 0 4px;
+  margin-top: $s-2;
+  padding: $s-0 $s-1;
 }
 
 // Use shared list styling with zero horizontal padding for full-width borders
 .search-results-list {
   @extend .dropdown-results-list;
-  padding: 0 0 16px 0 !important; // Override to ensure zero horizontal padding
+  padding: $s-0 $s-0 $s-4 $s-0 !important; // Override to ensure zero horizontal padding
 
   // On desktop, handle own scrolling with slightly different height
   @media (hover: hover) and (pointer: fine) {
     max-height: 340px; // Slightly different from default
   }
 
-  // On mobile (touch devices in MobileDrawer), no overflow handling
-  // MobileDrawer__content handles scrolling, this just grows naturally
+  // On mobile (touch devices in MobileDrawer), allow controlled height from inline styles
   @media (max-width: 768px) {
-    max-height: none;
+    max-height: none !important; // Allow inline styles to control height
     overflow-y: visible;
     // Safe area handling for bottom sheet content
     // Matches MessageComposer and MobileDrawer patterns
@@ -130,11 +130,11 @@
   .search-result-item {
     // Larger touch targets (minimum 44px height per mobile guidelines)
     min-height: 44px;
-    padding: 12px 16px;
+    padding: $s-3 $s-4;
 
     // More spacing between items for easier tapping
     &:not(:last-child) {
-      border-bottom: 1px solid var(--surface-3);
+      border-bottom: $border solid var(--color-border-mobile-drawer-item);
     }
   }
 }

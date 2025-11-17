@@ -74,6 +74,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Markdown Line Break Inconsistency](bugs/markdown-line-break-inconsistency.md)
 - [Message Hash Navigation Conflict Bug](bugs/message-hash-navigation-conflict.md)
 - [MessageDB Context: IndexedDB Platform Compatibility Issue](bugs/messagedb-cross-platform-storage-issue.md)
+- [MobileDrawer Virtuoso Double Scroller CSS Issues](bugs/mobiledrawer-virtuoso-double-scroller.md)
 - [Modal Gesture Handling Technical Debt](bugs/modal-gesture-handling-technical-debt.md)
 - [New Messages Separator - Intersection Observer Dismissal Issues](bugs/new-messages-separator-intersection-observer-issues.md)
 - [Performance Issue: UserSettingsModal Save Times Scale Poorly with Number of Spaces](bugs/usersettingsmodal-scalability-performance.md)
@@ -260,4 +261,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2025-11-16 17:55:02
+**Last Updated**: 2025-11-17 12:11:53

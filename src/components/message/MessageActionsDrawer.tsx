@@ -163,96 +163,72 @@ const MessageActionsDrawer: React.FC<MessageActionsDrawerProps> = ({
       showCloseButton={false}
       headerContent={reactionsContent}
     >
-      <div className="mobile-drawer__padded-content">
-        {/* Actions menu */}
-        <div className="message-actions-drawer__actions">
-        <Button
-          type="unstyled"
-          size="normal"
+      {/* Actions menu using new grouped layout */}
+      <div className="mobile-drawer__action-group">
+        <div
           onClick={handleReply}
-          iconName="reply"
-          fullWidth
-          className="action-menu-item"
+          className="mobile-drawer__action-item"
         >
-          {t`Reply`}
-        </Button>
+          <Icon name="reply" />
+          <Text>{t`Reply`}</Text>
+        </div>
 
-        <Button
-          type="unstyled"
-          size="normal"
+        <div
           onClick={handleCopyLink}
-          iconName="link"
-          fullWidth
-          className="action-menu-item"
+          className="mobile-drawer__action-item"
         >
-          {t`Copy message link`}
-        </Button>
+          <Icon name="link" />
+          <Text>{t`Copy message link`}</Text>
+        </div>
 
-        <Button
-          type="unstyled"
-          size="normal"
+        <div
           onClick={handleCopyMessageText}
-          iconName="clipboard"
-          fullWidth
-          className="action-menu-item"
+          className="mobile-drawer__action-item"
         >
-          {t`Copy message`}
-        </Button>
+          <Icon name="clipboard" />
+          <Text>{t`Copy message`}</Text>
+        </div>
 
         {canEdit && onEdit && (
-          <Button
-            type="unstyled"
-            size="normal"
+          <div
             onClick={handleEdit}
-            iconName="edit"
-            fullWidth
-            className="action-menu-item"
+            className="mobile-drawer__action-item"
           >
-            {t`Edit message`}
-          </Button>
+            <Icon name="edit" />
+            <Text>{t`Edit message`}</Text>
+          </div>
         )}
 
         {canViewEditHistory && onViewEditHistory && (
-          <Button
-            type="unstyled"
-            size="normal"
+          <div
             onClick={handleViewEditHistory}
-            iconName="history"
-            fullWidth
-            className="action-menu-item"
+            className="mobile-drawer__action-item"
           >
-            {t`View edit history`}
-          </Button>
+            <Icon name="history" />
+            <Text>{t`View edit history`}</Text>
+          </div>
         )}
 
         {canPinMessages && onPin && (
-          <Button
-            type="unstyled"
-            size="normal"
+          <div
             onClick={handlePin}
-            iconName={message.isPinned ? "pin-off" : "pin"}
-            fullWidth
-            className={`action-menu-item ${
-              message.isPinned ? 'action-menu-item--danger' : ''
-            }`}
+            className="mobile-drawer__action-item"
           >
-            {message.isPinned ? t`Unpin message` : t`Pin message`}
-          </Button>
+            <Icon name={message.isPinned ? "pin-off" : "pin"} />
+            <Text>{message.isPinned ? t`Unpin message` : t`Pin message`}</Text>
+          </div>
         )}
 
         {canDelete && (
-          <Button
-            type="unstyled"
-            size="normal"
+          <div
             onClick={handleDelete}
-            iconName="trash"
-            fullWidth
-            className="action-menu-item action-menu-item--danger"
+            className="mobile-drawer__action-item"
+            style={{ color: 'rgb(var(--danger))' }}
           >
-            {t`Delete message`}
-          </Button>
+            <Icon name="trash" />
+            <Text>{t`Delete message`}</Text>
+          </div>
         )}
-        </div>
       </div>
     </MobileDrawer>
   );

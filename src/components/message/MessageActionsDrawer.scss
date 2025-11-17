@@ -26,10 +26,10 @@
   justify-content: center;
   font-size: $text-lg;
   transition: all $duration-150 ease-in-out;
-  background-color: var(--surface-2);
+  background-color: var(--color-bg-mobile-drawer-item);
 
   &:hover {
-    background-color: var(--surface-3);
+    background-color: var(--color-bg-mobile-drawer-item-active);
     transform: scale(1.1);
   }
 
@@ -40,7 +40,6 @@
   &--active {
     border-width: $border;
     border-color: var(--accent-500);
-    // box-shadow: 0 0 12px 0px var(--accent-500);
   }
 }
 
@@ -61,7 +60,7 @@
   cursor: pointer;
 
   &:hover {
-    background-color: var(--surface-2);
+    background-color: var(--color-bg-mobile-drawer-item);
     border-color: var(--surface-5);
     transform: scale(1.1);
   }
@@ -71,80 +70,19 @@
   }
 }
 
-// Actions menu container
-.message-actions-drawer__actions {
-  display: flex;
-  flex-direction: column;
-  gap: $s-1;
-  padding-bottom: $s-2;
-  padding-left: $s-2;
-  padding-right: $s-2;
-}
-
-// Action menu items - for unstyled normal Button primitives
-.action-menu-item {
-  min-height: $s-11;
-  padding-top: $s-2;
-  padding-bottom: $s-2;
-  border-radius: $rounded-xl;
-  transition: all $duration-150 ease-in-out;
-  text-align: left;
-  justify-content: flex-start;
-  display: flex;
-  align-items: center;
-  color: var(--color-text-main);
-  font-size: $text-base;
-
-  &:hover {
-    background-color: var(--surface-2);
-  }
-
-  &:active {
-    transform: scale(0.98);
-  }
-
-  // Force left alignment and proper spacing
-  justify-content: flex-start !important;
-  text-align: left !important;
-
-  // Increase icon spacing
-  .quorum-button-icon-element {
-    margin-right: $s-3 !important; // More space between icon and text
-  }
-
-  &--danger {
-    color: rgb(var(--danger));
-
-    &:hover {
-      background-color: rgba(var(--danger), 0.1);
-    }
-
-    // Ensure danger color for icons
-    .quorum-button-icon-element {
-      color: rgb(var(--danger)) !important;
-    }
-  }
-}
+// Actions menu now uses mobile-drawer__action-group and mobile-drawer__action-item classes
+// No custom styling needed - handled by the semantic classes
 
 // High contrast mode support
 @media (prefers-contrast: high) {
   .quick-reaction-emoji {
     border-width: $border-2;
   }
-
-  .action-menu-item {
-    border: $border solid transparent;
-
-    &:hover {
-      border-color: var(--color-text-main);
-    }
-  }
 }
 
 // Reduce motion for accessibility
 @media (prefers-reduced-motion: reduce) {
-  .quick-reaction-emoji,
-  .action-menu-item {
+  .quick-reaction-emoji {
     transition: none;
   }
 }

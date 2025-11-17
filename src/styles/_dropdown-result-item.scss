@@ -14,6 +14,18 @@
     background-color: var(--surface-2);
   }
 
+  // Remove padding when inside mobile drawer item box
+  // The wrapper already provides $s-2 padding and background
+  .mobile-drawer__item-box & {
+    padding: 0;
+    border-bottom: none;
+    background-color: transparent !important;
+
+    &:hover {
+      background-color: transparent !important;
+    }
+  }
+
   // Note: :last-child removed as it doesn't work properly with virtualized lists
 }
 

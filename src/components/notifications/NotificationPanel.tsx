@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { t } from '@lingui/core/macro';
 import { Container, FlexRow, Text, Icon, Button, Tooltip, FlexCenter, Select } from '../primitives';
 import { DropdownPanel } from '../ui';
+import { isTouchDevice } from '../../utils/platform';
 import { NotificationItem } from './NotificationItem';
 import { useAllMentions, useMentionNotificationSettings } from '../../hooks/business/mentions';
 import { useAllReplies } from '../../hooks/business/replies';
@@ -33,6 +34,7 @@ export const NotificationPanel: React.FC<NotificationPanelProps> = ({
   const navigate = useNavigate();
   const { messageDB } = useMessageDB();
   const queryClient = useQueryClient();
+
 
   // Load user's saved notification settings for this space
   const { selectedTypes: savedTypes, isLoading: settingsLoading } = useMentionNotificationSettings({ spaceId });
@@ -171,7 +173,7 @@ export const NotificationPanel: React.FC<NotificationPanelProps> = ({
       position="absolute"
       positionStyle="right-aligned"
       maxWidth={500}
-      maxHeight={420}
+      maxHeight={Math.min(window.innerHeight * 0.8, 600)}
       title={
         allNotifications.length === 1
           ? t`${allNotifications.length} notification`
@@ -217,20 +219,45 @@ export const NotificationPanel: React.FC<NotificationPanelProps> = ({
       {isLoading || allNotifications.length === 0 ? (
         renderEmptyState()
       ) : (
-        <Container className="notification-panel__list">
-          {allNotifications.map((notification) => {
-            const sender = mapSenderToUser(notification.message.content?.senderId);
-            return (
-              <NotificationItem
-                key={`${notification.message.messageId}-${notification.channelId}`}
-                notification={notification}
-                onNavigate={handleNavigate}
-                displayName={sender?.displayName || t`Unknown User`}
-                mapSenderToUser={mapSenderToUser}
-              />
-            );
-          })}
-        </Container>
+        <>
+          {/* Mobile: Use new item list layout */}
+          {isTouchDevice() ? (
+            <div className="mobile-drawer__item-list mobile-drawer__item-list--with-controls">
+              {allNotifications.map((notification) => {
+                const sender = mapSenderToUser(notification.message.content?.senderId);
+                return (
+                  <div
+                    key={`${notification.message.messageId}-${notification.channelId}`}
+                    className="mobile-drawer__item-box mobile-drawer__item-box--interactive"
+                  >
+                    <NotificationItem
+                      notification={notification}
+                      onNavigate={handleNavigate}
+                      displayName={sender?.displayName || t`Unknown User`}
+                      mapSenderToUser={mapSenderToUser}
+                    />
+                  </div>
+                );
+              })}
+            </div>
+          ) : (
+            /* Desktop: Keep existing layout */
+            <Container className="notification-panel__list">
+              {allNotifications.map((notification) => {
+                const sender = mapSenderToUser(notification.message.content?.senderId);
+                return (
+                  <NotificationItem
+                    key={`${notification.message.messageId}-${notification.channelId}`}
+                    notification={notification}
+                    onNavigate={handleNavigate}
+                    displayName={sender?.displayName || t`Unknown User`}
+                    mapSenderToUser={mapSenderToUser}
+                  />
+                );
+              })}
+            </Container>
+          )}
+        </>
       )}
     </DropdownPanel>
   );

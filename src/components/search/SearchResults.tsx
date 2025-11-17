@@ -41,7 +41,7 @@ export const SearchResults: React.FC<SearchResultsProps> = ({
   highlightTerms,
   onClose,
   className,
-  maxHeight = 400,
+  maxHeight = Math.min(window.innerHeight * 0.8, 600),
   isOpen = true,
   onQueryChange,
   onClear,
@@ -49,6 +49,7 @@ export const SearchResults: React.FC<SearchResultsProps> = ({
   placeholder,
 }) => {
   const isTouch = isTouchDevice();
+
 
   // Business logic hooks
   const { searchTerms, handleNavigate } = useSearchResultsState({
@@ -158,28 +159,62 @@ export const SearchResults: React.FC<SearchResultsProps> = ({
         renderEmptyState()
       ) : (
         <>
-          <Virtuoso
-            data={results}
-            style={{ height: maxHeight }}
-            className="search-results-list"
-            itemContent={(index, result) => (
-              <SearchResultItem
-                key={`${result.message.messageId}-${index}`}
-                result={result}
-                onNavigate={handleNavigate}
-                highlightTerms={highlightTerms}
-                searchTerms={searchTerms}
-                index={index}
-                displayData={resultsData.get(result.message.messageId)}
+          {/* Mobile: Use new item list layout */}
+          {isTouch ? (
+            <div className="mobile-drawer__item-list">
+              <Virtuoso
+                data={results}
+                style={{ height: Math.min(window.innerHeight * 0.8, 600) - 100 }}
+                className="search-results-list"
+                itemContent={(index, result) => (
+                  <div className="mobile-drawer__item-box mobile-drawer__item-box--interactive">
+                    <SearchResultItem
+                      key={`${result.message.messageId}-${index}`}
+                      result={result}
+                      onNavigate={handleNavigate}
+                      highlightTerms={highlightTerms}
+                      searchTerms={searchTerms}
+                      index={index}
+                      displayData={resultsData.get(result.message.messageId)}
+                    />
+                  </div>
+                )}
               />
-            )}
-          />
-          {results.length >= 500 && (
-            <Container className="p-3 border-top">
-              <Callout variant="info" className="w-full">
-                {t`Showing first 500 results. Refine your search for more specific results.`}
-              </Callout>
-            </Container>
+              {results.length >= 500 && (
+                <div className="mobile-drawer__item-box">
+                  <Callout variant="info" className="w-full">
+                    {t`Showing first 500 results. Refine your search for more specific results.`}
+                  </Callout>
+                </div>
+              )}
+            </div>
+          ) : (
+            /* Desktop: Keep existing layout */
+            <>
+              <Virtuoso
+                data={results}
+                style={{ height: Math.min(window.innerHeight * 0.8, 600) - 100 }}
+                className="search-results-list"
+                itemContent={(index, result) => (
+                  <SearchResultItem
+                    key={`${result.message.messageId}-${index}`}
+                    result={result}
+                    onNavigate={handleNavigate}
+                    highlightTerms={highlightTerms}
+                    searchTerms={searchTerms}
+                    index={index}
+                    displayData={resultsData.get(result.message.messageId)}
+                  />
+                )}
+              />
+              {results.length >= 500 && (
+                <Container className="p-3 border-top">
+                  <Callout variant="info" className="w-full">
+                    {t`Showing first 500 results. Refine your search for more specific results.`}
+                  </Callout>
+                </Container>
+              )}
+            </>
           )}
         </>
       )}

@@ -5,6 +5,7 @@ import type { Message as MessageType, Channel, Sticker } from '../../api/quorumA
 import MessagePreview from './MessagePreview';
 import {
   FlexRow,
+  FlexBetween,
   FlexCenter,
   Text,
   Button,
@@ -58,54 +59,7 @@ const PinnedMessageItem: React.FC<PinnedMessageItemProps> = ({
       className="pinned-message-item"
     >
       <Container className="result-header">
-        {/* Mobile layout: actions on first row */}
-        <FlexRow className="sm:hidden items-center justify-end mb-2">
-          <FlexRow
-            className={`message-actions items-center${isTouchDevice() ? ' always-visible' : ''}`}
-          >
-          <Button
-            type="secondary"
-            onClick={() => onJumpToMessage(message.messageId)}
-            iconName="arrow-right"
-            size="small"
-            className="gap-1 mr-2"
-          >
-            {t`Jump`}
-          </Button>
-          {canPinMessages && (
-            <Tooltip
-              id={`unpin-${message.messageId}`}
-              content={t`Unpin this post`}
-              place="top"
-              showOnTouch={false}
-            >
-              <Button
-                type="unstyled"
-                onClick={(e: React.MouseEvent) => togglePin(e, message)}
-                iconName="pin-off"
-                iconOnly={true}
-                size="small"
-                className="text-danger"
-              />
-            </Tooltip>
-          )}
-          </FlexRow>
-        </FlexRow>
-
-        {/* Mobile layout: user info on second row */}
-        <FlexRow className="sm:hidden result-meta items-center">
-          <Icon name="user" className="result-user-icon" />
-          <Text className="result-sender mr-4">
-            {sender?.displayName || t`Unknown User`}
-          </Text>
-          <Icon name="calendar-alt" className="result-date-icon" />
-          <Text className="result-date">
-            {formatMessageDate(message.createdDate)}
-          </Text>
-        </FlexRow>
-
-        {/* Desktop layout: original single row */}
-        <FlexRow className="hidden sm:flex items-center justify-between">
+        <FlexBetween className="result-meta-container">
           <FlexRow className="result-meta items-center">
             <Icon name="user" className="result-user-icon" />
             <Text className="result-sender mr-4">
@@ -139,7 +93,6 @@ const PinnedMessageItem: React.FC<PinnedMessageItemProps> = ({
                   type="unstyled"
                   onClick={(e: React.MouseEvent) => togglePin(e, message)}
                   iconName="pin-off"
-                  iconSize="lg"
                   iconOnly={true}
                   size="small"
                   className="text-danger"
@@ -147,7 +100,7 @@ const PinnedMessageItem: React.FC<PinnedMessageItemProps> = ({
               </Tooltip>
             )}
           </FlexRow>
-        </FlexRow>
+        </FlexBetween>
       </Container>
 
       <Container className="result-content">
@@ -177,6 +130,7 @@ export const PinnedMessagesPanel: React.FC<PinnedMessagesPanelProps> = ({
   const navigate = useNavigate();
   const { pinnedMessages, canPinMessages, isLoading, togglePin } =
     usePinnedMessages(spaceId, channelId, channel, mapSenderToUser, stickers);
+
 
   // Use the new React state-based message highlighting
   const { highlightMessage, scrollToMessage } = useMessageHighlight();
@@ -242,7 +196,7 @@ export const PinnedMessagesPanel: React.FC<PinnedMessagesPanelProps> = ({
       position="absolute"
       positionStyle="right-aligned"
       maxWidth={500}
-      maxHeight={420}
+      maxHeight={Math.min(window.innerHeight * 0.8, 600)}
       title={
         pinnedMessages.length === 1
           ? t`${pinnedMessages.length} pinned message in this Channel`
@@ -254,25 +208,47 @@ export const PinnedMessagesPanel: React.FC<PinnedMessagesPanelProps> = ({
       {isLoading || pinnedMessages.length === 0 ? (
         renderEmptyState()
       ) : (
-        <Virtuoso
-          style={
-            isTouchDevice()
-              ? {} // Mobile: no inline height, let CSS handle it
-              : { height: '350px' } // Desktop: fixed height with own scrolling
-          }
-          totalCount={pinnedMessages.length}
-          itemContent={(index) => (
-            <PinnedMessageItem
-              message={pinnedMessages[index]}
-              mapSenderToUser={mapSenderToUser}
-              onJumpToMessage={handleJumpToMessage}
-              canPinMessages={canPinMessages}
-              togglePin={togglePin}
-              stickers={stickers}
+        <>
+          {/* Mobile: Use new item list layout */}
+          {isTouchDevice() ? (
+            <div className="mobile-drawer__item-list">
+              <Virtuoso
+                data={pinnedMessages}
+                style={{ height: Math.min(window.innerHeight * 0.8, 600) - 100 }}
+                className="pinned-messages-list"
+                itemContent={(index, message) => (
+                  <div className="mobile-drawer__item-box mobile-drawer__item-box--interactive">
+                    <PinnedMessageItem
+                      message={message}
+                      mapSenderToUser={mapSenderToUser}
+                      onJumpToMessage={handleJumpToMessage}
+                      canPinMessages={canPinMessages}
+                      togglePin={togglePin}
+                      stickers={stickers}
+                    />
+                  </div>
+                )}
+              />
+            </div>
+          ) : (
+            /* Desktop: Keep existing layout */
+            <Virtuoso
+              style={{ height: '350px' }} // Desktop: fixed height with own scrolling
+              totalCount={pinnedMessages.length}
+              itemContent={(index) => (
+                <PinnedMessageItem
+                  message={pinnedMessages[index]}
+                  mapSenderToUser={mapSenderToUser}
+                  onJumpToMessage={handleJumpToMessage}
+                  canPinMessages={canPinMessages}
+                  togglePin={togglePin}
+                  stickers={stickers}
+                />
+              )}
+              className="pinned-messages-list"
             />
           )}
-          className="pinned-messages-list"
-        />
+        </>
       )}
     </DropdownPanel>
   );

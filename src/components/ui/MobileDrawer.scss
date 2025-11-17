@@ -48,6 +48,12 @@
     border-bottom: none;
     padding-bottom: $s-2;
   }
+
+  // Remove border when using boxed layout systems (item lists or action groups)
+  &:has(+ .mobile-drawer__content .mobile-drawer__item-list),
+  &:has(+ .mobile-drawer__content .mobile-drawer__action-group) {
+    border-bottom: none;
+  }
 }
 
 .mobile-drawer__header-row {
@@ -111,18 +117,107 @@
   padding: 0; // No default padding - let child content control spacing
 }
 
-// Content padding utilities for consistent spacing across drawers
-// Use these classes on direct children of .mobile-drawer__content
+// For individual message preview boxes (search results, pinned messages, notifications)
+.mobile-drawer__item-list {
+  padding: 0 $s-3 $s-3 $s-3; // padding around the list
+  margin-top: (-$s-3); // negative top margin
 
-// For action menus, forms, and general content (needs padding on all sides)
-.mobile-drawer__padded-content {
-  padding: $s-4;
+  // Simplified approach: Give all items top margin, container handles first item spacing
+  & > div .mobile-drawer__item-box {
+    margin-top: $s-3; // spacing before each item
+  }
+
+  // For regular (non-Virtuoso) lists like notifications - same approach
+  & > div {
+    margin-top: $s-3;
+  }
+
+  // Exception: Lists with controls above (like NotificationPanel) need proper spacing
+  &.mobile-drawer__item-list--with-controls {
+    margin-top: 0; // Remove negative margin when list has controls above it
+  }
 }
 
-// For list-based content with full-width borders (notifications, search, pinned messages)
-.mobile-drawer__list-content {
-  padding: 0 0 $s-4 0; // Zero horizontal padding, bottom padding for spacing
+.mobile-drawer__item-box {
+  background: var(--color-bg-mobile-drawer-item); // Slightly elevated background
+  padding: $s-2-5;
+  border-radius: $rounded-lg; // 8px rounded corners
+  border: $border solid transparent; // Invisible border for consistent sizing
+  transition: background-color 150ms ease-in-out;
+
+  &--interactive {
+    cursor: pointer;
+
+    &:active {
+      background: var(--color-bg-mobile-drawer-item-active); // Touch feedback
+    }
+  }
 }
+
+// For grouped action lists (like MessageActionsDrawer)
+.mobile-drawer__action-group {
+  margin: $s-3 $s-4; 
+  background: var(--color-bg-mobile-drawer-item); 
+  border-radius: $rounded-lg; 
+  overflow: hidden; // Ensure borders don't extend beyond rounded corners
+}
+
+.mobile-drawer__action-item {
+  padding: $s-3 $s-4; // touch-friendly area
+  min-height: $s-11; // 44px minimum touch target
+  display: flex;
+  align-items: center;
+  gap: $s-3; // gap between icon and text
+  cursor: pointer;
+  transition: background-color 150ms ease-in-out;
+  border-bottom: $border solid var(--color-border-mobile-drawer-item);
+
+  &:last-child {
+    border-bottom: none; // Remove border from last item
+  }
+
+  &:active {
+    background: var(--color-bg-mobile-drawer-item-active); // Touch feedback
+  }
+}
+
+// For mixed layouts with section headers
+.mobile-drawer__section {
+  margin-bottom: $s-4; // spacing between sections
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.mobile-drawer__section-title {
+  font-size: $text-sm;
+  font-weight: $font-medium;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--color-text-subtle);
+  margin: $s-4 $s-2 $s-2 $s-2; // Top margin: 16px, horizontal: 8px, bottom: 8px
+  line-height: $leading-tight;
+}
+
+// For single actions in their own boxes
+.mobile-drawer__single-action {
+  margin: $s-2; // 8px margin around single action
+  background: var(--color-bg-mobile-drawer-item); // Elevated background
+  border-radius: $rounded-lg; // 8px rounded corners
+  cursor: pointer;
+  transition: background-color 150ms ease-in-out;
+
+  &:active {
+    background: var(--color-bg-mobile-drawer-item-active); // Touch feedback
+  }
+
+  .mobile-drawer__action-item {
+    border-bottom: none; // No border for single actions
+    margin: 0; // Reset margin since container handles it
+  }
+}
+
 
 // Animations
 @keyframes slide-up {

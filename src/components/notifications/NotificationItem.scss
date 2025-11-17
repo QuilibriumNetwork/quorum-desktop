@@ -1,12 +1,43 @@
 @use '../../styles/dropdown-result-item';
+@use '../../styles/variables' as *;
 
 // Notification item uses shared dropdown result item styling
 .notification-item {
-  @extend .dropdown-result-item;
+  // Base styles from dropdown-result-item (manually applied to avoid @extend across media queries)
+  padding: $s-4 $s-5;
+  border-bottom: $border solid var(--surface-3);
+  cursor: pointer;
+  transition: all $duration-200 $ease-in-out;
+  background-color: transparent;
+  font-weight: $font-normal;
 
-  &:focus {
-    outline: none;
-    background-color: var(--surface-2);
+  // Desktop: Use traditional dropdown result styling
+  @media (hover: hover) and (pointer: fine) {
+    &:hover {
+      background-color: var(--surface-2);
+    }
+
+    &:focus {
+      outline: none;
+      background-color: var(--surface-2);
+    }
+  }
+
+  // Mobile: Reset conflicting styles when used in mobile drawer item boxes
+  @media (hover: none) and (pointer: coarse) {
+    padding: 0; // Remove padding - handled by item box
+    border-bottom: none; // Remove border - item boxes handle separation
+    background-color: transparent !important; // Remove background - item box handles it
+    transition: none; // Disable transition - item box handles it
+
+    &:focus {
+      outline: none;
+      background-color: transparent !important;
+    }
+
+    &:hover {
+      background-color: transparent !important;
+    }
   }
 }
 
@@ -46,4 +77,20 @@
 
 .notification-text {
   @extend .dropdown-result-text;
+}
+
+// Mobile drawer responsive layout: Let date flow naturally to second row when needed
+.mobile-drawer__item-box {
+  .notification-item {
+    .notification-header {
+      flex-wrap: wrap; // Allow wrapping when content doesn't fit
+      gap: $s-1; // Add gap between wrapped items
+      align-items: flex-start; // Align items to top when wrapped
+
+      // When items wrap, they should align to the left
+      .notification-meta:last-child {
+        justify-content: flex-start; // Align left instead of right when wrapped
+      }
+    }
+  }
 }
