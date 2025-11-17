@@ -41,6 +41,7 @@ const ConfirmationModal: React.FunctionComponent<ConfirmationModalProps> = ({
       onClose={onCancel}
       title={title}
       size={size}
+      className={preview ? 'confirmation-modal-with-preview' : ''}
       hideClose={true} // Hide X button to prevent conflicts with parent modals
       swipeToClose={false} // Keep swipe disabled for consistency
     >

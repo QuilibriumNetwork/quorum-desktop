@@ -168,3 +168,12 @@
   flex-direction: column;
   justify-content: space-between;
 }
+
+// ConfirmationModal with preview - increase height only
+.quorum-modal.confirmation-modal-with-preview.quorum-modal-small {
+  max-height: 80vh; // Increase from 70vh to 80vh
+
+  @media (max-width: $screen-md) {
+    max-height: 70vh; // Increase from 60vh to 70vh
+  }
+}
