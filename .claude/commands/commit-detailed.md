@@ -1,3 +1,7 @@
+---
+description: Generate detailed, well-structured commit messages from code changes
+---
+
 Analyze the latest code changes and generate a detailed, well-structured commit message
 IMPORTANT: DO NOT MENTION THE LLM OR AI AGENT IN THE COMMIT MESSAGE
 

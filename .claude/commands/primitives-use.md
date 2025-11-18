@@ -1,3 +1,8 @@
+---
+description: Convert components to use primitive components architecture
+argument-hint: [component-name]
+---
+
 Convert this component ($ARGUMENTS) to use our src/components/primitives (docs:.agents\docs\features\primitives). 
 
 Priority:

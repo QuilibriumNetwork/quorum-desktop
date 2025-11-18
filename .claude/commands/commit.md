@@ -1,3 +1,7 @@
+---
+description: Create concise, well-formatted commit messages
+---
+
 Analyze the latest code changes and create a concise, well-formatted commit message.
 IMPORTANT: DO NOT MENTION THE LLM OR AI AGENT IN THE COMMIT MESSAGE
 

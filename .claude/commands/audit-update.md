@@ -1,3 +1,7 @@
+---
+description: Update component audit JSON with latest component categorization
+---
+
 Update src/dev/components-audit/audit.json using this script: src/dev/components-audit/update_audit.py - update the detailes for the component we have just worked on and then update the general stats at the end of the json.
 
 RULES to categorize a component:
