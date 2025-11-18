@@ -83,7 +83,7 @@
     margin-bottom: $s-3;
   }
 
-  /* When textarea grows beyond single line, align buttons to top */
+  /* When textarea grows beyond single line, align buttons to top and change from pill to rounded */
   &:has(.message-composer-textarea[style*="height: 4"]),
   &:has(.message-composer-textarea[style*="height: 5"]),
   &:has(.message-composer-textarea[style*="height: 6"]),
@@ -91,6 +91,7 @@
   &:has(.message-composer-textarea[style*="height: 8"]),
   &:has(.message-composer-textarea[style*="height: 9"]) {
     align-items: flex-start;
+    border-radius: $rounded-lg; /* Change from pill shape to standard rounded for multi-line */
   }
 }
 
