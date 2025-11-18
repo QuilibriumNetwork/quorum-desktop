@@ -1,4 +1,5 @@
 import type { Message, Mentions } from '../api/quorumApi';
+import { createIPFSCIDRegex } from './validation';
 
 /**
  * Options for checking if a user is mentioned in a message
@@ -245,7 +246,9 @@ export function extractMentionsFromText(
   }
 
   // Extract user mentions: @<address> OR @[Display Name]<address> (both formats) that have word boundaries
-  const userMentionRegex = /@(?:\[([^\]]+)\])?<([^>]+)>/g;
+  // Using centralized IPFS CID validation pattern
+  const cidPattern = createIPFSCIDRegex().source; // Get the pattern without global flag
+  const userMentionRegex = new RegExp(`@(?:\\[([^\\]]+)\\])?<(${cidPattern})>`, 'g');
   const userMatches = Array.from(text.matchAll(userMentionRegex));
 
   for (const match of userMatches) {

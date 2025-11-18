@@ -11,6 +11,7 @@ import {
   getScrollContainerMaxHeight,
 } from '../../utils/codeFormatting';
 import { hasWordBoundaries } from '../../utils/mentionUtils';
+import { createIPFSCIDRegex } from '../../utils/validation';
 import {
   isYouTubeURL,
   replaceYouTubeURLsInText,
@@ -199,6 +200,18 @@ export const MessageMarkdownRenderer: React.FC<MessageMarkdownRendererProps> = (
     return text;
   };
 
+  // Sanitize display names for safe token creation
+  const sanitizeDisplayName = useCallback((displayName: string | null | undefined): string => {
+    if (!displayName) return '';
+
+    // Remove >>> characters that could break token parsing
+    // Limit length to prevent performance issues (matches regex limits)
+    return displayName
+      .replace(/>>>/g, '') // Remove token-breaking characters
+      .substring(0, 200)   // Match regex limit of {0,200}
+      .trim();
+  }, []);
+
   // Process mentions to show displayNames with proper styling and click handling
   // Only process mentions that have word boundaries (whitespace before and after)
   const processMentions = useCallback((text: string): string => {
@@ -228,7 +241,9 @@ export const MessageMarkdownRenderer: React.FC<MessageMarkdownRendererProps> = (
     }
 
     // Replace @<address> OR @[Display Name]<address> with safe placeholder token only if it has word boundaries
-    const userMentionRegex = /@(?:\[([^\]]+)\])?<(Qm[a-zA-Z0-9]+)>/g;
+    // Using centralized IPFS CID validation pattern
+    const cidPattern = createIPFSCIDRegex().source; // Get the pattern without global flag
+    const userMentionRegex = new RegExp(`@(?:\\[([^\\]]+)\\])?<(${cidPattern})>`, 'g');
     const userMatches = Array.from(text.matchAll(userMentionRegex));
 
     // Process matches in reverse order to avoid index shifting issues
@@ -246,12 +261,13 @@ export const MessageMarkdownRenderer: React.FC<MessageMarkdownRendererProps> = (
       const address = match[2]; // Address is now in match[2] due to optional group
       const beforeText = processedText.substring(0, match.index);
       const afterText = processedText.substring(match.index! + match[0].length);
-      // Include inline display name in token for rendering preference
-      processedText = beforeText + `<<<MENTION_USER:${address}:${inlineDisplayName || ''}>>>` + afterText;
+      // Include sanitized inline display name in token for rendering preference
+      const sanitizedDisplayName = sanitizeDisplayName(inlineDisplayName);
+      processedText = beforeText + `<<<MENTION_USER:${address}:${sanitizedDisplayName}>>>` + afterText;
     }
 
     return processedText;
-  }, [mapSenderToUser, hasEveryoneMention]);
+  }, [mapSenderToUser, hasEveryoneMention, sanitizeDisplayName]);
 
   // Process role mentions - only render if role exists
   const processRoleMentions = useCallback((text: string): string => {
@@ -331,13 +347,14 @@ export const MessageMarkdownRenderer: React.FC<MessageMarkdownRendererProps> = (
         const inlineDisplayName = match[1]; // Optional display name from #[Name]<channelId>
         const beforeText = processed.substring(0, match.index);
         const afterText = processed.substring(match.index! + match[0].length);
-        // Include inline display name in token for rendering preference
-        processed = beforeText + `<<<MENTION_CHANNEL:${channelId}:${channelName}:${inlineDisplayName || ''}>>>` + afterText;
+        // Include sanitized inline display name in token for rendering preference
+        const sanitizedDisplayName = sanitizeDisplayName(inlineDisplayName);
+        processed = beforeText + `<<<MENTION_CHANNEL:${channelId}:${channelName}:${sanitizedDisplayName}>>>` + afterText;
       }
     });
 
     return processed;
-  }, [channelMentions, spaceChannels]);
+  }, [channelMentions, spaceChannels, sanitizeDisplayName]);
 
   // Shared function to process mention tokens into React components
   const processMentionTokens = useCallback((text: string): React.ReactNode[] => {
@@ -354,7 +371,10 @@ export const MessageMarkdownRenderer: React.FC<MessageMarkdownRendererProps> = (
 
     // Regex to find all mention tokens (everyone, user, role, channel)
     // Updated to support inline display names: USER:address:inlineDisplayName and CHANNEL:id:name:inlineDisplayName
-    const mentionRegex = /<<<MENTION_(EVERYONE|USER:(Qm[a-zA-Z0-9]+):([^>]*)|ROLE:([^:]+):([^>]+)|CHANNEL:([^:]+):([^:]+):([^>]*))>>>/g;
+    // Using centralized IPFS CID validation pattern
+    // SECURITY: Added quantifier limits to prevent catastrophic backtracking attacks
+    const cidPattern = createIPFSCIDRegex().source; // Get the pattern without global flag
+    const mentionRegex = new RegExp(`<<<MENTION_(EVERYONE|USER:(${cidPattern}):([^>]{0,200})|ROLE:([^:]{1,50}):([^>]{1,200})|CHANNEL:([^:>]{1,50}):([^:>]{1,200}):([^>]{0,200}))>>>`, 'g');
     let match;
 
     while ((match = mentionRegex.exec(text)) !== null) {
