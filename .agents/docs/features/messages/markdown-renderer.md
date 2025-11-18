@@ -31,9 +31,10 @@ Messages automatically detect markdown patterns and render with enhanced formatt
 - **Protected contexts:** URLs in code blocks and existing markdown links are preserved
 - **Inline vs standalone:** Different handling for URLs on their own line vs inline
 
-### **Security (Updated 2025-11-07)**
+### **Security (Updated 2025-11-18)**
 - **No HTML injection:** The `rehype-raw` plugin has been removed to eliminate critical HTML injection vulnerabilities
 - **Safe mentions:** User mentions use placeholder tokens that React escapes automatically
+- **Word boundary validation:** Mentions only process when surrounded by whitespace (prevents mentions inside markdown syntax like `**@user**`, `*@user*`, `[text](@user)`)
 - **XSS protection:** All user-controlled content is safely rendered through React components
 
 ## Code Block Features
@@ -188,8 +189,7 @@ const processedContent = useMemo(() => {
    - Mentions: Converted to safe placeholder tokens
    - URLs: All converted to markdown links for consistent processing
 3. **Component Rendering:** React component handlers process placeholders:
-   - `text` component: Catches mention placeholders in text nodes
-   - `p` component: Catches mention placeholders in paragraphs
+   - `text`, `p`, `h3` components: Convert mention tokens to styled React components via shared `processMentionTokens()` function
    - `img` component: Renders YouTube embeds from `![youtube-embed](videoId)` syntax
    - `a` component: Renders all links (including inline YouTube URLs) as clickable links
 4. **Security:** React automatically escapes all attributes, preventing XSS
@@ -453,7 +453,7 @@ All user-controlled content now follows this pattern:
 **Related Task**: `.agents/tasks/remove-rehype-raw-security-fix.md`
 
 ---
-**Last Updated**: 2025-11-09
-**Security Hardening**: Complete (rehype-raw removed, XSS vulnerabilities fixed)
+**Last Updated**: 2025-11-18
+**Security Hardening**: Complete (rehype-raw removed, XSS vulnerabilities fixed, word boundary validation added)
 **Performance Optimization**: Complete
-**Recent Changes**: Fixed invalid HTML nesting for block-level embeds (YouTube, invite cards)
+**Recent Changes**: Implemented word boundary validation for mentions (prevents mentions inside markdown syntax), shared token processing function, mention support in headers

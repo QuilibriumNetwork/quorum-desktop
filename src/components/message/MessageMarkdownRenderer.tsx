@@ -10,6 +10,7 @@ import {
   shouldUseScrollContainer,
   getScrollContainerMaxHeight,
 } from '../../utils/codeFormatting';
+import { hasWordBoundaries } from '../../utils/mentionUtils';
 import {
   isYouTubeURL,
   replaceYouTubeURLsInText,
@@ -199,20 +200,53 @@ export const MessageMarkdownRenderer: React.FC<MessageMarkdownRendererProps> = (
   };
 
   // Process mentions to show displayNames with proper styling and click handling
+  // Only process mentions that have word boundaries (whitespace before and after)
   const processMentions = useCallback((text: string): string => {
     if (!mapSenderToUser) return text;
 
     let processedText = text;
 
-    // Only style @everyone if the message has mentions.everyone = true
+    // Only style @everyone if the message has mentions.everyone = true and has word boundaries
     if (hasEveryoneMention) {
-      processedText = processedText.replace(/@everyone\b/gi, '<<<MENTION_EVERYONE>>>');
+      const everyoneMatches = Array.from(text.matchAll(/@everyone\b/gi));
+
+      // Collect valid matches
+      const validMatches = [];
+      for (const match of everyoneMatches) {
+        if (hasWordBoundaries(text, match)) {
+          validMatches.push(match);
+        }
+      }
+
+      // Replace from end to beginning to avoid index shifting
+      for (let i = validMatches.length - 1; i >= 0; i--) {
+        const match = validMatches[i];
+        const beforeText = processedText.substring(0, match.index);
+        const afterText = processedText.substring(match.index! + match[0].length);
+        processedText = beforeText + '<<<MENTION_EVERYONE>>>' + afterText;
+      }
     }
 
-    // Replace @<address> with safe placeholder token
-    processedText = processedText.replace(/@<(Qm[a-zA-Z0-9]+)>/g, (match, address) => {
-      return `<<<MENTION_USER:${address}>>>`;
-    });
+    // Replace @<address> with safe placeholder token only if it has word boundaries
+    const userMentionRegex = /@<(Qm[a-zA-Z0-9]+)>/g;
+    const userMatches = Array.from(text.matchAll(userMentionRegex));
+
+    // Process matches in reverse order to avoid index shifting issues
+    const validMatches = [];
+    for (const match of userMatches) {
+      if (hasWordBoundaries(text, match)) {
+        validMatches.push(match);
+      }
+    }
+
+    // Replace from end to beginning to avoid index shifting
+    for (let i = validMatches.length - 1; i >= 0; i--) {
+      const match = validMatches[i];
+      const address = match[1];
+      const beforeText = processedText.substring(0, match.index);
+      const afterText = processedText.substring(match.index! + match[0].length);
+      processedText = beforeText + `<<<MENTION_USER:${address}>>>` + afterText;
+    }
 
     return processedText;
   }, [mapSenderToUser, hasEveryoneMention]);
@@ -231,14 +265,27 @@ export const MessageMarkdownRenderer: React.FC<MessageMarkdownRendererProps> = (
       })
       .filter(Boolean) as Array<{ roleTag: string; displayName: string }>;
 
-    // Replace @roleTag with safe placeholder
+    // Replace @roleTag with safe placeholder (only if it has word boundaries)
     let processed = text;
     roleData.forEach(({ roleTag, displayName }) => {
       const regex = new RegExp(`@${roleTag}(?!\\w)`, 'g');
-      processed = processed.replace(
-        regex,
-        `<<<MENTION_ROLE:${roleTag}:${displayName}>>>`
-      );
+      const matches = Array.from(text.matchAll(regex));
+
+      // Collect valid matches
+      const validMatches = [];
+      for (const match of matches) {
+        if (hasWordBoundaries(text, match)) {
+          validMatches.push(match);
+        }
+      }
+
+      // Replace from end to beginning to avoid index shifting
+      for (let i = validMatches.length - 1; i >= 0; i--) {
+        const match = validMatches[i];
+        const beforeText = processed.substring(0, match.index);
+        const afterText = processed.substring(match.index! + match[0].length);
+        processed = beforeText + `<<<MENTION_ROLE:${roleTag}:${displayName}>>>` + afterText;
+      }
     });
 
     return processed;
@@ -258,7 +305,7 @@ export const MessageMarkdownRenderer: React.FC<MessageMarkdownRendererProps> = (
       })
       .filter(Boolean) as Array<{ channelId: string; channelName: string }>;
 
-    // Replace #<channelId> with safe placeholder
+    // Replace #<channelId> with safe placeholder (only if it has word boundaries)
     let processed = text;
     channelData.forEach(({ channelId, channelName }) => {
       // Escape special regex characters in channel ID
@@ -266,14 +313,119 @@ export const MessageMarkdownRenderer: React.FC<MessageMarkdownRendererProps> = (
 
       // Only Format: #<channelId> (with brackets) - ID-only format
       const idRegex = new RegExp(`#<${escapedChannelId}>`, 'g');
-      processed = processed.replace(
-        idRegex,
-        `<<<MENTION_CHANNEL:${channelId}:${channelName}>>>`
-      );
+      const matches = Array.from(text.matchAll(idRegex));
+
+      // Collect valid matches
+      const validMatches = [];
+      for (const match of matches) {
+        if (hasWordBoundaries(text, match)) {
+          validMatches.push(match);
+        }
+      }
+
+      // Replace from end to beginning to avoid index shifting
+      for (let i = validMatches.length - 1; i >= 0; i--) {
+        const match = validMatches[i];
+        const beforeText = processed.substring(0, match.index);
+        const afterText = processed.substring(match.index! + match[0].length);
+        processed = beforeText + `<<<MENTION_CHANNEL:${channelId}:${channelName}>>>` + afterText;
+      }
     });
 
     return processed;
   }, [channelMentions, spaceChannels]);
+
+  // Shared function to process mention tokens into React components
+  const processMentionTokens = useCallback((text: string): React.ReactNode[] => {
+    // Check if text contains any mention tokens
+    const hasMentions = text.includes('<<<MENTION_');
+
+    if (!hasMentions) {
+      return [text];
+    }
+
+    // Split text by mention tokens and render each part
+    const parts: React.ReactNode[] = [];
+    let lastIndex = 0;
+
+    // Regex to find all mention tokens (everyone, user, role, channel)
+    const mentionRegex = /<<<MENTION_(EVERYONE|USER:(Qm[a-zA-Z0-9]+)|ROLE:([^:]+):([^>]+)|CHANNEL:([^:]+):([^>]+))>>>/g;
+    let match;
+
+    while ((match = mentionRegex.exec(text)) !== null) {
+      // Add text before the mention
+      if (match.index > lastIndex) {
+        parts.push(text.substring(lastIndex, match.index));
+      }
+
+      // Determine mention type and render appropriately
+      if (match[1] === 'EVERYONE') {
+        // @everyone mention
+        parts.push(
+          <span key={`mention-${match.index}`} className="message-name-mentions-everyone">
+            @everyone
+          </span>
+        );
+      } else if (match[2]) {
+        // User mention: <<<MENTION_USER:address>>>
+        const address = match[2];
+        if (mapSenderToUser && onUserClick) {
+          const user = mapSenderToUser(address);
+          const displayName = user?.displayName || address.substring(0, 8) + '...';
+
+          parts.push(
+            <span
+              key={`mention-${match.index}`}
+              className="message-name-mentions-you interactive"
+              data-user-address={address}
+              data-user-display-name={displayName}
+              data-user-icon={user?.userIcon || ''}
+            >
+              @{displayName}
+            </span>
+          );
+        } else {
+          // Fallback if handlers not available
+          parts.push(match[0]);
+        }
+      } else if (match[3] && match[4]) {
+        // Role mention: <<<MENTION_ROLE:roleTag:displayName>>>
+        const roleTag = match[3];
+        const displayName = match[4];
+        parts.push(
+          <span
+            key={`mention-${match.index}`}
+            className="message-name-mentions-everyone"
+            title={displayName}
+          >
+            @{roleTag}
+          </span>
+        );
+      } else if (match[5] && match[6]) {
+        // Channel mention: <<<MENTION_CHANNEL:channelId:channelName>>>
+        const channelId = match[5];
+        const channelName = match[6];
+        parts.push(
+          <span
+            key={`mention-${match.index}`}
+            className="message-name-mentions-you cursor-pointer"
+            data-channel-id={channelId}
+          >
+            #{channelName}
+          </span>
+        );
+      }
+
+      lastIndex = match.index + match[0].length;
+    }
+
+    // Add remaining text after last mention
+    if (lastIndex < text.length) {
+      parts.push(text.substring(lastIndex));
+    }
+
+    return parts;
+  }, [mapSenderToUser, onUserClick]);
 
   // Simplified processing pipeline with stable dependencies
   const processedContent = useMemo(() => {
@@ -299,105 +451,27 @@ export const MessageMarkdownRenderer: React.FC<MessageMarkdownRendererProps> = (
     // Handle text nodes to render mentions safely
     text: ({ children, ...props }: any) => {
       const text = String(children);
-
-      // Check if text contains any mention tokens
-      const hasMentions = text.includes('<<<MENTION_');
-
-      if (!hasMentions) {
-        return <>{children}</>;
-      }
-
-      // Split text by mention tokens and render each part
-      const parts: React.ReactNode[] = [];
-      let lastIndex = 0;
-
-      // Regex to find all mention tokens (everyone, user, role, channel)
-      const mentionRegex = /<<<MENTION_(EVERYONE|USER:(Qm[a-zA-Z0-9]+)|ROLE:([^:]+):([^>]+)|CHANNEL:([^:]+):([^>]+))>>>/g;
-      let match;
-
-      while ((match = mentionRegex.exec(text)) !== null) {
-        // Add text before the mention
-        if (match.index > lastIndex) {
-          parts.push(text.substring(lastIndex, match.index));
-        }
-
-        // Determine mention type and render appropriately
-        if (match[1] === 'EVERYONE') {
-          // @everyone mention
-          parts.push(
-            <span key={`mention-${match.index}`} className="message-name-mentions-everyone">
-              @everyone
-            </span>
-          );
-        } else if (match[2]) {
-          // User mention: <<<MENTION_USER:address>>>
-          const address = match[2];
-          if (mapSenderToUser && onUserClick) {
-            const user = mapSenderToUser(address);
-            const displayName = user?.displayName || address.substring(0, 8) + '...';
-
-            parts.push(
-              <span
-                key={`mention-${match.index}`}
-                className="message-name-mentions-you interactive"
-                data-user-address={address}
-                data-user-display-name={displayName}
-                data-user-icon={user?.userIcon || ''}
-              >
-                @{displayName}
-              </span>
-            );
-          } else {
-            // Fallback if handlers not available
-            parts.push(match[0]);
-          }
-        } else if (match[3] && match[4]) {
-          // Role mention: <<<MENTION_ROLE:roleTag:displayName>>>
-          const roleTag = match[3];
-          const displayName = match[4];
-          parts.push(
-            <span
-              key={`mention-${match.index}`}
-              className="message-name-mentions-everyone"
-              title={displayName}
-            >
-              @{roleTag}
-            </span>
-          );
-        } else if (match[5] && match[6]) {
-          // Channel mention: <<<MENTION_CHANNEL:channelId:channelName>>>
-          const channelId = match[5];
-          const channelName = match[6];
-          parts.push(
-            <span
-              key={`mention-${match.index}`}
-              className="message-name-mentions-you cursor-pointer"
-              data-channel-id={channelId}
-            >
-              #{channelName}
-            </span>
-          );
-        }
-
-        lastIndex = match.index + match[0].length;
-      }
-
-      // Add remaining text after last mention
-      if (lastIndex < text.length) {
-        parts.push(text.substring(lastIndex));
-      }
-
-      return <>{parts}</>;
+      return <>{processMentionTokens(text)}</>;
     },
 
     // Disable most headers but allow H3
     h1: () => null,
     h2: () => null,
-    h3: ({ children, ...props }: any) => (
-      <h3 className="text-lg font-bold text-subtle mt-4 mb-2 first:mt-0" {...props}>
-        {children}
-      </h3>
-    ),
+    h3: ({ children, ...props }: any) => {
+      // Process mention tokens in header text
+      const processedChildren = React.Children.map(children, (child) => {
+        if (typeof child === 'string') {
+          return processMentionTokens(child);
+        }
+        return child;
+      });
+
+      return (
+        <h3 className="text-lg font-bold text-subtle mt-4 mb-2 first:mt-0" {...props}>
+          {processedChildren}
+        </h3>
+      );
+    },
     h4: () => null,
     h5: () => null,
     h6: () => null,
@@ -589,103 +663,12 @@ export const MessageMarkdownRenderer: React.FC<MessageMarkdownRendererProps> = (
       }
 
       // Process children recursively to find and replace mention placeholders
-      const processChild = (child: any): any => {
+      const processedChildren = React.Children.map(children, (child) => {
         if (typeof child === 'string') {
-          const text = child;
-
-          // Check if text contains any mention tokens
-          const hasMentions = text.includes('<<<MENTION_');
-
-          if (!hasMentions) {
-            return child;
-          }
-
-          // Split text by mention tokens and render each part
-          const parts: React.ReactNode[] = [];
-          let lastIndex = 0;
-
-          // Regex to find all mention tokens (everyone, user, role, channel)
-          const mentionRegex = /<<<MENTION_(EVERYONE|USER:(Qm[a-zA-Z0-9]+)|ROLE:([^:]+):([^>]+)|CHANNEL:([^:]+):([^>]+))>>>/g;
-          let match;
-
-          while ((match = mentionRegex.exec(text)) !== null) {
-            // Add text before the mention
-            if (match.index > lastIndex) {
-              parts.push(text.substring(lastIndex, match.index));
-            }
-
-            // Determine mention type and render appropriately
-            if (match[1] === 'EVERYONE') {
-              // @everyone mention
-              parts.push(
-                <span key={`mention-p-${match.index}`} className="message-name-mentions-everyone">
-                  @everyone
-                </span>
-              );
-            } else if (match[2]) {
-              // User mention: <<<MENTION_USER:address>>>
-              const address = match[2];
-              if (mapSenderToUser && onUserClick) {
-                const user = mapSenderToUser(address);
-                const displayName = user?.displayName || address.substring(0, 8) + '...';
-
-                parts.push(
-                  <span
-                    key={`mention-p-${match.index}`}
-                    className="message-name-mentions-you interactive"
-                    data-user-address={address}
-                    data-user-display-name={displayName}
-                    data-user-icon={user?.userIcon || ''}
-                  >
-                    @{displayName}
-                  </span>
-                );
-              } else {
-                // Fallback if handlers not available
-                parts.push(match[0]);
-              }
-            } else if (match[3] && match[4]) {
-              // Role mention: <<<MENTION_ROLE:roleTag:displayName>>>
-              const roleTag = match[3];
-              const displayName = match[4];
-              parts.push(
-                <span
-                  key={`mention-p-${match.index}`}
-                  className="message-name-mentions-everyone"
-                  title={displayName}
-                >
-                  @{roleTag}
-                </span>
-              );
-            } else if (match[5] && match[6]) {
-              // Channel mention: <<<MENTION_CHANNEL:channelId:channelName>>>
-              const channelId = match[5];
-              const channelName = match[6];
-              parts.push(
-                <span
-                  key={`mention-p-${match.index}`}
-                  className="message-name-mentions-you interactive"
-                  data-channel-id={channelId}
-                >
-                  #{channelName}
-                </span>
-              );
-            }
-
-            lastIndex = match.index + match[0].length;
-          }
-
-          // Add remaining text after last mention
-          if (lastIndex < text.length) {
-            parts.push(text.substring(lastIndex));
-          }
-
-          return <>{parts}</>;
+          return processMentionTokens(child);
         }
         return child;
-      };
-
-      const processedChildren = React.Children.map(children, processChild);
+      });
 
       return (
         <p className="mb-2 last:mb-0" {...props}>
@@ -715,7 +698,7 @@ export const MessageMarkdownRenderer: React.FC<MessageMarkdownRendererProps> = (
       </em>
     ),
 
-  }), [mapSenderToUser, onUserClick]); // Dependencies for text component mention handling
+  }), [mapSenderToUser, onUserClick, processMentionTokens]); // Dependencies for mention handling in text, h3, and p components
 
   // Handle mention clicks
   const handleClick = useCallback((event: React.MouseEvent) => {

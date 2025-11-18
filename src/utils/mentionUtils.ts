@@ -18,6 +18,28 @@ export interface MentionCheckOptions {
 export type MentionType = 'user' | 'role' | 'everyone' | null;
 
 /**
+ * Check if a mention has proper word boundaries (whitespace before and after)
+ * This ensures mentions only render when they are standalone tokens, not part of markdown syntax
+ *
+ * @param text - The full text being searched
+ * @param match - The regex match object containing the mention
+ * @returns true if the mention has whitespace boundaries
+ *
+ * @example
+ * hasWordBoundaries("Hello @user", match) // true - space before, end of string after
+ * hasWordBoundaries("**@user**", match) // false - asterisks before and after
+ * hasWordBoundaries("[text](@user)", match) // false - parenthesis before, bracket after
+ */
+export function hasWordBoundaries(text: string, match: RegExpMatchArray): boolean {
+  const beforeChar = match.index && match.index > 0 ? text[match.index - 1] : '\n';
+  const afterIndex = match.index! + match[0].length;
+  const afterChar = afterIndex < text.length ? text[afterIndex] : '\n';
+
+  // Check if both characters are whitespace (space, tab, newline)
+  return /\s/.test(beforeChar) && /\s/.test(afterChar);
+}
+
+/**
  * Check if a user is mentioned in a message
  *
  * @param message - The message to check
@@ -209,43 +231,46 @@ export function extractMentionsFromText(
     channelIds: [],
   };
 
-  // Remove code blocks (both inline and fenced) before processing mentions
-  // This prevents @everyone in code examples from triggering notifications
-  const textWithoutCodeBlocks = text
-    .replace(/```[\s\S]*?```/g, '') // Remove fenced code blocks
-    .replace(/`[^`]+`/g, '');        // Remove inline code
-
-  // Check for @everyone mention (only if user has permission)
-  if (/@everyone\b/i.test(textWithoutCodeBlocks)) {
-    if (options?.allowEveryone) {
-      mentions.everyone = true;
+  // Check for @everyone mention (only if user has permission and has word boundaries)
+  if (/@everyone\b/i.test(text)) {
+    const everyoneMatches = Array.from(text.matchAll(/@everyone\b/gi));
+    for (const match of everyoneMatches) {
+      if (hasWordBoundaries(text, match)) {
+        if (options?.allowEveryone) {
+          mentions.everyone = true;
+        }
+        break; // Only need to find one valid @everyone
+      }
     }
-    // If allowEveryone is false/undefined, @everyone is ignored (not extracted)
   }
 
-  // Extract user mentions: @<address> (with brackets)
+  // Extract user mentions: @<address> (with brackets) that have word boundaries
   const userMentionRegex = /@<([^>]+)>/g;
-  const userMatches = Array.from(textWithoutCodeBlocks.matchAll(userMentionRegex));
+  const userMatches = Array.from(text.matchAll(userMentionRegex));
 
   for (const match of userMatches) {
     const address = match[1];
-    if (address && !mentions.memberIds.includes(address)) {
+    // Only add mentions that have proper word boundaries
+    if (address && hasWordBoundaries(text, match) && !mentions.memberIds.includes(address)) {
       mentions.memberIds.push(address);
     }
   }
 
-  // Extract role mentions: @roleTag (NO brackets)
+  // Extract role mentions: @roleTag (NO brackets) that have word boundaries
   if (options?.spaceRoles && options.spaceRoles.length > 0) {
     // Match @word pattern (alphanumeric + hyphen/underscore)
-    // Negative lookahead (?!\w) ensures word boundary
-    const roleMentionRegex = /@([a-zA-Z0-9_-]+)(?!\w)/g;
-    const roleMatches = Array.from(textWithoutCodeBlocks.matchAll(roleMentionRegex));
+    // Note: We use word boundary checking instead of regex lookahead
+    const roleMentionRegex = /@([a-zA-Z0-9_-]+)/g;
+    const roleMatches = Array.from(text.matchAll(roleMentionRegex));
 
     for (const match of roleMatches) {
       const possibleRoleTag = match[1];
 
       // Skip 'everyone' (already handled above)
       if (possibleRoleTag.toLowerCase() === 'everyone') continue;
+
+      // Only process roles that have proper word boundaries
+      if (!hasWordBoundaries(text, match)) continue;
 
       // Validate against space roles (case-insensitive)
       const role = options.spaceRoles.find(
@@ -260,14 +285,17 @@ export function extractMentionsFromText(
     }
   }
 
-  // Extract channel mentions: only #<channelId> format is supported
+  // Extract channel mentions: only #<channelId> format that have word boundaries
   if (options?.spaceChannels && options.spaceChannels.length > 0) {
     // Only Format: #<channelId> - bracket format with IDs only
     const bracketChannelMentionRegex = /#<([^>]+)>/g;
-    const bracketChannelMatches = Array.from(textWithoutCodeBlocks.matchAll(bracketChannelMentionRegex));
+    const bracketChannelMatches = Array.from(text.matchAll(bracketChannelMentionRegex));
 
     for (const match of bracketChannelMatches) {
       const possibleChannelId = match[1];
+
+      // Only process channel mentions that have proper word boundaries
+      if (!hasWordBoundaries(text, match)) continue;
 
       // Match by ID only (exact match for rename-safety)
       const channel = options.spaceChannels.find(c => c.channelId === possibleChannelId);

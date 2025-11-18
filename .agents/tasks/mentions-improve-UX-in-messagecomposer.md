@@ -61,6 +61,7 @@
   - Done when: `extractMentionsFromText()` handles both old and new mention formats
   - Verify: Both `@<address>` and `@[Display Name]<address>` extract same address
   - Reference: Update regex patterns while preserving existing extraction logic
+  - ⚠️ **IMPORTANT**: Continue using `hasWordBoundaries()` validation with new patterns to prevent mentions inside markdown syntax (e.g., `**@[User]<addr>**` should not extract)
   - New patterns:
     ```typescript
     // User mentions: @<address> OR @[Display Name]<address>
@@ -80,6 +81,7 @@
   - Done when: Both old and new mention formats render correctly
   - Verify: `@<address>` shows lookup name, `@[Inline Name]<address>` shows inline name
   - Reference: Update regex patterns and add fallback logic for display names
+  - ⚠️ **IMPORTANT**: Continue using `hasWordBoundaries()` validation with new patterns in frontend rendering
   - Backward compatibility: Prefer inline display name, fallback to `mapSenderToUser`
 
 ### Phase 2: Visual Highlighting System (1.5 days) 🎨

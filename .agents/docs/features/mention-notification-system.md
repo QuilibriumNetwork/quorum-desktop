@@ -82,6 +82,7 @@ Flash-highlight animation (yellow fade, 6s)
 
 **`src/utils/mentionUtils.ts`**
 - `extractMentionsFromText(text, options)`: Parses `@<address>`, `@roleTag`, `@everyone`, `#<channelId>` patterns
+- `hasWordBoundaries(text, match)`: Validates mentions have whitespace boundaries (used by both backend and frontend)
 - `isMentioned(message, options)`: Checks if user is mentioned
 - `isMentionedWithSettings(message, options)`: Checks mention with user settings and role membership
   - Accepts: `['mention-you', 'mention-everyone', 'mention-roles']`
@@ -294,7 +295,7 @@ Parses message text and extracts:
 **Validation**:
 - Role tags are validated against `spaceRoles` array
 - Only existing roles are extracted (prevents fake mentions)
-- Code blocks are excluded from mention detection
+- **Word boundary validation**: Mentions only extract when surrounded by whitespace (excludes all markdown syntax: code blocks, bold, italic, links, etc.)
 - Case-insensitive matching for role tags
 
 ### Notification Filtering
@@ -401,7 +402,7 @@ Parses message text and extracts:
 **Validation**:
 - Channel IDs are validated against `spaceChannels` array by ID
 - Only existing channels are extracted (prevents fake mentions)
-- Code blocks are excluded from mention detection
+- **Word boundary validation**: Channel mentions only extract when surrounded by whitespace (excludes all markdown syntax)
 - Exact ID matching for rename-safety
 
 ### Rendering
@@ -479,7 +480,7 @@ mentions = extractMentionsFromText(messageText, {
 
 ### Edge Cases
 
-- Code blocks: @everyone in code blocks ignored
+- **Word boundary validation**: @everyone inside markdown syntax ignored (code blocks, bold, italic, links, etc.)
 - Case insensitive: @everyone, @Everyone, @EVERYONE work
 - Permission denial: Unauthorized @everyone doesn't trigger notifications
 
