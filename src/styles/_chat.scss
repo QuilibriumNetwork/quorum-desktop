@@ -47,12 +47,22 @@ html:not(.dark) .chat-container {
   background: var(--color-bg-mention);
   padding: 0.125rem 0.25rem;
   border-radius: 0.25rem;
-  cursor: pointer;
 }
 
-.message-name-mentions-you:hover {
-  color: var(--color-link-mention-hover);
-  background: var(--color-bg-mention-hover);
+/* Interactive mentions (clickable) */
+.message-name-mentions-you.interactive {
+  cursor: pointer;
+
+  &:hover {
+    color: var(--color-link-mention-hover);
+    background: var(--color-bg-mention-hover);
+  }
+}
+
+/* Non-interactive mentions (preview contexts) */
+.message-name-mentions-you.non-interactive {
+  cursor: default;
+  /* No hover effects */
 }
 
 .message-name-mentions-role {

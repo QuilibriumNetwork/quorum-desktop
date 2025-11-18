@@ -829,8 +829,7 @@ export const Message = React.memo(
                             <React.Fragment key={tokenData.key}>
                               <Text
                                 as="span"
-                                className="message-name-mentions-you"
-                                style={{ cursor: tokenData.isInteractive ? 'pointer' : 'default' }}
+                                className={`message-name-mentions-you ${tokenData.isInteractive ? 'interactive' : 'non-interactive'}`}
                                 onClick={tokenData.isInteractive ? () => {
                                   if (onChannelClick) {
                                     onChannelClick(tokenData.channelId);

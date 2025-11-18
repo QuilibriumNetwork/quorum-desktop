@@ -131,7 +131,9 @@ export const MessagePreview: React.FC<MessagePreviewProps> = ({
               if (tokenData.type === 'mention') {
                 renderedTokens.push(
                   <React.Fragment key={tokenData.key}>
-                    <span className="message-name-mentions-you">
+                    <span
+                      className={`message-name-mentions-you ${tokenData.isInteractive ? 'interactive' : 'non-interactive'}`}
+                    >
                       {tokenData.displayName}
                     </span>{' '}
                   </React.Fragment>
@@ -140,8 +142,8 @@ export const MessagePreview: React.FC<MessagePreviewProps> = ({
                 renderedTokens.push(
                   <React.Fragment key={tokenData.key}>
                     <span
-                      className={`message-name-mentions-you ${disableMentionInteractivity ? '' : 'cursor-pointer'}`}
-                      onClick={disableMentionInteractivity ? undefined : () => onChannelClick && onChannelClick(tokenData.channelId)}
+                      className={`message-name-mentions-you ${tokenData.isInteractive ? 'interactive' : 'non-interactive'}`}
+                      onClick={tokenData.isInteractive ? () => onChannelClick?.(tokenData.channelId) : undefined}
                     >
                       {tokenData.displayName}
                     </span>{' '}

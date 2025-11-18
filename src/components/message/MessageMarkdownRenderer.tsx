@@ -339,7 +339,7 @@ export const MessageMarkdownRenderer: React.FC<MessageMarkdownRendererProps> = (
             parts.push(
               <span
                 key={`mention-${match.index}`}
-                className="message-name-mentions-you cursor-pointer"
+                className="message-name-mentions-you interactive"
                 data-user-address={address}
                 data-user-display-name={displayName}
                 data-user-icon={user?.userIcon || ''}
@@ -632,7 +632,7 @@ export const MessageMarkdownRenderer: React.FC<MessageMarkdownRendererProps> = (
                 parts.push(
                   <span
                     key={`mention-p-${match.index}`}
-                    className="message-name-mentions-you cursor-pointer"
+                    className="message-name-mentions-you interactive"
                     data-user-address={address}
                     data-user-display-name={displayName}
                     data-user-icon={user?.userIcon || ''}
@@ -664,7 +664,7 @@ export const MessageMarkdownRenderer: React.FC<MessageMarkdownRendererProps> = (
               parts.push(
                 <span
                   key={`mention-p-${match.index}`}
-                  className="message-name-mentions-you cursor-pointer"
+                  className="message-name-mentions-you interactive"
                   data-channel-id={channelId}
                 >
                   #{channelName}
