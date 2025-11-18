@@ -67,8 +67,9 @@ The message rendering system maintains **two independent rendering paths** for r
 
 **Supported Features**:
 - ✅ Markdown formatting (`**bold**`, `*italic*`, code blocks, tables, etc.)
-- ✅ User mentions (`@<address>`) via safe placeholder tokens
+- ✅ User mentions (both formats: `@<address>` and `@[Display Name]<address>`) via safe placeholder tokens
 - ✅ Role mentions (`@role`) via safe placeholder tokens
+- ✅ Channel mentions (both formats: `#<channelId>` and `#[Channel Name]<channelId>`) via safe placeholder tokens
 - ✅ YouTube embeds (standalone URLs) and links (inline URLs)
 - ✅ Regular URL auto-linking
 - ✅ Invite links (via placeholder tokens)
@@ -309,10 +310,16 @@ MessageMarkdownRenderer uses special tokens to safely render dynamic content lik
 
 ### User Mentions
 - **Token Pattern**: `<<<MENTION_USER:address>>>`
-- **Creation**: `processMentions()` converts `@<Qm...>` to safe tokens
+- **Creation**: `processMentions()` converts both mention formats to safe tokens:
+  - Legacy format: `@<Qm...>` → `<<<MENTION_USER:Qm...>>>`
+  - Enhanced format: `@[Display Name]<Qm...>` → `<<<MENTION_USER:Qm...>>>`
 - **Rendering**: `text` and `p` components catch tokens and render styled spans
 - **Security**: Prevents markdown interpretation and XSS attacks
-- **Example**: `"Hey @<Qm123>"` → `"Hey <<<MENTION_USER:Qm123>>>"` → Styled mention with display name
+- **Backward Compatibility**: Both old and new formats work seamlessly
+- **Display Name Priority**: Enhanced format uses inline display name, legacy format falls back to user lookup
+- **Examples**:
+  - Legacy: `"Hey @<Qm123>"` → `"Hey <<<MENTION_USER:Qm123>>>"` → Styled mention with lookup name
+  - Enhanced: `"Hey @[John Doe]<Qm123>"` → `"Hey <<<MENTION_USER:Qm123>>>"` → Styled mention showing "John Doe"
 
 ### Everyone Mentions
 - **Token Pattern**: `<<<MENTION_EVERYONE>>>`
@@ -329,6 +336,18 @@ MessageMarkdownRenderer uses special tokens to safely render dynamic content lik
 - React components handle tokens safely (automatic attribute escaping)
 - Enables complex rendering (embeds, styled mentions) within markdown flow
 - Security: No raw HTML injection possible
+
+### Channel Mentions
+- **Token Pattern**: `<<<MENTION_CHANNEL:channelId>>>`
+- **Creation**: `processChannelMentions()` converts both channel mention formats to safe tokens:
+  - Legacy format: `#<ch-abc123>` → `<<<MENTION_CHANNEL:ch-abc123>>>`
+  - Enhanced format: `#[general-chat]<ch-abc123>` → `<<<MENTION_CHANNEL:ch-abc123>>>`
+- **Rendering**: `text` and `p` components catch tokens and render clickable channel spans
+- **Navigation**: Click handler navigates to the referenced channel
+- **Display Name Priority**: Enhanced format uses inline channel name, legacy format falls back to channel lookup
+- **Examples**:
+  - Legacy: `"Check #<ch-123>"` → Clickable span showing channel lookup name
+  - Enhanced: `"Check #[general]<ch-123>"` → Clickable span showing "general"
 
 **Related**: See `src/utils/markdownStripping.ts` for token handling in plain text contexts
 
@@ -456,4 +475,5 @@ All user-controlled content now follows this pattern:
 **Last Updated**: 2025-11-18
 **Security Hardening**: Complete (rehype-raw removed, XSS vulnerabilities fixed, word boundary validation added)
 **Performance Optimization**: Complete
-**Recent Changes**: Implemented word boundary validation for mentions (prevents mentions inside markdown syntax), shared token processing function, mention support in headers
+**Enhanced Mention Formats**: Complete (backward-compatible support for readable mention display names)
+**Recent Changes**: Implemented enhanced mention formats with inline display names (`@[Name]<address>`, `#[Name]<id>`), word boundary validation for mentions (prevents mentions inside markdown syntax), shared token processing function, mention support in headers

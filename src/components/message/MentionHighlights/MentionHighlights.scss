@@ -1,0 +1,126 @@
+/* ============================================
+   MENTION HIGHLIGHTS OVERLAY
+   ============================================
+
+   Provides visual highlighting for mentions while typing
+   in the message composer textarea. The overlay sits behind
+   the textarea with identical positioning and styling.
+   ============================================ */
+
+@use '@/styles/variables' as *;
+
+.mention-highlights {
+  /* CRITICAL: Position behind textarea with identical dimensions */
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1; /* Behind textarea but above background */
+
+  /* CRITICAL: Invisible to all interactions - textarea must handle everything */
+  pointer-events: none;
+  user-select: none;
+
+  /* CRITICAL: Match textarea styling EXACTLY */
+  /* These values must match .message-composer-textarea in MessageComposer.scss */
+  padding: $s-1; /* 4px - matches textarea padding */
+  line-height: $leading-normal; /* 1.5 - matches textarea line-height */
+  font-size: $text-base; /* 16px - matches textarea font-size */
+  font-family: inherit; /* Use same font as textarea */
+  box-sizing: border-box; /* Match textarea box-sizing */
+
+  /* CRITICAL: Text formatting must match textarea behavior */
+  white-space: pre-wrap; /* Match textarea whitespace handling */
+  word-wrap: break-word; /* Match textarea word wrapping */
+  overflow-wrap: break-word; /* Match textarea overflow wrapping */
+
+  /* Visual: Background and text handling */
+  background-color: transparent;
+  color: transparent; /* Hide regular text, only show highlights */
+  overflow: hidden; /* Prevent any layout issues */
+
+  /* Prevent text selection and focus */
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  outline: none;
+  border: none;
+}
+
+/* ============================================
+   MENTION HIGHLIGHT STYLING
+   ============================================
+
+   Uses existing mention colors from _chat.scss for consistency
+   with message mention appearance.
+   ============================================ */
+
+.mention-highlight {
+  /* Use existing mention styling for consistency */
+  /* Based on .message-name-mentions-you from _chat.scss */
+  font-weight: $font-medium;
+  color: var(--color-link-mention);
+  background: var(--color-bg-mention);
+  padding: 0.125rem 0.25rem;
+  border-radius: 0.25rem;
+
+  /* Make text visible (override parent color: transparent) */
+  color: var(--color-link-mention) !important;
+
+  /* Optional: Subtle animation for smooth appearance */
+  transition: background-color $duration-150 $ease-out;
+}
+
+/* ============================================
+   RESPONSIVE ADJUSTMENTS
+   ============================================ */
+
+/* Match any responsive textarea adjustments */
+@media (max-width: $screen-md) {
+  .mention-highlights {
+    /* Match any mobile-specific textarea styles if needed */
+  }
+}
+
+@media (min-width: $screen-lg) {
+  .mention-highlights {
+    /* Match any desktop-specific textarea styles if needed */
+    /* Textarea has max-height: $s-60 on desktop */
+  }
+}
+
+/* ============================================
+   ACCESSIBILITY & PERFORMANCE
+   ============================================ */
+
+/* Ensure screen readers ignore the highlight overlay */
+.mention-highlights[aria-hidden="true"] {
+  speak: none;
+  -webkit-speak: none;
+}
+
+/* Optimize rendering performance */
+.mention-highlights {
+  /* Use GPU acceleration for smooth rendering */
+  transform: translateZ(0);
+  will-change: contents;
+
+  /* Optimize for text rendering */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeSpeed;
+}
+
+/* ============================================
+   DEBUGGING (can be removed in production)
+   ============================================ */
+
+/* Uncomment for visual debugging - shows highlight overlay bounds */
+/*
+.mention-highlights {
+  border: 1px dashed rgba(255, 0, 0, 0.3);
+  background: rgba(255, 255, 0, 0.1);
+}
+*/

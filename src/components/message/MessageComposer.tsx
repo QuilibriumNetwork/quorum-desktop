@@ -145,22 +145,28 @@ export const MessageComposer = forwardRef<
       },
     }));
 
-    // Handle mention selection (updated for users, roles, and @everyone)
+    // Handle mention selection (updated for users, roles, channels, and @everyone with enhanced readable format)
     const handleMentionSelect = useCallback(
       (option: MentionOption, mentionStart: number, mentionEnd: number) => {
         let insertText: string;
 
         if (option.type === 'user') {
-          // Users: @<address> (with brackets)
-          insertText = `@<${option.data.address}>`;
+          // Users: @[Display Name]<address> (new readable format with display name)
+          const displayName = option.data.displayName || 'Unknown User';
+          // Escape brackets in display names to prevent format conflicts
+          const escapedDisplayName = displayName.replace(/[\[\]]/g, '');
+          insertText = `@[${escapedDisplayName}]<${option.data.address}>`;
         } else if (option.type === 'role') {
-          // Roles: @roleTag (NO brackets)
+          // Roles: @roleTag (NO brackets, unchanged)
           insertText = `@${option.data.roleTag}`;
         } else if (option.type === 'channel') {
-          // Channels: #<channelId> (with brackets) - store ID for rename-safety
-          insertText = `#<${option.data.channelId}>`;
+          // Channels: #[Channel Name]<channelId> (new readable format with channel name)
+          const channelName = option.data.channelName || 'Unknown Channel';
+          // Escape brackets in channel names to prevent format conflicts
+          const escapedChannelName = channelName.replace(/[\[\]]/g, '');
+          insertText = `#[${escapedChannelName}]<${option.data.channelId}>`;
         } else {
-          // @everyone: plain @everyone (NO brackets)
+          // @everyone: plain @everyone (NO brackets, unchanged)
           insertText = '@everyone';
         }
 

@@ -227,8 +227,8 @@ export const MessageMarkdownRenderer: React.FC<MessageMarkdownRendererProps> = (
       }
     }
 
-    // Replace @<address> with safe placeholder token only if it has word boundaries
-    const userMentionRegex = /@<(Qm[a-zA-Z0-9]+)>/g;
+    // Replace @<address> OR @[Display Name]<address> with safe placeholder token only if it has word boundaries
+    const userMentionRegex = /@(?:\[([^\]]+)\])?<(Qm[a-zA-Z0-9]+)>/g;
     const userMatches = Array.from(text.matchAll(userMentionRegex));
 
     // Process matches in reverse order to avoid index shifting issues
@@ -242,10 +242,12 @@ export const MessageMarkdownRenderer: React.FC<MessageMarkdownRendererProps> = (
     // Replace from end to beginning to avoid index shifting
     for (let i = validMatches.length - 1; i >= 0; i--) {
       const match = validMatches[i];
-      const address = match[1];
+      const inlineDisplayName = match[1]; // Optional display name from @[Name]<address>
+      const address = match[2]; // Address is now in match[2] due to optional group
       const beforeText = processedText.substring(0, match.index);
       const afterText = processedText.substring(match.index! + match[0].length);
-      processedText = beforeText + `<<<MENTION_USER:${address}>>>` + afterText;
+      // Include inline display name in token for rendering preference
+      processedText = beforeText + `<<<MENTION_USER:${address}:${inlineDisplayName || ''}>>>` + afterText;
     }
 
     return processedText;
@@ -311,9 +313,9 @@ export const MessageMarkdownRenderer: React.FC<MessageMarkdownRendererProps> = (
       // Escape special regex characters in channel ID
       const escapedChannelId = channelId.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
-      // Only Format: #<channelId> (with brackets) - ID-only format
-      const idRegex = new RegExp(`#<${escapedChannelId}>`, 'g');
-      const matches = Array.from(text.matchAll(idRegex));
+      // Support both formats: #<channelId> and #[Channel Name]<channelId>
+      const channelRegex = new RegExp(`#(?:\\[([^\\]]+)\\])?<${escapedChannelId}>`, 'g');
+      const matches = Array.from(text.matchAll(channelRegex));
 
       // Collect valid matches
       const validMatches = [];
@@ -326,9 +328,11 @@ export const MessageMarkdownRenderer: React.FC<MessageMarkdownRendererProps> = (
       // Replace from end to beginning to avoid index shifting
       for (let i = validMatches.length - 1; i >= 0; i--) {
         const match = validMatches[i];
+        const inlineDisplayName = match[1]; // Optional display name from #[Name]<channelId>
         const beforeText = processed.substring(0, match.index);
         const afterText = processed.substring(match.index! + match[0].length);
-        processed = beforeText + `<<<MENTION_CHANNEL:${channelId}:${channelName}>>>` + afterText;
+        // Include inline display name in token for rendering preference
+        processed = beforeText + `<<<MENTION_CHANNEL:${channelId}:${channelName}:${inlineDisplayName || ''}>>>` + afterText;
       }
     });
 
@@ -349,7 +353,8 @@ export const MessageMarkdownRenderer: React.FC<MessageMarkdownRendererProps> = (
     let lastIndex = 0;
 
     // Regex to find all mention tokens (everyone, user, role, channel)
-    const mentionRegex = /<<<MENTION_(EVERYONE|USER:(Qm[a-zA-Z0-9]+)|ROLE:([^:]+):([^>]+)|CHANNEL:([^:]+):([^>]+))>>>/g;
+    // Updated to support inline display names: USER:address:inlineDisplayName and CHANNEL:id:name:inlineDisplayName
+    const mentionRegex = /<<<MENTION_(EVERYONE|USER:(Qm[a-zA-Z0-9]+):([^>]*)|ROLE:([^:]+):([^>]+)|CHANNEL:([^:]+):([^:]+):([^>]*))>>>/g;
     let match;
 
     while ((match = mentionRegex.exec(text)) !== null) {
@@ -367,11 +372,13 @@ export const MessageMarkdownRenderer: React.FC<MessageMarkdownRendererProps> = (
           </span>
         );
       } else if (match[2]) {
-        // User mention: <<<MENTION_USER:address>>>
+        // User mention: <<<MENTION_USER:address:inlineDisplayName>>>
         const address = match[2];
+        const inlineDisplayName = match[3]; // Optional inline display name
         if (mapSenderToUser && onUserClick) {
           const user = mapSenderToUser(address);
-          const displayName = user?.displayName || address.substring(0, 8) + '...';
+          // Prefer inline display name, then user lookup, then fallback to truncated address
+          const displayName = inlineDisplayName || user?.displayName || address.substring(0, 8) + '...';
 
           parts.push(
             <span
@@ -388,10 +395,10 @@ export const MessageMarkdownRenderer: React.FC<MessageMarkdownRendererProps> = (
           // Fallback if handlers not available
           parts.push(match[0]);
         }
-      } else if (match[3] && match[4]) {
+      } else if (match[4] && match[5]) {
         // Role mention: <<<MENTION_ROLE:roleTag:displayName>>>
-        const roleTag = match[3];
-        const displayName = match[4];
+        const roleTag = match[4];
+        const displayName = match[5];
         parts.push(
           <span
             key={`mention-${match.index}`}
@@ -401,17 +408,20 @@ export const MessageMarkdownRenderer: React.FC<MessageMarkdownRendererProps> = (
             @{roleTag}
           </span>
         );
-      } else if (match[5] && match[6]) {
-        // Channel mention: <<<MENTION_CHANNEL:channelId:channelName>>>
-        const channelId = match[5];
-        const channelName = match[6];
+      } else if (match[6] && match[7]) {
+        // Channel mention: <<<MENTION_CHANNEL:channelId:channelName:inlineDisplayName>>>
+        const channelId = match[6];
+        const channelName = match[7];
+        const inlineDisplayName = match[8]; // Optional inline display name
+        // Prefer inline display name, then channel lookup name
+        const displayName = inlineDisplayName || channelName;
         parts.push(
           <span
             key={`mention-${match.index}`}
-            className="message-name-mentions-you cursor-pointer"
+            className="message-name-mentions-you interactive"
             data-channel-id={channelId}
           >
-            #{channelName}
+            #{displayName}
           </span>
         );
       }

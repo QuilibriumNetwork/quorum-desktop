@@ -244,12 +244,14 @@ export function extractMentionsFromText(
     }
   }
 
-  // Extract user mentions: @<address> (with brackets) that have word boundaries
-  const userMentionRegex = /@<([^>]+)>/g;
+  // Extract user mentions: @<address> OR @[Display Name]<address> (both formats) that have word boundaries
+  const userMentionRegex = /@(?:\[([^\]]+)\])?<([^>]+)>/g;
   const userMatches = Array.from(text.matchAll(userMentionRegex));
 
   for (const match of userMatches) {
-    const address = match[1];
+    // match[1] is the optional display name (could be undefined)
+    // match[2] is the address (always present)
+    const address = match[2];
     // Only add mentions that have proper word boundaries
     if (address && hasWordBoundaries(text, match) && !mentions.memberIds.includes(address)) {
       mentions.memberIds.push(address);
@@ -285,14 +287,16 @@ export function extractMentionsFromText(
     }
   }
 
-  // Extract channel mentions: only #<channelId> format that have word boundaries
+  // Extract channel mentions: #<channelId> OR #[Channel Name]<channelId> (both formats) that have word boundaries
   if (options?.spaceChannels && options.spaceChannels.length > 0) {
-    // Only Format: #<channelId> - bracket format with IDs only
-    const bracketChannelMentionRegex = /#<([^>]+)>/g;
-    const bracketChannelMatches = Array.from(text.matchAll(bracketChannelMentionRegex));
+    // Support both formats: #<channelId> and #[Channel Name]<channelId>
+    const channelMentionRegex = /#(?:\[([^\]]+)\])?<([^>]+)>/g;
+    const channelMatches = Array.from(text.matchAll(channelMentionRegex));
 
-    for (const match of bracketChannelMatches) {
-      const possibleChannelId = match[1];
+    for (const match of channelMatches) {
+      // match[1] is the optional display name (could be undefined)
+      // match[2] is the channelId (always present)
+      const possibleChannelId = match[2];
 
       // Only process channel mentions that have proper word boundaries
       if (!hasWordBoundaries(text, match)) continue;

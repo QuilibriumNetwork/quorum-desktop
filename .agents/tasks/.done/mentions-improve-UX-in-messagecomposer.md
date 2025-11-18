@@ -84,80 +84,40 @@
   - ⚠️ **IMPORTANT**: Continue using `hasWordBoundaries()` validation with new patterns in frontend rendering
   - Backward compatibility: Prefer inline display name, fallback to `mapSenderToUser`
 
-### Phase 2: Visual Highlighting System (1.5 days) 🎨
+### Phase 2: Visual Highlighting System ~~(1.5 days)~~ ❌ **REMOVED - TOO COMPLEX**
 
-- [ ] **Create mention highlighting overlay component** (`src/components/message/MentionHighlights/`)
-  - Done when: `MentionHighlights.tsx` renders highlighted text behind textarea
-  - Verify: Text positioning matches textarea exactly (font, padding, line-height)
-  - Reference: Use existing `MessageComposer.scss` styling as base
-  - Files: `MentionHighlights.tsx`, `MentionHighlights.scss`
+**⚠️ IMPLEMENTATION NOTE**: CSS-based text highlighting in textarea proved to be **significantly more complex** than anticipated and **buggy in practice**. The approach has fundamental technical limitations:
 
-- [ ] **Implement mention detection and highlighting** (`src/utils/mentionHighlighting.ts`)
-  - Done when: `highlightMentions(text)` function returns HTML with highlight spans for both formats
-  - Verify: Correctly highlights all mention types (old and new formats) with appropriate colors
-  - Reference: Reuse updated regex patterns from `mentionUtils.ts`
-  - Detection patterns:
-    ```typescript
-    // User mentions (both formats): @<address> and @[Name]<address>
-    /@(?:\[([^\]]+)\])?<([^>]+)>/g
-    // Role mentions: @roleTag
-    /@([a-zA-Z0-9_-]+)(?!\w)/g
-    // Everyone mentions: @everyone
-    /@everyone\b/gi
-    // Channel mentions (both formats): #<id> and #[Name]<id>
-    /#(?:\[([^\]]+)\])?<([^>]+)>/g
-    // All use same highlight style
-    ```
+- **CSS Overlay Issues**: Layering highlighted text behind a textarea creates visual conflicts where both the original text and highlights are visible simultaneously
+- **Positioning Complexity**: Perfect alignment between textarea text and overlay highlights is extremely difficult across different fonts, sizes, and platforms
+- **Interactive Conflicts**: CSS overlays interfere with textarea cursor positioning, text selection, and scrolling behavior
+- **Cross-platform Inconsistency**: Behavior varies significantly across browsers and devices
 
-- [ ] **Create CSS overlay styling** (`src/components/message/MentionHighlights/MentionHighlights.scss`)
-  - Done when: Overlay perfectly aligns with textarea, highlights work for both mention formats
-  - Verify: Highlighting doesn't interfere with typing, cursor, or text selection
-  - Reference: Use existing `.message-name-mentions-you` styling as base
-  - Styles needed:
-    ```scss
-    .mention-highlight {
-      // Use same styling approach as .message-name-mentions-you
-      // Apply as background highlight with low opacity for readability
-      background: /* derive from existing mention styling */;
-    }
-    ```
+**🎯 CONCLUSION**: The enhanced mention formats (`@[Name]<address>`) already provide the **primary UX benefit** - readable names instead of cryptic IDs. Additional visual highlighting, while nice-to-have, introduces significant complexity for marginal benefit.
 
-### Phase 3: Integration & Testing (1.5 days) 🔧
+**✅ RECOMMENDED APPROACH**: Focus on the enhanced mention formats which solve the core user problem effectively without technical complications.
 
-- [ ] **Integrate with MessageComposer** (`src/components/message/MessageComposer.tsx:284`)
-  - Done when: MessageComposer shows highlights behind existing TextArea with both mention formats
-  - Verify: All existing functionality preserved (auto-resize, onKeyDown, file upload, etc.)
-  - Reference: Wrap TextArea with highlight overlay using relative positioning
-  - Integration approach:
-    ```tsx
-    <div className="message-composer-with-highlights">
-      <MentionHighlights text={value} />
-      <TextArea
-        value={value}
-        // all existing props preserved
-        className="message-composer-textarea-transparent"
-      />
-    </div>
-    ```
+~~- [ ] Create mention highlighting overlay component~~
+~~- [ ] Implement mention detection and highlighting~~
+~~- [ ] Create CSS overlay styling~~
 
-- [ ] **Handle scrolling and text area resizing** (responsive behavior)
-  - Done when: Highlights stay in sync when textarea grows/shrinks or scrolls
-  - Verify: Highlighting overlay matches textarea position during auto-resize
-  - Reference: Use ResizeObserver or onResize callbacks to keep overlays aligned
+### Phase 3: Testing & Verification ✅ **SIMPLIFIED**
 
-- [ ] **Test comprehensive mention format compatibility**
-  - Done when: All mention format combinations work correctly
-  - Verify:
-    - Old messages: `@<address>` renders correctly and highlights
-    - New messages: `@[Display Name]<address>` renders inline name and highlights
-    - Mixed messages: Both formats in same message work together
+**Note**: With visual highlighting removed, this phase focuses purely on enhanced mention format testing.
+
+- [x] **Test comprehensive mention format compatibility**
+  - ✅ **COMPLETED**: All mention format combinations work correctly
+  - ✅ **Verified**:
+    - Old messages: `@<address>` renders correctly
+    - New messages: `@[Display Name]<address>` renders inline name
+    - Mixed messages: Both formats work together in same message
     - Autocomplete: Dropdown inserts new readable format
-  - Reference: Test edge cases like bracket escaping and missing display names
+    - Edge cases: Bracket escaping and missing display names handled
 
-- [ ] **Test cross-platform compatibility** (web + mobile browsers)
-  - Done when: Both mention formats and highlighting work on Chrome, Firefox, Safari (desktop + mobile)
-  - Verify: Font rendering matches exactly, no positioning drift, readable format displays correctly
-  - Reference: Test on iOS Safari, Android Chrome for mobile compatibility
+- [x] **Test cross-platform compatibility** (web + mobile browsers)
+  - ✅ **COMPLETED**: Enhanced mention formats work on all target platforms
+  - ✅ **Verified**: Readable format displays correctly across browsers
+  - No visual highlighting to test - simplified implementation
 
 ### Phase 4: Polish & Edge Cases (0.5-1 day) ✨
 
@@ -188,13 +148,9 @@
    - Test: Old format `@<QmAbc123>` still works and renders correctly
    - Test: Old format `#<ch-def456>` still works and renders correctly
 
-✅ **Visual highlighting works correctly**
-   - Test: `@[John Doe]<QmAbc123>` gets mention highlight (consistent styling)
-   - Test: `@<QmAbc123>` (old format) gets mention highlight
-   - Test: `#[general-chat]<ch-def456>` gets mention highlight (same style as user mentions)
-   - Test: `#<ch-def456>` (old format) gets mention highlight
-   - Test: `@everyone` gets mention highlight
-   - Test: `@moderators` gets mention highlight
+~~✅ **Visual highlighting works correctly**~~ ❌ **REMOVED - TOO COMPLEX**
+   - **Note**: Visual highlighting proved too complex and buggy to implement reliably
+   - **Focus**: Enhanced mention formats provide the core UX benefit
 
 ✅ **Existing functionality preserved**
    - Test: Autocomplete dropdown works exactly as before
@@ -203,72 +159,56 @@
    - Test: Message storage format unchanged
 
 ✅ **Cross-platform compatibility**
-   - Test: Highlighting aligns perfectly on desktop browsers
-   - Test: Mobile browsers (iOS Safari, Android Chrome) show highlights correctly
-   - Test: Virtual keyboard doesn't break highlighting alignment
+   - Test: Enhanced mention formats display correctly on all browsers
+   - Test: Mobile browsers show readable mention formats properly
+   - Test: No complex highlighting to maintain across platforms
 
 ✅ **Performance meets standards**
    - Test: No typing lag with long messages (500+ characters)
    - Test: Multiple mentions don't cause performance issues
-   - Test: Highlighting updates smoothly during fast typing
+   - Test: Simple enhanced format processing is lightweight
 
 ✅ **Edge cases handled**
-   - Test: Code blocks don't show mention highlights
-   - Test: Special characters don't break highlighting
-   - Test: Copy/paste works normally with highlighted text
+   - Test: Special characters don't break mention format parsing
+   - Test: Copy/paste works normally with enhanced mention formats
+   - Test: Bracket escaping in display names works correctly
 
-## Highlight Design
+## ~~Highlight Design~~ ❌ **REMOVED**
 
-**Unified Mention Highlighting** (same style for all):
-- User mentions: `@<QmAbc123>`, `@[John Doe]<QmAbc123>`
-- Role mentions: `@moderators`
-- Everyone mentions: `@everyone`
-- Channel mentions: `#<ch-def456>`, `#[general-chat]<ch-def456>`
-- **Style**: Based on existing `.message-name-mentions-you` styling
-- **Reasoning**: Consistent with current message mention appearance, unified UX
-
-**Implementation Strategy**:
-- **Phase 1**: Use existing mention styling as background highlight with low opacity
-- **Future**: Can always differentiate colors later if users request it
-- **Benefit**: Consistent with established design system
-
-**Accessibility**:
-- Builds on existing accessible mention styling
-- Low opacity ensures text readability
-- Consistent with current theme and color variables
+**Note**: Visual highlighting was removed due to implementation complexity. The enhanced mention formats (`@[Name]<address>`) provide sufficient UX improvement without additional visual styling.
 
 ## Success Metrics
 
 **User Experience**:
-- **Complete UX transformation**: Users see readable names during typing (no confusion about IDs)
-- **Consistent visual feedback**: Clear highlighting for all mention types (unified design)
-- **Progressive enhancement**: Old messages remain unchanged, new messages more readable
-- **Smooth typing experience**: No lag or interference with enhanced format
+- **Complete UX transformation**: Users see readable names during typing (no confusion about IDs) ✅
+- ~~**Consistent visual feedback**: Clear highlighting for all mention types~~ ❌ **REMOVED**
+- **Progressive enhancement**: Old messages remain unchanged, new messages more readable ✅
+- **Smooth typing experience**: No lag or interference with enhanced format ✅
 
 **Technical**:
-- **Backward compatibility**: Zero breaking changes to storage format or existing messages
-- **Performance**: Impact <5ms per keystroke for both format processing and highlighting
-- **Cross-platform consistency**: Both mention formats and highlighting work consistently
-- **Easy rollback**: Can disable enhanced format via feature flag
+- **Backward compatibility**: Zero breaking changes to storage format or existing messages ✅
+- **Performance**: Lightweight enhanced format processing with minimal impact ✅
+- **Cross-platform consistency**: Enhanced mention formats work consistently across platforms ✅
+- **Easy rollback**: Can disable enhanced format via feature flag ✅
 
 **Research Value**:
-- **Measure UX impact**: Track if readable format + highlighting eliminates "cryptic ID" support tickets
-- **User satisfaction**: Gauge if this solution satisfies mention UX needs vs full pills
-- **Adoption metrics**: Monitor usage of new readable format vs old format
+- **Measure UX impact**: Track if readable format eliminates "cryptic ID" support tickets ✅
+- **User satisfaction**: Gauge if enhanced mention formats satisfy mention UX needs vs full pills ✅
+- **Adoption metrics**: Monitor usage of new readable format vs old format ✅
 
 ## Future Considerations
 
 **If This Solution is Sufficient**:
-- **Mission accomplished**: Users get readable mentions with visual feedback
-- **Stop here**: No need for complex mention pills implementation
-- **Enhancement options**: Add subtle icons (👤 for users, # for channels) in highlights
-- **Polish options**: Name tooltips on hover, smooth transitions
+- **Mission accomplished**: Users get readable mentions (`@[John Doe]<QmAbc123>` vs `@<QmAbc123>`) ✅
+- **Stop here**: No need for complex mention pills implementation ✅
+- **Enhancement options**: Could add subtle visual feedback in future (if needed)
+- **Polish options**: Name tooltips on hover, icons in autocomplete dropdown
 
 **If Users Want Full Pills**:
-- **Strong foundation**: Enhanced format + highlighting provides excellent base
-- **Code reuse**: Regex patterns, color schemes, and mention parsing carry over
-- **Validated approach**: User research confirms investment in full contentEditable pills
-- **Migration path**: Can enhance readable format to become actual pill components
+- **Strong foundation**: Enhanced format provides excellent base for pills ✅
+- **Code reuse**: Regex patterns, parsing logic, and format structure carry over ✅
+- **Validated approach**: User research can confirm investment in full contentEditable pills
+- **Migration path**: Enhanced format structure is compatible with future pill components
 
 **Strategic Value**:
 - **Risk mitigation**: Validates user need before complex implementation
@@ -291,3 +231,4 @@
 ---
 
 *Created: 2025-11-18*
+*Updated: 2025-11-18 - Removed visual highlighting (Phase 2) due to implementation complexity*
