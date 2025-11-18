@@ -352,7 +352,7 @@ The script automatically:
 ### Task Creation Example
 **User says**: "I need to implement user authentication"
 
-**Skill response**: Creates `.agents/tasks/implement-user-authentication.md` with High complexity template, breaks down into phases (setup, UI components, backend integration), includes verification steps for security testing.
+**Skill response**: Creates `.agents/tasks/user-authentication.md` with High complexity template, breaks down into phases (setup, UI components, backend integration), includes verification steps for security testing.
 
 ### Documentation Example
 **User says**: "Document the new search feature we just built"
@@ -368,7 +368,7 @@ The script automatically:
 **User says**: "Move the completed auth task to the .done folder"
 
 **Skill response**:
-1. Moves `.agents/tasks/implement-user-authentication.md` to `.agents/tasks/.done/implement-user-authentication.md`
+1. Moves `.agents/tasks/user-authentication.md` to `.agents/tasks/.done/user-authentication.md`
 2. Runs the comprehensive update script: `python3 update-index.py`
    - Executes `yarn scan-docs` for project-wide documentation sync
    - Updates INDEX.md with new file location
@@ -420,7 +420,7 @@ The script automatically:
 
 **After frontend-style-validator review**:
 ```markdown
-# Create Cross-Platform Button Component
+# Cross-Platform Button Component
 
 > **⚠️ AI-Generated**: May contain errors. Verify before use.
 > **Reviewed by**: frontend-style-validator agent

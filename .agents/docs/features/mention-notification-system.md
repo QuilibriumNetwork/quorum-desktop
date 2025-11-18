@@ -9,7 +9,7 @@ The Unified Notification System provides real-time visual feedback for mentions 
 - **@you mentions**: Direct user mentions (`@<address>`)
 - **@everyone mentions**: Channel-wide mentions (permission-based)
 - **@role mentions**: Role-based mentions (`@moderators`, `@admins`) with user role checking
-- **#channel mentions**: Channel references (`#general`, `#announcements`) with clickable navigation
+- **#channel mentions**: Channel references (`#<channelId>`) with clickable navigation
 - **Replies**: Notifications when someone replies to your messages
 
 ### Key Design
@@ -89,7 +89,7 @@ Flash-highlight animation (yellow fade, 6s)
 - `getMentionType(message, options)`: Returns mention type for UI
 
 **`src/utils/channelUtils.ts`**
-- `findChannelByName(channelName, channels)`: Locates channel by name for channel mention validation
+- `findChannelByName(channelName, channels)`: Locates channel by name (utility function)
 
 **`src/utils/notificationSettingsUtils.ts`**
 - `getDefaultNotificationSettings(spaceId)`: Returns default settings
@@ -198,7 +198,7 @@ Flash-highlight animation (yellow fade, 6s)
 **`src/components/message/MessageMarkdownRenderer.tsx`**
 - Renders markdown-formatted messages
 - Processes role mentions: `@roleTag` → styled span
-- Processes channel mentions: `#channelname` → clickable span with navigation
+- Processes channel mentions: `#<channelId>` → clickable span with navigation
 - Only styles roles that exist in `message.mentions.roleIds`
 - Only styles channels that exist in `message.mentions.channelIds`
 - Accepts `roleMentions`, `channelMentions`, `spaceRoles`, and `spaceChannels` props
@@ -619,12 +619,12 @@ src/
 │   │   │   ├── useAllMentions.ts          # Fetch all mentions
 │   │   │   ├── useMentionInput.ts         # Autocomplete hook
 │   │   │   ├── useMentionNotificationSettings.ts # Settings hook
-│   │   │   └── useViewportMentionHighlight.ts # Viewport trigger
 │   │   ├── replies/
 │   │   │   ├── useReplyNotificationCounts.ts # Reply counts
 │   │   │   └── useAllReplies.ts           # Fetch all replies
 │   │   ├── messages/
-│   │   │   └── useMessageFormatting.ts    # Token-based rendering
+│   │   │   ├── useMessageFormatting.ts    # Token-based rendering
+│   │   │   └── useViewportMentionHighlight.ts # Viewport trigger
 │   │   └── conversations/
 │   │       └── useUpdateReadTime.ts       # Read time mutation
 │   └── queries/
@@ -652,6 +652,31 @@ src/
     └── messages.ts                        # Read time + queries
 ```
 
+## Mention Interactivity
+
+### CSS Architecture
+
+Mentions use semantic CSS classes to control interactivity:
+
+**Base styling**: `.message-name-mentions-you`
+- Font weight, colors, padding, border radius
+
+**Interactive mentions**: `.message-name-mentions-you.interactive`
+- Pointer cursor, hover effects
+- Used in: Regular message display, markdown rendering
+
+**Non-interactive mentions**: `.message-name-mentions-you.non-interactive`
+- Default cursor, no hover effects
+- Used in: Preview contexts (delete/pin modals, pinned lists, notification panel)
+
+### Implementation
+
+All mention components use `tokenData.isInteractive` flag to determine CSS class:
+- MessagePreview: Respects `disableMentionInteractivity` prop
+- NotificationItem: Always non-interactive
+- Message.tsx: Interactive when not in preview context
+- MessageMarkdownRenderer: Always interactive
+
 ---
 
 ## Related Documentation
@@ -663,4 +688,5 @@ src/
 
 ---
 
-*Last updated: 2025-11-17*
+*Last updated: 2025-11-18*
+*Reviewed by Claude Code: 2025-11-18*

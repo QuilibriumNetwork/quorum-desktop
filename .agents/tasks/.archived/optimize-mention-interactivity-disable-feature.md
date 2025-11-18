@@ -3,7 +3,7 @@
 > **⚠️ AI-Generated**: May contain errors. Verify before use.
 > **Reviewed by**: feature-analyzer agent
 
-**Status**: Pending
+**Status**: NOT IMPLEMENTED (OVER-ENGINEERED!)
 **Complexity**: High
 **Created**: 2025-11-17
 **Files**:
@@ -155,16 +155,37 @@
 > - Explain when/how to use mention interactivity controls
 > - Document architectural decisions for reference
 
-#### **3.1 Integration Tests**
-- [ ] **Token-based rendering tests**
-  - Done when: Tests verify mentions in preview contexts don't navigate
-  - Verify: Both confirmation modals and pinned message list tested
-  - Reference: Existing interaction tests
+#### **3.1 Automated Tests**
 
-- [ ] **Markdown rendering tests**
-  - Done when: Tests verify markdown mentions in preview contexts don't navigate
-  - Verify: Covers both user and channel mentions in markdown
-  - Reference: Test both `ENABLE_MARKDOWN = true/false` scenarios
+> **🎯 GOAL**: Create automated Vitest tests to prevent regressions and document expected behavior
+>
+> **WHY AUTOMATED TESTS**:
+> - **Regression Prevention**: Catches if someone accidentally breaks interactivity controls
+> - **CI/CD Integration**: Runs on every PR to ensure feature keeps working
+> - **Living Documentation**: Tests show exactly how mentions should behave
+> - **Refactoring Safety**: Can confidently implement Context API knowing tests will catch issues
+>
+> **TESTING APPROACH**: Unit tests with vi.fn() mocks following existing project patterns
+
+- [ ] **MessagePreview mention interactivity tests** (`src/dev/tests/components/message/MessagePreview.mention-interactivity.unit.test.tsx`)
+  - Done when: Tests verify mentions in preview contexts don't trigger navigation
+  - Test cases: Delete confirmation, pin/unpin confirmation modals
+  - Uses: Vitest + React Testing Library + vi.fn() navigation mocks
+  - Failure guidance: "Expected navigation not to be called but was called X times"
+  - Reference: Follow `MessageService.unit.test.tsx` documentation patterns
+
+- [ ] **PinnedMessagesPanel mention interactivity tests** (`src/dev/tests/components/message/PinnedMessagesPanel.mention-interactivity.unit.test.tsx`)
+  - Done when: Tests verify mention clicks don't navigate in pinned message list
+  - Test cases: Mobile and desktop rendering paths, all mention types (@user, @role, #channel, @everyone)
+  - Uses: Vitest + React Testing Library + vi.fn() mocks
+  - Failure guidance: Check if `disableMentionInteractivity` prop is properly passed through component hierarchy
+  - Reference: Follow existing test structure with detailed PURPOSE and APPROACH comments
+
+- [ ] **Markdown rendering tests** *(Future enhancement - only if preview contexts adopt markdown)*
+  - Done when: Tests verify markdown mentions respect `disableMentionInteractivity` prop
+  - Test cases: MessageMarkdownRenderer with interactivity disabled
+  - Uses: Vitest + conditional rendering based on `ENABLE_MARKDOWN` flag
+  - Note: Currently deferred since preview contexts use token-based rendering only
 
 #### **3.2 Update Documentation**
 - [ ] **Document Context API pattern** (`.agents/docs/features/`)
@@ -356,6 +377,12 @@ Channel.tsx
 - **Result**: Reduced implementation estimate from 6-10 hours to 4-8 hours
 - **Quality rating**: Improved from 7/10 to 8/10 due to confirmed non-issue
 
+### 2025-11-18 - Testing Strategy Updated
+- **Updated**: Section 3.1 to specify automated Vitest tests instead of unclear testing approach
+- **Clarified**: Test structure to follow existing project patterns (`src/dev/tests/` with detailed documentation)
+- **Added**: Specific test file paths and testing approach using vi.fn() mocks
+- **Aligned**: Testing strategy with existing MessageService.unit.test.tsx patterns
+
 ---
 
-_Created: 2025-11-17_
+_Created: 2025-11-17 | Updated: 2025-11-18_
