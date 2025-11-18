@@ -433,8 +433,8 @@ export const MessageMarkdownRenderer: React.FC<MessageMarkdownRendererProps> = (
         const channelId = match[6];
         const channelName = match[7];
         const inlineDisplayName = match[8]; // Optional inline display name
-        // Prefer inline display name, then channel lookup name
-        const displayName = inlineDisplayName || channelName;
+        // SECURITY: Only use actual channel data - ignore inline display names to prevent spoofing
+        const displayName = channelName;
         parts.push(
           <span
             key={`mention-${match.index}`}
@@ -668,11 +668,21 @@ export const MessageMarkdownRenderer: React.FC<MessageMarkdownRendererProps> = (
       </ol>
     ),
 
-    li: ({ children, ...props }: any) => (
-      <li className="mb-1 leading-relaxed [&>ul]:mt-1 [&>ol]:mt-1" {...props}>
-        {children}
-      </li>
-    ),
+    li: ({ children, ...props }: any) => {
+      // Process children recursively to find and replace mention placeholders (same as p component)
+      const processedChildren = React.Children.map(children, (child) => {
+        if (typeof child === 'string') {
+          return processMentionTokens(child);
+        }
+        return child;
+      });
+
+      return (
+        <li className="mb-1 leading-relaxed [&>ul]:mt-1 [&>ol]:mt-1" {...props}>
+          {processedChildren}
+        </li>
+      );
+    },
 
     // Style horizontal rules
     hr: ({ ...props }: any) => (
@@ -728,7 +738,7 @@ export const MessageMarkdownRenderer: React.FC<MessageMarkdownRendererProps> = (
       </em>
     ),
 
-  }), [mapSenderToUser, onUserClick, processMentionTokens]); // Dependencies for mention handling in text, h3, and p components
+  }), [mapSenderToUser, onUserClick, processMentionTokens]); // Dependencies for mention handling in text, h3, p, and li components
 
   // Handle mention clicks
   const handleClick = useCallback((event: React.MouseEvent) => {
