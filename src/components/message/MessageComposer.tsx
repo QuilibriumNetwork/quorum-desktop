@@ -116,6 +116,7 @@ export const MessageComposer = forwardRef<
     const [cursorPosition, setCursorPosition] = useState(0);
     const [dropdownOpen, setDropdownOpen] = useState(false);
     const [isTyping, setIsTyping] = useState(false);
+    const [isMultiline, setIsMultiline] = useState(false);
     const [responsivePlaceholder, setResponsivePlaceholder] = useState(placeholder);
     const { isMobile, isDesktop } = useResponsiveLayout();
 
@@ -286,6 +287,7 @@ export const MessageComposer = forwardRef<
         if (!value || value.trim() === '') {
           textarea.style.height = '32px'; // With box-sizing: border-box, this includes padding
           textarea.style.overflowY = 'hidden';
+          setIsMultiline(false);
           return;
         }
 
@@ -297,6 +299,9 @@ export const MessageComposer = forwardRef<
         const newHeight = Math.min(scrollHeight, maxHeight);
         textarea.style.height = `${newHeight}px`;
         textarea.style.overflowY = scrollHeight > maxHeight ? 'auto' : 'hidden';
+
+        // Update multiline state based on height - consider multiline if height > 32px (single line)
+        setIsMultiline(newHeight > 32);
       }
     }, [value, isDesktop]);
     // If disabled, show a message instead of the composer
@@ -498,7 +503,7 @@ export const MessageComposer = forwardRef<
         {/* Message input row */}
         <FlexRow
           ref={composerRef}
-          className={`message-composer-row ${inReplyTo ? 'has-reply' : ''} ${isTyping ? 'typing' : ''}`}
+          className={`message-composer-row ${inReplyTo ? 'has-reply' : ''} ${isTyping ? 'typing' : ''} ${isMultiline ? 'multiline' : ''}`}
         >
           <Tooltip id="attach-image" content={t`attach image`} place="top" showOnTouch={false}>
             <div {...getRootProps()}>
