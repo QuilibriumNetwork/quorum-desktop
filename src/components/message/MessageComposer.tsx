@@ -52,6 +52,7 @@ interface MessageComposerProps {
   // Reply-to and error handling
   inReplyTo?: any;
   fileError?: string | null;
+  mentionError?: string | null;
   isProcessingImage?: boolean;
   mapSenderToUser?: (senderId: string) => { displayName?: string };
   setInReplyTo?: (inReplyTo: any) => void;
@@ -96,6 +97,7 @@ export const MessageComposer = forwardRef<
       hasStickers = true,
       inReplyTo,
       fileError,
+      mentionError,
       isProcessingImage = false,
       mapSenderToUser,
       setInReplyTo,
@@ -327,7 +329,7 @@ export const MessageComposer = forwardRef<
     return (
       <div className="message-composer-container">
         {/* Error, processing indicator, and reply-to display */}
-        {(fileError || inReplyTo || isProcessingImage) && (
+        {(fileError || mentionError || inReplyTo || isProcessingImage) && (
           <div className="message-composer-info-container">
             {isProcessingImage && (
               <div className="message-composer-callout">
@@ -350,6 +352,17 @@ export const MessageComposer = forwardRef<
                   size="sm"
                 >
                   {fileError}
+                </Callout>
+              </div>
+            )}
+            {mentionError && (
+              <div className="message-composer-callout">
+                <Callout
+                  variant="error"
+                  layout="minimal"
+                  size="sm"
+                >
+                  {mentionError}
                 </Callout>
               </div>
             )}

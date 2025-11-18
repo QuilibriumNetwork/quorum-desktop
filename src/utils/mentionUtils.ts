@@ -36,8 +36,12 @@ export function hasWordBoundaries(text: string, match: RegExpMatchArray): boolea
   const afterIndex = match.index! + match[0].length;
   const afterChar = afterIndex < text.length ? text[afterIndex] : '\n';
 
-  // Check if both characters are whitespace (space, tab, newline)
-  return /\s/.test(beforeChar) && /\s/.test(afterChar);
+  // Check if both characters are whitespace, punctuation, or end-of-string
+  // This prevents mentions inside markdown syntax like **@user** or [@user](link)
+  // but allows mentions at sentence ends like "@user!" or "@user."
+  const isValidBoundary = (char: string) => /[\s.,!?;:\n]/.test(char);
+
+  return isValidBoundary(beforeChar) && isValidBoundary(afterChar);
 }
 
 /**
@@ -188,6 +192,12 @@ export function isMentionedWithSettings(
 }
 
 /**
+ * Maximum number of mentions allowed per message to prevent spam
+ */
+export const MAX_MENTIONS_PER_MESSAGE = 20;
+
+
+/**
  * Extract mentions from message text
  * Parses @<address> format mentions, @roleTag mentions, @everyone, and #<channelId> mentions
  *
@@ -232,42 +242,73 @@ export function extractMentionsFromText(
     channelIds: [],
   };
 
-  // Check for @everyone mention (only if user has permission and has word boundaries)
+  // Rate limiting: Count mentions as we process them
+  let totalMentionCount = 0;
+
+  // Count and extract @everyone mentions
   if (/@everyone\b/i.test(text)) {
     const everyoneMatches = Array.from(text.matchAll(/@everyone\b/gi));
     for (const match of everyoneMatches) {
       if (hasWordBoundaries(text, match)) {
+        totalMentionCount++; // Count @everyone syntax (always count for rate limiting)
         if (options?.allowEveryone) {
-          mentions.everyone = true;
+          mentions.everyone = true; // Only extract if user has permission
         }
         break; // Only need to find one valid @everyone
       }
     }
   }
 
-  // Extract user mentions: @<address> OR @[Display Name]<address> (both formats) that have word boundaries
-  // Using centralized IPFS CID validation pattern
-  const cidPattern = createIPFSCIDRegex().source; // Get the pattern without global flag
-  const userMentionRegex = new RegExp(`@(?:\\[([^\\]]+)\\])?<(${cidPattern})>`, 'g');
-  const userMatches = Array.from(text.matchAll(userMentionRegex));
+  // Count and extract user mentions: @<anything> OR @[Display Name]<anything>
+  // For rate limiting: count any @<...> syntax
+  // For extraction: validate IPFS CID format
+  const userMentionSyntaxRegex = /@(?:\[[^\]]+\])?<[^>]+>/g;
+  const userSyntaxMatches = Array.from(text.matchAll(userMentionSyntaxRegex));
 
-  for (const match of userMatches) {
-    // match[1] is the optional display name (could be undefined)
-    // match[2] is the address (always present)
-    const address = match[2];
-    // Only add mentions that have proper word boundaries
-    if (address && hasWordBoundaries(text, match) && !mentions.memberIds.includes(address)) {
-      mentions.memberIds.push(address);
+  // Count all @<...> syntax for rate limiting (stop at MAX+1 for efficiency)
+  for (const match of userSyntaxMatches) {
+    if (hasWordBoundaries(text, match)) {
+      totalMentionCount++; // Count any @<...> syntax
+      if (totalMentionCount > MAX_MENTIONS_PER_MESSAGE) break; // Early exit optimization
     }
   }
 
-  // Extract role mentions: @roleTag (NO brackets) that have word boundaries
-  if (options?.spaceRoles && options.spaceRoles.length > 0) {
-    // Match @word pattern (alphanumeric + hyphen/underscore)
-    // Note: We use word boundary checking instead of regex lookahead
-    const roleMentionRegex = /@([a-zA-Z0-9_-]+)/g;
-    const roleMatches = Array.from(text.matchAll(roleMentionRegex));
+  // Extract valid user mentions (with IPFS CID validation)
+  const cidPattern = createIPFSCIDRegex().source;
+  const validUserMentionRegex = new RegExp(`@(?:\\[([^\\]]+)\\])?<(${cidPattern})>`, 'g');
+  const validUserMatches = Array.from(text.matchAll(validUserMentionRegex));
 
+  for (const match of validUserMatches) {
+    const address = match[2];
+    if (address && hasWordBoundaries(text, match)) {
+      // Only add to array if not already included (for notification purposes)
+      if (!mentions.memberIds.includes(address)) {
+        mentions.memberIds.push(address);
+      }
+    }
+  }
+
+  // Count and extract role mentions: @roleTag (NO brackets)
+  // For rate limiting: count any @roleTag syntax (except @everyone)
+  // For extraction: validate against actual space roles
+  const roleMentionRegex = /@([a-zA-Z0-9_-]+)/g;
+  const roleMatches = Array.from(text.matchAll(roleMentionRegex));
+
+  for (const match of roleMatches) {
+    const possibleRoleTag = match[1];
+
+    // Skip 'everyone' (already handled above)
+    if (possibleRoleTag.toLowerCase() === 'everyone') continue;
+
+    // Count all @roleTag syntax for rate limiting (stop at MAX+1 for efficiency)
+    if (hasWordBoundaries(text, match)) {
+      totalMentionCount++; // Count any @roleTag syntax
+      if (totalMentionCount > MAX_MENTIONS_PER_MESSAGE) break; // Early exit optimization
+    }
+  }
+
+  // Extract valid role mentions (validate against actual space roles)
+  if (options?.spaceRoles && options.spaceRoles.length > 0) {
     for (const match of roleMatches) {
       const possibleRoleTag = match[1];
 
@@ -282,20 +323,29 @@ export function extractMentionsFromText(
         r => r.roleTag.toLowerCase() === possibleRoleTag.toLowerCase()
       );
 
-      // Only add if role exists and not already in list
+      // Only add valid roles to array (for notifications)
       if (role && !mentions.roleIds.includes(role.roleId)) {
         mentions.roleIds.push(role.roleId);
       }
-      // If role doesn't exist, @roleTag remains plain text (no extraction)
     }
   }
 
-  // Extract channel mentions: #<channelId> OR #[Channel Name]<channelId> (both formats) that have word boundaries
-  if (options?.spaceChannels && options.spaceChannels.length > 0) {
-    // Support both formats: #<channelId> and #[Channel Name]<channelId>
-    const channelMentionRegex = /#(?:\[([^\]]+)\])?<([^>]+)>/g;
-    const channelMatches = Array.from(text.matchAll(channelMentionRegex));
+  // Count and extract channel mentions: #<anything> OR #[Channel Name]<anything>
+  // For rate limiting: count any #<...> syntax
+  // For extraction: validate against actual space channels
+  const channelMentionRegex = /#(?:\[([^\]]+)\])?<([^>]+)>/g;
+  const channelMatches = Array.from(text.matchAll(channelMentionRegex));
 
+  // Count all #<...> syntax for rate limiting (stop at MAX+1 for efficiency)
+  for (const match of channelMatches) {
+    if (hasWordBoundaries(text, match)) {
+      totalMentionCount++; // Count any #<...> syntax
+      if (totalMentionCount > MAX_MENTIONS_PER_MESSAGE) break; // Early exit optimization
+    }
+  }
+
+  // Extract valid channel mentions (validate against actual space channels)
+  if (options?.spaceChannels && options.spaceChannels.length > 0) {
     for (const match of channelMatches) {
       // match[1] is the optional display name (could be undefined)
       // match[2] is the channelId (always present)
@@ -307,13 +357,15 @@ export function extractMentionsFromText(
       // Match by ID only (exact match for rename-safety)
       const channel = options.spaceChannels.find(c => c.channelId === possibleChannelId);
 
-      // Only add if channel exists and not already in list
+      // Only add valid channels to array (for notifications)
       if (channel && !mentions.channelIds.includes(channel.channelId)) {
         mentions.channelIds.push(channel.channelId);
       }
-      // If channel doesn't exist, #<channelId> remains plain text (no extraction)
     }
   }
+
+  // Set the total mention count (for validation)
+  mentions.totalMentionCount = totalMentionCount;
 
   return mentions;
 }

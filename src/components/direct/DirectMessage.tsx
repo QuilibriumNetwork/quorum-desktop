@@ -799,6 +799,7 @@ const DirectMessage: React.FC<{}> = () => {
                 showSigningToggle={!nonRepudiable}
                 skipSigning={skipSigning}
                 onSigningToggle={() => setSkipSigning(!skipSigning)}
+                mentionError={composer.mentionError}
               />
             </div>
           </div>

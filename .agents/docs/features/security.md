@@ -214,6 +214,39 @@ export const DANGEROUS_HTML_CHARS = /[<>"']/;
 
 ---
 
+## 3. Rate Limiting for Mention Extraction
+
+### Overview
+
+Implemented **mention count rate limiting** to prevent notification spam and system abuse via excessive mentions.
+
+### Attack Vector Mitigated
+
+**Mention Spam/DoS**: Messages with 100+ mentions flooding users with notifications or overloading mention processing.
+
+### Implementation Details
+
+**File**: `src/utils/mentionUtils.ts` or `src/services/MessageService.ts`
+**Function**: `extractMentionsFromText()`
+
+**Limit**: Maximum 20 total mentions per message (user + role + everyone + channel mentions combined)
+
+**Counting Strategy**: Uses syntax-only counting - any mention pattern is counted regardless of whether the user/channel actually exists. This prevents bypass attempts using fake mentions.
+
+**Behavior**: When limit exceeded, message submission is blocked with user-friendly error message in MessageComposer.
+
+### Security Guarantees
+
+- ✅ **Maximum 20 mentions** processed per message
+- ✅ **Notification spam prevention** - limits concurrent notifications
+- ✅ **Graceful degradation** - excess mentions become plain text without breaking functionality
+
+### References
+
+- Security audit report: `.agents/reports/security-audit-markdown-mentions-2025-11-18.md` (Recommendation 2, line 936)
+
+---
+
 ## Future Security Mechanisms
 
 This document will be updated as new security mechanisms are implemented.
@@ -223,9 +256,8 @@ This document will be updated as new security mechanisms are implemented.
 - End-to-end encryption validation
 - Secure key storage mechanisms
 - Content Security Policy (CSP) headers
-- Rate limiting and abuse prevention
 
 ---
 
 **Document Created**: 2025-11-08
-**Last Updated**: 2025-11-18 (Added Regex DoS prevention for mention token parsing)
+**Last Updated**: 2025-11-18 (Added Rate Limiting for Mention Extraction and Regex DoS prevention)

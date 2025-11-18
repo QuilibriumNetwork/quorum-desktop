@@ -236,6 +236,7 @@ export type Mentions = {
   roleIds: string[];
   channelIds: string[];
   everyone?: boolean;
+  totalMentionCount?: number; // Total number of mention instances (including duplicates)
 };
 
 export type GetChannelParams = {

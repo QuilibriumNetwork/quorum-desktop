@@ -1042,6 +1042,7 @@ const Channel: React.FC<ChannelProps> = ({
                     ? t`You cannot post in this channel`
                     : undefined
                 }
+                mentionError={composer.mentionError}
                   />
                 );
               })()}

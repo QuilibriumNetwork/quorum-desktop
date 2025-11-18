@@ -8,6 +8,7 @@ import {
 import { t } from '@lingui/core/macro';
 import { processAttachmentImage, FILE_SIZE_LIMITS } from '../../../utils/imageProcessing';
 import type { AttachmentProcessingResult } from '../../../utils/imageProcessing';
+import { extractMentionsFromText, MAX_MENTIONS_PER_MESSAGE } from '../../../utils/mentionUtils';
 
 interface UseMessageComposerOptions {
   type: 'channel' | 'direct';
@@ -38,8 +39,18 @@ export function useMessageComposer(options: UseMessageComposerOptions) {
   const [fileError, setFileError] = useState<string | null>(null);
   const [isProcessingImage, setIsProcessingImage] = useState(false);
 
+  // Mention validation state
+  const [mentionError, setMentionError] = useState<string | null>(null);
+
   // Ref for textarea
   const editor = useRef<HTMLTextAreaElement>(null);
+
+  // Clear mention error when message changes
+  useEffect(() => {
+    if (mentionError) {
+      setMentionError(null);
+    }
+  }, [pendingMessage]); // Clear error when user types
 
   // Image processing using standardized processor with thumbnail support
   const processImage = async (file: FileWithPath): Promise<AttachmentProcessingResult> => {
@@ -101,9 +112,42 @@ export function useMessageComposer(options: UseMessageComposerOptions) {
     return pendingMessage === '' ? 1 : 3;
   }, [pendingMessage]);
 
+  // Validate mentions count
+  const validateMentions = useCallback((text: string): boolean => {
+    if (!text.trim()) return true; // Empty messages are fine
+
+    try {
+      // Extract mentions to count them (syntax-only counting for rate limiting)
+      const mentions = extractMentionsFromText(text, {
+        allowEveryone: true, // Allow counting @everyone syntax
+      });
+
+      // Use the total mention count for proper rate limiting validation
+      const totalMentions = mentions.totalMentionCount || 0;
+
+      if (totalMentions > MAX_MENTIONS_PER_MESSAGE) {
+        setMentionError(t`Too many mentions in message. Maximum ${MAX_MENTIONS_PER_MESSAGE} allowed.`);
+        return false;
+      }
+
+      // Clear any existing mention error
+      setMentionError(null);
+      return true;
+    } catch (error) {
+      // If extraction fails, allow the message (don't block on validation errors)
+      setMentionError(null);
+      return true;
+    }
+  }, []);
+
   // Submit message
   const submitMessage = useCallback(async () => {
     if ((pendingMessage || processedImage) && !isSubmitting) {
+      // Validate mentions before submission
+      if (pendingMessage && !validateMentions(pendingMessage)) {
+        return; // Block submission if mentions are invalid
+      }
+
       setIsSubmitting(true);
       try {
         if (pendingMessage) {
@@ -142,6 +186,7 @@ export function useMessageComposer(options: UseMessageComposerOptions) {
     isSubmitting,
     onSubmitMessage,
     inReplyTo,
+    validateMentions,
   ]);
 
   // Submit sticker
@@ -190,6 +235,9 @@ export function useMessageComposer(options: UseMessageComposerOptions) {
     fileError,
     isProcessingImage,
     clearFile,
+
+    // Mention validation state
+    mentionError,
 
     // Sticker state
     showStickers,
