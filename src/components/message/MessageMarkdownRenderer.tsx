@@ -397,8 +397,8 @@ export const MessageMarkdownRenderer: React.FC<MessageMarkdownRendererProps> = (
         const inlineDisplayName = match[3]; // Optional inline display name
         if (mapSenderToUser && onUserClick) {
           const user = mapSenderToUser(address);
-          // Prefer inline display name, then user lookup, then fallback to truncated address
-          const displayName = inlineDisplayName || user?.displayName || address.substring(0, 8) + '...';
+          // SECURITY: Only use actual user data - ignore inline display names to prevent impersonation
+          const displayName = user?.displayName || address.substring(0, 8) + '...';
 
           parts.push(
             <span
@@ -737,14 +737,14 @@ export const MessageMarkdownRenderer: React.FC<MessageMarkdownRendererProps> = (
     // Handle user mention clicks
     if (target.classList.contains('message-name-mentions-you') && onUserClick) {
       const address = target.dataset.userAddress;
-      const displayName = target.dataset.userDisplayName;
-      const userIcon = target.dataset.userIcon;
 
       if (address) {
+        // SECURITY: Always do fresh user lookup for UserProfile modal to prevent impersonation
+        const user = mapSenderToUser ? mapSenderToUser(address) : null;
         onUserClick({
           address,
-          displayName: displayName || undefined,
-          userIcon: userIcon || undefined,
+          displayName: user?.displayName,
+          userIcon: user?.userIcon,
         }, event, { type: 'mention', element: target });
       }
     }
@@ -754,7 +754,7 @@ export const MessageMarkdownRenderer: React.FC<MessageMarkdownRendererProps> = (
       const channelId = target.dataset.channelId;
       onChannelClick(channelId);
     }
-  }, [onUserClick, onChannelClick]);
+  }, [onUserClick, onChannelClick, mapSenderToUser]);
 
   return (
     <div className={`break-words min-w-0 max-w-full overflow-hidden ${className || ''}`} onClick={handleClick}>
