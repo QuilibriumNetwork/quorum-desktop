@@ -21,41 +21,6 @@ These are **unit tests** using mocks and spies (`vi.fn()`), **NOT** integration 
 
 ---
 
-## 🚀 Running Tests
-
-### Run All Service Tests
-```bash
-yarn vitest src/dev/tests/services/ --run
-```
-
-### Run Specific Service
-```bash
-# MessageService tests
-yarn vitest src/dev/tests/services/MessageService.unit.test.tsx --run
-
-# SpaceService tests
-yarn vitest src/dev/tests/services/SpaceService.unit.test.tsx --run
-
-# InvitationService tests
-yarn vitest src/dev/tests/services/InvitationService.unit.test.tsx --run
-
-# SyncService tests
-yarn vitest src/dev/tests/services/SyncService.unit.test.tsx --run
-
-# EncryptionService tests
-yarn vitest src/dev/tests/services/EncryptionService.unit.test.tsx --run
-
-# ConfigService tests
-yarn vitest src/dev/tests/services/ConfigService.unit.test.tsx --run
-```
-
-### Watch Mode (Development)
-```bash
-yarn vitest src/dev/tests/services/ --watch
-```
-
----
-
 ## 📁 Directory Structure
 
 ```
@@ -67,18 +32,98 @@ src/dev/tests/
 │   ├── SyncService.unit.test.tsx         (15 tests)
 │   ├── EncryptionService.unit.test.tsx   (8 tests)
 │   └── ConfigService.unit.test.tsx       (8 tests)
+├── utils/                       # Utility function tests
+│   ├── messageGrouping.unit.test.ts      (message grouping)
+│   ├── mentionHighlighting.test.ts       (mention highlighting)
+│   ├── mentionUtils.enhanced.test.ts     (mention extraction)
+│   └── README.md                          (utility testing guide)
+├── components/                  # React component tests
+│   └── README.md                          (component testing guide)
+├── hooks/                       # React hooks tests
+│   └── README.md                          (hooks testing guide)
+├── integration/                 # Integration tests
+│   └── README.md                          (integration testing guide)
+├── e2e/                         # End-to-end tests
+│   └── README.md                          (E2E testing guide)
 ├── docs/                        # Manual testing guides (reference)
-│   ├── TEST-MANUAL_ConfigService.md
-│   ├── TEST-MANUAL_InvitationService.md
-│   ├── TEST-MANUAL_SpaceService.md
-│   └── test-implementation-guide.md
+│   ├── manual-test_ConfigService.md
+│   ├── manual-test_EncryptionService.md
+│   ├── manual-test_InvitationService.md
+│   ├── manual-test_MessageService.md
+│   ├── manual-test_SpaceService.md
+│   └── manual-test_SyncService.md
 ├── setup.ts                     # Global test setup (WebSocket/crypto mocks)
 └── README.md                    # This file
 ```
 
 ---
 
-## 📝 Test File Descriptions
+## 🏗️ Test Categories
+
+### Service Tests (`services/`)
+Comprehensive unit tests for all MessageDB services. Tests service construction, method signatures, and business logic with mocked dependencies.
+
+### Utility Tests (`utils/`)
+Tests for utility functions and helper modules. Includes message grouping, mention processing, and other shared utilities.
+
+### Component Tests (`components/`)
+React component unit and integration tests. Test rendering, user interactions, props handling, and accessibility.
+
+### Hook Tests (`hooks/`)
+Custom React hooks testing. Verify hook return values, state updates, and effect dependencies in isolation.
+
+### Integration Tests (`integration/`)
+Tests that verify multiple components/services working together. Focus on complete user workflows and service interactions.
+
+### End-to-End Tests (`e2e/`)
+Full application tests simulating real user scenarios. Test critical user journeys, cross-browser compatibility, and performance.
+
+---
+
+## 🎯 Test Naming Conventions
+
+- **Service tests**: `ServiceName.unit.test.tsx`
+- **Utility tests**: `utilityName.test.ts` or `utilityName.unit.test.ts`
+- **Component tests**: `ComponentName.test.tsx`
+- **Hook tests**: `useHookName.test.ts`
+- **Integration tests**: `featureName.integration.test.tsx`
+- **E2E tests**: `userFlow.e2e.test.ts`
+
+---
+
+## ⚡ Running Tests
+
+### All Tests
+```bash
+yarn vitest src/dev/tests/ --run
+```
+
+### By Category
+```bash
+# Service tests only
+yarn vitest src/dev/tests/services/ --run
+
+# Utility tests only
+yarn vitest src/dev/tests/utils/ --run
+
+# Component tests only
+yarn vitest src/dev/tests/components/ --run
+
+# Hook tests only
+yarn vitest src/dev/tests/hooks/ --run
+
+# Integration tests only
+yarn vitest src/dev/tests/integration/ --run
+```
+
+### Watch Mode (Development)
+```bash
+yarn vitest src/dev/tests/ --watch
+```
+
+---
+
+## 📝 Detailed Test Descriptions
 
 ### 1. MessageService.unit.test.tsx (16 tests)
 
@@ -305,6 +350,7 @@ Each guide includes:
 
 ---
 
-_Last updated: 2025-10-03_
-_Tests created: 2025-10-02 to 2025-10-03_
-_Total test coverage: 75 tests across 6 services (100% passing)_
+_Last updated: 2025-11-18_
+_Tests created: 2025-10-02 to 2025-11-18_
+_Total test coverage: 78+ tests across 6 services + 3 utilities (100% passing)_
+_Test organization: Restructured for scalability with dedicated directories for components, hooks, integration, and E2E tests_

@@ -6,8 +6,8 @@ import {
   getDateLabel,
   groupMessagesByDay,
   generateListWithSeparators,
-} from '../../utils/messageGrouping';
-import { Message } from '../../api/quorumApi';
+} from '../../../utils/messageGrouping';
+import { Message } from '../../../api/quorumApi';
 
 // Mock message helper
 const createMockMessage = (timestamp: number, messageId: string): Message => ({
