@@ -1,7 +1,10 @@
 ---
-name: "changelog-generator"
-description: "Generate professional changelogs from git commits with industry-standard categories. Automatically activates when users request changelog generation, including time-specific requests like 'generate changelog for past 30 days', 'create changelog last 3 days', 'changelog for 2 weeks', or simply 'generate changelog'. Creates both technical and user-friendly versions with intelligent commit filtering and categorization."
-allowed-tools: ["Bash", "Read", "Write", "Edit", "Grep", "Glob"]
+name: "Changelog Generator"
+description: "Generate professional changelogs from git commits with industry-standard categories. Automatically activates when users request changelog generation with time periods."
+version: "1.0.0"
+dependencies:
+  - "git"
+  - "bash"
 ---
 
 # Changelog Generator

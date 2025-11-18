@@ -1,7 +1,10 @@
 ---
-name: "cross-platform-primitives"
-description: "Expert guidance for cross-platform React component architecture using primitives. Activates when designing React components, refactoring UI elements, choosing between primitives and raw HTML, working with .web/.native file structure, migrating web components to cross-platform, creating new primitives, or making architectural decisions for Quorum Desktop's hybrid primitive system."
-allowed-tools: ["Read", "Write", "Edit", "Glob", "Grep"]
+name: "Cross-Platform Primitives"
+description: "Expert guidance for cross-platform React component architecture using primitives. Activates when designing components, choosing primitives vs HTML, or making architectural decisions."
+version: "1.0.0"
+dependencies:
+  - "react"
+  - "typescript"
 ---
 
 # Cross-Platform Primitives Expert
