@@ -51,7 +51,7 @@ msgstr ""
 
 #. js-lingui-explicit-id
 #: src/components/message/MessageComposer.native.tsx:238
-#: src/components/message/MessageComposer.tsx:362
+#: src/components/message/MessageComposer.tsx:375
 msgid "Replying to {user}"
 msgstr ""
 
@@ -259,7 +259,7 @@ msgstr ""
 msgid "Add Role"
 msgstr ""
 
-#: src/components/message/MessageComposer.tsx:547
+#: src/components/message/MessageComposer.tsx:560
 msgid "add sticker"
 msgstr ""
 
@@ -372,7 +372,7 @@ msgstr ""
 msgid "As a space owner, you need to assign yourself a role with delete permissions to delete other users' messages. <0><1>Learn more</1></0>"
 msgstr ""
 
-#: src/components/message/MessageComposer.tsx:514
+#: src/components/message/MessageComposer.tsx:527
 msgid "attach image"
 msgstr ""
 
@@ -445,7 +445,7 @@ msgstr ""
 msgid "Channel Managers"
 msgstr ""
 
-#: src/components/space/Channel.tsx:1236
+#: src/components/space/Channel.tsx:1237
 msgid "Channel members"
 msgstr ""
 
@@ -938,7 +938,7 @@ msgstr ""
 msgid "File cannot be larger than 25MB"
 msgstr ""
 
-#: src/hooks/business/messages/useMessageComposer.ts:66
+#: src/hooks/business/messages/useMessageComposer.ts:77
 msgid "File cannot be larger than 50MB"
 msgstr ""
 
@@ -946,7 +946,7 @@ msgstr ""
 msgid "File cannot be larger than 5MB"
 msgstr ""
 
-#: src/hooks/business/messages/useMessageComposer.ts:68
+#: src/hooks/business/messages/useMessageComposer.ts:79
 #: src/hooks/business/spaces/useSpaceProfile.ts:84
 #: src/hooks/business/ui/useCustomAssets.ts:105
 #: src/hooks/business/ui/useCustomAssets.ts:150
@@ -1295,7 +1295,7 @@ msgid "Mark all as read"
 msgstr ""
 
 #: src/components/direct/DirectMessage.tsx:657
-#: src/components/direct/DirectMessage.tsx:821
+#: src/components/direct/DirectMessage.tsx:822
 #: src/components/space/Channel.tsx:884
 msgid "Members List"
 msgstr ""
@@ -1317,15 +1317,15 @@ msgstr ""
 msgid "Message does not have a valid signature, this may not be from the sender"
 msgstr ""
 
-#: src/components/message/MessageComposer.tsx:132
+#: src/components/message/MessageComposer.tsx:134
 msgid "Message..."
 msgstr ""
 
-#: src/components/message/MessageComposer.tsx:564
+#: src/components/message/MessageComposer.tsx:577
 msgid "Messages are NOT signed!"
 msgstr ""
 
-#: src/components/message/MessageComposer.tsx:565
+#: src/components/message/MessageComposer.tsx:578
 msgid "Messages are signed!"
 msgstr ""
 
@@ -1361,7 +1361,7 @@ msgstr ""
 msgid "No pinned messages yet"
 msgstr ""
 
-#: src/components/message/MessageComposer.tsx:477
+#: src/components/message/MessageComposer.tsx:490
 msgid "No topic"
 msgstr ""
 
@@ -1374,8 +1374,8 @@ msgid "No unread notifications"
 msgstr ""
 
 #: src/components/space/Channel.tsx:604
-#: src/components/space/Channel.tsx:1087
-#: src/components/space/Channel.tsx:1275
+#: src/components/space/Channel.tsx:1088
+#: src/components/space/Channel.tsx:1276
 msgid "No users found!"
 msgstr ""
 
@@ -1403,7 +1403,7 @@ msgstr ""
 msgid "Notifications are not supported in this browser"
 msgstr ""
 
-#: src/components/message/MessageComposer.tsx:491
+#: src/components/message/MessageComposer.tsx:504
 msgid "Notify all members"
 msgstr ""
 
@@ -1566,7 +1566,7 @@ msgstr ""
 msgid "Private key saved to selected folder"
 msgstr ""
 
-#: src/components/message/MessageComposer.tsx:341
+#: src/components/message/MessageComposer.tsx:343
 msgid "Processing image... This may take a moment for large files."
 msgstr ""
 
@@ -1742,7 +1742,7 @@ msgstr ""
 msgid "Search username or address"
 msgstr ""
 
-#: src/components/space/Channel.tsx:1247
+#: src/components/space/Channel.tsx:1248
 msgid "Search Username or Address"
 msgstr ""
 
@@ -2007,6 +2007,10 @@ msgstr ""
 msgid "Too many files selected. Please select fewer files."
 msgstr ""
 
+#: src/hooks/business/messages/useMessageComposer.ts:129
+msgid "Too many mentions in message. Maximum {MAX_MENTIONS_PER_MESSAGE} allowed."
+msgstr ""
+
 #: src/components/search/SearchResults.tsx:105
 msgid "Try different keywords or check your spelling"
 msgstr ""
@@ -2071,8 +2075,8 @@ msgstr ""
 #: src/components/direct/DirectMessage.tsx:162
 #: src/components/direct/DirectMessage.tsx:177
 #: src/components/direct/DirectMessage.tsx:524
-#: src/components/message/MessageComposer.tsx:436
-#: src/components/message/MessageComposer.tsx:443
+#: src/components/message/MessageComposer.tsx:449
+#: src/components/message/MessageComposer.tsx:456
 #: src/components/message/MessageEditTextarea.tsx:225
 #: src/components/message/MessageEditTextarea.tsx:260
 #: src/components/message/MessageEditTextarea.tsx:267
@@ -2176,7 +2180,7 @@ msgid "User does not exist."
 msgstr ""
 
 #: src/components/space/Channel.tsx:591
-#: src/components/space/Channel.tsx:1073
+#: src/components/space/Channel.tsx:1074
 msgid "Username or Address"
 msgstr ""
 
@@ -2280,7 +2284,7 @@ msgstr ""
 msgid "You cannot delete a group that contains channels. Delete all {channelCount} channels in this group first."
 msgstr ""
 
-#: src/components/message/MessageComposer.tsx:320
+#: src/components/message/MessageComposer.tsx:322
 #: src/components/space/Channel.tsx:1042
 msgid "You cannot post in this channel"
 msgstr ""
