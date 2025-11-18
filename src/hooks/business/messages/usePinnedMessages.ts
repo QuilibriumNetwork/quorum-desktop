@@ -243,7 +243,7 @@ export const usePinnedMessages = (
         }),
         confirmText: message.isPinned ? t`Unpin` : t`Pin`,
         cancelText: t`Cancel`,
-        variant: message.isPinned ? 'danger' : 'info',
+        variant: message.isPinned ? 'danger' : 'primary',
         protipAction: message.isPinned ? t`unpin` : t`pin`,
         onConfirm: performToggle,
       });

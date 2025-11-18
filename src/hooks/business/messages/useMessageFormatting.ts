@@ -3,6 +3,7 @@ import * as linkify from 'linkifyjs';
 import { Message as MessageType, Sticker, Role, Channel } from '../../../api/quorumApi';
 import { isYouTubeURL, extractYouTubeVideoId, YOUTUBE_URL_REGEX } from '../../../utils/youtubeUtils';
 import { getValidInvitePrefixes } from '../../../utils/inviteDomain';
+import { createIPFSCIDRegex } from '../../../utils/validation';
 
 // Legacy export for backward compatibility
 export const YTRegex = YOUTUBE_URL_REGEX;
@@ -148,9 +149,15 @@ export function useMessageFormatting(options: UseMessageFormattingOptions) {
         };
       }
 
-      // Check for user mentions
-      if (token.match(new RegExp(`^@<Qm[a-zA-Z0-9]+>$`))) {
-        const userId = token.substring(2, token.length - 1);
+      // Check for user mentions: @<address> OR @[Display Name]<address> (both formats)
+      const cidPattern = createIPFSCIDRegex().source;
+      const userMentionRegex = new RegExp(`^@(?:\\[([^\\]]+)\\])?<(${cidPattern})>$`);
+      const userMatch = token.match(userMentionRegex);
+
+      if (userMatch) {
+        // userMatch[1] is the optional display name (could be undefined)
+        // userMatch[2] is the address (always present)
+        const userId = userMatch[2];
         const mention = mapSenderToUser(userId);
         return {
           type: 'mention' as const,
@@ -180,9 +187,14 @@ export function useMessageFormatting(options: UseMessageFormattingOptions) {
         }
       }
 
-      // Check for channel mentions (only style if channel exists in message.mentions.channelIds)
-      if (token.match(/^#<([^>]+)>$/) && message.mentions?.channelIds && message.mentions.channelIds.length > 0) {
-        const channelId = token.substring(2, token.length - 1);
+      // Check for channel mentions: #<channelId> OR #[Channel Name]<channelId> (both formats)
+      const channelMentionRegex = /^#(?:\[([^\]]+)\])?<([^>]+)>$/;
+      const channelMatch = token.match(channelMentionRegex);
+
+      if (channelMatch && message.mentions?.channelIds && message.mentions.channelIds.length > 0) {
+        // channelMatch[1] is the optional display name (could be undefined)
+        // channelMatch[2] is the channelId (always present)
+        const channelId = channelMatch[2];
 
         // Find the channel in spaceChannels to verify it exists and get channel name
         const channel = spaceChannels.find(c => c.channelId === channelId);
