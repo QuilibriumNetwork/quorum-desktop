@@ -63,7 +63,7 @@ const renderMessageContent = (
       } else {
         renderedTokens.push(
           <React.Fragment key={`${i}-${j}`}>
-            {tokenData.displayName}
+            {tokenData.text}
             {j < tokens.length - 1 ? ' ' : ''}
           </React.Fragment>
         );

@@ -109,6 +109,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [DirectMessage Navigation State Persistence](tasks/dm-navigation-state-persistence.md)
 - [Implement Background Sync Queue for User Settings and Async Operations](tasks/background-sync-queue.md)
 - [Implement Message Forwarding with Privacy Controls](tasks/message-forwarding-with-privacy-controls.md)
+- [Implement Smart Context Extraction Around Mentions in NotificationPanel](tasks/notification-mention-context-extraction.md)
 - [Multi-User Invite Selection Enhancement](tasks/multi-user-invite-selection.md)
 - [Passkey Import UX Issue](tasks/passkey-import-ux-issue.md)
 - [Server Folders - Discord-Style Grouping Feature](tasks/server-folders-discord-style.md)
@@ -273,4 +274,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2025-11-19 10:40:49
+**Last Updated**: 2025-11-19 12:38:30
