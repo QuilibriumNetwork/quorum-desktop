@@ -71,7 +71,7 @@ const PinnedMessageItem: React.FC<PinnedMessageItemProps> = ({
         <FlexBetween className="result-meta-container">
           <FlexRow className="result-meta items-center">
             <Icon name="user" className="result-user-icon" />
-            <Text className="result-sender mr-4">
+            <Text className="result-sender mr-4 truncate-user-name">
               {sender?.displayName || t`Unknown User`}
             </Text>
             <Icon name="calendar-alt" className="result-date-icon" />

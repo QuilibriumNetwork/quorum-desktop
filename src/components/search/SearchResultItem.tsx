@@ -67,7 +67,7 @@ const DMSearchResultItem: React.FC<SearchResultItemProps> = ({
               style={{ backgroundImage: `url(${icon})` }}
             />
           )}
-          <Text className="result-channel mr-2">{channelName}</Text>
+          <Text className="result-channel mr-2 truncate-channel-name">{channelName}</Text>
         </FlexRow>
         <FlexRow className="result-meta">
           <Icon name="calendar-alt" className="result-date-icon" />
@@ -132,9 +132,9 @@ const SpaceSearchResultItem: React.FC<SearchResultItemProps> = ({
       <FlexBetween className="result-header">
         <FlexRow className="result-meta">
           <Icon name={messageTypeIcon} className="result-type-icon" />
-          <Text className="result-channel mr-2">{channelName}</Text>
+          <Text className="result-channel mr-2 truncate-channel-name">{channelName}</Text>
           <Icon name="user" className="result-user-icon" />
-          <Text className="result-sender">{displayName}</Text>
+          <Text className="result-sender truncate-user-name">{displayName}</Text>
         </FlexRow>
         <FlexRow className="result-meta">
           <Icon name="calendar-alt" className="result-date-icon" />

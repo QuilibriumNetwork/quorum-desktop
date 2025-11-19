@@ -597,7 +597,7 @@ export const Message = React.memo(
 
               {/* Desktop layout: horizontal row with username and timestamp */}
               <FlexRow align="center" className="items-center min-w-0 hidden xs:flex">
-                <Text className="message-sender-name message-sender-name-responsive">
+                <Text className="message-sender-name truncate-user-name-chat">
                   {sender.displayName}
                 </Text>
                 {message.isPinned && (
@@ -660,7 +660,7 @@ export const Message = React.memo(
 
                 {/* Username row on mobile */}
                 <FlexRow align="center" className="items-center min-w-0">
-                  <Text className="message-sender-name message-sender-name-responsive">
+                  <Text className="message-sender-name truncate-user-name-chat">
                     {sender.displayName}
                   </Text>
                   {message.isPinned && (

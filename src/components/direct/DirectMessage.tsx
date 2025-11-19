@@ -615,7 +615,7 @@ const DirectMessage: React.FC<{}> = () => {
                   />
                 </FlexColumn>
                 <div className="pl-2 flex items-center gap-2 truncate whitespace-nowrap overflow-hidden min-w-0">
-                  <Text className="font-semibold dm-header-username-responsive">
+                  <Text className="font-semibold truncate-user-name-chat">
                     {otherUser.displayName ?? otherUser.address}
                   </Text>
                   <Text className="text-subtle flex-shrink-0">|</Text>

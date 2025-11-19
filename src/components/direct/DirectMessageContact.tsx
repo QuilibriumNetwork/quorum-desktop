@@ -86,7 +86,7 @@ const DirectMessageContact: React.FunctionComponent<{
           <div className="flex items-center justify-between gap-2">
             <span
               className={
-                'truncate flex-1 min-w-0 ' +
+                'truncate-user-name flex-1 min-w-0 ' +
                 (props.unread && address !== props.address
                   ? 'font-extrabold'
                   : 'font-semibold')

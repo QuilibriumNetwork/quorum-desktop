@@ -90,27 +90,7 @@
   overflow-x: hidden;
 }
 
-/* === DIRECTMESSAGE HEADER USERNAME TRUNCATION === */
-/* Responsive username truncation with different max-widths per screen size */
-.dm-header-username-responsive {
-  overflow: hidden !important;
-  text-overflow: ellipsis !important;
-  white-space: nowrap !important;
-  flex-shrink: 1;
-
-  /* Above 1024px: 400px max-width */
-  max-width: 400px !important;
-
-  /* Below 1024px: 300px max-width - hardcoded truncation (was previously missing!) */
-  @media (max-width: $screen-lg) {
-    max-width: 300px !important;
-  }
-
-  /* Below 480px: 200px max-width - hardcoded truncation */
-  @media (max-width: $screen-xs) {
-    max-width: 200px !important;
-  }
-}
+/* DirectMessage header username truncation now handled by centralized .truncate-user-name-chat class in _base.scss */
 
 /* === DIRECT MESSAGE CONTACT INTERACTION STYLES === */
 .dm-contact-interactive {

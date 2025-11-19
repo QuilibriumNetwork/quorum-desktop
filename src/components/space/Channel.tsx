@@ -637,7 +637,7 @@ const Channel: React.FC<ChannelProps> = ({
                     className="opacity-80"
                   />
                   <div className="flex flex-col ml-2 text-subtle">
-                    <span className="text-md font-bold">
+                    <span className="text-md font-bold truncate-user-name">
                       {member.displayName}
                     </span>
                   </div>
@@ -790,7 +790,7 @@ const Channel: React.FC<ChannelProps> = ({
                       : undefined
                   }
                 />
-                <span className="text-main font-bold flex-shrink truncate">
+                <span className="text-main font-bold flex-shrink truncate-user-name-chat">
                   {channel?.channelName}
                 </span>
                 {channel?.channelTopic && (
@@ -798,7 +798,7 @@ const Channel: React.FC<ChannelProps> = ({
                     <span className="hidden xs:inline text-subtle flex-shrink-0 font-normal">
                       |
                     </span>
-                    <span className="hidden xs:inline text-subtle flex-shrink truncate font-normal">
+                    <span className="hidden xs:inline text-subtle flex-shrink truncate-channel-description font-normal">
                       {channel.channelTopic}
                     </span>
                   </>
@@ -945,7 +945,7 @@ const Channel: React.FC<ChannelProps> = ({
                   <span className="hidden xs:inline text-subtle font-light flex-shrink-0">
                     |
                   </span>
-                  <span className="hidden xs:inline text-subtle font-normal text-sm flex-shrink truncate">
+                  <span className="hidden xs:inline text-subtle font-normal text-sm flex-shrink truncate-channel-description">
                     {channel.channelTopic}
                   </span>
                 </>
@@ -1129,7 +1129,7 @@ const Channel: React.FC<ChannelProps> = ({
                             className="opacity-80 group-hover:opacity-100 transition-opacity duration-150"
                           />
                           <div className="flex flex-col ml-2 text-subtle group-hover:text-main transition-colors duration-150">
-                            <span className="text-md font-bold">
+                            <span className="text-md font-bold truncate-user-name">
                               {item.displayName ?? item.address}
                             </span>
                           </div>
@@ -1327,7 +1327,7 @@ const Channel: React.FC<ChannelProps> = ({
                         className="opacity-80"
                       />
                       <div className="flex flex-col ml-2 text-subtle">
-                        <span className="text-md font-bold">
+                        <span className="text-md font-bold truncate-user-name">
                           {member.displayName}
                         </span>
                       </div>

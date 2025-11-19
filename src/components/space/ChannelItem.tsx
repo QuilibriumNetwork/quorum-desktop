@@ -94,7 +94,10 @@ const ChannelContent: React.FC<{
             </div>
           )}
         </div>
-        <span title={channel.isPinned ? 'Pinned channel' : undefined}>
+        <span
+          className="truncate-channel-name"
+          title={channel.isPinned ? 'Pinned channel' : undefined}
+        >
           {channel.channelName}
         </span>
         {!!channel.mentionCount && (

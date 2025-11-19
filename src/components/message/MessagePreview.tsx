@@ -247,7 +247,7 @@ export const MessagePreview: React.FC<MessagePreviewProps> = ({
         {!hideHeader && (
           <FlexRow align="center" className="dropdown-result-meta">
             <Icon name="user" className="dropdown-result-user-icon" />
-            <Text className="dropdown-result-sender mr-4">{getDisplayName()}</Text>
+            <Text className="dropdown-result-sender mr-4 truncate-user-name">{getDisplayName()}</Text>
             <Icon name="calendar-alt" className="dropdown-result-date-icon" />
             <Text className="dropdown-result-date">{formattedTimestamp}</Text>
           </FlexRow>
