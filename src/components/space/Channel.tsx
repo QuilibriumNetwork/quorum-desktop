@@ -876,6 +876,8 @@ const Channel: React.FC<ChannelProps> = ({
                   }
                   mapSenderToUser={mapSenderToUser}
                   userRoleIds={userRoleIds}
+                  spaceRoles={space?.roles || []}
+                  spaceChannels={space?.groups.flatMap((g) => g.channels) || []}
                 />
               </div>
 

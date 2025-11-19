@@ -20,6 +20,8 @@ interface NotificationPanelProps {
   mapSenderToUser: (senderId: string) => any;
   className?: string;
   userRoleIds?: string[];
+  spaceRoles?: any[];
+  spaceChannels?: any[];
 }
 
 export const NotificationPanel: React.FC<NotificationPanelProps> = ({
@@ -30,6 +32,8 @@ export const NotificationPanel: React.FC<NotificationPanelProps> = ({
   mapSenderToUser,
   className,
   userRoleIds = [],
+  spaceRoles = [],
+  spaceChannels = [],
 }) => {
   const navigate = useNavigate();
   const { messageDB } = useMessageDB();
@@ -236,6 +240,8 @@ export const NotificationPanel: React.FC<NotificationPanelProps> = ({
                       onNavigate={handleNavigate}
                       displayName={sender?.displayName || t`Unknown User`}
                       mapSenderToUser={mapSenderToUser}
+                      spaceRoles={spaceRoles}
+                      spaceChannels={spaceChannels}
                     />
                   </div>
                 );
@@ -253,6 +259,8 @@ export const NotificationPanel: React.FC<NotificationPanelProps> = ({
                     onNavigate={handleNavigate}
                     displayName={sender?.displayName || t`Unknown User`}
                     mapSenderToUser={mapSenderToUser}
+                    spaceRoles={spaceRoles}
+                    spaceChannels={spaceChannels}
                   />
                 );
               })}

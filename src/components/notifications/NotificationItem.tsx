@@ -1,6 +1,7 @@
 import React from 'react';
 import { Icon, FlexBetween, FlexRow, Container, Text } from '../primitives';
 import { useSearchResultHighlight, useSearchResultFormatting } from '../../hooks/business/search';
+import { useMessageFormatting } from '../../hooks/business/messages/useMessageFormatting';
 import type { MentionNotification } from '../../hooks/business/mentions';
 import type { ReplyNotification } from '../../types/notifications';
 import { stripMarkdown } from '../../utils/markdownStripping';
@@ -12,75 +13,66 @@ interface NotificationItemProps {
   displayName: string; // Message author display name
   mapSenderToUser: (senderId: string) => any; // For rendering mentions with display names
   className?: string;
+  spaceRoles?: any[]; // Space roles for mention formatting
+  spaceChannels?: any[]; // Space channels for mention formatting
 }
 
-// Helper function to parse text and render mentions with styling
-const renderTextWithMentions = (
-  text: string,
-  mapSenderToUser: (senderId: string) => any
+// Helper function to render message content with proper mention formatting
+const renderMessageContent = (
+  message: any,
+  formatting: any,
+  maxLength: number = 200
 ): React.ReactNode => {
-  // Match @<address> patterns from raw message text
-  const mentionPattern = /@<(Qm[a-zA-Z0-9]+)>|@everyone\b|@\w+/g;
-
-  const parts: React.ReactNode[] = [];
-  let lastIndex = 0;
-  let match;
-
-  while ((match = mentionPattern.exec(text)) !== null) {
-    // Add text before the mention
-    if (match.index > lastIndex) {
-      parts.push(text.substring(lastIndex, match.index));
-    }
-
-    const matchedText = match[0];
-
-    // Handle user mention @<address>
-    if (match[1]) {
-      const address = match[1];
-      const user = mapSenderToUser(address);
-      const displayName = user?.displayName || address.substring(0, 8) + '...';
-
-      parts.push(
-        <span
-          key={`mention-${match.index}`}
-          className="message-name-mentions-you non-interactive"
-        >
-          @{displayName}
-        </span>
-      );
-    }
-    // Handle @everyone
-    else if (matchedText.toLowerCase() === '@everyone') {
-      parts.push(
-        <span
-          key={`mention-${match.index}`}
-          className="message-name-mentions-you non-interactive"
-        >
-          @everyone
-        </span>
-      );
-    }
-    // Handle role mentions @roleTag
-    else {
-      parts.push(
-        <span
-          key={`mention-${match.index}`}
-          className="message-name-mentions-you non-interactive"
-        >
-          {matchedText}
-        </span>
-      );
-    }
-
-    lastIndex = match.index + matchedText.length;
+  const contentData = formatting.getContentData();
+  if (!contentData || contentData.type !== 'post') {
+    return message.content?.text?.substring(0, maxLength) || '[Empty message]';
   }
 
-  // Add remaining text after last mention
-  if (lastIndex < text.length) {
-    parts.push(text.substring(lastIndex));
+  const renderedTokens: React.ReactNode[] = [];
+  const allText = contentData.content.join(' ');
+
+  // Truncate if needed
+  const truncatedText = allText.length > maxLength ? allText.substring(0, maxLength) + '...' : allText;
+  const lines = [truncatedText]; // Treat as single line for notification display
+
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+    const tokens = line.split(' ');
+
+    for (let j = 0; j < tokens.length; j++) {
+      const token = tokens[j];
+      const tokenData = formatting.processTextToken(token, contentData.messageId, i, j);
+
+      if (tokenData.type === 'mention') {
+        renderedTokens.push(
+          <React.Fragment key={tokenData.key}>
+            <span className="message-name-mentions-you non-interactive">
+              {tokenData.displayName}
+            </span>
+            {j < tokens.length - 1 ? ' ' : ''}
+          </React.Fragment>
+        );
+      } else if (tokenData.type === 'channel-mention') {
+        renderedTokens.push(
+          <React.Fragment key={tokenData.key}>
+            <span className="message-name-mentions-you non-interactive">
+              {tokenData.displayName}
+            </span>
+            {j < tokens.length - 1 ? ' ' : ''}
+          </React.Fragment>
+        );
+      } else {
+        renderedTokens.push(
+          <React.Fragment key={`${i}-${j}`}>
+            {tokenData.displayName}
+            {j < tokens.length - 1 ? ' ' : ''}
+          </React.Fragment>
+        );
+      }
+    }
   }
 
-  return parts.length > 0 ? parts : text;
+  return renderedTokens.length > 0 ? renderedTokens : truncatedText;
 };
 
 export const NotificationItem: React.FC<NotificationItemProps> = ({
@@ -89,19 +81,21 @@ export const NotificationItem: React.FC<NotificationItemProps> = ({
   displayName,
   mapSenderToUser,
   className,
+  spaceRoles = [],
+  spaceChannels = [],
 }) => {
   const { message, channelName } = notification;
 
-  // Reuse search result formatting logic
-  const { contextualSnippet } = useSearchResultHighlight({
+  // Use proper message formatting (same as PinnedMessagesPanel)
+  const formatting = useMessageFormatting({
     message,
-    searchTerms: [], // No search terms, show from beginning
-    contextWords: 12,
-    maxLength: 200,
+    stickers: {},
+    mapSenderToUser,
+    onImageClick: () => {}, // No-op for notifications
+    spaceRoles,
+    spaceChannels,
+    disableMentionInteractivity: true, // Non-interactive in notifications
   });
-
-  // Strip markdown from snippet for clean display
-  const cleanSnippet = stripMarkdown(contextualSnippet);
 
   const { formattedDate, handleClick, handleKeyDown } = useSearchResultFormatting({
     message,
@@ -118,11 +112,8 @@ export const NotificationItem: React.FC<NotificationItemProps> = ({
     ? 'users'
     : 'user';
 
-  // Render text with styled mentions
-  const renderedText = renderTextWithMentions(
-    cleanSnippet,
-    mapSenderToUser
-  );
+  // Render message content with proper mention formatting
+  const renderedContent = renderMessageContent(message, formatting, 200);
 
   return (
     <Container
@@ -147,7 +138,7 @@ export const NotificationItem: React.FC<NotificationItemProps> = ({
 
       <Container className="notification-content">
         <Container className="notification-text">
-          {renderedText}
+          {renderedContent}
         </Container>
       </Container>
     </Container>
