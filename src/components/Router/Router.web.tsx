@@ -79,6 +79,7 @@ const DevMainPage = lazyDevImport(
 const Docs = lazyDevImport(() => import('@/dev/docs/Docs'), 'Docs');
 const Tasks = lazyDevImport(() => import('@/dev/docs/Tasks'), 'Tasks');
 const Bugs = lazyDevImport(() => import('@/dev/docs/Bugs'), 'Bugs');
+const Reports = lazyDevImport(() => import('@/dev/docs/Reports'), 'Reports');
 
 interface RouterProps {
   user: {
@@ -232,6 +233,16 @@ export function Router({ user, setUser }: RouterProps) {
           element={
             <Suspense fallback={<div>Loading bug reports...</div>}>
               <Bugs />
+            </Suspense>
+          }
+        />
+      )}
+      {process.env.NODE_ENV === 'development' && Reports && (
+        <Route
+          path="/dev/reports/:reportId?"
+          element={
+            <Suspense fallback={<div>Loading reports...</div>}>
+              <Reports />
             </Suspense>
           }
         />

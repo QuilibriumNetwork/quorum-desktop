@@ -23,6 +23,7 @@ Comprehensive development suite for building and managing cross-platform compone
 - Browse all documentation files from `.agents/docs/`
 - View task management files from `.agents/tasks/` (pending, ongoing, completed)
 - Access bug reports from `.agents/bugs/` (active and solved)
+- Browse reports and audits from `.agents/reports/` (security audits, research, analysis)
 - Features search functionality and categorization
 - Full markdown rendering with syntax highlighting
 - Organized by folder structure (e.g., mobile-dev/docs, features/primitives)
@@ -91,6 +92,10 @@ yarn dev
 ### Development Routes
 
 - **`/dev`** - Main development hub with tool overview and documentation viewer
+- **`/dev/docs`** - Browse project documentation
+- **`/dev/tasks`** - View development tasks and plans
+- **`/dev/bugs`** - Browse bug reports and issues
+- **`/dev/reports`** - Security audits, research and analysis reports
 - **`/playground`** - Interactive primitives testing environment
 - **`/dev/audit`** - Component audit and mobile readiness tracker
 - **`/dev/dependencies`** - Visual dependency map and mobile roadmap
@@ -103,4 +108,4 @@ yarn dev
 
 ---
 
-_Last updated: 2025-10-03_
+_Last updated: 2025-11-19_

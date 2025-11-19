@@ -31,8 +31,8 @@ const generateSlug = (path: string): string => {
     .replace(/\.md$/, '')
     .toLowerCase();
   
-  // Remove type prefix (docs/, tasks/, bugs/)
-  slug = slug.replace(/^(docs|tasks|bugs)\//, '');
+  // Remove type prefix (docs/, tasks/, bugs/, reports/)
+  slug = slug.replace(/^(docs|tasks|bugs|reports)\//, '');
   
   // Replace special characters and spaces with hyphens
   slug = slug
@@ -46,7 +46,7 @@ const generateSlug = (path: string): string => {
 const determineStatus = (
   path: string,
   filename: string,
-  type: 'docs' | 'tasks' | 'bugs'
+  type: 'docs' | 'tasks' | 'bugs' | 'reports'
 ): MarkdownFile['status'] => {
   if (type === 'tasks') {
     // Check if it's in a .done folder or has status prefix
@@ -64,6 +64,18 @@ const determineStatus = (
     // Check if it's in .solved folder or has SOLVED prefix
     if (path.includes('/.solved/') || filename.startsWith('SOLVED_')) {
       return 'solved';
+    }
+    return 'active';
+  }
+
+  if (type === 'reports') {
+    // Check if it's in .archive folder
+    if (path.includes('/.archive/')) {
+      return 'archived';
+    }
+    // Check if it's in .done folder (for backwards compatibility)
+    if (path.includes('/.done/')) {
+      return 'archived';
     }
     return 'active';
   }
@@ -90,7 +102,7 @@ const determinePriority = (filename: string): MarkdownFile['priority'] => {
   return 'medium'; // default
 };
 
-export const useMarkdownFiles = (type: 'docs' | 'tasks' | 'bugs') => {
+export const useMarkdownFiles = (type: 'docs' | 'tasks' | 'bugs' | 'reports') => {
   const [files, setFiles] = useState<MarkdownFile[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string>('');

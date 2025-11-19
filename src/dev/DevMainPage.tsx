@@ -31,6 +31,12 @@ export const DevMainPage: React.FC = () => {
       path: '/dev/bugs',
     },
     {
+      name: 'Reports & Audits',
+      icon: 'clipboard',
+      description: 'Security audits, research and analysis reports',
+      path: '/dev/reports',
+    },
+    {
       name: 'Primitives Playground',
       icon: 'flask',
       description:

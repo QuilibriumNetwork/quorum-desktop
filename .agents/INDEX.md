@@ -103,14 +103,13 @@ This is the main index for all documentation, bug reports, and task management.
 
 - [Combined Text + Image Messages](tasks/combined-text-image-messages.md)
 - [Conversation Deletion State Synchronization](tasks/conversation-deletion-state-sync.md)
+- [Custom ContentEditable Mention Pills for Message Composer](tasks/mention-pills-in-message-textarea.md)
 - [Date Translation with Moment.js Locale Configuration](tasks/i18n-date-translation-moment-locale.md)
 - [Device Identification Improvement](tasks/device-identification-improvement.md)
 - [DirectMessage Navigation State Persistence](tasks/dm-navigation-state-persistence.md)
 - [Implement Background Sync Queue for User Settings and Async Operations](tasks/background-sync-queue.md)
-- [Implement Discord-Like Mention Pills in Message Composer](tasks/mention-pills-in-message-textarea.md)
 - [Implement Message Forwarding with Privacy Controls](tasks/message-forwarding-with-privacy-controls.md)
 - [Multi-User Invite Selection Enhancement](tasks/multi-user-invite-selection.md)
-- [Optimize Mention Interactivity Disable Feature](tasks/optimize-mention-interactivity-disable-feature.md)
 - [Passkey Import UX Issue](tasks/passkey-import-ux-issue.md)
 - [Server Folders - Discord-Style Grouping Feature](tasks/server-folders-discord-style.md)
 - [Task: Implement Delete Public Invite Link Feature](tasks/delete-public-invite-link.md)
@@ -124,6 +123,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [ClickToCopyContent Component Analysis](tasks/.archived/click-to-copy-content-analysis.md)
 - [Font Size Management Analysis & Recommendations](tasks/.archived/font-size-management-analysis-2025.md)
 - [Modal System Consolidation via Route Wrapper Component](tasks/.archived/modal-system-consolidation.md)
+- [Optimize Mention Interactivity Disable Feature](tasks/.archived/optimize-mention-interactivity-disable-feature.md)
 - [Research: Mobile Markdown Formatting Options](tasks/.archived/markdown-toolbar-editor_mobile.md)
 - [Search Performance Optimization - Architecture Analysis Report](tasks/.archived/search-performance-optimization_ANALYSIS.md)
 - [Search Performance Optimization - Executive Summary](tasks/.archived/search-performance-analysis_SUMMARY.md)
@@ -203,7 +203,9 @@ This is the main index for all documentation, bug reports, and task management.
 - [Dropdown Panels Consolidation & Mobile Bottom Sheet Implementation](tasks/.done/dropdown-panels-consolidation.md)
 - [Edit Message Feature](tasks/.done/edit-message-feature.md)
 - [Emoji Picker Responsive Design Improvement](tasks/.done/emojipicker-responsive.md)
+- [Enhanced Mention Format with CSS Highlighting for Message Composer](tasks/.done/mentions-improve-UX-in-messagecomposer.md)
 - [Expo Go to Expo Dev Client Migration Plan - Simplified](tasks/.done/expo-go-to-dev-client-migration.md)
+- [Fix Mention Interactivity Consistency](tasks/.done/fix-mention-interactivity-consistency.md)
 - [Fix: React Query "undefined" Error in DM Conversations](tasks/.done/fix-react-query-undefined-error-in-dms.md)
 - [Implement Channel Mention Feature (#channelname)](tasks/.done/channel-mention-feature.md)
 - [Implement Copy Message Raw Text Option](tasks/.done/copy-message-text.md)
@@ -218,6 +220,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Mention Highlight Duration - Extended to 60 Seconds](tasks/.done/mention-highlight-60s-duration.md)
 - [Mention Notification Settings - Phase 4](tasks/.done/mention-notification-settings-phase4.md)
 - [Mention Notification System - Critical Race Condition Fix](tasks/.done/mention-notification-ux-improvements.md)
+- [Mention Rendering: Word Boundary Analysis](tasks/.done/mention-rendering-word-boundary-analysis.md)
 - [Message Handling Report](tasks/.done/messages-report.md)
 - [Message Highlight System - Complete Analysis & Recommendations](tasks/.done/message-highlight-system-optimization.md)
 - [Message Markdown Support Implementation](tasks/.done/message-markdown-support.md)
@@ -262,6 +265,12 @@ This is the main index for all documentation, bug reports, and task management.
 - [🔍 Global Message Search Implementation Plan](tasks/.done/global-search.md)
 - [🔍 Users List Filtering Feature](tasks/.done/users-list-filtering-feature.md)
 
+## 📊 Reports
+
+### Active Reports
+
+- [Security Audit: Markdown Renderer & Mentions System](reports/security-audit-markdown-mentions-2025-11-18.md)
+
 ---
 
-**Last Updated**: 2025-11-17 19:27:35
+**Last Updated**: 2025-11-19 10:40:49

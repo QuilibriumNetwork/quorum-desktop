@@ -29,6 +29,11 @@ const devNavItems: DevNavItem[] = [
     path: '/dev/bugs',
   },
   {
+    name: 'Reports',
+    icon: 'clipboard',
+    path: '/dev/reports',
+  },
+  {
     name: 'Playground',
     icon: 'flask',
     path: '/playground',

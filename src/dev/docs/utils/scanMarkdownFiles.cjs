@@ -45,6 +45,7 @@ const scanMarkdownFiles = () => {
     docs: scanDirectory(path.join(readmeDir, 'docs')),
     tasks: scanDirectory(path.join(readmeDir, 'tasks')),
     bugs: scanDirectory(path.join(readmeDir, 'bugs')),
+    reports: scanDirectory(path.join(readmeDir, 'reports')),
   };
 
   return results;

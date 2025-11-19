@@ -6,7 +6,7 @@ This script performs complete documentation synchronization by:
 1. Running 'yarn scan-docs' to update the project's markdown files scan
 2. Scanning all markdown files in .agents directory
 3. Extracting titles from files
-4. Organizing files by folder structure (docs -> bugs -> tasks)
+4. Organizing files by folder structure (docs -> bugs -> tasks -> reports)
 5. Maintaining proper subfolder groupings
 6. Updating the "Last Updated" timestamp in INDEX.md
 
@@ -27,12 +27,12 @@ def extract_title(file_path):
     try:
         with open(file_path, 'r', encoding='utf-8') as f:
             content = f.read()
-        
+
         # Look for first # heading
         match = re.search(r'^#\s+(.+)$', content, re.MULTILINE)
         if match:
             return match.group(1).strip()
-        
+
         # Fallback to filename without extension, formatted nicely
         return os.path.splitext(os.path.basename(file_path))[0].replace('-', ' ').replace('_', ' ').title()
     except Exception as e:
@@ -46,7 +46,7 @@ def get_file_sort_key(file_info):
     Files without numbers are sorted alphabetically after numbered files.
     """
     filename = file_info['filename']
-    
+
     # Check for numeric prefix (e.g., 01-filename.md, 1-filename.md, 001-filename.md)
     match = re.match(r'^(\d+)-', filename)
     if match:
@@ -65,9 +65,9 @@ def sort_files_smart(file_list):
 def run_yarn_scan_docs():
     """Run yarn scan-docs to update the documentation scan"""
     try:
-        # Navigate to project root from .agents directory
+        # Navigate to project root from skill directory
         script_dir = os.path.dirname(os.path.abspath(__file__))
-        project_root = os.path.join(script_dir, '..')
+        project_root = os.path.join(script_dir, '..', '..', '..')
         project_root = os.path.abspath(project_root)
 
         print('[YARN] Running yarn scan-docs...')
@@ -97,24 +97,33 @@ def run_yarn_scan_docs():
 
 def scan_readme_directory():
     """Scan .agents directory and build file structure"""
-    readme_root = os.path.dirname(os.path.abspath(__file__))  # Current script directory
+    # Navigate from skill directory to .agents directory
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    # From .claude/skills/docs-manager/ go to project root, then to .agents
+    readme_root = os.path.join(script_dir, '..', '..', '..', '.agents')
+    readme_root = os.path.abspath(readme_root)
 
     if not os.path.exists(readme_root):
         raise FileNotFoundError(f".agents directory not found at: {readme_root}")
-    
-    # Organize by structure - DOCS FIRST, BUGS SECOND, TASKS THIRD
+
+    # Organize by structure - DOCS FIRST, BUGS SECOND, TASKS THIRD, REPORTS FOURTH
     docs_root = []
     docs_subfolders = {}  # e.g., 'features' -> [files], 'features/primitives' -> [files]
-    
+
     bugs_active = []
     bugs_solved = []  # Will be populated from .solved folder
     bugs_subfolders = {}
-    
+
     tasks_pending = []  # Tasks directly in tasks/ folder
     tasks_subfolders = {}  # Subfolders in tasks/ (except .done)
     tasks_done = []  # Tasks in tasks/.done/
     tasks_done_subfolders = {}  # Subfolders in tasks/.done/
-    
+
+    reports_active = []  # Reports directly in reports/ folder
+    reports_subfolders = {}  # Subfolders in reports/ (except .done)
+    reports_done = []  # Reports in reports/.done/
+    reports_done_subfolders = {}  # Subfolders in reports/.done/
+
     for root, _, files in os.walk(readme_root):
         for file in files:
             if file.endswith('.md') and file != 'INDEX.md':
@@ -122,7 +131,7 @@ def scan_readme_directory():
                 relative_path = os.path.relpath(file_path, readme_root)
                 # Normalize path separators for cross-platform compatibility
                 relative_path_normalized = relative_path.replace('\\', '/')
-                
+
                 # Extract title and create file info
                 title = extract_title(file_path)
                 file_info = {
@@ -130,7 +139,7 @@ def scan_readme_directory():
                     'path': relative_path_normalized,
                     'filename': file
                 }
-                
+
                 # Categorize files based on their path (use normalized path)
                 if relative_path_normalized.startswith('docs/'):
                     path_parts = relative_path_normalized.split('/')
@@ -141,10 +150,10 @@ def scan_readme_directory():
                         if subfolder not in docs_subfolders:
                             docs_subfolders[subfolder] = []
                         docs_subfolders[subfolder].append(file_info)
-                
+
                 elif relative_path_normalized.startswith('bugs/'):
                     path_parts = relative_path_normalized.split('/')
-                    
+
                     # Check if file is in .solved folder
                     if relative_path_normalized.startswith('bugs/.solved/'):
                         if len(path_parts) == 3:  # bugs/.solved/file.md
@@ -161,10 +170,10 @@ def scan_readme_directory():
                         if subfolder not in bugs_subfolders:
                             bugs_subfolders[subfolder] = []
                         bugs_subfolders[subfolder].append(file_info)
-                
+
                 elif relative_path_normalized.startswith('tasks/'):
                     path_parts = relative_path_normalized.split('/')
-                    
+
                     # Check if file is in .done folder
                     if relative_path_normalized.startswith('tasks/.done/'):
                         if len(path_parts) == 3:  # tasks/.done/file.md
@@ -174,7 +183,7 @@ def scan_readme_directory():
                             if subfolder not in tasks_done_subfolders:
                                 tasks_done_subfolders[subfolder] = []
                             tasks_done_subfolders[subfolder].append(file_info)
-                    
+
                     elif len(path_parts) == 2:  # tasks/file.md (pending tasks)
                         tasks_pending.append(file_info)
                     else:  # tasks/subfolder/... files (not .done)
@@ -184,14 +193,39 @@ def scan_readme_directory():
                             if subfolder not in tasks_subfolders:
                                 tasks_subfolders[subfolder] = []
                             tasks_subfolders[subfolder].append(file_info)
-    
+
+                elif relative_path_normalized.startswith('reports/'):
+                    path_parts = relative_path_normalized.split('/')
+
+                    # Check if file is in .done folder
+                    if relative_path_normalized.startswith('reports/.done/'):
+                        if len(path_parts) == 3:  # reports/.done/file.md
+                            reports_done.append(file_info)
+                        else:  # reports/.done/subfolder/... files
+                            subfolder = '/'.join(path_parts[2:-1])
+                            if subfolder not in reports_done_subfolders:
+                                reports_done_subfolders[subfolder] = []
+                            reports_done_subfolders[subfolder].append(file_info)
+
+                    elif len(path_parts) == 2:  # reports/file.md (active reports)
+                        reports_active.append(file_info)
+                    else:  # reports/subfolder/... files (not .done)
+                        subfolder = '/'.join(path_parts[1:-1])
+                        # Skip .done folder itself
+                        if not subfolder.startswith('.done'):
+                            if subfolder not in reports_subfolders:
+                                reports_subfolders[subfolder] = []
+                            reports_subfolders[subfolder].append(file_info)
+
     # Sort all sections using smart sorting (numbered files first, then alphabetical)
     docs_root = sort_files_smart(docs_root)
     bugs_active = sort_files_smart(bugs_active)
     bugs_solved = sort_files_smart(bugs_solved)
     tasks_pending = sort_files_smart(tasks_pending)
     tasks_done = sort_files_smart(tasks_done)
-    
+    reports_active = sort_files_smart(reports_active)
+    reports_done = sort_files_smart(reports_done)
+
     # Sort subfolders and their contents (each folder treated independently)
     for subfolder in docs_subfolders:
         docs_subfolders[subfolder] = sort_files_smart(docs_subfolders[subfolder])
@@ -201,24 +235,28 @@ def scan_readme_directory():
         tasks_subfolders[subfolder] = sort_files_smart(tasks_subfolders[subfolder])
     for subfolder in tasks_done_subfolders:
         tasks_done_subfolders[subfolder] = sort_files_smart(tasks_done_subfolders[subfolder])
-    
+    for subfolder in reports_subfolders:
+        reports_subfolders[subfolder] = sort_files_smart(reports_subfolders[subfolder])
+    for subfolder in reports_done_subfolders:
+        reports_done_subfolders[subfolder] = sort_files_smart(reports_done_subfolders[subfolder])
+
     # Generate INDEX.md content
     index_content = []
     index_content.append('# Documentation Index')
     index_content.append('')
     index_content.append('This is the main index for all documentation, bug reports, and task management.')
     index_content.append('')
-    
+
     # DOCS SECTION - FIRST (as requested)
     index_content.append('## 📖 Documentation')
     index_content.append('')
-    
+
     # Root docs files first
     for file_info in docs_root:
         index_content.append(f'- [{file_info["title"]}]({file_info["path"]})')
     if docs_root:
         index_content.append('')
-    
+
     # Docs subfolders
     for subfolder in sorted(docs_subfolders.keys()):
         subfolder_title = subfolder.replace('-', ' ').replace('_', ' ').title()
@@ -229,24 +267,24 @@ def scan_readme_directory():
         for file_info in docs_subfolders[subfolder]:
             index_content.append(f'- [{file_info["title"]}]({file_info["path"]})')
         index_content.append('')
-    
+
     # BUGS SECTION - SECOND
     if bugs_active or bugs_solved or bugs_subfolders:
         index_content.append('## 🐛 Bug Reports')
         index_content.append('')
-        
+
         if bugs_active:
             index_content.append('### Active Issues')
             for file_info in bugs_active:
                 index_content.append(f'- [{file_info["title"]}]({file_info["path"]})')
             index_content.append('')
-        
+
         if bugs_solved:
             index_content.append('### Solved Issues')
             for file_info in bugs_solved:
                 index_content.append(f'- [{file_info["title"]}]({file_info["path"]})')
             index_content.append('')
-        
+
         # Bugs subfolders
         for subfolder in sorted(bugs_subfolders.keys()):
             subfolder_title = subfolder.replace('-', ' ').replace('_', ' ').title()
@@ -254,13 +292,13 @@ def scan_readme_directory():
             for file_info in bugs_subfolders[subfolder]:
                 index_content.append(f'- [{file_info["title"]}]({file_info["path"]})')
             index_content.append('')
-    
+
     # TASKS SECTION - THIRD
     # Pending/Active Tasks
     if tasks_pending or tasks_subfolders:
         index_content.append('## 📋 Tasks')
         index_content.append('')
-        
+
         if tasks_pending:
             index_content.append('### Pending Tasks')
             index_content.append('')
@@ -268,7 +306,7 @@ def scan_readme_directory():
             for file_info in tasks_pending:
                 index_content.append(f'- [{file_info["title"]}]({file_info["path"]})')
             index_content.append('')
-        
+
         # Task subfolders (excluding .done)
         for subfolder in sorted(tasks_subfolders.keys()):
             subfolder_title = subfolder.replace('-', ' ').replace('_', ' ').title()
@@ -278,18 +316,18 @@ def scan_readme_directory():
             for file_info in tasks_subfolders[subfolder]:
                 index_content.append(f'- [{file_info["title"]}]({file_info["path"]})')
             index_content.append('')
-    
+
     # Completed Tasks
     if tasks_done or tasks_done_subfolders:
         index_content.append('## 📋 Completed Tasks')
         index_content.append('')
-        
+
         # Root done files first
         for file_info in tasks_done:
             index_content.append(f'- [{file_info["title"]}]({file_info["path"]})')
         if tasks_done:
             index_content.append('')
-        
+
         # Done subfolders
         for subfolder in sorted(tasks_done_subfolders.keys()):
             subfolder_title = subfolder.replace('-', ' ').replace('_', ' ').title()
@@ -299,30 +337,78 @@ def scan_readme_directory():
             for file_info in tasks_done_subfolders[subfolder]:
                 index_content.append(f'- [{file_info["title"]}]({file_info["path"]})')
             index_content.append('')
-    
+
+    # REPORTS SECTION - FOURTH
+    # Active Reports
+    if reports_active or reports_subfolders:
+        index_content.append('## 📊 Reports')
+        index_content.append('')
+
+        if reports_active:
+            index_content.append('### Active Reports')
+            index_content.append('')
+            # Root active files
+            for file_info in reports_active:
+                index_content.append(f'- [{file_info["title"]}]({file_info["path"]})')
+            index_content.append('')
+
+        # Reports subfolders (excluding .done)
+        for subfolder in sorted(reports_subfolders.keys()):
+            subfolder_title = subfolder.replace('-', ' ').replace('_', ' ').title()
+            if '/' in subfolder_title:
+                subfolder_title = subfolder_title.replace('/', ' ')
+            index_content.append(f'### {subfolder_title}')
+            for file_info in reports_subfolders[subfolder]:
+                index_content.append(f'- [{file_info["title"]}]({file_info["path"]})')
+            index_content.append('')
+
+    # Completed Reports
+    if reports_done or reports_done_subfolders:
+        index_content.append('## 📊 Completed Reports')
+        index_content.append('')
+
+        # Root done files first
+        for file_info in reports_done:
+            index_content.append(f'- [{file_info["title"]}]({file_info["path"]})')
+        if reports_done:
+            index_content.append('')
+
+        # Done subfolders
+        for subfolder in sorted(reports_done_subfolders.keys()):
+            subfolder_title = subfolder.replace('-', ' ').replace('_', ' ').title()
+            if '/' in subfolder_title:
+                subfolder_title = subfolder_title.replace('/', '/')
+            index_content.append(f'### {subfolder_title}')
+            for file_info in reports_done_subfolders[subfolder]:
+                index_content.append(f'- [{file_info["title"]}]({file_info["path"]})')
+            index_content.append('')
+
     # Footer with timestamp
     index_content.append('---')
     index_content.append('')
     current_date = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
     index_content.append(f'**Last Updated**: {current_date}')
-    
+
     # Write INDEX.md
     index_path = os.path.join(readme_root, 'INDEX.md')
     with open(index_path, 'w', encoding='utf-8') as f:
         f.write('\n'.join(index_content))
-    
+
     # Summary
     total_files = (len(docs_root) + sum(len(files) for files in docs_subfolders.values()) +
                    len(bugs_active) + len(bugs_solved) + sum(len(files) for files in bugs_subfolders.values()) +
                    len(tasks_pending) + sum(len(files) for files in tasks_subfolders.values()) +
-                   len(tasks_done) + sum(len(files) for files in tasks_done_subfolders.values()))
-    
+                   len(tasks_done) + sum(len(files) for files in tasks_done_subfolders.values()) +
+                   len(reports_active) + sum(len(files) for files in reports_subfolders.values()) +
+                   len(reports_done) + sum(len(files) for files in reports_done_subfolders.values()))
+
     print(f'[OK] Updated {index_path}')
     print(f'[FILES] Processed {total_files} markdown files')
     print(f'[DOCS] Docs: {len(docs_root) + sum(len(files) for files in docs_subfolders.values())} files')
     print(f'[BUGS] Bugs: {len(bugs_active) + len(bugs_solved) + sum(len(files) for files in bugs_subfolders.values())} files')
     print(f'[TASKS] Tasks: {len(tasks_pending) + len(tasks_done) + sum(len(files) for files in tasks_subfolders.values()) + sum(len(files) for files in tasks_done_subfolders.values())} files')
-    
+    print(f'[REPORTS] Reports: {len(reports_active) + len(reports_done) + sum(len(files) for files in reports_subfolders.values()) + sum(len(files) for files in reports_done_subfolders.values())} files')
+
     return True
 
 if __name__ == '__main__':

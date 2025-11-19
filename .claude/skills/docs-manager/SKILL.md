@@ -1,22 +1,23 @@
 ---
 name: "docs-manager"
-description: "Automatically manages bugs, tasks, and documentation in the .agents/ folder following project conventions. Activates when creating bug reports, documenting features, tracking tasks, updating existing documentation, or organizing work in the established .agents workflow structure."
+description: "Automatically manages bugs, tasks, documentation, and reports in the .agents/ folder following project conventions. Activates when creating bug reports, documenting features, tracking tasks, generating reports, audits, researches, analyses, updating existing documentation, or organizing work in the established .agents workflow structure."
 allowed-tools: ["Read", "Write", "Edit", "Glob", "Grep", "TodoWrite", "Bash"]
 ---
 
 # Documentation Manager
 
-Automatically manages bugs, tasks, and documentation in the `.agents/` folder following project conventions and established workflow patterns.
+Automatically manages bugs, tasks, documentation, and reports in the `.agents/` folder following project conventions and established workflow patterns.
 
 ## Description
 
-This skill automates the creation, updating, and organization of documentation files in the `.agents/` folder structure following the established workflow from `agents-workflow.md`. It handles bugs, tasks, and feature documentation with appropriate templates, naming conventions, and folder organization.
+This skill automates the creation, updating, and organization of documentation files in the `.agents/` folder structure following the established workflow from `agents-workflow.md`. It handles bugs, tasks, feature documentation, and reports (including audits, researches, and analyses) with appropriate templates, naming conventions, and folder organization.
 
 **Use this skill when the user mentions:**
 - Creating bug reports, tracking issues, documenting problems, debugging
 - Creating tasks, planning features, tracking work, implementation planning
 - Creating documentation, documenting features, explaining architecture
-- Updating or organizing existing bugs/tasks/docs
+- Creating reports, audits, researches, analyses, investigations, assessments
+- Updating or organizing existing bugs/tasks/docs/reports
 - Moving completed work between folders (.done/.solved/.archived)
 - Following the established .agents workflow
 
@@ -24,6 +25,18 @@ This skill automates the creation, updating, and organization of documentation f
 - "create a doc...
 - "create a bug report..."
 - "create a task..."
+- "create a report..."
+- "create an audit..."
+- "audit..."
+- "generate an audit..."
+- "perform audit..."
+- "conduct audit..."
+- "security audit..."
+- "code audit..."
+- "document this research..."
+- "analyze this..."
+- "investigate..."
+- "assess..."
 - "document this feature..."
 - "track this task..."
 - "file this issue..."
@@ -32,6 +45,17 @@ This skill automates the creation, updating, and organization of documentation f
 - "update the bug report..."
 - "update the doc..."
 - "update the task..."
+- "update the report..."
+- "update the audit..."
+
+## Skill Coordination
+
+This skill focuses on **document creation and content management** within the `.agents` folder structure. For folder structure changes and system integration, the `agents-folder-manager` skill handles infrastructure modifications.
+
+**Coordination with agents-folder-manager:**
+- Relies on existing folder structure for document placement
+- May request folder structure changes for new content types
+- Benefits from folder manager's template updates when new folders are added
 
 ## Core Capabilities
 
@@ -55,7 +79,14 @@ This skill automates the creation, updating, and organization of documentation f
 - Includes integration details, technical decisions, limitations
 - Cross-references related documentation and components
 
-### 4. Index Automation
+### 4. Report Management
+- Creates reports, audits, researches, and analyses in `.agents/reports/`
+- Supports various report types: security audits, feature assessments, research findings
+- Follows structured reporting templates with executive summaries
+- Includes methodology, findings, recommendations, and action items
+- Cross-references with related tasks, bugs, and documentation
+
+### 5. Index Automation
 - **Automatically runs update-index.py** after any file operation
 - **Executes yarn scan-docs** for comprehensive project documentation sync
 - Maintains synchronized INDEX.md reflecting current .agents state
@@ -63,8 +94,8 @@ This skill automates the creation, updating, and organization of documentation f
 - Updates cross-references and directory organization
 - Preserves numeric ordering and proper categorization
 
-### 5. Workflow Integration
-- Respects folder structure: bugs/, tasks/, docs/ with .done/.solved/.archived subfolders
+### 6. Workflow Integration
+- Respects folder structure: bugs/, tasks/, docs/, reports/ with .done/.solved/.archived subfolders
 - Maintains consistent naming conventions and templates
 - Preserves completed work and implementation notes
 - Updates cross-references and maintains documentation index
@@ -80,6 +111,7 @@ Analyze the request to identify:
 - **Bug Report**: Error conditions, unexpected behavior, debugging needed
 - **Task**: Implementation work, feature development, specific changes needed
 - **Documentation**: Architecture, feature explanation, technical guidance
+- **Report**: Audits, research findings, analysis results, assessments, investigations
 
 ### Step 2: Apply Appropriate Template
 
@@ -261,14 +293,75 @@ Use complexity-appropriate template:
 _Created: YYYY-MM-DD_
 ```
 
+#### For Reports (`.agents/reports/`):
+```markdown
+# [Report Title]
+
+> **⚠️ AI-Generated**: May contain errors. Verify before use.
+> **Reviewed by**: [agent-name] agent *(add only after agent review and implementation)*
+
+## Executive Summary
+[Brief overview of key findings and recommendations]
+
+## Scope & Methodology
+- **Scope**: [What was analyzed/investigated]
+- **Methodology**: [How the analysis was conducted]
+- **Tools/Approaches**: [Specific methods or tools used]
+- **Timeframe**: [When analysis was conducted]
+
+## Findings
+### [Finding Category 1]
+- **Issue**: [Description of what was found]
+- **Impact**: [Severity/importance level]
+- **Evidence**: [Supporting details, file locations, examples]
+
+### [Finding Category 2]
+- **Issue**: [Description]
+- **Impact**: [Level of concern]
+- **Evidence**: [Supporting information]
+
+## Recommendations
+### High Priority
+1. **[Action Item 1]**
+   - **Why**: [Justification]
+   - **How**: [Implementation approach]
+   - **Files**: `src/path/to/file.ts:123`
+
+2. **[Action Item 2]**
+   - **Why**: [Reasoning]
+   - **How**: [Steps needed]
+
+### Medium/Low Priority
+- [Less critical recommendations]
+
+## Action Items
+- [ ] **[Specific task]** - Assigned to: [who] - Due: [when]
+- [ ] **[Follow-up task]** - Priority: [level]
+
+## Related Documentation
+- [Links to related tasks, bugs, documentation]
+- [Cross-references to relevant code or features]
+
+## Appendix
+[Supporting data, detailed logs, additional context]
+
+---
+
+_Created: YYYY-MM-DD_
+_Report Type: [Audit/Research/Analysis/Assessment]_
+```
+
 ### Step 3: File Placement and Naming
-- Use kebab-case: `feature-specific-descriptive-name.md`
+- **General naming**: Use kebab-case: `feature-specific-descriptive-name.md`
+- **Reports naming**: Use date format: `report-name_YYYY-MM-DD.md` (e.g., `auth-security-audit_2025-11-19.md`)
 - Place in appropriate folder:
   - Active bugs: `.agents/bugs/`
   - Solved bugs: `.agents/bugs/.solved/`
   - Active tasks: `.agents/tasks/`
   - Completed tasks: `.agents/tasks/.done/`
   - Feature docs: `.agents/docs/features/`
+  - Reports/audits: `.agents/reports/` (use date format: `report-name_YYYY-MM-DD.md`)
+  - Completed reports: `.agents/reports/.done/`
   - Archived items: respective `.archived/` folders
 
 ### Step 4: Cross-Reference Management
@@ -331,7 +424,7 @@ The script automatically:
 - **Runs yarn scan-docs** to sync project-wide documentation scanning
 - Scans all .md files in .agents/ directory
 - Extracts titles from first # heading
-- Organizes by folder structure (docs → bugs → tasks)
+- Organizes by folder structure (docs → bugs → tasks → reports)
 - Maintains proper subfolder groupings
 - Updates "Last Updated" timestamp
 - Handles numeric prefixes for ordering (01-file.md, 02-file.md)
@@ -358,6 +451,11 @@ The script automatically:
 **User says**: "Document the new search feature we just built"
 
 **Skill response**: Creates `.agents/docs/features/search-feature.md` explaining the search architecture, integration with MessageDB, performance optimizations, and usage examples.
+
+### Report Creation Example
+**User says**: "Create a security audit of our authentication system"
+
+**Skill response**: Creates `.agents/reports/auth-security-audit_2025-11-19.md` with structured audit template, analyzes authentication flows, identifies potential vulnerabilities, provides actionable recommendations with priority levels, and includes specific file references and remediation steps.
 
 ### Task Update Example
 **User says**: "Update the authentication task - some file paths have changed"
@@ -447,4 +545,4 @@ The skill essentially automates what you would do manually following your `agent
 
 ---
 
-_Updated: 2025-11-16_
+_Updated: 2025-11-19_

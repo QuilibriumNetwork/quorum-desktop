@@ -276,6 +276,45 @@ How to avoid in future
 _Created: YYYY-MM-DD_
 ```
 
+**For Reports** (`reports/`):
+```markdown
+# Report Title
+
+> **⚠️ AI-Generated**: May contain errors. Verify before use.
+
+## Executive Summary
+Brief overview of key findings and recommendations
+
+## Scope & Methodology
+- **Scope**: What was analyzed/investigated
+- **Methodology**: How the analysis was conducted
+- **Tools/Approaches**: Specific methods or tools used
+
+## Findings
+### [Finding Category 1]
+- **Issue**: Description of what was found
+- **Impact**: Severity/importance level
+- **Evidence**: Supporting details, file locations
+
+## Recommendations
+### High Priority
+1. **[Action Item 1]**
+   - **Why**: Justification
+   - **How**: Implementation approach
+   - **Files**: `src/path/to/file.ts:123`
+
+## Action Items
+- [ ] **[Specific task]** - Priority: [level]
+
+## Related Documentation
+Links to related tasks, bugs, documentation
+
+---
+
+_Created: YYYY-MM-DD_
+_Report Type: [Audit/Research/Analysis/Assessment]_
+```
+
 ### AI-Generated Documentation
 
 **IMPORTANT**: All documentation created by AI agents MUST include a warning disclaimer immediately below the title:
@@ -295,6 +334,7 @@ _Created: YYYY-MM-DD_
 - ✅ All docs in `.agents/` created by AI
 - ✅ Feature documentation in `docs/features/` created by AI
 - ✅ Bug reports in `bugs/` created by AI
+- ✅ Reports in `reports/` created by AI
 - ✅ Architecture guides created by AI
 - ❌ Human-written or human-verified documentation (remove the warning after verification)
 
@@ -302,10 +342,11 @@ _Created: YYYY-MM-DD_
 
 **Files**:
 - Use kebab-case: `feature-name.md`
+- **Reports**: Use date format: `report-name_YYYY-MM-DD.md` (e.g., `security-audit_2025-11-19.md`)
 - Be descriptive: ❌ `fix.md` ✅ `modal-zindex-stacking-fix.md`
 
 **Folders**:
-- Active work: Root folder (`bugs/`, `tasks/`)
+- Active work: Root folder (`bugs/`, `tasks/`, `reports/`)
 - Completed work: `.done/` or `.solved/` subfolders
 - Archived/deprecated: `.archived/` subfolder
 
@@ -546,4 +587,4 @@ cmd.exe /c "cd /d $WINDOWS_PATH && yarn lint"
 
 ---
 
-_Created: 2025-10-08 | Last updated: 2025-11-07_
+_Created: 2025-10-08 | Last updated: 2025-11-19_

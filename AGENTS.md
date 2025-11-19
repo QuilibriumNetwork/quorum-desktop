@@ -104,6 +104,7 @@ The `.agents/` folder contains all development context, tasks, and documentation
 - Features (Modals, Search, Theming, etc.)
 - Mobile Development
 - Active Bugs & Tasks
+- Reports & Audits
 
 ---
 
@@ -120,4 +121,4 @@ Quick checklist:
 
 ---
 
-_Last updated: 2025-10-08_
+_Last updated: 2025-11-19_
