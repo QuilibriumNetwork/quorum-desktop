@@ -784,7 +784,7 @@ const Channel: React.FC<ChannelProps> = ({
 
             {/* Channel name - hidden on mobile first row, shown on desktop */}
             <div className="hidden lg:flex flex-1 min-w-0">
-              <div className="flex items-center gap-2 truncate whitespace-nowrap overflow-hidden">
+              <div className="flex items-center gap-2 overflow-hidden min-w-0">
                 <Icon
                   name={iconName as any}
                   size={headerIconSize}
@@ -796,7 +796,7 @@ const Channel: React.FC<ChannelProps> = ({
                       : undefined
                   }
                 />
-                <span className="text-main font-bold flex-shrink truncate-user-name-chat">
+                <span className="text-main font-bold flex-shrink min-w-0 truncate-base">
                   {channel?.channelName}
                 </span>
                 {channel?.channelTopic && (
@@ -804,7 +804,7 @@ const Channel: React.FC<ChannelProps> = ({
                     <span className="hidden xs:inline text-subtle flex-shrink-0 font-normal">
                       |
                     </span>
-                    <span className="hidden xs:inline text-subtle flex-shrink truncate-channel-description font-normal">
+                    <span className="hidden xs:inline text-subtle flex-shrink-2 min-w-0 truncate-base font-normal">
                       {channel.channelTopic}
                     </span>
                   </>
@@ -933,7 +933,7 @@ const Channel: React.FC<ChannelProps> = ({
 
           {/* Second row on mobile: channel name / Hidden on desktop (shown above) */}
           <div className="w-full lg:hidden mt-3">
-            <div className="flex items-center gap-3 sm:gap-2 truncate whitespace-nowrap overflow-hidden">
+            <div className="flex items-center gap-3 sm:gap-2 overflow-hidden min-w-0">
               <Icon
                 name={iconName as any}
                 size={headerIconSize}
@@ -943,7 +943,7 @@ const Channel: React.FC<ChannelProps> = ({
                   !iconColor ? { color: 'var(--color-text-subtle)' } : undefined
                 }
               />
-              <span className="text-main font-bold flex-shrink truncate">
+              <span className="text-main font-bold flex-shrink min-w-0 truncate-base">
                 {channel?.channelName}
               </span>
               {channel?.channelTopic && (
@@ -951,7 +951,7 @@ const Channel: React.FC<ChannelProps> = ({
                   <span className="hidden xs:inline text-subtle font-light flex-shrink-0">
                     |
                   </span>
-                  <span className="hidden xs:inline text-subtle font-normal text-sm flex-shrink truncate-channel-description">
+                  <span className="hidden xs:inline text-subtle font-normal text-sm flex-shrink-2 min-w-0 truncate-base">
                     {channel.channelTopic}
                   </span>
                 </>

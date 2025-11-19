@@ -247,18 +247,11 @@ html.dark .error-label {
   }
 }
 
-/* Channel descriptions - moderate sizing for header context */
+/* Channel descriptions - handled by flexbox with truncate-base + flex-shrink-2 */
 .truncate-channel-description {
   @extend .truncate-base;
-  max-width: 150px !important; // 150px mobile - shorter than channel names
-
-  @media (min-width: $screen-sm) {
-    max-width: 250px !important; // 250px small screens (640px+)
-  }
-
-  @media (min-width: $screen-lg) {
-    max-width: 350px !important; // 350px large screens (1024px+) - shorter than chat names
-  }
+  /* No fixed max-width - flexbox handles responsive truncation */
+  /* Use flex-shrink-2 min-w-0 in JSX for proper flex behavior */
 }
 
 /* === CUSTOM SCROLLBARS === */

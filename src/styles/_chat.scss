@@ -1,7 +1,8 @@
 @use '@/styles/variables' as *;
 
 .chat-container {
-  flex: 1 0;
+  flex: 1;
+  min-width: 0; /* Allow shrinking when content is constrained */
   background: var(--color-bg-chat);
   z-index: 11; /* Higher than sidebar space-header (z-index: 10) */
   display: flex;
