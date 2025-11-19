@@ -5,6 +5,101 @@ import { t } from '@lingui/core/macro';
 import { useMessageFormatting } from '../../hooks/business/messages/useMessageFormatting';
 import { YouTubeEmbed } from '../ui/YouTubeEmbed';
 import { formatMessageDate } from '../../utils';
+import { processMarkdownText } from '../../utils/markdownStripping';
+
+// Helper function to process text with mentions and special tokens after smart markdown stripping
+const renderPreviewTextWithSpecialTokens = (
+  text: string,
+  formatting: any,
+  messageId: string,
+  disableMentionInteractivity: boolean,
+  onChannelClick?: (channelId: string) => void
+): React.ReactNode => {
+  const lines = text.split('\n');
+
+  return lines.map((line, i) => {
+    const tokens = line.split(' ');
+    const renderedTokens: React.ReactNode[] = [];
+
+    for (let j = 0; j < tokens.length; j++) {
+      const token = tokens[j];
+      const tokenData = formatting.processTextToken(token, messageId, i, j);
+
+      if (tokenData.type === 'mention') {
+        renderedTokens.push(
+          <React.Fragment key={tokenData.key}>
+            <span
+              className={`message-name-mentions-you ${disableMentionInteractivity ? 'non-interactive' : 'interactive'}`}
+            >
+              {tokenData.displayName}
+            </span>{' '}
+          </React.Fragment>
+        );
+      } else if (tokenData.type === 'channel-mention') {
+        renderedTokens.push(
+          <React.Fragment key={tokenData.key}>
+            <span
+              className={`message-name-mentions-you ${disableMentionInteractivity ? 'non-interactive' : 'interactive'}`}
+              onClick={!disableMentionInteractivity ? () => onChannelClick?.(tokenData.channelId) : undefined}
+            >
+              {tokenData.displayName}
+            </span>{' '}
+          </React.Fragment>
+        );
+      } else if (tokenData.type === 'link') {
+        renderedTokens.push(
+          <React.Fragment key={tokenData.key}>
+            <a
+              href={tokenData.url}
+              target="_blank"
+              referrerPolicy="no-referrer"
+              className="link"
+              style={{ fontSize: 'inherit' }}
+            >
+              {tokenData.text}
+            </a>{' '}
+          </React.Fragment>
+        );
+      } else if (tokenData.type === 'youtube') {
+        renderedTokens.push(
+          <Container key={tokenData.key} className="message-preview-youtube">
+            <YouTubeEmbed
+              src={'https://www.youtube.com/embed/' + tokenData.videoId}
+              allow="autoplay; encrypted-media"
+              className="rounded-lg youtube-embed"
+              style={{
+                width: '100%',
+                maxWidth: 300,
+                aspectRatio: '16/9',
+              }}
+              previewOnly={true}
+            />
+          </Container>
+        );
+      } else if (tokenData.type === 'invite') {
+        renderedTokens.push(
+          <React.Fragment key={tokenData.key}>
+            <Text className="text-accent">[Invite Link]</Text>{' '}
+          </React.Fragment>
+        );
+      } else {
+        // This is already processed by smart markdown stripping, so just render the clean text
+        renderedTokens.push(
+          <React.Fragment key={tokenData.key}>
+            {tokenData.text}{' '}
+          </React.Fragment>
+        );
+      }
+    }
+
+    return (
+      <React.Fragment key={`line-${i}`}>
+        {renderedTokens}
+        {i < lines.length - 1 && <br />}
+      </React.Fragment>
+    );
+  });
+};
 
 interface MessagePreviewProps {
   message: MessageType;
@@ -111,102 +206,30 @@ export const MessagePreview: React.FC<MessagePreviewProps> = ({
       );
     }
 
-    // Handle post content
+    // Handle post content with smart markdown processing
     if (contentData.type === 'post') {
+      // Get full text content and apply smart markdown stripping
+      const fullText = contentData.content.join('\n');
+      const smartProcessedText = processMarkdownText(fullText, {
+        preserveLineBreaks: true,     // Keep paragraph structure in previews
+        preserveEmphasis: true,       // Keep bold/italic intent without syntax
+        preserveHeaders: true,        // Keep header content without ### syntax
+        removeFormatting: true,       // Remove markdown syntax
+        removeStructure: false,       // Preserve line breaks for readability
+      });
+
+      // Process the text for mentions and links
+      const processedContent = renderPreviewTextWithSpecialTokens(
+        smartProcessedText,
+        formatting,
+        contentData.messageId,
+        disableMentionInteractivity,
+        onChannelClick
+      );
+
       return (
         <Container className="message-preview-post text-sm font-normal">
-          {contentData.content.map((line, i) => {
-            const tokens = line.split(' ');
-            const renderedTokens: React.ReactNode[] = [];
-
-            for (let j = 0; j < tokens.length; j++) {
-              const token = tokens[j];
-              const tokenData = formatting.processTextToken(
-                token,
-                contentData.messageId,
-                i,
-                j
-              );
-
-              if (tokenData.type === 'mention') {
-                renderedTokens.push(
-                  <React.Fragment key={tokenData.key}>
-                    <span
-                      className={`message-name-mentions-you ${tokenData.isInteractive ? 'interactive' : 'non-interactive'}`}
-                    >
-                      {tokenData.displayName}
-                    </span>{' '}
-                  </React.Fragment>
-                );
-              } else if (tokenData.type === 'channel-mention') {
-                renderedTokens.push(
-                  <React.Fragment key={tokenData.key}>
-                    <span
-                      className={`message-name-mentions-you ${tokenData.isInteractive ? 'interactive' : 'non-interactive'}`}
-                      onClick={tokenData.isInteractive ? () => onChannelClick?.(tokenData.channelId) : undefined}
-                    >
-                      {tokenData.displayName}
-                    </span>{' '}
-                  </React.Fragment>
-                );
-              } else if (tokenData.type === 'link') {
-                renderedTokens.push(
-                  <React.Fragment key={tokenData.key}>
-                    <a
-                      href={tokenData.url}
-                      target="_blank"
-                      referrerPolicy="no-referrer"
-                      className="link"
-                      style={{ fontSize: 'inherit' }}
-                    >
-                      {tokenData.text}
-                    </a>{' '}
-                  </React.Fragment>
-                );
-              } else if (tokenData.type === 'youtube') {
-                renderedTokens.push(
-                  <Container
-                    key={tokenData.key}
-                    className="message-preview-youtube"
-                  >
-                    <YouTubeEmbed
-                      src={
-                        'https://www.youtube.com/embed/' +
-                        tokenData.videoId
-                      }
-                      allow="autoplay; encrypted-media"
-                      className="rounded-lg youtube-embed"
-                      style={{
-                        width: '100%',
-                        maxWidth: 300,
-                        aspectRatio: '16/9',
-                      }}
-                      previewOnly={true}
-                    />
-                  </Container>
-                );
-              } else if (tokenData.type === 'invite') {
-                renderedTokens.push(
-                  <React.Fragment key={tokenData.key}>
-                    <Text className="text-accent">[Invite Link]</Text>{' '}
-                  </React.Fragment>
-                );
-              } else {
-                renderedTokens.push(
-                  <React.Fragment key={tokenData.key}>
-                    {tokenData.text}{' '}
-                  </React.Fragment>
-                );
-              }
-            }
-
-            return (
-              <React.Fragment key={`line-${i}`}>
-                {renderedTokens}
-                {i < contentData.content.length - 1 && <br />}
-              </React.Fragment>
-            );
-          })}
+          {processedContent}
         </Container>
       );
     }

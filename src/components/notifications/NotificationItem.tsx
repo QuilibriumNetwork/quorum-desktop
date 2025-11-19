@@ -1,10 +1,9 @@
 import React from 'react';
 import { Icon, FlexBetween, FlexRow, Container, Text } from '../primitives';
-import { useSearchResultHighlight, useSearchResultFormatting } from '../../hooks/business/search';
+import { useSearchResultFormatting } from '../../hooks/business/search';
 import { useMessageFormatting } from '../../hooks/business/messages/useMessageFormatting';
 import type { MentionNotification } from '../../hooks/business/mentions';
 import type { ReplyNotification } from '../../types/notifications';
-import { stripMarkdown } from '../../utils/markdownStripping';
 import './NotificationItem.scss';
 
 interface NotificationItemProps {

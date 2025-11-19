@@ -1,4 +1,4 @@
-import { unified } from 'unified';
+ import { unified } from 'unified';
 import remarkParse from 'remark-parse';
 import remarkGfm from 'remark-gfm';
 import remarkStringify from 'remark-stringify';
@@ -74,40 +74,161 @@ export function stripMarkdown(text: string): string {
 }
 
 /**
+ * Flexible markdown processing options for different contexts
+ */
+interface MarkdownProcessingOptions {
+  // Content removal options
+  removeMentions?: boolean;           // Remove @mentions entirely (default: false)
+  removeFormatting?: boolean;         // Remove markdown syntax (default: true)
+  removeStructure?: boolean;          // Remove line breaks, collapse whitespace (default: false)
+
+  // Preservation options (for "smart" stripping)
+  preserveLineBreaks?: boolean;       // Keep paragraph structure (default: true)
+  preserveEmphasis?: boolean;         // Keep bold/italic intent without syntax (default: true)
+  preserveHeaders?: boolean;          // Keep header content without ### syntax (default: true)
+
+  // Processing options
+  truncateLength?: number;            // Optional length limit with smart truncation
+  replaceMentionsWithNames?: boolean; // Convert @<addr> to @DisplayName (default: false)
+  mapSenderToUser?: (senderId: string) => { displayName?: string } | undefined;
+}
+
+/**
+ * Unified markdown text processing utility
+ *
+ * Flexible function that can handle different levels of markdown processing:
+ * - "Dumb" stripping (SearchResults): Remove everything, collapse to plain text
+ * - "Smart" stripping (PinnedMessages): Preserve structure and formatting intent
+ * - Custom combinations for future use cases
+ *
+ * @param text - Input text with markdown and mentions
+ * @param options - Processing configuration
+ * @returns Processed text according to options
+ *
+ * @example
+ * // SearchResults (dumb stripping)
+ * processMarkdownText('**Hello** @<Qm123>', {
+ *   removeMentions: true,
+ *   removeStructure: true
+ * }) // Returns: 'Hello'
+ *
+ * // PinnedMessages (smart stripping)
+ * processMarkdownText('### Title\n\n**Bold** text', {
+ *   preserveLineBreaks: true,
+ *   preserveEmphasis: true,
+ *   truncateLength: 100
+ * }) // Returns: 'Title\n\nBold text'
+ */
+export function processMarkdownText(text: string, options: MarkdownProcessingOptions = {}): string {
+  if (!text) return '';
+
+  const {
+    removeMentions = false,
+    removeFormatting = true,
+    removeStructure = false,
+    preserveLineBreaks = true,
+    preserveEmphasis = true,
+    preserveHeaders = true,
+    truncateLength,
+    replaceMentionsWithNames = false,
+    mapSenderToUser
+  } = options;
+
+  let processed = text;
+
+  // Step 1: Handle mentions first
+  if (replaceMentionsWithNames && mapSenderToUser) {
+    // Convert @<address> to @DisplayName
+    processed = processed.replace(/@<(Qm[a-zA-Z0-9]+)>/g, (_match, address) => {
+      const user = mapSenderToUser(address);
+      const displayName = user?.displayName || address.substring(0, 8) + '...';
+      return `@${displayName}`;
+    });
+  } else if (removeMentions) {
+    // Remove all mention patterns completely
+    processed = processed
+      .replace(/@<Qm[a-zA-Z0-9]+>/g, '')
+      .replace(/@everyone\b/gi, '')
+      .replace(/@\w+/g, '')
+      .replace(/<<<MENTION_USER:[^>]+>>>/g, '')
+      .replace(/<<<MENTION_EVERYONE>>>/g, '')
+      .replace(/<<<MENTION_ROLE:[^>]+>>>/g, '');
+  }
+
+  // Step 2: Handle markdown formatting
+  if (removeFormatting) {
+    if (preserveHeaders && preserveEmphasis) {
+      // Smart stripping: preserve intent but remove syntax
+      processed = processed
+        // Headers: ### Title → Title (preserve content)
+        .replace(/^#{1,6}\s+(.+)$/gm, '$1')
+        // Bold: **text** → text (preserve emphasis intent)
+        .replace(/\*\*(.+?)\*\*/g, '$1')
+        .replace(/__(.+?)__/g, '$1')
+        // Italic: *text* → text (preserve emphasis intent)
+        .replace(/\*(.+?)\*/g, '$1')
+        .replace(/_(.+?)_/g, '$1')
+        // Strikethrough: ~~text~~ → text
+        .replace(/~~(.+?)~~/g, '$1')
+        // Inline code: `code` → code
+        .replace(/`(.+?)`/g, '$1')
+        // Code blocks: ```lang\ncode\n``` → code
+        .replace(/```[\s\S]*?\n([\s\S]*?)\n```/g, '$1')
+        .replace(/```(.+?)```/g, '$1')
+        // Links: [text](url) → text
+        .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
+        // Blockquotes: > text → text
+        .replace(/^>\s+/gm, '')
+        // Lists: - item → item, 1. item → item
+        .replace(/^[\s]*[-*+]\s+/gm, '')
+        .replace(/^[\s]*\d+\.\s+/gm, '')
+        // Horizontal rules: --- → (remove)
+        .replace(/^[-*_]{3,}$/gm, '');
+    } else {
+      // Use existing stripMarkdown for heavy processing
+      processed = stripMarkdown(processed);
+    }
+  }
+
+  // Step 3: Handle structure
+  if (removeStructure) {
+    // Dumb stripping: collapse everything
+    processed = processed.replace(/\s+/g, ' ').trim();
+  } else if (preserveLineBreaks) {
+    // Smart stripping: preserve meaningful structure
+    processed = processed
+      // Preserve paragraph breaks but clean up excess
+      .replace(/\n{3,}/g, '\n\n')
+      // Clean up extra spaces but preserve single line breaks
+      .replace(/ +/g, ' ')
+      .trim();
+  }
+
+  // Step 4: Apply truncation with smart word boundaries
+  if (truncateLength && processed.length > truncateLength) {
+    processed = processed
+      .substring(0, truncateLength)
+      .replace(/\s+\S*$/, '...'); // Clean truncation at word boundary
+  }
+
+  return processed;
+}
+
+/**
  * Strips markdown formatting AND all mention patterns for contexts where mentions shouldn't render.
  * Use this in search results where we want pure plain text.
  *
- * Handles both raw mention patterns from message text and processed tokens.
- *
+ * @deprecated Use processMarkdownText() with appropriate options for better flexibility
  * @param text - Text with markdown formatting and mention patterns
  * @returns Plain text without markdown or mentions
- *
- * @example
- * stripMarkdownAndMentions('**Hello** @<Qm123>') // Returns: 'Hello'
- * stripMarkdownAndMentions('Check @everyone') // Returns: 'Check'
- * stripMarkdownAndMentions('Hey @role') // Returns: 'Hey'
  */
 export function stripMarkdownAndMentions(text: string): string {
-  // First strip standard markdown
-  let cleaned = stripMarkdown(text);
-
-  // Then remove all mention patterns
-  cleaned = cleaned
-    // Remove raw user mention patterns: @<address>
-    .replace(/@<Qm[a-zA-Z0-9]+>/g, '')
-    // Remove @everyone
-    .replace(/@everyone\b/gi, '')
-    // Remove role mentions: @roleTag (any @word that's not everyone)
-    .replace(/@\w+/g, '')
-    // Remove processed mention tokens (in case they exist)
-    .replace(/<<<MENTION_USER:[^>]+>>>/g, '')
-    .replace(/<<<MENTION_EVERYONE>>>/g, '')
-    .replace(/<<<MENTION_ROLE:[^>]+>>>/g, '');
-
-  // Clean up extra whitespace from removed mentions
-  cleaned = cleaned.replace(/\s+/g, ' ').trim();
-
-  return cleaned;
+  return processMarkdownText(text, {
+    removeMentions: true,
+    removeStructure: true,
+    preserveLineBreaks: false,
+    preserveEmphasis: false
+  });
 }
 
 /**
