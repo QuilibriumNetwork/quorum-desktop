@@ -29,6 +29,18 @@ import { base58btc } from 'multiformats/bases/base58';
 export const DANGEROUS_HTML_CHARS = /[<>"']/;
 
 /**
+ * Maximum length for user input names (display names, space names, group names, channel names)
+ * Centralized constant to ensure consistency across the application
+ */
+export const MAX_NAME_LENGTH = 40;
+
+/**
+ * Maximum length for topic/description fields (channel topics, space descriptions)
+ * Longer limit for descriptive text fields
+ */
+export const MAX_TOPIC_LENGTH = 80;
+
+/**
  * Validates a name (display name, space name, etc.) to ensure it doesn't contain
  * characters that could be used for XSS injection.
  *

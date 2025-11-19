@@ -4,6 +4,7 @@ import { useSpace } from '../../queries';
 import { useMessageDB } from '../../../components/context/useMessageDB';
 import { IconName } from '../../../components/primitives/Icon/types';
 import { IconColor } from '../../../components/space/IconPicker';
+import { validateGroupName } from '../validation';
 
 export interface GroupData {
   groupName: string;
@@ -42,6 +43,9 @@ export function useGroupManagement({
   const [channelCount, setChannelCount] = useState<number>(0);
   const [showWarning, setShowWarning] = useState<boolean>(false);
   const [showChannelError, setShowChannelError] = useState<boolean>(false);
+
+  // State for validation
+  const [validationError, setValidationError] = useState<string | undefined>(undefined);
 
   // Sync group data when space data loads
   useEffect(() => {
@@ -99,9 +103,12 @@ export function useGroupManagement({
 
   // Handle group name change
   const handleGroupNameChange = useCallback((value: string) => {
-    // Remove only truly problematic characters (filesystem/URL unsafe), allow emojis and Unicode
-    const sanitized = value.replace(/[<>:"/\\|?*\x00-\x1f]/g, '');
-    setGroupData((prev) => ({ ...prev, groupName: sanitized }));
+    // Update the value
+    setGroupData((prev) => ({ ...prev, groupName: value }));
+
+    // Validate the new value
+    const error = validateGroupName(value);
+    setValidationError(error);
   }, []);
 
   // Handle icon change
@@ -213,14 +220,17 @@ export function useGroupManagement({
   const canSaveChanges = useCallback(() => {
     if (!space) return false;
 
+    // Don't allow saving if there's a validation error
+    if (validationError) return false;
+
     if (groupName) {
-      // For existing groups: always allow saving (like ChannelEditor)
-      return true;
+      // For existing groups: allow saving if no validation errors
+      return !validationError;
     } else {
-      // For new groups: must have valid name that doesn't already exist
-      return groupData.groupName !== '' && !space.groups.find((g) => g.groupName === groupData.groupName);
+      // For new groups: must have valid name that doesn't already exist and no validation errors
+      return groupData.groupName !== '' && !space.groups.find((g) => g.groupName === groupData.groupName) && !validationError;
     }
-  }, [space, groupData.groupName, groupName]);
+  }, [space, groupData.groupName, groupName, validationError]);
 
   return {
     // State
@@ -235,6 +245,7 @@ export function useGroupManagement({
     deleteConfirmationStep,
     isEditMode: !!groupName,
     canSave: canSaveChanges(),
+    validationError,
 
     // Actions
     handleGroupNameChange,

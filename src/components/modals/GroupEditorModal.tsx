@@ -34,6 +34,7 @@ const GroupEditorModal: React.FunctionComponent<{
     deleteConfirmationStep,
     isEditMode,
     canSave,
+    validationError,
     handleGroupNameChange,
     handleIconChange,
     saveChanges,
@@ -69,6 +70,8 @@ const GroupEditorModal: React.FunctionComponent<{
             onChange={handleGroupNameChange}
             label={t`Group Name`}
             labelType="static"
+            error={!!validationError}
+            errorMessage={validationError}
           />
         </Container>
 

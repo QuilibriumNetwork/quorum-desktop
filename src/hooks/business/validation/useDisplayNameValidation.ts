@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { t } from '@lingui/core/macro';
-import { validateNameForXSS } from '../../../utils/validation';
+import { validateNameForXSS, MAX_NAME_LENGTH } from '../../../utils/validation';
 
 /**
  * Centralized display name validation logic
@@ -10,6 +10,9 @@ export const useDisplayNameValidation = (displayName: string) => {
   const error = useMemo(() => {
     if (!displayName.trim()) {
       return t`Display name is required`;
+    }
+    if (displayName.length > MAX_NAME_LENGTH) {
+      return t`Display name must be ${MAX_NAME_LENGTH} characters or less`;
     }
     if (displayName.trim().toLowerCase() === 'everyone') {
       return t`'everyone' is a reserved name.`;
@@ -32,6 +35,9 @@ export const useDisplayNameValidation = (displayName: string) => {
 export const validateDisplayName = (displayName: string): string | undefined => {
   if (!displayName.trim()) {
     return t`Display name is required`;
+  }
+  if (displayName.length > MAX_NAME_LENGTH) {
+    return t`Display name must be ${MAX_NAME_LENGTH} characters or less`;
   }
   if (displayName.trim().toLowerCase() === 'everyone') {
     return t`'everyone' is a reserved name.`;

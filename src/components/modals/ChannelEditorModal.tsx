@@ -48,6 +48,9 @@ const ChannelEditorModal: React.FunctionComponent<{
     iconColor,
     isEditMode,
     availableRoles,
+    channelNameValidationError,
+    channelTopicValidationError,
+    canSave,
     handleChannelNameChange,
     handleChannelTopicChange,
     handleReadOnlyChange,
@@ -95,6 +98,8 @@ const ChannelEditorModal: React.FunctionComponent<{
             onChange={handleChannelNameChange}
             label={t`Channel Name`}
             labelType="static"
+            error={!!channelNameValidationError}
+            errorMessage={channelNameValidationError}
           />
         </Container>
         <Container className="mb-4">
@@ -103,6 +108,8 @@ const ChannelEditorModal: React.FunctionComponent<{
             onChange={handleChannelTopicChange}
             label={t`Channel Topic`}
             labelType="static"
+            error={!!channelTopicValidationError}
+            errorMessage={channelTopicValidationError}
           />
         </Container>
 
@@ -185,7 +192,7 @@ const ChannelEditorModal: React.FunctionComponent<{
         )}
 
         <FlexRow className="justify-end gap-2 mt-6 max-sm:flex-col max-sm:gap-4">
-          <Button type="primary" className="max-sm:w-full" onClick={handleSave} disabled={isSaving || !channelName.trim()}>
+          <Button type="primary" className="max-sm:w-full" onClick={handleSave} disabled={!canSave || isSaving}>
             <Trans>Save Changes</Trans>
           </Button>
         </FlexRow>

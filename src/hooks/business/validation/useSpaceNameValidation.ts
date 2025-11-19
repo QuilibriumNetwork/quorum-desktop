@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { t } from '@lingui/core/macro';
-import { validateNameForXSS } from '../../../utils/validation';
+import { validateNameForXSS, MAX_NAME_LENGTH } from '../../../utils/validation';
 
 /**
  * Centralized space name validation logic
@@ -10,6 +10,9 @@ export const useSpaceNameValidation = (spaceName: string) => {
   const error = useMemo(() => {
     if (!spaceName.trim()) {
       return t`Space name is required`;
+    }
+    if (spaceName.length > MAX_NAME_LENGTH) {
+      return t`Space name must be ${MAX_NAME_LENGTH} characters or less`;
     }
     if (!validateNameForXSS(spaceName)) {
       return t`Space name cannot contain special characters`;
@@ -29,6 +32,9 @@ export const useSpaceNameValidation = (spaceName: string) => {
 export const validateSpaceName = (spaceName: string): string | undefined => {
   if (!spaceName.trim()) {
     return t`Space name is required`;
+  }
+  if (spaceName.length > MAX_NAME_LENGTH) {
+    return t`Space name must be ${MAX_NAME_LENGTH} characters or less`;
   }
   if (!validateNameForXSS(spaceName)) {
     return t`Space name cannot contain special characters`;

@@ -9,6 +9,7 @@ import ChannelPreview from '../../../components/space/ChannelPreview';
 import { t } from '@lingui/core/macro';
 import { IconName } from '../../../components/primitives/Icon/types';
 import { IconColor } from '../../../components/space/IconPicker';
+import { validateChannelName, validateChannelTopic } from '../validation';
 
 export interface ChannelData {
   channelName: string;
@@ -59,6 +60,10 @@ export function useChannelManagement({
   const [hasMessages, setHasMessages] = useState<boolean>(false);
   const [messageCount, setMessageCount] = useState<number>(0);
 
+  // State for validation
+  const [channelNameValidationError, setChannelNameValidationError] = useState<string | undefined>(undefined);
+  const [channelTopicValidationError, setChannelTopicValidationError] = useState<string | undefined>(undefined);
+
   // Sync channel data when space data loads
   useEffect(() => {
     if (channelId && space) {
@@ -103,14 +108,22 @@ export function useChannelManagement({
 
   // Handle channel name change
   const handleChannelNameChange = useCallback((value: string) => {
-    // Remove only truly problematic characters (filesystem/URL unsafe), allow emojis and Unicode
-    const sanitized = value.replace(/[<>:"/\\|?*\x00-\x1f]/g, '');
-    setChannelData((prev) => ({ ...prev, channelName: sanitized }));
+    // Update the value
+    setChannelData((prev) => ({ ...prev, channelName: value }));
+
+    // Validate the new value
+    const error = validateChannelName(value);
+    setChannelNameValidationError(error);
   }, []);
 
   // Handle channel topic change
   const handleChannelTopicChange = useCallback((value: string) => {
+    // Update the value
     setChannelData((prev) => ({ ...prev, channelTopic: value }));
+
+    // Validate the new value
+    const error = validateChannelTopic(value);
+    setChannelTopicValidationError(error);
   }, []);
 
   // Handle read-only toggle
@@ -307,6 +320,29 @@ export function useChannelManagement({
     setDeleteConfirmationStep(0);
   }, []);
 
+  // Check if changes can be saved
+  const canSaveChanges = useCallback(() => {
+    if (!space) return false;
+
+    // Don't allow saving if there are validation errors
+    if (channelNameValidationError || channelTopicValidationError) return false;
+
+    if (channelId) {
+      // For existing channels: allow saving if no validation errors and has name
+      return !channelNameValidationError && !channelTopicValidationError && channelData.channelName.trim() !== '';
+    } else {
+      // For new channels: must have valid name, no validation errors, and name doesn't already exist
+      const existingChannel = space.groups
+        .find((g) => g.groupName === groupName)
+        ?.channels.find((c) => c.channelName === channelData.channelName);
+
+      return channelData.channelName.trim() !== '' &&
+             !channelNameValidationError &&
+             !channelTopicValidationError &&
+             !existingChannel;
+    }
+  }, [space, channelData.channelName, channelId, groupName, channelNameValidationError, channelTopicValidationError]);
+
   return {
     // State
     channelName: channelData.channelName,
@@ -322,6 +358,9 @@ export function useChannelManagement({
     deleteConfirmationStep,
     isEditMode: !!channelId,
     availableRoles: space?.roles || [],
+    channelNameValidationError,
+    channelTopicValidationError,
+    canSave: canSaveChanges(),
 
     // Actions
     handleChannelNameChange,
