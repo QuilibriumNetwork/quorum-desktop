@@ -54,20 +54,21 @@ export const NotificationPanel: React.FC<NotificationPanelProps> = ({
   const { mentions, isLoading: mentionsLoading } = useAllMentions({
     spaceId,
     channelIds,
-    enabledTypes: mentionTypes.length > 0 ? mentionTypes : undefined,
+    enabledTypes: mentionTypes, // Pass empty array when no mention types selected
     userRoleIds,
   });
 
-  // Fetch replies (only if 'reply' is selected)
+  // Fetch replies based on UI filter state
   const { replies, isLoading: repliesLoading } = useAllReplies({
     spaceId,
     channelIds,
+    enabled: selectedTypes.includes('reply'),
   });
 
-  // Combine mentions and replies based on filter
+  // Combine mentions and replies - filtering is now handled by the hooks
   const allNotifications = [
     ...mentions,
-    ...(selectedTypes.includes('reply') ? replies : []),
+    ...replies,
   ].sort((a, b) => b.message.createdDate - a.message.createdDate);
 
   const isLoading = mentionsLoading || repliesLoading || settingsLoading;

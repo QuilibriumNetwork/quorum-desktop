@@ -7,6 +7,7 @@ import type { ReplyNotification } from '../../../types/notifications';
 interface UseAllRepliesProps {
   spaceId: string;
   channelIds: string[];
+  enabled?: boolean; // Optional: override for UI filter state
 }
 
 /**
@@ -16,9 +17,17 @@ interface UseAllRepliesProps {
  * Respects user's notification settings for the space (reply notifications must be enabled)
  *
  * @example
+ * // Use persistent settings (default behavior)
  * const { replies, isLoading } = useAllReplies({
  *   spaceId,
  *   channelIds
+ * });
+ *
+ * // Override with UI filter state
+ * const { replies, isLoading } = useAllReplies({
+ *   spaceId,
+ *   channelIds,
+ *   enabled: selectedTypes.includes('reply')
  * });
  *
  * @see .agents/tasks/reply-notification-system.md
@@ -26,13 +35,14 @@ interface UseAllRepliesProps {
 export function useAllReplies({
   spaceId,
   channelIds,
+  enabled,
 }: UseAllRepliesProps) {
   const user = usePasskeysContext();
   const { messageDB } = useMessageDB();
   const userAddress = user.currentPasskeyInfo?.address;
 
   const { data, isLoading } = useQuery({
-    queryKey: ['reply-notifications', spaceId, userAddress, ...channelIds.sort()],
+    queryKey: ['reply-notifications', spaceId, userAddress, ...channelIds.sort(), enabled],
     queryFn: async () => {
       if (!userAddress) return [];
 
@@ -44,8 +54,13 @@ export function useAllReplies({
         const settings = config?.notificationSettings?.[spaceId];
 
         // Check if reply notifications are enabled
-        if (!isNotificationTypeEnabled(settings, 'reply')) {
-          return []; // User has disabled reply notifications
+        // If enabled parameter provided from UI, use it; otherwise check persistent settings
+        const shouldFetchReplies = enabled !== undefined
+          ? enabled
+          : isNotificationTypeEnabled(settings, 'reply');
+
+        if (!shouldFetchReplies) {
+          return []; // User has disabled reply notifications (either in UI or persistent settings)
         }
 
         // Get space data to access channel names
