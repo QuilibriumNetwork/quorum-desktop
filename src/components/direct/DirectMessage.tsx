@@ -800,6 +800,8 @@ const DirectMessage: React.FC<{}> = () => {
                 skipSigning={skipSigning}
                 onSigningToggle={() => setSkipSigning(!skipSigning)}
                 mentionError={composer.mentionError}
+                messageValidation={composer.messageValidation}
+                characterCount={composer.characterCount}
               />
             </div>
           </div>

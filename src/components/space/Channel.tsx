@@ -1045,6 +1045,8 @@ const Channel: React.FC<ChannelProps> = ({
                     : undefined
                 }
                 mentionError={composer.mentionError}
+                messageValidation={composer.messageValidation}
+                characterCount={composer.characterCount}
                   />
                 );
               })()}

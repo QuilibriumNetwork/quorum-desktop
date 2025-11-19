@@ -9,6 +9,7 @@ import { t } from '@lingui/core/macro';
 import { processAttachmentImage, FILE_SIZE_LIMITS } from '../../../utils/imageProcessing';
 import type { AttachmentProcessingResult } from '../../../utils/imageProcessing';
 import { extractMentionsFromText, MAX_MENTIONS_PER_MESSAGE } from '../../../utils/mentionUtils';
+import { useMessageValidation, getMessageCounterText } from '../validation';
 
 interface UseMessageComposerOptions {
   type: 'channel' | 'direct';
@@ -41,6 +42,9 @@ export function useMessageComposer(options: UseMessageComposerOptions) {
 
   // Mention validation state
   const [mentionError, setMentionError] = useState<string | null>(null);
+
+  // Message validation state
+  const messageValidation = useMessageValidation(pendingMessage);
 
   // Ref for textarea
   const editor = useRef<HTMLTextAreaElement>(null);
@@ -148,6 +152,11 @@ export function useMessageComposer(options: UseMessageComposerOptions) {
         return; // Block submission if mentions are invalid
       }
 
+      // Validate message length before submission
+      if (pendingMessage && messageValidation.isOverLimit) {
+        return; // Block submission if message is too long
+      }
+
       setIsSubmitting(true);
       try {
         if (pendingMessage) {
@@ -187,6 +196,7 @@ export function useMessageComposer(options: UseMessageComposerOptions) {
     onSubmitMessage,
     inReplyTo,
     validateMentions,
+    messageValidation.isOverLimit,
   ]);
 
   // Submit sticker
@@ -238,6 +248,10 @@ export function useMessageComposer(options: UseMessageComposerOptions) {
 
     // Mention validation state
     mentionError,
+
+    // Message validation state
+    messageValidation,
+    characterCount: getMessageCounterText(messageValidation.messageLength),
 
     // Sticker state
     showStickers,

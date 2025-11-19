@@ -41,6 +41,12 @@ export const MAX_NAME_LENGTH = 40;
 export const MAX_TOPIC_LENGTH = 80;
 
 /**
+ * Maximum length for message content
+ * Future extensibility: Can be made dynamic based on user roles/subscription
+ */
+export const MAX_MESSAGE_LENGTH = 2500;
+
+/**
  * Validates a name (display name, space name, etc.) to ensure it doesn't contain
  * characters that could be used for XSS injection.
  *

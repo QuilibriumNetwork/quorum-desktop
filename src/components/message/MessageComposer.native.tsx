@@ -1,4 +1,4 @@
-import { forwardRef, useImperativeHandle, useRef, useState } from 'react';
+import { forwardRef, useImperativeHandle, useRef, useState, useEffect } from 'react';
 import {
   View,
   TouchableOpacity,
@@ -6,6 +6,8 @@ import {
   KeyboardAvoidingView,
   // @ts-ignore - TypeScript config doesn't recognize React Native modules in this environment
   Platform,
+  // @ts-ignore - TypeScript config doesn't recognize React Native modules in this environment
+  Dimensions,
 } from 'react-native';
 import { Icon, Text, FileUpload } from '../primitives';
 import { useTheme } from '../primitives/theme';
@@ -35,8 +37,21 @@ interface MessageComposerProps {
   // Reply-to and error handling
   inReplyTo?: any;
   fileError?: string | null;
+  mentionError?: string | null;
   mapSenderToUser?: (senderId: string) => { displayName?: string };
   setInReplyTo?: (inReplyTo: any) => void;
+
+  // Message validation props
+  messageValidation?: {
+    isOverLimit: boolean;
+    isApproachingLimit: boolean;
+    shouldShowCounter: boolean;
+    remainingChars: number;
+    messageLength: number;
+    maxLength: number;
+    isValid: boolean;
+  };
+  characterCount?: string;
 }
 
 export interface MessageComposerRef {
@@ -77,8 +92,11 @@ export const MessageComposer = forwardRef<
       hasStickers = true,
       inReplyTo,
       fileError,
+      mentionError,
       mapSenderToUser,
       setInReplyTo,
+      messageValidation,
+      characterCount,
       onFileError,
       onFileSelect,
     },
@@ -87,6 +105,15 @@ export const MessageComposer = forwardRef<
     const theme = useTheme();
     const textareaRef = useRef<any>(null);
     const [isExpanded, setIsExpanded] = useState(false);
+    const [screenWidth, setScreenWidth] = useState(Dimensions.get('window').width);
+
+    // Listen for dimension changes
+    useEffect(() => {
+      const subscription = Dimensions.addEventListener('change', ({ window }) => {
+        setScreenWidth(window.width);
+      });
+      return () => subscription?.remove();
+    }, []);
 
     // File upload configuration
     const maxImageSize = 2 * 1024 * 1024; // 2MB
@@ -208,18 +235,67 @@ export const MessageComposer = forwardRef<
     };
 
     const renderErrorAndReply = () => {
-      if (!fileError && !inReplyTo) return null;
+      const shouldShowCounter = messageValidation?.shouldShowCounter;
+      if (!fileError && !mentionError && !inReplyTo && !shouldShowCounter) return null;
+
+      // Check if we're on a small screen (equivalent to $screen-xs: 480px)
+      const isSmallScreen = screenWidth <= 480;
+      const hasErrors = fileError || mentionError;
+      const hasCounterAndErrors = shouldShowCounter && characterCount && hasErrors;
+
+      // Consistent error message styling
+      const errorMessageStyle = {
+        marginLeft: 4,
+        marginTop: 12,
+        marginBottom: 4,
+      };
 
       return (
         <View style={{ width: '100%', marginTop: 8, marginBottom: -8 }}>
-          {fileError && (
-            <Text
-              size="sm"
-              color={theme.colors.text.danger}
-              style={{ marginLeft: 4, marginTop: 12, marginBottom: 4 }}
+          {/* Combined character counter and errors */}
+          {((shouldShowCounter && characterCount) || hasErrors) && (
+            <View
+              style={{
+                marginLeft: 4,
+                marginTop: 12,
+                marginBottom: 4,
+                flexDirection: isSmallScreen ? 'column' : 'row',
+                alignItems: isSmallScreen ? 'flex-start' : 'center',
+                gap: isSmallScreen ? 4 : 8,
+              }}
             >
-              {fileError}
-            </Text>
+              {shouldShowCounter && characterCount && (
+                <Text
+                  size="sm"
+                  color={messageValidation?.isOverLimit
+                    ? theme.colors.text.danger // Use theme's danger color
+                    : theme.colors.text.subtle // Use theme's subtle color
+                  }
+                  style={{
+                    fontWeight: messageValidation?.isOverLimit ? 'bold' : 'normal',
+                  }}
+                >
+                  {characterCount}
+                </Text>
+              )}
+              {hasCounterAndErrors && !isSmallScreen && (
+                <Text size="sm" color={theme.colors.text.muted}>
+                  |
+                </Text>
+              )}
+              <View style={{ flexDirection: 'column', gap: 4, flex: isSmallScreen ? undefined : 1 }}>
+                {fileError && (
+                  <Text size="sm" color={theme.colors.text.danger}>
+                    {fileError}
+                  </Text>
+                )}
+                {mentionError && (
+                  <Text size="sm" color={theme.colors.text.danger}>
+                    {mentionError}
+                  </Text>
+                )}
+              </View>
+            </View>
           )}
           {inReplyTo && mapSenderToUser && setInReplyTo && (
             <View
@@ -269,6 +345,9 @@ export const MessageComposer = forwardRef<
             borderTopLeftRadius: inReplyTo ? 0 : 12,
             borderTopRightRadius: inReplyTo ? 0 : 12,
             backgroundColor: theme.colors.bg['chat-input'],
+            // Add danger border when over character limit
+            borderWidth: messageValidation?.isOverLimit ? 1 : 0,
+            borderColor: messageValidation?.isOverLimit ? theme.colors.border.danger : 'transparent',
           }}
         >
           {/* Left side - emoji/sticker picker buttons (hidden when expanded) */}
@@ -360,17 +439,21 @@ export const MessageComposer = forwardRef<
 
           {/* Send button (always on the right) - Uses custom SendIcon */}
           <TouchableOpacity
-            onPress={onSubmitMessage}
+            onPress={messageValidation?.isOverLimit ? undefined : onSubmitMessage}
+            disabled={messageValidation?.isOverLimit}
             style={{
               width: 32,
               height: 32,
               borderRadius: 16,
-              backgroundColor: theme.colors.accent.DEFAULT,
+              backgroundColor: messageValidation?.isOverLimit
+                ? theme.colors.surface[6]
+                : theme.colors.accent.DEFAULT,
               justifyContent: 'center',
               alignItems: 'center',
               flexShrink: 0,
+              opacity: messageValidation?.isOverLimit ? 0.6 : 1,
             }}
-            activeOpacity={0.6}
+            activeOpacity={messageValidation?.isOverLimit ? 1 : 0.6}
           >
             <SendIcon size={18} color="white" />
           </TouchableOpacity>

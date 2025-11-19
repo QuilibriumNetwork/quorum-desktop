@@ -173,6 +173,20 @@ html:not(.dark) .message-composer-row {
   &:hover {
     background-color: var(--accent-400);
   }
+
+  /* Disabled state */
+  &.disabled {
+    background-color: var(--surface-6) !important;
+    opacity: 0.6;
+    /* Ensure button maintains perfect circle shape when disabled */
+    width: $s-8 !important;
+    height: $s-8 !important;
+    border-radius: $rounded-full !important;
+
+    &:hover {
+      background-color: var(--surface-6) !important;
+    }
+  }
 }
 
 /* Signing toggle button */
@@ -452,4 +466,59 @@ html:not(.dark) .message-composer-row {
   background: var(--accent);
   color: white;
   flex-shrink: 0;
+}
+
+/* === CHARACTER LIMIT STYLES === */
+
+/* Combined errors and counter container */
+.message-composer-errors-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: $s-2;
+
+  /* Stack vertically on mobile */
+  @media (max-width: $screen-xs) {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: $s-1;
+  }
+}
+
+/* Character counter display - uses CSS variables for consistency */
+.message-composer-character-counter {
+  flex-shrink: 0;
+  font-size: $text-sm;
+  color: var(--color-text-subtle); /* Default state */
+
+  /* Error variant colors (over limit) */
+  &.error {
+    color: var(--color-text-danger);
+    font-weight: $font-bold;
+  }
+}
+
+/* Separator between counter and errors */
+.message-composer-error-separator {
+  font-size: $text-sm;
+  color: var(--color-text-muted);
+  flex-shrink: 0;
+
+  /* Hide separator on mobile when stacked */
+  @media (max-width: $screen-xs) {
+    display: none;
+  }
+}
+
+/* Error messages container */
+.message-composer-error-messages {
+  display: flex;
+  flex-direction: column;
+  gap: $s-1;
+  min-width: 0; /* Allow shrinking */
+}
+
+/* Danger border for message composer when over character limit */
+.message-composer-row.character-limit-exceeded {
+  border-color: var(--color-border-danger) !important;
 }

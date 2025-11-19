@@ -21,6 +21,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Delete Confirmation System](docs/features/delete-confirmation-system.md)
 - [Desktop Notifications Feature](docs/features/desktop-notifications.md)
 - [Dropdown Panels](docs/features/dropdown-panels.md)
+- [Input & Textarea Validation Reference](docs/features/input-validation-reference.md)
 - [Invite System Documentation](docs/features/invite-system-analysis.md)
 - [Kick User System Documentation](docs/features/kick-user-system.md)
 - [Modal Save Overlay System](docs/features/modal-save-overlay.md)
@@ -274,4 +275,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2025-11-19 12:38:30
+**Last Updated**: 2025-11-19 15:49:38

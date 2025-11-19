@@ -57,6 +57,18 @@ interface MessageComposerProps {
   mapSenderToUser?: (senderId: string) => { displayName?: string };
   setInReplyTo?: (inReplyTo: any) => void;
 
+  // Message validation props
+  messageValidation?: {
+    isOverLimit: boolean;
+    isApproachingLimit: boolean;
+    shouldShowCounter: boolean;
+    remainingChars: number;
+    messageLength: number;
+    maxLength: number;
+    isValid: boolean;
+  };
+  characterCount?: string;
+
   // Signing toggle props
   showSigningToggle?: boolean;
   skipSigning?: boolean;
@@ -101,6 +113,8 @@ export const MessageComposer = forwardRef<
       isProcessingImage = false,
       mapSenderToUser,
       setInReplyTo,
+      messageValidation,
+      characterCount,
       showSigningToggle = false,
       skipSigning = false,
       onSigningToggle,
@@ -328,8 +342,8 @@ export const MessageComposer = forwardRef<
 
     return (
       <div className="message-composer-container">
-        {/* Error, processing indicator, and reply-to display */}
-        {(fileError || mentionError || inReplyTo || isProcessingImage) && (
+        {/* Error, processing indicator, character counter, and reply-to display */}
+        {(fileError || mentionError || inReplyTo || isProcessingImage || (messageValidation?.shouldShowCounter)) && (
           <div className="message-composer-info-container">
             {isProcessingImage && (
               <div className="message-composer-callout">
@@ -344,26 +358,43 @@ export const MessageComposer = forwardRef<
                 </Callout>
               </div>
             )}
-            {fileError && (
+            {/* Combined character counter and errors */}
+            {((messageValidation?.shouldShowCounter && characterCount) || fileError || mentionError) && (
               <div className="message-composer-callout">
-                <Callout
-                  variant="error"
-                  layout="minimal"
-                  size="sm"
-                >
-                  {fileError}
-                </Callout>
-              </div>
-            )}
-            {mentionError && (
-              <div className="message-composer-callout">
-                <Callout
-                  variant="error"
-                  layout="minimal"
-                  size="sm"
-                >
-                  {mentionError}
-                </Callout>
+                <div className="message-composer-errors-container">
+                  {messageValidation?.shouldShowCounter && characterCount && (
+                    <div
+                      className={`message-composer-character-counter ${
+                        messageValidation.isOverLimit ? 'error' : ''
+                      }`}
+                    >
+                      {characterCount}
+                    </div>
+                  )}
+                  {messageValidation?.shouldShowCounter && characterCount && (fileError || mentionError) && (
+                    <div className="message-composer-error-separator">|</div>
+                  )}
+                  <div className="message-composer-error-messages">
+                    {fileError && (
+                      <Callout
+                        variant="error"
+                        layout="minimal"
+                        size="sm"
+                      >
+                        {fileError}
+                      </Callout>
+                    )}
+                    {mentionError && (
+                      <Callout
+                        variant="error"
+                        layout="minimal"
+                        size="sm"
+                      >
+                        {mentionError}
+                      </Callout>
+                    )}
+                  </div>
+                </div>
               </div>
             )}
             {inReplyTo && mapSenderToUser && setInReplyTo && (
@@ -522,7 +553,7 @@ export const MessageComposer = forwardRef<
         {/* Message input row */}
         <FlexRow
           ref={composerRef}
-          className={`message-composer-row ${inReplyTo ? 'has-reply' : ''} ${isTyping ? 'typing' : ''} ${isMultiline ? 'multiline' : ''}`}
+          className={`message-composer-row ${inReplyTo ? 'has-reply' : ''} ${isTyping ? 'typing' : ''} ${isMultiline ? 'multiline' : ''} ${messageValidation?.isOverLimit ? 'character-limit-exceeded' : ''}`}
         >
           <Tooltip id="attach-image" content={t`attach image`} place="top" showOnTouch={false}>
             <div {...getRootProps()}>
@@ -596,8 +627,8 @@ export const MessageComposer = forwardRef<
 
           <Button
             type="unstyled"
-            onClick={onSubmitMessage}
-            className="message-composer-send-btn"
+            onClick={messageValidation?.isOverLimit ? undefined : onSubmitMessage}
+            className={`message-composer-send-btn ${messageValidation?.isOverLimit ? 'disabled' : ''}`}
           />
         </FlexRow>
       </div>
