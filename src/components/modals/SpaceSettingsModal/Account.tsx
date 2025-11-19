@@ -16,6 +16,7 @@ import { useSpaceOwner } from '../../../hooks/queries/spaceOwner/useSpaceOwner';
 import { useSpaceLeaving } from '../../../hooks/business/spaces/useSpaceLeaving';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
 import { useUserRoleDisplay } from '../../../hooks/business/user/useUserRoleDisplay';
+import { useDisplayNameValidation } from '../../../hooks/business/validation';
 import { Role } from '../../../api/quorumApi';
 import type { NotificationTypeId } from '../../../types/notifications';
 
@@ -81,6 +82,9 @@ const Account: React.FunctionComponent<AccountProps> = ({
   // Get current user's roles (including private roles since user is viewing their own account)
   const { userRoles } = useUserRoleDisplay(userInfo?.address || '', roles, true);
 
+  // Proper display name validation (replaces basic hasValidationError)
+  const displayNameValidation = useDisplayNameValidation(displayName);
+
   return (
     <>
       <div className="modal-content-header">
@@ -138,10 +142,8 @@ const Account: React.FunctionComponent<AccountProps> = ({
               onChange={setDisplayName}
               placeholder={t`Display Name`}
               labelType="static"
-              error={hasValidationError}
-              errorMessage={
-                hasValidationError ? t`Display name is required` : undefined
-              }
+              error={!!displayNameValidation.error}
+              errorMessage={displayNameValidation.error}
             />
           </div>
         </div>

@@ -8,6 +8,7 @@ import { useMessageDB } from '../../../components/context/useMessageDB';
 import { useQueryClient } from '@tanstack/react-query';
 import { buildSpaceMembersKey } from '../../queries';
 import { showError } from '../../../utils/toast';
+import { useDisplayNameValidation } from '../validation';
 
 export interface UseSpaceProfileOptions {
   spaceId: string;
@@ -47,7 +48,10 @@ export const useSpaceProfile = (
   const [avatarFileError, setAvatarFileError] = useState<string | null>(null);
   const [isAvatarUploading, setIsAvatarUploading] = useState<boolean>(false);
   const [isSaving, setIsSaving] = useState<boolean>(false);
-  const [hasValidationError, setHasValidationError] = useState<boolean>(false);
+
+  // Use proper display name validation (replaces basic validation)
+  const displayNameValidation = useDisplayNameValidation(displayName);
+  const hasValidationError = !!displayNameValidation.error;
 
   // Load current member data
   useEffect(() => {
@@ -128,10 +132,7 @@ export const useSpaceProfile = (
     }
   }, [currentFile]);
 
-  // Display name validation
-  useEffect(() => {
-    setHasValidationError(!displayName.trim());
-  }, [displayName]);
+  // Display name validation is now handled by useDisplayNameValidation hook above
 
   const clearFileError = useCallback(() => {
     setAvatarFileError(null);
@@ -159,8 +160,7 @@ export const useSpaceProfile = (
   }, [fileData, currentFile, currentMember, currentPasskeyInfo]);
 
   const onSave = useCallback(async () => {
-    if (!currentPasskeyInfo || !displayName.trim()) {
-      setHasValidationError(true);
+    if (!currentPasskeyInfo || displayNameValidation.error) {
       return;
     }
 
@@ -226,6 +226,7 @@ export const useSpaceProfile = (
     submitChannelMessage,
     queryClient,
     onSaveCallback,
+    displayNameValidation.error,
   ]);
 
   return {

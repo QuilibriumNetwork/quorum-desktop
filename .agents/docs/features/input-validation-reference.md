@@ -13,7 +13,7 @@ This document provides a quick reference for all input and textarea validations 
 | Input Type | Limit | Threshold Display | Constant | Files |
 |------------|-------|------------------|----------|-------|
 | **Message Content** | 2500 chars | 80% (2000 chars) | `MAX_MESSAGE_LENGTH` | `validation.ts:47`<br>`useMessageValidation.ts`<br>`MessageComposer.tsx`<br>`MessageComposer.native.tsx` |
-| **Display Names** | 40 chars | N/A | `MAX_NAME_LENGTH` | `validation.ts:35`<br>`useDisplayNameValidation.ts`<br>Onboarding & Settings modals |
+| **Display Names** | 40 chars | N/A | `MAX_NAME_LENGTH` | `validation.ts:35`<br>`useDisplayNameValidation.ts`<br>Onboarding, User Settings & Space Settings modals |
 | **Space Names** | 40 chars | N/A | `MAX_NAME_LENGTH` | `validation.ts:35`<br>`useSpaceNameValidation.ts`<br>`CreateSpaceModal.tsx` |
 | **Topics/Descriptions** | 80 chars | N/A | `MAX_TOPIC_LENGTH` | `validation.ts:41`<br>Channel & Space settings |
 | **Mention Display Names** | 200 chars | N/A | Hardcoded | `MessageMarkdownRenderer.tsx:203` |
@@ -67,8 +67,8 @@ src/hooks/business/validation/
 - **UX**: Unified error display (counter | separator | error messages)
 
 #### User Settings & Onboarding
-- **Files**: `Onboarding.tsx`, `UserSettingsModal.tsx`, `useOnboardingFlowLogic.ts`
-- **Validations**: Display name XSS + length (40 chars)
+- **Files**: `Onboarding.tsx`, `UserSettingsModal.tsx`, `SpaceSettingsModal/Account.tsx`, `useOnboardingFlowLogic.ts`, `useSpaceProfile.ts`
+- **Validations**: Display name XSS + length (40 chars), reserved name validation ("everyone")
 - **UX**: Real-time validation with error messages
 
 #### Space Management
@@ -141,6 +141,16 @@ const isValidName = validateNameForXSS(name) && name.length <= MAX_NAME_LENGTH;
 const isValidAddress = isValidIPFSCID(address);
 ```
 
+## Recent Updates
+
+### 2025-11-19: Space Settings Modal Validation Fix
+- **Issue**: SpaceSettingsModal Account.tsx was missing proper display name validation
+- **Fix**: Added `useDisplayNameValidation` hook to both Account.tsx component and useSpaceProfile.ts hook
+- **Impact**: Now includes XSS protection, 40-character limit, and reserved name ("everyone") validation
+- **Files Modified**:
+  - `src/components/modals/SpaceSettingsModal/Account.tsx`: Added proper validation hook usage
+  - `src/hooks/business/spaces/useSpaceProfile.ts`: Updated to use `useDisplayNameValidation` instead of basic empty check
+
 ## Testing Scenarios
 
 ### Character Limits
@@ -171,4 +181,4 @@ const isValidAddress = isValidIPFSCID(address);
 ---
 
 _Created: 2025-11-19_
-_Last Updated: 2025-11-19_
+_Last Updated: 2025-11-19 (Added Space Settings Modal validation fix)_
