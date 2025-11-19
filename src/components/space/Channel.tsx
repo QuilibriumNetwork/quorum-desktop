@@ -481,10 +481,16 @@ const Channel: React.FC<ChannelProps> = ({
     return userRolesData.map((r) => r.roleId);
   }, [space, user.currentPasskeyInfo?.address]);
 
-  // Extract channels for channel mentions
+  // Extract channels for channel mentions (flat array for other components)
   const spaceChannels = React.useMemo(() => {
     if (!space) return [];
     return space.groups.flatMap(g => g.channels);
+  }, [space]);
+
+  // Extract groups for grouped channel mentions in MessageComposer
+  const spaceGroups = React.useMemo(() => {
+    if (!space) return [];
+    return space.groups || [];
   }, [space]);
 
   // Handle channel navigation for channel mentions
@@ -1030,7 +1036,7 @@ const Channel: React.FC<ChannelProps> = ({
                 inReplyTo={composer.inReplyTo}
                 users={Object.values(members)}
                 roles={roles?.filter(role => role.isPublic !== false)}
-                channels={spaceChannels}
+                groups={spaceGroups}
                 fileError={composer.fileError}
                 isProcessingImage={composer.isProcessingImage}
                 mapSenderToUser={mapSenderToUser}

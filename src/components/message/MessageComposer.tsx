@@ -5,7 +5,7 @@ import { i18n } from '@lingui/core';
 import { Buffer } from 'buffer';
 import type { AttachmentProcessingResult } from '../../utils/imageProcessing';
 import { useMentionInput, type MentionOption } from '../../hooks/business/mentions';
-import type { Channel } from '../../api/quorumApi';
+import type { Channel, Group } from '../../api/quorumApi';
 import { truncateAddress } from '../../utils';
 import { DefaultImages } from '../../utils';
 import { useResponsiveLayout } from '../../hooks/useResponsiveLayout';
@@ -81,7 +81,7 @@ interface MessageComposerProps {
   // Mention support
   users?: User[];
   roles?: Role[];
-  channels?: Channel[];
+  groups?: Group[]; // Changed from channels to groups for grouped channel mentions
   canUseEveryone?: boolean;
 }
 
@@ -122,7 +122,7 @@ export const MessageComposer = forwardRef<
       disabledMessage,
       users = [],
       roles = [],
-      channels = [],
+      groups = [],
       canUseEveryone = false,
     },
     ref
@@ -202,13 +202,13 @@ export const MessageComposer = forwardRef<
       [value, onChange]
     );
 
-    // Use mention input hook (now supports roles and @everyone)
+    // Use mention input hook (now supports roles and grouped channels)
     const mentionInput = useMentionInput({
       textValue: value,
       cursorPosition,
       users,
       roles,
-      channels,
+      groups,
       canUseEveryone,
       onMentionSelect: handleMentionSelect,
     });
@@ -463,17 +463,38 @@ export const MessageComposer = forwardRef<
             <div className="message-composer-mention-container">
               {mentionInput.filteredOptions.map((option, index) => (
                 <div
-                  key={option.type === 'user' ? option.data.address : option.type === 'role' ? option.data.roleId : option.type === 'channel' ? option.data.channelId : 'everyone'}
-                  className={`message-composer-mention-item ${
-                    index === mentionInput.selectedIndex ? 'selected' : ''
+                  key={option.type === 'user' ? option.data.address :
+                       option.type === 'role' ? option.data.roleId :
+                       option.type === 'channel' ? option.data.channelId :
+                       option.type === 'group-header' ? `group-${option.data.groupName}` :
+                       'everyone'}
+                  className={`${option.type === 'group-header' ? 'message-composer-group-header' : 'message-composer-mention-item'} ${
+                    option.type !== 'group-header' && index === mentionInput.selectedIndex ? 'selected' : ''
                   } ${
                     index === 0 ? 'first' : ''
                   } ${
                     index === mentionInput.filteredOptions.length - 1 ? 'last' : ''
-                  } ${option.type === 'role' ? 'role-item' : option.type === 'everyone' ? 'everyone-item' : option.type === 'channel' ? 'channel-item' : 'user-item'}`}
-                  onClick={() => mentionInput.selectOption(option)}
+                  } ${option.type === 'role' ? 'role-item' :
+                      option.type === 'everyone' ? 'everyone-item' :
+                      option.type === 'channel' ? 'channel-item' :
+                      option.type === 'group-header' ? 'group-item' : 'user-item'}`}
+                  onClick={() => option.type !== 'group-header' && mentionInput.selectOption(option)}
                 >
-                  {option.type === 'user' ? (
+                  {option.type === 'group-header' ? (
+                    <>
+                      {option.data.icon && (
+                        <div
+                          className="message-composer-group-icon"
+                          style={{ color: option.data.iconColor }}
+                        >
+                          <Icon name={option.data.icon as any} size="sm" />
+                        </div>
+                      )}
+                      <span className="message-composer-group-name">
+                        {option.data.groupName}
+                      </span>
+                    </>
+                  ) : option.type === 'user' ? (
                     <>
                       <UserAvatar
                         userIcon={option.data.userIcon}
@@ -510,15 +531,18 @@ export const MessageComposer = forwardRef<
                     </>
                   ) : option.type === 'channel' ? (
                     <>
-                      <div className="message-composer-channel-badge">
-                        <Icon name="hashtag" size="sm" />
+                      <div
+                        className="message-composer-channel-badge"
+                        style={option.data.icon && option.data.iconColor ? { color: option.data.iconColor } : undefined}
+                      >
+                        <Icon
+                          name={option.data.icon || "hashtag"}
+                          size="sm"
+                        />
                       </div>
                       <div className="message-composer-mention-info">
                         <span className="message-composer-mention-name">
-                          #{option.data.channelName}
-                        </span>
-                        <span className="message-composer-mention-address">
-                          {option.data.channelTopic || t`No topic`}
+                          {option.data.channelName}
                         </span>
                       </div>
                     </>

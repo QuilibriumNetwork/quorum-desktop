@@ -361,6 +361,10 @@ html:not(.dark) .message-composer-row {
   @media (min-width: $screen-sm) {
     width: 300px;
   }
+
+  @media (min-width: $screen-lg) {
+    width: 400px;
+  }
 }
 
 .message-composer-mention-container {
@@ -368,8 +372,12 @@ html:not(.dark) .message-composer-row {
   border: $border solid var(--color-border-default);
   border-radius: $rounded-lg;
   box-shadow: $shadow-lg;
-  max-height: $s-60; /* 240px - equivalent to max-h-60 */
+  max-height: 32rem; /* 320px - smaller height on small screens */
   overflow-y: auto;
+
+  @media (min-width: $screen-xs) {
+    max-height: 40rem; /* 640px - taller on larger screens */
+  }
 }
 
 .message-composer-mention-item {
@@ -388,7 +396,7 @@ html:not(.dark) .message-composer-row {
 }
 
 .message-composer-mention-item.selected {
-  background-color: var(--surface-3);
+  background-color: var(--color-field-option-bg-selected);
 }
 
 .message-composer-mention-item.first {
@@ -466,6 +474,43 @@ html:not(.dark) .message-composer-row {
   background: var(--accent);
   color: white;
   flex-shrink: 0;
+}
+
+/* Group header styles */
+.message-composer-group-header {
+  display: flex;
+  align-items: center;
+  gap: $s-2;
+  padding-left: $s-3;
+  padding-right: $s-3;
+  padding-top: $s-3;
+  padding-bottom: $s-1;
+  background-color: var(--surface-2);
+  font-weight: 600;
+  color: var(--color-text-subtle);
+  font-size: $text-xs;
+  text-transform: uppercase;
+  letter-spacing: $tracking-wide;
+  cursor: default;
+
+  &:first-child {
+    border-top-left-radius: $rounded-lg;
+    border-top-right-radius: $rounded-lg;
+  }
+}
+
+.message-composer-group-icon {
+  width: $s-4;
+  height: $s-4;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.message-composer-group-name {
+  font-weight: 600;
+  flex-grow: 1;
 }
 
 /* === CHARACTER LIMIT STYLES === */

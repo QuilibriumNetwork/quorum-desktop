@@ -31,7 +31,7 @@ msgid "No Role - {count}"
 msgstr "No Role - {count}"
 
 #. js-lingui-explicit-id
-#: src/components/space/Channel.tsx:1018
+#: src/components/space/Channel.tsx:1020
 msgid "Send a message to #{channel_name}"
 msgstr "Send a message to #{channel_name}"
 
@@ -46,13 +46,13 @@ msgid "{count} New Messages"
 msgstr "{count} New Messages"
 
 #. js-lingui-explicit-id
-#: src/components/message/MessageComposer.native.tsx:134
+#: src/components/message/MessageComposer.native.tsx:161
 msgid "Failed to process image"
 msgstr "Failed to process image"
 
 #. js-lingui-explicit-id
-#: src/components/message/MessageComposer.native.tsx:238
-#: src/components/message/MessageComposer.tsx:375
+#: src/components/message/MessageComposer.native.tsx:314
+#: src/components/message/MessageComposer.tsx:406
 msgid "Replying to {user}"
 msgstr "Replying to {user}"
 
@@ -84,8 +84,8 @@ msgstr "Send a message to {user}"
 msgid " for updates."
 msgstr " for updates."
 
-#: src/hooks/business/validation/useDisplayNameValidation.ts:15
-#: src/hooks/business/validation/useDisplayNameValidation.ts:37
+#: src/hooks/business/validation/useDisplayNameValidation.ts:18
+#: src/hooks/business/validation/useDisplayNameValidation.ts:43
 msgid "'everyone' is a reserved name."
 msgstr "'everyone' is a reserved name."
 
@@ -98,7 +98,7 @@ msgstr "(edited)"
 msgid "(empty)"
 msgstr "(empty)"
 
-#: src/components/message/MessagePreview.tsx:62
+#: src/components/message/MessagePreview.tsx:157
 msgid "[Empty message]"
 msgstr "[Empty message]"
 
@@ -114,8 +114,8 @@ msgstr "[Media]"
 msgid "[Message content not copyable]"
 msgstr "[Message content not copyable]"
 
-#: src/components/message/MessagePreview.tsx:65
-#: src/components/message/MessagePreview.tsx:214
+#: src/components/message/MessagePreview.tsx:160
+#: src/components/message/MessagePreview.tsx:237
 msgid "[Message]"
 msgstr "[Message]"
 
@@ -130,12 +130,12 @@ msgid "{0} devices marked for removal. Click \"Save Changes\" to confirm."
 msgstr "{0} devices marked for removal. Click \"Save Changes\" to confirm."
 
 #. placeholder {0}: allNotifications.length
-#: src/components/notifications/NotificationPanel.tsx:179
+#: src/components/notifications/NotificationPanel.tsx:184
 msgid "{0} notification"
 msgstr "{0} notification"
 
 #. placeholder {0}: allNotifications.length
-#: src/components/notifications/NotificationPanel.tsx:180
+#: src/components/notifications/NotificationPanel.tsx:185
 msgid "{0} notifications"
 msgstr "{0} notifications"
 
@@ -196,17 +196,17 @@ msgid "{size} TB"
 msgstr "{size} TB"
 
 #: src/components/modals/SpaceSettingsModal/Account.tsx:211
-#: src/components/notifications/NotificationPanel.tsx:83
+#: src/components/notifications/NotificationPanel.tsx:88
 msgid "@everyone"
 msgstr "@everyone"
 
 #: src/components/modals/SpaceSettingsModal/Account.tsx:216
-#: src/components/notifications/NotificationPanel.tsx:87
+#: src/components/notifications/NotificationPanel.tsx:92
 msgid "@roles"
 msgstr "@roles"
 
 #: src/components/modals/SpaceSettingsModal/Account.tsx:206
-#: src/components/notifications/NotificationPanel.tsx:79
+#: src/components/notifications/NotificationPanel.tsx:84
 msgid "@you"
 msgstr "@you"
 
@@ -243,7 +243,7 @@ msgstr "Account Settings"
 msgid "Add a Space"
 msgstr "Add a Space"
 
-#: src/components/modals/ChannelEditorModal.tsx:79
+#: src/components/modals/ChannelEditorModal.tsx:82
 msgid "Add Channel"
 msgstr "Add Channel"
 
@@ -251,7 +251,7 @@ msgstr "Add Channel"
 msgid "Add friend"
 msgstr "Add friend"
 
-#: src/components/modals/GroupEditorModal.tsx:58
+#: src/components/modals/GroupEditorModal.tsx:59
 #: src/components/space/ChannelList.tsx:143
 msgid "Add Group"
 msgstr "Add Group"
@@ -260,7 +260,7 @@ msgstr "Add Group"
 msgid "Add Role"
 msgstr "Add Role"
 
-#: src/components/message/MessageComposer.tsx:560
+#: src/components/message/MessageComposer.tsx:591
 msgid "add sticker"
 msgstr "add sticker"
 
@@ -334,7 +334,7 @@ msgstr "Animated sticker GIFs cannot be larger than 750KB. Please optimize your 
 msgid "Appearance"
 msgstr "Appearance"
 
-#: src/hooks/business/channels/useChannelManagement.ts:228
+#: src/hooks/business/channels/useChannelManagement.ts:241
 msgid "Are you sure you want to delete this channel? All messages will be lost. This action cannot be undone."
 msgstr "Are you sure you want to delete this channel? All messages will be lost. This action cannot be undone."
 
@@ -376,7 +376,7 @@ msgstr "Are you sure you want to unpin this message?"
 msgid "As a space owner, you need to assign yourself a role with delete permissions to delete other users' messages. <0><1>Learn more</1></0>"
 msgstr "As a space owner, you need to assign yourself a role with delete permissions to delete other users' messages. <0><1>Learn more</1></0>"
 
-#: src/components/message/MessageComposer.tsx:527
+#: src/components/message/MessageComposer.tsx:558
 msgid "attach image"
 msgstr "attach image"
 
@@ -410,7 +410,7 @@ msgstr "Camera permission is required to take photos"
 #: src/components/modals/ConfirmationModal.tsx:29
 #: src/components/modals/ConversationSettingsModal.tsx:63
 #: src/components/primitives/FileUpload/FileUpload.native.tsx:173
-#: src/hooks/business/channels/useChannelManagement.ts:234
+#: src/hooks/business/channels/useChannelManagement.ts:247
 #: src/hooks/business/messages/useMessageActions.ts:144
 #: src/hooks/business/messages/usePinnedMessages.ts:245
 #: src/hooks/business/spaces/useRoleManagement.ts:64
@@ -441,25 +441,50 @@ msgstr "Change your avatar and name for this Space"
 msgid "Changes are made automatically, but the active page may not be updated. Refresh the page to apply the new language."
 msgstr "Changes are made automatically, but the active page may not be updated. Refresh the page to apply the new language."
 
-#: src/components/modals/ChannelEditorModal.tsx:118
+#: src/components/modals/ChannelEditorModal.tsx:125
 msgid "Channel Icon"
 msgstr "Channel Icon"
 
-#: src/components/modals/ChannelEditorModal.tsx:156
+#: src/components/modals/ChannelEditorModal.tsx:163
 msgid "Channel Managers"
 msgstr "Channel Managers"
 
-#: src/components/space/Channel.tsx:1237
+#: src/components/space/Channel.tsx:1241
 msgid "Channel members"
 msgstr "Channel members"
 
-#: src/components/modals/ChannelEditorModal.tsx:96
+#: src/components/modals/ChannelEditorModal.tsx:99
 msgid "Channel Name"
 msgstr "Channel Name"
 
-#: src/components/modals/ChannelEditorModal.tsx:104
+#: src/hooks/business/validation/useChannelValidation.ts:18
+#: src/hooks/business/validation/useChannelValidation.ts:60
+msgid "Channel name cannot contain special characters"
+msgstr "Channel name cannot contain special characters"
+
+#: src/hooks/business/validation/useChannelValidation.ts:12
+#: src/hooks/business/validation/useChannelValidation.ts:54
+msgid "Channel name is required"
+msgstr "Channel name is required"
+
+#: src/hooks/business/validation/useChannelValidation.ts:15
+#: src/hooks/business/validation/useChannelValidation.ts:57
+msgid "Channel name must be {MAX_NAME_LENGTH} characters or less"
+msgstr "Channel name must be {MAX_NAME_LENGTH} characters or less"
+
+#: src/components/modals/ChannelEditorModal.tsx:109
 msgid "Channel Topic"
 msgstr "Channel Topic"
+
+#: src/hooks/business/validation/useChannelValidation.ts:38
+#: src/hooks/business/validation/useChannelValidation.ts:74
+msgid "Channel topic cannot contain special characters"
+msgstr "Channel topic cannot contain special characters"
+
+#: src/hooks/business/validation/useChannelValidation.ts:35
+#: src/hooks/business/validation/useChannelValidation.ts:71
+msgid "Channel topic must be {MAX_TOPIC_LENGTH} characters or less"
+msgstr "Channel topic must be {MAX_TOPIC_LENGTH} characters or less"
 
 #: src/components/Maintenance.native.tsx:52
 msgid "Check "
@@ -492,8 +517,8 @@ msgstr "Clear search"
 msgid "Clearing notifications with tag: {tag}"
 msgstr "Clearing notifications with tag: {tag}"
 
-#: src/components/modals/ChannelEditorModal.tsx:208
-#: src/components/modals/GroupEditorModal.tsx:126
+#: src/components/modals/ChannelEditorModal.tsx:215
+#: src/components/modals/GroupEditorModal.tsx:129
 #: src/components/modals/KickUserModal.tsx:86
 #: src/components/modals/LeaveSpaceModal.tsx:64
 #: src/components/modals/SpaceSettingsModal/Account.tsx:256
@@ -651,14 +676,14 @@ msgstr "delete"
 #: src/components/modals/ConversationSettingsModal.tsx:62
 #: src/components/modals/SpaceSettingsModal/Emojis.tsx:103
 #: src/components/modals/SpaceSettingsModal/Stickers.tsx:105
-#: src/hooks/business/channels/useChannelManagement.ts:233
+#: src/hooks/business/channels/useChannelManagement.ts:246
 #: src/hooks/business/messages/useMessageActions.ts:143
 #: src/hooks/business/spaces/useRoleManagement.ts:63
 msgid "Delete"
 msgstr "Delete"
 
-#: src/components/modals/ChannelEditorModal.tsx:207
-#: src/hooks/business/channels/useChannelManagement.ts:227
+#: src/components/modals/ChannelEditorModal.tsx:214
+#: src/hooks/business/channels/useChannelManagement.ts:240
 msgid "Delete Channel"
 msgstr "Delete Channel"
 
@@ -671,7 +696,7 @@ msgstr "Delete Conversation"
 #~ msgid "Delete Current Link"
 #~ msgstr "Delete Current Link"
 
-#: src/components/modals/GroupEditorModal.tsx:125
+#: src/components/modals/GroupEditorModal.tsx:128
 msgid "Delete Group"
 msgstr "Delete Group"
 
@@ -721,7 +746,7 @@ msgstr "Describe what this Space is about..."
 #~ msgid "Description"
 #~ msgstr "Description"
 
-#: src/hooks/business/validation/useSpaceNameValidation.ts:54
+#: src/hooks/business/validation/useSpaceNameValidation.ts:60
 msgid "Description cannot contain special characters"
 msgstr "Description cannot contain special characters"
 
@@ -733,7 +758,7 @@ msgstr "Description must be {MAX_DESCRIPTION_LENGTH} characters or less"
 #~ msgid "Description must be {maxDescriptionLength} characters or less"
 #~ msgstr "Description must be {maxDescriptionLength} characters or less"
 
-#: src/hooks/business/validation/useSpaceNameValidation.ts:58
+#: src/hooks/business/validation/useSpaceNameValidation.ts:64
 msgid "Description must be {maxLength} characters or less"
 msgstr "Description must be {maxLength} characters or less"
 
@@ -764,16 +789,21 @@ msgstr "Display name"
 msgid "Display Name"
 msgstr "Display Name"
 
-#: src/hooks/business/validation/useDisplayNameValidation.ts:18
-#: src/hooks/business/validation/useDisplayNameValidation.ts:40
+#: src/hooks/business/validation/useDisplayNameValidation.ts:21
+#: src/hooks/business/validation/useDisplayNameValidation.ts:46
 msgid "Display name cannot contain special characters"
 msgstr "Display name cannot contain special characters"
 
 #: src/components/modals/SpaceSettingsModal/Account.tsx:143
 #: src/hooks/business/validation/useDisplayNameValidation.ts:12
-#: src/hooks/business/validation/useDisplayNameValidation.ts:34
+#: src/hooks/business/validation/useDisplayNameValidation.ts:37
 msgid "Display name is required"
 msgstr "Display name is required"
+
+#: src/hooks/business/validation/useDisplayNameValidation.ts:15
+#: src/hooks/business/validation/useDisplayNameValidation.ts:40
+msgid "Display name must be {MAX_NAME_LENGTH} characters or less"
+msgstr "Display name must be {MAX_NAME_LENGTH} characters or less"
 
 #: src/components/ui/MobileDrawer.tsx:143
 msgid "Drawer"
@@ -789,11 +819,11 @@ msgstr "Drop your profile photo here"
 msgid "Edit {0}"
 msgstr "Edit {0}"
 
-#: src/components/modals/ChannelEditorModal.tsx:79
+#: src/components/modals/ChannelEditorModal.tsx:82
 msgid "Edit Channel"
 msgstr "Edit Channel"
 
-#: src/components/modals/GroupEditorModal.tsx:58
+#: src/components/modals/GroupEditorModal.tsx:59
 msgid "Edit Group"
 msgstr "Edit Group"
 
@@ -942,7 +972,7 @@ msgstr "File cannot be larger than {maxSize}"
 msgid "File cannot be larger than 25MB"
 msgstr "File cannot be larger than 25MB"
 
-#: src/hooks/business/messages/useMessageComposer.ts:77
+#: src/hooks/business/messages/useMessageComposer.ts:81
 msgid "File cannot be larger than 50MB"
 msgstr "File cannot be larger than 50MB"
 
@@ -950,7 +980,7 @@ msgstr "File cannot be larger than 50MB"
 msgid "File cannot be larger than 5MB"
 msgstr "File cannot be larger than 5MB"
 
-#: src/hooks/business/messages/useMessageComposer.ts:79
+#: src/hooks/business/messages/useMessageComposer.ts:83
 #: src/hooks/business/spaces/useSpaceProfile.ts:84
 #: src/hooks/business/ui/useCustomAssets.ts:105
 #: src/hooks/business/ui/useCustomAssets.ts:150
@@ -1032,13 +1062,28 @@ msgstr "Go to conversation"
 msgid "Go to Home"
 msgstr "Go to Home"
 
-#: src/components/modals/GroupEditorModal.tsx:83
+#: src/components/modals/GroupEditorModal.tsx:86
 msgid "Group Icon (optional)"
 msgstr "Group Icon (optional)"
 
-#: src/components/modals/GroupEditorModal.tsx:70
+#: src/components/modals/GroupEditorModal.tsx:71
 msgid "Group Name"
 msgstr "Group Name"
+
+#: src/hooks/business/validation/useGroupNameValidation.ts:18
+#: src/hooks/business/validation/useGroupNameValidation.ts:40
+msgid "Group name cannot contain special characters"
+msgstr "Group name cannot contain special characters"
+
+#: src/hooks/business/validation/useGroupNameValidation.ts:12
+#: src/hooks/business/validation/useGroupNameValidation.ts:34
+msgid "Group name is required"
+msgstr "Group name is required"
+
+#: src/hooks/business/validation/useGroupNameValidation.ts:15
+#: src/hooks/business/validation/useGroupNameValidation.ts:37
+msgid "Group name must be {MAX_NAME_LENGTH} characters or less"
+msgstr "Group name must be {MAX_NAME_LENGTH} characters or less"
 
 #: src/components/direct/EmptyDirectMessage.tsx:54
 msgid "hide home screen"
@@ -1240,7 +1285,7 @@ msgstr "Light"
 msgid "Loading message..."
 msgstr "Loading message..."
 
-#: src/components/notifications/NotificationPanel.tsx:153
+#: src/components/notifications/NotificationPanel.tsx:158
 msgid "Loading notifications..."
 msgstr "Loading notifications..."
 
@@ -1294,13 +1339,13 @@ msgstr "Manage your settings for this Space."
 msgid "Manual Backup Required"
 msgstr "Manual Backup Required"
 
-#: src/components/notifications/NotificationPanel.tsx:203
+#: src/components/notifications/NotificationPanel.tsx:208
 msgid "Mark all as read"
 msgstr "Mark all as read"
 
 #: src/components/direct/DirectMessage.tsx:657
-#: src/components/direct/DirectMessage.tsx:822
-#: src/components/space/Channel.tsx:884
+#: src/components/direct/DirectMessage.tsx:824
+#: src/components/space/Channel.tsx:886
 msgid "Members List"
 msgstr "Members List"
 
@@ -1321,15 +1366,15 @@ msgstr "Message deleted"
 msgid "Message does not have a valid signature, this may not be from the sender"
 msgstr "Message does not have a valid signature, this may not be from the sender"
 
-#: src/components/message/MessageComposer.tsx:134
+#: src/components/message/MessageComposer.tsx:148
 msgid "Message..."
 msgstr "Message..."
 
-#: src/components/message/MessageComposer.tsx:577
+#: src/components/message/MessageComposer.tsx:608
 msgid "Messages are NOT signed!"
 msgstr "Messages are NOT signed!"
 
-#: src/components/message/MessageComposer.tsx:578
+#: src/components/message/MessageComposer.tsx:609
 msgid "Messages are signed!"
 msgstr "Messages are signed!"
 
@@ -1365,7 +1410,7 @@ msgstr "No messages found"
 msgid "No pinned messages yet"
 msgstr "No pinned messages yet"
 
-#: src/components/message/MessageComposer.tsx:490
+#: src/components/message/MessageComposer.tsx:521
 msgid "No topic"
 msgstr "No topic"
 
@@ -1373,13 +1418,13 @@ msgstr "No topic"
 #~ msgid "No unread mentions"
 #~ msgstr "No unread mentions"
 
-#: src/components/notifications/NotificationPanel.tsx:161
+#: src/components/notifications/NotificationPanel.tsx:166
 msgid "No unread notifications"
 msgstr "No unread notifications"
 
 #: src/components/space/Channel.tsx:604
-#: src/components/space/Channel.tsx:1088
-#: src/components/space/Channel.tsx:1276
+#: src/components/space/Channel.tsx:1092
+#: src/components/space/Channel.tsx:1280
 msgid "No users found!"
 msgstr "No users found!"
 
@@ -1407,7 +1452,7 @@ msgstr "Notifications are blocked. Please enable them in your browser settings."
 msgid "Notifications are not supported in this browser"
 msgstr "Notifications are not supported in this browser"
 
-#: src/components/message/MessageComposer.tsx:504
+#: src/components/message/MessageComposer.tsx:535
 msgid "Notify all members"
 msgstr "Notify all members"
 
@@ -1499,7 +1544,7 @@ msgstr "pin"
 msgid "Pin"
 msgstr "Pin"
 
-#: src/components/modals/ChannelEditorModal.tsx:132
+#: src/components/modals/ChannelEditorModal.tsx:139
 msgid "Pin channel to top"
 msgstr "Pin channel to top"
 
@@ -1525,7 +1570,7 @@ msgstr "Pin Message"
 msgid "Pin Messages"
 msgstr "Pin Messages"
 
-#: src/components/modals/ChannelEditorModal.tsx:127
+#: src/components/modals/ChannelEditorModal.tsx:134
 msgid "Pin to top"
 msgstr "Pin to top"
 
@@ -1570,7 +1615,7 @@ msgstr "Privacy/Security"
 msgid "Private key saved to selected folder"
 msgstr "Private key saved to selected folder"
 
-#: src/components/message/MessageComposer.tsx:343
+#: src/components/message/MessageComposer.tsx:357
 msgid "Processing image... This may take a moment for large files."
 msgstr "Processing image... This may take a moment for large files."
 
@@ -1599,11 +1644,11 @@ msgstr "Quorum is peer-to-peer and end-to-end encrypted. This means your message
 msgid "Quorum was loaded while the browser was not in focus or a passkey request was rejected. Please reauthorize to access your messages."
 msgstr "Quorum was loaded while the browser was not in focus or a passkey request was rejected. Please reauthorize to access your messages."
 
-#: src/components/modals/ChannelEditorModal.tsx:141
+#: src/components/modals/ChannelEditorModal.tsx:148
 msgid "Read only"
 msgstr "Read only"
 
-#: src/components/modals/ChannelEditorModal.tsx:146
+#: src/components/modals/ChannelEditorModal.tsx:153
 msgid "Read only channel"
 msgstr "Read only channel"
 
@@ -1635,7 +1680,7 @@ msgid "Removing..."
 msgstr "Removing..."
 
 #: src/components/modals/SpaceSettingsModal/Account.tsx:222
-#: src/components/notifications/NotificationPanel.tsx:92
+#: src/components/notifications/NotificationPanel.tsx:97
 msgid "Replies"
 msgstr "Replies"
 
@@ -1667,8 +1712,8 @@ msgstr "Roles"
 msgid "Save"
 msgstr "Save"
 
-#: src/components/modals/ChannelEditorModal.tsx:189
-#: src/components/modals/GroupEditorModal.tsx:94
+#: src/components/modals/ChannelEditorModal.tsx:196
+#: src/components/modals/GroupEditorModal.tsx:97
 #: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:588
 #: src/components/modals/UserSettingsModal/UserSettingsModal.tsx:242
 #: src/components/user/UserProfileEdit.tsx:158
@@ -1704,8 +1749,8 @@ msgstr "Save User Key"
 msgid "saved config is out of date"
 msgstr "saved config is out of date"
 
-#: src/components/modals/ChannelEditorModal.tsx:89
-#: src/components/modals/GroupEditorModal.tsx:134
+#: src/components/modals/ChannelEditorModal.tsx:92
+#: src/components/modals/GroupEditorModal.tsx:137
 #: src/components/modals/ModalSaveOverlay.tsx:43
 msgid "Saving..."
 msgstr "Saving..."
@@ -1730,7 +1775,7 @@ msgid "Search in this Space..."
 msgstr "Search in this Space..."
 
 #: src/components/direct/DirectMessage.tsx:676
-#: src/components/space/Channel.tsx:903
+#: src/components/space/Channel.tsx:905
 msgid "Search Messages"
 msgstr "Search Messages"
 
@@ -1746,7 +1791,7 @@ msgstr "Search Results"
 msgid "Search username or address"
 msgstr "Search username or address"
 
-#: src/components/space/Channel.tsx:1248
+#: src/components/space/Channel.tsx:1252
 msgid "Search Username or Address"
 msgstr "Search Username or Address"
 
@@ -1767,7 +1812,7 @@ msgstr "Select"
 msgid "Select an option"
 msgstr "Select an option"
 
-#: src/components/modals/ChannelEditorModal.tsx:160
+#: src/components/modals/ChannelEditorModal.tsx:167
 msgid "Select any existing role as managers for this channel. Managers have post, delete, and pin permissions on ANY message by default. If no managers are selected, only the Space owner can manage the channel."
 msgstr "Select any existing role as managers for this channel. Managers have post, delete, and pin permissions on ANY message by default. If no managers are selected, only the Space owner can manage the channel."
 
@@ -1796,7 +1841,7 @@ msgstr "Select permissions"
 msgid "Select Profile Image"
 msgstr "Select Profile Image"
 
-#: src/components/modals/ChannelEditorModal.tsx:179
+#: src/components/modals/ChannelEditorModal.tsx:186
 msgid "Select Roles"
 msgstr "Select Roles"
 
@@ -1871,15 +1916,20 @@ msgstr "Space name"
 #~ msgid "Space Name"
 #~ msgstr "Space Name"
 
-#: src/hooks/business/validation/useSpaceNameValidation.ts:15
-#: src/hooks/business/validation/useSpaceNameValidation.ts:34
+#: src/hooks/business/validation/useSpaceNameValidation.ts:18
+#: src/hooks/business/validation/useSpaceNameValidation.ts:40
 msgid "Space name cannot contain special characters"
 msgstr "Space name cannot contain special characters"
 
 #: src/hooks/business/validation/useSpaceNameValidation.ts:12
-#: src/hooks/business/validation/useSpaceNameValidation.ts:31
+#: src/hooks/business/validation/useSpaceNameValidation.ts:34
 msgid "Space name is required"
 msgstr "Space name is required"
+
+#: src/hooks/business/validation/useSpaceNameValidation.ts:15
+#: src/hooks/business/validation/useSpaceNameValidation.ts:37
+msgid "Space name must be {MAX_NAME_LENGTH} characters or less"
+msgstr "Space name must be {MAX_NAME_LENGTH} characters or less"
 
 #: src/components/modals/SpaceSettingsModal/Navigation.tsx:38
 #: src/components/space/ChannelList.tsx:118
@@ -2011,7 +2061,7 @@ msgstr "Today at {timeFormatted}"
 msgid "Too many files selected. Please select fewer files."
 msgstr "Too many files selected. Please select fewer files."
 
-#: src/hooks/business/messages/useMessageComposer.ts:129
+#: src/hooks/business/messages/useMessageComposer.ts:133
 msgid "Too many mentions in message. Maximum {MAX_MENTIONS_PER_MESSAGE} allowed."
 msgstr "Too many mentions in message. Maximum {MAX_MENTIONS_PER_MESSAGE} allowed."
 
@@ -2067,7 +2117,7 @@ msgstr "Unknown"
 msgid "Unknown Space"
 msgstr "Unknown Space"
 
-#: src/components/message/MessagePreview.tsx:58
+#: src/components/message/MessagePreview.tsx:153
 msgid "Unknown time"
 msgstr "Unknown time"
 
@@ -2079,19 +2129,19 @@ msgstr "Unknown time"
 #: src/components/direct/DirectMessage.tsx:162
 #: src/components/direct/DirectMessage.tsx:177
 #: src/components/direct/DirectMessage.tsx:524
-#: src/components/message/MessageComposer.tsx:449
-#: src/components/message/MessageComposer.tsx:456
+#: src/components/message/MessageComposer.tsx:480
+#: src/components/message/MessageComposer.tsx:487
 #: src/components/message/MessageEditTextarea.tsx:225
 #: src/components/message/MessageEditTextarea.tsx:260
 #: src/components/message/MessageEditTextarea.tsx:267
 #: src/components/message/MessageEditTextarea.tsx:271
 #: src/components/message/MessageEditTextarea.tsx:277
-#: src/components/message/MessagePreview.tsx:52
+#: src/components/message/MessagePreview.tsx:147
 #: src/components/message/PinnedMessagesPanel.tsx:75
 #: src/components/modals/ConversationSettingsModal.tsx:104
 #: src/components/modals/NewDirectMessageModal.tsx:66
-#: src/components/notifications/NotificationPanel.tsx:236
-#: src/components/notifications/NotificationPanel.tsx:253
+#: src/components/notifications/NotificationPanel.tsx:241
+#: src/components/notifications/NotificationPanel.tsx:260
 #: src/hooks/business/channels/useChannelMessages.ts:144
 #: src/hooks/business/conversations/useDirectMessageData.ts:57
 #: src/hooks/business/conversations/useDirectMessageData.ts:75
@@ -2184,7 +2234,7 @@ msgid "User does not exist."
 msgstr "User does not exist."
 
 #: src/components/space/Channel.tsx:591
-#: src/components/space/Channel.tsx:1074
+#: src/components/space/Channel.tsx:1078
 msgid "Username or Address"
 msgstr "Username or Address"
 
@@ -2284,12 +2334,12 @@ msgstr "You can change this later for this conversation by clicking the lock ico
 msgid "You can manage your Space mention notifications in each Space's settings."
 msgstr "You can manage your Space mention notifications in each Space's settings."
 
-#: src/components/modals/GroupEditorModal.tsx:113
+#: src/components/modals/GroupEditorModal.tsx:116
 msgid "You cannot delete a group that contains channels. Delete all {channelCount} channels in this group first."
 msgstr "You cannot delete a group that contains channels. Delete all {channelCount} channels in this group first."
 
-#: src/components/message/MessageComposer.tsx:322
-#: src/components/space/Channel.tsx:1042
+#: src/components/message/MessageComposer.tsx:336
+#: src/components/space/Channel.tsx:1044
 msgid "You cannot post in this channel"
 msgstr "You cannot post in this channel"
 
@@ -2310,7 +2360,7 @@ msgstr "You have new unread messages"
 msgid "You won't be able to rejoin unless you are re-invited. Your existing messages will NOT be deleted."
 msgstr "You won't be able to rejoin unless you are re-invited. Your existing messages will NOT be deleted."
 
-#: src/components/notifications/NotificationPanel.tsx:163
+#: src/components/notifications/NotificationPanel.tsx:168
 msgid "You're all caught up!"
 msgstr "You're all caught up!"
 

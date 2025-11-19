@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
-import type { Channel } from '../../../api/quorumApi';
+import type { Channel, Group } from '../../../api/quorumApi';
 
 interface User {
   address: string;
@@ -19,14 +19,15 @@ export type MentionOption =
   | { type: 'user'; data: User }
   | { type: 'role'; data: Role }
   | { type: 'channel'; data: Channel }
-  | { type: 'everyone' };
+  | { type: 'everyone' }
+  | { type: 'group-header'; data: { groupName: string; icon?: string; iconColor?: string } };
 
 interface UseMentionInputOptions {
   textValue: string;
   cursorPosition: number;
   users: User[];
   roles?: Role[]; // NEW - optional roles for autocomplete
-  channels?: Channel[]; // NEW - optional channels for autocomplete
+  groups?: Group[]; // NEW - channel groups for autocomplete (replaces flat channels)
   canUseEveryone?: boolean; // NEW - permission to use @everyone
   onMentionSelect: (option: MentionOption, mentionStart: number, mentionEnd: number) => void;
   debounceMs?: number;
@@ -51,7 +52,7 @@ export function useMentionInput({
   cursorPosition,
   users,
   roles,
-  channels,
+  groups,
   canUseEveryone = false,
   onMentionSelect,
   debounceMs = 100,
@@ -139,41 +140,76 @@ export function useMentionInput({
     [roles, minQueryLength, maxDisplayResults]
   );
 
-  // NEW: Filter and rank channels based on query
-  const filterChannels = useCallback(
-    (query: string): Channel[] => {
-      // For channels, show immediately when # is typed (no minimum query length)
-      if (!query || !channels) return channels?.slice(0, 25) || [];
+  // NEW: Filter channels by groups based on query
+  const filterChannelGroups = useCallback(
+    (query: string): MentionOption[] => {
+      if (!groups) return [];
 
       const queryLower = query.toLowerCase();
+      const result: MentionOption[] = [];
+      let totalChannels = 0;
 
-      // Filter channels whose channelName matches the query
-      const matches = channels.filter(channel => {
-        const name = channel.channelName.toLowerCase();
-        return name.includes(queryLower);
-      });
+      // Process each group
+      for (const group of groups) {
+        // Filter channels in this group that match the query
+        const matchingChannels = group.channels.filter(channel => {
+          if (!query) return true; // Show all channels when no query
+          const name = channel.channelName.toLowerCase();
+          return name.includes(queryLower);
+        });
 
-      // Sort by relevance: exact match > starts with > contains
-      const sortedMatches = matches.sort((a, b) => {
-        const aName = a.channelName.toLowerCase();
-        const bName = b.channelName.toLowerCase();
+        if (matchingChannels.length > 0) {
+          // Sort channels within the group by relevance
+          const sortedChannels = matchingChannels.sort((a, b) => {
+            if (!query) {
+              // No query: sort by pinned first, then creation date
+              if (a.isPinned && !b.isPinned) return -1;
+              if (!a.isPinned && b.isPinned) return 1;
+              if (a.isPinned && b.isPinned) {
+                return (b.pinnedAt || 0) - (a.pinnedAt || 0);
+              }
+              return (a.createdDate || 0) - (b.createdDate || 0);
+            } else {
+              // With query: sort by relevance
+              const aName = a.channelName.toLowerCase();
+              const bName = b.channelName.toLowerCase();
 
-        // Exact match gets highest priority
-        if (aName === queryLower && bName !== queryLower) return -1;
-        if (bName === queryLower && aName !== queryLower) return 1;
+              if (aName === queryLower && bName !== queryLower) return -1;
+              if (bName === queryLower && aName !== queryLower) return 1;
+              if (aName.startsWith(queryLower) && !bName.startsWith(queryLower)) return -1;
+              if (bName.startsWith(queryLower) && !aName.startsWith(queryLower)) return 1;
 
-        // Starts with gets second priority
-        if (aName.startsWith(queryLower) && !bName.startsWith(queryLower)) return -1;
-        if (bName.startsWith(queryLower) && !aName.startsWith(queryLower)) return 1;
+              return aName.localeCompare(bName);
+            }
+          });
 
-        // Then alphabetical order
-        return aName.localeCompare(bName);
-      });
+          // Add group header
+          result.push({
+            type: 'group-header',
+            data: {
+              groupName: group.groupName,
+              icon: group.icon,
+              iconColor: group.iconColor,
+            },
+          });
 
-      // Limit to 25 results for channels
-      return sortedMatches.slice(0, 25);
+          // Add channels from this group
+          for (const channel of sortedChannels) {
+            if (totalChannels >= 25) break; // Limit total channels
+            result.push({
+              type: 'channel',
+              data: channel,
+            });
+            totalChannels++;
+          }
+        }
+
+        if (totalChannels >= 25) break; // Stop if we've reached the limit
+      }
+
+      return result;
     },
-    [channels]
+    [groups]
   );
 
   // Check if @everyone matches the query
@@ -192,29 +228,31 @@ export function useMentionInput({
 
   // Filter function - combines users, roles, channels, and @everyone
   const filterMentions = useCallback((query: string, mentionType: '@' | '#' = '@') => {
+    let options: MentionOption[];
+
     if (mentionType === '#') {
-      // Channel mentions: only show channels
-      const filteredChannels = filterChannels(query);
-      const combined: MentionOption[] = [
-        ...filteredChannels.map(c => ({ type: 'channel' as const, data: c })),
-      ];
-      setFilteredOptions(combined);
+      // Channel mentions: show grouped channels
+      options = filterChannelGroups(query);
+      setFilteredOptions(options);
     } else {
       // User/role mentions: show users, roles, and @everyone
       const filteredUsers = filterUsers(query);
       const filteredRoles = filterRoles(query);
       const everyoneMatches = checkEveryoneMatch(query);
 
-      const combined: MentionOption[] = [
+      options = [
         // Put @everyone first if it matches (most prominent)
         ...(everyoneMatches ? [{ type: 'everyone' as const }] : []),
         ...filteredUsers.map(u => ({ type: 'user' as const, data: u })),
         ...filteredRoles.map(r => ({ type: 'role' as const, data: r })),
       ];
-      setFilteredOptions(combined);
+      setFilteredOptions(options);
     }
-    setSelectedIndex(0);
-  }, [filterUsers, filterRoles, filterChannels, checkEveryoneMatch]);
+
+    // Find first selectable index (skip group headers)
+    const firstSelectableIndex = options.findIndex(option => option.type !== 'group-header');
+    setSelectedIndex(Math.max(0, firstSelectableIndex));
+  }, [filterUsers, filterRoles, filterChannelGroups, checkEveryoneMatch]);
 
   // Detect @ and # mentions and extract query
   useEffect(() => {
@@ -273,33 +311,47 @@ export function useMentionInput({
     }
   }, [textValue, cursorPosition, filterMentions, debounceMs]);
 
-  // Handle keyboard navigation
+  // Handle keyboard navigation (skip group headers)
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent): boolean => {
       if (!showDropdown || filteredOptions.length === 0) {
         return false;
       }
 
+      // Helper function to find next selectable index
+      const findNextSelectableIndex = (currentIndex: number, direction: 'up' | 'down'): number => {
+        let nextIndex = currentIndex;
+        const step = direction === 'down' ? 1 : -1;
+
+        do {
+          nextIndex += step;
+          if (nextIndex >= filteredOptions.length) nextIndex = 0;
+          if (nextIndex < 0) nextIndex = filteredOptions.length - 1;
+        } while (
+          filteredOptions[nextIndex]?.type === 'group-header' &&
+          nextIndex !== currentIndex
+        );
+
+        return nextIndex;
+      };
+
       switch (e.key) {
         case 'ArrowDown':
           e.preventDefault();
-          setSelectedIndex(prev =>
-            prev < filteredOptions.length - 1 ? prev + 1 : 0
-          );
+          setSelectedIndex(prev => findNextSelectableIndex(prev, 'down'));
           return true;
 
         case 'ArrowUp':
           e.preventDefault();
-          setSelectedIndex(prev =>
-            prev > 0 ? prev - 1 : filteredOptions.length - 1
-          );
+          setSelectedIndex(prev => findNextSelectableIndex(prev, 'up'));
           return true;
 
         case 'Enter':
         case 'Tab':
           e.preventDefault();
-          if (filteredOptions[selectedIndex]) {
-            selectOption(filteredOptions[selectedIndex]);
+          const selectedOption = filteredOptions[selectedIndex];
+          if (selectedOption && selectedOption.type !== 'group-header') {
+            selectOption(selectedOption);
           }
           return true;
 
@@ -315,11 +367,14 @@ export function useMentionInput({
     [showDropdown, filteredOptions, selectedIndex]
   );
 
-  // Select an option (user or role) from the dropdown
+  // Select an option (user, role, or channel) from the dropdown
   const selectOption = useCallback(
     (option: MentionOption) => {
+      // Only allow selection of actionable items (not group headers)
+      if (option.type === 'group-header') return;
+
       if (mentionStart !== -1) {
-        const mentionEnd = mentionStart + mentionQuery.length + 1; // +1 for @
+        const mentionEnd = mentionStart + mentionQuery.length + 1; // +1 for @ or #
         onMentionSelect(option, mentionStart, mentionEnd);
         dismissDropdown();
       }
