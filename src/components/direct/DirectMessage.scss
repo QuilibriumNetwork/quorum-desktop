@@ -1,5 +1,6 @@
 @use '../../styles/chat';
 @use '@/styles/variables' as *;
+@use '@/styles/base' as *;
 
 .direct-message-name {
   font-weight: $font-bold;
@@ -84,10 +85,10 @@
 .message-reply-text {
   padding-left: $s-2;
   font-size: $text-sm;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  width: 40%;
-  overflow-x: hidden;
+  @extend .truncate-base;
+  flex: 1;
+  min-width: 0;
+  /* Smart truncation - parent .message-reply-heading has flex layout */
 }
 
 /* DirectMessage header username truncation now handled by centralized .truncate-user-name-chat class in _base.scss */

@@ -623,7 +623,7 @@ const Channel: React.FC<ChannelProps> = ({
               {section.members.map((member) => (
                 <div
                   key={member.address}
-                  className="w-full flex flex-row items-center mb-2 px-3 cursor-pointer hover:bg-surface-2 rounded-md py-1 transition-colors duration-150"
+                  className="w-full flex flex-row items-center mb-2 px-3 cursor-pointer hover:bg-surface-2 rounded-md py-1 transition-colors duration-150 min-w-0"
                   onClick={(event) =>
                     userProfileModal.handleUserClick(
                       {
@@ -640,9 +640,9 @@ const Channel: React.FC<ChannelProps> = ({
                     displayName={member.displayName}
                     address={member.address}
                     size={30}
-                    className="opacity-80"
+                    className="opacity-80 flex-shrink-0"
                   />
-                  <div className="flex flex-col ml-2 text-subtle">
+                  <div className="flex flex-col ml-2 text-subtle min-w-0 flex-1">
                     <span className="text-md font-bold truncate-user-name">
                       {member.displayName}
                     </span>
@@ -1117,7 +1117,7 @@ const Channel: React.FC<ChannelProps> = ({
                     return (
                       <div className="px-4 pb-2">
                         <div
-                          className="w-full flex flex-row items-center cursor-pointer hover:bg-surface-2 rounded-md p-1 -m-1 transition-colors duration-150 group"
+                          className="w-full flex flex-row items-center cursor-pointer hover:bg-surface-2 rounded-md p-1 -m-1 transition-colors duration-150 group min-w-0"
                           onClick={(event) =>
                             userProfileModal.handleUserClick(
                               {
@@ -1134,9 +1134,9 @@ const Channel: React.FC<ChannelProps> = ({
                             displayName={item.displayName ?? item.address}
                             address={item.address}
                             size={30}
-                            className="opacity-80 group-hover:opacity-100 transition-opacity duration-150"
+                            className="opacity-80 group-hover:opacity-100 transition-opacity duration-150 flex-shrink-0"
                           />
-                          <div className="flex flex-col ml-2 text-subtle group-hover:text-main transition-colors duration-150">
+                          <div className="flex flex-col ml-2 text-subtle group-hover:text-main transition-colors duration-150 min-w-0 flex-1">
                             <span className="text-md font-bold truncate-user-name">
                               {item.displayName ?? item.address}
                             </span>
@@ -1315,7 +1315,7 @@ const Channel: React.FC<ChannelProps> = ({
                   {section.members.map((member) => (
                     <div
                       key={member.address}
-                      className="w-full flex flex-row items-center mb-2 px-4 cursor-pointer py-1"
+                      className="w-full flex flex-row items-center mb-2 px-4 cursor-pointer py-1 min-w-0"
                       onClick={(event) =>
                         userProfileModal.handleUserClick(
                           {
@@ -1332,9 +1332,9 @@ const Channel: React.FC<ChannelProps> = ({
                         displayName={member.displayName}
                         address={member.address}
                         size={30}
-                        className="opacity-80"
+                        className="opacity-80 flex-shrink-0"
                       />
-                      <div className="flex flex-col ml-2 text-subtle">
+                      <div className="flex flex-col ml-2 text-subtle min-w-0 flex-1">
                         <span className="text-md font-bold truncate-user-name">
                           {member.displayName}
                         </span>

@@ -123,14 +123,14 @@ export const NotificationItem: React.FC<NotificationItemProps> = ({
       onKeyDown={handleKeyDown}
     >
       <FlexBetween className="notification-header">
-        <FlexRow className="notification-meta">
-          <Icon name="hashtag" className="notification-channel-icon" />
-          <Text className="notification-channel mr-2 truncate-channel-name">{channelName}</Text>
-          <Icon name={notificationIcon} className="notification-mention-type-icon" />
-          <Text className="notification-sender truncate-user-name">{displayName}</Text>
+        <FlexRow className="notification-meta min-w-0">
+          <Icon name="hashtag" className="notification-channel-icon flex-shrink-0" />
+          <Text className="notification-channel mr-2 truncate-channel-name flex-shrink min-w-0">{channelName}</Text>
+          <Icon name={notificationIcon} className="notification-mention-type-icon flex-shrink-0" />
+          <Text className="notification-sender truncate-user-name flex-shrink min-w-0">{displayName}</Text>
         </FlexRow>
-        <FlexRow className="notification-meta">
-          <Icon name="calendar-alt" className="notification-date-icon" />
+        <FlexRow className="notification-meta flex-shrink-0 whitespace-nowrap">
+          <Icon name="calendar-alt" className="notification-date-icon flex-shrink-0" />
           <Text className="notification-date">{formattedDate}</Text>
         </FlexRow>
       </FlexBetween>

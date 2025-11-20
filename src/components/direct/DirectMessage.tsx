@@ -281,7 +281,7 @@ const DirectMessage: React.FC<{}> = () => {
     const sidebarContent = (
       <div className="flex flex-col">
         {Object.keys(members).map((s) => (
-          <div key={s} className="w-full flex flex-row items-center mb-2">
+          <div key={s} className="w-full flex flex-row items-center mb-2 min-w-0">
             <UserAvatar
               userIcon={members[s].userIcon}
               displayName={members[s].displayName ?? members[s].address}
@@ -289,14 +289,14 @@ const DirectMessage: React.FC<{}> = () => {
               size={36}
               className="flex-shrink-0"
             />
-            <div className="flex flex-col ml-2">
-              <span className="text-md font-bold truncate w-[190px] text-main/90">
+            <div className="flex flex-col ml-2 min-w-0 flex-1">
+              <span className="text-md font-bold truncate text-main/90">
                 {members[s].displayName ?? members[s].address}{' '}
                 {members[s].address === user.currentPasskeyInfo!.address && (
                   <span className="text-xs text-subtle">({t`You`})</span>
                 )}
               </span>
-              <span className="truncate w-[190px]">
+              <span className="truncate">
                 <ClickToCopyContent
                   text={members[s].address}
                   tooltipText={t`Copy address`}
@@ -614,8 +614,8 @@ const DirectMessage: React.FC<{}> = () => {
                     size={28}
                   />
                 </FlexColumn>
-                <div className="pl-2 flex items-center gap-2 truncate whitespace-nowrap overflow-hidden min-w-0">
-                  <Text className="font-semibold truncate-user-name-chat">
+                <div className="pl-2 flex items-center gap-2 overflow-hidden min-w-0">
+                  <Text className="font-semibold truncate-user-name-chat flex-shrink min-w-0">
                     {otherUser.displayName ?? otherUser.address}
                   </Text>
                   <Text className="text-subtle flex-shrink-0">|</Text>

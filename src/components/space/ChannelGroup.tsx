@@ -121,7 +121,7 @@ const ChannelGroup: React.FunctionComponent<{
                 title={`${props.group.groupName}`}
               />
             )}
-            <span className="truncate-group-name">{props.group.groupName}</span>
+            <span className="truncate-group-name flex-shrink min-w-0">{props.group.groupName}</span>
           </div>
         </div>
         {isSpaceOwner && (

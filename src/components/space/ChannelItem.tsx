@@ -95,7 +95,7 @@ const ChannelContent: React.FC<{
           )}
         </div>
         <span
-          className="truncate-channel-name"
+          className="truncate-channel-name flex-shrink min-w-0"
           title={channel.isPinned ? 'Pinned channel' : undefined}
         >
           {channel.channelName}

@@ -69,13 +69,13 @@ const PinnedMessageItem: React.FC<PinnedMessageItemProps> = ({
     >
       <Container className="result-header">
         <FlexBetween className="result-meta-container">
-          <FlexRow className="result-meta items-center">
-            <Icon name="user" className="result-user-icon" />
-            <Text className="result-sender mr-4 truncate-user-name">
+          <FlexRow className="result-meta items-center min-w-0">
+            <Icon name="user" className="result-user-icon flex-shrink-0" />
+            <Text className="result-sender mr-4 truncate-user-name flex-shrink min-w-0">
               {sender?.displayName || t`Unknown User`}
             </Text>
-            <Icon name="calendar-alt" className="result-date-icon" />
-            <Text className="result-date">
+            <Icon name="calendar-alt" className="result-date-icon flex-shrink-0" />
+            <Text className="result-date flex-shrink-0 whitespace-nowrap">
               {formatMessageDate(message.createdDate)}
             </Text>
           </FlexRow>

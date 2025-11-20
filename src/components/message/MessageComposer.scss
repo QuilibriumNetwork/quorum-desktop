@@ -1,5 +1,6 @@
 /* === MESSAGE COMPOSER STYLES === */
 @use '@/styles/variables' as *;
+@use '@/styles/base' as *;
 
 /* Auto-resizing textarea container */
 .message-composer-textarea-container {
@@ -428,17 +429,15 @@ html:not(.dark) .message-composer-row {
   font-size: $text-sm;
   font-weight: $font-medium;
   color: var(--color-text-main);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  @extend .truncate-base;
+  /* Smart truncation - parent .message-composer-mention-info has flex + min-width: 0 */
 }
 
 .message-composer-mention-address {
   font-size: $font-label-small;  // 14px mobile, 12px desktop - better readability on mobile
   color: var(--color-text-subtle);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  @extend .truncate-base;
+  /* Smart truncation - parent .message-composer-mention-info has flex + min-width: 0 */
 }
 
 /* NEW: Role mention styles */
@@ -458,9 +457,8 @@ html:not(.dark) .message-composer-row {
   font-size: $font-label-small;  // 14px mobile, 12px desktop - better readability on mobile
   color: var(--color-text-subtle);
   font-family: monospace;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  @extend .truncate-base;
+  /* Smart truncation - parent .message-composer-mention-info has flex + min-width: 0 */
 }
 
 /* NEW: @everyone mention styles */

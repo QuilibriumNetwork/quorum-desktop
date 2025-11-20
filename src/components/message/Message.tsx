@@ -597,7 +597,7 @@ export const Message = React.memo(
 
               {/* Desktop layout: horizontal row with username and timestamp */}
               <FlexRow align="center" className="items-center min-w-0 hidden xs:flex">
-                <Text className="message-sender-name truncate-user-name-chat">
+                <Text className="message-sender-name truncate-user-name-chat flex-shrink min-w-0">
                   {sender.displayName}
                 </Text>
                 {message.isPinned && (
@@ -636,7 +636,7 @@ export const Message = React.memo(
                     </Tooltip>
                   )}
                 </Text>
-                <FlexRow align="center" gap="xs">
+                <FlexRow align="center" gap="xs" className="flex-shrink-0 min-w-20 mr-4">
                   <Text className="message-timestamp">{displayedTimestmap}</Text>
                   {isEdited && (
                     <Text variant="subtle" size="xs">
@@ -649,7 +649,7 @@ export const Message = React.memo(
               {/* Mobile layout: vertical stack with timestamp above username */}
               <FlexColumn className="xs:hidden items-start">
                 {/* Timestamp row on mobile - aligned to left edge */}
-                <FlexRow align="center" gap="xs" className="mb-1">
+                <FlexRow align="center" gap="xs" className="mb-1 flex-shrink-0 min-w-20 mr-4">
                   <Text className="message-timestamp">{displayedTimestmap}</Text>
                   {isEdited && (
                     <Text variant="subtle" size="xs">
@@ -660,7 +660,7 @@ export const Message = React.memo(
 
                 {/* Username row on mobile */}
                 <FlexRow align="center" className="items-center min-w-0">
-                  <Text className="message-sender-name truncate-user-name-chat">
+                  <Text className="message-sender-name truncate-user-name-chat flex-shrink min-w-0">
                     {sender.displayName}
                   </Text>
                   {message.isPinned && (

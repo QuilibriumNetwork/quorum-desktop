@@ -245,10 +245,10 @@ export const MessagePreview: React.FC<MessagePreviewProps> = ({
       <FlexColumn gap="sm">
         {/* Message header */}
         {!hideHeader && (
-          <FlexRow align="center" className="dropdown-result-meta">
-            <Icon name="user" className="dropdown-result-user-icon" />
-            <Text className="dropdown-result-sender mr-4 truncate-user-name">{getDisplayName()}</Text>
-            <Icon name="calendar-alt" className="dropdown-result-date-icon" />
+          <FlexRow align="center" className="dropdown-result-meta min-w-0">
+            <Icon name="user" className="dropdown-result-user-icon flex-shrink-0" />
+            <Text className="dropdown-result-sender mr-4 truncate-user-name flex-shrink min-w-0">{getDisplayName()}</Text>
+            <Icon name="calendar-alt" className="dropdown-result-date-icon flex-shrink-0" />
             <Text className="dropdown-result-date">{formattedTimestamp}</Text>
           </FlexRow>
         )}

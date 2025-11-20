@@ -60,17 +60,17 @@ const DMSearchResultItem: React.FC<SearchResultItemProps> = ({
       onKeyDown={handleKeyDown}
     >
       <FlexBetween className="result-header">
-        <FlexRow className="result-meta">
+        <FlexRow className="result-meta min-w-0">
           {icon && (
             <Container
-              className="result-user-profile-image"
+              className="result-user-profile-image flex-shrink-0"
               style={{ backgroundImage: `url(${icon})` }}
             />
           )}
-          <Text className="result-channel mr-2 truncate-channel-name">{channelName}</Text>
+          <Text className="result-channel mr-2 truncate-channel-name flex-shrink min-w-0">{channelName}</Text>
         </FlexRow>
-        <FlexRow className="result-meta">
-          <Icon name="calendar-alt" className="result-date-icon" />
+        <FlexRow className="result-meta flex-shrink-0 whitespace-nowrap">
+          <Icon name="calendar-alt" className="result-date-icon flex-shrink-0" />
           <Text className="result-date">{formattedDate}</Text>
         </FlexRow>
       </FlexBetween>
@@ -130,14 +130,14 @@ const SpaceSearchResultItem: React.FC<SearchResultItemProps> = ({
       onKeyDown={handleKeyDown}
     >
       <FlexBetween className="result-header">
-        <FlexRow className="result-meta">
-          <Icon name={messageTypeIcon} className="result-type-icon" />
-          <Text className="result-channel mr-2 truncate-channel-name">{channelName}</Text>
-          <Icon name="user" className="result-user-icon" />
-          <Text className="result-sender truncate-user-name">{displayName}</Text>
+        <FlexRow className="result-meta min-w-0">
+          <Icon name={messageTypeIcon} className="result-type-icon flex-shrink-0" />
+          <Text className="result-channel mr-2 truncate-channel-name flex-shrink min-w-0">{channelName}</Text>
+          <Icon name="user" className="result-user-icon flex-shrink-0" />
+          <Text className="result-sender truncate-user-name flex-shrink min-w-0">{displayName}</Text>
         </FlexRow>
-        <FlexRow className="result-meta">
-          <Icon name="calendar-alt" className="result-date-icon" />
+        <FlexRow className="result-meta flex-shrink-0 whitespace-nowrap">
+          <Icon name="calendar-alt" className="result-date-icon flex-shrink-0" />
           <Text className="result-date">{formattedDate}</Text>
         </FlexRow>
       </FlexBetween>

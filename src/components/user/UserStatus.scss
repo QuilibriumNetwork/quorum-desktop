@@ -1,4 +1,5 @@
 @use '../../styles/variables' as *;
+@use '../../styles/base' as *;
 
 .user-status {
   height: 52px;
@@ -80,10 +81,9 @@
 
 .user-status-info {
   font-size: $s-2-5;
-  text-overflow: ellipsis;
-  width: 170px;
-  overflow: hidden;
-  white-space: nowrap;
+  @extend .truncate-base;
+  /* Smart truncation - responsive to actual container space */
+  /* Parent .user-status-text already has flex: 1 and min-width: 0 on desktop */
 }
 
 .user-status-menu {

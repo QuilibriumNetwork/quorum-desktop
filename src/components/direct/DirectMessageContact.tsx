@@ -97,7 +97,7 @@ const DirectMessageContact: React.FunctionComponent<{
             {props.timestamp && (
               <span
                 className={
-                  'text-xs flex-shrink-0 ' +
+                  'text-xs flex-shrink-0 min-w-15 whitespace-nowrap ' +
                   (address === props.address ? 'text-subtle' : 'text-muted')
                 }
               >

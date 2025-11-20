@@ -164,6 +164,7 @@ html:not(.dark) .chat-container {
   color: var(--surface-8);
   margin-left: $s-2;
   font-size: $text-sm;
+  /* Note: white-space and flex-shrink are now handled by Tailwind classes in JSX */
 }
 
 .message-post-content {

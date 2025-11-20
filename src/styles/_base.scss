@@ -184,74 +184,50 @@ html.dark .error-label {
 }
 
 /* === TEXT TRUNCATION SYSTEM === */
-/* Centralized, responsive, semantic truncation utilities */
+/*
+ * Smart, responsive text truncation system using flexbox containers.
+ *
+ * Key principles:
+ * - No fixed max-width values - truncation responds to actual container space
+ * - Uses flexbox with min-width: 0 to allow shrinking below content width
+ * - Semantic class names for different UI contexts (future customization)
+ * - Individual classes extend .truncate-base for maintainability
+ *
+ * Usage in JSX:
+ * - Parent container: Add 'min-w-0' class for proper flex behavior
+ * - Text elements: Use appropriate semantic truncation class
+ * - Priority control: Use 'flex-shrink-0', 'flex-shrink', 'flex-shrink-2'
+ */
 .truncate-base {
   overflow: hidden !important;
   text-overflow: ellipsis !important;
   white-space: nowrap !important;
-  flex-shrink: 1 !important; /* Allow shrinking in flex containers */
-  min-width: 0 !important; /* Required for flex children to shrink below content width */
+  flex-shrink: 1 !important;
+  min-width: 0 !important;
 }
 
-/* User display names - conservative sizing for dropdowns/compact layouts */
 .truncate-user-name {
   @extend .truncate-base;
-  max-width: $s-16 !important; // 64px mobile
-
-  @media (min-width: $screen-sm) {
-    max-width: $s-24 !important; // 96px small screens (640px+)
-  }
-
-  @media (min-width: $screen-lg) {
-    max-width: $s-36 !important; // 144px large screens (1024px+)
-  }
 }
 
-/* User display names in chat messages - generous sizing for message context */
 .truncate-user-name-chat {
   @extend .truncate-base;
-  max-width: 200px !important; // 200px mobile - same as original Message.scss
-
-  @media (min-width: $screen-sm) {
-    max-width: 300px !important; // 300px small screens (640px+)
-  }
-
-  @media (min-width: $screen-lg) {
-    max-width: 400px !important; // 400px large screens (1024px+) - original sizing
-  }
 }
 
-/* Channel names - consistent sizing across all screen sizes */
 .truncate-channel-name {
   @extend .truncate-base;
-  max-width: $s-48 !important; // 192px on all screen sizes
 }
 
-/* Group names - consistent sizing across all screen sizes */
 .truncate-group-name {
   @extend .truncate-base;
-  max-width: $s-48 !important; // 192px on all screen sizes
 }
 
-/* Space names - most generous sizing (top-level navigation) */
 .truncate-space-name {
   @extend .truncate-base;
-  max-width: $s-24 !important; // 96px mobile
-
-  @media (min-width: $screen-sm) {
-    max-width: $s-40 !important; // 160px small screens (640px+)
-  }
-
-  @media (min-width: $screen-lg) {
-    max-width: $s-60 !important; // 240px large screens (1024px+)
-  }
 }
 
-/* Channel descriptions - handled by flexbox with truncate-base + flex-shrink-2 */
 .truncate-channel-description {
   @extend .truncate-base;
-  /* No fixed max-width - flexbox handles responsive truncation */
-  /* Use flex-shrink-2 min-w-0 in JSX for proper flex behavior */
 }
 
 /* === CUSTOM SCROLLBARS === */
