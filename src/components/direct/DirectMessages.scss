@@ -83,3 +83,22 @@ html:not(.dark) .direct-messages-container-channels {
     border-top-left-radius: 0;
   }
 }
+
+/* === LEFT SIDEBAR BACKDROP POSITIONING === */
+/* Fix for mobile sidebar backdrop to account for NavMenu space */
+/* Prevents dark stripe by using proper navigation menu variables */
+.left-sidebar-backdrop {
+  @media (max-width: 1023px) {
+    left: $nav-header-width !important;
+
+    // Phone-specific positioning for smaller NavMenu
+    @media (max-width: 480px) {
+      left: $nav-header-width-mobile !important;
+    }
+
+    // When NavMenu is hidden, start from left edge
+    &.nav-menu-hidden {
+      left: 0 !important;
+    }
+  }
+}

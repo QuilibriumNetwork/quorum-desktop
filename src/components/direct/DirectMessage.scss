@@ -2,37 +2,10 @@
 @use '@/styles/variables' as *;
 @use '@/styles/base' as *;
 
-.direct-message-name {
-  font-weight: $font-bold;
-  font-size: $text-base;
-  border-bottom: $border solid var(--surface-5);
-  border-top-left-radius: 0; // Ensure no rounded corner
-
-  // Responsive layout for mobile/tablet
-  @media (max-width: 1023px) {
-    gap: $s-1-5;
-
-    // Ensure search bar + users icon are properly spaced on top
-    .dm-search {
-      flex: 1;
-    }
-  }
-}
-
-// Mobile layout - ensure chat container fills available space
-@media (max-width: 1023px) {
-  .chat-container {
-    position: relative;
-    overflow: hidden;
-    flex: 1 1 auto; // Expand to fill available space when sidebar is hidden
-    width: 100% !important;
-    max-width: 100% !important;
-    min-width: 0; // Allow shrinking
-  }
-
-  // Force full width for all chat content
-  .chat-container * {
-    max-width: 100%;
+// DirectMessage-specific search styles (extends shared .chat-header from _chat.scss)
+.chat-header {
+  .dm-search {
+    flex: 1;
   }
 }
 
@@ -78,6 +51,7 @@
 
 .message-reply-sender-name {
   padding-left: $s-1;
+  padding-right: $s-2; // Add right padding before reply text
   font-size: $text-sm;
   font-weight: $font-medium;
 }

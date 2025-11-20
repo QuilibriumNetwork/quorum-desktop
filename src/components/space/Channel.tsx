@@ -756,7 +756,7 @@ const Channel: React.FC<ChannelProps> = ({
         {/* Header - full width at top */}
         <div
           ref={headerRef}
-          className="channel-name border-b mt-[8px] pb-[8px] mx-[11px] lg:mx-4 text-main flex flex-wrap lg:flex-nowrap lg:justify-between lg:items-center"
+          className="chat-header border-b text-main flex flex-wrap lg:flex-nowrap lg:justify-between lg:items-center"
         >
           {/* First row on mobile: burger + controls / Single row on desktop */}
           <div className="w-full lg:w-auto flex items-center justify-between lg:contents">

@@ -25,12 +25,73 @@
     border-top-left-radius: $rounded-xl;
   }
 
+  // Phone layout - move to top, remove rounded border
+  @media (max-width: $screen-xs) {
+    border-top-left-radius: 0; // Remove rounded border on phones
+    margin-top: -14px; // Pull up to eliminate black stripe
+    padding-top: $s-2; // Maintain inner spacing
+    height: calc(100vh); // Full viewport height
+    @supports (height: 100dvh) {
+      height: calc(100dvh);
+    }
+
+    // Electron-specific adjustment for titlebar
+    .electron & {
+      margin-top: -38px; // Pull up for Electron (14px base + 24px titlebar)
+      padding-top: 38px;
+      height: calc(100vh);
+    }
+  }
+
   // Ensure the main flex child (chat content) takes full available space
   > .flex.flex-col {
     flex: 1;
     min-width: 0; // Allow shrinking
     min-height: 0; // Allow vertical shrinking so footer doesn't get pushed out
     width: 100%;
+  }
+}
+
+// Override Channel's specific rounded border rule for phones
+.space-container .chat-container {
+  @media (max-width: $screen-xs) {
+    border-top-left-radius: 0 !important; // Force remove rounded border on phones
+  }
+}
+
+// Shared header styles for Channel and DirectMessage
+.chat-header {
+  font-weight: $font-bold;
+  font-size: $text-base;
+  user-select: none;
+  border-bottom: $border solid var(--color-border-default);
+
+  // Spacing to match original: mt-[8px] pb-[8px] mx-[11px] lg:mx-4
+  margin-top: $s-2; // 8px (was mt-[8px])
+  padding-bottom: $s-2; // 8px (was pb-[8px])
+  margin-left: 11px; // 11px (was mx-[11px])
+  margin-right: 11px; // 11px (was mx-[11px])
+
+  // Desktop spacing
+  @media (min-width: 1024px) {
+    margin-left: $s-4; // 16px (was lg:mx-4)
+    margin-right: $s-4; // 16px (was lg:mx-4)
+  }
+
+  // Phone: move header down slightly as requested
+  @media (max-width: $screen-xs) {
+    margin-top: 0; // Remove top margin
+    padding-top: $s-3; // 12px - move header down slightly
+  }
+
+  // Responsive layout for mobile/tablet
+  @media (max-width: 1023px) {
+    gap: $s-1-5;
+
+    // Ensure search bar + users icon are properly spaced on top
+    .channel-search {
+      flex: 1;
+    }
   }
 }
 

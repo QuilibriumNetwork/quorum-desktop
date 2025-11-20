@@ -1,19 +1,10 @@
 @use '../../styles/variables' as *;
 @use '../../styles/chat';
 
-.channel-name {
-  font-weight: $font-bold;
-  font-size: $text-base;
-  user-select: none;
-
-  // Responsive layout for mobile/tablet
-  @media (max-width: 1023px) {
-    gap: $s-1-5;
-
-    // Ensure search bar + users icon are properly spaced on top
-    .channel-search {
-      flex: 1;
-    }
+// Channel-specific search styles (extends shared .chat-header from _chat.scss)
+.chat-header {
+  .channel-search {
+    flex: 1;
   }
 }
 
@@ -21,23 +12,10 @@
 // Scope to Channel component only to avoid affecting DirectMessage
 .space-container .chat-container {
   border-top-left-radius: 0;
-}
 
-// Mobile layout - ensure chat container fills available space
-@media (max-width: 1023px) {
-  .space-container .chat-container {
+  // Mobile: add rounded border (but will be overridden by _chat.scss for phones)
+  @media (max-width: 1023px) {
     border-top-left-radius: $rounded-xl;
-    position: relative;
-    overflow: hidden;
-    flex: 1 1 auto; // Expand to fill available space when sidebar is hidden
-    width: 100% !important;
-    max-width: 100% !important;
-    min-width: 0; // Allow shrinking
-  }
-
-  // Force full width for all chat content
-  .space-container .chat-container * {
-    max-width: 100%;
   }
 }
 

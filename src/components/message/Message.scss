@@ -110,10 +110,15 @@
 
 /* === RESPONSIVE IMAGES AND STICKERS === */
 .message-image {
-  max-width: min(300px, calc(100vw - 60px));
-  width: auto;
+  max-width: 300px; // Desktop: standard max width
+  width: 100%; // Take full width of available parent container
   height: auto;
   /* No max-height constraint - allow natural height based on aspect ratio */
+
+  // On narrow screens: ensure images never exceed container width
+  @media (max-width: $screen-xs) { // 480px and below
+    max-width: 100%; // Override 300px limit, use container width
+  }
 
   /* Add top margin below 640px to avoid 3-dots overlap */
   @media (max-width: 640px) {
@@ -122,11 +127,16 @@
 }
 
 .message-sticker {
-  max-width: min(300px, calc(100vw - 60px));
+  max-width: 300px; // Desktop: standard max width
   max-height: 600px;
-  width: auto;
+  width: 100%; // Take full width of available parent container
   height: auto;
   object-fit: contain; /* Ensure image fits within bounds while maintaining aspect ratio */
+
+  // On narrow screens: ensure stickers never exceed container width
+  @media (max-width: $screen-xs) { // 480px and below
+    max-width: 100%; // Override 300px limit, use container width
+  }
 
   /* Add top margin below 640px to avoid 3-dots overlap */
   @media (max-width: 640px) {

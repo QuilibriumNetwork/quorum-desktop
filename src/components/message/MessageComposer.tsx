@@ -400,18 +400,18 @@ export const MessageComposer = forwardRef<
             {inReplyTo && mapSenderToUser && setInReplyTo && (
               <div
                 onClick={() => setInReplyTo(undefined)}
-                className="message-composer-reply-bar"
+                className="message-composer-reply-bar flex items-center min-w-0"
               >
-                <span className="message-composer-reply-text">
-                  {i18n._('Replying to {user}', {
-                    user: mapSenderToUser(inReplyTo.content.senderId)
-                      .displayName,
-                  })}
+                <span className="message-composer-reply-text flex items-center min-w-0 flex-1">
+                  <span className="flex-shrink-0">{i18n._('Replying to')}</span>
+                  <span className="ml-1 truncate-user-name-chat">
+                    {mapSenderToUser(inReplyTo.content.senderId).displayName}
+                  </span>
                 </span>
                 <Icon
                   name="close"
                   size="sm"
-                  className="message-composer-reply-close"
+                  className="message-composer-reply-close flex-shrink-0 ml-2"
                   onClick={() => {
                     setInReplyTo(undefined);
                   }}

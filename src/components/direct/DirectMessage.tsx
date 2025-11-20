@@ -577,7 +577,7 @@ const DirectMessage: React.FC<{}> = () => {
         {/* Header - full width at top */}
         <Container
           ref={headerRef}
-          className="direct-message-name border-b mt-[8px] pb-[8px] mx-[11px] lg:mx-4 text-main flex flex-wrap lg:flex-nowrap lg:justify-between lg:items-center"
+          className="chat-header text-main flex flex-wrap lg:flex-nowrap lg:justify-between lg:items-center"
         >
           {/* First row on mobile: burger + controls / Single row on desktop */}
           <div className="w-full lg:w-auto flex items-center justify-between lg:contents">
@@ -618,12 +618,12 @@ const DirectMessage: React.FC<{}> = () => {
                   <Text className="font-semibold truncate-user-name-chat flex-shrink min-w-0">
                     {otherUser.displayName ?? otherUser.address}
                   </Text>
-                  <Text className="text-subtle flex-shrink-0">|</Text>
+                  <Text className="text-subtle flex-shrink-0 hidden xs:block">|</Text>
                   <ClickToCopyContent
                     text={address ?? ''}
                     tooltipText={t`Copy address`}
                     tooltipLocation="right"
-                    className="text-subtle flex-shrink-0"
+                    className="text-subtle flex-shrink-0 hidden xs:block"
                     iconPosition="right"
                     iconClassName="text-subtle hover:text-surface-7"
                     iconSize="xs"
@@ -707,16 +707,16 @@ const DirectMessage: React.FC<{}> = () => {
                   size={28}
                 />
               </FlexColumn>
-              <div className="pl-2 flex items-center gap-2 truncate whitespace-nowrap overflow-hidden min-w-0">
-                <Text className="font-semibold dm-header-username-responsive">
+              <div className="pl-2 flex items-center gap-2 overflow-hidden min-w-0">
+                <Text className="font-semibold truncate-user-name-chat">
                   {otherUser.displayName ?? otherUser.address}
                 </Text>
-                <Text className="text-subtle flex-shrink-0">|</Text>
+                <Text className="text-subtle flex-shrink-0 hidden xs:block">|</Text>
                 <ClickToCopyContent
                   text={address ?? ''}
                   tooltipText={t`Copy address`}
                   tooltipLocation="right"
-                  className="text-subtle flex-shrink-0"
+                  className="text-subtle flex-shrink-0 hidden xs:block"
                   iconPosition="right"
                   iconClassName="text-subtle hover:text-main"
                   iconSize="xs"

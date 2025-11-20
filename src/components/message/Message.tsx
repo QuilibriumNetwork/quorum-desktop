@@ -269,22 +269,25 @@ export const Message = React.memo(
         case 'join':
           return (
             <>
-              <Icon name="user-plus" size="sm" className="mr-2 text-subtle" />
-              {i18n._('{user} has joined', { user: userDisplayName })}
+              <Icon name="user-plus" size="sm" className="mr-2 text-subtle flex-shrink-0" />
+              <span className="truncate-user-name-chat">{userDisplayName}</span>
+              <span className="ml-1 flex-shrink-0">{i18n._('has joined')}</span>
             </>
           );
         case 'leave':
           return (
             <>
-              <Icon name="logout" size="sm" className="mr-2 text-subtle" />
-              {i18n._('{user} has left', { user: userDisplayName })}
+              <Icon name="logout" size="sm" className="mr-2 text-subtle flex-shrink-0" />
+              <span className="truncate-user-name-chat">{userDisplayName}</span>
+              <span className="ml-1 flex-shrink-0">{i18n._('has left')}</span>
             </>
           );
         case 'kick':
           return (
             <>
-              <Icon name="ban" size="sm" className="mr-2 text-danger" />
-              {i18n._('{user} has been kicked', { user: userDisplayName })}
+              <Icon name="ban" size="sm" className="mr-2 text-danger flex-shrink-0" />
+              <span className="truncate-user-name-chat">{userDisplayName}</span>
+              <span className="ml-1 flex-shrink-0">{i18n._('has been kicked')}</span>
             </>
           );
       }
@@ -403,7 +406,9 @@ export const Message = React.memo(
               return (
                 <Container
                   key={reply.messageId + 'rplyhd'}
-                  className="message-reply-heading  flex items-center"
+                  className={`message-reply-heading flex items-center min-w-0 ${
+                    isTouchDevice() ? 'pr-12' : ''
+                  }`}
                   onClick={() =>
                     virtuosoRef?.scrollToIndex({
                       index: replyIndex,
@@ -412,7 +417,7 @@ export const Message = React.memo(
                     })
                   }
                 >
-                  <Container className="message-reply-curve" />
+                  <Container className="message-reply-curve flex-shrink-0" />
                   <UserAvatar
                     userIcon={mapSenderToUser(reply.content.senderId).userIcon}
                     displayName={
@@ -420,12 +425,12 @@ export const Message = React.memo(
                     }
                     address={reply.content.senderId}
                     size={32}
-                    className="message-reply-sender-icon"
+                    className="message-reply-sender-icon flex-shrink-0"
                   />
-                  <Text className="message-reply-sender-name">
+                  <Text className="message-reply-sender-name flex-shrink-0 truncate-user-name-chat">
                     {mapSenderToUser(reply.content.senderId).displayName}
                   </Text>
-                  <Text className="message-reply-text">
+                  <Text className="message-reply-text flex-1 min-w-0">
                     {replyTextWithNames}
                   </Text>
                 </Container>
@@ -436,10 +441,10 @@ export const Message = React.memo(
           }
         })()}
         {['join', 'leave', 'kick'].includes(message.content.type) && (
-          <FlexRow className="px-4 py-2 italic items-center" align="center">
+          <FlexRow className="px-4 py-2 italic items-center min-w-0" align="center">
             <Text
               variant={message.content.type === 'kick' ? 'danger' : 'subtle'}
-              className="flex items-center"
+              className="flex items-center min-w-0 flex-1"
             >
               {formatEventMessage(sender.displayName, message.content.type)}
             </Text>

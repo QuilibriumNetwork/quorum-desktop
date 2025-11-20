@@ -44,12 +44,7 @@ const Space: React.FunctionComponent<SpaceProps> = (props) => {
       {/* Mobile backdrop overlay */}
       {(isMobile || isTablet) && leftSidebarOpen && (
         <div
-          className="fixed inset-y-0 right-0 bg-overlay z-[997]"
-          style={{
-            left: navMenuOpen
-              ? (window.innerWidth <= 480 ? '50px' : '74px')
-              : '0px'
-          }}
+          className={`fixed inset-y-0 right-0 bg-overlay z-[997] left-sidebar-backdrop ${!navMenuOpen ? 'nav-menu-hidden' : ''}`}
           onClick={closeLeftSidebar}
         />
       )}
