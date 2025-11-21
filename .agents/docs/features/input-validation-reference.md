@@ -58,6 +58,12 @@ Characters mapped to letters: `0→o`, `1→i`, `3→e`, `4→a`, `5→s`, `7→
 | `everyone loves me` | "everyone" not exact match |
 | `3very0ne` | No homoglyph check for "everyone" |
 
+#### Implementation Details
+The `isImpersonationName()` function uses THREE checks to catch all variations:
+1. **Original lowercase** with word boundaries → catches "admin123", "admin-team", "blah-administrator"
+2. **Homoglyph-normalized** with word boundaries → catches "adm1n", "@dmin", "supp0rt"
+3. **Starts/ends check** on normalized string → catches "m0derat0r123" where trailing digits become letters after normalization
+
 #### Implementation Files
 - `validation.ts`: `HOMOGLYPH_MAP`, `IMPERSONATION_NAMES`, `normalizeHomoglyphs()`, `isImpersonationName()`, `isEveryoneReserved()`, `getReservedNameType()`, `isReservedName()`
 - `useDisplayNameValidation.ts`: Uses `getReservedNameType()` for validation

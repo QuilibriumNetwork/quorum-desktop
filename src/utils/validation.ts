@@ -163,7 +163,7 @@ const hasReservedWordBoundary = (normalized: string, reserved: string): boolean 
 
 /**
  * Checks if a name matches any impersonation pattern.
- * Uses homoglyph normalization and word boundary detection.
+ * Uses BOTH original name (for word boundary) AND homoglyph-normalized (for lookalike detection).
  *
  * @param name - The name to check
  * @returns true if the name matches an impersonation pattern
@@ -172,12 +172,28 @@ const hasReservedWordBoundary = (normalized: string, reserved: string): boolean 
  * isImpersonationName("admin") // true
  * isImpersonationName("ADM1N") // true (homoglyph + case)
  * isImpersonationName("admin team") // true (word boundary)
+ * isImpersonationName("admin123") // true (word boundary with numbers)
  * isImpersonationName("sysadmin") // false (embedded)
  * isImpersonationName("supporting") // false (embedded)
  */
 export const isImpersonationName = (name: string): boolean => {
-  const normalized = normalizeHomoglyphs(name.trim());
-  return IMPERSONATION_NAMES.some((reserved) => hasReservedWordBoundary(normalized, reserved));
+  const trimmed = name.trim();
+  const lowercase = trimmed.toLowerCase();
+  const homoglyphNormalized = normalizeHomoglyphs(trimmed);
+
+  return IMPERSONATION_NAMES.some((reserved) => {
+    // Check 1: Original lowercase name with word boundaries (catches "admin123", "admin team")
+    const originalMatch = hasReservedWordBoundary(lowercase, reserved);
+    // Check 2: Homoglyph-normalized name with word boundaries (catches "adm1n", "@dmin")
+    const homoglyphMatch = hasReservedWordBoundary(homoglyphNormalized, reserved);
+    // Check 3: Homoglyph-normalized starts/ends with reserved word (catches "m0derat0r123")
+    // This handles cases where trailing digits become letters after normalization
+    const startsWithReserved = homoglyphNormalized.startsWith(reserved) &&
+      (homoglyphNormalized.length === reserved.length || !/^[a-z]$/.test(lowercase[reserved.length] || ''));
+    const endsWithReserved = homoglyphNormalized.endsWith(reserved) &&
+      (homoglyphNormalized.length === reserved.length || !/^[a-z]$/.test(lowercase[lowercase.length - reserved.length - 1] || ''));
+    return originalMatch || homoglyphMatch || startsWithReserved || endsWithReserved;
+  });
 };
 
 /**

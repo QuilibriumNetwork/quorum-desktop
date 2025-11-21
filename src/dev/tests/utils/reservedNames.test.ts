@@ -110,6 +110,27 @@ describe('Reserved Name Validation', () => {
         expect(isImpersonationName('supp0rt 24/7')).toBe(true);
         expect(isImpersonationName('m0derat0r123')).toBe(true);
       });
+
+      it('should block with hyphens and special separators', () => {
+        // Hyphens
+        expect(isImpersonationName('admin-blah')).toBe(true);
+        expect(isImpersonationName('blah-admin')).toBe(true);
+        expect(isImpersonationName('administrator-help')).toBe(true);
+        expect(isImpersonationName('help-administrator')).toBe(true);
+        expect(isImpersonationName('moderator-team')).toBe(true);
+        expect(isImpersonationName('team-moderator')).toBe(true);
+        expect(isImpersonationName('support-desk')).toBe(true);
+        expect(isImpersonationName('desk-support')).toBe(true);
+        // Underscores
+        expect(isImpersonationName('admin_official')).toBe(true);
+        expect(isImpersonationName('official_admin')).toBe(true);
+        // Dots
+        expect(isImpersonationName('admin.real')).toBe(true);
+        expect(isImpersonationName('real.admin')).toBe(true);
+        // Mixed separators
+        expect(isImpersonationName('the-admin-guy')).toBe(true);
+        expect(isImpersonationName('super_moderator_pro')).toBe(true);
+      });
     });
 
     describe('allowed embedded words', () => {
