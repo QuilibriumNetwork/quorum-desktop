@@ -31,7 +31,7 @@ msgid "No Role - {count}"
 msgstr "역할 없음 - {count}"
 
 #. js-lingui-explicit-id
-#: src/components/space/Channel.tsx:1020
+#: src/components/space/Channel.tsx:1026
 msgid "Send a message to #{channel_name}"
 msgstr "#{channel_name}에 메시지 보내기"
 
@@ -52,24 +52,28 @@ msgstr "이미지 처리에 실패했습니다"
 
 #. js-lingui-explicit-id
 #: src/components/message/MessageComposer.native.tsx:314
-#: src/components/message/MessageComposer.tsx:406
 msgid "Replying to {user}"
 msgstr "{user}에게 답장 중"
 
 #. js-lingui-explicit-id
-#: src/components/message/Message.tsx:273
-msgid "{user} has joined"
-msgstr "{user}가 참여했습니다."
+#: src/components/message/MessageComposer.tsx:406
+msgid "Replying to"
+msgstr "답글 중"
 
 #. js-lingui-explicit-id
-#: src/components/message/Message.tsx:280
-msgid "{user} has left"
-msgstr "{user}가 나갔습니다."
+#: src/components/message/Message.tsx:274
+msgid "has joined"
+msgstr "가입했습니다"
 
 #. js-lingui-explicit-id
-#: src/components/message/Message.tsx:287
-msgid "{user} has been kicked"
-msgstr "{user}가 퇴장당했습니다."
+#: src/components/message/Message.tsx:282
+msgid "has left"
+msgstr "퇴장했습니다"
+
+#. js-lingui-explicit-id
+#: src/components/message/Message.tsx:290
+msgid "has been kicked"
+msgstr "추방되었습니다"
 
 #. js-lingui-explicit-id
 #: src/components/direct/DirectMessage.tsx:783
@@ -85,11 +89,11 @@ msgstr "업데이트를 위해."
 
 #: src/hooks/business/validation/useDisplayNameValidation.ts:18
 #: src/hooks/business/validation/useDisplayNameValidation.ts:43
-msgid "'everyone' is a reserved name."
-msgstr "'everyone'는 예약된 이름입니다."
+#~ msgid "'everyone' is a reserved name."
+#~ msgstr "'everyone'는 예약된 이름입니다."
 
-#: src/components/message/Message.tsx:643
-#: src/components/message/Message.tsx:656
+#: src/components/message/Message.tsx:648
+#: src/components/message/Message.tsx:661
 msgid "(edited)"
 msgstr "(편집됨)"
 
@@ -190,6 +194,15 @@ msgstr "{size} MB"
 msgid "{size} TB"
 msgstr "{size} TB"
 
+#~ msgid "{user} has been kicked"
+#~ msgstr "{user}가 퇴장당했습니다."
+
+#~ msgid "{user} has joined"
+#~ msgstr "{user}가 참여했습니다."
+
+#~ msgid "{user} has left"
+#~ msgstr "{user}가 나갔습니다."
+
 #: src/components/modals/SpaceSettingsModal/Account.tsx:211
 #: src/components/notifications/NotificationPanel.tsx:88
 msgid "@everyone"
@@ -225,7 +238,7 @@ msgstr "계정"
 msgid "Account Address"
 msgstr "계정 주소"
 
-#: src/components/modals/SpaceSettingsModal/Account.tsx:89
+#: src/components/modals/SpaceSettingsModal/Account.tsx:91
 msgid "Account Settings"
 msgstr "계정 설정"
 
@@ -241,7 +254,7 @@ msgstr "공간 추가"
 msgid "Add Channel"
 msgstr "채널 추가"
 
-#: src/components/direct/DirectMessages.tsx:100
+#: src/components/direct/DirectMessages.tsx:95
 msgid "Add friend"
 msgstr "친구 추가"
 
@@ -254,7 +267,7 @@ msgstr "그룹 추가"
 msgid "Add Role"
 msgstr "역할 추가"
 
-#: src/components/message/MessageComposer.tsx:591
+#: src/components/message/MessageComposer.tsx:615
 msgid "add sticker"
 msgstr "스티커 추가"
 
@@ -369,7 +382,7 @@ msgstr "이 메시지의 고정을 해제하시겠습니까?"
 msgid "As a space owner, you need to assign yourself a role with delete permissions to delete other users' messages. <0><1>Learn more</1></0>"
 msgstr "공간 소유자는 다른 사용자의 메시지를 삭제하기 위해 삭제 권한이 있는 역할을 자신에게 할당해야 합니다. <0><1>자세히 알아보기</1></0>"
 
-#: src/components/message/MessageComposer.tsx:558
+#: src/components/message/MessageComposer.tsx:582
 msgid "attach image"
 msgstr "이미지 첨부"
 
@@ -422,7 +435,7 @@ msgstr "채널이 있는 공간은 삭제할 수 없습니다. 먼저 모든 채
 msgid "Cannot upload more than {0} files at once ({remaining} slots remaining)"
 msgstr "한 번에 {0}개 이상의 파일을 업로드할 수 없습니다 ({remaining} 슬롯 남음)"
 
-#: src/components/modals/SpaceSettingsModal/Account.tsx:101
+#: src/components/modals/SpaceSettingsModal/Account.tsx:103
 msgid "Change your avatar and name for this Space"
 msgstr "이 Space의 아바타와 이름을 변경하세요"
 
@@ -441,7 +454,7 @@ msgstr "채널 아이콘"
 msgid "Channel Managers"
 msgstr "채널 관리자"
 
-#: src/components/space/Channel.tsx:1241
+#: src/components/space/Channel.tsx:1247
 msgid "Channel members"
 msgstr "채널 멤버"
 
@@ -452,17 +465,17 @@ msgstr "채널 이름"
 #: src/hooks/business/validation/useChannelValidation.ts:18
 #: src/hooks/business/validation/useChannelValidation.ts:60
 msgid "Channel name cannot contain special characters"
-msgstr ""
+msgstr "채널 이름에는 특수 문자를 포함할 수 없습니다"
 
 #: src/hooks/business/validation/useChannelValidation.ts:12
 #: src/hooks/business/validation/useChannelValidation.ts:54
 msgid "Channel name is required"
-msgstr ""
+msgstr "채널 이름은 필수입니다"
 
 #: src/hooks/business/validation/useChannelValidation.ts:15
 #: src/hooks/business/validation/useChannelValidation.ts:57
 msgid "Channel name must be {MAX_NAME_LENGTH} characters or less"
-msgstr ""
+msgstr "채널 이름은 {MAX_NAME_LENGTH}자 이하이어야 합니다"
 
 #: src/components/modals/ChannelEditorModal.tsx:109
 msgid "Channel Topic"
@@ -471,12 +484,12 @@ msgstr "채널 주제"
 #: src/hooks/business/validation/useChannelValidation.ts:38
 #: src/hooks/business/validation/useChannelValidation.ts:74
 msgid "Channel topic cannot contain special characters"
-msgstr ""
+msgstr "채널 주제에는 특수 문자를 포함할 수 없습니다"
 
 #: src/hooks/business/validation/useChannelValidation.ts:35
 #: src/hooks/business/validation/useChannelValidation.ts:71
 msgid "Channel topic must be {MAX_TOPIC_LENGTH} characters or less"
-msgstr ""
+msgstr "채널 주제는 {MAX_TOPIC_LENGTH}자 이하이어야 합니다"
 
 #: src/components/Maintenance.native.tsx:52
 msgid "Check "
@@ -772,25 +785,24 @@ msgstr "다이렉트 메시지"
 msgid "Display name"
 msgstr "표시 이름"
 
-#: src/components/modals/SpaceSettingsModal/Account.tsx:139
+#: src/components/modals/SpaceSettingsModal/Account.tsx:141
 msgid "Display Name"
 msgstr "표시 이름"
 
-#: src/hooks/business/validation/useDisplayNameValidation.ts:21
-#: src/hooks/business/validation/useDisplayNameValidation.ts:46
+#: src/hooks/business/validation/useDisplayNameValidation.ts:29
+#: src/hooks/business/validation/useDisplayNameValidation.ts:58
 msgid "Display name cannot contain special characters"
 msgstr "표시 이름에는 특수 문자가 포함될 수 없습니다"
 
-#: src/components/modals/SpaceSettingsModal/Account.tsx:143
-#: src/hooks/business/validation/useDisplayNameValidation.ts:12
-#: src/hooks/business/validation/useDisplayNameValidation.ts:37
+#: src/hooks/business/validation/useDisplayNameValidation.ts:16
+#: src/hooks/business/validation/useDisplayNameValidation.ts:45
 msgid "Display name is required"
 msgstr "표시 이름은 필수입니다"
 
-#: src/hooks/business/validation/useDisplayNameValidation.ts:15
-#: src/hooks/business/validation/useDisplayNameValidation.ts:40
+#: src/hooks/business/validation/useDisplayNameValidation.ts:19
+#: src/hooks/business/validation/useDisplayNameValidation.ts:48
 msgid "Display name must be {MAX_NAME_LENGTH} characters or less"
-msgstr ""
+msgstr "표시 이름은 {MAX_NAME_LENGTH}자 이하이어야 합니다"
 
 #: src/components/ui/MobileDrawer.tsx:143
 msgid "Drawer"
@@ -917,7 +929,7 @@ msgstr "공간을 만들지 못했습니다. 다시 시도해 주세요."
 msgid "Failed to decrypt message with any known state"
 msgstr "알려진 상태로 메시지를 복호화하는 데 실패했습니다"
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:616
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:617
 msgid "Failed to generate invite link. Please try again."
 msgstr "초대 링크 생성에 실패했습니다. 다시 시도해 주세요."
 
@@ -941,7 +953,7 @@ msgstr "문서 선택에 실패했습니다"
 msgid "Failed to send invite. Please try again."
 msgstr "초대 전송에 실패했습니다. 다시 시도하십시오."
 
-#: src/hooks/business/spaces/useSpaceProfile.ts:215
+#: src/hooks/business/spaces/useSpaceProfile.ts:216
 msgid "Failed to update profile"
 msgstr "프로필 업데이트에 실패했습니다."
 
@@ -949,7 +961,7 @@ msgstr "프로필 업데이트에 실패했습니다."
 msgid "File cannot be larger than {maxSize}"
 msgstr "파일은 {maxSize}보다 클 수 없습니다"
 
-#: src/hooks/business/spaces/useSpaceProfile.ts:82
+#: src/hooks/business/spaces/useSpaceProfile.ts:87
 #: src/hooks/business/ui/useCustomAssets.ts:139
 #: src/hooks/business/ui/useFileUpload.ts:54
 #: src/hooks/business/ui/useSpaceFileUploads.ts:68
@@ -967,7 +979,7 @@ msgid "File cannot be larger than 5MB"
 msgstr "파일 크기는 5MB를 초과할 수 없습니다"
 
 #: src/hooks/business/messages/useMessageComposer.ts:83
-#: src/hooks/business/spaces/useSpaceProfile.ts:84
+#: src/hooks/business/spaces/useSpaceProfile.ts:89
 #: src/hooks/business/ui/useCustomAssets.ts:105
 #: src/hooks/business/ui/useCustomAssets.ts:150
 #: src/hooks/business/ui/useFileUpload.ts:56
@@ -995,7 +1007,7 @@ msgstr "파일 크기가 너무 작습니다. 최소 크기: {minSizeMB}"
 msgid "File validation failed. Please try again."
 msgstr "파일 검증에 실패했습니다. 다시 시도해 주세요."
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:442
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:443
 msgid "Fix"
 msgstr "수정"
 
@@ -1022,17 +1034,17 @@ msgstr "일반"
 msgid "General Chat"
 msgstr "일반 채팅"
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:607
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:608
 msgid "Generate Link"
 msgstr "링크 생성"
 
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:446
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:607
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:608
 msgid "Generate New Link"
 msgstr "새 링크 생성"
 
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:394
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:601
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:602
 msgid "Generate Public Invite Link"
 msgstr "공개 초대 링크 생성"
 
@@ -1059,17 +1071,17 @@ msgstr "그룹 이름"
 #: src/hooks/business/validation/useGroupNameValidation.ts:18
 #: src/hooks/business/validation/useGroupNameValidation.ts:40
 msgid "Group name cannot contain special characters"
-msgstr ""
+msgstr "그룹 이름에는 특수 문자를 포함할 수 없습니다"
 
 #: src/hooks/business/validation/useGroupNameValidation.ts:12
 #: src/hooks/business/validation/useGroupNameValidation.ts:34
 msgid "Group name is required"
-msgstr ""
+msgstr "그룹 이름은 필수입니다"
 
 #: src/hooks/business/validation/useGroupNameValidation.ts:15
 #: src/hooks/business/validation/useGroupNameValidation.ts:37
 msgid "Group name must be {MAX_NAME_LENGTH} characters or less"
-msgstr ""
+msgstr "그룹 이름은 {MAX_NAME_LENGTH}자 이하이어야 합니다"
 
 #: src/components/direct/EmptyDirectMessage.tsx:54
 msgid "hide home screen"
@@ -1317,7 +1329,7 @@ msgstr "장치 및 메시징과 동기화에 대한 개인 정보 조건을 관�
 msgid "Manage Inivte links and send invites to people you've previously had conversations with."
 msgstr "초대 링크 관리 및 이전에 대화한 사람에게 초대 보내기."
 
-#: src/components/modals/SpaceSettingsModal/Account.tsx:92
+#: src/components/modals/SpaceSettingsModal/Account.tsx:94
 msgid "Manage your settings for this Space."
 msgstr "이 Space에 대한 설정을 관리하세요."
 
@@ -1331,7 +1343,7 @@ msgstr "모두 읽음으로 표시"
 
 #: src/components/direct/DirectMessage.tsx:657
 #: src/components/direct/DirectMessage.tsx:824
-#: src/components/space/Channel.tsx:886
+#: src/components/space/Channel.tsx:892
 msgid "Members List"
 msgstr "회원 목록"
 
@@ -1347,8 +1359,8 @@ msgstr "메시지 작업"
 msgid "Message deleted"
 msgstr "메시지가 삭제되었습니다"
 
-#: src/components/message/Message.tsx:626
-#: src/components/message/Message.tsx:689
+#: src/components/message/Message.tsx:631
+#: src/components/message/Message.tsx:694
 msgid "Message does not have a valid signature, this may not be from the sender"
 msgstr "메시지에 유효한 서명이 없습니다. 이는 발신자가 아닐 수 있습니다."
 
@@ -1356,17 +1368,22 @@ msgstr "메시지에 유효한 서명이 없습니다. 이는 발신자가 아�
 msgid "Message..."
 msgstr "메시지..."
 
-#: src/components/message/MessageComposer.tsx:608
+#: src/components/message/MessageComposer.tsx:632
 msgid "Messages are NOT signed!"
 msgstr "메시지가 서명되지 않았습니다!"
 
-#: src/components/message/MessageComposer.tsx:609
+#: src/components/message/MessageComposer.tsx:633
 msgid "Messages are signed!"
 msgstr "메시지가 서명되었습니다!"
 
 #: src/components/message/MessageActions.tsx:86
 msgid "More reactions"
 msgstr "더 많은 반응"
+
+#: src/hooks/business/validation/useDisplayNameValidation.ts:26
+#: src/hooks/business/validation/useDisplayNameValidation.ts:55
+msgid "Names resembling admin, moderator, or support are reserved."
+msgstr ""
 
 #: src/components/modals/NewDirectMessageModal.tsx:83
 msgid "New Direct Message"
@@ -1396,9 +1413,8 @@ msgstr "메시지가 없습니다"
 msgid "No pinned messages yet"
 msgstr "아직 고정된 메시지가 없습니다"
 
-#: src/components/message/MessageComposer.tsx:521
-msgid "No topic"
-msgstr "주제 없음"
+#~ msgid "No topic"
+#~ msgstr "주제 없음"
 
 #~ msgid "No unread mentions"
 #~ msgstr "읽지 않은 멘션이 없습니다."
@@ -1407,9 +1423,9 @@ msgstr "주제 없음"
 msgid "No unread notifications"
 msgstr "읽지 않은 알림이 없습니다"
 
-#: src/components/space/Channel.tsx:604
-#: src/components/space/Channel.tsx:1092
-#: src/components/space/Channel.tsx:1280
+#: src/components/space/Channel.tsx:610
+#: src/components/space/Channel.tsx:1098
+#: src/components/space/Channel.tsx:1286
 msgid "No users found!"
 msgstr "사용자를 찾을 수 없습니다!"
 
@@ -1424,7 +1440,7 @@ msgstr "알림 권한이 부여되지 않음"
 #: src/components/modals/SpaceSettingsModal/Account.tsx:187
 #: src/components/modals/UserSettingsModal/Navigation.tsx:17
 #: src/components/modals/UserSettingsModal/Notifications.tsx:24
-#: src/components/space/Channel.tsx:854
+#: src/components/space/Channel.tsx:860
 msgid "Notifications"
 msgstr "알림"
 
@@ -1437,7 +1453,7 @@ msgstr "알림이 차단되었습니다. 이 사이트에 대해 브라우저 �
 msgid "Notifications are not supported in this browser"
 msgstr "이 브라우저에서는 알림이 지원되지 않습니다."
 
-#: src/components/message/MessageComposer.tsx:535
+#: src/components/message/MessageComposer.tsx:559
 msgid "Notify all members"
 msgstr "모든 구성원에게 알림"
 
@@ -1558,18 +1574,18 @@ msgstr "메시지 고정"
 msgid "Pin to top"
 msgstr "상단에 고정"
 
-#: src/components/message/Message.tsx:609
-#: src/components/message/Message.tsx:672
+#: src/components/message/Message.tsx:614
+#: src/components/message/Message.tsx:677
 msgid "Pinned"
 msgstr "고정됨"
 
 #. placeholder {0}: mapSenderToUser(message.pinnedBy)?.displayName || message.pinnedBy
-#: src/components/message/Message.tsx:608
-#: src/components/message/Message.tsx:671
+#: src/components/message/Message.tsx:613
+#: src/components/message/Message.tsx:676
 msgid "Pinned by {0}"
 msgstr "{0}에 의해 고정됨"
 
-#: src/components/space/Channel.tsx:815
+#: src/components/space/Channel.tsx:821
 msgid "Pinned Messages"
 msgstr "고정된 메시지"
 
@@ -1698,7 +1714,7 @@ msgstr "저장"
 
 #: src/components/modals/ChannelEditorModal.tsx:196
 #: src/components/modals/GroupEditorModal.tsx:97
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:588
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:589
 #: src/components/modals/UserSettingsModal/UserSettingsModal.tsx:242
 #: src/components/user/UserProfileEdit.tsx:158
 msgid "Save Changes"
@@ -1714,7 +1730,7 @@ msgstr "연락처 사진 저장"
 msgid "Save Edit History"
 msgstr "편집 기록 저장"
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:573
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:574
 #: src/components/modals/UserSettingsModal/UserSettingsModal.tsx:231
 msgid "Save Failed"
 msgstr "저장 실패"
@@ -1759,7 +1775,7 @@ msgid "Search in this Space..."
 msgstr "이 Space에서 검색..."
 
 #: src/components/direct/DirectMessage.tsx:676
-#: src/components/space/Channel.tsx:905
+#: src/components/space/Channel.tsx:911
 msgid "Search Messages"
 msgstr "메시지 검색"
 
@@ -1775,7 +1791,7 @@ msgstr "검색 결과"
 msgid "Search username or address"
 msgstr "사용자 이름 또는 주소 검색"
 
-#: src/components/space/Channel.tsx:1252
+#: src/components/space/Channel.tsx:1258
 msgid "Search Username or Address"
 msgstr "사용자 이름 또는 주소 검색"
 
@@ -1910,7 +1926,7 @@ msgstr "공간 이름은 필수입니다"
 #: src/hooks/business/validation/useSpaceNameValidation.ts:15
 #: src/hooks/business/validation/useSpaceNameValidation.ts:37
 msgid "Space name must be {MAX_NAME_LENGTH} characters or less"
-msgstr ""
+msgstr "Space 이름은 {MAX_NAME_LENGTH}자 이하이어야 합니다"
 
 #: src/components/modals/SpaceSettingsModal/Navigation.tsx:38
 #: src/components/space/ChannelList.tsx:118
@@ -1939,7 +1955,7 @@ msgstr "스티커"
 msgid "Successfully sent invite to {0}"
 msgstr "{0}에게 초대를 성공적으로 전송했습니다"
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:445
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:446
 msgid "Sync Kick Status"
 msgstr "킥 상태 동기화"
 
@@ -1998,6 +2014,11 @@ msgstr "이것은 당신의 공개 주소이며, 상호작용하고 싶은 누�
 msgid "This link will not expire, but you can generate a new one at any time, which will invalidate the old link."
 msgstr "이 링크는 만료되지 않지만, 언제든지 새 링크를 생성할 수 있으며, 이는 이전 링크를 무효화합니다."
 
+#: src/hooks/business/validation/useDisplayNameValidation.ts:23
+#: src/hooks/business/validation/useDisplayNameValidation.ts:52
+msgid "This name conflicts with @everyone mentions."
+msgstr ""
+
 #: src/components/modals/SpaceSettingsModal/Roles.tsx:58
 msgid "This protects your identity as the space owner. However, if you're the only one with this role, your identity becomes obvious. Consider having multiple users (real or fake accounts) with the same role for better privacy protection."
 msgstr "이것은 공간 소유자로서의 귀하의 신원을 보호합니다. 그러나 이 역할을 가진 유일한 사람이라면 귀하의 신원이 명백해집니다. 더 나은 개인 정보 보호를 위해 동일한 역할을 가진 여러 사용자(실제 또는 가짜 계정)를 두는 것을 고려하십시오."
@@ -2012,11 +2033,11 @@ msgstr "이 공개 초대 링크는 더 이상 유효하지 않습니다."
 msgid "This user is already a member of this space."
 msgstr "이 사용자는 이미 이 공간의 구성원입니다."
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:605
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:606
 msgid "This will create a public invite link that anyone can use to join your Space. Consider who you share this link with."
 msgstr "이 링크는 누구나 사용할 수 있는 공개 초대 링크를 생성합니다. 이 링크를 공유할 대상을 고려하세요."
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:604
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:605
 msgid "This will generate a new public invite link and invalidate the current one. Anyone with the old link will no longer be able to use it."
 msgstr "이 링크는 새로운 공개 초대 링크를 생성하고 현재 링크를 무효화합니다. 이전 링크를 가진 사람은 더 이상 사용할 수 없습니다."
 
@@ -2042,7 +2063,7 @@ msgstr "파일이 너무 많이 선택되었습니다. 더 적은 파일을 선�
 
 #: src/hooks/business/messages/useMessageComposer.ts:133
 msgid "Too many mentions in message. Maximum {MAX_MENTIONS_PER_MESSAGE} allowed."
-msgstr ""
+msgstr "메시지에 언급이 너무 많습니다. 최대 {MAX_MENTIONS_PER_MESSAGE}개가 허용됩니다."
 
 #: src/components/search/SearchResults.tsx:105
 msgid "Try different keywords or check your spelling"
@@ -2052,7 +2073,7 @@ msgstr "다른 키워드를 시도하거나 철자를 확인하세요."
 msgid "Unable to compress emoji images. Please use smaller images."
 msgstr "이모지 이미지를 압축할 수 없습니다. 더 작은 이미지를 사용하세요."
 
-#: src/hooks/business/spaces/useSpaceProfile.ts:123
+#: src/hooks/business/spaces/useSpaceProfile.ts:128
 #: src/hooks/business/ui/useFileUpload.ts:96
 #: src/hooks/business/ui/useSpaceFileUploads.ts:160
 #: src/hooks/business/ui/useSpaceFileUploads.ts:183
@@ -2108,8 +2129,8 @@ msgstr "알 수 없는 시간"
 #: src/components/direct/DirectMessage.tsx:162
 #: src/components/direct/DirectMessage.tsx:177
 #: src/components/direct/DirectMessage.tsx:524
-#: src/components/message/MessageComposer.tsx:480
-#: src/components/message/MessageComposer.tsx:487
+#: src/components/message/MessageComposer.tsx:501
+#: src/components/message/MessageComposer.tsx:508
 #: src/components/message/MessageEditTextarea.tsx:225
 #: src/components/message/MessageEditTextarea.tsx:260
 #: src/components/message/MessageEditTextarea.tsx:267
@@ -2171,11 +2192,11 @@ msgstr "고정 해제됨!"
 msgid "Until you reply, this sender will not see your display name or profile picture"
 msgstr "당신이 응답할 때까지, 이 발신자는 당신의 표시 이름이나 프로필 사진을 볼 수 없습니다."
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:445
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:446
 msgid "Update kick records for all members. Use this if kicked users still appear active to some members."
 msgstr "모든 구성원의 강제 퇴장 기록을 업데이트합니다. 퇴장한 사용자가 여전히 일부 구성원에게 활성 상태로 나타나는 경우 사용하세요."
 
-#: src/components/modals/SpaceSettingsModal/Account.tsx:128
+#: src/components/modals/SpaceSettingsModal/Account.tsx:130
 msgid "Upload an avatar for this Space - PNG or JPG - Optimal ratio 1:1"
 msgstr "이 공간의 아바타를 업로드하세요 - PNG 또는 JPG - 최적 비율 1:1"
 
@@ -2210,8 +2231,8 @@ msgstr "여기 사용자 주소"
 msgid "User does not exist."
 msgstr "사용자가 존재하지 않습니다."
 
-#: src/components/space/Channel.tsx:591
-#: src/components/space/Channel.tsx:1078
+#: src/components/space/Channel.tsx:597
+#: src/components/space/Channel.tsx:1084
 msgid "Username or Address"
 msgstr "사용자 이름 또는 주소"
 
@@ -2315,7 +2336,7 @@ msgid "You cannot delete a group that contains channels. Delete all {channelCoun
 msgstr "채널이 포함된 그룹을 삭제할 수 없습니다. 먼저 이 그룹의 모든 {channelCount} 채널을 삭제하세요."
 
 #: src/components/message/MessageComposer.tsx:336
-#: src/components/space/Channel.tsx:1044
+#: src/components/space/Channel.tsx:1050
 msgid "You cannot post in this channel"
 msgstr "이 채널에 게시할 수 없습니다."
 
@@ -2345,7 +2366,7 @@ msgstr "모두 잘 따라잡았습니다!"
 msgid "You're all set. Welcome to Quorum!"
 msgstr "모든 준비가 완료되었습니다. Quorum에 오신 것을 환영합니다!"
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:441
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:442
 msgid "You're not listed in this Space's members. Correcting this will add you to the Space Members list (stores your profile locally with your inbox address)."
 msgstr "이 공간의 구성원 목록에 없습니다. 이를 수정하면 귀하의 프로필이 귀하의 인박스 주소와 함께 로컬에 저장되어 공간 구성원 목록에 추가됩니다."
 
@@ -2354,7 +2375,7 @@ msgstr "이 공간의 구성원 목록에 없습니다. 이를 수정하면 귀�
 msgid "You've been invited to join a Space"
 msgstr "당신은 공간에 가입하라는 초대를 받았습니다."
 
-#: src/components/modals/SpaceSettingsModal/Account.tsx:98
+#: src/components/modals/SpaceSettingsModal/Account.tsx:100
 msgid "Your Details"
 msgstr "귀하의 세부정보"
 

@@ -31,7 +31,7 @@ msgid "No Role - {count}"
 msgstr "בלי תפקיד - {count}"
 
 #. js-lingui-explicit-id
-#: src/components/space/Channel.tsx:1020
+#: src/components/space/Channel.tsx:1026
 msgid "Send a message to #{channel_name}"
 msgstr "שלח הודעה ל-#{channel_name}"
 
@@ -52,24 +52,28 @@ msgstr "לא הצלחנו לעבד את התמונה"
 
 #. js-lingui-explicit-id
 #: src/components/message/MessageComposer.native.tsx:314
-#: src/components/message/MessageComposer.tsx:406
 msgid "Replying to {user}"
 msgstr "עונה ל-{user}"
 
 #. js-lingui-explicit-id
-#: src/components/message/Message.tsx:273
-msgid "{user} has joined"
-msgstr "{user} הצטרף"
+#: src/components/message/MessageComposer.tsx:406
+msgid "Replying to"
+msgstr "מגיב ל"
 
 #. js-lingui-explicit-id
-#: src/components/message/Message.tsx:280
-msgid "{user} has left"
-msgstr "{user} עזב"
+#: src/components/message/Message.tsx:274
+msgid "has joined"
+msgstr "הצטרף"
 
 #. js-lingui-explicit-id
-#: src/components/message/Message.tsx:287
-msgid "{user} has been kicked"
-msgstr "{user} הוקרן"
+#: src/components/message/Message.tsx:282
+msgid "has left"
+msgstr "עזב"
+
+#. js-lingui-explicit-id
+#: src/components/message/Message.tsx:290
+msgid "has been kicked"
+msgstr "הודח"
 
 #. js-lingui-explicit-id
 #: src/components/direct/DirectMessage.tsx:783
@@ -85,11 +89,11 @@ msgstr "עבור עדכונים."
 
 #: src/hooks/business/validation/useDisplayNameValidation.ts:18
 #: src/hooks/business/validation/useDisplayNameValidation.ts:43
-msgid "'everyone' is a reserved name."
-msgstr "'הכל' הוא שם שמור."
+#~ msgid "'everyone' is a reserved name."
+#~ msgstr "'הכל' הוא שם שמור."
 
-#: src/components/message/Message.tsx:643
-#: src/components/message/Message.tsx:656
+#: src/components/message/Message.tsx:648
+#: src/components/message/Message.tsx:661
 msgid "(edited)"
 msgstr "(נערך)"
 
@@ -190,6 +194,15 @@ msgstr "{size} מגה-בייט"
 msgid "{size} TB"
 msgstr "{size} טרה-בייט"
 
+#~ msgid "{user} has been kicked"
+#~ msgstr "{user} הוקרן"
+
+#~ msgid "{user} has joined"
+#~ msgstr "{user} הצטרף"
+
+#~ msgid "{user} has left"
+#~ msgstr "{user} עזב"
+
 #: src/components/modals/SpaceSettingsModal/Account.tsx:211
 #: src/components/notifications/NotificationPanel.tsx:88
 msgid "@everyone"
@@ -225,7 +238,7 @@ msgstr "חשבון"
 msgid "Account Address"
 msgstr "כתובת חשבון"
 
-#: src/components/modals/SpaceSettingsModal/Account.tsx:89
+#: src/components/modals/SpaceSettingsModal/Account.tsx:91
 msgid "Account Settings"
 msgstr "הגדרות חשבון"
 
@@ -241,7 +254,7 @@ msgstr "הוסף מרחב"
 msgid "Add Channel"
 msgstr "הוסף ערוץ"
 
-#: src/components/direct/DirectMessages.tsx:100
+#: src/components/direct/DirectMessages.tsx:95
 msgid "Add friend"
 msgstr "הוסף חבר"
 
@@ -254,7 +267,7 @@ msgstr "הוסף קבוצה"
 msgid "Add Role"
 msgstr "הוסף תפקיד"
 
-#: src/components/message/MessageComposer.tsx:591
+#: src/components/message/MessageComposer.tsx:615
 msgid "add sticker"
 msgstr "הוסף מדבקה"
 
@@ -369,7 +382,7 @@ msgstr "האם אתה בטוח שאתה רוצה לבטל את ההדבקה של
 msgid "As a space owner, you need to assign yourself a role with delete permissions to delete other users' messages. <0><1>Learn more</1></0>"
 msgstr "כמנהל של המרחב, עליך להעניק לעצמך תפקיד עם הרשאות מחיקה כדי למחוק הודעות של משתמשים אחרים. <0><1>למד עוד</1></0>"
 
-#: src/components/message/MessageComposer.tsx:558
+#: src/components/message/MessageComposer.tsx:582
 msgid "attach image"
 msgstr "הצמד תמונה"
 
@@ -422,7 +435,7 @@ msgstr "לא ניתן למחוק מרחב עם ערוצים. אנא מחק את 
 msgid "Cannot upload more than {0} files at once ({remaining} slots remaining)"
 msgstr "לא ניתן להעלות יותר מ-{0} קבצים בבת אחת ({remaining} מקומות פנויים)"
 
-#: src/components/modals/SpaceSettingsModal/Account.tsx:101
+#: src/components/modals/SpaceSettingsModal/Account.tsx:103
 msgid "Change your avatar and name for this Space"
 msgstr "שנה את התמונה והשם שלך עבור ה-Space הזה"
 
@@ -441,7 +454,7 @@ msgstr "אייקון ערוץ"
 msgid "Channel Managers"
 msgstr "מנהלי ערוץ"
 
-#: src/components/space/Channel.tsx:1241
+#: src/components/space/Channel.tsx:1247
 msgid "Channel members"
 msgstr "חברי ערוץ"
 
@@ -452,17 +465,17 @@ msgstr "שם ערוץ"
 #: src/hooks/business/validation/useChannelValidation.ts:18
 #: src/hooks/business/validation/useChannelValidation.ts:60
 msgid "Channel name cannot contain special characters"
-msgstr ""
+msgstr "שם הערוץ לא יכול להכיל תווים מיוחדים"
 
 #: src/hooks/business/validation/useChannelValidation.ts:12
 #: src/hooks/business/validation/useChannelValidation.ts:54
 msgid "Channel name is required"
-msgstr ""
+msgstr "שם הערוץ נדרש"
 
 #: src/hooks/business/validation/useChannelValidation.ts:15
 #: src/hooks/business/validation/useChannelValidation.ts:57
 msgid "Channel name must be {MAX_NAME_LENGTH} characters or less"
-msgstr ""
+msgstr "שם הערוץ חייב להיות באורך של {MAX_NAME_LENGTH} תווים או פחות"
 
 #: src/components/modals/ChannelEditorModal.tsx:109
 msgid "Channel Topic"
@@ -471,12 +484,12 @@ msgstr "נושא ערוץ"
 #: src/hooks/business/validation/useChannelValidation.ts:38
 #: src/hooks/business/validation/useChannelValidation.ts:74
 msgid "Channel topic cannot contain special characters"
-msgstr ""
+msgstr "נושא הערוץ לא יכול להכיל תווים מיוחדים"
 
 #: src/hooks/business/validation/useChannelValidation.ts:35
 #: src/hooks/business/validation/useChannelValidation.ts:71
 msgid "Channel topic must be {MAX_TOPIC_LENGTH} characters or less"
-msgstr ""
+msgstr "נושא הערוץ חייב להיות באורך של {MAX_TOPIC_LENGTH} תווים או פחות"
 
 #: src/components/Maintenance.native.tsx:52
 msgid "Check "
@@ -772,25 +785,24 @@ msgstr "הודעות ישירות"
 msgid "Display name"
 msgstr "שם תצוגה"
 
-#: src/components/modals/SpaceSettingsModal/Account.tsx:139
+#: src/components/modals/SpaceSettingsModal/Account.tsx:141
 msgid "Display Name"
 msgstr "שם תצוגה"
 
-#: src/hooks/business/validation/useDisplayNameValidation.ts:21
-#: src/hooks/business/validation/useDisplayNameValidation.ts:46
+#: src/hooks/business/validation/useDisplayNameValidation.ts:29
+#: src/hooks/business/validation/useDisplayNameValidation.ts:58
 msgid "Display name cannot contain special characters"
 msgstr "שם התצוגה לא יכול להכיל תווים מיוחדים"
 
-#: src/components/modals/SpaceSettingsModal/Account.tsx:143
-#: src/hooks/business/validation/useDisplayNameValidation.ts:12
-#: src/hooks/business/validation/useDisplayNameValidation.ts:37
+#: src/hooks/business/validation/useDisplayNameValidation.ts:16
+#: src/hooks/business/validation/useDisplayNameValidation.ts:45
 msgid "Display name is required"
 msgstr "שם תצוגה נדרש"
 
-#: src/hooks/business/validation/useDisplayNameValidation.ts:15
-#: src/hooks/business/validation/useDisplayNameValidation.ts:40
+#: src/hooks/business/validation/useDisplayNameValidation.ts:19
+#: src/hooks/business/validation/useDisplayNameValidation.ts:48
 msgid "Display name must be {MAX_NAME_LENGTH} characters or less"
-msgstr ""
+msgstr "שם התצוגה חייב להיות באורך של {MAX_NAME_LENGTH} תווים או פחות"
 
 #: src/components/ui/MobileDrawer.tsx:143
 msgid "Drawer"
@@ -917,7 +929,7 @@ msgstr "נכשל ביצירת Space. אנא נסה שוב."
 msgid "Failed to decrypt message with any known state"
 msgstr "נכשל בפענוח ההודעה עם כל מצב ידוע"
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:616
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:617
 msgid "Failed to generate invite link. Please try again."
 msgstr "נכשל ביצירת קישור הזמנה. אנא נסה שוב."
 
@@ -941,7 +953,7 @@ msgstr "נכשל בבחירת מסמך"
 msgid "Failed to send invite. Please try again."
 msgstr "שליחה של הזמנה נכשלה. אנא נסה שוב."
 
-#: src/hooks/business/spaces/useSpaceProfile.ts:215
+#: src/hooks/business/spaces/useSpaceProfile.ts:216
 msgid "Failed to update profile"
 msgstr "נכשל בעדכון הפרופיל"
 
@@ -949,7 +961,7 @@ msgstr "נכשל בעדכון הפרופיל"
 msgid "File cannot be larger than {maxSize}"
 msgstr "הקובץ לא יכול להיות גדול מ-{maxSize}"
 
-#: src/hooks/business/spaces/useSpaceProfile.ts:82
+#: src/hooks/business/spaces/useSpaceProfile.ts:87
 #: src/hooks/business/ui/useCustomAssets.ts:139
 #: src/hooks/business/ui/useFileUpload.ts:54
 #: src/hooks/business/ui/useSpaceFileUploads.ts:68
@@ -967,7 +979,7 @@ msgid "File cannot be larger than 5MB"
 msgstr "הקובץ לא יכול להיות גדול מ-5MB"
 
 #: src/hooks/business/messages/useMessageComposer.ts:83
-#: src/hooks/business/spaces/useSpaceProfile.ts:84
+#: src/hooks/business/spaces/useSpaceProfile.ts:89
 #: src/hooks/business/ui/useCustomAssets.ts:105
 #: src/hooks/business/ui/useCustomAssets.ts:150
 #: src/hooks/business/ui/useFileUpload.ts:56
@@ -995,7 +1007,7 @@ msgstr "גודל הקובץ קטן מדי. גודל מינימלי: {minSizeMB}"
 msgid "File validation failed. Please try again."
 msgstr "אימות הקובץ נכשל. אנא נסה שוב."
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:442
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:443
 msgid "Fix"
 msgstr "תיקון"
 
@@ -1022,17 +1034,17 @@ msgstr "כללי"
 msgid "General Chat"
 msgstr "שיחת צ'אט כללית"
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:607
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:608
 msgid "Generate Link"
 msgstr "צור קישור"
 
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:446
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:607
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:608
 msgid "Generate New Link"
 msgstr "ייצר קישור חדש"
 
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:394
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:601
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:602
 msgid "Generate Public Invite Link"
 msgstr "ייצר קישור הזמנה ציבורי"
 
@@ -1059,17 +1071,17 @@ msgstr "שם הקבוצה"
 #: src/hooks/business/validation/useGroupNameValidation.ts:18
 #: src/hooks/business/validation/useGroupNameValidation.ts:40
 msgid "Group name cannot contain special characters"
-msgstr ""
+msgstr "שם הקבוצה לא יכול להכיל תווים מיוחדים"
 
 #: src/hooks/business/validation/useGroupNameValidation.ts:12
 #: src/hooks/business/validation/useGroupNameValidation.ts:34
 msgid "Group name is required"
-msgstr ""
+msgstr "שם הקבוצה נדרש"
 
 #: src/hooks/business/validation/useGroupNameValidation.ts:15
 #: src/hooks/business/validation/useGroupNameValidation.ts:37
 msgid "Group name must be {MAX_NAME_LENGTH} characters or less"
-msgstr ""
+msgstr "שם הקבוצה חייב להיות באורך של {MAX_NAME_LENGTH} תווים או פחות"
 
 #: src/components/direct/EmptyDirectMessage.tsx:54
 msgid "hide home screen"
@@ -1317,7 +1329,7 @@ msgstr "נהל מכשירים, ותנאי פרטיות להודעות ולסנכ
 msgid "Manage Inivte links and send invites to people you've previously had conversations with."
 msgstr "נהל קישורי הזמנה ושלח הזמנות לאנשים שדיברת איתם בעבר."
 
-#: src/components/modals/SpaceSettingsModal/Account.tsx:92
+#: src/components/modals/SpaceSettingsModal/Account.tsx:94
 msgid "Manage your settings for this Space."
 msgstr "נהל את ההגדרות שלך עבור ה-Space הזה."
 
@@ -1331,7 +1343,7 @@ msgstr "סמן הכל כנקרא"
 
 #: src/components/direct/DirectMessage.tsx:657
 #: src/components/direct/DirectMessage.tsx:824
-#: src/components/space/Channel.tsx:886
+#: src/components/space/Channel.tsx:892
 msgid "Members List"
 msgstr "רשימת חברים"
 
@@ -1347,8 +1359,8 @@ msgstr "פעולות הודעה"
 msgid "Message deleted"
 msgstr "הודעה נמחקה"
 
-#: src/components/message/Message.tsx:626
-#: src/components/message/Message.tsx:689
+#: src/components/message/Message.tsx:631
+#: src/components/message/Message.tsx:694
 msgid "Message does not have a valid signature, this may not be from the sender"
 msgstr "ההודעה אינה בעלת חתימה תקפה, ייתכן שהיא לא מהשולח"
 
@@ -1356,17 +1368,22 @@ msgstr "ההודעה אינה בעלת חתימה תקפה, ייתכן שהיא 
 msgid "Message..."
 msgstr "הודעה..."
 
-#: src/components/message/MessageComposer.tsx:608
+#: src/components/message/MessageComposer.tsx:632
 msgid "Messages are NOT signed!"
 msgstr "ההודעות אינן חתומות!"
 
-#: src/components/message/MessageComposer.tsx:609
+#: src/components/message/MessageComposer.tsx:633
 msgid "Messages are signed!"
 msgstr "ההודעות חתומות!"
 
 #: src/components/message/MessageActions.tsx:86
 msgid "More reactions"
 msgstr "יותר תגובות"
+
+#: src/hooks/business/validation/useDisplayNameValidation.ts:26
+#: src/hooks/business/validation/useDisplayNameValidation.ts:55
+msgid "Names resembling admin, moderator, or support are reserved."
+msgstr ""
 
 #: src/components/modals/NewDirectMessageModal.tsx:83
 msgid "New Direct Message"
@@ -1396,9 +1413,8 @@ msgstr "לא נמצאו הודעות"
 msgid "No pinned messages yet"
 msgstr "אין הודעות מוצמדות עדיין"
 
-#: src/components/message/MessageComposer.tsx:521
-msgid "No topic"
-msgstr "אין נושא"
+#~ msgid "No topic"
+#~ msgstr "אין נושא"
 
 #~ msgid "No unread mentions"
 #~ msgstr "אין אזכורים שלא נקראו"
@@ -1407,9 +1423,9 @@ msgstr "אין נושא"
 msgid "No unread notifications"
 msgstr "אין הודעות לא נקראות"
 
-#: src/components/space/Channel.tsx:604
-#: src/components/space/Channel.tsx:1092
-#: src/components/space/Channel.tsx:1280
+#: src/components/space/Channel.tsx:610
+#: src/components/space/Channel.tsx:1098
+#: src/components/space/Channel.tsx:1286
 msgid "No users found!"
 msgstr "לא נמצאו משתמשים!"
 
@@ -1424,7 +1440,7 @@ msgstr "הרשאת התראה לא ניתנה"
 #: src/components/modals/SpaceSettingsModal/Account.tsx:187
 #: src/components/modals/UserSettingsModal/Navigation.tsx:17
 #: src/components/modals/UserSettingsModal/Notifications.tsx:24
-#: src/components/space/Channel.tsx:854
+#: src/components/space/Channel.tsx:860
 msgid "Notifications"
 msgstr "התראות"
 
@@ -1437,7 +1453,7 @@ msgstr "התראות חסומות. אנא אפשר אותן בהגדרות הד�
 msgid "Notifications are not supported in this browser"
 msgstr "התראות אינן נתמכות בדפדפן הזה"
 
-#: src/components/message/MessageComposer.tsx:535
+#: src/components/message/MessageComposer.tsx:559
 msgid "Notify all members"
 msgstr "הודע לכל החברים"
 
@@ -1558,18 +1574,18 @@ msgstr "הצמד הודעות"
 msgid "Pin to top"
 msgstr "סיכה למעלה"
 
-#: src/components/message/Message.tsx:609
-#: src/components/message/Message.tsx:672
+#: src/components/message/Message.tsx:614
+#: src/components/message/Message.tsx:677
 msgid "Pinned"
 msgstr "מוצמד"
 
 #. placeholder {0}: mapSenderToUser(message.pinnedBy)?.displayName || message.pinnedBy
-#: src/components/message/Message.tsx:608
-#: src/components/message/Message.tsx:671
+#: src/components/message/Message.tsx:613
+#: src/components/message/Message.tsx:676
 msgid "Pinned by {0}"
 msgstr "מוצמד על ידי {0}"
 
-#: src/components/space/Channel.tsx:815
+#: src/components/space/Channel.tsx:821
 msgid "Pinned Messages"
 msgstr "הודעות מוצמדות"
 
@@ -1698,7 +1714,7 @@ msgstr "שמור"
 
 #: src/components/modals/ChannelEditorModal.tsx:196
 #: src/components/modals/GroupEditorModal.tsx:97
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:588
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:589
 #: src/components/modals/UserSettingsModal/UserSettingsModal.tsx:242
 #: src/components/user/UserProfileEdit.tsx:158
 msgid "Save Changes"
@@ -1714,7 +1730,7 @@ msgstr "שמור תמונת קשר"
 msgid "Save Edit History"
 msgstr "שמור היסטוריית עריכה"
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:573
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:574
 #: src/components/modals/UserSettingsModal/UserSettingsModal.tsx:231
 msgid "Save Failed"
 msgstr "שימור נכשל"
@@ -1759,7 +1775,7 @@ msgid "Search in this Space..."
 msgstr "חפש במרחב הזה..."
 
 #: src/components/direct/DirectMessage.tsx:676
-#: src/components/space/Channel.tsx:905
+#: src/components/space/Channel.tsx:911
 msgid "Search Messages"
 msgstr "חפש הודעות"
 
@@ -1775,7 +1791,7 @@ msgstr "תוצאות חיפוש"
 msgid "Search username or address"
 msgstr "חפש שם משתמש או כתובת"
 
-#: src/components/space/Channel.tsx:1252
+#: src/components/space/Channel.tsx:1258
 msgid "Search Username or Address"
 msgstr "חפש שם משתמש או כתובת"
 
@@ -1910,7 +1926,7 @@ msgstr "שם המרחב נדרש"
 #: src/hooks/business/validation/useSpaceNameValidation.ts:15
 #: src/hooks/business/validation/useSpaceNameValidation.ts:37
 msgid "Space name must be {MAX_NAME_LENGTH} characters or less"
-msgstr ""
+msgstr "שם ה-Space חייב להיות באורך של {MAX_NAME_LENGTH} תווים או פחות"
 
 #: src/components/modals/SpaceSettingsModal/Navigation.tsx:38
 #: src/components/space/ChannelList.tsx:118
@@ -1939,7 +1955,7 @@ msgstr "מדבקות"
 msgid "Successfully sent invite to {0}"
 msgstr "הזמנה נשלחה בהצלחה ל-{0}"
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:445
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:446
 msgid "Sync Kick Status"
 msgstr "סנכרן מצב הדחה"
 
@@ -1998,6 +2014,11 @@ msgstr "זו הכתובת הציבורית שלך והיא בטוחה לשיתו
 msgid "This link will not expire, but you can generate a new one at any time, which will invalidate the old link."
 msgstr "הקישור הזה לא יפוג, אבל אתה יכול ליצור חדש בכל עת, מה שיבטל את הקישור הישן."
 
+#: src/hooks/business/validation/useDisplayNameValidation.ts:23
+#: src/hooks/business/validation/useDisplayNameValidation.ts:52
+msgid "This name conflicts with @everyone mentions."
+msgstr ""
+
 #: src/components/modals/SpaceSettingsModal/Roles.tsx:58
 msgid "This protects your identity as the space owner. However, if you're the only one with this role, your identity becomes obvious. Consider having multiple users (real or fake accounts) with the same role for better privacy protection."
 msgstr "זה מגן על זהותך כמנהל המרחב. עם זאת, אם אתה היחיד עם תפקיד זה, זהותך תהפוך לגלויה. שקול שיהיו מספר משתמשים (אמיתיים או מזויפים) עם אותו תפקיד כדי לשפר את הגנת הפרטיות."
@@ -2012,11 +2033,11 @@ msgstr "קישור ההזמנה הציבורי הזה אינו תקף יותר."
 msgid "This user is already a member of this space."
 msgstr "משתמש זה כבר חבר ב-מרחב הזה."
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:605
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:606
 msgid "This will create a public invite link that anyone can use to join your Space. Consider who you share this link with."
 msgstr "זה ייצור קישור הזמנה ציבורי שכל אחד יכול להשתמש בו כדי להצטרף למרחב שלך. שקול עם מי אתה משתף קישור זה."
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:604
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:605
 msgid "This will generate a new public invite link and invalidate the current one. Anyone with the old link will no longer be able to use it."
 msgstr "זה ייצור קישור הזמנה ציבורי חדש ויבטל את הקישור הנוכחי. כל מי שיש לו את הקישור הישן לא יוכל להשתמש בו יותר."
 
@@ -2042,7 +2063,7 @@ msgstr "נבחרו יותר מדי קבצים. אנא בחר קבצים פחות
 
 #: src/hooks/business/messages/useMessageComposer.ts:133
 msgid "Too many mentions in message. Maximum {MAX_MENTIONS_PER_MESSAGE} allowed."
-msgstr ""
+msgstr "יותר מדי אזכורים בהודעה. מקסימום {MAX_MENTIONS_PER_MESSAGE} מותר."
 
 #: src/components/search/SearchResults.tsx:105
 msgid "Try different keywords or check your spelling"
@@ -2052,7 +2073,7 @@ msgstr "נסה מילות מפתח שונות או בדוק את האיות של
 msgid "Unable to compress emoji images. Please use smaller images."
 msgstr "לא ניתן לדחוס תמונות אמוג'י. אנא השתמש בתמונות קטנות יותר."
 
-#: src/hooks/business/spaces/useSpaceProfile.ts:123
+#: src/hooks/business/spaces/useSpaceProfile.ts:128
 #: src/hooks/business/ui/useFileUpload.ts:96
 #: src/hooks/business/ui/useSpaceFileUploads.ts:160
 #: src/hooks/business/ui/useSpaceFileUploads.ts:183
@@ -2108,8 +2129,8 @@ msgstr "זמן לא ידוע"
 #: src/components/direct/DirectMessage.tsx:162
 #: src/components/direct/DirectMessage.tsx:177
 #: src/components/direct/DirectMessage.tsx:524
-#: src/components/message/MessageComposer.tsx:480
-#: src/components/message/MessageComposer.tsx:487
+#: src/components/message/MessageComposer.tsx:501
+#: src/components/message/MessageComposer.tsx:508
 #: src/components/message/MessageEditTextarea.tsx:225
 #: src/components/message/MessageEditTextarea.tsx:260
 #: src/components/message/MessageEditTextarea.tsx:267
@@ -2171,11 +2192,11 @@ msgstr "הוסר הצמדה!"
 msgid "Until you reply, this sender will not see your display name or profile picture"
 msgstr "עד שתשיב, השולח הזה לא יראה את שם התצוגה או את תמונת הפרופיל שלך"
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:445
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:446
 msgid "Update kick records for all members. Use this if kicked users still appear active to some members."
 msgstr "עדכן את רשומות ההדחה עבור כל החברים. השתמש בזה אם משתמשים שהודחו עדיין מופיעים פעילים לחלק מהחברים."
 
-#: src/components/modals/SpaceSettingsModal/Account.tsx:128
+#: src/components/modals/SpaceSettingsModal/Account.tsx:130
 msgid "Upload an avatar for this Space - PNG or JPG - Optimal ratio 1:1"
 msgstr "העלה תמונה עבור המרחב הזה - PNG או JPG - יחס אופטימלי 1:1"
 
@@ -2210,8 +2231,8 @@ msgstr "כתובת משתמש כאן"
 msgid "User does not exist."
 msgstr "המשתמש אינו קיים."
 
-#: src/components/space/Channel.tsx:591
-#: src/components/space/Channel.tsx:1078
+#: src/components/space/Channel.tsx:597
+#: src/components/space/Channel.tsx:1084
 msgid "Username or Address"
 msgstr "שם משתמש או כתובת"
 
@@ -2315,7 +2336,7 @@ msgid "You cannot delete a group that contains channels. Delete all {channelCoun
 msgstr "אינך יכול למחוק קבוצה שמכילה ערוצים. מחק קודם את כל {channelCount} הערוצים בקבוצה זו."
 
 #: src/components/message/MessageComposer.tsx:336
-#: src/components/space/Channel.tsx:1044
+#: src/components/space/Channel.tsx:1050
 msgid "You cannot post in this channel"
 msgstr "אינך יכול לפרסם בערוץ זה"
 
@@ -2345,7 +2366,7 @@ msgstr "אתה מעודכן!"
 msgid "You're all set. Welcome to Quorum!"
 msgstr "אתה מוכן. ברוך הבא לQuorum!"
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:441
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:442
 msgid "You're not listed in this Space's members. Correcting this will add you to the Space Members list (stores your profile locally with your inbox address)."
 msgstr "אתה לא רשום כחבר במרחק הזה. תיקון זה יוסיף אותך לרשימת חברי המרחק (שומר את הפרופיל שלך באופן מקומי עם כתובת תיבת הדואר שלך)."
 
@@ -2354,7 +2375,7 @@ msgstr "אתה לא רשום כחבר במרחק הזה. תיקון זה יוס�
 msgid "You've been invited to join a Space"
 msgstr "נשלחת אליך הזמנה להצטרף למרחב"
 
-#: src/components/modals/SpaceSettingsModal/Account.tsx:98
+#: src/components/modals/SpaceSettingsModal/Account.tsx:100
 msgid "Your Details"
 msgstr "פרטי שלך"
 

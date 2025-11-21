@@ -31,7 +31,7 @@ msgid "No Role - {count}"
 msgstr "Sin rol - {count}"
 
 #. js-lingui-explicit-id
-#: src/components/space/Channel.tsx:1020
+#: src/components/space/Channel.tsx:1026
 msgid "Send a message to #{channel_name}"
 msgstr "Enviar un mensaje a #{channel_name}"
 
@@ -52,24 +52,28 @@ msgstr "Error al procesar la imagen"
 
 #. js-lingui-explicit-id
 #: src/components/message/MessageComposer.native.tsx:314
-#: src/components/message/MessageComposer.tsx:406
 msgid "Replying to {user}"
 msgstr "Respondiendo a {user}"
 
 #. js-lingui-explicit-id
-#: src/components/message/Message.tsx:273
-msgid "{user} has joined"
-msgstr "{user} se han unido"
+#: src/components/message/MessageComposer.tsx:406
+msgid "Replying to"
+msgstr "Respondiendo a"
 
 #. js-lingui-explicit-id
-#: src/components/message/Message.tsx:280
-msgid "{user} has left"
-msgstr "{user} se ha ido"
+#: src/components/message/Message.tsx:274
+msgid "has joined"
+msgstr "se ha unido"
 
 #. js-lingui-explicit-id
-#: src/components/message/Message.tsx:287
-msgid "{user} has been kicked"
-msgstr "{user} ha sido expulsado"
+#: src/components/message/Message.tsx:282
+msgid "has left"
+msgstr "se ha ido"
+
+#. js-lingui-explicit-id
+#: src/components/message/Message.tsx:290
+msgid "has been kicked"
+msgstr "ha sido expulsado"
 
 #. js-lingui-explicit-id
 #: src/components/direct/DirectMessage.tsx:783
@@ -85,11 +89,11 @@ msgstr "para actualizaciones."
 
 #: src/hooks/business/validation/useDisplayNameValidation.ts:18
 #: src/hooks/business/validation/useDisplayNameValidation.ts:43
-msgid "'everyone' is a reserved name."
-msgstr "'everyone' es un nombre reservado."
+#~ msgid "'everyone' is a reserved name."
+#~ msgstr "'everyone' es un nombre reservado."
 
-#: src/components/message/Message.tsx:643
-#: src/components/message/Message.tsx:656
+#: src/components/message/Message.tsx:648
+#: src/components/message/Message.tsx:661
 msgid "(edited)"
 msgstr "(editado)"
 
@@ -190,6 +194,15 @@ msgstr "{size} MB"
 msgid "{size} TB"
 msgstr "{size} TB"
 
+#~ msgid "{user} has been kicked"
+#~ msgstr "{user} ha sido expulsado"
+
+#~ msgid "{user} has joined"
+#~ msgstr "{user} se han unido"
+
+#~ msgid "{user} has left"
+#~ msgstr "{user} se ha ido"
+
 #: src/components/modals/SpaceSettingsModal/Account.tsx:211
 #: src/components/notifications/NotificationPanel.tsx:88
 msgid "@everyone"
@@ -225,7 +238,7 @@ msgstr "Cuenta"
 msgid "Account Address"
 msgstr "Dirección de la cuenta"
 
-#: src/components/modals/SpaceSettingsModal/Account.tsx:89
+#: src/components/modals/SpaceSettingsModal/Account.tsx:91
 msgid "Account Settings"
 msgstr "Configuración de la cuenta"
 
@@ -241,7 +254,7 @@ msgstr "Agregar un Espacio"
 msgid "Add Channel"
 msgstr "Agregar Canal"
 
-#: src/components/direct/DirectMessages.tsx:100
+#: src/components/direct/DirectMessages.tsx:95
 msgid "Add friend"
 msgstr "Agregar amigo"
 
@@ -254,7 +267,7 @@ msgstr "Agregar grupo"
 msgid "Add Role"
 msgstr "Añadir rol"
 
-#: src/components/message/MessageComposer.tsx:591
+#: src/components/message/MessageComposer.tsx:615
 msgid "add sticker"
 msgstr "agregar sticker"
 
@@ -368,7 +381,7 @@ msgstr "¿Estás seguro de que deseas desanclar este mensaje?"
 msgid "As a space owner, you need to assign yourself a role with delete permissions to delete other users' messages. <0><1>Learn more</1></0>"
 msgstr "Como propietario del espacio, necesitas asignarte un rol con permisos de eliminación para borrar los mensajes de otros usuarios. <0><1>Aprende más</1></0>"
 
-#: src/components/message/MessageComposer.tsx:558
+#: src/components/message/MessageComposer.tsx:582
 msgid "attach image"
 msgstr "adjuntar imagen"
 
@@ -421,7 +434,7 @@ msgstr "No se puede eliminar el Espacio con canales. Por favor, elimina todos lo
 msgid "Cannot upload more than {0} files at once ({remaining} slots remaining)"
 msgstr "No se pueden subir más de {0} archivos a la vez ({remaining} espacios restantes)"
 
-#: src/components/modals/SpaceSettingsModal/Account.tsx:101
+#: src/components/modals/SpaceSettingsModal/Account.tsx:103
 msgid "Change your avatar and name for this Space"
 msgstr "Cambia tu avatar y nombre para este Espacio"
 
@@ -440,7 +453,7 @@ msgstr "Icono del canal"
 msgid "Channel Managers"
 msgstr "Gerentes de Canal"
 
-#: src/components/space/Channel.tsx:1241
+#: src/components/space/Channel.tsx:1247
 msgid "Channel members"
 msgstr "Miembros del canal"
 
@@ -451,17 +464,17 @@ msgstr "Nombre del canal"
 #: src/hooks/business/validation/useChannelValidation.ts:18
 #: src/hooks/business/validation/useChannelValidation.ts:60
 msgid "Channel name cannot contain special characters"
-msgstr ""
+msgstr "El nombre del canal no puede contener caracteres especiales"
 
 #: src/hooks/business/validation/useChannelValidation.ts:12
 #: src/hooks/business/validation/useChannelValidation.ts:54
 msgid "Channel name is required"
-msgstr ""
+msgstr "El nombre del canal es obligatorio"
 
 #: src/hooks/business/validation/useChannelValidation.ts:15
 #: src/hooks/business/validation/useChannelValidation.ts:57
 msgid "Channel name must be {MAX_NAME_LENGTH} characters or less"
-msgstr ""
+msgstr "El nombre del canal debe tener {MAX_NAME_LENGTH} caracteres o menos"
 
 #: src/components/modals/ChannelEditorModal.tsx:109
 msgid "Channel Topic"
@@ -470,12 +483,12 @@ msgstr "Canal Tema"
 #: src/hooks/business/validation/useChannelValidation.ts:38
 #: src/hooks/business/validation/useChannelValidation.ts:74
 msgid "Channel topic cannot contain special characters"
-msgstr ""
+msgstr "El tema del canal no puede contener caracteres especiales"
 
 #: src/hooks/business/validation/useChannelValidation.ts:35
 #: src/hooks/business/validation/useChannelValidation.ts:71
 msgid "Channel topic must be {MAX_TOPIC_LENGTH} characters or less"
-msgstr ""
+msgstr "El tema del canal debe tener {MAX_TOPIC_LENGTH} caracteres o menos"
 
 #: src/components/Maintenance.native.tsx:52
 msgid "Check "
@@ -771,25 +784,24 @@ msgstr "Mensajes Directos"
 msgid "Display name"
 msgstr "Nombre para mostrar"
 
-#: src/components/modals/SpaceSettingsModal/Account.tsx:139
+#: src/components/modals/SpaceSettingsModal/Account.tsx:141
 msgid "Display Name"
 msgstr "Nombre para mostrar"
 
-#: src/hooks/business/validation/useDisplayNameValidation.ts:21
-#: src/hooks/business/validation/useDisplayNameValidation.ts:46
+#: src/hooks/business/validation/useDisplayNameValidation.ts:29
+#: src/hooks/business/validation/useDisplayNameValidation.ts:58
 msgid "Display name cannot contain special characters"
 msgstr "El nombre para mostrar no puede contener caracteres especiales"
 
-#: src/components/modals/SpaceSettingsModal/Account.tsx:143
-#: src/hooks/business/validation/useDisplayNameValidation.ts:12
-#: src/hooks/business/validation/useDisplayNameValidation.ts:37
+#: src/hooks/business/validation/useDisplayNameValidation.ts:16
+#: src/hooks/business/validation/useDisplayNameValidation.ts:45
 msgid "Display name is required"
 msgstr "Se requiere un nombre para mostrar"
 
-#: src/hooks/business/validation/useDisplayNameValidation.ts:15
-#: src/hooks/business/validation/useDisplayNameValidation.ts:40
+#: src/hooks/business/validation/useDisplayNameValidation.ts:19
+#: src/hooks/business/validation/useDisplayNameValidation.ts:48
 msgid "Display name must be {MAX_NAME_LENGTH} characters or less"
-msgstr ""
+msgstr "El nombre para mostrar debe tener {MAX_NAME_LENGTH} caracteres o menos"
 
 #: src/components/ui/MobileDrawer.tsx:143
 msgid "Drawer"
@@ -916,7 +928,7 @@ msgstr "Error al crear el espacio. Por favor, inténtalo de nuevo."
 msgid "Failed to decrypt message with any known state"
 msgstr "Error al descifrar el mensaje con cualquier estado conocido"
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:616
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:617
 msgid "Failed to generate invite link. Please try again."
 msgstr "Error al generar el enlace de invitación. Por favor, inténtalo de nuevo."
 
@@ -940,7 +952,7 @@ msgstr "Error al seleccionar el documento"
 msgid "Failed to send invite. Please try again."
 msgstr "Error al enviar la invitación. Por favor, inténtalo de nuevo."
 
-#: src/hooks/business/spaces/useSpaceProfile.ts:215
+#: src/hooks/business/spaces/useSpaceProfile.ts:216
 msgid "Failed to update profile"
 msgstr "Error al actualizar el perfil"
 
@@ -948,7 +960,7 @@ msgstr "Error al actualizar el perfil"
 msgid "File cannot be larger than {maxSize}"
 msgstr "El archivo no puede ser mayor de {maxSize}"
 
-#: src/hooks/business/spaces/useSpaceProfile.ts:82
+#: src/hooks/business/spaces/useSpaceProfile.ts:87
 #: src/hooks/business/ui/useCustomAssets.ts:139
 #: src/hooks/business/ui/useFileUpload.ts:54
 #: src/hooks/business/ui/useSpaceFileUploads.ts:68
@@ -966,7 +978,7 @@ msgid "File cannot be larger than 5MB"
 msgstr "El archivo no puede ser mayor de 5MB"
 
 #: src/hooks/business/messages/useMessageComposer.ts:83
-#: src/hooks/business/spaces/useSpaceProfile.ts:84
+#: src/hooks/business/spaces/useSpaceProfile.ts:89
 #: src/hooks/business/ui/useCustomAssets.ts:105
 #: src/hooks/business/ui/useCustomAssets.ts:150
 #: src/hooks/business/ui/useFileUpload.ts:56
@@ -994,7 +1006,7 @@ msgstr "El tamaño del archivo es demasiado pequeño. Tamaño mínimo: {minSizeM
 msgid "File validation failed. Please try again."
 msgstr "La validación del archivo falló. Por favor, inténtalo de nuevo."
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:442
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:443
 msgid "Fix"
 msgstr "Arreglar"
 
@@ -1021,17 +1033,17 @@ msgstr "General"
 msgid "General Chat"
 msgstr "Chat general"
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:607
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:608
 msgid "Generate Link"
 msgstr "Generar enlace"
 
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:446
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:607
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:608
 msgid "Generate New Link"
 msgstr "Generar Nuevo Enlace"
 
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:394
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:601
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:602
 msgid "Generate Public Invite Link"
 msgstr "Generar Enlace de Invitación Pública"
 
@@ -1058,17 +1070,17 @@ msgstr "Nombre del Grupo"
 #: src/hooks/business/validation/useGroupNameValidation.ts:18
 #: src/hooks/business/validation/useGroupNameValidation.ts:40
 msgid "Group name cannot contain special characters"
-msgstr ""
+msgstr "El nombre del grupo no puede contener caracteres especiales"
 
 #: src/hooks/business/validation/useGroupNameValidation.ts:12
 #: src/hooks/business/validation/useGroupNameValidation.ts:34
 msgid "Group name is required"
-msgstr ""
+msgstr "El nombre del grupo es obligatorio"
 
 #: src/hooks/business/validation/useGroupNameValidation.ts:15
 #: src/hooks/business/validation/useGroupNameValidation.ts:37
 msgid "Group name must be {MAX_NAME_LENGTH} characters or less"
-msgstr ""
+msgstr "El nombre del grupo debe tener {MAX_NAME_LENGTH} caracteres o menos"
 
 #: src/components/direct/EmptyDirectMessage.tsx:54
 msgid "hide home screen"
@@ -1316,7 +1328,7 @@ msgstr "Gestiona dispositivos y condiciones de privacidad para mensajería y sin
 msgid "Manage Inivte links and send invites to people you've previously had conversations with."
 msgstr "Gestionar enlaces de invitación y enviar invitaciones a personas con las que has tenido conversaciones previamente."
 
-#: src/components/modals/SpaceSettingsModal/Account.tsx:92
+#: src/components/modals/SpaceSettingsModal/Account.tsx:94
 msgid "Manage your settings for this Space."
 msgstr "Gestiona tus configuraciones para este Espacio."
 
@@ -1330,7 +1342,7 @@ msgstr "Marcar todo como leído"
 
 #: src/components/direct/DirectMessage.tsx:657
 #: src/components/direct/DirectMessage.tsx:824
-#: src/components/space/Channel.tsx:886
+#: src/components/space/Channel.tsx:892
 msgid "Members List"
 msgstr "Lista de Miembros"
 
@@ -1346,8 +1358,8 @@ msgstr "Acciones de mensaje"
 msgid "Message deleted"
 msgstr "Mensaje eliminado"
 
-#: src/components/message/Message.tsx:626
-#: src/components/message/Message.tsx:689
+#: src/components/message/Message.tsx:631
+#: src/components/message/Message.tsx:694
 msgid "Message does not have a valid signature, this may not be from the sender"
 msgstr "El mensaje no tiene una firma válida, esto puede no ser del remitente"
 
@@ -1355,17 +1367,22 @@ msgstr "El mensaje no tiene una firma válida, esto puede no ser del remitente"
 msgid "Message..."
 msgstr "Mensaje..."
 
-#: src/components/message/MessageComposer.tsx:608
+#: src/components/message/MessageComposer.tsx:632
 msgid "Messages are NOT signed!"
 msgstr "¡Los mensajes NO están firmados!"
 
-#: src/components/message/MessageComposer.tsx:609
+#: src/components/message/MessageComposer.tsx:633
 msgid "Messages are signed!"
 msgstr "¡Los mensajes están firmados!"
 
 #: src/components/message/MessageActions.tsx:86
 msgid "More reactions"
 msgstr "Más reacciones"
+
+#: src/hooks/business/validation/useDisplayNameValidation.ts:26
+#: src/hooks/business/validation/useDisplayNameValidation.ts:55
+msgid "Names resembling admin, moderator, or support are reserved."
+msgstr ""
 
 #: src/components/modals/NewDirectMessageModal.tsx:83
 msgid "New Direct Message"
@@ -1395,9 +1412,8 @@ msgstr "No se encontraron mensajes"
 msgid "No pinned messages yet"
 msgstr "Aún no hay mensajes anclados"
 
-#: src/components/message/MessageComposer.tsx:521
-msgid "No topic"
-msgstr "No hay tema"
+#~ msgid "No topic"
+#~ msgstr "No hay tema"
 
 #~ msgid "No unread mentions"
 #~ msgstr "No hay menciones no leídas"
@@ -1406,9 +1422,9 @@ msgstr "No hay tema"
 msgid "No unread notifications"
 msgstr "No hay notificaciones no leídas"
 
-#: src/components/space/Channel.tsx:604
-#: src/components/space/Channel.tsx:1092
-#: src/components/space/Channel.tsx:1280
+#: src/components/space/Channel.tsx:610
+#: src/components/space/Channel.tsx:1098
+#: src/components/space/Channel.tsx:1286
 msgid "No users found!"
 msgstr "¡No se encontraron usuarios!"
 
@@ -1423,7 +1439,7 @@ msgstr "Permiso de notificación no concedido"
 #: src/components/modals/SpaceSettingsModal/Account.tsx:187
 #: src/components/modals/UserSettingsModal/Navigation.tsx:17
 #: src/components/modals/UserSettingsModal/Notifications.tsx:24
-#: src/components/space/Channel.tsx:854
+#: src/components/space/Channel.tsx:860
 msgid "Notifications"
 msgstr "Notificaciones"
 
@@ -1436,7 +1452,7 @@ msgstr "Las notificaciones están bloqueadas. Por favor, habilítalas en la conf
 msgid "Notifications are not supported in this browser"
 msgstr "Las notificaciones no son compatibles con este navegador"
 
-#: src/components/message/MessageComposer.tsx:535
+#: src/components/message/MessageComposer.tsx:559
 msgid "Notify all members"
 msgstr "Notificar a todos los miembros"
 
@@ -1557,18 +1573,18 @@ msgstr "Anclar Mensajes"
 msgid "Pin to top"
 msgstr "Fijar en la parte superior"
 
-#: src/components/message/Message.tsx:609
-#: src/components/message/Message.tsx:672
+#: src/components/message/Message.tsx:614
+#: src/components/message/Message.tsx:677
 msgid "Pinned"
 msgstr "Anclado"
 
 #. placeholder {0}: mapSenderToUser(message.pinnedBy)?.displayName || message.pinnedBy
-#: src/components/message/Message.tsx:608
-#: src/components/message/Message.tsx:671
+#: src/components/message/Message.tsx:613
+#: src/components/message/Message.tsx:676
 msgid "Pinned by {0}"
 msgstr "Anclado por {0}"
 
-#: src/components/space/Channel.tsx:815
+#: src/components/space/Channel.tsx:821
 msgid "Pinned Messages"
 msgstr "Mensajes Anclados"
 
@@ -1697,7 +1713,7 @@ msgstr "Guardar"
 
 #: src/components/modals/ChannelEditorModal.tsx:196
 #: src/components/modals/GroupEditorModal.tsx:97
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:588
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:589
 #: src/components/modals/UserSettingsModal/UserSettingsModal.tsx:242
 #: src/components/user/UserProfileEdit.tsx:158
 msgid "Save Changes"
@@ -1713,7 +1729,7 @@ msgstr "Guardar foto de contacto"
 msgid "Save Edit History"
 msgstr "Guardar historial de ediciones"
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:573
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:574
 #: src/components/modals/UserSettingsModal/UserSettingsModal.tsx:231
 msgid "Save Failed"
 msgstr "Error al Guardar"
@@ -1758,7 +1774,7 @@ msgid "Search in this Space..."
 msgstr "Buscar en este Espacio..."
 
 #: src/components/direct/DirectMessage.tsx:676
-#: src/components/space/Channel.tsx:905
+#: src/components/space/Channel.tsx:911
 msgid "Search Messages"
 msgstr "Buscar Mensajes"
 
@@ -1774,7 +1790,7 @@ msgstr "Resultados de búsqueda"
 msgid "Search username or address"
 msgstr "Buscar nombre de usuario o dirección"
 
-#: src/components/space/Channel.tsx:1252
+#: src/components/space/Channel.tsx:1258
 msgid "Search Username or Address"
 msgstr "Buscar nombre de usuario o dirección"
 
@@ -1909,7 +1925,7 @@ msgstr "Se requiere un nombre para el Espacio"
 #: src/hooks/business/validation/useSpaceNameValidation.ts:15
 #: src/hooks/business/validation/useSpaceNameValidation.ts:37
 msgid "Space name must be {MAX_NAME_LENGTH} characters or less"
-msgstr ""
+msgstr "El nombre del Espacio debe tener {MAX_NAME_LENGTH} caracteres o menos"
 
 #: src/components/modals/SpaceSettingsModal/Navigation.tsx:38
 #: src/components/space/ChannelList.tsx:118
@@ -1938,7 +1954,7 @@ msgstr "Pegatinas"
 msgid "Successfully sent invite to {0}"
 msgstr "Invitación enviada con éxito a {0}"
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:445
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:446
 msgid "Sync Kick Status"
 msgstr "Sincronizar estado de expulsión"
 
@@ -1997,6 +2013,11 @@ msgstr "Esta es tu dirección pública y es segura para compartir con cualquier 
 msgid "This link will not expire, but you can generate a new one at any time, which will invalidate the old link."
 msgstr "Este enlace no expirará, pero puedes generar uno nuevo en cualquier momento, lo que invalidará el enlace antiguo."
 
+#: src/hooks/business/validation/useDisplayNameValidation.ts:23
+#: src/hooks/business/validation/useDisplayNameValidation.ts:52
+msgid "This name conflicts with @everyone mentions."
+msgstr ""
+
 #: src/components/modals/SpaceSettingsModal/Roles.tsx:58
 msgid "This protects your identity as the space owner. However, if you're the only one with this role, your identity becomes obvious. Consider having multiple users (real or fake accounts) with the same role for better privacy protection."
 msgstr "Esto protege tu identidad como propietario del espacio. Sin embargo, si eres el único con este rol, tu identidad se vuelve obvia. Considera tener múltiples usuarios (cuentas reales o falsas) con el mismo rol para una mejor protección de la privacidad."
@@ -2011,11 +2032,11 @@ msgstr "Este enlace de invitación pública ya no es válido."
 msgid "This user is already a member of this space."
 msgstr "Este usuario ya es miembro de este espacio."
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:605
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:606
 msgid "This will create a public invite link that anyone can use to join your Space. Consider who you share this link with."
 msgstr "Esto creará un enlace de invitación público que cualquiera puede usar para unirse a tu Espacio. Considera con quién compartes este enlace."
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:604
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:605
 msgid "This will generate a new public invite link and invalidate the current one. Anyone with the old link will no longer be able to use it."
 msgstr "Esto generará un nuevo enlace de invitación público e invalidará el actual. Cualquiera con el enlace antiguo ya no podrá usarlo."
 
@@ -2041,7 +2062,7 @@ msgstr "Demasiados archivos seleccionados. Por favor selecciona menos archivos."
 
 #: src/hooks/business/messages/useMessageComposer.ts:133
 msgid "Too many mentions in message. Maximum {MAX_MENTIONS_PER_MESSAGE} allowed."
-msgstr ""
+msgstr "Demasiadas menciones en el mensaje. Se permiten un máximo de {MAX_MENTIONS_PER_MESSAGE}."
 
 #: src/components/search/SearchResults.tsx:105
 msgid "Try different keywords or check your spelling"
@@ -2051,7 +2072,7 @@ msgstr "Intenta con diferentes palabras clave o verifica tu ortografía"
 msgid "Unable to compress emoji images. Please use smaller images."
 msgstr "No se puede comprimir imágenes de emoji. Por favor, utiliza imágenes más pequeñas."
 
-#: src/hooks/business/spaces/useSpaceProfile.ts:123
+#: src/hooks/business/spaces/useSpaceProfile.ts:128
 #: src/hooks/business/ui/useFileUpload.ts:96
 #: src/hooks/business/ui/useSpaceFileUploads.ts:160
 #: src/hooks/business/ui/useSpaceFileUploads.ts:183
@@ -2107,8 +2128,8 @@ msgstr "Hora desconocida"
 #: src/components/direct/DirectMessage.tsx:162
 #: src/components/direct/DirectMessage.tsx:177
 #: src/components/direct/DirectMessage.tsx:524
-#: src/components/message/MessageComposer.tsx:480
-#: src/components/message/MessageComposer.tsx:487
+#: src/components/message/MessageComposer.tsx:501
+#: src/components/message/MessageComposer.tsx:508
 #: src/components/message/MessageEditTextarea.tsx:225
 #: src/components/message/MessageEditTextarea.tsx:260
 #: src/components/message/MessageEditTextarea.tsx:267
@@ -2170,11 +2191,11 @@ msgstr "¡Desanclado!"
 msgid "Until you reply, this sender will not see your display name or profile picture"
 msgstr "Hasta que respondas, este remitente no verá tu nombre de pantalla ni tu foto de perfil."
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:445
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:446
 msgid "Update kick records for all members. Use this if kicked users still appear active to some members."
 msgstr "Actualiza los registros de expulsión para todos los miembros. Usa esto si los usuarios expulsados aún aparecen activos para algunos miembros."
 
-#: src/components/modals/SpaceSettingsModal/Account.tsx:128
+#: src/components/modals/SpaceSettingsModal/Account.tsx:130
 msgid "Upload an avatar for this Space - PNG or JPG - Optimal ratio 1:1"
 msgstr "Sube un avatar para este Espacio - PNG o JPG - Relación óptima 1:1"
 
@@ -2209,8 +2230,8 @@ msgstr "Dirección del usuario aquí"
 msgid "User does not exist."
 msgstr "El usuario no existe."
 
-#: src/components/space/Channel.tsx:591
-#: src/components/space/Channel.tsx:1078
+#: src/components/space/Channel.tsx:597
+#: src/components/space/Channel.tsx:1084
 msgid "Username or Address"
 msgstr "Nombre de usuario o dirección"
 
@@ -2314,7 +2335,7 @@ msgid "You cannot delete a group that contains channels. Delete all {channelCoun
 msgstr "No puedes eliminar un grupo que contiene canales. Elimina primero todos los {channelCount} canales en este grupo."
 
 #: src/components/message/MessageComposer.tsx:336
-#: src/components/space/Channel.tsx:1044
+#: src/components/space/Channel.tsx:1050
 msgid "You cannot post in this channel"
 msgstr "No puedes publicar en este canal"
 
@@ -2344,7 +2365,7 @@ msgstr "¡Estás al día!"
 msgid "You're all set. Welcome to Quorum!"
 msgstr "Ya está todo listo. ¡Bienvenido a Quorum!"
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:441
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:442
 msgid "You're not listed in this Space's members. Correcting this will add you to the Space Members list (stores your profile locally with your inbox address)."
 msgstr "No estás en la lista de miembros de este Espacio. Corregir esto te añadirá a la lista de Miembros del Espacio (almacena tu perfil localmente con tu dirección de bandeja de entrada)."
 
@@ -2353,7 +2374,7 @@ msgstr "No estás en la lista de miembros de este Espacio. Corregir esto te aña
 msgid "You've been invited to join a Space"
 msgstr "Has sido invitado a unirte a un Espacio"
 
-#: src/components/modals/SpaceSettingsModal/Account.tsx:98
+#: src/components/modals/SpaceSettingsModal/Account.tsx:100
 msgid "Your Details"
 msgstr "Tus Detalles"
 

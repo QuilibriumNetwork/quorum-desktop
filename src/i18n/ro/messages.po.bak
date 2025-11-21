@@ -31,7 +31,7 @@ msgid "No Role - {count}"
 msgstr "Fără rol - {count}"
 
 #. js-lingui-explicit-id
-#: src/components/space/Channel.tsx:1020
+#: src/components/space/Channel.tsx:1026
 msgid "Send a message to #{channel_name}"
 msgstr "Trimite un mesaj către #{channel_name}"
 
@@ -52,24 +52,28 @@ msgstr "Eșec la procesarea imaginii"
 
 #. js-lingui-explicit-id
 #: src/components/message/MessageComposer.native.tsx:314
-#: src/components/message/MessageComposer.tsx:406
 msgid "Replying to {user}"
 msgstr "Răspunzând lui {user}"
 
 #. js-lingui-explicit-id
-#: src/components/message/Message.tsx:273
-msgid "{user} has joined"
-msgstr "{user} s-a alăturat"
+#: src/components/message/MessageComposer.tsx:406
+msgid "Replying to"
+msgstr "Răspunzând la"
 
 #. js-lingui-explicit-id
-#: src/components/message/Message.tsx:280
-msgid "{user} has left"
-msgstr "{user} a plecat"
+#: src/components/message/Message.tsx:274
+msgid "has joined"
+msgstr "s-a alăturat"
 
 #. js-lingui-explicit-id
-#: src/components/message/Message.tsx:287
-msgid "{user} has been kicked"
-msgstr "{user} a fost dat afară"
+#: src/components/message/Message.tsx:282
+msgid "has left"
+msgstr "a plecat"
+
+#. js-lingui-explicit-id
+#: src/components/message/Message.tsx:290
+msgid "has been kicked"
+msgstr "a fost dat afară"
 
 #. js-lingui-explicit-id
 #: src/components/direct/DirectMessage.tsx:783
@@ -85,11 +89,11 @@ msgstr "pentru actualizări."
 
 #: src/hooks/business/validation/useDisplayNameValidation.ts:18
 #: src/hooks/business/validation/useDisplayNameValidation.ts:43
-msgid "'everyone' is a reserved name."
-msgstr "'nimeni' este un nume rezervat."
+#~ msgid "'everyone' is a reserved name."
+#~ msgstr "'nimeni' este un nume rezervat."
 
-#: src/components/message/Message.tsx:643
-#: src/components/message/Message.tsx:656
+#: src/components/message/Message.tsx:648
+#: src/components/message/Message.tsx:661
 msgid "(edited)"
 msgstr "(editat)"
 
@@ -190,6 +194,15 @@ msgstr "{size} MB"
 msgid "{size} TB"
 msgstr "{size} TB"
 
+#~ msgid "{user} has been kicked"
+#~ msgstr "{user} a fost dat afară"
+
+#~ msgid "{user} has joined"
+#~ msgstr "{user} s-a alăturat"
+
+#~ msgid "{user} has left"
+#~ msgstr "{user} a plecat"
+
 #: src/components/modals/SpaceSettingsModal/Account.tsx:211
 #: src/components/notifications/NotificationPanel.tsx:88
 msgid "@everyone"
@@ -225,7 +238,7 @@ msgstr "Contul"
 msgid "Account Address"
 msgstr "Adresă de cont"
 
-#: src/components/modals/SpaceSettingsModal/Account.tsx:89
+#: src/components/modals/SpaceSettingsModal/Account.tsx:91
 msgid "Account Settings"
 msgstr "Setări cont"
 
@@ -241,7 +254,7 @@ msgstr "Adaugă un Spațiu"
 msgid "Add Channel"
 msgstr "Adaugă Canal"
 
-#: src/components/direct/DirectMessages.tsx:100
+#: src/components/direct/DirectMessages.tsx:95
 msgid "Add friend"
 msgstr "Adaugă prieten"
 
@@ -254,7 +267,7 @@ msgstr "Adaugă grup"
 msgid "Add Role"
 msgstr "Adaugă rol"
 
-#: src/components/message/MessageComposer.tsx:591
+#: src/components/message/MessageComposer.tsx:615
 msgid "add sticker"
 msgstr "adaugă autocolant"
 
@@ -368,7 +381,7 @@ msgstr "Ești sigur că vrei să desfaci fixarea acestui mesaj?"
 msgid "As a space owner, you need to assign yourself a role with delete permissions to delete other users' messages. <0><1>Learn more</1></0>"
 msgstr "Ca proprietar al spațiului, trebuie să-ți atribui un rol cu permisiuni de ștergere pentru a șterge mesajele altor utilizatori. <0><1>Află mai multe</1></0>"
 
-#: src/components/message/MessageComposer.tsx:558
+#: src/components/message/MessageComposer.tsx:582
 msgid "attach image"
 msgstr "atașează imagine"
 
@@ -421,7 +434,7 @@ msgstr "Nu se poate șterge Spațiu cu canale. Te rugăm să ștergi toate canal
 msgid "Cannot upload more than {0} files at once ({remaining} slots remaining)"
 msgstr "Nu poți încărca mai mult de {0} fișiere simultan ({remaining} sloturi rămase)"
 
-#: src/components/modals/SpaceSettingsModal/Account.tsx:101
+#: src/components/modals/SpaceSettingsModal/Account.tsx:103
 msgid "Change your avatar and name for this Space"
 msgstr "Schimbă-ți avatarul și numele pentru acest Space"
 
@@ -440,7 +453,7 @@ msgstr "Icon canal"
 msgid "Channel Managers"
 msgstr "Manageri de canal"
 
-#: src/components/space/Channel.tsx:1241
+#: src/components/space/Channel.tsx:1247
 msgid "Channel members"
 msgstr "Membrii canalului"
 
@@ -451,17 +464,17 @@ msgstr "Numele canalului"
 #: src/hooks/business/validation/useChannelValidation.ts:18
 #: src/hooks/business/validation/useChannelValidation.ts:60
 msgid "Channel name cannot contain special characters"
-msgstr ""
+msgstr "Numele canalului nu poate conține caractere speciale"
 
 #: src/hooks/business/validation/useChannelValidation.ts:12
 #: src/hooks/business/validation/useChannelValidation.ts:54
 msgid "Channel name is required"
-msgstr ""
+msgstr "Numele canalului este necesar"
 
 #: src/hooks/business/validation/useChannelValidation.ts:15
 #: src/hooks/business/validation/useChannelValidation.ts:57
 msgid "Channel name must be {MAX_NAME_LENGTH} characters or less"
-msgstr ""
+msgstr "Numele canalului trebuie să aibă {MAX_NAME_LENGTH} caractere sau mai puțin"
 
 #: src/components/modals/ChannelEditorModal.tsx:109
 msgid "Channel Topic"
@@ -470,12 +483,12 @@ msgstr "Subiectul canalului"
 #: src/hooks/business/validation/useChannelValidation.ts:38
 #: src/hooks/business/validation/useChannelValidation.ts:74
 msgid "Channel topic cannot contain special characters"
-msgstr ""
+msgstr "Subiectul canalului nu poate conține caractere speciale"
 
 #: src/hooks/business/validation/useChannelValidation.ts:35
 #: src/hooks/business/validation/useChannelValidation.ts:71
 msgid "Channel topic must be {MAX_TOPIC_LENGTH} characters or less"
-msgstr ""
+msgstr "Subiectul canalului trebuie să aibă {MAX_TOPIC_LENGTH} caractere sau mai puțin"
 
 #: src/components/Maintenance.native.tsx:52
 msgid "Check "
@@ -771,25 +784,24 @@ msgstr "Mesaje directe"
 msgid "Display name"
 msgstr "Nume de afișare"
 
-#: src/components/modals/SpaceSettingsModal/Account.tsx:139
+#: src/components/modals/SpaceSettingsModal/Account.tsx:141
 msgid "Display Name"
 msgstr "Nume de afișare"
 
-#: src/hooks/business/validation/useDisplayNameValidation.ts:21
-#: src/hooks/business/validation/useDisplayNameValidation.ts:46
+#: src/hooks/business/validation/useDisplayNameValidation.ts:29
+#: src/hooks/business/validation/useDisplayNameValidation.ts:58
 msgid "Display name cannot contain special characters"
 msgstr "Numele de afișare nu poate conține caractere speciale"
 
-#: src/components/modals/SpaceSettingsModal/Account.tsx:143
-#: src/hooks/business/validation/useDisplayNameValidation.ts:12
-#: src/hooks/business/validation/useDisplayNameValidation.ts:37
+#: src/hooks/business/validation/useDisplayNameValidation.ts:16
+#: src/hooks/business/validation/useDisplayNameValidation.ts:45
 msgid "Display name is required"
 msgstr "Numele de afișare este necesar"
 
-#: src/hooks/business/validation/useDisplayNameValidation.ts:15
-#: src/hooks/business/validation/useDisplayNameValidation.ts:40
+#: src/hooks/business/validation/useDisplayNameValidation.ts:19
+#: src/hooks/business/validation/useDisplayNameValidation.ts:48
 msgid "Display name must be {MAX_NAME_LENGTH} characters or less"
-msgstr ""
+msgstr "Numele de afișare trebuie să aibă {MAX_NAME_LENGTH} caractere sau mai puțin"
 
 #: src/components/ui/MobileDrawer.tsx:143
 msgid "Drawer"
@@ -916,7 +928,7 @@ msgstr "Crearea spațiului a eșuat. Te rugăm să încerci din nou."
 msgid "Failed to decrypt message with any known state"
 msgstr "Nu s-a reușit decriptarea mesajului cu niciun stat cunoscut"
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:616
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:617
 msgid "Failed to generate invite link. Please try again."
 msgstr "Nu s-a reușit generarea linkului de invitație. Te rugăm să încerci din nou."
 
@@ -940,7 +952,7 @@ msgstr "Nu am reușit să selectez documentul"
 msgid "Failed to send invite. Please try again."
 msgstr "Nu s-a putut trimite invitația. Te rugăm să încerci din nou."
 
-#: src/hooks/business/spaces/useSpaceProfile.ts:215
+#: src/hooks/business/spaces/useSpaceProfile.ts:216
 msgid "Failed to update profile"
 msgstr "Actualizarea profilului a eșuat"
 
@@ -948,7 +960,7 @@ msgstr "Actualizarea profilului a eșuat"
 msgid "File cannot be larger than {maxSize}"
 msgstr "Fișierul nu poate fi mai mare de {maxSize}"
 
-#: src/hooks/business/spaces/useSpaceProfile.ts:82
+#: src/hooks/business/spaces/useSpaceProfile.ts:87
 #: src/hooks/business/ui/useCustomAssets.ts:139
 #: src/hooks/business/ui/useFileUpload.ts:54
 #: src/hooks/business/ui/useSpaceFileUploads.ts:68
@@ -966,7 +978,7 @@ msgid "File cannot be larger than 5MB"
 msgstr "Fișierul nu poate fi mai mare de 5MB"
 
 #: src/hooks/business/messages/useMessageComposer.ts:83
-#: src/hooks/business/spaces/useSpaceProfile.ts:84
+#: src/hooks/business/spaces/useSpaceProfile.ts:89
 #: src/hooks/business/ui/useCustomAssets.ts:105
 #: src/hooks/business/ui/useCustomAssets.ts:150
 #: src/hooks/business/ui/useFileUpload.ts:56
@@ -994,7 +1006,7 @@ msgstr "Dimensiunea fișierului este prea mică. Dimensiunea minimă: {minSizeMB
 msgid "File validation failed. Please try again."
 msgstr "Validarea fișierului a eșuat. Te rugăm să încerci din nou."
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:442
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:443
 msgid "Fix"
 msgstr "Rezolvă"
 
@@ -1021,17 +1033,17 @@ msgstr "General"
 msgid "General Chat"
 msgstr "Chat General"
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:607
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:608
 msgid "Generate Link"
 msgstr "Generează linkul"
 
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:446
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:607
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:608
 msgid "Generate New Link"
 msgstr "Generează un nou link"
 
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:394
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:601
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:602
 msgid "Generate Public Invite Link"
 msgstr "Generează link de invitație public"
 
@@ -1058,17 +1070,17 @@ msgstr "Numele grupului"
 #: src/hooks/business/validation/useGroupNameValidation.ts:18
 #: src/hooks/business/validation/useGroupNameValidation.ts:40
 msgid "Group name cannot contain special characters"
-msgstr ""
+msgstr "Numele grupului nu poate conține caractere speciale"
 
 #: src/hooks/business/validation/useGroupNameValidation.ts:12
 #: src/hooks/business/validation/useGroupNameValidation.ts:34
 msgid "Group name is required"
-msgstr ""
+msgstr "Numele grupului este necesar"
 
 #: src/hooks/business/validation/useGroupNameValidation.ts:15
 #: src/hooks/business/validation/useGroupNameValidation.ts:37
 msgid "Group name must be {MAX_NAME_LENGTH} characters or less"
-msgstr ""
+msgstr "Numele grupului trebuie să aibă {MAX_NAME_LENGTH} caractere sau mai puțin"
 
 #: src/components/direct/EmptyDirectMessage.tsx:54
 msgid "hide home screen"
@@ -1316,7 +1328,7 @@ msgstr "Gestionează dispozitivele și condițiile de confidențialitate pentru 
 msgid "Manage Inivte links and send invites to people you've previously had conversations with."
 msgstr "Gestionează linkurile de invitație și trimite invitații persoanelor cu care ai avut conversații anterioare."
 
-#: src/components/modals/SpaceSettingsModal/Account.tsx:92
+#: src/components/modals/SpaceSettingsModal/Account.tsx:94
 msgid "Manage your settings for this Space."
 msgstr "Gestionează setările tale pentru acest Space."
 
@@ -1330,7 +1342,7 @@ msgstr "Marchează totul ca citit"
 
 #: src/components/direct/DirectMessage.tsx:657
 #: src/components/direct/DirectMessage.tsx:824
-#: src/components/space/Channel.tsx:886
+#: src/components/space/Channel.tsx:892
 msgid "Members List"
 msgstr "Lista membrilor"
 
@@ -1346,8 +1358,8 @@ msgstr "Acțiuni mesaj"
 msgid "Message deleted"
 msgstr "Mesaj șters"
 
-#: src/components/message/Message.tsx:626
-#: src/components/message/Message.tsx:689
+#: src/components/message/Message.tsx:631
+#: src/components/message/Message.tsx:694
 msgid "Message does not have a valid signature, this may not be from the sender"
 msgstr "Mesajul nu are o semnătură validă, acesta poate să nu fie de la expeditor"
 
@@ -1355,17 +1367,22 @@ msgstr "Mesajul nu are o semnătură validă, acesta poate să nu fie de la expe
 msgid "Message..."
 msgstr "Mesaj..."
 
-#: src/components/message/MessageComposer.tsx:608
+#: src/components/message/MessageComposer.tsx:632
 msgid "Messages are NOT signed!"
 msgstr "Mesajele NU sunt semnate!"
 
-#: src/components/message/MessageComposer.tsx:609
+#: src/components/message/MessageComposer.tsx:633
 msgid "Messages are signed!"
 msgstr "Mesajele sunt semnate!"
 
 #: src/components/message/MessageActions.tsx:86
 msgid "More reactions"
 msgstr "Mai multe reacții"
+
+#: src/hooks/business/validation/useDisplayNameValidation.ts:26
+#: src/hooks/business/validation/useDisplayNameValidation.ts:55
+msgid "Names resembling admin, moderator, or support are reserved."
+msgstr ""
 
 #: src/components/modals/NewDirectMessageModal.tsx:83
 msgid "New Direct Message"
@@ -1395,9 +1412,8 @@ msgstr "Niciun mesaj găsit"
 msgid "No pinned messages yet"
 msgstr "Nu sunt încă mesaje fixate"
 
-#: src/components/message/MessageComposer.tsx:521
-msgid "No topic"
-msgstr "Niciun subiect"
+#~ msgid "No topic"
+#~ msgstr "Niciun subiect"
 
 #~ msgid "No unread mentions"
 #~ msgstr "Nu sunt mențiuni necitite"
@@ -1406,9 +1422,9 @@ msgstr "Niciun subiect"
 msgid "No unread notifications"
 msgstr "Nu sunt notificări necitite"
 
-#: src/components/space/Channel.tsx:604
-#: src/components/space/Channel.tsx:1092
-#: src/components/space/Channel.tsx:1280
+#: src/components/space/Channel.tsx:610
+#: src/components/space/Channel.tsx:1098
+#: src/components/space/Channel.tsx:1286
 msgid "No users found!"
 msgstr "Niciun utilizator găsit!"
 
@@ -1423,7 +1439,7 @@ msgstr "Permisiunea pentru notificări nu a fost acordată"
 #: src/components/modals/SpaceSettingsModal/Account.tsx:187
 #: src/components/modals/UserSettingsModal/Navigation.tsx:17
 #: src/components/modals/UserSettingsModal/Notifications.tsx:24
-#: src/components/space/Channel.tsx:854
+#: src/components/space/Channel.tsx:860
 msgid "Notifications"
 msgstr "Notificări"
 
@@ -1436,7 +1452,7 @@ msgstr "Notificările sunt blocate. Te rugăm să le activezi în setările brow
 msgid "Notifications are not supported in this browser"
 msgstr "Notificările nu sunt acceptate în acest browser"
 
-#: src/components/message/MessageComposer.tsx:535
+#: src/components/message/MessageComposer.tsx:559
 msgid "Notify all members"
 msgstr "Notifică toți membrii"
 
@@ -1557,18 +1573,18 @@ msgstr "Fixează mesajele"
 msgid "Pin to top"
 msgstr "Fixa în sus"
 
-#: src/components/message/Message.tsx:609
-#: src/components/message/Message.tsx:672
+#: src/components/message/Message.tsx:614
+#: src/components/message/Message.tsx:677
 msgid "Pinned"
 msgstr "Fixat"
 
 #. placeholder {0}: mapSenderToUser(message.pinnedBy)?.displayName || message.pinnedBy
-#: src/components/message/Message.tsx:608
-#: src/components/message/Message.tsx:671
+#: src/components/message/Message.tsx:613
+#: src/components/message/Message.tsx:676
 msgid "Pinned by {0}"
 msgstr "Fixat de {0}"
 
-#: src/components/space/Channel.tsx:815
+#: src/components/space/Channel.tsx:821
 msgid "Pinned Messages"
 msgstr "Mesaje fixate"
 
@@ -1697,7 +1713,7 @@ msgstr "Salvează"
 
 #: src/components/modals/ChannelEditorModal.tsx:196
 #: src/components/modals/GroupEditorModal.tsx:97
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:588
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:589
 #: src/components/modals/UserSettingsModal/UserSettingsModal.tsx:242
 #: src/components/user/UserProfileEdit.tsx:158
 msgid "Save Changes"
@@ -1713,7 +1729,7 @@ msgstr "Salvează fotografia de contact"
 msgid "Save Edit History"
 msgstr "Salvează istoricul editărilor"
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:573
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:574
 #: src/components/modals/UserSettingsModal/UserSettingsModal.tsx:231
 msgid "Save Failed"
 msgstr "Salvarea a eșuat"
@@ -1758,7 +1774,7 @@ msgid "Search in this Space..."
 msgstr "Caută în acest Spațiu..."
 
 #: src/components/direct/DirectMessage.tsx:676
-#: src/components/space/Channel.tsx:905
+#: src/components/space/Channel.tsx:911
 msgid "Search Messages"
 msgstr "Caută Mesaje"
 
@@ -1774,7 +1790,7 @@ msgstr "Rezultatele căutării"
 msgid "Search username or address"
 msgstr "Caută numele de utilizator sau adresa"
 
-#: src/components/space/Channel.tsx:1252
+#: src/components/space/Channel.tsx:1258
 msgid "Search Username or Address"
 msgstr "Caută numele de utilizator sau adresa"
 
@@ -1909,7 +1925,7 @@ msgstr "Numele Spațiului este necesar"
 #: src/hooks/business/validation/useSpaceNameValidation.ts:15
 #: src/hooks/business/validation/useSpaceNameValidation.ts:37
 msgid "Space name must be {MAX_NAME_LENGTH} characters or less"
-msgstr ""
+msgstr "Numele Spațiu trebuie să aibă {MAX_NAME_LENGTH} caractere sau mai puțin"
 
 #: src/components/modals/SpaceSettingsModal/Navigation.tsx:38
 #: src/components/space/ChannelList.tsx:118
@@ -1938,7 +1954,7 @@ msgstr "Autocolante"
 msgid "Successfully sent invite to {0}"
 msgstr "Invitația a fost trimisă cu succes către {0}"
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:445
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:446
 msgid "Sync Kick Status"
 msgstr "Sincronizează statutul de eliminare"
 
@@ -1997,6 +2013,11 @@ msgstr "Aceasta este adresa ta publică și este sigură pentru a fi împărtă�
 msgid "This link will not expire, but you can generate a new one at any time, which will invalidate the old link."
 msgstr "Acest link nu va expira, dar poți genera unul nou în orice moment, ceea ce va invalida vechiul link."
 
+#: src/hooks/business/validation/useDisplayNameValidation.ts:23
+#: src/hooks/business/validation/useDisplayNameValidation.ts:52
+msgid "This name conflicts with @everyone mentions."
+msgstr ""
+
 #: src/components/modals/SpaceSettingsModal/Roles.tsx:58
 msgid "This protects your identity as the space owner. However, if you're the only one with this role, your identity becomes obvious. Consider having multiple users (real or fake accounts) with the same role for better privacy protection."
 msgstr "Aceasta îți protejează identitatea ca proprietar al spațiului. Cu toate acestea, dacă ești singurul cu acest rol, identitatea ta devine evidentă. Ia în considerare să ai mai mulți utilizatori (conturi reale sau false) cu același rol pentru o mai bună protecție a intimității."
@@ -2011,11 +2032,11 @@ msgstr "Acest link public de invitație nu mai este valabil."
 msgid "This user is already a member of this space."
 msgstr "Acest utilizator este deja membru al acestui Spațiu."
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:605
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:606
 msgid "This will create a public invite link that anyone can use to join your Space. Consider who you share this link with."
 msgstr "Aceasta va crea un link de invitație public pe care oricine îl poate folosi pentru a se alătura Spațiu-ului tău. Ia în considerare cu cine împărtășești acest link."
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:604
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:605
 msgid "This will generate a new public invite link and invalidate the current one. Anyone with the old link will no longer be able to use it."
 msgstr "Aceasta va genera un nou link de invitație public și va invalida pe cel curent. Oricine are vechiul link nu va mai putea să-l folosească."
 
@@ -2041,7 +2062,7 @@ msgstr "Prea multe fișiere selectate. Te rugăm să selectezi mai puține fiși
 
 #: src/hooks/business/messages/useMessageComposer.ts:133
 msgid "Too many mentions in message. Maximum {MAX_MENTIONS_PER_MESSAGE} allowed."
-msgstr ""
+msgstr "Prea multe mențiuni în mesaj. Maxim {MAX_MENTIONS_PER_MESSAGE} permis."
 
 #: src/components/search/SearchResults.tsx:105
 msgid "Try different keywords or check your spelling"
@@ -2051,7 +2072,7 @@ msgstr "Încearcă cuvinte cheie diferite sau verifică-ți ortografia"
 msgid "Unable to compress emoji images. Please use smaller images."
 msgstr "Imposibil de comprimat imaginile emoji. Te rugăm să folosești imagini mai mici."
 
-#: src/hooks/business/spaces/useSpaceProfile.ts:123
+#: src/hooks/business/spaces/useSpaceProfile.ts:128
 #: src/hooks/business/ui/useFileUpload.ts:96
 #: src/hooks/business/ui/useSpaceFileUploads.ts:160
 #: src/hooks/business/ui/useSpaceFileUploads.ts:183
@@ -2107,8 +2128,8 @@ msgstr "Timp necunoscut"
 #: src/components/direct/DirectMessage.tsx:162
 #: src/components/direct/DirectMessage.tsx:177
 #: src/components/direct/DirectMessage.tsx:524
-#: src/components/message/MessageComposer.tsx:480
-#: src/components/message/MessageComposer.tsx:487
+#: src/components/message/MessageComposer.tsx:501
+#: src/components/message/MessageComposer.tsx:508
 #: src/components/message/MessageEditTextarea.tsx:225
 #: src/components/message/MessageEditTextarea.tsx:260
 #: src/components/message/MessageEditTextarea.tsx:267
@@ -2170,11 +2191,11 @@ msgstr "Dezfixat!"
 msgid "Until you reply, this sender will not see your display name or profile picture"
 msgstr "Până când răspunzi, acest expeditor nu va vedea numele tău de afișare sau fotografia de profil"
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:445
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:446
 msgid "Update kick records for all members. Use this if kicked users still appear active to some members."
 msgstr "Actualizează înregistrările de excludere pentru toți membrii. Folosește aceasta dacă utilizatorii excluși apar încă activ pentru unii membri."
 
-#: src/components/modals/SpaceSettingsModal/Account.tsx:128
+#: src/components/modals/SpaceSettingsModal/Account.tsx:130
 msgid "Upload an avatar for this Space - PNG or JPG - Optimal ratio 1:1"
 msgstr "Încarcă un avatar pentru acest Spațiu - PNG sau JPG - Raport optim 1:1"
 
@@ -2209,8 +2230,8 @@ msgstr "Adresa utilizatorului aici"
 msgid "User does not exist."
 msgstr "Utilizatorul nu există."
 
-#: src/components/space/Channel.tsx:591
-#: src/components/space/Channel.tsx:1078
+#: src/components/space/Channel.tsx:597
+#: src/components/space/Channel.tsx:1084
 msgid "Username or Address"
 msgstr "Nume de utilizator sau adresă"
 
@@ -2314,7 +2335,7 @@ msgid "You cannot delete a group that contains channels. Delete all {channelCoun
 msgstr "Nu poți șterge un grup care conține canale. Șterge mai întâi toate cele {channelCount} canale din acest grup."
 
 #: src/components/message/MessageComposer.tsx:336
-#: src/components/space/Channel.tsx:1044
+#: src/components/space/Channel.tsx:1050
 msgid "You cannot post in this channel"
 msgstr "Nu poți posta în acest canal"
 
@@ -2344,7 +2365,7 @@ msgstr "Ești la curent!"
 msgid "You're all set. Welcome to Quorum!"
 msgstr "Ești pregătit. Bine ai venit la Quorum!"
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:441
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:442
 msgid "You're not listed in this Space's members. Correcting this will add you to the Space Members list (stores your profile locally with your inbox address)."
 msgstr "Nu ești listat printre membrii acestui Spațiu. Corectarea acestuia te va adăuga pe lista de Membri ai Spațiu-ului (stochează profilul tău local cu adresa ta de inbox)."
 
@@ -2353,7 +2374,7 @@ msgstr "Nu ești listat printre membrii acestui Spațiu. Corectarea acestuia te 
 msgid "You've been invited to join a Space"
 msgstr "Ai fost invitat să te alături unui Spațiu"
 
-#: src/components/modals/SpaceSettingsModal/Account.tsx:98
+#: src/components/modals/SpaceSettingsModal/Account.tsx:100
 msgid "Your Details"
 msgstr "Detaliile tale"
 

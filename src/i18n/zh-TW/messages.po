@@ -31,7 +31,7 @@ msgid "No Role - {count}"
 msgstr "無角色 - {count}"
 
 #. js-lingui-explicit-id
-#: src/components/space/Channel.tsx:1020
+#: src/components/space/Channel.tsx:1026
 msgid "Send a message to #{channel_name}"
 msgstr "傳送訊息至 #{channel_name}"
 
@@ -54,24 +54,28 @@ msgstr "無法處理圖像"
 
 #. js-lingui-explicit-id
 #: src/components/message/MessageComposer.native.tsx:314
-#: src/components/message/MessageComposer.tsx:406
 msgid "Replying to {user}"
 msgstr "回覆 {user}"
 
 #. js-lingui-explicit-id
-#: src/components/message/Message.tsx:273
-msgid "{user} has joined"
-msgstr "{user} 已加入"
+#: src/components/message/MessageComposer.tsx:406
+msgid "Replying to"
+msgstr "回覆中"
 
 #. js-lingui-explicit-id
-#: src/components/message/Message.tsx:280
-msgid "{user} has left"
-msgstr "{user} 已離開"
+#: src/components/message/Message.tsx:274
+msgid "has joined"
+msgstr "已加入"
 
 #. js-lingui-explicit-id
-#: src/components/message/Message.tsx:287
-msgid "{user} has been kicked"
-msgstr "{user} 已被踢出"
+#: src/components/message/Message.tsx:282
+msgid "has left"
+msgstr "已離開"
+
+#. js-lingui-explicit-id
+#: src/components/message/Message.tsx:290
+msgid "has been kicked"
+msgstr "已被踢出"
 
 #. js-lingui-explicit-id
 #: src/components/direct/DirectMessage.tsx:783
@@ -82,13 +86,8 @@ msgstr "傳送訊息給 {user}"
 msgid " for updates."
 msgstr "更新中。"
 
-#: src/hooks/business/validation/useDisplayNameValidation.ts:18
-#: src/hooks/business/validation/useDisplayNameValidation.ts:43
-msgid "'everyone' is a reserved name."
-msgstr "'everyone' 是保留名稱。"
-
-#: src/components/message/Message.tsx:643
-#: src/components/message/Message.tsx:656
+#: src/components/message/Message.tsx:648
+#: src/components/message/Message.tsx:661
 msgid "(edited)"
 msgstr "(編輯過的)"
 
@@ -212,7 +211,7 @@ msgstr "帳戶"
 msgid "Account Address"
 msgstr "帳戶地址"
 
-#: src/components/modals/SpaceSettingsModal/Account.tsx:89
+#: src/components/modals/SpaceSettingsModal/Account.tsx:91
 msgid "Account Settings"
 msgstr "帳戶設定"
 
@@ -225,7 +224,7 @@ msgstr "新增一個空間"
 msgid "Add Channel"
 msgstr "新增頻道"
 
-#: src/components/direct/DirectMessages.tsx:100
+#: src/components/direct/DirectMessages.tsx:95
 msgid "Add friend"
 msgstr "添加好友"
 
@@ -238,7 +237,7 @@ msgstr "新增群組"
 msgid "Add Role"
 msgstr "新增角色"
 
-#: src/components/message/MessageComposer.tsx:591
+#: src/components/message/MessageComposer.tsx:615
 msgid "add sticker"
 msgstr "新增貼圖"
 
@@ -366,7 +365,7 @@ msgid ""
 " to delete other users' messages. <0><1>Learn more</1></0>"
 msgstr "作為空間擁有者，您需要為自己分配一個具有刪除權限的角色，以刪除其他用戶的消息。<0><1>了解更多</1></0>"
 
-#: src/components/message/MessageComposer.tsx:558
+#: src/components/message/MessageComposer.tsx:582
 msgid "attach image"
 msgstr "附加圖片"
 
@@ -420,7 +419,7 @@ msgid ""
 "Cannot upload more than {0} files at once ({remaining} slots remaining)"
 msgstr "一次不能上傳超過 {0} 個文件（剩餘 {remaining} 個名額）"
 
-#: src/components/modals/SpaceSettingsModal/Account.tsx:101
+#: src/components/modals/SpaceSettingsModal/Account.tsx:103
 msgid "Change your avatar and name for this Space"
 msgstr "更改此 Space 的頭像和名稱"
 
@@ -438,7 +437,7 @@ msgstr "頻道圖示"
 msgid "Channel Managers"
 msgstr "頻道管理員"
 
-#: src/components/space/Channel.tsx:1241
+#: src/components/space/Channel.tsx:1247
 msgid "Channel members"
 msgstr "頻道成員"
 
@@ -760,23 +759,22 @@ msgstr "私訊"
 msgid "Display name"
 msgstr "顯示名稱"
 
-#: src/components/modals/SpaceSettingsModal/Account.tsx:139
+#: src/components/modals/SpaceSettingsModal/Account.tsx:141
 msgid "Display Name"
 msgstr "顯示名稱"
 
-#: src/hooks/business/validation/useDisplayNameValidation.ts:21
-#: src/hooks/business/validation/useDisplayNameValidation.ts:46
+#: src/hooks/business/validation/useDisplayNameValidation.ts:29
+#: src/hooks/business/validation/useDisplayNameValidation.ts:58
 msgid "Display name cannot contain special characters"
 msgstr "顯示名稱不能包含特殊字符"
 
-#: src/components/modals/SpaceSettingsModal/Account.tsx:143
-#: src/hooks/business/validation/useDisplayNameValidation.ts:12
-#: src/hooks/business/validation/useDisplayNameValidation.ts:37
+#: src/hooks/business/validation/useDisplayNameValidation.ts:16
+#: src/hooks/business/validation/useDisplayNameValidation.ts:45
 msgid "Display name is required"
 msgstr "顯示名稱是必需的"
 
-#: src/hooks/business/validation/useDisplayNameValidation.ts:15
-#: src/hooks/business/validation/useDisplayNameValidation.ts:40
+#: src/hooks/business/validation/useDisplayNameValidation.ts:19
+#: src/hooks/business/validation/useDisplayNameValidation.ts:48
 msgid "Display name must be {MAX_NAME_LENGTH} characters or less"
 msgstr "顯示名稱必須少於 {MAX_NAME_LENGTH} 個字符"
 
@@ -909,7 +907,7 @@ msgstr "創建空間失敗。請再試一次。"
 msgid "Failed to decrypt message with any known state"
 msgstr "無法使用任何已知狀態解密消息"
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:616
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:617
 msgid "Failed to generate invite link. Please try again."
 msgstr "生成邀請鏈接失敗。請再試一次。"
 
@@ -933,7 +931,7 @@ msgstr "無法選擇文件"
 msgid "Failed to send invite. Please try again."
 msgstr "邀請發送失敗。請再試一次。"
 
-#: src/hooks/business/spaces/useSpaceProfile.ts:215
+#: src/hooks/business/spaces/useSpaceProfile.ts:216
 msgid "Failed to update profile"
 msgstr "更新個人資料失敗"
 
@@ -941,7 +939,7 @@ msgstr "更新個人資料失敗"
 msgid "File cannot be larger than {maxSize}"
 msgstr "檔案不能大於 {maxSize}"
 
-#: src/hooks/business/spaces/useSpaceProfile.ts:82
+#: src/hooks/business/spaces/useSpaceProfile.ts:87
 #: src/hooks/business/ui/useCustomAssets.ts:139
 #: src/hooks/business/ui/useFileUpload.ts:54
 #: src/hooks/business/ui/useSpaceFileUploads.ts:68
@@ -959,7 +957,7 @@ msgid "File cannot be larger than 5MB"
 msgstr "檔案不能大於 5MB"
 
 #: src/hooks/business/messages/useMessageComposer.ts:83
-#: src/hooks/business/spaces/useSpaceProfile.ts:84
+#: src/hooks/business/spaces/useSpaceProfile.ts:89
 #: src/hooks/business/ui/useCustomAssets.ts:105
 #: src/hooks/business/ui/useCustomAssets.ts:150
 #: src/hooks/business/ui/useFileUpload.ts:56
@@ -987,7 +985,7 @@ msgstr "文件大小過小。最小大小：{minSizeMB}"
 msgid "File validation failed. Please try again."
 msgstr "文件驗證失敗。請再試一次。"
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:442
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:443
 msgid "Fix"
 msgstr "修復"
 
@@ -1014,17 +1012,17 @@ msgstr "一般設定"
 msgid "General Chat"
 msgstr "一般聊天"
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:607
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:608
 msgid "Generate Link"
 msgstr "生成連結"
 
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:446
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:607
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:608
 msgid "Generate New Link"
 msgstr "生成新鏈接"
 
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:394
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:601
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:602
 msgid "Generate Public Invite Link"
 msgstr "生成公開邀請鏈接"
 
@@ -1316,7 +1314,7 @@ msgid ""
 "conversations with."
 msgstr "管理邀請連結並向之前有過對話的人發送邀請。"
 
-#: src/components/modals/SpaceSettingsModal/Account.tsx:92
+#: src/components/modals/SpaceSettingsModal/Account.tsx:94
 msgid "Manage your settings for this Space."
 msgstr "管理此 Space 的設定。"
 
@@ -1330,7 +1328,7 @@ msgstr "全部標記為已讀"
 
 #: src/components/direct/DirectMessage.tsx:657
 #: src/components/direct/DirectMessage.tsx:824
-#: src/components/space/Channel.tsx:886
+#: src/components/space/Channel.tsx:892
 msgid "Members List"
 msgstr "成員列表"
 
@@ -1346,8 +1344,8 @@ msgstr "消息操作"
 msgid "Message deleted"
 msgstr "訊息已刪除"
 
-#: src/components/message/Message.tsx:626
-#: src/components/message/Message.tsx:689
+#: src/components/message/Message.tsx:631
+#: src/components/message/Message.tsx:694
 msgid ""
 "Message does not have a valid signature, this may not be from the sender"
 msgstr "消息沒有有效的簽名，這可能不是發件人發送的"
@@ -1356,17 +1354,22 @@ msgstr "消息沒有有效的簽名，這可能不是發件人發送的"
 msgid "Message..."
 msgstr "訊息..."
 
-#: src/components/message/MessageComposer.tsx:608
+#: src/components/message/MessageComposer.tsx:632
 msgid "Messages are NOT signed!"
 msgstr "消息未簽名！"
 
-#: src/components/message/MessageComposer.tsx:609
+#: src/components/message/MessageComposer.tsx:633
 msgid "Messages are signed!"
 msgstr "消息已簽名！"
 
 #: src/components/message/MessageActions.tsx:86
 msgid "More reactions"
 msgstr "更多反應"
+
+#: src/hooks/business/validation/useDisplayNameValidation.ts:26
+#: src/hooks/business/validation/useDisplayNameValidation.ts:55
+msgid "Names resembling admin, moderator, or support are reserved."
+msgstr "名稱類似於管理員、版主或支援者是保留的。"
 
 #: src/components/modals/NewDirectMessageModal.tsx:83
 msgid "New Direct Message"
@@ -1400,16 +1403,12 @@ msgstr "未找到消息"
 msgid "No pinned messages yet"
 msgstr "尚無固定訊息"
 
-#: src/components/message/MessageComposer.tsx:521
-msgid "No topic"
-msgstr "沒有主題"
-
 #: src/components/notifications/NotificationPanel.tsx:166
 msgid "No unread notifications"
 msgstr "沒有未讀通知"
 
-#: src/components/space/Channel.tsx:604 src/components/space/Channel.tsx:1092
-#: src/components/space/Channel.tsx:1280
+#: src/components/space/Channel.tsx:610 src/components/space/Channel.tsx:1098
+#: src/components/space/Channel.tsx:1286
 msgid "No users found!"
 msgstr "找不到使用者！"
 
@@ -1424,7 +1423,7 @@ msgstr "通知權限未授予"
 #: src/components/modals/SpaceSettingsModal/Account.tsx:187
 #: src/components/modals/UserSettingsModal/Navigation.tsx:17
 #: src/components/modals/UserSettingsModal/Notifications.tsx:24
-#: src/components/space/Channel.tsx:854
+#: src/components/space/Channel.tsx:860
 msgid "Notifications"
 msgstr "通知"
 
@@ -1438,7 +1437,7 @@ msgstr "通知已被阻止。請在瀏覽器設定中啟用它們。"
 msgid "Notifications are not supported in this browser"
 msgstr "此瀏覽器不支援通知"
 
-#: src/components/message/MessageComposer.tsx:535
+#: src/components/message/MessageComposer.tsx:559
 msgid "Notify all members"
 msgstr "通知所有成員"
 
@@ -1555,19 +1554,19 @@ msgstr "固定訊息"
 msgid "Pin to top"
 msgstr "釘住到頂部"
 
-#: src/components/message/Message.tsx:609
-#: src/components/message/Message.tsx:672
+#: src/components/message/Message.tsx:614
+#: src/components/message/Message.tsx:677
 msgid "Pinned"
 msgstr "已固定"
 
 #. placeholder {0}: mapSenderToUser(message.pinnedBy)?.displayName ||
 #. message.pinnedBy
-#: src/components/message/Message.tsx:608
-#: src/components/message/Message.tsx:671
+#: src/components/message/Message.tsx:613
+#: src/components/message/Message.tsx:676
 msgid "Pinned by {0}"
 msgstr "由 {0} 固定"
 
-#: src/components/space/Channel.tsx:815
+#: src/components/space/Channel.tsx:821
 msgid "Pinned Messages"
 msgstr "固定訊息"
 
@@ -1707,7 +1706,7 @@ msgstr "保存"
 
 #: src/components/modals/ChannelEditorModal.tsx:196
 #: src/components/modals/GroupEditorModal.tsx:97
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:588
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:589
 #: src/components/modals/UserSettingsModal/UserSettingsModal.tsx:242
 #: src/components/user/UserProfileEdit.tsx:158
 msgid "Save Changes"
@@ -1723,7 +1722,7 @@ msgstr "儲存聯絡人照片"
 msgid "Save Edit History"
 msgstr "保存編輯歷史"
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:573
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:574
 #: src/components/modals/UserSettingsModal/UserSettingsModal.tsx:231
 msgid "Save Failed"
 msgstr "儲存失敗"
@@ -1766,7 +1765,7 @@ msgid "Search in this Space..."
 msgstr "在此空間中搜尋..."
 
 #: src/components/direct/DirectMessage.tsx:676
-#: src/components/space/Channel.tsx:905
+#: src/components/space/Channel.tsx:911
 msgid "Search Messages"
 msgstr "搜尋消息"
 
@@ -1782,7 +1781,7 @@ msgstr "搜尋結果"
 msgid "Search username or address"
 msgstr "搜尋用戶名或地址"
 
-#: src/components/space/Channel.tsx:1252
+#: src/components/space/Channel.tsx:1258
 msgid "Search Username or Address"
 msgstr "搜尋用戶名或地址"
 
@@ -1944,7 +1943,7 @@ msgstr "貼圖"
 msgid "Successfully sent invite to {0}"
 msgstr "已成功發送邀請給 {0}"
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:445
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:446
 msgid "Sync Kick Status"
 msgstr "同步踢出狀態"
 
@@ -2010,6 +2009,11 @@ msgid ""
 " will invalidate the old link."
 msgstr "此連結不會過期，但你可以隨時生成一個新連結，這將使舊連結失效。"
 
+#: src/hooks/business/validation/useDisplayNameValidation.ts:23
+#: src/hooks/business/validation/useDisplayNameValidation.ts:52
+msgid "This name conflicts with @everyone mentions."
+msgstr "此名稱與 @everyone 提及衝突。"
+
 #: src/components/modals/SpaceSettingsModal/Roles.tsx:58
 msgid ""
 "This protects your identity as the space owner. However, if you're the only "
@@ -2029,13 +2033,13 @@ msgstr "此公共邀請鏈接不再有效。"
 msgid "This user is already a member of this space."
 msgstr "該用戶已經是此空間的成員。"
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:605
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:606
 msgid ""
 "This will create a public invite link that anyone can use to join your "
 "Space. Consider who you share this link with."
 msgstr "這將創建一個公共邀請連結，任何人都可以使用它來加入您的空間。考慮與誰分享這個連結。"
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:604
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:605
 msgid ""
 "This will generate a new public invite link and invalidate the current one. "
 "Anyone with the old link will no longer be able to use it."
@@ -2075,7 +2079,7 @@ msgstr "嘗試不同的關鍵字或檢查拼寫"
 msgid "Unable to compress emoji images. Please use smaller images."
 msgstr "無法壓縮emoji圖片。請使用較小的圖片。"
 
-#: src/hooks/business/spaces/useSpaceProfile.ts:123
+#: src/hooks/business/spaces/useSpaceProfile.ts:128
 #: src/hooks/business/ui/useFileUpload.ts:96
 #: src/hooks/business/ui/useSpaceFileUploads.ts:160
 #: src/hooks/business/ui/useSpaceFileUploads.ts:183
@@ -2133,8 +2137,8 @@ msgstr "未知時間"
 #: src/components/direct/DirectMessage.tsx:162
 #: src/components/direct/DirectMessage.tsx:177
 #: src/components/direct/DirectMessage.tsx:524
-#: src/components/message/MessageComposer.tsx:480
-#: src/components/message/MessageComposer.tsx:487
+#: src/components/message/MessageComposer.tsx:501
+#: src/components/message/MessageComposer.tsx:508
 #: src/components/message/MessageEditTextarea.tsx:225
 #: src/components/message/MessageEditTextarea.tsx:260
 #: src/components/message/MessageEditTextarea.tsx:267
@@ -2195,13 +2199,13 @@ msgid ""
 "picture"
 msgstr "在您回覆之前，該發件人將無法看到您的顯示名稱或個人資料圖片"
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:445
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:446
 msgid ""
 "Update kick records for all members. Use this if kicked users still appear "
 "active to some members."
 msgstr "更新所有成員的踢出記錄。如果被踢的用戶仍然對某些成員顯示為活躍，請使用此功能。"
 
-#: src/components/modals/SpaceSettingsModal/Account.tsx:128
+#: src/components/modals/SpaceSettingsModal/Account.tsx:130
 msgid "Upload an avatar for this Space - PNG or JPG - Optimal ratio 1:1"
 msgstr "為此空間上傳頭像 - PNG 或 JPG - 最佳比例 1:1"
 
@@ -2230,7 +2234,7 @@ msgstr "用戶地址在這裡"
 msgid "User does not exist."
 msgstr "用戶不存在。"
 
-#: src/components/space/Channel.tsx:591 src/components/space/Channel.tsx:1078
+#: src/components/space/Channel.tsx:597 src/components/space/Channel.tsx:1084
 msgid "Username or Address"
 msgstr "用戶名或地址"
 
@@ -2362,7 +2366,7 @@ msgid ""
 msgstr "你不能刪除包含頻道的群組。請先刪除此群組中的所有{channelCount}個頻道。"
 
 #: src/components/message/MessageComposer.tsx:336
-#: src/components/space/Channel.tsx:1044
+#: src/components/space/Channel.tsx:1050
 msgid "You cannot post in this channel"
 msgstr "你不能在此頻道中發佈"
 
@@ -2394,7 +2398,7 @@ msgstr "您已經全部跟上了！"
 msgid "You're all set. Welcome to Quorum!"
 msgstr "一切就緒，歡迎使用 Quorum！"
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:441
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:442
 msgid ""
 "You're not listed in this Space's members. Correcting this will add you to "
 "the Space Members list (stores your profile locally with your inbox "
@@ -2406,7 +2410,7 @@ msgstr "您未列入此空間的成員。更正此問題將使您添加到空間
 msgid "You've been invited to join a Space"
 msgstr "你已被邀請加入一個空間"
 
-#: src/components/modals/SpaceSettingsModal/Account.tsx:98
+#: src/components/modals/SpaceSettingsModal/Account.tsx:100
 msgid "Your Details"
 msgstr "您的詳細資訊"
 
@@ -2451,6 +2455,9 @@ msgstr "YouTube 影片縮圖"
 #~ "higher privacy guarantees, review the Advanced Settings."
 #~ msgstr "默認的 Space 設定提供最典型的聊天體驗，但若要獲得更高的隱私保障，請檢查進階設定。"
 
+#~ msgid "'everyone' is a reserved name."
+#~ msgstr "'everyone' 是保留名稱。"
+
 #~ msgid "{0} pinned message"
 #~ msgstr "{0} 固定訊息"
 
@@ -2462,6 +2469,15 @@ msgstr "YouTube 影片縮圖"
 
 #~ msgid "{0} unread mentions"
 #~ msgstr "{0} 未讀提及"
+
+#~ msgid "{user} has been kicked"
+#~ msgstr "{user} 已被踢出"
+
+#~ msgid "{user} has joined"
+#~ msgstr "{user} 已加入"
+
+#~ msgid "{user} has left"
+#~ msgstr "{user} 已離開"
 
 #~ msgid "Account Settings for This Space"
 #~ msgstr "此空間的帳戶設定"
@@ -2491,6 +2507,9 @@ msgstr "YouTube 影片縮圖"
 
 #~ msgid "Enter a name for your new Space"
 #~ msgstr "為您的新空間輸入一個名稱"
+
+#~ msgid "No topic"
+#~ msgstr "沒有主題"
 
 #~ msgid "No unread mentions"
 #~ msgstr "沒有未讀提及"

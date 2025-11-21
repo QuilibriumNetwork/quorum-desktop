@@ -31,7 +31,7 @@ msgid "No Role - {count}"
 msgstr "ไม่มีบทบาท - {count}"
 
 #. js-lingui-explicit-id
-#: src/components/space/Channel.tsx:1020
+#: src/components/space/Channel.tsx:1026
 msgid "Send a message to #{channel_name}"
 msgstr "ส่งข้อความไปยัง #{channel_name}"
 
@@ -56,24 +56,28 @@ msgstr "ไม่สามารถประมวลผลภาพได้"
 
 #. js-lingui-explicit-id
 #: src/components/message/MessageComposer.native.tsx:314
-#: src/components/message/MessageComposer.tsx:406
 msgid "Replying to {user}"
 msgstr "กำลังตอบกลับ {user}"
 
 #. js-lingui-explicit-id
-#: src/components/message/Message.tsx:273
-msgid "{user} has joined"
-msgstr "{user} ได้เข้าร่วม"
+#: src/components/message/MessageComposer.tsx:406
+msgid "Replying to"
+msgstr "กำลังตอบกลับ"
 
 #. js-lingui-explicit-id
-#: src/components/message/Message.tsx:280
-msgid "{user} has left"
-msgstr "{user} ได้ออก"
+#: src/components/message/Message.tsx:274
+msgid "has joined"
+msgstr "ได้เข้าร่วม"
 
 #. js-lingui-explicit-id
-#: src/components/message/Message.tsx:287
-msgid "{user} has been kicked"
-msgstr "{user} ถูกเตะ"
+#: src/components/message/Message.tsx:282
+msgid "has left"
+msgstr "ได้ออก"
+
+#. js-lingui-explicit-id
+#: src/components/message/Message.tsx:290
+msgid "has been kicked"
+msgstr "ถูกเตะออก"
 
 #. js-lingui-explicit-id
 #: src/components/direct/DirectMessage.tsx:783
@@ -84,13 +88,8 @@ msgstr "ส่งข้อความไปยัง {user}"
 msgid " for updates."
 msgstr "สำหรับการอัปเดต"
 
-#: src/hooks/business/validation/useDisplayNameValidation.ts:18
-#: src/hooks/business/validation/useDisplayNameValidation.ts:43
-msgid "'everyone' is a reserved name."
-msgstr "'name' เป็นชื่อที่สงวนไว้"
-
-#: src/components/message/Message.tsx:643
-#: src/components/message/Message.tsx:656
+#: src/components/message/Message.tsx:648
+#: src/components/message/Message.tsx:661
 msgid "(edited)"
 msgstr "(แก้ไขแล้ว)"
 
@@ -218,7 +217,7 @@ msgstr "บัญชี"
 msgid "Account Address"
 msgstr "ที่อยู่บัญชี"
 
-#: src/components/modals/SpaceSettingsModal/Account.tsx:89
+#: src/components/modals/SpaceSettingsModal/Account.tsx:91
 msgid "Account Settings"
 msgstr "การตั้งค่าบัญชี"
 
@@ -231,7 +230,7 @@ msgstr "เพิ่ม Space"
 msgid "Add Channel"
 msgstr "เพิ่มช่องทาง"
 
-#: src/components/direct/DirectMessages.tsx:100
+#: src/components/direct/DirectMessages.tsx:95
 msgid "Add friend"
 msgstr "เพิ่มเพื่อน"
 
@@ -244,7 +243,7 @@ msgstr "เพิ่มกลุ่ม"
 msgid "Add Role"
 msgstr "เพิ่มบทบาท"
 
-#: src/components/message/MessageComposer.tsx:591
+#: src/components/message/MessageComposer.tsx:615
 msgid "add sticker"
 msgstr "เพิ่มสติกเกอร์"
 
@@ -391,7 +390,7 @@ msgstr ""
 "คุณต้องกำหนดบทบาทให้กับตัวเองที่มีสิทธิ์ในการลบเพื่อที่จะลบข้อความของผู้ใช้อื่น"
 " <0><1>เรียนรู้เพิ่มเติม</1></0>"
 
-#: src/components/message/MessageComposer.tsx:558
+#: src/components/message/MessageComposer.tsx:582
 msgid "attach image"
 msgstr "แนบรูปภาพ"
 
@@ -447,7 +446,7 @@ msgstr ""
 "ไม่สามารถอัปโหลดไฟล์มากกว่า {0} ไฟล์ในครั้งเดียว ({remaining} "
 "ช่องว่างที่เหลือ)"
 
-#: src/components/modals/SpaceSettingsModal/Account.tsx:101
+#: src/components/modals/SpaceSettingsModal/Account.tsx:103
 msgid "Change your avatar and name for this Space"
 msgstr "เปลี่ยนรูปโปรไฟล์และชื่อของคุณสำหรับ Space นี้"
 
@@ -468,7 +467,7 @@ msgstr "ไอคอนช่อง"
 msgid "Channel Managers"
 msgstr "ผู้จัดการช่อง"
 
-#: src/components/space/Channel.tsx:1241
+#: src/components/space/Channel.tsx:1247
 msgid "Channel members"
 msgstr "สมาชิกช่อง"
 
@@ -796,23 +795,22 @@ msgstr "ข้อความตรง"
 msgid "Display name"
 msgstr "ชื่อแสดง"
 
-#: src/components/modals/SpaceSettingsModal/Account.tsx:139
+#: src/components/modals/SpaceSettingsModal/Account.tsx:141
 msgid "Display Name"
 msgstr "ชื่อที่แสดง"
 
-#: src/hooks/business/validation/useDisplayNameValidation.ts:21
-#: src/hooks/business/validation/useDisplayNameValidation.ts:46
+#: src/hooks/business/validation/useDisplayNameValidation.ts:29
+#: src/hooks/business/validation/useDisplayNameValidation.ts:58
 msgid "Display name cannot contain special characters"
 msgstr "ชื่อแสดงไม่สามารถมีอักขระพิเศษ"
 
-#: src/components/modals/SpaceSettingsModal/Account.tsx:143
-#: src/hooks/business/validation/useDisplayNameValidation.ts:12
-#: src/hooks/business/validation/useDisplayNameValidation.ts:37
+#: src/hooks/business/validation/useDisplayNameValidation.ts:16
+#: src/hooks/business/validation/useDisplayNameValidation.ts:45
 msgid "Display name is required"
 msgstr "ชื่อแสดงต้องการ"
 
-#: src/hooks/business/validation/useDisplayNameValidation.ts:15
-#: src/hooks/business/validation/useDisplayNameValidation.ts:40
+#: src/hooks/business/validation/useDisplayNameValidation.ts:19
+#: src/hooks/business/validation/useDisplayNameValidation.ts:48
 msgid "Display name must be {MAX_NAME_LENGTH} characters or less"
 msgstr "ชื่อแสดงต้องมีความยาวไม่เกิน {MAX_NAME_LENGTH} ตัวอักษร"
 
@@ -949,7 +947,7 @@ msgstr "ไม่สามารถสร้าง Space ได้ กรุณ�
 msgid "Failed to decrypt message with any known state"
 msgstr "ไม่สามารถถอดรหัสข้อความด้วยสถานะที่รู้จักได้"
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:616
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:617
 msgid "Failed to generate invite link. Please try again."
 msgstr "ไม่สามารถสร้างลิงก์เชิญได้ กรุณาลองอีกครั้ง"
 
@@ -973,7 +971,7 @@ msgstr "ไม่สามารถเลือกเอกสารได้"
 msgid "Failed to send invite. Please try again."
 msgstr "ส่งคำเชิญล้มเหลว กรุณาลองอีกครั้ง"
 
-#: src/hooks/business/spaces/useSpaceProfile.ts:215
+#: src/hooks/business/spaces/useSpaceProfile.ts:216
 msgid "Failed to update profile"
 msgstr "ไม่สามารถอัปเดตโปรไฟล์ได้"
 
@@ -981,7 +979,7 @@ msgstr "ไม่สามารถอัปเดตโปรไฟล์ได
 msgid "File cannot be larger than {maxSize}"
 msgstr "ไฟล์ไม่สามารถมีขนาดใหญ่กว่า {maxSize}"
 
-#: src/hooks/business/spaces/useSpaceProfile.ts:82
+#: src/hooks/business/spaces/useSpaceProfile.ts:87
 #: src/hooks/business/ui/useCustomAssets.ts:139
 #: src/hooks/business/ui/useFileUpload.ts:54
 #: src/hooks/business/ui/useSpaceFileUploads.ts:68
@@ -999,7 +997,7 @@ msgid "File cannot be larger than 5MB"
 msgstr "ไฟล์ไม่สามารถมีขนาดใหญ่กว่า 5MB"
 
 #: src/hooks/business/messages/useMessageComposer.ts:83
-#: src/hooks/business/spaces/useSpaceProfile.ts:84
+#: src/hooks/business/spaces/useSpaceProfile.ts:89
 #: src/hooks/business/ui/useCustomAssets.ts:105
 #: src/hooks/business/ui/useCustomAssets.ts:150
 #: src/hooks/business/ui/useFileUpload.ts:56
@@ -1027,7 +1025,7 @@ msgstr "ขนาดไฟล์เล็กเกินไป ขนาดข�
 msgid "File validation failed. Please try again."
 msgstr "การตรวจสอบไฟล์ล้มเหลว กรุณาลองอีกครั้ง"
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:442
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:443
 msgid "Fix"
 msgstr "แก้ไข"
 
@@ -1054,17 +1052,17 @@ msgstr "ทั่วไป"
 msgid "General Chat"
 msgstr "แชททั่วไป"
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:607
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:608
 msgid "Generate Link"
 msgstr "สร้างลิงก์"
 
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:446
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:607
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:608
 msgid "Generate New Link"
 msgstr "สร้างลิงก์ใหม่"
 
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:394
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:601
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:602
 msgid "Generate Public Invite Link"
 msgstr "สร้างลิงก์เชิญสาธารณะ"
 
@@ -1364,7 +1362,7 @@ msgid ""
 "conversations with."
 msgstr "จัดการลิงก์เชิญและส่งคำเชิญไปยังผู้คนที่คุณเคยสนทนาด้วย"
 
-#: src/components/modals/SpaceSettingsModal/Account.tsx:92
+#: src/components/modals/SpaceSettingsModal/Account.tsx:94
 msgid "Manage your settings for this Space."
 msgstr "จัดการการตั้งค่าของคุณสำหรับ Space นี้"
 
@@ -1378,7 +1376,7 @@ msgstr "ทำเครื่องหมายทั้งหมดว่าอ
 
 #: src/components/direct/DirectMessage.tsx:657
 #: src/components/direct/DirectMessage.tsx:824
-#: src/components/space/Channel.tsx:886
+#: src/components/space/Channel.tsx:892
 msgid "Members List"
 msgstr "รายชื่อสมาชิก"
 
@@ -1394,8 +1392,8 @@ msgstr "การดำเนินการข้อความ"
 msgid "Message deleted"
 msgstr "ข้อความถูกลบ"
 
-#: src/components/message/Message.tsx:626
-#: src/components/message/Message.tsx:689
+#: src/components/message/Message.tsx:631
+#: src/components/message/Message.tsx:694
 msgid ""
 "Message does not have a valid signature, this may not be from the sender"
 msgstr "ข้อความไม่มีลายเซ็นที่ถูกต้อง อาจไม่ใช่มาจากผู้ส่ง"
@@ -1404,17 +1402,22 @@ msgstr "ข้อความไม่มีลายเซ็นที่ถู
 msgid "Message..."
 msgstr "ข้อความ..."
 
-#: src/components/message/MessageComposer.tsx:608
+#: src/components/message/MessageComposer.tsx:632
 msgid "Messages are NOT signed!"
 msgstr "ข้อความไม่ได้รับการลงนาม!"
 
-#: src/components/message/MessageComposer.tsx:609
+#: src/components/message/MessageComposer.tsx:633
 msgid "Messages are signed!"
 msgstr "ข้อความได้รับการลงนาม!"
 
 #: src/components/message/MessageActions.tsx:86
 msgid "More reactions"
 msgstr "ปฏิกิริยามากขึ้น"
+
+#: src/hooks/business/validation/useDisplayNameValidation.ts:26
+#: src/hooks/business/validation/useDisplayNameValidation.ts:55
+msgid "Names resembling admin, moderator, or support are reserved."
+msgstr "ชื่อที่คล้ายกับผู้ดูแลระบบ ผู้ดูแล หรือการสนับสนุนถูกสงวนไว้"
 
 #: src/components/modals/NewDirectMessageModal.tsx:83
 msgid "New Direct Message"
@@ -1453,16 +1456,12 @@ msgstr "ไม่พบข้อความ"
 msgid "No pinned messages yet"
 msgstr "ยังไม่มีข้อความที่ถูกปักหมุด"
 
-#: src/components/message/MessageComposer.tsx:521
-msgid "No topic"
-msgstr "ไม่มีหัวข้อ"
-
 #: src/components/notifications/NotificationPanel.tsx:166
 msgid "No unread notifications"
 msgstr "ไม่มีการแจ้งเตือนที่ยังไม่ได้อ่าน"
 
-#: src/components/space/Channel.tsx:604 src/components/space/Channel.tsx:1092
-#: src/components/space/Channel.tsx:1280
+#: src/components/space/Channel.tsx:610 src/components/space/Channel.tsx:1098
+#: src/components/space/Channel.tsx:1286
 msgid "No users found!"
 msgstr "ไม่พบผู้ใช้!"
 
@@ -1477,7 +1476,7 @@ msgstr "ไม่ได้รับอนุญาตการแจ้งเต
 #: src/components/modals/SpaceSettingsModal/Account.tsx:187
 #: src/components/modals/UserSettingsModal/Navigation.tsx:17
 #: src/components/modals/UserSettingsModal/Notifications.tsx:24
-#: src/components/space/Channel.tsx:854
+#: src/components/space/Channel.tsx:860
 msgid "Notifications"
 msgstr "การแจ้งเตือน"
 
@@ -1491,7 +1490,7 @@ msgstr "การแจ้งเตือนถูกบล็อก โปร�
 msgid "Notifications are not supported in this browser"
 msgstr "การแจ้งเตือนไม่รองรับในเบราว์เซอร์นี้"
 
-#: src/components/message/MessageComposer.tsx:535
+#: src/components/message/MessageComposer.tsx:559
 msgid "Notify all members"
 msgstr "แจ้งสมาชิกทั้งหมด"
 
@@ -1608,19 +1607,19 @@ msgstr "ปักหมุดข้อความ"
 msgid "Pin to top"
 msgstr "ปักหมุดไปที่ด้านบน"
 
-#: src/components/message/Message.tsx:609
-#: src/components/message/Message.tsx:672
+#: src/components/message/Message.tsx:614
+#: src/components/message/Message.tsx:677
 msgid "Pinned"
 msgstr "ถูกปักหมุด"
 
 #. placeholder {0}: mapSenderToUser(message.pinnedBy)?.displayName ||
 #. message.pinnedBy
-#: src/components/message/Message.tsx:608
-#: src/components/message/Message.tsx:671
+#: src/components/message/Message.tsx:613
+#: src/components/message/Message.tsx:676
 msgid "Pinned by {0}"
 msgstr "ถูกปักหมุดโดย {0}"
 
-#: src/components/space/Channel.tsx:815
+#: src/components/space/Channel.tsx:821
 msgid "Pinned Messages"
 msgstr "ข้อความที่ถูกปักหมุด"
 
@@ -1772,7 +1771,7 @@ msgstr "บันทึก"
 
 #: src/components/modals/ChannelEditorModal.tsx:196
 #: src/components/modals/GroupEditorModal.tsx:97
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:588
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:589
 #: src/components/modals/UserSettingsModal/UserSettingsModal.tsx:242
 #: src/components/user/UserProfileEdit.tsx:158
 msgid "Save Changes"
@@ -1788,7 +1787,7 @@ msgstr "บันทึกภาพติดต่อ"
 msgid "Save Edit History"
 msgstr "บันทึกประวัติการแก้ไข"
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:573
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:574
 #: src/components/modals/UserSettingsModal/UserSettingsModal.tsx:231
 msgid "Save Failed"
 msgstr "บันทึกไม่สำเร็จ"
@@ -1831,7 +1830,7 @@ msgid "Search in this Space..."
 msgstr "ค้นหาใน Space นี้..."
 
 #: src/components/direct/DirectMessage.tsx:676
-#: src/components/space/Channel.tsx:905
+#: src/components/space/Channel.tsx:911
 msgid "Search Messages"
 msgstr "ค้นหาข้อความ"
 
@@ -1847,7 +1846,7 @@ msgstr "ผลการค้นหา"
 msgid "Search username or address"
 msgstr "ค้นหาชื่อผู้ใช้หรือที่อยู่"
 
-#: src/components/space/Channel.tsx:1252
+#: src/components/space/Channel.tsx:1258
 msgid "Search Username or Address"
 msgstr "ค้นหาชื่อผู้ใช้หรือที่อยู่"
 
@@ -2016,7 +2015,7 @@ msgstr "สติกเกอร์"
 msgid "Successfully sent invite to {0}"
 msgstr "ส่งคำเชิญไปยัง {0} สำเร็จ"
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:445
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:446
 msgid "Sync Kick Status"
 msgstr "ซิงค์สถานะการเตะ"
 
@@ -2091,6 +2090,11 @@ msgstr ""
 "ลิงก์นี้จะไม่หมดอายุ แต่คุณสามารถสร้างลิงก์ใหม่ได้ทุกเมื่อ "
 "ซึ่งจะทำให้ลิงก์เก่าไม่สามารถใช้งานได้"
 
+#: src/hooks/business/validation/useDisplayNameValidation.ts:23
+#: src/hooks/business/validation/useDisplayNameValidation.ts:52
+msgid "This name conflicts with @everyone mentions."
+msgstr "ชื่อนี้ขัดแย้งกับการกล่าวถึง @everyone."
+
 #: src/components/modals/SpaceSettingsModal/Roles.tsx:58
 msgid ""
 "This protects your identity as the space owner. However, if you're the only "
@@ -2113,7 +2117,7 @@ msgstr "ลิงก์เชิญสาธารณะนี้ไม่ถู
 msgid "This user is already a member of this space."
 msgstr "ผู้ใช้คนนี้เป็นสมาชิกของ Space นี้แล้ว"
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:605
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:606
 msgid ""
 "This will create a public invite link that anyone can use to join your "
 "Space. Consider who you share this link with."
@@ -2121,7 +2125,7 @@ msgstr ""
 "สิ่งนี้จะสร้างลิงก์เชิญสาธารณะที่ใครก็สามารถใช้เพื่อเข้าร่วม Space ของคุณ "
 "พิจารณาว่าคุณจะแบ่งปันลิงก์นี้กับใคร"
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:604
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:605
 msgid ""
 "This will generate a new public invite link and invalidate the current one. "
 "Anyone with the old link will no longer be able to use it."
@@ -2168,7 +2172,7 @@ msgstr "ลองใช้คำค้นหาที่แตกต่างก
 msgid "Unable to compress emoji images. Please use smaller images."
 msgstr "ไม่สามารถบีบอัดภาพอิโมจิได้ โปรดใช้ภาพที่มีขนาดเล็กกว่า"
 
-#: src/hooks/business/spaces/useSpaceProfile.ts:123
+#: src/hooks/business/spaces/useSpaceProfile.ts:128
 #: src/hooks/business/ui/useFileUpload.ts:96
 #: src/hooks/business/ui/useSpaceFileUploads.ts:160
 #: src/hooks/business/ui/useSpaceFileUploads.ts:183
@@ -2228,8 +2232,8 @@ msgstr "เวลาที่ไม่รู้จัก"
 #: src/components/direct/DirectMessage.tsx:162
 #: src/components/direct/DirectMessage.tsx:177
 #: src/components/direct/DirectMessage.tsx:524
-#: src/components/message/MessageComposer.tsx:480
-#: src/components/message/MessageComposer.tsx:487
+#: src/components/message/MessageComposer.tsx:501
+#: src/components/message/MessageComposer.tsx:508
 #: src/components/message/MessageEditTextarea.tsx:225
 #: src/components/message/MessageEditTextarea.tsx:260
 #: src/components/message/MessageEditTextarea.tsx:267
@@ -2290,7 +2294,7 @@ msgid ""
 "picture"
 msgstr "จนกว่าคุณจะตอบกลับ ผู้ส่งนี้จะไม่เห็นชื่อแสดงของคุณหรือรูปโปรไฟล์"
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:445
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:446
 msgid ""
 "Update kick records for all members. Use this if kicked users still appear "
 "active to some members."
@@ -2298,7 +2302,7 @@ msgstr ""
 "อัปเดตบันทึกการเตะสำหรับสมาชิกทั้งหมด "
 "ใช้สิ่งนี้หากผู้ใช้ที่ถูกเตะยังปรากฏว่าใช้งานอยู่สำหรับสมาชิกบางคน."
 
-#: src/components/modals/SpaceSettingsModal/Account.tsx:128
+#: src/components/modals/SpaceSettingsModal/Account.tsx:130
 msgid "Upload an avatar for this Space - PNG or JPG - Optimal ratio 1:1"
 msgstr ""
 "อัปโหลดภาพโปรไฟล์สำหรับพื้นที่นี้ - PNG หรือ JPG - อัตราส่วนที่เหมาะสม 1:1"
@@ -2328,7 +2332,7 @@ msgstr "ที่อยู่ผู้ใช้ที่นี่"
 msgid "User does not exist."
 msgstr "ผู้ใช้ไม่มีอยู่"
 
-#: src/components/space/Channel.tsx:591 src/components/space/Channel.tsx:1078
+#: src/components/space/Channel.tsx:597 src/components/space/Channel.tsx:1084
 msgid "Username or Address"
 msgstr "ชื่อผู้ใช้หรือที่อยู่"
 
@@ -2487,7 +2491,7 @@ msgstr ""
 "ทั้งหมดในกลุ่มนี้ก่อน"
 
 #: src/components/message/MessageComposer.tsx:336
-#: src/components/space/Channel.tsx:1044
+#: src/components/space/Channel.tsx:1050
 msgid "You cannot post in this channel"
 msgstr "คุณไม่สามารถโพสต์ในช่องนี้"
 
@@ -2521,7 +2525,7 @@ msgstr "คุณได้รับข้อมูลทั้งหมดแล
 msgid "You're all set. Welcome to Quorum!"
 msgstr "คุณพร้อมแล้ว ยินดีต้อนรับสู่ Quorum!"
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:441
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:442
 msgid ""
 "You're not listed in this Space's members. Correcting this will add you to "
 "the Space Members list (stores your profile locally with your inbox "
@@ -2536,7 +2540,7 @@ msgstr ""
 msgid "You've been invited to join a Space"
 msgstr "คุณได้รับเชิญให้เข้าร่วม พื้นที่"
 
-#: src/components/modals/SpaceSettingsModal/Account.tsx:98
+#: src/components/modals/SpaceSettingsModal/Account.tsx:100
 msgid "Your Details"
 msgstr "รายละเอียดของคุณ"
 
@@ -2591,6 +2595,9 @@ msgstr "ภาพขนาดย่อวิดีโอ YouTube"
 #~ "การตั้งค่า Space เริ่มต้นให้ประสบการณ์การสนทนาที่เป็นที่นิยมที่สุด "
 #~ "แต่เพื่อความเป็นส่วนตัวที่สูงขึ้น ให้ตรวจสอบการตั้งค่าขั้นสูง."
 
+#~ msgid "'everyone' is a reserved name."
+#~ msgstr "'name' เป็นชื่อที่สงวนไว้"
+
 #~ msgid "{0} pinned message"
 #~ msgstr "ข้อความที่ถูกปักหมุด {0}"
 
@@ -2602,6 +2609,15 @@ msgstr "ภาพขนาดย่อวิดีโอ YouTube"
 
 #~ msgid "{0} unread mentions"
 #~ msgstr "{0} การกล่าวถึงที่ยังไม่ได้อ่าน"
+
+#~ msgid "{user} has been kicked"
+#~ msgstr "{user} ถูกเตะ"
+
+#~ msgid "{user} has joined"
+#~ msgstr "{user} ได้เข้าร่วม"
+
+#~ msgid "{user} has left"
+#~ msgstr "{user} ได้ออก"
 
 #~ msgid "Account Settings for This Space"
 #~ msgstr "การตั้งค่าบัญชีสำหรับพื้นที่นี้"
@@ -2634,6 +2650,9 @@ msgstr "ภาพขนาดย่อวิดีโอ YouTube"
 
 #~ msgid "Enter a name for your new Space"
 #~ msgstr "กรุณาใส่ชื่อสำหรับ พื้นที่ ใหม่ของคุณ"
+
+#~ msgid "No topic"
+#~ msgstr "ไม่มีหัวข้อ"
 
 #~ msgid "No unread mentions"
 #~ msgstr "ไม่มีการกล่าวถึงที่ยังไม่ได้อ่าน"

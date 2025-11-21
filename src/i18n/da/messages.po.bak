@@ -31,7 +31,7 @@ msgid "No Role - {count}"
 msgstr "Ingen rolle - {count}"
 
 #. js-lingui-explicit-id
-#: src/components/space/Channel.tsx:1020
+#: src/components/space/Channel.tsx:1026
 msgid "Send a message to #{channel_name}"
 msgstr "Send en besked til #{channel_name}"
 
@@ -52,24 +52,28 @@ msgstr "Mislykkedes at behandle billede"
 
 #. js-lingui-explicit-id
 #: src/components/message/MessageComposer.native.tsx:314
-#: src/components/message/MessageComposer.tsx:406
 msgid "Replying to {user}"
 msgstr "Svarer til {user}"
 
 #. js-lingui-explicit-id
-#: src/components/message/Message.tsx:273
-msgid "{user} has joined"
-msgstr "{user} er blevet medlem"
+#: src/components/message/MessageComposer.tsx:406
+msgid "Replying to"
+msgstr "Svarer til"
 
 #. js-lingui-explicit-id
-#: src/components/message/Message.tsx:280
-msgid "{user} has left"
-msgstr "{user} har forladt"
+#: src/components/message/Message.tsx:274
+msgid "has joined"
+msgstr "er blevet medlem"
 
 #. js-lingui-explicit-id
-#: src/components/message/Message.tsx:287
-msgid "{user} has been kicked"
-msgstr "{user} er blevet smidt ud"
+#: src/components/message/Message.tsx:282
+msgid "has left"
+msgstr "er blevet fjernet"
+
+#. js-lingui-explicit-id
+#: src/components/message/Message.tsx:290
+msgid "has been kicked"
+msgstr "er blevet smidt ud"
 
 #. js-lingui-explicit-id
 #: src/components/direct/DirectMessage.tsx:783
@@ -85,11 +89,11 @@ msgstr "for opdateringer."
 
 #: src/hooks/business/validation/useDisplayNameValidation.ts:18
 #: src/hooks/business/validation/useDisplayNameValidation.ts:43
-msgid "'everyone' is a reserved name."
-msgstr "'alle' er et reserveret navn."
+#~ msgid "'everyone' is a reserved name."
+#~ msgstr "'alle' er et reserveret navn."
 
-#: src/components/message/Message.tsx:643
-#: src/components/message/Message.tsx:656
+#: src/components/message/Message.tsx:648
+#: src/components/message/Message.tsx:661
 msgid "(edited)"
 msgstr "(redigeret)"
 
@@ -190,6 +194,15 @@ msgstr "{size} MB"
 msgid "{size} TB"
 msgstr "{size} TB"
 
+#~ msgid "{user} has been kicked"
+#~ msgstr "{user} er blevet smidt ud"
+
+#~ msgid "{user} has joined"
+#~ msgstr "{user} er blevet medlem"
+
+#~ msgid "{user} has left"
+#~ msgstr "{user} har forladt"
+
 #: src/components/modals/SpaceSettingsModal/Account.tsx:211
 #: src/components/notifications/NotificationPanel.tsx:88
 msgid "@everyone"
@@ -225,7 +238,7 @@ msgstr "Konto"
 msgid "Account Address"
 msgstr "Kontoadresse"
 
-#: src/components/modals/SpaceSettingsModal/Account.tsx:89
+#: src/components/modals/SpaceSettingsModal/Account.tsx:91
 msgid "Account Settings"
 msgstr "Kontoindstillinger"
 
@@ -241,7 +254,7 @@ msgstr "Tilføj et Space"
 msgid "Add Channel"
 msgstr "Tilføj Kanal"
 
-#: src/components/direct/DirectMessages.tsx:100
+#: src/components/direct/DirectMessages.tsx:95
 msgid "Add friend"
 msgstr "Tilføj ven"
 
@@ -254,7 +267,7 @@ msgstr "Tilføj gruppe"
 msgid "Add Role"
 msgstr "Tilføj rolle"
 
-#: src/components/message/MessageComposer.tsx:591
+#: src/components/message/MessageComposer.tsx:615
 msgid "add sticker"
 msgstr "tilføj klistermærke"
 
@@ -369,7 +382,7 @@ msgstr "Er du sikker på, at du vil fjerne fastgørelsen af denne besked?"
 msgid "As a space owner, you need to assign yourself a role with delete permissions to delete other users' messages. <0><1>Learn more</1></0>"
 msgstr "Som ejer af rummet skal du tildele dig selv en rolle med sletningsrettigheder for at slette andre brugeres beskeder. <0><1>Læs mere</1></0>"
 
-#: src/components/message/MessageComposer.tsx:558
+#: src/components/message/MessageComposer.tsx:582
 msgid "attach image"
 msgstr "vedhæft billede"
 
@@ -422,7 +435,7 @@ msgstr "Kan ikke slette Space med kanaler. Slet venligst alle kanaler først."
 msgid "Cannot upload more than {0} files at once ({remaining} slots remaining)"
 msgstr "Kan ikke uploade mere end {0} filer ad gangen ({remaining} pladser tilbage)"
 
-#: src/components/modals/SpaceSettingsModal/Account.tsx:101
+#: src/components/modals/SpaceSettingsModal/Account.tsx:103
 msgid "Change your avatar and name for this Space"
 msgstr "Skift dit avatar og navn for denne Space"
 
@@ -441,7 +454,7 @@ msgstr "Kanalikon"
 msgid "Channel Managers"
 msgstr "Kanaladministratorer"
 
-#: src/components/space/Channel.tsx:1241
+#: src/components/space/Channel.tsx:1247
 msgid "Channel members"
 msgstr "Kanalmedlemmer"
 
@@ -452,17 +465,17 @@ msgstr "Kanalens navn"
 #: src/hooks/business/validation/useChannelValidation.ts:18
 #: src/hooks/business/validation/useChannelValidation.ts:60
 msgid "Channel name cannot contain special characters"
-msgstr ""
+msgstr "Kanalnavn må ikke indeholde specialtegn"
 
 #: src/hooks/business/validation/useChannelValidation.ts:12
 #: src/hooks/business/validation/useChannelValidation.ts:54
 msgid "Channel name is required"
-msgstr ""
+msgstr "Kanalnavn er påkrævet"
 
 #: src/hooks/business/validation/useChannelValidation.ts:15
 #: src/hooks/business/validation/useChannelValidation.ts:57
 msgid "Channel name must be {MAX_NAME_LENGTH} characters or less"
-msgstr ""
+msgstr "Kanalnavn skal være {MAX_NAME_LENGTH} tegn eller færre"
 
 #: src/components/modals/ChannelEditorModal.tsx:109
 msgid "Channel Topic"
@@ -471,12 +484,12 @@ msgstr "Kanal-emne"
 #: src/hooks/business/validation/useChannelValidation.ts:38
 #: src/hooks/business/validation/useChannelValidation.ts:74
 msgid "Channel topic cannot contain special characters"
-msgstr ""
+msgstr "Kanalemne må ikke indeholde specialtegn"
 
 #: src/hooks/business/validation/useChannelValidation.ts:35
 #: src/hooks/business/validation/useChannelValidation.ts:71
 msgid "Channel topic must be {MAX_TOPIC_LENGTH} characters or less"
-msgstr ""
+msgstr "Kanalemne skal være {MAX_TOPIC_LENGTH} tegn eller færre"
 
 #: src/components/Maintenance.native.tsx:52
 msgid "Check "
@@ -772,25 +785,24 @@ msgstr "Direkte beskeder"
 msgid "Display name"
 msgstr "Visningsnavn"
 
-#: src/components/modals/SpaceSettingsModal/Account.tsx:139
+#: src/components/modals/SpaceSettingsModal/Account.tsx:141
 msgid "Display Name"
 msgstr "Visningsnavn"
 
-#: src/hooks/business/validation/useDisplayNameValidation.ts:21
-#: src/hooks/business/validation/useDisplayNameValidation.ts:46
+#: src/hooks/business/validation/useDisplayNameValidation.ts:29
+#: src/hooks/business/validation/useDisplayNameValidation.ts:58
 msgid "Display name cannot contain special characters"
 msgstr "Visningsnavn må ikke indeholde specialtegn"
 
-#: src/components/modals/SpaceSettingsModal/Account.tsx:143
-#: src/hooks/business/validation/useDisplayNameValidation.ts:12
-#: src/hooks/business/validation/useDisplayNameValidation.ts:37
+#: src/hooks/business/validation/useDisplayNameValidation.ts:16
+#: src/hooks/business/validation/useDisplayNameValidation.ts:45
 msgid "Display name is required"
 msgstr "Visningsnavn er påkrævet"
 
-#: src/hooks/business/validation/useDisplayNameValidation.ts:15
-#: src/hooks/business/validation/useDisplayNameValidation.ts:40
+#: src/hooks/business/validation/useDisplayNameValidation.ts:19
+#: src/hooks/business/validation/useDisplayNameValidation.ts:48
 msgid "Display name must be {MAX_NAME_LENGTH} characters or less"
-msgstr ""
+msgstr "Visningsnavn skal være {MAX_NAME_LENGTH} tegn eller færre"
 
 #: src/components/ui/MobileDrawer.tsx:143
 msgid "Drawer"
@@ -917,7 +929,7 @@ msgstr "Det lykkedes ikke at oprette plads. Prøv venligst igen."
 msgid "Failed to decrypt message with any known state"
 msgstr "Failed to decrypt message with any known state"
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:616
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:617
 msgid "Failed to generate invite link. Please try again."
 msgstr "Kunne ikke generere invitationslink. Prøv venligst igen."
 
@@ -941,7 +953,7 @@ msgstr "Mislykkedes at vælge dokument"
 msgid "Failed to send invite. Please try again."
 msgstr "Fejl ved at sende invitation. Prøv venligst igen."
 
-#: src/hooks/business/spaces/useSpaceProfile.ts:215
+#: src/hooks/business/spaces/useSpaceProfile.ts:216
 msgid "Failed to update profile"
 msgstr "Mislykkedes med at opdatere profil"
 
@@ -949,7 +961,7 @@ msgstr "Mislykkedes med at opdatere profil"
 msgid "File cannot be larger than {maxSize}"
 msgstr "Fil må ikke være større end {maxSize}"
 
-#: src/hooks/business/spaces/useSpaceProfile.ts:82
+#: src/hooks/business/spaces/useSpaceProfile.ts:87
 #: src/hooks/business/ui/useCustomAssets.ts:139
 #: src/hooks/business/ui/useFileUpload.ts:54
 #: src/hooks/business/ui/useSpaceFileUploads.ts:68
@@ -967,7 +979,7 @@ msgid "File cannot be larger than 5MB"
 msgstr "Fil må ikke være større end 5MB"
 
 #: src/hooks/business/messages/useMessageComposer.ts:83
-#: src/hooks/business/spaces/useSpaceProfile.ts:84
+#: src/hooks/business/spaces/useSpaceProfile.ts:89
 #: src/hooks/business/ui/useCustomAssets.ts:105
 #: src/hooks/business/ui/useCustomAssets.ts:150
 #: src/hooks/business/ui/useFileUpload.ts:56
@@ -995,7 +1007,7 @@ msgstr "Filstørrelse for lille. Minimal størrelse: {minSizeMB}"
 msgid "File validation failed. Please try again."
 msgstr "Filvalidering mislykkedes. Prøv venligst igen."
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:442
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:443
 msgid "Fix"
 msgstr "Ret"
 
@@ -1022,17 +1034,17 @@ msgstr "Generelt"
 msgid "General Chat"
 msgstr "General Chat"
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:607
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:608
 msgid "Generate Link"
 msgstr "Generer Link"
 
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:446
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:607
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:608
 msgid "Generate New Link"
 msgstr "Generer nyt link"
 
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:394
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:601
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:602
 msgid "Generate Public Invite Link"
 msgstr "Generer offentligt invite-link"
 
@@ -1059,17 +1071,17 @@ msgstr "Gruppens navn"
 #: src/hooks/business/validation/useGroupNameValidation.ts:18
 #: src/hooks/business/validation/useGroupNameValidation.ts:40
 msgid "Group name cannot contain special characters"
-msgstr ""
+msgstr "Gruppenavn må ikke indeholde specialtegn"
 
 #: src/hooks/business/validation/useGroupNameValidation.ts:12
 #: src/hooks/business/validation/useGroupNameValidation.ts:34
 msgid "Group name is required"
-msgstr ""
+msgstr "Gruppenavn er påkrævet"
 
 #: src/hooks/business/validation/useGroupNameValidation.ts:15
 #: src/hooks/business/validation/useGroupNameValidation.ts:37
 msgid "Group name must be {MAX_NAME_LENGTH} characters or less"
-msgstr ""
+msgstr "Gruppenavn skal være {MAX_NAME_LENGTH} tegn eller færre"
 
 #: src/components/direct/EmptyDirectMessage.tsx:54
 msgid "hide home screen"
@@ -1317,7 +1329,7 @@ msgstr "Manage devices, and privacy conditions for messaging and synchronization
 msgid "Manage Inivte links and send invites to people you've previously had conversations with."
 msgstr "Administrer invitationslinks og send invitationer til personer, du tidligere har haft samtaler med."
 
-#: src/components/modals/SpaceSettingsModal/Account.tsx:92
+#: src/components/modals/SpaceSettingsModal/Account.tsx:94
 msgid "Manage your settings for this Space."
 msgstr "Administrer dine indstillinger for denne Space."
 
@@ -1331,7 +1343,7 @@ msgstr "Marker alle som læst"
 
 #: src/components/direct/DirectMessage.tsx:657
 #: src/components/direct/DirectMessage.tsx:824
-#: src/components/space/Channel.tsx:886
+#: src/components/space/Channel.tsx:892
 msgid "Members List"
 msgstr "Medlemsliste"
 
@@ -1347,8 +1359,8 @@ msgstr "Besked handlinger"
 msgid "Message deleted"
 msgstr "Besked slettet"
 
-#: src/components/message/Message.tsx:626
-#: src/components/message/Message.tsx:689
+#: src/components/message/Message.tsx:631
+#: src/components/message/Message.tsx:694
 msgid "Message does not have a valid signature, this may not be from the sender"
 msgstr "Message does not have a valid signature, this may not be from the sender"
 
@@ -1356,17 +1368,22 @@ msgstr "Message does not have a valid signature, this may not be from the sender
 msgid "Message..."
 msgstr "Besked..."
 
-#: src/components/message/MessageComposer.tsx:608
+#: src/components/message/MessageComposer.tsx:632
 msgid "Messages are NOT signed!"
 msgstr "Beskeder er IKKE underskrevet!"
 
-#: src/components/message/MessageComposer.tsx:609
+#: src/components/message/MessageComposer.tsx:633
 msgid "Messages are signed!"
 msgstr "Beskeder er underskrevet!"
 
 #: src/components/message/MessageActions.tsx:86
 msgid "More reactions"
 msgstr "Flere reaktioner"
+
+#: src/hooks/business/validation/useDisplayNameValidation.ts:26
+#: src/hooks/business/validation/useDisplayNameValidation.ts:55
+msgid "Names resembling admin, moderator, or support are reserved."
+msgstr ""
 
 #: src/components/modals/NewDirectMessageModal.tsx:83
 msgid "New Direct Message"
@@ -1396,9 +1413,8 @@ msgstr "Ingen beskeder fundet"
 msgid "No pinned messages yet"
 msgstr "Ingen fastgjorte beskeder endnu"
 
-#: src/components/message/MessageComposer.tsx:521
-msgid "No topic"
-msgstr "Ingen emne"
+#~ msgid "No topic"
+#~ msgstr "Ingen emne"
 
 #~ msgid "No unread mentions"
 #~ msgstr "Ingen ulæste omtaler"
@@ -1407,9 +1423,9 @@ msgstr "Ingen emne"
 msgid "No unread notifications"
 msgstr "Ingen ulæste notifikationer"
 
-#: src/components/space/Channel.tsx:604
-#: src/components/space/Channel.tsx:1092
-#: src/components/space/Channel.tsx:1280
+#: src/components/space/Channel.tsx:610
+#: src/components/space/Channel.tsx:1098
+#: src/components/space/Channel.tsx:1286
 msgid "No users found!"
 msgstr "Ingen brugere fundet!"
 
@@ -1424,7 +1440,7 @@ msgstr "Meddelelsesrettigheder ikke givet"
 #: src/components/modals/SpaceSettingsModal/Account.tsx:187
 #: src/components/modals/UserSettingsModal/Navigation.tsx:17
 #: src/components/modals/UserSettingsModal/Notifications.tsx:24
-#: src/components/space/Channel.tsx:854
+#: src/components/space/Channel.tsx:860
 msgid "Notifications"
 msgstr "Meddelelser"
 
@@ -1437,7 +1453,7 @@ msgstr "Meddelelser er blokeret. Aktivér dem venligst i dine browserindstilling
 msgid "Notifications are not supported in this browser"
 msgstr "Meddelelser understøttes ikke i denne browser"
 
-#: src/components/message/MessageComposer.tsx:535
+#: src/components/message/MessageComposer.tsx:559
 msgid "Notify all members"
 msgstr "Underret alle medlemmer"
 
@@ -1558,18 +1574,18 @@ msgstr "Fastgør beskeder"
 msgid "Pin to top"
 msgstr "Fastgør til toppen"
 
-#: src/components/message/Message.tsx:609
-#: src/components/message/Message.tsx:672
+#: src/components/message/Message.tsx:614
+#: src/components/message/Message.tsx:677
 msgid "Pinned"
 msgstr "Fastgjort"
 
 #. placeholder {0}: mapSenderToUser(message.pinnedBy)?.displayName || message.pinnedBy
-#: src/components/message/Message.tsx:608
-#: src/components/message/Message.tsx:671
+#: src/components/message/Message.tsx:613
+#: src/components/message/Message.tsx:676
 msgid "Pinned by {0}"
 msgstr "Fastgjort af {0}"
 
-#: src/components/space/Channel.tsx:815
+#: src/components/space/Channel.tsx:821
 msgid "Pinned Messages"
 msgstr "Fastgjorte beskeder"
 
@@ -1698,7 +1714,7 @@ msgstr "Gem"
 
 #: src/components/modals/ChannelEditorModal.tsx:196
 #: src/components/modals/GroupEditorModal.tsx:97
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:588
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:589
 #: src/components/modals/UserSettingsModal/UserSettingsModal.tsx:242
 #: src/components/user/UserProfileEdit.tsx:158
 msgid "Save Changes"
@@ -1714,7 +1730,7 @@ msgstr "Gem kontaktfoto"
 msgid "Save Edit History"
 msgstr "Gem redigeringshistorik"
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:573
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:574
 #: src/components/modals/UserSettingsModal/UserSettingsModal.tsx:231
 msgid "Save Failed"
 msgstr "Gemte ikke"
@@ -1759,7 +1775,7 @@ msgid "Search in this Space..."
 msgstr "Søg i dette Space..."
 
 #: src/components/direct/DirectMessage.tsx:676
-#: src/components/space/Channel.tsx:905
+#: src/components/space/Channel.tsx:911
 msgid "Search Messages"
 msgstr "Søg Beskeder"
 
@@ -1775,7 +1791,7 @@ msgstr "Søgeresultater"
 msgid "Search username or address"
 msgstr "Søg efter brugernavn eller adresse"
 
-#: src/components/space/Channel.tsx:1252
+#: src/components/space/Channel.tsx:1258
 msgid "Search Username or Address"
 msgstr "Søg efter brugernavn eller adresse"
 
@@ -1910,7 +1926,7 @@ msgstr "Navn på Space er påkrævet"
 #: src/hooks/business/validation/useSpaceNameValidation.ts:15
 #: src/hooks/business/validation/useSpaceNameValidation.ts:37
 msgid "Space name must be {MAX_NAME_LENGTH} characters or less"
-msgstr ""
+msgstr "Space-navn skal være {MAX_NAME_LENGTH} tegn eller færre"
 
 #: src/components/modals/SpaceSettingsModal/Navigation.tsx:38
 #: src/components/space/ChannelList.tsx:118
@@ -1939,7 +1955,7 @@ msgstr "Klistermærker"
 msgid "Successfully sent invite to {0}"
 msgstr "Sendte invitation til {0} med succes"
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:445
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:446
 msgid "Sync Kick Status"
 msgstr "Synkroniser udelukkelsesstatus"
 
@@ -1998,6 +2014,11 @@ msgstr "Dette er din offentlige adresse, og den er sikker at dele med hvem som h
 msgid "This link will not expire, but you can generate a new one at any time, which will invalidate the old link."
 msgstr "Dette link udløber ikke, men du kan generere et nyt når som helst, hvilket vil gøre det gamle link ugyldigt."
 
+#: src/hooks/business/validation/useDisplayNameValidation.ts:23
+#: src/hooks/business/validation/useDisplayNameValidation.ts:52
+msgid "This name conflicts with @everyone mentions."
+msgstr ""
+
 #: src/components/modals/SpaceSettingsModal/Roles.tsx:58
 msgid "This protects your identity as the space owner. However, if you're the only one with this role, your identity becomes obvious. Consider having multiple users (real or fake accounts) with the same role for better privacy protection."
 msgstr "Dette beskytter din identitet som rum ejer. Men hvis du er den eneste med denne rolle, bliver din identitet åbenlys. Overvej at have flere brugere (ægte eller falske konti) med den samme rolle for bedre beskyttelse af privatliv."
@@ -2012,11 +2033,11 @@ msgstr "Dette offentlige invite link er ikke længere gyldigt."
 msgid "This user is already a member of this space."
 msgstr "Denne bruger er allerede medlem af dette Space."
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:605
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:606
 msgid "This will create a public invite link that anyone can use to join your Space. Consider who you share this link with."
 msgstr "Dette vil oprette et offentligt invite-link, som alle kan bruge til at deltage i dit Space. Overvej, hvem du deler dette link med."
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:604
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:605
 msgid "This will generate a new public invite link and invalidate the current one. Anyone with the old link will no longer be able to use it."
 msgstr "Dette vil generere et nyt offentligt invite-link og ugyldiggøre det nuværende. Alle med det gamle link vil ikke længere kunne bruge det."
 
@@ -2042,7 +2063,7 @@ msgstr "For mange filer valgt. Vælg venligst færre filer."
 
 #: src/hooks/business/messages/useMessageComposer.ts:133
 msgid "Too many mentions in message. Maximum {MAX_MENTIONS_PER_MESSAGE} allowed."
-msgstr ""
+msgstr "For mange omtaler i besked. Maksimum {MAX_MENTIONS_PER_MESSAGE} tilladt."
 
 #: src/components/search/SearchResults.tsx:105
 msgid "Try different keywords or check your spelling"
@@ -2052,7 +2073,7 @@ msgstr "Prøv forskellige søgeord eller tjek din stavemåde"
 msgid "Unable to compress emoji images. Please use smaller images."
 msgstr "Kunne ikke komprimere emoji billeder. Brug venligst mindre billeder."
 
-#: src/hooks/business/spaces/useSpaceProfile.ts:123
+#: src/hooks/business/spaces/useSpaceProfile.ts:128
 #: src/hooks/business/ui/useFileUpload.ts:96
 #: src/hooks/business/ui/useSpaceFileUploads.ts:160
 #: src/hooks/business/ui/useSpaceFileUploads.ts:183
@@ -2108,8 +2129,8 @@ msgstr "Ukendt tid"
 #: src/components/direct/DirectMessage.tsx:162
 #: src/components/direct/DirectMessage.tsx:177
 #: src/components/direct/DirectMessage.tsx:524
-#: src/components/message/MessageComposer.tsx:480
-#: src/components/message/MessageComposer.tsx:487
+#: src/components/message/MessageComposer.tsx:501
+#: src/components/message/MessageComposer.tsx:508
 #: src/components/message/MessageEditTextarea.tsx:225
 #: src/components/message/MessageEditTextarea.tsx:260
 #: src/components/message/MessageEditTextarea.tsx:267
@@ -2171,11 +2192,11 @@ msgstr "Fjernelse af fastgørelse!"
 msgid "Until you reply, this sender will not see your display name or profile picture"
 msgstr "Indtil du svarer, vil denne afsender ikke se dit visningsnavn eller profilbillede"
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:445
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:446
 msgid "Update kick records for all members. Use this if kicked users still appear active to some members."
 msgstr "Opdater kick-poster for alle medlemmer. Brug dette, hvis sparkede brugere stadig vises som aktive for nogle medlemmer."
 
-#: src/components/modals/SpaceSettingsModal/Account.tsx:128
+#: src/components/modals/SpaceSettingsModal/Account.tsx:130
 msgid "Upload an avatar for this Space - PNG or JPG - Optimal ratio 1:1"
 msgstr "Upload et avatar til dette Space - PNG eller JPG - Optimal forhold 1:1"
 
@@ -2210,8 +2231,8 @@ msgstr "Brugeradresse her"
 msgid "User does not exist."
 msgstr "Bruger eksisterer ikke."
 
-#: src/components/space/Channel.tsx:591
-#: src/components/space/Channel.tsx:1078
+#: src/components/space/Channel.tsx:597
+#: src/components/space/Channel.tsx:1084
 msgid "Username or Address"
 msgstr "Brugernavn eller adresse"
 
@@ -2315,7 +2336,7 @@ msgid "You cannot delete a group that contains channels. Delete all {channelCoun
 msgstr "Du kan ikke slette en gruppe, der indeholder kanaler. Slet først alle {channelCount} kanaler i denne gruppe."
 
 #: src/components/message/MessageComposer.tsx:336
-#: src/components/space/Channel.tsx:1044
+#: src/components/space/Channel.tsx:1050
 msgid "You cannot post in this channel"
 msgstr "Du kan ikke poste i denne kanal"
 
@@ -2345,7 +2366,7 @@ msgstr "Du er helt opdateret!"
 msgid "You're all set. Welcome to Quorum!"
 msgstr "Så er du klar. Velkommen til Quorum!"
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:441
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:442
 msgid "You're not listed in this Space's members. Correcting this will add you to the Space Members list (stores your profile locally with your inbox address)."
 msgstr "Du er ikke opført blandt medlemmerne i dette Spaces. At rette dette vil tilføje dig til Space-medlemslisten (gemmer din profil lokalt med din indbakkeadresse)."
 
@@ -2354,7 +2375,7 @@ msgstr "Du er ikke opført blandt medlemmerne i dette Spaces. At rette dette vil
 msgid "You've been invited to join a Space"
 msgstr "Du er blevet inviteret til at deltage i et Space"
 
-#: src/components/modals/SpaceSettingsModal/Account.tsx:98
+#: src/components/modals/SpaceSettingsModal/Account.tsx:100
 msgid "Your Details"
 msgstr "Dine oplysninger"
 

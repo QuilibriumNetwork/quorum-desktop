@@ -31,7 +31,7 @@ msgid "No Role - {count}"
 msgstr "Ei roolia - {count}"
 
 #. js-lingui-explicit-id
-#: src/components/space/Channel.tsx:1020
+#: src/components/space/Channel.tsx:1026
 msgid "Send a message to #{channel_name}"
 msgstr "Lähetä viesti #{channel_name}:lle"
 
@@ -56,24 +56,28 @@ msgstr "Kuvan käsittely epäonnistui"
 
 #. js-lingui-explicit-id
 #: src/components/message/MessageComposer.native.tsx:314
-#: src/components/message/MessageComposer.tsx:406
 msgid "Replying to {user}"
 msgstr "Vastaamassa {user}"
 
 #. js-lingui-explicit-id
-#: src/components/message/Message.tsx:273
-msgid "{user} has joined"
-msgstr "{user} liittynyt"
+#: src/components/message/MessageComposer.tsx:406
+msgid "Replying to"
+msgstr "Vastaamassa"
 
 #. js-lingui-explicit-id
-#: src/components/message/Message.tsx:280
-msgid "{user} has left"
-msgstr "{user} jätti"
+#: src/components/message/Message.tsx:274
+msgid "has joined"
+msgstr "on liittynyt"
 
 #. js-lingui-explicit-id
-#: src/components/message/Message.tsx:287
-msgid "{user} has been kicked"
-msgstr "{user} on potkittu"
+#: src/components/message/Message.tsx:282
+msgid "has left"
+msgstr "on lähtenyt"
+
+#. js-lingui-explicit-id
+#: src/components/message/Message.tsx:290
+msgid "has been kicked"
+msgstr "on potkittu"
 
 #. js-lingui-explicit-id
 #: src/components/direct/DirectMessage.tsx:783
@@ -84,13 +88,8 @@ msgstr "Lähetä viesti {user}:lle"
 msgid " for updates."
 msgstr "päivityksiä varten."
 
-#: src/hooks/business/validation/useDisplayNameValidation.ts:18
-#: src/hooks/business/validation/useDisplayNameValidation.ts:43
-msgid "'everyone' is a reserved name."
-msgstr "'everyone' on varattu nimi."
-
-#: src/components/message/Message.tsx:643
-#: src/components/message/Message.tsx:656
+#: src/components/message/Message.tsx:648
+#: src/components/message/Message.tsx:661
 msgid "(edited)"
 msgstr "(muokattu)"
 
@@ -218,7 +217,7 @@ msgstr "Tili"
 msgid "Account Address"
 msgstr "Tiliosoite"
 
-#: src/components/modals/SpaceSettingsModal/Account.tsx:89
+#: src/components/modals/SpaceSettingsModal/Account.tsx:91
 msgid "Account Settings"
 msgstr "Tilin asetukset"
 
@@ -231,7 +230,7 @@ msgstr "Lisää Tila"
 msgid "Add Channel"
 msgstr "Lisää kanava"
 
-#: src/components/direct/DirectMessages.tsx:100
+#: src/components/direct/DirectMessages.tsx:95
 msgid "Add friend"
 msgstr "Lisää ystävä"
 
@@ -244,7 +243,7 @@ msgstr "Lisää ryhmä"
 msgid "Add Role"
 msgstr "Lisää Rooli"
 
-#: src/components/message/MessageComposer.tsx:591
+#: src/components/message/MessageComposer.tsx:615
 msgid "add sticker"
 msgstr "lisää tarra"
 
@@ -391,7 +390,7 @@ msgstr ""
 "poistamisoikeudet, jotta voit poistaa muiden käyttäjien viestejä. <0><1>Opi "
 "lisää</1></0>"
 
-#: src/components/message/MessageComposer.tsx:558
+#: src/components/message/MessageComposer.tsx:582
 msgid "attach image"
 msgstr "liitä kuva"
 
@@ -446,7 +445,7 @@ msgid ""
 msgstr ""
 "Ei voi ladata yli {0} tiedostoa kerralla ({remaining} paikkaa jäljellä)"
 
-#: src/components/modals/SpaceSettingsModal/Account.tsx:101
+#: src/components/modals/SpaceSettingsModal/Account.tsx:103
 msgid "Change your avatar and name for this Space"
 msgstr "Vaihda avatarisi ja nimesi tälle Space:lle"
 
@@ -466,7 +465,7 @@ msgstr "Kanavan kuvake"
 msgid "Channel Managers"
 msgstr "Kanavan hallinnoijat"
 
-#: src/components/space/Channel.tsx:1241
+#: src/components/space/Channel.tsx:1247
 msgid "Channel members"
 msgstr "Kanavan jäsenet"
 
@@ -797,23 +796,22 @@ msgstr "Suorat viestit"
 msgid "Display name"
 msgstr "Näyttönimi"
 
-#: src/components/modals/SpaceSettingsModal/Account.tsx:139
+#: src/components/modals/SpaceSettingsModal/Account.tsx:141
 msgid "Display Name"
 msgstr "Näyttönimi"
 
-#: src/hooks/business/validation/useDisplayNameValidation.ts:21
-#: src/hooks/business/validation/useDisplayNameValidation.ts:46
+#: src/hooks/business/validation/useDisplayNameValidation.ts:29
+#: src/hooks/business/validation/useDisplayNameValidation.ts:58
 msgid "Display name cannot contain special characters"
 msgstr "Näyttönimi ei voi sisältää erikoismerkkejä"
 
-#: src/components/modals/SpaceSettingsModal/Account.tsx:143
-#: src/hooks/business/validation/useDisplayNameValidation.ts:12
-#: src/hooks/business/validation/useDisplayNameValidation.ts:37
+#: src/hooks/business/validation/useDisplayNameValidation.ts:16
+#: src/hooks/business/validation/useDisplayNameValidation.ts:45
 msgid "Display name is required"
 msgstr "Näyttönimi on pakollinen"
 
-#: src/hooks/business/validation/useDisplayNameValidation.ts:15
-#: src/hooks/business/validation/useDisplayNameValidation.ts:40
+#: src/hooks/business/validation/useDisplayNameValidation.ts:19
+#: src/hooks/business/validation/useDisplayNameValidation.ts:48
 msgid "Display name must be {MAX_NAME_LENGTH} characters or less"
 msgstr "Näyttönimen on oltava {MAX_NAME_LENGTH} merkkiä tai vähemmän"
 
@@ -951,7 +949,7 @@ msgstr "Tilaa ei voitu luoda. Yritä uudelleen."
 msgid "Failed to decrypt message with any known state"
 msgstr "Viestin purkaminen tunnetuilla tiloilla epäonnistui"
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:616
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:617
 msgid "Failed to generate invite link. Please try again."
 msgstr "Kutsulinkin luominen epäonnistui. Yritä uudelleen."
 
@@ -975,7 +973,7 @@ msgstr "Dokumentin valinta epäonnistui"
 msgid "Failed to send invite. Please try again."
 msgstr "Kutsun lähettäminen epäonnistui. Yritä uudelleen."
 
-#: src/hooks/business/spaces/useSpaceProfile.ts:215
+#: src/hooks/business/spaces/useSpaceProfile.ts:216
 msgid "Failed to update profile"
 msgstr "Profiilin päivittäminen epäonnistui"
 
@@ -983,7 +981,7 @@ msgstr "Profiilin päivittäminen epäonnistui"
 msgid "File cannot be larger than {maxSize}"
 msgstr "Tiedoston koko ei voi olla suurempi kuin {maxSize}"
 
-#: src/hooks/business/spaces/useSpaceProfile.ts:82
+#: src/hooks/business/spaces/useSpaceProfile.ts:87
 #: src/hooks/business/ui/useCustomAssets.ts:139
 #: src/hooks/business/ui/useFileUpload.ts:54
 #: src/hooks/business/ui/useSpaceFileUploads.ts:68
@@ -1001,7 +999,7 @@ msgid "File cannot be larger than 5MB"
 msgstr "Tiedosto ei voi olla suurempi kuin 5MB"
 
 #: src/hooks/business/messages/useMessageComposer.ts:83
-#: src/hooks/business/spaces/useSpaceProfile.ts:84
+#: src/hooks/business/spaces/useSpaceProfile.ts:89
 #: src/hooks/business/ui/useCustomAssets.ts:105
 #: src/hooks/business/ui/useCustomAssets.ts:150
 #: src/hooks/business/ui/useFileUpload.ts:56
@@ -1029,7 +1027,7 @@ msgstr "Tiedoston koko on liian pieni. Pienin koko: {minSizeMB}"
 msgid "File validation failed. Please try again."
 msgstr "Tiedoston vahvistaminen epäonnistui. Yritä uudelleen."
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:442
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:443
 msgid "Fix"
 msgstr "Korjaa"
 
@@ -1056,17 +1054,17 @@ msgstr "Yleinen"
 msgid "General Chat"
 msgstr "Yleinen keskustelu"
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:607
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:608
 msgid "Generate Link"
 msgstr "Luo linkki"
 
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:446
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:607
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:608
 msgid "Generate New Link"
 msgstr "Luo uusi linkki"
 
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:394
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:601
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:602
 msgid "Generate Public Invite Link"
 msgstr "Luo julkinen kutsulinkki"
 
@@ -1372,7 +1370,7 @@ msgstr ""
 "Hallitse kutsulinkkejä ja lähetä kutsuja ihmisille, joiden kanssa olet "
 "aiemmin keskustellut."
 
-#: src/components/modals/SpaceSettingsModal/Account.tsx:92
+#: src/components/modals/SpaceSettingsModal/Account.tsx:94
 msgid "Manage your settings for this Space."
 msgstr "Hallitse asetuksiasi tälle Space:lle."
 
@@ -1386,7 +1384,7 @@ msgstr "Merkitse kaikki luetuiksi"
 
 #: src/components/direct/DirectMessage.tsx:657
 #: src/components/direct/DirectMessage.tsx:824
-#: src/components/space/Channel.tsx:886
+#: src/components/space/Channel.tsx:892
 msgid "Members List"
 msgstr "Jäsenluettelo"
 
@@ -1402,8 +1400,8 @@ msgstr "Viestitoiminnot"
 msgid "Message deleted"
 msgstr "Viesti poistettu"
 
-#: src/components/message/Message.tsx:626
-#: src/components/message/Message.tsx:689
+#: src/components/message/Message.tsx:631
+#: src/components/message/Message.tsx:694
 msgid ""
 "Message does not have a valid signature, this may not be from the sender"
 msgstr ""
@@ -1414,17 +1412,23 @@ msgstr ""
 msgid "Message..."
 msgstr "Viesti..."
 
-#: src/components/message/MessageComposer.tsx:608
+#: src/components/message/MessageComposer.tsx:632
 msgid "Messages are NOT signed!"
 msgstr "Viestejä EI ole allekirjoitettu!"
 
-#: src/components/message/MessageComposer.tsx:609
+#: src/components/message/MessageComposer.tsx:633
 msgid "Messages are signed!"
 msgstr "Viestit on allekirjoitettu!"
 
 #: src/components/message/MessageActions.tsx:86
 msgid "More reactions"
 msgstr "Lisää reaktioita"
+
+#: src/hooks/business/validation/useDisplayNameValidation.ts:26
+#: src/hooks/business/validation/useDisplayNameValidation.ts:55
+msgid "Names resembling admin, moderator, or support are reserved."
+msgstr ""
+"Nimiä, jotka muistuttavat adminia, moderaattoria tai tukea, on varattu."
 
 #: src/components/modals/NewDirectMessageModal.tsx:83
 msgid "New Direct Message"
@@ -1462,16 +1466,12 @@ msgstr "Ei viestejä löytynyt"
 msgid "No pinned messages yet"
 msgstr "Ei vielä kiinnitettyjä viestejä"
 
-#: src/components/message/MessageComposer.tsx:521
-msgid "No topic"
-msgstr "Ei aihetta"
-
 #: src/components/notifications/NotificationPanel.tsx:166
 msgid "No unread notifications"
 msgstr "Ei lukemattomia ilmoituksia"
 
-#: src/components/space/Channel.tsx:604 src/components/space/Channel.tsx:1092
-#: src/components/space/Channel.tsx:1280
+#: src/components/space/Channel.tsx:610 src/components/space/Channel.tsx:1098
+#: src/components/space/Channel.tsx:1286
 msgid "No users found!"
 msgstr "Käyttäjiä ei löytynyt!"
 
@@ -1486,7 +1486,7 @@ msgstr "Ilmoituslupaa ei myönnetty"
 #: src/components/modals/SpaceSettingsModal/Account.tsx:187
 #: src/components/modals/UserSettingsModal/Navigation.tsx:17
 #: src/components/modals/UserSettingsModal/Notifications.tsx:24
-#: src/components/space/Channel.tsx:854
+#: src/components/space/Channel.tsx:860
 msgid "Notifications"
 msgstr "Ilmoitukset"
 
@@ -1500,7 +1500,7 @@ msgstr "Ilmoitukset on estetty. Ota ne käyttöön selaimesi asetuksista."
 msgid "Notifications are not supported in this browser"
 msgstr "Ilmoituksia ei tueta tässä selaimessa"
 
-#: src/components/message/MessageComposer.tsx:535
+#: src/components/message/MessageComposer.tsx:559
 msgid "Notify all members"
 msgstr "Ilmoita kaikille jäsenille"
 
@@ -1617,19 +1617,19 @@ msgstr "Kiinnitä viestit"
 msgid "Pin to top"
 msgstr "Pinni ylös"
 
-#: src/components/message/Message.tsx:609
-#: src/components/message/Message.tsx:672
+#: src/components/message/Message.tsx:614
+#: src/components/message/Message.tsx:677
 msgid "Pinned"
 msgstr "Kiinnitetty"
 
 #. placeholder {0}: mapSenderToUser(message.pinnedBy)?.displayName ||
 #. message.pinnedBy
-#: src/components/message/Message.tsx:608
-#: src/components/message/Message.tsx:671
+#: src/components/message/Message.tsx:613
+#: src/components/message/Message.tsx:676
 msgid "Pinned by {0}"
 msgstr "Kiinnittänyt {0}"
 
-#: src/components/space/Channel.tsx:815
+#: src/components/space/Channel.tsx:821
 msgid "Pinned Messages"
 msgstr "Kiinnitetyt viestit"
 
@@ -1785,7 +1785,7 @@ msgstr "Tallenna"
 
 #: src/components/modals/ChannelEditorModal.tsx:196
 #: src/components/modals/GroupEditorModal.tsx:97
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:588
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:589
 #: src/components/modals/UserSettingsModal/UserSettingsModal.tsx:242
 #: src/components/user/UserProfileEdit.tsx:158
 msgid "Save Changes"
@@ -1801,7 +1801,7 @@ msgstr "Tallenna yhteystiedon kuva"
 msgid "Save Edit History"
 msgstr "Tallenna muokkaushistoria"
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:573
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:574
 #: src/components/modals/UserSettingsModal/UserSettingsModal.tsx:231
 msgid "Save Failed"
 msgstr "Tallennus epäonnistui"
@@ -1844,7 +1844,7 @@ msgid "Search in this Space..."
 msgstr "Etsi tästä Space..."
 
 #: src/components/direct/DirectMessage.tsx:676
-#: src/components/space/Channel.tsx:905
+#: src/components/space/Channel.tsx:911
 msgid "Search Messages"
 msgstr "Etsi viestejä"
 
@@ -1860,7 +1860,7 @@ msgstr "Haku tulokset"
 msgid "Search username or address"
 msgstr "Etsi käyttäjänimeä tai osoitetta"
 
-#: src/components/space/Channel.tsx:1252
+#: src/components/space/Channel.tsx:1258
 msgid "Search Username or Address"
 msgstr "Hae käyttäjänimeä tai osoitetta"
 
@@ -2030,7 +2030,7 @@ msgstr "Tarrat"
 msgid "Successfully sent invite to {0}"
 msgstr "Onnistunut kutsun lähettäminen osoitteeseen {0}"
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:445
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:446
 msgid "Sync Kick Status"
 msgstr "Synkronoi potkutila"
 
@@ -2106,6 +2106,11 @@ msgstr ""
 "Tämä linkki ei vanhene, mutta voit luoda uuden milloin tahansa, mikä tekee "
 "vanhasta linkistä voimattoman."
 
+#: src/hooks/business/validation/useDisplayNameValidation.ts:23
+#: src/hooks/business/validation/useDisplayNameValidation.ts:52
+msgid "This name conflicts with @everyone mentions."
+msgstr "Tämä nimi on ristiriidassa @everyone-mainintojen kanssa."
+
 #: src/components/modals/SpaceSettingsModal/Roles.tsx:58
 msgid ""
 "This protects your identity as the space owner. However, if you're the only "
@@ -2128,7 +2133,7 @@ msgstr "Tämä julkinen kutsulinkki ei ole enää voimassa."
 msgid "This user is already a member of this space."
 msgstr "Tämä käyttäjä on jo tämän Spacen jäsen."
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:605
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:606
 msgid ""
 "This will create a public invite link that anyone can use to join your "
 "Space. Consider who you share this link with."
@@ -2136,7 +2141,7 @@ msgstr ""
 "Tämä luo julkisen kutsulinkin, jota kuka tahansa voi käyttää liittyäkseen "
 "Tilaosi. Mieti, kenelle jaat tämän linkin."
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:604
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:605
 msgid ""
 "This will generate a new public invite link and invalidate the current one. "
 "Anyone with the old link will no longer be able to use it."
@@ -2184,7 +2189,7 @@ msgstr "Kokeile erilaisia avainsanoja tai tarkista oikeinkirjoitus"
 msgid "Unable to compress emoji images. Please use smaller images."
 msgstr "Ei voitu pakata emoji-kuvia. Käytä pienempiä kuvia."
 
-#: src/hooks/business/spaces/useSpaceProfile.ts:123
+#: src/hooks/business/spaces/useSpaceProfile.ts:128
 #: src/hooks/business/ui/useFileUpload.ts:96
 #: src/hooks/business/ui/useSpaceFileUploads.ts:160
 #: src/hooks/business/ui/useSpaceFileUploads.ts:183
@@ -2244,8 +2249,8 @@ msgstr "Tuntematon aika"
 #: src/components/direct/DirectMessage.tsx:162
 #: src/components/direct/DirectMessage.tsx:177
 #: src/components/direct/DirectMessage.tsx:524
-#: src/components/message/MessageComposer.tsx:480
-#: src/components/message/MessageComposer.tsx:487
+#: src/components/message/MessageComposer.tsx:501
+#: src/components/message/MessageComposer.tsx:508
 #: src/components/message/MessageEditTextarea.tsx:225
 #: src/components/message/MessageEditTextarea.tsx:260
 #: src/components/message/MessageEditTextarea.tsx:267
@@ -2307,7 +2312,7 @@ msgid ""
 msgstr ""
 "Kunnes vastaat, tämä lähettäjä ei näe näyttönimeäsi tai profiilikuvaasi"
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:445
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:446
 msgid ""
 "Update kick records for all members. Use this if kicked users still appear "
 "active to some members."
@@ -2315,7 +2320,7 @@ msgstr ""
 "Päivitä potkuennätykset kaikille jäsenille. Käytä tätä, jos potkut saaneet "
 "käyttäjät näyttävät edelleen aktiivisilta joillekin jäsenille."
 
-#: src/components/modals/SpaceSettingsModal/Account.tsx:128
+#: src/components/modals/SpaceSettingsModal/Account.tsx:130
 msgid "Upload an avatar for this Space - PNG or JPG - Optimal ratio 1:1"
 msgstr "Lataa avatar tälle Space - PNG tai JPG - Optimaalinen suhde 1:1"
 
@@ -2345,7 +2350,7 @@ msgstr "Käyttäjän osoite täällä"
 msgid "User does not exist."
 msgstr "Käyttäjää ei ole olemassa."
 
-#: src/components/space/Channel.tsx:591 src/components/space/Channel.tsx:1078
+#: src/components/space/Channel.tsx:597 src/components/space/Channel.tsx:1084
 msgid "Username or Address"
 msgstr "Käyttäjänimi tai osoite"
 
@@ -2504,7 +2509,7 @@ msgstr ""
 "{channelCount} kanavaa tästä ryhmästä."
 
 #: src/components/message/MessageComposer.tsx:336
-#: src/components/space/Channel.tsx:1044
+#: src/components/space/Channel.tsx:1050
 msgid "You cannot post in this channel"
 msgstr "Et voi julkaista tässä kanavassa"
 
@@ -2538,7 +2543,7 @@ msgstr "Olet kaikki ajan tasalla!"
 msgid "You're all set. Welcome to Quorum!"
 msgstr "Olet valmis. Tervetuloa Quorumiin!"
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:441
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:442
 msgid ""
 "You're not listed in this Space's members. Correcting this will add you to "
 "the Space Members list (stores your profile locally with your inbox "
@@ -2553,7 +2558,7 @@ msgstr ""
 msgid "You've been invited to join a Space"
 msgstr "Olet saanut kutsun liittyä Spaceen"
 
-#: src/components/modals/SpaceSettingsModal/Account.tsx:98
+#: src/components/modals/SpaceSettingsModal/Account.tsx:100
 msgid "Your Details"
 msgstr "Omat tiedot"
 
@@ -2609,6 +2614,9 @@ msgstr "YouTube-videon pikkukuva"
 #~ "Oletus Space asetukset tarjoavat tyypillisimmän keskustelukokemuksen, mutta "
 #~ "korkeampien yksityisyystakuiden vuoksi tarkista Laajennetut asetukset."
 
+#~ msgid "'everyone' is a reserved name."
+#~ msgstr "'everyone' on varattu nimi."
+
 #~ msgid "{0} pinned message"
 #~ msgstr "{0} kiinnitetty viesti"
 
@@ -2620,6 +2628,15 @@ msgstr "YouTube-videon pikkukuva"
 
 #~ msgid "{0} unread mentions"
 #~ msgstr "{0} lukematonta mainintaa"
+
+#~ msgid "{user} has been kicked"
+#~ msgstr "{user} on potkittu"
+
+#~ msgid "{user} has joined"
+#~ msgstr "{user} liittynyt"
+
+#~ msgid "{user} has left"
+#~ msgstr "{user} jätti"
 
 #~ msgid "Account Settings for This Space"
 #~ msgstr "Tilitiedot tälle Space"
@@ -2651,6 +2668,9 @@ msgstr "YouTube-videon pikkukuva"
 
 #~ msgid "Enter a name for your new Space"
 #~ msgstr "Anna nimi uudelle Spaceillesi"
+
+#~ msgid "No topic"
+#~ msgstr "Ei aihetta"
 
 #~ msgid "No unread mentions"
 #~ msgstr "Ei lukemattomia mainintoja"
