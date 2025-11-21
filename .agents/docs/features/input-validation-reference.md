@@ -32,7 +32,7 @@ Protects against impersonation and mention conflicts. **Only applies to user dis
 
 | Validation Type | Names Protected | Strategy | Purpose |
 |-----------------|-----------------|----------|---------|
-| **Mention Conflict** | `everyone` | Exact match only (case insensitive) | Prevent conflict with @everyone mention |
+| **Mention Conflict** | `everyone`, `here`, `mod`, `manager` | Exact match only (case insensitive) | Prevent conflict with @mentions |
 | **Anti-Impersonation** | `admin`, `administrator`, `moderator`, `support` | Homoglyph + Word Boundary | Prevent staff impersonation |
 
 #### Homoglyph Protection (Anti-Impersonation Only)
@@ -57,6 +57,12 @@ Characters mapped to letters: `0→o`, `1→i`, `3→e`, `4→a`, `5→s`, `7→
 | `padministrator` | Embedded, no word boundary |
 | `everyone loves me` | "everyone" not exact match |
 | `3very0ne` | No homoglyph check for "everyone" |
+| `here we go` | "here" not exact match |
+| `h3r3` | No homoglyph check for "here" |
+| `mod team` | "mod" not exact match |
+| `m0d` | No homoglyph check for "mod" |
+| `manager position` | "manager" not exact match |
+| `m4nager` | No homoglyph check for "manager" |
 
 #### Implementation Details
 The `isImpersonationName()` function uses THREE checks to catch all variations:
@@ -65,7 +71,7 @@ The `isImpersonationName()` function uses THREE checks to catch all variations:
 3. **Starts/ends check** on normalized string → catches "m0derat0r123" where trailing digits become letters after normalization
 
 #### Implementation Files
-- `validation.ts`: `HOMOGLYPH_MAP`, `IMPERSONATION_NAMES`, `normalizeHomoglyphs()`, `isImpersonationName()`, `isEveryoneReserved()`, `getReservedNameType()`, `isReservedName()`
+- `validation.ts`: `HOMOGLYPH_MAP`, `IMPERSONATION_NAMES`, `MENTION_RESERVED_NAMES`, `normalizeHomoglyphs()`, `isImpersonationName()`, `isMentionReserved()`, `getReservedNameType()`, `isReservedName()`
 - `useDisplayNameValidation.ts`: Uses `getReservedNameType()` for validation
 
 ### Address & ID Validation
@@ -83,11 +89,11 @@ The `isImpersonationName()` function uses THREE checks to catch all variations:
 src/utils/validation.ts
 ├── Constants: MAX_MESSAGE_LENGTH, MAX_NAME_LENGTH, MAX_TOPIC_LENGTH
 ├── XSS Functions: validateNameForXSS(), sanitizeNameForXSS()
-├── Reserved Names: HOMOGLYPH_MAP, IMPERSONATION_NAMES
+├── Reserved Names: HOMOGLYPH_MAP, IMPERSONATION_NAMES, MENTION_RESERVED_NAMES
 │   ├── normalizeHomoglyphs() - Convert lookalike chars to letters
 │   ├── isImpersonationName() - Check with homoglyph + word boundary
-│   ├── isEveryoneReserved() - Check exact "everyone" match
-│   ├── getReservedNameType() - Returns 'everyone' | 'impersonation' | null
+│   ├── isMentionReserved() - Check exact "everyone"/"here" match
+│   ├── getReservedNameType() - Returns 'mention' | 'impersonation' | null
 │   └── isReservedName() - Simple boolean check
 ├── IPFS Functions: isValidIPFSCID(), isValidChannelId()
 └── Error Helpers: getXSSValidationError()
@@ -199,14 +205,14 @@ const isValidAddress = isValidIPFSCID(address);
 ### 2025-11-21: Enhanced Reserved Name Validation with Anti-Impersonation
 - **Issue**: Only "everyone" was blocked; impersonation attempts like "admin", "supp0rt" were allowed
 - **Solution**: Two-tier validation system:
-  1. **"everyone"** - Simple exact match (case insensitive) for @everyone mention conflict
-  2. **Anti-impersonation** - Homoglyph normalization + word boundary detection for: `admin`, `administrator`, `moderator`, `support`
-- **Homoglyph Protection**: Maps lookalike characters (0→o, 1→i, 3→e, 4→a, 5→s, 7→t, @→a, $→s, !→i, |→l)
+  1. **Mention Keywords** (`everyone`, `here`, `mod`, `manager`) - Simple exact match (case insensitive) for @mention conflicts
+  2. **Anti-impersonation** (`admin`, `administrator`, `moderator`, `support`) - Homoglyph normalization + word boundary detection
+- **Homoglyph Protection**: Maps lookalike characters (0→o, 1→i, 3→e, 4→a, 5→s, 7→t, @→a, $→s, !→i, |→l) - Only for anti-impersonation
 - **Word Boundary**: Allows embedded words (e.g., "sysadmin", "supporting") but blocks separated words (e.g., "admin team", "moderator123")
 - **Scope**: Only applies to user display names (not space/channel/group names)
 - **Files Modified**:
-  - `src/utils/validation.ts`: Added `HOMOGLYPH_MAP`, `IMPERSONATION_NAMES`, `normalizeHomoglyphs()`, `isImpersonationName()`, `isEveryoneReserved()`, `getReservedNameType()`, `isReservedName()`
-  - `src/hooks/business/validation/useDisplayNameValidation.ts`: Updated to use `getReservedNameType()` with generic error message
+  - `src/utils/validation.ts`: Added `HOMOGLYPH_MAP`, `IMPERSONATION_NAMES`, `MENTION_RESERVED_NAMES`, `normalizeHomoglyphs()`, `isImpersonationName()`, `isMentionReserved()`, `getReservedNameType()`, `isReservedName()`
+  - `src/hooks/business/validation/useDisplayNameValidation.ts`: Updated to use `getReservedNameType()` with type-specific error messages
 
 ### 2025-11-19: Space Settings Modal Validation Fix
 - **Issue**: SpaceSettingsModal Account.tsx was missing proper display name validation
@@ -237,12 +243,27 @@ const isValidAddress = isValidIPFSCID(address);
 - [ ] Wrong length → Validation error
 
 ### Reserved Name Validation (Display Names Only)
-**"everyone" - Exact Match:**
+**Mention Keywords - Exact Match:**
 - [ ] `everyone` → Blocked
 - [ ] `Everyone` → Blocked (case insensitive)
 - [ ] `EVERYONE` → Blocked
 - [ ] `everyone loves me` → Allowed (not exact match)
 - [ ] `3very0ne` → Allowed (no homoglyph check for everyone)
+- [ ] `here` → Blocked
+- [ ] `Here` → Blocked (case insensitive)
+- [ ] `HERE` → Blocked
+- [ ] `here we go` → Allowed (not exact match)
+- [ ] `h3r3` → Allowed (no homoglyph check for here)
+- [ ] `mod` → Blocked
+- [ ] `Mod` → Blocked (case insensitive)
+- [ ] `MOD` → Blocked
+- [ ] `mod team` → Allowed (not exact match)
+- [ ] `m0d` → Allowed (no homoglyph check for mod)
+- [ ] `manager` → Blocked
+- [ ] `Manager` → Blocked (case insensitive)
+- [ ] `MANAGER` → Blocked
+- [ ] `manager position` → Allowed (not exact match)
+- [ ] `m4nager` → Allowed (no homoglyph check for manager)
 
 **Anti-Impersonation - Homoglyph + Word Boundary:**
 - [ ] `admin` → Blocked
@@ -265,4 +286,4 @@ const isValidAddress = isValidIPFSCID(address);
 ---
 
 _Created: 2025-11-19_
-_Last Updated: 2025-11-21 (Enhanced reserved name validation with anti-impersonation)_
+_Last Updated: 2025-11-21 (Added mention keywords: everyone, here, mod, manager + anti-impersonation)_

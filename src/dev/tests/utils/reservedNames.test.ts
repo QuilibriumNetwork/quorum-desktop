@@ -3,6 +3,7 @@ import {
   normalizeHomoglyphs,
   isImpersonationName,
   isEveryoneReserved,
+  isMentionReserved,
   getReservedNameType,
   isReservedName,
 } from '../../../utils/validation';
@@ -36,23 +37,56 @@ describe('Reserved Name Validation', () => {
     });
   });
 
-  describe('isEveryoneReserved', () => {
+  describe('isMentionReserved (and isEveryoneReserved alias)', () => {
     it('should block exact "everyone" match', () => {
+      expect(isMentionReserved('everyone')).toBe(true);
+      expect(isMentionReserved('Everyone')).toBe(true);
+      expect(isMentionReserved('EVERYONE')).toBe(true);
+      expect(isMentionReserved('  everyone  ')).toBe(true); // with whitespace
+      // Legacy alias should work the same
       expect(isEveryoneReserved('everyone')).toBe(true);
-      expect(isEveryoneReserved('Everyone')).toBe(true);
-      expect(isEveryoneReserved('EVERYONE')).toBe(true);
-      expect(isEveryoneReserved('  everyone  ')).toBe(true); // with whitespace
     });
 
-    it('should allow phrases containing everyone', () => {
-      expect(isEveryoneReserved('everyone loves me')).toBe(false);
-      expect(isEveryoneReserved('hello everyone')).toBe(false);
-      expect(isEveryoneReserved('everyones friend')).toBe(false);
+    it('should block exact "here" match', () => {
+      expect(isMentionReserved('here')).toBe(true);
+      expect(isMentionReserved('Here')).toBe(true);
+      expect(isMentionReserved('HERE')).toBe(true);
+      expect(isMentionReserved('  here  ')).toBe(true); // with whitespace
     });
 
-    it('should NOT apply homoglyph check for everyone', () => {
-      expect(isEveryoneReserved('3very0ne')).toBe(false);
-      expect(isEveryoneReserved('3v3ry0n3')).toBe(false);
+    it('should block exact "mod" match', () => {
+      expect(isMentionReserved('mod')).toBe(true);
+      expect(isMentionReserved('Mod')).toBe(true);
+      expect(isMentionReserved('MOD')).toBe(true);
+      expect(isMentionReserved('  mod  ')).toBe(true); // with whitespace
+    });
+
+    it('should block exact "manager" match', () => {
+      expect(isMentionReserved('manager')).toBe(true);
+      expect(isMentionReserved('Manager')).toBe(true);
+      expect(isMentionReserved('MANAGER')).toBe(true);
+      expect(isMentionReserved('  manager  ')).toBe(true); // with whitespace
+    });
+
+    it('should allow phrases containing mention keywords', () => {
+      expect(isMentionReserved('everyone loves me')).toBe(false);
+      expect(isMentionReserved('hello everyone')).toBe(false);
+      expect(isMentionReserved('everyones friend')).toBe(false);
+      expect(isMentionReserved('here we go')).toBe(false);
+      expect(isMentionReserved('come here')).toBe(false);
+      expect(isMentionReserved('heres the thing')).toBe(false);
+      expect(isMentionReserved('mod team')).toBe(false);
+      expect(isMentionReserved('moderation')).toBe(false);
+      expect(isMentionReserved('manager position')).toBe(false);
+      expect(isMentionReserved('managers unite')).toBe(false);
+    });
+
+    it('should NOT apply homoglyph check for mention keywords', () => {
+      expect(isMentionReserved('3very0ne')).toBe(false);
+      expect(isMentionReserved('3v3ry0n3')).toBe(false);
+      expect(isMentionReserved('h3r3')).toBe(false);
+      expect(isMentionReserved('m0d')).toBe(false);
+      expect(isMentionReserved('m4nager')).toBe(false);
     });
   });
 
@@ -151,9 +185,15 @@ describe('Reserved Name Validation', () => {
   });
 
   describe('getReservedNameType', () => {
-    it('should return "everyone" for everyone match', () => {
-      expect(getReservedNameType('everyone')).toBe('everyone');
-      expect(getReservedNameType('Everyone')).toBe('everyone');
+    it('should return "mention" for mention keyword matches', () => {
+      expect(getReservedNameType('everyone')).toBe('mention');
+      expect(getReservedNameType('Everyone')).toBe('mention');
+      expect(getReservedNameType('here')).toBe('mention');
+      expect(getReservedNameType('Here')).toBe('mention');
+      expect(getReservedNameType('mod')).toBe('mention');
+      expect(getReservedNameType('Mod')).toBe('mention');
+      expect(getReservedNameType('manager')).toBe('mention');
+      expect(getReservedNameType('Manager')).toBe('mention');
     });
 
     it('should return "impersonation" for impersonation names', () => {

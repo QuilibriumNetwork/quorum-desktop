@@ -197,42 +197,58 @@ export const isImpersonationName = (name: string): boolean => {
 };
 
 /**
- * Checks if "everyone" is used as an exact word (case insensitive).
+ * Mention keywords that conflict with system mentions.
+ * These are checked as exact matches only (case insensitive), no homoglyph protection.
+ */
+const MENTION_RESERVED_NAMES = ['everyone', 'here', 'mod', 'manager'];
+
+/**
+ * Checks if a name is a reserved mention keyword (case insensitive exact match).
  * This is less strict than impersonation check - only blocks exact match.
- * Reason: "everyone" conflicts with @everyone mention, not impersonation.
+ * Reason: These conflict with @everyone/@here mentions, not impersonation.
  *
  * @param name - The name to check
- * @returns true if name is exactly "everyone"
+ * @returns true if name is exactly "everyone" or "here"
  *
  * @example
- * isEveryoneReserved("everyone") // true
- * isEveryoneReserved("Everyone") // true
- * isEveryoneReserved("everyone loves me") // false (not exact)
- * isEveryoneReserved("3very0ne") // false (no homoglyph check)
+ * isMentionReserved("everyone") // true
+ * isMentionReserved("here") // true
+ * isMentionReserved("Here") // true
+ * isMentionReserved("everyone loves me") // false (not exact)
+ * isMentionReserved("3very0ne") // false (no homoglyph check)
  */
-export const isEveryoneReserved = (name: string): boolean => {
-  return name.trim().toLowerCase() === 'everyone';
+export const isMentionReserved = (name: string): boolean => {
+  const normalized = name.trim().toLowerCase();
+  return MENTION_RESERVED_NAMES.includes(normalized);
 };
 
 /**
- * Result of reserved name check with specific type for error messaging.
+ * @deprecated Use isMentionReserved instead
  */
-export type ReservedNameType = 'everyone' | 'impersonation' | null;
+export const isEveryoneReserved = isMentionReserved;
+
+/**
+ * Result of reserved name check with specific type for error messaging.
+ * - 'mention': Conflicts with @everyone or @here mentions
+ * - 'impersonation': Resembles admin/moderator/support names
+ */
+export type ReservedNameType = 'mention' | 'impersonation' | null;
 
 /**
  * Checks if a name is reserved and returns the type of reservation.
- * Combines both "everyone" check and impersonation check.
+ * Combines both mention keyword check and impersonation check.
  *
  * @param name - The name to check
  * @returns The type of reservation or null if not reserved
  *
  * @example
- * getReservedNameType("everyone") // 'everyone'
+ * getReservedNameType("everyone") // 'mention'
+ * getReservedNameType("here") // 'mention'
  * getReservedNameType("admin") // 'impersonation'
  * getReservedNameType("John") // null
  */
 export const getReservedNameType = (name: string): ReservedNameType => {
-  if (isEveryoneReserved(name)) return 'everyone';
+  if (isMentionReserved(name)) return 'mention';
   if (isImpersonationName(name)) return 'impersonation';
   return null;
 };

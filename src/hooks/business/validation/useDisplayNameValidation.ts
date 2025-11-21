@@ -19,8 +19,8 @@ export const useDisplayNameValidation = (displayName: string) => {
       return t`Display name must be ${MAX_NAME_LENGTH} characters or less`;
     }
     const reservedType = getReservedNameType(displayName);
-    if (reservedType === 'everyone') {
-      return t`This name conflicts with @everyone mentions.`;
+    if (reservedType === 'mention') {
+      return t`This name conflicts with mention keywords.`;
     }
     if (reservedType === 'impersonation') {
       return t`Names resembling admin, moderator, or support are reserved.`;
@@ -48,8 +48,8 @@ export const validateDisplayName = (displayName: string): string | undefined => 
     return t`Display name must be ${MAX_NAME_LENGTH} characters or less`;
   }
   const reservedType = getReservedNameType(displayName);
-  if (reservedType === 'everyone') {
-    return t`This name conflicts with @everyone mentions.`;
+  if (reservedType === 'mention') {
+    return t`This name conflicts with mention keywords.`;
   }
   if (reservedType === 'impersonation') {
     return t`Names resembling admin, moderator, or support are reserved.`;
