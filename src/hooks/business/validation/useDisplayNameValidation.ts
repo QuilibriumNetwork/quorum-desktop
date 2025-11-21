@@ -1,6 +1,10 @@
 import { useMemo } from 'react';
 import { t } from '@lingui/core/macro';
-import { validateNameForXSS, MAX_NAME_LENGTH } from '../../../utils/validation';
+import {
+  validateNameForXSS,
+  MAX_NAME_LENGTH,
+  getReservedNameType,
+} from '../../../utils/validation';
 
 /**
  * Centralized display name validation logic
@@ -14,8 +18,12 @@ export const useDisplayNameValidation = (displayName: string) => {
     if (displayName.length > MAX_NAME_LENGTH) {
       return t`Display name must be ${MAX_NAME_LENGTH} characters or less`;
     }
-    if (displayName.trim().toLowerCase() === 'everyone') {
-      return t`'everyone' is a reserved name.`;
+    const reservedType = getReservedNameType(displayName);
+    if (reservedType === 'everyone') {
+      return t`This name conflicts with @everyone mentions.`;
+    }
+    if (reservedType === 'impersonation') {
+      return t`Names resembling admin, moderator, or support are reserved.`;
     }
     if (!validateNameForXSS(displayName)) {
       return t`Display name cannot contain special characters`;
@@ -39,8 +47,12 @@ export const validateDisplayName = (displayName: string): string | undefined => 
   if (displayName.length > MAX_NAME_LENGTH) {
     return t`Display name must be ${MAX_NAME_LENGTH} characters or less`;
   }
-  if (displayName.trim().toLowerCase() === 'everyone') {
-    return t`'everyone' is a reserved name.`;
+  const reservedType = getReservedNameType(displayName);
+  if (reservedType === 'everyone') {
+    return t`This name conflicts with @everyone mentions.`;
+  }
+  if (reservedType === 'impersonation') {
+    return t`Names resembling admin, moderator, or support are reserved.`;
   }
   if (!validateNameForXSS(displayName)) {
     return t`Display name cannot contain special characters`;

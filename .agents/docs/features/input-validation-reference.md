@@ -26,6 +26,42 @@ This document provides a quick reference for all input and textarea validations 
 | **Mention Count Limit** | Max 20 mentions | N/A | Prevent notification spam | `mentionUtils.ts`<br>`useMessageComposer.ts` |
 | **Token Breaking** | Auto-removal | `>>>` | Prevent token injection | `MessageMarkdownRenderer.tsx:203` |
 
+### Reserved Name Validation (Display Names Only)
+
+Protects against impersonation and mention conflicts. **Only applies to user display names**, not space/channel/group names.
+
+| Validation Type | Names Protected | Strategy | Purpose |
+|-----------------|-----------------|----------|---------|
+| **Mention Conflict** | `everyone` | Exact match only (case insensitive) | Prevent conflict with @everyone mention |
+| **Anti-Impersonation** | `admin`, `administrator`, `moderator`, `support` | Homoglyph + Word Boundary | Prevent staff impersonation |
+
+#### Homoglyph Protection (Anti-Impersonation Only)
+
+Characters mapped to letters: `0→o`, `1→i`, `3→e`, `4→a`, `5→s`, `7→t`, `@→a`, `$→s`, `!→i`, `|→l`
+
+**Examples - BLOCKED:**
+| Input | Normalized | Reason |
+|-------|------------|--------|
+| `admin` | `admin` | Exact match |
+| `ADM1N` | `admin` | Homoglyph (1→i) + case |
+| `@dmin` | `admin` | Homoglyph (@→a) |
+| `admin team` | `admin team` | Word boundary (space) |
+| `moderator123` | `moderator123` | Word boundary (numbers) |
+| `supp0rt 24/7` | `support 24/7` | Homoglyph + boundary |
+
+**Examples - ALLOWED:**
+| Input | Reason |
+|-------|--------|
+| `sysadmin` | Embedded, no word boundary |
+| `supporting` | Embedded, no word boundary |
+| `padministrator` | Embedded, no word boundary |
+| `everyone loves me` | "everyone" not exact match |
+| `3very0ne` | No homoglyph check for "everyone" |
+
+#### Implementation Files
+- `validation.ts`: `HOMOGLYPH_MAP`, `IMPERSONATION_NAMES`, `normalizeHomoglyphs()`, `isImpersonationName()`, `isEveryoneReserved()`, `getReservedNameType()`, `isReservedName()`
+- `useDisplayNameValidation.ts`: Uses `getReservedNameType()` for validation
+
 ### Address & ID Validation
 
 | Type | Format | Validation | Files |
@@ -41,6 +77,12 @@ This document provides a quick reference for all input and textarea validations 
 src/utils/validation.ts
 ├── Constants: MAX_MESSAGE_LENGTH, MAX_NAME_LENGTH, MAX_TOPIC_LENGTH
 ├── XSS Functions: validateNameForXSS(), sanitizeNameForXSS()
+├── Reserved Names: HOMOGLYPH_MAP, IMPERSONATION_NAMES
+│   ├── normalizeHomoglyphs() - Convert lookalike chars to letters
+│   ├── isImpersonationName() - Check with homoglyph + word boundary
+│   ├── isEveryoneReserved() - Check exact "everyone" match
+│   ├── getReservedNameType() - Returns 'everyone' | 'impersonation' | null
+│   └── isReservedName() - Simple boolean check
 ├── IPFS Functions: isValidIPFSCID(), isValidChannelId()
 └── Error Helpers: getXSSValidationError()
 ```
@@ -50,8 +92,8 @@ src/utils/validation.ts
 ```
 src/hooks/business/validation/
 ├── useMessageValidation.ts     → Message length + 80% threshold logic
-├── useDisplayNameValidation.ts → Display name XSS + length validation
-├── useSpaceNameValidation.ts   → Space name XSS + length validation
+├── useDisplayNameValidation.ts → Display name XSS + length + RESERVED NAME validation
+├── useSpaceNameValidation.ts   → Space name XSS + length (NO reserved name check)
 └── index.ts                    → Exports all validation hooks
 ```
 
@@ -68,7 +110,12 @@ src/hooks/business/validation/
 
 #### User Settings & Onboarding
 - **Files**: `Onboarding.tsx`, `UserSettingsModal.tsx`, `SpaceSettingsModal/Account.tsx`, `useOnboardingFlowLogic.ts`, `useSpaceProfile.ts`
-- **Validations**: Display name XSS + length (40 chars), reserved name validation ("everyone")
+- **Validations**:
+  - XSS protection (blocks `< > " '`)
+  - Length limit (40 chars)
+  - Reserved name validation:
+    - `everyone` - exact match only (mention conflict)
+    - `admin`, `administrator`, `moderator`, `support` - with homoglyph + word boundary (anti-impersonation)
 - **UX**: Real-time validation with error messages
 
 #### Space Management
@@ -143,6 +190,18 @@ const isValidAddress = isValidIPFSCID(address);
 
 ## Recent Updates
 
+### 2025-11-21: Enhanced Reserved Name Validation with Anti-Impersonation
+- **Issue**: Only "everyone" was blocked; impersonation attempts like "admin", "supp0rt" were allowed
+- **Solution**: Two-tier validation system:
+  1. **"everyone"** - Simple exact match (case insensitive) for @everyone mention conflict
+  2. **Anti-impersonation** - Homoglyph normalization + word boundary detection for: `admin`, `administrator`, `moderator`, `support`
+- **Homoglyph Protection**: Maps lookalike characters (0→o, 1→i, 3→e, 4→a, 5→s, 7→t, @→a, $→s, !→i, |→l)
+- **Word Boundary**: Allows embedded words (e.g., "sysadmin", "supporting") but blocks separated words (e.g., "admin team", "moderator123")
+- **Scope**: Only applies to user display names (not space/channel/group names)
+- **Files Modified**:
+  - `src/utils/validation.ts`: Added `HOMOGLYPH_MAP`, `IMPERSONATION_NAMES`, `normalizeHomoglyphs()`, `isImpersonationName()`, `isEveryoneReserved()`, `getReservedNameType()`, `isReservedName()`
+  - `src/hooks/business/validation/useDisplayNameValidation.ts`: Updated to use `getReservedNameType()` with generic error message
+
 ### 2025-11-19: Space Settings Modal Validation Fix
 - **Issue**: SpaceSettingsModal Account.tsx was missing proper display name validation
 - **Fix**: Added `useDisplayNameValidation` hook to both Account.tsx component and useSpaceProfile.ts hook
@@ -171,6 +230,25 @@ const isValidAddress = isValidIPFSCID(address);
 - [ ] Invalid format → Validation error
 - [ ] Wrong length → Validation error
 
+### Reserved Name Validation (Display Names Only)
+**"everyone" - Exact Match:**
+- [ ] `everyone` → Blocked
+- [ ] `Everyone` → Blocked (case insensitive)
+- [ ] `EVERYONE` → Blocked
+- [ ] `everyone loves me` → Allowed (not exact match)
+- [ ] `3very0ne` → Allowed (no homoglyph check for everyone)
+
+**Anti-Impersonation - Homoglyph + Word Boundary:**
+- [ ] `admin` → Blocked
+- [ ] `ADM1N` → Blocked (homoglyph 1→i)
+- [ ] `@dmin` → Blocked (homoglyph @→a)
+- [ ] `admin team` → Blocked (word boundary)
+- [ ] `moderator123` → Blocked (word boundary)
+- [ ] `supp0rt` → Blocked (homoglyph 0→o)
+- [ ] `sysadmin` → Allowed (embedded)
+- [ ] `supporting` → Allowed (embedded)
+- [ ] `padministrator` → Allowed (embedded)
+
 ## Related Documentation
 
 - **Security Details**: [security.md](./security.md)
@@ -181,4 +259,4 @@ const isValidAddress = isValidIPFSCID(address);
 ---
 
 _Created: 2025-11-19_
-_Last Updated: 2025-11-19 (Added Space Settings Modal validation fix)_
+_Last Updated: 2025-11-21 (Enhanced reserved name validation with anti-impersonation)_

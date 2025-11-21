@@ -418,6 +418,7 @@ const SpaceSettingsModal: React.FunctionComponent<{
                           onSave={spaceProfile.onSave}
                           isSaving={spaceProfile.isSaving}
                           hasValidationError={spaceProfile.hasValidationError}
+                          displayNameError={spaceProfile.displayNameError}
                           onClose={dismiss}
                           roles={roles}
                           selectedMentionTypes={mentionSettings.selectedTypes}

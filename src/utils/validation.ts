@@ -97,6 +97,141 @@ export const sanitizeNameForXSS = (name: string): string => {
 };
 
 // ============================================
+// RESERVED NAME VALIDATION
+// ============================================
+
+/**
+ * Homoglyph map for anti-impersonation protection.
+ * Maps visually similar characters to their letter equivalents.
+ */
+const HOMOGLYPH_MAP: Record<string, string> = {
+  '0': 'o',
+  '1': 'i',
+  '3': 'e',
+  '4': 'a',
+  '5': 's',
+  '7': 't',
+  '@': 'a',
+  '$': 's',
+  '!': 'i',
+  '|': 'l',
+};
+
+/**
+ * Names protected with strict anti-impersonation (homoglyph + word boundary).
+ * These names are commonly used by bad actors to impersonate staff/authority.
+ */
+const IMPERSONATION_NAMES = ['admin', 'administrator', 'moderator', 'support'];
+
+/**
+ * Normalizes a string by replacing homoglyphs with their letter equivalents.
+ *
+ * @param name - The name to normalize
+ * @returns The normalized name with homoglyphs replaced
+ *
+ * @example
+ * normalizeHomoglyphs("adm1n") // "admin"
+ * normalizeHomoglyphs("supp0rt") // "support"
+ * normalizeHomoglyphs("@DM1N") // "admin" (after toLowerCase)
+ */
+export const normalizeHomoglyphs = (name: string): string => {
+  return name
+    .toLowerCase()
+    .split('')
+    .map((char) => HOMOGLYPH_MAP[char] || char)
+    .join('');
+};
+
+/**
+ * Checks if a name contains a reserved word at a word boundary.
+ * Word boundaries are: start/end of string, spaces, numbers, punctuation.
+ *
+ * @param normalized - The normalized (homoglyph-replaced) name
+ * @param reserved - The reserved word to check for
+ * @returns true if the reserved word is found at a word boundary
+ *
+ * @example
+ * hasReservedWordBoundary("admin", "admin") // true
+ * hasReservedWordBoundary("admin123", "admin") // true
+ * hasReservedWordBoundary("sysadmin", "admin") // false (embedded)
+ */
+const hasReservedWordBoundary = (normalized: string, reserved: string): boolean => {
+  // Match reserved word at start, end, or separated by non-letters
+  const pattern = new RegExp(`(^|[^a-z])${reserved}([^a-z]|$)`, 'i');
+  return pattern.test(normalized);
+};
+
+/**
+ * Checks if a name matches any impersonation pattern.
+ * Uses homoglyph normalization and word boundary detection.
+ *
+ * @param name - The name to check
+ * @returns true if the name matches an impersonation pattern
+ *
+ * @example
+ * isImpersonationName("admin") // true
+ * isImpersonationName("ADM1N") // true (homoglyph + case)
+ * isImpersonationName("admin team") // true (word boundary)
+ * isImpersonationName("sysadmin") // false (embedded)
+ * isImpersonationName("supporting") // false (embedded)
+ */
+export const isImpersonationName = (name: string): boolean => {
+  const normalized = normalizeHomoglyphs(name.trim());
+  return IMPERSONATION_NAMES.some((reserved) => hasReservedWordBoundary(normalized, reserved));
+};
+
+/**
+ * Checks if "everyone" is used as an exact word (case insensitive).
+ * This is less strict than impersonation check - only blocks exact match.
+ * Reason: "everyone" conflicts with @everyone mention, not impersonation.
+ *
+ * @param name - The name to check
+ * @returns true if name is exactly "everyone"
+ *
+ * @example
+ * isEveryoneReserved("everyone") // true
+ * isEveryoneReserved("Everyone") // true
+ * isEveryoneReserved("everyone loves me") // false (not exact)
+ * isEveryoneReserved("3very0ne") // false (no homoglyph check)
+ */
+export const isEveryoneReserved = (name: string): boolean => {
+  return name.trim().toLowerCase() === 'everyone';
+};
+
+/**
+ * Result of reserved name check with specific type for error messaging.
+ */
+export type ReservedNameType = 'everyone' | 'impersonation' | null;
+
+/**
+ * Checks if a name is reserved and returns the type of reservation.
+ * Combines both "everyone" check and impersonation check.
+ *
+ * @param name - The name to check
+ * @returns The type of reservation or null if not reserved
+ *
+ * @example
+ * getReservedNameType("everyone") // 'everyone'
+ * getReservedNameType("admin") // 'impersonation'
+ * getReservedNameType("John") // null
+ */
+export const getReservedNameType = (name: string): ReservedNameType => {
+  if (isEveryoneReserved(name)) return 'everyone';
+  if (isImpersonationName(name)) return 'impersonation';
+  return null;
+};
+
+/**
+ * Simple boolean check if a name is reserved (any type).
+ *
+ * @param name - The name to check
+ * @returns true if the name is reserved
+ */
+export const isReservedName = (name: string): boolean => {
+  return getReservedNameType(name) !== null;
+};
+
+// ============================================
 // CRYPTOGRAPHIC KEY VALIDATION
 // ============================================
 

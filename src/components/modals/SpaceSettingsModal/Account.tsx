@@ -16,7 +16,6 @@ import { useSpaceOwner } from '../../../hooks/queries/spaceOwner/useSpaceOwner';
 import { useSpaceLeaving } from '../../../hooks/business/spaces/useSpaceLeaving';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
 import { useUserRoleDisplay } from '../../../hooks/business/user/useUserRoleDisplay';
-import { useDisplayNameValidation } from '../../../hooks/business/validation';
 import { Role } from '../../../api/quorumApi';
 import type { NotificationTypeId } from '../../../types/notifications';
 
@@ -40,6 +39,7 @@ interface AccountProps {
   onSave: () => void;
   isSaving: boolean;
   hasValidationError: boolean;
+  displayNameError: string | undefined;
   onClose: () => void;
   roles?: Role[];
   // Notification settings props (passed from parent)
@@ -65,6 +65,7 @@ const Account: React.FunctionComponent<AccountProps> = ({
   onSave,
   isSaving,
   hasValidationError,
+  displayNameError,
   onClose,
   roles,
   selectedMentionTypes,
@@ -81,9 +82,6 @@ const Account: React.FunctionComponent<AccountProps> = ({
 
   // Get current user's roles (including private roles since user is viewing their own account)
   const { userRoles } = useUserRoleDisplay(userInfo?.address || '', roles, true);
-
-  // Proper display name validation (replaces basic hasValidationError)
-  const displayNameValidation = useDisplayNameValidation(displayName);
 
   return (
     <>
@@ -142,8 +140,8 @@ const Account: React.FunctionComponent<AccountProps> = ({
               onChange={setDisplayName}
               placeholder={t`Display Name`}
               labelType="static"
-              error={!!displayNameValidation.error}
-              errorMessage={displayNameValidation.error}
+              error={hasValidationError}
+              errorMessage={displayNameError}
             />
           </div>
         </div>

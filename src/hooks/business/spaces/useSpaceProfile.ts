@@ -30,6 +30,7 @@ export interface UseSpaceProfileReturn {
   onSave: () => Promise<void>;
   isSaving: boolean;
   hasValidationError: boolean;
+  displayNameError: string | undefined;
   currentMember: any;
 }
 
@@ -244,6 +245,7 @@ export const useSpaceProfile = (
     onSave,
     isSaving,
     hasValidationError,
+    displayNameError: displayNameValidation.error,
     currentMember,
   };
 };
