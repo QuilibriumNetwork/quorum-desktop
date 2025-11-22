@@ -177,7 +177,6 @@ Create both markdown (.md) and text (.txt) versions with this structure:
 # Updates for Quorum Development
 
 This list is for the web app, these changes are not yet live but you can test them on https://test.quorummessenger.com/
-For Test Space access see: https://t.me/c/1967251104/146703/187208
 
 [Only include categories that have relevant commits - skip empty sections]
 
@@ -218,6 +217,19 @@ For Test Space access see: https://t.me/c/1967251104/146703/187208
 ❌ **Write long descriptions**: Keep bullet points under 15 words when possible
 ❌ **Include obvious things**: Don't state "works better now" without specifics
 
+### Subcategory Emojis (REQUIRED for grouped features):
+When grouping multiple related changes under a subcategory heading, ALWAYS prefix with a relevant emoji:
+
+**Common subcategory emoji mappings:**
+- 📬 Unread/Notifications    - 💬 Messages/Chat/DMs
+- 🧭 Navigation              - 🏷️ Mentions/Tags
+- 🛡️ Safety/Security         - ✏️ Composer/Input
+- 📱 Mobile                  - 🎨 Visual/UI/Styling
+- 🔍 Search                  - ⚙️ Settings
+- 👥 Users/Members           - 📁 Channels/Spaces
+- 🔔 Alerts                  - 📌 Pinning
+- 🔗 Links/Sharing           - ⌨️ Keyboard/Shortcuts
+
 ### Example Transformations:
 
 **Multiple commits about pinning:**
@@ -227,7 +239,9 @@ For Test Space access see: https://t.me/c/1967251104/146703/187208
 
 **Becomes:**
 🎉 **New Features**
-- Message pinning for important content
+
+📌 Message Pinning
+- Pin important messages for easy access
 
 **Multiple enhancement commits:**
 - "🎨 style: improve button styling"
@@ -236,6 +250,8 @@ For Test Space access see: https://t.me/c/1967251104/146703/187208
 
 **Becomes:**
 ✨ **Enhancements**
+
+🎨 Visual Polish
 - Smoother animations and updated visual design
 
 ## Output Requirements
@@ -245,6 +261,11 @@ For Test Space access see: https://t.me/c/1967251104/146703/187208
 3. **Include footer** with commit statistics
 4. **Only include categories** that have actual commits (skip empty sections)
 5. **Maximum 2 bullet points per category** - be selective and impactful
+6. **Always include Quorum links footer** at the very end:
+   ```
+   ---
+   Quorum links: https://iri.quest/quorum
+   ```
 
 ## Quality Check
 Before finalizing, ask yourself:
