@@ -1,0 +1,126 @@
+@use '@/styles/variables' as *;
+
+// Invisible trigger that stays in nav flow
+.expandable-user-avatar-trigger {
+  width: $nav-space-icon-size; // 48px - match space icons
+  height: $nav-space-icon-size;
+  flex-shrink: 0;
+
+  @media (max-width: $screen-xs) {
+    width: $nav-space-icon-size-mobile;
+    height: $nav-space-icon-size-mobile;
+  }
+}
+
+// Fixed position pill - always visible, animates width
+.expandable-user-avatar {
+  position: fixed;
+  bottom: $s-5; // 20px
+  // Dynamic centering: (nav-width - icon-size) / 2
+  left: calc((#{$nav-header-width} - #{$nav-space-icon-size}) / 2);
+  display: flex;
+  align-items: center;
+  width: $nav-space-icon-size; // Collapsed - exactly avatar size (48px)
+  height: $nav-space-icon-size;
+  border-radius: $rounded-full;
+  background-color: var(--surface-4);
+  box-shadow: $shadow-lg;
+  overflow: hidden; // Hide content when collapsed
+  z-index: 20;
+  cursor: pointer;
+  transition:
+    width $duration-200 ease-out,
+    height $duration-200 ease-out,
+    bottom $duration-200 ease-out;
+
+  // Light theme - add border
+  html:not(.dark) & {
+    border: $border solid var(--color-border-subtle);
+  }
+
+  // Mobile: recalculate centering for narrower nav
+  @media (max-width: $screen-xs) {
+    left: calc((#{$nav-header-width-mobile} - #{$nav-space-icon-size-mobile}) / 2);
+    width: $nav-space-icon-size-mobile;
+    height: $nav-space-icon-size-mobile;
+  }
+
+  // Expanded state - taller but compensate bottom to keep avatar stable
+  // Height +4px, bottom -2px = avatar center stays in same visual position
+  &.expanded {
+    width: 300px; // Wider for more breathing room
+    height: 52px; // 48px + 4px for breathing room
+    bottom: calc(#{$s-5} - 2px); // Offset half the height increase
+    padding-right: $s-3;
+    overflow: visible; // Allow tooltips to escape when expanded
+
+    @media (max-width: $screen-xs) {
+      height: 48px; // Slightly smaller on mobile
+      bottom: $s-5; // No offset needed if same height
+    }
+  }
+}
+
+// Avatar icon - NO padding, flush with pill edge
+.expandable-user-avatar-icon {
+  flex-shrink: 0;
+  margin: 0; // No margin - avatar flush with pill border
+  cursor: pointer;
+  border-radius: $rounded-full;
+
+  // Only add right margin when expanded (space between avatar and text)
+  .expanded & {
+    margin-right: $s-2;
+  }
+}
+
+// Content wrapper (text + settings) - hidden when collapsed
+.expandable-user-avatar-content {
+  display: flex;
+  align-items: center;
+  flex: 1;
+  min-width: 0;
+  opacity: 0;
+  transition: opacity $duration-150 ease-out;
+
+  .expanded & {
+    opacity: 1;
+  }
+}
+
+// Text container
+.expandable-user-avatar-text {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  flex: 1;
+  min-width: 0; // Allow text to truncate properly
+}
+
+// Display name
+.expandable-user-avatar-username {
+  font-size: $text-base;
+  font-weight: $font-bold;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+// Address info
+.expandable-user-avatar-info {
+  font-size: $text-xs;
+  width: fit-content;
+}
+
+// Settings icon container
+.expandable-user-avatar-settings {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding-left: $s-2;
+
+  .icon {
+    width: $s-5;
+    height: $s-5;
+  }
+}

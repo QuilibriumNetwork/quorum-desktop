@@ -111,13 +111,7 @@ export function Router({ user, setUser }: RouterProps) {
             <MobileProvider>
               <SidebarProvider>
                 <Layout>
-                  <DirectMessages
-                    setUser={setUser}
-                    setAuthState={() => {
-                      setUser(undefined);
-                    }}
-                    user={user}
-                  />
+                  <DirectMessages />
                 </Layout>
               </SidebarProvider>
             </MobileProvider>
@@ -131,13 +125,7 @@ export function Router({ user, setUser }: RouterProps) {
             <MobileProvider>
               <SidebarProvider>
                 <Layout>
-                  <DirectMessages
-                    setUser={setUser}
-                    setAuthState={() => {
-                      setUser(undefined);
-                    }}
-                    user={user}
-                  />
+                  <DirectMessages />
                 </Layout>
               </SidebarProvider>
             </MobileProvider>
@@ -152,13 +140,7 @@ export function Router({ user, setUser }: RouterProps) {
               <SidebarProvider>
                 <Layout>
                   <RouteErrorBoundary fallback={<Navigate to="/" replace />}>
-                    <Space
-                      setUser={setUser}
-                      setAuthState={() => {
-                        setUser(undefined);
-                      }}
-                      user={user}
-                    />
+                    <Space />
                   </RouteErrorBoundary>
                 </Layout>
               </SidebarProvider>

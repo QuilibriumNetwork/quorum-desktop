@@ -2,36 +2,15 @@ import * as React from 'react';
 import { useParams } from 'react-router';
 import DirectMessageContactsList from './DirectMessageContactsList';
 import DirectMessage from './DirectMessage';
-import UserStatus from '../user/UserStatus';
 import { EmptyDirectMessage } from './EmptyDirectMessage';
 import { useResponsiveLayoutContext } from '../context/ResponsiveLayoutProvider';
 
 import './DirectMessages.scss';
 import { useRegistrationContext } from '../context/useRegistrationContext';
-import { useModalContext } from '../context/ModalProvider';
 import { ReactTooltip } from '../ui';
 import { t } from '@lingui/core/macro';
 
-type DirectMessagesProps = {
-  user: any;
-  setAuthState: React.Dispatch<React.SetStateAction<string | undefined>>;
-  setUser: React.Dispatch<
-    React.SetStateAction<
-      | {
-          displayName: string;
-          state: string;
-          status: string;
-          userIcon: string;
-          address: string;
-        }
-      | undefined
-    >
-  >;
-};
-
-const DirectMessages: React.FunctionComponent<DirectMessagesProps> = (
-  props
-) => {
+const DirectMessages: React.FunctionComponent = () => {
   let { address } = useParams<{ address: string }>();
   const { keyset } = useRegistrationContext();
   const {
@@ -57,9 +36,6 @@ const DirectMessages: React.FunctionComponent<DirectMessagesProps> = (
     }
   }, [address, isMobile, isTablet]); // Removed leftSidebarOpen from deps to avoid fighting manual toggles
 
-  const { openUserSettings, isNewDirectMessageOpen, closeNewDirectMessage } =
-    useModalContext();
-
   return (
     <div className="direct-messages-container">
       {/* Mobile backdrop overlay - show when sidebar is visible */}
@@ -76,12 +52,6 @@ const DirectMessages: React.FunctionComponent<DirectMessagesProps> = (
         <React.Suspense>
           {keyset.deviceKeyset?.inbox_keyset && <DirectMessageContactsList />}
         </React.Suspense>
-        <UserStatus
-          setIsUserSettingsOpen={openUserSettings}
-          setUser={props.setUser}
-          setAuthState={props.setAuthState}
-          user={props.user}
-        />
       </div>
       <React.Suspense>
         {address ? (

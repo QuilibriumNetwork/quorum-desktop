@@ -57,38 +57,29 @@
 .expanded-nav-buttons-container {
   position: fixed;
   bottom: 0;
+  left: 0; // Explicit anchor for consistent positioning
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: flex-end;
   width: $nav-header-width; /* Use full nav header width for proper centering */
   height: 100vh;
-  padding-bottom: $s-10;
+  padding-bottom: $s-5;
   padding-left: 0; /* Remove left padding for centering */
   gap: $s-2;
-
-  /* Desktop: Move up to accommodate pill-shaped UserStatus */
-  @media (min-width: $screen-lg) {
-    padding-bottom: $s-20; /* Move up to make space for UserStatus pill at bottom */
-  }
-
-  /* Tablet/Mobile: Less bottom space since no UserStatus */
-  @media (max-width: 1023px) {
-    padding-bottom: $s-5; /* Reduced bottom space when UserStatus is hidden */
-  }
 
   // Mobile phone optimization
   @media (max-width: $screen-xs) {
     width: $nav-header-width-mobile;
-    padding-bottom: $s-6; /* Even less space on mobile */
+    padding-bottom: $s-6;
     padding-left: 0;
     gap: $s-2;
   }
 }
 
 .expanded-nav-button-primary {
-  width: $s-10;
-  height: $s-10;
+  width: $nav-space-icon-size; // 48px - match space icons
+  height: $nav-space-icon-size;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -98,7 +89,7 @@
   transition-property: all;
   transition-duration: $duration-200;
   cursor: pointer;
-  margin-top: $s-3;
+  // No margin - container gap handles spacing
 
   @media (min-width: $screen-lg) {
     &:hover {
@@ -106,11 +97,10 @@
     }
   }
 
-  // Mobile phone optimization - match space icon size
+  // Mobile phone optimization
   @media (max-width: $screen-xs) {
-    width: $s-10;
-    height: $s-10;
-    margin-top: $s-2;
+    width: $nav-space-icon-size-mobile;
+    height: $nav-space-icon-size-mobile;
   }
 }
 
