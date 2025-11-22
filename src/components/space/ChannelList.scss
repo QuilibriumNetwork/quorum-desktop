@@ -65,11 +65,9 @@ html:not(.dark) {
   padding: $s-2 $s-6 $s-2 $s-4;
   font-weight: $font-bold;
   font-size: $text-lg;
-  background-size: cover;
-  background-position: center;
   border-top-left-radius: $rounded-xl;
   margin-right: -$s-2-5;
-  height: 120px;
+  height: 132px;
   width: var(--sidebar-left-width);
   color: var(--color-text-main);
   text-shadow: 0px 2px 3px rgba(0, 0, 0, 0.3);
@@ -80,15 +78,27 @@ html:not(.dark) {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
+  overflow: hidden; // Clips background layer when header shrinks
+  transition: height 50ms ease-out; // Smooth height changes on scroll
 
   @media (max-width: 1023px) {
     border-top-left-radius: 0;
-    height: 132px;
     padding-top: $s-3;
   }
 
   @media (min-width: $screen-2xl) {
-    height: 140px;
+    height: 144px;
+  }
+}
+
+// Background layer - fixed height, stays in place while parent shrinks
+.space-header-bg {
+  background-size: cover;
+  background-position: center;
+  border-top-left-radius: $rounded-xl;
+
+  @media (max-width: 1023px) {
+    border-top-left-radius: 0;
   }
 }
 

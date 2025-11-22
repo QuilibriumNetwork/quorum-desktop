@@ -7,6 +7,7 @@ import {
   useSpacePermissions,
   useSpaceHeader,
   useSpaceGroups,
+  useCollapsingHeader,
 } from '../../hooks';
 import { useChannelMentionCounts } from '../../hooks/business/mentions';
 import { useReplyNotificationCounts } from '../../hooks/business/replies';
@@ -45,6 +46,16 @@ const ChannelList: React.FC<ChannelListProps> = ({ spaceId }) => {
     gradientOverlayStyle,
     spaceName,
   } = useSpaceHeader(space);
+
+  // Collapsing header effect for spaces with banners
+  const { handleScroll, collapsingHeaderStyle, backgroundLayerStyle } =
+    useCollapsingHeader(hasBanner);
+
+  // Background layer style (fixed height, gets clipped by parent)
+  const combinedBackgroundStyle = React.useMemo(
+    () => ({ ...bannerStyle, ...backgroundLayerStyle }),
+    [bannerStyle, backgroundLayerStyle]
+  );
 
   const { groups } = useSpaceGroups(space);
 
@@ -96,12 +107,18 @@ const ChannelList: React.FC<ChannelListProps> = ({ spaceId }) => {
 
   return (
     <Container className="channels-list-wrapper list-bottom-fade">
-      <Container className={headerClassName} style={bannerStyle}>
+      <Container className={headerClassName} style={collapsingHeaderStyle}>
         {hasBanner && (
-          <Container
-            className="absolute inset-0 pointer-events-none z-0"
-            style={gradientOverlayStyle}
-          />
+          <>
+            <Container
+              className="space-header-bg absolute inset-x-0 top-0 pointer-events-none z-0"
+              style={combinedBackgroundStyle}
+            />
+            <Container
+              className="absolute inset-x-0 top-0 pointer-events-none z-1"
+              style={{ ...gradientOverlayStyle, ...backgroundLayerStyle }}
+            />
+          </>
         )}
 
         <Container className="space-header-name truncate-space-name relative z-10 flex-1 min-w-0">
@@ -123,7 +140,7 @@ const ChannelList: React.FC<ChannelListProps> = ({ spaceId }) => {
           </Tooltip>
         </Container>
       </Container>
-      <Container className="channels-list">
+      <Container className="channels-list" onScroll={handleScroll}>
         {groupsWithMentionCounts.map((group: GroupWithMentionCounts) => (
           <ChannelGroup
             onEditGroup={openEditGroupEditor}

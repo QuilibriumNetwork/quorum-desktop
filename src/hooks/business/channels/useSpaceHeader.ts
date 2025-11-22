@@ -1,4 +1,10 @@
-import { useMemo } from 'react'
+import { useMemo, useState, useCallback, useEffect } from 'react'
+
+// Header height constants
+const HEADER_MAX_HEIGHT = 132
+const HEADER_MAX_HEIGHT_2XL = 144
+const HEADER_MIN_HEIGHT = 44
+const SCREEN_2XL = 1536 // Very large screens
 
 /**
  * Custom hook for space header styling and banner logic
@@ -38,5 +44,66 @@ export const useSpaceHeader = (space: any) => {
     hasBanner,
     gradientOverlayStyle,
     spaceName: space?.spaceName,
+  }
+}
+
+/**
+ * Hook for collapsing header effect based on scroll position
+ * Returns scroll handler and dynamic header styles
+ */
+export const useCollapsingHeader = (hasBanner: boolean) => {
+  const [scrollTop, setScrollTop] = useState(0)
+  const [maxHeight, setMaxHeight] = useState(HEADER_MAX_HEIGHT)
+
+  // Detect screen size for responsive max height
+  useEffect(() => {
+    const updateMaxHeight = () => {
+      const is2xl = window.innerWidth >= SCREEN_2XL
+      setMaxHeight(is2xl ? HEADER_MAX_HEIGHT_2XL : HEADER_MAX_HEIGHT)
+    }
+
+    updateMaxHeight()
+    window.addEventListener('resize', updateMaxHeight)
+    return () => window.removeEventListener('resize', updateMaxHeight)
+  }, [])
+
+  const handleScroll = useCallback((e: React.UIEvent<HTMLDivElement>) => {
+    setScrollTop(e.currentTarget.scrollTop)
+  }, [])
+
+  // Calculate scroll threshold based on height difference
+  const scrollThreshold = maxHeight - HEADER_MIN_HEIGHT
+
+  // Calculate header height based on scroll position
+  const headerHeight = useMemo(() => {
+    if (!hasBanner) return undefined // Let CSS handle non-banner headers
+
+    // Calculate collapse progress (0 = fully expanded, 1 = fully collapsed)
+    const progress = Math.min(scrollTop / scrollThreshold, 1)
+    const height = maxHeight - progress * (maxHeight - HEADER_MIN_HEIGHT)
+    return height
+  }, [hasBanner, scrollTop, maxHeight, scrollThreshold])
+
+  // Dynamic style for the header container
+  const collapsingHeaderStyle = useMemo(() => {
+    if (!hasBanner || headerHeight === undefined) return {}
+    return {
+      height: `${headerHeight}px`,
+      minHeight: `${HEADER_MIN_HEIGHT}px`,
+    }
+  }, [hasBanner, headerHeight])
+
+  // Fixed height for the background layer (doesn't shrink, gets clipped)
+  const backgroundLayerStyle = useMemo(() => {
+    if (!hasBanner) return {}
+    return {
+      height: `${maxHeight}px`,
+    }
+  }, [hasBanner, maxHeight])
+
+  return {
+    handleScroll,
+    collapsingHeaderStyle,
+    backgroundLayerStyle,
   }
 }
