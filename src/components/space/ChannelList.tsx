@@ -95,7 +95,7 @@ const ChannelList: React.FC<ChannelListProps> = ({ spaceId }) => {
   );
 
   return (
-    <Container className="channels-list-wrapper">
+    <Container className="channels-list-wrapper list-bottom-fade">
       <Container className={headerClassName} style={bannerStyle}>
         {hasBanner && (
           <Container

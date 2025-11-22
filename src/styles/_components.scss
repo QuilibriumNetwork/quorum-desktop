@@ -108,6 +108,37 @@ div[role='presentation'] {
   margin-top: $s-1; // Fine-tune vertical alignment for DM layout
 }
 
+/* === LIST FADE EFFECTS === */
+/* Bottom fade overlay for scrollable lists (desktop only) */
+/* Apply via className - fades content at bottom into background */
+/* Variants: .list-bottom-fade (sidebar bg), .list-bottom-fade-chat (chat bg) */
+.list-bottom-fade {
+  position: relative;
+  --fade-bg: var(--color-bg-sidebar);
+
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 120px;
+    background: linear-gradient(to bottom, transparent, var(--fade-bg));
+    pointer-events: none;
+    z-index: 5;
+
+    @media (max-width: 1023px) {
+      display: none;
+    }
+  }
+
+  /* Variant for chat background */
+  &-chat {
+    @extend .list-bottom-fade;
+    --fade-bg: var(--color-bg-chat);
+  }
+}
+
 /* === ANIMATIONS === */
 
 /* Connecting.tsx */
