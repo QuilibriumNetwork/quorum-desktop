@@ -25,11 +25,6 @@
 
   /* layout dimensions */
   --sidebar-left-width: 260px;
-  
-  // Wider sidebar for extra large screens
-  @media (min-width: $screen-2xl) {
-    --sidebar-left-width: 300px;
-  }
 
   /* === BOX SHADOWS (Light Theme) === */
   /* Use subtle dark shadows for light backgrounds */
@@ -44,6 +39,14 @@
   /* Mobile-first: text-xs-responsive starts at text-sm for readability on phones */
   --text-xs-responsive: #{$text-sm}; /* 14px on mobile */
   --text-xs-responsive-lh: #{$text-sm-lh}; /* 20px line-height on mobile */
+
+  /* === MEDIA QUERIES === */
+  /* All nested rules grouped at the end to avoid Sass mixed-decls deprecation */
+
+  // Wider sidebar for extra large screens
+  @media (min-width: $screen-2xl) {
+    --sidebar-left-width: 300px;
+  }
 
   @media (min-width: $screen-md) {
     /* Apply font-size-adjust only on desktop for slightly smaller Inter appearance */
