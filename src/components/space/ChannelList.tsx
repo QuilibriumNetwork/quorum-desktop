@@ -57,7 +57,7 @@ const ChannelList: React.FC<ChannelListProps> = ({ spaceId }) => {
     [bannerStyle, backgroundLayerStyle]
   );
 
-  const { groups } = useSpaceGroups(space);
+  const { groups } = useSpaceGroups(space ?? undefined);
 
   // Get all channel IDs from all groups
   const channelIds = React.useMemo(
@@ -135,6 +135,7 @@ const ChannelList: React.FC<ChannelListProps> = ({ spaceId }) => {
             content={t`Space Settings`}
             place="left"
             showOnTouch={false}
+            highlighted
           >
             <Icon name={getContextIcon()} />
           </Tooltip>

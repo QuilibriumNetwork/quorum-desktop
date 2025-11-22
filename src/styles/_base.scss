@@ -66,6 +66,14 @@
 
 }
 
+/* === GLOBAL BROWSER ARTIFACT RESETS === */
+/* Remove browser tap highlight on touch devices */
+*,
+*::before,
+*::after {
+  -webkit-tap-highlight-color: transparent;
+}
+
 /* === LINKS === */
 a,
 .link {
