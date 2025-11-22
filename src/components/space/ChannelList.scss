@@ -86,6 +86,10 @@ html:not(.dark) {
     height: 132px;
     padding-top: $s-3;
   }
+
+  @media (min-width: $screen-2xl) {
+    height: 140px;
+  }
 }
 
 // More space below name when no banner image

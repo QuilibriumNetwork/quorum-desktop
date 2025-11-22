@@ -25,6 +25,11 @@
 
   /* layout dimensions */
   --sidebar-left-width: 260px;
+  
+  // Wider sidebar for extra large screens
+  @media (min-width: $screen-2xl) {
+    --sidebar-left-width: 300px;
+  }
 
   /* === BOX SHADOWS (Light Theme) === */
   /* Use subtle dark shadows for light backgrounds */
@@ -58,6 +63,7 @@
   @media (max-width: 320px) {
     --sidebar-left-width: calc(100vw - 80px);
   }
+
 }
 
 /* === LINKS === */
