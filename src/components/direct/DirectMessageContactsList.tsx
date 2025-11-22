@@ -19,7 +19,7 @@ const DirectMessageContactsList: React.FC<{}> = ({}) => {
   const { openNewDirectMessage } = useModalContext();
 
   return (
-    <Container className="direct-messages-list-wrapper list-bottom-fade flex flex-col h-full z-0 flex-grow select-none">
+    <Container className="direct-messages-list-wrapper flex flex-col h-full z-0 flex-grow select-none">
       <FlexBetween className="direct-messages-header px-4 pt-4 pb-2 lg:py-2 font-semibold flex-shrink-0">
         <Container>
           <Trans>Direct Messages</Trans>

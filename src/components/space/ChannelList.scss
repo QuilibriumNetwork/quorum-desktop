@@ -3,8 +3,8 @@
 .channels-list-wrapper {
   display: flex;
   flex-direction: column;
-  //height: calc(100% - 52px); // Account for UserStatus height
-  height: 100%;
+  // height: calc(100% - 52px); // Account for UserStatus height
+  height: calc(100% - 24px); 
   width: var(--sidebar-left-width);
 
   @media (max-width: 1023px) {
