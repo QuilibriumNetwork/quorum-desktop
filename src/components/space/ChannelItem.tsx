@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { Icon } from '../primitives';
 import { getIconColorHex, IconColor } from './IconPicker/types';
 import { useLongPressWithDefaults } from '../../hooks/useLongPress';
@@ -143,6 +143,7 @@ const ChannelItem: React.FC<ChannelItemProps> = ({
   closeLeftSidebar,
   openChannelEditor,
 }) => {
+  const navigate = useNavigate();
   // Create long press handlers within the component (proper hook usage)
   const longPressHandlers = useLongPressWithDefaults({
     delay: TOUCH_INTERACTION_TYPES.STANDARD.delay,
@@ -191,12 +192,24 @@ const ChannelItem: React.FC<ChannelItemProps> = ({
   }
 
   return (
-    <Link
-      to={`/spaces/${spaceId}/${channel.channelId}`}
-      onClick={onChannelClick}
+    <div
+      role="link"
+      tabIndex={0}
+      className="cursor-pointer"
+      onClick={() => {
+        onChannelClick?.();
+        navigate(`/spaces/${spaceId}/${channel.channelId}`);
+      }}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          onChannelClick?.();
+          navigate(`/spaces/${spaceId}/${channel.channelId}`);
+        }
+      }}
     >
       {channelContent}
-    </Link>
+    </div>
   );
 };
 

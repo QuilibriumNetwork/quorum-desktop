@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useParams } from 'react-router';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import SpaceIcon from './SpaceIcon';
 import { useSortable } from '@dnd-kit/sortable';
 import { useDragStateContext } from '../../context/DragStateContext';
@@ -19,6 +19,7 @@ type SpaceButtonProps = {
 };
 
 const SpaceButton: React.FunctionComponent<SpaceButtonProps> = ({ space, mentionCount }) => {
+  const navigate = useNavigate();
   const { spaceId: currentSpaceId } = useParams<{ spaceId: string }>();
 
   // Drag and drop functionality - platform-specific
@@ -48,13 +49,21 @@ const SpaceButton: React.FunctionComponent<SpaceButtonProps> = ({ space, mention
   const navigationUrl = `/spaces/${space.spaceId}/${space.defaultChannelId || '00000000-0000-0000-0000-000000000000'}`;
 
   return (
-    <Link
+    <div
       ref={setNodeRef}
+      role="link"
+      tabIndex={0}
       style={style}
       {...listeners}
       {...attributes}
-      className="block"
-      to={navigationUrl}
+      className="block cursor-pointer"
+      onClick={() => navigate(navigationUrl)}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          navigate(navigationUrl);
+        }
+      }}
     >
       <SpaceIcon
         notifs={Boolean(space.notifs && space.notifs > 0)}
@@ -66,7 +75,7 @@ const SpaceButton: React.FunctionComponent<SpaceButtonProps> = ({ space, mention
         highlightedTooltip={true}
         mentionCount={mentionCount}
       />
-    </Link>
+    </div>
   );
 };
 

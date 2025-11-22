@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { DndContext, closestCenter } from '@dnd-kit/core';
 import { SortableContext } from '@dnd-kit/sortable';
 import { restrictToVerticalAxis } from '@dnd-kit/modifiers';
@@ -30,6 +30,7 @@ type NavMenuProps = {
 };
 
 const NavMenuContent: React.FC<NavMenuProps> = (props) => {
+  const navigate = useNavigate();
   const location = useLocation();
   const user = usePasskeysContext();
   const { data: spaces } = useSpaces({});
@@ -77,7 +78,18 @@ const NavMenuContent: React.FC<NavMenuProps> = (props) => {
         window.electron ? <div className="p-3"></div> : <></>
       }
       <div className="nav-menu-logo">
-        <Link className="block" to="/messages">
+        <div
+          role="link"
+          tabIndex={0}
+          className="block cursor-pointer"
+          onClick={() => navigate('/messages')}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              navigate('/messages');
+            }
+          }}
+        >
           <SpaceIcon
             notifs={dmUnreadCount > 0}
             size="regular"
@@ -87,7 +99,7 @@ const NavMenuContent: React.FC<NavMenuProps> = (props) => {
             spaceId="direct-messages"
             highlightedTooltip={true}
           />
-        </Link>
+        </div>
       </div>
       <div className="nav-menu-spaces grow">
         <DndContext

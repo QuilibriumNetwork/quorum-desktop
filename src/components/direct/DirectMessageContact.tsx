@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { truncateAddress } from '../../utils';
 import { useResponsiveLayoutContext } from '../context/ResponsiveLayoutProvider';
 import { UserAvatar } from '../user/UserAvatar';
@@ -15,6 +15,7 @@ const DirectMessageContact: React.FunctionComponent<{
   previewIcon?: string;
   timestamp?: number;
 }> = (props) => {
+  const navigate = useNavigate();
   let { address } = useParams<{ address: string }>();
   const { isMobile, isTablet, closeLeftSidebar } = useResponsiveLayoutContext();
   const [isPressed, setIsPressed] = React.useState(false);
@@ -26,6 +27,7 @@ const DirectMessageContact: React.FunctionComponent<{
     if (isMobile || isTablet) {
       closeLeftSidebar();
     }
+    navigate(`/messages/${props.address}`);
   };
 
   const handleMouseDown = () => {
@@ -56,21 +58,29 @@ const DirectMessageContact: React.FunctionComponent<{
   }, [address, props.address, isNavigating]);
 
   return (
-    <Link to={`/messages/${props.address}`} onClick={handleContactClick}>
-      <div
-        className={
-          'relative flex flex-row items-center py-3 px-4' +
-          (address === props.address || isPressed || isNavigating
-            ? ' !bg-sidebar-active-accent'
-            : ' hover:bg-sidebar-hover'
-          )
+    <div
+      role="link"
+      tabIndex={0}
+      className={
+        'relative flex flex-row items-center py-3 px-4 cursor-pointer' +
+        (address === props.address || isPressed || isNavigating
+          ? ' !bg-sidebar-active-accent'
+          : ' hover:bg-sidebar-hover'
+        )
+      }
+      onClick={handleContactClick}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          handleContactClick();
         }
-        onMouseDown={handleMouseDown}
-        onMouseUp={handleMouseUp}
-        onMouseLeave={handleMouseLeave}
-        onTouchStart={handleTouchStart}
-        onTouchEnd={handleTouchEnd}
-      >
+      }}
+      onMouseDown={handleMouseDown}
+      onMouseUp={handleMouseUp}
+      onMouseLeave={handleMouseLeave}
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
+    >
         {props.unread && address !== props.address && (
           <div className="dm-unread-dot" title="Unread messages" />
         )}
@@ -136,8 +146,7 @@ const DirectMessageContact: React.FunctionComponent<{
             </div>
           ) : null}
         </div>
-      </div>
-    </Link>
+    </div>
   );
 };
 
