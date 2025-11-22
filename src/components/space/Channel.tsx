@@ -923,7 +923,7 @@ const Channel: React.FC<ChannelProps> = ({
               ) : null}
 
               <GlobalSearch
-                className="channel-search ml-2"
+                className={`channel-search${isTouchDevice() ? '' : ' ml-2'}`}
                 isOpen={activePanel === 'search'}
                 onOpen={() => setActivePanel('search')}
                 onClose={() => setActivePanel(null)}

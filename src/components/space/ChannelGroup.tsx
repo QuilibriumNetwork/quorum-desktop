@@ -96,7 +96,8 @@ const ChannelGroup: React.FunctionComponent<{
       <div className="channel-group-name small-caps flex flex-row justify-between">
         <div
           className={
-            ((isSpaceOwner && !isTouch) ? 'hover:text-main cursor-pointer' : '') +
+            'min-w-0 overflow-hidden' +
+            ((isSpaceOwner && !isTouch) ? ' hover:text-main cursor-pointer' : '') +
             (isTouch ? ' cursor-pointer' : '') +
             (groupLongPressHandlers.className ? ` ${groupLongPressHandlers.className}` : '')
           }
