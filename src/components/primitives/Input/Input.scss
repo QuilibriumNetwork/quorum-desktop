@@ -343,3 +343,9 @@
   color: var(--color-text-danger);
   text-align: left;
 }
+
+// Onboarding input error message styling - match the pill shape padding and brand colors
+.input-container:has(.onboarding-input) .input-error-message {
+  padding-left: $s-4;
+  color: #ff9393;
+}

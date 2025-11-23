@@ -211,18 +211,19 @@ export const Onboarding = ({
             </div>
             <div className="flex flex-row justify-center">
               <div className="grow"></div>
-              <div className="w-full max-w-[460px] px-4 pt-4 text-center flex flex-col sm:flex-row justify-between gap-4">
+              <div className="w-full max-w-[460px] px-4 pt-4 text-center flex flex-col sm:flex-row sm:items-start justify-between gap-4">
                 <div className="flex-1 min-w-0">
                   <Input
-                    className="onboarding-input !bg-white w-full"
+                    variant="onboarding"
+                    className="w-full"
                     value={onboardingFlow.displayName}
                     onChange={onboardingFlow.setDisplayName}
                     placeholder="Bongocat"
-                    error={!!getDisplayNameError(onboardingFlow.displayName)}
-                    errorMessage={getDisplayNameError(onboardingFlow.displayName)}
+                    error={!!onboardingFlow.displayName.trim() && !!getDisplayNameError(onboardingFlow.displayName)}
+                    errorMessage={onboardingFlow.displayName.trim() ? getDisplayNameError(onboardingFlow.displayName) : undefined}
                   />
                 </div>
-                <div className="flex flex-col justify-center sm:min-w-[180px] sm:pl-2">
+                <div className="flex flex-col sm:pt-0 sm:min-w-[180px] sm:pl-2">
                   <Button
                     type="primary-white"
                     disabled={!onboardingFlow.canProceedWithName}
@@ -306,7 +307,7 @@ export const Onboarding = ({
                 >
                   {t`Save Contact Photo`}
                 </Button>
-                <div className="pt-8 text-center">
+                <div className="pt-8 flex justify-center items-center">
                   <span
                     className="text-white text-sm cursor-pointer hover:text-white/80 transition-colors"
                     onClick={handleSavePhoto}
