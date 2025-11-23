@@ -31,7 +31,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Security Mechanisms](docs/features/security.md)
 - [Space Settings Modal - Fixes Section](docs/features/space-settings-fixes-section.md)
 - [Toast Notifications](docs/features/toast-notifications.md)
-- [Touch Long Press System](docs/features/touch-long-press-system.md)
+- [Touch Interaction System](docs/features/touch-interaction-system.md)
 - [Unified Notification System (Mentions + Replies)](docs/features/mention-notification-system.md)
 - [Unread Message Visual Indicators](docs/features/unread-message-indicators.md)
 - [🔍 Global Message Search - Implementation Guide & Documentation](docs/features/search-feature.md)
@@ -277,4 +277,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2025-11-21 09:40:55
+**Last Updated**: 2025-11-23 10:57:32

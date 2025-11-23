@@ -66,21 +66,3 @@
 }
 
 /* DirectMessage header username truncation now handled by centralized .truncate-user-name-chat class in _base.scss */
-
-/* === DIRECT MESSAGE CONTACT INTERACTION STYLES === */
-.dm-contact-interactive {
-  &:hover {
-    background: var(--color-bg-sidebar-hover) !important;
-  }
-
-  &:active,
-  &:focus-within {
-    background: var(--color-bg-sidebar-active-accent) !important;
-  }
-
-  // Ensure active state overrides hover when both are present
-  &:hover:active,
-  &:hover:focus-within {
-    background: var(--color-bg-sidebar-active-accent) !important;
-  }
-}

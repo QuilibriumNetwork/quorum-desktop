@@ -1,8 +1,8 @@
-# Touch Long Press System
+# Touch Interaction System
 
 ## Overview
 
-The touch long press system provides consistent long press gesture handling across the application with automatic prevention of browser default behaviors (context menus, text selection) on touch devices. The system respects user permissions and provides optimal performance through proper React patterns.
+The touch interaction system provides consistent gesture handling across the application, including long press, scroll vs tap detection, and automatic prevention of browser default behaviors (context menus, text selection) on touch devices. The system respects user permissions and provides optimal performance through proper React patterns.
 
 ## Enhanced useLongPress Hook
 
@@ -139,6 +139,97 @@ interface LongPressOptions {
   preventTouchDefaults?: boolean;
 }
 ```
+
+## Scroll vs Tap Detection
+
+### The Problem
+
+On touch devices, when users try to scroll a list, their finger lands on a list item. Without proper handling, this registers as a tap instead of a scroll, causing unwanted navigation.
+
+### The Solution: Movement Threshold
+
+The `useLongPress` hook uses a **movement threshold** (default: 10px) to distinguish scrolling from tapping:
+
+- If finger moves **< 10px** → Treat as tap
+- If finger moves **≥ 10px** → Treat as scroll (cancel tap)
+
+### Industry Standard Validation
+
+Our 10px threshold aligns with industry standards:
+
+| Platform/Library | Default Threshold |
+|------------------|-------------------|
+| Android Native (`TOUCH_SLOP`) | ~8-10 dp |
+| Hammer.js | 2-10 px |
+| use-long-press (npm) | 25 px |
+| Common implementations | 5-20 px |
+
+### How It Works
+
+```tsx
+// In useLongPress.ts
+const move = useCallback((event) => {
+  const deltaX = Math.abs(clientX - startPoint.current.x);
+  const deltaY = Math.abs(clientY - startPoint.current.y);
+
+  // If movement exceeds threshold, cancel the tap
+  if (deltaX > threshold || deltaY > threshold) {
+    clearTimeout(timeout.current);
+  }
+}, [threshold]);
+```
+
+### Usage in List Components
+
+For scrollable lists with tappable items (like `DirectMessageContactsList`):
+
+```tsx
+const handlers = useLongPressWithDefaults({
+  delay: TOUCH_INTERACTION_TYPES.STANDARD.delay,
+  onLongPress: undefined, // No long press action needed
+  onTap: () => {
+    hapticLight();
+    navigateToItem();
+  },
+  threshold: TOUCH_INTERACTION_TYPES.STANDARD.threshold, // 10px
+});
+
+// Touch devices get scroll-aware tap detection
+if (isTouch) {
+  return (
+    <div {...handlers} style={handlers.style}>
+      {content}
+    </div>
+  );
+}
+
+// Desktop gets standard click + hover
+return (
+  <div onClick={handleClick} className="hover:bg-hover">
+    {content}
+  </div>
+);
+```
+
+### CSS Hover States on Touch
+
+Hover states should be disabled on touch devices to prevent "sticky hover" after tapping:
+
+```scss
+// Only apply hover on devices with true hover capability
+@media (hover: hover) and (pointer: fine) {
+  .list-item:hover {
+    background: var(--color-bg-hover);
+  }
+}
+```
+
+### Adjusting the Threshold
+
+If users report accidental taps while scrolling, increase the threshold:
+- **10px** (default) - Good balance for most cases
+- **15-20px** - More forgiving, better for fast scrolling
+- **25px** - Very forgiving (npm use-long-press default)
 
 ## Implementation Examples
 
@@ -300,4 +391,4 @@ const handlers = useLongPressWithDefaults({
 
 ---
 
-*Updated: 2025-01-25*
+*Updated: 2025-11-23*

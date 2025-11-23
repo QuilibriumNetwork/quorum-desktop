@@ -27,15 +27,18 @@
   justify-content: center;
 }
 
-.channel-group .channel-name:hover {
-  background: var(--color-bg-sidebar-hover);
-  padding: 0 $s-4;
-  margin: 0 (-$s-4);
-  border-radius: $rounded-lg 0 0 $rounded-lg;
-  color: var(--color-text-main);
+// Only apply hover styles on devices with true hover capability (mouse/trackpad)
+@media (hover: hover) and (pointer: fine) {
+  .channel-group .channel-name:hover {
+    background: var(--color-bg-sidebar-hover);
+    padding: 0 $s-4;
+    margin: 0 (-$s-4);
+    border-radius: $rounded-lg 0 0 $rounded-lg;
+    color: var(--color-text-main);
 
-  .channel-configure {
-    display: flex !important;
+    .channel-configure {
+      display: flex !important;
+    }
   }
 }
 
@@ -48,9 +51,11 @@
   border-radius: $rounded-lg 0 0 $rounded-lg;
 }
 
-.channel-group .channel-name-focused:hover {
-  .channel-configure {
-    display: flex !important;
+@media (hover: hover) and (pointer: fine) {
+  .channel-group .channel-name-focused:hover {
+    .channel-configure {
+      display: flex !important;
+    }
   }
 }
 
@@ -123,11 +128,14 @@ html.dark .channel-mentions-bubble {
     padding: 0 $s-2-5;
   }
 
-  .channel-group .channel-name:hover {
+  .channel-group .channel-name-focused {
     border-radius: $rounded-lg;
   }
+}
 
-  .channel-group .channel-name-focused {
+// Mobile hover (only on devices with true hover capability)
+@media (max-width: 1023px) and (hover: hover) and (pointer: fine) {
+  .channel-group .channel-name:hover {
     border-radius: $rounded-lg;
   }
 }
