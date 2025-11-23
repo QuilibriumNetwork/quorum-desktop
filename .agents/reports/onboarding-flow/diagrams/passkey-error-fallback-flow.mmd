@@ -1,0 +1,48 @@
+%%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#4f46e5', 'primaryTextColor': '#fff', 'primaryBorderColor': '#4338ca', 'lineColor': '#6366f1', 'secondaryColor': '#fef2f2', 'tertiaryColor': '#fef3c7'}}}%%
+flowchart TD
+    subgraph MODAL["PASSKEY MODAL"]
+        A[["Continue"]]
+    end
+
+    subgraph AUTH["AUTHENTICATOR PROMPT"]
+        B["Biometric / PIN"]
+    end
+
+    C{{"Passkey<br/>Supported?"}}
+
+    subgraph SUCCESS["SUCCESS PATH"]
+        D["✓ Passkey Created"]
+        E["Key stored in<br/>hardware credential"]
+    end
+
+    subgraph ERROR["ERROR STATE"]
+        F["❗ Error encountered"]
+        G["'Browser/authenticator does not<br/>support required extensions'"]
+        H[["Proceed Without Passkeys"]]
+        I[["Cancel"]]
+    end
+
+    subgraph FALLBACK["FALLBACK MODE"]
+        J["Key stored in IndexedDB<br/>(software encryption)"]
+        K["⚠️ Less secure than passkey"]
+    end
+
+    subgraph ONBOARD["ONBOARDING"]
+        L["Continue to onboarding..."]
+    end
+
+    M[("Back to<br/>Login")]
+
+    A --> B
+    B --> C
+    C -->|"Yes<br/>(Chrome 131+ / Safari 17+)"| D
+    C -->|"No<br/>(Older browsers / Firefox)"| F
+    D --> E
+    E --> L
+    F --> G
+    G --> H
+    G --> I
+    H --> J
+    J --> K
+    K --> L
+    I --> M

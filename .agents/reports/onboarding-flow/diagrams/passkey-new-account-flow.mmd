@@ -1,0 +1,56 @@
+%%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#4f46e5', 'primaryTextColor': '#fff', 'primaryBorderColor': '#4338ca', 'lineColor': '#6366f1', 'secondaryColor': '#f0fdf4', 'tertiaryColor': '#fef3c7'}}}%%
+flowchart TD
+    subgraph LOGIN["LOGIN SCREEN"]
+        A[["Create New Account"]]
+        B[["Import Existing Key"]]
+    end
+
+    subgraph MODAL1["PASSKEY MODAL - Step 1"]
+        C["'This will require two round-trips<br/>with your authenticator'"]
+        D[["Continue"]]
+    end
+
+    subgraph AUTH1["AUTHENTICATOR #1"]
+        E["Face ID / Touch ID /<br/>Windows Hello / PIN"]
+        E1["Creates passkey credential"]
+    end
+
+    subgraph MODAL2["PASSKEY MODAL - Step 2"]
+        F["'One more passkey interaction.<br/>Tap continue to complete.'"]
+        G[["Continue"]]
+    end
+
+    subgraph AUTH2["AUTHENTICATOR #2"]
+        H["Face ID / Touch ID /<br/>Windows Hello / PIN"]
+        H1["Stores private key<br/>in credential"]
+    end
+
+    subgraph MODAL3["PASSKEY MODAL - Success"]
+        I["✓ Passkey created successfully"]
+        J[["Continue"]]
+    end
+
+    subgraph ONBOARDING["ONBOARDING FLOW"]
+        K["1. Key Backup<br/>[Save User Key] or 'Skip'"]
+        L["2. Display Name<br/>[Set Display Name]"]
+        M["3. Profile Photo<br/>[Upload] or 'Skip'"]
+        N["4. Complete<br/>[Let's gooooooooo]"]
+    end
+
+    O[("APP<br/>Ready")]
+
+    A --> C
+    C --> D
+    D --> E
+    E --> E1
+    E1 --> F
+    F --> G
+    G --> H
+    H --> H1
+    H1 --> I
+    I --> J
+    J --> K
+    K --> L
+    L --> M
+    M --> N
+    N --> O

@@ -1,0 +1,90 @@
+%%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#4f46e5', 'primaryTextColor': '#fff', 'primaryBorderColor': '#4338ca', 'lineColor': '#6366f1', 'secondaryColor': '#f0fdf4', 'tertiaryColor': '#fef3c7', 'fontSize': '14px'}}}%%
+flowchart TD
+    subgraph LOGIN["🏠 LOGIN SCREEN"]
+        START((" "))
+        NEW[["Create New Account"]]
+        IMPORT[["Import Existing Key"]]
+    end
+
+    subgraph IMPORT_FILE["📁 FILE IMPORT"]
+        DROP["Drop .key file"]
+        VALIDATE{{"Valid?"}}
+        PARSE["Parse private key<br/>from file"]
+    end
+
+    subgraph KEYGEN["🔑 KEY GENERATION"]
+        GEN["Generate new<br/>Ed448 keypair"]
+    end
+
+    subgraph PASSKEY_FLOW["🔐 PASSKEY CREATION (2 Steps Required)"]
+        direction TB
+
+        subgraph STEP1["Step 1: Create Credential"]
+            MSG1["'Two round-trips required...'"]
+            BTN1[["Continue"]]
+            AUTH1["🔒 Biometric/PIN #1"]
+            CRED["Credential Created"]
+        end
+
+        subgraph STEP2["Step 2: Store Key"]
+            MSG2["'One more interaction...'"]
+            BTN2[["Continue"]]
+            AUTH2["🔒 Biometric/PIN #2"]
+            STORE["Private Key Stored"]
+        end
+    end
+
+    subgraph ERROR_HANDLING["⚠️ ERROR / FALLBACK"]
+        ERR["Passkey Failed"]
+        ERRMSG["Browser/authenticator<br/>not supported"]
+        FALLBACK[["Proceed Without Passkeys"]]
+        CANCEL[["Cancel"]]
+        INDEXDB["Store in IndexedDB<br/>(less secure)"]
+    end
+
+    subgraph ONBOARDING["📝 ONBOARDING"]
+        BACKUP["1. Key Backup"]
+        NAME["2. Display Name"]
+        PHOTO["3. Profile Photo"]
+        DONE["4. Complete"]
+    end
+
+    APP(("✅ APP<br/>READY"))
+    BACK(("↩️ Back"))
+
+    START --> NEW
+    START --> IMPORT
+
+    NEW --> GEN
+    IMPORT --> DROP
+    DROP --> VALIDATE
+    VALIDATE -->|"❌ Invalid"| DROP
+    VALIDATE -->|"✓ Valid"| PARSE
+
+    GEN --> MSG1
+    PARSE --> MSG1
+
+    MSG1 --> BTN1
+    BTN1 --> AUTH1
+    AUTH1 -->|"✓ Success"| CRED
+    AUTH1 -->|"❌ Failed"| ERR
+
+    CRED --> MSG2
+    MSG2 --> BTN2
+    BTN2 --> AUTH2
+    AUTH2 -->|"✓ Success"| STORE
+    AUTH2 -->|"❌ Failed"| ERR
+
+    ERR --> ERRMSG
+    ERRMSG --> FALLBACK
+    ERRMSG --> CANCEL
+    FALLBACK --> INDEXDB
+    CANCEL --> BACK
+
+    STORE --> BACKUP
+    INDEXDB --> BACKUP
+
+    BACKUP --> NAME
+    NAME --> PHOTO
+    PHOTO --> DONE
+    DONE --> APP

@@ -1,0 +1,58 @@
+%%{init: {'theme': 'base', 'themeVariables': { 'primaryColor': '#4f46e5', 'primaryTextColor': '#fff', 'primaryBorderColor': '#4338ca', 'lineColor': '#6366f1', 'secondaryColor': '#f0fdf4', 'tertiaryColor': '#fef3c7'}}}%%
+flowchart TD
+    subgraph LOGIN["LOGIN SCREEN"]
+        A[["Import Existing Key"]]
+    end
+
+    subgraph IMPORT["PASSKEY MODAL - Import"]
+        B["'Import your existing key file'"]
+        C["📁 Drop .key file here<br/>or click to select"]
+    end
+
+    D{{"File<br/>Valid?"}}
+
+    subgraph INVALID["INVALID FILE"]
+        E["❗ 'Corrupted key file'"]
+        F[["Try different file"]]
+        G[["Cancel"]]
+    end
+
+    subgraph MODAL1["PASSKEY MODAL - Step 1"]
+        H["'This will require two round-trips...'"]
+        I[["Continue"]]
+    end
+
+    subgraph AUTH1["AUTHENTICATOR #1"]
+        J["Creates passkey credential<br/>for imported key"]
+    end
+
+    subgraph MODAL2["PASSKEY MODAL - Step 2"]
+        K["'One more passkey interaction...'"]
+        L[["Continue"]]
+    end
+
+    subgraph AUTH2["AUTHENTICATOR #2"]
+        M["Stores imported private key<br/>in credential"]
+    end
+
+    subgraph SUCCESS["SUCCESS"]
+        N["✓ Key imported &<br/>passkey created"]
+    end
+
+    O["ONBOARDING FLOW"]
+
+    A --> B
+    B --> C
+    C --> D
+    D -->|"Invalid format<br/>or corrupted"| E
+    E --> F
+    E --> G
+    F --> C
+    D -->|"Valid .key file"| H
+    H --> I
+    I --> J
+    J --> K
+    K --> L
+    L --> M
+    M --> N
+    N --> O
