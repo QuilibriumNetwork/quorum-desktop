@@ -10,23 +10,32 @@
 import { base58btc } from 'multiformats/bases/base58';
 
 /**
- * Regular expression to detect dangerous HTML characters that can be used for XSS injection.
+ * Regular expression to detect dangerous HTML patterns that could be used for XSS injection.
  *
- * Blocks:
- * - < : Opens HTML tags (e.g., <script>)
- * - > : Closes HTML tags
- * - " : Can break out of double-quoted HTML attributes
- * - ' : Can break out of single-quoted HTML attributes
+ * Blocks < only when followed by characters that start HTML constructs:
+ * - <a, <div, <script (HTML tags - letter after <)
+ * - </div (closing tags - / after <)
+ * - <!-- (comments - ! after <)
+ * - <?xml (processing instructions - ? after <)
  *
- * Allows all other characters including:
- * - & : Safe (cannot inject code by itself, allows "AT&T", "Tom & Jerry", etc.)
- * - Currency symbols: $, €, ¥, £, etc.
- * - Accented letters: é, ñ, ü, etc.
- * - International characters: 北京, مستخدم, etc.
- * - Emojis: 🎉, 👍, etc.
- * - Common punctuation: -, _, ., @, #, etc.
+ * Allows (safe patterns):
+ * - <3 : Heart emoticon (number after <)
+ * - >_< : Emoticons (standalone >)
+ * - ->, <- : Arrows
+ * - <<, >> : Double brackets
+ * - <> : Empty brackets
+ * - < space : Space after < breaks HTML parsing
+ * - " and ' : React auto-escapes in JSX; allows O'Brien, "The Legend"
+ * - & : Safe (allows "AT&T", "Tom & Jerry")
+ * - Currency, accents, international chars, emojis, punctuation
+ *
+ * Security note: This relaxed pattern is safe because:
+ * 1. HTML5 spec requires < immediately followed by ASCII letter for tag recognition
+ * 2. Unicode lookalikes are NOT parsed as HTML tags by browsers
+ * 3. React JSX auto-escapes all text content and attribute values
+ * 4. SearchService.highlightSearchTerms properly escapes HTML before dangerouslySetInnerHTML
  */
-export const DANGEROUS_HTML_CHARS = /[<>"']/;
+export const DANGEROUS_HTML_PATTERN = /<[a-zA-Z\/!?]/;
 
 /**
  * Maximum length for user input names (display names, space names, group names, channel names)
@@ -48,22 +57,31 @@ export const MAX_MESSAGE_LENGTH = 2500;
 
 /**
  * Validates a name (display name, space name, etc.) to ensure it doesn't contain
- * characters that could be used for XSS injection.
+ * patterns that could be used for XSS injection.
  *
  * @param name - The name to validate
- * @returns true if the name is safe, false if it contains dangerous characters
+ * @returns true if the name is safe, false if it contains dangerous patterns
  *
  * @example
+ * // Allowed patterns
  * validateNameForXSS("John Doe") // true
  * validateNameForXSS("John & Jane") // true
- * validateNameForXSS("José García") // true
- * validateNameForXSS("User 🎉") // true
- * validateNameForXSS("Price: $100") // true
- * validateNameForXSS("<script>alert('xss')</script>") // false
- * validateNameForXSS('test"><script>') // false
+ * validateNameForXSS("O'Brien") // true (quotes allowed)
+ * validateNameForXSS('"The Legend"') // true (quotes allowed)
+ * validateNameForXSS("<3") // true (heart emoticon)
+ * validateNameForXSS(">_<") // true (emoticon)
+ * validateNameForXSS("->") // true (arrow)
+ * validateNameForXSS("<<Name>>") // true (decorative)
+ * validateNameForXSS("a > b") // true (comparison)
+ *
+ * // Blocked patterns (HTML-like)
+ * validateNameForXSS("<script>") // false
+ * validateNameForXSS("<img onerror") // false
+ * validateNameForXSS("</div>") // false
+ * validateNameForXSS("<!--comment") // false
  */
 export const validateNameForXSS = (name: string): boolean => {
-  return !DANGEROUS_HTML_CHARS.test(name);
+  return !DANGEROUS_HTML_PATTERN.test(name);
 };
 
 /**
@@ -73,27 +91,32 @@ export const validateNameForXSS = (name: string): boolean => {
  * @returns A localized error message
  *
  * @example
- * getXSSValidationError("Display name") // "Display name cannot contain < > \" ' characters"
- * getXSSValidationError("Space name") // "Space name cannot contain < > \" ' characters"
+ * getXSSValidationError("Display name") // "Display name cannot contain HTML tags"
+ * getXSSValidationError("Space name") // "Space name cannot contain HTML tags"
  */
 export const getXSSValidationError = (fieldName: string = 'Name'): string => {
-  return `${fieldName} cannot contain special characters`;
+  return `${fieldName} cannot contain HTML tags`;
 };
 
 /**
- * Sanitizes a name by removing dangerous HTML characters.
- * Use this for migrating existing data that may contain dangerous characters.
+ * Sanitizes a name by removing the < character when it starts an HTML-like pattern.
+ * Use this for migrating existing data that may contain dangerous patterns.
  *
  * @param name - The name to sanitize
- * @returns The sanitized name with dangerous characters removed
+ * @returns The sanitized name with dangerous < characters removed
  *
  * @example
- * sanitizeNameForXSS("John<script>") // "Johnscript"
- * sanitizeNameForXSS('test"><script>') // "testscript"
+ * sanitizeNameForXSS("John<script>") // "Johnscript>" (removes < before 's')
+ * sanitizeNameForXSS("test</div>") // "test/div>" (removes < before '/')
  * sanitizeNameForXSS("John & Jane") // "John & Jane" (unchanged)
+ * sanitizeNameForXSS("O'Brien") // "O'Brien" (unchanged)
+ * sanitizeNameForXSS("<3") // "<3" (unchanged - safe pattern)
+ * sanitizeNameForXSS(">_<") // ">_<" (unchanged - safe pattern)
  */
 export const sanitizeNameForXSS = (name: string): string => {
-  return name.replace(DANGEROUS_HTML_CHARS, '');
+  // Remove < only when followed by characters that start HTML constructs
+  // Uses global flag to remove all occurrences
+  return name.replace(/<([a-zA-Z\/!?])/g, '$1');
 };
 
 // ============================================

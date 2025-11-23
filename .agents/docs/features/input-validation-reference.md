@@ -20,11 +20,15 @@ This document provides a quick reference for all input and textarea validations 
 
 ### Content Security Validation
 
-| Validation Type | Rule | Blocked Characters | Purpose | Files |
-|-----------------|------|-------------------|---------|-------|
-| **XSS Prevention** | `DANGEROUS_HTML_CHARS` | `< > " '` | Prevent script injection | `validation.ts:29`<br>`validateNameForXSS()` |
+| Validation Type | Rule | Blocked Patterns | Purpose | Files |
+|-----------------|------|------------------|---------|-------|
+| **XSS Prevention** | `DANGEROUS_HTML_PATTERN` | `<` + letter/`/`/`!`/`?` | Prevent HTML tag injection | `validation.ts:38`<br>`validateNameForXSS()` |
 | **Mention Count Limit** | Max 20 mentions | N/A | Prevent notification spam | `mentionUtils.ts`<br>`useMessageComposer.ts` |
 | **Token Breaking** | Auto-removal | `>>>` | Prevent token injection | `MessageMarkdownRenderer.tsx:203` |
+
+**Allowed Safe Patterns**: `<3` (heart), `>_<` (emoticon), `->`, `<-` (arrows), `<<`, `>>`, `<>`, quotes (`"`, `'`).
+
+**Blocked Dangerous Patterns**: `<script>`, `<img`, `</div>`, `<!--`, `<?xml` - anything that starts an HTML tag.
 
 ### Reserved Name Validation (Display Names Only)
 
@@ -202,6 +206,27 @@ const isValidAddress = isValidIPFSCID(address);
 
 ## Recent Updates
 
+### 2025-11-23: Pattern-Based XSS Validation (Major Relaxation)
+- **Change**: Replaced character-based blocking with pattern-based detection
+  - Old: `DANGEROUS_HTML_CHARS = /[<>"']/` (blocked all `<`, `>`, `"`, `'`)
+  - New: `DANGEROUS_HTML_PATTERN = /<[a-zA-Z\/!?]/` (only blocks HTML tag starts)
+- **Reason**:
+  - Quotes and standalone angle brackets are safely handled by React's JSX auto-escaping
+  - HTML5 spec requires `<` immediately followed by letter for tag recognition
+  - Unicode lookalikes are NOT parsed as HTML tags by browsers
+- **User Benefit**: Now allowed:
+  - Emoticons: `<3`, `>_<`, `>.<`
+  - Arrows: `->`, `<-`, `=>`, `<=`
+  - Decorative: `<<Name>>`, `>>quote`
+  - Quotes: `O'Brien`, `"The Legend"`
+- **Still Blocked**: `<script>`, `<img`, `</div>`, `<!--`, `<?xml`
+- **Security Safeguards**:
+  - Fixed `SearchService.highlightSearchTerms` with proper HTML and regex escaping
+  - Security analyst verified all attack vectors are covered
+- **Files Modified**:
+  - `src/utils/validation.ts`: New `DANGEROUS_HTML_PATTERN`, updated functions
+  - `src/services/SearchService.ts`: Added `escapeHtml()` and `escapeRegex()` methods
+
 ### 2025-11-21: Enhanced Reserved Name Validation with Anti-Impersonation
 - **Issue**: Only "everyone" was blocked; impersonation attempts like "admin", "supp0rt" were allowed
 - **Solution**: Two-tier validation system:
@@ -233,8 +258,16 @@ const isValidAddress = isValidIPFSCID(address);
 
 ### XSS Prevention
 - [ ] Name with `<script>` → Blocked with error message
-- [ ] Name with `">` → Blocked with error message
+- [ ] Name with `<img>` → Blocked with error message
+- [ ] Name with `</div>` → Blocked with error message
+- [ ] Name with `<!--` → Blocked with error message
+- [ ] Name with `<3` → Allowed (heart emoticon)
+- [ ] Name with `>_<` → Allowed (emoticon)
+- [ ] Name with `->` or `<-` → Allowed (arrows)
+- [ ] Name with `<<` or `>>` → Allowed (decorative)
 - [ ] Name with `&` → Allowed (safe character)
+- [ ] Name with `"` → Allowed (React auto-escapes)
+- [ ] Name with `'` → Allowed (e.g., `O'Brien`)
 - [ ] International chars → Allowed (émojis, 北京, etc.)
 
 ### Address Validation
@@ -286,4 +319,4 @@ const isValidAddress = isValidIPFSCID(address);
 ---
 
 _Created: 2025-11-19_
-_Last Updated: 2025-11-21 (Added mention keywords: everyone, here, mod, manager + anti-impersonation)_
+_Last Updated: 2025-11-23 (Pattern-based XSS validation; allows emoticons, arrows, quotes; fixed SearchService XSS)_

@@ -178,12 +178,37 @@ export class SearchService {
     return '';
   }
 
-  highlightSearchTerms(text: string, searchTerms: string[]): string {
-    if (!searchTerms.length) return text;
+  /**
+   * Escapes HTML special characters to prevent XSS when using dangerouslySetInnerHTML
+   */
+  private escapeHtml(text: string): string {
+    return text
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
+  }
 
-    let highlightedText = text;
+  /**
+   * Escapes regex special characters to prevent regex injection
+   */
+  private escapeRegex(text: string): string {
+    return text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  }
+
+  highlightSearchTerms(text: string, searchTerms: string[]): string {
+    if (!searchTerms.length) return this.escapeHtml(text);
+
+    // First, HTML-escape the text to prevent XSS
+    let highlightedText = this.escapeHtml(text);
+
     searchTerms.forEach((term) => {
-      const regex = new RegExp(`(${term})`, 'gi');
+      // Escape both HTML and regex special characters in the search term
+      const escapedTerm = this.escapeRegex(this.escapeHtml(term));
+      if (!escapedTerm) return;
+
+      const regex = new RegExp(`(${escapedTerm})`, 'gi');
       highlightedText = highlightedText.replace(regex, '<mark>$1</mark>');
     });
 
