@@ -1061,7 +1061,7 @@ const Channel: React.FC<ChannelProps> = ({
 
           {/* Desktop sidebar only - mobile sidebar renders via SidebarProvider at Layout level */}
           {showUsers && (
-            <div className="hidden lg:block w-[260px] bg-chat border-l border-default flex-shrink-0">
+            <div className="channel-users-sidebar list-bottom-fade-chat hidden lg:block w-[260px] bg-chat border-l border-default flex-shrink-0">
               {/* Search Input */}
               <div className="px-4 pt-4 bg-chat sticky top-0 z-10">
                 <div
@@ -1104,6 +1104,9 @@ const Channel: React.FC<ChannelProps> = ({
               <Virtuoso
                 data={generateVirtualizedUserList(activeSearch)}
                 overscan={10}
+                components={{
+                  Footer: () => <div className="channel-users-fade-spacer" />,
+                }}
                 itemContent={(_index, item) => {
                   if (item.type === 'header') {
                     return (

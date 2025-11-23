@@ -19,7 +19,7 @@ const DirectMessageContactsList: React.FC<{}> = ({}) => {
   const { openNewDirectMessage } = useModalContext();
 
   return (
-    <Container className="direct-messages-list-wrapper flex flex-col h-full z-0 flex-grow select-none">
+    <Container className="direct-messages-list-wrapper list-bottom-fade flex flex-col h-full z-0 flex-grow select-none">
       <FlexBetween className="direct-messages-header px-4 pt-4 pb-2 lg:py-2 font-semibold flex-shrink-0">
         <Container>
           <Trans>Direct Messages</Trans>
@@ -36,7 +36,7 @@ const DirectMessageContactsList: React.FC<{}> = ({}) => {
           />
         </FlexColumn>
       </FlexBetween>
-      <Container className="direct-messages-list flex flex-col h-full overflow-y-auto overflow-x-hidden">
+      <Container className="direct-messages-list list-fade-content flex flex-col h-full overflow-y-auto overflow-x-hidden">
         {conversationsList.length === 0 ? (
           <FlexColumn className="justify-center items-center flex-1 px-4">
             <Container className="w-full text-center mb-4 text-subtle">
@@ -51,7 +51,7 @@ const DirectMessageContactsList: React.FC<{}> = ({}) => {
             </Button>
           </FlexColumn>
         ) : (
-          <Container className="flex-1 overflow-y-auto">
+          <>
             {conversationsWithPreviews.map((c) => {
               return (
                 <DirectMessageContact
@@ -66,7 +66,7 @@ const DirectMessageContactsList: React.FC<{}> = ({}) => {
                 />
               );
             })}
-          </Container>
+          </>
         )}
       </Container>
     </Container>

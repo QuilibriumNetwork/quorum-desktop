@@ -106,7 +106,7 @@ const ChannelList: React.FC<ChannelListProps> = ({ spaceId }) => {
   );
 
   return (
-    <Container className="channels-list-wrapper">
+    <Container className="channels-list-wrapper list-bottom-fade">
       <Container className={headerClassName} style={collapsingHeaderStyle}>
         {hasBanner && (
           <>
@@ -141,7 +141,7 @@ const ChannelList: React.FC<ChannelListProps> = ({ spaceId }) => {
           </Tooltip>
         </Container>
       </Container>
-      <Container className="channels-list" onScroll={handleScroll}>
+      <Container className="channels-list list-fade-content" onScroll={handleScroll}>
         {groupsWithMentionCounts.map((group: GroupWithMentionCounts) => (
           <ChannelGroup
             onEditGroup={openEditGroupEditor}

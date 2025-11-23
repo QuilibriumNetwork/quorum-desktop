@@ -1,4 +1,5 @@
 @use '../../styles/variables' as *;
+@use '../../styles/components' as *;
 @use '../../styles/chat';
 
 // Channel-specific search styles (extends shared .chat-header from _chat.scss)
@@ -122,4 +123,11 @@
     object-fit: contain;
     border-radius: $rounded-md;
   }
+}
+
+/* === CHANNEL USERS SIDEBAR === */
+// Bottom spacer for fade effect in Virtuoso list
+.channel-users-fade-spacer {
+  height: $list-fade-gradient-height;
+  flex-shrink: 0;
 }
