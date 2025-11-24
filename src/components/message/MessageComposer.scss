@@ -85,9 +85,9 @@
     margin-bottom: $s-3;
   }
 
-  /* When textarea grows beyond single line, align buttons to top and change from pill to rounded */
+  /* When textarea grows beyond single line, align buttons to bottom and change from pill to rounded */
   &.multiline {
-    align-items: flex-start;
+    align-items: flex-end;
     border-radius: $rounded-lg; /* Change from pill shape to standard rounded for multi-line */
   }
 }
