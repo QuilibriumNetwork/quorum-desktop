@@ -33,9 +33,10 @@
     height $duration-200 ease-out,
     bottom $duration-200 ease-out;
 
-  // Light theme - add border
+  // Light theme - different background and border
   html:not(.dark) & {
-    border: $border solid var(--color-border-subtle);
+    background-color: var(--surface-0);
+    border: $border solid var(--color-border-default);
   }
 
   // Mobile: recalculate centering for narrower nav
