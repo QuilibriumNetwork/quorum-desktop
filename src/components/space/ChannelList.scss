@@ -3,8 +3,7 @@
 .channels-list-wrapper {
   display: flex;
   flex-direction: column;
-  // height: calc(100% - 52px); // Account for UserStatus height
-  height: calc(100% - 24px); 
+  height: 100%; // If UserStatus is added back, use calc(100% - [status height])
   width: var(--sidebar-left-width);
 
   @media (max-width: 1023px) {

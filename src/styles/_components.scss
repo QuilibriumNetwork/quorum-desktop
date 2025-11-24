@@ -123,8 +123,8 @@ $list-fade-gradient-height: 120px;    /* Height of the gradient overlay - paddin
     content: '';
     position: absolute;
     bottom: 0;
-    left: 0;
-    right: 0;
+    left: $border;   // Inset to respect container border (visible in light theme)
+    right: $border;
     height: $list-fade-gradient-height;
     background: linear-gradient(to bottom, transparent, var(--fade-bg));
     pointer-events: none;
