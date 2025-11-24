@@ -75,7 +75,7 @@ React automatically escapes all JSX attributes, providing an additional safety l
 - ✅ Users **cannot** inject `<script>` tags in messages
 - ✅ Users **cannot** inject `<img>` tags with `onerror` handlers
 - ✅ Users **cannot** inject `<iframe>`, `<a>`, `<div>` or other HTML tags
-- ✅ Users **cannot** use dangerous characters (`< > " '`) in display/space names
+- ✅ Users **cannot** use dangerous characters (`< > [ ] /`) in display/space names
 - ✅ Users **cannot** inject arbitrary images via markdown image syntax
 - ✅ Markdown formatting still works (**bold**, *italic*, links, code blocks, etc.)
 - ✅ User mentions and role mentions render correctly with styling
@@ -135,12 +135,14 @@ const mentionRegex = new RegExp(`<<<MENTION_(EVERYONE|USER:(${cidPattern}):([^>]
 // Limited quantifiers with maximum bounds
 ```
 
-**Limits Applied**:
-- Display names: `{0,200}` characters maximum
-- Role tags: `{1,50}` characters (must have at least 1)
+**Regex Parsing Limits** (for token processing security, not UI input validation):
+- Display names: `{0,200}` characters (accepts empty for graceful handling of malformed data)
+- Role tags: `{1,50}` characters
 - Role display names: `{1,200}` characters
-- Channel IDs: `{1,50}` characters
+- Channel IDs: `{1,50}` characters (system-generated, but limited in regex to prevent malformed token attacks)
 - Channel names: `{1,200}` characters
+
+> **Note**: These limits are for **regex parsing security** to prevent DoS attacks from any data source (API, network, legacy data). For **UI input validation** limits, see the validation hooks in `src/hooks/business/validation/` which enforce stricter rules (e.g., display names require at least 1 character).
 
 #### Input Sanitization for Token Creation
 
@@ -260,4 +262,4 @@ This document will be updated as new security mechanisms are implemented.
 ---
 
 **Document Created**: 2025-11-08
-**Last Updated**: 2025-11-18 (Added Rate Limiting for Mention Extraction and Regex DoS prevention)
+**Last Updated**: 2025-11-24 (Clarified regex parsing limits vs UI input validation)
