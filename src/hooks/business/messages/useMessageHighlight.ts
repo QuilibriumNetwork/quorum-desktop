@@ -22,7 +22,7 @@ export interface HighlightOptions {
   scrollBlock?: 'start' | 'center' | 'end';
 }
 
-const DEFAULT_HIGHLIGHT_DURATION = 2000;
+const DEFAULT_HIGHLIGHT_DURATION = 8000;
 const DEFAULT_SCROLL_BEHAVIOR = 'auto';
 const DEFAULT_SCROLL_BLOCK = 'center';
 

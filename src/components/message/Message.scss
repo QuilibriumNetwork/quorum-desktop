@@ -4,8 +4,8 @@
   0% {
     background-color: rgb(var(--warning) / 0.2);
   }
-  30% {
-    background-color: rgb(var(--warning) / 0.2); /* stay solid */
+  50% {
+    background-color: rgb(var(--warning) / 0.2); /* stay solid for 4s */
   }
   100% {
     background-color: transparent;
@@ -13,7 +13,7 @@
 }
 
 .message-highlighted {
-  animation: flash-highlight 6s ease-out;
+  animation: flash-highlight 8s ease-out;
 }
 
 /* Mention-specific highlight with longer duration and more subtle background */
@@ -21,16 +21,16 @@
   0% {
     background-color: rgb(var(--warning) / 0.1);
   }
-  95% {
+  93.4% {
     background-color: rgb(var(--warning) / 0.1); /* stay solid for 57s */
   }
   100% {
-    background-color: transparent;
+    background-color: transparent; /* fade over 4s */
   }
 }
 
 .message-highlighted-mention {
-  animation: flash-highlight-mention 60s ease-out;
+  animation: flash-highlight-mention 61s ease-out;
 }
 
 /* === RESPONSIVE YOUTUBE EMBEDS === */

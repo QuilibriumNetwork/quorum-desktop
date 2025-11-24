@@ -55,7 +55,7 @@ export function useViewportMentionHighlight(
             hasTriggeredRef.current = true;
 
             // Trigger highlight using mention variant (60 second duration for all mention types)
-            highlightMessage(messageId, { duration: 60000, variant: 'mention' });
+            highlightMessage(messageId, { duration: 61000, variant: 'mention' });
 
             // Stop observing once triggered
             if (observerRef.current) {
