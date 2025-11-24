@@ -32,8 +32,8 @@
   .channel-group .channel-name:hover {
     background: var(--color-bg-sidebar-hover);
     padding: 0 $s-4;
-    margin: 0 (-$s-4);
-    border-radius: $rounded-lg 0 0 $rounded-lg;
+    margin: 0 0 0 (-$s-4);
+    border-radius: $rounded-lg;
     color: var(--color-text-main);
 
     .channel-configure {
@@ -46,9 +46,9 @@
   font-weight: $font-bold;
   background: var(--color-bg-sidebar-active);
   padding: 0 $s-4;
-  margin: 0 (-$s-4);
+  margin: 0 0 0 (-$s-4);
   color: var(--color-text-main);
-  border-radius: $rounded-lg 0 0 $rounded-lg;
+  border-radius: $rounded-lg;
 }
 
 @media (hover: hover) and (pointer: fine) {
