@@ -112,6 +112,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Implement Background Sync Queue for User Settings and Async Operations](tasks/background-sync-queue.md)
 - [Implement Message Forwarding with Privacy Controls](tasks/message-forwarding-with-privacy-controls.md)
 - [Implement Smart Context Extraction Around Mentions in NotificationPanel](tasks/notification-mention-context-extraction.md)
+- [Message Bookmarking Feature](tasks/message-bookmarking-feature.md)
 - [Multi-User Invite Selection Enhancement](tasks/multi-user-invite-selection.md)
 - [Passkey Import UX Issue](tasks/passkey-import-ux-issue.md)
 - [SDK PasskeyModal Customization Props Enhancement](tasks/sdk-passkey-modal-customization-props.md)
@@ -275,6 +276,10 @@ This is the main index for all documentation, bug reports, and task management.
 
 - [Security Audit: Markdown Renderer & Mentions System](reports/security-audit-markdown-mentions-2025-11-18.md)
 
+### Onboarding Flow
+- [Passkey Authentication Flow Analysis](reports/onboarding-flow/passkey-authentication-flow-analysis-2025-11-23.md)
+- [Passkey Flow - Simplified User Journey](reports/onboarding-flow/passkey-flow-simplified-2025-11-23.md)
+
 ---
 
-**Last Updated**: 2025-11-23 10:57:32
+**Last Updated**: 2025-11-24 11:51:38
