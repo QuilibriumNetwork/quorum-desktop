@@ -2,7 +2,7 @@
 description: Update .agents/INDEX.md file with latest documentation structure
 ---
 
-Update the .agents/INDEX.md file by running `python3 .agents/update-index.py`
+Update the .agents/INDEX.md file by running `python3 .claude\skills\docs-manager\update-index.py`
 
 The script automatically:
 

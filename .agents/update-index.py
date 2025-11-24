@@ -65,9 +65,9 @@ def sort_files_smart(file_list):
 def run_yarn_scan_docs():
     """Run yarn scan-docs to update the documentation scan"""
     try:
-        # Navigate to project root from skill directory
+        # Navigate to project root from .agents directory
         script_dir = os.path.dirname(os.path.abspath(__file__))
-        project_root = os.path.join(script_dir, '..', '..', '..')
+        project_root = os.path.join(script_dir, '..')
         project_root = os.path.abspath(project_root)
 
         print('[YARN] Running yarn scan-docs...')
@@ -97,11 +97,9 @@ def run_yarn_scan_docs():
 
 def scan_readme_directory():
     """Scan .agents directory and build file structure"""
-    # Navigate from skill directory to .agents directory
+    # Script is located directly in .agents directory
     script_dir = os.path.dirname(os.path.abspath(__file__))
-    # From .claude/skills/docs-manager/ go to project root, then to .agents
-    readme_root = os.path.join(script_dir, '..', '..', '..', '.agents')
-    readme_root = os.path.abspath(readme_root)
+    readme_root = script_dir  # Already in .agents
 
     if not os.path.exists(readme_root):
         raise FileNotFoundError(f".agents directory not found at: {readme_root}")

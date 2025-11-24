@@ -228,5 +228,287 @@ The "save as property in device keys" approach would be simpler but requires **S
 
 ---
 
+## Subtask: SDK Modification for Device Name Sync
+
+**Status:** Pending (Requires SDK changes)
+**Complexity:** Medium
+**Location:** `@quilibrium/quilibrium-js-sdk-channels` (local: `/mnt/d/GitHub/Quilibrium/quilibrium-js-sdk-channels`)
+
+### Why SDK Modification is the Proper Solution
+
+The UserConfig sync approach failed because of **race conditions during concurrent device registration**. The proper solution is to include device metadata in the `DeviceRegistration` type itself, which:
+
+1. **Syncs automatically** - Device names travel with device keys
+2. **No race conditions** - Each device registers its own name atomically
+3. **Server stores it** - Names persist alongside device identity keys
+4. **Other devices see it** - When fetching user registration, all device names are included
+
+### Current SDK Architecture
+
+#### Key Types (`src/channel/channel.ts`)
+
+```typescript
+// Current DeviceRegistration (lines 146-150)
+export type DeviceRegistration = {
+  identity_public_key: string;
+  pre_public_key: string;
+  inbox_registration: InboxRegistration;
+};
+
+// Current UserRegistration (lines 152-158)
+export type UserRegistration = {
+  user_address: string;
+  user_public_key: string;
+  peer_public_key: string;
+  device_registrations: DeviceRegistration[];
+  signature: string;
+};
+```
+
+#### Registration Flow
+
+1. `NewDeviceKeyset()` - Creates cryptographic keys for the device
+2. `ConstructUserRegistration()` - Combines user keyset + device keysets into signed registration
+3. Client calls `POST /users/{address}` with the `UserRegistration` payload
+4. Server stores and returns device registrations
+
+### Proposed SDK Changes
+
+#### 1. Extend DeviceRegistration Type
+
+```typescript
+// In src/channel/channel.ts (line 146)
+export type DeviceRegistration = {
+  identity_public_key: string;
+  pre_public_key: string;
+  inbox_registration: InboxRegistration;
+  device_metadata?: DeviceMetadata;  // NEW: Optional for backward compatibility
+};
+
+// NEW type
+export type DeviceMetadata = {
+  device_name?: string;        // e.g., "Chrome (Windows)", "Desktop App (macOS)"
+  device_type?: 'web' | 'desktop' | 'mobile';
+  registered_at?: number;      // Unix timestamp
+};
+```
+
+#### 2. Update ConstructUserRegistration Function
+
+The signature in `ConstructUserRegistration` (lines 341-411) must include the new field. Currently it signs:
+
+```typescript
+// Current signature payload (lines 386-405)
+[
+  ...userKeyset.peer_key.public_key,
+  ...existing_device_keysets.flatMap((d) => [
+    ...Buffer.from(d.identity_public_key, 'hex'),
+    ...Buffer.from(d.pre_public_key, 'hex'),
+    ...base58_to_binary(d.inbox_registration.inbox_address),
+    ...Buffer.from(d.inbox_registration.inbox_encryption_public_key, 'hex'),
+  ]),
+  ...device_keysets.flatMap((d) => [...similar...]),
+]
+```
+
+**Modify to include device_metadata:**
+
+```typescript
+// Updated signature payload
+[
+  ...userKeyset.peer_key.public_key,
+  ...existing_device_keysets.flatMap((d) => [
+    ...Buffer.from(d.identity_public_key, 'hex'),
+    ...Buffer.from(d.pre_public_key, 'hex'),
+    ...base58_to_binary(d.inbox_registration.inbox_address),
+    ...Buffer.from(d.inbox_registration.inbox_encryption_public_key, 'hex'),
+    // NEW: Include device_name in signature (empty string if not set)
+    ...Buffer.from(d.device_metadata?.device_name || '', 'utf-8'),
+  ]),
+  ...device_keysets.flatMap((d, index) => [
+    ...d.identity_key.public_key,
+    ...d.pre_key.public_key,
+    ...base58_to_binary(d.inbox_keyset.inbox_address),
+    ...d.inbox_keyset.inbox_encryption_key.public_key,
+    // NEW: Include device_name in signature
+    ...Buffer.from(deviceMetadataArray?.[index]?.device_name || '', 'utf-8'),
+  ]),
+]
+```
+
+#### 3. Update Function Signature
+
+```typescript
+// Current (line 341)
+export const ConstructUserRegistration = async (
+  userKeyset: UserKeyset,
+  existing_device_keysets: DeviceRegistration[],
+  device_keysets: DeviceKeyset[]
+) => { ... }
+
+// Updated
+export const ConstructUserRegistration = async (
+  userKeyset: UserKeyset,
+  existing_device_keysets: DeviceRegistration[],
+  device_keysets: DeviceKeyset[],
+  deviceMetadataArray?: DeviceMetadata[]  // NEW: Optional metadata for new devices
+) => { ... }
+```
+
+#### 4. Update Device Registration Creation
+
+```typescript
+// Current (lines 359-375)
+device_registrations: [
+  ...existing_device_keysets,
+  ...device_keysets.map((d) => {
+    return {
+      identity_public_key: Buffer.from(...).toString('hex'),
+      pre_public_key: Buffer.from(...).toString('hex'),
+      inbox_registration: { ... },
+    } as DeviceRegistration;
+  }),
+],
+
+// Updated
+device_registrations: [
+  ...existing_device_keysets,
+  ...device_keysets.map((d, index) => {
+    return {
+      identity_public_key: Buffer.from(...).toString('hex'),
+      pre_public_key: Buffer.from(...).toString('hex'),
+      inbox_registration: { ... },
+      device_metadata: deviceMetadataArray?.[index],  // NEW
+    } as DeviceRegistration;
+  }),
+],
+```
+
+### Server-Side Changes Required
+
+The server must be updated to:
+
+1. **Accept** `device_metadata` field in POST/PUT `/users/{address}`
+2. **Store** device metadata alongside device keys
+3. **Return** device metadata in GET `/users/{address}` responses
+4. **Validate** signature includes device_name (for new registrations)
+
+### Client-Side Changes (quorum-desktop)
+
+#### 1. Device Detection Utility
+
+Create `src/utils/deviceInfo.ts` (use existing browser detection code from this task):
+
+```typescript
+export interface DeviceMetadata {
+  device_name: string;
+  device_type: 'web' | 'desktop' | 'mobile';
+  registered_at: number;
+}
+
+export function getDeviceMetadata(): DeviceMetadata {
+  return {
+    device_name: getDeviceName(),  // "Chrome (Windows)", "Desktop App (macOS)", etc.
+    device_type: getDeviceType(),
+    registered_at: Date.now(),
+  };
+}
+
+function getDeviceName(): string {
+  if (isElectron()) return `Desktop App (${detectOS()})`;
+  if (isMobile()) return `Mobile App (${detectOS()})`;
+  return `${detectBrowser()} (${detectOS()})`;
+}
+```
+
+#### 2. Update Registration Flow
+
+In `RegistrationPersister.tsx` or `useAuthenticationFlow.ts`:
+
+```typescript
+import { getDeviceMetadata } from '../utils/deviceInfo';
+import { channel } from '@quilibrium/quilibrium-js-sdk-channels';
+
+// During registration
+const deviceMetadata = getDeviceMetadata();
+const registration = await channel.ConstructUserRegistration(
+  userKeyset,
+  existingDevices,
+  [newDeviceKeyset],
+  [deviceMetadata]  // NEW: Pass device metadata
+);
+```
+
+#### 3. Update Privacy Settings Display
+
+In `Privacy.tsx`, use `device_metadata.device_name` instead of cryptographic address:
+
+```typescript
+{devices.map((device) => (
+  <FlexRow key={device.inbox_registration.inbox_address}>
+    <Text>
+      {device.device_metadata?.device_name ||
+       truncateAddress(device.inbox_registration.inbox_address)}
+      {isCurrentDevice(device) && ' - This device'}
+    </Text>
+    <Button onClick={() => removeDevice(device)}>Remove</Button>
+  </FlexRow>
+))}
+```
+
+### Backward Compatibility
+
+- `device_metadata` is **optional** in the type
+- Old registrations without metadata continue to work
+- Display falls back to truncated address if no metadata
+- Signature validation accepts both old and new formats (server must handle)
+
+### Migration Path
+
+1. **Phase 1**: Deploy SDK changes (backward compatible)
+2. **Phase 2**: Update server to accept and store device_metadata
+3. **Phase 3**: Update quorum-desktop to send device_metadata during registration
+4. **Phase 4**: Update quorum-desktop Privacy settings to display device names
+5. **Future**: Consider adding device renaming API
+
+### Files to Modify in SDK
+
+| File | Changes |
+|------|---------|
+| `src/channel/channel.ts` | Add `DeviceMetadata` type, extend `DeviceRegistration`, update `ConstructUserRegistration` |
+| `src/index.ts` | Export new `DeviceMetadata` type |
+
+### Files to Modify in quorum-desktop
+
+| File | Changes |
+|------|---------|
+| `src/utils/deviceInfo.ts` | NEW: Device detection utility |
+| `src/components/context/RegistrationPersister.tsx` | Pass device metadata to registration |
+| `src/hooks/business/user/useAuthenticationFlow.ts` | Include device metadata in registration flow |
+| `src/components/modals/UserSettingsModal/Privacy.tsx` | Display device names from metadata |
+
+### Why This Approach Works
+
+Unlike the UserConfig sync approach that failed:
+
+| Aspect | UserConfig Approach | SDK Metadata Approach |
+|--------|--------------------|-----------------------|
+| **Write timing** | All devices write to same config | Each device writes its own registration |
+| **Conflict resolution** | Last-write-wins (loses data) | No conflicts (atomic per device) |
+| **Storage** | Client-side IndexedDB | Server-side with device keys |
+| **Sync** | Requires merge logic | Automatic via user registration |
+| **Race conditions** | Yes (concurrent registration) | No (each device independent) |
+
+### Estimated Effort
+
+- **SDK changes**: 2-4 hours
+- **Server changes**: 2-4 hours (depending on backend architecture)
+- **Client changes**: 2-4 hours
+- **Testing**: 2-4 hours
+- **Total**: ~1-2 days
+
+---
+
 *Created: 2025-09-25*
 *Updated: 2025-09-26 (Feature analysis, implementation attempt, and results documentation)*
+*Updated: 2025-11-24 (Added detailed SDK modification subtask)*

@@ -108,7 +108,6 @@ This is the main index for all documentation, bug reports, and task management.
 - [Date Translation with Moment.js Locale Configuration](tasks/i18n-date-translation-moment-locale.md)
 - [Device Identification Improvement](tasks/device-identification-improvement.md)
 - [DirectMessage Navigation State Persistence](tasks/dm-navigation-state-persistence.md)
-- [Enhance Markdown Renderer Fallback System](tasks/markdown-renderer-fallback-system-enhancement.md)
 - [Implement Background Sync Queue for User Settings and Async Operations](tasks/background-sync-queue.md)
 - [Implement Message Forwarding with Privacy Controls](tasks/message-forwarding-with-privacy-controls.md)
 - [Implement Smart Context Extraction Around Mentions in NotificationPanel](tasks/notification-mention-context-extraction.md)
@@ -208,6 +207,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Dropdown Panels Consolidation & Mobile Bottom Sheet Implementation](tasks/.done/dropdown-panels-consolidation.md)
 - [Edit Message Feature](tasks/.done/edit-message-feature.md)
 - [Emoji Picker Responsive Design Improvement](tasks/.done/emojipicker-responsive.md)
+- [Enhance Markdown Renderer Fallback System](tasks/.done/markdown-renderer-fallback-system-enhancement.md)
 - [Enhanced Mention Format with CSS Highlighting for Message Composer](tasks/.done/mentions-improve-UX-in-messagecomposer.md)
 - [Expo Go to Expo Dev Client Migration Plan - Simplified](tasks/.done/expo-go-to-dev-client-migration.md)
 - [Fix Mention Interactivity Consistency](tasks/.done/fix-mention-interactivity-consistency.md)
@@ -282,4 +282,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2025-11-24 11:51:38
+**Last Updated**: 2025-11-24 12:07:25
