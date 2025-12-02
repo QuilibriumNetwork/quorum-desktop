@@ -827,108 +827,133 @@ export const Message = React.memo(
                   }
 
                   // Fall back to the original token-based rendering
-                  return contentData.content.map((c, i) => (
-                    <Container
-                      key={contentData.messageId + '-' + i}
-                      className="message-post-content break-words"
-                    >
-                      {c.split(' ').map((t, j) => {
-                        const tokenData = formatting.processTextToken(
-                          t,
-                          contentData.messageId,
-                          i,
-                          j
-                        );
+                  return contentData.content.map((c, i) => {
+                    // Smart tokenization: preserve mention patterns (which may contain spaces in display names)
+                    // Matches: @[Display Name]<address> or #[Channel Name]<channelId> as single tokens
+                    const mentionPattern = /(@(?:\[[^\]]+\])?<[^>]+>|#(?:\[[^\]]+\])?<[^>]+>)/g;
+                    const tokens: string[] = [];
+                    let lastIndex = 0;
+                    let match;
 
-                        if (tokenData.type === 'mention') {
-                          // Check if this is @everyone, a role mention, or a user mention
-                          const isEveryone = tokenData.address === 'everyone';
-                          const isRole = !isEveryone && !tokenData.address.startsWith('Qm');
-                          const mentionClass = (isEveryone || isRole)
-                            ? 'message-name-mentions-everyone'
-                            : 'message-name-mentions-you';
-                          return (
-                            <React.Fragment key={tokenData.key}>
-                              <Text className={mentionClass}>
-                                {tokenData.displayName}
-                              </Text>{' '}
-                            </React.Fragment>
+                    while ((match = mentionPattern.exec(c)) !== null) {
+                      // Add any text before this mention (split by spaces)
+                      if (match.index > lastIndex) {
+                        const beforeText = c.slice(lastIndex, match.index);
+                        tokens.push(...beforeText.split(' ').filter(t => t));
+                      }
+                      // Add the mention as a single token
+                      tokens.push(match[0]);
+                      lastIndex = match.index + match[0].length;
+                    }
+                    // Add any remaining text after the last mention
+                    if (lastIndex < c.length) {
+                      const afterText = c.slice(lastIndex);
+                      tokens.push(...afterText.split(' ').filter(t => t));
+                    }
+
+                    return (
+                      <Container
+                        key={contentData.messageId + '-' + i}
+                        className="message-post-content break-words"
+                      >
+                        {tokens.map((t, j) => {
+                          const tokenData = formatting.processTextToken(
+                            t,
+                            contentData.messageId,
+                            i,
+                            j
                           );
-                        }
 
-                        if (tokenData.type === 'youtube') {
-                          return (
-                            <Container
-                              key={tokenData.key}
-                              className="message-post-content"
-                            >
-                              <YouTubeEmbed
-                                src={
-                                  'https://www.youtube.com/embed/' +
-                                  tokenData.videoId
-                                }
-                                allow="autoplay; encrypted-media"
-                                className="rounded-lg youtube-embed"
-                              />
-                            </Container>
-                          );
-                        }
+                          if (tokenData.type === 'mention') {
+                            // Check if this is @everyone, a role mention, or a user mention
+                            const isEveryone = tokenData.address === 'everyone';
+                            const isRole = !isEveryone && !tokenData.address.startsWith('Qm');
+                            const mentionClass = (isEveryone || isRole)
+                              ? 'message-name-mentions-everyone'
+                              : 'message-name-mentions-you';
+                            return (
+                              <React.Fragment key={tokenData.key}>
+                                <Text className={mentionClass}>
+                                  {tokenData.displayName}
+                                </Text>{' '}
+                              </React.Fragment>
+                            );
+                          }
 
-                        if (tokenData.type === 'invite') {
-                          return (
-                            <InviteLink
-                              key={tokenData.key}
-                              inviteLink={tokenData.inviteLink}
-                            />
-                          );
-                        }
-
-                        if (tokenData.type === 'link') {
-                          const truncatedText =
-                            tokenData.text.length > 50
-                              ? tokenData.text.substring(0, 50) + '...'
-                              : tokenData.text;
-
-                          return (
-                            <React.Fragment key={tokenData.key}>
-                              <Text
-                                as="a"
-                                href={tokenData.url}
-                                target="_blank"
-                                referrerPolicy="no-referrer"
+                          if (tokenData.type === 'youtube') {
+                            return (
+                              <Container
+                                key={tokenData.key}
+                                className="message-post-content"
                               >
-                                {truncatedText}
-                              </Text>{' '}
-                            </React.Fragment>
-                          );
-                        }
-
-                        if (tokenData.type === 'channel-mention') {
-                          return (
-                            <React.Fragment key={tokenData.key}>
-                              <Text
-                                as="span"
-                                className={`message-name-mentions-you ${tokenData.isInteractive ? 'interactive' : 'non-interactive'}`}
-                                onClick={tokenData.isInteractive ? () => {
-                                  if (onChannelClick) {
-                                    onChannelClick(tokenData.channelId);
+                                <YouTubeEmbed
+                                  src={
+                                    'https://www.youtube.com/embed/' +
+                                    tokenData.videoId
                                   }
-                                } : undefined}
-                              >
-                                {tokenData.displayName}
-                              </Text>{' '}
+                                  allow="autoplay; encrypted-media"
+                                  className="rounded-lg youtube-embed"
+                                />
+                              </Container>
+                            );
+                          }
+
+                          if (tokenData.type === 'invite') {
+                            return (
+                              <InviteLink
+                                key={tokenData.key}
+                                inviteLink={tokenData.inviteLink}
+                              />
+                            );
+                          }
+
+                          if (tokenData.type === 'link') {
+                            const truncatedText =
+                              tokenData.text.length > 50
+                                ? tokenData.text.substring(0, 50) + '...'
+                                : tokenData.text;
+
+                            return (
+                              <React.Fragment key={tokenData.key}>
+                                <Text
+                                  as="a"
+                                  href={tokenData.url}
+                                  target="_blank"
+                                  referrerPolicy="no-referrer"
+                                >
+                                  {truncatedText}
+                                </Text>{' '}
+                              </React.Fragment>
+                            );
+                          }
+
+                          if (tokenData.type === 'channel-mention') {
+                            return (
+                              <React.Fragment key={tokenData.key}>
+                                <Text
+                                  as="span"
+                                  className={`message-name-mentions-you ${tokenData.isInteractive ? 'interactive' : 'non-interactive'}`}
+                                  onClick={tokenData.isInteractive ? () => {
+                                    if (onChannelClick) {
+                                      onChannelClick(tokenData.channelId);
+                                    }
+                                  } : undefined}
+                                >
+                                  {tokenData.displayName}
+                                </Text>{' '}
+                              </React.Fragment>
+                            );
+                          }
+
+                          return (
+                            <React.Fragment key={tokenData.key}>
+                              {tokenData.text}{' '}
                             </React.Fragment>
                           );
-                        }
-
-                        return (
-                          <React.Fragment key={tokenData.key}>
-                            {tokenData.text}{' '}
-                          </React.Fragment>
-                        );
-                      })}
-                    </Container>
-                  ));
+                        })}
+                      </Container>
+                    );
+                  });
                 } else if (contentData.type === 'embed') {
                   return (
                     <Container
