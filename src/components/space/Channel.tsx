@@ -828,9 +828,10 @@ const Channel: React.FC<ChannelProps> = ({
                     <Button
                       type="unstyled"
                       onClick={() => setActivePanel('pinned')}
-                      className="relative header-icon-button"
+                      className={`relative header-icon-button ${activePanel === 'pinned' ? 'active' : ''}`}
                       iconName="pin"
                       iconSize={headerIconSize}
+                      iconVariant={activePanel === 'pinned' ? 'filled' : 'outline'}
                       iconOnly
                     >
                       <span className="absolute -top-1 -right-1 bg-accent text-white text-[10px] rounded-full w-4 h-4 flex items-center justify-center">
@@ -867,9 +868,10 @@ const Channel: React.FC<ChannelProps> = ({
                   <Button
                     type="unstyled"
                     onClick={() => setActivePanel('notifications')}
-                    className="relative header-icon-button"
+                    className={`relative header-icon-button ${activePanel === 'notifications' ? 'active' : ''}`}
                     iconName="bell"
                     iconSize={headerIconSize}
+                    iconVariant={activePanel === 'notifications' ? 'filled' : 'outline'}
                     iconOnly
                   />
                 </Tooltip>
@@ -901,9 +903,10 @@ const Channel: React.FC<ChannelProps> = ({
                   <Button
                     type="unstyled"
                     onClick={() => setActivePanel('bookmarks')}
-                    className="header-icon-button"
+                    className={`header-icon-button ${activePanel === 'bookmarks' ? 'active' : ''}`}
                     iconName="bookmark"
                     iconSize={headerIconSize}
+                    iconVariant={activePanel === 'bookmarks' ? 'filled' : 'outline'}
                     iconOnly
                   />
                 </Tooltip>
@@ -931,7 +934,7 @@ const Channel: React.FC<ChannelProps> = ({
                   onClick={() => {
                     setShowUsers(!showUsers);
                   }}
-                  className="header-icon-button"
+                  className={`header-icon-button ${showUsers ? 'active' : ''}`}
                   iconName="users"
                   iconSize={headerIconSize}
                   iconOnly

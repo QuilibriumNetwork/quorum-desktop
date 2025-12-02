@@ -666,7 +666,7 @@ const DirectMessage: React.FC<{}> = () => {
                   onClick={() => {
                     setShowUsers(!showUsers);
                   }}
-                  className="header-icon-button"
+                  className={`header-icon-button ${showUsers ? 'active' : ''}`}
                   iconName="users"
                   iconSize={headerIconSize}
                   iconOnly
@@ -683,9 +683,10 @@ const DirectMessage: React.FC<{}> = () => {
                   <Button
                     type="unstyled"
                     onClick={() => setActivePanel('bookmarks')}
-                    className="header-icon-button"
+                    className={`header-icon-button ${activePanel === 'bookmarks' ? 'active' : ''}`}
                     iconName="bookmark"
                     iconSize={headerIconSize}
+                    iconVariant={activePanel === 'bookmarks' ? 'filled' : 'outline'}
                     iconOnly
                   />
                 </Tooltip>

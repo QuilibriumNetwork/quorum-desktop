@@ -46,6 +46,7 @@ const Button: React.FC<WebButtonProps> = (props) => {
                   ? 'lg'
                   : 'md')
             }
+            variant={props.iconVariant}
             className="quorum-button-icon-element"
             style={{ color: 'inherit' }}
           />

@@ -146,7 +146,7 @@ export const MessageActions: React.FC<MessageActionsProps> = ({
             return false;
           }}
           onMouseLeave={() => setHoveredAction(null)}
-          className="absolute flex flex-row right-4 top-[-10px] p-1 bg-tooltip select-none shadow-lg rounded-lg -m-1"
+          className="absolute flex flex-row right-4 top-[-10px] px-2 py-1 bg-tooltip select-none shadow-lg rounded-lg -m-1"
         >
           {/* Quick reactions */}
           <div
@@ -278,7 +278,6 @@ export const MessageActions: React.FC<MessageActionsProps> = ({
                 <Icon
                   name={message.isPinned ? 'pin-off' : 'pin'}
                   size="md"
-                  variant={message.isPinned ? undefined : 'filled'}
                 />
               </div>
             </>
@@ -296,7 +295,6 @@ export const MessageActions: React.FC<MessageActionsProps> = ({
                 <Icon
                   name="trash"
                   size="md"
-                  variant="filled"
                   className="text-[rgb(var(--danger))] hover:text-[rgb(var(--danger-hover))] hover:scale-125"
                 />
               </div>
