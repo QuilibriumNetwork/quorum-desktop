@@ -263,6 +263,12 @@ All magic numbers have been extracted into configuration objects:
 4. **Pin History**: Track pin/unpin activity for moderation
 5. **Bulk Operations**: Pin/unpin multiple messages at once
 
+## Related Documentation
+
+- [Message Preview Rendering](message-preview-rendering.md) - Overview of preview rendering systems (MessagePreview used here)
+- [Bookmarks](bookmarks.md) - Similar panel pattern with hybrid rendering
+- [Markdown Stripping](markdown-stripping.md) - Text processing used by MessagePreview
+
 ---
 
-_Last updated: January 2025 - Added configuration constants, improved error handling, and database query optimization notes_
+_Last updated: 2025-12-02_

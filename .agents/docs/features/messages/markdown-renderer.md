@@ -1,9 +1,5 @@
 # Markdown Renderer
 
-**Status**: ✅ Complete & Optimized
-**Created**: 2025-09-20
-**Last Updated**: 2025-01-20 (Major performance optimization)
-
 ## Overview
 
 Messages automatically detect markdown patterns and render with enhanced formatting when markdown syntax is used. The renderer now includes intelligent URL processing, YouTube video embedding, and performance optimizations to prevent component remounting.
@@ -471,8 +467,14 @@ All user-controlled content now follows this pattern:
 
 **Related Task**: `.agents/tasks/remove-rehype-raw-security-fix.md`
 
+## Related Documentation
+
+- [Message Preview Rendering](message-preview-rendering.md) - Preview systems for panels (uses stripping, not full markdown)
+- [Markdown Stripping](markdown-stripping.md) - Text processing utilities for previews
+- [Bookmarks](bookmarks.md) - Hybrid preview rendering for bookmarks
+
 ---
-**Last Updated**: 2025-11-18
+**Last Updated**: 2025-12-02
 **Security Hardening**: Complete (rehype-raw removed, XSS vulnerabilities fixed, word boundary validation added)
 **Performance Optimization**: Complete
 **Enhanced Mention Formats**: Complete (backward-compatible support for readable mention display names)

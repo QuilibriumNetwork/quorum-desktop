@@ -1,7 +1,7 @@
 # Bookmarks Feature
 
 > **⚠️ AI-Generated**: May contain errors. Verify before use.
-> **Reviewed by**: feature-analyzer agent
+> **Reviewed by**: feature-analyzer and security-analyst agents
 
 ## Overview
 
@@ -40,10 +40,12 @@ The Bookmarks feature allows users to privately save important messages from bot
 **Data Layer**:
 - `src/api/quorumApi.ts:242+` - `Bookmark` type definition and `BOOKMARKS_CONFIG`
 - `src/db/messages.ts:50-51` - UserConfig type with sync fields (`bookmarks?`, `deletedBookmarkIds?`)
+- `src/db/messages.ts:205-218` - `getMessageById()` for context-free message resolution
 - `src/db/messages.ts:1577-1696` - CRUD operations in MessageDB class
 
 **Business Logic**:
 - `src/hooks/business/bookmarks/useBookmarks.ts` - Main business hook with React Query integration
+- `src/hooks/queries/bookmarks/useResolvedBookmark.ts` - Message resolution for hybrid MessagePreview rendering
 - `src/hooks/queries/bookmarks/` - React Query hooks for data fetching and caching
 - `src/hooks/business/messages/useMessageActions.ts` - Action integration and context handling
 
@@ -80,9 +82,15 @@ export type Bookmark = {
   cachedPreview: {
     senderAddress: string;      // For avatar/name lookup
     senderName: string;         // Display name at bookmark time
-    textSnippet: string;        // First ~150 chars, plain text (markdown and mentions stripped)
+    textSnippet: string;        // First ~150 chars, plain text (empty for media-only)
     messageDate: number;        // Original message timestamp
     sourceName: string;         // "Space Name > #channel" or empty for DMs
+
+    // Media content info for visual rendering
+    contentType: 'text' | 'image' | 'sticker';
+    imageUrl?: string;          // For embed messages (image URL)
+    thumbnailUrl?: string;      // For embed messages (smaller preview)
+    stickerId?: string;         // For sticker messages (resolve at render time)
   };
 };
 ```
@@ -385,13 +393,39 @@ Race conditions from rapid clicking are prevented via pending state tracking tha
 - Responsive design with mobile breakpoint at 639px
 - Consistent with NotificationPanel and PinnedMessagesPanel patterns
 
+### Hybrid Message Preview (Like PinnedMessagesPanel)
+BookmarkItem uses a hybrid rendering approach:
+
+1. **Full MessagePreview** (preferred): If message exists in local IndexedDB, render with `MessagePreview` component (same as PinnedMessagesPanel) - supports full markdown, mentions, images, stickers
+2. **Cached Preview** (fallback): If message not found locally (cross-device sync, unloaded channel), render using `cachedPreview` data stored in the bookmark
+
+Resolution flow:
+```
+useResolvedBookmark(bookmark) → messageDB.getMessageById(messageId)
+    ↓
+┌─────────────────────────────────────────┐
+│ Message found in local IndexedDB?       │
+├────────────┬────────────────────────────┤
+│    YES     │           NO               │
+│    ↓       │           ↓                │
+│ MessagePreview        │ CachedPreview   │
+│ (full render)         │ (fallback)      │
+└────────────┴────────────────────────────┘
+```
+
+### Media Content Support (Cached Fallback)
+When using cached preview fallback:
+- Images (embeds): Displayed as thumbnails (200x120 max)
+- Stickers: Displayed visually (80x80 max) with sticker lookup at render time
+- Fallback text: `[Image]` or `[Sticker]` shown if media URL unavailable
+
 ## Known Limitations
 
 ### Bookmark Count Badge
 Header icons don't show bookmark count. This is by design to avoid header clutter.
 
-### Message Resolution Caching
-Cached preview prevents real-time updates to sender names/message content. This tradeoff prioritizes performance over real-time accuracy, which is acceptable for bookmark previews.
+### Cross-Device Message Availability
+When viewing bookmarks on a different device, messages may not exist in local IndexedDB (not synced). In this case, the cached preview is shown instead of full MessagePreview. This is expected behavior - the cached preview ensures bookmarks always display something useful.
 
 ### Deleted Message Handling
 When a message is deleted, any bookmark pointing to it is automatically removed (cascade deletion). This prevents orphaned bookmarks with stale cached data.
@@ -401,6 +435,9 @@ Sync requires network connectivity. Local changes are preserved but won't sync u
 
 ## Related Documentation
 
+- [Message Preview Rendering](message-preview-rendering.md) - Overview of all preview rendering systems
+- [Markdown Stripping](markdown-stripping.md) - Text processing utilities
+- [Markdown Renderer](markdown-renderer.md) - Full message rendering (dual system)
 - `src/components/message/PinnedMessagesPanel.tsx` - Similar panel structure and navigation
 - `src/components/notifications/NotificationPanel.tsx` - Filter patterns and UI reference
 - `src/components/ui/DropdownPanel.tsx` - Container component architecture
@@ -409,4 +446,4 @@ Sync requires network connectivity. Local changes are preserved but won't sync u
 
 ---
 
-*Updated: 2025-12-02 (security hardening: cascade deletion, input sanitization)*
+*Updated: 2025-12-02 (hybrid MessagePreview: full render when message available, cached fallback otherwise)*
