@@ -1,9 +1,5 @@
 # DM Conversation List Previews
 
-**Status:** ✅ Implemented
-**Location:** Direct Messages sidebar
-**Added:** 2025-01-14
-
 ## Overview
 
 Shows message previews and timestamps in the DM conversation list, similar to Signal/Telegram. Provides quick context about recent messages without opening the conversation.

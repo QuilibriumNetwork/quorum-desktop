@@ -1,12 +1,5 @@
 # New Messages Separator
 
-**Status**: ✅ Fully Implemented
-**Components**: NewMessagesSeparator, MessageList, Channel, DirectMessage
-**Affects**: Message navigation, Unread message UX
-**Implemented**: 2025-11-12 (Channels), 2025-11-13 (Direct Messages)
-
----
-
 ## Overview
 
 ### Problem

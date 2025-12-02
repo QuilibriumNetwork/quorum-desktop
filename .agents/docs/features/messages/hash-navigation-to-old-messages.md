@@ -1,12 +1,5 @@
 # Hash Navigation to Old Messages
 
-**Status**: ✅ Fully Implemented
-**Components**: MessageList, Channel, DirectMessage, Message Loading
-**Affects**: Search results, Pinned messages, Notifications, URL hashes
-**Implemented**: 2025-11-12 (Channels), 2025-11-13 (Direct Messages)
-
----
-
 ## Overview
 
 ### Problem

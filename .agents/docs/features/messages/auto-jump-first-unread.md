@@ -1,12 +1,5 @@
 # Auto-Jump to First Unread Message
 
-**Status**: ✅ Fully Implemented
-**Components**: MessageList, Channel, DirectMessage
-**Affects**: Channel navigation, Direct Message navigation, Unread message UX
-**Implemented**: 2025-11-12 (Channels), 2025-11-13 (Direct Messages)
-
----
-
 ## Overview
 
 ### Problem
