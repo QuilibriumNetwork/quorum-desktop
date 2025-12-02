@@ -15,8 +15,8 @@ import {
 import { DropdownPanel } from '../ui';
 import { useBookmarks } from '../../hooks/business/bookmarks';
 import { useMessageHighlight } from '../../hooks/business/messages/useMessageHighlight';
+import { useSearchContext } from '../../hooks/useSearchContext';
 import { isTouchDevice } from '../../utils/platform';
-import { useSpaces } from '../../hooks';
 import './BookmarksPanel.scss';
 
 interface BookmarksPanelProps {
@@ -31,71 +31,80 @@ export const BookmarksPanel: React.FC<BookmarksPanelProps> = ({
   userAddress,
 }) => {
   const navigate = useNavigate();
-  const { data: spaces } = useSpaces({});
+
+  // Get current route context for filtering
+  const searchContext = useSearchContext();
 
   // Message highlighting hook (same as pinned messages)
   const { scrollToMessage, highlightMessage } = useMessageHighlight();
 
   // Bookmark data
   const {
-    bookmarks,
     bookmarkCount,
     isLoading,
     error,
     removeBookmark,
     filterBySourceType,
-    filterBySpace,
+    filterByConversation,
+    filterByCurrentSpace,
   } = useBookmarks({ userAddress });
 
   // Filter state - single value like NotificationPanel
   const [selectedFilter, setSelectedFilter] = useState<string>('all');
 
-  // Get filter options (like NotificationPanel)
+  // Dynamic filter options ordering based on context
   const filterOptions = useMemo(() => {
-    const baseOptions = [
-      { value: 'all', label: t`All bookmarks` },
-      { value: 'dms', label: t`Direct messages` },
-      { value: 'spaces', label: t`All spaces` },
-    ];
+    const options = [{ value: 'all', label: t`All Bookmarks` }];
 
-    // Add individual space options
-    if (spaces) {
-      const spacesWithBookmarks = new Set(
-        bookmarks
-          .filter(b => b.sourceType === 'channel' && b.spaceId)
-          .map(b => b.spaceId!)
+    // Dynamic ordering based on current context
+    if (searchContext.type === 'dm' && searchContext.conversationId && searchContext.conversationId !== 'general') {
+      // DM context: prioritize current conversation
+      options.push(
+        { value: `conversation:${searchContext.conversationId}`, label: t`This conversation` },
+        { value: 'dms', label: t`All DMs` },
+        { value: 'spaces', label: t`All Spaces` }
       );
-
-      const spaceOptions = spaces
-        .filter(space => spacesWithBookmarks.has(space.spaceId))
-        .map(space => ({
-          value: space.spaceId,
-          label: space.spaceName,
-        }));
-
-      return [...baseOptions, ...spaceOptions];
-    }
-
-    return baseOptions;
-  }, [spaces, bookmarks]);
-
-  // Get filtered bookmarks
-  const filteredBookmarks = useMemo(() => {
-    let result;
-    if (selectedFilter === 'all') {
-      result = filterBySourceType('all');
-    } else if (selectedFilter === 'dms') {
-      result = filterBySourceType('dm');
-    } else if (selectedFilter === 'spaces') {
-      result = filterBySourceType('channel');
+    } else if (searchContext.type === 'space' && searchContext.spaceId && searchContext.spaceId !== 'default') {
+      // Space context: prioritize current space
+      options.push(
+        { value: `currentSpace:${searchContext.spaceId}`, label: t`This Space` },
+        { value: 'spaces', label: t`All Spaces` },
+        { value: 'dms', label: t`All DMs` }
+      );
     } else {
-      // Individual space selected
-      result = filterBySpace(selectedFilter);
+      // General context: standard ordering
+      options.push(
+        { value: 'dms', label: t`All DMs` },
+        { value: 'spaces', label: t`All Spaces` }
+      );
     }
 
+    return options;
+  }, [searchContext]);
 
-    return result;
-  }, [filterBySourceType, filterBySpace, selectedFilter, bookmarks]);
+  // Get filtered bookmarks with context-aware filtering
+  const filteredBookmarks = useMemo(() => {
+    if (selectedFilter.startsWith('conversation:')) {
+      const conversationId = selectedFilter.replace('conversation:', '');
+      return filterByConversation(conversationId);
+    } else if (selectedFilter.startsWith('currentSpace:')) {
+      const spaceId = selectedFilter.replace('currentSpace:', '');
+      return filterByCurrentSpace(spaceId, searchContext.channelId);
+    }
+
+    // Handle standard filter types
+    switch (selectedFilter) {
+      case 'all':
+        return filterBySourceType('all');
+      case 'dms':
+        return filterBySourceType('dm');
+      case 'spaces':
+        return filterBySourceType('channel');
+      default:
+        // Fallback to show all bookmarks
+        return filterBySourceType('all');
+    }
+  }, [selectedFilter, searchContext, filterBySourceType, filterByConversation, filterByCurrentSpace]);
 
   // Handle navigation to bookmark (enhanced timing pattern matching pinned messages)
   const handleJumpToMessage = useCallback((bookmark: Bookmark) => {

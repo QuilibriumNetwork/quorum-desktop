@@ -88,7 +88,7 @@ export const useBookmarks = ({ userAddress }: UseBookmarksOptions) => {
       });
       return { previousBookmarks };
     },
-    onError: (err, newBookmark, context) => {
+    onError: (_err, _newBookmark, context) => {
       queryClient.setQueryData(['bookmarks', userAddress], context?.previousBookmarks);
     },
     onSettled: () => {
@@ -109,7 +109,7 @@ export const useBookmarks = ({ userAddress }: UseBookmarksOptions) => {
       });
       return { previousBookmarks };
     },
-    onError: (err, bookmarkId, context) => {
+    onError: (_err, _bookmarkId, context) => {
       queryClient.setQueryData(['bookmarks', userAddress], context?.previousBookmarks);
     },
     onSettled: () => {
@@ -155,30 +155,40 @@ export const useBookmarks = ({ userAddress }: UseBookmarksOptions) => {
 
     const existingBookmark = bookmarks.find(b => b.messageId === message.messageId);
 
-    const mutation = existingBookmark ? removeBookmarkMutation : addBookmarkMutation;
-    const mutationData = existingBookmark
-      ? existingBookmark.bookmarkId
-      : createBookmarkFromMessage(message, sourceType, context, senderName, sourceName);
-
-    if (!existingBookmark && !canAddBookmark) {
-      setPendingToggles(prev => {
-        const next = new Set(prev);
-        next.delete(message.messageId);
-        return next;
+    if (existingBookmark) {
+      // Remove existing bookmark
+      removeBookmarkMutation.mutate(existingBookmark.bookmarkId, {
+        onSettled: () => {
+          setPendingToggles(prev => {
+            const next = new Set(prev);
+            next.delete(message.messageId);
+            return next;
+          });
+        }
       });
-      console.warn('Cannot add bookmark: limit reached');
-      return;
-    }
-
-    mutation.mutate(mutationData, {
-      onSettled: () => {
+    } else {
+      // Add new bookmark
+      if (!canAddBookmark) {
         setPendingToggles(prev => {
           const next = new Set(prev);
           next.delete(message.messageId);
           return next;
         });
+        console.warn('Cannot add bookmark: limit reached');
+        return;
       }
-    });
+
+      const newBookmark = createBookmarkFromMessage(message, sourceType, context, senderName, sourceName);
+      addBookmarkMutation.mutate(newBookmark, {
+        onSettled: () => {
+          setPendingToggles(prev => {
+            const next = new Set(prev);
+            next.delete(message.messageId);
+            return next;
+          });
+        }
+      });
+    }
   }, [pendingToggles, bookmarks, removeBookmarkMutation, addBookmarkMutation, canAddBookmark, createBookmarkFromMessage]);
 
   // Helper functions
@@ -198,8 +208,22 @@ export const useBookmarks = ({ userAddress }: UseBookmarksOptions) => {
     return bookmarks.filter(bookmark => bookmark.sourceType === type);
   }, [bookmarks]);
 
-  const filterBySpace = useCallback((spaceId: string) => {
-    return bookmarks.filter(bookmark => bookmark.spaceId === spaceId);
+
+  // New filtering functions for context-aware filtering
+  const filterByConversation = useCallback((conversationId: string) => {
+    return bookmarks.filter(bookmark => bookmark.conversationId === conversationId);
+  }, [bookmarks]);
+
+  const filterByCurrentSpace = useCallback((spaceId: string, channelId?: string) => {
+    if (channelId) {
+      // Filter by specific channel within space
+      return bookmarks.filter(bookmark =>
+        bookmark.spaceId === spaceId && bookmark.channelId === channelId
+      );
+    } else {
+      // Filter by entire space (all channels)
+      return bookmarks.filter(bookmark => bookmark.spaceId === spaceId);
+    }
   }, [bookmarks]);
 
   return {
@@ -224,6 +248,7 @@ export const useBookmarks = ({ userAddress }: UseBookmarksOptions) => {
 
     // Filtering
     filterBySourceType,
-    filterBySpace,
+    filterByConversation,
+    filterByCurrentSpace,
   };
 };

@@ -5,10 +5,21 @@
 .bookmarks-panel {
   // z-index inherited from DropdownPanel (10001) - no override needed
   // Title font size inherited from DropdownPanel ($text-sm)
+}
 
-  .bookmarks-panel__controls {
-    padding: $s-3;
-    border-bottom: 1px solid var(--surface-3);
+// Controls styling for both desktop (bookmarks-panel) and mobile (mobile-drawer) contexts
+.bookmarks-panel .bookmarks-panel__controls,
+.mobile-drawer .bookmarks-panel__controls {
+  padding: $s-1 $s-4;
+  border-bottom: $border solid var(--surface-3);
+
+  // Ensure filter icon (Select in compact mode) is centered
+  .select-container {
+    button {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
   }
 }
 
