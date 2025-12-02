@@ -2,7 +2,7 @@ import React, { useState, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Virtuoso } from 'react-virtuoso';
 import { t } from '@lingui/core/macro';
-import type { Bookmark } from '../../api/quorumApi';
+import type { Bookmark, Sticker, Role, Channel } from '../../api/quorumApi';
 import { BookmarkItem } from './BookmarkItem';
 import {
   FlexRow,
@@ -23,12 +23,23 @@ interface BookmarksPanelProps {
   isOpen: boolean;
   onClose: () => void;
   userAddress: string;
+  stickers?: { [key: string]: Sticker };
+  // Props for MessagePreview rendering in BookmarkItem
+  mapSenderToUser?: (senderId: string) => any;
+  spaceRoles?: Role[];
+  spaceChannels?: Channel[];
+  onChannelClick?: (channelId: string) => void;
 }
 
 export const BookmarksPanel: React.FC<BookmarksPanelProps> = ({
   isOpen,
   onClose,
   userAddress,
+  stickers,
+  mapSenderToUser,
+  spaceRoles,
+  spaceChannels,
+  onChannelClick,
 }) => {
   const navigate = useNavigate();
 
@@ -183,7 +194,7 @@ export const BookmarksPanel: React.FC<BookmarksPanelProps> = ({
     if (bookmarkCount === 0) {
       return (
         <FlexCenter className="bookmark-empty-state">
-          <Icon name="bookmark" className="empty-icon" />
+          <Icon name="bookmark" size="3xl" className="empty-icon" />
           <Text className="empty-message">{t`No bookmarks yet`}</Text>
           <Text className="empty-hint">
             {t`Bookmark messages to save them for later reference`}
@@ -229,6 +240,11 @@ export const BookmarksPanel: React.FC<BookmarksPanelProps> = ({
                 bookmark={bookmark}
                 onJumpToMessage={handleJumpToMessage}
                 onRemoveBookmark={handleRemoveBookmark}
+                stickers={stickers}
+                mapSenderToUser={mapSenderToUser}
+                spaceRoles={spaceRoles}
+                spaceChannels={spaceChannels}
+                onChannelClick={onChannelClick}
               />
             </div>
           ))}
@@ -247,13 +263,18 @@ export const BookmarksPanel: React.FC<BookmarksPanelProps> = ({
               bookmark={bookmark}
               onJumpToMessage={handleJumpToMessage}
               onRemoveBookmark={handleRemoveBookmark}
+              stickers={stickers}
+              mapSenderToUser={mapSenderToUser}
+              spaceRoles={spaceRoles}
+              spaceChannels={spaceChannels}
+              onChannelClick={onChannelClick}
             />
           )}
           style={{ height: '100%' }}
         />
       </div>
     );
-  }, [isLoading, error, filteredBookmarks, renderEmptyState, handleJumpToMessage, handleRemoveBookmark]);
+  }, [isLoading, error, filteredBookmarks, renderEmptyState, handleJumpToMessage, handleRemoveBookmark, stickers, mapSenderToUser, spaceRoles, spaceChannels, onChannelClick]);
 
   return (
     <DropdownPanel

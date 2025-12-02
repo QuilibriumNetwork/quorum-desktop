@@ -253,9 +253,15 @@ export type Bookmark = {
   cachedPreview: {
     senderAddress: string;      // For avatar/name lookup
     senderName: string;         // Display name at bookmark time
-    textSnippet: string;        // First ~150 chars, markdown stripped
+    textSnippet: string;        // First ~150 chars, markdown stripped (empty for media-only)
     messageDate: number;        // Original message timestamp
     sourceName: string;         // "Space Name > #channel" or "Contact Name"
+
+    // Media content info for visual rendering
+    contentType: 'text' | 'image' | 'sticker';
+    imageUrl?: string;          // For embed messages (image URL)
+    thumbnailUrl?: string;      // For embed messages (smaller preview)
+    stickerId?: string;         // For sticker messages (resolve at render time)
   };
 
   // Future: notes?: string; tags?: string[];

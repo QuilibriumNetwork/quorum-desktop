@@ -695,6 +695,7 @@ const DirectMessage: React.FC<{}> = () => {
                   isOpen={activePanel === 'bookmarks'}
                   onClose={() => setActivePanel(null)}
                   userAddress={userAddress}
+                  mapSenderToUser={mapSenderToUser}
                 />
               </div>
 

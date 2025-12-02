@@ -1,6 +1,6 @@
 import React from 'react';
 import { t } from '@lingui/core/macro';
-import type { Bookmark } from '../../api/quorumApi';
+import type { Bookmark, Sticker, Role, Channel } from '../../api/quorumApi';
 import {
   FlexRow,
   FlexBetween,
@@ -12,19 +12,104 @@ import {
 } from '../primitives';
 import { isTouchDevice } from '../../utils/platform';
 import { formatMessageDate } from '../../utils';
+import { useResolvedBookmark } from '../../hooks/queries/bookmarks';
+import { MessagePreview } from '../message/MessagePreview';
 
 export interface BookmarkItemProps {
   bookmark: Bookmark;
   onJumpToMessage: (bookmark: Bookmark) => void;
   onRemoveBookmark: (bookmarkId: string) => void;
+  stickers?: { [key: string]: Sticker };
+  // Props for MessagePreview rendering (when message is resolved)
+  mapSenderToUser?: (senderId: string) => any;
+  spaceRoles?: Role[];
+  spaceChannels?: Channel[];
+  onChannelClick?: (channelId: string) => void;
 }
 
 export const BookmarkItem: React.FC<BookmarkItemProps> = ({
   bookmark,
   onJumpToMessage,
   onRemoveBookmark,
+  stickers,
+  mapSenderToUser,
+  spaceRoles,
+  spaceChannels,
+  onChannelClick,
 }) => {
   const { cachedPreview } = bookmark;
+
+  // Try to resolve the full message from local IndexedDB
+  const { data: resolvedMessage } = useResolvedBookmark(bookmark, true);
+
+  // Render cached preview fallback (used when message not found locally)
+  const renderCachedPreview = () => {
+    const contentType = cachedPreview.contentType || 'text';
+
+    if (contentType === 'image') {
+      const imgSrc = cachedPreview.thumbnailUrl || cachedPreview.imageUrl;
+      if (imgSrc) {
+        return (
+          <Container className="bookmark-media-preview">
+            <img
+              src={imgSrc}
+              alt={t`Bookmarked image`}
+              className="bookmark-image rounded-lg"
+              style={{ maxWidth: 200, maxHeight: 120, width: 'auto' }}
+            />
+          </Container>
+        );
+      }
+      return <Text className="message-preview text-muted">{t`[Image]`}</Text>;
+    }
+
+    if (contentType === 'sticker') {
+      const sticker = cachedPreview.stickerId ? stickers?.[cachedPreview.stickerId] : undefined;
+      if (sticker && typeof sticker === 'object' && sticker.imgUrl) {
+        return (
+          <Container className="bookmark-media-preview">
+            <img
+              src={sticker.imgUrl}
+              alt={t`Bookmarked sticker`}
+              className="bookmark-sticker rounded-lg"
+              style={{ maxWidth: 80, maxHeight: 80 }}
+            />
+          </Container>
+        );
+      }
+      return <Text className="message-preview text-muted">{t`[Sticker]`}</Text>;
+    }
+
+    // Default: text content
+    return (
+      <Text className="message-preview">
+        {cachedPreview.textSnippet || t`[Empty message]`}
+      </Text>
+    );
+  };
+
+  // Render content: prefer MessagePreview if message resolved, fallback to cached
+  const renderContent = () => {
+    // If we have the full message and mapSenderToUser, render with MessagePreview
+    if (resolvedMessage && mapSenderToUser) {
+      return (
+        <MessagePreview
+          message={resolvedMessage}
+          mapSenderToUser={mapSenderToUser}
+          stickers={stickers}
+          showBackground={false}
+          hideHeader={true}
+          spaceRoles={spaceRoles}
+          spaceChannels={spaceChannels}
+          onChannelClick={onChannelClick}
+          disableMentionInteractivity={true}
+        />
+      );
+    }
+
+    // Fallback to cached preview
+    return renderCachedPreview();
+  };
 
   return (
     <Container
@@ -92,9 +177,7 @@ export const BookmarkItem: React.FC<BookmarkItemProps> = ({
 
       {/* Message preview */}
       <Container className="result-content">
-        <Text className="message-preview">
-          {cachedPreview.textSnippet || t`No text content`}
-        </Text>
+        {renderContent()}
       </Container>
     </Container>
   );

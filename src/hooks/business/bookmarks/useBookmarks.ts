@@ -44,21 +44,40 @@ export const useBookmarks = ({ userAddress }: UseBookmarksOptions) => {
     senderName: string,
     sourceName: string
   ): Bookmark => {
-    // Extract text content for preview
+    // Determine content type and extract relevant data
+    let contentType: 'text' | 'image' | 'sticker' = 'text';
     let textSnippet = '';
-    if (message.content.type === 'post') {
+    let imageUrl: string | undefined;
+    let thumbnailUrl: string | undefined;
+    let stickerId: string | undefined;
+
+    if (message.content.type === 'embed') {
+      // Image/embed content
+      contentType = 'image';
+      imageUrl = message.content.imageUrl;
+      thumbnailUrl = message.content.thumbnailUrl;
+    } else if (message.content.type === 'sticker') {
+      // Sticker content
+      contentType = 'sticker';
+      stickerId = message.content.stickerId;
+    } else if (message.content.type === 'post') {
+      // Text content
+      contentType = 'text';
       const text = message.content.text;
       textSnippet = Array.isArray(text) ? text.join(' ') : text;
     } else if (message.content.type === 'event') {
+      contentType = 'text';
       textSnippet = message.content.text;
     }
 
     // Strip markdown and mentions for clean plain text preview
-    textSnippet = stripMarkdownAndMentions(textSnippet);
+    if (textSnippet) {
+      textSnippet = stripMarkdownAndMentions(textSnippet);
 
-    // Truncate to snippet length
-    if (textSnippet.length > BOOKMARKS_CONFIG.PREVIEW_SNIPPET_LENGTH) {
-      textSnippet = textSnippet.substring(0, BOOKMARKS_CONFIG.PREVIEW_SNIPPET_LENGTH) + '...';
+      // Truncate to snippet length
+      if (textSnippet.length > BOOKMARKS_CONFIG.PREVIEW_SNIPPET_LENGTH) {
+        textSnippet = textSnippet.substring(0, BOOKMARKS_CONFIG.PREVIEW_SNIPPET_LENGTH) + '...';
+      }
     }
 
     return {
@@ -75,6 +94,10 @@ export const useBookmarks = ({ userAddress }: UseBookmarksOptions) => {
         textSnippet,
         messageDate: message.createdDate,
         sourceName,
+        contentType,
+        imageUrl,
+        thumbnailUrl,
+        stickerId,
       },
     };
   }, []);

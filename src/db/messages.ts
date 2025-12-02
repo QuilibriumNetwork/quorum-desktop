@@ -197,6 +197,26 @@ export class MessageDB {
     });
   }
 
+  /**
+   * Get a message by ID only, without context validation.
+   * Used for bookmark resolution where we just need to display the message.
+   * Falls back gracefully if message not found (e.g., cross-device sync).
+   */
+  async getMessageById(messageId: string): Promise<Message | undefined> {
+    await this.init();
+    return new Promise((resolve, reject) => {
+      const transaction = this.db!.transaction('messages', 'readonly');
+      const store = transaction.objectStore('messages');
+
+      const request = store.get(messageId);
+
+      request.onsuccess = () => {
+        resolve(request.result as Message | undefined);
+      };
+      request.onerror = () => reject(request.error);
+    });
+  }
+
   async getAllSpaceMessages({
     spaceId,
   }: {

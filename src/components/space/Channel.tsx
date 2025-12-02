@@ -913,6 +913,11 @@ const Channel: React.FC<ChannelProps> = ({
                   isOpen={activePanel === 'bookmarks'}
                   onClose={() => setActivePanel(null)}
                   userAddress={userAddress}
+                  stickers={stickers}
+                  mapSenderToUser={mapSenderToUser}
+                  spaceRoles={roles}
+                  spaceChannels={spaceChannels}
+                  onChannelClick={handleChannelClick}
                 />
               </div>
 
