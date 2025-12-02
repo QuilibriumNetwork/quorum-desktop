@@ -697,10 +697,24 @@ export class MessageDB {
     });
 
     return new Promise((resolve, reject) => {
-      const transaction = this.db!.transaction(['messages'], 'readwrite');
-      const store = transaction.objectStore('messages');
-      const messageRequest = store.delete(messageId);
+      // Include 'bookmarks' store to cascade delete any bookmarks pointing to this message
+      const transaction = this.db!.transaction(['messages', 'bookmarks'], 'readwrite');
+      const messageStore = transaction.objectStore('messages');
+      const bookmarkStore = transaction.objectStore('bookmarks');
+
+      // Delete the message
+      const messageRequest = messageStore.delete(messageId);
       messageRequest.onerror = () => reject(messageRequest.error);
+
+      // Cascade delete: Remove any bookmark pointing to this message
+      const bookmarkIndex = bookmarkStore.index('by_message');
+      const bookmarkRequest = bookmarkIndex.get(messageId);
+      bookmarkRequest.onsuccess = () => {
+        const bookmark = bookmarkRequest.result;
+        if (bookmark) {
+          bookmarkStore.delete(bookmark.bookmarkId);
+        }
+      };
 
       transaction.oncomplete = () => {
         // Remove from search index after deleting
@@ -1120,8 +1134,11 @@ export class MessageDB {
     const [spaceId, channelId] = conversationId.split('/');
     if (!spaceId || !channelId) return;
     return new Promise((resolve, reject) => {
-      const transaction = this.db!.transaction('messages', 'readwrite');
+      // Include 'bookmarks' store to cascade delete bookmarks for deleted messages
+      const transaction = this.db!.transaction(['messages', 'bookmarks'], 'readwrite');
       const store = transaction.objectStore('messages');
+      const bookmarkStore = transaction.objectStore('bookmarks');
+      const bookmarkIndex = bookmarkStore.index('by_message');
       const index = store.index('by_conversation_time');
 
       const range = IDBKeyRange.bound(
@@ -1146,6 +1163,16 @@ export class MessageDB {
             const dmIndex = this.searchIndices.get(dmIndexKey);
             if (dmIndex) dmIndex.removeById(msg.messageId);
           } catch {}
+
+          // Cascade delete: Remove any bookmark pointing to this message
+          const bookmarkRequest = bookmarkIndex.get(msg.messageId);
+          bookmarkRequest.onsuccess = () => {
+            const bookmark = bookmarkRequest.result;
+            if (bookmark) {
+              bookmarkStore.delete(bookmark.bookmarkId);
+            }
+          };
+
           store.delete(msg.messageId);
           cursor.continue();
         } else {

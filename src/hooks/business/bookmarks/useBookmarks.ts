@@ -4,6 +4,7 @@ import { useBookmarks as useBookmarksQuery } from '../../queries/bookmarks/useBo
 import { useInvalidateBookmarks } from '../../queries/bookmarks/useInvalidateBookmarks';
 import { useMessageDB } from '../../../components/context/useMessageDB';
 import { Bookmark, Message, BOOKMARKS_CONFIG } from '../../../api/quorumApi';
+import { stripMarkdownAndMentions } from '../../../utils/markdownStripping';
 
 export interface BookmarkContext {
   spaceId?: string;
@@ -51,6 +52,9 @@ export const useBookmarks = ({ userAddress }: UseBookmarksOptions) => {
     } else if (message.content.type === 'event') {
       textSnippet = message.content.text;
     }
+
+    // Strip markdown and mentions for clean plain text preview
+    textSnippet = stripMarkdownAndMentions(textSnippet);
 
     // Truncate to snippet length
     if (textSnippet.length > BOOKMARKS_CONFIG.PREVIEW_SNIPPET_LENGTH) {
@@ -134,8 +138,25 @@ export const useBookmarks = ({ userAddress }: UseBookmarksOptions) => {
     senderName: string = 'Unknown User',
     sourceName: string = 'Unknown Source'
   ) => {
+    // Validate bookmark limit
     if (!canAddBookmark) {
       console.warn('Cannot add bookmark: limit reached');
+      return;
+    }
+
+    // Validate message structure
+    if (!message || !message.messageId || !message.content) {
+      console.warn('Cannot add bookmark: invalid message structure');
+      return;
+    }
+
+    // Validate context consistency with sourceType
+    if (sourceType === 'channel' && (!context.spaceId || !context.channelId)) {
+      console.warn('Cannot add bookmark: channel bookmark requires spaceId and channelId');
+      return;
+    }
+    if (sourceType === 'dm' && !context.conversationId) {
+      console.warn('Cannot add bookmark: DM bookmark requires conversationId');
       return;
     }
 
@@ -156,6 +177,22 @@ export const useBookmarks = ({ userAddress }: UseBookmarksOptions) => {
     senderName: string = 'Unknown User',
     sourceName: string = 'Unknown Source'
   ) => {
+    // Validate message structure first (before accessing messageId)
+    if (!message || !message.messageId || !message.content) {
+      console.warn('Cannot toggle bookmark: invalid message structure');
+      return;
+    }
+
+    // Validate context consistency with sourceType
+    if (sourceType === 'channel' && (!context.spaceId || !context.channelId)) {
+      console.warn('Cannot toggle bookmark: channel bookmark requires spaceId and channelId');
+      return;
+    }
+    if (sourceType === 'dm' && !context.conversationId) {
+      console.warn('Cannot toggle bookmark: DM bookmark requires conversationId');
+      return;
+    }
+
     if (pendingToggles.has(message.messageId)) {
       return; // Ignore if pending
     }
