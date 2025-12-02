@@ -14,6 +14,8 @@ export const getDefaultUserConfig = (address: string): UserConfig => {
     nonRepudiable: true,
     spaceKeys: [],
     spaceIds: [],
+    bookmarks: [],
+    deletedBookmarkIds: [],
     timestamp: Date.now(),
   };
 };

@@ -99,7 +99,16 @@ export const useBookmarks = ({ userAddress }: UseBookmarksOptions) => {
   // Remove bookmark mutation
   const removeBookmarkMutation = useMutation({
     mutationFn: async (bookmarkId: string) => {
+      // Remove bookmark from IndexedDB
       await messageDB.removeBookmark(bookmarkId);
+
+      // Track deletion for sync (Phase 7: Critical Fix)
+      const config = await messageDB.getUserConfig({ address: userAddress });
+      if (config) {
+        config.deletedBookmarkIds = config.deletedBookmarkIds || [];
+        config.deletedBookmarkIds.push(bookmarkId);
+        await messageDB.saveUserConfig(config);
+      }
     },
     onMutate: async (bookmarkId) => {
       await queryClient.cancelQueries({ queryKey: ['bookmarks', userAddress] });

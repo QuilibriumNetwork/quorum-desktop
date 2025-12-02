@@ -38,6 +38,7 @@ This is the main index for all documentation, bug reports, and task management.
 
 ### Features / Messages
 - [Auto-Jump to First Unread Message](docs/features/messages/auto-jump-first-unread.md)
+- [Bookmarks Feature](docs/features/messages/bookmarks.md)
 - [Client-Side Image Compression & Thumbnail System](docs/features/messages/client-side-image-compression.md)
 - [DM Conversation List Previews](docs/features/messages/dm-conversation-list-previews.md)
 - [Emoji Picker React - Styling & Customization](docs/features/messages/emoji-picker-react-customization.md)
@@ -111,7 +112,6 @@ This is the main index for all documentation, bug reports, and task management.
 - [Implement Background Sync Queue for User Settings and Async Operations](tasks/background-sync-queue.md)
 - [Implement Message Forwarding with Privacy Controls](tasks/message-forwarding-with-privacy-controls.md)
 - [Implement Smart Context Extraction Around Mentions in NotificationPanel](tasks/notification-mention-context-extraction.md)
-- [Message Bookmarking Feature](tasks/message-bookmarking-feature.md)
 - [Multi-User Invite Selection Enhancement](tasks/multi-user-invite-selection.md)
 - [Passkey Import UX Issue](tasks/passkey-import-ux-issue.md)
 - [SDK PasskeyModal Customization Props Enhancement](tasks/sdk-passkey-modal-customization-props.md)
@@ -226,6 +226,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Mention Notification Settings - Phase 4](tasks/.done/mention-notification-settings-phase4.md)
 - [Mention Notification System - Critical Race Condition Fix](tasks/.done/mention-notification-ux-improvements.md)
 - [Mention Rendering: Word Boundary Analysis](tasks/.done/mention-rendering-word-boundary-analysis.md)
+- [Message Bookmarking Feature](tasks/.done/message-bookmarking-feature.md)
 - [Message Handling Report](tasks/.done/messages-report.md)
 - [Message Highlight System - Complete Analysis & Recommendations](tasks/.done/message-highlight-system-optimization.md)
 - [Message Markdown Support Implementation](tasks/.done/message-markdown-support.md)
@@ -282,4 +283,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2025-11-24 12:07:25
+**Last Updated**: 2025-12-02 15:34:07

@@ -3,6 +3,7 @@
 
 import { MessageDB, UserConfig } from '../db/messages';
 import { QuorumApiClient } from '../api/baseTypes';
+import { Bookmark } from '../api/quorumApi';
 import { channel as secureChannel, channel_raw as ch } from '@quilibrium/quilibrium-js-sdk-channels';
 import { sha256, base58btc } from '../utils/crypto';
 import { int64ToBytes } from '../utils/bytes';
@@ -285,6 +286,55 @@ export class ConfigService {
       }
     }
 
+    // Merge bookmarks from remote 
+    if (config.bookmarks && config.bookmarks.length > 0) {
+      const localBookmarks = await this.messageDB.getBookmarks();
+      const mergedBookmarks = this.mergeBookmarks(
+        localBookmarks,
+        config.bookmarks,
+        config.deletedBookmarkIds ?? []
+      );
+
+      // Apply differential sync
+      try {
+        const localMap = new Map(localBookmarks.map(b => [b.bookmarkId, b]));
+        const mergedMap = new Map(mergedBookmarks.map(b => [b.bookmarkId, b]));
+
+        // Calculate differential changes
+        const toDelete = localBookmarks.filter(b => !mergedMap.has(b.bookmarkId));
+        const toAdd = mergedBookmarks.filter(b => !localMap.has(b.bookmarkId));
+        const toUpdate = mergedBookmarks.filter(b => {
+          const existing = localMap.get(b.bookmarkId);
+          return existing && existing.createdAt !== b.createdAt;
+        });
+
+        // Apply only necessary changes (much faster than replace-all)
+        for (const bookmark of toDelete) {
+          await this.messageDB.removeBookmark(bookmark.bookmarkId);
+        }
+        for (const bookmark of [...toAdd, ...toUpdate]) {
+          await this.messageDB.addBookmark(bookmark);
+        }
+
+        console.log(`Bookmark sync: ${toDelete.length} deleted, ${toAdd.length} added, ${toUpdate.length} updated`);
+      } catch (error) {
+        console.error('Bookmark sync failed, attempting to restore local bookmarks:', error);
+
+        // Attempt to restore original bookmarks on failure
+        try {
+          for (const bookmark of localBookmarks) {
+            await this.messageDB.addBookmark(bookmark);
+          }
+          console.warn('Successfully restored local bookmarks after sync failure');
+        } catch (restoreError) {
+          console.error('Failed to restore local bookmarks:', restoreError);
+          // At this point, user may have lost bookmarks - this is logged for debugging
+        }
+
+        // Don't throw - continue with rest of config save to avoid corrupting other data
+      }
+    }
+
     await this.messageDB.saveUserConfig({
       ...config,
       timestamp: savedConfig.timestamp,
@@ -352,6 +402,10 @@ export class ConfigService {
 
       config.spaceKeys = await Promise.all(spaceKeysPromises);
 
+      // Collect bookmarks before encryption (Phase 7: Sync Integration)
+      config.bookmarks = await this.messageDB.getBookmarks();
+      // Note: deletedBookmarkIds will be reset AFTER successful sync
+
       let iv = crypto.getRandomValues(new Uint8Array(12));
       const ciphertext =
         Buffer.from(
@@ -388,9 +442,51 @@ export class ConfigService {
         timestamp: ts,
         signature: signature,
       });
+
+      // Reset tombstones only after successful sync (Phase 7: Critical Fix)
+      config.deletedBookmarkIds = [];
     }
 
     await this.messageDB.saveUserConfig(config);
+  }
+
+  /**
+   * Merge local and remote bookmarks with conflict resolution
+   * Strategy: Last-write-wins with tombstone tracking for deletions
+   * Deduplication: Prevents multiple bookmarks pointing to same message
+   */
+  private mergeBookmarks(
+    local: Bookmark[],
+    remote: Bookmark[],
+    deletedIds: string[]
+  ): Bookmark[] {
+    const bookmarkMap = new Map<string, Bookmark>();
+    const messageIdToBookmarkId = new Map<string, string>(); // Track by messageId to prevent duplicates
+
+    const addBookmark = (bookmark: Bookmark) => {
+      if (deletedIds.includes(bookmark.bookmarkId)) return;
+
+      // Check for existing bookmark pointing to same message
+      const existingBookmarkId = messageIdToBookmarkId.get(bookmark.messageId);
+      const existing = existingBookmarkId ? bookmarkMap.get(existingBookmarkId) : undefined;
+
+      if (!existing || bookmark.createdAt > existing.createdAt) {
+        // Remove old duplicate if exists
+        if (existingBookmarkId) {
+          bookmarkMap.delete(existingBookmarkId);
+        }
+        bookmarkMap.set(bookmark.bookmarkId, bookmark);
+        messageIdToBookmarkId.set(bookmark.messageId, bookmark.bookmarkId);
+      }
+    };
+
+    // Add local and remote bookmarks with deduplication
+    local.forEach(addBookmark);
+    remote.forEach(addBookmark);
+
+    // Convert back to array and sort by creation time (newest first)
+    return Array.from(bookmarkMap.values())
+      .sort((a, b) => b.createdAt - a.createdAt);
   }
 }
 

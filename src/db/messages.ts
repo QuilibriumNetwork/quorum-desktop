@@ -47,6 +47,8 @@ export type UserConfig = {
   notificationSettings?: {
     [spaceId: string]: NotificationSettings;
   };
+  bookmarks?: Bookmark[];
+  deletedBookmarkIds?: string[];
 };
 
 export interface SearchableMessage {
