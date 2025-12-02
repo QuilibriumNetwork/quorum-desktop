@@ -31,6 +31,7 @@ import MessageComposer, {
 } from '../message/MessageComposer';
 import { PinnedMessagesPanel } from '../message/PinnedMessagesPanel';
 import { NotificationPanel } from '../notifications/NotificationPanel';
+import { BookmarksPanel } from '../bookmarks/BookmarksPanel';
 import { Virtuoso } from 'react-virtuoso';
 import UserProfile from '../user/UserProfile';
 import { useUserProfileModal } from '../../hooks/business/ui/useUserProfileModal';
@@ -100,7 +101,7 @@ const Channel: React.FC<ChannelProps> = ({
   const [skipSigning, setSkipSigning] = useState<boolean>(false);
 
   // Unified panel state - ensures only one panel can be open at a time
-  type ActivePanel = 'pinned' | 'notifications' | 'search' | null;
+  type ActivePanel = 'pinned' | 'notifications' | 'bookmarks' | 'search' | null;
   const [activePanel, setActivePanel] = useState<ActivePanel>(null);
 
   const [isDeletionInProgress, setIsDeletionInProgress] = useState(false);
@@ -160,6 +161,9 @@ const Channel: React.FC<ChannelProps> = ({
 
   // Get pinned messages
   const { pinnedCount } = usePinnedMessages(spaceId, channelId, channel);
+
+  // Get current user address for bookmarks
+  const userAddress = user?.currentPasskeyInfo?.address || '';
 
   // Get last read timestamp for mention highlighting - using React Query
   const conversationId = `${spaceId}/${channelId}`;
@@ -887,6 +891,31 @@ const Channel: React.FC<ChannelProps> = ({
                 />
               </div>
 
+              {/* Bookmarks */}
+              <div className="relative">
+                <Tooltip
+                  id={`bookmarks-${channelId}`}
+                  content={t`Bookmarks`}
+                  showOnTouch={false}
+                >
+                  <Button
+                    type="unstyled"
+                    onClick={() => setActivePanel('bookmarks')}
+                    className="header-icon-button"
+                    iconName="bookmark"
+                    iconSize={headerIconSize}
+                    iconOnly
+                  />
+                </Tooltip>
+
+                {/* Bookmarks Panel */}
+                <BookmarksPanel
+                  isOpen={activePanel === 'bookmarks'}
+                  onClose={() => setActivePanel(null)}
+                  userAddress={userAddress}
+                />
+              </div>
+
               <Tooltip
                 id={`members-list-${channelId}`}
                 content={t`Members List`}
@@ -1004,6 +1033,7 @@ const Channel: React.FC<ChannelProps> = ({
                   fetchNextPage();
                 }}
                 hasNextPage={hasNextPage}
+                spaceName={space?.spaceName}
               />
             </div>
 

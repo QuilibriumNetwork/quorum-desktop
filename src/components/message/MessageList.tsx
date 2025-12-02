@@ -51,6 +51,7 @@ interface MessageListProps {
   channel?: Channel;
   customEmoji?: Emoji[];
   isRepudiable?: boolean;
+  spaceName?: string;
   roles: Role[];
   kickUserAddress?: string;
   setKickUserAddress?: React.Dispatch<React.SetStateAction<string | undefined>>;
@@ -121,6 +122,7 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
       scrollToMessageId,
       newMessagesSeparator,
       onDismissSeparator,
+      spaceName,
     } = props;
 
     const [width, height] = useWindowSize();
@@ -262,6 +264,7 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
               onChannelClick={onChannelClick}
               spaceChannels={spaceChannels}
               lastReadTimestamp={lastReadTimestamp}
+              spaceName={spaceName}
             />
           </React.Fragment>
         );

@@ -1,0 +1,148 @@
+@use '../../styles/dropdown-result-item';
+@use '@/styles/variables' as *;
+
+// Bookmarks panel specific styling
+.bookmarks-panel {
+  // z-index inherited from DropdownPanel (10001) - no override needed
+  // Title font size inherited from DropdownPanel ($text-sm)
+
+  .bookmarks-panel__controls {
+    padding: $s-3;
+    border-bottom: 1px solid var(--surface-3);
+  }
+}
+
+// Use shared list styling with zero horizontal padding for full-width borders
+.bookmarks-list {
+  @extend .dropdown-results-list;
+  padding: 0 0 $s-4 0 !important; // Override to ensure zero horizontal padding
+}
+
+// Use shared item styling with bookmark-specific class name
+.bookmark-item {
+  @extend .dropdown-result-item;
+  cursor: default; // Override cursor - only show pointer on specific interactive elements
+
+  &:hover {
+    background-color: var(--surface-2);
+  }
+}
+
+// Use shared header styling with bookmark-specific class names
+// Custom margin and padding to make room for .result-source
+.bookmarks-panel .result-header,
+.mobile-drawer .bookmark-item .result-header {
+  @extend .dropdown-result-header;
+  margin-bottom: $s-2;
+  padding-bottom: $s-1;
+
+  // Responsive layout for both desktop and mobile contexts
+  .result-meta-container {
+    align-items: center; // Center items vertically with action buttons
+    flex-wrap: wrap; // Allow wrapping when content doesn't fit
+    gap: $s-1; // Add gap between wrapped items
+  }
+
+  // Mobile: remove flex properties to allow stacking
+  @media (max-width: 639px) {
+    display: block;
+    padding-bottom: $s-2;
+  }
+}
+
+.result-meta {
+  @extend .dropdown-result-meta;
+}
+
+.result-content {
+  @extend .dropdown-result-content;
+}
+
+// Result source styling for both desktop (bookmarks-panel) and mobile (mobile-drawer) contexts
+.bookmarks-panel .result-source,
+.mobile-drawer .bookmark-item .result-source {
+  padding: 0 $s-4 $s-2 0;
+
+  .source-icon {
+    @extend .dropdown-result-user-icon;
+    margin-right: $s-1-5; // 6px - Visual spacing match
+  }
+
+  .source-name {
+    @extend .dropdown-result-sender;
+  }
+}
+
+// Used styles
+.result-sender {
+  @extend .dropdown-result-sender;
+}
+
+.result-date {
+  @extend .dropdown-result-date;
+}
+
+.result-user-icon {
+  @extend .dropdown-result-user-icon;
+}
+
+.result-date-icon {
+  @extend .dropdown-result-date-icon;
+}
+
+// Bookmark-specific action styling
+.message-actions {
+  @extend .dropdown-result-actions;
+}
+
+
+// Message preview styling
+.message-preview {
+  font-size: $text-sm;
+  line-height: 1.4;
+  color: var(--surface-11);
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+// Use shared empty state styling
+.bookmark-empty-state {
+  @extend .dropdown-empty-state;
+}
+
+.bookmark-loading-state {
+  @extend .dropdown-loading-state;
+}
+
+.empty-icon {
+  @extend .dropdown-empty-icon;
+}
+
+.loading-icon {
+  @extend .dropdown-loading-icon;
+}
+
+.empty-message {
+  @extend .dropdown-empty-message;
+}
+
+.loading-message {
+  @extend .dropdown-loading-message;
+}
+
+.empty-hint {
+  @extend .dropdown-empty-hint;
+}
+
+// Mobile-specific action button alignment when wrapped
+.mobile-drawer__item-box {
+  .bookmark-item {
+    .result-meta-container {
+      // When items wrap in mobile context, actions should align to the left
+      .message-actions {
+        justify-content: flex-start; // Align left instead of right when wrapped
+      }
+    }
+  }
+}

@@ -4,7 +4,7 @@
 > **Reviewed by**: feature-analyzer agent
 > **Soft-review by human.**
 
-**Status**: Pending
+**Status**: Phase 5 Complete (Header Integration) - Ready for Phase 6 (Cross-Context Navigation)
 **Complexity**: High
 **Created**: 2025-11-24
 **Related**:
@@ -68,6 +68,50 @@ DirectMessage Header:
 | **Sync** | Via space sync | Via user data sync (`allowSync`) |
 
 ---
+
+## Implementation Status
+
+### Completed Phases (1-4)
+
+✅ **Phase 1: Data Layer** - COMPLETE
+- Added `Bookmark` type to `src/api/quorumApi.ts` (integrated with existing API types)
+- Added `bookmarks` object store to `src/db/messages.ts` (not separate file)
+- Implemented CRUD operations in MessageDB class
+- Used `crypto.randomUUID()` for bookmark ID generation
+- Schema: bookmarkId (keyPath), messageId index, createdAt index
+
+✅ **Phase 2: Business Logic Hook** - COMPLETE
+- Created `src/hooks/business/bookmarks/useBookmarks.ts` with React Query integration
+- Created React Query hooks in `src/hooks/queries/bookmarks/`
+- Added export to `src/hooks/business/index.ts` (critical for mobile drawer)
+- Implemented optimistic updates and race condition prevention
+- O(1) bookmark status checking via memoized Set
+
+✅ **Phase 3: UI Components** - COMPLETE
+- Created `src/components/bookmarks/BookmarksPanel.tsx` with DropdownPanel
+- Created `src/components/bookmarks/BookmarkItem.tsx` with jump/remove actions
+- **Simplified filtering**: Used single Select component (like NotificationPanel) instead of tabs + dropdown
+- Integrated Virtuoso for performance with large bookmark lists
+- Added responsive mobile drawer support
+
+✅ **Phase 4: Message Action Integration** - COMPLETE
+- Added bookmark actions to `src/components/message/MessageActions.tsx` (desktop hover)
+- Added bookmark actions to `src/components/message/MessageActionsDrawer.tsx` (mobile)
+- Updated `src/components/message/Message.tsx` with bookmark context detection
+- Fixed `src/components/context/MobileProvider.tsx` to pass bookmark props
+- **Added bookmark-off icon**: Updated Icon component mapping and TypeScript types
+- **Icon pattern**: outline for actions (bookmark/bookmark-off), filled for message headers
+- **Position**: After "Copy message", before separator (as planned)
+
+### Key Implementation Differences from Original Plan
+
+1. **Integrated vs Separate Files**: Put bookmark CRUD in existing `MessageDB` class rather than separate `src/db/bookmarks.ts`
+2. **React Query Integration**: Added dedicated query hooks in `src/hooks/queries/bookmarks/`
+3. **Simplified Filtering**: Used NotificationPanel's single Select pattern instead of custom tabs + dropdown
+4. **Icon System**: Added `bookmark-off` icon to primitives Icon component for consistent remove actions
+5. **Visual Indicators**: Added filled bookmark icon in message headers when message is bookmarked (positioned between username and timestamp, after pin indicator)
+6. **Export Fix**: Added bookmarks export to business hooks index (required for mobile drawer)
+7. **Icon Consistency**: Used outline icons for actions (bookmark/bookmark-off) and filled icons for status indicators
 
 ## Implementation
 
@@ -525,104 +569,134 @@ const { isBookmarked, toggleBookmark } = useBookmarks(userAddress);
 
 ---
 
-### Phase 5: Header Integration
+✅ **Phase 5: Header Integration** - COMPLETE
 
-> **Architecture Note**: Since bookmarks are GLOBAL (across all spaces and DMs), the panel shows the same data regardless of where it's opened. To avoid multiple panel instances, use a **singleton pattern via React Context** or **Portal to a single mount point**. Alternatively, manage open state at app level to ensure only one panel is open at a time.
+> **Architecture Note**: Used local state management with mutual exclusion pattern (existing panel pattern) instead of singleton context. Each header manages its own panel state but only one panel can be open at a time via the `activePanel` state pattern.
 
-**Files to modify**:
-- `src/components/space/Channel.tsx` - Add bookmark icon after search icon
-- `src/components/direct/DirectMessage.tsx` - Add bookmark icon after gear icon
-- Consider: `src/components/context/BookmarksContext.tsx` (NEW) - For singleton panel state
+**Files Modified**:
+- `src/components/space/Channel.tsx` - Added bookmark icon in controls section
+- `src/components/direct/DirectMessage.tsx` - Added bookmark icon in controls section
 
-**Channel Header Changes**:
+**Implementation Details**:
+
+**Channel Header Integration**:
 ```typescript
-// After search icon (last position)
+// Added to existing controls section after notifications and members
+<div className="relative">
+  <Tooltip
+    id="channel-bookmarks"
+    content={t`Bookmarks`}
+    showOnTouch={false}
+  >
+    <Button
+      type="unstyled"
+      onClick={() => setActivePanel('bookmarks')}
+      className="header-icon-button"
+      iconName="bookmark"
+      iconSize={headerIconSize}
+      iconOnly
+    />
+  </Tooltip>
 
-{/* Separator before bookmark */}
-<div className="w-2 mr-2 text-center flex flex-col border-r border-r-1 border-surface-5" />
-
-{/* Bookmark icon - no badge */}
-<Tooltip content={t`Bookmarks`}>
-  <Button
-    ref={bookmarkButtonRef}
-    icon="bookmark"
-    onClick={() => setIsBookmarksPanelOpen(true)}
+  <BookmarksPanel
+    isOpen={activePanel === 'bookmarks'}
+    onClose={() => setActivePanel(null)}
+    userAddress={userAddress}
   />
-</Tooltip>
-
-<BookmarksPanel
-  isOpen={isBookmarksPanelOpen}
-  onClose={() => setIsBookmarksPanelOpen(false)}
-  anchorRef={bookmarkButtonRef}
-/>
+</div>
 ```
 
-**DirectMessage Header Changes**:
+**DirectMessage Header Integration**:
 ```typescript
-// After gear/settings icon (last position)
+// Added to controls section between members and search
+<div className="relative">
+  <Tooltip
+    id="dm-bookmarks"
+    content={t`Bookmarks`}
+    showOnTouch={false}
+  >
+    <Button
+      type="unstyled"
+      onClick={() => setActivePanel('bookmarks')}
+      className="header-icon-button"
+      iconName="bookmark"
+      iconSize={headerIconSize}
+      iconOnly
+    />
+  </Tooltip>
 
-{/* Separator before bookmark */}
-<div className="w-2 mr-2 text-center flex flex-col border-r border-r-1 border-surface-5" />
-
-{/* Bookmark icon - no badge */}
-<Tooltip content={t`Bookmarks`}>
-  <Button
-    ref={bookmarkButtonRef}
-    icon="bookmark"
-    onClick={() => setIsBookmarksPanelOpen(true)}
+  <BookmarksPanel
+    isOpen={activePanel === 'bookmarks'}
+    onClose={() => setActivePanel(null)}
+    userAddress={userAddress}
   />
-</Tooltip>
-
-<BookmarksPanel
-  isOpen={isBookmarksPanelOpen}
-  onClose={() => setIsBookmarksPanelOpen(false)}
-  anchorRef={bookmarkButtonRef}
-/>
+</div>
 ```
+
+**Key Changes from Original Design**:
+- **No visual separators** - Integrated into existing control button groups
+- **No anchorRef** - Used DropdownPanel's relative positioning with `position="absolute"` and `positionStyle="right-aligned"`
+- **No BookmarksContext** - Used existing `activePanel` state pattern for mutual exclusion
+- **Fixed user address access** - Used `user?.currentPasskeyInfo?.address` instead of `user?.userAddress`
+- **Panel positioning** - Added proper positioning props to prevent off-screen issues
+- **Mobile integration** - Works with existing MobileDrawer pattern for responsive behavior
+
+**Additional Fixes During Implementation**:
+- Added Message.tsx conversationId detection for DM bookmark classification (`spaceId === channelId` pattern)
+- Fixed DM filtering by properly detecting DMs in `/messages/` routes
+- Updated sourceName logic to handle both `/dm/` and `/messages/` DM routes
 
 ---
 
-### Phase 6: Cross-Context Navigation
+### Phase 6: Cross-Context Navigation & UI Polish
 
-**Files to reference**:
-- `src/hooks/business/messages/useMessageHighlight.ts`
+**Files Modified**:
+- `src/components/bookmarks/BookmarksPanel.tsx`
+- `src/components/bookmarks/BookmarkItem.tsx`
+- `src/components/bookmarks/BookmarksPanel.scss`
+- `src/components/message/Message.tsx`
+- `src/components/message/MessageList.tsx`
+- `src/components/space/Channel.tsx`
+- `src/styles/_dropdown-result-item.scss`
 
-**Navigation Logic** (with proper timing for cross-context navigation):
+**✅ Implemented Cross-Context Navigation**:
 ```typescript
-const navigateToBookmark = async (bookmark: Bookmark) => {
-  // 1. Close bookmarks panel first
+const handleJumpToMessage = useCallback((bookmark: Bookmark) => {
+  // Close the panel first
   onClose();
 
-  // 2. Determine if cross-context navigation needed
-  const needsNavigation = bookmark.sourceType === 'channel'
-    ? (currentSpaceId !== bookmark.spaceId || currentChannelId !== bookmark.channelId)
-    : (currentConversationId !== bookmark.conversationId);
-
-  if (needsNavigation) {
-    // 3a. Cross-context: Use URL hash - let destination component handle highlight
-    // This is more reliable than setTimeout
-    if (bookmark.sourceType === 'channel') {
-      navigate(`/spaces/${bookmark.spaceId}/channels/${bookmark.channelId}#msg-${bookmark.messageId}`);
-    } else {
-      navigate(`/dm/${bookmark.conversationId}#msg-${bookmark.messageId}`);
-    }
-    // Destination Channel/DirectMessage component reads hash and highlights on mount
+  // Navigate to the bookmarked message with hash for highlighting
+  if (bookmark.sourceType === 'channel') {
+    navigate(`/spaces/${bookmark.spaceId}/${bookmark.channelId}#msg-${bookmark.messageId}`);
   } else {
-    // 3b. Same context: Highlight immediately
-    highlightMessage(bookmark.messageId, {
-      duration: 3000,
-      variant: 'default',
-      scrollBehavior: 'smooth',
-      scrollBlock: 'center',
-    });
+    // For DMs: extract address from conversationId (format: "address/address")
+    const dmAddress = bookmark.conversationId?.split('/')[0];
+    navigate(`/messages/${dmAddress}#msg-${bookmark.messageId}`);
   }
-};
+
+  // Enhanced timing pattern matching pinned messages: 100ms delay + 2000ms highlight
+  setTimeout(() => {
+    scrollToMessage(bookmark.messageId);
+    highlightMessage(bookmark.messageId, { duration: 2000 });
+  }, 100);
+}, [navigate, onClose, scrollToMessage, highlightMessage]);
 ```
 
-**Edge Cases to Handle**:
-- [ ] Original message was deleted → Show "Message no longer available" in panel
-- [ ] User no longer has access to space → Show "Space no longer accessible"
-- [ ] Message in archived channel → Navigate anyway (if accessible)
+**✅ Enhanced Space Name Display**:
+- Added `spaceName` prop through component chain: `Channel.tsx` → `MessageList.tsx` → `Message.tsx`
+- Updated `sourceName` generation to show "SpaceName > ChannelName" format for channels
+- DMs continue to show no source info (empty string)
+
+**✅ Fixed BookmarkItem UI Issues**:
+- Reduced excessive left padding from `.result-source` class
+- Fixed icon mapping errors (`hash` → `hashtag`, `message-circle` → removed)
+- Standardized styling between username+date and space/channel lines using `@extend .dropdown-result-sender`
+- Properly scoped CSS overrides to `.bookmarks-panel` to avoid affecting other panels
+
+**✅ CSS Architecture Improvements**:
+- Fixed base `.dropdown-result-sender` color to `var(--color-text-subtle)` for consistency
+- Used `@extend` pattern for maintainable shared styling
+- Added proper CSS scoping to prevent global side effects
 
 ---
 
@@ -811,21 +885,21 @@ useQuery({
 
 ## Definition of Done
 
-- [ ] Data layer complete (bookmarks store, types, CRUD, indices)
-- [ ] `useBookmarks` hook with all operations and memoized Set
-- [ ] `BookmarksPanel` with Virtuoso and filters
-- [ ] `BookmarkItem` with preview, navigation, remove
-- [ ] Message action integration (bookmark button on hover)
-- [ ] Channel header integration (last position)
-- [ ] DirectMessage header integration (last position)
+- [x] Data layer complete (bookmarks store, types, CRUD, indices)
+- [x] `useBookmarks` hook with all operations and memoized Set
+- [x] `BookmarksPanel` with Virtuoso and filters
+- [x] `BookmarkItem` with preview, navigation, remove
+- [x] Message action integration (bookmark button on hover)
+- [x] Channel header integration (added to controls section)
+- [x] DirectMessage header integration (added to controls section)
 - [ ] Cross-context navigation working
 - [ ] Sync integration when `allowSync` is enabled
-- [ ] TypeScript passes
-- [ ] Manual testing on desktop
-- [ ] Manual testing on mobile/touch devices
+- [x] TypeScript passes
+- [x] Manual testing on desktop
+- [x] Manual testing on mobile/touch devices
 - [ ] Performance testing with 100+ bookmarks
 - [ ] Edge cases handled (deleted messages, left spaces)
-- [ ] No console errors
+- [x] No console errors
 
 ---
 
@@ -857,6 +931,35 @@ useQuery({
 
 ---
 
+## Files Actually Created/Modified (Phase 1-4)
+
+### New Files Created:
+- `src/hooks/business/bookmarks/useBookmarks.ts` - Main business logic hook
+- `src/hooks/business/bookmarks/index.ts` - Export file
+- `src/hooks/queries/bookmarks/buildBookmarksKey.ts` - React Query key builder
+- `src/hooks/queries/bookmarks/buildBookmarksFetcher.ts` - React Query fetcher
+- `src/hooks/queries/bookmarks/useBookmarks.ts` - React Query hook
+- `src/hooks/queries/bookmarks/useInvalidateBookmarks.ts` - Cache invalidation
+- `src/components/bookmarks/BookmarksPanel.tsx` - Main panel component
+- `src/components/bookmarks/BookmarkItem.tsx` - Individual bookmark item
+- `src/components/bookmarks/BookmarksPanel.scss` - Panel styling
+- `src/components/bookmarks/index.ts` - Export file
+
+### Files Modified:
+- `src/api/quorumApi.ts` - Added Bookmark type and BOOKMARKS_CONFIG
+- `src/db/messages.ts` - Added bookmarks store and CRUD operations (v3→v4)
+- `src/hooks/business/index.ts` - Added bookmarks export (critical fix)
+- `src/components/message/MessageActions.tsx` - Added bookmark action button
+- `src/components/message/MessageActionsDrawer.tsx` - Added bookmark action in mobile drawer
+- `src/components/message/Message.tsx` - Added bookmark context and props passing
+- `src/components/context/MobileProvider.tsx` - Added bookmark props to drawer rendering
+- `src/components/primitives/Icon/iconMapping.ts` - Added bookmark-off mapping
+- `src/components/primitives/Icon/types.ts` - Added bookmark-off to IconName type
+- `src/components/space/Channel.tsx` - Added bookmark icon in header controls (Phase 5)
+- `src/components/direct/DirectMessage.tsx` - Added bookmark icon in header controls (Phase 5)
+
+---
+
 ## Design Decisions (Finalized)
 
 | Decision | Answer |
@@ -864,11 +967,11 @@ useQuery({
 | **Visual separator** | YES - `\|` separator before bookmark icon in headers |
 | **Bookmark limit** | Max 200 bookmarks per user |
 | **Badge on icon** | NO - no count badge on header icon |
-| **Visual indicator on messages** | NO - only action in MessageActions/Drawer |
+| **Visual indicator on messages** | YES - filled bookmark icon in message headers (between username and timestamp) |
 | **Position in MessageActions** | After "Copy message", before the `\|` separator |
 | **Position in MessageActionsDrawer** | After "Copy message", before "Edit message" |
 
 ---
 
 _Created: 2025-11-24_
-_Updated: 2025-11-24_
+_Updated: 2025-12-01 - Phase 5 complete, header integration and DM filtering fixes completed_

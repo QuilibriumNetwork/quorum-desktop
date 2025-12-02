@@ -44,6 +44,7 @@ import {
   Text,
   Tooltip,
 } from '../primitives';
+import { BookmarksPanel } from '../bookmarks/BookmarksPanel';
 
 const DirectMessage: React.FC<{}> = () => {
   const { isMobile, isTablet, isDesktop, toggleLeftSidebar, navMenuOpen, toggleNavMenu } =
@@ -52,7 +53,7 @@ const DirectMessage: React.FC<{}> = () => {
   const { openConversationSettings } = useModalContext();
 
   // Unified panel state for search - ensures only search panel can be open
-  type ActivePanel = 'search' | null;
+  type ActivePanel = 'search' | 'bookmarks' | null;
   const [activePanel, setActivePanel] = useState<ActivePanel>(null);
   const user = usePasskeysContext();
   const queryClient = useQueryClient();
@@ -97,6 +98,9 @@ const DirectMessage: React.FC<{}> = () => {
     spaceId: address!,
     channelId: address!,
   });
+
+  // Get current user address for bookmarks
+  const userAddress = user?.currentPasskeyInfo?.address || '';
 
   // Refs for tracking visible message timestamps (for read-time updates)
   const latestTimestampRef = useRef<number>(0);
@@ -668,6 +672,31 @@ const DirectMessage: React.FC<{}> = () => {
                   iconOnly
                 />
               </Tooltip>
+
+              {/* Bookmarks */}
+              <div className="relative">
+                <Tooltip
+                  id="dm-bookmarks"
+                  content={t`Bookmarks`}
+                  showOnTouch={false}
+                >
+                  <Button
+                    type="unstyled"
+                    onClick={() => setActivePanel('bookmarks')}
+                    className="header-icon-button"
+                    iconName="bookmark"
+                    iconSize={headerIconSize}
+                    iconOnly
+                  />
+                </Tooltip>
+
+                {/* Bookmarks Panel */}
+                <BookmarksPanel
+                  isOpen={activePanel === 'bookmarks'}
+                  onClose={() => setActivePanel(null)}
+                  userAddress={userAddress}
+                />
+              </div>
 
               {/* Search: Touch devices always show icon, non-touch devices show inline search */}
               {isTouchDevice() ? (

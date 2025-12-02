@@ -69,25 +69,25 @@ const PinnedMessageItem: React.FC<PinnedMessageItemProps> = ({
     >
       <Container className="result-header">
         <FlexBetween className="result-meta-container">
-          <FlexRow className="result-meta items-center min-w-0">
+          <FlexRow className="result-meta items-center min-w-0 flex-1 mr-2">
             <Icon name="user" className="result-user-icon flex-shrink-0" />
-            <Text className="result-sender mr-4 truncate-user-name flex-shrink min-w-0">
+            <Text className="result-sender mr-2 truncate flex-shrink min-w-0">
               {sender?.displayName || t`Unknown User`}
             </Text>
-            <Icon name="calendar-alt" className="result-date-icon flex-shrink-0" />
-            <Text className="result-date flex-shrink-0 whitespace-nowrap">
+            <Icon name="calendar-alt" className="result-date-icon flex-shrink-0 ml-1" />
+            <Text className="result-date flex-shrink-0 whitespace-nowrap ml-1">
               {formatMessageDate(message.createdDate)}
             </Text>
           </FlexRow>
           <FlexRow
-            className={`message-actions items-center${isTouchDevice() ? ' always-visible' : ''}`}
+            className={`message-actions items-center flex-shrink-0${isTouchDevice() ? ' always-visible' : ''}`}
           >
             <Button
               type="secondary"
               onClick={() => onJumpToMessage(message.messageId)}
               iconName="arrow-right"
               size="small"
-              className="gap-1 mr-2"
+              className="gap-1"
             >
               {t`Jump`}
             </Button>
@@ -103,8 +103,9 @@ const PinnedMessageItem: React.FC<PinnedMessageItemProps> = ({
                   onClick={(e: React.MouseEvent) => togglePin(e, message)}
                   iconName="pin-off"
                   iconOnly={true}
+                  iconSize="lg"
                   size="small"
-                  className="text-danger"
+                  className="text-danger flex items-center justify-center"
                 />
               </Tooltip>
             )}

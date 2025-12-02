@@ -5,6 +5,7 @@ import { useConfirmationModal } from '../../../components/context/ConfirmationMo
 import MessagePreview from '../../../components/message/MessagePreview';
 import { extractMessageRawText } from '../../../utils/clipboard';
 import { useCopyToClipboard } from '../ui';
+import { useBookmarks } from '../bookmarks';
 import { t } from '@lingui/core/macro';
 
 interface UseMessageActionsOptions {
@@ -24,6 +25,11 @@ interface UseMessageActionsOptions {
   spaceRoles?: Role[];
   spaceChannels?: Channel[];
   onChannelClick?: (channelId: string) => void;
+  // Bookmark context for creating bookmarks
+  spaceId?: string;
+  channelId?: string;
+  conversationId?: string;
+  sourceName?: string;
 }
 
 export function useMessageActions(options: UseMessageActionsOptions) {
@@ -44,6 +50,11 @@ export function useMessageActions(options: UseMessageActionsOptions) {
     spaceRoles,
     spaceChannels,
     onChannelClick,
+    // Bookmark context
+    spaceId,
+    channelId,
+    conversationId,
+    sourceName,
   } = options;
 
   // State for copied link feedback
@@ -54,6 +65,9 @@ export function useMessageActions(options: UseMessageActionsOptions) {
 
   // Get confirmation modal from context
   const { showConfirmationModal } = useConfirmationModal();
+
+  // Bookmarks hook for bookmark functionality
+  const bookmarks = useBookmarks({ userAddress });
 
   // Calculate if user can delete this message
   // canDeleteMessages already contains all permission logic including space owner privileges
@@ -178,6 +192,39 @@ export function useMessageActions(options: UseMessageActionsOptions) {
     }
   }, [canViewEditHistory, message, onViewEditHistory]);
 
+  // Handle bookmark toggle action
+  const handleBookmarkToggle = useCallback(() => {
+    // Determine source type and context
+    const sourceType = conversationId ? 'dm' : 'channel';
+    const context = {
+      spaceId,
+      channelId,
+      conversationId,
+    };
+
+
+    // Get sender name for bookmark preview
+    const senderName = mapSenderToUser ?
+      mapSenderToUser(message.content.senderId)?.displayName || 'Unknown User' :
+      'Unknown User';
+
+    // Use provided sourceName or derive it
+    const bookmarkSourceName = sourceName ||
+      (sourceType === 'dm' ? 'Direct Message' : `#${channelId || 'unknown'}`);
+
+    bookmarks.toggleBookmark(
+      message,
+      sourceType,
+      context,
+      senderName,
+      bookmarkSourceName
+    );
+  }, [message, bookmarks, conversationId, spaceId, channelId, mapSenderToUser, sourceName]);
+
+  // Get bookmark status for this message
+  const isBookmarked = bookmarks.isBookmarked(message.messageId);
+  const isBookmarkPending = bookmarks.isPending(message.messageId);
+
   return {
     // State
     copiedLinkId,
@@ -185,6 +232,11 @@ export function useMessageActions(options: UseMessageActionsOptions) {
     canUserDelete,
     canUserEdit,
     canViewEditHistory,
+
+    // Bookmark state
+    isBookmarked,
+    isBookmarkPending,
+    canAddBookmark: bookmarks.canAddBookmark,
 
     // Actions
     handleReaction,
@@ -195,5 +247,6 @@ export function useMessageActions(options: UseMessageActionsOptions) {
     handleMoreReactions,
     handleEdit,
     handleViewEditHistory,
+    handleBookmarkToggle,
   };
 }

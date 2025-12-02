@@ -109,6 +109,7 @@ type MessageProps = {
   spaceChannels?: Channel[];
   lastReadTimestamp?: number;
   spaceRoles?: Role[];
+  spaceName?: string;
 };
 
 export const Message = React.memo(
@@ -142,6 +143,7 @@ export const Message = React.memo(
     spaceChannels = [],
     lastReadTimestamp = 0,
     spaceRoles = [],
+    spaceName,
   }: MessageProps) => {
     const user = usePasskeysContext();
     const { spaceId } = useParams();
@@ -182,6 +184,38 @@ export const Message = React.memo(
       spaceRoles,
       spaceChannels,
       onChannelClick,
+      // Bookmark context - determine from URL and message data
+      spaceId: spaceId || message.spaceId,
+      channelId: channel?.channelId || message.channelId,
+      conversationId: (() => {
+        // DM detection: either /dm/ route OR /messages/ with same spaceId/channelId
+        const isDMRoute = location.pathname.includes('/dm/');
+        const isDMMessages = location.pathname.includes('/messages/') &&
+                             message.spaceId === message.channelId;
+
+        if (isDMRoute) {
+          return location.pathname.split('/dm/')[1]?.split('#')[0];
+        } else if (isDMMessages) {
+          // Use spaceId/spaceId format to match system expectations
+          return `${message.spaceId}/${message.spaceId}`;
+        }
+
+        return undefined;
+      })(),
+      sourceName: (() => {
+        // For DMs, return empty string (no source info shown)
+        if (location.pathname.includes('/dm/') ||
+            (location.pathname.includes('/messages/') && message.spaceId === message.channelId)) {
+          return '';
+        }
+
+        // For channels, include space name if available
+        if (channel?.channelName) {
+          return spaceName ? `${spaceName} > ${channel.channelName}` : channel.channelName;
+        }
+
+        return 'Unknown';
+      })(),
     });
 
     // Emoji picker business logic
@@ -204,8 +238,8 @@ export const Message = React.memo(
         // For touch devices, always show confirmation (shiftKey = false)
         // This ensures mobile/touch users always get confirmation modals
         openMobileActionsDrawer({
-          ...config,
           ...buildDrawerConfig(),
+          ...config,
         });
       },
       onEmojiPickerUserProfileClick: emojiPicker.handleUserProfileClick,
@@ -317,32 +351,37 @@ export const Message = React.memo(
     // Shared drawer configuration builder to avoid duplication
     const buildDrawerConfig = useCallback(
       () => ({
-        message,
-        onReply: messageActions.handleReply,
-        onCopyLink: messageActions.handleCopyLink,
-        onCopyMessageText: messageActions.handleCopyMessageText,
-        onDelete: messageActions.canUserDelete
-          ? () =>
-              messageActions.handleDelete({
-                shiftKey: false,
-              } as React.MouseEvent)
-          : undefined,
-        onPin: pinnedMessages.canPinMessages
-          ? () =>
-              pinnedMessages.togglePin(
-                { shiftKey: false } as React.MouseEvent,
-                message
-              )
-          : undefined,
-        onReaction: messageActions.handleReaction,
-        onMoreReactions: handleMoreReactions,
-        onEdit: messageActions.canUserEdit ? messageActions.handleEdit : undefined,
-        onViewEditHistory: messageActions.canViewEditHistory ? messageActions.handleViewEditHistory : undefined,
-        canDelete: messageActions.canUserDelete,
-        canEdit: messageActions.canUserEdit,
-        canViewEditHistory: messageActions.canViewEditHistory,
-        canPinMessages: pinnedMessages.canPinMessages,
-        userAddress: user.currentPasskeyInfo!.address,
+          message,
+          onReply: messageActions.handleReply,
+          onCopyLink: messageActions.handleCopyLink,
+          onCopyMessageText: messageActions.handleCopyMessageText,
+          onDelete: messageActions.canUserDelete
+            ? () =>
+                messageActions.handleDelete({
+                  shiftKey: false,
+                } as React.MouseEvent)
+            : undefined,
+          onPin: pinnedMessages.canPinMessages
+            ? () =>
+                pinnedMessages.togglePin(
+                  { shiftKey: false } as React.MouseEvent,
+                  message
+                )
+            : undefined,
+          onReaction: messageActions.handleReaction,
+          onMoreReactions: handleMoreReactions,
+          onEdit: messageActions.canUserEdit ? messageActions.handleEdit : undefined,
+          onViewEditHistory: messageActions.canViewEditHistory ? messageActions.handleViewEditHistory : undefined,
+          canDelete: messageActions.canUserDelete,
+          canEdit: messageActions.canUserEdit,
+          canViewEditHistory: messageActions.canViewEditHistory,
+          canPinMessages: pinnedMessages.canPinMessages,
+          userAddress: user.currentPasskeyInfo!.address,
+          // Bookmark functionality
+          isBookmarked: messageActions.isBookmarked,
+          isBookmarkPending: messageActions.isBookmarkPending,
+          canAddBookmark: messageActions.canAddBookmark,
+          onBookmarkToggle: messageActions.handleBookmarkToggle,
       }),
       [message, messageActions, pinnedMessages, user, handleMoreReactions]
     );
@@ -546,6 +585,11 @@ export const Message = React.memo(
                   canViewEditHistory={messageActions.canViewEditHistory}
                   copiedLinkId={messageActions.copiedLinkId}
                   copiedMessageText={messageActions.copiedMessageText}
+                  // Bookmark props
+                  isBookmarked={messageActions.isBookmarked}
+                  isBookmarkPending={messageActions.isBookmarkPending}
+                  canAddBookmark={messageActions.canAddBookmark}
+                  onBookmarkToggle={messageActions.handleBookmarkToggle}
                 />
               )}
 
@@ -624,6 +668,21 @@ export const Message = React.memo(
                     />
                   </Tooltip>
                 )}
+                {messageActions.isBookmarked && (
+                  <Tooltip
+                    id={`bookmark-indicator-${message.messageId}`}
+                    content={t`Bookmarked`}
+                    showOnTouch={true}
+                    autoHideAfter={3000}
+                  >
+                    <Icon
+                      name="bookmark"
+                      size="sm"
+                      variant="filled"
+                      className="ml-2 text-accent"
+                    />
+                  </Tooltip>
+                )}
                 <Text className="pl-2">
                   {!message.signature && (
                     <Tooltip
@@ -681,6 +740,21 @@ export const Message = React.memo(
                     >
                       <Icon
                         name="pin"
+                        size="sm"
+                        variant="filled"
+                        className="ml-2 text-accent"
+                      />
+                    </Tooltip>
+                  )}
+                  {messageActions.isBookmarked && (
+                    <Tooltip
+                      id={`bookmark-indicator-mobile-${message.messageId}`}
+                      content={t`Bookmarked`}
+                      showOnTouch={true}
+                      autoHideAfter={3000}
+                    >
+                      <Icon
+                        name="bookmark"
                         size="sm"
                         variant="filled"
                         className="ml-2 text-accent"
