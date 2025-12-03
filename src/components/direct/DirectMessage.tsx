@@ -772,7 +772,6 @@ const DirectMessage: React.FC<{}> = () => {
             >
               <MessageList
                 ref={messageListRef}
-                isRepudiable={!nonRepudiable}
                 roles={[]}
                 canDeleteMessages={canDeleteMessages}
                 editor={composer.editor}

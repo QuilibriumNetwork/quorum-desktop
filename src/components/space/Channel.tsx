@@ -1009,7 +1009,6 @@ const Channel: React.FC<ChannelProps> = ({
             >
               <MessageList
                 ref={messageListRef}
-                isRepudiable={space?.isRepudiable}
                 stickers={stickers}
                 roles={roles}
                 canDeleteMessages={canDeleteMessages}

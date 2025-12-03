@@ -50,7 +50,6 @@ interface MessageListProps {
   canPinMessages?: (message: MessageType) => boolean;
   channel?: Channel;
   customEmoji?: Emoji[];
-  isRepudiable?: boolean;
   spaceName?: string;
   roles: Role[];
   kickUserAddress?: string;
@@ -108,7 +107,6 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
       canPinMessages,
       channel,
       customEmoji,
-      isRepudiable,
       roles,
       kickUserAddress,
       setKickUserAddress,
@@ -249,7 +247,6 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
               setHoverTarget={setHoverTarget}
               setInReplyTo={setInReplyTo}
               editorRef={editor.current}
-              repudiability={isRepudiable}
               height={height}
               canEditRoles={isSpaceOwner}
               canDeleteMessages={canDeleteMessages(message)}
@@ -283,7 +280,6 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
         setHoverTarget,
         setInReplyTo,
         editor,
-        isRepudiable,
         height,
         isSpaceOwner,
         canDeleteMessages,

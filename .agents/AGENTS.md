@@ -59,7 +59,8 @@ import { Trans } from '@lingui/react/macro';
 ```bash
 yarn dev              # Start dev server (ask user)
 yarn build            # Build project (you can run)
-yarn lint             # Lint (run on modified files)
+yarn validate         # Type check + lint (run after changes)
+yarn lint             # Lint only
 yarn format           # Format (run on modified files)
 ```
 
@@ -67,8 +68,7 @@ yarn format           # Format (run on modified files)
 ```bash
 # Get current Windows path and run commands
 WINDOWS_PATH=$(pwd | sed 's|^/mnt/\([a-z]\)/|\U\1:/|' | sed 's|/|\\|g')
-cmd.exe /c "cd /d $WINDOWS_PATH && npx tsc --noEmit"
-cmd.exe /c "cd /d $WINDOWS_PATH && yarn lint"
+cmd.exe /c "cd /d $WINDOWS_PATH && yarn validate"
 ```
 
 ## 📦 Package Management
