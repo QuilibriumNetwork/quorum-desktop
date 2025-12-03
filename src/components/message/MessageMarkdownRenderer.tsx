@@ -13,10 +13,8 @@ import {
 import { hasWordBoundaries } from '../../utils/mentionUtils';
 import { createIPFSCIDRegex } from '../../utils/validation';
 import {
-  isYouTubeURL,
   replaceYouTubeURLsInText,
   extractYouTubeVideoId,
-  YOUTUBE_URL_DETECTION_REGEX
 } from '../../utils/youtubeUtils';
 import { getValidInvitePrefixes } from '../../utils/inviteDomain';
 import { getValidMessageLinkPrefixes } from '../../utils/messageLinkUtils';
@@ -110,7 +108,7 @@ const processURLs = (text: string): string => {
   }
 
   // Filter out URLs in protected regions
-  const validUrls = urlMatches.filter(({ index, url }) => {
+  const validUrls = urlMatches.filter(({ index }) => {
     return !protectedRegions.some(r => index >= r.start && index < r.end);
   });
 
@@ -203,7 +201,7 @@ export const MessageMarkdownRenderer: React.FC<MessageMarkdownRendererProps> = (
     const codeBlocks: string[] = [];
 
     // Extract code blocks and replace with placeholders
-    let textWithPlaceholders = text.replace(codeBlockRegex, (match, index) => {
+    let textWithPlaceholders = text.replace(codeBlockRegex, (match) => {
       codeBlocks.push(match);
       return `__CODE_BLOCK_${codeBlocks.length - 1}__`;
     });
@@ -560,7 +558,7 @@ export const MessageMarkdownRenderer: React.FC<MessageMarkdownRendererProps> = (
       } else if (match[3]) {
         // User mention: <<<MENTION_USER:address:inlineDisplayName>>>
         const address = match[3];
-        const inlineDisplayName = match[4]; // Optional inline display name
+        // Note: match[4] contains inline display name but is intentionally ignored for security
         if (mapSenderToUser && onUserClick) {
           const user = mapSenderToUser(address);
           // SECURITY: Only use actual user data - ignore inline display names to prevent impersonation
@@ -598,16 +596,14 @@ export const MessageMarkdownRenderer: React.FC<MessageMarkdownRendererProps> = (
         // Channel mention: <<<MENTION_CHANNEL:channelId:channelName:inlineDisplayName>>>
         const channelId = match[7];
         const channelName = match[8];
-        const inlineDisplayName = match[9]; // Optional inline display name
-        // SECURITY: Only use actual channel data - ignore inline display names to prevent spoofing
-        const displayName = channelName;
+        // Note: match[9] contains inline display name but is intentionally ignored for security
         parts.push(
           <span
             key={`mention-${match.index}`}
             className="message-mentions-channel interactive"
             data-channel-id={channelId}
           >
-            #{displayName}
+            #{channelName}
           </span>
         );
       } else if (match[10] && match[11] && match[12]) {
@@ -666,7 +662,7 @@ export const MessageMarkdownRenderer: React.FC<MessageMarkdownRendererProps> = (
   // Memoize components to prevent re-creation and YouTube component remounting
   const components = useMemo(() => ({
     // Handle text nodes to render mentions safely
-    text: ({ children, ...props }: any) => {
+    text: ({ children }: any) => {
       const text = String(children);
       return <>{processMentionTokens(text)}</>;
     },
@@ -727,7 +723,7 @@ export const MessageMarkdownRenderer: React.FC<MessageMarkdownRendererProps> = (
     },
 
     // Handle images - catch YouTube embeds and invite cards marked with special alt text
-    img: ({ src, alt, ...props }: any) => {
+    img: ({ src, alt }: any) => {
       // Handle YouTube embeds marked with special alt text
       if (alt === 'youtube-embed' && src) {
         return (

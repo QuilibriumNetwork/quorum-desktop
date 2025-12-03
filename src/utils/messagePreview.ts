@@ -49,7 +49,7 @@ export function generateMessagePreview(
     case 'join': // User joined (spaces only)
     case 'leave': // User left (spaces only)
     case 'kick': // User kicked (spaces only)
-      return '';
+      return { text: '' };
 
     // Special case: Deleted message
     case 'remove-message':

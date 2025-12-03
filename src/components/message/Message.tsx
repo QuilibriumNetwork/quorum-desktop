@@ -1,7 +1,6 @@
-import React, { useMemo, useState, useCallback, useRef, useEffect } from 'react';
+import React, { useMemo, useState, useCallback } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
-import { useQueryClient } from '@tanstack/react-query';
 import type {
   Emoji,
   Message as MessageType,
@@ -23,10 +22,8 @@ import {
   Container,
   FlexRow,
   FlexColumn,
-  FlexCenter,
   Icon,
   Tooltip,
-  Button,
 } from '../primitives';
 import { useImageModal } from '../context/ImageModalProvider';
 import './Message.scss';
@@ -46,14 +43,9 @@ import { useMessageHighlight } from '../../hooks/business/messages/useMessageHig
 import { useViewportMentionHighlight } from '../../hooks/business/messages/useViewportMentionHighlight';
 import MessageActions from './MessageActions';
 import { MessageMarkdownRenderer } from './MessageMarkdownRenderer';
-import { getImageConfig } from '../../utils/imageProcessing/config';
 import { isTouchDevice } from '../../utils/platform';
 import { hapticLight } from '../../utils/haptic';
 import { formatMessageDate } from '../../utils';
-import { buildMessagesKey } from '../../hooks/queries/messages/buildMessagesKey';
-import { InfiniteData } from '@tanstack/react-query';
-import { useMessageDB } from '../context/useMessageDB';
-import { DefaultImages } from '../../utils';
 import { useEditHistoryModal } from '../context/EditHistoryModalProvider';
 import { MessageEditTextarea } from './MessageEditTextarea';
 import { ENABLE_MARKDOWN } from '../../config/features';
@@ -90,7 +82,6 @@ type MessageProps = {
   hoverTarget: string | undefined;
   setHoverTarget: React.Dispatch<React.SetStateAction<string | undefined>>;
   setInReplyTo: React.Dispatch<React.SetStateAction<MessageType | undefined>>;
-  repudiability?: boolean;
   editorRef: any;
   height: number;
   submitMessage: (message: any) => Promise<void>;
@@ -132,7 +123,6 @@ export const Message = React.memo(
     hoverTarget,
     setHoverTarget,
     setInReplyTo,
-    repudiability,
     editorRef,
     height,
     submitMessage,
@@ -149,8 +139,6 @@ export const Message = React.memo(
     const { spaceId } = useParams();
     const location = useLocation();
     const navigate = useNavigate();
-    const queryClient = useQueryClient();
-    const { messageDB } = useMessageDB();
     const { openMobileActionsDrawer, openMobileEmojiDrawer } = useMobile();
 
     // Component state that needs to be available to hooks
@@ -1004,10 +992,6 @@ export const Message = React.memo(
                             (contentData.content as any).isLargeGif
                           );
 
-                          // Get the max display width from configuration
-                          const config = getImageConfig('messageAttachment');
-                          const gifMaxWidth = config.gifMaxDisplayWidth || 300;
-
                           // Track if large GIF is showing animated version (not thumbnail)
                           const [isShowingAnimation, setIsShowingAnimation] =
                             useState(false);
@@ -1098,16 +1082,6 @@ export const Message = React.memo(
                     </Container>
                   );
                 } else if (contentData.type === 'sticker') {
-                  // Use the same robust GIF detection for stickers
-                  const isStickerGif = contentData.sticker?.imgUrl
-                    ? createGifDetector(contentData.sticker.imgUrl)
-                    : false;
-
-                  // Get sticker config
-                  const stickerConfig = getImageConfig('sticker');
-                  const stickerGifMaxWidth =
-                    stickerConfig.gifMaxDisplayWidth || 300;
-
                   return (
                     <img
                       src={contentData.sticker?.imgUrl}
