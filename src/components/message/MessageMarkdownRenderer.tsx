@@ -387,7 +387,7 @@ export const MessageMarkdownRenderer: React.FC<MessageMarkdownRendererProps> = (
       if (match[1] === 'EVERYONE') {
         // @everyone mention
         parts.push(
-          <span key={`mention-${match.index}`} className="message-name-mentions-everyone">
+          <span key={`mention-${match.index}`} className="message-mentions-everyone">
             @everyone
           </span>
         );
@@ -403,7 +403,7 @@ export const MessageMarkdownRenderer: React.FC<MessageMarkdownRendererProps> = (
           parts.push(
             <span
               key={`mention-${match.index}`}
-              className="message-name-mentions-you interactive"
+              className="message-mentions-user interactive"
               data-user-address={address}
               data-user-display-name={displayName}
               data-user-icon={user?.userIcon || ''}
@@ -422,7 +422,7 @@ export const MessageMarkdownRenderer: React.FC<MessageMarkdownRendererProps> = (
         parts.push(
           <span
             key={`mention-${match.index}`}
-            className="message-name-mentions-everyone"
+            className="message-mentions-role"
             title={displayName}
           >
             @{roleTag}
@@ -438,7 +438,7 @@ export const MessageMarkdownRenderer: React.FC<MessageMarkdownRendererProps> = (
         parts.push(
           <span
             key={`mention-${match.index}`}
-            className="message-name-mentions-you interactive"
+            className="message-mentions-channel interactive"
             data-channel-id={channelId}
           >
             #{displayName}
@@ -745,7 +745,7 @@ export const MessageMarkdownRenderer: React.FC<MessageMarkdownRendererProps> = (
     const target = event.target as HTMLElement;
 
     // Handle user mention clicks
-    if (target.classList.contains('message-name-mentions-you') && onUserClick) {
+    if (target.classList.contains('message-mentions-user') && onUserClick) {
       const address = target.dataset.userAddress;
 
       if (address) {

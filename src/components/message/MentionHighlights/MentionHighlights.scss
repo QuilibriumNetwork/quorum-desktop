@@ -59,7 +59,7 @@
 
 .mention-highlight {
   /* Use existing mention styling for consistency */
-  /* Based on .message-name-mentions-you from _chat.scss */
+  /* Based on @mixin mention-base from _chat.scss */
   font-weight: $font-medium;
   color: var(--color-link-mention);
   background: var(--color-bg-mention);

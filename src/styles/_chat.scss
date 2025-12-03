@@ -103,7 +103,8 @@ html:not(.dark) .chat-container {
   }
 }
 
-.message-name-mentions-you {
+// Base mention styling mixin
+@mixin mention-base {
   font-weight: $font-medium;
   color: var(--color-link-mention);
   background: var(--color-bg-mention);
@@ -111,47 +112,34 @@ html:not(.dark) .chat-container {
   border-radius: 0.25rem;
 }
 
-/* Interactive mentions (clickable) */
-.message-name-mentions-you.interactive {
-  cursor: pointer;
+// Apply base styling to all mention types
+.message-mentions-user,
+.message-mentions-role,
+.message-mentions-everyone,
+.message-mentions-channel {
+  @include mention-base;
+}
 
-  &:hover {
-    color: var(--color-link-mention-hover);
-    background: var(--color-bg-mention-hover);
+// Interactive modifier (for user and channel mentions)
+.message-mentions-user,
+.message-mentions-channel {
+  &.interactive {
+    cursor: pointer;
+
+    &:hover {
+      color: var(--color-link-mention-hover);
+      background: var(--color-bg-mention-hover);
+    }
+  }
+
+  &.non-interactive {
+    cursor: default;
   }
 }
 
-/* Non-interactive mentions (preview contexts) */
-.message-name-mentions-you.non-interactive {
-  cursor: default;
-  /* No hover effects */
-}
-
-.message-name-mentions-role {
-  font-weight: $font-medium;
-  color: var(--color-link-mention);
-  background: var(--color-bg-mention);
-  padding: 0.125rem 0.25rem;
-  border-radius: 0.25rem;
-  cursor: default;
-}
-
-.message-mentions-you {
-  border-left: $border-2 solid var(--accent);
-  background: rgba(var(--accent-rgb), 0.2);
-}
-
-.message-mentions-role {
-  border-left: $border-2 solid var(--success);
-  background: rgb(var(--success) / 0.2);
-}
-
-.message-name-mentions-everyone {
-  font-weight: $font-medium;
-  color: var(--color-link-mention);
-  background: var(--color-bg-mention);
-  padding: 0.125rem 0.25rem;
-  border-radius: 0.25rem;
+// Non-interactive by default (for role and everyone mentions)
+.message-mentions-role,
+.message-mentions-everyone {
   cursor: default;
 }
 

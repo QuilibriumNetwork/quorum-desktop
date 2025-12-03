@@ -11,7 +11,10 @@
     font-size: $text-sm !important;
 
     // Preserve mention styling within message previews
-    .message-name-mentions-you {
+    .message-mentions-user,
+    .message-mentions-role,
+    .message-mentions-everyone,
+    .message-mentions-channel {
       font-size: $text-sm !important; // Match parent text size, but keep other mention styling
     }
   }

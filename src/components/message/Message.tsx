@@ -864,9 +864,11 @@ export const Message = React.memo(
                             // Check if this is @everyone, a role mention, or a user mention
                             const isEveryone = tokenData.address === 'everyone';
                             const isRole = !isEveryone && !tokenData.address.startsWith('Qm');
-                            const mentionClass = (isEveryone || isRole)
-                              ? 'message-name-mentions-everyone'
-                              : 'message-name-mentions-you';
+                            const mentionClass = isEveryone
+                              ? 'message-mentions-everyone'
+                              : isRole
+                                ? 'message-mentions-role'
+                                : 'message-mentions-user';
                             return (
                               <React.Fragment key={tokenData.key}>
                                 <Text className={mentionClass}>
@@ -928,7 +930,7 @@ export const Message = React.memo(
                               <React.Fragment key={tokenData.key}>
                                 <Text
                                   as="span"
-                                  className={`message-name-mentions-you ${tokenData.isInteractive ? 'interactive' : 'non-interactive'}`}
+                                  className={`message-mentions-channel ${tokenData.isInteractive ? 'interactive' : 'non-interactive'}`}
                                   onClick={tokenData.isInteractive ? () => {
                                     if (onChannelClick) {
                                       onChannelClick(tokenData.channelId);

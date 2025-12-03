@@ -45,7 +45,7 @@ const renderMessageContent = (
       if (tokenData.type === 'mention') {
         renderedTokens.push(
           <React.Fragment key={tokenData.key}>
-            <span className="message-name-mentions-you non-interactive">
+            <span className="message-mentions-user non-interactive">
               {tokenData.displayName}
             </span>
             {j < tokens.length - 1 ? ' ' : ''}
@@ -54,7 +54,7 @@ const renderMessageContent = (
       } else if (tokenData.type === 'channel-mention') {
         renderedTokens.push(
           <React.Fragment key={tokenData.key}>
-            <span className="message-name-mentions-you non-interactive">
+            <span className="message-mentions-channel non-interactive">
               {tokenData.displayName}
             </span>
             {j < tokens.length - 1 ? ' ' : ''}

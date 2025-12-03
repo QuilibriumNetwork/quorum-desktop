@@ -52,7 +52,7 @@ const renderPreviewTextWithSpecialTokens = (
         renderedTokens.push(
           <React.Fragment key={tokenData.key}>
             <span
-              className={`message-name-mentions-you ${disableMentionInteractivity ? 'non-interactive' : 'interactive'}`}
+              className={`message-mentions-user ${disableMentionInteractivity ? 'non-interactive' : 'interactive'}`}
             >
               {tokenData.displayName}
             </span>{' '}
@@ -62,7 +62,7 @@ const renderPreviewTextWithSpecialTokens = (
         renderedTokens.push(
           <React.Fragment key={tokenData.key}>
             <span
-              className={`message-name-mentions-you ${disableMentionInteractivity ? 'non-interactive' : 'interactive'}`}
+              className={`message-mentions-channel ${disableMentionInteractivity ? 'non-interactive' : 'interactive'}`}
               onClick={!disableMentionInteractivity ? () => onChannelClick?.(tokenData.channelId) : undefined}
             >
               {tokenData.displayName}
