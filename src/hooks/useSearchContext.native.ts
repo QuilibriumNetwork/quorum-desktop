@@ -25,11 +25,7 @@ export const useSearchContext = (): SearchContext => {
     const pathname = location.pathname;
 
     // Direct message routes - same logic as web
-    if (
-      pathname.includes('/dm/') ||
-      pathname.includes('/direct/') ||
-      pathname.includes('/messages/')
-    ) {
+    if (pathname.includes('/messages/')) {
       // For /messages/:address routes, get address from params
       if (params.address) {
         const conversationId = `${params.address}/${params.address}`;
@@ -47,7 +43,7 @@ export const useSearchContext = (): SearchContext => {
       }
 
       // Try to extract from pathname - same logic as web
-      const dmMatch = pathname.match(/\/(?:dm|direct|messages)\/([^\/]+)/);
+      const dmMatch = pathname.match(/\/messages\/([^\/]+)/);
       if (dmMatch) {
         const address = dmMatch[1];
         const conversationId = `${address}/${address}`;

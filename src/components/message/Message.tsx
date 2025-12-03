@@ -188,14 +188,11 @@ export const Message = React.memo(
       spaceId: spaceId || message.spaceId,
       channelId: channel?.channelId || message.channelId,
       conversationId: (() => {
-        // DM detection: either /dm/ route OR /messages/ with same spaceId/channelId
-        const isDMRoute = location.pathname.includes('/dm/');
-        const isDMMessages = location.pathname.includes('/messages/') &&
-                             message.spaceId === message.channelId;
+        // DM detection: /messages/ route with same spaceId/channelId
+        const isDM = location.pathname.includes('/messages/') &&
+                     message.spaceId === message.channelId;
 
-        if (isDMRoute) {
-          return location.pathname.split('/dm/')[1]?.split('#')[0];
-        } else if (isDMMessages) {
+        if (isDM) {
           // Use spaceId/spaceId format to match system expectations
           return `${message.spaceId}/${message.spaceId}`;
         }
@@ -204,8 +201,7 @@ export const Message = React.memo(
       })(),
       sourceName: (() => {
         // For DMs, return empty string (no source info shown)
-        if (location.pathname.includes('/dm/') ||
-            (location.pathname.includes('/messages/') && message.spaceId === message.channelId)) {
+        if (location.pathname.includes('/messages/') && message.spaceId === message.channelId) {
           return '';
         }
 
