@@ -118,6 +118,7 @@ export const iconComponentMap: Record<IconName, string> = {
   refresh: 'IconRefresh',
   'external-link': 'IconExternalLink',
   bookmark: 'IconBookmark',
+  'bookmark-off': 'IconBookmarkOff',
   filter: 'IconFilter',
   sort: 'IconArrowsSort',
   print: 'IconPrinter',

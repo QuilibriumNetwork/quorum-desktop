@@ -65,6 +65,10 @@ export function stripMarkdown(text: string): string {
       final = final.replace(new RegExp(placeholder.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g'), originalMention);
     });
 
+    // Remove unnecessary escapes added by remarkStringify
+    // These escapes are added to prevent markdown interpretation but we want plain text
+    final = final.replace(/\\([:.#\-*_`~\[\](){}|>!])/g, '$1');
+
     return final.trim();
   } catch (error) {
     // Fallback to original text if parsing fails
@@ -147,12 +151,19 @@ export function processMarkdownText(text: string, options: MarkdownProcessingOpt
   } else if (removeMentions) {
     // Remove all mention patterns completely
     processed = processed
+      // User mentions: @<address>
       .replace(/@<Qm[a-zA-Z0-9]+>/g, '')
+      // @everyone
       .replace(/@everyone\b/gi, '')
+      // Role mentions: @roleName
       .replace(/@\w+/g, '')
+      // Channel mentions: #[Name]<id> or #<id>
+      .replace(/#(?:\[[^\]]+\])?<[^>]+>/g, '')
+      // Internal tokens
       .replace(/<<<MENTION_USER:[^>]+>>>/g, '')
       .replace(/<<<MENTION_EVERYONE>>>/g, '')
-      .replace(/<<<MENTION_ROLE:[^>]+>>>/g, '');
+      .replace(/<<<MENTION_ROLE:[^>]+>>>/g, '')
+      .replace(/<<<MENTION_CHANNEL:[^>]+>>>/g, '');
   }
 
   // Step 2: Handle markdown formatting

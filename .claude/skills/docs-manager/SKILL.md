@@ -257,6 +257,27 @@ Use complexity-appropriate template:
 ```
 
 #### For Documentation (`.agents/docs/features/`):
+
+**CRITICAL DISTINCTION - Documentation vs Tasks**:
+- **Documentation** describes the **current state** of a feature - what it IS and how it WORKS
+- **Tasks** track implementation progress - status, phases, checklists, what needs to be DONE
+
+**Documentation files MUST NOT include**:
+- ❌ "Feature Status" or "Implementation Status" sections with phases
+- ❌ "Verification Checklist" or "Definition of Done" sections
+- ❌ Implementation history language ("we added", "we fixed", "was implemented", "changes made")
+- ❌ Phase tracking ("Phase 1 complete", "Phase 2 pending")
+- ❌ Changelog-style entries or implementation notes
+- ❌ Status indicators (Pending, In Progress, Complete)
+
+**Documentation files SHOULD**:
+- ✅ Describe features in present tense as they currently exist
+- ✅ Explain architecture, data flow, and integration points
+- ✅ Include usage examples and code snippets
+- ✅ Document technical decisions and their rationale
+- ✅ List known limitations and their impact
+- ✅ Reference related documentation and components
+
 ```markdown
 # [Feature Name]
 
@@ -264,11 +285,11 @@ Use complexity-appropriate template:
 > **Reviewed by**: [agent-name] agent *(add only after agent review and implementation)*
 
 ## Overview
-[What the feature does and why it exists]
+[What the feature does and why it exists - written as current state, not history]
 
 ## Architecture
-[Technical implementation details]
-- **Key components**: List main files/classes
+[Technical implementation details - describe how it works NOW]
+- **Key components**: List main files/classes with line references
 - **Data flow**: How information moves through system
 - **Integration points**: How it connects to other features
 
@@ -276,12 +297,14 @@ Use complexity-appropriate template:
 [Code examples showing how to use the feature]
 
 ## Technical Decisions
+[Rationale for key architectural choices - explain WHY, not WHEN]
 - **[Decision 1]**: Rationale and trade-offs
 - **[Decision 2]**: Alternative approaches considered
 
 ## Known Limitations
-- [Limitation 1]: Impact and potential solutions
-- [Limitation 2]: Workarounds if any
+[Current constraints and their impact]
+- [Limitation 1]: Impact and potential workarounds
+- [Limitation 2]: Design trade-offs accepted
 
 ## Related Documentation
 - [Cross-references to other relevant docs]
@@ -290,7 +313,7 @@ Use complexity-appropriate template:
 
 ---
 
-_Created: YYYY-MM-DD_
+*Updated: YYYY-MM-DD*
 ```
 
 #### For Reports (`.agents/reports/`):
@@ -450,7 +473,7 @@ The script automatically:
 ### Documentation Example
 **User says**: "Document the new search feature we just built"
 
-**Skill response**: Creates `.agents/docs/features/search-feature.md` explaining the search architecture, integration with MessageDB, performance optimizations, and usage examples.
+**Skill response**: Creates `.agents/docs/features/search-feature.md` describing the search feature as it currently exists - architecture, integration with MessageDB, performance characteristics, and usage examples. Uses present tense throughout ("The search feature provides...", "Messages are indexed using...") - NOT implementation history ("We added...", "Phase 1 implemented..."). Does NOT include status sections, verification checklists, or phase tracking.
 
 ### Report Creation Example
 **User says**: "Create a security audit of our authentication system"
@@ -545,4 +568,4 @@ The skill essentially automates what you would do manually following your `agent
 
 ---
 
-_Updated: 2025-11-19_
+_Updated: 2025-12-02_

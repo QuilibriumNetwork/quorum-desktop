@@ -8,3 +8,4 @@ export * from './search';
 export * from './invites';
 export * from './messages';
 export * from './mentions';
+export * from './bookmarks';

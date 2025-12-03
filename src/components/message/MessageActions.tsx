@@ -28,6 +28,11 @@ interface MessageActionsProps {
   onViewEditHistory?: () => void;
   copiedLinkId: string | null;
   copiedMessageText: boolean;
+  // Bookmark props
+  isBookmarked?: boolean;
+  isBookmarkPending?: boolean;
+  canAddBookmark?: boolean;
+  onBookmarkToggle?: () => void;
 }
 
 export const MessageActions: React.FC<MessageActionsProps> = ({
@@ -48,6 +53,11 @@ export const MessageActions: React.FC<MessageActionsProps> = ({
   onViewEditHistory,
   copiedLinkId,
   copiedMessageText,
+  // Bookmark props
+  isBookmarked = false,
+  isBookmarkPending = false,
+  canAddBookmark = true,
+  onBookmarkToggle,
 }) => {
   // State for tracking which action is currently hovered
   const [hoveredAction, setHoveredAction] = useState<string | null>(null);
@@ -100,6 +110,10 @@ export const MessageActions: React.FC<MessageActionsProps> = ({
         return t`View edit history`;
       case 'pin':
         return message.isPinned ? t`Unpin message` : t`Pin message`;
+      case 'bookmark':
+        if (isBookmarkPending) return t`Processing...`;
+        if (!canAddBookmark && !isBookmarked) return t`Bookmark limit reached`;
+        return isBookmarked ? t`Remove bookmark` : t`Bookmark message`;
       case 'delete':
         return t`Delete message`;
       default:
@@ -132,7 +146,7 @@ export const MessageActions: React.FC<MessageActionsProps> = ({
             return false;
           }}
           onMouseLeave={() => setHoveredAction(null)}
-          className="absolute flex flex-row right-4 top-[-10px] p-1 bg-tooltip select-none shadow-lg rounded-lg -m-1"
+          className="absolute flex flex-row right-4 top-[-10px] px-2 py-1 bg-tooltip select-none shadow-lg rounded-lg -m-1"
         >
           {/* Quick reactions */}
           <div
@@ -190,10 +204,34 @@ export const MessageActions: React.FC<MessageActionsProps> = ({
           <div
             onClick={onCopyMessageText}
             onMouseEnter={() => setHoveredAction('copyMessage')}
-            className="text-center text-surface-9 hover:text-surface-10 hover:scale-125 transition duration-200 rounded-md flex items-center justify-center cursor-pointer"
+            className="mr-2 text-center text-surface-9 hover:text-surface-10 hover:scale-125 transition duration-200 rounded-md flex items-center justify-center cursor-pointer"
           >
             <Icon name="clipboard" size="sm" />
           </div>
+
+          {/* Bookmark (right after copy message, no separator before) */}
+          {onBookmarkToggle && (
+            <div
+              onClick={(e) => {
+                e.stopPropagation();
+                if (!isBookmarkPending && (canAddBookmark || isBookmarked)) {
+                  onBookmarkToggle();
+                }
+              }}
+              onMouseEnter={() => setHoveredAction('bookmark')}
+              className={`text-center transition duration-200 rounded-md flex items-center justify-center ${
+                isBookmarkPending || (!canAddBookmark && !isBookmarked)
+                  ? 'cursor-not-allowed opacity-50'
+                  : 'cursor-pointer hover:scale-125'
+              } text-surface-9 hover:text-surface-10`}
+            >
+              <Icon
+                name={isBookmarked ? 'bookmark-off' : 'bookmark'}
+                size="md"
+                className={isBookmarkPending ? 'animate-pulse' : ''}
+              />
+            </div>
+          )}
 
           {/* Edit/History section with separator */}
           {(canUserEdit || canViewEditHistory) && (
@@ -240,7 +278,6 @@ export const MessageActions: React.FC<MessageActionsProps> = ({
                 <Icon
                   name={message.isPinned ? 'pin-off' : 'pin'}
                   size="md"
-                  variant={message.isPinned ? undefined : 'filled'}
                 />
               </div>
             </>
@@ -258,7 +295,6 @@ export const MessageActions: React.FC<MessageActionsProps> = ({
                 <Icon
                   name="trash"
                   size="md"
-                  variant="filled"
                   className="text-[rgb(var(--danger))] hover:text-[rgb(var(--danger-hover))] hover:scale-125"
                 />
               </div>

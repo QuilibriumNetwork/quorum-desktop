@@ -1,5 +1,5 @@
 import { channel } from '@quilibrium/quilibrium-js-sdk-channels';
-import { Conversation, Message, Space } from '../api/quorumApi';
+import { Conversation, Message, Space, Bookmark } from '../api/quorumApi';
 import type { NotificationSettings } from '../types/notifications';
 import MiniSearch from 'minisearch';
 
@@ -47,6 +47,8 @@ export type UserConfig = {
   notificationSettings?: {
     [spaceId: string]: NotificationSettings;
   };
+  bookmarks?: Bookmark[];
+  deletedBookmarkIds?: string[];
 };
 
 export interface SearchableMessage {
@@ -76,7 +78,7 @@ export interface SearchResult {
 export class MessageDB {
   private db: IDBDatabase | null = null;
   private readonly DB_NAME = 'quorum_db';
-  private readonly DB_VERSION = 3;
+  private readonly DB_VERSION = 4;
   private searchIndices: Map<string, MiniSearch<SearchableMessage>> = new Map();
   private indexInitialized = false;
 
@@ -151,6 +153,17 @@ export class MessageDB {
             ]);
           }
         }
+
+        if (event.oldVersion < 4) {
+          // Add bookmarks object store
+          const bookmarksStore = db.createObjectStore('bookmarks', {
+            keyPath: 'bookmarkId',
+          });
+
+          // Create indices for efficient querying
+          bookmarksStore.createIndex('by_message', 'messageId'); // Essential for O(1) isBookmarked check
+          bookmarksStore.createIndex('by_created', 'createdAt'); // For chronological listing
+        }
       };
     });
   }
@@ -179,6 +192,26 @@ export class MessageDB {
         } else {
           resolve(undefined);
         }
+      };
+      request.onerror = () => reject(request.error);
+    });
+  }
+
+  /**
+   * Get a message by ID only, without context validation.
+   * Used for bookmark resolution where we just need to display the message.
+   * Falls back gracefully if message not found (e.g., cross-device sync).
+   */
+  async getMessageById(messageId: string): Promise<Message | undefined> {
+    await this.init();
+    return new Promise((resolve, reject) => {
+      const transaction = this.db!.transaction('messages', 'readonly');
+      const store = transaction.objectStore('messages');
+
+      const request = store.get(messageId);
+
+      request.onsuccess = () => {
+        resolve(request.result as Message | undefined);
       };
       request.onerror = () => reject(request.error);
     });
@@ -684,10 +717,24 @@ export class MessageDB {
     });
 
     return new Promise((resolve, reject) => {
-      const transaction = this.db!.transaction(['messages'], 'readwrite');
-      const store = transaction.objectStore('messages');
-      const messageRequest = store.delete(messageId);
+      // Include 'bookmarks' store to cascade delete any bookmarks pointing to this message
+      const transaction = this.db!.transaction(['messages', 'bookmarks'], 'readwrite');
+      const messageStore = transaction.objectStore('messages');
+      const bookmarkStore = transaction.objectStore('bookmarks');
+
+      // Delete the message
+      const messageRequest = messageStore.delete(messageId);
       messageRequest.onerror = () => reject(messageRequest.error);
+
+      // Cascade delete: Remove any bookmark pointing to this message
+      const bookmarkIndex = bookmarkStore.index('by_message');
+      const bookmarkRequest = bookmarkIndex.get(messageId);
+      bookmarkRequest.onsuccess = () => {
+        const bookmark = bookmarkRequest.result;
+        if (bookmark) {
+          bookmarkStore.delete(bookmark.bookmarkId);
+        }
+      };
 
       transaction.oncomplete = () => {
         // Remove from search index after deleting
@@ -1107,8 +1154,11 @@ export class MessageDB {
     const [spaceId, channelId] = conversationId.split('/');
     if (!spaceId || !channelId) return;
     return new Promise((resolve, reject) => {
-      const transaction = this.db!.transaction('messages', 'readwrite');
+      // Include 'bookmarks' store to cascade delete bookmarks for deleted messages
+      const transaction = this.db!.transaction(['messages', 'bookmarks'], 'readwrite');
       const store = transaction.objectStore('messages');
+      const bookmarkStore = transaction.objectStore('bookmarks');
+      const bookmarkIndex = bookmarkStore.index('by_message');
       const index = store.index('by_conversation_time');
 
       const range = IDBKeyRange.bound(
@@ -1133,6 +1183,16 @@ export class MessageDB {
             const dmIndex = this.searchIndices.get(dmIndexKey);
             if (dmIndex) dmIndex.removeById(msg.messageId);
           } catch {}
+
+          // Cascade delete: Remove any bookmark pointing to this message
+          const bookmarkRequest = bookmarkIndex.get(msg.messageId);
+          bookmarkRequest.onsuccess = () => {
+            const bookmark = bookmarkRequest.result;
+            if (bookmark) {
+              bookmarkStore.delete(bookmark.bookmarkId);
+            }
+          };
+
           store.delete(msg.messageId);
           cursor.continue();
         } else {
@@ -1558,6 +1618,128 @@ export class MessageDB {
         }
       };
 
+      request.onerror = () => reject(request.error);
+    });
+  }
+
+  // Bookmarks Methods
+  async addBookmark(bookmark: Bookmark): Promise<void> {
+    await this.init();
+    return new Promise((resolve, reject) => {
+      const transaction = this.db!.transaction('bookmarks', 'readwrite');
+      const store = transaction.objectStore('bookmarks');
+      const request = store.add(bookmark);
+
+      request.onsuccess = () => resolve();
+      request.onerror = () => reject(request.error);
+    });
+  }
+
+  async removeBookmark(bookmarkId: string): Promise<void> {
+    await this.init();
+    return new Promise((resolve, reject) => {
+      const transaction = this.db!.transaction('bookmarks', 'readwrite');
+      const store = transaction.objectStore('bookmarks');
+      const request = store.delete(bookmarkId);
+
+      request.onsuccess = () => resolve();
+      request.onerror = () => reject(request.error);
+    });
+  }
+
+  async removeBookmarkByMessageId(messageId: string): Promise<void> {
+    await this.init();
+    return new Promise((resolve, reject) => {
+      const transaction = this.db!.transaction('bookmarks', 'readwrite');
+      const store = transaction.objectStore('bookmarks');
+      const index = store.index('by_message');
+
+      const request = index.get(messageId);
+
+      request.onsuccess = () => {
+        const bookmark = request.result;
+        if (bookmark) {
+          const deleteRequest = store.delete(bookmark.bookmarkId);
+          deleteRequest.onsuccess = () => resolve();
+          deleteRequest.onerror = () => reject(deleteRequest.error);
+        } else {
+          resolve(); // Bookmark doesn't exist, that's fine
+        }
+      };
+      request.onerror = () => reject(request.error);
+    });
+  }
+
+  async getBookmarks(): Promise<Bookmark[]> {
+    await this.init();
+    return new Promise((resolve, reject) => {
+      const transaction = this.db!.transaction('bookmarks', 'readonly');
+      const store = transaction.objectStore('bookmarks');
+      const index = store.index('by_created');
+
+      // Get all bookmarks sorted by creation date (newest first)
+      const request = index.getAll();
+
+      request.onsuccess = () => {
+        const bookmarks = request.result || [];
+        // Sort newest first
+        bookmarks.sort((a, b) => b.createdAt - a.createdAt);
+        resolve(bookmarks);
+      };
+      request.onerror = () => reject(request.error);
+    });
+  }
+
+  async getBookmarksBySourceType(sourceType: 'channel' | 'dm'): Promise<Bookmark[]> {
+    const allBookmarks = await this.getBookmarks();
+    return allBookmarks.filter(bookmark => bookmark.sourceType === sourceType);
+  }
+
+  async getBookmarksBySpace(spaceId: string): Promise<Bookmark[]> {
+    const allBookmarks = await this.getBookmarks();
+    return allBookmarks.filter(bookmark => bookmark.spaceId === spaceId);
+  }
+
+  async getBookmarkCount(): Promise<number> {
+    await this.init();
+    return new Promise((resolve, reject) => {
+      const transaction = this.db!.transaction('bookmarks', 'readonly');
+      const store = transaction.objectStore('bookmarks');
+      const request = store.count();
+
+      request.onsuccess = () => resolve(request.result);
+      request.onerror = () => reject(request.error);
+    });
+  }
+
+  async isBookmarked(messageId: string): Promise<boolean> {
+    await this.init();
+    return new Promise((resolve, reject) => {
+      const transaction = this.db!.transaction('bookmarks', 'readonly');
+      const store = transaction.objectStore('bookmarks');
+      const index = store.index('by_message');
+
+      const request = index.get(messageId);
+
+      request.onsuccess = () => {
+        resolve(!!request.result);
+      };
+      request.onerror = () => reject(request.error);
+    });
+  }
+
+  async getBookmarkByMessageId(messageId: string): Promise<Bookmark | undefined> {
+    await this.init();
+    return new Promise((resolve, reject) => {
+      const transaction = this.db!.transaction('bookmarks', 'readonly');
+      const store = transaction.objectStore('bookmarks');
+      const index = store.index('by_message');
+
+      const request = index.get(messageId);
+
+      request.onsuccess = () => {
+        resolve(request.result);
+      };
       request.onerror = () => reject(request.error);
     });
   }

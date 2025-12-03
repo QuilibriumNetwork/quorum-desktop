@@ -191,6 +191,11 @@ export const MobileProvider: React.FC<MobileProviderProps> = ({ children }) => {
             userAddress={state.messageActionsDrawer.data.userAddress}
             onDeleteWithConfirmation={state.messageActionsDrawer.data.onDeleteWithConfirmation}
             onPinWithConfirmation={state.messageActionsDrawer.data.onPinWithConfirmation}
+            // Bookmark props
+            isBookmarked={state.messageActionsDrawer.data.isBookmarked}
+            isBookmarkPending={state.messageActionsDrawer.data.isBookmarkPending}
+            canAddBookmark={state.messageActionsDrawer.data.canAddBookmark}
+            onBookmarkToggle={state.messageActionsDrawer.data.onBookmarkToggle}
           />
           </div>
           <div

@@ -1,9 +1,5 @@
 # Markdown Stripping
 
-**Status**: ✅ Complete
-**Created**: 2025-01-13
-**Last Updated**: 2025-11-19
-
 ## Overview
 
 Unified system for processing markdown text with flexible options for different contexts. Supports both "smart" stripping (preserves structure and formatting intent) and "dumb" stripping (collapses to plain text) depending on use case. Used across search results, message previews, and notifications.
@@ -152,5 +148,11 @@ const plainSnippet = stripMarkdownAndMentions(contextualSnippet); // Remove ever
 - `remark-stringify` - Convert back to string
 - `strip-markdown` - Official remark plugin for stripping markdown
 
+## Related Documentation
+
+- [Message Preview Rendering](message-preview-rendering.md) - How MessagePreview uses these utilities
+- [Markdown Renderer](markdown-renderer.md) - Full message rendering (dual system)
+- [Bookmarks](bookmarks.md) - Hybrid preview rendering for bookmarks
+
 ---
-**Last Updated**: 2025-11-19
+**Last Updated**: 2025-12-02

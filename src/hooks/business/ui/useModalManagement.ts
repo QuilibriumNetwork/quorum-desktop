@@ -39,6 +39,12 @@ interface UseModalManagementReturn {
   };
   showImageModal: (imageUrl: string) => void;
   hideImageModal: () => void;
+  editHistoryModal: {
+    visible: boolean;
+    message: MessageType | null;
+  };
+  showEditHistoryModal: (message: MessageType) => void;
+  hideEditHistoryModal: () => void;
 }
 
 export const useModalManagement = (): UseModalManagementReturn => {
@@ -67,6 +73,13 @@ export const useModalManagement = (): UseModalManagementReturn => {
   }>({
     visible: false,
     imageUrl: null,
+  });
+  const [editHistoryModal, setEditHistoryModal] = useState<{
+    visible: boolean;
+    message: MessageType | null;
+  }>({
+    visible: false,
+    message: null,
   });
 
   const showAddSpaceModal = useCallback(() => {
@@ -118,6 +131,14 @@ export const useModalManagement = (): UseModalManagementReturn => {
     setImageModal({ visible: false, imageUrl: null });
   }, []);
 
+  const showEditHistoryModal = useCallback((message: MessageType) => {
+    setEditHistoryModal({ visible: true, message });
+  }, []);
+
+  const hideEditHistoryModal = useCallback(() => {
+    setEditHistoryModal({ visible: false, message: null });
+  }, []);
+
   return {
     addSpaceVisible,
     showAddSpaceModal,
@@ -131,5 +152,8 @@ export const useModalManagement = (): UseModalManagementReturn => {
     imageModal,
     showImageModal,
     hideImageModal,
+    editHistoryModal,
+    showEditHistoryModal,
+    hideEditHistoryModal,
   };
 };

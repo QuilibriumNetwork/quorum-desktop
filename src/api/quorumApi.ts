@@ -239,6 +239,40 @@ export type Mentions = {
   totalMentionCount?: number; // Total number of mention instances (including duplicates)
 };
 
+export type Bookmark = {
+  bookmarkId: string;           // UUID
+  messageId: string;            // Reference to original message
+  spaceId?: string;             // For space messages (undefined for DMs)
+  channelId?: string;           // For channel messages (undefined for DMs)
+  conversationId?: string;      // For DM messages (undefined for channels)
+  sourceType: 'channel' | 'dm';
+  createdAt: number;            // Timestamp for sorting
+
+  // Cached preview - avoids cross-context message resolution
+  // Stored at bookmark creation time, acceptable if slightly stale
+  cachedPreview: {
+    senderAddress: string;      // For avatar/name lookup
+    senderName: string;         // Display name at bookmark time
+    textSnippet: string;        // First ~150 chars, markdown stripped (empty for media-only)
+    messageDate: number;        // Original message timestamp
+    sourceName: string;         // "Space Name > #channel" or "Contact Name"
+
+    // Media content info for visual rendering
+    contentType: 'text' | 'image' | 'sticker';
+    imageUrl?: string;          // For embed messages (image URL)
+    thumbnailUrl?: string;      // For embed messages (smaller preview)
+    stickerId?: string;         // For sticker messages (resolve at render time)
+  };
+
+  // Future: notes?: string; tags?: string[];
+};
+
+// Configuration
+export const BOOKMARKS_CONFIG = {
+  MAX_BOOKMARKS: 200,           // Maximum number of bookmarks per user
+  PREVIEW_SNIPPET_LENGTH: 150,  // Character limit for cached text snippet
+} as const;
+
 export type GetChannelParams = {
   spaceId: string;
   channelId: string;

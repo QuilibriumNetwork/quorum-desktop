@@ -6,8 +6,10 @@ import CreateSpaceModal from './modals/CreateSpaceModal';
 import AddSpaceModal from './modals/AddSpaceModal';
 import ConfirmationModal from './modals/ConfirmationModal';
 import ImageModal from './modals/ImageModal';
+import { EditHistoryModal } from './modals/EditHistoryModal';
 import { ConfirmationModalProvider } from './context/ConfirmationModalProvider';
 import { ImageModalProvider } from './context/ImageModalProvider';
+import { EditHistoryModalProvider } from './context/EditHistoryModalProvider';
 import Connecting from './Connecting';
 import { useModalManagement, useElectronDetection } from '../hooks';
 import { useNavigationHotkeys } from '@/hooks/platform/interactions/useNavigationHotkeys';
@@ -29,6 +31,9 @@ const Layout: React.FunctionComponent<{
     imageModal,
     showImageModal,
     hideImageModal,
+    editHistoryModal,
+    showEditHistoryModal,
+    hideEditHistoryModal,
   } = useModalManagement();
   const { isElectron } = useElectronDetection();
   const { showRightSidebar, setShowRightSidebar, rightSidebarContent } =
@@ -128,6 +133,15 @@ const Layout: React.FunctionComponent<{
         />
       )}
 
+      {/* Edit History Modal */}
+      {editHistoryModal.visible && editHistoryModal.message && (
+        <EditHistoryModal
+          visible={editHistoryModal.visible}
+          message={editHistoryModal.message}
+          onClose={hideEditHistoryModal}
+        />
+      )}
+
       {/* {joinSpaceVisible && <JoinSpaceModal visible={joinSpaceVisible} onClose={() => setJoinSpaceVisible(false)}/>} */}
       <NavMenu
         showCreateSpaceModal={showAddSpaceModal}
@@ -136,7 +150,8 @@ const Layout: React.FunctionComponent<{
       <Container>{isElectron && <CloseButton />}</Container>
       <ConfirmationModalProvider showConfirmationModal={showConfirmationModal}>
         <ImageModalProvider showImageModal={showImageModal}>
-          <ResponsiveContainer>
+          <EditHistoryModalProvider showEditHistoryModal={showEditHistoryModal}>
+            <ResponsiveContainer>
             {props.children}
             {toast && (
               <Portal>
@@ -160,7 +175,8 @@ const Layout: React.FunctionComponent<{
                 </div>
               </Portal>
             )}
-          </ResponsiveContainer>
+            </ResponsiveContainer>
+          </EditHistoryModalProvider>
         </ImageModalProvider>
       </ConfirmationModalProvider>
     </React.Suspense>

@@ -74,6 +74,11 @@ div[role='presentation'] {
   &:hover .quorum-button-icon-element {
     color: var(--color-text-main) !important;
   }
+
+  /* Active state - when panel is open */
+  &.active .quorum-button-icon-element {
+    color: var(--color-text-main) !important;
+  }
 }
 
 /* === UNREAD MESSAGE INDICATORS === */

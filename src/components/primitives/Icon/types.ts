@@ -108,6 +108,7 @@ export type IconName =
   | 'refresh'
   | 'external-link'
   | 'bookmark'
+  | 'bookmark-off'
   | 'filter'
   | 'sort'
   | 'print'

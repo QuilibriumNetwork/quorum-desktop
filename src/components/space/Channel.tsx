@@ -31,6 +31,7 @@ import MessageComposer, {
 } from '../message/MessageComposer';
 import { PinnedMessagesPanel } from '../message/PinnedMessagesPanel';
 import { NotificationPanel } from '../notifications/NotificationPanel';
+import { BookmarksPanel } from '../bookmarks/BookmarksPanel';
 import { Virtuoso } from 'react-virtuoso';
 import UserProfile from '../user/UserProfile';
 import { useUserProfileModal } from '../../hooks/business/ui/useUserProfileModal';
@@ -100,7 +101,7 @@ const Channel: React.FC<ChannelProps> = ({
   const [skipSigning, setSkipSigning] = useState<boolean>(false);
 
   // Unified panel state - ensures only one panel can be open at a time
-  type ActivePanel = 'pinned' | 'notifications' | 'search' | null;
+  type ActivePanel = 'pinned' | 'notifications' | 'bookmarks' | 'search' | null;
   const [activePanel, setActivePanel] = useState<ActivePanel>(null);
 
   const [isDeletionInProgress, setIsDeletionInProgress] = useState(false);
@@ -160,6 +161,9 @@ const Channel: React.FC<ChannelProps> = ({
 
   // Get pinned messages
   const { pinnedCount } = usePinnedMessages(spaceId, channelId, channel);
+
+  // Get current user address for bookmarks
+  const userAddress = user?.currentPasskeyInfo?.address || '';
 
   // Get last read timestamp for mention highlighting - using React Query
   const conversationId = `${spaceId}/${channelId}`;
@@ -824,9 +828,10 @@ const Channel: React.FC<ChannelProps> = ({
                     <Button
                       type="unstyled"
                       onClick={() => setActivePanel('pinned')}
-                      className="relative header-icon-button"
+                      className={`relative header-icon-button ${activePanel === 'pinned' ? 'active' : ''}`}
                       iconName="pin"
                       iconSize={headerIconSize}
+                      iconVariant={activePanel === 'pinned' ? 'filled' : 'outline'}
                       iconOnly
                     >
                       <span className="absolute -top-1 -right-1 bg-accent text-white text-[10px] rounded-full w-4 h-4 flex items-center justify-center">
@@ -863,9 +868,10 @@ const Channel: React.FC<ChannelProps> = ({
                   <Button
                     type="unstyled"
                     onClick={() => setActivePanel('notifications')}
-                    className="relative header-icon-button"
+                    className={`relative header-icon-button ${activePanel === 'notifications' ? 'active' : ''}`}
                     iconName="bell"
                     iconSize={headerIconSize}
+                    iconVariant={activePanel === 'notifications' ? 'filled' : 'outline'}
                     iconOnly
                   />
                 </Tooltip>
@@ -887,6 +893,37 @@ const Channel: React.FC<ChannelProps> = ({
                 />
               </div>
 
+              {/* Bookmarks */}
+              <div className="relative">
+                <Tooltip
+                  id={`bookmarks-${channelId}`}
+                  content={t`Bookmarks`}
+                  showOnTouch={false}
+                >
+                  <Button
+                    type="unstyled"
+                    onClick={() => setActivePanel('bookmarks')}
+                    className={`header-icon-button ${activePanel === 'bookmarks' ? 'active' : ''}`}
+                    iconName="bookmark"
+                    iconSize={headerIconSize}
+                    iconVariant={activePanel === 'bookmarks' ? 'filled' : 'outline'}
+                    iconOnly
+                  />
+                </Tooltip>
+
+                {/* Bookmarks Panel */}
+                <BookmarksPanel
+                  isOpen={activePanel === 'bookmarks'}
+                  onClose={() => setActivePanel(null)}
+                  userAddress={userAddress}
+                  stickers={stickers}
+                  mapSenderToUser={mapSenderToUser}
+                  spaceRoles={roles}
+                  spaceChannels={spaceChannels}
+                  onChannelClick={handleChannelClick}
+                />
+              </div>
+
               <Tooltip
                 id={`members-list-${channelId}`}
                 content={t`Members List`}
@@ -897,7 +934,7 @@ const Channel: React.FC<ChannelProps> = ({
                   onClick={() => {
                     setShowUsers(!showUsers);
                   }}
-                  className="header-icon-button"
+                  className={`header-icon-button ${showUsers ? 'active' : ''}`}
                   iconName="users"
                   iconSize={headerIconSize}
                   iconOnly
@@ -1004,6 +1041,7 @@ const Channel: React.FC<ChannelProps> = ({
                   fetchNextPage();
                 }}
                 hasNextPage={hasNextPage}
+                spaceName={space?.spaceName}
               />
             </div>
 
