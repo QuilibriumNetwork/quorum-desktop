@@ -178,6 +178,12 @@ html:not(.dark) .chat-container {
   }
 }
 
+// Bottom spacer for message list - gives last message breathing room above composer
+.message-list-bottom-spacer {
+  height: $s-4;
+  flex-shrink: 0;
+}
+
 .message-list-expanded {
   flex: 1 0;
   min-width: 0; // Allow shrinking

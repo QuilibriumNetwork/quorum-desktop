@@ -506,6 +506,9 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
           computeItemKey={computeItemKey}
           itemContent={rowRenderer}
           rangeChanged={handleRangeChanged}
+          components={{
+            Footer: () => <div className="message-list-bottom-spacer" />,
+          }}
         />
 
         {/* Jump to Present Button */}
