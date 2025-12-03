@@ -103,6 +103,7 @@ export const BookmarkItem: React.FC<BookmarkItemProps> = ({
           spaceChannels={spaceChannels}
           onChannelClick={onChannelClick}
           disableMentionInteractivity={true}
+          currentSpaceId={bookmark.spaceId}
         />
       );
     }

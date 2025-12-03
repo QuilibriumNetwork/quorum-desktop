@@ -116,13 +116,15 @@ html:not(.dark) .chat-container {
 .message-mentions-user,
 .message-mentions-role,
 .message-mentions-everyone,
-.message-mentions-channel {
+.message-mentions-channel,
+.message-mentions-message-link {
   @include mention-base;
 }
 
-// Interactive modifier (for user and channel mentions)
+// Interactive modifier (for user, channel mentions, and message links)
 .message-mentions-user,
-.message-mentions-channel {
+.message-mentions-channel,
+.message-mentions-message-link {
   &.interactive {
     cursor: pointer;
 
@@ -141,6 +143,26 @@ html:not(.dark) .chat-container {
 .message-mentions-role,
 .message-mentions-everyone {
   cursor: default;
+}
+
+// Message link specific styles (separator and icon)
+.message-mentions-message-link {
+  display: inline-flex;
+  align-items: center;
+
+  // Separator between channel name and icon
+  // Inherits font-size and color from parent
+  &__separator {
+    margin: 0 $s-1;                       // 0 4px - balanced spacing
+    opacity: 0.7;                         // Slightly muted relative to channel name
+  }
+
+  // Message icon
+  // Inherits color from mention-base (--color-link-mention)
+  &__icon {
+    vertical-align: middle;
+    opacity: 0.85;                        // Slightly muted relative to channel name
+  }
 }
 
 .message-list {

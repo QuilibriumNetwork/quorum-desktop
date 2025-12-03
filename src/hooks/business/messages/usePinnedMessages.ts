@@ -229,8 +229,8 @@ export const usePinnedMessages = (
       // Show confirmation modal
       showConfirmationModal({
         title: message.isPinned ? t`Unpin Message` : t`Pin Message`,
-        message: message.isPinned 
-          ? t`Are you sure you want to unpin this message?` 
+        message: message.isPinned
+          ? t`Are you sure you want to unpin this message?`
           : t`Are you sure you want to pin this message?`,
         preview: React.createElement(MessagePreview, {
           message,
@@ -240,6 +240,7 @@ export const usePinnedMessages = (
           spaceChannels,
           onChannelClick,
           disableMentionInteractivity: true,
+          currentSpaceId: spaceId,
         }),
         confirmText: message.isPinned ? t`Unpin` : t`Pin`,
         cancelText: t`Cancel`,
@@ -248,7 +249,7 @@ export const usePinnedMessages = (
         onConfirm: performToggle,
       });
     },
-    [pinMessage, unpinMessage, showConfirmationModal, mapSenderToUser, spaceRoles, spaceChannels, onChannelClick]
+    [pinMessage, unpinMessage, showConfirmationModal, mapSenderToUser, stickers, spaceId, spaceRoles, spaceChannels, onChannelClick]
   );
 
   return {

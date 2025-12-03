@@ -1,5 +1,5 @@
 import React, { useMemo, useState, useCallback, useRef, useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
 import { useQueryClient } from '@tanstack/react-query';
 import type {
@@ -148,6 +148,7 @@ export const Message = React.memo(
     const user = usePasskeysContext();
     const { spaceId } = useParams();
     const location = useLocation();
+    const navigate = useNavigate();
     const queryClient = useQueryClient();
     const { messageDB } = useMessageDB();
     const { openMobileActionsDrawer, openMobileEmojiDrawer } = useMobile();
@@ -248,6 +249,8 @@ export const Message = React.memo(
       mapSenderToUser,
       onImageClick: showImageModal,
       spaceRoles,
+      spaceChannels,
+      currentSpaceId: spaceId,
     });
 
     // Pinned messages logic
@@ -810,6 +813,11 @@ export const Message = React.memo(
                           mapSenderToUser={mapSenderToUser}
                           onUserClick={onUserClick}
                           onChannelClick={onChannelClick}
+                          onMessageLinkClick={(channelId, messageId) => {
+                            if (spaceId) {
+                              navigate(`/spaces/${spaceId}/${channelId}#msg-${messageId}`);
+                            }
+                          }}
                           hasEveryoneMention={message.mentions?.everyone}
                           roleMentions={message.mentions?.roleIds}
                           channelMentions={message.mentions?.channelIds}
@@ -817,6 +825,7 @@ export const Message = React.memo(
                           spaceChannels={spaceChannels}
                           messageSenderId={message.content?.senderId}
                           currentUserAddress={user.currentPasskeyInfo?.address}
+                          currentSpaceId={spaceId}
                         />
                       </Container>
                     );
@@ -938,6 +947,27 @@ export const Message = React.memo(
                                   } : undefined}
                                 >
                                   {tokenData.displayName}
+                                </Text>{' '}
+                              </React.Fragment>
+                            );
+                          }
+
+                          if (tokenData.type === 'message-link') {
+                            return (
+                              <React.Fragment key={tokenData.key}>
+                                <Text
+                                  as="span"
+                                  className={`message-mentions-message-link ${tokenData.isInteractive ? 'interactive' : 'non-interactive'}`}
+                                  onClick={tokenData.isInteractive ? () => {
+                                    // Navigate to the message in the channel
+                                    if (spaceId) {
+                                      navigate(`/spaces/${spaceId}/${tokenData.channelId}#msg-${tokenData.messageId}`);
+                                    }
+                                  } : undefined}
+                                >
+                                  #{tokenData.channelName}
+                                  <span className="message-mentions-message-link__separator"> › </span>
+                                  <Icon name="comment-dots" size="sm" variant="filled" className="message-mentions-message-link__icon" />
                                 </Text>{' '}
                               </React.Fragment>
                             );

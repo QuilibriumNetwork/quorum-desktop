@@ -13,7 +13,8 @@ const renderPreviewTextWithSpecialTokens = (
   formatting: any,
   messageId: string,
   disableMentionInteractivity: boolean,
-  onChannelClick?: (channelId: string) => void
+  onChannelClick?: (channelId: string) => void,
+  onMessageLinkClick?: (channelId: string, messageId: string) => void
 ): React.ReactNode => {
   const lines = text.split('\n');
 
@@ -105,6 +106,19 @@ const renderPreviewTextWithSpecialTokens = (
             <Text className="text-accent">[Invite Link]</Text>{' '}
           </React.Fragment>
         );
+      } else if (tokenData.type === 'message-link') {
+        renderedTokens.push(
+          <React.Fragment key={tokenData.key}>
+            <span
+              className={`message-mentions-message-link ${disableMentionInteractivity ? 'non-interactive' : 'interactive'}`}
+              onClick={!disableMentionInteractivity ? () => onMessageLinkClick?.(tokenData.channelId, tokenData.messageId) : undefined}
+            >
+              #{tokenData.channelName}
+              <span className="message-mentions-message-link__separator"> › </span>
+              <Icon name="comment-dots" size="sm" variant="filled" className="message-mentions-message-link__icon" />
+            </span>{' '}
+          </React.Fragment>
+        );
       } else {
         // This is already processed by smart markdown stripping, so just render the clean text
         renderedTokens.push(
@@ -133,7 +147,9 @@ interface MessagePreviewProps {
   spaceRoles?: Role[];
   spaceChannels?: Channel[];
   onChannelClick?: (channelId: string) => void;
+  onMessageLinkClick?: (channelId: string, messageId: string) => void;
   disableMentionInteractivity?: boolean;
+  currentSpaceId?: string;
 }
 
 export const MessagePreview: React.FC<MessagePreviewProps> = ({
@@ -145,7 +161,9 @@ export const MessagePreview: React.FC<MessagePreviewProps> = ({
   spaceRoles = [],
   spaceChannels = [],
   onChannelClick,
+  onMessageLinkClick,
   disableMentionInteractivity = false,
+  currentSpaceId,
 }) => {
   // Extract senderId from the message content based on message type
   const senderId = message.content?.senderId || '';
@@ -160,6 +178,7 @@ export const MessagePreview: React.FC<MessagePreviewProps> = ({
     spaceRoles,
     spaceChannels,
     disableMentionInteractivity,
+    currentSpaceId,
   });
 
   // Get display name - prefer sender displayName, fallback to username, then senderId
@@ -247,7 +266,8 @@ export const MessagePreview: React.FC<MessagePreviewProps> = ({
         formatting,
         contentData.messageId,
         disableMentionInteractivity,
-        onChannelClick
+        onChannelClick,
+        onMessageLinkClick
       );
 
       return (
@@ -278,7 +298,6 @@ export const MessagePreview: React.FC<MessagePreviewProps> = ({
 
         {!hideHeader && (
           <Spacer
-            spaceBefore="xs"
             spaceAfter="xs"
             border={true}
             direction="vertical"

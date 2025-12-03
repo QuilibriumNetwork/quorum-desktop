@@ -3,6 +3,7 @@ import * as linkify from 'linkifyjs';
 import { Message as MessageType, Sticker, Role, Channel } from '../../../api/quorumApi';
 import { isYouTubeURL, extractYouTubeVideoId, YOUTUBE_URL_REGEX } from '../../../utils/youtubeUtils';
 import { getValidInvitePrefixes } from '../../../utils/inviteDomain';
+import { parseMessageLink } from '../../../utils/messageLinkUtils';
 import { createIPFSCIDRegex } from '../../../utils/validation';
 
 // Legacy export for backward compatibility
@@ -19,6 +20,7 @@ interface UseMessageFormattingOptions {
   spaceRoles?: Role[];
   spaceChannels?: Channel[];
   disableMentionInteractivity?: boolean;
+  currentSpaceId?: string;
 }
 
 // Detect if text contains markdown patterns
@@ -51,7 +53,7 @@ function isInviteLink(token: string): boolean {
 }
 
 export function useMessageFormatting(options: UseMessageFormattingOptions) {
-  const { message, stickers, mapSenderToUser, onImageClick, spaceRoles = [], spaceChannels = [], disableMentionInteractivity = false } = options;
+  const { message, stickers, mapSenderToUser, onImageClick, spaceRoles = [], spaceChannels = [], disableMentionInteractivity = false, currentSpaceId } = options;
 
 
   // Handle image click with size checking
@@ -213,6 +215,23 @@ export function useMessageFormatting(options: UseMessageFormattingOptions) {
       }
 
 
+      // Check for message links (same-space only)
+      const messageLinkInfo = parseMessageLink(token);
+      if (messageLinkInfo && currentSpaceId && messageLinkInfo.spaceId === currentSpaceId) {
+        const channel = spaceChannels.find(c => c.channelId === messageLinkInfo.channelId);
+        // Only render as message link if channel exists in current space
+        if (channel) {
+          return {
+            type: 'message-link' as const,
+            key: `${messageId}-${lineIndex}-${tokenIndex}`,
+            channelId: messageLinkInfo.channelId,
+            messageId: messageLinkInfo.messageId,
+            channelName: channel.channelName,
+            isInteractive: !disableMentionInteractivity,
+          };
+        }
+      }
+
       // Check for YouTube videos using centralized utilities
       if (isYouTubeURL(token)) {
         const videoId = extractYouTubeVideoId(token);
@@ -251,7 +270,7 @@ export function useMessageFormatting(options: UseMessageFormattingOptions) {
         text: token,
       };
     },
-    [mapSenderToUser, message.mentions, spaceRoles, spaceChannels, disableMentionInteractivity]
+    [mapSenderToUser, message.mentions, spaceRoles, spaceChannels, disableMentionInteractivity, currentSpaceId]
   );
 
   return {

@@ -1,4 +1,4 @@
-import React, { useMemo, useCallback } from 'react';
+import React, { useMemo, useCallback, createContext, useContext } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import remarkBreaks from 'remark-breaks';
@@ -19,8 +19,14 @@ import {
   YOUTUBE_URL_DETECTION_REGEX
 } from '../../utils/youtubeUtils';
 import { getValidInvitePrefixes } from '../../utils/inviteDomain';
+import { getValidMessageLinkPrefixes } from '../../utils/messageLinkUtils';
 import { InviteLink } from './InviteLink';
+import { Icon } from '../primitives';
 import type { Role, Channel } from '../../api/quorumApi';
+
+// Context to track if we're inside a fenced code block (```...```)
+// This allows the code component to know if it should apply inline styling
+const CodeBlockContext = createContext(false);
 
 interface MessageMarkdownRendererProps {
   content: string;
@@ -32,6 +38,7 @@ interface MessageMarkdownRendererProps {
     userIcon?: string;
   }, event: React.MouseEvent, context?: { type: 'mention' | 'message-avatar'; element: HTMLElement }) => void;
   onChannelClick?: (channelId: string) => void;
+  onMessageLinkClick?: (channelId: string, messageId: string) => void;
   hasEveryoneMention?: boolean;
   roleMentions?: string[];
   channelMentions?: string[];
@@ -39,6 +46,7 @@ interface MessageMarkdownRendererProps {
   spaceChannels?: Channel[];
   messageSenderId?: string;
   currentUserAddress?: string;
+  currentSpaceId?: string;
 }
 
 
@@ -62,40 +70,67 @@ const processInviteLinks = (text: string): string => {
 
 // Stable processing functions outside component to prevent re-creation
 const processURLs = (text: string): string => {
-  // Replace non-YouTube URLs with markdown links, avoiding code blocks and existing markdown links
-  return text.replace(/^(?!.*```[\s\S]*?```.*$)(.*)$/gm, (line) => {
-    // Only process lines that don't contain code blocks
-    if (line.includes('```')) {
-      return line;
+  // Step 1: Build protected regions (code blocks, inline code, existing markdown links)
+  const protectedRegions: { start: number; end: number }[] = [];
+
+  // Extract fenced code blocks (```...```)
+  const codeBlockRegex = /```[\s\S]*?```/g;
+  let match;
+  while ((match = codeBlockRegex.exec(text)) !== null) {
+    protectedRegions.push({ start: match.index, end: match.index + match[0].length });
+  }
+
+  // Extract inline code (`...`)
+  const inlineCodeRegex = /`[^`]+`/g;
+  while ((match = inlineCodeRegex.exec(text)) !== null) {
+    const isInsideCodeBlock = protectedRegions.some(
+      r => match!.index >= r.start && match!.index < r.end
+    );
+    if (!isInsideCodeBlock) {
+      protectedRegions.push({ start: match.index, end: match.index + match[0].length });
+    }
+  }
+
+  // Extract existing markdown links [text](url)
+  const markdownLinkRegex = /\[([^\]]+)\]\(([^)]+)\)/g;
+  while ((match = markdownLinkRegex.exec(text)) !== null) {
+    const isInsideCodeBlock = protectedRegions.some(
+      r => match!.index >= r.start && match!.index < r.end
+    );
+    if (!isInsideCodeBlock) {
+      protectedRegions.push({ start: match.index, end: match.index + match[0].length });
+    }
+  }
+
+  // Step 2: Find all URLs and convert only those not in protected regions
+  const urlRegex = /https?:\/\/[^\s<>"{}|\\^`[\]]+/g;
+  const urlMatches: { index: number; url: string }[] = [];
+  while ((match = urlRegex.exec(text)) !== null) {
+    urlMatches.push({ index: match.index, url: match[0] });
+  }
+
+  // Filter out URLs in protected regions
+  const validUrls = urlMatches.filter(({ index, url }) => {
+    return !protectedRegions.some(r => index >= r.start && index < r.end);
+  });
+
+  // Step 3: Replace URLs from end to start to avoid index shifting
+  let result = text;
+  for (let i = validUrls.length - 1; i >= 0; i--) {
+    const { index, url } = validUrls[i];
+    const beforeUrl = result.substring(0, index);
+    const afterUrl = result.substring(index + url.length);
+
+    // Additional check: angle bracket autolinks <URL>
+    if (beforeUrl.endsWith('<') && afterUrl.startsWith('>')) {
+      continue; // Don't modify - already in angle bracket autolink
     }
 
-    // Replace non-YouTube URLs with markdown links, but avoid URLs already in markdown links or angle brackets
-    return line.replace(/https?:\/\/[^\s<>"{}|\\^`[\]]+/g, (url, offset) => {
-      // Check if this URL is already part of a markdown link or angle bracket autolink
-      const beforeUrl = line.substring(0, offset);
-      const afterUrl = line.substring(offset + url.length);
+    // Convert URL to markdown link
+    result = beforeUrl + `[${url}](${url})` + afterUrl;
+  }
 
-      // Look for markdown link pattern: ](URL) - URL is already inside a markdown link
-      if (beforeUrl.includes('](') || (beforeUrl.endsWith('](') && afterUrl.startsWith(')'))) {
-        return url; // Don't modify - already in markdown link
-      }
-
-      // Look for partial markdown link pattern: [text](URL - we're at the URL part
-      const linkStart = beforeUrl.lastIndexOf('[');
-      const linkMiddle = beforeUrl.lastIndexOf('](');
-      if (linkStart > -1 && linkMiddle > linkStart && linkMiddle === beforeUrl.length - 2) {
-        return url; // Don't modify - already in markdown link
-      }
-
-      // Look for angle bracket autolinks: <URL>
-      if (beforeUrl.endsWith('<') && afterUrl.startsWith('>')) {
-        return url; // Don't modify - already in angle bracket autolink
-      }
-
-      // Convert ALL URLs to markdown links (including YouTube URLs)
-      return `[${url}](${url})`;
-    });
-  });
+  return result;
 };
 
 const processStandaloneYouTubeUrls = (text: string): string => {
@@ -150,6 +185,7 @@ export const MessageMarkdownRenderer: React.FC<MessageMarkdownRendererProps> = (
   mapSenderToUser,
   onUserClick,
   onChannelClick,
+  onMessageLinkClick,
   hasEveryoneMention = false,
   roleMentions = [],
   channelMentions = [],
@@ -157,6 +193,7 @@ export const MessageMarkdownRenderer: React.FC<MessageMarkdownRendererProps> = (
   spaceChannels = [],
   messageSenderId,
   currentUserAddress,
+  currentSpaceId,
 }) => {
 
   // Convert H1 and H2 headers to H3 since only H3 is allowed
@@ -356,12 +393,123 @@ export const MessageMarkdownRenderer: React.FC<MessageMarkdownRendererProps> = (
     return processed;
   }, [channelMentions, spaceChannels, sanitizeDisplayName]);
 
+  // Process message links to convert them to styled tokens (same-space only)
+  // IMPORTANT: Skip processing inside code blocks and markdown link syntax
+  const processMessageLinks = useCallback((text: string): string => {
+    if (!currentSpaceId || !spaceChannels || spaceChannels.length === 0) {
+      return text;
+    }
+
+    // Step 1: Extract protected regions (code blocks, inline code, markdown links)
+    const protectedRegions: { start: number; end: number; content: string }[] = [];
+
+    // Extract fenced code blocks (```...```)
+    const codeBlockRegex = /```[\s\S]*?```/g;
+    let match;
+    while ((match = codeBlockRegex.exec(text)) !== null) {
+      protectedRegions.push({
+        start: match.index,
+        end: match.index + match[0].length,
+        content: match[0]
+      });
+    }
+
+    // Extract inline code (`...`)
+    const inlineCodeRegex = /`[^`]+`/g;
+    while ((match = inlineCodeRegex.exec(text)) !== null) {
+      // Check if this inline code is inside a fenced code block
+      const isInsideCodeBlock = protectedRegions.some(
+        r => match!.index >= r.start && match!.index < r.end
+      );
+      if (!isInsideCodeBlock) {
+        protectedRegions.push({
+          start: match.index,
+          end: match.index + match[0].length,
+          content: match[0]
+        });
+      }
+    }
+
+    // Extract markdown links [text](url) - to preserve intentional markdown formatting
+    const markdownLinkRegex = /\[([^\]]+)\]\(([^)]+)\)/g;
+    while ((match = markdownLinkRegex.exec(text)) !== null) {
+      // Check if this is inside a code block
+      const isInsideCodeBlock = protectedRegions.some(
+        r => match!.index >= r.start && match!.index < r.end
+      );
+      if (!isInsideCodeBlock) {
+        protectedRegions.push({
+          start: match.index,
+          end: match.index + match[0].length,
+          content: match[0]
+        });
+      }
+    }
+
+    // Step 2: Build regex dynamically from valid prefixes
+    const prefixes = getValidMessageLinkPrefixes();
+    const prefixPattern = prefixes
+      .map(p => p.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'))
+      .join('|');
+
+    // Match message link URLs
+    const messageLinkRegex = new RegExp(
+      `(?:${prefixPattern})([^/]+)/([^#]+)#msg-([a-zA-Z0-9_-]+)`,
+      'g'
+    );
+
+    let processed = text;
+    const matches = Array.from(text.matchAll(messageLinkRegex));
+
+    // Collect valid matches with word boundary validation AND not in protected regions
+    const validMatches = [];
+    for (const matchItem of matches) {
+      // Skip if inside a protected region (code block, inline code, or markdown link)
+      const isProtected = protectedRegions.some(
+        r => matchItem.index! >= r.start && matchItem.index! < r.end
+      );
+      if (isProtected) {
+        continue;
+      }
+
+      if (hasWordBoundaries(text, matchItem)) {
+        validMatches.push(matchItem);
+      }
+    }
+
+    // Process matches in reverse order to avoid index shifting
+    for (let i = validMatches.length - 1; i >= 0; i--) {
+      const matchItem = validMatches[i];
+      const [fullMatch, spaceId, channelId, messageId] = matchItem;
+
+      // CRITICAL: Only process links to CURRENT space
+      if (spaceId !== currentSpaceId) {
+        continue; // Leave cross-space links as plain URLs
+      }
+
+      // Find channel name from spaceChannels
+      const channel = spaceChannels.find(c => c.channelId === channelId);
+      if (!channel) {
+        continue; // Channel not found - leave as plain URL
+      }
+
+      const channelName = channel.channelName;
+      const beforeText = processed.substring(0, matchItem.index);
+      const afterText = processed.substring(matchItem.index! + fullMatch.length);
+
+      // Simplified token format (spaceId implicit - current space only)
+      processed = beforeText + `<<<MESSAGE_LINK:${channelId}:${messageId}:${channelName}>>>` + afterText;
+    }
+
+    return processed;
+  }, [currentSpaceId, spaceChannels]);
+
   // Shared function to process mention tokens into React components
   const processMentionTokens = useCallback((text: string): React.ReactNode[] => {
-    // Check if text contains any mention tokens
-    const hasMentions = text.includes('<<<MENTION_');
+    // Check if text contains any mention or message link tokens
+    const hasTokens = text.includes('<<<MENTION_') || text.includes('<<<MESSAGE_LINK:');
 
-    if (!hasMentions) {
+    if (!hasTokens) {
       return [text];
     }
 
@@ -369,32 +517,50 @@ export const MessageMarkdownRenderer: React.FC<MessageMarkdownRendererProps> = (
     const parts: React.ReactNode[] = [];
     let lastIndex = 0;
 
-    // Regex to find all mention tokens (everyone, user, role, channel)
+    // Regex to find all mention tokens (everyone, user, role, channel) and message link tokens
     // Updated to support inline display names: USER:address:inlineDisplayName and CHANNEL:id:name:inlineDisplayName
     // Using centralized IPFS CID validation pattern
     // SECURITY: Added quantifier limits to prevent catastrophic backtracking attacks
+    // Capture group mapping:
+    // match[1] = MENTION type (EVERYONE, USER:..., ROLE:..., CHANNEL:...)
+    // match[2] = USER address
+    // match[3] = USER inline display name
+    // match[4] = ROLE roleTag
+    // match[5] = ROLE displayName
+    // match[6] = CHANNEL channelId
+    // match[7] = CHANNEL channelName
+    // match[8] = CHANNEL inline display name
+    // match[9] = MESSAGE_LINK channelId
+    // match[10] = MESSAGE_LINK messageId
+    // match[11] = MESSAGE_LINK channelName
     const cidPattern = createIPFSCIDRegex().source; // Get the pattern without global flag
-    const mentionRegex = new RegExp(`<<<MENTION_(EVERYONE|USER:(${cidPattern}):([^>]{0,200})|ROLE:([^:]{1,50}):([^>]{1,200})|CHANNEL:([^:>]{1,50}):([^:>]{1,200}):([^>]{0,200}))>>>`, 'g');
+    const tokenRegex = new RegExp(
+      `<<<(` +
+        `MENTION_(EVERYONE|USER:(${cidPattern}):([^>]{0,200})|ROLE:([^:]{1,50}):([^>]{1,200})|CHANNEL:([^:>]{1,50}):([^:>]{1,200}):([^>]{0,200}))|` +
+        `MESSAGE_LINK:([^:>]{1,100}):([^:>]{1,100}):([^>]{0,200})` +
+      `)>>>`,
+      'g'
+    );
     let match;
 
-    while ((match = mentionRegex.exec(text)) !== null) {
-      // Add text before the mention
+    while ((match = tokenRegex.exec(text)) !== null) {
+      // Add text before the token
       if (match.index > lastIndex) {
         parts.push(text.substring(lastIndex, match.index));
       }
 
-      // Determine mention type and render appropriately
-      if (match[1] === 'EVERYONE') {
+      // Determine token type and render appropriately
+      if (match[2] === 'EVERYONE') {
         // @everyone mention
         parts.push(
           <span key={`mention-${match.index}`} className="message-mentions-everyone">
             @everyone
           </span>
         );
-      } else if (match[2]) {
+      } else if (match[3]) {
         // User mention: <<<MENTION_USER:address:inlineDisplayName>>>
-        const address = match[2];
-        const inlineDisplayName = match[3]; // Optional inline display name
+        const address = match[3];
+        const inlineDisplayName = match[4]; // Optional inline display name
         if (mapSenderToUser && onUserClick) {
           const user = mapSenderToUser(address);
           // SECURITY: Only use actual user data - ignore inline display names to prevent impersonation
@@ -415,10 +581,10 @@ export const MessageMarkdownRenderer: React.FC<MessageMarkdownRendererProps> = (
           // Fallback if handlers not available
           parts.push(match[0]);
         }
-      } else if (match[4] && match[5]) {
+      } else if (match[5] && match[6]) {
         // Role mention: <<<MENTION_ROLE:roleTag:displayName>>>
-        const roleTag = match[4];
-        const displayName = match[5];
+        const roleTag = match[5];
+        const displayName = match[6];
         parts.push(
           <span
             key={`mention-${match.index}`}
@@ -428,11 +594,11 @@ export const MessageMarkdownRenderer: React.FC<MessageMarkdownRendererProps> = (
             @{roleTag}
           </span>
         );
-      } else if (match[6] && match[7]) {
+      } else if (match[7] && match[8]) {
         // Channel mention: <<<MENTION_CHANNEL:channelId:channelName:inlineDisplayName>>>
-        const channelId = match[6];
-        const channelName = match[7];
-        const inlineDisplayName = match[8]; // Optional inline display name
+        const channelId = match[7];
+        const channelName = match[8];
+        const inlineDisplayName = match[9]; // Optional inline display name
         // SECURITY: Only use actual channel data - ignore inline display names to prevent spoofing
         const displayName = channelName;
         parts.push(
@@ -442,6 +608,24 @@ export const MessageMarkdownRenderer: React.FC<MessageMarkdownRendererProps> = (
             data-channel-id={channelId}
           >
             #{displayName}
+          </span>
+        );
+      } else if (match[10] && match[11] && match[12]) {
+        // Message link: <<<MESSAGE_LINK:channelId:messageId:channelName>>>
+        const channelId = match[10];
+        const messageId = match[11];
+        const channelName = match[12];
+
+        parts.push(
+          <span
+            key={`message-link-${match.index}`}
+            className="message-mentions-message-link interactive"
+            data-channel-id={channelId}
+            data-message-id={messageId}
+          >
+            #{channelName}
+            <span className="message-mentions-message-link__separator"> › </span>
+            <Icon name="comment-dots" size="sm" variant="filled" className="message-mentions-message-link__icon" />
           </span>
         );
       }
@@ -458,15 +642,18 @@ export const MessageMarkdownRenderer: React.FC<MessageMarkdownRendererProps> = (
   }, [mapSenderToUser, onUserClick]);
 
   // Simplified processing pipeline with stable dependencies
+  // NOTE: processMessageLinks BEFORE processURLs to prevent double-processing
   const processedContent = useMemo(() => {
     return fixUnclosedCodeBlocks(
       convertHeadersToH3(
         processURLs(
-          processChannelMentions(
-            processRoleMentions(
-              processMentions(
-                processStandaloneYouTubeUrls(
-                  processInviteLinks(content)
+          processMessageLinks(
+            processChannelMentions(
+              processRoleMentions(
+                processMentions(
+                  processStandaloneYouTubeUrls(
+                    processInviteLinks(content)
+                  )
                 )
               )
             )
@@ -474,7 +661,7 @@ export const MessageMarkdownRenderer: React.FC<MessageMarkdownRendererProps> = (
         )
       )
     );
-  }, [content, processMentions, processRoleMentions, processChannelMentions]);
+  }, [content, processMentions, processRoleMentions, processChannelMentions, processMessageLinks]);
 
   // Memoize components to prevent re-creation and YouTube component remounting
   const components = useMemo(() => ({
@@ -510,15 +697,27 @@ export const MessageMarkdownRenderer: React.FC<MessageMarkdownRendererProps> = (
     a: ({ href, children, ...props }: any) => {
       // Render ALL links (including YouTube) as clickable links
       if (href) {
+        // Truncate link text if it's a URL (matches href) and is too long
+        // This handles auto-converted URLs like [http://...](http://...)
+        // Custom link text like [click here](url) is preserved
+        const childText = typeof children === 'string' ? children :
+          (Array.isArray(children) && typeof children[0] === 'string' ? children[0] : null);
+
+        const isAutoLink = childText && (childText === href || childText.startsWith('http'));
+        const truncatedText = isAutoLink && childText.length > 50
+          ? childText.substring(0, 50) + '...'
+          : children;
+
         return (
           <a
             href={href}
             target="_blank"
             rel="noopener noreferrer"
             className="link"
+            title={isAutoLink && childText.length > 50 ? href : undefined}
             {...props}
           >
-            {children}
+            {truncatedText}
           </a>
         );
       }
@@ -564,6 +763,7 @@ export const MessageMarkdownRenderer: React.FC<MessageMarkdownRendererProps> = (
     },
 
     // Enhanced code block rendering with scroll and copy functionality
+    // Wraps children with CodeBlockContext so nested code elements know they're in a block
     pre: ({ children, ...props }: any) => {
       const codeContent = extractCodeContent(children);
       const useScroll = shouldUseScrollContainer(codeContent);
@@ -571,37 +771,43 @@ export const MessageMarkdownRenderer: React.FC<MessageMarkdownRendererProps> = (
 
       if (useScroll) {
         return (
-          <div className="relative my-2 last:mb-0 w-full min-w-0">
-            <CopyButton codeContent={codeContent} />
-            <ScrollContainer maxHeight={maxHeight} showBorder={true} borderRadius="md" className="bg-surface-4 w-full min-w-0">
-              <pre className="p-3 font-mono text-subtle text-sm whitespace-pre-wrap break-all overflow-wrap-anywhere min-w-0 max-w-full" {...props}>
-                {children}
-              </pre>
-            </ScrollContainer>
-          </div>
+          <CodeBlockContext.Provider value={true}>
+            <div className="relative my-2 last:mb-0 w-full min-w-0">
+              <CopyButton codeContent={codeContent} />
+              <ScrollContainer maxHeight={maxHeight} showBorder={true} borderRadius="md" className="bg-surface-4 w-full min-w-0">
+                <pre className="p-3 font-mono text-subtle text-sm whitespace-pre-wrap break-all overflow-wrap-anywhere min-w-0 max-w-full" {...props}>
+                  {children}
+                </pre>
+              </ScrollContainer>
+            </div>
+          </CodeBlockContext.Provider>
         );
       }
 
       return (
-        <div className="relative my-2 last:mb-0 w-full min-w-0">
-          <CopyButton codeContent={codeContent} />
-          <pre className="bg-surface-4 border border-default rounded-lg p-3 font-mono text-sm text-subtle whitespace-pre-wrap break-words w-full min-w-0" {...props}>
-            {children}
-          </pre>
-        </div>
+        <CodeBlockContext.Provider value={true}>
+          <div className="relative my-2 last:mb-0 w-full min-w-0">
+            <CopyButton codeContent={codeContent} />
+            <pre className="bg-surface-4 border border-default rounded-lg p-3 font-mono text-sm text-subtle whitespace-pre-wrap break-words w-full min-w-0" {...props}>
+              {children}
+            </pre>
+          </div>
+        </CodeBlockContext.Provider>
       );
     },
 
-    // Simple inline code rendering without copy functionality
+    // Code rendering - uses context to distinguish inline (`) from block (```)
     code: ({ children, className, ...props }: any) => {
-      const isCodeBlock = className?.includes('language-');
+      // Check if we're inside a pre element (fenced code block)
+      // This is set by the pre component via CodeBlockContext
+      const isInCodeBlock = useContext(CodeBlockContext);
 
-      // If this is part of a code block, let the pre handler deal with it
-      if (isCodeBlock) {
+      if (isInCodeBlock) {
+        // Inside a fenced code block - let pre handle styling
         return <code className={className} {...props}>{children}</code>;
       }
 
-      // Simple inline code styling
+      // Inline code styling (single backticks)
       return (
         <code
           className="bg-surface-4 border border-default px-1.5 py-0.5 rounded text-xs font-mono mx-0.5 text-accent-500"
@@ -759,12 +965,22 @@ export const MessageMarkdownRenderer: React.FC<MessageMarkdownRendererProps> = (
       }
     }
 
-    // Handle channel mention clicks
-    if (target.dataset.channelId && onChannelClick) {
+    // Handle message link clicks (has both channelId and messageId)
+    if (target.classList.contains('message-mentions-message-link') && target.dataset.messageId && onMessageLinkClick) {
+      const channelId = target.dataset.channelId;
+      const messageId = target.dataset.messageId;
+      if (channelId && messageId) {
+        onMessageLinkClick(channelId, messageId);
+      }
+      return; // Don't also trigger channel click
+    }
+
+    // Handle channel mention clicks (only has channelId, no messageId)
+    if (target.classList.contains('message-mentions-channel') && target.dataset.channelId && onChannelClick) {
       const channelId = target.dataset.channelId;
       onChannelClick(channelId);
     }
-  }, [onUserClick, onChannelClick, mapSenderToUser]);
+  }, [onUserClick, onChannelClick, onMessageLinkClick, mapSenderToUser]);
 
   return (
     <div className={`break-words min-w-0 max-w-full overflow-hidden ${className || ''}`} onClick={handleClick}>

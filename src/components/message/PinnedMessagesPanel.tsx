@@ -46,6 +46,7 @@ interface PinnedMessageItemProps {
   spaceRoles?: Role[];
   spaceChannels?: Channel[];
   onChannelClick?: (channelId: string) => void;
+  spaceId: string;
 }
 
 // Extract PinnedMessageItem component for Virtuoso optimization
@@ -59,6 +60,7 @@ const PinnedMessageItem: React.FC<PinnedMessageItemProps> = ({
   spaceRoles,
   spaceChannels,
   onChannelClick,
+  spaceId,
 }) => {
   const sender = mapSenderToUser(message.content?.senderId);
 
@@ -124,6 +126,7 @@ const PinnedMessageItem: React.FC<PinnedMessageItemProps> = ({
           spaceChannels={spaceChannels}
           onChannelClick={onChannelClick}
           disableMentionInteractivity={true}
+          currentSpaceId={spaceId}
         />
       </Container>
     </Container>
@@ -245,6 +248,7 @@ export const PinnedMessagesPanel: React.FC<PinnedMessagesPanelProps> = ({
                       spaceRoles={spaceRoles}
                       spaceChannels={spaceChannels}
                       onChannelClick={onChannelClick}
+                      spaceId={spaceId}
                     />
                   </div>
                 )}
@@ -266,6 +270,7 @@ export const PinnedMessagesPanel: React.FC<PinnedMessagesPanelProps> = ({
                   spaceRoles={spaceRoles}
                   spaceChannels={spaceChannels}
                   onChannelClick={onChannelClick}
+                  spaceId={spaceId}
                 />
               )}
               className="pinned-messages-list"

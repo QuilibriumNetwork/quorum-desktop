@@ -3,6 +3,8 @@
  * Automatically detects staging vs production and uses the appropriate domain
  */
 
+import { buildValidPrefixes, getEnvironmentInfo } from './environmentDomains';
+
 /**
  * Get the base domain for invite links based on the current environment
  * @returns The appropriate domain for invite links
@@ -60,99 +62,30 @@ export function getInviteUrlBase(isPublicInvite: boolean = false): string {
 
 /**
  * Get valid invite URL prefixes for validation
+ * Uses centralized domain detection from environmentDomains.ts
  * @returns Array of valid URL prefixes that invite links can start with
  */
 export function getValidInvitePrefixes(): string[] {
-  // Check if we're in a browser environment
-  if (typeof window !== 'undefined' && window.location) {
-    const hostname = window.location.hostname;
+  const { environment } = getEnvironmentInfo();
 
-    // STAGING: Only accept staging URLs
-    if (hostname === 'test.quorummessenger.com') {
-      return [
-        'https://test.quorummessenger.com/#',
-        'https://test.quorummessenger.com/invite/#',
-        'test.quorummessenger.com/#',
-        'test.quorummessenger.com/invite/#'
-      ];
-    }
+  // Build prefixes for both invite path variants
+  const hashPrefixes = buildValidPrefixes('/#');
+  const invitePrefixes = buildValidPrefixes('/invite/#');
 
-    // PRODUCTION: Accept both app domain and short domain
-    if (hostname === 'app.quorummessenger.com') {
-      return [
-        // Production app domain
-        'https://app.quorummessenger.com/invite/#',
-        'https://app.quorummessenger.com/#',
-        'app.quorummessenger.com/invite/#',
-        'app.quorummessenger.com/#',
-        // Production short domain
-        'https://qm.one/#',
-        'https://qm.one/invite/#',
-        'qm.one/#',
-        'qm.one/invite/#',
-      ];
-    }
-
-    // CUSTOM DEPLOYMENT: Only accept current domain
-    if (hostname !== 'localhost' && hostname !== '127.0.0.1') {
-      return [
-        `https://${hostname}/#`,
-        `https://${hostname}/invite/#`,
-        `${hostname}/#`,
-        `${hostname}/invite/#`
-      ];
-    }
+  // Localhost development: also accept common test ports
+  if (environment === 'localhost') {
+    return [
+      ...hashPrefixes,
+      ...invitePrefixes,
+      // Keep legacy localhost ports for development
+      'http://localhost:5173/#',
+      'http://localhost:5173/invite/#',
+      'http://localhost:3000/#',
+      'http://localhost:3000/invite/#',
+    ];
   }
 
-  // LOCAL DEVELOPMENT: Accept localhost and all common domains for testing
-  const localhostPrefixes = [];
-
-  // Check if we're in localhost to add the current localhost:port
-  if (typeof window !== 'undefined' && window.location) {
-    const hostname = window.location.hostname;
-    const port = window.location.port;
-
-    if (hostname === 'localhost' || hostname === '127.0.0.1') {
-      const localHost = port ? `${hostname}:${port}` : hostname;
-      localhostPrefixes.push(
-        `http://${localHost}/#`,
-        `http://${localHost}/invite/#`,
-        `${localHost}/#`,
-        `${localHost}/invite/#`
-      );
-    }
-  }
-
-  return [
-    ...localhostPrefixes,
-    // Common localhost ports for development
-    'http://localhost:5173/#',
-    'http://localhost:5173/invite/#',
-    'localhost:5173/#',
-    'localhost:5173/invite/#',
-    'http://localhost:3000/#',
-    'http://localhost:3000/invite/#',
-    'localhost:3000/#',
-    'localhost:3000/invite/#',
-    'http://127.0.0.1:5173/#',
-    'http://127.0.0.1:5173/invite/#',
-    '127.0.0.1:5173/#',
-    '127.0.0.1:5173/invite/#',
-    // Production domains
-    'https://app.quorummessenger.com/invite/#',
-    'https://app.quorummessenger.com/#',
-    'app.quorummessenger.com/invite/#',
-    'app.quorummessenger.com/#',
-    'https://qm.one/#',
-    'https://qm.one/invite/#',
-    'qm.one/#',
-    'qm.one/invite/#',
-    // Staging domains
-    'https://test.quorummessenger.com/#',
-    'https://test.quorummessenger.com/invite/#',
-    'test.quorummessenger.com/#',
-    'test.quorummessenger.com/invite/#'
-  ];
+  return [...hashPrefixes, ...invitePrefixes];
 }
 
 /**

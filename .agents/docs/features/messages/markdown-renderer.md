@@ -47,6 +47,8 @@ Messages automatically detect markdown patterns and render with enhanced formatt
 - `src/utils/youtubeUtils.ts` - Centralized YouTube URL utilities
 - `src/utils/codeFormatting.ts` - Code block analysis utilities
 - `src/utils/markdownFormatting.ts` - Markdown formatting functions for toolbar
+- `src/utils/messageLinkUtils.ts` - Message link URL parsing and validation
+- `src/utils/environmentDomains.ts` - Environment-aware domain detection (localhost/staging/prod)
 - `src/hooks/business/messages/useMessageFormatting.ts` - Pattern detection & shouldUseMarkdown()
 - `src/components/message/Message.tsx` - Integration point (markdown vs token-based routing)
 - `src/config/features.ts` - Feature flag configuration (ENABLE_MARKDOWN)
@@ -142,7 +144,7 @@ if (ENABLE_MARKDOWN && formatting.shouldUseMarkdown()) {
 ```typescript
 // Stable processing functions (outside component scope)
 const processURLs = (text: string): string => {
-  /* Convert ALL URLs (including YouTube) to markdown links */
+  /* Convert URLs to markdown links (protects code blocks, inline code, existing md links) */
 };
 
 const processStandaloneYouTubeUrls = (text: string): string => {
@@ -159,20 +161,35 @@ const processRoleMentions = (text: string): string => {
   /* Replace @role mentions with safe placeholders */
 };
 
-// Processing pipeline
+const processChannelMentions = (text: string): string => {
+  /* Replace #channel mentions with safe placeholders */
+};
+
+const processMessageLinks = (text: string): string => {
+  /* Replace message URLs with <<<MESSAGE_LINK:channelId:messageId:channelName>>> */
+  /* Same-space only, protects code blocks/inline code/markdown links */
+};
+
+// Processing pipeline (order matters!)
 const processedContent = useMemo(() => {
   return fixUnclosedCodeBlocks(
     convertHeadersToH3(
-      processURLs(
-        processRoleMentions(
-          processMentions(
-            processStandaloneYouTubeUrls(content)
+      processURLs(                    // Last: convert remaining URLs to links
+        processMessageLinks(          // Before URLs: extract message links
+          processChannelMentions(
+            processRoleMentions(
+              processMentions(
+                processStandaloneYouTubeUrls(
+                  processInviteLinks(content)
+                )
+              )
+            )
           )
         )
       )
     )
   );
-}, [content, processMentions, processRoleMentions]);
+}, [content, processMentions, processRoleMentions, processChannelMentions, processMessageLinks]);
 ```
 
 ### **Component Rendering Flow (Updated 2025-11-07)**
@@ -345,6 +362,21 @@ MessageMarkdownRenderer uses special tokens to safely render dynamic content lik
   - Legacy: `"Check #<ch-123>"` → Clickable span showing channel lookup name
   - Enhanced: `"Check #[general]<ch-123>"` → Clickable span showing "general"
 
+### Message Links (Discord-style)
+- **Token Pattern**: `<<<MESSAGE_LINK:channelId:messageId:channelName>>>`
+- **Creation**: `processMessageLinks()` converts message URLs to styled tokens
+- **URL Format**: `https://qm.one/spaces/{spaceId}/{channelId}#msg-{messageId}`
+- **Rendering**: Styled span showing `#channelName › 📄` (channel name + separator + message icon)
+- **Navigation**: Click navigates to the specific message in the channel
+- **Same-Space Only**: Only links to the current space are converted; cross-space links remain as regular URLs
+- **Protected Contexts**: URLs inside code blocks, inline code, or markdown links `[text](url)` are NOT converted
+- **CSS Classes**: `.message-mentions-message-link`, `.message-mentions-message-link__separator`, `.message-mentions-message-link__icon`
+- **Example**: `"See https://qm.one/spaces/Qm.../Qm...#msg-abc123"` → `"See #general › 📄"` (clickable)
+
+**Key Files**:
+- `src/utils/messageLinkUtils.ts` - URL parsing and validation
+- `src/utils/environmentDomains.ts` - Environment-aware domain detection (localhost, staging, production)
+
 **Related**: See `src/utils/markdownStripping.ts` for token handling in plain text contexts
 
 ## Dependencies
@@ -474,8 +506,9 @@ All user-controlled content now follows this pattern:
 - [Bookmarks](bookmarks.md) - Hybrid preview rendering for bookmarks
 
 ---
-**Last Updated**: 2025-12-02
+**Last Updated**: 2025-12-03
 **Security Hardening**: Complete (rehype-raw removed, XSS vulnerabilities fixed, word boundary validation added)
 **Performance Optimization**: Complete
 **Enhanced Mention Formats**: Complete (backward-compatible support for readable mention display names)
-**Recent Changes**: Implemented enhanced mention formats with inline display names (`@[Name]<address>`, `#[Name]<id>`), word boundary validation for mentions (prevents mentions inside markdown syntax), shared token processing function, mention support in headers
+**Message Links**: Complete (Discord-style rendering with same-space validation)
+**Recent Changes**: Added message link rendering (`<<<MESSAGE_LINK:...>>>` tokens), protected contexts for code blocks/inline code/markdown links, link truncation (50 chars), CodeBlockContext for reliable inline vs block code detection

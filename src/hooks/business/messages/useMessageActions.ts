@@ -153,6 +153,7 @@ export function useMessageActions(options: UseMessageActionsOptions) {
         spaceChannels,
         onChannelClick,
         disableMentionInteractivity: true,
+        currentSpaceId: spaceId,
       }),
       confirmText: t`Delete`,
       cancelText: t`Cancel`,
@@ -160,7 +161,7 @@ export function useMessageActions(options: UseMessageActionsOptions) {
       protipAction: t`delete`,
       onConfirm: performDelete,
     });
-  }, [message, onSubmitMessage, showConfirmationModal, mapSenderToUser, stickers]);
+  }, [message, onSubmitMessage, showConfirmationModal, mapSenderToUser, stickers, spaceId, spaceRoles, spaceChannels, onChannelClick]);
 
   // Handle more reactions (emoji picker)
   const handleMoreReactions = useCallback(
