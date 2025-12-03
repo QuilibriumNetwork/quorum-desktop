@@ -81,6 +81,13 @@ const DirectMessage: React.FC<{}> = () => {
   let { address } = useParams<{ address: string }>();
   const conversationId = address! + '/' + address!;
 
+  // Store last viewed DM address for navigation persistence
+  useEffect(() => {
+    if (address) {
+      sessionStorage.setItem('lastDmAddress', address);
+    }
+  }, [address]);
+
   // Get all the data we need (same as original)
   const { data: registration } = useRegistration({ address: address! });
   const { data: self } = useRegistration({

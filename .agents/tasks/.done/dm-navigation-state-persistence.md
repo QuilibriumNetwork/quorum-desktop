@@ -2,7 +2,77 @@
 
 > **⚠️ AI-Generated**: May contain errors. Verify before use.
 
-Implemneted by Tyler?
+**Status**: ❌ NOT RECOMMENDED - Over-engineered
+**Analyzed**: 2025-12-03 by feature-analyzer agent
+**Simple Alternative**: See [Recommended Fix](#recommended-simple-fix-10-lines) below
+
+---
+
+## Feature Analyzer Assessment (4/10)
+
+### Why This Solution is Over-Engineered
+
+| Aspect | Proposed Solution | Simple Solution |
+|--------|------------------|-----------------|
+| **Files Modified** | 5 new/modified files | 1 file modified |
+| **Lines of Code** | ~150+ lines | ~10 lines |
+| **Database Changes** | Yes (schema update) | No |
+| **I/O Operations** | Write on every DM view | None |
+| **Complexity** | New hook + persistence layer | Single useEffect |
+| **Risk** | Config migration, race conditions | Minimal |
+
+### Critical Issues
+
+1. **Wrong Abstraction Layer**: `UserConfig` is for persistent user preferences (encryption keys, notification settings, bookmarks), not transient navigation state. Adding `lastDirectMessageAddress` pollutes the schema.
+
+2. **Unnecessary I/O**: Would trigger IndexedDB writes on every DM selection - performance overhead for minimal benefit.
+
+3. **Already Solved**: The hotkey system (`useNavigationHotkeys.ts:143-165`) already implements this exact behavior without any persistence.
+
+4. **Misleading Comparison**: Spaces don't persist "last channel" either - they use `defaultChannelId` from Space metadata, not user navigation history.
+
+---
+
+## Recommended Simple Fix (~10 lines)
+
+Add auto-redirect in `DirectMessages.tsx`:
+
+```typescript
+// In DirectMessages.tsx
+const { address } = useParams();
+const { conversations } = useConversationPolling();
+const navigate = useNavigate();
+
+useEffect(() => {
+  // If on /messages (no address) and have conversations, redirect to first
+  if (!address && conversations.length > 0) {
+    navigate(`/messages/${conversations[0].address}`, { replace: true });
+  }
+}, [address, conversations, navigate]);
+```
+
+### If Session Persistence is Needed
+
+Use `sessionStorage` instead of UserConfig:
+
+```typescript
+// On DM view
+useEffect(() => {
+  if (address) sessionStorage.setItem('lastDmAddress', address);
+}, [address]);
+
+// On navigation (NavMenu.tsx)
+const lastAddress = sessionStorage.getItem('lastDmAddress');
+if (lastAddress && conversations.some(c => c.address === lastAddress)) {
+  navigate(`/messages/${lastAddress}`);
+} else if (conversations.length > 0) {
+  navigate(`/messages/${conversations[0].address}`);
+}
+```
+
+---
+
+## Original Proposal (NOT RECOMMENDED)
 
 ## Overview
 
@@ -144,3 +214,4 @@ export const useDirectMessageNavigation = () => {
 ---
 
 _Created: 2025-11-15_
+_Updated: 2025-12-03 - Added feature-analyzer assessment, marked as over-engineered, added simple alternative_

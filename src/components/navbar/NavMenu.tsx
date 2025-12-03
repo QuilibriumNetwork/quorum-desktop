@@ -82,11 +82,15 @@ const NavMenuContent: React.FC<NavMenuProps> = (props) => {
           role="link"
           tabIndex={0}
           className="block cursor-pointer"
-          onClick={() => navigate('/messages')}
+          onClick={() => {
+            const lastAddress = sessionStorage.getItem('lastDmAddress');
+            navigate(lastAddress ? `/messages/${lastAddress}` : '/messages');
+          }}
           onKeyDown={(e) => {
             if (e.key === 'Enter' || e.key === ' ') {
               e.preventDefault();
-              navigate('/messages');
+              const lastAddress = sessionStorage.getItem('lastDmAddress');
+              navigate(lastAddress ? `/messages/${lastAddress}` : '/messages');
             }
           }}
         >
