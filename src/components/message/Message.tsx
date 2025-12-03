@@ -54,7 +54,7 @@ import { buildMessagesKey } from '../../hooks/queries/messages/buildMessagesKey'
 import { InfiniteData } from '@tanstack/react-query';
 import { useMessageDB } from '../context/useMessageDB';
 import { DefaultImages } from '../../utils';
-import { EditHistoryModal } from '../modals/EditHistoryModal';
+import { useEditHistoryModal } from '../context/EditHistoryModalProvider';
 import { MessageEditTextarea } from './MessageEditTextarea';
 import { ENABLE_MARKDOWN } from '../../config/features';
 import { replaceMentionsWithDisplayNames } from '../../utils/markdownStripping';
@@ -155,10 +155,10 @@ export const Message = React.memo(
     // Component state that needs to be available to hooks
     const [showUserProfile, setShowUserProfile] = useState<boolean>(false);
     const [editingMessageId, setEditingMessageId] = useState<string | null>(null);
-    const [showEditHistoryModal, setShowEditHistoryModal] = useState<boolean>(false);
 
-    // Image modal context
+    // Modal contexts
     const { showImageModal } = useImageModal();
+    const { showEditHistoryModal } = useEditHistoryModal();
 
     // Message actions business logic
     const messageActions = useMessageActions({
@@ -179,7 +179,7 @@ export const Message = React.memo(
         }
       },
       onViewEditHistory: (msg) => {
-        setShowEditHistoryModal(true);
+        showEditHistoryModal(msg);
       },
       spaceRoles,
       spaceChannels,
@@ -1125,12 +1125,6 @@ export const Message = React.memo(
           </FlexRow>
         )}
 
-        {/* Edit History Modal */}
-        <EditHistoryModal
-          visible={showEditHistoryModal}
-          onClose={() => setShowEditHistoryModal(false)}
-          message={message}
-        />
       </FlexColumn>
     );
   },

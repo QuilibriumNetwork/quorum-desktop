@@ -45,6 +45,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Hash Navigation to Old Messages](docs/features/messages/hash-navigation-to-old-messages.md)
 - [Markdown Renderer](docs/features/messages/markdown-renderer.md)
 - [Markdown Stripping](docs/features/messages/markdown-stripping.md)
+- [Message Preview Rendering](docs/features/messages/message-preview-rendering.md)
 - [Message Signing System](docs/features/messages/message-signing-system.md)
 - [Mobile Message Actions Implementation](docs/features/messages/message-actions-mobile.md)
 - [New Messages Separator](docs/features/messages/new-messages-separator.md)
@@ -135,6 +136,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Space/Channel Message Deletion Placeholders](tasks/.archived/space-message-deletion-placeholders.md)
 - [Task: Fix Search Results Limitation and Pagination](tasks/.archived/search-results-limitation-and-navigation-fix.md)
 - [Text Primitive Analysis: Typography Prop & Helpers Confusion](tasks/.archived/text-primitive-analysis.md)
+- [Unify Modal Systems: Migrate Layout-Level Modals to ModalProvider](tasks/.archived/modal-system-unification.md)
 
 ### .Archived Css Refactor
 - [CSS Inventory - Complete Codebase Analysis](tasks/.archived/css-refactor/css-inventory.md)
@@ -283,4 +285,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2025-12-02 15:34:07
+**Last Updated**: 2025-12-03 11:41:18
