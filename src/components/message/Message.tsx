@@ -1121,10 +1121,10 @@ export const Message = React.memo(
                   <FlexRow
                     key={message.messageId + '-reactions-' + r.emojiId}
                     className={
-                      'cursor-pointer items-center mr-1 mb-1 rounded-lg py-[1pt] px-2 border border-transparent whitespace-nowrap ' +
+                      'cursor-pointer items-center mr-1 mb-1 rounded-lg py-[1pt] px-2 whitespace-nowrap ' +
                       (r.memberIds.includes(user.currentPasskeyInfo!.address)
-                        ? 'bg-accent-150 hover:bg-accent-200 dark:bg-accent-700 dark:hover:bg-accent-600'
-                        : 'bg-tooltip hover:bg-surface-5')
+                        ? 'bg-accent-rgb/30 hover:bg-accent-rgb/60 border border-accent'
+                        : 'bg-surface-5 hover:bg-surface-00 border border-surface-5 hover:border-surface-00')
                     }
                     onClick={() => {
                       messageActions.handleReaction(r.emojiId);

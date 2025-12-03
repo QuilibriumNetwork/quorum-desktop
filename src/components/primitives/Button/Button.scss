@@ -31,13 +31,13 @@
 
 .btn-secondary {
   @extend %btn-base;
-  background-color: rgba(var(--accent-rgb), 0.3);
+  background-color: rgb(var(--accent-rgb) / 0.3);
   border: $border-2 solid transparent;
   cursor: pointer;
   color: var(--accent-600);
 
   &:hover {
-    background-color: rgba(var(--accent-rgb), 0.45);
+    background-color: rgb(var(--accent-rgb) / 0.45);
     color: var(--accent-700);
   }
 }

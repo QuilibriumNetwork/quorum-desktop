@@ -17,7 +17,7 @@
   --accent-900: #060421;
 
   --accent: var(--accent-500); /* for solid use (hex) */
-  --accent-rgb: 2, 135, 242; /* for color , <opacity>) */
+  --accent-rgb: 2 135 242; /* space-separated for rgb(var() / opacity) */
 
   /* surface */
   --surface-00: #ffffff;
@@ -46,10 +46,10 @@
   --color-link-hover: var(--accent-300);
 
   /* mentions */
-  --color-bg-mention: rgba(var(--accent-rgb), 0.2);
-  --color-bg-mention-hover: rgba(var(--accent-rgb), 0.5);
-  --color-link-mention: var(--accent-400);
-  --color-link-mention-hover: var(--accent-150);
+  --color-bg-mention: rgb(var(--accent-rgb) / 0.2);
+  --color-bg-mention-hover: rgb(var(--accent-rgb) / 0.4);
+  --color-link-mention: var(--accent-500);
+  --color-link-mention-hover: var(--accent-600);
 
   /* app general */
   --color-bg-app: var(--surface-00); // main bg - Navmenu
@@ -58,7 +58,7 @@
   --color-bg-sidebar: var(--surface-0);
   --color-bg-sidebar-hover: var(--surface-1); 
   --color-bg-sidebar-active: var(--surface-2);
-  --color-bg-sidebar-active-accent: rgba(var(--accent-rgb), 0.25);
+  --color-bg-sidebar-active-accent: rgb(var(--accent-rgb) / 0.25);
 
   /* chat area */
   --color-bg-chat: var(--surface-1);
@@ -102,7 +102,7 @@
   --color-field-placeholder: var(--color-text-subtle);
 
   /* Field focus shadows */
-  --color-field-focus-shadow: rgba(var(--accent-rgb), 0.1);
+  --color-field-focus-shadow: rgb(var(--accent-rgb) / 0.1);
   --color-field-error-focus-shadow: rgb(var(--danger) / 0.1);
 
   /* Field dropdown/options (for Select component) */
@@ -111,7 +111,7 @@
   --color-field-option-selected: var(--surface-1);
   --color-field-option-text: var(--color-text-main);
   --color-field-option-text-selected: var(--accent);
-  --color-field-option-bg-selected: rgba(var(--accent-rgb), 0.25);
+  --color-field-option-bg-selected: rgb(var(--accent-rgb) / 0.25);
 
   --color-border-subtle: var(--surface-4);
   --color-border-default: var(--surface-5);
@@ -161,6 +161,12 @@ html.dark {
   --color-link-hover: var(--accent-200);
   --color-text-danger: #d46767;
 
+  /* mentions */
+  --color-bg-mention: rgb(var(--accent-rgb) / 0.2);
+  --color-bg-mention-hover: rgb(var(--accent-rgb) / 0.5);
+  --color-link-mention: var(--accent-400);
+  --color-link-mention-hover: var(--accent-150);
+
   /* Field semantic - dark theme override */
   --color-field-placeholder: var(--color-text-muted);
 
@@ -189,7 +195,7 @@ html.dark {
   --accent-800: #0a0733;
   --accent-900: #060421;
   --accent: var(--accent-500);
-  --accent-rgb: 2, 135, 242;
+  --accent-rgb: 2 135 242;
   background-color: var(--accent-500);
 }
 
@@ -206,7 +212,7 @@ html.dark {
   --accent-800: #281566;
   --accent-900: #140b33;
   --accent: var(--accent-500);
-  --accent-rgb: 124, 82, 255;
+  --accent-rgb: 124 82 255;
   background-color: var(--accent-500);
 }
 
@@ -223,7 +229,7 @@ html.dark {
   --accent-800: #86198f;
   --accent-900: #701a75;
   --accent: var(--accent-500);
-  --accent-rgb: 217, 70, 239;
+  --accent-rgb: 217 70 239;
   background-color: var(--accent-500);
 }
 
@@ -240,7 +246,7 @@ html.dark {
   --accent-800: #9a3412;
   --accent-900: #7c2d12;
   --accent: var(--accent-500);
-  --accent-rgb: 249, 115, 22;
+  --accent-rgb: 249 115 22;
   background-color: var(--accent-500);
 }
 
@@ -257,7 +263,7 @@ html.dark {
   --accent-800: #142b07;
   --accent-900: #0a1504;
   --accent: var(--accent-500);
-  --accent-rgb: 79, 168, 26;
+  --accent-rgb: 79 168 26;
   background-color: var(--accent-500);
   background-color: var(--accent-500);
 }
@@ -275,6 +281,6 @@ html.dark {
   --accent-800: #713f12;
   --accent-900: #5a3310;
   --accent: var(--accent-500);
-  --accent-rgb: 202, 138, 4;
+  --accent-rgb: 202 138 4;
   background-color: var(--accent-500);
 }

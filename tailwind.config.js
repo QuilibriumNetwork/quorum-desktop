@@ -44,7 +44,7 @@ export default {
           800: 'var(--accent-800)',
           900: 'var(--accent-900)',
           DEFAULT: 'var(--accent)',
-          rgb: 'var(--accent-rgb)',
+          rgb: withOpacityValue('--accent-rgb'),
         },
 
         // surface raw variables (direct use if needed)
