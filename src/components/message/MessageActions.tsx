@@ -125,6 +125,15 @@ export const MessageActions: React.FC<MessageActionsProps> = ({
     }
   };
 
+  // Reusable class strings for consistency
+  const emojiButtonClass =
+    'w-5 xl:w-6 mr-1 text-center xl:text-lg rounded-md flex flex-col justify-around cursor-pointer hover:scale-125 xl:hover:scale-150 transition duration-200';
+  const iconButtonClass =
+    'text-center text-surface-9 hover:text-surface-10 hover:scale-125 xl:hover:scale-150 transition duration-200 rounded-md flex items-center justify-center cursor-pointer';
+  const iconButtonClassMr = `${iconButtonClass} mr-2`;
+  const separatorClass =
+    'w-2 mr-2 text-center flex flex-col border-r border-r-1 border-surface-5';
+
   return (
     <>
       {/* Shared tooltip for the entire action zone */}
@@ -140,24 +149,24 @@ export const MessageActions: React.FC<MessageActionsProps> = ({
             return false;
           }}
           onMouseLeave={() => setHoveredAction(null)}
-          className="absolute flex flex-row right-4 top-[-10px] px-2 py-1 bg-tooltip select-none shadow-lg rounded-lg -m-1"
+          className="absolute flex flex-row right-4 top-[-10px] px-2 py-1 xl:px-3 xl:py-1.5 bg-tooltip select-none rounded-lg -m-1 border dark:border-0"
         >
           {/* Quick reactions */}
           <div
             onClick={() => handleQuickReaction(message, '❤️')}
-            className="w-5 mr-1 text-center rounded-md flex flex-col justify-around cursor-pointer hover:scale-125 transition duration-200"
+            className={emojiButtonClass}
           >
             ❤️
           </div>
           <div
             onClick={() => handleQuickReaction(message, '👍')}
-            className="w-5 mr-1 text-center rounded-md flex flex-col justify-around cursor-pointer hover:scale-125 transition duration-200"
+            className={emojiButtonClass}
           >
             👍
           </div>
           <div
             onClick={() => handleQuickReaction(message, '🔥')}
-            className="w-5 mr-1 text-center rounded-md flex flex-col justify-around cursor-pointer hover:scale-125 transition duration-200"
+            className={emojiButtonClass}
           >
             🔥
           </div>
@@ -168,39 +177,43 @@ export const MessageActions: React.FC<MessageActionsProps> = ({
               onMoreReactions(e.clientY);
             }}
             onMouseEnter={() => setHoveredAction('emoji')}
-            className="text-center hover:scale-125 text-surface-9 hover:text-surface-10 transition duration-200 rounded-md flex items-center justify-center cursor-pointer"
+            className={iconButtonClass}
           >
-            <Icon name="mood-happy" size="md" variant="filled" />
+            <Icon name="mood-happy" size="md" variant="filled" className="xl:hidden" />
+            <Icon name="mood-happy" size="lg" variant="filled" className="hidden xl:block" />
           </div>
 
           {/* Separator */}
-          <div className="w-2 mr-2 text-center flex flex-col border-r border-r-1 border-surface-5"></div>
+          <div className={separatorClass}></div>
 
           {/* Reply */}
           <div
             onClick={onReply}
             onMouseEnter={() => setHoveredAction('reply')}
-            className="mr-2 text-center text-surface-9 hover:text-surface-10 hover:scale-125 transition duration-200 rounded-md flex items-center justify-center cursor-pointer"
+            className={iconButtonClassMr}
           >
-            <Icon name="reply" size="md" />
+            <Icon name="reply" size="md" className="xl:hidden" />
+            <Icon name="reply" size="lg" className="hidden xl:block" />
           </div>
 
           {/* Copy link */}
           <div
             onClick={onCopyLink}
             onMouseEnter={() => setHoveredAction('copy')}
-            className="mr-2 text-center text-surface-9 hover:text-surface-10 hover:scale-125 transition duration-200 rounded-md flex items-center justify-center cursor-pointer"
+            className={iconButtonClassMr}
           >
-            <Icon name="link" size="sm" />
+            <Icon name="link" size="sm" className="xl:hidden" />
+            <Icon name="link" size="lg" className="hidden xl:block" />
           </div>
 
           {/* Copy message */}
           <div
             onClick={onCopyMessageText}
             onMouseEnter={() => setHoveredAction('copyMessage')}
-            className="mr-2 text-center text-surface-9 hover:text-surface-10 hover:scale-125 transition duration-200 rounded-md flex items-center justify-center cursor-pointer"
+            className={iconButtonClassMr}
           >
-            <Icon name="clipboard" size="sm" />
+            <Icon name="clipboard" size="sm" className="xl:hidden" />
+            <Icon name="clipboard" size="lg" className="hidden xl:block" />
           </div>
 
           {/* Bookmark (right after copy message, no separator before) */}
@@ -211,11 +224,17 @@ export const MessageActions: React.FC<MessageActionsProps> = ({
                 onBookmarkToggle();
               }}
               onMouseEnter={() => setHoveredAction('bookmark')}
-              className="text-center transition duration-200 rounded-md flex items-center justify-center cursor-pointer hover:scale-125 text-surface-9 hover:text-surface-10"
+              className={iconButtonClass}
             >
               <Icon
                 name={isBookmarked ? 'bookmark-off' : 'bookmark'}
                 size="md"
+                className="xl:hidden"
+              />
+              <Icon
+                name={isBookmarked ? 'bookmark-off' : 'bookmark'}
+                size="lg"
+                className="hidden xl:block"
               />
             </div>
           )}
@@ -224,16 +243,17 @@ export const MessageActions: React.FC<MessageActionsProps> = ({
           {(canUserEdit || canViewEditHistory) && (
             <>
               {/* Separator before edit/history section */}
-              <div className="w-2 mr-2 text-center flex flex-col border-r border-r-1 border-surface-5"></div>
+              <div className={separatorClass}></div>
 
               {/* Edit (if user can edit) */}
               {canUserEdit && onEdit && (
                 <div
                   onClick={onEdit}
                   onMouseEnter={() => setHoveredAction('edit')}
-                  className="mr-2 text-center text-surface-9 hover:text-surface-10 hover:scale-125 transition duration-200 rounded-md flex items-center justify-center cursor-pointer"
+                  className={iconButtonClassMr}
                 >
-                  <Icon name="edit" size="md" />
+                  <Icon name="edit" size="md" className="xl:hidden" />
+                  <Icon name="edit" size="lg" className="hidden xl:block" />
                 </div>
               )}
 
@@ -242,9 +262,10 @@ export const MessageActions: React.FC<MessageActionsProps> = ({
                 <div
                   onClick={onViewEditHistory}
                   onMouseEnter={() => setHoveredAction('history')}
-                  className="text-center text-surface-9 hover:text-surface-10 hover:scale-125 transition duration-200 rounded-md flex items-center justify-center cursor-pointer"
+                  className={iconButtonClass}
                 >
-                  <Icon name="history" size="md" />
+                  <Icon name="history" size="md" className="xl:hidden" />
+                  <Icon name="history" size="lg" className="hidden xl:block" />
                 </div>
               )}
             </>
@@ -253,18 +274,24 @@ export const MessageActions: React.FC<MessageActionsProps> = ({
           {/* Pin (if user can pin) */}
           {canPinMessages && onPin && (
             <>
-              <div className="w-2 mr-2 text-center flex flex-col border-r border-r-1 border-surface-5"></div>
+              <div className={separatorClass}></div>
               <div
                 onClick={(e) => {
                   e.stopPropagation();
                   handlePinClick(e);
                 }}
                 onMouseEnter={handlePinHover}
-                className="text-center text-surface-9 hover:text-surface-10 hover:scale-125 transition duration-200 rounded-md flex items-center justify-center cursor-pointer"
+                className={iconButtonClass}
               >
                 <Icon
                   name={message.isPinned ? 'pin-off' : 'pin'}
                   size="md"
+                  className="xl:hidden"
+                />
+                <Icon
+                  name={message.isPinned ? 'pin-off' : 'pin'}
+                  size="lg"
+                  className="hidden xl:block"
                 />
               </div>
             </>
@@ -277,12 +304,17 @@ export const MessageActions: React.FC<MessageActionsProps> = ({
               <div
                 onClick={onDelete}
                 onMouseEnter={() => setHoveredAction('delete')}
-                className="text-center transition duration-200 rounded-md flex items-center justify-center cursor-pointer"
+                className="text-center transition duration-200 rounded-md flex items-center justify-center cursor-pointer hover:scale-125 xl:hover:scale-150"
               >
                 <Icon
                   name="trash"
                   size="md"
-                  className="text-[rgb(var(--danger))] hover:text-[rgb(var(--danger-hover))] hover:scale-125"
+                  className="xl:hidden text-[rgb(var(--danger))] hover:text-[rgb(var(--danger-hover))]"
+                />
+                <Icon
+                  name="trash"
+                  size="lg"
+                  className="hidden xl:block text-[rgb(var(--danger))] hover:text-[rgb(var(--danger-hover))]"
                 />
               </div>
             </>
