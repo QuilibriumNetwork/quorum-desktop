@@ -6,21 +6,31 @@ import { t } from '@lingui/core/macro';
  * This is the standard format used across all message-related components.
  *
  * Format:
- * - Today: "Today at 3:45 pm"
- * - Yesterday: "Yesterday at 3:45 pm"
+ * - Today: "Today at 3:45 pm" (or just "Today" if compact)
+ * - Yesterday: "Yesterday at 3:45 pm" (or just "Yesterday" if compact)
  * - Last week: Day name (e.g., "Monday")
  * - Older: Relative time (e.g., "3 days ago", "2 months ago")
  *
  * @param timestamp - Unix timestamp in milliseconds
+ * @param compact - If true, omit time for today/yesterday (useful for mobile)
  * @returns Formatted date string
  */
-export const formatMessageDate = (timestamp: number): string => {
+export const formatMessageDate = (timestamp: number, compact = false): string => {
   const time = moment.tz(
     timestamp,
     Intl.DateTimeFormat().resolvedOptions().timeZone
   );
   const fromNow = time.fromNow();
   const timeFormatted = time.format('h:mm a');
+
+  if (compact) {
+    return time.calendar(null, {
+      sameDay: `[${t`Today`}]`,
+      lastDay: `[${t`Yesterday`}]`,
+      lastWeek: 'dddd',
+      sameElse: () => `[${fromNow}]`,
+    });
+  }
 
   return time.calendar(null, {
     sameDay: function () {

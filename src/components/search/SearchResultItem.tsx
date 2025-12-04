@@ -17,6 +17,7 @@ interface SearchResultItemProps {
   searchTerms: string[];
   index: number;
   displayData?: BatchSearchResultDisplayData;
+  compactDate?: boolean;
 }
 
 // DM Search Result Component
@@ -28,6 +29,7 @@ const DMSearchResultItem: React.FC<SearchResultItemProps> = ({
   searchTerms,
   index,
   displayData,
+  compactDate = false,
 }) => {
   const { message } = result;
 
@@ -49,6 +51,7 @@ const DMSearchResultItem: React.FC<SearchResultItemProps> = ({
     useSearchResultFormatting({
       message,
       onNavigate,
+      compactDate,
     });
 
   return (
@@ -96,6 +99,7 @@ const SpaceSearchResultItem: React.FC<SearchResultItemProps> = ({
   searchTerms,
   index,
   displayData,
+  compactDate = false,
 }) => {
   const { message } = result;
 
@@ -119,6 +123,7 @@ const SpaceSearchResultItem: React.FC<SearchResultItemProps> = ({
     useSearchResultFormatting({
       message,
       onNavigate,
+      compactDate,
     });
 
   return (

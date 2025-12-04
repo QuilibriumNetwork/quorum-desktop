@@ -6,6 +6,7 @@ import { formatMessageDate } from '../../../utils';
 export interface UseSearchResultFormattingProps {
   message: Message;
   onNavigate: (spaceId: string, channelId: string, messageId: string) => void;
+  compactDate?: boolean;
 }
 
 export interface UseSearchResultFormattingReturn {
@@ -22,11 +23,12 @@ export interface UseSearchResultFormattingReturn {
 export const useSearchResultFormatting = ({
   message,
   onNavigate,
+  compactDate = false,
 }: UseSearchResultFormattingProps): UseSearchResultFormattingReturn => {
   // Format date using shared utility (matches Message.tsx format)
   const formattedDate = useMemo(() => {
-    return formatMessageDate(message.createdDate);
-  }, [message.createdDate]);
+    return formatMessageDate(message.createdDate, compactDate);
+  }, [message.createdDate, compactDate]);
 
   // Get message type icon
   const messageTypeIcon = useMemo((): IconName => {

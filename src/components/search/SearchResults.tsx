@@ -176,6 +176,7 @@ export const SearchResults: React.FC<SearchResultsProps> = ({
                       searchTerms={searchTerms}
                       index={index}
                       displayData={resultsData.get(result.message.messageId)}
+                      compactDate={true}
                     />
                   </div>
                 )}

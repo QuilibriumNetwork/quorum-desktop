@@ -14,6 +14,7 @@ interface NotificationItemProps {
   className?: string;
   spaceRoles?: any[]; // Space roles for mention formatting
   spaceChannels?: any[]; // Space channels for mention formatting
+  compactDate?: boolean; // Compact date format (omit time for today/yesterday)
 }
 
 // Helper function to render message content with proper mention formatting
@@ -82,6 +83,7 @@ export const NotificationItem: React.FC<NotificationItemProps> = ({
   className,
   spaceRoles = [],
   spaceChannels = [],
+  compactDate = false,
 }) => {
   const { message, channelName } = notification;
 
@@ -99,6 +101,7 @@ export const NotificationItem: React.FC<NotificationItemProps> = ({
   const { formattedDate, handleClick, handleKeyDown } = useSearchResultFormatting({
     message,
     onNavigate,
+    compactDate,
   });
 
   // Determine notification type and icon

@@ -236,6 +236,7 @@ export const BookmarksPanel: React.FC<BookmarksPanelProps> = ({
                 onRemoveBookmark={handleRemoveBookmark}
                 stickers={stickers}
                 mapSenderToUser={mapSenderToUser}
+                compactDate={isTouchDevice()}
               />
             </div>
           ))}
@@ -256,6 +257,7 @@ export const BookmarksPanel: React.FC<BookmarksPanelProps> = ({
               onRemoveBookmark={handleRemoveBookmark}
               stickers={stickers}
               mapSenderToUser={mapSenderToUser}
+              compactDate={isTouchDevice()}
             />
           )}
           style={{ height: '100%' }}

@@ -22,6 +22,8 @@ export interface BookmarkItemProps {
   stickers?: { [key: string]: Sticker };
   // Props for MessagePreview rendering (when message is resolved)
   mapSenderToUser?: (senderId: string) => any;
+  // Compact date format (omit time for today/yesterday)
+  compactDate?: boolean;
 }
 
 export const BookmarkItem: React.FC<BookmarkItemProps> = ({
@@ -30,6 +32,7 @@ export const BookmarkItem: React.FC<BookmarkItemProps> = ({
   onRemoveBookmark,
   stickers,
   mapSenderToUser,
+  compactDate = false,
 }) => {
   const { cachedPreview } = bookmark;
 
@@ -116,7 +119,7 @@ export const BookmarkItem: React.FC<BookmarkItemProps> = ({
             </Text>
             <Icon name="calendar-alt" className="result-date-icon flex-shrink-0 ml-1" />
             <Text className="result-date flex-shrink-0 whitespace-nowrap ml-1">
-              {formatMessageDate(cachedPreview.messageDate)}
+              {formatMessageDate(cachedPreview.messageDate, compactDate)}
             </Text>
           </FlexRow>
           <FlexRow

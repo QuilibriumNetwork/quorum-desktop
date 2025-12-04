@@ -47,6 +47,7 @@ interface PinnedMessageItemProps {
   spaceChannels?: Channel[];
   onChannelClick?: (channelId: string) => void;
   spaceId: string;
+  compactDate?: boolean;
 }
 
 // Extract PinnedMessageItem component for Virtuoso optimization
@@ -61,6 +62,7 @@ const PinnedMessageItem: React.FC<PinnedMessageItemProps> = ({
   spaceChannels,
   onChannelClick,
   spaceId,
+  compactDate = false,
 }) => {
   const sender = mapSenderToUser(message.content?.senderId);
 
@@ -78,7 +80,7 @@ const PinnedMessageItem: React.FC<PinnedMessageItemProps> = ({
             </Text>
             <Icon name="calendar-alt" className="result-date-icon flex-shrink-0 ml-1" />
             <Text className="result-date flex-shrink-0 whitespace-nowrap ml-1">
-              {formatMessageDate(message.createdDate)}
+              {formatMessageDate(message.createdDate, compactDate)}
             </Text>
           </FlexRow>
           <FlexRow
@@ -249,6 +251,7 @@ export const PinnedMessagesPanel: React.FC<PinnedMessagesPanelProps> = ({
                       spaceChannels={spaceChannels}
                       onChannelClick={onChannelClick}
                       spaceId={spaceId}
+                      compactDate={true}
                     />
                   </div>
                 )}

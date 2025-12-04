@@ -242,6 +242,7 @@ export const NotificationPanel: React.FC<NotificationPanelProps> = ({
                       mapSenderToUser={mapSenderToUser}
                       spaceRoles={spaceRoles}
                       spaceChannels={spaceChannels}
+                      compactDate={true}
                     />
                   </div>
                 );
