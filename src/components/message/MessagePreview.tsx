@@ -71,6 +71,12 @@ const renderPreviewTextWithSpecialTokens = (
           </React.Fragment>
         );
       } else if (tokenData.type === 'link') {
+        // Truncate long URLs to 50 chars (matching MessageMarkdownRenderer)
+        const isLongUrl = tokenData.text.length > 50;
+        const displayText = isLongUrl
+          ? tokenData.text.substring(0, 50) + '...'
+          : tokenData.text;
+
         renderedTokens.push(
           <React.Fragment key={tokenData.key}>
             <a
@@ -78,9 +84,10 @@ const renderPreviewTextWithSpecialTokens = (
               target="_blank"
               referrerPolicy="no-referrer"
               className="link"
-              style={{ fontSize: 'inherit' }}
+              title={isLongUrl ? tokenData.url : undefined}
+              style={{ fontSize: 'inherit', wordBreak: 'break-all' }}
             >
-              {tokenData.text}
+              {displayText}
             </a>{' '}
           </React.Fragment>
         );

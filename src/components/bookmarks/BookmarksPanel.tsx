@@ -2,7 +2,7 @@ import React, { useState, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Virtuoso } from 'react-virtuoso';
 import { t } from '@lingui/core/macro';
-import type { Bookmark, Sticker, Role, Channel } from '../../api/quorumApi';
+import type { Bookmark, Sticker } from '../../api/quorumApi';
 import { BookmarkItem } from './BookmarkItem';
 import {
   FlexRow,
@@ -26,9 +26,6 @@ interface BookmarksPanelProps {
   stickers?: { [key: string]: Sticker };
   // Props for MessagePreview rendering in BookmarkItem
   mapSenderToUser?: (senderId: string) => any;
-  spaceRoles?: Role[];
-  spaceChannels?: Channel[];
-  onChannelClick?: (channelId: string) => void;
 }
 
 export const BookmarksPanel: React.FC<BookmarksPanelProps> = ({
@@ -37,9 +34,6 @@ export const BookmarksPanel: React.FC<BookmarksPanelProps> = ({
   userAddress,
   stickers,
   mapSenderToUser,
-  spaceRoles,
-  spaceChannels,
-  onChannelClick,
 }) => {
   const navigate = useNavigate();
 
@@ -242,9 +236,6 @@ export const BookmarksPanel: React.FC<BookmarksPanelProps> = ({
                 onRemoveBookmark={handleRemoveBookmark}
                 stickers={stickers}
                 mapSenderToUser={mapSenderToUser}
-                spaceRoles={spaceRoles}
-                spaceChannels={spaceChannels}
-                onChannelClick={onChannelClick}
               />
             </div>
           ))}
@@ -265,16 +256,13 @@ export const BookmarksPanel: React.FC<BookmarksPanelProps> = ({
               onRemoveBookmark={handleRemoveBookmark}
               stickers={stickers}
               mapSenderToUser={mapSenderToUser}
-              spaceRoles={spaceRoles}
-              spaceChannels={spaceChannels}
-              onChannelClick={onChannelClick}
             />
           )}
           style={{ height: '100%' }}
         />
       </div>
     );
-  }, [isLoading, error, filteredBookmarks, renderEmptyState, handleJumpToMessage, handleRemoveBookmark, stickers, mapSenderToUser, spaceRoles, spaceChannels, onChannelClick]);
+  }, [isLoading, error, filteredBookmarks, renderEmptyState, handleJumpToMessage, handleRemoveBookmark, stickers, mapSenderToUser]);
 
   return (
     <DropdownPanel

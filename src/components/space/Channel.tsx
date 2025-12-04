@@ -918,9 +918,6 @@ const Channel: React.FC<ChannelProps> = ({
                   userAddress={userAddress}
                   stickers={stickers}
                   mapSenderToUser={mapSenderToUser}
-                  spaceRoles={roles}
-                  spaceChannels={spaceChannels}
-                  onChannelClick={handleChannelClick}
                 />
               </div>
 

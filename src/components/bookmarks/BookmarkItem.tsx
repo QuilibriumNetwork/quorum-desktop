@@ -1,6 +1,6 @@
 import React from 'react';
 import { t } from '@lingui/core/macro';
-import type { Bookmark, Sticker, Role, Channel } from '../../api/quorumApi';
+import type { Bookmark, Sticker } from '../../api/quorumApi';
 import {
   FlexRow,
   FlexBetween,
@@ -22,9 +22,6 @@ export interface BookmarkItemProps {
   stickers?: { [key: string]: Sticker };
   // Props for MessagePreview rendering (when message is resolved)
   mapSenderToUser?: (senderId: string) => any;
-  spaceRoles?: Role[];
-  spaceChannels?: Channel[];
-  onChannelClick?: (channelId: string) => void;
 }
 
 export const BookmarkItem: React.FC<BookmarkItemProps> = ({
@@ -33,9 +30,6 @@ export const BookmarkItem: React.FC<BookmarkItemProps> = ({
   onRemoveBookmark,
   stickers,
   mapSenderToUser,
-  spaceRoles,
-  spaceChannels,
-  onChannelClick,
 }) => {
   const { cachedPreview } = bookmark;
 
@@ -99,11 +93,7 @@ export const BookmarkItem: React.FC<BookmarkItemProps> = ({
           stickers={stickers}
           showBackground={false}
           hideHeader={true}
-          spaceRoles={spaceRoles}
-          spaceChannels={spaceChannels}
-          onChannelClick={onChannelClick}
           disableMentionInteractivity={true}
-          currentSpaceId={bookmark.spaceId}
         />
       );
     }

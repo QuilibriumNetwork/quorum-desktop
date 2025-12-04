@@ -117,6 +117,18 @@
   overflow-wrap: break-word;
 }
 
+// Ensure links in MessagePreview (rich rendering) wrap and don't overflow
+.bookmark-item .message-preview-post,
+.mobile-drawer .bookmark-item .message-preview-post {
+  word-break: break-word;
+  overflow-wrap: break-word;
+
+  .link {
+    word-break: break-all;
+    overflow-wrap: break-word;
+  }
+}
+
 // Use shared empty state styling
 .bookmark-empty-state {
   @extend .dropdown-empty-state;
