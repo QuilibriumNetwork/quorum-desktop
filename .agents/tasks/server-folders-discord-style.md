@@ -2,10 +2,7 @@
 
 https://github.com/QuilibriumNetwork/quorum-desktop/issues/89
 
-> **⚠️ AI-Generated**: May contain errors. Verify before use.
-> **Reviewed by**: feature-analyzer and security-analyst agent
-
-> **Status**: Planning
+> **Status**: Ready for Implementation
 > **Priority**: Medium
 > **Complexity**: High
 > **Cross-Platform**: Must work on both desktop and mobile
@@ -14,28 +11,329 @@ https://github.com/QuilibriumNetwork/quorum-desktop/issues/89
 
 ## Overview
 
-Implement Discord-style space folder functionality that allows users to group space icons by dragging them together in the left navigation bar. This feature enhances organization for users with many Spaces and provides visual grouping with customizable folder icons.
+Implement Discord-style space folder functionality that allows users to group space icons by dragging them together in the left navigation bar.
 
-Quorum "Spaces" = Discord "Servers"
+**Key Features:**
+- Drag space onto space → creates folder
+- Expandable folder container with colored background
+- Folder customization (name, icon, color)
+- Cross-device sync with conflict resolution
+- Backwards compatible with native app
 
 ---
 
-## Data Architecture
+## Error Check Commands
 
-### Single-Array Schema (Simplified)
+Run after each step to catch errors early (faster than `yarn build`):
 
-**Rationale**: A single `items` array eliminates data consistency issues between separate `folderOrder` and `folders` arrays.
+**Option 1: Lint specific files (recommended)**
+```bash
+cmd.exe /c "cd /d D:\GitHub\Quilibrium\quorum-desktop && yarn lint"
+```
+
+**Option 2: Type-check specific files only**
+```bash
+# Replace with actual files you modified
+cmd.exe /c "cd /d D:\GitHub\Quilibrium\quorum-desktop && npx tsc --noEmit --skipLibCheck src/path/to/file.ts src/path/to/other.tsx"
+```
+
+**Example for folder files:**
+```bash
+cmd.exe /c "cd /d D:\GitHub\Quilibrium\quorum-desktop && npx tsc --noEmit --skipLibCheck src/components/navbar/FolderButton.tsx src/components/navbar/FolderContainer.tsx src/utils/folderUtils.ts"
+```
+
+> ⚠️ Avoid running `npx tsc --noEmit` on the whole project - it will show many unrelated errors.
+
+---
+
+# IMPLEMENTATION CHECKLIST
+
+## Phase 1: Data Foundation
+
+### 1.1 Add `folder` icon to ICON_OPTIONS
+- [ ] **File**: `src/components/space/IconPicker/types.ts`
+- [ ] Add to `ICON_OPTIONS` array:
+  ```typescript
+  { name: 'folder', tier: 1, category: 'Organization' },
+  ```
+- [ ] **STOP**: Run `yarn lint` or check modified files
+
+### 1.2 Add `mode` prop to IconPicker
+- [ ] **File**: `src/components/space/IconPicker/types.ts`
+- [ ] Add to `IconPickerProps`:
+  ```typescript
+  mode?: 'icon-color' | 'background-color';  // default: 'icon-color'
+  ```
+- [ ] **File**: `src/components/space/IconPicker/IconPicker.web.tsx`
+- [ ] When `mode="background-color"`:
+  - Icons always render white
+  - Color swatches show as background previews (circle with color bg, white icon inside)
+- [ ] **STOP**: Run `yarn lint` or check modified files
+- [ ] **STOP - VISUAL TEST**: Open any channel editor, verify IconPicker still works normally
+
+### 1.3 Add NavItem types
+- [ ] **File**: `src/api/quorumApi.ts` (near UserConfig type)
+- [ ] Add types (see [Reference: Data Types](#reference-data-types)):
+  ```typescript
+  export type FolderColor = IconColor;
+
+  export type NavItem =
+    | { type: 'space'; id: string }
+    | {
+        type: 'folder';
+        id: string;
+        name: string;
+        spaceIds: string[];
+        icon?: IconName;
+        color?: FolderColor;
+        createdDate: number;
+        modifiedDate: number;
+      };
+  ```
+- [ ] Update `UserConfig` type:
+  ```typescript
+  items?: NavItem[];  // Optional during migration
+  ```
+- [ ] **STOP**: Run `yarn lint` or check modified files
+
+### 1.4 Add helper functions
+- [ ] **File**: `src/utils.ts` (or new `src/utils/folderUtils.ts`)
+- [ ] Add `deriveSpaceIds()` function (see [Reference: Helper Functions](#reference-helper-functions))
+- [ ] Add `validateItems()` function
+- [ ] Add `migrateToItems()` function
+- [ ] **STOP**: Run `yarn lint` or check modified files
+
+### 1.5 Add SpaceButton `size` prop
+- [ ] **File**: `src/components/navbar/SpaceButton.tsx` (or wherever SpaceButton is)
+- [ ] Add prop: `size?: 'regular' | 'small'` (default: 'regular')
+- [ ] When `size="small"`: render at 40px instead of 48px
+- [ ] **STOP**: Run `yarn lint` or check modified files
+
+**✅ PHASE 1 COMPLETE** - No visual changes yet, just foundation
+
+---
+
+## Phase 2: Folder UI Components
+
+### 2.1 Create FolderButton component
+- [ ] **New File**: `src/components/navbar/FolderButton.tsx`
+- [ ] Props: `folder`, `hasUnread`, `unreadCount`
+- [ ] Renders: White icon on colored background (48px circle)
+- [ ] See [Reference: FolderButton Component](#reference-folderbutton-component)
+- [ ] **STOP**: Run `yarn lint` or check modified files
+
+### 2.2 Create FolderContainer component
+- [ ] **New File**: `src/components/navbar/FolderContainer.tsx`
+- [ ] Handles collapsed/expanded states
+- [ ] Uses `useLongPressWithDefaults` from touch interaction system
+- [ ] See [Reference: FolderContainer Component](#reference-foldercontainer-component)
+- [ ] **STOP**: Run `yarn lint` or check modified files
+
+### 2.3 Create folder SCSS
+- [ ] **New File**: `src/components/navbar/Folder.scss`
+- [ ] Styles for:
+  - `.folder-button` - 48px circle with color bg
+  - `.folder-container` - expanded container with 50% opacity bg
+  - `.folder-spaces` - container for smaller space icons
+- [ ] Use `@media (hover: hover)` for hover states
+- [ ] **STOP**: Run `yarn lint` or check modified files
+
+### 2.4 Integrate into NavMenu
+- [ ] **File**: Find where spaces are rendered in navbar (likely `NavMenu.tsx` or similar)
+- [ ] Add logic to read from `items` array (fall back to `spaceIds` for migration)
+- [ ] Render `FolderContainer` for folder items, `SpaceButton` for space items
+- [ ] **STOP**: Run `yarn lint` or check modified files
+- [ ] **STOP - VISUAL TEST**:
+  - Manually add a test folder to your local config (via dev tools or temp code)
+  - Verify folder appears in navbar
+  - Verify clicking expands/collapses
+  - Verify spaces inside are smaller (40px)
+
+**✅ PHASE 2 COMPLETE** - Folders render visually
+
+---
+
+## Phase 3: Interactions & Modals
+
+### 3.1 Add FolderEditorModal state to ModalProvider
+- [ ] **File**: `src/hooks/business/ui/useModalState.ts`
+- [ ] Add state:
+  ```typescript
+  folderEditor: { isOpen: boolean; folderId?: string };
+  ```
+- [ ] Add actions: `OPEN_FOLDER_EDITOR`, `CLOSE_FOLDER_EDITOR`
+- [ ] **File**: `src/components/context/ModalProvider.tsx`
+- [ ] Add modal rendering (pattern from ChannelEditorModal)
+- [ ] **STOP**: Run `yarn lint` or check modified files
+
+### 3.2 Create FolderEditorModal
+- [ ] **New File**: `src/components/modals/FolderEditorModal.tsx`
+- [ ] Pattern: Follow `ChannelEditorModal.tsx`
+- [ ] Contains:
+  - Name input (max 40 chars)
+  - IconPicker with `mode="background-color"`
+  - Save button
+  - Delete Folder link at bottom (danger style)
+- [ ] See [Reference: FolderEditorModal](#reference-foldereditormodal)
+- [ ] **STOP**: Run `yarn lint` or check modified files
+- [ ] **STOP - VISUAL TEST**:
+  - Trigger modal open (via temp button or dev tools)
+  - Verify layout matches spec
+  - Verify IconPicker shows icons in white on colored backgrounds
+
+### 3.3 Create FolderContextMenu (desktop only)
+- [ ] **New File**: `src/components/navbar/FolderContextMenu.tsx`
+- [ ] Options: "Folder Settings", "Delete Folder"
+- [ ] See [Reference: FolderContextMenu](#reference-foldercontextmenu)
+- [ ] **STOP**: Run `yarn lint` or check modified files
+
+### 3.4 Wire up interactions
+- [ ] **File**: `src/components/navbar/FolderContainer.tsx`
+- [ ] Desktop: Right-click → FolderContextMenu
+- [ ] Touch: Long-press → FolderEditorModal directly
+- [ ] Use `useLongPressWithDefaults` with `TOUCH_INTERACTION_TYPES.STANDARD`
+- [ ] **STOP**: Run `yarn lint` or check modified files
+- [ ] **STOP - VISUAL TEST**:
+  - Desktop: Right-click folder → context menu appears
+  - Desktop: Click "Folder Settings" → modal opens
+  - Mobile (or touch simulation): Long-press → modal opens directly
+
+**✅ PHASE 3 COMPLETE** - Folder editing works
+
+---
+
+## Phase 4: Drag & Drop
+
+> ⚠️ This phase is complex. Implement incrementally and test each scenario.
+>
+> **Existing system**: `src/hooks/business/spaces/useSpaceDragAndDrop.ts` already handles space reordering with `@dnd-kit`. Extend this hook, don't replace it.
+
+### 4.1 Extend existing drag hook for folders
+- [ ] **File**: `src/hooks/business/spaces/useSpaceDragAndDrop.ts`
+- [ ] Current: handles simple space reordering via `arrayMove`
+- [ ] Extend `handleDragEnd` to detect folder scenarios (see [Reference: Drag State Machine](#reference-drag-state-machine))
+- [ ] Add touch constraints to existing sensors:
+  ```typescript
+  // Current: { distance: 8 }
+  // Add touch support:
+  activationConstraint: isTouchDevice
+    ? { delay: 200, tolerance: 5, distance: 15 }
+    : { distance: 8 }
+  ```
+- [ ] **STOP**: Run `yarn lint` or check modified files
+
+### 4.2 Implement basic folder creation
+- [ ] Drag Space A onto Space B → creates folder containing both
+- [ ] Test scenario: `SPACE_TO_SPACE`
+- [ ] **STOP**: Run `yarn lint` or check modified files
+- [ ] **STOP - VISUAL TEST**: Drag one space onto another, verify folder is created
+
+### 4.3 Implement add to folder
+- [ ] Drag Space onto Folder → adds space to folder
+- [ ] Test scenario: `SPACE_TO_FOLDER`
+- [ ] **STOP - VISUAL TEST**: Drag space onto folder, verify it's added
+
+### 4.4 Implement remove from folder
+- [ ] Drag Space out of folder → becomes standalone
+- [ ] Test scenario: `SPACE_OUT_OF_FOLDER`
+- [ ] Auto-delete folder if empty
+- [ ] **STOP - VISUAL TEST**: Drag space out of folder, verify it becomes standalone
+
+### 4.5 Implement remaining drag scenarios
+- [ ] `FOLDER_REORDER` - Reorder folders in list
+- [ ] `SPACE_REORDER_IN_FOLDER` - Reorder within folder
+- [ ] `SPACE_REORDER_STANDALONE` - Reorder standalone spaces
+- [ ] `SPACE_BETWEEN_FOLDERS` - Move space from folder A to folder B
+- [ ] See [Reference: Drag State Machine](#reference-drag-state-machine) for all 10 scenarios
+- [ ] **STOP - VISUAL TEST**: Test each scenario manually
+
+### 4.6 Add visual feedback
+- [ ] Drop zone indicators (highlight valid targets)
+- [ ] Drag shadows
+- [ ] Invalid drop feedback (shake/red tint)
+- [ ] **STOP - VISUAL TEST**: Verify drag feedback looks good
+
+**✅ PHASE 4 COMPLETE** - Full drag & drop working
+
+---
+
+## Phase 5: Sync & Persistence
+
+### 5.1 Update ConfigService for items
+- [ ] **File**: `src/services/ConfigService.ts`
+- [ ] In `saveConfig()`: Always derive `spaceIds` from `items` before saving
+- [ ] Add `deriveSpaceIds()` call
+- [ ] **STOP**: Run `yarn lint` or check modified files
+
+### 5.2 Implement mergeItems()
+- [ ] **File**: `src/services/ConfigService.ts`
+- [ ] Add `mergeItems()` function (see [Reference: Merge Algorithm](#reference-merge-algorithm))
+- [ ] Call in `getConfig()` after decryption
+- [ ] **STOP**: Run `yarn lint` or check modified files
+
+### 5.3 Add device-local folder states
+- [ ] Store collapsed/expanded state locally (not synced)
+- [ ] Use localStorage or IndexedDB DevicePreferences
+- [ ] Key: `folderStates: Record<folderId, { collapsed: boolean }>`
+- [ ] **STOP**: Run `yarn lint` or check modified files
+- [ ] **STOP - VISUAL TEST**:
+  - Expand folder, refresh page → should remember state
+  - This state should NOT sync to other devices
+
+### 5.4 Test sync scenarios
+- [ ] Create folder on device A → appears on device B
+- [ ] Edit folder on A → syncs to B
+- [ ] Delete folder on A → removed on B
+- [ ] Conflict: Edit on both devices → most recent wins
+
+**✅ PHASE 5 COMPLETE** - Sync working
+
+---
+
+## Phase 6: Polish & Cross-Platform
+
+### 6.1 Touch gesture tuning
+- [ ] Test on actual touch device (or good simulation)
+- [ ] Verify: tap expands, long-press opens modal, drag reorders
+- [ ] Verify: no accidental drags during scroll
+- [ ] Tune `activationConstraint` if needed
+
+### 6.2 Animations
+- [ ] Expand/collapse animation (smooth height transition)
+- [ ] Drag feedback animations
+- [ ] Folder creation animation (subtle)
+
+### 6.3 i18n
+- [ ] Add translations for:
+  - "Folder Settings"
+  - "Delete Folder"
+  - "Edit Folder"
+  - Validation messages
+- [ ] Note: Default folder name "Spaces" is user data, not translated
+
+### 6.4 Final testing
+- [ ] Run through full [Manual Testing Checklist](#manual-testing-checklist)
+- [ ] Run `yarn build` - ensure no errors
+- [ ] Test on both desktop and mobile
+
+**✅ PHASE 6 COMPLETE** - Feature ready for release
+
+---
+
+# REFERENCE SECTIONS
+
+## Reference: Data Types
 
 ```typescript
-// Reuse existing IconColor type from IconPicker
-// Available: 'default' | 'blue' | 'purple' | 'fuchsia' | 'green' | 'orange' | 'yellow' | 'red'
-type FolderColor = IconColor;
+// In src/api/quorumApi.ts
 
-type NavItem =
+export type FolderColor = IconColor;
+
+export type NavItem =
   | { type: 'space'; id: string }
   | {
       type: 'folder';
-      id: string;                   // UUID
+      id: string;                   // crypto.randomUUID()
       name: string;                 // User-defined name (default: "Spaces")
       spaceIds: string[];           // Spaces in this folder (ordered)
       icon?: IconName;              // Custom icon (always rendered white, default: 'folder')
@@ -44,14 +342,11 @@ type NavItem =
       modifiedDate: number;
     };
 
-type UserConfig = {
+export type UserConfig = {
   address: string;
-  spaceIds?: string[];              // DEPRECATED - migration only
-  items: NavItem[];                 // Single source of truth
-  timestamp?: number;
-  nonRepudiable?: boolean;
-  allowSync?: boolean;
-  spaceKeys?: SpaceKeyConfig[];
+  spaceIds: string[];               // KEPT for backwards compatibility (derived from items)
+  items?: NavItem[];                // Single source of truth for ordering & folders
+  // ... other existing fields
 };
 
 // Device-local preferences (NOT synced)
@@ -61,20 +356,63 @@ type DevicePreferences = {
 };
 ```
 
-**Key Design Decisions**:
-- Folder data is inline within `items` array - no separate lookups needed
-- `collapsed` state stored separately in device-local preferences (not synced)
-- Space can only exist in ONE location (either standalone or inside exactly one folder)
-- Empty folders are auto-deleted when last space is removed
-
-### Migration Strategy
+## Reference: Helper Functions
 
 ```typescript
-const migrateToItems = (config: UserConfig): UserConfig => {
-  // Already migrated
-  if (config.items) return config;
+// In src/utils/folderUtils.ts
 
-  // Convert legacy spaceIds to items format
+import { NavItem } from '../api/quorumApi';
+
+// Extract all space IDs from items (flattens folders)
+export const deriveSpaceIds = (items: NavItem[]): string[] => {
+  const spaceIds: string[] = [];
+  for (const item of items) {
+    if (item.type === 'space') {
+      spaceIds.push(item.id);
+    } else if (item.type === 'folder') {
+      spaceIds.push(...item.spaceIds);
+    }
+  }
+  return spaceIds;
+};
+
+// Validate and clean items array
+export const validateItems = (items: NavItem[]): NavItem[] => {
+  const seen = new Set<string>();
+  const validItems: NavItem[] = [];
+  let folderCount = 0;
+
+  for (const item of items) {
+    if (item.type === 'space') {
+      if (!seen.has(item.id)) {
+        seen.add(item.id);
+        validItems.push(item);
+      }
+    } else if (item.type === 'folder') {
+      if (folderCount >= 20) continue; // Max 20 folders
+
+      // Dedupe spaces within folder
+      const uniqueSpaces = item.spaceIds.filter(id => {
+        if (seen.has(id)) return false;
+        seen.add(id);
+        return true;
+      }).slice(0, 50); // Max 50 spaces per folder
+
+      if (uniqueSpaces.length > 0) {
+        validItems.push({ ...item, spaceIds: uniqueSpaces });
+        folderCount++;
+      }
+      // Empty folders are auto-deleted (not added to validItems)
+    }
+  }
+
+  return validItems;
+};
+
+// Migrate legacy spaceIds to items format
+export const migrateToItems = (config: UserConfig): UserConfig => {
+  if (config.items) return config; // Already migrated
+
   const items: NavItem[] = (config.spaceIds || []).map(id => ({
     type: 'space' as const,
     id,
@@ -83,219 +421,18 @@ const migrateToItems = (config: UserConfig): UserConfig => {
   return {
     ...config,
     items,
-    spaceIds: undefined, // Remove deprecated field
+    // Keep spaceIds for backwards compatibility
   };
 };
 ```
 
-**Migration is one-way**: Once migrated, `spaceIds` is removed. No rollback needed since folder feature is additive.
-
----
-
-## Validation Rules
-
-### Folder Validation
-
-Reuses existing validation patterns from `src/utils/validation.ts`. See `.agents/docs/features/input-validation-reference.md` for details.
-
-```typescript
-import { validateNameForXSS, MAX_NAME_LENGTH } from '@/utils/validation';
-
-const FOLDER_VALIDATION = {
-  name: {
-    minLength: 1,
-    maxLength: MAX_NAME_LENGTH,   // 40 chars - consistent with space/display names
-    default: 'Spaces',
-    trimWhitespace: true,
-    xssValidation: true,          // Use validateNameForXSS()
-    reservedNames: false,         // NOT needed - only for user display names
-  },
-  capacity: {
-    minSpaces: 1,          // Auto-delete folder if empty
-    maxSpaces: 50,         // Reasonable UI limit
-    maxFoldersPerUser: 20,  // Prevent clutter
-  },
-  membership: {
-    exclusive: true,        // Space can only be in ONE folder
-  },
-};
-
-// Validation function
-const validateFolderName = (name: string): { isValid: boolean; error?: string } => {
-  const trimmed = name.trim();
-
-  if (!trimmed) {
-    return { isValid: false, error: 'Folder name cannot be empty' };
-  }
-
-  if (trimmed.length > MAX_NAME_LENGTH) {
-    return { isValid: false, error: `Folder name must be ${MAX_NAME_LENGTH} characters or less` };
-  }
-
-  const xssError = validateNameForXSS(trimmed);
-  if (xssError) {
-    return { isValid: false, error: xssError };
-  }
-
-  return { isValid: true };
-};
-```
-
-### Validation Error Messages (User-Facing)
-
-| Scenario | Error Message |
-|----------|---------------|
-| Blank folder name (user clears name in editor) | "Folder name cannot be empty" |
-| Name too long | "Folder name must be 40 characters or less" |
-| XSS attempt | "Name cannot contain HTML tags" |
-| Max folders reached | "Maximum of 20 folders allowed" |
-| Max Spaces in folder | "Folder can contain up to 50 spaces" |
-
-**Notes**:
-- XSS validation allows emoticons (`<3`), arrows (`->`), quotes - only blocks actual HTML tags
-- No reserved name validation (only applies to user display names for anti-impersonation)
-- Duplicate space membership is prevented by drag logic; `validateItems()` handles it silently as data integrity safeguard
-
----
-
-## Drag & Drop State Machine
-
-### Complete Scenario Matrix
-
-| Drag Source | Drop Target | Action | Result |
-|-------------|-------------|--------|--------|
-| Space (standalone) | Space (standalone) | Create folder | New folder with both Spaces |
-| Space (standalone) | Folder (collapsed) | Add to folder | Space added to folder end |
-| Space (standalone) | Folder (expanded) | Add to folder | Space added to folder end |
-| Space (standalone) | Root area | Reorder | Move space position in list |
-| Space (in folder) | Outside folder | Remove from folder | Space becomes standalone |
-| Space (in folder) | Same folder | Reorder | Change position within folder |
-| Space (in folder) | Different folder | Move folder | Remove from old, add to new |
-| Space (in folder) | Space (standalone) | Create folder | Remove from old folder, create new with both |
-| Folder | Root area | Reorder | Change folder position in list |
-| Folder | Folder | **Invalid** | No action, visual feedback |
-| Folder | Space | **Invalid** | No action, visual feedback |
-
-### Drag Handler Implementation
-
-```typescript
-// src/hooks/business/spaces/useSpaceDragAndDrop.ts
-
-interface DragData {
-  type: 'space' | 'folder';
-  id: string;
-  parentFolderId?: string;  // If space is inside a folder
-}
-
-const handleDragEnd = (event: DragEndEvent) => {
-  const { active, over } = event;
-  if (!over || active.id === over.id) return;
-
-  const dragData = active.data.current as DragData;
-  const dropData = over.data.current as DragData;
-
-  // Determine scenario and execute
-  const scenario = detectScenario(dragData, dropData);
-
-  switch (scenario) {
-    case 'space-to-space':
-      createFolderWithSpaces(dragData.id, dropData.id);
-      break;
-
-    case 'space-to-folder':
-      addSpaceToFolder(dragData.id, dropData.id);
-      break;
-
-    case 'space-out-of-folder':
-      removeSpaceFromFolder(dragData.id, dragData.parentFolderId!);
-      break;
-
-    case 'space-within-folder':
-      reorderWithinFolder(dragData.parentFolderId!, active.id, over.id);
-      break;
-
-    case 'space-between-folders':
-      moveSpaceBetweenFolders(
-        dragData.id,
-        dragData.parentFolderId!,
-        dropData.id
-      );
-      break;
-
-    case 'folder-reorder':
-      reorderItems(active.id, over.id);
-      break;
-
-    case 'invalid':
-      // No action - visual feedback handled by drop indicator
-      break;
-  }
-};
-```
-
-### Auto-Delete Empty Folders
-
-```typescript
-const removeSpaceFromFolder = (spaceId: string, folderId: string) => {
-  const folder = findFolder(folderId);
-  const newSpaceIds = folder.spaceIds.filter(id => id !== spaceId);
-
-  if (newSpaceIds.length === 0) {
-    // Delete empty folder, space is already standalone
-    deleteFolder(folderId);
-  } else if (newSpaceIds.length === 1) {
-    // Auto-ungroup: delete folder, make remaining space standalone
-    const remainingSpaceId = newSpaceIds[0];
-    deleteFolder(folderId);
-    // Space is now standalone at folder's position
-  } else {
-    // Update folder with remaining Spaces
-    updateFolder(folderId, { spaceIds: newSpaceIds });
-  }
-};
-```
-
-### Drop Zone Indicators
-
-```typescript
-type DropIndicator =
-  | { type: 'create-folder'; position: 'before' | 'after' }
-  | { type: 'add-to-folder'; folderId: string }
-  | { type: 'reorder'; position: 'before' | 'after' }
-  | { type: 'invalid'; reason: string }
-  | null;
-
-// Visual states during drag
-interface DragState {
-  isDragging: boolean;
-  draggedItem: DragData | null;
-  dropIndicator: DropIndicator;
-}
-```
-
----
-
-## Component Architecture
-
-### New Components
-
-```
-src/components/navbar/
-├── NavMenu.tsx              # MODIFY: Render mixed items array
-├── SpaceButton.tsx          # MODIFY: Add size prop ('regular' | 'small')
-├── FolderContainer.tsx      # NEW: Wrapper for folder (collapsed/expanded states)
-├── FolderButton.tsx         # NEW: Folder icon button (white icon on colored bg)
-├── FolderContextMenu.tsx    # NEW: Right-click context menu (desktop only)
-└── FolderEditorModal.tsx    # NEW: Edit folder name/icon/color
-```
-
-### FolderButton Component
-
-The folder icon button - renders white icon on colored background.
-Note: Click/touch handlers are managed by parent FolderContainer using touch interaction system.
+## Reference: FolderButton Component
 
 ```typescript
 // src/components/navbar/FolderButton.tsx
+
+import { Icon, Tooltip } from '../primitives';
+import { getIconColorHex } from '../space/IconPicker/types';
 
 interface FolderButtonProps {
   folder: NavItem & { type: 'folder' };
@@ -315,8 +452,8 @@ const FolderButton: React.FC<FolderButtonProps> = ({
       <div
         className="folder-button"
         style={{
-          backgroundColor: getColorHex(folder.color),
-          borderRadius: 'var(--rounded-full)',
+          backgroundColor: getIconColorHex(folder.color),
+          borderRadius: '50%',
           width: 48,
           height: 48,
           display: 'flex',
@@ -326,7 +463,7 @@ const FolderButton: React.FC<FolderButtonProps> = ({
       >
         <Icon
           name={folder.icon || 'folder'}
-          color="white"  // Always white
+          color="white"
           size="md"
         />
         {unreadCount > 0 && (
@@ -338,20 +475,7 @@ const FolderButton: React.FC<FolderButtonProps> = ({
 };
 ```
 
-### SpaceButton Modification
-
-```typescript
-// src/components/navbar/SpaceButton.tsx
-
-interface SpaceButtonProps {
-  space: Space;
-  size?: 'regular' | 'small';  // NEW: 'small' for spaces inside folders (40px vs 48px)
-}
-```
-
-When `size="small"`, the space icon renders at 40px instead of 48px, but retains all functionality (selection indicator, unread indicator, notification badge).
-
-### FolderContainer Component
+## Reference: FolderContainer Component
 
 ```typescript
 // src/components/navbar/FolderContainer.tsx
@@ -379,23 +503,21 @@ const FolderContainer: React.FC<FolderContainerProps> = ({
 }) => {
   const { isTouchDevice } = usePlatform();
   const hasUnread = spaces.some(s => s.hasUnread);
-  const unreadCount = spaces.reduce((sum, s) => sum + s.unreadCount, 0);
+  const unreadCount = spaces.reduce((sum, s) => sum + (s.unreadCount || 0), 0);
 
-  // Use existing touch interaction system (see touch-interaction-system.md)
   const touchHandlers = useLongPressWithDefaults({
-    delay: TOUCH_INTERACTION_TYPES.STANDARD.delay,  // 500ms
-    threshold: TOUCH_INTERACTION_TYPES.STANDARD.threshold,  // 10px
+    delay: TOUCH_INTERACTION_TYPES.STANDARD.delay,
+    threshold: TOUCH_INTERACTION_TYPES.STANDARD.threshold,
     onLongPress: () => {
       if (isTouchDevice) {
         hapticMedium();
-        onEdit();  // Open FolderEditorModal
+        onEdit();
       }
     },
     onTap: onToggleExpand,
   });
 
   if (!isExpanded) {
-    // Collapsed: just show folder icon
     return (
       <div
         {...touchHandlers}
@@ -403,16 +525,11 @@ const FolderContainer: React.FC<FolderContainerProps> = ({
         className={touchHandlers.className || ''}
         style={touchHandlers.style}
       >
-        <FolderButton
-          folder={folder}
-          hasUnread={hasUnread}
-          unreadCount={unreadCount}
-        />
+        <FolderButton folder={folder} hasUnread={hasUnread} unreadCount={unreadCount} />
       </div>
     );
   }
 
-  // Expanded: container with folder icon + spaces inside
   return (
     <div
       {...touchHandlers}
@@ -420,26 +537,15 @@ const FolderContainer: React.FC<FolderContainerProps> = ({
       className={`folder-container ${touchHandlers.className || ''}`}
       style={{
         ...touchHandlers.style,
-        backgroundColor: `${getColorHex(folder.color)}80`,  // 50% opacity
+        backgroundColor: `${getIconColorHex(folder.color)}80`, // 50% opacity
         borderRadius: 'var(--rounded-lg)',
         padding: '8px 4px',
       }}
     >
-      {/* Folder icon at top - tap to collapse */}
-      <FolderButton
-        folder={folder}
-        hasUnread={hasUnread}
-        unreadCount={unreadCount}
-      />
-
-      {/* Spaces inside folder */}
+      <FolderButton folder={folder} hasUnread={hasUnread} unreadCount={unreadCount} />
       <div className="folder-spaces">
         {spaces.map(space => (
-          <SpaceButton
-            key={space.spaceId}
-            space={space}
-            size="small"  // 40px instead of 48px
-          />
+          <SpaceButton key={space.spaceId} space={space} size="small" />
         ))}
       </div>
     </div>
@@ -447,52 +553,7 @@ const FolderContainer: React.FC<FolderContainerProps> = ({
 };
 ```
 
-### NavMenu Rendering
-
-```typescript
-// src/components/navbar/NavMenu.tsx
-
-const NavMenu: React.FC = () => {
-  const { items } = useUserConfig();
-  const { folderStates, toggleFolder } = useFolderStates();
-  const spaces = useSpaces();
-
-  return (
-    <DndContext {...dragHandlers}>
-      <SortableContext items={getItemIds(items)}>
-        {items.map((item) => {
-          if (item.type === 'space') {
-            const space = spaces.find(s => s.spaceId === item.id);
-            if (!space) return null;
-            return <SpaceButton key={item.id} space={space} />;
-          }
-
-          if (item.type === 'folder') {
-            const folderSpaces = item.spaceIds
-              .map(id => spaces.find(s => s.spaceId === id))
-              .filter(Boolean);
-            const isExpanded = folderStates[item.id]?.collapsed === false;
-
-            return (
-              <FolderContainer
-                key={item.id}
-                folder={item}
-                spaces={folderSpaces}
-                isExpanded={isExpanded}
-                onToggleExpand={() => toggleFolder(item.id)}
-                onContextMenu={(e) => openFolderContextMenu(item, e)}
-                onEdit={() => openFolderEditor(item)}
-              />
-            );
-          }
-        })}
-      </SortableContext>
-    </DndContext>
-  );
-};
-```
-
-### FolderContextMenu
+## Reference: FolderContextMenu
 
 ```typescript
 // src/components/navbar/FolderContextMenu.tsx
@@ -506,7 +567,6 @@ interface FolderContextMenuProps {
 }
 
 const FolderContextMenu: React.FC<FolderContextMenuProps> = ({
-  folder,
   position,
   onClose,
   onOpenSettings,
@@ -530,514 +590,177 @@ const FolderContextMenu: React.FC<FolderContextMenuProps> = ({
 };
 ```
 
-**Delete Folder behavior**: Spaces inside the folder become standalone (ungrouped). No confirmation modal needed since it's easily reversible by re-creating the folder.
+## Reference: FolderEditorModal
 
-### FolderEditorModal
+Follow `ChannelEditorModal.tsx` pattern:
 
-> ⚠️ **Must use ModalProvider system** (see `.agents/docs/features/modals.md`)
-> - Triggered from NavMenu area (context menu / long-press)
-> - Same pattern as ChannelEditorModal, GroupEditorModal
-
-**Implementation steps:**
-
-1. **Add state** to `src/hooks/business/ui/useModalState.ts`:
-```typescript
-folderEditor: { isOpen: boolean; folder?: NavItem & { type: 'folder' } }
+```
+┌─────────────────────────────┐
+│ Edit Folder            [X]  │
+├─────────────────────────────┤
+│ Folder Name                 │
+│ [____________________]      │
+│                             │
+│ [icon] [color swatches]     │
+│  (IconPicker mode=          │
+│   "background-color")       │
+│                             │
+│         [Save Changes]      │
+│ ─────────────────────────── │
+│       Delete Folder         │  <- danger text
+└─────────────────────────────┘
 ```
 
-2. **Add to ModalProvider** (`src/components/context/ModalProvider.tsx`):
+Must use ModalProvider system (see `.agents/docs/features/modals.md`).
+
+## Reference: Drag State Machine
+
+| # | Scenario | Source | Target | Result |
+|---|----------|--------|--------|--------|
+| 1 | SPACE_TO_SPACE | Standalone space | Standalone space | Create folder |
+| 2 | SPACE_TO_FOLDER | Standalone space | Folder | Add to folder |
+| 3 | SPACE_TO_FOLDER_SPACE | Standalone space | Space inside folder | Add to that folder |
+| 4 | FOLDER_SPACE_TO_FOLDER | Space in folder A | Folder B | Move to folder B |
+| 5 | FOLDER_SPACE_TO_SPACE | Space in folder | Standalone space | Create new folder |
+| 6 | SPACE_OUT_OF_FOLDER | Space in folder | Outside (gap) | Remove from folder |
+| 7 | FOLDER_REORDER | Folder | Gap between items | Reorder folders |
+| 8 | SPACE_REORDER_STANDALONE | Standalone space | Gap between items | Reorder |
+| 9 | SPACE_REORDER_IN_FOLDER | Space in folder | Gap within folder | Reorder |
+| 10 | INVALID | Any | Invalid target | Cancel |
+
+## Reference: Existing Drag System
+
+**Current implementation** (`src/hooks/business/spaces/useSpaceDragAndDrop.ts`):
 ```typescript
-{modalState.state.folderEditor.isOpen && (
-  <FolderEditorModal
-    folder={modalState.state.folderEditor.folder}
-    onClose={modalState.closeFolderEditor}
-  />
-)}
+// Already handles: space reordering via arrayMove
+// Uses: @dnd-kit/core, @dnd-kit/sortable
+// Persists: saveConfig({ spaceIds: sortedSpaces.map(...) })
+
+const sensors = useSensors(
+  useSensor(PointerSensor, {
+    activationConstraint: { distance: 8 },  // Desktop only currently
+  })
+);
 ```
 
-3. **Use**: `const { openFolderEditor } = useModals();`
-
-**Modal content:**
-- Name input (max 40 chars)
-- IconPicker with `mode="background-color"` (icons always white, color = folder bg)
-- Live preview: white icon on colored background
-- Spacer + "Delete Folder" danger link at bottom (same pattern as ChannelEditorModal)
-
+**Extend to support folders**:
 ```typescript
-// src/components/modals/FolderEditorModal.tsx
-
-interface FolderEditorModalProps {
-  folder: NavItem & { type: 'folder' };
-  onClose: () => void;
-}
-
-// Modal layout:
-// ┌─────────────────────────────┐
-// │ Edit Folder            [X]  │
-// ├─────────────────────────────┤
-// │ Folder Name                 │
-// │ [____________________]      │
-// │                             │
-// │ [icon] [color swatches]     │
-// │                             │
-// │         [Save Changes]      │
-// │ ─────────────────────────── │
-// │       Delete Folder         │  <- danger text, like ChannelEditorModal
-// └─────────────────────────────┘
-```
-
-### IconPicker Mode Enhancement
-
-Add `mode` prop to existing IconPicker component:
-
-```typescript
-// src/components/space/IconPicker/types.ts
-
-interface IconPickerProps {
-  // ... existing props
-  mode?: 'icon-color' | 'background-color';  // NEW
-}
-
-// mode="icon-color" (default, current behavior):
-//   - Icons rendered in selected color
-//   - For channels, groups, etc.
-
-// mode="background-color" (new):
-//   - Icons always rendered white
-//   - Color swatches show as background previews
-//   - For folders
-```
-
----
-
-## Cross-Platform Interaction
-
-### Desktop (Mouse)
-
-| Action | Gesture | Result |
-|--------|---------|--------|
-| Expand/Collapse | Click folder | Toggle expanded state |
-| Context menu | Right-click | Show FolderContextMenu |
-| Drag folder | Click + drag | Reorder in list |
-| Drag space | Click + drag | Various (see state machine) |
-| Tooltip | Hover | Show folder name + count |
-
-### Mobile (Touch)
-
-| Action | Gesture | Result |
-|--------|---------|--------|
-| Expand/Collapse | Tap folder | Toggle expanded state |
-| Edit folder | Long press (500ms) | Opens FolderEditorModal directly |
-| Drag folder | Long press + drag | Reorder in list |
-| Drag space | Long press + drag | Various (see state machine) |
-| Tooltip | Disabled | N/A |
-
-### FolderContextMenu (Desktop only)
-
-| Option | Action |
-|--------|--------|
-| Folder Settings | Opens FolderEditorModal |
-| Delete Folder | Ungroups spaces (makes them standalone) |
-
-**Note**: On touch devices, long-press opens FolderEditorModal directly (which includes "Delete Folder" option at bottom, similar to ChannelEditorModal pattern).
-
-### Touch Interaction System Integration
-
-> ⚠️ **Leverage existing system** - See `.agents/docs/features/touch-interaction-system.md`
-
-**Use existing hooks and constants:**
-
-```typescript
-// src/components/navbar/FolderContainer.tsx
-
-import { useLongPressWithDefaults } from '../../hooks/useLongPress';
-import { TOUCH_INTERACTION_TYPES } from '../../constants/touchInteraction';
-import { hapticMedium } from '../../utils/haptic';
-
-const FolderContainer: React.FC<FolderContainerProps> = ({
-  folder,
-  onToggleExpand,
-  onContextMenu,
-  onEdit,
-}) => {
-  const { isTouchDevice } = usePlatform();
-
-  // Use existing touch interaction system
-  const touchHandlers = useLongPressWithDefaults({
-    delay: TOUCH_INTERACTION_TYPES.STANDARD.delay,  // 500ms
-    threshold: TOUCH_INTERACTION_TYPES.STANDARD.threshold,  // 10px
-    onLongPress: () => {
-      if (isTouchDevice) {
-        hapticMedium();  // Haptic feedback on long-press
-        onEdit();        // Open FolderEditorModal
-      }
-    },
-    onTap: () => {
-      onToggleExpand();  // Expand/collapse folder
-    },
-  });
-
-  return (
-    <div
-      {...touchHandlers}
-      onContextMenu={onContextMenu}  // Desktop right-click
-      className={`folder-container ${touchHandlers.className || ''}`}
-      style={touchHandlers.style}
-    >
-      {/* ... */}
-    </div>
-  );
-};
-```
-
-### Drag Activation Constraints
-
-```typescript
-// src/hooks/business/spaces/useSpaceDragAndDrop.ts
-
 const { isTouchDevice } = usePlatform();
 
 const sensors = useSensors(
   useSensor(PointerSensor, {
     activationConstraint: isTouchDevice
-      ? {
-          delay: 200,        // Prevent accidental drags
-          tolerance: 5,      // Allow slight movement during delay
-          distance: 15,      // Higher threshold for touch
-        }
-      : {
-          distance: 8,       // Quick activation for mouse
-        },
+      ? { delay: 200, tolerance: 5, distance: 15 }
+      : { distance: 8 },
   })
 );
-```
 
-### Gesture Conflict Resolution
-
-| Gesture | Duration | Movement | Action |
-|---------|----------|----------|--------|
-| Tap | < 500ms | < 10px | Expand/collapse folder |
-| Long press | > 500ms | < 10px | Open FolderEditorModal (touch) |
-| Drag | > 200ms | > 15px | Start drag operation |
-| Scroll | any | Vertical only | Scroll list (not drag) |
-| Right-click | instant | N/A | Open FolderContextMenu (desktop) |
-
-### CSS Hover States
-
-```scss
-// Disable hover on touch devices to prevent "sticky hover"
-@media (hover: hover) and (pointer: fine) {
-  .folder-button:hover {
-    transform: scale(1.05);
-  }
+// In handleDragEnd, detect scenario and route to appropriate handler:
+const scenario = detectDragScenario(active, over, items);
+switch (scenario) {
+  case 'SPACE_TO_SPACE': createFolderWithSpaces(...); break;
+  case 'SPACE_TO_FOLDER': addSpaceToFolder(...); break;
+  // ... etc
+  default: /* existing arrayMove logic for simple reorder */
 }
 ```
 
----
-
-## Sync & Conflict Resolution
-
-### Sync Strategy
+## Reference: Merge Algorithm
 
 ```typescript
-interface SyncPayload {
-  items: NavItem[];           // Synced across devices
-  timestamp: number;
-  // folderStates NOT included - device-local only
-}
-```
+// In ConfigService.ts
 
-### Conflict Resolution Rules
-
-| Scenario | Resolution | Rationale |
-|----------|------------|-----------|
-| Same folder modified on 2 devices | Most recent timestamp wins | Simple, predictable |
-| Folder deleted on A, modified on B | Restore folder with B's changes | Prefer data preservation |
-| Space added to folder on A, deleted on B | Space remains in folder | Prefer data preservation |
-| Folder order differs | Most recent timestamp wins | Order is subjective anyway |
-
-### Orphaned Space Handling
-
-When a folder is deleted but contains Spaces referenced by another device:
-
-```typescript
-const resolveFolderDeletion = (
+private mergeItems(
   localItems: NavItem[],
-  incomingItems: NavItem[],
-  deletedFolderId: string
-) => {
-  const localFolder = findFolder(localItems, deletedFolderId);
+  remoteItems: NavItem[],
+  localTimestamp: number,
+  remoteTimestamp: number
+): NavItem[] {
+  const mergedFolders = new Map<string, NavItem>();
+  const allSpaceIds = new Set<string>();
+  const spaceLocations = new Map<string, string | null>();
 
-  if (!localFolder) {
-    // Folder doesn't exist locally, deletion confirmed
-    return incomingItems;
-  }
-
-  // Folder exists locally - check if Spaces need rescue
-  const orphanedSpaces = localFolder.spaceIds.filter(spaceId => {
-    // Space not in any incoming folder or standalone
-    return !isSpaceInItems(incomingItems, spaceId);
-  });
-
-  if (orphanedSpaces.length > 0) {
-    // Add orphaned Spaces as standalone at end
-    return [
-      ...incomingItems,
-      ...orphanedSpaces.map(id => ({ type: 'space' as const, id })),
-    ];
-  }
-
-  return incomingItems;
-};
-```
-
----
-
-## Error Handling
-
-### Error Scenarios & Recovery
-
-| Scenario | Detection | Recovery |
-|----------|-----------|----------|
-| Save config fails | IndexedDB error | Show toast, retry with exponential backoff |
-| Sync conflict | Timestamp comparison | Apply conflict resolution rules |
-| Invalid folder data | Schema validation | Remove invalid folder, move Spaces to standalone |
-| Missing space in folder | Space not found | Remove from folder's spaceIds silently |
-| Circular reference | Validation check | Should never happen with single-array design |
-
-### Validation on Load
-
-```typescript
-const validateItems = (items: NavItem[]): NavItem[] => {
-  const seenSpaces = new Set<string>();
-  const validItems: NavItem[] = [];
-
-  for (const item of items) {
-    if (item.type === 'space') {
-      if (!seenSpaces.has(item.id)) {
-        seenSpaces.add(item.id);
-        validItems.push(item);
+  const processFolders = (items: NavItem[]) => {
+    for (const item of items) {
+      if (item.type === 'folder') {
+        const existing = mergedFolders.get(item.id);
+        if (!existing || item.modifiedDate > existing.modifiedDate) {
+          mergedFolders.set(item.id, item);
+        }
+        for (const spaceId of item.spaceIds) {
+          allSpaceIds.add(spaceId);
+          const currentLocation = spaceLocations.get(spaceId);
+          if (!currentLocation || item.modifiedDate > (mergedFolders.get(currentLocation)?.modifiedDate ?? 0)) {
+            spaceLocations.set(spaceId, item.id);
+          }
+        }
+      } else if (item.type === 'space') {
+        allSpaceIds.add(item.id);
+        if (!spaceLocations.has(item.id)) {
+          spaceLocations.set(item.id, null);
+        }
       }
-      // Skip duplicate Spaces
-    } else if (item.type === 'folder') {
-      // Filter folder's Spaces to remove duplicates
-      const uniqueSpaceIds = item.spaceIds.filter(id => {
-        if (seenSpaces.has(id)) return false;
-        seenSpaces.add(id);
-        return true;
-      });
+    }
+  };
 
-      if (uniqueSpaceIds.length > 0) {
-        validItems.push({ ...item, spaceIds: uniqueSpaceIds });
+  processFolders(localItems);
+  processFolders(remoteItems);
+
+  const baseItems = remoteTimestamp >= localTimestamp ? remoteItems : localItems;
+  const result: NavItem[] = [];
+  const addedIds = new Set<string>();
+
+  for (const item of baseItems) {
+    if (item.type === 'folder') {
+      const mergedFolder = mergedFolders.get(item.id);
+      if (mergedFolder && !addedIds.has(item.id)) {
+        result.push(mergedFolder);
+        addedIds.add(item.id);
       }
-      // Skip empty folders
+    } else if (item.type === 'space') {
+      if (spaceLocations.get(item.id) === null && !addedIds.has(item.id)) {
+        result.push(item);
+        addedIds.add(item.id);
+      }
     }
   }
 
-  return validItems;
-};
+  // Rescue orphaned spaces
+  for (const spaceId of allSpaceIds) {
+    const isInResult = result.some(item =>
+      (item.type === 'space' && item.id === spaceId) ||
+      (item.type === 'folder' && item.spaceIds.includes(spaceId))
+    );
+    if (!isInResult) {
+      result.push({ type: 'space', id: spaceId });
+    }
+  }
+
+  return result;
+}
+```
+
+## Reference: Backwards Compatibility
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│ Web app (with folders)                                      │
+│   └─> reads items → sees folders + spaces                   │
+│   └─> writes both: items + spaceIds (derived)               │
+├─────────────────────────────────────────────────────────────┤
+│ Native app (before folder support)                          │
+│   └─> reads spaceIds → sees all spaces (flat, ungrouped)    │
+├─────────────────────────────────────────────────────────────┤
+│ Native app (after folder support)                           │
+│   └─> reads items → sees folders + spaces                   │
+└─────────────────────────────────────────────────────────────┘
 ```
 
 ---
 
-## User Experience
+# Manual Testing Checklist
 
-### Folder Creation Flow
-
-1. User drags Space A onto Space B
-2. System shows "Create Folder" overlay indicator
-3. On drop:
-   - Create folder with defaults:
-     - `name`: "Spaces"
-     - `icon`: "folder" (must add to ICON_OPTIONS if not present)
-     - `color`: "default" (gray #9ca3af)
-   - Add both Spaces to folder
-   - Auto-expand folder
-4. User can customize via context menu (desktop) or long-press (touch)
-
-### Folder Deletion Flow
-
-**From FolderEditorModal** (touch: long-press, desktop: context menu → Folder Settings):
-1. User clicks "Delete Folder" danger link at bottom
-2. Spaces become standalone (ungrouped), folder removed
-3. No confirmation modal needed (easily reversible by re-creating folder)
-
-**From FolderContextMenu** (desktop only: right-click):
-1. User clicks "Delete Folder" option
-2. Same behavior: spaces become standalone, folder removed
-
-### Empty Folder Auto-Delete
-
-When user drags last space out of folder:
-1. Folder automatically deletes
-2. No confirmation needed (reversible by creating new folder)
-3. Toast notification: "Folder deleted" (optional, low priority)
-
----
-
-## Visual Design
-
-### Folder Icon States
-
-| State | Visual |
-|-------|--------|
-| Collapsed, no unread | Folder icon (white) on colored background, 48px circle |
-| Collapsed, has unread | Same + notification badge (aggregate count from all spaces) |
-| Expanded | Folder container with spaces inside (see below) |
-| Dragging | Folder icon with drag shadow, slight scale up |
-| Drop target (valid) | Highlight border, slight scale up |
-| Drop target (invalid) | Red tint or shake animation |
-
-**Collapsed folder** (simple, like Discord):
-- Just the folder icon on colored background
-- No preview icons of spaces inside (simpler than Discord's stacked preview)
-- Notification badge shows aggregate unread count from all contained spaces
-
-### Expanded Folder Container (Discord-style)
-
-When a folder is expanded, it renders as a vertical container:
-
-```
-┌─────────────────┐
-│   [folder📁]    │  <- Folder icon (white on colored bg), click to collapse
-│  ┌───────────┐  │
-│  │  [space]  │  │  <- Smaller space icons inside
-│  │  [space]  │  │
-│  │  [space]  │  │
-│  └───────────┘  │
-└─────────────────┘
-     ↑
-  Container with folder color at 50% opacity
-```
-
-**Container styling:**
-- Background: `folder.color` at 50% opacity
-- Border radius: rounded corners (consistent with design system)
-- Padding: small padding around space icons
-
-**Folder icon (top of container):**
-- White icon on solid colored background (same as collapsed state)
-- Click to collapse the folder
-- Shows notification badge if any space has unread
-
-**Space icons inside folder:**
-- Slightly smaller than regular space icons (e.g., 40px vs 48px)
-- Same behavior as normal space icons:
-  - Left accent indicator when selected
-  - Left indicator for unread messages
-  - Notification bubble for mention counts
-- Clickable to navigate to that space
-- Draggable to reorder within folder or drag out
-
-### Folder Icon Customization
-
-Using existing IconPicker and ColorSwatch components:
-- **Icons**: 50+ icons from existing icon set (always rendered white)
-- **Colors**: 8 colors from existing palette (applied to background)
-- **Default**: `folder` icon, gray background
-
-**Color Application Pattern** (consistent with UserInitials):
-- Background: `color` applied as gradient (lighter top, darker bottom)
-- Icon: Always white for contrast
-- Matches space icons that use initials fallback
-
-### Animation Timings
-
-| Animation | Duration | Easing |
-|-----------|----------|--------|
-| Expand/collapse | 200ms | ease-out |
-| Drag start | 150ms | ease-out |
-| Drop settle | 200ms | spring |
-| Invalid drop shake | 300ms | ease-in-out |
-
----
-
-## Accessibility
-
-### Keyboard Navigation
-
-| Key | Action |
-|-----|--------|
-| Tab | Move focus through items |
-| Enter/Space | Toggle folder expand/collapse |
-| Arrow Up/Down | Move between items |
-| Delete | Delete focused folder (with confirmation) |
-
-### Screen Reader Announcements
-
-| Event | Announcement |
-|-------|--------------|
-| Folder focused | "{name} folder, {n} spaces, {collapsed/expanded}" |
-| Folder expanded | "{name} expanded, {n} spaces" |
-| Folder collapsed | "{name} collapsed" |
-| Drag started | "Dragging {item}, drop on another space to create folder" |
-| Folder created | "Created folder with {n} spaces" |
-
----
-
-## Implementation Phases
-
-### Phase 1: Data & Core Components
-1. Schema migration (spaceIds → items)
-2. Device-local collapsed state storage (DevicePreferences)
-3. Add `folder` icon to ICON_OPTIONS (if not present)
-4. IconPicker `mode` prop enhancement (`icon-color` | `background-color`)
-5. SpaceButton `size` prop (`regular` | `small`)
-
-### Phase 2: Folder UI Components
-1. FolderButton component (white icon on colored bg)
-2. FolderContainer component (collapsed/expanded states)
-3. Expanded folder visual design:
-   - Container with folder color @ 50% opacity
-   - Smaller space icons (40px) inside
-   - Full space icon functionality (selection, unread, badges)
-4. NavMenu integration (render mixed items array)
-
-### Phase 3: Interactions & Modals
-1. FolderContextMenu (desktop only - right-click)
-2. FolderEditorModal via ModalProvider:
-   - Add state to useModalState.ts
-   - Add to ModalProvider.tsx
-   - IconPicker with `mode="background-color"`
-   - Delete Folder option at bottom
-3. Touch: long-press → open FolderEditorModal directly
-4. Desktop: right-click → context menu → Folder Settings / Delete
-
-### Phase 4: Drag & Drop
-1. Basic drag-and-drop (create folder, add to folder)
-2. Complete drag state machine (all 10 scenarios)
-3. Drop zone indicators
-4. Auto-delete empty folders
-5. Reorder within folders
-
-### Phase 5: Cross-Platform & Sync
-1. Touch activation constraint tuning
-2. Mobile gesture conflict resolution (tap vs long-press vs drag)
-3. Sync conflict resolution
-4. Orphaned space handling
-5. Animations and visual polish
-6. i18n: Translate all UI strings (FolderContextMenu, FolderEditorModal, tooltips)
-   - Note: Default folder name "Spaces" is user data, not translated
-
----
-
-## Testing Strategy
-
-### Unit Tests
-- `validateItems()` - duplicate removal, empty folder removal
-- `migrateToItems()` - legacy spaceIds conversion
-- `detectScenario()` - all 10 drag scenarios
-- Conflict resolution functions
-
-### Integration Tests
-- Create folder via drag-and-drop
-- Remove space from folder
-- Auto-delete empty folder
-- Cross-device sync with conflicts
-
-### Manual Testing Checklist
-
-**Folder Creation & Structure**
+## Folder Creation & Structure
 - [ ] Create folder by dragging space onto space
 - [ ] Add space to existing folder
 - [ ] Remove space from folder (drag out)
@@ -1045,7 +768,7 @@ Using existing IconPicker and ColorSwatch components:
 - [ ] Reorder folders in list
 - [ ] Auto-delete folder when last space removed
 
-**Expanded Folder Visual**
+## Expanded Folder Visual
 - [ ] Expanded folder shows container with 50% opacity bg color
 - [ ] Folder icon at top (white on solid color), click to collapse
 - [ ] Space icons inside are smaller (40px vs 48px)
@@ -1053,127 +776,39 @@ Using existing IconPicker and ColorSwatch components:
 - [ ] Space icons retain unread indicator
 - [ ] Space icons retain notification badges
 
-**Desktop Interactions**
+## Desktop Interactions
 - [ ] Click folder to expand/collapse
 - [ ] Right-click folder → context menu appears
 - [ ] Context menu: "Folder Settings" opens FolderEditorModal
 - [ ] Context menu: "Delete Folder" ungroups spaces
 - [ ] Hover folder → tooltip shows name
 
-**Touch Interactions**
+## Touch Interactions
 - [ ] Tap folder to expand/collapse
 - [ ] Long-press folder → FolderEditorModal opens directly
 - [ ] Long-press + drag → reorder folder
 - [ ] No accidental drags during scroll
 
-**FolderEditorModal**
+## FolderEditorModal
 - [ ] Edit folder name (max 40 chars, validation)
 - [ ] Change folder icon (IconPicker with background-color mode)
 - [ ] Change folder color (icons always white preview)
 - [ ] Save changes persists
 - [ ] Delete Folder option at bottom works
 
-**Sync**
+## Sync
 - [ ] Create folder on device A, appears on device B
 - [ ] Edit folder on A, syncs to B
 - [ ] Delete folder on A while B has it expanded
 
----
-
-## Security Considerations
-
-Reviewed by security-analyst agent. Config sync is E2E encrypted (AES-GCM + Ed448 signatures), so folder data is not visible to network observers or servers.
-
-### Required: Schema Validation After Decrypt
-
-**Issue**: After decrypting synced config in `ConfigService.ts`, JSON is parsed directly without validation:
-```typescript
-const config = JSON.parse(...) as UserConfig;  // No validation!
-```
-
-A compromised device (same user) could sync malformed folder data that crashes other devices.
-
-**Mitigation**: Add Zod schema validation after decryption:
-
-```typescript
-import { z } from 'zod';
-
-const NavItemSchema = z.discriminatedUnion('type', [
-  z.object({ type: z.literal('space'), id: z.string() }),
-  z.object({
-    type: z.literal('folder'),
-    id: z.string(),
-    name: z.string().max(40),
-    spaceIds: z.array(z.string()).max(50),
-    icon: z.string().optional(),
-    color: z.string().optional(),
-    createdDate: z.number(),
-    modifiedDate: z.number(),
-  }),
-]);
-
-const UserConfigSchema = z.object({
-  address: z.string(),
-  items: z.array(NavItemSchema).max(100).optional(),  // 20 folders + 80 spaces max
-  // ... other fields
-});
-
-// In ConfigService.getConfig(), after decryption:
-const rawConfig = JSON.parse(decryptedBuffer.toString('utf-8'));
-const config = UserConfigSchema.parse(rawConfig);  // Throws if invalid
-```
-
-### Required: Limit Enforcement After Sync
-
-**Issue**: Validation limits (20 folders, 50 spaces per folder) are only enforced in UI. A compromised device could sync config with 1000 folders.
-
-**Mitigation**: Enforce limits in `validateItems()` and call it after sync:
-
-```typescript
-const validateItems = (items: NavItem[]): NavItem[] => {
-  const validItems: NavItem[] = [];
-  let folderCount = 0;
-
-  for (const item of items) {
-    if (item.type === 'folder') {
-      if (folderCount >= 20) continue;  // Skip excess folders
-      if (item.spaceIds.length > 50) {
-        item.spaceIds = item.spaceIds.slice(0, 50);  // Truncate
-      }
-      folderCount++;
-    }
-    validItems.push(item);
-  }
-
-  return validItems;
-};
-
-// In ConfigService.getConfig(), after schema validation:
-config.items = validateItems(config.items ?? []);
-```
-
-### Not a Concern: Privacy Metadata
-
-Folder structure is fully encrypted. Server only sees:
-- Timestamp (when config changed)
-- Encrypted blob size
-
-This is consistent with existing config sync (spaceIds, bookmarks) - not a new leak.
-
----
-
-## Risk Assessment
-
-| Risk | Severity | Likelihood | Mitigation |
-|------|----------|------------|------------|
-| Drag gesture conflicts on mobile | High | High | Activation constraint tuning, testing |
-| Data loss during sync | High | Low | Orphan handling, prefer preservation |
-| Complex drag scenarios confuse users | Medium | Medium | Clear visual feedback, subtle animations |
-| Empty folder edge cases | Medium | Medium | Auto-delete logic, validation on load |
+## Backwards Compatibility
+- [ ] Create folders on web → native app shows all spaces flat
+- [ ] Verify `spaceIds` is populated after saving config with folders
+- [ ] Add space on native app → appears correctly on web app
 
 ---
 
 _Created: 2025-09-26_
-_Last Updated: 2025-12-04 (expanded folder visual design)_
+_Last Updated: 2025-12-04_
 
 **Dependencies**: @dnd-kit, existing IconPicker, existing drag-and-drop infrastructure
