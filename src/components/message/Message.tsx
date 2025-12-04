@@ -366,8 +366,6 @@ export const Message = React.memo(
           userAddress: user.currentPasskeyInfo!.address,
           // Bookmark functionality
           isBookmarked: messageActions.isBookmarked,
-          isBookmarkPending: messageActions.isBookmarkPending,
-          canAddBookmark: messageActions.canAddBookmark,
           onBookmarkToggle: messageActions.handleBookmarkToggle,
       }),
       [message, messageActions, pinnedMessages, user, handleMoreReactions]
@@ -574,8 +572,6 @@ export const Message = React.memo(
                   copiedMessageText={messageActions.copiedMessageText}
                   // Bookmark props
                   isBookmarked={messageActions.isBookmarked}
-                  isBookmarkPending={messageActions.isBookmarkPending}
-                  canAddBookmark={messageActions.canAddBookmark}
                   onBookmarkToggle={messageActions.handleBookmarkToggle}
                 />
               )}

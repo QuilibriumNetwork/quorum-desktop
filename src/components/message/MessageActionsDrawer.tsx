@@ -27,8 +27,6 @@ export interface MessageActionsDrawerProps {
   onPinWithConfirmation?: () => void;
   // Bookmark props
   isBookmarked?: boolean;
-  isBookmarkPending?: boolean;
-  canAddBookmark?: boolean;
   onBookmarkToggle?: () => void;
 }
 
@@ -58,8 +56,6 @@ const MessageActionsDrawer: React.FC<MessageActionsDrawerProps> = ({
   onPinWithConfirmation,
   // Bookmark props
   isBookmarked = false,
-  isBookmarkPending = false,
-  canAddBookmark = true,
   onBookmarkToggle,
 }) => {
   const quickReactions = ['❤️', '👍', '🔥', '😂', '😢', '😮'];
@@ -128,7 +124,7 @@ const MessageActionsDrawer: React.FC<MessageActionsDrawerProps> = ({
   };
 
   const handleBookmarkToggle = () => {
-    if (onBookmarkToggle && !isBookmarkPending && (canAddBookmark || isBookmarked)) {
+    if (onBookmarkToggle) {
       onBookmarkToggle();
       onClose();
     }
@@ -239,21 +235,10 @@ const MessageActionsDrawer: React.FC<MessageActionsDrawerProps> = ({
         {onBookmarkToggle && (
           <div
             onClick={handleBookmarkToggle}
-            className={`mobile-drawer__action-item ${
-              isBookmarkPending || (!canAddBookmark && !isBookmarked) ? 'opacity-50' : ''
-            }`}
+            className="mobile-drawer__action-item"
           >
-            <Icon
-              name={isBookmarked ? 'bookmark-off' : 'bookmark'}
-              className={isBookmarkPending ? 'animate-pulse' : ''}
-            />
-            <Text>
-              {isBookmarkPending
-                ? t`Processing...`
-                : isBookmarked
-                ? t`Remove bookmark`
-                : t`Bookmark message`}
-            </Text>
+            <Icon name={isBookmarked ? 'bookmark-off' : 'bookmark'} />
+            <Text>{isBookmarked ? t`Remove bookmark` : t`Bookmark message`}</Text>
           </div>
         )}
 

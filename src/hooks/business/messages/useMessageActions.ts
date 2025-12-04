@@ -224,7 +224,6 @@ export function useMessageActions(options: UseMessageActionsOptions) {
 
   // Get bookmark status for this message
   const isBookmarked = bookmarks.isBookmarked(message.messageId);
-  const isBookmarkPending = bookmarks.isPending(message.messageId);
 
   return {
     // State
@@ -236,8 +235,6 @@ export function useMessageActions(options: UseMessageActionsOptions) {
 
     // Bookmark state
     isBookmarked,
-    isBookmarkPending,
-    canAddBookmark: bookmarks.canAddBookmark,
 
     // Actions
     handleReaction,

@@ -30,8 +30,6 @@ interface MessageActionsProps {
   copiedMessageText: boolean;
   // Bookmark props
   isBookmarked?: boolean;
-  isBookmarkPending?: boolean;
-  canAddBookmark?: boolean;
   onBookmarkToggle?: () => void;
 }
 
@@ -55,8 +53,6 @@ export const MessageActions: React.FC<MessageActionsProps> = ({
   copiedMessageText,
   // Bookmark props
   isBookmarked = false,
-  isBookmarkPending = false,
-  canAddBookmark = true,
   onBookmarkToggle,
 }) => {
   // State for tracking which action is currently hovered
@@ -111,8 +107,6 @@ export const MessageActions: React.FC<MessageActionsProps> = ({
       case 'pin':
         return message.isPinned ? t`Unpin message` : t`Pin message`;
       case 'bookmark':
-        if (isBookmarkPending) return t`Processing...`;
-        if (!canAddBookmark && !isBookmarked) return t`Bookmark limit reached`;
         return isBookmarked ? t`Remove bookmark` : t`Bookmark message`;
       case 'delete':
         return t`Delete message`;
@@ -214,21 +208,14 @@ export const MessageActions: React.FC<MessageActionsProps> = ({
             <div
               onClick={(e) => {
                 e.stopPropagation();
-                if (!isBookmarkPending && (canAddBookmark || isBookmarked)) {
-                  onBookmarkToggle();
-                }
+                onBookmarkToggle();
               }}
               onMouseEnter={() => setHoveredAction('bookmark')}
-              className={`text-center transition duration-200 rounded-md flex items-center justify-center ${
-                isBookmarkPending || (!canAddBookmark && !isBookmarked)
-                  ? 'cursor-not-allowed opacity-50'
-                  : 'cursor-pointer hover:scale-125'
-              } text-surface-9 hover:text-surface-10`}
+              className="text-center transition duration-200 rounded-md flex items-center justify-center cursor-pointer hover:scale-125 text-surface-9 hover:text-surface-10"
             >
               <Icon
                 name={isBookmarked ? 'bookmark-off' : 'bookmark'}
                 size="md"
-                className={isBookmarkPending ? 'animate-pulse' : ''}
               />
             </div>
           )}

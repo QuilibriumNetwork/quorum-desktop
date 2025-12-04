@@ -5,6 +5,8 @@ import { useInvalidateBookmarks } from '../../queries/bookmarks/useInvalidateBoo
 import { useMessageDB } from '../../../components/context/useMessageDB';
 import { Bookmark, Message, BOOKMARKS_CONFIG } from '../../../api/quorumApi';
 import { stripMarkdownAndMentions } from '../../../utils/markdownStripping';
+import { showWarning } from '../../../utils/toast';
+import { t } from '@lingui/core/macro';
 
 export interface BookmarkContext {
   spaceId?: string;
@@ -163,7 +165,7 @@ export const useBookmarks = ({ userAddress }: UseBookmarksOptions) => {
   ) => {
     // Validate bookmark limit
     if (!canAddBookmark) {
-      console.warn('Cannot add bookmark: limit reached');
+      showWarning(t`Bookmark limit reached! Remove some to add new ones.`);
       return;
     }
 
@@ -243,7 +245,7 @@ export const useBookmarks = ({ userAddress }: UseBookmarksOptions) => {
           next.delete(message.messageId);
           return next;
         });
-        console.warn('Cannot add bookmark: limit reached');
+        showWarning(t`Bookmark limit reached! Remove some to add new ones.`);
         return;
       }
 
