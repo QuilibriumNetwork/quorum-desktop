@@ -27,6 +27,10 @@ Quorum "Spaces" = Discord "Servers"
 **Rationale**: A single `items` array eliminates data consistency issues between separate `folderOrder` and `folders` arrays.
 
 ```typescript
+// Reuse existing IconColor type from IconPicker
+// Available: 'default' | 'blue' | 'purple' | 'fuchsia' | 'green' | 'orange' | 'yellow' | 'red'
+type FolderColor = IconColor;
+
 type NavItem =
   | { type: 'space'; id: string }
   | {
@@ -34,8 +38,8 @@ type NavItem =
       id: string;                   // UUID
       name: string;                 // User-defined name (default: "Spaces")
       spaceIds: string[];           // Spaces in this folder (ordered)
-      icon?: IconName;              // Custom icon from IconPicker
-      iconColor?: IconColor;        // Custom color from IconPicker
+      icon?: IconName;              // Custom icon (always rendered white, default: 'folder')
+      color?: FolderColor;          // Folder background color (default: 'default' = gray #9ca3af)
       createdDate: number;
       modifiedDate: number;
     };
@@ -278,62 +282,57 @@ interface DragState {
 ```
 src/components/navbar/
 ├── NavMenu.tsx              # MODIFY: Render mixed items array
-├── SpaceButton.tsx          # KEEP: Space-only, add isInFolder prop
-├── FolderButton.tsx         # NEW: Folder rendering with expand/collapse
-├── FolderChildren.tsx       # NEW: Renders Spaces within expanded folder
+├── SpaceButton.tsx          # MODIFY: Add size prop ('regular' | 'small')
+├── FolderContainer.tsx      # NEW: Wrapper for folder (collapsed/expanded states)
+├── FolderButton.tsx         # NEW: Folder icon button (white icon on colored bg)
+├── FolderContextMenu.tsx    # NEW: Right-click context menu (desktop only)
 └── FolderEditorModal.tsx    # NEW: Edit folder name/icon/color
 ```
 
 ### FolderButton Component
+
+The folder icon button - renders white icon on colored background.
+Note: Click/touch handlers are managed by parent FolderContainer using touch interaction system.
 
 ```typescript
 // src/components/navbar/FolderButton.tsx
 
 interface FolderButtonProps {
   folder: NavItem & { type: 'folder' };
-  spaces: Space[];              // Resolved spaces in this folder
-  isExpanded: boolean;
-  hasUnread: boolean;           // Aggregate from contained spaces
-  unreadCount: number;          // Aggregate notification count
-  onToggleExpand: () => void;
-  onEdit: () => void;
-  onDragStart: () => void;
+  hasUnread: boolean;
+  unreadCount: number;
 }
 
 const FolderButton: React.FC<FolderButtonProps> = ({
   folder,
-  spaces,
-  isExpanded,
   hasUnread,
   unreadCount,
-  onToggleExpand,
-  onEdit,
 }) => {
   const { isTouchDevice } = usePlatform();
 
-  // Long press for edit on both touch AND desktop
-  const longPressHandlers = useLongPress({
-    onLongPress: onEdit,
-    delay: 500,
-  });
-
   return (
-    <Tooltip content={`${folder.name} (${spaces.length})`} disabled={isTouchDevice}>
-      <Pressable
-        onClick={onToggleExpand}
-        {...longPressHandlers}
-        style={styles.folderButton}
+    <Tooltip content={folder.name} disabled={isTouchDevice}>
+      <div
+        className="folder-button"
+        style={{
+          backgroundColor: getColorHex(folder.color),
+          borderRadius: 'var(--rounded-full)',
+          width: 48,
+          height: 48,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
       >
-        <FolderIcon
-          icon={folder.icon}
-          iconColor={folder.iconColor}
-          previewIcons={spaces.slice(0, 4).map(s => s.icon)}
-          isExpanded={isExpanded}
+        <Icon
+          name={folder.icon || 'folder'}
+          color="white"  // Always white
+          size="md"
         />
         {unreadCount > 0 && (
           <NotificationBadge count={unreadCount} />
         )}
-      </Pressable>
+      </div>
     </Tooltip>
   );
 };
@@ -346,11 +345,107 @@ const FolderButton: React.FC<FolderButtonProps> = ({
 
 interface SpaceButtonProps {
   space: Space;
-  isInFolder?: boolean;  // NEW: Adjusts styling/indentation
+  size?: 'regular' | 'small';  // NEW: 'small' for spaces inside folders (40px vs 48px)
 }
 ```
 
-Minimal change - just add optional `isInFolder` prop for visual styling.
+When `size="small"`, the space icon renders at 40px instead of 48px, but retains all functionality (selection indicator, unread indicator, notification badge).
+
+### FolderContainer Component
+
+```typescript
+// src/components/navbar/FolderContainer.tsx
+
+import { useLongPressWithDefaults } from '../../hooks/useLongPress';
+import { TOUCH_INTERACTION_TYPES } from '../../constants/touchInteraction';
+import { hapticMedium } from '../../utils/haptic';
+
+interface FolderContainerProps {
+  folder: NavItem & { type: 'folder' };
+  spaces: Space[];
+  isExpanded: boolean;
+  onToggleExpand: () => void;
+  onContextMenu: (e: React.MouseEvent) => void;
+  onEdit: () => void;
+}
+
+const FolderContainer: React.FC<FolderContainerProps> = ({
+  folder,
+  spaces,
+  isExpanded,
+  onToggleExpand,
+  onContextMenu,
+  onEdit,
+}) => {
+  const { isTouchDevice } = usePlatform();
+  const hasUnread = spaces.some(s => s.hasUnread);
+  const unreadCount = spaces.reduce((sum, s) => sum + s.unreadCount, 0);
+
+  // Use existing touch interaction system (see touch-interaction-system.md)
+  const touchHandlers = useLongPressWithDefaults({
+    delay: TOUCH_INTERACTION_TYPES.STANDARD.delay,  // 500ms
+    threshold: TOUCH_INTERACTION_TYPES.STANDARD.threshold,  // 10px
+    onLongPress: () => {
+      if (isTouchDevice) {
+        hapticMedium();
+        onEdit();  // Open FolderEditorModal
+      }
+    },
+    onTap: onToggleExpand,
+  });
+
+  if (!isExpanded) {
+    // Collapsed: just show folder icon
+    return (
+      <div
+        {...touchHandlers}
+        onContextMenu={onContextMenu}
+        className={touchHandlers.className || ''}
+        style={touchHandlers.style}
+      >
+        <FolderButton
+          folder={folder}
+          hasUnread={hasUnread}
+          unreadCount={unreadCount}
+        />
+      </div>
+    );
+  }
+
+  // Expanded: container with folder icon + spaces inside
+  return (
+    <div
+      {...touchHandlers}
+      onContextMenu={onContextMenu}
+      className={`folder-container ${touchHandlers.className || ''}`}
+      style={{
+        ...touchHandlers.style,
+        backgroundColor: `${getColorHex(folder.color)}80`,  // 50% opacity
+        borderRadius: 'var(--rounded-lg)',
+        padding: '8px 4px',
+      }}
+    >
+      {/* Folder icon at top - tap to collapse */}
+      <FolderButton
+        folder={folder}
+        hasUnread={hasUnread}
+        unreadCount={unreadCount}
+      />
+
+      {/* Spaces inside folder */}
+      <div className="folder-spaces">
+        {spaces.map(space => (
+          <SpaceButton
+            key={space.spaceId}
+            space={space}
+            size="small"  // 40px instead of 48px
+          />
+        ))}
+      </div>
+    </div>
+  );
+};
+```
 
 ### NavMenu Rendering
 
@@ -379,28 +474,15 @@ const NavMenu: React.FC = () => {
             const isExpanded = folderStates[item.id]?.collapsed === false;
 
             return (
-              <React.Fragment key={item.id}>
-                <FolderButton
-                  folder={item}
-                  spaces={folderSpaces}
-                  isExpanded={isExpanded}
-                  hasUnread={folderSpaces.some(s => s.hasUnread)}
-                  unreadCount={folderSpaces.reduce((sum, s) => sum + s.unreadCount, 0)}
-                  onToggleExpand={() => toggleFolder(item.id)}
-                  onEdit={() => openFolderEditor(item)}
-                />
-                {isExpanded && (
-                  <FolderChildren folderId={item.id}>
-                    {folderSpaces.map(space => (
-                      <SpaceButton
-                        key={space.spaceId}
-                        space={space}
-                        isInFolder
-                      />
-                    ))}
-                  </FolderChildren>
-                )}
-              </React.Fragment>
+              <FolderContainer
+                key={item.id}
+                folder={item}
+                spaces={folderSpaces}
+                isExpanded={isExpanded}
+                onToggleExpand={() => toggleFolder(item.id)}
+                onContextMenu={(e) => openFolderContextMenu(item, e)}
+                onEdit={() => openFolderEditor(item)}
+              />
             );
           }
         })}
@@ -410,23 +492,120 @@ const NavMenu: React.FC = () => {
 };
 ```
 
+### FolderContextMenu
+
+```typescript
+// src/components/navbar/FolderContextMenu.tsx
+
+interface FolderContextMenuProps {
+  folder: NavItem & { type: 'folder' };
+  position: { x: number; y: number };
+  onClose: () => void;
+  onOpenSettings: () => void;
+  onDelete: () => void;
+}
+
+const FolderContextMenu: React.FC<FolderContextMenuProps> = ({
+  folder,
+  position,
+  onClose,
+  onOpenSettings,
+  onDelete,
+}) => {
+  return (
+    <ContextMenu position={position} onClose={onClose}>
+      <ContextMenuItem
+        icon="settings"
+        label={t`Folder Settings`}
+        onClick={onOpenSettings}
+      />
+      <ContextMenuItem
+        icon="folder-minus"
+        label={t`Delete Folder`}
+        onClick={onDelete}
+        variant="danger"
+      />
+    </ContextMenu>
+  );
+};
+```
+
+**Delete Folder behavior**: Spaces inside the folder become standalone (ungrouped). No confirmation modal needed since it's easily reversible by re-creating the folder.
+
 ### FolderEditorModal
 
-Reuse `GroupEditorModal` pattern with:
-- Name input (max 32 chars)
-- IconPicker integration (50+ icons)
-- ColorSwatch integration (8 colors)
-- "Delete Folder" link at bottom (opens ConfirmationModal)
+> ⚠️ **Must use ModalProvider system** (see `.agents/docs/features/modals.md`)
+> - Triggered from NavMenu area (context menu / long-press)
+> - Same pattern as ChannelEditorModal, GroupEditorModal
+
+**Implementation steps:**
+
+1. **Add state** to `src/hooks/business/ui/useModalState.ts`:
+```typescript
+folderEditor: { isOpen: boolean; folder?: NavItem & { type: 'folder' } }
+```
+
+2. **Add to ModalProvider** (`src/components/context/ModalProvider.tsx`):
+```typescript
+{modalState.state.folderEditor.isOpen && (
+  <FolderEditorModal
+    folder={modalState.state.folderEditor.folder}
+    onClose={modalState.closeFolderEditor}
+  />
+)}
+```
+
+3. **Use**: `const { openFolderEditor } = useModals();`
+
+**Modal content:**
+- Name input (max 40 chars)
+- IconPicker with `mode="background-color"` (icons always white, color = folder bg)
+- Live preview: white icon on colored background
+- Spacer + "Delete Folder" danger link at bottom (same pattern as ChannelEditorModal)
 
 ```typescript
 // src/components/modals/FolderEditorModal.tsx
 
 interface FolderEditorModalProps {
   folder: NavItem & { type: 'folder' };
-  onSave: (updates: Partial<NavItem>) => void;
-  onDelete: () => void;
   onClose: () => void;
 }
+
+// Modal layout:
+// ┌─────────────────────────────┐
+// │ Edit Folder            [X]  │
+// ├─────────────────────────────┤
+// │ Folder Name                 │
+// │ [____________________]      │
+// │                             │
+// │ [icon] [color swatches]     │
+// │                             │
+// │         [Save Changes]      │
+// │ ─────────────────────────── │
+// │       Delete Folder         │  <- danger text, like ChannelEditorModal
+// └─────────────────────────────┘
+```
+
+### IconPicker Mode Enhancement
+
+Add `mode` prop to existing IconPicker component:
+
+```typescript
+// src/components/space/IconPicker/types.ts
+
+interface IconPickerProps {
+  // ... existing props
+  mode?: 'icon-color' | 'background-color';  // NEW
+}
+
+// mode="icon-color" (default, current behavior):
+//   - Icons rendered in selected color
+//   - For channels, groups, etc.
+
+// mode="background-color" (new):
+//   - Icons always rendered white
+//   - Color swatches show as background previews
+//   - For folders
 ```
 
 ---
@@ -438,7 +617,7 @@ interface FolderEditorModalProps {
 | Action | Gesture | Result |
 |--------|---------|--------|
 | Expand/Collapse | Click folder | Toggle expanded state |
-| Edit folder | Long press (500ms) | Open FolderEditorModal |
+| Context menu | Right-click | Show FolderContextMenu |
 | Drag folder | Click + drag | Reorder in list |
 | Drag space | Click + drag | Various (see state machine) |
 | Tooltip | Hover | Show folder name + count |
@@ -448,12 +627,70 @@ interface FolderEditorModalProps {
 | Action | Gesture | Result |
 |--------|---------|--------|
 | Expand/Collapse | Tap folder | Toggle expanded state |
-| Edit folder | Long press (500ms) | Open FolderEditorModal |
+| Edit folder | Long press (500ms) | Opens FolderEditorModal directly |
 | Drag folder | Long press + drag | Reorder in list |
 | Drag space | Long press + drag | Various (see state machine) |
 | Tooltip | Disabled | N/A |
 
-### Touch Activation Constraints
+### FolderContextMenu (Desktop only)
+
+| Option | Action |
+|--------|--------|
+| Folder Settings | Opens FolderEditorModal |
+| Delete Folder | Ungroups spaces (makes them standalone) |
+
+**Note**: On touch devices, long-press opens FolderEditorModal directly (which includes "Delete Folder" option at bottom, similar to ChannelEditorModal pattern).
+
+### Touch Interaction System Integration
+
+> ⚠️ **Leverage existing system** - See `.agents/docs/features/touch-interaction-system.md`
+
+**Use existing hooks and constants:**
+
+```typescript
+// src/components/navbar/FolderContainer.tsx
+
+import { useLongPressWithDefaults } from '../../hooks/useLongPress';
+import { TOUCH_INTERACTION_TYPES } from '../../constants/touchInteraction';
+import { hapticMedium } from '../../utils/haptic';
+
+const FolderContainer: React.FC<FolderContainerProps> = ({
+  folder,
+  onToggleExpand,
+  onContextMenu,
+  onEdit,
+}) => {
+  const { isTouchDevice } = usePlatform();
+
+  // Use existing touch interaction system
+  const touchHandlers = useLongPressWithDefaults({
+    delay: TOUCH_INTERACTION_TYPES.STANDARD.delay,  // 500ms
+    threshold: TOUCH_INTERACTION_TYPES.STANDARD.threshold,  // 10px
+    onLongPress: () => {
+      if (isTouchDevice) {
+        hapticMedium();  // Haptic feedback on long-press
+        onEdit();        // Open FolderEditorModal
+      }
+    },
+    onTap: () => {
+      onToggleExpand();  // Expand/collapse folder
+    },
+  });
+
+  return (
+    <div
+      {...touchHandlers}
+      onContextMenu={onContextMenu}  // Desktop right-click
+      className={`folder-container ${touchHandlers.className || ''}`}
+      style={touchHandlers.style}
+    >
+      {/* ... */}
+    </div>
+  );
+};
+```
+
+### Drag Activation Constraints
 
 ```typescript
 // src/hooks/business/spaces/useSpaceDragAndDrop.ts
@@ -479,10 +716,22 @@ const sensors = useSensors(
 
 | Gesture | Duration | Movement | Action |
 |---------|----------|----------|--------|
-| Tap | < 200ms | < 5px | Expand/collapse folder |
-| Long press | > 500ms | < 5px | Open editor modal |
+| Tap | < 500ms | < 10px | Expand/collapse folder |
+| Long press | > 500ms | < 10px | Open FolderEditorModal (touch) |
 | Drag | > 200ms | > 15px | Start drag operation |
 | Scroll | any | Vertical only | Scroll list (not drag) |
+| Right-click | instant | N/A | Open FolderContextMenu (desktop) |
+
+### CSS Hover States
+
+```scss
+// Disable hover on touch devices to prevent "sticky hover"
+@media (hover: hover) and (pointer: fine) {
+  .folder-button:hover {
+    transform: scale(1.05);
+  }
+}
+```
 
 ---
 
@@ -598,20 +847,24 @@ const validateItems = (items: NavItem[]): NavItem[] => {
 1. User drags Space A onto Space B
 2. System shows "Create Folder" overlay indicator
 3. On drop:
-   - Create folder with defaults: name="Spaces", icon=`folder`, color=default
+   - Create folder with defaults:
+     - `name`: "Spaces"
+     - `icon`: "folder" (must add to ICON_OPTIONS if not present)
+     - `color`: "default" (gray #9ca3af)
    - Add both Spaces to folder
    - Auto-expand folder
-4. User can long-press to customize name/icon/color later
+4. User can customize via context menu (desktop) or long-press (touch)
 
 ### Folder Deletion Flow
 
-1. User opens FolderEditorModal (via long press)
-2. User clicks "Delete Folder" link at bottom
-3. ConfirmationModal appears:
-   - Title: "Delete Folder"
-   - Message: "The spaces inside will be moved out of the folder."
-   - Buttons: "Cancel" | "Delete"
-4. On confirm: Spaces become standalone, folder removed
+**From FolderEditorModal** (touch: long-press, desktop: context menu → Folder Settings):
+1. User clicks "Delete Folder" danger link at bottom
+2. Spaces become standalone (ungrouped), folder removed
+3. No confirmation modal needed (easily reversible by re-creating folder)
+
+**From FolderContextMenu** (desktop only: right-click):
+1. User clicks "Delete Folder" option
+2. Same behavior: spaces become standalone, folder removed
 
 ### Empty Folder Auto-Delete
 
@@ -628,19 +881,65 @@ When user drags last space out of folder:
 
 | State | Visual |
 |-------|--------|
-| Collapsed, no unread | Folder icon with 4 space preview icons behind |
-| Collapsed, has unread | Folder icon + notification badge (aggregate count) |
-| Expanded | Folder icon with "open" style, children visible below |
-| Dragging | Folder icon with drag shadow |
+| Collapsed, no unread | Folder icon (white) on colored background, 48px circle |
+| Collapsed, has unread | Same + notification badge (aggregate count from all spaces) |
+| Expanded | Folder container with spaces inside (see below) |
+| Dragging | Folder icon with drag shadow, slight scale up |
 | Drop target (valid) | Highlight border, slight scale up |
 | Drop target (invalid) | Red tint or shake animation |
+
+**Collapsed folder** (simple, like Discord):
+- Just the folder icon on colored background
+- No preview icons of spaces inside (simpler than Discord's stacked preview)
+- Notification badge shows aggregate unread count from all contained spaces
+
+### Expanded Folder Container (Discord-style)
+
+When a folder is expanded, it renders as a vertical container:
+
+```
+┌─────────────────┐
+│   [folder📁]    │  <- Folder icon (white on colored bg), click to collapse
+│  ┌───────────┐  │
+│  │  [space]  │  │  <- Smaller space icons inside
+│  │  [space]  │  │
+│  │  [space]  │  │
+│  └───────────┘  │
+└─────────────────┘
+     ↑
+  Container with folder color at 50% opacity
+```
+
+**Container styling:**
+- Background: `folder.color` at 50% opacity
+- Border radius: rounded corners (consistent with design system)
+- Padding: small padding around space icons
+
+**Folder icon (top of container):**
+- White icon on solid colored background (same as collapsed state)
+- Click to collapse the folder
+- Shows notification badge if any space has unread
+
+**Space icons inside folder:**
+- Slightly smaller than regular space icons (e.g., 40px vs 48px)
+- Same behavior as normal space icons:
+  - Left accent indicator when selected
+  - Left indicator for unread messages
+  - Notification bubble for mention counts
+- Clickable to navigate to that space
+- Draggable to reorder within folder or drag out
 
 ### Folder Icon Customization
 
 Using existing IconPicker and ColorSwatch components:
-- **Icons**: 50+ icons from existing icon set
-- **Colors**: 8 colors from existing palette
-- **Default**: `folder` icon, gray color
+- **Icons**: 50+ icons from existing icon set (always rendered white)
+- **Colors**: 8 colors from existing palette (applied to background)
+- **Default**: `folder` icon, gray background
+
+**Color Application Pattern** (consistent with UserInitials):
+- Background: `color` applied as gradient (lighter top, darker bottom)
+- Icon: Always white for contrast
+- Matches space icons that use initials fallback
 
 ### Animation Timings
 
@@ -678,29 +977,47 @@ Using existing IconPicker and ColorSwatch components:
 
 ## Implementation Phases
 
-### Phase 1: Core Functionality
+### Phase 1: Data & Core Components
 1. Schema migration (spaceIds → items)
-2. FolderButton component with expand/collapse
-3. Basic drag-and-drop (create folder, add to folder)
-4. Device-local collapsed state storage
+2. Device-local collapsed state storage (DevicePreferences)
+3. Add `folder` icon to ICON_OPTIONS (if not present)
+4. IconPicker `mode` prop enhancement (`icon-color` | `background-color`)
+5. SpaceButton `size` prop (`regular` | `small`)
 
-### Phase 2: Full Drag Support
-1. Complete drag state machine (all 10 scenarios)
-2. Drop zone indicators
-3. Auto-delete empty folders
-4. Reorder within folders
+### Phase 2: Folder UI Components
+1. FolderButton component (white icon on colored bg)
+2. FolderContainer component (collapsed/expanded states)
+3. Expanded folder visual design:
+   - Container with folder color @ 50% opacity
+   - Smaller space icons (40px) inside
+   - Full space icon functionality (selection, unread, badges)
+4. NavMenu integration (render mixed items array)
 
-### Phase 3: Customization & Polish
-1. FolderEditorModal with IconPicker integration
-2. Icon and color customization (50+ icons, 8 colors)
-3. Folder deletion flow
-4. Animations and visual polish
+### Phase 3: Interactions & Modals
+1. FolderContextMenu (desktop only - right-click)
+2. FolderEditorModal via ModalProvider:
+   - Add state to useModalState.ts
+   - Add to ModalProvider.tsx
+   - IconPicker with `mode="background-color"`
+   - Delete Folder option at bottom
+3. Touch: long-press → open FolderEditorModal directly
+4. Desktop: right-click → context menu → Folder Settings / Delete
 
-### Phase 4: Cross-Platform & Sync
+### Phase 4: Drag & Drop
+1. Basic drag-and-drop (create folder, add to folder)
+2. Complete drag state machine (all 10 scenarios)
+3. Drop zone indicators
+4. Auto-delete empty folders
+5. Reorder within folders
+
+### Phase 5: Cross-Platform & Sync
 1. Touch activation constraint tuning
-2. Mobile gesture conflict resolution
+2. Mobile gesture conflict resolution (tap vs long-press vs drag)
 3. Sync conflict resolution
 4. Orphaned space handling
+5. Animations and visual polish
+6. i18n: Translate all UI strings (FolderContextMenu, FolderEditorModal, tooltips)
+   - Note: Default folder name "Spaces" is user data, not translated
 
 ---
 
@@ -719,18 +1036,47 @@ Using existing IconPicker and ColorSwatch components:
 - Cross-device sync with conflicts
 
 ### Manual Testing Checklist
+
+**Folder Creation & Structure**
 - [ ] Create folder by dragging space onto space
 - [ ] Add space to existing folder
 - [ ] Remove space from folder (drag out)
-- [ ] Reorder Spaces within folder
+- [ ] Reorder spaces within folder
 - [ ] Reorder folders in list
-- [ ] Expand/collapse folder
-- [ ] Edit folder name/icon/color
-- [ ] Delete folder, verify Spaces restored
-- [ ] Mobile: long-press to edit
-- [ ] Mobile: drag without triggering scroll
-- [ ] Sync: create folder on device A, verify on device B
-- [ ] Sync: delete folder on A while B has it expanded
+- [ ] Auto-delete folder when last space removed
+
+**Expanded Folder Visual**
+- [ ] Expanded folder shows container with 50% opacity bg color
+- [ ] Folder icon at top (white on solid color), click to collapse
+- [ ] Space icons inside are smaller (40px vs 48px)
+- [ ] Space icons retain selection indicator
+- [ ] Space icons retain unread indicator
+- [ ] Space icons retain notification badges
+
+**Desktop Interactions**
+- [ ] Click folder to expand/collapse
+- [ ] Right-click folder → context menu appears
+- [ ] Context menu: "Folder Settings" opens FolderEditorModal
+- [ ] Context menu: "Delete Folder" ungroups spaces
+- [ ] Hover folder → tooltip shows name
+
+**Touch Interactions**
+- [ ] Tap folder to expand/collapse
+- [ ] Long-press folder → FolderEditorModal opens directly
+- [ ] Long-press + drag → reorder folder
+- [ ] No accidental drags during scroll
+
+**FolderEditorModal**
+- [ ] Edit folder name (max 40 chars, validation)
+- [ ] Change folder icon (IconPicker with background-color mode)
+- [ ] Change folder color (icons always white preview)
+- [ ] Save changes persists
+- [ ] Delete Folder option at bottom works
+
+**Sync**
+- [ ] Create folder on device A, appears on device B
+- [ ] Edit folder on A, syncs to B
+- [ ] Delete folder on A while B has it expanded
 
 ---
 
@@ -760,7 +1106,7 @@ const NavItemSchema = z.discriminatedUnion('type', [
     name: z.string().max(40),
     spaceIds: z.array(z.string()).max(50),
     icon: z.string().optional(),
-    iconColor: z.string().optional(),
+    color: z.string().optional(),
     createdDate: z.number(),
     modifiedDate: z.number(),
   }),
@@ -828,6 +1174,6 @@ This is consistent with existing config sync (spaceIds, bookmarks) - not a new l
 ---
 
 _Created: 2025-09-26_
-_Last Updated: 2025-12-03_
+_Last Updated: 2025-12-04 (expanded folder visual design)_
 
 **Dependencies**: @dnd-kit, existing IconPicker, existing drag-and-drop infrastructure
