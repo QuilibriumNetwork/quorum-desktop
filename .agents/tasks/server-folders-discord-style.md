@@ -173,13 +173,20 @@ cmd.exe /c "cd /d D:\GitHub\Quilibrium\quorum-desktop && npx tsc --noEmit --skip
   - Name input (max 40 chars)
   - IconPicker with `mode="background-color"`
   - Save button
-  - Delete Folder link at bottom (danger style)
+  - Delete Folder link at bottom (danger style, double-click confirmation)
+- [ ] **Name validation**: Show input error if empty, Save button disabled until valid
+  - On new folder creation: Pre-fill with "Spaces" (user can change)
+- [ ] **Delete confirmation**: Use double-click pattern (like GroupEditorModal)
+  - First click: "Delete Folder" → "Click again to confirm"
+  - Second click: Execute delete (ungroups spaces)
 - [ ] See [Reference: FolderEditorModal](#reference-foldereditormodal)
 - [ ] **STOP**: Run `yarn lint` or check modified files
 - [ ] **STOP - VISUAL TEST**:
   - Trigger modal open (via temp button or dev tools)
   - Verify layout matches spec
   - Verify IconPicker shows icons in white on colored backgrounds
+  - Clear name field → verify error shown, Save disabled
+  - Click Delete → verify "Click again to confirm" appears
 
 ### 3.3 Create FolderContextMenu (desktop only)
 - [ ] **New File**: `src/components/navbar/FolderContextMenu.tsx`
@@ -215,11 +222,14 @@ cmd.exe /c "cd /d D:\GitHub\Quilibrium\quorum-desktop && npx tsc --noEmit --skip
 - [ ] Add touch constraints to existing sensors:
   ```typescript
   // Current: { distance: 8 }
-  // Add touch support:
+  // Add touch support (prevents accidental drags during scroll):
   activationConstraint: isTouchDevice
     ? { delay: 200, tolerance: 5, distance: 15 }
     : { distance: 8 }
   ```
+- [ ] **Block sync during drag**: Set `isDragging` flag in `handleDragStart`, clear in `handleDragEnd`
+  - ConfigService should check this flag and skip/defer sync updates while dragging
+  - Prevents race conditions if remote sync arrives mid-drag
 - [ ] **STOP**: Run `yarn lint` or check modified files
 
 ### 4.2 Implement basic folder creation
@@ -230,13 +240,29 @@ cmd.exe /c "cd /d D:\GitHub\Quilibrium\quorum-desktop && npx tsc --noEmit --skip
 
 ### 4.3 Implement add to folder
 - [ ] Drag Space onto Folder → adds space to folder
+- [ ] **Works on collapsed folders too**: Drop on folder button adds to folder (no expansion required)
 - [ ] Test scenario: `SPACE_TO_FOLDER`
-- [ ] **STOP - VISUAL TEST**: Drag space onto folder, verify it's added
+- [ ] **STOP - VISUAL TEST**:
+  - Drag space onto expanded folder → added
+  - Drag space onto collapsed folder → added (folder stays collapsed)
 
 ### 4.4 Implement remove from folder
 - [ ] Drag Space out of folder → becomes standalone
 - [ ] Test scenario: `SPACE_OUT_OF_FOLDER`
-- [ ] Auto-delete folder if empty
+- [ ] Auto-delete folder if empty (last space removed)
+- [ ] **Folder deletion behavior**: When folder is deleted (via modal or auto-delete), spaces "spill out" in place:
+  - Spaces keep their current order within the folder
+  - Inserted at the folder's position in the list
+  - Example: `[A] [📁 D,B,C] [E]` → delete folder → `[A] [D] [B] [C] [E]`
+  ```typescript
+  const folderIndex = items.findIndex(i => i.id === folderId);
+  const folder = items[folderIndex];
+  const newItems = [
+    ...items.slice(0, folderIndex),
+    ...folder.spaceIds.map(id => ({ type: 'space', id })),
+    ...items.slice(folderIndex + 1),
+  ];
+  ```
 - [ ] **STOP - VISUAL TEST**: Drag space out of folder, verify it becomes standalone
 
 ### 4.5 Implement remaining drag scenarios
@@ -253,7 +279,21 @@ cmd.exe /c "cd /d D:\GitHub\Quilibrium\quorum-desktop && npx tsc --noEmit --skip
 - [ ] Invalid drop feedback (shake/red tint)
 - [ ] **STOP - VISUAL TEST**: Verify drag feedback looks good
 
-**✅ PHASE 4 COMPLETE** - Full drag & drop working
+### 4.7 Add UI limit enforcement
+- [ ] **File**: `src/hooks/business/spaces/useSpaceDragAndDrop.ts` (or folder utils)
+- [ ] Before creating folder: Check if folder count >= 20
+  - If exceeded → show toast: "Maximum 20 folders reached"
+  - Cancel the drag operation
+- [ ] Before adding space to folder: Check if folder.spaceIds.length >= 50
+  - If exceeded → show toast: "Maximum 50 spaces per folder"
+  - Cancel the drag operation
+- [ ] Use existing toast system (see how bookmarks shows "Bookmark limit reached")
+- [ ] **STOP**: Run `yarn lint` or check modified files
+- [ ] **STOP - VISUAL TEST**:
+  - Create 20 folders, try to create 21st → should see error toast
+  - Add 50 spaces to folder, try to add 51st → should see error toast
+
+**✅ PHASE 4 COMPLETE** - Full drag & drop working with limit enforcement
 
 ---
 
@@ -265,10 +305,13 @@ cmd.exe /c "cd /d D:\GitHub\Quilibrium\quorum-desktop && npx tsc --noEmit --skip
 - [ ] Add `deriveSpaceIds()` call
 - [ ] **STOP**: Run `yarn lint` or check modified files
 
-### 5.2 Implement mergeItems()
+### 5.2 Implement mergeItems() and security validation
 - [ ] **File**: `src/services/ConfigService.ts`
 - [ ] Add `mergeItems()` function (see [Reference: Merge Algorithm](#reference-merge-algorithm))
 - [ ] Call in `getConfig()` after decryption
+- [ ] **Security**: Call `validateItems()` after merge to enforce limits (see [Security Considerations](#security-considerations))
+  - Prevents compromised device from syncing 1000+ folders
+  - Truncates oversized folder.spaceIds arrays
 - [ ] **STOP**: Run `yarn lint` or check modified files
 
 ### 5.3 Add device-local folder states
@@ -599,17 +642,27 @@ Follow `ChannelEditorModal.tsx` pattern:
 │ Edit Folder            [X]  │
 ├─────────────────────────────┤
 │ Folder Name                 │
-│ [____________________]      │
+│ [Spaces_______________]     │  <- pre-filled, error if empty
 │                             │
 │ [icon] [color swatches]     │
 │  (IconPicker mode=          │
 │   "background-color")       │
 │                             │
-│         [Save Changes]      │
+│         [Save Changes]      │  <- disabled if name empty
 │ ─────────────────────────── │
-│       Delete Folder         │  <- danger text
+│       Delete Folder         │  <- double-click: "Click again to confirm"
 └─────────────────────────────┘
 ```
+
+**Defaults on folder creation**:
+- Name: "Spaces" (pre-filled, user can edit)
+- Icon: "folder"
+- Color: "default" (gray #9ca3af)
+
+**Delete behavior**: Double-click confirmation pattern (like GroupEditorModal)
+- First click: Text changes to "Click again to confirm"
+- Second click (within 5s): Executes delete, ungroups spaces
+- Timeout: Resets to "Delete Folder" after 5 seconds
 
 Must use ModalProvider system (see `.agents/docs/features/modals.md`).
 
@@ -758,6 +811,97 @@ private mergeItems(
 
 ---
 
+# Security Considerations
+
+> Reviewed by security-analyst agent. Config sync is E2E encrypted (AES-GCM + Ed448 signatures), so folder data is not visible to network observers or servers.
+
+**Threat Model**: These issues only affect a single user's devices. If Device A is compromised, it could sync malformed data that crashes the user's Device B. This **cannot** affect other users because config is encrypted and signed with the user's private key.
+
+## Required: Schema Validation After Decrypt
+
+**Issue**: After decrypting synced config in `ConfigService.ts`, JSON is parsed directly without validation:
+```typescript
+const config = JSON.parse(...) as UserConfig;  // No validation!
+```
+
+A compromised device could sync malformed folder data that crashes the user's other devices.
+
+**Mitigation**: Add Zod schema validation after decryption:
+
+```typescript
+import { z } from 'zod';
+
+const NavItemSchema = z.discriminatedUnion('type', [
+  z.object({ type: z.literal('space'), id: z.string() }),
+  z.object({
+    type: z.literal('folder'),
+    id: z.string(),
+    name: z.string().max(40),
+    spaceIds: z.array(z.string()).max(50),
+    icon: z.string().optional(),
+    color: z.string().optional(),
+    createdDate: z.number(),
+    modifiedDate: z.number(),
+  }),
+]);
+
+const UserConfigSchema = z.object({
+  address: z.string(),
+  items: z.array(NavItemSchema).max(100).optional(),  // 20 folders + 80 spaces max
+  // ... other fields
+});
+
+// In ConfigService.getConfig(), after decryption:
+const rawConfig = JSON.parse(decryptedBuffer.toString('utf-8'));
+const config = UserConfigSchema.parse(rawConfig);  // Throws if invalid
+```
+
+## Required: Limit Enforcement (Two Layers)
+
+**Limits**: 20 folders max, 50 spaces per folder max.
+
+| Layer | Where | What happens | Implemented |
+|-------|-------|--------------|-------------|
+| **UI** | Phase 4.7 | User sees toast error, action blocked | Drag & drop validation |
+| **Post-sync** | Phase 5.2 | Silent truncation, no error | `validateItems()` after decrypt |
+
+**Why two layers?**
+- UI layer: Friendly UX for normal users
+- Post-sync layer: Defense against compromised devices bypassing UI (DevTools, malware, modified app)
+
+```typescript
+const validateItems = (items: NavItem[]): NavItem[] => {
+  const validItems: NavItem[] = [];
+  let folderCount = 0;
+
+  for (const item of items) {
+    if (item.type === 'folder') {
+      if (folderCount >= 20) continue;  // Skip excess folders
+      if (item.spaceIds.length > 50) {
+        item.spaceIds = item.spaceIds.slice(0, 50);  // Truncate
+      }
+      folderCount++;
+    }
+    validItems.push(item);
+  }
+
+  return validItems;
+};
+
+// In ConfigService.getConfig(), after schema validation:
+config.items = validateItems(config.items ?? []);
+```
+
+## Not a Concern: Privacy Metadata
+
+Folder structure is fully encrypted. Server only sees:
+- Timestamp (when config changed)
+- Encrypted blob size
+
+This is consistent with existing config sync (spaceIds, bookmarks) - not a new leak.
+
+---
+
 # Manual Testing Checklist
 
 ## Folder Creation & Structure
@@ -767,6 +911,7 @@ private mergeItems(
 - [ ] Reorder spaces within folder
 - [ ] Reorder folders in list
 - [ ] Auto-delete folder when last space removed
+- [ ] **Folder deletion preserves space order**: Reorder spaces in folder (e.g., D,B,C), delete folder → spaces appear as D,B,C (not original order)
 
 ## Expanded Folder Visual
 - [ ] Expanded folder shows container with 50% opacity bg color
@@ -809,6 +954,6 @@ private mergeItems(
 ---
 
 _Created: 2025-09-26_
-_Last Updated: 2025-12-04_
+_Last Updated: 2025-12-04 (added folder deletion behavior: spaces spill out preserving their order)_
 
 **Dependencies**: @dnd-kit, existing IconPicker, existing drag-and-drop infrastructure
