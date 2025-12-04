@@ -109,15 +109,13 @@ This is the main index for all documentation, bug reports, and task management.
 - [Custom ContentEditable Mention Pills for Message Composer](tasks/mention-pills-in-message-textarea.md)
 - [Date Translation with Moment.js Locale Configuration](tasks/i18n-date-translation-moment-locale.md)
 - [Device Identification Improvement](tasks/device-identification-improvement.md)
-- [DirectMessage Navigation State Persistence](tasks/dm-navigation-state-persistence.md)
 - [Implement Background Sync Queue for User Settings and Async Operations](tasks/background-sync-queue.md)
 - [Implement Message Forwarding with Privacy Controls](tasks/message-forwarding-with-privacy-controls.md)
 - [Implement Smart Context Extraction Around Mentions in NotificationPanel](tasks/notification-mention-context-extraction.md)
-- [Message Link Rendering (Discord-style)](tasks/message-link-rendering.md)
 - [Multi-User Invite Selection Enhancement](tasks/multi-user-invite-selection.md)
 - [Passkey Import UX Issue](tasks/passkey-import-ux-issue.md)
 - [SDK PasskeyModal Customization Props Enhancement](tasks/sdk-passkey-modal-customization-props.md)
-- [Server Folders - Discord-Style Grouping Feature](tasks/server-folders-discord-style.md)
+- [Space Folders - Discord-Style Grouping Feature](tasks/server-folders-discord-style.md)
 - [Task: Implement Delete Public Invite Link Feature](tasks/delete-public-invite-link.md)
 - [Test Suite Implementation Plan for Quorum Desktop](tasks/test-suite-plan.md)
 - [User Config Sync on Existing Accounts](tasks/user-config-sync-on-existing-accounts.md)
@@ -206,6 +204,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Delete Confirmation System Implementation](tasks/.done/delete-confirmation-system.md)
 - [Direct Message Deletion Feature](tasks/.done/dm-message-deletion.md)
 - [Direct Message Features Comparison Analysis](tasks/.done/direct-message-features-comparison.md)
+- [DirectMessage Navigation State Persistence](tasks/.done/dm-navigation-state-persistence.md)
 - [DM Unread Indicators - Exclude Current User's Messages](tasks/.done/dm-unread-indicators-sender-filtering.md)
 - [Dropdown Panels Consolidation & Mobile Bottom Sheet Implementation](tasks/.done/dropdown-panels-consolidation.md)
 - [Edit Message Feature](tasks/.done/edit-message-feature.md)
@@ -232,6 +231,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Message Bookmarking Feature](tasks/.done/message-bookmarking-feature.md)
 - [Message Handling Report](tasks/.done/messages-report.md)
 - [Message Highlight System - Complete Analysis & Recommendations](tasks/.done/message-highlight-system-optimization.md)
+- [Message Link Rendering (Discord-style)](tasks/.done/message-link-rendering.md)
 - [Message Markdown Support Implementation](tasks/.done/message-markdown-support.md)
 - [MessageDB Circular Dependency Status](tasks/.done/messagedb-circular-dependecy-status.md)
 - [MessageDB.tsx Refactoring Analysis and TAsk](tasks/.done/DONE_messagedb-refactoring.md)
@@ -278,7 +278,9 @@ This is the main index for all documentation, bug reports, and task management.
 
 ### Active Reports
 
+- [Quorum Privacy Analysis](reports/privacy-analysis-quorum-2025-12-03.md)
 - [Security Audit: Markdown Renderer & Mentions System](reports/security-audit-markdown-mentions-2025-11-18.md)
+- [Web-to-Native Feature Sync Compatibility Analysis](reports/web-native-feature-sync-analysis_2025-12-04.md)
 
 ### Onboarding Flow
 - [Passkey Authentication Flow Analysis](reports/onboarding-flow/passkey-authentication-flow-analysis-2025-11-23.md)
@@ -286,4 +288,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2025-12-03 13:14:45
+**Last Updated**: 2025-12-04 17:43:58
