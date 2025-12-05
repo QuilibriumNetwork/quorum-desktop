@@ -105,12 +105,13 @@ export const NotificationItem: React.FC<NotificationItemProps> = ({
   });
 
   // Determine notification type and icon
-  const isReply = notification.type === 'reply';
+  const isReply = 'type' in notification && notification.type === 'reply';
+  const mentionType = 'mentionType' in notification ? notification.mentionType : null;
   const notificationIcon = isReply
     ? 'reply'
-    : notification.type === 'mention-everyone' || (notification as MentionNotification).mentionType === 'everyone'
+    : mentionType === 'everyone'
     ? 'bullhorn'
-    : notification.type === 'mention-roles' || (notification as MentionNotification).mentionType === 'roles'
+    : mentionType === 'roles'
     ? 'users'
     : 'user';
 

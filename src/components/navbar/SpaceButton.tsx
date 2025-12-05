@@ -51,11 +51,11 @@ const SpaceButton: React.FunctionComponent<SpaceButtonProps> = ({ space, mention
   return (
     <div
       ref={setNodeRef}
-      role="link"
-      tabIndex={0}
       style={style}
       {...listeners}
       {...attributes}
+      role="link"
+      tabIndex={0}
       className="block cursor-pointer"
       onClick={() => navigate(navigationUrl)}
       onKeyDown={(e) => {

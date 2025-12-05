@@ -137,6 +137,7 @@ const ConversationSettingsModal: React.FC<ConversationSettingsModalProps> = ({
   const handleDeleteClick = React.useCallback(
     async (e: React.MouseEvent) => {
       const performDelete = async () => {
+        if (!currentPasskeyInfo) return;
         await deleteConversation(conversationId, currentPasskeyInfo);
         const list = (convPages?.pages || [])
           .flatMap((p: any) => p.conversations)
@@ -166,6 +167,7 @@ const ConversationSettingsModal: React.FC<ConversationSettingsModalProps> = ({
       convPages,
       navigate,
       onClose,
+      currentPasskeyInfo,
     ]
   );
 

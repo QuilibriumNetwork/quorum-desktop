@@ -6,10 +6,8 @@ import {
   forwardRef,
   useImperativeHandle,
   useCallback,
-  useMemo,
 } from 'react';
 import { useLocation } from 'react-router-dom';
-import * as moment from 'moment-timezone';
 import { Message } from './Message';
 import { DateSeparator } from './DateSeparator';
 import { NewMessagesSeparator } from './NewMessagesSeparator';
@@ -123,7 +121,7 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
       spaceName,
     } = props;
 
-    const [width, height] = useWindowSize();
+    const [_width, height] = useWindowSize();
     const [hoverTarget, setHoverTarget] = useState<string>();
     const [emojiPickerOpen, setEmojiPickerOpen] = useState<string>();
     const [emojiPickerOpenDirection, setEmojiPickerOpenDirection] =
@@ -306,6 +304,7 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
         spaceChannels,
         lastReadTimestamp,
         newMessagesSeparator,
+        spaceName,
       ]
     );
 
@@ -313,6 +312,7 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
       if (!init) {
         setTimeout(() => setInit(true), 200);
       }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     // Track if we've already processed a hash navigation to prevent re-navigation on messageList changes
@@ -370,7 +370,8 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
           }
         }
       }
-    }, [init, location.hash, scrollToMessage, highlightMessage, messageList]); // Added new dependencies
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- hasProcessedHash intentionally excluded to prevent infinite loops
+    }, [init, location.hash, scrollToMessage, highlightMessage, messageList, onHashMessageNotFound]);
 
     // Handle programmatic scrollToMessageId (e.g., auto-jump to first unread)
     useEffect(() => {

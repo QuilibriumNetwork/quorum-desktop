@@ -2,12 +2,10 @@ import React, { forwardRef, useImperativeHandle, useRef, useState, useCallback, 
 import { Button, FlexRow, Tooltip, Icon, TextArea, Callout } from '../primitives';
 import { t } from '@lingui/core/macro';
 import { i18n } from '@lingui/core';
-import { Buffer } from 'buffer';
 import type { AttachmentProcessingResult } from '../../utils/imageProcessing';
 import { useMentionInput, type MentionOption } from '../../hooks/business/mentions';
-import type { Channel, Group } from '../../api/quorumApi';
+import type { Group } from '../../api/quorumApi';
 import { truncateAddress } from '../../utils';
-import { DefaultImages } from '../../utils';
 import { useResponsiveLayout } from '../../hooks/useResponsiveLayout';
 import { isTouchDevice } from '../../utils/platform';
 import './MessageComposer.scss';
@@ -99,7 +97,7 @@ export const MessageComposer = forwardRef<
       onChange,
       onKeyDown,
       placeholder,
-      calculateRows,
+      calculateRows: _calculateRows,
       getRootProps,
       getInputProps,
       processedImage,
@@ -134,7 +132,7 @@ export const MessageComposer = forwardRef<
     const [isTyping, setIsTyping] = useState(false);
     const [isMultiline, setIsMultiline] = useState(false);
     const [responsivePlaceholder, setResponsivePlaceholder] = useState(placeholder);
-    const { isMobile, isDesktop } = useResponsiveLayout();
+    const { isDesktop } = useResponsiveLayout();
 
     // Markdown toolbar state
     const [showMarkdownToolbar, setShowMarkdownToolbar] = useState(false);
@@ -170,7 +168,7 @@ export const MessageComposer = forwardRef<
           // Users: @[Display Name]<address> (new readable format with display name)
           const displayName = option.data.displayName || 'Unknown User';
           // Escape brackets in display names to prevent format conflicts
-          const escapedDisplayName = displayName.replace(/[\[\]]/g, '');
+          const escapedDisplayName = displayName.replace(/[[\]]/g, '');
           insertText = `@[${escapedDisplayName}]<${option.data.address}>`;
         } else if (option.type === 'role') {
           // Roles: @roleTag (NO brackets, unchanged)
@@ -179,7 +177,7 @@ export const MessageComposer = forwardRef<
           // Channels: #[Channel Name]<channelId> (new readable format with channel name)
           const channelName = option.data.channelName || 'Unknown Channel';
           // Escape brackets in channel names to prevent format conflicts
-          const escapedChannelName = channelName.replace(/[\[\]]/g, '');
+          const escapedChannelName = channelName.replace(/[[\]]/g, '');
           insertText = `#[${escapedChannelName}]<${option.data.channelId}>`;
         } else {
           // @everyone: plain @everyone (NO brackets, unchanged)

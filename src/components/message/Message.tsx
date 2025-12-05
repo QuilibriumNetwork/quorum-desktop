@@ -151,6 +151,7 @@ export const Message = React.memo(
     const [showUserProfile, setShowUserProfile] = useState<boolean>(false);
     const [editingMessageId, setEditingMessageId] = useState<string | null>(null);
     const [contextMenu, setContextMenu] = useState<{ x: number; y: number } | null>(null);
+    const [isShowingGifAnimation, setIsShowingGifAnimation] = useState(false);
 
     // Modal contexts
     const { showImageModal } = useImageModal();
@@ -292,7 +293,7 @@ export const Message = React.memo(
       highlightMessage
     );
 
-    let sender = mapSenderToUser(message.content?.senderId);
+    const sender = mapSenderToUser(message.content?.senderId);
     const displayedTimestmap = formatMessageDate(message.createdDate);
     const isEdited = message.modifiedDate !== message.createdDate;
 
@@ -326,14 +327,14 @@ export const Message = React.memo(
     };
 
     // Handle more reactions with mobile/desktop logic
-    const handleMoreReactions = () => {
+    const handleMoreReactions = useCallback(() => {
       // Always use MobileProvider's emoji drawer (EmojiPickerDrawer)
       // This is used from MessageActionsDrawer, which is part of the mobile drawer system
       openMobileEmojiDrawer({
         onEmojiClick: messageActions.handleReaction,
         customEmojis: emojiPicker.customEmojis,
       });
-    };
+    }, [openMobileEmojiDrawer, messageActions.handleReaction, emojiPicker.customEmojis]);
 
     // Handle 3-dots menu click for touch devices
     const handle3DotsMenuClick = (event: React.MouseEvent) => {
@@ -431,13 +432,13 @@ export const Message = React.memo(
 
         {(() => {
           if (message.content.type == 'post') {
-            let replyIndex = !message.content.repliesToMessageId
+            const replyIndex = !message.content.repliesToMessageId
               ? undefined
               : messageList.findIndex(
                   (c) =>
                     c.messageId === (message.content as any).repliesToMessageId
                 );
-            let reply =
+            const reply =
               replyIndex !== undefined ? messageList[replyIndex] : undefined;
             if (reply) {
               // Get reply text and replace mention addresses with display names
@@ -1047,16 +1048,11 @@ export const Message = React.memo(
                           className="rounded-lg youtube-embed"
                         />
                       )}
-                      {contentData.content.imageUrl &&
-                        (() => {
+                      {contentData.content.imageUrl && (() => {
                           const isGif = createGifDetector(
                             contentData.content.imageUrl,
                             (contentData.content as any).isLargeGif
                           );
-
-                          // Track if large GIF is showing animated version (not thumbnail)
-                          const [isShowingAnimation, setIsShowingAnimation] =
-                            useState(false);
 
                           return (
                             <div className="relative inline-block">
@@ -1070,7 +1066,7 @@ export const Message = React.memo(
                                     ? (contentData.content as any).isLargeGif &&
                                       (contentData.content as any)
                                         .thumbnailUrl &&
-                                      !isShowingAnimation
+                                      !isShowingGifAnimation
                                       ? 'cursor-pointer' // Pointer cursor for GIF static thumbnails
                                       : 'cursor-auto' // No pointer cursor for animating GIFs
                                     : 'cursor-pointer hover:opacity-80' // Clickable for non-GIFs
@@ -1100,7 +1096,7 @@ export const Message = React.memo(
                                             'error',
                                             handleError
                                           );
-                                          setIsShowingAnimation(false);
+                                          setIsShowingGifAnimation(false);
                                         };
 
                                         img.addEventListener(
@@ -1108,7 +1104,7 @@ export const Message = React.memo(
                                           handleError
                                         );
                                         img.src = contentData.content.imageUrl!;
-                                        setIsShowingAnimation(true); // Hide play icon when showing animation
+                                        setIsShowingGifAnimation(true); // Hide play icon when showing animation
                                       }
                                     }
                                     // For small GIFs, they're already animating - do nothing
@@ -1125,7 +1121,7 @@ export const Message = React.memo(
                               />
                               {(contentData.content as any).isLargeGif &&
                                 (contentData.content as any).thumbnailUrl &&
-                                !isShowingAnimation && (
+                                !isShowingGifAnimation && (
                                   <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
                                     <div className="bg-black/50 rounded-full p-2">
                                       <svg
