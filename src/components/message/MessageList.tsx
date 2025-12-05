@@ -324,17 +324,17 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
             scrollToMessage(msgId, virtuoso.current, messageList);
 
             // Highlight using React state (this will trigger re-render with highlight class)
-            highlightMessage(msgId, { duration: 6000 }); // Match CSS animation duration
+            highlightMessage(msgId, { duration: 8000 }); // Match CSS animation duration (8s)
           }, 200);
 
-          // Remove hash after highlighting is established
+          // Remove hash after highlight animation completes (8s matches CSS animation)
           setTimeout(() => {
             history.replaceState(
               null,
               '',
               window.location.pathname + window.location.search
             );
-          }, 1000);
+          }, 8000);
         } else {
           // Message not found in current list
           if (onHashMessageNotFound && !hasProcessedHash) {

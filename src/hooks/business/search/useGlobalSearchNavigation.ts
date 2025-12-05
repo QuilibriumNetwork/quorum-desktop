@@ -11,7 +11,8 @@ export interface UseGlobalSearchNavigationReturn {
 
 /**
  * Handles navigation logic for global search results
- * This is the web implementation - a native version would use different navigation
+ * Uses hash-based highlighting for cross-component communication.
+ * This is the web implementation - a native version would use different navigation.
  */
 export const useGlobalSearchNavigation =
   (): UseGlobalSearchNavigationReturn => {
@@ -29,6 +30,15 @@ export const useGlobalSearchNavigation =
           // For spaces, use normal space route
           navigate(`/spaces/${spaceId}/${channelId}#msg-${messageId}`);
         }
+
+        // Clean up hash after highlight animation completes (8s matches CSS animation)
+        setTimeout(() => {
+          history.replaceState(
+            null,
+            '',
+            window.location.pathname + window.location.search
+          );
+        }, 8000);
       },
       [navigate]
     );

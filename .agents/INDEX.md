@@ -45,6 +45,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Hash Navigation to Old Messages](docs/features/messages/hash-navigation-to-old-messages.md)
 - [Markdown Renderer](docs/features/messages/markdown-renderer.md)
 - [Markdown Stripping](docs/features/messages/markdown-stripping.md)
+- [Message Highlight System](docs/features/messages/message-highlight-system.md)
 - [Message Preview Rendering](docs/features/messages/message-preview-rendering.md)
 - [Message Signing System](docs/features/messages/message-signing-system.md)
 - [Mobile Message Actions Implementation](docs/features/messages/message-actions-mobile.md)
@@ -115,7 +116,6 @@ This is the main index for all documentation, bug reports, and task management.
 - [Message Context Menu System](tasks/message-context-menu-system.md)
 - [Multi-User Invite Selection Enhancement](tasks/multi-user-invite-selection.md)
 - [Passkey Import UX Issue](tasks/passkey-import-ux-issue.md)
-- [Refactor Message Highlighting System](tasks/message-highlight-system-refactor.md)
 - [SDK PasskeyModal Customization Props Enhancement](tasks/sdk-passkey-modal-customization-props.md)
 - [Space Folders - Discord-Style Grouping Feature](tasks/server-folders-discord-style.md)
 - [Task: Implement Delete Public Invite Link Feature](tasks/delete-public-invite-link.md)
@@ -247,6 +247,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Public Invite Links Improvement Task](tasks/.done/invite-links-improve.md)
 - [ReactTooltip Mobile Optimization](tasks/.done/reacttoolltip-mobile.md)
 - [Read-Only Channels with Role Managers](tasks/.done/read-only-channels-with-role-managers.md)
+- [Refactor Message Highlighting System](tasks/.done/message-highlight-system-refactor.md)
 - [Refactor Modal Placement in Layout.tsx](tasks/.done/refactor-modal-placement.md)
 - [Rehype-Raw Security Fix - Complete Recap](tasks/.done/rehype-raw-security-fix-recap-2025-11-07.md)
 - [Rename .agents to .agents](tasks/.done/rename-readme-to-agents.md)
@@ -290,4 +291,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2025-12-05 17:37:45
+**Last Updated**: 2025-12-05 18:00:30

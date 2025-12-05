@@ -253,10 +253,14 @@ export const Message = React.memo(
       onChannelClick
     );
 
-    // Message highlighting logic - replaces isHashTarget
+    // Message highlighting - dual mechanism design:
+    // 1. URL Hash: Cross-component communication (pinned, bookmarks, search, reply clicks)
+    //    - Hash is global browser state all Message components detect via useLocation()
+    // 2. Local State: Self-highlighting for mentions when they enter viewport
+    //    - useViewportMentionHighlight calls highlightMessage on THIS component's hook instance
     const { isHighlighted, highlightMessage, getHighlightVariant } = useMessageHighlight();
     const isMessageHighlighted = useMemo(() => {
-      // Check both URL hash (for backward compatibility) and React state highlighting
+      // Check BOTH mechanisms - hash for cross-component, state for self-highlighting
       const isUrlTarget = location.hash === `#msg-${message.messageId}`;
       const isStateHighlighted = isHighlighted(message.messageId);
       return isUrlTarget || isStateHighlighted;
@@ -433,13 +437,27 @@ export const Message = React.memo(
                   className={`message-reply-heading flex items-center min-w-0 ${
                     isTouchDevice() ? 'pr-12' : ''
                   }`}
-                  onClick={() =>
+                  onClick={() => {
+                    // Navigate with hash to trigger highlighting via URL state
+                    const currentPath = window.location.pathname;
+                    navigate(`${currentPath}#msg-${reply.messageId}`);
+
+                    // Scroll to the message
                     virtuosoRef?.scrollToIndex({
                       index: replyIndex,
                       align: 'start',
                       behavior: 'smooth',
-                    })
-                  }
+                    });
+
+                    // Remove hash after highlight animation completes (8s matches CSS animation)
+                    setTimeout(() => {
+                      history.replaceState(
+                        null,
+                        '',
+                        window.location.pathname + window.location.search
+                      );
+                    }, 8000);
+                  }}
                 >
                   <Container className="message-reply-curve flex-shrink-0" />
                   <UserAvatar

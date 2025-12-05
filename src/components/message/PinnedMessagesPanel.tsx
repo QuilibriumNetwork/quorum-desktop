@@ -16,7 +16,6 @@ import {
 import { DropdownPanel } from '../ui';
 import { t } from '@lingui/core/macro';
 import { usePinnedMessages } from '../../hooks';
-import { useMessageHighlight } from '../../hooks/business/messages/useMessageHighlight';
 import { isTouchDevice } from '../../utils/platform';
 import { formatMessageDate } from '../../utils';
 import './PinnedMessagesPanel.scss';
@@ -153,36 +152,26 @@ export const PinnedMessagesPanel: React.FC<PinnedMessagesPanelProps> = ({
   const { pinnedMessages, canPinMessages, isLoading, togglePin } =
     usePinnedMessages(spaceId, channelId, channel, mapSenderToUser, stickers, spaceRoles, spaceChannels, onChannelClick);
 
-
-  // Use the new React state-based message highlighting
-  const { highlightMessage, scrollToMessage } = useMessageHighlight();
-
   const handleJumpToMessage = useCallback(
     (messageId: string) => {
       // Close the panel
       onClose();
 
-      // Navigate to the message with hash (for URL state consistency)
+      // Navigate with hash - MessageList handles scroll and Message detects hash for highlighting
+      // This is the cross-component communication pattern via URL state
       const currentPath = window.location.pathname;
       navigate(`${currentPath}#msg-${messageId}`);
 
-      // Use React state-based highlighting instead of DOM manipulation
+      // Clean up hash after highlight animation completes (8s matches CSS animation)
       setTimeout(() => {
-        // Scroll to the message using the appropriate method
-        scrollToMessage(messageId, virtuosoRef, messageList);
-
-        // Highlight the message using React state (triggers re-render with highlight class)
-        highlightMessage(messageId, { duration: 2000 });
-      }, 100);
+        history.replaceState(
+          null,
+          '',
+          window.location.pathname + window.location.search
+        );
+      }, 8000);
     },
-    [
-      navigate,
-      onClose,
-      scrollToMessage,
-      highlightMessage,
-      virtuosoRef,
-      messageList,
-    ]
+    [navigate, onClose]
   );
 
   if (!isOpen) return null;

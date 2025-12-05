@@ -209,8 +209,12 @@ Added thumbtack-related icons:
 1. User clicks jump button (arrow-right) in panel
 2. `handleJumpToMessage(messageId)` triggered
 3. Panel closes and navigates to `#msg-${messageId}`
-4. Message scrolls into view with highlight animation
-5. Yellow highlight effect applied for 2 seconds
+4. MessageList detects hash and scrolls to message
+5. Message component detects hash match and applies `.message-highlighted` class
+6. Yellow highlight effect (8 second CSS animation)
+7. Hash is cleaned up after 8 seconds
+
+See `.agents/docs/features/messages/message-highlight-system.md` for the full highlighting architecture.
 
 ## Key Technical Details
 

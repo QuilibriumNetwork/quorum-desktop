@@ -14,7 +14,6 @@ import {
 } from '../primitives';
 import { DropdownPanel } from '../ui';
 import { useBookmarks } from '../../hooks/business/bookmarks';
-import { useMessageHighlight } from '../../hooks/business/messages/useMessageHighlight';
 import { useSearchContext } from '../../hooks/useSearchContext';
 import { isTouchDevice } from '../../utils/platform';
 import './BookmarksPanel.scss';
@@ -39,9 +38,6 @@ export const BookmarksPanel: React.FC<BookmarksPanelProps> = ({
 
   // Get current route context for filtering
   const searchContext = useSearchContext();
-
-  // Message highlighting hook (same as pinned messages)
-  const { scrollToMessage, highlightMessage } = useMessageHighlight();
 
   // Bookmark data
   const {
@@ -111,12 +107,12 @@ export const BookmarksPanel: React.FC<BookmarksPanelProps> = ({
     }
   }, [selectedFilter, searchContext, filterBySourceType, filterByConversation, filterByCurrentSpace]);
 
-  // Handle navigation to bookmark (enhanced timing pattern matching pinned messages)
+  // Handle navigation to bookmark - uses hash-based highlighting (cross-component communication)
   const handleJumpToMessage = useCallback((bookmark: Bookmark) => {
     // Close the panel first
     onClose();
 
-    // Navigate to the bookmarked message with hash for highlighting
+    // Navigate with hash - destination MessageList handles scroll and Message detects hash for highlighting
     if (bookmark.sourceType === 'channel') {
       navigate(`/spaces/${bookmark.spaceId}/${bookmark.channelId}#msg-${bookmark.messageId}`);
     } else {
@@ -125,14 +121,15 @@ export const BookmarksPanel: React.FC<BookmarksPanelProps> = ({
       navigate(`/messages/${dmAddress}#msg-${bookmark.messageId}`);
     }
 
-    // Enhanced timing pattern (same as pinned messages): 100ms delay + 2000ms highlight
+    // Clean up hash after highlight animation completes (8s matches CSS animation)
     setTimeout(() => {
-      // The destination component will handle scrolling and highlighting via hash detection
-      // But we can also trigger explicit highlighting for cross-context navigation reliability
-      scrollToMessage(bookmark.messageId);
-      highlightMessage(bookmark.messageId, { duration: 2000 }); // 2 seconds, matching pinned messages
-    }, 100);
-  }, [navigate, onClose, scrollToMessage, highlightMessage]);
+      history.replaceState(
+        null,
+        '',
+        window.location.pathname + window.location.search
+      );
+    }, 8000);
+  }, [navigate, onClose]);
 
   // Handle bookmark removal
   const handleRemoveBookmark = useCallback((bookmarkId: string) => {

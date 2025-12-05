@@ -3,9 +3,10 @@
 > **⚠️ AI-Generated**: May contain errors. Verify before use.
 > **Reviewed by**: feature-analyzer agent
 
-**Status**: Pending
+**Status**: Completed
 **Complexity**: High
 **Created**: 2025-12-05
+**Completed**: 2025-12-05
 **Files**:
 - `src/hooks/business/messages/useMessageHighlight.ts` (main hook - needs refactor)
 - `src/components/message/Message.tsx:255-270` (highlight logic)
@@ -81,103 +82,68 @@ The message highlighting system has **fundamental architectural flaws**. The `us
 
 ### Phase 1: Remove Dead Code
 
-- [ ] **Remove useless `highlightMessage` calls**
-  - `src/components/message/PinnedMessagesPanel.tsx:175` - remove line
-  - `src/components/bookmarks/BookmarksPanel.tsx:133` - remove line
+- [x] **Remove useless `highlightMessage` calls**
+  - `src/components/message/PinnedMessagesPanel.tsx:175` - removed
+  - `src/components/bookmarks/BookmarksPanel.tsx:133` - removed
   - These calls set state in the Panel's hook instance, not the target Message
-  - Done when: Lines removed, highlighting still works via hash
-  - Verify: Click pinned message → scrolls and highlights correctly
 
-- [ ] **Remove useless `scrollToMessage` calls from panels**
-  - `src/components/message/PinnedMessagesPanel.tsx:172` - remove line
-  - `src/components/bookmarks/BookmarksPanel.tsx:132` - remove line
+- [x] **Remove useless `scrollToMessage` calls from panels**
+  - `src/components/message/PinnedMessagesPanel.tsx:172` - removed
+  - `src/components/bookmarks/BookmarksPanel.tsx:132` - removed
   - The hash navigation already triggers scroll in MessageList
-  - Done when: Lines removed, scroll behavior unchanged
-  - Verify: Both features still scroll to target message
 
-- [ ] **Remove hook imports from panels**
-  - `src/components/message/PinnedMessagesPanel.tsx:158` - remove `useMessageHighlight` import/call
-  - `src/components/bookmarks/BookmarksPanel.tsx:44` - remove `useMessageHighlight` import/call
-  - Done when: No more dead hook usage
-  - Verify: Files still compile, features work
+- [x] **Remove hook imports from panels**
+  - `src/components/message/PinnedMessagesPanel.tsx` - removed `useMessageHighlight` import/call
+  - `src/components/bookmarks/BookmarksPanel.tsx` - removed `useMessageHighlight` import/call
 
 ### Phase 2: Standardize Hash Cleanup
 
-Currently inconsistent:
-- MessageList: 1000ms cleanup
-- Reply click: 2000ms cleanup
-- Everything else: No cleanup ❌
+Previously inconsistent - now all use 8000ms to match CSS animation duration.
 
-- [ ] **Add hash cleanup to PinnedMessagesPanel**
-  - Location: `src/components/message/PinnedMessagesPanel.tsx` after navigate call
-  - Add: `setTimeout(() => history.replaceState(null, '', window.location.pathname + window.location.search), 8000);`
-  - Done when: Hash is cleaned up after highlight fades
-  - Verify: URL returns to clean state after clicking pinned message
+- [x] **Add hash cleanup to PinnedMessagesPanel**
+  - Added: `setTimeout(() => history.replaceState(...), 8000);` after navigate call
 
-- [ ] **Add hash cleanup to BookmarksPanel**
-  - Location: `src/components/bookmarks/BookmarksPanel.tsx` after navigate call
-  - Same pattern as PinnedMessagesPanel
-  - Done when: Hash cleaned up consistently
-  - Verify: URL returns to clean state after clicking bookmark
+- [x] **Add hash cleanup to BookmarksPanel**
+  - Added same pattern as PinnedMessagesPanel
 
-- [ ] **Add hash cleanup to NotificationPanel**
-  - Location: `src/components/notifications/NotificationPanel.tsx:118` after navigate call
-  - Same pattern
-  - Done when: Hash cleaned up
-  - Verify: URL returns to clean state after clicking notification
+- [x] **Add hash cleanup to NotificationPanel**
+  - Added same pattern after navigate call
 
-- [ ] **Add hash cleanup to search navigation**
-  - Location: `src/hooks/business/search/useGlobalSearchNavigation.ts:27,30`
-  - Same pattern
-  - Done when: Hash cleaned up
-  - Verify: URL returns to clean state after clicking search result
+- [x] **Add hash cleanup to search navigation**
+  - Added to `useGlobalSearchNavigation.ts` after both DM and space navigation
 
-- [ ] **Standardize existing cleanup timing**
-  - `MessageList.tsx:331-337`: Change 1000ms → 8000ms (match CSS animation)
-  - `Message.tsx:449-455`: Change 2000ms → 8000ms
-  - Done when: All hash cleanups use 8000ms
-  - Verify: Hash persists for full animation duration
+- [x] **Standardize existing cleanup timing**
+  - `MessageList.tsx`: Changed 1000ms → 8000ms
+  - `Message.tsx` (reply click): Changed 2000ms → 8000ms
 
 ### Phase 3: Fix Timer/CSS Duration Mismatch
 
-The `highlightMessage()` calls that DO work (mention self-highlighting) have wrong durations:
+- [x] **Update MessageList highlight duration**
+  - Changed: `{ duration: 6000 }` → `{ duration: 8000 }` to match CSS animation
 
-- [ ] **Update MessageList highlight duration**
-  - File: `src/components/message/MessageList.tsx:327`
-  - Change: `{ duration: 6000 }` → `{ duration: 8000 }`
-  - Done when: Timer matches CSS animation (8s)
-  - Verify: Highlight doesn't disappear before animation completes
-
-- [ ] **Verify mention duration is correct**
-  - File: `src/hooks/business/messages/useViewportMentionHighlight.ts:58`
-  - Current: `{ duration: 61000, variant: 'mention' }` ✅ (matches CSS 61s)
-  - No change needed, just verify
+- [x] **Verify mention duration is correct**
+  - Verified: `{ duration: 61000, variant: 'mention' }` ✅ (matches CSS 61s)
 
 ### Phase 4: Simplify Hook Architecture
 
-Keep only what's actually used. The mention highlighting uses local state correctly (self-highlighting).
+- [x] **Document the actual architecture**
+  - Updated hook JSDoc in `useMessageHighlight.ts` to accurately describe:
+    - LOCAL state (not centralized)
+    - Two highlighting mechanisms: URL hash vs local state
+    - When each mechanism is used
+  - References to Message.tsx and useViewportMentionHighlight.ts
 
-- [ ] **Document the actual architecture**
-  - Add clear comments explaining:
-    - Hash is for cross-component highlighting
-    - Local state is for self-highlighting (mentions only)
-  - Update hook JSDoc to remove "centralized" claim
-  - Done when: Code accurately describes what it does
+- [x] **Keep useful exports**
+  - `scrollToMessage()` - kept, still useful in MessageList
+  - `highlightMessage()` - kept, needed for mention self-highlighting
+  - `isHighlighted()` - kept, needed for Message to check state
+  - `getHighlightVariant()` - kept, needed for mention vs default CSS class
 
-- [ ] **Consider removing unused exports**
-  - `scrollToMessage()` - may still be useful as utility
-  - Keep `highlightMessage()` - needed for mention self-highlighting
-  - Keep `isHighlighted()` - needed for Message to check state
-  - Keep `getHighlightVariant()` - needed for mention vs default CSS class
-  - Done when: Only useful functions exported
-
-- [ ] **Update Message.tsx highlight check**
-  - File: `src/components/message/Message.tsx:258-263`
-  - Current logic is correct: checks BOTH hash AND local state
-  - Hash: for cross-component (pinned, bookmarks, search, links)
-  - State: for self-highlighting (mentions)
-  - Add comment explaining dual mechanism
-  - Done when: Logic documented
+- [x] **Update Message.tsx highlight check**
+  - Added clear comments explaining dual mechanism design:
+    1. URL Hash: Cross-component communication
+    2. Local State: Self-highlighting for mentions
+  - Comments at lines 256-260
 
 ## Verification
 
@@ -224,14 +190,14 @@ Keep only what's actually used. The mention highlighting uses local state correc
 
 ## Definition of Done
 
-- [ ] All dead code removed (useless highlightMessage/scrollToMessage calls)
-- [ ] Hash cleanup added to all navigation sources (8000ms)
-- [ ] Timer durations match CSS animations (8s default, 61s mention)
-- [ ] Code comments accurately describe architecture
-- [ ] All verification tests pass
-- [ ] TypeScript compiles
-- [ ] No console errors
-- [ ] Task updated with implementation notes
+- [x] All dead code removed (useless highlightMessage/scrollToMessage calls)
+- [x] Hash cleanup added to all navigation sources (8000ms)
+- [x] Timer durations match CSS animations (8s default, 61s mention)
+- [x] Code comments accurately describe architecture
+- [ ] All verification tests pass (manual testing needed)
+- [x] TypeScript compiles (`yarn build` passes)
+- [ ] No console errors (manual testing needed)
+- [x] Task updated with implementation notes
 
 ## Technical Notes
 
@@ -269,7 +235,42 @@ Both are needed because:
 - `.agents/bugs/message-hash-navigation-conflict.md` - Known hash conflict with deletion
 - `src/components/message/Message.scss:1-34` - CSS animation definitions
 
+## Implementation Summary
+
+### Files Modified
+
+1. **`src/components/message/PinnedMessagesPanel.tsx`**
+   - Removed `useMessageHighlight` import and hook call
+   - Removed `scrollToMessage()` and `highlightMessage()` calls (dead code)
+   - Added 8000ms hash cleanup after navigation
+   - Simplified `handleJumpToMessage` to rely on hash-based highlighting
+
+2. **`src/components/bookmarks/BookmarksPanel.tsx`**
+   - Removed `useMessageHighlight` import and hook call
+   - Removed `scrollToMessage()` and `highlightMessage()` calls (dead code)
+   - Added 8000ms hash cleanup after navigation
+   - Simplified `handleJumpToMessage` to rely on hash-based highlighting
+
+3. **`src/components/notifications/NotificationPanel.tsx`**
+   - Added 8000ms hash cleanup after navigation
+
+4. **`src/hooks/business/search/useGlobalSearchNavigation.ts`**
+   - Added 8000ms hash cleanup after navigation
+   - Updated JSDoc to document hash-based highlighting pattern
+
+5. **`src/components/message/MessageList.tsx`**
+   - Fixed highlight duration: 6000ms → 8000ms (match CSS animation)
+   - Fixed hash cleanup timing: 1000ms → 8000ms
+
+6. **`src/components/message/Message.tsx`**
+   - Fixed reply click hash cleanup: 2000ms → 8000ms
+   - Added architecture comments explaining dual mechanism
+
+7. **`src/hooks/business/messages/useMessageHighlight.ts`**
+   - Rewrote JSDoc to accurately describe LOCAL (not centralized) state
+   - Documented the dual-mechanism architecture
+
 ---
 
 _Created: 2025-12-05_
-_Updated: 2025-12-05_
+_Updated: 2025-12-05 (implementation completed)_

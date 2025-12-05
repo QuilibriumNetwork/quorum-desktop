@@ -107,15 +107,22 @@ export const NotificationPanel: React.FC<NotificationPanelProps> = ({
     setSelectedTypes(newValues as NotificationTypeId[]);
   }, []);
 
-  // Handle navigation to message
+  // Handle navigation to message - uses hash-based highlighting (cross-component communication)
   const handleNavigate = useCallback((spaceId: string, channelId: string, messageId: string) => {
     // Close the dropdown
     onClose();
 
-    // Always use URL hash navigation for consistency and reliability
-    // MessageList already handles #msg- hash by scrolling to the message
-    // Message component applies .message-highlighted class when hash matches
+    // Navigate with hash - MessageList handles scroll and Message detects hash for highlighting
     navigate(`/spaces/${spaceId}/${channelId}#msg-${messageId}`);
+
+    // Clean up hash after highlight animation completes (8s matches CSS animation)
+    setTimeout(() => {
+      history.replaceState(
+        null,
+        '',
+        window.location.pathname + window.location.search
+      );
+    }, 8000);
   }, [navigate, onClose]);
 
   // Handle mark all as read

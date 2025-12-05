@@ -313,8 +313,11 @@ const filterOptions = useMemo(() => {
 
 ### Cross-Context Navigation
 
+Navigation uses hash-based highlighting (cross-component communication via URL state):
+
 ```typescript
 const handleJumpToMessage = (bookmark: Bookmark) => {
+  // Navigate with hash - destination MessageList handles scroll, Message detects hash for highlighting
   if (bookmark.sourceType === 'channel') {
     navigate(`/spaces/${bookmark.spaceId}/${bookmark.channelId}#msg-${bookmark.messageId}`);
   } else {
@@ -322,12 +325,14 @@ const handleJumpToMessage = (bookmark: Bookmark) => {
     navigate(`/messages/${dmAddress}#msg-${bookmark.messageId}`);
   }
 
+  // Clean up hash after highlight animation completes (8s matches CSS animation)
   setTimeout(() => {
-    scrollToMessage(bookmark.messageId);
-    highlightMessage(bookmark.messageId, { duration: 2000 });
-  }, 100);
+    history.replaceState(null, '', window.location.pathname + window.location.search);
+  }, 8000);
 };
 ```
+
+See `.agents/docs/features/messages/message-highlight-system.md` for the full highlighting architecture.
 
 ## Technical Decisions
 

@@ -27,8 +27,20 @@ const DEFAULT_SCROLL_BEHAVIOR = 'auto';
 const DEFAULT_SCROLL_BLOCK = 'center';
 
 /**
- * Centralized message highlighting hook that replaces DOM manipulation with React state.
- * Provides mobile-safe scrolling and consistent highlight behavior across all components.
+ * Message highlighting hook for self-highlighting within a component.
+ *
+ * IMPORTANT: This hook creates LOCAL state, not shared/centralized state.
+ * Each component that calls this hook gets its own isolated state.
+ *
+ * Two highlighting mechanisms exist:
+ * 1. **URL Hash** (`#msg-{id}`): For cross-component communication (pinned, bookmarks,
+ *    search, notifications, reply clicks). The hash is global browser state that all
+ *    Message components can detect via useLocation().
+ * 2. **Local State** (this hook): For self-highlighting only. Used by mention viewport
+ *    highlighting where a Message component highlights itself when it enters the viewport.
+ *
+ * @see Message.tsx:258-263 - Checks BOTH hash AND local state for highlighting
+ * @see useViewportMentionHighlight.ts - Uses this hook correctly for self-highlighting
  */
 export const useMessageHighlight = (): MessageHighlightState => {
   const [highlightedMessageId, setHighlightedMessageId] = useState<

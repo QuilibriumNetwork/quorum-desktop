@@ -67,12 +67,14 @@ useViewportMentionHighlight() detects via IntersectionObserver
     ↓
 Check: isMentioned && isUnread (createdDate > lastRead)?
     ↓
-highlightMessage(messageId, { duration: 6000 })
+highlightMessage(messageId, { duration: 61000, variant: 'mention' })
     ↓
-Message gets .message-highlighted CSS class
+Message gets .message-highlighted-mention CSS class
     ↓
-Flash-highlight animation (yellow fade, 6s)
+Flash-highlight animation (yellow fade, 61s - more subtle, longer duration)
 ```
+
+This is a **self-highlighting** pattern where the Message component highlights itself. See `.agents/docs/features/messages/message-highlight-system.md` for the full architecture.
 
 ---
 
