@@ -893,16 +893,15 @@ export const MessageMarkdownRenderer: React.FC<MessageMarkdownRendererProps> = (
 
     // Style paragraphs - process children to handle mentions
     p: ({ children, node, ...props }: any) => {
-      // Check if this paragraph contains only an image (which could be YouTube or invite card)
-      // If so, render it unwrapped to avoid invalid <p><div> nesting
-      if (node && node.children && node.children.length === 1) {
-        const firstChild = node.children[0];
-        // Check if the only child is an image node (our embeds use image syntax)
-        if (firstChild.tagName === 'img') {
-          // This paragraph contains only an embed - render children without <p> wrapper
-          return <>{children}</>;
-        }
-      }
+      // Check if this paragraph contains any images (which become block elements like YouTube or invite cards)
+      // If so, render as <div> to avoid invalid <p><div> nesting
+      const hasBlockEmbed =
+        node?.children?.some(
+          (child: any) =>
+            child.tagName === 'img' &&
+            (child.properties?.alt === 'youtube-embed' ||
+              child.properties?.alt === 'invite-card')
+        ) ?? false;
 
       // Process children recursively to find and replace mention placeholders
       const processedChildren = React.Children.map(children, (child) => {
@@ -911,6 +910,15 @@ export const MessageMarkdownRenderer: React.FC<MessageMarkdownRendererProps> = (
         }
         return child;
       });
+
+      // Use div instead of p when containing block-level embeds
+      if (hasBlockEmbed) {
+        return (
+          <div className="mb-2 last:mb-0" {...props}>
+            {processedChildren}
+          </div>
+        );
+      }
 
       return (
         <p className="mb-2 last:mb-0" {...props}>
