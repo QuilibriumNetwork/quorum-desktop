@@ -31,7 +31,7 @@ msgid "No Role - {count}"
 msgstr "בלי תפקיד - {count}"
 
 #. js-lingui-explicit-id
-#: src/components/space/Channel.tsx:1064
+#: src/components/space/Channel.tsx:1060
 msgid "Send a message to #{channel_name}"
 msgstr "שלח הודעה ל-#{channel_name}"
 
@@ -65,22 +65,22 @@ msgid "Replying to {user}"
 msgstr "עונה ל-{user}"
 
 #. js-lingui-explicit-id
-#: src/components/message/Message.tsx:308
+#: src/components/message/Message.tsx:306
 msgid "has joined"
 msgstr "הצטרף"
 
 #. js-lingui-explicit-id
-#: src/components/message/Message.tsx:316
+#: src/components/message/Message.tsx:314
 msgid "has left"
 msgstr "עזב"
 
 #. js-lingui-explicit-id
-#: src/components/message/Message.tsx:324
+#: src/components/message/Message.tsx:322
 msgid "has been kicked"
 msgstr "הודח"
 
 #. js-lingui-explicit-id
-#: src/components/direct/DirectMessage.tsx:814
+#: src/components/direct/DirectMessage.tsx:820
 msgid "Send a message to {user}"
 msgstr "שלח הודעה ל-{user}"
 
@@ -88,8 +88,8 @@ msgstr "שלח הודעה ל-{user}"
 msgid " for updates."
 msgstr "עבור עדכונים."
 
-#: src/components/message/Message.tsx:707
-#: src/components/message/Message.tsx:720
+#: src/components/message/Message.tsx:756
+#: src/components/message/Message.tsx:769
 msgid "(edited)"
 msgstr "(נערך)"
 
@@ -97,12 +97,12 @@ msgstr "(נערך)"
 msgid "(empty)"
 msgstr "(ריק)"
 
-#: src/components/bookmarks/BookmarkItem.tsx:86
-#: src/components/message/MessagePreview.tsx:180
+#: src/components/bookmarks/BookmarkItem.tsx:83
+#: src/components/message/MessagePreview.tsx:206
 msgid "[Empty message]"
 msgstr "[הודעה ריקה]"
 
-#: src/components/bookmarks/BookmarkItem.tsx:63 src/utils/clipboard.ts:28
+#: src/components/bookmarks/BookmarkItem.tsx:60 src/utils/clipboard.ts:28
 msgid "[Image]"
 msgstr "[תמונה]"
 
@@ -114,8 +114,8 @@ msgstr "[מדיה]"
 msgid "[Message content not copyable]"
 msgstr "[תוכן ההודעה אינו ניתן להעתקה]"
 
-#: src/components/message/MessagePreview.tsx:183
-#: src/components/message/MessagePreview.tsx:260
+#: src/components/message/MessagePreview.tsx:209
+#: src/components/message/MessagePreview.tsx:287
 msgid "[Message]"
 msgstr "[הודעה]"
 
@@ -124,7 +124,7 @@ msgstr "[הודעה]"
 msgid "[Sticker: {0}]"
 msgstr "[סטיקר: {0}]"
 
-#: src/components/bookmarks/BookmarkItem.tsx:80
+#: src/components/bookmarks/BookmarkItem.tsx:77
 msgid "[Sticker]"
 msgstr "[סטיקר]"
 
@@ -134,22 +134,22 @@ msgid "{0} devices marked for removal. Click \"Save Changes\" to confirm."
 msgstr "{0} מכשירים שסומנו למחיקה. לחץ \"שמור שינויים\" כדי לאשר."
 
 #. placeholder {0}: allNotifications.length
-#: src/components/notifications/NotificationPanel.tsx:184
+#: src/components/notifications/NotificationPanel.tsx:191
 msgid "{0} notification"
 msgstr "{0} הודעה"
 
 #. placeholder {0}: allNotifications.length
-#: src/components/notifications/NotificationPanel.tsx:185
+#: src/components/notifications/NotificationPanel.tsx:192
 msgid "{0} notifications"
 msgstr "{0} הודעות"
 
 #. placeholder {0}: pinnedMessages.length
-#: src/components/message/PinnedMessagesPanel.tsx:219
+#: src/components/message/PinnedMessagesPanel.tsx:213
 msgid "{0} pinned message in this Channel"
 msgstr "{0} הודעה ממוסגרת בערוץ הזה"
 
 #. placeholder {0}: pinnedMessages.length
-#: src/components/message/PinnedMessagesPanel.tsx:220
+#: src/components/message/PinnedMessagesPanel.tsx:214
 msgid "{0} pinned messages in this Channel"
 msgstr "{0} הודעות ממוסגרות בערוץ הזה"
 
@@ -163,11 +163,11 @@ msgstr "{0} תוצאה"
 msgid "{0} results"
 msgstr "{0} תוצאות"
 
-#: src/components/bookmarks/BookmarksPanel.tsx:289
+#: src/components/bookmarks/BookmarksPanel.tsx:276
 msgid "{bookmarkCount} bookmark"
 msgstr "{bookmarkCount} סימן"
 
-#: src/components/bookmarks/BookmarksPanel.tsx:290
+#: src/components/bookmarks/BookmarksPanel.tsx:277
 msgid "{bookmarkCount} bookmarks"
 msgstr "{bookmarkCount} סימנים"
 
@@ -304,13 +304,13 @@ msgstr "הגדרות מתקדמות"
 msgid "All"
 msgstr "הכל"
 
-#: src/components/bookmarks/BookmarksPanel.tsx:68
+#: src/components/bookmarks/BookmarksPanel.tsx:58
 msgid "All Bookmarks"
 msgstr "כל הסימנים"
 
-#: src/components/bookmarks/BookmarksPanel.tsx:75
-#: src/components/bookmarks/BookmarksPanel.tsx:83
-#: src/components/bookmarks/BookmarksPanel.tsx:88
+#: src/components/bookmarks/BookmarksPanel.tsx:65
+#: src/components/bookmarks/BookmarksPanel.tsx:73
+#: src/components/bookmarks/BookmarksPanel.tsx:78
 msgid "All DMs"
 msgstr "כל ההודעות הפרטיות"
 
@@ -318,9 +318,9 @@ msgstr "כל ההודעות הפרטיות"
 msgid "All kick records are up to date."
 msgstr "כל רישומי ההדחה מעודכנים."
 
-#: src/components/bookmarks/BookmarksPanel.tsx:76
-#: src/components/bookmarks/BookmarksPanel.tsx:82
-#: src/components/bookmarks/BookmarksPanel.tsx:89
+#: src/components/bookmarks/BookmarksPanel.tsx:66
+#: src/components/bookmarks/BookmarksPanel.tsx:72
+#: src/components/bookmarks/BookmarksPanel.tsx:79
 msgid "All Spaces"
 msgstr "כל החללים"
 
@@ -428,33 +428,38 @@ msgstr "חזרה לקישור הזמנה"
 msgid "Backup Failed"
 msgstr "גיבוי נכשל"
 
-#: src/components/message/MessageActions.tsx:115
-msgid "Bookmark limit reached"
-msgstr "הגעת למגבלת הסימנים"
+#: src/components/message/MessageActionsMenu.tsx:255
+msgid "Bookmark"
+msgstr "מועדף"
 
-#: src/components/message/MessageActions.tsx:116
-#: src/components/message/MessageActionsDrawer.tsx:255
+#: src/hooks/business/bookmarks/useBookmarks.ts:168
+#: src/hooks/business/bookmarks/useBookmarks.ts:248
+msgid "Bookmark limit reached! Remove some to add new ones."
+msgstr "הגעת למגבלת המועדפים! הסר כמה כדי להוסיף חדשים."
+
+#: src/components/message/MessageActions.tsx:110
+#: src/components/message/MessageActionsDrawer.tsx:241
 msgid "Bookmark message"
 msgstr "הודעת סימן"
 
-#: src/components/bookmarks/BookmarksPanel.tsx:200
+#: src/components/bookmarks/BookmarksPanel.tsx:191
 msgid "Bookmark messages to save them for later reference"
 msgstr "הודעות סימן לשמירה לעיון מאוחר"
 
-#: src/components/message/Message.tsx:674
-#: src/components/message/Message.tsx:752
+#: src/components/message/Message.tsx:723
+#: src/components/message/Message.tsx:801
 msgid "Bookmarked"
 msgstr "סומן"
 
-#: src/components/bookmarks/BookmarkItem.tsx:56
+#: src/components/bookmarks/BookmarkItem.tsx:53
 msgid "Bookmarked image"
 msgstr "תמונה מסומנת"
 
-#: src/components/bookmarks/BookmarkItem.tsx:73
+#: src/components/bookmarks/BookmarkItem.tsx:70
 msgid "Bookmarked sticker"
 msgstr "סטיקר מסומן"
 
-#: src/components/direct/DirectMessage.tsx:680
+#: src/components/direct/DirectMessage.tsx:687
 #: src/components/space/Channel.tsx:900
 msgid "Bookmarks"
 msgstr "סימנים"
@@ -478,8 +483,8 @@ msgstr "דרושה הרשאת מצלמה כדי לצלם תמונות"
 #: src/components/modals/ConversationSettingsModal.tsx:63
 #: src/components/primitives/FileUpload/FileUpload.native.tsx:173
 #: src/hooks/business/channels/useChannelManagement.ts:247
-#: src/hooks/business/messages/useMessageActions.ts:158
-#: src/hooks/business/messages/usePinnedMessages.ts:245
+#: src/hooks/business/messages/useMessageActions.ts:159
+#: src/hooks/business/messages/usePinnedMessages.ts:246
 #: src/hooks/business/spaces/useRoleManagement.ts:64
 #: src/hooks/business/user/useFileUpload.native.ts:48
 #: src/hooks/platform/files/useFileDownload.native.ts:82
@@ -517,7 +522,7 @@ msgstr "אייקון ערוץ"
 msgid "Channel Managers"
 msgstr "מנהלי ערוץ"
 
-#: src/components/space/Channel.tsx:1288
+#: src/components/space/Channel.tsx:1284
 msgid "Channel members"
 msgstr "חברי ערוץ"
 
@@ -626,7 +631,7 @@ msgstr "מפתח קונפיגורציה"
 msgid "Connecting"
 msgstr "מתחבר"
 
-#: src/components/direct/DirectMessage.tsx:646
+#: src/components/direct/DirectMessage.tsx:653
 msgid "Conversation settings"
 msgstr "הגדרות שיחה"
 
@@ -634,8 +639,10 @@ msgstr "הגדרות שיחה"
 msgid "Conversation Settings"
 msgstr "הגדרות שיחה"
 
+#: src/components/message/MessageActions.tsx:97
 #: src/components/message/MessageActions.tsx:101
-#: src/components/message/MessageActions.tsx:105
+#: src/components/message/MessageActionsMenu.tsx:226
+#: src/components/message/MessageActionsMenu.tsx:233
 #: src/components/ui/ClickToCopyContent.native.tsx:203
 #: src/components/ui/ClickToCopyContent.native.tsx:275
 #: src/components/ui/ClickToCopyContent.tsx:153
@@ -643,9 +650,9 @@ msgstr "הגדרות שיחה"
 msgid "Copied!"
 msgstr "נשמר!"
 
-#: src/components/direct/DirectMessage.tsx:306
-#: src/components/direct/DirectMessage.tsx:628
-#: src/components/direct/DirectMessage.tsx:748
+#: src/components/direct/DirectMessage.tsx:313
+#: src/components/direct/DirectMessage.tsx:635
+#: src/components/direct/DirectMessage.tsx:755
 #: src/components/modals/UserSettingsModal/General.tsx:118
 #: src/components/user/ExpandableUserAvatar.tsx:90
 #: src/components/user/UserProfile.tsx:109
@@ -666,13 +673,18 @@ msgstr "להעתיק קישור הזמנה ללוח"
 msgid "Copy Key & Continue"
 msgstr "העתק מפתח והמשך"
 
-#: src/components/message/MessageActions.tsx:106
-#: src/components/message/MessageActionsDrawer.tsx:206
+#: src/components/message/MessageActionsMenu.tsx:226
+msgid "Copy link"
+msgstr "העתק קישור"
+
+#: src/components/message/MessageActions.tsx:102
+#: src/components/message/MessageActionsDrawer.tsx:202
+#: src/components/message/MessageActionsMenu.tsx:233
 msgid "Copy message"
 msgstr "העתק הודעה"
 
-#: src/components/message/MessageActions.tsx:102
-#: src/components/message/MessageActionsDrawer.tsx:198
+#: src/components/message/MessageActions.tsx:98
+#: src/components/message/MessageActionsDrawer.tsx:194
 msgid "Copy message link"
 msgstr "להעתיק קישור הודעה"
 
@@ -748,17 +760,18 @@ msgstr ""
 "הגדרות ברירת המחדל של Space מספקות את חוויית הצ'אט הטיפוסית ביותר, אך עבור "
 "ערבויות פרטיות גבוהות יותר, עיין בהגדרות המתקדמות הללו."
 
-#: src/hooks/business/messages/useMessageActions.ts:160
+#: src/hooks/business/messages/useMessageActions.ts:161
 msgid "delete"
 msgstr "מחק"
 
+#: src/components/message/MessageActionsMenu.tsx:275
 #: src/components/modals/ConfirmationModal.native.tsx:26
 #: src/components/modals/ConfirmationModal.tsx:28
 #: src/components/modals/ConversationSettingsModal.tsx:62
 #: src/components/modals/SpaceSettingsModal/Emojis.tsx:103
 #: src/components/modals/SpaceSettingsModal/Stickers.tsx:105
 #: src/hooks/business/channels/useChannelManagement.ts:246
-#: src/hooks/business/messages/useMessageActions.ts:157
+#: src/hooks/business/messages/useMessageActions.ts:158
 #: src/hooks/business/spaces/useRoleManagement.ts:63
 msgid "Delete"
 msgstr "מחק"
@@ -777,8 +790,8 @@ msgstr "מחק שיחה"
 msgid "Delete Group"
 msgstr "מחוק קבוצה"
 
-#: src/components/message/MessageActions.tsx:118
-#: src/components/message/MessageActionsDrawer.tsx:267
+#: src/components/message/MessageActions.tsx:112
+#: src/components/message/MessageActionsDrawer.tsx:252
 msgid "Delete message"
 msgstr "מחוק הודעה"
 
@@ -838,7 +851,7 @@ msgid "Direct Message"
 msgstr "הודעה ישירה"
 
 #: src/components/direct/DirectMessageContactsList.tsx:25
-#: src/components/navbar/NavMenu.tsx:97
+#: src/components/navbar/NavMenu.tsx:101
 msgid "Direct Messages"
 msgstr "הודעות ישירות"
 
@@ -874,6 +887,10 @@ msgstr "מגירה"
 msgid "Drop your profile photo here"
 msgstr "גרור את תמונת הפרופיל שלך לכאן"
 
+#: src/components/message/MessageActionsMenu.tsx:240
+msgid "Edit"
+msgstr "ערוך"
+
 #. placeholder {0}: index + 1
 #: src/components/modals/EditHistoryModal.tsx:91
 msgid "Edit {0}"
@@ -887,12 +904,16 @@ msgstr "ערוך ערוץ"
 msgid "Edit Group"
 msgstr "ערוך קבוצה"
 
+#: src/components/message/MessageActionsMenu.tsx:247
+msgid "Edit history"
+msgstr "ערוך היסטוריה"
+
 #: src/components/modals/EditHistoryModal.tsx:58
 msgid "Edit History"
 msgstr "היסטוריית עריכה"
 
-#: src/components/message/MessageActions.tsx:108
-#: src/components/message/MessageActionsDrawer.tsx:215
+#: src/components/message/MessageActions.tsx:104
+#: src/components/message/MessageActionsDrawer.tsx:211
 msgid "Edit message"
 msgstr "ערוך הודעה"
 
@@ -1000,7 +1021,7 @@ msgstr "נכשל בפענוח ההודעה עם כל מצב ידוע"
 msgid "Failed to generate invite link. Please try again."
 msgstr "נכשל ביצירת קישור הזמנה. אנא נסה שוב."
 
-#: src/components/bookmarks/BookmarksPanel.tsx:189
+#: src/components/bookmarks/BookmarksPanel.tsx:180
 msgid "Failed to load bookmarks"
 msgstr "נכשל לטעון סימנים"
 
@@ -1200,7 +1221,7 @@ msgstr "ייבא מפתח קיים"
 msgid "Important first-time user information:"
 msgstr "מידע חשוב למשתמשים חדשים:"
 
-#: src/components/message/PinnedMessagesPanel.tsx:203
+#: src/components/message/PinnedMessagesPanel.tsx:197
 msgid "Important messages will be pinned here"
 msgstr "הודעות חשובות יימנעו כאן"
 
@@ -1279,12 +1300,12 @@ msgstr "מצטרף למרחב..."
 msgid "Joining..."
 msgstr "מצטרף..."
 
-#: src/components/bookmarks/BookmarkItem.tsx:141
-#: src/components/message/PinnedMessagesPanel.tsx:92
+#: src/components/bookmarks/BookmarkItem.tsx:135
+#: src/components/message/PinnedMessagesPanel.tsx:95
 msgid "Jump"
 msgstr "קפיצה"
 
-#: src/components/message/MessageList.tsx:523
+#: src/components/message/MessageList.tsx:535
 msgid "Jump to present"
 msgstr "קפיצה להווה"
 
@@ -1361,19 +1382,19 @@ msgstr "בוא נלך"
 msgid "Light"
 msgstr "אור"
 
-#: src/components/bookmarks/BookmarksPanel.tsx:180
+#: src/components/bookmarks/BookmarksPanel.tsx:171
 msgid "Loading bookmarks..."
 msgstr "טוען סימנים..."
 
-#: src/components/message/MessageList.tsx:534
+#: src/components/message/MessageList.tsx:546
 msgid "Loading message..."
 msgstr "טוען הודעה..."
 
-#: src/components/notifications/NotificationPanel.tsx:158
+#: src/components/notifications/NotificationPanel.tsx:165
 msgid "Loading notifications..."
 msgstr "טוען הודעות..."
 
-#: src/components/message/PinnedMessagesPanel.tsx:191
+#: src/components/message/PinnedMessagesPanel.tsx:185
 msgid "Loading pinned messages..."
 msgstr "טוען הודעות מוצמדות..."
 
@@ -1429,13 +1450,13 @@ msgstr "נהל את ההגדרות שלך עבור ה-Space הזה."
 msgid "Manual Backup Required"
 msgstr "גיבוי ידני נדרש"
 
-#: src/components/notifications/NotificationPanel.tsx:208
+#: src/components/notifications/NotificationPanel.tsx:215
 msgid "Mark all as read"
 msgstr "סמן הכל כנקרא"
 
-#: src/components/direct/DirectMessage.tsx:661
-#: src/components/direct/DirectMessage.tsx:855
-#: src/components/space/Channel.tsx:929
+#: src/components/direct/DirectMessage.tsx:668
+#: src/components/direct/DirectMessage.tsx:861
+#: src/components/space/Channel.tsx:926
 msgid "Members List"
 msgstr "רשימת חברים"
 
@@ -1443,7 +1464,7 @@ msgstr "רשימת חברים"
 msgid "Mention Everyone"
 msgstr "אזכור את כולם"
 
-#: src/components/message/MessageActionsDrawer.tsx:179
+#: src/components/message/MessageActionsDrawer.tsx:175
 msgid "Message actions"
 msgstr "פעולות הודעה"
 
@@ -1451,8 +1472,8 @@ msgstr "פעולות הודעה"
 msgid "Message deleted"
 msgstr "הודעה נמחקה"
 
-#: src/components/message/Message.tsx:690
-#: src/components/message/Message.tsx:768
+#: src/components/message/Message.tsx:739
+#: src/components/message/Message.tsx:817
 msgid ""
 "Message does not have a valid signature, this may not be from the sender"
 msgstr "ההודעה אינה בעלת חתימה תקפה, ייתכן שהיא לא מהשולח"
@@ -1469,7 +1490,7 @@ msgstr "ההודעות אינן חתומות!"
 msgid "Messages are signed!"
 msgstr "ההודעות חתומות!"
 
-#: src/components/message/MessageActions.tsx:96
+#: src/components/message/MessageActions.tsx:92
 msgid "More reactions"
 msgstr "יותר תגובות"
 
@@ -1486,23 +1507,23 @@ msgstr "הודעה ישירה חדשה"
 msgid "New Messages"
 msgstr "הודעות חדשות"
 
-#: src/components/bookmarks/BookmarksPanel.tsx:217
+#: src/components/bookmarks/BookmarksPanel.tsx:208
 msgid "No bookmarks found"
 msgstr "לא נמצאו סימנים"
 
-#: src/components/bookmarks/BookmarksPanel.tsx:214
+#: src/components/bookmarks/BookmarksPanel.tsx:205
 msgid "No bookmarks in DMs"
 msgstr "אין סימנים בהודעות פרטיות"
 
-#: src/components/bookmarks/BookmarksPanel.tsx:212
+#: src/components/bookmarks/BookmarksPanel.tsx:203
 msgid "No bookmarks in spaces"
 msgstr "אין סימנים בחללים"
 
-#: src/components/bookmarks/BookmarksPanel.tsx:216
+#: src/components/bookmarks/BookmarksPanel.tsx:207
 msgid "No bookmarks in this space"
 msgstr "אין סימנים בחלל הזה"
 
-#: src/components/bookmarks/BookmarksPanel.tsx:198
+#: src/components/bookmarks/BookmarksPanel.tsx:189
 msgid "No bookmarks yet"
 msgstr "עדיין אין סימנים"
 
@@ -1530,16 +1551,16 @@ msgstr ""
 msgid "No messages found"
 msgstr "לא נמצאו הודעות"
 
-#: src/components/message/PinnedMessagesPanel.tsx:199
+#: src/components/message/PinnedMessagesPanel.tsx:193
 msgid "No pinned messages yet"
 msgstr "אין הודעות מוצמדות עדיין"
 
-#: src/components/notifications/NotificationPanel.tsx:166
+#: src/components/notifications/NotificationPanel.tsx:173
 msgid "No unread notifications"
 msgstr "אין הודעות לא נקראות"
 
-#: src/components/space/Channel.tsx:614 src/components/space/Channel.tsx:1136
-#: src/components/space/Channel.tsx:1327
+#: src/components/space/Channel.tsx:614 src/components/space/Channel.tsx:1132
+#: src/components/space/Channel.tsx:1323
 msgid "No users found!"
 msgstr "לא נמצאו משתמשים!"
 
@@ -1647,11 +1668,12 @@ msgstr "ספריית תמונות"
 msgid "Photo library permission is required to select images"
 msgstr "הרשאת ספריית תמונות נדרשת לבחירת תמונות"
 
-#: src/hooks/business/messages/usePinnedMessages.ts:247
+#: src/hooks/business/messages/usePinnedMessages.ts:248
 msgid "pin"
 msgstr "סיכה"
 
-#: src/hooks/business/messages/usePinnedMessages.ts:244
+#: src/components/message/MessageActionsMenu.tsx:264
+#: src/hooks/business/messages/usePinnedMessages.ts:245
 msgid "Pin"
 msgstr "סיכה"
 
@@ -1659,7 +1681,7 @@ msgstr "סיכה"
 msgid "Pin channel to top"
 msgstr "סיכה ערוץ למעלה"
 
-#: src/components/message/PinnedMessagesPanel.tsx:202
+#: src/components/message/PinnedMessagesPanel.tsx:196
 msgid "Pin important messages to keep them easily accessible"
 msgstr "הצמד הודעות חשובות כדי לשמור עליהן נגישות בקלות"
 
@@ -1668,8 +1690,8 @@ msgstr "הצמד הודעות חשובות כדי לשמור עליהן נגיש
 msgid "Pin limit reached ({0})"
 msgstr "הגעת למגבלת ההצמדה ({0})"
 
-#: src/components/message/MessageActions.tsx:112
-#: src/components/message/MessageActionsDrawer.tsx:235
+#: src/components/message/MessageActions.tsx:108
+#: src/components/message/MessageActionsDrawer.tsx:231
 msgid "Pin message"
 msgstr "הצמד הודעה"
 
@@ -1685,15 +1707,15 @@ msgstr "הצמד הודעות"
 msgid "Pin to top"
 msgstr "סיכה למעלה"
 
-#: src/components/message/Message.tsx:658
-#: src/components/message/Message.tsx:736
+#: src/components/message/Message.tsx:707
+#: src/components/message/Message.tsx:785
 msgid "Pinned"
 msgstr "מוצמד"
 
 #. placeholder {0}: mapSenderToUser(message.pinnedBy)?.displayName ||
 #. message.pinnedBy
-#: src/components/message/Message.tsx:657
-#: src/components/message/Message.tsx:735
+#: src/components/message/Message.tsx:706
+#: src/components/message/Message.tsx:784
 msgid "Pinned by {0}"
 msgstr "מוצמד על ידי {0}"
 
@@ -1701,7 +1723,7 @@ msgstr "מוצמד על ידי {0}"
 msgid "Pinned Messages"
 msgstr "הודעות מוצמדות"
 
-#: src/components/message/MessageActions.tsx:91
+#: src/components/message/MessageActions.tsx:87
 msgid "Pinned!"
 msgstr "מוצמד!"
 
@@ -1730,11 +1752,6 @@ msgstr "המפתח הפרטי נשמר בתיקייה שנבחרה"
 #: src/components/message/MessageComposer.tsx:357
 msgid "Processing image... This may take a moment for large files."
 msgstr "מעבד תמונה... זה עשוי לקחת רגע עבור קבצים גדולים."
-
-#: src/components/message/MessageActions.tsx:114
-#: src/components/message/MessageActionsDrawer.tsx:252
-msgid "Processing..."
-msgstr "מעבד..."
 
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:354
 msgid "Public Invite Links"
@@ -1809,9 +1826,10 @@ msgstr "רענן"
 msgid "Remove"
 msgstr "הסר"
 
-#: src/components/bookmarks/BookmarkItem.tsx:145
-#: src/components/message/MessageActions.tsx:116
-#: src/components/message/MessageActionsDrawer.tsx:254
+#: src/components/bookmarks/BookmarkItem.tsx:139
+#: src/components/message/MessageActions.tsx:110
+#: src/components/message/MessageActionsDrawer.tsx:241
+#: src/components/message/MessageActionsMenu.tsx:255
 msgid "Remove bookmark"
 msgstr "הסר סימן"
 
@@ -1824,8 +1842,9 @@ msgstr "מסיר..."
 msgid "Replies"
 msgstr "תגובות"
 
-#: src/components/message/MessageActions.tsx:98
-#: src/components/message/MessageActionsDrawer.tsx:190
+#: src/components/message/MessageActions.tsx:94
+#: src/components/message/MessageActionsDrawer.tsx:186
+#: src/components/message/MessageActionsMenu.tsx:220
 msgid "Reply"
 msgstr "ענה"
 
@@ -1904,11 +1923,11 @@ msgstr "שומר..."
 msgid "Search failed: {0}"
 msgstr "נכשל בחיפוש: {0}"
 
-#: src/hooks/useSearchContext.native.ts:102 src/hooks/useSearchContext.ts:94
+#: src/hooks/useSearchContext.native.ts:98 src/hooks/useSearchContext.ts:90
 msgid "Search here"
 msgstr "חפש כאן"
 
-#: src/hooks/useSearchContext.native.ts:100 src/hooks/useSearchContext.ts:92
+#: src/hooks/useSearchContext.native.ts:96 src/hooks/useSearchContext.ts:88
 msgid "Search in this Space"
 msgstr "חפש בחלל הזה"
 
@@ -1916,8 +1935,8 @@ msgstr "חפש בחלל הזה"
 msgid "Search in this Space..."
 msgstr "חפש במרחב הזה..."
 
-#: src/components/direct/DirectMessage.tsx:707
-#: src/components/space/Channel.tsx:948
+#: src/components/direct/DirectMessage.tsx:714
+#: src/components/space/Channel.tsx:945
 msgid "Search Messages"
 msgstr "חפש הודעות"
 
@@ -1933,7 +1952,7 @@ msgstr "תוצאות חיפוש"
 msgid "Search username or address"
 msgstr "חפש שם משתמש או כתובת"
 
-#: src/components/space/Channel.tsx:1299
+#: src/components/space/Channel.tsx:1295
 msgid "Search Username or Address"
 msgstr "חפש שם משתמש או כתובת"
 
@@ -2031,8 +2050,8 @@ msgstr ""
 msgid "show home screen"
 msgstr "הצג מסך בית"
 
-#: src/components/search/SearchResults.tsx:186
-#: src/components/search/SearchResults.tsx:213
+#: src/components/search/SearchResults.tsx:187
+#: src/components/search/SearchResults.tsx:214
 msgid ""
 "Showing first 500 results. Refine your search for more specific results."
 msgstr "מראה 500 התוצאות הראשונות. צמצם את החיפוש שלך לתוצאות ספציפיות יותר."
@@ -2140,7 +2159,7 @@ msgstr ""
 "פעולה זו אינה ניתנת לביטול ותסיר לצמיתות את כל הגדרות ה-מרחב. כדי למחוק את "
 "ה-מרחב, עליך קודם למחוק את כל הערוצים."
 
-#: src/components/bookmarks/BookmarksPanel.tsx:74
+#: src/components/bookmarks/BookmarksPanel.tsx:64
 msgid "This conversation"
 msgstr "שיחה זו"
 
@@ -2198,7 +2217,7 @@ msgstr ""
 msgid "This public invite link is no longer valid."
 msgstr "קישור ההזמנה הציבורי הזה אינו תקף יותר."
 
-#: src/components/bookmarks/BookmarksPanel.tsx:81
+#: src/components/bookmarks/BookmarksPanel.tsx:71
 msgid "This Space"
 msgstr "החלל הזה"
 
@@ -2239,7 +2258,11 @@ msgstr ""
 "כדי לבטל התראות, אנא שנה את ההגדרה בהגדרות הדפדפן שלך. לא ניתן לבטל התראות "
 "באופן תכנותי."
 
-#: src/utils/dateFormatting.ts:27
+#: src/utils/dateFormatting.ts:28
+msgid "Today"
+msgstr "היום"
+
+#: src/utils/dateFormatting.ts:37
 msgid "Today at {timeFormatted}"
 msgstr "היום ב{timeFormatted}"
 
@@ -2308,19 +2331,19 @@ msgstr "לא ידוע"
 msgid "Unknown Space"
 msgstr "חלל לא ידוע"
 
-#: src/components/message/MessagePreview.tsx:176
+#: src/components/message/MessagePreview.tsx:202
 msgid "Unknown time"
 msgstr "זמן לא ידוע"
 
-#: src/components/bookmarks/BookmarkItem.tsx:124
+#: src/components/bookmarks/BookmarkItem.tsx:118
 #: src/components/context/MessageDB.bak.tsx:961
 #: src/components/context/MessageDB.bak.tsx:980
 #: src/components/context/MessageDB.bak.tsx:3043
 #: src/components/context/MessageDB.bak.tsx:4122
 #: src/components/context/MessageDB.bak.tsx:5292
-#: src/components/direct/DirectMessage.tsx:166
-#: src/components/direct/DirectMessage.tsx:181
-#: src/components/direct/DirectMessage.tsx:528
+#: src/components/direct/DirectMessage.tsx:173
+#: src/components/direct/DirectMessage.tsx:188
+#: src/components/direct/DirectMessage.tsx:535
 #: src/components/message/MessageComposer.tsx:501
 #: src/components/message/MessageComposer.tsx:508
 #: src/components/message/MessageEditTextarea.tsx:225
@@ -2328,12 +2351,12 @@ msgstr "זמן לא ידוע"
 #: src/components/message/MessageEditTextarea.tsx:267
 #: src/components/message/MessageEditTextarea.tsx:271
 #: src/components/message/MessageEditTextarea.tsx:277
-#: src/components/message/MessagePreview.tsx:170
-#: src/components/message/PinnedMessagesPanel.tsx:75
+#: src/components/message/MessagePreview.tsx:196
+#: src/components/message/PinnedMessagesPanel.tsx:78
 #: src/components/modals/ConversationSettingsModal.tsx:104
 #: src/components/modals/NewDirectMessageModal.tsx:66
-#: src/components/notifications/NotificationPanel.tsx:241
-#: src/components/notifications/NotificationPanel.tsx:260
+#: src/components/notifications/NotificationPanel.tsx:248
+#: src/components/notifications/NotificationPanel.tsx:268
 #: src/hooks/business/channels/useChannelMessages.ts:144
 #: src/hooks/business/conversations/useDirectMessageData.ts:57
 #: src/hooks/business/conversations/useDirectMessageData.ts:75
@@ -2352,16 +2375,17 @@ msgstr "זמן לא ידוע"
 msgid "Unknown User"
 msgstr "משתמש לא ידוע"
 
-#: src/hooks/business/messages/usePinnedMessages.ts:247
+#: src/hooks/business/messages/usePinnedMessages.ts:248
 msgid "unpin"
 msgstr "הסר סיכה"
 
-#: src/hooks/business/messages/usePinnedMessages.ts:244
+#: src/components/message/MessageActionsMenu.tsx:264
+#: src/hooks/business/messages/usePinnedMessages.ts:245
 msgid "Unpin"
 msgstr "הסר סיכה"
 
-#: src/components/message/MessageActions.tsx:112
-#: src/components/message/MessageActionsDrawer.tsx:235
+#: src/components/message/MessageActions.tsx:108
+#: src/components/message/MessageActionsDrawer.tsx:231
 msgid "Unpin message"
 msgstr "הסר הצמדה מההודעה"
 
@@ -2369,15 +2393,15 @@ msgstr "הסר הצמדה מההודעה"
 msgid "Unpin Message"
 msgstr "הסר סיכה הודעה"
 
-#: src/components/message/PinnedMessagesPanel.tsx:97
+#: src/components/message/PinnedMessagesPanel.tsx:100
 msgid "Unpin this post"
 msgstr "הסר הצמדה מהפוסט הזה"
 
-#: src/components/message/MessageActions.tsx:92
+#: src/components/message/MessageActions.tsx:88
 msgid "Unpinned!"
 msgstr "הוסר הצמדה!"
 
-#: src/components/direct/DirectMessage.tsx:802
+#: src/components/direct/DirectMessage.tsx:808
 msgid ""
 "Until you reply, this sender will not see your display name or profile "
 "picture"
@@ -2420,7 +2444,7 @@ msgstr "כתובת משתמש כאן"
 msgid "User does not exist."
 msgstr "המשתמש אינו קיים."
 
-#: src/components/space/Channel.tsx:601 src/components/space/Channel.tsx:1122
+#: src/components/space/Channel.tsx:601 src/components/space/Channel.tsx:1118
 msgid "Username or Address"
 msgstr "שם משתמש או כתובת"
 
@@ -2432,8 +2456,8 @@ msgstr "useWebSocket חייב להיות בשימוש בתוך WebSocketProvider
 msgid "Validating invite..."
 msgstr "מאמת הזמנה..."
 
-#: src/components/message/MessageActions.tsx:110
-#: src/components/message/MessageActionsDrawer.tsx:225
+#: src/components/message/MessageActions.tsx:106
+#: src/components/message/MessageActionsDrawer.tsx:221
 msgid "View edit history"
 msgstr "צפה בהיסטוריית עריכה"
 
@@ -2531,15 +2555,15 @@ msgstr ""
 "כאשר אתה חותם על הודעה, אתה מאשר שהיא מגיעה מהמפתח שלך. כאשר אתה לא חותם על "
 "הודעה, יש לך הכח להכחיש. אתה יכול לשלוט בהגדרה זו עבור כל שיחה והודעה בנפרד."
 
-#: src/utils/dateFormatting.ts:55
+#: src/utils/dateFormatting.ts:29 src/utils/dateFormatting.ts:65
 msgid "Yesterday"
 msgstr "אתמול"
 
-#: src/utils/dateFormatting.ts:30
+#: src/utils/dateFormatting.ts:40
 msgid "Yesterday at {timeFormatted}"
 msgstr "אתמול ב{timeFormatted}"
 
-#: src/components/direct/DirectMessage.tsx:300
+#: src/components/direct/DirectMessage.tsx:307
 #: src/hooks/business/search/useBatchSearchResultsDisplay.ts:139
 msgid "You"
 msgstr "אתה"
@@ -2569,7 +2593,7 @@ msgstr ""
 "בקבוצה זו."
 
 #: src/components/message/MessageComposer.tsx:336
-#: src/components/space/Channel.tsx:1088
+#: src/components/space/Channel.tsx:1084
 msgid "You cannot post in this channel"
 msgstr "אינך יכול לפרסם בערוץ זה"
 
@@ -2593,7 +2617,7 @@ msgid ""
 msgstr ""
 "לא תוכל להצטרף מחדש אלא אם כן תוזמן שוב. ההודעות הקיימות שלך לא יימחקו."
 
-#: src/components/notifications/NotificationPanel.tsx:168
+#: src/components/notifications/NotificationPanel.tsx:175
 msgid "You're all caught up!"
 msgstr "אתה מעודכן!"
 
@@ -2705,6 +2729,9 @@ msgstr "תמונה ממוזערת של וידאו של YouTube"
 #~ "האם אתה בטוח שברצונך לעזוב את המרחב הזה? לא תוכל להצטרף מחדש אלא אם כן תוזמן"
 #~ " שוב. ההודעות הקיימות שלך לא יימחקו."
 
+#~ msgid "Bookmark limit reached"
+#~ msgstr "הגעת למגבלת הסימנים"
+
 #~ msgid "Change your avatar and name for this Space."
 #~ msgstr "שנה את התמונה שלך ואת השם עבור המרחב הזה."
 
@@ -2734,6 +2761,9 @@ msgstr "תמונה ממוזערת של וידאו של YouTube"
 
 #~ msgid "optional"
 #~ msgstr "אופציונלי"
+
+#~ msgid "Processing..."
+#~ msgstr "מעבד..."
 
 #~ msgid "Select for which mentions you will receive notifications"
 #~ msgstr "בחר עבור אילו אזכורים תקבל הודעות"

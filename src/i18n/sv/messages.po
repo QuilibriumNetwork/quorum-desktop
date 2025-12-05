@@ -31,7 +31,7 @@ msgid "No Role - {count}"
 msgstr "Ingen roll - {count}"
 
 #. js-lingui-explicit-id
-#: src/components/space/Channel.tsx:1064
+#: src/components/space/Channel.tsx:1060
 msgid "Send a message to #{channel_name}"
 msgstr "Skicka ett meddelande till #{channel_name}"
 
@@ -65,22 +65,22 @@ msgid "Replying to {user}"
 msgstr "Svarar {user}"
 
 #. js-lingui-explicit-id
-#: src/components/message/Message.tsx:308
+#: src/components/message/Message.tsx:306
 msgid "has joined"
 msgstr "har anslutit"
 
 #. js-lingui-explicit-id
-#: src/components/message/Message.tsx:316
+#: src/components/message/Message.tsx:314
 msgid "has left"
 msgstr "har lämnat"
 
 #. js-lingui-explicit-id
-#: src/components/message/Message.tsx:324
+#: src/components/message/Message.tsx:322
 msgid "has been kicked"
 msgstr "har blivit utkickad"
 
 #. js-lingui-explicit-id
-#: src/components/direct/DirectMessage.tsx:814
+#: src/components/direct/DirectMessage.tsx:820
 msgid "Send a message to {user}"
 msgstr "Skicka ett meddelande till {user}"
 
@@ -88,8 +88,8 @@ msgstr "Skicka ett meddelande till {user}"
 msgid " for updates."
 msgstr "för uppdateringar."
 
-#: src/components/message/Message.tsx:707
-#: src/components/message/Message.tsx:720
+#: src/components/message/Message.tsx:756
+#: src/components/message/Message.tsx:769
 msgid "(edited)"
 msgstr "(redigerad)"
 
@@ -97,12 +97,12 @@ msgstr "(redigerad)"
 msgid "(empty)"
 msgstr "(tom)"
 
-#: src/components/bookmarks/BookmarkItem.tsx:86
-#: src/components/message/MessagePreview.tsx:180
+#: src/components/bookmarks/BookmarkItem.tsx:83
+#: src/components/message/MessagePreview.tsx:206
 msgid "[Empty message]"
 msgstr "[Tomt meddelande]"
 
-#: src/components/bookmarks/BookmarkItem.tsx:63 src/utils/clipboard.ts:28
+#: src/components/bookmarks/BookmarkItem.tsx:60 src/utils/clipboard.ts:28
 msgid "[Image]"
 msgstr "[Image]"
 
@@ -114,8 +114,8 @@ msgstr "[Media]"
 msgid "[Message content not copyable]"
 msgstr "[Message content not copyable]"
 
-#: src/components/message/MessagePreview.tsx:183
-#: src/components/message/MessagePreview.tsx:260
+#: src/components/message/MessagePreview.tsx:209
+#: src/components/message/MessagePreview.tsx:287
 msgid "[Message]"
 msgstr "[Meddelande]"
 
@@ -124,7 +124,7 @@ msgstr "[Meddelande]"
 msgid "[Sticker: {0}]"
 msgstr "[Sticker: {0}]"
 
-#: src/components/bookmarks/BookmarkItem.tsx:80
+#: src/components/bookmarks/BookmarkItem.tsx:77
 msgid "[Sticker]"
 msgstr "[Klister]"
 
@@ -136,22 +136,22 @@ msgstr ""
 " bekräfta."
 
 #. placeholder {0}: allNotifications.length
-#: src/components/notifications/NotificationPanel.tsx:184
+#: src/components/notifications/NotificationPanel.tsx:191
 msgid "{0} notification"
 msgstr "{0} meddelande"
 
 #. placeholder {0}: allNotifications.length
-#: src/components/notifications/NotificationPanel.tsx:185
+#: src/components/notifications/NotificationPanel.tsx:192
 msgid "{0} notifications"
 msgstr "{0} meddelanden"
 
 #. placeholder {0}: pinnedMessages.length
-#: src/components/message/PinnedMessagesPanel.tsx:219
+#: src/components/message/PinnedMessagesPanel.tsx:213
 msgid "{0} pinned message in this Channel"
 msgstr "{0} fastsatt meddelande i denna Kanal"
 
 #. placeholder {0}: pinnedMessages.length
-#: src/components/message/PinnedMessagesPanel.tsx:220
+#: src/components/message/PinnedMessagesPanel.tsx:214
 msgid "{0} pinned messages in this Channel"
 msgstr "{0} fastsatta meddelanden i denna Kanal"
 
@@ -165,11 +165,11 @@ msgstr "{0} resultat"
 msgid "{0} results"
 msgstr "{0} resultat"
 
-#: src/components/bookmarks/BookmarksPanel.tsx:289
+#: src/components/bookmarks/BookmarksPanel.tsx:276
 msgid "{bookmarkCount} bookmark"
 msgstr "{bookmarkCount} bokmärke"
 
-#: src/components/bookmarks/BookmarksPanel.tsx:290
+#: src/components/bookmarks/BookmarksPanel.tsx:277
 msgid "{bookmarkCount} bookmarks"
 msgstr "{bookmarkCount} bokmärken"
 
@@ -310,13 +310,13 @@ msgstr "Avancerade inställningar"
 msgid "All"
 msgstr "Alla"
 
-#: src/components/bookmarks/BookmarksPanel.tsx:68
+#: src/components/bookmarks/BookmarksPanel.tsx:58
 msgid "All Bookmarks"
 msgstr "Alla bokmärken"
 
-#: src/components/bookmarks/BookmarksPanel.tsx:75
-#: src/components/bookmarks/BookmarksPanel.tsx:83
-#: src/components/bookmarks/BookmarksPanel.tsx:88
+#: src/components/bookmarks/BookmarksPanel.tsx:65
+#: src/components/bookmarks/BookmarksPanel.tsx:73
+#: src/components/bookmarks/BookmarksPanel.tsx:78
 msgid "All DMs"
 msgstr "Alla DM:ar"
 
@@ -324,9 +324,9 @@ msgstr "Alla DM:ar"
 msgid "All kick records are up to date."
 msgstr "Alla kickregister är uppdaterade."
 
-#: src/components/bookmarks/BookmarksPanel.tsx:76
-#: src/components/bookmarks/BookmarksPanel.tsx:82
-#: src/components/bookmarks/BookmarksPanel.tsx:89
+#: src/components/bookmarks/BookmarksPanel.tsx:66
+#: src/components/bookmarks/BookmarksPanel.tsx:72
+#: src/components/bookmarks/BookmarksPanel.tsx:79
 msgid "All Spaces"
 msgstr "Alla Spaces"
 
@@ -435,33 +435,38 @@ msgstr "Tillbaka till inbjudningslänk"
 msgid "Backup Failed"
 msgstr "Säkerhetskopiering misslyckades"
 
-#: src/components/message/MessageActions.tsx:115
-msgid "Bookmark limit reached"
-msgstr "Bokmärkesgräns nådd"
+#: src/components/message/MessageActionsMenu.tsx:255
+msgid "Bookmark"
+msgstr "Bokmärke"
 
-#: src/components/message/MessageActions.tsx:116
-#: src/components/message/MessageActionsDrawer.tsx:255
+#: src/hooks/business/bookmarks/useBookmarks.ts:168
+#: src/hooks/business/bookmarks/useBookmarks.ts:248
+msgid "Bookmark limit reached! Remove some to add new ones."
+msgstr "Bokmärkesgränsen nådd! Ta bort några för att lägga till nya."
+
+#: src/components/message/MessageActions.tsx:110
+#: src/components/message/MessageActionsDrawer.tsx:241
 msgid "Bookmark message"
 msgstr "Bokmärkesmeddelande"
 
-#: src/components/bookmarks/BookmarksPanel.tsx:200
+#: src/components/bookmarks/BookmarksPanel.tsx:191
 msgid "Bookmark messages to save them for later reference"
 msgstr "Bokmärkesmeddelanden för att spara dem för senare referens"
 
-#: src/components/message/Message.tsx:674
-#: src/components/message/Message.tsx:752
+#: src/components/message/Message.tsx:723
+#: src/components/message/Message.tsx:801
 msgid "Bookmarked"
 msgstr "Bokmärkt"
 
-#: src/components/bookmarks/BookmarkItem.tsx:56
+#: src/components/bookmarks/BookmarkItem.tsx:53
 msgid "Bookmarked image"
 msgstr "Bokmärkt bild"
 
-#: src/components/bookmarks/BookmarkItem.tsx:73
+#: src/components/bookmarks/BookmarkItem.tsx:70
 msgid "Bookmarked sticker"
 msgstr "Bokmärkt klistermärke"
 
-#: src/components/direct/DirectMessage.tsx:680
+#: src/components/direct/DirectMessage.tsx:687
 #: src/components/space/Channel.tsx:900
 msgid "Bookmarks"
 msgstr "Bokmärken"
@@ -485,8 +490,8 @@ msgstr "Kamerabehörighet krävs för att ta foton"
 #: src/components/modals/ConversationSettingsModal.tsx:63
 #: src/components/primitives/FileUpload/FileUpload.native.tsx:173
 #: src/hooks/business/channels/useChannelManagement.ts:247
-#: src/hooks/business/messages/useMessageActions.ts:158
-#: src/hooks/business/messages/usePinnedMessages.ts:245
+#: src/hooks/business/messages/useMessageActions.ts:159
+#: src/hooks/business/messages/usePinnedMessages.ts:246
 #: src/hooks/business/spaces/useRoleManagement.ts:64
 #: src/hooks/business/user/useFileUpload.native.ts:48
 #: src/hooks/platform/files/useFileDownload.native.ts:82
@@ -526,7 +531,7 @@ msgstr "Kanalikon"
 msgid "Channel Managers"
 msgstr "Kanalansvariga"
 
-#: src/components/space/Channel.tsx:1288
+#: src/components/space/Channel.tsx:1284
 msgid "Channel members"
 msgstr "Kanalmedlemmar"
 
@@ -637,7 +642,7 @@ msgstr "Konfigurationsnyckel"
 msgid "Connecting"
 msgstr "Ansluter"
 
-#: src/components/direct/DirectMessage.tsx:646
+#: src/components/direct/DirectMessage.tsx:653
 msgid "Conversation settings"
 msgstr "Konversationsinställningar"
 
@@ -645,8 +650,10 @@ msgstr "Konversationsinställningar"
 msgid "Conversation Settings"
 msgstr "Konversationsinställningar"
 
+#: src/components/message/MessageActions.tsx:97
 #: src/components/message/MessageActions.tsx:101
-#: src/components/message/MessageActions.tsx:105
+#: src/components/message/MessageActionsMenu.tsx:226
+#: src/components/message/MessageActionsMenu.tsx:233
 #: src/components/ui/ClickToCopyContent.native.tsx:203
 #: src/components/ui/ClickToCopyContent.native.tsx:275
 #: src/components/ui/ClickToCopyContent.tsx:153
@@ -654,9 +661,9 @@ msgstr "Konversationsinställningar"
 msgid "Copied!"
 msgstr "Kopierad!"
 
-#: src/components/direct/DirectMessage.tsx:306
-#: src/components/direct/DirectMessage.tsx:628
-#: src/components/direct/DirectMessage.tsx:748
+#: src/components/direct/DirectMessage.tsx:313
+#: src/components/direct/DirectMessage.tsx:635
+#: src/components/direct/DirectMessage.tsx:755
 #: src/components/modals/UserSettingsModal/General.tsx:118
 #: src/components/user/ExpandableUserAvatar.tsx:90
 #: src/components/user/UserProfile.tsx:109
@@ -677,13 +684,18 @@ msgstr "Kopiera inbjudningslänk till urklipp"
 msgid "Copy Key & Continue"
 msgstr "Kopiera nyckel och fortsätt"
 
-#: src/components/message/MessageActions.tsx:106
-#: src/components/message/MessageActionsDrawer.tsx:206
+#: src/components/message/MessageActionsMenu.tsx:226
+msgid "Copy link"
+msgstr "Kopiera länk"
+
+#: src/components/message/MessageActions.tsx:102
+#: src/components/message/MessageActionsDrawer.tsx:202
+#: src/components/message/MessageActionsMenu.tsx:233
 msgid "Copy message"
 msgstr "Kopiera meddelande"
 
-#: src/components/message/MessageActions.tsx:102
-#: src/components/message/MessageActionsDrawer.tsx:198
+#: src/components/message/MessageActions.tsx:98
+#: src/components/message/MessageActionsDrawer.tsx:194
 msgid "Copy message link"
 msgstr "Kopiera meddelandelänk"
 
@@ -759,17 +771,18 @@ msgstr ""
 "Standardinställningar för Space ger den mest typiska chatupplevelsen, men "
 "för högre integritetsgarantier, granska dessa avancerade inställningar."
 
-#: src/hooks/business/messages/useMessageActions.ts:160
+#: src/hooks/business/messages/useMessageActions.ts:161
 msgid "delete"
 msgstr "ta bort"
 
+#: src/components/message/MessageActionsMenu.tsx:275
 #: src/components/modals/ConfirmationModal.native.tsx:26
 #: src/components/modals/ConfirmationModal.tsx:28
 #: src/components/modals/ConversationSettingsModal.tsx:62
 #: src/components/modals/SpaceSettingsModal/Emojis.tsx:103
 #: src/components/modals/SpaceSettingsModal/Stickers.tsx:105
 #: src/hooks/business/channels/useChannelManagement.ts:246
-#: src/hooks/business/messages/useMessageActions.ts:157
+#: src/hooks/business/messages/useMessageActions.ts:158
 #: src/hooks/business/spaces/useRoleManagement.ts:63
 msgid "Delete"
 msgstr "Ta bort"
@@ -788,8 +801,8 @@ msgstr "Ta bort konversation"
 msgid "Delete Group"
 msgstr "Ta bort grupp"
 
-#: src/components/message/MessageActions.tsx:118
-#: src/components/message/MessageActionsDrawer.tsx:267
+#: src/components/message/MessageActions.tsx:112
+#: src/components/message/MessageActionsDrawer.tsx:252
 msgid "Delete message"
 msgstr "Ta bort meddelande"
 
@@ -849,7 +862,7 @@ msgid "Direct Message"
 msgstr "Direktmeddelande"
 
 #: src/components/direct/DirectMessageContactsList.tsx:25
-#: src/components/navbar/NavMenu.tsx:97
+#: src/components/navbar/NavMenu.tsx:101
 msgid "Direct Messages"
 msgstr "Direktmeddelanden"
 
@@ -885,6 +898,10 @@ msgstr "Låda"
 msgid "Drop your profile photo here"
 msgstr "Släpp din profilbild här"
 
+#: src/components/message/MessageActionsMenu.tsx:240
+msgid "Edit"
+msgstr "Redigera"
+
 #. placeholder {0}: index + 1
 #: src/components/modals/EditHistoryModal.tsx:91
 msgid "Edit {0}"
@@ -898,12 +915,16 @@ msgstr "Redigera kanal"
 msgid "Edit Group"
 msgstr "Redigera grupp"
 
+#: src/components/message/MessageActionsMenu.tsx:247
+msgid "Edit history"
+msgstr "Redigera historik"
+
 #: src/components/modals/EditHistoryModal.tsx:58
 msgid "Edit History"
 msgstr "Redigeringshistorik"
 
-#: src/components/message/MessageActions.tsx:108
-#: src/components/message/MessageActionsDrawer.tsx:215
+#: src/components/message/MessageActions.tsx:104
+#: src/components/message/MessageActionsDrawer.tsx:211
 msgid "Edit message"
 msgstr "Redigera meddelande"
 
@@ -1016,7 +1037,7 @@ msgstr "Misslyckades med att dekryptera meddelande med någon känd status"
 msgid "Failed to generate invite link. Please try again."
 msgstr "Misslyckades med att generera inbjudningslänk. Försök igen."
 
-#: src/components/bookmarks/BookmarksPanel.tsx:189
+#: src/components/bookmarks/BookmarksPanel.tsx:180
 msgid "Failed to load bookmarks"
 msgstr "Misslyckades med att ladda bokmärken"
 
@@ -1218,7 +1239,7 @@ msgstr "Importera befintlig nyckel"
 msgid "Important first-time user information:"
 msgstr "Viktig information för första gången användare:"
 
-#: src/components/message/PinnedMessagesPanel.tsx:203
+#: src/components/message/PinnedMessagesPanel.tsx:197
 msgid "Important messages will be pinned here"
 msgstr "Viktiga meddelanden kommer att fästas här"
 
@@ -1298,12 +1319,12 @@ msgstr "Går med i Space..."
 msgid "Joining..."
 msgstr "Går med..."
 
-#: src/components/bookmarks/BookmarkItem.tsx:141
-#: src/components/message/PinnedMessagesPanel.tsx:92
+#: src/components/bookmarks/BookmarkItem.tsx:135
+#: src/components/message/PinnedMessagesPanel.tsx:95
 msgid "Jump"
 msgstr "Hoppa"
 
-#: src/components/message/MessageList.tsx:523
+#: src/components/message/MessageList.tsx:535
 msgid "Jump to present"
 msgstr "Hoppa till nutid"
 
@@ -1380,19 +1401,19 @@ msgstr "Låt oss gåooooo"
 msgid "Light"
 msgstr "Ljus"
 
-#: src/components/bookmarks/BookmarksPanel.tsx:180
+#: src/components/bookmarks/BookmarksPanel.tsx:171
 msgid "Loading bookmarks..."
 msgstr "Laddar bokmärken..."
 
-#: src/components/message/MessageList.tsx:534
+#: src/components/message/MessageList.tsx:546
 msgid "Loading message..."
 msgstr "Laddar meddelande..."
 
-#: src/components/notifications/NotificationPanel.tsx:158
+#: src/components/notifications/NotificationPanel.tsx:165
 msgid "Loading notifications..."
 msgstr "Laddar aviseringar..."
 
-#: src/components/message/PinnedMessagesPanel.tsx:191
+#: src/components/message/PinnedMessagesPanel.tsx:185
 msgid "Loading pinned messages..."
 msgstr "Laddar fastsatta meddelanden..."
 
@@ -1451,13 +1472,13 @@ msgstr "Hantera dina inställningar för detta Space."
 msgid "Manual Backup Required"
 msgstr "Manuell säkerhetskopiering krävs"
 
-#: src/components/notifications/NotificationPanel.tsx:208
+#: src/components/notifications/NotificationPanel.tsx:215
 msgid "Mark all as read"
 msgstr "Markera alla som lästa"
 
-#: src/components/direct/DirectMessage.tsx:661
-#: src/components/direct/DirectMessage.tsx:855
-#: src/components/space/Channel.tsx:929
+#: src/components/direct/DirectMessage.tsx:668
+#: src/components/direct/DirectMessage.tsx:861
+#: src/components/space/Channel.tsx:926
 msgid "Members List"
 msgstr "Medlemslista"
 
@@ -1465,7 +1486,7 @@ msgstr "Medlemslista"
 msgid "Mention Everyone"
 msgstr "Nämn alla"
 
-#: src/components/message/MessageActionsDrawer.tsx:179
+#: src/components/message/MessageActionsDrawer.tsx:175
 msgid "Message actions"
 msgstr "Meddelandeåtgärder"
 
@@ -1473,8 +1494,8 @@ msgstr "Meddelandeåtgärder"
 msgid "Message deleted"
 msgstr "Meddelande raderat"
 
-#: src/components/message/Message.tsx:690
-#: src/components/message/Message.tsx:768
+#: src/components/message/Message.tsx:739
+#: src/components/message/Message.tsx:817
 msgid ""
 "Message does not have a valid signature, this may not be from the sender"
 msgstr ""
@@ -1493,7 +1514,7 @@ msgstr "Meddelanden är INTE signerade!"
 msgid "Messages are signed!"
 msgstr "Meddelanden är signerade!"
 
-#: src/components/message/MessageActions.tsx:96
+#: src/components/message/MessageActions.tsx:92
 msgid "More reactions"
 msgstr "Fler reaktioner"
 
@@ -1510,23 +1531,23 @@ msgstr "Ny direktmeddelande"
 msgid "New Messages"
 msgstr "Nya Meddelanden"
 
-#: src/components/bookmarks/BookmarksPanel.tsx:217
+#: src/components/bookmarks/BookmarksPanel.tsx:208
 msgid "No bookmarks found"
 msgstr "Inga bokmärken hittades"
 
-#: src/components/bookmarks/BookmarksPanel.tsx:214
+#: src/components/bookmarks/BookmarksPanel.tsx:205
 msgid "No bookmarks in DMs"
 msgstr "Inga bokmärken i DM:ar"
 
-#: src/components/bookmarks/BookmarksPanel.tsx:212
+#: src/components/bookmarks/BookmarksPanel.tsx:203
 msgid "No bookmarks in spaces"
 msgstr "Inga bokmärken i spaces"
 
-#: src/components/bookmarks/BookmarksPanel.tsx:216
+#: src/components/bookmarks/BookmarksPanel.tsx:207
 msgid "No bookmarks in this space"
 msgstr "Inga bokmärken i detta space"
 
-#: src/components/bookmarks/BookmarksPanel.tsx:198
+#: src/components/bookmarks/BookmarksPanel.tsx:189
 msgid "No bookmarks yet"
 msgstr "Inga bokmärken än"
 
@@ -1556,16 +1577,16 @@ msgstr ""
 msgid "No messages found"
 msgstr "Inga meddelanden hittades"
 
-#: src/components/message/PinnedMessagesPanel.tsx:199
+#: src/components/message/PinnedMessagesPanel.tsx:193
 msgid "No pinned messages yet"
 msgstr "Inga fastsatta meddelanden än"
 
-#: src/components/notifications/NotificationPanel.tsx:166
+#: src/components/notifications/NotificationPanel.tsx:173
 msgid "No unread notifications"
 msgstr "Inga olästa meddelanden"
 
-#: src/components/space/Channel.tsx:614 src/components/space/Channel.tsx:1136
-#: src/components/space/Channel.tsx:1327
+#: src/components/space/Channel.tsx:614 src/components/space/Channel.tsx:1132
+#: src/components/space/Channel.tsx:1323
 msgid "No users found!"
 msgstr "Inga användare hittades!"
 
@@ -1674,11 +1695,12 @@ msgstr "Fotobibliotek"
 msgid "Photo library permission is required to select images"
 msgstr "Behörighet för fotobibliotek krävs för att välja bilder"
 
-#: src/hooks/business/messages/usePinnedMessages.ts:247
+#: src/hooks/business/messages/usePinnedMessages.ts:248
 msgid "pin"
 msgstr "nåla"
 
-#: src/hooks/business/messages/usePinnedMessages.ts:244
+#: src/components/message/MessageActionsMenu.tsx:264
+#: src/hooks/business/messages/usePinnedMessages.ts:245
 msgid "Pin"
 msgstr "Nåla"
 
@@ -1686,7 +1708,7 @@ msgstr "Nåla"
 msgid "Pin channel to top"
 msgstr "Nåla kanal till toppen"
 
-#: src/components/message/PinnedMessagesPanel.tsx:202
+#: src/components/message/PinnedMessagesPanel.tsx:196
 msgid "Pin important messages to keep them easily accessible"
 msgstr "Fäst viktiga meddelanden för att hålla dem lättillgängliga"
 
@@ -1695,8 +1717,8 @@ msgstr "Fäst viktiga meddelanden för att hålla dem lättillgängliga"
 msgid "Pin limit reached ({0})"
 msgstr "Fästgräns nådd ({0})"
 
-#: src/components/message/MessageActions.tsx:112
-#: src/components/message/MessageActionsDrawer.tsx:235
+#: src/components/message/MessageActions.tsx:108
+#: src/components/message/MessageActionsDrawer.tsx:231
 msgid "Pin message"
 msgstr "Fäst meddelande"
 
@@ -1712,15 +1734,15 @@ msgstr "Fäst meddelanden"
 msgid "Pin to top"
 msgstr "Nåla till toppen"
 
-#: src/components/message/Message.tsx:658
-#: src/components/message/Message.tsx:736
+#: src/components/message/Message.tsx:707
+#: src/components/message/Message.tsx:785
 msgid "Pinned"
 msgstr "Fastsatt"
 
 #. placeholder {0}: mapSenderToUser(message.pinnedBy)?.displayName ||
 #. message.pinnedBy
-#: src/components/message/Message.tsx:657
-#: src/components/message/Message.tsx:735
+#: src/components/message/Message.tsx:706
+#: src/components/message/Message.tsx:784
 msgid "Pinned by {0}"
 msgstr "Fastsatt av {0}"
 
@@ -1728,7 +1750,7 @@ msgstr "Fastsatt av {0}"
 msgid "Pinned Messages"
 msgstr "Fastsatta meddelanden"
 
-#: src/components/message/MessageActions.tsx:91
+#: src/components/message/MessageActions.tsx:87
 msgid "Pinned!"
 msgstr "Fastsatt!"
 
@@ -1758,11 +1780,6 @@ msgstr "Privat nyckel sparad i vald mapp"
 #: src/components/message/MessageComposer.tsx:357
 msgid "Processing image... This may take a moment for large files."
 msgstr "Bearbetar bild... Detta kan ta en stund för stora filer."
-
-#: src/components/message/MessageActions.tsx:114
-#: src/components/message/MessageActionsDrawer.tsx:252
-msgid "Processing..."
-msgstr "Bearbetar..."
 
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:354
 msgid "Public Invite Links"
@@ -1840,9 +1857,10 @@ msgstr "Uppdatera"
 msgid "Remove"
 msgstr "Ta bort"
 
-#: src/components/bookmarks/BookmarkItem.tsx:145
-#: src/components/message/MessageActions.tsx:116
-#: src/components/message/MessageActionsDrawer.tsx:254
+#: src/components/bookmarks/BookmarkItem.tsx:139
+#: src/components/message/MessageActions.tsx:110
+#: src/components/message/MessageActionsDrawer.tsx:241
+#: src/components/message/MessageActionsMenu.tsx:255
 msgid "Remove bookmark"
 msgstr "Ta bort bokmärke"
 
@@ -1855,8 +1873,9 @@ msgstr "Tar bort..."
 msgid "Replies"
 msgstr "Svar"
 
-#: src/components/message/MessageActions.tsx:98
-#: src/components/message/MessageActionsDrawer.tsx:190
+#: src/components/message/MessageActions.tsx:94
+#: src/components/message/MessageActionsDrawer.tsx:186
+#: src/components/message/MessageActionsMenu.tsx:220
 msgid "Reply"
 msgstr "Svara"
 
@@ -1935,11 +1954,11 @@ msgstr "Sparar..."
 msgid "Search failed: {0}"
 msgstr "Sökningen misslyckades: {0}"
 
-#: src/hooks/useSearchContext.native.ts:102 src/hooks/useSearchContext.ts:94
+#: src/hooks/useSearchContext.native.ts:98 src/hooks/useSearchContext.ts:90
 msgid "Search here"
 msgstr "Sök här"
 
-#: src/hooks/useSearchContext.native.ts:100 src/hooks/useSearchContext.ts:92
+#: src/hooks/useSearchContext.native.ts:96 src/hooks/useSearchContext.ts:88
 msgid "Search in this Space"
 msgstr "Sök i detta Space"
 
@@ -1947,8 +1966,8 @@ msgstr "Sök i detta Space"
 msgid "Search in this Space..."
 msgstr "Sök i detta Space..."
 
-#: src/components/direct/DirectMessage.tsx:707
-#: src/components/space/Channel.tsx:948
+#: src/components/direct/DirectMessage.tsx:714
+#: src/components/space/Channel.tsx:945
 msgid "Search Messages"
 msgstr "Sök Meddelanden"
 
@@ -1964,7 +1983,7 @@ msgstr "Sökresultat"
 msgid "Search username or address"
 msgstr "Sök användarnamn eller adress"
 
-#: src/components/space/Channel.tsx:1299
+#: src/components/space/Channel.tsx:1295
 msgid "Search Username or Address"
 msgstr "Sök användarnamn eller adress"
 
@@ -2063,8 +2082,8 @@ msgstr ""
 msgid "show home screen"
 msgstr "visa hemskärm"
 
-#: src/components/search/SearchResults.tsx:186
-#: src/components/search/SearchResults.tsx:213
+#: src/components/search/SearchResults.tsx:187
+#: src/components/search/SearchResults.tsx:214
 msgid ""
 "Showing first 500 results. Refine your search for more specific results."
 msgstr ""
@@ -2177,7 +2196,7 @@ msgstr ""
 "inställningar för Space. För att ta bort Space måste du först ta bort alla "
 "kanaler."
 
-#: src/components/bookmarks/BookmarksPanel.tsx:74
+#: src/components/bookmarks/BookmarksPanel.tsx:64
 msgid "This conversation"
 msgstr "Denna konversation"
 
@@ -2237,7 +2256,7 @@ msgstr ""
 msgid "This public invite link is no longer valid."
 msgstr "Denna offentliga inbjudningslänk är inte längre giltig."
 
-#: src/components/bookmarks/BookmarksPanel.tsx:81
+#: src/components/bookmarks/BookmarksPanel.tsx:71
 msgid "This Space"
 msgstr "Detta Space"
 
@@ -2279,7 +2298,11 @@ msgstr ""
 "För att inaktivera aviseringar, vänligen ändra inställningen i din "
 "webbläsarinställningar. Aviseringar kan inte inaktiveras programmässigt."
 
-#: src/utils/dateFormatting.ts:27
+#: src/utils/dateFormatting.ts:28
+msgid "Today"
+msgstr "Idag"
+
+#: src/utils/dateFormatting.ts:37
 msgid "Today at {timeFormatted}"
 msgstr "I dag kl. {timeFormatted}"
 
@@ -2352,19 +2375,19 @@ msgstr "Okänd"
 msgid "Unknown Space"
 msgstr "Okänt Space"
 
-#: src/components/message/MessagePreview.tsx:176
+#: src/components/message/MessagePreview.tsx:202
 msgid "Unknown time"
 msgstr "Okänd tid"
 
-#: src/components/bookmarks/BookmarkItem.tsx:124
+#: src/components/bookmarks/BookmarkItem.tsx:118
 #: src/components/context/MessageDB.bak.tsx:961
 #: src/components/context/MessageDB.bak.tsx:980
 #: src/components/context/MessageDB.bak.tsx:3043
 #: src/components/context/MessageDB.bak.tsx:4122
 #: src/components/context/MessageDB.bak.tsx:5292
-#: src/components/direct/DirectMessage.tsx:166
-#: src/components/direct/DirectMessage.tsx:181
-#: src/components/direct/DirectMessage.tsx:528
+#: src/components/direct/DirectMessage.tsx:173
+#: src/components/direct/DirectMessage.tsx:188
+#: src/components/direct/DirectMessage.tsx:535
 #: src/components/message/MessageComposer.tsx:501
 #: src/components/message/MessageComposer.tsx:508
 #: src/components/message/MessageEditTextarea.tsx:225
@@ -2372,12 +2395,12 @@ msgstr "Okänd tid"
 #: src/components/message/MessageEditTextarea.tsx:267
 #: src/components/message/MessageEditTextarea.tsx:271
 #: src/components/message/MessageEditTextarea.tsx:277
-#: src/components/message/MessagePreview.tsx:170
-#: src/components/message/PinnedMessagesPanel.tsx:75
+#: src/components/message/MessagePreview.tsx:196
+#: src/components/message/PinnedMessagesPanel.tsx:78
 #: src/components/modals/ConversationSettingsModal.tsx:104
 #: src/components/modals/NewDirectMessageModal.tsx:66
-#: src/components/notifications/NotificationPanel.tsx:241
-#: src/components/notifications/NotificationPanel.tsx:260
+#: src/components/notifications/NotificationPanel.tsx:248
+#: src/components/notifications/NotificationPanel.tsx:268
 #: src/hooks/business/channels/useChannelMessages.ts:144
 #: src/hooks/business/conversations/useDirectMessageData.ts:57
 #: src/hooks/business/conversations/useDirectMessageData.ts:75
@@ -2396,16 +2419,17 @@ msgstr "Okänd tid"
 msgid "Unknown User"
 msgstr "Okänd användare"
 
-#: src/hooks/business/messages/usePinnedMessages.ts:247
+#: src/hooks/business/messages/usePinnedMessages.ts:248
 msgid "unpin"
 msgstr "avnåla"
 
-#: src/hooks/business/messages/usePinnedMessages.ts:244
+#: src/components/message/MessageActionsMenu.tsx:264
+#: src/hooks/business/messages/usePinnedMessages.ts:245
 msgid "Unpin"
 msgstr "Avnåla"
 
-#: src/components/message/MessageActions.tsx:112
-#: src/components/message/MessageActionsDrawer.tsx:235
+#: src/components/message/MessageActions.tsx:108
+#: src/components/message/MessageActionsDrawer.tsx:231
 msgid "Unpin message"
 msgstr "Avfäst meddelande"
 
@@ -2413,15 +2437,15 @@ msgstr "Avfäst meddelande"
 msgid "Unpin Message"
 msgstr "Avnåla meddelande"
 
-#: src/components/message/PinnedMessagesPanel.tsx:97
+#: src/components/message/PinnedMessagesPanel.tsx:100
 msgid "Unpin this post"
 msgstr "Avfäst detta inlägg"
 
-#: src/components/message/MessageActions.tsx:92
+#: src/components/message/MessageActions.tsx:88
 msgid "Unpinned!"
 msgstr "Avfäst!"
 
-#: src/components/direct/DirectMessage.tsx:802
+#: src/components/direct/DirectMessage.tsx:808
 msgid ""
 "Until you reply, this sender will not see your display name or profile "
 "picture"
@@ -2468,7 +2492,7 @@ msgstr "Användaradress här"
 msgid "User does not exist."
 msgstr "Användaren existerar inte."
 
-#: src/components/space/Channel.tsx:601 src/components/space/Channel.tsx:1122
+#: src/components/space/Channel.tsx:601 src/components/space/Channel.tsx:1118
 msgid "Username or Address"
 msgstr "Användarnamn eller adress"
 
@@ -2480,8 +2504,8 @@ msgstr "useWebSocket måste användas inom en WebSocketProvider"
 msgid "Validating invite..."
 msgstr "Validerar inbjudan..."
 
-#: src/components/message/MessageActions.tsx:110
-#: src/components/message/MessageActionsDrawer.tsx:225
+#: src/components/message/MessageActions.tsx:106
+#: src/components/message/MessageActionsDrawer.tsx:221
 msgid "View edit history"
 msgstr "Visa redigeringshistorik"
 
@@ -2589,15 +2613,15 @@ msgstr ""
 "kontrollera denna inställning för varje konversation och meddelande "
 "individuellt."
 
-#: src/utils/dateFormatting.ts:55
+#: src/utils/dateFormatting.ts:29 src/utils/dateFormatting.ts:65
 msgid "Yesterday"
 msgstr "Igår"
 
-#: src/utils/dateFormatting.ts:30
+#: src/utils/dateFormatting.ts:40
 msgid "Yesterday at {timeFormatted}"
 msgstr "I går kl. {timeFormatted}"
 
-#: src/components/direct/DirectMessage.tsx:300
+#: src/components/direct/DirectMessage.tsx:307
 #: src/hooks/business/search/useBatchSearchResultsDisplay.ts:139
 msgid "You"
 msgstr "Du"
@@ -2629,7 +2653,7 @@ msgstr ""
 "{channelCount} kanaler i denna grupp."
 
 #: src/components/message/MessageComposer.tsx:336
-#: src/components/space/Channel.tsx:1088
+#: src/components/space/Channel.tsx:1084
 msgid "You cannot post in this channel"
 msgstr "Du kan inte posta i denna kanal"
 
@@ -2654,7 +2678,7 @@ msgstr ""
 "Du kommer inte att kunna återansluta om du inte blir återinbjuden. Dina "
 "befintliga meddelanden kommer INTE att raderas."
 
-#: src/components/notifications/NotificationPanel.tsx:168
+#: src/components/notifications/NotificationPanel.tsx:175
 msgid "You're all caught up!"
 msgstr "Du har allt under kontroll!"
 
@@ -2769,6 +2793,9 @@ msgstr "YouTube Video Miniatyr"
 #~ "återansluta om du inte blir inbjuden igen. Dina befintliga meddelanden "
 #~ "kommer INTE att raderas."
 
+#~ msgid "Bookmark limit reached"
+#~ msgstr "Bokmärkesgräns nådd"
+
 #~ msgid "Change your avatar and name for this Space."
 #~ msgstr "Ändra din avatar och namn för detta Space."
 
@@ -2798,6 +2825,9 @@ msgstr "YouTube Video Miniatyr"
 
 #~ msgid "optional"
 #~ msgstr "valfritt"
+
+#~ msgid "Processing..."
+#~ msgstr "Bearbetar..."
 
 #~ msgid "Select for which mentions you will receive notifications"
 #~ msgstr "Välj för vilka omnämnanden du vill få aviseringar"

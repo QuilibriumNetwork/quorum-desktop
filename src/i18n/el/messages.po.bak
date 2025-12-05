@@ -31,7 +31,7 @@ msgid "No Role - {count}"
 msgstr "Χωρίς Ρόλο - {count}"
 
 #. js-lingui-explicit-id
-#: src/components/space/Channel.tsx:1064
+#: src/components/space/Channel.tsx:1060
 msgid "Send a message to #{channel_name}"
 msgstr "Στείλτε ένα μήνυμα στο #{channel_name}"
 
@@ -61,22 +61,22 @@ msgid "Replying to {user}"
 msgstr "Απαντώντας στον {user}"
 
 #. js-lingui-explicit-id
-#: src/components/message/Message.tsx:308
+#: src/components/message/Message.tsx:306
 msgid "has joined"
 msgstr "έχει ενταχθεί"
 
 #. js-lingui-explicit-id
-#: src/components/message/Message.tsx:316
+#: src/components/message/Message.tsx:314
 msgid "has left"
 msgstr "έχει αποχωρήσει"
 
 #. js-lingui-explicit-id
-#: src/components/message/Message.tsx:324
+#: src/components/message/Message.tsx:322
 msgid "has been kicked"
 msgstr "έχει αποβληθεί"
 
 #. js-lingui-explicit-id
-#: src/components/direct/DirectMessage.tsx:814
+#: src/components/direct/DirectMessage.tsx:820
 msgid "Send a message to {user}"
 msgstr "Στείλτε ένα μήνυμα στον {user}"
 
@@ -90,8 +90,8 @@ msgstr "για ενημερώσεις."
 #~ msgid "'everyone' is a reserved name."
 #~ msgstr "'όλοι' είναι ένα κρατημένο όνομα."
 
-#: src/components/message/Message.tsx:707
-#: src/components/message/Message.tsx:720
+#: src/components/message/Message.tsx:756
+#: src/components/message/Message.tsx:769
 msgid "(edited)"
 msgstr "(επεξεργασμένο)"
 
@@ -99,12 +99,12 @@ msgstr "(επεξεργασμένο)"
 msgid "(empty)"
 msgstr "(κενό)"
 
-#: src/components/bookmarks/BookmarkItem.tsx:86
-#: src/components/message/MessagePreview.tsx:180
+#: src/components/bookmarks/BookmarkItem.tsx:83
+#: src/components/message/MessagePreview.tsx:206
 msgid "[Empty message]"
 msgstr "[Κενό μήνυμα]"
 
-#: src/components/bookmarks/BookmarkItem.tsx:63
+#: src/components/bookmarks/BookmarkItem.tsx:60
 #: src/utils/clipboard.ts:28
 msgid "[Image]"
 msgstr "[Εικόνα]"
@@ -117,8 +117,8 @@ msgstr "[Μέσα]"
 msgid "[Message content not copyable]"
 msgstr "[Το περιεχόμενο του μηνύματος δεν είναι αντιγράψιμο]"
 
-#: src/components/message/MessagePreview.tsx:183
-#: src/components/message/MessagePreview.tsx:260
+#: src/components/message/MessagePreview.tsx:209
+#: src/components/message/MessagePreview.tsx:287
 msgid "[Message]"
 msgstr "[Μήνυμα]"
 
@@ -127,9 +127,9 @@ msgstr "[Μήνυμα]"
 msgid "[Sticker: {0}]"
 msgstr "[Αυτοκόλλητο: {0}]"
 
-#: src/components/bookmarks/BookmarkItem.tsx:80
+#: src/components/bookmarks/BookmarkItem.tsx:77
 msgid "[Sticker]"
-msgstr ""
+msgstr "[Sticker]"
 
 #. placeholder {0}: removedDevices.length
 #: src/components/modals/UserSettingsModal/Privacy.tsx:103
@@ -137,12 +137,12 @@ msgid "{0} devices marked for removal. Click \"Save Changes\" to confirm."
 msgstr "{0} apparaten gemarkeerd voor verwijdering. Klik op \"Wijzigingen opslaan\" om te bevestigen."
 
 #. placeholder {0}: allNotifications.length
-#: src/components/notifications/NotificationPanel.tsx:184
+#: src/components/notifications/NotificationPanel.tsx:191
 msgid "{0} notification"
 msgstr "{0} ειδοποίηση"
 
 #. placeholder {0}: allNotifications.length
-#: src/components/notifications/NotificationPanel.tsx:185
+#: src/components/notifications/NotificationPanel.tsx:192
 msgid "{0} notifications"
 msgstr "{0} ειδοποιήσεις"
 
@@ -150,7 +150,7 @@ msgstr "{0} ειδοποιήσεις"
 #~ msgstr "{0} μήνυμα που έχει καρφιτσωθεί"
 
 #. placeholder {0}: pinnedMessages.length
-#: src/components/message/PinnedMessagesPanel.tsx:219
+#: src/components/message/PinnedMessagesPanel.tsx:213
 msgid "{0} pinned message in this Channel"
 msgstr "{0} καρφιτσωμένο μήνυμα σε αυτό το Κανάλι"
 
@@ -158,7 +158,7 @@ msgstr "{0} καρφιτσωμένο μήνυμα σε αυτό το Κανάλ�
 #~ msgstr "{0} μηνύματα που έχουν καρφιτσωθεί"
 
 #. placeholder {0}: pinnedMessages.length
-#: src/components/message/PinnedMessagesPanel.tsx:220
+#: src/components/message/PinnedMessagesPanel.tsx:214
 msgid "{0} pinned messages in this Channel"
 msgstr "{0} καρφιτσωμένα μηνύματα σε αυτό το Κανάλι"
 
@@ -178,13 +178,13 @@ msgstr "{0} αποτελέσματα"
 #~ msgid "{0} unread mentions"
 #~ msgstr "{0} μη αναγνωσμένες αναφορές"
 
-#: src/components/bookmarks/BookmarksPanel.tsx:289
+#: src/components/bookmarks/BookmarksPanel.tsx:276
 msgid "{bookmarkCount} bookmark"
-msgstr ""
+msgstr "{bookmarkCount} σελιδοδείκτης"
 
-#: src/components/bookmarks/BookmarksPanel.tsx:290
+#: src/components/bookmarks/BookmarksPanel.tsx:277
 msgid "{bookmarkCount} bookmarks"
-msgstr ""
+msgstr "{bookmarkCount} σελιδοδείκτες"
 
 #: src/components/primitives/FileUpload/FileUpload.web.tsx:13
 msgid "{size} Bytes"
@@ -319,25 +319,25 @@ msgstr "Προχωρημένες Ρυθμίσεις"
 msgid "All"
 msgstr "Όλα"
 
-#: src/components/bookmarks/BookmarksPanel.tsx:68
+#: src/components/bookmarks/BookmarksPanel.tsx:58
 msgid "All Bookmarks"
-msgstr ""
+msgstr "Όλοι οι σελιδοδείκτες"
 
-#: src/components/bookmarks/BookmarksPanel.tsx:75
-#: src/components/bookmarks/BookmarksPanel.tsx:83
-#: src/components/bookmarks/BookmarksPanel.tsx:88
+#: src/components/bookmarks/BookmarksPanel.tsx:65
+#: src/components/bookmarks/BookmarksPanel.tsx:73
+#: src/components/bookmarks/BookmarksPanel.tsx:78
 msgid "All DMs"
-msgstr ""
+msgstr "Όλα τα DMs"
 
 #: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:59
 msgid "All kick records are up to date."
 msgstr "Όλα τα αρχεία αποβολής είναι ενημερωμένα."
 
-#: src/components/bookmarks/BookmarksPanel.tsx:76
-#: src/components/bookmarks/BookmarksPanel.tsx:82
-#: src/components/bookmarks/BookmarksPanel.tsx:89
+#: src/components/bookmarks/BookmarksPanel.tsx:66
+#: src/components/bookmarks/BookmarksPanel.tsx:72
+#: src/components/bookmarks/BookmarksPanel.tsx:79
 msgid "All Spaces"
-msgstr ""
+msgstr "Όλοι οι Χώροι"
 
 #: src/components/modals/AddSpaceModal.tsx:259
 msgid "Already Joined"
@@ -425,36 +425,45 @@ msgstr "Terug naar uitnodigingslink"
 msgid "Backup Failed"
 msgstr "Αποτυχία Αντίγραφης"
 
+#: src/components/message/MessageActionsMenu.tsx:255
+msgid "Bookmark"
+msgstr ""
+
 #: src/components/message/MessageActions.tsx:115
-msgid "Bookmark limit reached"
+#~ msgid "Bookmark limit reached"
+#~ msgstr "Έφτασε το όριο σελιδοδεικτών"
+
+#: src/hooks/business/bookmarks/useBookmarks.ts:168
+#: src/hooks/business/bookmarks/useBookmarks.ts:248
+msgid "Bookmark limit reached! Remove some to add new ones."
 msgstr ""
 
-#: src/components/message/MessageActions.tsx:116
-#: src/components/message/MessageActionsDrawer.tsx:255
+#: src/components/message/MessageActions.tsx:110
+#: src/components/message/MessageActionsDrawer.tsx:241
 msgid "Bookmark message"
-msgstr ""
+msgstr "Μήνυμα σελιδοδείκτη"
 
-#: src/components/bookmarks/BookmarksPanel.tsx:200
+#: src/components/bookmarks/BookmarksPanel.tsx:191
 msgid "Bookmark messages to save them for later reference"
-msgstr ""
+msgstr "Μηνύματα σελιδοδείκτη για να τα αποθηκεύσετε για μελλοντική αναφορά"
 
-#: src/components/message/Message.tsx:674
-#: src/components/message/Message.tsx:752
+#: src/components/message/Message.tsx:723
+#: src/components/message/Message.tsx:801
 msgid "Bookmarked"
-msgstr ""
+msgstr "Σελιδοδείκτης"
 
-#: src/components/bookmarks/BookmarkItem.tsx:56
+#: src/components/bookmarks/BookmarkItem.tsx:53
 msgid "Bookmarked image"
-msgstr ""
+msgstr "Εικόνα σελιδοδείκτη"
 
-#: src/components/bookmarks/BookmarkItem.tsx:73
+#: src/components/bookmarks/BookmarkItem.tsx:70
 msgid "Bookmarked sticker"
-msgstr ""
+msgstr "Αυτοκόλλητο σελιδοδείκτη"
 
-#: src/components/direct/DirectMessage.tsx:680
+#: src/components/direct/DirectMessage.tsx:687
 #: src/components/space/Channel.tsx:900
 msgid "Bookmarks"
-msgstr ""
+msgstr "Σελιδοδείκτες"
 
 #: src/components/user/UserOnlineStateIndicator.tsx:30
 msgid "Busy"
@@ -475,8 +484,8 @@ msgstr "Η άδεια κάμερας είναι απαραίτητη για να
 #: src/components/modals/ConversationSettingsModal.tsx:63
 #: src/components/primitives/FileUpload/FileUpload.native.tsx:173
 #: src/hooks/business/channels/useChannelManagement.ts:247
-#: src/hooks/business/messages/useMessageActions.ts:158
-#: src/hooks/business/messages/usePinnedMessages.ts:245
+#: src/hooks/business/messages/useMessageActions.ts:159
+#: src/hooks/business/messages/usePinnedMessages.ts:246
 #: src/hooks/business/spaces/useRoleManagement.ts:64
 #: src/hooks/business/user/useFileUpload.native.ts:48
 #: src/hooks/platform/files/useFileDownload.native.ts:82
@@ -512,7 +521,7 @@ msgstr "Εικονίδιο καναλιού"
 msgid "Channel Managers"
 msgstr "Διαχειριστές καναλιού"
 
-#: src/components/space/Channel.tsx:1288
+#: src/components/space/Channel.tsx:1284
 msgid "Channel members"
 msgstr "Μέλη καναλιού"
 
@@ -613,7 +622,7 @@ msgstr "Configuratiesleutel"
 msgid "Connecting"
 msgstr "Σύνδεση"
 
-#: src/components/direct/DirectMessage.tsx:646
+#: src/components/direct/DirectMessage.tsx:653
 msgid "Conversation settings"
 msgstr "Ρυθμίσεις συνομιλίας"
 
@@ -621,8 +630,10 @@ msgstr "Ρυθμίσεις συνομιλίας"
 msgid "Conversation Settings"
 msgstr "Ρυθμίσεις Συνομιλίας"
 
+#: src/components/message/MessageActions.tsx:97
 #: src/components/message/MessageActions.tsx:101
-#: src/components/message/MessageActions.tsx:105
+#: src/components/message/MessageActionsMenu.tsx:226
+#: src/components/message/MessageActionsMenu.tsx:233
 #: src/components/ui/ClickToCopyContent.native.tsx:203
 #: src/components/ui/ClickToCopyContent.native.tsx:275
 #: src/components/ui/ClickToCopyContent.tsx:153
@@ -630,9 +641,9 @@ msgstr "Ρυθμίσεις Συνομιλίας"
 msgid "Copied!"
 msgstr "Αντιγράφηκε!"
 
-#: src/components/direct/DirectMessage.tsx:306
-#: src/components/direct/DirectMessage.tsx:628
-#: src/components/direct/DirectMessage.tsx:748
+#: src/components/direct/DirectMessage.tsx:313
+#: src/components/direct/DirectMessage.tsx:635
+#: src/components/direct/DirectMessage.tsx:755
 #: src/components/modals/UserSettingsModal/General.tsx:118
 #: src/components/user/ExpandableUserAvatar.tsx:90
 #: src/components/user/UserProfile.tsx:109
@@ -653,13 +664,18 @@ msgstr "Αντιγραφή συνδέσμου πρόσκλησης στο πρό
 msgid "Copy Key & Continue"
 msgstr "Αντιγραφή Κλειδιού & Συνεχίστε"
 
-#: src/components/message/MessageActions.tsx:106
-#: src/components/message/MessageActionsDrawer.tsx:206
+#: src/components/message/MessageActionsMenu.tsx:226
+msgid "Copy link"
+msgstr ""
+
+#: src/components/message/MessageActions.tsx:102
+#: src/components/message/MessageActionsDrawer.tsx:202
+#: src/components/message/MessageActionsMenu.tsx:233
 msgid "Copy message"
 msgstr "Αντιγραφή μηνύματος"
 
-#: src/components/message/MessageActions.tsx:102
-#: src/components/message/MessageActionsDrawer.tsx:198
+#: src/components/message/MessageActions.tsx:98
+#: src/components/message/MessageActionsDrawer.tsx:194
 msgid "Copy message link"
 msgstr "Αντιγραφή συνδέσμου μηνύματος"
 
@@ -731,17 +747,18 @@ msgstr "Προεπιλεγμένο Κανάλι"
 msgid "Default Space settings provide the most typical chat experience, but for higher privacy guarantees, review these advanced settings."
 msgstr "Οι προεπιλεγμένες ρυθμίσεις του Space παρέχουν την πιο τυπική εμπειρία συνομιλίας, αλλά για υψηλότερες εγγυήσεις ιδιωτικότητας, αναθεωρήστε αυτές τις προηγμένες ρυθμίσεις."
 
-#: src/hooks/business/messages/useMessageActions.ts:160
+#: src/hooks/business/messages/useMessageActions.ts:161
 msgid "delete"
 msgstr "διαγραφή"
 
+#: src/components/message/MessageActionsMenu.tsx:275
 #: src/components/modals/ConfirmationModal.native.tsx:26
 #: src/components/modals/ConfirmationModal.tsx:28
 #: src/components/modals/ConversationSettingsModal.tsx:62
 #: src/components/modals/SpaceSettingsModal/Emojis.tsx:103
 #: src/components/modals/SpaceSettingsModal/Stickers.tsx:105
 #: src/hooks/business/channels/useChannelManagement.ts:246
-#: src/hooks/business/messages/useMessageActions.ts:157
+#: src/hooks/business/messages/useMessageActions.ts:158
 #: src/hooks/business/spaces/useRoleManagement.ts:63
 msgid "Delete"
 msgstr "Διαγραφή"
@@ -766,8 +783,8 @@ msgstr "Διαγραφή Ομάδας"
 #~ msgid "Delete Link"
 #~ msgstr "Verwijder Link"
 
-#: src/components/message/MessageActions.tsx:118
-#: src/components/message/MessageActionsDrawer.tsx:267
+#: src/components/message/MessageActions.tsx:112
+#: src/components/message/MessageActionsDrawer.tsx:252
 msgid "Delete message"
 msgstr "Διαγραφή μηνύματος"
 
@@ -836,7 +853,7 @@ msgid "Direct Message"
 msgstr "Άμεσο Μήνυμα"
 
 #: src/components/direct/DirectMessageContactsList.tsx:25
-#: src/components/navbar/NavMenu.tsx:97
+#: src/components/navbar/NavMenu.tsx:101
 msgid "Direct Messages"
 msgstr "Άμεσες Μηνύματα"
 
@@ -872,6 +889,10 @@ msgstr "Συρτάρι"
 msgid "Drop your profile photo here"
 msgstr "Ρίξε τη φωτογραφία προφίλ σου εδώ"
 
+#: src/components/message/MessageActionsMenu.tsx:240
+msgid "Edit"
+msgstr ""
+
 #. placeholder {0}: index + 1
 #: src/components/modals/EditHistoryModal.tsx:91
 msgid "Edit {0}"
@@ -885,12 +906,16 @@ msgstr "Επεξεργασία Καναλιού"
 msgid "Edit Group"
 msgstr "Επεξεργασία Ομάδας"
 
+#: src/components/message/MessageActionsMenu.tsx:247
+msgid "Edit history"
+msgstr ""
+
 #: src/components/modals/EditHistoryModal.tsx:58
 msgid "Edit History"
 msgstr "Ιστορικό Επεξεργασίας"
 
-#: src/components/message/MessageActions.tsx:108
-#: src/components/message/MessageActionsDrawer.tsx:215
+#: src/components/message/MessageActions.tsx:104
+#: src/components/message/MessageActionsDrawer.tsx:211
 msgid "Edit message"
 msgstr "Επεξεργασία μηνύματος"
 
@@ -992,9 +1017,9 @@ msgstr "Αποτυχία αποκρυπτογράφησης μηνύματος �
 msgid "Failed to generate invite link. Please try again."
 msgstr "Απέτυχε η δημιουργία του συνδέσμου πρόσκλησης. Παρακαλώ δοκιμάστε ξανά."
 
-#: src/components/bookmarks/BookmarksPanel.tsx:189
+#: src/components/bookmarks/BookmarksPanel.tsx:180
 msgid "Failed to load bookmarks"
-msgstr ""
+msgstr "Αποτυχία φόρτωσης σελιδοδεικτών"
 
 #: src/components/primitives/FileUpload/FileUpload.native.tsx:105
 msgid "Failed to open image picker"
@@ -1183,7 +1208,7 @@ msgstr "Εισαγωγή Υπάρχοντος Κλειδιού"
 msgid "Important first-time user information:"
 msgstr "Σημαντικές πληροφορίες για νέους χρήστες:"
 
-#: src/components/message/PinnedMessagesPanel.tsx:203
+#: src/components/message/PinnedMessagesPanel.tsx:197
 msgid "Important messages will be pinned here"
 msgstr "Σημαντικά μηνύματα θα καρφιτσωθούν εδώ"
 
@@ -1265,12 +1290,12 @@ msgstr "Συμμετοχή στον Χώρο..."
 msgid "Joining..."
 msgstr "Συμμετοχή..."
 
-#: src/components/bookmarks/BookmarkItem.tsx:141
-#: src/components/message/PinnedMessagesPanel.tsx:92
+#: src/components/bookmarks/BookmarkItem.tsx:135
+#: src/components/message/PinnedMessagesPanel.tsx:95
 msgid "Jump"
 msgstr "Άλμα"
 
-#: src/components/message/MessageList.tsx:523
+#: src/components/message/MessageList.tsx:535
 msgid "Jump to present"
 msgstr "Μετάβαση στο παρόν"
 
@@ -1343,19 +1368,19 @@ msgstr "Ας πάμε!"
 msgid "Light"
 msgstr "Φως"
 
-#: src/components/bookmarks/BookmarksPanel.tsx:180
+#: src/components/bookmarks/BookmarksPanel.tsx:171
 msgid "Loading bookmarks..."
-msgstr ""
+msgstr "Φόρτωση σελιδοδεικτών..."
 
-#: src/components/message/MessageList.tsx:534
+#: src/components/message/MessageList.tsx:546
 msgid "Loading message..."
 msgstr "Φόρτωση μηνύματος..."
 
-#: src/components/notifications/NotificationPanel.tsx:158
+#: src/components/notifications/NotificationPanel.tsx:165
 msgid "Loading notifications..."
 msgstr "Φόρτωση ειδοποιήσεων..."
 
-#: src/components/message/PinnedMessagesPanel.tsx:191
+#: src/components/message/PinnedMessagesPanel.tsx:185
 msgid "Loading pinned messages..."
 msgstr "Φόρτωση καρφιτσωμένων μηνυμάτων..."
 
@@ -1405,13 +1430,13 @@ msgstr "Διαχειριστείτε τις ρυθμίσεις σας για α�
 msgid "Manual Backup Required"
 msgstr "Απαιτείται χειροκίνητο αντίγραφο ασφαλείας"
 
-#: src/components/notifications/NotificationPanel.tsx:208
+#: src/components/notifications/NotificationPanel.tsx:215
 msgid "Mark all as read"
 msgstr "Σήμανση όλων ως αναγνωσμένων"
 
-#: src/components/direct/DirectMessage.tsx:661
-#: src/components/direct/DirectMessage.tsx:855
-#: src/components/space/Channel.tsx:929
+#: src/components/direct/DirectMessage.tsx:668
+#: src/components/direct/DirectMessage.tsx:861
+#: src/components/space/Channel.tsx:926
 msgid "Members List"
 msgstr "Λίστα μελών"
 
@@ -1419,7 +1444,7 @@ msgstr "Λίστα μελών"
 msgid "Mention Everyone"
 msgstr "Αναφορά σε όλους"
 
-#: src/components/message/MessageActionsDrawer.tsx:179
+#: src/components/message/MessageActionsDrawer.tsx:175
 msgid "Message actions"
 msgstr "Ενέργειες μηνυμάτων"
 
@@ -1427,8 +1452,8 @@ msgstr "Ενέργειες μηνυμάτων"
 msgid "Message deleted"
 msgstr "Μήνυμα διαγράφηκε"
 
-#: src/components/message/Message.tsx:690
-#: src/components/message/Message.tsx:768
+#: src/components/message/Message.tsx:739
+#: src/components/message/Message.tsx:817
 msgid "Message does not have a valid signature, this may not be from the sender"
 msgstr "Το μήνυμα δεν έχει έγκυρη υπογραφή, αυτό μπορεί να μην είναι από τον αποστολέα"
 
@@ -1444,7 +1469,7 @@ msgstr "Τα μηνύματα ΔΕΝ είναι υπογεγραμμένα!"
 msgid "Messages are signed!"
 msgstr "Τα μηνύματα είναι υπογεγραμμένα!"
 
-#: src/components/message/MessageActions.tsx:96
+#: src/components/message/MessageActions.tsx:92
 msgid "More reactions"
 msgstr "Περισσότερες αντιδράσεις"
 
@@ -1461,25 +1486,25 @@ msgstr "Νέο Άμεσο Μήνυμα"
 msgid "New Messages"
 msgstr "Νέα Μηνύματα"
 
-#: src/components/bookmarks/BookmarksPanel.tsx:217
+#: src/components/bookmarks/BookmarksPanel.tsx:208
 msgid "No bookmarks found"
-msgstr ""
+msgstr "Δεν βρέθηκαν σελιδοδείκτες"
 
-#: src/components/bookmarks/BookmarksPanel.tsx:214
+#: src/components/bookmarks/BookmarksPanel.tsx:205
 msgid "No bookmarks in DMs"
-msgstr ""
+msgstr "Δεν υπάρχουν σελιδοδείκτες στα DMs"
 
-#: src/components/bookmarks/BookmarksPanel.tsx:212
+#: src/components/bookmarks/BookmarksPanel.tsx:203
 msgid "No bookmarks in spaces"
-msgstr ""
+msgstr "Δεν υπάρχουν σελιδοδείκτες σε χώρους"
 
-#: src/components/bookmarks/BookmarksPanel.tsx:216
+#: src/components/bookmarks/BookmarksPanel.tsx:207
 msgid "No bookmarks in this space"
-msgstr ""
+msgstr "Δεν υπάρχουν σελιδοδείκτες σε αυτόν τον χώρο"
 
-#: src/components/bookmarks/BookmarksPanel.tsx:198
+#: src/components/bookmarks/BookmarksPanel.tsx:189
 msgid "No bookmarks yet"
-msgstr ""
+msgstr "Δεν υπάρχουν σελιδοδείκτες ακόμα"
 
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:155
 msgid "No conversations found"
@@ -1497,7 +1522,7 @@ msgstr "Δεν υπάρχουν διαθέσιμες αξιολογήσεις π
 msgid "No messages found"
 msgstr "Δεν βρέθηκαν μηνύματα"
 
-#: src/components/message/PinnedMessagesPanel.tsx:199
+#: src/components/message/PinnedMessagesPanel.tsx:193
 msgid "No pinned messages yet"
 msgstr "Δεν υπάρχουν καρφιτσωμένα μηνύματα ακόμα"
 
@@ -1507,13 +1532,13 @@ msgstr "Δεν υπάρχουν καρφιτσωμένα μηνύματα ακό
 #~ msgid "No unread mentions"
 #~ msgstr "Δεν υπάρχουν μη αναγνωσμένες αναφορές"
 
-#: src/components/notifications/NotificationPanel.tsx:166
+#: src/components/notifications/NotificationPanel.tsx:173
 msgid "No unread notifications"
 msgstr "Δεν υπάρχουν μη αναγνωσμένες ειδοποιήσεις"
 
 #: src/components/space/Channel.tsx:614
-#: src/components/space/Channel.tsx:1136
-#: src/components/space/Channel.tsx:1327
+#: src/components/space/Channel.tsx:1132
+#: src/components/space/Channel.tsx:1323
 msgid "No users found!"
 msgstr "Δε βρέθηκαν χρήστες!"
 
@@ -1624,11 +1649,12 @@ msgstr "Βιβλιοθήκη φωτογραφιών"
 msgid "Photo library permission is required to select images"
 msgstr "Η άδεια πρόσβασης στη βιβλιοθήκη φωτογραφιών είναι απαραίτητη για την επιλογή εικόνων"
 
-#: src/hooks/business/messages/usePinnedMessages.ts:247
+#: src/hooks/business/messages/usePinnedMessages.ts:248
 msgid "pin"
 msgstr "pin"
 
-#: src/hooks/business/messages/usePinnedMessages.ts:244
+#: src/components/message/MessageActionsMenu.tsx:264
+#: src/hooks/business/messages/usePinnedMessages.ts:245
 msgid "Pin"
 msgstr "Καρφίτσωμα"
 
@@ -1636,7 +1662,7 @@ msgstr "Καρφίτσωμα"
 msgid "Pin channel to top"
 msgstr "Καρφίτσωμα καναλιού στην κορυφή"
 
-#: src/components/message/PinnedMessagesPanel.tsx:202
+#: src/components/message/PinnedMessagesPanel.tsx:196
 msgid "Pin important messages to keep them easily accessible"
 msgstr "Καρφιτσώστε σημαντικά μηνύματα για να είναι εύκολα προσβάσιμα"
 
@@ -1645,8 +1671,8 @@ msgstr "Καρφιτσώστε σημαντικά μηνύματα για να �
 msgid "Pin limit reached ({0})"
 msgstr "Έχει επιτευχθεί το όριο καρφιτσώματος ({0})"
 
-#: src/components/message/MessageActions.tsx:112
-#: src/components/message/MessageActionsDrawer.tsx:235
+#: src/components/message/MessageActions.tsx:108
+#: src/components/message/MessageActionsDrawer.tsx:231
 msgid "Pin message"
 msgstr "Καρφιτσώστε το μήνυμα"
 
@@ -1662,14 +1688,14 @@ msgstr "Καρφιτσώστε μηνύματα"
 msgid "Pin to top"
 msgstr "Καρφίτσωμα στην κορυφή"
 
-#: src/components/message/Message.tsx:658
-#: src/components/message/Message.tsx:736
+#: src/components/message/Message.tsx:707
+#: src/components/message/Message.tsx:785
 msgid "Pinned"
 msgstr "Καρφιτσωμένα"
 
 #. placeholder {0}: mapSenderToUser(message.pinnedBy)?.displayName || message.pinnedBy
-#: src/components/message/Message.tsx:657
-#: src/components/message/Message.tsx:735
+#: src/components/message/Message.tsx:706
+#: src/components/message/Message.tsx:784
 msgid "Pinned by {0}"
 msgstr "Καρφιτσωμένο από {0}"
 
@@ -1677,7 +1703,7 @@ msgstr "Καρφιτσωμένο από {0}"
 msgid "Pinned Messages"
 msgstr "Καρφιτσωμένα μηνύματα"
 
-#: src/components/message/MessageActions.tsx:91
+#: src/components/message/MessageActions.tsx:87
 msgid "Pinned!"
 msgstr "Καρφιτσωμένο!"
 
@@ -1709,8 +1735,8 @@ msgstr "Przetwarzanie obrazu... To może zająć chwilę w przypadku dużych pli
 
 #: src/components/message/MessageActions.tsx:114
 #: src/components/message/MessageActionsDrawer.tsx:252
-msgid "Processing..."
-msgstr ""
+#~ msgid "Processing..."
+#~ msgstr "Επεξεργασία..."
 
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:354
 msgid "Public Invite Links"
@@ -1768,11 +1794,12 @@ msgstr "Ανανέωση"
 msgid "Remove"
 msgstr "Αφαίρεση"
 
-#: src/components/bookmarks/BookmarkItem.tsx:145
-#: src/components/message/MessageActions.tsx:116
-#: src/components/message/MessageActionsDrawer.tsx:254
+#: src/components/bookmarks/BookmarkItem.tsx:139
+#: src/components/message/MessageActions.tsx:110
+#: src/components/message/MessageActionsDrawer.tsx:241
+#: src/components/message/MessageActionsMenu.tsx:255
 msgid "Remove bookmark"
-msgstr ""
+msgstr "Αφαίρεση σελιδοδείκτη"
 
 #: src/components/user/UserProfile.tsx:158
 msgid "Removing..."
@@ -1783,8 +1810,9 @@ msgstr "Αφαίρεση..."
 msgid "Replies"
 msgstr "Απαντήσεις"
 
-#: src/components/message/MessageActions.tsx:98
-#: src/components/message/MessageActionsDrawer.tsx:190
+#: src/components/message/MessageActions.tsx:94
+#: src/components/message/MessageActionsDrawer.tsx:186
+#: src/components/message/MessageActionsMenu.tsx:220
 msgid "Reply"
 msgstr "Απάντηση"
 
@@ -1859,13 +1887,13 @@ msgstr "Αποθήκευση..."
 msgid "Search failed: {0}"
 msgstr "Αποτυχία αναζήτησης: {0}"
 
-#: src/hooks/useSearchContext.native.ts:102
-#: src/hooks/useSearchContext.ts:94
+#: src/hooks/useSearchContext.native.ts:98
+#: src/hooks/useSearchContext.ts:90
 msgid "Search here"
 msgstr "Αναζητήστε εδώ"
 
-#: src/hooks/useSearchContext.native.ts:100
-#: src/hooks/useSearchContext.ts:92
+#: src/hooks/useSearchContext.native.ts:96
+#: src/hooks/useSearchContext.ts:88
 msgid "Search in this Space"
 msgstr "Αναζήτηση σε αυτό το Χώρος"
 
@@ -1873,8 +1901,8 @@ msgstr "Αναζήτηση σε αυτό το Χώρος"
 msgid "Search in this Space..."
 msgstr "Αναζήτηση σε αυτό το Χώρο..."
 
-#: src/components/direct/DirectMessage.tsx:707
-#: src/components/space/Channel.tsx:948
+#: src/components/direct/DirectMessage.tsx:714
+#: src/components/space/Channel.tsx:945
 msgid "Search Messages"
 msgstr "Αναζήτηση Μηνυμάτων"
 
@@ -1890,7 +1918,7 @@ msgstr "Αποτελέσματα Αναζήτησης"
 msgid "Search username or address"
 msgstr "Αναζήτηση ονόματος χρήστη ή διεύθυνσης"
 
-#: src/components/space/Channel.tsx:1299
+#: src/components/space/Channel.tsx:1295
 msgid "Search Username or Address"
 msgstr "Αναζήτηση Όνομα χρήστη ή Διεύθυνση"
 
@@ -1983,8 +2011,8 @@ msgstr "Εμφάνιση ειδοποιήσεων επιτραπέζιου υπ�
 msgid "show home screen"
 msgstr "εμφάνιση αρχικής οθόνης"
 
-#: src/components/search/SearchResults.tsx:186
-#: src/components/search/SearchResults.tsx:213
+#: src/components/search/SearchResults.tsx:187
+#: src/components/search/SearchResults.tsx:214
 msgid "Showing first 500 results. Refine your search for more specific results."
 msgstr "Εμφάνιση των πρώτων 500 αποτελεσμάτων. Βελτιώστε την αναζήτησή σας για πιο συγκεκριμένα αποτελέσματα."
 
@@ -2091,9 +2119,9 @@ msgstr "Η σελίδα που ψάχνετε δεν υπάρχει ή έχει 
 msgid "This action cannot be undone and will permanently remove all the Space settings. To delete the Space, you must first delete all Channels."
 msgstr "Deze actie kan niet ongedaan worden gemaakt en zal alle instellingen van de Μόνιμη διαγραφή Χώρου. Για να διαγράψετε τον Χώρο, πρέπει πρώτα alle Kanalen verwijderen."
 
-#: src/components/bookmarks/BookmarksPanel.tsx:74
+#: src/components/bookmarks/BookmarksPanel.tsx:64
 msgid "This conversation"
-msgstr ""
+msgstr "Αυτή η συνομιλία"
 
 #: src/components/modals/CreateSpaceModal.tsx:160
 #: src/components/modals/SpaceSettingsModal/General.tsx:169
@@ -2117,15 +2145,13 @@ msgstr "Αυτή είναι η δημόσια διεύθυνσή σας και �
 msgid "This link will not expire, but you can generate a new one at any time, which will invalidate the old link."
 msgstr "Deze link verloopt niet, maar je kunt op elk moment een nieuwe genereren, wat de oude link ongeldig maakt."
 
-#: src/hooks/business/validation/useDisplayNameValidation.ts:23
-#: src/hooks/business/validation/useDisplayNameValidation.ts:52
 #~ msgid "This name conflicts with @everyone mentions."
 #~ msgstr "Αυτό το όνομα συγκρούεται με τις αναφορές @everyone."
 
 #: src/hooks/business/validation/useDisplayNameValidation.ts:23
 #: src/hooks/business/validation/useDisplayNameValidation.ts:52
 msgid "This name conflicts with mention keywords."
-msgstr ""
+msgstr "Αυτή η ονομασία συγκρούεται με τις λέξεις-κλειδιά αναφοράς."
 
 #: src/components/modals/SpaceSettingsModal/Roles.tsx:58
 msgid "This protects your identity as the space owner. However, if you're the only one with this role, your identity becomes obvious. Consider having multiple users (real or fake accounts) with the same role for better privacy protection."
@@ -2137,9 +2163,9 @@ msgstr "Αυτό προστατεύει την ταυτότητά σας ως ι
 msgid "This public invite link is no longer valid."
 msgstr "Deze openbare uitnodigingslink is niet langer geldig."
 
-#: src/components/bookmarks/BookmarksPanel.tsx:81
+#: src/components/bookmarks/BookmarksPanel.tsx:71
 msgid "This Space"
-msgstr ""
+msgstr "Αυτός ο Χώρος"
 
 #: src/hooks/business/spaces/useInviteManagement.ts:128
 msgid "This user is already a member of this space."
@@ -2165,7 +2191,11 @@ msgstr "TIP: Houd shift ingedrukt terwijl je {protipAction} klikt om deze bevest
 msgid "To disable notifications, please change the setting in your browser settings. Notifications cannot be disabled programmatically."
 msgstr "Για να απενεργοποιήσετε τις ειδοποιήσεις, παρακαλώ αλλάξτε την ρύθμιση στις ρυθμίσεις του προγράμματος περιήγησής σας. Οι ειδοποιήσεις δεν μπορούν να απενεργοποιηθούν προγραμματικά."
 
-#: src/utils/dateFormatting.ts:27
+#: src/utils/dateFormatting.ts:28
+msgid "Today"
+msgstr ""
+
+#: src/utils/dateFormatting.ts:37
 msgid "Today at {timeFormatted}"
 msgstr "Σήμερα στις {timeFormatted}"
 
@@ -2229,19 +2259,19 @@ msgstr "Άγνωστο"
 msgid "Unknown Space"
 msgstr "Άγνωστο Χώρος"
 
-#: src/components/message/MessagePreview.tsx:176
+#: src/components/message/MessagePreview.tsx:202
 msgid "Unknown time"
 msgstr "Άγνωστη ώρα"
 
-#: src/components/bookmarks/BookmarkItem.tsx:124
+#: src/components/bookmarks/BookmarkItem.tsx:118
 #: src/components/context/MessageDB.bak.tsx:961
 #: src/components/context/MessageDB.bak.tsx:980
 #: src/components/context/MessageDB.bak.tsx:3043
 #: src/components/context/MessageDB.bak.tsx:4122
 #: src/components/context/MessageDB.bak.tsx:5292
-#: src/components/direct/DirectMessage.tsx:166
-#: src/components/direct/DirectMessage.tsx:181
-#: src/components/direct/DirectMessage.tsx:528
+#: src/components/direct/DirectMessage.tsx:173
+#: src/components/direct/DirectMessage.tsx:188
+#: src/components/direct/DirectMessage.tsx:535
 #: src/components/message/MessageComposer.tsx:501
 #: src/components/message/MessageComposer.tsx:508
 #: src/components/message/MessageEditTextarea.tsx:225
@@ -2249,12 +2279,12 @@ msgstr "Άγνωστη ώρα"
 #: src/components/message/MessageEditTextarea.tsx:267
 #: src/components/message/MessageEditTextarea.tsx:271
 #: src/components/message/MessageEditTextarea.tsx:277
-#: src/components/message/MessagePreview.tsx:170
-#: src/components/message/PinnedMessagesPanel.tsx:75
+#: src/components/message/MessagePreview.tsx:196
+#: src/components/message/PinnedMessagesPanel.tsx:78
 #: src/components/modals/ConversationSettingsModal.tsx:104
 #: src/components/modals/NewDirectMessageModal.tsx:66
-#: src/components/notifications/NotificationPanel.tsx:241
-#: src/components/notifications/NotificationPanel.tsx:260
+#: src/components/notifications/NotificationPanel.tsx:248
+#: src/components/notifications/NotificationPanel.tsx:268
 #: src/hooks/business/channels/useChannelMessages.ts:144
 #: src/hooks/business/conversations/useDirectMessageData.ts:57
 #: src/hooks/business/conversations/useDirectMessageData.ts:75
@@ -2276,16 +2306,17 @@ msgstr "Άγνωστη ώρα"
 msgid "Unknown User"
 msgstr "Άγνωστος Χρήστης"
 
-#: src/hooks/business/messages/usePinnedMessages.ts:247
+#: src/hooks/business/messages/usePinnedMessages.ts:248
 msgid "unpin"
 msgstr "unpin"
 
-#: src/hooks/business/messages/usePinnedMessages.ts:244
+#: src/components/message/MessageActionsMenu.tsx:264
+#: src/hooks/business/messages/usePinnedMessages.ts:245
 msgid "Unpin"
 msgstr "Ξεκαρφίτσωμα"
 
-#: src/components/message/MessageActions.tsx:112
-#: src/components/message/MessageActionsDrawer.tsx:235
+#: src/components/message/MessageActions.tsx:108
+#: src/components/message/MessageActionsDrawer.tsx:231
 msgid "Unpin message"
 msgstr "Αφαίρεση καρφιτσώματος μηνύματος"
 
@@ -2293,15 +2324,15 @@ msgstr "Αφαίρεση καρφιτσώματος μηνύματος"
 msgid "Unpin Message"
 msgstr "Ξεκαρφίτσωμα Μηνύματος"
 
-#: src/components/message/PinnedMessagesPanel.tsx:97
+#: src/components/message/PinnedMessagesPanel.tsx:100
 msgid "Unpin this post"
 msgstr "Αφαίρεση αυτού του δημοσιεύματος"
 
-#: src/components/message/MessageActions.tsx:92
+#: src/components/message/MessageActions.tsx:88
 msgid "Unpinned!"
 msgstr "Αφαίρεση καρφιτσώματος!"
 
-#: src/components/direct/DirectMessage.tsx:802
+#: src/components/direct/DirectMessage.tsx:808
 msgid "Until you reply, this sender will not see your display name or profile picture"
 msgstr "Μέχρι να απαντήσεις, αυτός ο αποστολέας δεν θα δει το όνομα ή την εικόνα προφίλ σου"
 
@@ -2345,7 +2376,7 @@ msgid "User does not exist."
 msgstr "Ο χρήστης δεν υπάρχει."
 
 #: src/components/space/Channel.tsx:601
-#: src/components/space/Channel.tsx:1122
+#: src/components/space/Channel.tsx:1118
 msgid "Username or Address"
 msgstr "Όνομα χρήστη ή Διεύθυνση"
 
@@ -2357,8 +2388,8 @@ msgstr "useWebSocket πρέπει να χρησιμοποιείται εντός
 msgid "Validating invite..."
 msgstr "Uitnodiging aan het valideren..."
 
-#: src/components/message/MessageActions.tsx:110
-#: src/components/message/MessageActionsDrawer.tsx:225
+#: src/components/message/MessageActions.tsx:106
+#: src/components/message/MessageActionsDrawer.tsx:221
 msgid "View edit history"
 msgstr "Δείτε το ιστορικό επεξεργασίας"
 
@@ -2419,15 +2450,16 @@ msgstr "Wanneer je een bericht ondertekent, bevestig je dat het van je sleutel k
 msgid "When you sign a message, you are confirming that it comes from your key. When you don't sign a message, you have plausible deniability. You can control this setting for each conversation and message individually."
 msgstr "Wanneer je een bericht ondertekent, bevestig je dat het van je sleutel komt. Wanneer je een bericht niet ondertekent, heb je plausibele ontkenning. Je kunt deze instelling voor elk gesprek en elk bericht afzonderlijk beheren."
 
-#: src/utils/dateFormatting.ts:55
+#: src/utils/dateFormatting.ts:29
+#: src/utils/dateFormatting.ts:65
 msgid "Yesterday"
 msgstr "Χθες"
 
-#: src/utils/dateFormatting.ts:30
+#: src/utils/dateFormatting.ts:40
 msgid "Yesterday at {timeFormatted}"
 msgstr "Χθες στις {timeFormatted}"
 
-#: src/components/direct/DirectMessage.tsx:300
+#: src/components/direct/DirectMessage.tsx:307
 #: src/hooks/business/search/useBatchSearchResultsDisplay.ts:139
 msgid "You"
 msgstr "Εσύ"
@@ -2449,7 +2481,7 @@ msgid "You cannot delete a group that contains channels. Delete all {channelCoun
 msgstr "Δεν μπορείτε να διαγράψετε μια ομάδα που περιέχει κανάλια. Διαγράψτε πρώτα όλα τα {channelCount} κανάλια σε αυτήν την ομάδα."
 
 #: src/components/message/MessageComposer.tsx:336
-#: src/components/space/Channel.tsx:1088
+#: src/components/space/Channel.tsx:1084
 msgid "You cannot post in this channel"
 msgstr "Δεν μπορείτε να δημοσιεύσετε σε αυτό το κανάλι"
 
@@ -2470,7 +2502,7 @@ msgstr "Έχεις νέα μη αναγνωσμένα μηνύματα"
 msgid "You won't be able to rejoin unless you are re-invited. Your existing messages will NOT be deleted."
 msgstr "Δεν θα μπορείτε να επανασυνδεθείτε εκτός αν σας ξανακαλέσουν. Τα υπάρχοντα μηνύματά σας ΔΕΝ θα διαγραφούν."
 
-#: src/components/notifications/NotificationPanel.tsx:168
+#: src/components/notifications/NotificationPanel.tsx:175
 msgid "You're all caught up!"
 msgstr "Είστε ενήμεροι!"
 
