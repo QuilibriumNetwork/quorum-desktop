@@ -92,6 +92,8 @@ export default [
       }],
       '@typescript-eslint/no-explicit-any': 'off', // Allow 'any' type
       'no-unused-vars': 'off', // Turn off base rule (use TS version instead)
+      'react/display-name': 'off', // Allow anonymous components (forwardRef, memo)
+      'react/no-unescaped-entities': 'off', // Allow quotes/apostrophes in JSX (needed for i18n)
     },
   },
 ];
