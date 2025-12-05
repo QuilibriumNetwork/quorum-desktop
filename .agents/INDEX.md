@@ -112,8 +112,10 @@ This is the main index for all documentation, bug reports, and task management.
 - [Implement Background Sync Queue for User Settings and Async Operations](tasks/background-sync-queue.md)
 - [Implement Message Forwarding with Privacy Controls](tasks/message-forwarding-with-privacy-controls.md)
 - [Implement Smart Context Extraction Around Mentions in NotificationPanel](tasks/notification-mention-context-extraction.md)
+- [Message Context Menu System](tasks/message-context-menu-system.md)
 - [Multi-User Invite Selection Enhancement](tasks/multi-user-invite-selection.md)
 - [Passkey Import UX Issue](tasks/passkey-import-ux-issue.md)
+- [Refactor Message Highlighting System](tasks/message-highlight-system-refactor.md)
 - [SDK PasskeyModal Customization Props Enhancement](tasks/sdk-passkey-modal-customization-props.md)
 - [Space Folders - Discord-Style Grouping Feature](tasks/server-folders-discord-style.md)
 - [Task: Implement Delete Public Invite Link Feature](tasks/delete-public-invite-link.md)
@@ -288,4 +290,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2025-12-04 17:43:58
+**Last Updated**: 2025-12-05 17:37:45
