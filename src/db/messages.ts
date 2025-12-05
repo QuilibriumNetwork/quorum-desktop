@@ -1021,11 +1021,17 @@ export class MessageDB {
   }
 
   async addMessageToIndex(message: Message): Promise<void> {
+    const searchable = this.messageToSearchable(message);
+
     // Add to space index
     const spaceIndexKey = `space:${message.spaceId}`;
     const spaceIndex = this.searchIndices.get(spaceIndexKey);
     if (spaceIndex) {
-      spaceIndex.add(this.messageToSearchable(message));
+      if (spaceIndex.has(message.messageId)) {
+        spaceIndex.replace(searchable);
+      } else {
+        spaceIndex.add(searchable);
+      }
     }
 
     // If it's a DM, also add to DM index
@@ -1033,7 +1039,11 @@ export class MessageDB {
     const dmIndexKey = `dm:${conversationId}`;
     const dmIndex = this.searchIndices.get(dmIndexKey);
     if (dmIndex) {
-      dmIndex.add(this.messageToSearchable(message));
+      if (dmIndex.has(message.messageId)) {
+        dmIndex.replace(searchable);
+      } else {
+        dmIndex.add(searchable);
+      }
     }
   }
 
