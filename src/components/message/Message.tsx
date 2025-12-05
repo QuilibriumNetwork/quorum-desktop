@@ -24,6 +24,7 @@ import {
   FlexColumn,
   Icon,
   Tooltip,
+  Portal,
 } from '../primitives';
 import { useImageModal } from '../context/ImageModalProvider';
 import './Message.scss';
@@ -42,6 +43,7 @@ import {
 import { useMessageHighlight } from '../../hooks/business/messages/useMessageHighlight';
 import { useViewportMentionHighlight } from '../../hooks/business/messages/useViewportMentionHighlight';
 import MessageActions from './MessageActions';
+import MessageActionsMenu from './MessageActionsMenu';
 import { MessageMarkdownRenderer } from './MessageMarkdownRenderer';
 import { isTouchDevice } from '../../utils/platform';
 import { hapticLight } from '../../utils/haptic';
@@ -79,6 +81,8 @@ type MessageProps = {
   setEmojiPickerOpenDirection: React.Dispatch<
     React.SetStateAction<string | undefined>
   >;
+  emojiPickerPosition: { x: number; y: number } | null;
+  setEmojiPickerPosition: React.Dispatch<React.SetStateAction<{ x: number; y: number } | null>>;
   hoverTarget: string | undefined;
   setHoverTarget: React.Dispatch<React.SetStateAction<string | undefined>>;
   setInReplyTo: React.Dispatch<React.SetStateAction<MessageType | undefined>>;
@@ -120,6 +124,8 @@ export const Message = React.memo(
     setEmojiPickerOpen,
     emojiPickerOpenDirection,
     setEmojiPickerOpenDirection,
+    emojiPickerPosition,
+    setEmojiPickerPosition,
     hoverTarget,
     setHoverTarget,
     setInReplyTo,
@@ -144,6 +150,7 @@ export const Message = React.memo(
     // Component state that needs to be available to hooks
     const [showUserProfile, setShowUserProfile] = useState<boolean>(false);
     const [editingMessageId, setEditingMessageId] = useState<string | null>(null);
+    const [contextMenu, setContextMenu] = useState<{ x: number; y: number } | null>(null);
 
     // Modal contexts
     const { showImageModal } = useImageModal();
@@ -375,6 +382,18 @@ export const Message = React.memo(
       [message, messageActions, pinnedMessages, user, handleMoreReactions]
     );
 
+    // Handle right-click context menu (desktop only)
+    const handleContextMenu = useCallback(
+      (e: React.MouseEvent) => {
+        // Only show context menu on non-touch devices
+        if (isTouchDevice()) return;
+
+        e.preventDefault();
+        setContextMenu({ x: e.clientX, y: e.clientY });
+      },
+      []
+    );
+
     return (
       <FlexColumn
         ref={mentionRef}
@@ -393,6 +412,7 @@ export const Message = React.memo(
         onMouseOver={interactions.handleMouseOver}
         onMouseOut={interactions.handleMouseOut}
         onClick={interactions.handleMessageClick}
+        onContextMenu={handleContextMenu}
       >
         {/* 3-Dots Menu Button for Touch Devices - Top Right Corner */}
         {isTouchDevice() && (
@@ -594,7 +614,7 @@ export const Message = React.memo(
                 />
               )}
 
-              {emojiPickerOpen === message.messageId && (
+              {emojiPickerOpen === message.messageId && !emojiPickerPosition && (
                 <Container
                   onClick={(e: React.MouseEvent) => e.stopPropagation()}
                   className={
@@ -617,6 +637,34 @@ export const Message = React.memo(
                     }}
                   />
                 </Container>
+              )}
+
+              {/* Fixed position emoji picker (opened from context menu) */}
+              {emojiPickerOpen === message.messageId && emojiPickerPosition && (
+                <Portal>
+                  <Container
+                    onClick={(e: React.MouseEvent) => e.stopPropagation()}
+                    className="fixed z-[10002]"
+                    style={{
+                      left: Math.min(emojiPickerPosition.x, window.innerWidth - 352),
+                      top: Math.min(emojiPickerPosition.y, window.innerHeight - 435),
+                    }}
+                  >
+                    <EmojiPicker
+                      suggestedEmojisMode={SuggestionMode.FREQUENT}
+                      customEmojis={emojiPicker.customEmojis}
+                      getEmojiUrl={(unified) => {
+                        return '/apple/64/' + unified + '.png';
+                      }}
+                      skinTonePickerLocation={SkinTonePickerLocation.PREVIEW}
+                      theme={Theme.DARK}
+                      onEmojiClick={(e) => {
+                        emojiPicker.handleDesktopEmojiClick(e.emoji);
+                        setEmojiPickerPosition(null);
+                      }}
+                    />
+                  </Container>
+                </Portal>
               )}
 
               {/* Mobile Emoji Picker */}
@@ -1141,6 +1189,67 @@ export const Message = React.memo(
           </FlexRow>
         )}
 
+        {/* Desktop Context Menu */}
+        {contextMenu && (
+          <MessageActionsMenu
+            message={message}
+            position={contextMenu}
+            onClose={() => setContextMenu(null)}
+            onReply={() => {
+              messageActions.handleReply();
+              setContextMenu(null);
+            }}
+            onCopyLink={messageActions.handleCopyLink}
+            onCopyMessageText={messageActions.handleCopyMessageText}
+            onDelete={
+              messageActions.canUserDelete
+                ? () =>
+                    messageActions.handleDelete({
+                      shiftKey: false,
+                    } as React.MouseEvent)
+                : undefined
+            }
+            onPin={
+              pinnedMessages.canPinMessages
+                ? () =>
+                    pinnedMessages.togglePin(
+                      { shiftKey: false } as React.MouseEvent,
+                      message
+                    )
+                : undefined
+            }
+            onReaction={messageActions.handleReaction}
+            onMoreReactions={() => {
+              const menuPosition = contextMenu;
+              setContextMenu(null);
+              // Use setTimeout to ensure context menu is closed before opening emoji picker
+              setTimeout(() => {
+                if (menuPosition) {
+                  setEmojiPickerPosition(menuPosition);
+                }
+                messageActions.handleMoreReactions(0);
+              }, 0);
+            }}
+            onEdit={
+              messageActions.canUserEdit ? messageActions.handleEdit : undefined
+            }
+            onViewEditHistory={
+              messageActions.canViewEditHistory
+                ? messageActions.handleViewEditHistory
+                : undefined
+            }
+            canDelete={messageActions.canUserDelete}
+            canEdit={messageActions.canUserEdit}
+            canViewEditHistory={messageActions.canViewEditHistory}
+            canPinMessages={pinnedMessages.canPinMessages}
+            userAddress={user.currentPasskeyInfo!.address}
+            copiedLinkId={messageActions.copiedLinkId}
+            copiedMessageText={messageActions.copiedMessageText}
+            isBookmarked={messageActions.isBookmarked}
+            onBookmarkToggle={messageActions.handleBookmarkToggle}
+          />
+        )}
+
       </FlexColumn>
     );
   },
@@ -1154,6 +1263,7 @@ export const Message = React.memo(
       JSON.stringify(prevProps.message.content) !== JSON.stringify(nextProps.message.content) ||
       JSON.stringify(prevProps.message.edits) !== JSON.stringify(nextProps.message.edits) ||
       prevProps.emojiPickerOpen !== nextProps.emojiPickerOpen ||
+      prevProps.emojiPickerPosition !== nextProps.emojiPickerPosition ||
       prevProps.hoverTarget !== nextProps.hoverTarget ||
       prevProps.height !== nextProps.height ||
       prevProps.kickUserAddress !== nextProps.kickUserAddress ||

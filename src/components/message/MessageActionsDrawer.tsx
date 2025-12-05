@@ -249,7 +249,7 @@ const MessageActionsDrawer: React.FC<MessageActionsDrawerProps> = ({
             style={{ color: 'rgb(var(--danger))' }}
           >
             <Icon name="trash" />
-            <Text>{t`Delete message`}</Text>
+            <Text style={{ color: 'inherit' }}>{t`Delete message`}</Text>
           </div>
         )}
       </div>

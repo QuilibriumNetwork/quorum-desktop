@@ -128,6 +128,15 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
     const [emojiPickerOpen, setEmojiPickerOpen] = useState<string>();
     const [emojiPickerOpenDirection, setEmojiPickerOpenDirection] =
       useState<string>();
+    const [emojiPickerPosition, setEmojiPickerPosition] = useState<{ x: number; y: number } | null>(null);
+
+    // Reset emoji picker position when picker closes
+    useEffect(() => {
+      if (!emojiPickerOpen) {
+        setEmojiPickerPosition(null);
+      }
+    }, [emojiPickerOpen]);
+
     const virtuoso = useRef<VirtuosoHandle>(null);
     const [init, setInit] = useState(false);
     const location = useLocation();
@@ -238,6 +247,8 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
               setEmojiPickerOpen={setEmojiPickerOpen}
               emojiPickerOpenDirection={emojiPickerOpenDirection}
               setEmojiPickerOpenDirection={setEmojiPickerOpenDirection}
+              emojiPickerPosition={emojiPickerPosition}
+              setEmojiPickerPosition={setEmojiPickerPosition}
               message={message}
               customEmoji={customEmoji}
               messageList={messageList}
@@ -274,6 +285,8 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
         setEmojiPickerOpen,
         emojiPickerOpenDirection,
         setEmojiPickerOpenDirection,
+        emojiPickerPosition,
+        setEmojiPickerPosition,
         customEmoji,
         mapSenderToUser,
         hoverTarget,

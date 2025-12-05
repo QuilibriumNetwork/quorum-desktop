@@ -113,7 +113,6 @@ This is the main index for all documentation, bug reports, and task management.
 - [Implement Background Sync Queue for User Settings and Async Operations](tasks/background-sync-queue.md)
 - [Implement Message Forwarding with Privacy Controls](tasks/message-forwarding-with-privacy-controls.md)
 - [Implement Smart Context Extraction Around Mentions in NotificationPanel](tasks/notification-mention-context-extraction.md)
-- [Message Context Menu System](tasks/message-context-menu-system.md)
 - [Multi-User Invite Selection Enhancement](tasks/multi-user-invite-selection.md)
 - [Passkey Import UX Issue](tasks/passkey-import-ux-issue.md)
 - [SDK PasskeyModal Customization Props Enhancement](tasks/sdk-passkey-modal-customization-props.md)
@@ -231,6 +230,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Mention Notification System - Critical Race Condition Fix](tasks/.done/mention-notification-ux-improvements.md)
 - [Mention Rendering: Word Boundary Analysis](tasks/.done/mention-rendering-word-boundary-analysis.md)
 - [Message Bookmarking Feature](tasks/.done/message-bookmarking-feature.md)
+- [Message Context Menu System](tasks/.done/message-context-menu-system.md)
 - [Message Handling Report](tasks/.done/messages-report.md)
 - [Message Highlight System - Complete Analysis & Recommendations](tasks/.done/message-highlight-system-optimization.md)
 - [Message Link Rendering (Discord-style)](tasks/.done/message-link-rendering.md)
@@ -291,4 +291,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2025-12-05 18:00:30
+**Last Updated**: 2025-12-05 18:45:41

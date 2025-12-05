@@ -19,6 +19,7 @@ import { isElectron, isWeb } from './utils/platform';
 import { DefaultImages } from './utils';
 import { i18n } from './i18n';
 import { I18nProvider } from '@lingui/react';
+import { useContextMenuPrevention } from './hooks/useContextMenuPrevention';
 
 window.Buffer = Buffer;
 
@@ -50,6 +51,9 @@ class ErrorBoundary extends React.Component<
 }
 
 const App = () => {
+  // Prevent native browser context menu (except on input fields)
+  useContextMenuPrevention();
+
   const { currentPasskeyInfo, passkeyRegistrationComplete } =
     usePasskeysContext();
   const [user, setUser] = useState<
