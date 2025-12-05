@@ -22,6 +22,7 @@ export default [
       '.claude/**',
       '.agents/**',
       'mobile/test/**',
+      'src/i18n/**', // Auto-generated translation files
     ],
   },
   // JavaScript/JSX files
