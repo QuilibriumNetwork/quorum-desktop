@@ -11,7 +11,7 @@ import { ReactTooltip } from '../ui';
 import { t } from '@lingui/core/macro';
 
 const DirectMessages: React.FunctionComponent = () => {
-  let { address } = useParams<{ address: string }>();
+  const { address } = useParams<{ address: string }>();
   const { keyset } = useRegistrationContext();
   const {
     isMobile,

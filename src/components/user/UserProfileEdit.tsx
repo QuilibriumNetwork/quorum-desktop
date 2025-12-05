@@ -26,8 +26,8 @@ const UserProfileEdit: React.FunctionComponent<{
       >
     | undefined;
 }> = (props) => {
-  let [status, setStatus] = React.useState<string>(props.user.status);
-  let [displayName, setDisplayName] = React.useState<string>(
+  const [status, setStatus] = React.useState<string>(props.user.status);
+  const [displayName, setDisplayName] = React.useState<string>(
     props.user.displayName
   );
   const { currentPasskeyInfo, updateStoredPasskey } = usePasskeysContext();

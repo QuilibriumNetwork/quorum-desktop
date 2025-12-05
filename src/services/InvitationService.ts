@@ -60,7 +60,7 @@ export class InvitationService {
 
     const config_key = await this.messageDB.getSpaceKey(spaceId, 'config');
     const hub_key = await this.messageDB.getSpaceKey(spaceId, 'hub');
-    let response = await this.messageDB.getEncryptionStates({
+    const response = await this.messageDB.getEncryptionStates({
       conversationId: spaceId + '/' + spaceId,
     });
 
@@ -210,8 +210,8 @@ export class InvitationService {
       const ephemeral_key = JSON.parse(
         ch.js_generate_x448()
       ) as secureChannel.X448Keypair;
-      let members = await this.messageDB.getSpaceMembers(spaceId);
-      let filteredMembers = members.filter(
+      const members = await this.messageDB.getSpaceMembers(spaceId);
+      const filteredMembers = members.filter(
         (m) => m.inbox_address !== '' && m.user_address != this.selfAddress
       );
       const encryptionStates = await this.messageDB.getEncryptionStates({
@@ -228,7 +228,7 @@ export class InvitationService {
         );
 
       console.log('new link session', session);
-      let outbounds: string[] = [];
+      const outbounds: string[] = [];
       let newPeerIdSet = {
         [trState.id_peer_map[1].public_key]: 1,
       };
@@ -265,7 +265,7 @@ export class InvitationService {
         };
         idCounter++;
       }
-      let ownRatchet = JSON.parse(session.state);
+      const ownRatchet = JSON.parse(session.state);
       ownRatchet.peer_id_map = newPeerIdSet;
       ownRatchet.id_peer_map = newIdPeerSet;
       session.state = JSON.stringify(ownRatchet);
@@ -823,7 +823,7 @@ export class InvitationService {
           }),
         ];
       });
-      let participant = {
+      const participant = {
         address: currentPasskeyInfo!.address,
         id: ratchet.id,
         inboxAddress: inboxAddress,

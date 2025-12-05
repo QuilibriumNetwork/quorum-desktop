@@ -10,8 +10,8 @@ import './Space.scss';
 
 const Space: React.FunctionComponent = () => {
   const [kickUserAddress, setKickUserAddress] = useState<string>();
-  let params = useParams<{ spaceId: string; channelId: string }>();
-  let { data: space } = useSpace({ spaceId: params.spaceId! });
+  const params = useParams<{ spaceId: string; channelId: string }>();
+  const { data: space } = useSpace({ spaceId: params.spaceId! });
   const { isMobile, isTablet, leftSidebarOpen, closeLeftSidebar, navMenuOpen } =
     useResponsiveLayoutContext();
 

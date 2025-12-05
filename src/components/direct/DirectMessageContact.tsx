@@ -20,7 +20,7 @@ const DirectMessageContact: React.FunctionComponent<{
   timestamp?: number;
 }> = (props) => {
   const navigate = useNavigate();
-  let { address } = useParams<{ address: string }>();
+  const { address } = useParams<{ address: string }>();
   const { isMobile, isTablet, closeLeftSidebar } = useResponsiveLayoutContext();
   const [isNavigating, setIsNavigating] = React.useState(false);
   const isTouch = isTouchDevice();

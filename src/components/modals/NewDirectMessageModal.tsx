@@ -55,7 +55,7 @@ const NewDirectMessageModal: React.FunctionComponent<
 
   // Override handleSubmit to save conversation settings
   const handleSubmitWithSettings = React.useCallback(async () => {
-    if (!!address) {
+    if (address) {
       // Persist the conversation record with the selected non-repudiability
       const now = Date.now();
       try {

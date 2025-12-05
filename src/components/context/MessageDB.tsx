@@ -256,7 +256,7 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
     timestamps: number[],
     apiClient: QuorumApiClient
   ) => {
-    let del = {
+    const del = {
       inbox_address: inboxKeyset.inbox_address,
       timestamps: timestamps,
       inbox_public_key: Buffer.from(

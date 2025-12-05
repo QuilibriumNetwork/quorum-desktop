@@ -81,7 +81,7 @@ export function WebSocketProvider({ children }: WebSocketProviderProps) {
     let outbound: OutboundMessage | undefined;
 
     try {
-      let inboxMap = new Map<string, EncryptedMessage[]>();
+      const inboxMap = new Map<string, EncryptedMessage[]>();
 
       // Process inbound messages
       while ((message = dequeue())) {
@@ -94,7 +94,7 @@ export function WebSocketProvider({ children }: WebSocketProviderProps) {
         inboxMap.set(message.inboxAddress, messages!);
       }
 
-      let allPromises = [] as Promise<void>[];
+      const allPromises = [] as Promise<void>[];
       let totalNewMessages = 0;
 
       for (const [_, messages] of inboxMap) {

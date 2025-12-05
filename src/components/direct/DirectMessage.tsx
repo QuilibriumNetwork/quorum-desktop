@@ -78,7 +78,7 @@ const DirectMessage: React.FC<{}> = () => {
   const [isLoadingHashMessage, setIsLoadingHashMessage] = useState(false);
 
   // Extract business logic hooks but also get the original data for compatibility
-  let { address } = useParams<{ address: string }>();
+  const { address } = useParams<{ address: string }>();
   const conversationId = address! + '/' + address!;
 
   // Store last viewed DM address for navigation persistence
@@ -155,7 +155,7 @@ const DirectMessage: React.FC<{}> = () => {
 
   // Recreate members logic exactly as original (temporary fix)
   const members = useMemo(() => {
-    let m = {} as {
+    const m = {} as {
       [address: string]: {
         displayName?: string;
         userIcon?: string;

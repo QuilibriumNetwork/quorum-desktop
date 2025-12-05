@@ -47,7 +47,7 @@ export class SyncService {
           const memberSet = await this.messageDB.getSpaceMembers(spaceId);
           const messageSet = await this.messageDB.getAllSpaceMessages({ spaceId });
           const hubKey = await this.messageDB.getSpaceKey(spaceId, 'hub');
-          let outbounds: string[] = [];
+          const outbounds: string[] = [];
           const encryptionState = await this.messageDB.getEncryptionStates({
             conversationId: spaceId + '/' + spaceId,
           });
@@ -247,7 +247,7 @@ export class SyncService {
       const messageSet = await this.messageDB.getAllSpaceMessages({ spaceId });
       const hubKey = await this.messageDB.getSpaceKey(spaceId, 'hub');
       const inboxKey = await this.messageDB.getSpaceKey(spaceId, 'inbox');
-      let outbounds: string[] = [];
+      const outbounds: string[] = [];
       const encryptionState = await this.messageDB.getEncryptionStates({
         conversationId: spaceId + '/' + spaceId,
       });
@@ -477,7 +477,7 @@ export class SyncService {
 
         this.enqueueOutbound(async () => {
           const hubKey = await this.messageDB.getSpaceKey(spaceId, 'hub');
-          let outbounds: string[] = [];
+          const outbounds: string[] = [];
 
           const envelope = await secureChannel.SealSyncEnvelope(
             inboxAddress,

@@ -921,7 +921,7 @@ export class MessageService {
     skipSigning?: boolean
   ) {
     this.enqueueOutbound(async () => {
-      let outbounds: string[] = [];
+      const outbounds: string[] = [];
       const nonce = crypto.randomUUID();
 
       // Handle edit-message type
@@ -984,7 +984,7 @@ export class MessageService {
           } as EditMessage,
         } as Message;
 
-        let conversationId = address + '/' + address;
+        const conversationId = address + '/' + address;
         const conversation = await this.messageDB.getConversation({
           conversationId,
         });
@@ -1007,7 +1007,7 @@ export class MessageService {
         }
 
         response = await this.messageDB.getEncryptionStates({ conversationId });
-        let sets = response.map((e) => JSON.parse(e.state));
+        const sets = response.map((e) => JSON.parse(e.state));
 
         let sessions: secureChannel.SealedMessageAndMetadata[] = [];
         // Sign DM unless explicitly skipped
@@ -1152,7 +1152,7 @@ export class MessageService {
                 senderId: currentPasskeyInfo.address,
               },
       } as Message;
-      let conversationId = address + '/' + address;
+      const conversationId = address + '/' + address;
       const conversation = await this.messageDB.getConversation({
         conversationId,
       });
@@ -1174,7 +1174,7 @@ export class MessageService {
       }
 
       response = await this.messageDB.getEncryptionStates({ conversationId });
-      let sets = response.map((e) => JSON.parse(e.state));
+      const sets = response.map((e) => JSON.parse(e.state));
 
       let sessions: secureChannel.SealedMessageAndMetadata[] = [];
       // Sign DM unless explicitly skipped
@@ -1321,7 +1321,7 @@ export class MessageService {
       },
       {} as { [key: string]: EncryptionState }
     );
-    let found = states[message.inboxAddress];
+    const found = states[message.inboxAddress];
 
     if (
       message.inboxAddress == keyset.deviceKeyset.inbox_keyset.inbox_address
@@ -1479,7 +1479,7 @@ export class MessageService {
     let decryptedContent: Message | null = null;
     let newState: string | null = null;
 
-    let keys = JSON.parse(found.state);
+    const keys = JSON.parse(found.state);
     let updatedUserProfile: secureChannel.UserProfile | undefined;
     let sentAccept: boolean | undefined;
     if (keys.sending_inbox) {
@@ -2059,7 +2059,7 @@ export class MessageService {
                   privateKey: inner_envelope.configKey,
                   publicKey: configPub,
                 });
-                let template = JSON.parse(inner_envelope.state);
+                const template = JSON.parse(inner_envelope.state);
                 template.peer_key = Buffer.from(
                   new Uint8Array(
                     keyset.deviceKeyset.inbox_keyset.inbox_encryption_key.private_key
@@ -2657,7 +2657,7 @@ export class MessageService {
     parentMessage?: Message
   ) {
     this.enqueueOutbound(async () => {
-      let outbounds: string[] = [];
+      const outbounds: string[] = [];
       const nonce = crypto.randomUUID();
       const space = await this.messageDB.getSpace(spaceId);
 
@@ -2722,11 +2722,11 @@ export class MessageService {
           } as EditMessage,
         } as Message;
 
-        let conversationId = spaceId + '/' + channelId;
+        const conversationId = spaceId + '/' + channelId;
         const conversation = await this.messageDB.getConversation({
           conversationId,
         });
-        let response = await this.messageDB.getEncryptionStates({
+        const response = await this.messageDB.getEncryptionStates({
           conversationId: spaceId + '/' + spaceId,
         });
         const sets = response.map((e) => JSON.parse(e.state));
@@ -2881,11 +2881,11 @@ export class MessageService {
         replyMetadata,
       } as Message;
 
-      let conversationId = spaceId + '/' + channelId;
+      const conversationId = spaceId + '/' + channelId;
       const conversation = await this.messageDB.getConversation({
         conversationId,
       });
-      let response = await this.messageDB.getEncryptionStates({
+      const response = await this.messageDB.getEncryptionStates({
         conversationId: spaceId + '/' + spaceId,
       });
       const sets = response.map((e) => JSON.parse(e.state));

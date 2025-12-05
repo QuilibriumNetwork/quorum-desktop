@@ -51,7 +51,7 @@ export const MarkdownViewer: React.FC<MarkdownViewerProps> = ({
     };
     
     // Process tables first (before other replacements)
-    let html = markdown
+    const html = markdown
       // Extract and protect tables
       .replace(/(\|[^\n]+\|\n)(\|[\s:|-]+\|\n)((?:\|[^\n]+\|\n?)+)/g, (match, header, separator, body) => {
         const placeholder = `__TABLE_${tablePlaceholders.length}__`;

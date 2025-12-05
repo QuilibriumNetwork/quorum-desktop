@@ -19,7 +19,7 @@ export const useSpaceOrdering = (
   useEffect(() => {
     const processSpaces = async () => {
       const spaceSet = config.spaceIds;
-      let dedupeList: { [spaceId: string]: boolean } = {};
+      const dedupeList: { [spaceId: string]: boolean } = {};
 
       // Deduplicate space IDs
       for (const id of spaceSet) {

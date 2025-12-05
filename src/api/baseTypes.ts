@@ -255,7 +255,7 @@ abstract class AbstractQuorumApiClient {
     const controller = new AbortController();
     const requestStartedAt = Date.now();
 
-    let timeoutId = resolvedTimeout
+    const timeoutId = resolvedTimeout
       ? setTimeout(() => {
           if (this.options.onTimeout) {
             this.options.onTimeout({
@@ -536,7 +536,7 @@ export class QuorumApiClient extends AbstractQuorumApiClient {
       return (vars: any): string => {
         let template = pair[0] as string;
 
-        for (let name of pair[1] as string[]) {
+        for (const name of pair[1] as string[]) {
           template = template.replace('${' + name + '}', vars[name]);
         }
 
@@ -612,15 +612,15 @@ export const isQuorumError = (error: unknown): error is QuorumError =>
   error instanceof QuorumError;
 
 export type QuorumErrorOptions<
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   
   T extends object = object,
 > = {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   
   error?: unknown;
 } & T;
 
 export class QuorumError extends Error {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   
   readonly error?: unknown;
   public hasBeenTracked?: boolean;
 
@@ -834,9 +834,9 @@ function mergeIntoDefaultOptions<T>({
   defaults,
   options,
 }: {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   
   defaults: Record<any, any>;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   
   options: Record<any, any>;
 }): T {
   const mergedOptions = { ...defaults };

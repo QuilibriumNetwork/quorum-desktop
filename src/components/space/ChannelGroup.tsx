@@ -36,11 +36,11 @@ const ChannelGroup: React.FunctionComponent<{
   const { openChannelEditor } = useModalContext();
   const navigate = useNavigate();
   const { isMobile, isTablet, closeLeftSidebar } = useResponsiveLayoutContext();
-  let { spaceId, channelId } = useParams<{
+  const { spaceId, channelId } = useParams<{
     spaceId: string;
     channelId: string;
   }>();
-  let { data: isSpaceOwner } = useSpaceOwner({ spaceId: spaceId! });
+  const { data: isSpaceOwner } = useSpaceOwner({ spaceId: spaceId! });
   const isTouch = isTouchDevice();
 
   // Sort channels: pinned first (newest pin on top), then unpinned (by creation date)

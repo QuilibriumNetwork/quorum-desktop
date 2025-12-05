@@ -40,7 +40,7 @@ export function stripMarkdown(text: string): string {
     // The markdown stripper treats @<address> as HTML tags and removes them
     // So we temporarily replace them with unique placeholders
     const mentionPlaceholders = new Map<string, string>();
-    let processed = text
+    const processed = text
       .replace(/@<(Qm[a-zA-Z0-9]+)>/g, (match) => {
         // Use a unique placeholder that won't be affected by markdown processing
         // Use special unicode characters to avoid conflicts

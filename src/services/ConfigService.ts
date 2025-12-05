@@ -147,7 +147,7 @@ export class ConfigService {
             await this.messageDB.saveSpaceKey(key);
           }
 
-          let reg = (await this.apiClient.getSpace(space.spaceId)).data;
+          const reg = (await this.apiClient.getSpace(space.spaceId)).data;
           this.spaceInfo.current[space.spaceId] = reg;
 
           const manifestPayload = await this.apiClient.getSpaceManifest(
@@ -406,7 +406,7 @@ export class ConfigService {
       config.bookmarks = await this.messageDB.getBookmarks();
       // Note: deletedBookmarkIds will be reset AFTER successful sync
 
-      let iv = crypto.getRandomValues(new Uint8Array(12));
+      const iv = crypto.getRandomValues(new Uint8Array(12));
       const ciphertext =
         Buffer.from(
           await window.crypto.subtle.encrypt(

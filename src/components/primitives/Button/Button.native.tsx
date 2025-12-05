@@ -26,7 +26,7 @@ const Button: React.FC<NativeButtonProps> = (props) => {
     const baseHeight = 8 * 2 + 16 + 4; // paddingVertical * 2 + fontSize + extra
     const pillRadius = size === 'large' ? 30 : size === 'small' ? 20 : 25;
 
-    let style = [styles.base, { borderRadius: pillRadius }];
+    const style = [styles.base, { borderRadius: pillRadius }];
 
     // Add full width styling if needed
     if (props.fullWidth) {
@@ -206,7 +206,7 @@ const Button: React.FC<NativeButtonProps> = (props) => {
 
   const getTextStyle = () => {
     const size = props.size || 'normal';
-    let style = [styles.text];
+    const style = [styles.text];
 
     // Add size-specific text styles
     if (size === 'compact' || size === 'small') {

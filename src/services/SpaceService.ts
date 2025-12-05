@@ -791,8 +791,8 @@ export class SpaceService {
         ).toString('hex'),
       };
       await this.apiClient.postSpaceManifest(spaceId, manifest);
-      let members = await this.messageDB.getSpaceMembers(spaceId);
-      let filteredMembers = members.filter(
+      const members = await this.messageDB.getSpaceMembers(spaceId);
+      const filteredMembers = members.filter(
         (m) =>
           m.inbox_address !== '' &&
           m.inbox_address &&
@@ -811,7 +811,7 @@ export class SpaceService {
           registration,
           filteredMembers.length + 200
         );
-      let outbounds: string[] = [];
+      const outbounds: string[] = [];
       let newPeerIdSet = {
         [trState.id_peer_map[1].public_key]: 1,
       };
@@ -848,7 +848,7 @@ export class SpaceService {
         };
         idCounter++;
       }
-      let ownRatchet = JSON.parse(session.state);
+      const ownRatchet = JSON.parse(session.state);
       ownRatchet.peer_id_map = newPeerIdSet;
       ownRatchet.id_peer_map = newIdPeerSet;
       session.state = JSON.stringify(ownRatchet);

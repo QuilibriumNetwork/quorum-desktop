@@ -753,7 +753,7 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
     timestamps: number[],
     apiClient: QuorumApiClient
   ) => {
-    let del = {
+    const del = {
       inbox_address: inboxKeyset.inbox_address,
       timestamps: timestamps,
       inbox_public_key: Buffer.from(
@@ -855,7 +855,7 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
         },
         {} as { [key: string]: EncryptionState }
       );
-      let found = states[message.inboxAddress];
+      const found = states[message.inboxAddress];
 
       if (
         message.inboxAddress == keyset.deviceKeyset.inbox_keyset.inbox_address
@@ -1014,7 +1014,7 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
       let decryptedContent: Message | null = null;
       let newState: string | null = null;
 
-      let keys = JSON.parse(found.state);
+      const keys = JSON.parse(found.state);
       let updatedUserProfile: secureChannel.UserProfile | undefined;
       let sentAccept: boolean | undefined;
       if (keys.sending_inbox) {
@@ -1592,7 +1592,7 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
                     privateKey: inner_envelope.configKey,
                     publicKey: configPub,
                   });
-                  let template = JSON.parse(inner_envelope.state);
+                  const template = JSON.parse(inner_envelope.state);
                   template.peer_key = Buffer.from(
                     new Uint8Array(
                       keyset.deviceKeyset.inbox_keyset.inbox_encryption_key.private_key
@@ -2174,7 +2174,7 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
             const memberSet = await messageDB.getSpaceMembers(spaceId);
             const messageSet = await messageDB.getAllSpaceMessages({ spaceId });
             const hubKey = await messageDB.getSpaceKey(spaceId, 'hub');
-            let outbounds: string[] = [];
+            const outbounds: string[] = [];
             const encryptionState = await messageDB.getEncryptionStates({
               conversationId: spaceId + '/' + spaceId,
             });
@@ -2401,7 +2401,7 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
         const messageSet = await messageDB.getAllSpaceMessages({ spaceId });
         const hubKey = await messageDB.getSpaceKey(spaceId, 'hub');
         const inboxKey = await messageDB.getSpaceKey(spaceId, 'inbox');
-        let outbounds: string[] = [];
+        const outbounds: string[] = [];
         const encryptionState = await messageDB.getEncryptionStates({
           conversationId: spaceId + '/' + spaceId,
         });
@@ -2656,7 +2656,7 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
 
           enqueueOutbound(async () => {
             const hubKey = await messageDB.getSpaceKey(spaceId, 'hub');
-            let outbounds: string[] = [];
+            const outbounds: string[] = [];
 
             const envelope = await secureChannel.SealSyncEnvelope(
               inboxAddress,
@@ -2882,7 +2882,7 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
       skipSigning?: boolean
     ) => {
       enqueueOutbound(async () => {
-        let outbounds: string[] = [];
+        const outbounds: string[] = [];
         const nonce = crypto.randomUUID();
         const messageId = await crypto.subtle.digest(
           'SHA-256',
@@ -2918,7 +2918,7 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
                   senderId: currentPasskeyInfo.address,
                 },
         } as Message;
-        let conversationId = address + '/' + address;
+        const conversationId = address + '/' + address;
         const conversation = await messageDB.getConversation({
           conversationId,
         });
@@ -2938,7 +2938,7 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
         }
 
         response = await messageDB.getEncryptionStates({ conversationId });
-        let sets = response.map((e) => JSON.parse(e.state));
+        const sets = response.map((e) => JSON.parse(e.state));
 
         let sessions: secureChannel.SealedMessageAndMetadata[] = [];
         // Sign DM unless explicitly skipped
@@ -3720,8 +3720,8 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
           ).toString('hex'),
         };
         await apiClient.postSpaceManifest(spaceId, manifest);
-        let members = await messageDB.getSpaceMembers(spaceId);
-        let filteredMembers = members.filter(
+        const members = await messageDB.getSpaceMembers(spaceId);
+        const filteredMembers = members.filter(
           (m) =>
             m.inbox_address !== '' &&
             m.inbox_address &&
@@ -3740,7 +3740,7 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
             registration,
             filteredMembers.length + 200
           );
-        let outbounds: string[] = [];
+        const outbounds: string[] = [];
         let newPeerIdSet = {
           [trState.id_peer_map[1].public_key]: 1,
         };
@@ -3777,7 +3777,7 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
           };
           idCounter++;
         }
-        let ownRatchet = JSON.parse(session.state);
+        const ownRatchet = JSON.parse(session.state);
         ownRatchet.peer_id_map = newPeerIdSet;
         ownRatchet.id_peer_map = newIdPeerSet;
         session.state = JSON.stringify(ownRatchet);
@@ -4257,7 +4257,7 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
 
     const config_key = await messageDB.getSpaceKey(spaceId, 'config');
     const hub_key = await messageDB.getSpaceKey(spaceId, 'hub');
-    let response = await messageDB.getEncryptionStates({
+    const response = await messageDB.getEncryptionStates({
       conversationId: spaceId + '/' + spaceId,
     });
     const sets = response.map((e) => JSON.parse(e.state));
@@ -4383,8 +4383,8 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
         const ephemeral_key = JSON.parse(
           ch.js_generate_x448()
         ) as secureChannel.X448Keypair;
-        let members = await messageDB.getSpaceMembers(spaceId);
-        let filteredMembers = members.filter(
+        const members = await messageDB.getSpaceMembers(spaceId);
+        const filteredMembers = members.filter(
           (m) => m.inbox_address !== '' && m.user_address != selfAddress
         );
         const encryptionStates = await messageDB.getEncryptionStates({
@@ -4401,7 +4401,7 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
           );
 
         console.log("new link session", session);
-        let outbounds: string[] = [];
+        const outbounds: string[] = [];
         let newPeerIdSet = {
           [trState.id_peer_map[1].public_key]: 1,
         };
@@ -4438,7 +4438,7 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
           };
           idCounter++;
         }
-        let ownRatchet = JSON.parse(session.state);
+        const ownRatchet = JSON.parse(session.state);
         ownRatchet.peer_id_map = newPeerIdSet;
         ownRatchet.id_peer_map = newIdPeerSet;
         session.state = JSON.stringify(ownRatchet);
@@ -5013,7 +5013,7 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
               }),
             ];
           });
-          let participant = {
+          const participant = {
             address: currentPasskeyInfo!.address,
             id: ratchet.id,
             inboxAddress: inboxAddress,
@@ -5200,7 +5200,7 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
       skipSigning?: boolean
     ) => {
       enqueueOutbound(async () => {
-        let outbounds: string[] = [];
+        const outbounds: string[] = [];
         const nonce = crypto.randomUUID();
         const space = await messageDB.getSpace(spaceId);
         const messageId = await crypto.subtle.digest(
@@ -5236,11 +5236,11 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
                 },
         } as Message;
 
-        let conversationId = spaceId + '/' + channelId;
+        const conversationId = spaceId + '/' + channelId;
         const conversation = await messageDB.getConversation({
           conversationId,
         });
-        let response = await messageDB.getEncryptionStates({
+        const response = await messageDB.getEncryptionStates({
           conversationId: spaceId + '/' + spaceId,
         });
         const sets = response.map((e) => JSON.parse(e.state));
@@ -5426,7 +5426,7 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
               await messageDB.saveSpaceKey(key);
             }
 
-            let reg = (await apiClient.getSpace(space.spaceId)).data;
+            const reg = (await apiClient.getSpace(space.spaceId)).data;
             spaceInfo.current[space.spaceId] = reg;
 
             const manifestPayload = await apiClient.getSpaceManifest(
@@ -5632,7 +5632,7 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
 
         config.spaceKeys = await Promise.all(spaceKeysPromises);
 
-        let iv = crypto.getRandomValues(new Uint8Array(12));
+        const iv = crypto.getRandomValues(new Uint8Array(12));
         const ciphertext =
           Buffer.from(
             await window.crypto.subtle.encrypt(
