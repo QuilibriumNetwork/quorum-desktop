@@ -3,6 +3,7 @@ import { Icon, Tooltip } from '../primitives';
 import { getIconColorHex } from '../space/IconPicker/types';
 import { NavItem } from '../../db/messages';
 import { isTouchDevice } from '../../utils/platform';
+import { useDragStateContext } from '../../context/DragStateContext';
 import { formatMentionCount } from '../../utils/formatMentionCount';
 import './Folder.scss';
 
@@ -17,13 +18,23 @@ interface FolderButtonProps {
 const FolderButton: React.FC<FolderButtonProps> = ({
   folder,
   hasUnread,
-  unreadCount,
+  unreadCount: _unreadCount, // Reserved for future use
   mentionCount = 0,
   size = 'regular',
 }) => {
   const isTouch = isTouchDevice();
   const backgroundColor = getIconColorHex(folder.color);
   const sizeClass = size === 'small' ? 'folder-button--small' : '';
+
+  // Check if we're in a drag context (will be undefined if not in DragStateProvider)
+  let isDragging = false;
+  try {
+    const dragContext = useDragStateContext();
+    isDragging = dragContext.isDragging;
+  } catch {
+    // Not in drag context, tooltips should work normally
+    isDragging = false;
+  }
 
   const buttonElement = (
     <div
@@ -33,7 +44,7 @@ const FolderButton: React.FC<FolderButtonProps> = ({
       <Icon
         name={folder.icon || 'folder'}
         color="#ffffff"
-        size={size === 'small' ? 'sm' : 'md'}
+        size={size === 'small' ? 'lg' : 'xl'}
       />
       {mentionCount > 0 && (
         <span className="folder-button-mention-bubble">
@@ -43,8 +54,8 @@ const FolderButton: React.FC<FolderButtonProps> = ({
     </div>
   );
 
-  // Don't show tooltip on touch devices
-  if (isTouch) {
+  // Don't show tooltip on touch devices or while dragging
+  if (isTouch || isDragging) {
     return buttonElement;
   }
 

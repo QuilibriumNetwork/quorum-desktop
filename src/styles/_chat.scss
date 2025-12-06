@@ -7,9 +7,9 @@
   z-index: 11; /* Higher than sidebar space-header (z-index: 10) */
   display: flex;
   flex-direction: row;
-  height: calc(100vh - 14px);
+  height: calc(100vh - $layout-top-offset);
   @supports (height: 100dvh) {
-    height: calc(100dvh - 14px);
+    height: calc(100dvh - $layout-top-offset);
   }
 
   // Electron-specific height adjustment for titlebar

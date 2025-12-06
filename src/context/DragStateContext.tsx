@@ -1,9 +1,13 @@
 import React, { createContext, useContext, ReactNode } from 'react';
-import { useDragState } from '../hooks/business/ui/useDragState';
+import { useDragState, ActiveDragItem, DropTarget } from '../hooks/business/ui/useDragState';
 
 interface DragStateContextType {
   isDragging: boolean;
   setIsDragging: (dragging: boolean) => void;
+  activeItem: ActiveDragItem | null;
+  setActiveItem: (item: ActiveDragItem | null) => void;
+  dropTarget: DropTarget | null;
+  setDropTarget: (target: DropTarget | null) => void;
 }
 
 const DragStateContext = createContext<DragStateContextType | undefined>(

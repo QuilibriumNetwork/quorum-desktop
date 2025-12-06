@@ -41,6 +41,9 @@ header {
   display: flex;
   flex-direction: column;
   align-items: center;
+  // Align DM icon top with chat area: header padding (8px) + this = $layout-top-offset (14px)
+  padding-top: calc($layout-top-offset - $s-2);
+  padding-bottom: $s-2; // Space between DM icon and first space/folder
 
   .space-icon {
     width: $nav-space-icon-size;
@@ -51,11 +54,10 @@ header {
     background-size: contain;
     background-color: #373036ff;
     background-repeat: no-repeat;
-    margin-top: 7px;
-    display: inline-block;
+    // Use block to avoid baseline alignment gap that affects toggle positioning
+    display: block;
     transition: all $duration-100 linear;
     cursor: pointer;
-    //margin-bottom: 16px;
   }
 
   // Mobile phone optimization
@@ -63,9 +65,7 @@ header {
     .space-icon {
       width: $nav-space-icon-size-mobile;
       height: $nav-space-icon-size-mobile;
-      margin-top: 5px;
       border-radius: $rounded-lg;
-      //margin-bottom: 8px;
     }
   }
 }
@@ -79,6 +79,8 @@ header {
   display: flex;
   flex-direction: column;
   align-items: center;
+  gap: $s-2-5; // Spacing between all items (10px)
+  padding-top: $s-2; // Top padding instead of margin on first item
 }
 
 .nav-menu-spaces::-webkit-scrollbar {
@@ -94,4 +96,12 @@ header {
 
 .box-shadow {
   box-shadow: 0 $s-1 $s-3 rgba(0, 0, 0, 0.05);
+}
+
+// Ghost style for drag overlay - semi-transparent with shadow
+.drag-overlay-ghost {
+  opacity: 0.9;
+  cursor: grabbing;
+  filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.3));
+  transform: scale(1.05);
 }

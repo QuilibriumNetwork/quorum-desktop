@@ -18,21 +18,24 @@ export interface FolderContextMenuProps {
   onDelete: () => void;
 }
 
+const OFFSET_RIGHT = 12; // $s-3 = 12px
+
 function calculatePosition(clickX: number, clickY: number) {
   const viewportW = window.innerWidth;
   const viewportH = window.innerHeight;
 
-  const flipX = clickX + MENU_WIDTH + PADDING > viewportW;
+  const offsetClickX = clickX + OFFSET_RIGHT;
+  const flipX = offsetClickX + MENU_WIDTH + PADDING > viewportW;
   const flipY = clickY + MENU_HEIGHT + PADDING > viewportH;
 
   return {
-    x: flipX ? Math.max(PADDING, clickX - MENU_WIDTH) : clickX,
+    x: flipX ? Math.max(PADDING, clickX - MENU_WIDTH) : offsetClickX,
     y: flipY ? Math.max(PADDING, clickY - MENU_HEIGHT) : clickY,
   };
 }
 
 const FolderContextMenu: React.FC<FolderContextMenuProps> = ({
-  folder: _folder,
+  folder,
   position,
   onClose,
   onOpenSettings,
@@ -89,25 +92,31 @@ const FolderContextMenu: React.FC<FolderContextMenuProps> = ({
           top: adjustedPosition.y,
         }}
       >
+        {/* Folder name header */}
+        <div className="folder-context-menu-header">
+          <FlexRow align="center" gap={2}>
+            <Icon name="folder" size="sm" />
+            <Text weight="medium">{folder.name}</Text>
+          </FlexRow>
+        </div>
+
         <button
           className="folder-context-menu-item"
           onClick={handleSettingsClick}
         >
           <FlexRow align="center" gap={2}>
             <Icon name="settings" size="sm" />
-            <Text>{t`Folder Settings`}</Text>
+            <Text size="sm">{t`Folder Settings`}</Text>
           </FlexRow>
         </button>
-
-        <div className="folder-context-menu-divider" />
 
         <button
           className="folder-context-menu-item folder-context-menu-item--danger"
           onClick={handleDeleteClick}
         >
           <FlexRow align="center" gap={2}>
-            <Icon name="folder-minus" size="sm" />
-            <Text>{t`Delete Folder`}</Text>
+            <Icon name="trash" size="sm" />
+            <Text size="sm">{t`Delete Folder`}</Text>
           </FlexRow>
         </button>
       </div>

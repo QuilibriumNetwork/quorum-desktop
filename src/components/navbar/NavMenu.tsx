@@ -1,18 +1,18 @@
 import * as React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { DndContext, closestCenter } from '@dnd-kit/core';
+import { DndContext, closestCenter, DragOverlay } from '@dnd-kit/core';
 import { SortableContext } from '@dnd-kit/sortable';
-import { restrictToVerticalAxis } from '@dnd-kit/modifiers';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
 import ExpandableNavMenu from './ExpandableNavMenu';
 import SpaceButton from './SpaceButton';
 import SpaceIcon from './SpaceIcon';
+import FolderButton from './FolderButton';
 import FolderContainer from './FolderContainer';
 import FolderContextMenu from './FolderContextMenu';
 import { t } from '@lingui/core/macro';
 import { useModals } from '../context/ModalProvider';
 import { NavItem } from '../../db/messages';
-import { DragStateProvider } from '../../context/DragStateContext';
+import { DragStateProvider, useDragStateContext } from '../../context/DragStateContext';
 import {
   useSpaces,
   useConfig,
@@ -20,6 +20,7 @@ import {
   useSpaceDragAndDrop,
   useFolderStates,
   useNavItems,
+  useFolderDragAndDrop,
 } from '../../hooks';
 import { useSpaceMentionCounts } from '../../hooks/business/mentions';
 import { useSpaceReplyCounts } from '../../hooks/business/replies';
@@ -93,15 +94,24 @@ const NavMenuContent: React.FC<NavMenuProps> = (props) => {
 
   // Legacy: Use old space ordering hook when no items
   const { mappedSpaces, setMappedSpaces } = useSpaceOrdering(spaces, config);
-  const { handleDragStart, handleDragEnd, sensors } = useSpaceDragAndDrop({
+  const _legacyDrag = useSpaceDragAndDrop({
     mappedSpaces,
     setMappedSpaces,
     config,
   });
 
+  // New: Folder-aware drag and drop (handles migration from legacy format)
+  const folderDrag = useFolderDragAndDrop({
+    config,
+  });
+
+  // Always use folder drag - it handles both legacy and new formats via migrateToItems
+  const { handleDragStart, handleDragMove, handleDragEnd, sensors } = folderDrag;
+
   // New: Use nav items hook for folders support
   const { navItems, allSpaces } = useNavItems(spaces, config);
   const { isExpanded, toggleFolder } = useFolderStates();
+  const { activeItem } = useDragStateContext();
 
   // Use allSpaces from navItems if available, otherwise fall back to mappedSpaces
   const spacesForCounts = hasItems ? allSpaces : mappedSpaces;
@@ -168,9 +178,9 @@ const NavMenuContent: React.FC<NavMenuProps> = (props) => {
       <div className="nav-menu-spaces grow">
         <DndContext
           sensors={sensors}
-          modifiers={[restrictToVerticalAxis]}
           collisionDetection={closestCenter}
           onDragStart={handleDragStart}
+          onDragMove={handleDragMove}
           onDragEnd={handleDragEnd}
         >
           {hasItems ? (
@@ -239,6 +249,50 @@ const NavMenuContent: React.FC<NavMenuProps> = (props) => {
               })}
             </SortableContext>
           )}
+
+          {/* DragOverlay renders a floating ghost copy - can move freely outside NavMenu */}
+          <DragOverlay
+            dropAnimation={{
+              duration: 200,
+              easing: 'ease',
+            }}
+          >
+            {activeItem ? (
+              <div className="drag-overlay-ghost">
+                {activeItem.type === 'space' ? (
+                  (() => {
+                    const space = allSpaces.find((s) => s.spaceId === activeItem.id);
+                    if (!space) return null;
+                    return (
+                      <SpaceIcon
+                        notifs={false}
+                        selected={false}
+                        size="regular"
+                        iconUrl={space.iconUrl}
+                        spaceName={space.spaceName}
+                        spaceId={space.spaceId}
+                        noTooltip
+                      />
+                    );
+                  })()
+                ) : (
+                  (() => {
+                    const folderItem = navItems.find(
+                      (ni) => ni.item.type === 'folder' && ni.item.id === activeItem.id
+                    );
+                    if (!folderItem || folderItem.item.type !== 'folder') return null;
+                    return (
+                      <FolderButton
+                        folder={folderItem.item}
+                        hasUnread={false}
+                        unreadCount={0}
+                      />
+                    );
+                  })()
+                )}
+              </div>
+            ) : null}
+          </DragOverlay>
         </DndContext>
       </div>
       <div className="expanded-nav-buttons-container">

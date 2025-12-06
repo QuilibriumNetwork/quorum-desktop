@@ -68,7 +68,7 @@ const SpaceIcon: React.FunctionComponent<SpaceIconProps> = (props) => {
 
   const iconElement = (
     <div className="relative z-[999]">
-      {!props.noToggle && (
+      {!props.noToggle && !isDragging && (
         <div
           className={`${props.selected ? 'space-icon-selected' : props.notifs ? 'space-icon-has-notifs' : 'space-icon'}-toggle`}
         />
@@ -90,7 +90,7 @@ const SpaceIcon: React.FunctionComponent<SpaceIconProps> = (props) => {
           {...(props.noTooltip ? {} : { id: `${iconId}-anchor` })}
         />
       )}
-      {props.mentionCount && props.mentionCount > 0 && (
+      {props.mentionCount != null && props.mentionCount > 0 && (
         <span className="space-icon-mention-bubble">
           {formatMentionCount(props.mentionCount, 9)}
         </span>

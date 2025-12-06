@@ -4,13 +4,14 @@
   width: $nav-space-icon-size;
   height: $nav-space-icon-size;
   box-sizing: border-box;
-  border-radius: $rounded-full;
+  border-radius: $rounded-lg; // Consistent rounded square shape
   background-position: center;
   background-size: cover;
   background-color: var(--surface-2);
   background-repeat: no-repeat;
-  margin-top: 7px;
-  display: inline-block;
+  // margin-top removed - container uses gap for consistent spacing
+  // Use block instead of inline-block to avoid baseline alignment gap
+  display: block;
   transition: all $duration-100 linear;
   border: $border-2 none var(--surface-border);
 
@@ -18,15 +19,13 @@
   @media (max-width: $screen-xs) {
     width: $nav-space-icon-size-mobile !important;
     height: $nav-space-icon-size-mobile !important;
-    margin-top: 5px;
-    border-radius: $rounded-full;
   }
 }
 
 .space-icon-small {
   width: 40px !important;
   height: 40px !important;
-  margin-top: $s-1;
+  // margin-top removed - container uses gap for consistent spacing
 }
 
 .space-icon-large {
@@ -35,38 +34,52 @@
 }
 
 .space-icon:hover {
-  border-radius: $rounded-full;
   opacity: 0.8;
 }
 
-.space-icon-toggle {
-  opacity: 0;
-  pointer-events: none;
-}
-
-.space-icon-has-notifs-toggle {
+// Base toggle indicator styles (shared)
+@mixin toggle-base {
   content: ' ';
   position: absolute;
   width: $s-1-5;
-  height: $s-1-5;
   border-radius: $rounded-sm;
-  margin-left: -15px;
-  margin-top: 28px;
+  left: -15px;
+  top: 50%;
+  transform: translateY(-50%);
   z-index: 1000;
   background: var(--accent);
   transition: all $duration-100 linear;
+  pointer-events: none;
 
-  // Mobile phone optimization - adjust positioning for narrower NavMenu (54px vs 74px)
+  // Mobile phone optimization - adjust horizontal position for narrower NavMenu
   @media (max-width: $screen-xs) {
-    margin-left: -8px; 
-    margin-top: 22px;
+    left: -8px;
   }
 
-  // Tablet/larger mobile optimization - intermediate positioning between mobile and desktop
+  // Tablet/larger mobile optimization
   @media (min-width: #{$screen-xs + 1px}) and (max-width: $screen-md) {
-    margin-left: -18px;
-    margin-top: 24px;
+    left: -18px;
   }
+}
+
+// Default toggle - hidden, but will show on hover
+.space-icon-toggle {
+  @include toggle-base;
+  height: $s-6; // Same as old selected size for hover
+  opacity: 0;
+}
+
+// Show toggle on hover (desktop only)
+@media (hover: hover) {
+  .relative:hover .space-icon-toggle {
+    opacity: 1;
+  }
+}
+
+// Unread notifications toggle - small dot
+.space-icon-has-notifs-toggle {
+  @include toggle-base;
+  height: $s-1-5; // Dot size
 }
 
 .space-icon-selected {
@@ -77,8 +90,9 @@
   background-size: cover;
   background-color: var(--accent-500);
   background-repeat: no-repeat;
-  margin-top: $s-2;
-  display: inline-block;
+  // margin-top removed - container uses gap for consistent spacing
+  // Use block instead of inline-block to avoid baseline alignment gap
+  display: block;
   box-shadow: 0 0 13px 1px var(--accent-500);
   border: none;
   border-radius: $rounded-lg;
@@ -88,37 +102,36 @@
   @media (max-width: $screen-xs) {
     width: $nav-space-icon-size-mobile !important;
     height: $nav-space-icon-size-mobile !important;
-    margin-top: $s-1;
     border-radius: $rounded-lg;
     box-shadow: none;
   }
+
 }
 
+// Selected toggle - tall bar (larger than hover)
 .space-icon-selected-toggle {
-  content: ' ';
-  border: $border-2;
-  border-radius: $rounded-sm;
-  border-color: var(--accent-500);
-  position: absolute;
-  width: $s-1-5;
-  height: $s-6;
-  margin-left: -15px;
-  margin-top: 21px;
-  z-index: 1000;
+  @include toggle-base;
+  height: $s-10; // Tall bar for selected state (40px)
   background: var(--accent-500);
-  transition: all $duration-100 linear;
+}
 
-  // Mobile phone optimization - adjust positioning for mobile icon size (40px)
-  // Calculation: icon-margin(4px) + (icon-height(40px) / 2) - (toggle-height(20px) / 2) = 14px
-  @media (max-width: $screen-xs) {
-    margin-left: -8px;
-    margin-top: 14px;
+// Drag placeholder - shows where the dragged item was
+.space-icon-drag-placeholder {
+  width: $nav-space-icon-size;
+  height: $nav-space-icon-size;
+  border-radius: $rounded-lg;
+  background-color: var(--surface-2);
+
+  // Size variants
+  &.space-icon-small {
+    width: 40px;
+    height: 40px;
   }
 
-  // Tablet/larger mobile optimization - intermediate positioning between mobile and desktop
-  @media (min-width: #{$screen-xs + 1px}) and (max-width: $screen-md) {
-    margin-left: -18px;
-    margin-top: 17px;
+  // Mobile phone optimization
+  @media (max-width: $screen-xs) {
+    width: $nav-space-icon-size-mobile;
+    height: $nav-space-icon-size-mobile;
   }
 }
 
@@ -161,4 +174,30 @@
 
 html.dark .space-icon-mention-bubble {
   background-color: var(--accent-600);
+}
+
+// Drop target indicator for merge action
+// Shows when dragging to center of a space/folder (will create or add to folder)
+.drop-target-wiggle {
+  position: relative;
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: -4px;
+    border: 3px dashed var(--accent-500);
+    border-radius: $rounded-xl; // Slightly larger than icon's rounded-lg due to inset
+    animation: pulse-border 1s ease-in-out infinite;
+  }
+}
+
+@keyframes pulse-border {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(1.03);
+  }
 }

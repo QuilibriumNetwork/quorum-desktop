@@ -297,3 +297,7 @@ $nav-header-width-mobile: 54px;       /* NavMenu header width on mobile - used i
 $nav-space-icon-size: $s-12;          /* Space icon size (desktop) - 48px - used in NavMenu, SpaceIcon, ExpandableNavMenu */
 $nav-space-icon-size-mobile: $s-12;   /* Space icon size (mobile) - 40px - used in NavMenu, SpaceIcon, ExpandableNavMenu */
 
+/* === LAYOUT TOP OFFSET === */
+/* Space between top of screen and main content areas - keeps NavMenu logo aligned with chat header */
+$layout-top-offset: 14px;             /* Used in: _chat.scss (chat-container height), NavMenu.scss (logo positioning) */
+

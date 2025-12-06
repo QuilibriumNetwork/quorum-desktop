@@ -1,15 +1,21 @@
 @use '@/styles/context-menu' as contextMenu;
+@use '@/styles/variables' as *;
 
 .folder-context-menu {
   @include contextMenu.base;
+  padding-top: 0; // Header handles top padding
 }
 
-.folder-context-menu-divider {
-  @include contextMenu.divider;
+.folder-context-menu-header {
+  padding: $s-2 $s-3;
+  border-bottom: $border solid var(--surface-3);
+  margin-bottom: $s-1;
+  color: var(--color-text-main);
 }
 
 .folder-context-menu-item {
   @include contextMenu.item;
+  padding: $s-1-5 $s-3; // Slightly smaller padding
 
   &--danger {
     @include contextMenu.item-danger;

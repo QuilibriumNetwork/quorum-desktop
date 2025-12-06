@@ -4,14 +4,14 @@
 .folder-button {
   width: $s-12; // 48px
   height: $s-12;
-  border-radius: $rounded-full;
+  border-radius: $rounded-lg; // Consistent rounded square shape (matches space icons)
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   transition: all $duration-150 $ease-in-out;
   position: relative;
-  margin-top: $s-2;
+  // margin-top removed - container uses gap for consistent spacing
 
   // Hover state (desktop only)
   @media (hover: hover) {
@@ -25,7 +25,6 @@
   &--small {
     width: 40px;
     height: 40px;
-    margin-top: $s-1;
   }
 
   // Unread indicator styling
@@ -37,7 +36,6 @@
   @media (max-width: $screen-xs) {
     width: 40px;
     height: 40px;
-    margin-top: $s-1;
 
     &--small {
       width: 36px;
@@ -73,25 +71,77 @@ html.dark .folder-button-mention-bubble {
   background-color: var(--accent-600);
 }
 
-// Expanded folder container
+// Folder container - handles both collapsed and expanded states
 .folder-container {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: $s-1;
-  padding: $s-2 $s-1;
-  border-radius: $rounded-lg;
-  transition: all $duration-200 $ease-in-out;
-  margin-top: $s-2;
+  border-radius: $rounded-xl;
+  // No padding when collapsed - padding only applied when expanded
+  transition:
+    background-color $duration-300 $ease-in-out,
+    padding $duration-300 $ease-in-out;
+
+  // Expanded state - show colored background and add padding
+  &--expanded {
+    background-color: color-mix(in srgb, var(--folder-color) 25%, transparent);
+    padding: $s-1;
+  }
 }
 
-// Container for space icons inside an expanded folder
+// Folder button header
+.folder-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+// Wrapper for spaces - uses CSS grid trick to animate height from 0 to auto
+.folder-spaces-wrapper {
+  display: grid;
+  // grid-template-rows animates between 0fr and 1fr for smooth height transition
+  grid-template-rows: 0fr;
+  transition: grid-template-rows $duration-300 $ease-in-out;
+  // Use clip-path to clip vertically (for collapse animation) while allowing horizontal overflow
+  // Only clip when collapsed - remove clip-path when expanded so tooltips can show
+  // inset(top right bottom left) - negative values extend the clipping region outward
+  clip-path: inset(0 -100px 0 -100px);
+
+  // Expanded state - remove clip-path so tooltips aren't clipped
+  .folder-container--expanded & {
+    grid-template-rows: 1fr;
+    clip-path: none;
+  }
+}
+
+// Container for space icons inside folder
 .folder-spaces {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: $s-0-5;
-  padding-top: $s-1;
+  gap: $s-2-5; // Same gap as nav-menu-spaces (10px)
+  // min-height: 0 is required for the grid animation to work
+  min-height: 0;
+
+  // First space gets top margin for spacing from folder header
+  > :first-child {
+    margin-top: $s-2;
+  }
+
+  // Last space gets bottom margin
+  > :last-child {
+    margin-bottom: $s-1;
+  }
+
+  // Selected space inside folder: no glow, just the left toggle indicator
+  .space-icon-selected {
+    box-shadow: none;
+  }
+
+  // Drag placeholder inside folder: use folder color at 25% opacity
+  .space-icon-drag-placeholder {
+    background-color: color-mix(in srgb, var(--folder-color) 25%, transparent);
+  }
 }
 
 // Selection indicator for folder (mirroring space-icon toggle)
@@ -135,3 +185,4 @@ html.dark .folder-button-mention-bubble {
   background-color: var(--surface-4);
   border: 1px solid var(--surface-border);
 }
+

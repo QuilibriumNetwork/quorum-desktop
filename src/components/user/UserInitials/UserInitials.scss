@@ -60,6 +60,7 @@ html.dark .user-initials {
 .user-initials.space-icon,
 .user-initials.space-icon-selected {
   display: inline-flex !important;
+  border-radius: $rounded-lg !important; // Match space icon rounded square shape
 
   // Override inline fontSize on mobile to match the 40px mobile icon size
   // Calculation: $nav-space-icon-size-mobile (40px) * 0.4 = 16px
