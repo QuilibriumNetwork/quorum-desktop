@@ -26,6 +26,12 @@ export interface IconPickerProps {
   className?: string;
   testID?: string;
   defaultIcon?: IconName; // Icon to use when clearing (for channels that always need an icon)
+  /**
+   * Display mode for the IconPicker
+   * - 'icon-color' (default): Icons are colored, swatches show icon preview
+   * - 'background-color': Icons always white, swatches show as colored backgrounds (for folder icons)
+   */
+  mode?: 'icon-color' | 'background-color';
 }
 
 // Icons that have filled variants in Tabler Icons library
@@ -63,6 +69,7 @@ export const FILLED_ICONS: Set<IconName> = new Set([
   'fire', // IconFlameFilled
   'certificate', // IconRosetteDiscountCheckFilled (new mapping)
   'seedling', // IconSeedlingFilled
+  'folder', // IconFolderFilled
 ]);
 
 // 50 icons organized by tier and category
@@ -74,6 +81,7 @@ export const ICON_OPTIONS: IconOption[] = [
   { name: 'users', tier: 1, category: 'Team' },
   { name: 'comment-dots', tier: 1, category: 'Discussion' },
   { name: 'star', tier: 1, category: 'Important' },
+  { name: 'folder', tier: 1, category: 'Organization' },
 
   // Tier 2: Popular Categories (Second Row)
   { name: 'briefcase', tier: 2, category: 'Business' },

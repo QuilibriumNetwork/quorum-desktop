@@ -48,66 +48,51 @@ cmd.exe /c "cd /d D:\GitHub\Quilibrium\quorum-desktop && npx tsc --noEmit --skip
 
 # IMPLEMENTATION CHECKLIST
 
-## Phase 1: Data Foundation
+## Phase 1: Data Foundation ✅ COMPLETE
 
 ### 1.1 Add `folder` icon to ICON_OPTIONS
-- [ ] **File**: `src/components/space/IconPicker/types.ts`
-- [ ] Add to `ICON_OPTIONS` array:
-  ```typescript
-  { name: 'folder', tier: 1, category: 'Organization' },
-  ```
-- [ ] **STOP**: Run `yarn lint` or check modified files
+- [x] **File**: `src/components/space/IconPicker/types.ts`
+- [x] Added to `ICON_OPTIONS` array: `{ name: 'folder', tier: 1, category: 'Organization' }`
+- [x] Added `folder` to `FILLED_ICONS` set
+- [x] **File**: `src/components/primitives/Icon/types.ts` - Added `'folder'` and `'folder-minus'` to IconName
+- [x] **File**: `src/components/primitives/Icon/iconMapping.ts` - Added folder icon mappings
+- [x] **STOP**: Lint passed
 
 ### 1.2 Add `mode` prop to IconPicker
-- [ ] **File**: `src/components/space/IconPicker/types.ts`
-- [ ] Add to `IconPickerProps`:
-  ```typescript
-  mode?: 'icon-color' | 'background-color';  // default: 'icon-color'
-  ```
-- [ ] **File**: `src/components/space/IconPicker/IconPicker.web.tsx`
-- [ ] When `mode="background-color"`:
-  - Icons always render white
-  - Color swatches show as background previews (circle with color bg, white icon inside)
-- [ ] **STOP**: Run `yarn lint` or check modified files
+- [x] **File**: `src/components/space/IconPicker/types.ts` - Added `mode?: 'icon-color' | 'background-color'`
+- [x] **File**: `src/components/space/IconPicker/IconPicker.web.tsx`
+  - When `mode="background-color"`: icons render white, button shows colored bg, swatches show colored circles with white icons
+  - Added `isBackgroundColorMode` and `displayIconColor` variables
+  - Updated button, variant toggles, color swatches, and icon grid for bg-color mode
+- [x] **File**: `src/components/space/IconPicker/IconPicker.native.tsx` - Same updates for native
+- [x] **File**: `src/components/space/IconPicker/IconPicker.scss` - Added `.icon-picker-bg-swatch` styles
+- [x] **File**: `src/components/space/IconPicker/IconPicker.native.styles.ts` - Added `bgSwatchButton` styles
+- [x] **STOP**: Lint passed
 - [ ] **STOP - VISUAL TEST**: Open any channel editor, verify IconPicker still works normally
 
 ### 1.3 Add NavItem types
-- [ ] **File**: `src/api/quorumApi.ts` (near UserConfig type)
-- [ ] Add types (see [Reference: Data Types](#reference-data-types)):
-  ```typescript
-  export type FolderColor = IconColor;
-
-  export type NavItem =
-    | { type: 'space'; id: string }
-    | {
-        type: 'folder';
-        id: string;
-        name: string;
-        spaceIds: string[];
-        icon?: IconName;
-        color?: FolderColor;
-        createdDate: number;
-        modifiedDate: number;
-      };
-  ```
-- [ ] Update `UserConfig` type:
-  ```typescript
-  items?: NavItem[];  // Optional during migration
-  ```
-- [ ] **STOP**: Run `yarn lint` or check modified files
+- [x] **File**: `src/db/messages.ts` (UserConfig was here, not quorumApi.ts)
+- [x] Added `FolderColor` type alias for IconColor
+- [x] Added `NavItem` discriminated union type (space | folder)
+- [x] Added `items?: NavItem[]` to UserConfig type
+- [x] **STOP**: Lint passed
 
 ### 1.4 Add helper functions
-- [ ] **File**: `src/utils.ts` (or new `src/utils/folderUtils.ts`)
-- [ ] Add `deriveSpaceIds()` function (see [Reference: Helper Functions](#reference-helper-functions))
-- [ ] Add `validateItems()` function
-- [ ] Add `migrateToItems()` function
-- [ ] **STOP**: Run `yarn lint` or check modified files
+- [x] **New File**: `src/utils/folderUtils.ts`
+- [x] Added `deriveSpaceIds()` function
+- [x] Added `validateItems()` function
+- [x] Added `migrateToItems()` function
+- [x] Added `createFolder()` helper
+- [x] Added `findFolderContainingSpace()` helper
+- [x] Added `canCreateFolder()` / `canAddToFolder()` limit check helpers
+- [x] Added constants: `MAX_FOLDERS = 20`, `MAX_SPACES_PER_FOLDER = 50`
+- [x] **STOP**: Lint passed
 
 ### 1.5 Add SpaceButton `size` prop
-- [ ] **File**: `src/components/navbar/SpaceButton.tsx` (or wherever SpaceButton is)
-- [ ] Add prop: `size?: 'regular' | 'small'` (default: 'regular')
-- [ ] When `size="small"`: render at 40px instead of 48px
-- [ ] **STOP**: Run `yarn lint` or check modified files
+- [x] **File**: `src/components/navbar/SpaceButton.tsx` - Added `size?: 'small' | 'regular'` prop
+- [x] **File**: `src/components/navbar/SpaceIcon.tsx` - Updated size type to `'small' | 'regular' | 'large'`, added 40px for small
+- [x] **File**: `src/components/navbar/SpaceIcon.scss` - Added `.space-icon-small` class (40px)
+- [x] **STOP**: Lint passed
 
 **✅ PHASE 1 COMPLETE** - No visual changes yet, just foundation
 
@@ -954,6 +939,6 @@ This is consistent with existing config sync (spaceIds, bookmarks) - not a new l
 ---
 
 _Created: 2025-09-26_
-_Last Updated: 2025-12-04 (added folder deletion behavior: spaces spill out preserving their order)_
+_Last Updated: 2025-12-06 (Phase 1 complete - data foundation implemented)_
 
 **Dependencies**: @dnd-kit, existing IconPicker, existing drag-and-drop infrastructure

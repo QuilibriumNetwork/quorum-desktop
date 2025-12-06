@@ -16,9 +16,10 @@ interface Space {
 type SpaceButtonProps = {
   space: Space;
   mentionCount?: number;
+  size?: 'small' | 'regular';
 };
 
-const SpaceButton: React.FunctionComponent<SpaceButtonProps> = ({ space, mentionCount }) => {
+const SpaceButton: React.FunctionComponent<SpaceButtonProps> = ({ space, mentionCount, size = 'regular' }) => {
   const navigate = useNavigate();
   const { spaceId: currentSpaceId } = useParams<{ spaceId: string }>();
 
@@ -68,7 +69,7 @@ const SpaceButton: React.FunctionComponent<SpaceButtonProps> = ({ space, mention
       <SpaceIcon
         notifs={Boolean(space.notifs && space.notifs > 0)}
         selected={isSelected}
-        size="regular"
+        size={size}
         iconUrl={space.iconUrl}
         spaceName={space.spaceName}
         spaceId={space.spaceId}

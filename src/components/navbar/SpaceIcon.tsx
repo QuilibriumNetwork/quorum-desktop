@@ -13,7 +13,7 @@ type SpaceIconProps = {
   iconUrl?: string;
   iconData?: Promise<ArrayBuffer>;
   spaceName: string;
-  size: 'regular' | 'large';
+  size: 'small' | 'regular' | 'large';
   notifs: boolean;
   noTooltip?: boolean;
   noToggle?: boolean;
@@ -63,8 +63,8 @@ const SpaceIcon: React.FunctionComponent<SpaceIconProps> = (props) => {
     [props.spaceName]
   );
 
-  // Match the CSS sizes: $nav-space-icon-size is 48px, large is 114px
-  const size = props.size === 'large' ? 114 : 48;
+  // Match the CSS sizes: small is 40px, regular is 48px, large is 114px
+  const size = props.size === 'large' ? 114 : props.size === 'small' ? 40 : 48;
 
   const iconElement = (
     <div className="relative z-[999]">

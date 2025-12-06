@@ -99,6 +99,8 @@ export type IconName =
   | 'calendar-alt'
   | 'history'
   | 'paperclip'
+  | 'folder'
+  | 'folder-minus'
 
   // Common additions for future use
   | 'home'

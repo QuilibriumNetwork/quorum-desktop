@@ -86,4 +86,17 @@ export const createIconPickerStyles = (colors: ColorPalette) =>
       borderColor: colors.accent.DEFAULT,
       backgroundColor: colors.surface['3'],
     },
+    // Background color swatch button (for background-color mode)
+    bgSwatchButton: {
+      width: 24,
+      height: 24,
+      borderRadius: 12,
+      justifyContent: 'center',
+      alignItems: 'center',
+      borderWidth: 2,
+      borderColor: 'transparent',
+    },
+    bgSwatchButtonActive: {
+      borderColor: colors.text.main,
+    },
   });

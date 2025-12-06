@@ -1,6 +1,8 @@
 import { channel } from '@quilibrium/quilibrium-js-sdk-channels';
 import { Conversation, Message, Space, Bookmark } from '../api/quorumApi';
 import type { NotificationSettings } from '../types/notifications';
+import type { IconColor } from '../components/space/IconPicker/types';
+import type { IconName } from '../components/primitives/Icon/types';
 import MiniSearch from 'minisearch';
 
 export interface EncryptedMessage {
@@ -22,9 +24,27 @@ export interface DecryptionResult {
   newState: any;
 }
 
+// Folder color type (reuses icon colors)
+export type FolderColor = IconColor;
+
+// NavItem represents either a standalone space or a folder containing spaces
+export type NavItem =
+  | { type: 'space'; id: string }
+  | {
+      type: 'folder';
+      id: string;                   // crypto.randomUUID()
+      name: string;                 // User-defined name (default: "Spaces")
+      spaceIds: string[];           // Spaces in this folder (ordered)
+      icon?: IconName;              // Custom icon (always rendered white, default: 'folder')
+      color?: FolderColor;          // Folder background color (default: 'default' = gray)
+      createdDate: number;
+      modifiedDate: number;
+    };
+
 export type UserConfig = {
   address: string;
-  spaceIds: string[];
+  spaceIds: string[];               // KEPT for backwards compatibility (derived from items)
+  items?: NavItem[];                // Single source of truth for ordering & folders
   timestamp?: number;
   nonRepudiable?: boolean;
   allowSync?: boolean;
