@@ -46,6 +46,7 @@ const ChannelEditorModal: React.FunctionComponent<{
     isPinned,
     icon,
     iconColor,
+    iconVariant,
     isEditMode,
     availableRoles,
     channelNameValidationError,
@@ -118,6 +119,7 @@ const ChannelEditorModal: React.FunctionComponent<{
             <IconPicker
               selectedIcon={icon}
               selectedIconColor={iconColor}
+              selectedIconVariant={iconVariant}
               onIconSelect={handleIconChange}
               defaultIcon="hashtag"
             />

@@ -1,4 +1,4 @@
-import { IconName } from '../../primitives/Icon/types';
+import { IconName, IconVariant } from '../../primitives/Icon/types';
 
 export type IconColor = 'default' | 'blue' | 'purple' | 'fuchsia' | 'green' | 'orange' | 'yellow' | 'red';
 
@@ -18,7 +18,8 @@ export interface ColorOption {
 export interface IconPickerProps {
   selectedIcon?: IconName;
   selectedIconColor?: IconColor;
-  onIconSelect: (icon: IconName | null, iconColor: IconColor) => void;
+  selectedIconVariant?: IconVariant;
+  onIconSelect: (icon: IconName | null, iconColor: IconColor, iconVariant: IconVariant) => void;
   buttonVariant?: 'subtle' | 'primary' | 'secondary';
   placeholder?: string;
   disabled?: boolean;
@@ -26,6 +27,43 @@ export interface IconPickerProps {
   testID?: string;
   defaultIcon?: IconName; // Icon to use when clearing (for channels that always need an icon)
 }
+
+// Icons that have filled variants in Tabler Icons library
+// These icons will be shown when "Filled" variant is selected
+export const FILLED_ICONS: Set<IconName> = new Set([
+  'star',
+  'heart',
+  'home',
+  'bell',
+  'shield',
+  'lock',
+  'eye',
+  'bookmark',
+  'circle',
+  'comment-dots', // IconMessageFilled
+  'smile', // IconMoodSmileFilled
+  'info-circle', // IconInfoCircleFilled
+  'question-circle', // IconHelpCircleFilled
+  'check-circle', // IconCircleCheckFilled
+  'warning', // IconAlertTriangleFilled
+  'gift', // IconGiftFilled
+  'pin', // IconPinFilled
+  'briefcase', // IconBriefcaseFilled
+  'image', // IconPhotoFilled
+  'video', // IconVideoFilled
+  'microphone', // IconMicrophoneFilled
+  'settings', // IconSettingsFilled
+  'bug', // IconBugFilled
+  'calendar-alt', // IconCalendarFilled
+  'book', // IconBookFilled
+  'paw', // IconPawFilled
+  'headset', // IconHeadphonesFilled
+  'palette', // IconPaletteFilled
+  'flask', // IconFlaskFilled
+  'fire', // IconFlameFilled
+  'certificate', // IconRosetteDiscountCheckFilled (new mapping)
+  'seedling', // IconSeedlingFilled
+]);
 
 // 50 icons organized by tier and category
 export const ICON_OPTIONS: IconOption[] = [
@@ -74,7 +112,7 @@ export const ICON_OPTIONS: IconOption[] = [
   { name: 'utensils', tier: 6, category: 'Food' },
   { name: 'paw', tier: 6, category: 'Animals' },
   { name: 'leaf', tier: 6, category: 'Nature' },
-  { name: 'tree', tier: 6, category: 'Nature' },
+  { name: 'seedling', tier: 6, category: 'Nature' },
   { name: 'headset', tier: 6, category: 'Gaming Communication' },
   { name: 'chart-line', tier: 6, category: 'Analytics' },
 

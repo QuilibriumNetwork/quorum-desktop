@@ -7,7 +7,7 @@ import { useMessageDB } from '../../../components/context/useMessageDB';
 import { useConfirmation } from '../../ui/useConfirmation';
 import ChannelPreview from '../../../components/space/ChannelPreview';
 import { t } from '@lingui/core/macro';
-import { IconName } from '../../../components/primitives/Icon/types';
+import { IconName, IconVariant } from '../../../components/primitives/Icon/types';
 import { IconColor } from '../../../components/space/IconPicker';
 import { validateChannelName, validateChannelTopic } from '../validation';
 
@@ -20,6 +20,7 @@ export interface ChannelData {
   pinnedAt?: number;
   icon: IconName;  // Channels always have an icon (defaults to hashtag)
   iconColor?: IconColor;
+  iconVariant?: IconVariant;
 }
 
 export function useChannelManagement({
@@ -53,6 +54,7 @@ export function useChannelManagement({
     pinnedAt: currentChannel?.pinnedAt,
     icon: (currentChannel?.icon || 'hashtag') as IconName,
     iconColor: (currentChannel?.iconColor as IconColor) || 'default',
+    iconVariant: (currentChannel?.iconVariant as IconVariant) || 'outline',
   });
 
   // State for deletion flow
@@ -81,6 +83,7 @@ export function useChannelManagement({
           pinnedAt: channel.pinnedAt,
           icon: (channel.icon || 'hashtag') as IconName,
           iconColor: (channel.iconColor as IconColor) || 'default',
+          iconVariant: (channel.iconVariant as IconVariant) || 'outline',
         });
       }
     }
@@ -147,12 +150,13 @@ export function useChannelManagement({
   }, []);
 
   // Handle icon change
-  const handleIconChange = useCallback((iconName: IconName | null, iconColor: IconColor = 'default') => {
+  const handleIconChange = useCallback((iconName: IconName | null, iconColor: IconColor = 'default', iconVariant: IconVariant = 'outline') => {
     const newIcon = iconName || 'hashtag'; // Channels always have an icon, default to hashtag
     setChannelData((prev) => ({
       ...prev,
       icon: newIcon,
       iconColor: iconColor,
+      iconVariant: iconVariant,
     }));
   }, []);
 
@@ -181,6 +185,7 @@ export function useChannelManagement({
                           pinnedAt: channelData.pinnedAt,
                           icon: channelData.icon,
                           iconColor: channelData.iconColor,
+                          iconVariant: channelData.iconVariant,
                           modifiedDate: Date.now(),
                         }
                       : c
@@ -212,6 +217,7 @@ export function useChannelManagement({
                       pinnedAt: channelData.pinnedAt,
                       icon: channelData.icon,
                       iconColor: channelData.iconColor,
+                      iconVariant: channelData.iconVariant,
                       createdDate: Date.now(),
                       modifiedDate: Date.now(),
                     } as Channel,
@@ -353,6 +359,7 @@ export function useChannelManagement({
     pinnedAt: channelData.pinnedAt,
     icon: channelData.icon,
     iconColor: channelData.iconColor,
+    iconVariant: channelData.iconVariant,
     hasMessages,
     messageCount,
     deleteConfirmationStep,

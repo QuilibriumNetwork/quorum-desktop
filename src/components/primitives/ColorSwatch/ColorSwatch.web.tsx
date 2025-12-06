@@ -27,6 +27,7 @@ export const ColorSwatch: React.FC<ColorSwatchWebProps> = ({
   className = '',
   style,
   testID,
+  applyAccentTheme = false,
 }) => {
   const handleClick = () => {
     if (!disabled && onPress) {
@@ -39,7 +40,7 @@ export const ColorSwatch: React.FC<ColorSwatchWebProps> = ({
       className={`
         color-swatch
         color-swatch--${size}
-        accent-${color}
+        ${applyAccentTheme ? `accent-${color}` : ''}
         ${isActive ? 'color-swatch--active' : ''}
         ${disabled ? 'color-swatch--disabled' : ''}
         ${className}

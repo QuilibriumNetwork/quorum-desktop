@@ -5,15 +5,18 @@ import {
   IconPickerProps,
   ICON_OPTIONS,
   ICON_COLORS,
+  FILLED_ICONS,
   getIconColorHex,
   IconColor,
 } from './types';
-import { IconName } from '../../primitives/Icon/types';
+import { IconName, IconVariant } from '../../primitives/Icon/types';
 import { Trans } from '@lingui/react/macro';
+import './IconPicker.scss';
 
 export const IconPicker: React.FC<IconPickerProps> = ({
   selectedIcon,
   selectedIconColor = 'default',
+  selectedIconVariant = 'outline',
   onIconSelect,
   placeholder = 'Select icon',
   className = '',
@@ -22,16 +25,30 @@ export const IconPicker: React.FC<IconPickerProps> = ({
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedColor, setSelectedColor] = useState(selectedIconColor);
+  const [selectedVariant, setSelectedVariant] = useState<IconVariant>(selectedIconVariant);
   const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0 });
   const buttonRef = useRef<HTMLDivElement>(null);
 
   // Memoize color calculations for performance
   const iconColorHex = useMemo(() => getIconColorHex(selectedColor), [selectedColor]);
 
+  // Filter icons based on selected variant
+  const filteredIcons = useMemo(() => {
+    if (selectedVariant === 'filled') {
+      return ICON_OPTIONS.filter(icon => FILLED_ICONS.has(icon.name));
+    }
+    return ICON_OPTIONS;
+  }, [selectedVariant]);
+
   // Sync selectedColor with prop changes
   useEffect(() => {
     setSelectedColor(selectedIconColor);
   }, [selectedIconColor]);
+
+  // Sync selectedVariant with prop changes
+  useEffect(() => {
+    setSelectedVariant(selectedIconVariant);
+  }, [selectedIconVariant]);
 
   // Calculate dropdown position when opened
   useEffect(() => {
@@ -46,7 +63,7 @@ export const IconPicker: React.FC<IconPickerProps> = ({
 
 
   const handleIconClick = (iconName: IconName) => {
-    onIconSelect(iconName, selectedColor);
+    onIconSelect(iconName, selectedColor, selectedVariant);
     setIsOpen(false);
   };
 
@@ -55,8 +72,9 @@ export const IconPicker: React.FC<IconPickerProps> = ({
   };
 
   const handleClearIcon = () => {
-    onIconSelect(defaultIcon || null, 'default');
+    onIconSelect(defaultIcon || null, 'default', 'outline');
     setSelectedColor('default'); // Reset color to default
+    setSelectedVariant('outline'); // Reset variant to outline
     setIsOpen(false);
   };
 
@@ -64,7 +82,15 @@ export const IconPicker: React.FC<IconPickerProps> = ({
     setSelectedColor(color);
     // Immediately notify parent of color change with current icon
     if (selectedIcon) {
-      onIconSelect(selectedIcon, color);
+      onIconSelect(selectedIcon, color, selectedVariant);
+    }
+  };
+
+  const handleVariantChange = (variant: IconVariant) => {
+    setSelectedVariant(variant);
+    // Immediately notify parent of variant change with current icon
+    if (selectedIcon) {
+      onIconSelect(selectedIcon, selectedColor, variant);
     }
   };
 
@@ -93,6 +119,7 @@ export const IconPicker: React.FC<IconPickerProps> = ({
               name={selectedIcon}
               size="sm"
               color={iconColorHex}
+              variant={selectedVariant}
             />
           </span>
         ) : (
@@ -128,37 +155,54 @@ export const IconPicker: React.FC<IconPickerProps> = ({
           backgroundColor: 'var(--color-bg-sidebar)',
         }}
       >
-        {/* Color Swatch Header */}
-        <div className="p-3 border-b border-surface-3 relative">
-          {/* Clear selection button */}
-          <Button
-            type="unstyled"
-            onClick={handleClearIcon}
-            className="absolute top-2 right-2 flex items-center gap-1 hover:text-main"
-            size="small"
-          >
-            <Icon name="close" />
-            <Trans>Clear</Trans>
-          </Button>
+        {/* Header with variant toggle and clear button */}
+        <div className="p-3 border-b border-surface-3">
+          {/* Top row: Variant toggle (left) and Clear button (right) */}
+          <div className="flex justify-between items-center mb-3">
+            {/* Variant toggle - styled to match icon grid */}
+            <FlexRow gap={1}>
+              <button
+                onClick={() => handleVariantChange('outline')}
+                className={`icon-picker-variant-btn ${selectedVariant === 'outline' ? 'icon-picker-variant-btn--active' : ''}`}
+                aria-label="Outline icons"
+                aria-pressed={selectedVariant === 'outline'}
+              >
+                <Icon name="circle" size="sm" color={iconColorHex} variant="outline" />
+              </button>
+              <button
+                onClick={() => handleVariantChange('filled')}
+                className={`icon-picker-variant-btn ${selectedVariant === 'filled' ? 'icon-picker-variant-btn--active' : ''}`}
+                aria-label="Filled icons"
+                aria-pressed={selectedVariant === 'filled'}
+              >
+                <Icon name="circle" size="sm" color={iconColorHex} variant="filled" />
+              </button>
+            </FlexRow>
 
-          <FlexRow gap={3} justify="center" className="pt-8">
+            {/* Clear selection button */}
+            <Button
+              type="unstyled"
+              onClick={handleClearIcon}
+              className="flex items-center gap-1 hover:text-main ml-auto"
+              size="small"
+            >
+              <Icon name="close" size="sm" />
+              <Trans>Clear</Trans>
+            </Button>
+          </div>
+
+          {/* Color swatches row */}
+          <FlexRow gap={3} justify="between">
             {ICON_COLORS.map((colorOption) => (
               <ColorSwatch
                 key={colorOption.value}
-                color={
-                  colorOption.value === 'default' ? 'gray' : colorOption.value
-                }
+                color={colorOption.value === 'default' ? 'gray' : colorOption.value}
                 isActive={selectedColor === colorOption.value}
                 onPress={() => handleColorChange(colorOption.value)}
                 size="small"
-                style={
-                  colorOption.value === 'default'
-                    ? {
-                        backgroundColor: colorOption.hex,
-                        border: '1px solid var(--surface-5)',
-                      }
-                    : undefined
-                }
+                showCheckmark={false}
+                className="icon-picker-color-swatch"
+                style={colorOption.value === 'default' ? { backgroundColor: colorOption.hex } : undefined}
               />
             ))}
           </FlexRow>
@@ -167,7 +211,7 @@ export const IconPicker: React.FC<IconPickerProps> = ({
         {/* Scrollable Icon Grid */}
         <div className="p-2 mt-2">
           <div className="grid grid-cols-8 gap-1">
-            {ICON_OPTIONS.map((iconOption) => (
+            {filteredIcons.map((iconOption) => (
               <button
                 key={iconOption.name}
                 onClick={() => handleIconClick(iconOption.name)}
@@ -177,11 +221,7 @@ export const IconPicker: React.FC<IconPickerProps> = ({
                     handleIconClick(iconOption.name);
                   }
                 }}
-                className={`w-7 h-7 p-0 rounded-full flex items-center justify-center transition-colors cursor-pointer focus:outline-none ${
-                  selectedIcon === iconOption.name
-                    ? 'border-2 border-accent bg-surface-2'
-                    : 'border border-transparent bg-surface-2 hover:bg-surface-2 hover:border-accent focus:border-accent'
-                }`}
+                className={`icon-picker-icon-btn ${selectedIcon === iconOption.name ? 'icon-picker-icon-btn--active' : ''}`}
                 aria-label={`Select ${iconOption.name} icon for ${iconOption.category.toLowerCase()}`}
                 aria-pressed={selectedIcon === iconOption.name}
               >
@@ -189,6 +229,7 @@ export const IconPicker: React.FC<IconPickerProps> = ({
                   name={iconOption.name}
                   size="sm"
                   color={iconColorHex}
+                  variant={selectedVariant}
                   style={{ pointerEvents: 'none' }}
                   aria-hidden="true"
                 />

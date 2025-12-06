@@ -61,7 +61,7 @@ export const iconComponentMap: Record<IconName, string> = {
   utensils: 'IconToolsKitchen2',
   video: 'IconVideo',
   microphone: 'IconMicrophone',
-  gamepad: 'IconDeviceGamepad',
+  gamepad: 'IconDeviceGamepad2',
   headset: 'IconHeadphones',
   sword: 'IconSword',
   support: 'IconLifebuoy',
@@ -146,7 +146,7 @@ export const iconComponentMap: Record<IconName, string> = {
   'chart-line': 'IconChartLine',
   badge: 'IconBadge',
   'id-badge': 'IconId',
-  certificate: 'IconCertificate',
+  certificate: 'IconRosetteDiscountCheck',
 
   // Code-related icons
   code: 'IconCode',
@@ -161,8 +161,10 @@ export const iconComponentMap: Record<IconName, string> = {
   quote: 'IconQuote',
 
   // Nature & sci-fi icons
-  tree: 'IconTree',
+  tree: 'IconPlant2',
+  seedling: 'IconSeedling',
   robot: 'IconRobot',
+  ai: 'IconAi',
   fire: 'IconFlame',
   globe: 'IconWorld',
   plane: 'IconPlane',

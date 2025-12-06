@@ -50,6 +50,7 @@ export type Group = {
   channels: Channel[];
   icon?: string;
   iconColor?: string;
+  iconVariant?: 'outline' | 'filled';
 };
 
 export type Channel = {
@@ -68,6 +69,7 @@ export type Channel = {
   pinnedAt?: number; // Timestamp when the channel was pinned (for stack ordering)
   icon?: string; // Custom icon name
   iconColor?: string; // Custom icon color
+  iconVariant?: 'outline' | 'filled'; // Icon style variant
 };
 
 export type Conversation = {

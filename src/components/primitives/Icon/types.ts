@@ -145,7 +145,9 @@ export type IconName =
   | 'quote'
   // Nature & sci-fi icons
   | 'tree'
+  | 'seedling'
   | 'robot'
+  | 'ai'
   | 'fire'
   | 'globe'
   | 'plane';

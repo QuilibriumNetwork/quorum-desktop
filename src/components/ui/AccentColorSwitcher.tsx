@@ -38,6 +38,7 @@ const AccentColorSwitcher: React.FC = () => {
           isActive={accent === color}
           onPress={() => setAccent(color)}
           size={swatchSize}
+          applyAccentTheme
         />
       ))}
     </FlexRow>

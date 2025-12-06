@@ -17,6 +17,7 @@ const ChannelGroup: React.FunctionComponent<{
     groupName: string;
     icon?: string;
     iconColor?: string;
+    iconVariant?: 'outline' | 'filled';
     channels: {
       channelId: string;
       channelName: string;
@@ -29,6 +30,7 @@ const ChannelGroup: React.FunctionComponent<{
       createdDate?: number;
       icon?: string;
       iconColor?: string;
+      iconVariant?: 'outline' | 'filled';
     }[];
   };
   onEditGroup: (groupName: string) => void;
@@ -116,6 +118,7 @@ const ChannelGroup: React.FunctionComponent<{
                 key={`group-${props.group.groupName}-${props.group.icon}`}
                 name={props.group.icon as any}
                 size="sm"
+                variant={props.group.iconVariant || 'outline'}
                 style={{
                   color: getIconColorHex(props.group.iconColor as IconColor)
                 }}

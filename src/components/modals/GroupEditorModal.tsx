@@ -29,6 +29,7 @@ const GroupEditorModal: React.FunctionComponent<{
     group,
     icon,
     iconColor,
+    iconVariant,
     channelCount,
     showChannelError,
     deleteConfirmationStep,
@@ -80,6 +81,7 @@ const GroupEditorModal: React.FunctionComponent<{
             <IconPicker
               selectedIcon={icon}
               selectedIconColor={iconColor}
+              selectedIconVariant={iconVariant}
               onIconSelect={handleIconChange}
             />
             <div className="text-label-strong">

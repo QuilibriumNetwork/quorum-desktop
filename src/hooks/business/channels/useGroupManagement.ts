@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
 import { useSpace } from '../../queries';
 import { useMessageDB } from '../../../components/context/useMessageDB';
-import { IconName } from '../../../components/primitives/Icon/types';
+import { IconName, IconVariant } from '../../../components/primitives/Icon/types';
 import { IconColor } from '../../../components/space/IconPicker';
 import { validateGroupName } from '../validation';
 
@@ -10,6 +10,7 @@ export interface GroupData {
   groupName: string;
   icon?: IconName;
   iconColor?: IconColor;
+  iconVariant?: IconVariant;
 }
 
 export function useGroupManagement({
@@ -34,6 +35,7 @@ export function useGroupManagement({
     groupName: groupName || '',
     icon: currentGroup?.icon as IconName | undefined,
     iconColor: (currentGroup?.iconColor as IconColor) || 'default',
+    iconVariant: (currentGroup?.iconVariant as IconVariant) || 'outline',
   });
 
   // State for deletion flow
@@ -56,6 +58,7 @@ export function useGroupManagement({
           groupName: group.groupName || '',
           icon: group.icon as IconName | undefined,
           iconColor: (group.iconColor as IconColor) || 'default',
+          iconVariant: (group.iconVariant as IconVariant) || 'outline',
         });
       }
     }
@@ -112,11 +115,12 @@ export function useGroupManagement({
   }, []);
 
   // Handle icon change
-  const handleIconChange = useCallback((iconName: IconName | null, iconColor: IconColor = 'default') => {
+  const handleIconChange = useCallback((iconName: IconName | null, iconColor: IconColor = 'default', iconVariant: IconVariant = 'outline') => {
     setGroupData((prev) => ({
       ...prev,
       icon: iconName || undefined,
       iconColor: iconColor,
+      iconVariant: iconVariant,
     }));
   }, []);
 
@@ -134,6 +138,7 @@ export function useGroupManagement({
             groupName: groupData.groupName,
             icon: groupData.icon,
             iconColor: groupData.iconColor,
+            iconVariant: groupData.iconVariant,
           } : g;
         }),
       });
@@ -146,6 +151,7 @@ export function useGroupManagement({
             groupName: groupData.groupName,
             icon: groupData.icon,
             iconColor: groupData.iconColor,
+            iconVariant: groupData.iconVariant,
             channels: []
           }],
         });
@@ -237,6 +243,7 @@ export function useGroupManagement({
     group: groupData.groupName, // For backward compatibility
     icon: groupData.icon,
     iconColor: groupData.iconColor,
+    iconVariant: groupData.iconVariant,
     hasMessages,
     hasChannels,
     channelCount,

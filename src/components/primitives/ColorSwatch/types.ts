@@ -9,6 +9,8 @@ export interface ColorSwatchProps {
   showCheckmark?: boolean;
   disabled?: boolean;
   testID?: string;
+  /** If true, adds accent-{color} class to override app accent CSS vars (used in theme picker) */
+  applyAccentTheme?: boolean;
 }
 
 // Web-specific props

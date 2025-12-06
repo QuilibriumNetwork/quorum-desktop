@@ -1,0 +1,71 @@
+// IconPicker component styles
+@use '@/styles/variables' as *;
+
+// Variant toggle buttons (outline/filled circle icons)
+.icon-picker-variant-btn {
+  width: $s-7;
+  height: $s-7;
+  padding: 0;
+  border-radius: $rounded-full;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all $duration-150 $ease-in-out;
+  cursor: pointer;
+  background-color: var(--surface-2);
+  border: $border solid transparent;
+
+  &:hover:not(.icon-picker-variant-btn--active) {
+    border-color: var(--accent);
+  }
+
+  &:focus {
+    outline: none;
+  }
+
+  &--active {
+    border: $border-2 solid var(--accent);
+  }
+}
+
+// Color swatch overrides for IconPicker
+// Uses simple border instead of box-shadow ring
+// Black for light theme, white for dark theme for max contrast
+.icon-picker-color-swatch {
+  // Override the default ColorSwatch active state
+  &.color-swatch--active {
+    box-shadow: none !important;
+    border: $border-2 solid black !important;
+
+    html.dark & {
+      border-color: white !important;
+    }
+  }
+}
+
+// Icon grid buttons
+.icon-picker-icon-btn {
+  width: $s-7;
+  height: $s-7;
+  padding: 0;
+  border-radius: $rounded-full;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all $duration-150 $ease-in-out;
+  cursor: pointer;
+  background-color: var(--surface-2);
+  border: $border solid transparent;
+
+  &:hover:not(.icon-picker-icon-btn--active) {
+    border-color: var(--accent);
+  }
+
+  &:focus {
+    outline: none;
+  }
+
+  &--active {
+    border: $border-2 solid var(--accent);
+  }
+}

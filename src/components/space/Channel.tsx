@@ -517,6 +517,7 @@ const Channel: React.FC<ChannelProps> = ({
       return {
         iconName: channel.icon,
         iconColor: getIconColorHex(channel.iconColor as any),
+        iconVariant: (channel.iconVariant || 'outline') as 'outline' | 'filled',
       };
     }
 
@@ -525,16 +526,18 @@ const Channel: React.FC<ChannelProps> = ({
       return {
         iconName: 'lock' as const,
         iconColor: undefined, // Use default text color
+        iconVariant: 'outline' as const,
       };
     }
 
     return {
       iconName: 'hashtag' as const,
       iconColor: undefined, // Use default text color
+      iconVariant: 'outline' as const,
     };
   };
 
-  const { iconName, iconColor } = getChannelIconAndColor();
+  const { iconName, iconColor, iconVariant } = getChannelIconAndColor();
 
   // Compute responsive icon size for header icons (lg for desktop ≥1024px, sm for mobile/tablet)
   const headerIconSize = isDesktop ? 'lg' : 'lg';
@@ -794,6 +797,7 @@ const Channel: React.FC<ChannelProps> = ({
                   size={headerIconSize}
                   className="flex-shrink-0"
                   color={iconColor}
+                  variant={iconVariant}
                   style={
                     !iconColor
                       ? { color: 'var(--color-text-subtle)' }
@@ -973,6 +977,7 @@ const Channel: React.FC<ChannelProps> = ({
                 size={headerIconSize}
                 className="flex-shrink-0"
                 color={iconColor}
+                variant={iconVariant}
                 style={
                   !iconColor ? { color: 'var(--color-text-subtle)' } : undefined
                 }

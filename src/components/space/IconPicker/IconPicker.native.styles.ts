@@ -71,4 +71,19 @@ export const createIconPickerStyles = (colors: ColorPalette) =>
       borderWidth: 1,
       borderColor: colors.border.default,
     },
+    variantButton: {
+      width: 28,
+      height: 28,
+      borderRadius: 14,
+      justifyContent: 'center',
+      alignItems: 'center',
+      backgroundColor: colors.surface['2'],
+      borderWidth: 1,
+      borderColor: colors.surface['5'],
+    },
+    variantButtonActive: {
+      borderWidth: 2,
+      borderColor: colors.accent.DEFAULT,
+      backgroundColor: colors.surface['3'],
+    },
   });

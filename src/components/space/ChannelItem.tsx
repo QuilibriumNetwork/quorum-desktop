@@ -18,6 +18,7 @@ interface Channel {
   createdDate?: number;
   icon?: string;
   iconColor?: string;
+  iconVariant?: 'outline' | 'filled';
 }
 
 interface ChannelItemProps {
@@ -78,6 +79,7 @@ const ChannelContent: React.FC<{
             key={`channel-${channel.channelId}`}
             name={(channel.icon as any) || 'hashtag'}
             size="sm"
+            variant={channel.iconVariant || 'outline'}
             style={{
               color: getIconColorHex(channel.iconColor as IconColor),
             }}

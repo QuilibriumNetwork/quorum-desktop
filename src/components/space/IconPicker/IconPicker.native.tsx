@@ -1,13 +1,14 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { View, TouchableOpacity, Animated } from 'react-native';
 import { Button, Icon, FlexRow, ColorSwatch, ScrollContainer, Spacer, useTheme } from '../../primitives';
-import { IconPickerProps, ICON_OPTIONS, ICON_COLORS, getIconColorHex, IconColor } from './types';
-import { IconName } from '../../primitives/Icon/types';
+import { IconPickerProps, ICON_OPTIONS, ICON_COLORS, FILLED_ICONS, getIconColorHex, IconColor } from './types';
+import { IconName, IconVariant } from '../../primitives/Icon/types';
 import { createIconPickerStyles } from './IconPicker.native.styles';
 
 export const IconPicker: React.FC<IconPickerProps> = ({
   selectedIcon,
   selectedIconColor = 'default',
+  selectedIconVariant = 'outline',
   onIconSelect,
   placeholder = 'Select icon',
   className = '',
@@ -16,6 +17,7 @@ export const IconPicker: React.FC<IconPickerProps> = ({
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedColor, setSelectedColor] = useState(selectedIconColor);
+  const [selectedVariant, setSelectedVariant] = useState<IconVariant>(selectedIconVariant);
   const [animatedHeight] = useState(new Animated.Value(0));
   const theme = useTheme();
 
@@ -23,6 +25,19 @@ export const IconPicker: React.FC<IconPickerProps> = ({
   useEffect(() => {
     setSelectedColor(selectedIconColor);
   }, [selectedIconColor]);
+
+  // Sync selectedVariant with prop changes
+  useEffect(() => {
+    setSelectedVariant(selectedIconVariant);
+  }, [selectedIconVariant]);
+
+  // Filter icons based on selected variant
+  const filteredIcons = useMemo(() => {
+    if (selectedVariant === 'filled') {
+      return ICON_OPTIONS.filter(icon => FILLED_ICONS.has(icon.name));
+    }
+    return ICON_OPTIONS;
+  }, [selectedVariant]);
 
   // Animation for dropdown open/close
   useEffect(() => {
@@ -34,13 +49,14 @@ export const IconPicker: React.FC<IconPickerProps> = ({
   }, [isOpen, animatedHeight]);
 
   const handleIconClick = (iconName: IconName) => {
-    onIconSelect(iconName, selectedColor);
+    onIconSelect(iconName, selectedColor, selectedVariant);
     setIsOpen(false);
   };
 
   const handleClearIcon = () => {
-    onIconSelect(defaultIcon || null, 'default');
+    onIconSelect(defaultIcon || null, 'default', 'outline');
     setSelectedColor('default'); // Reset color to default
+    setSelectedVariant('outline'); // Reset variant to outline
     setIsOpen(false);
   };
 
@@ -48,7 +64,15 @@ export const IconPicker: React.FC<IconPickerProps> = ({
     setSelectedColor(color);
     // Immediately notify parent of color change with current icon
     if (selectedIcon) {
-      onIconSelect(selectedIcon, color);
+      onIconSelect(selectedIcon, color, selectedVariant);
+    }
+  };
+
+  const handleVariantChange = (variant: IconVariant) => {
+    setSelectedVariant(variant);
+    // Immediately notify parent of variant change with current icon
+    if (selectedIcon) {
+      onIconSelect(selectedIcon, selectedColor, variant);
     }
   };
 
@@ -73,6 +97,7 @@ export const IconPicker: React.FC<IconPickerProps> = ({
             name={selectedIcon}
             size="sm"
             color={iconColorHex}
+            variant={selectedVariant}
           />
         </TouchableOpacity>
       ) : (
@@ -97,10 +122,37 @@ export const IconPicker: React.FC<IconPickerProps> = ({
       >
         {isOpen && (
           <ScrollContainer height={400} showBorder={false} borderRadius="lg">
-            {/* Header with color swatches and clear button */}
+            {/* Header with variant toggle, color swatches, and clear button */}
             <View style={styles.headerContainer}>
-              {/* Clear selection button */}
-              <View style={styles.clearButtonContainer}>
+              {/* Top row: Variant toggle (left) and Clear button (right) */}
+              <FlexRow justify="space-between" align="center" style={{ marginBottom: 12 }}>
+                {/* Variant toggle - styled to match icon grid */}
+                <FlexRow gap="xs">
+                  <TouchableOpacity
+                    onPress={() => handleVariantChange('outline')}
+                    style={[
+                      styles.variantButton,
+                      selectedVariant === 'outline' && styles.variantButtonActive
+                    ]}
+                    accessibilityLabel="Outline icons"
+                    accessibilityState={{ selected: selectedVariant === 'outline' }}
+                  >
+                    <Icon name="circle" size="sm" color={iconColorHex} variant="outline" />
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    onPress={() => handleVariantChange('filled')}
+                    style={[
+                      styles.variantButton,
+                      selectedVariant === 'filled' && styles.variantButtonActive
+                    ]}
+                    accessibilityLabel="Filled icons"
+                    accessibilityState={{ selected: selectedVariant === 'filled' }}
+                  >
+                    <Icon name="circle" size="sm" color={iconColorHex} variant="filled" />
+                  </TouchableOpacity>
+                </FlexRow>
+
+                {/* Clear selection button */}
                 <Button
                   type="subtle-outline"
                   onClick={handleClearIcon}
@@ -109,12 +161,10 @@ export const IconPicker: React.FC<IconPickerProps> = ({
                 >
                   Clear
                 </Button>
-              </View>
-
-              <Spacer size={36} />
+              </FlexRow>
 
               {/* Color selection */}
-              <FlexRow gap="md" justify="center" style={styles.colorRow}>
+              <FlexRow gap="md" justify="between" style={styles.colorRow}>
                 {ICON_COLORS.map((colorOption) => (
                   <ColorSwatch
                     key={colorOption.value}
@@ -122,11 +172,8 @@ export const IconPicker: React.FC<IconPickerProps> = ({
                     isActive={selectedColor === colorOption.value}
                     onPress={() => handleColorChange(colorOption.value)}
                     size="small"
-                    style={colorOption.value === 'default' ? {
-                      backgroundColor: colorOption.hex,
-                      borderWidth: 1,
-                      borderColor: theme.colors.surface[5] || theme.colors.border.default
-                    } : undefined}
+                    showCheckmark={false}
+                    style={colorOption.value === 'default' ? { backgroundColor: colorOption.hex } : undefined}
                   />
                 ))}
               </FlexRow>
@@ -144,7 +191,7 @@ export const IconPicker: React.FC<IconPickerProps> = ({
             {/* Icon Grid */}
             <View style={styles.iconGridContainer}>
               <View style={styles.iconGrid}>
-                {ICON_OPTIONS.map((iconOption) => (
+                {filteredIcons.map((iconOption) => (
                   <TouchableOpacity
                     key={iconOption.name}
                     onPress={() => handleIconClick(iconOption.name)}
@@ -160,6 +207,7 @@ export const IconPicker: React.FC<IconPickerProps> = ({
                       name={iconOption.name}
                       size="md"
                       color={iconColorHex}
+                      variant={selectedVariant}
                     />
                   </TouchableOpacity>
                 ))}
