@@ -1,0 +1,137 @@
+@use '@/styles/variables' as *;
+
+// Folder button - the icon representing a folder
+.folder-button {
+  width: $s-12; // 48px
+  height: $s-12;
+  border-radius: $rounded-full;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all $duration-150 $ease-in-out;
+  position: relative;
+  margin-top: $s-2;
+
+  // Hover state (desktop only)
+  @media (hover: hover) {
+    &:hover {
+      opacity: 0.85;
+      transform: scale(1.02);
+    }
+  }
+
+  // Small size for spaces inside folders
+  &--small {
+    width: 40px;
+    height: 40px;
+    margin-top: $s-1;
+  }
+
+  // Unread indicator styling
+  &--has-unread {
+    box-shadow: 0 0 0 2px var(--accent);
+  }
+
+  // Mobile phone optimization
+  @media (max-width: $screen-xs) {
+    width: 40px;
+    height: 40px;
+    margin-top: $s-1;
+
+    &--small {
+      width: 36px;
+      height: 36px;
+    }
+  }
+}
+
+// Mention badge on folder button
+.folder-button-mention-bubble {
+  position: absolute;
+  top: -$s-1;
+  right: -$s-1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: $s-4-5;
+  height: $s-4-5;
+  padding: 0 $s-1;
+  border-radius: $rounded-full;
+  font-weight: $font-medium;
+  font-size: $text-xs;
+  line-height: 1;
+  text-align: center;
+  color: white;
+  background-color: var(--accent-400);
+  z-index: 1001;
+  pointer-events: none;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+html.dark .folder-button-mention-bubble {
+  background-color: var(--accent-600);
+}
+
+// Expanded folder container
+.folder-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $s-1;
+  padding: $s-2 $s-1;
+  border-radius: $rounded-lg;
+  transition: all $duration-200 $ease-in-out;
+  margin-top: $s-2;
+}
+
+// Container for space icons inside an expanded folder
+.folder-spaces {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $s-0-5;
+  padding-top: $s-1;
+}
+
+// Selection indicator for folder (mirroring space-icon toggle)
+.folder-toggle {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.folder-has-unread-toggle {
+  content: ' ';
+  position: absolute;
+  width: $s-1-5;
+  height: $s-1-5;
+  border-radius: $rounded-sm;
+  margin-left: -15px;
+  margin-top: 28px;
+  z-index: 1000;
+  background: var(--accent);
+  transition: all $duration-100 linear;
+
+  @media (max-width: $screen-xs) {
+    margin-left: -8px;
+    margin-top: 22px;
+  }
+}
+
+// Collapsed folder with spaces badge
+.folder-collapsed-count {
+  position: absolute;
+  bottom: -$s-0-5;
+  right: -$s-0-5;
+  min-width: $s-4;
+  height: $s-4;
+  padding: 0 $s-0-5;
+  border-radius: $rounded-full;
+  font-size: 10px;
+  font-weight: $font-medium;
+  line-height: $s-4;
+  text-align: center;
+  color: var(--text-main);
+  background-color: var(--surface-4);
+  border: 1px solid var(--surface-border);
+}

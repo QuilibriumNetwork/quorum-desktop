@@ -10,6 +10,7 @@ export * from './business/channels';
 export * from './business/invites';
 export * from './business/messages';
 export * from './business/spaces';
+export * from './business/folders';
 export * from './business/search';
 // NOTE: Problematic search hooks are commented out in ./business/search/index.ts
 

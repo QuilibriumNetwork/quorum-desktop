@@ -98,36 +98,47 @@ cmd.exe /c "cd /d D:\GitHub\Quilibrium\quorum-desktop && npx tsc --noEmit --skip
 
 ---
 
-## Phase 2: Folder UI Components
+## Phase 2: Folder UI Components ✅ COMPLETE
 
 ### 2.1 Create FolderButton component
-- [ ] **New File**: `src/components/navbar/FolderButton.tsx`
-- [ ] Props: `folder`, `hasUnread`, `unreadCount`
-- [ ] Renders: White icon on colored background (48px circle)
-- [ ] See [Reference: FolderButton Component](#reference-folderbutton-component)
-- [ ] **STOP**: Run `yarn lint` or check modified files
+- [x] **New File**: `src/components/navbar/FolderButton.tsx`
+- [x] Props: `folder`, `hasUnread`, `unreadCount`, `mentionCount`, `size`
+- [x] Renders: White icon on colored background (48px circle, 40px for small)
+- [x] Tooltip on desktop, disabled on touch devices
+- [x] Mention bubble for unread counts
+- [x] **STOP**: Lint passed
 
 ### 2.2 Create FolderContainer component
-- [ ] **New File**: `src/components/navbar/FolderContainer.tsx`
-- [ ] Handles collapsed/expanded states
-- [ ] Uses `useLongPressWithDefaults` from touch interaction system
-- [ ] See [Reference: FolderContainer Component](#reference-foldercontainer-component)
-- [ ] **STOP**: Run `yarn lint` or check modified files
+- [x] **New File**: `src/components/navbar/FolderContainer.tsx`
+- [x] Handles collapsed/expanded states with FolderButton
+- [x] Uses `useLongPressWithDefaults` for touch (long-press opens editor)
+- [x] Desktop: click toggles expand, right-click for context menu (Phase 3)
+- [x] Integrates with dnd-kit for drag-and-drop
+- [x] Renders spaces at small size (40px) when expanded
+- [x] **STOP**: Lint passed
 
 ### 2.3 Create folder SCSS
-- [ ] **New File**: `src/components/navbar/Folder.scss`
-- [ ] Styles for:
-  - `.folder-button` - 48px circle with color bg
-  - `.folder-container` - expanded container with 50% opacity bg
-  - `.folder-spaces` - container for smaller space icons
-- [ ] Use `@media (hover: hover)` for hover states
-- [ ] **STOP**: Run `yarn lint` or check modified files
+- [x] **New File**: `src/components/navbar/Folder.scss`
+- [x] `.folder-button` - 48px circle with color bg, hover effects
+- [x] `.folder-button--small` - 40px variant
+- [x] `.folder-button-mention-bubble` - mention count badge
+- [x] `.folder-container` - expanded container styling
+- [x] `.folder-spaces` - container for space icons
+- [x] Mobile-responsive sizes
+- [x] **STOP**: Lint passed
 
 ### 2.4 Integrate into NavMenu
-- [ ] **File**: Find where spaces are rendered in navbar (likely `NavMenu.tsx` or similar)
-- [ ] Add logic to read from `items` array (fall back to `spaceIds` for migration)
-- [ ] Render `FolderContainer` for folder items, `SpaceButton` for space items
-- [ ] **STOP**: Run `yarn lint` or check modified files
+- [x] **File**: `src/components/navbar/NavMenu.tsx`
+- [x] Added `useFolderStates` hook for local collapsed/expanded state
+- [x] Added `useNavItems` hook to process config.items
+- [x] Logic to detect `hasItems` (new format) vs legacy `spaceIds`
+- [x] Render `FolderContainer` for folders, `SpaceButton` for spaces
+- [x] Pass through mention counts and unread counts to folders
+- [x] **New Files**:
+  - `src/hooks/business/folders/useFolderStates.ts` - localStorage-based state
+  - `src/hooks/business/folders/useNavItems.ts` - maps config to renderable items
+  - `src/hooks/business/folders/index.ts` - exports
+- [x] **STOP**: Lint passed
 - [ ] **STOP - VISUAL TEST**:
   - Manually add a test folder to your local config (via dev tools or temp code)
   - Verify folder appears in navbar
@@ -939,6 +950,6 @@ This is consistent with existing config sync (spaceIds, bookmarks) - not a new l
 ---
 
 _Created: 2025-09-26_
-_Last Updated: 2025-12-06 (Phase 1 complete - data foundation implemented)_
+_Last Updated: 2025-12-06 (Phase 2 complete - folder UI components implemented)_
 
 **Dependencies**: @dnd-kit, existing IconPicker, existing drag-and-drop infrastructure
