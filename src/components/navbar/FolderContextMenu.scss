@@ -1,0 +1,17 @@
+@use '@/styles/context-menu' as contextMenu;
+
+.folder-context-menu {
+  @include contextMenu.base;
+}
+
+.folder-context-menu-divider {
+  @include contextMenu.divider;
+}
+
+.folder-context-menu-item {
+  @include contextMenu.item;
+
+  &--danger {
+    @include contextMenu.item-danger;
+  }
+}

@@ -63,6 +63,7 @@ export type IconName =
   | 'user-x'
   | 'user-minus'
   | 'party'
+  | 'celebration'
   | 'gift'
   | 'hand-peace'
   | 'ban'
@@ -74,6 +75,7 @@ export type IconName =
   | 'star'
   | 'eye'
   | 'eye-off'
+  | 'life-ring'
 
   // Settings & Security
   | 'settings'

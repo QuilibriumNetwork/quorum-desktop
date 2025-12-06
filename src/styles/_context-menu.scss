@@ -1,0 +1,104 @@
+/* ============================================
+   CONTEXT MENU - Shared Styles
+   ============================================
+
+   Use this mixin for all context menus across
+   the application to maintain consistent styling.
+
+   Usage:
+   @use '@/styles/context-menu' as contextMenu;
+   .my-context-menu { @include contextMenu.base; }
+   .my-context-menu-item { @include contextMenu.item; }
+   ============================================ */
+
+@use '@/styles/variables' as *;
+
+// Base context menu container
+@mixin base {
+  position: fixed;
+  background: var(--color-bg-contextmenu);
+  border-radius: $rounded-lg;
+  box-shadow: $shadow-md;
+  z-index: 10001;
+  min-width: 180px;
+  max-width: 240px;
+  padding: $s-2 0;
+  animation: contextMenuOpen $duration-150 $ease-out;
+  border: $border solid var(--surface-3);
+
+  .dark & {
+    border: none;
+  }
+}
+
+// Context menu item
+@mixin item {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  gap: $s-3;
+  padding: $s-2 $s-3;
+  cursor: pointer;
+  transition: background-color $duration-150 ease-in-out;
+  color: rgb(var(--color-text-main));
+  background: transparent;
+  border: none;
+  text-align: left;
+  font-size: inherit;
+
+  &:hover {
+    background-color: var(--color-bg-contextmenu-hover);
+  }
+
+  &:active {
+    background-color: var(--color-bg-contextmenu-hover);
+  }
+}
+
+// Danger variant for item
+@mixin item-danger {
+  color: rgb(var(--danger));
+
+  * {
+    color: inherit;
+  }
+}
+
+// Divider between menu sections
+@mixin divider {
+  height: $border;
+  background-color: var(--surface-3);
+  margin: $s-2 $s-3;
+}
+
+// Open animation keyframes
+@keyframes contextMenuOpen {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+// Accessibility: reduced motion
+@media (prefers-reduced-motion: reduce) {
+  @at-root {
+    [class*='context-menu'],
+    [class*='actions-menu'] {
+      animation: none;
+    }
+  }
+}
+
+// High contrast mode
+@media (prefers-contrast: high) {
+  @at-root {
+    [class*='context-menu'],
+    [class*='actions-menu'] {
+      border: $border-2 solid var(--color-text-main);
+    }
+  }
+}

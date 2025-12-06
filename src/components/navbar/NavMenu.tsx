@@ -8,7 +8,10 @@ import ExpandableNavMenu from './ExpandableNavMenu';
 import SpaceButton from './SpaceButton';
 import SpaceIcon from './SpaceIcon';
 import FolderContainer from './FolderContainer';
+import FolderContextMenu from './FolderContextMenu';
 import { t } from '@lingui/core/macro';
+import { useModals } from '../context/ModalProvider';
+import { NavItem } from '../../db/messages';
 import { DragStateProvider } from '../../context/DragStateContext';
 import {
   useSpaces,
@@ -32,6 +35,12 @@ type NavMenuProps = {
   showJoinSpaceModal: () => void;
 };
 
+// Context menu state type
+interface ContextMenuState {
+  folder: (NavItem & { type: 'folder' }) | null;
+  position: { x: number; y: number };
+}
+
 const NavMenuContent: React.FC<NavMenuProps> = (props) => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -41,6 +50,43 @@ const NavMenuContent: React.FC<NavMenuProps> = (props) => {
     userAddress: user.currentPasskeyInfo!.address,
   });
   const { navMenuOpen, isDesktop } = useResponsiveLayoutContext();
+  const { openFolderEditor } = useModals();
+
+  // Context menu state
+  const [contextMenu, setContextMenu] = React.useState<ContextMenuState>({
+    folder: null,
+    position: { x: 0, y: 0 },
+  });
+
+  const handleContextMenu = React.useCallback(
+    (folder: NavItem & { type: 'folder' }, e: React.MouseEvent) => {
+      e.preventDefault();
+      setContextMenu({
+        folder,
+        position: { x: e.clientX, y: e.clientY },
+      });
+    },
+    []
+  );
+
+  const closeContextMenu = React.useCallback(() => {
+    setContextMenu({ folder: null, position: { x: 0, y: 0 } });
+  }, []);
+
+  const handleOpenFolderSettings = React.useCallback(() => {
+    if (contextMenu.folder) {
+      openFolderEditor(contextMenu.folder.id);
+    }
+    closeContextMenu();
+  }, [contextMenu.folder, openFolderEditor, closeContextMenu]);
+
+  const handleDeleteFolder = React.useCallback(() => {
+    // Delete is handled in the modal, so just open settings
+    if (contextMenu.folder) {
+      openFolderEditor(contextMenu.folder.id);
+    }
+    closeContextMenu();
+  }, [contextMenu.folder, openFolderEditor, closeContextMenu]);
 
   // Check if config has items (new format) or just spaceIds (legacy)
   const hasItems = config?.items && config.items.length > 0;
@@ -166,10 +212,8 @@ const NavMenuContent: React.FC<NavMenuProps> = (props) => {
                       spaces={spacesWithNotifs}
                       isExpanded={isExpanded(folder.id)}
                       onToggleExpand={() => toggleFolder(folder.id)}
-                      onEdit={() => {
-                        // TODO: Open folder editor modal (Phase 3)
-                        console.log('Edit folder:', folder.id);
-                      }}
+                      onContextMenu={(e) => handleContextMenu(folder, e)}
+                      onEdit={() => openFolderEditor(folder.id)}
                       spaceMentionCounts={folderMentionCounts}
                     />
                   );
@@ -200,6 +244,17 @@ const NavMenuContent: React.FC<NavMenuProps> = (props) => {
       <div className="expanded-nav-buttons-container">
         <ExpandableNavMenu {...props} />
       </div>
+
+      {/* Folder context menu */}
+      {contextMenu.folder && (
+        <FolderContextMenu
+          folder={contextMenu.folder}
+          position={contextMenu.position}
+          onClose={closeContextMenu}
+          onOpenSettings={handleOpenFolderSettings}
+          onDelete={handleDeleteFolder}
+        />
+      )}
     </header>
   );
 };

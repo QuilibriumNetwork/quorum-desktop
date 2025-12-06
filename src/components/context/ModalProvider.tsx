@@ -7,6 +7,7 @@ import LeaveSpaceModal from '../modals/LeaveSpaceModal';
 import KickUserModal from '../modals/KickUserModal';
 import NewDirectMessageModal from '../modals/NewDirectMessageModal';
 import ConversationSettingsModal from '../modals/ConversationSettingsModal';
+import FolderEditorModal from '../modals/FolderEditorModal';
 import {
   useModalState,
   type ModalState,
@@ -35,6 +36,8 @@ interface ModalContextType {
   closeKickUser: () => void;
   openConversationSettings: (conversationId: string) => void;
   closeConversationSettings: () => void;
+  openFolderEditor: (folderId?: string) => void;
+  closeFolderEditor: () => void;
   // Legacy compatibility with existing useModalContext
   isNewDirectMessageOpen: boolean;
 }
@@ -93,6 +96,8 @@ export const ModalProvider: React.FC<ModalProviderProps> = ({
     closeKickUser: modalState.closeKickUser,
     openConversationSettings: modalState.openConversationSettings,
     closeConversationSettings: modalState.closeConversationSettings,
+    openFolderEditor: modalState.openFolderEditor,
+    closeFolderEditor: modalState.closeFolderEditor,
     // Legacy compatibility
     isNewDirectMessageOpen: modalState.isNewDirectMessageOpen,
   };
@@ -170,6 +175,13 @@ export const ModalProvider: React.FC<ModalProviderProps> = ({
             onClose={modalState.closeConversationSettings}
           />
         )}
+
+      {modalState.state.folderEditor.isOpen && (
+        <FolderEditorModal
+          folderId={modalState.state.folderEditor.folderId}
+          onClose={modalState.closeFolderEditor}
+        />
+      )}
 
       {children}
     </ModalContext.Provider>

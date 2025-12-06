@@ -73,6 +73,7 @@ export const iconComponentMap: Record<IconName, string> = {
   'user-x': 'IconUserX',
   'user-minus': 'IconUserMinus',
   party: 'IconConfetti',
+  celebration: 'IconConfetti',
   gift: 'IconGift',
   'hand-peace': 'IconHandStop',
   ban: 'IconBan',
@@ -84,6 +85,7 @@ export const iconComponentMap: Record<IconName, string> = {
   star: 'IconStar',
   eye: 'IconEye',
   'eye-off': 'IconEyeOff',
+  'life-ring': 'IconLifebuoy',
 
   // Settings & Security
   settings: 'IconSettings',
