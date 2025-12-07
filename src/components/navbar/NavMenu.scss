@@ -72,15 +72,17 @@ header {
 
 .nav-menu-spaces {
   overflow-y: auto;
-  overflow-x: none;
+  overflow-x: hidden;
   width: 100%;
   scrollbar-width: none;
-  flex-grow: 1;
+  flex: 1 1 0; // flex-grow: 1, flex-shrink: 1, flex-basis: 0 - allows proper shrinking
+  min-height: 0; // Required for flexbox overflow to work - allows element to shrink below content size
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: $s-2-5; // Spacing between all items (10px)
   padding-top: $s-2; // Top padding instead of margin on first item
+  padding-bottom: 140px; // Space for fixed bottom buttons (+ button, avatar, padding)
 }
 
 .nav-menu-spaces::-webkit-scrollbar {
