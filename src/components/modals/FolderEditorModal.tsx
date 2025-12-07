@@ -123,7 +123,7 @@ const FolderEditorModal: React.FC<FolderEditorModalProps> = ({
             </FlexCenter>
             {spaceCount > 0 && deleteConfirmationStep === 0 && (
               <FlexCenter className="mt-2">
-                <Text variant="muted" size="xs">
+                <Text variant="subtle" size="xs">
                   <Trans>{spaceCount} spaces will be ungrouped</Trans>
                 </Text>
               </FlexCenter>

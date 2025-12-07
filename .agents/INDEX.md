@@ -72,6 +72,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Brave Browser React Hook Errors - ONGOING INVESTIGATION](bugs/brave-browser-react-hook-errors.md)
 - [DirectMessage Invite Loading Performance Issue](bugs/directmessage-invite-loading-performance.md)
 - [Expired Invite Card Validation Timing Issue](bugs/expired-invite-card-validation-timing.md)
+- [FolderEditorModal Race Condition on Auto-Open After Folder Creation](bugs/folder-editor-modal-race-condition.md)
 - [JoinSpaceModal "Invalid JSON" Error Due to Network Issues](bugs/joinspacemodal-invalid-json-network-error.md)
 - [Kick User Button Remains Enabled After User is Kicked](bugs/kick-user-button-state-after-kick.md)
 - [Markdown Line Break Inconsistency](bugs/markdown-line-break-inconsistency.md)
@@ -293,4 +294,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2025-12-06 17:50:57
+**Last Updated**: 2025-12-07 12:10:34

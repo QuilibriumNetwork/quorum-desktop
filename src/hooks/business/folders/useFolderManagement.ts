@@ -1,11 +1,14 @@
 import { useState, useCallback, useEffect, useMemo } from 'react';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
-import { useConfig } from '../../queries';
+import { useQueryClient } from '@tanstack/react-query';
+import { t } from '@lingui/core/macro';
+import { useConfig, buildConfigKey } from '../../queries';
 import { useMessageDB } from '../../../components/context/useMessageDB';
 import { NavItem, UserConfig } from '../../../db/messages';
 import { IconName, IconVariant } from '../../../components/primitives/Icon/types';
 import { IconColor } from '../../../components/space/IconPicker/types';
 import { createFolder, deriveSpaceIds } from '../../../utils/folderUtils';
+import { validateNameForXSS, MAX_NAME_LENGTH } from '../../../utils/validation';
 
 interface UseFolderManagementProps {
   folderId?: string;
@@ -17,6 +20,7 @@ export const useFolderManagement = ({
   onDeleteComplete,
 }: UseFolderManagementProps) => {
   const user = usePasskeysContext();
+  const queryClient = useQueryClient();
   const { data: config } = useConfig({
     userAddress: user.currentPasskeyInfo?.address || '',
   });
@@ -63,13 +67,16 @@ export const useFolderManagement = ({
     }
   }, [deleteConfirmationStep]);
 
-  // Validation
+  // Validation - same rules as space names (XSS + length)
   const validationError = useMemo(() => {
     if (!name.trim()) {
-      return 'Folder name is required';
+      return t`Folder name is required`;
     }
-    if (name.length > 40) {
-      return 'Folder name must be 40 characters or less';
+    if (name.length > MAX_NAME_LENGTH) {
+      return t`Folder name must be ${MAX_NAME_LENGTH} characters or less`;
+    }
+    if (!validateNameForXSS(name)) {
+      return t`Folder name cannot contain special characters`;
     }
     return null;
   }, [name]);
@@ -77,12 +84,9 @@ export const useFolderManagement = ({
   const canSave = !validationError;
 
   // Handlers
-  const handleNameChange = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      setName(e.target.value);
-    },
-    []
-  );
+  const handleNameChange = useCallback((value: string) => {
+    setName(value);
+  }, []);
 
   const handleIconChange = useCallback(
     (newIcon: IconName | null, newColor: IconColor, newVariant: IconVariant) => {
@@ -115,7 +119,7 @@ export const useFolderManagement = ({
       });
     } else {
       // This shouldn't happen in the modal (folders created via drag)
-      // But handle it for completeness
+      // But handle it for completeness - see bug report: folder-editor-modal-race-condition.md
       const folder = createFolder(name.trim(), [], icon, iconColor);
       newItems = [...(config.items || []), folder];
     }
@@ -125,6 +129,14 @@ export const useFolderManagement = ({
       items: newItems,
       spaceIds: deriveSpaceIds(newItems),
     };
+
+    // Optimistically update React Query cache for instant UI feedback
+    if (config.address) {
+      queryClient.setQueryData(
+        buildConfigKey({ userAddress: config.address }),
+        newConfig
+      );
+    }
 
     await saveConfig({ config: newConfig, keyset });
   }, [
@@ -138,6 +150,7 @@ export const useFolderManagement = ({
     icon,
     iconColor,
     saveConfig,
+    queryClient,
   ]);
 
   const handleDeleteClick = useCallback(() => {

@@ -50,6 +50,7 @@ interface DragInfo {
 
 interface UseFolderDragAndDropProps {
   config: UserConfig | undefined;
+  onFolderCreated?: (folderId: string) => void;
 }
 
 interface UseFolderDragAndDropReturn {
@@ -187,6 +188,7 @@ function detectScenario(
 
 export const useFolderDragAndDrop = ({
   config,
+  onFolderCreated,
 }: UseFolderDragAndDropProps): UseFolderDragAndDropReturn => {
   const { setIsDragging, setActiveItem, dropTarget, setDropTarget } = useDragStateContext();
   const { saveConfig, keyset } = useMessageDB();
@@ -292,6 +294,7 @@ export const useFolderDragAndDrop = ({
       const scenario = detectScenario(activeInfo, overInfo, items, currentDropIntent);
 
       let newItems: NavItem[] = items;
+      let createdFolderId: string | null = null;
 
       switch (scenario) {
         case 'SPACE_TO_SPACE': {
@@ -312,6 +315,7 @@ export const useFolderDragAndDrop = ({
 
           // Create folder with both spaces
           const folder = createFolder('Spaces', [overId, activeId]);
+          createdFolderId = folder.id;
 
           // Remove both spaces from items, insert folder at over position
           const minIdx = Math.min(activeIdx, overIdx);
@@ -319,10 +323,6 @@ export const useFolderDragAndDrop = ({
             (i) => !(i.type === 'space' && (i.id === activeId || i.id === overId))
           );
           newItems.splice(minIdx, 0, folder);
-
-          // NOTE: Don't open editor immediately - React Query config cache may be stale
-          // and the modal would overwrite the new folder with old data.
-          // User can right-click the folder to customize it later.
           break;
         }
 
@@ -433,6 +433,7 @@ export const useFolderDragAndDrop = ({
 
           // Create folder with both spaces
           const folder = createFolder('Spaces', [overId, activeId]);
+          createdFolderId = folder.id;
 
           const now = Date.now();
           // Remove active from source folder, remove over from standalone
@@ -455,8 +456,6 @@ export const useFolderDragAndDrop = ({
 
           // Insert folder at over position
           newItems.splice(overIdx, 0, folder);
-
-          // NOTE: Don't open editor immediately - same cache staleness issue
           break;
         }
 
@@ -573,8 +572,16 @@ export const useFolderDragAndDrop = ({
 
       // Persist to DB (and sync to server)
       saveConfig({ config: newConfig, keyset });
+
+      // Open folder editor modal for newly created folders
+      if (createdFolderId && onFolderCreated) {
+        // Use setTimeout to let the UI update before opening modal
+        setTimeout(() => {
+          onFolderCreated(createdFolderId!);
+        }, 100);
+      }
     },
-    [config, keyset, saveConfig, setIsDragging, setActiveItem, dropTarget, setDropTarget, queryClient]
+    [config, keyset, saveConfig, setIsDragging, setActiveItem, dropTarget, setDropTarget, queryClient, onFolderCreated]
   );
 
   // Configure sensors with touch support

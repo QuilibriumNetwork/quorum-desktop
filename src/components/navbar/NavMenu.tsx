@@ -103,6 +103,8 @@ const NavMenuContent: React.FC<NavMenuProps> = (props) => {
   // New: Folder-aware drag and drop (handles migration from legacy format)
   const folderDrag = useFolderDragAndDrop({
     config,
+    // TODO: Auto-open modal on folder creation causes issues - disabled for now
+    // onFolderCreated: openFolderEditor,
   });
 
   // Always use folder drag - it handles both legacy and new formats via migrateToItems
