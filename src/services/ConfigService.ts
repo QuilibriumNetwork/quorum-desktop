@@ -401,18 +401,8 @@ export class ConfigService {
       });
 
       const allSpaceKeys = await Promise.all(spaceKeysPromises);
-      // Filter out entries with undefined encryptionState or bloated states (>100KB) to avoid API rejection
-      // See: .agents/bugs/encryption-state-evals-bloat.md
-      const MAX_STATE_SIZE = 100000; // 100KB limit per encryption state
-      config.spaceKeys = allSpaceKeys.filter(sk => {
-        if (sk.encryptionState === undefined) return false;
-        const stateSize = JSON.stringify(sk.encryptionState).length;
-        if (stateSize > MAX_STATE_SIZE) {
-          console.warn('Skipping bloated encryption state for space:', sk.spaceId, 'size:', stateSize);
-          return false;
-        }
-        return true;
-      });
+      // Filter out entries with undefined encryptionState
+      config.spaceKeys = allSpaceKeys.filter(sk => sk.encryptionState !== undefined);
 
       // Collect bookmarks before encryption (Phase 7: Sync Integration)
       config.bookmarks = await this.messageDB.getBookmarks();

@@ -6,7 +6,7 @@ https://github.com/QuilibriumNetwork/quorum-desktop/issues/108
 
 When a user **creates** a space, the encryption state stores ~10,000 polynomial evaluations (`evals`) for private invite generation. Each eval is ~200 bytes, resulting in **~2MB per created space**.
 
-A test user who created 10+ spaces hit the API config sync limit (`invalid config missing data` 400 error) because the total payload exceeded the server limit.
+A test user who created 2+ spaces hit the API config sync limit (`invalid config missing data` 400 error) because the total payload exceeded the server limit (~4MB).
 
 Users who **join** spaces are not affected (they get 0 evals, ~12KB per space).
 
@@ -26,24 +26,13 @@ const session = await secureChannel.EstablishTripleRatchetSessionForSpace(
 );
 ```
 
-## Temporary Fix (Not Production-Ready)
+**This is a pre-existing issue in the `develop` branch** (same pattern at `MessageDB.tsx:2860`), not something introduced by feature branches.
 
-Added a filter in `ConfigService.saveConfig` to skip encryption states >100KB:
+## Workaround
 
-```typescript
-// src/services/ConfigService.ts:406-415
-const MAX_STATE_SIZE = 100000;
-config.spaceKeys = allSpaceKeys.filter(sk => {
-  const stateSize = JSON.stringify(sk.encryptionState).length;
-  if (stateSize > MAX_STATE_SIZE) {
-    console.warn('Skipping bloated encryption state for space:', sk.spaceId);
-    return false;
-  }
-  return true;
-});
-```
+**Disable config sync**: Users who hit this issue can disable "Allow Sync" in Privacy settings. This prevents the API call that fails, while still allowing local space creation.
 
-**This is not suitable for production** - it silently skips syncing encryption states for all newly created spaces, breaking cross-device private invite generation. This is just so I can keep using my test user without deleting Spaces.
+The bloated encryption states remain in local IndexedDB (no size limit) and spaces work normally. The tradeoff is no cross-device sync until the SDK issue is fixed.
 
 ## Proposed Solution
 
@@ -59,3 +48,4 @@ Note: Consumed evals are already removed from state when private invites are sen
 ---
 
 _Created: 2025-12-09_
+_Updated: 2025-12-09 - Confirmed pre-existing bug in develop branch. Added workaround (disable sync). Removed temp hack._
