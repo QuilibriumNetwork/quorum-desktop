@@ -1,4 +1,4 @@
-import React, { useMemo, useCallback, createContext, useContext } from 'react';
+import React, { useMemo, useCallback } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import remarkBreaks from 'remark-breaks';
@@ -21,10 +21,6 @@ import { getValidMessageLinkPrefixes } from '../../utils/messageLinkUtils';
 import { InviteLink } from './InviteLink';
 import { Icon } from '../primitives';
 import type { Role, Channel } from '../../api/quorumApi';
-
-// Context to track if we're inside a fenced code block (```...```)
-// This allows the code component to know if it should apply inline styling
-const CodeBlockContext = createContext(false);
 
 interface MessageMarkdownRendererProps {
   content: string;
@@ -64,6 +60,54 @@ const processInviteLinks = (text: string): string => {
     }
     return url;
   });
+};
+
+// Helper type for protected regions
+interface ProtectedRegion {
+  start: number;
+  end: number;
+}
+
+// Extract protected regions where mentions/URLs should NOT be processed
+// This includes: fenced code blocks, inline code, and markdown links
+const getProtectedRegions = (text: string): ProtectedRegion[] => {
+  const protectedRegions: ProtectedRegion[] = [];
+
+  // Extract fenced code blocks (```...```)
+  const codeBlockRegex = /```[\s\S]*?```/g;
+  let match;
+  while ((match = codeBlockRegex.exec(text)) !== null) {
+    protectedRegions.push({ start: match.index, end: match.index + match[0].length });
+  }
+
+  // Extract inline code (`...`)
+  const inlineCodeRegex = /`[^`]+`/g;
+  while ((match = inlineCodeRegex.exec(text)) !== null) {
+    const isInsideCodeBlock = protectedRegions.some(
+      r => match!.index >= r.start && match!.index < r.end
+    );
+    if (!isInsideCodeBlock) {
+      protectedRegions.push({ start: match.index, end: match.index + match[0].length });
+    }
+  }
+
+  // Extract markdown links [text](url)
+  const markdownLinkRegex = /\[([^\]]+)\]\(([^)]+)\)/g;
+  while ((match = markdownLinkRegex.exec(text)) !== null) {
+    const isInsideCodeBlock = protectedRegions.some(
+      r => match!.index >= r.start && match!.index < r.end
+    );
+    if (!isInsideCodeBlock) {
+      protectedRegions.push({ start: match.index, end: match.index + match[0].length });
+    }
+  }
+
+  return protectedRegions;
+};
+
+// Check if an index is inside a protected region
+const isInProtectedRegion = (index: number, protectedRegions: ProtectedRegion[]): boolean => {
+  return protectedRegions.some(r => index >= r.start && index < r.end);
 };
 
 // Stable processing functions outside component to prevent re-creation
@@ -248,9 +292,13 @@ export const MessageMarkdownRenderer: React.FC<MessageMarkdownRendererProps> = (
   }, []);
 
   // Process mentions to show displayNames with proper styling and click handling
-  // Only process mentions that have word boundaries (whitespace before and after)
+  // Only process mentions that have word boundaries AND are not inside protected regions
+  // Protected regions: code blocks, inline code, markdown links
   const processMentions = useCallback((text: string): string => {
     if (!mapSenderToUser) return text;
+
+    // Get protected regions (code blocks, inline code, markdown links)
+    const protectedRegions = getProtectedRegions(text);
 
     let processedText = text;
 
@@ -258,10 +306,10 @@ export const MessageMarkdownRenderer: React.FC<MessageMarkdownRendererProps> = (
     if (hasEveryoneMention) {
       const everyoneMatches = Array.from(text.matchAll(/@everyone\b/gi));
 
-      // Collect valid matches
+      // Collect valid matches (not in protected regions and has word boundaries)
       const validMatches = [];
       for (const match of everyoneMatches) {
-        if (hasWordBoundaries(text, match)) {
+        if (!isInProtectedRegion(match.index!, protectedRegions) && hasWordBoundaries(text, match)) {
           validMatches.push(match);
         }
       }
@@ -277,21 +325,31 @@ export const MessageMarkdownRenderer: React.FC<MessageMarkdownRendererProps> = (
 
     // Replace @<address> OR @[Display Name]<address> with safe placeholder token only if it has word boundaries
     // Using centralized IPFS CID validation pattern
+    // NOTE: Must match against processedText (not original text) since @everyone replacements change indices
     const cidPattern = createIPFSCIDRegex().source; // Get the pattern without global flag
     const userMentionRegex = new RegExp(`@(?:\\[([^\\]]+)\\])?<(${cidPattern})>`, 'g');
-    const userMatches = Array.from(text.matchAll(userMentionRegex));
+    const userMatches = Array.from(processedText.matchAll(userMentionRegex));
 
     // Process matches in reverse order to avoid index shifting issues
-    const validMatches = [];
+    // Filter out matches in protected regions (using original text indices for protected region check)
+    // Note: Protected regions are calculated on original text, but since we only replaced @everyone
+    // with a longer token, protected region checks are still valid (mentions in code blocks stay in code blocks)
+    const validUserMatches = [];
     for (const match of userMatches) {
-      if (hasWordBoundaries(text, match)) {
-        validMatches.push(match);
+      if (hasWordBoundaries(processedText, match)) {
+        // Check if this position in original text was in a protected region
+        // Since @everyone tokens are longer, we can't use original indices directly
+        // Instead, check if the match content appears to be inside a code block in processedText
+        const isInCodeBlock = isInProtectedRegion(match.index!, getProtectedRegions(processedText));
+        if (!isInCodeBlock) {
+          validUserMatches.push(match);
+        }
       }
     }
 
     // Replace from end to beginning to avoid index shifting
-    for (let i = validMatches.length - 1; i >= 0; i--) {
-      const match = validMatches[i];
+    for (let i = validUserMatches.length - 1; i >= 0; i--) {
+      const match = validUserMatches[i];
       const inlineDisplayName = match[1]; // Optional display name from @[Name]<address>
       const address = match[2]; // Address is now in match[2] due to optional group
       const beforeText = processedText.substring(0, match.index);
@@ -305,6 +363,7 @@ export const MessageMarkdownRenderer: React.FC<MessageMarkdownRendererProps> = (
   }, [mapSenderToUser, hasEveryoneMention, sanitizeDisplayName]);
 
   // Process role mentions - only render if role exists
+  // Only process mentions that have word boundaries AND are not inside protected regions
   const processRoleMentions = useCallback((text: string): string => {
     if (!roleMentions || roleMentions.length === 0 || !spaceRoles || spaceRoles.length === 0) {
       return text;
@@ -318,16 +377,20 @@ export const MessageMarkdownRenderer: React.FC<MessageMarkdownRendererProps> = (
       })
       .filter(Boolean) as Array<{ roleTag: string; displayName: string }>;
 
-    // Replace @roleTag with safe placeholder (only if it has word boundaries)
+    // Replace @roleTag with safe placeholder (only if it has word boundaries and not in protected region)
+    // NOTE: Must re-match and recalculate protected regions after each role replacement
+    // because replacements change string indices
     let processed = text;
     roleData.forEach(({ roleTag, displayName }) => {
+      // Recalculate protected regions on current processed text
+      const protectedRegions = getProtectedRegions(processed);
       const regex = new RegExp(`@${roleTag}(?!\\w)`, 'g');
-      const matches = Array.from(text.matchAll(regex));
+      const matches = Array.from(processed.matchAll(regex));
 
-      // Collect valid matches
+      // Collect valid matches (not in protected regions and has word boundaries)
       const validMatches = [];
       for (const match of matches) {
-        if (hasWordBoundaries(text, match)) {
+        if (!isInProtectedRegion(match.index!, protectedRegions) && hasWordBoundaries(processed, match)) {
           validMatches.push(match);
         }
       }
@@ -345,6 +408,7 @@ export const MessageMarkdownRenderer: React.FC<MessageMarkdownRendererProps> = (
   }, [roleMentions, spaceRoles]);
 
   // Process channel mentions - only render if channel exists
+  // Only process mentions that have word boundaries AND are not inside protected regions
   const processChannelMentions = useCallback((text: string): string => {
     if (!channelMentions || channelMentions.length === 0 || !spaceChannels || spaceChannels.length === 0) {
       return text;
@@ -358,20 +422,24 @@ export const MessageMarkdownRenderer: React.FC<MessageMarkdownRendererProps> = (
       })
       .filter(Boolean) as Array<{ channelId: string; channelName: string }>;
 
-    // Replace #<channelId> with safe placeholder (only if it has word boundaries)
+    // Replace #<channelId> with safe placeholder (only if it has word boundaries and not in protected region)
+    // NOTE: Must re-match and recalculate protected regions after each channel replacement
+    // because replacements change string indices
     let processed = text;
     channelData.forEach(({ channelId, channelName }) => {
+      // Recalculate protected regions on current processed text
+      const protectedRegions = getProtectedRegions(processed);
       // Escape special regex characters in channel ID
       const escapedChannelId = channelId.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
       // Support both formats: #<channelId> and #[Channel Name]<channelId>
       const channelRegex = new RegExp(`#(?:\\[([^\\]]+)\\])?<${escapedChannelId}>`, 'g');
-      const matches = Array.from(text.matchAll(channelRegex));
+      const matches = Array.from(processed.matchAll(channelRegex));
 
-      // Collect valid matches
+      // Collect valid matches (not in protected regions and has word boundaries)
       const validMatches = [];
       for (const match of matches) {
-        if (hasWordBoundaries(text, match)) {
+        if (!isInProtectedRegion(match.index!, protectedRegions) && hasWordBoundaries(processed, match)) {
           validMatches.push(match);
         }
       }
@@ -759,7 +827,6 @@ export const MessageMarkdownRenderer: React.FC<MessageMarkdownRendererProps> = (
     },
 
     // Enhanced code block rendering with scroll and copy functionality
-    // Wraps children with CodeBlockContext so nested code elements know they're in a block
     pre: ({ children, ...props }: any) => {
       const codeContent = extractCodeContent(children);
       const useScroll = shouldUseScrollContainer(codeContent);
@@ -767,52 +834,33 @@ export const MessageMarkdownRenderer: React.FC<MessageMarkdownRendererProps> = (
 
       if (useScroll) {
         return (
-          <CodeBlockContext.Provider value={true}>
-            <div className="relative my-2 last:mb-0 w-full min-w-0">
-              <CopyButton codeContent={codeContent} />
-              <ScrollContainer maxHeight={maxHeight} showBorder={true} borderRadius="md" className="bg-surface-4 w-full min-w-0">
-                <pre className="p-3 font-mono text-subtle text-sm whitespace-pre-wrap break-all overflow-wrap-anywhere min-w-0 max-w-full" {...props}>
-                  {children}
-                </pre>
-              </ScrollContainer>
-            </div>
-          </CodeBlockContext.Provider>
+          <div className="relative my-2 last:mb-0 w-full min-w-0">
+            <CopyButton codeContent={codeContent} />
+            <ScrollContainer maxHeight={maxHeight} showBorder={true} borderRadius="md" className="bg-surface-4 w-full min-w-0">
+              <pre className="p-3 font-mono text-subtle text-sm whitespace-pre-wrap break-all overflow-wrap-anywhere min-w-0 max-w-full" {...props}>
+                {children}
+              </pre>
+            </ScrollContainer>
+          </div>
         );
       }
 
       return (
-        <CodeBlockContext.Provider value={true}>
-          <div className="relative my-2 last:mb-0 w-full min-w-0">
-            <CopyButton codeContent={codeContent} />
-            <pre className="bg-surface-4 border border-default rounded-lg p-3 font-mono text-sm text-subtle whitespace-pre-wrap break-words w-full min-w-0" {...props}>
-              {children}
-            </pre>
-          </div>
-        </CodeBlockContext.Provider>
+        <div className="relative my-2 last:mb-0 w-full min-w-0">
+          <CopyButton codeContent={codeContent} />
+          <pre className="bg-surface-4 border border-default rounded-lg p-3 font-mono text-sm text-subtle whitespace-pre-wrap break-words w-full min-w-0" {...props}>
+            {children}
+          </pre>
+        </div>
       );
     },
 
-    // Code rendering - uses context to distinguish inline (`) from block (```)
-    code: ({ children, className, ...props }: any) => {
-      // Check if we're inside a pre element (fenced code block)
-      // This is set by the pre component via CodeBlockContext
-      const isInCodeBlock = useContext(CodeBlockContext);
-
-      if (isInCodeBlock) {
-        // Inside a fenced code block - let pre handle styling
-        return <code className={className} {...props}>{children}</code>;
-      }
-
-      // Inline code styling (single backticks)
-      return (
-        <code
-          className="bg-surface-4 border border-default px-1.5 py-0.5 rounded text-xs font-mono mx-0.5 text-accent-500"
-          {...props}
-        >
-          {children}
-        </code>
-      );
-    },
+    // Code rendering - CSS handles inline vs block styling via `code:not(pre code)` selector
+    code: ({ children, className, ...props }: any) => (
+      <code className={`markdown-code ${className || ''}`} {...props}>
+        {children}
+      </code>
+    ),
 
     // Style blockquotes
     blockquote: ({ children, ...props }: any) => (
@@ -948,7 +996,7 @@ export const MessageMarkdownRenderer: React.FC<MessageMarkdownRendererProps> = (
       </em>
     ),
 
-  }), [mapSenderToUser, onUserClick, processMentionTokens]); // Dependencies for mention handling in text, h3, p, and li components
+  }), [processMentionTokens, messageSenderId, currentUserAddress]); // processMentionTokens already captures mapSenderToUser and onUserClick
 
   // Handle mention clicks
   const handleClick = useCallback((event: React.MouseEvent) => {

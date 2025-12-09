@@ -224,6 +224,21 @@
 
 /* Username truncation now handled by centralized .truncate-user-name class in _base.scss */
 
+/* === INLINE CODE STYLING === */
+/* Inline code (not inside pre blocks) gets pill/badge styling */
+/* Code inside pre blocks inherits from pre with no extra styling */
+.markdown-code:not(pre .markdown-code) {
+  background-color: var(--surface-4);
+  border: $border solid var(--border-default);
+  padding: $s-0-5 $s-1-5;
+  border-radius: $rounded;
+  font-size: $text-xs;
+  font-family: monospace;
+  margin-left: $s-0-5;
+  margin-right: $s-0-5;
+  color: var(--accent-500);
+}
+
 /* === MOBILE TIMESTAMP ALIGNMENT === */
 /* Remove left margin from timestamp on mobile when it's above username */
 @media (max-width: $screen-xs) {
