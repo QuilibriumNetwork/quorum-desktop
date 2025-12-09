@@ -388,3 +388,4 @@ backgroundColor: '#ffffff'; // Use colors.bg.app instead
 ---
 
 _Updated: 2025-08-04_
+_Verified: 2025-12-09 - File structure confirmed current_

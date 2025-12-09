@@ -8,7 +8,7 @@ The desktop notifications feature allows Quorum to notify users about new messag
 
 ### Core Components
 
-1. **NotificationService** (`src/services/notificationService.ts`)
+1. **NotificationService** (`src/services/NotificationService.ts`)
    - Singleton service that manages all notification-related functionality
    - Handles browser permission requests and status checks
    - Provides methods for showing different types of notifications
@@ -136,3 +136,4 @@ When testing the notification feature:
 ---
 
 _Last updated: 2025-07-23_
+_Verified: 2025-12-09 - File path corrected (NotificationService.ts)_

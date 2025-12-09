@@ -123,3 +123,4 @@ src/components/direct/DirectMessageContact.scss       # Uses shared dm-unread-do
 
 _Created: 2025-11-10_
 _Updated: 2025-01-13 - Unified channels and DMs to use shared timestamp-based approach_
+_Verified: 2025-12-09 - File paths confirmed current_

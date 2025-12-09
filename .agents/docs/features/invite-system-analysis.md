@@ -352,4 +352,5 @@ _Created: July 30, 2025 by Claude Code_
 _Updated: September 22, 2025 - Corrected reversibility of public invite links_
 _Updated: September 25, 2025 - Added duplicate prevention fixes_
 _Updated: October 4, 2025 - Corrected deletion capability (requires backend API, not currently possible)_
+_Verified: December 9, 2025 - File paths confirmed current_
 _Covers: SpaceEditor.tsx, useInviteManagement.ts, useInviteValidation.ts, useSpaceJoining.ts, InvitationService.ts, MessageDB Context, InviteLink.tsx, inviteDomain.ts_

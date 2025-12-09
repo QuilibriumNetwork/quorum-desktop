@@ -512,3 +512,4 @@ All user-controlled content now follows this pattern:
 **Enhanced Mention Formats**: Complete (backward-compatible support for readable mention display names)
 **Message Links**: Complete (Discord-style rendering with same-space validation)
 **Recent Changes**: Added message link rendering (`<<<MESSAGE_LINK:...>>>` tokens), protected contexts for code blocks/inline code/markdown links, link truncation (50 chars), CodeBlockContext for reliable inline vs block code detection
+**Verified**: 2025-12-09 - File paths confirmed current

@@ -392,3 +392,4 @@ const handlers = useLongPressWithDefaults({
 ---
 
 *Updated: 2025-11-23*
+*Verified: 2025-12-09 - File paths confirmed current*

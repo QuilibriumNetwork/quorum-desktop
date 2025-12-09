@@ -167,3 +167,4 @@ All modals must use: `Button`, `Input`, `Switch`, `Icon`, `Tooltip`, `Select` fr
 ---
 
 **Last Updated:** 2025-12-03
+**Verified:** 2025-12-09 - File paths confirmed current

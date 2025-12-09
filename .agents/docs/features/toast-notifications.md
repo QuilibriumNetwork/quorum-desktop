@@ -48,3 +48,4 @@ Main function to display a toast notification.
 ---
 
 _Last updated: 2025-10-17_
+_Verified: 2025-12-09 - File paths confirmed current_

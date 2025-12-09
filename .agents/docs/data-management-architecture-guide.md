@@ -1,11 +1,9 @@
 # Quorum Data Management Architecture
 
-**NEEDS HUMAN REVIEW: _Last review: 2025-08-14 10:45 UTC_**
-
 A comprehensive guide to data storage, management, and flow patterns in the Quorum desktop application.
 
-**Created**: 2025-01-20  
-**Last Updated**: 2025-01-20
+**Created**: 2025-01-20
+**Last Updated**: 2025-12-09
 
 ## Table of Contents
 
@@ -54,7 +52,7 @@ Following recent refactoring, core MessageDB functionalities have been extracted
 class MessageDB {
   private db: IDBDatabase | null = null;
   private readonly DB_NAME = 'quorum_db';
-  private readonly DB_VERSION = 2;
+  private readonly DB_VERSION = 4;
   private searchIndices: Map<string, MiniSearch<SearchableMessage>> = new Map();
 }
 ```
@@ -72,6 +70,7 @@ class MessageDB {
 - `inbox_mapping` - Inbox address mappings
 - `latest_states` - Latest encryption states
 - `conversation_users` - Users in conversations
+- `bookmarks` - User bookmarked messages
 
 ### 2. localStorage (Preferences & Settings)
 
@@ -102,6 +101,11 @@ localStorage.setItem(`userStatus_${address}`, status);
 - **WebSocket Context** (`src/components/context/WebsocketProvider.tsx`)
 - **Registration Context** (`src/components/context/RegistrationPersister.tsx`)
 - **Theme Context** (`src/components/context/ThemeProvider.tsx`)
+- **QuorumApi Context** (`src/components/context/QuorumApiContext.tsx`)
+- **Responsive Layout Context** (`src/components/context/ResponsiveLayoutProvider.tsx`)
+- **Sidebar Context** (`src/components/context/SidebarProvider.tsx`)
+- **Mobile Context** (`src/components/context/MobileProvider.tsx`)
+- **Modal Providers** (`src/components/context/ModalProvider.tsx`, `ConfirmationModalProvider.tsx`, `ImageModalProvider.tsx`, `EditHistoryModalProvider.tsx`)
 
 ### 4. Server Integration
 
@@ -118,7 +122,7 @@ class QuorumApiClient {
 
 ## Database Schema & Structure
 
-### IndexedDB Schema (Version 2)
+### IndexedDB Schema (Version 4)
 
 #### Messages Store
 
@@ -232,7 +236,10 @@ export type Message = {
     | LeaveMessage
     | KickMessage
     | UpdateProfileMessage
-    | StickerMessage;
+    | StickerMessage
+    | PinMessage
+    | DeleteConversationMessage
+    | EditMessage;
   reactions: Reaction[];
   mentions: Mentions;
   publicKey?: string;
@@ -251,6 +258,9 @@ export type Message = {
 - `LeaveMessage` - User leave events
 - `KickMessage` - User kick events
 - `UpdateProfileMessage` - Profile updates
+- `PinMessage` - Message pin/unpin actions
+- `DeleteConversationMessage` - Conversation deletion events
+- `EditMessage` - Message edit events
 
 ### Message Flow
 
@@ -316,9 +326,24 @@ type RegistrationContextValue = {
 **User Config Structure**:
 
 ```typescript
+// NavItem represents either a standalone space or a folder containing spaces
+export type NavItem =
+  | { type: 'space'; id: string }
+  | {
+      type: 'folder';
+      id: string;
+      name: string;
+      spaceIds: string[];
+      icon?: IconName;
+      color?: FolderColor;
+      createdDate: number;
+      modifiedDate: number;
+    };
+
 export type UserConfig = {
   address: string;
-  spaceIds: string[];
+  spaceIds: string[];               // Kept for backwards compatibility
+  items?: NavItem[];                // Single source of truth for ordering & folders
   timestamp?: number;
   nonRepudiable?: boolean;
   allowSync?: boolean;
@@ -338,6 +363,11 @@ export type UserConfig = {
       spaceId: string;
     }[];
   }[];
+  notificationSettings?: {
+    [spaceId: string]: NotificationSettings;
+  };
+  bookmarks?: Bookmark[];
+  deletedBookmarkIds?: string[];
 };
 ```
 
@@ -365,7 +395,7 @@ export type UserConfig = {
 export type Space = {
   spaceId: string;
   spaceName: string;
-  description: string;
+  description?: string;
   vanityUrl: string;
   inviteUrl: string;
   iconUrl: string;
@@ -376,6 +406,7 @@ export type Space = {
   modifiedDate: number;
   isRepudiable: boolean;
   isPublic: boolean;
+  saveEditHistory?: boolean;
   groups: Group[];
   roles: Role[];
   emojis: Emoji[];
@@ -385,6 +416,9 @@ export type Space = {
 export type Group = {
   groupName: string;
   channels: Channel[];
+  icon?: string;
+  iconColor?: string;
+  iconVariant?: 'outline' | 'filled';
 };
 
 export type Channel = {
@@ -397,6 +431,13 @@ export type Channel = {
   modifiedDate: number;
   mentionCount?: number;
   mentions?: string;
+  isReadOnly?: boolean;
+  managerRoleIds?: string[];      // Roles that can manage read-only channels
+  isPinned?: boolean;              // Pinned to top of group
+  pinnedAt?: number;               // Timestamp for stack ordering
+  icon?: string;                   // Custom icon name
+  iconColor?: string;              // Custom icon color
+  iconVariant?: 'outline' | 'filled';
 };
 ```
 
@@ -412,9 +453,10 @@ export type Role = {
   color: string;
   members: string[];
   permissions: Permission[];
+  isPublic?: boolean; // Whether the role is visible to other users
 };
 
-export type Permission = 'message:delete';
+export type Permission = 'message:delete' | 'message:pin' | 'user:kick' | 'mention:everyone';
 ```
 
 ### Space Operations
@@ -751,6 +793,10 @@ interface SearchContext {
 3. **Registration Context** - User authentication
 4. **Theme Context** - UI preferences
 5. **Responsive Layout Context** - UI state management
+6. **QuorumApi Context** - API client access
+7. **Sidebar Context** - Sidebar state management
+8. **Mobile Context** - Mobile-specific state
+9. **Modal Providers** - Various modal management contexts
 
 ### State Synchronization
 
@@ -894,4 +940,4 @@ class ErrorBoundary extends React.Component {
 
 ---
 
-_Last updated: 2025-01-20_
+_Last updated: 2025-12-09_

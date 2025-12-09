@@ -260,3 +260,4 @@ Toasts automatically:
 ---
 
 _Created: 2025-10-05 by Claude Code_
+_Verified: 2025-12-09 - File paths confirmed current_

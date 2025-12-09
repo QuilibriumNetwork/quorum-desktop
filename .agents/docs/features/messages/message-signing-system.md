@@ -1,6 +1,6 @@
 # Message Signing System
 
-**Last Updated:** September 21, 2025
+**Last Updated:** December 9, 2025
 
 ## Overview
 
@@ -27,7 +27,7 @@ The message signing system provides **4-level hierarchical control** over crypto
 
 ### 1. Global User Settings
 
-**File:** `src/components/modals/UserSettingsModal.tsx`
+**File:** `src/components/modals/UserSettingsModal/Privacy.tsx`
 **Hook:** `src/hooks/business/user/useUserSettings.ts`
 
 ```typescript
@@ -215,9 +215,9 @@ const effectiveSkip = space?.isRepudiable ? skipSigning : false;
 
 | Level | Location | Control |
 |-------|----------|---------|
-| Global | UserSettingsModal → Privacy/Security | "Always sign Direct Messages" |
-| Space | SpaceSettingsModal → General | "Require Message Signing" |
-| Conversation | ConversationSettingsModal | "Always sign messages" |
+| Global | UserSettingsModal/Privacy.tsx | "Always sign Direct Messages" |
+| Space | SpaceSettingsModal/General.tsx | "Require Message Signing" |
+| Conversation | ConversationSettingsModal.tsx | "Always sign messages" |
 | Message | MessageComposer | Lock/unlock icon |
 
 ### Visual Indicators
