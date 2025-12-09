@@ -12,7 +12,7 @@
   font-size: $text-sm;
   text-align: center;
   user-select: none;
-  transition: all $duration-300 $ease-in-out;
+  transition: border-color $duration-300 $ease-in-out, box-shadow $duration-300 $ease-in-out, opacity $duration-300 $ease-in-out;
   color: white;
 }
 
@@ -124,7 +124,7 @@ html.dark .btn-secondary {
 
 .btn-unstyled {
   cursor: pointer;
-  transition: all $duration-300 $ease-in-out;
+  transition: opacity $duration-300 $ease-in-out;
   user-select: none;
   border: none;
   // No padding, borders, or background - allows full className control
