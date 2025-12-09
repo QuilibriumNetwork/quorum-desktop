@@ -340,6 +340,89 @@ All 10 scenarios from the state machine are implemented:
 
 ---
 
+## Phase 4.5: Critical Bug Fix - New Spaces Not Visible ✅ COMPLETE
+
+> **Issue discovered**: After Phase 4, newly created spaces were not appearing in NavMenu.
+> **Root cause**: When creating/joining spaces, only `spaceIds` was updated, but `items` array was not.
+
+### Problem Analysis
+
+The folder feature introduced a dual data structure:
+- `spaceIds: string[]` - Legacy flat list (for backwards compatibility)
+- `items: NavItem[]` - New structure supporting folders
+
+NavMenu rendering logic (line 93):
+```typescript
+const hasItems = config?.items && config.items.length > 0;
+```
+
+When `hasItems` is true, NavMenu uses `useNavItems` hook which reads from `items` array.
+When a new space was created, `SpaceService.createSpace` only added to `spaceIds`, not `items`.
+
+### Files Modified
+
+#### SpaceService.ts (space creation)
+- **Location**: `src/services/SpaceService.ts:434-459`
+- **Change**: When creating a space, now also adds to `items` array if it exists
+```typescript
+// Create NavItem for the new space
+const newSpaceItem: NavItem = { type: 'space', id: spaceAddress };
+if (!config) {
+  // New user: create config with both spaceIds and items
+  await this.saveConfig({
+    config: {
+      address: registration.user_address,
+      spaceIds: [spaceAddress],
+      items: [newSpaceItem],
+    },
+    keyset,
+  });
+} else {
+  // Existing user: update both spaceIds and items (if items exists)
+  const updatedConfig = {
+    ...config,
+    spaceIds: [...config.spaceIds, spaceAddress],
+  };
+  if (config.items) {
+    updatedConfig.items = [...config.items, newSpaceItem];
+  }
+  await this.saveConfig({ config: updatedConfig, keyset });
+}
+```
+
+#### InvitationService.ts (joining spaces via invite)
+- **Location**: `src/services/InvitationService.ts:799-818`
+- **Change**: Same pattern - adds to `items` when joining a space
+```typescript
+const newSpaceItem: NavItem = { type: 'space', id: space.spaceId };
+if (config) {
+  config.spaceIds = [...(config.spaceIds ?? []), space.spaceId];
+  if (config.items) {
+    config.items = [...config.items, newSpaceItem];
+  }
+} else {
+  config = {
+    address: currentPasskeyInfo.address,
+    spaceIds: [space.spaceId],
+    items: [newSpaceItem],
+  };
+}
+```
+
+### Key Insight
+
+The fix maintains backwards compatibility:
+- If `config.items` doesn't exist (legacy config), only `spaceIds` is updated
+- If `config.items` exists (folder-enabled config), both are updated
+- New users get both `spaceIds` and `items` from the start
+
+### Related Bug Report
+- See `.agents/bugs/bloated-encryption-states-sync-failure.md` for a separate sync issue discovered during debugging
+
+**✅ PHASE 4.5 COMPLETE** - New spaces now appear correctly in NavMenu
+
+---
+
 ## Phase 5: Sync & Persistence
 
 ### 5.1 Update ConfigService for items
