@@ -3,9 +3,10 @@ import { useSortable } from '@dnd-kit/sortable';
 import FolderButton from './FolderButton';
 import SpaceButton from './SpaceButton';
 import { useDragStateContext } from '../../context/DragStateContext';
-import { getIconColorHex } from '../space/IconPicker/types';
+import { getFolderColorHex } from '../space/IconPicker/types';
 import { NavItem } from '../../db/messages';
 import { isTouchDevice } from '../../utils/platform';
+import { useTheme } from '../primitives';
 import './Folder.scss';
 
 interface Space {
@@ -36,6 +37,8 @@ const FolderContainer: React.FC<FolderContainerProps> = ({
   spaceMentionCounts = {},
 }) => {
   const isTouch = isTouchDevice();
+  const { resolvedTheme } = useTheme();
+  const isDarkTheme = resolvedTheme === 'dark';
 
   // Long press timer for touch devices to open editor
   const longPressTimer = React.useRef<NodeJS.Timeout | null>(null);
@@ -111,7 +114,7 @@ const FolderContainer: React.FC<FolderContainerProps> = ({
   };
 
   // Get folder color for CSS variable
-  const folderColor = getIconColorHex(folder.color);
+  const folderColor = getFolderColorHex(folder.color, isDarkTheme);
 
   // Always render full structure, CSS handles expand/collapse animation
   return (

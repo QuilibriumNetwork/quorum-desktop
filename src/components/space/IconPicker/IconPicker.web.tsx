@@ -1,12 +1,14 @@
 import React, { useState, useRef, useEffect, useMemo } from 'react';
-import { Button, Icon, FlexRow, ColorSwatch } from '../../primitives';
+import { Button, Icon, FlexRow, ColorSwatch, useTheme } from '../../primitives';
 import { DropdownPanel } from '../../ui';
 import {
   IconPickerProps,
   ICON_OPTIONS,
   ICON_COLORS,
+  FOLDER_COLORS,
   FILLED_ICONS,
   getIconColorHex,
+  getFolderColorHex,
   IconColor,
 } from './types';
 import { IconName, IconVariant } from '../../primitives/Icon/types';
@@ -29,12 +31,18 @@ export const IconPicker: React.FC<IconPickerProps> = ({
   const [selectedVariant, setSelectedVariant] = useState<IconVariant>(selectedIconVariant);
   const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0 });
   const buttonRef = useRef<HTMLDivElement>(null);
-
-  // Memoize color calculations for performance
-  const iconColorHex = useMemo(() => getIconColorHex(selectedColor), [selectedColor]);
+  const { resolvedTheme } = useTheme();
+  const isDarkTheme = resolvedTheme === 'dark';
 
   // In background-color mode, icons are always white, color is used for backgrounds
   const isBackgroundColorMode = mode === 'background-color';
+
+  // Memoize color calculations for performance
+  // Use dimmed folder colors in background-color mode
+  const iconColorHex = useMemo(
+    () => isBackgroundColorMode ? getFolderColorHex(selectedColor, isDarkTheme) : getIconColorHex(selectedColor),
+    [selectedColor, isBackgroundColorMode, isDarkTheme]
+  );
   const displayIconColor = isBackgroundColorMode ? '#ffffff' : iconColorHex;
 
   // Filter icons based on selected variant
@@ -205,13 +213,17 @@ export const IconPicker: React.FC<IconPickerProps> = ({
           {/* Color swatches row */}
           <FlexRow gap={3} justify="between">
             {isBackgroundColorMode ? (
-              // Background-color mode: show colored circles with white icon inside
-              ICON_COLORS.map((colorOption) => (
+              // Background-color mode: show colored circles with white icon inside (using dimmed folder colors)
+              FOLDER_COLORS.map((colorOption) => (
                 <button
                   key={colorOption.value}
                   onClick={() => handleColorChange(colorOption.value)}
                   className={`icon-picker-bg-swatch ${selectedColor === colorOption.value ? 'icon-picker-bg-swatch--active' : ''}`}
-                  style={{ backgroundColor: colorOption.hex }}
+                  style={{
+                    backgroundColor: colorOption.value === 'default'
+                      ? getFolderColorHex('default', isDarkTheme)
+                      : colorOption.hex
+                  }}
                   aria-label={`Select ${colorOption.label} background color`}
                   aria-pressed={selectedColor === colorOption.value}
                 >
