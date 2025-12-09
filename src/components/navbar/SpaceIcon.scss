@@ -179,25 +179,17 @@ html.dark .space-icon-mention-bubble {
 // Drop target indicator for merge action
 // Shows when dragging to center of a space/folder (will create or add to folder)
 .drop-target-wiggle {
-  position: relative;
-
-  &::after {
-    content: '';
-    position: absolute;
-    inset: -4px;
-    border: 3px dashed var(--accent-500);
-    border-radius: $rounded-xl; // Slightly larger than icon's rounded-lg due to inset
-    animation: pulse-border 1s ease-in-out infinite;
-  }
+  animation: wiggle 0.25s ease-in-out infinite;
 }
 
-@keyframes pulse-border {
+@keyframes wiggle {
   0%, 100% {
-    opacity: 1;
-    transform: scale(1);
+    transform: rotate(0deg);
   }
-  50% {
-    opacity: 0.7;
-    transform: scale(1.03);
+  25% {
+    transform: rotate(-5deg);
+  }
+  75% {
+    transform: rotate(5deg);
   }
 }

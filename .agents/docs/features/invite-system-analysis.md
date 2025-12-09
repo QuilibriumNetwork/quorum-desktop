@@ -48,7 +48,7 @@ Public invite links are shareable URLs that anyone can use to join a space. They
 - Same URL for all users
 - Can be shared anywhere
 - Regeneratable (invalidates previous public link)
-- Permanent switch from private-only mode
+- Switches system to public-only mode (private invites become public URL)
 
 ## Critical System Behavior
 
@@ -65,9 +65,9 @@ When you generate a public invite link, the system switches from private-only to
    - **Limited capacity**: Spaces can only generate a finite number of private invites
 
 2. **Phase 2 - The Switch:**
-   - Generate first public link → **ALL previous private invites immediately stop working**
-   - New public key is generated alongside original keys (logic now within `InvitationService` or `SpaceService`)
-   - System switches to public-only mode while public link exists
+   - Generate first public link → `space.inviteUrl` is set
+   - `constructInviteLink()` now returns the public URL immediately (line 57-58)
+   - **ALL subsequent "private" invites become the public URL**
 
 3. **Phase 3 - Public-Only Mode:**
    - "Send invite to existing conversations" now sends the **same public URL** to everyone
@@ -75,69 +75,53 @@ When you generate a public invite link, the system switches from private-only to
    - Can generate new public links (invalidates old one by creating new config key)
    - **Cannot delete**: True deletion requires backend API endpoint that doesn't exist
 
-**🔥 Most Important Understanding:**
-
-**KEY BEHAVIOR:** "After creating public link, ALL invites become the public URL"
-**LIMITATION:** "Cannot return to private-only mode - deletion requires backend API support"
-
-**Critical Code Evidence:**
+**🔥 Critical Code Evidence:**
 
 ```typescript
-// constructInviteLink() decision logic (now within InvitationService)
-// The MessageDB Context provides access to the InvitationService, which orchestrates this logic.
-const constructInviteLink = React.useCallback(async (spaceId: string) => {
-  // Interaction with SpaceService or MessageDB for space data
-  const space = await messageDB.getSpace(spaceId); // This call would be internal to a service
+// constructInviteLink() - InvitationService.ts:55-59
+async constructInviteLink(spaceId: string) {
+  const space = await this.messageDB.getSpace(spaceId);
   if (space?.inviteUrl) {
-    return space.inviteUrl; // ← Returns public URL if it exists and is truthy
+    return space.inviteUrl; // ← Returns public URL, skips private invite generation!
   }
-  // ← Falls back to private invite generation when inviteUrl is empty/deleted
+  // ... private invite code never reached once inviteUrl exists
+}
 ```
 
-**Private Invite Secret Consumption (now orchestrated by InvitationService):**
+**LIMITATION:** Cannot return to private-only mode - deletion requires backend API support.
+
+### Evals (Polynomial Evaluations)
+
+Evals are cryptographic secrets used exclusively for invite generation. They are NOT used for message encryption.
+
+**Eval Allocation:**
+
+| Operation | Evals Generated | Notes |
+|-----------|-----------------|-------|
+| Space creation | ~10,000 (SDK default) | No `total` param passed |
+| Generate public invite link | `members + 200` | Replaces previous session |
+| Kick user (rekey) | `members + 200` | Replaces previous session |
+
+**Important**: When `generateNewInviteLink()` is called, it creates a NEW session that **replaces** the old encryption state. The original ~10K evals from space creation are discarded and replaced with ~200 evals.
+
+**Eval Consumption:**
 
 ```typescript
-// Private invite generation consumes secrets from finite pool
-const index_secret_raw = sets[0].evals.shift(); // ← REMOVES secret from evals array
-const secret = Buffer.from(new Uint8Array(index_secret_raw)).toString('hex');
-// The InvitationService would handle saving the modified encryption state
-// await messageDB.saveEncryptionState( // This call would be internal to a service
-//   { ...response[0], state: JSON.stringify(sets[0]) }, // ← SAVES modified state
-//   true
-// );
-// Each private invite permanently consumes one secret from the evals array
+// InvitationService.ts - Private invite consumes one eval
+const index_secret_raw = sets[0].evals.shift(); // Removes from array
+await this.messageDB.saveEncryptionState(
+  { ...response[0], state: JSON.stringify(sets[0]) }, // Saves updated state
+  true
+);
 ```
 
-**Regenerate Functionality (Invalidates Old Link):**
+### Known Issue: Config Sync Bloat
 
-```typescript
-// Generate new config keypair
-const configPair = JSON.parse(ch.js_generate_x448());
+See: `.agents/bugs/encryption-state-evals-bloat.md`
 
-// Post new evals with NEW config key
-await apiClient.postSpaceInviteEvals({
-  config_public_key: newConfigKey,
-  space_evals: newEvals,
-  ...
-});
+Space creation allocates ~10K evals (~2MB per space) which causes config sync failures for users who create many spaces. The `generateNewInviteLink` and `kickUser` operations correctly use `members + 200`, suggesting the 10K default at creation may be unintentional.
 
-// Update local inviteUrl to use new key
-space.inviteUrl = `${baseUrl}#spaceId=${spaceId}&configKey=${newConfigKey}`;
-```
-
-**User Experience Impact:**
-
-- **Private-Only Spaces**: Private invites are truly private and never expire (until switching to public)
-- **Active Public Spaces**: The "Send invite" feature becomes a public link distributor
-- **No Rollback**: Once in public mode, cannot return to private-only (requires backend delete API)
-- **Regeneration Works**: Creating new public link orphans old server data, making old link unusable
-
-**Example Timeline:**
-1. Send 5 private invites → 5 secrets consumed from `evals` array, invites work with unique keys
-2. Generate public link → Those 5 private invites immediately break, but secrets already consumed
-3. Send "private" invite to friend → Actually sends the public URL (no secrets consumed)
-4. Generate new public link → Old public link stops working (new config key), old server data orphaned
-5. Cannot return to private mode → Stuck in public-only mode permanently
+**Proposed improvement**: On-demand eval generation instead of upfront allocation.
 
 ## Technical Architecture Details
 
@@ -352,5 +336,5 @@ _Created: July 30, 2025 by Claude Code_
 _Updated: September 22, 2025 - Corrected reversibility of public invite links_
 _Updated: September 25, 2025 - Added duplicate prevention fixes_
 _Updated: October 4, 2025 - Corrected deletion capability (requires backend API, not currently possible)_
-_Verified: December 9, 2025 - File paths confirmed current_
+_Updated: December 9, 2025 - Added evals documentation (what they are, allocation amounts, consumption). Added config sync bloat issue reference._
 _Covers: SpaceEditor.tsx, useInviteManagement.ts, useInviteValidation.ts, useSpaceJoining.ts, InvitationService.ts, MessageDB Context, InviteLink.tsx, inviteDomain.ts_

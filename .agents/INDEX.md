@@ -6,6 +6,7 @@ This is the main index for all documentation, bug reports, and task management.
 
 - [Complete Guide: Cross-Platform React Components for Web + Native](docs/cross-platform-components-guide.md)
 - [Component Management & Development Guide](docs/component-management-guide.md)
+- [Config Sync System](docs/config-sync-system.md)
 - [Cross-Platform Repository Implementation](docs/cross-platform-repository-implementation.md)
 - [Expo Dev Testing Guide](docs/expo-dev-testing-guide.md)
 - [Quorum Data Management Architecture](docs/data-management-architecture-guide.md)
@@ -69,7 +70,6 @@ This is the main index for all documentation, bug reports, and task management.
 ## 🐛 Bug Reports
 
 ### Active Issues
-- [Bloated Encryption States Causing Config Sync Failure](bugs/bloated-encryption-states-sync-failure.md)
 - [Brave Browser React Hook Errors - ONGOING INVESTIGATION](bugs/brave-browser-react-hook-errors.md)
 - [DirectMessage Invite Loading Performance Issue](bugs/directmessage-invite-loading-performance.md)
 - [Expired Invite Card Validation Timing Issue](bugs/expired-invite-card-validation-timing.md)
@@ -87,6 +87,7 @@ This is the main index for all documentation, bug reports, and task management.
 
 ### Solved Issues
 - [Android 7.0 File Download Fix - Implementation Plan](bugs/.solved/SOLVED_android-file-download-huawei-p9-lite.md)
+- [Bloated Encryption States Causing Config Sync Failure](bugs/.solved/bloated-encryption-states-sync-failure.md)
 - [Bug: Auto-Jump to First Unread Message - Blocked by Virtuoso Scroll Positioning](bugs/.solved/auto-jump-unread-virtuoso-scroll-conflict.md)
 - [Channel/Group Save Race Condition](bugs/.solved/channel-group-save-race-condition.md)
 - [Folder Click to Expand/Collapse Not Working](bugs/.solved/folder-click-expand-not-working.md)
@@ -295,4 +296,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2025-12-09 14:02:58
+**Last Updated**: 2025-12-09 14:43:35

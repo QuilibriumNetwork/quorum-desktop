@@ -402,6 +402,7 @@ export class ConfigService {
 
       const allSpaceKeys = await Promise.all(spaceKeysPromises);
       // Filter out entries with undefined encryptionState or bloated states (>100KB) to avoid API rejection
+      // See: .agents/bugs/encryption-state-evals-bloat.md
       const MAX_STATE_SIZE = 100000; // 100KB limit per encryption state
       config.spaceKeys = allSpaceKeys.filter(sk => {
         if (sk.encryptionState === undefined) return false;
