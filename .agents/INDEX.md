@@ -69,6 +69,7 @@ This is the main index for all documentation, bug reports, and task management.
 ## 🐛 Bug Reports
 
 ### Active Issues
+- [Bloated Encryption States Causing Config Sync Failure](bugs/bloated-encryption-states-sync-failure.md)
 - [Brave Browser React Hook Errors - ONGOING INVESTIGATION](bugs/brave-browser-react-hook-errors.md)
 - [DirectMessage Invite Loading Performance Issue](bugs/directmessage-invite-loading-performance.md)
 - [Expired Invite Card Validation Timing Issue](bugs/expired-invite-card-validation-timing.md)
@@ -294,4 +295,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2025-12-07 12:10:34
+**Last Updated**: 2025-12-09 12:50:40
