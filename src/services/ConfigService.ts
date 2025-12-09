@@ -400,7 +400,18 @@ export class ConfigService {
         };
       });
 
-      config.spaceKeys = await Promise.all(spaceKeysPromises);
+      const allSpaceKeys = await Promise.all(spaceKeysPromises);
+      // Filter out entries with undefined encryptionState or bloated states (>100KB) to avoid API rejection
+      const MAX_STATE_SIZE = 100000; // 100KB limit per encryption state
+      config.spaceKeys = allSpaceKeys.filter(sk => {
+        if (sk.encryptionState === undefined) return false;
+        const stateSize = JSON.stringify(sk.encryptionState).length;
+        if (stateSize > MAX_STATE_SIZE) {
+          console.warn('Skipping bloated encryption state for space:', sk.spaceId, 'size:', stateSize);
+          return false;
+        }
+        return true;
+      });
 
       // Collect bookmarks before encryption (Phase 7: Sync Integration)
       config.bookmarks = await this.messageDB.getBookmarks();
