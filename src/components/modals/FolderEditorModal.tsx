@@ -40,7 +40,8 @@ const FolderEditorModal: React.FC<FolderEditorModalProps> = ({
     handleIconChange,
     saveChanges,
     handleDeleteClick,
-  } = useFolderManagement({ folderId, onDeleteComplete: onClose });
+    deleteFolder,
+  } = useFolderManagement({ folderId });
 
   // Modal save state hook
   const { isSaving, saveUntilComplete } = useModalSaveState({
@@ -53,6 +54,14 @@ const FolderEditorModal: React.FC<FolderEditorModalProps> = ({
       await saveChanges();
     });
   }, [saveUntilComplete, saveChanges]);
+
+  const handleDelete = React.useCallback(async () => {
+    const confirmed = handleDeleteClick();
+    if (!confirmed) return;
+
+    await deleteFolder();
+    onClose();
+  }, [handleDeleteClick, deleteFolder, onClose]);
 
   return (
     <Modal
@@ -114,7 +123,7 @@ const FolderEditorModal: React.FC<FolderEditorModalProps> = ({
               <Text
                 variant="danger"
                 className="cursor-pointer hover:text-danger-hover"
-                onClick={handleDeleteClick}
+                onClick={handleDelete}
               >
                 {deleteConfirmationStep === 0
                   ? t`Delete Folder`
@@ -124,7 +133,7 @@ const FolderEditorModal: React.FC<FolderEditorModalProps> = ({
             {spaceCount > 0 && deleteConfirmationStep === 0 && (
               <FlexCenter className="mt-2">
                 <Text variant="subtle" size="xs">
-                  <Trans>{spaceCount} spaces will be ungrouped</Trans>
+                  <Trans>Your Spaces will NOT be deleted</Trans>
                 </Text>
               </FlexCenter>
             )}

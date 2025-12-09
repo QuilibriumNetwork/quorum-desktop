@@ -22,6 +22,7 @@ import {
   useNavItems,
   useFolderDragAndDrop,
 } from '../../hooks';
+import { useDeleteFolder } from '../../hooks/business/folders';
 import { useSpaceMentionCounts } from '../../hooks/business/mentions';
 import { useSpaceReplyCounts } from '../../hooks/business/replies';
 import {
@@ -52,6 +53,7 @@ const NavMenuContent: React.FC<NavMenuProps> = (props) => {
   });
   const { navMenuOpen, isDesktop } = useResponsiveLayoutContext();
   const { openFolderEditor } = useModals();
+  const { deleteFolder } = useDeleteFolder();
 
   // Context menu state
   const [contextMenu, setContextMenu] = React.useState<ContextMenuState>({
@@ -81,13 +83,13 @@ const NavMenuContent: React.FC<NavMenuProps> = (props) => {
     closeContextMenu();
   }, [contextMenu.folder, openFolderEditor, closeContextMenu]);
 
-  const handleDeleteFolder = React.useCallback(() => {
-    // Delete is handled in the modal, so just open settings
-    if (contextMenu.folder) {
-      openFolderEditor(contextMenu.folder.id);
-    }
+  const handleDeleteFolder = React.useCallback(async () => {
+    const folder = contextMenu.folder;
+    if (!folder) return;
+
     closeContextMenu();
-  }, [contextMenu.folder, openFolderEditor, closeContextMenu]);
+    await deleteFolder(folder.id);
+  }, [contextMenu.folder, closeContextMenu, deleteFolder]);
 
   // Check if config has items (new format) or just spaceIds (legacy)
   const hasItems = config?.items && config.items.length > 0;

@@ -9,15 +9,14 @@ import { IconName, IconVariant } from '../../../components/primitives/Icon/types
 import { IconColor } from '../../../components/space/IconPicker/types';
 import { createFolder, deriveSpaceIds } from '../../../utils/folderUtils';
 import { validateNameForXSS, MAX_NAME_LENGTH } from '../../../utils/validation';
+import { useDeleteFolder } from './useDeleteFolder';
 
 interface UseFolderManagementProps {
   folderId?: string;
-  onDeleteComplete?: () => void;
 }
 
 export const useFolderManagement = ({
   folderId,
-  onDeleteComplete,
 }: UseFolderManagementProps) => {
   const user = usePasskeysContext();
   const queryClient = useQueryClient();
@@ -25,6 +24,7 @@ export const useFolderManagement = ({
     userAddress: user.currentPasskeyInfo?.address || '',
   });
   const { saveConfig, keyset } = useMessageDB();
+  const { deleteFolder: deleteFolderById } = useDeleteFolder();
 
   // Find existing folder if editing
   const existingFolder = useMemo(() => {
@@ -153,50 +153,20 @@ export const useFolderManagement = ({
     queryClient,
   ]);
 
+  // Delete folder - wrapper around shared hook
+  const deleteFolder = useCallback(async () => {
+    if (!folderId) return;
+    await deleteFolderById(folderId);
+  }, [folderId, deleteFolderById]);
+
+  // Handle delete click - returns true if confirmed (second click)
   const handleDeleteClick = useCallback(() => {
     if (deleteConfirmationStep === 0) {
       setDeleteConfirmationStep(1);
-      return;
+      return false;
     }
-
-    // Second click - perform delete
-    if (!config || !keyset || !existingFolder) return;
-
-    // "Spill out" spaces from folder - they become standalone at folder's position
-    const folderIndex = (config.items || []).findIndex(
-      (i) => i.type === 'folder' && i.id === folderId
-    );
-    if (folderIndex === -1) return;
-
-    const spilledSpaces: NavItem[] = existingFolder.spaceIds.map((id) => ({
-      type: 'space' as const,
-      id,
-    }));
-
-    const newItems: NavItem[] = [
-      ...(config.items || []).slice(0, folderIndex),
-      ...spilledSpaces,
-      ...(config.items || []).slice(folderIndex + 1),
-    ];
-
-    const newConfig: UserConfig = {
-      ...config,
-      items: newItems,
-      spaceIds: deriveSpaceIds(newItems),
-    };
-
-    saveConfig({ config: newConfig, keyset }).then(() => {
-      onDeleteComplete?.();
-    });
-  }, [
-    deleteConfirmationStep,
-    config,
-    keyset,
-    existingFolder,
-    folderId,
-    saveConfig,
-    onDeleteComplete,
-  ]);
+    return true;
+  }, [deleteConfirmationStep]);
 
   return {
     // State
@@ -215,5 +185,6 @@ export const useFolderManagement = ({
     handleIconChange,
     saveChanges,
     handleDeleteClick,
+    deleteFolder,
   };
 };

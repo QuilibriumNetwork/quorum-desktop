@@ -45,6 +45,7 @@ const FolderContextMenu: React.FC<FolderContextMenuProps> = ({
   const [adjustedPosition, setAdjustedPosition] = useState(() =>
     calculatePosition(position.x, position.y)
   );
+  const [deleteConfirm, setDeleteConfirm] = useState(false);
 
   // Click outside to close
   useClickOutside(menuRef, onClose, true);
@@ -78,6 +79,10 @@ const FolderContextMenu: React.FC<FolderContextMenuProps> = ({
   };
 
   const handleDeleteClick = () => {
+    if (!deleteConfirm) {
+      setDeleteConfirm(true);
+      return;
+    }
     onDelete();
     onClose();
   };
@@ -95,7 +100,7 @@ const FolderContextMenu: React.FC<FolderContextMenuProps> = ({
         {/* Folder name header */}
         <div className="folder-context-menu-header">
           <FlexRow align="center" gap={2}>
-            <Icon name="folder" size="sm" />
+            <Icon name={folder.icon || 'folder'} size="sm" />
             <Text weight="medium">{folder.name}</Text>
           </FlexRow>
         </div>
@@ -116,7 +121,7 @@ const FolderContextMenu: React.FC<FolderContextMenuProps> = ({
         >
           <FlexRow align="center" gap={2}>
             <Icon name="trash" size="sm" />
-            <Text size="sm">{t`Delete Folder`}</Text>
+            <Text size="sm">{deleteConfirm ? t`Confirm` : t`Delete Folder`}</Text>
           </FlexRow>
         </button>
       </div>
