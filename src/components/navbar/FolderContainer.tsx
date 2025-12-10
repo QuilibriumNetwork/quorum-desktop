@@ -157,6 +157,7 @@ const FolderContainer: React.FC<FolderContainerProps> = ({
             hasUnread={hasUnread}
             unreadCount={spaces.reduce((sum, s) => sum + (s.notifs || 0), 0)}
             mentionCount={totalMentionCount}
+            isExpanded={isExpanded}
           />
         </div>
 

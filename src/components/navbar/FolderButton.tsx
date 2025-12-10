@@ -6,6 +6,7 @@ import { isTouchDevice } from '../../utils/platform';
 import { useDragStateContext } from '../../context/DragStateContext';
 import { formatMentionCount } from '../../utils/formatMentionCount';
 import './Folder.scss';
+import './SpaceIcon.scss';
 
 interface FolderButtonProps {
   folder: NavItem & { type: 'folder' };
@@ -13,6 +14,7 @@ interface FolderButtonProps {
   unreadCount: number;
   mentionCount?: number;
   size?: 'small' | 'regular';
+  isExpanded?: boolean;
 }
 
 const FolderButton: React.FC<FolderButtonProps> = ({
@@ -21,6 +23,7 @@ const FolderButton: React.FC<FolderButtonProps> = ({
   unreadCount: _unreadCount, // Reserved for future use
   mentionCount = 0,
   size = 'regular',
+  isExpanded = false,
 }) => {
   const isTouch = isTouchDevice();
   const { resolvedTheme } = useTheme();
@@ -38,21 +41,32 @@ const FolderButton: React.FC<FolderButtonProps> = ({
     isDragging = false;
   }
 
+  // Hide indicators when folder is expanded (spaces inside show their own indicators)
+  const showIndicators = !isExpanded;
+
   const buttonElement = (
-    <div
-      className={`folder-button ${sizeClass} ${hasUnread ? 'folder-button--has-unread' : ''}`}
-      style={{ backgroundColor }}
-    >
-      <Icon
-        name={folder.icon || 'folder'}
-        color="#ffffff"
-        size={size === 'small' ? 'lg' : 'xl'}
-      />
-      {mentionCount > 0 && (
-        <span className="folder-button-mention-bubble">
-          {formatMentionCount(mentionCount, 9)}
-        </span>
+    <div className="relative">
+      {/* Toggle indicator - reuses SpaceIcon toggle styles */}
+      {!isDragging && showIndicators && (
+        <div
+          className={`space-icon-toggle ${hasUnread ? 'space-icon-toggle--unread' : ''}`}
+        />
       )}
+      <div
+        className={`folder-button ${sizeClass}`}
+        style={{ backgroundColor }}
+      >
+        <Icon
+          name={folder.icon || 'folder'}
+          color="#ffffff"
+          size={size === 'small' ? 'lg' : 'xl'}
+        />
+        {showIndicators && mentionCount > 0 && (
+          <span className="folder-button-mention-bubble">
+            {formatMentionCount(mentionCount, 9)}
+          </span>
+        )}
+      </div>
     </div>
   );
 

@@ -27,11 +27,6 @@
     height: 40px;
   }
 
-  // Unread indicator styling
-  &--has-unread {
-    box-shadow: 0 0 0 2px var(--accent);
-  }
-
   // Mobile phone optimization
   @media (max-width: $screen-xs) {
     width: 40px;
@@ -47,7 +42,7 @@
 // Mention badge on folder button
 .folder-button-mention-bubble {
   position: absolute;
-  top: -$s-1;
+  bottom: -$s-0-5;
   right: -$s-1;
   display: flex;
   align-items: center;
@@ -81,6 +76,8 @@ html.dark .folder-button-mention-bubble {
   transition:
     background-color $duration-300 $ease-in-out,
     padding $duration-300 $ease-in-out;
+  // Allow toggle indicators to overflow to the left
+  overflow: visible;
 
   // Expanded state - show colored background and add padding
   &--expanded {
@@ -106,6 +103,8 @@ html.dark .folder-button-mention-bubble {
   // Only clip when collapsed - remove clip-path when expanded so tooltips can show
   // inset(top right bottom left) - negative values extend the clipping region outward
   clip-path: inset(0 -100px 0 -100px);
+  // Allow toggle indicators to overflow
+  overflow: visible;
 
   // Expanded state - remove clip-path so tooltips aren't clipped
   .folder-container--expanded & {
@@ -122,6 +121,8 @@ html.dark .folder-button-mention-bubble {
   gap: $s-2-5; // Same gap as nav-menu-spaces (10px)
   // min-height: 0 is required for the grid animation to work
   min-height: 0;
+  // Allow toggle indicators to overflow to the left
+  overflow: visible;
 
   // First space gets top margin for spacing from folder header
   > :first-child {

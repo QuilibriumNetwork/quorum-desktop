@@ -37,9 +37,9 @@
   opacity: 0.8;
 }
 
-// Base toggle indicator styles (shared)
-@mixin toggle-base {
-  content: ' ';
+// Toggle indicator - single element with state-based modifiers for smooth transitions
+// States: default (hidden) → hover → unread (small dot) → selected (tall bar)
+.space-icon-toggle {
   position: absolute;
   width: $s-1-5;
   border-radius: $rounded-sm;
@@ -48,8 +48,16 @@
   transform: translateY(-50%);
   z-index: 1000;
   background: var(--accent);
-  transition: all $duration-100 linear;
   pointer-events: none;
+
+  // Smooth transitions for height and opacity changes
+  transition:
+    height $duration-200 $ease-out,
+    opacity $duration-150 $ease-out;
+
+  // Default state: invisible, but with hover height ready
+  height: $s-5; // 20px - hover size
+  opacity: 0;
 
   // Mobile phone optimization - adjust horizontal position for narrower NavMenu
   @media (max-width: $screen-xs) {
@@ -60,26 +68,31 @@
   @media (min-width: #{$screen-xs + 1px}) and (max-width: $screen-md) {
     left: -18px;
   }
-}
 
-// Default toggle - hidden, but will show on hover
-.space-icon-toggle {
-  @include toggle-base;
-  height: $s-6; // Same as old selected size for hover
-  opacity: 0;
-}
-
-// Show toggle on hover (desktop only)
-@media (hover: hover) {
-  .relative:hover .space-icon-toggle {
+  // Unread state: small dot, always visible
+  &--unread {
+    height: $s-1-5; // 6px - small dot
     opacity: 1;
+  }
+
+  // Selected state: tall bar, always visible
+  &--selected {
+    height: $s-10; // 40px - tall bar
+    opacity: 1;
+    background: var(--accent-500);
   }
 }
 
-// Unread notifications toggle - small dot
-.space-icon-has-notifs-toggle {
-  @include toggle-base;
-  height: $s-1-5; // Dot size
+// Show toggle on hover (desktop only) - only when not already in a visible state
+@media (hover: hover) {
+  .relative:hover .space-icon-toggle:not(.space-icon-toggle--selected):not(.space-icon-toggle--unread) {
+    opacity: 1;
+  }
+
+  // When hovering over unread, grow to hover size
+  .relative:hover .space-icon-toggle--unread {
+    height: $s-5; // Grow from dot to hover bar
+  }
 }
 
 .space-icon-selected {
@@ -108,13 +121,6 @@
 
 }
 
-// Selected toggle - tall bar (larger than hover)
-.space-icon-selected-toggle {
-  @include toggle-base;
-  height: $s-10; // Tall bar for selected state (40px)
-  background: var(--accent-500);
-}
-
 // Drag placeholder - shows where the dragged item was
 .space-icon-drag-placeholder {
   width: $nav-space-icon-size;
@@ -139,7 +145,7 @@
 // Light theme: accent-400, Dark theme: accent-600
 .space-icon-mention-bubble {
   position: absolute;
-  top: $s-1;
+  bottom: -$s-0-5;
   right: -$s-1;
   display: flex;
   align-items: center;
@@ -163,7 +169,7 @@
     min-width: $s-4-5;
     height: $s-4-5;
     font-size: 11px;
-    top: $s-0-5;
+    bottom: 0;
     right: -$s-0-5;
     // Ensure centering is maintained on mobile
     display: flex;

@@ -70,7 +70,13 @@ const SpaceIcon: React.FunctionComponent<SpaceIconProps> = (props) => {
     <div className="relative z-[999]">
       {!props.noToggle && !isDragging && (
         <div
-          className={`${props.selected ? 'space-icon-selected' : props.notifs ? 'space-icon-has-notifs' : 'space-icon'}-toggle`}
+          className={`space-icon-toggle ${
+            props.selected
+              ? 'space-icon-toggle--selected'
+              : props.notifs
+                ? 'space-icon-toggle--unread'
+                : ''
+          }`}
         />
       )}
       {hasValidImage ? (
