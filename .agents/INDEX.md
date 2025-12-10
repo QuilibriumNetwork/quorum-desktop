@@ -124,6 +124,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [SDK PasskeyModal Customization Props Enhancement](tasks/sdk-passkey-modal-customization-props.md)
 - [Task: Implement Delete Public Invite Link Feature](tasks/delete-public-invite-link.md)
 - [Test Suite Implementation Plan for Quorum Desktop](tasks/test-suite-plan.md)
+- [Tooltip Shared Mode for NavMenu Flickering Fix](tasks/tooltip-shared-mode-navmenu-flickering.md)
 - [User Config Sync on Existing Accounts](tasks/user-config-sync-on-existing-accounts.md)
 - [User Status Feature Implementation Plan](tasks/user-status.md)
 
@@ -299,4 +300,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2025-12-10 16:22:23
+**Last Updated**: 2025-12-10 16:41:25
