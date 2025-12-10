@@ -29,6 +29,7 @@ import {
 import { isTouchDevice } from '../../../utils/platform';
 import { showWarning } from '../../../utils/toast';
 import { buildConfigKey } from '../../queries';
+import { withWaitCursor } from '../../../utils/cursor';
 
 /**
  * Drag scenario types for folder operations
@@ -263,7 +264,7 @@ export const useFolderDragAndDrop = ({
   );
 
   const handleDragEnd = useCallback(
-    async (e: DragEndEvent) => {
+    (e: DragEndEvent) => {
       // Capture drop intent before clearing state
       const currentDropIntent = dropTarget?.intent ?? null;
 
@@ -573,15 +574,34 @@ export const useFolderDragAndDrop = ({
         );
       }
 
-      // Persist to DB (and sync to server)
-      await saveConfig({ config: newConfig, keyset });
-
-      // Open folder editor modal for newly created folders
-      // Delay allows React Query state to settle after save
+      // Open folder editor modal FIRST (before saveConfig blocks the thread)
+      // Modal reads from optimistic cache
       if (createdFolderId && onFolderCreated) {
         setTimeout(() => {
           onFolderCreated(createdFolderId!);
         }, FOLDER_MODAL_OPEN_DELAY_MS);
+      }
+
+      // Persist to DB (and sync to server)
+      // Note: crypto operations in saveConfig can block main thread for ~3s when sync enabled
+      // See: .agents/tasks/background-sync-queue.md for proper fix
+      const doSave = () =>
+        saveConfig({ config: newConfig, keyset }).catch((err) => {
+          console.error('[FolderDragAndDrop] Failed to save config:', err);
+        });
+
+      if (createdFolderId) {
+        // Folder creation: defer save to let modal open first, show wait cursor
+        setTimeout(() => {
+          if (newConfig.allowSync) {
+            withWaitCursor(doSave);
+          } else {
+            doSave();
+          }
+        }, 150);
+      } else {
+        // Simple reorder: save immediately, no cursor change needed
+        doSave();
       }
     },
     [config, keyset, saveConfig, setIsDragging, setActiveItem, dropTarget, setDropTarget, queryClient, onFolderCreated]
