@@ -1,6 +1,27 @@
 # FolderEditorModal Race Condition on Auto-Open After Folder Creation
 
-> **⚠️ AI-Generated**: May contain errors. Verify before use.
+> **✅ SOLVED** - Implemented Option 1: await saveConfig before opening modal
+
+## Solution
+
+**Files changed:**
+- `src/hooks/business/folders/useFolderDragAndDrop.ts` - Made `handleDragEnd` async, added `await` before `saveConfig()`
+- `src/components/navbar/NavMenu.tsx` - Re-enabled `onFolderCreated: openFolderEditor` callback
+
+**The fix:**
+```typescript
+// Before: saveConfig was not awaited, modal opened before save completed
+saveConfig({ config: newConfig, keyset });
+
+// After: await ensures save completes before modal opens
+await saveConfig({ config: newConfig, keyset });
+```
+
+The 100ms delay (`FOLDER_MODAL_OPEN_DELAY_MS`) after save completion allows React Query state to settle.
+
+---
+
+## Original Issue
 
 ## Symptoms
 
@@ -91,3 +112,4 @@ Implement a lock mechanism during folder creation flow to prevent concurrent con
 ---
 
 _Created: 2025-12-07_
+_Solved: 2025-12-10_

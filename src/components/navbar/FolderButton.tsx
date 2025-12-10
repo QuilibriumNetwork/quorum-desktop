@@ -14,6 +14,7 @@ interface FolderButtonProps {
   mentionCount?: number;
   size?: 'small' | 'regular';
   isExpanded?: boolean;
+  showWiggle?: boolean;
 }
 
 const FolderButton: React.FC<FolderButtonProps> = ({
@@ -22,6 +23,7 @@ const FolderButton: React.FC<FolderButtonProps> = ({
   mentionCount = 0,
   size = 'regular',
   isExpanded = false,
+  showWiggle = false,
 }) => {
   const isTouch = isTouchDevice();
   const { resolvedTheme } = useTheme();
@@ -51,7 +53,7 @@ const FolderButton: React.FC<FolderButtonProps> = ({
         />
       )}
       <div
-        className={`folder-button ${sizeClass}`}
+        className={`folder-button ${sizeClass} ${showWiggle ? 'drop-target-wiggle' : ''}`}
         style={{ backgroundColor }}
       >
         <Icon

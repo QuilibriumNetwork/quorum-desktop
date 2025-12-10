@@ -186,6 +186,9 @@ html.dark .space-icon-mention-bubble {
 // Shows when dragging to center of a space/folder (will create or add to folder)
 .drop-target-wiggle {
   animation: wiggle 0.25s ease-in-out infinite;
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: $rounded-lg;
 }
 
 @keyframes wiggle {

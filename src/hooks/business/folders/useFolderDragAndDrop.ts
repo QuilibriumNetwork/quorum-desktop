@@ -263,7 +263,7 @@ export const useFolderDragAndDrop = ({
   );
 
   const handleDragEnd = useCallback(
-    (e: DragEndEvent) => {
+    async (e: DragEndEvent) => {
       // Capture drop intent before clearing state
       const currentDropIntent = dropTarget?.intent ?? null;
 
@@ -574,9 +574,10 @@ export const useFolderDragAndDrop = ({
       }
 
       // Persist to DB (and sync to server)
-      saveConfig({ config: newConfig, keyset });
+      await saveConfig({ config: newConfig, keyset });
 
       // Open folder editor modal for newly created folders
+      // Delay allows React Query state to settle after save
       if (createdFolderId && onFolderCreated) {
         setTimeout(() => {
           onFolderCreated(createdFolderId!);

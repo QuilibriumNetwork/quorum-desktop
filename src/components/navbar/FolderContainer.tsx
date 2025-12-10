@@ -132,7 +132,7 @@ const FolderContainer: React.FC<FolderContainerProps> = ({
           '--folder-color': folderColor,
         } as React.CSSProperties}
         {...attributes}
-        className={`folder-container ${isExpanded ? 'folder-container--expanded' : ''} ${showWiggle ? 'drop-target-wiggle' : ''}`}
+        className={`folder-container ${isExpanded ? 'folder-container--expanded' : ''}`}
       >
         {/* Folder button header - draggable and clickable */}
         <div
@@ -157,6 +157,7 @@ const FolderContainer: React.FC<FolderContainerProps> = ({
             hasUnread={hasUnread}
             mentionCount={totalMentionCount}
             isExpanded={isExpanded}
+            showWiggle={showWiggle}
           />
         </div>
 
