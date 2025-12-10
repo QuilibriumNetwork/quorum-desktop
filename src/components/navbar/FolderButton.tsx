@@ -11,7 +11,6 @@ import './SpaceIcon.scss';
 interface FolderButtonProps {
   folder: NavItem & { type: 'folder' };
   hasUnread: boolean;
-  unreadCount: number;
   mentionCount?: number;
   size?: 'small' | 'regular';
   isExpanded?: boolean;
@@ -20,7 +19,6 @@ interface FolderButtonProps {
 const FolderButton: React.FC<FolderButtonProps> = ({
   folder,
   hasUnread,
-  unreadCount: _unreadCount, // Reserved for future use
   mentionCount = 0,
   size = 'regular',
   isExpanded = false,

@@ -1,4 +1,5 @@
-import { NavItem, UserConfig } from '../db/messages';
+import { NavItem, UserConfig, FolderColor } from '../db/messages';
+import { IconName } from '../components/primitives/Icon/types';
 
 /**
  * Folder utility functions for managing space folders in the navbar
@@ -6,7 +7,16 @@ import { NavItem, UserConfig } from '../db/messages';
 
 // Maximum limits for folders and spaces per folder
 export const MAX_FOLDERS = 20;
-export const MAX_SPACES_PER_FOLDER = 50;
+export const MAX_SPACES_PER_FOLDER = 100;
+
+// Drop zone thresholds for drag intent detection (as fraction of element height)
+// Top 25% = reorder-before, middle 50% = merge, bottom 25% = reorder-after
+export const DROP_ZONE_TOP_THRESHOLD = 0.25;
+export const DROP_ZONE_BOTTOM_THRESHOLD = 0.75;
+
+// Delay before opening folder editor modal after folder creation
+// Allows React Query optimistic update to propagate before modal reads state
+export const FOLDER_MODAL_OPEN_DELAY_MS = 100;
 
 /**
  * Extract all space IDs from items (flattens folders)
@@ -28,7 +38,7 @@ export const deriveSpaceIds = (items: NavItem[]): string[] => {
  * Validate and clean items array
  * - Removes duplicate space IDs
  * - Enforces max folder count (20)
- * - Enforces max spaces per folder (50)
+ * - Enforces max spaces per folder (100)
  * - Removes empty folders
  */
 export const validateItems = (items: NavItem[]): NavItem[] => {
@@ -50,7 +60,7 @@ export const validateItems = (items: NavItem[]): NavItem[] => {
         if (seen.has(id)) return false;
         seen.add(id);
         return true;
-      }).slice(0, MAX_SPACES_PER_FOLDER); // Max 50 spaces per folder
+      }).slice(0, MAX_SPACES_PER_FOLDER); // Max 100 spaces per folder
 
       if (uniqueSpaces.length > 0) {
         validItems.push({ ...item, spaceIds: uniqueSpaces });
@@ -88,8 +98,8 @@ export const migrateToItems = (config: UserConfig): UserConfig => {
 export const createFolder = (
   name: string,
   spaceIds: string[],
-  icon?: string,
-  color?: string
+  icon?: IconName,
+  color?: FolderColor
 ): NavItem & { type: 'folder' } => {
   const now = Date.now();
   return {
@@ -97,8 +107,8 @@ export const createFolder = (
     id: crypto.randomUUID(),
     name,
     spaceIds,
-    icon: icon as any,
-    color: color as any,
+    icon,
+    color,
     createdDate: now,
     modifiedDate: now,
   };

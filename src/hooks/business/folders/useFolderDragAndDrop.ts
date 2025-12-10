@@ -22,6 +22,9 @@ import {
   migrateToItems,
   MAX_FOLDERS,
   MAX_SPACES_PER_FOLDER,
+  DROP_ZONE_TOP_THRESHOLD,
+  DROP_ZONE_BOTTOM_THRESHOLD,
+  FOLDER_MODAL_OPEN_DELAY_MS,
 } from '../../../utils/folderUtils';
 import { isTouchDevice } from '../../../utils/platform';
 import { showWarning } from '../../../utils/toast';
@@ -236,8 +239,8 @@ export const useFolderDragAndDrop = ({
       const pointerCenter = pointerY + activeHeight / 2;
 
       // Calculate zones: top 25% = reorder-before, middle 50% = merge, bottom 25% = reorder-after
-      const topThreshold = overRect.top + overRect.height * 0.25;
-      const bottomThreshold = overRect.top + overRect.height * 0.75;
+      const topThreshold = overRect.top + overRect.height * DROP_ZONE_TOP_THRESHOLD;
+      const bottomThreshold = overRect.top + overRect.height * DROP_ZONE_BOTTOM_THRESHOLD;
 
       let intent: 'merge' | 'reorder-before' | 'reorder-after';
 
@@ -575,10 +578,9 @@ export const useFolderDragAndDrop = ({
 
       // Open folder editor modal for newly created folders
       if (createdFolderId && onFolderCreated) {
-        // Use setTimeout to let the UI update before opening modal
         setTimeout(() => {
           onFolderCreated(createdFolderId!);
-        }, 100);
+        }, FOLDER_MODAL_OPEN_DELAY_MS);
       }
     },
     [config, keyset, saveConfig, setIsDragging, setActiveItem, dropTarget, setDropTarget, queryClient, onFolderCreated]

@@ -12,6 +12,7 @@ import { t } from '@lingui/core/macro';
 import { QueryClient } from '@tanstack/react-query';
 import { buildSpacesKey, buildConfigKey } from '../hooks';
 import { Space } from '../api/quorumApi';
+import { validateItems } from '../utils/folderUtils';
 
 export class ConfigService {
   private messageDB: MessageDB;
@@ -125,6 +126,11 @@ export class ConfigService {
     ) as UserConfig;
     if (!config) {
       return storedConfig;
+    }
+
+    // Validate and sanitize items array to enforce limits (max 20 folders, 100 spaces per folder)
+    if (config.items) {
+      config.items = validateItems(config.items);
     }
 
     for (const space of config.spaceKeys ?? []) {

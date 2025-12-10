@@ -289,7 +289,6 @@ const NavMenuContent: React.FC<NavMenuProps> = (props) => {
                       <FolderButton
                         folder={folderItem.item}
                         hasUnread={false}
-                        unreadCount={0}
                       />
                     );
                   })()
