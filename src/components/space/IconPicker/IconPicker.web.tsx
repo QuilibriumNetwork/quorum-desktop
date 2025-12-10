@@ -1,12 +1,14 @@
 import React, { useState, useRef, useEffect, useMemo } from 'react';
-import { Button, Icon, FlexRow, ColorSwatch } from '../../primitives';
+import { Button, Icon, FlexRow, ColorSwatch, useTheme } from '../../primitives';
 import { DropdownPanel } from '../../ui';
 import {
   IconPickerProps,
   ICON_OPTIONS,
   ICON_COLORS,
+  FOLDER_COLORS,
   FILLED_ICONS,
   getIconColorHex,
+  getFolderColorHex,
   IconColor,
 } from './types';
 import { IconName, IconVariant } from '../../primitives/Icon/types';
@@ -22,15 +24,26 @@ export const IconPicker: React.FC<IconPickerProps> = ({
   className = '',
   testID,
   defaultIcon,
+  mode = 'icon-color',
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedColor, setSelectedColor] = useState(selectedIconColor);
   const [selectedVariant, setSelectedVariant] = useState<IconVariant>(selectedIconVariant);
   const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0 });
   const buttonRef = useRef<HTMLDivElement>(null);
+  const { resolvedTheme } = useTheme();
+  const isDarkTheme = resolvedTheme === 'dark';
+
+  // In background-color mode, icons are always white, color is used for backgrounds
+  const isBackgroundColorMode = mode === 'background-color';
 
   // Memoize color calculations for performance
-  const iconColorHex = useMemo(() => getIconColorHex(selectedColor), [selectedColor]);
+  // Use dimmed folder colors in background-color mode
+  const iconColorHex = useMemo(
+    () => isBackgroundColorMode ? getFolderColorHex(selectedColor, isDarkTheme) : getIconColorHex(selectedColor),
+    [selectedColor, isBackgroundColorMode, isDarkTheme]
+  );
+  const displayIconColor = isBackgroundColorMode ? '#ffffff' : iconColorHex;
 
   // Filter icons based on selected variant
   const filteredIcons = useMemo(() => {
@@ -106,19 +119,25 @@ export const IconPicker: React.FC<IconPickerProps> = ({
           <span
             onClick={handleButtonClick}
             className="icon-picker-button cursor-pointer w-7 h-7 rounded-full flex items-center justify-center transition-colors"
-            style={{ backgroundColor: 'var(--color-field-bg)' }}
+            style={{
+              backgroundColor: isBackgroundColorMode ? iconColorHex : 'var(--color-field-bg)',
+            }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.backgroundColor = 'var(--color-field-bg-focus)';
+              if (!isBackgroundColorMode) {
+                e.currentTarget.style.backgroundColor = 'var(--color-field-bg-focus)';
+              }
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.backgroundColor = 'var(--color-field-bg)';
+              if (!isBackgroundColorMode) {
+                e.currentTarget.style.backgroundColor = 'var(--color-field-bg)';
+              }
             }}
             aria-label={`Selected icon: ${selectedIcon}`}
           >
             <Icon
               name={selectedIcon}
               size="sm"
-              color={iconColorHex}
+              color={displayIconColor}
               variant={selectedVariant}
             />
           </span>
@@ -167,7 +186,7 @@ export const IconPicker: React.FC<IconPickerProps> = ({
                 aria-label="Outline icons"
                 aria-pressed={selectedVariant === 'outline'}
               >
-                <Icon name="circle" size="sm" color={iconColorHex} variant="outline" />
+                <Icon name="circle" size="sm" color={displayIconColor} variant="outline" />
               </button>
               <button
                 onClick={() => handleVariantChange('filled')}
@@ -175,7 +194,7 @@ export const IconPicker: React.FC<IconPickerProps> = ({
                 aria-label="Filled icons"
                 aria-pressed={selectedVariant === 'filled'}
               >
-                <Icon name="circle" size="sm" color={iconColorHex} variant="filled" />
+                <Icon name="circle" size="sm" color={displayIconColor} variant="filled" />
               </button>
             </FlexRow>
 
@@ -193,18 +212,44 @@ export const IconPicker: React.FC<IconPickerProps> = ({
 
           {/* Color swatches row */}
           <FlexRow gap={3} justify="between">
-            {ICON_COLORS.map((colorOption) => (
-              <ColorSwatch
-                key={colorOption.value}
-                color={colorOption.value === 'default' ? 'gray' : colorOption.value}
-                isActive={selectedColor === colorOption.value}
-                onPress={() => handleColorChange(colorOption.value)}
-                size="small"
-                showCheckmark={false}
-                className="icon-picker-color-swatch"
-                style={colorOption.value === 'default' ? { backgroundColor: colorOption.hex } : undefined}
-              />
-            ))}
+            {isBackgroundColorMode ? (
+              // Background-color mode: show colored circles with white icon inside (using dimmed folder colors)
+              FOLDER_COLORS.map((colorOption) => (
+                <button
+                  key={colorOption.value}
+                  onClick={() => handleColorChange(colorOption.value)}
+                  className={`icon-picker-bg-swatch ${selectedColor === colorOption.value ? 'icon-picker-bg-swatch--active' : ''}`}
+                  style={{
+                    backgroundColor: colorOption.value === 'default'
+                      ? getFolderColorHex('default', isDarkTheme)
+                      : colorOption.hex
+                  }}
+                  aria-label={`Select ${colorOption.label} background color`}
+                  aria-pressed={selectedColor === colorOption.value}
+                >
+                  <Icon
+                    name={selectedIcon || 'folder'}
+                    size="xs"
+                    color="#ffffff"
+                    variant={selectedVariant}
+                  />
+                </button>
+              ))
+            ) : (
+              // Icon-color mode: standard color swatches
+              ICON_COLORS.map((colorOption) => (
+                <ColorSwatch
+                  key={colorOption.value}
+                  color={colorOption.value === 'default' ? 'gray' : colorOption.value}
+                  isActive={selectedColor === colorOption.value}
+                  onPress={() => handleColorChange(colorOption.value)}
+                  size="small"
+                  showCheckmark={false}
+                  className="icon-picker-color-swatch"
+                  style={colorOption.value === 'default' ? { backgroundColor: colorOption.hex } : undefined}
+                />
+              ))
+            )}
           </FlexRow>
         </div>
 
@@ -221,14 +266,15 @@ export const IconPicker: React.FC<IconPickerProps> = ({
                     handleIconClick(iconOption.name);
                   }
                 }}
-                className={`icon-picker-icon-btn ${selectedIcon === iconOption.name ? 'icon-picker-icon-btn--active' : ''}`}
+                className={`icon-picker-icon-btn ${selectedIcon === iconOption.name ? 'icon-picker-icon-btn--active' : ''} ${isBackgroundColorMode ? 'icon-picker-icon-btn--bg-mode' : ''}`}
+                style={isBackgroundColorMode ? { backgroundColor: iconColorHex } : undefined}
                 aria-label={`Select ${iconOption.name} icon for ${iconOption.category.toLowerCase()}`}
                 aria-pressed={selectedIcon === iconOption.name}
               >
                 <Icon
                   name={iconOption.name}
                   size="sm"
-                  color={iconColorHex}
+                  color={displayIconColor}
                   variant={selectedVariant}
                   style={{ pointerEvents: 'none' }}
                   aria-hidden="true"

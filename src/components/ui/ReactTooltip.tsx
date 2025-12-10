@@ -167,7 +167,9 @@ const ReactTooltip: React.FunctionComponent<ReactTooltipProps> = ({
         className={tooltipClassName}
         anchorSelect={anchorSelect}
         border={
-          highlighted ? '1px solid var(--color-border-default)' : undefined
+          resolvedThemeInUse === 'light' || highlighted
+            ? '1px solid var(--color-border-default)'
+            : undefined
         }
         isOpen={alwaysVisible ? true : visible}
         disableFocusListener
@@ -187,7 +189,11 @@ const ReactTooltip: React.FunctionComponent<ReactTooltipProps> = ({
       noArrow={noArrow}
       className={tooltipClassName}
       anchorSelect={anchorSelect}
-      border={highlighted ? '1px solid var(--color-border-default)' : undefined}
+      border={
+        resolvedThemeInUse === 'light' || highlighted
+          ? '1px solid var(--color-border-default)'
+          : undefined
+      }
       strategy="fixed"
     />
   );

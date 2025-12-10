@@ -14,6 +14,7 @@ export const IconPicker: React.FC<IconPickerProps> = ({
   className = '',
   testID,
   defaultIcon,
+  mode = 'icon-color',
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedColor, setSelectedColor] = useState(selectedIconColor);
@@ -84,19 +85,26 @@ export const IconPicker: React.FC<IconPickerProps> = ({
   const iconColorHex = useMemo(() => getIconColorHex(selectedColor), [selectedColor]);
   const styles = useMemo(() => createIconPickerStyles(theme.colors), [theme.colors]);
 
+  // In background-color mode, icons are always white, color is used for backgrounds
+  const isBackgroundColorMode = mode === 'background-color';
+  const displayIconColor = isBackgroundColorMode ? '#ffffff' : iconColorHex;
+
   return (
     <View testID={testID}>
       {/* Icon Button */}
       {selectedIcon ? (
         <TouchableOpacity
           onPress={handleButtonPress}
-          style={styles.iconButton}
+          style={[
+            styles.iconButton,
+            isBackgroundColorMode && { backgroundColor: iconColorHex },
+          ]}
           accessibilityLabel={`Selected icon: ${selectedIcon}`}
         >
           <Icon
             name={selectedIcon}
             size="sm"
-            color={iconColorHex}
+            color={displayIconColor}
             variant={selectedVariant}
           />
         </TouchableOpacity>
@@ -137,7 +145,7 @@ export const IconPicker: React.FC<IconPickerProps> = ({
                     accessibilityLabel="Outline icons"
                     accessibilityState={{ selected: selectedVariant === 'outline' }}
                   >
-                    <Icon name="circle" size="sm" color={iconColorHex} variant="outline" />
+                    <Icon name="circle" size="sm" color={displayIconColor} variant="outline" />
                   </TouchableOpacity>
                   <TouchableOpacity
                     onPress={() => handleVariantChange('filled')}
@@ -148,7 +156,7 @@ export const IconPicker: React.FC<IconPickerProps> = ({
                     accessibilityLabel="Filled icons"
                     accessibilityState={{ selected: selectedVariant === 'filled' }}
                   >
-                    <Icon name="circle" size="sm" color={iconColorHex} variant="filled" />
+                    <Icon name="circle" size="sm" color={displayIconColor} variant="filled" />
                   </TouchableOpacity>
                 </FlexRow>
 
@@ -165,17 +173,42 @@ export const IconPicker: React.FC<IconPickerProps> = ({
 
               {/* Color selection */}
               <FlexRow gap="md" justify="between" style={styles.colorRow}>
-                {ICON_COLORS.map((colorOption) => (
-                  <ColorSwatch
-                    key={colorOption.value}
-                    color={colorOption.value === 'default' ? 'gray' : colorOption.value}
-                    isActive={selectedColor === colorOption.value}
-                    onPress={() => handleColorChange(colorOption.value)}
-                    size="small"
-                    showCheckmark={false}
-                    style={colorOption.value === 'default' ? { backgroundColor: colorOption.hex } : undefined}
-                  />
-                ))}
+                {isBackgroundColorMode ? (
+                  // Background-color mode: show colored circles with white icon inside
+                  ICON_COLORS.map((colorOption) => (
+                    <TouchableOpacity
+                      key={colorOption.value}
+                      onPress={() => handleColorChange(colorOption.value)}
+                      style={[
+                        styles.bgSwatchButton,
+                        { backgroundColor: colorOption.hex },
+                        selectedColor === colorOption.value && styles.bgSwatchButtonActive,
+                      ]}
+                      accessibilityLabel={`Select ${colorOption.label} background color`}
+                      accessibilityState={{ selected: selectedColor === colorOption.value }}
+                    >
+                      <Icon
+                        name={selectedIcon || 'folder'}
+                        size={12}
+                        color="#ffffff"
+                        variant={selectedVariant}
+                      />
+                    </TouchableOpacity>
+                  ))
+                ) : (
+                  // Icon-color mode: standard color swatches
+                  ICON_COLORS.map((colorOption) => (
+                    <ColorSwatch
+                      key={colorOption.value}
+                      color={colorOption.value === 'default' ? 'gray' : colorOption.value}
+                      isActive={selectedColor === colorOption.value}
+                      onPress={() => handleColorChange(colorOption.value)}
+                      size="small"
+                      showCheckmark={false}
+                      style={colorOption.value === 'default' ? { backgroundColor: colorOption.hex } : undefined}
+                    />
+                  ))
+                )}
               </FlexRow>
             </View>
 
@@ -197,7 +230,8 @@ export const IconPicker: React.FC<IconPickerProps> = ({
                     onPress={() => handleIconClick(iconOption.name)}
                     style={[
                       styles.iconOption,
-                      selectedIcon === iconOption.name ? styles.selectedOption : styles.unselectedOption
+                      selectedIcon === iconOption.name ? styles.selectedOption : styles.unselectedOption,
+                      isBackgroundColorMode && { backgroundColor: iconColorHex },
                     ]}
                     accessibilityLabel={`Select ${iconOption.name} icon for ${iconOption.category.toLowerCase()}`}
                     accessibilityHint={`Tap to select this icon`}
@@ -206,7 +240,7 @@ export const IconPicker: React.FC<IconPickerProps> = ({
                     <Icon
                       name={iconOption.name}
                       size="md"
-                      color={iconColorHex}
+                      color={displayIconColor}
                       variant={selectedVariant}
                     />
                   </TouchableOpacity>

@@ -2,9 +2,7 @@
 
 **[← Back to Primitives INDEX](./INDEX.md)**
 
-[← Back to Docs INDEX](/.agents/INDEX.md)
 
-**READY FOR OFFICIAL DOCS: _Last review: 2025-08-14 10:45 UTC_**
 
 ## Overview
 
@@ -274,6 +272,7 @@ The goal is shared business logic with appropriate UI abstractions, not primitiv
 ---
 
 _Last updated: 2025-10-14_
+_Verified: 2025-12-09_
 
 ---
 

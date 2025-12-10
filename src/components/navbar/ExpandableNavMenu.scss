@@ -63,10 +63,20 @@
   align-items: center;
   justify-content: flex-end;
   width: $nav-header-width; /* Use full nav header width for proper centering */
-  height: 100vh;
   padding-bottom: $s-5;
+  padding-top: $s-2;
   padding-left: 0; /* Remove left padding for centering */
   gap: $s-2;
+  pointer-events: none; // Allow clicks to pass through the container
+  z-index: 1000; // Above the space icons/folders in .nav-menu-spaces
+
+  // Solid background - covers scrolling icons
+  background-color: var(--color-bg-app);
+
+  // Re-enable pointer events on actual buttons
+  > * {
+    pointer-events: auto;
+  }
 
   // Mobile phone optimization
   @media (max-width: $screen-xs) {

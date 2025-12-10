@@ -204,3 +204,4 @@ Cleaning up the hash earlier would cause the highlight to stop mid-animation.
 ---
 
 _Updated: 2025-12-05_
+_Verified: 2025-12-09 - File paths confirmed current_

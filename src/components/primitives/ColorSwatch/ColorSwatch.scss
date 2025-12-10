@@ -7,7 +7,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all $duration-150 $ease-in-out;
+  transition: transform $duration-150 $ease-in-out, border-color $duration-150 $ease-in-out, box-shadow $duration-150 $ease-in-out;
   position: relative;
   // background-color set via inline style for specific color
 
@@ -17,9 +17,7 @@
 
   &:focus-visible {
     outline: none;
-    box-shadow:
-      0 0 0 2px var(--accent),
-      0 0 0 4px var(--surface-1);
+    box-shadow: 0 0 0 2px var(--accent);
   }
 
   // Size variants
@@ -41,9 +39,7 @@
   // Active state
   &--active {
     border-color: var(--accent-600);
-    box-shadow:
-      0 0 0 2px var(--surface-1),
-      0 0 0 4px var(--accent-600);
+    box-shadow: 0 0 0 2px var(--accent-600);
   }
 
   // Disabled state

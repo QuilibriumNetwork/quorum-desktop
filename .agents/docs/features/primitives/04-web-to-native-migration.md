@@ -2,9 +2,7 @@
 
 **[← Back to Primitives INDEX](./INDEX.md)**
 
-[← Back to Docs INDEX](/.agents/INDEX.md)
 
-**READY FOR OFFICIAL DOCS: _Last review: 2025-08-14 10:45 UTC_**
 
 Complete guide for converting web components to React Native using our cross-platform primitives.
 
@@ -508,6 +506,7 @@ Following these patterns will ensure your components work seamlessly across web 
 ---
 
 _Last updated: 2025-10-14_
+_Verified: 2025-12-09_
 
 ---
 

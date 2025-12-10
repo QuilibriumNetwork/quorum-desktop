@@ -242,3 +242,4 @@ No changes required in navigation sources - fix is centralized in MessageList an
 ---
 
 *Last updated: 2025-11-13*
+*Verified: 2025-12-09 - File paths and architecture confirmed current*

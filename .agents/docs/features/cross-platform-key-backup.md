@@ -18,18 +18,15 @@ The original implementation relied solely on Storage Access Framework (SAF) for 
 The solution uses a layered architecture with platform-specific adapters:
 
 ```
-Onboarding.native.tsx
+Onboarding.native.tsx / Onboarding.web.tsx
     ↓ imports
-useKeyBackup.ts (main hook)
-    ↓ combines
-useKeyBackupLogic.ts (business logic) + useFileDownload.native.ts (platform adapter)
+useKeyBackup.ts (native) / useWebKeyBackup.ts (web)
 ```
 
 ### Key Components
 
-1. **`useKeyBackup.ts`** - Main hook that combines business logic with platform adapter
-2. **`useKeyBackupLogic.ts`** - Shared business logic for key export and validation
-3. **`useFileDownload.native.ts`** - Platform-specific file operations adapter
+1. **`useKeyBackup.ts`** - Native (React Native) implementation with platform-specific file operations
+2. **`useWebKeyBackup.ts`** - Web implementation with browser download functionality
 
 ## Implementation Logic Flow
 
@@ -249,5 +246,5 @@ import QRCode from 'react-native-qrcode-svg';
 
 ---
 
-_Last Updated: 2025-01-11_  
-_Created by: Claude Code Assistant_
+_Last Updated: 2025-01-11_
+_Verified: 2025-12-09 - Architecture updated to reflect current hook structure_

@@ -1,7 +1,7 @@
 // SpaceService.ts - Extracted from MessageDB.tsx with ZERO modifications
 // This service handles space creation, management, and member operations
 
-import { MessageDB } from '../db/messages';
+import { MessageDB, NavItem } from '../db/messages';
 import { Space, Message, KickMessage } from '../api/quorumApi';
 import { sha256, base58btc, hexToSpreadArray } from '../utils/crypto';
 import { int64ToBytes } from '../utils/bytes';
@@ -431,17 +431,29 @@ export class SpaceService {
     const config = await this.messageDB.getUserConfig({
       address: registration.user_address,
     });
+    // Create NavItem for the new space
+    const newSpaceItem: NavItem = { type: 'space', id: spaceAddress };
     if (!config) {
       await this.saveConfig({
         config: {
           address: registration.user_address,
           spaceIds: [spaceAddress],
+          items: [newSpaceItem],
         },
         keyset,
       });
     } else {
+      // Update both spaceIds and items (if items exists)
+      const updatedConfig = {
+        ...config,
+        spaceIds: [...config.spaceIds, spaceAddress],
+      };
+      // Only add to items if the config already has items array
+      if (config.items) {
+        updatedConfig.items = [...config.items, newSpaceItem];
+      }
       await this.saveConfig({
-        config: { ...config, spaceIds: [...config.spaceIds, spaceAddress] },
+        config: updatedConfig,
         keyset,
       });
     }

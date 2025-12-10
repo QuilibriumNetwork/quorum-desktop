@@ -1,6 +1,8 @@
 import { channel } from '@quilibrium/quilibrium-js-sdk-channels';
 import { Conversation, Message, Space, Bookmark } from '../api/quorumApi';
 import type { NotificationSettings } from '../types/notifications';
+import type { IconColor } from '../components/space/IconPicker/types';
+import type { IconName } from '../components/primitives/Icon/types';
 import MiniSearch from 'minisearch';
 
 export interface EncryptedMessage {
@@ -22,9 +24,27 @@ export interface DecryptionResult {
   newState: any;
 }
 
+// Folder color type (reuses icon colors)
+export type FolderColor = IconColor;
+
+// NavItem represents either a standalone space or a folder containing spaces
+export type NavItem =
+  | { type: 'space'; id: string }
+  | {
+      type: 'folder';
+      id: string;                   // crypto.randomUUID()
+      name: string;                 // User-defined name (default: "Spaces")
+      spaceIds: string[];           // Spaces in this folder (ordered)
+      icon?: IconName;              // Custom icon (always rendered white, default: 'folder')
+      color?: FolderColor;          // Folder background color (default: 'default' = gray)
+      createdDate: number;
+      modifiedDate: number;
+    };
+
 export type UserConfig = {
   address: string;
-  spaceIds: string[];
+  spaceIds: string[];               // KEPT for backwards compatibility (derived from items)
+  items?: NavItem[];                // Single source of truth for ordering & folders
   timestamp?: number;
   nonRepudiable?: boolean;
   allowSync?: boolean;
@@ -1749,6 +1769,151 @@ export class MessageDB {
 
       request.onsuccess = () => {
         resolve(request.result);
+      };
+      request.onerror = () => reject(request.error);
+    });
+  }
+
+  // ============================================
+  // DEBUG UTILITIES FOR ENCRYPTION STATE ANALYSIS
+  // ============================================
+  // See: .agents/bugs/encryption-state-evals-bloat.md
+  //
+  // Usage (browser console):
+  //   await window.__messageDB.analyzeEncryptionStates()
+  //   await window.__messageDB.deleteBloatedEncryptionState(conversationId, inboxId)
+
+  /**
+   * Analyzes all encryption states and returns a report of their sizes and structure.
+   * Bloated states (>100KB) get deep analysis to identify the cause.
+   */
+  async analyzeEncryptionStates(): Promise<{
+    total: number;
+    bloated: number;
+    healthy: number;
+    states: Array<{
+      conversationId: string;
+      inboxId: string;
+      sizeBytes: number;
+      isBloated: boolean;
+      analysis?: {
+        outerKeys?: string[];
+        innerKeys?: string[];
+        skippedKeysHeaders?: number;
+        skippedKeysTotal?: number;
+        participantCount?: number;
+        participantSkippedKeys?: Array<{ index: number; headers: number; total: number }>;
+        idPeerMapSize?: number;
+        peerIdMapSize?: number;
+      };
+    }>;
+  }> {
+    await this.init();
+    const BLOAT_THRESHOLD = 100000; // 100KB
+
+    return new Promise((resolve, reject) => {
+      const transaction = this.db!.transaction('encryption_states', 'readonly');
+      const store = transaction.objectStore('encryption_states');
+      const request = store.getAll();
+
+      request.onsuccess = () => {
+        const allStates = request.result as EncryptionState[];
+        const results = allStates.map(es => {
+          const stateJson = JSON.stringify(es);
+          const sizeBytes = stateJson.length;
+          const isBloated = sizeBytes > BLOAT_THRESHOLD;
+
+          const result: any = {
+            conversationId: es.conversationId,
+            inboxId: es.inboxId,
+            sizeBytes,
+            isBloated,
+          };
+
+          // Deep analysis for bloated states
+          if (isBloated) {
+            try {
+              const outerState = JSON.parse(es.state);
+              result.analysis = {
+                outerKeys: Object.keys(outerState),
+              };
+
+              if (outerState.state) {
+                const innerState = JSON.parse(outerState.state);
+                result.analysis.innerKeys = Object.keys(innerState);
+
+                // Double Ratchet skipped keys
+                if (innerState.skipped_keys_map) {
+                  const skippedKeys = innerState.skipped_keys_map;
+                  result.analysis.skippedKeysHeaders = Object.keys(skippedKeys).length;
+                  result.analysis.skippedKeysTotal = 0;
+                  for (const header of Object.values(skippedKeys) as any[]) {
+                    result.analysis.skippedKeysTotal += Object.keys(header).length;
+                  }
+                }
+
+                // Triple Ratchet peer maps
+                if (innerState.id_peer_map) {
+                  result.analysis.idPeerMapSize = Object.keys(innerState.id_peer_map).length;
+                }
+                if (innerState.peer_id_map) {
+                  result.analysis.peerIdMapSize = Object.keys(innerState.peer_id_map).length;
+                }
+
+                // Triple Ratchet participants
+                if (innerState.participants && Array.isArray(innerState.participants)) {
+                  result.analysis.participantCount = innerState.participants.length;
+                  result.analysis.participantSkippedKeys = [];
+                  for (let i = 0; i < innerState.participants.length; i++) {
+                    const p = innerState.participants[i];
+                    if (p.skipped_keys_map) {
+                      const skippedKeys = p.skipped_keys_map;
+                      const headers = Object.keys(skippedKeys).length;
+                      let total = 0;
+                      for (const header of Object.values(skippedKeys) as any[]) {
+                        total += Object.keys(header).length;
+                      }
+                      if (headers > 0 || total > 0) {
+                        result.analysis.participantSkippedKeys.push({ index: i, headers, total });
+                      }
+                    }
+                  }
+                }
+              }
+            } catch (e) {
+              result.analysis = { error: String(e) };
+            }
+          }
+
+          return result;
+        });
+
+        resolve({
+          total: results.length,
+          bloated: results.filter(r => r.isBloated).length,
+          healthy: results.filter(r => !r.isBloated).length,
+          states: results.sort((a, b) => b.sizeBytes - a.sizeBytes),
+        });
+      };
+      request.onerror = () => reject(request.error);
+    });
+  }
+
+  /**
+   * Deletes a specific bloated encryption state entirely.
+   * WARNING: This will require re-establishing the encryption session for that space/conversation.
+   * Use from browser console: await window.__messageDB.deleteBloatedEncryptionState(conversationId, inboxId)
+   */
+  async deleteBloatedEncryptionState(conversationId: string, inboxId: string): Promise<boolean> {
+    await this.init();
+    return new Promise((resolve, reject) => {
+      const transaction = this.db!.transaction('encryption_states', 'readwrite');
+      const store = transaction.objectStore('encryption_states');
+      const request = store.delete([conversationId, inboxId]);
+
+      request.onsuccess = () => {
+        console.log(`Deleted encryption state for ${conversationId} / ${inboxId}`);
+        resolve(true);
       };
       request.onerror = () => reject(request.error);
     });

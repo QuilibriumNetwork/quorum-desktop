@@ -331,4 +331,4 @@ We should implement user preference levels for external content:
 
 **Last Updated**: 2025-11-07
 **Recent Changes**: Inline vs standalone URL detection, security hardening (rehype-raw removal)
-**File Last Modified**: 2025-11-07 by Claude
+**Verified**: 2025-12-09 - File paths confirmed current

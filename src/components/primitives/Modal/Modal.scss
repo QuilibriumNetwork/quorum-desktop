@@ -121,9 +121,7 @@
   color: var(--color-text-subtle);
   background-color: var(--surface-00);
   border-radius: $rounded-full;
-  transition:
-    color $duration-200 $ease-in-out,
-    background-color $duration-200 $ease-in-out;
+  transition: color $duration-200 $ease-in-out;
   // Increase touch target for mobile
   padding: $s-2;
   margin: (-$s-2);

@@ -36,7 +36,7 @@
     font-size: $font-input;  // 16px - prevents iOS zoom on mobile
     line-height: $leading-normal;
     cursor: pointer;
-    transition: all $duration-150 $ease-in-out;
+    transition: border-color $duration-150 $ease-in-out, box-shadow $duration-150 $ease-in-out;
 
     // Use smaller text on larger screens for density
     @media (min-width: $screen-md) {
@@ -272,7 +272,6 @@
     justify-content: space-between;
     padding: $s-2 $s-3;
     cursor: pointer;
-    transition: background-color $duration-100 $ease-linear;
     font-size: $text-sm; // Default medium size
     white-space: nowrap;
 
@@ -456,7 +455,6 @@
     padding: $s-1 $s-2;
     border-radius: $rounded;
     cursor: pointer;
-    transition: background-color $duration-100 $ease-linear;
     font-size: $text-sm;
     font-weight: $font-medium;
     color: var(--color-text-main);

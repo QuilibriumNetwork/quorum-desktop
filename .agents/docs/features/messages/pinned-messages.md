@@ -276,3 +276,4 @@ All magic numbers have been extracted into configuration objects:
 ---
 
 _Last updated: 2025-12-02_
+_Verified: 2025-12-09 - File paths confirmed current_

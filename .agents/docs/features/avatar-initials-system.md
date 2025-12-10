@@ -613,4 +613,4 @@ border-radius: 50%;
 ---
 
 _Last updated: 2025-10-26_
-_Created by: AI Agent_
+_Verified: 2025-12-09 - File paths confirmed current_

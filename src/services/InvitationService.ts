@@ -1,7 +1,7 @@
 // InvitationService.ts - Extracted from MessageDB.tsx with ZERO modifications
 // This service handles space invitation operations
 
-import { MessageDB } from '../db/messages';
+import { MessageDB, NavItem } from '../db/messages';
 import { QuorumApiClient } from '../api/baseTypes';
 import { channel as secureChannel, channel_raw as ch } from '@quilibrium/quilibrium-js-sdk-channels';
 import { sha256, base58btc, hexToSpreadArray } from '../utils/crypto';
@@ -800,12 +800,19 @@ export class InvitationService {
         address: currentPasskeyInfo.address,
         userKey: keyset.userKeyset,
       });
+      // Create NavItem for the new space
+      const newSpaceItem: NavItem = { type: 'space', id: space.spaceId };
       if (config) {
         config.spaceIds = [...(config.spaceIds ?? []), space.spaceId];
+        // Also add to items if items array exists
+        if (config.items) {
+          config.items = [...config.items, newSpaceItem];
+        }
       } else {
         config = {
           address: currentPasskeyInfo.address,
           spaceIds: [space.spaceId],
+          items: [newSpaceItem],
         };
       }
       await this.saveConfig({ config, keyset });

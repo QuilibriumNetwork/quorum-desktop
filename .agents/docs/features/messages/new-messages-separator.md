@@ -345,3 +345,4 @@ const handleRangeChanged = useCallback(
 ---
 
 *Last updated: 2025-11-13 (DM sender filtering added)*
+*Verified: 2025-12-09 - File paths confirmed current*

@@ -220,7 +220,12 @@ type MessageDBContextProps = {
 
 const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
   const messageDB = useMemo(() => {
-    return new MessageDB();
+    const db = new MessageDB();
+    // Expose for debugging bloated encryption states
+    // Usage: await window.__messageDB.analyzeEncryptionStates()
+    // Usage: await window.__messageDB.cleanBloatedEncryptionStates({ dryRun: false })
+    (window as any).__messageDB = db;
+    return db;
   }, []);
   const queryClient = useQueryClient();
   const { apiClient } = useQuorumApiClient();

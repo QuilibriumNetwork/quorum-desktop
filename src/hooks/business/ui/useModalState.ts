@@ -35,6 +35,10 @@ export interface ModalState {
     isOpen: boolean;
     conversationId?: string;
   };
+  folderEditor: {
+    isOpen: boolean;
+    folderId?: string;
+  };
 }
 
 // Modal actions
@@ -59,7 +63,9 @@ type ModalAction =
   | { type: 'OPEN_KICK_USER'; kickUserAddress: string }
   | { type: 'CLOSE_KICK_USER' }
   | { type: 'OPEN_CONVERSATION_SETTINGS'; conversationId: string }
-  | { type: 'CLOSE_CONVERSATION_SETTINGS' };
+  | { type: 'CLOSE_CONVERSATION_SETTINGS' }
+  | { type: 'OPEN_FOLDER_EDITOR'; folderId?: string }
+  | { type: 'CLOSE_FOLDER_EDITOR' };
 
 // Initial state
 const initialModalState: ModalState = {
@@ -71,6 +77,7 @@ const initialModalState: ModalState = {
   newDirectMessage: { isOpen: false },
   kickUser: { isOpen: false },
   conversationSettings: { isOpen: false },
+  folderEditor: { isOpen: false },
 };
 
 // Modal reducer
@@ -145,6 +152,14 @@ function modalReducer(state: ModalState, action: ModalAction): ModalState {
       };
     case 'CLOSE_CONVERSATION_SETTINGS':
       return { ...state, conversationSettings: { isOpen: false } };
+
+    case 'OPEN_FOLDER_EDITOR':
+      return {
+        ...state,
+        folderEditor: { isOpen: true, folderId: action.folderId },
+      };
+    case 'CLOSE_FOLDER_EDITOR':
+      return { ...state, folderEditor: { isOpen: false } };
 
     default:
       return state;
@@ -234,6 +249,15 @@ export const useModalState = () => {
     dispatch({ type: 'CLOSE_CONVERSATION_SETTINGS' });
   }, []);
 
+  // Folder Editor Modal
+  const openFolderEditor = useCallback((folderId?: string) => {
+    dispatch({ type: 'OPEN_FOLDER_EDITOR', folderId });
+  }, []);
+
+  const closeFolderEditor = useCallback(() => {
+    dispatch({ type: 'CLOSE_FOLDER_EDITOR' });
+  }, []);
+
   return {
     // State
     state,
@@ -269,6 +293,10 @@ export const useModalState = () => {
     // Conversation Settings
     openConversationSettings,
     closeConversationSettings,
+
+    // Folder Editor
+    openFolderEditor,
+    closeFolderEditor,
 
     // Legacy compatibility
     isNewDirectMessageOpen: state.newDirectMessage.isOpen,

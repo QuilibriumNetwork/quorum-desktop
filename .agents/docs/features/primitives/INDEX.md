@@ -183,6 +183,7 @@ Check [05-primitive-styling-guide.md](./05-primitive-styling-guide.md) for color
 ---
 
 _Last updated: 2025-10-14 - Added Portal primitive_
+_Verified: 2025-12-09_
 
 ---
 

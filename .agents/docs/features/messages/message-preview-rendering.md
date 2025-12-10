@@ -277,3 +277,4 @@ MessagePreview is **20-100x faster** than full markdown rendering, making it sui
 ---
 
 *Created: 2025-12-02*
+*Verified: 2025-12-09 - File paths confirmed current*

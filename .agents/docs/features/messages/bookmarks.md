@@ -452,3 +452,4 @@ Sync requires network connectivity. Local changes are preserved but won't sync u
 ---
 
 *Updated: 2025-12-02 (hybrid MessagePreview: full render when message available, cached fallback otherwise)*
+*Verified: 2025-12-09 - File paths confirmed current*

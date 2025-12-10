@@ -26,6 +26,12 @@ export interface IconPickerProps {
   className?: string;
   testID?: string;
   defaultIcon?: IconName; // Icon to use when clearing (for channels that always need an icon)
+  /**
+   * Display mode for the IconPicker
+   * - 'icon-color' (default): Icons are colored, swatches show icon preview
+   * - 'background-color': Icons always white, swatches show as colored backgrounds (for folder icons)
+   */
+  mode?: 'icon-color' | 'background-color';
 }
 
 // Icons that have filled variants in Tabler Icons library
@@ -63,6 +69,7 @@ export const FILLED_ICONS: Set<IconName> = new Set([
   'fire', // IconFlameFilled
   'certificate', // IconRosetteDiscountCheckFilled (new mapping)
   'seedling', // IconSeedlingFilled
+  'folder', // IconFolderFilled
 ]);
 
 // 50 icons organized by tier and category
@@ -74,6 +81,7 @@ export const ICON_OPTIONS: IconOption[] = [
   { name: 'users', tier: 1, category: 'Team' },
   { name: 'comment-dots', tier: 1, category: 'Discussion' },
   { name: 'star', tier: 1, category: 'Important' },
+  { name: 'folder', tier: 1, category: 'Organization' },
 
   // Tier 2: Popular Categories (Second Row)
   { name: 'briefcase', tier: 2, category: 'Business' },
@@ -147,6 +155,18 @@ export const ICON_COLORS: ColorOption[] = [
   { value: 'red', label: 'Red', class: 'text-accent-red', hex: '#ef4444' },
 ];
 
+// Dimmed colors for folder backgrounds (25% less saturation, similar to UserInitials)
+export const FOLDER_COLORS: ColorOption[] = [
+  { value: 'default', label: 'Default', class: 'text-subtle', hex: '#6b7280' },
+  { value: 'blue', label: 'Blue', class: 'text-accent-blue', hex: '#5f8eeb' },
+  { value: 'purple', label: 'Purple', class: 'text-accent-purple', hex: '#9673ea' },
+  { value: 'fuchsia', label: 'Fuchsia', class: 'text-accent-fuchsia', hex: '#c54cc7' },
+  { value: 'green', label: 'Green', class: 'text-accent-green', hex: '#40b589' },
+  { value: 'orange', label: 'Orange', class: 'text-accent-orange', hex: '#ec814a' },
+  { value: 'yellow', label: 'Yellow', class: 'text-accent-yellow', hex: '#d4a017' },
+  { value: 'red', label: 'Red', class: 'text-accent-red', hex: '#e7615d' },
+];
+
 // Helper function to get icon color hex value
 export const getIconColorHex = (iconColor?: IconColor): string => {
   if (!iconColor || iconColor === 'default') {
@@ -160,6 +180,21 @@ export const getIconColorHex = (iconColor?: IconColor): string => {
   }
 
   return colorOption.hex;
+};
+
+// Theme-specific default gray for folders
+const FOLDER_DEFAULT_LIGHT = '#9ca3af'; // lighter gray for light theme (subtle)
+const FOLDER_DEFAULT_DARK = '#52525b';  // darker gray for dark theme (subtle)
+
+// Helper function to get folder color hex value (dimmed palette)
+// Pass isDarkTheme for theme-specific default gray
+export const getFolderColorHex = (iconColor?: IconColor, isDarkTheme?: boolean): string => {
+  if (!iconColor || iconColor === 'default') {
+    return isDarkTheme ? FOLDER_DEFAULT_DARK : FOLDER_DEFAULT_LIGHT;
+  }
+
+  const colorOption = FOLDER_COLORS.find(color => color.value === iconColor);
+  return colorOption?.hex ?? (isDarkTheme ? FOLDER_DEFAULT_DARK : FOLDER_DEFAULT_LIGHT);
 };
 
 // Helper function to get icon color class (for fallback)

@@ -12,7 +12,7 @@
   justify-content: center;
   transition: all $duration-150 $ease-in-out;
   cursor: pointer;
-  background-color: var(--surface-2);
+  background-color: var(--surface-6);
   border: $border solid transparent;
 
   &:hover:not(.icon-picker-variant-btn--active) {
@@ -67,5 +67,40 @@
 
   &--active {
     border: $border-2 solid var(--accent);
+  }
+
+  // Background-color mode: remove default bg since inline style provides it
+  &--bg-mode {
+    background-color: transparent;
+  }
+}
+
+// Background color swatches (for folder icons in background-color mode)
+.icon-picker-bg-swatch {
+  width: $s-6;
+  height: $s-6;
+  padding: 0;
+  border-radius: $rounded-full;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all $duration-150 $ease-in-out;
+  cursor: pointer;
+  border: $border-2 solid transparent;
+
+  &:hover:not(.icon-picker-bg-swatch--active) {
+    opacity: 0.8;
+  }
+
+  &:focus {
+    outline: none;
+  }
+
+  &--active {
+    border-color: black;
+
+    html.dark & {
+      border-color: white;
+    }
   }
 }

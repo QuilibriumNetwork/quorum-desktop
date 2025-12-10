@@ -1,0 +1,189 @@
+@use '@/styles/variables' as *;
+
+// Folder button - the icon representing a folder
+.folder-button {
+  width: $s-12; // 48px
+  height: $s-12;
+  border-radius: $rounded-lg; // Consistent rounded square shape (matches space icons)
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all $duration-150 $ease-in-out;
+  position: relative;
+  // margin-top removed - container uses gap for consistent spacing
+
+  // Hover state (desktop only)
+  @media (hover: hover) {
+    &:hover {
+      opacity: 0.85;
+      transform: scale(1.02);
+    }
+  }
+
+  // Small size for spaces inside folders
+  &--small {
+    width: 40px;
+    height: 40px;
+  }
+
+  // Mobile phone optimization
+  @media (max-width: $screen-xs) {
+    width: 40px;
+    height: 40px;
+
+    &--small {
+      width: 36px;
+      height: 36px;
+    }
+  }
+}
+
+// Mention badge on folder button
+.folder-button-mention-bubble {
+  position: absolute;
+  bottom: -$s-0-5;
+  right: -$s-1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: $s-4-5;
+  height: $s-4-5;
+  padding: 0 $s-1;
+  border-radius: $rounded-full;
+  font-weight: $font-medium;
+  font-size: $text-xs;
+  line-height: 1;
+  text-align: center;
+  color: white;
+  background-color: var(--accent-400);
+  z-index: 1001;
+  pointer-events: none;
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+html.dark .folder-button-mention-bubble {
+  background-color: var(--accent-600);
+}
+
+// Folder container - handles both collapsed and expanded states
+.folder-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border-radius: $rounded-xl;
+  // No padding when collapsed - padding only applied when expanded
+  transition:
+    background-color $duration-300 $ease-in-out,
+    padding $duration-300 $ease-in-out;
+  // Allow toggle indicators to overflow to the left
+  overflow: visible;
+
+  // Expanded state - show colored background and add padding
+  &--expanded {
+    background-color: color-mix(in srgb, var(--folder-color) 25%, transparent);
+    padding: $s-1;
+  }
+}
+
+// Folder button header
+.folder-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+// Wrapper for spaces - uses CSS grid trick to animate height from 0 to auto
+.folder-spaces-wrapper {
+  display: grid;
+  // grid-template-rows animates between 0fr and 1fr for smooth height transition
+  grid-template-rows: 0fr;
+  transition: grid-template-rows $duration-300 $ease-in-out;
+  // Use clip-path to clip vertically (for collapse animation) while allowing horizontal overflow
+  // Only clip when collapsed - remove clip-path when expanded so tooltips can show
+  // inset(top right bottom left) - negative values extend the clipping region outward
+  clip-path: inset(0 -100px 0 -100px);
+  // Allow toggle indicators to overflow
+  overflow: visible;
+
+  // Expanded state - remove clip-path so tooltips aren't clipped
+  .folder-container--expanded & {
+    grid-template-rows: 1fr;
+    clip-path: none;
+  }
+}
+
+// Container for space icons inside folder
+.folder-spaces {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $s-2-5; // Same gap as nav-menu-spaces (10px)
+  // min-height: 0 is required for the grid animation to work
+  min-height: 0;
+  // Allow toggle indicators to overflow to the left
+  overflow: visible;
+
+  // First space gets top margin for spacing from folder header
+  > :first-child {
+    margin-top: $s-2;
+  }
+
+  // Last space gets bottom margin
+  > :last-child {
+    margin-bottom: $s-1;
+  }
+
+  // Selected space inside folder: no glow, just the left toggle indicator
+  .space-icon-selected {
+    box-shadow: none;
+  }
+
+  // Drag placeholder inside folder: use folder color at 25% opacity
+  .space-icon-drag-placeholder {
+    background-color: color-mix(in srgb, var(--folder-color) 25%, transparent);
+  }
+}
+
+// Selection indicator for folder (mirroring space-icon toggle)
+.folder-toggle {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.folder-has-unread-toggle {
+  content: ' ';
+  position: absolute;
+  width: $s-1-5;
+  height: $s-1-5;
+  border-radius: $rounded-sm;
+  margin-left: -15px;
+  margin-top: 28px;
+  z-index: 1000;
+  background: var(--accent);
+  transition: all $duration-100 linear;
+
+  @media (max-width: $screen-xs) {
+    margin-left: -8px;
+    margin-top: 22px;
+  }
+}
+
+// Collapsed folder with spaces badge
+.folder-collapsed-count {
+  position: absolute;
+  bottom: -$s-0-5;
+  right: -$s-0-5;
+  min-width: $s-4;
+  height: $s-4;
+  padding: 0 $s-0-5;
+  border-radius: $rounded-full;
+  font-size: 10px;
+  font-weight: $font-medium;
+  line-height: $s-4;
+  text-align: center;
+  color: var(--text-main);
+  background-color: var(--surface-4);
+  border: 1px solid var(--surface-border);
+}
+

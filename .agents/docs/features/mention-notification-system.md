@@ -701,3 +701,4 @@ All mention components use `tokenData.isInteractive` flag to determine CSS class
 *Last updated: 2025-11-18*
 *Reviewed by Claude Code: 2025-11-18*
 *Enhanced mention formats implemented: 2025-11-18*
+*Verified: 2025-12-09 - File paths confirmed current*

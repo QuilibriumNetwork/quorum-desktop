@@ -88,3 +88,4 @@ Future translations ready:
 ---
 
 **Updated:** 2025-01-14
+**Verified:** 2025-12-09 - File paths confirmed current

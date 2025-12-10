@@ -156,3 +156,4 @@ const plainSnippet = stripMarkdownAndMentions(contextualSnippet); // Remove ever
 
 ---
 **Last Updated**: 2025-12-02
+**Verified**: 2025-12-09 - File paths confirmed current

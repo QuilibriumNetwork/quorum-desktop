@@ -182,3 +182,4 @@ src/
 ---
 
 *Created: 2025-09-13*
+*Verified: 2025-12-09 - File paths confirmed current*
