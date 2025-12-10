@@ -28,6 +28,7 @@ export interface UseUserSettingsReturn {
   downloadKey: () => Promise<void>;
   keyset: any;
   removedDevices: string[];
+  isConfigLoaded: boolean;
 }
 
 export const useUserSettings = (
@@ -42,6 +43,7 @@ export const useUserSettings = (
   const [allowSync, setAllowSync] = useState(false);
   const [nonRepudiable, setNonRepudiable] = useState(true);
   const [init, setInit] = useState(false);
+  const [isConfigLoaded, setIsConfigLoaded] = useState(false);
 
   const { data: registration } = useRegistration({
     address: currentPasskeyInfo?.address!,
@@ -75,6 +77,7 @@ export const useUserSettings = (
         existingConfig.current = config;
         setAllowSync(config?.allowSync ?? false);
         setNonRepudiable(config?.nonRepudiable ?? true);
+        setIsConfigLoaded(true);
       })();
     }
   }, [init, currentPasskeyInfo, getConfig, keyset]);
@@ -192,5 +195,6 @@ export const useUserSettings = (
     downloadKey,
     keyset,
     removedDevices,
+    isConfigLoaded,
   };
 };

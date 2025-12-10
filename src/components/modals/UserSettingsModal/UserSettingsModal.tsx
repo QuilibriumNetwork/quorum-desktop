@@ -69,6 +69,7 @@ const UserSettingsModal: React.FunctionComponent<{
     downloadKey,
     keyset,
     removedDevices,
+    isConfigLoaded,
   } = useUserSettings();
 
   const {
@@ -184,6 +185,7 @@ const UserSettingsModal: React.FunctionComponent<{
                         onSave={saveChanges}
                         isSaving={isSaving}
                         removedDevices={removedDevices}
+                        isConfigLoaded={isConfigLoaded}
                       />
                     );
                   case 'notifications':

@@ -15,6 +15,7 @@ interface PrivacyProps {
   onSave: () => void;
   isSaving: boolean;
   removedDevices?: string[];
+  isConfigLoaded?: boolean;
 }
 
 const Privacy: React.FunctionComponent<PrivacyProps> = ({
@@ -29,6 +30,7 @@ const Privacy: React.FunctionComponent<PrivacyProps> = ({
   onSave,
   isSaving,
   removedDevices = [],
+  isConfigLoaded = true,
 }) => {
   return (
     <>
@@ -66,7 +68,7 @@ const Privacy: React.FunctionComponent<PrivacyProps> = ({
               </Tooltip>
             </div>
 
-            <Switch value={allowSync} onChange={setAllowSync} />
+            <Switch value={allowSync} onChange={setAllowSync} disabled={!isConfigLoaded} />
           </div>
           <div className="flex flex-row justify-between">
             <div className="flex flex-row items-center">
@@ -86,10 +88,7 @@ const Privacy: React.FunctionComponent<PrivacyProps> = ({
               </Tooltip>
             </div>
 
-            <Switch
-              value={nonRepudiable}
-              onChange={setNonRepudiable}
-            />
+            <Switch value={nonRepudiable} onChange={setNonRepudiable} />
           </div>
         </div>
 
