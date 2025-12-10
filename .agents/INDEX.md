@@ -85,13 +85,14 @@ This is the main index for all documentation, bug reports, and task management.
 - [Pinned Messages Panel Button Clicks Bug](bugs/pinned-messages-panel-clicks-and-message-list-disappearing.md)
 - [Public Invite Link Intermittent Expiration Bug](bugs/public-invite-link-intermittent-expiration.md)
 - [Space Owner Delete Permissions Bug](bugs/space-owner-delete-permissions-bug.md)
+- [Tooltip Flickering at Top-Left on Fast Mouse Movement](bugs/tooltip-flickering-top-left-on-fast-mouse-movement.md)
 
 ### Solved Issues
 - [Android 7.0 File Download Fix - Implementation Plan](bugs/.solved/SOLVED_android-file-download-huawei-p9-lite.md)
 - [Bug: Auto-Jump to First Unread Message - Blocked by Virtuoso Scroll Positioning](bugs/.solved/auto-jump-unread-virtuoso-scroll-conflict.md)
 - [Channel/Group Save Race Condition](bugs/.solved/channel-group-save-race-condition.md)
 - [Folder Click to Expand/Collapse Not Working](bugs/.solved/folder-click-expand-not-working.md)
-- [FolderEditorModal Race Condition on Auto-Open](bugs/.solved/folder-editor-modal-race-condition.md)
+- [FolderEditorModal Race Condition on Auto-Open After Folder Creation](bugs/.solved/folder-editor-modal-race-condition.md)
 - [Icon Color Not Saving Issue](bugs/.solved/icon-color-not-saving-issue.md)
 - [Kick User UX Improvements](bugs/.solved/kick-user-ux-improvements.md)
 - [MobileDrawer Virtuoso Double Scroller CSS Issues](bugs/.solved/mobiledrawer-virtuoso-double-scroller.md)
@@ -121,7 +122,6 @@ This is the main index for all documentation, bug reports, and task management.
 - [Multi-User Invite Selection Enhancement](tasks/multi-user-invite-selection.md)
 - [Passkey Import UX Issue](tasks/passkey-import-ux-issue.md)
 - [SDK PasskeyModal Customization Props Enhancement](tasks/sdk-passkey-modal-customization-props.md)
-- [Space Folders - Discord-Style Grouping Feature](tasks/space-folders-discord-style.md)
 - [Task: Implement Delete Public Invite Link Feature](tasks/delete-public-invite-link.md)
 - [Test Suite Implementation Plan for Quorum Desktop](tasks/test-suite-plan.md)
 - [User Config Sync on Existing Accounts](tasks/user-config-sync-on-existing-accounts.md)
@@ -263,6 +263,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Role Mention Notifications Implementation](tasks/.done/role-mention-notifications.md)
 - [Search Components Primitive Migration](tasks/.done/search-primitive-migration.md)
 - [Security Analysis: MessageMarkdownRenderer Component](tasks/.done/security-analysis-message-markdown-renderer-2025-11-07.md)
+- [Space Folders - Discord-Style Grouping Feature](tasks/.done/space-folders-discord-style.md)
 - [Space Folders: Toggle Indicator Fix for Spaces Inside Folders](tasks/.done/space-folders-toggle-indicator-fix.md)
 - [Space Icon Mention Bubbles](tasks/.done/space-icon-mention-bubbles.md)
 - [Space Initials Fallback - Optional Space Images](tasks/.done/space-initials-fallback.md)
@@ -294,7 +295,8 @@ This is the main index for all documentation, bug reports, and task management.
 ### Onboarding Flow
 - [Passkey Authentication Flow Analysis](reports/onboarding-flow/passkey-authentication-flow-analysis-2025-11-23.md)
 - [Passkey Flow - Simplified User Journey](reports/onboarding-flow/passkey-flow-simplified-2025-11-23.md)
+- [Quorum Authentication Flows](reports/onboarding-flow/new-onboarding-flow-inline-passkey-2025-12-08.md)
 
 ---
 
-**Last Updated**: 2025-12-10 10:56:40
+**Last Updated**: 2025-12-10 16:22:23

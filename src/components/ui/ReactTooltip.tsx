@@ -69,15 +69,15 @@ const ReactTooltip: React.FunctionComponent<ReactTooltipProps> = ({
     let pressTimer: NodeJS.Timeout | null = null;
 
     // Open tooltip logic for click or long-press
-    const openTooltip = (e: Event) => {
+    const openTooltip = () => {
       // Don't stop propagation - let the original click handler work too
       setVisible(true);
     };
 
     if (touchTrigger === 'click') {
-      const handleTouch = (e: TouchEvent) => {
+      const handleTouch = () => {
         // Don't prevent default - let the original click handler work
-        openTooltip(e);
+        openTooltip();
       };
       elem.addEventListener('touchend', handleTouch, { passive: false });
       // For accessibility, also open on click
@@ -90,10 +90,10 @@ const ReactTooltip: React.FunctionComponent<ReactTooltipProps> = ({
     }
 
     if (touchTrigger === 'long-press') {
-      const handleTouchStart = (e: TouchEvent) => {
-        pressTimer = setTimeout(() => openTooltip(e), longPressDuration);
+      const handleTouchStart = () => {
+        pressTimer = setTimeout(() => openTooltip(), longPressDuration);
       };
-      const handleTouchEnd = (e: TouchEvent) => {
+      const handleTouchEnd = () => {
         if (pressTimer) clearTimeout(pressTimer);
       };
       elem.addEventListener('touchstart', handleTouchStart);
@@ -109,7 +109,7 @@ const ReactTooltip: React.FunctionComponent<ReactTooltipProps> = ({
         elem.removeEventListener('click', openTooltip);
       };
     }
-  }, [showOnTouch, anchorSelect, touchTrigger, longPressDuration]);
+  }, [showOnTouch, anchorSelect, touchTrigger, longPressDuration, alwaysVisible]);
 
   // Auto-hide after specified time on touch devices (if autoHideAfter is provided)
   React.useEffect(() => {
@@ -149,7 +149,7 @@ const ReactTooltip: React.FunctionComponent<ReactTooltipProps> = ({
       document.removeEventListener('touchstart', handleOutside, true);
       document.removeEventListener('mousedown', handleOutside, true);
     };
-  }, [visible, showOnTouch]);
+  }, [visible, showOnTouch, alwaysVisible]);
 
   // Hide by default on touch unless showOnTouch is set
   if (isTouchDevice() && !showOnTouch) {
@@ -157,6 +157,7 @@ const ReactTooltip: React.FunctionComponent<ReactTooltipProps> = ({
   }
 
   // On touch devices and showOnTouch, show controlled tooltip
+  // Using isOpen for controlled mode - no need for disable* props
   if (isTouchDevice() && showOnTouch) {
     return (
       <Tooltip
@@ -172,10 +173,7 @@ const ReactTooltip: React.FunctionComponent<ReactTooltipProps> = ({
             : undefined
         }
         isOpen={alwaysVisible ? true : visible}
-        disableFocusListener
-        disableHoverListener
-        disableTouchListener
-        strategy="fixed"
+        positionStrategy="fixed"
       />
     );
   }
@@ -194,7 +192,7 @@ const ReactTooltip: React.FunctionComponent<ReactTooltipProps> = ({
           ? '1px solid var(--color-border-default)'
           : undefined
       }
-      strategy="fixed"
+      positionStrategy="fixed"
     />
   );
 };
