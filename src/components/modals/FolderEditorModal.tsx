@@ -43,10 +43,13 @@ const FolderEditorModal: React.FC<FolderEditorModalProps> = ({
     deleteFolder,
   } = useFolderManagement({ folderId });
 
-  // Modal save state hook
+  // Modal save state hook (30s timeout for sync crypto operations)
   const { isSaving, saveUntilComplete } = useModalSaveState({
-    maxTimeout: 10000,
+    maxTimeout: 30000,
     onSaveComplete: onClose,
+    onSaveError: (error) => {
+      console.error('[FolderEditorModal] Save error:', error);
+    },
   });
 
   const handleSave = React.useCallback(async () => {

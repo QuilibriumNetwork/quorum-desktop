@@ -5,6 +5,7 @@ import { useConfig, buildConfigKey } from '../../queries';
 import { useMessageDB } from '../../../components/context/useMessageDB';
 import { NavItem, UserConfig } from '../../../db/messages';
 import { deriveSpaceIds } from '../../../utils/folderUtils';
+import { withWaitCursor } from '../../../utils/cursor';
 
 /**
  * Hook for deleting a folder and "spilling out" its spaces to standalone.
@@ -56,7 +57,13 @@ export const useDeleteFolder = () => {
         );
       }
 
-      await saveConfig({ config: newConfig, keyset });
+      // Show wait cursor during sync (crypto operations can block)
+      const doSave = () => saveConfig({ config: newConfig, keyset });
+      if (newConfig.allowSync) {
+        await withWaitCursor(doSave);
+      } else {
+        await doSave();
+      }
     },
     [config, keyset, queryClient, saveConfig]
   );
