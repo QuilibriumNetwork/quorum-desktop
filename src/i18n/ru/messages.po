@@ -31,7 +31,7 @@ msgid "No Role - {count}"
 msgstr "Нет роли - {count}"
 
 #. js-lingui-explicit-id
-#: src/components/space/Channel.tsx:1060
+#: src/components/space/Channel.tsx:1065
 msgid "Send a message to #{channel_name}"
 msgstr "Отправить сообщение для #{channel_name}"
 
@@ -50,7 +50,7 @@ msgid "{count} New Messages"
 msgstr "{count} Новые сообщения"
 
 #. js-lingui-explicit-id
-#: src/components/message/MessageComposer.tsx:406
+#: src/components/message/MessageComposer.tsx:404
 msgid "Replying to"
 msgstr "Отвечая на"
 
@@ -65,17 +65,17 @@ msgid "Replying to {user}"
 msgstr "Ответ на {user}"
 
 #. js-lingui-explicit-id
-#: src/components/message/Message.tsx:306
+#: src/components/message/Message.tsx:307
 msgid "has joined"
 msgstr "присоединился"
 
 #. js-lingui-explicit-id
-#: src/components/message/Message.tsx:314
+#: src/components/message/Message.tsx:315
 msgid "has left"
 msgstr "покинул"
 
 #. js-lingui-explicit-id
-#: src/components/message/Message.tsx:322
+#: src/components/message/Message.tsx:323
 msgid "has been kicked"
 msgstr "был исключен"
 
@@ -88,8 +88,8 @@ msgstr "Отправить сообщение для {user}"
 msgid " for updates."
 msgstr "для обновлений."
 
-#: src/components/message/Message.tsx:756
-#: src/components/message/Message.tsx:769
+#: src/components/message/Message.tsx:757
+#: src/components/message/Message.tsx:770
 msgid "(edited)"
 msgstr "(отредактировано)"
 
@@ -239,7 +239,7 @@ msgstr "Настройки аккаунта"
 msgid "Add a Space"
 msgstr "Добавить Пространство"
 
-#: src/components/modals/ChannelEditorModal.tsx:82
+#: src/components/modals/ChannelEditorModal.tsx:83
 msgid "Add Channel"
 msgstr "Добавить канал"
 
@@ -247,7 +247,7 @@ msgstr "Добавить канал"
 msgid "Add friend"
 msgstr "Добавить друга"
 
-#: src/components/modals/GroupEditorModal.tsx:59
+#: src/components/modals/GroupEditorModal.tsx:60
 #: src/components/space/ChannelList.tsx:161
 msgid "Add Group"
 msgstr "Добавить группу"
@@ -256,7 +256,7 @@ msgstr "Добавить группу"
 msgid "Add Role"
 msgstr "Добавить роль"
 
-#: src/components/message/MessageComposer.tsx:615
+#: src/components/message/MessageComposer.tsx:613
 msgid "add sticker"
 msgstr "добавить стикер"
 
@@ -338,7 +338,7 @@ msgstr "Уже присоединился"
 msgid "Always sign Direct Messages"
 msgstr "Всегда подписывать прямые сообщения"
 
-#: src/components/modals/ConversationSettingsModal.tsx:191
+#: src/components/modals/ConversationSettingsModal.tsx:193
 #: src/components/modals/NewDirectMessageModal.tsx:143
 msgid "Always sign messages"
 msgstr "Всегда подписывать сообщения"
@@ -369,7 +369,7 @@ msgstr ""
 msgid "Appearance"
 msgstr "Внешний вид"
 
-#: src/hooks/business/channels/useChannelManagement.ts:241
+#: src/hooks/business/channels/useChannelManagement.ts:247
 msgid ""
 "Are you sure you want to delete this channel? All messages will be lost. "
 "This action cannot be undone."
@@ -419,7 +419,7 @@ msgstr ""
 "удаление, чтобы удалять сообщения других пользователей. <0><1>Узнать "
 "больше</1></0>"
 
-#: src/components/message/MessageComposer.tsx:582
+#: src/components/message/MessageComposer.tsx:580
 msgid "attach image"
 msgstr "прикрепить изображение"
 
@@ -453,8 +453,8 @@ msgstr "Сообщение закладки"
 msgid "Bookmark messages to save them for later reference"
 msgstr "Сообщения закладок для сохранения их на будущее"
 
-#: src/components/message/Message.tsx:723
-#: src/components/message/Message.tsx:801
+#: src/components/message/Message.tsx:724
+#: src/components/message/Message.tsx:802
 msgid "Bookmarked"
 msgstr "Закладка добавлена"
 
@@ -467,7 +467,7 @@ msgid "Bookmarked sticker"
 msgstr "Закладка стикера"
 
 #: src/components/direct/DirectMessage.tsx:687
-#: src/components/space/Channel.tsx:900
+#: src/components/space/Channel.tsx:904
 msgid "Bookmarks"
 msgstr "Закладки"
 
@@ -489,7 +489,7 @@ msgstr "Разрешение на использование камеры нео
 #: src/components/modals/ConfirmationModal.tsx:29
 #: src/components/modals/ConversationSettingsModal.tsx:63
 #: src/components/primitives/FileUpload/FileUpload.native.tsx:173
-#: src/hooks/business/channels/useChannelManagement.ts:247
+#: src/hooks/business/channels/useChannelManagement.ts:253
 #: src/hooks/business/messages/useMessageActions.ts:159
 #: src/hooks/business/messages/usePinnedMessages.ts:246
 #: src/hooks/business/spaces/useRoleManagement.ts:64
@@ -525,19 +525,19 @@ msgstr ""
 "Изменения вносятся автоматически, но активная страница может не обновиться. "
 "Обновите страницу, чтобы применить новый язык."
 
-#: src/components/modals/ChannelEditorModal.tsx:125
+#: src/components/modals/ChannelEditorModal.tsx:127
 msgid "Channel Icon"
 msgstr "Иконка канала"
 
-#: src/components/modals/ChannelEditorModal.tsx:163
+#: src/components/modals/ChannelEditorModal.tsx:165
 msgid "Channel Managers"
 msgstr "Менеджеры канала"
 
-#: src/components/space/Channel.tsx:1284
+#: src/components/space/Channel.tsx:1289
 msgid "Channel members"
 msgstr "Участники канала"
 
-#: src/components/modals/ChannelEditorModal.tsx:99
+#: src/components/modals/ChannelEditorModal.tsx:100
 msgid "Channel Name"
 msgstr "Название канала"
 
@@ -556,7 +556,7 @@ msgstr "Имя канала обязательно"
 msgid "Channel name must be {MAX_NAME_LENGTH} characters or less"
 msgstr "Имя канала должно содержать не более {MAX_NAME_LENGTH} символов"
 
-#: src/components/modals/ChannelEditorModal.tsx:109
+#: src/components/modals/ChannelEditorModal.tsx:110
 msgid "Channel Topic"
 msgstr "Тема канала"
 
@@ -589,7 +589,7 @@ msgstr "Выберите предпочитаемую тему для Quorum."
 #: src/components/modals/SpaceSettingsModal/Account.tsx:202
 #: src/components/primitives/Select/Select.native.tsx:39
 #: src/components/primitives/Select/Select.web.tsx:33
-#: src/components/space/IconPicker/IconPicker.web.tsx:141
+#: src/components/space/IconPicker/IconPicker.web.tsx:209
 msgid "Clear"
 msgstr "Очистить"
 
@@ -601,8 +601,9 @@ msgstr "Очистить поиск"
 msgid "Clearing notifications with tag: {tag}"
 msgstr "Очистка уведомлений с тегом: {tag}"
 
-#: src/components/modals/ChannelEditorModal.tsx:215
-#: src/components/modals/GroupEditorModal.tsx:129
+#: src/components/modals/ChannelEditorModal.tsx:217
+#: src/components/modals/FolderEditorModal.tsx:130
+#: src/components/modals/GroupEditorModal.tsx:131
 #: src/components/modals/KickUserModal.tsx:86
 #: src/components/modals/LeaveSpaceModal.tsx:64
 #: src/components/modals/SpaceSettingsModal/Account.tsx:256
@@ -640,6 +641,10 @@ msgstr "Нажмите, чтобы скопировать"
 msgid "Config Key"
 msgstr "Ключ конфигурации"
 
+#: src/components/navbar/FolderContextMenu.tsx:124
+msgid "Confirm"
+msgstr "Подтвердить"
+
 #: src/components/Connecting.tsx:12
 msgid "Connecting"
 msgstr "Подключение"
@@ -648,7 +653,7 @@ msgstr "Подключение"
 msgid "Conversation settings"
 msgstr "Настройки беседы"
 
-#: src/components/modals/ConversationSettingsModal.tsx:183
+#: src/components/modals/ConversationSettingsModal.tsx:185
 msgid "Conversation Settings"
 msgstr "Настройки беседы"
 
@@ -702,7 +707,7 @@ msgid "Copy message link"
 msgstr "Скопируйте ссылку на сообщение"
 
 #: src/components/context/MessageDB.bak.tsx:5563
-#: src/services/ConfigService.ts:284
+#: src/services/ConfigService.ts:290
 msgid "Could not add Space"
 msgstr "Не удалось добавить пространство"
 
@@ -713,7 +718,7 @@ msgstr ""
 "Не удалось получить данные Пространства. Пожалуйста, попробуйте снова."
 
 #: src/components/context/MessageDB.bak.tsx:5436
-#: src/services/ConfigService.ts:157
+#: src/services/ConfigService.ts:163
 msgid "Could not obtain manifest for Space"
 msgstr "Не удалось получить манифест для пространства"
 
@@ -753,12 +758,12 @@ msgid "Dark"
 msgstr "Темный"
 
 #: src/components/context/MessageDB.bak.tsx:5415
-#: src/services/ConfigService.ts:136
+#: src/services/ConfigService.ts:142
 msgid "decrypted space with no known config key"
 msgstr "расшифрованное пространство без известного ключа конфигурации"
 
 #: src/components/context/MessageDB.bak.tsx:5421
-#: src/services/ConfigService.ts:142
+#: src/services/ConfigService.ts:148
 msgid "Decrypted Space with no known hub key"
 msgstr "Расшифрованное пространство без известного ключа хаба"
 
@@ -785,23 +790,28 @@ msgstr "удалить"
 #: src/components/modals/ConversationSettingsModal.tsx:62
 #: src/components/modals/SpaceSettingsModal/Emojis.tsx:103
 #: src/components/modals/SpaceSettingsModal/Stickers.tsx:105
-#: src/hooks/business/channels/useChannelManagement.ts:246
+#: src/hooks/business/channels/useChannelManagement.ts:252
 #: src/hooks/business/messages/useMessageActions.ts:158
 #: src/hooks/business/spaces/useRoleManagement.ts:63
 msgid "Delete"
 msgstr "Удалить"
 
-#: src/components/modals/ChannelEditorModal.tsx:214
-#: src/hooks/business/channels/useChannelManagement.ts:240
+#: src/components/modals/ChannelEditorModal.tsx:216
+#: src/hooks/business/channels/useChannelManagement.ts:246
 msgid "Delete Channel"
 msgstr "Удалить канал"
 
 #: src/components/modals/ConversationSettingsModal.tsx:59
-#: src/components/modals/ConversationSettingsModal.tsx:256
+#: src/components/modals/ConversationSettingsModal.tsx:258
 msgid "Delete Conversation"
 msgstr "Удалить беседу"
 
-#: src/components/modals/GroupEditorModal.tsx:128
+#: src/components/modals/FolderEditorModal.tsx:129
+#: src/components/navbar/FolderContextMenu.tsx:124
+msgid "Delete Folder"
+msgstr "Удалить папку"
+
+#: src/components/modals/GroupEditorModal.tsx:130
 msgid "Delete Group"
 msgstr "Удалить группу"
 
@@ -866,7 +876,7 @@ msgid "Direct Message"
 msgstr "Прямое сообщение"
 
 #: src/components/direct/DirectMessageContactsList.tsx:25
-#: src/components/navbar/NavMenu.tsx:101
+#: src/components/navbar/NavMenu.tsx:174
 msgid "Direct Messages"
 msgstr "Прямые сообщения"
 
@@ -911,11 +921,15 @@ msgstr "Редактировать"
 msgid "Edit {0}"
 msgstr "Редактировать {0}"
 
-#: src/components/modals/ChannelEditorModal.tsx:82
+#: src/components/modals/ChannelEditorModal.tsx:83
 msgid "Edit Channel"
 msgstr "Редактировать канал"
 
-#: src/components/modals/GroupEditorModal.tsx:59
+#: src/components/modals/FolderEditorModal.tsx:68
+msgid "Edit Folder"
+msgstr "Редактировать папку"
+
+#: src/components/modals/GroupEditorModal.tsx:60
 msgid "Edit Group"
 msgstr "Редактировать группу"
 
@@ -1133,6 +1147,30 @@ msgstr "Исправления"
 msgid "Fixing..."
 msgstr "Исправление..."
 
+#: src/components/modals/FolderEditorModal.tsx:98
+msgid "Folder Icon & Color"
+msgstr "Иконка и цвет папки"
+
+#: src/components/modals/FolderEditorModal.tsx:80
+msgid "Folder Name"
+msgstr "Название папки"
+
+#: src/hooks/business/folders/useFolderManagement.ts:79
+msgid "Folder name cannot contain special characters"
+msgstr "Название папки не может содержать специальные символы"
+
+#: src/hooks/business/folders/useFolderManagement.ts:73
+msgid "Folder name is required"
+msgstr "Название папки обязательно"
+
+#: src/hooks/business/folders/useFolderManagement.ts:76
+msgid "Folder name must be {MAX_NAME_LENGTH} characters or less"
+msgstr "Название папки должно содержать {MAX_NAME_LENGTH} символов или меньше"
+
+#: src/components/navbar/FolderContextMenu.tsx:114
+msgid "Folder Settings"
+msgstr "Настройки папки"
+
 #: src/components/context/MessageDB.bak.tsx:3186
 #: src/services/SpaceService.ts:236
 msgid "general"
@@ -1175,11 +1213,11 @@ msgstr "Перейти к разговору"
 msgid "Go to Home"
 msgstr "Перейти на главную"
 
-#: src/components/modals/GroupEditorModal.tsx:86
+#: src/components/modals/GroupEditorModal.tsx:88
 msgid "Group Icon (optional)"
 msgstr "Иконка группы (необязательно)"
 
-#: src/components/modals/GroupEditorModal.tsx:71
+#: src/components/modals/GroupEditorModal.tsx:72
 msgid "Group Name"
 msgstr "Название группы"
 
@@ -1331,7 +1369,7 @@ msgstr "Присоединение..."
 msgid "Jump"
 msgstr "Перейти"
 
-#: src/components/message/MessageList.tsx:535
+#: src/components/message/MessageList.tsx:536
 msgid "Jump to present"
 msgstr "Перейти к настоящему"
 
@@ -1412,7 +1450,7 @@ msgstr "Свет"
 msgid "Loading bookmarks..."
 msgstr "Загрузка закладок..."
 
-#: src/components/message/MessageList.tsx:546
+#: src/components/message/MessageList.tsx:547
 msgid "Loading message..."
 msgstr "Загрузка сообщения..."
 
@@ -1488,7 +1526,7 @@ msgstr "Отметить все как прочитанные"
 
 #: src/components/direct/DirectMessage.tsx:668
 #: src/components/direct/DirectMessage.tsx:861
-#: src/components/space/Channel.tsx:926
+#: src/components/space/Channel.tsx:930
 msgid "Members List"
 msgstr "Список участников"
 
@@ -1504,22 +1542,22 @@ msgstr "Действия с сообщениями"
 msgid "Message deleted"
 msgstr "Сообщение удалено"
 
-#: src/components/message/Message.tsx:739
-#: src/components/message/Message.tsx:817
+#: src/components/message/Message.tsx:740
+#: src/components/message/Message.tsx:818
 msgid ""
 "Message does not have a valid signature, this may not be from the sender"
 msgstr ""
 "Сообщение не имеет действительной подписи, это может быть не от отправителя"
 
-#: src/components/message/MessageComposer.tsx:148
+#: src/components/message/MessageComposer.tsx:146
 msgid "Message..."
 msgstr "Сообщение..."
 
-#: src/components/message/MessageComposer.tsx:632
+#: src/components/message/MessageComposer.tsx:630
 msgid "Messages are NOT signed!"
 msgstr "Сообщения НЕ подписаны!"
 
-#: src/components/message/MessageComposer.tsx:633
+#: src/components/message/MessageComposer.tsx:631
 msgid "Messages are signed!"
 msgstr "Сообщения подписаны!"
 
@@ -1537,6 +1575,10 @@ msgstr ""
 #: src/components/modals/NewDirectMessageModal.tsx:83
 msgid "New Direct Message"
 msgstr "Новое прямое сообщение"
+
+#: src/components/modals/FolderEditorModal.tsx:68
+msgid "New Folder"
+msgstr "Новая папка"
 
 #: src/components/message/NewMessagesSeparator.tsx:64
 msgid "New Messages"
@@ -1596,8 +1638,8 @@ msgstr "Пока нет закреплённых сообщений"
 msgid "No unread notifications"
 msgstr "Нет непрочитанных уведомлений"
 
-#: src/components/space/Channel.tsx:614 src/components/space/Channel.tsx:1132
-#: src/components/space/Channel.tsx:1323
+#: src/components/space/Channel.tsx:617 src/components/space/Channel.tsx:1137
+#: src/components/space/Channel.tsx:1328
 msgid "No users found!"
 msgstr "Пользователи не найдены!"
 
@@ -1612,7 +1654,7 @@ msgstr "Разрешение на уведомления не предостав
 #: src/components/modals/SpaceSettingsModal/Account.tsx:187
 #: src/components/modals/UserSettingsModal/Navigation.tsx:17
 #: src/components/modals/UserSettingsModal/Notifications.tsx:24
-#: src/components/space/Channel.tsx:865
+#: src/components/space/Channel.tsx:869
 msgid "Notifications"
 msgstr "Уведомления"
 
@@ -1628,7 +1670,7 @@ msgstr ""
 msgid "Notifications are not supported in this browser"
 msgstr "Уведомления не поддерживаются в этом браузере"
 
-#: src/components/message/MessageComposer.tsx:559
+#: src/components/message/MessageComposer.tsx:557
 msgid "Notify all members"
 msgstr "Уведомить всех участников"
 
@@ -1716,7 +1758,7 @@ msgstr "пин"
 msgid "Pin"
 msgstr "Закрепить"
 
-#: src/components/modals/ChannelEditorModal.tsx:139
+#: src/components/modals/ChannelEditorModal.tsx:141
 msgid "Pin channel to top"
 msgstr "Закрепить канал вверху"
 
@@ -1742,23 +1784,23 @@ msgstr "Закрепить сообщение"
 msgid "Pin Messages"
 msgstr "Закрепить сообщения"
 
-#: src/components/modals/ChannelEditorModal.tsx:134
+#: src/components/modals/ChannelEditorModal.tsx:136
 msgid "Pin to top"
 msgstr "Закрепить вверху"
 
-#: src/components/message/Message.tsx:707
-#: src/components/message/Message.tsx:785
+#: src/components/message/Message.tsx:708
+#: src/components/message/Message.tsx:786
 msgid "Pinned"
 msgstr "Закреплено"
 
 #. placeholder {0}: mapSenderToUser(message.pinnedBy)?.displayName ||
 #. message.pinnedBy
-#: src/components/message/Message.tsx:706
-#: src/components/message/Message.tsx:784
+#: src/components/message/Message.tsx:707
+#: src/components/message/Message.tsx:785
 msgid "Pinned by {0}"
 msgstr "Закреплено пользователем {0}"
 
-#: src/components/space/Channel.tsx:825
+#: src/components/space/Channel.tsx:829
 msgid "Pinned Messages"
 msgstr "Закреплённые сообщения"
 
@@ -1789,7 +1831,7 @@ msgstr "Конфиденциальность/Безопасность"
 msgid "Private key saved to selected folder"
 msgstr "Приватный ключ сохранен в выбранной папке"
 
-#: src/components/message/MessageComposer.tsx:357
+#: src/components/message/MessageComposer.tsx:355
 msgid "Processing image... This may take a moment for large files."
 msgstr ""
 "Обработка изображения... Это может занять некоторое время для больших "
@@ -1844,11 +1886,11 @@ msgstr ""
 "доступа был отклонен. Пожалуйста, повторно авторизуйтесь, чтобы получить "
 "доступ к вашим сообщениям."
 
-#: src/components/modals/ChannelEditorModal.tsx:148
+#: src/components/modals/ChannelEditorModal.tsx:150
 msgid "Read only"
 msgstr "Только для чтения"
 
-#: src/components/modals/ChannelEditorModal.tsx:153
+#: src/components/modals/ChannelEditorModal.tsx:155
 msgid "Read only channel"
 msgstr "Канал только для чтения"
 
@@ -1861,7 +1903,7 @@ msgid "Reauthorize"
 msgstr "Повторная авторизация"
 
 #: src/components/context/MessageDB.bak.tsx:5385
-#: src/services/ConfigService.ts:106
+#: src/services/ConfigService.ts:107
 msgid "received config with invalid signature!"
 msgstr "получена конфигурация с недействительной подписью!"
 
@@ -1919,12 +1961,13 @@ msgid "Roles"
 msgstr "Роли"
 
 #: src/components/message/MessageEditTextarea.tsx:378
-#: src/components/modals/ConversationSettingsModal.tsx:240
+#: src/components/modals/ConversationSettingsModal.tsx:242
 msgid "Save"
 msgstr "Сохранить"
 
-#: src/components/modals/ChannelEditorModal.tsx:196
-#: src/components/modals/GroupEditorModal.tsx:97
+#: src/components/modals/ChannelEditorModal.tsx:198
+#: src/components/modals/FolderEditorModal.tsx:110
+#: src/components/modals/GroupEditorModal.tsx:99
 #: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:589
 #: src/components/modals/UserSettingsModal/UserSettingsModal.tsx:242
 #: src/components/user/UserProfileEdit.tsx:158
@@ -1936,7 +1979,7 @@ msgstr "Сохранить изменения"
 msgid "Save Contact Photo"
 msgstr "Сохранить фотографию контакта"
 
-#: src/components/modals/ConversationSettingsModal.tsx:216
+#: src/components/modals/ConversationSettingsModal.tsx:218
 #: src/components/modals/SpaceSettingsModal/General.tsx:288
 msgid "Save Edit History"
 msgstr "Сохранить историю изменений"
@@ -1956,12 +1999,13 @@ msgid "Save User Key"
 msgstr "Сохранить ключ пользователя"
 
 #: src/components/context/MessageDB.bak.tsx:5343
-#: src/services/ConfigService.ts:64
+#: src/services/ConfigService.ts:65
 msgid "saved config is out of date"
 msgstr "сохраненная конфигурация устарела"
 
-#: src/components/modals/ChannelEditorModal.tsx:92
-#: src/components/modals/GroupEditorModal.tsx:137
+#: src/components/modals/ChannelEditorModal.tsx:93
+#: src/components/modals/FolderEditorModal.tsx:145
+#: src/components/modals/GroupEditorModal.tsx:139
 #: src/components/modals/ModalSaveOverlay.tsx:43
 msgid "Saving..."
 msgstr "Сохранение..."
@@ -1984,7 +2028,7 @@ msgid "Search in this Space..."
 msgstr "Поиск в этом Пространстве..."
 
 #: src/components/direct/DirectMessage.tsx:714
-#: src/components/space/Channel.tsx:945
+#: src/components/space/Channel.tsx:949
 msgid "Search Messages"
 msgstr "Поиск сообщений"
 
@@ -2000,7 +2044,7 @@ msgstr "Результаты поиска"
 msgid "Search username or address"
 msgstr "Поиск имени пользователя или адреса"
 
-#: src/components/space/Channel.tsx:1295
+#: src/components/space/Channel.tsx:1300
 msgid "Search Username or Address"
 msgstr "Поиск имени пользователя или адреса"
 
@@ -2021,7 +2065,7 @@ msgstr "Выбрать"
 msgid "Select an option"
 msgstr "Выберите вариант"
 
-#: src/components/modals/ChannelEditorModal.tsx:167
+#: src/components/modals/ChannelEditorModal.tsx:169
 msgid ""
 "Select any existing role as managers for this channel. Managers have post, "
 "delete, and pin permissions on ANY message by default. If no managers are "
@@ -2053,7 +2097,7 @@ msgstr "Выберите разрешения"
 msgid "Select Profile Image"
 msgstr "Выберите изображение профиля"
 
-#: src/components/modals/ChannelEditorModal.tsx:186
+#: src/components/modals/ChannelEditorModal.tsx:188
 msgid "Select Roles"
 msgstr "Выбрать роли"
 
@@ -2369,7 +2413,7 @@ msgid "Unable to copy to clipboard"
 msgstr "Не удалось скопировать в буфер обмена"
 
 #: src/components/context/MessageDB.bak.tsx:3482
-#: src/services/SpaceService.ts:538
+#: src/services/SpaceService.ts:550
 msgid ""
 "Unable to leave space due to incomplete configuration. The space data may be"
 " corrupted."
@@ -2418,8 +2462,8 @@ msgstr "Неизвестное время"
 #: src/components/direct/DirectMessage.tsx:173
 #: src/components/direct/DirectMessage.tsx:188
 #: src/components/direct/DirectMessage.tsx:535
-#: src/components/message/MessageComposer.tsx:501
-#: src/components/message/MessageComposer.tsx:508
+#: src/components/message/MessageComposer.tsx:499
+#: src/components/message/MessageComposer.tsx:506
 #: src/components/message/MessageEditTextarea.tsx:225
 #: src/components/message/MessageEditTextarea.tsx:260
 #: src/components/message/MessageEditTextarea.tsx:267
@@ -2524,7 +2568,7 @@ msgstr "Адрес пользователя здесь"
 msgid "User does not exist."
 msgstr "Пользователь не существует."
 
-#: src/components/space/Channel.tsx:601 src/components/space/Channel.tsx:1118
+#: src/components/space/Channel.tsx:604 src/components/space/Channel.tsx:1123
 msgid "Username or Address"
 msgstr "Имя пользователя или адрес"
 
@@ -2550,7 +2594,7 @@ msgstr "Добро пожаловать в Quorum!"
 msgid "What's on your mind today?"
 msgstr "О чем вы сегодня думаете?"
 
-#: src/components/modals/ConversationSettingsModal.tsx:220
+#: src/components/modals/ConversationSettingsModal.tsx:222
 #: src/components/modals/SpaceSettingsModal/General.tsx:292
 msgid ""
 "When enabled, all previous versions of edited messages will be saved. When "
@@ -2625,7 +2669,7 @@ msgstr ""
 "При использовании Quorum в браузере ваши сообщения сохраняются локально в "
 "вашем браузере."
 
-#: src/components/modals/ConversationSettingsModal.tsx:195
+#: src/components/modals/ConversationSettingsModal.tsx:197
 msgid ""
 "When you sign a message, you are confirming that it comes from your key. "
 "When you don't sign a message, you have plausible deniability. The default "
@@ -2679,7 +2723,7 @@ msgstr ""
 "Вы можете управлять уведомлениями о упоминаниях вашего пространства в "
 "настройках каждого пространства."
 
-#: src/components/modals/GroupEditorModal.tsx:116
+#: src/components/modals/GroupEditorModal.tsx:118
 msgid ""
 "You cannot delete a group that contains channels. Delete all {channelCount} "
 "channels in this group first."
@@ -2687,8 +2731,8 @@ msgstr ""
 "Вы не можете удалить группу, содержащую каналы. Сначала удалите все "
 "{channelCount} каналы в этой группе."
 
-#: src/components/message/MessageComposer.tsx:336
-#: src/components/space/Channel.tsx:1084
+#: src/components/message/MessageComposer.tsx:334
+#: src/components/space/Channel.tsx:1089
 msgid "You cannot post in this channel"
 msgstr "Вы не можете публиковать в этом канале"
 
@@ -2778,6 +2822,10 @@ msgstr ""
 #: src/components/modals/SpaceSettingsModal/Account.tsx:165
 msgid "Your Roles"
 msgstr "Ваши роли"
+
+#: src/components/modals/FolderEditorModal.tsx:136
+msgid "Your Spaces will NOT be deleted"
+msgstr "Ваши Spaces не будут удалены"
 
 #: src/components/ui/YouTubeFacade.tsx:92
 msgid "YouTube Video"

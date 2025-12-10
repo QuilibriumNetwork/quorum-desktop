@@ -31,7 +31,7 @@ msgid "No Role - {count}"
 msgstr "בלי תפקיד - {count}"
 
 #. js-lingui-explicit-id
-#: src/components/space/Channel.tsx:1060
+#: src/components/space/Channel.tsx:1065
 msgid "Send a message to #{channel_name}"
 msgstr "שלח הודעה ל-#{channel_name}"
 
@@ -46,7 +46,7 @@ msgid "{count} New Messages"
 msgstr "{count} הודעות חדשות"
 
 #. js-lingui-explicit-id
-#: src/components/message/MessageComposer.tsx:406
+#: src/components/message/MessageComposer.tsx:404
 msgid "Replying to"
 msgstr "מגיב ל"
 
@@ -61,17 +61,17 @@ msgid "Replying to {user}"
 msgstr "עונה ל-{user}"
 
 #. js-lingui-explicit-id
-#: src/components/message/Message.tsx:306
+#: src/components/message/Message.tsx:307
 msgid "has joined"
 msgstr "הצטרף"
 
 #. js-lingui-explicit-id
-#: src/components/message/Message.tsx:314
+#: src/components/message/Message.tsx:315
 msgid "has left"
 msgstr "עזב"
 
 #. js-lingui-explicit-id
-#: src/components/message/Message.tsx:322
+#: src/components/message/Message.tsx:323
 msgid "has been kicked"
 msgstr "הודח"
 
@@ -90,8 +90,8 @@ msgstr "עבור עדכונים."
 #~ msgid "'everyone' is a reserved name."
 #~ msgstr "'הכל' הוא שם שמור."
 
-#: src/components/message/Message.tsx:756
-#: src/components/message/Message.tsx:769
+#: src/components/message/Message.tsx:757
+#: src/components/message/Message.tsx:770
 msgid "(edited)"
 msgstr "(נערך)"
 
@@ -262,7 +262,7 @@ msgstr "הגדרות חשבון"
 msgid "Add a Space"
 msgstr "הוסף מרחב"
 
-#: src/components/modals/ChannelEditorModal.tsx:82
+#: src/components/modals/ChannelEditorModal.tsx:83
 msgid "Add Channel"
 msgstr "הוסף ערוץ"
 
@@ -270,7 +270,7 @@ msgstr "הוסף ערוץ"
 msgid "Add friend"
 msgstr "הוסף חבר"
 
-#: src/components/modals/GroupEditorModal.tsx:59
+#: src/components/modals/GroupEditorModal.tsx:60
 #: src/components/space/ChannelList.tsx:161
 msgid "Add Group"
 msgstr "הוסף קבוצה"
@@ -279,7 +279,7 @@ msgstr "הוסף קבוצה"
 msgid "Add Role"
 msgstr "הוסף תפקיד"
 
-#: src/components/message/MessageComposer.tsx:615
+#: src/components/message/MessageComposer.tsx:613
 msgid "add sticker"
 msgstr "הוסף מדבקה"
 
@@ -347,7 +347,7 @@ msgstr "כבר הצטרפת"
 msgid "Always sign Direct Messages"
 msgstr "תמיד חתום על הודעות ישירות"
 
-#: src/components/modals/ConversationSettingsModal.tsx:191
+#: src/components/modals/ConversationSettingsModal.tsx:193
 #: src/components/modals/NewDirectMessageModal.tsx:143
 msgid "Always sign messages"
 msgstr "תמיד חתום על הודעות"
@@ -369,7 +369,7 @@ msgstr "גיף אנימציה של מדבקות לא יכול להיות גדו�
 msgid "Appearance"
 msgstr "מראה"
 
-#: src/hooks/business/channels/useChannelManagement.ts:241
+#: src/hooks/business/channels/useChannelManagement.ts:247
 msgid "Are you sure you want to delete this channel? All messages will be lost. This action cannot be undone."
 msgstr "האם אתה בטוח שאתה רוצה למחוק את הערוץ הזה? כל ההודעות יאבדו. פעולה זו אינה ניתנת לביטול."
 
@@ -410,7 +410,7 @@ msgstr "האם אתה בטוח שאתה רוצה לבטל את ההדבקה של
 msgid "As a space owner, you need to assign yourself a role with delete permissions to delete other users' messages. <0><1>Learn more</1></0>"
 msgstr "כמנהל של המרחב, עליך להעניק לעצמך תפקיד עם הרשאות מחיקה כדי למחוק הודעות של משתמשים אחרים. <0><1>למד עוד</1></0>"
 
-#: src/components/message/MessageComposer.tsx:582
+#: src/components/message/MessageComposer.tsx:580
 msgid "attach image"
 msgstr "הצמד תמונה"
 
@@ -428,16 +428,15 @@ msgstr "גיבוי נכשל"
 
 #: src/components/message/MessageActionsMenu.tsx:255
 msgid "Bookmark"
-msgstr ""
+msgstr "מועדף"
 
-#: src/components/message/MessageActions.tsx:115
 #~ msgid "Bookmark limit reached"
 #~ msgstr "הגעת למגבלת הסימנים"
 
 #: src/hooks/business/bookmarks/useBookmarks.ts:168
 #: src/hooks/business/bookmarks/useBookmarks.ts:248
 msgid "Bookmark limit reached! Remove some to add new ones."
-msgstr ""
+msgstr "הגעת למגבלת המועדפים! הסר כמה כדי להוסיף חדשים."
 
 #: src/components/message/MessageActions.tsx:110
 #: src/components/message/MessageActionsDrawer.tsx:241
@@ -448,8 +447,8 @@ msgstr "הודעת סימן"
 msgid "Bookmark messages to save them for later reference"
 msgstr "הודעות סימן לשמירה לעיון מאוחר"
 
-#: src/components/message/Message.tsx:723
-#: src/components/message/Message.tsx:801
+#: src/components/message/Message.tsx:724
+#: src/components/message/Message.tsx:802
 msgid "Bookmarked"
 msgstr "סומן"
 
@@ -462,7 +461,7 @@ msgid "Bookmarked sticker"
 msgstr "סטיקר מסומן"
 
 #: src/components/direct/DirectMessage.tsx:687
-#: src/components/space/Channel.tsx:900
+#: src/components/space/Channel.tsx:904
 msgid "Bookmarks"
 msgstr "סימנים"
 
@@ -484,7 +483,7 @@ msgstr "דרושה הרשאת מצלמה כדי לצלם תמונות"
 #: src/components/modals/ConfirmationModal.tsx:29
 #: src/components/modals/ConversationSettingsModal.tsx:63
 #: src/components/primitives/FileUpload/FileUpload.native.tsx:173
-#: src/hooks/business/channels/useChannelManagement.ts:247
+#: src/hooks/business/channels/useChannelManagement.ts:253
 #: src/hooks/business/messages/useMessageActions.ts:159
 #: src/hooks/business/messages/usePinnedMessages.ts:246
 #: src/hooks/business/spaces/useRoleManagement.ts:64
@@ -514,19 +513,19 @@ msgstr "שנה את התמונה והשם שלך עבור ה-Space הזה"
 msgid "Changes are made automatically, but the active page may not be updated. Refresh the page to apply the new language."
 msgstr "שינויים מתבצעים אוטומטית, אך הדף הפעיל עשוי לא להתעדכן. רענן את הדף כדי להחיל את השפה החדשה."
 
-#: src/components/modals/ChannelEditorModal.tsx:125
+#: src/components/modals/ChannelEditorModal.tsx:127
 msgid "Channel Icon"
 msgstr "אייקון ערוץ"
 
-#: src/components/modals/ChannelEditorModal.tsx:163
+#: src/components/modals/ChannelEditorModal.tsx:165
 msgid "Channel Managers"
 msgstr "מנהלי ערוץ"
 
-#: src/components/space/Channel.tsx:1284
+#: src/components/space/Channel.tsx:1289
 msgid "Channel members"
 msgstr "חברי ערוץ"
 
-#: src/components/modals/ChannelEditorModal.tsx:99
+#: src/components/modals/ChannelEditorModal.tsx:100
 msgid "Channel Name"
 msgstr "שם ערוץ"
 
@@ -545,7 +544,7 @@ msgstr "שם הערוץ נדרש"
 msgid "Channel name must be {MAX_NAME_LENGTH} characters or less"
 msgstr "שם הערוץ חייב להיות באורך של {MAX_NAME_LENGTH} תווים או פחות"
 
-#: src/components/modals/ChannelEditorModal.tsx:109
+#: src/components/modals/ChannelEditorModal.tsx:110
 msgid "Channel Topic"
 msgstr "נושא ערוץ"
 
@@ -578,7 +577,7 @@ msgstr "בחר את הנושא המועדף שלך עבור Quorum."
 #: src/components/modals/SpaceSettingsModal/Account.tsx:202
 #: src/components/primitives/Select/Select.native.tsx:39
 #: src/components/primitives/Select/Select.web.tsx:33
-#: src/components/space/IconPicker/IconPicker.web.tsx:141
+#: src/components/space/IconPicker/IconPicker.web.tsx:209
 msgid "Clear"
 msgstr "נקה"
 
@@ -590,8 +589,9 @@ msgstr "נקה חיפוש"
 msgid "Clearing notifications with tag: {tag}"
 msgstr "ניקוי התראות עם תג: {tag}"
 
-#: src/components/modals/ChannelEditorModal.tsx:215
-#: src/components/modals/GroupEditorModal.tsx:129
+#: src/components/modals/ChannelEditorModal.tsx:217
+#: src/components/modals/FolderEditorModal.tsx:130
+#: src/components/modals/GroupEditorModal.tsx:131
 #: src/components/modals/KickUserModal.tsx:86
 #: src/components/modals/LeaveSpaceModal.tsx:64
 #: src/components/modals/SpaceSettingsModal/Account.tsx:256
@@ -619,6 +619,10 @@ msgstr "לחץ כדי להעתיק"
 msgid "Config Key"
 msgstr "מפתח קונפיגורציה"
 
+#: src/components/navbar/FolderContextMenu.tsx:124
+msgid "Confirm"
+msgstr ""
+
 #: src/components/Connecting.tsx:12
 msgid "Connecting"
 msgstr "מתחבר"
@@ -627,7 +631,7 @@ msgstr "מתחבר"
 msgid "Conversation settings"
 msgstr "הגדרות שיחה"
 
-#: src/components/modals/ConversationSettingsModal.tsx:183
+#: src/components/modals/ConversationSettingsModal.tsx:185
 msgid "Conversation Settings"
 msgstr "הגדרות שיחה"
 
@@ -667,7 +671,7 @@ msgstr "העתק מפתח והמשך"
 
 #: src/components/message/MessageActionsMenu.tsx:226
 msgid "Copy link"
-msgstr ""
+msgstr "העתק קישור"
 
 #: src/components/message/MessageActions.tsx:102
 #: src/components/message/MessageActionsDrawer.tsx:202
@@ -681,7 +685,7 @@ msgid "Copy message link"
 msgstr "להעתיק קישור הודעה"
 
 #: src/components/context/MessageDB.bak.tsx:5563
-#: src/services/ConfigService.ts:284
+#: src/services/ConfigService.ts:290
 msgid "Could not add Space"
 msgstr "לא ניתן להוסיף מרחב"
 
@@ -691,7 +695,7 @@ msgid "Could not fetch the Space details. Please try again."
 msgstr "לא ניתן לשלוף את פרטי ה-מרחב. אנא נסה שוב."
 
 #: src/components/context/MessageDB.bak.tsx:5436
-#: src/services/ConfigService.ts:157
+#: src/services/ConfigService.ts:163
 msgid "Could not obtain manifest for Space"
 msgstr "לא ניתן להשיג מניפסט עבור מרחב"
 
@@ -731,12 +735,12 @@ msgid "Dark"
 msgstr "כהה"
 
 #: src/components/context/MessageDB.bak.tsx:5415
-#: src/services/ConfigService.ts:136
+#: src/services/ConfigService.ts:142
 msgid "decrypted space with no known config key"
 msgstr "מרחב מפוענח ללא מפתח קונפיגורציה ידוע"
 
 #: src/components/context/MessageDB.bak.tsx:5421
-#: src/services/ConfigService.ts:142
+#: src/services/ConfigService.ts:148
 msgid "Decrypted Space with no known hub key"
 msgstr "מרחב מפוענח ללא מפתח מרכז ידוע"
 
@@ -758,26 +762,31 @@ msgstr "מחק"
 #: src/components/modals/ConversationSettingsModal.tsx:62
 #: src/components/modals/SpaceSettingsModal/Emojis.tsx:103
 #: src/components/modals/SpaceSettingsModal/Stickers.tsx:105
-#: src/hooks/business/channels/useChannelManagement.ts:246
+#: src/hooks/business/channels/useChannelManagement.ts:252
 #: src/hooks/business/messages/useMessageActions.ts:158
 #: src/hooks/business/spaces/useRoleManagement.ts:63
 msgid "Delete"
 msgstr "מחק"
 
-#: src/components/modals/ChannelEditorModal.tsx:214
-#: src/hooks/business/channels/useChannelManagement.ts:240
+#: src/components/modals/ChannelEditorModal.tsx:216
+#: src/hooks/business/channels/useChannelManagement.ts:246
 msgid "Delete Channel"
 msgstr "מחוק ערוץ"
 
 #: src/components/modals/ConversationSettingsModal.tsx:59
-#: src/components/modals/ConversationSettingsModal.tsx:256
+#: src/components/modals/ConversationSettingsModal.tsx:258
 msgid "Delete Conversation"
 msgstr "מחק שיחה"
 
 #~ msgid "Delete Current Link"
 #~ msgstr "מחק קישור נוכחי"
 
-#: src/components/modals/GroupEditorModal.tsx:128
+#: src/components/modals/FolderEditorModal.tsx:129
+#: src/components/navbar/FolderContextMenu.tsx:124
+msgid "Delete Folder"
+msgstr ""
+
+#: src/components/modals/GroupEditorModal.tsx:130
 msgid "Delete Group"
 msgstr "מחוק קבוצה"
 
@@ -854,7 +863,7 @@ msgid "Direct Message"
 msgstr "הודעה ישירה"
 
 #: src/components/direct/DirectMessageContactsList.tsx:25
-#: src/components/navbar/NavMenu.tsx:101
+#: src/components/navbar/NavMenu.tsx:174
 msgid "Direct Messages"
 msgstr "הודעות ישירות"
 
@@ -892,24 +901,28 @@ msgstr "גרור את תמונת הפרופיל שלך לכאן"
 
 #: src/components/message/MessageActionsMenu.tsx:240
 msgid "Edit"
-msgstr ""
+msgstr "ערוך"
 
 #. placeholder {0}: index + 1
 #: src/components/modals/EditHistoryModal.tsx:91
 msgid "Edit {0}"
 msgstr "ערוך {0}"
 
-#: src/components/modals/ChannelEditorModal.tsx:82
+#: src/components/modals/ChannelEditorModal.tsx:83
 msgid "Edit Channel"
 msgstr "ערוך ערוץ"
 
-#: src/components/modals/GroupEditorModal.tsx:59
+#: src/components/modals/FolderEditorModal.tsx:68
+msgid "Edit Folder"
+msgstr ""
+
+#: src/components/modals/GroupEditorModal.tsx:60
 msgid "Edit Group"
 msgstr "ערוך קבוצה"
 
 #: src/components/message/MessageActionsMenu.tsx:247
 msgid "Edit history"
-msgstr ""
+msgstr "ערוך היסטוריה"
 
 #: src/components/modals/EditHistoryModal.tsx:58
 msgid "Edit History"
@@ -1108,6 +1121,30 @@ msgstr "תיקונים"
 msgid "Fixing..."
 msgstr "מתקן..."
 
+#: src/components/modals/FolderEditorModal.tsx:98
+msgid "Folder Icon & Color"
+msgstr ""
+
+#: src/components/modals/FolderEditorModal.tsx:80
+msgid "Folder Name"
+msgstr ""
+
+#: src/hooks/business/folders/useFolderManagement.ts:79
+msgid "Folder name cannot contain special characters"
+msgstr ""
+
+#: src/hooks/business/folders/useFolderManagement.ts:73
+msgid "Folder name is required"
+msgstr ""
+
+#: src/hooks/business/folders/useFolderManagement.ts:76
+msgid "Folder name must be {MAX_NAME_LENGTH} characters or less"
+msgstr ""
+
+#: src/components/navbar/FolderContextMenu.tsx:114
+msgid "Folder Settings"
+msgstr ""
+
 #: src/components/context/MessageDB.bak.tsx:3186
 #: src/services/SpaceService.ts:236
 msgid "general"
@@ -1149,11 +1186,11 @@ msgstr "לך לשיחה"
 msgid "Go to Home"
 msgstr "עבור לדף הבית"
 
-#: src/components/modals/GroupEditorModal.tsx:86
+#: src/components/modals/GroupEditorModal.tsx:88
 msgid "Group Icon (optional)"
 msgstr "אייקון קבוצה (אופציונלי)"
 
-#: src/components/modals/GroupEditorModal.tsx:71
+#: src/components/modals/GroupEditorModal.tsx:72
 msgid "Group Name"
 msgstr "שם הקבוצה"
 
@@ -1296,7 +1333,7 @@ msgstr "מצטרף..."
 msgid "Jump"
 msgstr "קפיצה"
 
-#: src/components/message/MessageList.tsx:535
+#: src/components/message/MessageList.tsx:536
 msgid "Jump to present"
 msgstr "קפיצה להווה"
 
@@ -1373,7 +1410,7 @@ msgstr "אור"
 msgid "Loading bookmarks..."
 msgstr "טוען סימנים..."
 
-#: src/components/message/MessageList.tsx:546
+#: src/components/message/MessageList.tsx:547
 msgid "Loading message..."
 msgstr "טוען הודעה..."
 
@@ -1437,7 +1474,7 @@ msgstr "סמן הכל כנקרא"
 
 #: src/components/direct/DirectMessage.tsx:668
 #: src/components/direct/DirectMessage.tsx:861
-#: src/components/space/Channel.tsx:926
+#: src/components/space/Channel.tsx:930
 msgid "Members List"
 msgstr "רשימת חברים"
 
@@ -1453,20 +1490,20 @@ msgstr "פעולות הודעה"
 msgid "Message deleted"
 msgstr "הודעה נמחקה"
 
-#: src/components/message/Message.tsx:739
-#: src/components/message/Message.tsx:817
+#: src/components/message/Message.tsx:740
+#: src/components/message/Message.tsx:818
 msgid "Message does not have a valid signature, this may not be from the sender"
 msgstr "ההודעה אינה בעלת חתימה תקפה, ייתכן שהיא לא מהשולח"
 
-#: src/components/message/MessageComposer.tsx:148
+#: src/components/message/MessageComposer.tsx:146
 msgid "Message..."
 msgstr "הודעה..."
 
-#: src/components/message/MessageComposer.tsx:632
+#: src/components/message/MessageComposer.tsx:630
 msgid "Messages are NOT signed!"
 msgstr "ההודעות אינן חתומות!"
 
-#: src/components/message/MessageComposer.tsx:633
+#: src/components/message/MessageComposer.tsx:631
 msgid "Messages are signed!"
 msgstr "ההודעות חתומות!"
 
@@ -1482,6 +1519,10 @@ msgstr "שמות הדומים לאדמין, מודרטור או תמיכה שמ�
 #: src/components/modals/NewDirectMessageModal.tsx:83
 msgid "New Direct Message"
 msgstr "הודעה ישירה חדשה"
+
+#: src/components/modals/FolderEditorModal.tsx:68
+msgid "New Folder"
+msgstr ""
 
 #: src/components/message/NewMessagesSeparator.tsx:64
 msgid "New Messages"
@@ -1537,9 +1578,9 @@ msgstr "אין הודעות מוצמדות עדיין"
 msgid "No unread notifications"
 msgstr "אין הודעות לא נקראות"
 
-#: src/components/space/Channel.tsx:614
-#: src/components/space/Channel.tsx:1132
-#: src/components/space/Channel.tsx:1323
+#: src/components/space/Channel.tsx:617
+#: src/components/space/Channel.tsx:1137
+#: src/components/space/Channel.tsx:1328
 msgid "No users found!"
 msgstr "לא נמצאו משתמשים!"
 
@@ -1554,7 +1595,7 @@ msgstr "הרשאת התראה לא ניתנה"
 #: src/components/modals/SpaceSettingsModal/Account.tsx:187
 #: src/components/modals/UserSettingsModal/Navigation.tsx:17
 #: src/components/modals/UserSettingsModal/Notifications.tsx:24
-#: src/components/space/Channel.tsx:865
+#: src/components/space/Channel.tsx:869
 msgid "Notifications"
 msgstr "התראות"
 
@@ -1567,7 +1608,7 @@ msgstr "התראות חסומות. אנא אפשר אותן בהגדרות הד�
 msgid "Notifications are not supported in this browser"
 msgstr "התראות אינן נתמכות בדפדפן הזה"
 
-#: src/components/message/MessageComposer.tsx:559
+#: src/components/message/MessageComposer.tsx:557
 msgid "Notify all members"
 msgstr "הודע לכל החברים"
 
@@ -1659,7 +1700,7 @@ msgstr "סיכה"
 msgid "Pin"
 msgstr "סיכה"
 
-#: src/components/modals/ChannelEditorModal.tsx:139
+#: src/components/modals/ChannelEditorModal.tsx:141
 msgid "Pin channel to top"
 msgstr "סיכה ערוץ למעלה"
 
@@ -1685,22 +1726,22 @@ msgstr "סיכה הודעה"
 msgid "Pin Messages"
 msgstr "הצמד הודעות"
 
-#: src/components/modals/ChannelEditorModal.tsx:134
+#: src/components/modals/ChannelEditorModal.tsx:136
 msgid "Pin to top"
 msgstr "סיכה למעלה"
 
-#: src/components/message/Message.tsx:707
-#: src/components/message/Message.tsx:785
+#: src/components/message/Message.tsx:708
+#: src/components/message/Message.tsx:786
 msgid "Pinned"
 msgstr "מוצמד"
 
 #. placeholder {0}: mapSenderToUser(message.pinnedBy)?.displayName || message.pinnedBy
-#: src/components/message/Message.tsx:706
-#: src/components/message/Message.tsx:784
+#: src/components/message/Message.tsx:707
+#: src/components/message/Message.tsx:785
 msgid "Pinned by {0}"
 msgstr "מוצמד על ידי {0}"
 
-#: src/components/space/Channel.tsx:825
+#: src/components/space/Channel.tsx:829
 msgid "Pinned Messages"
 msgstr "הודעות מוצמדות"
 
@@ -1730,12 +1771,10 @@ msgstr "פרטיות/אבטחה"
 msgid "Private key saved to selected folder"
 msgstr "המפתח הפרטי נשמר בתיקייה שנבחרה"
 
-#: src/components/message/MessageComposer.tsx:357
+#: src/components/message/MessageComposer.tsx:355
 msgid "Processing image... This may take a moment for large files."
 msgstr "מעבד תמונה... זה עשוי לקחת רגע עבור קבצים גדולים."
 
-#: src/components/message/MessageActions.tsx:114
-#: src/components/message/MessageActionsDrawer.tsx:252
 #~ msgid "Processing..."
 #~ msgstr "מעבד..."
 
@@ -1764,11 +1803,11 @@ msgstr "הקוורום הוא בין-שימושי ומוצפן מקצה לקצה
 msgid "Quorum was loaded while the browser was not in focus or a passkey request was rejected. Please reauthorize to access your messages."
 msgstr "הקוורום נטען בזמן שהדפדפן לא היה במוקד או שבקשת מפתח הושללה. אנא אשר מחדש כדי לגשת להודעות שלך."
 
-#: src/components/modals/ChannelEditorModal.tsx:148
+#: src/components/modals/ChannelEditorModal.tsx:150
 msgid "Read only"
 msgstr "קריאה בלבד"
 
-#: src/components/modals/ChannelEditorModal.tsx:153
+#: src/components/modals/ChannelEditorModal.tsx:155
 msgid "Read only channel"
 msgstr "ערוץ קריאה בלבד"
 
@@ -1781,7 +1820,7 @@ msgid "Reauthorize"
 msgstr "אשר מחדש"
 
 #: src/components/context/MessageDB.bak.tsx:5385
-#: src/services/ConfigService.ts:106
+#: src/services/ConfigService.ts:107
 msgid "received config with invalid signature!"
 msgstr "קיבל קונפיגורציה עם חתימה לא תקפה!"
 
@@ -1836,12 +1875,13 @@ msgid "Roles"
 msgstr "תפקידים"
 
 #: src/components/message/MessageEditTextarea.tsx:378
-#: src/components/modals/ConversationSettingsModal.tsx:240
+#: src/components/modals/ConversationSettingsModal.tsx:242
 msgid "Save"
 msgstr "שמור"
 
-#: src/components/modals/ChannelEditorModal.tsx:196
-#: src/components/modals/GroupEditorModal.tsx:97
+#: src/components/modals/ChannelEditorModal.tsx:198
+#: src/components/modals/FolderEditorModal.tsx:110
+#: src/components/modals/GroupEditorModal.tsx:99
 #: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:589
 #: src/components/modals/UserSettingsModal/UserSettingsModal.tsx:242
 #: src/components/user/UserProfileEdit.tsx:158
@@ -1853,7 +1893,7 @@ msgstr "שמור שינויים"
 msgid "Save Contact Photo"
 msgstr "שמור תמונת קשר"
 
-#: src/components/modals/ConversationSettingsModal.tsx:216
+#: src/components/modals/ConversationSettingsModal.tsx:218
 #: src/components/modals/SpaceSettingsModal/General.tsx:288
 msgid "Save Edit History"
 msgstr "שמור היסטוריית עריכה"
@@ -1873,12 +1913,13 @@ msgid "Save User Key"
 msgstr "שמור מפתח משתמש"
 
 #: src/components/context/MessageDB.bak.tsx:5343
-#: src/services/ConfigService.ts:64
+#: src/services/ConfigService.ts:65
 msgid "saved config is out of date"
 msgstr "הגדרת הקונפיגורציה שהושמרה אינה עדכנית"
 
-#: src/components/modals/ChannelEditorModal.tsx:92
-#: src/components/modals/GroupEditorModal.tsx:137
+#: src/components/modals/ChannelEditorModal.tsx:93
+#: src/components/modals/FolderEditorModal.tsx:145
+#: src/components/modals/GroupEditorModal.tsx:139
 #: src/components/modals/ModalSaveOverlay.tsx:43
 msgid "Saving..."
 msgstr "שומר..."
@@ -1903,7 +1944,7 @@ msgid "Search in this Space..."
 msgstr "חפש במרחב הזה..."
 
 #: src/components/direct/DirectMessage.tsx:714
-#: src/components/space/Channel.tsx:945
+#: src/components/space/Channel.tsx:949
 msgid "Search Messages"
 msgstr "חפש הודעות"
 
@@ -1919,7 +1960,7 @@ msgstr "תוצאות חיפוש"
 msgid "Search username or address"
 msgstr "חפש שם משתמש או כתובת"
 
-#: src/components/space/Channel.tsx:1295
+#: src/components/space/Channel.tsx:1300
 msgid "Search Username or Address"
 msgstr "חפש שם משתמש או כתובת"
 
@@ -1940,7 +1981,7 @@ msgstr "בחר"
 msgid "Select an option"
 msgstr "בחר אפשרות"
 
-#: src/components/modals/ChannelEditorModal.tsx:167
+#: src/components/modals/ChannelEditorModal.tsx:169
 msgid "Select any existing role as managers for this channel. Managers have post, delete, and pin permissions on ANY message by default. If no managers are selected, only the Space owner can manage the channel."
 msgstr "בחר כל תפקיד קיים כמנהלים עבור ערוץ זה. למנהלים יש הרשאות לפרסם, למחוק ולסמן הודעות בכל הודעה כברירת מחדל. אם לא נבחרו מנהלים, רק בעל ה-Space יכול לנהל את הערוץ."
 
@@ -1968,7 +2009,7 @@ msgstr "בחר הרשאות"
 msgid "Select Profile Image"
 msgstr "בחר תמונת פרופיל"
 
-#: src/components/modals/ChannelEditorModal.tsx:186
+#: src/components/modals/ChannelEditorModal.tsx:188
 msgid "Select Roles"
 msgstr "בחר תפקידים"
 
@@ -2194,7 +2235,7 @@ msgstr "כדי לבטל התראות, אנא שנה את ההגדרה בהגדר
 
 #: src/utils/dateFormatting.ts:28
 msgid "Today"
-msgstr ""
+msgstr "היום"
 
 #: src/utils/dateFormatting.ts:37
 msgid "Today at {timeFormatted}"
@@ -2234,7 +2275,7 @@ msgid "Unable to copy to clipboard"
 msgstr "לא ניתן להעתיק ללוח הגזירים"
 
 #: src/components/context/MessageDB.bak.tsx:3482
-#: src/services/SpaceService.ts:538
+#: src/services/SpaceService.ts:550
 msgid "Unable to leave space due to incomplete configuration. The space data may be corrupted."
 msgstr "לא ניתן לעזוב את ה-Space עקב תצורה לא מלאה. נתוני ה-Space עשויים להיות פגומים."
 
@@ -2273,8 +2314,8 @@ msgstr "זמן לא ידוע"
 #: src/components/direct/DirectMessage.tsx:173
 #: src/components/direct/DirectMessage.tsx:188
 #: src/components/direct/DirectMessage.tsx:535
-#: src/components/message/MessageComposer.tsx:501
-#: src/components/message/MessageComposer.tsx:508
+#: src/components/message/MessageComposer.tsx:499
+#: src/components/message/MessageComposer.tsx:506
 #: src/components/message/MessageEditTextarea.tsx:225
 #: src/components/message/MessageEditTextarea.tsx:260
 #: src/components/message/MessageEditTextarea.tsx:267
@@ -2376,8 +2417,8 @@ msgstr "כתובת משתמש כאן"
 msgid "User does not exist."
 msgstr "המשתמש אינו קיים."
 
-#: src/components/space/Channel.tsx:601
-#: src/components/space/Channel.tsx:1118
+#: src/components/space/Channel.tsx:604
+#: src/components/space/Channel.tsx:1123
 msgid "Username or Address"
 msgstr "שם משתמש או כתובת"
 
@@ -2403,7 +2444,7 @@ msgstr "ברוך הבא לQuorum!"
 msgid "What's on your mind today?"
 msgstr "מה על דעתך היום?"
 
-#: src/components/modals/ConversationSettingsModal.tsx:220
+#: src/components/modals/ConversationSettingsModal.tsx:222
 #: src/components/modals/SpaceSettingsModal/General.tsx:292
 msgid "When enabled, all previous versions of edited messages will be saved. When disabled, only the current edited version is kept."
 msgstr "כאשר זה מופעל, כל הגרסאות הקודמות של הודעות ערוכות יישמרו. כאשר זה מושבת, רק הגרסה הנוכחית המוערת נשמרת."
@@ -2443,7 +2484,7 @@ msgstr "כשהגדרה זו מופעלת, קישורי הזמנה יאפשרו �
 msgid "When using Quorum on a browser, your messages are saved locally to your browser."
 msgstr "כשאתה משתמש בQuorum בדפדפן, ההודעות שלך נשמרות מקומית בדפדפן שלך."
 
-#: src/components/modals/ConversationSettingsModal.tsx:195
+#: src/components/modals/ConversationSettingsModal.tsx:197
 msgid "When you sign a message, you are confirming that it comes from your key. When you don't sign a message, you have plausible deniability. The default for all conversations can be changed in User Settings."
 msgstr "כאשר אתה חותם על הודעה, אתה מאשר שהיא מגיעה מהמפתח שלך. כאשר אתה לא חותם על הודעה, יש לך הכח להכחיש. ברירת המחדל לכל השיחות יכולה להשתנות בהגדרות המשתמש."
 
@@ -2477,12 +2518,12 @@ msgstr "תוכל לשנות זאת מאוחר יותר בשיחה זו על יד
 msgid "You can manage your Space mention notifications in each Space's settings."
 msgstr "אתה יכול לנהל את התראות המוזכרות של Space שלך בהגדרות של כל Space."
 
-#: src/components/modals/GroupEditorModal.tsx:116
+#: src/components/modals/GroupEditorModal.tsx:118
 msgid "You cannot delete a group that contains channels. Delete all {channelCount} channels in this group first."
 msgstr "אינך יכול למחוק קבוצה שמכילה ערוצים. מחק קודם את כל {channelCount} הערוצים בקבוצה זו."
 
-#: src/components/message/MessageComposer.tsx:336
-#: src/components/space/Channel.tsx:1084
+#: src/components/message/MessageComposer.tsx:334
+#: src/components/space/Channel.tsx:1089
 msgid "You cannot post in this channel"
 msgstr "אינך יכול לפרסם בערוץ זה"
 
@@ -2544,6 +2585,10 @@ msgstr "גודל תמונת הפרופיל שלך חייב להיות 2MB או �
 #: src/components/modals/SpaceSettingsModal/Account.tsx:165
 msgid "Your Roles"
 msgstr "התפקידים שלך"
+
+#: src/components/modals/FolderEditorModal.tsx:136
+msgid "Your Spaces will NOT be deleted"
+msgstr ""
 
 #: src/components/ui/YouTubeFacade.tsx:92
 msgid "YouTube Video"

@@ -31,7 +31,7 @@ msgid "No Role - {count}"
 msgstr "Žádná role - {count}"
 
 #. js-lingui-explicit-id
-#: src/components/space/Channel.tsx:1060
+#: src/components/space/Channel.tsx:1065
 msgid "Send a message to #{channel_name}"
 msgstr "Odeslat zprávu #{channel_name}"
 
@@ -50,7 +50,7 @@ msgid "{count} New Messages"
 msgstr "{count} Nové zprávy"
 
 #. js-lingui-explicit-id
-#: src/components/message/MessageComposer.tsx:406
+#: src/components/message/MessageComposer.tsx:404
 msgid "Replying to"
 msgstr "Odpovídání na"
 
@@ -65,17 +65,17 @@ msgid "Replying to {user}"
 msgstr "Odpovídání {user}"
 
 #. js-lingui-explicit-id
-#: src/components/message/Message.tsx:306
+#: src/components/message/Message.tsx:307
 msgid "has joined"
 msgstr "se připojil"
 
 #. js-lingui-explicit-id
-#: src/components/message/Message.tsx:314
+#: src/components/message/Message.tsx:315
 msgid "has left"
 msgstr "odešel"
 
 #. js-lingui-explicit-id
-#: src/components/message/Message.tsx:322
+#: src/components/message/Message.tsx:323
 msgid "has been kicked"
 msgstr "byl vykopnut"
 
@@ -88,8 +88,8 @@ msgstr "Odeslat zprávu {user}"
 msgid " for updates."
 msgstr "pro aktualizace."
 
-#: src/components/message/Message.tsx:756
-#: src/components/message/Message.tsx:769
+#: src/components/message/Message.tsx:757
+#: src/components/message/Message.tsx:770
 msgid "(edited)"
 msgstr "(Upraveno)"
 
@@ -239,7 +239,7 @@ msgstr "Nastavení účtu"
 msgid "Add a Space"
 msgstr "Přidat Space"
 
-#: src/components/modals/ChannelEditorModal.tsx:82
+#: src/components/modals/ChannelEditorModal.tsx:83
 msgid "Add Channel"
 msgstr "Přidat kanál"
 
@@ -247,7 +247,7 @@ msgstr "Přidat kanál"
 msgid "Add friend"
 msgstr "Přidat přítele"
 
-#: src/components/modals/GroupEditorModal.tsx:59
+#: src/components/modals/GroupEditorModal.tsx:60
 #: src/components/space/ChannelList.tsx:161
 msgid "Add Group"
 msgstr "Přidat skupinu"
@@ -256,7 +256,7 @@ msgstr "Přidat skupinu"
 msgid "Add Role"
 msgstr "Přidat roli"
 
-#: src/components/message/MessageComposer.tsx:615
+#: src/components/message/MessageComposer.tsx:613
 msgid "add sticker"
 msgstr "přidat nálepku"
 
@@ -338,7 +338,7 @@ msgstr "Již připojeno"
 msgid "Always sign Direct Messages"
 msgstr "Vždy podepisovat přímé zprávy"
 
-#: src/components/modals/ConversationSettingsModal.tsx:191
+#: src/components/modals/ConversationSettingsModal.tsx:193
 #: src/components/modals/NewDirectMessageModal.tsx:143
 msgid "Always sign messages"
 msgstr "Vždy podepisovat zprávy"
@@ -368,7 +368,7 @@ msgstr ""
 msgid "Appearance"
 msgstr "Vzhled"
 
-#: src/hooks/business/channels/useChannelManagement.ts:241
+#: src/hooks/business/channels/useChannelManagement.ts:247
 msgid ""
 "Are you sure you want to delete this channel? All messages will be lost. "
 "This action cannot be undone."
@@ -417,7 +417,7 @@ msgstr ""
 "Jako vlastník prostoru si musíte přiřadit roli s oprávněním mazat, abyste "
 "mohli mazat zprávy ostatních uživatelů. <0><1>Zjistit více</1></0>"
 
-#: src/components/message/MessageComposer.tsx:582
+#: src/components/message/MessageComposer.tsx:580
 msgid "attach image"
 msgstr "připojit obrázek"
 
@@ -452,8 +452,8 @@ msgstr "Zpráva o záložce"
 msgid "Bookmark messages to save them for later reference"
 msgstr "Zprávy o záložkách pro jejich uložení pro pozdější použití"
 
-#: src/components/message/Message.tsx:723
-#: src/components/message/Message.tsx:801
+#: src/components/message/Message.tsx:724
+#: src/components/message/Message.tsx:802
 msgid "Bookmarked"
 msgstr "Uloženo"
 
@@ -466,7 +466,7 @@ msgid "Bookmarked sticker"
 msgstr "Uložený sticker"
 
 #: src/components/direct/DirectMessage.tsx:687
-#: src/components/space/Channel.tsx:900
+#: src/components/space/Channel.tsx:904
 msgid "Bookmarks"
 msgstr "Záložky"
 
@@ -488,7 +488,7 @@ msgstr "Kamera je vyžadována pro pořizování fotografií"
 #: src/components/modals/ConfirmationModal.tsx:29
 #: src/components/modals/ConversationSettingsModal.tsx:63
 #: src/components/primitives/FileUpload/FileUpload.native.tsx:173
-#: src/hooks/business/channels/useChannelManagement.ts:247
+#: src/hooks/business/channels/useChannelManagement.ts:253
 #: src/hooks/business/messages/useMessageActions.ts:159
 #: src/hooks/business/messages/usePinnedMessages.ts:246
 #: src/hooks/business/spaces/useRoleManagement.ts:64
@@ -521,19 +521,19 @@ msgstr ""
 "Změny se provádějí automaticky, ale aktivní stránka nemusí být "
 "aktualizována. Obnovte stránku, abyste použili nový jazyk."
 
-#: src/components/modals/ChannelEditorModal.tsx:125
+#: src/components/modals/ChannelEditorModal.tsx:127
 msgid "Channel Icon"
 msgstr "Ikona kanálu"
 
-#: src/components/modals/ChannelEditorModal.tsx:163
+#: src/components/modals/ChannelEditorModal.tsx:165
 msgid "Channel Managers"
 msgstr "Správci kanálů"
 
-#: src/components/space/Channel.tsx:1284
+#: src/components/space/Channel.tsx:1289
 msgid "Channel members"
 msgstr "Členové kanálu"
 
-#: src/components/modals/ChannelEditorModal.tsx:99
+#: src/components/modals/ChannelEditorModal.tsx:100
 msgid "Channel Name"
 msgstr "Název kanálu"
 
@@ -552,7 +552,7 @@ msgstr "Název kanálu je povinný"
 msgid "Channel name must be {MAX_NAME_LENGTH} characters or less"
 msgstr "Název kanálu musí mít maximálně {MAX_NAME_LENGTH} znaků"
 
-#: src/components/modals/ChannelEditorModal.tsx:109
+#: src/components/modals/ChannelEditorModal.tsx:110
 msgid "Channel Topic"
 msgstr "Téma kanálu"
 
@@ -585,7 +585,7 @@ msgstr "Vyberte si svůj preferovaný motiv pro Quorum."
 #: src/components/modals/SpaceSettingsModal/Account.tsx:202
 #: src/components/primitives/Select/Select.native.tsx:39
 #: src/components/primitives/Select/Select.web.tsx:33
-#: src/components/space/IconPicker/IconPicker.web.tsx:141
+#: src/components/space/IconPicker/IconPicker.web.tsx:209
 msgid "Clear"
 msgstr "Vymazat"
 
@@ -597,8 +597,9 @@ msgstr "Vymazat hledání"
 msgid "Clearing notifications with tag: {tag}"
 msgstr "Mazání oznámení s tagem: {tag}"
 
-#: src/components/modals/ChannelEditorModal.tsx:215
-#: src/components/modals/GroupEditorModal.tsx:129
+#: src/components/modals/ChannelEditorModal.tsx:217
+#: src/components/modals/FolderEditorModal.tsx:130
+#: src/components/modals/GroupEditorModal.tsx:131
 #: src/components/modals/KickUserModal.tsx:86
 #: src/components/modals/LeaveSpaceModal.tsx:64
 #: src/components/modals/SpaceSettingsModal/Account.tsx:256
@@ -636,6 +637,10 @@ msgstr "Klikněte pro zkopírování"
 msgid "Config Key"
 msgstr "Konfigurační klíč"
 
+#: src/components/navbar/FolderContextMenu.tsx:124
+msgid "Confirm"
+msgstr "Potvrdit"
+
 #: src/components/Connecting.tsx:12
 msgid "Connecting"
 msgstr "Připojuji se"
@@ -644,7 +649,7 @@ msgstr "Připojuji se"
 msgid "Conversation settings"
 msgstr "Nastavení konverzace"
 
-#: src/components/modals/ConversationSettingsModal.tsx:183
+#: src/components/modals/ConversationSettingsModal.tsx:185
 msgid "Conversation Settings"
 msgstr "Nastavení konverzace"
 
@@ -698,7 +703,7 @@ msgid "Copy message link"
 msgstr "Kopírovat odkaz na zprávu"
 
 #: src/components/context/MessageDB.bak.tsx:5563
-#: src/services/ConfigService.ts:284
+#: src/services/ConfigService.ts:290
 msgid "Could not add Space"
 msgstr "Nepodařilo se přidat Prostor"
 
@@ -708,7 +713,7 @@ msgid "Could not fetch the Space details. Please try again."
 msgstr "Nepodařilo se načíst detaily Space. Zkuste to prosím znovu."
 
 #: src/components/context/MessageDB.bak.tsx:5436
-#: src/services/ConfigService.ts:157
+#: src/services/ConfigService.ts:163
 msgid "Could not obtain manifest for Space"
 msgstr "Nepodařilo se získat manifest pro Prostor"
 
@@ -748,12 +753,12 @@ msgid "Dark"
 msgstr "Tmavý"
 
 #: src/components/context/MessageDB.bak.tsx:5415
-#: src/services/ConfigService.ts:136
+#: src/services/ConfigService.ts:142
 msgid "decrypted space with no known config key"
 msgstr "dešifrovaný space bez známého konfiguračního klíče"
 
 #: src/components/context/MessageDB.bak.tsx:5421
-#: src/services/ConfigService.ts:142
+#: src/services/ConfigService.ts:148
 msgid "Decrypted Space with no known hub key"
 msgstr "Dešifrovaný Prostor bez známého klíče hubu"
 
@@ -779,23 +784,28 @@ msgstr "smazat"
 #: src/components/modals/ConversationSettingsModal.tsx:62
 #: src/components/modals/SpaceSettingsModal/Emojis.tsx:103
 #: src/components/modals/SpaceSettingsModal/Stickers.tsx:105
-#: src/hooks/business/channels/useChannelManagement.ts:246
+#: src/hooks/business/channels/useChannelManagement.ts:252
 #: src/hooks/business/messages/useMessageActions.ts:158
 #: src/hooks/business/spaces/useRoleManagement.ts:63
 msgid "Delete"
 msgstr "Smazat"
 
-#: src/components/modals/ChannelEditorModal.tsx:214
-#: src/hooks/business/channels/useChannelManagement.ts:240
+#: src/components/modals/ChannelEditorModal.tsx:216
+#: src/hooks/business/channels/useChannelManagement.ts:246
 msgid "Delete Channel"
 msgstr "Smazat kanál"
 
 #: src/components/modals/ConversationSettingsModal.tsx:59
-#: src/components/modals/ConversationSettingsModal.tsx:256
+#: src/components/modals/ConversationSettingsModal.tsx:258
 msgid "Delete Conversation"
 msgstr "Smazat konverzaci"
 
-#: src/components/modals/GroupEditorModal.tsx:128
+#: src/components/modals/FolderEditorModal.tsx:129
+#: src/components/navbar/FolderContextMenu.tsx:124
+msgid "Delete Folder"
+msgstr "Smazat složku"
+
+#: src/components/modals/GroupEditorModal.tsx:130
 msgid "Delete Group"
 msgstr "Smazat skupinu"
 
@@ -860,7 +870,7 @@ msgid "Direct Message"
 msgstr "Přímá zpráva"
 
 #: src/components/direct/DirectMessageContactsList.tsx:25
-#: src/components/navbar/NavMenu.tsx:101
+#: src/components/navbar/NavMenu.tsx:174
 msgid "Direct Messages"
 msgstr "Osobní zprávy"
 
@@ -905,11 +915,15 @@ msgstr "Upravit"
 msgid "Edit {0}"
 msgstr "Upravit {0}"
 
-#: src/components/modals/ChannelEditorModal.tsx:82
+#: src/components/modals/ChannelEditorModal.tsx:83
 msgid "Edit Channel"
 msgstr "Upravit kanál"
 
-#: src/components/modals/GroupEditorModal.tsx:59
+#: src/components/modals/FolderEditorModal.tsx:68
+msgid "Edit Folder"
+msgstr "Upravit složku"
+
+#: src/components/modals/GroupEditorModal.tsx:60
 msgid "Edit Group"
 msgstr "Upravit skupinu"
 
@@ -1125,6 +1139,30 @@ msgstr "Opravy"
 msgid "Fixing..."
 msgstr "Opravuji..."
 
+#: src/components/modals/FolderEditorModal.tsx:98
+msgid "Folder Icon & Color"
+msgstr "Ikona a barva složky"
+
+#: src/components/modals/FolderEditorModal.tsx:80
+msgid "Folder Name"
+msgstr "Název složky"
+
+#: src/hooks/business/folders/useFolderManagement.ts:79
+msgid "Folder name cannot contain special characters"
+msgstr "Název složky nesmí obsahovat speciální znaky"
+
+#: src/hooks/business/folders/useFolderManagement.ts:73
+msgid "Folder name is required"
+msgstr "Název složky je povinný"
+
+#: src/hooks/business/folders/useFolderManagement.ts:76
+msgid "Folder name must be {MAX_NAME_LENGTH} characters or less"
+msgstr "Název složky musí mít maximálně {MAX_NAME_LENGTH} znaků"
+
+#: src/components/navbar/FolderContextMenu.tsx:114
+msgid "Folder Settings"
+msgstr "Nastavení složky"
+
 #: src/components/context/MessageDB.bak.tsx:3186
 #: src/services/SpaceService.ts:236
 msgid "general"
@@ -1167,11 +1205,11 @@ msgstr "Přejít na konverzaci"
 msgid "Go to Home"
 msgstr "Přejít na domovskou stránku"
 
-#: src/components/modals/GroupEditorModal.tsx:86
+#: src/components/modals/GroupEditorModal.tsx:88
 msgid "Group Icon (optional)"
 msgstr "Ikona skupiny (volitelně)"
 
-#: src/components/modals/GroupEditorModal.tsx:71
+#: src/components/modals/GroupEditorModal.tsx:72
 msgid "Group Name"
 msgstr "Název skupiny"
 
@@ -1322,7 +1360,7 @@ msgstr "Připojuji se..."
 msgid "Jump"
 msgstr "Přeskočit"
 
-#: src/components/message/MessageList.tsx:535
+#: src/components/message/MessageList.tsx:536
 msgid "Jump to present"
 msgstr "Přejít na současnost"
 
@@ -1403,7 +1441,7 @@ msgstr "Světlo"
 msgid "Loading bookmarks..."
 msgstr "Načítání záložek..."
 
-#: src/components/message/MessageList.tsx:546
+#: src/components/message/MessageList.tsx:547
 msgid "Loading message..."
 msgstr "Načítání zprávy..."
 
@@ -1477,7 +1515,7 @@ msgstr "Označit vše jako přečtené"
 
 #: src/components/direct/DirectMessage.tsx:668
 #: src/components/direct/DirectMessage.tsx:861
-#: src/components/space/Channel.tsx:926
+#: src/components/space/Channel.tsx:930
 msgid "Members List"
 msgstr "Seznam členů"
 
@@ -1493,21 +1531,21 @@ msgstr "Akce zprávy"
 msgid "Message deleted"
 msgstr "Zpráva byla smazána"
 
-#: src/components/message/Message.tsx:739
-#: src/components/message/Message.tsx:817
+#: src/components/message/Message.tsx:740
+#: src/components/message/Message.tsx:818
 msgid ""
 "Message does not have a valid signature, this may not be from the sender"
 msgstr "Zpráva nemá platný podpis, to nemusí být od odesílatele"
 
-#: src/components/message/MessageComposer.tsx:148
+#: src/components/message/MessageComposer.tsx:146
 msgid "Message..."
 msgstr "Zpráva..."
 
-#: src/components/message/MessageComposer.tsx:632
+#: src/components/message/MessageComposer.tsx:630
 msgid "Messages are NOT signed!"
 msgstr "Zprávy NENÍ podepsané!"
 
-#: src/components/message/MessageComposer.tsx:633
+#: src/components/message/MessageComposer.tsx:631
 msgid "Messages are signed!"
 msgstr "Zprávy jsou podepsané!"
 
@@ -1523,6 +1561,10 @@ msgstr "Jména připomínající admina, moderátora nebo podporu jsou rezervov�
 #: src/components/modals/NewDirectMessageModal.tsx:83
 msgid "New Direct Message"
 msgstr "Nová přímá zpráva"
+
+#: src/components/modals/FolderEditorModal.tsx:68
+msgid "New Folder"
+msgstr "Nová složka"
 
 #: src/components/message/NewMessagesSeparator.tsx:64
 msgid "New Messages"
@@ -1582,8 +1624,8 @@ msgstr "Zatím žádné připnuté zprávy"
 msgid "No unread notifications"
 msgstr "Žádná nepřečtená oznámení"
 
-#: src/components/space/Channel.tsx:614 src/components/space/Channel.tsx:1132
-#: src/components/space/Channel.tsx:1323
+#: src/components/space/Channel.tsx:617 src/components/space/Channel.tsx:1137
+#: src/components/space/Channel.tsx:1328
 msgid "No users found!"
 msgstr "Žádní uživatelé nenalezeni!"
 
@@ -1598,7 +1640,7 @@ msgstr "Povolení oznámení nebylo uděleno"
 #: src/components/modals/SpaceSettingsModal/Account.tsx:187
 #: src/components/modals/UserSettingsModal/Navigation.tsx:17
 #: src/components/modals/UserSettingsModal/Notifications.tsx:24
-#: src/components/space/Channel.tsx:865
+#: src/components/space/Channel.tsx:869
 msgid "Notifications"
 msgstr "Oznámení"
 
@@ -1612,7 +1654,7 @@ msgstr "Oznámení jsou blokována. Prosím, povol je v nastavení prohlížeče
 msgid "Notifications are not supported in this browser"
 msgstr "Oznámení nejsou v tomto prohlížeči podporována"
 
-#: src/components/message/MessageComposer.tsx:559
+#: src/components/message/MessageComposer.tsx:557
 msgid "Notify all members"
 msgstr "Oznámit všem členům"
 
@@ -1700,7 +1742,7 @@ msgstr "připnout"
 msgid "Pin"
 msgstr "Připnout"
 
-#: src/components/modals/ChannelEditorModal.tsx:139
+#: src/components/modals/ChannelEditorModal.tsx:141
 msgid "Pin channel to top"
 msgstr "Připnout kanál na vrchol"
 
@@ -1726,23 +1768,23 @@ msgstr "Připnout zprávu"
 msgid "Pin Messages"
 msgstr "Připnout zprávy"
 
-#: src/components/modals/ChannelEditorModal.tsx:134
+#: src/components/modals/ChannelEditorModal.tsx:136
 msgid "Pin to top"
 msgstr "Připnout na vrchol"
 
-#: src/components/message/Message.tsx:707
-#: src/components/message/Message.tsx:785
+#: src/components/message/Message.tsx:708
+#: src/components/message/Message.tsx:786
 msgid "Pinned"
 msgstr "Připnuto"
 
 #. placeholder {0}: mapSenderToUser(message.pinnedBy)?.displayName ||
 #. message.pinnedBy
-#: src/components/message/Message.tsx:706
-#: src/components/message/Message.tsx:784
+#: src/components/message/Message.tsx:707
+#: src/components/message/Message.tsx:785
 msgid "Pinned by {0}"
 msgstr "Připnul {0}"
 
-#: src/components/space/Channel.tsx:825
+#: src/components/space/Channel.tsx:829
 msgid "Pinned Messages"
 msgstr "Připnuté zprávy"
 
@@ -1773,7 +1815,7 @@ msgstr "Ochrana soukromí/Bezpečnost"
 msgid "Private key saved to selected folder"
 msgstr "Soukromý klíč uložen do vybrané složky"
 
-#: src/components/message/MessageComposer.tsx:357
+#: src/components/message/MessageComposer.tsx:355
 msgid "Processing image... This may take a moment for large files."
 msgstr "Zpracovávám obrázek... Může to chvíli trvat u velkých souborů."
 
@@ -1823,11 +1865,11 @@ msgstr ""
 "Quorum bylo načteno, zatímco prohlížeč nebyl v ohnisku nebo byla odmítnuta "
 "žádost o klíč. Prosím, znovu autorizuj přístup k tvým zprávám."
 
-#: src/components/modals/ChannelEditorModal.tsx:148
+#: src/components/modals/ChannelEditorModal.tsx:150
 msgid "Read only"
 msgstr "Pouze pro čtení"
 
-#: src/components/modals/ChannelEditorModal.tsx:153
+#: src/components/modals/ChannelEditorModal.tsx:155
 msgid "Read only channel"
 msgstr "Pouze pro čtení kanál"
 
@@ -1840,7 +1882,7 @@ msgid "Reauthorize"
 msgstr "Znovu autorizovat"
 
 #: src/components/context/MessageDB.bak.tsx:5385
-#: src/services/ConfigService.ts:106
+#: src/services/ConfigService.ts:107
 msgid "received config with invalid signature!"
 msgstr "obdržena konfigurace s neplatným podpisem!"
 
@@ -1898,12 +1940,13 @@ msgid "Roles"
 msgstr "Role"
 
 #: src/components/message/MessageEditTextarea.tsx:378
-#: src/components/modals/ConversationSettingsModal.tsx:240
+#: src/components/modals/ConversationSettingsModal.tsx:242
 msgid "Save"
 msgstr "Uložit"
 
-#: src/components/modals/ChannelEditorModal.tsx:196
-#: src/components/modals/GroupEditorModal.tsx:97
+#: src/components/modals/ChannelEditorModal.tsx:198
+#: src/components/modals/FolderEditorModal.tsx:110
+#: src/components/modals/GroupEditorModal.tsx:99
 #: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:589
 #: src/components/modals/UserSettingsModal/UserSettingsModal.tsx:242
 #: src/components/user/UserProfileEdit.tsx:158
@@ -1915,7 +1958,7 @@ msgstr "Uložit změny"
 msgid "Save Contact Photo"
 msgstr "Uložit fotografii kontaktu"
 
-#: src/components/modals/ConversationSettingsModal.tsx:216
+#: src/components/modals/ConversationSettingsModal.tsx:218
 #: src/components/modals/SpaceSettingsModal/General.tsx:288
 msgid "Save Edit History"
 msgstr "Uložit historii úprav"
@@ -1935,12 +1978,13 @@ msgid "Save User Key"
 msgstr "Uložit uživatelský klíč"
 
 #: src/components/context/MessageDB.bak.tsx:5343
-#: src/services/ConfigService.ts:64
+#: src/services/ConfigService.ts:65
 msgid "saved config is out of date"
 msgstr "uložená konfigurace je zastaralá"
 
-#: src/components/modals/ChannelEditorModal.tsx:92
-#: src/components/modals/GroupEditorModal.tsx:137
+#: src/components/modals/ChannelEditorModal.tsx:93
+#: src/components/modals/FolderEditorModal.tsx:145
+#: src/components/modals/GroupEditorModal.tsx:139
 #: src/components/modals/ModalSaveOverlay.tsx:43
 msgid "Saving..."
 msgstr "Ukládání..."
@@ -1963,7 +2007,7 @@ msgid "Search in this Space..."
 msgstr "Hledat v tomto Space..."
 
 #: src/components/direct/DirectMessage.tsx:714
-#: src/components/space/Channel.tsx:945
+#: src/components/space/Channel.tsx:949
 msgid "Search Messages"
 msgstr "Hledat zprávy"
 
@@ -1979,7 +2023,7 @@ msgstr "Výsledky hledání"
 msgid "Search username or address"
 msgstr "Hledat uživatelské jméno nebo adresu"
 
-#: src/components/space/Channel.tsx:1295
+#: src/components/space/Channel.tsx:1300
 msgid "Search Username or Address"
 msgstr "Hledat uživatelské jméno nebo adresu"
 
@@ -2000,7 +2044,7 @@ msgstr "Vybrat"
 msgid "Select an option"
 msgstr "Vyberte možnost"
 
-#: src/components/modals/ChannelEditorModal.tsx:167
+#: src/components/modals/ChannelEditorModal.tsx:169
 msgid ""
 "Select any existing role as managers for this channel. Managers have post, "
 "delete, and pin permissions on ANY message by default. If no managers are "
@@ -2032,7 +2076,7 @@ msgstr "Vyberte oprávnění"
 msgid "Select Profile Image"
 msgstr "Vyberte profilový obrázek"
 
-#: src/components/modals/ChannelEditorModal.tsx:186
+#: src/components/modals/ChannelEditorModal.tsx:188
 msgid "Select Roles"
 msgstr "Vybrat role"
 
@@ -2336,7 +2380,7 @@ msgid "Unable to copy to clipboard"
 msgstr "Nelze zkopírovat do schránky"
 
 #: src/components/context/MessageDB.bak.tsx:3482
-#: src/services/SpaceService.ts:538
+#: src/services/SpaceService.ts:550
 msgid ""
 "Unable to leave space due to incomplete configuration. The space data may be"
 " corrupted."
@@ -2379,8 +2423,8 @@ msgstr "Neznámý čas"
 #: src/components/direct/DirectMessage.tsx:173
 #: src/components/direct/DirectMessage.tsx:188
 #: src/components/direct/DirectMessage.tsx:535
-#: src/components/message/MessageComposer.tsx:501
-#: src/components/message/MessageComposer.tsx:508
+#: src/components/message/MessageComposer.tsx:499
+#: src/components/message/MessageComposer.tsx:506
 #: src/components/message/MessageEditTextarea.tsx:225
 #: src/components/message/MessageEditTextarea.tsx:260
 #: src/components/message/MessageEditTextarea.tsx:267
@@ -2482,7 +2526,7 @@ msgstr "Adresa uživatele zde"
 msgid "User does not exist."
 msgstr "Uživatel neexistuje."
 
-#: src/components/space/Channel.tsx:601 src/components/space/Channel.tsx:1118
+#: src/components/space/Channel.tsx:604 src/components/space/Channel.tsx:1123
 msgid "Username or Address"
 msgstr "Uživatelské jméno nebo adresa"
 
@@ -2508,7 +2552,7 @@ msgstr "Vítejte v Quorum!"
 msgid "What's on your mind today?"
 msgstr "Co máte dnes na srdci?"
 
-#: src/components/modals/ConversationSettingsModal.tsx:220
+#: src/components/modals/ConversationSettingsModal.tsx:222
 #: src/components/modals/SpaceSettingsModal/General.tsx:292
 msgid ""
 "When enabled, all previous versions of edited messages will be saved. When "
@@ -2580,7 +2624,7 @@ msgstr ""
 "Když používáte Quorum v prohlížeči, vaše zprávy jsou ukládány lokálně do "
 "vašeho prohlížeče."
 
-#: src/components/modals/ConversationSettingsModal.tsx:195
+#: src/components/modals/ConversationSettingsModal.tsx:197
 msgid ""
 "When you sign a message, you are confirming that it comes from your key. "
 "When you don't sign a message, you have plausible deniability. The default "
@@ -2632,7 +2676,7 @@ msgstr ""
 "Můžete spravovat oznámení o zmínkách ve vašem prostoru v nastavení každého "
 "prostoru."
 
-#: src/components/modals/GroupEditorModal.tsx:116
+#: src/components/modals/GroupEditorModal.tsx:118
 msgid ""
 "You cannot delete a group that contains channels. Delete all {channelCount} "
 "channels in this group first."
@@ -2640,8 +2684,8 @@ msgstr ""
 "Nemůžete smazat skupinu, která obsahuje kanály. Nejprve smažte všech "
 "{channelCount} kanály v této skupině."
 
-#: src/components/message/MessageComposer.tsx:336
-#: src/components/space/Channel.tsx:1084
+#: src/components/message/MessageComposer.tsx:334
+#: src/components/space/Channel.tsx:1089
 msgid "You cannot post in this channel"
 msgstr "Nemůžete přispívat v tomto kanálu"
 
@@ -2730,6 +2774,10 @@ msgstr ""
 #: src/components/modals/SpaceSettingsModal/Account.tsx:165
 msgid "Your Roles"
 msgstr "Vaše role"
+
+#: src/components/modals/FolderEditorModal.tsx:136
+msgid "Your Spaces will NOT be deleted"
+msgstr "Vaše prostory NEBUDOU smazány"
 
 #: src/components/ui/YouTubeFacade.tsx:92
 msgid "YouTube Video"
