@@ -15,6 +15,13 @@ export const TOUCH_INTERACTION_CONFIG = {
 
   /** Quick feedback delay for acknowledgment taps */
   QUICK_TAP_DELAY: 0,
+
+  /**
+   * Movement threshold for drag-and-drop elements (in pixels)
+   * Higher than standard threshold to distinguish drag from long-press
+   * Must match dnd-kit PointerSensor activationConstraint.distance
+   */
+  DRAG_MOVEMENT_THRESHOLD: 15,
 } as const;
 
 /**
@@ -37,5 +44,20 @@ export const TOUCH_INTERACTION_TYPES = {
   QUICK: {
     delay: TOUCH_INTERACTION_CONFIG.LONG_PRESS_DELAY,
     threshold: TOUCH_INTERACTION_CONFIG.MOVEMENT_THRESHOLD,
+  },
+
+  /**
+   * Drag-and-drop interaction for elements using dnd-kit
+   * IMPORTANT: Do NOT use useLongPress hook with draggable elements - it conflicts with dnd-kit.
+   * Instead, use raw touch events (onTouchStart/Move/End) which run in parallel with pointer events.
+   * See: .agents/reports/dnd-kit-touch-best-practices_2025-12-11.md
+   */
+  DRAG_AND_DROP: {
+    delay: TOUCH_INTERACTION_CONFIG.LONG_PRESS_DELAY,
+    threshold: TOUCH_INTERACTION_CONFIG.DRAG_MOVEMENT_THRESHOLD,
+    /** dnd-kit PointerSensor distance activation for touch devices */
+    dragActivationDistance: TOUCH_INTERACTION_CONFIG.DRAG_MOVEMENT_THRESHOLD,
+    /** dnd-kit PointerSensor distance activation for mouse */
+    mouseActivationDistance: 8,
   },
 } as const;

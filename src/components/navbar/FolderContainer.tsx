@@ -6,6 +6,8 @@ import { useDragStateContext } from '../../context/DragStateContext';
 import { getFolderColorHex } from '../space/IconPicker/types';
 import { NavItem } from '../../db/messages';
 import { isTouchDevice } from '../../utils/platform';
+import { hapticMedium } from '../../utils/haptic';
+import { TOUCH_INTERACTION_TYPES } from '../../constants/touchInteraction';
 import { useTheme } from '../primitives';
 import './Folder.scss';
 
@@ -41,29 +43,60 @@ const FolderContainer: React.FC<FolderContainerProps> = ({
   const isDarkTheme = resolvedTheme === 'dark';
 
   // Long press timer for touch devices to open editor
+  // Uses touch events (not pointer events) to avoid conflicts with dnd-kit
   const longPressTimer = React.useRef<NodeJS.Timeout | null>(null);
+  const touchStartPos = React.useRef<{ x: number; y: number } | null>(null);
+  const { threshold: MOVEMENT_THRESHOLD, delay: LONG_PRESS_DELAY } = TOUCH_INTERACTION_TYPES.DRAG_AND_DROP;
 
-  const handlePointerDown = () => {
-    if (isTouch) {
+  const clearLongPressTimer = () => {
+    if (longPressTimer.current) {
+      clearTimeout(longPressTimer.current);
+      longPressTimer.current = null;
+    }
+    touchStartPos.current = null;
+  };
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    if (isTouch && e.touches.length === 1) {
+      const touch = e.touches[0];
+      touchStartPos.current = { x: touch.clientX, y: touch.clientY };
       longPressTimer.current = setTimeout(() => {
+        hapticMedium(); // Haptic feedback for long-press
         onEdit();
-      }, 500);
+        clearLongPressTimer();
+      }, LONG_PRESS_DELAY);
     }
   };
 
-  const handlePointerUp = () => {
-    if (longPressTimer.current) {
-      clearTimeout(longPressTimer.current);
-      longPressTimer.current = null;
+  const handleTouchMove = (e: React.TouchEvent) => {
+    // Cancel long-press if user moves significantly (they want to drag)
+    if (touchStartPos.current && longPressTimer.current && e.touches.length === 1) {
+      const touch = e.touches[0];
+      const dx = touch.clientX - touchStartPos.current.x;
+      const dy = touch.clientY - touchStartPos.current.y;
+      const distance = Math.sqrt(dx * dx + dy * dy);
+      if (distance > MOVEMENT_THRESHOLD) {
+        clearLongPressTimer();
+      }
     }
   };
 
-  const handlePointerCancel = () => {
-    if (longPressTimer.current) {
-      clearTimeout(longPressTimer.current);
-      longPressTimer.current = null;
-    }
+  const handleTouchEnd = () => {
+    clearLongPressTimer();
   };
+
+  // Cancel long-press timer when drag starts (drag activates at 150ms, long-press at 500ms)
+  const { attributes, listeners, setNodeRef, isDragging } =
+    useSortable({
+      id: folder.id,
+      data: { type: 'folder', targetId: folder.id },
+    });
+
+  React.useEffect(() => {
+    if (isDragging) {
+      clearLongPressTimer();
+    }
+  }, [isDragging]);
 
   // Calculate aggregate unread stats
   const hasUnread = spaces.some((s) => s.notifs && s.notifs > 0);
@@ -71,13 +104,6 @@ const FolderContainer: React.FC<FolderContainerProps> = ({
     (sum, s) => sum + (spaceMentionCounts[s.spaceId] || 0),
     0
   );
-
-  // Drag and drop for the folder itself
-  const { attributes, listeners, setNodeRef, isDragging } =
-    useSortable({
-      id: folder.id,
-      data: { type: 'folder', targetId: folder.id },
-    });
 
   // Get drop target from context for visual feedback
   const { setIsDragging, dropTarget, activeItem } = useDragStateContext();
@@ -132,9 +158,14 @@ const FolderContainer: React.FC<FolderContainerProps> = ({
         style={{
           ...dragStyle,
           '--folder-color': folderColor,
+          touchAction: 'none',
         } as React.CSSProperties}
         {...attributes}
         {...listeners}
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
+        onTouchCancel={handleTouchEnd}
         className={`folder-container ${isExpanded ? 'folder-container--expanded' : ''}`}
       >
         {isDragging ? (
@@ -148,9 +179,6 @@ const FolderContainer: React.FC<FolderContainerProps> = ({
               tabIndex={0}
               onClick={handleClick}
               onContextMenu={handleContextMenu}
-              onPointerDown={handlePointerDown}
-              onPointerUp={handlePointerUp}
-              onPointerCancel={handlePointerCancel}
               onKeyDown={(e) => {
                 if (e.key === 'Enter' || e.key === ' ') {
                   e.preventDefault();

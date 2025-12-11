@@ -83,6 +83,9 @@ header {
   gap: $s-2-5; // Spacing between all items (10px)
   padding-top: $s-2; // Top padding instead of margin on first item
   padding-bottom: 140px; // Space for fixed bottom buttons (+ button, avatar, padding)
+  // Prevent browser pull-to-refresh gesture during drag operations
+  // Required for touch drag-and-drop to work on mobile browsers
+  touch-action: pan-y;
 }
 
 .nav-menu-spaces::-webkit-scrollbar {

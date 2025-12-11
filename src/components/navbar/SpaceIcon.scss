@@ -14,6 +14,9 @@
   display: block;
   transition: all $duration-100 linear;
   border: $border-2 none var(--surface-border);
+  // Required for PointerSensor touch drag - prevents scroll interference on iOS Safari
+  // See: .agents/reports/dnd-kit-touch-best-practices_2025-12-11.md
+  touch-action: none;
 
   // Mobile phone optimization
   @media (max-width: $screen-xs) {
@@ -110,6 +113,8 @@
   border: none;
   border-radius: $rounded-lg;
   transition: all $duration-100 linear;
+  // Required for PointerSensor touch drag - prevents scroll interference on iOS Safari
+  touch-action: none;
 
   // Mobile phone optimization
   @media (max-width: $screen-xs) {

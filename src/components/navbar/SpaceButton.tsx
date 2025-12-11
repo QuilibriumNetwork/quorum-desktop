@@ -69,7 +69,7 @@ const SpaceButton: React.FunctionComponent<SpaceButtonProps> = ({ space, mention
       )}
       <div
         ref={setNodeRef}
-        style={style}
+        style={{ ...style, touchAction: 'none' }}
         {...listeners}
         {...attributes}
         role="link"

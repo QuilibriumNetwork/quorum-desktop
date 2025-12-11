@@ -4,7 +4,6 @@ import {
   DragMoveEvent,
   DragStartEvent,
   PointerSensor,
-  TouchSensor,
   useSensor,
   useSensors,
 } from '@dnd-kit/core';
@@ -607,20 +606,17 @@ export const useFolderDragAndDrop = ({
     [config, keyset, saveConfig, setIsDragging, setActiveItem, dropTarget, setDropTarget, queryClient, onFolderCreated]
   );
 
-  // Configure sensors with touch support
+  // Configure sensors for both mouse and touch
+  // Use only PointerSensor - it handles both pointer types
+  // TouchSensor causes race conditions when used alongside PointerSensor
+  // See: .agents/reports/dnd-kit-touch-best-practices_2025-12-11.md
   const isTouch = isTouchDevice();
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: isTouch
-        ? { delay: 200, tolerance: 5 }
-        : { distance: 8 },
-    }),
-    useSensor(TouchSensor, {
-      activationConstraint: {
-        delay: 200,
-        tolerance: 5,
-      },
+        ? { distance: 15 } // Touch: activate after 15px movement (no delay - let long-press work independently)
+        : { distance: 8 }, // Mouse: activate after 8px movement
     })
   );
 

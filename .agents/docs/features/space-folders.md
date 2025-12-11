@@ -427,20 +427,66 @@ During drag, the original item becomes invisible and a ghost copy follows the cu
 
 ### Touch Support
 
-Sensors are configured with platform-specific activation constraints:
+**Important**: See [Touch Interaction System](./../touch-interaction-system.md#drag-and-drop-with-long-press-dnd-kit) for full details on touch + drag-and-drop patterns.
+
+#### Sensor Configuration
+
+Only `PointerSensor` is used - **do not add TouchSensor** (causes race conditions):
 
 ```typescript
+// src/hooks/business/folders/useFolderDragAndDrop.ts
+import { TOUCH_INTERACTION_TYPES } from '../../../constants/touchInteraction';
+
+const { dragActivationDistance, mouseActivationDistance } = TOUCH_INTERACTION_TYPES.DRAG_AND_DROP;
+
 const sensors = useSensors(
   useSensor(PointerSensor, {
-    activationConstraint: isTouchDevice
-      ? { delay: 200, tolerance: 5 }   // Touch: 200ms hold, 5px tolerance
-      : { distance: 8 },               // Desktop: 8px movement
-  }),
-  useSensor(TouchSensor, {
-    activationConstraint: { delay: 200, tolerance: 5 },
+    activationConstraint: isTouchDevice()
+      ? { distance: dragActivationDistance }  // 15px - no delay, allows long-press to work
+      : { distance: mouseActivationDistance }, // 8px
   })
 );
 ```
+
+#### CSS Requirements
+
+```scss
+// Draggable elements (SpaceIcon, FolderButton)
+.space-icon, .folder-button {
+  touch-action: none;  // Required for iOS Safari
+}
+
+// Scrollable container
+.nav-menu-spaces {
+  touch-action: pan-y;  // Allow scroll, prevent pull-to-refresh
+}
+```
+
+#### Long-Press on Folders (Touch Only)
+
+Since drag uses distance-based activation (not delay), long-press is handled separately with raw touch events:
+
+```typescript
+// FolderContainer.tsx - simplified
+const { threshold, delay } = TOUCH_INTERACTION_TYPES.DRAG_AND_DROP;
+
+const handleTouchStart = (e: React.TouchEvent) => {
+  touchStartPos.current = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+  longPressTimer.current = setTimeout(() => {
+    hapticLight();
+    onEdit();  // Opens FolderEditorModal
+  }, delay);  // 500ms
+};
+
+const handleTouchMove = (e: React.TouchEvent) => {
+  // Cancel if moved > 15px (user wants to drag, not long-press)
+  if (distance > threshold) clearLongPressTimer();
+};
+```
+
+**Why this pattern?** Touch events run in parallel with pointer events (dnd-kit). The 15px threshold is shared between cancelling long-press and activating drag.
+
+See: `.agents/reports/dnd-kit-touch-best-practices_2025-12-11.md`
 
 ---
 
@@ -745,4 +791,4 @@ const NavItemSchema = z.discriminatedUnion('type', [
 
 ---
 
-*Updated: 2025-12-10*
+*Updated: 2025-12-11*

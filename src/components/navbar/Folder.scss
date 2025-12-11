@@ -11,6 +11,9 @@
   cursor: pointer;
   transition: all $duration-150 $ease-in-out;
   position: relative;
+  // Required for PointerSensor touch drag - prevents scroll interference on iOS Safari
+  // See: .agents/reports/dnd-kit-touch-best-practices_2025-12-11.md
+  touch-action: none;
   // margin-top removed - container uses gap for consistent spacing
 
   // Hover state (desktop only)

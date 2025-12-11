@@ -1,4 +1,6 @@
 import { useState, useCallback, useRef } from 'react';
+import { hapticLight } from '../../../utils/haptic';
+import { isTouchDevice } from '../../../utils/platform';
 
 export interface ActiveDragItem {
   id: string;
@@ -56,7 +58,20 @@ export const useDragState = (): UseDragStateReturn => {
   }, []);
 
   const setDropTarget = useCallback((target: DropTarget | null) => {
-    setDropTargetState(target);
+    // Trigger haptic feedback on touch devices when drop target changes
+    // This provides tactile feedback when separator appears or merge wiggle activates
+    setDropTargetState((prevTarget) => {
+      if (isTouchDevice() && target !== null) {
+        // Check if this is a meaningful change (new target or different intent)
+        const isNewTarget = !prevTarget || prevTarget.id !== target.id;
+        const isNewIntent = prevTarget && prevTarget.id === target.id && prevTarget.intent !== target.intent;
+
+        if (isNewTarget || isNewIntent) {
+          hapticLight();
+        }
+      }
+      return target;
+    });
   }, []);
 
   return {

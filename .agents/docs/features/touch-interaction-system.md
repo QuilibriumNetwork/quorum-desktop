@@ -374,6 +374,97 @@ const handlers = useLongPressWithDefaults({
 >
 ```
 
+## Drag-and-Drop with Long Press (dnd-kit)
+
+### ⚠️ IMPORTANT: Do NOT use `useLongPress` with draggable elements
+
+When an element uses dnd-kit for drag-and-drop AND needs long-press functionality, **do not use the `useLongPress` hook**. It conflicts with dnd-kit's PointerSensor.
+
+**Why?**
+1. `useLongPress` applies `touch-action: manipulation` - dnd-kit requires `touch-action: none`
+2. Both systems listen to pointer/mouse events, causing race conditions
+3. The 10px threshold in `useLongPress` doesn't match dnd-kit's 15px activation distance
+
+### Correct Pattern for Drag + Long Press
+
+Use raw touch events which run in parallel with dnd-kit's pointer events:
+
+```tsx
+import { TOUCH_INTERACTION_TYPES } from '../../constants/touchInteraction';
+import { hapticLight } from '../../utils/haptic';
+
+const MyDraggableComponent = ({ onEdit }) => {
+  const isTouch = isTouchDevice();
+  const longPressTimer = useRef<NodeJS.Timeout | null>(null);
+  const touchStartPos = useRef<{ x: number; y: number } | null>(null);
+  const { threshold, delay } = TOUCH_INTERACTION_TYPES.DRAG_AND_DROP;
+
+  // dnd-kit sortable
+  const { attributes, listeners, setNodeRef, isDragging } = useSortable({ id });
+
+  // Cancel long-press when drag starts
+  useEffect(() => {
+    if (isDragging) clearLongPressTimer();
+  }, [isDragging]);
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    if (isTouch && e.touches.length === 1) {
+      const touch = e.touches[0];
+      touchStartPos.current = { x: touch.clientX, y: touch.clientY };
+      longPressTimer.current = setTimeout(() => {
+        hapticLight();
+        onEdit();
+        clearLongPressTimer();
+      }, delay);
+    }
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (touchStartPos.current && longPressTimer.current) {
+      const touch = e.touches[0];
+      const dx = touch.clientX - touchStartPos.current.x;
+      const dy = touch.clientY - touchStartPos.current.y;
+      if (Math.sqrt(dx*dx + dy*dy) > threshold) {
+        clearLongPressTimer();
+      }
+    }
+  };
+
+  return (
+    <div
+      ref={setNodeRef}
+      style={{ touchAction: 'none' }}  // Required for dnd-kit on iOS
+      {...attributes}
+      {...listeners}
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={clearLongPressTimer}
+      onTouchCancel={clearLongPressTimer}
+    >
+      {/* content */}
+    </div>
+  );
+};
+```
+
+### CSS Requirements for Draggables
+
+```scss
+.draggable-element {
+  // Required for PointerSensor - prevents scroll interference on iOS Safari
+  touch-action: none;
+}
+
+.scrollable-container {
+  // Allow vertical scroll but prevent pull-to-refresh
+  touch-action: pan-y;
+}
+```
+
+### Reference
+- See: `.agents/reports/dnd-kit-touch-best-practices_2025-12-11.md`
+- Implementation: `src/components/navbar/FolderContainer.tsx`
+
 ## Architecture Files
 
 ### Core Files Created/Modified:
@@ -388,8 +479,9 @@ const handlers = useLongPressWithDefaults({
 2. **Performance**: Create hooks at component level, not in render loops
 3. **Consistency**: Use centralized constants for timing and thresholds
 4. **Maintainability**: Extract shared components to eliminate code duplication
+5. **dnd-kit Compatibility**: Use raw touch events for draggables, not `useLongPress`
 
 ---
 
-*Updated: 2025-11-23*
-*Verified: 2025-12-09 - File paths confirmed current*
+*Updated: 2025-12-11*
+*Verified: 2025-12-11 - Added dnd-kit drag-and-drop section*
