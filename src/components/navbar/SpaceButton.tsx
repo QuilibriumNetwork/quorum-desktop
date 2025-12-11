@@ -32,14 +32,16 @@ const SpaceButton: React.FunctionComponent<SpaceButtonProps> = ({ space, mention
     });
 
   // Get drop target from context for visual feedback
-  const { setIsDragging, dropTarget } = useDragStateContext();
+  const { setIsDragging, dropTarget, activeItem } = useDragStateContext();
 
   // Check if this space is the current drop target
   const isDropTarget = dropTarget?.id === space.spaceId;
   // Spaces inside folders never wiggle - only show reorder indicators
-  // Standalone spaces can wiggle (merge = create folder with both)
+  // Standalone spaces can wiggle ONLY when another space is dragged (merge = create folder)
+  // Never wiggle when a folder is being dragged (folders can't merge with spaces)
   const isInsideFolder = !!parentFolderId;
-  const showWiggle = isDropTarget && dropTarget.intent === 'merge' && !isInsideFolder;
+  const isDraggingSpace = activeItem?.type === 'space';
+  const showWiggle = isDropTarget && dropTarget.intent === 'merge' && !isInsideFolder && isDraggingSpace;
   const showDropBefore = isDropTarget && (dropTarget.intent === 'reorder-before' || (dropTarget.intent === 'merge' && isInsideFolder));
   const showDropAfter = isDropTarget && dropTarget.intent === 'reorder-after';
 

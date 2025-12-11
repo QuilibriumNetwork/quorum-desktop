@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useRef } from 'react';
 
 export interface ActiveDragItem {
   id: string;
@@ -23,13 +23,32 @@ interface UseDragStateReturn {
   setDropTarget: (target: DropTarget | null) => void;
 }
 
+// Delay before clearing isDragging after drop to prevent tooltip flash during crypto freeze
+const DRAG_END_TOOLTIP_DELAY_MS = 3000;
+
 export const useDragState = (): UseDragStateReturn => {
   const [isDragging, setIsDraggingState] = useState(false);
   const [activeItem, setActiveItemState] = useState<ActiveDragItem | null>(null);
   const [dropTarget, setDropTargetState] = useState<DropTarget | null>(null);
+  const dragEndTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const setIsDragging = useCallback((dragging: boolean) => {
-    setIsDraggingState(dragging);
+    // Clear any pending timeout
+    if (dragEndTimeoutRef.current) {
+      clearTimeout(dragEndTimeoutRef.current);
+      dragEndTimeoutRef.current = null;
+    }
+
+    if (dragging) {
+      // Start dragging immediately
+      setIsDraggingState(true);
+    } else {
+      // Delay clearing isDragging to prevent tooltip flash during crypto operations
+      dragEndTimeoutRef.current = setTimeout(() => {
+        setIsDraggingState(false);
+        dragEndTimeoutRef.current = null;
+      }, DRAG_END_TOOLTIP_DELAY_MS);
+    }
   }, []);
 
   const setActiveItem = useCallback((item: ActiveDragItem | null) => {

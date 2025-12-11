@@ -80,13 +80,15 @@ const FolderContainer: React.FC<FolderContainerProps> = ({
     });
 
   // Get drop target from context for visual feedback
-  const { setIsDragging, dropTarget } = useDragStateContext();
+  const { setIsDragging, dropTarget, activeItem } = useDragStateContext();
 
   // Check if this folder is the current drop target
   const isDropTarget = dropTarget?.id === folder.id;
-  // Closed folders can wiggle (merge = add to folder)
+  // Closed folders can wiggle ONLY when a space is being dragged (merge = add to folder)
+  // Never wiggle when a folder is being dragged (folders can't merge)
   // Open folders never wiggle - spaces inside show their own indicators
-  const showWiggle = isDropTarget && dropTarget.intent === 'merge' && !isExpanded;
+  const isDraggingSpace = activeItem?.type === 'space';
+  const showWiggle = isDropTarget && dropTarget.intent === 'merge' && !isExpanded && isDraggingSpace;
   const showDropBefore = isDropTarget && (dropTarget.intent === 'reorder-before' || (dropTarget.intent === 'merge' && isExpanded));
   const showDropAfter = isDropTarget && dropTarget.intent === 'reorder-after';
 
@@ -132,49 +134,56 @@ const FolderContainer: React.FC<FolderContainerProps> = ({
           '--folder-color': folderColor,
         } as React.CSSProperties}
         {...attributes}
+        {...listeners}
         className={`folder-container ${isExpanded ? 'folder-container--expanded' : ''}`}
       >
-        {/* Folder button header - draggable and clickable */}
-        <div
-          {...listeners}
-          role="button"
-          tabIndex={0}
-          onClick={handleClick}
-          onContextMenu={handleContextMenu}
-          onPointerDown={handlePointerDown}
-          onPointerUp={handlePointerUp}
-          onPointerCancel={handlePointerCancel}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter' || e.key === ' ') {
-              e.preventDefault();
-              onToggleExpand();
-            }
-          }}
-          className="folder-header cursor-pointer"
-        >
-          <FolderButton
-            folder={folder}
-            hasUnread={hasUnread}
-            mentionCount={totalMentionCount}
-            isExpanded={isExpanded}
-            showWiggle={showWiggle}
-          />
-        </div>
-
-        {/* Space icons container - uses CSS grid for smooth height animation */}
-        <div className="folder-spaces-wrapper">
-          <div className="folder-spaces">
-            {spaces.map((space) => (
-              <SpaceButton
-                key={space.spaceId}
-                space={space}
-                size="regular"
-                mentionCount={spaceMentionCounts[space.spaceId]}
-                parentFolderId={folder.id}
+        {isDragging ? (
+          // Placeholder shown while dragging - reuse SpaceIcon placeholder styles
+          <div className="space-icon-drag-placeholder" />
+        ) : (
+          <>
+            {/* Folder button header - clickable */}
+            <div
+              role="button"
+              tabIndex={0}
+              onClick={handleClick}
+              onContextMenu={handleContextMenu}
+              onPointerDown={handlePointerDown}
+              onPointerUp={handlePointerUp}
+              onPointerCancel={handlePointerCancel}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  onToggleExpand();
+                }
+              }}
+              className="folder-header cursor-pointer"
+            >
+              <FolderButton
+                folder={folder}
+                hasUnread={hasUnread}
+                mentionCount={totalMentionCount}
+                isExpanded={isExpanded}
+                showWiggle={showWiggle}
               />
-            ))}
-          </div>
-        </div>
+            </div>
+
+            {/* Space icons container - uses CSS grid for smooth height animation */}
+            <div className="folder-spaces-wrapper">
+              <div className="folder-spaces">
+                {spaces.map((space) => (
+                  <SpaceButton
+                    key={space.spaceId}
+                    space={space}
+                    size="regular"
+                    mentionCount={spaceMentionCounts[space.spaceId]}
+                    parentFolderId={folder.id}
+                  />
+                ))}
+              </div>
+            </div>
+          </>
+        )}
       </div>
       {/* Drop indicator - shown below this folder when reordering */}
       {showDropAfter && (
