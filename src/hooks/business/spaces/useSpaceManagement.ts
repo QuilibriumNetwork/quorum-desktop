@@ -33,6 +33,7 @@ export interface UseSpaceManagementReturn {
   currentPasskeyInfo: any;
   deleteError: string | null;
   clearDeleteError: () => void;
+  isDeleting: boolean;
 }
 
 export const useSpaceManagement = (
@@ -47,6 +48,7 @@ export const useSpaceManagement = (
   const [saving, setSaving] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState('general');
   const [deleteError, setDeleteError] = useState<string | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const { updateSpace, deleteSpace } = useMessageDB();
   const { currentPasskeyInfo } = usePasskeysContext();
@@ -138,6 +140,9 @@ export const useSpaceManagement = (
         }
       }
 
+      // Show deleting overlay before starting crypto operations
+      setIsDeleting(true);
+
       await deleteSpace(spaceId);
       navigate('/');
       onClose?.();
@@ -145,6 +150,8 @@ export const useSpaceManagement = (
       console.error('Failed to delete space:', error);
       console.error('Space ID was:', spaceId);
       setDeleteError('unknown');
+    } finally {
+      setIsDeleting(false);
     }
   }, [deleteSpace, spaceId, navigate, onClose, space]);
 
@@ -173,5 +180,6 @@ export const useSpaceManagement = (
     currentPasskeyInfo,
     deleteError,
     clearDeleteError,
+    isDeleting,
   };
 };

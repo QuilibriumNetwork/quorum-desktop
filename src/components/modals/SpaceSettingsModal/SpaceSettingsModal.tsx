@@ -146,6 +146,7 @@ const SpaceSettingsModal: React.FunctionComponent<{
     handleDeleteSpace,
     deleteError,
     clearDeleteError,
+    isDeleting,
   } = useSpaceManagement({
     spaceId,
     onClose: dismiss,
@@ -376,17 +377,19 @@ const SpaceSettingsModal: React.FunctionComponent<{
       <Modal
         title=""
         visible={true}
-        onClose={(isSaving || spaceProfile.isSaving || mentionSettings.isSaving) ? undefined : dismiss}
+        onClose={(isSaving || spaceProfile.isSaving || mentionSettings.isSaving || isDeleting) ? undefined : dismiss}
         size="large"
         className="modal-complex-wrapper"
         hideClose={false}
         noPadding={true}
-        closeOnBackdropClick={!(isSaving || spaceProfile.isSaving || mentionSettings.isSaving)}
-        closeOnEscape={!(isSaving || spaceProfile.isSaving || mentionSettings.isSaving)}
+        closeOnBackdropClick={!(isSaving || spaceProfile.isSaving || mentionSettings.isSaving || isDeleting)}
+        closeOnEscape={!(isSaving || spaceProfile.isSaving || mentionSettings.isSaving || isDeleting)}
       >
         <div className="modal-complex-container-inner relative">
           {/* Loading overlay for saving */}
           <ModalSaveOverlay visible={isSaving || (selectedCategory === 'account' && (spaceProfile.isSaving || mentionSettings.isSaving))} />
+          {/* Loading overlay for deleting */}
+          <ModalSaveOverlay visible={isDeleting} message={t`Deleting Space...`} />
 
           <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
             <div className="modal-complex-layout-with-footer">
