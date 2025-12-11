@@ -4,4 +4,5 @@ export type {
   TooltipProps,
   TooltipWebProps,
   TooltipNativeProps,
+  TooltipPlacement,
 } from './types';

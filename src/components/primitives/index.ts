@@ -75,6 +75,7 @@ export type {
   TooltipProps,
   TooltipWebProps,
   TooltipNativeProps,
+  TooltipPlacement,
 } from './Tooltip';
 export type {
   IconProps,

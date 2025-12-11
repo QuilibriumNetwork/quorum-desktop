@@ -311,6 +311,7 @@ const NavMenuContent: React.FC<NavMenuProps> = (props) => {
           onDelete={handleDeleteFolder}
         />
       )}
+
     </header>
   );
 };

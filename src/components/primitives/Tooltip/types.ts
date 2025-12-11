@@ -1,22 +1,25 @@
 import { ReactNode } from 'react';
 
+// Shared placement type for all tooltip components
+export type TooltipPlacement =
+  | 'top'
+  | 'top-start'
+  | 'top-end'
+  | 'right'
+  | 'right-start'
+  | 'right-end'
+  | 'bottom'
+  | 'bottom-start'
+  | 'bottom-end'
+  | 'left'
+  | 'left-start'
+  | 'left-end';
+
 export interface TooltipProps {
   id: string;
   content: string;
   children: ReactNode;
-  place?:
-    | 'top'
-    | 'top-start'
-    | 'top-end'
-    | 'right'
-    | 'right-start'
-    | 'right-end'
-    | 'bottom'
-    | 'bottom-start'
-    | 'bottom-end'
-    | 'left'
-    | 'left-start'
-    | 'left-end';
+  place?: TooltipPlacement;
   noArrow?: boolean;
   className?: string;
   highlighted?: boolean;
@@ -37,3 +40,4 @@ export interface TooltipWebProps extends TooltipProps {
 export interface TooltipNativeProps extends TooltipProps {
   // Native-specific props can be added here
 }
+

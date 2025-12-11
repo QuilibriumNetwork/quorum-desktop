@@ -85,7 +85,6 @@ This is the main index for all documentation, bug reports, and task management.
 - [Pinned Messages Panel Button Clicks Bug](bugs/pinned-messages-panel-clicks-and-message-list-disappearing.md)
 - [Public Invite Link Intermittent Expiration Bug](bugs/public-invite-link-intermittent-expiration.md)
 - [Space Owner Delete Permissions Bug](bugs/space-owner-delete-permissions-bug.md)
-- [Tooltip Flickering at Top-Left on Fast Mouse Movement](bugs/tooltip-flickering-top-left-on-fast-mouse-movement.md)
 
 ### Solved Issues
 - [Android 7.0 File Download Fix - Implementation Plan](bugs/.solved/SOLVED_android-file-download-huawei-p9-lite.md)
@@ -106,6 +105,7 @@ This is the main index for all documentation, bug reports, and task management.
 
 ### .Archived
 - [Bug: Auto-jump to First Unread Breaks Initial Message Sync](bugs/.archived/auto-jump-unread-breaks-message-sync.md)
+- [Tooltip Flickering at Top-Left on Fast Mouse Movement](bugs/.archived/tooltip-flickering-top-left-on-fast-mouse-movement.md)
 
 ## 📋 Tasks
 
@@ -124,7 +124,6 @@ This is the main index for all documentation, bug reports, and task management.
 - [SDK PasskeyModal Customization Props Enhancement](tasks/sdk-passkey-modal-customization-props.md)
 - [Task: Implement Delete Public Invite Link Feature](tasks/delete-public-invite-link.md)
 - [Test Suite Implementation Plan for Quorum Desktop](tasks/test-suite-plan.md)
-- [Tooltip Shared Mode for NavMenu Flickering Fix](tasks/tooltip-shared-mode-navmenu-flickering.md)
 - [User Config Sync on Existing Accounts](tasks/user-config-sync-on-existing-accounts.md)
 - [User Status Feature Implementation Plan](tasks/user-status.md)
 
@@ -142,6 +141,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Space/Channel Message Deletion Placeholders](tasks/.archived/space-message-deletion-placeholders.md)
 - [Task: Fix Search Results Limitation and Pagination](tasks/.archived/search-results-limitation-and-navigation-fix.md)
 - [Text Primitive Analysis: Typography Prop & Helpers Confusion](tasks/.archived/text-primitive-analysis.md)
+- [Tooltip Shared Mode for NavMenu Flickering Fix](tasks/.archived/tooltip-shared-mode-navmenu-flickering.md)
 - [Unify Modal Systems: Migrate Layout-Level Modals to ModalProvider](tasks/.archived/modal-system-unification.md)
 
 ### .Archived Css Refactor
@@ -300,4 +300,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2025-12-10 16:41:25
+**Last Updated**: 2025-12-11 12:57:56

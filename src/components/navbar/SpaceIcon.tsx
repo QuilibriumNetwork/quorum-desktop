@@ -37,21 +37,6 @@ const SpaceIcon: React.FunctionComponent<SpaceIconProps> = (props) => {
     isDragging = false;
   }
 
-  // Generate a unique ID for this space icon
-  // Use spaceId if available, otherwise sanitize the space name
-  const sanitizedName = props.spaceName
-    .toLowerCase()
-    .replace(/[^a-z0-9]/gi, '-') // Replace all non-alphanumeric chars with hyphens
-    .replace(/^-+|-+$/g, '') // Remove leading/trailing hyphens
-    .replace(/-+/g, '-'); // Replace multiple hyphens with single hyphen
-
-  const uniqueId = props.spaceId || sanitizedName || 'default';
-
-  // Use useMemo to ensure stable ID across renders
-  const iconId = React.useMemo(() => {
-    return `space-icon-${uniqueId}-${Math.random().toString(36).substr(2, 9)}`;
-  }, [uniqueId]);
-
   // Check if there's a valid image
   const hasValidImage = backgroundImage &&
     props.iconUrl &&
@@ -61,6 +46,12 @@ const SpaceIcon: React.FunctionComponent<SpaceIconProps> = (props) => {
   const backgroundColor = React.useMemo(
     () => getColorFromDisplayName(props.spaceName),
     [props.spaceName]
+  );
+
+  // Generate unique ID for tooltip
+  const iconId = React.useMemo(
+    () => `space-icon-${props.spaceId || 'unknown'}-${Math.random().toString(36).slice(2, 7)}`,
+    [props.spaceId]
   );
 
   // Match the CSS sizes: small is 40px, regular is 48px, large is 114px
@@ -85,7 +76,6 @@ const SpaceIcon: React.FunctionComponent<SpaceIconProps> = (props) => {
           style={{
             backgroundImage,
           }}
-          {...(props.noTooltip ? {} : { id: `${iconId}-anchor` })}
         />
       ) : (
         <UserInitials
@@ -93,7 +83,6 @@ const SpaceIcon: React.FunctionComponent<SpaceIconProps> = (props) => {
           backgroundColor={backgroundColor}
           size={size}
           className={`${props.selected ? 'space-icon-selected' : 'space-icon'} space-icon-${props.size}`}
-          {...(props.noTooltip ? {} : { id: `${iconId}-anchor` })}
         />
       )}
       {props.mentionCount != null && props.mentionCount > 0 && (
