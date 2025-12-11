@@ -49,37 +49,15 @@ export class UnifiedPermissionSystem {
 
   /**
    * Check if user can delete a specific message
+   *
+   * NOTE: Space owners must have a role with delete permission to delete others' messages.
+   * This is intentional - the receiving side validates permissions consistently.
    */
   canDeleteMessage(message: MessageType): boolean {
-    const { userAddress, isSpaceOwner, space, channel } = this.context;
+    const { userAddress, channel } = this.context;
 
     // 1. Users can always delete their own messages
     if (message.content.senderId === userAddress) {
-      return true;
-    }
-
-    // 2. Space owners can delete ANY message (inherent privilege)
-    if (isSpaceOwner) {
-      return true;
-    }
-
-    // 3. Read-only channels: ISOLATED permission system
-    if (channel?.isReadOnly) {
-      return this.isReadOnlyChannelManager();
-    }
-
-    // 4. Regular channels: Traditional role-based permissions
-    return this.hasTraditionalRolePermission('message:delete');
-  }
-
-  /**
-   * Check if user can pin/unpin a specific message
-   */
-  canPinMessage(message: MessageType): boolean {
-    const { isSpaceOwner, channel } = this.context;
-
-    // 1. Space owners can pin ANY message (inherent privilege)
-    if (isSpaceOwner) {
       return true;
     }
 
@@ -89,26 +67,43 @@ export class UnifiedPermissionSystem {
     }
 
     // 3. Regular channels: Traditional role-based permissions
+    return this.hasTraditionalRolePermission('message:delete');
+  }
+
+  /**
+   * Check if user can pin/unpin a specific message
+   *
+   * NOTE: Space owners must have a role with pin permission to pin messages.
+   * This prepares for global pin sync where receiving side validates permissions.
+   */
+  canPinMessage(_message: MessageType): boolean {
+    const { channel } = this.context;
+
+    // 1. Read-only channels: ISOLATED permission system
+    if (channel?.isReadOnly) {
+      return this.isReadOnlyChannelManager();
+    }
+
+    // 2. Regular channels: Traditional role-based permissions
     return this.hasTraditionalRolePermission('message:pin');
   }
 
   /**
    * Check if user can post messages in the channel
+   *
+   * NOTE: Space owners must explicitly join a manager role to post in read-only channels.
+   * This is intentional - the receiving side cannot verify space ownership (privacy requirement),
+   * so we enforce the same rule on both sides for consistency.
    */
   canPostMessage(): boolean {
-    const { isSpaceOwner, channel } = this.context;
+    const { channel } = this.context;
 
-    // 1. Space owners can post anywhere (inherent privilege)
-    if (isSpaceOwner) {
-      return true;
-    }
-
-    // 2. Read-only channels: ONLY managers can post
+    // Read-only channels: ONLY managers can post
     if (channel?.isReadOnly) {
       return this.isReadOnlyChannelManager();
     }
 
-    // 3. Regular channels: Everyone can post (no restrictions)
+    // Regular channels: Everyone can post (no restrictions)
     return true;
   }
 
@@ -220,10 +215,13 @@ export function hasChannelPermission(
 /**
  * Helper to check if a user can manage (post/delete/pin) in a read-only channel
  * This is useful for UI elements that need to know general management capabilities
+ *
+ * NOTE: Space owners must explicitly join a manager role to manage read-only channels.
+ * This is intentional - the receiving side cannot verify space ownership (privacy requirement).
  */
 export function canManageReadOnlyChannel(
   userAddress: string,
-  isSpaceOwner: boolean,
+  _isSpaceOwner: boolean,
   space: Space | undefined,
   channel: Channel | undefined
 ): boolean {
@@ -231,12 +229,7 @@ export function canManageReadOnlyChannel(
     return false; // Not a read-only channel
   }
 
-  // Space owners can manage any channel
-  if (isSpaceOwner) {
-    return true;
-  }
-
-  // Check if user is a manager
+  // Check if user is a manager (space owners must also be in a manager role)
   if (!channel.managerRoleIds || !space?.roles) {
     return false;
   }

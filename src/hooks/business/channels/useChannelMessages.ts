@@ -38,30 +38,27 @@ export function useChannelMessages({
   const { data: space } = useSpace({ spaceId });
 
   // Helper function to check if user can manage read-only channel
+  // NOTE: Space owners must explicitly join a manager role to manage read-only channels.
+  // This is intentional - the receiving side cannot verify space ownership (privacy requirement).
   const canManageReadOnlyChannel = useCallback(
     (userAddress: string): boolean => {
       if (!channel?.isReadOnly) {
         return true;
       }
 
-      // Space owners can always manage
-      if (isSpaceOwner) {
-        return true;
-      }
-
-      // If no manager roles defined, only space owner can manage
+      // If no manager roles defined, nobody can manage
       if (!channel.managerRoleIds || channel.managerRoleIds.length === 0) {
         return false;
       }
 
-      // Check if user has any of the manager roles
+      // Check if user has any of the manager roles (space owners must also be in a manager role)
       return roles.some(
         (role) =>
           channel.managerRoleIds?.includes(role.roleId) &&
           role.members.includes(userAddress)
       );
     },
-    [channel, isSpaceOwner, roles]
+    [channel, roles]
   );
 
   const messageList = useMemo(() => {

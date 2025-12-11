@@ -818,6 +818,67 @@ export class MessageService {
         }
       );
     } else {
+      // Read-only channel validation - must validate BEFORE adding to cache
+      const isDM = spaceId === channelId;
+      const isValidatableType =
+        decryptedContent.content.type === 'post' ||
+        decryptedContent.content.type === 'edit-message';
+
+      if (!isDM && isValidatableType) {
+        const space = await this.messageDB.getSpace(spaceId);
+
+        // FAIL-SECURE: Reject if space data unavailable
+        if (!space) {
+          console.warn(
+            `⚠️ Rejecting message ${decryptedContent.messageId} - space ${spaceId} data unavailable`
+          );
+          return;
+        }
+
+        // Find the target channel in space groups
+        const channel = space.groups
+          ?.find((g) => g.channels.find((c) => c.channelId === channelId))
+          ?.channels.find((c) => c.channelId === channelId);
+
+        // FAIL-SECURE: Reject if channel not found
+        if (!channel) {
+          console.warn(
+            `⚠️ Rejecting message ${decryptedContent.messageId} - channel ${channelId} not found in space ${spaceId}`
+          );
+          return;
+        }
+
+        // Validate read-only channel permissions
+        if (channel.isReadOnly) {
+          const senderId = decryptedContent.content.senderId;
+
+          // Check if channel has manager roles configured
+          if (!channel.managerRoleIds || channel.managerRoleIds.length === 0) {
+            console.log(
+              `🔒 Rejecting message ${decryptedContent.messageId} from ${senderId} - read-only channel ${channelId} has no manager roles configured`
+            );
+            return;
+          }
+
+          // Check if sender is in a manager role
+          // Note: Space owners must explicitly join a manager role (privacy requirement)
+          const isChannelManager =
+            space.roles?.some(
+              (role) =>
+                channel.managerRoleIds?.includes(role.roleId) &&
+                role.members?.includes(senderId)
+            ) ?? false;
+
+          if (!isChannelManager) {
+            console.log(
+              `🔒 Rejecting unauthorized message ${decryptedContent.messageId} from ${senderId} in read-only channel ${channelId}`
+            );
+            return;
+          }
+        }
+      }
+
+      // Authorized - add to cache
       queryClient.setQueryData(
         buildMessagesKey({ spaceId: spaceId, channelId: channelId }),
         (oldData: InfiniteData<any>) => {

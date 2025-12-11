@@ -166,7 +166,7 @@ const ChannelEditorModal: React.FunctionComponent<{
                 </div>
                 <Tooltip
                   id="channel-managers-tooltip"
-                  content={t`Select any existing role as managers for this channel. Managers have post, delete, and pin permissions on ANY message by default. If no managers are selected, only the Space owner can manage the channel.`}
+                  content={t`Members of selected roles can post, delete, and pin messages in this read-only channel. Note: Space owners must also be in a manager role to post here.`}
                   place="bottom"
                   className="!w-[350px]"
                   maxWidth={350}

@@ -12,8 +12,10 @@ Quorum's space permission system is designed around a **layered, hierarchical ar
 1. Own Content (highest) → Users always control their own messages
 2. Read-Only Channel Managers → Isolated permissions in specific channels
 3. Traditional Roles → Permission grants through role assignments
-4. Space Owner → UI permissions only (processing not implemented)
+4. Space Owner (kick only) → Can kick users (protocol verifies via owner_public_keys)
 ```
+
+**Important Security Note**: Space owners do NOT have automatic permissions for post/delete/pin. The receiving side cannot verify space ownership for these operations (privacy requirement), so space owners must join appropriate roles.
 
 ### 2. Dual Permission Models
 
@@ -54,18 +56,24 @@ The system operates two **parallel but coordinated** permission models:
 ### How Systems Work Together
 
 1. **Regular Channels**:
-   - Space owners get UI permissions only (processing not implemented)
+   - Space owners need roles with permissions for delete/pin (kick always works)
    - Traditional roles get both UI and processing permissions
    - Read-only manager permissions are ignored (channel not read-only)
 
 2. **Read-Only Channels**:
-   - Space owners get UI permissions only (processing not implemented)
+   - Space owners must join a manager role for post/delete/pin
    - Read-only managers get both UI and processing permissions
    - Traditional role permissions are blocked (isolation principle)
+   - Receiving-side validation in MessageService.ts enforces these rules
 
 3. **Self-Content**:
    - Users always control their own messages (both UI and processing)
    - Works consistently across all channel types
+
+4. **Kick Permission** (Special Case):
+   - Space owners can ALWAYS kick users
+   - Protocol verifies ownership via `owner_public_keys`
+   - This is the ONLY space owner privilege that works without roles
 
 ### Permission Resolution Flow
 
@@ -97,11 +105,13 @@ graph TD
 - **Only designated managers have permissions in read-only channels**
 - **Space owners use UI permissions but need architectural consideration for processing**
 
-### Processing Limitations
+### Processing & Validation
 
-- **Space owners in regular channels**: May need traditional roles with delete permissions
-- **Service-oriented processing**: Validation is now handled by specialized services (e.g., `MessageService`, `SpaceService`) exposed via `MessageDB Context`, and is currently limited to role-based and self-delete validation.
-- **Architectural gap**: Space owner verification within the relevant service exposed via `MessageDB Context` needs resolution.
+- **Space owners**: Must have roles with appropriate permissions for delete/pin (kick is the exception)
+- **Service-oriented processing**: Validation handled by `MessageService` and `SpaceService`
+- **Receiving-side validation**: MessageService.ts validates incoming messages in read-only channels
+- **Privacy constraint**: Space ownership cannot be verified for post/delete/pin (no `Space.ownerAddress` exposed)
+- **Protocol exception**: Kick messages are verified via `owner_public_keys` at the protocol level
 
 ## Implementation Structure
 
@@ -160,18 +170,21 @@ export type Channel = {
 - **Read-only manager system**: Complete isolation and functionality
 - **Traditional role system**: Space-wide permissions working correctly
 - **UI permission checking**: Unified system shows correct buttons/states
+- **Space owner kick**: Always works (protocol-level verification)
+- **Receiving-side validation**: Read-only channel messages validated in MessageService.ts
 
-### ❌ Known Issues
+### ✅ Security Design Decisions
 
-- **Space owner delete messages**: UI shows buttons but processing not implemented - buttons do nothing
-- **Cryptographic validation gap**: Space ownership cannot be verified in distributed message processing
-- **Security challenges**: Previous attempts introduced vulnerabilities, reverted
+- **Space owner bypass removed**: Space owners must join roles for post/delete/pin
+- **Kick exception**: Protocol verifies ownership via `owner_public_keys`
+- **Consistent enforcement**: UI and receiving-side enforce same rules
+- **Privacy preserved**: No `Space.ownerAddress` exposed in distributed processing
 
-### ⚠️ Architectural Considerations
+### ⚠️ Architectural Notes
 
-- **Permission consistency**: UI permissions vs processing permissions misalignment for space owners
+- **Kick is special**: Only permission where space ownership can be verified at protocol level
+- **Role requirement**: Space owners should assign themselves to roles for full functionality
 - **System expansion**: Architecture ready for additional permission types
-- **Security first**: Any space owner implementation must not compromise message validation
 
 ### 🔧 Future Enhancements
 
@@ -203,6 +216,6 @@ export type Channel = {
 
 ---
 
-_Last Updated: 2025-09-11_
-_Architecture Status: Partial - Core systems working except space owner delete permissions (reverted due to security issues)_
-_Verified: 2025-12-09 - File paths confirmed current_
+_Last Updated: 2025-12-11_
+_Architecture Status: Complete - Space owner bypass removed, receiving-side validation added_
+_Security Update: Space owners must join roles for post/delete/pin (kick exception via protocol)_

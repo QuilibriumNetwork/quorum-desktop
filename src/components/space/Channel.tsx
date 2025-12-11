@@ -40,28 +40,25 @@ import { UserAvatar } from '../user/UserAvatar';
 import { getUserRoles, hasPermission } from '../../utils/permissions';
 
 // Helper function to check if user can post in read-only channel
+// NOTE: Space owners must explicitly join a manager role to post in read-only channels.
+// This is intentional - the receiving side cannot verify space ownership (privacy requirement).
 function canPostInReadOnlyChannel(
   channel: Channel | undefined,
   userAddress: string | undefined,
   roles: Role[],
-  isSpaceOwner: boolean
+  _isSpaceOwner: boolean
 ): boolean {
   // If not a read-only channel, allow posting
   if (!channel?.isReadOnly) {
     return true;
   }
 
-  // Space owners can always post
-  if (isSpaceOwner) {
-    return true;
-  }
-
-  // If no manager roles defined, only space owner can post
+  // If no manager roles defined, nobody can post
   if (!channel.managerRoleIds || channel.managerRoleIds.length === 0) {
     return false;
   }
 
-  // Check if user has any of the manager roles
+  // Check if user has any of the manager roles (space owners must also be in a manager role)
   if (!userAddress) {
     return false;
   }

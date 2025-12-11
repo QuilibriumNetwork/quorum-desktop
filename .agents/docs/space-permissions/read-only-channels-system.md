@@ -13,7 +13,7 @@ Read-only channels provide an **isolated permission system** that operates indep
 - **Traditional roles with `message:delete`** → ❌ Cannot delete in read-only channels
 - **Traditional roles with `message:pin`** → ❌ Cannot pin in read-only channels
 - **Read-only channel managers** → ✅ Full permissions in their managed channels only
-- **Space owners** → ❌ UI permissions only (processing not implemented - buttons do nothing)
+- **Space owners** → ❌ Must join a manager role (receiving-side cannot verify ownership)
 
 ### Manager-Based Permissions
 
@@ -42,10 +42,12 @@ export type Channel = {
 
 | User Type            | Regular Channels | Read-Only Channels (Manager) | Read-Only Channels (Non-Manager) |
 | -------------------- | ---------------- | ---------------------------- | -------------------------------- |
-| **Space Owner**      | All permissions  | UI only (no processing)      | UI only (no processing)          |
+| **Space Owner**      | Role-based*      | All permissions              | No permissions (must join role)  |
 | **Manager Role**     | Role permissions | All permissions              | No special permissions           |
 | **Traditional Role** | Role permissions | No permissions               | No permissions                   |
 | **Regular User**     | No permissions   | No permissions               | React only                       |
+
+*Space owners can always **kick users** (protocol verifies via `owner_public_keys`), but need roles for delete/pin.
 
 ## Implementation Architecture
 
@@ -76,16 +78,14 @@ export type Channel = {
 />
 ```
 
-**Manager Explanation Text**:
+**Manager Explanation Tooltip**:
 
 ```typescript
-<p className="text-xs text-subtle mb-4 leading-tight">
-  <Trans>
-    Select any existing role as managers for this channel. Managers have
-    post, delete, and pin permissions on ANY message by default. If no
-    managers are selected, only the Space owner can manage the channel.
-  </Trans>
-</p>
+<Tooltip
+  content={t`Members of selected roles can post, delete, and pin messages
+  in this read-only channel. Note: Space owners must also be in a manager
+  role to post here.`}
+/>
 ```
 
 #### **Channel Headers** (`src/components/space/Channel.tsx`)
@@ -153,24 +153,23 @@ export type Channel = {
 #### **Post Permissions** (`src/components/space/Channel.tsx`)
 
 ```typescript
+// NOTE: Space owners must explicitly join a manager role to post in read-only channels.
+// This is intentional - the receiving side cannot verify space ownership (privacy requirement).
 function canPostInReadOnlyChannel(
   channel: Channel | undefined,
   userAddress: string | undefined,
   roles: Role[],
-  isSpaceOwner: boolean
+  _isSpaceOwner: boolean
 ): boolean {
   // Regular channels: everyone can post
   if (!channel?.isReadOnly) return true;
 
-  // Space owners can always post
-  if (isSpaceOwner) return true;
-
-  // No manager roles defined: only space owner can post
+  // No manager roles defined: nobody can post
   if (!channel.managerRoleIds || channel.managerRoleIds.length === 0) {
     return false;
   }
 
-  // Check if user has any manager roles
+  // Check if user has any manager roles (space owners must also be in a manager role)
   if (!userAddress) return false;
 
   return roles.some(
@@ -426,11 +425,12 @@ if (spaceId != channelId) {
 - **Manager pin permissions**: Read-only managers can pin/unpin messages
 - **Self-message management**: Users can delete own messages in read-only channels
 
-### ⚠️ Space Owner Considerations
+### ⚠️ Space Owner Requirements
 
-- **UI Permissions**: Space owners see appropriate buttons and can attempt actions
-- **Processing Gap**: Space owner verification within the relevant service (e.g., `SpaceService`) exposed via `MessageDB Context` needs architectural consideration.
-- **Workaround**: Space owners can assign themselves to manager roles for full functionality
+- **Privacy Constraint**: Receiving side cannot verify space ownership (no `Space.ownerAddress` exposed)
+- **Role Requirement**: Space owners must explicitly join a manager role for post/delete/pin permissions
+- **Exception**: Space owners can always **kick users** (protocol verifies via `owner_public_keys`)
+- **Receiving-Side Validation**: MessageService.ts validates all incoming messages in read-only channels
 
 ### 🔧 Future Enhancements
 
@@ -506,6 +506,6 @@ if (spaceId != channelId) {
 
 ---
 
-_Last Updated: 2025-09-11_
-_Implementation Status: Core functionality complete, manager system working correctly_
-_Verified: 2025-12-09 - File paths confirmed current_
+_Last Updated: 2025-12-11_
+_Implementation Status: Core functionality complete, space owner bypass removed for security_
+_Security Update: Space owners must now join manager roles (receiving-side validation added)_

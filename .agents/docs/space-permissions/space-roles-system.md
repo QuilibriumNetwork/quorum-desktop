@@ -126,11 +126,13 @@ const { userRoles } = useUserRoleDisplay(targetAddress, roles, true);
 
 ## Permission Enforcement
 
-### Space Owner Override System
+### Space Owner Permissions
 
-**Critical Principle**: Space owners automatically have all **UI permissions** regardless of role assignments.
+**Important Design Decision**: Space owners do NOT automatically have all permissions. They must join appropriate roles.
 
-**⚠️ Important Limitation**: Space owner processing permissions are NOT implemented - delete buttons appear but do nothing.
+**Exception - Kick Permission**: Space owners can ALWAYS kick users because the protocol verifies ownership via `owner_public_keys`.
+
+**Why No Automatic Bypass?**: The receiving side cannot verify space ownership for post/delete/pin operations (privacy requirement - no `Space.ownerAddress` exposed). To maintain consistent enforcement on both sending and receiving sides, space owners must join roles.
 
 ```typescript
 // Core permission checking pattern
@@ -140,10 +142,10 @@ export function hasPermission(
   space: Space | undefined,
   isSpaceOwner: boolean = false
 ): boolean {
-  // Space owners always have all permissions
-  if (isSpaceOwner) return true;
+  // Space owners can ONLY kick without roles (protocol-level verification)
+  if (isSpaceOwner && permission === 'user:kick') return true;
 
-  // Check role-based permissions
+  // All other permissions require role membership
   return (
     space?.roles?.some(
       (role) =>
@@ -165,11 +167,14 @@ export function getUserPermissions(
   space: Space | undefined,
   isSpaceOwner: boolean = false
 ): Permission[] {
+  const permissions = new Set<Permission>();
+
+  // Space owners can ONLY kick without roles
   if (isSpaceOwner) {
-    return ['message:delete', 'message:pin', 'user:kick', 'mention:everyone'];
+    permissions.add('user:kick');
   }
 
-  const permissions = new Set<Permission>();
+  // All other permissions come from roles
   space?.roles?.forEach((role) => {
     if (role.members.includes(userAddress)) {
       role.permissions.forEach((p) => permissions.add(p));
@@ -190,9 +195,10 @@ export function getUserPermissions(
 
 #### **Processing Level Enforcement**
 
-- **MessageService Operations**: Server-side validation for delete operations (role-based only, space owners NOT implemented), interacting with MessageDB for persistence.
-- **Pinning System**: Permission checks in mutation hooks (role-based only, space owners NOT implemented)
-- **User Management**: Multi-layer kick protection system (including space owner protection), handled by `SpaceService`.
+- **MessageService Operations**: Server-side validation for delete operations, interacting with MessageDB for persistence
+- **Pinning System**: Permission checks in mutation hooks (preparing for global sync)
+- **User Management**: Multi-layer kick protection system, handled by `SpaceService`
+- **Receiving-Side Validation**: MessageService.ts validates incoming messages in read-only channels
 
 ## Role Management Components
 
@@ -339,8 +345,9 @@ export function canKickUser(targetUserAddress: string, space: Space): boolean {
 
 - **UI Controls**: Prevent unauthorized action attempts
 - **Business Logic**: Validate permissions in hooks and utilities
-- **Server Validation**: Final authorization in relevant services (e.g., `MessageService`, `SpaceService`) exposed via `MessageDB Context`.
-- **Space Owner Priority**: Owners bypass all permission checks
+- **Server Validation**: Final authorization in relevant services (e.g., `MessageService`, `SpaceService`)
+- **Receiving-Side Validation**: Incoming messages validated before adding to cache
+- **Space Owner Kick**: Protocol-level verification via `owner_public_keys`
 
 ## Integration with Permission Architecture
 
@@ -482,9 +489,9 @@ export type Role = {
 ### Working with Space Roles
 
 1. **Use `hasPermission()` utility**: Prefer centralized permission checking
-2. **Consider space owner override**: Always account for space owner privileges
+2. **Space owner kick exception**: Only kick permission works without roles
 3. **Respect read-only isolation**: Don't expect space roles to work in read-only channels
-4. **Implement defense in depth**: UI controls + business logic + server validation
+4. **Implement defense in depth**: UI controls + business logic + server validation + receiving-side
 
 ### Adding New Permissions
 
@@ -510,6 +517,6 @@ export type Role = {
 
 ---
 
-_Last Updated: 2025-01-07_
-_Implementation Status: Core features complete including role visibility system, expansion opportunities identified_
-_Verified: 2025-12-09 - File paths confirmed current_
+_Last Updated: 2025-12-11_
+_Implementation Status: Core features complete, space owner bypass removed for security_
+_Security Update: Space owners must join roles for delete/pin (kick exception via protocol)_
