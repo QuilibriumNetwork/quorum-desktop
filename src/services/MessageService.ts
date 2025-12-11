@@ -33,7 +33,11 @@ import { DefaultImages } from '../utils';
 import { getInviteUrlBase } from '../utils/inviteDomain';
 import { canonicalize } from '../utils/canonicalize';
 import { QuorumApiClient } from '../api/baseTypes';
-import { extractMentionsFromText } from '../utils/mentionUtils';
+import {
+  extractMentionsFromText,
+  MAX_MENTIONS_PER_MESSAGE,
+} from '../utils/mentionUtils';
+import { MAX_MESSAGE_LENGTH } from '../utils/validation';
 import { hasPermission } from '../utils/permissions';
 import { showWarning } from '../utils/toast';
 
@@ -329,6 +333,22 @@ export class MessageService {
       const editTimeWindow = 15 * 60 * 1000;
       const timeSinceCreation = Date.now() - targetMessage.createdDate;
       if (timeSinceCreation > editTimeWindow) {
+        return;
+      }
+
+      // Edit message length validation (defense-in-depth)
+      // Note: editedText can be string | string[], must handle both
+      const editedTextContent = editMessage.editedText;
+      const editedMessageText = Array.isArray(editedTextContent)
+        ? editedTextContent.join('')
+        : editedTextContent;
+
+      if (editedMessageText && editedMessageText.length > MAX_MESSAGE_LENGTH) {
+        console.log(
+          `🔒 Rejecting oversized edit ${decryptedContent.messageId} ` +
+            `from ${editMessage.senderId} ` +
+            `(${editedMessageText.length} chars > ${MAX_MESSAGE_LENGTH} limit)`
+        );
         return;
       }
 
@@ -819,12 +839,11 @@ export class MessageService {
       );
     } else {
       // Read-only channel validation - must validate BEFORE adding to cache
+      // Note: edit-message is handled earlier in the if-else chain (line ~310)
       const isDM = spaceId === channelId;
-      const isValidatableType =
-        decryptedContent.content.type === 'post' ||
-        decryptedContent.content.type === 'edit-message';
+      const isPostMessage = decryptedContent.content.type === 'post';
 
-      if (!isDM && isValidatableType) {
+      if (!isDM && isPostMessage) {
         const space = await this.messageDB.getSpace(spaceId);
 
         // FAIL-SECURE: Reject if space data unavailable
@@ -875,6 +894,41 @@ export class MessageService {
             );
             return;
           }
+        }
+      }
+
+      // Message length validation for post messages (defense-in-depth)
+      // Note: text can be string | string[], must handle both
+      // Edit-message validation is in the edit-message handler above (line ~310)
+      if (isPostMessage) {
+        const text = (decryptedContent.content as PostMessage).text;
+        const messageText = Array.isArray(text) ? text.join('') : text;
+
+        if (messageText && messageText.length > MAX_MESSAGE_LENGTH) {
+          console.log(
+            `🔒 Rejecting oversized message ${decryptedContent.messageId} ` +
+              `from ${decryptedContent.content.senderId} ` +
+              `(${messageText.length} chars > ${MAX_MESSAGE_LENGTH} limit)`
+          );
+          return;
+        }
+      }
+
+      // Mention count validation (defense-in-depth)
+      if (decryptedContent.mentions) {
+        const totalMentions =
+          (decryptedContent.mentions.memberIds?.length || 0) +
+          (decryptedContent.mentions.roleIds?.length || 0) +
+          (decryptedContent.mentions.channelIds?.length || 0) +
+          (decryptedContent.mentions.everyone ? 1 : 0);
+
+        if (totalMentions > MAX_MENTIONS_PER_MESSAGE) {
+          console.log(
+            `🔒 Rejecting message ${decryptedContent.messageId} ` +
+              `from ${decryptedContent.content.senderId} ` +
+              `with excessive mentions (${totalMentions} > ${MAX_MENTIONS_PER_MESSAGE})`
+          );
+          return;
         }
       }
 
@@ -2207,7 +2261,7 @@ export class MessageService {
                     showWarning(
                       `You've been kicked from ${space?.spaceName || spaceId}`
                     );
-                  } catch {}
+                  } catch { /* intentionally empty */ }
                   // Immediately navigate away from the space view when kicked
                   this.navigate('/messages', {
                     replace: true,
@@ -2605,7 +2659,7 @@ export class MessageService {
             }
           }
         }
-      } catch {}
+      } catch { /* intentionally empty */ }
     }
 
     if (newState) {
@@ -2860,7 +2914,7 @@ export class MessageService {
       const canUseEveryone = hasPermission(
         currentPasskeyInfo.address,
         'mention:everyone',
-        space,
+        space ?? undefined,
         isSpaceOwner || false
       );
 

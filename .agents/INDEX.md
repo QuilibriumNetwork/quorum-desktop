@@ -119,6 +119,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Fix Message Length Limit Bypass Vulnerability](tasks/fix-message-length-bypass-vulnerability.md)
 - [Fix Read-Only Channel Bypass Vulnerability](tasks/fix-read-only-channel-bypass-vulnerability.md)
 - [Implement Background Sync Queue for User Settings and Async Operations](tasks/background-sync-queue.md)
+- [Message Rate Limiting with User Experience Feedback](tasks/message-rate-limiting-with-ux-feedback.md)
 - [Implement Message Forwarding with Privacy Controls](tasks/message-forwarding-with-privacy-controls.md)
 - [Implement Smart Context Extraction Around Mentions in NotificationPanel](tasks/notification-mention-context-extraction.md)
 - [Multi-User Invite Selection Enhancement](tasks/multi-user-invite-selection.md)
@@ -304,4 +305,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2025-12-11 13:15:00
+**Last Updated**: 2025-12-11 14:30:00
