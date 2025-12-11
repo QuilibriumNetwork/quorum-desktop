@@ -40,6 +40,7 @@ import {
 import { MAX_MESSAGE_LENGTH } from '../utils/validation';
 import { hasPermission } from '../utils/permissions';
 import { showWarning } from '../utils/toast';
+import { SimpleRateLimiter, RATE_LIMITS } from '../utils/rateLimit';
 
 // Type definitions for the service
 export interface MessageServiceDependencies {
@@ -113,6 +114,9 @@ export class MessageService {
   private directSync: (spaceId: string, message: any) => Promise<void>;
   private saveConfig: (args: { config: any; keyset: any }) => Promise<void>;
   private sendHubMessage: (spaceId: string, message: string) => Promise<string>;
+
+  // Per-sender rate limiters (receiving-side defense-in-depth)
+  private receivingRateLimiters = new Map<string, SimpleRateLimiter>();
 
   constructor(dependencies: MessageServiceDependencies) {
     this.messageDB = dependencies.messageDB;
@@ -930,6 +934,26 @@ export class MessageService {
           );
           return;
         }
+      }
+
+      // Receiving-side rate limit detection (defense-in-depth)
+      const senderId = decryptedContent.content.senderId;
+      let limiter = this.receivingRateLimiters.get(senderId);
+      if (!limiter) {
+        limiter = new SimpleRateLimiter(
+          RATE_LIMITS.RECEIVING.maxMessages,
+          RATE_LIMITS.RECEIVING.windowMs
+        );
+        this.receivingRateLimiters.set(senderId, limiter);
+      }
+
+      const rateCheck = limiter.canSend();
+      if (!rateCheck.allowed) {
+        console.warn(
+          `🔒 Rate limit: Message from ${senderId} rejected (flood detected). ` +
+            `Message ID: ${decryptedContent.messageId}`
+        );
+        return; // Drop message silently (defense-in-depth)
       }
 
       // Authorized - add to cache

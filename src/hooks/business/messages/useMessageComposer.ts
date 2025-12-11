@@ -10,6 +10,8 @@ import { processAttachmentImage, FILE_SIZE_LIMITS } from '../../../utils/imagePr
 import type { AttachmentProcessingResult } from '../../../utils/imageProcessing';
 import { extractMentionsFromText, MAX_MENTIONS_PER_MESSAGE } from '../../../utils/mentionUtils';
 import { useMessageValidation, getMessageCounterText } from '../validation';
+import { SimpleRateLimiter, RATE_LIMITS } from '../../../utils/rateLimit';
+import { showWarning } from '../../../utils/toast';
 
 interface UseMessageComposerOptions {
   type: 'channel' | 'direct';
@@ -48,6 +50,11 @@ export function useMessageComposer(options: UseMessageComposerOptions) {
 
   // Ref for textarea
   const editor = useRef<HTMLTextAreaElement>(null);
+
+  // Rate limiter ref (persists across renders)
+  const rateLimiter = useRef(
+    new SimpleRateLimiter(RATE_LIMITS.UI.maxMessages, RATE_LIMITS.UI.windowMs)
+  );
 
   // Clear mention error when message changes
   useEffect(() => {
@@ -155,6 +162,13 @@ export function useMessageComposer(options: UseMessageComposerOptions) {
       // Validate message length before submission
       if (pendingMessage && messageValidation.isOverLimit) {
         return; // Block submission if message is too long
+      }
+
+      // Rate limit validation
+      const rateCheck = rateLimiter.current.canSend();
+      if (!rateCheck.allowed) {
+        showWarning(t`You're sending messages too quickly. Please wait a moment.`);
+        return; // Block submission if rate limited
       }
 
       setIsSubmitting(true);
