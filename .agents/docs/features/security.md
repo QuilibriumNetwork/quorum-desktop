@@ -1,12 +1,147 @@
-# Security Mechanisms
+# Security Architecture
 
-This document describes the security mechanisms implemented in the application to protect against various attack vectors. Each security mechanism is documented with the files involved for easy reference and maintenance.
+This document provides a comprehensive overview of the security mechanisms implemented in the Quorum Desktop application. It covers client-side protections, defense-in-depth validation, and cryptographic security.
 
 ---
 
-## 1. XSS (Cross-Site Scripting) Prevention
+## Executive Summary
 
-### Overview
+Quorum Desktop implements a **multi-layered security architecture** designed for a decentralized, privacy-focused messaging platform.
+
+### Security Posture (as of 2025-12-11)
+
+| Category | Status |
+|----------|--------|
+| **Critical vulnerabilities** | None identified |
+| **High-risk gaps** | None - all fixes applied |
+| **Defense-in-depth** | Fully implemented |
+| **Client validation bypass risk** | LOW - receiving-side validation protects honest clients |
+
+### Key Security Principles
+
+1. **Defense-in-Depth**: Multiple validation layers (UI → Service → Receiving)
+2. **Fail-Secure**: When uncertain, reject rather than allow
+3. **Privacy-First**: End-to-end encryption, minimal metadata exposure
+4. **Decentralized Trust**: No central authority - clients validate independently
+
+---
+
+## Open Source Security Context
+
+Quorum is **open-source software**, which has important security implications:
+
+### Why Custom Clients are a Threat Vector
+
+Since the source code is publicly available, anyone can:
+- Build a **modified client** that bypasses UI validation
+- Use **browser DevTools** to call internal functions directly
+- Create **automated scripts** to spam or abuse the system
+
+This means **client-side validation alone is never sufficient** for security-critical features.
+
+### Web/Desktop App vs Native Mobile App
+
+| Platform | Custom Client Risk | Why |
+|----------|-------------------|-----|
+| **Web App (Browser)** | Higher | Browser DevTools accessible, code easily inspectable |
+| **Desktop App (Electron)** | Higher | Same as web - DevTools accessible, JavaScript inspectable |
+| **Native Mobile App** | Lower | Compiled code, no DevTools, separate codebase |
+
+> **Note**: This repository contains the **Web App** and **Electron Desktop App** code. The native mobile apps (iOS/Android) are in a separate repository with compiled native code, which is inherently harder to modify at runtime.
+
+All platforms benefit from **receiving-side validation** because malicious messages can originate from any client on the network - a modified web client can send messages that native app users receive.
+
+### Our Security Response
+
+Rather than treating open-source as a vulnerability, we embrace it:
+
+1. **Assume all clients are potentially hostile** - Receiving validation protects honest users
+2. **Never trust sender claims** - Validate permissions independently
+3. **Silent rejection** - Don't reveal what was blocked to attackers
+4. **Transparent security model** - This documentation helps security researchers audit our approach
+
+> **Note**: The open-source nature also means security researchers can verify our claims and report vulnerabilities, making the system more secure over time.
+
+---
+
+## Defense-in-Depth Architecture
+
+In a decentralized P2P messaging system, there is no central server to enforce rules. Security relies on **each client validating independently**.
+
+### Three Validation Layers
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                     SENDING CLIENT                               │
+├─────────────────────────────────────────────────────────────────┤
+│  Layer 1: UI Validation                                          │
+│  - Prevents honest users from attempting unauthorized actions    │
+│  - Shows helpful error messages                                  │
+│  - Example: "You're sending messages too quickly"               │
+├─────────────────────────────────────────────────────────────────┤
+│  Layer 2: Service Validation                                     │
+│  - Strips unauthorized data before broadcast                     │
+│  - Example: @everyone removed if user lacks permission          │
+└─────────────────────────────────────────────────────────────────┘
+                              │
+                              │ Encrypted message broadcast
+                              │ via DHT network
+                              ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                    RECEIVING CLIENT                              │
+├─────────────────────────────────────────────────────────────────┤
+│  Layer 3: Receiving Validation                                   │
+│  - Validates ALL incoming messages before displaying            │
+│  - Rejects unauthorized/malformed content silently              │
+│  - Protects against malicious custom clients                    │
+│  - Example: Oversized messages dropped, rate limits enforced    │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+### Why Receiving Validation is Critical
+
+- **Custom clients** can bypass UI and service validation entirely
+- **DevTools manipulation** can call internal functions directly
+- **Only receiving validation** protects honest clients from malicious senders
+- **Silent rejection** prevents attackers from learning what was blocked
+
+---
+
+## Client-Side Validation Summary
+
+The following table summarizes all client-side limitations and their security status:
+
+| Limitation | Risk | Affects Official Client? | Bypass Status |
+|------------|------|--------------------------|---------------|
+| **XSS Prevention** | **LOW** | ❌ No - 3-layer defense | ❌ No - input sanitized |
+| **Regex DoS Prevention** | **LOW** | ❌ No - bounded quantifiers | ❌ No - length limits |
+| **@everyone mention** | **LOW** | ❌ No - stripped before broadcast | ❌ No - service layer |
+| **Delete others' messages** | **LOW** | ❌ No - rejected on receive | ⚠️ Sends, but rejected |
+| **Pin messages** | **LOW** | ❌ No - role required | ✅ Yes, but local only |
+| **Read-only channel posting** | **LOW** | ❌ No - rejected on receive | ⚠️ Sends, but rejected |
+| **Message length (2500 chars)** | **LOW** | ❌ No - rejected on receive | ⚠️ Sends, but rejected |
+| **Mentions per message (20)** | **LOW** | ❌ No - rejected on receive | ⚠️ Sends, but rejected |
+| **Message rate limiting** | **LOW** | ❌ No - 2-layer rate limiting | ⚠️ Sends, but rejected |
+| **Bookmarks limit (200)** | **NONE** | N/A - private data | ✅ Yes, but private |
+| **Folders limit (20/100)** | **NONE** | N/A - private data | ⚠️ Auto-truncated |
+| **Role visibility** | **NONE** | N/A - cosmetic | ✅ Yes, trivial |
+| **Kick space owner** | **LOW** | ❌ No - crypto verified | ❌ No - needs signatures |
+
+**Legend:**
+- **Risk**: Security risk level if bypassed
+- **Affects Official Client?**: Whether honest users see malicious content
+- **Bypass Status**: How bypass attempts are handled
+
+---
+
+## Security Mechanisms
+
+### 1. XSS (Cross-Site Scripting) Prevention
+
+**Defense Type**: Input validation + output encoding
+**Risk Level**: LOW (fully mitigated)
+
+#### Overview
 
 Implemented a **defense-in-depth** approach using three layers:
 
@@ -14,7 +149,7 @@ Implemented a **defense-in-depth** approach using three layers:
 2. **Placeholder Token System** - Safely render mentions without parsing user HTML
 3. **React Auto-Escaping** - Built-in JSX attribute escaping as a safety net
 
-### Attack Vectors Mitigated
+#### Attack Vectors Mitigated
 
 - HTML injection in messages (e.g., `<script>alert('XSS')</script>`)
 - Attribute injection via display names (e.g., `"><script>alert('XSS')</script>`)
@@ -23,244 +158,246 @@ Implemented a **defense-in-depth** approach using three layers:
 - Phishing links via HTML tags
 - UI spoofing via injected elements
 
-### Implementation Details
-
-#### Layer 1: Input Validation
+#### Implementation Files
 
 **Core Utilities:**
 - `src/utils/validation.ts` - Core validation functions (`validateNameForXSS`, `sanitizeNameForXSS`)
 
 **Validation Hooks:**
-- `src/hooks/business/validation/useDisplayNameValidation.ts` - Display name validation logic
-- `src/hooks/business/validation/useSpaceNameValidation.ts` - Space name validation logic
-- `src/hooks/business/validation/index.ts` - Exports validation hooks
+- `src/hooks/business/validation/useDisplayNameValidation.ts` - Display name validation
+- `src/hooks/business/validation/useSpaceNameValidation.ts` - Space name validation
 
 **Applied In:**
-- `src/components/onboarding/Onboarding.tsx` - Onboarding display name input
-- `src/hooks/business/user/useOnboardingFlowLogic.ts` - Onboarding validation logic
-- `src/components/modals/UserSettingsModal/UserSettingsModal.tsx` - User settings display name
-- `src/components/modals/CreateSpaceModal.tsx` - Space creation name input
-- `src/hooks/business/spaces/useSpaceCreation.ts` - Space creation validation logic
-- `src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx` - Space settings validation
-- `src/components/modals/SpaceSettingsModal/General.tsx` - Space settings name input
+- `src/components/onboarding/Onboarding.tsx` - Onboarding display name
+- `src/components/modals/UserSettingsModal/UserSettingsModal.tsx` - User settings
+- `src/components/modals/CreateSpaceModal.tsx` - Space creation
+- `src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx` - Space settings
 
-#### Layer 2: Placeholder Token System
+**Placeholder Token System:**
+- `src/components/message/MessageMarkdownRenderer.tsx` - Safe mention rendering
 
-**Core Implementation:**
-- `src/components/message/MessageMarkdownRenderer.tsx` - Converts mentions to safe placeholder tokens and renders them as React components
+#### Security Guarantees
 
-**How It Works:**
-1. User mentions (`@<address>`, `@everyone`) are converted to placeholder tokens (e.g., `<<<MENTION_USER:address>>>`)
-2. ReactMarkdown processes the text (escaping all HTML by default)
-3. Placeholder tokens are detected and rendered as styled React components
-4. No HTML parsing occurs, preventing all HTML injection attacks
+- ✅ Users **cannot** inject `<script>`, `<img>`, `<iframe>`, or other HTML tags
+- ✅ Users **cannot** use dangerous characters (`< > " '`) in display/space names
+- ✅ Markdown formatting still works (**bold**, *italic*, links, code blocks)
+- ✅ YouTube embeds work securely without allowing arbitrary HTML
 
-**Special Case: YouTube Embeds**
+---
 
-YouTube embeds use a similar safe approach without HTML parsing:
+### 2. Regex DoS (Denial of Service) Prevention
 
-1. Standalone YouTube URLs are converted to markdown image syntax: `![youtube-embed](videoId)`
-2. The markdown image component handler detects the special `alt="youtube-embed"` marker
-3. Renders a safe React component (`YouTubeFacade`) instead of allowing arbitrary images
-4. All other markdown images (user-typed) are blocked to prevent image-based attacks
+**Defense Type**: Bounded quantifiers + input sanitization
+**Risk Level**: LOW (fully mitigated)
 
-This approach avoids whitelisting HTML `<div>` or `<iframe>` elements, which could be abused for layout manipulation or UI spoofing.
+#### Overview
 
-#### Layer 3: React Auto-Escaping
+Protection against **Regular Expression Denial of Service** attacks targeting catastrophic backtracking in mention token parsing.
 
-React automatically escapes all JSX attributes, providing an additional safety layer for any data that might bypass input validation.
+#### Attack Vector
 
-### Security Guarantees
+Malicious input with long strings causes exponential regex processing time:
+```javascript
+// Attack: 1000+ character display name
+@[aaaaaaaaaaaaaaaa...1000 chars...]<QmValidAddress>
+```
 
-- ✅ Users **cannot** inject `<script>` tags in messages
-- ✅ Users **cannot** inject `<img>` tags with `onerror` handlers
-- ✅ Users **cannot** inject `<iframe>`, `<a>`, `<div>` or other HTML tags
-- ✅ Users **cannot** use dangerous characters (`< > [ ] /`) in display/space names
-- ✅ Users **cannot** inject arbitrary images via markdown image syntax
-- ✅ Markdown formatting still works (**bold**, *italic*, links, code blocks, etc.)
-- ✅ User mentions and role mentions render correctly with styling
-- ✅ YouTube embeds work securely for standalone URLs without allowing HTML elements
+#### Implementation
 
-### Testing
+**File**: `src/components/message/MessageMarkdownRenderer.tsx`
 
-Test cases and snippets available in `.agents/tasks/.done/xss-security-test-snippets.txt`
+**Regex Limits:**
+- Display names: max 200 characters
+- Role tags: max 50 characters
+- Channel names: max 200 characters
 
-### References
+**Input Sanitization:**
+```typescript
+const sanitizeDisplayName = (name: string) => {
+  return name
+    .replace(/>>>/g, '')  // Remove token-breaking chars
+    .substring(0, 200)    // Enforce length limit
+    .trim();
+};
+```
+
+#### Security Guarantees
+
+- ✅ Regex processing **bounded to finite time** regardless of input
+- ✅ Token-breaking characters **automatically removed**
+- ✅ Protection works against **all input sources** (UI, API, network)
+
+---
+
+### 3. Receiving-Side Message Validation
+
+**Defense Type**: Defense-in-depth validation
+**Risk Level**: LOW (all bypasses blocked)
+
+#### Overview
+
+All incoming messages are validated **before being added to the UI cache**, protecting honest clients from malicious senders.
+
+#### Validations Performed
+
+| Check | Limit | Location |
+|-------|-------|----------|
+| Read-only channel | Permission required | `MessageService.ts:821-878` |
+| Message length | 2500 characters max | `MessageService.ts:897-917` |
+| Mention count | 20 mentions max | `MessageService.ts:921-937` |
+| Rate limiting | 10 msgs/10 sec per sender | `MessageService.ts:939-957` |
+
+#### Implementation Pattern
+
+```typescript
+// Example: Message length validation (receiving side)
+if (isPostMessage) {
+  const text = (decryptedContent.content as PostMessage).text;
+  const messageText = Array.isArray(text) ? text.join('') : text;
+
+  if (messageText && messageText.length > MAX_MESSAGE_LENGTH) {
+    console.log(`🔒 Rejecting oversized message from ${senderId}`);
+    return; // Drop silently
+  }
+}
+```
+
+#### Security Guarantees
+
+- ✅ Oversized messages **never displayed** to honest users
+- ✅ Excessive mentions **never trigger notifications**
+- ✅ Read-only channel spam **never visible**
+- ✅ Message flooding **automatically rate limited**
+- ✅ Attackers only see their own malicious content
+
+---
+
+### 4. Message Rate Limiting
+
+**Defense Type**: 2-layer throttling (UI + receiving)
+**Risk Level**: LOW (fully mitigated)
+
+#### Overview
+
+Prevents message flooding/spam via sliding window rate limiting at two layers.
+
+#### Implementation
+
+| Layer | Limit | Feedback | Location |
+|-------|-------|----------|----------|
+| **UI** | 5 msgs / 5 sec | Toast warning | `useMessageComposer.ts:52-57` |
+| **Receiving** | 10 msgs / 10 sec | Silent rejection | `MessageService.ts:939-957` |
+
+**Rate Limiter Utility**: `src/utils/rateLimit.ts`
+
+```typescript
+export class SimpleRateLimiter {
+  private timestamps: number[] = [];
+
+  canSend(): { allowed: boolean; waitMs: number } {
+    const now = Date.now();
+    // Sliding window: remove expired timestamps
+    this.timestamps = this.timestamps.filter(t => t > now - this.windowMs);
+
+    if (this.timestamps.length < this.maxMessages) {
+      this.timestamps.push(now);
+      return { allowed: true, waitMs: 0 };
+    }
+    return { allowed: false, waitMs: /* calculated */ };
+  }
+}
+```
+
+#### Security Guarantees
+
+- ✅ UI prevents accidental rapid clicking with user feedback
+- ✅ Receiving layer blocks DevTools/custom client bypass
+- ✅ Flooded messages **only visible to attacker**
+- ✅ Per-sender tracking prevents multi-account abuse
+
+---
+
+### 5. Permission-Based Security
+
+**Defense Type**: Role-based access control + receiving validation
+**Risk Level**: LOW (crypto-verified where critical)
+
+#### Space Owner Protection
+
+Space owner identity is cryptographically tied to space creation keys:
+- **Location**: `src/services/SpaceService.ts:660-679`
+- **Verification**: Protocol verifies via `owner_public_keys`
+- **Bypass**: Requires forging cryptographic signatures
+
+#### @everyone Mention Permission
+
+Permission stripped **before broadcast** - unauthorized mentions never propagate:
+- **Location**: `src/services/MessageService.ts:2799-2826`
+- **Check**: `hasPermission(address, 'mention:everyone', space, isSpaceOwner)`
+
+#### Delete Message Permission
+
+Receiving clients validate permissions independently:
+- **Location**: `src/services/MessageService.ts:691-750`
+- **Behavior**: Unauthorized deletes silently ignored
+
+---
+
+## Cryptographic Security
+
+### End-to-End Encryption
+
+All messages are encrypted using the Quilibrium secure channel protocol:
+
+- **Algorithm**: Ed448 signatures + AES-GCM encryption
+- **Key Exchange**: Per-conversation key derivation
+- **Forward Secrecy**: Ratcheting key updates
+- **Metadata Protection**: Encrypted DHT storage
+
+### Passkey Authentication
+
+User identity secured via WebAuthn passkeys:
+- **No passwords**: Phishing-resistant authentication
+- **Device-bound**: Private keys never leave device
+- **Biometric**: Optional fingerprint/face unlock
+
+---
+
+## Security Testing
+
+### Attack Scenarios Tested
+
+1. **XSS injection** - HTML/script tags in messages and names
+2. **Regex DoS** - Long strings causing catastrophic backtracking
+3. **Message flooding** - Rapid message submission
+4. **Permission bypass** - DevTools/custom client manipulation
+5. **Read-only channel posting** - Unauthorized posts to restricted channels
+6. **Mention spam** - Excessive @mentions for notification abuse
+
+### Test Resources
+
+- XSS test snippets: `.agents/tasks/.done/xss-security-test-snippets.txt`
+- Security audit: `.temp/client-side-limitations-bypass-audit_2025-12-11.md`
+
+---
+
+## References
+
+### Internal Documentation
+
+- [Input Validation Reference](./input-validation-reference.md) - Detailed validation rules, limits, and implementation patterns
+
+### External Resources
 
 - [OWASP XSS Prevention Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Cross_Site_Scripting_Prevention_Cheat_Sheet.html)
+- [OWASP Regular Expression DoS](https://owasp.org/www-community/attacks/Regular_expression_Denial_of_Service_-_ReDoS)
 - [ReactMarkdown Security](https://github.com/remarkjs/react-markdown#security)
-- Full implementation details: `.agents/tasks/.done/xss-prevention-final-implementation-2025-11-08.md`
-
----
-
-## 2. Regex DoS (Denial of Service) Prevention
-
-### Overview
-
-Implemented protection against **Regular Expression Denial of Service** attacks, specifically targeting **catastrophic backtracking** vulnerabilities in mention token parsing.
-
-### Attack Vector Mitigated
-
-**Regex Catastrophic Backtracking**: Malicious input containing long strings with unbounded quantifiers (`*`, `+`) in regex patterns with alternation can cause exponential time complexity, freezing the browser.
-
-**Example Attack**:
-```javascript
-// Malicious mention with 1000+ characters in display name
-@[aaaaaaaaaaaaaaaaaaaaaa...1000 chars...]<QmValidAddress>
-```
-
-This creates a mention token like:
-```
-<<<MENTION_USER:QmValidAddress:aaaaaaaaaaaaaaaa...1000 chars...>>>
-```
-
-When processed by a vulnerable regex like `([^>]*)`, the regex engine tries every possible combination, causing exponential processing time.
-
-### Implementation Details
-
-#### Quantifier Limits in Token Processing
-
-**File**: `src/components/message/MessageMarkdownRenderer.tsx`
-**Function**: `processMentionTokens()` (lines 358-363)
-
-**Before (Vulnerable)**:
-```typescript
-const mentionRegex = /<<<MENTION_(USER:.+:([^>]*)|ROLE:([^:]+):([^>]+))>>>/g;
-// Unbounded quantifiers: ([^>]*), ([^:]+), ([^>]+)
-```
-
-**After (Protected)**:
-```typescript
-const mentionRegex = new RegExp(`<<<MENTION_(EVERYONE|USER:(${cidPattern}):([^>]{0,200})|ROLE:([^:]{1,50}):([^>]{1,200})|CHANNEL:([^:>]{1,50}):([^:>]{1,200}):([^>]{0,200}))>>>`, 'g');
-// Limited quantifiers with maximum bounds
-```
-
-**Regex Parsing Limits** (for token processing security, not UI input validation):
-- Display names: `{0,200}` characters (accepts empty for graceful handling of malformed data)
-- Role tags: `{1,50}` characters
-- Role display names: `{1,200}` characters
-- Channel IDs: `{1,50}` characters (system-generated, but limited in regex to prevent malformed token attacks)
-- Channel names: `{1,200}` characters
-
-> **Note**: These limits are for **regex parsing security** to prevent DoS attacks from any data source (API, network, legacy data). For **UI input validation** limits, see the validation hooks in `src/hooks/business/validation/` which enforce stricter rules (e.g., display names require at least 1 character).
-
-#### Input Sanitization for Token Creation
-
-**File**: `src/components/message/MessageMarkdownRenderer.tsx`
-**Function**: `sanitizeDisplayName()` (lines 203-213)
-
-```typescript
-const sanitizeDisplayName = useCallback((displayName: string | null | undefined): string => {
-  if (!displayName) return '';
-
-  return displayName
-    .replace(/>>>/g, '') // Remove token-breaking characters
-    .substring(0, 200)   // Match regex limit
-    .trim();
-}, []);
-```
-
-**Applied to**:
-- User mention display names: `@[DisplayName]<address>` (line 265)
-- Channel mention display names: `#[ChannelName]<channelId>` (line 351)
-
-### Why XSS Validation Alone Was Insufficient
-
-The existing XSS validation (`validateNameForXSS`) only blocks HTML-dangerous characters:
-```typescript
-export const DANGEROUS_HTML_CHARS = /[<>"']/;
-```
-
-**XSS Protection**: Prevents content injection
-**Regex DoS Protection**: Prevents performance attacks
-
-**Attack bypasses XSS validation because**:
-- Long strings without `<>"'` characters pass XSS validation
-- Performance attack occurs during token parsing, not content rendering
-- Malicious input can come from API, network, or legacy data sources
-
-### Defense Layers
-
-1. **Regex Quantifier Limits**: Maximum character bounds prevent infinite backtracking
-2. **Input Sanitization**: Remove token-breaking characters and enforce length limits
-3. **Token Format Validation**: Precise IPFS CID patterns reduce regex complexity
-4. **Early Bounds Checking**: Fast string validation before expensive regex operations
-
-### Security Guarantees
-
-- ✅ Mention display names **cannot** exceed 200 characters
-- ✅ Token-breaking characters (`>>>`) are **automatically removed**
-- ✅ Regex processing **bounded to finite time** regardless of input
-- ✅ Protection works against **all input sources** (UI, API, network, legacy data)
-- ✅ **No functional impact** - legitimate mentions continue working normally
-- ✅ **Graceful degradation** - malicious input is sanitized rather than rejected
-
-### Testing Attack Scenarios
-
-**Test Cases**:
-1. **Long display names**: 1000+ character names in mention format
-2. **Token injection**: Display names containing `>>>` sequences
-3. **Mixed attacks**: Combining long strings with special characters
-4. **Legacy data**: Pre-existing mentions with unbounded content
-
-**Performance Verification**:
-- Maximum parsing time: <5ms for any input
-- Browser remains responsive during mention processing
-- Memory usage stays within normal bounds
-
-### References
-
-- [OWASP Regular Expression Denial of Service](https://owasp.org/www-community/attacks/Regular_expression_Denial_of_Service_-_ReDoS)
-- [Regex Catastrophic Backtracking](https://www.regular-expressions.info/catastrophic.html)
-- [Feature Analysis Report](Feature-analyzer identified this vulnerability during centralized validation review)
-
----
-
-## 3. Rate Limiting for Mention Extraction
-
-### Overview
-
-Implemented **mention count rate limiting** to prevent notification spam and system abuse via excessive mentions.
-
-### Attack Vector Mitigated
-
-**Mention Spam/DoS**: Messages with 100+ mentions flooding users with notifications or overloading mention processing.
-
-### Implementation Details
-
-**File**: `src/utils/mentionUtils.ts` or `src/services/MessageService.ts`
-**Function**: `extractMentionsFromText()`
-
-**Limit**: Maximum 20 total mentions per message (user + role + everyone + channel mentions combined)
-
-**Counting Strategy**: Uses syntax-only counting - any mention pattern is counted regardless of whether the user/channel actually exists. This prevents bypass attempts using fake mentions.
-
-**Behavior**: When limit exceeded, message submission is blocked with user-friendly error message in MessageComposer.
-
-### Security Guarantees
-
-- ✅ **Maximum 20 mentions** processed per message
-- ✅ **Notification spam prevention** - limits concurrent notifications
-- ✅ **Graceful degradation** - excess mentions become plain text without breaking functionality
-
-### References
-
-- Security audit report: `.agents/reports/security-audit-markdown-mentions-2025-11-18.md` (Recommendation 2, line 936)
-
----
-
-## Future Security Mechanisms
-
-This document will be updated as new security mechanisms are implemented.
-
-### Planned
-
-- End-to-end encryption validation
-- Secure key storage mechanisms
-- Content Security Policy (CSP) headers
 
 ---
 
 **Document Created**: 2025-11-08
-**Last Updated**: 2025-11-24 (Clarified regex parsing limits vs UI input validation)
-**Verified**: 2025-12-09 - File paths confirmed current
+**Last Updated**: 2025-12-11
+**Major Updates**:
+- 2025-12-11: Added receiving-side validation for message length, mentions, read-only channels
+- 2025-12-11: Added 2-layer message rate limiting
+- 2025-12-11: Restructured as comprehensive security architecture document
