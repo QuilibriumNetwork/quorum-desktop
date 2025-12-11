@@ -116,6 +116,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Custom ContentEditable Mention Pills for Message Composer](tasks/mention-pills-in-message-textarea.md)
 - [Date Translation with Moment.js Locale Configuration](tasks/i18n-date-translation-moment-locale.md)
 - [Device Identification Improvement](tasks/device-identification-improvement.md)
+- [Fix Message Length Limit Bypass Vulnerability](tasks/fix-message-length-bypass-vulnerability.md)
 - [Fix Read-Only Channel Bypass Vulnerability](tasks/fix-read-only-channel-bypass-vulnerability.md)
 - [Implement Background Sync Queue for User Settings and Async Operations](tasks/background-sync-queue.md)
 - [Implement Message Forwarding with Privacy Controls](tasks/message-forwarding-with-privacy-controls.md)
@@ -303,4 +304,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2025-12-11 12:57:56
+**Last Updated**: 2025-12-11 13:15:00
