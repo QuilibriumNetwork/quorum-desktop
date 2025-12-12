@@ -410,6 +410,28 @@ export class ConfigService {
       // Filter out entries with undefined encryptionState
       config.spaceKeys = allSpaceKeys.filter(sk => sk.encryptionState !== undefined);
 
+      // Ensure spaceIds and items only include spaces that have encryption keys
+      // This prevents server validation errors when some spaces don't have complete encryption data
+      const validSpaceIds = new Set(config.spaceKeys.map(sk => sk.spaceId));
+      config.spaceIds = config.spaceIds.filter(id => validSpaceIds.has(id));
+      if (config.items) {
+        config.items = config.items.filter(item => {
+          if (item.type === 'space') {
+            return validSpaceIds.has(item.id);
+          } else {
+            // For folders, filter out spaces without encryption keys
+            item.spaceIds = item.spaceIds.filter(id => validSpaceIds.has(id));
+            // Remove empty folders
+            return item.spaceIds.length > 0;
+          }
+        });
+      }
+
+      // After filtering spaceIds/items, also filter spaceKeys to only include spaces that are still in spaceIds
+      // This ensures bidirectional consistency: spaceIds ⟷ spaceKeys
+      const finalSpaceIds = new Set(config.spaceIds);
+      config.spaceKeys = config.spaceKeys.filter(sk => finalSpaceIds.has(sk.spaceId));
+
       // Collect bookmarks before encryption (Phase 7: Sync Integration)
       config.bookmarks = await this.messageDB.getBookmarks();
       // Note: deletedBookmarkIds will be reset AFTER successful sync

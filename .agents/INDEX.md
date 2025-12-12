@@ -102,6 +102,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [SOLVED: Fast Refresh Export Incompatibility](bugs/.solved/SOLVED_fast-refresh-export-incompatibility.md)
 - [SOLVED: Modal NavMenu Z-Index Stacking Issue](bugs/.solved/SOLVED_modal-navmenu-zindex-stacking.md)
 - [SOLVED: Right Sidebar Overlay Issue - Navbar Still Visible](bugs/.solved/SOLVED_right-sidebar-overlay.md)
+- [Space Creation Config Save Race Condition](bugs/.solved/space-creation-config-save-race-condition.md)
 
 ### .Archived
 - [Bug: Auto-jump to First Unread Breaks Initial Message Sync](bugs/.archived/auto-jump-unread-breaks-message-sync.md)
@@ -121,7 +122,6 @@ This is the main index for all documentation, bug reports, and task management.
 - [Implement Smart Context Extraction Around Mentions in NotificationPanel](tasks/notification-mention-context-extraction.md)
 - [Multi-User Invite Selection Enhancement](tasks/multi-user-invite-selection.md)
 - [Passkey Import UX Issue](tasks/passkey-import-ux-issue.md)
-- [Pinned Messages Cross-Client Synchronization](tasks/pinned-messages-sync.md)
 - [SDK PasskeyModal Customization Props Enhancement](tasks/sdk-passkey-modal-customization-props.md)
 - [Task: Implement Delete Public Invite Link Feature](tasks/delete-public-invite-link.md)
 - [Test Suite Implementation Plan for Quorum Desktop](tasks/test-suite-plan.md)
@@ -253,6 +253,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Notification Dropdown/Inbox UI Implementation](tasks/.done/notification-inbox-ui.md)
 - [Per-Space Profile Data Flow Analysis](tasks/.done/per-space-profile-data-flow-analysis.md)
 - [Phase 1 Complete: Component Audit Infrastructure & Initial Analysis](tasks/.done/components-audit-dashboard.md)
+- [Pinned Messages Cross-Client Synchronization](tasks/.done/pinned-messages-sync.md)
 - [Pinned Messages Feature - Implementation Plan](tasks/.done/pinned-messages-feature.md)
 - [Public Invite Links Improvement Task](tasks/.done/invite-links-improve.md)
 - [ReactTooltip Mobile Optimization](tasks/.done/reacttoolltip-mobile.md)
@@ -305,4 +306,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2025-12-12 10:53:16
+**Last Updated**: 2025-12-12 12:48:59

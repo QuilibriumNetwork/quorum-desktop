@@ -428,6 +428,18 @@ export class SpaceService {
         inbox_address: inboxAddress,
       });
     }
+    // IMPORTANT: Save encryption state BEFORE updating config
+    // This ensures the space has encryption keys when config filtering runs
+    await this.messageDB.saveEncryptionState(
+      {
+        state: JSON.stringify(session),
+        timestamp: ts,
+        conversationId: spaceAddress + '/' + spaceAddress,
+        inboxId: inboxAddress,
+      },
+      true
+    );
+
     const config = await this.messageDB.getUserConfig({
       address: registration.user_address,
     });
@@ -457,15 +469,6 @@ export class SpaceService {
         keyset,
       });
     }
-    await this.messageDB.saveEncryptionState(
-      {
-        state: JSON.stringify(session),
-        timestamp: ts,
-        conversationId: spaceAddress + '/' + spaceAddress,
-        inboxId: inboxAddress,
-      },
-      true
-    );
     // Ensure member list reflects the creator immediately
     await queryClient.invalidateQueries({
       queryKey: buildSpaceMembersKey({ spaceId: spaceAddress }),

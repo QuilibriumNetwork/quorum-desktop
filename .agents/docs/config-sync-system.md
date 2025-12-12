@@ -56,11 +56,12 @@ export type UserConfig = {
 │  ConfigService.saveConfig()                                              │
 │       ↓                                                                  │
 │  ┌─────────────────────────────────────────────────────────────────┐    │
-│  │ 1. Collect current data                                          │    │
+│  │ 1. Collect and filter current data                              │    │
 │  │    - Fetch all spaces from IndexedDB                            │    │
 │  │    - Fetch space keys and encryption states                      │    │
+│  │    - Filter spaces without encryption states                     │    │
+│  │    - Filter spaceIds and items to match spaceKeys (consistency)  │    │
 │  │    - Fetch bookmarks                                             │    │
-│  │    - Filter bloated encryption states (>100KB safety net)        │    │
 │  └─────────────────────────────────────────────────────────────────┘    │
 │       ↓                                                                  │
 │  ┌─────────────────────────────────────────────────────────────────┐    │
@@ -237,26 +238,58 @@ Config is saved (and potentially synced) when:
 
 ## Safety Mechanisms
 
-### Bloated Encryption State Filter
+### Encryption State Filtering
 
-Some encryption states can grow abnormally large (~2MB instead of ~10KB), causing API rejection. A safety filter skips these:
+Spaces without complete encryption data are filtered out during sync to prevent server validation errors. This happens in two scenarios:
+
+#### 1. Missing Encryption States
+
+Spaces that haven't completed encryption setup are excluded:
 
 ```typescript
-const MAX_STATE_SIZE = 100000; // 100KB limit
-config.spaceKeys = allSpaceKeys.filter(sk => {
-  if (sk.encryptionState === undefined) return false;
-  const stateSize = JSON.stringify(sk.encryptionState).length;
-  if (stateSize > MAX_STATE_SIZE) {
-    console.warn('Skipping bloated encryption state:', sk.spaceId);
-    return false;
-  }
-  return true;
-});
+// Filter out spaces with undefined encryptionState
+config.spaceKeys = allSpaceKeys.filter(sk => sk.encryptionState !== undefined);
 ```
 
-**Impact**: Spaces with bloated states won't sync their encryption session. Users need to re-establish encryption on new devices for those spaces.
+#### 2. Bidirectional Config Consistency Check (Added 2025-12-12)
 
-**Related bug**: `.agents/bugs/bloated-encryption-states-sync-failure.md`
+We perform **two-way filtering** to ensure perfect consistency between `spaceKeys` and `spaceIds`:
+
+```typescript
+// Step 1: Filter spaceIds/items to only include spaces WITH encryption keys
+const validSpaceIds = new Set(config.spaceKeys.map(sk => sk.spaceId));
+config.spaceIds = config.spaceIds.filter(id => validSpaceIds.has(id));
+
+if (config.items) {
+  config.items = config.items.filter(item => {
+    if (item.type === 'space') {
+      return validSpaceIds.has(item.id);
+    } else {
+      // For folders, filter out spaces without encryption keys
+      item.spaceIds = item.spaceIds.filter(id => validSpaceIds.has(id));
+      // Remove empty folders
+      return item.spaceIds.length > 0;
+    }
+  });
+}
+
+// Step 2: Filter spaceKeys to only include keys for spaces IN the final spaceIds
+const finalSpaceIds = new Set(config.spaceIds);
+config.spaceKeys = config.spaceKeys.filter(sk => finalSpaceIds.has(sk.spaceId));
+```
+
+**Why bidirectional filtering?** The server validates that `spaceIds` and `spaceKeys` must be perfectly in sync:
+- Every space in `spaceIds` must have keys in `spaceKeys` (prevents "missing encryption" errors)
+- Every key in `spaceKeys` must reference a space in `spaceIds` (prevents "orphaned keys" errors)
+
+Mismatches result in `400 - invalid config missing data` errors.
+
+**Impact**:
+- Spaces without complete encryption won't appear in the nav bar
+- They remain in the local database (not deleted)
+- Once encryption completes, they'll automatically appear on next sync
+
+**Related bug**: Fixed folder operations failing with `400 - invalid config missing data` on staging (2025-12-12)
 
 ### Signature Verification
 
@@ -322,3 +355,4 @@ The 100KB per-encryption-state filter keeps total payload well under limits.
 ---
 
 *Created: 2025-12-09*
+*Updated: 2025-12-12* - Added spaceIds/items filtering for server validation consistency
