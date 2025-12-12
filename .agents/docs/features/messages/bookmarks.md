@@ -230,6 +230,7 @@ The sync includes transaction safety with rollback capability. If sync fails par
 - **Signing**: Ed448 signature for integrity verification
 - **Privacy Control**: Only syncs when `allowSync=true` in Privacy settings
 - **User Control**: Disable sync anytime via Privacy settings toggle
+- **Limit Enforcement**: 200 bookmark limit enforced with defense-in-depth (UI + database-layer atomic validation to prevent client-side bypass, see [messages.ts:1656-1679](../../../src/db/messages.ts#L1656-L1679))
 
 ## Usage Examples
 

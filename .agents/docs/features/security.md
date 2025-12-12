@@ -122,7 +122,7 @@ The following table summarizes all client-side limitations and their security st
 | **Message length (2500 chars)** | **LOW** | ❌ No - rejected on receive | ⚠️ Sends, but rejected |
 | **Mentions per message (20)** | **LOW** | ❌ No - rejected on receive | ⚠️ Sends, but rejected |
 | **Message rate limiting** | **LOW** | ❌ No - 2-layer rate limiting | ⚠️ Sends, but rejected |
-| **Bookmarks limit (200)** | **NONE** | N/A - private data | ✅ Yes, but private |
+| **Bookmarks limit (200)** | **NONE** | N/A - private data | ❌ No - DB validation |
 | **Folders limit (20/100)** | **NONE** | N/A - private data | ⚠️ Auto-truncated |
 | **Role visibility** | **NONE** | N/A - cosmetic | ✅ Yes, trivial |
 | **Kick space owner** | **LOW** | ❌ No - crypto verified | ❌ No - needs signatures |
@@ -415,6 +415,7 @@ User identity secured via WebAuthn passkeys:
 **Document Created**: 2025-11-08
 **Last Updated**: 2025-12-12
 **Major Updates**:
+- 2025-12-12: Added bookmark limit database-layer validation (defense-in-depth hardening)
 - 2025-12-12: Added pin message cross-client synchronization with full defense-in-depth validation
 - 2025-12-11: Added receiving-side validation for message length, mentions, read-only channels
 - 2025-12-11: Added 2-layer message rate limiting

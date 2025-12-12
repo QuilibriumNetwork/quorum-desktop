@@ -1,5 +1,5 @@
 import { channel } from '@quilibrium/quilibrium-js-sdk-channels';
-import { Conversation, Message, Space, Bookmark } from '../api/quorumApi';
+import { Conversation, Message, Space, Bookmark, BOOKMARKS_CONFIG } from '../api/quorumApi';
 import type { NotificationSettings } from '../types/notifications';
 import type { IconColor } from '../components/space/IconPicker/types';
 import type { IconName } from '../components/primitives/Icon/types';
@@ -1658,10 +1658,23 @@ export class MessageDB {
     return new Promise((resolve, reject) => {
       const transaction = this.db!.transaction('bookmarks', 'readwrite');
       const store = transaction.objectStore('bookmarks');
-      const request = store.add(bookmark);
 
-      request.onsuccess = () => resolve();
-      request.onerror = () => reject(request.error);
+      // SECURITY: Atomic limit check to prevent client-side bypass
+      const countRequest = store.count();
+
+      countRequest.onsuccess = () => {
+        if (countRequest.result >= BOOKMARKS_CONFIG.MAX_BOOKMARKS) {
+          reject(new Error('BOOKMARK_LIMIT_EXCEEDED'));
+          return;
+        }
+
+        // Only add if under limit
+        const request = store.add(bookmark);
+        request.onsuccess = () => resolve();
+        request.onerror = () => reject(request.error);
+      };
+
+      countRequest.onerror = () => reject(countRequest.error);
     });
   }
 
