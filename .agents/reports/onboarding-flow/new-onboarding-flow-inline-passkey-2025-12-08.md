@@ -5,6 +5,7 @@
 **Visual Progress:** 5 dots (●○○○○)
 - Step 0 (Welcome) has no dots
 - Steps 1a & 1b share the same dot (both are "Passkey Setup")
+- Steps 2a & 2b share the same dot (both are "Backup Key")
 
 ---
 
@@ -30,14 +31,14 @@
 - **On success:** → Step 1b (same dot stays active)
 
 - **On error/cancel:**
-  - Text (user cancelled): "You cancelled the confirmation. Tap Try Again when ready." ⓘ
-  - Text (not supported): "Passkeys aren't supported on this browser." ⓘ
-  - Text (timeout): "The confirmation timed out. Please try again." ⓘ
-  - Text (generic): "Something went wrong. Please try again." ⓘ
+  - Text (user cancelled): "You cancelled the passkey setup. You can try again, or continue without Passkey (still secure, just without device hardware protection)." ⓘ
+  - Text (not supported): "Passkeys aren't supported on this browser. You'll need to continue without Passkey (still secure, just without device hardware protection)." ⓘ
+  - Text (timeout): "The passkey setup timed out. You can try again, or continue without Passkey (still secure, just without device hardware protection)." ⓘ
+  - Text (generic): "Passkey setup failed. You can try again, or continue without Passkey (still secure, just without device hardware protection)." ⓘ
   - ⓘ tooltip: Shows raw browser error for debugging/support
   - Buttons: `Try Again` / `Continue without passkey`
     - `Try Again` → retry Step 1a (safe - nothing created yet)
-    - `Continue without passkey` → Fallback Mode → Step 2
+    - `Continue without passkey` → Fallback Mode → Step 2a
 
 > **Note:**
 > - Calls `register()` → device biometric/PIN prompt.
@@ -52,11 +53,11 @@
   - Primary: `Save to Passkey` → device prompt
 - **Tooltip:** "What is the Account Key?" → "Your account key is your unique identity in Quorum. It's like a master password that proves you are you - but it's generated automatically and stored securely in your passkey."
 
-- **On success:** → Step 2
+- **On success:** → Step 2a
 
 - **On error:**
   - Text: "Couldn't save to passkey. Your account key will be stored with standard encryption on this device - still secure, but without hardware protection."
-  - Buttons: `Continue without Passkey` → Step 2
+  - Buttons: `Continue without Passkey` → Step 2a
 
 > **Note:**
 > - Calls `completeRegistration()` → device biometric/PIN prompt.
@@ -65,15 +66,22 @@
 
 ---
 
-### Step 2: Backup Key (●●○○○)
+### Step 2a: Backup Key (●●○○○)
 - **Title:** Back Up Your Account Key
-- **Text:** Save a backup of your account key. You'll need this to recover your account if you lose access to your device.
-- **Warning:** Keep this file safe and private. Anyone with this file can access your account.
+- **Text:** You'll need this file to recover your account if you lose access to your device.
 - **Buttons:**
-  - Primary: `Download Key Backup` → downloads `.key` file
+  - Primary: `Download Key Backup` → downloads `.key` file → Step 2b
   - Link: `I've already saved my key` → Step 3
-- **After download:** Show `Continue` button → Step 3
-- **Tooltip:** "Without this backup, losing your device means losing your account - there's no 'forgot password' option. This is the price you pay for privacy :-)"
+- **Tooltip:** "Why do I need to do this?" → "Without this backup, losing your device means losing your account - there's no 'forgot password' option. This is the price you pay for privacy :-)"
+
+---
+
+### Step 2b: Security Warning (●●○○○) - same dot as 2a
+- **Title:** Keep your Key Safe!
+- **Text:** Keep the file you downloaded safe and private! Anyone with this file can access your account.
+- **Icon:** Lock icon
+- **Buttons:**
+  - Primary: `I understand` → Step 3
 
 ---
 
@@ -81,10 +89,10 @@
 - **Title:** What should we call you?
 - **Text:** This is how others will see you in Quorum. You can change this anytime in Settings.
 - **Input:** placeholder "Enter your name"
-- **Input (disabled):** label "Account Address" - placeholder "The user account address"
+- **Input (disabled):** label "Account Address" - placeholder "The user account address" - The is redundant and could be skipped from the design
 - **Buttons:**
   - Primary: `Continue` (disabled until name entered) → Step 4
-- **Tooltip:** "What is the Account Address?" → "Your account address is a unique public identifier derived from your account key. Others can use it to find and message you. Think of it like a username that can never change."
+- **Tooltip:** (hide if we don't show the account address input) "What is the Account Address?" → "Your account address is a unique public identifier derived from your account key. Others can use it to find and message you. Think of it like a username that can never change."
 
 ---
 
@@ -129,12 +137,12 @@ This flow is used when:
 
 ---
 
-### Import Step 1: Import Key (●○○○○)
+### Import Step 0: Import Key (●○○○○)
 - **Title:** Import your account key
 - **Text:** Select or drag your account key file to restore your account.
 - **Input:** File drop zone (accepts `.key` files)
 - **Buttons:**
-  - Primary: `Continue` (disabled until file selected) → Step 2a
+  - Primary: `Continue` (disabled until file selected) → Import Step 1a
   - Link: `Create new account instead` → New Account Step 1a
 
 - **On invalid file:**
@@ -145,11 +153,11 @@ This flow is used when:
 
 ---
 
-### Import Step 2a & 2b: Passkey Setup (●●○○○)
+### Import Step 1a & 1b: Passkey Setup (●●○○○)
 - Same as New Account Steps 1a & 1b
 - Uses imported keypair instead of generating new one
 
-- **On success:** → Step 3 (Backup Key) → Step 4 (Name) → Step 5 (Photo) → Main App
+- **On success:** → Step 2a (Backup Key) → Step 2b (Security Warning) → Step 3 (Name) → Step 4 (Photo) → Step 5 (Complete) → Main App
 
 > **Note:** Currently users must re-enter name and photo even when importing existing account. Profile data is stored locally, not synced. This will be improved in future.
 
@@ -170,7 +178,7 @@ Triggered when:
 - `credentialId` set to `'not-passkey'`
 
 **User flow after fallback:**
-- Continues to Step 2 (Backup Key) → Step 3 (Name) → Step 4 (Photo) → Step 5 (Complete)
+- Continues to Step 2a (Backup Key) → Step 2b (Security Warning) → Step 3 (Name) → Step 4 (Photo) → Step 5 (Complete)
 - Same flow as passkey users, just without hardware protection
 
 **No way to create passkey later** - not currently supported in UI (could be added in Settings)
@@ -204,7 +212,7 @@ This is a WebAuthn spec requirement, not a design choice.
 // New account
 register(fqAppPrefix, address)           // Step 1a
 completeRegistration(fqAppPrefix, {...}) // Step 1b
-downloadKey()                            // Step 2
+downloadKey()                            // Step 2a
 
 // Login
 authenticate(fqAppPrefix)                // Passkey login
