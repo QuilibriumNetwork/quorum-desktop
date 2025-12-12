@@ -14,6 +14,8 @@ The script ensures both the project's documentation system and the .agents
 index are synchronized and up-to-date.
 
 Usage: python3 update-index.py
+
+Cross-platform compatible: Works on both WSL and native Windows.
 """
 
 import os
@@ -21,6 +23,41 @@ import re
 import subprocess
 import sys
 from datetime import datetime
+
+# Configure stdout for UTF-8 on Windows to support emoji/unicode output
+if sys.platform == 'win32':
+    try:
+        # Try to set UTF-8 mode for stdout
+        sys.stdout.reconfigure(encoding='utf-8', errors='replace')
+    except Exception:
+        pass  # Fall back to default encoding if reconfigure fails
+
+# Cross-platform symbols (use ASCII fallbacks on Windows if needed)
+def get_symbols():
+    """Return symbols appropriate for the current platform/encoding."""
+    try:
+        # Test if we can print unicode
+        test = '\u2714'  # checkmark
+        test.encode(sys.stdout.encoding or 'utf-8')
+        return {
+            'check': '\u2714',      # ✔
+            'cross': '\u2718',      # ✘
+            'warning': '!',         # ! (warning emoji often fails even with UTF-8)
+            'success': '[OK]',
+            'error': '[ERROR]',
+            'partial': '[PARTIAL]'
+        }
+    except (UnicodeEncodeError, LookupError):
+        return {
+            'check': '[OK]',
+            'cross': '[X]',
+            'warning': '[!]',
+            'success': '[OK]',
+            'error': '[ERROR]',
+            'partial': '[PARTIAL]'
+        }
+
+SYMBOLS = get_symbols()
 
 def extract_title(file_path):
     """Extract the first # title from a markdown file"""
@@ -72,27 +109,45 @@ def run_yarn_scan_docs():
 
         print('[YARN] Running yarn scan-docs...')
 
-        # Use cmd.exe for Windows compatibility from WSL
-        if os.name == 'posix' and '/mnt/' in project_root:
+        # Determine execution environment
+        is_wsl = os.name == 'posix' and '/mnt/' in project_root
+        is_native_windows = sys.platform == 'win32'
+
+        if is_wsl:
             # WSL environment - use cmd.exe to run yarn
-            windows_path = project_root.replace('/mnt/d/', 'D:\\').replace('/', '\\')
+            # Convert WSL path to Windows path (handles /mnt/c/, /mnt/d/, etc.)
+            windows_path = re.sub(r'^/mnt/([a-z])/', lambda m: m.group(1).upper() + ':\\', project_root)
+            windows_path = windows_path.replace('/', '\\')
             cmd = f'cmd.exe /c "cd /d {windows_path} && yarn scan-docs"'
             result = subprocess.run(cmd, shell=True, capture_output=True, text=True, cwd=project_root)
+        elif is_native_windows:
+            # Native Windows - use shell=True to find yarn via PATH
+            result = subprocess.run(
+                'yarn scan-docs',
+                shell=True,
+                capture_output=True,
+                text=True,
+                cwd=project_root,
+                encoding='utf-8',
+                errors='replace'
+            )
         else:
-            # Direct yarn execution for other environments
+            # Linux/macOS - direct yarn execution
             result = subprocess.run(['yarn', 'scan-docs'], capture_output=True, text=True, cwd=project_root)
 
         if result.returncode == 0:
-            print('[YARN] ✅ yarn scan-docs completed successfully')
+            print(f'[YARN] {SYMBOLS["check"]} yarn scan-docs completed successfully')
             return True
         else:
-            print(f'[YARN] ⚠️  yarn scan-docs failed with return code {result.returncode}')
-            print(f'[YARN] stdout: {result.stdout}')
-            print(f'[YARN] stderr: {result.stderr}')
+            print(f'[YARN] {SYMBOLS["warning"]} yarn scan-docs failed with return code {result.returncode}')
+            if result.stdout:
+                print(f'[YARN] stdout: {result.stdout}')
+            if result.stderr:
+                print(f'[YARN] stderr: {result.stderr}')
             return False
 
     except Exception as e:
-        print(f'[YARN] ❌ Error running yarn scan-docs: {e}')
+        print(f'[YARN] {SYMBOLS["cross"]} Error running yarn scan-docs: {e}')
         return False
 
 def scan_readme_directory():
@@ -421,10 +476,10 @@ if __name__ == '__main__':
 
         # Final status report
         if yarn_success:
-            print('\n[SUCCESS] ✅ Both yarn scan-docs and index update completed successfully!')
+            print(f'\n{SYMBOLS["success"]} {SYMBOLS["check"]} Both yarn scan-docs and index update completed successfully!')
         else:
-            print('\n[PARTIAL] ⚠️  Index update completed, but yarn scan-docs had issues. Check output above.')
+            print(f'\n{SYMBOLS["partial"]} {SYMBOLS["warning"]} Index update completed, but yarn scan-docs had issues. Check output above.')
 
     except Exception as e:
-        print(f'\n[ERROR] ❌ Error during execution: {e}')
+        print(f'\n{SYMBOLS["error"]} {SYMBOLS["cross"]} Error during execution: {e}')
         exit(1)

@@ -428,7 +428,11 @@ After creating, editing, moving, renaming, or deleting any bug report, task, or 
 
 1. **Run the index update script**:
    ```bash
+   # From WSL:
    python3 /mnt/d/GitHub/Quilibrium/quorum-desktop/.claude/skills/docs-manager/update-index.py
+
+   # From native Windows (PowerShell or cmd):
+   python .claude/skills/docs-manager/update-index.py
    ```
 
 2. **Verify the INDEX.md was updated**:
