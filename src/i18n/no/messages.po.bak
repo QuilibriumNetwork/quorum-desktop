@@ -31,7 +31,7 @@ msgid "No Role - {count}"
 msgstr "Ingen rolle - {count}"
 
 #. js-lingui-explicit-id
-#: src/components/space/Channel.tsx:1065
+#: src/components/space/Channel.tsx:1062
 msgid "Send a message to #{channel_name}"
 msgstr "Send en melding til #{channel_name}"
 
@@ -132,7 +132,7 @@ msgid "[Sticker]"
 msgstr "[Sticker]"
 
 #. placeholder {0}: removedDevices.length
-#: src/components/modals/UserSettingsModal/Privacy.tsx:103
+#: src/components/modals/UserSettingsModal/Privacy.tsx:102
 msgid "{0} devices marked for removal. Click \"Save Changes\" to confirm."
 msgstr "{0} enheter merket for fjerning. Klikk \"Lagre endringer\" for å bekrefte."
 
@@ -238,7 +238,7 @@ msgstr "Legg til en venn"
 msgid "0 Bytes"
 msgstr "0 Bytes"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:102
+#: src/components/modals/UserSettingsModal/Privacy.tsx:101
 msgid "1 device marked for removal. Click \"Save Changes\" to confirm."
 msgstr "1 enhet merket for fjerning. Klikk \"Lagre endringer\" for å bekrefte."
 
@@ -305,7 +305,7 @@ msgstr "Adresser må være nøyaktig 46 tegn lange."
 msgid "Addresses start with \"Qm\"."
 msgstr "Adresser starter med \"Qm\"."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:48
+#: src/components/modals/UserSettingsModal/Privacy.tsx:50
 msgid "Adjust security-related settings, which may impact user  experience but increase the security of your Quorum account."
 msgstr "Juster sikkerhetsrelaterte innstillinger, som kan påvirke brukeropplevelsen, men øke sikkerheten til Quorum-kontoen din."
 
@@ -343,7 +343,7 @@ msgstr "Alle Spaces"
 msgid "Already Joined"
 msgstr "Allerede blitt med"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:74
+#: src/components/modals/UserSettingsModal/Privacy.tsx:76
 msgid "Always sign Direct Messages"
 msgstr "Signer alltid Direkte Meldinger"
 
@@ -398,17 +398,21 @@ msgstr "Er du sikker på at du vil forlate dette Rommet? Du vil ikke kunne bli m
 #~ msgid "Are you sure you want to leave this Space? You won't be able to rejoin unless you are re-invited. Your existing messages will NOT be deleted."
 #~ msgstr "Er du sikker på at du vil forlate dette Space? Du vil ikke kunne bli med igjen med mindre du blir invitert på nytt. Dine eksisterende meldinger vil IKKE bli slettet."
 
-#: src/hooks/business/messages/usePinnedMessages.ts:234
+#: src/hooks/business/messages/usePinnedMessages.ts:260
 msgid "Are you sure you want to pin this message?"
 msgstr "Er du sikker på at du vil feste denne meldingen?"
 
-#: src/hooks/business/messages/usePinnedMessages.ts:233
+#: src/hooks/business/messages/usePinnedMessages.ts:259
 msgid "Are you sure you want to unpin this message?"
 msgstr "Er du sikker på at du vil fjerne festingen av denne meldingen?"
 
 #: src/components/modals/SpaceSettingsModal/Roles.tsx:54
-msgid "As a space owner, you need to assign yourself a role with delete permissions to delete other users' messages. <0><1>Learn more</1></0>"
-msgstr "Som som eier av rommet, må du tildele deg selv en rolle med slettrettigheter for å slette andre brukeres meldinger. <0><1>Lær mer</1></0>"
+msgid "As a space owner, you must assign yourself a role to perform moderation actions. Kicking users is the only action that doesn't require a role. <0><1>Learn more</1></0>"
+msgstr ""
+
+#: src/components/modals/SpaceSettingsModal/Roles.tsx:54
+#~ msgid "As a space owner, you need to assign yourself a role with delete permissions to delete other users' messages. <0><1>Learn more</1></0>"
+#~ msgstr "Som som eier av rommet, må du tildele deg selv en rolle med slettrettigheter for å slette andre brukeres meldinger. <0><1>Lær mer</1></0>"
 
 #: src/components/message/MessageComposer.tsx:580
 msgid "attach image"
@@ -461,7 +465,7 @@ msgid "Bookmarked sticker"
 msgstr "Bokmerket klistremerke"
 
 #: src/components/direct/DirectMessage.tsx:687
-#: src/components/space/Channel.tsx:904
+#: src/components/space/Channel.tsx:901
 msgid "Bookmarks"
 msgstr "Bokmerker"
 
@@ -485,7 +489,7 @@ msgstr "Kameratilgang er nødvendig for å ta bilder"
 #: src/components/primitives/FileUpload/FileUpload.native.tsx:173
 #: src/hooks/business/channels/useChannelManagement.ts:253
 #: src/hooks/business/messages/useMessageActions.ts:159
-#: src/hooks/business/messages/usePinnedMessages.ts:246
+#: src/hooks/business/messages/usePinnedMessages.ts:272
 #: src/hooks/business/spaces/useRoleManagement.ts:64
 #: src/hooks/business/user/useFileUpload.native.ts:48
 #: src/hooks/platform/files/useFileDownload.native.ts:82
@@ -521,7 +525,7 @@ msgstr "Kanalikon"
 msgid "Channel Managers"
 msgstr "Kanaladministratorer"
 
-#: src/components/space/Channel.tsx:1289
+#: src/components/space/Channel.tsx:1286
 msgid "Channel members"
 msgstr "Kanalmedlemmer"
 
@@ -590,7 +594,7 @@ msgid "Clearing notifications with tag: {tag}"
 msgstr "Fjerner varsler med tag: {tag}"
 
 #: src/components/modals/ChannelEditorModal.tsx:217
-#: src/components/modals/FolderEditorModal.tsx:130
+#: src/components/modals/FolderEditorModal.tsx:133
 #: src/components/modals/GroupEditorModal.tsx:131
 #: src/components/modals/KickUserModal.tsx:86
 #: src/components/modals/LeaveSpaceModal.tsx:64
@@ -621,7 +625,7 @@ msgstr "Konfigurasjonsnøkkel"
 
 #: src/components/navbar/FolderContextMenu.tsx:124
 msgid "Confirm"
-msgstr ""
+msgstr "Bekreft"
 
 #: src/components/Connecting.tsx:12
 msgid "Connecting"
@@ -781,10 +785,10 @@ msgstr "Slett samtale"
 #~ msgid "Delete Current Link"
 #~ msgstr "Slett nåværende lenke"
 
-#: src/components/modals/FolderEditorModal.tsx:129
+#: src/components/modals/FolderEditorModal.tsx:132
 #: src/components/navbar/FolderContextMenu.tsx:124
 msgid "Delete Folder"
-msgstr ""
+msgstr "Slett mappe"
 
 #: src/components/modals/GroupEditorModal.tsx:130
 msgid "Delete Group"
@@ -825,6 +829,10 @@ msgstr "Slett Rom"
 #: src/components/modals/SpaceSettingsModal/Danger.tsx:27
 msgid "Delete this space"
 msgstr "Slett denne plassen"
+
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:392
+msgid "Deleting Space..."
+msgstr ""
 
 #: src/components/modals/SpaceSettingsModal/General.tsx:156
 msgid "Describe what this Space is about..."
@@ -912,9 +920,9 @@ msgstr "Rediger {0}"
 msgid "Edit Channel"
 msgstr "Rediger Kanal"
 
-#: src/components/modals/FolderEditorModal.tsx:68
+#: src/components/modals/FolderEditorModal.tsx:71
 msgid "Edit Folder"
-msgstr ""
+msgstr "Rediger mappe"
 
 #: src/components/modals/GroupEditorModal.tsx:60
 msgid "Edit Group"
@@ -942,7 +950,7 @@ msgstr "Emoji-velger"
 msgid "Emojis"
 msgstr "Emojis"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:54
+#: src/components/modals/UserSettingsModal/Privacy.tsx:56
 msgid "Enable sync"
 msgstr "Aktiver synkronisering"
 
@@ -1006,11 +1014,11 @@ msgstr "Feil ved visning av varsel:"
 msgid "Existing Conversations"
 msgstr "Eksisterende samtaler"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:187
+#: src/components/modals/UserSettingsModal/Privacy.tsx:186
 msgid "Export"
 msgstr "Eksporter"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:178
+#: src/components/modals/UserSettingsModal/Privacy.tsx:177
 msgid "Export your key to a file by clicking this button. Do not share this file with anyone else or they can impersonate you or steal your Space's Apex earnings."
 msgstr "Eksporter nøkkelen din til en fil ved å klikke på denne knappen. Ikke del denne filen med noen andre, ellers kan de utgi seg for deg eller stjele inntektene fra Space ditt."
 
@@ -1023,11 +1031,11 @@ msgid "Failed to create space. Please try again."
 msgstr "Kunne ikke opprette Space. Vennligst prøv igjen."
 
 #: src/components/context/MessageDB.bak.tsx:984
-#: src/services/MessageService.ts:1447
+#: src/services/MessageService.ts:1760
 msgid "Failed to decrypt message with any known state"
 msgstr "Mislyktes med å dekryptere melding med kjent tilstand"
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:617
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:620
 msgid "Failed to generate invite link. Please try again."
 msgstr "Kunne ikke generere invitasjonslenke. Vennligst prøv igjen."
 
@@ -1043,7 +1051,7 @@ msgstr "Kunne ikke åpne bildevelger"
 msgid "Failed to parse WebSocket message:"
 msgstr "Mislyktes med å analysere WebSocket-melding:"
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:270
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:271
 msgid "Failed to save notification settings"
 msgstr "Kunne ikke lagre varslingsinnstillinger"
 
@@ -1072,7 +1080,7 @@ msgstr "Fil kan ikke være større enn {maxSize}"
 msgid "File cannot be larger than 25MB"
 msgstr "Fil kan ikke være større enn 25MB"
 
-#: src/hooks/business/messages/useMessageComposer.ts:81
+#: src/hooks/business/messages/useMessageComposer.ts:88
 msgid "File cannot be larger than 50MB"
 msgstr "Fil kan ikke være større enn 50MB"
 
@@ -1080,7 +1088,7 @@ msgstr "Fil kan ikke være større enn 50MB"
 msgid "File cannot be larger than 5MB"
 msgstr "Fil kan ikke være større enn 5MB"
 
-#: src/hooks/business/messages/useMessageComposer.ts:83
+#: src/hooks/business/messages/useMessageComposer.ts:90
 #: src/hooks/business/spaces/useSpaceProfile.ts:89
 #: src/hooks/business/ui/useCustomAssets.ts:105
 #: src/hooks/business/ui/useCustomAssets.ts:150
@@ -1109,7 +1117,7 @@ msgstr "Filstørrelse for liten. Minimum størrelse: {minSizeMB}"
 msgid "File validation failed. Please try again."
 msgstr "Filvalidering feilet. Vennligst prøv igjen."
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:443
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:446
 msgid "Fix"
 msgstr "Fiks"
 
@@ -1121,29 +1129,29 @@ msgstr "Fikser"
 msgid "Fixing..."
 msgstr "Fikser..."
 
-#: src/components/modals/FolderEditorModal.tsx:98
+#: src/components/modals/FolderEditorModal.tsx:101
 msgid "Folder Icon & Color"
-msgstr ""
+msgstr "Mappeikon og farge"
 
-#: src/components/modals/FolderEditorModal.tsx:80
+#: src/components/modals/FolderEditorModal.tsx:83
 msgid "Folder Name"
-msgstr ""
+msgstr "Mappenavn"
 
 #: src/hooks/business/folders/useFolderManagement.ts:79
 msgid "Folder name cannot contain special characters"
-msgstr ""
+msgstr "Mappenavn kan ikke inneholde spesialtegn"
 
 #: src/hooks/business/folders/useFolderManagement.ts:73
 msgid "Folder name is required"
-msgstr ""
+msgstr "Mappenavn er påkrevd"
 
 #: src/hooks/business/folders/useFolderManagement.ts:76
 msgid "Folder name must be {MAX_NAME_LENGTH} characters or less"
-msgstr ""
+msgstr "Mappenavn må være {MAX_NAME_LENGTH} tegn eller færre"
 
 #: src/components/navbar/FolderContextMenu.tsx:114
 msgid "Folder Settings"
-msgstr ""
+msgstr "Mappeinnstillinger"
 
 #: src/components/context/MessageDB.bak.tsx:3186
 #: src/services/SpaceService.ts:236
@@ -1160,17 +1168,17 @@ msgstr "Generell"
 msgid "General Chat"
 msgstr "Generell chat"
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:608
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:611
 msgid "Generate Link"
 msgstr "Generer lenke"
 
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:446
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:608
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:611
 msgid "Generate New Link"
 msgstr "Generer ny lenke"
 
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:394
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:602
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:605
 msgid "Generate Public Invite Link"
 msgstr "Generer offentlig invitasjonslenke"
 
@@ -1251,7 +1259,7 @@ msgid "Important messages will be pinned here"
 msgstr "Viktige meldinger vil bli festet her"
 
 #: src/components/context/MessageDB.bak.tsx:1184
-#: src/services/MessageService.ts:1646
+#: src/services/MessageService.ts:1959
 msgid "invalid address for signature"
 msgstr "ugyldig adresse for signatur"
 
@@ -1275,13 +1283,13 @@ msgstr "Ugyldig filtype. Vennligst sjekk aksepterte filformater."
 msgid "invalid link"
 msgstr "ugyldig lenke"
 
-#: src/hooks/business/messages/usePinnedMessages.ts:74
-#: src/hooks/business/messages/usePinnedMessages.ts:123
+#: src/hooks/business/messages/usePinnedMessages.ts:72
+#: src/hooks/business/messages/usePinnedMessages.ts:132
 msgid "Invalid message ID"
 msgstr "Ugyldig melding ID"
 
 #: src/components/context/MessageDB.bak.tsx:5180
-#: src/utils/canonicalize.ts:104
+#: src/utils/canonicalize.ts:114
 msgid "invalid message type"
 msgstr "ugyldig meldingstype"
 
@@ -1341,7 +1349,7 @@ msgstr "Hopp til nåtid"
 msgid "Key Copied!"
 msgstr "Nøkkel kopiert!"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:175
+#: src/components/modals/UserSettingsModal/Privacy.tsx:174
 msgid "Key Export"
 msgstr "Nøkkel Eksport"
 
@@ -1452,7 +1460,7 @@ msgstr "Gjør kontoen din unik – sett et kontaktbilde. Denne informasjonen gis
 msgid "Manage desktop notification preferences for new messages."
 msgstr "Administrer innstillinger for skrivebordsvarsler for nye meldinger."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:39
+#: src/components/modals/UserSettingsModal/Privacy.tsx:41
 msgid "Manage devices, and privacy conditions for messaging and synchronization."
 msgstr "Administrer enheter og personvernvilkår for meldinger og synkronisering."
 
@@ -1474,9 +1482,13 @@ msgstr "Merk alt som lest"
 
 #: src/components/direct/DirectMessage.tsx:668
 #: src/components/direct/DirectMessage.tsx:861
-#: src/components/space/Channel.tsx:930
+#: src/components/space/Channel.tsx:927
 msgid "Members List"
 msgstr "Medlemsliste"
+
+#: src/components/modals/ChannelEditorModal.tsx:169
+msgid "Members of selected roles can post, delete, and pin messages in this read-only channel. Note: Space owners must also be in a manager role to post here."
+msgstr ""
 
 #: src/components/modals/SpaceSettingsModal/Roles.tsx:174
 msgid "Mention Everyone"
@@ -1520,9 +1532,9 @@ msgstr "Navn som ligner admin, moderator eller support er reservert."
 msgid "New Direct Message"
 msgstr "Ny Direkte Meldinger"
 
-#: src/components/modals/FolderEditorModal.tsx:68
+#: src/components/modals/FolderEditorModal.tsx:71
 msgid "New Folder"
-msgstr ""
+msgstr "Ny mappe"
 
 #: src/components/message/NewMessagesSeparator.tsx:64
 msgid "New Messages"
@@ -1578,9 +1590,9 @@ msgstr "Ingen festede meldinger ennå"
 msgid "No unread notifications"
 msgstr "Ingen uleste varslinger"
 
-#: src/components/space/Channel.tsx:617
-#: src/components/space/Channel.tsx:1137
-#: src/components/space/Channel.tsx:1328
+#: src/components/space/Channel.tsx:614
+#: src/components/space/Channel.tsx:1134
+#: src/components/space/Channel.tsx:1325
 msgid "No users found!"
 msgstr "Ingen brukere funnet!"
 
@@ -1595,7 +1607,7 @@ msgstr "Varselstillatelse ikke gitt"
 #: src/components/modals/SpaceSettingsModal/Account.tsx:187
 #: src/components/modals/UserSettingsModal/Navigation.tsx:17
 #: src/components/modals/UserSettingsModal/Notifications.tsx:24
-#: src/components/space/Channel.tsx:869
+#: src/components/space/Channel.tsx:866
 msgid "Notifications"
 msgstr "Varsler"
 
@@ -1659,11 +1671,11 @@ msgstr "Siden ble ikke funnet"
 msgid "Paste an invite link"
 msgstr "Lim inn en invitasjonslenke"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:154
+#: src/components/modals/UserSettingsModal/Privacy.tsx:153
 msgid "Pending"
 msgstr "Venter"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:140
+#: src/components/modals/UserSettingsModal/Privacy.tsx:139
 msgid "Pending removal - click Save to confirm"
 msgstr "Venter på fjerning - klikk Lagre for å bekrefte"
 
@@ -1691,12 +1703,12 @@ msgstr "Bildebibliotek"
 msgid "Photo library permission is required to select images"
 msgstr "Tillatelse til bildebibliotek er nødvendig for å velge bilder"
 
-#: src/hooks/business/messages/usePinnedMessages.ts:248
+#: src/hooks/business/messages/usePinnedMessages.ts:274
 msgid "pin"
 msgstr "pin"
 
 #: src/components/message/MessageActionsMenu.tsx:264
-#: src/hooks/business/messages/usePinnedMessages.ts:245
+#: src/hooks/business/messages/usePinnedMessages.ts:271
 msgid "Pin"
 msgstr "Festepinne"
 
@@ -1709,7 +1721,7 @@ msgid "Pin important messages to keep them easily accessible"
 msgstr "Fest viktige meldinger for å holde dem lett tilgjengelige"
 
 #. placeholder {0}: PINNED_MESSAGES_CONFIG.MAX_PINS
-#: src/hooks/business/messages/usePinnedMessages.ts:85
+#: src/hooks/business/messages/usePinnedMessages.ts:87
 msgid "Pin limit reached ({0})"
 msgstr "Grensen for festing nådd ({0})"
 
@@ -1718,7 +1730,7 @@ msgstr "Grensen for festing nådd ({0})"
 msgid "Pin message"
 msgstr "Fest melding"
 
-#: src/hooks/business/messages/usePinnedMessages.ts:231
+#: src/hooks/business/messages/usePinnedMessages.ts:257
 msgid "Pin Message"
 msgstr "Festepinne melding"
 
@@ -1741,7 +1753,7 @@ msgstr "Festet"
 msgid "Pinned by {0}"
 msgstr "Festet av {0}"
 
-#: src/components/space/Channel.tsx:829
+#: src/components/space/Channel.tsx:826
 msgid "Pinned Messages"
 msgstr "Festede meldinger"
 
@@ -1763,7 +1775,7 @@ msgid "Privacy Settings"
 msgstr "Personverninnstillinger"
 
 #: src/components/modals/UserSettingsModal/Navigation.tsx:16
-#: src/components/modals/UserSettingsModal/Privacy.tsx:37
+#: src/components/modals/UserSettingsModal/Privacy.tsx:39
 msgid "Privacy/Security"
 msgstr "Personvern/Sikkerhet"
 
@@ -1830,7 +1842,7 @@ msgstr "mottatt konfigurasjon med ugyldig signatur!"
 msgid "Refresh"
 msgstr "Oppdater"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:154
+#: src/components/modals/UserSettingsModal/Privacy.tsx:153
 msgid "Remove"
 msgstr "Fjern"
 
@@ -1865,6 +1877,10 @@ msgstr "Krev meldingssignering"
 msgid "Require messages sent in this Space to be signed by the sender. Technically speaking, this makes the messages in this Space non-repudiable."
 msgstr "Krev at meldinger sendt i denne Space må signeres av avsenderen. Teknisk sett gjør dette meldingene i denne Space ikke-repudiable."
 
+#: src/components/modals/SpaceSettingsModal/Roles.tsx:58
+msgid "Requiring roles for moderation actions protects your identity as the space owner. However, if you're the only one with a specific role, your actions may reveal who you are. For better privacy, consider having multiple users (real or additional accounts) share the same role."
+msgstr ""
+
 #: src/components/modals/AddSpaceModal.tsx:266
 msgid "Reset"
 msgstr "Tilbakestill"
@@ -1880,10 +1896,10 @@ msgid "Save"
 msgstr "Lagre"
 
 #: src/components/modals/ChannelEditorModal.tsx:198
-#: src/components/modals/FolderEditorModal.tsx:110
+#: src/components/modals/FolderEditorModal.tsx:113
 #: src/components/modals/GroupEditorModal.tsx:99
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:589
-#: src/components/modals/UserSettingsModal/UserSettingsModal.tsx:242
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:592
+#: src/components/modals/UserSettingsModal/UserSettingsModal.tsx:244
 #: src/components/user/UserProfileEdit.tsx:158
 msgid "Save Changes"
 msgstr "Lagre endringer"
@@ -1898,8 +1914,8 @@ msgstr "Lagre kontaktbilde"
 msgid "Save Edit History"
 msgstr "Lagre redigeringshistorikk"
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:574
-#: src/components/modals/UserSettingsModal/UserSettingsModal.tsx:231
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:577
+#: src/components/modals/UserSettingsModal/UserSettingsModal.tsx:233
 msgid "Save Failed"
 msgstr "Lagring mislyktes"
 
@@ -1918,7 +1934,7 @@ msgid "saved config is out of date"
 msgstr "lagret konfigurasjon er utdatert"
 
 #: src/components/modals/ChannelEditorModal.tsx:93
-#: src/components/modals/FolderEditorModal.tsx:145
+#: src/components/modals/FolderEditorModal.tsx:148
 #: src/components/modals/GroupEditorModal.tsx:139
 #: src/components/modals/ModalSaveOverlay.tsx:43
 msgid "Saving..."
@@ -1944,7 +1960,7 @@ msgid "Search in this Space..."
 msgstr "Søk i dette Space..."
 
 #: src/components/direct/DirectMessage.tsx:714
-#: src/components/space/Channel.tsx:949
+#: src/components/space/Channel.tsx:946
 msgid "Search Messages"
 msgstr "Søk Meldinger"
 
@@ -1960,7 +1976,7 @@ msgstr "Søkeresultater"
 msgid "Search username or address"
 msgstr "Søk etter brukernavn eller adresse"
 
-#: src/components/space/Channel.tsx:1300
+#: src/components/space/Channel.tsx:1297
 msgid "Search Username or Address"
 msgstr "Søk etter brukernavn eller adresse"
 
@@ -1968,7 +1984,7 @@ msgstr "Søk etter brukernavn eller adresse"
 msgid "Searching..."
 msgstr "Søker..."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:45
+#: src/components/modals/UserSettingsModal/Privacy.tsx:47
 msgid "Security"
 msgstr "Sikkerhet"
 
@@ -1982,8 +1998,8 @@ msgid "Select an option"
 msgstr "Velg et alternativ"
 
 #: src/components/modals/ChannelEditorModal.tsx:169
-msgid "Select any existing role as managers for this channel. Managers have post, delete, and pin permissions on ANY message by default. If no managers are selected, only the Space owner can manage the channel."
-msgstr "Velg hvilken som helst eksisterende rolle som ledere for denne kanalen. Ledere har post-, slett- og festepinne-rettigheter på ALLE meldinger som standard. Hvis ingen ledere er valgt, kan bare eieren av Space administrere kanalen."
+#~ msgid "Select any existing role as managers for this channel. Managers have post, delete, and pin permissions on ANY message by default. If no managers are selected, only the Space owner can manage the channel."
+#~ msgstr "Velg hvilken som helst eksisterende rolle som ledere for denne kanalen. Ledere har post-, slett- og festepinne-rettigheter på ALLE meldinger som standard. Hvis ingen ledere er valgt, kan bare eieren av Space administrere kanalen."
 
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:38
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:278
@@ -2124,7 +2140,7 @@ msgstr "Klistremerker"
 msgid "Successfully sent invite to {0}"
 msgstr "Invitasjon sendt til {0} med suksess"
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:446
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:449
 msgid "Sync Kick Status"
 msgstr "Synkroniser kick-status"
 
@@ -2170,7 +2186,7 @@ msgstr "Denne samtalen"
 msgid "This description will be visible on invites and shown to people when they look up or join your Space using an invite link."
 msgstr "Denne beskrivelsen vil være synlig på invitasjoner og vises til folk når de ser opp eller blir med i din Space ved hjelp av en invitasjonslenke."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:163
+#: src/components/modals/UserSettingsModal/Privacy.tsx:162
 msgid "This device"
 msgstr "Denne enheten"
 
@@ -2196,8 +2212,8 @@ msgid "This name conflicts with mention keywords."
 msgstr "Dette navnet er i konflikt med nevneord."
 
 #: src/components/modals/SpaceSettingsModal/Roles.tsx:58
-msgid "This protects your identity as the space owner. However, if you're the only one with this role, your identity becomes obvious. Consider having multiple users (real or fake accounts) with the same role for better privacy protection."
-msgstr "Dette beskytter identiteten din som rommet eier. Men hvis du er den eneste med denne rollen, blir identiteten din åpenbar. Vurder å ha flere brukere (ekte eller falske kontoer) med samme rolle for bedre personvernbeskyttelse."
+#~ msgid "This protects your identity as the space owner. However, if you're the only one with this role, your identity becomes obvious. Consider having multiple users (real or fake accounts) with the same role for better privacy protection."
+#~ msgstr "Dette beskytter identiteten din som rommet eier. Men hvis du er den eneste med denne rollen, blir identiteten din åpenbar. Vurder å ha flere brukere (ekte eller falske kontoer) med samme rolle for bedre personvernbeskyttelse."
 
 #: src/components/context/MessageDB.bak.tsx:4819
 #: src/components/message/InviteLink.tsx:44
@@ -2213,11 +2229,11 @@ msgstr "Dette Space"
 msgid "This user is already a member of this space."
 msgstr "Denne brukeren er allerede medlem av dette Space."
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:606
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:609
 msgid "This will create a public invite link that anyone can use to join your Space. Consider who you share this link with."
 msgstr "Dette vil opprette en offentlig invitasjonslenke som alle kan bruke for å bli med i ditt Space. Tenk på hvem du deler denne lenken med."
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:605
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:608
 msgid "This will generate a new public invite link and invalidate the current one. Anyone with the old link will no longer be able to use it."
 msgstr "Dette vil generere en ny offentlig invitasjonslenke og ugyldiggjøre den nåværende. Alle med den gamle lenken vil ikke lenger kunne bruke den."
 
@@ -2245,7 +2261,7 @@ msgstr "I dag kl {timeFormatted}"
 msgid "Too many files selected. Please select fewer files."
 msgstr "For mange filer valgt. Vennligst velg færre filer."
 
-#: src/hooks/business/messages/useMessageComposer.ts:133
+#: src/hooks/business/messages/useMessageComposer.ts:140
 msgid "Too many mentions in message. Maximum {MAX_MENTIONS_PER_MESSAGE} allowed."
 msgstr "For mange omtaler i meldingen. Maksimum {MAX_MENTIONS_PER_MESSAGE} tillatt."
 
@@ -2327,7 +2343,7 @@ msgstr "Ukjent tid"
 #: src/components/modals/NewDirectMessageModal.tsx:66
 #: src/components/notifications/NotificationPanel.tsx:248
 #: src/components/notifications/NotificationPanel.tsx:268
-#: src/hooks/business/channels/useChannelMessages.ts:144
+#: src/hooks/business/channels/useChannelMessages.ts:141
 #: src/hooks/business/conversations/useDirectMessageData.ts:57
 #: src/hooks/business/conversations/useDirectMessageData.ts:75
 #: src/hooks/business/search/useBatchSearchResultsDisplay.ts:133
@@ -2339,21 +2355,22 @@ msgstr "Ukjent tid"
 #: src/hooks/business/search/useSearchResultDisplaySpace.ts:45
 #: src/hooks/queries/userInfo/buildUserInfoFetcher.ts:15
 #: src/services/EncryptionService.ts:138
-#: src/services/MessageService.ts:1113
-#: src/services/MessageService.ts:1285
-#: src/services/MessageService.ts:1425
-#: src/services/MessageService.ts:1443
-#: src/services/MessageService.ts:2779
-#: src/services/MessageService.ts:2943
+#: src/services/MessageService.ts:1426
+#: src/services/MessageService.ts:1598
+#: src/services/MessageService.ts:1738
+#: src/services/MessageService.ts:1756
+#: src/services/MessageService.ts:3092
+#: src/services/MessageService.ts:3226
+#: src/services/MessageService.ts:3390
 msgid "Unknown User"
 msgstr "Ukjent bruker"
 
-#: src/hooks/business/messages/usePinnedMessages.ts:248
+#: src/hooks/business/messages/usePinnedMessages.ts:274
 msgid "unpin"
 msgstr "fjern festepinne"
 
 #: src/components/message/MessageActionsMenu.tsx:264
-#: src/hooks/business/messages/usePinnedMessages.ts:245
+#: src/hooks/business/messages/usePinnedMessages.ts:271
 msgid "Unpin"
 msgstr "Fjern festepinne"
 
@@ -2362,7 +2379,7 @@ msgstr "Fjern festepinne"
 msgid "Unpin message"
 msgstr "Fjern festing av melding"
 
-#: src/hooks/business/messages/usePinnedMessages.ts:231
+#: src/hooks/business/messages/usePinnedMessages.ts:257
 msgid "Unpin Message"
 msgstr "Fjern festepinne melding"
 
@@ -2378,7 +2395,7 @@ msgstr "Fjernet festing!"
 msgid "Until you reply, this sender will not see your display name or profile picture"
 msgstr "Inntil du svarer, vil denne avsenderen ikke se ditt visningsnavn eller profilbilde"
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:446
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:449
 msgid "Update kick records for all members. Use this if kicked users still appear active to some members."
 msgstr "Oppdater sparkeposter for alle medlemmer. Bruk dette hvis sparkede brukere fortsatt vises som aktive for noen medlemmer."
 
@@ -2417,8 +2434,13 @@ msgstr "Brukeradresse her"
 msgid "User does not exist."
 msgstr "Bruker eksisterer ikke."
 
-#: src/components/space/Channel.tsx:604
-#: src/components/space/Channel.tsx:1123
+#: src/hooks/business/messages/usePinnedMessages.ts:76
+#: src/hooks/business/messages/usePinnedMessages.ts:136
+msgid "User not authenticated"
+msgstr ""
+
+#: src/components/space/Channel.tsx:601
+#: src/components/space/Channel.tsx:1120
 msgid "Username or Address"
 msgstr "Brukernavn eller adresse"
 
@@ -2449,7 +2471,7 @@ msgstr "Hva tenker du på i dag?"
 msgid "When enabled, all previous versions of edited messages will be saved. When disabled, only the current edited version is kept."
 msgstr "Når aktivert, vil alle tidligere versjoner av redigerte meldinger bli lagret. Når deaktivert, beholdes kun den nåværende redigerte versjonen."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:58
+#: src/components/modals/UserSettingsModal/Privacy.tsx:60
 msgid "When enabled, synchronizes your user data, Spaces, and Space keys between devices. Enabling this increases metadata visibility of your account, which can reveal when you have joined new Spaces, although not the Spaces you have joined."
 msgstr "Når aktivert, synkroniserer din brukerdata, Spaces og Space-nøkler mellom enheter. Aktivering av dette øker metadata synligheten av kontoen din, noe som kan avsløre når du har blitt med i nye Spaces, selv om ikke de Spaces du har blitt med i."
 
@@ -2488,7 +2510,7 @@ msgstr "Når du bruker Quorum i en nettleser, lagres meldingene dine lokalt i ne
 msgid "When you sign a message, you are confirming that it comes from your key. When you don't sign a message, you have plausible deniability. The default for all conversations can be changed in User Settings."
 msgstr "Når du signerer en melding, bekrefter du at den kommer fra din nøkkel. Når du ikke signerer en melding, har du plausibel benektelse. Standardinnstillingen for alle samtaler kan endres i Brukerinnstillinger."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:78
+#: src/components/modals/UserSettingsModal/Privacy.tsx:80
 msgid "When you sign a message, you are confirming that it comes from your key. When you don't sign a message, you have plausible deniability. You can control this setting for each conversation and message individually."
 msgstr "Når du signerer en melding, bekrefter du at den kommer fra din nøkkel. Når du ikke signerer en melding, har du plausibel benektelse. Du kan kontrollere denne innstillingen for hver samtale og melding individuelt."
 
@@ -2523,7 +2545,7 @@ msgid "You cannot delete a group that contains channels. Delete all {channelCoun
 msgstr "Du kan ikke slette en gruppe som inneholder kanaler. Slett alle {channelCount} kanaler i denne gruppen først."
 
 #: src/components/message/MessageComposer.tsx:334
-#: src/components/space/Channel.tsx:1089
+#: src/components/space/Channel.tsx:1086
 msgid "You cannot post in this channel"
 msgstr "Du kan ikke poste i denne kanalen"
 
@@ -2553,9 +2575,13 @@ msgstr "Du er helt oppdatert!"
 msgid "You're all set. Welcome to Quorum!"
 msgstr "Du er klar. Velkommen til Quorum!"
 
-#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:442
+#: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:445
 msgid "You're not listed in this Space's members. Correcting this will add you to the Space Members list (stores your profile locally with your inbox address)."
 msgstr "Du er ikke oppført blant medlemmene i dette Space. Å rette dette vil legge deg til i listen over Space-medlemmer (lagrer profilen din lokalt med din innboksadresse)."
+
+#: src/hooks/business/messages/useMessageComposer.ts:170
+msgid "You're sending messages too quickly. Please wait a moment."
+msgstr ""
 
 #: src/components/message/InviteLink.tsx:60
 #: src/components/message/InviteLink.tsx:82
@@ -2586,9 +2612,9 @@ msgstr "Størrelsen på profilbildet ditt må være 2MB eller mindre og må vær
 msgid "Your Roles"
 msgstr "Dine roller"
 
-#: src/components/modals/FolderEditorModal.tsx:136
+#: src/components/modals/FolderEditorModal.tsx:139
 msgid "Your Spaces will NOT be deleted"
-msgstr ""
+msgstr "Dine Spaces vil IKKE bli slettet"
 
 #: src/components/ui/YouTubeFacade.tsx:92
 msgid "YouTube Video"
