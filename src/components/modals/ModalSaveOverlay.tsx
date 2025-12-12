@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useState, useEffect } from 'react';
 import { Icon } from '../primitives';
 import { t } from '@lingui/core/macro';
 
@@ -9,6 +10,8 @@ interface ModalSaveOverlayProps {
   message?: string;
   /** Optional className for additional styling */
   className?: string;
+  /** Enable progressive messages for long operations (default: true) */
+  enableProgressiveMessages?: boolean;
 }
 
 /**
@@ -16,6 +19,9 @@ interface ModalSaveOverlayProps {
  *
  * Displays a semi-transparent overlay with a spinner and message during async operations.
  * Commonly used in modals to prevent user interaction while processing.
+ *
+ * Features progressive messages that update as the operation takes longer, providing
+ * friendly feedback to users during extended waits.
  *
  * IMPORTANT: When using this overlay, always implement a timeout failsafe to prevent
  * users from being stuck indefinitely if the operation hangs. Use the useModalSaveState
@@ -36,13 +42,69 @@ interface ModalSaveOverlayProps {
  * <ModalSaveOverlay visible={isDeleting} message="Deleting..." />
  * <ModalSaveOverlay visible={isProcessing} message="Processing..." />
  * <ModalSaveOverlay visible={isUploading} message="Uploading files..." />
+ *
+ * // Disable progressive messages if needed
+ * <ModalSaveOverlay visible={isSaving} enableProgressiveMessages={false} />
  * ```
  */
 const ModalSaveOverlay: React.FC<ModalSaveOverlayProps> = ({
   visible,
   message = t`Saving...`,
   className = '',
+  enableProgressiveMessages = true,
 }) => {
+  const [currentMessage, setCurrentMessage] = useState(message);
+
+  useEffect(() => {
+    if (!visible) {
+      setCurrentMessage(message);
+      return;
+    }
+
+    setCurrentMessage(message);
+
+    if (!enableProgressiveMessages) {
+      return;
+    }
+
+    // Progressive message timeouts
+    const timeouts: NodeJS.Timeout[] = [];
+
+    // 3 seconds - Still working
+    timeouts.push(
+      setTimeout(() => {
+        setCurrentMessage(t`Almost done...`);
+      }, 3000)
+    );
+
+    // 8 seconds - Hang in there
+    timeouts.push(
+      setTimeout(() => {
+        setCurrentMessage(t`Hang in there...`);
+      }, 8000)
+    );
+
+    // 13 seconds - This is embarrassing
+    timeouts.push(
+      setTimeout(() => {
+        setCurrentMessage(t`This is embarrassing...`);
+      }, 15000)
+    );
+
+    // 18 seconds - Timeout warning
+    timeouts.push(
+      setTimeout(() => {
+        setCurrentMessage(t`Timeout in 10 seconds anyway...`);
+      }, 20000)
+    );
+
+    // Cleanup function
+    return () => {
+      timeouts.forEach((timeout) => clearTimeout(timeout));
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [visible, enableProgressiveMessages]);
+
   if (!visible) return null;
 
   return (
@@ -54,7 +116,7 @@ const ModalSaveOverlay: React.FC<ModalSaveOverlayProps> = ({
           size={24}
           className="modal-save-spinner icon-spin"
         />
-        <div className="modal-save-text">{message}</div>
+        <div className="modal-save-text">{currentMessage}</div>
       </div>
     </div>
   );
