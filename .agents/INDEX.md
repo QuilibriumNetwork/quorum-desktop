@@ -29,7 +29,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Modal System Documentation](docs/features/modals.md)
 - [ReactTooltip Mobile Support Documentation](docs/features/reacttooltip-mobile.md)
 - [Responsive Layout System Documentation](docs/features/responsive-layout.md)
-- [Security Mechanisms](docs/features/security.md)
+- [Security Architecture](docs/features/security.md)
 - [Space Folders](docs/features/space-folders.md)
 - [Space Settings Modal - Fixes Section](docs/features/space-settings-fixes-section.md)
 - [Toast Notifications](docs/features/toast-notifications.md)
@@ -116,14 +116,12 @@ This is the main index for all documentation, bug reports, and task management.
 - [Custom ContentEditable Mention Pills for Message Composer](tasks/mention-pills-in-message-textarea.md)
 - [Date Translation with Moment.js Locale Configuration](tasks/i18n-date-translation-moment-locale.md)
 - [Device Identification Improvement](tasks/device-identification-improvement.md)
-- [Fix Message Length Limit Bypass Vulnerability](tasks/fix-message-length-bypass-vulnerability.md)
-- [Fix Read-Only Channel Bypass Vulnerability](tasks/fix-read-only-channel-bypass-vulnerability.md)
 - [Implement Background Sync Queue for User Settings and Async Operations](tasks/background-sync-queue.md)
-- [Message Rate Limiting with User Experience Feedback](tasks/message-rate-limiting-with-ux-feedback.md)
 - [Implement Message Forwarding with Privacy Controls](tasks/message-forwarding-with-privacy-controls.md)
 - [Implement Smart Context Extraction Around Mentions in NotificationPanel](tasks/notification-mention-context-extraction.md)
 - [Multi-User Invite Selection Enhancement](tasks/multi-user-invite-selection.md)
 - [Passkey Import UX Issue](tasks/passkey-import-ux-issue.md)
+- [Pinned Messages Cross-Client Synchronization](tasks/pinned-messages-sync.md)
 - [SDK PasskeyModal Customization Props Enhancement](tasks/sdk-passkey-modal-customization-props.md)
 - [Task: Implement Delete Public Invite Link Feature](tasks/delete-public-invite-link.md)
 - [Test Suite Implementation Plan for Quorum Desktop](tasks/test-suite-plan.md)
@@ -223,6 +221,8 @@ This is the main index for all documentation, bug reports, and task management.
 - [Enhanced Mention Format with CSS Highlighting for Message Composer](tasks/.done/mentions-improve-UX-in-messagecomposer.md)
 - [Expo Go to Expo Dev Client Migration Plan - Simplified](tasks/.done/expo-go-to-dev-client-migration.md)
 - [Fix Mention Interactivity Consistency](tasks/.done/fix-mention-interactivity-consistency.md)
+- [Fix Message Length Limit Bypass Vulnerability](tasks/.done/fix-message-length-bypass-vulnerability.md)
+- [Fix Read-Only Channel Bypass Vulnerability](tasks/.done/fix-read-only-channel-bypass-vulnerability.md)
 - [Fix: React Query "undefined" Error in DM Conversations](tasks/.done/fix-react-query-undefined-error-in-dms.md)
 - [Implement Channel Mention Feature (#channelname)](tasks/.done/channel-mention-feature.md)
 - [Implement Copy Message Raw Text Option](tasks/.done/copy-message-text.md)
@@ -244,6 +244,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Message Highlight System - Complete Analysis & Recommendations](tasks/.done/message-highlight-system-optimization.md)
 - [Message Link Rendering (Discord-style)](tasks/.done/message-link-rendering.md)
 - [Message Markdown Support Implementation](tasks/.done/message-markdown-support.md)
+- [Message Rate Limiting with User Experience Feedback](tasks/.done/message-rate-limiting-with-ux-feedback.md)
 - [MessageDB Circular Dependency Status](tasks/.done/messagedb-circular-dependecy-status.md)
 - [MessageDB.tsx Refactoring Analysis and TAsk](tasks/.done/DONE_messagedb-refactoring.md)
 - [Mobile Message Options UX Enhancement](tasks/.done/message-options-mobile.md)
@@ -292,7 +293,6 @@ This is the main index for all documentation, bug reports, and task management.
 
 ### Active Reports
 
-- [Client-Side Limitations Bypass Audit](reports/client-side-limitations-bypass-audit_2025-12-11.md)
 - [dnd-kit Touch Drag-and-Drop Best Practices Research](reports/dnd-kit-touch-best-practices_2025-12-11.md)
 - [Quorum Privacy Analysis](reports/privacy-analysis-quorum-2025-12-03.md)
 - [Security Audit: Markdown Renderer & Mentions System](reports/security-audit-markdown-mentions-2025-11-18.md)
@@ -305,4 +305,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2025-12-11 14:30:00
+**Last Updated**: 2025-12-12 10:53:16

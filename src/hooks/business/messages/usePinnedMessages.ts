@@ -1,9 +1,8 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useCallback } from 'react';
 import React from 'react';
 import { useQueryClient, useMutation, useQuery } from '@tanstack/react-query';
-import type { Message, Channel, Role } from '../../../api/quorumApi';
+import type { Message, Channel, Role, PinMessage } from '../../../api/quorumApi';
 import { useMessageDB } from '../../../components/context/useMessageDB';
-import { useSpaceOwner } from '../../queries/spaceOwner';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
 import { hasPermission } from '../../../utils/permissions';
 import { useConfirmationModal } from '../../../components/context/ConfirmationModalProvider';
@@ -27,8 +26,7 @@ export const usePinnedMessages = (
 ) => {
   const queryClient = useQueryClient();
   const user = usePasskeysContext();
-  const { messageDB } = useMessageDB();
-  const { data: isSpaceOwner } = useSpaceOwner({ spaceId });
+  const { messageDB, submitChannelMessage } = useMessageDB();
   const { showConfirmationModal } = useConfirmationModal();
   // Query for space data to check roles and permissions
   const { data: space } = useQuery({
@@ -74,6 +72,10 @@ export const usePinnedMessages = (
         throw new Error(t`Invalid message ID`);
       }
 
+      if (!user?.currentPasskeyInfo) {
+        throw new Error(t`User not authenticated`);
+      }
+
       try {
         const currentCount = await messageDB.getPinnedMessageCount(
           spaceId,
@@ -86,14 +88,21 @@ export const usePinnedMessages = (
           );
         }
 
-        await messageDB.updateMessagePinStatus(
-          messageId,
-          true,
-          user?.currentPasskeyInfo?.address
-        );
+        // Broadcast pin message to all space members
+        const pinMessage: PinMessage = {
+          senderId: user.currentPasskeyInfo.address,
+          type: 'pin',
+          targetMessageId: messageId,
+          action: 'pin',
+        };
 
-        // TODO: Send pin event message to channel
-        // This will be implemented when we add system messages
+        await submitChannelMessage(
+          spaceId,
+          channelId,
+          pinMessage,
+          queryClient,
+          user.currentPasskeyInfo
+        );
       } catch (error) {
         console.error('Error pinning message:', error);
         throw error;
@@ -123,11 +132,26 @@ export const usePinnedMessages = (
         throw new Error(t`Invalid message ID`);
       }
 
-      try {
-        await messageDB.updateMessagePinStatus(messageId, false);
+      if (!user?.currentPasskeyInfo) {
+        throw new Error(t`User not authenticated`);
+      }
 
-        // TODO: Send unpin event message to channel
-        // This will be implemented when we add system messages
+      try {
+        // Broadcast unpin message to all space members
+        const unpinMessage: PinMessage = {
+          senderId: user.currentPasskeyInfo.address,
+          type: 'pin',
+          targetMessageId: messageId,
+          action: 'unpin',
+        };
+
+        await submitChannelMessage(
+          spaceId,
+          channelId,
+          unpinMessage,
+          queryClient,
+          user.currentPasskeyInfo
+        );
       } catch (error) {
         console.error('Error unpinning message:', error);
         throw error;
@@ -171,9 +195,11 @@ export const usePinnedMessages = (
       }
     }
 
-    // Use centralized permission utility (handles space owners + role permissions)
-    return hasPermission(userAddress, 'message:pin', space, isSpaceOwner);
-  }, [user?.currentPasskeyInfo?.address, isSpaceOwner, channel, space]);
+    // IMPORTANT: NO isSpaceOwner bypass - space owners must have explicit message:pin role
+    // This matches the receiving-side validation (MessageService.ts:448-523, 882-978)
+    // See: .agents/docs/features/messages/pinned-messages.md (lines 317-322)
+    return hasPermission(userAddress, 'message:pin', space ?? undefined, false);
+  }, [user?.currentPasskeyInfo?.address, channel, space]);
 
   const pinMessage = useCallback(
     (messageId: string) => {
@@ -244,7 +270,7 @@ export const usePinnedMessages = (
         }),
         confirmText: message.isPinned ? t`Unpin` : t`Pin`,
         cancelText: t`Cancel`,
-        variant: message.isPinned ? 'danger' : 'primary',
+        variant: message.isPinned ? 'danger' : undefined,
         protipAction: message.isPinned ? t`unpin` : t`pin`,
         onConfirm: performToggle,
       });

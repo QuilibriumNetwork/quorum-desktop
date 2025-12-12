@@ -12,6 +12,7 @@ import {
   KickMessage,
   Space,
   EditMessage,
+  PinMessage,
 } from '../api/quorumApi';
 import { sha256, base58btc, hexToSpreadArray } from '../utils/crypto';
 import { int64ToBytes } from '../utils/bytes';
@@ -444,6 +445,82 @@ export class MessageService {
         updatedUserProfile.user_icon!,
         updatedUserProfile.display_name!
       );
+    } else if (decryptedContent.content.type === 'pin') {
+      const pinMessage = decryptedContent.content as PinMessage;
+      const targetMessage = await messageDB.getMessage({
+        spaceId,
+        channelId,
+        messageId: pinMessage.targetMessageId,
+      });
+      if (!targetMessage) {
+        return;
+      }
+
+      // Reject DMs - pins are Space-only feature
+      if (spaceId === channelId) {
+        return; // Not supported
+      }
+
+      const space = await messageDB.getSpace(spaceId);
+      const senderId = pinMessage.senderId;
+
+      // For read-only channels: check manager privileges FIRST
+      const channel = space?.groups
+        ?.find((g) => g.channels.find((c) => c.channelId === channelId))
+        ?.channels.find((c) => c.channelId === channelId);
+
+      if (channel?.isReadOnly) {
+        const isManager = !!(
+          channel.managerRoleIds &&
+          space?.roles?.some(
+            (role) =>
+              channel.managerRoleIds?.includes(role.roleId) &&
+              role.members.includes(senderId)
+          )
+        );
+        if (!isManager) {
+          return; // Reject
+        }
+      } else {
+        // For regular channels: check explicit role membership (NO isSpaceOwner bypass)
+        // Space owners must assign themselves a role with message:pin permission
+        const hasRolePermission = space?.roles?.some(
+          (role) =>
+            role.members.includes(senderId) &&
+            role.permissions.includes('message:pin')
+        );
+        if (!hasRolePermission) {
+          return; // Reject
+        }
+      }
+
+      // Pin limit validation (defense-in-depth) - only check when pinning
+      if (pinMessage.action === 'pin') {
+        const pinnedMessages = await messageDB.getPinnedMessages(
+          spaceId,
+          channelId
+        );
+        if (pinnedMessages.length >= 50) {
+          return; // Reject - pin limit reached
+        }
+      }
+
+      // Update target message with pin status
+      const updatedMessage: Message = {
+        ...targetMessage,
+        isPinned: pinMessage.action === 'pin',
+        pinnedAt: pinMessage.action === 'pin' ? Date.now() : undefined,
+        pinnedBy: pinMessage.action === 'pin' ? senderId : undefined,
+      };
+
+      await messageDB.saveMessage(
+        updatedMessage,
+        0,
+        spaceId,
+        conversationType,
+        updatedUserProfile.user_icon!,
+        updatedUserProfile.display_name!
+      );
     } else if (decryptedContent.content.type === 'update-profile') {
       const participant = await messageDB.getSpaceMember(
         decryptedContent.spaceId,
@@ -802,6 +879,103 @@ export class MessageService {
       } else {
         console.log('🔹 ADDMESSAGE: Ignoring unauthorized delete request');
       }
+    } else if (decryptedContent.content.type === 'pin') {
+      const pinMessage = decryptedContent.content as PinMessage;
+
+      // Reject DMs - pins are Space-only feature
+      if (spaceId === channelId) {
+        return; // Not supported
+      }
+
+      const space = await this.messageDB.getSpace(spaceId);
+      const senderId = pinMessage.senderId;
+
+      // Check permissions (same logic as saveMessage)
+      let hasPermission = false;
+
+      // For read-only channels: check manager privileges FIRST
+      const channel = space?.groups
+        ?.find((g) => g.channels.find((c) => c.channelId === channelId))
+        ?.channels.find((c) => c.channelId === channelId);
+
+      if (channel?.isReadOnly) {
+        const isManager = !!(
+          channel.managerRoleIds &&
+          space?.roles?.some(
+            (role) =>
+              channel.managerRoleIds?.includes(role.roleId) &&
+              role.members.includes(senderId)
+          )
+        );
+        hasPermission = isManager;
+      } else {
+        // For regular channels: check explicit role membership (NO isSpaceOwner bypass)
+        hasPermission = !!(
+          space?.roles?.some(
+            (role) =>
+              role.members.includes(senderId) &&
+              role.permissions.includes('message:pin')
+          )
+        );
+      }
+
+      if (!hasPermission) {
+        return; // Reject
+      }
+
+      // Pin limit validation - only check when pinning
+      if (pinMessage.action === 'pin') {
+        const pinnedMessages = await this.messageDB.getPinnedMessages(
+          spaceId,
+          channelId
+        );
+        if (pinnedMessages.length >= 50) {
+          return; // Reject - pin limit reached
+        }
+      }
+
+      // Update React Query cache
+      queryClient.setQueryData(
+        buildMessagesKey({ spaceId: spaceId, channelId: channelId }),
+        (oldData: InfiniteData<any>) => {
+          if (!oldData?.pages) return oldData;
+
+          return {
+            pageParams: oldData.pageParams,
+            pages: oldData.pages.map((page) => {
+              return {
+                ...page,
+                messages: [
+                  ...page.messages.map((m: Message) => {
+                    if (m.messageId === pinMessage.targetMessageId) {
+                      return {
+                        ...m,
+                        isPinned: pinMessage.action === 'pin',
+                        pinnedAt:
+                          pinMessage.action === 'pin' ? Date.now() : undefined,
+                        pinnedBy:
+                          pinMessage.action === 'pin' ? senderId : undefined,
+                      };
+                    }
+                    return m;
+                  }),
+                ],
+                // Preserve any cursors or other pagination metadata
+                nextCursor: page.nextCursor,
+                prevCursor: page.prevCursor,
+              };
+            }),
+          };
+        }
+      );
+
+      // Invalidate BOTH query caches
+      queryClient.invalidateQueries({
+        queryKey: ['pinnedMessages', spaceId, channelId],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ['pinnedMessageCount', spaceId, channelId],
+      });
     } else if (decryptedContent.content.type === 'update-profile') {
       const participant = await this.messageDB.getSpaceMember(
         decryptedContent.spaceId,
@@ -2871,6 +3045,140 @@ export class MessageService {
         const sets = response.map((e) => JSON.parse(e.state));
 
         // enforce non-repudiability
+        if (!space?.isRepudiable || (space?.isRepudiable && !skipSigning)) {
+          const inboxKey = await this.messageDB.getSpaceKey(spaceId, 'inbox');
+          message.publicKey = inboxKey.publicKey;
+          message.signature = Buffer.from(
+            JSON.parse(
+              ch.js_sign_ed448(
+                Buffer.from(inboxKey.privateKey, 'hex').toString('base64'),
+                Buffer.from(messageId).toString('base64')
+              )
+            ),
+            'base64'
+          ).toString('hex');
+        }
+
+        const msg = secureChannel.TripleRatchetEncrypt(
+          JSON.stringify({
+            ratchet_state: sets[0].state,
+            message: [
+              ...new Uint8Array(Buffer.from(JSON.stringify(message), 'utf-8')),
+            ],
+          } as secureChannel.TripleRatchetStateAndMessage)
+        );
+        const result = JSON.parse(
+          msg
+        ) as secureChannel.TripleRatchetStateAndEnvelope;
+        outbounds.push(
+          await this.sendHubMessage(
+            spaceId,
+            JSON.stringify({
+              type: 'message',
+              message: JSON.parse(result.envelope),
+            })
+          )
+        );
+        await this.saveMessage(
+          message,
+          this.messageDB,
+          spaceId,
+          channelId,
+          'group',
+          {
+            user_icon:
+              conversation.conversation?.icon ?? DefaultImages.UNKNOWN_USER,
+            display_name:
+              conversation.conversation?.displayName ?? t`Unknown User`,
+          }
+        );
+        await this.addMessage(queryClient, spaceId, channelId, message);
+
+        return outbounds;
+      }
+
+      // Handle pin-message type
+      if (
+        typeof pendingMessage === 'object' &&
+        (pendingMessage as any).type === 'pin'
+      ) {
+        const pinMessage = pendingMessage as PinMessage;
+
+        // Reject DMs - pins are Space-only feature
+        if (spaceId === channelId) {
+          return outbounds;
+        }
+
+        // Validate permissions (same logic as saveMessage/addMessage)
+        let hasPermission = false;
+
+        // For read-only channels: check manager privileges FIRST
+        const channel = space?.groups
+          ?.find((g) => g.channels.find((c) => c.channelId === channelId))
+          ?.channels.find((c) => c.channelId === channelId);
+
+        if (channel?.isReadOnly) {
+          const isManager = !!(
+            channel.managerRoleIds &&
+            space?.roles?.some(
+              (role) =>
+                channel.managerRoleIds?.includes(role.roleId) &&
+                role.members.includes(currentPasskeyInfo.address)
+            )
+          );
+          hasPermission = isManager;
+        } else {
+          // For regular channels: check explicit role membership (NO isSpaceOwner bypass)
+          hasPermission = !!(
+            space?.roles?.some(
+              (role) =>
+                role.members.includes(currentPasskeyInfo.address) &&
+                role.permissions.includes('message:pin')
+            )
+          );
+        }
+
+        if (!hasPermission) {
+          return outbounds;
+        }
+
+        // Generate message ID using SHA-256(nonce + 'pin' + senderId + canonicalize(pinMessage))
+        const messageId = await crypto.subtle.digest(
+          'SHA-256',
+          Buffer.from(
+            nonce +
+              'pin' +
+              currentPasskeyInfo.address +
+              canonicalize(pinMessage),
+            'utf-8'
+          )
+        );
+
+        const message = {
+          spaceId: spaceId,
+          channelId: channelId,
+          messageId: Buffer.from(messageId).toString('hex'),
+          digestAlgorithm: 'SHA-256',
+          nonce: nonce,
+          createdDate: Date.now(),
+          modifiedDate: Date.now(),
+          lastModifiedHash: '',
+          content: {
+            ...pinMessage,
+            senderId: currentPasskeyInfo.address,
+          } as PinMessage,
+        } as Message;
+
+        const conversationId = spaceId + '/' + channelId;
+        const conversation = await this.messageDB.getConversation({
+          conversationId,
+        });
+        const response = await this.messageDB.getEncryptionStates({
+          conversationId: spaceId + '/' + spaceId,
+        });
+        const sets = response.map((e) => JSON.parse(e.state));
+
+        // Enforce non-repudiability
         if (!space?.isRepudiable || (space?.isRepudiable && !skipSigning)) {
           const inboxKey = await this.messageDB.getSpaceKey(spaceId, 'inbox');
           message.publicKey = inboxKey.publicKey;

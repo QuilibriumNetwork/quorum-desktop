@@ -117,7 +117,7 @@ The following table summarizes all client-side limitations and their security st
 | **Regex DoS Prevention** | **LOW** | ❌ No - bounded quantifiers | ❌ No - length limits |
 | **@everyone mention** | **LOW** | ❌ No - stripped before broadcast | ❌ No - service layer |
 | **Delete others' messages** | **LOW** | ❌ No - rejected on receive | ⚠️ Sends, but rejected |
-| **Pin messages** | **LOW** | ❌ No - role required | ✅ Yes, but local only |
+| **Pin messages** | **LOW** | ❌ No - rejected on receive | ⚠️ Sends, but rejected |
 | **Read-only channel posting** | **LOW** | ❌ No - rejected on receive | ⚠️ Sends, but rejected |
 | **Message length (2500 chars)** | **LOW** | ❌ No - rejected on receive | ⚠️ Sends, but rejected |
 | **Mentions per message (20)** | **LOW** | ❌ No - rejected on receive | ⚠️ Sends, but rejected |
@@ -246,6 +246,7 @@ All incoming messages are validated **before being added to the UI cache**, prot
 | Message length | 2500 characters max | `MessageService.ts:897-917` |
 | Mention count | 20 mentions max | `MessageService.ts:921-937` |
 | Rate limiting | 10 msgs/10 sec per sender | `MessageService.ts:939-957` |
+| Pin messages | Permission + 50 max pins | `MessageService.ts:448-523, 882-978` |
 
 #### Implementation Pattern
 
@@ -268,6 +269,7 @@ if (isPostMessage) {
 - ✅ Excessive mentions **never trigger notifications**
 - ✅ Read-only channel spam **never visible**
 - ✅ Message flooding **automatically rate limited**
+- ✅ Unauthorized pins **never displayed** to honest users
 - ✅ Attackers only see their own malicious content
 
 ---
@@ -341,6 +343,21 @@ Receiving clients validate permissions independently:
 - **Location**: `src/services/MessageService.ts:691-750`
 - **Behavior**: Unauthorized deletes silently ignored
 
+#### Pin Message Permission
+
+Pin/unpin actions broadcast with full defense-in-depth validation:
+- **Sending**: `src/services/MessageService.ts:3100-3232`
+- **Receiving (saveMessage)**: `src/services/MessageService.ts:448-523`
+- **Receiving (addMessage)**: `src/services/MessageService.ts:882-978`
+- **Security Features**:
+  - ✅ DMs rejected (pins are Space-only)
+  - ✅ Read-only channel managers can pin
+  - ✅ Regular channels require explicit `message:pin` role permission
+  - ✅ NO `isSpaceOwner` bypass on receiving side
+  - ✅ Pin limit (50) enforced on both sending and receiving sides
+  - ✅ Rate limiting via existing message throttle
+- **Behavior**: Unauthorized pins silently rejected, attacker only sees their own pin
+
 ---
 
 ## Cryptographic Security
@@ -396,8 +413,9 @@ User identity secured via WebAuthn passkeys:
 ---
 
 **Document Created**: 2025-11-08
-**Last Updated**: 2025-12-11
+**Last Updated**: 2025-12-12
 **Major Updates**:
+- 2025-12-12: Added pin message cross-client synchronization with full defense-in-depth validation
 - 2025-12-11: Added receiving-side validation for message length, mentions, read-only channels
 - 2025-12-11: Added 2-layer message rate limiting
 - 2025-12-11: Restructured as comprehensive security architecture document

@@ -8,6 +8,7 @@ import type {
   UpdateProfileMessage,
   StickerMessage,
   EditMessage,
+  PinMessage,
 } from '../api/quorumApi';
 
 /**
@@ -29,6 +30,7 @@ export function canonicalize(
     | UpdateProfileMessage
     | StickerMessage
     | EditMessage
+    | PinMessage
 ): string {
   if (typeof pendingMessage === 'string') {
     return pendingMessage;
@@ -98,6 +100,14 @@ export function canonicalize(
       pendingMessage.originalMessageId +
       editedText +
       pendingMessage.editNonce
+    );
+  }
+
+  if (pendingMessage.type === 'pin') {
+    return (
+      pendingMessage.type +
+      pendingMessage.targetMessageId +
+      pendingMessage.action
     );
   }
 

@@ -2,16 +2,25 @@
 
 ## Overview
 
-The pinned messages feature allows space owners to pin important messages within channels, making them easily accessible through a dedicated panel. This Discord-like functionality helps prioritize key information and announcements within conversations.
+The pinned messages feature allows authorized users to pin important messages within Space channels, making them easily accessible through a dedicated panel. Pin/unpin actions are broadcast to all space members with full defense-in-depth validation, ensuring pins synchronize across all devices while maintaining security.
+
+**Key Features:**
+- ✅ Cross-client synchronization via encrypted broadcast
+- ✅ Role-based permissions with `message:pin` permission
+- ✅ Defense-in-depth validation (UI → Sending → Receiving)
+- ✅ Space Channels only (DMs not supported)
+- ✅ Pin limit enforcement (50 max per channel)
 
 ## User Experience
 
-- **Space owners only**: Only users with space owner permissions can pin/unpin messages
+- **Role-based permissions**: Users with `message:pin` permission or read-only channel managers can pin/unpin messages
+- **Space Channels only**: Pin feature available in Space Channels, not in DMs
 - **Pin from message actions**: Hover over any message to reveal pin/unpin button (thumbtack icon)
 - **Visual indicators**: Pinned messages show a thumbtack icon next to the sender name
 - **Pinned messages panel**: Access all pinned messages via thumbtack button in channel header
 - **Quick navigation**: Jump directly to pinned messages in the conversation
 - **Confirmation feedback**: Shows "Pinned!" and "Unpinned!" tooltips after actions
+- **Real-time sync**: Pin/unpin actions broadcast to all space members and sync across devices
 
 ## Architecture
 
@@ -39,7 +48,7 @@ The pinned messages feature allows space owners to pin important messages within
 **File: `src/api/quorumApi.ts`**
 
 - Extended `Message` type with pin-related fields
-- Added `PinMessage` type for future system message implementation:
+- `PinMessage` type used for cross-client synchronization:
   ```typescript
   type PinMessage = {
     senderId: string;
@@ -49,6 +58,48 @@ The pinned messages feature allows space owners to pin important messages within
   };
   ```
 
+### Message Broadcasting
+
+**File: `src/services/MessageService.ts`**
+
+Pin/unpin actions are broadcast to all space members using the same pattern as reactions, deletions, and edits:
+
+**Sending (`submitChannelMessage` - lines 3100-3232):**
+- Validates user permissions before broadcast
+- Generates message ID using SHA-256(nonce + 'pin' + senderId + canonicalize(pinMessage))
+- Creates Message envelope with PinMessage content
+- Signs if non-repudiable space
+- Encrypts with Triple Ratchet
+- Sends via `sendHubMessage()`
+- Calls `saveMessage()` and `addMessage()` for local updates
+
+**Receiving (`saveMessage` - lines 448-523):**
+- Validates target message exists
+- Rejects DMs (pins are Space-only)
+- Validates permissions:
+  - Read-only channels: Only managers via `managerRoleIds`
+  - Regular channels: Explicit `message:pin` role permission (NO isSpaceOwner bypass)
+- Pin limit validation (50 max)
+- Updates target message with `isPinned`, `pinnedAt`, `pinnedBy` fields
+- Persists to IndexedDB
+
+**Receiving (`addMessage` - lines 882-978):**
+- Same permission validation as saveMessage (defense-in-depth)
+- Pin limit validation
+- Updates React Query cache
+- Invalidates `pinnedMessages` and `pinnedMessageCount` query caches
+
+**Canonicalization (`src/utils/canonicalize.ts` - lines 104-110):**
+```typescript
+if (pendingMessage.type === 'pin') {
+  return (
+    pendingMessage.type +
+    pendingMessage.targetMessageId +
+    pendingMessage.action  // Ensures unique IDs for pin vs unpin
+  );
+}
+```
+
 ### Business Logic
 
 **File: `src/hooks/business/messages/usePinnedMessages.ts`**
@@ -57,12 +108,19 @@ Main hook managing all pinned message functionality:
 
 **Key features:**
 
-- React Query integration with optimistic updates
-- Permission checking (space owner validation)
+- React Query integration with network broadcast
+- Permission checking (role-based with `message:pin` permission)
 - Pin limit enforcement (50 messages maximum, configurable via `PINNED_MESSAGES_CONFIG.MAX_PINS`)
+- Network broadcast via `submitChannelMessage()` instead of local-only updates
 - Automatic query invalidation for real-time updates
 - Comprehensive error handling with try-catch blocks and validation
 - Error state exposure via `pinError` and `unpinError` properties
+
+**Pin/Unpin Implementation (lines 71-160):**
+- Replaced local `updateMessagePinStatus()` with `submitChannelMessage()` broadcast
+- Creates `PinMessage` object with `action: 'pin'` or `action: 'unpin'`
+- Broadcasts to all space members via encrypted message
+- Receiving clients independently validate and apply changes
 
 **Exported functions:**
 
@@ -190,10 +248,20 @@ Added thumbtack-related icons:
 3. `handlePinClick()` calls `togglePin(message)`
 4. `togglePin()` determines action based on `message.isPinned`
 5. Calls `pinMessage(messageId)` → triggers pin mutation
-6. Mutation updates database via `updateMessagePinStatus()`
-7. On success, invalidates relevant React Query caches
-8. UI updates automatically with new pin state
-9. Shows "Pinned!" confirmation tooltip for 2 seconds
+6. Mutation creates `PinMessage` object and calls `submitChannelMessage()`
+7. **Sending client:**
+   - Validates permissions (UI layer)
+   - Validates permissions again (sending layer)
+   - Encrypts and broadcasts to all space members
+   - Calls `saveMessage()` and `addMessage()` for local updates
+8. **All receiving clients (including sender):**
+   - Decrypt incoming message
+   - Validate permissions independently (receiving layer)
+   - Validate pin limit (50 max)
+   - Update local database and React Query cache
+   - Invalidate `pinnedMessages` and `pinnedMessageCount` queries
+9. UI updates automatically with new pin state across all devices
+10. Shows "Pinned!" confirmation tooltip for 2 seconds
 
 ### Viewing Pinned Messages
 
@@ -235,9 +303,30 @@ All magic numbers have been extracted into configuration objects:
 
 ### Permission System
 
-- Only space owners can pin/unpin messages
-- Permission checked in hook: `canPinMessages: Boolean(isSpaceOwner)`
-- UI elements conditionally rendered based on permissions
+**Defense-in-Depth (3 Layers):**
+
+1. **UI Layer**: Permission checked in hook via `canUserPin()`
+   - Read-only channels: Check `managerRoleIds` first
+   - Regular channels: Check `message:pin` role permission via `hasPermission()` (includes isSpaceOwner bypass for UI only)
+   - UI elements conditionally rendered based on permissions
+
+2. **Sending Layer** (`MessageService.ts:3100-3232`):
+   - Same permission logic before broadcast
+   - Prevents unauthorized messages from being sent
+
+3. **Receiving Layer** (`MessageService.ts:448-523, 882-978`):
+   - **Independent validation** by each receiving client
+   - Read-only channels: Only managers via `managerRoleIds`
+   - Regular channels: **Explicit `message:pin` role permission only** (NO isSpaceOwner bypass)
+   - Space owners must assign themselves a role with `message:pin` permission
+   - Protects against malicious/modified clients
+
+**Security Guarantees:**
+- ✅ Unauthorized pins never displayed to honest users
+- ✅ Silent rejection (attacker only sees their own pin)
+- ✅ Pin limit enforced on both sending and receiving sides
+- ✅ DMs explicitly rejected (pins are Space-only)
+- ✅ Rate limiting via existing message throttle (10 msgs/10 sec)
 
 ### Error Handling
 
@@ -259,21 +348,35 @@ All magic numbers have been extracted into configuration objects:
 - Responsive design with mobile-first approach
 - Touch-friendly tooltips with auto-hide timers
 
+## Completed Enhancements
+
+- ✅ **Cross-Client Sync** (2025-12-12): Pin/unpin actions now broadcast to all space members
+- ✅ **Role-based Permissions** (2025-12-12): Extended to use `message:pin` permission, not just space owners
+- ✅ **Defense-in-Depth Security** (2025-12-12): 3-layer validation (UI → Sending → Receiving)
+- ✅ **DM Protection** (2025-12-12): Pins explicitly rejected in DMs (Space-only feature)
+
 ## Future Enhancements
 
-1. **System Messages**: Implement PinMessage type for pin/unpin notifications
-2. **Role-based Permissions**: Extend beyond space owners to specific roles
-3. **Pin Categories**: Allow organizing pins by topic or importance
-4. **Pin History**: Track pin/unpin activity for moderation
-5. **Bulk Operations**: Pin/unpin multiple messages at once
+1. **System Messages**: Show pin/unpin notifications in conversation feed
+2. **Pin Categories**: Allow organizing pins by topic or importance
+3. **Pin History**: Track pin/unpin activity for moderation
+4. **Bulk Operations**: Pin/unpin multiple messages at once
 
 ## Related Documentation
 
 - [Message Preview Rendering](message-preview-rendering.md) - Overview of preview rendering systems (MessagePreview used here)
 - [Bookmarks](bookmarks.md) - Similar panel pattern with hybrid rendering
 - [Markdown Stripping](markdown-stripping.md) - Text processing used by MessagePreview
+- [Security Architecture](../security.md) - Defense-in-depth validation pattern used for pins
+- [Data Management Architecture](../../data-management-architecture-guide.md) - Message sync patterns
+
+## Implementation Tasks
+
+- [Pinned Messages Feature Plan](.agents/tasks/.done/pinned-messages-feature.md) - Original feature implementation
+- [Pinned Messages Sync Task](.agents/tasks/pinned-messages-sync.md) - Cross-client synchronization (✅ COMPLETED 2025-12-12)
 
 ---
 
-_Last updated: 2025-12-02_
-_Verified: 2025-12-09 - File paths confirmed current_
+_Created: 2025-12-02_
+_Last updated: 2025-12-12_
+_Major Update: Added cross-client synchronization with full defense-in-depth validation_
