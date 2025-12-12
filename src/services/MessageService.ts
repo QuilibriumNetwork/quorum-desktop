@@ -2932,6 +2932,15 @@ export class MessageService {
         conversationId.split('/')[0],
         'inbox'
       );
+
+      if (!inbox_key) {
+        // Space was deleted, silently skip cleanup
+        console.debug(
+          `Skipping inbox cleanup for deleted space: ${conversationId.split('/')[0]}`
+        );
+        return;
+      }
+
       await this.deleteInboxMessages(
         {
           inbox_address: inbox_key.address!,
