@@ -2,10 +2,34 @@
 
 > **⚠️ AI-Generated**: May contain errors. Verify before use.
 
-**Status**: Pending
+**Status**: ❌ Archived - Not Worth Implementing
 **Complexity**: Medium
 **Created**: 2025-12-13
 **Updated**: 2025-12-13 (Security & Feature Analysis Review)
+**Archived**: 2025-12-13
+
+## ❌ Why This Task Was Archived
+
+**Performance testing revealed the original premise was incorrect.**
+
+The task assumed DB queries in `saveConfig()` took 300-800ms. Actual timing instrumentation showed:
+
+| Component | Time | % of Total |
+|-----------|------|------------|
+| DB queries (fetchAllSpaceKeys) | **~40ms** | 0.6% |
+| Ed448 signing | ~1,000ms | 14% |
+| API call (postUserSettings) | **~5,500ms** | 80% |
+| **Total** | ~7,000ms | 100% |
+
+**Conclusion**: Caching would save ~40ms out of 7 seconds. The real bottlenecks are:
+1. **API latency** (5.5 seconds) - needs backend investigation
+2. **Ed448 WASM signing** (1 second) - covered by background-action-queue task
+
+This task would provide negligible improvement. The effort is better spent on the background action queue task which addresses the actual bottlenecks.
+
+---
+
+## Original Task (For Reference)
 
 **Files**:
 - `src/services/ConfigService.ts` (main changes)
@@ -17,6 +41,18 @@
 **Eliminate redundant database queries during config saves by caching space key metadata (NOT private keys), reducing save time from 300-800ms to near-zero for repeated saves.**
 
 This is a **quick win** optimization that can be implemented independently of the larger action queue task.
+
+## What Operations Will Be Faster?
+
+**Any operation that triggers `saveConfig()` will benefit**, including:
+- ✅ Avatar/profile changes
+- ✅ Folder drag-and-drop
+- ✅ Creating/deleting folders
+- ✅ User settings changes
+- ✅ Space reordering
+- ✅ Any config modification
+
+**Why?** All these operations call `saveConfig()`, which currently re-fetches ALL space keys every time - even when the change has nothing to do with spaces. The space keys are needed for encrypting the synced config, but they rarely change.
 
 ## Problem
 
@@ -39,6 +75,8 @@ const spaceKeysPromises = spaces.map(async (space) => {
 - 1 + (30 × 2) = **61 database queries per save**
 - ~300-800ms just for DB queries
 - Happens on EVERY config change (avatar, folder drag, settings, etc.)
+
+**The irony**: Changing your avatar takes 300-800ms because it's re-fetching space data that has nothing to do with avatars!
 
 **The reality**: Space keys almost never change! They only change when:
 - User joins a new space

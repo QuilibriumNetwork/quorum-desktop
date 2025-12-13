@@ -372,11 +372,16 @@ export class ConfigService {
 
     if (config.allowSync) {
       console.log('syncing config', config);
+      // DEBUG TIMING - REMOVE AFTER TESTING
+      const DEBUG_START = performance.now();
+      const DEBUG_TIMES: Record<string, number> = {};
+
       const userKey = keyset.userKeyset;
       const derived = await crypto.subtle.digest(
         'SHA-512',
         Buffer.from(new Uint8Array(userKey.user_key.private_key))
       );
+      DEBUG_TIMES['1_sha512_derive'] = performance.now() - DEBUG_START;
 
       const subtleKey = await window.crypto.subtle.importKey(
         'raw',
@@ -388,8 +393,10 @@ export class ConfigService {
         false,
         ['encrypt']
       );
+      DEBUG_TIMES['2_aes_key_import'] = performance.now() - DEBUG_START;
 
       const spaces = await this.messageDB.getSpaces();
+      DEBUG_TIMES['3_getSpaces'] = performance.now() - DEBUG_START;
 
       // Fetch all space keys and encryption states in parallel
       const spaceKeysPromises = spaces.map(async (space) => {
@@ -407,6 +414,7 @@ export class ConfigService {
       });
 
       const allSpaceKeys = await Promise.all(spaceKeysPromises);
+      DEBUG_TIMES['4_fetchAllSpaceKeys'] = performance.now() - DEBUG_START;
       // Filter out entries with undefined encryptionState
       config.spaceKeys = allSpaceKeys.filter(sk => sk.encryptionState !== undefined);
 
@@ -434,17 +442,21 @@ export class ConfigService {
 
       // Collect bookmarks before encryption (Phase 7: Sync Integration)
       config.bookmarks = await this.messageDB.getBookmarks();
+      DEBUG_TIMES['5_getBookmarks'] = performance.now() - DEBUG_START;
       // Note: deletedBookmarkIds will be reset AFTER successful sync
 
       const iv = crypto.getRandomValues(new Uint8Array(12));
+      const configJson = JSON.stringify(config);
+      DEBUG_TIMES['6_jsonStringify'] = performance.now() - DEBUG_START;
       const ciphertext =
         Buffer.from(
           await window.crypto.subtle.encrypt(
             { name: 'AES-GCM', iv: iv },
             subtleKey,
-            Buffer.from(JSON.stringify(config), 'utf-8')
+            Buffer.from(configJson, 'utf-8')
           )
         ).toString('hex') + Buffer.from(iv).toString('hex');
+      DEBUG_TIMES['7_aesEncrypt'] = performance.now() - DEBUG_START;
 
       const signature = Buffer.from(
         JSON.parse(
@@ -462,6 +474,7 @@ export class ConfigService {
         ),
         'base64'
       ).toString('hex');
+      DEBUG_TIMES['8_ed448Sign'] = performance.now() - DEBUG_START;
 
       await this.apiClient.postUserSettings(config.address, {
         user_address: config.address,
@@ -471,6 +484,22 @@ export class ConfigService {
         user_config: ciphertext,
         timestamp: ts,
         signature: signature,
+      });
+      DEBUG_TIMES['9_apiCall'] = performance.now() - DEBUG_START;
+
+      // DEBUG: Log timing breakdown
+      console.log('⏱️ saveConfig TIMING BREAKDOWN (ms):', {
+        '1_sha512_derive': DEBUG_TIMES['1_sha512_derive'].toFixed(1),
+        '2_aes_key_import': (DEBUG_TIMES['2_aes_key_import'] - DEBUG_TIMES['1_sha512_derive']).toFixed(1),
+        '3_getSpaces': (DEBUG_TIMES['3_getSpaces'] - DEBUG_TIMES['2_aes_key_import']).toFixed(1),
+        '4_fetchAllSpaceKeys': (DEBUG_TIMES['4_fetchAllSpaceKeys'] - DEBUG_TIMES['3_getSpaces']).toFixed(1),
+        '5_getBookmarks': (DEBUG_TIMES['5_getBookmarks'] - DEBUG_TIMES['4_fetchAllSpaceKeys']).toFixed(1),
+        '6_jsonStringify': (DEBUG_TIMES['6_jsonStringify'] - DEBUG_TIMES['5_getBookmarks']).toFixed(1),
+        '7_aesEncrypt': (DEBUG_TIMES['7_aesEncrypt'] - DEBUG_TIMES['6_jsonStringify']).toFixed(1),
+        '8_ed448Sign': (DEBUG_TIMES['8_ed448Sign'] - DEBUG_TIMES['7_aesEncrypt']).toFixed(1),
+        '9_apiCall': (DEBUG_TIMES['9_apiCall'] - DEBUG_TIMES['8_ed448Sign']).toFixed(1),
+        'TOTAL': DEBUG_TIMES['9_apiCall'].toFixed(1),
+        'spaceCount': spaces.length,
       });
 
       // Reset tombstones only after successful sync (Phase 7: Critical Fix)

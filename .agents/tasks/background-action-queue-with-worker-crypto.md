@@ -8,9 +8,34 @@ https://github.com/QuilibriumNetwork/quorum-desktop/issues/110
 **Status**: Pending
 **Complexity**: Critical
 **Created**: 2025-12-13
+**Updated**: 2025-12-13 (timing data corrected after measurement)
 **Branch**: `cross-platform_web-worker`
 
 **Estimated Effort**: 15-20 hours (incremental milestones)
+
+---
+
+## 📊 Key Finding: Timing Analysis (2025-12-13)
+
+Performance testing revealed the **actual bottlenecks** are different from initial assumptions:
+
+| Component | Time | Impact | Can This Task Fix? |
+|-----------|------|--------|-------------------|
+| API call (`postUserSettings`) | 5,500ms | 80% | ⚠️ Partially - makes it non-blocking |
+| Ed448 WASM signing | 1,000ms | 14% | ✅ Yes - offload to background |
+| DB queries | 40ms | 0.6% | ❌ Already fast enough |
+| AES/SHA crypto | <1ms | 0.01% | ❌ Already fast enough |
+
+**This task is still valid** because:
+1. **Debouncing** reduces number of 7-second saves
+2. **Background processing** makes the entire operation non-blocking (user doesn't wait)
+3. **Persistent queue** prevents data loss during the long API calls
+4. **Offline support** queues operations when network is slow/unavailable
+
+> 💡 The original "Web Worker for AES crypto" rationale was incorrect (AES is 0.2ms).
+> The real value is making the **entire save flow non-blocking**, including the 5.5s API call.
+
+---
 
 ## Objective
 
@@ -41,39 +66,51 @@ Items are marked with risk levels:
 - 🟡 **MEDIUM RISK** - Some unknowns, but manageable
 - 🔴 **HIGH RISK / EXPERIMENTAL** - Unknown compatibility, requires PoC first
 
-### Recommended Order
+### Recommended Order (Updated 2025-12-13)
 
-1. **Milestone 1**: Debouncing (LOW RISK) - Immediate UX improvement
-2. **Milestone 2**: Web Worker PoC (MEDIUM RISK) - Validate approach early (SDK compatibility confirmed)
-3. **Milestone 3**: Web Worker Integration (MEDIUM RISK) - If PoC passes
-4. **Milestone 4**: Persistent Queue Foundation (MEDIUM RISK)
-5. **Milestone 5**: Queue Processing Engine (MEDIUM RISK)
-6. **Milestone 6**: UI Feedback (LOW RISK)
-7. **Milestone 7**: Full Integration (MEDIUM RISK)
+| Order | Milestone | Value | Notes |
+|-------|-----------|-------|-------|
+| 1 | **Debouncing** | ⭐⭐⭐ HIGH | 5-10x improvement for rapid operations |
+| 2 | **Web Worker PoC** | ⭐ LOW | Validates approach, but AES is only 0.2ms |
+| 3 | **Web Worker Integration** | ⭐ LOW | Infrastructure for non-blocking saves |
+| 4 | **Persistent Queue** | ⭐⭐ MEDIUM | Enables reliability features |
+| 5 | **Queue Processing** | ⭐⭐⭐ HIGH | Makes saves truly non-blocking (user doesn't wait 7s) |
+| 6 | **UI Feedback** | ⭐⭐ MEDIUM | User knows what's happening |
+| 7 | **Full Integration** | ⭐⭐⭐ HIGH | Complete solution |
+
+> 💡 **Key insight**: Milestones 2-3 (Web Worker) have LOW value for crypto offloading (AES is 0.2ms).
+> Their real value is establishing infrastructure for Milestone 5 where the **entire save runs in background**.
 
 ---
 
 ## Current Problems (Why We Need This)
 
 ### Problem 1: UI Freezing During Config Saves
-**Symptom**: App freezes for 2-4 seconds when:
-- Saving space settings
+**Symptom**: App freezes for ~7 seconds when:
+- Saving user settings (avatar, display name)
 - Dragging folders
 - Creating/deleting folders
-- Changing user settings
 
-**Root Cause**: Crypto operations block main thread:
+**Actual Timing** (measured 2025-12-13 with debug instrumentation):
 ```
-SHA-512 digest:    5-15ms
-AES key import:    2-5ms
-AES-GCM encrypt:   10-25ms
-Ed448 sign:        10-20ms (WASM)
-JSON.stringify:    5-10ms
-IndexedDB write:   5-10ms
----------------------------------
-Total:             37-85ms per save
+SHA-512 digest:       0.3ms   (0.004%)
+AES key import:       0.3ms   (0.004%)
+DB queries:          40.0ms   (0.6%)    ← NOT the bottleneck
+JSON stringify:       0.1ms   (0.001%)
+AES-GCM encrypt:      0.2ms   (0.003%)
+Ed448 sign (WASM):  1000.0ms  (14%)     ← MAIN THREAD BLOCKER
+API call:           5500.0ms  (80%)     ← THE REAL BOTTLENECK
+-------------------------------------------------
+Total:              ~7000ms per save
 ```
-With rapid operations (drag-and-drop), this compounds.
+
+**Root Causes** (in priority order):
+1. **API latency (80%)** - `postUserSettings` takes 5.5 seconds - needs backend investigation
+2. **Ed448 WASM signing (14%)** - 1 second on main thread causes UI freeze
+3. **Everything else (<1%)** - Negligible impact
+
+> ⚠️ **NOTE**: Original estimates in this task were incorrect. AES/SHA operations are sub-millisecond.
+> The Web Worker benefit is primarily for **Ed448 signing** (if we move WASM there), not AES.
 
 ### Problem 2: Data Loss on Failure
 **Symptom**: Messages/config lost when:
@@ -87,6 +124,16 @@ With rapid operations (drag-and-drop), this compounds.
 **Symptom**: Operations fail silently when offline.
 
 **Root Cause**: No persistence layer to hold operations until online.
+
+### Problem 4: API Latency (NEW - Discovered 2025-12-13)
+**Symptom**: Config saves take 5.5 seconds even with fast local operations.
+
+**Root Cause**: `postUserSettings` API endpoint is slow. This is **80% of total save time**.
+
+**This task can't fix it** - requires backend investigation. But the action queue helps by:
+- Making the save **non-blocking** (user doesn't wait)
+- Allowing **retry on failure**
+- Enabling **offline queuing**
 
 ---
 
@@ -121,8 +168,8 @@ With rapid operations (drag-and-drop), this compounds.
 │  1. Acquire distributed lock (multi-tab safety)              │
 │  2. Get next batch of pending tasks                          │
 │  3. For crypto-heavy tasks:                                  │
-│     → Send to Web Worker (AES encryption)                    │
-│     → Ed448 signing on main thread (security)                │
+│     → Send to Web Worker (AES encryption - minimal benefit)  │
+│     → Ed448 signing on main thread (1s blocker - see note)   │
 │  4. Execute task (API calls, WebSocket sends)                │
 │  5. Update status, handle retries                            │
 └─────────────────────┬───────────────────────────────────────┘
@@ -130,12 +177,32 @@ With rapid operations (drag-and-drop), this compounds.
                       ▼
 ┌─────────────────────────────────────────────────────────────┐
 │              WEB WORKER (Off Main Thread)                    │
-│  - AES-GCM encryption                                        │
-│  - SHA-512 hashing                                           │
+│  - AES-GCM encryption (minimal benefit: 0.2ms)               │
+│  - SHA-512 hashing (minimal benefit: 0.3ms)                  │
 │  - JSON serialization                                        │
 │  - NEVER receives private keys                               │
+│                                                              │
+│  NOTE: Web Worker provides minimal crypto speedup since      │
+│  AES/SHA are already sub-millisecond. The REAL value is:     │
+│  - Making the entire save operation NON-BLOCKING             │
+│  - User doesn't wait for 5.5s API call                       │
+│  - Ed448 signing (1s) could move here in future              │
 └─────────────────────────────────────────────────────────────┘
 ```
+
+### ⚠️ Critical Insight: Ed448 Signing Is The Real Opportunity
+
+The current plan keeps Ed448 signing on the main thread "for security." However:
+
+- **Ed448 takes 1,000ms** (14% of total time) - the ONLY main thread blocker
+- **AES takes 0.2ms** (0.003%) - moving this to worker provides negligible benefit
+
+**Future consideration**: If we want to eliminate UI freezing, we should investigate moving Ed448 WASM to the Web Worker. This requires:
+1. Loading WASM in worker context (proven possible, already in task)
+2. Sending the private key to worker (requires security analysis)
+3. OR: Making the background processor truly asynchronous (queue + poll for result)
+
+For now, this task focuses on making the **entire save non-blocking** via the action queue, which solves the UX problem even without moving Ed448.
 
 ---
 
@@ -147,8 +214,11 @@ With rapid operations (drag-and-drop), this compounds.
 **Effort**: 1-2 hours
 
 ### What This Solves
-- 10 folder drags → 10 saves → 10 freezes (CURRENT)
-- 10 folder drags → 1-2 saves → 1-2 freezes (AFTER)
+- 10 folder drags → 10 saves → 10 × 7s freezes = **70 seconds** (CURRENT)
+- 10 folder drags → 1-2 saves → 1-2 × 7s freezes = **7-14 seconds** (AFTER)
+
+> 💡 **HIGH VALUE**: Each save takes ~7 seconds. Debouncing reduces the NUMBER of saves,
+> providing 5-10x improvement for rapid operations like drag-and-drop.
 
 ### Implementation
 
@@ -581,9 +651,14 @@ Delete the test files. No production code touched.
 ## Milestone 3: Web Worker Integration 🟡 MEDIUM RISK
 
 **Goal**: Move AES encryption to Web Worker for config saves.
-**Value**: ~60% reduction in main thread blocking.
+**Value**: ⚠️ **MINIMAL** - AES takes only 0.2ms. Real value is infrastructure for non-blocking saves.
 **Risk**: Medium - PoC validated approach, but production integration has unknowns.
 **Effort**: 2-3 hours
+
+> ⚠️ **UPDATED 2025-12-13**: Original claim of "~60% reduction" was incorrect.
+> AES encryption takes 0.2ms (0.003% of total save time). Moving it to worker provides
+> negligible performance benefit. However, this milestone establishes the worker
+> infrastructure needed for Milestone 5 (queue processing in background).
 
 **⚠️ PREREQUISITE**: Milestone 2 must pass first!
 
@@ -1612,5 +1687,5 @@ This milestone is intentionally less detailed because:
 ---
 
 _Created: 2025-12-13_
-_Last Updated: 2025-12-13_
+_Last Updated: 2025-12-13 (timing data corrected based on actual measurements)_
 _Status: Ready for Implementation_
