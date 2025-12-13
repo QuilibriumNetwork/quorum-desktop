@@ -2,7 +2,7 @@
 
 **Status:** TODO
 **Priority:** Medium
-**Complexity:** Medium
+**Complexity:** Low (Web-Only) / Medium (Full Cross-Platform)
 **Original Feature By:** tjsturos (Tyler Sturos)
 **Original Commit:** `a51ea3f663e43957a6b1f477eabe5ae1100c3616`
 **Reverted In:** `ab82d8e6e12386a0700511a664700c5eaa8aa467`
@@ -37,454 +37,529 @@ The feature was reverted due to **bug `.agents/bugs/messagedb-cross-platform-sto
 - **Problem**: IndexedDB APIs don't exist in React Native environment
 - **Timing**: Occurred before MessageDB refactoring was completed
 
-## Current Architecture Context
+## Implementation Strategy
 
-Since the original implementation, the codebase has undergone **significant refactoring**:
+### Chosen Approach: Web-Only with Adapter Pattern (Option A)
 
-### ✅ MessageDB Refactoring Complete (Phase 2)
+Instead of blocking on the full cross-platform crypto abstraction, we use the existing adapter pattern to implement config sync for web only, with mobile gracefully degrading to standard onboarding.
 
-**Status**: MessageDB has been fully refactored into specialized services (see `.agents/tasks/.done/DONE_messagedb-refactoring.md`)
+**Why this approach:**
+- Delivers value immediately for web users (majority use case)
+- Follows established adapter patterns in the codebase (`usePasskeyAdapter.web.ts` / `usePasskeyAdapter.native.ts`)
+- Mobile gracefully degrades (skips auto-fetch, proceeds with normal onboarding)
+- No risk of mobile crashes - native adapter returns `null`
+- Can be enhanced later when crypto abstraction is complete
 
-**New Service Architecture**:
-- **ConfigService** (`src/services/ConfigService.ts`) - Handles user config get/save
-- **MessageService** (`src/services/MessageService.ts`) - Message operations
-- **SpaceService** (`src/services/SpaceService.ts`) - Space management
-- **EncryptionService** (`src/services/EncryptionService.ts`) - Encryption/keys
-- **SyncService** (`src/services/SyncService.ts`) - Data synchronization
-- **InvitationService** (`src/services/InvitationService.ts`) - Invites
+**Key insight:** `useUserSettings.ts` already successfully imports `useMessageDB` and calls `getConfig()` on web. The same pattern works if we route through the adapter.
 
-**Key Changes**:
-- MessageDB.tsx now delegates to specialized services
-- Business logic extracted from monolithic context
-- Each service has clear, focused responsibilities
-- Services are properly dependency-injected
+---
 
-### ⚠️ Cross-Platform Storage Issue
+## Security Requirements
 
-**Status**: **NOT YET RESOLVED** (as of 2025-10-04)
+> ⚠️ **Critical**: These security measures must be implemented. Remote config data must be treated as untrusted.
 
-The underlying cross-platform storage issue that caused the original revert still exists:
+### Input Validation (Zero-Trust)
 
-- **Web**: Uses IndexedDB via `src/db/messages.ts`
-- **Mobile**: Needs AsyncStorage equivalent (not yet implemented)
-- **Issue**: ConfigService uses `window.crypto` and browser-specific APIs (lines 71-86, 116-123)
-
-**Critical Code in ConfigService.ts**:
+**Profile Image Validation** - Add `validateProfileImage()` utility:
 ```typescript
-// Line 71-75: Browser-only crypto API
-const derived = await crypto.subtle.digest(
-  'SHA-512',
-  Buffer.from(new Uint8Array(userKey.user_key.private_key))
-);
+// src/hooks/business/validation/useProfileValidation.ts
+const MAX_PROFILE_IMAGE_SIZE = 500 * 1024; // 500KB
+const ALLOWED_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
 
-// Line 76-85: window.crypto.subtle (browser-only)
-const subtleKey = await window.crypto.subtle.importKey(
-  'raw',
-  derived.slice(0, 32),
-  { name: 'AES-GCM', length: 256 },
-  false,
-  ['decrypt']
-);
+export function validateProfileImage(dataUri: string | undefined): boolean {
+  if (!dataUri) return false;
+  if (!dataUri.startsWith('data:image/')) return false;
 
-// Line 116-123: window.crypto.subtle.decrypt (browser-only)
-const config = JSON.parse(
-  Buffer.from(
-    await window.crypto.subtle.decrypt(
-      { name: 'AES-GCM', iv: Buffer.from(iv, 'hex') },
-      subtleKey,
-      Buffer.from(ciphertext, 'hex')
-    )
-  ).toString('utf-8')
-) as UserConfig;
-```
+  // Estimate base64 decoded size
+  const sizeEstimate = (dataUri.length * 3) / 4;
+  if (sizeEstimate > MAX_PROFILE_IMAGE_SIZE) return false;
 
-## Implementation Plan
+  // Validate MIME type
+  const mimeMatch = dataUri.match(/^data:(image\/[^;]+);/);
+  if (!mimeMatch || !ALLOWED_IMAGE_TYPES.includes(mimeMatch[1])) return false;
 
-### Phase 1: Platform-Agnostic Crypto Abstraction
-
-**Goal**: Make ConfigService work on both web and mobile platforms
-
-**Tasks**:
-
-1. **Create crypto utilities abstraction** (`src/utils/crypto.ts` already exists but may need extension)
-   - [ ] Audit existing `src/utils/crypto.ts` for platform compatibility
-   - [ ] Create `src/utils/platform/crypto.web.ts` - Web implementation using `window.crypto.subtle`
-   - [ ] Create `src/utils/platform/crypto.native.ts` - React Native implementation using `expo-crypto`
-   - [ ] Export unified API: `deriveKey()`, `encrypt()`, `decrypt()`, `importKey()`
-   - [ ] Test both implementations have identical behavior
-
-2. **Refactor ConfigService to use crypto abstractions**
-   - [ ] Replace direct `crypto.subtle` calls with platform-agnostic utilities
-   - [ ] Replace direct `window.crypto.subtle` calls with platform-agnostic utilities
-   - [ ] Update ConfigService constructor to inject crypto utilities if needed
-   - [ ] Verify ConfigService TypeScript compiles for both platforms
-   - [ ] Test ConfigService works identically on web and mobile
-
-**Validation Criteria**:
-- ✅ ConfigService has no direct references to `window.crypto` or browser-specific APIs
-- ✅ TypeScript compiles without errors for both web and mobile
-- ✅ Crypto operations produce identical results on both platforms
-
-### Phase 2: Implement Config Fetch on Login
-
-**Goal**: Auto-fetch user config when logging into existing account
-
-**Original Implementation Reference** (from commit a51ea3f6):
-
-**File**: `src/hooks/business/user/useOnboardingFlowLogic.ts`
-
-**Changes Made**:
-```typescript
-// Added imports
-import { passkey } from '@quilibrium/quilibrium-js-sdk-channels';
-import { useMessageDB } from '../../../components/context/MessageDB';
-import { useQuorumApiClient } from '../../../components/context/QuorumApiContext';
-
-// Added state
-const [isFetchingUser, setIsFetchingUser] = useState<boolean>(false);
-const { getConfig } = useMessageDB();
-const { apiClient } = useQuorumApiClient();
-
-// Added loading step to state machine
-export type OnboardingStep = 'loading' | 'key-backup' | 'display-name' | 'profile-photo' | 'complete';
-
-// New function: fetchUser
-const fetchUser = useCallback(async (
-  address: string,
-  setUser?: (user: {...}) => void
-) => {
-  // ... 78 lines of logic (see commit for full implementation)
-}, []);
-
-// Updated getCurrentStep to handle loading state
-const getCurrentStep = useCallback((): OnboardingStep => {
-  if (isFetchingUser) return 'loading';
-  // ... rest of logic
-}, [isFetchingUser, ...]);
-```
-
-**File**: `src/components/onboarding/Onboarding.tsx`
-
-**Changes Made**:
-```typescript
-// Added loading state display
-const [isConfigLoading, setIsConfigLoading] = useState<boolean>(false);
-
-// Added useEffect to auto-fetch config on mount when user has address
-useEffect(() => {
-  if (onboardingFlow.currentPasskeyInfo?.address) {
-    const { address } = onboardingFlow.currentPasskeyInfo;
-    setIsConfigLoading(true);
-    (async () => {
-      try {
-        await onboardingFlow.fetchUser(address, setUser);
-      } finally {
-        setIsConfigLoading(false);
-      }
-    })();
-  }
-}, [onboardingFlow.currentPasskeyInfo?.address]);
-
-// Updated UI to show loading state
-{isConfigLoading
-  ? t`Initializing your profile...`
-  : // ... rest of onboarding UI
+  return true;
 }
-
-// Wrapped all onboarding steps with loading check
-{!isConfigLoading && onboardingFlow.currentStep === 'key-backup' && ...}
-{!isConfigLoading && onboardingFlow.currentStep === 'display-name' && ...}
 ```
 
-**File**: `src/db/messages.ts`
-
-**Changes Made**:
+**Display Name Re-validation** - Must re-validate after decryption:
 ```typescript
-export type UserConfig = {
-  // ... existing fields
-  name?: string;              // NEW
-  profile_image?: string;     // NEW
+// In fetchUserConfig - ALWAYS re-validate remote data
+const nameError = validateDisplayName(config.name || '');
+const imageValid = validateProfileImage(config.profile_image);
+
+return {
+  name: nameError ? undefined : config.name,
+  profile_image: imageValid ? config.profile_image : undefined,
 };
 ```
 
-**File**: `src/hooks/business/user/useUserSettings.ts`
+### Session Integrity
 
-**Changes Made**:
+**Address Verification** - Verify session owns the requested address:
 ```typescript
-// In saveChanges function, persist name and profile_image to UserConfig
-await saveConfig({
-  config: {
-    ...existingConfig.current!,
-    address: currentPasskeyInfo.address,
-    name: displayName,                                    // NEW
-    profile_image: profileImageUrl ?? DefaultImages.UNKNOWN_USER,  // NEW
-    allowSync,
-    nonRepudiable: nonRepudiable,
-  },
-  keyset,
+// In usePasskeyAdapter.web.ts fetchUserConfig
+if (address !== keyset.userKeyset.user_key.address) {
+  console.error('Address mismatch: session hijacking attempt detected');
+  return null;
+}
+```
+
+### Rate Limiting
+
+**Client-side Throttling** - Prevent API spam:
+```typescript
+const lastFetchTime = useRef<number>(0);
+const MIN_FETCH_INTERVAL = 5000; // 5 seconds
+
+const fetchUserConfig = useCallback(async (address: string) => {
+  const now = Date.now();
+  if (now - lastFetchTime.current < MIN_FETCH_INTERVAL) {
+    console.warn('Config fetch throttled');
+    return null;
+  }
+  lastFetchTime.current = now;
+  // ... rest of function
+}, []);
+```
+
+### Privacy Protection
+
+**Remove PII from Logs** - Update `ConfigService.ts` line 374:
+```typescript
+// BEFORE (exposes PII):
+console.log('syncing config', config);
+
+// AFTER (safe):
+console.log('syncing config', {
+  address: config.address,
+  timestamp: config.timestamp,
+  spaceCount: config.spaceIds?.length,
+  // DO NOT log: name, profile_image, bookmarks
 });
 ```
 
-**Tasks**:
+### Error Handling Strategy
 
-1. **Update UserConfig type** (✅ Easy - no cross-platform issues)
-   - [ ] Add `name?: string` field to UserConfig in `src/db/messages.ts`
-   - [ ] Add `profile_image?: string` field to UserConfig
-   - [ ] Update default config in `src/utils.ts` to include empty name/profile_image
+| Context | Behavior |
+|---------|----------|
+| Auto-fetch (onboarding) | Silent failure with `console.warn`, return `null` |
+| Manual resync (settings) | Show user-friendly toast/error message |
+| Crypto/signature errors | Generic message in production, detailed in dev |
 
-2. **Update useUserSettings to persist profile to config** (✅ Easy)
-   - [ ] Modify `src/hooks/business/user/useUserSettings.ts`
-   - [ ] In `saveChanges`, add `name` and `profile_image` to config before calling `saveConfig()`
-   - [ ] Ensure changes are backward compatible (existing configs without these fields)
+---
 
-3. **Create platform-agnostic config fetch logic** (⚠️ Requires careful platform handling)
-   - [ ] Extract `fetchUser` logic from original commit into separate utility
-   - [ ] Create `src/hooks/business/user/useConfigFetch.ts` (platform-agnostic business logic)
-   - [ ] Handle platform-specific passkey loading:
-     - Web: Use `passkey.loadKeyDecryptData()` and `passkey.createKeyFromBuffer()`
-     - Mobile: May need different approach - investigate React Native passkey storage
-   - [ ] Call ConfigService's `getConfig()` with proper keyset
-   - [ ] Return profile data (name, profile_image) if available
-   - [ ] Handle errors gracefully (network issues, malformed config, etc.)
+## Implementation Plan
 
-4. **Update OnboardingAdapter interface** (✅ Easy)
-   - [ ] Add `fetchUserConfig: (address: string) => Promise<UserConfig | null>` to `OnboardingAdapter`
-   - [ ] Implement in `src/hooks/platform/user/usePasskeyAdapter.web.ts`
-   - [ ] Create `src/hooks/platform/user/usePasskeyAdapter.native.ts` (mobile implementation)
+### Phase 1: Update UserConfig Type and Persistence
 
-5. **Update useOnboardingFlowLogic** (⚠️ Must avoid direct MessageDB import)
-   - [ ] **DO NOT** import `useMessageDB` directly (this caused the original bug!)
-   - [ ] Add `fetchUserConfig` prop from OnboardingAdapter
-   - [ ] Add `isFetchingUser` state
-   - [ ] Add 'loading' state to OnboardingStep type
-   - [ ] Create `fetchUser()` function that:
-     - Calls `adapter.fetchUserConfig(address)`
-     - Updates `displayName` and profile photo if config exists
-     - Handles loading state properly
-   - [ ] Update `getCurrentStep()` to return 'loading' when `isFetchingUser === true`
-   - [ ] Export `fetchUser` function in return object
+**Goal**: Add profile fields to UserConfig and persist them on save
 
-6. **Update Onboarding.tsx component** (✅ Easy once hooks are ready)
-   - [ ] Add `useEffect` to call `onboardingFlow.fetchUser()` when address is available
-   - [ ] Add loading state display: "Initializing your profile..."
-   - [ ] Wrap all onboarding steps with `!isConfigLoading` check
-   - [ ] Ensure loading UI is accessible and user-friendly
+**Files to modify:**
+- `src/db/messages.ts`
+- `src/utils.ts`
+- `src/hooks/business/user/useUserSettings.ts`
+- `src/hooks/business/validation/useProfileValidation.ts` (NEW)
 
-**Validation Criteria**:
-- ✅ When user logs in with existing account, config is auto-fetched
-- ✅ Display name and profile photo are auto-populated if saved
-- ✅ Loading state shows during config fetch
-- ✅ Works on both web and mobile platforms
-- ✅ Handles errors gracefully (network failures, missing config, etc.)
-- ✅ No crashes on mobile due to IndexedDB/browser API usage
+**Tasks:**
 
-### Phase 3: Add Manual Resync Option
+1. **Update UserConfig type** in `src/db/messages.ts`
+   - [ ] Add `name?: string` field
+   - [ ] Add `profile_image?: string` field
+
+2. **Update default config** in `src/utils.ts`
+   - [ ] Add empty `name` and `profile_image` to `getDefaultUserConfig()`
+
+3. **Create profile validation utility** in `src/hooks/business/validation/useProfileValidation.ts`
+   - [ ] Add `validateProfileImage(dataUri)` - 500KB max, image/* MIME only
+   - [ ] Export for use in config loading and saving paths
+
+4. **Update useUserSettings to persist profile to config**
+   - [ ] In `saveChanges()`, add `name` and `profile_image` to config:
+     ```typescript
+     await saveConfig({
+       config: {
+         ...existingConfig.current!,
+         allowSync,
+         nonRepudiable: nonRepudiable,
+         name: displayName,                    // ADD
+         profile_image: profileImageUrl,       // ADD
+       },
+       keyset: keyset,
+     });
+     ```
+   - [ ] Ensure backward compatibility (existing configs without these fields)
+
+**Validation:**
+- ✅ TypeScript compiles without errors
+- ✅ Existing configs without new fields still work
+- ✅ New configs include profile data
+- ✅ `validateProfileImage()` rejects oversized/invalid images
+
+---
+
+### Phase 2: Extend OnboardingAdapter Interface
+
+**Goal**: Add config fetch capability to the adapter pattern with security controls
+
+**Files to modify:**
+- `src/hooks/business/user/useOnboardingFlowLogic.ts` (interface only)
+- `src/hooks/platform/user/usePasskeyAdapter.web.ts`
+- `src/hooks/platform/user/usePasskeyAdapter.native.ts`
+
+**Tasks:**
+
+1. **Extend OnboardingAdapter interface** in `useOnboardingFlowLogic.ts`
+   ```typescript
+   export interface OnboardingAdapter {
+     currentPasskeyInfo: PasskeyInfo | null;
+     updateStoredPasskey: (credentialId: string, updates: Partial<PasskeyInfo>) => void;
+     // NEW: Optional config fetch - returns null if not supported (mobile)
+     fetchUserConfig?: (address: string) => Promise<{ name?: string; profile_image?: string } | null>;
+   }
+   ```
+
+2. **Implement in web adapter** (`usePasskeyAdapter.web.ts`)
+   - [ ] Import `useMessageDB` to access `getConfig`
+   - [ ] Import `useRegistrationContext` to access `keyset`
+   - [ ] Import `validateDisplayName` and `validateProfileImage`
+   - [ ] Add rate limiting ref
+   - [ ] Implement `fetchUserConfig()` with security controls:
+     ```typescript
+     import { useMessageDB } from '../../../components/context/useMessageDB';
+     import { useRegistrationContext } from '../../../components/context/useRegistrationContext';
+     import { validateDisplayName } from '../../business/validation/useDisplayNameValidation';
+     import { validateProfileImage } from '../../business/validation/useProfileValidation';
+
+     // Inside hook:
+     const { getConfig } = useMessageDB();
+     const { keyset } = useRegistrationContext();
+     const lastFetchTime = useRef<number>(0);
+     const MIN_FETCH_INTERVAL = 5000;
+
+     const fetchUserConfig = useCallback(async (address: string) => {
+       // Rate limiting
+       const now = Date.now();
+       if (now - lastFetchTime.current < MIN_FETCH_INTERVAL) {
+         return null;
+       }
+       lastFetchTime.current = now;
+
+       // Session integrity check
+       if (address !== keyset.userKeyset?.user_key?.address) {
+         console.error('Address mismatch detected');
+         return null;
+       }
+
+       try {
+         const config = await getConfig({ address, userKey: keyset.userKeyset });
+         if (config?.name || config?.profile_image) {
+           // CRITICAL: Re-validate all remote data (zero-trust)
+           const nameError = validateDisplayName(config.name || '');
+           const imageValid = validateProfileImage(config.profile_image);
+
+           return {
+             name: nameError ? undefined : config.name,
+             profile_image: imageValid ? config.profile_image : undefined,
+           };
+         }
+         return null;
+       } catch (error) {
+         console.warn('Failed to fetch user config');
+         return null;
+       }
+     }, [getConfig, keyset.userKeyset]);
+     ```
+   - [ ] Add to returned adapter object
+
+3. **Implement stub in native adapter** (`usePasskeyAdapter.native.ts`)
+   - [ ] Add `fetchUserConfig: async () => null` (no-op, graceful degradation)
+
+**Validation:**
+- ✅ Web adapter can fetch config and return profile data
+- ✅ Native adapter returns null without errors
+- ✅ No IndexedDB/browser API imports in native adapter
+- ✅ Rate limiting prevents rapid re-fetches
+- ✅ Address verification prevents session hijacking
+- ✅ XSS/injection attacks blocked by re-validation
+
+---
+
+### Phase 3: Update Onboarding Flow Logic
+
+**Goal**: Add loading state and config fetch to onboarding state machine
+
+**Files to modify:**
+- `src/hooks/business/user/useOnboardingFlowLogic.ts`
+
+**UX Design Decision**: The `'loading'` step is a **transitional state** that:
+- Shows "Initializing your profile..." during fetch
+- Immediately transitions to `'key-backup'` when fetch completes (success or failure)
+- Should NOT block the user if fetch fails or returns null
+
+**Tasks:**
+
+1. **Add loading step to state machine**
+   ```typescript
+   export type OnboardingStep =
+     | 'loading'        // NEW: Fetching user config (transitional)
+     | 'key-backup'
+     | 'display-name'
+     | 'profile-photo'
+     | 'complete';
+   ```
+
+2. **Add state for config fetching**
+   - [ ] Add `isFetchingConfig` state (boolean)
+   - [ ] Add `configFetched` state (boolean, prevents re-fetching)
+
+3. **Create fetchUserConfig function**
+   ```typescript
+   const fetchUserConfig = useCallback(async () => {
+     // Guard: only fetch if adapter supports it, we have an address, and haven't fetched yet
+     if (!adapter.fetchUserConfig || !currentPasskeyInfo?.address || configFetched) {
+       setConfigFetched(true); // Mark as "attempted" even if skipped
+       return;
+     }
+
+     setIsFetchingConfig(true);
+     try {
+       const config = await adapter.fetchUserConfig(currentPasskeyInfo.address);
+       if (config) {
+         if (config.name) setDisplayName(config.name);
+         if (config.profile_image) {
+           updateStoredPasskey(currentPasskeyInfo.credentialId, {
+             ...currentPasskeyInfo,
+             displayName: config.name || currentPasskeyInfo.displayName,
+             pfpUrl: config.profile_image,
+           });
+         }
+       }
+     } catch (error) {
+       // Silent failure - proceed with normal onboarding
+       console.warn('Config fetch failed, proceeding with onboarding');
+     } finally {
+       setIsFetchingConfig(false);
+       setConfigFetched(true);
+     }
+   }, [adapter, currentPasskeyInfo, configFetched, updateStoredPasskey]);
+   ```
+
+4. **Update getCurrentStep to handle loading**
+   ```typescript
+   const getCurrentStep = useCallback((): OnboardingStep => {
+     if (isFetchingConfig) return 'loading';
+     // ... rest of existing logic
+   }, [isFetchingConfig, exported, currentPasskeyInfo?.displayName, currentPasskeyInfo?.pfpUrl]);
+   ```
+
+5. **Export new values**
+   - [ ] Export `fetchUserConfig` function
+   - [ ] Export `isFetchingConfig` state
+   - [ ] Export `configFetched` state
+
+**Validation:**
+- ✅ Loading state shown during config fetch
+- ✅ Profile data pre-populated when available
+- ✅ Graceful fallback when fetch fails or returns null
+- ✅ No re-fetching after initial attempt
+- ✅ Immediate transition to key-backup if fetch fails/skipped
+
+---
+
+### Phase 4: Update Onboarding UI Component
+
+**Goal**: Integrate config fetch into onboarding UI
+
+**Files to modify:**
+- `src/components/onboarding/Onboarding.tsx`
+
+**Tasks:**
+
+1. **Trigger config fetch on mount with guards**
+   ```typescript
+   useEffect(() => {
+     // Only fetch at the start of onboarding, when we have an address
+     if (
+       onboardingFlow.currentPasskeyInfo?.address &&
+       !onboardingFlow.configFetched &&
+       !onboardingFlow.isFetchingConfig &&
+       onboardingFlow.currentStep === 'key-backup' // Only at start
+     ) {
+       onboardingFlow.fetchUserConfig();
+     }
+   }, [
+     onboardingFlow.currentPasskeyInfo?.address,
+     onboardingFlow.configFetched,
+     onboardingFlow.isFetchingConfig,
+     onboardingFlow.currentStep
+   ]);
+   ```
+
+2. **Add loading UI**
+   ```typescript
+   {onboardingFlow.currentStep === 'loading' && (
+     <LoadingState message={t`Initializing your profile...`} />
+   )}
+   ```
+
+3. **Wrap existing steps with loading check**
+   - [ ] Only render step content when not loading
+
+**Validation:**
+- ✅ Loading message displayed during fetch
+- ✅ Smooth transition to next step after fetch
+- ✅ Works correctly for both new and returning users
+- ✅ No race conditions - fetch only triggers once at start
+
+---
+
+### Phase 5: Add Manual Resync Option (Optional Enhancement)
 
 **Goal**: Allow users to manually refresh their config from User Settings
 
-**Original Implementation Reference** (from commit a51ea3f6):
+**Files to modify:**
+- `src/hooks/business/user/useUserSettings.ts`
+- `src/components/modals/UserSettingsModal.tsx`
 
-**File**: `src/components/modals/UserSettingsModal.tsx`
+**Tasks:**
 
-**Changes Made**:
-```typescript
-import { useMessageDB } from '../context/MessageDB';
+1. **Add resync function to useUserSettings**
+   - [ ] Create `resyncConfig()` function
+   - [ ] Fetch remote config with `getConfig()`
+   - [ ] Re-validate fetched data (zero-trust)
+   - [ ] Update local state (allowSync, nonRepudiable, displayName)
+   - [ ] Add `isResyncing` loading state
 
-const { getConfig } = useMessageDB();
-
-const resyncConfig = async () => {
-  if (!currentPasskeyInfo) return;
-  const cfg = await getConfig({
-    address: currentPasskeyInfo.address,
-    userKey: keyset.userKeyset,
-    preferSaved: true,  // Force fetch from remote
-  });
-  if (cfg) {
-    setAllowSync(cfg.allowSync ?? false);
-    setNonRepudiable(cfg.nonRepudiable ?? true);
-    if (typeof cfg.name === 'string') setDisplayName(cfg.name);
-  }
-};
-
-// UI: Added button next to "Save Changes"
-{allowSync && (
-  <Tooltip content={t`This will override your locally stored settings...`}>
-    <Button type="secondary" onClick={resyncConfig}>
-      {t`Resync Settings`}
-    </Button>
-  </Tooltip>
-)}
-```
-
-**Tasks**:
-
-1. **Update ConfigService.getConfig() API** (✅ Already done in refactor)
-   - [x] ConfigService already has `getConfig()` method
-   - [ ] Review if `preferSaved` parameter is needed (force remote fetch)
-   - [ ] Add `preferSaved?: boolean` parameter if not present
-   - [ ] When `preferSaved === true`, skip local cache and always fetch remote
-
-2. **Add resync functionality to UserSettingsModal** (⚠️ Must use proper service)
-   - [ ] **DO NOT** import `useMessageDB` directly in the modal
-   - [ ] Create hook: `src/hooks/business/user/useConfigResync.ts`
-   - [ ] Hook should use MessageDB context to access ConfigService
-   - [ ] Implement `resyncConfig()` function:
-     - Fetch config with `preferSaved: true`
-     - Update local state (allowSync, nonRepudiable, displayName, profile photo)
-     - Show success/error toast notifications
-   - [ ] Add "Resync Settings" button in UserSettingsModal
-   - [ ] Only show button when `allowSync === true` (user has opted into sync)
-   - [ ] Add tooltip explaining what resync does
+2. **Add Resync button to UserSettingsModal**
+   - [ ] Only show when `allowSync === true`
+   - [ ] Add tooltip: "This will override your locally stored settings with remote config"
    - [ ] Show loading state during resync
-   - [ ] Handle errors gracefully with user-friendly messages
+   - [ ] Handle errors with user-friendly toast messages (NOT silent like auto-fetch)
 
-**Validation Criteria**:
-- ✅ "Resync Settings" button appears only when sync is enabled
-- ✅ Clicking button fetches latest config from remote
-- ✅ Local settings are updated to match remote config
-- ✅ User sees loading state during resync
-- ✅ Success/error messages are shown appropriately
-- ✅ Works on both web and mobile platforms
+**Validation:**
+- ✅ Button appears only when sync is enabled
+- ✅ Clicking button refreshes settings from remote
+- ✅ Loading state shown during operation
+- ✅ Success toast on completion
+- ✅ Error toast with user-friendly message on failure
 
-### Phase 4: Testing & Validation
+---
 
-**Goal**: Comprehensive testing to prevent regression
+### Phase 6: Security Hardening
 
-**Tasks**:
+**Goal**: Address remaining security concerns
 
-1. **Unit Tests**
-   - [ ] Test crypto utilities (web and mobile implementations)
-   - [ ] Test ConfigService.getConfig() with `preferSaved` parameter
-   - [ ] Test useOnboardingFlowLogic.fetchUser() function
-   - [ ] Test useConfigResync hook
-   - [ ] Test UserConfig type updates are backward compatible
+**Files to modify:**
+- `src/services/ConfigService.ts`
 
-2. **Integration Tests**
-   - [ ] Test full onboarding flow with existing account
-   - [ ] Test config auto-fetch on login
-   - [ ] Test manual resync from User Settings
-   - [ ] Test config save with profile info
-   - [ ] Test error scenarios (network failures, malformed data)
+**Tasks:**
 
-3. **Cross-Platform Tests**
-   - [ ] Test on web (Chrome, Firefox, Safari)
-   - [ ] Test on mobile (iOS simulator, Android emulator)
-   - [ ] Test crypto operations produce identical results
-   - [ ] Test IndexedDB on web, AsyncStorage on mobile
-   - [ ] Verify no crashes on mobile startup
+1. **Remove PII from logs** (line 374)
+   - [ ] Redact `name`, `profile_image`, `bookmarks` from console.log
 
-4. **Manual QA Scenarios**
-   - [ ] **Scenario 1**: New user completes onboarding → config saved with profile
-   - [ ] **Scenario 2**: Existing user logs in → profile auto-populated
-   - [ ] **Scenario 3**: User enables sync → "Resync" button appears
-   - [ ] **Scenario 4**: User clicks "Resync" → settings updated
-   - [ ] **Scenario 5**: Network error during fetch → graceful error message
-   - [ ] **Scenario 6**: Malformed remote config → falls back to local config
+2. **Improve error handling** (lines 53-62)
+   - [ ] Differentiate between 404 (no config) vs network/other errors
+   - [ ] Log appropriate context without exposing crypto internals
 
-**Validation Criteria**:
-- ✅ All unit tests pass
-- ✅ All integration tests pass
-- ✅ All cross-platform tests pass
-- ✅ All manual QA scenarios verified
-- ✅ No crashes on mobile startup
-- ✅ No TypeScript compilation errors
-- ✅ No console errors or warnings
+3. **Add security tests**
+   - [ ] Test: Reject oversized profile images (>500KB)
+   - [ ] Test: Reject non-image data URIs
+   - [ ] Test: Reject XSS in display name from remote config
+   - [ ] Test: Rate limiting prevents rapid fetches
+   - [ ] Test: Address mismatch is rejected
 
-## Risk Assessment
+---
 
-### High Risk Areas
+## Future Enhancement: Full Cross-Platform Support (Option B)
 
-1. **Cross-Platform Crypto Operations**
-   - **Risk**: Crypto API differences between web (window.crypto.subtle) and mobile (expo-crypto)
-   - **Mitigation**: Comprehensive crypto abstraction layer with unit tests
-   - **Fallback**: Use existing `src/utils/crypto.ts` patterns that already work cross-platform
-
-2. **Passkey Storage Access**
-   - **Risk**: Different passkey storage mechanisms on web vs mobile
-   - **Mitigation**: Platform-specific adapter pattern (already established)
-   - **Fallback**: Skip auto-fetch on platforms where passkey access is problematic
-
-3. **IndexedDB vs AsyncStorage**
-   - **Risk**: Storage APIs are fundamentally different
-   - **Mitigation**: This is already handled by MessageDB refactor
-   - **Note**: ConfigService uses MessageDB which abstracts storage
-
-### Medium Risk Areas
-
-1. **Backward Compatibility**
-   - **Risk**: Existing users have configs without `name`/`profile_image` fields
-   - **Mitigation**: Make fields optional, provide sensible defaults
-   - **Validation**: Test with old config format
-
-2. **Network Failures**
-   - **Risk**: Config fetch fails during onboarding
-   - **Mitigation**: Graceful error handling, allow user to proceed with onboarding
-   - **UX**: Show error but don't block user
-
-### Low Risk Areas
-
-1. **UI Changes**
-   - **Risk**: Minimal - just adding loading state and resync button
-   - **Mitigation**: Follow existing UI patterns
-   - **Validation**: Visual regression testing
-
-## Success Criteria
-
-### Functional Requirements
-
-- ✅ **Auto-fetch on login**: Returning users see their saved profile info
-- ✅ **Manual resync**: Users can refresh settings from User Settings modal
-- ✅ **Config persistence**: Display name and profile photo saved to UserConfig
-- ✅ **Cross-platform**: Works identically on web and mobile
-- ✅ **Error handling**: Graceful degradation when network/config issues occur
-
-### Technical Requirements
-
-- ✅ **No mobile crashes**: Zero IndexedDB/browser API usage in mobile code paths
-- ✅ **No direct dependencies**: Business logic doesn't import MessageDB directly
-- ✅ **Type safety**: All TypeScript code compiles without errors
-- ✅ **Test coverage**: >80% coverage on new code
-- ✅ **Performance**: Config fetch <2 seconds on average network
-
-### User Experience Requirements
-
-- ✅ **Loading states**: Clear feedback during async operations
-- ✅ **Error messages**: User-friendly error messages when things fail
-- ✅ **Backward compatible**: Existing users not disrupted
-- ✅ **Discoverable**: Resync button visible when sync is enabled
-- ✅ **Responsive**: UI remains responsive during config fetch
-
-## Implementation Phases Summary
-
-| Phase | Description | Risk | Estimated Effort |
-|-------|-------------|------|------------------|
-| **Phase 1** | Platform-agnostic crypto abstraction | High | 4-6 hours |
-| **Phase 2** | Auto-fetch config on login | Medium | 6-8 hours |
-| **Phase 3** | Manual resync option | Low | 2-3 hours |
-| **Phase 4** | Testing & validation | Medium | 4-6 hours |
-| **Total** | | | **16-23 hours** |
-
-## Dependencies
-
-### Blockers
-
-- ❌ **Cross-platform storage issue** (`.agents/bugs/messagedb-cross-platform-storage-issue.md`)
-  - Must be resolved before Phase 1
-  - Requires crypto abstraction layer
-  - Affects ConfigService directly
+When mobile parity is needed, implement cross-platform crypto abstraction:
 
 ### Prerequisites
+- Create `src/utils/platform/crypto.web.ts` using `window.crypto.subtle`
+- Create `src/utils/platform/crypto.native.ts` using `expo-crypto` / `react-native-crypto`
+- Unified API: `deriveKey()`, `encrypt()`, `decrypt()`, `importKey()`
+- Refactor `ConfigService.ts` to use crypto abstraction
 
-- ✅ **MessageDB refactoring complete** (`.agents/tasks/.done/DONE_messagedb-refactoring.md`)
-  - ConfigService already extracted
-  - Service architecture in place
-  - Dependency injection working
+### Tasks
+1. **Audit ConfigService.ts crypto usage**
+   - Lines 73-87: `crypto.subtle.digest()` and `window.crypto.subtle.importKey()`
+   - Lines 120-125: `window.crypto.subtle.decrypt()`
+   - Lines 380-395: `crypto.subtle.digest()` and `window.crypto.subtle.importKey()`
+   - Lines 452-458: `window.crypto.subtle.encrypt()`
 
-### Related Tasks
+2. **Create platform-agnostic crypto utilities**
+   - Mobile already has `react-native-crypto` and `react-native-get-random-values` installed
+   - Create unified abstraction layer
 
-- **Mobile platform support**: Implementing AsyncStorage equivalent for IndexedDB
-- **Crypto utilities**: Cross-platform crypto operations
-- **Passkey adapters**: Platform-specific passkey storage access
+3. **Update native adapter**
+   - Implement full `fetchUserConfig()` using cross-platform crypto
+   - Remove no-op stub
+
+### Estimated Effort
+- Crypto abstraction: 4-6 hours
+- ConfigService refactor: 2-3 hours
+- Native adapter implementation: 2-3 hours
+- Testing: 3-4 hours
+- **Total: 11-16 hours**
+
+---
+
+## Summary
+
+| Phase | Description | Scope | Effort |
+|-------|-------------|-------|--------|
+| **Phase 1** | Update UserConfig type & persistence + validation utility | Shared | ~45 min |
+| **Phase 2** | Extend OnboardingAdapter interface with security | Web + Native stub | ~1.5 hours |
+| **Phase 3** | Update onboarding flow logic | Shared | ~1 hour |
+| **Phase 4** | Update onboarding UI | Shared | ~30 min |
+| **Phase 5** | Manual resync option (optional) | Web | ~1 hour |
+| **Phase 6** | Security hardening + tests | Shared | ~1 hour |
+| **Total (Web-Only)** | | | **~6 hours** |
+| **Future: Option B** | Full cross-platform | Web + Native | **~12-16 hours** |
+
+---
+
+## Validation Checklist
+
+### Web - Functional
+- [ ] Returning user sees "Initializing your profile..." on login
+- [ ] Display name pre-populated from remote config
+- [ ] Profile image pre-populated from remote config
+- [ ] New user completes normal onboarding flow
+- [ ] Config save includes name and profile_image
+- [ ] Resync button works in User Settings (if implemented)
+
+### Web - Security
+- [ ] Oversized profile images (>500KB) are rejected
+- [ ] Non-image data URIs are rejected
+- [ ] XSS in display name from remote config is sanitized/rejected
+- [ ] Rapid refresh attempts are rate-limited (5s minimum)
+- [ ] Address mismatch triggers error, not data fetch
+- [ ] Console logs do not contain PII (name, profile_image)
+
+### Mobile (Graceful Degradation)
+- [ ] App launches without crash
+- [ ] `fetchUserConfig` returns null immediately (no async delay)
+- [ ] No "Initializing your profile..." shown (skips fetch)
+- [ ] Onboarding proceeds directly to key-backup step
+- [ ] Normal onboarding flow works
+- [ ] No console errors related to IndexedDB/crypto
+
+---
+
+## Security Risk Assessment
+
+| Risk | Level | Status |
+|------|-------|--------|
+| Data URI Injection (oversized/malicious images) | 🔴 Critical | Mitigated by `validateProfileImage()` |
+| XSS via display name bypass | 🟠 High | Mitigated by re-validation after decryption |
+| Session hijacking via address mismatch | 🟠 High | Mitigated by address verification |
+| Privacy leakage in logs | 🟠 High | Mitigated by PII redaction |
+| API spam / DoS | 🟡 Medium | Mitigated by rate limiting |
+| Information disclosure via errors | 🟢 Low | Mitigated by generic error messages |
+
+---
 
 ## References
 
@@ -519,7 +594,16 @@ const resyncConfig = async () => {
 - `.agents/tasks/.done/DONE_messagedb-refactoring.md` - Refactoring details
 - `.agents/bugs/messagedb-cross-platform-storage-issue.md` - Cross-platform storage bug
 
+### Security Analysis
+
+This task was reviewed by the security-analyst agent on 2025-12-13. Key findings:
+- ✅ Existing crypto (Ed448 + AES-GCM) is solid
+- ⚠️ Data validation needed for remote config (zero-trust)
+- ⚠️ PII logging must be removed
+- ⚠️ Rate limiting recommended
+
 ---
 
 _Created: 2025-10-04_
-_Last Updated: 2025-10-04_
+_Last Updated: 2025-12-13_
+_Security Review: 2025-12-13_
