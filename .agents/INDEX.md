@@ -112,6 +112,8 @@ This is the main index for all documentation, bug reports, and task management.
 
 ### Pending Tasks
 
+- [Background Action Queue with Web Worker Crypto](tasks/background-action-queue-with-worker-crypto.md)
+- [Cache Space Key Metadata to Reduce Config Save Overhead](tasks/config-save-space-key-caching.md)
 - [Combined Text + Image Messages](tasks/combined-text-image-messages.md)
 - [Conversation Deletion State Synchronization](tasks/conversation-deletion-state-sync.md)
 - [Custom ContentEditable Mention Pills for Message Composer](tasks/mention-pills-in-message-textarea.md)
@@ -306,4 +308,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2025-12-12 12:48:59
+**Last Updated**: 2025-12-13 10:56:24
