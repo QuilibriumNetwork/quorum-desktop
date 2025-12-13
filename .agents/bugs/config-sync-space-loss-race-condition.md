@@ -98,21 +98,50 @@ If any step fails, the space is **not fully initialized** but the loop continues
 - `EncryptionService.ts:237` - Fixing encryption states
 - `MessageService.ts:2554` - Handling kick messages
 
-## Solution
+## Mitigation Implemented
 
-**Not yet implemented.** Requires architectural decision on approach:
+### Diagnostic Logging (2025-12-13)
+
+Added warning log to detect when spaces are filtered out during sync:
+
+```typescript
+// ConfigService.ts:412-419
+const spacesWithoutEncryption = allSpaceKeys.filter(sk => sk.encryptionState === undefined);
+if (spacesWithoutEncryption.length > 0) {
+  console.warn(
+    `[ConfigService] ${spacesWithoutEncryption.length} space(s) filtered from sync (missing encryption state):`,
+    spacesWithoutEncryption.map(sk => sk.spaceId)
+  );
+}
+```
+
+This helps detect if the bug is occurring in production. If users report space loss, check browser console for this warning.
+
+## Why Full Fix Is Complex
+
+The filtering logic **cannot simply be removed** - it was added to fix a different bug where folder operations failed with `400 - invalid config missing data`. The server requires `spaceIds.length === spaceKeys.length` (bidirectional consistency).
+
+See: [.agents/bugs/.solved/space-creation-config-save-race-condition.md](.agents/bugs/.solved/space-creation-config-save-race-condition.md)
+
+## Solution Options
+
+**Not yet implemented.** Requires architectural decision:
 
 ### Option A: Merge Instead of Replace (Recommended)
 Before `saveConfig()` overwrites remote, merge local and remote space lists:
-1. Fetch current remote config
+1. Fetch current remote config, decrypt it
 2. Merge `spaceKeys`: local takes precedence for conflicts, but preserve remote-only spaces
 3. Only remove a space if explicitly deleted (add `deletedSpaceIds` tombstone array like bookmarks have)
+
+**Complexity**: High - requires duplicating decryption logic or refactoring to share it
 
 ### Option B: Delay saveConfig Until Sync Complete
 Add a sync state flag to prevent `saveConfig()` during active space sync:
 1. Set `isSyncingSpaces = true` at start of `getConfig()` space loop
 2. Block `saveConfig()` while flag is set (queue the save)
 3. Only allow save after all spaces have valid encryption states
+
+**Complexity**: Medium - but may cause UX issues if sync takes long
 
 ### Option C: Mark Incomplete Spaces
 Track spaces that failed to sync and exclude them from filtering:
@@ -121,6 +150,19 @@ Track spaces that failed to sync and exclude them from filtering:
 3. In `saveConfig()`, preserve `pendingSyncSpaces` in remote config
 4. Retry sync for pending spaces periodically
 
+**Complexity**: Medium - needs new state management
+
+### Option D: Block Sync on Significant Space Loss (Considered, Not Implemented)
+Before uploading, check if we'd lose many spaces compared to local DB:
+```typescript
+if (newSpaceCount < dbSpaceCount * 0.5) {
+  console.error('Aborting sync: would lose too many spaces');
+  return; // Save locally only
+}
+```
+
+**Problem**: Blocks ALL sync (profile, bookmarks, settings) not just space data. Too aggressive.
+
 ## Prevention
 
 Once fixed, prevent regression with:
@@ -128,7 +170,6 @@ Once fixed, prevent regression with:
 1. **Integration test**: Simulate partial space sync failure, verify spaces preserved
 2. **Sync state tracking**: Add UI indicator when spaces are syncing
 3. **Conflict detection**: Warn user if remote config has spaces not present locally
-4. **Audit logging**: Log space list changes during config sync for debugging
 
 ## Comparison with Bookmark Sync
 
@@ -160,4 +201,5 @@ Spaces need similar treatment but currently lack any merge or tombstone logic.
 ---
 
 _Created: 2025-12-13_
-_Status: Unconfirmed (reported on single profile, needs reproduction)_
+_Updated: 2025-12-13_
+_Status: Unconfirmed (reported on single profile, diagnostic logging added)_

@@ -125,6 +125,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Multi-User Invite Selection Enhancement](tasks/multi-user-invite-selection.md)
 - [Passkey Import UX Issue](tasks/passkey-import-ux-issue.md)
 - [SDK PasskeyModal Customization Props Enhancement](tasks/sdk-passkey-modal-customization-props.md)
+- [Space Recovery Tool in UserSettingsModal](tasks/space-recovery-tool.md)
 - [Task: Implement Delete Public Invite Link Feature](tasks/delete-public-invite-link.md)
 - [Test Suite Implementation Plan for Quorum Desktop](tasks/test-suite-plan.md)
 - [User Status Feature Implementation Plan](tasks/user-status.md)
@@ -309,4 +310,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2025-12-13 15:55:17
+**Last Updated**: 2025-12-13 16:30:14
