@@ -157,9 +157,35 @@ test:
 build:
 ```
 
-### Templates (`templates/`)
+### Templates (`templates/`) - MANDATORY
 
-Templates provide consistent formatting and can include variables like `{{DATE_RANGE}}`, `{{PROJECT_NAME}}`, etc.
+**IMPORTANT: You MUST read and follow these templates exactly for consistent output.**
+
+Templates define the exact structure, formatting, and layout for each output format. Before generating any changelog:
+
+1. **Read the appropriate template file(s)** for the requested output format
+2. **Follow the template structure exactly** - same headers, separators, sections
+3. **Use the same formatting conventions** - bullet styles, emoji placement, spacing
+
+| Output Type | Template File | Purpose |
+|-------------|---------------|---------|
+| User-friendly (Markdown) | `templates/user-friendly-format.md` | Discord, documentation, web |
+| User-friendly (Plain text) | `templates/user-friendly-format.txt` | Telegram, email, messaging |
+| Technical (Markdown) | `templates/technical-format.md` | GitHub releases, dev docs |
+| Social media | `templates/social-media-format.txt` | Twitter, short announcements |
+
+**Template Variables:**
+- `{{DATE_RANGE}}` - The date range covered (e.g., "December 11-13, 2025")
+- `{{PROJECT_NAME}}` - Project name (Quorum)
+- `{{CONTENT}}` - Main changelog content
+
+**Key Formatting Rules from Templates:**
+- Use `---` as section separators in Markdown (NOT `━━━` unicode lines)
+- Use `---` as section separators in Plain text (NOT `━━━` unicode lines)
+- Use `•` for bullet points
+- Use subcategory emojis from the reference table in templates
+- Include the footer with improvement count and date range
+- Include the Quorum links at the bottom
 
 ## Instructions
 
@@ -171,26 +197,41 @@ Analyze the request to identify:
 - **User-Friendly Changelog**: For end users, marketing, beta announcements, feature highlights
 - **Custom Analysis**: Specific date ranges, branches, or focus areas
 
-### Step 2: Execute Appropriate Script
+### Step 2: Read Templates (MANDATORY)
+
+**Before writing any output, you MUST read the template files:**
+
+```
+# For user-friendly changelogs, read BOTH:
+templates/user-friendly-format.md   # For markdown output
+templates/user-friendly-format.txt  # For plain text output
+
+# For technical changelogs:
+templates/technical-format.md
+```
+
+This ensures consistent formatting across all changelogs.
+
+### Step 3: Execute Appropriate Script & Generate Output
 
 **For Technical Changelogs:**
 1. Run `changelog-generator.sh` with appropriate parameters
 2. Review generated output for accuracy
 3. Enhance with additional context if needed
-4. Save in both markdown and text formats
+4. Save in both markdown and text formats **following template structure**
 
 **For User-Friendly Changelogs:**
-1. Run `changelog-user-friendly.sh` to generate commit analysis
-2. Use the analysis file to create engaging, benefit-focused descriptions
+1. Run `changelog-user-friendly.sh` to generate commit analysis (or use git log directly)
+2. Use the analysis to create engaging, benefit-focused descriptions
 3. Apply user-friendly writing guidelines:
    - Focus on user capabilities, not technical details
    - Use active language and exciting tone
    - Keep bullet points concise (under 15 words)
    - Group related changes into single descriptions
-4. Generate both markdown and text versions
+4. Generate both markdown and text versions **using the exact template structure**
 5. Include project-specific formatting (test links, access instructions)
 
-### Step 3: Apply Enhancement Guidelines
+### Step 4: Apply Enhancement Guidelines
 
 **User-Friendly Enhancement Rules:**
 
@@ -219,7 +260,7 @@ Analyze the request to identify:
 📌 **Pinned Messages & Content Management**
 - Pin important messages in channels for easy member access
 
-### Step 4: Quality Assurance
+### Step 5: Quality Assurance
 
 **Technical Changelog Check:**
 - All commit links work and point to correct repository
@@ -234,7 +275,7 @@ Analyze the request to identify:
 - No technical jargon or implementation details remain
 - Categories only appear if they contain relevant content
 
-### Step 5: Output and Delivery
+### Step 6: Output and Delivery
 
 1. **Save files** in the specified output directory
 2. **Provide file paths** to the user for easy access
