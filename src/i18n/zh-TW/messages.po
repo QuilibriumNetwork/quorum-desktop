@@ -36,7 +36,7 @@ msgid "Send a message to #{channel_name}"
 msgstr "傳送訊息至 #{channel_name}"
 
 #. js-lingui-explicit-id
-#: src/components/onboarding/Onboarding.tsx:256
+#: src/components/onboarding/Onboarding.tsx:270
 msgid ""
 "Your profile image size must be {maxFileSize} or less and must be a PNG, "
 "JPG, or JPEG file extension."
@@ -48,11 +48,6 @@ msgid "{count} New Messages"
 msgstr "{count} 新訊息"
 
 #. js-lingui-explicit-id
-#: src/components/message/MessageComposer.tsx:404
-msgid "Replying to"
-msgstr "回覆中"
-
-#. js-lingui-explicit-id
 #: src/components/message/MessageComposer.native.tsx:161
 msgid "Failed to process image"
 msgstr "無法處理圖像"
@@ -61,6 +56,11 @@ msgstr "無法處理圖像"
 #: src/components/message/MessageComposer.native.tsx:314
 msgid "Replying to {user}"
 msgstr "回覆 {user}"
+
+#. js-lingui-explicit-id
+#: src/components/message/MessageComposer.tsx:404
+msgid "Replying to"
+msgstr "回覆中"
 
 #. js-lingui-explicit-id
 #: src/components/message/Message.tsx:307
@@ -127,7 +127,7 @@ msgid "[Sticker]"
 msgstr "[貼紙]"
 
 #. placeholder {0}: removedDevices.length
-#: src/components/modals/UserSettingsModal/Privacy.tsx:102
+#: src/components/modals/UserSettingsModal/Privacy.tsx:106
 msgid "{0} devices marked for removal. Click \"Save Changes\" to confirm."
 msgstr "{0} 個設備標記為刪除。點擊 \"保存更改\" 以確認。"
 
@@ -212,7 +212,7 @@ msgstr "添加朋友"
 msgid "0 Bytes"
 msgstr "0 位元組"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:101
+#: src/components/modals/UserSettingsModal/Privacy.tsx:105
 msgid "1 device marked for removal. Click \"Save Changes\" to confirm."
 msgstr "1 個設備標記為刪除。點擊 \"保存更改\" 以確認。"
 
@@ -281,7 +281,7 @@ msgstr "地址必須正好 46 個字符長。"
 msgid "Addresses start with \"Qm\"."
 msgstr "地址以 \"Qm\" 開頭。"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:50
+#: src/components/modals/UserSettingsModal/Privacy.tsx:54
 msgid ""
 "Adjust security-related settings, which may impact user  experience but "
 "increase the security of your Quorum account."
@@ -317,11 +317,15 @@ msgstr "所有踢出記錄均為最新。"
 msgid "All Spaces"
 msgstr "所有空間"
 
+#: src/components/modals/ModalSaveOverlay.tsx:76
+msgid "Almost done..."
+msgstr "快完成了..."
+
 #: src/components/modals/AddSpaceModal.tsx:259
 msgid "Already Joined"
 msgstr "已經加入"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:76
+#: src/components/modals/UserSettingsModal/Privacy.tsx:80
 msgid "Always sign Direct Messages"
 msgstr "始終簽署直接消息"
 
@@ -585,7 +589,7 @@ msgstr "再次點擊以確認"
 msgid "Click on the role name and tag to edit them."
 msgstr "點擊角色名稱或標籤進行編輯。"
 
-#: src/components/onboarding/Onboarding.tsx:163
+#: src/components/onboarding/Onboarding.tsx:177
 msgid ""
 "Click the button below to create a backup of your key info, because once "
 "it's gone, it's gone  forever. You may be prompted to authenticate again."
@@ -690,6 +694,18 @@ msgstr "無法獲取空間的清單"
 msgid "Could not verify invite"
 msgstr "無法驗證邀請"
 
+#: src/hooks/business/user/useOnboardingFlowLogic.ts:273
+msgid ""
+"Couldn't decrypt your saved profile. Please re-enter your name and profile "
+"image."
+msgstr "無法解密您保存的個人資料。請重新輸入您的姓名和個人資料圖片。"
+
+#: src/hooks/business/user/useOnboardingFlowLogic.ts:278
+msgid ""
+"Couldn't load your saved profile. Please re-enter your name and profile "
+"image."
+msgstr "無法加載您保存的個人資料。請重新輸入您的姓名和個人資料圖片。"
+
 #: src/components/modals/AddSpaceModal.tsx:293
 #: src/components/modals/CreateSpaceModal.tsx:79
 msgid "Create a Space"
@@ -719,6 +735,10 @@ msgstr "當前邀請連結"
 #: src/components/ui/ThemeRadioGroup.tsx:23
 msgid "Dark"
 msgstr "黑暗"
+
+#: src/components/modals/UserSettingsModal/Privacy.tsx:198
+msgid "Data Recovery"
+msgstr "數據恢復"
 
 #: src/components/context/MessageDB.bak.tsx:5415
 #: src/services/ConfigService.ts:142
@@ -872,7 +892,7 @@ msgid "Drawer"
 msgstr "抽屜"
 
 #: src/components/onboarding/Onboarding.native.tsx:177
-#: src/components/onboarding/Onboarding.tsx:121
+#: src/components/onboarding/Onboarding.tsx:131
 msgid "Drop your profile photo here"
 msgstr "將您的個人資料照片拖放到這裡"
 
@@ -919,7 +939,7 @@ msgstr "Emoji 選擇器"
 msgid "Emojis"
 msgstr "表情符號"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:56
+#: src/components/modals/UserSettingsModal/Privacy.tsx:60
 msgid "Enable sync"
 msgstr "啟用同步"
 
@@ -984,11 +1004,11 @@ msgstr "顯示通知時出錯："
 msgid "Existing Conversations"
 msgstr "現有對話"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:186
+#: src/components/modals/UserSettingsModal/Privacy.tsx:190
 msgid "Export"
 msgstr "匯出"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:177
+#: src/components/modals/UserSettingsModal/Privacy.tsx:181
 msgid ""
 "Export your key to a file by clicking this button. Do not share this file "
 "with anyone else or they can impersonate you or steal your Space's Apex "
@@ -1023,6 +1043,10 @@ msgstr "無法打開圖像選擇器"
 #: src/components/context/WebsocketProvider.tsx:164
 msgid "Failed to parse WebSocket message:"
 msgstr "無法解析 WebSocket 消息："
+
+#: src/hooks/business/user/useSpaceRecovery.ts:101
+msgid "Failed to restore spaces"
+msgstr "恢復空間失敗"
 
 #: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:271
 msgid "Failed to save notification settings"
@@ -1190,12 +1214,16 @@ msgstr "群組名稱是必需的"
 msgid "Group name must be {MAX_NAME_LENGTH} characters or less"
 msgstr "群組名稱必須少於 {MAX_NAME_LENGTH} 個字符"
 
+#: src/components/modals/ModalSaveOverlay.tsx:83
+msgid "Hang in there..."
+msgstr "稍等一下..."
+
 #: src/components/direct/EmptyDirectMessage.tsx:54
 msgid "hide home screen"
 msgstr "隱藏主屏幕"
 
 #: src/components/onboarding/Onboarding.native.tsx:290
-#: src/components/onboarding/Onboarding.tsx:184
+#: src/components/onboarding/Onboarding.tsx:198
 msgid "I already saved mine"
 msgstr "我已備份"
 
@@ -1203,19 +1231,19 @@ msgstr "我已備份"
 msgid "I've Saved It"
 msgstr "我已經保存了它"
 
-#: src/components/onboarding/Onboarding.tsx:319
-#: src/components/onboarding/Onboarding.tsx:326
+#: src/components/onboarding/Onboarding.tsx:333
+#: src/components/onboarding/Onboarding.tsx:340
 msgid "If skipped, you'll get the default profile image and can set it later"
 msgstr "如果跳過，您將獲得默認的個人資料圖片，並可以稍後設置。"
 
-#: src/components/onboarding/Onboarding.tsx:149
+#: src/components/onboarding/Onboarding.tsx:167
 msgid ""
 "If you clear your browser storage or switch browsers, your old messages and "
 "keys may disappear."
 msgstr "如果您清除瀏覽器存儲或切換瀏覽器，您的舊消息和密鑰可能會消失。"
 
 #: src/components/onboarding/Onboarding.native.tsx:254
-#: src/components/onboarding/Onboarding.tsx:156
+#: src/components/onboarding/Onboarding.tsx:172
 msgid ""
 "If you uninstall the app from your device, you will lose your old messages "
 "and keys."
@@ -1227,7 +1255,7 @@ msgid "Import Existing Key"
 msgstr "匯入現有金鑰"
 
 #: src/components/onboarding/Onboarding.native.tsx:244
-#: src/components/onboarding/Onboarding.tsx:134
+#: src/components/onboarding/Onboarding.tsx:154
 msgid "Important first-time user information:"
 msgstr "首次使用重要資訊："
 
@@ -1323,7 +1351,7 @@ msgstr "跳到现在"
 msgid "Key Copied!"
 msgstr "密鑰已複製！"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:174
+#: src/components/modals/UserSettingsModal/Privacy.tsx:178
 msgid "Key Export"
 msgstr "密鑰匯出"
 
@@ -1375,14 +1403,14 @@ msgid "Leave this space"
 msgstr "離開此空間"
 
 #: src/components/onboarding/Onboarding.native.tsx:312
-#: src/components/onboarding/Onboarding.tsx:198
+#: src/components/onboarding/Onboarding.tsx:212
 msgid ""
 "Let your friends know who you are! Pick a friendly name to display in your "
 "conversations, something easier to read than:"
 msgstr "讓你的朋友知道你是誰！選擇一個友好的名稱在你的對話中顯示，比較容易閱讀："
 
 #: src/components/onboarding/Onboarding.native.tsx:505
-#: src/components/onboarding/Onboarding.tsx:352
+#: src/components/onboarding/Onboarding.tsx:366
 msgid "Let's gooooooooo"
 msgstr "開始使用！"
 
@@ -1406,6 +1434,10 @@ msgstr "正在加載通知..."
 msgid "Loading pinned messages..."
 msgstr "正在加載固定訊息..."
 
+#: src/components/onboarding/Onboarding.tsx:143
+msgid "Loading your profile..."
+msgstr "正在加載您的個人資料..."
+
 #: src/hooks/business/conversations/useDirectMessageCreation.ts:32
 msgid "Looking up user..."
 msgstr "正在查找用戶..."
@@ -1427,7 +1459,7 @@ msgid "Make role public"
 msgstr "使角色公開"
 
 #: src/components/onboarding/Onboarding.native.tsx:364
-#: src/components/onboarding/Onboarding.tsx:247
+#: src/components/onboarding/Onboarding.tsx:261
 msgid ""
 "Make your account uniquely yours – set a contact photo. This information is "
 "only provided to the Spaces you join."
@@ -1437,7 +1469,7 @@ msgstr "使您的帳戶獨一無二 - 設置聯繫人照片。此信息僅提供
 msgid "Manage desktop notification preferences for new messages."
 msgstr "管理新消息的桌面通知偏好設定。"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:41
+#: src/components/modals/UserSettingsModal/Privacy.tsx:45
 msgid ""
 "Manage devices, and privacy conditions for messaging and synchronization."
 msgstr "管理設備和消息傳遞及同步的隱私條件。"
@@ -1564,6 +1596,10 @@ msgstr "沒有邀請評估可用。請生成公共邀請鏈接或確保空間的
 msgid "No messages found"
 msgstr "未找到消息"
 
+#: src/hooks/business/user/useSpaceRecovery.ts:76
+msgid "No missing spaces found"
+msgstr "未找到缺失的空間"
+
 #: src/components/message/PinnedMessagesPanel.tsx:193
 msgid "No pinned messages yet"
 msgstr "尚無固定訊息"
@@ -1618,7 +1654,7 @@ msgid "OK"
 msgstr "好的"
 
 #: src/components/onboarding/Onboarding.native.tsx:222
-#: src/components/onboarding/Onboarding.tsx:110
+#: src/components/onboarding/Onboarding.tsx:120
 msgid "One of us, one of us!"
 msgstr "歡迎加入！"
 
@@ -1650,11 +1686,11 @@ msgstr "頁面未找到"
 msgid "Paste an invite link"
 msgstr "粘貼邀請鏈接"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:153
+#: src/components/modals/UserSettingsModal/Privacy.tsx:157
 msgid "Pending"
 msgstr "待處理"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:139
+#: src/components/modals/UserSettingsModal/Privacy.tsx:143
 msgid "Pending removal - click Save to confirm"
 msgstr "待處理刪除 - 點擊保存以確認"
 
@@ -1664,7 +1700,7 @@ msgid "Permissions:"
 msgstr "權限："
 
 #: src/components/onboarding/Onboarding.native.tsx:223
-#: src/components/onboarding/Onboarding.tsx:111
+#: src/components/onboarding/Onboarding.tsx:121
 msgid "Personalize your account"
 msgstr "個人化您的帳號"
 
@@ -1741,7 +1777,7 @@ msgid "Pinned!"
 msgstr "已固定！"
 
 #: src/components/onboarding/Onboarding.native.tsx:180
-#: src/components/onboarding/Onboarding.tsx:123
+#: src/components/onboarding/Onboarding.tsx:133
 msgid "PNG, JPG or JPEG • Optimal ratio 1:1"
 msgstr "PNG、JPG或JPEG • 最佳比例1:1"
 
@@ -1754,7 +1790,7 @@ msgid "Privacy Settings"
 msgstr "隱私設定"
 
 #: src/components/modals/UserSettingsModal/Navigation.tsx:16
-#: src/components/modals/UserSettingsModal/Privacy.tsx:39
+#: src/components/modals/UserSettingsModal/Privacy.tsx:43
 msgid "Privacy/Security"
 msgstr "隱私/安全"
 
@@ -1788,7 +1824,7 @@ msgid ""
 msgstr "Quorum 基礎設施正在部署中。請嘗試刷新。"
 
 #: src/components/onboarding/Onboarding.native.tsx:249
-#: src/components/onboarding/Onboarding.tsx:137
+#: src/components/onboarding/Onboarding.tsx:157
 msgid ""
 "Quorum is peer-to-peer and end-to-end encrypted. This means your messages "
 "stay private, but equally important, they only live on the network for the "
@@ -1827,7 +1863,7 @@ msgstr "收到無效簽名的配置！"
 msgid "Refresh"
 msgstr "重新整理"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:153
+#: src/components/modals/UserSettingsModal/Privacy.tsx:157
 msgid "Remove"
 msgstr "移除"
 
@@ -1877,6 +1913,25 @@ msgstr ""
 msgid "Reset"
 msgstr "重置"
 
+#: src/components/modals/UserSettingsModal/Privacy.tsx:208
+msgid "Restore Missing Spaces"
+msgstr "恢復缺失的空間"
+
+#: src/components/modals/UserSettingsModal/Privacy.tsx:200
+msgid ""
+"Restore Spaces that exist on this device but are missing from your "
+"navigation menu."
+msgstr "恢復此設備上存在但在導航菜單中缺失的空間。"
+
+#. placeholder {0}: recoverable.length
+#: src/hooks/business/user/useSpaceRecovery.ts:98
+msgid "Restored {0} space(s)"
+msgstr "已恢復 {0} 個空間"
+
+#: src/components/modals/UserSettingsModal/Privacy.tsx:208
+msgid "Restoring..."
+msgstr "正在恢復..."
+
 #: src/components/modals/SpaceSettingsModal/Navigation.tsx:22
 #: src/components/modals/SpaceSettingsModal/Roles.tsx:45
 msgid "Roles"
@@ -1891,13 +1946,13 @@ msgstr "保存"
 #: src/components/modals/FolderEditorModal.tsx:113
 #: src/components/modals/GroupEditorModal.tsx:99
 #: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:592
-#: src/components/modals/UserSettingsModal/UserSettingsModal.tsx:244
+#: src/components/modals/UserSettingsModal/UserSettingsModal.tsx:249
 #: src/components/user/UserProfileEdit.tsx:158
 msgid "Save Changes"
 msgstr "儲存變更"
 
 #: src/components/onboarding/Onboarding.native.tsx:473
-#: src/components/onboarding/Onboarding.tsx:308
+#: src/components/onboarding/Onboarding.tsx:322
 msgid "Save Contact Photo"
 msgstr "儲存聯絡人照片"
 
@@ -1907,7 +1962,7 @@ msgid "Save Edit History"
 msgstr "保存編輯歷史"
 
 #: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:577
-#: src/components/modals/UserSettingsModal/UserSettingsModal.tsx:233
+#: src/components/modals/UserSettingsModal/UserSettingsModal.tsx:238
 msgid "Save Failed"
 msgstr "儲存失敗"
 
@@ -1916,7 +1971,7 @@ msgid "Save Private Key"
 msgstr "保存私鑰"
 
 #: src/components/onboarding/Onboarding.native.tsx:269
-#: src/components/onboarding/Onboarding.tsx:177
+#: src/components/onboarding/Onboarding.tsx:191
 msgid "Save User Key"
 msgstr "儲存使用者金鑰"
 
@@ -1928,7 +1983,7 @@ msgstr "保存的配置已過期"
 #: src/components/modals/ChannelEditorModal.tsx:93
 #: src/components/modals/FolderEditorModal.tsx:148
 #: src/components/modals/GroupEditorModal.tsx:139
-#: src/components/modals/ModalSaveOverlay.tsx:43
+#: src/components/modals/ModalSaveOverlay.tsx:52
 msgid "Saving..."
 msgstr "正在儲存..."
 
@@ -1974,7 +2029,7 @@ msgstr "搜尋用戶名或地址"
 msgid "Searching..."
 msgstr "搜尋中..."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:47
+#: src/components/modals/UserSettingsModal/Privacy.tsx:51
 msgid "Security"
 msgstr "安全"
 
@@ -2033,7 +2088,7 @@ msgid "Session Encrypted"
 msgstr "會話加密"
 
 #: src/components/onboarding/Onboarding.native.tsx:344
-#: src/components/onboarding/Onboarding.tsx:233
+#: src/components/onboarding/Onboarding.tsx:247
 msgid "Set Display Name"
 msgstr "設定顯示名稱"
 
@@ -2059,7 +2114,7 @@ msgid ""
 msgstr "顯示前 500 筆結果。請精煉您的搜尋以獲得更具體的結果。"
 
 #: src/components/onboarding/Onboarding.native.tsx:461
-#: src/components/onboarding/Onboarding.tsx:315
+#: src/components/onboarding/Onboarding.tsx:329
 msgid "Skip Adding Photo"
 msgstr "跳過添加照片"
 
@@ -2170,14 +2225,18 @@ msgid ""
 "look up or join your Space using an invite link."
 msgstr "此描述將在邀請中顯示，並在人們使用邀請鏈接查找或加入您的 Space 時顯示。"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:162
+#: src/components/modals/UserSettingsModal/Privacy.tsx:166
 msgid "This device"
 msgstr "這個設備"
 
 #: src/components/onboarding/Onboarding.native.tsx:318
-#: src/components/onboarding/Onboarding.tsx:207
+#: src/components/onboarding/Onboarding.tsx:221
 msgid "This information is only provided to the Spaces you join."
 msgstr "此信息僅提供給您加入的空間。"
+
+#: src/components/modals/ModalSaveOverlay.tsx:90
+msgid "This is embarrassing..."
+msgstr "這真尷尬..."
 
 #: src/components/modals/UserSettingsModal/General.tsx:110
 msgid ""
@@ -2221,6 +2280,10 @@ msgid ""
 "This will generate a new public invite link and invalidate the current one. "
 "Anyone with the old link will no longer be able to use it."
 msgstr "這將生成一個新的公共邀請連結並使當前的連結失效。擁有舊連結的任何人將不再能夠使用它。"
+
+#: src/components/modals/ModalSaveOverlay.tsx:97
+msgid "Timeout in 10 seconds anyway..."
+msgstr "反正10秒後超時..."
 
 #: src/components/modals/ConfirmationModal.native.tsx:57
 #: src/components/modals/ConfirmationModal.tsx:78
@@ -2278,11 +2341,15 @@ msgid "Unable to copy to clipboard"
 msgstr "無法複製到剪貼簿"
 
 #: src/components/context/MessageDB.bak.tsx:3482
-#: src/services/SpaceService.ts:550
+#: src/services/SpaceService.ts:553
 msgid ""
 "Unable to leave space due to incomplete configuration. The space data may be"
 " corrupted."
 msgstr "由於配置不完整，無法離開空間。空間數據可能已損壞。"
+
+#: src/hooks/business/user/useSpaceRecovery.ts:39
+msgid "Unable to load user config"
+msgstr "無法加載用戶配置"
 
 #: src/utils/imageProcessing/errors.ts:33
 msgid "Unable to process emoji image. Please use a smaller image."
@@ -2295,6 +2362,10 @@ msgstr "無法處理圖像。請使用較小的圖像。"
 #: src/utils/imageProcessing/errors.ts:36
 msgid "Unable to process sticker image. Please use a smaller image."
 msgstr "無法處理貼圖圖像。請使用較小的圖像。"
+
+#: src/hooks/business/user/useSpaceRecovery.ts:23
+msgid "Unable to restore: not logged in"
+msgstr "無法恢復：未登錄"
 
 #: src/components/modals/JoinSpaceModal.tsx:112
 msgid "Unknown"
@@ -2345,8 +2416,8 @@ msgstr "未知時間"
 #: src/hooks/queries/userInfo/buildUserInfoFetcher.ts:15
 #: src/services/EncryptionService.ts:138 src/services/MessageService.ts:1426
 #: src/services/MessageService.ts:1598 src/services/MessageService.ts:1738
-#: src/services/MessageService.ts:1756 src/services/MessageService.ts:3092
-#: src/services/MessageService.ts:3226 src/services/MessageService.ts:3390
+#: src/services/MessageService.ts:1756 src/services/MessageService.ts:3101
+#: src/services/MessageService.ts:3235 src/services/MessageService.ts:3399
 msgid "Unknown User"
 msgstr "未知使用者"
 
@@ -2440,7 +2511,7 @@ msgid "View edit history"
 msgstr "查看編輯歷史"
 
 #: src/components/onboarding/Onboarding.native.tsx:239
-#: src/components/onboarding/Onboarding.tsx:107
+#: src/components/onboarding/Onboarding.tsx:117
 msgid "Welcome to Quorum!"
 msgstr "歡迎使用 Quorum！"
 
@@ -2455,7 +2526,7 @@ msgid ""
 "disabled, only the current edited version is kept."
 msgstr "啟用後，所有編輯過的訊息的先前版本將被保存。禁用後，僅保留當前編輯版本。"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:60
+#: src/components/modals/UserSettingsModal/Privacy.tsx:64
 msgid ""
 "When enabled, synchronizes your user data, Spaces, and Space keys between "
 "devices. Enabling this increases metadata visibility of your account, which "
@@ -2499,7 +2570,7 @@ msgstr ""
 "當此設置啟用時，邀請鏈接將自動允許用戶加入您的空間。當未啟用時，跟隨邀請鏈接的用戶將向您發送請求以加入您的空間，您必須手動批准。公共鏈接需要在鏈接中存在一些關鍵材料"
 " - 請注意，擁有公共空間鏈接的人可以允許任何擁有該鏈接的人在鏈接有效期間閱讀空間中的消息。"
 
-#: src/components/onboarding/Onboarding.tsx:145
+#: src/components/onboarding/Onboarding.tsx:164
 msgid ""
 "When using Quorum on a browser, your messages are saved locally to your "
 "browser."
@@ -2512,7 +2583,7 @@ msgid ""
 "for all conversations can be changed in User Settings."
 msgstr "當您簽署一條消息時，您確認它來自您的密鑰。當您不簽署一條消息時，您具有合理的否認權。所有對話的默認設置可以在用戶設置中更改。"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:80
+#: src/components/modals/UserSettingsModal/Privacy.tsx:84
 msgid ""
 "When you sign a message, you are confirming that it comes from your key. "
 "When you don't sign a message, you have plausible deniability. You can "
@@ -2582,7 +2653,7 @@ msgid "You're all caught up!"
 msgstr "您已經全部跟上了！"
 
 #: src/components/onboarding/Onboarding.native.tsx:494
-#: src/components/onboarding/Onboarding.tsx:340
+#: src/components/onboarding/Onboarding.tsx:354
 msgid "You're all set. Welcome to Quorum!"
 msgstr "一切就緒，歡迎使用 Quorum！"
 

@@ -36,7 +36,7 @@ msgid "Send a message to #{channel_name}"
 msgstr "Gửi tin nhắn đến #{channel_name}"
 
 #. js-lingui-explicit-id
-#: src/components/onboarding/Onboarding.tsx:256
+#: src/components/onboarding/Onboarding.tsx:270
 msgid ""
 "Your profile image size must be {maxFileSize} or less and must be a PNG, "
 "JPG, or JPEG file extension."
@@ -50,11 +50,6 @@ msgid "{count} New Messages"
 msgstr "{count} Tin nhắn mới"
 
 #. js-lingui-explicit-id
-#: src/components/message/MessageComposer.tsx:404
-msgid "Replying to"
-msgstr "Đang trả lời"
-
-#. js-lingui-explicit-id
 #: src/components/message/MessageComposer.native.tsx:161
 msgid "Failed to process image"
 msgstr "Không thể xử lý hình ảnh"
@@ -63,6 +58,11 @@ msgstr "Không thể xử lý hình ảnh"
 #: src/components/message/MessageComposer.native.tsx:314
 msgid "Replying to {user}"
 msgstr "Đang trả lời {user}"
+
+#. js-lingui-explicit-id
+#: src/components/message/MessageComposer.tsx:404
+msgid "Replying to"
+msgstr "Đang trả lời"
 
 #. js-lingui-explicit-id
 #: src/components/message/Message.tsx:307
@@ -129,7 +129,7 @@ msgid "[Sticker]"
 msgstr "[Sticker]"
 
 #. placeholder {0}: removedDevices.length
-#: src/components/modals/UserSettingsModal/Privacy.tsx:102
+#: src/components/modals/UserSettingsModal/Privacy.tsx:106
 msgid "{0} devices marked for removal. Click \"Save Changes\" to confirm."
 msgstr "{0} thiết bị đã được đánh dấu để xóa. Nhấn \"Lưu thay đổi\" để xác nhận."
 
@@ -214,7 +214,7 @@ msgstr "Thêm một người bạn"
 msgid "0 Bytes"
 msgstr "0 Bytes"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:101
+#: src/components/modals/UserSettingsModal/Privacy.tsx:105
 msgid "1 device marked for removal. Click \"Save Changes\" to confirm."
 msgstr "1 thiết bị đã được đánh dấu để xóa. Nhấn \"Lưu thay đổi\" để xác nhận."
 
@@ -288,7 +288,7 @@ msgstr "Địa chỉ phải dài chính xác 46 ký tự."
 msgid "Addresses start with \"Qm\"."
 msgstr "Địa chỉ bắt đầu bằng \"Qm\"."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:50
+#: src/components/modals/UserSettingsModal/Privacy.tsx:54
 msgid ""
 "Adjust security-related settings, which may impact user  experience but "
 "increase the security of your Quorum account."
@@ -326,11 +326,15 @@ msgstr "Tất cả các bản ghi bị kick đều được cập nhật."
 msgid "All Spaces"
 msgstr "Tất cả Spaces"
 
+#: src/components/modals/ModalSaveOverlay.tsx:76
+msgid "Almost done..."
+msgstr "Gần xong rồi..."
+
 #: src/components/modals/AddSpaceModal.tsx:259
 msgid "Already Joined"
 msgstr "Đã tham gia"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:76
+#: src/components/modals/UserSettingsModal/Privacy.tsx:80
 msgid "Always sign Direct Messages"
 msgstr "Luôn ký tin nhắn trực tiếp"
 
@@ -607,7 +611,7 @@ msgstr "Nhấn lại để xác nhận"
 msgid "Click on the role name and tag to edit them."
 msgstr "Nhấp vào tên vai trò và thẻ để chỉnh sửa chúng."
 
-#: src/components/onboarding/Onboarding.tsx:163
+#: src/components/onboarding/Onboarding.tsx:177
 msgid ""
 "Click the button below to create a backup of your key info, because once "
 "it's gone, it's gone  forever. You may be prompted to authenticate again."
@@ -718,6 +722,22 @@ msgstr "Không thể lấy manifest cho Không Gian"
 msgid "Could not verify invite"
 msgstr "Không thể xác minh lời mời"
 
+#: src/hooks/business/user/useOnboardingFlowLogic.ts:273
+msgid ""
+"Couldn't decrypt your saved profile. Please re-enter your name and profile "
+"image."
+msgstr ""
+"Không thể giải mã hồ sơ đã lưu của bạn. Vui lòng nhập lại tên và hình ảnh hồ"
+" sơ của bạn."
+
+#: src/hooks/business/user/useOnboardingFlowLogic.ts:278
+msgid ""
+"Couldn't load your saved profile. Please re-enter your name and profile "
+"image."
+msgstr ""
+"Không thể tải hồ sơ đã lưu của bạn. Vui lòng nhập lại tên và hình ảnh hồ sơ "
+"của bạn."
+
 #: src/components/modals/AddSpaceModal.tsx:293
 #: src/components/modals/CreateSpaceModal.tsx:79
 msgid "Create a Space"
@@ -747,6 +767,10 @@ msgstr "Liên kết mời hiện tại"
 #: src/components/ui/ThemeRadioGroup.tsx:23
 msgid "Dark"
 msgstr "Tối"
+
+#: src/components/modals/UserSettingsModal/Privacy.tsx:198
+msgid "Data Recovery"
+msgstr "Khôi phục dữ liệu"
 
 #: src/components/context/MessageDB.bak.tsx:5415
 #: src/services/ConfigService.ts:142
@@ -903,7 +927,7 @@ msgid "Drawer"
 msgstr "Ngăn kéo"
 
 #: src/components/onboarding/Onboarding.native.tsx:177
-#: src/components/onboarding/Onboarding.tsx:121
+#: src/components/onboarding/Onboarding.tsx:131
 msgid "Drop your profile photo here"
 msgstr "Thả ảnh đại diện của bạn ở đây"
 
@@ -950,7 +974,7 @@ msgstr "Bảng chọn emoji"
 msgid "Emojis"
 msgstr "Emojis"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:56
+#: src/components/modals/UserSettingsModal/Privacy.tsx:60
 msgid "Enable sync"
 msgstr "Bật đồng bộ"
 
@@ -1019,11 +1043,11 @@ msgstr "Lỗi khi hiển thị thông báo:"
 msgid "Existing Conversations"
 msgstr "Các cuộc trò chuyện hiện có"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:186
+#: src/components/modals/UserSettingsModal/Privacy.tsx:190
 msgid "Export"
 msgstr "Xuất"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:177
+#: src/components/modals/UserSettingsModal/Privacy.tsx:181
 msgid ""
 "Export your key to a file by clicking this button. Do not share this file "
 "with anyone else or they can impersonate you or steal your Space's Apex "
@@ -1061,6 +1085,10 @@ msgstr "Không thể mở trình chọn hình ảnh"
 #: src/components/context/WebsocketProvider.tsx:164
 msgid "Failed to parse WebSocket message:"
 msgstr "Không thể phân tích tin nhắn WebSocket:"
+
+#: src/hooks/business/user/useSpaceRecovery.ts:101
+msgid "Failed to restore spaces"
+msgstr "Không thể khôi phục các không gian"
 
 #: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:271
 msgid "Failed to save notification settings"
@@ -1229,12 +1257,16 @@ msgstr "Tên nhóm là bắt buộc"
 msgid "Group name must be {MAX_NAME_LENGTH} characters or less"
 msgstr "Tên nhóm phải có {MAX_NAME_LENGTH} ký tự trở xuống"
 
+#: src/components/modals/ModalSaveOverlay.tsx:83
+msgid "Hang in there..."
+msgstr "Chờ một chút..."
+
 #: src/components/direct/EmptyDirectMessage.tsx:54
 msgid "hide home screen"
 msgstr "ẩn màn hình chính"
 
 #: src/components/onboarding/Onboarding.native.tsx:290
-#: src/components/onboarding/Onboarding.tsx:184
+#: src/components/onboarding/Onboarding.tsx:198
 msgid "I already saved mine"
 msgstr "Tôi đã lưu của mình rồi"
 
@@ -1242,13 +1274,13 @@ msgstr "Tôi đã lưu của mình rồi"
 msgid "I've Saved It"
 msgstr "Tôi đã lưu nó"
 
-#: src/components/onboarding/Onboarding.tsx:319
-#: src/components/onboarding/Onboarding.tsx:326
+#: src/components/onboarding/Onboarding.tsx:333
+#: src/components/onboarding/Onboarding.tsx:340
 msgid "If skipped, you'll get the default profile image and can set it later"
 msgstr ""
 "Nếu bỏ qua, bạn sẽ nhận được hình ảnh hồ sơ mặc định và có thể thiết lập sau"
 
-#: src/components/onboarding/Onboarding.tsx:149
+#: src/components/onboarding/Onboarding.tsx:167
 msgid ""
 "If you clear your browser storage or switch browsers, your old messages and "
 "keys may disappear."
@@ -1257,7 +1289,7 @@ msgstr ""
 "khóa cũ của bạn có thể biến mất."
 
 #: src/components/onboarding/Onboarding.native.tsx:254
-#: src/components/onboarding/Onboarding.tsx:156
+#: src/components/onboarding/Onboarding.tsx:172
 msgid ""
 "If you uninstall the app from your device, you will lose your old messages "
 "and keys."
@@ -1271,7 +1303,7 @@ msgid "Import Existing Key"
 msgstr "Nhập khóa hiện có"
 
 #: src/components/onboarding/Onboarding.native.tsx:244
-#: src/components/onboarding/Onboarding.tsx:134
+#: src/components/onboarding/Onboarding.tsx:154
 msgid "Important first-time user information:"
 msgstr "Thông tin quan trọng cho người dùng lần đầu:"
 
@@ -1370,7 +1402,7 @@ msgstr "Nhảy đến hiện tại"
 msgid "Key Copied!"
 msgstr "Khóa đã được sao chép!"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:174
+#: src/components/modals/UserSettingsModal/Privacy.tsx:178
 msgid "Key Export"
 msgstr "Xuất khóa"
 
@@ -1422,7 +1454,7 @@ msgid "Leave this space"
 msgstr "Rời khỏi không gian này"
 
 #: src/components/onboarding/Onboarding.native.tsx:312
-#: src/components/onboarding/Onboarding.tsx:198
+#: src/components/onboarding/Onboarding.tsx:212
 msgid ""
 "Let your friends know who you are! Pick a friendly name to display in your "
 "conversations, something easier to read than:"
@@ -1431,7 +1463,7 @@ msgstr ""
 " cuộc trò chuyện của bạn, cái gì đó dễ đọc hơn:"
 
 #: src/components/onboarding/Onboarding.native.tsx:505
-#: src/components/onboarding/Onboarding.tsx:352
+#: src/components/onboarding/Onboarding.tsx:366
 msgid "Let's gooooooooo"
 msgstr "Hãy đi nào"
 
@@ -1455,6 +1487,10 @@ msgstr "Đang tải thông báo..."
 msgid "Loading pinned messages..."
 msgstr "Đang tải tin nhắn đã ghim..."
 
+#: src/components/onboarding/Onboarding.tsx:143
+msgid "Loading your profile..."
+msgstr "Đang tải hồ sơ của bạn..."
+
 #: src/hooks/business/conversations/useDirectMessageCreation.ts:32
 msgid "Looking up user..."
 msgstr "Đang tìm kiếm người dùng..."
@@ -1476,7 +1512,7 @@ msgid "Make role public"
 msgstr "Làm cho vai trò công khai"
 
 #: src/components/onboarding/Onboarding.native.tsx:364
-#: src/components/onboarding/Onboarding.tsx:247
+#: src/components/onboarding/Onboarding.tsx:261
 msgid ""
 "Make your account uniquely yours – set a contact photo. This information is "
 "only provided to the Spaces you join."
@@ -1488,7 +1524,7 @@ msgstr ""
 msgid "Manage desktop notification preferences for new messages."
 msgstr "Quản lý sở thích thông báo trên máy tính cho các tin nhắn mới."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:41
+#: src/components/modals/UserSettingsModal/Privacy.tsx:45
 msgid ""
 "Manage devices, and privacy conditions for messaging and synchronization."
 msgstr ""
@@ -1627,6 +1663,10 @@ msgstr ""
 msgid "No messages found"
 msgstr "Không tìm thấy tin nhắn"
 
+#: src/hooks/business/user/useSpaceRecovery.ts:76
+msgid "No missing spaces found"
+msgstr "Không tìm thấy không gian nào bị thiếu"
+
 #: src/components/message/PinnedMessagesPanel.tsx:193
 msgid "No pinned messages yet"
 msgstr "Chưa có tin nhắn nào được ghim"
@@ -1682,7 +1722,7 @@ msgid "OK"
 msgstr "Đồng ý"
 
 #: src/components/onboarding/Onboarding.native.tsx:222
-#: src/components/onboarding/Onboarding.tsx:110
+#: src/components/onboarding/Onboarding.tsx:120
 msgid "One of us, one of us!"
 msgstr "Một trong chúng ta, một trong chúng ta!"
 
@@ -1714,11 +1754,11 @@ msgstr "Trang không tìm thấy"
 msgid "Paste an invite link"
 msgstr "Dán liên kết mời"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:153
+#: src/components/modals/UserSettingsModal/Privacy.tsx:157
 msgid "Pending"
 msgstr "Đang chờ"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:139
+#: src/components/modals/UserSettingsModal/Privacy.tsx:143
 msgid "Pending removal - click Save to confirm"
 msgstr "Đang chờ xóa - nhấn Lưu để xác nhận"
 
@@ -1728,7 +1768,7 @@ msgid "Permissions:"
 msgstr "Quyền:"
 
 #: src/components/onboarding/Onboarding.native.tsx:223
-#: src/components/onboarding/Onboarding.tsx:111
+#: src/components/onboarding/Onboarding.tsx:121
 msgid "Personalize your account"
 msgstr "Cá nhân hóa tài khoản của bạn"
 
@@ -1805,7 +1845,7 @@ msgid "Pinned!"
 msgstr "Đã ghim!"
 
 #: src/components/onboarding/Onboarding.native.tsx:180
-#: src/components/onboarding/Onboarding.tsx:123
+#: src/components/onboarding/Onboarding.tsx:133
 msgid "PNG, JPG or JPEG • Optimal ratio 1:1"
 msgstr "PNG, JPG hoặc JPEG • Tỷ lệ tối ưu 1:1"
 
@@ -1818,7 +1858,7 @@ msgid "Privacy Settings"
 msgstr "Cài đặt quyền riêng tư"
 
 #: src/components/modals/UserSettingsModal/Navigation.tsx:16
-#: src/components/modals/UserSettingsModal/Privacy.tsx:39
+#: src/components/modals/UserSettingsModal/Privacy.tsx:43
 msgid "Privacy/Security"
 msgstr "Quyền riêng tư/Bảo mật"
 
@@ -1862,7 +1902,7 @@ msgstr ""
 "làm mới."
 
 #: src/components/onboarding/Onboarding.native.tsx:249
-#: src/components/onboarding/Onboarding.tsx:137
+#: src/components/onboarding/Onboarding.tsx:157
 msgid ""
 "Quorum is peer-to-peer and end-to-end encrypted. This means your messages "
 "stay private, but equally important, they only live on the network for the "
@@ -1906,7 +1946,7 @@ msgstr "nhận cấu hình với chữ ký không hợp lệ!"
 msgid "Refresh"
 msgstr "Làm mới"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:153
+#: src/components/modals/UserSettingsModal/Privacy.tsx:157
 msgid "Remove"
 msgstr "Xóa"
 
@@ -1963,6 +2003,27 @@ msgstr ""
 msgid "Reset"
 msgstr "Đặt lại"
 
+#: src/components/modals/UserSettingsModal/Privacy.tsx:208
+msgid "Restore Missing Spaces"
+msgstr "Khôi phục Không gian Bị thiếu"
+
+#: src/components/modals/UserSettingsModal/Privacy.tsx:200
+msgid ""
+"Restore Spaces that exist on this device but are missing from your "
+"navigation menu."
+msgstr ""
+"Khôi phục các không gian tồn tại trên thiết bị này nhưng bị thiếu trong menu"
+" điều hướng của bạn."
+
+#. placeholder {0}: recoverable.length
+#: src/hooks/business/user/useSpaceRecovery.ts:98
+msgid "Restored {0} space(s)"
+msgstr "Đã khôi phục {0} không gian"
+
+#: src/components/modals/UserSettingsModal/Privacy.tsx:208
+msgid "Restoring..."
+msgstr "Đang khôi phục..."
+
 #: src/components/modals/SpaceSettingsModal/Navigation.tsx:22
 #: src/components/modals/SpaceSettingsModal/Roles.tsx:45
 msgid "Roles"
@@ -1977,13 +2038,13 @@ msgstr "Lưu"
 #: src/components/modals/FolderEditorModal.tsx:113
 #: src/components/modals/GroupEditorModal.tsx:99
 #: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:592
-#: src/components/modals/UserSettingsModal/UserSettingsModal.tsx:244
+#: src/components/modals/UserSettingsModal/UserSettingsModal.tsx:249
 #: src/components/user/UserProfileEdit.tsx:158
 msgid "Save Changes"
 msgstr "Lưu thay đổi"
 
 #: src/components/onboarding/Onboarding.native.tsx:473
-#: src/components/onboarding/Onboarding.tsx:308
+#: src/components/onboarding/Onboarding.tsx:322
 msgid "Save Contact Photo"
 msgstr "Lưu ảnh liên hệ"
 
@@ -1993,7 +2054,7 @@ msgid "Save Edit History"
 msgstr "Lưu Lịch sử Chỉnh sửa"
 
 #: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:577
-#: src/components/modals/UserSettingsModal/UserSettingsModal.tsx:233
+#: src/components/modals/UserSettingsModal/UserSettingsModal.tsx:238
 msgid "Save Failed"
 msgstr "Lưu không thành công"
 
@@ -2002,7 +2063,7 @@ msgid "Save Private Key"
 msgstr "Lưu khóa riêng"
 
 #: src/components/onboarding/Onboarding.native.tsx:269
-#: src/components/onboarding/Onboarding.tsx:177
+#: src/components/onboarding/Onboarding.tsx:191
 msgid "Save User Key"
 msgstr "Lưu khóa người dùng"
 
@@ -2014,7 +2075,7 @@ msgstr "cấu hình đã lưu đã lỗi thời"
 #: src/components/modals/ChannelEditorModal.tsx:93
 #: src/components/modals/FolderEditorModal.tsx:148
 #: src/components/modals/GroupEditorModal.tsx:139
-#: src/components/modals/ModalSaveOverlay.tsx:43
+#: src/components/modals/ModalSaveOverlay.tsx:52
 msgid "Saving..."
 msgstr "Đang lưu..."
 
@@ -2060,7 +2121,7 @@ msgstr "Tìm kiếm Tên người dùng hoặc Địa chỉ"
 msgid "Searching..."
 msgstr "Đang tìm kiếm..."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:47
+#: src/components/modals/UserSettingsModal/Privacy.tsx:51
 msgid "Security"
 msgstr "Bảo mật"
 
@@ -2119,7 +2180,7 @@ msgid "Session Encrypted"
 msgstr "Phiên đã được mã hóa"
 
 #: src/components/onboarding/Onboarding.native.tsx:344
-#: src/components/onboarding/Onboarding.tsx:233
+#: src/components/onboarding/Onboarding.tsx:247
 msgid "Set Display Name"
 msgstr "Đặt tên hiển thị"
 
@@ -2150,7 +2211,7 @@ msgstr ""
 "thể hơn."
 
 #: src/components/onboarding/Onboarding.native.tsx:461
-#: src/components/onboarding/Onboarding.tsx:315
+#: src/components/onboarding/Onboarding.tsx:329
 msgid "Skip Adding Photo"
 msgstr "Bỏ qua thêm ảnh"
 
@@ -2267,14 +2328,18 @@ msgstr ""
 "Mô tả này sẽ được hiển thị trên các lời mời và cho mọi người khi họ tìm kiếm"
 " hoặc tham gia Space của bạn bằng cách sử dụng liên kết mời."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:162
+#: src/components/modals/UserSettingsModal/Privacy.tsx:166
 msgid "This device"
 msgstr "Thiết bị này"
 
 #: src/components/onboarding/Onboarding.native.tsx:318
-#: src/components/onboarding/Onboarding.tsx:207
+#: src/components/onboarding/Onboarding.tsx:221
 msgid "This information is only provided to the Spaces you join."
 msgstr "Thông tin này chỉ được cung cấp cho các không gian mà bạn tham gia."
+
+#: src/components/modals/ModalSaveOverlay.tsx:90
+msgid "This is embarrassing..."
+msgstr "Thật xấu hổ..."
 
 #: src/components/modals/UserSettingsModal/General.tsx:110
 msgid ""
@@ -2327,6 +2392,10 @@ msgid ""
 msgstr ""
 "Điều này sẽ tạo một liên kết mời công khai mới và làm vô hiệu liên kết hiện "
 "tại. Bất kỳ ai có liên kết cũ sẽ không còn có thể sử dụng nó."
+
+#: src/components/modals/ModalSaveOverlay.tsx:97
+msgid "Timeout in 10 seconds anyway..."
+msgstr "Hết thời gian trong 10 giây nữa..."
 
 #: src/components/modals/ConfirmationModal.native.tsx:57
 #: src/components/modals/ConfirmationModal.tsx:78
@@ -2390,13 +2459,17 @@ msgid "Unable to copy to clipboard"
 msgstr "Không thể sao chép vào clipboard"
 
 #: src/components/context/MessageDB.bak.tsx:3482
-#: src/services/SpaceService.ts:550
+#: src/services/SpaceService.ts:553
 msgid ""
 "Unable to leave space due to incomplete configuration. The space data may be"
 " corrupted."
 msgstr ""
 "Không thể rời khỏi không gian do cấu hình chưa hoàn chỉnh. Dữ liệu không "
 "gian có thể bị hỏng."
+
+#: src/hooks/business/user/useSpaceRecovery.ts:39
+msgid "Unable to load user config"
+msgstr "Không thể tải cấu hình người dùng"
 
 #: src/utils/imageProcessing/errors.ts:33
 msgid "Unable to process emoji image. Please use a smaller image."
@@ -2411,6 +2484,10 @@ msgstr "Không thể xử lý hình ảnh. Vui lòng sử dụng một hình ả
 msgid "Unable to process sticker image. Please use a smaller image."
 msgstr ""
 "Không thể xử lý hình ảnh nhãn dán. Vui lòng sử dụng một hình ảnh nhỏ hơn."
+
+#: src/hooks/business/user/useSpaceRecovery.ts:23
+msgid "Unable to restore: not logged in"
+msgstr "Không thể khôi phục: chưa đăng nhập"
 
 #: src/components/modals/JoinSpaceModal.tsx:112
 msgid "Unknown"
@@ -2461,8 +2538,8 @@ msgstr "Thời gian không xác định"
 #: src/hooks/queries/userInfo/buildUserInfoFetcher.ts:15
 #: src/services/EncryptionService.ts:138 src/services/MessageService.ts:1426
 #: src/services/MessageService.ts:1598 src/services/MessageService.ts:1738
-#: src/services/MessageService.ts:1756 src/services/MessageService.ts:3092
-#: src/services/MessageService.ts:3226 src/services/MessageService.ts:3390
+#: src/services/MessageService.ts:1756 src/services/MessageService.ts:3101
+#: src/services/MessageService.ts:3235 src/services/MessageService.ts:3399
 msgid "Unknown User"
 msgstr "Người dùng không xác định"
 
@@ -2562,7 +2639,7 @@ msgid "View edit history"
 msgstr "Xem lịch sử chỉnh sửa"
 
 #: src/components/onboarding/Onboarding.native.tsx:239
-#: src/components/onboarding/Onboarding.tsx:107
+#: src/components/onboarding/Onboarding.tsx:117
 msgid "Welcome to Quorum!"
 msgstr "Chào mừng đến với Quorum!"
 
@@ -2579,7 +2656,7 @@ msgstr ""
 "Khi được bật, tất cả các phiên bản trước của các tin nhắn đã chỉnh sửa sẽ "
 "được lưu. Khi bị tắt, chỉ phiên bản chỉnh sửa hiện tại được giữ lại."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:60
+#: src/components/modals/UserSettingsModal/Privacy.tsx:64
 msgid ""
 "When enabled, synchronizes your user data, Spaces, and Space keys between "
 "devices. Enabling this increases metadata visibility of your account, which "
@@ -2634,7 +2711,7 @@ msgstr ""
 "phép bất kỳ ai có liên kết đọc tin nhắn trên Space trong thời gian liên kết "
 "còn hợp lệ."
 
-#: src/components/onboarding/Onboarding.tsx:145
+#: src/components/onboarding/Onboarding.tsx:164
 msgid ""
 "When using Quorum on a browser, your messages are saved locally to your "
 "browser."
@@ -2652,7 +2729,7 @@ msgstr ""
 "bạn không ký một tin nhắn, bạn có thể phủ nhận một cách hợp lý. Mặc định cho"
 " tất cả các cuộc trò chuyện có thể được thay đổi trong Cài đặt Người dùng."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:80
+#: src/components/modals/UserSettingsModal/Privacy.tsx:84
 msgid ""
 "When you sign a message, you are confirming that it comes from your key. "
 "When you don't sign a message, you have plausible deniability. You can "
@@ -2734,7 +2811,7 @@ msgid "You're all caught up!"
 msgstr "Bạn đã theo kịp tất cả!"
 
 #: src/components/onboarding/Onboarding.native.tsx:494
-#: src/components/onboarding/Onboarding.tsx:340
+#: src/components/onboarding/Onboarding.tsx:354
 msgid "You're all set. Welcome to Quorum!"
 msgstr "Bạn đã sẵn sàng. Chào mừng đến với Quorum!"
 

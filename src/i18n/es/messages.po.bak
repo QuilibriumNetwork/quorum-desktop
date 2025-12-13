@@ -36,7 +36,7 @@ msgid "Send a message to #{channel_name}"
 msgstr "Enviar un mensaje a #{channel_name}"
 
 #. js-lingui-explicit-id
-#: src/components/onboarding/Onboarding.tsx:256
+#: src/components/onboarding/Onboarding.tsx:270
 msgid "Your profile image size must be {maxFileSize} or less and must be a PNG, JPG, or JPEG file extension."
 msgstr "El tamaño de la imagen de tu perfil debe ser {maxFileSize} o menos y debe tener una extensión de archivo PNG, JPG o JPEG."
 
@@ -44,11 +44,6 @@ msgstr "El tamaño de la imagen de tu perfil debe ser {maxFileSize} o menos y de
 #: src/components/message/NewMessagesSeparator.tsx:69
 msgid "{count} New Messages"
 msgstr "{count} Nuevos Mensajes"
-
-#. js-lingui-explicit-id
-#: src/components/message/MessageComposer.tsx:404
-msgid "Replying to"
-msgstr "Respondiendo a"
 
 #. js-lingui-explicit-id
 #: src/components/message/MessageComposer.native.tsx:161
@@ -59,6 +54,11 @@ msgstr "Error al procesar la imagen"
 #: src/components/message/MessageComposer.native.tsx:314
 msgid "Replying to {user}"
 msgstr "Respondiendo a {user}"
+
+#. js-lingui-explicit-id
+#: src/components/message/MessageComposer.tsx:404
+msgid "Replying to"
+msgstr "Respondiendo a"
 
 #. js-lingui-explicit-id
 #: src/components/message/Message.tsx:307
@@ -132,7 +132,7 @@ msgid "[Sticker]"
 msgstr "[Sticker]"
 
 #. placeholder {0}: removedDevices.length
-#: src/components/modals/UserSettingsModal/Privacy.tsx:102
+#: src/components/modals/UserSettingsModal/Privacy.tsx:106
 msgid "{0} devices marked for removal. Click \"Save Changes\" to confirm."
 msgstr "{0} dispositivos marcados para eliminación. Haz clic en \"Guardar cambios\" para confirmar."
 
@@ -238,7 +238,7 @@ msgstr "Agregar un amigo"
 msgid "0 Bytes"
 msgstr "0 Bytes"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:101
+#: src/components/modals/UserSettingsModal/Privacy.tsx:105
 msgid "1 device marked for removal. Click \"Save Changes\" to confirm."
 msgstr "1 dispositivo marcado para eliminación. Haz clic en \"Guardar cambios\" para confirmar."
 
@@ -305,7 +305,7 @@ msgstr "Las direcciones deben tener exactamente 46 caracteres de longitud."
 msgid "Addresses start with \"Qm\"."
 msgstr "Las direcciones comienzan con \"Qm\"."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:50
+#: src/components/modals/UserSettingsModal/Privacy.tsx:54
 msgid "Adjust security-related settings, which may impact user  experience but increase the security of your Quorum account."
 msgstr "Ajusta la configuración relacionada con la seguridad, que puede afectar la experiencia del usuario pero aumentar la seguridad de tu cuenta de Quorum."
 
@@ -339,11 +339,15 @@ msgstr "Todos los registros de expulsión están actualizados."
 msgid "All Spaces"
 msgstr "Todos los Espacios"
 
+#: src/components/modals/ModalSaveOverlay.tsx:76
+msgid "Almost done..."
+msgstr ""
+
 #: src/components/modals/AddSpaceModal.tsx:259
 msgid "Already Joined"
 msgstr "Ya unido"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:76
+#: src/components/modals/UserSettingsModal/Privacy.tsx:80
 msgid "Always sign Direct Messages"
 msgstr "Siempre firmar Mensajes Directos"
 
@@ -407,9 +411,8 @@ msgstr "¿Estás seguro de que deseas desanclar este mensaje?"
 
 #: src/components/modals/SpaceSettingsModal/Roles.tsx:54
 msgid "As a space owner, you must assign yourself a role to perform moderation actions. Kicking users is the only action that doesn't require a role. <0><1>Learn more</1></0>"
-msgstr ""
+msgstr "Como propietario del espacio, debes asignarte un rol para realizar acciones de moderación. Echar a los usuarios es la única acción que no requiere un rol. <0><1>Aprende más</1></0>"
 
-#: src/components/modals/SpaceSettingsModal/Roles.tsx:54
 #~ msgid "As a space owner, you need to assign yourself a role with delete permissions to delete other users' messages. <0><1>Learn more</1></0>"
 #~ msgstr "Como propietario del espacio, necesitas asignarte un rol con permisos de eliminación para borrar los mensajes de otros usuarios. <0><1>Aprende más</1></0>"
 
@@ -606,7 +609,7 @@ msgstr "Haz clic de nuevo para confirmar"
 msgid "Click on the role name and tag to edit them."
 msgstr "Haga clic en el nombre del rol y la etiqueta para editarlos."
 
-#: src/components/onboarding/Onboarding.tsx:163
+#: src/components/onboarding/Onboarding.tsx:177
 msgid "Click the button below to create a backup of your key info, because once it's gone, it's gone  forever. You may be prompted to authenticate again."
 msgstr "Haz clic en el botón de abajo para crear una copia de seguridad de tu información clave, porque una vez que se ha ido, se ha ido para siempre. Es posible que se te pida autenticarte nuevamente."
 
@@ -707,6 +710,14 @@ msgstr "No se pudo obtener el manifiesto para el Espcacio"
 msgid "Could not verify invite"
 msgstr "No se ha podido verificar la invitación"
 
+#: src/hooks/business/user/useOnboardingFlowLogic.ts:273
+msgid "Couldn't decrypt your saved profile. Please re-enter your name and profile image."
+msgstr ""
+
+#: src/hooks/business/user/useOnboardingFlowLogic.ts:278
+msgid "Couldn't load your saved profile. Please re-enter your name and profile image."
+msgstr ""
+
 #: src/components/modals/AddSpaceModal.tsx:293
 #: src/components/modals/CreateSpaceModal.tsx:79
 msgid "Create a Space"
@@ -736,6 +747,10 @@ msgstr "Enlace de invitación actual"
 #: src/components/ui/ThemeRadioGroup.tsx:23
 msgid "Dark"
 msgstr "Oscuro"
+
+#: src/components/modals/UserSettingsModal/Privacy.tsx:198
+msgid "Data Recovery"
+msgstr ""
 
 #: src/components/context/MessageDB.bak.tsx:5415
 #: src/services/ConfigService.ts:142
@@ -831,7 +846,7 @@ msgstr "Eliminar este espacio"
 
 #: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:392
 msgid "Deleting Space..."
-msgstr ""
+msgstr "Eliminando Espacio..."
 
 #: src/components/modals/SpaceSettingsModal/General.tsx:156
 msgid "Describe what this Space is about..."
@@ -902,7 +917,7 @@ msgid "Drawer"
 msgstr "Cajón"
 
 #: src/components/onboarding/Onboarding.native.tsx:177
-#: src/components/onboarding/Onboarding.tsx:121
+#: src/components/onboarding/Onboarding.tsx:131
 msgid "Drop your profile photo here"
 msgstr "Deja tu foto de perfil aquí"
 
@@ -949,7 +964,7 @@ msgstr "Selector de emojis"
 msgid "Emojis"
 msgstr "Emojis"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:56
+#: src/components/modals/UserSettingsModal/Privacy.tsx:60
 msgid "Enable sync"
 msgstr "Habilitar sincronización"
 
@@ -1013,11 +1028,11 @@ msgstr "Error al mostrar la notificación:"
 msgid "Existing Conversations"
 msgstr "Conversaciones Existentes"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:186
+#: src/components/modals/UserSettingsModal/Privacy.tsx:190
 msgid "Export"
 msgstr "Exportar"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:177
+#: src/components/modals/UserSettingsModal/Privacy.tsx:181
 msgid "Export your key to a file by clicking this button. Do not share this file with anyone else or they can impersonate you or steal your Space's Apex earnings."
 msgstr "Exporta tu clave a un archivo haciendo clic en este botón. No compartas este archivo con nadie más o podrían suplantarte o robar las ganancias de Apex de tu Espcacio."
 
@@ -1049,6 +1064,10 @@ msgstr "Error al abrir el selector de imágenes"
 #: src/components/context/WebsocketProvider.tsx:164
 msgid "Failed to parse WebSocket message:"
 msgstr "Error al analizar el mensaje de WebSocket:"
+
+#: src/hooks/business/user/useSpaceRecovery.ts:101
+msgid "Failed to restore spaces"
+msgstr ""
 
 #: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:271
 msgid "Failed to save notification settings"
@@ -1216,12 +1235,16 @@ msgstr "El nombre del grupo es obligatorio"
 msgid "Group name must be {MAX_NAME_LENGTH} characters or less"
 msgstr "El nombre del grupo debe tener {MAX_NAME_LENGTH} caracteres o menos"
 
+#: src/components/modals/ModalSaveOverlay.tsx:83
+msgid "Hang in there..."
+msgstr ""
+
 #: src/components/direct/EmptyDirectMessage.tsx:54
 msgid "hide home screen"
 msgstr "ocultar pantalla de inicio"
 
 #: src/components/onboarding/Onboarding.native.tsx:290
-#: src/components/onboarding/Onboarding.tsx:184
+#: src/components/onboarding/Onboarding.tsx:198
 msgid "I already saved mine"
 msgstr "Ya he guardado la mía"
 
@@ -1229,17 +1252,17 @@ msgstr "Ya he guardado la mía"
 msgid "I've Saved It"
 msgstr "Lo he guardado"
 
-#: src/components/onboarding/Onboarding.tsx:319
-#: src/components/onboarding/Onboarding.tsx:326
+#: src/components/onboarding/Onboarding.tsx:333
+#: src/components/onboarding/Onboarding.tsx:340
 msgid "If skipped, you'll get the default profile image and can set it later"
 msgstr "Si se omite, obtendrás la imagen de perfil predeterminada y podrás configurarla más tarde"
 
-#: src/components/onboarding/Onboarding.tsx:149
+#: src/components/onboarding/Onboarding.tsx:167
 msgid "If you clear your browser storage or switch browsers, your old messages and keys may disappear."
 msgstr "Si borras el almacenamiento de tu navegador o cambias de navegador, tus mensajes y claves antiguos pueden desaparecer."
 
 #: src/components/onboarding/Onboarding.native.tsx:254
-#: src/components/onboarding/Onboarding.tsx:156
+#: src/components/onboarding/Onboarding.tsx:172
 msgid "If you uninstall the app from your device, you will lose your old messages and keys."
 msgstr "Si desinstalas la aplicación de tu dispositivo, perderás tus mensajes y claves antiguos."
 
@@ -1249,7 +1272,7 @@ msgid "Import Existing Key"
 msgstr "Importar clave existente"
 
 #: src/components/onboarding/Onboarding.native.tsx:244
-#: src/components/onboarding/Onboarding.tsx:134
+#: src/components/onboarding/Onboarding.tsx:154
 msgid "Important first-time user information:"
 msgstr "Información importante para el primer usuario:"
 
@@ -1348,7 +1371,7 @@ msgstr "Saltar al presente"
 msgid "Key Copied!"
 msgstr "¡Clave copiada!"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:174
+#: src/components/modals/UserSettingsModal/Privacy.tsx:178
 msgid "Key Export"
 msgstr "Exportación de clave"
 
@@ -1400,12 +1423,12 @@ msgid "Leave this space"
 msgstr "Salir de este espacio"
 
 #: src/components/onboarding/Onboarding.native.tsx:312
-#: src/components/onboarding/Onboarding.tsx:198
+#: src/components/onboarding/Onboarding.tsx:212
 msgid "Let your friends know who you are! Pick a friendly name to display in your conversations, something easier to read than:"
 msgstr "¡Haz saber a tus amigos quién eres! Elige un nombre amigable para mostrar en tus conversaciones, algo más fácil de leer que:"
 
 #: src/components/onboarding/Onboarding.native.tsx:505
-#: src/components/onboarding/Onboarding.tsx:352
+#: src/components/onboarding/Onboarding.tsx:366
 msgid "Let's gooooooooo"
 msgstr "¡Vamos!"
 
@@ -1429,6 +1452,10 @@ msgstr "Cargando notificaciones..."
 msgid "Loading pinned messages..."
 msgstr "Cargando mensajes anclados..."
 
+#: src/components/onboarding/Onboarding.tsx:143
+msgid "Loading your profile..."
+msgstr ""
+
 #: src/hooks/business/conversations/useDirectMessageCreation.ts:32
 msgid "Looking up user..."
 msgstr "Buscando usuario..."
@@ -1451,7 +1478,7 @@ msgid "Make role public"
 msgstr "Hacer rol público"
 
 #: src/components/onboarding/Onboarding.native.tsx:364
-#: src/components/onboarding/Onboarding.tsx:247
+#: src/components/onboarding/Onboarding.tsx:261
 msgid "Make your account uniquely yours – set a contact photo. This information is only provided to the Spaces you join."
 msgstr "Haz que tu cuenta sea única: establece una foto de contacto. Esta información solo se proporciona a los Espcacios que te unas."
 
@@ -1459,7 +1486,7 @@ msgstr "Haz que tu cuenta sea única: establece una foto de contacto. Esta infor
 msgid "Manage desktop notification preferences for new messages."
 msgstr "Gestiona las preferencias de notificación de escritorio para nuevos mensajes."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:41
+#: src/components/modals/UserSettingsModal/Privacy.tsx:45
 msgid "Manage devices, and privacy conditions for messaging and synchronization."
 msgstr "Gestiona dispositivos y condiciones de privacidad para mensajería y sincronización."
 
@@ -1487,7 +1514,7 @@ msgstr "Lista de Miembros"
 
 #: src/components/modals/ChannelEditorModal.tsx:169
 msgid "Members of selected roles can post, delete, and pin messages in this read-only channel. Note: Space owners must also be in a manager role to post here."
-msgstr ""
+msgstr "Los miembros de los roles seleccionados pueden publicar, eliminar y fijar mensajes en este canal de solo lectura. Nota: los propietarios del espacio también deben estar en un rol de gerente para publicar aquí."
 
 #: src/components/modals/SpaceSettingsModal/Roles.tsx:174
 msgid "Mention Everyone"
@@ -1575,6 +1602,10 @@ msgstr "No hay evaluaciones de invitación disponibles. Por favor, genera un enl
 msgid "No messages found"
 msgstr "No se encontraron mensajes"
 
+#: src/hooks/business/user/useSpaceRecovery.ts:76
+msgid "No missing spaces found"
+msgstr ""
+
 #: src/components/message/PinnedMessagesPanel.tsx:193
 msgid "No pinned messages yet"
 msgstr "Aún no hay mensajes anclados"
@@ -1635,7 +1666,7 @@ msgid "OK"
 msgstr "Está bien"
 
 #: src/components/onboarding/Onboarding.native.tsx:222
-#: src/components/onboarding/Onboarding.tsx:110
+#: src/components/onboarding/Onboarding.tsx:120
 msgid "One of us, one of us!"
 msgstr "¡Uno de nosotros, uno de nosotros!"
 
@@ -1670,11 +1701,11 @@ msgstr "Página no encontrada"
 msgid "Paste an invite link"
 msgstr "Pega un enlace de invitación"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:153
+#: src/components/modals/UserSettingsModal/Privacy.tsx:157
 msgid "Pending"
 msgstr "Pendiente"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:139
+#: src/components/modals/UserSettingsModal/Privacy.tsx:143
 msgid "Pending removal - click Save to confirm"
 msgstr "Eliminación pendiente - haz clic en Guardar para confirmar"
 
@@ -1684,7 +1715,7 @@ msgid "Permissions:"
 msgstr "Permisos:"
 
 #: src/components/onboarding/Onboarding.native.tsx:223
-#: src/components/onboarding/Onboarding.tsx:111
+#: src/components/onboarding/Onboarding.tsx:121
 msgid "Personalize your account"
 msgstr "Personalice su cuenta"
 
@@ -1761,7 +1792,7 @@ msgid "Pinned!"
 msgstr "¡Anclado!"
 
 #: src/components/onboarding/Onboarding.native.tsx:180
-#: src/components/onboarding/Onboarding.tsx:123
+#: src/components/onboarding/Onboarding.tsx:133
 msgid "PNG, JPG or JPEG • Optimal ratio 1:1"
 msgstr "PNG, JPG o JPEG • Relación óptima 1:1"
 
@@ -1774,7 +1805,7 @@ msgid "Privacy Settings"
 msgstr "Configuración de privacidad"
 
 #: src/components/modals/UserSettingsModal/Navigation.tsx:16
-#: src/components/modals/UserSettingsModal/Privacy.tsx:39
+#: src/components/modals/UserSettingsModal/Privacy.tsx:43
 msgid "Privacy/Security"
 msgstr "Privacidad/Seguridad"
 
@@ -1806,7 +1837,7 @@ msgid "Quorum infrastructure is being deployed at this time. Please try refreshi
 msgstr "La infraestructura de Quorum se está implementando en este momento. Por favor, intenta refrescar."
 
 #: src/components/onboarding/Onboarding.native.tsx:249
-#: src/components/onboarding/Onboarding.tsx:137
+#: src/components/onboarding/Onboarding.tsx:157
 msgid "Quorum is peer-to-peer and end-to-end encrypted. This means your messages stay private, but equally important, they only live on the network for the time required to reach you and your recipients."
 msgstr "Quorum es peer-to-peer y está encriptado de extremo a extremo. Esto significa que tus mensajes permanecen privados, pero igualmente importante, solo viven en la red el tiempo necesario para llegar a ti y a tus destinatarios."
 
@@ -1841,7 +1872,7 @@ msgstr "¡configuración recibida con firma inválida!"
 msgid "Refresh"
 msgstr "Actualice"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:153
+#: src/components/modals/UserSettingsModal/Privacy.tsx:157
 msgid "Remove"
 msgstr "Eliminar"
 
@@ -1878,11 +1909,28 @@ msgstr "Requerir que los mensajes enviados en este Espacio sean firmados por el 
 
 #: src/components/modals/SpaceSettingsModal/Roles.tsx:58
 msgid "Requiring roles for moderation actions protects your identity as the space owner. However, if you're the only one with a specific role, your actions may reveal who you are. For better privacy, consider having multiple users (real or additional accounts) share the same role."
-msgstr ""
+msgstr "Requerir roles para acciones de moderación protege tu identidad como propietario del espacio. Sin embargo, si eres el único con un rol específico, tus acciones pueden revelar quién eres. Para una mejor privacidad, considera que varios usuarios (cuentas reales o adicionales) compartan el mismo rol."
 
 #: src/components/modals/AddSpaceModal.tsx:266
 msgid "Reset"
 msgstr "Restablecer"
+
+#: src/components/modals/UserSettingsModal/Privacy.tsx:208
+msgid "Restore Missing Spaces"
+msgstr ""
+
+#: src/components/modals/UserSettingsModal/Privacy.tsx:200
+msgid "Restore Spaces that exist on this device but are missing from your navigation menu."
+msgstr ""
+
+#. placeholder {0}: recoverable.length
+#: src/hooks/business/user/useSpaceRecovery.ts:98
+msgid "Restored {0} space(s)"
+msgstr ""
+
+#: src/components/modals/UserSettingsModal/Privacy.tsx:208
+msgid "Restoring..."
+msgstr ""
 
 #: src/components/modals/SpaceSettingsModal/Navigation.tsx:22
 #: src/components/modals/SpaceSettingsModal/Roles.tsx:45
@@ -1898,13 +1946,13 @@ msgstr "Guardar"
 #: src/components/modals/FolderEditorModal.tsx:113
 #: src/components/modals/GroupEditorModal.tsx:99
 #: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:592
-#: src/components/modals/UserSettingsModal/UserSettingsModal.tsx:244
+#: src/components/modals/UserSettingsModal/UserSettingsModal.tsx:249
 #: src/components/user/UserProfileEdit.tsx:158
 msgid "Save Changes"
 msgstr "Guardar cambios"
 
 #: src/components/onboarding/Onboarding.native.tsx:473
-#: src/components/onboarding/Onboarding.tsx:308
+#: src/components/onboarding/Onboarding.tsx:322
 msgid "Save Contact Photo"
 msgstr "Guardar foto de contacto"
 
@@ -1914,7 +1962,7 @@ msgid "Save Edit History"
 msgstr "Guardar historial de ediciones"
 
 #: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:577
-#: src/components/modals/UserSettingsModal/UserSettingsModal.tsx:233
+#: src/components/modals/UserSettingsModal/UserSettingsModal.tsx:238
 msgid "Save Failed"
 msgstr "Error al Guardar"
 
@@ -1923,7 +1971,7 @@ msgid "Save Private Key"
 msgstr "Guardar clave privada"
 
 #: src/components/onboarding/Onboarding.native.tsx:269
-#: src/components/onboarding/Onboarding.tsx:177
+#: src/components/onboarding/Onboarding.tsx:191
 msgid "Save User Key"
 msgstr "Guardar clave de usuario"
 
@@ -1935,7 +1983,7 @@ msgstr "la configuración guardada está desactualizada"
 #: src/components/modals/ChannelEditorModal.tsx:93
 #: src/components/modals/FolderEditorModal.tsx:148
 #: src/components/modals/GroupEditorModal.tsx:139
-#: src/components/modals/ModalSaveOverlay.tsx:43
+#: src/components/modals/ModalSaveOverlay.tsx:52
 msgid "Saving..."
 msgstr "Guardando..."
 
@@ -1983,7 +2031,7 @@ msgstr "Buscar nombre de usuario o dirección"
 msgid "Searching..."
 msgstr "Buscando..."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:47
+#: src/components/modals/UserSettingsModal/Privacy.tsx:51
 msgid "Security"
 msgstr "Seguridad"
 
@@ -1996,7 +2044,6 @@ msgstr "Seleccionar"
 msgid "Select an option"
 msgstr "Seleccionar una opción"
 
-#: src/components/modals/ChannelEditorModal.tsx:169
 #~ msgid "Select any existing role as managers for this channel. Managers have post, delete, and pin permissions on ANY message by default. If no managers are selected, only the Space owner can manage the channel."
 #~ msgstr "Selecciona cualquier rol existente como administradores para este canal. Los administradores tienen permisos para publicar, eliminar y fijar en CUALQUIER mensaje por defecto. Si no se seleccionan administradores, solo el propietario del Espacio puede gestionar el canal."
 
@@ -2052,7 +2099,7 @@ msgid "Session Encrypted"
 msgstr "Sesión Encriptada"
 
 #: src/components/onboarding/Onboarding.native.tsx:344
-#: src/components/onboarding/Onboarding.tsx:233
+#: src/components/onboarding/Onboarding.tsx:247
 msgid "Set Display Name"
 msgstr "Establecer nombre para mostrar"
 
@@ -2074,7 +2121,7 @@ msgid "Showing first 500 results. Refine your search for more specific results."
 msgstr "Mostrando los primeros 500 resultados. Refina tu búsqueda para obtener resultados más específicos."
 
 #: src/components/onboarding/Onboarding.native.tsx:461
-#: src/components/onboarding/Onboarding.tsx:315
+#: src/components/onboarding/Onboarding.tsx:329
 msgid "Skip Adding Photo"
 msgstr "Saltar Agregar Foto"
 
@@ -2185,14 +2232,18 @@ msgstr "Esta conversación"
 msgid "This description will be visible on invites and shown to people when they look up or join your Space using an invite link."
 msgstr "Esta descripción será visible en las invitaciones y se mostrará a las personas cuando busquen o se unan a tu Espacio usando un enlace de invitación."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:162
+#: src/components/modals/UserSettingsModal/Privacy.tsx:166
 msgid "This device"
 msgstr "Este dispositivo"
 
 #: src/components/onboarding/Onboarding.native.tsx:318
-#: src/components/onboarding/Onboarding.tsx:207
+#: src/components/onboarding/Onboarding.tsx:221
 msgid "This information is only provided to the Spaces you join."
 msgstr "Esta información solo se proporciona a los Espacios que te unes."
+
+#: src/components/modals/ModalSaveOverlay.tsx:90
+msgid "This is embarrassing..."
+msgstr ""
 
 #: src/components/modals/UserSettingsModal/General.tsx:110
 msgid "This is your public address and is safe to share with anyone you want to interact with."
@@ -2210,7 +2261,6 @@ msgstr "Este enlace no expirará, pero puedes generar uno nuevo en cualquier mom
 msgid "This name conflicts with mention keywords."
 msgstr "Este nombre entra en conflicto con las palabras clave de mención."
 
-#: src/components/modals/SpaceSettingsModal/Roles.tsx:58
 #~ msgid "This protects your identity as the space owner. However, if you're the only one with this role, your identity becomes obvious. Consider having multiple users (real or fake accounts) with the same role for better privacy protection."
 #~ msgstr "Esto protege tu identidad como propietario del espacio. Sin embargo, si eres el único con este rol, tu identidad se vuelve obvia. Considera tener múltiples usuarios (cuentas reales o falsas) con el mismo rol para una mejor protección de la privacidad."
 
@@ -2238,6 +2288,10 @@ msgstr "Esto generará un nuevo enlace de invitación público e invalidará el 
 
 #~ msgid "This will permanently delete the current public invite link. Anyone who has this link will no longer be able to use it to join your Space."
 #~ msgstr "Esto eliminará permanentemente el enlace de invitación público actual. Cualquiera que tenga este enlace ya no podrá usarlo para unirse a tu Espacio."
+
+#: src/components/modals/ModalSaveOverlay.tsx:97
+msgid "Timeout in 10 seconds anyway..."
+msgstr ""
 
 #: src/components/modals/ConfirmationModal.native.tsx:57
 #: src/components/modals/ConfirmationModal.tsx:78
@@ -2290,9 +2344,13 @@ msgid "Unable to copy to clipboard"
 msgstr "No se puede copiar al portapapeles"
 
 #: src/components/context/MessageDB.bak.tsx:3482
-#: src/services/SpaceService.ts:550
+#: src/services/SpaceService.ts:553
 msgid "Unable to leave space due to incomplete configuration. The space data may be corrupted."
 msgstr "No se puede salir del espacio debido a una configuración incompleta. Los datos del espacio pueden estar corruptos."
+
+#: src/hooks/business/user/useSpaceRecovery.ts:39
+msgid "Unable to load user config"
+msgstr ""
 
 #: src/utils/imageProcessing/errors.ts:33
 msgid "Unable to process emoji image. Please use a smaller image."
@@ -2305,6 +2363,10 @@ msgstr "No se puede procesar la imagen. Por favor, utiliza una imagen más peque
 #: src/utils/imageProcessing/errors.ts:36
 msgid "Unable to process sticker image. Please use a smaller image."
 msgstr "No se puede procesar la imagen de sticker. Por favor, utiliza una imagen más pequeña."
+
+#: src/hooks/business/user/useSpaceRecovery.ts:23
+msgid "Unable to restore: not logged in"
+msgstr ""
 
 #: src/components/modals/JoinSpaceModal.tsx:112
 msgid "Unknown"
@@ -2358,9 +2420,9 @@ msgstr "Hora desconocida"
 #: src/services/MessageService.ts:1598
 #: src/services/MessageService.ts:1738
 #: src/services/MessageService.ts:1756
-#: src/services/MessageService.ts:3092
-#: src/services/MessageService.ts:3226
-#: src/services/MessageService.ts:3390
+#: src/services/MessageService.ts:3101
+#: src/services/MessageService.ts:3235
+#: src/services/MessageService.ts:3399
 msgid "Unknown User"
 msgstr "Usuario Desconocido"
 
@@ -2436,7 +2498,7 @@ msgstr "El usuario no existe."
 #: src/hooks/business/messages/usePinnedMessages.ts:76
 #: src/hooks/business/messages/usePinnedMessages.ts:136
 msgid "User not authenticated"
-msgstr ""
+msgstr "Usuario no autenticado"
 
 #: src/components/space/Channel.tsx:601
 #: src/components/space/Channel.tsx:1120
@@ -2457,7 +2519,7 @@ msgid "View edit history"
 msgstr "Ver historial de ediciones"
 
 #: src/components/onboarding/Onboarding.native.tsx:239
-#: src/components/onboarding/Onboarding.tsx:107
+#: src/components/onboarding/Onboarding.tsx:117
 msgid "Welcome to Quorum!"
 msgstr "¡Bienvenido a Quorum!"
 
@@ -2470,7 +2532,7 @@ msgstr "¿Qué tienes en mente hoy?"
 msgid "When enabled, all previous versions of edited messages will be saved. When disabled, only the current edited version is kept."
 msgstr "Cuando está habilitado, todas las versiones anteriores de los mensajes editados se guardarán. Cuando está deshabilitado, solo se mantiene la versión editada actual."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:60
+#: src/components/modals/UserSettingsModal/Privacy.tsx:64
 msgid "When enabled, synchronizes your user data, Spaces, and Space keys between devices. Enabling this increases metadata visibility of your account, which can reveal when you have joined new Spaces, although not the Spaces you have joined."
 msgstr "Cuando está habilitado, sincroniza tus datos de usuario, Espacios y claves de Espacio entre dispositivos. Habilitar esto aumenta la visibilidad de los metadatos de tu cuenta, lo que puede revelar cuándo te has unido a nuevos Espacios, aunque no los Espacios a los que te has unido."
 
@@ -2501,7 +2563,7 @@ msgstr "Cuando alguien responde a tus mensajes"
 msgid "When this setting is enabled, invite links will automatically allow a user to join your Space. When it is not enabled, users following an invite link will send you a request to join your Space that you must manually approve. Public links require some key material to be present in the link – be aware that possession of a public Space link can allow anyone with the link to read messages on the Space for the duration of the link being valid."
 msgstr "Cuando esta configuración está habilitada, los enlaces de invitación permitirán automáticamente a un usuario unirse a tu Espacio. Cuando no está habilitada, los usuarios que sigan un enlace de invitación te enviarán una solicitud para unirse a tu Espacio que debes aprobar manualmente. Los enlaces públicos requieren que algunos materiales clave estén presentes en el enlace; ten en cuenta que la posesión de un enlace de Espacio público puede permitir que cualquiera con el enlace lea mensajes en el Espacio durante la duración de la validez del enlace."
 
-#: src/components/onboarding/Onboarding.tsx:145
+#: src/components/onboarding/Onboarding.tsx:164
 msgid "When using Quorum on a browser, your messages are saved locally to your browser."
 msgstr "Al usar Quorum en un navegador, tus mensajes se guardan localmente en tu navegador."
 
@@ -2509,7 +2571,7 @@ msgstr "Al usar Quorum en un navegador, tus mensajes se guardan localmente en tu
 msgid "When you sign a message, you are confirming that it comes from your key. When you don't sign a message, you have plausible deniability. The default for all conversations can be changed in User Settings."
 msgstr "Cuando firmas un mensaje, confirmas que proviene de tu clave. Cuando no firmas un mensaje, tienes una negación plausible. La configuración predeterminada para todas las conversaciones se puede cambiar en la Configuración del Usuario."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:80
+#: src/components/modals/UserSettingsModal/Privacy.tsx:84
 msgid "When you sign a message, you are confirming that it comes from your key. When you don't sign a message, you have plausible deniability. You can control this setting for each conversation and message individually."
 msgstr "Cuando firmas un mensaje, confirmas que proviene de tu clave. Cuando no firmas un mensaje, tienes una negación plausible. Puedes controlar esta configuración para cada conversación y mensaje individualmente."
 
@@ -2570,7 +2632,7 @@ msgid "You're all caught up!"
 msgstr "¡Estás al día!"
 
 #: src/components/onboarding/Onboarding.native.tsx:494
-#: src/components/onboarding/Onboarding.tsx:340
+#: src/components/onboarding/Onboarding.tsx:354
 msgid "You're all set. Welcome to Quorum!"
 msgstr "Ya está todo listo. ¡Bienvenido a Quorum!"
 
@@ -2580,7 +2642,7 @@ msgstr "No estás en la lista de miembros de este Espacio. Corregir esto te aña
 
 #: src/hooks/business/messages/useMessageComposer.ts:170
 msgid "You're sending messages too quickly. Please wait a moment."
-msgstr ""
+msgstr "Estás enviando mensajes demasiado rápido. Por favor, espera un momento."
 
 #: src/components/message/InviteLink.tsx:60
 #: src/components/message/InviteLink.tsx:82

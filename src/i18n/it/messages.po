@@ -36,7 +36,7 @@ msgid "Send a message to #{channel_name}"
 msgstr "Invia un messaggio a #{channel_name}"
 
 #. js-lingui-explicit-id
-#: src/components/onboarding/Onboarding.tsx:256
+#: src/components/onboarding/Onboarding.tsx:270
 msgid ""
 "Your profile image size must be {maxFileSize} or less and must be a PNG, "
 "JPG, or JPEG file extension."
@@ -50,11 +50,6 @@ msgid "{count} New Messages"
 msgstr "{count} Nuovi Messaggi"
 
 #. js-lingui-explicit-id
-#: src/components/message/MessageComposer.tsx:404
-msgid "Replying to"
-msgstr "Rispondendo a"
-
-#. js-lingui-explicit-id
 #: src/components/message/MessageComposer.native.tsx:161
 msgid "Failed to process image"
 msgstr "Impossibile elaborare l'immagine"
@@ -63,6 +58,11 @@ msgstr "Impossibile elaborare l'immagine"
 #: src/components/message/MessageComposer.native.tsx:314
 msgid "Replying to {user}"
 msgstr "Rispondendo a {user}"
+
+#. js-lingui-explicit-id
+#: src/components/message/MessageComposer.tsx:404
+msgid "Replying to"
+msgstr "Rispondendo a"
 
 #. js-lingui-explicit-id
 #: src/components/message/Message.tsx:307
@@ -129,7 +129,7 @@ msgid "[Sticker]"
 msgstr "[Sticker]"
 
 #. placeholder {0}: removedDevices.length
-#: src/components/modals/UserSettingsModal/Privacy.tsx:102
+#: src/components/modals/UserSettingsModal/Privacy.tsx:106
 msgid "{0} devices marked for removal. Click \"Save Changes\" to confirm."
 msgstr ""
 "{0} dispositivi contrassegnati per la rimozione. Clicca \"Salva modifiche\" "
@@ -216,7 +216,7 @@ msgstr "Aggiungi un amico"
 msgid "0 Bytes"
 msgstr "0 Byte"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:101
+#: src/components/modals/UserSettingsModal/Privacy.tsx:105
 msgid "1 device marked for removal. Click \"Save Changes\" to confirm."
 msgstr ""
 "1 dispositivo contrassegnato per la rimozione. Clicca \"Salva modifiche\" "
@@ -292,7 +292,7 @@ msgstr "Gli indirizzi devono essere esattamente 46 caratteri."
 msgid "Addresses start with \"Qm\"."
 msgstr "Gli indirizzi iniziano con \"Qm\"."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:50
+#: src/components/modals/UserSettingsModal/Privacy.tsx:54
 msgid ""
 "Adjust security-related settings, which may impact user  experience but "
 "increase the security of your Quorum account."
@@ -330,11 +330,15 @@ msgstr "Tutti i registri di espulsione sono aggiornati."
 msgid "All Spaces"
 msgstr "Tutti gli Spazi"
 
+#: src/components/modals/ModalSaveOverlay.tsx:76
+msgid "Almost done..."
+msgstr "Quasi fatto..."
+
 #: src/components/modals/AddSpaceModal.tsx:259
 msgid "Already Joined"
 msgstr "Già unito"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:76
+#: src/components/modals/UserSettingsModal/Privacy.tsx:80
 msgid "Always sign Direct Messages"
 msgstr "Firma sempre i Messaggi Diretti"
 
@@ -619,7 +623,7 @@ msgstr "Clicca di nuovo per confermare"
 msgid "Click on the role name and tag to edit them."
 msgstr "Clicca sul nome del ruolo e sull'etichetta per modificarli."
 
-#: src/components/onboarding/Onboarding.tsx:163
+#: src/components/onboarding/Onboarding.tsx:177
 msgid ""
 "Click the button below to create a backup of your key info, because once "
 "it's gone, it's gone  forever. You may be prompted to authenticate again."
@@ -730,6 +734,22 @@ msgstr "Impossibile ottenere il manifesto per lo Spazio"
 msgid "Could not verify invite"
 msgstr "Impossibile verificare l'invito"
 
+#: src/hooks/business/user/useOnboardingFlowLogic.ts:273
+msgid ""
+"Couldn't decrypt your saved profile. Please re-enter your name and profile "
+"image."
+msgstr ""
+"Impossibile decrittare il tuo profilo salvato. Per favore reinserisci il tuo"
+" nome e l'immagine del profilo."
+
+#: src/hooks/business/user/useOnboardingFlowLogic.ts:278
+msgid ""
+"Couldn't load your saved profile. Please re-enter your name and profile "
+"image."
+msgstr ""
+"Impossibile caricare il tuo profilo salvato. Per favore reinserisci il tuo "
+"nome e l'immagine del profilo."
+
 #: src/components/modals/AddSpaceModal.tsx:293
 #: src/components/modals/CreateSpaceModal.tsx:79
 msgid "Create a Space"
@@ -759,6 +779,10 @@ msgstr "Link di Invito Corrente"
 #: src/components/ui/ThemeRadioGroup.tsx:23
 msgid "Dark"
 msgstr "Scuro"
+
+#: src/components/modals/UserSettingsModal/Privacy.tsx:198
+msgid "Data Recovery"
+msgstr "Recupero dati"
 
 #: src/components/context/MessageDB.bak.tsx:5415
 #: src/services/ConfigService.ts:142
@@ -918,7 +942,7 @@ msgid "Drawer"
 msgstr "Cassetto"
 
 #: src/components/onboarding/Onboarding.native.tsx:177
-#: src/components/onboarding/Onboarding.tsx:121
+#: src/components/onboarding/Onboarding.tsx:131
 msgid "Drop your profile photo here"
 msgstr "Trascina la tua foto profilo qui"
 
@@ -965,7 +989,7 @@ msgstr "Selettore di emoji"
 msgid "Emojis"
 msgstr "Emojis"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:56
+#: src/components/modals/UserSettingsModal/Privacy.tsx:60
 msgid "Enable sync"
 msgstr "Abilita sincronizzazione"
 
@@ -1036,11 +1060,11 @@ msgstr "Errore durante la visualizzazione della notifica:"
 msgid "Existing Conversations"
 msgstr "Conversazioni esistenti"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:186
+#: src/components/modals/UserSettingsModal/Privacy.tsx:190
 msgid "Export"
 msgstr "Esporta"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:177
+#: src/components/modals/UserSettingsModal/Privacy.tsx:181
 msgid ""
 "Export your key to a file by clicking this button. Do not share this file "
 "with anyone else or they can impersonate you or steal your Space's Apex "
@@ -1078,6 +1102,10 @@ msgstr "Impossibile aprire il selettore di immagini"
 #: src/components/context/WebsocketProvider.tsx:164
 msgid "Failed to parse WebSocket message:"
 msgstr "Impossibile analizzare il messaggio WebSocket:"
+
+#: src/hooks/business/user/useSpaceRecovery.ts:101
+msgid "Failed to restore spaces"
+msgstr "Impossibile ripristinare gli spazi"
 
 #: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:271
 msgid "Failed to save notification settings"
@@ -1250,12 +1278,16 @@ msgid "Group name must be {MAX_NAME_LENGTH} characters or less"
 msgstr ""
 "Il nome del gruppo deve essere lungo al massimo {MAX_NAME_LENGTH} caratteri"
 
+#: src/components/modals/ModalSaveOverlay.tsx:83
+msgid "Hang in there..."
+msgstr "Aspetta un attimo..."
+
 #: src/components/direct/EmptyDirectMessage.tsx:54
 msgid "hide home screen"
 msgstr "nascondi schermata principale"
 
 #: src/components/onboarding/Onboarding.native.tsx:290
-#: src/components/onboarding/Onboarding.tsx:184
+#: src/components/onboarding/Onboarding.tsx:198
 msgid "I already saved mine"
 msgstr "Ho già salvato la mia chiave"
 
@@ -1263,14 +1295,14 @@ msgstr "Ho già salvato la mia chiave"
 msgid "I've Saved It"
 msgstr "L'ho salvato"
 
-#: src/components/onboarding/Onboarding.tsx:319
-#: src/components/onboarding/Onboarding.tsx:326
+#: src/components/onboarding/Onboarding.tsx:333
+#: src/components/onboarding/Onboarding.tsx:340
 msgid "If skipped, you'll get the default profile image and can set it later"
 msgstr ""
 "Se saltato, sarà impostata l'immagine del profilo predefinita (potrai "
 "cambiarla in seguito)"
 
-#: src/components/onboarding/Onboarding.tsx:149
+#: src/components/onboarding/Onboarding.tsx:167
 msgid ""
 "If you clear your browser storage or switch browsers, your old messages and "
 "keys may disappear."
@@ -1279,7 +1311,7 @@ msgstr ""
 "messaggi e chiavi potrebbero scomparire."
 
 #: src/components/onboarding/Onboarding.native.tsx:254
-#: src/components/onboarding/Onboarding.tsx:156
+#: src/components/onboarding/Onboarding.tsx:172
 msgid ""
 "If you uninstall the app from your device, you will lose your old messages "
 "and keys."
@@ -1293,7 +1325,7 @@ msgid "Import Existing Key"
 msgstr "Importa chiave esistente"
 
 #: src/components/onboarding/Onboarding.native.tsx:244
-#: src/components/onboarding/Onboarding.tsx:134
+#: src/components/onboarding/Onboarding.tsx:154
 msgid "Important first-time user information:"
 msgstr "Informazioni importanti per i nuovi utenti:"
 
@@ -1391,7 +1423,7 @@ msgstr "Salta al presente"
 msgid "Key Copied!"
 msgstr "Chiave copiata!"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:174
+#: src/components/modals/UserSettingsModal/Privacy.tsx:178
 msgid "Key Export"
 msgstr "Esportazione chiave"
 
@@ -1443,7 +1475,7 @@ msgid "Leave this space"
 msgstr "Lascia questo spazio"
 
 #: src/components/onboarding/Onboarding.native.tsx:312
-#: src/components/onboarding/Onboarding.tsx:198
+#: src/components/onboarding/Onboarding.tsx:212
 msgid ""
 "Let your friends know who you are! Pick a friendly name to display in your "
 "conversations, something easier to read than:"
@@ -1452,7 +1484,7 @@ msgstr ""
 "nelle tue conversazioni, qualcosa di più facile da leggere di:"
 
 #: src/components/onboarding/Onboarding.native.tsx:505
-#: src/components/onboarding/Onboarding.tsx:352
+#: src/components/onboarding/Onboarding.tsx:366
 msgid "Let's gooooooooo"
 msgstr "Andiamo!"
 
@@ -1476,6 +1508,10 @@ msgstr "Caricamento notifiche..."
 msgid "Loading pinned messages..."
 msgstr "Caricamento messaggi fissati..."
 
+#: src/components/onboarding/Onboarding.tsx:143
+msgid "Loading your profile..."
+msgstr "Caricamento del tuo profilo..."
+
 #: src/hooks/business/conversations/useDirectMessageCreation.ts:32
 msgid "Looking up user..."
 msgstr "Ricerca utente..."
@@ -1497,7 +1533,7 @@ msgid "Make role public"
 msgstr "Rendi il ruolo pubblico"
 
 #: src/components/onboarding/Onboarding.native.tsx:364
-#: src/components/onboarding/Onboarding.tsx:247
+#: src/components/onboarding/Onboarding.tsx:261
 msgid ""
 "Make your account uniquely yours – set a contact photo. This information is "
 "only provided to the Spaces you join."
@@ -1509,7 +1545,7 @@ msgstr ""
 msgid "Manage desktop notification preferences for new messages."
 msgstr "Gestisci le preferenze delle notifiche desktop per i nuovi messaggi."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:41
+#: src/components/modals/UserSettingsModal/Privacy.tsx:45
 msgid ""
 "Manage devices, and privacy conditions for messaging and synchronization."
 msgstr ""
@@ -1650,6 +1686,10 @@ msgstr ""
 msgid "No messages found"
 msgstr "Nessun messaggio trovato"
 
+#: src/hooks/business/user/useSpaceRecovery.ts:76
+msgid "No missing spaces found"
+msgstr "Nessuno spazio mancante trovato"
+
 #: src/components/message/PinnedMessagesPanel.tsx:193
 msgid "No pinned messages yet"
 msgstr "Nessun messaggio fissato ancora"
@@ -1705,7 +1745,7 @@ msgid "OK"
 msgstr "OK"
 
 #: src/components/onboarding/Onboarding.native.tsx:222
-#: src/components/onboarding/Onboarding.tsx:110
+#: src/components/onboarding/Onboarding.tsx:120
 msgid "One of us, one of us!"
 msgstr "Uno di noi, uno di noi!"
 
@@ -1737,11 +1777,11 @@ msgstr "Pagina non trovata"
 msgid "Paste an invite link"
 msgstr "Incolla un link di invito"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:153
+#: src/components/modals/UserSettingsModal/Privacy.tsx:157
 msgid "Pending"
 msgstr "In attesa"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:139
+#: src/components/modals/UserSettingsModal/Privacy.tsx:143
 msgid "Pending removal - click Save to confirm"
 msgstr "Rimozione in attesa - clicca su Salva per confermare"
 
@@ -1751,7 +1791,7 @@ msgid "Permissions:"
 msgstr "Autorizzazioni:"
 
 #: src/components/onboarding/Onboarding.native.tsx:223
-#: src/components/onboarding/Onboarding.tsx:111
+#: src/components/onboarding/Onboarding.tsx:121
 msgid "Personalize your account"
 msgstr "Personalizza il tuo account"
 
@@ -1830,7 +1870,7 @@ msgid "Pinned!"
 msgstr "Fissato!"
 
 #: src/components/onboarding/Onboarding.native.tsx:180
-#: src/components/onboarding/Onboarding.tsx:123
+#: src/components/onboarding/Onboarding.tsx:133
 msgid "PNG, JPG or JPEG • Optimal ratio 1:1"
 msgstr "PNG, JPG o JPEG • Rapporto ottimale 1:1"
 
@@ -1844,7 +1884,7 @@ msgid "Privacy Settings"
 msgstr "Impostazioni sulla privacy"
 
 #: src/components/modals/UserSettingsModal/Navigation.tsx:16
-#: src/components/modals/UserSettingsModal/Privacy.tsx:39
+#: src/components/modals/UserSettingsModal/Privacy.tsx:43
 msgid "Privacy/Security"
 msgstr "Privacy/Sicurezza"
 
@@ -1888,7 +1928,7 @@ msgstr ""
 "Riprova a ricaricare."
 
 #: src/components/onboarding/Onboarding.native.tsx:249
-#: src/components/onboarding/Onboarding.tsx:137
+#: src/components/onboarding/Onboarding.tsx:157
 msgid ""
 "Quorum is peer-to-peer and end-to-end encrypted. This means your messages "
 "stay private, but equally important, they only live on the network for the "
@@ -1933,7 +1973,7 @@ msgstr "config ricevuta con firma non valida!"
 msgid "Refresh"
 msgstr "Ricarica"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:153
+#: src/components/modals/UserSettingsModal/Privacy.tsx:157
 msgid "Remove"
 msgstr "Rimuovi"
 
@@ -1990,6 +2030,27 @@ msgstr ""
 msgid "Reset"
 msgstr "Ripristina"
 
+#: src/components/modals/UserSettingsModal/Privacy.tsx:208
+msgid "Restore Missing Spaces"
+msgstr "Ripristina spazi mancanti"
+
+#: src/components/modals/UserSettingsModal/Privacy.tsx:200
+msgid ""
+"Restore Spaces that exist on this device but are missing from your "
+"navigation menu."
+msgstr ""
+"Ripristina gli spazi che esistono su questo dispositivo ma mancano dal tuo "
+"menu di navigazione."
+
+#. placeholder {0}: recoverable.length
+#: src/hooks/business/user/useSpaceRecovery.ts:98
+msgid "Restored {0} space(s)"
+msgstr "Ripristinato {0} spazio(i)"
+
+#: src/components/modals/UserSettingsModal/Privacy.tsx:208
+msgid "Restoring..."
+msgstr "Ripristinando..."
+
 #: src/components/modals/SpaceSettingsModal/Navigation.tsx:22
 #: src/components/modals/SpaceSettingsModal/Roles.tsx:45
 msgid "Roles"
@@ -2004,13 +2065,13 @@ msgstr "Salva"
 #: src/components/modals/FolderEditorModal.tsx:113
 #: src/components/modals/GroupEditorModal.tsx:99
 #: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:592
-#: src/components/modals/UserSettingsModal/UserSettingsModal.tsx:244
+#: src/components/modals/UserSettingsModal/UserSettingsModal.tsx:249
 #: src/components/user/UserProfileEdit.tsx:158
 msgid "Save Changes"
 msgstr "Salva modifiche"
 
 #: src/components/onboarding/Onboarding.native.tsx:473
-#: src/components/onboarding/Onboarding.tsx:308
+#: src/components/onboarding/Onboarding.tsx:322
 msgid "Save Contact Photo"
 msgstr "Salva foto contatto"
 
@@ -2020,7 +2081,7 @@ msgid "Save Edit History"
 msgstr "Salva cronologia modifiche"
 
 #: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:577
-#: src/components/modals/UserSettingsModal/UserSettingsModal.tsx:233
+#: src/components/modals/UserSettingsModal/UserSettingsModal.tsx:238
 msgid "Save Failed"
 msgstr "Salvataggio Fallito"
 
@@ -2029,7 +2090,7 @@ msgid "Save Private Key"
 msgstr "Salva chiave privata"
 
 #: src/components/onboarding/Onboarding.native.tsx:269
-#: src/components/onboarding/Onboarding.tsx:177
+#: src/components/onboarding/Onboarding.tsx:191
 msgid "Save User Key"
 msgstr "Salva chiave utente"
 
@@ -2041,7 +2102,7 @@ msgstr "la configurazione salvata è obsoleta"
 #: src/components/modals/ChannelEditorModal.tsx:93
 #: src/components/modals/FolderEditorModal.tsx:148
 #: src/components/modals/GroupEditorModal.tsx:139
-#: src/components/modals/ModalSaveOverlay.tsx:43
+#: src/components/modals/ModalSaveOverlay.tsx:52
 msgid "Saving..."
 msgstr "Salvataggio..."
 
@@ -2087,7 +2148,7 @@ msgstr "Cerca Nome utente o Indirizzo"
 msgid "Searching..."
 msgstr "Cercando..."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:47
+#: src/components/modals/UserSettingsModal/Privacy.tsx:51
 msgid "Security"
 msgstr "Sicurezza"
 
@@ -2146,7 +2207,7 @@ msgid "Session Encrypted"
 msgstr "Sessione crittografata"
 
 #: src/components/onboarding/Onboarding.native.tsx:344
-#: src/components/onboarding/Onboarding.tsx:233
+#: src/components/onboarding/Onboarding.tsx:247
 msgid "Set Display Name"
 msgstr "Imposta nome visualizzato"
 
@@ -2177,7 +2238,7 @@ msgstr ""
 "specifici."
 
 #: src/components/onboarding/Onboarding.native.tsx:461
-#: src/components/onboarding/Onboarding.tsx:315
+#: src/components/onboarding/Onboarding.tsx:329
 msgid "Skip Adding Photo"
 msgstr "Salta aggiunta foto"
 
@@ -2296,14 +2357,18 @@ msgstr ""
 "Questa descrizione sarà visibile sugli inviti e mostrata alle persone quando"
 " cercano o si uniscono al tuo Space utilizzando un link di invito."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:162
+#: src/components/modals/UserSettingsModal/Privacy.tsx:166
 msgid "This device"
 msgstr "Questo dispositivo"
 
 #: src/components/onboarding/Onboarding.native.tsx:318
-#: src/components/onboarding/Onboarding.tsx:207
+#: src/components/onboarding/Onboarding.tsx:221
 msgid "This information is only provided to the Spaces you join."
 msgstr "Queste informazioni sono fornite solo agli Spazi a cui ti unisci."
+
+#: src/components/modals/ModalSaveOverlay.tsx:90
+msgid "This is embarrassing..."
+msgstr "È imbarazzante..."
 
 #: src/components/modals/UserSettingsModal/General.tsx:110
 msgid ""
@@ -2355,6 +2420,10 @@ msgid ""
 msgstr ""
 "Questo genererà un nuovo link di invito pubblico e invaliderà quello "
 "attuale. Chiunque abbia il vecchio link non potrà più usarlo."
+
+#: src/components/modals/ModalSaveOverlay.tsx:97
+msgid "Timeout in 10 seconds anyway..."
+msgstr "Timeout in 10 secondi comunque..."
 
 #: src/components/modals/ConfirmationModal.native.tsx:57
 #: src/components/modals/ConfirmationModal.tsx:78
@@ -2425,13 +2494,17 @@ msgid "Unable to copy to clipboard"
 msgstr "Impossibile copiare negli appunti"
 
 #: src/components/context/MessageDB.bak.tsx:3482
-#: src/services/SpaceService.ts:550
+#: src/services/SpaceService.ts:553
 msgid ""
 "Unable to leave space due to incomplete configuration. The space data may be"
 " corrupted."
 msgstr ""
 "Impossibile lasciare lo spazio a causa di una configurazione incompleta. I "
 "dati dello spazio potrebbero essere danneggiati."
+
+#: src/hooks/business/user/useSpaceRecovery.ts:39
+msgid "Unable to load user config"
+msgstr "Impossibile caricare la configurazione utente"
 
 #: src/utils/imageProcessing/errors.ts:33
 msgid "Unable to process emoji image. Please use a smaller image."
@@ -2450,6 +2523,10 @@ msgid "Unable to process sticker image. Please use a smaller image."
 msgstr ""
 "Impossibile elaborare l'immagine dell'adesivo. Si prega di utilizzare "
 "un'immagine più piccola."
+
+#: src/hooks/business/user/useSpaceRecovery.ts:23
+msgid "Unable to restore: not logged in"
+msgstr "Impossibile ripristinare: non effettuato il login"
 
 #: src/components/modals/JoinSpaceModal.tsx:112
 msgid "Unknown"
@@ -2500,8 +2577,8 @@ msgstr "Tempo sconosciuto"
 #: src/hooks/queries/userInfo/buildUserInfoFetcher.ts:15
 #: src/services/EncryptionService.ts:138 src/services/MessageService.ts:1426
 #: src/services/MessageService.ts:1598 src/services/MessageService.ts:1738
-#: src/services/MessageService.ts:1756 src/services/MessageService.ts:3092
-#: src/services/MessageService.ts:3226 src/services/MessageService.ts:3390
+#: src/services/MessageService.ts:1756 src/services/MessageService.ts:3101
+#: src/services/MessageService.ts:3235 src/services/MessageService.ts:3399
 msgid "Unknown User"
 msgstr "Utente sconosciuto"
 
@@ -2601,7 +2678,7 @@ msgid "View edit history"
 msgstr "Visualizza la cronologia delle modifiche"
 
 #: src/components/onboarding/Onboarding.native.tsx:239
-#: src/components/onboarding/Onboarding.tsx:107
+#: src/components/onboarding/Onboarding.tsx:117
 msgid "Welcome to Quorum!"
 msgstr "Benvenuto in Quorum!"
 
@@ -2619,7 +2696,7 @@ msgstr ""
 "verranno salvate. Quando disabilitato, solo l'attuale versione modificata "
 "viene mantenuta."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:60
+#: src/components/modals/UserSettingsModal/Privacy.tsx:64
 msgid ""
 "When enabled, synchronizes your user data, Spaces, and Space keys between "
 "devices. Enabling this increases metadata visibility of your account, which "
@@ -2676,7 +2753,7 @@ msgstr ""
 "a chiunque abbia il link di leggere i messaggi nello Spazio per la durata "
 "della validità del link."
 
-#: src/components/onboarding/Onboarding.tsx:145
+#: src/components/onboarding/Onboarding.tsx:164
 msgid ""
 "When using Quorum on a browser, your messages are saved locally to your "
 "browser."
@@ -2694,7 +2771,7 @@ msgstr ""
 "non firmi un messaggio, hai una negazione plausibile. Il valore predefinito "
 "per tutte le conversazioni può essere cambiato nelle Impostazioni Utente."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:80
+#: src/components/modals/UserSettingsModal/Privacy.tsx:84
 msgid ""
 "When you sign a message, you are confirming that it comes from your key. "
 "When you don't sign a message, you have plausible deniability. You can "
@@ -2775,7 +2852,7 @@ msgid "You're all caught up!"
 msgstr "Sei a posto!"
 
 #: src/components/onboarding/Onboarding.native.tsx:494
-#: src/components/onboarding/Onboarding.tsx:340
+#: src/components/onboarding/Onboarding.tsx:354
 msgid "You're all set. Welcome to Quorum!"
 msgstr "Hai fatto tutto. Benvenuto in Quorum!"
 

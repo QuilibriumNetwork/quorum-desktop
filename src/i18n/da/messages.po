@@ -36,7 +36,7 @@ msgid "Send a message to #{channel_name}"
 msgstr "Send en besked til #{channel_name}"
 
 #. js-lingui-explicit-id
-#: src/components/onboarding/Onboarding.tsx:256
+#: src/components/onboarding/Onboarding.tsx:270
 msgid ""
 "Your profile image size must be {maxFileSize} or less and must be a PNG, "
 "JPG, or JPEG file extension."
@@ -50,11 +50,6 @@ msgid "{count} New Messages"
 msgstr "{count} Nye beskeder"
 
 #. js-lingui-explicit-id
-#: src/components/message/MessageComposer.tsx:404
-msgid "Replying to"
-msgstr "Svarer til"
-
-#. js-lingui-explicit-id
 #: src/components/message/MessageComposer.native.tsx:161
 msgid "Failed to process image"
 msgstr "Mislykkedes at behandle billede"
@@ -63,6 +58,11 @@ msgstr "Mislykkedes at behandle billede"
 #: src/components/message/MessageComposer.native.tsx:314
 msgid "Replying to {user}"
 msgstr "Svarer til {user}"
+
+#. js-lingui-explicit-id
+#: src/components/message/MessageComposer.tsx:404
+msgid "Replying to"
+msgstr "Svarer til"
 
 #. js-lingui-explicit-id
 #: src/components/message/Message.tsx:307
@@ -129,7 +129,7 @@ msgid "[Sticker]"
 msgstr "[Sticker]"
 
 #. placeholder {0}: removedDevices.length
-#: src/components/modals/UserSettingsModal/Privacy.tsx:102
+#: src/components/modals/UserSettingsModal/Privacy.tsx:106
 msgid "{0} devices marked for removal. Click \"Save Changes\" to confirm."
 msgstr ""
 "{0} enheder markeret til fjernelse. Klik på \"Gem ændringer\" for at "
@@ -216,7 +216,7 @@ msgstr "Tilføj en ven"
 msgid "0 Bytes"
 msgstr "0 Bytes"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:101
+#: src/components/modals/UserSettingsModal/Privacy.tsx:105
 msgid "1 device marked for removal. Click \"Save Changes\" to confirm."
 msgstr ""
 "1 enhed markeret til fjernelse. Klik på \"Gem ændringer\" for at bekræfte."
@@ -291,7 +291,7 @@ msgstr "Adresser skal være præcist 46 tegn lange."
 msgid "Addresses start with \"Qm\"."
 msgstr "Adresser starter med \"Qm\"."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:50
+#: src/components/modals/UserSettingsModal/Privacy.tsx:54
 msgid ""
 "Adjust security-related settings, which may impact user  experience but "
 "increase the security of your Quorum account."
@@ -329,11 +329,15 @@ msgstr "Alle kick-optegnelser er opdaterede."
 msgid "All Spaces"
 msgstr "Alle Spaces"
 
+#: src/components/modals/ModalSaveOverlay.tsx:76
+msgid "Almost done..."
+msgstr "Næsten færdig..."
+
 #: src/components/modals/AddSpaceModal.tsx:259
 msgid "Already Joined"
 msgstr "Allerede tilsluttet"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:76
+#: src/components/modals/UserSettingsModal/Privacy.tsx:80
 msgid "Always sign Direct Messages"
 msgstr "Underskriv altid direkte beskeder"
 
@@ -612,7 +616,7 @@ msgstr "Klik igen for at bekræfte"
 msgid "Click on the role name and tag to edit them."
 msgstr "Klik på rollenavnet og tagget for at redigere dem."
 
-#: src/components/onboarding/Onboarding.tsx:163
+#: src/components/onboarding/Onboarding.tsx:177
 msgid ""
 "Click the button below to create a backup of your key info, because once "
 "it's gone, it's gone  forever. You may be prompted to authenticate again."
@@ -723,6 +727,22 @@ msgstr "Kunne ikke opnå manifest for rum"
 msgid "Could not verify invite"
 msgstr "Kunne ikke bekræfte invitationen"
 
+#: src/hooks/business/user/useOnboardingFlowLogic.ts:273
+msgid ""
+"Couldn't decrypt your saved profile. Please re-enter your name and profile "
+"image."
+msgstr ""
+"Kunne ikke dekryptere din gemte profil. Venligst indtast dit navn og "
+"profilbillede igen."
+
+#: src/hooks/business/user/useOnboardingFlowLogic.ts:278
+msgid ""
+"Couldn't load your saved profile. Please re-enter your name and profile "
+"image."
+msgstr ""
+"Kunne ikke indlæse din gemte profil. Venligst indtast dit navn og "
+"profilbillede igen."
+
 #: src/components/modals/AddSpaceModal.tsx:293
 #: src/components/modals/CreateSpaceModal.tsx:79
 msgid "Create a Space"
@@ -752,6 +772,10 @@ msgstr "Nuværende invitationslink"
 #: src/components/ui/ThemeRadioGroup.tsx:23
 msgid "Dark"
 msgstr "Mørk"
+
+#: src/components/modals/UserSettingsModal/Privacy.tsx:198
+msgid "Data Recovery"
+msgstr "Data Recovery"
 
 #: src/components/context/MessageDB.bak.tsx:5415
 #: src/services/ConfigService.ts:142
@@ -907,7 +931,7 @@ msgid "Drawer"
 msgstr "Skuffe"
 
 #: src/components/onboarding/Onboarding.native.tsx:177
-#: src/components/onboarding/Onboarding.tsx:121
+#: src/components/onboarding/Onboarding.tsx:131
 msgid "Drop your profile photo here"
 msgstr "Drop your profile photo here"
 
@@ -954,7 +978,7 @@ msgstr "Emoji vælger"
 msgid "Emojis"
 msgstr "Emojis"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:56
+#: src/components/modals/UserSettingsModal/Privacy.tsx:60
 msgid "Enable sync"
 msgstr "Enable sync"
 
@@ -1023,11 +1047,11 @@ msgstr "Fejl ved visning af meddelelse:"
 msgid "Existing Conversations"
 msgstr "Eksisterende samtaler"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:186
+#: src/components/modals/UserSettingsModal/Privacy.tsx:190
 msgid "Export"
 msgstr "Export"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:177
+#: src/components/modals/UserSettingsModal/Privacy.tsx:181
 msgid ""
 "Export your key to a file by clicking this button. Do not share this file "
 "with anyone else or they can impersonate you or steal your Space's Apex "
@@ -1065,6 +1089,10 @@ msgstr "Mislykkedes at åbne billedevælger"
 #: src/components/context/WebsocketProvider.tsx:164
 msgid "Failed to parse WebSocket message:"
 msgstr "Failed to parse WebSocket message:"
+
+#: src/hooks/business/user/useSpaceRecovery.ts:101
+msgid "Failed to restore spaces"
+msgstr "Kunne ikke gendanne rum"
 
 #: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:271
 msgid "Failed to save notification settings"
@@ -1233,12 +1261,16 @@ msgstr "Gruppenavn er påkrævet"
 msgid "Group name must be {MAX_NAME_LENGTH} characters or less"
 msgstr "Gruppenavn skal være {MAX_NAME_LENGTH} tegn eller færre"
 
+#: src/components/modals/ModalSaveOverlay.tsx:83
+msgid "Hang in there..."
+msgstr "Hold ud..."
+
 #: src/components/direct/EmptyDirectMessage.tsx:54
 msgid "hide home screen"
 msgstr "skjul startskærm"
 
 #: src/components/onboarding/Onboarding.native.tsx:290
-#: src/components/onboarding/Onboarding.tsx:184
+#: src/components/onboarding/Onboarding.tsx:198
 msgid "I already saved mine"
 msgstr "Jeg har allerede gemt min"
 
@@ -1246,12 +1278,12 @@ msgstr "Jeg har allerede gemt min"
 msgid "I've Saved It"
 msgstr "Jeg har gemt det"
 
-#: src/components/onboarding/Onboarding.tsx:319
-#: src/components/onboarding/Onboarding.tsx:326
+#: src/components/onboarding/Onboarding.tsx:333
+#: src/components/onboarding/Onboarding.tsx:340
 msgid "If skipped, you'll get the default profile image and can set it later"
 msgstr "If skipped, you'll get the default profile image and can set it later"
 
-#: src/components/onboarding/Onboarding.tsx:149
+#: src/components/onboarding/Onboarding.tsx:167
 msgid ""
 "If you clear your browser storage or switch browsers, your old messages and "
 "keys may disappear."
@@ -1260,7 +1292,7 @@ msgstr ""
 "keys may disappear."
 
 #: src/components/onboarding/Onboarding.native.tsx:254
-#: src/components/onboarding/Onboarding.tsx:156
+#: src/components/onboarding/Onboarding.tsx:172
 msgid ""
 "If you uninstall the app from your device, you will lose your old messages "
 "and keys."
@@ -1274,7 +1306,7 @@ msgid "Import Existing Key"
 msgstr "Importer eksisterende nøgle"
 
 #: src/components/onboarding/Onboarding.native.tsx:244
-#: src/components/onboarding/Onboarding.tsx:134
+#: src/components/onboarding/Onboarding.tsx:154
 msgid "Important first-time user information:"
 msgstr "Vigtig information til førstegangsbrugere:"
 
@@ -1371,7 +1403,7 @@ msgstr "Spring til nutiden"
 msgid "Key Copied!"
 msgstr "Nøgle kopieret!"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:174
+#: src/components/modals/UserSettingsModal/Privacy.tsx:178
 msgid "Key Export"
 msgstr "Key Export"
 
@@ -1423,7 +1455,7 @@ msgid "Leave this space"
 msgstr "Forlad dette space"
 
 #: src/components/onboarding/Onboarding.native.tsx:312
-#: src/components/onboarding/Onboarding.tsx:198
+#: src/components/onboarding/Onboarding.tsx:212
 msgid ""
 "Let your friends know who you are! Pick a friendly name to display in your "
 "conversations, something easier to read than:"
@@ -1432,7 +1464,7 @@ msgstr ""
 "samtaler, noget der er lettere at læse end:"
 
 #: src/components/onboarding/Onboarding.native.tsx:505
-#: src/components/onboarding/Onboarding.tsx:352
+#: src/components/onboarding/Onboarding.tsx:366
 msgid "Let's gooooooooo"
 msgstr "Lad os komme af sted"
 
@@ -1456,6 +1488,10 @@ msgstr "Indlæser notifikationer..."
 msgid "Loading pinned messages..."
 msgstr "Indlæser fastgjorte beskeder..."
 
+#: src/components/onboarding/Onboarding.tsx:143
+msgid "Loading your profile..."
+msgstr "Indlæser din profil..."
+
 #: src/hooks/business/conversations/useDirectMessageCreation.ts:32
 msgid "Looking up user..."
 msgstr "Ser efter bruger..."
@@ -1477,7 +1513,7 @@ msgid "Make role public"
 msgstr "Gør rolle offentlig"
 
 #: src/components/onboarding/Onboarding.native.tsx:364
-#: src/components/onboarding/Onboarding.tsx:247
+#: src/components/onboarding/Onboarding.tsx:261
 msgid ""
 "Make your account uniquely yours – set a contact photo. This information is "
 "only provided to the Spaces you join."
@@ -1490,7 +1526,7 @@ msgid "Manage desktop notification preferences for new messages."
 msgstr ""
 "Administrer indstillinger for skrivebordsmeddelelser for nye beskeder."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:41
+#: src/components/modals/UserSettingsModal/Privacy.tsx:45
 msgid ""
 "Manage devices, and privacy conditions for messaging and synchronization."
 msgstr ""
@@ -1630,6 +1666,10 @@ msgstr ""
 msgid "No messages found"
 msgstr "Ingen beskeder fundet"
 
+#: src/hooks/business/user/useSpaceRecovery.ts:76
+msgid "No missing spaces found"
+msgstr "Ingen manglende rum fundet"
+
 #: src/components/message/PinnedMessagesPanel.tsx:193
 msgid "No pinned messages yet"
 msgstr "Ingen fastgjorte beskeder endnu"
@@ -1685,7 +1725,7 @@ msgid "OK"
 msgstr "OK"
 
 #: src/components/onboarding/Onboarding.native.tsx:222
-#: src/components/onboarding/Onboarding.tsx:110
+#: src/components/onboarding/Onboarding.tsx:120
 msgid "One of us, one of us!"
 msgstr "En af os, en af os!"
 
@@ -1717,11 +1757,11 @@ msgstr "Siden blev ikke fundet"
 msgid "Paste an invite link"
 msgstr "Indsæt et invite link"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:153
+#: src/components/modals/UserSettingsModal/Privacy.tsx:157
 msgid "Pending"
 msgstr "Afventer"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:139
+#: src/components/modals/UserSettingsModal/Privacy.tsx:143
 msgid "Pending removal - click Save to confirm"
 msgstr "Afventer fjernelse - klik på Gem for at bekræfte"
 
@@ -1731,7 +1771,7 @@ msgid "Permissions:"
 msgstr "Tilladelser:"
 
 #: src/components/onboarding/Onboarding.native.tsx:223
-#: src/components/onboarding/Onboarding.tsx:111
+#: src/components/onboarding/Onboarding.tsx:121
 msgid "Personalize your account"
 msgstr "Gør din konto personlig"
 
@@ -1808,7 +1848,7 @@ msgid "Pinned!"
 msgstr "Fastgjort!"
 
 #: src/components/onboarding/Onboarding.native.tsx:180
-#: src/components/onboarding/Onboarding.tsx:123
+#: src/components/onboarding/Onboarding.tsx:133
 msgid "PNG, JPG or JPEG • Optimal ratio 1:1"
 msgstr "PNG, JPG eller JPEG • Optimal forhold 1:1"
 
@@ -1822,7 +1862,7 @@ msgid "Privacy Settings"
 msgstr "Privatlivsindstillinger"
 
 #: src/components/modals/UserSettingsModal/Navigation.tsx:16
-#: src/components/modals/UserSettingsModal/Privacy.tsx:39
+#: src/components/modals/UserSettingsModal/Privacy.tsx:43
 msgid "Privacy/Security"
 msgstr "Privatliv/Sikkerhed"
 
@@ -1864,7 +1904,7 @@ msgstr ""
 "venligst at opdatere."
 
 #: src/components/onboarding/Onboarding.native.tsx:249
-#: src/components/onboarding/Onboarding.tsx:137
+#: src/components/onboarding/Onboarding.tsx:157
 msgid ""
 "Quorum is peer-to-peer and end-to-end encrypted. This means your messages "
 "stay private, but equally important, they only live on the network for the "
@@ -1909,7 +1949,7 @@ msgstr "modtaget konfiguration med ugyldig signatur!"
 msgid "Refresh"
 msgstr "Opdatering"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:153
+#: src/components/modals/UserSettingsModal/Privacy.tsx:157
 msgid "Remove"
 msgstr "Fjern"
 
@@ -1964,6 +2004,26 @@ msgstr ""
 msgid "Reset"
 msgstr "Nulstil"
 
+#: src/components/modals/UserSettingsModal/Privacy.tsx:208
+msgid "Restore Missing Spaces"
+msgstr "Gendan manglende rum"
+
+#: src/components/modals/UserSettingsModal/Privacy.tsx:200
+msgid ""
+"Restore Spaces that exist on this device but are missing from your "
+"navigation menu."
+msgstr ""
+"Gendan rum, der findes på denne enhed, men mangler i din navigationsmenu."
+
+#. placeholder {0}: recoverable.length
+#: src/hooks/business/user/useSpaceRecovery.ts:98
+msgid "Restored {0} space(s)"
+msgstr "Gendannet {0} rum"
+
+#: src/components/modals/UserSettingsModal/Privacy.tsx:208
+msgid "Restoring..."
+msgstr "Gendanner..."
+
 #: src/components/modals/SpaceSettingsModal/Navigation.tsx:22
 #: src/components/modals/SpaceSettingsModal/Roles.tsx:45
 msgid "Roles"
@@ -1978,13 +2038,13 @@ msgstr "Gem"
 #: src/components/modals/FolderEditorModal.tsx:113
 #: src/components/modals/GroupEditorModal.tsx:99
 #: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:592
-#: src/components/modals/UserSettingsModal/UserSettingsModal.tsx:244
+#: src/components/modals/UserSettingsModal/UserSettingsModal.tsx:249
 #: src/components/user/UserProfileEdit.tsx:158
 msgid "Save Changes"
 msgstr "Gem ændringer"
 
 #: src/components/onboarding/Onboarding.native.tsx:473
-#: src/components/onboarding/Onboarding.tsx:308
+#: src/components/onboarding/Onboarding.tsx:322
 msgid "Save Contact Photo"
 msgstr "Gem kontaktfoto"
 
@@ -1994,7 +2054,7 @@ msgid "Save Edit History"
 msgstr "Gem redigeringshistorik"
 
 #: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:577
-#: src/components/modals/UserSettingsModal/UserSettingsModal.tsx:233
+#: src/components/modals/UserSettingsModal/UserSettingsModal.tsx:238
 msgid "Save Failed"
 msgstr "Gemte ikke"
 
@@ -2003,7 +2063,7 @@ msgid "Save Private Key"
 msgstr "Gem privat nøgle"
 
 #: src/components/onboarding/Onboarding.native.tsx:269
-#: src/components/onboarding/Onboarding.tsx:177
+#: src/components/onboarding/Onboarding.tsx:191
 msgid "Save User Key"
 msgstr "Gem brugernøgle"
 
@@ -2015,7 +2075,7 @@ msgstr "gemt konfiguration er forældet"
 #: src/components/modals/ChannelEditorModal.tsx:93
 #: src/components/modals/FolderEditorModal.tsx:148
 #: src/components/modals/GroupEditorModal.tsx:139
-#: src/components/modals/ModalSaveOverlay.tsx:43
+#: src/components/modals/ModalSaveOverlay.tsx:52
 msgid "Saving..."
 msgstr "Gemmer..."
 
@@ -2061,7 +2121,7 @@ msgstr "Søg efter brugernavn eller adresse"
 msgid "Searching..."
 msgstr "Søger..."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:47
+#: src/components/modals/UserSettingsModal/Privacy.tsx:51
 msgid "Security"
 msgstr "Sikkerhed"
 
@@ -2120,7 +2180,7 @@ msgid "Session Encrypted"
 msgstr "Session Krypteret"
 
 #: src/components/onboarding/Onboarding.native.tsx:344
-#: src/components/onboarding/Onboarding.tsx:233
+#: src/components/onboarding/Onboarding.tsx:247
 msgid "Set Display Name"
 msgstr "Indstil visningsnavn"
 
@@ -2151,7 +2211,7 @@ msgstr ""
 "resultater."
 
 #: src/components/onboarding/Onboarding.native.tsx:461
-#: src/components/onboarding/Onboarding.tsx:315
+#: src/components/onboarding/Onboarding.tsx:329
 msgid "Skip Adding Photo"
 msgstr "Spring over at tilføje foto"
 
@@ -2268,14 +2328,18 @@ msgstr ""
 "Denne beskrivelse vil være synlig på invites og vises for folk, når de søger"
 " efter eller tilslutter sig din Space ved hjælp af et invite-link."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:162
+#: src/components/modals/UserSettingsModal/Privacy.tsx:166
 msgid "This device"
 msgstr "Denne enhed"
 
 #: src/components/onboarding/Onboarding.native.tsx:318
-#: src/components/onboarding/Onboarding.tsx:207
+#: src/components/onboarding/Onboarding.tsx:221
 msgid "This information is only provided to the Spaces you join."
 msgstr "Disse oplysninger gives kun til de Spaces, du deltager i."
+
+#: src/components/modals/ModalSaveOverlay.tsx:90
+msgid "This is embarrassing..."
+msgstr "Dette er pinligt..."
 
 #: src/components/modals/UserSettingsModal/General.tsx:110
 msgid ""
@@ -2327,6 +2391,10 @@ msgid ""
 msgstr ""
 "Dette vil generere et nyt offentligt invite-link og ugyldiggøre det "
 "nuværende. Alle med det gamle link vil ikke længere kunne bruge det."
+
+#: src/components/modals/ModalSaveOverlay.tsx:97
+msgid "Timeout in 10 seconds anyway..."
+msgstr "Timeout om 10 sekunder alligevel..."
 
 #: src/components/modals/ConfirmationModal.native.tsx:57
 #: src/components/modals/ConfirmationModal.tsx:78
@@ -2390,13 +2458,17 @@ msgid "Unable to copy to clipboard"
 msgstr "Kan ikke kopiere til udklipsholder"
 
 #: src/components/context/MessageDB.bak.tsx:3482
-#: src/services/SpaceService.ts:550
+#: src/services/SpaceService.ts:553
 msgid ""
 "Unable to leave space due to incomplete configuration. The space data may be"
 " corrupted."
 msgstr ""
 "Kunne ikke forlade space på grund af ufuldstændig konfiguration. Space-"
 "dataene kan være beskadigede."
+
+#: src/hooks/business/user/useSpaceRecovery.ts:39
+msgid "Unable to load user config"
+msgstr "Kunne ikke indlæse brugerconfig"
 
 #: src/utils/imageProcessing/errors.ts:33
 msgid "Unable to process emoji image. Please use a smaller image."
@@ -2410,6 +2482,10 @@ msgstr "Kunne ikke behandle billede. Venligst brug et mindre billede."
 msgid "Unable to process sticker image. Please use a smaller image."
 msgstr ""
 "Kunne ikke behandle klistermærke billede. Venligst brug et mindre billede."
+
+#: src/hooks/business/user/useSpaceRecovery.ts:23
+msgid "Unable to restore: not logged in"
+msgstr "Kunne ikke gendanne: ikke logget ind"
 
 #: src/components/modals/JoinSpaceModal.tsx:112
 msgid "Unknown"
@@ -2460,8 +2536,8 @@ msgstr "Ukendt tid"
 #: src/hooks/queries/userInfo/buildUserInfoFetcher.ts:15
 #: src/services/EncryptionService.ts:138 src/services/MessageService.ts:1426
 #: src/services/MessageService.ts:1598 src/services/MessageService.ts:1738
-#: src/services/MessageService.ts:1756 src/services/MessageService.ts:3092
-#: src/services/MessageService.ts:3226 src/services/MessageService.ts:3390
+#: src/services/MessageService.ts:1756 src/services/MessageService.ts:3101
+#: src/services/MessageService.ts:3235 src/services/MessageService.ts:3399
 msgid "Unknown User"
 msgstr "Ukendt bruger"
 
@@ -2560,7 +2636,7 @@ msgid "View edit history"
 msgstr "Se redigeringshistorik"
 
 #: src/components/onboarding/Onboarding.native.tsx:239
-#: src/components/onboarding/Onboarding.tsx:107
+#: src/components/onboarding/Onboarding.tsx:117
 msgid "Welcome to Quorum!"
 msgstr "Velkommen til Quorum!"
 
@@ -2578,7 +2654,7 @@ msgstr ""
 "blive gemt. Når det er deaktiveret, gemmes kun den nuværende redigerede "
 "version."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:60
+#: src/components/modals/UserSettingsModal/Privacy.tsx:64
 msgid ""
 "When enabled, synchronizes your user data, Spaces, and Space keys between "
 "devices. Enabling this increases metadata visibility of your account, which "
@@ -2633,7 +2709,7 @@ msgstr ""
 "Space link kan tillade enhver med linket at læse beskeder på Space i den "
 "periode, linket er gyldigt."
 
-#: src/components/onboarding/Onboarding.tsx:145
+#: src/components/onboarding/Onboarding.tsx:164
 msgid ""
 "When using Quorum on a browser, your messages are saved locally to your "
 "browser."
@@ -2651,7 +2727,7 @@ msgstr ""
 "Når du ikke underskriver en besked, har du plausibel benægtelse. "
 "Standardindstillingen for alle samtaler kan ændres i Brugerindstillinger."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:80
+#: src/components/modals/UserSettingsModal/Privacy.tsx:84
 msgid ""
 "When you sign a message, you are confirming that it comes from your key. "
 "When you don't sign a message, you have plausible deniability. You can "
@@ -2732,7 +2808,7 @@ msgid "You're all caught up!"
 msgstr "Du er helt opdateret!"
 
 #: src/components/onboarding/Onboarding.native.tsx:494
-#: src/components/onboarding/Onboarding.tsx:340
+#: src/components/onboarding/Onboarding.tsx:354
 msgid "You're all set. Welcome to Quorum!"
 msgstr "Så er du klar. Velkommen til Quorum!"
 

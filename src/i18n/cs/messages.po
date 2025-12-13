@@ -36,7 +36,7 @@ msgid "Send a message to #{channel_name}"
 msgstr "Odeslat zprávu #{channel_name}"
 
 #. js-lingui-explicit-id
-#: src/components/onboarding/Onboarding.tsx:256
+#: src/components/onboarding/Onboarding.tsx:270
 msgid ""
 "Your profile image size must be {maxFileSize} or less and must be a PNG, "
 "JPG, or JPEG file extension."
@@ -50,11 +50,6 @@ msgid "{count} New Messages"
 msgstr "{count} Nové zprávy"
 
 #. js-lingui-explicit-id
-#: src/components/message/MessageComposer.tsx:404
-msgid "Replying to"
-msgstr "Odpovídání na"
-
-#. js-lingui-explicit-id
 #: src/components/message/MessageComposer.native.tsx:161
 msgid "Failed to process image"
 msgstr "Nepodařilo se zpracovat obrázek"
@@ -63,6 +58,11 @@ msgstr "Nepodařilo se zpracovat obrázek"
 #: src/components/message/MessageComposer.native.tsx:314
 msgid "Replying to {user}"
 msgstr "Odpovídání {user}"
+
+#. js-lingui-explicit-id
+#: src/components/message/MessageComposer.tsx:404
+msgid "Replying to"
+msgstr "Odpovídání na"
 
 #. js-lingui-explicit-id
 #: src/components/message/Message.tsx:307
@@ -129,7 +129,7 @@ msgid "[Sticker]"
 msgstr "[Sticker]"
 
 #. placeholder {0}: removedDevices.length
-#: src/components/modals/UserSettingsModal/Privacy.tsx:102
+#: src/components/modals/UserSettingsModal/Privacy.tsx:106
 msgid "{0} devices marked for removal. Click \"Save Changes\" to confirm."
 msgstr ""
 "{0} zařízení označených k odstranění. Klikněte na \"Uložit změny\" pro "
@@ -216,7 +216,7 @@ msgstr "Přidat přítele"
 msgid "0 Bytes"
 msgstr "0 bajtů"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:101
+#: src/components/modals/UserSettingsModal/Privacy.tsx:105
 msgid "1 device marked for removal. Click \"Save Changes\" to confirm."
 msgstr ""
 "1 zařízení označené k odstranění. Klikněte na \"Uložit změny\" pro "
@@ -292,7 +292,7 @@ msgstr "Adresy musí mít přesně 46 znaků."
 msgid "Addresses start with \"Qm\"."
 msgstr "Adresy začínají na \"Qm\"."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:50
+#: src/components/modals/UserSettingsModal/Privacy.tsx:54
 msgid ""
 "Adjust security-related settings, which may impact user  experience but "
 "increase the security of your Quorum account."
@@ -330,11 +330,15 @@ msgstr "Všechny záznamy o vyloučení jsou aktuální."
 msgid "All Spaces"
 msgstr "Všechny prostory"
 
+#: src/components/modals/ModalSaveOverlay.tsx:76
+msgid "Almost done..."
+msgstr "Téměř hotovo..."
+
 #: src/components/modals/AddSpaceModal.tsx:259
 msgid "Already Joined"
 msgstr "Již připojeno"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:76
+#: src/components/modals/UserSettingsModal/Privacy.tsx:80
 msgid "Always sign Direct Messages"
 msgstr "Vždy podepisovat přímé zprávy"
 
@@ -613,7 +617,7 @@ msgstr "Klikněte znovu pro potvrzení"
 msgid "Click on the role name and tag to edit them."
 msgstr "Klikněte na název role a štítek pro jejich úpravu."
 
-#: src/components/onboarding/Onboarding.tsx:163
+#: src/components/onboarding/Onboarding.tsx:177
 msgid ""
 "Click the button below to create a backup of your key info, because once "
 "it's gone, it's gone  forever. You may be prompted to authenticate again."
@@ -724,6 +728,22 @@ msgstr "Nepodařilo se získat manifest pro Prostor"
 msgid "Could not verify invite"
 msgstr "Nepodařilo se ověřit pozvánku"
 
+#: src/hooks/business/user/useOnboardingFlowLogic.ts:273
+msgid ""
+"Couldn't decrypt your saved profile. Please re-enter your name and profile "
+"image."
+msgstr ""
+"Nepodařilo se dešifrovat váš uložený profil. Prosím, zadejte znovu své jméno"
+" a profilový obrázek."
+
+#: src/hooks/business/user/useOnboardingFlowLogic.ts:278
+msgid ""
+"Couldn't load your saved profile. Please re-enter your name and profile "
+"image."
+msgstr ""
+"Nepodařilo se načíst váš uložený profil. Prosím, zadejte znovu své jméno a "
+"profilový obrázek."
+
 #: src/components/modals/AddSpaceModal.tsx:293
 #: src/components/modals/CreateSpaceModal.tsx:79
 msgid "Create a Space"
@@ -753,6 +773,10 @@ msgstr "Aktuální pozvánkový odkaz"
 #: src/components/ui/ThemeRadioGroup.tsx:23
 msgid "Dark"
 msgstr "Tmavý"
+
+#: src/components/modals/UserSettingsModal/Privacy.tsx:198
+msgid "Data Recovery"
+msgstr "Obnova dat"
 
 #: src/components/context/MessageDB.bak.tsx:5415
 #: src/services/ConfigService.ts:142
@@ -908,7 +932,7 @@ msgid "Drawer"
 msgstr "Zásuvka"
 
 #: src/components/onboarding/Onboarding.native.tsx:177
-#: src/components/onboarding/Onboarding.tsx:121
+#: src/components/onboarding/Onboarding.tsx:131
 msgid "Drop your profile photo here"
 msgstr "Sem vložte svou profilovou fotografii"
 
@@ -955,7 +979,7 @@ msgstr "Výběr emoji"
 msgid "Emojis"
 msgstr "Emojis"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:56
+#: src/components/modals/UserSettingsModal/Privacy.tsx:60
 msgid "Enable sync"
 msgstr "Povolit synchronizaci"
 
@@ -1024,11 +1048,11 @@ msgstr "Chyba při zobrazování oznámení:"
 msgid "Existing Conversations"
 msgstr "Existující konverzace"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:186
+#: src/components/modals/UserSettingsModal/Privacy.tsx:190
 msgid "Export"
 msgstr "Exportovat"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:177
+#: src/components/modals/UserSettingsModal/Privacy.tsx:181
 msgid ""
 "Export your key to a file by clicking this button. Do not share this file "
 "with anyone else or they can impersonate you or steal your Space's Apex "
@@ -1066,6 +1090,10 @@ msgstr "Nepodařilo se otevřít výběr obrázků"
 #: src/components/context/WebsocketProvider.tsx:164
 msgid "Failed to parse WebSocket message:"
 msgstr "Nepodařilo se analyzovat WebSocket zprávu:"
+
+#: src/hooks/business/user/useSpaceRecovery.ts:101
+msgid "Failed to restore spaces"
+msgstr "Obnovení prostorů se nezdařilo"
 
 #: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:271
 msgid "Failed to save notification settings"
@@ -1234,12 +1262,16 @@ msgstr "Název skupiny je povinný"
 msgid "Group name must be {MAX_NAME_LENGTH} characters or less"
 msgstr "Název skupiny musí mít maximálně {MAX_NAME_LENGTH} znaků"
 
+#: src/components/modals/ModalSaveOverlay.tsx:83
+msgid "Hang in there..."
+msgstr "Vydržte..."
+
 #: src/components/direct/EmptyDirectMessage.tsx:54
 msgid "hide home screen"
 msgstr "skrýt domovskou obrazovku"
 
 #: src/components/onboarding/Onboarding.native.tsx:290
-#: src/components/onboarding/Onboarding.tsx:184
+#: src/components/onboarding/Onboarding.tsx:198
 msgid "I already saved mine"
 msgstr "Už jsem si ten svůj uložil"
 
@@ -1247,14 +1279,14 @@ msgstr "Už jsem si ten svůj uložil"
 msgid "I've Saved It"
 msgstr "Uložil jsem to"
 
-#: src/components/onboarding/Onboarding.tsx:319
-#: src/components/onboarding/Onboarding.tsx:326
+#: src/components/onboarding/Onboarding.tsx:333
+#: src/components/onboarding/Onboarding.tsx:340
 msgid "If skipped, you'll get the default profile image and can set it later"
 msgstr ""
 "Pokud přeskočíte, dostanete výchozí profilový obrázek a můžete ho nastavit "
 "později"
 
-#: src/components/onboarding/Onboarding.tsx:149
+#: src/components/onboarding/Onboarding.tsx:167
 msgid ""
 "If you clear your browser storage or switch browsers, your old messages and "
 "keys may disappear."
@@ -1263,7 +1295,7 @@ msgstr ""
 "zprávy a klíče mohou zmizet."
 
 #: src/components/onboarding/Onboarding.native.tsx:254
-#: src/components/onboarding/Onboarding.tsx:156
+#: src/components/onboarding/Onboarding.tsx:172
 msgid ""
 "If you uninstall the app from your device, you will lose your old messages "
 "and keys."
@@ -1277,7 +1309,7 @@ msgid "Import Existing Key"
 msgstr "Importovat existující klíč"
 
 #: src/components/onboarding/Onboarding.native.tsx:244
-#: src/components/onboarding/Onboarding.tsx:134
+#: src/components/onboarding/Onboarding.tsx:154
 msgid "Important first-time user information:"
 msgstr "Důležité informace pro nové uživatele:"
 
@@ -1374,7 +1406,7 @@ msgstr "Přejít na současnost"
 msgid "Key Copied!"
 msgstr "Klíč zkopírován!"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:174
+#: src/components/modals/UserSettingsModal/Privacy.tsx:178
 msgid "Key Export"
 msgstr "Export klíče"
 
@@ -1426,7 +1458,7 @@ msgid "Leave this space"
 msgstr "Opustit tento space"
 
 #: src/components/onboarding/Onboarding.native.tsx:312
-#: src/components/onboarding/Onboarding.tsx:198
+#: src/components/onboarding/Onboarding.tsx:212
 msgid ""
 "Let your friends know who you are! Pick a friendly name to display in your "
 "conversations, something easier to read than:"
@@ -1435,7 +1467,7 @@ msgstr ""
 "zobrazovat v tvých konverzacích, něco snadněji čitelného než:"
 
 #: src/components/onboarding/Onboarding.native.tsx:505
-#: src/components/onboarding/Onboarding.tsx:352
+#: src/components/onboarding/Onboarding.tsx:366
 msgid "Let's gooooooooo"
 msgstr "Jdeme na to"
 
@@ -1459,6 +1491,10 @@ msgstr "Načítání oznámení..."
 msgid "Loading pinned messages..."
 msgstr "Načítání připnutých zpráv..."
 
+#: src/components/onboarding/Onboarding.tsx:143
+msgid "Loading your profile..."
+msgstr "Načítání vašeho profilu..."
+
 #: src/hooks/business/conversations/useDirectMessageCreation.ts:32
 msgid "Looking up user..."
 msgstr "Hledám uživatele..."
@@ -1480,7 +1516,7 @@ msgid "Make role public"
 msgstr "Udělat roli veřejnou"
 
 #: src/components/onboarding/Onboarding.native.tsx:364
-#: src/components/onboarding/Onboarding.tsx:247
+#: src/components/onboarding/Onboarding.tsx:261
 msgid ""
 "Make your account uniquely yours – set a contact photo. This information is "
 "only provided to the Spaces you join."
@@ -1492,7 +1528,7 @@ msgstr ""
 msgid "Manage desktop notification preferences for new messages."
 msgstr "Spravuj preference oznámení na ploše pro nové zprávy."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:41
+#: src/components/modals/UserSettingsModal/Privacy.tsx:45
 msgid ""
 "Manage devices, and privacy conditions for messaging and synchronization."
 msgstr ""
@@ -1632,6 +1668,10 @@ msgstr ""
 msgid "No messages found"
 msgstr "Žádné zprávy nenalezeny"
 
+#: src/hooks/business/user/useSpaceRecovery.ts:76
+msgid "No missing spaces found"
+msgstr "Žádné chybějící prostory nebyly nalezeny"
+
 #: src/components/message/PinnedMessagesPanel.tsx:193
 msgid "No pinned messages yet"
 msgstr "Zatím žádné připnuté zprávy"
@@ -1686,7 +1726,7 @@ msgid "OK"
 msgstr "OK"
 
 #: src/components/onboarding/Onboarding.native.tsx:222
-#: src/components/onboarding/Onboarding.tsx:110
+#: src/components/onboarding/Onboarding.tsx:120
 msgid "One of us, one of us!"
 msgstr "Jeden z nás, jeden z nás!"
 
@@ -1718,11 +1758,11 @@ msgstr "Stránka nebyla nalezena"
 msgid "Paste an invite link"
 msgstr "Vložte pozvánkový odkaz"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:153
+#: src/components/modals/UserSettingsModal/Privacy.tsx:157
 msgid "Pending"
 msgstr "Čekající"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:139
+#: src/components/modals/UserSettingsModal/Privacy.tsx:143
 msgid "Pending removal - click Save to confirm"
 msgstr "Čekající na odstranění - klikněte na Uložit pro potvrzení"
 
@@ -1732,7 +1772,7 @@ msgid "Permissions:"
 msgstr "Oprávnění:"
 
 #: src/components/onboarding/Onboarding.native.tsx:223
-#: src/components/onboarding/Onboarding.tsx:111
+#: src/components/onboarding/Onboarding.tsx:121
 msgid "Personalize your account"
 msgstr "Personalizuj si svůj účet"
 
@@ -1809,7 +1849,7 @@ msgid "Pinned!"
 msgstr "Připnuto!"
 
 #: src/components/onboarding/Onboarding.native.tsx:180
-#: src/components/onboarding/Onboarding.tsx:123
+#: src/components/onboarding/Onboarding.tsx:133
 msgid "PNG, JPG or JPEG • Optimal ratio 1:1"
 msgstr "PNG, JPG nebo JPEG • Optimální poměr 1:1"
 
@@ -1823,7 +1863,7 @@ msgid "Privacy Settings"
 msgstr "Nastavení ochrany soukromí"
 
 #: src/components/modals/UserSettingsModal/Navigation.tsx:16
-#: src/components/modals/UserSettingsModal/Privacy.tsx:39
+#: src/components/modals/UserSettingsModal/Privacy.tsx:43
 msgid "Privacy/Security"
 msgstr "Ochrana soukromí/Bezpečnost"
 
@@ -1863,7 +1903,7 @@ msgstr ""
 "Quorum infrastruktura je v tuto chvíli nasazována. Zkuste prosím obnovit."
 
 #: src/components/onboarding/Onboarding.native.tsx:249
-#: src/components/onboarding/Onboarding.tsx:137
+#: src/components/onboarding/Onboarding.tsx:157
 msgid ""
 "Quorum is peer-to-peer and end-to-end encrypted. This means your messages "
 "stay private, but equally important, they only live on the network for the "
@@ -1907,7 +1947,7 @@ msgstr "obdržena konfigurace s neplatným podpisem!"
 msgid "Refresh"
 msgstr "Obnovit"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:153
+#: src/components/modals/UserSettingsModal/Privacy.tsx:157
 msgid "Remove"
 msgstr "Odebrat"
 
@@ -1962,6 +2002,27 @@ msgstr ""
 msgid "Reset"
 msgstr "Obnovit"
 
+#: src/components/modals/UserSettingsModal/Privacy.tsx:208
+msgid "Restore Missing Spaces"
+msgstr "Obnovit chybějící prostory"
+
+#: src/components/modals/UserSettingsModal/Privacy.tsx:200
+msgid ""
+"Restore Spaces that exist on this device but are missing from your "
+"navigation menu."
+msgstr ""
+"Obnovit prostory, které existují na tomto zařízení, ale chybí v navigačním "
+"menu."
+
+#. placeholder {0}: recoverable.length
+#: src/hooks/business/user/useSpaceRecovery.ts:98
+msgid "Restored {0} space(s)"
+msgstr "Obnoven {0} prostor(y)"
+
+#: src/components/modals/UserSettingsModal/Privacy.tsx:208
+msgid "Restoring..."
+msgstr "Obnovuji..."
+
 #: src/components/modals/SpaceSettingsModal/Navigation.tsx:22
 #: src/components/modals/SpaceSettingsModal/Roles.tsx:45
 msgid "Roles"
@@ -1976,13 +2037,13 @@ msgstr "Uložit"
 #: src/components/modals/FolderEditorModal.tsx:113
 #: src/components/modals/GroupEditorModal.tsx:99
 #: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:592
-#: src/components/modals/UserSettingsModal/UserSettingsModal.tsx:244
+#: src/components/modals/UserSettingsModal/UserSettingsModal.tsx:249
 #: src/components/user/UserProfileEdit.tsx:158
 msgid "Save Changes"
 msgstr "Uložit změny"
 
 #: src/components/onboarding/Onboarding.native.tsx:473
-#: src/components/onboarding/Onboarding.tsx:308
+#: src/components/onboarding/Onboarding.tsx:322
 msgid "Save Contact Photo"
 msgstr "Uložit fotografii kontaktu"
 
@@ -1992,7 +2053,7 @@ msgid "Save Edit History"
 msgstr "Uložit historii úprav"
 
 #: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:577
-#: src/components/modals/UserSettingsModal/UserSettingsModal.tsx:233
+#: src/components/modals/UserSettingsModal/UserSettingsModal.tsx:238
 msgid "Save Failed"
 msgstr "Uložení se nezdařilo"
 
@@ -2001,7 +2062,7 @@ msgid "Save Private Key"
 msgstr "Uložit soukromý klíč"
 
 #: src/components/onboarding/Onboarding.native.tsx:269
-#: src/components/onboarding/Onboarding.tsx:177
+#: src/components/onboarding/Onboarding.tsx:191
 msgid "Save User Key"
 msgstr "Uložit uživatelský klíč"
 
@@ -2013,7 +2074,7 @@ msgstr "uložená konfigurace je zastaralá"
 #: src/components/modals/ChannelEditorModal.tsx:93
 #: src/components/modals/FolderEditorModal.tsx:148
 #: src/components/modals/GroupEditorModal.tsx:139
-#: src/components/modals/ModalSaveOverlay.tsx:43
+#: src/components/modals/ModalSaveOverlay.tsx:52
 msgid "Saving..."
 msgstr "Ukládání..."
 
@@ -2059,7 +2120,7 @@ msgstr "Hledat uživatelské jméno nebo adresu"
 msgid "Searching..."
 msgstr "Hledání..."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:47
+#: src/components/modals/UserSettingsModal/Privacy.tsx:51
 msgid "Security"
 msgstr "Bezpečnost"
 
@@ -2118,7 +2179,7 @@ msgid "Session Encrypted"
 msgstr "Relace zašifrována"
 
 #: src/components/onboarding/Onboarding.native.tsx:344
-#: src/components/onboarding/Onboarding.tsx:233
+#: src/components/onboarding/Onboarding.tsx:247
 msgid "Set Display Name"
 msgstr "Nastavit zobrazené jméno"
 
@@ -2148,7 +2209,7 @@ msgstr ""
 "výsledky."
 
 #: src/components/onboarding/Onboarding.native.tsx:461
-#: src/components/onboarding/Onboarding.tsx:315
+#: src/components/onboarding/Onboarding.tsx:329
 msgid "Skip Adding Photo"
 msgstr "Přeskočit přidání fotografie"
 
@@ -2265,14 +2326,18 @@ msgstr ""
 "Tento popis bude viditelný na pozvánkách a zobrazen lidem, když hledají nebo"
 " se připojují k vašemu Space pomocí pozvánkového odkazu."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:162
+#: src/components/modals/UserSettingsModal/Privacy.tsx:166
 msgid "This device"
 msgstr "Toto zařízení"
 
 #: src/components/onboarding/Onboarding.native.tsx:318
-#: src/components/onboarding/Onboarding.tsx:207
+#: src/components/onboarding/Onboarding.tsx:221
 msgid "This information is only provided to the Spaces you join."
 msgstr "Tato informace je poskytována pouze pro Prostory, které se připojíte."
+
+#: src/components/modals/ModalSaveOverlay.tsx:90
+msgid "This is embarrassing..."
+msgstr "To je trapné..."
 
 #: src/components/modals/UserSettingsModal/General.tsx:110
 msgid ""
@@ -2324,6 +2389,10 @@ msgid ""
 msgstr ""
 "Tímto vygenerujete nový veřejný pozvánkový odkaz a zneplatníte ten aktuální."
 " Kdokoli s původním odkazem již nebude moci jej použít."
+
+#: src/components/modals/ModalSaveOverlay.tsx:97
+msgid "Timeout in 10 seconds anyway..."
+msgstr "Časový limit za 10 sekund stejně..."
 
 #: src/components/modals/ConfirmationModal.native.tsx:57
 #: src/components/modals/ConfirmationModal.tsx:78
@@ -2386,13 +2455,17 @@ msgid "Unable to copy to clipboard"
 msgstr "Nelze zkopírovat do schránky"
 
 #: src/components/context/MessageDB.bak.tsx:3482
-#: src/services/SpaceService.ts:550
+#: src/services/SpaceService.ts:553
 msgid ""
 "Unable to leave space due to incomplete configuration. The space data may be"
 " corrupted."
 msgstr ""
 "Nelze opustit prostor kvůli neúplné konfiguraci. Data prostoru mohou být "
 "poškozena."
+
+#: src/hooks/business/user/useSpaceRecovery.ts:39
+msgid "Unable to load user config"
+msgstr "Nepodařilo se načíst uživatelskou konfiguraci"
 
 #: src/utils/imageProcessing/errors.ts:33
 msgid "Unable to process emoji image. Please use a smaller image."
@@ -2405,6 +2478,10 @@ msgstr "Nelze zpracovat obrázek. Prosím, použijte menší obrázek."
 #: src/utils/imageProcessing/errors.ts:36
 msgid "Unable to process sticker image. Please use a smaller image."
 msgstr "Nelze zpracovat samolepkový obrázek. Prosím, použijte menší obrázek."
+
+#: src/hooks/business/user/useSpaceRecovery.ts:23
+msgid "Unable to restore: not logged in"
+msgstr "Nepodařilo se obnovit: nejste přihlášeni"
 
 #: src/components/modals/JoinSpaceModal.tsx:112
 msgid "Unknown"
@@ -2455,8 +2532,8 @@ msgstr "Neznámý čas"
 #: src/hooks/queries/userInfo/buildUserInfoFetcher.ts:15
 #: src/services/EncryptionService.ts:138 src/services/MessageService.ts:1426
 #: src/services/MessageService.ts:1598 src/services/MessageService.ts:1738
-#: src/services/MessageService.ts:1756 src/services/MessageService.ts:3092
-#: src/services/MessageService.ts:3226 src/services/MessageService.ts:3390
+#: src/services/MessageService.ts:1756 src/services/MessageService.ts:3101
+#: src/services/MessageService.ts:3235 src/services/MessageService.ts:3399
 msgid "Unknown User"
 msgstr "Neznámý uživatel"
 
@@ -2555,7 +2632,7 @@ msgid "View edit history"
 msgstr "Zobrazit historii úprav"
 
 #: src/components/onboarding/Onboarding.native.tsx:239
-#: src/components/onboarding/Onboarding.tsx:107
+#: src/components/onboarding/Onboarding.tsx:117
 msgid "Welcome to Quorum!"
 msgstr "Vítejte v Quorum!"
 
@@ -2572,7 +2649,7 @@ msgstr ""
 "Když je povoleno, všechny předchozí verze upravených zpráv budou uloženy. "
 "Když je zakázáno, bude uchována pouze aktuální upravená verze."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:60
+#: src/components/modals/UserSettingsModal/Privacy.tsx:64
 msgid ""
 "When enabled, synchronizes your user data, Spaces, and Space keys between "
 "devices. Enabling this increases metadata visibility of your account, which "
@@ -2627,7 +2704,7 @@ msgstr ""
 "veřejného odkazu na Prostor může umožnit komukoli s odkazem číst zprávy ve "
 "Prostor po dobu platnosti odkazu."
 
-#: src/components/onboarding/Onboarding.tsx:145
+#: src/components/onboarding/Onboarding.tsx:164
 msgid ""
 "When using Quorum on a browser, your messages are saved locally to your "
 "browser."
@@ -2645,7 +2722,7 @@ msgstr ""
 "nepodepíšete, máte rozumnou popření. Výchozí nastavení pro všechny "
 "konverzace lze změnit v uživatelských nastaveních."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:80
+#: src/components/modals/UserSettingsModal/Privacy.tsx:84
 msgid ""
 "When you sign a message, you are confirming that it comes from your key. "
 "When you don't sign a message, you have plausible deniability. You can "
@@ -2726,7 +2803,7 @@ msgid "You're all caught up!"
 msgstr "Jste všichni v obraze!"
 
 #: src/components/onboarding/Onboarding.native.tsx:494
-#: src/components/onboarding/Onboarding.tsx:340
+#: src/components/onboarding/Onboarding.tsx:354
 msgid "You're all set. Welcome to Quorum!"
 msgstr "Jste připraveni. Vítejte v Quorum!"
 

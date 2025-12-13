@@ -36,7 +36,7 @@ msgid "Send a message to #{channel_name}"
 msgstr "#{channel_name}에 메시지 보내기"
 
 #. js-lingui-explicit-id
-#: src/components/onboarding/Onboarding.tsx:256
+#: src/components/onboarding/Onboarding.tsx:270
 msgid ""
 "Your profile image size must be {maxFileSize} or less and must be a PNG, "
 "JPG, or JPEG file extension."
@@ -48,11 +48,6 @@ msgid "{count} New Messages"
 msgstr "{count}개의 새 메시지"
 
 #. js-lingui-explicit-id
-#: src/components/message/MessageComposer.tsx:404
-msgid "Replying to"
-msgstr "답글 중"
-
-#. js-lingui-explicit-id
 #: src/components/message/MessageComposer.native.tsx:161
 msgid "Failed to process image"
 msgstr "이미지 처리에 실패했습니다"
@@ -61,6 +56,11 @@ msgstr "이미지 처리에 실패했습니다"
 #: src/components/message/MessageComposer.native.tsx:314
 msgid "Replying to {user}"
 msgstr "{user}에게 답장 중"
+
+#. js-lingui-explicit-id
+#: src/components/message/MessageComposer.tsx:404
+msgid "Replying to"
+msgstr "답글 중"
 
 #. js-lingui-explicit-id
 #: src/components/message/Message.tsx:307
@@ -127,7 +127,7 @@ msgid "[Sticker]"
 msgstr "[스티커]"
 
 #. placeholder {0}: removedDevices.length
-#: src/components/modals/UserSettingsModal/Privacy.tsx:102
+#: src/components/modals/UserSettingsModal/Privacy.tsx:106
 msgid "{0} devices marked for removal. Click \"Save Changes\" to confirm."
 msgstr "{0} 개의 장치가 제거를 위해 표시되었습니다. \"변경 사항 저장\"을 클릭하여 확인하십시오."
 
@@ -212,7 +212,7 @@ msgstr "친구 추가"
 msgid "0 Bytes"
 msgstr "0 바이트"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:101
+#: src/components/modals/UserSettingsModal/Privacy.tsx:105
 msgid "1 device marked for removal. Click \"Save Changes\" to confirm."
 msgstr "1 개의 장치가 제거를 위해 표시되었습니다. \"변경 사항 저장\"을 클릭하여 확인하십시오."
 
@@ -284,7 +284,7 @@ msgstr "주소는 정확히 46자여야 합니다."
 msgid "Addresses start with \"Qm\"."
 msgstr "주소는 \"Qm\"으로 시작합니다."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:50
+#: src/components/modals/UserSettingsModal/Privacy.tsx:54
 msgid ""
 "Adjust security-related settings, which may impact user  experience but "
 "increase the security of your Quorum account."
@@ -320,11 +320,15 @@ msgstr "모든 킥 기록이 최신입니다."
 msgid "All Spaces"
 msgstr "모든 스페이스"
 
+#: src/components/modals/ModalSaveOverlay.tsx:76
+msgid "Almost done..."
+msgstr "거의 다 왔어요..."
+
 #: src/components/modals/AddSpaceModal.tsx:259
 msgid "Already Joined"
 msgstr "이미 참여했습니다"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:76
+#: src/components/modals/UserSettingsModal/Privacy.tsx:80
 msgid "Always sign Direct Messages"
 msgstr "항상 직접 메시지 서명"
 
@@ -592,7 +596,7 @@ msgstr "다시 클릭하여 확인하세요"
 msgid "Click on the role name and tag to edit them."
 msgstr "역할 이름과 태그를 클릭하여 수정하세요."
 
-#: src/components/onboarding/Onboarding.tsx:163
+#: src/components/onboarding/Onboarding.tsx:177
 msgid ""
 "Click the button below to create a backup of your key info, because once "
 "it's gone, it's gone  forever. You may be prompted to authenticate again."
@@ -699,6 +703,18 @@ msgstr "스페이스에 대한 매니페스트를 가져올 수 없습니다"
 msgid "Could not verify invite"
 msgstr "초대를 확인할 수 없습니다"
 
+#: src/hooks/business/user/useOnboardingFlowLogic.ts:273
+msgid ""
+"Couldn't decrypt your saved profile. Please re-enter your name and profile "
+"image."
+msgstr "저장된 프로필을 복호화할 수 없습니다. 이름과 프로필 이미지를 다시 입력해 주세요."
+
+#: src/hooks/business/user/useOnboardingFlowLogic.ts:278
+msgid ""
+"Couldn't load your saved profile. Please re-enter your name and profile "
+"image."
+msgstr "저장된 프로필을 불러올 수 없습니다. 이름과 프로필 이미지를 다시 입력해 주세요."
+
 #: src/components/modals/AddSpaceModal.tsx:293
 #: src/components/modals/CreateSpaceModal.tsx:79
 msgid "Create a Space"
@@ -728,6 +744,10 @@ msgstr "현재 초대 링크"
 #: src/components/ui/ThemeRadioGroup.tsx:23
 msgid "Dark"
 msgstr "어두운"
+
+#: src/components/modals/UserSettingsModal/Privacy.tsx:198
+msgid "Data Recovery"
+msgstr "데이터 복구"
 
 #: src/components/context/MessageDB.bak.tsx:5415
 #: src/services/ConfigService.ts:142
@@ -882,7 +902,7 @@ msgid "Drawer"
 msgstr "서랍"
 
 #: src/components/onboarding/Onboarding.native.tsx:177
-#: src/components/onboarding/Onboarding.tsx:121
+#: src/components/onboarding/Onboarding.tsx:131
 msgid "Drop your profile photo here"
 msgstr "여기에 프로필 사진을 드롭하세요"
 
@@ -929,7 +949,7 @@ msgstr "이모지 선택기"
 msgid "Emojis"
 msgstr "이모지"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:56
+#: src/components/modals/UserSettingsModal/Privacy.tsx:60
 msgid "Enable sync"
 msgstr "동기화 활성화"
 
@@ -994,11 +1014,11 @@ msgstr "알림 표시 오류:"
 msgid "Existing Conversations"
 msgstr "기존 대화"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:186
+#: src/components/modals/UserSettingsModal/Privacy.tsx:190
 msgid "Export"
 msgstr "내보내기"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:177
+#: src/components/modals/UserSettingsModal/Privacy.tsx:181
 msgid ""
 "Export your key to a file by clicking this button. Do not share this file "
 "with anyone else or they can impersonate you or steal your Space's Apex "
@@ -1035,6 +1055,10 @@ msgstr "이미지 선택기를 여는 데 실패했습니다"
 #: src/components/context/WebsocketProvider.tsx:164
 msgid "Failed to parse WebSocket message:"
 msgstr "WebSocket 메시지를 구문 분석하는 데 실패했습니다:"
+
+#: src/hooks/business/user/useSpaceRecovery.ts:101
+msgid "Failed to restore spaces"
+msgstr "공간 복원에 실패했습니다"
 
 #: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:271
 msgid "Failed to save notification settings"
@@ -1202,12 +1226,16 @@ msgstr "그룹 이름은 필수입니다"
 msgid "Group name must be {MAX_NAME_LENGTH} characters or less"
 msgstr "그룹 이름은 {MAX_NAME_LENGTH}자 이하이어야 합니다"
 
+#: src/components/modals/ModalSaveOverlay.tsx:83
+msgid "Hang in there..."
+msgstr "조금만 기다려 주세요..."
+
 #: src/components/direct/EmptyDirectMessage.tsx:54
 msgid "hide home screen"
 msgstr "홈 화면 숨기기"
 
 #: src/components/onboarding/Onboarding.native.tsx:290
-#: src/components/onboarding/Onboarding.tsx:184
+#: src/components/onboarding/Onboarding.tsx:198
 msgid "I already saved mine"
 msgstr "나는 이미 내 것을 저장했습니다"
 
@@ -1215,19 +1243,19 @@ msgstr "나는 이미 내 것을 저장했습니다"
 msgid "I've Saved It"
 msgstr "저장했습니다"
 
-#: src/components/onboarding/Onboarding.tsx:319
-#: src/components/onboarding/Onboarding.tsx:326
+#: src/components/onboarding/Onboarding.tsx:333
+#: src/components/onboarding/Onboarding.tsx:340
 msgid "If skipped, you'll get the default profile image and can set it later"
 msgstr "건너뛰면 기본 프로필 이미지가 제공되며 나중에 설정할 수 있습니다"
 
-#: src/components/onboarding/Onboarding.tsx:149
+#: src/components/onboarding/Onboarding.tsx:167
 msgid ""
 "If you clear your browser storage or switch browsers, your old messages and "
 "keys may disappear."
 msgstr "브라우저 저장소를 지우거나 브라우저를 변경하면 이전 메시지와 키가 사라질 수 있습니다."
 
 #: src/components/onboarding/Onboarding.native.tsx:254
-#: src/components/onboarding/Onboarding.tsx:156
+#: src/components/onboarding/Onboarding.tsx:172
 msgid ""
 "If you uninstall the app from your device, you will lose your old messages "
 "and keys."
@@ -1239,7 +1267,7 @@ msgid "Import Existing Key"
 msgstr "기존 키 가져오기"
 
 #: src/components/onboarding/Onboarding.native.tsx:244
-#: src/components/onboarding/Onboarding.tsx:134
+#: src/components/onboarding/Onboarding.tsx:154
 msgid "Important first-time user information:"
 msgstr "중요한 첫 사용자 정보:"
 
@@ -1335,7 +1363,7 @@ msgstr "현재로 점프"
 msgid "Key Copied!"
 msgstr "키가 복사되었습니다!"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:174
+#: src/components/modals/UserSettingsModal/Privacy.tsx:178
 msgid "Key Export"
 msgstr "키 내보내기"
 
@@ -1387,14 +1415,14 @@ msgid "Leave this space"
 msgstr "이 공간을 떠나기"
 
 #: src/components/onboarding/Onboarding.native.tsx:312
-#: src/components/onboarding/Onboarding.tsx:198
+#: src/components/onboarding/Onboarding.tsx:212
 msgid ""
 "Let your friends know who you are! Pick a friendly name to display in your "
 "conversations, something easier to read than:"
 msgstr "친구들에게 당신이 누구인지 알려주세요! 대화에서 표시할 친근한 이름을 선택하세요. 읽기 쉬운 이름이 좋습니다:"
 
 #: src/components/onboarding/Onboarding.native.tsx:505
-#: src/components/onboarding/Onboarding.tsx:352
+#: src/components/onboarding/Onboarding.tsx:366
 msgid "Let's gooooooooo"
 msgstr "가자아아아아"
 
@@ -1418,6 +1446,10 @@ msgstr "알림 로딩 중..."
 msgid "Loading pinned messages..."
 msgstr "고정된 메시지를 로딩 중..."
 
+#: src/components/onboarding/Onboarding.tsx:143
+msgid "Loading your profile..."
+msgstr "프로필을 로딩 중입니다..."
+
 #: src/hooks/business/conversations/useDirectMessageCreation.ts:32
 msgid "Looking up user..."
 msgstr "사용자 검색 중..."
@@ -1439,7 +1471,7 @@ msgid "Make role public"
 msgstr "역할을 공개로 만들기"
 
 #: src/components/onboarding/Onboarding.native.tsx:364
-#: src/components/onboarding/Onboarding.tsx:247
+#: src/components/onboarding/Onboarding.tsx:261
 msgid ""
 "Make your account uniquely yours – set a contact photo. This information is "
 "only provided to the Spaces you join."
@@ -1449,7 +1481,7 @@ msgstr "계정을 독특하게 만들어 보세요 – 연락처 사진을 설�
 msgid "Manage desktop notification preferences for new messages."
 msgstr "새 메시지에 대한 데스크톱 알림 기본 설정 관리."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:41
+#: src/components/modals/UserSettingsModal/Privacy.tsx:45
 msgid ""
 "Manage devices, and privacy conditions for messaging and synchronization."
 msgstr "장치 및 메시징과 동기화에 대한 개인 정보 조건을 관리하세요."
@@ -1578,6 +1610,10 @@ msgstr "초대 평가가 없습니다. 공개 초대 링크를 생성하거나 �
 msgid "No messages found"
 msgstr "메시지가 없습니다"
 
+#: src/hooks/business/user/useSpaceRecovery.ts:76
+msgid "No missing spaces found"
+msgstr "누락된 공간이 없습니다"
+
 #: src/components/message/PinnedMessagesPanel.tsx:193
 msgid "No pinned messages yet"
 msgstr "아직 고정된 메시지가 없습니다"
@@ -1632,7 +1668,7 @@ msgid "OK"
 msgstr "확인"
 
 #: src/components/onboarding/Onboarding.native.tsx:222
-#: src/components/onboarding/Onboarding.tsx:110
+#: src/components/onboarding/Onboarding.tsx:120
 msgid "One of us, one of us!"
 msgstr "우리 중 하나, 우리 중 하나!"
 
@@ -1664,11 +1700,11 @@ msgstr "페이지를 찾을 수 없습니다"
 msgid "Paste an invite link"
 msgstr "초대 링크 붙여넣기"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:153
+#: src/components/modals/UserSettingsModal/Privacy.tsx:157
 msgid "Pending"
 msgstr "대기 중"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:139
+#: src/components/modals/UserSettingsModal/Privacy.tsx:143
 msgid "Pending removal - click Save to confirm"
 msgstr "대기 중 제거 - 확인하려면 저장을 클릭하십시오."
 
@@ -1678,7 +1714,7 @@ msgid "Permissions:"
 msgstr "권한:"
 
 #: src/components/onboarding/Onboarding.native.tsx:223
-#: src/components/onboarding/Onboarding.tsx:111
+#: src/components/onboarding/Onboarding.tsx:121
 msgid "Personalize your account"
 msgstr "계정을 개인화하세요"
 
@@ -1755,7 +1791,7 @@ msgid "Pinned!"
 msgstr "고정됨!"
 
 #: src/components/onboarding/Onboarding.native.tsx:180
-#: src/components/onboarding/Onboarding.tsx:123
+#: src/components/onboarding/Onboarding.tsx:133
 msgid "PNG, JPG or JPEG • Optimal ratio 1:1"
 msgstr "PNG, JPG 또는 JPEG • 최적 비율 1:1"
 
@@ -1768,7 +1804,7 @@ msgid "Privacy Settings"
 msgstr "개인 정보 설정"
 
 #: src/components/modals/UserSettingsModal/Navigation.tsx:16
-#: src/components/modals/UserSettingsModal/Privacy.tsx:39
+#: src/components/modals/UserSettingsModal/Privacy.tsx:43
 msgid "Privacy/Security"
 msgstr "개인 정보/보안"
 
@@ -1806,7 +1842,7 @@ msgid ""
 msgstr "Quorum 인프라가 현재 배포되고 있습니다. 새로 고침을 시도해 주세요."
 
 #: src/components/onboarding/Onboarding.native.tsx:249
-#: src/components/onboarding/Onboarding.tsx:137
+#: src/components/onboarding/Onboarding.tsx:157
 msgid ""
 "Quorum is peer-to-peer and end-to-end encrypted. This means your messages "
 "stay private, but equally important, they only live on the network for the "
@@ -1847,7 +1883,7 @@ msgstr "유효하지 않은 서명으로 구성 수신!"
 msgid "Refresh"
 msgstr "새로 고침"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:153
+#: src/components/modals/UserSettingsModal/Privacy.tsx:157
 msgid "Remove"
 msgstr "제거"
 
@@ -1901,6 +1937,25 @@ msgstr ""
 msgid "Reset"
 msgstr "재설정"
 
+#: src/components/modals/UserSettingsModal/Privacy.tsx:208
+msgid "Restore Missing Spaces"
+msgstr "누락된 공간 복원"
+
+#: src/components/modals/UserSettingsModal/Privacy.tsx:200
+msgid ""
+"Restore Spaces that exist on this device but are missing from your "
+"navigation menu."
+msgstr "이 장치에 존재하지만 탐색 메뉴에서 누락된 공간을 복원합니다."
+
+#. placeholder {0}: recoverable.length
+#: src/hooks/business/user/useSpaceRecovery.ts:98
+msgid "Restored {0} space(s)"
+msgstr "{0} 공간(들)을 복원했습니다"
+
+#: src/components/modals/UserSettingsModal/Privacy.tsx:208
+msgid "Restoring..."
+msgstr "복원 중..."
+
 #: src/components/modals/SpaceSettingsModal/Navigation.tsx:22
 #: src/components/modals/SpaceSettingsModal/Roles.tsx:45
 msgid "Roles"
@@ -1915,13 +1970,13 @@ msgstr "저장"
 #: src/components/modals/FolderEditorModal.tsx:113
 #: src/components/modals/GroupEditorModal.tsx:99
 #: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:592
-#: src/components/modals/UserSettingsModal/UserSettingsModal.tsx:244
+#: src/components/modals/UserSettingsModal/UserSettingsModal.tsx:249
 #: src/components/user/UserProfileEdit.tsx:158
 msgid "Save Changes"
 msgstr "변경 사항 저장"
 
 #: src/components/onboarding/Onboarding.native.tsx:473
-#: src/components/onboarding/Onboarding.tsx:308
+#: src/components/onboarding/Onboarding.tsx:322
 msgid "Save Contact Photo"
 msgstr "연락처 사진 저장"
 
@@ -1931,7 +1986,7 @@ msgid "Save Edit History"
 msgstr "편집 기록 저장"
 
 #: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:577
-#: src/components/modals/UserSettingsModal/UserSettingsModal.tsx:233
+#: src/components/modals/UserSettingsModal/UserSettingsModal.tsx:238
 msgid "Save Failed"
 msgstr "저장 실패"
 
@@ -1940,7 +1995,7 @@ msgid "Save Private Key"
 msgstr "개인 키 저장"
 
 #: src/components/onboarding/Onboarding.native.tsx:269
-#: src/components/onboarding/Onboarding.tsx:177
+#: src/components/onboarding/Onboarding.tsx:191
 msgid "Save User Key"
 msgstr "사용자 키 저장"
 
@@ -1952,7 +2007,7 @@ msgstr "저장된 구성은 오래되었습니다"
 #: src/components/modals/ChannelEditorModal.tsx:93
 #: src/components/modals/FolderEditorModal.tsx:148
 #: src/components/modals/GroupEditorModal.tsx:139
-#: src/components/modals/ModalSaveOverlay.tsx:43
+#: src/components/modals/ModalSaveOverlay.tsx:52
 msgid "Saving..."
 msgstr "저장 중..."
 
@@ -1998,7 +2053,7 @@ msgstr "사용자 이름 또는 주소 검색"
 msgid "Searching..."
 msgstr "검색 중..."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:47
+#: src/components/modals/UserSettingsModal/Privacy.tsx:51
 msgid "Security"
 msgstr "보안"
 
@@ -2057,7 +2112,7 @@ msgid "Session Encrypted"
 msgstr "세션 암호화됨"
 
 #: src/components/onboarding/Onboarding.native.tsx:344
-#: src/components/onboarding/Onboarding.tsx:233
+#: src/components/onboarding/Onboarding.tsx:247
 msgid "Set Display Name"
 msgstr "표시 이름 설정"
 
@@ -2085,7 +2140,7 @@ msgid ""
 msgstr "첫 500개의 결과를 표시합니다. 더 구체적인 결과를 위해 검색을 세분화하세요."
 
 #: src/components/onboarding/Onboarding.native.tsx:461
-#: src/components/onboarding/Onboarding.tsx:315
+#: src/components/onboarding/Onboarding.tsx:329
 msgid "Skip Adding Photo"
 msgstr "사진 추가 건너뛰기"
 
@@ -2197,14 +2252,18 @@ msgid ""
 "look up or join your Space using an invite link."
 msgstr "이 설명은 초대에서 보이며, 사람들이 초대 링크를 사용하여 Space를 검색하거나 가입할 때 표시됩니다."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:162
+#: src/components/modals/UserSettingsModal/Privacy.tsx:166
 msgid "This device"
 msgstr "이 장치"
 
 #: src/components/onboarding/Onboarding.native.tsx:318
-#: src/components/onboarding/Onboarding.tsx:207
+#: src/components/onboarding/Onboarding.tsx:221
 msgid "This information is only provided to the Spaces you join."
 msgstr "이 정보는 당신이 가입한 공간에만 제공됩니다."
+
+#: src/components/modals/ModalSaveOverlay.tsx:90
+msgid "This is embarrassing..."
+msgstr "이건 좀 부끄럽네요..."
 
 #: src/components/modals/UserSettingsModal/General.tsx:110
 msgid ""
@@ -2249,6 +2308,10 @@ msgid ""
 "Anyone with the old link will no longer be able to use it."
 msgstr ""
 "이 링크는 새로운 공개 초대 링크를 생성하고 현재 링크를 무효화합니다. 이전 링크를 가진 사람은 더 이상 사용할 수 없습니다."
+
+#: src/components/modals/ModalSaveOverlay.tsx:97
+msgid "Timeout in 10 seconds anyway..."
+msgstr "어쨌든 10초 후에 시간 초과..."
 
 #: src/components/modals/ConfirmationModal.native.tsx:57
 #: src/components/modals/ConfirmationModal.tsx:78
@@ -2306,11 +2369,15 @@ msgid "Unable to copy to clipboard"
 msgstr "클립보드에 복사할 수 없습니다"
 
 #: src/components/context/MessageDB.bak.tsx:3482
-#: src/services/SpaceService.ts:550
+#: src/services/SpaceService.ts:553
 msgid ""
 "Unable to leave space due to incomplete configuration. The space data may be"
 " corrupted."
 msgstr "구성이 완료되지 않아 Space를 떠날 수 없습니다. Space 데이터가 손상되었을 수 있습니다."
+
+#: src/hooks/business/user/useSpaceRecovery.ts:39
+msgid "Unable to load user config"
+msgstr "사용자 설정을 불러올 수 없습니다"
 
 #: src/utils/imageProcessing/errors.ts:33
 msgid "Unable to process emoji image. Please use a smaller image."
@@ -2323,6 +2390,10 @@ msgstr "이미지를 처리할 수 없습니다. 더 작은 이미지를 사용�
 #: src/utils/imageProcessing/errors.ts:36
 msgid "Unable to process sticker image. Please use a smaller image."
 msgstr "스티커 이미지를 처리할 수 없습니다. 더 작은 이미지를 사용해 주세요."
+
+#: src/hooks/business/user/useSpaceRecovery.ts:23
+msgid "Unable to restore: not logged in"
+msgstr "복원할 수 없습니다: 로그인하지 않음"
 
 #: src/components/modals/JoinSpaceModal.tsx:112
 msgid "Unknown"
@@ -2373,8 +2444,8 @@ msgstr "알 수 없는 시간"
 #: src/hooks/queries/userInfo/buildUserInfoFetcher.ts:15
 #: src/services/EncryptionService.ts:138 src/services/MessageService.ts:1426
 #: src/services/MessageService.ts:1598 src/services/MessageService.ts:1738
-#: src/services/MessageService.ts:1756 src/services/MessageService.ts:3092
-#: src/services/MessageService.ts:3226 src/services/MessageService.ts:3390
+#: src/services/MessageService.ts:1756 src/services/MessageService.ts:3101
+#: src/services/MessageService.ts:3235 src/services/MessageService.ts:3399
 msgid "Unknown User"
 msgstr "알 수 없는 사용자"
 
@@ -2469,7 +2540,7 @@ msgid "View edit history"
 msgstr "편집 기록 보기"
 
 #: src/components/onboarding/Onboarding.native.tsx:239
-#: src/components/onboarding/Onboarding.tsx:107
+#: src/components/onboarding/Onboarding.tsx:117
 msgid "Welcome to Quorum!"
 msgstr "Quorum에 오신 것을 환영합니다!"
 
@@ -2484,7 +2555,7 @@ msgid ""
 "disabled, only the current edited version is kept."
 msgstr "활성화되면 편집된 메시지의 모든 이전 버전이 저장됩니다. 비활성화되면 현재 편집된 버전만 유지됩니다."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:60
+#: src/components/modals/UserSettingsModal/Privacy.tsx:64
 msgid ""
 "When enabled, synchronizes your user data, Spaces, and Space keys between "
 "devices. Enabling this increases metadata visibility of your account, which "
@@ -2532,7 +2603,7 @@ msgstr ""
 "따르는 사용자는 당신의 공간에 가입하기 위한 요청을 보내며, 이를 수동으로 승인해야 합니다. 공개 링크는 링크에 일부 키 자료가 존재해야"
 " 하며, 공개 공간 링크를 소유하면 링크가 유효한 동안 누구나 메시지를 읽을 수 있습니다."
 
-#: src/components/onboarding/Onboarding.tsx:145
+#: src/components/onboarding/Onboarding.tsx:164
 msgid ""
 "When using Quorum on a browser, your messages are saved locally to your "
 "browser."
@@ -2547,7 +2618,7 @@ msgstr ""
 "메시지에 서명하면 해당 메시지가 귀하의 키에서 온 것임을 확인하는 것입니다. 메시지에 서명하지 않으면 그럴듯한 부인 가능성을 가집니다. "
 "모든 대화의 기본값은 사용자 설정에서 변경할 수 있습니다."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:80
+#: src/components/modals/UserSettingsModal/Privacy.tsx:84
 msgid ""
 "When you sign a message, you are confirming that it comes from your key. "
 "When you don't sign a message, you have plausible deniability. You can "
@@ -2619,7 +2690,7 @@ msgid "You're all caught up!"
 msgstr "모두 잘 따라잡았습니다!"
 
 #: src/components/onboarding/Onboarding.native.tsx:494
-#: src/components/onboarding/Onboarding.tsx:340
+#: src/components/onboarding/Onboarding.tsx:354
 msgid "You're all set. Welcome to Quorum!"
 msgstr "모든 준비가 완료되었습니다. Quorum에 오신 것을 환영합니다!"
 

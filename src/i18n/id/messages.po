@@ -36,7 +36,7 @@ msgid "Send a message to #{channel_name}"
 msgstr "Kirim pesan ke #{channel_name}"
 
 #. js-lingui-explicit-id
-#: src/components/onboarding/Onboarding.tsx:256
+#: src/components/onboarding/Onboarding.tsx:270
 msgid ""
 "Your profile image size must be {maxFileSize} or less and must be a PNG, "
 "JPG, or JPEG file extension."
@@ -50,11 +50,6 @@ msgid "{count} New Messages"
 msgstr "{count} Pesan Baru"
 
 #. js-lingui-explicit-id
-#: src/components/message/MessageComposer.tsx:404
-msgid "Replying to"
-msgstr "Menjawab"
-
-#. js-lingui-explicit-id
 #: src/components/message/MessageComposer.native.tsx:161
 msgid "Failed to process image"
 msgstr "Gagal memproses gambar"
@@ -63,6 +58,11 @@ msgstr "Gagal memproses gambar"
 #: src/components/message/MessageComposer.native.tsx:314
 msgid "Replying to {user}"
 msgstr "Menjawab {user}"
+
+#. js-lingui-explicit-id
+#: src/components/message/MessageComposer.tsx:404
+msgid "Replying to"
+msgstr "Menjawab"
 
 #. js-lingui-explicit-id
 #: src/components/message/Message.tsx:307
@@ -129,7 +129,7 @@ msgid "[Sticker]"
 msgstr "[Sticker]"
 
 #. placeholder {0}: removedDevices.length
-#: src/components/modals/UserSettingsModal/Privacy.tsx:102
+#: src/components/modals/UserSettingsModal/Privacy.tsx:106
 msgid "{0} devices marked for removal. Click \"Save Changes\" to confirm."
 msgstr ""
 "{0} perangkat ditandai untuk dihapus. Klik \"Simpan Perubahan\" untuk "
@@ -216,7 +216,7 @@ msgstr "Tambahkan teman"
 msgid "0 Bytes"
 msgstr "0 Byte"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:101
+#: src/components/modals/UserSettingsModal/Privacy.tsx:105
 msgid "1 device marked for removal. Click \"Save Changes\" to confirm."
 msgstr ""
 "1 perangkat ditandai untuk dihapus. Klik \"Simpan Perubahan\" untuk "
@@ -292,7 +292,7 @@ msgstr "Alamat harus tepat 46 karakter panjangnya."
 msgid "Addresses start with \"Qm\"."
 msgstr "Alamat dimulai dengan \"Qm\"."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:50
+#: src/components/modals/UserSettingsModal/Privacy.tsx:54
 msgid ""
 "Adjust security-related settings, which may impact user  experience but "
 "increase the security of your Quorum account."
@@ -330,11 +330,15 @@ msgstr "Semua catatan pengusiran sudah diperbarui."
 msgid "All Spaces"
 msgstr "Semua Space"
 
+#: src/components/modals/ModalSaveOverlay.tsx:76
+msgid "Almost done..."
+msgstr "Hampir selesai..."
+
 #: src/components/modals/AddSpaceModal.tsx:259
 msgid "Already Joined"
 msgstr "Sudah Bergabung"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:76
+#: src/components/modals/UserSettingsModal/Privacy.tsx:80
 msgid "Always sign Direct Messages"
 msgstr "Selalu tanda tangan Pesan Langsung"
 
@@ -617,7 +621,7 @@ msgstr "Klik lagi untuk mengonfirmasi"
 msgid "Click on the role name and tag to edit them."
 msgstr "Klik pada nama peran dan tag untuk mengeditnya."
 
-#: src/components/onboarding/Onboarding.tsx:163
+#: src/components/onboarding/Onboarding.tsx:177
 msgid ""
 "Click the button below to create a backup of your key info, because once "
 "it's gone, it's gone  forever. You may be prompted to authenticate again."
@@ -728,6 +732,22 @@ msgstr "Tidak dapat memperoleh manifest untuk Space"
 msgid "Could not verify invite"
 msgstr "Tidak dapat memverifikasi undangan"
 
+#: src/hooks/business/user/useOnboardingFlowLogic.ts:273
+msgid ""
+"Couldn't decrypt your saved profile. Please re-enter your name and profile "
+"image."
+msgstr ""
+"Tidak dapat mendekripsi profil yang disimpan. Silakan masukkan kembali nama "
+"dan gambar profil Anda."
+
+#: src/hooks/business/user/useOnboardingFlowLogic.ts:278
+msgid ""
+"Couldn't load your saved profile. Please re-enter your name and profile "
+"image."
+msgstr ""
+"Tidak dapat memuat profil yang disimpan. Silakan masukkan kembali nama dan "
+"gambar profil Anda."
+
 #: src/components/modals/AddSpaceModal.tsx:293
 #: src/components/modals/CreateSpaceModal.tsx:79
 msgid "Create a Space"
@@ -757,6 +777,10 @@ msgstr "Tautan Undangan Saat Ini"
 #: src/components/ui/ThemeRadioGroup.tsx:23
 msgid "Dark"
 msgstr "Gelap"
+
+#: src/components/modals/UserSettingsModal/Privacy.tsx:198
+msgid "Data Recovery"
+msgstr "Pemulihan Data"
 
 #: src/components/context/MessageDB.bak.tsx:5415
 #: src/services/ConfigService.ts:142
@@ -913,7 +937,7 @@ msgid "Drawer"
 msgstr "Laci"
 
 #: src/components/onboarding/Onboarding.native.tsx:177
-#: src/components/onboarding/Onboarding.tsx:121
+#: src/components/onboarding/Onboarding.tsx:131
 msgid "Drop your profile photo here"
 msgstr "Jatuhkan foto profil Anda di sini"
 
@@ -960,7 +984,7 @@ msgstr "Pemilih emoji"
 msgid "Emojis"
 msgstr "Emojis"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:56
+#: src/components/modals/UserSettingsModal/Privacy.tsx:60
 msgid "Enable sync"
 msgstr "Aktifkan sinkronisasi"
 
@@ -1029,11 +1053,11 @@ msgstr "Kesalahan saat menampilkan notifikasi:"
 msgid "Existing Conversations"
 msgstr "Percakapan yang Ada"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:186
+#: src/components/modals/UserSettingsModal/Privacy.tsx:190
 msgid "Export"
 msgstr "Ekspor"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:177
+#: src/components/modals/UserSettingsModal/Privacy.tsx:181
 msgid ""
 "Export your key to a file by clicking this button. Do not share this file "
 "with anyone else or they can impersonate you or steal your Space's Apex "
@@ -1071,6 +1095,10 @@ msgstr "Gagal membuka pemilih gambar"
 #: src/components/context/WebsocketProvider.tsx:164
 msgid "Failed to parse WebSocket message:"
 msgstr "Gagal mengurai pesan WebSocket:"
+
+#: src/hooks/business/user/useSpaceRecovery.ts:101
+msgid "Failed to restore spaces"
+msgstr "Gagal memulihkan ruang"
 
 #: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:271
 msgid "Failed to save notification settings"
@@ -1240,12 +1268,16 @@ msgstr "Nama grup diperlukan"
 msgid "Group name must be {MAX_NAME_LENGTH} characters or less"
 msgstr "Nama grup harus {MAX_NAME_LENGTH} karakter atau kurang"
 
+#: src/components/modals/ModalSaveOverlay.tsx:83
+msgid "Hang in there..."
+msgstr "Bersabarlah..."
+
 #: src/components/direct/EmptyDirectMessage.tsx:54
 msgid "hide home screen"
 msgstr "sembunyikan layar beranda"
 
 #: src/components/onboarding/Onboarding.native.tsx:290
-#: src/components/onboarding/Onboarding.tsx:184
+#: src/components/onboarding/Onboarding.tsx:198
 msgid "I already saved mine"
 msgstr "Saya sudah menyimpan milik saya"
 
@@ -1253,14 +1285,14 @@ msgstr "Saya sudah menyimpan milik saya"
 msgid "I've Saved It"
 msgstr "Saya Sudah Menyimpannya"
 
-#: src/components/onboarding/Onboarding.tsx:319
-#: src/components/onboarding/Onboarding.tsx:326
+#: src/components/onboarding/Onboarding.tsx:333
+#: src/components/onboarding/Onboarding.tsx:340
 msgid "If skipped, you'll get the default profile image and can set it later"
 msgstr ""
 "Jika dilewati, Anda akan mendapatkan gambar profil default dan dapat "
 "mengaturnya nanti"
 
-#: src/components/onboarding/Onboarding.tsx:149
+#: src/components/onboarding/Onboarding.tsx:167
 msgid ""
 "If you clear your browser storage or switch browsers, your old messages and "
 "keys may disappear."
@@ -1269,7 +1301,7 @@ msgstr ""
 " kunci lama Anda mungkin hilang."
 
 #: src/components/onboarding/Onboarding.native.tsx:254
-#: src/components/onboarding/Onboarding.tsx:156
+#: src/components/onboarding/Onboarding.tsx:172
 msgid ""
 "If you uninstall the app from your device, you will lose your old messages "
 "and keys."
@@ -1283,7 +1315,7 @@ msgid "Import Existing Key"
 msgstr "Impor Kunci yang Ada"
 
 #: src/components/onboarding/Onboarding.native.tsx:244
-#: src/components/onboarding/Onboarding.tsx:134
+#: src/components/onboarding/Onboarding.tsx:154
 msgid "Important first-time user information:"
 msgstr "Informasi penting untuk pengguna baru:"
 
@@ -1381,7 +1413,7 @@ msgstr "Lompat ke saat ini"
 msgid "Key Copied!"
 msgstr "Kunci Disalin!"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:174
+#: src/components/modals/UserSettingsModal/Privacy.tsx:178
 msgid "Key Export"
 msgstr "Ekspor Kunci"
 
@@ -1433,7 +1465,7 @@ msgid "Leave this space"
 msgstr "Tinggalkan ruang ini"
 
 #: src/components/onboarding/Onboarding.native.tsx:312
-#: src/components/onboarding/Onboarding.tsx:198
+#: src/components/onboarding/Onboarding.tsx:212
 msgid ""
 "Let your friends know who you are! Pick a friendly name to display in your "
 "conversations, something easier to read than:"
@@ -1442,7 +1474,7 @@ msgstr ""
 "dalam percakapanmu, sesuatu yang lebih mudah dibaca daripada:"
 
 #: src/components/onboarding/Onboarding.native.tsx:505
-#: src/components/onboarding/Onboarding.tsx:352
+#: src/components/onboarding/Onboarding.tsx:366
 msgid "Let's gooooooooo"
 msgstr "Ayo berangkat!"
 
@@ -1466,6 +1498,10 @@ msgstr "Memuat notifikasi..."
 msgid "Loading pinned messages..."
 msgstr "Memuat pesan yang dipin..."
 
+#: src/components/onboarding/Onboarding.tsx:143
+msgid "Loading your profile..."
+msgstr "Memuat profil Anda..."
+
 #: src/hooks/business/conversations/useDirectMessageCreation.ts:32
 msgid "Looking up user..."
 msgstr "Mencari pengguna..."
@@ -1487,7 +1523,7 @@ msgid "Make role public"
 msgstr "Jadikan peran publik"
 
 #: src/components/onboarding/Onboarding.native.tsx:364
-#: src/components/onboarding/Onboarding.tsx:247
+#: src/components/onboarding/Onboarding.tsx:261
 msgid ""
 "Make your account uniquely yours – set a contact photo. This information is "
 "only provided to the Spaces you join."
@@ -1499,7 +1535,7 @@ msgstr ""
 msgid "Manage desktop notification preferences for new messages."
 msgstr "Kelola preferensi notifikasi desktop untuk pesan baru."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:41
+#: src/components/modals/UserSettingsModal/Privacy.tsx:45
 msgid ""
 "Manage devices, and privacy conditions for messaging and synchronization."
 msgstr "Kelola perangkat, dan kondisi privasi untuk pesan dan sinkronisasi."
@@ -1639,6 +1675,10 @@ msgstr ""
 msgid "No messages found"
 msgstr "Tidak ada pesan yang ditemukan"
 
+#: src/hooks/business/user/useSpaceRecovery.ts:76
+msgid "No missing spaces found"
+msgstr "Tidak ada ruang yang hilang ditemukan"
+
 #: src/components/message/PinnedMessagesPanel.tsx:193
 msgid "No pinned messages yet"
 msgstr "Belum ada pesan yang dipin"
@@ -1693,7 +1733,7 @@ msgid "OK"
 msgstr "OK"
 
 #: src/components/onboarding/Onboarding.native.tsx:222
-#: src/components/onboarding/Onboarding.tsx:110
+#: src/components/onboarding/Onboarding.tsx:120
 msgid "One of us, one of us!"
 msgstr "Salah satu dari kita, salah satu dari kita!"
 
@@ -1725,11 +1765,11 @@ msgstr "Halaman Tidak Ditemukan"
 msgid "Paste an invite link"
 msgstr "Tempel tautan undangan"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:153
+#: src/components/modals/UserSettingsModal/Privacy.tsx:157
 msgid "Pending"
 msgstr "Menunggu"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:139
+#: src/components/modals/UserSettingsModal/Privacy.tsx:143
 msgid "Pending removal - click Save to confirm"
 msgstr "Penghapusan yang tertunda - klik Simpan untuk mengonfirmasi"
 
@@ -1739,7 +1779,7 @@ msgid "Permissions:"
 msgstr "Izin:"
 
 #: src/components/onboarding/Onboarding.native.tsx:223
-#: src/components/onboarding/Onboarding.tsx:111
+#: src/components/onboarding/Onboarding.tsx:121
 msgid "Personalize your account"
 msgstr "Personalisasi akunmu"
 
@@ -1816,7 +1856,7 @@ msgid "Pinned!"
 msgstr "Dipin!"
 
 #: src/components/onboarding/Onboarding.native.tsx:180
-#: src/components/onboarding/Onboarding.tsx:123
+#: src/components/onboarding/Onboarding.tsx:133
 msgid "PNG, JPG or JPEG • Optimal ratio 1:1"
 msgstr "PNG, JPG atau JPEG • Rasio optimal 1:1"
 
@@ -1831,7 +1871,7 @@ msgid "Privacy Settings"
 msgstr "Pengaturan Privasi"
 
 #: src/components/modals/UserSettingsModal/Navigation.tsx:16
-#: src/components/modals/UserSettingsModal/Privacy.tsx:39
+#: src/components/modals/UserSettingsModal/Privacy.tsx:43
 msgid "Privacy/Security"
 msgstr "Privasi/Keamanan"
 
@@ -1872,7 +1912,7 @@ msgstr ""
 "Infrastruktur Quorum sedang diterapkan saat ini. Silakan coba menyegarkan."
 
 #: src/components/onboarding/Onboarding.native.tsx:249
-#: src/components/onboarding/Onboarding.tsx:137
+#: src/components/onboarding/Onboarding.tsx:157
 msgid ""
 "Quorum is peer-to-peer and end-to-end encrypted. This means your messages "
 "stay private, but equally important, they only live on the network for the "
@@ -1916,7 +1956,7 @@ msgstr "menerima konfigurasi dengan tanda tangan tidak valid!"
 msgid "Refresh"
 msgstr "Segarkan"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:153
+#: src/components/modals/UserSettingsModal/Privacy.tsx:157
 msgid "Remove"
 msgstr "Hapus"
 
@@ -1973,6 +2013,27 @@ msgstr ""
 msgid "Reset"
 msgstr "Atur Ulang"
 
+#: src/components/modals/UserSettingsModal/Privacy.tsx:208
+msgid "Restore Missing Spaces"
+msgstr "Pulihkan Ruang yang Hilang"
+
+#: src/components/modals/UserSettingsModal/Privacy.tsx:200
+msgid ""
+"Restore Spaces that exist on this device but are missing from your "
+"navigation menu."
+msgstr ""
+"Pulihkan Ruang yang ada di perangkat ini tetapi hilang dari menu navigasi "
+"Anda."
+
+#. placeholder {0}: recoverable.length
+#: src/hooks/business/user/useSpaceRecovery.ts:98
+msgid "Restored {0} space(s)"
+msgstr "Berhasil memulihkan {0} ruang"
+
+#: src/components/modals/UserSettingsModal/Privacy.tsx:208
+msgid "Restoring..."
+msgstr "Memulihkan..."
+
 #: src/components/modals/SpaceSettingsModal/Navigation.tsx:22
 #: src/components/modals/SpaceSettingsModal/Roles.tsx:45
 msgid "Roles"
@@ -1987,13 +2048,13 @@ msgstr "Simpan"
 #: src/components/modals/FolderEditorModal.tsx:113
 #: src/components/modals/GroupEditorModal.tsx:99
 #: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:592
-#: src/components/modals/UserSettingsModal/UserSettingsModal.tsx:244
+#: src/components/modals/UserSettingsModal/UserSettingsModal.tsx:249
 #: src/components/user/UserProfileEdit.tsx:158
 msgid "Save Changes"
 msgstr "Simpan Perubahan"
 
 #: src/components/onboarding/Onboarding.native.tsx:473
-#: src/components/onboarding/Onboarding.tsx:308
+#: src/components/onboarding/Onboarding.tsx:322
 msgid "Save Contact Photo"
 msgstr "Simpan Foto Kontak"
 
@@ -2003,7 +2064,7 @@ msgid "Save Edit History"
 msgstr "Simpan Riwayat Edit"
 
 #: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:577
-#: src/components/modals/UserSettingsModal/UserSettingsModal.tsx:233
+#: src/components/modals/UserSettingsModal/UserSettingsModal.tsx:238
 msgid "Save Failed"
 msgstr "Gagal Menyimpan"
 
@@ -2012,7 +2073,7 @@ msgid "Save Private Key"
 msgstr "Simpan Kunci Pribadi"
 
 #: src/components/onboarding/Onboarding.native.tsx:269
-#: src/components/onboarding/Onboarding.tsx:177
+#: src/components/onboarding/Onboarding.tsx:191
 msgid "Save User Key"
 msgstr "Simpan Kunci Pengguna"
 
@@ -2024,7 +2085,7 @@ msgstr "konfigurasi yang disimpan sudah kadaluarsa"
 #: src/components/modals/ChannelEditorModal.tsx:93
 #: src/components/modals/FolderEditorModal.tsx:148
 #: src/components/modals/GroupEditorModal.tsx:139
-#: src/components/modals/ModalSaveOverlay.tsx:43
+#: src/components/modals/ModalSaveOverlay.tsx:52
 msgid "Saving..."
 msgstr "Menyimpan..."
 
@@ -2070,7 +2131,7 @@ msgstr "Cari Nama Pengguna atau Alamat"
 msgid "Searching..."
 msgstr "Mencari..."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:47
+#: src/components/modals/UserSettingsModal/Privacy.tsx:51
 msgid "Security"
 msgstr "Keamanan"
 
@@ -2129,7 +2190,7 @@ msgid "Session Encrypted"
 msgstr "Sesi Terenkripsi"
 
 #: src/components/onboarding/Onboarding.native.tsx:344
-#: src/components/onboarding/Onboarding.tsx:233
+#: src/components/onboarding/Onboarding.tsx:247
 msgid "Set Display Name"
 msgstr "Tetapkan Nama Tampilan"
 
@@ -2160,7 +2221,7 @@ msgstr ""
 "lebih spesifik."
 
 #: src/components/onboarding/Onboarding.native.tsx:461
-#: src/components/onboarding/Onboarding.tsx:315
+#: src/components/onboarding/Onboarding.tsx:329
 msgid "Skip Adding Photo"
 msgstr "Lewati Menambahkan Foto"
 
@@ -2279,14 +2340,18 @@ msgstr ""
 " saat mereka mencari atau bergabung dengan Space Anda menggunakan tautan "
 "undangan."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:162
+#: src/components/modals/UserSettingsModal/Privacy.tsx:166
 msgid "This device"
 msgstr "Perangkat ini"
 
 #: src/components/onboarding/Onboarding.native.tsx:318
-#: src/components/onboarding/Onboarding.tsx:207
+#: src/components/onboarding/Onboarding.tsx:221
 msgid "This information is only provided to the Spaces you join."
 msgstr "Informasi ini hanya diberikan kepada Ruang yang Anda ikuti."
+
+#: src/components/modals/ModalSaveOverlay.tsx:90
+msgid "This is embarrassing..."
+msgstr "Ini memalukan..."
 
 #: src/components/modals/UserSettingsModal/General.tsx:110
 msgid ""
@@ -2339,6 +2404,10 @@ msgid ""
 msgstr ""
 "Ini akan menghasilkan tautan undangan publik baru dan membatalkan tautan "
 "yang ada. Siapa pun dengan tautan lama tidak akan dapat menggunakannya lagi."
+
+#: src/components/modals/ModalSaveOverlay.tsx:97
+msgid "Timeout in 10 seconds anyway..."
+msgstr "Waktu habis dalam 10 detik juga..."
 
 #: src/components/modals/ConfirmationModal.native.tsx:57
 #: src/components/modals/ConfirmationModal.tsx:78
@@ -2408,13 +2477,17 @@ msgid "Unable to copy to clipboard"
 msgstr "Tidak dapat menyalin ke clipboard"
 
 #: src/components/context/MessageDB.bak.tsx:3482
-#: src/services/SpaceService.ts:550
+#: src/services/SpaceService.ts:553
 msgid ""
 "Unable to leave space due to incomplete configuration. The space data may be"
 " corrupted."
 msgstr ""
 "Tidak dapat meninggalkan space karena konfigurasi yang tidak lengkap. Data "
 "space mungkin rusak."
+
+#: src/hooks/business/user/useSpaceRecovery.ts:39
+msgid "Unable to load user config"
+msgstr "Tidak dapat memuat konfigurasi pengguna"
 
 #: src/utils/imageProcessing/errors.ts:33
 msgid "Unable to process emoji image. Please use a smaller image."
@@ -2431,6 +2504,10 @@ msgid "Unable to process sticker image. Please use a smaller image."
 msgstr ""
 "Tidak dapat memproses gambar stiker. Silakan gunakan gambar yang lebih "
 "kecil."
+
+#: src/hooks/business/user/useSpaceRecovery.ts:23
+msgid "Unable to restore: not logged in"
+msgstr "Tidak dapat memulihkan: tidak masuk"
 
 #: src/components/modals/JoinSpaceModal.tsx:112
 msgid "Unknown"
@@ -2481,8 +2558,8 @@ msgstr "Waktu tidak diketahui"
 #: src/hooks/queries/userInfo/buildUserInfoFetcher.ts:15
 #: src/services/EncryptionService.ts:138 src/services/MessageService.ts:1426
 #: src/services/MessageService.ts:1598 src/services/MessageService.ts:1738
-#: src/services/MessageService.ts:1756 src/services/MessageService.ts:3092
-#: src/services/MessageService.ts:3226 src/services/MessageService.ts:3390
+#: src/services/MessageService.ts:1756 src/services/MessageService.ts:3101
+#: src/services/MessageService.ts:3235 src/services/MessageService.ts:3399
 msgid "Unknown User"
 msgstr "Pengguna Tidak Dikenal"
 
@@ -2581,7 +2658,7 @@ msgid "View edit history"
 msgstr "Lihat riwayat edit"
 
 #: src/components/onboarding/Onboarding.native.tsx:239
-#: src/components/onboarding/Onboarding.tsx:107
+#: src/components/onboarding/Onboarding.tsx:117
 msgid "Welcome to Quorum!"
 msgstr "Selamat datang di Quorum!"
 
@@ -2599,7 +2676,7 @@ msgstr ""
 "disimpan. Saat dinonaktifkan, hanya versi yang diedit saat ini yang "
 "disimpan."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:60
+#: src/components/modals/UserSettingsModal/Privacy.tsx:64
 msgid ""
 "When enabled, synchronizes your user data, Spaces, and Space keys between "
 "devices. Enabling this increases metadata visibility of your account, which "
@@ -2656,7 +2733,7 @@ msgstr ""
 "saja dengan tautan tersebut untuk membaca pesan di Space selama tautan "
 "tersebut valid."
 
-#: src/components/onboarding/Onboarding.tsx:145
+#: src/components/onboarding/Onboarding.tsx:164
 msgid ""
 "When using Quorum on a browser, your messages are saved locally to your "
 "browser."
@@ -2675,7 +2752,7 @@ msgstr ""
 "memiliki alasan yang dapat diterima. Pengaturan default untuk semua "
 "percakapan dapat diubah di Pengaturan Pengguna."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:80
+#: src/components/modals/UserSettingsModal/Privacy.tsx:84
 msgid ""
 "When you sign a message, you are confirming that it comes from your key. "
 "When you don't sign a message, you have plausible deniability. You can "
@@ -2757,7 +2834,7 @@ msgid "You're all caught up!"
 msgstr "Kamu sudah semua terupdate!"
 
 #: src/components/onboarding/Onboarding.native.tsx:494
-#: src/components/onboarding/Onboarding.tsx:340
+#: src/components/onboarding/Onboarding.tsx:354
 msgid "You're all set. Welcome to Quorum!"
 msgstr "Kamu sudah siap. Selamat datang di Quorum!"
 
