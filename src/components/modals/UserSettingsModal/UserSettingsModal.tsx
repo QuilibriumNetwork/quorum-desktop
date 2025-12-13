@@ -15,6 +15,7 @@ import {
   useLocaleSettings,
   useNotificationSettings,
   useModalSaveState,
+  useSpaceRecovery,
 } from '../../../hooks';
 import { validateDisplayName } from '../../../hooks/business/validation';
 import General from './General';
@@ -94,6 +95,8 @@ const UserSettingsModal: React.FunctionComponent<{
     permissionStatus,
     showRevokeMessage,
   } = useNotificationSettings();
+
+  const { restoreMissingSpaces, isRestoring } = useSpaceRecovery();
 
   const displayNameError = validateDisplayName(displayName);
 
@@ -186,6 +189,8 @@ const UserSettingsModal: React.FunctionComponent<{
                         isSaving={isSaving}
                         removedDevices={removedDevices}
                         isConfigLoaded={isConfigLoaded}
+                        isRestoring={isRestoring}
+                        onRestoreMissingSpaces={restoreMissingSpaces}
                       />
                     );
                   case 'notifications':

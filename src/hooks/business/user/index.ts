@@ -10,3 +10,4 @@ export * from './useOnboardingFlow';
 export * from './useKeyBackup';
 export * from './useFileUpload';
 export * from './useAuthenticationFlow';
+export * from './useSpaceRecovery';

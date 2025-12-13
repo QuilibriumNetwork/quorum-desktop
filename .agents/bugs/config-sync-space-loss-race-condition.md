@@ -100,6 +100,25 @@ If any step fails, the space is **not fully initialized** but the loop continues
 
 ## Mitigation Implemented
 
+### Space Recovery Tool (2025-12-13)
+
+Added user-facing recovery tool in User Settings → Privacy/Security → Data Recovery.
+
+**Location**: [useSpaceRecovery.ts](../../src/hooks/business/user/useSpaceRecovery.ts)
+
+**What it does**:
+- Scans local IndexedDB for spaces not in navigation menu
+- Validates encryption state (must exist, must be valid JSON)
+- Skips bloated encryption states (>500KB) - these cause sync failures
+- Adds recoverable spaces back to nav menu and syncs
+
+**Limitations**:
+- Only recovers spaces with valid local encryption data
+- Cannot recover spaces with bloated states (see separate bug)
+- Cannot recover spaces that were never synced to this device
+
+**Task doc**: [space-recovery-tool.md](../tasks/space-recovery-tool.md)
+
 ### Diagnostic Logging (2025-12-13)
 
 Added warning log to detect when spaces are filtered out during sync:
@@ -202,4 +221,4 @@ Spaces need similar treatment but currently lack any merge or tombstone logic.
 
 _Created: 2025-12-13_
 _Updated: 2025-12-13_
-_Status: Unconfirmed (reported on single profile, diagnostic logging added)_
+_Status: Mitigated (recovery tool available, diagnostic logging added)_

@@ -125,7 +125,6 @@ This is the main index for all documentation, bug reports, and task management.
 - [Multi-User Invite Selection Enhancement](tasks/multi-user-invite-selection.md)
 - [Passkey Import UX Issue](tasks/passkey-import-ux-issue.md)
 - [SDK PasskeyModal Customization Props Enhancement](tasks/sdk-passkey-modal-customization-props.md)
-- [Space Recovery Tool in UserSettingsModal](tasks/space-recovery-tool.md)
 - [Task: Implement Delete Public Invite Link Feature](tasks/delete-public-invite-link.md)
 - [Test Suite Implementation Plan for Quorum Desktop](tasks/test-suite-plan.md)
 - [User Status Feature Implementation Plan](tasks/user-status.md)
@@ -276,6 +275,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Space Folders: Toggle Indicator Fix for Spaces Inside Folders](tasks/.done/space-folders-toggle-indicator-fix.md)
 - [Space Icon Mention Bubbles](tasks/.done/space-icon-mention-bubbles.md)
 - [Space Initials Fallback - Optional Space Images](tasks/.done/space-initials-fallback.md)
+- [Space Recovery Tool in UserSettingsModal](tasks/.done/space-recovery-tool.md)
 - [Tailwind @apply Conversion Audit](tasks/.done/tailwind-apply-conversion-audit.md)
 - [Task: Enhanced Direct Message Conversation List](tasks/.done/dm-conversation-list-preview.md)
 - [Task: Fix Hash Navigation to Old Messages (#msg-messageId Pattern)](tasks/.done/fix-hash-navigation-to-old-messages.md)
@@ -310,4 +310,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2025-12-13 16:30:14
+**Last Updated**: 2025-12-13 17:34:33

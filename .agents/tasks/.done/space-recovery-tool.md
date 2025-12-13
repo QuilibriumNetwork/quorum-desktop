@@ -135,7 +135,7 @@ This provides user self-service recovery while the underlying sync bug is being 
     <Spacer size="md" direction="vertical" borderTop={true} />
     <div className="text-subtitle-2">{t`Data Recovery`}</div>
     <div className="pt-2 text-label-strong">
-      {t`If some of your Spaces are missing from the navigation menu, click below to restore them.`}
+      {t`Restore Spaces that exist on this device but are missing from your navigation menu.`}
     </div>
     <div className="pt-4 pb-8 max-w-[200px]">
       <Button

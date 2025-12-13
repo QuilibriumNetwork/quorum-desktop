@@ -16,6 +16,8 @@ interface PrivacyProps {
   isSaving: boolean;
   removedDevices?: string[];
   isConfigLoaded?: boolean;
+  isRestoring?: boolean;
+  onRestoreMissingSpaces?: () => void;
 }
 
 const Privacy: React.FunctionComponent<PrivacyProps> = ({
@@ -31,6 +33,8 @@ const Privacy: React.FunctionComponent<PrivacyProps> = ({
   isSaving,
   removedDevices = [],
   isConfigLoaded = true,
+  isRestoring = false,
+  onRestoreMissingSpaces,
 }) => {
   return (
     <>
@@ -187,6 +191,25 @@ const Privacy: React.FunctionComponent<PrivacyProps> = ({
             </Button>
           </div>
         </div>
+
+        {onRestoreMissingSpaces && (
+          <div className="modal-content-info">
+            <Spacer size="md" direction="vertical" borderTop={true} />
+            <div className="text-subtitle-2">{t`Data Recovery`}</div>
+            <div className="pt-2 text-label-strong">
+              {t`Restore Spaces that exist on this device but are missing from your navigation menu.`}
+            </div>
+            <div className="pt-4 pb-8 max-w-[200px]">
+              <Button
+                type="secondary"
+                onClick={onRestoreMissingSpaces}
+                disabled={isRestoring}
+              >
+                {isRestoring ? t`Restoring...` : t`Restore Missing Spaces`}
+              </Button>
+            </div>
+          </div>
+        )}
       </div>
     </>
   );

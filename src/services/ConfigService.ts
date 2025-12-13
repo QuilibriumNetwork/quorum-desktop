@@ -409,6 +409,15 @@ export class ConfigService {
       // Filter out entries with undefined encryptionState
       config.spaceKeys = allSpaceKeys.filter(sk => sk.encryptionState !== undefined);
 
+      // Log warning if spaces are being filtered out (helps debug potential sync issues)
+      const spacesWithoutEncryption = allSpaceKeys.filter(sk => sk.encryptionState === undefined);
+      if (spacesWithoutEncryption.length > 0) {
+        console.warn(
+          `[ConfigService] ${spacesWithoutEncryption.length} space(s) filtered from sync (missing encryption state):`,
+          spacesWithoutEncryption.map(sk => sk.spaceId)
+        );
+      }
+
       // Ensure spaceIds and items only include spaces that have encryption keys
       // This prevents server validation errors when some spaces don't have complete encryption data
       const validSpaceIds = new Set(config.spaceKeys.map(sk => sk.spaceId));
