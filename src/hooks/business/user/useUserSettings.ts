@@ -142,12 +142,14 @@ export const useUserSettings = (
       currentPasskeyInfo
     );
 
-    // Save config
+    // Save config with profile data
     await saveConfig({
       config: {
         ...existingConfig.current!,
         allowSync,
         nonRepudiable: nonRepudiable,
+        name: displayName,
+        profile_image: profileImageUrl,
       },
       keyset: keyset,
     });

@@ -1,7 +1,5 @@
-import {
-  usePasskeysContext,
-  passkey,
-} from '@quilibrium/quilibrium-js-sdk-channels';
+import { useCallback } from 'react';
+import { usePasskeysContext, passkey } from '@quilibrium/quilibrium-js-sdk-channels';
 import {
   OnboardingAdapter,
   PasskeyInfo,
@@ -11,7 +9,7 @@ import {
  * Web adapter for passkey functionality using the Quilibrium SDK
  */
 export const usePasskeyAdapter = (): OnboardingAdapter => {
-  const { currentPasskeyInfo, updateStoredPasskey } = usePasskeysContext();
+  const { currentPasskeyInfo, updateStoredPasskey, exportKey } = usePasskeysContext();
 
   // Convert SDK types to our platform-agnostic types
   const adaptedPasskeyInfo: PasskeyInfo | null = currentPasskeyInfo
@@ -36,13 +34,25 @@ export const usePasskeyAdapter = (): OnboardingAdapter => {
       publicKey: updates.publicKey || '',
       displayName: updates.displayName,
       pfpUrl: updates.pfpUrl,
-      completedOnboarding: updates.completedOnboarding,
+      completedOnboarding: updates.completedOnboarding ?? false,
     };
     updateStoredPasskey(credentialId, sdkUpdates);
   };
 
+  /**
+   * Export the user's private key (hex string)
+   * Wraps the SDK's exportKey function
+   */
+  const adaptedExportKey = useCallback(
+    async (address: string): Promise<string> => {
+      return exportKey(address);
+    },
+    [exportKey]
+  );
+
   return {
     currentPasskeyInfo: adaptedPasskeyInfo,
     updateStoredPasskey: adaptedUpdateStoredPasskey,
+    exportKey: adaptedExportKey,
   };
 };

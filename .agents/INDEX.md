@@ -36,6 +36,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Touch Interaction System](docs/features/touch-interaction-system.md)
 - [Unified Notification System (Mentions + Replies)](docs/features/mention-notification-system.md)
 - [Unread Message Visual Indicators](docs/features/unread-message-indicators.md)
+- [User Config Sync on Existing Accounts](docs/features/user-config-sync.md)
 - [🔍 Global Message Search - Implementation Guide & Documentation](docs/features/search-feature.md)
 
 ### Features / Messages
@@ -72,6 +73,7 @@ This is the main index for all documentation, bug reports, and task management.
 
 ### Active Issues
 - [Brave Browser React Hook Errors - ONGOING INVESTIGATION](bugs/brave-browser-react-hook-errors.md)
+- [Config Sync Space Loss Race Condition](bugs/config-sync-space-loss-race-condition.md)
 - [DirectMessage Invite Loading Performance Issue](bugs/directmessage-invite-loading-performance.md)
 - [Encryption State Evals Causing Config Sync Bloat](bugs/encryption-state-evals-bloat.md)
 - [Expired Invite Card Validation Timing Issue](bugs/expired-invite-card-validation-timing.md)
@@ -113,13 +115,11 @@ This is the main index for all documentation, bug reports, and task management.
 ### Pending Tasks
 
 - [Background Action Queue with Web Worker Crypto](tasks/background-action-queue-with-worker-crypto.md)
-- [Cache Space Key Metadata to Reduce Config Save Overhead](tasks/config-save-space-key-caching.md)
 - [Combined Text + Image Messages](tasks/combined-text-image-messages.md)
 - [Conversation Deletion State Synchronization](tasks/conversation-deletion-state-sync.md)
 - [Custom ContentEditable Mention Pills for Message Composer](tasks/mention-pills-in-message-textarea.md)
 - [Date Translation with Moment.js Locale Configuration](tasks/i18n-date-translation-moment-locale.md)
 - [Device Identification Improvement](tasks/device-identification-improvement.md)
-- [Implement Background Sync Queue for User Settings and Async Operations](tasks/background-sync-queue.md)
 - [Implement Message Forwarding with Privacy Controls](tasks/message-forwarding-with-privacy-controls.md)
 - [Implement Smart Context Extraction Around Mentions in NotificationPanel](tasks/notification-mention-context-extraction.md)
 - [Multi-User Invite Selection Enhancement](tasks/multi-user-invite-selection.md)
@@ -127,12 +127,12 @@ This is the main index for all documentation, bug reports, and task management.
 - [SDK PasskeyModal Customization Props Enhancement](tasks/sdk-passkey-modal-customization-props.md)
 - [Task: Implement Delete Public Invite Link Feature](tasks/delete-public-invite-link.md)
 - [Test Suite Implementation Plan for Quorum Desktop](tasks/test-suite-plan.md)
-- [User Config Sync on Existing Accounts](tasks/user-config-sync-on-existing-accounts.md)
 - [User Status Feature Implementation Plan](tasks/user-status.md)
 
 ### .Archived
 - [🚀 Search Performance Optimization - Revised Implementation Plan](tasks/.archived/2025-11-12-search-performance-optimization-original.md)
 - [Auto-Jump to First Unread Message + Fix Hash Navigation](tasks/.archived/auto-jump-first-unread.md)
+- [Cache Space Key Metadata to Reduce Config Save Overhead](tasks/.archived/config-save-space-key-caching.md)
 - [ClickToCopyContent Component Analysis](tasks/.archived/click-to-copy-content-analysis.md)
 - [Font Size Management Analysis & Recommendations](tasks/.archived/font-size-management-analysis-2025.md)
 - [Modal System Consolidation via Route Wrapper Component](tasks/.archived/modal-system-consolidation.md)
@@ -286,6 +286,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [UI Folder Reorganization Task](tasks/.done/ui-folder-reorganization.md)
 - [Unify Unread Message Indicators: Channels & DMs](tasks/.done/unify-unread-indicators-channels-dms.md)
 - [Unread Message Visual Indicators Implementation](tasks/.done/unread-message-visual-indicators.md)
+- [User Config Sync on Existing Accounts](tasks/.done/user-config-sync-on-existing-accounts.md)
 - [User Initials Avatars](tasks/.done/user-initials.md)
 - [XSS Prevention - Final Implementation](tasks/.done/xss-prevention-final-implementation-2025-11-08.md)
 - [🎯 Objective: Implement Global Message Search](tasks/.done/global-search-plan.md)
@@ -308,4 +309,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2025-12-13 10:56:24
+**Last Updated**: 2025-12-13 15:55:17

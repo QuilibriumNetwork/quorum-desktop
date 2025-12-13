@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { PasskeyModal } from '@quilibrium/quilibrium-js-sdk-channels';
 import '../../styles/_passkey-modal.scss';
 import { Input, Icon, Button, Tooltip, FileUpload } from '../primitives';
@@ -11,7 +11,6 @@ import { t } from '@lingui/core/macro';
 import { i18n } from '@lingui/core';
 import { Trans } from '@lingui/react/macro';
 import { DefaultImages } from '../../utils';
-import { validateNameForXSS } from '../../utils/validation';
 import { validateDisplayName as getDisplayNameError } from '../../hooks/business/validation';
 
 export const Onboarding = ({
@@ -44,6 +43,17 @@ export const Onboarding = ({
   const [isDragActive, setIsDragActive] = useState(false);
 
   const maxImageSize = 25 * 1024 * 1024; // 25MB
+
+  // Trigger config fetch for returning users when we have an address
+  useEffect(() => {
+    if (
+      onboardingFlow.currentPasskeyInfo !== null &&
+      onboardingFlow.currentPasskeyInfo.address
+    ) {
+      const { address } = onboardingFlow.currentPasskeyInfo;
+      onboardingFlow.fetchUser(address, setUser);
+    }
+  }, [onboardingFlow.currentPasskeyInfo?.address]);
 
   // Handle file upload
   const handleFilesSelected = useCallback((files: any[]) => {
@@ -125,6 +135,16 @@ export const Onboarding = ({
             </div>
           </div>
         )}
+        {onboardingFlow.currentStep === 'loading' && (
+          <div className="flex flex-row justify-center">
+            <div className="grow"></div>
+            <div className="w-full max-w-[460px] px-4 py-8 text-center text-white flex flex-col items-center">
+              <Icon name="spinner" size="2xl" className="icon-spin mb-4" />
+              <p className="text-lg">{t`Loading your profile...`}</p>
+            </div>
+            <div className="grow"></div>
+          </div>
+        )}
         {onboardingFlow.currentStep === 'key-backup' && (
           <>
             <div className="flex flex-row justify-center">
@@ -136,29 +156,23 @@ export const Onboarding = ({
                 <p className="pb-4">
                   {t`Quorum is peer-to-peer and end-to-end encrypted. This means your messages stay private, but equally important, they only live on the network for the time required to reach you and your recipients.`}
                 </p>
-                <p className="pb-4">
-                  {
-                    // @ts-ignore
-                    !window.electron ? (
-                      <>
-                        <p className="pb-4">
-                          {t`When using Quorum on a browser, your messages are saved locally to your browser.`}
-                        </p>
-                        <p className="font-bold">
-                          <b>
-                            {t`If you clear your browser storage or switch browsers, your old messages and keys may disappear.`}
-                          </b>
-                        </p>
-                      </>
-                    ) : (
-                      <>
-                        <p className="pb-4 font-bold">
-                          {t`If you uninstall the app from your device, you will lose your old messages and keys.`}
-                        </p>
-                      </>
-                    )
-                  }
-                </p>
+                {
+                  // @ts-ignore
+                  !window.electron ? (
+                    <>
+                      <p className="pb-4">
+                        {t`When using Quorum on a browser, your messages are saved locally to your browser.`}
+                      </p>
+                      <p className="pb-4 font-bold">
+                        {t`If you clear your browser storage or switch browsers, your old messages and keys may disappear.`}
+                      </p>
+                    </>
+                  ) : (
+                    <p className="pb-4 font-bold">
+                      {t`If you uninstall the app from your device, you will lose your old messages and keys.`}
+                    </p>
+                  )
+                }
                 <p className="pb-4">
                   {t`Click the button below to create a backup of your key info, because once it's gone, it's gone  forever. You may be prompted to authenticate again.`}
                 </p>

@@ -48,6 +48,8 @@ export type UserConfig = {
   timestamp?: number;
   nonRepudiable?: boolean;
   allowSync?: boolean;
+  name?: string;                    // User's display name (synced from profile)
+  profile_image?: string;           // User's profile image as data URI (synced from profile)
   spaceKeys?: {
     spaceId: string;
     encryptionState: {
