@@ -48,9 +48,11 @@ export function getUserPermissions(
   space: Space | undefined,
   isSpaceOwner: boolean = false
 ): Permission[] {
-  // Space owners have all permissions
+  // Space owners have all role-delegatable permissions
+  // Note: kick is NOT included here - it's handled separately via canKickUser()
+  // because it requires the owner's ED448 key, not a role permission
   if (isSpaceOwner) {
-    return ['message:delete', 'message:pin', 'user:kick', 'mention:everyone'];
+    return ['message:delete', 'message:pin', 'mention:everyone'];
   }
 
   if (!space || !space.roles) {

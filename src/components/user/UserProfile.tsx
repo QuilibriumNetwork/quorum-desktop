@@ -13,7 +13,7 @@ import {
 import { useSpaceOwner } from '../../hooks/queries/spaceOwner';
 import { useQuery } from '@tanstack/react-query';
 import { useMessageDB } from '../context/useMessageDB';
-import { hasPermission, canKickUser } from '../../utils/permissions';
+import { canKickUser } from '../../utils/permissions';
 import { t } from '@lingui/core/macro';
 import { truncateAddress } from '../../utils';
 import { UserAvatar } from './UserAvatar';
@@ -55,16 +55,9 @@ const UserProfile: React.FunctionComponent<{
     enabled: !!props.spaceId,
   });
 
-  const hasKickPermission = hasPermission(
-    currentPasskeyInfo?.address || '',
-    'user:kick',
-    space || undefined,
-    isSpaceOwner
-  );
-
+  // Only space owners can kick users (requires owner's ED448 key)
   const canKickThisUser = canKickUser(props.user.address, space || undefined);
-
-  const canKickUsers = hasKickPermission && canKickThisUser;
+  const canKickUsers = isSpaceOwner && canKickThisUser;
 
   return (
     <Container

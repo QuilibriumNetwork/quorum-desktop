@@ -83,7 +83,7 @@ const mockSpace: Space = {
       roleTag: 'multi',
       color: '#ff00ff',
       members: ['multi-role-user'],
-      permissions: ['message:delete', 'message:pin', 'user:kick'],
+      permissions: ['message:delete', 'message:pin'],
     },
   ],
   emojis: [],
@@ -247,7 +247,7 @@ describe('Unified Permission System Edge Cases', () => {
       expect(system.canPinMessage(testMessage)).toBe(true);
     });
 
-    test('Read-only manager CANNOT kick users (kick is space-wide, not channel-specific)', () => {
+    test('Read-only manager CANNOT kick users (only space owner can kick)', () => {
       const context: PermissionContext = {
         userAddress: 'readonly-manager',
         isSpaceOwner: false,
@@ -256,6 +256,7 @@ describe('Unified Permission System Edge Cases', () => {
       };
 
       const system = new UnifiedPermissionSystem(context);
+      // Only space owners can kick - kick requires owner's ED448 key
       expect(system.canKickUser()).toBe(false);
     });
   });
@@ -289,7 +290,7 @@ describe('Unified Permission System Edge Cases', () => {
       const system = new UnifiedPermissionSystem(context);
       expect(system.canDeleteMessage(testMessage)).toBe(true); // From multi-permissions-role-id
       expect(system.canPinMessage(testMessage)).toBe(true); // From multi-permissions-role-id
-      expect(system.canKickUser()).toBe(true); // From multi-permissions-role-id
+      expect(system.canKickUser()).toBe(false); // Only space owner can kick (requires owner's ED448 key)
       expect(system.canPostMessage()).toBe(true); // Regular channels allow posting
     });
 

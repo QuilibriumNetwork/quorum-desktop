@@ -108,19 +108,15 @@ export class UnifiedPermissionSystem {
   }
 
   /**
-   * Check if user can kick other users from the space
+   * Check if user can kick other users from the space.
+   *
+   * NOTE: Only space owners can kick. The kick operation requires the owner's
+   * ED448 private key to sign the kick message, which only the owner possesses.
+   * Role-based kick delegation is not currently supported at the protocol level.
    */
   canKickUser(): boolean {
     const { isSpaceOwner } = this.context;
-
-    // 1. Space owners can kick anyone (inherent privilege)
-    if (isSpaceOwner) {
-      return true;
-    }
-
-    // 2. Kick is space-wide, not channel-specific, so use traditional roles
-    // Read-only channel managers do NOT get kick permissions
-    return this.hasTraditionalRolePermission('user:kick');
+    return isSpaceOwner;
   }
 
   /**
@@ -205,8 +201,8 @@ export function hasChannelPermission(
       return message ? checker.canDeleteMessage(message) : false;
     case 'message:pin':
       return message ? checker.canPinMessage(message) : false;
-    case 'user:kick':
-      return checker.canKickUser();
+    // Note: 'user:kick' is not a role permission - use canKickUser() directly
+    // Kick requires owner's ED448 key and cannot be delegated via roles
     default:
       return false;
   }

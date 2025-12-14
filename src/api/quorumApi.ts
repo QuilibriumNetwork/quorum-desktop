@@ -1,6 +1,7 @@
 import { getConfig } from '../config/config';
 
-export type Permission = 'message:delete' | 'message:pin' | 'user:kick' | 'mention:everyone';
+// Note: 'user:kick' was removed - kick requires owner's ED448 key, cannot be delegated via roles
+export type Permission = 'message:delete' | 'message:pin' | 'mention:everyone';
 
 export type Role = {
   roleId: string;

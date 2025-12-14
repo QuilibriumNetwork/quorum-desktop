@@ -87,7 +87,6 @@ This is the main index for all documentation, bug reports, and task management.
 - [Pinned Messages Panel Button Clicks Bug](bugs/pinned-messages-panel-clicks-and-message-list-disappearing.md)
 - [Public Invite Link Intermittent Expiration Bug](bugs/public-invite-link-intermittent-expiration.md)
 - [Space Owner Delete Permissions Bug](bugs/space-owner-delete-permissions-bug.md)
-- [user:kick Role Permission is Non-Functional for Non-Owners](bugs/user-kick-role-permission-non-functional.md)
 
 ### Solved Issues
 - [Android 7.0 File Download Fix - Implementation Plan](bugs/.solved/SOLVED_android-file-download-huawei-p9-lite.md)
@@ -106,6 +105,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [SOLVED: Modal NavMenu Z-Index Stacking Issue](bugs/.solved/SOLVED_modal-navmenu-zindex-stacking.md)
 - [SOLVED: Right Sidebar Overlay Issue - Navbar Still Visible](bugs/.solved/SOLVED_right-sidebar-overlay.md)
 - [Space Creation Config Save Race Condition](bugs/.solved/space-creation-config-save-race-condition.md)
+- [user:kick Role Permission is Non-Functional for Non-Owners](bugs/.solved/user-kick-role-permission-non-functional.md)
 
 ### .Archived
 - [Bug: Auto-jump to First Unread Breaks Initial Message Sync](bugs/.archived/auto-jump-unread-breaks-message-sync.md)
@@ -314,4 +314,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2025-12-14 18:01:53
+**Last Updated**: 2025-12-14 18:07:31
