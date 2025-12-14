@@ -74,15 +74,15 @@
   gap: $s-2;
   margin-left: $s-3;
   margin-top: $s-2;
-  margin-bottom: $s-2;
-  padding: $s-1-5;
+  margin-bottom: $composer-margin-bottom-mobile;
+  padding: $composer-padding-mobile;
   border-radius: $rounded-full;
   background-color: var(--color-bg-chat-input);
 
   /* Desktop: Increase height to match UserStatus */
   @media (min-width: $screen-lg) {
-    padding: $s-2-5 $s-3; /* Increase vertical padding to match UserStatus height */
-    margin-bottom: $s-3;
+    padding: $composer-padding-desktop $s-3; /* Increase vertical padding to match UserStatus height */
+    margin-bottom: $composer-margin-bottom-desktop;
   }
 
   /* When textarea grows beyond single line, align buttons to bottom and change from pill to rounded */

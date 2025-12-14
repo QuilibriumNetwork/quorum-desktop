@@ -301,3 +301,14 @@ $nav-space-icon-size-mobile: $s-12;   /* Space icon size (mobile) - 40px - used 
 /* Space between top of screen and main content areas - keeps NavMenu logo aligned with chat header */
 $layout-top-offset: 14px;             /* Used in: _chat.scss (chat-container height), NavMenu.scss (logo positioning) */
 
+/* === MESSAGE COMPOSER SIZES === */
+/* Semantic variables for MessageComposer dimensions - keeps toast positioning in sync */
+$composer-padding-mobile: $s-1-5;         /* 6px - vertical padding on mobile */
+$composer-padding-desktop: $s-2-5;        /* 10px - vertical padding on desktop */
+$composer-margin-bottom-mobile: $s-2;     /* 8px */
+$composer-margin-bottom-desktop: $s-3;    /* 12px */
+$composer-button-height: $s-9;            /* 36px - tallest button (upload/sticker) */
+
+/* === TOAST POSITIONING === */
+$toast-gap: $s-3;                         /* 12px - space between toast and composer */
+

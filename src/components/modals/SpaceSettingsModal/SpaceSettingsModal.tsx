@@ -27,7 +27,7 @@ import {
   useSpaceProfile,
 } from '../../../hooks';
 import { useMentionNotificationSettings } from '../../../hooks/business/mentions';
-import { showSuccess, showInfo, showError } from '../../../utils/toast';
+import { showToast } from '../../../utils/toast';
 import Account from './Account';
 import General from './General';
 import Roles from './Roles';
@@ -53,10 +53,10 @@ const SpaceSettingsModal: React.FunctionComponent<{
       if (count > 0) {
         // Optionally, request a members sync shortly after
         await requestSync(space.spaceId);
-        showSuccess(`Updated records for ${count} users that have been kicked.`);
+        showToast(`Updated records for ${count} users that have been kicked.`, { variant: 'success', bottomFixed: true });
       } else {
         // No updates needed
-        showInfo(t`All kick records are up to date.`);
+        showToast(t`All kick records are up to date.`, { variant: 'info', bottomFixed: true });
       }
     } finally {
       setSyncingKicks(false);
@@ -268,7 +268,7 @@ const SpaceSettingsModal: React.FunctionComponent<{
       // spaceProfile.onSave already shows error toasts, so we don't need to duplicate
       // But if mention settings fail, we should show an error
       if (error instanceof Error && error.message.includes('mention')) {
-        showError(t`Failed to save notification settings`);
+        showToast(t`Failed to save notification settings`, { variant: 'error', bottomFixed: true });
       }
       throw error; // Re-throw to prevent modal from closing
     }

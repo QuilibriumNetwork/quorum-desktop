@@ -173,3 +173,34 @@ $list-fade-gradient-height: 120px;    /* Height of the gradient overlay - paddin
     opacity: 0.2;
   }
 }
+
+/* === TOAST CONTAINER === */
+/* Default: positioned above MessageComposer to avoid overlap */
+.toast-container {
+  position: fixed;
+  right: $s-4;
+  max-width: 360px;
+  z-index: 2147483647;
+
+  /* Position above MessageComposer: (padding * 2) + button + margin + gap */
+  bottom: calc(
+    ($composer-padding-mobile * 2) +
+    $composer-button-height +
+    $composer-margin-bottom-mobile +
+    $toast-gap
+  );
+
+  @media (min-width: $screen-lg) {
+    bottom: calc(
+      ($composer-padding-desktop * 2) +
+      $composer-button-height +
+      $composer-margin-bottom-desktop +
+      $toast-gap
+    );
+  }
+
+  /* For modals/settings: fixed bottom position */
+  &.bottom-fixed {
+    bottom: $s-4;
+  }
+}

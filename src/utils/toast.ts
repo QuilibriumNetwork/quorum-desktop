@@ -7,23 +7,45 @@
 
 export type ToastVariant = 'info' | 'success' | 'warning' | 'error';
 
+interface ToastOptions {
+  variant?: ToastVariant;
+  /** Position toast at fixed bottom (for modals/settings). Default positions above MessageComposer. */
+  bottomFixed?: boolean;
+}
+
 interface ToastDetail {
+  id?: string;
   message: string;
   variant: ToastVariant;
+  persistent?: boolean;
+  /** Position toast at fixed bottom (for modals/settings). Default positions above MessageComposer. */
+  bottomFixed?: boolean;
 }
 
 /**
  * Show a toast notification with the specified variant
  *
  * @param message - The message to display
- * @param variant - The toast variant (info, success, warning, error)
+ * @param variantOrOptions - The toast variant or options object
  */
-export const showToast = (message: string, variant: ToastVariant = 'info'): void => {
+export const showToast = (
+  message: string,
+  variantOrOptions: ToastVariant | ToastOptions = 'info'
+): void => {
   if (typeof window === 'undefined') return;
+
+  const options: ToastOptions =
+    typeof variantOrOptions === 'string'
+      ? { variant: variantOrOptions }
+      : variantOrOptions;
 
   window.dispatchEvent(
     new CustomEvent<ToastDetail>('quorum:toast', {
-      detail: { message, variant },
+      detail: {
+        message,
+        variant: options.variant || 'info',
+        bottomFixed: options.bottomFixed,
+      },
     })
   );
 };
@@ -62,4 +84,42 @@ export const showWarning = (message: string): void => {
  */
 export const showInfo = (message: string): void => {
   showToast(message, 'info');
+};
+
+/**
+ * Show a persistent toast that stays visible until manually dismissed
+ *
+ * @param id - Unique identifier for the toast (used for dismissal)
+ * @param message - The message to display
+ * @param variant - The toast variant (info, success, warning, error)
+ * @param bottomFixed - Position toast at fixed bottom (for modals/settings)
+ */
+export const showPersistentToast = (
+  id: string,
+  message: string,
+  variant: ToastVariant = 'info',
+  bottomFixed?: boolean
+): void => {
+  if (typeof window === 'undefined') return;
+
+  window.dispatchEvent(
+    new CustomEvent<ToastDetail>('quorum:toast', {
+      detail: { id, message, variant, persistent: true, bottomFixed },
+    })
+  );
+};
+
+/**
+ * Dismiss a toast by its ID
+ *
+ * @param id - The ID of the toast to dismiss
+ */
+export const dismissToast = (id: string): void => {
+  if (typeof window === 'undefined') return;
+
+  window.dispatchEvent(
+    new CustomEvent<{ id: string }>('quorum:toast-dismiss', {
+      detail: { id },
+    })
+  );
 };

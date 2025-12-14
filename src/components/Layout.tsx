@@ -41,8 +41,11 @@ const Layout: React.FunctionComponent<{
   useNavigationHotkeys();
 
   const [toast, setToast] = React.useState<{
+    id?: string;
     message: string;
     variant?: 'info' | 'success' | 'warning' | 'error';
+    persistent?: boolean;
+    bottomFixed?: boolean;
   } | null>(null);
 
   // Store timer ref for cleanup (prevents memory leak)
@@ -51,16 +54,21 @@ const Layout: React.FunctionComponent<{
   React.useEffect(() => {
     const showToast = (
       message: string,
-      variant: 'info' | 'success' | 'warning' | 'error'
+      variant: 'info' | 'success' | 'warning' | 'error',
+      id?: string,
+      persistent?: boolean,
+      bottomFixed?: boolean
     ) => {
       // Clear any existing timer
       clearTimeout(toastTimerRef.current);
 
       // Show new toast
-      setToast({ message, variant });
+      setToast({ id, message, variant, persistent, bottomFixed });
 
-      // Set new timer with cleanup
-      toastTimerRef.current = setTimeout(() => setToast(null), 5000);
+      // Only set auto-dismiss timer for non-persistent toasts
+      if (!persistent) {
+        toastTimerRef.current = setTimeout(() => setToast(null), 5000);
+      }
     };
 
     const kickHandler = (e: any) => {
@@ -71,17 +79,32 @@ const Layout: React.FunctionComponent<{
     };
 
     const genericHandler = (e: any) => {
-      showToast(e.detail?.message || 'Notification', e.detail?.variant || 'info');
+      showToast(
+        e.detail?.message || 'Notification',
+        e.detail?.variant || 'info',
+        e.detail?.id,
+        e.detail?.persistent,
+        e.detail?.bottomFixed
+      );
+    };
+
+    const dismissHandler = (e: any) => {
+      const dismissId = e.detail?.id;
+      if (dismissId) {
+        setToast((current) => (current?.id === dismissId ? null : current));
+      }
     };
 
     (window as any).addEventListener('quorum:kick-toast', kickHandler);
     (window as any).addEventListener('quorum:toast', genericHandler);
+    (window as any).addEventListener('quorum:toast-dismiss', dismissHandler);
 
     return () => {
       // Clean up timer on unmount
       clearTimeout(toastTimerRef.current);
       (window as any).removeEventListener('quorum:kick-toast', kickHandler);
       (window as any).removeEventListener('quorum:toast', genericHandler);
+      (window as any).removeEventListener('quorum:toast-dismiss', dismissHandler);
     };
   }, []);
 
@@ -155,10 +178,7 @@ const Layout: React.FunctionComponent<{
             {props.children}
             {toast && (
               <Portal>
-                <div
-                  className="fixed bottom-4 right-4 max-w-[360px]"
-                  style={{ zIndex: 2147483647 }}
-                >
+                <div className={`toast-container${toast.bottomFixed ? ' bottom-fixed' : ''}`}>
                   <Callout
                     variant={toast.variant || 'info'}
                     size="sm"
