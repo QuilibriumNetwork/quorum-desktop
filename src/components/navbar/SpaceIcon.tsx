@@ -20,6 +20,7 @@ type SpaceIconProps = {
   spaceId?: string; // Add spaceId to make IDs unique
   highlightedTooltip?: boolean;
   mentionCount?: number;
+  isDropTarget?: boolean; // Show toggle indicator when this is a drop target for merge
 };
 const SpaceIcon: React.FunctionComponent<SpaceIconProps> = (props) => {
   const { backgroundImage } = useImageLoading({
@@ -59,14 +60,16 @@ const SpaceIcon: React.FunctionComponent<SpaceIconProps> = (props) => {
 
   const iconElement = (
     <div className="relative z-[999]">
-      {!props.noToggle && !isDragging && (
+      {!props.noToggle && (!isDragging || props.isDropTarget) && (
         <div
           className={`space-icon-toggle ${
             props.selected
               ? 'space-icon-toggle--selected'
-              : props.notifs
-                ? 'space-icon-toggle--unread'
-                : ''
+              : props.isDropTarget
+                ? 'space-icon-toggle--drop-target'
+                : props.notifs
+                  ? 'space-icon-toggle--unread'
+                  : ''
           }`}
         />
       )}

@@ -47,9 +47,15 @@ const FolderButton: React.FC<FolderButtonProps> = ({
   const buttonElement = (
     <div className="relative">
       {/* Toggle indicator - reuses SpaceIcon toggle styles */}
-      {!isDragging && showIndicators && (
+      {(!isDragging || showWiggle) && showIndicators && (
         <div
-          className={`space-icon-toggle ${hasUnread ? 'space-icon-toggle--unread' : ''}`}
+          className={`space-icon-toggle ${
+            showWiggle
+              ? 'space-icon-toggle--drop-target'
+              : hasUnread
+                ? 'space-icon-toggle--unread'
+                : ''
+          }`}
         />
       )}
       <div

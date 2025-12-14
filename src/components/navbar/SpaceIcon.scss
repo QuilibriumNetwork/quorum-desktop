@@ -84,6 +84,12 @@
     opacity: 1;
     background: var(--accent-500);
   }
+
+  // Drop target state: hover-size bar, visible during drag merge
+  &--drop-target {
+    height: $s-5; // 20px - same as hover size
+    opacity: 1;
+  }
 }
 
 // Show toggle on hover (desktop only) - only when not already in a visible state
