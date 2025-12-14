@@ -87,6 +87,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Pinned Messages Panel Button Clicks Bug](bugs/pinned-messages-panel-clicks-and-message-list-disappearing.md)
 - [Public Invite Link Intermittent Expiration Bug](bugs/public-invite-link-intermittent-expiration.md)
 - [Space Owner Delete Permissions Bug](bugs/space-owner-delete-permissions-bug.md)
+- [user:kick Role Permission is Non-Functional for Non-Owners](bugs/user-kick-role-permission-non-functional.md)
 
 ### Solved Issues
 - [Android 7.0 File Download Fix - Implementation Plan](bugs/.solved/SOLVED_android-file-download-huawei-p9-lite.md)
@@ -313,4 +314,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2025-12-14 17:15:29
+**Last Updated**: 2025-12-14 18:01:53
