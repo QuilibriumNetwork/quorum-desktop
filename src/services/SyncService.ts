@@ -5,6 +5,8 @@ import { MessageDB } from '../db/messages';
 import { channel as secureChannel } from '@quilibrium/quilibrium-js-sdk-channels';
 import { Message } from '../api/quorumApi';
 import { hexToSpreadArray } from '../utils/crypto';
+import { showPersistentToast } from '../utils/toast';
+import { t } from '@lingui/core/macro';
 
 export class SyncService {
   private messageDB: MessageDB;
@@ -190,6 +192,11 @@ export class SyncService {
 
     if (candidates.length == 0) {
       return;
+    }
+
+    const messageDelta = candidates[0].messageCount - messageSet.length;
+    if (messageDelta >= 20) {
+      showPersistentToast('sync', t`Syncing Space...`, 'info');
     }
 
     this.enqueueOutbound(async () => {

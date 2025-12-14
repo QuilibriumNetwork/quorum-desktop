@@ -40,8 +40,11 @@ import {
 } from '../utils/mentionUtils';
 import { MAX_MESSAGE_LENGTH } from '../utils/validation';
 import { hasPermission } from '../utils/permissions';
-import { showWarning } from '../utils/toast';
+import { showWarning, dismissToast } from '../utils/toast';
 import { SimpleRateLimiter, RATE_LIMITS } from '../utils/rateLimit';
+
+// Timer for dismissing sync toast after inactivity
+let syncDismissTimer: NodeJS.Timeout | undefined;
 
 // Type definitions for the service
 export interface MessageServiceDependencies {
@@ -2853,6 +2856,12 @@ export class MessageService {
                     });
                   }
                 }
+
+                // Reset dismiss timer on each sync chunk (5s after last chunk)
+                clearTimeout(syncDismissTimer);
+                syncDismissTimer = setTimeout(() => {
+                  dismissToast('sync');
+                }, 5000);
               }
             }
           }
