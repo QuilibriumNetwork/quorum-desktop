@@ -277,6 +277,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Space Icon Mention Bubbles](tasks/.done/space-icon-mention-bubbles.md)
 - [Space Initials Fallback - Optional Space Images](tasks/.done/space-initials-fallback.md)
 - [Space Recovery Tool in UserSettingsModal](tasks/.done/space-recovery-tool.md)
+- [Sync Toast Notifications](tasks/.done/sync-toast-notifications.md)
 - [Tailwind @apply Conversion Audit](tasks/.done/tailwind-apply-conversion-audit.md)
 - [Task: Enhanced Direct Message Conversation List](tasks/.done/dm-conversation-list-preview.md)
 - [Task: Fix Hash Navigation to Old Messages (#msg-messageId Pattern)](tasks/.done/fix-hash-navigation-to-old-messages.md)
@@ -311,4 +312,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2025-12-14 15:09:49
+**Last Updated**: 2025-12-14 16:35:12
