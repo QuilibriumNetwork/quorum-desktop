@@ -52,10 +52,10 @@ const Roles: React.FunctionComponent<RolesProps> = ({
           <div className="pt-3">
             <Callout variant="info" size="sm" dismissible>
               <Trans>
-                As a space owner, you must assign yourself a role to perform moderation actions. Kicking users is the only action that doesn't require a role.{' '}
+                You must assign yourself a role for moderation actions (except kicking). Grant delete and mute permissions carefully.{' '}
                 <Tooltip
                   id="role-privacy-info"
-                  content={t`Requiring roles for moderation actions protects your identity as the space owner. However, if you're the only one with a specific role, your actions may reveal who you are. For better privacy, consider having multiple users (real or additional accounts) share the same role.`}
+                  content={t`For privacy, your ownership is hidden from other clients. This means: Delete permission holders can delete your messages permanently, Mute permission holders can mute you (reversible). Only grant these to trusted users. Also note: if you're the only one with a role, your actions may reveal you as the owner—consider sharing roles with other trusted users.`}
                   place="top"
                   className="!w-[400px]"
                 >

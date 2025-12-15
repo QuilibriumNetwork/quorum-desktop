@@ -87,8 +87,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Performance Issue: UserSettingsModal Save Times Scale Poorly with Number of Spaces](bugs/usersettingsmodal-scalability-performance.md)
 - [Pinned Messages Panel Button Clicks Bug](bugs/pinned-messages-panel-clicks-and-message-list-disappearing.md)
 - [Public Invite Link Intermittent Expiration Bug](bugs/public-invite-link-intermittent-expiration.md)
-- [Role with message:delete permission can delete space owner's messages](bugs/message-delete-owner-vulnerability.md)
-- [Space Owner Delete Permissions Bug](bugs/space-owner-delete-permissions-bug.md)
+- [Space Owner Privacy Limitation](bugs/space-owner-privacy-limitation.md)
 
 ### Solved Issues
 - [Android 7.0 File Download Fix - Implementation Plan](bugs/.solved/SOLVED_android-file-download-huawei-p9-lite.md)
@@ -111,6 +110,8 @@ This is the main index for all documentation, bug reports, and task management.
 
 ### .Archived
 - [Bug: Auto-jump to First Unread Breaks Initial Message Sync](bugs/.archived/auto-jump-unread-breaks-message-sync.md)
+- [Role with message:delete permission can delete space owner's messages](bugs/.archived/message-delete-owner-vulnerability.md)
+- [Space Owner Delete Permissions Bug](bugs/.archived/space-owner-delete-permissions-bug.md)
 - [Tooltip Flickering at Top-Left on Fast Mouse Movement](bugs/.archived/tooltip-flickering-top-left-on-fast-mouse-movement.md)
 
 ## 📋 Tasks
@@ -317,4 +318,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2025-12-15 11:42:56
+**Last Updated**: 2025-12-15 13:01:48
