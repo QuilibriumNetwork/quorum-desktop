@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { useState } from 'react';
 import { useParams } from 'react-router';
 import ChannelList from './ChannelList';
 import Channel from './Channel';
@@ -9,7 +8,6 @@ import { useResponsiveLayoutContext } from '../context/ResponsiveLayoutProvider'
 import './Space.scss';
 
 const Space: React.FunctionComponent = () => {
-  const [kickUserAddress, setKickUserAddress] = useState<string>();
   const params = useParams<{ spaceId: string; channelId: string }>();
   const { data: space } = useSpace({ spaceId: params.spaceId! });
   const { isMobile, isTablet, leftSidebarOpen, closeLeftSidebar, navMenuOpen } =
@@ -36,8 +34,6 @@ const Space: React.FunctionComponent = () => {
       </div>
       <Channel
         key={`${params.spaceId}-${params.channelId}`}
-        kickUserAddress={kickUserAddress}
-        setKickUserAddress={setKickUserAddress}
         spaceId={params.spaceId}
         channelId={params.channelId}
       />

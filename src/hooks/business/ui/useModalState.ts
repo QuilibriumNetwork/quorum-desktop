@@ -8,6 +8,13 @@ export interface MuteUserTarget {
   isUnmuting?: boolean;
 }
 
+// Kick target interface
+export interface KickUserTarget {
+  address: string;
+  displayName: string;
+  userIcon?: string;
+}
+
 // Modal state interface
 export interface ModalState {
   userSettings: {
@@ -37,7 +44,7 @@ export interface ModalState {
   };
   kickUser: {
     isOpen: boolean;
-    kickUserAddress?: string;
+    target?: KickUserTarget;
   };
   muteUser: {
     isOpen: boolean;
@@ -72,7 +79,7 @@ type ModalAction =
   | { type: 'CLOSE_LEAVE_SPACE' }
   | { type: 'OPEN_NEW_DIRECT_MESSAGE' }
   | { type: 'CLOSE_NEW_DIRECT_MESSAGE' }
-  | { type: 'OPEN_KICK_USER'; kickUserAddress: string }
+  | { type: 'OPEN_KICK_USER'; target: KickUserTarget }
   | { type: 'CLOSE_KICK_USER' }
   | { type: 'OPEN_MUTE_USER'; target: MuteUserTarget }
   | { type: 'CLOSE_MUTE_USER' }
@@ -152,7 +159,7 @@ function modalReducer(state: ModalState, action: ModalAction): ModalState {
     case 'OPEN_KICK_USER':
       return {
         ...state,
-        kickUser: { isOpen: true, kickUserAddress: action.kickUserAddress },
+        kickUser: { isOpen: true, target: action.target },
       };
     case 'CLOSE_KICK_USER':
       return { ...state, kickUser: { isOpen: false } };
@@ -255,8 +262,8 @@ export const useModalState = () => {
   }, []);
 
   // Kick User Modal
-  const openKickUser = useCallback((kickUserAddress: string) => {
-    dispatch({ type: 'OPEN_KICK_USER', kickUserAddress });
+  const openKickUser = useCallback((target: KickUserTarget) => {
+    dispatch({ type: 'OPEN_KICK_USER', target });
   }, []);
 
   const closeKickUser = useCallback(() => {

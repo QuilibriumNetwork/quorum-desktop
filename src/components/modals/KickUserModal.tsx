@@ -1,14 +1,18 @@
 import * as React from 'react';
 import { Button, Modal, Container, Text, FlexRow, Spacer } from '../primitives';
+import { UserAvatar } from '../user/UserAvatar';
 import { useUserKicking } from '../../hooks';
 import { useModalSaveState } from '../../hooks';
 import ModalSaveOverlay from './ModalSaveOverlay';
 import { t } from '@lingui/core/macro';
+import { truncateAddress } from '../../utils';
 
 type KickUserModalProps = {
   visible: boolean;
-  kickUserAddress?: string;
   onClose: () => void;
+  userName: string;
+  userIcon?: string;
+  userAddress: string;
 };
 
 const KickUserModal: React.FunctionComponent<KickUserModalProps> = (props) => {
@@ -35,10 +39,10 @@ const KickUserModal: React.FunctionComponent<KickUserModalProps> = (props) => {
   const handleKickWithOverlay = React.useCallback(() => {
     if (confirmationStep === 0) {
       // First click - just advance to confirmation step
-      handleKickClick(props.kickUserAddress!, () => {});
+      handleKickClick(props.userAddress, () => {});
     } else {
       // Second click - execute kick with overlay
-      if (!props.kickUserAddress) return;
+      if (!props.userAddress) return;
 
       saveUntilComplete(async () => {
         // Ensure minimum 3 second overlay display time
@@ -46,7 +50,7 @@ const KickUserModal: React.FunctionComponent<KickUserModalProps> = (props) => {
         const minDisplayTime = 3000; // 3 seconds
 
         // Execute the kick operation
-        await kickUserFromSpace(props.kickUserAddress!);
+        await kickUserFromSpace(props.userAddress);
 
         // If operation completed too quickly, wait for minimum display time
         const elapsed = Date.now() - startTime;
@@ -55,7 +59,7 @@ const KickUserModal: React.FunctionComponent<KickUserModalProps> = (props) => {
         }
       });
     }
-  }, [confirmationStep, handleKickClick, saveUntilComplete, kickUserFromSpace, props.kickUserAddress]);
+  }, [confirmationStep, handleKickClick, saveUntilComplete, kickUserFromSpace, props.userAddress]);
 
   return (
     <Modal
@@ -70,20 +74,48 @@ const KickUserModal: React.FunctionComponent<KickUserModalProps> = (props) => {
       <ModalSaveOverlay visible={isSaving} message={t`Kicking...`} />
 
       <Container>
-        <Container>
-          <Text typography="body" variant="subtle">
-            {t`Use the below button to kick this user out of the Space`}
-          </Text>
-        </Container>
-        <Spacer size="lg"></Spacer>
-        <FlexRow>
+        <FlexRow gap="md" align="center">
+          <UserAvatar
+            userIcon={props.userIcon}
+            displayName={props.userName}
+            address={props.userAddress}
+            size={40}
+          />
+          <Container className="flex-1 min-w-0 flex flex-col">
+            <Text typography="body" className="font-semibold truncate-user-name">
+              {props.userName}
+            </Text>
+            <Text typography="small">
+              {truncateAddress(props.userAddress)}
+            </Text>
+          </Container>
+        </FlexRow>
+
+        <Spacer size="lg" />
+
+        <Text typography="body" variant="subtle">
+          {t`This user will be removed from the Space.`}
+        </Text>
+
+        <Spacer size="lg" />
+
+        <FlexRow gap="sm">
+          <Button
+            type="subtle"
+            onClick={props.onClose}
+            disabled={isSaving}
+            fullWidth={true}
+          >
+            {t`Cancel`}
+          </Button>
           <Button
             type="danger"
             disabled={isSaving || kicking}
             onClick={handleKickWithOverlay}
             hapticFeedback={true}
+            fullWidth={true}
           >
-            {confirmationStep === 0 ? t`Kick!` : t`Click again to confirm`}
+            {confirmationStep === 0 ? t`Kick` : t`Click again to confirm`}
           </Button>
         </FlexRow>
       </Container>

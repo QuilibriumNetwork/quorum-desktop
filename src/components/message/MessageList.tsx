@@ -50,8 +50,6 @@ interface MessageListProps {
   customEmoji?: Emoji[];
   spaceName?: string;
   roles: Role[];
-  kickUserAddress?: string;
-  setKickUserAddress?: React.Dispatch<React.SetStateAction<string | undefined>>;
   isDeletionInProgress?: boolean;
   onUserClick?: (
     user: {
@@ -106,8 +104,6 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
       channel,
       customEmoji,
       roles,
-      kickUserAddress,
-      setKickUserAddress,
       isDeletionInProgress,
       onUserClick,
       onChannelClick,
@@ -264,8 +260,6 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
               }
               channel={channel}
               submitMessage={submitMessage}
-              kickUserAddress={kickUserAddress}
-              setKickUserAddress={setKickUserAddress}
               onUserClick={onUserClick}
               onChannelClick={onChannelClick}
               spaceChannels={spaceChannels}
@@ -297,8 +291,6 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
         canPinMessages,
         channel,
         submitMessage,
-        kickUserAddress,
-        setKickUserAddress,
         onUserClick,
         onChannelClick,
         spaceChannels,

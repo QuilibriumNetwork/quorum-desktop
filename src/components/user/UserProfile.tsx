@@ -26,18 +26,15 @@ const UserProfile: React.FunctionComponent<{
   canEditRoles?: boolean;
   user: any;
   dismiss?: () => void;
-  kickUserAddress?: string;
-  setKickUserAddress?: React.Dispatch<React.SetStateAction<string | undefined>>;
 }> = (props) => {
   const { currentPasskeyInfo } = usePasskeysContext();
   const { messageDB } = useMessageDB();
-  const { openMuteUser } = useModals();
+  const { openMuteUser, openKickUser } = useModals();
 
   // Extract business logic into hooks
   const { addRole, removeRole, loadingRoles } = useUserRoleManagement(props.spaceId);
-  const { sendMessage, kickUser } = useUserProfileActions({
+  const { sendMessage } = useUserProfileActions({
     dismiss: props.dismiss,
-    setKickUserAddress: props.setKickUserAddress,
   });
   const { userRoles, availableRoles } = useUserRoleDisplay(
     props.user.address,
@@ -255,7 +252,14 @@ const UserProfile: React.FunctionComponent<{
                     size="small"
                     iconName="ban"
                     className="justify-center text-center"
-                    onClick={() => kickUser(props.user.address)}
+                    onClick={() => {
+                      openKickUser({
+                        address: props.user.address,
+                        displayName: props.user.displayName,
+                        userIcon: props.user.userIcon,
+                      });
+                      props.dismiss?.();
+                    }}
                     disabled={props.user.isKicked}
                   >
                     {props.user.isKicked ? t`Kicked!` : t`Kick`}

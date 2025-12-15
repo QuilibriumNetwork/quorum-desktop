@@ -9,7 +9,6 @@ export interface MuteUserTarget {
 
 export interface UserProfileActionsOptions {
   dismiss?: () => void;
-  setKickUserAddress?: React.Dispatch<React.SetStateAction<string | undefined>>;
   setMuteUserTarget?: React.Dispatch<React.SetStateAction<MuteUserTarget | undefined>>;
 }
 
@@ -17,7 +16,7 @@ export const useUserProfileActions = (
   options: UserProfileActionsOptions = {}
 ) => {
   const navigate = useNavigate();
-  const { dismiss, setKickUserAddress, setMuteUserTarget } = options;
+  const { dismiss, setMuteUserTarget } = options;
 
   const sendMessage = useCallback(
     (userAddress: string) => {
@@ -25,16 +24,6 @@ export const useUserProfileActions = (
       dismiss?.();
     },
     [navigate, dismiss]
-  );
-
-  const kickUser = useCallback(
-    (userAddress: string) => {
-      if (setKickUserAddress) {
-        setKickUserAddress(userAddress);
-        dismiss?.();
-      }
-    },
-    [setKickUserAddress, dismiss]
   );
 
   const openMuteModal = useCallback(
@@ -49,7 +38,6 @@ export const useUserProfileActions = (
 
   return {
     sendMessage,
-    kickUser,
     openMuteModal,
   };
 };

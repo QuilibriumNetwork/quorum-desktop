@@ -89,8 +89,6 @@ type MessageProps = {
   editorRef: any;
   height: number;
   submitMessage: (message: any) => Promise<void>;
-  kickUserAddress?: string;
-  setKickUserAddress?: React.Dispatch<React.SetStateAction<string | undefined>>;
   onUserClick?: (
     user: {
       address: string;
@@ -132,8 +130,6 @@ export const Message = React.memo(
     editorRef,
     height,
     submitMessage,
-    kickUserAddress,
-    setKickUserAddress,
     onUserClick,
     onChannelClick,
     spaceChannels = [],
@@ -545,8 +541,6 @@ export const Message = React.memo(
                   <UserProfile
                     spaceId={message.spaceId}
                     canEditRoles={canEditRoles}
-                    kickUserAddress={kickUserAddress}
-                    setKickUserAddress={setKickUserAddress}
                     roles={senderRoles}
                     user={sender}
                     dismiss={() => {
@@ -1262,7 +1256,6 @@ export const Message = React.memo(
       prevProps.emojiPickerPosition !== nextProps.emojiPickerPosition ||
       prevProps.hoverTarget !== nextProps.hoverTarget ||
       prevProps.height !== nextProps.height ||
-      prevProps.kickUserAddress !== nextProps.kickUserAddress ||
       JSON.stringify(prevProps.message.reactions) !==
         JSON.stringify(nextProps.message.reactions) ||
       prevProps.message.isPinned !== nextProps.message.isPinned;

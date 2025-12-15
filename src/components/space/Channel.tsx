@@ -22,7 +22,6 @@ import { t } from '@lingui/core/macro';
 import { GlobalSearch } from '../search';
 import { useResponsiveLayoutContext } from '../context/ResponsiveLayoutProvider';
 import { useSidebar } from '../context/SidebarProvider';
-import { useModals } from '../context/ModalProvider';
 import { Button, Tooltip, Icon, Input } from '../primitives';
 import { MobileDrawer } from '../ui';
 import { getIconColorHex } from './IconPicker/types';
@@ -74,20 +73,15 @@ function canPostInReadOnlyChannel(
 type ChannelProps = {
   spaceId: string;
   channelId: string;
-  kickUserAddress?: string;
-  setKickUserAddress: React.Dispatch<React.SetStateAction<string | undefined>>;
 };
 
 const Channel: React.FC<ChannelProps> = ({
   spaceId,
   channelId,
-  kickUserAddress,
-  setKickUserAddress,
 }) => {
   const navigate = useNavigate();
   const { isDesktop, toggleLeftSidebar, navMenuOpen, toggleNavMenu } =
     useResponsiveLayoutContext();
-  const { openKickUser } = useModals();
   const queryClient = useQueryClient();
   const user = usePasskeysContext();
   const {
@@ -713,14 +707,6 @@ const Channel: React.FC<ChannelProps> = ({
     }
   }, []);
 
-  // Handle kick user modal opening
-  React.useEffect(() => {
-    if (kickUserAddress) {
-      openKickUser(kickUserAddress);
-      setKickUserAddress(undefined); // Clear local state immediately
-    }
-  }, [kickUserAddress, openKickUser, setKickUserAddress]);
-
   // Save read time when viewing channel (for mention count tracking)
   // Uses mutation to ensure proper cache invalidation
   // Uses ref + interval pattern to avoid restarting timer on every new message
@@ -1029,8 +1015,6 @@ const Channel: React.FC<ChannelProps> = ({
                 customEmoji={space?.emojis}
                 members={members}
                 submitMessage={handleSubmitMessage}
-                kickUserAddress={kickUserAddress}
-                setKickUserAddress={setKickUserAddress}
                 isDeletionInProgress={isDeletionInProgress}
                 onUserClick={userProfileModal.handleUserClick}
                 lastReadTimestamp={lastReadTimestamp}
@@ -1276,8 +1260,6 @@ const Channel: React.FC<ChannelProps> = ({
                   key={userProfileModal.selectedUser.address}
                   spaceId={spaceId}
                   canEditRoles={isSpaceOwner}
-                  kickUserAddress={kickUserAddress}
-                  setKickUserAddress={setKickUserAddress}
                   roles={roles || []}
                   user={userProfileModal.selectedUser}
                   dismiss={handleUserProfileClose}

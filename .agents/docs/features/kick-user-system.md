@@ -9,13 +9,35 @@ The Kick User system allows **space owners** to remove users from spaces through
 ### Component Structure
 
 ```
-KickUserModal (UI Component)
+UserProfile.tsx (Kick button)
+    ↓
+ModalProvider (useModals().openKickUser)
+    ↓
+KickUserModal (UI Component with user info display)
     ↓
 useUserKicking (Business Logic Hook)
     ↓
 SpaceService.kickUser (Core Implementation via MessageDB Context)
     ↓
 IndexedDB + Server API
+```
+
+### Modal State Flow
+
+The kick modal uses the centralized modal state system in `useModalState.ts`:
+
+```tsx
+// State interface
+interface KickUserTarget {
+  address: string;
+  displayName: string;
+  userIcon?: string;
+}
+
+// Opening the modal
+openKickUser(target: KickUserTarget) → dispatch({ type: 'OPEN_KICK_USER', target })
+
+// Modal renders when state.kickUser.isOpen && state.kickUser.target
 ```
 
 ## Components
@@ -28,19 +50,22 @@ IndexedDB + Server API
 
 **Key Features**:
 
-- ✅ **Cross-platform compatible** - Uses only primitives (Container, Text, FlexRow, Button, Modal)
-- ✅ **Responsive design** - Text centers on mobile (<640px), left-aligned on desktop
+- ✅ **Cross-platform compatible** - Uses only primitives (Container, Text, FlexRow, Button, Modal, Spacer)
+- ✅ **User identification** - Displays target user's avatar, name, and truncated address
 - ✅ **Confirmation flow** - Requires two clicks to prevent accidental kicks
-- ✅ **Loading states** - Shows disabled state during kick operation
+- ✅ **Loading states** - Shows disabled state and overlay during kick operation
 - ✅ **Auto-reset** - Confirmation resets when modal closes
+- ✅ **Cancel option** - Explicit cancel button alongside kick action
 
 **Props**:
 
 ```tsx
 interface KickUserModalProps {
-  visible: boolean; // Modal visibility
-  kickUserAddress?: string; // Address of user to kick
-  onClose: () => void; // Close handler
+  visible: boolean;      // Modal visibility
+  onClose: () => void;   // Close handler
+  userName: string;      // Display name of user to kick
+  userIcon?: string;     // Avatar URL of user to kick
+  userAddress: string;   // Address of user to kick
 }
 ```
 
@@ -50,7 +75,9 @@ interface KickUserModalProps {
 - `Container` - Layout containers with responsive props
 - `Text` - Typography with variant styling
 - `FlexRow` - Horizontal layout
-- `Button` - Action button with danger styling
+- `Spacer` - Vertical spacing between sections
+- `Button` - Action buttons (Cancel and Kick)
+- `UserAvatar` - User avatar display component
 
 ### useUserKicking (Business Logic Hook)
 
@@ -116,17 +143,22 @@ const [confirmationTimeout, setConfirmationTimeout] =
 ### 1. User Interaction Flow
 
 ```
-User clicks "Kick User" button
+User clicks "Kick" button in UserProfile popup
     ↓
-Modal shows with user confirmation
+openKickUser({ address, displayName, userIcon }) called via ModalProvider
     ↓
-First click: "Kick!" → "Click again to confirm"
+Modal shows with:
+  - User avatar, name, and truncated address
+  - "This user will be removed from the Space" message
+  - Cancel and Kick buttons
+    ↓
+First click on "Kick" → "Click again to confirm"
     ↓
 5-second timeout starts (auto-resets)
     ↓
 Second click: Execute kick operation
     ↓
-Modal shows loading state (button disabled)
+Modal shows loading overlay ("Kicking...")
     ↓
 Operation completes (~5 seconds)
     ↓
@@ -136,9 +168,15 @@ Modal closes, success message appears in chat
 ### 2. Technical Implementation Flow
 
 ```
-handleKickClick(userAddress, onClose)
+UserProfile.tsx: openKickUser({ address, displayName, userIcon })
     ↓
-kickUserFromSpace(userAddress, onClose)
+ModalProvider dispatches OPEN_KICK_USER action with target
+    ↓
+KickUserModal receives props: userName, userIcon, userAddress
+    ↓
+User confirms → handleKickClick(userAddress)
+    ↓
+kickUserFromSpace(userAddress)
     ↓
 SpaceService.kickUser(spaceId, userAddress, userKeyset, deviceKeyset, registration) (via MessageDB Context)
     ↓
@@ -146,7 +184,7 @@ SpaceService.kickUser(spaceId, userAddress, userKeyset, deviceKeyset, registrati
     ↓
 queryClient.invalidateQueries(['SpaceMembers', spaceId])
     ↓
-onClose() - Modal closes
+Modal auto-closes on success
 ```
 
 ### 3. `SpaceService.kickUser` Implementation
@@ -334,6 +372,6 @@ SpaceService.kickUser(
 ---
 
 **Last Updated**: 2025-12-15
-**Verified**: 2025-12-15 - Clarified owner-only kick (protocol-level enforcement)
+**Verified**: 2025-12-15 - Updated modal props and flow (user info display via ModalProvider)
 **Status**: Production Ready
 **Cross-Platform**: ✅ Web + Mobile Compatible

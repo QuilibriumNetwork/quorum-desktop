@@ -13,6 +13,7 @@ import {
   useModalState,
   type ModalState,
   type MuteUserTarget,
+  type KickUserTarget,
 } from '../../hooks/business/ui/useModalState';
 import { useUserMuting } from '../../hooks/business/user/useUserMuting';
 
@@ -35,7 +36,7 @@ interface ModalContextType {
   closeLeaveSpace: () => void;
   openNewDirectMessage: () => void;
   closeNewDirectMessage: () => void;
-  openKickUser: (kickUserAddress: string) => void;
+  openKickUser: (target: KickUserTarget) => void;
   closeKickUser: () => void;
   openMuteUser: (target: MuteUserTarget) => void;
   closeMuteUser: () => void;
@@ -157,11 +158,13 @@ export const ModalProvider: React.FC<ModalProviderProps> = ({
         )}
 
       {modalState.state.kickUser.isOpen &&
-        modalState.state.kickUser.kickUserAddress && (
+        modalState.state.kickUser.target && (
           <KickUserModal
-            kickUserAddress={modalState.state.kickUser.kickUserAddress}
             visible={true}
             onClose={modalState.closeKickUser}
+            userName={modalState.state.kickUser.target.displayName}
+            userIcon={modalState.state.kickUser.target.userIcon}
+            userAddress={modalState.state.kickUser.target.address}
           />
         )}
 
