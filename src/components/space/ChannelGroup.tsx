@@ -119,6 +119,7 @@ const ChannelGroup: React.FunctionComponent<{
                 name={props.group.icon as any}
                 size="sm"
                 variant={props.group.iconVariant || 'outline'}
+                className="flex-shrink-0"
                 style={{
                   color: getIconColorHex(props.group.iconColor as IconColor)
                 }}
