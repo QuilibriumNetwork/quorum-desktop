@@ -31,7 +31,7 @@ msgid "No Role - {count}"
 msgstr "Нет роли - {count}"
 
 #. js-lingui-explicit-id
-#: src/components/space/Channel.tsx:1062
+#: src/components/space/Channel.tsx:1055
 msgid "Send a message to #{channel_name}"
 msgstr "Отправить сообщение для #{channel_name}"
 
@@ -65,17 +65,17 @@ msgid "Replying to"
 msgstr "Отвечая на"
 
 #. js-lingui-explicit-id
-#: src/components/message/Message.tsx:307
+#: src/components/message/Message.tsx:303
 msgid "has joined"
 msgstr "присоединился"
 
 #. js-lingui-explicit-id
-#: src/components/message/Message.tsx:315
+#: src/components/message/Message.tsx:311
 msgid "has left"
 msgstr "покинул"
 
 #. js-lingui-explicit-id
-#: src/components/message/Message.tsx:323
+#: src/components/message/Message.tsx:319
 msgid "has been kicked"
 msgstr "был исключен"
 
@@ -88,8 +88,8 @@ msgstr "Отправить сообщение для {user}"
 msgid " for updates."
 msgstr "для обновлений."
 
-#: src/components/message/Message.tsx:757
-#: src/components/message/Message.tsx:770
+#: src/components/message/Message.tsx:751
+#: src/components/message/Message.tsx:764
 msgid "(edited)"
 msgstr "(отредактировано)"
 
@@ -278,7 +278,7 @@ msgstr ""
 "использоваться только в Space. Вы можете загрузить PNG, JPG или GIF, "
 "максимум 25 МБ (автоматически оптимизировано)."
 
-#: src/components/user/UserProfile.tsx:186
+#: src/components/user/UserProfile.tsx:200
 msgid "Adding..."
 msgstr "Добавление..."
 
@@ -414,16 +414,6 @@ msgstr "Вы уверены, что хотите закрепить это со�
 msgid "Are you sure you want to unpin this message?"
 msgstr "Вы уверены, что хотите открепить это сообщение?"
 
-#: src/components/modals/SpaceSettingsModal/Roles.tsx:54
-msgid ""
-"As a space owner, you must assign yourself a role to perform moderation "
-"actions. Kicking users is the only action that doesn't require a role. "
-"<0><1>Learn more</1></0>"
-msgstr ""
-"Как владелец пространства, вы должны назначить себе роль для выполнения "
-"действий модерации. Исключением является возможность исключения "
-"пользователей, для которой роль не требуется. <0><1>Узнать больше</1></0>"
-
 #: src/components/message/MessageComposer.tsx:580
 msgid "attach image"
 msgstr "прикрепить изображение"
@@ -458,8 +448,8 @@ msgstr "Сообщение закладки"
 msgid "Bookmark messages to save them for later reference"
 msgstr "Сообщения закладок для сохранения их на будущее"
 
-#: src/components/message/Message.tsx:724
-#: src/components/message/Message.tsx:802
+#: src/components/message/Message.tsx:718
+#: src/components/message/Message.tsx:796
 msgid "Bookmarked"
 msgstr "Закладка добавлена"
 
@@ -472,7 +462,7 @@ msgid "Bookmarked sticker"
 msgstr "Закладка стикера"
 
 #: src/components/direct/DirectMessage.tsx:687
-#: src/components/space/Channel.tsx:901
+#: src/components/space/Channel.tsx:896
 msgid "Bookmarks"
 msgstr "Закладки"
 
@@ -493,6 +483,8 @@ msgstr "Разрешение на использование камеры нео
 #: src/components/modals/ConfirmationModal.native.tsx:27
 #: src/components/modals/ConfirmationModal.tsx:29
 #: src/components/modals/ConversationSettingsModal.tsx:63
+#: src/components/modals/KickUserModal.tsx:109
+#: src/components/modals/MuteUserModal.tsx:107
 #: src/components/primitives/FileUpload/FileUpload.native.tsx:173
 #: src/hooks/business/channels/useChannelManagement.ts:253
 #: src/hooks/business/messages/useMessageActions.ts:159
@@ -538,7 +530,7 @@ msgstr "Иконка канала"
 msgid "Channel Managers"
 msgstr "Менеджеры канала"
 
-#: src/components/space/Channel.tsx:1286
+#: src/components/space/Channel.tsx:1279
 msgid "Channel members"
 msgstr "Участники канала"
 
@@ -609,7 +601,7 @@ msgstr "Очистка уведомлений с тегом: {tag}"
 #: src/components/modals/ChannelEditorModal.tsx:217
 #: src/components/modals/FolderEditorModal.tsx:133
 #: src/components/modals/GroupEditorModal.tsx:131
-#: src/components/modals/KickUserModal.tsx:86
+#: src/components/modals/KickUserModal.tsx:118
 #: src/components/modals/LeaveSpaceModal.tsx:64
 #: src/components/modals/SpaceSettingsModal/Account.tsx:256
 #: src/components/modals/SpaceSettingsModal/Danger.tsx:68
@@ -678,7 +670,7 @@ msgstr "Скопировано!"
 #: src/components/direct/DirectMessage.tsx:755
 #: src/components/modals/UserSettingsModal/General.tsx:118
 #: src/components/user/ExpandableUserAvatar.tsx:90
-#: src/components/user/UserProfile.tsx:109
+#: src/components/user/UserProfile.tsx:123
 #: src/components/user/UserStatus.tsx:47
 msgid "Copy address"
 msgstr "Скопировать адрес"
@@ -849,7 +841,7 @@ msgstr "Удалить сообщение"
 msgid "Delete Message"
 msgstr "Удалить сообщение"
 
-#: src/components/modals/SpaceSettingsModal/Roles.tsx:162
+#: src/components/modals/SpaceSettingsModal/Roles.tsx:174
 msgid "Delete Messages"
 msgstr "Удалить сообщения"
 
@@ -1076,7 +1068,7 @@ msgid "Failed to create space. Please try again."
 msgstr "Не удалось создать пространство. Пожалуйста, попробуйте еще раз."
 
 #: src/components/context/MessageDB.bak.tsx:984
-#: src/services/MessageService.ts:1760
+#: src/services/MessageService.ts:1825
 msgid "Failed to decrypt message with any known state"
 msgstr "Не удалось расшифровать сообщение с известным состоянием"
 
@@ -1089,6 +1081,10 @@ msgstr ""
 #: src/components/bookmarks/BookmarksPanel.tsx:180
 msgid "Failed to load bookmarks"
 msgstr "Не удалось загрузить закладки"
+
+#: src/components/modals/MuteUserModal.tsx:51
+msgid "Failed to mute user"
+msgstr "Не удалось отключить звук пользователя"
 
 #: src/components/primitives/FileUpload/FileUpload.native.tsx:105
 msgid "Failed to open image picker"
@@ -1113,6 +1109,10 @@ msgstr "Не удалось выбрать документ"
 #: src/hooks/business/spaces/useInviteManagement.ts:144
 msgid "Failed to send invite. Please try again."
 msgstr "Не удалось отправить приглашение. Пожалуйста, попробуйте снова."
+
+#: src/components/modals/MuteUserModal.tsx:51
+msgid "Failed to unmute user"
+msgstr "Не удалось включить звук пользователя"
 
 #: src/hooks/business/spaces/useSpaceProfile.ts:216
 msgid "Failed to update profile"
@@ -1204,8 +1204,24 @@ msgstr "Название папки должно содержать {MAX_NAME_LE
 msgid "Folder Settings"
 msgstr "Настройки папки"
 
+#: src/components/modals/SpaceSettingsModal/Roles.tsx:58
+msgid ""
+"For privacy, your ownership is hidden from other clients. This means: Delete"
+" permission holders can delete your messages permanently, Mute permission "
+"holders can mute you (reversible). Only grant these to trusted users. Also "
+"note: if you're the only one with a role, your actions may reveal you as the"
+" owner—consider sharing roles with other trusted users."
+msgstr ""
+"В целях конфиденциальности ваше владение скрыто от других клиентов. Это "
+"означает: держатели разрешений на удаление могут навсегда удалить ваши "
+"сообщения, держатели разрешений на отключение звука могут отключить вас "
+"(обратимо). Предоставляйте эти права только доверенным пользователям. Также "
+"обратите внимание: если вы единственный с ролью, ваши действия могут выдать "
+"вас как владельца — подумайте о том, чтобы поделиться ролями с другими "
+"доверенными пользователями."
+
 #: src/components/context/MessageDB.bak.tsx:3186
-#: src/services/SpaceService.ts:236
+#: src/services/SpaceService.ts:233
 msgid "general"
 msgstr "общий"
 
@@ -1215,7 +1231,7 @@ msgid "General"
 msgstr "Общий"
 
 #: src/components/context/MessageDB.bak.tsx:3187
-#: src/services/SpaceService.ts:237
+#: src/services/SpaceService.ts:234
 msgid "General Chat"
 msgstr "Общий чат"
 
@@ -1325,7 +1341,7 @@ msgid "Important messages will be pinned here"
 msgstr "Важные сообщения будут закреплены здесь"
 
 #: src/components/context/MessageDB.bak.tsx:1184
-#: src/services/MessageService.ts:1959
+#: src/services/MessageService.ts:2024
 msgid "invalid address for signature"
 msgstr "недействительный адрес для подписи"
 
@@ -1355,7 +1371,7 @@ msgstr "недействительная ссылка"
 msgid "Invalid message ID"
 msgstr "Недопустимый ID сообщения"
 
-#: src/components/context/MessageDB.bak.tsx:5180 src/utils/canonicalize.ts:114
+#: src/components/context/MessageDB.bak.tsx:5180 src/utils/canonicalize.ts:126
 msgid "invalid message type"
 msgstr "недействительный тип сообщения"
 
@@ -1406,7 +1422,7 @@ msgstr "Присоединение..."
 msgid "Jump"
 msgstr "Перейти"
 
-#: src/components/message/MessageList.tsx:536
+#: src/components/message/MessageList.tsx:528
 msgid "Jump to present"
 msgstr "Перейти к настоящему"
 
@@ -1426,24 +1442,20 @@ msgstr "Ключ готов"
 msgid "Key Saved"
 msgstr "Ключ сохранен"
 
-#: src/components/modals/KickUserModal.tsx:66
-#: src/components/user/UserProfile.tsx:211
+#: src/components/modals/KickUserModal.tsx:118
+#: src/components/user/UserProfile.tsx:265
+msgid "Kick"
+msgstr "Кик"
+
+#: src/components/modals/KickUserModal.tsx:70
 msgid "Kick User"
 msgstr "Удалить пользователя"
 
-#: src/components/modals/SpaceSettingsModal/Roles.tsx:170
-msgid "Kick Users"
-msgstr "Исключить пользователей"
-
-#: src/components/modals/KickUserModal.tsx:86
-msgid "Kick!"
-msgstr "Выгнать!"
-
-#: src/components/user/UserProfile.tsx:211
+#: src/components/user/UserProfile.tsx:265
 msgid "Kicked!"
 msgstr "Выгнан!"
 
-#: src/components/modals/KickUserModal.tsx:70
+#: src/components/modals/KickUserModal.tsx:74
 msgid "Kicking..."
 msgstr "Выкидывание..."
 
@@ -1487,7 +1499,7 @@ msgstr "Свет"
 msgid "Loading bookmarks..."
 msgstr "Загрузка закладок..."
 
-#: src/components/message/MessageList.tsx:547
+#: src/components/message/MessageList.tsx:539
 msgid "Loading message..."
 msgstr "Загрузка сообщения..."
 
@@ -1567,7 +1579,7 @@ msgstr "Отметить все как прочитанные"
 
 #: src/components/direct/DirectMessage.tsx:668
 #: src/components/direct/DirectMessage.tsx:861
-#: src/components/space/Channel.tsx:927
+#: src/components/space/Channel.tsx:922
 msgid "Members List"
 msgstr "Список участников"
 
@@ -1581,7 +1593,7 @@ msgstr ""
 "этом канале только для чтения. Примечание: владельцы пространства также "
 "должны быть в роли менеджера, чтобы отправлять сообщения здесь."
 
-#: src/components/modals/SpaceSettingsModal/Roles.tsx:174
+#: src/components/modals/SpaceSettingsModal/Roles.tsx:162
 msgid "Mention Everyone"
 msgstr "Упомянуть всех"
 
@@ -1593,8 +1605,8 @@ msgstr "Действия с сообщениями"
 msgid "Message deleted"
 msgstr "Сообщение удалено"
 
-#: src/components/message/Message.tsx:740
-#: src/components/message/Message.tsx:818
+#: src/components/message/Message.tsx:734
+#: src/components/message/Message.tsx:812
 msgid ""
 "Message does not have a valid signature, this may not be from the sender"
 msgstr ""
@@ -1615,6 +1627,19 @@ msgstr "Сообщения подписаны!"
 #: src/components/message/MessageActions.tsx:92
 msgid "More reactions"
 msgstr "Другие реакции"
+
+#: src/components/modals/MuteUserModal.tsx:118
+#: src/components/user/UserProfile.tsx:246
+msgid "Mute"
+msgstr "Отключить звук"
+
+#: src/components/modals/MuteUserModal.tsx:62
+msgid "Mute User"
+msgstr "Отключить звук пользователя"
+
+#: src/components/modals/SpaceSettingsModal/Roles.tsx:170
+msgid "Mute Users"
+msgstr "Отключить звук пользователей"
 
 #: src/hooks/business/validation/useDisplayNameValidation.ts:26
 #: src/hooks/business/validation/useDisplayNameValidation.ts:55
@@ -1693,8 +1718,8 @@ msgstr "Пока нет закреплённых сообщений"
 msgid "No unread notifications"
 msgstr "Нет непрочитанных уведомлений"
 
-#: src/components/space/Channel.tsx:614 src/components/space/Channel.tsx:1134
-#: src/components/space/Channel.tsx:1325
+#: src/components/space/Channel.tsx:617 src/components/space/Channel.tsx:1129
+#: src/components/space/Channel.tsx:1318
 msgid "No users found!"
 msgstr "Пользователи не найдены!"
 
@@ -1709,7 +1734,7 @@ msgstr "Разрешение на уведомления не предостав
 #: src/components/modals/SpaceSettingsModal/Account.tsx:187
 #: src/components/modals/UserSettingsModal/Navigation.tsx:17
 #: src/components/modals/UserSettingsModal/Notifications.tsx:24
-#: src/components/space/Channel.tsx:866
+#: src/components/space/Channel.tsx:861
 msgid "Notifications"
 msgstr "Уведомления"
 
@@ -1843,19 +1868,19 @@ msgstr "Закрепить сообщения"
 msgid "Pin to top"
 msgstr "Закрепить вверху"
 
-#: src/components/message/Message.tsx:708
-#: src/components/message/Message.tsx:786
+#: src/components/message/Message.tsx:702
+#: src/components/message/Message.tsx:780
 msgid "Pinned"
 msgstr "Закреплено"
 
 #. placeholder {0}: mapSenderToUser(message.pinnedBy)?.displayName ||
 #. message.pinnedBy
-#: src/components/message/Message.tsx:707
-#: src/components/message/Message.tsx:785
+#: src/components/message/Message.tsx:701
+#: src/components/message/Message.tsx:779
 msgid "Pinned by {0}"
 msgstr "Закреплено пользователем {0}"
 
-#: src/components/space/Channel.tsx:826
+#: src/components/space/Channel.tsx:821
 msgid "Pinned Messages"
 msgstr "Закреплённые сообщения"
 
@@ -1978,7 +2003,7 @@ msgstr "Удалить"
 msgid "Remove bookmark"
 msgstr "Удалить закладку"
 
-#: src/components/user/UserProfile.tsx:158
+#: src/components/user/UserProfile.tsx:172
 msgid "Removing..."
 msgstr "Удаление..."
 
@@ -2005,19 +2030,6 @@ msgid ""
 msgstr ""
 "Требовать, чтобы сообщения, отправленные в этом Space, были подписаны "
 "отправителем. Технически это делает сообщения в этом Space необратимыми."
-
-#: src/components/modals/SpaceSettingsModal/Roles.tsx:58
-msgid ""
-"Requiring roles for moderation actions protects your identity as the space "
-"owner. However, if you're the only one with a specific role, your actions "
-"may reveal who you are. For better privacy, consider having multiple users "
-"(real or additional accounts) share the same role."
-msgstr ""
-"Требование ролей для действий модерации защищает вашу личность как владельца"
-" пространства. Однако, если вы единственный, у кого есть конкретная роль, "
-"ваши действия могут выдать вашу личность. Для лучшей конфиденциальности "
-"рассмотрите возможность назначения нескольких пользователей (реальных или "
-"дополнительных аккаунтов) на одну и ту же роль."
 
 #: src/components/modals/AddSpaceModal.tsx:266
 msgid "Reset"
@@ -2117,7 +2129,7 @@ msgid "Search in this Space..."
 msgstr "Поиск в этом Пространстве..."
 
 #: src/components/direct/DirectMessage.tsx:714
-#: src/components/space/Channel.tsx:946
+#: src/components/space/Channel.tsx:941
 msgid "Search Messages"
 msgstr "Поиск сообщений"
 
@@ -2133,7 +2145,7 @@ msgstr "Результаты поиска"
 msgid "Search username or address"
 msgstr "Поиск имени пользователя или адреса"
 
-#: src/components/space/Channel.tsx:1297
+#: src/components/space/Channel.tsx:1290
 msgid "Search Username or Address"
 msgstr "Поиск имени пользователя или адреса"
 
@@ -2191,7 +2203,7 @@ msgstr "Отправить"
 msgid "Send Invite"
 msgstr "Отправить приглашение"
 
-#: src/components/user/UserProfile.tsx:201
+#: src/components/user/UserProfile.tsx:218
 msgid "Send Message"
 msgstr "Отправить сообщение"
 
@@ -2297,6 +2309,10 @@ msgstr "Успешно отправлено приглашение на {0}"
 msgid "Sync Kick Status"
 msgstr "Синхронизировать статус исключения"
 
+#: src/services/SyncService.ts:199
+msgid "Syncing Space..."
+msgstr "Синхронизация Пространства..."
+
 #: src/components/ui/ThemeRadioGroup.tsx:28
 msgid "System"
 msgstr "Система"
@@ -2399,6 +2415,20 @@ msgstr "Это Пространство"
 msgid "This user is already a member of this space."
 msgstr "Этот пользователь уже является участником этого Пространства."
 
+#: src/components/modals/MuteUserModal.tsx:93
+msgid "This user will be able to send messages in this Space again."
+msgstr ""
+"Этот пользователь снова сможет отправлять сообщения в этом Пространстве."
+
+#: src/components/modals/KickUserModal.tsx:97
+msgid "This user will be removed from the Space."
+msgstr "Этот пользователь будет удален из Пространства."
+
+#: src/components/modals/MuteUserModal.tsx:94
+msgid "This user will no longer be able to send messages in this Space."
+msgstr ""
+"Этот пользователь больше не сможет отправлять сообщения в этом Пространстве."
+
 #: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:609
 msgid ""
 "This will create a public invite link that anyone can use to join your "
@@ -2487,7 +2517,7 @@ msgid "Unable to copy to clipboard"
 msgstr "Не удалось скопировать в буфер обмена"
 
 #: src/components/context/MessageDB.bak.tsx:3482
-#: src/services/SpaceService.ts:553
+#: src/services/SpaceService.ts:550
 msgid ""
 "Unable to leave space due to incomplete configuration. The space data may be"
 " corrupted."
@@ -2568,12 +2598,21 @@ msgstr "Неизвестное время"
 #: src/hooks/business/search/useSearchResultDisplayDM.ts:33
 #: src/hooks/business/search/useSearchResultDisplaySpace.ts:45
 #: src/hooks/queries/userInfo/buildUserInfoFetcher.ts:15
-#: src/services/EncryptionService.ts:138 src/services/MessageService.ts:1426
-#: src/services/MessageService.ts:1598 src/services/MessageService.ts:1738
-#: src/services/MessageService.ts:1756 src/services/MessageService.ts:3101
-#: src/services/MessageService.ts:3235 src/services/MessageService.ts:3399
+#: src/services/EncryptionService.ts:138 src/services/MessageService.ts:1491
+#: src/services/MessageService.ts:1663 src/services/MessageService.ts:1803
+#: src/services/MessageService.ts:1821 src/services/MessageService.ts:3172
+#: src/services/MessageService.ts:3306 src/services/MessageService.ts:3470
 msgid "Unknown User"
 msgstr "Неизвестный пользователь"
+
+#: src/components/modals/MuteUserModal.tsx:118
+#: src/components/user/UserProfile.tsx:246
+msgid "Unmute"
+msgstr "Включить звук"
+
+#: src/components/modals/MuteUserModal.tsx:62
+msgid "Unmute User"
+msgstr "Включить звук пользователя"
 
 #: src/hooks/business/messages/usePinnedMessages.ts:274
 msgid "unpin"
@@ -2636,11 +2675,6 @@ msgstr "Загрузить наклейку"
 msgid "Use \"Save to Files\" to save your private key"
 msgstr "Используйте \"Сохранить в файлы\", чтобы сохранить ваш приватный ключ"
 
-#: src/components/modals/KickUserModal.tsx:75
-msgid "Use the below button to kick this user out of the Space"
-msgstr ""
-"Используйте кнопку ниже, чтобы выгнать этого пользователя из Пространства"
-
 #: src/components/modals/NewDirectMessageModal.tsx:107
 msgid "User address here"
 msgstr "Адрес пользователя здесь"
@@ -2650,12 +2684,20 @@ msgstr "Адрес пользователя здесь"
 msgid "User does not exist."
 msgstr "Пользователь не существует."
 
+#: src/components/modals/MuteUserModal.tsx:117
+msgid "User Muted!"
+msgstr "Пользователь отключен!"
+
 #: src/hooks/business/messages/usePinnedMessages.ts:76
 #: src/hooks/business/messages/usePinnedMessages.ts:136
 msgid "User not authenticated"
 msgstr "Пользователь не аутентифицирован"
 
-#: src/components/space/Channel.tsx:601 src/components/space/Channel.tsx:1120
+#: src/components/modals/MuteUserModal.tsx:117
+msgid "User Unmuted!"
+msgstr "Пользователь включен!"
+
+#: src/components/space/Channel.tsx:604 src/components/space/Channel.tsx:1115
 msgid "Username or Address"
 msgstr "Имя пользователя или адрес"
 
@@ -2819,7 +2861,7 @@ msgstr ""
 "{channelCount} каналы в этой группе."
 
 #: src/components/message/MessageComposer.tsx:334
-#: src/components/space/Channel.tsx:1086
+#: src/components/space/Channel.tsx:1081
 msgid "You cannot post in this channel"
 msgstr "Вы не можете публиковать в этом канале"
 
@@ -2832,9 +2874,22 @@ msgstr "Вы не можете отправить прямое сообщени�
 msgid "You have a new unread message"
 msgstr "У вас новое непрочитанное сообщение"
 
+#: src/components/space/Channel.tsx:1079
+msgid "You have been muted in this Space"
+msgstr "Вы были отключены в этом Пространстве"
+
 #: src/services/NotificationService.ts:103
 msgid "You have new unread messages"
 msgstr "У вас новые непрочитанные сообщения"
+
+#: src/components/modals/SpaceSettingsModal/Roles.tsx:54
+msgid ""
+"You must assign yourself a role for moderation actions (except kicking). "
+"Grant delete and mute permissions carefully. <0><1>Learn more</1></0>"
+msgstr ""
+"Вы должны назначить себе роль для действий модерации (кроме кика). Осторожно"
+" предоставляйте разрешения на удаление и отключение звука. <0><1>Узнать "
+"больше</1></0>"
 
 #: src/components/modals/SpaceSettingsModal/Account.tsx:241
 msgid ""
@@ -2970,6 +3025,15 @@ msgstr "Миниатюра видео YouTube"
 #~ "если вас не пригласят снова. Ваши существующие сообщения НЕ будут удалены."
 
 #~ msgid ""
+#~ "As a space owner, you must assign yourself a role to perform moderation "
+#~ "actions. Kicking users is the only action that doesn't require a role. "
+#~ "<0><1>Learn more</1></0>"
+#~ msgstr ""
+#~ "Как владелец пространства, вы должны назначить себе роль для выполнения "
+#~ "действий модерации. Исключением является возможность исключения "
+#~ "пользователей, для которой роль не требуется. <0><1>Узнать больше</1></0>"
+
+#~ msgid ""
 #~ "As a space owner, you need to assign yourself a role with delete permissions"
 #~ " to delete other users' messages. <0><1>Learn more</1></0>"
 #~ msgstr ""
@@ -3001,6 +3065,12 @@ msgstr "Миниатюра видео YouTube"
 #~ msgid "Enter a name for your new Space"
 #~ msgstr "Введите имя для вашего нового пространства"
 
+#~ msgid "Kick Users"
+#~ msgstr "Исключить пользователей"
+
+#~ msgid "Kick!"
+#~ msgstr "Выгнать!"
+
 #~ msgid "No topic"
 #~ msgstr "Нет темы"
 
@@ -3012,6 +3082,18 @@ msgstr "Миниатюра видео YouTube"
 
 #~ msgid "Processing..."
 #~ msgstr "Обработка..."
+
+#~ msgid ""
+#~ "Requiring roles for moderation actions protects your identity as the space "
+#~ "owner. However, if you're the only one with a specific role, your actions "
+#~ "may reveal who you are. For better privacy, consider having multiple users "
+#~ "(real or additional accounts) share the same role."
+#~ msgstr ""
+#~ "Требование ролей для действий модерации защищает вашу личность как владельца"
+#~ " пространства. Однако, если вы единственный, у кого есть конкретная роль, "
+#~ "ваши действия могут выдать вашу личность. Для лучшей конфиденциальности "
+#~ "рассмотрите возможность назначения нескольких пользователей (реальных или "
+#~ "дополнительных аккаунтов) на одну и ту же роль."
 
 #~ msgid ""
 #~ "Select any existing role as managers for this channel. Managers have post, "
@@ -3074,6 +3156,10 @@ msgstr "Миниатюра видео YouTube"
 #~ msgstr ""
 #~ "Загрузите изображение, выберите имя и, при желании, добавьте описание для "
 #~ "вашего Space."
+
+#~ msgid "Use the below button to kick this user out of the Space"
+#~ msgstr ""
+#~ "Используйте кнопку ниже, чтобы выгнать этого пользователя из Пространства"
 
 #~ msgid "When someone mentions a role you have (Coming Soon)"
 #~ msgstr "Когда кто-то упоминает роль, которую вы имеете (Скоро)"

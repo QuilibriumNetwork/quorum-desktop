@@ -31,7 +31,7 @@ msgid "No Role - {count}"
 msgstr "無角色 - {count}"
 
 #. js-lingui-explicit-id
-#: src/components/space/Channel.tsx:1062
+#: src/components/space/Channel.tsx:1055
 msgid "Send a message to #{channel_name}"
 msgstr "傳送訊息至 #{channel_name}"
 
@@ -61,17 +61,17 @@ msgid "Replying to"
 msgstr "回覆中"
 
 #. js-lingui-explicit-id
-#: src/components/message/Message.tsx:307
+#: src/components/message/Message.tsx:303
 msgid "has joined"
 msgstr "已加入"
 
 #. js-lingui-explicit-id
-#: src/components/message/Message.tsx:315
+#: src/components/message/Message.tsx:311
 msgid "has left"
 msgstr "已離開"
 
 #. js-lingui-explicit-id
-#: src/components/message/Message.tsx:323
+#: src/components/message/Message.tsx:319
 msgid "has been kicked"
 msgstr "已被踢出"
 
@@ -90,8 +90,8 @@ msgstr "更新中。"
 #~ msgid "'everyone' is a reserved name."
 #~ msgstr "'everyone' 是保留名稱。"
 
-#: src/components/message/Message.tsx:757
-#: src/components/message/Message.tsx:770
+#: src/components/message/Message.tsx:751
+#: src/components/message/Message.tsx:764
 msgid "(edited)"
 msgstr "(編輯過的)"
 
@@ -291,7 +291,7 @@ msgstr "最多可添加 50 個自訂 emoji。自訂 emoji 只能在 Space 內使
 msgid "Add up to 50 custom stickers. Custom stickers can only be used within a Space. You can upload PNG, JPG or GIF, max 25MB (automatically optimized)."
 msgstr "最多可添加 50 個自訂貼圖。自訂貼圖只能在 Space 內使用。您可以上傳 PNG、JPG 或 GIF，最大 25MB（自動優化）。"
 
-#: src/components/user/UserProfile.tsx:186
+#: src/components/user/UserProfile.tsx:200
 msgid "Adding..."
 msgstr "正在添加..."
 
@@ -341,7 +341,7 @@ msgstr "所有空間"
 
 #: src/components/modals/ModalSaveOverlay.tsx:76
 msgid "Almost done..."
-msgstr ""
+msgstr "快完成了..."
 
 #: src/components/modals/AddSpaceModal.tsx:259
 msgid "Already Joined"
@@ -410,8 +410,8 @@ msgid "Are you sure you want to unpin this message?"
 msgstr "您確定要取消釘選此訊息嗎？"
 
 #: src/components/modals/SpaceSettingsModal/Roles.tsx:54
-msgid "As a space owner, you must assign yourself a role to perform moderation actions. Kicking users is the only action that doesn't require a role. <0><1>Learn more</1></0>"
-msgstr "作為空間擁有者，您必須為自己分配一個角色以執行管理操作。踢出用戶是唯一不需要角色的操作。<0><1>了解更多</1></0>"
+#~ msgid "As a space owner, you must assign yourself a role to perform moderation actions. Kicking users is the only action that doesn't require a role. <0><1>Learn more</1></0>"
+#~ msgstr "作為空間擁有者，您必須為自己分配一個角色以執行管理操作。踢出用戶是唯一不需要角色的操作。<0><1>了解更多</1></0>"
 
 #~ msgid "As a space owner, you need to assign yourself a role with delete permissions to delete other users' messages. <0><1>Learn more</1></0>"
 #~ msgstr "作為空間擁有者，您需要為自己分配一個具有刪除權限的角色，以刪除其他用戶的消息。<0><1>了解更多</1></0>"
@@ -453,8 +453,8 @@ msgstr "書籤訊息"
 msgid "Bookmark messages to save them for later reference"
 msgstr "書籤訊息以便稍後參考"
 
-#: src/components/message/Message.tsx:724
-#: src/components/message/Message.tsx:802
+#: src/components/message/Message.tsx:718
+#: src/components/message/Message.tsx:796
 msgid "Bookmarked"
 msgstr "已書籤"
 
@@ -467,7 +467,7 @@ msgid "Bookmarked sticker"
 msgstr "已書籤的貼紙"
 
 #: src/components/direct/DirectMessage.tsx:687
-#: src/components/space/Channel.tsx:901
+#: src/components/space/Channel.tsx:896
 msgid "Bookmarks"
 msgstr "書籤"
 
@@ -488,6 +488,8 @@ msgstr "需要相機權限才能拍攝照片"
 #: src/components/modals/ConfirmationModal.native.tsx:27
 #: src/components/modals/ConfirmationModal.tsx:29
 #: src/components/modals/ConversationSettingsModal.tsx:63
+#: src/components/modals/KickUserModal.tsx:109
+#: src/components/modals/MuteUserModal.tsx:107
 #: src/components/primitives/FileUpload/FileUpload.native.tsx:173
 #: src/hooks/business/channels/useChannelManagement.ts:253
 #: src/hooks/business/messages/useMessageActions.ts:159
@@ -527,7 +529,7 @@ msgstr "頻道圖示"
 msgid "Channel Managers"
 msgstr "頻道管理員"
 
-#: src/components/space/Channel.tsx:1286
+#: src/components/space/Channel.tsx:1279
 msgid "Channel members"
 msgstr "頻道成員"
 
@@ -598,7 +600,7 @@ msgstr "清除標籤為 {tag} 的通知"
 #: src/components/modals/ChannelEditorModal.tsx:217
 #: src/components/modals/FolderEditorModal.tsx:133
 #: src/components/modals/GroupEditorModal.tsx:131
-#: src/components/modals/KickUserModal.tsx:86
+#: src/components/modals/KickUserModal.tsx:118
 #: src/components/modals/LeaveSpaceModal.tsx:64
 #: src/components/modals/SpaceSettingsModal/Account.tsx:256
 #: src/components/modals/SpaceSettingsModal/Danger.tsx:68
@@ -657,7 +659,7 @@ msgstr "已複製！"
 #: src/components/direct/DirectMessage.tsx:755
 #: src/components/modals/UserSettingsModal/General.tsx:118
 #: src/components/user/ExpandableUserAvatar.tsx:90
-#: src/components/user/UserProfile.tsx:109
+#: src/components/user/UserProfile.tsx:123
 #: src/components/user/UserStatus.tsx:47
 msgid "Copy address"
 msgstr "複製地址"
@@ -712,11 +714,11 @@ msgstr "無法驗證邀請"
 
 #: src/hooks/business/user/useOnboardingFlowLogic.ts:273
 msgid "Couldn't decrypt your saved profile. Please re-enter your name and profile image."
-msgstr ""
+msgstr "無法解密您保存的個人資料。請重新輸入您的姓名和個人資料圖片。"
 
 #: src/hooks/business/user/useOnboardingFlowLogic.ts:278
 msgid "Couldn't load your saved profile. Please re-enter your name and profile image."
-msgstr ""
+msgstr "無法加載您保存的個人資料。請重新輸入您的姓名和個人資料圖片。"
 
 #: src/components/modals/AddSpaceModal.tsx:293
 #: src/components/modals/CreateSpaceModal.tsx:79
@@ -750,7 +752,7 @@ msgstr "黑暗"
 
 #: src/components/modals/UserSettingsModal/Privacy.tsx:198
 msgid "Data Recovery"
-msgstr ""
+msgstr "數據恢復"
 
 #: src/components/context/MessageDB.bak.tsx:5415
 #: src/services/ConfigService.ts:142
@@ -820,7 +822,7 @@ msgstr "刪除訊息"
 msgid "Delete Message"
 msgstr "刪除訊息"
 
-#: src/components/modals/SpaceSettingsModal/Roles.tsx:162
+#: src/components/modals/SpaceSettingsModal/Roles.tsx:174
 msgid "Delete Messages"
 msgstr "刪除訊息"
 
@@ -1045,7 +1047,7 @@ msgid "Failed to create space. Please try again."
 msgstr "創建空間失敗。請再試一次。"
 
 #: src/components/context/MessageDB.bak.tsx:984
-#: src/services/MessageService.ts:1760
+#: src/services/MessageService.ts:1825
 msgid "Failed to decrypt message with any known state"
 msgstr "無法使用任何已知狀態解密消息"
 
@@ -1057,6 +1059,10 @@ msgstr "生成邀請鏈接失敗。請再試一次。"
 msgid "Failed to load bookmarks"
 msgstr "無法載入書籤"
 
+#: src/components/modals/MuteUserModal.tsx:51
+msgid "Failed to mute user"
+msgstr ""
+
 #: src/components/primitives/FileUpload/FileUpload.native.tsx:105
 msgid "Failed to open image picker"
 msgstr "無法打開圖像選擇器"
@@ -1067,7 +1073,7 @@ msgstr "無法解析 WebSocket 消息："
 
 #: src/hooks/business/user/useSpaceRecovery.ts:101
 msgid "Failed to restore spaces"
-msgstr ""
+msgstr "恢復空間失敗"
 
 #: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:271
 msgid "Failed to save notification settings"
@@ -1080,6 +1086,10 @@ msgstr "無法選擇文件"
 #: src/hooks/business/spaces/useInviteManagement.ts:144
 msgid "Failed to send invite. Please try again."
 msgstr "邀請發送失敗。請再試一次。"
+
+#: src/components/modals/MuteUserModal.tsx:51
+msgid "Failed to unmute user"
+msgstr ""
 
 #: src/hooks/business/spaces/useSpaceProfile.ts:216
 msgid "Failed to update profile"
@@ -1171,8 +1181,12 @@ msgstr "資料夾名稱必須少於 {MAX_NAME_LENGTH} 個字元"
 msgid "Folder Settings"
 msgstr "資料夾設定"
 
+#: src/components/modals/SpaceSettingsModal/Roles.tsx:58
+msgid "For privacy, your ownership is hidden from other clients. This means: Delete permission holders can delete your messages permanently, Mute permission holders can mute you (reversible). Only grant these to trusted users. Also note: if you're the only one with a role, your actions may reveal you as the owner—consider sharing roles with other trusted users."
+msgstr ""
+
 #: src/components/context/MessageDB.bak.tsx:3186
-#: src/services/SpaceService.ts:236
+#: src/services/SpaceService.ts:233
 msgid "general"
 msgstr "一般"
 
@@ -1182,7 +1196,7 @@ msgid "General"
 msgstr "一般設定"
 
 #: src/components/context/MessageDB.bak.tsx:3187
-#: src/services/SpaceService.ts:237
+#: src/services/SpaceService.ts:234
 msgid "General Chat"
 msgstr "一般聊天"
 
@@ -1237,7 +1251,7 @@ msgstr "群組名稱必須少於 {MAX_NAME_LENGTH} 個字符"
 
 #: src/components/modals/ModalSaveOverlay.tsx:83
 msgid "Hang in there..."
-msgstr ""
+msgstr "稍等一下..."
 
 #: src/components/direct/EmptyDirectMessage.tsx:54
 msgid "hide home screen"
@@ -1281,7 +1295,7 @@ msgid "Important messages will be pinned here"
 msgstr "重要訊息將固定在這裡"
 
 #: src/components/context/MessageDB.bak.tsx:1184
-#: src/services/MessageService.ts:1959
+#: src/services/MessageService.ts:2024
 msgid "invalid address for signature"
 msgstr "簽名的地址無效"
 
@@ -1311,7 +1325,7 @@ msgid "Invalid message ID"
 msgstr "無效的訊息 ID"
 
 #: src/components/context/MessageDB.bak.tsx:5180
-#: src/utils/canonicalize.ts:114
+#: src/utils/canonicalize.ts:126
 msgid "invalid message type"
 msgstr "消息類型無效"
 
@@ -1363,7 +1377,7 @@ msgstr "加入中..."
 msgid "Jump"
 msgstr "跳轉"
 
-#: src/components/message/MessageList.tsx:536
+#: src/components/message/MessageList.tsx:528
 msgid "Jump to present"
 msgstr "跳到现在"
 
@@ -1383,24 +1397,28 @@ msgstr "密鑰已準備好"
 msgid "Key Saved"
 msgstr "密鑰已保存"
 
-#: src/components/modals/KickUserModal.tsx:66
-#: src/components/user/UserProfile.tsx:211
+#: src/components/modals/KickUserModal.tsx:118
+#: src/components/user/UserProfile.tsx:265
+msgid "Kick"
+msgstr ""
+
+#: src/components/modals/KickUserModal.tsx:70
 msgid "Kick User"
 msgstr "踢除使用者"
 
 #: src/components/modals/SpaceSettingsModal/Roles.tsx:170
-msgid "Kick Users"
-msgstr "踢出用戶"
+#~ msgid "Kick Users"
+#~ msgstr "踢出用戶"
 
 #: src/components/modals/KickUserModal.tsx:86
-msgid "Kick!"
-msgstr "踢出！"
+#~ msgid "Kick!"
+#~ msgstr "踢出！"
 
-#: src/components/user/UserProfile.tsx:211
+#: src/components/user/UserProfile.tsx:265
 msgid "Kicked!"
 msgstr "被踢出！"
 
-#: src/components/modals/KickUserModal.tsx:70
+#: src/components/modals/KickUserModal.tsx:74
 msgid "Kicking..."
 msgstr "踢出中..."
 
@@ -1440,7 +1458,7 @@ msgstr "光"
 msgid "Loading bookmarks..."
 msgstr "正在載入書籤..."
 
-#: src/components/message/MessageList.tsx:547
+#: src/components/message/MessageList.tsx:539
 msgid "Loading message..."
 msgstr "載入訊息中..."
 
@@ -1454,7 +1472,7 @@ msgstr "正在加載固定訊息..."
 
 #: src/components/onboarding/Onboarding.tsx:143
 msgid "Loading your profile..."
-msgstr ""
+msgstr "正在加載您的個人資料..."
 
 #: src/hooks/business/conversations/useDirectMessageCreation.ts:32
 msgid "Looking up user..."
@@ -1508,7 +1526,7 @@ msgstr "全部標記為已讀"
 
 #: src/components/direct/DirectMessage.tsx:668
 #: src/components/direct/DirectMessage.tsx:861
-#: src/components/space/Channel.tsx:927
+#: src/components/space/Channel.tsx:922
 msgid "Members List"
 msgstr "成員列表"
 
@@ -1516,7 +1534,7 @@ msgstr "成員列表"
 msgid "Members of selected roles can post, delete, and pin messages in this read-only channel. Note: Space owners must also be in a manager role to post here."
 msgstr "所選角色的成員可以在此只讀頻道中發佈、刪除和置頂消息。注意：空間擁有者必須也在經理角色中才能在此發佈。"
 
-#: src/components/modals/SpaceSettingsModal/Roles.tsx:174
+#: src/components/modals/SpaceSettingsModal/Roles.tsx:162
 msgid "Mention Everyone"
 msgstr "提及所有人"
 
@@ -1528,8 +1546,8 @@ msgstr "消息操作"
 msgid "Message deleted"
 msgstr "訊息已刪除"
 
-#: src/components/message/Message.tsx:740
-#: src/components/message/Message.tsx:818
+#: src/components/message/Message.tsx:734
+#: src/components/message/Message.tsx:812
 msgid "Message does not have a valid signature, this may not be from the sender"
 msgstr "消息沒有有效的簽名，這可能不是發件人發送的"
 
@@ -1548,6 +1566,19 @@ msgstr "消息已簽名！"
 #: src/components/message/MessageActions.tsx:92
 msgid "More reactions"
 msgstr "更多反應"
+
+#: src/components/modals/MuteUserModal.tsx:118
+#: src/components/user/UserProfile.tsx:246
+msgid "Mute"
+msgstr ""
+
+#: src/components/modals/MuteUserModal.tsx:62
+msgid "Mute User"
+msgstr ""
+
+#: src/components/modals/SpaceSettingsModal/Roles.tsx:170
+msgid "Mute Users"
+msgstr ""
 
 #: src/hooks/business/validation/useDisplayNameValidation.ts:26
 #: src/hooks/business/validation/useDisplayNameValidation.ts:55
@@ -1604,7 +1635,7 @@ msgstr "未找到消息"
 
 #: src/hooks/business/user/useSpaceRecovery.ts:76
 msgid "No missing spaces found"
-msgstr ""
+msgstr "未找到缺失的空間"
 
 #: src/components/message/PinnedMessagesPanel.tsx:193
 msgid "No pinned messages yet"
@@ -1620,9 +1651,9 @@ msgstr "尚無固定訊息"
 msgid "No unread notifications"
 msgstr "沒有未讀通知"
 
-#: src/components/space/Channel.tsx:614
-#: src/components/space/Channel.tsx:1134
-#: src/components/space/Channel.tsx:1325
+#: src/components/space/Channel.tsx:617
+#: src/components/space/Channel.tsx:1129
+#: src/components/space/Channel.tsx:1318
 msgid "No users found!"
 msgstr "找不到使用者！"
 
@@ -1637,7 +1668,7 @@ msgstr "通知權限未授予"
 #: src/components/modals/SpaceSettingsModal/Account.tsx:187
 #: src/components/modals/UserSettingsModal/Navigation.tsx:17
 #: src/components/modals/UserSettingsModal/Notifications.tsx:24
-#: src/components/space/Channel.tsx:866
+#: src/components/space/Channel.tsx:861
 msgid "Notifications"
 msgstr "通知"
 
@@ -1772,18 +1803,18 @@ msgstr "固定訊息"
 msgid "Pin to top"
 msgstr "釘住到頂部"
 
-#: src/components/message/Message.tsx:708
-#: src/components/message/Message.tsx:786
+#: src/components/message/Message.tsx:702
+#: src/components/message/Message.tsx:780
 msgid "Pinned"
 msgstr "已固定"
 
 #. placeholder {0}: mapSenderToUser(message.pinnedBy)?.displayName || message.pinnedBy
-#: src/components/message/Message.tsx:707
-#: src/components/message/Message.tsx:785
+#: src/components/message/Message.tsx:701
+#: src/components/message/Message.tsx:779
 msgid "Pinned by {0}"
 msgstr "由 {0} 固定"
 
-#: src/components/space/Channel.tsx:826
+#: src/components/space/Channel.tsx:821
 msgid "Pinned Messages"
 msgstr "固定訊息"
 
@@ -1883,7 +1914,7 @@ msgstr "移除"
 msgid "Remove bookmark"
 msgstr "移除書籤"
 
-#: src/components/user/UserProfile.tsx:158
+#: src/components/user/UserProfile.tsx:172
 msgid "Removing..."
 msgstr "正在移除..."
 
@@ -1908,8 +1939,8 @@ msgid "Require messages sent in this Space to be signed by the sender. Technical
 msgstr "要求在此空間中發送的消息由發送者簽名。從技術上講，這使得此空間中的消息不可否認。"
 
 #: src/components/modals/SpaceSettingsModal/Roles.tsx:58
-msgid "Requiring roles for moderation actions protects your identity as the space owner. However, if you're the only one with a specific role, your actions may reveal who you are. For better privacy, consider having multiple users (real or additional accounts) share the same role."
-msgstr "對於管理操作要求角色可以保護您作為空間擁有者的身份。然而，如果您是唯一擁有特定角色的人，您的行為可能會揭示您的身份。為了更好的隱私，考慮讓多個用戶（真實或額外帳戶）共享相同的角色。"
+#~ msgid "Requiring roles for moderation actions protects your identity as the space owner. However, if you're the only one with a specific role, your actions may reveal who you are. For better privacy, consider having multiple users (real or additional accounts) share the same role."
+#~ msgstr "對於管理操作要求角色可以保護您作為空間擁有者的身份。然而，如果您是唯一擁有特定角色的人，您的行為可能會揭示您的身份。為了更好的隱私，考慮讓多個用戶（真實或額外帳戶）共享相同的角色。"
 
 #: src/components/modals/AddSpaceModal.tsx:266
 msgid "Reset"
@@ -1917,20 +1948,20 @@ msgstr "重置"
 
 #: src/components/modals/UserSettingsModal/Privacy.tsx:208
 msgid "Restore Missing Spaces"
-msgstr ""
+msgstr "恢復缺失的空間"
 
 #: src/components/modals/UserSettingsModal/Privacy.tsx:200
 msgid "Restore Spaces that exist on this device but are missing from your navigation menu."
-msgstr ""
+msgstr "恢復此設備上存在但在導航菜單中缺失的空間。"
 
 #. placeholder {0}: recoverable.length
 #: src/hooks/business/user/useSpaceRecovery.ts:98
 msgid "Restored {0} space(s)"
-msgstr ""
+msgstr "已恢復 {0} 個空間"
 
 #: src/components/modals/UserSettingsModal/Privacy.tsx:208
 msgid "Restoring..."
-msgstr ""
+msgstr "正在恢復..."
 
 #: src/components/modals/SpaceSettingsModal/Navigation.tsx:22
 #: src/components/modals/SpaceSettingsModal/Roles.tsx:45
@@ -2007,7 +2038,7 @@ msgid "Search in this Space..."
 msgstr "在此空間中搜尋..."
 
 #: src/components/direct/DirectMessage.tsx:714
-#: src/components/space/Channel.tsx:946
+#: src/components/space/Channel.tsx:941
 msgid "Search Messages"
 msgstr "搜尋消息"
 
@@ -2023,7 +2054,7 @@ msgstr "搜尋結果"
 msgid "Search username or address"
 msgstr "搜尋用戶名或地址"
 
-#: src/components/space/Channel.tsx:1297
+#: src/components/space/Channel.tsx:1290
 msgid "Search Username or Address"
 msgstr "搜尋用戶名或地址"
 
@@ -2090,7 +2121,7 @@ msgstr "傳送邀請"
 #~ msgid "Send invites to people you've previously had conversations with. An invite button will appear in their inbox."
 #~ msgstr "向曾有對話的對象發送邀請，他們的收件箱將顯示邀請按鈕。"
 
-#: src/components/user/UserProfile.tsx:201
+#: src/components/user/UserProfile.tsx:218
 msgid "Send Message"
 msgstr "發送消息"
 
@@ -2193,6 +2224,10 @@ msgstr "同步踢出狀態"
 #~ msgid "Sync kick status for previously kicked users. This verifies kicks without posting visible messages."
 #~ msgstr "同步之前被踢出用戶的踢出狀態。這會在不發佈可見消息的情況下驗證踢出。"
 
+#: src/services/SyncService.ts:199
+msgid "Syncing Space..."
+msgstr ""
+
 #: src/components/ui/ThemeRadioGroup.tsx:28
 msgid "System"
 msgstr "系統"
@@ -2243,7 +2278,7 @@ msgstr "此信息僅提供給您加入的空間。"
 
 #: src/components/modals/ModalSaveOverlay.tsx:90
 msgid "This is embarrassing..."
-msgstr ""
+msgstr "這真尷尬..."
 
 #: src/components/modals/UserSettingsModal/General.tsx:110
 msgid "This is your public address and is safe to share with anyone you want to interact with."
@@ -2278,6 +2313,18 @@ msgstr "此空間"
 msgid "This user is already a member of this space."
 msgstr "該用戶已經是此空間的成員。"
 
+#: src/components/modals/MuteUserModal.tsx:93
+msgid "This user will be able to send messages in this Space again."
+msgstr ""
+
+#: src/components/modals/KickUserModal.tsx:97
+msgid "This user will be removed from the Space."
+msgstr ""
+
+#: src/components/modals/MuteUserModal.tsx:94
+msgid "This user will no longer be able to send messages in this Space."
+msgstr ""
+
 #: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:609
 msgid "This will create a public invite link that anyone can use to join your Space. Consider who you share this link with."
 msgstr "這將創建一個公共邀請連結，任何人都可以使用它來加入您的空間。考慮與誰分享這個連結。"
@@ -2291,7 +2338,7 @@ msgstr "這將生成一個新的公共邀請連結並使當前的連結失效。
 
 #: src/components/modals/ModalSaveOverlay.tsx:97
 msgid "Timeout in 10 seconds anyway..."
-msgstr ""
+msgstr "反正10秒後超時..."
 
 #: src/components/modals/ConfirmationModal.native.tsx:57
 #: src/components/modals/ConfirmationModal.tsx:78
@@ -2344,13 +2391,13 @@ msgid "Unable to copy to clipboard"
 msgstr "無法複製到剪貼簿"
 
 #: src/components/context/MessageDB.bak.tsx:3482
-#: src/services/SpaceService.ts:553
+#: src/services/SpaceService.ts:550
 msgid "Unable to leave space due to incomplete configuration. The space data may be corrupted."
 msgstr "由於配置不完整，無法離開空間。空間數據可能已損壞。"
 
 #: src/hooks/business/user/useSpaceRecovery.ts:39
 msgid "Unable to load user config"
-msgstr ""
+msgstr "無法加載用戶配置"
 
 #: src/utils/imageProcessing/errors.ts:33
 msgid "Unable to process emoji image. Please use a smaller image."
@@ -2366,7 +2413,7 @@ msgstr "無法處理貼圖圖像。請使用較小的圖像。"
 
 #: src/hooks/business/user/useSpaceRecovery.ts:23
 msgid "Unable to restore: not logged in"
-msgstr ""
+msgstr "無法恢復：未登錄"
 
 #: src/components/modals/JoinSpaceModal.tsx:112
 msgid "Unknown"
@@ -2416,15 +2463,24 @@ msgstr "未知時間"
 #: src/hooks/business/search/useSearchResultDisplaySpace.ts:45
 #: src/hooks/queries/userInfo/buildUserInfoFetcher.ts:15
 #: src/services/EncryptionService.ts:138
-#: src/services/MessageService.ts:1426
-#: src/services/MessageService.ts:1598
-#: src/services/MessageService.ts:1738
-#: src/services/MessageService.ts:1756
-#: src/services/MessageService.ts:3101
-#: src/services/MessageService.ts:3235
-#: src/services/MessageService.ts:3399
+#: src/services/MessageService.ts:1491
+#: src/services/MessageService.ts:1663
+#: src/services/MessageService.ts:1803
+#: src/services/MessageService.ts:1821
+#: src/services/MessageService.ts:3172
+#: src/services/MessageService.ts:3306
+#: src/services/MessageService.ts:3470
 msgid "Unknown User"
 msgstr "未知使用者"
+
+#: src/components/modals/MuteUserModal.tsx:118
+#: src/components/user/UserProfile.tsx:246
+msgid "Unmute"
+msgstr ""
+
+#: src/components/modals/MuteUserModal.tsx:62
+msgid "Unmute User"
+msgstr ""
 
 #: src/hooks/business/messages/usePinnedMessages.ts:274
 msgid "unpin"
@@ -2483,8 +2539,8 @@ msgid "Use \"Save to Files\" to save your private key"
 msgstr "使用“保存到文件”來保存您的私鑰"
 
 #: src/components/modals/KickUserModal.tsx:75
-msgid "Use the below button to kick this user out of the Space"
-msgstr "使用下面的按鈕將此用戶踢出空間"
+#~ msgid "Use the below button to kick this user out of the Space"
+#~ msgstr "使用下面的按鈕將此用戶踢出空間"
 
 #: src/components/modals/NewDirectMessageModal.tsx:107
 msgid "User address here"
@@ -2495,13 +2551,21 @@ msgstr "用戶地址在這裡"
 msgid "User does not exist."
 msgstr "用戶不存在。"
 
+#: src/components/modals/MuteUserModal.tsx:117
+msgid "User Muted!"
+msgstr ""
+
 #: src/hooks/business/messages/usePinnedMessages.ts:76
 #: src/hooks/business/messages/usePinnedMessages.ts:136
 msgid "User not authenticated"
 msgstr "用戶未經身份驗證"
 
-#: src/components/space/Channel.tsx:601
-#: src/components/space/Channel.tsx:1120
+#: src/components/modals/MuteUserModal.tsx:117
+msgid "User Unmuted!"
+msgstr ""
+
+#: src/components/space/Channel.tsx:604
+#: src/components/space/Channel.tsx:1115
 msgid "Username or Address"
 msgstr "用戶名或地址"
 
@@ -2606,7 +2670,7 @@ msgid "You cannot delete a group that contains channels. Delete all {channelCoun
 msgstr "你不能刪除包含頻道的群組。請先刪除此群組中的所有{channelCount}個頻道。"
 
 #: src/components/message/MessageComposer.tsx:334
-#: src/components/space/Channel.tsx:1086
+#: src/components/space/Channel.tsx:1081
 msgid "You cannot post in this channel"
 msgstr "你不能在此頻道中發佈"
 
@@ -2619,9 +2683,17 @@ msgstr "您無法向自己發送直接消息。"
 msgid "You have a new unread message"
 msgstr "你有一條新的未讀消息"
 
+#: src/components/space/Channel.tsx:1079
+msgid "You have been muted in this Space"
+msgstr ""
+
 #: src/services/NotificationService.ts:103
 msgid "You have new unread messages"
 msgstr "你有新的未讀消息"
+
+#: src/components/modals/SpaceSettingsModal/Roles.tsx:54
+msgid "You must assign yourself a role for moderation actions (except kicking). Grant delete and mute permissions carefully. <0><1>Learn more</1></0>"
+msgstr ""
 
 #: src/components/modals/SpaceSettingsModal/Account.tsx:241
 msgid "You won't be able to rejoin unless you are re-invited. Your existing messages will NOT be deleted."

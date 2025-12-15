@@ -31,7 +31,7 @@ msgid "No Role - {count}"
 msgstr "Ingen roll - {count}"
 
 #. js-lingui-explicit-id
-#: src/components/space/Channel.tsx:1062
+#: src/components/space/Channel.tsx:1055
 msgid "Send a message to #{channel_name}"
 msgstr "Skicka ett meddelande till #{channel_name}"
 
@@ -65,17 +65,17 @@ msgid "Replying to"
 msgstr "Svarar på"
 
 #. js-lingui-explicit-id
-#: src/components/message/Message.tsx:307
+#: src/components/message/Message.tsx:303
 msgid "has joined"
 msgstr "har anslutit"
 
 #. js-lingui-explicit-id
-#: src/components/message/Message.tsx:315
+#: src/components/message/Message.tsx:311
 msgid "has left"
 msgstr "har lämnat"
 
 #. js-lingui-explicit-id
-#: src/components/message/Message.tsx:323
+#: src/components/message/Message.tsx:319
 msgid "has been kicked"
 msgstr "har blivit utkickad"
 
@@ -88,8 +88,8 @@ msgstr "Skicka ett meddelande till {user}"
 msgid " for updates."
 msgstr "för uppdateringar."
 
-#: src/components/message/Message.tsx:757
-#: src/components/message/Message.tsx:770
+#: src/components/message/Message.tsx:751
+#: src/components/message/Message.tsx:764
 msgid "(edited)"
 msgstr "(redigerad)"
 
@@ -278,7 +278,7 @@ msgstr ""
 "endast användas inom ett Space. Du kan ladda upp PNG, JPG eller GIF, max "
 "25MB (automatiskt optimerad)."
 
-#: src/components/user/UserProfile.tsx:186
+#: src/components/user/UserProfile.tsx:200
 msgid "Adding..."
 msgstr "Lägger till..."
 
@@ -414,16 +414,6 @@ msgstr "Är du säker på att du vill fästa det här meddelandet?"
 msgid "Are you sure you want to unpin this message?"
 msgstr "Är du säker på att du vill avfästa det här meddelandet?"
 
-#: src/components/modals/SpaceSettingsModal/Roles.tsx:54
-msgid ""
-"As a space owner, you must assign yourself a role to perform moderation "
-"actions. Kicking users is the only action that doesn't require a role. "
-"<0><1>Learn more</1></0>"
-msgstr ""
-"Som ägare av ett Space måste du tilldela dig själv en roll för att utföra "
-"modereringsåtgärder. Att sparka användare är den enda åtgärden som inte "
-"kräver en roll. <0><1>Lär dig mer</1></0>"
-
 #: src/components/message/MessageComposer.tsx:580
 msgid "attach image"
 msgstr "bifoga bild"
@@ -458,8 +448,8 @@ msgstr "Bokmärkesmeddelande"
 msgid "Bookmark messages to save them for later reference"
 msgstr "Bokmärkesmeddelanden för att spara dem för senare referens"
 
-#: src/components/message/Message.tsx:724
-#: src/components/message/Message.tsx:802
+#: src/components/message/Message.tsx:718
+#: src/components/message/Message.tsx:796
 msgid "Bookmarked"
 msgstr "Bokmärkt"
 
@@ -472,7 +462,7 @@ msgid "Bookmarked sticker"
 msgstr "Bokmärkt klistermärke"
 
 #: src/components/direct/DirectMessage.tsx:687
-#: src/components/space/Channel.tsx:901
+#: src/components/space/Channel.tsx:896
 msgid "Bookmarks"
 msgstr "Bokmärken"
 
@@ -493,6 +483,8 @@ msgstr "Kamerabehörighet krävs för att ta foton"
 #: src/components/modals/ConfirmationModal.native.tsx:27
 #: src/components/modals/ConfirmationModal.tsx:29
 #: src/components/modals/ConversationSettingsModal.tsx:63
+#: src/components/modals/KickUserModal.tsx:109
+#: src/components/modals/MuteUserModal.tsx:107
 #: src/components/primitives/FileUpload/FileUpload.native.tsx:173
 #: src/hooks/business/channels/useChannelManagement.ts:253
 #: src/hooks/business/messages/useMessageActions.ts:159
@@ -536,7 +528,7 @@ msgstr "Kanalikon"
 msgid "Channel Managers"
 msgstr "Kanalansvariga"
 
-#: src/components/space/Channel.tsx:1286
+#: src/components/space/Channel.tsx:1279
 msgid "Channel members"
 msgstr "Kanalmedlemmar"
 
@@ -607,7 +599,7 @@ msgstr "Rensar aviseringar med tagg: {tag}"
 #: src/components/modals/ChannelEditorModal.tsx:217
 #: src/components/modals/FolderEditorModal.tsx:133
 #: src/components/modals/GroupEditorModal.tsx:131
-#: src/components/modals/KickUserModal.tsx:86
+#: src/components/modals/KickUserModal.tsx:118
 #: src/components/modals/LeaveSpaceModal.tsx:64
 #: src/components/modals/SpaceSettingsModal/Account.tsx:256
 #: src/components/modals/SpaceSettingsModal/Danger.tsx:68
@@ -676,7 +668,7 @@ msgstr "Kopierad!"
 #: src/components/direct/DirectMessage.tsx:755
 #: src/components/modals/UserSettingsModal/General.tsx:118
 #: src/components/user/ExpandableUserAvatar.tsx:90
-#: src/components/user/UserProfile.tsx:109
+#: src/components/user/UserProfile.tsx:123
 #: src/components/user/UserStatus.tsx:47
 msgid "Copy address"
 msgstr "Kopiera adress"
@@ -845,7 +837,7 @@ msgstr "Ta bort meddelande"
 msgid "Delete Message"
 msgstr "Ta bort meddelande"
 
-#: src/components/modals/SpaceSettingsModal/Roles.tsx:162
+#: src/components/modals/SpaceSettingsModal/Roles.tsx:174
 msgid "Delete Messages"
 msgstr "Ta bort meddelanden"
 
@@ -1072,7 +1064,7 @@ msgid "Failed to create space. Please try again."
 msgstr "Misslyckades med att skapa utrymme. Vänligen försök igen."
 
 #: src/components/context/MessageDB.bak.tsx:984
-#: src/services/MessageService.ts:1760
+#: src/services/MessageService.ts:1825
 msgid "Failed to decrypt message with any known state"
 msgstr "Misslyckades med att dekryptera meddelande med någon känd status"
 
@@ -1083,6 +1075,10 @@ msgstr "Misslyckades med att generera inbjudningslänk. Försök igen."
 #: src/components/bookmarks/BookmarksPanel.tsx:180
 msgid "Failed to load bookmarks"
 msgstr "Misslyckades med att ladda bokmärken"
+
+#: src/components/modals/MuteUserModal.tsx:51
+msgid "Failed to mute user"
+msgstr "Misslyckades att stänga av användaren"
 
 #: src/components/primitives/FileUpload/FileUpload.native.tsx:105
 msgid "Failed to open image picker"
@@ -1107,6 +1103,10 @@ msgstr "Misslyckades att välja dokument"
 #: src/hooks/business/spaces/useInviteManagement.ts:144
 msgid "Failed to send invite. Please try again."
 msgstr "Misslyckades med att skicka inbjudan. Vänligen försök igen."
+
+#: src/components/modals/MuteUserModal.tsx:51
+msgid "Failed to unmute user"
+msgstr "Misslyckades att slå på ljudet för användaren"
 
 #: src/hooks/business/spaces/useSpaceProfile.ts:216
 msgid "Failed to update profile"
@@ -1198,8 +1198,23 @@ msgstr "Mappnamn måste vara {MAX_NAME_LENGTH} tecken eller färre"
 msgid "Folder Settings"
 msgstr "Mappinställningar"
 
+#: src/components/modals/SpaceSettingsModal/Roles.tsx:58
+msgid ""
+"For privacy, your ownership is hidden from other clients. This means: Delete"
+" permission holders can delete your messages permanently, Mute permission "
+"holders can mute you (reversible). Only grant these to trusted users. Also "
+"note: if you're the only one with a role, your actions may reveal you as the"
+" owner—consider sharing roles with other trusted users."
+msgstr ""
+"Av sekretessskäl är ditt ägarskap dolt för andra klienter. Detta innebär: "
+"Raderingsbehörighetsinnehavare kan permanent radera dina meddelanden, Stänga"
+" av ljudbehörighetsinnehavare kan stänga av ljudet för dig (återställbart). "
+"Ge endast dessa till betrodda användare. Observera också: om du är den enda "
+"med en roll kan dina åtgärder avslöja dig som ägare—överväg att dela roller "
+"med andra betrodda användare."
+
 #: src/components/context/MessageDB.bak.tsx:3186
-#: src/services/SpaceService.ts:236
+#: src/services/SpaceService.ts:233
 msgid "general"
 msgstr "allmän"
 
@@ -1209,7 +1224,7 @@ msgid "General"
 msgstr "Allmän"
 
 #: src/components/context/MessageDB.bak.tsx:3187
-#: src/services/SpaceService.ts:237
+#: src/services/SpaceService.ts:234
 msgid "General Chat"
 msgstr "Allmän chatt"
 
@@ -1319,7 +1334,7 @@ msgid "Important messages will be pinned here"
 msgstr "Viktiga meddelanden kommer att fästas här"
 
 #: src/components/context/MessageDB.bak.tsx:1184
-#: src/services/MessageService.ts:1959
+#: src/services/MessageService.ts:2024
 msgid "invalid address for signature"
 msgstr "ogiltig adress för signatur"
 
@@ -1348,7 +1363,7 @@ msgstr "ogiltig länk"
 msgid "Invalid message ID"
 msgstr "Ogiltigt meddelande-ID"
 
-#: src/components/context/MessageDB.bak.tsx:5180 src/utils/canonicalize.ts:114
+#: src/components/context/MessageDB.bak.tsx:5180 src/utils/canonicalize.ts:126
 msgid "invalid message type"
 msgstr "ogiltig meddelandetyp"
 
@@ -1399,7 +1414,7 @@ msgstr "Går med..."
 msgid "Jump"
 msgstr "Hoppa"
 
-#: src/components/message/MessageList.tsx:536
+#: src/components/message/MessageList.tsx:528
 msgid "Jump to present"
 msgstr "Hoppa till nutid"
 
@@ -1419,24 +1434,20 @@ msgstr "Nyckel redo"
 msgid "Key Saved"
 msgstr "Nyckel sparad"
 
-#: src/components/modals/KickUserModal.tsx:66
-#: src/components/user/UserProfile.tsx:211
+#: src/components/modals/KickUserModal.tsx:118
+#: src/components/user/UserProfile.tsx:265
+msgid "Kick"
+msgstr "Sparka"
+
+#: src/components/modals/KickUserModal.tsx:70
 msgid "Kick User"
 msgstr "Kicka användare"
 
-#: src/components/modals/SpaceSettingsModal/Roles.tsx:170
-msgid "Kick Users"
-msgstr "Sparka användare"
-
-#: src/components/modals/KickUserModal.tsx:86
-msgid "Kick!"
-msgstr "Sparka!"
-
-#: src/components/user/UserProfile.tsx:211
+#: src/components/user/UserProfile.tsx:265
 msgid "Kicked!"
 msgstr "Utkastad!"
 
-#: src/components/modals/KickUserModal.tsx:70
+#: src/components/modals/KickUserModal.tsx:74
 msgid "Kicking..."
 msgstr "Utkastning..."
 
@@ -1480,7 +1491,7 @@ msgstr "Ljus"
 msgid "Loading bookmarks..."
 msgstr "Laddar bokmärken..."
 
-#: src/components/message/MessageList.tsx:547
+#: src/components/message/MessageList.tsx:539
 msgid "Loading message..."
 msgstr "Laddar meddelande..."
 
@@ -1557,7 +1568,7 @@ msgstr "Markera alla som lästa"
 
 #: src/components/direct/DirectMessage.tsx:668
 #: src/components/direct/DirectMessage.tsx:861
-#: src/components/space/Channel.tsx:927
+#: src/components/space/Channel.tsx:922
 msgid "Members List"
 msgstr "Medlemslista"
 
@@ -1571,7 +1582,7 @@ msgstr ""
 "skrivskyddade kanal. Observera: Space-ägare måste också vara i en "
 "managerroll för att posta här."
 
-#: src/components/modals/SpaceSettingsModal/Roles.tsx:174
+#: src/components/modals/SpaceSettingsModal/Roles.tsx:162
 msgid "Mention Everyone"
 msgstr "Nämn alla"
 
@@ -1583,8 +1594,8 @@ msgstr "Meddelandeåtgärder"
 msgid "Message deleted"
 msgstr "Meddelande raderat"
 
-#: src/components/message/Message.tsx:740
-#: src/components/message/Message.tsx:818
+#: src/components/message/Message.tsx:734
+#: src/components/message/Message.tsx:812
 msgid ""
 "Message does not have a valid signature, this may not be from the sender"
 msgstr ""
@@ -1606,6 +1617,19 @@ msgstr "Meddelanden är signerade!"
 #: src/components/message/MessageActions.tsx:92
 msgid "More reactions"
 msgstr "Fler reaktioner"
+
+#: src/components/modals/MuteUserModal.tsx:118
+#: src/components/user/UserProfile.tsx:246
+msgid "Mute"
+msgstr "Stänga av ljudet"
+
+#: src/components/modals/MuteUserModal.tsx:62
+msgid "Mute User"
+msgstr "Stäng av ljudet för användare"
+
+#: src/components/modals/SpaceSettingsModal/Roles.tsx:170
+msgid "Mute Users"
+msgstr "Stäng av ljudet för användare"
 
 #: src/hooks/business/validation/useDisplayNameValidation.ts:26
 #: src/hooks/business/validation/useDisplayNameValidation.ts:55
@@ -1682,8 +1706,8 @@ msgstr "Inga fastsatta meddelanden än"
 msgid "No unread notifications"
 msgstr "Inga olästa meddelanden"
 
-#: src/components/space/Channel.tsx:614 src/components/space/Channel.tsx:1134
-#: src/components/space/Channel.tsx:1325
+#: src/components/space/Channel.tsx:617 src/components/space/Channel.tsx:1129
+#: src/components/space/Channel.tsx:1318
 msgid "No users found!"
 msgstr "Inga användare hittades!"
 
@@ -1698,7 +1722,7 @@ msgstr "Aviseringstillstånd beviljades inte"
 #: src/components/modals/SpaceSettingsModal/Account.tsx:187
 #: src/components/modals/UserSettingsModal/Navigation.tsx:17
 #: src/components/modals/UserSettingsModal/Notifications.tsx:24
-#: src/components/space/Channel.tsx:866
+#: src/components/space/Channel.tsx:861
 msgid "Notifications"
 msgstr "Aviseringar"
 
@@ -1831,19 +1855,19 @@ msgstr "Fäst meddelanden"
 msgid "Pin to top"
 msgstr "Nåla till toppen"
 
-#: src/components/message/Message.tsx:708
-#: src/components/message/Message.tsx:786
+#: src/components/message/Message.tsx:702
+#: src/components/message/Message.tsx:780
 msgid "Pinned"
 msgstr "Fastsatt"
 
 #. placeholder {0}: mapSenderToUser(message.pinnedBy)?.displayName ||
 #. message.pinnedBy
-#: src/components/message/Message.tsx:707
-#: src/components/message/Message.tsx:785
+#: src/components/message/Message.tsx:701
+#: src/components/message/Message.tsx:779
 msgid "Pinned by {0}"
 msgstr "Fastsatt av {0}"
 
-#: src/components/space/Channel.tsx:826
+#: src/components/space/Channel.tsx:821
 msgid "Pinned Messages"
 msgstr "Fastsatta meddelanden"
 
@@ -1961,7 +1985,7 @@ msgstr "Ta bort"
 msgid "Remove bookmark"
 msgstr "Ta bort bokmärke"
 
-#: src/components/user/UserProfile.tsx:158
+#: src/components/user/UserProfile.tsx:172
 msgid "Removing..."
 msgstr "Tar bort..."
 
@@ -1988,18 +2012,6 @@ msgid ""
 msgstr ""
 "Kräv att meddelanden som skickas i detta Space ska signeras av avsändaren. "
 "Tekniskt sett gör detta meddelandena i detta Space icke-repudiabla."
-
-#: src/components/modals/SpaceSettingsModal/Roles.tsx:58
-msgid ""
-"Requiring roles for moderation actions protects your identity as the space "
-"owner. However, if you're the only one with a specific role, your actions "
-"may reveal who you are. For better privacy, consider having multiple users "
-"(real or additional accounts) share the same role."
-msgstr ""
-"Att kräva roller för modereringsåtgärder skyddar din identitet som Space-"
-"ägare. Men om du är den enda med en specifik roll kan dina åtgärder avslöja "
-"vem du är. För bättre integritet, överväg att ha flera användare (verkliga "
-"eller ytterligare konton) som delar samma roll."
 
 #: src/components/modals/AddSpaceModal.tsx:266
 msgid "Reset"
@@ -2099,7 +2111,7 @@ msgid "Search in this Space..."
 msgstr "Sök i detta Space..."
 
 #: src/components/direct/DirectMessage.tsx:714
-#: src/components/space/Channel.tsx:946
+#: src/components/space/Channel.tsx:941
 msgid "Search Messages"
 msgstr "Sök Meddelanden"
 
@@ -2115,7 +2127,7 @@ msgstr "Sökresultat"
 msgid "Search username or address"
 msgstr "Sök användarnamn eller adress"
 
-#: src/components/space/Channel.tsx:1297
+#: src/components/space/Channel.tsx:1290
 msgid "Search Username or Address"
 msgstr "Sök användarnamn eller adress"
 
@@ -2173,7 +2185,7 @@ msgstr "Skicka"
 msgid "Send Invite"
 msgstr "Skicka inbjudan"
 
-#: src/components/user/UserProfile.tsx:201
+#: src/components/user/UserProfile.tsx:218
 msgid "Send Message"
 msgstr "Skicka meddelande"
 
@@ -2279,6 +2291,10 @@ msgstr "Framgångsrikt skickad inbjudan till {0}"
 msgid "Sync Kick Status"
 msgstr "Synkronisera kickstatus"
 
+#: src/services/SyncService.ts:199
+msgid "Syncing Space..."
+msgstr "Synkroniserar Space..."
+
 #: src/components/ui/ThemeRadioGroup.tsx:28
 msgid "System"
 msgstr "System"
@@ -2379,6 +2395,21 @@ msgstr "Detta Space"
 msgid "This user is already a member of this space."
 msgstr "Denna användare är redan medlem i detta Space."
 
+#: src/components/modals/MuteUserModal.tsx:93
+msgid "This user will be able to send messages in this Space again."
+msgstr ""
+"Denna användare kommer att kunna skicka meddelanden i denna Space igen."
+
+#: src/components/modals/KickUserModal.tsx:97
+msgid "This user will be removed from the Space."
+msgstr "Denna användare kommer att tas bort från Space."
+
+#: src/components/modals/MuteUserModal.tsx:94
+msgid "This user will no longer be able to send messages in this Space."
+msgstr ""
+"Denna användare kommer inte längre att kunna skicka meddelanden i denna "
+"Space."
+
 #: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:609
 msgid ""
 "This will create a public invite link that anyone can use to join your "
@@ -2463,7 +2494,7 @@ msgid "Unable to copy to clipboard"
 msgstr "Kunde inte kopiera till urklipp"
 
 #: src/components/context/MessageDB.bak.tsx:3482
-#: src/services/SpaceService.ts:553
+#: src/services/SpaceService.ts:550
 msgid ""
 "Unable to leave space due to incomplete configuration. The space data may be"
 " corrupted."
@@ -2539,12 +2570,21 @@ msgstr "Okänd tid"
 #: src/hooks/business/search/useSearchResultDisplayDM.ts:33
 #: src/hooks/business/search/useSearchResultDisplaySpace.ts:45
 #: src/hooks/queries/userInfo/buildUserInfoFetcher.ts:15
-#: src/services/EncryptionService.ts:138 src/services/MessageService.ts:1426
-#: src/services/MessageService.ts:1598 src/services/MessageService.ts:1738
-#: src/services/MessageService.ts:1756 src/services/MessageService.ts:3101
-#: src/services/MessageService.ts:3235 src/services/MessageService.ts:3399
+#: src/services/EncryptionService.ts:138 src/services/MessageService.ts:1491
+#: src/services/MessageService.ts:1663 src/services/MessageService.ts:1803
+#: src/services/MessageService.ts:1821 src/services/MessageService.ts:3172
+#: src/services/MessageService.ts:3306 src/services/MessageService.ts:3470
 msgid "Unknown User"
 msgstr "Okänd användare"
+
+#: src/components/modals/MuteUserModal.tsx:118
+#: src/components/user/UserProfile.tsx:246
+msgid "Unmute"
+msgstr "Slå på ljudet"
+
+#: src/components/modals/MuteUserModal.tsx:62
+msgid "Unmute User"
+msgstr "Slå på ljudet för användare"
 
 #: src/hooks/business/messages/usePinnedMessages.ts:274
 msgid "unpin"
@@ -2606,10 +2646,6 @@ msgstr "Ladda upp klistermärke"
 msgid "Use \"Save to Files\" to save your private key"
 msgstr "Använd \"Spara till Filer\" för att spara din privata nyckel"
 
-#: src/components/modals/KickUserModal.tsx:75
-msgid "Use the below button to kick this user out of the Space"
-msgstr "Använd knappen nedan för att sparka ut denna användare från Space"
-
 #: src/components/modals/NewDirectMessageModal.tsx:107
 msgid "User address here"
 msgstr "Användaradress här"
@@ -2619,12 +2655,20 @@ msgstr "Användaradress här"
 msgid "User does not exist."
 msgstr "Användaren existerar inte."
 
+#: src/components/modals/MuteUserModal.tsx:117
+msgid "User Muted!"
+msgstr "Användare stängd av ljudet!"
+
 #: src/hooks/business/messages/usePinnedMessages.ts:76
 #: src/hooks/business/messages/usePinnedMessages.ts:136
 msgid "User not authenticated"
 msgstr "Användare inte autentiserad"
 
-#: src/components/space/Channel.tsx:601 src/components/space/Channel.tsx:1120
+#: src/components/modals/MuteUserModal.tsx:117
+msgid "User Unmuted!"
+msgstr "Användare har fått ljudet påslaget!"
+
+#: src/components/space/Channel.tsx:604 src/components/space/Channel.tsx:1115
 msgid "Username or Address"
 msgstr "Användarnamn eller adress"
 
@@ -2785,7 +2829,7 @@ msgstr ""
 "{channelCount} kanaler i denna grupp."
 
 #: src/components/message/MessageComposer.tsx:334
-#: src/components/space/Channel.tsx:1086
+#: src/components/space/Channel.tsx:1081
 msgid "You cannot post in this channel"
 msgstr "Du kan inte posta i denna kanal"
 
@@ -2798,9 +2842,22 @@ msgstr "Du kan inte skicka ett direktmeddelande till dig själv."
 msgid "You have a new unread message"
 msgstr "Du har ett nytt oläst meddelande"
 
+#: src/components/space/Channel.tsx:1079
+msgid "You have been muted in this Space"
+msgstr "Du har blivit stängd av ljudet i denna Space"
+
 #: src/services/NotificationService.ts:103
 msgid "You have new unread messages"
 msgstr "Du har nya olästa meddelanden"
+
+#: src/components/modals/SpaceSettingsModal/Roles.tsx:54
+msgid ""
+"You must assign yourself a role for moderation actions (except kicking). "
+"Grant delete and mute permissions carefully. <0><1>Learn more</1></0>"
+msgstr ""
+"Du måste tilldela dig själv en roll för modereringsåtgärder (utom att "
+"sparka). Ge raderings- och ljudavstängningsbehörigheter noggrant. <0><1>Lär "
+"dig mer</1></0>"
 
 #: src/components/modals/SpaceSettingsModal/Account.tsx:241
 msgid ""
@@ -2934,6 +2991,15 @@ msgstr "YouTube Video Miniatyr"
 #~ "kommer INTE att raderas."
 
 #~ msgid ""
+#~ "As a space owner, you must assign yourself a role to perform moderation "
+#~ "actions. Kicking users is the only action that doesn't require a role. "
+#~ "<0><1>Learn more</1></0>"
+#~ msgstr ""
+#~ "Som ägare av ett Space måste du tilldela dig själv en roll för att utföra "
+#~ "modereringsåtgärder. Att sparka användare är den enda åtgärden som inte "
+#~ "kräver en roll. <0><1>Lär dig mer</1></0>"
+
+#~ msgid ""
 #~ "As a space owner, you need to assign yourself a role with delete permissions"
 #~ " to delete other users' messages. <0><1>Learn more</1></0>"
 #~ msgstr ""
@@ -2965,6 +3031,12 @@ msgstr "YouTube Video Miniatyr"
 #~ msgid "Enter a name for your new Space"
 #~ msgstr "Ange ett namn för ditt nya Space"
 
+#~ msgid "Kick Users"
+#~ msgstr "Sparka användare"
+
+#~ msgid "Kick!"
+#~ msgstr "Sparka!"
+
 #~ msgid "No topic"
 #~ msgstr "Ingen ämne"
 
@@ -2976,6 +3048,17 @@ msgstr "YouTube Video Miniatyr"
 
 #~ msgid "Processing..."
 #~ msgstr "Bearbetar..."
+
+#~ msgid ""
+#~ "Requiring roles for moderation actions protects your identity as the space "
+#~ "owner. However, if you're the only one with a specific role, your actions "
+#~ "may reveal who you are. For better privacy, consider having multiple users "
+#~ "(real or additional accounts) share the same role."
+#~ msgstr ""
+#~ "Att kräva roller för modereringsåtgärder skyddar din identitet som Space-"
+#~ "ägare. Men om du är den enda med en specifik roll kan dina åtgärder avslöja "
+#~ "vem du är. För bättre integritet, överväg att ha flera användare (verkliga "
+#~ "eller ytterligare konton) som delar samma roll."
 
 #~ msgid ""
 #~ "Select any existing role as managers for this channel. Managers have post, "
@@ -3036,6 +3119,9 @@ msgstr "YouTube Video Miniatyr"
 #~ msgstr ""
 #~ "Ladda upp en bild, välj ett namn och lägg eventuellt till en beskrivning för"
 #~ " ditt Space."
+
+#~ msgid "Use the below button to kick this user out of the Space"
+#~ msgstr "Använd knappen nedan för att sparka ut denna användare från Space"
 
 #~ msgid "When someone mentions a role you have (Coming Soon)"
 #~ msgstr "När någon nämner en roll du har (Kommer Snart)"

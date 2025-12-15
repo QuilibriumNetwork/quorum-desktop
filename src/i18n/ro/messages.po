@@ -31,7 +31,7 @@ msgid "No Role - {count}"
 msgstr "Fără rol - {count}"
 
 #. js-lingui-explicit-id
-#: src/components/space/Channel.tsx:1062
+#: src/components/space/Channel.tsx:1055
 msgid "Send a message to #{channel_name}"
 msgstr "Trimite un mesaj către #{channel_name}"
 
@@ -65,17 +65,17 @@ msgid "Replying to"
 msgstr "Răspunzând la"
 
 #. js-lingui-explicit-id
-#: src/components/message/Message.tsx:307
+#: src/components/message/Message.tsx:303
 msgid "has joined"
 msgstr "s-a alăturat"
 
 #. js-lingui-explicit-id
-#: src/components/message/Message.tsx:315
+#: src/components/message/Message.tsx:311
 msgid "has left"
 msgstr "a plecat"
 
 #. js-lingui-explicit-id
-#: src/components/message/Message.tsx:323
+#: src/components/message/Message.tsx:319
 msgid "has been kicked"
 msgstr "a fost dat afară"
 
@@ -88,8 +88,8 @@ msgstr "Trimite un mesaj lui {user}"
 msgid " for updates."
 msgstr "pentru actualizări."
 
-#: src/components/message/Message.tsx:757
-#: src/components/message/Message.tsx:770
+#: src/components/message/Message.tsx:751
+#: src/components/message/Message.tsx:764
 msgid "(edited)"
 msgstr "(editat)"
 
@@ -278,7 +278,7 @@ msgstr ""
 " folosite doar în cadrul unui Espaciul. Poți încărca PNG, JPG sau GIF, max "
 "25MB (optimizat automat)."
 
-#: src/components/user/UserProfile.tsx:186
+#: src/components/user/UserProfile.tsx:200
 msgid "Adding..."
 msgstr "Adăugare..."
 
@@ -415,16 +415,6 @@ msgstr "Ești sigur că vrei să fixezi acest mesaj?"
 msgid "Are you sure you want to unpin this message?"
 msgstr "Ești sigur că vrei să desfaci fixarea acestui mesaj?"
 
-#: src/components/modals/SpaceSettingsModal/Roles.tsx:54
-msgid ""
-"As a space owner, you must assign yourself a role to perform moderation "
-"actions. Kicking users is the only action that doesn't require a role. "
-"<0><1>Learn more</1></0>"
-msgstr ""
-"Ca un proprietar de spațiu, trebuie să-ți atribui un rol pentru a efectua "
-"acțiuni de moderare. Excluderea utilizatorilor este singura acțiune care nu "
-"necesită un rol. <0><1>Află mai multe</1></0>"
-
 #: src/components/message/MessageComposer.tsx:580
 msgid "attach image"
 msgstr "atașează imagine"
@@ -459,8 +449,8 @@ msgstr "Mesaj de marcaj"
 msgid "Bookmark messages to save them for later reference"
 msgstr "Mesaje de marcaj pentru a le salva pentru referințe ulterioare"
 
-#: src/components/message/Message.tsx:724
-#: src/components/message/Message.tsx:802
+#: src/components/message/Message.tsx:718
+#: src/components/message/Message.tsx:796
 msgid "Bookmarked"
 msgstr "Marcaj"
 
@@ -473,7 +463,7 @@ msgid "Bookmarked sticker"
 msgstr "Sticker marcat"
 
 #: src/components/direct/DirectMessage.tsx:687
-#: src/components/space/Channel.tsx:901
+#: src/components/space/Channel.tsx:896
 msgid "Bookmarks"
 msgstr "Marcaje"
 
@@ -494,6 +484,8 @@ msgstr "Permisiunea pentru cameră este necesară pentru a face fotografii"
 #: src/components/modals/ConfirmationModal.native.tsx:27
 #: src/components/modals/ConfirmationModal.tsx:29
 #: src/components/modals/ConversationSettingsModal.tsx:63
+#: src/components/modals/KickUserModal.tsx:109
+#: src/components/modals/MuteUserModal.tsx:107
 #: src/components/primitives/FileUpload/FileUpload.native.tsx:173
 #: src/hooks/business/channels/useChannelManagement.ts:253
 #: src/hooks/business/messages/useMessageActions.ts:159
@@ -539,7 +531,7 @@ msgstr "Icon canal"
 msgid "Channel Managers"
 msgstr "Manageri de canal"
 
-#: src/components/space/Channel.tsx:1286
+#: src/components/space/Channel.tsx:1279
 msgid "Channel members"
 msgstr "Membrii canalului"
 
@@ -613,7 +605,7 @@ msgstr "Ștergerea notificărilor cu eticheta: {tag}"
 #: src/components/modals/ChannelEditorModal.tsx:217
 #: src/components/modals/FolderEditorModal.tsx:133
 #: src/components/modals/GroupEditorModal.tsx:131
-#: src/components/modals/KickUserModal.tsx:86
+#: src/components/modals/KickUserModal.tsx:118
 #: src/components/modals/LeaveSpaceModal.tsx:64
 #: src/components/modals/SpaceSettingsModal/Account.tsx:256
 #: src/components/modals/SpaceSettingsModal/Danger.tsx:68
@@ -682,7 +674,7 @@ msgstr "Copiat!"
 #: src/components/direct/DirectMessage.tsx:755
 #: src/components/modals/UserSettingsModal/General.tsx:118
 #: src/components/user/ExpandableUserAvatar.tsx:90
-#: src/components/user/UserProfile.tsx:109
+#: src/components/user/UserProfile.tsx:123
 #: src/components/user/UserStatus.tsx:47
 msgid "Copy address"
 msgstr "Copiază adresa"
@@ -853,7 +845,7 @@ msgstr "Șterge mesaj"
 msgid "Delete Message"
 msgstr "Șterge mesajul"
 
-#: src/components/modals/SpaceSettingsModal/Roles.tsx:162
+#: src/components/modals/SpaceSettingsModal/Roles.tsx:174
 msgid "Delete Messages"
 msgstr "Șterge mesajele"
 
@@ -1083,7 +1075,7 @@ msgid "Failed to create space. Please try again."
 msgstr "Crearea spațiului a eșuat. Te rugăm să încerci din nou."
 
 #: src/components/context/MessageDB.bak.tsx:984
-#: src/services/MessageService.ts:1760
+#: src/services/MessageService.ts:1825
 msgid "Failed to decrypt message with any known state"
 msgstr "Nu s-a reușit decriptarea mesajului cu niciun stat cunoscut"
 
@@ -1095,6 +1087,10 @@ msgstr ""
 #: src/components/bookmarks/BookmarksPanel.tsx:180
 msgid "Failed to load bookmarks"
 msgstr "Eșec la încărcarea marcajelor"
+
+#: src/components/modals/MuteUserModal.tsx:51
+msgid "Failed to mute user"
+msgstr "Nu s-a reușit să se dezactiveze utilizatorul"
 
 #: src/components/primitives/FileUpload/FileUpload.native.tsx:105
 msgid "Failed to open image picker"
@@ -1119,6 +1115,10 @@ msgstr "Nu am reușit să selectez documentul"
 #: src/hooks/business/spaces/useInviteManagement.ts:144
 msgid "Failed to send invite. Please try again."
 msgstr "Nu s-a putut trimite invitația. Te rugăm să încerci din nou."
+
+#: src/components/modals/MuteUserModal.tsx:51
+msgid "Failed to unmute user"
+msgstr "Nu s-a reușit să se reactiveze utilizatorul"
 
 #: src/hooks/business/spaces/useSpaceProfile.ts:216
 msgid "Failed to update profile"
@@ -1214,8 +1214,24 @@ msgstr ""
 msgid "Folder Settings"
 msgstr "Setările Folderului"
 
+#: src/components/modals/SpaceSettingsModal/Roles.tsx:58
+msgid ""
+"For privacy, your ownership is hidden from other clients. This means: Delete"
+" permission holders can delete your messages permanently, Mute permission "
+"holders can mute you (reversible). Only grant these to trusted users. Also "
+"note: if you're the only one with a role, your actions may reveal you as the"
+" owner—consider sharing roles with other trusted users."
+msgstr ""
+"Din motive de confidențialitate, proprietatea ta este ascunsă de ceilalți "
+"clienți. Aceasta înseamnă: Deținătorii de permisiuni de ștergere pot șterge "
+"mesajele tale permanent, Deținătorii de permisiuni de dezactivare te pot "
+"dezactiva (reversibil). Acordă aceste permisiuni doar utilizatorilor de "
+"încredere. De asemenea, reține: dacă ești singurul cu un rol, acțiunile tale"
+" pot dezvălui că ești proprietarul—ia în considerare să împărtășești roluri "
+"cu alți utilizatori de încredere."
+
 #: src/components/context/MessageDB.bak.tsx:3186
-#: src/services/SpaceService.ts:236
+#: src/services/SpaceService.ts:233
 msgid "general"
 msgstr "general"
 
@@ -1225,7 +1241,7 @@ msgid "General"
 msgstr "General"
 
 #: src/components/context/MessageDB.bak.tsx:3187
-#: src/services/SpaceService.ts:237
+#: src/services/SpaceService.ts:234
 msgid "General Chat"
 msgstr "Chat General"
 
@@ -1337,7 +1353,7 @@ msgid "Important messages will be pinned here"
 msgstr "Mesajele importante vor fi fixate aici"
 
 #: src/components/context/MessageDB.bak.tsx:1184
-#: src/services/MessageService.ts:1959
+#: src/services/MessageService.ts:2024
 msgid "invalid address for signature"
 msgstr "adresă invalidă pentru semnătură"
 
@@ -1367,7 +1383,7 @@ msgstr "link invalid"
 msgid "Invalid message ID"
 msgstr "ID-ul mesajului este invalid"
 
-#: src/components/context/MessageDB.bak.tsx:5180 src/utils/canonicalize.ts:114
+#: src/components/context/MessageDB.bak.tsx:5180 src/utils/canonicalize.ts:126
 msgid "invalid message type"
 msgstr "tip de mesaj invalid"
 
@@ -1418,7 +1434,7 @@ msgstr "Se alătură..."
 msgid "Jump"
 msgstr "Sari"
 
-#: src/components/message/MessageList.tsx:536
+#: src/components/message/MessageList.tsx:528
 msgid "Jump to present"
 msgstr "Sari la prezent"
 
@@ -1438,24 +1454,20 @@ msgstr "Cheia este pregătită"
 msgid "Key Saved"
 msgstr "Cheia a fost salvată"
 
-#: src/components/modals/KickUserModal.tsx:66
-#: src/components/user/UserProfile.tsx:211
+#: src/components/modals/KickUserModal.tsx:118
+#: src/components/user/UserProfile.tsx:265
+msgid "Kick"
+msgstr "Îndepărtează"
+
+#: src/components/modals/KickUserModal.tsx:70
 msgid "Kick User"
 msgstr "Kick User"
 
-#: src/components/modals/SpaceSettingsModal/Roles.tsx:170
-msgid "Kick Users"
-msgstr "Excluzi utilizatori"
-
-#: src/components/modals/KickUserModal.tsx:86
-msgid "Kick!"
-msgstr "Kick!"
-
-#: src/components/user/UserProfile.tsx:211
+#: src/components/user/UserProfile.tsx:265
 msgid "Kicked!"
 msgstr "Dat afară!"
 
-#: src/components/modals/KickUserModal.tsx:70
+#: src/components/modals/KickUserModal.tsx:74
 msgid "Kicking..."
 msgstr "Expulsare..."
 
@@ -1499,7 +1511,7 @@ msgstr "Lumină"
 msgid "Loading bookmarks..."
 msgstr "Încărcare marcaje..."
 
-#: src/components/message/MessageList.tsx:547
+#: src/components/message/MessageList.tsx:539
 msgid "Loading message..."
 msgstr "Se încarcă mesajul..."
 
@@ -1578,7 +1590,7 @@ msgstr "Marchează totul ca citit"
 
 #: src/components/direct/DirectMessage.tsx:668
 #: src/components/direct/DirectMessage.tsx:861
-#: src/components/space/Channel.tsx:927
+#: src/components/space/Channel.tsx:922
 msgid "Members List"
 msgstr "Lista membrilor"
 
@@ -1592,7 +1604,7 @@ msgstr ""
 "de citire. Notă: Proprietarii de spațiu trebuie să fie, de asemenea, într-un"
 " rol de manager pentru a posta aici."
 
-#: src/components/modals/SpaceSettingsModal/Roles.tsx:174
+#: src/components/modals/SpaceSettingsModal/Roles.tsx:162
 msgid "Mention Everyone"
 msgstr "Menționează pe toată lumea"
 
@@ -1604,8 +1616,8 @@ msgstr "Acțiuni mesaj"
 msgid "Message deleted"
 msgstr "Mesaj șters"
 
-#: src/components/message/Message.tsx:740
-#: src/components/message/Message.tsx:818
+#: src/components/message/Message.tsx:734
+#: src/components/message/Message.tsx:812
 msgid ""
 "Message does not have a valid signature, this may not be from the sender"
 msgstr ""
@@ -1626,6 +1638,19 @@ msgstr "Mesajele sunt semnate!"
 #: src/components/message/MessageActions.tsx:92
 msgid "More reactions"
 msgstr "Mai multe reacții"
+
+#: src/components/modals/MuteUserModal.tsx:118
+#: src/components/user/UserProfile.tsx:246
+msgid "Mute"
+msgstr "Dezactivează"
+
+#: src/components/modals/MuteUserModal.tsx:62
+msgid "Mute User"
+msgstr "Dezactivează utilizatorul"
+
+#: src/components/modals/SpaceSettingsModal/Roles.tsx:170
+msgid "Mute Users"
+msgstr "Dezactivează utilizatorii"
 
 #: src/hooks/business/validation/useDisplayNameValidation.ts:26
 #: src/hooks/business/validation/useDisplayNameValidation.ts:55
@@ -1702,8 +1727,8 @@ msgstr "Nu sunt încă mesaje fixate"
 msgid "No unread notifications"
 msgstr "Nu sunt notificări necitite"
 
-#: src/components/space/Channel.tsx:614 src/components/space/Channel.tsx:1134
-#: src/components/space/Channel.tsx:1325
+#: src/components/space/Channel.tsx:617 src/components/space/Channel.tsx:1129
+#: src/components/space/Channel.tsx:1318
 msgid "No users found!"
 msgstr "Niciun utilizator găsit!"
 
@@ -1718,7 +1743,7 @@ msgstr "Permisiunea pentru notificări nu a fost acordată"
 #: src/components/modals/SpaceSettingsModal/Account.tsx:187
 #: src/components/modals/UserSettingsModal/Navigation.tsx:17
 #: src/components/modals/UserSettingsModal/Notifications.tsx:24
-#: src/components/space/Channel.tsx:866
+#: src/components/space/Channel.tsx:861
 msgid "Notifications"
 msgstr "Notificări"
 
@@ -1853,19 +1878,19 @@ msgstr "Fixează mesajele"
 msgid "Pin to top"
 msgstr "Fixa în sus"
 
-#: src/components/message/Message.tsx:708
-#: src/components/message/Message.tsx:786
+#: src/components/message/Message.tsx:702
+#: src/components/message/Message.tsx:780
 msgid "Pinned"
 msgstr "Fixat"
 
 #. placeholder {0}: mapSenderToUser(message.pinnedBy)?.displayName ||
 #. message.pinnedBy
-#: src/components/message/Message.tsx:707
-#: src/components/message/Message.tsx:785
+#: src/components/message/Message.tsx:701
+#: src/components/message/Message.tsx:779
 msgid "Pinned by {0}"
 msgstr "Fixat de {0}"
 
-#: src/components/space/Channel.tsx:826
+#: src/components/space/Channel.tsx:821
 msgid "Pinned Messages"
 msgstr "Mesaje fixate"
 
@@ -1986,7 +2011,7 @@ msgstr "Elimină"
 msgid "Remove bookmark"
 msgstr "Șterge marcajul"
 
-#: src/components/user/UserProfile.tsx:158
+#: src/components/user/UserProfile.tsx:172
 msgid "Removing..."
 msgstr "Eliminare..."
 
@@ -2014,19 +2039,6 @@ msgstr ""
 "Necesită ca mesajele trimise în acest Space să fie semnate de expeditor. "
 "Tehnic vorbind, acest lucru face ca mesajele din acest Space să fie non-"
 "repudiabile."
-
-#: src/components/modals/SpaceSettingsModal/Roles.tsx:58
-msgid ""
-"Requiring roles for moderation actions protects your identity as the space "
-"owner. However, if you're the only one with a specific role, your actions "
-"may reveal who you are. For better privacy, consider having multiple users "
-"(real or additional accounts) share the same role."
-msgstr ""
-"Cererea de roluri pentru acțiunile de moderare îți protejează identitatea ca"
-" proprietar de spațiu. Cu toate acestea, dacă ești singurul cu un rol "
-"specific, acțiunile tale pot dezvălui cine ești. Pentru o mai bună "
-"confidențialitate, ia în considerare să ai mai mulți utilizatori (conturi "
-"reale sau suplimentare) care să împărtășească același rol."
 
 #: src/components/modals/AddSpaceModal.tsx:266
 msgid "Reset"
@@ -2126,7 +2138,7 @@ msgid "Search in this Space..."
 msgstr "Caută în acest Spațiu..."
 
 #: src/components/direct/DirectMessage.tsx:714
-#: src/components/space/Channel.tsx:946
+#: src/components/space/Channel.tsx:941
 msgid "Search Messages"
 msgstr "Caută Mesaje"
 
@@ -2142,7 +2154,7 @@ msgstr "Rezultatele căutării"
 msgid "Search username or address"
 msgstr "Caută numele de utilizator sau adresa"
 
-#: src/components/space/Channel.tsx:1297
+#: src/components/space/Channel.tsx:1290
 msgid "Search Username or Address"
 msgstr "Caută numele de utilizator sau adresa"
 
@@ -2200,7 +2212,7 @@ msgstr "Trimite"
 msgid "Send Invite"
 msgstr "Trimite invitație"
 
-#: src/components/user/UserProfile.tsx:201
+#: src/components/user/UserProfile.tsx:218
 msgid "Send Message"
 msgstr "Trimite mesaj"
 
@@ -2307,6 +2319,10 @@ msgstr "Invitația a fost trimisă cu succes către {0}"
 msgid "Sync Kick Status"
 msgstr "Sincronizează statutul de eliminare"
 
+#: src/services/SyncService.ts:199
+msgid "Syncing Space..."
+msgstr "Sincronizare Spațiu..."
+
 #: src/components/ui/ThemeRadioGroup.tsx:28
 msgid "System"
 msgstr "Sistem"
@@ -2408,6 +2424,18 @@ msgstr "Acest Spațiu"
 msgid "This user is already a member of this space."
 msgstr "Acest utilizator este deja membru al acestui Spațiu."
 
+#: src/components/modals/MuteUserModal.tsx:93
+msgid "This user will be able to send messages in this Space again."
+msgstr "Acest utilizator va putea trimite mesaje din nou în acest Spațiu."
+
+#: src/components/modals/KickUserModal.tsx:97
+msgid "This user will be removed from the Space."
+msgstr "Acest utilizator va fi eliminat din Spațiu."
+
+#: src/components/modals/MuteUserModal.tsx:94
+msgid "This user will no longer be able to send messages in this Space."
+msgstr "Acest utilizator nu va mai putea trimite mesaje în acest Spațiu."
+
 #: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:609
 msgid ""
 "This will create a public invite link that anyone can use to join your "
@@ -2496,7 +2524,7 @@ msgid "Unable to copy to clipboard"
 msgstr "Imposibil de copiat în clipboard"
 
 #: src/components/context/MessageDB.bak.tsx:3482
-#: src/services/SpaceService.ts:553
+#: src/services/SpaceService.ts:550
 msgid ""
 "Unable to leave space due to incomplete configuration. The space data may be"
 " corrupted."
@@ -2576,12 +2604,21 @@ msgstr "Timp necunoscut"
 #: src/hooks/business/search/useSearchResultDisplayDM.ts:33
 #: src/hooks/business/search/useSearchResultDisplaySpace.ts:45
 #: src/hooks/queries/userInfo/buildUserInfoFetcher.ts:15
-#: src/services/EncryptionService.ts:138 src/services/MessageService.ts:1426
-#: src/services/MessageService.ts:1598 src/services/MessageService.ts:1738
-#: src/services/MessageService.ts:1756 src/services/MessageService.ts:3101
-#: src/services/MessageService.ts:3235 src/services/MessageService.ts:3399
+#: src/services/EncryptionService.ts:138 src/services/MessageService.ts:1491
+#: src/services/MessageService.ts:1663 src/services/MessageService.ts:1803
+#: src/services/MessageService.ts:1821 src/services/MessageService.ts:3172
+#: src/services/MessageService.ts:3306 src/services/MessageService.ts:3470
 msgid "Unknown User"
 msgstr "Utilizator necunoscut"
+
+#: src/components/modals/MuteUserModal.tsx:118
+#: src/components/user/UserProfile.tsx:246
+msgid "Unmute"
+msgstr "Reactivează"
+
+#: src/components/modals/MuteUserModal.tsx:62
+msgid "Unmute User"
+msgstr "Reactivează utilizatorul"
 
 #: src/hooks/business/messages/usePinnedMessages.ts:274
 msgid "unpin"
@@ -2642,11 +2679,6 @@ msgstr "Încarcă Sticker"
 msgid "Use \"Save to Files\" to save your private key"
 msgstr "Folosește \"Salvează în Fișiere\" pentru a-ți salva cheia privată"
 
-#: src/components/modals/KickUserModal.tsx:75
-msgid "Use the below button to kick this user out of the Space"
-msgstr ""
-"Folosește butonul de mai jos pentru a elimina acest utilizator din Spațiu"
-
 #: src/components/modals/NewDirectMessageModal.tsx:107
 msgid "User address here"
 msgstr "Adresa utilizatorului aici"
@@ -2656,12 +2688,20 @@ msgstr "Adresa utilizatorului aici"
 msgid "User does not exist."
 msgstr "Utilizatorul nu există."
 
+#: src/components/modals/MuteUserModal.tsx:117
+msgid "User Muted!"
+msgstr "Utilizator dezactivat!"
+
 #: src/hooks/business/messages/usePinnedMessages.ts:76
 #: src/hooks/business/messages/usePinnedMessages.ts:136
 msgid "User not authenticated"
 msgstr "Utilizator neautentificat"
 
-#: src/components/space/Channel.tsx:601 src/components/space/Channel.tsx:1120
+#: src/components/modals/MuteUserModal.tsx:117
+msgid "User Unmuted!"
+msgstr "Utilizator reactivat!"
+
+#: src/components/space/Channel.tsx:604 src/components/space/Channel.tsx:1115
 msgid "Username or Address"
 msgstr "Nume de utilizator sau adresă"
 
@@ -2820,7 +2860,7 @@ msgstr ""
 "{channelCount} canale din acest grup."
 
 #: src/components/message/MessageComposer.tsx:334
-#: src/components/space/Channel.tsx:1086
+#: src/components/space/Channel.tsx:1081
 msgid "You cannot post in this channel"
 msgstr "Nu poți posta în acest canal"
 
@@ -2833,9 +2873,22 @@ msgstr "Nu poți trimite un mesaj direct ție însuți."
 msgid "You have a new unread message"
 msgstr "Ai un mesaj nou necitit"
 
+#: src/components/space/Channel.tsx:1079
+msgid "You have been muted in this Space"
+msgstr "Ai fost dezactivat în acest Spațiu"
+
 #: src/services/NotificationService.ts:103
 msgid "You have new unread messages"
 msgstr "Ai mesaje noi necitite"
+
+#: src/components/modals/SpaceSettingsModal/Roles.tsx:54
+msgid ""
+"You must assign yourself a role for moderation actions (except kicking). "
+"Grant delete and mute permissions carefully. <0><1>Learn more</1></0>"
+msgstr ""
+"Trebuie să îți atribui un rol pentru acțiunile de moderare (cu excepția "
+"îndepărtării). Acordă permisiunile de ștergere și dezactivare cu atenție. "
+"<0><1>Află mai multe</1></0>"
 
 #: src/components/modals/SpaceSettingsModal/Account.tsx:241
 msgid ""
@@ -2969,6 +3022,15 @@ msgstr "Miniatură video YouTube"
 #~ "decât dacă ești reinvitat. Mesajele tale existente NU vor fi șterse."
 
 #~ msgid ""
+#~ "As a space owner, you must assign yourself a role to perform moderation "
+#~ "actions. Kicking users is the only action that doesn't require a role. "
+#~ "<0><1>Learn more</1></0>"
+#~ msgstr ""
+#~ "Ca un proprietar de spațiu, trebuie să-ți atribui un rol pentru a efectua "
+#~ "acțiuni de moderare. Excluderea utilizatorilor este singura acțiune care nu "
+#~ "necesită un rol. <0><1>Află mai multe</1></0>"
+
+#~ msgid ""
 #~ "As a space owner, you need to assign yourself a role with delete permissions"
 #~ " to delete other users' messages. <0><1>Learn more</1></0>"
 #~ msgstr ""
@@ -3001,6 +3063,12 @@ msgstr "Miniatură video YouTube"
 #~ msgid "Enter a name for your new Space"
 #~ msgstr "Introdu numele pentru noul tău Spațiu"
 
+#~ msgid "Kick Users"
+#~ msgstr "Excluzi utilizatori"
+
+#~ msgid "Kick!"
+#~ msgstr "Kick!"
+
 #~ msgid "No topic"
 #~ msgstr "Niciun subiect"
 
@@ -3012,6 +3080,18 @@ msgstr "Miniatură video YouTube"
 
 #~ msgid "Processing..."
 #~ msgstr "Se procesează..."
+
+#~ msgid ""
+#~ "Requiring roles for moderation actions protects your identity as the space "
+#~ "owner. However, if you're the only one with a specific role, your actions "
+#~ "may reveal who you are. For better privacy, consider having multiple users "
+#~ "(real or additional accounts) share the same role."
+#~ msgstr ""
+#~ "Cererea de roluri pentru acțiunile de moderare îți protejează identitatea ca"
+#~ " proprietar de spațiu. Cu toate acestea, dacă ești singurul cu un rol "
+#~ "specific, acțiunile tale pot dezvălui cine ești. Pentru o mai bună "
+#~ "confidențialitate, ia în considerare să ai mai mulți utilizatori (conturi "
+#~ "reale sau suplimentare) care să împărtășească același rol."
 
 #~ msgid ""
 #~ "Select any existing role as managers for this channel. Managers have post, "
@@ -3074,6 +3154,10 @@ msgstr "Miniatură video YouTube"
 #~ msgstr ""
 #~ "Încarcă o imagine, alege un nume și, opțional, adaugă o descriere pentru "
 #~ "Space-ul tău."
+
+#~ msgid "Use the below button to kick this user out of the Space"
+#~ msgstr ""
+#~ "Folosește butonul de mai jos pentru a elimina acest utilizator din Spațiu"
 
 #~ msgid "When someone mentions a role you have (Coming Soon)"
 #~ msgstr "Când cineva menționează un rol pe care îl aveți (În curând)"
