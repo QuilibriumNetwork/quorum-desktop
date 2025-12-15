@@ -47,7 +47,6 @@ declare module 'minisearch' {
       options?: { chunkSize?: number }
     ): Promise<void>;
     remove(document: T): void;
-    removeById(id: string): void;
     removeAll(documents: T[]): void;
     search(query: string, options?: SearchOptions): SearchResult[];
     autoSuggest(query: string, options?: AutoSuggestOptions): Suggestion[];

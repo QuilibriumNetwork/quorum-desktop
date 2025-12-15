@@ -1095,7 +1095,7 @@ export class MessageDB {
     const spaceIndexKey = `space:${spaceId}`;
     const spaceIndex = this.searchIndices.get(spaceIndexKey);
     if (spaceIndex) {
-      spaceIndex.removeById(messageId);
+      spaceIndex.discard(messageId);
     }
 
     // Remove from DM index if applicable
@@ -1103,7 +1103,7 @@ export class MessageDB {
     const dmIndexKey = `dm:${conversationId}`;
     const dmIndex = this.searchIndices.get(dmIndexKey);
     if (dmIndex) {
-      dmIndex.removeById(messageId);
+      dmIndex.discard(messageId);
     }
   }
 
@@ -1226,11 +1226,11 @@ export class MessageDB {
             // Remove from in-memory search indices if present
             const spaceIndexKey = `space:${msg.spaceId}`;
             const spaceIndex = this.searchIndices.get(spaceIndexKey);
-            if (spaceIndex) spaceIndex.removeById(msg.messageId);
+            if (spaceIndex) spaceIndex.discard(msg.messageId);
 
             const dmIndexKey = `dm:${msg.spaceId}/${msg.channelId}`;
             const dmIndex = this.searchIndices.get(dmIndexKey);
-            if (dmIndex) dmIndex.removeById(msg.messageId);
+            if (dmIndex) dmIndex.discard(msg.messageId);
           } catch {}
 
           // Cascade delete: Remove any bookmark pointing to this message
