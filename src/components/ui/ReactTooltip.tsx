@@ -179,6 +179,7 @@ const ReactTooltip: React.FunctionComponent<ReactTooltipProps> = ({
   }
 
   // Normal desktop/hover operation
+  // delayShow fixes flickering at (0,0) by letting Floating UI calculate position first
   return (
     <Tooltip
       id={id}
@@ -193,6 +194,7 @@ const ReactTooltip: React.FunctionComponent<ReactTooltipProps> = ({
           : undefined
       }
       positionStrategy="fixed"
+      delayShow={50}
     />
   );
 };

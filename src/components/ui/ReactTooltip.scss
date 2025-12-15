@@ -12,7 +12,7 @@
   border-radius: $rounded-lg !important;
   color: rgb(var(--color-text-main)) !important;
   box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.11) !important;
-  opacity: 1 !important;
+  // Note: opacity handled at bottom of file - allows fade-in transition to mask (0,0) flicker
 }
 
 @mixin reset-text {
@@ -62,3 +62,11 @@
     max-width: 400px !important;
   }
 }
+
+/* Fix tooltip flickering: let react-tooltip handle the fade-in transition,
+   but ensure fully opaque when shown. The transition masks the (0,0) positioning.
+   react-tooltip defaults to --rt-opacity: 0.9 (90%), we override to 1 (100%). */
+.react-tooltip {
+  --rt-opacity: 1; // Override default 0.9 to make tooltips fully opaque
+}
+
