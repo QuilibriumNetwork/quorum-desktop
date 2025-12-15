@@ -2,22 +2,24 @@
 
 > **AI-Generated**: May contain errors. Verify before use.
 
-## Status: Accepted Limitation
+## Status: Open - Broader Scope Identified
 
-After multiple attempts including a fully functional shared tooltip implementation, the flickering was only **marginally reduced**, not eliminated. The issue appears to be fundamental to react-tooltip v5's positioning logic.
-
-**Decision**: Accept this as a minor visual imperfection. The flickering only occurs during rapid mouse movement and is not severe enough to justify library replacement or custom implementation.
+Previously accepted as a minor limitation affecting only NavMenu SpaceIcons. **Reopened** because the issue is app-wide and more significant than originally assessed.
 
 ## Symptoms
 
-When moving the mouse quickly up and down over SpaceIcons in the NavMenu, tooltips briefly flash/flicker at the top-left corner of the viewport (position 0,0) before appearing in the correct position or disappearing.
+When moving the mouse quickly over any set of tooltips, they briefly flash/flicker at the top-left corner of the viewport (position 0,0) before appearing in the correct position or disappearing.
 
-- **Severity**: Low - noticeable on first hover, then only during fast movement
-- **Reproducibility**: Consistent when moving mouse rapidly over multiple SpaceIcons
-- **Affected Components**: `src/components/navbar/SpaceIcon.tsx`, `src/components/navbar/NavMenu.tsx`
-- **Does NOT affect**: Slow/normal mouse movement over SpaceIcons (after initial hover)
+- **Severity**: Medium - affects UX across the entire application
+- **Reproducibility**: Consistent when moving mouse rapidly over any tooltip group
+- **Scope**: App-wide (not limited to NavMenu)
 
-**Note**: The flickering happens immediately on the **first hover** over any SpaceIcon. After that initial flicker, subsequent hovers only trigger the flickering when moving the mouse quickly up and down across multiple SpaceIcons in the NavMenu.
+### Affected Areas
+
+- **NavMenu SpaceIcons** - original discovery location
+- **Message Actions** - hovering quickly over action buttons
+- **Channel/DM Header Icons** - bookmarks, pinned messages, notifications icons
+- **Any component using Tooltip primitive** - the issue is systemic
 
 ## Root Cause
 
@@ -31,7 +33,7 @@ When moving from one anchor to another quickly:
 Technical explanation from react-tooltip maintainers:
 > "The flickering is due to a design limitation on the tooltip. When the anchor element changes between renders (even if it's in the exact same place), we hide the tooltip when recalculating the position."
 
-## Attempted Solutions
+## Previous Attempted Solutions (NavMenu only)
 
 ### 1. Remove Duplicate Anchor IDs
 **Result**: Did not fix flickering (but was a legitimate bug fix).
@@ -63,32 +65,27 @@ Technical explanation from react-tooltip maintainers:
 />
 ```
 
-**Initial Blocker**: Tooltips appeared not to work. This was caused by **browser caching** - testing in a fresh browser profile confirmed the implementation worked. Hard refresh (`Ctrl+Shift+R`) resolved it.
-
-**Final Result**: Implementation worked, but **flickering was only marginally reduced**, not eliminated. The improvement was not significant enough to justify the added complexity.
-
-**Decision**: Reverted to simple tooltips. Components were removed.
+**Final Result**: Implementation worked, but **flickering was only marginally reduced**, not eliminated.
 
 See [Tooltip Shared Mode Task](../tasks/.archived/tooltip-shared-mode-navmenu-flickering.md) for full implementation details.
 
-## Current State
+## Potential Solutions to Investigate
 
-Using original simple `<Tooltip>` wrapper in SpaceIcon. Flickering is accepted as a minor limitation of react-tooltip v5.
-
-## Future Considerations
-
-If this becomes more problematic:
+Given the app-wide scope, a more comprehensive fix is warranted:
 
 1. **Switch tooltip library**: Radix UI Tooltip, Floating UI, or Tippy.js may handle rapid anchor switching better
 2. **Custom implementation**: Build tooltip with Floating UI directly for full control
 3. **CSS workaround**: Investigate if `transition-delay` on opacity could mask the position jump
+4. **Debounce hover events**: Add small delay before showing tooltips to prevent rapid switching
+5. **Hide during transition**: Force tooltip to be invisible when position is (0,0)
 
 ## Related Files
 
-- `src/components/navbar/SpaceIcon.tsx` - SpaceIcon component with Tooltip wrapper
-- `src/components/navbar/NavMenu.tsx` - Parent component rendering SpaceIcons
+- `src/components/primitives/Tooltip/Tooltip.web.tsx` - Tooltip primitive (web) - **primary fix location**
 - `src/components/ui/ReactTooltip.tsx` - ReactTooltip wrapper component
-- `src/components/primitives/Tooltip/Tooltip.web.tsx` - Tooltip primitive (web)
+- `src/components/navbar/SpaceIcon.tsx` - SpaceIcon component with Tooltip wrapper
+- `src/components/chat/MessageActions.tsx` - Message action buttons with tooltips
+- `src/components/chat/ChannelHeader.tsx` - Header icons with tooltips
 
 ## References
 
@@ -98,4 +95,5 @@ If this becomes more problematic:
 ---
 
 _Created: 2025-12-10_
-_Updated: 2025-12-11 - Attempt 5 completed and worked, but improvement was marginal. Reverted to simple tooltips. Status: Accepted Limitation._
+_Updated: 2025-12-11 - Attempt 5 completed and worked, but improvement was marginal. Reverted to simple tooltips._
+_Updated: 2025-12-15 - Reopened. Issue is app-wide, affecting message actions, header icons, and all tooltip groups. Broader scope warrants revisiting solutions._

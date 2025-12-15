@@ -1,8 +1,9 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { t } from '@lingui/core/macro';
-import { Portal, Icon, Text, FlexRow } from '../primitives';
+import { Portal, Icon, Text, FlexRow, useTheme } from '../primitives';
 import { useClickOutside } from '../../hooks/useClickOutside';
 import { NavItem } from '../../db/messages';
+import { getFolderColorHex } from '../space/IconPicker/types';
 import './FolderContextMenu.scss';
 
 // Fixed dimensions for viewport edge detection
@@ -46,6 +47,20 @@ const FolderContextMenu: React.FC<FolderContextMenuProps> = ({
     calculatePosition(position.x, position.y)
   );
   const [deleteConfirm, setDeleteConfirm] = useState(false);
+
+  // Reset delete confirmation after 5 second timeout
+  useEffect(() => {
+    if (deleteConfirm) {
+      const timeout = setTimeout(() => {
+        setDeleteConfirm(false);
+      }, 5000);
+      return () => clearTimeout(timeout);
+    }
+  }, [deleteConfirm]);
+
+  const { resolvedTheme } = useTheme();
+  const isDarkTheme = resolvedTheme === 'dark';
+  const folderColor = getFolderColorHex(folder.color, isDarkTheme);
 
   // Click outside to close
   useClickOutside(menuRef, onClose, true);
@@ -98,10 +113,10 @@ const FolderContextMenu: React.FC<FolderContextMenuProps> = ({
         }}
       >
         {/* Folder name header */}
-        <div className="folder-context-menu-header">
+        <div className="folder-context-menu-header" style={{ color: folderColor }}>
           <FlexRow align="center" gap={2}>
             <Icon name={folder.icon || 'folder'} size="sm" />
-            <Text weight="medium">{folder.name}</Text>
+            <Text weight="medium" color={folderColor}>{folder.name}</Text>
           </FlexRow>
         </div>
 

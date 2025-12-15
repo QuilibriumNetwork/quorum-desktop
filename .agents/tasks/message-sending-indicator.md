@@ -28,6 +28,7 @@
 - **Constraints**: Must handle message re-ordering when incoming messages arrive during pending state
 - **Dependencies**: React Query cache management, Triple Ratchet encryption flow
 - **Security requirement**: Signature must be generated BEFORE optimistic display (non-repudiability)
+- **Prior art**: See commit `671d1bc0` on branch `feat/immediately-send-message` - an earlier attempt using `isSent` boolean instead of 3-state status. Lacks failure handling but has useful `clientMessageId` deduplication pattern worth considering.
 
 ## Prerequisites
 
