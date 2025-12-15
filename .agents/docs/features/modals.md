@@ -51,7 +51,7 @@ After feature-analyzer review, the hybrid architecture was determined to be **co
 
 **Context Providers**: ConfirmationModalProvider, ImageModalProvider, EditHistoryModalProvider
 
-### ModalProvider Modals (8)
+### ModalProvider Modals (9)
 
 | Modal | File | Purpose |
 |-------|------|---------|
@@ -61,6 +61,7 @@ After feature-analyzer review, the hybrid architecture was determined to be **co
 | GroupEditorModal | `src/components/modals/GroupEditorModal.tsx` | Create/edit channel groups |
 | LeaveSpaceModal | `src/components/modals/LeaveSpaceModal.tsx` | Leave space confirmation |
 | KickUserModal | `src/components/modals/KickUserModal.tsx` | Kick user confirmation |
+| MuteUserModal | `src/components/modals/MuteUserModal.tsx` | Mute user confirmation |
 | NewDirectMessageModal | `src/components/modals/NewDirectMessageModal.tsx` | Start new DM |
 | ConversationSettingsModal | `src/components/modals/ConversationSettingsModal.tsx` | DM conversation settings |
 
@@ -166,5 +167,5 @@ All modals must use: `Button`, `Input`, `Switch`, `Icon`, `Tooltip`, `Select` fr
 
 ---
 
-**Last Updated:** 2025-12-03
-**Verified:** 2025-12-09 - File paths confirmed current
+**Last Updated:** 2025-12-15
+**Verified:** 2025-12-15 - Added MuteUserModal to ModalProvider section
