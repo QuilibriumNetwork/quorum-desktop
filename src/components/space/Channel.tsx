@@ -10,6 +10,7 @@ import {
   useConversation,
   useUpdateReadTime,
 } from '../../hooks';
+import { useMutedUsers } from '../../hooks/queries/mutedUsers';
 import { loadMessagesAround } from '../../hooks/queries/messages/loadMessagesAround';
 import { buildMessagesKey } from '../../hooks/queries/messages/buildMessagesKey';
 import { useMessageDB } from '../context/useMessageDB';
@@ -158,6 +159,12 @@ const Channel: React.FC<ChannelProps> = ({
 
   // Get pinned messages
   const { pinnedCount } = usePinnedMessages(spaceId, channelId, channel);
+
+  // Check if current user is muted in this space
+  const { data: mutedUsers } = useMutedUsers({ spaceId });
+  const isCurrentUserMuted = mutedUsers?.some(
+    m => m.targetUserId === user?.currentPasskeyInfo?.address
+  ) ?? false;
 
   // Get current user address for bookmarks
   const userAddress = user?.currentPasskeyInfo?.address || '';
@@ -500,12 +507,14 @@ const Channel: React.FC<ChannelProps> = ({
   }, [navigate, spaceId]);
 
   // Check if user can post in this channel
-  const canPost = canPostInReadOnlyChannel(
+  const canPostInChannel = canPostInReadOnlyChannel(
     channel,
     user.currentPasskeyInfo?.address,
     roles,
     isSpaceOwner || false
   );
+  // Also block muted users from posting
+  const canPost = canPostInChannel && !isCurrentUserMuted;
 
   // Helper function to get channel icon and color
   const getChannelIconAndColor = () => {
@@ -1082,9 +1091,11 @@ const Channel: React.FC<ChannelProps> = ({
                 onSigningToggle={() => setSkipSigning(!skipSigning)}
                 disabled={!canPost}
                 disabledMessage={
-                  channel?.isReadOnly
-                    ? t`You cannot post in this channel`
-                    : undefined
+                  isCurrentUserMuted
+                    ? t`You have been muted in this Space`
+                    : channel?.isReadOnly
+                      ? t`You cannot post in this channel`
+                      : undefined
                 }
                 mentionError={composer.mentionError}
                 messageValidation={composer.messageValidation}

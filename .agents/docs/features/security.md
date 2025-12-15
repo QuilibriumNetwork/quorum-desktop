@@ -116,6 +116,7 @@ The following table summarizes all client-side limitations and their security st
 | **XSS Prevention** | **LOW** | ❌ No - 3-layer defense | ❌ No - input sanitized |
 | **Kick space owner (by others)** | **LOW** | ❌ No - crypto verified | ❌ No - needs owner keys |
 | **Delete others' messages** | **LOW** | ❌ No - rejected on receive | ⚠️ Sends, but rejected |
+| **Mute users** | **LOW** | ❌ No - rejected on receive | ⚠️ Sends, but rejected |
 | **Read-only channel posting** | **LOW** | ❌ No - rejected on receive | ⚠️ Sends, but rejected |
 | **Pin messages** | **LOW** | ❌ No - rejected on receive | ⚠️ Sends, but rejected |
 | **@everyone mention** | **LOW** | ❌ No - stripped before broadcast | ❌ No - service layer |
@@ -359,6 +360,21 @@ Pin/unpin actions broadcast with full defense-in-depth validation:
   - ✅ Rate limiting via existing message throttle
 - **Behavior**: Unauthorized pins silently rejected, attacker only sees their own pin
 
+#### Mute User Permission
+
+Mute/unmute actions with full defense-in-depth validation (added 2025-12-15):
+- **Sending**: `src/hooks/business/user/useUserMuting.ts`
+- **Receiving**: `src/services/MessageService.ts` (mute/unmute message handlers)
+- **Security Features**:
+  - ✅ DMs rejected (mute is Space-only)
+  - ✅ Self-mute rejected (prevents self-DoS)
+  - ✅ Requires explicit `user:mute` role permission
+  - ✅ NO `isSpaceOwner` bypass on receiving side
+  - ✅ Replay protection via `muteId` deduplication
+  - ✅ Timestamp-based conflict resolution for concurrent mute/unmute
+  - ✅ Fail-secure: reject when space data unavailable
+- **Behavior**: Unauthorized mutes silently rejected, muted users' messages hidden from honest clients
+
 ---
 
 ## Cryptographic Security
@@ -414,8 +430,9 @@ User identity secured via WebAuthn passkeys:
 ---
 
 **Document Created**: 2025-11-08
-**Last Updated**: 2025-12-12
+**Last Updated**: 2025-12-15
 **Major Updates**:
+- 2025-12-15: Added mute user permission with full defense-in-depth validation
 - 2025-12-12: Added bookmark limit database-layer validation (defense-in-depth hardening)
 - 2025-12-12: Added pin message cross-client synchronization with full defense-in-depth validation
 - 2025-12-11: Added receiving-side validation for message length, mentions, read-only channels

@@ -3,21 +3,26 @@
 > **⚠️ AI-Generated**: May contain errors. Verify before use.
 > **Reviewed by**: feature-analyzer agent, security-analyst agent
 
-**Status**: Pending
+**Status**: ✅ Complete
 **Complexity**: Medium
 **Created**: 2025-12-14
+**Completed**: 2025-12-15
 **Files**:
-- `src/api/quorumApi.ts:3-4` - Permission type, add `'user:mute'`
-- `src/api/quorumApi.ts:99-113` - Message content types, add MuteMessage/UnmuteMessage
-- `src/api/quorumApi.ts:195-198` - Add MuteMessage type definition (after KickMessage)
-- `src/components/modals/SpaceSettingsModal/Roles.tsx:160-172` - Permission dropdown options
-- `src/components/modals/MuteUserModal.tsx` - Mute confirmation modal (NEW)
-- `src/components/user/UserProfile.tsx:186-209` - Add mute/unmute button
-- `src/hooks/business/user/useUserProfileActions.ts` - Add mute action
-- `src/services/MessageService.ts:839-852` - Receive-side validation pattern (reference)
-- `src/db/messages.ts` - Mute state persistence (NEW)
-- `src/utils/channelPermissions.ts` - canMuteUser method (NEW)
-- `src/hooks/queries/mute/useMutedUsers.ts` - Mute state hook (NEW)
+- `src/api/quorumApi.ts` - Permission type `'user:mute'`, MuteMessage/UnmuteMessage types
+- `src/utils/canonicalize.ts` - Canonicalization for mute/unmute messages
+- `src/components/modals/SpaceSettingsModal/Roles.tsx` - Permission dropdown options
+- `src/components/modals/MuteUserModal.tsx` - Mute/unmute confirmation modal
+- `src/components/user/UserProfile.tsx` - Mute/unmute button
+- `src/hooks/business/user/useUserMuting.ts` - Mute/unmute actions hook
+- `src/hooks/business/ui/useModalState.ts` - MuteUserTarget interface with isUnmuting
+- `src/components/context/ModalProvider.tsx` - Modal integration with mute/unmute logic
+- `src/services/MessageService.ts` - Receive-side validation and message filtering
+- `src/db/messages.ts` - Mute state persistence (muted_users store)
+- `src/utils/channelPermissions.ts` - canMuteUser method
+- `src/hooks/queries/mutedUsers/` - Mute state hooks (useMutedUsers, useInvalidateMutedUsers)
+- `src/components/space/Channel.tsx` - MessageComposer disabled for muted users
+- `src/components/primitives/Icon/types.ts` - volume/volume-off icon names
+- `src/components/primitives/Icon/iconMapping.ts` - volume/volume-off mappings
 
 ## What & Why
 
@@ -42,7 +47,7 @@
    export type Permission = 'message:delete' | 'message:pin' | 'mention:everyone' | 'user:mute';
    ```
 
-2. **Add MuteMessage and UnmuteMessage types** (`src/api/quorumApi.ts` after line 198)
+2. **Add MuteMessage and UnmuteMessage types** (`src/api/quorumApi.ts` after line 199, following KickMessage)
    ```typescript
    export type MuteMessage = {
      senderId: string;      // Who performed the mute
@@ -95,7 +100,18 @@
 ### Phase 3: State Persistence & UI
 
 6. **Add mute state persistence** (`src/db/messages.ts`)
-   - Add `muted_users` object store with schema:
+   - **Increment DB version**: Change `DB_VERSION` from `4` to `5` (line 103)
+   - Add migration in `onupgradeneeded`:
+     ```typescript
+     if (event.oldVersion < 5) {
+       const mutedUsersStore = db.createObjectStore('muted_users', {
+         keyPath: ['spaceId', 'targetUserId'],  // Composite key
+       });
+       mutedUsersStore.createIndex('by_space', 'spaceId');
+       mutedUsersStore.createIndex('by_mute_id', 'lastMuteId');  // For deduplication lookups
+     }
+     ```
+   - Add `MutedUserRecord` type:
      ```typescript
      type MutedUserRecord = {
        spaceId: string;
@@ -105,7 +121,7 @@
        lastMuteId: string;  // For deduplication
      };
      ```
-   - Add methods: `getMutedUsers(spaceId)`, `muteUser(...)`, `unmuteUser(...)`
+   - Add methods: `getMutedUsers(spaceId)`, `getMuteByMuteId(muteId)`, `muteUser(...)`, `unmuteUser(...)`
    - **Important**: Mute state is per-space, not global
 
 7. **Create mute state hook** (`src/hooks/queries/mute/useMutedUsers.ts`)
@@ -122,11 +138,63 @@
 
 8. **Update UserProfile layout** (`src/components/user/UserProfile.tsx:186-209`)
    - Current: 2 buttons (Send Message, Kick User) in a 2-column grid
-   - **Recommended layout** (Option C - grouped moderation):
-     - Send Message: full width on mobile, spans 2 cols on desktop
-     - Mute/Unmute + Kick: side by side below
-   - Add Mute/Unmute button with toggle state based on `useMutedUsers` hook
+   - **Button labels**: "Send Message", "Mute" (or "Unmute"), "Kick"
+   - **Layout**:
+     - Row 1: "Send Message" button (full width)
+     - Row 2: Moderation buttons side by side (when both visible)
+   - **Conditional display**:
+     - "Kick" only shown to space owners (`isSpaceOwner && canKickThisUser`)
+     - "Mute"/"Unmute" only shown to users with `user:mute` permission (`canMuteUsers`)
+     - When only ONE moderation button is visible → it takes full row width
+     - When BOTH are visible → side by side
+   - **Responsive behavior** (maintain current pattern):
+     - On mobile/small screens: all buttons stack vertically (full width each)
+     - On desktop: Row 1 full width, Row 2 side-by-side (or single full-width if only one)
+   - Add Mute/Unmute toggle state based on `useMutedUsers` hook
    - Mute button opens confirmation modal (see step 9)
+
+   **Icons** (using `iconName` prop on Button):
+   - Send Message: `message` (speech bubble) ⚠️ **NEW - add alias to icon system**
+   - Mute: `volume-off` (muted speaker) ⚠️ **NEW - add to icon system**
+   - Unmute: `volume` (speaker with sound) ⚠️ **NEW - add to icon system**
+   - Kick: `ban` (prohibition sign - already in icon system)
+
+   **Add icons to primitive** (`src/components/primitives/Icon/`):
+   - In `types.ts`: Add `'message' | 'volume' | 'volume-off'` to IconName type
+   - In `iconMapping.ts`: Add mappings:
+     ```typescript
+     'message': 'IconMessage',      // Alias (comment-dots also maps to this)
+     'volume': 'IconVolume',
+     'volume-off': 'IconVolumeOff',
+     ```
+   - Reference: https://tabler.io/icons/icon/message, https://tabler.io/icons/icon/volume, https://tabler.io/icons/icon/volume-off
+
+   ```tsx
+   {/* Row 1: Send Message - always full width */}
+   <Button size="small" iconName="message" className="w-full justify-center">
+     {t`Send Message`}
+   </Button>
+
+   {/* Row 2: Moderation buttons - conditional */}
+   {(canMuteUsers || canKickUsers) && (
+     <Container className={`grid gap-1 sm:gap-2 ${
+       canMuteUsers && canKickUsers
+         ? 'grid-cols-1 sm:grid-cols-2'  // Both: side by side on desktop
+         : 'grid-cols-1'                  // One: full width
+     }`}>
+       {canMuteUsers && (
+         <Button type="secondary" size="small" iconName={isMuted ? 'volume' : 'volume-off'} className="justify-center">
+           {isMuted ? t`Unmute` : t`Mute`}
+         </Button>
+       )}
+       {canKickUsers && (
+         <Button type="danger" size="small" iconName="ban" className="justify-center">
+           {t`Kick`}
+         </Button>
+       )}
+     </Container>
+   )}
+   ```
 
 9. **Create MuteUserModal** (`src/components/modals/MuteUserModal.tsx`)
    - Similar pattern to KickUserModal
@@ -245,19 +313,24 @@
    - Run: `npx tsc --noEmit`
 
 ✅ **Mobile layout works**
-   - Buttons don't overflow on small screens
+   - Buttons stack vertically on small screens
+   - When only Mute OR Kick visible (not both), button takes full width
+   - When both Mute AND Kick visible, they're side-by-side on desktop, stacked on mobile
 
 ## Definition of Done
 
-- [ ] `user:mute` permission type added
-- [ ] MuteMessage/UnmuteMessage types defined
-- [ ] Permission available in role settings
-- [ ] MuteUserModal created
-- [ ] Mute/Unmute button in UserProfile
-- [ ] Receive-side validation implemented
-- [ ] Muted users' messages hidden
-- [ ] TypeScript passes
-- [ ] Manual testing successful
+- [x] `user:mute` permission type added
+- [x] MuteMessage/UnmuteMessage types defined
+- [x] Permission available in role settings
+- [x] DB migration added (version 5 with `muted_users` store)
+- [x] Icons added to Icon primitive (`volume`, `volume-off`)
+- [x] MuteUserModal created (supports both mute and unmute modes)
+- [x] Mute/Unmute button in UserProfile (with responsive layout & icons)
+- [x] Receive-side validation implemented
+- [x] Muted users' messages hidden
+- [x] Muted users see disabled MessageComposer
+- [x] Canonicalization support for mute/unmute messages
+- [x] Manual testing successful
 
 ## Notes
 
@@ -265,6 +338,21 @@
 - Same role that can mute can also unmute
 - **Space owners must have a role with `user:mute` permission** - no implicit bypass (receiving side can't verify owner status)
 - Muted user sees disabled composer with "You are muted in this space" - they know they're muted but there's no public announcement
+
+## Implementation Notes (2025-12-15)
+
+**Key implementation differences from original plan:**
+- Mute hook lives in `src/hooks/business/user/useUserMuting.ts` (separate from `useUserProfileActions`)
+- Query hooks in `src/hooks/queries/mutedUsers/` (not `mute/`)
+- MuteUserModal supports both mute and unmute modes via `isUnmuting` prop (single component for both)
+
+**Critical fix applied:**
+- Added `mute` and `unmute` message types to `src/utils/canonicalize.ts` - without this, messages were stored locally but not transmitted over the network (caused "Invalid message type" error)
+
+**UI behavior:**
+- Mute/Unmute button visible on own profile if user has permission (allows testing)
+- Kick button hidden on own profile (space owners cannot kick themselves)
+- Modal shows error via Callout component if mute/unmute fails
 
 ## Security Considerations (from security-analyst review)
 

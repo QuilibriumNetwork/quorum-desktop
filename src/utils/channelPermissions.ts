@@ -35,6 +35,7 @@ export interface ChannelPermissionChecker {
   canPinMessage: (message: MessageType) => boolean;
   canPostMessage: () => boolean;
   canKickUser: () => boolean;
+  canMuteUser: () => boolean;
 }
 
 /**
@@ -120,6 +121,24 @@ export class UnifiedPermissionSystem {
   }
 
   /**
+   * Check if user can mute/unmute other users in the space.
+   *
+   * NOTE: NO isSpaceOwner bypass - receiving side can't verify owner status.
+   * Space owners must assign themselves a role with user:mute permission.
+   */
+  canMuteUser(): boolean {
+    const { channel } = this.context;
+
+    // 1. Read-only channels: Only managers can mute
+    if (channel?.isReadOnly) {
+      return this.isReadOnlyChannelManager();
+    }
+
+    // 2. Regular channels: Check for user:mute permission via roles
+    return this.hasTraditionalRolePermission('user:mute');
+  }
+
+  /**
    * Check if user is a manager of the current read-only channel
    * This is the ONLY way to get permissions in read-only channels (except space owner)
    */
@@ -171,6 +190,7 @@ export function createChannelPermissionChecker(
       permissionSystem.canPinMessage(message),
     canPostMessage: () => permissionSystem.canPostMessage(),
     canKickUser: () => permissionSystem.canKickUser(),
+    canMuteUser: () => permissionSystem.canMuteUser(),
   };
 }
 
@@ -201,6 +221,8 @@ export function hasChannelPermission(
       return message ? checker.canDeleteMessage(message) : false;
     case 'message:pin':
       return message ? checker.canPinMessage(message) : false;
+    case 'user:mute':
+      return checker.canMuteUser();
     // Note: 'user:kick' is not a role permission - use canKickUser() directly
     // Kick requires owner's ED448 key and cannot be delegated via roles
     default:

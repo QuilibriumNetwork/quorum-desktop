@@ -1,7 +1,7 @@
 import { getConfig } from '../config/config';
 
 // Note: 'user:kick' was removed - kick requires owner's ED448 key, cannot be delegated via roles
-export type Permission = 'message:delete' | 'message:pin' | 'mention:everyone';
+export type Permission = 'message:delete' | 'message:pin' | 'mention:everyone' | 'user:mute';
 
 export type Role = {
   roleId: string;
@@ -106,6 +106,7 @@ export type Message = {
     | JoinMessage
     | LeaveMessage
     | KickMessage
+    | MuteMessage
     | UpdateProfileMessage
     | StickerMessage
     | PinMessage
@@ -195,6 +196,15 @@ export type LeaveMessage = {
 export type KickMessage = {
   senderId: string;
   type: 'kick';
+};
+
+export type MuteMessage = {
+  senderId: string;
+  type: 'mute';
+  targetUserId: string;
+  muteId: string;
+  timestamp: number;
+  action: 'mute' | 'unmute';
 };
 
 export type StickerMessage = {

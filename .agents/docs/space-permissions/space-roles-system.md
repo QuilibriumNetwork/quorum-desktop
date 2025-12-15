@@ -19,7 +19,7 @@ export type Role = {
   isPublic?: boolean; // Whether the role is visible to other users (defaults to true)
 };
 
-export type Permission = 'message:delete' | 'message:pin' | 'user:kick' | 'mention:everyone';
+export type Permission = 'message:delete' | 'message:pin' | 'user:mute' | 'mention:everyone';
 ```
 
 ### Permission Types
@@ -38,12 +38,14 @@ export type Permission = 'message:delete' | 'message:pin' | 'user:kick' | 'menti
 - **Processing**: Validated through pinning mutation hooks
 - **Restrictions**: Does not work in read-only channels (isolation principle)
 
-#### **`user:kick`**
+#### **`user:mute`**
 
-- **Scope**: Remove users from the entire space
-- **UI Integration**: Controls kick button in user profiles
-- **Processing**: Multi-layer validation with space owner protection
-- **Protection**: Cannot kick space owners (enforced at all levels)
+- **Scope**: Mute/unmute users in the space (their messages hidden from all clients)
+- **UI Integration**: Controls mute/unmute button in user profiles
+- **Processing**: Validated by `MessageService` for mute message reception (receiving-side validation)
+- **Enforcement**: Client-enforced - each client independently ignores muted users' messages
+- **Restrictions**: Does not work in DMs (mute is Space-only feature)
+- **Self-Mute**: Users with permission can unmute themselves if muted by others
 
 #### **`mention:everyone`**
 
@@ -272,7 +274,7 @@ export interface UseRoleManagementReturn {
   options={[
     { value: 'message:delete', label: 'Delete Messages' },
     { value: 'message:pin', label: 'Pin Messages' },
-    { value: 'user:kick', label: 'Kick Users' },
+    { value: 'user:mute', label: 'Mute Users' },
     { value: 'mention:everyone', label: 'Mention Everyone' }
   ]}
   onChange={(perms) => updateRolePermissions(index, perms as Permission[])}
@@ -400,7 +402,7 @@ if (spaceId != channelId) {
 
 - **Message Deletion**: Role-based delete permissions working in regular channels
 - **Message Pinning**: Role-based pin permissions with proper UI integration
-- **User Kicking**: Complete kick system with space owner protection
+- **User Muting**: Role-based mute/unmute with receiving-side validation (2025-12-15)
 - **Mention Everyone**: Role-based @everyone mention permissions
 - **Role Management**: Full CRUD operations with sophisticated UI
 - **Role Visibility**: Public/private role toggle with filtering in UserProfile and Account Settings
@@ -517,6 +519,6 @@ export type Role = {
 
 ---
 
-_Last Updated: 2025-12-11_
-_Implementation Status: Core features complete, space owner bypass removed for security_
-_Security Update: Space owners must join roles for delete/pin (kick exception via protocol)_
+_Last Updated: 2025-12-15_
+_Implementation Status: Core features complete, user:mute added, user:kick removed_
+_Security Update: Space owners must join roles for delete/pin/mute (kick is space-owner only via protocol)_

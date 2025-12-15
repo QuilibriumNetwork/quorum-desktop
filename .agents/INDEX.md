@@ -27,6 +27,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Kick User System Documentation](docs/features/kick-user-system.md)
 - [Modal Save Overlay System](docs/features/modal-save-overlay.md)
 - [Modal System Documentation](docs/features/modals.md)
+- [Mute User System Documentation](docs/features/mute-user-system.md)
 - [ReactTooltip Mobile Support Documentation](docs/features/reacttooltip-mobile.md)
 - [Responsive Layout System Documentation](docs/features/responsive-layout.md)
 - [Security Architecture](docs/features/security.md)
@@ -86,6 +87,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Performance Issue: UserSettingsModal Save Times Scale Poorly with Number of Spaces](bugs/usersettingsmodal-scalability-performance.md)
 - [Pinned Messages Panel Button Clicks Bug](bugs/pinned-messages-panel-clicks-and-message-list-disappearing.md)
 - [Public Invite Link Intermittent Expiration Bug](bugs/public-invite-link-intermittent-expiration.md)
+- [Role with message:delete permission can delete space owner's messages](bugs/message-delete-owner-vulnerability.md)
 - [Space Owner Delete Permissions Bug](bugs/space-owner-delete-permissions-bug.md)
 
 ### Solved Issues
@@ -315,4 +317,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2025-12-14 18:40:22
+**Last Updated**: 2025-12-15 11:42:56

@@ -91,6 +91,14 @@ export interface SearchContext {
   conversationId?: string;
 }
 
+export interface MutedUserRecord {
+  spaceId: string;
+  targetUserId: string;
+  mutedAt: number;
+  mutedBy: string;
+  lastMuteId: string;
+}
+
 export interface SearchResult {
   message: Message;
   score: number;
@@ -100,7 +108,7 @@ export interface SearchResult {
 export class MessageDB {
   private db: IDBDatabase | null = null;
   private readonly DB_NAME = 'quorum_db';
-  private readonly DB_VERSION = 4;
+  private readonly DB_VERSION = 5;
   private searchIndices: Map<string, MiniSearch<SearchableMessage>> = new Map();
   private indexInitialized = false;
 
@@ -185,6 +193,15 @@ export class MessageDB {
           // Create indices for efficient querying
           bookmarksStore.createIndex('by_message', 'messageId'); // Essential for O(1) isBookmarked check
           bookmarksStore.createIndex('by_created', 'createdAt'); // For chronological listing
+        }
+
+        if (event.oldVersion < 5) {
+          // Add muted_users object store for client-side mute enforcement
+          const mutedUsersStore = db.createObjectStore('muted_users', {
+            keyPath: ['spaceId', 'targetUserId'],
+          });
+          mutedUsersStore.createIndex('by_space', 'spaceId');
+          mutedUsersStore.createIndex('by_mute_id', 'lastMuteId');
         }
       };
     });
@@ -1929,6 +1946,106 @@ export class MessageDB {
       request.onsuccess = () => {
         console.log(`Deleted encryption state for ${conversationId} / ${inboxId}`);
         resolve(true);
+      };
+      request.onerror = () => reject(request.error);
+    });
+  }
+
+  // ===== Muted Users Methods =====
+
+  /**
+   * Get all muted users for a space
+   */
+  async getMutedUsers(spaceId: string): Promise<MutedUserRecord[]> {
+    await this.init();
+    return new Promise((resolve, reject) => {
+      const transaction = this.db!.transaction('muted_users', 'readonly');
+      const store = transaction.objectStore('muted_users');
+      const index = store.index('by_space');
+      const request = index.getAll(spaceId);
+
+      request.onsuccess = () => {
+        resolve(request.result as MutedUserRecord[]);
+      };
+      request.onerror = () => reject(request.error);
+    });
+  }
+
+  /**
+   * Check if a mute action has already been processed (deduplication)
+   */
+  async getMuteByMuteId(muteId: string): Promise<MutedUserRecord | undefined> {
+    await this.init();
+    return new Promise((resolve, reject) => {
+      const transaction = this.db!.transaction('muted_users', 'readonly');
+      const store = transaction.objectStore('muted_users');
+      const index = store.index('by_mute_id');
+      const request = index.get(muteId);
+
+      request.onsuccess = () => {
+        resolve(request.result as MutedUserRecord | undefined);
+      };
+      request.onerror = () => reject(request.error);
+    });
+  }
+
+  /**
+   * Mute a user in a space
+   */
+  async muteUser(
+    spaceId: string,
+    targetUserId: string,
+    mutedBy: string,
+    muteId: string,
+    timestamp: number
+  ): Promise<void> {
+    await this.init();
+    return new Promise((resolve, reject) => {
+      const transaction = this.db!.transaction('muted_users', 'readwrite');
+      const store = transaction.objectStore('muted_users');
+
+      const record: MutedUserRecord = {
+        spaceId,
+        targetUserId,
+        mutedAt: timestamp,
+        mutedBy,
+        lastMuteId: muteId,
+      };
+
+      const request = store.put(record);
+
+      request.onsuccess = () => resolve();
+      request.onerror = () => reject(request.error);
+    });
+  }
+
+  /**
+   * Unmute a user in a space
+   */
+  async unmuteUser(spaceId: string, targetUserId: string): Promise<void> {
+    await this.init();
+    return new Promise((resolve, reject) => {
+      const transaction = this.db!.transaction('muted_users', 'readwrite');
+      const store = transaction.objectStore('muted_users');
+      const request = store.delete([spaceId, targetUserId]);
+
+      request.onsuccess = () => resolve();
+      request.onerror = () => reject(request.error);
+    });
+  }
+
+  /**
+   * Check if a user is muted in a space
+   */
+  async isUserMuted(spaceId: string, targetUserId: string): Promise<boolean> {
+    await this.init();
+    return new Promise((resolve, reject) => {
+      const transaction = this.db!.transaction('muted_users', 'readonly');
+      const store = transaction.objectStore('muted_users');
+      const request = store.get([spaceId, targetUserId]);
+
+      request.onsuccess = () => {
+        resolve(!!request.result);
       };
       request.onerror = () => reject(request.error);
     });

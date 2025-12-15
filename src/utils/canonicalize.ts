@@ -9,6 +9,7 @@ import type {
   StickerMessage,
   EditMessage,
   PinMessage,
+  MuteMessage,
 } from '../api/quorumApi';
 
 /**
@@ -31,6 +32,7 @@ export function canonicalize(
     | StickerMessage
     | EditMessage
     | PinMessage
+    | MuteMessage
 ): string {
   if (typeof pendingMessage === 'string') {
     return pendingMessage;
@@ -107,6 +109,16 @@ export function canonicalize(
     return (
       pendingMessage.type +
       pendingMessage.targetMessageId +
+      pendingMessage.action
+    );
+  }
+
+  if (pendingMessage.type === 'mute') {
+    return (
+      pendingMessage.type +
+      pendingMessage.targetUserId +
+      pendingMessage.muteId +
+      pendingMessage.timestamp +
       pendingMessage.action
     );
   }

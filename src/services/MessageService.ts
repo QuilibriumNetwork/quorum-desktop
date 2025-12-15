@@ -10,6 +10,7 @@ import {
   JoinMessage,
   LeaveMessage,
   KickMessage,
+  MuteMessage,
   Space,
   EditMessage,
   PinMessage,
@@ -1018,6 +1019,61 @@ export class MessageService {
           ];
         }
       );
+    } else if (decryptedContent.content.type === 'mute') {
+      // Handle mute/unmute message - receive-side validation
+      const muteContent = decryptedContent.content as MuteMessage;
+
+      // Reject DMs - mute is Space-only feature
+      if (spaceId === channelId) {
+        return;
+      }
+
+      // Self-mute check (only for mute action)
+      if (muteContent.action === 'mute' && muteContent.targetUserId === muteContent.senderId) {
+        return;
+      }
+
+      // Fail-secure validation
+      const space = await this.messageDB.getSpace(spaceId);
+      if (!space) {
+        return;
+      }
+
+      // Check permission - sender must have user:mute via roles
+      const hasPermission = space.roles?.some(
+        (role) =>
+          role.members?.includes(muteContent.senderId) &&
+          role.permissions?.includes('user:mute')
+      );
+
+      if (!hasPermission) {
+        return;
+      }
+
+      if (muteContent.action === 'mute') {
+        // Deduplication check
+        const existingMute = await this.messageDB.getMuteByMuteId(muteContent.muteId);
+        if (existingMute) {
+          return;
+        }
+
+        // Apply mute
+        await this.messageDB.muteUser(
+          spaceId,
+          muteContent.targetUserId,
+          muteContent.senderId,
+          muteContent.muteId,
+          muteContent.timestamp
+        );
+      } else {
+        // Apply unmute
+        await this.messageDB.unmuteUser(spaceId, muteContent.targetUserId);
+      }
+
+      // Invalidate muted users cache
+      queryClient.invalidateQueries({
+        queryKey: ['mutedUsers', spaceId],
+      });
     } else {
       // Read-only channel validation - must validate BEFORE adding to cache
       // Note: edit-message is handled earlier in the if-else chain (line ~310)
@@ -1131,6 +1187,12 @@ export class MessageService {
             `Message ID: ${decryptedContent.messageId}`
         );
         return; // Drop message silently (defense-in-depth)
+      }
+
+      // Check if sender is muted in this space (filter muted users' messages)
+      const isSenderMuted = await this.messageDB.isUserMuted(spaceId, senderId);
+      if (isSenderMuted) {
+        return; // Drop message silently - sender is muted
       }
 
       // Authorized - add to cache

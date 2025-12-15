@@ -86,6 +86,9 @@ export const iconComponentMap: Record<IconName, string> = {
   eye: 'IconEye',
   'eye-off': 'IconEyeOff',
   'life-ring': 'IconLifebuoy',
+  volume: 'IconVolume',
+  'volume-off': 'IconVolumeOff',
+  message: 'IconMessage',
 
   // Settings & Security
   settings: 'IconSettings',

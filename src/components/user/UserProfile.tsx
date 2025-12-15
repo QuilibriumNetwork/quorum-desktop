@@ -13,7 +13,10 @@ import {
 import { useSpaceOwner } from '../../hooks/queries/spaceOwner';
 import { useQuery } from '@tanstack/react-query';
 import { useMessageDB } from '../context/useMessageDB';
+import { useModals } from '../context/ModalProvider';
 import { canKickUser } from '../../utils/permissions';
+import { createChannelPermissionChecker } from '../../utils/channelPermissions';
+import { useMutedUsers } from '../../hooks/queries/mutedUsers';
 import { t } from '@lingui/core/macro';
 import { truncateAddress } from '../../utils';
 import { UserAvatar } from './UserAvatar';
@@ -29,6 +32,7 @@ const UserProfile: React.FunctionComponent<{
 }> = (props) => {
   const { currentPasskeyInfo } = usePasskeysContext();
   const { messageDB } = useMessageDB();
+  const { openMuteUser } = useModals();
 
   // Extract business logic into hooks
   const { addRole, removeRole, loadingRoles } = useUserRoleManagement(props.spaceId);
@@ -55,9 +59,31 @@ const UserProfile: React.FunctionComponent<{
     enabled: !!props.spaceId,
   });
 
+  // Check if this user is muted
+  const { data: mutedUsers } = useMutedUsers({ spaceId: props.spaceId || '' });
+  const isUserMuted = mutedUsers?.some(m => m.targetUserId === props.user.address) ?? false;
+
+  // Permission checks
   // Only space owners can kick users (requires owner's ED448 key)
   const canKickThisUser = canKickUser(props.user.address, space || undefined);
   const canKickUsers = isSpaceOwner && canKickThisUser;
+
+  // Check if current user can mute (requires user:mute permission via role)
+  const canMuteUsers = React.useMemo(() => {
+    if (!currentPasskeyInfo?.address || !space || !props.spaceId) return false;
+
+    const permissionChecker = createChannelPermissionChecker({
+      userAddress: currentPasskeyInfo.address,
+      isSpaceOwner: isSpaceOwner ?? false,
+      space: space,
+      channel: undefined, // UserProfile is space-level, not channel-specific
+    });
+
+    return permissionChecker.canMuteUser();
+  }, [currentPasskeyInfo?.address, space, props.spaceId, isSpaceOwner]);
+
+  // Check if viewing own profile
+  const isOwnProfile = currentPasskeyInfo?.address === props.user.address;
 
   return (
     <Container
@@ -183,28 +209,62 @@ const UserProfile: React.FunctionComponent<{
             </Container>
           </Container>
         )}
-        {currentPasskeyInfo!.address !== props.user.address && (
+        {/* Action buttons section - shown when viewing others OR when you have moderation permissions */}
+        {(!isOwnProfile || canMuteUsers || canKickUsers) && (
           <Container className="bg-surface-3 rounded-b-xl p-3">
-            <Container className="grid grid-cols-1 gap-1 sm:grid-cols-2 sm:gap-2">
+            {/* Send Message - only when viewing others' profiles */}
+            {!isOwnProfile && (
               <Button
                 size="small"
-                className="justify-center text-center"
+                iconName="message"
+                className="w-full justify-center text-center"
                 onClick={() => sendMessage(props.user.address)}
               >
                 {t`Send Message`}
               </Button>
-              {canKickUsers && (
-                <Button
-                  type="danger"
-                  size="small"
-                  className="justify-center text-center"
-                  onClick={() => kickUser(props.user.address)}
-                  disabled={props.user.isKicked}
-                >
-                  {props.user.isKicked ? t`Kicked!` : t`Kick User`}
-                </Button>
-              )}
-            </Container>
+            )}
+
+            {/* Moderation buttons - based on permissions */}
+            {/* Mute: on own profile only show Unmute if muted (prevent self-muting), Kick: hidden on own profile */}
+            {((canMuteUsers && (!isOwnProfile || isUserMuted)) || (canKickUsers && !isOwnProfile)) && (
+              <Container className={`${!isOwnProfile ? 'mt-2 ' : ''}grid gap-1 sm:gap-2 ${
+                canMuteUsers && (!isOwnProfile || isUserMuted) && canKickUsers && !isOwnProfile
+                  ? 'grid-cols-1 sm:grid-cols-2'
+                  : 'grid-cols-1'
+              }`}>
+                {canMuteUsers && (!isOwnProfile || isUserMuted) && (
+                  <Button
+                    type="secondary"
+                    size="small"
+                    iconName={isUserMuted ? 'volume' : 'volume-off'}
+                    className="justify-center text-center"
+                    onClick={() => {
+                      openMuteUser({
+                        address: props.user.address,
+                        displayName: props.user.displayName,
+                        userIcon: props.user.userIcon,
+                        isUnmuting: isUserMuted,
+                      });
+                      props.dismiss?.();
+                    }}
+                  >
+                    {isUserMuted ? t`Unmute` : t`Mute`}
+                  </Button>
+                )}
+                {canKickUsers && !isOwnProfile && (
+                  <Button
+                    type="danger"
+                    size="small"
+                    iconName="ban"
+                    className="justify-center text-center"
+                    onClick={() => kickUser(props.user.address)}
+                    disabled={props.user.isKicked}
+                  >
+                    {props.user.isKicked ? t`Kicked!` : t`Kick`}
+                  </Button>
+                )}
+              </Container>
+            )}
           </Container>
         )}
       </Container>

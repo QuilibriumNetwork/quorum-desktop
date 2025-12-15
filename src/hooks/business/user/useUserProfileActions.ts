@@ -1,16 +1,23 @@
 import { useCallback } from 'react';
 import { useNavigate } from 'react-router';
 
+export interface MuteUserTarget {
+  address: string;
+  displayName: string;
+  userIcon?: string;
+}
+
 export interface UserProfileActionsOptions {
   dismiss?: () => void;
   setKickUserAddress?: React.Dispatch<React.SetStateAction<string | undefined>>;
+  setMuteUserTarget?: React.Dispatch<React.SetStateAction<MuteUserTarget | undefined>>;
 }
 
 export const useUserProfileActions = (
   options: UserProfileActionsOptions = {}
 ) => {
   const navigate = useNavigate();
-  const { dismiss, setKickUserAddress } = options;
+  const { dismiss, setKickUserAddress, setMuteUserTarget } = options;
 
   const sendMessage = useCallback(
     (userAddress: string) => {
@@ -30,8 +37,19 @@ export const useUserProfileActions = (
     [setKickUserAddress, dismiss]
   );
 
+  const openMuteModal = useCallback(
+    (target: MuteUserTarget) => {
+      if (setMuteUserTarget) {
+        setMuteUserTarget(target);
+        dismiss?.();
+      }
+    },
+    [setMuteUserTarget, dismiss]
+  );
+
   return {
     sendMessage,
     kickUser,
+    openMuteModal,
   };
 };

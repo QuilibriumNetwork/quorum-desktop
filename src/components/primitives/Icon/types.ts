@@ -76,6 +76,9 @@ export type IconName =
   | 'eye'
   | 'eye-off'
   | 'life-ring'
+  | 'volume'
+  | 'volume-off'
+  | 'message'
 
   // Settings & Security
   | 'settings'

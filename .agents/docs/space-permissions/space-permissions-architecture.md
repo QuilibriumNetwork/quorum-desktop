@@ -24,7 +24,7 @@ The system operates two **parallel but coordinated** permission models:
 #### **Traditional Space Roles** (Space-wide)
 
 - **Scope**: Entire space, all regular channels
-- **Permissions**: `message:delete`, `message:pin`, `user:kick`
+- **Permissions**: `message:delete`, `message:pin`, `user:mute`, `mention:everyone`
 - **Management**: Created and assigned by space owners
 - **Enforcement**: Throughout the space in regular channels
 
@@ -149,7 +149,7 @@ export type Role = {
   permissions: Permission[];
 };
 
-export type Permission = 'message:delete' | 'message:pin' | 'user:kick';
+export type Permission = 'message:delete' | 'message:pin' | 'user:mute' | 'mention:everyone';
 ```
 
 #### **Read-Only Channels**
@@ -216,6 +216,6 @@ export type Channel = {
 
 ---
 
-_Last Updated: 2025-12-11_
+_Last Updated: 2025-12-15_
 _Architecture Status: Complete - Space owner bypass removed, receiving-side validation added_
-_Security Update: Space owners must join roles for post/delete/pin (kick exception via protocol)_
+_Security Update: Space owners must join roles for post/delete/pin/mute (kick exception via protocol)_

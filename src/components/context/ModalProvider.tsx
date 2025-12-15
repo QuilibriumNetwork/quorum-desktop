@@ -5,13 +5,16 @@ import ChannelEditorModal from '../modals/ChannelEditorModal';
 import GroupEditorModal from '../modals/GroupEditorModal';
 import LeaveSpaceModal from '../modals/LeaveSpaceModal';
 import KickUserModal from '../modals/KickUserModal';
+import MuteUserModal from '../modals/MuteUserModal';
 import NewDirectMessageModal from '../modals/NewDirectMessageModal';
 import ConversationSettingsModal from '../modals/ConversationSettingsModal';
 import FolderEditorModal from '../modals/FolderEditorModal';
 import {
   useModalState,
   type ModalState,
+  type MuteUserTarget,
 } from '../../hooks/business/ui/useModalState';
+import { useUserMuting } from '../../hooks/business/user/useUserMuting';
 
 // Context interface
 interface ModalContextType {
@@ -34,6 +37,8 @@ interface ModalContextType {
   closeNewDirectMessage: () => void;
   openKickUser: (kickUserAddress: string) => void;
   closeKickUser: () => void;
+  openMuteUser: (target: MuteUserTarget) => void;
+  closeMuteUser: () => void;
   openConversationSettings: (conversationId: string) => void;
   closeConversationSettings: () => void;
   openFolderEditor: (folderId?: string) => void;
@@ -73,10 +78,10 @@ interface ModalProviderProps {
 // Provider component
 export const ModalProvider: React.FC<ModalProviderProps> = ({
   children,
-  user,
   setUser,
 }) => {
   const modalState = useModalState();
+  const { muteUser, unmuteUser } = useUserMuting();
 
   const contextValue: ModalContextType = {
     state: modalState.state,
@@ -94,6 +99,8 @@ export const ModalProvider: React.FC<ModalProviderProps> = ({
     closeNewDirectMessage: modalState.closeNewDirectMessage,
     openKickUser: modalState.openKickUser,
     closeKickUser: modalState.closeKickUser,
+    openMuteUser: modalState.openMuteUser,
+    closeMuteUser: modalState.closeMuteUser,
     openConversationSettings: modalState.openConversationSettings,
     closeConversationSettings: modalState.closeConversationSettings,
     openFolderEditor: modalState.openFolderEditor,
@@ -155,6 +162,23 @@ export const ModalProvider: React.FC<ModalProviderProps> = ({
             kickUserAddress={modalState.state.kickUser.kickUserAddress}
             visible={true}
             onClose={modalState.closeKickUser}
+          />
+        )}
+
+      {modalState.state.muteUser.isOpen &&
+        modalState.state.muteUser.target && (
+          <MuteUserModal
+            visible={true}
+            onClose={modalState.closeMuteUser}
+            onConfirm={() =>
+              modalState.state.muteUser.target!.isUnmuting
+                ? unmuteUser(modalState.state.muteUser.target!.address)
+                : muteUser(modalState.state.muteUser.target!.address)
+            }
+            userName={modalState.state.muteUser.target.displayName}
+            userIcon={modalState.state.muteUser.target.userIcon}
+            userAddress={modalState.state.muteUser.target.address}
+            isUnmuting={modalState.state.muteUser.target.isUnmuting}
           />
         )}
 

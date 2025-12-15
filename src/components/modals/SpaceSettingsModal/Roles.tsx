@@ -158,16 +158,20 @@ const Roles: React.FunctionComponent<RolesProps> = ({
                         width="200px"
                         options={[
                           {
-                            value: 'message:delete',
-                            label: t`Delete Messages`,
+                            value: 'mention:everyone',
+                            label: t`Mention Everyone`,
                           },
                           {
                             value: 'message:pin',
                             label: t`Pin Messages`,
                           },
                           {
-                            value: 'mention:everyone',
-                            label: t`Mention Everyone`,
+                            value: 'user:mute',
+                            label: t`Mute Users`,
+                          },
+                          {
+                            value: 'message:delete',
+                            label: t`Delete Messages`,
                           },
                         ]}
                       />
