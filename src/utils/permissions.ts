@@ -49,8 +49,8 @@ export function getUserPermissions(
   isSpaceOwner: boolean = false
 ): Permission[] {
   // Space owners have all role-delegatable permissions
-  // Note: kick is NOT included here - it's handled separately via canKickUser()
-  // because it requires the owner's ED448 key, not a role permission
+  // Note: kick is NOT included here because it requires the owner's ED448 key,
+  // not a role permission - only owners can kick (protocol-level enforcement)
   if (isSpaceOwner) {
     return ['message:delete', 'message:pin', 'mention:everyone'];
   }
@@ -71,29 +71,6 @@ export function getUserPermissions(
   });
 
   return Array.from(permissions);
-}
-
-/**
- * Check if a user can be kicked from a space
- * Space owners cannot be kicked, regardless of who has kick permissions
- * @param targetUserAddress - The address of the user to be kicked
- * @param space - The space object
- * @returns boolean - true if user can be kicked
- */
-export function canKickUser(
-  targetUserAddress: string,
-  space: Space | undefined
-): boolean {
-  if (!space) {
-    return false;
-  }
-
-  // Space owners cannot be kicked
-  // TODO: Currently cannot check if user is space owner without async key check
-  // For now, this only prevents kicking based on other criteria
-  // See: .agents/bugs/space-owner-delete-permissions-bug.md
-
-  return true;
 }
 
 /**

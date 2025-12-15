@@ -14,7 +14,6 @@ import { useSpaceOwner } from '../../hooks/queries/spaceOwner';
 import { useQuery } from '@tanstack/react-query';
 import { useMessageDB } from '../context/useMessageDB';
 import { useModals } from '../context/ModalProvider';
-import { canKickUser } from '../../utils/permissions';
 import { createChannelPermissionChecker } from '../../utils/channelPermissions';
 import { useMutedUsers } from '../../hooks/queries/mutedUsers';
 import { t } from '@lingui/core/macro';
@@ -64,9 +63,8 @@ const UserProfile: React.FunctionComponent<{
   const isUserMuted = mutedUsers?.some(m => m.targetUserId === props.user.address) ?? false;
 
   // Permission checks
-  // Only space owners can kick users (requires owner's ED448 key)
-  const canKickThisUser = canKickUser(props.user.address, space || undefined);
-  const canKickUsers = isSpaceOwner && canKickThisUser;
+  // Only space owners can kick users (requires owner's ED448 key - protocol-level enforcement)
+  const canKickUsers = isSpaceOwner ?? false;
 
   // Check if current user can mute (requires user:mute permission via role)
   const canMuteUsers = React.useMemo(() => {

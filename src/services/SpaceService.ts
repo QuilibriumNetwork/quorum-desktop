@@ -24,7 +24,6 @@ export interface SpaceServiceDependencies {
     userKeyset: secureChannel.UserKeyset;
   };
   spaceInfo: React.MutableRefObject<{ [key: string]: any }>;
-  canKickUser: (userAddress: string, space: Space) => boolean;
   saveMessage: (
     message: Message,
     messageDB: MessageDB,
@@ -52,7 +51,6 @@ export class SpaceService {
     userKeyset: secureChannel.UserKeyset;
   };
   private spaceInfo: React.MutableRefObject<{ [key: string]: any }>;
-  private canKickUser: (userAddress: string, space: Space) => boolean;
   private saveMessage: (
     message: Message,
     messageDB: MessageDB,
@@ -76,7 +74,6 @@ export class SpaceService {
     this.selfAddress = dependencies.selfAddress;
     this.keyset = dependencies.keyset;
     this.spaceInfo = dependencies.spaceInfo;
-    this.canKickUser = dependencies.canKickUser;
     this.saveMessage = dependencies.saveMessage;
     this.addMessage = dependencies.addMessage;
   }
@@ -675,11 +672,8 @@ export class SpaceService {
       throw new Error(`Space ${spaceId} not found`);
     }
 
-    // Prevent kicking the space owner
-    if (!this.canKickUser(userAddress, space)) {
-      console.error('Cannot kick space owner');
-      throw new Error('Cannot kick space owner from the space');
-    }
+    // Note: Only space owners can kick (requires owner's ED448 key at protocol level)
+    // The kick message signature verification ensures only the actual owner can kick
 
     this.enqueueOutbound(async () => {
       const spaceKey = await this.messageDB.getSpaceKey(spaceId, spaceId);

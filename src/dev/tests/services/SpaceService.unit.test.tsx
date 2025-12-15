@@ -86,7 +86,6 @@ describe('SpaceService - Unit Tests', () => {
         deviceKeyset: { privateKey: 'device-key' } as any,
       },
       spaceInfo: { current: {} } as any,
-      canKickUser: vi.fn().mockReturnValue(true),
       saveMessage: vi.fn().mockResolvedValue(undefined),
       addMessage: vi.fn().mockResolvedValue(undefined),
     };
@@ -226,38 +225,7 @@ describe('SpaceService - Unit Tests', () => {
       ).rejects.toThrow('Space space-nonexistent not found');
     });
 
-    it('should validate canKickUser returns false for space owner', () => {
-      const spaceId = 'space-123';
-      const ownerAddress = 'owner-address';
-
-      // Create service with canKickUser that returns false (can't kick owner)
-      const canKickUserMock = vi.fn().mockReturnValue(false);
-      const testService = new SpaceService({
-        ...mockDeps,
-        canKickUser: canKickUserMock,
-      });
-
-      // Mock space found
-      mockDeps.messageDB.getSpace = vi.fn().mockResolvedValue({
-        spaceId,
-        spaceName: 'Test Space',
-      });
-
-      const mockUserKeyset = { privateKey: 'user-key' } as any;
-      const mockDeviceKeyset = { privateKey: 'device-key' } as any;
-      const mockRegistration = { user_address: 'kicker' } as any;
-
-      // ✅ VERIFY: Should reject when canKickUser returns false
-      expect(
-        testService.kickUser(
-          spaceId,
-          ownerAddress,
-          mockUserKeyset,
-          mockDeviceKeyset,
-          mockRegistration,
-          queryClient
-        )
-      ).rejects.toThrow();
-    });
+    // Note: canKickUser validation was removed - kick is now enforced at protocol level
+    // Only space owners can kick (requires ED448 key signature verification)
   });
 });

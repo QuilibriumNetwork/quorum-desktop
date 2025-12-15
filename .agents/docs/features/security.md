@@ -114,7 +114,6 @@ The following table summarizes all client-side limitations and their security st
 | Limitation | Risk | Affects Official Client? | Bypass Status |
 |------------|------|--------------------------|---------------|
 | **XSS Prevention** | **LOW** | ❌ No - 3-layer defense | ❌ No - input sanitized |
-| **Kick space owner (by others)** | **LOW** | ❌ No - crypto verified | ❌ No - needs owner keys |
 | **Delete others' messages** | **LOW** | ❌ No - rejected on receive | ⚠️ Sends, but rejected |
 | **Mute users** | **LOW** | ❌ No - rejected on receive | ⚠️ Sends, but rejected |
 | **Read-only channel posting** | **LOW** | ❌ No - rejected on receive | ⚠️ Sends, but rejected |
@@ -125,6 +124,7 @@ The following table summarizes all client-side limitations and their security st
 | **Message length (2500 chars)** | **LOW** | ❌ No - rejected on receive | ⚠️ Sends, but rejected |
 | **Mentions per message (20)** | **LOW** | ❌ No - rejected on receive | ⚠️ Sends, but rejected |
 | **Space owner kick users** | **NONE** | N/A - protocol feature | ❌ No - ED448 signed |
+| **Kick space owner (by others)** | **NONE** | N/A - protocol feature | ❌ No - ED448 signed |
 | **Bookmarks limit (200)** | **NONE** | N/A - private data | ❌ No - DB validation |
 | **Folders limit (20/100)** | **NONE** | N/A - private data | ⚠️ Auto-truncated |
 | **Role visibility** | **NONE** | N/A - cosmetic | ✅ Yes, trivial |

@@ -56,7 +56,6 @@ import { useNavigate } from 'react-router';
 import { sha256, base58btc } from '../../utils/crypto';
 import { canonicalize } from '../../utils/canonicalize';
 import { t } from '@lingui/core/macro';
-import { canKickUser } from '../../utils/permissions';
 
 type MessageDBContextValue = {
   messageDB: MessageDB;
@@ -815,11 +814,10 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
       selfAddress,
       keyset,
       spaceInfo,
-      canKickUser,
       saveMessage,
       addMessage,
     });
-  }, [messageDB, apiClient, enqueueOutbound, saveConfig, selfAddress, keyset, spaceInfo, canKickUser, saveMessage, addMessage]);
+  }, [messageDB, apiClient, enqueueOutbound, saveConfig, selfAddress, keyset, spaceInfo, saveMessage, addMessage]);
 
   const createSpace = React.useCallback(
     async (

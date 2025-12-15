@@ -2,7 +2,7 @@
 
 ## Overview
 
-The Kick User system allows space administrators to remove users from spaces through a secure, cryptographically-verified process. The system has been refactored to use cross-platform primitives and extracted business logic for maintainability and mobile compatibility.
+The Kick User system allows **space owners** to remove users from spaces through a secure, cryptographically-verified process. Only the space owner can kick users - this is enforced at the protocol level via ED448 signature verification. The system has been refactored to use cross-platform primitives and extracted business logic for maintainability and mobile compatibility.
 
 ## Architecture
 
@@ -243,7 +243,7 @@ SpaceService.kickUser(
 - ✅ spaceId must be present (from URL params)
 - ✅ userAddress must be provided
 - ✅ registration data must be loaded
-- ✅ User must have admin privileges (implicit in registration check)
+- ✅ User must be space owner (protocol enforces via ED448 key - only owner possesses the key to sign kick messages)
 
 ### Error States
 
@@ -321,7 +321,8 @@ SpaceService.kickUser(
 2. **Progress indication**: Show detailed progress during 5-second operation
 3. **Batch operations**: Allow kicking multiple users simultaneously
 4. **Audit logging**: Track kick operations for space administration
-5. **Permission levels**: Different kick permissions for different admin roles
+
+> **Note**: Role-based kick delegation (different kick permissions for different admin roles) is not feasible at the protocol level - kick requires the space owner's ED448 private key to sign the message, which cannot be delegated.
 
 ### Mobile Considerations
 
@@ -332,7 +333,7 @@ SpaceService.kickUser(
 
 ---
 
-**Last Updated**: 2025-01-30
-**Verified**: 2025-12-09 - File paths confirmed current
+**Last Updated**: 2025-12-15
+**Verified**: 2025-12-15 - Clarified owner-only kick (protocol-level enforcement)
 **Status**: Production Ready
 **Cross-Platform**: ✅ Web + Mobile Compatible
