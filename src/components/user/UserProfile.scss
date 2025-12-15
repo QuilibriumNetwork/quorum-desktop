@@ -37,6 +37,11 @@
 .user-profile-username {
   font-size: $text-lg;
   font-weight: $font-bold;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
+  padding-right: $s-6; // Space for close button
 }
 
 .user-profile-info {

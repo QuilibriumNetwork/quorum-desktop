@@ -111,7 +111,7 @@ const UserProfile: React.FunctionComponent<{
           className="user-profile-icon"
         />
         <Container className="user-profile-text">
-          <Container className="user-profile-username break-words">
+          <Container className="user-profile-username">
             <Text>{props.user.displayName}</Text>
           </Container>
           <FlexRow className="py-1 text-subtle">
