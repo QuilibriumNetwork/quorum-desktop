@@ -41,7 +41,7 @@ import {
 } from '../utils/mentionUtils';
 import { MAX_MESSAGE_LENGTH } from '../utils/validation';
 import { hasPermission } from '../utils/permissions';
-import { showWarning, dismissToast } from '../utils/toast';
+import { showWarning, dismissToast, showPersistentToast } from '../utils/toast';
 import { SimpleRateLimiter, RATE_LIMITS } from '../utils/rateLimit';
 
 // Timer for dismissing sync toast after inactivity
@@ -2839,6 +2839,12 @@ export class MessageService {
                 )
               );
               if (verify) {
+                // Show toast when receiving actual sync messages (not preemptively)
+                // Only show for significant syncs (>= 20 messages in this chunk)
+                if (envelope.message.messages?.length >= 20) {
+                  showPersistentToast('sync', t`Syncing Space...`, 'info');
+                }
+
                 const space = await this.messageDB.getSpace(
                   conversationId.split('/')[0]
                 );
