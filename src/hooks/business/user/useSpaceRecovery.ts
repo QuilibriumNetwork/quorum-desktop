@@ -4,7 +4,7 @@ import { t } from '@lingui/core/macro';
 import { useMessageDB } from '../../../components/context/useMessageDB';
 import { useRegistrationContext } from '../../../components/context/useRegistrationContext';
 import { useInvalidateConfig } from '../../queries';
-import { showSuccess, showError, showInfo } from '../../../utils/toast';
+import { showToast } from '../../../utils/toast';
 
 export interface UseSpaceRecoveryReturn {
   restoreMissingSpaces: () => Promise<void>;
@@ -20,7 +20,7 @@ export const useSpaceRecovery = (): UseSpaceRecoveryReturn => {
 
   const restoreMissingSpaces = useCallback(async () => {
     if (!currentPasskeyInfo || !keyset || !messageDB) {
-      showError(t`Unable to restore: not logged in`);
+      showToast(t`Unable to restore: not logged in`, { variant: 'error', bottomFixed: true });
       return;
     }
 
@@ -36,7 +36,7 @@ export const useSpaceRecovery = (): UseSpaceRecoveryReturn => {
       });
 
       if (!config) {
-        showError(t`Unable to load user config`);
+        showToast(t`Unable to load user config`, { variant: 'error', bottomFixed: true });
         return;
       }
 
@@ -73,7 +73,7 @@ export const useSpaceRecovery = (): UseSpaceRecoveryReturn => {
       console.log(`[SpaceRecovery] Found ${orphaned.length} orphaned, ${recoverable.length} recoverable`);
 
       if (recoverable.length === 0) {
-        showInfo(t`No missing spaces found`);
+        showToast(t`No missing spaces found`, { variant: 'info', bottomFixed: true });
         return;
       }
 
@@ -95,10 +95,10 @@ export const useSpaceRecovery = (): UseSpaceRecoveryReturn => {
       // 7. Invalidate React Query cache (nav menu updates automatically)
       await invalidateConfig({ userAddress: currentPasskeyInfo.address });
 
-      showSuccess(t`Restored ${recoverable.length} space(s)`);
+      showToast(t`Restored ${recoverable.length} space(s)`, { variant: 'success', bottomFixed: true });
     } catch (error) {
       console.error('[SpaceRecovery] Error:', error);
-      showError(t`Failed to restore spaces`);
+      showToast(t`Failed to restore spaces`, { variant: 'error', bottomFixed: true });
     } finally {
       setIsRestoring(false);
     }
