@@ -105,6 +105,7 @@ export const iconComponentMap: Record<IconName, string> = {
   warning: 'IconAlertTriangle',
   error: 'IconAlertCircle',
   spinner: 'IconLoader',
+  clock: 'IconClock',
 
   // Files & Media
   image: 'IconPhoto',

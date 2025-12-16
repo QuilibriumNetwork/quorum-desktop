@@ -102,6 +102,46 @@ Structure your analysis as follows:
 - **Assume compromise**: Design for post-compromise security
 - **Verifiability**: Prefer mechanisms that can be cryptographically verified
 
+## Quorum-Specific Security Architecture
+
+Understanding these existing security mechanisms prevents false positive findings:
+
+### Triple Ratchet Encryption
+- Uses **Triple Ratchet protocol** (advanced variant of Signal Protocol)
+- Each encryption operation **advances the ratchet state**
+- Creates unique encrypted envelopes per send attempt (even for same plaintext)
+- Provides inherent replay protection at the encryption layer
+- Implementation: `MessageService.ts` → `secureChannel.TripleRatchetEncrypt()`
+
+### Message Identity & Signature System
+- **messageId** = SHA-256(`nonce + type + sender + canonicalize(content)`)
+- **Ed448 signatures** are over the `messageId`, not the raw payload
+- Uses `canonicalize()` before hashing (prevents object field ordering attacks)
+- Provides non-repudiability: proof that sender authorized this specific message
+- `isRepudiable` flag exists for different security models
+
+### 4 Layers of Replay Protection
+When analyzing replay attack vectors, note these existing protections:
+1. **messageId uniqueness**: SHA-256 hash includes nonce from `crypto.randomUUID()`
+2. **React Query deduplication**: `addMessage()` filters by messageId before adding
+3. **Triple Ratchet state**: Each encryption advances state, rejects out-of-order
+4. **Ed448 signature binding**: Signature is over messageId (includes nonce)
+
+### Client-Side Ephemeral Fields Pattern
+- Fields like `sendStatus`, `sendError` are **UI-only ephemeral state**
+- **NEVER** persisted to IndexedDB or included in network payloads
+- Must be stripped before `saveMessage()` and before encryption
+- This pattern is intentional for optimistic UI updates
+
+### Cryptographic Components
+| Component | Algorithm | Location | Notes |
+|-----------|-----------|----------|-------|
+| Signatures | Ed448 | WASM (`js_sign_ed448`) | ~1s on main thread |
+| Message encryption | Triple Ratchet | SDK | State-based, PFS |
+| Config encryption | AES-GCM | Web Crypto API | 256-bit keys |
+| Hashing | SHA-256, SHA-512 | Web Crypto API | Sub-millisecond |
+| Key derivation | SHA-512 of private key | Web Crypto API | For AES key |
+
 ## Important Context
 
 ### Platform Architecture

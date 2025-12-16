@@ -95,6 +95,7 @@ export type IconName =
   | 'warning'
   | 'error'
   | 'spinner'
+  | 'clock'
 
   // Files & Media
   | 'image'
