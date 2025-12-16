@@ -203,22 +203,19 @@ const processStandaloneYouTubeUrls = (text: string): string => {
   return processedLines.join('\n');
 };
 
-// Reusable copy button component - outside component to prevent re-creation
+// Reusable copy button component - floats to right so code wraps around it
 const CopyButton = ({ codeContent }: { codeContent: string }) => (
-  <div className="absolute top-1 right-1 w-8 h-8 z-50">
+  <span className="float-right ml-2 mb-1">
     <ClickToCopyContent
       text={codeContent}
-      className="w-full h-full flex items-center justify-center"
       iconSize="sm"
       iconClassName="text-subtle hover:text-main"
       tooltipLocation="top"
       copyOnContentClick={true}
     >
-      <div className="w-full h-full flex items-center justify-center">
-        <div className="w-4 h-4"></div>
-      </div>
+      {''}
     </ClickToCopyContent>
-  </div>
+  </span>
 );
 
 export const MessageMarkdownRenderer: React.FC<MessageMarkdownRendererProps> = ({
@@ -834,10 +831,10 @@ export const MessageMarkdownRenderer: React.FC<MessageMarkdownRendererProps> = (
 
       if (useScroll) {
         return (
-          <div className="relative my-2 last:mb-0 w-full min-w-0">
-            <CopyButton codeContent={codeContent} />
+          <div className="my-2 last:mb-0 w-full min-w-0">
             <ScrollContainer maxHeight={maxHeight} showBorder={true} borderRadius="md" className="bg-surface-4 w-full min-w-0">
               <pre className="p-3 font-mono text-subtle text-sm whitespace-pre-wrap break-all overflow-wrap-anywhere min-w-0 max-w-full" {...props}>
+                <CopyButton codeContent={codeContent} />
                 {children}
               </pre>
             </ScrollContainer>
@@ -846,9 +843,9 @@ export const MessageMarkdownRenderer: React.FC<MessageMarkdownRendererProps> = (
       }
 
       return (
-        <div className="relative my-2 last:mb-0 w-full min-w-0">
-          <CopyButton codeContent={codeContent} />
+        <div className="my-2 last:mb-0 w-full min-w-0">
           <pre className="bg-surface-4 border border-default rounded-lg p-3 font-mono text-sm text-subtle whitespace-pre-wrap break-words w-full min-w-0" {...props}>
+            <CopyButton codeContent={codeContent} />
             {children}
           </pre>
         </div>
