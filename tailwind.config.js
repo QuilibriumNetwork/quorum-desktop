@@ -106,6 +106,8 @@ export default {
         subtle: 'var(--color-text-subtle)',
         muted: 'var(--color-text-muted)',
         danger: 'var(--color-text-danger)',
+        warning: 'var(--color-text-warning)',
+        success: 'var(--color-text-success)',
       },
 
       boxShadow: {

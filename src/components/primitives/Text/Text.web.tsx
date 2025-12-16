@@ -10,8 +10,8 @@ const variantMap = {
   muted: 'text-muted',
   error: 'text-red-600 dark:text-red-400',
   danger: 'text-danger',
-  success: 'text-green-600',
-  warning: 'text-yellow-600',
+  success: 'text-success',
+  warning: 'text-warning',
   link: 'text-link-primitive',
 };
 

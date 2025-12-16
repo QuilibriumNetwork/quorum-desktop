@@ -40,6 +40,8 @@
   --color-text-subtle: #818181;
   --color-text-muted: #b6b6b6;
   --color-text-danger: rgb(var(--danger));
+  --color-text-warning: rgb(var(--warning));
+  --color-text-success: rgb(var(--success));
 
   /* links */
   --color-link: var(--accent);
@@ -162,6 +164,8 @@ html.dark {
   --color-link: var(--accent-400);
   --color-link-hover: var(--accent-200);
   --color-text-danger: #e15151;
+  --color-text-warning: rgb(var(--warning));
+  --color-text-success: rgb(var(--success));
 
   /* mentions */
   --color-bg-mention: rgb(var(--accent-rgb) / 0.2);
