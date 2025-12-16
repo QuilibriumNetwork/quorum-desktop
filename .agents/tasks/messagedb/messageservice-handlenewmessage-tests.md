@@ -1,18 +1,22 @@
 # handleNewMessage Integration Tests Guide
 
-**Status**: ⚠️ BLOCKED - Import chain issue (see Blocker section)
-**Priority**: 🔴 CRITICAL (if pursuing comprehensive test approach)
+**Status**: ⏸️ ON HOLD (Dependent on refactor plan, which is on hold)
+**Priority**: ⚪ Low (was Critical)
 **Test Count Target**: 40-50 tests
 **Time Estimate**: 12-18 hours
-**Last Updated**: 2025-10-03
+**Last Updated**: 2025-12-16
+
+> **⚠️ Dec 2025 Analysis Verdict**: This test guide is **ON HOLD** because the parent refactoring plan is on hold. The import chain blocker was never resolved, and subsequent analysis concluded the handleNewMessage refactoring provides low ROI. See [messagedb-current-state.md](./messagedb-current-state.md) for details.
 
 ---
 
 ## Purpose
 
-Create comprehensive integration tests for `handleNewMessage` (1,321 lines) to enable safe refactoring. This guide provides detailed test specifications for all control messages, sync messages, crypto operations, and error paths.
+Create comprehensive integration tests for `handleNewMessage` (1,354 lines) to enable safe refactoring. This guide provides detailed test specifications for all control messages, sync messages, crypto operations, and error paths.
 
 **Note**: This is only needed if pursuing **Option A** (comprehensive tests upfront) from the refactoring plan. For **Option B** (incremental), use snapshot tests instead.
+
+**Current Status**: ON HOLD - The refactoring this test suite would enable has been deprioritized.
 
 ---
 
@@ -547,11 +551,12 @@ describe('handleJoinMessage', () => {
 
 ## Related Files
 
-- [Refactoring Plan](./handlenewmessage-refactor-plan.md) - Overall strategy and decision guide
+- [Refactoring Plan](./messageservice-handlenewmessage-refactor.md) - Overall strategy and decision guide
 - [Manual Test Guide](./test-manual_MessageService.md) - Manual testing procedures
 
 ---
 
-_Last updated: 2025-10-03_
-_Status: Blocked by import chain issue (30 min fix)_
-_Total time estimate: 12-18 hours for comprehensive tests_
+_Last updated: 2025-12-16_
+_Status: ⏸️ ON HOLD - Refactoring deprioritized, tests not needed_
+_Import chain blocker: Unresolved (was estimated 30 min fix)_
+_Total time estimate: 12-18 hours for comprehensive tests (if ever resumed)_

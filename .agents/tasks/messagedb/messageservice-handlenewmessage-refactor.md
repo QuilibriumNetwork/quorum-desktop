@@ -1,18 +1,20 @@
 # handleNewMessage Refactoring Plan
 
-**Status**: ⚠️ BLOCKED - Test blocker must be resolved first
-**Priority**: 🔴 CRITICAL
-**Last Updated**: 2025-10-03
+**Status**: ⏸️ ON HOLD (Low ROI per Dec 2025 Analysis)
+**Priority**: ⚪ Low (was Critical)
+**Last Updated**: 2025-12-16
+
+> **⚠️ Dec 2025 Analysis Verdict**: This refactoring is **ON HOLD indefinitely**. The test blocker was never resolved, and subsequent analysis concluded the refactoring provides low ROI for the risk involved. The 1,354-line function is large but well-structured with clear message type boundaries. See [messagedb-current-state.md](./messagedb-current-state.md) for details.
 
 ---
 
 ## Executive Summary
 
-`handleNewMessage` is a 1,321-line God Function that mixes encryption, message routing, and business logic. Refactoring it requires a **Handler Registry Pattern** approach, NOT delegation to other services (encryption context cannot be leaked).
+`handleNewMessage` is a 1,354-line function (was 1,321 in Oct 2025) that mixes encryption, message routing, and business logic. Refactoring it requires a **Handler Registry Pattern** approach, NOT delegation to other services (encryption context cannot be leaked).
 
 **Current Tests**: Insufficient (only 2 basic tests)
-**Test Blocker**: MessageService cannot be imported in tests due to dependency chain
-**Recommended Approach**: Incremental refactoring with manual testing + minimal snapshot tests
+**Test Blocker**: MessageService cannot be imported in tests due to dependency chain (UNRESOLVED)
+**Status**: ON HOLD - Risk outweighs benefit
 
 ---
 
@@ -94,7 +96,7 @@ Test Files → MessageService
 **Risk**: 10-15% chance of bugs
 
 1. Extract query keys to `src/utils/queryKeys.ts` (30 min)
-2. Create 40-50 integration tests (12-18 hours) - see [handlenewmessage-tests.md](./handlenewmessage-tests.md)
+2. Create 40-50 integration tests (12-18 hours) - see [messageservice-handlenewmessage-tests.md](./messageservice-handlenewmessage-tests.md)
 3. Extract handlers incrementally with test safety net
 4. 90% confidence in refactoring
 
@@ -293,12 +295,13 @@ After EVERY handler extraction:
 
 ## Related Files
 
-- [Integration Tests Plan](./handlenewmessage-tests.md) - Detailed test creation guide
+- [Integration Tests Plan](./messageservice-handlenewmessage-tests.md) - Detailed test creation guide
 - [Manual Test Guide](./test-manual_MessageService.md) - Manual testing procedures
 - [Architecture Analysis](./handlenewmessage-analysis.md) - Full 400-line analysis (archive)
 - [Phase 4 Plan](./messagedb-phase4-optimization.md) - Overall optimization plan (archive)
 
 ---
 
-_Last updated: 2025-10-03_
+_Last updated: 2025-12-16_
+_Status: ⏸️ ON HOLD - Test blocker unresolved, refactoring deemed low ROI_
 _Created by consolidating: handlenewmessage-analysis.md, test-gap-analysis.md, messagedb-phase4-optimization.md, create-handlenewmessage-tests.md_

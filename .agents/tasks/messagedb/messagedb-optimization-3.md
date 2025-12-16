@@ -1,9 +1,11 @@
 # High-Risk Optimization Opportunities
 
-**Status**: 📋 Future Reference
+**Status**: 📋 Future Reference (Blocked on handleNewMessage refactor)
 **Created**: 2025-10-03
-**Context**: High-risk large function refactorings for future consideration
+**Updated**: 2025-12-16
+**Context**: High-risk large function refactorings in SpaceService and InvitationService
 
+> **Note**: These optimizations target large functions in **SpaceService** (`kickUser`, `createSpace`) and **InvitationService** (`joinInviteLink`). They are blocked on the `handleNewMessage` refactoring being completed first to validate the Handler Registry Pattern approach.
 
 > NOTE: verify manually first or via feature-analyzer agent to avoid over-engineering
 
@@ -423,5 +425,6 @@ yarn vitest src/dev/refactoring/tests/ --run  # Verify tests pass
 
 ---
 
-_Last updated: 2025-10-03_
-_Note: These are reference tasks for future work. Do NOT start before the `handleNewMessage` refactoring is complete._
+_Last updated: 2025-12-16_
+_Status: 📋 Future Reference - Blocked on handleNewMessage refactor_
+_Targets: SpaceService (kickUser, createSpace), InvitationService (joinInviteLink)_

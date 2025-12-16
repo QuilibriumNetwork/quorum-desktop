@@ -25,7 +25,6 @@ This is the main index for all documentation, bug reports, and task management.
 - [Input & Textarea Validation Reference](docs/features/input-validation-reference.md)
 - [Invite System Documentation](docs/features/invite-system-analysis.md)
 - [Kick User System Documentation](docs/features/kick-user-system.md)
-- [Message Sending Indicator](docs/features/message-sending-indicator.md)
 - [Modal Save Overlay System](docs/features/modal-save-overlay.md)
 - [Modal System Documentation](docs/features/modals.md)
 - [Mute User System Documentation](docs/features/mute-user-system.md)
@@ -52,6 +51,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Markdown Stripping](docs/features/messages/markdown-stripping.md)
 - [Message Highlight System](docs/features/messages/message-highlight-system.md)
 - [Message Preview Rendering](docs/features/messages/message-preview-rendering.md)
+- [Message Sending Indicator](docs/features/messages/message-sending-indicator.md)
 - [Message Signing System](docs/features/messages/message-signing-system.md)
 - [Mobile Message Actions Implementation](docs/features/messages/message-actions-mobile.md)
 - [New Messages Separator](docs/features/messages/new-messages-separator.md)
@@ -164,12 +164,13 @@ This is the main index for all documentation, bug reports, and task management.
 - [Docusaurus Setup & Implementation Task](tasks/docusaurus/docusaurus-setup-implementation.md)
 
 ### Messagedb
-- [handleNewMessage Integration Tests Guide](tasks/messagedb/handlenewmessage-tests.md)
-- [handleNewMessage Refactoring Plan](tasks/messagedb/handlenewmessage-refactor-plan.md)
+- [handleNewMessage Integration Tests Guide](tasks/messagedb/messageservice-handlenewmessage-tests.md)
+- [handleNewMessage Refactoring Plan](tasks/messagedb/messageservice-handlenewmessage-refactor.md)
 - [High-Risk Optimization Opportunities](tasks/messagedb/messagedb-optimization-3.md)
 - [Low/Medium Risk Optimization Opportunities](tasks/messagedb/messagedb-optimization-1.md)
 - [MessageDB Refactoring - Current State](tasks/messagedb/messagedb-current-state.md)
-- [MessageDB: Optimization Plan](tasks/messagedb/messagedb-optimization-2.md)
+- [MessageDB: Optimization Plan (Phase 4)](tasks/messagedb/messagedb-optimization-2.md)
+- [MessageService.ts Analysis](tasks/messagedb/messageservice-analysis.md)
 
 ### Mobile Dev
 - [Business Logic Extraction & Native Preparation Plan](tasks/mobile-dev/business-logic-extraction-plan.md)
@@ -319,4 +320,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2025-12-16 14:33:36
+**Last Updated**: 2025-12-16 15:01:12
