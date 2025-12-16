@@ -71,6 +71,7 @@ interface MessageListProps {
     initialUnreadCount: number;
   } | null;
   onDismissSeparator?: () => void; // Callback when separator should be dismissed
+  onRetryMessage?: (message: MessageType) => void;
 }
 
 function useWindowSize() {
@@ -115,6 +116,7 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
       newMessagesSeparator,
       onDismissSeparator,
       spaceName,
+      onRetryMessage,
     } = props;
 
     const [_width, height] = useWindowSize();
@@ -265,6 +267,7 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
               spaceChannels={spaceChannels}
               lastReadTimestamp={lastReadTimestamp}
               spaceName={spaceName}
+              onRetryMessage={onRetryMessage}
             />
           </React.Fragment>
         );
@@ -297,6 +300,7 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
         lastReadTimestamp,
         newMessagesSeparator,
         spaceName,
+        onRetryMessage,
       ]
     );
 

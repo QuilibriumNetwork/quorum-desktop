@@ -247,3 +247,37 @@
   }
 }
 
+/* === MESSAGE SEND STATUS INDICATOR === */
+.message-status {
+  font-size: $text-sm;
+
+  &.sending {
+    color: rgb(var(--warning));
+    // Only show after 1s delay - avoids flicker for fast sends
+    opacity: 0;
+    animation: fadeInSending 0.2s ease-in forwards;
+    animation-delay: 1s;
+  }
+
+  &.failed {
+    color: rgb(var(--danger));
+  }
+
+  &__retry {
+    text-decoration: underline;
+    cursor: pointer;
+
+    &:hover {
+      opacity: 0.8;
+    }
+  }
+}
+
+@keyframes fadeInSending {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}

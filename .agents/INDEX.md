@@ -25,6 +25,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Input & Textarea Validation Reference](docs/features/input-validation-reference.md)
 - [Invite System Documentation](docs/features/invite-system-analysis.md)
 - [Kick User System Documentation](docs/features/kick-user-system.md)
+- [Message Sending Indicator](docs/features/message-sending-indicator.md)
 - [Modal Save Overlay System](docs/features/modal-save-overlay.md)
 - [Modal System Documentation](docs/features/modals.md)
 - [Mute User System Documentation](docs/features/mute-user-system.md)
@@ -106,13 +107,13 @@ This is the main index for all documentation, bug reports, and task management.
 - [SOLVED: Modal NavMenu Z-Index Stacking Issue](bugs/.solved/SOLVED_modal-navmenu-zindex-stacking.md)
 - [SOLVED: Right Sidebar Overlay Issue - Navbar Still Visible](bugs/.solved/SOLVED_right-sidebar-overlay.md)
 - [Space Creation Config Save Race Condition](bugs/.solved/space-creation-config-save-race-condition.md)
+- [Tooltip Flickering at Top-Left on Fast Mouse Movement](bugs/.solved/SOLVED_tooltip-flickering-top-left-on-fast-mouse-movement.md)
 - [user:kick Role Permission is Non-Functional for Non-Owners](bugs/.solved/user-kick-role-permission-non-functional.md)
 
 ### .Archived
 - [Bug: Auto-jump to First Unread Breaks Initial Message Sync](bugs/.archived/auto-jump-unread-breaks-message-sync.md)
 - [Role with message:delete permission can delete space owner's messages](bugs/.archived/message-delete-owner-vulnerability.md)
 - [Space Owner Delete Permissions Bug](bugs/.archived/space-owner-delete-permissions-bug.md)
-- [Tooltip Flickering at Top-Left on Fast Mouse Movement](bugs/.archived/tooltip-flickering-top-left-on-fast-mouse-movement.md)
 
 ## 📋 Tasks
 
@@ -125,9 +126,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Date Translation with Moment.js Locale Configuration](tasks/i18n-date-translation-moment-locale.md)
 - [Device Identification Improvement](tasks/device-identification-improvement.md)
 - [Implement Message Forwarding with Privacy Controls](tasks/message-forwarding-with-privacy-controls.md)
-- [Implement Message Sending Indicator](tasks/message-sending-indicator.md)
 - [Implement Smart Context Extraction Around Mentions in NotificationPanel](tasks/notification-mention-context-extraction.md)
-- [Implement User Mute Feature](tasks/implement-mute-feature.md)
 - [Multi-User Invite Selection Enhancement](tasks/multi-user-invite-selection.md)
 - [Passkey Import UX Issue](tasks/passkey-import-ux-issue.md)
 - [SDK PasskeyModal Customization Props Enhancement](tasks/sdk-passkey-modal-customization-props.md)
@@ -237,7 +236,9 @@ This is the main index for all documentation, bug reports, and task management.
 - [Implement Copy Message Raw Text Option](tasks/.done/copy-message-text.md)
 - [Implement Dm Unread Features](tasks/.done/implement-dm-unread-features.md)
 - [Implement Mention Notification Bubbles](tasks/.done/mention-notification-bubbles.md)
+- [Implement Message Sending Indicator](tasks/.done/message-sending-indicator.md)
 - [Implement Per-Space Display Names and Avatars with Account Section](tasks/.done/per-space-display-name-avatar.md)
+- [Implement User Mute Feature](tasks/.done/implement-mute-feature.md)
 - [Implementation Plan: Repository Restructure for Cross-Platform Development](tasks/.done/implementation-plan-repo-restructure.md)
 - [Jump to Present Button](tasks/.done/jump-to-present-button-messages-list.md)
 - [Lazy Loading Implementation for Message Lists](tasks/.done/lazy-loading-implementation.md)
@@ -318,4 +319,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2025-12-15 13:01:48
+**Last Updated**: 2025-12-16 14:33:36

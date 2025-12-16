@@ -103,6 +103,7 @@ type MessageProps = {
   lastReadTimestamp?: number;
   spaceRoles?: Role[];
   spaceName?: string;
+  onRetryMessage?: (message: MessageType) => void;
 };
 
 export const Message = React.memo(
@@ -136,6 +137,7 @@ export const Message = React.memo(
     lastReadTimestamp = 0,
     spaceRoles = [],
     spaceName,
+    onRetryMessage,
   }: MessageProps) => {
     const user = usePasskeysContext();
     const { spaceId } = useParams();
@@ -1175,6 +1177,44 @@ export const Message = React.memo(
                   </FlexRow>
                 ))}
               </FlexRow>
+
+              {/* Message Send Status Indicator */}
+              {message.sendStatus === 'sending' && (
+                <FlexRow align="center" gap="xs" className="message-status sending pt-1">
+                  <Icon name="clock" size="xs" />
+                  <Text size="sm" variant="warning">{t`Sending...`}</Text>
+                </FlexRow>
+              )}
+              {message.sendStatus === 'failed' && (
+                <FlexRow align="center" gap="xs" className="message-status failed pt-1">
+                  <Icon name="warning" size="xs" />
+                  <Text size="sm" variant="danger">
+                    {t`Failed to send.`}{' '}
+                    <Text
+                      as="span"
+                      size="sm"
+                      variant="danger"
+                      className="message-status__retry"
+                      onClick={(e: React.MouseEvent) => {
+                        e.stopPropagation();
+                        onRetryMessage?.(message);
+                      }}
+                    >
+                      {t`Retry`}
+                    </Text>
+                  </Text>
+                  {message.sendError && (
+                    <Tooltip
+                      id={`send-error-${message.messageId}`}
+                      content={message.sendError}
+                      showOnTouch={true}
+                      autoHideAfter={3000}
+                    >
+                      <Icon name="circle-question" size="xs" />
+                    </Tooltip>
+                  )}
+                </FlexRow>
+              )}
             </Container>
           </FlexRow>
         )}
@@ -1258,7 +1298,8 @@ export const Message = React.memo(
       prevProps.height !== nextProps.height ||
       JSON.stringify(prevProps.message.reactions) !==
         JSON.stringify(nextProps.message.reactions) ||
-      prevProps.message.isPinned !== nextProps.message.isPinned;
+      prevProps.message.isPinned !== nextProps.message.isPinned ||
+      prevProps.message.sendStatus !== nextProps.message.sendStatus;
 
     return !shouldRerender;
   }

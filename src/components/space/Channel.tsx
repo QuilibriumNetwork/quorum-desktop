@@ -108,7 +108,7 @@ const Channel: React.FC<ChannelProps> = ({
   const [searchFocused, setSearchFocused] = useState(false);
 
   const headerRef = React.useRef<HTMLDivElement>(null);
-  const { submitChannelMessage, messageDB } = useMessageDB();
+  const { submitChannelMessage, retryMessage, messageDB } = useMessageDB();
 
   // Hash message loading state
   const [isLoadingHashMessage, setIsLoadingHashMessage] = useState(false);
@@ -269,6 +269,14 @@ const Channel: React.FC<ChannelProps> = ({
       isSpaceOwner,
       messageDB,
     ]
+  );
+
+  // Handle retrying a failed message
+  const handleRetryMessage = useCallback(
+    async (message: import('../../api/quorumApi').Message) => {
+      await retryMessage(spaceId, channelId, message, queryClient);
+    },
+    [spaceId, channelId, retryMessage, queryClient]
   );
 
   // Handle sticker submission
@@ -1052,6 +1060,7 @@ const Channel: React.FC<ChannelProps> = ({
                 }}
                 hasNextPage={hasNextPage}
                 spaceName={space?.spaceName}
+                onRetryMessage={handleRetryMessage}
               />
             </div>
 

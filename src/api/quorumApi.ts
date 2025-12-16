@@ -87,6 +87,9 @@ export type Conversation = {
   lastMessageId?: string; // For showing message previews in conversation list
 };
 
+/** Client-side ephemeral status - NEVER persist to IndexedDB or include in network payload */
+export type MessageSendStatus = 'sending' | 'sent' | 'failed';
+
 export type Message = {
   channelId: string;
   spaceId: string;
@@ -128,6 +131,10 @@ export type Message = {
     modifiedDate: number;
     lastModifiedHash: string;
   }>;
+  /** Client-side ephemeral - NEVER persist to IndexedDB or transmit */
+  sendStatus?: MessageSendStatus;
+  /** Client-side ephemeral - sanitized error message for display */
+  sendError?: string;
 };
 
 export type PostMessage = {

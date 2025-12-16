@@ -125,6 +125,31 @@ type MessageDBContextValue = {
     isSpaceOwner?: boolean,
     parentMessage?: Message
   ) => Promise<void>;
+  retryMessage: (
+    spaceId: string,
+    channelId: string,
+    failedMessage: Message,
+    queryClient: QueryClient
+  ) => Promise<void>;
+  retryDirectMessage: (
+    address: string,
+    failedMessage: Message,
+    self: secureChannel.UserRegistration,
+    counterparty: secureChannel.UserRegistration,
+    queryClient: QueryClient,
+    currentPasskeyInfo: {
+      credentialId: string;
+      address: string;
+      publicKey: string;
+      displayName?: string;
+      pfpUrl?: string;
+      completedOnboarding: boolean;
+    },
+    keyset: {
+      deviceKeyset: secureChannel.DeviceKeyset;
+      userKeyset: secureChannel.UserKeyset;
+    }
+  ) => Promise<void>;
   getConfig: ({
     address,
     userKey,
@@ -926,6 +951,56 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
     [messageService]
   );
 
+  const retryMessage = React.useCallback(
+    async (
+      spaceId: string,
+      channelId: string,
+      failedMessage: Message,
+      queryClient: QueryClient
+    ) => {
+      return messageService.retryMessage(
+        spaceId,
+        channelId,
+        failedMessage,
+        queryClient
+      );
+    },
+    [messageService]
+  );
+
+  const retryDirectMessage = React.useCallback(
+    async (
+      address: string,
+      failedMessage: Message,
+      self: secureChannel.UserRegistration,
+      counterparty: secureChannel.UserRegistration,
+      queryClient: QueryClient,
+      currentPasskeyInfo: {
+        credentialId: string;
+        address: string;
+        publicKey: string;
+        displayName?: string;
+        pfpUrl?: string;
+        completedOnboarding: boolean;
+      },
+      keyset: {
+        deviceKeyset: secureChannel.DeviceKeyset;
+        userKeyset: secureChannel.UserKeyset;
+      }
+    ) => {
+      return messageService.retryDirectMessage(
+        address,
+        failedMessage,
+        self,
+        counterparty,
+        queryClient,
+        currentPasskeyInfo,
+        keyset
+      );
+    },
+    [messageService]
+  );
+
   const deleteConversation = React.useCallback(
     async (
       conversationId: string,
@@ -968,6 +1043,8 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
         updateSpace,
         createChannel,
         submitChannelMessage,
+        retryMessage,
+        retryDirectMessage,
         getConfig,
         saveConfig,
         setSelfAddress,
@@ -999,6 +1076,8 @@ const MessageDBContext = createContext<MessageDBContextValue>({
   updateSpace: () => undefined as never,
   createChannel: () => undefined as never,
   submitChannelMessage: () => undefined as never,
+  retryMessage: () => undefined as never,
+  retryDirectMessage: () => undefined as never,
   getConfig: () => undefined as never,
   saveConfig: () => undefined as never,
   setSelfAddress: (_) => {},

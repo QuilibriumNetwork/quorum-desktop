@@ -567,6 +567,53 @@ export class MessageService {
   }
 
   /**
+   * Updates message send status in the query cache.
+   * Used for optimistic updates when sending messages.
+   * Handles race condition: if server version already replaced optimistic version,
+   * the message won't have sendStatus and we skip the update.
+   */
+  updateMessageStatus(
+    queryClient: QueryClient,
+    spaceId: string,
+    channelId: string,
+    messageId: string,
+    status: 'sent' | 'failed',
+    error?: string
+  ) {
+    const queryKey = buildMessagesKey({ spaceId, channelId });
+
+    queryClient.setQueryData(
+      queryKey,
+      (oldData: InfiniteData<any>) => {
+        if (!oldData?.pages) return oldData;
+
+        return {
+          pageParams: oldData.pageParams,
+          pages: oldData.pages.map((page) => ({
+            ...page,
+            messages: page.messages.map((msg: Message) => {
+              if (msg.messageId === messageId) {
+                // Only update if this is still the optimistic version (has sendStatus)
+                // If server version already replaced it, sendStatus will be undefined
+                if (msg.sendStatus !== undefined) {
+                  return status === 'sent'
+                    ? { ...msg, sendStatus: undefined, sendError: undefined }
+                    : { ...msg, sendStatus: status, sendError: error };
+                }
+                // Server version already replaced optimistic - no action needed
+                return msg;
+              }
+              return msg;
+            }),
+            nextCursor: page.nextCursor,
+            prevCursor: page.prevCursor,
+          })),
+        };
+      }
+    );
+  }
+
+  /**
    * Adds message to query cache (optimistic update).
    */
   async addMessage(
@@ -1212,14 +1259,36 @@ export class MessageService {
             pages: oldData.pages.map((page, index) => {
               // Only add the new message to the most recent page
               if (index === oldData.pages.length - 1) {
+                // Build new messages array with deduplication
+                const newMessages = [
+                  ...page.messages.filter(
+                    (m: Message) => m.messageId !== decryptedContent.messageId
+                  ),
+                  decryptedContent,
+                ];
+
+                // Sort: pending messages ('sending') stay at end, others by createdDate
+                newMessages.sort((a: Message, b: Message) => {
+                  // Pending messages always go to END
+                  if (
+                    a.sendStatus === 'sending' &&
+                    b.sendStatus !== 'sending'
+                  ) {
+                    return 1;
+                  }
+                  if (
+                    b.sendStatus === 'sending' &&
+                    a.sendStatus !== 'sending'
+                  ) {
+                    return -1;
+                  }
+                  // Otherwise maintain chronological order by createdDate
+                  return a.createdDate - b.createdDate;
+                });
+
                 return {
                   ...page,
-                  messages: [
-                    ...page.messages.filter(
-                      (m: Message) => m.messageId !== decryptedContent.messageId
-                    ),
-                    decryptedContent,
-                  ],
+                  messages: newMessages,
                   // Preserve any cursors or other pagination metadata
                   nextCursor: page.nextCursor,
                   prevCursor: page.prevCursor,
@@ -1282,6 +1351,7 @@ export class MessageService {
 
   /**
    * Submits direct message: encrypts, signs, sends to API, saves locally.
+   * For post messages: uses optimistic updates (message appears immediately with "Sending" status).
    */
   async submitMessage(
     address: string,
@@ -1304,6 +1374,262 @@ export class MessageService {
     inReplyTo?: string,
     skipSigning?: boolean
   ) {
+    // Determine message type for optimistic update handling
+    const isEditMessage =
+      typeof pendingMessage === 'object' &&
+      (pendingMessage as any).type === 'edit-message';
+    const isDeleteConversation =
+      typeof pendingMessage === 'object' &&
+      (pendingMessage as any).type === 'delete-conversation';
+    const isReaction =
+      typeof pendingMessage === 'object' &&
+      ((pendingMessage as any).type === 'reaction' ||
+        (pendingMessage as any).type === 'remove-reaction');
+    const isRemoveMessage =
+      typeof pendingMessage === 'object' &&
+      (pendingMessage as any).type === 'remove-message';
+
+    // Post messages (regular text/embed) use optimistic updates
+    const isPostMessage =
+      typeof pendingMessage === 'string' ||
+      (!isEditMessage &&
+        !isDeleteConversation &&
+        !isReaction &&
+        !isRemoveMessage &&
+        (pendingMessage as any).type !== 'remove-message');
+
+    // For post messages: prepare and show optimistically BEFORE enqueueing
+    if (isPostMessage) {
+      // Generate nonce and calculate messageId
+      const nonce = crypto.randomUUID();
+      const messageIdBuffer = await crypto.subtle.digest(
+        'SHA-256',
+        Buffer.from(
+          nonce +
+            'post' +
+            currentPasskeyInfo.address +
+            (typeof pendingMessage === 'string'
+              ? pendingMessage
+              : JSON.stringify(pendingMessage)),
+          'utf-8'
+        )
+      );
+      const messageIdHex = Buffer.from(messageIdBuffer).toString('hex');
+
+      // Create message object
+      const message = {
+        channelId: address!,
+        spaceId: address!,
+        messageId: messageIdHex,
+        digestAlgorithm: 'SHA-256',
+        nonce: nonce,
+        createdDate: Date.now(),
+        modifiedDate: Date.now(),
+        lastModifiedHash: '',
+        content:
+          typeof pendingMessage === 'string'
+            ? ({
+                type: 'post',
+                senderId: currentPasskeyInfo.address,
+                text: pendingMessage,
+                repliesToMessageId: inReplyTo,
+              } as PostMessage)
+            : {
+                ...(pendingMessage as any),
+                senderId: currentPasskeyInfo.address,
+              },
+        reactions: [],
+      } as unknown as Message;
+
+      // Sign message BEFORE optimistic display
+      if (!skipSigning) {
+        try {
+          const sig = ch.js_sign_ed448(
+            Buffer.from(
+              new Uint8Array(keyset.userKeyset.user_key.private_key)
+            ).toString('base64'),
+            Buffer.from(messageIdBuffer).toString('base64')
+          );
+          message.publicKey = Buffer.from(
+            new Uint8Array(keyset.userKeyset.user_key.public_key)
+          ).toString('hex');
+          message.signature = Buffer.from(JSON.parse(sig), 'base64').toString(
+            'hex'
+          );
+        } catch {}
+      }
+
+      // Add to cache with 'sending' status (optimistic update)
+      await this.addMessage(queryClient, address, address, {
+        ...message,
+        sendStatus: 'sending',
+      });
+
+      // Enqueue network operation
+      this.enqueueOutbound(async () => {
+        const outbounds: string[] = [];
+        try {
+          const conversationId = address + '/' + address;
+          const conversation = await this.messageDB.getConversation({
+            conversationId,
+          });
+          let response = await this.messageDB.getEncryptionStates({
+            conversationId,
+          });
+          const inboxes = self.device_registrations
+            .map((d) => d.inbox_registration.inbox_address)
+            .concat(
+              counterparty.device_registrations.map(
+                (d) => d.inbox_registration.inbox_address
+              )
+            )
+            .sort();
+          for (const res of response) {
+            if (!inboxes.includes(JSON.parse(res.state).tag)) {
+              await this.messageDB.deleteEncryptionState(res);
+            }
+          }
+
+          response = await this.messageDB.getEncryptionStates({
+            conversationId,
+          });
+          const sets = response.map((e) => JSON.parse(e.state));
+
+          let sessions: secureChannel.SealedMessageAndMetadata[] = [];
+
+          // Strip ephemeral fields before encrypting
+          const { sendStatus, sendError, ...messageToEncrypt } = message;
+
+          for (const inbox of inboxes.filter(
+            (i) => i !== keyset.deviceKeyset.inbox_keyset.inbox_address
+          )) {
+            const set = sets.find((s) => s.tag === inbox);
+            if (set) {
+              if (set.sending_inbox.inbox_public_key === '') {
+                sessions = [
+                  ...sessions,
+                  ...secureChannel.DoubleRatchetInboxEncryptForceSenderInit(
+                    keyset.deviceKeyset,
+                    [set],
+                    JSON.stringify(messageToEncrypt),
+                    self,
+                    currentPasskeyInfo!.displayName,
+                    currentPasskeyInfo?.pfpUrl
+                  ),
+                ];
+              } else {
+                sessions = [
+                  ...sessions,
+                  ...secureChannel.DoubleRatchetInboxEncrypt(
+                    keyset.deviceKeyset,
+                    [set],
+                    JSON.stringify(messageToEncrypt),
+                    self,
+                    currentPasskeyInfo!.displayName,
+                    currentPasskeyInfo?.pfpUrl
+                  ),
+                ];
+              }
+            } else {
+              sessions = [
+                ...sessions,
+                ...(await secureChannel.NewDoubleRatchetSenderSession(
+                  keyset.deviceKeyset,
+                  self.user_address,
+                  self.device_registrations
+                    .concat(counterparty.device_registrations)
+                    .find((d) => d.inbox_registration.inbox_address === inbox)!,
+                  JSON.stringify(messageToEncrypt),
+                  currentPasskeyInfo!.displayName,
+                  currentPasskeyInfo?.pfpUrl
+                )),
+              ];
+            }
+          }
+
+          for (const session of sessions) {
+            const newEncryptionState: EncryptionState = {
+              state: JSON.stringify({
+                ratchet_state: session.ratchet_state,
+                receiving_inbox: session.receiving_inbox,
+                tag: session.tag,
+                sending_inbox: session.sending_inbox,
+              } as secureChannel.DoubleRatchetStateAndInboxKeys),
+              timestamp: Date.now(),
+              inboxId: session.receiving_inbox.inbox_address,
+              conversationId: address! + '/' + address!,
+              sentAccept: session.sent_accept,
+            };
+            await this.messageDB.saveEncryptionState(newEncryptionState, true);
+            outbounds.push(
+              JSON.stringify({
+                type: 'listen',
+                inbox_addresses: [session.receiving_inbox.inbox_address],
+              })
+            );
+            outbounds.push(
+              JSON.stringify({ type: 'direct', ...session.sealed_message })
+            );
+          }
+
+          // Save to IndexedDB (without sendStatus/sendError)
+          await this.saveMessage(
+            messageToEncrypt as Message,
+            this.messageDB,
+            address!,
+            address!,
+            'direct',
+            {
+              user_icon:
+                conversation?.conversation?.icon ?? DefaultImages.UNKNOWN_USER,
+              display_name:
+                conversation?.conversation?.displayName ?? t`Unknown User`,
+            }
+          );
+
+          // Update status to 'sent'
+          this.updateMessageStatus(
+            queryClient,
+            address,
+            address,
+            messageIdHex,
+            'sent'
+          );
+
+          this.addOrUpdateConversation(
+            queryClient,
+            address,
+            Date.now(),
+            message.createdDate,
+            {
+              user_icon:
+                conversation?.conversation?.icon ?? DefaultImages.UNKNOWN_USER,
+              display_name:
+                conversation?.conversation?.displayName ?? 'Unknown User',
+            }
+          );
+
+          return outbounds;
+        } catch (error) {
+          // Update status to 'failed' with sanitized error
+          const sanitizedError = this.sanitizeError(error);
+          this.updateMessageStatus(
+            queryClient,
+            address,
+            address,
+            messageIdHex,
+            'failed',
+            sanitizedError
+          );
+          console.error('Failed to send DM:', error);
+          return outbounds;
+        }
+      });
+
+      return; // Post message handling complete
+    }
+
+    // For edit-message, delete-conversation, reactions: use existing flow (no optimistic update)
     this.enqueueOutbound(async () => {
       const outbounds: string[] = [];
       const nonce = crypto.randomUUID();
@@ -3041,7 +3367,28 @@ export class MessageService {
   }
 
   /**
+   * Sanitizes error messages for display to users.
+   * Never exposes sensitive data like IP addresses, paths, or stack traces.
+   */
+  private sanitizeError(error: unknown): string {
+    if (error instanceof Error) {
+      const msg = error.message.toLowerCase();
+      if (msg.includes('network') || msg.includes('fetch') || msg.includes('socket')) {
+        return 'Network error';
+      }
+      if (msg.includes('encrypt') || msg.includes('ratchet') || msg.includes('crypto')) {
+        return 'Encryption error';
+      }
+      if (msg.includes('timeout')) {
+        return 'Connection timed out';
+      }
+    }
+    return 'Failed to send message';
+  }
+
+  /**
    * Submits channel message: encrypts with triple ratchet, sends via hub, saves locally.
+   * For post messages: uses optimistic updates (message appears immediately with "Sending" status).
    */
   async submitChannelMessage(
     spaceId: string,
@@ -3061,6 +3408,242 @@ export class MessageService {
     isSpaceOwner?: boolean,
     parentMessage?: Message
   ) {
+    // Determine message type for optimistic update handling
+    const isEditMessage =
+      typeof pendingMessage === 'object' &&
+      (pendingMessage as any).type === 'edit-message';
+    const isPinMessage =
+      typeof pendingMessage === 'object' &&
+      (pendingMessage as any).type === 'pin';
+    const isUpdateProfileMessage =
+      typeof pendingMessage === 'object' &&
+      (pendingMessage as any).type === 'update-profile';
+
+    // Post messages (regular text messages) use optimistic updates
+    const isPostMessage =
+      typeof pendingMessage === 'string' ||
+      (!isEditMessage && !isPinMessage && !isUpdateProfileMessage);
+
+    // For post messages: prepare and show optimistically BEFORE enqueueing
+    if (isPostMessage) {
+      // Generate nonce and fetch required data (fast local operations)
+      const nonce = crypto.randomUUID();
+      const space = await this.messageDB.getSpace(spaceId);
+
+      // Calculate messageId (SHA-256 hash)
+      const messageIdBuffer = await crypto.subtle.digest(
+        'SHA-256',
+        Buffer.from(
+          nonce +
+            'post' +
+            currentPasskeyInfo.address +
+            canonicalize(pendingMessage as any),
+          'utf-8'
+        )
+      );
+      const messageIdHex = Buffer.from(messageIdBuffer).toString('hex');
+
+      // Extract mentions
+      const canUseEveryone = hasPermission(
+        currentPasskeyInfo.address,
+        'mention:everyone',
+        space ?? undefined,
+        isSpaceOwner || false
+      );
+      const spaceRoles =
+        space?.roles
+          ?.filter((r) => r.isPublic !== false)
+          .map((r) => ({
+            roleId: r.roleId,
+            roleTag: r.roleTag,
+          })) || [];
+      const spaceChannels =
+        space?.groups?.flatMap((g) =>
+          g.channels.map((c) => ({
+            channelId: c.channelId,
+            channelName: c.channelName,
+          }))
+        ) || [];
+
+      let mentions;
+      if (typeof pendingMessage === 'string') {
+        mentions = extractMentionsFromText(pendingMessage, {
+          allowEveryone: canUseEveryone,
+          spaceRoles,
+          spaceChannels,
+        });
+      } else if ((pendingMessage as any).text) {
+        mentions = extractMentionsFromText((pendingMessage as any).text, {
+          allowEveryone: canUseEveryone,
+          spaceRoles,
+          spaceChannels,
+        });
+      }
+
+      // Build reply metadata
+      let replyMetadata:
+        | { parentAuthor: string; parentChannelId: string }
+        | undefined;
+      if (inReplyTo && parentMessage) {
+        if (parentMessage.content.senderId !== currentPasskeyInfo.address) {
+          replyMetadata = {
+            parentAuthor: parentMessage.content.senderId,
+            parentChannelId: channelId,
+          };
+        }
+      }
+
+      // Create message object
+      const message = {
+        spaceId: spaceId,
+        channelId: channelId,
+        messageId: messageIdHex,
+        digestAlgorithm: 'SHA-256',
+        nonce: nonce,
+        createdDate: Date.now(),
+        modifiedDate: Date.now(),
+        lastModifiedHash: '',
+        content:
+          typeof pendingMessage === 'string'
+            ? ({
+                type: 'post',
+                senderId: currentPasskeyInfo.address,
+                text: pendingMessage,
+                repliesToMessageId: inReplyTo,
+              } as PostMessage)
+            : {
+                ...(pendingMessage as any),
+                senderId: currentPasskeyInfo.address,
+              },
+        mentions:
+          mentions &&
+          (mentions.memberIds.length > 0 ||
+            mentions.roleIds.length > 0 ||
+            mentions.channelIds.length > 0 ||
+            mentions.everyone)
+            ? mentions
+            : undefined,
+        replyMetadata,
+        reactions: [],
+      } as Message;
+
+      // Sign message BEFORE optimistic display (non-repudiability requirement)
+      if (!space?.isRepudiable || (space?.isRepudiable && !skipSigning)) {
+        const inboxKey = await this.messageDB.getSpaceKey(spaceId, 'inbox');
+        message.publicKey = inboxKey.publicKey;
+        message.signature = Buffer.from(
+          JSON.parse(
+            ch.js_sign_ed448(
+              Buffer.from(inboxKey.privateKey, 'hex').toString('base64'),
+              Buffer.from(messageIdBuffer).toString('base64')
+            )
+          ),
+          'base64'
+        ).toString('hex');
+      }
+
+      // Add to cache with 'sending' status (optimistic update)
+      await this.addMessage(queryClient, spaceId, channelId, {
+        ...message,
+        sendStatus: 'sending',
+      });
+
+      // Enqueue network operation
+      this.enqueueOutbound(async () => {
+        const outbounds: string[] = [];
+        try {
+          // Get encryption state (must be inside queue to avoid race conditions)
+          const conversationId = spaceId + '/' + channelId;
+          const conversation = await this.messageDB.getConversation({
+            conversationId,
+          });
+          const response = await this.messageDB.getEncryptionStates({
+            conversationId: spaceId + '/' + spaceId,
+          });
+          const sets = response.map((e) => JSON.parse(e.state));
+
+          // Triple Ratchet encrypt (message without ephemeral fields)
+          const { sendStatus, sendError, ...messageToEncrypt } = message;
+          const msg = secureChannel.TripleRatchetEncrypt(
+            JSON.stringify({
+              ratchet_state: sets[0].state,
+              message: [
+                ...new Uint8Array(
+                  Buffer.from(JSON.stringify(messageToEncrypt), 'utf-8')
+                ),
+              ],
+            } as secureChannel.TripleRatchetStateAndMessage)
+          );
+          const result = JSON.parse(
+            msg
+          ) as secureChannel.TripleRatchetStateAndEnvelope;
+
+          // Send via hub
+          outbounds.push(
+            await this.sendHubMessage(
+              spaceId,
+              JSON.stringify({
+                type: 'message',
+                message: JSON.parse(result.envelope),
+              })
+            )
+          );
+
+          // Save to IndexedDB (without sendStatus/sendError)
+          await this.saveMessage(
+            messageToEncrypt as Message,
+            this.messageDB,
+            spaceId,
+            channelId,
+            'group',
+            {
+              user_icon:
+                conversation.conversation?.icon ?? DefaultImages.UNKNOWN_USER,
+              display_name:
+                conversation.conversation?.displayName ?? t`Unknown User`,
+            }
+          );
+
+          // Update status to 'sent'
+          this.updateMessageStatus(
+            queryClient,
+            spaceId,
+            channelId,
+            messageIdHex,
+            'sent'
+          );
+
+          // Invalidate reply notification caches if this is a reply
+          if (message.replyMetadata) {
+            await queryClient.invalidateQueries({
+              queryKey: ['reply-counts', 'channel', spaceId],
+            });
+            await queryClient.invalidateQueries({
+              queryKey: ['reply-notifications', spaceId],
+            });
+          }
+
+          return outbounds;
+        } catch (error) {
+          // Update status to 'failed' with sanitized error
+          const sanitizedError = this.sanitizeError(error);
+          this.updateMessageStatus(
+            queryClient,
+            spaceId,
+            channelId,
+            messageIdHex,
+            'failed',
+            sanitizedError
+          );
+          console.error('Failed to send message:', error);
+          return outbounds;
+        }
+      });
+
+      return; // Post message handling complete
+    }
+
+    // For edit-message, pin-message, and update-profile: use existing flow (no optimistic update)
     this.enqueueOutbound(async () => {
       const outbounds: string[] = [];
       const nonce = crypto.randomUUID();
@@ -3323,178 +3906,327 @@ export class MessageService {
         return outbounds;
       }
 
-      const messageId = await crypto.subtle.digest(
-        'SHA-256',
-        Buffer.from(
-          nonce +
-            'post' +
-            currentPasskeyInfo.address +
-            canonicalize(pendingMessage as any),
-          'utf-8'
-        )
-      );
-      // Extract mentions from message text
-      // Check if user has permission to use @everyone
-      const canUseEveryone = hasPermission(
-        currentPasskeyInfo.address,
-        'mention:everyone',
-        space ?? undefined,
-        isSpaceOwner || false
-      );
-
-      // Get space roles for role mention validation (filter out hidden roles)
-      const spaceRoles =
-        space?.roles
-          ?.filter((r) => r.isPublic !== false)
-          .map((r) => ({
-            roleId: r.roleId,
-            roleTag: r.roleTag,
-          })) || [];
-
-      // Get space channels for channel mention validation
-      const spaceChannels = space?.groups?.flatMap(g =>
-        g.channels.map(c => ({
-          channelId: c.channelId,
-          channelName: c.channelName,
-        }))
-      ) || [];
-
-      let mentions;
-      if (typeof pendingMessage === 'string') {
-        mentions = extractMentionsFromText(pendingMessage, {
-          allowEveryone: canUseEveryone,
-          spaceRoles,
-          spaceChannels,
-        });
-      } else if ((pendingMessage as any).text) {
-        mentions = extractMentionsFromText((pendingMessage as any).text, {
-          allowEveryone: canUseEveryone,
-          spaceRoles,
-          spaceChannels,
-        });
-      }
-
-      // Populate replyMetadata if replying to a message
-      let replyMetadata:
-        | { parentAuthor: string; parentChannelId: string }
-        | undefined;
-      if (inReplyTo && parentMessage) {
-        // Don't create notification for self-replies
-        if (parentMessage.content.senderId !== currentPasskeyInfo.address) {
-          replyMetadata = {
-            parentAuthor: parentMessage.content.senderId,
-            parentChannelId: channelId,
-          };
-        }
-      }
-
-      const message = {
-        spaceId: spaceId,
-        channelId: channelId,
-        messageId: Buffer.from(messageId).toString('hex'),
-        digestAlgorithm: 'SHA-256',
-        nonce: nonce,
-        createdDate: Date.now(),
-        modifiedDate: Date.now(),
-        lastModifiedHash: '',
-        content:
-          typeof pendingMessage === 'string'
-            ? ({
-                type: 'post',
-                senderId: currentPasskeyInfo.address,
-                text: pendingMessage,
-                repliesToMessageId: inReplyTo,
-              } as PostMessage)
-            : {
-                ...(pendingMessage as any),
-                senderId: currentPasskeyInfo.address,
-              },
-        mentions:
-          mentions &&
-          (mentions.memberIds.length > 0 ||
-            mentions.roleIds.length > 0 ||
-            mentions.channelIds.length > 0 ||
-            mentions.everyone)
-            ? mentions
-            : undefined,
-        replyMetadata,
-      } as Message;
-
-      const conversationId = spaceId + '/' + channelId;
-      const conversation = await this.messageDB.getConversation({
-        conversationId,
-      });
-      const response = await this.messageDB.getEncryptionStates({
-        conversationId: spaceId + '/' + spaceId,
-      });
-      const sets = response.map((e) => JSON.parse(e.state));
-
-      // enforce non-repudiability
-      if (
-        !space?.isRepudiable ||
-        (space?.isRepudiable && !skipSigning) ||
-        (typeof pendingMessage !== 'string' &&
-          (pendingMessage as any).type === 'update-profile')
-      ) {
-        const inboxKey = await this.messageDB.getSpaceKey(spaceId, 'inbox');
-        message.publicKey = inboxKey.publicKey;
-        message.signature = Buffer.from(
-          JSON.parse(
-            ch.js_sign_ed448(
-              Buffer.from(inboxKey.privateKey, 'hex').toString('base64'),
-              Buffer.from(messageId).toString('base64')
-            )
-          ),
-          'base64'
-        ).toString('hex');
-      }
-
-      const msg = secureChannel.TripleRatchetEncrypt(
-        JSON.stringify({
-          ratchet_state: sets[0].state,
-          message: [
-            ...new Uint8Array(Buffer.from(JSON.stringify(message), 'utf-8')),
-          ],
-        } as secureChannel.TripleRatchetStateAndMessage)
-      );
-      const result = JSON.parse(
-        msg
-      ) as secureChannel.TripleRatchetStateAndEnvelope;
-      outbounds.push(
-        await this.sendHubMessage(
-          spaceId,
-          JSON.stringify({
-            type: 'message',
-            message: JSON.parse(result.envelope),
-          })
-        )
-      );
-      await this.saveMessage(
-        message,
-        this.messageDB,
-        spaceId,
-        channelId,
-        'group',
-        {
-          user_icon:
-            conversation.conversation?.icon ?? DefaultImages.UNKNOWN_USER,
-          display_name:
-            conversation.conversation?.displayName ?? t`Unknown User`,
-        }
-      );
-      await this.addMessage(queryClient, spaceId, channelId, message);
-
-      // Invalidate reply notification caches if this is a reply
-      if (message.replyMetadata) {
-        await queryClient.invalidateQueries({
-          queryKey: ['reply-counts', 'channel', spaceId],
-        });
-        await queryClient.invalidateQueries({
-          queryKey: ['reply-notifications', spaceId],
-        });
-      }
-
+      // No matching message type in this path (edit/pin only)
       return outbounds;
+    });
+  }
+
+  /**
+   * Retries sending a failed message.
+   * Re-uses the same signed message (messageId preserved) with fresh encryption.
+   */
+  async retryMessage(
+    spaceId: string,
+    channelId: string,
+    failedMessage: Message,
+    queryClient: QueryClient
+  ) {
+    // Validate message is in 'failed' state
+    if (failedMessage.sendStatus !== 'failed') {
+      console.warn('Cannot retry message that is not in failed state');
+      return;
+    }
+
+    // Update status to 'sending' (optimistic)
+    queryClient.setQueryData(
+      buildMessagesKey({ spaceId, channelId }),
+      (oldData: InfiniteData<any>) => {
+        if (!oldData?.pages) return oldData;
+        return {
+          pageParams: oldData.pageParams,
+          pages: oldData.pages.map((page) => ({
+            ...page,
+            messages: page.messages.map((msg: Message) =>
+              msg.messageId === failedMessage.messageId
+                ? { ...msg, sendStatus: 'sending' as const, sendError: undefined }
+                : msg
+            ),
+            nextCursor: page.nextCursor,
+            prevCursor: page.prevCursor,
+          })),
+        };
+      }
+    );
+
+    // Enqueue the retry
+    this.enqueueOutbound(async () => {
+      const outbounds: string[] = [];
+      try {
+        // Get encryption state (must be inside queue to avoid race conditions)
+        const conversationId = spaceId + '/' + channelId;
+        const conversation = await this.messageDB.getConversation({
+          conversationId,
+        });
+        const response = await this.messageDB.getEncryptionStates({
+          conversationId: spaceId + '/' + spaceId,
+        });
+        const sets = response.map((e) => JSON.parse(e.state));
+
+        // Strip ephemeral fields before encrypting
+        const { sendStatus, sendError, ...messageToEncrypt } = failedMessage;
+
+        // Triple Ratchet encrypt (creates fresh encrypted envelope)
+        const msg = secureChannel.TripleRatchetEncrypt(
+          JSON.stringify({
+            ratchet_state: sets[0].state,
+            message: [
+              ...new Uint8Array(
+                Buffer.from(JSON.stringify(messageToEncrypt), 'utf-8')
+              ),
+            ],
+          } as secureChannel.TripleRatchetStateAndMessage)
+        );
+        const result = JSON.parse(
+          msg
+        ) as secureChannel.TripleRatchetStateAndEnvelope;
+
+        // Send via hub
+        outbounds.push(
+          await this.sendHubMessage(
+            spaceId,
+            JSON.stringify({
+              type: 'message',
+              message: JSON.parse(result.envelope),
+            })
+          )
+        );
+
+        // Save to IndexedDB (without sendStatus/sendError)
+        await this.saveMessage(
+          messageToEncrypt as Message,
+          this.messageDB,
+          spaceId,
+          channelId,
+          'group',
+          {
+            user_icon:
+              conversation.conversation?.icon ?? DefaultImages.UNKNOWN_USER,
+            display_name:
+              conversation.conversation?.displayName ?? t`Unknown User`,
+          }
+        );
+
+        // Update status to 'sent'
+        this.updateMessageStatus(
+          queryClient,
+          spaceId,
+          channelId,
+          failedMessage.messageId,
+          'sent'
+        );
+
+        return outbounds;
+      } catch (error) {
+        // Revert status to 'failed' with updated error
+        const sanitizedError = this.sanitizeError(error);
+        this.updateMessageStatus(
+          queryClient,
+          spaceId,
+          channelId,
+          failedMessage.messageId,
+          'failed',
+          sanitizedError
+        );
+        console.error('Retry failed:', error);
+        return outbounds;
+      }
+    });
+  }
+
+  /**
+   * Retries sending a failed direct message.
+   * Re-uses the same signed message (messageId preserved) with fresh encryption.
+   */
+  async retryDirectMessage(
+    address: string,
+    failedMessage: Message,
+    self: secureChannel.UserRegistration,
+    counterparty: secureChannel.UserRegistration,
+    queryClient: QueryClient,
+    currentPasskeyInfo: {
+      credentialId: string;
+      address: string;
+      publicKey: string;
+      displayName?: string;
+      pfpUrl?: string;
+      completedOnboarding: boolean;
+    },
+    keyset: {
+      deviceKeyset: secureChannel.DeviceKeyset;
+      userKeyset: secureChannel.UserKeyset;
+    }
+  ) {
+    // Validate message is in 'failed' state
+    if (failedMessage.sendStatus !== 'failed') {
+      console.warn('Cannot retry message that is not in failed state');
+      return;
+    }
+
+    // Update status to 'sending' (optimistic)
+    queryClient.setQueryData(
+      buildMessagesKey({ spaceId: address, channelId: address }),
+      (oldData: InfiniteData<any>) => {
+        if (!oldData?.pages) return oldData;
+        return {
+          pageParams: oldData.pageParams,
+          pages: oldData.pages.map((page) => ({
+            ...page,
+            messages: page.messages.map((msg: Message) =>
+              msg.messageId === failedMessage.messageId
+                ? { ...msg, sendStatus: 'sending' as const, sendError: undefined }
+                : msg
+            ),
+            nextCursor: page.nextCursor,
+            prevCursor: page.prevCursor,
+          })),
+        };
+      }
+    );
+
+    // Enqueue the retry
+    this.enqueueOutbound(async () => {
+      const outbounds: string[] = [];
+      try {
+        const conversationId = address + '/' + address;
+        const conversation = await this.messageDB.getConversation({
+          conversationId,
+        });
+        let response = await this.messageDB.getEncryptionStates({
+          conversationId,
+        });
+        const inboxes = self.device_registrations
+          .map((d) => d.inbox_registration.inbox_address)
+          .concat(
+            counterparty.device_registrations.map(
+              (d) => d.inbox_registration.inbox_address
+            )
+          )
+          .sort();
+        for (const res of response) {
+          if (!inboxes.includes(JSON.parse(res.state).tag)) {
+            await this.messageDB.deleteEncryptionState(res);
+          }
+        }
+
+        response = await this.messageDB.getEncryptionStates({ conversationId });
+        const sets = response.map((e) => JSON.parse(e.state));
+
+        let sessions: secureChannel.SealedMessageAndMetadata[] = [];
+
+        // Strip ephemeral fields before encrypting
+        const { sendStatus, sendError, ...messageToEncrypt } = failedMessage;
+
+        for (const inbox of inboxes.filter(
+          (i) => i !== keyset.deviceKeyset.inbox_keyset.inbox_address
+        )) {
+          const set = sets.find((s) => s.tag === inbox);
+          if (set) {
+            if (set.sending_inbox.inbox_public_key === '') {
+              sessions = [
+                ...sessions,
+                ...secureChannel.DoubleRatchetInboxEncryptForceSenderInit(
+                  keyset.deviceKeyset,
+                  [set],
+                  JSON.stringify(messageToEncrypt),
+                  self,
+                  currentPasskeyInfo!.displayName,
+                  currentPasskeyInfo?.pfpUrl
+                ),
+              ];
+            } else {
+              sessions = [
+                ...sessions,
+                ...secureChannel.DoubleRatchetInboxEncrypt(
+                  keyset.deviceKeyset,
+                  [set],
+                  JSON.stringify(messageToEncrypt),
+                  self,
+                  currentPasskeyInfo!.displayName,
+                  currentPasskeyInfo?.pfpUrl
+                ),
+              ];
+            }
+          } else {
+            sessions = [
+              ...sessions,
+              ...(await secureChannel.NewDoubleRatchetSenderSession(
+                keyset.deviceKeyset,
+                self.user_address,
+                self.device_registrations
+                  .concat(counterparty.device_registrations)
+                  .find((d) => d.inbox_registration.inbox_address === inbox)!,
+                JSON.stringify(messageToEncrypt),
+                currentPasskeyInfo!.displayName,
+                currentPasskeyInfo?.pfpUrl
+              )),
+            ];
+          }
+        }
+
+        for (const session of sessions) {
+          const newEncryptionState: EncryptionState = {
+            state: JSON.stringify({
+              ratchet_state: session.ratchet_state,
+              receiving_inbox: session.receiving_inbox,
+              tag: session.tag,
+              sending_inbox: session.sending_inbox,
+            } as secureChannel.DoubleRatchetStateAndInboxKeys),
+            timestamp: Date.now(),
+            inboxId: session.receiving_inbox.inbox_address,
+            conversationId: address + '/' + address,
+            sentAccept: session.sent_accept,
+          };
+          await this.messageDB.saveEncryptionState(newEncryptionState, true);
+          outbounds.push(
+            JSON.stringify({
+              type: 'listen',
+              inbox_addresses: [session.receiving_inbox.inbox_address],
+            })
+          );
+          outbounds.push(
+            JSON.stringify({ type: 'direct', ...session.sealed_message })
+          );
+        }
+
+        // Save to IndexedDB (without sendStatus/sendError)
+        await this.saveMessage(
+          messageToEncrypt as Message,
+          this.messageDB,
+          address,
+          address,
+          'direct',
+          {
+            user_icon:
+              conversation?.conversation?.icon ?? DefaultImages.UNKNOWN_USER,
+            display_name:
+              conversation?.conversation?.displayName ?? t`Unknown User`,
+          }
+        );
+
+        // Update status to 'sent'
+        this.updateMessageStatus(
+          queryClient,
+          address,
+          address,
+          failedMessage.messageId,
+          'sent'
+        );
+
+        return outbounds;
+      } catch (error) {
+        // Revert status to 'failed' with updated error
+        const sanitizedError = this.sanitizeError(error);
+        this.updateMessageStatus(
+          queryClient,
+          address,
+          address,
+          failedMessage.messageId,
+          'failed',
+          sanitizedError
+        );
+        console.error('Retry DM failed:', error);
+        return outbounds;
+      }
     });
   }
 

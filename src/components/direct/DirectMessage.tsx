@@ -57,7 +57,7 @@ const DirectMessage: React.FC<{}> = () => {
   const [activePanel, setActivePanel] = useState<ActivePanel>(null);
   const user = usePasskeysContext();
   const queryClient = useQueryClient();
-  const { submitMessage, keyset, getConfig, messageDB } = useMessageDB();
+  const { submitMessage, retryDirectMessage, keyset, getConfig, messageDB } = useMessageDB();
 
   // State for message signing
   const [skipSigning, setSkipSigning] = useState<boolean>(false);
@@ -278,6 +278,26 @@ const DirectMessage: React.FC<{}> = () => {
       nonRepudiable,
       skipSigning,
     ]
+  );
+
+  // Handle retrying a failed message
+  const handleRetryMessage = useCallback(
+    async (message: import('../../api/quorumApi').Message) => {
+      if (!self?.registration || !registration?.registration) {
+        console.error('Cannot retry: missing registration data');
+        return;
+      }
+      await retryDirectMessage(
+        address!,
+        message,
+        self.registration,
+        registration.registration,
+        queryClient,
+        user.currentPasskeyInfo!,
+        keyset
+      );
+    },
+    [address, self, registration, queryClient, user.currentPasskeyInfo, keyset, retryDirectMessage]
   );
 
   // Use MessageComposer hook
@@ -799,6 +819,7 @@ const DirectMessage: React.FC<{}> = () => {
                   fetchNextPage();
                 }}
                 hasNextPage={hasNextPage}
+                onRetryMessage={handleRetryMessage}
               />
             </Container>
             {/* Accept chat warning */}
