@@ -31,7 +31,7 @@ msgid "No Role - {count}"
 msgstr "ไม่มีบทบาท - {count}"
 
 #. js-lingui-explicit-id
-#: src/components/space/Channel.tsx:1055
+#: src/components/space/Channel.tsx:1083
 msgid "Send a message to #{channel_name}"
 msgstr "ส่งข้อความไปยัง #{channel_name}"
 
@@ -46,6 +46,11 @@ msgid "{count} New Messages"
 msgstr "{count} ข้อความใหม่"
 
 #. js-lingui-explicit-id
+#: src/components/message/MessageComposer.tsx:404
+msgid "Replying to"
+msgstr "กำลังตอบกลับ"
+
+#. js-lingui-explicit-id
 #: src/components/message/MessageComposer.native.tsx:161
 msgid "Failed to process image"
 msgstr "ไม่สามารถประมวลผลภาพได้"
@@ -56,27 +61,22 @@ msgid "Replying to {user}"
 msgstr "กำลังตอบกลับ {user}"
 
 #. js-lingui-explicit-id
-#: src/components/message/MessageComposer.tsx:404
-msgid "Replying to"
-msgstr "กำลังตอบกลับ"
-
-#. js-lingui-explicit-id
-#: src/components/message/Message.tsx:303
+#: src/components/message/Message.tsx:305
 msgid "has joined"
 msgstr "ได้เข้าร่วม"
 
 #. js-lingui-explicit-id
-#: src/components/message/Message.tsx:311
+#: src/components/message/Message.tsx:313
 msgid "has left"
 msgstr "ได้ออก"
 
 #. js-lingui-explicit-id
-#: src/components/message/Message.tsx:319
+#: src/components/message/Message.tsx:321
 msgid "has been kicked"
 msgstr "ถูกเตะออก"
 
 #. js-lingui-explicit-id
-#: src/components/direct/DirectMessage.tsx:820
+#: src/components/direct/DirectMessage.tsx:841
 msgid "Send a message to {user}"
 msgstr "ส่งข้อความไปยัง {user}"
 
@@ -90,8 +90,8 @@ msgstr "สำหรับการอัปเดต"
 #~ msgid "'everyone' is a reserved name."
 #~ msgstr "'name' เป็นชื่อที่สงวนไว้"
 
-#: src/components/message/Message.tsx:751
-#: src/components/message/Message.tsx:764
+#: src/components/message/Message.tsx:753
+#: src/components/message/Message.tsx:766
 msgid "(edited)"
 msgstr "(แก้ไขแล้ว)"
 
@@ -186,6 +186,14 @@ msgstr "{bookmarkCount} บุ๊กมาร์ก"
 msgid "{bookmarkCount} bookmarks"
 msgstr "{bookmarkCount} บุ๊กมาร์ก"
 
+#: src/utils/dateFormatting.ts:90
+msgid "{days} days"
+msgstr ""
+
+#: src/utils/dateFormatting.ts:92
+msgid "{hours} hours"
+msgstr ""
+
 #: src/components/primitives/FileUpload/FileUpload.web.tsx:13
 msgid "{size} Bytes"
 msgstr "{size} ไบต์"
@@ -234,9 +242,17 @@ msgstr "@you"
 msgid "+ Add a friend"
 msgstr "เพิ่มเพื่อน"
 
+#: src/components/modals/MuteUserModal.tsx:118
+msgid "0 = forever"
+msgstr ""
+
 #: src/components/primitives/FileUpload/FileUpload.web.tsx:8
 msgid "0 Bytes"
 msgstr "0 ไบต์"
+
+#: src/utils/dateFormatting.ts:84
+msgid "0 hours"
+msgstr ""
 
 #: src/components/modals/UserSettingsModal/Privacy.tsx:105
 msgid "1 device marked for removal. Click \"Save Changes\" to confirm."
@@ -409,7 +425,6 @@ msgstr "คุณแน่ใจหรือไม่ว่าต้องกา
 msgid "Are you sure you want to unpin this message?"
 msgstr "คุณแน่ใจหรือไม่ว่าต้องการยกเลิกการปักหมุดข้อความนี้?"
 
-#: src/components/modals/SpaceSettingsModal/Roles.tsx:54
 #~ msgid "As a space owner, you must assign yourself a role to perform moderation actions. Kicking users is the only action that doesn't require a role. <0><1>Learn more</1></0>"
 #~ msgstr "ในฐานะเจ้าของพื้นที่ คุณต้องกำหนดบทบาทให้กับตัวเองเพื่อทำการจัดการ การเตะผู้ใช้เป็นการกระทำเดียวที่ไม่ต้องการบทบาท <0><1>เรียนรู้เพิ่มเติม</1></0>"
 
@@ -453,8 +468,8 @@ msgstr "ข้อความบุ๊กมาร์ก"
 msgid "Bookmark messages to save them for later reference"
 msgstr "ข้อความบุ๊กมาร์กเพื่อบันทึกไว้ใช้งานในภายหลัง"
 
-#: src/components/message/Message.tsx:718
-#: src/components/message/Message.tsx:796
+#: src/components/message/Message.tsx:720
+#: src/components/message/Message.tsx:798
 msgid "Bookmarked"
 msgstr "บุ๊กมาร์กแล้ว"
 
@@ -466,8 +481,8 @@ msgstr "ภาพที่บุ๊กมาร์ก"
 msgid "Bookmarked sticker"
 msgstr "สติกเกอร์ที่บุ๊กมาร์ก"
 
-#: src/components/direct/DirectMessage.tsx:687
-#: src/components/space/Channel.tsx:896
+#: src/components/direct/DirectMessage.tsx:707
+#: src/components/space/Channel.tsx:923
 msgid "Bookmarks"
 msgstr "บุ๊กมาร์ก"
 
@@ -489,7 +504,7 @@ msgstr "ต้องการสิทธิ์กล้องเพื่อถ
 #: src/components/modals/ConfirmationModal.tsx:29
 #: src/components/modals/ConversationSettingsModal.tsx:63
 #: src/components/modals/KickUserModal.tsx:109
-#: src/components/modals/MuteUserModal.tsx:107
+#: src/components/modals/MuteUserModal.tsx:147
 #: src/components/primitives/FileUpload/FileUpload.native.tsx:173
 #: src/hooks/business/channels/useChannelManagement.ts:253
 #: src/hooks/business/messages/useMessageActions.ts:159
@@ -529,7 +544,7 @@ msgstr "ไอคอนช่อง"
 msgid "Channel Managers"
 msgstr "ผู้จัดการช่อง"
 
-#: src/components/space/Channel.tsx:1279
+#: src/components/space/Channel.tsx:1309
 msgid "Channel members"
 msgstr "สมาชิกช่อง"
 
@@ -627,7 +642,7 @@ msgstr "คลิกเพื่อคัดลอก"
 msgid "Config Key"
 msgstr "คีย์การกำหนดค่า"
 
-#: src/components/navbar/FolderContextMenu.tsx:124
+#: src/components/navbar/FolderContextMenu.tsx:139
 msgid "Confirm"
 msgstr "ยืนยัน"
 
@@ -635,7 +650,7 @@ msgstr "ยืนยัน"
 msgid "Connecting"
 msgstr "กำลังเชื่อมต่อ"
 
-#: src/components/direct/DirectMessage.tsx:653
+#: src/components/direct/DirectMessage.tsx:673
 msgid "Conversation settings"
 msgstr "การตั้งค่าการสนทนา"
 
@@ -654,9 +669,9 @@ msgstr "การตั้งค่าการสนทนา"
 msgid "Copied!"
 msgstr "คัดลอกแล้ว!"
 
-#: src/components/direct/DirectMessage.tsx:313
-#: src/components/direct/DirectMessage.tsx:635
-#: src/components/direct/DirectMessage.tsx:755
+#: src/components/direct/DirectMessage.tsx:333
+#: src/components/direct/DirectMessage.tsx:655
+#: src/components/direct/DirectMessage.tsx:775
 #: src/components/modals/UserSettingsModal/General.tsx:118
 #: src/components/user/ExpandableUserAvatar.tsx:90
 #: src/components/user/UserProfile.tsx:123
@@ -754,6 +769,10 @@ msgstr "มืด"
 msgid "Data Recovery"
 msgstr "การกู้คืนข้อมูล"
 
+#: src/components/modals/MuteUserModal.tsx:115
+msgid "days"
+msgstr ""
+
 #: src/components/context/MessageDB.bak.tsx:5415
 #: src/services/ConfigService.ts:142
 msgid "decrypted space with no known config key"
@@ -802,7 +821,7 @@ msgstr "ลบการสนทนา"
 #~ msgstr "ลบลิงก์ปัจจุบัน"
 
 #: src/components/modals/FolderEditorModal.tsx:132
-#: src/components/navbar/FolderContextMenu.tsx:124
+#: src/components/navbar/FolderContextMenu.tsx:139
 msgid "Delete Folder"
 msgstr "ลบโฟลเดอร์"
 
@@ -1047,7 +1066,7 @@ msgid "Failed to create space. Please try again."
 msgstr "ไม่สามารถสร้าง Space ได้ กรุณาลองอีกครั้ง"
 
 #: src/components/context/MessageDB.bak.tsx:984
-#: src/services/MessageService.ts:1825
+#: src/services/MessageService.ts:2157
 msgid "Failed to decrypt message with any known state"
 msgstr "ไม่สามารถถอดรหัสข้อความด้วยสถานะที่รู้จักได้"
 
@@ -1059,9 +1078,9 @@ msgstr "ไม่สามารถสร้างลิงก์เชิญไ
 msgid "Failed to load bookmarks"
 msgstr "ไม่สามารถโหลดบุ๊กมาร์กได้"
 
-#: src/components/modals/MuteUserModal.tsx:51
+#: src/components/modals/MuteUserModal.tsx:67
 msgid "Failed to mute user"
-msgstr ""
+msgstr "ไม่สามารถปิดเสียงผู้ใช้ได้"
 
 #: src/components/primitives/FileUpload/FileUpload.native.tsx:105
 msgid "Failed to open image picker"
@@ -1087,9 +1106,13 @@ msgstr "ไม่สามารถเลือกเอกสารได้"
 msgid "Failed to send invite. Please try again."
 msgstr "ส่งคำเชิญล้มเหลว กรุณาลองอีกครั้ง"
 
-#: src/components/modals/MuteUserModal.tsx:51
-msgid "Failed to unmute user"
+#: src/components/message/Message.tsx:1192
+msgid "Failed to send."
 msgstr ""
+
+#: src/components/modals/MuteUserModal.tsx:67
+msgid "Failed to unmute user"
+msgstr "ไม่สามารถเปิดเสียงผู้ใช้ได้"
 
 #: src/hooks/business/spaces/useSpaceProfile.ts:216
 msgid "Failed to update profile"
@@ -1177,13 +1200,13 @@ msgstr "ชื่อโฟลเดอร์เป็นสิ่งที่จ
 msgid "Folder name must be {MAX_NAME_LENGTH} characters or less"
 msgstr "ชื่อโฟลเดอร์ต้องมีความยาวไม่เกิน {MAX_NAME_LENGTH} ตัวอักษร"
 
-#: src/components/navbar/FolderContextMenu.tsx:114
+#: src/components/navbar/FolderContextMenu.tsx:129
 msgid "Folder Settings"
 msgstr "การตั้งค่าโฟลเดอร์"
 
 #: src/components/modals/SpaceSettingsModal/Roles.tsx:58
 msgid "For privacy, your ownership is hidden from other clients. This means: Delete permission holders can delete your messages permanently, Mute permission holders can mute you (reversible). Only grant these to trusted users. Also note: if you're the only one with a role, your actions may reveal you as the owner—consider sharing roles with other trusted users."
-msgstr ""
+msgstr "เพื่อความเป็นส่วนตัว การเป็นเจ้าของของคุณจะถูกซ่อนจากลูกค้ารายอื่น นี่หมายความว่า: ผู้ถือสิทธิ์การลบสามารถลบข้อความของคุณได้อย่างถาวร ผู้ถือสิทธิ์การปิดเสียงสามารถปิดเสียงคุณ (สามารถย้อนกลับได้) ให้สิทธิ์เหล่านี้แก่ผู้ใช้ที่เชื่อถือได้เท่านั้น นอกจากนี้ โปรดทราบ: หากคุณเป็นคนเดียวที่มีบทบาท การกระทำของคุณอาจเปิดเผยว่าคุณเป็นเจ้าของ - พิจารณาแบ่งปันบทบาทกับผู้ใช้ที่เชื่อถือได้คนอื่น"
 
 #: src/components/context/MessageDB.bak.tsx:3186
 #: src/services/SpaceService.ts:233
@@ -1295,7 +1318,7 @@ msgid "Important messages will be pinned here"
 msgstr "ข้อความสำคัญจะถูกปักหมุดที่นี่"
 
 #: src/components/context/MessageDB.bak.tsx:1184
-#: src/services/MessageService.ts:2024
+#: src/services/MessageService.ts:2356
 msgid "invalid address for signature"
 msgstr "ที่อยู่ไม่ถูกต้องสำหรับลายเซ็น"
 
@@ -1325,7 +1348,7 @@ msgid "Invalid message ID"
 msgstr "รหัสข้อความไม่ถูกต้อง"
 
 #: src/components/context/MessageDB.bak.tsx:5180
-#: src/utils/canonicalize.ts:126
+#: src/utils/canonicalize.ts:127
 msgid "invalid message type"
 msgstr "ประเภทข้อความไม่ถูกต้อง"
 
@@ -1377,7 +1400,7 @@ msgstr "กำลังเข้าร่วม..."
 msgid "Jump"
 msgstr "กระโดด"
 
-#: src/components/message/MessageList.tsx:528
+#: src/components/message/MessageList.tsx:532
 msgid "Jump to present"
 msgstr "กระโดดไปยังปัจจุบัน"
 
@@ -1400,17 +1423,15 @@ msgstr "บันทึกคีย์แล้ว"
 #: src/components/modals/KickUserModal.tsx:118
 #: src/components/user/UserProfile.tsx:265
 msgid "Kick"
-msgstr ""
+msgstr "เตะ"
 
 #: src/components/modals/KickUserModal.tsx:70
 msgid "Kick User"
 msgstr "เตะผู้ใช้"
 
-#: src/components/modals/SpaceSettingsModal/Roles.tsx:170
 #~ msgid "Kick Users"
 #~ msgstr "เตะผู้ใช้"
 
-#: src/components/modals/KickUserModal.tsx:86
 #~ msgid "Kick!"
 #~ msgstr "เตะ!"
 
@@ -1458,7 +1479,7 @@ msgstr "แสง"
 msgid "Loading bookmarks..."
 msgstr "กำลังโหลดบุ๊กมาร์ก..."
 
-#: src/components/message/MessageList.tsx:539
+#: src/components/message/MessageList.tsx:543
 msgid "Loading message..."
 msgstr "กำลังโหลดข้อความ..."
 
@@ -1524,9 +1545,9 @@ msgstr "ต้องการการสำรองข้อมูลด้ว
 msgid "Mark all as read"
 msgstr "ทำเครื่องหมายทั้งหมดว่าอ่านแล้ว"
 
-#: src/components/direct/DirectMessage.tsx:668
-#: src/components/direct/DirectMessage.tsx:861
-#: src/components/space/Channel.tsx:922
+#: src/components/direct/DirectMessage.tsx:688
+#: src/components/direct/DirectMessage.tsx:882
+#: src/components/space/Channel.tsx:949
 msgid "Members List"
 msgstr "รายชื่อสมาชิก"
 
@@ -1546,8 +1567,8 @@ msgstr "การดำเนินการข้อความ"
 msgid "Message deleted"
 msgstr "ข้อความถูกลบ"
 
-#: src/components/message/Message.tsx:734
-#: src/components/message/Message.tsx:812
+#: src/components/message/Message.tsx:736
+#: src/components/message/Message.tsx:814
 msgid "Message does not have a valid signature, this may not be from the sender"
 msgstr "ข้อความไม่มีลายเซ็นที่ถูกต้อง อาจไม่ใช่มาจากผู้ส่ง"
 
@@ -1567,18 +1588,29 @@ msgstr "ข้อความได้รับการลงนาม!"
 msgid "More reactions"
 msgstr "ปฏิกิริยามากขึ้น"
 
-#: src/components/modals/MuteUserModal.tsx:118
 #: src/components/user/UserProfile.tsx:246
 msgid "Mute"
+msgstr "ปิดเสียง"
+
+#: src/components/modals/MuteUserModal.tsx:106
+msgid "Mute for"
 msgstr ""
 
-#: src/components/modals/MuteUserModal.tsx:62
-msgid "Mute User"
+#: src/components/modals/MuteUserModal.tsx:162
+msgid "Mute for {days} days"
 msgstr ""
+
+#: src/components/modals/MuteUserModal.tsx:161
+msgid "Mute Forever"
+msgstr ""
+
+#: src/components/modals/MuteUserModal.tsx:78
+msgid "Mute User"
+msgstr "ปิดเสียงผู้ใช้"
 
 #: src/components/modals/SpaceSettingsModal/Roles.tsx:170
 msgid "Mute Users"
-msgstr ""
+msgstr "ปิดเสียงผู้ใช้หลายคน"
 
 #: src/hooks/business/validation/useDisplayNameValidation.ts:26
 #: src/hooks/business/validation/useDisplayNameValidation.ts:55
@@ -1651,9 +1683,9 @@ msgstr "ยังไม่มีข้อความที่ถูกปัก
 msgid "No unread notifications"
 msgstr "ไม่มีการแจ้งเตือนที่ยังไม่ได้อ่าน"
 
-#: src/components/space/Channel.tsx:617
-#: src/components/space/Channel.tsx:1129
-#: src/components/space/Channel.tsx:1318
+#: src/components/space/Channel.tsx:644
+#: src/components/space/Channel.tsx:1159
+#: src/components/space/Channel.tsx:1348
 msgid "No users found!"
 msgstr "ไม่พบผู้ใช้!"
 
@@ -1668,7 +1700,7 @@ msgstr "ไม่ได้รับอนุญาตการแจ้งเต
 #: src/components/modals/SpaceSettingsModal/Account.tsx:187
 #: src/components/modals/UserSettingsModal/Navigation.tsx:17
 #: src/components/modals/UserSettingsModal/Notifications.tsx:24
-#: src/components/space/Channel.tsx:861
+#: src/components/space/Channel.tsx:888
 msgid "Notifications"
 msgstr "การแจ้งเตือน"
 
@@ -1803,18 +1835,18 @@ msgstr "ปักหมุดข้อความ"
 msgid "Pin to top"
 msgstr "ปักหมุดไปที่ด้านบน"
 
-#: src/components/message/Message.tsx:702
-#: src/components/message/Message.tsx:780
+#: src/components/message/Message.tsx:704
+#: src/components/message/Message.tsx:782
 msgid "Pinned"
 msgstr "ถูกปักหมุด"
 
 #. placeholder {0}: mapSenderToUser(message.pinnedBy)?.displayName || message.pinnedBy
-#: src/components/message/Message.tsx:701
-#: src/components/message/Message.tsx:779
+#: src/components/message/Message.tsx:703
+#: src/components/message/Message.tsx:781
 msgid "Pinned by {0}"
 msgstr "ถูกปักหมุดโดย {0}"
 
-#: src/components/space/Channel.tsx:821
+#: src/components/space/Channel.tsx:848
 msgid "Pinned Messages"
 msgstr "ข้อความที่ถูกปักหมุด"
 
@@ -1938,7 +1970,6 @@ msgstr "ต้องการการลงนามข้อความ"
 msgid "Require messages sent in this Space to be signed by the sender. Technically speaking, this makes the messages in this Space non-repudiable."
 msgstr "ต้องการให้ข้อความที่ส่งใน พื้นที่ นี้ได้รับการลงนามโดยผู้ส่ง กล่าวโดยเทคนิคแล้ว สิ่งนี้ทำให้ข้อความใน พื้นที่ นี้ไม่สามารถปฏิเสธได้"
 
-#: src/components/modals/SpaceSettingsModal/Roles.tsx:58
 #~ msgid "Requiring roles for moderation actions protects your identity as the space owner. However, if you're the only one with a specific role, your actions may reveal who you are. For better privacy, consider having multiple users (real or additional accounts) share the same role."
 #~ msgstr "การกำหนดบทบาทสำหรับการจัดการช่วยปกป้องตัวตนของคุณในฐานะเจ้าของพื้นที่ อย่างไรก็ตาม หากคุณเป็นคนเดียวที่มีบทบาทเฉพาะ การกระทำของคุณอาจเปิดเผยตัวตนของคุณ สำหรับความเป็นส่วนตัวที่ดีกว่า ควรพิจารณาให้ผู้ใช้หลายคน (บัญชีจริงหรือบัญชีเพิ่มเติม) แบ่งปันบทบาทเดียวกัน"
 
@@ -1962,6 +1993,10 @@ msgstr "กู้คืน {0} พื้นที่"
 #: src/components/modals/UserSettingsModal/Privacy.tsx:208
 msgid "Restoring..."
 msgstr "กำลังคืนค่า..."
+
+#: src/components/message/Message.tsx:1203
+msgid "Retry"
+msgstr ""
 
 #: src/components/modals/SpaceSettingsModal/Navigation.tsx:22
 #: src/components/modals/SpaceSettingsModal/Roles.tsx:45
@@ -2037,8 +2072,8 @@ msgstr "ค้นหาใน พื้นที่ นี้"
 msgid "Search in this Space..."
 msgstr "ค้นหาใน Space นี้..."
 
-#: src/components/direct/DirectMessage.tsx:714
-#: src/components/space/Channel.tsx:941
+#: src/components/direct/DirectMessage.tsx:734
+#: src/components/space/Channel.tsx:968
 msgid "Search Messages"
 msgstr "ค้นหาข้อความ"
 
@@ -2054,7 +2089,7 @@ msgstr "ผลการค้นหา"
 msgid "Search username or address"
 msgstr "ค้นหาชื่อผู้ใช้หรือที่อยู่"
 
-#: src/components/space/Channel.tsx:1290
+#: src/components/space/Channel.tsx:1320
 msgid "Search Username or Address"
 msgstr "ค้นหาชื่อผู้ใช้หรือที่อยู่"
 
@@ -2124,6 +2159,10 @@ msgstr "ส่งคำเชิญ"
 #: src/components/user/UserProfile.tsx:218
 msgid "Send Message"
 msgstr "ส่งข้อความ"
+
+#: src/components/message/Message.tsx:1185
+msgid "Sending..."
+msgstr ""
 
 #: src/components/context/RegistrationPersister.tsx:257
 msgid "Session Encrypted"
@@ -2224,9 +2263,9 @@ msgstr "ซิงค์สถานะการเตะ"
 #~ msgid "Sync kick status for previously kicked users. This verifies kicks without posting visible messages."
 #~ msgstr "ซิงค์สถานะการเตะสำหรับผู้ใช้ที่ถูกเตะออกก่อนหน้านี้ นี่จะตรวจสอบการเตะโดยไม่โพสต์ข้อความที่มองเห็นได้"
 
-#: src/services/SyncService.ts:199
+#: src/services/MessageService.ts:3177
 msgid "Syncing Space..."
-msgstr ""
+msgstr "กำลังซิงค์ Space..."
 
 #: src/components/ui/ThemeRadioGroup.tsx:28
 msgid "System"
@@ -2313,16 +2352,20 @@ msgstr "พื้นที่นี้"
 msgid "This user is already a member of this space."
 msgstr "ผู้ใช้คนนี้เป็นสมาชิกของ Space นี้แล้ว"
 
-#: src/components/modals/MuteUserModal.tsx:93
+#: src/components/modals/MuteUserModal.tsx:131
 msgid "This user will be able to send messages in this Space again."
-msgstr ""
+msgstr "ผู้ใช้นี้จะสามารถส่งข้อความใน Space นี้ได้อีกครั้ง"
 
 #: src/components/modals/KickUserModal.tsx:97
 msgid "This user will be removed from the Space."
-msgstr ""
+msgstr "ผู้ใช้นี้จะถูกลบออกจาก Space"
 
-#: src/components/modals/MuteUserModal.tsx:94
+#: src/components/modals/MuteUserModal.tsx:133
 msgid "This user will no longer be able to send messages in this Space."
+msgstr "ผู้ใช้นี้จะไม่สามารถส่งข้อความใน Space นี้ได้อีกต่อไป"
+
+#: src/components/modals/MuteUserModal.tsx:134
+msgid "This user will not be able to send messages for {days} days."
 msgstr ""
 
 #: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:609
@@ -2437,7 +2480,7 @@ msgstr "เวลาที่ไม่รู้จัก"
 #: src/components/context/MessageDB.bak.tsx:5292
 #: src/components/direct/DirectMessage.tsx:173
 #: src/components/direct/DirectMessage.tsx:188
-#: src/components/direct/DirectMessage.tsx:535
+#: src/components/direct/DirectMessage.tsx:555
 #: src/components/message/MessageComposer.tsx:499
 #: src/components/message/MessageComposer.tsx:506
 #: src/components/message/MessageEditTextarea.tsx:225
@@ -2463,24 +2506,27 @@ msgstr "เวลาที่ไม่รู้จัก"
 #: src/hooks/business/search/useSearchResultDisplaySpace.ts:45
 #: src/hooks/queries/userInfo/buildUserInfoFetcher.ts:15
 #: src/services/EncryptionService.ts:138
-#: src/services/MessageService.ts:1491
-#: src/services/MessageService.ts:1663
-#: src/services/MessageService.ts:1803
-#: src/services/MessageService.ts:1821
-#: src/services/MessageService.ts:3172
-#: src/services/MessageService.ts:3306
-#: src/services/MessageService.ts:3470
+#: src/services/MessageService.ts:1586
+#: src/services/MessageService.ts:1823
+#: src/services/MessageService.ts:1995
+#: src/services/MessageService.ts:2135
+#: src/services/MessageService.ts:2153
+#: src/services/MessageService.ts:3603
+#: src/services/MessageService.ts:3767
+#: src/services/MessageService.ts:3901
+#: src/services/MessageService.ts:4005
+#: src/services/MessageService.ts:4202
 msgid "Unknown User"
 msgstr "ผู้ใช้ที่ไม่ทราบ"
 
-#: src/components/modals/MuteUserModal.tsx:118
+#: src/components/modals/MuteUserModal.tsx:159
 #: src/components/user/UserProfile.tsx:246
 msgid "Unmute"
-msgstr ""
+msgstr "เปิดเสียง"
 
-#: src/components/modals/MuteUserModal.tsx:62
+#: src/components/modals/MuteUserModal.tsx:78
 msgid "Unmute User"
-msgstr ""
+msgstr "เปิดเสียงผู้ใช้"
 
 #: src/hooks/business/messages/usePinnedMessages.ts:274
 msgid "unpin"
@@ -2508,7 +2554,7 @@ msgstr "ยกเลิกการปักหมุดโพสต์นี้
 msgid "Unpinned!"
 msgstr "ยกเลิกการปักหมุดแล้ว!"
 
-#: src/components/direct/DirectMessage.tsx:808
+#: src/components/direct/DirectMessage.tsx:829
 msgid "Until you reply, this sender will not see your display name or profile picture"
 msgstr "จนกว่าคุณจะตอบกลับ ผู้ส่งนี้จะไม่เห็นชื่อแสดงของคุณหรือรูปโปรไฟล์"
 
@@ -2538,7 +2584,6 @@ msgstr "อัปโหลดสติกเกอร์"
 msgid "Use \"Save to Files\" to save your private key"
 msgstr "ใช้ \"บันทึกไปยังไฟล์\" เพื่อบันทึกกุญแจส่วนตัวของคุณ"
 
-#: src/components/modals/KickUserModal.tsx:75
 #~ msgid "Use the below button to kick this user out of the Space"
 #~ msgstr "ใช้ปุ่มด้านล่างเพื่อเตะผู้ใช้นี้ออกจาก พื้นที่"
 
@@ -2551,21 +2596,21 @@ msgstr "ที่อยู่ผู้ใช้ที่นี่"
 msgid "User does not exist."
 msgstr "ผู้ใช้ไม่มีอยู่"
 
-#: src/components/modals/MuteUserModal.tsx:117
+#: src/components/modals/MuteUserModal.tsx:157
 msgid "User Muted!"
-msgstr ""
+msgstr "ผู้ใช้ถูกปิดเสียง!"
 
 #: src/hooks/business/messages/usePinnedMessages.ts:76
 #: src/hooks/business/messages/usePinnedMessages.ts:136
 msgid "User not authenticated"
 msgstr "ผู้ใช้ไม่ได้รับการตรวจสอบสิทธิ"
 
-#: src/components/modals/MuteUserModal.tsx:117
+#: src/components/modals/MuteUserModal.tsx:157
 msgid "User Unmuted!"
-msgstr ""
+msgstr "ผู้ใช้เปิดเสียงแล้ว!"
 
-#: src/components/space/Channel.tsx:604
-#: src/components/space/Channel.tsx:1115
+#: src/components/space/Channel.tsx:631
+#: src/components/space/Channel.tsx:1145
 msgid "Username or Address"
 msgstr "ชื่อผู้ใช้หรือที่อยู่"
 
@@ -2648,7 +2693,7 @@ msgstr "เมื่อวาน"
 msgid "Yesterday at {timeFormatted}"
 msgstr "เมื่อวานนี้เวลา {timeFormatted}"
 
-#: src/components/direct/DirectMessage.tsx:307
+#: src/components/direct/DirectMessage.tsx:327
 #: src/hooks/business/search/useBatchSearchResultsDisplay.ts:139
 msgid "You"
 msgstr "คุณ"
@@ -2656,6 +2701,11 @@ msgstr "คุณ"
 #: src/components/modals/AddSpaceModal.tsx:117
 msgid "You are already a member of this Space."
 msgstr "คุณเป็นสมาชิกของ Space นี้แล้ว"
+
+#. placeholder {0}: formatMuteRemaining(currentMuteRecord.expiresAt)
+#: src/components/space/Channel.tsx:1108
+msgid "You are muted for {0}"
+msgstr ""
 
 #: src/components/modals/NewDirectMessageModal.tsx:146
 msgid "You can change this later for this conversation by clicking the lock icon in the Conversation view."
@@ -2670,7 +2720,7 @@ msgid "You cannot delete a group that contains channels. Delete all {channelCoun
 msgstr "คุณไม่สามารถลบกลุ่มที่มีช่องอยู่ได้ ให้ลบช่อง {channelCount} ทั้งหมดในกลุ่มนี้ก่อน"
 
 #: src/components/message/MessageComposer.tsx:334
-#: src/components/space/Channel.tsx:1081
+#: src/components/space/Channel.tsx:1111
 msgid "You cannot post in this channel"
 msgstr "คุณไม่สามารถโพสต์ในช่องนี้"
 
@@ -2683,9 +2733,9 @@ msgstr "คุณไม่สามารถส่งข้อความตร
 msgid "You have a new unread message"
 msgstr "คุณมีข้อความใหม่ที่ยังไม่ได้อ่าน"
 
-#: src/components/space/Channel.tsx:1079
+#: src/components/space/Channel.tsx:1109
 msgid "You have been muted in this Space"
-msgstr ""
+msgstr "คุณถูกปิดเสียงใน Space นี้"
 
 #: src/services/NotificationService.ts:103
 msgid "You have new unread messages"
@@ -2693,7 +2743,7 @@ msgstr "คุณมีข้อความใหม่ที่ยังไม
 
 #: src/components/modals/SpaceSettingsModal/Roles.tsx:54
 msgid "You must assign yourself a role for moderation actions (except kicking). Grant delete and mute permissions carefully. <0><1>Learn more</1></0>"
-msgstr ""
+msgstr "คุณต้องกำหนดบทบาทให้กับตัวเองสำหรับการดำเนินการจัดการ (ยกเว้นการเตะ) มอบสิทธิ์การลบและปิดเสียงอย่างระมัดระวัง <0><1>เรียนรู้เพิ่มเติม</1></0>"
 
 #: src/components/modals/SpaceSettingsModal/Account.tsx:241
 msgid "You won't be able to rejoin unless you are re-invited. Your existing messages will NOT be deleted."

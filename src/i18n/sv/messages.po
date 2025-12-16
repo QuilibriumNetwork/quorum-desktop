@@ -31,7 +31,7 @@ msgid "No Role - {count}"
 msgstr "Ingen roll - {count}"
 
 #. js-lingui-explicit-id
-#: src/components/space/Channel.tsx:1055
+#: src/components/space/Channel.tsx:1083
 msgid "Send a message to #{channel_name}"
 msgstr "Skicka ett meddelande till #{channel_name}"
 
@@ -50,6 +50,11 @@ msgid "{count} New Messages"
 msgstr "{count} Nya Meddelanden"
 
 #. js-lingui-explicit-id
+#: src/components/message/MessageComposer.tsx:404
+msgid "Replying to"
+msgstr "Svarar på"
+
+#. js-lingui-explicit-id
 #: src/components/message/MessageComposer.native.tsx:161
 msgid "Failed to process image"
 msgstr "Misslyckades att bearbeta bilden"
@@ -60,27 +65,22 @@ msgid "Replying to {user}"
 msgstr "Svarar {user}"
 
 #. js-lingui-explicit-id
-#: src/components/message/MessageComposer.tsx:404
-msgid "Replying to"
-msgstr "Svarar på"
-
-#. js-lingui-explicit-id
-#: src/components/message/Message.tsx:303
+#: src/components/message/Message.tsx:305
 msgid "has joined"
 msgstr "har anslutit"
 
 #. js-lingui-explicit-id
-#: src/components/message/Message.tsx:311
+#: src/components/message/Message.tsx:313
 msgid "has left"
 msgstr "har lämnat"
 
 #. js-lingui-explicit-id
-#: src/components/message/Message.tsx:319
+#: src/components/message/Message.tsx:321
 msgid "has been kicked"
 msgstr "har blivit utkickad"
 
 #. js-lingui-explicit-id
-#: src/components/direct/DirectMessage.tsx:820
+#: src/components/direct/DirectMessage.tsx:841
 msgid "Send a message to {user}"
 msgstr "Skicka ett meddelande till {user}"
 
@@ -88,8 +88,8 @@ msgstr "Skicka ett meddelande till {user}"
 msgid " for updates."
 msgstr "för uppdateringar."
 
-#: src/components/message/Message.tsx:751
-#: src/components/message/Message.tsx:764
+#: src/components/message/Message.tsx:753
+#: src/components/message/Message.tsx:766
 msgid "(edited)"
 msgstr "(redigerad)"
 
@@ -173,6 +173,14 @@ msgstr "{bookmarkCount} bokmärke"
 msgid "{bookmarkCount} bookmarks"
 msgstr "{bookmarkCount} bokmärken"
 
+#: src/utils/dateFormatting.ts:90
+msgid "{days} days"
+msgstr "{days} dagar"
+
+#: src/utils/dateFormatting.ts:92
+msgid "{hours} hours"
+msgstr "{hours} timmar"
+
 #: src/components/primitives/FileUpload/FileUpload.web.tsx:13
 msgid "{size} Bytes"
 msgstr "{size} Byte"
@@ -212,9 +220,17 @@ msgstr "@you"
 msgid "+ Add a friend"
 msgstr "Lägg till en vän"
 
+#: src/components/modals/MuteUserModal.tsx:118
+msgid "0 = forever"
+msgstr "0 = för alltid"
+
 #: src/components/primitives/FileUpload/FileUpload.web.tsx:8
 msgid "0 Bytes"
 msgstr "0 Byte"
+
+#: src/utils/dateFormatting.ts:84
+msgid "0 hours"
+msgstr "0 timmar"
 
 #: src/components/modals/UserSettingsModal/Privacy.tsx:105
 msgid "1 device marked for removal. Click \"Save Changes\" to confirm."
@@ -448,8 +464,8 @@ msgstr "Bokmärkesmeddelande"
 msgid "Bookmark messages to save them for later reference"
 msgstr "Bokmärkesmeddelanden för att spara dem för senare referens"
 
-#: src/components/message/Message.tsx:718
-#: src/components/message/Message.tsx:796
+#: src/components/message/Message.tsx:720
+#: src/components/message/Message.tsx:798
 msgid "Bookmarked"
 msgstr "Bokmärkt"
 
@@ -461,8 +477,8 @@ msgstr "Bokmärkt bild"
 msgid "Bookmarked sticker"
 msgstr "Bokmärkt klistermärke"
 
-#: src/components/direct/DirectMessage.tsx:687
-#: src/components/space/Channel.tsx:896
+#: src/components/direct/DirectMessage.tsx:707
+#: src/components/space/Channel.tsx:923
 msgid "Bookmarks"
 msgstr "Bokmärken"
 
@@ -484,7 +500,7 @@ msgstr "Kamerabehörighet krävs för att ta foton"
 #: src/components/modals/ConfirmationModal.tsx:29
 #: src/components/modals/ConversationSettingsModal.tsx:63
 #: src/components/modals/KickUserModal.tsx:109
-#: src/components/modals/MuteUserModal.tsx:107
+#: src/components/modals/MuteUserModal.tsx:147
 #: src/components/primitives/FileUpload/FileUpload.native.tsx:173
 #: src/hooks/business/channels/useChannelManagement.ts:253
 #: src/hooks/business/messages/useMessageActions.ts:159
@@ -528,7 +544,7 @@ msgstr "Kanalikon"
 msgid "Channel Managers"
 msgstr "Kanalansvariga"
 
-#: src/components/space/Channel.tsx:1279
+#: src/components/space/Channel.tsx:1309
 msgid "Channel members"
 msgstr "Kanalmedlemmar"
 
@@ -636,7 +652,7 @@ msgstr "Klicka för att kopiera"
 msgid "Config Key"
 msgstr "Konfigurationsnyckel"
 
-#: src/components/navbar/FolderContextMenu.tsx:124
+#: src/components/navbar/FolderContextMenu.tsx:139
 msgid "Confirm"
 msgstr "Bekräfta"
 
@@ -644,7 +660,7 @@ msgstr "Bekräfta"
 msgid "Connecting"
 msgstr "Ansluter"
 
-#: src/components/direct/DirectMessage.tsx:653
+#: src/components/direct/DirectMessage.tsx:673
 msgid "Conversation settings"
 msgstr "Konversationsinställningar"
 
@@ -663,9 +679,9 @@ msgstr "Konversationsinställningar"
 msgid "Copied!"
 msgstr "Kopierad!"
 
-#: src/components/direct/DirectMessage.tsx:313
-#: src/components/direct/DirectMessage.tsx:635
-#: src/components/direct/DirectMessage.tsx:755
+#: src/components/direct/DirectMessage.tsx:333
+#: src/components/direct/DirectMessage.tsx:655
+#: src/components/direct/DirectMessage.tsx:775
 #: src/components/modals/UserSettingsModal/General.tsx:118
 #: src/components/user/ExpandableUserAvatar.tsx:90
 #: src/components/user/UserProfile.tsx:123
@@ -771,6 +787,10 @@ msgstr "Mörk"
 msgid "Data Recovery"
 msgstr "Dataåterställning"
 
+#: src/components/modals/MuteUserModal.tsx:115
+msgid "days"
+msgstr "dagar"
+
 #: src/components/context/MessageDB.bak.tsx:5415
 #: src/services/ConfigService.ts:142
 msgid "decrypted space with no known config key"
@@ -820,7 +840,7 @@ msgid "Delete Conversation"
 msgstr "Ta bort konversation"
 
 #: src/components/modals/FolderEditorModal.tsx:132
-#: src/components/navbar/FolderContextMenu.tsx:124
+#: src/components/navbar/FolderContextMenu.tsx:139
 msgid "Delete Folder"
 msgstr "Ta bort mapp"
 
@@ -1064,7 +1084,7 @@ msgid "Failed to create space. Please try again."
 msgstr "Misslyckades med att skapa utrymme. Vänligen försök igen."
 
 #: src/components/context/MessageDB.bak.tsx:984
-#: src/services/MessageService.ts:1825
+#: src/services/MessageService.ts:2157
 msgid "Failed to decrypt message with any known state"
 msgstr "Misslyckades med att dekryptera meddelande med någon känd status"
 
@@ -1076,7 +1096,7 @@ msgstr "Misslyckades med att generera inbjudningslänk. Försök igen."
 msgid "Failed to load bookmarks"
 msgstr "Misslyckades med att ladda bokmärken"
 
-#: src/components/modals/MuteUserModal.tsx:51
+#: src/components/modals/MuteUserModal.tsx:67
 msgid "Failed to mute user"
 msgstr "Misslyckades att stänga av användaren"
 
@@ -1104,7 +1124,11 @@ msgstr "Misslyckades att välja dokument"
 msgid "Failed to send invite. Please try again."
 msgstr "Misslyckades med att skicka inbjudan. Vänligen försök igen."
 
-#: src/components/modals/MuteUserModal.tsx:51
+#: src/components/message/Message.tsx:1192
+msgid "Failed to send."
+msgstr "Misslyckades med att skicka."
+
+#: src/components/modals/MuteUserModal.tsx:67
 msgid "Failed to unmute user"
 msgstr "Misslyckades att slå på ljudet för användaren"
 
@@ -1194,7 +1218,7 @@ msgstr "Mappnamn krävs"
 msgid "Folder name must be {MAX_NAME_LENGTH} characters or less"
 msgstr "Mappnamn måste vara {MAX_NAME_LENGTH} tecken eller färre"
 
-#: src/components/navbar/FolderContextMenu.tsx:114
+#: src/components/navbar/FolderContextMenu.tsx:129
 msgid "Folder Settings"
 msgstr "Mappinställningar"
 
@@ -1334,7 +1358,7 @@ msgid "Important messages will be pinned here"
 msgstr "Viktiga meddelanden kommer att fästas här"
 
 #: src/components/context/MessageDB.bak.tsx:1184
-#: src/services/MessageService.ts:2024
+#: src/services/MessageService.ts:2356
 msgid "invalid address for signature"
 msgstr "ogiltig adress för signatur"
 
@@ -1363,7 +1387,7 @@ msgstr "ogiltig länk"
 msgid "Invalid message ID"
 msgstr "Ogiltigt meddelande-ID"
 
-#: src/components/context/MessageDB.bak.tsx:5180 src/utils/canonicalize.ts:126
+#: src/components/context/MessageDB.bak.tsx:5180 src/utils/canonicalize.ts:127
 msgid "invalid message type"
 msgstr "ogiltig meddelandetyp"
 
@@ -1414,7 +1438,7 @@ msgstr "Går med..."
 msgid "Jump"
 msgstr "Hoppa"
 
-#: src/components/message/MessageList.tsx:528
+#: src/components/message/MessageList.tsx:532
 msgid "Jump to present"
 msgstr "Hoppa till nutid"
 
@@ -1491,7 +1515,7 @@ msgstr "Ljus"
 msgid "Loading bookmarks..."
 msgstr "Laddar bokmärken..."
 
-#: src/components/message/MessageList.tsx:539
+#: src/components/message/MessageList.tsx:543
 msgid "Loading message..."
 msgstr "Laddar meddelande..."
 
@@ -1566,9 +1590,9 @@ msgstr "Manuell säkerhetskopiering krävs"
 msgid "Mark all as read"
 msgstr "Markera alla som lästa"
 
-#: src/components/direct/DirectMessage.tsx:668
-#: src/components/direct/DirectMessage.tsx:861
-#: src/components/space/Channel.tsx:922
+#: src/components/direct/DirectMessage.tsx:688
+#: src/components/direct/DirectMessage.tsx:882
+#: src/components/space/Channel.tsx:949
 msgid "Members List"
 msgstr "Medlemslista"
 
@@ -1594,8 +1618,8 @@ msgstr "Meddelandeåtgärder"
 msgid "Message deleted"
 msgstr "Meddelande raderat"
 
-#: src/components/message/Message.tsx:734
-#: src/components/message/Message.tsx:812
+#: src/components/message/Message.tsx:736
+#: src/components/message/Message.tsx:814
 msgid ""
 "Message does not have a valid signature, this may not be from the sender"
 msgstr ""
@@ -1618,12 +1642,23 @@ msgstr "Meddelanden är signerade!"
 msgid "More reactions"
 msgstr "Fler reaktioner"
 
-#: src/components/modals/MuteUserModal.tsx:118
 #: src/components/user/UserProfile.tsx:246
 msgid "Mute"
 msgstr "Stänga av ljudet"
 
-#: src/components/modals/MuteUserModal.tsx:62
+#: src/components/modals/MuteUserModal.tsx:106
+msgid "Mute for"
+msgstr "Dämpa i"
+
+#: src/components/modals/MuteUserModal.tsx:162
+msgid "Mute for {days} days"
+msgstr "Dämpa i {days} dagar"
+
+#: src/components/modals/MuteUserModal.tsx:161
+msgid "Mute Forever"
+msgstr "Dämpa för alltid"
+
+#: src/components/modals/MuteUserModal.tsx:78
 msgid "Mute User"
 msgstr "Stäng av ljudet för användare"
 
@@ -1706,8 +1741,8 @@ msgstr "Inga fastsatta meddelanden än"
 msgid "No unread notifications"
 msgstr "Inga olästa meddelanden"
 
-#: src/components/space/Channel.tsx:617 src/components/space/Channel.tsx:1129
-#: src/components/space/Channel.tsx:1318
+#: src/components/space/Channel.tsx:644 src/components/space/Channel.tsx:1159
+#: src/components/space/Channel.tsx:1348
 msgid "No users found!"
 msgstr "Inga användare hittades!"
 
@@ -1722,7 +1757,7 @@ msgstr "Aviseringstillstånd beviljades inte"
 #: src/components/modals/SpaceSettingsModal/Account.tsx:187
 #: src/components/modals/UserSettingsModal/Navigation.tsx:17
 #: src/components/modals/UserSettingsModal/Notifications.tsx:24
-#: src/components/space/Channel.tsx:861
+#: src/components/space/Channel.tsx:888
 msgid "Notifications"
 msgstr "Aviseringar"
 
@@ -1855,19 +1890,19 @@ msgstr "Fäst meddelanden"
 msgid "Pin to top"
 msgstr "Nåla till toppen"
 
-#: src/components/message/Message.tsx:702
-#: src/components/message/Message.tsx:780
+#: src/components/message/Message.tsx:704
+#: src/components/message/Message.tsx:782
 msgid "Pinned"
 msgstr "Fastsatt"
 
 #. placeholder {0}: mapSenderToUser(message.pinnedBy)?.displayName ||
 #. message.pinnedBy
-#: src/components/message/Message.tsx:701
-#: src/components/message/Message.tsx:779
+#: src/components/message/Message.tsx:703
+#: src/components/message/Message.tsx:781
 msgid "Pinned by {0}"
 msgstr "Fastsatt av {0}"
 
-#: src/components/space/Channel.tsx:821
+#: src/components/space/Channel.tsx:848
 msgid "Pinned Messages"
 msgstr "Fastsatta meddelanden"
 
@@ -2038,6 +2073,10 @@ msgstr "Återställd {0} utrymme(n)"
 msgid "Restoring..."
 msgstr "Återställer..."
 
+#: src/components/message/Message.tsx:1203
+msgid "Retry"
+msgstr "Försök igen"
+
 #: src/components/modals/SpaceSettingsModal/Navigation.tsx:22
 #: src/components/modals/SpaceSettingsModal/Roles.tsx:45
 msgid "Roles"
@@ -2110,8 +2149,8 @@ msgstr "Sök i detta Space"
 msgid "Search in this Space..."
 msgstr "Sök i detta Space..."
 
-#: src/components/direct/DirectMessage.tsx:714
-#: src/components/space/Channel.tsx:941
+#: src/components/direct/DirectMessage.tsx:734
+#: src/components/space/Channel.tsx:968
 msgid "Search Messages"
 msgstr "Sök Meddelanden"
 
@@ -2127,7 +2166,7 @@ msgstr "Sökresultat"
 msgid "Search username or address"
 msgstr "Sök användarnamn eller adress"
 
-#: src/components/space/Channel.tsx:1290
+#: src/components/space/Channel.tsx:1320
 msgid "Search Username or Address"
 msgstr "Sök användarnamn eller adress"
 
@@ -2188,6 +2227,10 @@ msgstr "Skicka inbjudan"
 #: src/components/user/UserProfile.tsx:218
 msgid "Send Message"
 msgstr "Skicka meddelande"
+
+#: src/components/message/Message.tsx:1185
+msgid "Sending..."
+msgstr "Skickar..."
 
 #: src/components/context/RegistrationPersister.tsx:257
 msgid "Session Encrypted"
@@ -2291,7 +2334,7 @@ msgstr "Framgångsrikt skickad inbjudan till {0}"
 msgid "Sync Kick Status"
 msgstr "Synkronisera kickstatus"
 
-#: src/services/SyncService.ts:199
+#: src/services/MessageService.ts:3177
 msgid "Syncing Space..."
 msgstr "Synkroniserar Space..."
 
@@ -2395,7 +2438,7 @@ msgstr "Detta Space"
 msgid "This user is already a member of this space."
 msgstr "Denna användare är redan medlem i detta Space."
 
-#: src/components/modals/MuteUserModal.tsx:93
+#: src/components/modals/MuteUserModal.tsx:131
 msgid "This user will be able to send messages in this Space again."
 msgstr ""
 "Denna användare kommer att kunna skicka meddelanden i denna Space igen."
@@ -2404,11 +2447,15 @@ msgstr ""
 msgid "This user will be removed from the Space."
 msgstr "Denna användare kommer att tas bort från Space."
 
-#: src/components/modals/MuteUserModal.tsx:94
+#: src/components/modals/MuteUserModal.tsx:133
 msgid "This user will no longer be able to send messages in this Space."
 msgstr ""
 "Denna användare kommer inte längre att kunna skicka meddelanden i denna "
 "Space."
+
+#: src/components/modals/MuteUserModal.tsx:134
+msgid "This user will not be able to send messages for {days} days."
+msgstr "Denna användare kommer inte kunna skicka meddelanden i {days} dagar."
 
 #: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:609
 msgid ""
@@ -2545,7 +2592,7 @@ msgstr "Okänd tid"
 #: src/components/context/MessageDB.bak.tsx:5292
 #: src/components/direct/DirectMessage.tsx:173
 #: src/components/direct/DirectMessage.tsx:188
-#: src/components/direct/DirectMessage.tsx:535
+#: src/components/direct/DirectMessage.tsx:555
 #: src/components/message/MessageComposer.tsx:499
 #: src/components/message/MessageComposer.tsx:506
 #: src/components/message/MessageEditTextarea.tsx:225
@@ -2570,19 +2617,21 @@ msgstr "Okänd tid"
 #: src/hooks/business/search/useSearchResultDisplayDM.ts:33
 #: src/hooks/business/search/useSearchResultDisplaySpace.ts:45
 #: src/hooks/queries/userInfo/buildUserInfoFetcher.ts:15
-#: src/services/EncryptionService.ts:138 src/services/MessageService.ts:1491
-#: src/services/MessageService.ts:1663 src/services/MessageService.ts:1803
-#: src/services/MessageService.ts:1821 src/services/MessageService.ts:3172
-#: src/services/MessageService.ts:3306 src/services/MessageService.ts:3470
+#: src/services/EncryptionService.ts:138 src/services/MessageService.ts:1586
+#: src/services/MessageService.ts:1823 src/services/MessageService.ts:1995
+#: src/services/MessageService.ts:2135 src/services/MessageService.ts:2153
+#: src/services/MessageService.ts:3603 src/services/MessageService.ts:3767
+#: src/services/MessageService.ts:3901 src/services/MessageService.ts:4005
+#: src/services/MessageService.ts:4202
 msgid "Unknown User"
 msgstr "Okänd användare"
 
-#: src/components/modals/MuteUserModal.tsx:118
+#: src/components/modals/MuteUserModal.tsx:159
 #: src/components/user/UserProfile.tsx:246
 msgid "Unmute"
 msgstr "Slå på ljudet"
 
-#: src/components/modals/MuteUserModal.tsx:62
+#: src/components/modals/MuteUserModal.tsx:78
 msgid "Unmute User"
 msgstr "Slå på ljudet för användare"
 
@@ -2612,7 +2661,7 @@ msgstr "Avfäst detta inlägg"
 msgid "Unpinned!"
 msgstr "Avfäst!"
 
-#: src/components/direct/DirectMessage.tsx:808
+#: src/components/direct/DirectMessage.tsx:829
 msgid ""
 "Until you reply, this sender will not see your display name or profile "
 "picture"
@@ -2655,7 +2704,7 @@ msgstr "Användaradress här"
 msgid "User does not exist."
 msgstr "Användaren existerar inte."
 
-#: src/components/modals/MuteUserModal.tsx:117
+#: src/components/modals/MuteUserModal.tsx:157
 msgid "User Muted!"
 msgstr "Användare stängd av ljudet!"
 
@@ -2664,11 +2713,11 @@ msgstr "Användare stängd av ljudet!"
 msgid "User not authenticated"
 msgstr "Användare inte autentiserad"
 
-#: src/components/modals/MuteUserModal.tsx:117
+#: src/components/modals/MuteUserModal.tsx:157
 msgid "User Unmuted!"
 msgstr "Användare har fått ljudet påslaget!"
 
-#: src/components/space/Channel.tsx:604 src/components/space/Channel.tsx:1115
+#: src/components/space/Channel.tsx:631 src/components/space/Channel.tsx:1145
 msgid "Username or Address"
 msgstr "Användarnamn eller adress"
 
@@ -2797,7 +2846,7 @@ msgstr "Igår"
 msgid "Yesterday at {timeFormatted}"
 msgstr "I går kl. {timeFormatted}"
 
-#: src/components/direct/DirectMessage.tsx:307
+#: src/components/direct/DirectMessage.tsx:327
 #: src/hooks/business/search/useBatchSearchResultsDisplay.ts:139
 msgid "You"
 msgstr "Du"
@@ -2805,6 +2854,11 @@ msgstr "Du"
 #: src/components/modals/AddSpaceModal.tsx:117
 msgid "You are already a member of this Space."
 msgstr "Du är redan medlem i detta Space."
+
+#. placeholder {0}: formatMuteRemaining(currentMuteRecord.expiresAt)
+#: src/components/space/Channel.tsx:1108
+msgid "You are muted for {0}"
+msgstr "Du är dämpad i {0}"
 
 #: src/components/modals/NewDirectMessageModal.tsx:146
 msgid ""
@@ -2829,7 +2883,7 @@ msgstr ""
 "{channelCount} kanaler i denna grupp."
 
 #: src/components/message/MessageComposer.tsx:334
-#: src/components/space/Channel.tsx:1081
+#: src/components/space/Channel.tsx:1111
 msgid "You cannot post in this channel"
 msgstr "Du kan inte posta i denna kanal"
 
@@ -2842,7 +2896,7 @@ msgstr "Du kan inte skicka ett direktmeddelande till dig själv."
 msgid "You have a new unread message"
 msgstr "Du har ett nytt oläst meddelande"
 
-#: src/components/space/Channel.tsx:1079
+#: src/components/space/Channel.tsx:1109
 msgid "You have been muted in this Space"
 msgstr "Du har blivit stängd av ljudet i denna Space"
 

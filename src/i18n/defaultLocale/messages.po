@@ -30,7 +30,7 @@ msgid "No Role - {count}"
 msgstr ""
 
 #. js-lingui-explicit-id
-#: src/components/space/Channel.tsx:1055
+#: src/components/space/Channel.tsx:1083
 msgid "Send a message to #{channel_name}"
 msgstr ""
 
@@ -45,6 +45,11 @@ msgid "{count} New Messages"
 msgstr ""
 
 #. js-lingui-explicit-id
+#: src/components/message/MessageComposer.tsx:404
+msgid "Replying to"
+msgstr ""
+
+#. js-lingui-explicit-id
 #: src/components/message/MessageComposer.native.tsx:161
 msgid "Failed to process image"
 msgstr ""
@@ -55,27 +60,22 @@ msgid "Replying to {user}"
 msgstr ""
 
 #. js-lingui-explicit-id
-#: src/components/message/MessageComposer.tsx:404
-msgid "Replying to"
-msgstr ""
-
-#. js-lingui-explicit-id
-#: src/components/message/Message.tsx:303
+#: src/components/message/Message.tsx:305
 msgid "has joined"
 msgstr ""
 
 #. js-lingui-explicit-id
-#: src/components/message/Message.tsx:311
+#: src/components/message/Message.tsx:313
 msgid "has left"
 msgstr ""
 
 #. js-lingui-explicit-id
-#: src/components/message/Message.tsx:319
+#: src/components/message/Message.tsx:321
 msgid "has been kicked"
 msgstr ""
 
 #. js-lingui-explicit-id
-#: src/components/direct/DirectMessage.tsx:820
+#: src/components/direct/DirectMessage.tsx:841
 msgid "Send a message to {user}"
 msgstr ""
 
@@ -107,8 +107,8 @@ msgstr ""
 #~ msgid "'everyone' is a reserved name."
 #~ msgstr ""
 
-#: src/components/message/Message.tsx:751
-#: src/components/message/Message.tsx:764
+#: src/components/message/Message.tsx:753
+#: src/components/message/Message.tsx:766
 msgid "(edited)"
 msgstr ""
 
@@ -207,6 +207,14 @@ msgstr ""
 msgid "{bookmarkCount} bookmarks"
 msgstr ""
 
+#: src/utils/dateFormatting.ts:90
+msgid "{days} days"
+msgstr ""
+
+#: src/utils/dateFormatting.ts:92
+msgid "{hours} hours"
+msgstr ""
+
 #: src/components/primitives/FileUpload/FileUpload.web.tsx:13
 msgid "{size} Bytes"
 msgstr ""
@@ -246,8 +254,16 @@ msgstr ""
 msgid "+ Add a friend"
 msgstr ""
 
+#: src/components/modals/MuteUserModal.tsx:118
+msgid "0 = forever"
+msgstr ""
+
 #: src/components/primitives/FileUpload/FileUpload.web.tsx:8
 msgid "0 Bytes"
+msgstr ""
+
+#: src/utils/dateFormatting.ts:84
+msgid "0 hours"
 msgstr ""
 
 #: src/components/modals/UserSettingsModal/Privacy.tsx:105
@@ -467,8 +483,8 @@ msgstr ""
 msgid "Bookmark messages to save them for later reference"
 msgstr ""
 
-#: src/components/message/Message.tsx:718
-#: src/components/message/Message.tsx:796
+#: src/components/message/Message.tsx:720
+#: src/components/message/Message.tsx:798
 msgid "Bookmarked"
 msgstr ""
 
@@ -480,8 +496,8 @@ msgstr ""
 msgid "Bookmarked sticker"
 msgstr ""
 
-#: src/components/direct/DirectMessage.tsx:687
-#: src/components/space/Channel.tsx:896
+#: src/components/direct/DirectMessage.tsx:707
+#: src/components/space/Channel.tsx:923
 msgid "Bookmarks"
 msgstr ""
 
@@ -503,7 +519,7 @@ msgstr ""
 #: src/components/modals/ConfirmationModal.tsx:29
 #: src/components/modals/ConversationSettingsModal.tsx:63
 #: src/components/modals/KickUserModal.tsx:109
-#: src/components/modals/MuteUserModal.tsx:107
+#: src/components/modals/MuteUserModal.tsx:147
 #: src/components/primitives/FileUpload/FileUpload.native.tsx:173
 #: src/hooks/business/channels/useChannelManagement.ts:253
 #: src/hooks/business/messages/useMessageActions.ts:159
@@ -544,7 +560,7 @@ msgstr ""
 msgid "Channel Managers"
 msgstr ""
 
-#: src/components/space/Channel.tsx:1279
+#: src/components/space/Channel.tsx:1309
 msgid "Channel members"
 msgstr ""
 
@@ -642,7 +658,7 @@ msgstr ""
 msgid "Config Key"
 msgstr ""
 
-#: src/components/navbar/FolderContextMenu.tsx:124
+#: src/components/navbar/FolderContextMenu.tsx:139
 msgid "Confirm"
 msgstr ""
 
@@ -650,7 +666,7 @@ msgstr ""
 msgid "Connecting"
 msgstr ""
 
-#: src/components/direct/DirectMessage.tsx:653
+#: src/components/direct/DirectMessage.tsx:673
 msgid "Conversation settings"
 msgstr ""
 
@@ -669,9 +685,9 @@ msgstr ""
 msgid "Copied!"
 msgstr ""
 
-#: src/components/direct/DirectMessage.tsx:313
-#: src/components/direct/DirectMessage.tsx:635
-#: src/components/direct/DirectMessage.tsx:755
+#: src/components/direct/DirectMessage.tsx:333
+#: src/components/direct/DirectMessage.tsx:655
+#: src/components/direct/DirectMessage.tsx:775
 #: src/components/modals/UserSettingsModal/General.tsx:118
 #: src/components/user/ExpandableUserAvatar.tsx:90
 #: src/components/user/UserProfile.tsx:123
@@ -769,6 +785,10 @@ msgstr ""
 msgid "Data Recovery"
 msgstr ""
 
+#: src/components/modals/MuteUserModal.tsx:115
+msgid "days"
+msgstr ""
+
 #: src/components/context/MessageDB.bak.tsx:5415
 #: src/services/ConfigService.ts:142
 msgid "decrypted space with no known config key"
@@ -818,7 +838,7 @@ msgstr ""
 #~ msgstr ""
 
 #: src/components/modals/FolderEditorModal.tsx:132
-#: src/components/navbar/FolderContextMenu.tsx:124
+#: src/components/navbar/FolderContextMenu.tsx:139
 msgid "Delete Folder"
 msgstr ""
 
@@ -1068,7 +1088,7 @@ msgid "Failed to create space. Please try again."
 msgstr ""
 
 #: src/components/context/MessageDB.bak.tsx:984
-#: src/services/MessageService.ts:1825
+#: src/services/MessageService.ts:2157
 msgid "Failed to decrypt message with any known state"
 msgstr ""
 
@@ -1080,7 +1100,7 @@ msgstr ""
 msgid "Failed to load bookmarks"
 msgstr ""
 
-#: src/components/modals/MuteUserModal.tsx:51
+#: src/components/modals/MuteUserModal.tsx:67
 msgid "Failed to mute user"
 msgstr ""
 
@@ -1108,7 +1128,11 @@ msgstr ""
 msgid "Failed to send invite. Please try again."
 msgstr ""
 
-#: src/components/modals/MuteUserModal.tsx:51
+#: src/components/message/Message.tsx:1192
+msgid "Failed to send."
+msgstr ""
+
+#: src/components/modals/MuteUserModal.tsx:67
 msgid "Failed to unmute user"
 msgstr ""
 
@@ -1198,7 +1222,7 @@ msgstr ""
 msgid "Folder name must be {MAX_NAME_LENGTH} characters or less"
 msgstr ""
 
-#: src/components/navbar/FolderContextMenu.tsx:114
+#: src/components/navbar/FolderContextMenu.tsx:129
 msgid "Folder Settings"
 msgstr ""
 
@@ -1316,7 +1340,7 @@ msgid "Important messages will be pinned here"
 msgstr ""
 
 #: src/components/context/MessageDB.bak.tsx:1184
-#: src/services/MessageService.ts:2024
+#: src/services/MessageService.ts:2356
 msgid "invalid address for signature"
 msgstr ""
 
@@ -1346,7 +1370,7 @@ msgid "Invalid message ID"
 msgstr ""
 
 #: src/components/context/MessageDB.bak.tsx:5180
-#: src/utils/canonicalize.ts:126
+#: src/utils/canonicalize.ts:127
 msgid "invalid message type"
 msgstr ""
 
@@ -1398,7 +1422,7 @@ msgstr ""
 msgid "Jump"
 msgstr ""
 
-#: src/components/message/MessageList.tsx:528
+#: src/components/message/MessageList.tsx:532
 msgid "Jump to present"
 msgstr ""
 
@@ -1479,7 +1503,7 @@ msgstr ""
 msgid "Loading bookmarks..."
 msgstr ""
 
-#: src/components/message/MessageList.tsx:539
+#: src/components/message/MessageList.tsx:543
 msgid "Loading message..."
 msgstr ""
 
@@ -1545,9 +1569,9 @@ msgstr ""
 msgid "Mark all as read"
 msgstr ""
 
-#: src/components/direct/DirectMessage.tsx:668
-#: src/components/direct/DirectMessage.tsx:861
-#: src/components/space/Channel.tsx:922
+#: src/components/direct/DirectMessage.tsx:688
+#: src/components/direct/DirectMessage.tsx:882
+#: src/components/space/Channel.tsx:949
 msgid "Members List"
 msgstr ""
 
@@ -1567,8 +1591,8 @@ msgstr ""
 msgid "Message deleted"
 msgstr ""
 
-#: src/components/message/Message.tsx:734
-#: src/components/message/Message.tsx:812
+#: src/components/message/Message.tsx:736
+#: src/components/message/Message.tsx:814
 msgid "Message does not have a valid signature, this may not be from the sender"
 msgstr ""
 
@@ -1588,12 +1612,23 @@ msgstr ""
 msgid "More reactions"
 msgstr ""
 
-#: src/components/modals/MuteUserModal.tsx:118
 #: src/components/user/UserProfile.tsx:246
 msgid "Mute"
 msgstr ""
 
-#: src/components/modals/MuteUserModal.tsx:62
+#: src/components/modals/MuteUserModal.tsx:106
+msgid "Mute for"
+msgstr ""
+
+#: src/components/modals/MuteUserModal.tsx:162
+msgid "Mute for {days} days"
+msgstr ""
+
+#: src/components/modals/MuteUserModal.tsx:161
+msgid "Mute Forever"
+msgstr ""
+
+#: src/components/modals/MuteUserModal.tsx:78
 msgid "Mute User"
 msgstr ""
 
@@ -1674,9 +1709,9 @@ msgstr ""
 msgid "No unread notifications"
 msgstr ""
 
-#: src/components/space/Channel.tsx:617
-#: src/components/space/Channel.tsx:1129
-#: src/components/space/Channel.tsx:1318
+#: src/components/space/Channel.tsx:644
+#: src/components/space/Channel.tsx:1159
+#: src/components/space/Channel.tsx:1348
 msgid "No users found!"
 msgstr ""
 
@@ -1691,7 +1726,7 @@ msgstr ""
 #: src/components/modals/SpaceSettingsModal/Account.tsx:187
 #: src/components/modals/UserSettingsModal/Navigation.tsx:17
 #: src/components/modals/UserSettingsModal/Notifications.tsx:24
-#: src/components/space/Channel.tsx:861
+#: src/components/space/Channel.tsx:888
 msgid "Notifications"
 msgstr ""
 
@@ -1827,18 +1862,18 @@ msgstr ""
 msgid "Pin to top"
 msgstr ""
 
-#: src/components/message/Message.tsx:702
-#: src/components/message/Message.tsx:780
+#: src/components/message/Message.tsx:704
+#: src/components/message/Message.tsx:782
 msgid "Pinned"
 msgstr ""
 
 #. placeholder {0}: mapSenderToUser(message.pinnedBy)?.displayName || message.pinnedBy
-#: src/components/message/Message.tsx:701
-#: src/components/message/Message.tsx:779
+#: src/components/message/Message.tsx:703
+#: src/components/message/Message.tsx:781
 msgid "Pinned by {0}"
 msgstr ""
 
-#: src/components/space/Channel.tsx:821
+#: src/components/space/Channel.tsx:848
 msgid "Pinned Messages"
 msgstr ""
 
@@ -1989,6 +2024,10 @@ msgstr ""
 msgid "Restoring..."
 msgstr ""
 
+#: src/components/message/Message.tsx:1203
+msgid "Retry"
+msgstr ""
+
 #: src/components/modals/SpaceSettingsModal/Navigation.tsx:22
 #: src/components/modals/SpaceSettingsModal/Roles.tsx:45
 msgid "Roles"
@@ -2063,8 +2102,8 @@ msgstr ""
 msgid "Search in this Space..."
 msgstr ""
 
-#: src/components/direct/DirectMessage.tsx:714
-#: src/components/space/Channel.tsx:941
+#: src/components/direct/DirectMessage.tsx:734
+#: src/components/space/Channel.tsx:968
 msgid "Search Messages"
 msgstr ""
 
@@ -2080,7 +2119,7 @@ msgstr ""
 msgid "Search username or address"
 msgstr ""
 
-#: src/components/space/Channel.tsx:1290
+#: src/components/space/Channel.tsx:1320
 msgid "Search Username or Address"
 msgstr ""
 
@@ -2152,6 +2191,10 @@ msgstr ""
 
 #: src/components/user/UserProfile.tsx:218
 msgid "Send Message"
+msgstr ""
+
+#: src/components/message/Message.tsx:1185
+msgid "Sending..."
 msgstr ""
 
 #: src/components/context/RegistrationPersister.tsx:257
@@ -2255,7 +2298,7 @@ msgstr ""
 #~ msgid "Sync kick status for previously kicked users. This verifies kicks without posting visible messages."
 #~ msgstr ""
 
-#: src/services/SyncService.ts:199
+#: src/services/MessageService.ts:3177
 msgid "Syncing Space..."
 msgstr ""
 
@@ -2347,7 +2390,7 @@ msgstr ""
 msgid "This user is already a member of this space."
 msgstr ""
 
-#: src/components/modals/MuteUserModal.tsx:93
+#: src/components/modals/MuteUserModal.tsx:131
 msgid "This user will be able to send messages in this Space again."
 msgstr ""
 
@@ -2355,8 +2398,12 @@ msgstr ""
 msgid "This user will be removed from the Space."
 msgstr ""
 
-#: src/components/modals/MuteUserModal.tsx:94
+#: src/components/modals/MuteUserModal.tsx:133
 msgid "This user will no longer be able to send messages in this Space."
+msgstr ""
+
+#: src/components/modals/MuteUserModal.tsx:134
+msgid "This user will not be able to send messages for {days} days."
 msgstr ""
 
 #: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:609
@@ -2472,7 +2519,7 @@ msgstr ""
 #: src/components/context/MessageDB.bak.tsx:5292
 #: src/components/direct/DirectMessage.tsx:173
 #: src/components/direct/DirectMessage.tsx:188
-#: src/components/direct/DirectMessage.tsx:535
+#: src/components/direct/DirectMessage.tsx:555
 #: src/components/message/MessageComposer.tsx:499
 #: src/components/message/MessageComposer.tsx:506
 #: src/components/message/MessageEditTextarea.tsx:225
@@ -2498,22 +2545,25 @@ msgstr ""
 #: src/hooks/business/search/useSearchResultDisplaySpace.ts:45
 #: src/hooks/queries/userInfo/buildUserInfoFetcher.ts:15
 #: src/services/EncryptionService.ts:138
-#: src/services/MessageService.ts:1491
-#: src/services/MessageService.ts:1663
-#: src/services/MessageService.ts:1803
-#: src/services/MessageService.ts:1821
-#: src/services/MessageService.ts:3172
-#: src/services/MessageService.ts:3306
-#: src/services/MessageService.ts:3470
+#: src/services/MessageService.ts:1586
+#: src/services/MessageService.ts:1823
+#: src/services/MessageService.ts:1995
+#: src/services/MessageService.ts:2135
+#: src/services/MessageService.ts:2153
+#: src/services/MessageService.ts:3603
+#: src/services/MessageService.ts:3767
+#: src/services/MessageService.ts:3901
+#: src/services/MessageService.ts:4005
+#: src/services/MessageService.ts:4202
 msgid "Unknown User"
 msgstr ""
 
-#: src/components/modals/MuteUserModal.tsx:118
+#: src/components/modals/MuteUserModal.tsx:159
 #: src/components/user/UserProfile.tsx:246
 msgid "Unmute"
 msgstr ""
 
-#: src/components/modals/MuteUserModal.tsx:62
+#: src/components/modals/MuteUserModal.tsx:78
 msgid "Unmute User"
 msgstr ""
 
@@ -2543,7 +2593,7 @@ msgstr ""
 msgid "Unpinned!"
 msgstr ""
 
-#: src/components/direct/DirectMessage.tsx:808
+#: src/components/direct/DirectMessage.tsx:829
 msgid "Until you reply, this sender will not see your display name or profile picture"
 msgstr ""
 
@@ -2588,7 +2638,7 @@ msgstr ""
 msgid "User does not exist."
 msgstr ""
 
-#: src/components/modals/MuteUserModal.tsx:117
+#: src/components/modals/MuteUserModal.tsx:157
 msgid "User Muted!"
 msgstr ""
 
@@ -2597,12 +2647,12 @@ msgstr ""
 msgid "User not authenticated"
 msgstr ""
 
-#: src/components/modals/MuteUserModal.tsx:117
+#: src/components/modals/MuteUserModal.tsx:157
 msgid "User Unmuted!"
 msgstr ""
 
-#: src/components/space/Channel.tsx:604
-#: src/components/space/Channel.tsx:1115
+#: src/components/space/Channel.tsx:631
+#: src/components/space/Channel.tsx:1145
 msgid "Username or Address"
 msgstr ""
 
@@ -2686,13 +2736,18 @@ msgstr ""
 msgid "Yesterday at {timeFormatted}"
 msgstr ""
 
-#: src/components/direct/DirectMessage.tsx:307
+#: src/components/direct/DirectMessage.tsx:327
 #: src/hooks/business/search/useBatchSearchResultsDisplay.ts:139
 msgid "You"
 msgstr ""
 
 #: src/components/modals/AddSpaceModal.tsx:117
 msgid "You are already a member of this Space."
+msgstr ""
+
+#. placeholder {0}: formatMuteRemaining(currentMuteRecord.expiresAt)
+#: src/components/space/Channel.tsx:1108
+msgid "You are muted for {0}"
 msgstr ""
 
 #: src/components/modals/NewDirectMessageModal.tsx:146
@@ -2708,7 +2763,7 @@ msgid "You cannot delete a group that contains channels. Delete all {channelCoun
 msgstr ""
 
 #: src/components/message/MessageComposer.tsx:334
-#: src/components/space/Channel.tsx:1081
+#: src/components/space/Channel.tsx:1111
 msgid "You cannot post in this channel"
 msgstr ""
 
@@ -2721,7 +2776,7 @@ msgstr ""
 msgid "You have a new unread message"
 msgstr ""
 
-#: src/components/space/Channel.tsx:1079
+#: src/components/space/Channel.tsx:1109
 msgid "You have been muted in this Space"
 msgstr ""
 

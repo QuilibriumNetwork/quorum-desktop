@@ -31,7 +31,7 @@ msgid "No Role - {count}"
 msgstr "Nema uloge - {count}"
 
 #. js-lingui-explicit-id
-#: src/components/space/Channel.tsx:1055
+#: src/components/space/Channel.tsx:1083
 msgid "Send a message to #{channel_name}"
 msgstr "Pošaljite poruku #{channel_name}"
 
@@ -50,6 +50,11 @@ msgid "{count} New Messages"
 msgstr "{count} Nova Poruke"
 
 #. js-lingui-explicit-id
+#: src/components/message/MessageComposer.tsx:404
+msgid "Replying to"
+msgstr "Odgovara se"
+
+#. js-lingui-explicit-id
 #: src/components/message/MessageComposer.native.tsx:161
 msgid "Failed to process image"
 msgstr "Nije uspelo da se obradi slika"
@@ -60,27 +65,22 @@ msgid "Replying to {user}"
 msgstr "Odgovaram {user}"
 
 #. js-lingui-explicit-id
-#: src/components/message/MessageComposer.tsx:404
-msgid "Replying to"
-msgstr "Odgovara se"
-
-#. js-lingui-explicit-id
-#: src/components/message/Message.tsx:303
+#: src/components/message/Message.tsx:305
 msgid "has joined"
 msgstr "pridružio se"
 
 #. js-lingui-explicit-id
-#: src/components/message/Message.tsx:311
+#: src/components/message/Message.tsx:313
 msgid "has left"
 msgstr "napustio je"
 
 #. js-lingui-explicit-id
-#: src/components/message/Message.tsx:319
+#: src/components/message/Message.tsx:321
 msgid "has been kicked"
 msgstr "bio je izbačen"
 
 #. js-lingui-explicit-id
-#: src/components/direct/DirectMessage.tsx:820
+#: src/components/direct/DirectMessage.tsx:841
 msgid "Send a message to {user}"
 msgstr "Pošaljite poruku {user}"
 
@@ -88,8 +88,8 @@ msgstr "Pošaljite poruku {user}"
 msgid " for updates."
 msgstr "za ažuriranja."
 
-#: src/components/message/Message.tsx:751
-#: src/components/message/Message.tsx:764
+#: src/components/message/Message.tsx:753
+#: src/components/message/Message.tsx:766
 msgid "(edited)"
 msgstr "(izmenjeno)"
 
@@ -173,6 +173,14 @@ msgstr "{bookmarkCount} oznaka"
 msgid "{bookmarkCount} bookmarks"
 msgstr "{bookmarkCount} oznake"
 
+#: src/utils/dateFormatting.ts:90
+msgid "{days} days"
+msgstr "{days} dana"
+
+#: src/utils/dateFormatting.ts:92
+msgid "{hours} hours"
+msgstr "{hours} sati"
+
 #: src/components/primitives/FileUpload/FileUpload.web.tsx:13
 msgid "{size} Bytes"
 msgstr "{size} B"
@@ -212,9 +220,17 @@ msgstr "@you"
 msgid "+ Add a friend"
 msgstr "Dodaj prijatelja"
 
+#: src/components/modals/MuteUserModal.tsx:118
+msgid "0 = forever"
+msgstr "0 = zauvek"
+
 #: src/components/primitives/FileUpload/FileUpload.web.tsx:8
 msgid "0 Bytes"
 msgstr "0 B"
+
+#: src/utils/dateFormatting.ts:84
+msgid "0 hours"
+msgstr "0 sati"
 
 #: src/components/modals/UserSettingsModal/Privacy.tsx:105
 msgid "1 device marked for removal. Click \"Save Changes\" to confirm."
@@ -446,8 +462,8 @@ msgstr "Poruka oznake"
 msgid "Bookmark messages to save them for later reference"
 msgstr "Poruke oznake za čuvanje za kasniju referencu"
 
-#: src/components/message/Message.tsx:718
-#: src/components/message/Message.tsx:796
+#: src/components/message/Message.tsx:720
+#: src/components/message/Message.tsx:798
 msgid "Bookmarked"
 msgstr "Označeno"
 
@@ -459,8 +475,8 @@ msgstr "Označena slika"
 msgid "Bookmarked sticker"
 msgstr "Označeni stikeri"
 
-#: src/components/direct/DirectMessage.tsx:687
-#: src/components/space/Channel.tsx:896
+#: src/components/direct/DirectMessage.tsx:707
+#: src/components/space/Channel.tsx:923
 msgid "Bookmarks"
 msgstr "Oznake"
 
@@ -482,7 +498,7 @@ msgstr "Dozvola za kameru je potrebna za pravljenje fotografija"
 #: src/components/modals/ConfirmationModal.tsx:29
 #: src/components/modals/ConversationSettingsModal.tsx:63
 #: src/components/modals/KickUserModal.tsx:109
-#: src/components/modals/MuteUserModal.tsx:107
+#: src/components/modals/MuteUserModal.tsx:147
 #: src/components/primitives/FileUpload/FileUpload.native.tsx:173
 #: src/hooks/business/channels/useChannelManagement.ts:253
 #: src/hooks/business/messages/useMessageActions.ts:159
@@ -526,7 +542,7 @@ msgstr "Ikona kanala"
 msgid "Channel Managers"
 msgstr "Menadžeri kanala"
 
-#: src/components/space/Channel.tsx:1279
+#: src/components/space/Channel.tsx:1309
 msgid "Channel members"
 msgstr "Članovi kanala"
 
@@ -634,7 +650,7 @@ msgstr "Kliknite da kopirate"
 msgid "Config Key"
 msgstr "Ključ konfiguracije"
 
-#: src/components/navbar/FolderContextMenu.tsx:124
+#: src/components/navbar/FolderContextMenu.tsx:139
 msgid "Confirm"
 msgstr "Potvrdi"
 
@@ -642,7 +658,7 @@ msgstr "Potvrdi"
 msgid "Connecting"
 msgstr "U povezivanju"
 
-#: src/components/direct/DirectMessage.tsx:653
+#: src/components/direct/DirectMessage.tsx:673
 msgid "Conversation settings"
 msgstr "Podešavanja razgovora"
 
@@ -661,9 +677,9 @@ msgstr "Podešavanja razgovora"
 msgid "Copied!"
 msgstr "Kopirano!"
 
-#: src/components/direct/DirectMessage.tsx:313
-#: src/components/direct/DirectMessage.tsx:635
-#: src/components/direct/DirectMessage.tsx:755
+#: src/components/direct/DirectMessage.tsx:333
+#: src/components/direct/DirectMessage.tsx:655
+#: src/components/direct/DirectMessage.tsx:775
 #: src/components/modals/UserSettingsModal/General.tsx:118
 #: src/components/user/ExpandableUserAvatar.tsx:90
 #: src/components/user/UserProfile.tsx:123
@@ -769,6 +785,10 @@ msgstr "Tamno"
 msgid "Data Recovery"
 msgstr "Obnova podataka"
 
+#: src/components/modals/MuteUserModal.tsx:115
+msgid "days"
+msgstr "dana"
+
 #: src/components/context/MessageDB.bak.tsx:5415
 #: src/services/ConfigService.ts:142
 msgid "decrypted space with no known config key"
@@ -818,7 +838,7 @@ msgid "Delete Conversation"
 msgstr "Obriši razgovor"
 
 #: src/components/modals/FolderEditorModal.tsx:132
-#: src/components/navbar/FolderContextMenu.tsx:124
+#: src/components/navbar/FolderContextMenu.tsx:139
 msgid "Delete Folder"
 msgstr "Obriši fasciklu"
 
@@ -1061,7 +1081,7 @@ msgid "Failed to create space. Please try again."
 msgstr "Nije uspelo da se kreira prostor. Pokušajte ponovo."
 
 #: src/components/context/MessageDB.bak.tsx:984
-#: src/services/MessageService.ts:1825
+#: src/services/MessageService.ts:2157
 msgid "Failed to decrypt message with any known state"
 msgstr "Neuspešno dešifrovanje poruke sa bilo kojim poznatim stanjem"
 
@@ -1073,7 +1093,7 @@ msgstr "Nije uspelo da se generiše link za poziv. Pokušajte ponovo."
 msgid "Failed to load bookmarks"
 msgstr "Nije moguće učitati oznake"
 
-#: src/components/modals/MuteUserModal.tsx:51
+#: src/components/modals/MuteUserModal.tsx:67
 msgid "Failed to mute user"
 msgstr "Nije uspelo da se utiša korisnik"
 
@@ -1101,7 +1121,11 @@ msgstr "Nije uspelo da se izabere dokument"
 msgid "Failed to send invite. Please try again."
 msgstr "Slanje pozivnice nije uspelo. Pokušajte ponovo."
 
-#: src/components/modals/MuteUserModal.tsx:51
+#: src/components/message/Message.tsx:1192
+msgid "Failed to send."
+msgstr "Slanje nije uspelo."
+
+#: src/components/modals/MuteUserModal.tsx:67
 msgid "Failed to unmute user"
 msgstr "Nije uspelo da se ponovo uključi korisnik"
 
@@ -1191,7 +1215,7 @@ msgstr "Ime fascikle je obavezno"
 msgid "Folder name must be {MAX_NAME_LENGTH} characters or less"
 msgstr "Ime fascikle mora imati {MAX_NAME_LENGTH} karaktera ili manje"
 
-#: src/components/navbar/FolderContextMenu.tsx:114
+#: src/components/navbar/FolderContextMenu.tsx:129
 msgid "Folder Settings"
 msgstr "Podešavanja fascikle"
 
@@ -1331,7 +1355,7 @@ msgid "Important messages will be pinned here"
 msgstr "Važne poruke će biti zakačene ovde"
 
 #: src/components/context/MessageDB.bak.tsx:1184
-#: src/services/MessageService.ts:2024
+#: src/services/MessageService.ts:2356
 msgid "invalid address for signature"
 msgstr "nevažeća adresa za potpis"
 
@@ -1361,7 +1385,7 @@ msgstr "nevažeća veza"
 msgid "Invalid message ID"
 msgstr "Nevažeći ID poruke"
 
-#: src/components/context/MessageDB.bak.tsx:5180 src/utils/canonicalize.ts:126
+#: src/components/context/MessageDB.bak.tsx:5180 src/utils/canonicalize.ts:127
 msgid "invalid message type"
 msgstr "nevažeća vrsta poruke"
 
@@ -1412,7 +1436,7 @@ msgstr "Pridruživanje..."
 msgid "Jump"
 msgstr "Skoči"
 
-#: src/components/message/MessageList.tsx:528
+#: src/components/message/MessageList.tsx:532
 msgid "Jump to present"
 msgstr "Skoči na sadašnji trenutak"
 
@@ -1489,7 +1513,7 @@ msgstr "Svetlost"
 msgid "Loading bookmarks..."
 msgstr "Učitavanje oznaka..."
 
-#: src/components/message/MessageList.tsx:539
+#: src/components/message/MessageList.tsx:543
 msgid "Loading message..."
 msgstr "Učitavanje poruke..."
 
@@ -1564,9 +1588,9 @@ msgstr "Ručno pravljenje rezervne kopije je potrebno"
 msgid "Mark all as read"
 msgstr "Označi sve kao pročitano"
 
-#: src/components/direct/DirectMessage.tsx:668
-#: src/components/direct/DirectMessage.tsx:861
-#: src/components/space/Channel.tsx:922
+#: src/components/direct/DirectMessage.tsx:688
+#: src/components/direct/DirectMessage.tsx:882
+#: src/components/space/Channel.tsx:949
 msgid "Members List"
 msgstr "Lista članova"
 
@@ -1592,8 +1616,8 @@ msgstr "Akcije poruka"
 msgid "Message deleted"
 msgstr "Poruka obrisana"
 
-#: src/components/message/Message.tsx:734
-#: src/components/message/Message.tsx:812
+#: src/components/message/Message.tsx:736
+#: src/components/message/Message.tsx:814
 msgid ""
 "Message does not have a valid signature, this may not be from the sender"
 msgstr "Poruka nema važeći potpis, ovo možda nije od pošiljaoca"
@@ -1614,12 +1638,23 @@ msgstr "Poruke su potpisane!"
 msgid "More reactions"
 msgstr "Više reakcija"
 
-#: src/components/modals/MuteUserModal.tsx:118
 #: src/components/user/UserProfile.tsx:246
 msgid "Mute"
 msgstr "Utišavanje"
 
-#: src/components/modals/MuteUserModal.tsx:62
+#: src/components/modals/MuteUserModal.tsx:106
+msgid "Mute for"
+msgstr "Isključi zvuk na"
+
+#: src/components/modals/MuteUserModal.tsx:162
+msgid "Mute for {days} days"
+msgstr "Isključi zvuk na {days} dana"
+
+#: src/components/modals/MuteUserModal.tsx:161
+msgid "Mute Forever"
+msgstr "Isključi zvuk zauvek"
+
+#: src/components/modals/MuteUserModal.tsx:78
 msgid "Mute User"
 msgstr "Utišaj korisnika"
 
@@ -1701,8 +1736,8 @@ msgstr "Još nema zakačenih poruka"
 msgid "No unread notifications"
 msgstr "Nema nepročitanih obaveštenja"
 
-#: src/components/space/Channel.tsx:617 src/components/space/Channel.tsx:1129
-#: src/components/space/Channel.tsx:1318
+#: src/components/space/Channel.tsx:644 src/components/space/Channel.tsx:1159
+#: src/components/space/Channel.tsx:1348
 msgid "No users found!"
 msgstr "Nema korisnika!"
 
@@ -1717,7 +1752,7 @@ msgstr "Dozvola za obaveštenja nije odobrena"
 #: src/components/modals/SpaceSettingsModal/Account.tsx:187
 #: src/components/modals/UserSettingsModal/Navigation.tsx:17
 #: src/components/modals/UserSettingsModal/Notifications.tsx:24
-#: src/components/space/Channel.tsx:861
+#: src/components/space/Channel.tsx:888
 msgid "Notifications"
 msgstr "Obaveštenja"
 
@@ -1851,19 +1886,19 @@ msgstr "Zakači poruke"
 msgid "Pin to top"
 msgstr "Zaka na vrh"
 
-#: src/components/message/Message.tsx:702
-#: src/components/message/Message.tsx:780
+#: src/components/message/Message.tsx:704
+#: src/components/message/Message.tsx:782
 msgid "Pinned"
 msgstr "Zakačeno"
 
 #. placeholder {0}: mapSenderToUser(message.pinnedBy)?.displayName ||
 #. message.pinnedBy
-#: src/components/message/Message.tsx:701
-#: src/components/message/Message.tsx:779
+#: src/components/message/Message.tsx:703
+#: src/components/message/Message.tsx:781
 msgid "Pinned by {0}"
 msgstr "Zakačeno od {0}"
 
-#: src/components/space/Channel.tsx:821
+#: src/components/space/Channel.tsx:848
 msgid "Pinned Messages"
 msgstr "Zakačene poruke"
 
@@ -2032,6 +2067,10 @@ msgstr "Obnovljeno {0} prostor(a)"
 msgid "Restoring..."
 msgstr "Obnavljanje..."
 
+#: src/components/message/Message.tsx:1203
+msgid "Retry"
+msgstr "Pokušaj ponovo"
+
 #: src/components/modals/SpaceSettingsModal/Navigation.tsx:22
 #: src/components/modals/SpaceSettingsModal/Roles.tsx:45
 msgid "Roles"
@@ -2104,8 +2143,8 @@ msgstr "Pretraga u ovom Простору-u"
 msgid "Search in this Space..."
 msgstr "Pretraži u ovom prostoru..."
 
-#: src/components/direct/DirectMessage.tsx:714
-#: src/components/space/Channel.tsx:941
+#: src/components/direct/DirectMessage.tsx:734
+#: src/components/space/Channel.tsx:968
 msgid "Search Messages"
 msgstr "Pretraži poruke"
 
@@ -2121,7 +2160,7 @@ msgstr "Rezultati pretrage"
 msgid "Search username or address"
 msgstr "Pretraži korisničko ime ili adresu"
 
-#: src/components/space/Channel.tsx:1290
+#: src/components/space/Channel.tsx:1320
 msgid "Search Username or Address"
 msgstr "Pretraži korisničko ime ili adresu"
 
@@ -2182,6 +2221,10 @@ msgstr "Pošalji pozivnicu"
 #: src/components/user/UserProfile.tsx:218
 msgid "Send Message"
 msgstr "Pošalji poruku"
+
+#: src/components/message/Message.tsx:1185
+msgid "Sending..."
+msgstr "Šaljem..."
 
 #: src/components/context/RegistrationPersister.tsx:257
 msgid "Session Encrypted"
@@ -2284,7 +2327,7 @@ msgstr "Uspešno poslata pozivnica {0}"
 msgid "Sync Kick Status"
 msgstr "Sinhronizuj status izbacivanja"
 
-#: src/services/SyncService.ts:199
+#: src/services/MessageService.ts:3177
 msgid "Syncing Space..."
 msgstr "Sinhronizacija prostora..."
 
@@ -2387,7 +2430,7 @@ msgstr "Ovaj prostor"
 msgid "This user is already a member of this space."
 msgstr "Ovaj korisnik je već član ovog espacija."
 
-#: src/components/modals/MuteUserModal.tsx:93
+#: src/components/modals/MuteUserModal.tsx:131
 msgid "This user will be able to send messages in this Space again."
 msgstr "Ovaj korisnik će ponovo moći da šalje poruke u ovom prostoru."
 
@@ -2395,9 +2438,13 @@ msgstr "Ovaj korisnik će ponovo moći da šalje poruke u ovom prostoru."
 msgid "This user will be removed from the Space."
 msgstr "Ovaj korisnik će biti uklonjen iz prostora."
 
-#: src/components/modals/MuteUserModal.tsx:94
+#: src/components/modals/MuteUserModal.tsx:133
 msgid "This user will no longer be able to send messages in this Space."
 msgstr "Ovaj korisnik više neće moći da šalje poruke u ovom prostoru."
+
+#: src/components/modals/MuteUserModal.tsx:134
+msgid "This user will not be able to send messages for {days} days."
+msgstr "Ovaj korisnik neće moći da šalje poruke narednih {days} dana."
 
 #: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:609
 msgid ""
@@ -2531,7 +2578,7 @@ msgstr "Nepoznat vreme"
 #: src/components/context/MessageDB.bak.tsx:5292
 #: src/components/direct/DirectMessage.tsx:173
 #: src/components/direct/DirectMessage.tsx:188
-#: src/components/direct/DirectMessage.tsx:535
+#: src/components/direct/DirectMessage.tsx:555
 #: src/components/message/MessageComposer.tsx:499
 #: src/components/message/MessageComposer.tsx:506
 #: src/components/message/MessageEditTextarea.tsx:225
@@ -2556,19 +2603,21 @@ msgstr "Nepoznat vreme"
 #: src/hooks/business/search/useSearchResultDisplayDM.ts:33
 #: src/hooks/business/search/useSearchResultDisplaySpace.ts:45
 #: src/hooks/queries/userInfo/buildUserInfoFetcher.ts:15
-#: src/services/EncryptionService.ts:138 src/services/MessageService.ts:1491
-#: src/services/MessageService.ts:1663 src/services/MessageService.ts:1803
-#: src/services/MessageService.ts:1821 src/services/MessageService.ts:3172
-#: src/services/MessageService.ts:3306 src/services/MessageService.ts:3470
+#: src/services/EncryptionService.ts:138 src/services/MessageService.ts:1586
+#: src/services/MessageService.ts:1823 src/services/MessageService.ts:1995
+#: src/services/MessageService.ts:2135 src/services/MessageService.ts:2153
+#: src/services/MessageService.ts:3603 src/services/MessageService.ts:3767
+#: src/services/MessageService.ts:3901 src/services/MessageService.ts:4005
+#: src/services/MessageService.ts:4202
 msgid "Unknown User"
 msgstr "Nepoznati korisnik"
 
-#: src/components/modals/MuteUserModal.tsx:118
+#: src/components/modals/MuteUserModal.tsx:159
 #: src/components/user/UserProfile.tsx:246
 msgid "Unmute"
 msgstr "Ponovno uključivanje"
 
-#: src/components/modals/MuteUserModal.tsx:62
+#: src/components/modals/MuteUserModal.tsx:78
 msgid "Unmute User"
 msgstr "Ponovno uključi korisnika"
 
@@ -2598,7 +2647,7 @@ msgstr "Ukloni ovu objavu"
 msgid "Unpinned!"
 msgstr "Uklonjeno!"
 
-#: src/components/direct/DirectMessage.tsx:808
+#: src/components/direct/DirectMessage.tsx:829
 msgid ""
 "Until you reply, this sender will not see your display name or profile "
 "picture"
@@ -2638,7 +2687,7 @@ msgstr "Adresa korisnika ovde"
 msgid "User does not exist."
 msgstr "Korisnik ne postoji."
 
-#: src/components/modals/MuteUserModal.tsx:117
+#: src/components/modals/MuteUserModal.tsx:157
 msgid "User Muted!"
 msgstr "Korisnik je utišan!"
 
@@ -2647,11 +2696,11 @@ msgstr "Korisnik je utišan!"
 msgid "User not authenticated"
 msgstr "Korisnik nije autentifikovan"
 
-#: src/components/modals/MuteUserModal.tsx:117
+#: src/components/modals/MuteUserModal.tsx:157
 msgid "User Unmuted!"
 msgstr "Korisnik je ponovo uključen!"
 
-#: src/components/space/Channel.tsx:604 src/components/space/Channel.tsx:1115
+#: src/components/space/Channel.tsx:631 src/components/space/Channel.tsx:1145
 msgid "Username or Address"
 msgstr "Korisničko ime ili adresa"
 
@@ -2777,7 +2826,7 @@ msgstr "Juče"
 msgid "Yesterday at {timeFormatted}"
 msgstr "Juče u {timeFormatted}"
 
-#: src/components/direct/DirectMessage.tsx:307
+#: src/components/direct/DirectMessage.tsx:327
 #: src/hooks/business/search/useBatchSearchResultsDisplay.ts:139
 msgid "You"
 msgstr "Ti"
@@ -2785,6 +2834,11 @@ msgstr "Ti"
 #: src/components/modals/AddSpaceModal.tsx:117
 msgid "You are already a member of this Space."
 msgstr "Već ste član ovog Space."
+
+#. placeholder {0}: formatMuteRemaining(currentMuteRecord.expiresAt)
+#: src/components/space/Channel.tsx:1108
+msgid "You are muted for {0}"
+msgstr "Ti si isključen za {0}"
 
 #: src/components/modals/NewDirectMessageModal.tsx:146
 msgid ""
@@ -2810,7 +2864,7 @@ msgstr ""
 "{channelCount} kanala u ovoj grupi."
 
 #: src/components/message/MessageComposer.tsx:334
-#: src/components/space/Channel.tsx:1081
+#: src/components/space/Channel.tsx:1111
 msgid "You cannot post in this channel"
 msgstr "Ne možete postaviti u ovom kanalu"
 
@@ -2823,7 +2877,7 @@ msgstr "Ne možete poslati direktnu poruku sebi."
 msgid "You have a new unread message"
 msgstr "Imate novu nepročitanu poruku"
 
-#: src/components/space/Channel.tsx:1079
+#: src/components/space/Channel.tsx:1109
 msgid "You have been muted in this Space"
 msgstr "Utišani ste u ovom prostoru"
 
