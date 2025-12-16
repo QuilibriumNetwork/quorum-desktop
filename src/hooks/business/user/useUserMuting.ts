@@ -16,7 +16,7 @@ export const useUserMuting = () => {
   const invalidateMutedUsers = useInvalidateMutedUsers();
 
   const muteUser = useCallback(
-    async (targetUserId: string) => {
+    async (targetUserId: string, days: number = 0) => {
       // Validate required parameters - throw errors instead of silent return
       if (!spaceId) {
         throw new Error('Cannot mute user: not in a Space context');
@@ -38,13 +38,19 @@ export const useUserMuting = () => {
 
       setMuting(true);
       try {
+        const timestamp = Date.now();
+        // Convert days to milliseconds (0 = forever, undefined duration)
+        const duration = days > 0 ? days * 24 * 60 * 60 * 1000 : undefined;
+        const expiresAt = duration ? timestamp + duration : undefined;
+
         const muteMessage: MuteMessage = {
           type: 'mute',
           senderId: currentPasskeyInfo.address,
           targetUserId,
           muteId: crypto.randomUUID(),
-          timestamp: Date.now(),
+          timestamp,
           action: 'mute',
+          ...(duration !== undefined && { duration }),
         };
 
         await submitChannelMessage(
@@ -61,7 +67,8 @@ export const useUserMuting = () => {
           targetUserId,
           currentPasskeyInfo.address,
           muteMessage.muteId,
-          muteMessage.timestamp
+          muteMessage.timestamp,
+          expiresAt
         );
 
         // Invalidate muted users cache

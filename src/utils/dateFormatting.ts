@@ -65,3 +65,30 @@ export const formatConversationTime = (timestamp: number): string => {
   if (daysDiff === 1) return t`Yesterday`;
   return time.format('D MMM'); // "11 Nov"
 };
+
+/**
+ * Formats remaining mute duration for display.
+ * Uses smart formatting based on duration length.
+ *
+ * Examples:
+ * - 364d 23h remaining → "365 days"
+ * - 6d 5h remaining   → "7 days"
+ * - 23h 45m remaining → "24 hours"
+ * - 2h 15m remaining  → "3 hours"
+ *
+ * @param expiresAt - Unix timestamp when mute expires (milliseconds)
+ * @returns Formatted duration string (e.g., "7 days", "24 hours")
+ */
+export const formatMuteRemaining = (expiresAt: number): string => {
+  const remaining = expiresAt - Date.now();
+  if (remaining <= 0) return t`0 hours`;
+
+  const hours = Math.ceil(remaining / (1000 * 60 * 60));
+  const days = Math.ceil(remaining / (1000 * 60 * 60 * 24));
+
+  if (days > 1) {
+    return t`${days} days`;
+  } else {
+    return t`${hours} hours`;
+  }
+};

@@ -10,7 +10,8 @@ import {
   useConversation,
   useUpdateReadTime,
 } from '../../hooks';
-import { useMutedUsers } from '../../hooks/queries/mutedUsers';
+import { useMutedUsers, useInvalidateMutedUsers } from '../../hooks/queries/mutedUsers';
+import { formatMuteRemaining } from '../../utils/dateFormatting';
 import { loadMessagesAround } from '../../hooks/queries/messages/loadMessagesAround';
 import { buildMessagesKey } from '../../hooks/queries/messages/buildMessagesKey';
 import { useMessageDB } from '../context/useMessageDB';
@@ -154,11 +155,29 @@ const Channel: React.FC<ChannelProps> = ({
   // Get pinned messages
   const { pinnedCount } = usePinnedMessages(spaceId, channelId, channel);
 
-  // Check if current user is muted in this space
+  // Check if current user is muted in this space (considers expiration)
   const { data: mutedUsers } = useMutedUsers({ spaceId });
-  const isCurrentUserMuted = mutedUsers?.some(
+  const invalidateMutedUsers = useInvalidateMutedUsers();
+  const currentMuteRecord = mutedUsers?.find(
     m => m.targetUserId === user?.currentPasskeyInfo?.address
-  ) ?? false;
+  );
+  const isCurrentUserMuted = currentMuteRecord
+    ? (!currentMuteRecord.expiresAt || currentMuteRecord.expiresAt > Date.now())
+    : false;
+
+  // Auto-refresh when mute expires
+  useEffect(() => {
+    if (!currentMuteRecord?.expiresAt) return; // Forever mute or not muted
+
+    const remaining = currentMuteRecord.expiresAt - Date.now();
+    if (remaining <= 0) return; // Already expired
+
+    const timer = setTimeout(() => {
+      invalidateMutedUsers({ spaceId });
+    }, remaining);
+
+    return () => clearTimeout(timer);
+  }, [currentMuteRecord?.expiresAt, invalidateMutedUsers, spaceId]);
 
   // Get current user address for bookmarks
   const userAddress = user?.currentPasskeyInfo?.address || '';
@@ -1076,7 +1095,9 @@ const Channel: React.FC<ChannelProps> = ({
                 disabled={!canPost}
                 disabledMessage={
                   isCurrentUserMuted
-                    ? t`You have been muted in this Space`
+                    ? currentMuteRecord?.expiresAt
+                      ? t`You are muted for ${formatMuteRemaining(currentMuteRecord.expiresAt)}`
+                      : t`You have been muted in this Space`
                     : channel?.isReadOnly
                       ? t`You cannot post in this channel`
                       : undefined

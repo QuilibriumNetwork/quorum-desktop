@@ -205,6 +205,7 @@ export type MuteMessage = {
   muteId: string;
   timestamp: number;
   action: 'mute' | 'unmute';
+  duration?: number; // milliseconds, undefined = forever
 };
 
 export type StickerMessage = {

@@ -97,6 +97,7 @@ export interface MutedUserRecord {
   mutedAt: number;
   mutedBy: string;
   lastMuteId: string;
+  expiresAt?: number; // undefined = forever
 }
 
 export interface SearchResult {
@@ -1997,7 +1998,8 @@ export class MessageDB {
     targetUserId: string,
     mutedBy: string,
     muteId: string,
-    timestamp: number
+    timestamp: number,
+    expiresAt?: number
   ): Promise<void> {
     await this.init();
     return new Promise((resolve, reject) => {
@@ -2010,6 +2012,7 @@ export class MessageDB {
         mutedAt: timestamp,
         mutedBy,
         lastMuteId: muteId,
+        ...(expiresAt !== undefined && { expiresAt }),
       };
 
       const request = store.put(record);
@@ -2035,7 +2038,7 @@ export class MessageDB {
   }
 
   /**
-   * Check if a user is muted in a space
+   * Check if a user is muted in a space (considers expiration)
    */
   async isUserMuted(spaceId: string, targetUserId: string): Promise<boolean> {
     await this.init();
@@ -2045,7 +2048,17 @@ export class MessageDB {
       const request = store.get([spaceId, targetUserId]);
 
       request.onsuccess = () => {
-        resolve(!!request.result);
+        const record = request.result as MutedUserRecord | undefined;
+        if (!record) {
+          resolve(false);
+          return;
+        }
+        // Check if mute has expired
+        if (record.expiresAt && record.expiresAt <= Date.now()) {
+          resolve(false);
+          return;
+        }
+        resolve(true);
       };
       request.onerror = () => reject(request.error);
     });

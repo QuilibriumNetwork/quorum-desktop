@@ -173,10 +173,10 @@ export const ModalProvider: React.FC<ModalProviderProps> = ({
           <MuteUserModal
             visible={true}
             onClose={modalState.closeMuteUser}
-            onConfirm={() =>
+            onConfirm={(days: number) =>
               modalState.state.muteUser.target!.isUnmuting
                 ? unmuteUser(modalState.state.muteUser.target!.address)
-                : muteUser(modalState.state.muteUser.target!.address)
+                : muteUser(modalState.state.muteUser.target!.address, days)
             }
             userName={modalState.state.muteUser.target.displayName}
             userIcon={modalState.state.muteUser.target.userIcon}

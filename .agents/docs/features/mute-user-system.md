@@ -50,13 +50,20 @@ IndexedDB (muted_users store)
 interface MuteUserModalProps {
   visible: boolean;
   onClose: () => void;
-  onConfirm: () => Promise<void>;
+  onConfirm: (days: number) => Promise<void>;  // days: 0 = forever, 1-365 = duration
   userName: string;
   userIcon?: string;
   userAddress: string;
   isUnmuting?: boolean;  // Controls mute vs unmute mode
 }
 ```
+
+**Duration Input** (V2):
+- Numeric input field (0-365 days)
+- `0` = mute forever (permanent until manually unmuted)
+- `1-365` = mute for specified number of days (auto-expires)
+- Default: 1 day
+- Error-proof: Silent clamp to 0-365 range, non-numeric characters filtered
 
 ### useUserMuting (Business Logic Hook)
 
@@ -66,26 +73,28 @@ interface MuteUserModalProps {
 
 **Key Functions**:
 
-#### `muteUser(targetUserId: string)`
+#### `muteUser(targetUserId: string, days: number = 0)`
 
 - Validates required parameters (spaceId, currentUser, targetUserId)
-- Creates `MuteMessage` with unique `muteId` and timestamp
+- Converts `days` to `duration` in milliseconds (0 = undefined for forever)
+- Calculates `expiresAt` timestamp (timestamp + duration)
+- Creates `MuteMessage` with unique `muteId`, timestamp, and optional `duration`
 - Broadcasts via `submitChannelMessage`
-- Stores locally in IndexedDB for immediate effect
+- Stores locally in IndexedDB with `expiresAt` for immediate effect
 - Invalidates React Query cache
 
 #### `unmuteUser(targetUserId: string)`
 
 - Same validation as muteUser
-- Creates `UnmuteMessage` with unique `muteId` and timestamp
-- Broadcasts and updates local state
+- Creates `MuteMessage` with `action: 'unmute'`
+- Broadcasts and removes local mute record
 
 **Return Values**:
 
 ```tsx
 {
   muting: boolean;      // Loading state
-  muteUser: (targetUserId: string) => Promise<void>;
+  muteUser: (targetUserId: string, days?: number) => Promise<void>;
   unmuteUser: (targetUserId: string) => Promise<void>;
 }
 ```
@@ -98,7 +107,12 @@ interface MuteUserModalProps {
 
 ```typescript
 const { data: mutedUsers } = useMutedUsers({ spaceId });
-const isMuted = mutedUsers?.some(m => m.targetUserId === userAddress);
+
+// Check if user is muted (must also check expiration)
+const muteRecord = mutedUsers?.find(m => m.targetUserId === userAddress);
+const isMuted = muteRecord
+  ? (!muteRecord.expiresAt || muteRecord.expiresAt > Date.now())
+  : false;
 ```
 
 ## Data Flow
@@ -163,6 +177,7 @@ type MutedUserRecord = {
   mutedAt: number;       // Timestamp when muted
   mutedBy: string;       // User who performed the mute
   lastMuteId: string;    // For deduplication/replay protection
+  expiresAt?: number;    // V2: When mute expires (undefined = forever)
 };
 
 // Composite key: [spaceId, targetUserId]
@@ -172,8 +187,8 @@ type MutedUserRecord = {
 ### Database Methods
 
 - `getMutedUsers(spaceId)`: Get all muted users in a space
-- `isUserMuted(spaceId, userId)`: Check if specific user is muted
-- `muteUser(spaceId, targetUserId, mutedBy, muteId, timestamp)`: Add mute record
+- `isUserMuted(spaceId, userId)`: Check if specific user is muted (includes expiration check)
+- `muteUser(spaceId, targetUserId, mutedBy, muteId, timestamp, expiresAt?)`: Add mute record
 - `unmuteUser(spaceId, targetUserId)`: Remove mute record
 - `getMuteByMuteId(muteId)`: For deduplication checks
 
@@ -183,21 +198,17 @@ type MutedUserRecord = {
 
 ```typescript
 export type MuteMessage = {
-  senderId: string;      // Who performed the mute
+  senderId: string;      // Who performed the mute/unmute
   type: 'mute';
-  targetUserId: string;  // Who got muted
+  targetUserId: string;  // Who got muted/unmuted
   muteId: string;        // UUID for deduplication (replay protection)
   timestamp: number;     // For ordering/conflict resolution
-};
-
-export type UnmuteMessage = {
-  senderId: string;      // Who performed the unmute
-  type: 'unmute';
-  targetUserId: string;  // Who got unmuted
-  muteId: string;        // UUID for deduplication
-  timestamp: number;     // For ordering/conflict resolution
+  action: 'mute' | 'unmute';  // Mute or unmute action
+  duration?: number;     // V2: Duration in milliseconds (undefined = forever)
 };
 ```
+
+**Note**: Mute and unmute now use the same `MuteMessage` type with an `action` field to distinguish between operations.
 
 ## Permission Integration
 
@@ -256,8 +267,16 @@ if (!hasPermission) {
 
 **Location**: `src/components/space/Channel.tsx`
 
-Muted users see a disabled composer with message:
-> "You have been muted in this Space"
+Muted users see a disabled composer with message showing remaining time:
+- Timed mute: "You are muted for 3 days" / "You are muted for 24 hours"
+- Forever mute: "You have been muted in this Space"
+
+**Auto-Refresh**: When a timed mute expires, a `setTimeout` automatically invalidates the muted users cache, enabling the composer without requiring a page refresh.
+
+**Helper Function**: `formatMuteRemaining(expiresAt)` in `src/utils/dateFormatting.ts`:
+- Shows "X days" for mutes > 1 day remaining
+- Shows "X hours" for mutes ≤ 1 day remaining
+- Uses `Math.ceil` for user-friendly rounding (e.g., 23h 45m → "24 hours")
 
 ## Security Considerations
 
@@ -298,7 +317,8 @@ Muted users see a disabled composer with message:
 - `src/components/context/ModalProvider.tsx` - Modal state management
 
 ### Supporting Files
-- `src/utils/canonicalize.ts` - Message canonicalization for mute/unmute
+- `src/utils/canonicalize.ts` - Message canonicalization for mute (includes `duration`)
+- `src/utils/dateFormatting.ts` - `formatMuteRemaining()` helper for time display
 - `src/hooks/business/ui/useModalState.ts` - MuteUserTarget interface
 
 ## Known Limitations
@@ -314,9 +334,13 @@ Users with `user:mute` permission can mute the space owner. This differs from ki
 - The effect is temporary (reversible via self-unmute)
 - Malicious moderators can be removed by the owner
 
-### No Mute Duration
+### Mute Duration (V2 - Implemented)
 
-Currently mute is permanent until manually unmuted. There's no time-based auto-unmute feature (planned for V2).
+Mute duration is now supported:
+- **0 days** = Forever (permanent until manually unmuted)
+- **1-365 days** = Timed mute (auto-expires after specified duration)
+
+Duration is calculated client-side using `setTimeout`. Note: JS `setTimeout` max is ~24.8 days, but this is acceptable since users typically refresh/restart the app before then.
 
 ### Client-Enforced Only
 
@@ -328,7 +352,8 @@ Mute is enforced by each client independently. A malicious custom client could c
 |--------|------|------|
 | **Enforcement** | Client-side (receiving validation) | Protocol-level (ED448 signed) |
 | **Permission** | `user:mute` role permission | Space owner only |
-| **Reversible** | Yes (unmute) | Requires re-invite |
+| **Reversible** | Yes (unmute or auto-expires) | Requires re-invite |
+| **Duration** | 0-365 days (0 = forever) | Permanent |
 | **Effect** | Messages hidden from others | User removed from space |
 | **Visibility** | Silent (user knows via disabled composer) | Visible kick message |
 | **Space owner bypass** | No (can't verify on receive) | Yes (protocol verifies) |
@@ -343,5 +368,6 @@ Mute is enforced by each client independently. A malicious custom client could c
 ---
 
 *Created: 2025-12-15*
+*Updated: 2025-12-16 (V2: Mute Duration Support)*
 *Status: Production Ready*
 *Cross-Platform: ✅ Web + Mobile Compatible*

@@ -381,7 +381,7 @@
 ## V2: Mute Duration Support (Future Enhancement)
 
 ### Overview
-Add ability to mute users for a specific duration (1, 3, 7 days, or forever).
+Add ability to mute users for a specific duration (0-365 days, where 0 = forever).
 
 ### Type Changes
 
@@ -407,31 +407,59 @@ type MutedUserRecord = {
 };
 ```
 
+### Canonicalization (Critical!)
+
+**Must add `duration` field to `src/utils/canonicalize.ts`** - same issue we fixed for V1 where messages were stored locally but not transmitted over the network.
+
 ### UI Changes - MuteUserModal V2
 
 Update modal to include duration input:
 
 ```tsx
+const [days, setDays] = useState(1); // Default to 1 day (not forever)
+
 <Modal isOpen={isOpen} onClose={onClose}>
   <Container className="p-4">
     <UserAvatar ... />
-    <Text className="text-lg font-semibold mt-2">
+    <Text typography="body" className="font-semibold">
       {t`Mute ${userName} for`}
     </Text>
 
     <FlexRow className="items-center gap-2 mt-3">
       <Input
         type="number"
+        inputMode="numeric"
+        pattern="[0-9]*"
         min={0}
+        max={365}
         value={days}
-        onChange={(e) => setDays(parseInt(e.target.value) || 0)}
+        onChange={(e) => {
+          const val = parseInt(e.target.value) || 0;
+          setDays(Math.min(365, Math.max(0, val))); // Clamp 0-365
+        }}
+        onKeyDown={(e) => {
+          // Block non-numeric keys (allow backspace, delete, arrows, tab)
+          if (!/[0-9]/.test(e.key) && !['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab'].includes(e.key)) {
+            e.preventDefault();
+          }
+        }}
+        onPaste={(e) => {
+          // Extract only digits from pasted content
+          const pasted = e.clipboardData.getData('text');
+          const digitsOnly = pasted.replace(/\D/g, '');
+          if (pasted !== digitsOnly) {
+            e.preventDefault();
+            const val = parseInt(digitsOnly) || 0;
+            setDays(Math.min(365, Math.max(0, val)));
+          }
+        }}
         className="w-20 text-center"
       />
-      <Text>{t`days`}</Text>
+      <Text typography="body">{t`days`}</Text>
     </FlexRow>
 
-    <Text variant="muted" size="sm" className="mt-1">
-      {t`Enter 0 to mute forever`}
+    <Text typography="small" variant="subtle">
+      {t`0 = forever`}
     </Text>
 
     <Button
@@ -454,6 +482,19 @@ const isMuted = mutedUsers?.some(m =>
   (!m.expiresAt || m.expiresAt > Date.now())
 );
 
+// Helper function for smart duration formatting
+const formatMuteRemaining = (expiresAt: number): string => {
+  const remaining = expiresAt - Date.now();
+  const hours = Math.ceil(remaining / (1000 * 60 * 60));
+  const days = Math.ceil(remaining / (1000 * 60 * 60 * 24));
+
+  if (days > 1) {
+    return t`${days} days`;
+  } else {
+    return t`${hours} hours`;
+  }
+};
+
 // In Channel.tsx for composer - show remaining time:
 const muteRecord = mutedUsers?.find(m => m.targetUserId === currentUserAddress);
 const isMuted = muteRecord && (!muteRecord.expiresAt || muteRecord.expiresAt > Date.now());
@@ -461,16 +502,55 @@ const isMuted = muteRecord && (!muteRecord.expiresAt || muteRecord.expiresAt > D
 disabledMessage={
   isMuted
     ? muteRecord.expiresAt
-      ? t`You are muted for ${formatDuration(muteRecord.expiresAt - Date.now())}`
+      ? t`You are muted for ${formatMuteRemaining(muteRecord.expiresAt)}`
       : t`You are muted in this space`
     : ...
 }
+
+// Examples:
+// 364d 23h remaining → "You are muted for 365 days"
+// 6d 5h remaining   → "You are muted for 7 days"
+// 23h 45m remaining → "You are muted for 24 hours"
+// 2h 15m remaining  → "You are muted for 3 hours"
+// Forever           → "You are muted in this space"
 ```
 
+### Auto-Refresh on Mute Expiry
+
+Use a single `setTimeout` to exact expiry time (NOT polling with `setInterval`):
+
+```typescript
+// In Channel.tsx or a dedicated hook
+useEffect(() => {
+  if (!muteRecord?.expiresAt) return; // Forever mute, no timer needed
+
+  const remaining = muteRecord.expiresAt - Date.now();
+  if (remaining <= 0) return; // Already expired
+
+  const timer = setTimeout(() => {
+    invalidateMutedUsers(); // Trigger re-fetch/re-render
+  }, remaining);
+
+  return () => clearTimeout(timer);
+}, [muteRecord?.expiresAt, invalidateMutedUsers]);
+```
+
+**Performance**: One timer per muted user viewing their own status. Negligible cost.
+
+**Note**: JS `setTimeout` max is ~24.8 days, but we don't need to handle this edge case - users will refresh/restart the app long before then, and the timeout recalculates on mount.
+
+### Risks & Considerations
+
+| Risk | Severity | Notes |
+|------|----------|-------|
+| **Clock skew** | ℹ️ Inherent | Different clients have different local clocks. A mute that expired on one client may still be active on another. Acceptable for client-enforced feature. |
+| **Canonicalization** | ⚠️ Critical | Must add `duration` to canonicalize.ts or field won't transmit! |
+| **Input validation** | ✅ Simple | Clamp to 0-365 range, error-proof by design |
+
 ### Complexity
-- **Effort**: Low-Medium (~2-3 hours)
-- **Risk**: Low (additive change, backwards compatible)
-- **Dependencies**: V1 implementation complete
+- **Effort**: Low (~2-3 hours)
+- **Risk**: Low (additive change)
+- **Backward compatibility**: Non-issue (mute feature is new, no legacy clients to support)
 
 ---
 

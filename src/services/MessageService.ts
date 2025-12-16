@@ -1057,13 +1057,19 @@ export class MessageService {
           return;
         }
 
+        // Calculate expiresAt from duration (if provided)
+        const expiresAt = muteContent.duration
+          ? muteContent.timestamp + muteContent.duration
+          : undefined;
+
         // Apply mute
         await this.messageDB.muteUser(
           spaceId,
           muteContent.targetUserId,
           muteContent.senderId,
           muteContent.muteId,
-          muteContent.timestamp
+          muteContent.timestamp,
+          expiresAt
         );
       } else {
         // Apply unmute

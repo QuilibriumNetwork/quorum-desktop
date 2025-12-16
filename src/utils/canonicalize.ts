@@ -119,7 +119,8 @@ export function canonicalize(
       pendingMessage.targetUserId +
       pendingMessage.muteId +
       pendingMessage.timestamp +
-      pendingMessage.action
+      pendingMessage.action +
+      (pendingMessage.duration ?? '')
     );
   }
 
