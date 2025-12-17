@@ -171,10 +171,11 @@ if (!db.objectStoreNames.contains('action_queue')) {
 
 ```typescript
 export type ActionType =
-  // Core actions
-  | 'send-message'
-  | 'save-user-config'  // UserConfig: folders, sidebar order, user preferences (UserSettingsModal)
-  | 'update-space'      // Space settings: name, description, roles, emojis, stickers (SpaceSettingsModal)
+  // Core actions - sending messages
+  | 'send-channel-message'  // Receives signed message, Triple Ratchet encrypt
+  | 'send-dm'               // Receives signed message, Double Ratchet encrypt
+  | 'save-user-config'      // UserConfig: folders, sidebar order, user preferences
+  | 'update-space'          // Space settings: name, description, roles, emojis, stickers
 
   // Moderation
   | 'kick-user'
@@ -417,38 +418,8 @@ interface TaskHandler {
 export class ActionQueueHandlers {
   constructor(private deps: HandlerDeps) {}
 
-  // === PHASE 1: Core Actions ===
-
-  sendMessage: TaskHandler = {
-    execute: async (context) => {
-      // Check if space/channel still exists
-      const space = await this.deps.messageDB.getSpace(context.spaceId);
-      if (!space) {
-        console.log(`[ActionQueue] Discarding message for deleted space: ${context.spaceId}`);
-        return;
-      }
-
-      const channel = space.groups
-        ?.flatMap(g => g.channels)
-        .find(c => c.channelId === context.channelId);
-      if (!channel) {
-        console.log(`[ActionQueue] Discarding message for deleted channel: ${context.channelId}`);
-        return;
-      }
-
-      await this.deps.messageService.submitChannelMessage(context);
-      this.deps.queryClient.invalidateQueries({ queryKey: ['messages', context.channelId] });
-    },
-    isPermanentError: (error) => {
-      return error.message.includes('400') ||
-             error.message.includes('403') ||
-             error.message.includes('404') ||
-             error.message.includes('not found');
-    },
-    // NO toast - inline message indicator handles feedback
-    successMessage: undefined,
-    failureMessage: undefined,
-  };
+  // === CORE ACTIONS ===
+  // Note: Message handlers (sendChannelMessage, sendDm) are documented in Milestone 4
 
   saveUserConfig: TaskHandler = {
     execute: async (context) => {
@@ -589,7 +560,8 @@ export class ActionQueueHandlers {
 
   getHandler(taskType: string): TaskHandler | undefined {
     const handlers: Record<string, TaskHandler> = {
-      'send-message': this.sendMessage,
+      'send-channel-message': this.sendChannelMessage,
+      'send-dm': this.sendDm,
       'save-user-config': this.saveUserConfig,
       'update-space': this.updateSpace,
       'kick-user': this.kickUser,
@@ -1051,7 +1023,7 @@ export function OfflineBanner() {
 ### Implementation Status
 
 1. ✅ **Initialize ActionQueueService** in `MessageDB.tsx` with handlers
-2. ⏳ **Update WebsocketProvider** to use queue for message sending (future)
+2. ✅ **Route message sending** through queue (`send-channel-message`, `send-dm`)
 3. ✅ **Wire OfflineBanner** into Layout component
 4. ✅ **Update hooks** to route through queue
 
@@ -1072,7 +1044,8 @@ export function OfflineBanner() {
 | **Pin message** | `pin-message` | ✅ Implemented | `usePinnedMessages.ts` |
 | **Unpin message** | `unpin-message` | ✅ Implemented | `usePinnedMessages.ts` |
 | **Delete message** | `delete-message` | ✅ Implemented | `useMessageActions.ts` |
-| Send message | `send-message` | ⏳ Future | (uses WebSocket queue) |
+| **Send channel message** | `send-channel-message` | ✅ Implemented | `MessageService.ts` → `ActionQueueHandlers.ts` |
+| **Send DM** | `send-dm` | ✅ Implemented | `MessageService.ts` → `ActionQueueHandlers.ts` |
 | Edit message | `edit-message` | ⏳ Future | |
 | Listen subscription | - | ❌ N/A | Ephemeral |
 | Sync request | - | ❌ N/A | Ephemeral |
@@ -1084,10 +1057,113 @@ export function OfflineBanner() {
 ### Verification (Milestone 4)
 
 - [ ] Config saves persist across crash
-- [ ] Offline → Online syncs correctly
+- [x] Offline → Online syncs correctly (send-message tested)
 - [ ] Multi-tab doesn't cause duplicates (status-based gating)
 - [x] Basic functionality works (manual test - folder drag, settings save)
-- [ ] Messages persist across refresh (future - send-message handler)
+- [x] Messages persist across refresh (send-channel-message, send-dm handlers)
+
+### Send Message Integration
+
+Integrates message sending (channel messages and DMs) into the action queue for offline resilience and retry support.
+
+#### Architecture: Signing vs Encryption Separation
+
+The key insight is separating **signing** (identity/non-repudiation) from **encryption** (confidentiality):
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                    submitChannelMessage()                    │
+│  1. Generate messageId (nonce)                              │
+│  2. Sign message with Ed448 ← HAPPENS ONCE                  │
+│  3. Add to React Query cache (optimistic, sendStatus: 'sending') │
+│  4. Queue to ActionQueue with signed message                │
+└─────────────────────┬───────────────────────────────────────┘
+                      │
+                      ▼
+┌─────────────────────────────────────────────────────────────┐
+│              ActionQueue Handler (retryable)                 │
+│  1. Get encryption state from IndexedDB                     │
+│  2. Encrypt with Triple/Double Ratchet ← CAN RETRY SAFELY   │
+│  3. Save updated ratchet state                              │
+│  4. Send via WebSocket                                      │
+│  5. Save to IndexedDB                                       │
+│  6. Update cache status to 'sent'                           │
+└─────────────────────────────────────────────────────────────┘
+```
+
+**Why this matters**: If we signed inside the handler, each retry would create a NEW messageId → duplicate messages. By signing before queueing, the same messageId/signature is preserved across retries.
+
+#### Handlers
+
+| Handler | Encryption Protocol | Use Case |
+|---------|---------------------|----------|
+| `send-channel-message` | Triple Ratchet | Space channel messages (group) |
+| `send-dm` | Double Ratchet | Direct messages (1:1) |
+
+> **Note**: Triple Ratchet is for multi-party (N participants), Double Ratchet is for two-party. This is standard cryptographic practice.
+
+#### Handler Flow: `send-channel-message`
+
+```typescript
+execute: async (context) => {
+  const { spaceId, channelId, signedMessage, messageId } = context;
+
+  // 1. Validate space/channel still exists
+  // 2. Get encryption state from IndexedDB
+  // 3. Strip ephemeral fields (sendStatus, sendError)
+  // 4. Triple Ratchet encrypt
+  // 5. Send via WebSocket hub
+  // 6. Save updated ratchet state ← CRITICAL for ratchet sync
+  // 7. Save message to IndexedDB
+  // 8. Re-add to cache if missing (offline→online edge case)
+  // 9. Update status to 'sent'
+}
+```
+
+#### Handler Flow: `send-dm`
+
+```typescript
+execute: async (context) => {
+  const { address, signedMessage, messageId, self, counterparty, keyset } = context;
+
+  // 1. Validate target inboxes exist
+  // 2. Get/create encryption states for each inbox
+  // 3. Strip ephemeral fields
+  // 4. Double Ratchet encrypt for each recipient device
+  // 5. Save updated ratchet states
+  // 6. Send to each inbox via WebSocket
+  // 7. Save message to IndexedDB
+  // 8. Re-add to cache if missing
+  // 9. Update status to 'sent'
+}
+```
+
+#### Offline → Online Cache Recovery
+
+**Problem**: Messages sent offline could disappear from UI when coming back online.
+
+**Root Cause**: Race condition where cache refetch replaces data before handler finishes saving.
+
+**Solution**: After saving to IndexedDB, ensure message exists in cache before updating status:
+
+```typescript
+queryClient.setQueryData(messagesKey, (oldData) => {
+  const exists = oldData?.pages?.some(p =>
+    p.messages.some(m => m.messageId === messageId)
+  );
+  if (exists) return oldData;
+
+  // Re-add message that was removed by refetch
+  return { ...oldData, pages: /* add message to last page */ };
+});
+```
+
+#### Key Implementation Details
+
+1. **Encryption state persistence** - Both handlers save updated ratchet state after encryption to prevent desync
+2. **Target inbox validation** - DM handler validates recipients exist before attempting encryption
+3. **Fallback path** - Falls back to `enqueueOutbound` if ActionQueue not available (backward compatible)
+4. **No toast notifications** - Message status indicator handles user feedback inline
 
 ---
 
@@ -1130,7 +1206,7 @@ export function OfflineBanner() {
 - [ ] User sees appropriate feedback (OfflineBanner + toasts) (needs testing)
 - [x] TypeScript compiles without errors
 - [ ] All platforms tested (Electron + Web)
-- [ ] Message sending uses queue (future enhancement)
+- [x] Message sending uses queue (send-channel-message, send-dm)
 
 ---
 
@@ -1243,188 +1319,6 @@ await actionQueueService.enqueue('action-type', context, dedupKey);
 4. **Check method signatures** - MessageDB methods may have different signatures than expected (e.g., `deleteMessage(messageId)` not `deleteMessage(spaceId, channelId, messageId)`)
 5. **Build complete objects** - TypeScript will catch missing fields if you spread properly
 
----
-
-## Phase 2: Send Message Integration
-
-**Status**: 🟡 Planning
-
-### Problem
-
-The current `sendMessage` handler in `ActionQueueHandlers.ts` calls `submitChannelMessage()` directly:
-
-```typescript
-private sendMessage: TaskHandler = {
-  execute: async (context) => {
-    await this.deps.messageService.submitChannelMessage(
-      context.spaceId,
-      context.channelId,
-      context.pendingMessage,  // ← Raw message text
-      ...
-    );
-  }
-}
-```
-
-This is WRONG for ActionQueue integration because:
-1. `submitChannelMessage()` generates nonce, signs, and does optimistic display
-2. If the queue retries, it would sign AGAIN with a NEW messageId → duplicate messages
-3. The message-sending-indicator feature already does optimistic display BEFORE queueing
-
-### Solution: Separate Signing from Sending
-
-Create NEW handlers that receive the **already-signed message** in context:
-
-| Handler | Encryption | Use Case |
-|---------|------------|----------|
-| `send-channel-message` | Triple Ratchet | Space channel messages |
-| `send-dm` | Double Ratchet | Direct messages |
-
-### Implementation Plan
-
-#### Step 1: Add ActionQueue to MessageService
-
-**File**: `src/services/MessageService.ts`
-
-```typescript
-// Add to constructor or via setter
-private actionQueueService?: ActionQueueService;
-
-setActionQueueService(service: ActionQueueService): void {
-  this.actionQueueService = service;
-}
-```
-
-#### Step 2: Create `send-channel-message` Handler
-
-**File**: `src/services/ActionQueueHandlers.ts`
-
-```typescript
-private sendChannelMessage: TaskHandler = {
-  execute: async (context) => {
-    const { spaceId, channelId, signedMessage, messageId } = context;
-
-    // Check if space/channel still exists
-    const space = await this.deps.messageDB.getSpace(spaceId);
-    if (!space) return;
-
-    // Get encryption state
-    const response = await this.deps.messageDB.getEncryptionStates({
-      conversationId: spaceId + '/' + spaceId,
-    });
-    const sets = response.map((e) => JSON.parse(e.state));
-
-    // Triple Ratchet encrypt (message WITHOUT ephemeral fields)
-    const { sendStatus, sendError, ...messageToEncrypt } = signedMessage;
-    const msg = secureChannel.TripleRatchetEncrypt(
-      JSON.stringify({
-        ratchet_state: sets[0].state,
-        message: [...new Uint8Array(Buffer.from(JSON.stringify(messageToEncrypt), 'utf-8'))],
-      })
-    );
-    const result = JSON.parse(msg);
-
-    // Send via hub
-    await this.deps.messageService.sendHubMessage(
-      spaceId,
-      JSON.stringify({ type: 'message', message: JSON.parse(result.envelope) })
-    );
-
-    // Save to IndexedDB (without sendStatus/sendError)
-    const conversation = await this.deps.messageDB.getConversation({
-      conversationId: spaceId + '/' + channelId,
-    });
-    await this.deps.messageService.saveMessage(
-      messageToEncrypt,
-      this.deps.messageDB,
-      spaceId,
-      channelId,
-      'group',
-      { user_icon: conversation?.conversation?.icon, display_name: conversation?.conversation?.displayName }
-    );
-
-    // Update status to 'sent'
-    this.deps.messageService.updateMessageStatus(
-      this.deps.queryClient,
-      spaceId,
-      channelId,
-      messageId,
-      'sent'
-    );
-  },
-  isPermanentError: (error) => {
-    return error.message.includes('400') || error.message.includes('403');
-  },
-};
-```
-
-#### Step 3: Create `send-dm` Handler
-
-Similar to above but uses Double Ratchet encryption path.
-
-#### Step 4: Modify `submitChannelMessage` to Use ActionQueue
-
-**File**: `src/services/MessageService.ts`
-
-```typescript
-// In submitChannelMessage, for post messages:
-
-// BEFORE (current):
-this.enqueueOutbound(async () => {
-  // encrypt + send + save + status update
-});
-
-// AFTER:
-if (this.actionQueueService) {
-  await this.actionQueueService.enqueue(
-    'send-channel-message',
-    {
-      spaceId,
-      channelId,
-      signedMessage: message, // Already signed
-      messageId: messageIdHex,
-    },
-    `send:${spaceId}:${channelId}:${messageIdHex}`
-  );
-} else {
-  // Fallback to enqueueOutbound for backward compatibility
-  this.enqueueOutbound(async () => { ... });
-}
-```
-
-#### Step 5: Wire Up in MessageDB Context
-
-**File**: `src/components/context/MessageDB.tsx`
-
-```typescript
-// After creating messageService and actionQueueService:
-messageService.setActionQueueService(actionQueueService);
-```
-
-### Key Differences from Current sendMessage Handler
-
-| Aspect | Current `sendMessage` | New `sendChannelMessage` |
-|--------|----------------------|-------------------------|
-| Input | Raw message text | Already-signed Message object |
-| Signing | Done inside handler | Done BEFORE queueing |
-| Optimistic update | Done inside handler | Done BEFORE queueing |
-| Retry behavior | Signs new message each time | Reuses same signature |
-| Message identity | New messageId per retry | Same messageId always |
-
-### Benefits of This Approach
-
-1. **Message identity preserved** - Same messageId throughout retries
-2. **Signature integrity** - Same signature for non-repudiability
-3. **No duplicates** - Server deduplication by messageId works
-4. **Offline resilient** - Signed message persists in IndexedDB queue
-5. **Backward compatible** - Falls back to enqueueOutbound if no ActionQueue
-
----
-
-_Created: 2025-12-17_
-_Updated: 2025-12-18 00:30_
-_Status: ✅ Implemented (awaiting full testing)_
-
 ## Testing
 
 Debug commands available in browser console:
@@ -1438,3 +1332,8 @@ await window.__messageDB.getAllQueueTasks()
 // Force process queue
 window.__actionQueue.processQueue()
 ```
+
+---
+
+_Created: 2025-12-17_
+_Updated: 2025-12-17 19:00_

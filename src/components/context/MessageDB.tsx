@@ -870,11 +870,13 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
   // Wire handlers and start queue processing
   useEffect(() => {
     actionQueueService.setHandlers(actionQueueHandlers);
+    // Enable ActionQueue-based message sending in MessageService
+    messageService.setActionQueueService(actionQueueService);
     actionQueueService.start();
     return () => {
       actionQueueService.stop();
     };
-  }, [actionQueueService, actionQueueHandlers]);
+  }, [actionQueueService, actionQueueHandlers, messageService]);
 
   const createSpace = React.useCallback(
     async (

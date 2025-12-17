@@ -20,8 +20,12 @@ import type { MessageDB } from '../db/messages';
 import type { MessageService } from './MessageService';
 import type { ConfigService } from './ConfigService';
 import type { SpaceService } from './SpaceService';
-import type { QueryClient } from '@tanstack/react-query';
+import type { QueryClient, InfiniteData } from '@tanstack/react-query';
 import type { ActionType } from '../types/actionQueue';
+import { buildMessagesKey } from '../hooks/queries/messages/buildMessagesKey';
+import { channel as secureChannel } from '@quilibrium/quilibrium-js-sdk-channels';
+import type { Message } from '../api/quorumApi';
+import { DefaultImages } from '../utils';
 
 export interface HandlerDependencies {
   messageDB: MessageDB;
@@ -46,57 +50,6 @@ export class ActionQueueHandlers {
   constructor(private deps: HandlerDependencies) {}
 
   // === CORE ACTIONS ===
-
-  /**
-   * Send a message to a channel
-   * No toast - inline message indicator handles feedback
-   */
-  private sendMessage: TaskHandler = {
-    execute: async (context) => {
-      // Check if space/channel still exists
-      const space = await this.deps.messageDB.getSpace(context.spaceId as string);
-      if (!space) {
-        console.log(
-          `[ActionQueue] Discarding message for deleted space: ${context.spaceId}`
-        );
-        return;
-      }
-
-      const channel = space.groups
-        ?.flatMap((g) => g.channels)
-        .find((c) => c.channelId === context.channelId);
-      if (!channel) {
-        console.log(
-          `[ActionQueue] Discarding message for deleted channel: ${context.channelId}`
-        );
-        return;
-      }
-
-      // Context contains all params needed for submitChannelMessage
-      await this.deps.messageService.submitChannelMessage(
-        context.spaceId as string,
-        context.channelId as string,
-        context.pendingMessage as string | object,
-        this.deps.queryClient,
-        context.currentPasskeyInfo as any,
-        context.inReplyTo as string | undefined,
-        context.skipSigning as boolean | undefined,
-        context.isSpaceOwner as boolean | undefined,
-        context.parentMessage as any
-      );
-    },
-    isPermanentError: (error) => {
-      return (
-        error.message.includes('400') ||
-        error.message.includes('403') ||
-        error.message.includes('404') ||
-        error.message.toLowerCase().includes('not found')
-      );
-    },
-    // NO toast - inline message indicator handles feedback
-    successMessage: undefined,
-    failureMessage: undefined,
-  };
 
   /**
    * Save user config (folders, sidebar order, preferences)
@@ -353,12 +306,406 @@ export class ActionQueueHandlers {
     failureMessage: t`Failed to delete message`,
   };
 
+  // === NEW: Signed Message Handlers (for ActionQueue integration) ===
+
+  /**
+   * Send a channel message that's already signed.
+   * Receives the complete signed Message object, encrypts with Triple Ratchet, and sends.
+   * This handler is for messages where signing + optimistic display happened BEFORE queueing.
+   *
+   * Context expected:
+   * - spaceId: string
+   * - channelId: string
+   * - signedMessage: Message (already signed, with sendStatus: 'sending')
+   * - messageId: string
+   * - replyMetadata?: { parentAuthor, parentChannelId }
+   */
+  private sendChannelMessage: TaskHandler = {
+    execute: async (context) => {
+      const spaceId = context.spaceId as string;
+      const channelId = context.channelId as string;
+      const signedMessage = context.signedMessage as Message;
+      const messageId = context.messageId as string;
+
+      // Check if space/channel still exists
+      const space = await this.deps.messageDB.getSpace(spaceId);
+      if (!space) {
+        console.log(`[ActionQueue] Discarding message for deleted space: ${spaceId}`);
+        // Update status to indicate failure (space deleted)
+        this.deps.messageService.updateMessageStatus(
+          this.deps.queryClient,
+          spaceId,
+          channelId,
+          messageId,
+          'failed',
+          'Space was deleted'
+        );
+        return;
+      }
+
+      const channel = space.groups
+        ?.flatMap((g) => g.channels)
+        .find((c) => c.channelId === channelId);
+      if (!channel) {
+        console.log(`[ActionQueue] Discarding message for deleted channel: ${channelId}`);
+        this.deps.messageService.updateMessageStatus(
+          this.deps.queryClient,
+          spaceId,
+          channelId,
+          messageId,
+          'failed',
+          'Channel was deleted'
+        );
+        return;
+      }
+
+      // Get encryption state
+      const response = await this.deps.messageDB.getEncryptionStates({
+        conversationId: spaceId + '/' + spaceId,
+      });
+      const sets = response.map((e) => JSON.parse(e.state));
+
+      if (sets.length === 0) {
+        throw new Error('No encryption state available');
+      }
+
+      // Strip ephemeral fields before encrypting
+      const { sendStatus: _sendStatus, sendError: _sendError, ...messageToEncrypt } = signedMessage;
+
+      // Triple Ratchet encrypt
+      const msg = secureChannel.TripleRatchetEncrypt(
+        JSON.stringify({
+          ratchet_state: sets[0].state,
+          message: [
+            ...new Uint8Array(Buffer.from(JSON.stringify(messageToEncrypt), 'utf-8')),
+          ],
+        } as secureChannel.TripleRatchetStateAndMessage)
+      );
+      const result = JSON.parse(msg) as secureChannel.TripleRatchetStateAndEnvelope;
+
+      // Send via hub
+      const sendHubMessage = this.deps.messageService.getSendHubMessage();
+      await sendHubMessage(
+        spaceId,
+        JSON.stringify({
+          type: 'message',
+          message: JSON.parse(result.envelope),
+        })
+      );
+
+      // Save the updated Triple Ratchet state
+      const newEncryptionState = {
+        state: JSON.stringify({
+          state: result.ratchet_state,
+        }),
+        timestamp: Date.now(),
+        inboxId: spaceId,
+        conversationId: spaceId + '/' + spaceId,
+        sentAccept: false,
+      };
+      await this.deps.messageDB.saveEncryptionState(newEncryptionState, true);
+
+      // Get conversation for user profile info
+      const conversationId = spaceId + '/' + channelId;
+      const conversation = await this.deps.messageDB.getConversation({
+        conversationId,
+      });
+
+      // Save to IndexedDB (without sendStatus/sendError)
+      await this.deps.messageService.saveMessage(
+        messageToEncrypt as Message,
+        this.deps.messageDB,
+        spaceId,
+        channelId,
+        'group',
+        {
+          user_icon: conversation?.conversation?.icon ?? DefaultImages.UNKNOWN_USER,
+          display_name: conversation?.conversation?.displayName ?? 'Unknown User',
+        }
+      );
+
+      // Ensure message is in React Query cache (may have been removed by refetch when coming back online)
+      // This re-adds the message with sendStatus: undefined (sent state)
+      const messagesKey = buildMessagesKey({ spaceId, channelId });
+      this.deps.queryClient.setQueryData(
+        messagesKey,
+        (oldData: InfiniteData<{ messages: Message[]; nextCursor?: number; prevCursor?: number }> | undefined) => {
+          if (!oldData?.pages) return oldData;
+
+          // Check if message already exists in cache
+          const messageExists = oldData.pages.some((page) =>
+            page.messages.some((m) => m.messageId === messageId)
+          );
+
+          if (messageExists) {
+            // Message exists - just update status (handled by updateMessageStatus below)
+            return oldData;
+          }
+
+          // Message not in cache (likely removed by refetch) - re-add it
+          return {
+            pageParams: oldData.pageParams,
+            pages: oldData.pages.map((page, index) => {
+              // Add to the last page (most recent messages)
+              if (index === oldData.pages.length - 1) {
+                const newMessages = [...page.messages, messageToEncrypt as Message];
+                // Sort by createdDate
+                newMessages.sort((a, b) => a.createdDate - b.createdDate);
+                return {
+                  ...page,
+                  messages: newMessages,
+                };
+              }
+              return page;
+            }),
+          };
+        }
+      );
+
+      // Update status to 'sent'
+      this.deps.messageService.updateMessageStatus(
+        this.deps.queryClient,
+        spaceId,
+        channelId,
+        messageId,
+        'sent'
+      );
+
+      // Invalidate reply notification caches if this is a reply
+      if ((context.replyMetadata as any)?.parentAuthor) {
+        await this.deps.queryClient.invalidateQueries({
+          queryKey: ['reply-counts', 'channel', spaceId],
+        });
+        await this.deps.queryClient.invalidateQueries({
+          queryKey: ['reply-notifications', spaceId],
+        });
+      }
+    },
+    isPermanentError: (error) => {
+      // Permanent errors that shouldn't be retried
+      return (
+        error.message.includes('400') ||
+        error.message.includes('403') ||
+        error.message.includes('Space was deleted') ||
+        error.message.includes('Channel was deleted')
+      );
+    },
+    // No toast - inline message indicator handles feedback
+    successMessage: undefined,
+    failureMessage: undefined,
+  };
+
+  /**
+   * Send a direct message that's already signed.
+   * Receives the complete signed Message object, encrypts with Double Ratchet, and sends.
+   *
+   * Context expected:
+   * - address: string (the DM conversation address)
+   * - signedMessage: Message (already signed)
+   * - messageId: string
+   * - self: UserRegistration
+   * - counterparty: UserRegistration
+   * - keyset: { deviceKeyset, userKeyset }
+   */
+  private sendDm: TaskHandler = {
+    execute: async (context) => {
+      const address = context.address as string;
+      const signedMessage = context.signedMessage as Message;
+      const messageId = context.messageId as string;
+      const self = context.self as secureChannel.UserRegistration;
+      const counterparty = context.counterparty as secureChannel.UserRegistration;
+      const keyset = context.keyset as {
+        deviceKeyset: secureChannel.DeviceKeyset;
+        userKeyset: secureChannel.UserKeyset;
+      };
+
+      const conversationId = address + '/' + address;
+      const conversation = await this.deps.messageDB.getConversation({
+        conversationId,
+      });
+
+      // Get encryption states
+      let response = await this.deps.messageDB.getEncryptionStates({
+        conversationId,
+      });
+
+      const inboxes = self.device_registrations
+        .map((d) => d.inbox_registration.inbox_address)
+        .concat(
+          counterparty.device_registrations.map(
+            (d) => d.inbox_registration.inbox_address
+          )
+        )
+        .sort();
+
+      // Clean up stale encryption states
+      for (const res of response) {
+        if (!inboxes.includes(JSON.parse(res.state).tag)) {
+          await this.deps.messageDB.deleteEncryptionState(res);
+        }
+      }
+
+      response = await this.deps.messageDB.getEncryptionStates({ conversationId });
+      const sets = response.map((e) => JSON.parse(e.state));
+
+      let sessions: secureChannel.SealedMessageAndMetadata[] = [];
+
+      // Strip ephemeral fields before encrypting
+      const { sendStatus: _sendStatus, sendError: _sendError, ...messageToEncrypt } = signedMessage;
+
+      // Get target inboxes (excluding our own device)
+      const targetInboxes = inboxes.filter(
+        (i) => i !== keyset.deviceKeyset.inbox_keyset.inbox_address
+      );
+
+      // Validate we have recipients to send to
+      if (targetInboxes.length === 0) {
+        throw new Error('No target inboxes available for DM - counterparty may have no registered devices');
+      }
+
+      // Encrypt for each inbox (Double Ratchet)
+      for (const inbox of targetInboxes) {
+        const set = sets.find((s) => s.tag === inbox);
+        if (set) {
+          if (set.sending_inbox.inbox_public_key === '') {
+            sessions = [
+              ...sessions,
+              ...secureChannel.DoubleRatchetInboxEncryptForceSenderInit(
+                keyset.deviceKeyset,
+                [set],
+                JSON.stringify(messageToEncrypt),
+                self,
+                undefined,
+                undefined
+              ),
+            ];
+          } else {
+            sessions = [
+              ...sessions,
+              ...secureChannel.DoubleRatchetInboxEncrypt(
+                keyset.deviceKeyset,
+                [set],
+                JSON.stringify(messageToEncrypt),
+                self,
+                undefined,
+                undefined
+              ),
+            ];
+          }
+        } else {
+          sessions = [
+            ...sessions,
+            ...(await secureChannel.NewDoubleRatchetSenderSession(
+              keyset.deviceKeyset,
+              self.user_address,
+              self.device_registrations
+                .concat(counterparty.device_registrations)
+                .find((d) => d.inbox_registration.inbox_address === inbox)!,
+              JSON.stringify(messageToEncrypt),
+              undefined,
+              undefined
+            )),
+          ];
+        }
+      }
+
+      // Save encryption states and send messages
+      const sendHubMessage = this.deps.messageService.getSendHubMessage();
+      for (const session of sessions) {
+        const newEncryptionState = {
+          state: JSON.stringify({
+            ratchet_state: session.ratchet_state,
+            receiving_inbox: session.receiving_inbox,
+            tag: session.tag,
+            sending_inbox: session.sending_inbox,
+          } as secureChannel.DoubleRatchetStateAndInboxKeys),
+          timestamp: Date.now(),
+          inboxId: session.receiving_inbox.inbox_address,
+          conversationId: address + '/' + address,
+          sentAccept: session.sent_accept,
+        };
+        await this.deps.messageDB.saveEncryptionState(newEncryptionState, true);
+
+        // Send the message
+        await sendHubMessage(
+          address,
+          JSON.stringify({ type: 'direct', ...session.sealed_message })
+        );
+      }
+
+      // Save to IndexedDB (without sendStatus/sendError)
+      await this.deps.messageService.saveMessage(
+        messageToEncrypt as Message,
+        this.deps.messageDB,
+        address,
+        address,
+        'direct',
+        {
+          user_icon: conversation?.conversation?.icon ?? DefaultImages.UNKNOWN_USER,
+          display_name: conversation?.conversation?.displayName ?? 'Unknown User',
+        }
+      );
+
+      // Ensure message is in React Query cache (may have been removed by refetch when coming back online)
+      const messagesKey = buildMessagesKey({ spaceId: address, channelId: address });
+      this.deps.queryClient.setQueryData(
+        messagesKey,
+        (oldData: InfiniteData<{ messages: Message[]; nextCursor?: number; prevCursor?: number }> | undefined) => {
+          if (!oldData?.pages) return oldData;
+
+          // Check if message already exists in cache
+          const messageExists = oldData.pages.some((page) =>
+            page.messages.some((m) => m.messageId === messageId)
+          );
+
+          if (messageExists) {
+            return oldData;
+          }
+
+          // Message not in cache - re-add it
+          return {
+            pageParams: oldData.pageParams,
+            pages: oldData.pages.map((page, index) => {
+              if (index === oldData.pages.length - 1) {
+                const newMessages = [...page.messages, messageToEncrypt as Message];
+                newMessages.sort((a, b) => a.createdDate - b.createdDate);
+                return {
+                  ...page,
+                  messages: newMessages,
+                };
+              }
+              return page;
+            }),
+          };
+        }
+      );
+
+      // Update status to 'sent'
+      this.deps.messageService.updateMessageStatus(
+        this.deps.queryClient,
+        address,
+        address,
+        messageId,
+        'sent'
+      );
+    },
+    isPermanentError: (error) => {
+      return (
+        error.message.includes('400') ||
+        error.message.includes('403')
+      );
+    },
+    successMessage: undefined,
+    failureMessage: undefined,
+  };
+
   /**
    * Get handler for a specific task type
    */
   getHandler(taskType: ActionType | string): TaskHandler | undefined {
     const handlers: Record<string, TaskHandler> = {
-      'send-message': this.sendMessage,
+      'send-channel-message': this.sendChannelMessage,
+      'send-dm': this.sendDm,
       'save-user-config': this.saveUserConfig,
       'update-space': this.updateSpace,
       'kick-user': this.kickUser,

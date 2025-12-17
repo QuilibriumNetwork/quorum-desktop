@@ -43,6 +43,7 @@ import { MAX_MESSAGE_LENGTH } from '../utils/validation';
 import { hasPermission } from '../utils/permissions';
 import { showWarning, dismissToast, showPersistentToast } from '../utils/toast';
 import { SimpleRateLimiter, RATE_LIMITS } from '../utils/rateLimit';
+import type { ActionQueueService } from './ActionQueueService';
 
 // Timer for dismissing sync toast after inactivity
 let syncDismissTimer: NodeJS.Timeout | undefined;
@@ -123,6 +124,9 @@ export class MessageService {
   // Per-sender rate limiters (receiving-side defense-in-depth)
   private receivingRateLimiters = new Map<string, SimpleRateLimiter>();
 
+  // ActionQueueService for persistent queue (optional, set via setter)
+  private actionQueueService?: ActionQueueService;
+
   constructor(dependencies: MessageServiceDependencies) {
     this.messageDB = dependencies.messageDB;
     this.enqueueOutbound = dependencies.enqueueOutbound;
@@ -139,6 +143,21 @@ export class MessageService {
     this.directSync = dependencies.directSync;
     this.saveConfig = dependencies.saveConfig;
     this.sendHubMessage = dependencies.sendHubMessage;
+  }
+
+  /**
+   * Set the ActionQueueService for persistent queue operations.
+   * Call this after MessageService is created to avoid circular dependencies.
+   */
+  setActionQueueService(service: ActionQueueService): void {
+    this.actionQueueService = service;
+  }
+
+  /**
+   * Get sendHubMessage for use by ActionQueueHandlers
+   */
+  getSendHubMessage(): (spaceId: string, message: string) => Promise<string> {
+    return this.sendHubMessage;
   }
 
   /**
@@ -1465,166 +1484,183 @@ export class MessageService {
         sendStatus: 'sending',
       });
 
-      // Enqueue network operation
-      this.enqueueOutbound(async () => {
-        const outbounds: string[] = [];
-        try {
-          const conversationId = address + '/' + address;
-          const conversation = await this.messageDB.getConversation({
-            conversationId,
-          });
-          let response = await this.messageDB.getEncryptionStates({
-            conversationId,
-          });
-          const inboxes = self.device_registrations
-            .map((d) => d.inbox_registration.inbox_address)
-            .concat(
-              counterparty.device_registrations.map(
-                (d) => d.inbox_registration.inbox_address
+      // Use ActionQueue if available (persistent, crash-resistant)
+      // Otherwise fall back to enqueueOutbound (in-memory only)
+      if (this.actionQueueService) {
+        await this.actionQueueService.enqueue(
+          'send-dm',
+          {
+            address,
+            signedMessage: message,
+            messageId: messageIdHex,
+            self,
+            counterparty,
+            keyset,
+          },
+          `send-dm:${address}:${messageIdHex}`
+        );
+      } else {
+        // Fallback: enqueueOutbound (in-memory, lost on crash/refresh)
+        this.enqueueOutbound(async () => {
+          const outbounds: string[] = [];
+          try {
+            const conversationId = address + '/' + address;
+            const conversation = await this.messageDB.getConversation({
+              conversationId,
+            });
+            let response = await this.messageDB.getEncryptionStates({
+              conversationId,
+            });
+            const inboxes = self.device_registrations
+              .map((d) => d.inbox_registration.inbox_address)
+              .concat(
+                counterparty.device_registrations.map(
+                  (d) => d.inbox_registration.inbox_address
+                )
               )
-            )
-            .sort();
-          for (const res of response) {
-            if (!inboxes.includes(JSON.parse(res.state).tag)) {
-              await this.messageDB.deleteEncryptionState(res);
+              .sort();
+            for (const res of response) {
+              if (!inboxes.includes(JSON.parse(res.state).tag)) {
+                await this.messageDB.deleteEncryptionState(res);
+              }
             }
-          }
 
-          response = await this.messageDB.getEncryptionStates({
-            conversationId,
-          });
-          const sets = response.map((e) => JSON.parse(e.state));
+            response = await this.messageDB.getEncryptionStates({
+              conversationId,
+            });
+            const sets = response.map((e) => JSON.parse(e.state));
 
-          let sessions: secureChannel.SealedMessageAndMetadata[] = [];
+            let sessions: secureChannel.SealedMessageAndMetadata[] = [];
 
-          // Strip ephemeral fields before encrypting
-          const { sendStatus, sendError, ...messageToEncrypt } = message;
+            // Strip ephemeral fields before encrypting
+            const { sendStatus: _sendStatus, sendError: _sendError, ...messageToEncrypt } = message;
 
-          for (const inbox of inboxes.filter(
-            (i) => i !== keyset.deviceKeyset.inbox_keyset.inbox_address
-          )) {
-            const set = sets.find((s) => s.tag === inbox);
-            if (set) {
-              if (set.sending_inbox.inbox_public_key === '') {
-                sessions = [
-                  ...sessions,
-                  ...secureChannel.DoubleRatchetInboxEncryptForceSenderInit(
-                    keyset.deviceKeyset,
-                    [set],
-                    JSON.stringify(messageToEncrypt),
-                    self,
-                    currentPasskeyInfo!.displayName,
-                    currentPasskeyInfo?.pfpUrl
-                  ),
-                ];
+            for (const inbox of inboxes.filter(
+              (i) => i !== keyset.deviceKeyset.inbox_keyset.inbox_address
+            )) {
+              const set = sets.find((s) => s.tag === inbox);
+              if (set) {
+                if (set.sending_inbox.inbox_public_key === '') {
+                  sessions = [
+                    ...sessions,
+                    ...secureChannel.DoubleRatchetInboxEncryptForceSenderInit(
+                      keyset.deviceKeyset,
+                      [set],
+                      JSON.stringify(messageToEncrypt),
+                      self,
+                      currentPasskeyInfo!.displayName,
+                      currentPasskeyInfo?.pfpUrl
+                    ),
+                  ];
+                } else {
+                  sessions = [
+                    ...sessions,
+                    ...secureChannel.DoubleRatchetInboxEncrypt(
+                      keyset.deviceKeyset,
+                      [set],
+                      JSON.stringify(messageToEncrypt),
+                      self,
+                      currentPasskeyInfo!.displayName,
+                      currentPasskeyInfo?.pfpUrl
+                    ),
+                  ];
+                }
               } else {
                 sessions = [
                   ...sessions,
-                  ...secureChannel.DoubleRatchetInboxEncrypt(
+                  ...(await secureChannel.NewDoubleRatchetSenderSession(
                     keyset.deviceKeyset,
-                    [set],
+                    self.user_address,
+                    self.device_registrations
+                      .concat(counterparty.device_registrations)
+                      .find((d) => d.inbox_registration.inbox_address === inbox)!,
                     JSON.stringify(messageToEncrypt),
-                    self,
                     currentPasskeyInfo!.displayName,
                     currentPasskeyInfo?.pfpUrl
-                  ),
+                  )),
                 ];
               }
-            } else {
-              sessions = [
-                ...sessions,
-                ...(await secureChannel.NewDoubleRatchetSenderSession(
-                  keyset.deviceKeyset,
-                  self.user_address,
-                  self.device_registrations
-                    .concat(counterparty.device_registrations)
-                    .find((d) => d.inbox_registration.inbox_address === inbox)!,
-                  JSON.stringify(messageToEncrypt),
-                  currentPasskeyInfo!.displayName,
-                  currentPasskeyInfo?.pfpUrl
-                )),
-              ];
             }
-          }
 
-          for (const session of sessions) {
-            const newEncryptionState: EncryptionState = {
-              state: JSON.stringify({
-                ratchet_state: session.ratchet_state,
-                receiving_inbox: session.receiving_inbox,
-                tag: session.tag,
-                sending_inbox: session.sending_inbox,
-              } as secureChannel.DoubleRatchetStateAndInboxKeys),
-              timestamp: Date.now(),
-              inboxId: session.receiving_inbox.inbox_address,
-              conversationId: address! + '/' + address!,
-              sentAccept: session.sent_accept,
-            };
-            await this.messageDB.saveEncryptionState(newEncryptionState, true);
-            outbounds.push(
-              JSON.stringify({
-                type: 'listen',
-                inbox_addresses: [session.receiving_inbox.inbox_address],
-              })
+            for (const session of sessions) {
+              const newEncryptionState: EncryptionState = {
+                state: JSON.stringify({
+                  ratchet_state: session.ratchet_state,
+                  receiving_inbox: session.receiving_inbox,
+                  tag: session.tag,
+                  sending_inbox: session.sending_inbox,
+                } as secureChannel.DoubleRatchetStateAndInboxKeys),
+                timestamp: Date.now(),
+                inboxId: session.receiving_inbox.inbox_address,
+                conversationId: address! + '/' + address!,
+                sentAccept: session.sent_accept,
+              };
+              await this.messageDB.saveEncryptionState(newEncryptionState, true);
+              outbounds.push(
+                JSON.stringify({
+                  type: 'listen',
+                  inbox_addresses: [session.receiving_inbox.inbox_address],
+                })
+              );
+              outbounds.push(
+                JSON.stringify({ type: 'direct', ...session.sealed_message })
+              );
+            }
+
+            // Save to IndexedDB (without sendStatus/sendError)
+            await this.saveMessage(
+              messageToEncrypt as Message,
+              this.messageDB,
+              address!,
+              address!,
+              'direct',
+              {
+                user_icon:
+                  conversation?.conversation?.icon ?? DefaultImages.UNKNOWN_USER,
+                display_name:
+                  conversation?.conversation?.displayName ?? t`Unknown User`,
+              }
             );
-            outbounds.push(
-              JSON.stringify({ type: 'direct', ...session.sealed_message })
+
+            // Update status to 'sent'
+            this.updateMessageStatus(
+              queryClient,
+              address,
+              address,
+              messageIdHex,
+              'sent'
             );
+
+            this.addOrUpdateConversation(
+              queryClient,
+              address,
+              Date.now(),
+              message.createdDate,
+              {
+                user_icon:
+                  conversation?.conversation?.icon ?? DefaultImages.UNKNOWN_USER,
+                display_name:
+                  conversation?.conversation?.displayName ?? 'Unknown User',
+              }
+            );
+
+            return outbounds;
+          } catch (error) {
+            // Update status to 'failed' with sanitized error
+            const sanitizedError = this.sanitizeError(error);
+            this.updateMessageStatus(
+              queryClient,
+              address,
+              address,
+              messageIdHex,
+              'failed',
+              sanitizedError
+            );
+            console.error('Failed to send DM:', error);
+            return outbounds;
           }
-
-          // Save to IndexedDB (without sendStatus/sendError)
-          await this.saveMessage(
-            messageToEncrypt as Message,
-            this.messageDB,
-            address!,
-            address!,
-            'direct',
-            {
-              user_icon:
-                conversation?.conversation?.icon ?? DefaultImages.UNKNOWN_USER,
-              display_name:
-                conversation?.conversation?.displayName ?? t`Unknown User`,
-            }
-          );
-
-          // Update status to 'sent'
-          this.updateMessageStatus(
-            queryClient,
-            address,
-            address,
-            messageIdHex,
-            'sent'
-          );
-
-          this.addOrUpdateConversation(
-            queryClient,
-            address,
-            Date.now(),
-            message.createdDate,
-            {
-              user_icon:
-                conversation?.conversation?.icon ?? DefaultImages.UNKNOWN_USER,
-              display_name:
-                conversation?.conversation?.displayName ?? 'Unknown User',
-            }
-          );
-
-          return outbounds;
-        } catch (error) {
-          // Update status to 'failed' with sanitized error
-          const sanitizedError = this.sanitizeError(error);
-          this.updateMessageStatus(
-            queryClient,
-            address,
-            address,
-            messageIdHex,
-            'failed',
-            sanitizedError
-          );
-          console.error('Failed to send DM:', error);
-          return outbounds;
-        }
-      });
+        });
+      }
 
       return; // Post message handling complete
     }
@@ -3548,97 +3584,113 @@ export class MessageService {
         sendStatus: 'sending',
       });
 
-      // Enqueue network operation
-      this.enqueueOutbound(async () => {
-        const outbounds: string[] = [];
-        try {
-          // Get encryption state (must be inside queue to avoid race conditions)
-          const conversationId = spaceId + '/' + channelId;
-          const conversation = await this.messageDB.getConversation({
-            conversationId,
-          });
-          const response = await this.messageDB.getEncryptionStates({
-            conversationId: spaceId + '/' + spaceId,
-          });
-          const sets = response.map((e) => JSON.parse(e.state));
+      // Use ActionQueue if available (persistent, crash-resistant)
+      // Otherwise fall back to enqueueOutbound (in-memory only)
+      if (this.actionQueueService) {
+        await this.actionQueueService.enqueue(
+          'send-channel-message',
+          {
+            spaceId,
+            channelId,
+            signedMessage: message,
+            messageId: messageIdHex,
+            replyMetadata: message.replyMetadata,
+          },
+          `send:${spaceId}:${channelId}:${messageIdHex}`
+        );
+      } else {
+        // Fallback: enqueueOutbound (in-memory, lost on crash/refresh)
+        this.enqueueOutbound(async () => {
+          const outbounds: string[] = [];
+          try {
+            // Get encryption state (must be inside queue to avoid race conditions)
+            const conversationId = spaceId + '/' + channelId;
+            const conversation = await this.messageDB.getConversation({
+              conversationId,
+            });
+            const response = await this.messageDB.getEncryptionStates({
+              conversationId: spaceId + '/' + spaceId,
+            });
+            const sets = response.map((e) => JSON.parse(e.state));
 
-          // Triple Ratchet encrypt (message without ephemeral fields)
-          const { sendStatus, sendError, ...messageToEncrypt } = message;
-          const msg = secureChannel.TripleRatchetEncrypt(
-            JSON.stringify({
-              ratchet_state: sets[0].state,
-              message: [
-                ...new Uint8Array(
-                  Buffer.from(JSON.stringify(messageToEncrypt), 'utf-8')
-                ),
-              ],
-            } as secureChannel.TripleRatchetStateAndMessage)
-          );
-          const result = JSON.parse(
-            msg
-          ) as secureChannel.TripleRatchetStateAndEnvelope;
-
-          // Send via hub
-          outbounds.push(
-            await this.sendHubMessage(
-              spaceId,
+            // Triple Ratchet encrypt (message without ephemeral fields)
+            const { sendStatus: _sendStatus, sendError: _sendError, ...messageToEncrypt } = message;
+            const msg = secureChannel.TripleRatchetEncrypt(
               JSON.stringify({
-                type: 'message',
-                message: JSON.parse(result.envelope),
-              })
-            )
-          );
+                ratchet_state: sets[0].state,
+                message: [
+                  ...new Uint8Array(
+                    Buffer.from(JSON.stringify(messageToEncrypt), 'utf-8')
+                  ),
+                ],
+              } as secureChannel.TripleRatchetStateAndMessage)
+            );
+            const result = JSON.parse(
+              msg
+            ) as secureChannel.TripleRatchetStateAndEnvelope;
 
-          // Save to IndexedDB (without sendStatus/sendError)
-          await this.saveMessage(
-            messageToEncrypt as Message,
-            this.messageDB,
-            spaceId,
-            channelId,
-            'group',
-            {
-              user_icon:
-                conversation.conversation?.icon ?? DefaultImages.UNKNOWN_USER,
-              display_name:
-                conversation.conversation?.displayName ?? t`Unknown User`,
+            // Send via hub
+            outbounds.push(
+              await this.sendHubMessage(
+                spaceId,
+                JSON.stringify({
+                  type: 'message',
+                  message: JSON.parse(result.envelope),
+                })
+              )
+            );
+
+            // Save to IndexedDB (without sendStatus/sendError)
+            await this.saveMessage(
+              messageToEncrypt as Message,
+              this.messageDB,
+              spaceId,
+              channelId,
+              'group',
+              {
+                user_icon:
+                  conversation.conversation?.icon ?? DefaultImages.UNKNOWN_USER,
+                display_name:
+                  conversation.conversation?.displayName ?? t`Unknown User`,
+              }
+            );
+
+            // Update status to 'sent'
+            this.updateMessageStatus(
+              queryClient,
+              spaceId,
+              channelId,
+              messageIdHex,
+              'sent'
+            );
+
+            // Invalidate reply notification caches if this is a reply
+            if (message.replyMetadata) {
+              await queryClient.invalidateQueries({
+                queryKey: ['reply-counts', 'channel', spaceId],
+              });
+              await queryClient.invalidateQueries({
+                queryKey: ['reply-notifications', spaceId],
+              });
             }
-          );
 
-          // Update status to 'sent'
-          this.updateMessageStatus(
-            queryClient,
-            spaceId,
-            channelId,
-            messageIdHex,
-            'sent'
-          );
-
-          // Invalidate reply notification caches if this is a reply
-          if (message.replyMetadata) {
-            await queryClient.invalidateQueries({
-              queryKey: ['reply-counts', 'channel', spaceId],
-            });
-            await queryClient.invalidateQueries({
-              queryKey: ['reply-notifications', spaceId],
-            });
+            return outbounds;
+          } catch (error) {
+            // Update status to 'failed' with sanitized error
+            const sanitizedError = this.sanitizeError(error);
+            this.updateMessageStatus(
+              queryClient,
+              spaceId,
+              channelId,
+              messageIdHex,
+              'failed',
+              sanitizedError
+            );
+            console.error('Failed to send message:', error);
+            return outbounds;
           }
-
-          return outbounds;
-        } catch (error) {
-          // Update status to 'failed' with sanitized error
-          const sanitizedError = this.sanitizeError(error);
-          this.updateMessageStatus(
-            queryClient,
-            spaceId,
-            channelId,
-            messageIdHex,
-            'failed',
-            sanitizedError
-          );
-          console.error('Failed to send message:', error);
-          return outbounds;
-        }
-      });
+        });
+      }
 
       return; // Post message handling complete
     }
@@ -3963,7 +4015,7 @@ export class MessageService {
         const sets = response.map((e) => JSON.parse(e.state));
 
         // Strip ephemeral fields before encrypting
-        const { sendStatus, sendError, ...messageToEncrypt } = failedMessage;
+        const { sendStatus: _sendStatus, sendError: _sendError, ...messageToEncrypt } = failedMessage;
 
         // Triple Ratchet encrypt (creates fresh encrypted envelope)
         const msg = secureChannel.TripleRatchetEncrypt(
@@ -4114,7 +4166,7 @@ export class MessageService {
         let sessions: secureChannel.SealedMessageAndMetadata[] = [];
 
         // Strip ephemeral fields before encrypting
-        const { sendStatus, sendError, ...messageToEncrypt } = failedMessage;
+        const { sendStatus: _sendStatus, sendError: _sendError, ...messageToEncrypt } = failedMessage;
 
         for (const inbox of inboxes.filter(
           (i) => i !== keyset.deviceKeyset.inbox_keyset.inbox_address

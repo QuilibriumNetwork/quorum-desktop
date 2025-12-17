@@ -6,8 +6,9 @@
  */
 
 export type ActionType =
-  // Core actions
-  | 'send-message'
+  // Core actions - sending messages
+  | 'send-channel-message' // Receives signed message, Triple Ratchet encrypt
+  | 'send-dm' // Receives signed message, Double Ratchet encrypt
   | 'save-user-config' // UserConfig: folders, sidebar order, user preferences (UserSettingsModal)
   | 'update-space' // Space settings: name, description, roles, emojis, stickers (SpaceSettingsModal)
 
