@@ -62,9 +62,18 @@ export function useChannelMessages({
   );
 
   const messageList = useMemo(() => {
-    return messages.pages.flatMap(
+    const allMessages = messages.pages.flatMap(
       (p) => (p as { messages: MessageType[] }).messages as MessageType[]
     );
+    // Deduplicate by messageId to prevent React key warnings
+    // This can happen when the same message is added from multiple sources
+    // (e.g., kick message created in SpaceService and MessageService rekey handler)
+    const seen = new Set<string>();
+    return allMessages.filter((msg) => {
+      if (seen.has(msg.messageId)) return false;
+      seen.add(msg.messageId);
+      return true;
+    });
   }, [messages]);
 
   const canDeleteMessages = useCallback(
