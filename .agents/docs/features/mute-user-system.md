@@ -364,10 +364,11 @@ Mute is enforced by each client independently. A malicious custom client could c
 - **[Space Permissions Architecture](../space-permissions/space-permissions-architecture.md)** - Permission system overview
 - **[Space Roles System](../space-permissions/space-roles-system.md)** - Role-based permissions
 - **[Security Architecture](./security.md)** - Defense-in-depth validation
+- **[Background Action Queue](../../tasks/background-action-queue.md)** - Future: offline resilience and retry for mute operations
 
 ---
 
 *Created: 2025-12-15*
-*Updated: 2025-12-16 (V2: Mute Duration Support)*
+*Updated: 2025-12-17 (added action queue link)*
 *Status: Production Ready*
 *Cross-Platform: ✅ Web + Mobile Compatible*

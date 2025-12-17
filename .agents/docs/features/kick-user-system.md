@@ -302,7 +302,68 @@ SpaceService.kickUser(
 
 - **5-second operation**: Kick operation typically takes ~5 seconds
 - **Non-blocking**: UI remains responsive (loading state shown)
-- **Background operation**: Cryptographic work happens in background thread
+- **Background operation**: Cryptographic work happens in background thread (via `enqueueOutbound`)
+
+### Performance Analysis (2025-12-17)
+
+**Test Configuration**: 3 total members, 1 member to notify
+
+#### Timing Breakdown
+
+| Operation | Time (ms) | % of Total |
+|-----------|-----------|------------|
+| **EstablishTripleRatchetSessionForSpace** | **5,086** | **~75%** |
+| postSpaceManifest API | 431 | ~6% |
+| postSpace API | 377 | ~6% |
+| Peer ID mapping loop (getUser API calls) | 372 | ~5% |
+| Rekey envelope loop | 114 | ~2% |
+| Create signatures (space + owner) | 67 | ~1% |
+| Create manifest + signature | 55 | <1% |
+| Kick envelope creation | 51 | <1% |
+| Get keys (space, owner, hub) | 5 | <1% |
+| Generate config keypair | 10 | <1% |
+| Generate ephemeral key + getSpace | 7 | <1% |
+| Get and filter members | 1 | <1% |
+| Get encryption states | 0 | <1% |
+| Save config key | 2 | <1% |
+| getSpace (initial) | 15 | <1% |
+
+#### Console Output
+
+```
+[KICK TIMING] Starting kick operation for user: QmNTPKPGXqwjFUjfCMMrTXXtxzwqCDVtN3oTGSFEuSXX2U
+[KICK SERVICE] Starting kickUser for: QmNTPKPGXqwjFUjfCMMrTXXtxzwqCDVtN3oTGSFEuSXX2U
+[KICK SERVICE] getSpace completed in 15ms
+[KICK SERVICE] Starting enqueued outbound operation
+[KICK TIMING] kickUser() completed in 16ms
+[KICK TIMING] Kick operation completed for user: QmNTPKPGXqwjFUjfCMMrTXXtxzwqCDVtN3oTGSFEuSXX2U
+[KICK TIMING] Cache invalidation completed in 3ms
+[KICK TIMING] Total kick operation took 20ms
+[KICK SERVICE] Get keys (space, owner, hub) completed in 5ms
+[KICK SERVICE] Generate config keypair completed in 10ms
+[KICK SERVICE] Save config key completed in 2ms
+[KICK SERVICE] Create signatures (space + owner) completed in 67ms
+[KICK SERVICE] postSpace API call completed in 377ms
+[KICK SERVICE] Generate ephemeral key + getSpace completed in 7ms
+[KICK SERVICE] Create manifest + signature completed in 55ms
+[KICK SERVICE] postSpaceManifest API call completed in 431ms
+[KICK SERVICE] Get and filter members (3 total, 1 to notify) completed in 1ms
+[KICK SERVICE] Get encryption states completed in 0ms
+[KICK SERVICE] EstablishTripleRatchetSessionForSpace completed in 5086ms
+[KICK SERVICE] Starting peer ID mapping loop for 1 members
+[KICK SERVICE] Peer ID mapping loop (getUser API calls) completed in 372ms
+[KICK SERVICE] Starting rekey envelope loop for 1 members
+[KICK SERVICE] Rekey envelope loop completed in 114ms
+[KICK SERVICE] Kick envelope creation completed in 51ms
+```
+
+#### Key Finding
+
+**`EstablishTripleRatchetSessionForSpace` is the primary bottleneck**, consuming ~75% of the total operation time at 5,086ms. This is a cryptographic operation from `@quilibrium/quilibrium-js-sdk-channels` that establishes a new triple ratchet session with capacity for `filteredMembers.length + 200` members. The expensive part is the DKG (Distributed Key Generation) setup.
+
+#### Important Note on Async Behavior
+
+The `kickUser()` call in the hook returns after only ~16-20ms because `enqueueOutbound()` is fire-and-forget - it queues the work but doesn't wait for completion. The actual cryptographic work continues in the background, which is why the UI shows "Total kick operation took 20ms" while the service continues logging for several more seconds.
 
 ### Cache Management
 
@@ -371,7 +432,8 @@ SpaceService.kickUser(
 
 ---
 
-**Last Updated**: 2025-12-15
+**Last Updated**: 2025-12-17
 **Verified**: 2025-12-15 - Updated modal props and flow (user info display via ModalProvider)
+**Performance Tested**: 2025-12-17 - Added detailed timing analysis
 **Status**: Production Ready
 **Cross-Platform**: ✅ Web + Mobile Compatible

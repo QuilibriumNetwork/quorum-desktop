@@ -47,7 +47,6 @@ export const useUserKicking = () => {
         // The kickUser function doesn't remove the user from local IndexedDB
         // So we invalidate the cache to trigger a re-render, but the kicked user
         // will still appear until the server sync removes them from local DB
-        console.log('Kick operation completed for user:', userAddress);
 
         // Invalidate space members cache to refresh the user list
         await queryClient.invalidateQueries({

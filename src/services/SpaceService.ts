@@ -738,6 +738,7 @@ export class SpaceService {
         ],
         timestamp: ts,
       } as secureChannel.SpaceRegistration);
+
       this.spaceInfo.current[spaceId] = {
         space_address: spaceId,
         space_public_key: spaceKey.publicKey,
@@ -753,6 +754,7 @@ export class SpaceService {
         ],
         timestamp: ts,
       } as secureChannel.SpaceRegistration;
+
       const ephemeral_key = JSON.parse(
         ch.js_generate_x448()
       ) as secureChannel.X448Keypair;
@@ -799,6 +801,7 @@ export class SpaceService {
           'base64'
         ).toString('hex'),
       };
+
       await this.apiClient.postSpaceManifest(spaceId, manifest);
       const members = await this.messageDB.getSpaceMembers(spaceId);
       const filteredMembers = members.filter(

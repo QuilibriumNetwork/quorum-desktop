@@ -5,13 +5,36 @@ https://github.com/QuilibriumNetwork/quorum-desktop/issues/110
 > **⚠️ AI-Generated**: May contain errors. Verify before use.
 > **Reviewed by**: feature-analyzer, security-analyst, and Explore agents (2025-12-13)
 
-**Status**: Pending
+**Status**: Archived
 **Complexity**: Critical
 **Created**: 2025-12-13
-**Updated**: 2025-12-13 (timing data corrected after measurement)
+**Updated**: 2025-12-17 (archived - web worker approach deprecated)
 **Branch**: `cross-platform_web-worker`
 
 **Estimated Effort**: 15-20 hours (incremental milestones)
+
+---
+
+## ARCHIVED - Web Worker Approach Deprecated
+
+> **This task has been archived and replaced by [background-action-queue.md](../background-action-queue.md)**
+
+### Why Web Worker Was Removed
+
+After timing analysis, the Web Worker milestones (M2-M3) were found to provide **negligible benefit**:
+
+| Operation | Time | Web Worker Benefit |
+|-----------|------|-------------------|
+| AES-GCM encryption | 0.2ms | Moving 0.2ms off main thread = meaningless |
+| SHA-512 hashing | 0.3ms | Moving 0.3ms off main thread = meaningless |
+| Ed448 signing | 1,000ms | Can't move - requires private key (security risk) |
+| API call | 5,500ms | Can't move - network latency, not CPU |
+
+**The real solution** is the background action queue (M4-M7), which makes the entire save operation non-blocking regardless of where the CPU work happens.
+
+**Reference**: Commit [81c2c5ca](https://github.com/QuilibriumNetwork/quorum-desktop/commit/81c2c5caaf92f7ecd5fdd157847ec773a63cd91b) implemented the action queue without web workers, confirming this analysis.
+
+---
 
 ---
 
