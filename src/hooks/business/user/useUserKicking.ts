@@ -4,7 +4,6 @@ import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
 import { useMessageDB } from '../../../components/context/useMessageDB';
 import { useRegistrationContext } from '../../../components/context/useRegistrationContext';
 import { useRegistration } from '../../../hooks';
-import { useQueryClient } from '@tanstack/react-query';
 
 export const useUserKicking = () => {
   const [kicking, setKicking] = useState(false);
@@ -12,8 +11,7 @@ export const useUserKicking = () => {
   const [confirmationTimeout, setConfirmationTimeout] =
     useState<NodeJS.Timeout | null>(null);
 
-  const queryClient = useQueryClient();
-  const { kickUser } = useMessageDB();
+  const { actionQueueService } = useMessageDB();
   const { currentPasskeyInfo } = usePasskeysContext();
   const { keyset } = useRegistrationContext();
   const { data: registration } = useRegistration({
@@ -36,33 +34,31 @@ export const useUserKicking = () => {
 
       setKicking(true);
       try {
-        await kickUser(
-          spaceId,
-          userAddress,
-          keyset.userKeyset,
-          keyset.deviceKeyset,
-          registration.registration
+        // Queue the kick action - will be processed in background
+        await actionQueueService.enqueue(
+          'kick-user',
+          {
+            spaceId,
+            userAddress,
+            user_keyset: keyset.userKeyset,
+            device_keyset: keyset.deviceKeyset,
+            registration: registration.registration,
+          },
+          `kick:${spaceId}:${userAddress}` // Dedup key
         );
 
-        // The kickUser function doesn't remove the user from local IndexedDB
-        // So we invalidate the cache to trigger a re-render, but the kicked user
-        // will still appear until the server sync removes them from local DB
-
-        // Invalidate space members cache to refresh the user list
-        await queryClient.invalidateQueries({
-          queryKey: ['SpaceMembers', spaceId],
-        });
-
+        // Call success callback immediately since action is queued
+        // The actual kick will happen in background with toast feedback
         if (onSuccess) {
           onSuccess();
         }
       } catch (error) {
-        console.error('Failed to kick user:', error);
+        console.error('Failed to queue kick action:', error);
       } finally {
         setKicking(false);
       }
     },
-    [kickUser, spaceId, keyset, registration, queryClient]
+    [actionQueueService, spaceId, keyset, registration]
   );
 
   const handleKickClick = useCallback(

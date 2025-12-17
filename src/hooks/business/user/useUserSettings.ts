@@ -49,7 +49,7 @@ export const useUserSettings = (
     address: currentPasskeyInfo?.address!,
   });
   const { keyset } = useRegistrationContext();
-  const { saveConfig, getConfig, updateUserProfile } = useMessageDB();
+  const { actionQueueService, getConfig, updateUserProfile } = useMessageDB();
   const uploadRegistration = useUploadRegistration();
   const existingConfig = useRef<UserConfig | null>(null);
 
@@ -142,17 +142,19 @@ export const useUserSettings = (
       currentPasskeyInfo
     );
 
-    // Save config with profile data
-    await saveConfig({
-      config: {
-        ...existingConfig.current!,
-        allowSync,
-        nonRepudiable: nonRepudiable,
-        name: displayName,
-        profile_image: profileImageUrl,
-      },
-      keyset: keyset,
-    });
+    // Queue config save in background - no more UI blocking!
+    const newConfig = {
+      ...existingConfig.current!,
+      allowSync,
+      nonRepudiable: nonRepudiable,
+      name: displayName,
+      profile_image: profileImageUrl,
+    };
+    await actionQueueService.enqueue(
+      'save-user-config',
+      { config: newConfig, keyset },
+      `config:${currentPasskeyInfo.address}` // Dedup key
+    );
 
     // If devices were removed, reconstruct and upload the registration
     if (removedDevices.length > 0 && stagedRegistration) {

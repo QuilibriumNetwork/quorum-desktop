@@ -1,9 +1,10 @@
 import { useState, useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
+import { useQueryClient } from '@tanstack/react-query';
 import { useRegistrationContext } from '../../../components/context/useRegistrationContext';
 import { useMessageDB } from '../../../components/context/useMessageDB';
-import { useSpace } from '../../queries';
+import { useSpace, buildSpaceKey } from '../../queries';
 
 export interface UseSpaceManagementOptions {
   spaceId: string;
@@ -19,7 +20,6 @@ export interface UseSpaceManagementReturn {
   setIsRepudiable: (isRepudiable: boolean) => void;
   saveEditHistory: boolean;
   setSaveEditHistory: (saveEditHistory: boolean) => void;
-  saving: boolean;
   selectedCategory: string;
   setSelectedCategory: (category: string) => void;
   saveChanges: (
@@ -45,16 +45,16 @@ export const useSpaceManagement = (
   const [isPublic, setIsPublic] = useState(true);
   const [isRepudiable, setIsRepudiable] = useState(false);
   const [saveEditHistory, setSaveEditHistory] = useState(false);
-  const [saving, setSaving] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState('general');
   const [deleteError, setDeleteError] = useState<string | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
 
-  const { updateSpace, deleteSpace } = useMessageDB();
+  const { actionQueueService, deleteSpace, messageDB } = useMessageDB();
   const { currentPasskeyInfo } = usePasskeysContext();
-  const { keyset } = useRegistrationContext();
+  useRegistrationContext(); // Ensure registration context is available
   const { data: space } = useSpace({ spaceId });
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
   // Update states when space data loads (only once)
   useEffect(() => {
@@ -74,41 +74,46 @@ export const useSpaceManagement = (
     ) => {
       if (!spaceName.trim() || !space) return;
 
-      setSaving(true);
-      try {
-        const iconUrl =
-          iconData && currentIconFile
-            ? 'data:' +
-              currentIconFile.type +
-              ';base64,' +
-              Buffer.from(iconData).toString('base64')
-            : space.iconUrl;
+      const iconUrl =
+        iconData && currentIconFile
+          ? 'data:' +
+            currentIconFile.type +
+            ';base64,' +
+            Buffer.from(iconData).toString('base64')
+          : space.iconUrl;
 
-        const bannerUrl =
-          bannerData && currentBannerFile
-            ? 'data:' +
-              currentBannerFile.type +
-              ';base64,' +
-              Buffer.from(bannerData).toString('base64')
-            : space.bannerUrl;
+      const bannerUrl =
+        bannerData && currentBannerFile
+          ? 'data:' +
+            currentBannerFile.type +
+            ';base64,' +
+            Buffer.from(bannerData).toString('base64')
+          : space.bannerUrl;
 
-        await updateSpace({
-          ...space,
-          spaceName,
-          iconUrl,
-          bannerUrl,
-          isRepudiable,
-          saveEditHistory,
-        });
+      const updatedSpace = {
+        ...space,
+        spaceName,
+        iconUrl,
+        bannerUrl,
+        isRepudiable,
+        saveEditHistory,
+      };
 
-        onClose?.();
-      } catch (error) {
-        console.error('Failed to update space:', error);
-      } finally {
-        setSaving(false);
-      }
+      // Optimistic update: Update local DB and React Query cache immediately
+      await messageDB.saveSpace(updatedSpace);
+      queryClient.setQueryData(buildSpaceKey({ spaceId }), updatedSpace);
+
+      // Queue the server-side update in background
+      await actionQueueService.enqueue(
+        'update-space',
+        { spaceId, space: updatedSpace },
+        `space:${spaceId}` // Dedup key - only latest update matters
+      );
+
+      // Close modal immediately (optimistic)
+      onClose?.();
     },
-    [spaceName, space, isRepudiable, saveEditHistory, updateSpace, onClose]
+    [spaceName, space, isRepudiable, saveEditHistory, spaceId, messageDB, queryClient, actionQueueService, onClose]
   );
 
   const handleDeleteSpace = useCallback(async () => {
@@ -171,7 +176,6 @@ export const useSpaceManagement = (
     setIsRepudiable,
     saveEditHistory,
     setSaveEditHistory,
-    saving,
     selectedCategory,
     setSelectedCategory,
     saveChanges,

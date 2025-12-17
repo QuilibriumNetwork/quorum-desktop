@@ -1,11 +1,15 @@
 import { useCallback, useState } from 'react';
 import React from 'react';
-import { Message as MessageType, Role, Channel } from '../../../api/quorumApi';
+import { Message as MessageType, Role, Channel, ReactionMessage, RemoveReactionMessage, RemoveMessage } from '../../../api/quorumApi';
 import { useConfirmationModal } from '../../../components/context/ConfirmationModalProvider';
+import { useMessageDB } from '../../../components/context/useMessageDB';
+import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
+import { useQueryClient, InfiniteData } from '@tanstack/react-query';
 import MessagePreview from '../../../components/message/MessagePreview';
 import { extractMessageRawText } from '../../../utils/clipboard';
 import { useCopyToClipboard } from '../ui';
 import { useBookmarks } from '../bookmarks';
+import { buildMessagesKey } from '../../queries/messages/buildMessagesKey';
 import { t } from '@lingui/core/macro';
 
 interface UseMessageActionsOptions {
@@ -69,6 +73,11 @@ export function useMessageActions(options: UseMessageActionsOptions) {
   // Bookmarks hook for bookmark functionality
   const bookmarks = useBookmarks({ userAddress });
 
+  // ActionQueue hooks for offline-resilient operations
+  const { messageDB, actionQueueService } = useMessageDB();
+  const { currentPasskeyInfo } = usePasskeysContext();
+  const queryClient = useQueryClient();
+
   // Calculate if user can delete this message
   // canDeleteMessages already contains all permission logic including space owner privileges
   const canUserDelete = Boolean(canDeleteMessages);
@@ -80,28 +89,114 @@ export function useMessageActions(options: UseMessageActionsOptions) {
     message.content.type === 'post' &&
     (Date.now() - message.createdDate) <= EDIT_TIME_WINDOW;
 
-  // Handle reaction submission
+  // Handle reaction submission - optimistic update + queue
   const handleReaction = useCallback(
-    (emoji: string) => {
+    async (emoji: string) => {
+      // Skip if not in a space context (reactions only work in channels)
+      if (!spaceId || !channelId || !currentPasskeyInfo) {
+        // Fallback to old behavior for DMs or missing context
+        onSubmitMessage({
+          type: message.reactions?.find((r) => r.emojiId === emoji)?.memberIds.includes(userAddress)
+            ? 'remove-reaction'
+            : 'reaction',
+          messageId: message.messageId,
+          reaction: emoji,
+        });
+        return;
+      }
+
       const hasReacted = message.reactions
         ?.find((r) => r.emojiId === emoji)
         ?.memberIds.includes(userAddress);
 
+      // Optimistic update: Update React Query cache immediately
+      const messagesKey = buildMessagesKey({ spaceId, channelId });
+
+      // Build the updated reactions
+      const currentReactions = message.reactions || [];
+      const existingReaction = currentReactions.find((r) => r.emojiId === emoji);
+
+      let updatedReactions;
       if (!hasReacted) {
-        onSubmitMessage({
-          type: 'reaction',
-          messageId: message.messageId,
-          reaction: emoji,
-        });
+        // Adding reaction
+        if (existingReaction) {
+          updatedReactions = currentReactions.map((r) =>
+            r.emojiId === emoji
+              ? { ...r, memberIds: [...r.memberIds, userAddress], count: r.memberIds.length + 1 }
+              : r
+          );
+        } else {
+          // Create new reaction with all required fields
+          updatedReactions = [...currentReactions, {
+            emojiId: emoji,
+            emojiName: emoji,
+            spaceId: spaceId,
+            memberIds: [userAddress],
+            count: 1,
+          }];
+        }
       } else {
-        onSubmitMessage({
-          type: 'remove-reaction',
-          messageId: message.messageId,
-          reaction: emoji,
-        });
+        // Removing reaction
+        updatedReactions = currentReactions
+          .map((r) =>
+            r.emojiId === emoji
+              ? { ...r, memberIds: r.memberIds.filter((id) => id !== userAddress), count: r.memberIds.length - 1 }
+              : r
+          )
+          .filter((r) => r.memberIds.length > 0);
       }
+
+      // Optimistic update: Update React Query cache immediately for instant UI feedback
+      queryClient.setQueryData(
+        messagesKey,
+        (oldData: InfiniteData<{ messages: MessageType[]; prevCursor?: number; nextCursor?: number }> | undefined) => {
+          if (!oldData?.pages) return oldData;
+          return {
+            pageParams: oldData.pageParams,
+            pages: oldData.pages.map((page) => ({
+              ...page,
+              messages: page.messages.map((msg) =>
+                msg.messageId === message.messageId
+                  ? { ...msg, reactions: updatedReactions }
+                  : msg
+              ),
+            })),
+          };
+        }
+      );
+
+      // Also persist to IndexedDB for offline durability
+      const updatedMessage = { ...message, reactions: updatedReactions };
+      await messageDB.updateMessage(updatedMessage);
+
+      // Create the reaction message
+      const reactionMessage: ReactionMessage | RemoveReactionMessage = hasReacted
+        ? {
+            type: 'remove-reaction',
+            senderId: currentPasskeyInfo.address,
+            messageId: message.messageId,
+            reaction: emoji,
+          }
+        : {
+            type: 'reaction',
+            senderId: currentPasskeyInfo.address,
+            messageId: message.messageId,
+            reaction: emoji,
+          };
+
+      // Queue the server-side broadcast
+      await actionQueueService.enqueue(
+        'reaction',
+        {
+          spaceId,
+          channelId,
+          reactionMessage,
+          currentPasskeyInfo,
+        },
+        `reaction:${spaceId}:${channelId}:${message.messageId}:${emoji}:${userAddress}` // Dedup key
+      );
     },
-    [message, userAddress, onSubmitMessage]
+    [message, userAddress, spaceId, channelId, currentPasskeyInfo, queryClient, actionQueueService, onSubmitMessage]
   );
 
   // Handle reply action
@@ -126,13 +221,56 @@ export function useMessageActions(options: UseMessageActionsOptions) {
     await copyToClipboard(text);
   }, [message, copyToClipboard]);
 
-  // Handle delete action with confirmation
+  // Handle delete action with confirmation - optimistic update + queue
   const handleDelete = useCallback((e: React.MouseEvent) => {
-    const performDelete = () => {
-      onSubmitMessage({
+    const performDelete = async () => {
+      // Skip if not in a space context (delete only works in channels for now)
+      if (!spaceId || !channelId || !currentPasskeyInfo) {
+        // Fallback to old behavior for DMs or missing context
+        onSubmitMessage({
+          type: 'remove-message',
+          removeMessageId: message.messageId,
+        });
+        return;
+      }
+
+      // Optimistic update: Remove message from React Query cache immediately
+      const messagesKey = buildMessagesKey({ spaceId, channelId });
+      queryClient.setQueryData(
+        messagesKey,
+        (oldData: InfiniteData<{ messages: MessageType[]; prevCursor?: number; nextCursor?: number }> | undefined) => {
+          if (!oldData?.pages) return oldData;
+          return {
+            pageParams: oldData.pageParams,
+            pages: oldData.pages.map((page) => ({
+              ...page,
+              messages: page.messages.filter((msg) => msg.messageId !== message.messageId),
+            })),
+          };
+        }
+      );
+
+      // Also delete from local DB for persistence
+      await messageDB.deleteMessage(message.messageId);
+
+      // Create the delete message
+      const deleteMessage: RemoveMessage = {
         type: 'remove-message',
+        senderId: currentPasskeyInfo.address,
         removeMessageId: message.messageId,
-      });
+      };
+
+      // Queue the server-side broadcast
+      await actionQueueService.enqueue(
+        'delete-message',
+        {
+          spaceId,
+          channelId,
+          deleteMessage,
+          currentPasskeyInfo,
+        },
+        `delete:${spaceId}:${channelId}:${message.messageId}` // Dedup key
+      );
     };
 
     // Check for Shift+click bypass (desktop only)
@@ -161,7 +299,7 @@ export function useMessageActions(options: UseMessageActionsOptions) {
       protipAction: t`delete`,
       onConfirm: performDelete,
     });
-  }, [message, onSubmitMessage, showConfirmationModal, mapSenderToUser, stickers, spaceId, spaceRoles, spaceChannels, onChannelClick]);
+  }, [message, spaceId, channelId, currentPasskeyInfo, queryClient, messageDB, actionQueueService, onSubmitMessage, showConfirmationModal, mapSenderToUser, stickers, spaceRoles, spaceChannels, onChannelClick]);
 
   // Handle more reactions (emoji picker)
   const handleMoreReactions = useCallback(

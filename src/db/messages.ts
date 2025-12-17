@@ -1342,6 +1342,21 @@ export class MessageDB {
     });
   }
 
+  /**
+   * Update an existing message in IndexedDB (for optimistic updates)
+   */
+  async updateMessage(message: Message): Promise<void> {
+    await this.init();
+    return new Promise((resolve, reject) => {
+      const transaction = this.db!.transaction('messages', 'readwrite');
+      const store = transaction.objectStore('messages');
+      const request = store.put(message);
+
+      request.onsuccess = () => resolve();
+      request.onerror = () => reject(request.error);
+    });
+  }
+
   // Pinned Messages Methods
   async getPinnedMessages(
     spaceId: string,

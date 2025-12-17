@@ -20,7 +20,10 @@ import {
   SyncService,
   ConfigService,
   InvitationService,
+  ActionQueueService,
+  ActionQueueHandlers,
 } from '../../services';
+import { ActionQueueProvider } from './ActionQueueContext';
 import {
   buildConversationsKey,
 } from '../../hooks';
@@ -236,6 +239,7 @@ type MessageDBContextValue = {
       completedOnboarding: boolean;
     }
   ) => Promise<void>;
+  actionQueueService: ActionQueueService;
 };
 
 type MessageDBContextProps = {
@@ -844,6 +848,34 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
     });
   }, [messageDB, apiClient, enqueueOutbound, saveConfig, selfAddress, keyset, spaceInfo, saveMessage, addMessage]);
 
+  // ActionQueueService (depends on all other services)
+  const actionQueueService = useMemo(() => {
+    const service = new ActionQueueService(messageDB);
+    // Expose for debugging: window.__actionQueue
+    (window as any).__actionQueue = service;
+    return service;
+  }, [messageDB]);
+
+  // ActionQueueHandlers (wire handlers after services are ready)
+  const actionQueueHandlers = useMemo(() => {
+    return new ActionQueueHandlers({
+      messageDB,
+      messageService,
+      configService,
+      spaceService,
+      queryClient,
+    });
+  }, [messageDB, messageService, configService, spaceService, queryClient]);
+
+  // Wire handlers and start queue processing
+  useEffect(() => {
+    actionQueueService.setHandlers(actionQueueHandlers);
+    actionQueueService.start();
+    return () => {
+      actionQueueService.stop();
+    };
+  }, [actionQueueService, actionQueueHandlers]);
+
   const createSpace = React.useCallback(
     async (
       spaceName: string,
@@ -1059,9 +1091,12 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
         requestSync,
         sendVerifyKickedStatuses,
         deleteConversation,
+        actionQueueService,
       }}
     >
-      {children}
+      <ActionQueueProvider actionQueueService={actionQueueService}>
+        {children}
+      </ActionQueueProvider>
     </MessageDBContext.Provider>
   );
 };
@@ -1092,6 +1127,7 @@ const MessageDBContext = createContext<MessageDBContextValue>({
   requestSync: () => undefined as never,
   sendVerifyKickedStatuses: () => undefined as never,
   deleteConversation: () => undefined as never,
+  actionQueueService: undefined as never,
 });
 
 export { MessageDBProvider, MessageDBContext };

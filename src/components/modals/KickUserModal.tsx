@@ -20,8 +20,8 @@ const KickUserModal: React.FunctionComponent<KickUserModalProps> = (props) => {
     useUserKicking();
 
   const { isSaving, saveUntilComplete } = useModalSaveState({
-    defaultTimeout: 5000,      // 5s for kick operations
     maxTimeout: 30000,         // 30s failsafe
+    showOverlayDelay: 1000,    // Only show overlay if operation takes >1s
     onSaveComplete: props.onClose, // Auto-close modal on success
     onSaveError: (error) => {
       console.error('Kick failed:', error);
@@ -41,22 +41,11 @@ const KickUserModal: React.FunctionComponent<KickUserModalProps> = (props) => {
       // First click - just advance to confirmation step
       handleKickClick(props.userAddress, () => {});
     } else {
-      // Second click - execute kick with overlay
+      // Second click - execute kick (queued via ActionQueue)
       if (!props.userAddress) return;
 
       saveUntilComplete(async () => {
-        // Ensure minimum 3 second overlay display time
-        const startTime = Date.now();
-        const minDisplayTime = 3000; // 3 seconds
-
-        // Execute the kick operation
         await kickUserFromSpace(props.userAddress);
-
-        // If operation completed too quickly, wait for minimum display time
-        const elapsed = Date.now() - startTime;
-        if (elapsed < minDisplayTime) {
-          await new Promise(resolve => setTimeout(resolve, minDisplayTime - elapsed));
-        }
       });
     }
   }, [confirmationStep, handleKickClick, saveUntilComplete, kickUserFromSpace, props.userAddress]);

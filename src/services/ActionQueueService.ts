@@ -13,6 +13,7 @@
 import { MessageDB } from '../db/messages';
 import type { QueueTask, ActionType, QueueStats } from '../types/actionQueue';
 import type { ActionQueueHandlers } from './ActionQueueHandlers';
+import { showError } from '../utils/toast';
 
 export class ActionQueueService {
   private messageDB: MessageDB;
@@ -213,7 +214,7 @@ export class ActionQueueService {
         task.error = err.message;
         task.processedAt = Date.now();
         if (handler.failureMessage) {
-          console.error(`[ActionQueue] ${handler.failureMessage}: ${err.message}`);
+          showError(handler.failureMessage);
         }
       } else {
         task.retryCount++;
@@ -222,7 +223,7 @@ export class ActionQueueService {
           task.error = `Max retries exceeded: ${err.message}`;
           task.processedAt = Date.now();
           if (handler.failureMessage) {
-            console.error(`[ActionQueue] ${handler.failureMessage}: ${err.message}`);
+            showError(handler.failureMessage);
           }
         } else {
           task.status = 'pending';

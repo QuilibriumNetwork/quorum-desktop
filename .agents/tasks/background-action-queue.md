@@ -4,7 +4,7 @@ https://github.com/QuilibriumNetwork/quorum-desktop/issues/110
 
 > **AI-Generated**: May contain errors. Verify before use.
 
-**Status**: Ready for Implementation
+**Status**: ✅ Implemented (Core Features)
 **Complexity**: High
 **Created**: 2025-12-17
 **Updated**: 2025-12-17
@@ -123,14 +123,14 @@ The two queues work **in series**, not compete:
 
 ## Milestones
 
-| Order | Milestone | Value | Effort | Key Additions |
-|-------|-----------|-------|--------|---------------|
-| 1 | **Persistent Queue** | ⭐⭐⭐ HIGH | 2h | IndexedDB + crash recovery |
-| 2 | **Queue Processing** | ⭐⭐⭐ HIGH | 3h | Handlers + lazy init + status gating |
-| 3 | **UI Feedback** | ⭐⭐ MEDIUM | 2h | Event listener + offline banner |
-| 4 | **Full Integration** | ⭐⭐⭐ HIGH | 1-2h | Wire together |
+| Order | Milestone | Status | Key Additions |
+|-------|-----------|--------|---------------|
+| 1 | **Persistent Queue** | ✅ Complete | IndexedDB + crash recovery |
+| 2 | **Queue Processing** | ✅ Complete | Handlers + lazy init + status gating |
+| 3 | **UI Feedback** | ✅ Complete | Event listener + offline banner |
+| 4 | **Full Integration** | ✅ Complete | Wire together |
 
-> **Note**: Concurrency is intentionally omitted. Start with sequential processing - add parallelism only if profiling shows it's needed.
+> **Note**: Concurrency is intentionally omitted. Sequential processing is sufficient - the 80% bottleneck is network latency, not processing.
 
 ---
 
@@ -361,14 +361,14 @@ async resetStuckProcessingTasks(stuckTimeoutMs = 60000): Promise<number> {
 
 ### Verification (Milestone 1)
 
-- [ ] Database migration runs without errors
+- [ ] Database migration runs without errors (DB_VERSION 6)
 - [ ] Can add tasks to queue
 - [ ] Can query tasks by status
 - [ ] Can update task status
 - [ ] Can delete tasks
 - [ ] Can get queue stats
 - [ ] Crash recovery resets stuck tasks on startup
-- [ ] TypeScript compiles
+- [x] TypeScript compiles
 
 ---
 
@@ -1036,89 +1036,101 @@ export function OfflineBanner() {
 
 - [ ] Context listens to `quorum:queue-updated` events
 - [ ] Stats update automatically when queue changes
-- [ ] Offline banner appears when offline
+- [x] Offline banner appears when offline (manual test)
 - [ ] Pending count shows in banner
 - [ ] Banner disappears when queue empty and online
 - [ ] Queue processing triggers when coming back online
 
 ---
 
-## Milestone 4: Full Integration 🟡 MEDIUM RISK
+## Milestone 4: Full Integration ✅ Complete
 
 **Goal**: Wire everything together for production use.
 **Value**: Complete feature working end-to-end.
-**Effort**: 1-2 hours
 
-### Implementation
+### Implementation Status
 
-1. **Initialize ActionQueueService** in app startup with handlers (see M2 Step 2.3)
-2. **Update WebsocketProvider** to use queue for message sending
-3. **Wire OfflineBanner** into Layout component
-4. **Update hooks** to route through queue where appropriate
+1. ✅ **Initialize ActionQueueService** in `MessageDB.tsx` with handlers
+2. ⏳ **Update WebsocketProvider** to use queue for message sending (future)
+3. ✅ **Wire OfflineBanner** into Layout component
+4. ✅ **Update hooks** to route through queue
 
 ### Which Operations Use the Queue?
 
-| Operation | Action Type | Via ActionQueue? | Reason |
-|-----------|-------------|-----------------|--------|
-| **Send message** | `send-message` | ✅ Yes | Needs persistence, retry |
-| **UserSettingsModal** | `save-user-config` | ✅ Yes | User preferences |
-| **Folder create/edit/delete** | `save-user-config` | ✅ Yes | Local folder structure |
-| **Folder drag-drop reorder** | `save-user-config` | ✅ Yes | Sidebar order |
-| **Space drag-drop reorder** | `save-user-config` | ✅ Yes | Sidebar order |
-| **SpaceSettingsModal** | `update-space` | ✅ Yes | Space name, roles, emojis, stickers |
-| Reaction | `reaction` | ✅ Yes | Offline support |
-| Pin/Unpin | `pin-message` | ✅ Yes | Offline support |
-| Edit message | `edit-message` | ✅ Yes | Offline support |
-| Delete message | `delete-message` | ✅ Yes | Offline support |
-| Mute/Unmute | `mute-user` | ✅ Yes | Offline support |
-| Kick user | `kick-user` | ✅ Yes | Offline support (with staleness check) |
-| Listen subscription | - | ❌ No | Ephemeral, reconnect handles |
-| Sync request | - | ❌ No | Ephemeral |
-| Bookmark | - | ❌ No | Already local (syncs via config) |
+| Operation | Action Type | Status | Hook/File |
+|-----------|-------------|--------|-----------|
+| **UserSettingsModal** | `save-user-config` | ✅ Implemented | `useUserSettings.ts` |
+| **Folder create/edit** | `save-user-config` | ✅ Implemented | `useFolderManagement.ts` |
+| **Folder delete** | `save-user-config` | ✅ Implemented | `useDeleteFolder.ts` |
+| **Folder drag-drop** | `save-user-config` | ✅ Implemented | `useFolderDragAndDrop.ts` |
+| **Space drag-drop** | `save-user-config` | ✅ Implemented | `useSpaceDragAndDrop.ts` |
+| **Kick user** | `kick-user` | ✅ Implemented | `useUserKicking.ts` |
+| **SpaceSettingsModal** | `update-space` | ✅ Implemented | `useSpaceManagement.ts` |
+| **Mute user** | `mute-user` | ✅ Implemented | `useUserMuting.ts` |
+| **Unmute user** | `unmute-user` | ✅ Implemented | `useUserMuting.ts` |
+| **Reaction** | `reaction` | ✅ Implemented | `useMessageActions.ts` |
+| **Pin message** | `pin-message` | ✅ Implemented | `usePinnedMessages.ts` |
+| **Unpin message** | `unpin-message` | ✅ Implemented | `usePinnedMessages.ts` |
+| **Delete message** | `delete-message` | ✅ Implemented | `useMessageActions.ts` |
+| Send message | `send-message` | ⏳ Future | (uses WebSocket queue) |
+| Edit message | `edit-message` | ⏳ Future | |
+| Listen subscription | - | ❌ N/A | Ephemeral |
+| Sync request | - | ❌ N/A | Ephemeral |
 
 > **Note**: `save-user-config` and `update-space` are distinct operations:
 > - `save-user-config` → `ConfigService.saveConfig()` → User's local config (folders, preferences)
 > - `update-space` → `SpaceService.updateSpace()` → Server-side space manifest (name, roles, emojis)
 
-### Future: Concurrency (Optional)
-
-> **Skip unless profiling shows it's needed.** With 80% of time being network latency, parallel processing provides minimal benefit over sequential.
-
 ### Verification (Milestone 4)
 
-- [ ] Messages persist across refresh
 - [ ] Config saves persist across crash
 - [ ] Offline → Online syncs correctly
-- [ ] Multi-tab doesn't cause duplicates
-- [ ] All existing functionality works
+- [ ] Multi-tab doesn't cause duplicates (status-based gating)
+- [x] Basic functionality works (manual test - folder drag, settings save)
+- [ ] Messages persist across refresh (future - send-message handler)
 
 ---
 
 ## Files Summary
 
-### New Files
-- `src/types/actionQueue.ts` - Type definitions
-- `src/services/ActionQueueService.ts` - Core queue service
-- `src/services/ActionQueueHandlers.ts` - Class-based handlers
-- `src/components/context/ActionQueueContext.tsx` - React context
-- `src/components/ui/OfflineBanner.tsx` - Offline indicator
+### New Files (Created)
+- ✅ `src/types/actionQueue.ts` - Type definitions
+- ✅ `src/services/ActionQueueService.ts` - Core queue service
+- ✅ `src/services/ActionQueueHandlers.ts` - Class-based handlers
+- ✅ `src/components/context/ActionQueueContext.tsx` - React context
+- ✅ `src/components/ui/OfflineBanner.tsx` - Offline indicator
+- ✅ `src/components/ui/OfflineBanner.scss` - Banner styles
 
 ### Modified Files
-- `src/db/messages.ts` (queue storage + crash recovery in M1)
-- `src/components/Layout.tsx` (add OfflineBanner)
-- `src/components/context/WebsocketProvider.tsx` (use queue)
+- ✅ `src/db/messages.ts` - Added action_queue store + CRUD methods (DB_VERSION 6)
+- ✅ `src/services/index.ts` - Export new services
+- ✅ `src/components/context/MessageDB.tsx` - Wire ActionQueueService + ActionQueueProvider
+- ✅ `src/components/Layout.tsx` - Add OfflineBanner
+
+### Hooks Updated to Use Queue
+- ✅ `src/hooks/business/user/useUserKicking.ts` - kick-user
+- ✅ `src/hooks/business/user/useUserSettings.ts` - save-user-config
+- ✅ `src/hooks/business/user/useUserMuting.ts` - mute-user, unmute-user
+- ✅ `src/hooks/business/folders/useFolderDragAndDrop.ts` - save-user-config
+- ✅ `src/hooks/business/folders/useFolderManagement.ts` - save-user-config
+- ✅ `src/hooks/business/folders/useDeleteFolder.ts` - save-user-config
+- ✅ `src/hooks/business/spaces/useSpaceDragAndDrop.ts` - save-user-config
+- ✅ `src/hooks/business/spaces/useSpaceManagement.ts` - update-space
+- ✅ `src/hooks/business/messages/usePinnedMessages.ts` - pin-message, unpin-message
+- ✅ `src/hooks/business/messages/useMessageActions.ts` - reaction, delete-message
 
 ---
 
 ## Definition of Done
 
-- [ ] All milestones complete
-- [ ] UI doesn't freeze during config saves
-- [ ] Data persists across crashes/refreshes
-- [ ] Offline mode queues actions correctly
-- [ ] User sees appropriate feedback
-- [ ] TypeScript compiles without errors
+- [x] All milestones complete (code implemented)
+- [ ] UI doesn't freeze during config saves (needs testing)
+- [ ] Data persists across crashes/refreshes (needs testing)
+- [ ] Offline mode queues actions correctly (needs testing)
+- [ ] User sees appropriate feedback (OfflineBanner + toasts) (needs testing)
+- [x] TypeScript compiles without errors
 - [ ] All platforms tested (Electron + Web)
+- [ ] Message sending uses queue (future enhancement)
 
 ---
 
@@ -1175,6 +1187,254 @@ After threat model analysis, encrypting the action queue provides **minimal secu
 
 ---
 
+## Lessons Learned: Optimistic UI Updates for Offline Actions
+
+When plugging actions into the queue (reactions, pins, deletes), we encountered issues with offline UI updates. Here are the key lessons:
+
+### Problem: `invalidateQueries` vs `setQueryData`
+
+| Method | Behavior | Works Offline? |
+|--------|----------|----------------|
+| `invalidateQueries` | Marks query as stale, triggers background refetch | ❌ No - refetch is delayed/skipped |
+| `setQueryData` | Directly updates cache, triggers immediate re-render | ✅ Yes - instant UI update |
+
+**Symptom**: Actions queued while offline didn't show in UI until coming back online.
+
+**Root Cause**: We were using `invalidateQueries` which only marks queries as stale - it doesn't force an immediate re-render. React Query may batch or delay the actual refetch.
+
+### Solution Pattern for Offline-Resilient Actions
+
+```typescript
+// 1. Optimistic UI update via setQueryData (INSTANT)
+queryClient.setQueryData(queryKey, (oldData) => {
+  // Return new data with changes applied
+  return { ...oldData, /* changes */ };
+});
+
+// 2. Persist to IndexedDB (DURABLE)
+await messageDB.updateMessage(updatedMessage);
+
+// 3. Queue server broadcast (EVENTUAL)
+await actionQueueService.enqueue('action-type', context, dedupKey);
+```
+
+### Specific Fixes Applied
+
+#### Reactions (`useMessageActions.ts`)
+- Changed from `invalidateQueries` to `setQueryData` for Messages cache
+- Must build proper `Reaction` objects with all required fields (`emojiId`, `emojiName`, `spaceId`, `memberIds`, `count`)
+
+#### Pins (`usePinnedMessages.ts`)
+- Use `setQueryData` for three caches:
+  1. `['Messages', spaceId, channelId]` - Update `isPinned` flag on message
+  2. `['pinnedMessageCount', spaceId, channelId]` - Increment/decrement count
+  3. `['pinnedMessages', spaceId, channelId]` - Add/remove from pinned list
+- For pin, get full message from Messages cache before adding to pinnedMessages list
+
+#### Delete (`useMessageActions.ts`)
+- `setQueryData` to filter out deleted message from Messages cache
+- `messageDB.deleteMessage(messageId)` - note: takes only messageId, not spaceId/channelId
+
+### Key Takeaways
+
+1. **Always use `setQueryData` for optimistic updates** - it's the only way to get instant UI feedback
+2. **Still persist to IndexedDB** - for durability across app restarts
+3. **Queue server broadcast separately** - fire-and-forget pattern
+4. **Check method signatures** - MessageDB methods may have different signatures than expected (e.g., `deleteMessage(messageId)` not `deleteMessage(spaceId, channelId, messageId)`)
+5. **Build complete objects** - TypeScript will catch missing fields if you spread properly
+
+---
+
+## Phase 2: Send Message Integration
+
+**Status**: 🟡 Planning
+
+### Problem
+
+The current `sendMessage` handler in `ActionQueueHandlers.ts` calls `submitChannelMessage()` directly:
+
+```typescript
+private sendMessage: TaskHandler = {
+  execute: async (context) => {
+    await this.deps.messageService.submitChannelMessage(
+      context.spaceId,
+      context.channelId,
+      context.pendingMessage,  // ← Raw message text
+      ...
+    );
+  }
+}
+```
+
+This is WRONG for ActionQueue integration because:
+1. `submitChannelMessage()` generates nonce, signs, and does optimistic display
+2. If the queue retries, it would sign AGAIN with a NEW messageId → duplicate messages
+3. The message-sending-indicator feature already does optimistic display BEFORE queueing
+
+### Solution: Separate Signing from Sending
+
+Create NEW handlers that receive the **already-signed message** in context:
+
+| Handler | Encryption | Use Case |
+|---------|------------|----------|
+| `send-channel-message` | Triple Ratchet | Space channel messages |
+| `send-dm` | Double Ratchet | Direct messages |
+
+### Implementation Plan
+
+#### Step 1: Add ActionQueue to MessageService
+
+**File**: `src/services/MessageService.ts`
+
+```typescript
+// Add to constructor or via setter
+private actionQueueService?: ActionQueueService;
+
+setActionQueueService(service: ActionQueueService): void {
+  this.actionQueueService = service;
+}
+```
+
+#### Step 2: Create `send-channel-message` Handler
+
+**File**: `src/services/ActionQueueHandlers.ts`
+
+```typescript
+private sendChannelMessage: TaskHandler = {
+  execute: async (context) => {
+    const { spaceId, channelId, signedMessage, messageId } = context;
+
+    // Check if space/channel still exists
+    const space = await this.deps.messageDB.getSpace(spaceId);
+    if (!space) return;
+
+    // Get encryption state
+    const response = await this.deps.messageDB.getEncryptionStates({
+      conversationId: spaceId + '/' + spaceId,
+    });
+    const sets = response.map((e) => JSON.parse(e.state));
+
+    // Triple Ratchet encrypt (message WITHOUT ephemeral fields)
+    const { sendStatus, sendError, ...messageToEncrypt } = signedMessage;
+    const msg = secureChannel.TripleRatchetEncrypt(
+      JSON.stringify({
+        ratchet_state: sets[0].state,
+        message: [...new Uint8Array(Buffer.from(JSON.stringify(messageToEncrypt), 'utf-8'))],
+      })
+    );
+    const result = JSON.parse(msg);
+
+    // Send via hub
+    await this.deps.messageService.sendHubMessage(
+      spaceId,
+      JSON.stringify({ type: 'message', message: JSON.parse(result.envelope) })
+    );
+
+    // Save to IndexedDB (without sendStatus/sendError)
+    const conversation = await this.deps.messageDB.getConversation({
+      conversationId: spaceId + '/' + channelId,
+    });
+    await this.deps.messageService.saveMessage(
+      messageToEncrypt,
+      this.deps.messageDB,
+      spaceId,
+      channelId,
+      'group',
+      { user_icon: conversation?.conversation?.icon, display_name: conversation?.conversation?.displayName }
+    );
+
+    // Update status to 'sent'
+    this.deps.messageService.updateMessageStatus(
+      this.deps.queryClient,
+      spaceId,
+      channelId,
+      messageId,
+      'sent'
+    );
+  },
+  isPermanentError: (error) => {
+    return error.message.includes('400') || error.message.includes('403');
+  },
+};
+```
+
+#### Step 3: Create `send-dm` Handler
+
+Similar to above but uses Double Ratchet encryption path.
+
+#### Step 4: Modify `submitChannelMessage` to Use ActionQueue
+
+**File**: `src/services/MessageService.ts`
+
+```typescript
+// In submitChannelMessage, for post messages:
+
+// BEFORE (current):
+this.enqueueOutbound(async () => {
+  // encrypt + send + save + status update
+});
+
+// AFTER:
+if (this.actionQueueService) {
+  await this.actionQueueService.enqueue(
+    'send-channel-message',
+    {
+      spaceId,
+      channelId,
+      signedMessage: message, // Already signed
+      messageId: messageIdHex,
+    },
+    `send:${spaceId}:${channelId}:${messageIdHex}`
+  );
+} else {
+  // Fallback to enqueueOutbound for backward compatibility
+  this.enqueueOutbound(async () => { ... });
+}
+```
+
+#### Step 5: Wire Up in MessageDB Context
+
+**File**: `src/components/context/MessageDB.tsx`
+
+```typescript
+// After creating messageService and actionQueueService:
+messageService.setActionQueueService(actionQueueService);
+```
+
+### Key Differences from Current sendMessage Handler
+
+| Aspect | Current `sendMessage` | New `sendChannelMessage` |
+|--------|----------------------|-------------------------|
+| Input | Raw message text | Already-signed Message object |
+| Signing | Done inside handler | Done BEFORE queueing |
+| Optimistic update | Done inside handler | Done BEFORE queueing |
+| Retry behavior | Signs new message each time | Reuses same signature |
+| Message identity | New messageId per retry | Same messageId always |
+
+### Benefits of This Approach
+
+1. **Message identity preserved** - Same messageId throughout retries
+2. **Signature integrity** - Same signature for non-repudiability
+3. **No duplicates** - Server deduplication by messageId works
+4. **Offline resilient** - Signed message persists in IndexedDB queue
+5. **Backward compatible** - Falls back to enqueueOutbound if no ActionQueue
+
+---
+
 _Created: 2025-12-17_
-_Updated: 2025-12-17 19:30_
-_Status: Ready for Implementation_
+_Updated: 2025-12-18 00:30_
+_Status: ✅ Implemented (awaiting full testing)_
+
+## Testing
+
+Debug commands available in browser console:
+```javascript
+// Check queue stats
+await window.__actionQueue.getStats()
+
+// View all tasks
+await window.__messageDB.getAllQueueTasks()
+
+// Force process queue
+window.__actionQueue.processQueue()
+```

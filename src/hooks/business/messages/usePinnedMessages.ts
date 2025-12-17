@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import React from 'react';
-import { useQueryClient, useMutation, useQuery } from '@tanstack/react-query';
+import { useQueryClient, useQuery } from '@tanstack/react-query';
 import type { Message, Channel, Role, PinMessage } from '../../../api/quorumApi';
 import { useMessageDB } from '../../../components/context/useMessageDB';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
@@ -26,7 +26,7 @@ export const usePinnedMessages = (
 ) => {
   const queryClient = useQueryClient();
   const user = usePasskeysContext();
-  const { messageDB, submitChannelMessage } = useMessageDB();
+  const { messageDB, actionQueueService } = useMessageDB();
   const { showConfirmationModal } = useConfirmationModal();
   // Query for space data to check roles and permissions
   const { data: space } = useQuery({
@@ -65,9 +65,9 @@ export const usePinnedMessages = (
     enabled: !!spaceId && !!channelId,
   });
 
-  // Mutation for pinning a message
-  const pinMutation = useMutation({
-    mutationFn: async (messageId: string) => {
+  // Pin a message - optimistic local update + queue server call
+  const doPinMessage = useCallback(
+    async (messageId: string) => {
       if (!messageId) {
         throw new Error(t`Invalid message ID`);
       }
@@ -76,58 +76,90 @@ export const usePinnedMessages = (
         throw new Error(t`User not authenticated`);
       }
 
-      try {
-        const currentCount = await messageDB.getPinnedMessageCount(
-          spaceId,
-          channelId
+      const currentCount = await messageDB.getPinnedMessageCount(
+        spaceId,
+        channelId
+      );
+
+      if (currentCount >= PINNED_MESSAGES_CONFIG.MAX_PINS) {
+        throw new Error(
+          t`Pin limit reached (${PINNED_MESSAGES_CONFIG.MAX_PINS})`
         );
+      }
 
-        if (currentCount >= PINNED_MESSAGES_CONFIG.MAX_PINS) {
-          throw new Error(
-            t`Pin limit reached (${PINNED_MESSAGES_CONFIG.MAX_PINS})`
-          );
+      // Create the pin message
+      const pinMessage: PinMessage = {
+        senderId: user.currentPasskeyInfo.address,
+        type: 'pin',
+        targetMessageId: messageId,
+        action: 'pin',
+      };
+
+      // Optimistic update: Update React Query caches immediately for instant UI feedback
+      // Update Messages cache to show isPinned = true
+      queryClient.setQueryData(
+        ['Messages', spaceId, channelId],
+        (oldData: any) => {
+          if (!oldData?.pages) return oldData;
+          return {
+            pageParams: oldData.pageParams,
+            pages: oldData.pages.map((page: any) => ({
+              ...page,
+              messages: page.messages.map((msg: Message) =>
+                msg.messageId === messageId
+                  ? { ...msg, isPinned: true, pinnedAt: Date.now(), pinnedBy: user.currentPasskeyInfo!.address }
+                  : msg
+              ),
+            })),
+          };
         }
+      );
 
-        // Broadcast pin message to all space members
-        const pinMessage: PinMessage = {
-          senderId: user.currentPasskeyInfo.address,
-          type: 'pin',
-          targetMessageId: messageId,
-          action: 'pin',
-        };
+      // Update pinnedMessageCount cache
+      queryClient.setQueryData(
+        ['pinnedMessageCount', spaceId, channelId],
+        (oldCount: number | undefined) => (oldCount ?? 0) + 1
+      );
 
-        await submitChannelMessage(
+      // Also persist to IndexedDB for offline durability
+      await messageDB.updateMessagePinStatus(messageId, true, user.currentPasskeyInfo.address);
+
+      // Update pinnedMessages list cache directly for instant UI feedback
+      // Get the message from Messages cache to add to pinned list
+      const messagesData = queryClient.getQueryData(['Messages', spaceId, channelId]) as any;
+      if (messagesData?.pages) {
+        for (const page of messagesData.pages) {
+          const foundMsg = page.messages?.find((m: Message) => m.messageId === messageId);
+          if (foundMsg) {
+            const pinnedMsg = { ...foundMsg, isPinned: true, pinnedAt: Date.now(), pinnedBy: user.currentPasskeyInfo!.address };
+            queryClient.setQueryData(
+              ['pinnedMessages', spaceId, channelId],
+              (oldPinned: Message[] | undefined) => [...(oldPinned || []), pinnedMsg]
+            );
+            break;
+          }
+        }
+      }
+
+      // Queue the server-side broadcast
+      await actionQueueService.enqueue(
+        'pin-message',
+        {
           spaceId,
           channelId,
+          messageId,
           pinMessage,
-          queryClient,
-          user.currentPasskeyInfo
-        );
-      } catch (error) {
-        console.error('Error pinning message:', error);
-        throw error;
-      }
+          currentPasskeyInfo: user.currentPasskeyInfo,
+        },
+        `pin:${spaceId}:${channelId}:${messageId}` // Dedup key
+      );
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ['pinnedMessages', spaceId, channelId],
-      });
-      queryClient.invalidateQueries({
-        queryKey: ['pinnedMessageCount', spaceId, channelId],
-      });
-      queryClient.invalidateQueries({
-        queryKey: ['Messages', spaceId, channelId],
-      });
-    },
-    onError: (error) => {
-      console.error('Pin mutation failed:', error);
-      // The error will be available to consumers via mutation state
-    },
-  });
+    [spaceId, channelId, user?.currentPasskeyInfo, messageDB, queryClient, actionQueueService]
+  );
 
-  // Mutation for unpinning a message
-  const unpinMutation = useMutation({
-    mutationFn: async (messageId: string) => {
+  // Unpin a message - optimistic local update + queue server call
+  const doUnpinMessage = useCallback(
+    async (messageId: string) => {
       if (!messageId) {
         throw new Error(t`Invalid message ID`);
       }
@@ -136,43 +168,63 @@ export const usePinnedMessages = (
         throw new Error(t`User not authenticated`);
       }
 
-      try {
-        // Broadcast unpin message to all space members
-        const unpinMessage: PinMessage = {
-          senderId: user.currentPasskeyInfo.address,
-          type: 'pin',
-          targetMessageId: messageId,
-          action: 'unpin',
-        };
+      // Create the unpin message
+      const unpinMessage: PinMessage = {
+        senderId: user.currentPasskeyInfo.address,
+        type: 'pin',
+        targetMessageId: messageId,
+        action: 'unpin',
+      };
 
-        await submitChannelMessage(
+      // Optimistic update: Update React Query caches immediately for instant UI feedback
+      // Update Messages cache to show isPinned = false
+      queryClient.setQueryData(
+        ['Messages', spaceId, channelId],
+        (oldData: any) => {
+          if (!oldData?.pages) return oldData;
+          return {
+            pageParams: oldData.pageParams,
+            pages: oldData.pages.map((page: any) => ({
+              ...page,
+              messages: page.messages.map((msg: Message) =>
+                msg.messageId === messageId
+                  ? { ...msg, isPinned: false, pinnedAt: undefined, pinnedBy: undefined }
+                  : msg
+              ),
+            })),
+          };
+        }
+      );
+
+      // Update pinnedMessageCount cache
+      queryClient.setQueryData(
+        ['pinnedMessageCount', spaceId, channelId],
+        (oldCount: number | undefined) => Math.max(0, (oldCount ?? 0) - 1)
+      );
+
+      // Also persist to IndexedDB for offline durability
+      await messageDB.updateMessagePinStatus(messageId, false);
+
+      // Update pinnedMessages list cache directly - remove the unpinned message
+      queryClient.setQueryData(
+        ['pinnedMessages', spaceId, channelId],
+        (oldPinned: Message[] | undefined) => (oldPinned || []).filter((m) => m.messageId !== messageId)
+      );
+
+      // Queue the server-side broadcast
+      await actionQueueService.enqueue(
+        'unpin-message',
+        {
           spaceId,
           channelId,
           unpinMessage,
-          queryClient,
-          user.currentPasskeyInfo
-        );
-      } catch (error) {
-        console.error('Error unpinning message:', error);
-        throw error;
-      }
+          currentPasskeyInfo: user.currentPasskeyInfo,
+        },
+        `unpin:${spaceId}:${channelId}:${messageId}` // Dedup key
+      );
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ['pinnedMessages', spaceId, channelId],
-      });
-      queryClient.invalidateQueries({
-        queryKey: ['pinnedMessageCount', spaceId, channelId],
-      });
-      queryClient.invalidateQueries({
-        queryKey: ['Messages', spaceId, channelId],
-      });
-    },
-    onError: (error) => {
-      console.error('Unpin mutation failed:', error);
-      // The error will be available to consumers via mutation state
-    },
-  });
+    [spaceId, channelId, user?.currentPasskeyInfo, messageDB, queryClient, actionQueueService]
+  );
 
   // Check if user can pin messages - includes read-only manager logic
   const canUserPin = useCallback(() => {
@@ -211,9 +263,9 @@ export const usePinnedMessages = (
         console.error('Missing spaceId or channelId for pinning message');
         return;
       }
-      pinMutation.mutate(messageId);
+      doPinMessage(messageId);
     },
-    [canUserPin, pinMutation, spaceId, channelId]
+    [canUserPin, doPinMessage, spaceId, channelId]
   );
 
   const unpinMessage = useCallback(
@@ -226,9 +278,9 @@ export const usePinnedMessages = (
         console.error('Missing spaceId or channelId for unpinning message');
         return;
       }
-      unpinMutation.mutate(messageId);
+      doUnpinMessage(messageId);
     },
-    [canUserPin, unpinMutation, spaceId, channelId]
+    [canUserPin, doUnpinMessage, spaceId, channelId]
   );
 
   const togglePin = useCallback(
@@ -285,10 +337,8 @@ export const usePinnedMessages = (
     pinMessage,
     unpinMessage,
     togglePin,
-    isPinning: pinMutation.isPending || unpinMutation.isPending,
+    isPinning: false, // Always false - operations are queued and return immediately
     isLoading,
-    error: error || pinMutation.error || unpinMutation.error,
-    pinError: pinMutation.error,
-    unpinError: unpinMutation.error,
+    error,
   };
 };

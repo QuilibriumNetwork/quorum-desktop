@@ -144,7 +144,7 @@ export class ActionQueueHandlers {
         error.message.toLowerCase().includes('not found')
       );
     },
-    successMessage: t`Space settings saved`,
+    successMessage: undefined, // Silent success
     failureMessage: t`Failed to save space settings`,
   };
 
@@ -160,7 +160,7 @@ export class ActionQueueHandlers {
         context.spaceId as string
       );
       const userStillPresent = members?.some(
-        (m) => m.user_address === context.targetUserId
+        (m) => m.user_address === context.userAddress
       );
       if (!userStillPresent) {
         console.log('[ActionQueue] User already left space, skipping kick');
@@ -185,8 +185,8 @@ export class ActionQueueHandlers {
         error.message.toLowerCase().includes('not found')
       );
     },
-    successMessage: t`User removed`,
-    failureMessage: t`Failed to remove user`,
+    successMessage: undefined, // Silent success
+    failureMessage: t`Failed to kick user`,
   };
 
   /**
@@ -211,7 +211,7 @@ export class ActionQueueHandlers {
         error.message.includes('403')
       );
     },
-    successMessage: t`User muted`,
+    successMessage: undefined, // Silent success
     failureMessage: t`Failed to mute user`,
   };
 
@@ -237,7 +237,7 @@ export class ActionQueueHandlers {
         error.message.includes('403')
       );
     },
-    successMessage: t`User unmuted`,
+    successMessage: undefined, // Silent success
     failureMessage: t`Failed to unmute user`,
   };
 

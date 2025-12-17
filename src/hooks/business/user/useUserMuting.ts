@@ -1,16 +1,12 @@
-import { useState, useCallback } from 'react';
+import { useCallback } from 'react';
 import { useParams } from 'react-router';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
 import { useMessageDB } from '../../../components/context/useMessageDB';
-import { useQueryClient } from '@tanstack/react-query';
 import { useInvalidateMutedUsers } from '../../queries/mutedUsers';
 import type { MuteMessage } from '../../../api/quorumApi';
 
 export const useUserMuting = () => {
-  const [muting, setMuting] = useState(false);
-
-  const queryClient = useQueryClient();
-  const { messageDB, submitChannelMessage } = useMessageDB();
+  const { messageDB, actionQueueService } = useMessageDB();
   const { currentPasskeyInfo } = usePasskeysContext();
   const { spaceId, channelId } = useParams();
   const invalidateMutedUsers = useInvalidateMutedUsers();
@@ -36,51 +32,45 @@ export const useUserMuting = () => {
         throw new Error('Cannot mute user: no channel available');
       }
 
-      setMuting(true);
-      try {
-        const timestamp = Date.now();
-        // Convert days to milliseconds (0 = forever, undefined duration)
-        const duration = days > 0 ? days * 24 * 60 * 60 * 1000 : undefined;
-        const expiresAt = duration ? timestamp + duration : undefined;
+      const timestamp = Date.now();
+      // Convert days to milliseconds (0 = forever, undefined duration)
+      const duration = days > 0 ? days * 24 * 60 * 60 * 1000 : undefined;
+      const expiresAt = duration ? timestamp + duration : undefined;
 
-        const muteMessage: MuteMessage = {
-          type: 'mute',
-          senderId: currentPasskeyInfo.address,
-          targetUserId,
-          muteId: crypto.randomUUID(),
-          timestamp,
-          action: 'mute',
-          ...(duration !== undefined && { duration }),
-        };
+      const muteMessage: MuteMessage = {
+        type: 'mute',
+        senderId: currentPasskeyInfo.address,
+        targetUserId,
+        muteId: crypto.randomUUID(),
+        timestamp,
+        action: 'mute',
+        ...(duration !== undefined && { duration }),
+      };
 
-        await submitChannelMessage(
+      // Optimistic update: Store locally for immediate effect
+      await messageDB.muteUser(
+        spaceId,
+        targetUserId,
+        currentPasskeyInfo.address,
+        muteMessage.muteId,
+        muteMessage.timestamp,
+        expiresAt
+      );
+      invalidateMutedUsers({ spaceId });
+
+      // Queue the server-side message send in background
+      await actionQueueService.enqueue(
+        'mute-user',
+        {
           spaceId,
-          targetChannelId,
+          channelId: targetChannelId,
           muteMessage,
-          queryClient,
-          currentPasskeyInfo
-        );
-
-        // Also store locally for immediate effect
-        await messageDB.muteUser(
-          spaceId,
-          targetUserId,
-          currentPasskeyInfo.address,
-          muteMessage.muteId,
-          muteMessage.timestamp,
-          expiresAt
-        );
-
-        // Invalidate muted users cache
-        invalidateMutedUsers({ spaceId });
-      } catch (error) {
-        console.error('Failed to mute user:', error);
-        throw error;
-      } finally {
-        setMuting(false);
-      }
+          currentPasskeyInfo,
+        },
+        `mute:${spaceId}:${targetUserId}` // Dedup key
+      );
     },
-    [spaceId, channelId, currentPasskeyInfo, messageDB, submitChannelMessage, queryClient, invalidateMutedUsers]
+    [spaceId, channelId, currentPasskeyInfo, messageDB, actionQueueService, invalidateMutedUsers]
   );
 
   const unmuteUser = useCallback(
@@ -104,42 +94,35 @@ export const useUserMuting = () => {
         throw new Error('Cannot unmute user: no channel available');
       }
 
-      setMuting(true);
-      try {
-        const unmuteMessage: MuteMessage = {
-          type: 'mute',
-          senderId: currentPasskeyInfo.address,
-          targetUserId,
-          muteId: crypto.randomUUID(),
-          timestamp: Date.now(),
-          action: 'unmute',
-        };
+      const unmuteMessage: MuteMessage = {
+        type: 'mute',
+        senderId: currentPasskeyInfo.address,
+        targetUserId,
+        muteId: crypto.randomUUID(),
+        timestamp: Date.now(),
+        action: 'unmute',
+      };
 
-        await submitChannelMessage(
+      // Optimistic update: Remove locally for immediate effect
+      await messageDB.unmuteUser(spaceId, targetUserId);
+      invalidateMutedUsers({ spaceId });
+
+      // Queue the server-side message send in background
+      await actionQueueService.enqueue(
+        'unmute-user',
+        {
           spaceId,
-          targetChannelId,
+          channelId: targetChannelId,
           unmuteMessage,
-          queryClient,
-          currentPasskeyInfo
-        );
-
-        // Also remove locally for immediate effect
-        await messageDB.unmuteUser(spaceId, targetUserId);
-
-        // Invalidate muted users cache
-        invalidateMutedUsers({ spaceId });
-      } catch (error) {
-        console.error('Failed to unmute user:', error);
-        throw error;
-      } finally {
-        setMuting(false);
-      }
+          currentPasskeyInfo,
+        },
+        `unmute:${spaceId}:${targetUserId}` // Dedup key
+      );
     },
-    [spaceId, channelId, currentPasskeyInfo, messageDB, submitChannelMessage, queryClient, invalidateMutedUsers]
+    [spaceId, channelId, currentPasskeyInfo, messageDB, actionQueueService, invalidateMutedUsers]
   );
 
   return {
-    muting,
     muteUser,
     unmuteUser,
   };

@@ -28,7 +28,6 @@ import {
 import { isTouchDevice } from '../../../utils/platform';
 import { showWarning } from '../../../utils/toast';
 import { buildConfigKey } from '../../queries';
-import { withWaitCursor } from '../../../utils/cursor';
 
 /**
  * Drag scenario types for folder operations
@@ -194,7 +193,7 @@ export const useFolderDragAndDrop = ({
   onFolderCreated,
 }: UseFolderDragAndDropProps): UseFolderDragAndDropReturn => {
   const { setIsDragging, setActiveItem, dropTarget, setDropTarget } = useDragStateContext();
-  const { saveConfig, keyset } = useMessageDB();
+  const { actionQueueService, keyset } = useMessageDB();
   const queryClient = useQueryClient();
 
   const handleDragStart = useCallback(
@@ -573,37 +572,25 @@ export const useFolderDragAndDrop = ({
         );
       }
 
-      // Open folder editor modal FIRST (before saveConfig blocks the thread)
-      // Modal reads from optimistic cache
+      // Open folder editor modal (reads from optimistic cache)
       if (createdFolderId && onFolderCreated) {
         setTimeout(() => {
           onFolderCreated(createdFolderId!);
         }, FOLDER_MODAL_OPEN_DELAY_MS);
       }
 
-      // Persist to DB (and sync to server)
-      // Note: crypto operations in saveConfig can block main thread for ~3s when sync enabled
-      // See: .agents/tasks/background-sync-queue.md for proper fix
-      const doSave = () =>
-        saveConfig({ config: newConfig, keyset }).catch((err) => {
-          console.error('[FolderDragAndDrop] Failed to save config:', err);
+      // Queue config save in background - no more UI blocking!
+      actionQueueService
+        .enqueue(
+          'save-user-config',
+          { config: newConfig, keyset },
+          `config:${newConfig.address}` // Dedup key - only latest config matters
+        )
+        .catch((err) => {
+          console.error('[FolderDragAndDrop] Failed to queue config save:', err);
         });
-
-      if (createdFolderId) {
-        // Folder creation: defer save to let modal open first, show wait cursor
-        setTimeout(() => {
-          if (newConfig.allowSync) {
-            withWaitCursor(doSave);
-          } else {
-            doSave();
-          }
-        }, 150);
-      } else {
-        // Simple reorder: save immediately, no cursor change needed
-        doSave();
-      }
     },
-    [config, keyset, saveConfig, setIsDragging, setActiveItem, dropTarget, setDropTarget, queryClient, onFolderCreated]
+    [config, keyset, actionQueueService, setIsDragging, setActiveItem, dropTarget, setDropTarget, queryClient, onFolderCreated]
   );
 
   // Configure sensors for both mouse and touch
