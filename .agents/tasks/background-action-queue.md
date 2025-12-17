@@ -1046,8 +1046,19 @@ export function OfflineBanner() {
 | **Delete message** | `delete-message` | ✅ Implemented | `useMessageActions.ts` |
 | **Send channel message** | `send-channel-message` | ✅ Implemented | `MessageService.ts` → `ActionQueueHandlers.ts` |
 | **Send DM** | `send-dm` | ✅ Implemented | `MessageService.ts` → `ActionQueueHandlers.ts` |
-| Edit message | `edit-message` | ⏳ Future | |
+| **Edit message** | `edit-message` | ✅ Implemented | `MessageEditTextarea.tsx` |
 | Listen subscription | - | ❌ N/A | Ephemeral |
+
+> **Edit Message Deduplication Note**: When integrating `edit-message`, we encountered duplicate entries in `EditHistoryModal` because edits were processed multiple times:
+> 1. **Optimistic update** in `MessageEditTextarea.tsx` correctly builds the `edits` array
+> 2. **Queue handler** processes when online → triggers `setQueryData` in `MessageService.ts`
+> 3. **Hub echo** broadcasts the edit back → triggers `setQueryData` again
+>
+> **Solution**: In `MessageService.ts` (lines 827-857), we added:
+> - A timestamp check: `if (m.modifiedDate >= editMessage.editedAt)` to skip if edit already applied or stale
+> - Keep existing `edits` array instead of rebuilding it (optimistic update already handles it)
+>
+> This pattern applies to any action that modifies message state and may be echoed back by the hub.
 | Sync request | - | ❌ N/A | Ephemeral |
 
 > **Note**: `save-user-config` and `update-space` are distinct operations:

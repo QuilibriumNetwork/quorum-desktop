@@ -752,6 +752,12 @@ export class MessageService {
       );
     } else if (decryptedContent.content.type === 'edit-message') {
       const editMessage = decryptedContent.content as EditMessage;
+      console.log(`[MessageService:addMessage] Processing edit-message:`, {
+        originalMessageId: editMessage.originalMessageId,
+        editedAt: editMessage.editedAt,
+        editNonce: editMessage.editNonce,
+        editedText: String(editMessage.editedText).substring(0, 50),
+      });
 
       // Check if saveEditHistory is enabled for this conversation/space (before the map callback)
       const isDMForEdit = spaceId === channelId;
@@ -789,12 +795,24 @@ export class MessageService {
                 messages: [
                   ...page.messages.map((m: Message) => {
                     if (m.messageId === editMessage.originalMessageId) {
+                      console.log(`[MessageService:setQueryData] Found target message:`, {
+                        messageId: m.messageId,
+                        currentModifiedDate: m.modifiedDate,
+                        currentLastModifiedHash: m.lastModifiedHash,
+                        currentEditsCount: m.edits?.length || 0,
+                        currentText: m.content.type === 'post' ? String(m.content.text).substring(0, 50) : 'N/A',
+                        incomingEditedAt: editMessage.editedAt,
+                        incomingEditNonce: editMessage.editNonce,
+                      });
+
                       // Only update if the sender matches (permission check)
                       if (m.content.senderId !== editMessage.senderId) {
+                        console.log(`[MessageService:setQueryData] SKIP: sender mismatch`);
                         return m;
                       }
                       // Only allow editing post messages
                       if (m.content.type !== 'post') {
+                        console.log(`[MessageService:setQueryData] SKIP: not a post message`);
                         return m;
                       }
 
@@ -802,41 +820,31 @@ export class MessageService {
                       const editTimeWindow = 15 * 60 * 1000;
                       const timeSinceCreation = Date.now() - m.createdDate;
                       if (timeSinceCreation > editTimeWindow) {
+                        console.log(`[MessageService:setQueryData] SKIP: outside edit window`);
                         return m;
                       }
 
-                      // Preserve current content in edits array before updating (only if saveEditHistory is enabled)
-                      const currentText =
-                        m.content.type === 'post' ? m.content.text : '';
+                      // CRITICAL: Skip if this edit or a newer edit was already applied
+                      // This prevents duplicates from: 1) queue processing, 2) hub echoes
+                      if (m.modifiedDate >= editMessage.editedAt) {
+                        console.log(`[MessageService:setQueryData] SKIP: edit already applied or stale`, {
+                          messageModifiedDate: m.modifiedDate,
+                          editEditedAt: editMessage.editedAt,
+                          alreadyApplied: m.lastModifiedHash === editMessage.editNonce,
+                        });
+                        return m;
+                      }
+
+                      // Keep existing edits array - optimistic update already handles it
                       const existingEdits = m.edits || [];
 
-                      // Build edits array: preserve previous versions only if saveEditHistory is enabled
-                      const edits = saveEditHistoryEnabled
-                        ? m.modifiedDate === m.createdDate
-                          ? // First edit: add original content to edits array
-                            [
-                              {
-                                text: currentText,
-                                modifiedDate: m.createdDate,
-                                lastModifiedHash: m.nonce,
-                              },
-                            ]
-                          : existingEdits.length > 0
-                            ? // Subsequent edits: add current version (which is now the previous version)
-                              [
-                                ...existingEdits,
-                                {
-                                  text: currentText,
-                                  modifiedDate: m.modifiedDate,
-                                  lastModifiedHash:
-                                    m.lastModifiedHash || m.nonce,
-                                },
-                              ]
-                            : // Edge case: edited before but edits array is empty (shouldn't happen, but handle gracefully)
-                              existingEdits
-                        : []; // If saveEditHistory is disabled, don't preserve edits
+                      console.log(`[MessageService:setQueryData] APPLYING edit:`, {
+                        saveEditHistoryEnabled,
+                        existingEditsCount: existingEdits.length,
+                        newText: String(editMessage.editedText).substring(0, 50),
+                      });
 
-                      // Update the message with edited text
+                      // Update the message with edited text, keeping existing edits array
                       return {
                         ...m,
                         modifiedDate: editMessage.editedAt,
@@ -845,7 +853,7 @@ export class MessageService {
                           ...m.content,
                           text: editMessage.editedText,
                         } as PostMessage,
-                        edits: edits,
+                        edits: existingEdits,
                       };
                     }
                     return m;

@@ -9,6 +9,7 @@ import type { Message as MessageType, PostMessage } from '../../api/quorumApi';
 import { t } from '@lingui/core/macro';
 import { buildMessagesKey } from '../../hooks/queries/messages/buildMessagesKey';
 import { useMessageDB } from '../context/useMessageDB';
+import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
 import { DefaultImages } from '../../utils';
 import { isTouchDevice } from '../../utils/platform';
 import { ENABLE_MARKDOWN } from '../../config/features';
@@ -33,7 +34,8 @@ export function MessageEditTextarea({
   mapSenderToUser,
 }: MessageEditTextareaProps) {
   const queryClient = useQueryClient();
-  const { messageDB } = useMessageDB();
+  const { messageDB, actionQueueService } = useMessageDB();
+  const { currentPasskeyInfo } = usePasskeysContext();
 
   // Edit state
   const [editText, setEditText] = useState(initialText);
@@ -108,6 +110,16 @@ export function MessageEditTextarea({
     const currentText = message.content.type === 'post' ? message.content.text : '';
     const existingEdits = message.edits || [];
 
+    console.log(`[MessageEditTextarea] Building edits array:`, {
+      messageId: message.messageId,
+      currentModifiedDate: message.modifiedDate,
+      currentLastModifiedHash: message.lastModifiedHash,
+      existingEditsCount: existingEdits.length,
+      isFirstEdit: message.modifiedDate === message.createdDate,
+      editedAt,
+      editNonce,
+    });
+
     // Build edits array optimistically
     const edits = message.modifiedDate === message.createdDate
       ? // First edit: add original content to edits array
@@ -130,6 +142,7 @@ export function MessageEditTextarea({
         ]
       : existingEdits;
 
+    console.log(`[MessageEditTextarea] New edits array length: ${edits.length}`);
     console.timeEnd('[Edit] 2. Build edits array (optimistic - will check saveEditHistory async)');
     console.time('[Edit] 3. Create updatedMessage object');
 
@@ -293,14 +306,32 @@ export function MessageEditTextarea({
         console.timeEnd('[Edit] Async: 2. Save to IndexedDB');
         console.time('[Edit] Async: 3. Send edit message');
 
-        // Send edit message
-        await submitMessage({
-          type: 'edit-message',
+        // Build the edit message object
+        const editMessage = {
+          type: 'edit-message' as const,
           originalMessageId: message.messageId,
           editedText,
           editedAt,
           editNonce,
-        });
+        };
+
+        // Use action queue for space channels, fallback for DMs
+        if (actionQueueService && currentPasskeyInfo && !isDM) {
+          await actionQueueService.enqueue(
+            'edit-message',
+            {
+              messageId: message.messageId,
+              spaceId: currentSpaceId,
+              channelId: currentChannelId,
+              editMessage,
+              currentPasskeyInfo,
+            },
+            `edit:${currentSpaceId}:${currentChannelId}:${message.messageId}`
+          );
+        } else {
+          // Fallback for DMs or missing context
+          await submitMessage(editMessage);
+        }
 
         console.timeEnd('[Edit] Async: 3. Send edit message');
         console.timeEnd('[Edit] Async: Total async operations');

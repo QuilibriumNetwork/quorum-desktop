@@ -264,11 +264,26 @@ export class ActionQueueHandlers {
    */
   private editMessage: TaskHandler = {
     execute: async (context) => {
+      const editMsg = context.editMessage as { editedAt: number; editedText: string | string[] };
+      console.log(`[ActionQueue:editMessage] START - messageId=${context.messageId}, editedAt=${editMsg.editedAt}`);
+
       const message = await this.deps.messageDB.getMessageById(
         context.messageId as string
       );
-      if (!message) return; // Message deleted - skip silently
 
+      if (!message) {
+        console.log(`[ActionQueue:editMessage] Message not found, skipping`);
+        return;
+      }
+
+      console.log(`[ActionQueue:editMessage] Current message state:`, {
+        modifiedDate: message.modifiedDate,
+        lastModifiedHash: message.lastModifiedHash,
+        editsCount: message.edits?.length || 0,
+        currentText: message.content.type === 'post' ? String(message.content.text).substring(0, 50) : 'N/A',
+      });
+
+      console.log(`[ActionQueue:editMessage] Processing edit, calling submitChannelMessage`);
       await this.deps.messageService.submitChannelMessage(
         context.spaceId as string,
         context.channelId as string,
@@ -276,6 +291,7 @@ export class ActionQueueHandlers {
         this.deps.queryClient,
         context.currentPasskeyInfo as any
       );
+      console.log(`[ActionQueue:editMessage] END`);
     },
     isPermanentError: (error) => error.message.includes('404'),
     successMessage: undefined,
