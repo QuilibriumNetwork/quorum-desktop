@@ -1,0 +1,31 @@
+@use '../../styles/variables' as *;
+
+.offline-banner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: $s-2 $s-4;
+  font-size: $text-sm;
+  font-weight: 500;
+  z-index: 1000;
+
+  &--offline {
+    background-color: rgb(var(--warning) / 0.15);
+    color: rgb(var(--warning));
+    border-bottom: 1px solid rgb(var(--warning) / 0.3);
+  }
+
+  &--syncing {
+    background-color: rgb(var(--accent-rgb) / 0.1);
+    color: var(--accent);
+    border-bottom: 1px solid rgb(var(--accent-rgb) / 0.2);
+  }
+
+  &__text {
+    display: inline;
+  }
+
+  &__count {
+    opacity: 0.8;
+  }
+}

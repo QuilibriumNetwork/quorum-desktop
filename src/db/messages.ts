@@ -3,6 +3,7 @@ import { Conversation, Message, Space, Bookmark, BOOKMARKS_CONFIG } from '../api
 import type { NotificationSettings } from '../types/notifications';
 import type { IconColor } from '../components/space/IconPicker/types';
 import type { IconName } from '../components/primitives/Icon/types';
+import type { QueueTask, TaskStatus, QueueStats } from '../types/actionQueue';
 import MiniSearch from 'minisearch';
 
 export interface EncryptedMessage {
@@ -109,7 +110,7 @@ export interface SearchResult {
 export class MessageDB {
   private db: IDBDatabase | null = null;
   private readonly DB_NAME = 'quorum_db';
-  private readonly DB_VERSION = 5;
+  private readonly DB_VERSION = 6;
   private searchIndices: Map<string, MiniSearch<SearchableMessage>> = new Map();
   private indexInitialized = false;
 
@@ -203,6 +204,18 @@ export class MessageDB {
           });
           mutedUsersStore.createIndex('by_space', 'spaceId');
           mutedUsersStore.createIndex('by_mute_id', 'lastMuteId');
+        }
+
+        if (event.oldVersion < 6) {
+          // Add action_queue object store for persistent background task queue
+          const queueStore = db.createObjectStore('action_queue', {
+            keyPath: 'id',
+            autoIncrement: true,
+          });
+          queueStore.createIndex('status', 'status', { unique: false });
+          queueStore.createIndex('taskType', 'taskType', { unique: false });
+          queueStore.createIndex('key', 'key', { unique: false });
+          queueStore.createIndex('nextRetryAt', 'nextRetryAt', { unique: false });
         }
       };
     });
@@ -2062,5 +2075,164 @@ export class MessageDB {
       };
       request.onerror = () => reject(request.error);
     });
+  }
+
+  // ===== Action Queue Methods =====
+
+  /**
+   * Add a task to the action queue
+   */
+  async addQueueTask(task: Omit<QueueTask, 'id'>): Promise<number> {
+    await this.init();
+    return new Promise((resolve, reject) => {
+      const tx = this.db!.transaction('action_queue', 'readwrite');
+      const store = tx.objectStore('action_queue');
+      const request = store.add(task);
+
+      request.onsuccess = () => resolve(request.result as number);
+      request.onerror = () => reject(request.error);
+    });
+  }
+
+  /**
+   * Get a single task by ID
+   */
+  async getQueueTask(id: number): Promise<QueueTask | undefined> {
+    await this.init();
+    return new Promise((resolve, reject) => {
+      const tx = this.db!.transaction('action_queue', 'readonly');
+      const store = tx.objectStore('action_queue');
+      const request = store.get(id);
+
+      request.onsuccess = () => resolve(request.result);
+      request.onerror = () => reject(request.error);
+    });
+  }
+
+  /**
+   * Get tasks by status with optional limit
+   */
+  async getQueueTasksByStatus(
+    status: TaskStatus,
+    limit = 50
+  ): Promise<QueueTask[]> {
+    await this.init();
+    return new Promise((resolve, reject) => {
+      const tx = this.db!.transaction('action_queue', 'readonly');
+      const store = tx.objectStore('action_queue');
+      const index = store.index('status');
+      const request = index.getAll(status, limit);
+
+      request.onsuccess = () => resolve(request.result || []);
+      request.onerror = () => reject(request.error);
+    });
+  }
+
+  /**
+   * Get all tasks in the queue
+   */
+  async getAllQueueTasks(): Promise<QueueTask[]> {
+    await this.init();
+    return new Promise((resolve, reject) => {
+      const tx = this.db!.transaction('action_queue', 'readonly');
+      const store = tx.objectStore('action_queue');
+      const request = store.getAll();
+
+      request.onsuccess = () => resolve(request.result || []);
+      request.onerror = () => reject(request.error);
+    });
+  }
+
+  /**
+   * Update an existing task
+   */
+  async updateQueueTask(task: QueueTask): Promise<void> {
+    await this.init();
+    return new Promise((resolve, reject) => {
+      const tx = this.db!.transaction('action_queue', 'readwrite');
+      const store = tx.objectStore('action_queue');
+      const request = store.put(task);
+
+      request.onsuccess = () => resolve();
+      request.onerror = () => reject(request.error);
+    });
+  }
+
+  /**
+   * Delete a task from the queue
+   */
+  async deleteQueueTask(id: number): Promise<void> {
+    await this.init();
+    return new Promise((resolve, reject) => {
+      const tx = this.db!.transaction('action_queue', 'readwrite');
+      const store = tx.objectStore('action_queue');
+      const request = store.delete(id);
+
+      request.onsuccess = () => resolve();
+      request.onerror = () => reject(request.error);
+    });
+  }
+
+  /**
+   * Get queue statistics
+   */
+  async getQueueStats(): Promise<QueueStats> {
+    await this.init();
+    const all = await this.getAllQueueTasks();
+
+    return {
+      pending: all.filter((t) => t.status === 'pending').length,
+      processing: all.filter((t) => t.status === 'processing').length,
+      failed: all.filter((t) => t.status === 'failed').length,
+      completed: all.filter((t) => t.status === 'completed').length,
+      total: all.length,
+    };
+  }
+
+  /**
+   * Prune completed tasks older than the specified age
+   */
+  async pruneCompletedTasks(olderThanMs = 24 * 60 * 60 * 1000): Promise<number> {
+    await this.init();
+    const cutoff = Date.now() - olderThanMs;
+    const completed = await this.getQueueTasksByStatus('completed', 1000);
+
+    let deleted = 0;
+    for (const task of completed) {
+      if (task.processedAt && task.processedAt < cutoff) {
+        await this.deleteQueueTask(task.id!);
+        deleted++;
+      }
+    }
+
+    return deleted;
+  }
+
+  /**
+   * Reset tasks stuck in 'processing' state after crash.
+   * Only resets tasks that have been processing for longer than the timeout.
+   * Call this on app startup.
+   */
+  async resetStuckProcessingTasks(stuckTimeoutMs = 60000): Promise<number> {
+    await this.init();
+    const cutoff = Date.now() - stuckTimeoutMs;
+    const processing = await this.getQueueTasksByStatus('processing');
+
+    let reset = 0;
+    for (const task of processing) {
+      // Only reset if stuck for more than timeout
+      if (task.processingStartedAt && task.processingStartedAt < cutoff) {
+        task.status = 'pending';
+        task.processingStartedAt = undefined;
+        task.retryCount = (task.retryCount || 0) + 1;
+        await this.updateQueueTask(task);
+        reset++;
+        console.log(
+          `[ActionQueue] Reset stuck task ${task.id} (${task.taskType})`
+        );
+      }
+    }
+
+    return reset;
   }
 }
