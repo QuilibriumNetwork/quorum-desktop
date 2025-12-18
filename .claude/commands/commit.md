@@ -3,7 +3,9 @@ description: Create concise, well-formatted commit messages
 ---
 
 Analyze the latest code changes and create a concise, well-formatted commit message.
-IMPORTANT: DO NOT MENTION THE LLM OR AI AGENT IN THE COMMIT MESSAGE
+CRITICAL: NEVER mention Claude, AI, LLM, Anthropic, or add any AI attribution to the commit.
+
+User notes: $ARGUMENTS
 
 Instructions:
 1) Run: git status

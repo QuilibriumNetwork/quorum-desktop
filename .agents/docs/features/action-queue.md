@@ -110,6 +110,13 @@ actionQueueService.start();
 | `edit-message` | Edit a message | `MessageEditTextarea.tsx` |
 | `delete-message` | Delete a message | `useMessageActions.ts` |
 
+### Potential Future Actions
+
+| Action Type | Description | Current Location | Notes |
+|-------------|-------------|------------------|-------|
+| `delete-conversation` | Delete DM conversation | `MessageService.deleteConversation()` | Currently blocks UI for 3-4s due to crypto. Adding to queue would provide retry logic but won't improve perceived performance without Web Worker for crypto operations. |
+| `delete-space` | Delete a space | `useSpaceManagement.ts` | Same as above - has "Deleting Space..." overlay but crypto blocks main thread. |
+
 ## Data Flow
 
 ### Optimistic UI Pattern
@@ -288,4 +295,4 @@ Simpler, avoids race conditions, prevents server overload, maintains message ord
 
 ---
 
-*Updated: 2025-12-18*
+*Updated: 2025-12-18 16:50*
