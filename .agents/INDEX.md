@@ -78,6 +78,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Brave Browser React Hook Errors - ONGOING INVESTIGATION](bugs/brave-browser-react-hook-errors.md)
 - [Config Sync Space Loss Race Condition](bugs/config-sync-space-loss-race-condition.md)
 - [DirectMessage Invite Loading Performance Issue](bugs/directmessage-invite-loading-performance.md)
+- [DM Sync Non-Deterministic Failures](bugs/dm-sync-non-deterministic-failures.md)
 - [Encryption State Evals Causing Config Sync Bloat](bugs/encryption-state-evals-bloat.md)
 - [Expired Invite Card Validation Timing Issue](bugs/expired-invite-card-validation-timing.md)
 - [Ghost Message Appears After Deleting a Message](bugs/ghost-message-after-delete.md)
@@ -124,7 +125,6 @@ This is the main index for all documentation, bug reports, and task management.
 
 ### Pending Tasks
 
-- [Add DM-Specific Action Queue Handlers](tasks/dm-action-queue-handlers.md)
 - [Combined Text + Image Messages](tasks/combined-text-image-messages.md)
 - [Conversation Deletion State Synchronization](tasks/conversation-deletion-state-sync.md)
 - [Custom ContentEditable Mention Pills for Message Composer](tasks/mention-pills-in-message-textarea.md)
@@ -212,6 +212,7 @@ This is the main index for all documentation, bug reports, and task management.
 ## 📋 Completed Tasks
 
 - [AccentColorSwitcher Cross-Platform Migration + Persistence](tasks/.done/accent-color-switcher-cross-platform-migration.md)
+- [Add DM-Specific Action Queue Handlers](tasks/.done/dm-action-queue-handlers.md)
 - [Analysis Report & Implementation Plan: Strategic Portal Integration for Overlay Components (v7)](tasks/.done/modal-portal-refactor-analysis.md)
 - [Android 7.0 File Download Fix - Implementation Plan](tasks/.done/FAILED_android-file-download-fix.md)
 - [Background Action Queue](tasks/.done/background-action-queue.md)
@@ -329,4 +330,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2025-12-18 14:42:53
+**Last Updated**: 2025-12-18 16:47:38

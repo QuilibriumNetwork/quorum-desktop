@@ -3,7 +3,7 @@ import React from 'react';
 import { Message as MessageType, Role, Channel, ReactionMessage, RemoveReactionMessage, RemoveMessage } from '../../../api/quorumApi';
 import { useConfirmationModal } from '../../../components/context/ConfirmationModalProvider';
 import { useMessageDB } from '../../../components/context/useMessageDB';
-import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
+import { usePasskeysContext, channel as secureChannel } from '@quilibrium/quilibrium-js-sdk-channels';
 import { useQueryClient, InfiniteData } from '@tanstack/react-query';
 import MessagePreview from '../../../components/message/MessagePreview';
 import { extractMessageRawText } from '../../../utils/clipboard';
@@ -11,6 +11,16 @@ import { useCopyToClipboard } from '../ui';
 import { useBookmarks } from '../bookmarks';
 import { buildMessagesKey } from '../../queries/messages/buildMessagesKey';
 import { t } from '@lingui/core/macro';
+import { isDmActionEnabled } from '../../../config/features';
+
+/**
+ * DM context for action queue handlers.
+ * Required for DM reactions/deletes/edits to use Double Ratchet encryption.
+ */
+export interface DmContext {
+  self: secureChannel.UserRegistration;
+  counterparty: secureChannel.UserRegistration;
+}
 
 interface UseMessageActionsOptions {
   message: MessageType;
@@ -34,6 +44,8 @@ interface UseMessageActionsOptions {
   channelId?: string;
   conversationId?: string;
   sourceName?: string;
+  // DM context for offline-resilient reactions/deletes (optional - only for DMs)
+  dmContext?: DmContext;
 }
 
 export function useMessageActions(options: UseMessageActionsOptions) {
@@ -59,6 +71,8 @@ export function useMessageActions(options: UseMessageActionsOptions) {
     channelId,
     conversationId,
     sourceName,
+    // DM context for offline-resilient reactions/deletes
+    dmContext,
   } = options;
 
   // State for copied link feedback
@@ -74,7 +88,7 @@ export function useMessageActions(options: UseMessageActionsOptions) {
   const bookmarks = useBookmarks({ userAddress });
 
   // ActionQueue hooks for offline-resilient operations
-  const { messageDB, actionQueueService } = useMessageDB();
+  const { messageDB, actionQueueService, keyset } = useMessageDB();
   const { currentPasskeyInfo } = usePasskeysContext();
   const queryClient = useQueryClient();
 
@@ -89,12 +103,32 @@ export function useMessageActions(options: UseMessageActionsOptions) {
     message.content.type === 'post' &&
     (Date.now() - message.createdDate) <= EDIT_TIME_WINDOW;
 
+  // Helper to build DM context for action queue handlers
+  const buildDmActionContext = useCallback((address: string) => {
+    if (!dmContext?.self || !dmContext?.counterparty) {
+      console.warn('[useMessageActions] Missing DM registration context - dmContext prop not provided');
+      return null;
+    }
+    if (!keyset?.deviceKeyset || !keyset?.userKeyset) {
+      console.warn('[useMessageActions] Missing keyset');
+      return null;
+    }
+    return {
+      address,
+      self: dmContext.self,
+      counterparty: dmContext.counterparty,
+      keyset,
+      senderDisplayName: currentPasskeyInfo?.displayName,
+      senderUserIcon: currentPasskeyInfo?.pfpUrl,
+    };
+  }, [dmContext, keyset, currentPasskeyInfo]);
+
   // Handle reaction submission - optimistic update + queue
   const handleReaction = useCallback(
     async (emoji: string) => {
-      // Skip if not in a space context (reactions only work in channels)
+      // Check for missing context
       if (!spaceId || !channelId || !currentPasskeyInfo) {
-        // Fallback to old behavior for DMs or missing context
+        // Fallback to old behavior for missing context
         onSubmitMessage({
           type: message.reactions?.find((r) => r.emojiId === emoji)?.memberIds.includes(userAddress)
             ? 'remove-reaction'
@@ -104,6 +138,9 @@ export function useMessageActions(options: UseMessageActionsOptions) {
         });
         return;
       }
+
+      // Detect DM: spaceId === channelId means it's a DM conversation
+      const isDM = spaceId === channelId;
 
       const hasReacted = message.reactions
         ?.find((r) => r.emojiId === emoji)
@@ -184,19 +221,43 @@ export function useMessageActions(options: UseMessageActionsOptions) {
             reaction: emoji,
           };
 
-      // Queue the server-side broadcast
-      await actionQueueService.enqueue(
-        'reaction',
-        {
-          spaceId,
-          channelId,
-          reactionMessage,
-          currentPasskeyInfo,
-        },
-        `reaction:${spaceId}:${channelId}:${message.messageId}:${emoji}:${userAddress}` // Dedup key
-      );
+      // Route to appropriate handler based on DM vs Space
+      if (isDM) {
+        // DM: Use Double Ratchet encryption via reaction-dm handler (if enabled)
+        const dmActionContext = isDmActionEnabled('REACTION') ? buildDmActionContext(spaceId) : null;
+        if (!dmActionContext) {
+          // Fallback to legacy path if context unavailable or feature disabled
+          onSubmitMessage({
+            type: hasReacted ? 'remove-reaction' : 'reaction',
+            messageId: message.messageId,
+            reaction: emoji,
+          });
+          return;
+        }
+
+        await actionQueueService.enqueue(
+          'reaction-dm',
+          {
+            ...dmActionContext,
+            reactionMessage,
+          },
+          `reaction-dm:${spaceId}:${message.messageId}:${emoji}` // Dedup key
+        );
+      } else {
+        // Space: Use Triple Ratchet encryption via reaction handler
+        await actionQueueService.enqueue(
+          'reaction',
+          {
+            spaceId,
+            channelId,
+            reactionMessage,
+            currentPasskeyInfo,
+          },
+          `reaction:${spaceId}:${channelId}:${message.messageId}:${emoji}:${userAddress}` // Dedup key
+        );
+      }
     },
-    [message, userAddress, spaceId, channelId, currentPasskeyInfo, queryClient, actionQueueService, onSubmitMessage]
+    [message, userAddress, spaceId, channelId, currentPasskeyInfo, queryClient, actionQueueService, onSubmitMessage, messageDB, buildDmActionContext]
   );
 
   // Handle reply action
@@ -224,15 +285,18 @@ export function useMessageActions(options: UseMessageActionsOptions) {
   // Handle delete action with confirmation - optimistic update + queue
   const handleDelete = useCallback((e: React.MouseEvent) => {
     const performDelete = async () => {
-      // Skip if not in a space context (delete only works in channels for now)
+      // Check for missing context
       if (!spaceId || !channelId || !currentPasskeyInfo) {
-        // Fallback to old behavior for DMs or missing context
+        // Fallback to old behavior for missing context
         onSubmitMessage({
           type: 'remove-message',
           removeMessageId: message.messageId,
         });
         return;
       }
+
+      // Detect DM: spaceId === channelId means it's a DM conversation
+      const isDM = spaceId === channelId;
 
       // Optimistic update: Remove message from React Query cache immediately
       const messagesKey = buildMessagesKey({ spaceId, channelId });
@@ -260,17 +324,40 @@ export function useMessageActions(options: UseMessageActionsOptions) {
         removeMessageId: message.messageId,
       };
 
-      // Queue the server-side broadcast
-      await actionQueueService.enqueue(
-        'delete-message',
-        {
-          spaceId,
-          channelId,
-          deleteMessage,
-          currentPasskeyInfo,
-        },
-        `delete:${spaceId}:${channelId}:${message.messageId}` // Dedup key
-      );
+      // Route to appropriate handler based on DM vs Space
+      if (isDM) {
+        // DM: Use Double Ratchet encryption via delete-dm handler (if enabled)
+        const dmActionContext = isDmActionEnabled('DELETE') ? buildDmActionContext(spaceId) : null;
+        if (!dmActionContext) {
+          // Fallback to legacy path if context unavailable or feature disabled
+          onSubmitMessage({
+            type: 'remove-message',
+            removeMessageId: message.messageId,
+          });
+          return;
+        }
+
+        await actionQueueService.enqueue(
+          'delete-dm',
+          {
+            ...dmActionContext,
+            deleteMessage,
+          },
+          `delete-dm:${spaceId}:${message.messageId}` // Dedup key
+        );
+      } else {
+        // Space: Use Triple Ratchet encryption via delete-message handler
+        await actionQueueService.enqueue(
+          'delete-message',
+          {
+            spaceId,
+            channelId,
+            deleteMessage,
+            currentPasskeyInfo,
+          },
+          `delete:${spaceId}:${channelId}:${message.messageId}` // Dedup key
+        );
+      }
     };
 
     // Check for Shift+click bypass (desktop only)
@@ -299,7 +386,7 @@ export function useMessageActions(options: UseMessageActionsOptions) {
       protipAction: t`delete`,
       onConfirm: performDelete,
     });
-  }, [message, spaceId, channelId, currentPasskeyInfo, queryClient, messageDB, actionQueueService, onSubmitMessage, showConfirmationModal, mapSenderToUser, stickers, spaceRoles, spaceChannels, onChannelClick]);
+  }, [message, spaceId, channelId, currentPasskeyInfo, queryClient, messageDB, actionQueueService, onSubmitMessage, showConfirmationModal, mapSenderToUser, stickers, spaceRoles, spaceChannels, onChannelClick, buildDmActionContext]);
 
   // Handle more reactions (emoji picker)
   const handleMoreReactions = useCallback(

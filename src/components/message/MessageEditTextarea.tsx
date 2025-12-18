@@ -9,10 +9,19 @@ import type { Message as MessageType, PostMessage } from '../../api/quorumApi';
 import { t } from '@lingui/core/macro';
 import { buildMessagesKey } from '../../hooks/queries/messages/buildMessagesKey';
 import { useMessageDB } from '../context/useMessageDB';
-import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
+import { usePasskeysContext, channel as secureChannel } from '@quilibrium/quilibrium-js-sdk-channels';
 import { DefaultImages } from '../../utils';
 import { isTouchDevice } from '../../utils/platform';
-import { ENABLE_MARKDOWN } from '../../config/features';
+import { ENABLE_MARKDOWN, isDmActionEnabled } from '../../config/features';
+
+/**
+ * DM context for action queue handlers.
+ * Required for DM edits to use Double Ratchet encryption.
+ */
+export interface DmContext {
+  self: secureChannel.UserRegistration;
+  counterparty: secureChannel.UserRegistration;
+}
 
 interface MessageEditTextareaProps {
   message: MessageType;
@@ -20,6 +29,8 @@ interface MessageEditTextareaProps {
   onCancel: () => void;
   submitMessage: (message: any) => Promise<void>;
   mapSenderToUser: (senderId: string) => any;
+  /** DM context for offline-resilient edits (optional - only for DMs) */
+  dmContext?: DmContext;
 }
 
 /**
@@ -32,9 +43,10 @@ export function MessageEditTextarea({
   onCancel,
   submitMessage,
   mapSenderToUser,
+  dmContext,
 }: MessageEditTextareaProps) {
   const queryClient = useQueryClient();
-  const { messageDB, actionQueueService } = useMessageDB();
+  const { messageDB, actionQueueService, keyset } = useMessageDB();
   const { currentPasskeyInfo } = usePasskeysContext();
 
   // Edit state
@@ -91,9 +103,6 @@ export function MessageEditTextarea({
   );
 
   const handleSaveEdit = async () => {
-    console.time('[Edit] Total handleSaveEdit');
-    console.time('[Edit] 1. Initial setup');
-
     const editNonce = crypto.randomUUID();
     const editedAt = Date.now();
     const editedTextArray = editText.split('\n');
@@ -103,22 +112,9 @@ export function MessageEditTextarea({
     const currentChannelId = message.channelId;
     const isDM = currentSpaceId === currentChannelId;
 
-    console.timeEnd('[Edit] 1. Initial setup');
-    console.time('[Edit] 2. Build edits array (optimistic - will check saveEditHistory async)');
-
     // Preserve current content in edits array before updating
     const currentText = message.content.type === 'post' ? message.content.text : '';
     const existingEdits = message.edits || [];
-
-    console.log(`[MessageEditTextarea] Building edits array:`, {
-      messageId: message.messageId,
-      currentModifiedDate: message.modifiedDate,
-      currentLastModifiedHash: message.lastModifiedHash,
-      existingEditsCount: existingEdits.length,
-      isFirstEdit: message.modifiedDate === message.createdDate,
-      editedAt,
-      editNonce,
-    });
 
     // Build edits array optimistically
     const edits = message.modifiedDate === message.createdDate
@@ -142,10 +138,6 @@ export function MessageEditTextarea({
         ]
       : existingEdits;
 
-    console.log(`[MessageEditTextarea] New edits array length: ${edits.length}`);
-    console.timeEnd('[Edit] 2. Build edits array (optimistic - will check saveEditHistory async)');
-    console.time('[Edit] 3. Create updatedMessage object');
-
     // Create updated message object
     const updatedMessage: MessageType = {
       ...message,
@@ -157,9 +149,6 @@ export function MessageEditTextarea({
       } as PostMessage,
       edits: edits,
     };
-
-    console.timeEnd('[Edit] 3. Create updatedMessage object');
-    console.time('[Edit] 4. Update React Query cache');
 
     // Update React Query cache IMMEDIATELY
     queryClient.setQueryData(
@@ -188,21 +177,12 @@ export function MessageEditTextarea({
       }
     );
 
-    console.timeEnd('[Edit] 4. Update React Query cache');
-    console.time('[Edit] 5. Close edit UI');
-
     // Close edit UI IMMEDIATELY
     onCancel();
 
-    console.timeEnd('[Edit] 5. Close edit UI');
-    console.timeEnd('[Edit] Total handleSaveEdit');
-    console.log('[Edit] Synchronous operations complete, starting async operations...');
-
     // Update IndexedDB and send asynchronously
     (async () => {
-      console.time('[Edit] Async: Total async operations');
       try {
-        console.time('[Edit] Async: 0. Check saveEditHistory setting');
 
         // Check if saveEditHistory is enabled
         let saveEditHistoryEnabled = false;
@@ -265,9 +245,6 @@ export function MessageEditTextarea({
           );
         }
 
-        console.timeEnd('[Edit] Async: 0. Check saveEditHistory setting');
-        console.time('[Edit] Async: 1. Get conversation info');
-
         // Get conversation info for saveMessage
         let conversationIcon: string = DefaultImages.UNKNOWN_USER;
         let conversationDisplayName: string = t`Unknown User`;
@@ -290,9 +267,6 @@ export function MessageEditTextarea({
           conversationDisplayName = senderInfo.displayName || t`Unknown User`;
         }
 
-        console.timeEnd('[Edit] Async: 1. Get conversation info');
-        console.time('[Edit] Async: 2. Save to IndexedDB');
-
         // Update IndexedDB
         await messageDB.saveMessage(
           updatedMessage,
@@ -303,9 +277,6 @@ export function MessageEditTextarea({
           conversationDisplayName
         );
 
-        console.timeEnd('[Edit] Async: 2. Save to IndexedDB');
-        console.time('[Edit] Async: 3. Send edit message');
-
         // Build the edit message object
         const editMessage = {
           type: 'edit-message' as const,
@@ -315,26 +286,47 @@ export function MessageEditTextarea({
           editNonce,
         };
 
-        // Use action queue for space channels, fallback for DMs
-        if (actionQueueService && currentPasskeyInfo && !isDM) {
-          await actionQueueService.enqueue(
-            'edit-message',
-            {
-              messageId: message.messageId,
-              spaceId: currentSpaceId,
-              channelId: currentChannelId,
-              editMessage,
-              currentPasskeyInfo,
-            },
-            `edit:${currentSpaceId}:${currentChannelId}:${message.messageId}`
-          );
+        // Route to appropriate handler based on DM vs Space
+        if (actionQueueService && currentPasskeyInfo) {
+          if (isDM) {
+            // DM: Use Double Ratchet encryption via edit-dm handler (if enabled)
+            if (isDmActionEnabled('EDIT') && dmContext?.self && dmContext?.counterparty && keyset?.deviceKeyset && keyset?.userKeyset) {
+              await actionQueueService.enqueue(
+                'edit-dm',
+                {
+                  address: currentSpaceId,
+                  messageId: message.messageId,
+                  editMessage,
+                  self: dmContext.self,
+                  counterparty: dmContext.counterparty,
+                  keyset,
+                  senderDisplayName: currentPasskeyInfo.displayName,
+                  senderUserIcon: currentPasskeyInfo.pfpUrl,
+                },
+                `edit-dm:${currentSpaceId}:${message.messageId}`
+              );
+            } else {
+              // Fallback to legacy path if DM context unavailable or feature disabled
+              await submitMessage(editMessage);
+            }
+          } else {
+            // Space: Use Triple Ratchet encryption via edit-message handler
+            await actionQueueService.enqueue(
+              'edit-message',
+              {
+                messageId: message.messageId,
+                spaceId: currentSpaceId,
+                channelId: currentChannelId,
+                editMessage,
+                currentPasskeyInfo,
+              },
+              `edit:${currentSpaceId}:${currentChannelId}:${message.messageId}`
+            );
+          }
         } else {
-          // Fallback for DMs or missing context
+          // Fallback for missing context
           await submitMessage(editMessage);
         }
-
-        console.timeEnd('[Edit] Async: 3. Send edit message');
-        console.timeEnd('[Edit] Async: Total async operations');
       } catch (error) {
         console.error('Failed to save/send edit:', error);
       }
@@ -365,12 +357,9 @@ export function MessageEditTextarea({
         onKeyDown={(e) => {
           if (e.key === 'Enter' && !e.shiftKey) {
             e.preventDefault();
-            console.time('[Edit] onKeyDown: Enter pressed to handleSaveEdit complete');
-            console.log('[Edit] onKeyDown: Enter key pressed, calling handleSaveEdit...');
             handleSaveEdit().catch((error) => {
               console.error('Failed to save edit:', error);
             });
-            console.timeEnd('[Edit] onKeyDown: Enter pressed to handleSaveEdit complete');
           } else if (e.key === 'Escape') {
             onCancel();
           }
@@ -397,12 +386,9 @@ export function MessageEditTextarea({
             type="primary"
             size="sm"
             onClick={() => {
-              console.time('[Edit] onClick: Save button clicked to handleSaveEdit complete');
-              console.log('[Edit] onClick: Save button clicked, calling handleSaveEdit...');
               handleSaveEdit().catch((error) => {
                 console.error('Failed to save edit:', error);
               });
-              console.timeEnd('[Edit] onClick: Save button clicked to handleSaveEdit complete');
             }}
             disabled={!editText.trim()}
           >

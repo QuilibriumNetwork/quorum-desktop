@@ -17,12 +17,17 @@ export type ActionType =
   | 'mute-user'
   | 'unmute-user'
 
-  // Message actions
+  // Message actions (Space - Triple Ratchet)
   | 'reaction'
   | 'pin-message'
   | 'unpin-message'
   | 'edit-message'
-  | 'delete-message';
+  | 'delete-message'
+
+  // DM actions (Double Ratchet)
+  | 'reaction-dm'
+  | 'delete-dm'
+  | 'edit-dm';
 
 export type TaskStatus = 'pending' | 'processing' | 'completed' | 'failed';
 

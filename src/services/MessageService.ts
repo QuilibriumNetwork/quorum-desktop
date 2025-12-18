@@ -1536,6 +1536,14 @@ export class MessageService {
     }
 
     // For edit-message, delete-conversation, reactions: use existing flow (no optimistic update)
+    const legacyTraceId = `DM-LEGACY-${Date.now().toString(36)}`;
+    const messageType = typeof pendingMessage === 'object' ? (pendingMessage as any).type : 'post';
+    console.log(`[${legacyTraceId}] submitMessage LEGACY PATH START`, {
+      type: messageType,
+      address: address?.slice(0, 16) + '...',
+      timestamp: new Date().toISOString(),
+    });
+
     this.enqueueOutbound(async () => {
       const outbounds: string[] = [];
       const nonce = crypto.randomUUID();
@@ -1731,6 +1739,7 @@ export class MessageService {
         );
         await this.addMessage(queryClient, address, address, message);
 
+        console.log(`[${legacyTraceId}] LEGACY PATH COMPLETE (edit-message)`, { outboundCount: outbounds.length });
         return outbounds;
       }
 
@@ -1885,6 +1894,7 @@ export class MessageService {
 
       // do not save delete-conversation message
       if (message.content.type === 'delete-conversation') {
+        console.log(`[${legacyTraceId}] LEGACY PATH COMPLETE (delete-conversation)`, { outboundCount: outbounds.length });
         return outbounds;
       }
 
@@ -1915,6 +1925,7 @@ export class MessageService {
         }
       );
 
+      console.log(`[${legacyTraceId}] LEGACY PATH COMPLETE`, { outboundCount: outbounds.length, messageType: message.content.type });
       return outbounds;
     });
   }

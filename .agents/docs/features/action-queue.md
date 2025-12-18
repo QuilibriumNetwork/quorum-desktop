@@ -1,6 +1,6 @@
 # Action Queue
 
-> **⚠️ AI-Generated**: May contain errors. Verify before use.
+> **AI-Generated**: May contain errors. Verify before use.
 
 ## Overview
 
@@ -10,6 +10,7 @@ The Action Queue is a persistent background task processing system that handles 
 - **Crash recovery** via IndexedDB persistence
 - **Offline support** by queuing actions until connectivity is restored
 - **Automatic retries** with exponential backoff for transient failures
+- **Visibility** through offline banner counter ("n actions queued")
 
 ## Architecture
 
@@ -53,23 +54,8 @@ The Action Queue is a persistent background task processing system that handles 
 | [ActionQueueService.ts](src/services/ActionQueueService.ts) | Core queue service - enqueuing, processing, retry logic |
 | [ActionQueueHandlers.ts](src/services/ActionQueueHandlers.ts) | Task handlers for each action type |
 | [ActionQueueContext.tsx](src/components/context/ActionQueueContext.tsx) | React context for queue state |
-| [OfflineBanner.tsx](src/components/ui/OfflineBanner.tsx) | Offline status indicator |
-| [OfflineBanner.scss](src/components/ui/OfflineBanner.scss) | Banner styles + layout push logic |
+| [OfflineBanner.tsx](src/components/ui/OfflineBanner.tsx) | Offline status indicator with queue count |
 | [actionQueue.ts](src/types/actionQueue.ts) | Type definitions |
-
-### Relationship to WebSocket Queue
-
-The Action Queue works **in series** with the existing WebSocket queue:
-
-```
-ActionQueueService    →    MessageService/ConfigService    →    WebSocketProvider
-(Persistence layer)        (Business logic)                    (Transport layer)
-```
-
-| Queue | Purpose | Storage | Lifetime |
-|-------|---------|---------|----------|
-| **ActionQueue** | Persistence, retry, crash recovery | IndexedDB | Survives refresh |
-| **WebSocket queue** | Buffer during disconnect | Memory | Lost on refresh |
 
 ### Service Initialization
 
@@ -95,29 +81,237 @@ actionQueueService.setHandlers(handlers);
 actionQueueService.start();
 ```
 
+---
+
+## Space vs DM: Two Different Encryption Systems
+
+The action queue handles two fundamentally different messaging systems with different encryption protocols.
+
+### Encryption Protocol Comparison
+
+| Aspect | Space Messages | DM Messages |
+|--------|----------------|-------------|
+| **Protocol** | Triple Ratchet | Double Ratchet |
+| **Encryption States** | 1 per space | N per device inbox |
+| **Recipients** | All space members via Hub | Specific device inboxes |
+| **Transport** | `sendHubMessage()` | `sendDirectMessages()` (WebSocket) |
+| **Identity** | Always known (space members) | Hidden until reply |
+| **ID Structure** | `spaceId` ≠ `channelId` | `spaceId` === `channelId` (both = address) |
+
+### DM Detection
+
+Code detects DMs using this pattern:
+```typescript
+const isDM = spaceId === channelId;
+```
+
+For DMs, the counterparty's wallet address is used for both `spaceId` and `channelId`.
+
+---
+
 ## Supported Action Types
 
-| Action Type | Description | Hook/Service |
-|-------------|-------------|--------------|
-| `send-channel-message` | Send message to space channel (Triple Ratchet) | `MessageService.ts` |
-| `send-dm` | Send direct message (Double Ratchet) | `MessageService.ts` |
-| `save-user-config` | Save user settings, folders, sidebar order | `useUserSettings.ts`, `useFolderManagement.ts` |
-| `update-space` | Update space settings (name, roles, emojis) | `useSpaceManagement.ts` |
-| `kick-user` | Remove user from space | `useUserKicking.ts` |
-| `mute-user` / `unmute-user` | Mute/unmute user in space | `useUserMuting.ts` |
-| `reaction` | Add reaction to message | `useMessageActions.ts` |
-| `pin-message` / `unpin-message` | Pin/unpin a message | `usePinnedMessages.ts` |
+### Space Actions (Triple Ratchet)
+
+| Action Type | Description | Source Location |
+|-------------|-------------|-----------------|
+| `send-channel-message` | Send message to space channel | `MessageService.ts` |
+| `reaction` | Add/remove reaction to message | `useMessageActions.ts` |
+| `pin-message` | Pin a message | `usePinnedMessages.ts` |
+| `unpin-message` | Unpin a message | `usePinnedMessages.ts` |
 | `edit-message` | Edit a message | `MessageEditTextarea.tsx` |
 | `delete-message` | Delete a message | `useMessageActions.ts` |
 
-### Potential Future Actions
+All Space actions use `submitChannelMessage()` which encrypts with Triple Ratchet and sends via Hub.
 
-| Action Type | Description | Current Location | Notes |
-|-------------|-------------|------------------|-------|
-| `delete-conversation` | Delete DM conversation | `MessageService.deleteConversation()` | Currently blocks UI for 3-4s due to crypto. Adding to queue would provide retry logic but won't improve perceived performance without Web Worker for crypto operations. |
-| `delete-space` | Delete a space | `useSpaceManagement.ts` | Same as above - has "Deleting Space..." overlay but crypto blocks main thread. |
+### DM Actions (Double Ratchet)
 
-## Data Flow
+| Action Type | Description | Source Location |
+|-------------|-------------|-----------------|
+| `send-dm` | Send direct message | `MessageService.ts` |
+| `reaction-dm` | Add/remove reaction to DM | `useMessageActions.ts` |
+| `delete-dm` | Delete a DM | `useMessageActions.ts` |
+| `edit-dm` | Edit a DM | `MessageEditTextarea.tsx` |
+
+All DM actions use `encryptAndSendDm()` helper which encrypts with Double Ratchet and sends via WebSocket.
+
+### Global Actions (No Encryption)
+
+| Action Type | Description | Source Location |
+|-------------|-------------|-----------------|
+| `save-user-config` | Save user settings, folders, sidebar order | `useUserSettings.ts` |
+| `update-space` | Update space settings (name, roles, emojis) | `useSpaceManagement.ts` |
+| `kick-user` | Remove user from space | `useUserKicking.ts` |
+| `mute-user` | Mute user in space | `useUserMuting.ts` |
+| `unmute-user` | Unmute user in space | `useUserMuting.ts` |
+
+---
+
+## Handler Architecture
+
+### Space Message Handler Flow
+
+```
+User clicks Send in Space channel
+    │
+    ▼
+MessageService.submitChannelMessage()
+    ├─► Generate messageId (nonce)
+    ├─► Sign message with Ed448 ← HAPPENS ONCE
+    ├─► Add to React Query cache (sendStatus: 'sending')
+    └─► actionQueueService.enqueue('send-channel-message', context)
+            │
+            ▼
+ActionQueueHandlers.sendChannelMessage.execute()
+    ├─► Check space/channel still exists
+    ├─► Get Triple Ratchet encryption state
+    ├─► Encrypt with TripleRatchetEncrypt()
+    ├─► Send via sendHubMessage()
+    ├─► Save updated encryption state
+    └─► Update message status to 'sent'
+```
+
+### DM Message Handler Flow
+
+```
+User clicks Send in DM conversation
+    │
+    ▼
+MessageService.submitMessage() (for DMs)
+    ├─► Generate messageId (nonce)
+    ├─► Sign message with Ed448 ← HAPPENS ONCE
+    ├─► Add to React Query cache (sendStatus: 'sending')
+    └─► actionQueueService.enqueue('send-dm', context)
+            │
+            ▼
+ActionQueueHandlers.sendDm.execute()
+    ├─► Get all inbox addresses (self + counterparty devices)
+    ├─► Clean up stale encryption states
+    ├─► For each target inbox:
+    │     ├─► Check for existing encryption state
+    │     ├─► Encrypt with DoubleRatchetInboxEncrypt() or
+    │     │   NewDoubleRatchetSenderSession() (first message)
+    │     └─► Collect sealed message
+    ├─► Save encryption states
+    ├─► Send all messages via sendDirectMessages()
+    └─► Update message status to 'sent'
+```
+
+### DM Secondary Actions (Reactions, Deletes, Edits)
+
+DM secondary actions use a shared helper `encryptAndSendDm()`:
+
+```
+User adds reaction in DM
+    │
+    ▼
+useMessageActions.handleReaction()
+    ├─► Optimistic UI update (React Query cache)
+    ├─► Persist to IndexedDB
+    ├─► Check isDM = spaceId === channelId → true
+    ├─► buildDmActionContext() → get self, counterparty, keyset
+    └─► actionQueueService.enqueue('reaction-dm', context)
+            │
+            ▼
+ActionQueueHandlers.reactionDm.execute()
+    └─► encryptAndSendDm(address, reactionMessage, ...)
+            ├─► Double Ratchet encryption per inbox
+            └─► sendDirectMessages()
+```
+
+### Context Requirements by Action Type
+
+#### Space Actions Context
+```typescript
+{
+  spaceId: string;
+  channelId: string;
+  signedMessage?: Message;      // For send-channel-message
+  reactionMessage?: object;     // For reaction
+  editMessage?: object;         // For edit-message
+  deleteMessage?: object;       // For delete-message
+  currentPasskeyInfo: object;   // User identity
+}
+```
+
+#### DM Actions Context
+```typescript
+{
+  address: string;              // Counterparty wallet address
+  signedMessage?: Message;      // For send-dm
+  reactionMessage?: object;     // For reaction-dm
+  editMessage?: object;         // For edit-dm
+  deleteMessage?: object;       // For delete-dm
+  messageId?: string;           // For edit-dm (to check if still exists)
+  self: UserRegistration;       // Sender's registration
+  counterparty: UserRegistration; // Recipient's registration
+  keyset: {
+    deviceKeyset: DeviceKeyset;
+    userKeyset: UserKeyset;
+  };
+  senderDisplayName?: string;   // For identity revelation
+  senderUserIcon?: string;      // For identity revelation
+}
+```
+
+---
+
+## Deduplication Keys
+
+Each action type uses a unique deduplication key to prevent duplicate actions:
+
+| Action Type | Dedupe Key Format |
+|-------------|-------------------|
+| `send-channel-message` | `send:${spaceId}:${channelId}:${messageId}` |
+| `send-dm` | `send-dm:${address}:${messageId}` |
+| `reaction` | `reaction:${spaceId}:${channelId}:${messageId}:${emoji}:${userAddress}` |
+| `reaction-dm` | `reaction-dm:${address}:${messageId}:${emoji}` |
+| `delete-message` | `delete:${spaceId}:${channelId}:${messageId}` |
+| `delete-dm` | `delete-dm:${address}:${messageId}` |
+| `edit-message` | `edit:${spaceId}:${channelId}:${messageId}` |
+| `edit-dm` | `edit-dm:${address}:${messageId}` |
+
+---
+
+## Legacy Fallback Path
+
+DM secondary actions (reactions, deletes, edits) have a **legacy fallback** when `dmContext` is unavailable.
+
+### When Fallback Triggers
+
+The fallback triggers when:
+- `dmContext` prop is not passed through component hierarchy
+- `buildDmActionContext()` returns `null` (missing registration or keyset)
+- Race conditions during component mounting
+
+### Fallback Flow
+
+```
+handleReaction() (DM)
+    ├─► isDM = true
+    ├─► buildDmActionContext() → null (context unavailable)
+    └─► onSubmitMessage({ type: 'reaction', ... })  ← FALLBACK
+            │
+            ▼
+MessageService.submitMessage()
+    └─► enqueueOutbound() (WebSocket queue)
+            └─► Double Ratchet encryption + send
+```
+
+### Fallback Characteristics
+
+| Aspect | Action Queue Path | Legacy Fallback Path |
+|--------|-------------------|---------------------|
+| **Visibility** | Shows in offline banner | No visibility |
+| **Deduplication** | Yes (dedupe key) | No |
+| **Retry Logic** | Exponential backoff | WebSocket reconnection |
+| **Offline Support** | Yes | Yes (WebSocket queue) |
+
+The fallback works correctly for both online and offline scenarios - it just lacks the action queue's visibility and deduplication features.
+
+---
+
+## Data Flow Patterns
 
 ### Optimistic UI Pattern
 
@@ -136,12 +330,12 @@ await actionQueueService.enqueue('action-type', context, dedupKey);
 
 > **Important**: Use `setQueryData` for optimistic updates, not `invalidateQueries`. The latter may delay/skip refetches, causing offline actions to not appear in the UI.
 
-### Message Sending
+### Sign Once, Encrypt on Retry
 
 For messages, **signing** happens before queueing, **encryption** happens in the handler:
 
 ```
-submitChannelMessage()
+submitChannelMessage() / submitMessage()
   1. Generate messageId (nonce)
   2. Sign message with Ed448 ← HAPPENS ONCE
   3. Add to cache (sendStatus: 'sending')
@@ -149,13 +343,31 @@ submitChannelMessage()
 
 ActionQueue Handler (retryable)
   1. Encrypt with Triple/Double Ratchet ← CAN RETRY SAFELY
-  2. Send via WebSocket
+  2. Send via WebSocket/Hub
   3. Update cache status to 'sent'
 ```
 
 This separation ensures retries don't create duplicate messages - the same messageId/signature is preserved across retries.
 
-### Multi-Tab Safety
+---
+
+## Relationship to WebSocket Queue
+
+The Action Queue works **in series** with the existing WebSocket queue:
+
+```
+ActionQueueService    →    MessageService/ConfigService    →    WebSocketProvider
+(Persistence layer)        (Business logic)                    (Transport layer)
+```
+
+| Queue | Purpose | Storage | Lifetime |
+|-------|---------|---------|----------|
+| **ActionQueue** | Persistence, retry, crash recovery | IndexedDB | Survives refresh |
+| **WebSocket queue** | Buffer during disconnect | Memory | Lost on refresh |
+
+---
+
+## Multi-Tab Safety
 
 The queue uses status-based gating to prevent duplicate processing:
 
@@ -163,6 +375,8 @@ The queue uses status-based gating to prevent duplicate processing:
 2. Skip if status is not `pending` (another tab grabbed it)
 3. Check `processingStartedAt` timestamp for grace period (30s)
 4. Mark as `processing` with timestamp before executing
+
+---
 
 ## UI Integration
 
@@ -190,6 +404,8 @@ const { isOnline, stats, refreshStats } = useActionQueue();
 | `quorum:queue-updated` | Queue state changed (debounced 500ms) |
 | `quorum:session-expired` | Auth error (401) encountered |
 
+---
+
 ## IndexedDB Schema
 
 ```typescript
@@ -197,7 +413,7 @@ interface QueueTask {
   id?: number;              // Auto-generated
   taskType: ActionType;
   context: Record<string, unknown>;
-  key: string;              // Grouping key (e.g., "spaceId/channelId")
+  key: string;              // Grouping/dedup key
   status: TaskStatus;       // 'pending' | 'processing' | 'completed' | 'failed'
   retryCount: number;
   maxRetries: number;
@@ -210,6 +426,8 @@ interface QueueTask {
 ```
 
 **Indexes**: `status`, `taskType`, `key`, `nextRetryAt`
+
+---
 
 ## Configuration
 
@@ -227,6 +445,8 @@ interface QueueTask {
 ### Exponential Backoff
 
 `min(baseRetryDelayMs * 2^retryCount, maxRetryDelayMs)` → 2s, 4s, 8s...
+
+---
 
 ## Error Handling
 
@@ -247,6 +467,8 @@ Some handlers are safe to retry by design:
 - **Delete**: Already deleted = success
 - **Kick**: Checks if user already left
 
+---
+
 ## Toast Feedback
 
 | Action | Success | Failure |
@@ -257,6 +479,9 @@ Some handlers are safe to retry by design:
 | Moderation | None | "Failed to [action] user" |
 | Reactions | None | None |
 | Pin/Unpin | None | "Failed to pin/unpin message" |
+| DM secondary actions | None | "Failed to edit/delete message" |
+
+---
 
 ## Debugging
 
@@ -270,6 +495,8 @@ await window.__messageDB.getAllQueueTasks()
 // Force process queue
 window.__actionQueue.processQueue()
 ```
+
+---
 
 ## Technical Decisions
 
@@ -289,10 +516,47 @@ IndexedDB is origin-sandboxed. The user already has the key (they're logged in).
 
 Simpler, avoids race conditions, prevents server overload, maintains message ordering.
 
-## Related Documentation
+### Legacy Fallback Preserved
 
-- [Background Action Queue Task](.agents/tasks/.done/background-action-queue.md) - Implementation details and history
+The legacy `onSubmitMessage` path is intentionally preserved for DM secondary actions. This provides resilience for edge cases (race conditions, missing context) while the action queue path provides better visibility and deduplication.
 
 ---
 
-*Updated: 2025-12-18 16:50*
+## Component Hierarchy for DM Context
+
+For DM actions to use the action queue (not fallback), `dmContext` must be passed through the component hierarchy:
+
+```
+DirectMessage.tsx
+  └─► Constructs dmContext: { self: self.registration, counterparty: registration.registration }
+      │
+      ▼
+MessageList.tsx (dmContext prop)
+      │
+      ▼
+Message.tsx (dmContext prop)
+  ├─► useMessageActions({ ..., dmContext }) → for reactions, deletes
+  └─► MessageEditTextarea (dmContext prop) → for edits
+```
+
+If `dmContext` is not available at any point, the fallback path is used.
+
+---
+
+## Potential Future Actions
+
+| Action Type | Description | Current Location | Notes |
+|-------------|-------------|------------------|-------|
+| `delete-conversation` | Delete DM conversation | `MessageService.deleteConversation()` | Currently blocks UI for 3-4s due to crypto |
+| `delete-space` | Delete a space | `useSpaceManagement.ts` | Same - has overlay but crypto blocks main thread |
+
+---
+
+## Related Documentation
+
+- [DM Action Queue Handlers Task](../../tasks/dm-action-queue-handlers.md) - Implementation details
+- [DM Verification Report](../../reports/action-queue-dm-verification_2025-12-18.md) - Analysis report
+
+---
+
+*Updated: 2025-12-18 - Added DM action types, Space vs DM comparison, legacy fallback documentation*

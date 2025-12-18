@@ -559,6 +559,14 @@ export class ActionQueueHandlers {
       const senderDisplayName = context.senderDisplayName as string | undefined;
       const senderUserIcon = context.senderUserIcon as string | undefined;
 
+      const traceId = `DM-${messageId.slice(0, 8)}`;
+      console.log(`[${traceId}] send-dm START`, {
+        address: address.slice(0, 16) + '...',
+        messageId: messageId.slice(0, 16) + '...',
+        contentType: signedMessage.content?.type,
+        timestamp: new Date().toISOString(),
+      });
+
       const conversationId = address + '/' + address;
       const conversation = await this.deps.messageDB.getConversation({
         conversationId,
@@ -601,8 +609,13 @@ export class ActionQueueHandlers {
 
       // Validate we have recipients to send to
       if (targetInboxes.length === 0) {
+        console.error(`[${traceId}] FAILED: No target inboxes available`);
         throw new Error('No target inboxes available for DM - counterparty may have no registered devices');
       }
+
+      console.log(`[${traceId}] Encrypting for ${targetInboxes.length} target inbox(es)`, {
+        encryptionStatesFound: sets.length,
+      });
 
       // Encrypt for each inbox (Double Ratchet)
       for (const inbox of targetInboxes) {
@@ -689,7 +702,11 @@ export class ActionQueueHandlers {
       }
 
       // Send all messages via WebSocket
+      console.log(`[${traceId}] Sending ${outboundMessages.length} outbound messages via WebSocket`, {
+        sessionCount: sessions.length,
+      });
       await this.deps.messageService.sendDirectMessages(outboundMessages);
+      console.log(`[${traceId}] WebSocket send completed`);
 
       // Save to IndexedDB (without sendStatus/sendError)
       await this.deps.messageService.saveMessage(
@@ -746,6 +763,7 @@ export class ActionQueueHandlers {
         messageId,
         'sent'
       );
+      console.log(`[${traceId}] send-dm COMPLETE - message sent successfully`);
     },
     isPermanentError: (error) => {
       return (
@@ -756,6 +774,11 @@ export class ActionQueueHandlers {
     onFailure: (context, error) => {
       const address = context.address as string;
       const messageId = context.messageId as string;
+      const traceId = `DM-${messageId.slice(0, 8)}`;
+      console.error(`[${traceId}] send-dm FAILED`, {
+        error: error.message,
+        timestamp: new Date().toISOString(),
+      });
       this.deps.messageService.updateMessageStatus(
         this.deps.queryClient,
         address,
@@ -767,6 +790,349 @@ export class ActionQueueHandlers {
     },
     successMessage: undefined,
     failureMessage: undefined,
+  };
+
+  // === DM SECONDARY ACTION HANDLERS (Double Ratchet) ===
+
+  /**
+   * Shared helper to encrypt and send DM messages using Double Ratchet.
+   * Used by send-dm, reaction-dm, delete-dm, edit-dm handlers.
+   *
+   * @param address - The DM conversation address
+   * @param messageContent - The message content to encrypt and send (already a plain object)
+   * @param self - Sender's UserRegistration
+   * @param counterparty - Recipient's UserRegistration
+   * @param keyset - Sender's device and user keysets
+   * @param senderDisplayName - Optional sender display name for identity revelation
+   * @param senderUserIcon - Optional sender profile picture URL
+   * @param traceId - Optional trace ID for logging
+   */
+  private async encryptAndSendDm(
+    address: string,
+    messageContent: Record<string, unknown>,
+    self: secureChannel.UserRegistration,
+    counterparty: secureChannel.UserRegistration,
+    keyset: {
+      deviceKeyset: secureChannel.DeviceKeyset;
+      userKeyset: secureChannel.UserKeyset;
+    },
+    senderDisplayName?: string,
+    senderUserIcon?: string,
+    traceId?: string
+  ): Promise<void> {
+    const conversationId = address + '/' + address;
+    const log = traceId ? (msg: string, data?: object) => console.log(`[${traceId}] ${msg}`, data ?? '') : () => {};
+
+    // Get encryption states
+    let response = await this.deps.messageDB.getEncryptionStates({
+      conversationId,
+    });
+
+    const inboxes = (self?.device_registrations ?? [])
+      .filter((d) => d.inbox_registration)
+      .map((d) => d.inbox_registration.inbox_address)
+      .concat(
+        (counterparty?.device_registrations ?? [])
+          .filter((d) => d.inbox_registration)
+          .map((d) => d.inbox_registration.inbox_address)
+      )
+      .sort();
+
+    // Clean up stale encryption states
+    for (const res of response) {
+      if (!inboxes.includes(JSON.parse(res.state).tag)) {
+        await this.deps.messageDB.deleteEncryptionState(res);
+      }
+    }
+
+    response = await this.deps.messageDB.getEncryptionStates({ conversationId });
+    const sets = response.map((e) => JSON.parse(e.state));
+
+    let sessions: secureChannel.SealedMessageAndMetadata[] = [];
+
+    // Get target inboxes (excluding our own device)
+    const targetInboxes = inboxes.filter(
+      (i) => i !== keyset.deviceKeyset.inbox_keyset.inbox_address
+    );
+
+    // Validate we have recipients to send to
+    if (targetInboxes.length === 0) {
+      log('FAILED: No target inboxes available');
+      throw new Error('No target inboxes available for DM - counterparty may have no registered devices');
+    }
+
+    log('Encrypting for target inboxes', { targetCount: targetInboxes.length, encryptionStates: sets.length });
+
+    // Encrypt for each inbox (Double Ratchet)
+    for (const inbox of targetInboxes) {
+      const set = sets.find((s) => s.tag === inbox);
+      if (set) {
+        if (set.sending_inbox.inbox_public_key === '') {
+          const newSessions = secureChannel.DoubleRatchetInboxEncryptForceSenderInit(
+            keyset.deviceKeyset,
+            [set],
+            JSON.stringify(messageContent),
+            self,
+            senderDisplayName,
+            senderUserIcon
+          );
+          sessions = [...sessions, ...newSessions];
+        } else {
+          const newSessions = secureChannel.DoubleRatchetInboxEncrypt(
+            keyset.deviceKeyset,
+            [set],
+            JSON.stringify(messageContent),
+            self,
+            senderDisplayName,
+            senderUserIcon
+          );
+          sessions = [...sessions, ...newSessions];
+        }
+      } else {
+        // Find the device registration for this inbox
+        const targetDevice = self.device_registrations
+          .concat(counterparty.device_registrations)
+          .filter((d) => d.inbox_registration)
+          .find((d) => d.inbox_registration.inbox_address === inbox);
+
+        if (!targetDevice) {
+          continue; // Skip this inbox
+        }
+
+        sessions = [
+          ...sessions,
+          ...(await secureChannel.NewDoubleRatchetSenderSession(
+            keyset.deviceKeyset,
+            self.user_address,
+            targetDevice,
+            JSON.stringify(messageContent),
+            senderDisplayName,
+            senderUserIcon
+          )),
+        ];
+      }
+    }
+
+    // Save encryption states and collect messages to send
+    const outboundMessages: string[] = [];
+
+    for (const session of sessions) {
+      if (!session.receiving_inbox) {
+        continue;
+      }
+
+      const newEncryptionState = {
+        state: JSON.stringify({
+          ratchet_state: session.ratchet_state,
+          receiving_inbox: session.receiving_inbox,
+          tag: session.tag,
+          sending_inbox: session.sending_inbox,
+        } as secureChannel.DoubleRatchetStateAndInboxKeys),
+        timestamp: Date.now(),
+        inboxId: session.receiving_inbox.inbox_address,
+        conversationId: address + '/' + address,
+        sentAccept: session.sent_accept,
+      };
+      await this.deps.messageDB.saveEncryptionState(newEncryptionState, true);
+
+      // Collect messages to send: listen subscription + direct message
+      outboundMessages.push(
+        JSON.stringify({
+          type: 'listen',
+          inbox_addresses: [session.receiving_inbox.inbox_address],
+        })
+      );
+      outboundMessages.push(
+        JSON.stringify({ type: 'direct', ...session.sealed_message })
+      );
+    }
+
+    // Send all messages via WebSocket
+    log('Sending via WebSocket', { outboundCount: outboundMessages.length, sessions: sessions.length });
+    await this.deps.messageService.sendDirectMessages(outboundMessages);
+    log('WebSocket send completed');
+  }
+
+  /**
+   * Add/remove a reaction to a DM message.
+   * Uses Double Ratchet encryption.
+   *
+   * Context expected:
+   * - address: string (DM conversation address)
+   * - reactionMessage: ReactionMessage | RemoveReactionMessage
+   * - self: UserRegistration
+   * - counterparty: UserRegistration
+   * - keyset: { deviceKeyset, userKeyset }
+   * - senderDisplayName?: string
+   * - senderUserIcon?: string
+   */
+  private reactionDm: TaskHandler = {
+    execute: async (context) => {
+      const address = context.address as string;
+      const reactionMessage = context.reactionMessage as Record<string, unknown>;
+      const self = context.self as secureChannel.UserRegistration;
+      const counterparty = context.counterparty as secureChannel.UserRegistration;
+      const keyset = context.keyset as {
+        deviceKeyset: secureChannel.DeviceKeyset;
+        userKeyset: secureChannel.UserKeyset;
+      };
+      const senderDisplayName = context.senderDisplayName as string | undefined;
+      const senderUserIcon = context.senderUserIcon as string | undefined;
+
+      const traceId = `DM-REACT-${(reactionMessage.messageId as string)?.slice(0, 8) ?? 'unknown'}`;
+      console.log(`[${traceId}] reaction-dm START`, {
+        type: reactionMessage.type,
+        reaction: reactionMessage.reaction,
+        messageId: (reactionMessage.messageId as string)?.slice(0, 16),
+        timestamp: new Date().toISOString(),
+      });
+
+      try {
+        await this.encryptAndSendDm(
+          address,
+          reactionMessage,
+          self,
+          counterparty,
+          keyset,
+          senderDisplayName,
+          senderUserIcon,
+          traceId
+        );
+        console.log(`[${traceId}] reaction-dm COMPLETE`);
+      } catch (error) {
+        console.error(`[${traceId}] reaction-dm FAILED`, { error: (error as Error).message });
+        throw error;
+      }
+    },
+    // Reactions are idempotent - re-adding same reaction is fine
+    isPermanentError: (error) => {
+      return error.message.includes('404'); // Message deleted
+    },
+    successMessage: undefined,
+    failureMessage: undefined,
+  };
+
+  /**
+   * Delete a DM message.
+   * Uses Double Ratchet encryption.
+   *
+   * Context expected:
+   * - address: string (DM conversation address)
+   * - deleteMessage: RemoveMessage
+   * - self: UserRegistration
+   * - counterparty: UserRegistration
+   * - keyset: { deviceKeyset, userKeyset }
+   * - senderDisplayName?: string
+   * - senderUserIcon?: string
+   */
+  private deleteDm: TaskHandler = {
+    execute: async (context) => {
+      const address = context.address as string;
+      const deleteMessage = context.deleteMessage as Record<string, unknown>;
+      const self = context.self as secureChannel.UserRegistration;
+      const counterparty = context.counterparty as secureChannel.UserRegistration;
+      const keyset = context.keyset as {
+        deviceKeyset: secureChannel.DeviceKeyset;
+        userKeyset: secureChannel.UserKeyset;
+      };
+      const senderDisplayName = context.senderDisplayName as string | undefined;
+      const senderUserIcon = context.senderUserIcon as string | undefined;
+
+      const traceId = `DM-DEL-${(deleteMessage.removeMessageId as string)?.slice(0, 8) ?? 'unknown'}`;
+      console.log(`[${traceId}] delete-dm START`, {
+        removeMessageId: (deleteMessage.removeMessageId as string)?.slice(0, 16),
+        timestamp: new Date().toISOString(),
+      });
+
+      try {
+        await this.encryptAndSendDm(
+          address,
+          deleteMessage,
+          self,
+          counterparty,
+          keyset,
+          senderDisplayName,
+          senderUserIcon,
+          traceId
+        );
+        console.log(`[${traceId}] delete-dm COMPLETE`);
+      } catch (err: any) {
+        // If message already deleted, treat as success
+        if (err.message?.includes('404')) {
+          console.log(`[${traceId}] delete-dm COMPLETE (already deleted)`);
+          return;
+        }
+        console.error(`[${traceId}] delete-dm FAILED`, { error: err.message });
+        throw err;
+      }
+    },
+    // Idempotent - if already deleted, that's success
+    isPermanentError: () => false,
+    successMessage: undefined,
+    failureMessage: t`Failed to delete message`,
+  };
+
+  /**
+   * Edit a DM message.
+   * Uses Double Ratchet encryption.
+   *
+   * Context expected:
+   * - address: string (DM conversation address)
+   * - editMessage: EditMessage
+   * - messageId: string
+   * - self: UserRegistration
+   * - counterparty: UserRegistration
+   * - keyset: { deviceKeyset, userKeyset }
+   * - senderDisplayName?: string
+   * - senderUserIcon?: string
+   */
+  private editDm: TaskHandler = {
+    execute: async (context) => {
+      const address = context.address as string;
+      const editMessage = context.editMessage as Record<string, unknown>;
+      const messageId = context.messageId as string;
+      const self = context.self as secureChannel.UserRegistration;
+      const counterparty = context.counterparty as secureChannel.UserRegistration;
+      const keyset = context.keyset as {
+        deviceKeyset: secureChannel.DeviceKeyset;
+        userKeyset: secureChannel.UserKeyset;
+      };
+      const senderDisplayName = context.senderDisplayName as string | undefined;
+      const senderUserIcon = context.senderUserIcon as string | undefined;
+
+      const traceId = `DM-EDIT-${messageId.slice(0, 8)}`;
+      console.log(`[${traceId}] edit-dm START`, {
+        messageId: messageId.slice(0, 16),
+        timestamp: new Date().toISOString(),
+      });
+
+      // Check if message still exists
+      const message = await this.deps.messageDB.getMessageById(messageId);
+      if (!message) {
+        console.log(`[${traceId}] edit-dm SKIPPED - message not found`);
+        return;
+      }
+
+      try {
+        await this.encryptAndSendDm(
+          address,
+          editMessage,
+          self,
+          counterparty,
+          keyset,
+          senderDisplayName,
+          senderUserIcon,
+          traceId
+        );
+        console.log(`[${traceId}] edit-dm COMPLETE`);
+      } catch (error) {
+        console.error(`[${traceId}] edit-dm FAILED`, { error: (error as Error).message });
+        throw error;
+      }
+    },
+    isPermanentError: (error) => error.message.includes('404'),
+    successMessage: undefined,
+    failureMessage: t`Failed to edit message`,
   };
 
   /**
@@ -798,11 +1164,16 @@ export class ActionQueueHandlers {
       'kick-user': this.kickUser,
       'mute-user': this.muteUser,
       'unmute-user': this.unmuteUser,
+      // Space message actions (Triple Ratchet)
       reaction: this.reaction,
       'pin-message': this.pinMessage,
       'unpin-message': this.unpinMessage,
       'edit-message': this.editMessage,
       'delete-message': this.deleteMessage,
+      // DM message actions (Double Ratchet)
+      'reaction-dm': this.reactionDm,
+      'delete-dm': this.deleteDm,
+      'edit-dm': this.editDm,
     };
     return handlers[taskType];
   }

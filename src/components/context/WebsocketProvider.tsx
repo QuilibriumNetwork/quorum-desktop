@@ -126,6 +126,23 @@ export function WebSocketProvider({ children }: WebSocketProviderProps) {
           try {
             const messages = await outbound();
             for (const m of messages) {
+              // Log DM-related WebSocket sends for debugging
+              try {
+                const parsed = JSON.parse(m);
+                if (parsed.type === 'direct' || parsed.type === 'listen') {
+                  console.log(`[WS-SEND] ${parsed.type}`, {
+                    timestamp: new Date().toISOString(),
+                    ...(parsed.type === 'listen' ? { inboxCount: parsed.inbox_addresses?.length } : {}),
+                    ...(parsed.type === 'direct' ? {
+                      hasEnvelope: !!parsed.envelope,
+                      toInbox: parsed.to_inbox_address?.slice(0, 16) + '...',
+                      payloadSize: m.length,
+                    } : {}),
+                  });
+                }
+              } catch {
+                // Not JSON, skip logging
+              }
               wsRef.current.send(m);
             }
           } catch (error) {

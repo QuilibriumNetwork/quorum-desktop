@@ -820,6 +820,11 @@ const DirectMessage: React.FC<{}> = () => {
                 }}
                 hasNextPage={hasNextPage}
                 onRetryMessage={handleRetryMessage}
+                dmContext={
+                  self?.registration && registration?.registration
+                    ? { self: self.registration, counterparty: registration.registration }
+                    : undefined
+                }
               />
             </Container>
             {/* Accept chat warning */}

@@ -27,6 +27,7 @@ import { shouldShowDateSeparator } from '../../utils/messageGrouping';
 import { useScrollTracking } from '../../hooks/ui/useScrollTracking';
 import { Button } from '../primitives';
 import { Trans } from '@lingui/react/macro';
+import type { DmContext } from '../../hooks/business/messages/useMessageActions';
 
 export interface MessageListRef {
   scrollToBottom: () => void;
@@ -72,6 +73,8 @@ interface MessageListProps {
   } | null;
   onDismissSeparator?: () => void; // Callback when separator should be dismissed
   onRetryMessage?: (message: MessageType) => void;
+  /** DM context for offline-resilient reactions/deletes/edits (optional - only for DMs) */
+  dmContext?: DmContext;
 }
 
 function useWindowSize() {
@@ -117,6 +120,7 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
       onDismissSeparator,
       spaceName,
       onRetryMessage,
+      dmContext,
     } = props;
 
     const [_width, height] = useWindowSize();
@@ -268,6 +272,7 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
               lastReadTimestamp={lastReadTimestamp}
               spaceName={spaceName}
               onRetryMessage={onRetryMessage}
+              dmContext={dmContext}
             />
           </React.Fragment>
         );
