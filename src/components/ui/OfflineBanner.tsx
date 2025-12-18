@@ -2,47 +2,67 @@
  * OfflineBanner - Shows offline status and pending actions count
  *
  * Displays when:
- * - User is offline
- * - There are pending actions syncing
+ * - User is offline (shows queued actions count)
+ * - User hasn't dismissed it this session
+ *
+ * Does NOT display when online - action queue processing happens silently
+ * and "Syncing Space..." toast handles sync feedback separately.
+ *
+ * Dismiss behavior:
+ * - User can close with X button
+ * - Reappears on page refresh (browser) or app restart (Electron)
+ *
+ * Adds 'offline-banner-visible' class to body to push layout down.
  *
  * See: .agents/tasks/background-action-queue.md
  */
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { t } from '@lingui/core/macro';
 import { useActionQueue } from '../context/ActionQueueContext';
+import { Icon } from '../primitives';
 import './OfflineBanner.scss';
 
 export const OfflineBanner: React.FC = () => {
   const { isOnline, stats } = useActionQueue();
+  const [dismissed, setDismissed] = useState(false);
 
-  // Don't show anything if online and no pending actions
-  if (isOnline && stats.pending === 0) return null;
+  const showBanner = !isOnline && !dismissed;
 
-  if (!isOnline) {
-    return (
-      <div className="offline-banner offline-banner--offline">
-        <span className="offline-banner__text">{t`You're offline`}</span>
-        {stats.pending > 0 && (
-          <span className="offline-banner__count">
-            {' '}
-            - {stats.pending} {t`actions queued`}
-          </span>
-        )}
-      </div>
-    );
-  }
+  // Add/remove body class to push layout down
+  useEffect(() => {
+    if (showBanner) {
+      document.body.classList.add('offline-banner-visible');
+    } else {
+      document.body.classList.remove('offline-banner-visible');
+    }
+    return () => {
+      document.body.classList.remove('offline-banner-visible');
+    };
+  }, [showBanner]);
 
-  // Online but syncing
-  if (stats.pending > 0) {
-    return (
-      <div className="offline-banner offline-banner--syncing">
-        <span className="offline-banner__text">
-          {t`Syncing`} ({stats.pending} {t`pending`})
-        </span>
-      </div>
-    );
-  }
+  // Reset dismissed state when coming back online (so it shows again next time offline)
+  useEffect(() => {
+    if (isOnline) {
+      setDismissed(false);
+    }
+  }, [isOnline]);
 
-  return null;
+  if (!showBanner) return null;
+
+  return (
+    <div className="offline-banner">
+      <span>
+        {t`You're offline`}
+        {stats.pending > 0 && ` - ${stats.pending} ${t`actions queued`}`}
+      </span>
+      <button
+        className="offline-banner__close"
+        onClick={() => setDismissed(true)}
+        aria-label="Dismiss"
+      >
+        <Icon name="close" size={14} />
+      </button>
+    </div>
+  );
 };
