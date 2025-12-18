@@ -135,6 +135,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Service Worker for App Update Detection](tasks/service-worker-app-updates.md)
 - [Task: Implement Delete Public Invite Link Feature](tasks/delete-public-invite-link.md)
 - [Test Suite Implementation Plan for Quorum Desktop](tasks/test-suite-plan.md)
+- [Tombstone Cleanup Strategy for Deleted Messages](tasks/tombstone-cleanup-strategy.md)
 - [User Status Feature Implementation Plan](tasks/user-status.md)
 
 ### .Archived
@@ -324,4 +325,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2025-12-18 10:52:09
+**Last Updated**: 2025-12-18 11:46:10

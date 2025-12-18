@@ -101,6 +101,17 @@ export interface MutedUserRecord {
   expiresAt?: number; // undefined = forever
 }
 
+/**
+ * Tombstone record for deleted messages.
+ * Prevents deleted messages from being re-added during peer sync.
+ */
+export interface DeletedMessageRecord {
+  messageId: string;
+  spaceId: string;
+  channelId: string;
+  deletedAt: number;
+}
+
 export interface SearchResult {
   message: Message;
   score: number;
@@ -110,7 +121,7 @@ export interface SearchResult {
 export class MessageDB {
   private db: IDBDatabase | null = null;
   private readonly DB_NAME = 'quorum_db';
-  private readonly DB_VERSION = 6;
+  private readonly DB_VERSION = 7;
   private searchIndices: Map<string, MiniSearch<SearchableMessage>> = new Map();
   private indexInitialized = false;
 
@@ -216,6 +227,16 @@ export class MessageDB {
           queueStore.createIndex('taskType', 'taskType', { unique: false });
           queueStore.createIndex('key', 'key', { unique: false });
           queueStore.createIndex('nextRetryAt', 'nextRetryAt', { unique: false });
+        }
+
+        if (event.oldVersion < 7) {
+          // Add deleted_messages object store for tombstone tracking
+          // Prevents deleted messages from being re-added during peer sync
+          const deletedMessagesStore = db.createObjectStore('deleted_messages', {
+            keyPath: 'messageId',
+          });
+          deletedMessagesStore.createIndex('by_space_channel', ['spaceId', 'channelId']);
+          deletedMessagesStore.createIndex('by_deleted_at', 'deletedAt');
         }
       };
     });
@@ -760,7 +781,7 @@ export class MessageDB {
   async deleteMessage(messageId: string): Promise<void> {
     await this.init();
 
-    // Get message first to extract spaceId and channelId for search index removal
+    // Get message first to extract spaceId and channelId for search index removal and tombstone
     const message = await new Promise<Message | undefined>((resolve, reject) => {
       const transaction = this.db!.transaction(['messages'], 'readonly');
       const store = transaction.objectStore('messages');
@@ -770,14 +791,31 @@ export class MessageDB {
     });
 
     return new Promise((resolve, reject) => {
-      // Include 'bookmarks' store to cascade delete any bookmarks pointing to this message
-      const transaction = this.db!.transaction(['messages', 'bookmarks'], 'readwrite');
+      // Include 'bookmarks' and 'deleted_messages' stores
+      const transaction = this.db!.transaction(
+        ['messages', 'bookmarks', 'deleted_messages'],
+        'readwrite'
+      );
       const messageStore = transaction.objectStore('messages');
       const bookmarkStore = transaction.objectStore('bookmarks');
+      const deletedMessagesStore = transaction.objectStore('deleted_messages');
 
       // Delete the message
       const messageRequest = messageStore.delete(messageId);
       messageRequest.onerror = () => reject(messageRequest.error);
+
+      // Save tombstone to prevent re-sync (only for channel messages, not DMs)
+      // DMs don't have a sync mechanism, so tombstones aren't needed
+      // DM detection: spaceId === channelId (both are partner's address)
+      if (message && message.spaceId !== message.channelId) {
+        const tombstone: DeletedMessageRecord = {
+          messageId,
+          spaceId: message.spaceId,
+          channelId: message.channelId,
+          deletedAt: Date.now(),
+        };
+        deletedMessagesStore.put(tombstone);
+      }
 
       // Cascade delete: Remove any bookmark pointing to this message
       const bookmarkIndex = bookmarkStore.index('by_message');
@@ -803,6 +841,21 @@ export class MessageDB {
         resolve();
       };
       transaction.onerror = () => reject(transaction.error);
+    });
+  }
+
+  /**
+   * Check if a message has been deleted (tombstone exists).
+   * Used to prevent deleted messages from being re-added during peer sync.
+   */
+  async isMessageDeleted(messageId: string): Promise<boolean> {
+    await this.init();
+    return new Promise((resolve, reject) => {
+      const transaction = this.db!.transaction(['deleted_messages'], 'readonly');
+      const store = transaction.objectStore('deleted_messages');
+      const request = store.get(messageId);
+      request.onsuccess = () => resolve(!!request.result);
+      request.onerror = () => reject(request.error);
     });
   }
 

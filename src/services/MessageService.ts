@@ -574,6 +574,11 @@ export class MessageService {
       participant.inbox_address = inboxAddress;
       await messageDB.saveSpaceMember(decryptedContent.spaceId, participant);
     } else {
+      // Check tombstone before saving - prevents deleted messages from being re-added during sync
+      if (await messageDB.isMessageDeleted(decryptedContent.messageId)) {
+        return;
+      }
+
       await messageDB.saveMessage(
         { ...decryptedContent, channelId: channelId, spaceId: spaceId },
         0,

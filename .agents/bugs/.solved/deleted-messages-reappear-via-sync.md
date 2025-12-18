@@ -107,55 +107,26 @@ if (await messageDB.isMessageDeleted(message.messageId)) {
 | [MessageService.ts](src/services/MessageService.ts) | ~576-590 | `saveMessage()` doesn't check if message was previously deleted |
 | [messages.ts](src/db/messages.ts) | N/A | No `deleted_messages` table or tombstone tracking |
 
-## Solution
+## Solution - IMPLEMENTED
 
-### Required: Add Tombstone Tracking
+### Tombstone Tracking (Done)
 
-**Step 1**: Add `deleted_messages` table to IndexedDB (DB_VERSION 7)
-```typescript
-if (event.oldVersion < 7) {
-  const deletedStore = db.createObjectStore('deleted_messages', {
-    keyPath: 'messageId',
-  });
-  deletedStore.createIndex('by_space_channel', ['spaceId', 'channelId']);
-  deletedStore.createIndex('by_deleted_at', 'deletedAt');
-}
-```
+**Step 1**: Added `deleted_messages` table to IndexedDB (DB_VERSION 7)
+- File: [messages.ts](src/db/messages.ts)
+- Added `DeletedMessageRecord` interface
+- Created `deleted_messages` object store with indices
 
-**Step 2**: Track deletions in `deleteMessage()`
-```typescript
-async deleteMessage(messageId: string): Promise<void> {
-  // Get message info before deleting
-  const message = await this.getMessage({ messageId });
-
-  // Save tombstone
-  if (message) {
-    await this.saveDeletedMessageId({
-      messageId,
-      spaceId: message.spaceId,
-      channelId: message.channelId,
-      deletedAt: Date.now(),
-    });
-  }
-
-  // Existing delete logic...
-}
-```
+**Step 2**: Track deletions in `deleteMessage()` (channel messages only)
+- File: [messages.ts](src/db/messages.ts)
+- Modified `deleteMessage()` to save tombstone before deleting
+- **DMs excluded**: Tombstones are only created for channel messages (`spaceId !== channelId`)
+- DMs don't need tombstones because they have no sync mechanism that could resurrect deleted messages
 
 **Step 3**: Check tombstones during sync in `saveMessage()`
-```typescript
-// In the else branch of saveMessage() for post messages:
-} else {
-  // Skip if this message was previously deleted
-  if (await messageDB.isMessageDeleted(decryptedContent.messageId)) {
-    return;
-  }
+- File: [MessageService.ts](src/services/MessageService.ts)
+- Added `isMessageDeleted()` check before saving post messages
 
-  await messageDB.saveMessage(...);
-}
-```
-
-### Optional: Tombstone Cleanup
+### Future: Tombstone Cleanup (Not Implemented)
 
 To prevent unbounded growth of tombstones:
 - Add periodic cleanup of tombstones older than 30 days
@@ -171,12 +142,6 @@ To prevent unbounded growth of tombstones:
 4. On Client B: Delete all 3 messages
 5. Observe: Messages may reappear after a few seconds when Client A syncs
 
-**Console logs to watch for:**
-```
-[MessageService:sync-messages] Received sync with X messages
-[MessageService:saveMessage] Saving post message to IndexedDB: {messageId: 'DELETED_ID'}
-```
-
 **To verify fix:**
 1. Delete a message
 2. Wait for sync from other peers
@@ -190,3 +155,5 @@ To prevent unbounded growth of tombstones:
 ---
 
 _Created: 2025-12-18_
+_Updated: 2025-12-18 - Fix implemented (tombstone tracking)_
+_Updated: 2025-12-18 - DMs excluded from tombstone tracking (no sync mechanism)_
