@@ -16,6 +16,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Unused Dependencies Analysis](docs/development/unused-dependencies-analysis.md)
 
 ### Features
+- [Action Queue](docs/features/action-queue.md)
 - [Avatar & Initials System](docs/features/avatar-initials-system.md)
 - [Cross-Platform Key Backup Implementation](docs/features/cross-platform-key-backup.md)
 - [Cross-Platform Theming System](docs/features/cross-platform-theming.md)
@@ -119,7 +120,7 @@ This is the main index for all documentation, bug reports, and task management.
 
 ### Pending Tasks
 
-- [Background Action Queue with Web Worker Crypto](tasks/background-action-queue-with-worker-crypto.md)
+- [Background Action Queue](tasks/background-action-queue.md)
 - [Combined Text + Image Messages](tasks/combined-text-image-messages.md)
 - [Conversation Deletion State Synchronization](tasks/conversation-deletion-state-sync.md)
 - [Custom ContentEditable Mention Pills for Message Composer](tasks/mention-pills-in-message-textarea.md)
@@ -138,6 +139,7 @@ This is the main index for all documentation, bug reports, and task management.
 ### .Archived
 - [🚀 Search Performance Optimization - Revised Implementation Plan](tasks/.archived/2025-11-12-search-performance-optimization-original.md)
 - [Auto-Jump to First Unread Message + Fix Hash Navigation](tasks/.archived/auto-jump-first-unread.md)
+- [Background Action Queue with Web Worker Crypto](tasks/.archived/background-action-queue-with-worker-crypto.md)
 - [Cache Space Key Metadata to Reduce Config Save Overhead](tasks/.archived/config-save-space-key-caching.md)
 - [ClickToCopyContent Component Analysis](tasks/.archived/click-to-copy-content-analysis.md)
 - [Font Size Management Analysis & Recommendations](tasks/.archived/font-size-management-analysis-2025.md)
@@ -320,4 +322,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2025-12-16 15:01:12
+**Last Updated**: 2025-12-18 09:43:02

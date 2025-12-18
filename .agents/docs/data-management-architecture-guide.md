@@ -3,7 +3,7 @@
 A comprehensive guide to data storage, management, and flow patterns in the Quorum desktop application.
 
 **Created**: 2025-01-20
-**Last Updated**: 2025-12-09
+**Last Updated**: 2025-12-18
 
 ## Table of Contents
 
@@ -32,7 +32,7 @@ Following recent refactoring, core MessageDB functionalities have been extracted
 ### Key Components
 
 - **MessageDB Orchestrator**: Coordinates interactions with specialized services and IndexedDB (`src/db/messages.ts`, `src/components/context/MessageDB.tsx`)
-- **Specialized Services**: Encapsulate business logic for specific domains (`src/services/MessageService.ts`, `src/services/SpaceService.ts`, `src/services/EncryptionService.ts`, `src/services/SyncService.ts`, `src/services/InvitationService.ts`, `src/services/ConfigService.ts`, `src/services/SearchService.ts`, `src/services/NotificationService.ts`)
+- **Specialized Services**: Encapsulate business logic for specific domains (`src/services/MessageService.ts`, `src/services/SpaceService.ts`, `src/services/EncryptionService.ts`, `src/services/SyncService.ts`, `src/services/InvitationService.ts`, `src/services/ConfigService.ts`, `src/services/SearchService.ts`, `src/services/NotificationService.ts`, `src/services/ActionQueueService.ts`, `src/services/ActionQueueHandlers.ts`)
 - **Context Providers**: Data management contexts (`src/components/context/`)
 - **Query System**: TanStack Query hooks (`src/hooks/queries/`)
 - **API Layer**: RESTful client (`src/api/`)
@@ -52,7 +52,7 @@ Following recent refactoring, core MessageDB functionalities have been extracted
 class MessageDB {
   private db: IDBDatabase | null = null;
   private readonly DB_NAME = 'quorum_db';
-  private readonly DB_VERSION = 4;
+  private readonly DB_VERSION = 6;
   private searchIndices: Map<string, MiniSearch<SearchableMessage>> = new Map();
 }
 ```
@@ -71,6 +71,7 @@ class MessageDB {
 - `latest_states` - Latest encryption states
 - `conversation_users` - Users in conversations
 - `bookmarks` - User bookmarked messages
+- `action_queue` - Persistent background task queue (see [Action Queue](features/action-queue.md))
 
 ### 2. localStorage (Preferences & Settings)
 
@@ -106,6 +107,7 @@ localStorage.setItem(`userStatus_${address}`, status);
 - **Sidebar Context** (`src/components/context/SidebarProvider.tsx`)
 - **Mobile Context** (`src/components/context/MobileProvider.tsx`)
 - **Modal Providers** (`src/components/context/ModalProvider.tsx`, `ConfirmationModalProvider.tsx`, `ImageModalProvider.tsx`, `EditHistoryModalProvider.tsx`)
+- **Action Queue Context** (`src/components/context/ActionQueueContext.tsx`) - Queue stats and online/offline state
 
 ### 4. Server Integration
 
@@ -122,7 +124,7 @@ class QuorumApiClient {
 
 ## Database Schema & Structure
 
-### IndexedDB Schema (Version 4)
+### IndexedDB Schema (Version 6)
 
 #### Messages Store
 
@@ -614,6 +616,16 @@ await submitMessage(...);
 // Handle errors by reverting if needed
 ```
 
+### Background Action Queue
+
+For operations that benefit from persistence, retry logic, and offline support, the application uses a background action queue. This system:
+- Provides instant UI feedback via optimistic updates
+- Persists tasks to IndexedDB for crash recovery
+- Processes tasks asynchronously with exponential backoff retry
+- Handles offline gracefully (queues accumulate, process when online)
+
+See [Action Queue](features/action-queue.md) for detailed architecture and implementation.
+
 ---
 
 ## Security & Encryption
@@ -918,6 +930,8 @@ class ErrorBoundary extends React.Component {
   - `ConfigService.ts` - Manages user and application configuration.
   - `SearchService.ts` - Implements full-text search functionality.
   - `NotificationService.ts` - Manages application notifications.
+  - `ActionQueueService.ts` - Persistent background task queue with retry logic.
+  - `ActionQueueHandlers.ts` - Task handlers for each action type.
 - **`src/components/context/WebsocketProvider.tsx`** - WebSocket management
 - **`src/components/context/RegistrationPersister.tsx`** - User authentication
 - **`src/api/baseTypes.ts`** - API client implementation
@@ -940,4 +954,4 @@ class ErrorBoundary extends React.Component {
 
 ---
 
-_Last updated: 2025-12-09_
+_Last updated: 2025-12-18_
