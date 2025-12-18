@@ -161,6 +161,20 @@ export class MessageService {
   }
 
   /**
+   * Send direct message(s) via WebSocket.
+   * Used by ActionQueueHandlers for DM sending.
+   * @param messages Array of pre-formatted message strings to send
+   */
+  sendDirectMessages(messages: string[]): Promise<void> {
+    return new Promise((resolve) => {
+      this.enqueueOutbound(async () => {
+        resolve();
+        return messages;
+      });
+    });
+  }
+
+  /**
    * Saves message to DB and updates query cache.
    */
   async saveMessage(
@@ -1512,6 +1526,8 @@ export class MessageService {
           self,
           counterparty,
           keyset,
+          senderDisplayName: currentPasskeyInfo.displayName,
+          senderUserIcon: currentPasskeyInfo.pfpUrl,
         },
         `send-dm:${address}:${messageIdHex}`
       );
@@ -2031,17 +2047,18 @@ export class MessageService {
             session.user_address,
             decryptedContent
           );
+          const profileToUse = updatedUserProfile ?? {
+            user_icon:
+              conversation?.conversation?.icon ?? DefaultImages.UNKNOWN_USER,
+            display_name:
+              conversation?.conversation?.displayName ?? t`Unknown User`,
+          };
           this.addOrUpdateConversation(
             queryClient,
             session.user_address,
             envelope.timestamp,
             0,
-            updatedUserProfile ?? {
-              user_icon:
-                conversation?.conversation?.icon ?? DefaultImages.UNKNOWN_USER,
-              display_name:
-                conversation?.conversation?.displayName ?? t`Unknown User`,
-            }
+            profileToUse
           );
         } else {
           console.error(t`Failed to decrypt message with any known state`);
@@ -3178,16 +3195,17 @@ export class MessageService {
 
     if (decryptedContent) {
       if (keys.sending_inbox) {
+        const profileToUse = updatedUserProfile ?? {
+          user_icon: conversation.conversation?.icon,
+          display_name: conversation.conversation?.displayName,
+        };
         await this.saveMessage(
           decryptedContent,
           this.messageDB,
           conversationId.split('/')[0],
           conversationId.split('/')[0],
           keys.sending_inbox ? 'direct' : 'group',
-          updatedUserProfile ?? {
-            user_icon: conversation.conversation?.icon,
-            display_name: conversation.conversation?.displayName,
-          }
+          profileToUse
         );
         await this.addMessage(
           queryClient,
@@ -3200,10 +3218,7 @@ export class MessageService {
           conversationId.split('/')[0],
           message.timestamp,
           conversation.conversation?.lastReadTimestamp ?? 0,
-          updatedUserProfile ?? {
-            user_icon: conversation.conversation?.icon,
-            display_name: conversation.conversation?.displayName,
-          }
+          profileToUse
         );
       } else {
         await this.saveMessage(

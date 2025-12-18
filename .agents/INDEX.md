@@ -77,8 +77,8 @@ This is the main index for all documentation, bug reports, and task management.
 ### Active Issues
 - [Brave Browser React Hook Errors - ONGOING INVESTIGATION](bugs/brave-browser-react-hook-errors.md)
 - [Config Sync Space Loss Race Condition](bugs/config-sync-space-loss-race-condition.md)
-- [Deleted Messages Reappear After Peer Sync](bugs/deleted-messages-reappear-via-sync.md)
 - [DirectMessage Invite Loading Performance Issue](bugs/directmessage-invite-loading-performance.md)
+- [DM Shows "Unknown User" After Conversation Starts](bugs/dm-unknown-user-identity-not-revealed.md)
 - [Encryption State Evals Causing Config Sync Bloat](bugs/encryption-state-evals-bloat.md)
 - [Expired Invite Card Validation Timing Issue](bugs/expired-invite-card-validation-timing.md)
 - [Ghost Message Appears After Deleting a Message](bugs/ghost-message-after-delete.md)
@@ -97,6 +97,8 @@ This is the main index for all documentation, bug reports, and task management.
 - [Android 7.0 File Download Fix - Implementation Plan](bugs/.solved/SOLVED_android-file-download-huawei-p9-lite.md)
 - [Bug: Auto-Jump to First Unread Message - Blocked by Virtuoso Scroll Positioning](bugs/.solved/auto-jump-unread-virtuoso-scroll-conflict.md)
 - [Channel/Group Save Race Condition](bugs/.solved/channel-group-save-race-condition.md)
+- [Deleted Messages Reappear After Peer Sync](bugs/.solved/deleted-messages-reappear-via-sync.md)
+- [DM Send Fails with "Cannot read properties of undefined (reading 'address')"](bugs/.solved/dm-send-fails-address-undefined.md)
 - [Folder Click to Expand/Collapse Not Working](bugs/.solved/folder-click-expand-not-working.md)
 - [FolderEditorModal Race Condition on Auto-Open After Folder Creation](bugs/.solved/folder-editor-modal-race-condition.md)
 - [Icon Color Not Saving Issue](bugs/.solved/icon-color-not-saving-issue.md)
@@ -325,4 +327,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2025-12-18 11:46:10
+**Last Updated**: 2025-12-18 14:05:54

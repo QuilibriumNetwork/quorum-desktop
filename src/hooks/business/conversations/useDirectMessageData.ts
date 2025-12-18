@@ -48,8 +48,8 @@ export function useDirectMessageData(): UseDirectMessageDataReturn {
     // Other user
     if (conversation?.conversation) {
       m[address!] = {
-        displayName: conversation.conversation.displayName,
-        userIcon: conversation.conversation.icon,
+        displayName: conversation.conversation.displayName ?? t`Unknown User`,
+        userIcon: conversation.conversation.icon ?? DefaultImages.UNKNOWN_USER,
         address: address!,
       };
     } else if (registration?.registration) {

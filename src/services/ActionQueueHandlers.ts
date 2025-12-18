@@ -38,6 +38,8 @@ export interface HandlerDependencies {
 export interface TaskHandler {
   execute: (context: Record<string, unknown>) => Promise<void>;
   isPermanentError: (error: Error) => boolean;
+  /** Called when task fails permanently (after all retries or permanent error) */
+  onFailure?: (context: Record<string, unknown>, error: Error) => void;
   successMessage?: string; // Only show toast if defined
   failureMessage?: string; // Only show toast if defined
 }
@@ -511,6 +513,19 @@ export class ActionQueueHandlers {
         error.message.includes('Channel was deleted')
       );
     },
+    onFailure: (context, error) => {
+      const spaceId = context.spaceId as string;
+      const channelId = context.channelId as string;
+      const messageId = context.messageId as string;
+      this.deps.messageService.updateMessageStatus(
+        this.deps.queryClient,
+        spaceId,
+        channelId,
+        messageId,
+        'failed',
+        this.sanitizeError(error)
+      );
+    },
     // No toast - inline message indicator handles feedback
     successMessage: undefined,
     failureMessage: undefined,
@@ -527,6 +542,8 @@ export class ActionQueueHandlers {
    * - self: UserRegistration
    * - counterparty: UserRegistration
    * - keyset: { deviceKeyset, userKeyset }
+   * - senderDisplayName: string (optional, user's display name for identity revelation)
+   * - senderUserIcon: string (optional, user's profile picture URL for identity revelation)
    */
   private sendDm: TaskHandler = {
     execute: async (context) => {
@@ -539,6 +556,8 @@ export class ActionQueueHandlers {
         deviceKeyset: secureChannel.DeviceKeyset;
         userKeyset: secureChannel.UserKeyset;
       };
+      const senderDisplayName = context.senderDisplayName as string | undefined;
+      const senderUserIcon = context.senderUserIcon as string | undefined;
 
       const conversationId = address + '/' + address;
       const conversation = await this.deps.messageDB.getConversation({
@@ -550,12 +569,13 @@ export class ActionQueueHandlers {
         conversationId,
       });
 
-      const inboxes = self.device_registrations
+      const inboxes = (self?.device_registrations ?? [])
+        .filter((d) => d.inbox_registration)
         .map((d) => d.inbox_registration.inbox_address)
         .concat(
-          counterparty.device_registrations.map(
-            (d) => d.inbox_registration.inbox_address
-          )
+          (counterparty?.device_registrations ?? [])
+            .filter((d) => d.inbox_registration)
+            .map((d) => d.inbox_registration.inbox_address)
         )
         .sort();
 
@@ -589,50 +609,59 @@ export class ActionQueueHandlers {
         const set = sets.find((s) => s.tag === inbox);
         if (set) {
           if (set.sending_inbox.inbox_public_key === '') {
-            sessions = [
-              ...sessions,
-              ...secureChannel.DoubleRatchetInboxEncryptForceSenderInit(
-                keyset.deviceKeyset,
-                [set],
-                JSON.stringify(messageToEncrypt),
-                self,
-                undefined,
-                undefined
-              ),
-            ];
+            const newSessions = secureChannel.DoubleRatchetInboxEncryptForceSenderInit(
+              keyset.deviceKeyset,
+              [set],
+              JSON.stringify(messageToEncrypt),
+              self,
+              senderDisplayName,
+              senderUserIcon
+            );
+            sessions = [...sessions, ...newSessions];
           } else {
-            sessions = [
-              ...sessions,
-              ...secureChannel.DoubleRatchetInboxEncrypt(
-                keyset.deviceKeyset,
-                [set],
-                JSON.stringify(messageToEncrypt),
-                self,
-                undefined,
-                undefined
-              ),
-            ];
+            const newSessions = secureChannel.DoubleRatchetInboxEncrypt(
+              keyset.deviceKeyset,
+              [set],
+              JSON.stringify(messageToEncrypt),
+              self,
+              senderDisplayName,
+              senderUserIcon
+            );
+            sessions = [...sessions, ...newSessions];
           }
         } else {
+          // Find the device registration for this inbox
+          const targetDevice = self.device_registrations
+            .concat(counterparty.device_registrations)
+            .filter((d) => d.inbox_registration)
+            .find((d) => d.inbox_registration.inbox_address === inbox);
+
+          if (!targetDevice) {
+            continue; // Skip this inbox
+          }
+
           sessions = [
             ...sessions,
             ...(await secureChannel.NewDoubleRatchetSenderSession(
               keyset.deviceKeyset,
               self.user_address,
-              self.device_registrations
-                .concat(counterparty.device_registrations)
-                .find((d) => d.inbox_registration.inbox_address === inbox)!,
+              targetDevice,
               JSON.stringify(messageToEncrypt),
-              undefined,
-              undefined
+              senderDisplayName,
+              senderUserIcon
             )),
           ];
         }
       }
 
-      // Save encryption states and send messages
-      const sendHubMessage = this.deps.messageService.getSendHubMessage();
+      // Save encryption states and collect messages to send
+      const outboundMessages: string[] = [];
+
       for (const session of sessions) {
+        if (!session.receiving_inbox) {
+          continue;
+        }
+
         const newEncryptionState = {
           state: JSON.stringify({
             ratchet_state: session.ratchet_state,
@@ -647,12 +676,20 @@ export class ActionQueueHandlers {
         };
         await this.deps.messageDB.saveEncryptionState(newEncryptionState, true);
 
-        // Send the message
-        await sendHubMessage(
-          address,
+        // Collect messages to send: listen subscription + direct message
+        outboundMessages.push(
+          JSON.stringify({
+            type: 'listen',
+            inbox_addresses: [session.receiving_inbox.inbox_address],
+          })
+        );
+        outboundMessages.push(
           JSON.stringify({ type: 'direct', ...session.sealed_message })
         );
       }
+
+      // Send all messages via WebSocket
+      await this.deps.messageService.sendDirectMessages(outboundMessages);
 
       // Save to IndexedDB (without sendStatus/sendError)
       await this.deps.messageService.saveMessage(
@@ -716,9 +753,38 @@ export class ActionQueueHandlers {
         error.message.includes('403')
       );
     },
+    onFailure: (context, error) => {
+      const address = context.address as string;
+      const messageId = context.messageId as string;
+      this.deps.messageService.updateMessageStatus(
+        this.deps.queryClient,
+        address,
+        address,
+        messageId,
+        'failed',
+        this.sanitizeError(error)
+      );
+    },
     successMessage: undefined,
     failureMessage: undefined,
   };
+
+  /**
+   * Sanitize error messages to avoid exposing internal details to the user
+   */
+  private sanitizeError(error: Error): string {
+    const msg = error.message.toLowerCase();
+    if (msg.includes('network') || msg.includes('fetch') || msg.includes('offline')) {
+      return t`Network error`;
+    }
+    if (msg.includes('encrypt') || msg.includes('ratchet') || msg.includes('key')) {
+      return t`Encryption error`;
+    }
+    if (msg.includes('no target inboxes')) {
+      return t`Recipient has no devices`;
+    }
+    return t`Send failed`;
+  }
 
   /**
    * Get handler for a specific task type

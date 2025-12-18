@@ -323,38 +323,39 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
     queryClient.setQueryData(
       buildConversationsKey({ type: 'direct' }),
       (oldData: InfiniteData<any>) => {
-        if (!oldData?.pages) return oldData;
+        if (!oldData?.pages) {
+          return oldData;
+        }
 
         return {
           pageParams: oldData.pageParams,
           pages: oldData.pages.map((page, index) => {
             if (index === 0) {
+              // Find existing conversation to preserve its data (especially isRepudiable)
+              const existingConv = page.conversations.find(
+                (c: Conversation) => c.conversationId === conversationId
+              );
+              const newDisplayName = updatedUserProfile?.display_name ?? existingConv?.displayName;
+              const newIcon = updatedUserProfile?.user_icon ?? existingConv?.icon;
+
               return {
                 ...page,
                 conversations: [
                   ...page.conversations.filter(
                     (c: Conversation) => c.conversationId !== conversationId
                   ),
-                  (() => {
-                    // Find existing conversation to preserve its data (especially isRepudiable)
-                    const existingConv = page.conversations.find(
-                      (c: Conversation) => c.conversationId === conversationId
-                    );
-                    return {
-                      ...existingConv, // Preserve all existing fields including isRepudiable
-                      conversationId,
-                      address: address,
-                      icon: updatedUserProfile?.user_icon ?? existingConv?.icon,
-                      displayName:
-                        updatedUserProfile?.display_name ??
-                        existingConv?.displayName,
-                      type: 'direct' as const,
-                      timestamp: timestamp,
-                      lastReadTimestamp: lastReadTimestamp,
-                      // Explicitly preserve isRepudiable to ensure it's not lost
-                      isRepudiable: existingConv?.isRepudiable,
-                    };
-                  })(),
+                  {
+                    ...existingConv, // Preserve all existing fields including isRepudiable
+                    conversationId,
+                    address: address,
+                    icon: newIcon,
+                    displayName: newDisplayName,
+                    type: 'direct' as const,
+                    timestamp: timestamp,
+                    lastReadTimestamp: lastReadTimestamp,
+                    // Explicitly preserve isRepudiable to ensure it's not lost
+                    isRepudiable: existingConv?.isRepudiable,
+                  },
                 ],
                 nextCursor: page.nextCursor,
                 prevCursor: page.prevCursor,

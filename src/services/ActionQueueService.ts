@@ -204,6 +204,8 @@ export class ActionQueueService {
         if (typeof window !== 'undefined') {
           window.dispatchEvent(new CustomEvent('quorum:session-expired'));
         }
+        // Call onFailure callback for auth errors
+        handler.onFailure?.(task.context, err);
         await this.messageDB.updateQueueTask(task);
         this.notifyQueueUpdated();
         return;
@@ -216,6 +218,8 @@ export class ActionQueueService {
         if (handler.failureMessage) {
           showError(handler.failureMessage);
         }
+        // Call onFailure callback for permanent errors
+        handler.onFailure?.(task.context, err);
       } else {
         task.retryCount++;
         if (task.retryCount >= task.maxRetries) {
@@ -225,6 +229,8 @@ export class ActionQueueService {
           if (handler.failureMessage) {
             showError(handler.failureMessage);
           }
+          // Call onFailure callback when max retries exceeded
+          handler.onFailure?.(task.context, err);
         } else {
           task.status = 'pending';
           task.nextRetryAt = Date.now() + this.calculateBackoff(task.retryCount);

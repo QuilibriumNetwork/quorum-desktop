@@ -1210,7 +1210,7 @@ export const Message = React.memo(
                       showOnTouch={true}
                       autoHideAfter={3000}
                     >
-                      <Icon name="circle-question" size="xs" />
+                      <Icon name="question-circle" size="xs" />
                     </Tooltip>
                   )}
                 </FlexRow>
