@@ -77,9 +77,11 @@ This is the main index for all documentation, bug reports, and task management.
 ### Active Issues
 - [Brave Browser React Hook Errors - ONGOING INVESTIGATION](bugs/brave-browser-react-hook-errors.md)
 - [Config Sync Space Loss Race Condition](bugs/config-sync-space-loss-race-condition.md)
+- [Deleted Messages Reappear After Peer Sync](bugs/deleted-messages-reappear-via-sync.md)
 - [DirectMessage Invite Loading Performance Issue](bugs/directmessage-invite-loading-performance.md)
 - [Encryption State Evals Causing Config Sync Bloat](bugs/encryption-state-evals-bloat.md)
 - [Expired Invite Card Validation Timing Issue](bugs/expired-invite-card-validation-timing.md)
+- [Ghost Message Appears After Deleting a Message](bugs/ghost-message-after-delete.md)
 - [JoinSpaceModal "Invalid JSON" Error Due to Network Issues](bugs/joinspacemodal-invalid-json-network-error.md)
 - [Kick User Button Remains Enabled After User is Kicked](bugs/kick-user-button-state-after-kick.md)
 - [Markdown Line Break Inconsistency](bugs/markdown-line-break-inconsistency.md)
@@ -120,7 +122,6 @@ This is the main index for all documentation, bug reports, and task management.
 
 ### Pending Tasks
 
-- [Background Action Queue](tasks/background-action-queue.md)
 - [Combined Text + Image Messages](tasks/combined-text-image-messages.md)
 - [Conversation Deletion State Synchronization](tasks/conversation-deletion-state-sync.md)
 - [Custom ContentEditable Mention Pills for Message Composer](tasks/mention-pills-in-message-textarea.md)
@@ -209,6 +210,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [AccentColorSwitcher Cross-Platform Migration + Persistence](tasks/.done/accent-color-switcher-cross-platform-migration.md)
 - [Analysis Report & Implementation Plan: Strategic Portal Integration for Overlay Components (v7)](tasks/.done/modal-portal-refactor-analysis.md)
 - [Android 7.0 File Download Fix - Implementation Plan](tasks/.done/FAILED_android-file-download-fix.md)
+- [Background Action Queue](tasks/.done/background-action-queue.md)
 - [Callout Primitive Audit Report](tasks/.done/callout-primitive-audit.md)
 - [Callout Primitive System](tasks/.done/callout-primitive-system.md)
 - [Channel & Group Icon Selection Feature](tasks/.done/channel-group-icon-selection.md)
@@ -322,4 +324,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2025-12-18 09:43:02
+**Last Updated**: 2025-12-18 10:52:09

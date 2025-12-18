@@ -459,6 +459,11 @@ export class ActionQueueHandlers {
           }
 
           // Message not in cache (likely removed by refetch) - re-add it
+          // Only re-add post messages to cache (not remove-message, reaction, etc.)
+          if (signedMessage.content.type !== 'post') {
+            return oldData;
+          }
+
           return {
             pageParams: oldData.pageParams,
             pages: oldData.pages.map((page, index) => {

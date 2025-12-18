@@ -2200,6 +2200,12 @@ export class MessageService {
           ).toString('utf-8');
           decryptedContent = JSON.parse(output);
 
+          console.log('[MessageService:handleNewMessage] Received channel message:', {
+            messageId: decryptedContent?.messageId,
+            type: decryptedContent?.content?.type,
+            channelId: decryptedContent?.channelId,
+          });
+
           if (decryptedContent) {
             const space = await this.messageDB.getSpace(
               conversationId.split('/')[0]
