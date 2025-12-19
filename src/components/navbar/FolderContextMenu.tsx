@@ -77,10 +77,16 @@ const FolderContextMenu: React.FC<FolderContextMenuProps> = ({
   }, [onClose]);
 
   // Close on scroll
+  // Uses close-once guard to prevent onClose firing hundreds of times per scroll gesture
   useEffect(() => {
-    const handleScroll = () => onClose();
-    window.addEventListener('scroll', handleScroll, true);
-    return () => window.removeEventListener('scroll', handleScroll, true);
+    let hasClosed = false;
+    const handleScroll = () => {
+      if (hasClosed) return;
+      hasClosed = true;
+      onClose();
+    };
+    window.addEventListener('scroll', handleScroll, { capture: true });
+    return () => window.removeEventListener('scroll', handleScroll, { capture: true });
   }, [onClose]);
 
   // Recalculate position if it changes

@@ -364,8 +364,11 @@ const DirectMessage: React.FC<{}> = () => {
   }, [composer.inReplyTo]);
 
   // Calculate header height for mobile sidebar positioning
+  // Debounced to avoid excessive recalculations during window drag
   useEffect(() => {
     if (headerRef.current) {
+      let timeoutId: ReturnType<typeof setTimeout>;
+
       const updateHeaderHeight = () => {
         const rect = headerRef.current?.getBoundingClientRect();
         if (rect) {
@@ -378,11 +381,17 @@ const DirectMessage: React.FC<{}> = () => {
         }
       };
 
+      const debouncedUpdate = () => {
+        clearTimeout(timeoutId);
+        timeoutId = setTimeout(updateHeaderHeight, 150);
+      };
+
       updateHeaderHeight();
-      window.addEventListener('resize', updateHeaderHeight);
+      window.addEventListener('resize', debouncedUpdate);
 
       return () => {
-        window.removeEventListener('resize', updateHeaderHeight);
+        clearTimeout(timeoutId);
+        window.removeEventListener('resize', debouncedUpdate);
       };
     }
   }, []);

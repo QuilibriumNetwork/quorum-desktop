@@ -6,6 +6,7 @@ import {
   forwardRef,
   useImperativeHandle,
   useCallback,
+  useMemo,
 } from 'react';
 import { useLocation } from 'react-router-dom';
 import { Message } from './Message';
@@ -80,12 +81,24 @@ interface MessageListProps {
 function useWindowSize() {
   const [size, setSize] = React.useState([0, 0]);
   useLayoutEffect(() => {
+    let timeoutId: ReturnType<typeof setTimeout>;
+
     function updateSize() {
       setSize([window.innerWidth, window.innerHeight]);
     }
-    window.addEventListener('resize', updateSize);
+
+    // Debounce resize to avoid recalculating Virtuoso overscan on every pixel
+    function debouncedUpdate() {
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(updateSize, 150);
+    }
+
+    window.addEventListener('resize', debouncedUpdate);
     updateSize();
-    return () => window.removeEventListener('resize', updateSize);
+    return () => {
+      clearTimeout(timeoutId);
+      window.removeEventListener('resize', debouncedUpdate);
+    };
   }, []);
   return size;
 }
@@ -433,18 +446,21 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
       }
     }, [newMessagesSeparator]);
 
+    // Memoize firstUnreadIndex to avoid O(n) search on every scroll event
+    // This moves the expensive findIndex out of the scroll callback
+    const firstUnreadIndex = useMemo(() => {
+      if (!newMessagesSeparator?.firstUnreadMessageId) return -1;
+      return messageList.findIndex(
+        (m) => m.messageId === newMessagesSeparator.firstUnreadMessageId
+      );
+    }, [messageList, newMessagesSeparator?.firstUnreadMessageId]);
+
     // Handle separator dismissal via Virtuoso's rangeChanged callback
     const handleRangeChanged = useCallback(
       (range: { startIndex: number; endIndex: number }) => {
-        if (!newMessagesSeparator || !onDismissSeparator) {
+        if (firstUnreadIndex === -1 || !onDismissSeparator) {
           return;
         }
-
-        const firstUnreadIndex = messageList.findIndex(
-          (m) => m.messageId === newMessagesSeparator.firstUnreadMessageId
-        );
-
-        if (firstUnreadIndex === -1) return;
 
         const isVisible =
           firstUnreadIndex >= range.startIndex &&
@@ -458,12 +474,7 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
           onDismissSeparator();
         }
       },
-      [
-        newMessagesSeparator,
-        onDismissSeparator,
-        messageList,
-        separatorWasVisible,
-      ]
+      [firstUnreadIndex, onDismissSeparator, separatorWasVisible]
     );
 
     // Stable computeItemKey to prevent unnecessary re-mounts
