@@ -26,8 +26,9 @@ When investigating issues, we must determine:
 |---|-----|--------|----------|----------------|
 | 001 | [DM Sending Indicator Hang](001-dm-sending-indicator-hang.md) | ✅ Fixed | High | `action-queue-bug` (error handling) + `pre-existing` (slow crypto) |
 | 002 | [WebSocket Queue Starvation](002-websocket-queue-starvation.md) | 📋 Documented | Medium | `pre-existing` - Not Action Queue related |
-| 003 | [DM Code Comparison Audit](003-code-comparison-audit.md) | ✅ Complete | N/A | Audit - No new bugs found |
+| 003 | [DM Code Comparison Audit](003-DM-message-code-comparison-audit.md) | ✅ Complete | N/A | Audit - No new bugs found |
 | 004 | [Space Message Code Comparison Audit](004-space-message-code-comparison-audit.md) | ✅ Fixed | 🚨 Critical | Audit - Found & fixed `pre-existing` bug in `submitChannelMessage()` |
+| 005 | [DM Sync Non-Deterministic Failures](005-dm-sync-non-deterministic-failures.md) | 📋 Documented | Medium | `network-issue` - Messages sent but not delivered by network |
 
 ## Important: Network Issues
 

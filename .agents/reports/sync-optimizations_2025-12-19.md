@@ -2,27 +2,11 @@
 
 > **⚠️ AI-Generated**: May contain errors. Verify before use.
 
-## Executive Summary
-
 This report tracks sync-related optimizations implemented in the quorum-desktop codebase. These optimizations improve message delivery latency, throughput, and reliability. The lead dev can review these changes to understand the rationale and decide whether to adopt, modify, or replace them.
-
-## Scope & Methodology
-
-- **Scope**: WebSocket message processing, Action Queue integration, message delivery paths
-- **Methodology**: Code analysis, architecture review, specialized agent verification
-- **Goal**: Reduce sync latency and eliminate blocking issues without breaking existing functionality
-
----
 
 ## Optimizations
 
-### 1. WebSocket Queue Separation (Pending Implementation)
-
-**Status**: Ready for implementation
-**Bug Report**: [websocket-processqueue-stuck-blocking-outbound.md](../bugs/websocket-processqueue-stuck-blocking-outbound.md)
-**Impact**: High - Affects all outbound message delivery
-
-#### Problem
+### 1. WebSocket Queue Separation - 002e1a9e81747fcd6e9526509b2a7aba3f4747f5
 
 The `WebSocketProvider.processQueue()` function used a single lock (`processingRef`) for both inbound and outbound message processing. This caused:
 
@@ -95,12 +79,6 @@ Bug exists in `develop` branch since initial commit. Not caused by Action Queue,
 ### Decision Points
 
 1. **WebSocket Queue Separation**: Accept as-is, or prefer different approach?
-
-### How to Test
-
-- Send DM while receiving large batch of inbound messages
-- Update Space profile during active sync
-- Verify outbound executes immediately, not after inbound completes
 
 ---
 

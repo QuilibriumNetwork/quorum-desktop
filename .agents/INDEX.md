@@ -75,24 +75,19 @@ This is the main index for all documentation, bug reports, and task management.
 ## 🐛 Bug Reports
 
 ### Active Issues
-- [Brave Browser React Hook Errors - ONGOING INVESTIGATION](bugs/brave-browser-react-hook-errors.md)
 - [Config Sync Space Loss Race Condition](bugs/config-sync-space-loss-race-condition.md)
 - [DirectMessage Invite Loading Performance Issue](bugs/directmessage-invite-loading-performance.md)
-- [DM Sync Non-Deterministic Failures](bugs/dm-sync-non-deterministic-failures.md)
 - [Encryption State Evals Causing Config Sync Bloat](bugs/encryption-state-evals-bloat.md)
 - [Expired Invite Card Validation Timing Issue](bugs/expired-invite-card-validation-timing.md)
-- [Ghost Message Appears After Deleting a Message](bugs/ghost-message-after-delete.md)
 - [JoinSpaceModal "Invalid JSON" Error Due to Network Issues](bugs/joinspacemodal-invalid-json-network-error.md)
 - [Kick User Button Remains Enabled After User is Kicked](bugs/kick-user-button-state-after-kick.md)
 - [Markdown Line Break Inconsistency](bugs/markdown-line-break-inconsistency.md)
 - [Message Hash Navigation Conflict Bug](bugs/message-hash-navigation-conflict.md)
 - [MessageDB Context: IndexedDB Platform Compatibility Issue](bugs/messagedb-cross-platform-storage-issue.md)
 - [Modal Gesture Handling Technical Debt](bugs/modal-gesture-handling-technical-debt.md)
-- [Performance Issue: UserSettingsModal Save Times Scale Poorly with Number of Spaces](bugs/usersettingsmodal-scalability-performance.md)
 - [Pinned Messages Panel Button Clicks Bug](bugs/pinned-messages-panel-clicks-and-message-list-disappearing.md)
 - [Public Invite Link Intermittent Expiration Bug](bugs/public-invite-link-intermittent-expiration.md)
 - [Space Owner Privacy Limitation](bugs/space-owner-privacy-limitation.md)
-- [WebSocket processQueue Stuck - Blocking Outbound Messages](bugs/websocket-processqueue-stuck-blocking-outbound.md)
 
 ### Solved Issues
 - [Android 7.0 File Download Fix - Implementation Plan](bugs/.solved/SOLVED_android-file-download-huawei-p9-lite.md)
@@ -103,11 +98,13 @@ This is the main index for all documentation, bug reports, and task management.
 - [DM Shows "Unknown User" After Conversation Starts](bugs/.solved/dm-unknown-user-identity-not-revealed.md)
 - [Folder Click to Expand/Collapse Not Working](bugs/.solved/folder-click-expand-not-working.md)
 - [FolderEditorModal Race Condition on Auto-Open After Folder Creation](bugs/.solved/folder-editor-modal-race-condition.md)
+- [Ghost Message Appears After Deleting a Message](bugs/.solved/ghost-message-after-delete.md)
 - [Icon Color Not Saving Issue](bugs/.solved/icon-color-not-saving-issue.md)
 - [Kick User UX Improvements](bugs/.solved/kick-user-ux-improvements.md)
 - [MobileDrawer Virtuoso Double Scroller CSS Issues](bugs/.solved/mobiledrawer-virtuoso-double-scroller.md)
 - [New Messages Separator - Intersection Observer Dismissal Issues](bugs/.solved/new-messages-separator-intersection-observer-issues.md)
 - [NewDirectMessage Modal: URL-to-State Conversion](bugs/.solved/SOLVED_newdirectmessage-modal-url-to-state-conversion.md)
+- [Performance Issue: UserSettingsModal Save Times Scale Poorly with Number of Spaces](bugs/.solved/usersettingsmodal-scalability-performance.md)
 - [React Hooks Violation: Conditional Return Before Hooks](bugs/.solved/SOLVED_react-hooks-violation-conditional-return.md)
 - [Solved Search Results Page Refresh And Focus Stealing](bugs/.solved/SOLVED_search-results-page-refresh-and-focus-stealing.md)
 - [SOLVED: Fast Refresh Export Incompatibility](bugs/.solved/SOLVED_fast-refresh-export-incompatibility.md)
@@ -116,17 +113,13 @@ This is the main index for all documentation, bug reports, and task management.
 - [Space Creation Config Save Race Condition](bugs/.solved/space-creation-config-save-race-condition.md)
 - [Tooltip Flickering at Top-Left on Fast Mouse Movement](bugs/.solved/SOLVED_tooltip-flickering-top-left-on-fast-mouse-movement.md)
 - [user:kick Role Permission is Non-Functional for Non-Owners](bugs/.solved/user-kick-role-permission-non-functional.md)
+- [WebSocket processQueue Stuck - Blocking Outbound Messages](bugs/.solved/websocket-processqueue-stuck-blocking-outbound.md)
 
 ### .Archived
+- [Brave Browser React Hook Errors - ONGOING INVESTIGATION](bugs/.archived/brave-browser-react-hook-errors.md)
 - [Bug: Auto-jump to First Unread Breaks Initial Message Sync](bugs/.archived/auto-jump-unread-breaks-message-sync.md)
 - [Role with message:delete permission can delete space owner's messages](bugs/.archived/message-delete-owner-vulnerability.md)
 - [Space Owner Delete Permissions Bug](bugs/.archived/space-owner-delete-permissions-bug.md)
-
-### Action Queue
-- [DM "Sending..." Indicator Hangs Indefinitely](bugs/action-queue/001-dm-sending-indicator-hang.md)
-- [WebSocket Queue Starvation Causes DM Delays](bugs/action-queue/002-websocket-queue-starvation.md)
-- [Action Queue vs Legacy DM Implementation - Code Comparison Audit](bugs/action-queue/003-code-comparison-audit.md)
-- [Action Queue vs Legacy Space Message Implementation - Code Comparison Audit](bugs/action-queue/004-space-message-code-comparison-audit.md)
 
 ## 📋 Tasks
 
@@ -325,12 +318,18 @@ This is the main index for all documentation, bug reports, and task management.
 
 ### Active Reports
 
-- [Action Queue DM Implementation Verification Report](reports/action-queue-dm-verification_2025-12-18.md)
 - [dnd-kit Touch Drag-and-Drop Best Practices Research](reports/dnd-kit-touch-best-practices_2025-12-11.md)
 - [Quorum Privacy Analysis](reports/privacy-analysis-quorum-2025-12-03.md)
 - [Security Audit: Markdown Renderer & Mentions System](reports/security-audit-markdown-mentions-2025-11-18.md)
 - [Sync Optimizations Report](reports/sync-optimizations_2025-12-19.md)
 - [Web-to-Native Feature Sync Compatibility Analysis](reports/web-native-feature-sync-analysis_2025-12-04.md)
+
+### Action Queue
+- [DM "Sending..." Indicator Hangs Indefinitely](reports/action-queue/001-dm-sending-indicator-hang.md)
+- [WebSocket Queue Starvation Causes DM Delays](reports/action-queue/002-websocket-queue-starvation.md)
+- [Action Queue vs Legacy DM Message Implementation - Code Comparison Audit](reports/action-queue/003-DM-message-code-comparison-audit.md)
+- [Action Queue vs Legacy Space Message Implementation - Code Comparison Audit](reports/action-queue/004-space-message-code-comparison-audit.md)
+- [DM Sync Non-Deterministic Failures](reports/action-queue/005-dm-sync-non-deterministic-failures.md)
 
 ### Onboarding Flow
 - [Passkey Authentication Flow Analysis](reports/onboarding-flow/passkey-authentication-flow-analysis-2025-11-23.md)
@@ -339,4 +338,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2025-12-19 15:05:43
+**Last Updated**: 2025-12-19 16:20:04

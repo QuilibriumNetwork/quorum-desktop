@@ -259,9 +259,10 @@ Once issue is resolved, remove debugging logs from:
 
 ## Related
 
-- Feature docs: `.agents/docs/features/action-queue.md`
+- [Action Queue Bug Index](./INDEX.md)
+- [Action Queue Feature Docs](../../docs/features/action-queue.md)
+- [DM Code Comparison Audit](./003-DM-message-code-comparison-audit.md)
 - Feature flags: `src/config/features.ts`
-- Report: `.agents/reports/action-queue-dm-verification_2025-12-18.md`
 
 ---
 

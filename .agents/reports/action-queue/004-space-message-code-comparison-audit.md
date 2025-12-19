@@ -431,7 +431,7 @@ Aligned channel handler status update with DM atomic pattern in `ActionQueueHand
 ## Related
 
 - [Action Queue Bug Index](./INDEX.md)
-- [DM Code Comparison Audit (Bug 003)](./003-code-comparison-audit.md)
+- [DM Code Comparison Audit (Bug 003)](./003-DM-message-code-comparison-audit.md)
 - [DM Sending Indicator Hang (Bug 001)](./001-dm-sending-indicator-hang.md)
 - [WebSocket Queue Starvation (Bug 002)](./002-websocket-queue-starvation.md)
 

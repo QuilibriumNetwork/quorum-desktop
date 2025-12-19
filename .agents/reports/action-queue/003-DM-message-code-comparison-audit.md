@@ -1,10 +1,33 @@
-# Action Queue vs Legacy DM Implementation - Code Comparison Audit
+# Action Queue vs Legacy DM Message Implementation - Code Comparison Audit
 
 > **⚠️ AI-Generated**: May contain errors. Verify before use.
 
 ## Purpose
 
 Deep dive comparison of the Action Queue DM handler (`send-dm`) vs the legacy path to identify any potential issues introduced by the Action Queue implementation.
+
+---
+
+## Background: Why DMs Work Differently Than Space Messages
+
+### Encryption Differences
+
+| Aspect | Space Messages | DM Messages |
+|--------|----------------|-------------|
+| **Algorithm** | Triple Ratchet (single state) | Double Ratchet (per-device states) |
+| **Encryption States** | 1 per space | N per device inbox |
+| **Recipients** | All space members via Hub | Specific device inboxes via WebSocket |
+| **Identity Revelation** | Always known (space members) | Hidden until reply (sender params needed) |
+| **Publishing** | `sendHubMessage()` | `sendDirectMessages()` with listen+direct pairs |
+
+### ID Structure Differences
+
+- **Space Messages**: `spaceId` + `channelId` (distinct IDs)
+- **DM Messages**: `address` used for both `spaceId` and `channelId` fields
+
+### Sender Identity in DMs
+
+DMs require special handling for sender identity revelation. The `senderDisplayName` and `senderUserIcon` parameters are passed to Double Ratchet encryption functions, ensuring recipients can see sender identity before accepting the conversation.
 
 ## Classification
 
@@ -301,13 +324,39 @@ No outstanding issues found. The Action Queue DM implementation is safe for prod
 
 ---
 
+## DM Action Type Coverage
+
+| Action Type | DM Support | Method Used | Status |
+|-------------|------------|-------------|--------|
+| `send-dm` | ✅ Full | Action Queue | ✅ Correct - Double Ratchet |
+| `send-channel-message` | ❌ N/A | - | Space-only (Triple Ratchet) |
+| `reaction-dm` | ✅ Full | Action Queue | ✅ Double Ratchet |
+| `delete-dm` | ✅ Full | Action Queue | ✅ Double Ratchet |
+| `edit-dm` | ✅ Full | Action Queue | ✅ Double Ratchet |
+| `reaction` | ❌ N/A | - | Space-only (Triple Ratchet) |
+| `delete-message` | ❌ N/A | - | Space-only (Triple Ratchet) |
+| `edit-message` | ❌ N/A | - | Space-only (Triple Ratchet) |
+
+### DM Handler Deduplication Keys
+
+| Action Type | Dedupe Key Format |
+|-------------|-------------------|
+| `send-dm` | `send-dm:${address}:${messageId}` |
+| `reaction-dm` | `reaction-dm:${address}:${messageId}:${emoji}` |
+| `delete-dm` | `delete-dm:${address}:${messageId}` |
+| `edit-dm` | `edit-dm:${address}:${messageId}` |
+
+---
+
 ## Related
 
 - [Action Queue Bug Index](./INDEX.md)
 - [DM Sending Indicator Hang (Bug 001)](./001-dm-sending-indicator-hang.md)
 - [WebSocket Queue Starvation (Bug 002)](./002-websocket-queue-starvation.md)
+- [Space Message Code Comparison Audit (Bug 004)](./004-space-message-code-comparison-audit.md)
 
 ---
 
 _Created: 2025-12-19_
+_Updated: 2025-12-19 - Integrated content from verification report_
 _Status: 📋 Audit Complete_

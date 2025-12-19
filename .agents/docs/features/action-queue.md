@@ -555,7 +555,7 @@ If `dmContext` is not available at any point, the fallback path is used.
 ## Related Documentation
 
 - [DM Action Queue Handlers Task](../../tasks/dm-action-queue-handlers.md) - Implementation details
-- [DM Verification Report](../../reports/action-queue-dm-verification_2025-12-18.md) - Analysis report
+- [DM Code Comparison Audit](../../reports/action-queue/003-DM-message-code-comparison-audit.md) - Code analysis and verification
 
 ---
 

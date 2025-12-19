@@ -6,7 +6,7 @@
 **Complexity**: High
 **Created**: 2025-12-18
 **Completed**: 2025-12-18
-**Related Report**: [action-queue-dm-verification_2025-12-18.md](../reports/action-queue-dm-verification_2025-12-18.md)
+**Related Audit**: [003-DM-message-code-comparison-audit.md](../reports/action-queue/003-DM-message-code-comparison-audit.md)
 
 **Files Modified**:
 - `src/types/actionQueue.ts`
