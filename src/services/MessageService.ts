@@ -653,12 +653,14 @@ export class MessageService {
 
   /**
    * Adds message to query cache (optimistic update).
+   * @param skipRateLimit - If true, skips rate limiting (used for DMs where spam is less of a concern)
    */
   async addMessage(
     queryClient: QueryClient,
     spaceId: string,
     channelId: string,
-    decryptedContent: Message
+    decryptedContent: Message,
+    skipRateLimit = false
   ) {
     if (decryptedContent.content.type === 'reaction') {
       const reaction = decryptedContent.content as ReactionMessage;
@@ -1269,23 +1271,27 @@ export class MessageService {
       }
 
       // Receiving-side rate limit detection (defense-in-depth)
+      // Skip rate limiting for DMs - spam is less of a concern in 1:1 conversations
+      // and rate limiting interferes with syncing historical messages
       const senderId = decryptedContent.content.senderId;
-      let limiter = this.receivingRateLimiters.get(senderId);
-      if (!limiter) {
-        limiter = new SimpleRateLimiter(
-          RATE_LIMITS.RECEIVING.maxMessages,
-          RATE_LIMITS.RECEIVING.windowMs
-        );
-        this.receivingRateLimiters.set(senderId, limiter);
-      }
+      if (!skipRateLimit) {
+        let limiter = this.receivingRateLimiters.get(senderId);
+        if (!limiter) {
+          limiter = new SimpleRateLimiter(
+            RATE_LIMITS.RECEIVING.maxMessages,
+            RATE_LIMITS.RECEIVING.windowMs
+          );
+          this.receivingRateLimiters.set(senderId, limiter);
+        }
 
-      const rateCheck = limiter.canSend();
-      if (!rateCheck.allowed) {
-        console.warn(
-          `🔒 Rate limit: Message from ${senderId} rejected (flood detected). ` +
-            `Message ID: ${decryptedContent.messageId}`
-        );
-        return; // Drop message silently (defense-in-depth)
+        const rateCheck = limiter.canSend();
+        if (!rateCheck.allowed) {
+          console.warn(
+            `🔒 Rate limit: Message from ${senderId} rejected (flood detected). ` +
+              `Message ID: ${decryptedContent.messageId}`
+          );
+          return; // Drop message silently (defense-in-depth)
+        }
       }
 
       // Check if sender is muted in this space (filter muted users' messages)
@@ -3222,7 +3228,8 @@ export class MessageService {
           queryClient,
           conversationId.split('/')[0],
           conversationId.split('/')[0],
-          decryptedContent
+          decryptedContent,
+          true // Skip rate limiting for DMs
         );
         this.addOrUpdateConversation(
           queryClient,
