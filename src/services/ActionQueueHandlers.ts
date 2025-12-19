@@ -618,7 +618,8 @@ export class ActionQueueHandlers {
       });
 
       // Encrypt for each inbox (Double Ratchet)
-      for (const inbox of targetInboxes) {
+      for (let i = 0; i < targetInboxes.length; i++) {
+        const inbox = targetInboxes[i];
         const set = sets.find((s) => s.tag === inbox);
         if (set) {
           if (set.sending_inbox.inbox_public_key === '') {
@@ -650,20 +651,26 @@ export class ActionQueueHandlers {
             .find((d) => d.inbox_registration.inbox_address === inbox);
 
           if (!targetDevice) {
+            console.warn(`[${traceId}] Inbox ${i + 1}/${targetInboxes.length}: No device registration found for ${inbox.slice(0, 16)}...`);
             continue; // Skip this inbox
           }
 
-          sessions = [
-            ...sessions,
-            ...(await secureChannel.NewDoubleRatchetSenderSession(
+          console.log(`[${traceId}] Inbox ${i + 1}/${targetInboxes.length}: Creating new session for ${inbox.slice(0, 16)}...`);
+          try {
+            const newSessions = await secureChannel.NewDoubleRatchetSenderSession(
               keyset.deviceKeyset,
               self.user_address,
               targetDevice,
               JSON.stringify(messageToEncrypt),
               senderDisplayName,
               senderUserIcon
-            )),
-          ];
+            );
+            sessions = [...sessions, ...newSessions];
+            console.log(`[${traceId}] Inbox ${i + 1}/${targetInboxes.length}: Session created successfully`);
+          } catch (err) {
+            console.error(`[${traceId}] Inbox ${i + 1}/${targetInboxes.length}: Failed to create session`, err);
+            // Continue to next inbox instead of failing entire send
+          }
         }
       }
 
@@ -721,7 +728,8 @@ export class ActionQueueHandlers {
         }
       );
 
-      // Ensure message is in React Query cache (may have been removed by refetch when coming back online)
+      // Ensure message is in React Query cache AND update status to 'sent' in a single atomic operation
+      // This prevents race conditions between two separate setQueryData calls
       const messagesKey = buildMessagesKey({ spaceId: address, channelId: address });
       this.deps.queryClient.setQueryData(
         messagesKey,
@@ -729,15 +737,34 @@ export class ActionQueueHandlers {
           if (!oldData?.pages) return oldData;
 
           // Check if message already exists in cache
-          const messageExists = oldData.pages.some((page) =>
+          const existingPageIndex = oldData.pages.findIndex((page) =>
             page.messages.some((m) => m.messageId === messageId)
           );
 
-          if (messageExists) {
-            return oldData;
+          if (existingPageIndex !== -1) {
+            // Message exists - update its status to 'sent' (clear sendStatus/sendError)
+            return {
+              pageParams: oldData.pageParams,
+              pages: oldData.pages.map((page, index) => {
+                if (index !== existingPageIndex) return page;
+                return {
+                  ...page,
+                  messages: page.messages.map((msg) => {
+                    if (msg.messageId === messageId && msg.sendStatus !== undefined) {
+                      // Clear sendStatus to mark as sent
+                      const { sendStatus: _, sendError: __, ...rest } = msg;
+                      return rest as Message;
+                    }
+                    return msg;
+                  }),
+                  nextCursor: page.nextCursor,
+                  prevCursor: page.prevCursor,
+                };
+              }),
+            };
           }
 
-          // Message not in cache - re-add it
+          // Message not in cache - re-add it (already without sendStatus since messageToEncrypt was stripped)
           return {
             pageParams: oldData.pageParams,
             pages: oldData.pages.map((page, index) => {
@@ -753,15 +780,6 @@ export class ActionQueueHandlers {
             }),
           };
         }
-      );
-
-      // Update status to 'sent'
-      this.deps.messageService.updateMessageStatus(
-        this.deps.queryClient,
-        address,
-        address,
-        messageId,
-        'sent'
       );
       console.log(`[${traceId}] send-dm COMPLETE - message sent successfully`);
     },

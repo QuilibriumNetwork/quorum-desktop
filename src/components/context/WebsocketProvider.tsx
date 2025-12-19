@@ -135,7 +135,7 @@ export function WebSocketProvider({ children }: WebSocketProviderProps) {
                     ...(parsed.type === 'listen' ? { inboxCount: parsed.inbox_addresses?.length } : {}),
                     ...(parsed.type === 'direct' ? {
                       hasEnvelope: !!parsed.envelope,
-                      toInbox: parsed.to_inbox_address?.slice(0, 16) + '...',
+                      toInbox: parsed.inbox_address?.slice(0, 16) + '...',
                       payloadSize: m.length,
                     } : {}),
                   });
