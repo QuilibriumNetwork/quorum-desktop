@@ -3593,6 +3593,19 @@ export class MessageService {
         const result = JSON.parse(
           msg
         ) as secureChannel.TripleRatchetStateAndEnvelope;
+
+        // Save the updated Triple Ratchet state
+        const newEncryptionState = {
+          state: JSON.stringify({
+            state: result.ratchet_state,
+          }),
+          timestamp: Date.now(),
+          inboxId: spaceId,
+          conversationId: spaceId + '/' + spaceId,
+          sentAccept: false,
+        };
+        await this.messageDB.saveEncryptionState(newEncryptionState, true);
+
         outbounds.push(
           await this.sendHubMessage(
             spaceId,
@@ -3727,6 +3740,19 @@ export class MessageService {
         const result = JSON.parse(
           msg
         ) as secureChannel.TripleRatchetStateAndEnvelope;
+
+        // Save the updated Triple Ratchet state
+        const newEncryptionState = {
+          state: JSON.stringify({
+            state: result.ratchet_state,
+          }),
+          timestamp: Date.now(),
+          inboxId: spaceId,
+          conversationId: spaceId + '/' + spaceId,
+          sentAccept: false,
+        };
+        await this.messageDB.saveEncryptionState(newEncryptionState, true);
+
         outbounds.push(
           await this.sendHubMessage(
             spaceId,
@@ -3827,6 +3853,18 @@ export class MessageService {
         const result = JSON.parse(
           msg
         ) as secureChannel.TripleRatchetStateAndEnvelope;
+
+        // Save the updated Triple Ratchet state
+        const newEncryptionState = {
+          state: JSON.stringify({
+            state: result.ratchet_state,
+          }),
+          timestamp: Date.now(),
+          inboxId: spaceId,
+          conversationId: spaceId + '/' + spaceId,
+          sentAccept: false,
+        };
+        await this.messageDB.saveEncryptionState(newEncryptionState, true);
 
         // Send via hub
         outbounds.push(

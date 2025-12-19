@@ -121,6 +121,12 @@ This is the main index for all documentation, bug reports, and task management.
 - [Role with message:delete permission can delete space owner's messages](bugs/.archived/message-delete-owner-vulnerability.md)
 - [Space Owner Delete Permissions Bug](bugs/.archived/space-owner-delete-permissions-bug.md)
 
+### Action Queue
+- [DM "Sending..." Indicator Hangs Indefinitely](bugs/action-queue/001-dm-sending-indicator-hang.md)
+- [WebSocket Queue Starvation Causes DM Delays](bugs/action-queue/002-websocket-queue-starvation.md)
+- [Action Queue vs Legacy DM Implementation - Code Comparison Audit](bugs/action-queue/003-code-comparison-audit.md)
+- [Action Queue vs Legacy Space Message Implementation - Code Comparison Audit](bugs/action-queue/004-space-message-code-comparison-audit.md)
+
 ## 📋 Tasks
 
 ### Pending Tasks
@@ -330,4 +336,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2025-12-18 16:47:38
+**Last Updated**: 2025-12-19 11:56:09
