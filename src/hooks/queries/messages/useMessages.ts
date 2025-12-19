@@ -17,6 +17,7 @@ const useMessages = ({
     initialPageParam: undefined,
     queryKey: buildMessagesKey({ spaceId, channelId }),
     queryFn: buildMessagesFetcher({ messageDB, spaceId, channelId }),
+    networkMode: 'always', // This query uses IndexedDB, not network
     getNextPageParam: (
       lastPage: unknown
     ):

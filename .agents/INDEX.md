@@ -77,6 +77,7 @@ This is the main index for all documentation, bug reports, and task management.
 ### Active Issues
 - [Config Sync Space Loss Race Condition](bugs/config-sync-space-loss-race-condition.md)
 - [DirectMessage Invite Loading Performance Issue](bugs/directmessage-invite-loading-performance.md)
+- [DM Offline Navigation Shows Empty View](bugs/dm-offline-navigation-empty.md)
 - [Encryption State Evals Causing Config Sync Bloat](bugs/encryption-state-evals-bloat.md)
 - [Expired Invite Card Validation Timing Issue](bugs/expired-invite-card-validation-timing.md)
 - [JoinSpaceModal "Invalid JSON" Error Due to Network Issues](bugs/joinspacemodal-invalid-json-network-error.md)
@@ -104,6 +105,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [MobileDrawer Virtuoso Double Scroller CSS Issues](bugs/.solved/mobiledrawer-virtuoso-double-scroller.md)
 - [New Messages Separator - Intersection Observer Dismissal Issues](bugs/.solved/new-messages-separator-intersection-observer-issues.md)
 - [NewDirectMessage Modal: URL-to-State Conversion](bugs/.solved/SOLVED_newdirectmessage-modal-url-to-state-conversion.md)
+- [Offline Navigation Issues](bugs/.solved/offline-navigation-issues.md)
 - [Performance Issue: UserSettingsModal Save Times Scale Poorly with Number of Spaces](bugs/.solved/usersettingsmodal-scalability-performance.md)
 - [React Hooks Violation: Conditional Return Before Hooks](bugs/.solved/SOLVED_react-hooks-violation-conditional-return.md)
 - [Solved Search Results Page Refresh And Focus Stealing](bugs/.solved/SOLVED_search-results-page-refresh-and-focus-stealing.md)
@@ -134,7 +136,6 @@ This is the main index for all documentation, bug reports, and task management.
 - [Implement Smart Context Extraction Around Mentions in NotificationPanel](tasks/notification-mention-context-extraction.md)
 - [Multi-User Invite Selection Enhancement](tasks/multi-user-invite-selection.md)
 - [Passkey Import UX Issue](tasks/passkey-import-ux-issue.md)
-- [Scroll Performance Optimization](tasks/scroll-performance-optimization.md)
 - [SDK PasskeyModal Customization Props Enhancement](tasks/sdk-passkey-modal-customization-props.md)
 - [Service Worker for App Update Detection](tasks/service-worker-app-updates.md)
 - [Task: Implement Delete Public Invite Link Feature](tasks/delete-public-invite-link.md)
@@ -288,6 +289,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Responsive Layout Implementation Plan](tasks/.done/responsive-layout.md)
 - [Responsive Layout Requirements](tasks/.done/responsive-layout_requirements.md)
 - [Role Mention Notifications Implementation](tasks/.done/role-mention-notifications.md)
+- [Scroll Performance Optimization](tasks/.done/scroll-performance-optimization.md)
 - [Search Components Primitive Migration](tasks/.done/search-primitive-migration.md)
 - [Security Analysis: MessageMarkdownRenderer Component](tasks/.done/security-analysis-message-markdown-renderer-2025-11-07.md)
 - [Space Folders - Discord-Style Grouping Feature](tasks/.done/space-folders-discord-style.md)
@@ -338,4 +340,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2025-12-19 16:20:04
+**Last Updated**: 2025-12-19 17:09:49

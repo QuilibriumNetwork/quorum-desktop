@@ -11,6 +11,7 @@ const useSpaces = ({}: {}) => {
     queryKey: buildSpacesKey({}),
     queryFn: buildSpacesFetcher({ messageDB }),
     refetchOnMount: true,
+    networkMode: 'always', // This query uses IndexedDB, not network
   });
 };
 

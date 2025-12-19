@@ -10,6 +10,7 @@ const useConfig = ({ userAddress }: { userAddress: string }) => {
     queryKey: buildConfigKey({ userAddress }),
     queryFn: buildConfigFetcher({ messageDB, userAddress }),
     refetchOnMount: true,
+    networkMode: 'always', // This query uses IndexedDB, not network
   });
 };
 

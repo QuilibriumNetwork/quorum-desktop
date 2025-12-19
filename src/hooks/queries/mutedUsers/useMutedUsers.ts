@@ -11,6 +11,7 @@ const useMutedUsers = ({ spaceId }: { spaceId: string }) => {
     queryFn: buildMutedUsersFetcher({ messageDB, spaceId }),
     staleTime: Infinity, // Mute state is invalidated manually when mute/unmute messages are received
     enabled: !!spaceId,
+    networkMode: 'always', // This query uses IndexedDB, not network
   });
 };
 

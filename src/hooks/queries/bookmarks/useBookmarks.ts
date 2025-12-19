@@ -10,6 +10,7 @@ const useBookmarks = ({ userAddress }: { userAddress: string }) => {
     queryKey: buildBookmarksKey({ userAddress }),
     queryFn: buildBookmarksFetcher({ messageDB }),
     staleTime: 30000, // Cache for 30 seconds
+    networkMode: 'always', // This query uses IndexedDB, not network
   });
 };
 
