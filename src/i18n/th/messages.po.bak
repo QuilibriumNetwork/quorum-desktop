@@ -31,7 +31,7 @@ msgid "No Role - {count}"
 msgstr "ไม่มีบทบาท - {count}"
 
 #. js-lingui-explicit-id
-#: src/components/space/Channel.tsx:1083
+#: src/components/space/Channel.tsx:1092
 msgid "Send a message to #{channel_name}"
 msgstr "ส่งข้อความไปยัง #{channel_name}"
 
@@ -61,22 +61,22 @@ msgid "Replying to {user}"
 msgstr "กำลังตอบกลับ {user}"
 
 #. js-lingui-explicit-id
-#: src/components/message/Message.tsx:305
+#: src/components/message/Message.tsx:311
 msgid "has joined"
 msgstr "ได้เข้าร่วม"
 
 #. js-lingui-explicit-id
-#: src/components/message/Message.tsx:313
+#: src/components/message/Message.tsx:319
 msgid "has left"
 msgstr "ได้ออก"
 
 #. js-lingui-explicit-id
-#: src/components/message/Message.tsx:321
+#: src/components/message/Message.tsx:327
 msgid "has been kicked"
 msgstr "ถูกเตะออก"
 
 #. js-lingui-explicit-id
-#: src/components/direct/DirectMessage.tsx:841
+#: src/components/direct/DirectMessage.tsx:873
 msgid "Send a message to {user}"
 msgstr "ส่งข้อความไปยัง {user}"
 
@@ -90,8 +90,8 @@ msgstr "สำหรับการอัปเดต"
 #~ msgid "'everyone' is a reserved name."
 #~ msgstr "'name' เป็นชื่อที่สงวนไว้"
 
-#: src/components/message/Message.tsx:753
-#: src/components/message/Message.tsx:766
+#: src/components/message/Message.tsx:759
+#: src/components/message/Message.tsx:772
 msgid "(edited)"
 msgstr "(แก้ไขแล้ว)"
 
@@ -188,11 +188,11 @@ msgstr "{bookmarkCount} บุ๊กมาร์ก"
 
 #: src/utils/dateFormatting.ts:90
 msgid "{days} days"
-msgstr ""
+msgstr "{days} วัน"
 
 #: src/utils/dateFormatting.ts:92
 msgid "{hours} hours"
-msgstr ""
+msgstr "{hours} ชั่วโมง"
 
 #: src/components/primitives/FileUpload/FileUpload.web.tsx:13
 msgid "{size} Bytes"
@@ -242,9 +242,9 @@ msgstr "@you"
 msgid "+ Add a friend"
 msgstr "เพิ่มเพื่อน"
 
-#: src/components/modals/MuteUserModal.tsx:118
+#: src/components/modals/MuteUserModal.tsx:107
 msgid "0 = forever"
-msgstr ""
+msgstr "0 = ตลอดไป"
 
 #: src/components/primitives/FileUpload/FileUpload.web.tsx:8
 msgid "0 Bytes"
@@ -252,7 +252,7 @@ msgstr "0 ไบต์"
 
 #: src/utils/dateFormatting.ts:84
 msgid "0 hours"
-msgstr ""
+msgstr "0 ชั่วโมง"
 
 #: src/components/modals/UserSettingsModal/Privacy.tsx:105
 msgid "1 device marked for removal. Click \"Save Changes\" to confirm."
@@ -272,6 +272,10 @@ msgstr "การตั้งค่าบัญชี"
 
 #~ msgid "Account Settings for This Space"
 #~ msgstr "การตั้งค่าบัญชีสำหรับพื้นที่นี้"
+
+#: src/components/ui/OfflineBanner.tsx:57
+msgid "actions queued"
+msgstr ""
 
 #: src/components/modals/AddSpaceModal.tsx:121
 #: src/components/navbar/ExpandableNavMenu.tsx:30
@@ -402,7 +406,7 @@ msgstr ""
 "คุณแน่ใจหรือไม่ว่าต้องการลบการสนทนานี้?\n"
 "การดำเนินการนี้จะลบการสนทนาจากอุปกรณ์ของคุณเท่านั้น ผู้เข้าร่วมคนอื่นยังคงสามารถเข้าถึงประวัติการสนทนาได้."
 
-#: src/hooks/business/messages/useMessageActions.ts:147
+#: src/hooks/business/messages/useMessageActions.ts:372
 msgid "Are you sure you want to delete this message?"
 msgstr "คุณแน่ใจหรือไม่ว่าต้องการลบข้อความนี้?"
 
@@ -417,11 +421,11 @@ msgstr "คุณแน่ใจหรือว่าต้องการออ
 #~ msgid "Are you sure you want to leave this Space? You won't be able to rejoin unless you are re-invited. Your existing messages will NOT be deleted."
 #~ msgstr "คุณแน่ใจหรือว่าต้องการออกจากพื้นที่นี้? คุณจะไม่สามารถเข้าร่วมอีกครั้งเว้นแต่จะได้รับเชิญใหม่ ข้อความที่มีอยู่ของคุณจะไม่ถูกลบ"
 
-#: src/hooks/business/messages/usePinnedMessages.ts:260
+#: src/hooks/business/messages/usePinnedMessages.ts:312
 msgid "Are you sure you want to pin this message?"
 msgstr "คุณแน่ใจหรือไม่ว่าต้องการปักหมุดข้อความนี้?"
 
-#: src/hooks/business/messages/usePinnedMessages.ts:259
+#: src/hooks/business/messages/usePinnedMessages.ts:311
 msgid "Are you sure you want to unpin this message?"
 msgstr "คุณแน่ใจหรือไม่ว่าต้องการยกเลิกการปักหมุดข้อความนี้?"
 
@@ -447,7 +451,7 @@ msgstr "กลับไปที่ลิงก์เชิญ"
 msgid "Backup Failed"
 msgstr "การสำรองข้อมูลล้มเหลว"
 
-#: src/components/message/MessageActionsMenu.tsx:255
+#: src/components/message/MessageActionsMenu.tsx:261
 msgid "Bookmark"
 msgstr "บุ๊กมาร์ก"
 
@@ -468,8 +472,8 @@ msgstr "ข้อความบุ๊กมาร์ก"
 msgid "Bookmark messages to save them for later reference"
 msgstr "ข้อความบุ๊กมาร์กเพื่อบันทึกไว้ใช้งานในภายหลัง"
 
-#: src/components/message/Message.tsx:720
-#: src/components/message/Message.tsx:798
+#: src/components/message/Message.tsx:726
+#: src/components/message/Message.tsx:804
 msgid "Bookmarked"
 msgstr "บุ๊กมาร์กแล้ว"
 
@@ -481,8 +485,8 @@ msgstr "ภาพที่บุ๊กมาร์ก"
 msgid "Bookmarked sticker"
 msgstr "สติกเกอร์ที่บุ๊กมาร์ก"
 
-#: src/components/direct/DirectMessage.tsx:707
-#: src/components/space/Channel.tsx:923
+#: src/components/direct/DirectMessage.tsx:734
+#: src/components/space/Channel.tsx:932
 msgid "Bookmarks"
 msgstr "บุ๊กมาร์ก"
 
@@ -499,16 +503,16 @@ msgstr "กล้อง"
 msgid "Camera permission is required to take photos"
 msgstr "ต้องการสิทธิ์กล้องเพื่อถ่ายภาพ"
 
-#: src/components/message/MessageEditTextarea.tsx:363
+#: src/components/message/MessageEditTextarea.tsx:383
 #: src/components/modals/ConfirmationModal.native.tsx:27
-#: src/components/modals/ConfirmationModal.tsx:29
+#: src/components/modals/ConfirmationModal.tsx:31
 #: src/components/modals/ConversationSettingsModal.tsx:63
-#: src/components/modals/KickUserModal.tsx:109
-#: src/components/modals/MuteUserModal.tsx:147
+#: src/components/modals/KickUserModal.tsx:98
+#: src/components/modals/MuteUserModal.tsx:129
 #: src/components/primitives/FileUpload/FileUpload.native.tsx:173
 #: src/hooks/business/channels/useChannelManagement.ts:253
-#: src/hooks/business/messages/useMessageActions.ts:159
-#: src/hooks/business/messages/usePinnedMessages.ts:272
+#: src/hooks/business/messages/useMessageActions.ts:384
+#: src/hooks/business/messages/usePinnedMessages.ts:324
 #: src/hooks/business/spaces/useRoleManagement.ts:64
 #: src/hooks/business/user/useFileUpload.native.ts:48
 #: src/hooks/platform/files/useFileDownload.native.ts:82
@@ -544,7 +548,7 @@ msgstr "ไอคอนช่อง"
 msgid "Channel Managers"
 msgstr "ผู้จัดการช่อง"
 
-#: src/components/space/Channel.tsx:1309
+#: src/components/space/Channel.tsx:1318
 msgid "Channel members"
 msgstr "สมาชิกช่อง"
 
@@ -615,7 +619,7 @@ msgstr "ล้างการแจ้งเตือนที่มีแท็
 #: src/components/modals/ChannelEditorModal.tsx:217
 #: src/components/modals/FolderEditorModal.tsx:133
 #: src/components/modals/GroupEditorModal.tsx:131
-#: src/components/modals/KickUserModal.tsx:118
+#: src/components/modals/KickUserModal.tsx:107
 #: src/components/modals/LeaveSpaceModal.tsx:64
 #: src/components/modals/SpaceSettingsModal/Account.tsx:256
 #: src/components/modals/SpaceSettingsModal/Danger.tsx:68
@@ -642,7 +646,7 @@ msgstr "คลิกเพื่อคัดลอก"
 msgid "Config Key"
 msgstr "คีย์การกำหนดค่า"
 
-#: src/components/navbar/FolderContextMenu.tsx:139
+#: src/components/navbar/FolderContextMenu.tsx:145
 msgid "Confirm"
 msgstr "ยืนยัน"
 
@@ -650,7 +654,7 @@ msgstr "ยืนยัน"
 msgid "Connecting"
 msgstr "กำลังเชื่อมต่อ"
 
-#: src/components/direct/DirectMessage.tsx:673
+#: src/components/direct/DirectMessage.tsx:700
 msgid "Conversation settings"
 msgstr "การตั้งค่าการสนทนา"
 
@@ -660,8 +664,8 @@ msgstr "การตั้งค่าการสนทนา"
 
 #: src/components/message/MessageActions.tsx:97
 #: src/components/message/MessageActions.tsx:101
-#: src/components/message/MessageActionsMenu.tsx:226
-#: src/components/message/MessageActionsMenu.tsx:233
+#: src/components/message/MessageActionsMenu.tsx:232
+#: src/components/message/MessageActionsMenu.tsx:239
 #: src/components/ui/ClickToCopyContent.native.tsx:203
 #: src/components/ui/ClickToCopyContent.native.tsx:275
 #: src/components/ui/ClickToCopyContent.tsx:153
@@ -669,9 +673,9 @@ msgstr "การตั้งค่าการสนทนา"
 msgid "Copied!"
 msgstr "คัดลอกแล้ว!"
 
-#: src/components/direct/DirectMessage.tsx:333
-#: src/components/direct/DirectMessage.tsx:655
-#: src/components/direct/DirectMessage.tsx:775
+#: src/components/direct/DirectMessage.tsx:351
+#: src/components/direct/DirectMessage.tsx:682
+#: src/components/direct/DirectMessage.tsx:802
 #: src/components/modals/UserSettingsModal/General.tsx:118
 #: src/components/user/ExpandableUserAvatar.tsx:90
 #: src/components/user/UserProfile.tsx:123
@@ -692,13 +696,13 @@ msgstr "คัดลอกลิงก์เชิญไปยังคลิป
 msgid "Copy Key & Continue"
 msgstr "คัดลอกคีย์และดำเนินการต่อ"
 
-#: src/components/message/MessageActionsMenu.tsx:226
+#: src/components/message/MessageActionsMenu.tsx:232
 msgid "Copy link"
 msgstr "คัดลอกลิงก์"
 
 #: src/components/message/MessageActions.tsx:102
 #: src/components/message/MessageActionsDrawer.tsx:202
-#: src/components/message/MessageActionsMenu.tsx:233
+#: src/components/message/MessageActionsMenu.tsx:239
 msgid "Copy message"
 msgstr "คัดลอกข้อความ"
 
@@ -769,9 +773,9 @@ msgstr "มืด"
 msgid "Data Recovery"
 msgstr "การกู้คืนข้อมูล"
 
-#: src/components/modals/MuteUserModal.tsx:115
+#: src/components/modals/MuteUserModal.tsx:104
 msgid "days"
-msgstr ""
+msgstr "วัน"
 
 #: src/components/context/MessageDB.bak.tsx:5415
 #: src/services/ConfigService.ts:142
@@ -791,18 +795,18 @@ msgstr "ช่องทางเริ่มต้น"
 msgid "Default Space settings provide the most typical chat experience, but for higher privacy guarantees, review these advanced settings."
 msgstr "การตั้งค่า Space เริ่มต้นให้ประสบการณ์การแชทที่เป็นมาตรฐานที่สุด แต่เพื่อความเป็นส่วนตัวที่สูงขึ้น ให้ตรวจสอบการตั้งค่าขั้นสูงเหล่านี้"
 
-#: src/hooks/business/messages/useMessageActions.ts:161
+#: src/hooks/business/messages/useMessageActions.ts:386
 msgid "delete"
 msgstr "ลบ"
 
-#: src/components/message/MessageActionsMenu.tsx:275
+#: src/components/message/MessageActionsMenu.tsx:281
 #: src/components/modals/ConfirmationModal.native.tsx:26
-#: src/components/modals/ConfirmationModal.tsx:28
+#: src/components/modals/ConfirmationModal.tsx:30
 #: src/components/modals/ConversationSettingsModal.tsx:62
 #: src/components/modals/SpaceSettingsModal/Emojis.tsx:103
 #: src/components/modals/SpaceSettingsModal/Stickers.tsx:105
 #: src/hooks/business/channels/useChannelManagement.ts:252
-#: src/hooks/business/messages/useMessageActions.ts:158
+#: src/hooks/business/messages/useMessageActions.ts:383
 #: src/hooks/business/spaces/useRoleManagement.ts:63
 msgid "Delete"
 msgstr "ลบ"
@@ -821,7 +825,7 @@ msgstr "ลบการสนทนา"
 #~ msgstr "ลบลิงก์ปัจจุบัน"
 
 #: src/components/modals/FolderEditorModal.tsx:132
-#: src/components/navbar/FolderContextMenu.tsx:139
+#: src/components/navbar/FolderContextMenu.tsx:145
 msgid "Delete Folder"
 msgstr "ลบโฟลเดอร์"
 
@@ -837,7 +841,7 @@ msgstr "ลบกลุ่ม"
 msgid "Delete message"
 msgstr "ลบข้อความ"
 
-#: src/hooks/business/messages/useMessageActions.ts:146
+#: src/hooks/business/messages/useMessageActions.ts:371
 msgid "Delete Message"
 msgstr "ลบข้อความ"
 
@@ -868,6 +872,10 @@ msgstr "ลบ Space นี้"
 #: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:392
 msgid "Deleting Space..."
 msgstr "กำลังลบพื้นที่..."
+
+#: src/components/modals/ConversationSettingsModal.tsx:275
+msgid "Deleting..."
+msgstr ""
 
 #: src/components/modals/SpaceSettingsModal/General.tsx:156
 msgid "Describe what this Space is about..."
@@ -942,7 +950,7 @@ msgstr "ลิ้นชัก"
 msgid "Drop your profile photo here"
 msgstr "วางรูปโปรไฟล์ของคุณที่นี่"
 
-#: src/components/message/MessageActionsMenu.tsx:240
+#: src/components/message/MessageActionsMenu.tsx:246
 msgid "Edit"
 msgstr "แก้ไข"
 
@@ -963,7 +971,7 @@ msgstr "แก้ไขโฟลเดอร์"
 msgid "Edit Group"
 msgstr "แก้ไขกลุ่ม"
 
-#: src/components/message/MessageActionsMenu.tsx:247
+#: src/components/message/MessageActionsMenu.tsx:253
 msgid "Edit history"
 msgstr "แก้ไขประวัติ"
 
@@ -988,6 +996,10 @@ msgstr "Emojis"
 #: src/components/modals/UserSettingsModal/Privacy.tsx:60
 msgid "Enable sync"
 msgstr "เปิดใช้งานการซิงค์"
+
+#: src/services/ActionQueueHandlers.ts:1174
+msgid "Encryption error"
+msgstr ""
 
 #: src/services/InvitationService.ts:74
 msgid "Encryption state is missing required template data. Please generate a public invite link first."
@@ -1024,17 +1036,25 @@ msgstr "กรอกทั้ง Space ID และคีย์การกำ�
 msgid "Enter details manually"
 msgstr "กรอกรายละเอียดด้วยตนเอง"
 
-#: src/components/context/WebsocketProvider.tsx:108
+#: src/components/context/WebsocketProvider.tsx:125
+msgid "Error processing inbound queue:"
+msgstr ""
+
+#: src/components/context/WebsocketProvider.tsx:110
 msgid "Error processing inbound:"
 msgstr "เกิดข้อผิดพลาดในการประมวลผลข้อมูลขาเข้า:"
 
-#: src/components/context/WebsocketProvider.tsx:132
+#: src/components/context/WebsocketProvider.tsx:155
+msgid "Error processing outbound queue:"
+msgstr ""
+
+#: src/components/context/WebsocketProvider.tsx:150
 msgid "Error processing outbound:"
 msgstr "เกิดข้อผิดพลาดในการประมวลผลข้อมูลขาออก:"
 
 #: src/components/context/WebsocketProvider.tsx:137
-msgid "Error processing queue:"
-msgstr "เกิดข้อผิดพลาดในการประมวลผลคิว:"
+#~ msgid "Error processing queue:"
+#~ msgstr "เกิดข้อผิดพลาดในการประมวลผลคิว:"
 
 #: src/services/NotificationService.ts:77
 msgid "Error requesting notification permission:"
@@ -1066,19 +1086,34 @@ msgid "Failed to create space. Please try again."
 msgstr "ไม่สามารถสร้าง Space ได้ กรุณาลองอีกครั้ง"
 
 #: src/components/context/MessageDB.bak.tsx:984
-#: src/services/MessageService.ts:2157
+#: src/services/MessageService.ts:2082
 msgid "Failed to decrypt message with any known state"
 msgstr "ไม่สามารถถอดรหัสข้อความด้วยสถานะที่รู้จักได้"
+
+#: src/services/ActionQueueHandlers.ts:324
+#: src/services/ActionQueueHandlers.ts:1099
+msgid "Failed to delete message"
+msgstr ""
+
+#: src/services/ActionQueueHandlers.ts:300
+#: src/services/ActionQueueHandlers.ts:1162
+msgid "Failed to edit message"
+msgstr ""
 
 #: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:620
 msgid "Failed to generate invite link. Please try again."
 msgstr "ไม่สามารถสร้างลิงก์เชิญได้ กรุณาลองอีกครั้ง"
 
+#: src/services/ActionQueueHandlers.ts:144
+msgid "Failed to kick user"
+msgstr ""
+
 #: src/components/bookmarks/BookmarksPanel.tsx:180
 msgid "Failed to load bookmarks"
 msgstr "ไม่สามารถโหลดบุ๊กมาร์กได้"
 
-#: src/components/modals/MuteUserModal.tsx:67
+#: src/components/modals/MuteUserModal.tsx:55
+#: src/services/ActionQueueHandlers.ts:170
 msgid "Failed to mute user"
 msgstr "ไม่สามารถปิดเสียงผู้ใช้ได้"
 
@@ -1086,9 +1121,13 @@ msgstr "ไม่สามารถปิดเสียงผู้ใช้ไ
 msgid "Failed to open image picker"
 msgstr "ไม่สามารถเปิดตัวเลือกภาพได้"
 
-#: src/components/context/WebsocketProvider.tsx:164
+#: src/components/context/WebsocketProvider.tsx:184
 msgid "Failed to parse WebSocket message:"
 msgstr "ไม่สามารถวิเคราะห์ข้อความ WebSocket ได้:"
+
+#: src/services/ActionQueueHandlers.ts:243
+msgid "Failed to pin message"
+msgstr ""
 
 #: src/hooks/business/user/useSpaceRecovery.ts:101
 msgid "Failed to restore spaces"
@@ -1098,6 +1137,14 @@ msgstr "ไม่สามารถกู้คืนพื้นที่ได
 msgid "Failed to save notification settings"
 msgstr "ไม่สามารถบันทึกการตั้งค่าการแจ้งเตือนได้"
 
+#: src/services/ActionQueueHandlers.ts:74
+msgid "Failed to save settings"
+msgstr ""
+
+#: src/services/ActionQueueHandlers.ts:103
+msgid "Failed to save space settings"
+msgstr ""
+
 #: src/components/primitives/FileUpload/FileUpload.native.tsx:147
 msgid "Failed to select document"
 msgstr "ไม่สามารถเลือกเอกสารได้"
@@ -1106,15 +1153,20 @@ msgstr "ไม่สามารถเลือกเอกสารได้"
 msgid "Failed to send invite. Please try again."
 msgstr "ส่งคำเชิญล้มเหลว กรุณาลองอีกครั้ง"
 
-#: src/components/message/Message.tsx:1192
+#: src/components/message/Message.tsx:1199
 msgid "Failed to send."
-msgstr ""
+msgstr "ส่งไม่สำเร็จ"
 
-#: src/components/modals/MuteUserModal.tsx:67
+#: src/components/modals/MuteUserModal.tsx:55
+#: src/services/ActionQueueHandlers.ts:196
 msgid "Failed to unmute user"
 msgstr "ไม่สามารถเปิดเสียงผู้ใช้ได้"
 
-#: src/hooks/business/spaces/useSpaceProfile.ts:216
+#: src/services/ActionQueueHandlers.ts:261
+msgid "Failed to unpin message"
+msgstr ""
+
+#: src/hooks/business/spaces/useSpaceProfile.ts:213
 msgid "Failed to update profile"
 msgstr "ไม่สามารถอัปเดตโปรไฟล์ได้"
 
@@ -1122,7 +1174,7 @@ msgstr "ไม่สามารถอัปเดตโปรไฟล์ได
 msgid "File cannot be larger than {maxSize}"
 msgstr "ไฟล์ไม่สามารถมีขนาดใหญ่กว่า {maxSize}"
 
-#: src/hooks/business/spaces/useSpaceProfile.ts:87
+#: src/hooks/business/spaces/useSpaceProfile.ts:86
 #: src/hooks/business/ui/useCustomAssets.ts:139
 #: src/hooks/business/ui/useFileUpload.ts:54
 #: src/hooks/business/ui/useSpaceFileUploads.ts:68
@@ -1140,7 +1192,7 @@ msgid "File cannot be larger than 5MB"
 msgstr "ไฟล์ไม่สามารถมีขนาดใหญ่กว่า 5MB"
 
 #: src/hooks/business/messages/useMessageComposer.ts:90
-#: src/hooks/business/spaces/useSpaceProfile.ts:89
+#: src/hooks/business/spaces/useSpaceProfile.ts:88
 #: src/hooks/business/ui/useCustomAssets.ts:105
 #: src/hooks/business/ui/useCustomAssets.ts:150
 #: src/hooks/business/ui/useFileUpload.ts:56
@@ -1200,7 +1252,7 @@ msgstr "ชื่อโฟลเดอร์เป็นสิ่งที่จ
 msgid "Folder name must be {MAX_NAME_LENGTH} characters or less"
 msgstr "ชื่อโฟลเดอร์ต้องมีความยาวไม่เกิน {MAX_NAME_LENGTH} ตัวอักษร"
 
-#: src/components/navbar/FolderContextMenu.tsx:129
+#: src/components/navbar/FolderContextMenu.tsx:135
 msgid "Folder Settings"
 msgstr "การตั้งค่าโฟลเดอร์"
 
@@ -1318,7 +1370,7 @@ msgid "Important messages will be pinned here"
 msgstr "ข้อความสำคัญจะถูกปักหมุดที่นี่"
 
 #: src/components/context/MessageDB.bak.tsx:1184
-#: src/services/MessageService.ts:2356
+#: src/services/MessageService.ts:2287
 msgid "invalid address for signature"
 msgstr "ที่อยู่ไม่ถูกต้องสำหรับลายเซ็น"
 
@@ -1343,7 +1395,7 @@ msgid "invalid link"
 msgstr "ลิงก์ไม่ถูกต้อง"
 
 #: src/hooks/business/messages/usePinnedMessages.ts:72
-#: src/hooks/business/messages/usePinnedMessages.ts:132
+#: src/hooks/business/messages/usePinnedMessages.ts:164
 msgid "Invalid message ID"
 msgstr "รหัสข้อความไม่ถูกต้อง"
 
@@ -1400,7 +1452,7 @@ msgstr "กำลังเข้าร่วม..."
 msgid "Jump"
 msgstr "กระโดด"
 
-#: src/components/message/MessageList.tsx:532
+#: src/components/message/MessageList.tsx:548
 msgid "Jump to present"
 msgstr "กระโดดไปยังปัจจุบัน"
 
@@ -1420,12 +1472,12 @@ msgstr "คีย์พร้อมใช้งาน"
 msgid "Key Saved"
 msgstr "บันทึกคีย์แล้ว"
 
-#: src/components/modals/KickUserModal.tsx:118
+#: src/components/modals/KickUserModal.tsx:107
 #: src/components/user/UserProfile.tsx:265
 msgid "Kick"
 msgstr "เตะ"
 
-#: src/components/modals/KickUserModal.tsx:70
+#: src/components/modals/KickUserModal.tsx:59
 msgid "Kick User"
 msgstr "เตะผู้ใช้"
 
@@ -1439,7 +1491,7 @@ msgstr "เตะผู้ใช้"
 msgid "Kicked!"
 msgstr "ถูกเตะออก!"
 
-#: src/components/modals/KickUserModal.tsx:74
+#: src/components/modals/KickUserModal.tsx:63
 msgid "Kicking..."
 msgstr "กำลังเตะ..."
 
@@ -1479,7 +1531,7 @@ msgstr "แสง"
 msgid "Loading bookmarks..."
 msgstr "กำลังโหลดบุ๊กมาร์ก..."
 
-#: src/components/message/MessageList.tsx:543
+#: src/components/message/MessageList.tsx:559
 msgid "Loading message..."
 msgstr "กำลังโหลดข้อความ..."
 
@@ -1545,9 +1597,9 @@ msgstr "ต้องการการสำรองข้อมูลด้ว
 msgid "Mark all as read"
 msgstr "ทำเครื่องหมายทั้งหมดว่าอ่านแล้ว"
 
-#: src/components/direct/DirectMessage.tsx:688
-#: src/components/direct/DirectMessage.tsx:882
-#: src/components/space/Channel.tsx:949
+#: src/components/direct/DirectMessage.tsx:715
+#: src/components/direct/DirectMessage.tsx:914
+#: src/components/space/Channel.tsx:958
 msgid "Members List"
 msgstr "รายชื่อสมาชิก"
 
@@ -1567,8 +1619,8 @@ msgstr "การดำเนินการข้อความ"
 msgid "Message deleted"
 msgstr "ข้อความถูกลบ"
 
-#: src/components/message/Message.tsx:736
-#: src/components/message/Message.tsx:814
+#: src/components/message/Message.tsx:742
+#: src/components/message/Message.tsx:820
 msgid "Message does not have a valid signature, this may not be from the sender"
 msgstr "ข้อความไม่มีลายเซ็นที่ถูกต้อง อาจไม่ใช่มาจากผู้ส่ง"
 
@@ -1592,19 +1644,19 @@ msgstr "ปฏิกิริยามากขึ้น"
 msgid "Mute"
 msgstr "ปิดเสียง"
 
-#: src/components/modals/MuteUserModal.tsx:106
+#: src/components/modals/MuteUserModal.tsx:95
 msgid "Mute for"
-msgstr ""
+msgstr "ปิดเสียงเป็นเวลา"
 
-#: src/components/modals/MuteUserModal.tsx:162
+#: src/components/modals/MuteUserModal.tsx:141
 msgid "Mute for {days} days"
-msgstr ""
+msgstr "ปิดเสียงเป็นเวลา {days} วัน"
 
-#: src/components/modals/MuteUserModal.tsx:161
+#: src/components/modals/MuteUserModal.tsx:140
 msgid "Mute Forever"
-msgstr ""
+msgstr "ปิดเสียงตลอดไป"
 
-#: src/components/modals/MuteUserModal.tsx:78
+#: src/components/modals/MuteUserModal.tsx:67
 msgid "Mute User"
 msgstr "ปิดเสียงผู้ใช้"
 
@@ -1616,6 +1668,10 @@ msgstr "ปิดเสียงผู้ใช้หลายคน"
 #: src/hooks/business/validation/useDisplayNameValidation.ts:55
 msgid "Names resembling admin, moderator, or support are reserved."
 msgstr "ชื่อที่คล้ายกับผู้ดูแลระบบ ผู้ดูแล หรือการสนับสนุนถูกสงวนไว้"
+
+#: src/services/ActionQueueHandlers.ts:1171
+msgid "Network error"
+msgstr ""
 
 #: src/components/modals/NewDirectMessageModal.tsx:83
 msgid "New Direct Message"
@@ -1684,8 +1740,8 @@ msgid "No unread notifications"
 msgstr "ไม่มีการแจ้งเตือนที่ยังไม่ได้อ่าน"
 
 #: src/components/space/Channel.tsx:644
-#: src/components/space/Channel.tsx:1159
-#: src/components/space/Channel.tsx:1348
+#: src/components/space/Channel.tsx:1168
+#: src/components/space/Channel.tsx:1357
 msgid "No users found!"
 msgstr "ไม่พบผู้ใช้!"
 
@@ -1700,7 +1756,7 @@ msgstr "ไม่ได้รับอนุญาตการแจ้งเต
 #: src/components/modals/SpaceSettingsModal/Account.tsx:187
 #: src/components/modals/UserSettingsModal/Navigation.tsx:17
 #: src/components/modals/UserSettingsModal/Notifications.tsx:24
-#: src/components/space/Channel.tsx:888
+#: src/components/space/Channel.tsx:897
 msgid "Notifications"
 msgstr "การแจ้งเตือน"
 
@@ -1796,12 +1852,12 @@ msgstr "ห้องสมุดภาพ"
 msgid "Photo library permission is required to select images"
 msgstr "ต้องการสิทธิ์ห้องสมุดภาพเพื่อเลือกภาพ"
 
-#: src/hooks/business/messages/usePinnedMessages.ts:274
+#: src/hooks/business/messages/usePinnedMessages.ts:326
 msgid "pin"
 msgstr "ปักหมุด"
 
-#: src/components/message/MessageActionsMenu.tsx:264
-#: src/hooks/business/messages/usePinnedMessages.ts:271
+#: src/components/message/MessageActionsMenu.tsx:270
+#: src/hooks/business/messages/usePinnedMessages.ts:323
 msgid "Pin"
 msgstr "ปักหมุด"
 
@@ -1814,7 +1870,7 @@ msgid "Pin important messages to keep them easily accessible"
 msgstr "ปักหมุดข้อความสำคัญเพื่อให้เข้าถึงได้ง่าย"
 
 #. placeholder {0}: PINNED_MESSAGES_CONFIG.MAX_PINS
-#: src/hooks/business/messages/usePinnedMessages.ts:87
+#: src/hooks/business/messages/usePinnedMessages.ts:86
 msgid "Pin limit reached ({0})"
 msgstr "ถึงขีดจำกัดการปักหมุดแล้ว ({0})"
 
@@ -1823,7 +1879,7 @@ msgstr "ถึงขีดจำกัดการปักหมุดแล้
 msgid "Pin message"
 msgstr "ปักหมุดข้อความ"
 
-#: src/hooks/business/messages/usePinnedMessages.ts:257
+#: src/hooks/business/messages/usePinnedMessages.ts:309
 msgid "Pin Message"
 msgstr "ปักหมุดข้อความ"
 
@@ -1835,18 +1891,18 @@ msgstr "ปักหมุดข้อความ"
 msgid "Pin to top"
 msgstr "ปักหมุดไปที่ด้านบน"
 
-#: src/components/message/Message.tsx:704
-#: src/components/message/Message.tsx:782
+#: src/components/message/Message.tsx:710
+#: src/components/message/Message.tsx:788
 msgid "Pinned"
 msgstr "ถูกปักหมุด"
 
 #. placeholder {0}: mapSenderToUser(message.pinnedBy)?.displayName || message.pinnedBy
-#: src/components/message/Message.tsx:703
-#: src/components/message/Message.tsx:781
+#: src/components/message/Message.tsx:709
+#: src/components/message/Message.tsx:787
 msgid "Pinned by {0}"
 msgstr "ถูกปักหมุดโดย {0}"
 
-#: src/components/space/Channel.tsx:848
+#: src/components/space/Channel.tsx:857
 msgid "Pinned Messages"
 msgstr "ข้อความที่ถูกปักหมุด"
 
@@ -1859,7 +1915,7 @@ msgstr "ถูกปักหมุดแล้ว!"
 msgid "PNG, JPG or JPEG • Optimal ratio 1:1"
 msgstr "PNG, JPG หรือ JPEG • อัตราส่วนที่เหมาะสม 1:1"
 
-#: src/components/message/MessageEditTextarea.tsx:355
+#: src/components/message/MessageEditTextarea.tsx:375
 msgid "Press Enter to save, Shift+Enter for new line, Esc to cancel"
 msgstr "กด Enter เพื่อบันทึก, Shift+Enter สำหรับบรรทัดใหม่, Esc เพื่อยกเลิก"
 
@@ -1929,6 +1985,10 @@ msgstr "อนุญาตใหม่"
 msgid "received config with invalid signature!"
 msgstr "ได้รับการกำหนดค่าที่มีลายเซ็นไม่ถูกต้อง!"
 
+#: src/services/ActionQueueHandlers.ts:1177
+msgid "Recipient has no devices"
+msgstr ""
+
 #: src/components/Maintenance.native.tsx:73
 #: src/components/Maintenance.tsx:46
 #: src/components/modals/UserSettingsModal/Appearance.tsx:61
@@ -1942,7 +2002,7 @@ msgstr "ลบ"
 #: src/components/bookmarks/BookmarkItem.tsx:139
 #: src/components/message/MessageActions.tsx:110
 #: src/components/message/MessageActionsDrawer.tsx:241
-#: src/components/message/MessageActionsMenu.tsx:255
+#: src/components/message/MessageActionsMenu.tsx:261
 msgid "Remove bookmark"
 msgstr "ลบบุ๊กมาร์ก"
 
@@ -1957,7 +2017,7 @@ msgstr "การตอบกลับ"
 
 #: src/components/message/MessageActions.tsx:94
 #: src/components/message/MessageActionsDrawer.tsx:186
-#: src/components/message/MessageActionsMenu.tsx:220
+#: src/components/message/MessageActionsMenu.tsx:226
 msgid "Reply"
 msgstr "ตอบกลับ"
 
@@ -1994,16 +2054,16 @@ msgstr "กู้คืน {0} พื้นที่"
 msgid "Restoring..."
 msgstr "กำลังคืนค่า..."
 
-#: src/components/message/Message.tsx:1203
+#: src/components/message/Message.tsx:1210
 msgid "Retry"
-msgstr ""
+msgstr "ลองอีกครั้ง"
 
 #: src/components/modals/SpaceSettingsModal/Navigation.tsx:22
 #: src/components/modals/SpaceSettingsModal/Roles.tsx:45
 msgid "Roles"
 msgstr "บทบาท"
 
-#: src/components/message/MessageEditTextarea.tsx:378
+#: src/components/message/MessageEditTextarea.tsx:395
 #: src/components/modals/ConversationSettingsModal.tsx:242
 msgid "Save"
 msgstr "บันทึก"
@@ -2072,8 +2132,8 @@ msgstr "ค้นหาใน พื้นที่ นี้"
 msgid "Search in this Space..."
 msgstr "ค้นหาใน Space นี้..."
 
-#: src/components/direct/DirectMessage.tsx:734
-#: src/components/space/Channel.tsx:968
+#: src/components/direct/DirectMessage.tsx:761
+#: src/components/space/Channel.tsx:977
 msgid "Search Messages"
 msgstr "ค้นหาข้อความ"
 
@@ -2089,7 +2149,7 @@ msgstr "ผลการค้นหา"
 msgid "Search username or address"
 msgstr "ค้นหาชื่อผู้ใช้หรือที่อยู่"
 
-#: src/components/space/Channel.tsx:1320
+#: src/components/space/Channel.tsx:1329
 msgid "Search Username or Address"
 msgstr "ค้นหาชื่อผู้ใช้หรือที่อยู่"
 
@@ -2149,6 +2209,10 @@ msgstr "เลือกประเภทการแจ้งเตือนท
 msgid "Send"
 msgstr "ส่ง"
 
+#: src/services/ActionQueueHandlers.ts:1179
+msgid "Send failed"
+msgstr ""
+
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:324
 msgid "Send Invite"
 msgstr "ส่งคำเชิญ"
@@ -2160,9 +2224,9 @@ msgstr "ส่งคำเชิญ"
 msgid "Send Message"
 msgstr "ส่งข้อความ"
 
-#: src/components/message/Message.tsx:1185
+#: src/components/message/Message.tsx:1192
 msgid "Sending..."
-msgstr ""
+msgstr "กำลังส่ง..."
 
 #: src/components/context/RegistrationPersister.tsx:257
 msgid "Session Encrypted"
@@ -2263,7 +2327,7 @@ msgstr "ซิงค์สถานะการเตะ"
 #~ msgid "Sync kick status for previously kicked users. This verifies kicks without posting visible messages."
 #~ msgstr "ซิงค์สถานะการเตะสำหรับผู้ใช้ที่ถูกเตะออกก่อนหน้านี้ นี่จะตรวจสอบการเตะโดยไม่โพสต์ข้อความที่มองเห็นได้"
 
-#: src/services/MessageService.ts:3177
+#: src/services/MessageService.ts:3108
 msgid "Syncing Space..."
 msgstr "กำลังซิงค์ Space..."
 
@@ -2352,21 +2416,21 @@ msgstr "พื้นที่นี้"
 msgid "This user is already a member of this space."
 msgstr "ผู้ใช้คนนี้เป็นสมาชิกของ Space นี้แล้ว"
 
-#: src/components/modals/MuteUserModal.tsx:131
+#: src/components/modals/MuteUserModal.tsx:115
 msgid "This user will be able to send messages in this Space again."
 msgstr "ผู้ใช้นี้จะสามารถส่งข้อความใน Space นี้ได้อีกครั้ง"
 
-#: src/components/modals/KickUserModal.tsx:97
+#: src/components/modals/KickUserModal.tsx:86
 msgid "This user will be removed from the Space."
 msgstr "ผู้ใช้นี้จะถูกลบออกจาก Space"
 
-#: src/components/modals/MuteUserModal.tsx:133
+#: src/components/modals/MuteUserModal.tsx:117
 msgid "This user will no longer be able to send messages in this Space."
 msgstr "ผู้ใช้นี้จะไม่สามารถส่งข้อความใน Space นี้ได้อีกต่อไป"
 
-#: src/components/modals/MuteUserModal.tsx:134
+#: src/components/modals/MuteUserModal.tsx:118
 msgid "This user will not be able to send messages for {days} days."
-msgstr ""
+msgstr "ผู้ใช้คนนี้จะไม่สามารถส่งข้อความได้เป็นเวลา {days} วัน"
 
 #: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:609
 msgid "This will create a public invite link that anyone can use to join your Space. Consider who you share this link with."
@@ -2384,7 +2448,7 @@ msgid "Timeout in 10 seconds anyway..."
 msgstr "หมดเวลาใน 10 วินาทีอยู่ดี..."
 
 #: src/components/modals/ConfirmationModal.native.tsx:57
-#: src/components/modals/ConfirmationModal.tsx:78
+#: src/components/modals/ConfirmationModal.tsx:82
 msgid "TIP: Hold down shift when clicking {protipAction} to bypass this confirmation entirely."
 msgstr "เคล็ดลับ: กดปุ่ม Shift ขณะคลิก {protipAction} เพื่อข้ามการยืนยันนี้ทั้งหมด"
 
@@ -2416,7 +2480,7 @@ msgstr "ลองใช้คำค้นหาที่แตกต่างก
 msgid "Unable to compress emoji images. Please use smaller images."
 msgstr "ไม่สามารถบีบอัดภาพอิโมจิได้ โปรดใช้ภาพที่มีขนาดเล็กกว่า"
 
-#: src/hooks/business/spaces/useSpaceProfile.ts:128
+#: src/hooks/business/spaces/useSpaceProfile.ts:127
 #: src/hooks/business/ui/useFileUpload.ts:96
 #: src/hooks/business/ui/useSpaceFileUploads.ts:160
 #: src/hooks/business/ui/useSpaceFileUploads.ts:183
@@ -2478,23 +2542,26 @@ msgstr "เวลาที่ไม่รู้จัก"
 #: src/components/context/MessageDB.bak.tsx:3043
 #: src/components/context/MessageDB.bak.tsx:4122
 #: src/components/context/MessageDB.bak.tsx:5292
-#: src/components/direct/DirectMessage.tsx:173
-#: src/components/direct/DirectMessage.tsx:188
-#: src/components/direct/DirectMessage.tsx:555
+#: src/components/direct/DirectMessage.tsx:170
+#: src/components/direct/DirectMessage.tsx:177
+#: src/components/direct/DirectMessage.tsx:184
+#: src/components/direct/DirectMessage.tsx:200
+#: src/components/direct/DirectMessage.tsx:582
 #: src/components/message/MessageComposer.tsx:499
 #: src/components/message/MessageComposer.tsx:506
-#: src/components/message/MessageEditTextarea.tsx:225
-#: src/components/message/MessageEditTextarea.tsx:260
+#: src/components/message/MessageEditTextarea.tsx:218
+#: src/components/message/MessageEditTextarea.tsx:250
+#: src/components/message/MessageEditTextarea.tsx:257
+#: src/components/message/MessageEditTextarea.tsx:261
 #: src/components/message/MessageEditTextarea.tsx:267
-#: src/components/message/MessageEditTextarea.tsx:271
-#: src/components/message/MessageEditTextarea.tsx:277
 #: src/components/message/MessagePreview.tsx:196
 #: src/components/message/PinnedMessagesPanel.tsx:78
 #: src/components/modals/ConversationSettingsModal.tsx:104
 #: src/components/modals/NewDirectMessageModal.tsx:66
 #: src/components/notifications/NotificationPanel.tsx:248
 #: src/components/notifications/NotificationPanel.tsx:268
-#: src/hooks/business/channels/useChannelMessages.ts:141
+#: src/hooks/business/channels/useChannelMessages.ts:150
+#: src/hooks/business/conversations/useDirectMessageData.ts:51
 #: src/hooks/business/conversations/useDirectMessageData.ts:57
 #: src/hooks/business/conversations/useDirectMessageData.ts:75
 #: src/hooks/business/search/useBatchSearchResultsDisplay.ts:133
@@ -2506,34 +2573,32 @@ msgstr "เวลาที่ไม่รู้จัก"
 #: src/hooks/business/search/useSearchResultDisplaySpace.ts:45
 #: src/hooks/queries/userInfo/buildUserInfoFetcher.ts:15
 #: src/services/EncryptionService.ts:138
-#: src/services/MessageService.ts:1586
-#: src/services/MessageService.ts:1823
-#: src/services/MessageService.ts:1995
-#: src/services/MessageService.ts:2135
-#: src/services/MessageService.ts:2153
-#: src/services/MessageService.ts:3603
-#: src/services/MessageService.ts:3767
-#: src/services/MessageService.ts:3901
-#: src/services/MessageService.ts:4005
-#: src/services/MessageService.ts:4202
+#: src/services/MessageService.ts:1744
+#: src/services/MessageService.ts:1918
+#: src/services/MessageService.ts:2059
+#: src/services/MessageService.ts:2072
+#: src/services/MessageService.ts:3636
+#: src/services/MessageService.ts:3783
+#: src/services/MessageService.ts:4018
+#: src/services/MessageService.ts:4215
 msgid "Unknown User"
 msgstr "ผู้ใช้ที่ไม่ทราบ"
 
-#: src/components/modals/MuteUserModal.tsx:159
+#: src/components/modals/MuteUserModal.tsx:138
 #: src/components/user/UserProfile.tsx:246
 msgid "Unmute"
 msgstr "เปิดเสียง"
 
-#: src/components/modals/MuteUserModal.tsx:78
+#: src/components/modals/MuteUserModal.tsx:67
 msgid "Unmute User"
 msgstr "เปิดเสียงผู้ใช้"
 
-#: src/hooks/business/messages/usePinnedMessages.ts:274
+#: src/hooks/business/messages/usePinnedMessages.ts:326
 msgid "unpin"
 msgstr "ยกเลิกการปักหมุด"
 
-#: src/components/message/MessageActionsMenu.tsx:264
-#: src/hooks/business/messages/usePinnedMessages.ts:271
+#: src/components/message/MessageActionsMenu.tsx:270
+#: src/hooks/business/messages/usePinnedMessages.ts:323
 msgid "Unpin"
 msgstr "ยกเลิกการปักหมุด"
 
@@ -2542,7 +2607,7 @@ msgstr "ยกเลิกการปักหมุด"
 msgid "Unpin message"
 msgstr "ยกเลิกการปักหมุดข้อความ"
 
-#: src/hooks/business/messages/usePinnedMessages.ts:257
+#: src/hooks/business/messages/usePinnedMessages.ts:309
 msgid "Unpin Message"
 msgstr "ยกเลิกการปักหมุดข้อความ"
 
@@ -2554,7 +2619,7 @@ msgstr "ยกเลิกการปักหมุดโพสต์นี้
 msgid "Unpinned!"
 msgstr "ยกเลิกการปักหมุดแล้ว!"
 
-#: src/components/direct/DirectMessage.tsx:829
+#: src/components/direct/DirectMessage.tsx:861
 msgid "Until you reply, this sender will not see your display name or profile picture"
 msgstr "จนกว่าคุณจะตอบกลับ ผู้ส่งนี้จะไม่เห็นชื่อแสดงของคุณหรือรูปโปรไฟล์"
 
@@ -2597,24 +2662,24 @@ msgid "User does not exist."
 msgstr "ผู้ใช้ไม่มีอยู่"
 
 #: src/components/modals/MuteUserModal.tsx:157
-msgid "User Muted!"
-msgstr "ผู้ใช้ถูกปิดเสียง!"
+#~ msgid "User Muted!"
+#~ msgstr "ผู้ใช้ถูกปิดเสียง!"
 
 #: src/hooks/business/messages/usePinnedMessages.ts:76
-#: src/hooks/business/messages/usePinnedMessages.ts:136
+#: src/hooks/business/messages/usePinnedMessages.ts:168
 msgid "User not authenticated"
 msgstr "ผู้ใช้ไม่ได้รับการตรวจสอบสิทธิ"
 
 #: src/components/modals/MuteUserModal.tsx:157
-msgid "User Unmuted!"
-msgstr "ผู้ใช้เปิดเสียงแล้ว!"
+#~ msgid "User Unmuted!"
+#~ msgstr "ผู้ใช้เปิดเสียงแล้ว!"
 
 #: src/components/space/Channel.tsx:631
-#: src/components/space/Channel.tsx:1145
+#: src/components/space/Channel.tsx:1154
 msgid "Username or Address"
 msgstr "ชื่อผู้ใช้หรือที่อยู่"
 
-#: src/components/context/WebsocketProvider.tsx:219
+#: src/components/context/WebsocketProvider.tsx:241
 msgid "useWebSocket must be used within a WebSocketProvider"
 msgstr "useWebSocket ต้องถูกใช้ภายใน WebSocketProvider"
 
@@ -2693,7 +2758,7 @@ msgstr "เมื่อวาน"
 msgid "Yesterday at {timeFormatted}"
 msgstr "เมื่อวานนี้เวลา {timeFormatted}"
 
-#: src/components/direct/DirectMessage.tsx:327
+#: src/components/direct/DirectMessage.tsx:345
 #: src/hooks/business/search/useBatchSearchResultsDisplay.ts:139
 msgid "You"
 msgstr "คุณ"
@@ -2703,9 +2768,9 @@ msgid "You are already a member of this Space."
 msgstr "คุณเป็นสมาชิกของ Space นี้แล้ว"
 
 #. placeholder {0}: formatMuteRemaining(currentMuteRecord.expiresAt)
-#: src/components/space/Channel.tsx:1108
+#: src/components/space/Channel.tsx:1117
 msgid "You are muted for {0}"
-msgstr ""
+msgstr "คุณถูกปิดเสียงเป็นเวลา {0}"
 
 #: src/components/modals/NewDirectMessageModal.tsx:146
 msgid "You can change this later for this conversation by clicking the lock icon in the Conversation view."
@@ -2720,7 +2785,7 @@ msgid "You cannot delete a group that contains channels. Delete all {channelCoun
 msgstr "คุณไม่สามารถลบกลุ่มที่มีช่องอยู่ได้ ให้ลบช่อง {channelCount} ทั้งหมดในกลุ่มนี้ก่อน"
 
 #: src/components/message/MessageComposer.tsx:334
-#: src/components/space/Channel.tsx:1111
+#: src/components/space/Channel.tsx:1120
 msgid "You cannot post in this channel"
 msgstr "คุณไม่สามารถโพสต์ในช่องนี้"
 
@@ -2733,7 +2798,7 @@ msgstr "คุณไม่สามารถส่งข้อความตร
 msgid "You have a new unread message"
 msgstr "คุณมีข้อความใหม่ที่ยังไม่ได้อ่าน"
 
-#: src/components/space/Channel.tsx:1109
+#: src/components/space/Channel.tsx:1118
 msgid "You have been muted in this Space"
 msgstr "คุณถูกปิดเสียงใน Space นี้"
 
@@ -2761,6 +2826,10 @@ msgstr "คุณพร้อมแล้ว ยินดีต้อนรั�
 #: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:445
 msgid "You're not listed in this Space's members. Correcting this will add you to the Space Members list (stores your profile locally with your inbox address)."
 msgstr "คุณไม่ได้อยู่ในสมาชิกของ Space นี้ การแก้ไขนี้จะทำให้คุณถูกเพิ่มในรายชื่อสมาชิก Space (เก็บโปรไฟล์ของคุณไว้ในเครื่องพร้อมที่อยู่กล่องจดหมายของคุณ)"
+
+#: src/components/ui/OfflineBanner.tsx:56
+msgid "You're offline"
+msgstr ""
 
 #: src/hooks/business/messages/useMessageComposer.ts:170
 msgid "You're sending messages too quickly. Please wait a moment."

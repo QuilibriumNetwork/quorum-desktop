@@ -31,7 +31,7 @@ msgid "No Role - {count}"
 msgstr "Ingen rolle - {count}"
 
 #. js-lingui-explicit-id
-#: src/components/space/Channel.tsx:1083
+#: src/components/space/Channel.tsx:1092
 msgid "Send a message to #{channel_name}"
 msgstr "Send en melding til #{channel_name}"
 
@@ -65,22 +65,22 @@ msgid "Replying to {user}"
 msgstr "Svaret til {user}"
 
 #. js-lingui-explicit-id
-#: src/components/message/Message.tsx:305
+#: src/components/message/Message.tsx:311
 msgid "has joined"
 msgstr "har blitt med"
 
 #. js-lingui-explicit-id
-#: src/components/message/Message.tsx:313
+#: src/components/message/Message.tsx:319
 msgid "has left"
 msgstr "har forlatt"
 
 #. js-lingui-explicit-id
-#: src/components/message/Message.tsx:321
+#: src/components/message/Message.tsx:327
 msgid "has been kicked"
 msgstr "har blitt sparket"
 
 #. js-lingui-explicit-id
-#: src/components/direct/DirectMessage.tsx:841
+#: src/components/direct/DirectMessage.tsx:873
 msgid "Send a message to {user}"
 msgstr "Send en melding til {user}"
 
@@ -88,8 +88,8 @@ msgstr "Send en melding til {user}"
 msgid " for updates."
 msgstr "for oppdateringer."
 
-#: src/components/message/Message.tsx:753
-#: src/components/message/Message.tsx:766
+#: src/components/message/Message.tsx:759
+#: src/components/message/Message.tsx:772
 msgid "(edited)"
 msgstr "(redigert)"
 
@@ -219,7 +219,7 @@ msgstr "@you"
 msgid "+ Add a friend"
 msgstr "Legg til en venn"
 
-#: src/components/modals/MuteUserModal.tsx:118
+#: src/components/modals/MuteUserModal.tsx:107
 msgid "0 = forever"
 msgstr "0 = for alltid"
 
@@ -246,6 +246,10 @@ msgstr "Kontoadresse"
 #: src/components/modals/SpaceSettingsModal/Account.tsx:91
 msgid "Account Settings"
 msgstr "Kontoinnstillinger"
+
+#: src/components/ui/OfflineBanner.tsx:57
+msgid "actions queued"
+msgstr "Handling handling"
 
 #: src/components/modals/AddSpaceModal.tsx:121
 #: src/components/navbar/ExpandableNavMenu.tsx:30
@@ -403,7 +407,7 @@ msgstr ""
 "\n"
 "Dette vil slette samtalen fra enheten din bare. Den andre deltakeren vil fortsatt ha tilgang til samtalehistorikken."
 
-#: src/hooks/business/messages/useMessageActions.ts:147
+#: src/hooks/business/messages/useMessageActions.ts:372
 msgid "Are you sure you want to delete this message?"
 msgstr "Er du sikker på at du vil slette denne meldingen?"
 
@@ -419,11 +423,11 @@ msgstr ""
 "Er du sikker på at du vil forlate dette Rommet? Du vil ikke kunne bli med "
 "igjen med mindre du blir invitert på nytt."
 
-#: src/hooks/business/messages/usePinnedMessages.ts:260
+#: src/hooks/business/messages/usePinnedMessages.ts:312
 msgid "Are you sure you want to pin this message?"
 msgstr "Er du sikker på at du vil feste denne meldingen?"
 
-#: src/hooks/business/messages/usePinnedMessages.ts:259
+#: src/hooks/business/messages/usePinnedMessages.ts:311
 msgid "Are you sure you want to unpin this message?"
 msgstr "Er du sikker på at du vil fjerne festingen av denne meldingen?"
 
@@ -443,7 +447,7 @@ msgstr "Tilbake til invitasjonslenke"
 msgid "Backup Failed"
 msgstr "Sikkerhetskopiering mislyktes"
 
-#: src/components/message/MessageActionsMenu.tsx:255
+#: src/components/message/MessageActionsMenu.tsx:261
 msgid "Bookmark"
 msgstr "Bokmerke"
 
@@ -461,8 +465,8 @@ msgstr "Bokmerkemelding"
 msgid "Bookmark messages to save them for later reference"
 msgstr "Bokmerkemeldinger for å lagre dem for senere referanse"
 
-#: src/components/message/Message.tsx:720
-#: src/components/message/Message.tsx:798
+#: src/components/message/Message.tsx:726
+#: src/components/message/Message.tsx:804
 msgid "Bookmarked"
 msgstr "Bokmerket"
 
@@ -474,8 +478,8 @@ msgstr "Bokmerket bilde"
 msgid "Bookmarked sticker"
 msgstr "Bokmerket klistremerke"
 
-#: src/components/direct/DirectMessage.tsx:707
-#: src/components/space/Channel.tsx:923
+#: src/components/direct/DirectMessage.tsx:734
+#: src/components/space/Channel.tsx:932
 msgid "Bookmarks"
 msgstr "Bokmerker"
 
@@ -492,16 +496,16 @@ msgstr "Kamera"
 msgid "Camera permission is required to take photos"
 msgstr "Kameratilgang er nødvendig for å ta bilder"
 
-#: src/components/message/MessageEditTextarea.tsx:363
+#: src/components/message/MessageEditTextarea.tsx:383
 #: src/components/modals/ConfirmationModal.native.tsx:27
-#: src/components/modals/ConfirmationModal.tsx:29
+#: src/components/modals/ConfirmationModal.tsx:31
 #: src/components/modals/ConversationSettingsModal.tsx:63
-#: src/components/modals/KickUserModal.tsx:109
-#: src/components/modals/MuteUserModal.tsx:147
+#: src/components/modals/KickUserModal.tsx:98
+#: src/components/modals/MuteUserModal.tsx:129
 #: src/components/primitives/FileUpload/FileUpload.native.tsx:173
 #: src/hooks/business/channels/useChannelManagement.ts:253
-#: src/hooks/business/messages/useMessageActions.ts:159
-#: src/hooks/business/messages/usePinnedMessages.ts:272
+#: src/hooks/business/messages/useMessageActions.ts:384
+#: src/hooks/business/messages/usePinnedMessages.ts:324
 #: src/hooks/business/spaces/useRoleManagement.ts:64
 #: src/hooks/business/user/useFileUpload.native.ts:48
 #: src/hooks/platform/files/useFileDownload.native.ts:82
@@ -541,7 +545,7 @@ msgstr "Kanalikon"
 msgid "Channel Managers"
 msgstr "Kanaladministratorer"
 
-#: src/components/space/Channel.tsx:1309
+#: src/components/space/Channel.tsx:1318
 msgid "Channel members"
 msgstr "Kanalmedlemmer"
 
@@ -612,7 +616,7 @@ msgstr "Fjerner varsler med tag: {tag}"
 #: src/components/modals/ChannelEditorModal.tsx:217
 #: src/components/modals/FolderEditorModal.tsx:133
 #: src/components/modals/GroupEditorModal.tsx:131
-#: src/components/modals/KickUserModal.tsx:118
+#: src/components/modals/KickUserModal.tsx:107
 #: src/components/modals/LeaveSpaceModal.tsx:64
 #: src/components/modals/SpaceSettingsModal/Account.tsx:256
 #: src/components/modals/SpaceSettingsModal/Danger.tsx:68
@@ -649,7 +653,7 @@ msgstr "Klikk for å kopiere"
 msgid "Config Key"
 msgstr "Konfigurasjonsnøkkel"
 
-#: src/components/navbar/FolderContextMenu.tsx:139
+#: src/components/navbar/FolderContextMenu.tsx:145
 msgid "Confirm"
 msgstr "Bekreft"
 
@@ -657,7 +661,7 @@ msgstr "Bekreft"
 msgid "Connecting"
 msgstr "Tilkobler"
 
-#: src/components/direct/DirectMessage.tsx:673
+#: src/components/direct/DirectMessage.tsx:700
 msgid "Conversation settings"
 msgstr "Samtaleinnstillinger"
 
@@ -667,8 +671,8 @@ msgstr "Samtaleinnstillinger"
 
 #: src/components/message/MessageActions.tsx:97
 #: src/components/message/MessageActions.tsx:101
-#: src/components/message/MessageActionsMenu.tsx:226
-#: src/components/message/MessageActionsMenu.tsx:233
+#: src/components/message/MessageActionsMenu.tsx:232
+#: src/components/message/MessageActionsMenu.tsx:239
 #: src/components/ui/ClickToCopyContent.native.tsx:203
 #: src/components/ui/ClickToCopyContent.native.tsx:275
 #: src/components/ui/ClickToCopyContent.tsx:153
@@ -676,9 +680,9 @@ msgstr "Samtaleinnstillinger"
 msgid "Copied!"
 msgstr "Kopiert!"
 
-#: src/components/direct/DirectMessage.tsx:333
-#: src/components/direct/DirectMessage.tsx:655
-#: src/components/direct/DirectMessage.tsx:775
+#: src/components/direct/DirectMessage.tsx:351
+#: src/components/direct/DirectMessage.tsx:682
+#: src/components/direct/DirectMessage.tsx:802
 #: src/components/modals/UserSettingsModal/General.tsx:118
 #: src/components/user/ExpandableUserAvatar.tsx:90
 #: src/components/user/UserProfile.tsx:123
@@ -699,13 +703,13 @@ msgstr "Kopier invitasjonslenke til utklippstavle"
 msgid "Copy Key & Continue"
 msgstr "Kopier Nøkkel & Fortsett"
 
-#: src/components/message/MessageActionsMenu.tsx:226
+#: src/components/message/MessageActionsMenu.tsx:232
 msgid "Copy link"
 msgstr "Kopier lenke"
 
 #: src/components/message/MessageActions.tsx:102
 #: src/components/message/MessageActionsDrawer.tsx:202
-#: src/components/message/MessageActionsMenu.tsx:233
+#: src/components/message/MessageActionsMenu.tsx:239
 msgid "Copy message"
 msgstr "Kopier melding"
 
@@ -784,7 +788,7 @@ msgstr "Mørk"
 msgid "Data Recovery"
 msgstr "Datagjenoppretting"
 
-#: src/components/modals/MuteUserModal.tsx:115
+#: src/components/modals/MuteUserModal.tsx:104
 msgid "days"
 msgstr "dager"
 
@@ -810,18 +814,18 @@ msgstr ""
 "Standard Space-innstillinger gir den mest typiske chatteopplevelsen, men for"
 " høyere personverngarantier, gjennomgå disse avanserte innstillingene."
 
-#: src/hooks/business/messages/useMessageActions.ts:161
+#: src/hooks/business/messages/useMessageActions.ts:386
 msgid "delete"
 msgstr "slette"
 
-#: src/components/message/MessageActionsMenu.tsx:275
+#: src/components/message/MessageActionsMenu.tsx:281
 #: src/components/modals/ConfirmationModal.native.tsx:26
-#: src/components/modals/ConfirmationModal.tsx:28
+#: src/components/modals/ConfirmationModal.tsx:30
 #: src/components/modals/ConversationSettingsModal.tsx:62
 #: src/components/modals/SpaceSettingsModal/Emojis.tsx:103
 #: src/components/modals/SpaceSettingsModal/Stickers.tsx:105
 #: src/hooks/business/channels/useChannelManagement.ts:252
-#: src/hooks/business/messages/useMessageActions.ts:158
+#: src/hooks/business/messages/useMessageActions.ts:383
 #: src/hooks/business/spaces/useRoleManagement.ts:63
 msgid "Delete"
 msgstr "Slett"
@@ -837,7 +841,7 @@ msgid "Delete Conversation"
 msgstr "Slett samtale"
 
 #: src/components/modals/FolderEditorModal.tsx:132
-#: src/components/navbar/FolderContextMenu.tsx:139
+#: src/components/navbar/FolderContextMenu.tsx:145
 msgid "Delete Folder"
 msgstr "Slett mappe"
 
@@ -850,7 +854,7 @@ msgstr "Slett gruppe"
 msgid "Delete message"
 msgstr "Slett melding"
 
-#: src/hooks/business/messages/useMessageActions.ts:146
+#: src/hooks/business/messages/useMessageActions.ts:371
 msgid "Delete Message"
 msgstr "Slett melding"
 
@@ -878,6 +882,10 @@ msgstr "Slett denne plassen"
 #: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:392
 msgid "Deleting Space..."
 msgstr "Sletter rommet..."
+
+#: src/components/modals/ConversationSettingsModal.tsx:275
+msgid "Deleting..."
+msgstr "Sletter..."
 
 #: src/components/modals/SpaceSettingsModal/General.tsx:156
 msgid "Describe what this Space is about..."
@@ -946,7 +954,7 @@ msgstr "Skuff"
 msgid "Drop your profile photo here"
 msgstr "Slipp profilbildet ditt her"
 
-#: src/components/message/MessageActionsMenu.tsx:240
+#: src/components/message/MessageActionsMenu.tsx:246
 msgid "Edit"
 msgstr "Rediger"
 
@@ -967,7 +975,7 @@ msgstr "Rediger mappe"
 msgid "Edit Group"
 msgstr "Rediger Gruppe"
 
-#: src/components/message/MessageActionsMenu.tsx:247
+#: src/components/message/MessageActionsMenu.tsx:253
 msgid "Edit history"
 msgstr "Rediger historikk"
 
@@ -992,6 +1000,10 @@ msgstr "Emojis"
 #: src/components/modals/UserSettingsModal/Privacy.tsx:60
 msgid "Enable sync"
 msgstr "Aktiver synkronisering"
+
+#: src/services/ActionQueueHandlers.ts:1174
+msgid "Encryption error"
+msgstr "Krypteringsfeil"
 
 #: src/services/InvitationService.ts:74
 msgid ""
@@ -1033,17 +1045,21 @@ msgstr "Skriv inn både Space-ID og konfigurasjonsnøkkel for å validere"
 msgid "Enter details manually"
 msgstr "Skriv inn detaljer manuelt"
 
-#: src/components/context/WebsocketProvider.tsx:108
+#: src/components/context/WebsocketProvider.tsx:125
+msgid "Error processing inbound queue:"
+msgstr "Feil ved behandling av innkommende kø:"
+
+#: src/components/context/WebsocketProvider.tsx:110
 msgid "Error processing inbound:"
 msgstr "Feil ved behandling av innkommende:"
 
-#: src/components/context/WebsocketProvider.tsx:132
+#: src/components/context/WebsocketProvider.tsx:155
+msgid "Error processing outbound queue:"
+msgstr "Feil ved behandling av utgående kø:"
+
+#: src/components/context/WebsocketProvider.tsx:150
 msgid "Error processing outbound:"
 msgstr "Feil ved behandling av utgående:"
-
-#: src/components/context/WebsocketProvider.tsx:137
-msgid "Error processing queue:"
-msgstr "Feil ved behandling av kø:"
 
 #: src/services/NotificationService.ts:77
 msgid "Error requesting notification permission:"
@@ -1081,19 +1097,34 @@ msgid "Failed to create space. Please try again."
 msgstr "Kunne ikke opprette Space. Vennligst prøv igjen."
 
 #: src/components/context/MessageDB.bak.tsx:984
-#: src/services/MessageService.ts:2157
+#: src/services/MessageService.ts:2082
 msgid "Failed to decrypt message with any known state"
 msgstr "Mislyktes med å dekryptere melding med kjent tilstand"
+
+#: src/services/ActionQueueHandlers.ts:324
+#: src/services/ActionQueueHandlers.ts:1099
+msgid "Failed to delete message"
+msgstr "Kunne ikke slette melding"
+
+#: src/services/ActionQueueHandlers.ts:300
+#: src/services/ActionQueueHandlers.ts:1162
+msgid "Failed to edit message"
+msgstr "Kunne ikke redigere melding"
 
 #: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:620
 msgid "Failed to generate invite link. Please try again."
 msgstr "Kunne ikke generere invitasjonslenke. Vennligst prøv igjen."
 
+#: src/services/ActionQueueHandlers.ts:144
+msgid "Failed to kick user"
+msgstr "Kunne ikke kaste ut bruker"
+
 #: src/components/bookmarks/BookmarksPanel.tsx:180
 msgid "Failed to load bookmarks"
 msgstr "Kunne ikke laste bokmerker"
 
-#: src/components/modals/MuteUserModal.tsx:67
+#: src/components/modals/MuteUserModal.tsx:55
+#: src/services/ActionQueueHandlers.ts:170
 msgid "Failed to mute user"
 msgstr "Mislyktes i å dempe bruker"
 
@@ -1101,9 +1132,13 @@ msgstr "Mislyktes i å dempe bruker"
 msgid "Failed to open image picker"
 msgstr "Kunne ikke åpne bildevelger"
 
-#: src/components/context/WebsocketProvider.tsx:164
+#: src/components/context/WebsocketProvider.tsx:184
 msgid "Failed to parse WebSocket message:"
 msgstr "Mislyktes med å analysere WebSocket-melding:"
+
+#: src/services/ActionQueueHandlers.ts:243
+msgid "Failed to pin message"
+msgstr "Kunne ikke feste melding"
 
 #: src/hooks/business/user/useSpaceRecovery.ts:101
 msgid "Failed to restore spaces"
@@ -1113,6 +1148,14 @@ msgstr "Kunne ikke gjenopprette rom"
 msgid "Failed to save notification settings"
 msgstr "Kunne ikke lagre varslingsinnstillinger"
 
+#: src/services/ActionQueueHandlers.ts:74
+msgid "Failed to save settings"
+msgstr "Kunne ikke lagre innstillinger"
+
+#: src/services/ActionQueueHandlers.ts:103
+msgid "Failed to save space settings"
+msgstr "Kunne ikke lagre rominnstillinger"
+
 #: src/components/primitives/FileUpload/FileUpload.native.tsx:147
 msgid "Failed to select document"
 msgstr "Feilet å velge dokument"
@@ -1121,15 +1164,20 @@ msgstr "Feilet å velge dokument"
 msgid "Failed to send invite. Please try again."
 msgstr "Feil ved sending av invitasjon. Vennligst prøv igjen."
 
-#: src/components/message/Message.tsx:1192
+#: src/components/message/Message.tsx:1199
 msgid "Failed to send."
 msgstr "Sending feilet."
 
-#: src/components/modals/MuteUserModal.tsx:67
+#: src/components/modals/MuteUserModal.tsx:55
+#: src/services/ActionQueueHandlers.ts:196
 msgid "Failed to unmute user"
 msgstr "Mislyktes i å fjerne dempingen av bruker"
 
-#: src/hooks/business/spaces/useSpaceProfile.ts:216
+#: src/services/ActionQueueHandlers.ts:261
+msgid "Failed to unpin message"
+msgstr "Kunne ikke fjerne feste fra melding"
+
+#: src/hooks/business/spaces/useSpaceProfile.ts:213
 msgid "Failed to update profile"
 msgstr "Feil ved oppdatering av profil"
 
@@ -1137,7 +1185,7 @@ msgstr "Feil ved oppdatering av profil"
 msgid "File cannot be larger than {maxSize}"
 msgstr "Fil kan ikke være større enn {maxSize}"
 
-#: src/hooks/business/spaces/useSpaceProfile.ts:87
+#: src/hooks/business/spaces/useSpaceProfile.ts:86
 #: src/hooks/business/ui/useCustomAssets.ts:139
 #: src/hooks/business/ui/useFileUpload.ts:54
 #: src/hooks/business/ui/useSpaceFileUploads.ts:68
@@ -1155,7 +1203,7 @@ msgid "File cannot be larger than 5MB"
 msgstr "Fil kan ikke være større enn 5MB"
 
 #: src/hooks/business/messages/useMessageComposer.ts:90
-#: src/hooks/business/spaces/useSpaceProfile.ts:89
+#: src/hooks/business/spaces/useSpaceProfile.ts:88
 #: src/hooks/business/ui/useCustomAssets.ts:105
 #: src/hooks/business/ui/useCustomAssets.ts:150
 #: src/hooks/business/ui/useFileUpload.ts:56
@@ -1215,7 +1263,7 @@ msgstr "Mappenavn er påkrevd"
 msgid "Folder name must be {MAX_NAME_LENGTH} characters or less"
 msgstr "Mappenavn må være {MAX_NAME_LENGTH} tegn eller færre"
 
-#: src/components/navbar/FolderContextMenu.tsx:129
+#: src/components/navbar/FolderContextMenu.tsx:135
 msgid "Folder Settings"
 msgstr "Mappeinnstillinger"
 
@@ -1355,7 +1403,7 @@ msgid "Important messages will be pinned here"
 msgstr "Viktige meldinger vil bli festet her"
 
 #: src/components/context/MessageDB.bak.tsx:1184
-#: src/services/MessageService.ts:2356
+#: src/services/MessageService.ts:2287
 msgid "invalid address for signature"
 msgstr "ugyldig adresse for signatur"
 
@@ -1379,7 +1427,7 @@ msgid "invalid link"
 msgstr "ugyldig lenke"
 
 #: src/hooks/business/messages/usePinnedMessages.ts:72
-#: src/hooks/business/messages/usePinnedMessages.ts:132
+#: src/hooks/business/messages/usePinnedMessages.ts:164
 msgid "Invalid message ID"
 msgstr "Ugyldig melding ID"
 
@@ -1434,7 +1482,7 @@ msgstr "Bli med..."
 msgid "Jump"
 msgstr "Hopp"
 
-#: src/components/message/MessageList.tsx:532
+#: src/components/message/MessageList.tsx:548
 msgid "Jump to present"
 msgstr "Hopp til nåtid"
 
@@ -1454,12 +1502,12 @@ msgstr "Nøkkel klar"
 msgid "Key Saved"
 msgstr "Nøkkel lagret"
 
-#: src/components/modals/KickUserModal.tsx:118
+#: src/components/modals/KickUserModal.tsx:107
 #: src/components/user/UserProfile.tsx:265
 msgid "Kick"
 msgstr "Spark"
 
-#: src/components/modals/KickUserModal.tsx:70
+#: src/components/modals/KickUserModal.tsx:59
 msgid "Kick User"
 msgstr "Spark Bruker"
 
@@ -1467,7 +1515,7 @@ msgstr "Spark Bruker"
 msgid "Kicked!"
 msgstr "Utkastet!"
 
-#: src/components/modals/KickUserModal.tsx:74
+#: src/components/modals/KickUserModal.tsx:63
 msgid "Kicking..."
 msgstr "Kaster ut..."
 
@@ -1511,7 +1559,7 @@ msgstr "Lys"
 msgid "Loading bookmarks..."
 msgstr "Laster bokmerker..."
 
-#: src/components/message/MessageList.tsx:543
+#: src/components/message/MessageList.tsx:559
 msgid "Loading message..."
 msgstr "Laster melding..."
 
@@ -1586,9 +1634,9 @@ msgstr "Manuell sikkerhetskopiering kreves"
 msgid "Mark all as read"
 msgstr "Merk alt som lest"
 
-#: src/components/direct/DirectMessage.tsx:688
-#: src/components/direct/DirectMessage.tsx:882
-#: src/components/space/Channel.tsx:949
+#: src/components/direct/DirectMessage.tsx:715
+#: src/components/direct/DirectMessage.tsx:914
+#: src/components/space/Channel.tsx:958
 msgid "Members List"
 msgstr "Medlemsliste"
 
@@ -1614,8 +1662,8 @@ msgstr "Meldingshandlinger"
 msgid "Message deleted"
 msgstr "Melding slettet"
 
-#: src/components/message/Message.tsx:736
-#: src/components/message/Message.tsx:814
+#: src/components/message/Message.tsx:742
+#: src/components/message/Message.tsx:820
 msgid ""
 "Message does not have a valid signature, this may not be from the sender"
 msgstr ""
@@ -1642,19 +1690,19 @@ msgstr "Flere reaksjoner"
 msgid "Mute"
 msgstr "Demp"
 
-#: src/components/modals/MuteUserModal.tsx:106
+#: src/components/modals/MuteUserModal.tsx:95
 msgid "Mute for"
 msgstr "Dempe i"
 
-#: src/components/modals/MuteUserModal.tsx:162
+#: src/components/modals/MuteUserModal.tsx:141
 msgid "Mute for {days} days"
 msgstr "Dempe i {days} dager"
 
-#: src/components/modals/MuteUserModal.tsx:161
+#: src/components/modals/MuteUserModal.tsx:140
 msgid "Mute Forever"
 msgstr "Dempe for alltid"
 
-#: src/components/modals/MuteUserModal.tsx:78
+#: src/components/modals/MuteUserModal.tsx:67
 msgid "Mute User"
 msgstr "Demp bruker"
 
@@ -1666,6 +1714,10 @@ msgstr "Demp brukere"
 #: src/hooks/business/validation/useDisplayNameValidation.ts:55
 msgid "Names resembling admin, moderator, or support are reserved."
 msgstr "Navn som ligner admin, moderator eller support er reservert."
+
+#: src/services/ActionQueueHandlers.ts:1171
+msgid "Network error"
+msgstr "Nettverksfeil"
 
 #: src/components/modals/NewDirectMessageModal.tsx:83
 msgid "New Direct Message"
@@ -1736,8 +1788,8 @@ msgstr "Ingen festede meldinger ennå"
 msgid "No unread notifications"
 msgstr "Ingen uleste varslinger"
 
-#: src/components/space/Channel.tsx:644 src/components/space/Channel.tsx:1159
-#: src/components/space/Channel.tsx:1348
+#: src/components/space/Channel.tsx:644 src/components/space/Channel.tsx:1168
+#: src/components/space/Channel.tsx:1357
 msgid "No users found!"
 msgstr "Ingen brukere funnet!"
 
@@ -1752,7 +1804,7 @@ msgstr "Varselstillatelse ikke gitt"
 #: src/components/modals/SpaceSettingsModal/Account.tsx:187
 #: src/components/modals/UserSettingsModal/Navigation.tsx:17
 #: src/components/modals/UserSettingsModal/Notifications.tsx:24
-#: src/components/space/Channel.tsx:888
+#: src/components/space/Channel.tsx:897
 msgid "Notifications"
 msgstr "Varsler"
 
@@ -1846,12 +1898,12 @@ msgstr "Bildebibliotek"
 msgid "Photo library permission is required to select images"
 msgstr "Tillatelse til bildebibliotek er nødvendig for å velge bilder"
 
-#: src/hooks/business/messages/usePinnedMessages.ts:274
+#: src/hooks/business/messages/usePinnedMessages.ts:326
 msgid "pin"
 msgstr "pin"
 
-#: src/components/message/MessageActionsMenu.tsx:264
-#: src/hooks/business/messages/usePinnedMessages.ts:271
+#: src/components/message/MessageActionsMenu.tsx:270
+#: src/hooks/business/messages/usePinnedMessages.ts:323
 msgid "Pin"
 msgstr "Festepinne"
 
@@ -1864,7 +1916,7 @@ msgid "Pin important messages to keep them easily accessible"
 msgstr "Fest viktige meldinger for å holde dem lett tilgjengelige"
 
 #. placeholder {0}: PINNED_MESSAGES_CONFIG.MAX_PINS
-#: src/hooks/business/messages/usePinnedMessages.ts:87
+#: src/hooks/business/messages/usePinnedMessages.ts:86
 msgid "Pin limit reached ({0})"
 msgstr "Grensen for festing nådd ({0})"
 
@@ -1873,7 +1925,7 @@ msgstr "Grensen for festing nådd ({0})"
 msgid "Pin message"
 msgstr "Fest melding"
 
-#: src/hooks/business/messages/usePinnedMessages.ts:257
+#: src/hooks/business/messages/usePinnedMessages.ts:309
 msgid "Pin Message"
 msgstr "Festepinne melding"
 
@@ -1885,19 +1937,19 @@ msgstr "Fest meldinger"
 msgid "Pin to top"
 msgstr "Festepinne til toppen"
 
-#: src/components/message/Message.tsx:704
-#: src/components/message/Message.tsx:782
+#: src/components/message/Message.tsx:710
+#: src/components/message/Message.tsx:788
 msgid "Pinned"
 msgstr "Festet"
 
 #. placeholder {0}: mapSenderToUser(message.pinnedBy)?.displayName ||
 #. message.pinnedBy
-#: src/components/message/Message.tsx:703
-#: src/components/message/Message.tsx:781
+#: src/components/message/Message.tsx:709
+#: src/components/message/Message.tsx:787
 msgid "Pinned by {0}"
 msgstr "Festet av {0}"
 
-#: src/components/space/Channel.tsx:848
+#: src/components/space/Channel.tsx:857
 msgid "Pinned Messages"
 msgstr "Festede meldinger"
 
@@ -1910,7 +1962,7 @@ msgstr "Festet!"
 msgid "PNG, JPG or JPEG • Optimal ratio 1:1"
 msgstr "PNG, JPG eller JPEG • Optimal forhold 1:1"
 
-#: src/components/message/MessageEditTextarea.tsx:355
+#: src/components/message/MessageEditTextarea.tsx:375
 msgid "Press Enter to save, Shift+Enter for new line, Esc to cancel"
 msgstr "Trykk Enter for å lagre, Shift+Enter for ny linje, Esc for å avbryte"
 
@@ -1999,6 +2051,10 @@ msgstr "Reautorisere"
 msgid "received config with invalid signature!"
 msgstr "mottatt konfigurasjon med ugyldig signatur!"
 
+#: src/services/ActionQueueHandlers.ts:1177
+msgid "Recipient has no devices"
+msgstr "Mottaker har ingen enheter"
+
 #: src/components/Maintenance.native.tsx:73 src/components/Maintenance.tsx:46
 #: src/components/modals/UserSettingsModal/Appearance.tsx:61
 msgid "Refresh"
@@ -2011,7 +2067,7 @@ msgstr "Fjern"
 #: src/components/bookmarks/BookmarkItem.tsx:139
 #: src/components/message/MessageActions.tsx:110
 #: src/components/message/MessageActionsDrawer.tsx:241
-#: src/components/message/MessageActionsMenu.tsx:255
+#: src/components/message/MessageActionsMenu.tsx:261
 msgid "Remove bookmark"
 msgstr "Fjern bokmerke"
 
@@ -2026,7 +2082,7 @@ msgstr "Svar"
 
 #: src/components/message/MessageActions.tsx:94
 #: src/components/message/MessageActionsDrawer.tsx:186
-#: src/components/message/MessageActionsMenu.tsx:220
+#: src/components/message/MessageActionsMenu.tsx:226
 msgid "Reply"
 msgstr "Svar"
 
@@ -2068,7 +2124,7 @@ msgstr "Gjenopprettet {0} rom"
 msgid "Restoring..."
 msgstr "Gjenoppretter..."
 
-#: src/components/message/Message.tsx:1203
+#: src/components/message/Message.tsx:1210
 msgid "Retry"
 msgstr "Prøv igjen"
 
@@ -2077,7 +2133,7 @@ msgstr "Prøv igjen"
 msgid "Roles"
 msgstr "Roller"
 
-#: src/components/message/MessageEditTextarea.tsx:378
+#: src/components/message/MessageEditTextarea.tsx:395
 #: src/components/modals/ConversationSettingsModal.tsx:242
 msgid "Save"
 msgstr "Lagre"
@@ -2144,8 +2200,8 @@ msgstr "Søk i denne Rom"
 msgid "Search in this Space..."
 msgstr "Søk i dette Space..."
 
-#: src/components/direct/DirectMessage.tsx:734
-#: src/components/space/Channel.tsx:968
+#: src/components/direct/DirectMessage.tsx:761
+#: src/components/space/Channel.tsx:977
 msgid "Search Messages"
 msgstr "Søk Meldinger"
 
@@ -2161,7 +2217,7 @@ msgstr "Søkeresultater"
 msgid "Search username or address"
 msgstr "Søk etter brukernavn eller adresse"
 
-#: src/components/space/Channel.tsx:1320
+#: src/components/space/Channel.tsx:1329
 msgid "Search Username or Address"
 msgstr "Søk etter brukernavn eller adresse"
 
@@ -2215,6 +2271,10 @@ msgstr "Velg hvilke typer varslinger du vil motta"
 msgid "Send"
 msgstr "Send"
 
+#: src/services/ActionQueueHandlers.ts:1179
+msgid "Send failed"
+msgstr "Sending mislyktes"
+
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:324
 msgid "Send Invite"
 msgstr "Send invitasjon"
@@ -2223,7 +2283,7 @@ msgstr "Send invitasjon"
 msgid "Send Message"
 msgstr "Send melding"
 
-#: src/components/message/Message.tsx:1185
+#: src/components/message/Message.tsx:1192
 msgid "Sending..."
 msgstr "Sender..."
 
@@ -2329,7 +2389,7 @@ msgstr "Invitasjon sendt til {0} med suksess"
 msgid "Sync Kick Status"
 msgstr "Synkroniser kick-status"
 
-#: src/services/MessageService.ts:3177
+#: src/services/MessageService.ts:3108
 msgid "Syncing Space..."
 msgstr "Synkroniserer Space..."
 
@@ -2432,19 +2492,19 @@ msgstr "Dette Space"
 msgid "This user is already a member of this space."
 msgstr "Denne brukeren er allerede medlem av dette Space."
 
-#: src/components/modals/MuteUserModal.tsx:131
+#: src/components/modals/MuteUserModal.tsx:115
 msgid "This user will be able to send messages in this Space again."
 msgstr "Denne brukeren vil kunne sende meldinger i denne Space igjen."
 
-#: src/components/modals/KickUserModal.tsx:97
+#: src/components/modals/KickUserModal.tsx:86
 msgid "This user will be removed from the Space."
 msgstr "Denne brukeren vil bli fjernet fra Space."
 
-#: src/components/modals/MuteUserModal.tsx:133
+#: src/components/modals/MuteUserModal.tsx:117
 msgid "This user will no longer be able to send messages in this Space."
 msgstr "Denne brukeren vil ikke lenger kunne sende meldinger i denne Space."
 
-#: src/components/modals/MuteUserModal.tsx:134
+#: src/components/modals/MuteUserModal.tsx:118
 msgid "This user will not be able to send messages for {days} days."
 msgstr "Denne brukeren vil ikke kunne sende meldinger i {days} dager."
 
@@ -2469,7 +2529,7 @@ msgid "Timeout in 10 seconds anyway..."
 msgstr "Tidsavbrudd om 10 sekunder uansett..."
 
 #: src/components/modals/ConfirmationModal.native.tsx:57
-#: src/components/modals/ConfirmationModal.tsx:78
+#: src/components/modals/ConfirmationModal.tsx:82
 msgid ""
 "TIP: Hold down shift when clicking {protipAction} to bypass this "
 "confirmation entirely."
@@ -2511,7 +2571,7 @@ msgstr "Prøv forskjellige søkeord eller sjekk stavemåten din"
 msgid "Unable to compress emoji images. Please use smaller images."
 msgstr "Kan ikke komprimere emoji-bilder. Vennligst bruk mindre bilder."
 
-#: src/hooks/business/spaces/useSpaceProfile.ts:128
+#: src/hooks/business/spaces/useSpaceProfile.ts:127
 #: src/hooks/business/ui/useFileUpload.ts:96
 #: src/hooks/business/ui/useSpaceFileUploads.ts:160
 #: src/hooks/business/ui/useSpaceFileUploads.ts:183
@@ -2578,23 +2638,26 @@ msgstr "Ukjent tid"
 #: src/components/context/MessageDB.bak.tsx:3043
 #: src/components/context/MessageDB.bak.tsx:4122
 #: src/components/context/MessageDB.bak.tsx:5292
-#: src/components/direct/DirectMessage.tsx:173
-#: src/components/direct/DirectMessage.tsx:188
-#: src/components/direct/DirectMessage.tsx:555
+#: src/components/direct/DirectMessage.tsx:170
+#: src/components/direct/DirectMessage.tsx:177
+#: src/components/direct/DirectMessage.tsx:184
+#: src/components/direct/DirectMessage.tsx:200
+#: src/components/direct/DirectMessage.tsx:582
 #: src/components/message/MessageComposer.tsx:499
 #: src/components/message/MessageComposer.tsx:506
-#: src/components/message/MessageEditTextarea.tsx:225
-#: src/components/message/MessageEditTextarea.tsx:260
+#: src/components/message/MessageEditTextarea.tsx:218
+#: src/components/message/MessageEditTextarea.tsx:250
+#: src/components/message/MessageEditTextarea.tsx:257
+#: src/components/message/MessageEditTextarea.tsx:261
 #: src/components/message/MessageEditTextarea.tsx:267
-#: src/components/message/MessageEditTextarea.tsx:271
-#: src/components/message/MessageEditTextarea.tsx:277
 #: src/components/message/MessagePreview.tsx:196
 #: src/components/message/PinnedMessagesPanel.tsx:78
 #: src/components/modals/ConversationSettingsModal.tsx:104
 #: src/components/modals/NewDirectMessageModal.tsx:66
 #: src/components/notifications/NotificationPanel.tsx:248
 #: src/components/notifications/NotificationPanel.tsx:268
-#: src/hooks/business/channels/useChannelMessages.ts:141
+#: src/hooks/business/channels/useChannelMessages.ts:150
+#: src/hooks/business/conversations/useDirectMessageData.ts:51
 #: src/hooks/business/conversations/useDirectMessageData.ts:57
 #: src/hooks/business/conversations/useDirectMessageData.ts:75
 #: src/hooks/business/search/useBatchSearchResultsDisplay.ts:133
@@ -2605,30 +2668,29 @@ msgstr "Ukjent tid"
 #: src/hooks/business/search/useSearchResultDisplayDM.ts:33
 #: src/hooks/business/search/useSearchResultDisplaySpace.ts:45
 #: src/hooks/queries/userInfo/buildUserInfoFetcher.ts:15
-#: src/services/EncryptionService.ts:138 src/services/MessageService.ts:1586
-#: src/services/MessageService.ts:1823 src/services/MessageService.ts:1995
-#: src/services/MessageService.ts:2135 src/services/MessageService.ts:2153
-#: src/services/MessageService.ts:3603 src/services/MessageService.ts:3767
-#: src/services/MessageService.ts:3901 src/services/MessageService.ts:4005
-#: src/services/MessageService.ts:4202
+#: src/services/EncryptionService.ts:138 src/services/MessageService.ts:1744
+#: src/services/MessageService.ts:1918 src/services/MessageService.ts:2059
+#: src/services/MessageService.ts:2072 src/services/MessageService.ts:3636
+#: src/services/MessageService.ts:3783 src/services/MessageService.ts:4018
+#: src/services/MessageService.ts:4215
 msgid "Unknown User"
 msgstr "Ukjent bruker"
 
-#: src/components/modals/MuteUserModal.tsx:159
+#: src/components/modals/MuteUserModal.tsx:138
 #: src/components/user/UserProfile.tsx:246
 msgid "Unmute"
 msgstr "Fjern demping"
 
-#: src/components/modals/MuteUserModal.tsx:78
+#: src/components/modals/MuteUserModal.tsx:67
 msgid "Unmute User"
 msgstr "Fjern demping av bruker"
 
-#: src/hooks/business/messages/usePinnedMessages.ts:274
+#: src/hooks/business/messages/usePinnedMessages.ts:326
 msgid "unpin"
 msgstr "fjern festepinne"
 
-#: src/components/message/MessageActionsMenu.tsx:264
-#: src/hooks/business/messages/usePinnedMessages.ts:271
+#: src/components/message/MessageActionsMenu.tsx:270
+#: src/hooks/business/messages/usePinnedMessages.ts:323
 msgid "Unpin"
 msgstr "Fjern festepinne"
 
@@ -2637,7 +2699,7 @@ msgstr "Fjern festepinne"
 msgid "Unpin message"
 msgstr "Fjern festing av melding"
 
-#: src/hooks/business/messages/usePinnedMessages.ts:257
+#: src/hooks/business/messages/usePinnedMessages.ts:309
 msgid "Unpin Message"
 msgstr "Fjern festepinne melding"
 
@@ -2649,7 +2711,7 @@ msgstr "Fjern festing av dette innlegget"
 msgid "Unpinned!"
 msgstr "Fjernet festing!"
 
-#: src/components/direct/DirectMessage.tsx:829
+#: src/components/direct/DirectMessage.tsx:861
 msgid ""
 "Until you reply, this sender will not see your display name or profile "
 "picture"
@@ -2691,24 +2753,16 @@ msgstr "Brukeradresse her"
 msgid "User does not exist."
 msgstr "Bruker eksisterer ikke."
 
-#: src/components/modals/MuteUserModal.tsx:157
-msgid "User Muted!"
-msgstr "Bruker dempet!"
-
 #: src/hooks/business/messages/usePinnedMessages.ts:76
-#: src/hooks/business/messages/usePinnedMessages.ts:136
+#: src/hooks/business/messages/usePinnedMessages.ts:168
 msgid "User not authenticated"
 msgstr "Bruker ikke autentisert"
 
-#: src/components/modals/MuteUserModal.tsx:157
-msgid "User Unmuted!"
-msgstr "Bruker fjernet fra demping!"
-
-#: src/components/space/Channel.tsx:631 src/components/space/Channel.tsx:1145
+#: src/components/space/Channel.tsx:631 src/components/space/Channel.tsx:1154
 msgid "Username or Address"
 msgstr "Brukernavn eller adresse"
 
-#: src/components/context/WebsocketProvider.tsx:219
+#: src/components/context/WebsocketProvider.tsx:241
 msgid "useWebSocket must be used within a WebSocketProvider"
 msgstr "useWebSocket må brukes innenfor en WebSocketProvider"
 
@@ -2830,7 +2884,7 @@ msgstr "I går"
 msgid "Yesterday at {timeFormatted}"
 msgstr "I går kl {timeFormatted}"
 
-#: src/components/direct/DirectMessage.tsx:327
+#: src/components/direct/DirectMessage.tsx:345
 #: src/hooks/business/search/useBatchSearchResultsDisplay.ts:139
 msgid "You"
 msgstr "Du"
@@ -2840,7 +2894,7 @@ msgid "You are already a member of this Space."
 msgstr "Du er allerede medlem av dette Space."
 
 #. placeholder {0}: formatMuteRemaining(currentMuteRecord.expiresAt)
-#: src/components/space/Channel.tsx:1108
+#: src/components/space/Channel.tsx:1117
 msgid "You are muted for {0}"
 msgstr "Du er dempet i {0}"
 
@@ -2868,7 +2922,7 @@ msgstr ""
 "{channelCount} kanaler i denne gruppen først."
 
 #: src/components/message/MessageComposer.tsx:334
-#: src/components/space/Channel.tsx:1111
+#: src/components/space/Channel.tsx:1120
 msgid "You cannot post in this channel"
 msgstr "Du kan ikke poste i denne kanalen"
 
@@ -2881,7 +2935,7 @@ msgstr "Du kan ikke sende en direkte melding til deg selv."
 msgid "You have a new unread message"
 msgstr "Du har en ny ulest melding"
 
-#: src/components/space/Channel.tsx:1109
+#: src/components/space/Channel.tsx:1118
 msgid "You have been muted in this Space"
 msgstr "Du har blitt dempet i denne Space"
 
@@ -2923,6 +2977,10 @@ msgstr ""
 "Du er ikke oppført blant medlemmene i dette Space. Å rette dette vil legge "
 "deg til i listen over Space-medlemmer (lagrer profilen din lokalt med din "
 "innboksadresse)."
+
+#: src/components/ui/OfflineBanner.tsx:56
+msgid "You're offline"
+msgstr "Du er offline"
 
 #: src/hooks/business/messages/useMessageComposer.ts:170
 msgid "You're sending messages too quickly. Please wait a moment."
@@ -3068,6 +3126,9 @@ msgstr "YouTube-video-miniature"
 #~ msgid "Enter a name for your new Space"
 #~ msgstr "Angi et navn for ditt nye Rom"
 
+#~ msgid "Error processing queue:"
+#~ msgstr "Feil ved behandling av kø:"
+
 #~ msgid "Kick Users"
 #~ msgstr "Spark brukere"
 
@@ -3160,6 +3221,12 @@ msgstr "YouTube-video-miniature"
 
 #~ msgid "Use the below button to kick this user out of the Space"
 #~ msgstr "Bruk knappen nedenfor for å kaste denne brukeren ut av Rom"
+
+#~ msgid "User Muted!"
+#~ msgstr "Bruker dempet!"
+
+#~ msgid "User Unmuted!"
+#~ msgstr "Bruker fjernet fra demping!"
 
 #~ msgid "When someone mentions a role you have (Coming Soon)"
 #~ msgstr "Når noen nevner en rolle du har (Kommer snart)"
