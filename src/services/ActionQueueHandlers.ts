@@ -442,8 +442,8 @@ export class ActionQueueHandlers {
         }
       );
 
-      // Ensure message is in React Query cache (may have been removed by refetch when coming back online)
-      // This re-adds the message with sendStatus: undefined (sent state)
+      // Ensure message is in React Query cache AND update status to 'sent' in a single atomic operation
+      // This prevents race conditions between two separate setQueryData calls
       const messagesKey = buildMessagesKey({ spaceId, channelId });
       this.deps.queryClient.setQueryData(
         messagesKey,
@@ -451,13 +451,31 @@ export class ActionQueueHandlers {
           if (!oldData?.pages) return oldData;
 
           // Check if message already exists in cache
-          const messageExists = oldData.pages.some((page) =>
+          const existingPageIndex = oldData.pages.findIndex((page) =>
             page.messages.some((m) => m.messageId === messageId)
           );
 
-          if (messageExists) {
-            // Message exists - just update status (handled by updateMessageStatus below)
-            return oldData;
+          if (existingPageIndex !== -1) {
+            // Message exists - update its status to 'sent' (clear sendStatus/sendError)
+            return {
+              pageParams: oldData.pageParams,
+              pages: oldData.pages.map((page, index) => {
+                if (index !== existingPageIndex) return page;
+                return {
+                  ...page,
+                  messages: page.messages.map((msg) => {
+                    if (msg.messageId === messageId && msg.sendStatus !== undefined) {
+                      // Clear sendStatus to mark as sent
+                      const { sendStatus: _, sendError: __, ...rest } = msg;
+                      return rest as Message;
+                    }
+                    return msg;
+                  }),
+                  nextCursor: page.nextCursor,
+                  prevCursor: page.prevCursor,
+                };
+              }),
+            };
           }
 
           // Message not in cache (likely removed by refetch) - re-add it
@@ -483,15 +501,6 @@ export class ActionQueueHandlers {
             }),
           };
         }
-      );
-
-      // Update status to 'sent'
-      this.deps.messageService.updateMessageStatus(
-        this.deps.queryClient,
-        spaceId,
-        channelId,
-        messageId,
-        'sent'
       );
 
       // Invalidate reply notification caches if this is a reply

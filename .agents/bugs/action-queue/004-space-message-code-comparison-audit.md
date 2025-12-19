@@ -298,22 +298,30 @@ if ((context.replyMetadata as any)?.parentAuthor) {
 
 ---
 
-### 6. ⚠️ DIFFERENCE: Status Update Atomicity
+### 6. ✅ FIXED: Status Update Atomicity
 
-**Action Queue (sendChannelMessage):**
+**Action Queue (sendChannelMessage) - After Fix:**
 ```typescript
-// Line 448-486: setQueryData for cache re-add
-// Line 489-495: Separate updateMessageStatus call
+// Lines 445-504: Single atomic setQueryData combining cache re-add and status update
+this.deps.queryClient.setQueryData(messagesKey, (oldData) => {
+  // Check if message exists
+  const existingPageIndex = oldData.pages.findIndex((page) =>
+    page.messages.some((m) => m.messageId === messageId)
+  );
+
+  if (existingPageIndex !== -1) {
+    // Message exists - update its status to 'sent' (clear sendStatus/sendError)
+    return { /* atomic update */ };
+  }
+
+  // Message not in cache - re-add it (only post messages)
+  return { /* re-add logic */ };
+});
 ```
 
-**Action Queue (sendDm - for comparison):**
-```typescript
-// Lines 731-783: Single atomic setQueryData combining both operations
-```
+**Classification**: `fixed` - Now aligned with DM atomic pattern
 
-**Classification**: `minor improvement opportunity`
-
-**Notes**: The DM handler combines cache re-add and status update into a single atomic operation. The Channel handler uses two separate calls. In practice, React Query batches these, so the risk is low. However, aligning with the DM pattern would be more correct.
+**Notes**: The channel handler now uses a single atomic `setQueryData` call that handles both cache re-add and status update, matching the DM handler pattern.
 
 ---
 
@@ -362,7 +370,7 @@ await this.saveMessage(
 | 3. Error handling | None | Lower risk | Improvement |
 | 4. Cache re-add | None | Better offline | Improvement |
 | 5. Reply invalidation | None | Better UX | Improvement |
-| 6. Status atomicity | Low | Minor race | Consider aligning |
+| 6. Status atomicity | None | Fixed | ✅ Aligned with DM |
 | 7. Field stripping | None | Identical | N/A |
 | 8. Message saving | None | Identical | N/A |
 
@@ -400,7 +408,7 @@ The edit/pin path in `submitChannelMessage()` (`MessageService.ts:3494-3760`) do
 | Priority | Item | Status |
 |----------|------|--------|
 | 🚨 Critical | Fix encryption state persistence in `submitChannelMessage()` for edit/pin/delete | ✅ Fixed |
-| Low | Align channel handler status update with DM atomic pattern | 📋 Optional |
+| Low | Align channel handler status update with DM atomic pattern | ✅ Fixed |
 
 ### Fix Applied (2025-12-19)
 
@@ -409,6 +417,14 @@ Added `saveEncryptionState()` calls after `TripleRatchetEncrypt()` in three loca
 1. **Edit-message path** (`MessageService.ts:3597-3607`)
 2. **Pin-message path** (`MessageService.ts:3744-3754`)
 3. **retryMessage path** (`MessageService.ts:3857-3867`)
+
+### Atomic Pattern Fix Applied (2025-12-19)
+
+Aligned channel handler status update with DM atomic pattern in `ActionQueueHandlers.ts:445-504`:
+
+- Replaced two separate calls (setQueryData + updateMessageStatus) with single atomic setQueryData
+- Single operation now handles both cache re-add and status update
+- Matches the DM handler pattern for consistency
 
 ---
 
