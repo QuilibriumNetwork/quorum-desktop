@@ -92,6 +92,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Pinned Messages Panel Button Clicks Bug](bugs/pinned-messages-panel-clicks-and-message-list-disappearing.md)
 - [Public Invite Link Intermittent Expiration Bug](bugs/public-invite-link-intermittent-expiration.md)
 - [Space Owner Privacy Limitation](bugs/space-owner-privacy-limitation.md)
+- [WebSocket processQueue Stuck - Blocking Outbound Messages](bugs/websocket-processqueue-stuck-blocking-outbound.md)
 
 ### Solved Issues
 - [Android 7.0 File Download Fix - Implementation Plan](bugs/.solved/SOLVED_android-file-download-huawei-p9-lite.md)
@@ -140,6 +141,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Implement Smart Context Extraction Around Mentions in NotificationPanel](tasks/notification-mention-context-extraction.md)
 - [Multi-User Invite Selection Enhancement](tasks/multi-user-invite-selection.md)
 - [Passkey Import UX Issue](tasks/passkey-import-ux-issue.md)
+- [Scroll Performance Optimization](tasks/scroll-performance-optimization.md)
 - [SDK PasskeyModal Customization Props Enhancement](tasks/sdk-passkey-modal-customization-props.md)
 - [Service Worker for App Update Detection](tasks/service-worker-app-updates.md)
 - [Task: Implement Delete Public Invite Link Feature](tasks/delete-public-invite-link.md)
@@ -327,6 +329,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [dnd-kit Touch Drag-and-Drop Best Practices Research](reports/dnd-kit-touch-best-practices_2025-12-11.md)
 - [Quorum Privacy Analysis](reports/privacy-analysis-quorum-2025-12-03.md)
 - [Security Audit: Markdown Renderer & Mentions System](reports/security-audit-markdown-mentions-2025-11-18.md)
+- [Sync Optimizations Report](reports/sync-optimizations_2025-12-19.md)
 - [Web-to-Native Feature Sync Compatibility Analysis](reports/web-native-feature-sync-analysis_2025-12-04.md)
 
 ### Onboarding Flow
@@ -336,4 +339,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2025-12-19 11:56:09
+**Last Updated**: 2025-12-19 15:05:43
