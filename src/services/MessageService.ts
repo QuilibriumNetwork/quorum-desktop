@@ -14,6 +14,7 @@ import {
   Space,
   EditMessage,
   PinMessage,
+  UpdateProfileMessage,
 } from '../api/quorumApi';
 import { sha256, base58btc, hexToSpreadArray } from '../utils/crypto';
 import { int64ToBytes } from '../utils/bytes';
@@ -3787,7 +3788,126 @@ export class MessageService {
         return outbounds;
       }
 
-      // No matching message type in this path (edit/pin only)
+      // Handle update-profile type
+      if (
+        typeof pendingMessage === 'object' &&
+        (pendingMessage as any).type === 'update-profile'
+      ) {
+        const updateProfileMessage = pendingMessage as UpdateProfileMessage;
+
+        // Generate message ID
+        const messageId = await crypto.subtle.digest(
+          'SHA-256',
+          Buffer.from(
+            nonce +
+              'update-profile' +
+              currentPasskeyInfo.address +
+              canonicalize(updateProfileMessage),
+            'utf-8'
+          )
+        );
+
+        const message = {
+          spaceId: spaceId,
+          channelId: channelId,
+          messageId: Buffer.from(messageId).toString('hex'),
+          digestAlgorithm: 'SHA-256',
+          nonce: nonce,
+          createdDate: Date.now(),
+          modifiedDate: Date.now(),
+          lastModifiedHash: '',
+          content: {
+            ...updateProfileMessage,
+            senderId: currentPasskeyInfo.address,
+          } as UpdateProfileMessage,
+        } as Message;
+
+        const response = await this.messageDB.getEncryptionStates({
+          conversationId: spaceId + '/' + spaceId,
+        });
+        const sets = response.map((e) => JSON.parse(e.state));
+
+        // Enforce non-repudiability (required for profile updates to verify sender)
+        const inboxKey = await this.messageDB.getSpaceKey(spaceId, 'inbox');
+        message.publicKey = inboxKey.publicKey;
+        message.signature = Buffer.from(
+          JSON.parse(
+            ch.js_sign_ed448(
+              Buffer.from(inboxKey.privateKey, 'hex').toString('base64'),
+              Buffer.from(messageId).toString('base64')
+            )
+          ),
+          'base64'
+        ).toString('hex');
+
+        const msg = secureChannel.TripleRatchetEncrypt(
+          JSON.stringify({
+            ratchet_state: sets[0].state,
+            message: [
+              ...new Uint8Array(Buffer.from(JSON.stringify(message), 'utf-8')),
+            ],
+          } as secureChannel.TripleRatchetStateAndMessage)
+        );
+        const result = JSON.parse(
+          msg
+        ) as secureChannel.TripleRatchetStateAndEnvelope;
+
+        // Save the updated Triple Ratchet state
+        const newEncryptionState = {
+          state: JSON.stringify({
+            state: result.ratchet_state,
+          }),
+          timestamp: Date.now(),
+          inboxId: spaceId,
+          conversationId: spaceId + '/' + spaceId,
+          sentAccept: false,
+        };
+        await this.messageDB.saveEncryptionState(newEncryptionState, true);
+
+        // Send to hub
+        outbounds.push(
+          await this.sendHubMessage(
+            spaceId,
+            JSON.stringify({
+              type: 'message',
+              message: JSON.parse(result.envelope),
+            })
+          )
+        );
+
+        // Update local database immediately (don't wait for server echo)
+        // This ensures the profile change is visible right away
+        const participant = await this.messageDB.getSpaceMember(
+          spaceId,
+          currentPasskeyInfo.address
+        );
+        if (participant) {
+          participant.display_name = updateProfileMessage.displayName;
+          participant.user_icon = updateProfileMessage.userIcon;
+          await this.messageDB.saveSpaceMember(spaceId, participant);
+
+          // Update query cache for immediate UI refresh
+          queryClient.setQueryData(
+            buildSpaceMembersKey({ spaceId }),
+            (oldData: secureChannel.UserProfile[]) => {
+              if (!oldData) return oldData;
+              return oldData.map((member) =>
+                member.user_address === currentPasskeyInfo.address
+                  ? {
+                      ...member,
+                      display_name: updateProfileMessage.displayName,
+                      user_icon: updateProfileMessage.userIcon,
+                    }
+                  : member
+              );
+            }
+          );
+        }
+
+        return outbounds;
+      }
+
+      // No matching message type in this path
       return outbounds;
     });
   }
