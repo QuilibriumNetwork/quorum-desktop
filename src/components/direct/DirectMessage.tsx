@@ -10,11 +10,11 @@ import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
 import { EmbedMessage } from '../../api/quorumApi';
 import './DirectMessage.scss';
 import {
-  useRegistration,
   useMessageComposer,
   useDirectMessagesList,
   useUpdateReadTime,
 } from '../../hooks';
+import { useRegistrationOptional } from '../../hooks/queries/registration/useRegistrationOptional';
 import { useConversation } from '../../hooks/queries/conversation/useConversation';
 import { useMessageDB } from '../context/useMessageDB';
 import { useQueryClient } from '@tanstack/react-query';
@@ -88,9 +88,10 @@ const DirectMessage: React.FC<{}> = () => {
     }
   }, [address]);
 
-  // Get all the data we need (same as original)
-  const { data: registration } = useRegistration({ address: address! });
-  const { data: self } = useRegistration({
+  // Get all the data we need
+  // Use non-suspense registration queries for offline resilience
+  const { data: registration } = useRegistrationOptional({ address: address! });
+  const { data: self } = useRegistrationOptional({
     address: user.currentPasskeyInfo!.address,
   });
   const { data: conversation } = useConversation({
@@ -153,7 +154,8 @@ const DirectMessage: React.FC<{}> = () => {
     canDeleteMessages,
   } = useDirectMessagesList();
 
-  // Recreate members logic exactly as original (temporary fix)
+  // Build members with fallback chain: conversation (IndexedDB) > registration (network) > defaults
+  // This allows the component to render offline using cached conversation data
   const members = useMemo(() => {
     const m = {} as {
       [address: string]: {
@@ -163,18 +165,28 @@ const DirectMessage: React.FC<{}> = () => {
       };
     };
     if (conversation?.conversation) {
+      // Priority 1: Use conversation data from IndexedDB (available offline)
       m[address!] = {
         displayName: conversation.conversation!.displayName ?? t`Unknown User`,
         userIcon: conversation.conversation!.icon ?? DefaultImages.UNKNOWN_USER,
         address: address!,
       };
     } else if (registration?.registration) {
+      // Priority 2: Use registration data from network API
       m[registration.registration.user_address] = {
         displayName: t`Unknown User`,
         userIcon: DefaultImages.UNKNOWN_USER,
         address: registration.registration.user_address,
       };
+    } else {
+      // Priority 3: Offline fallback - use address as identifier
+      m[address!] = {
+        displayName: t`Unknown User`,
+        userIcon: DefaultImages.UNKNOWN_USER,
+        address: address!,
+      };
     }
+    // Self data - use passkey context as primary source (always available)
     m[user.currentPasskeyInfo!.address] = {
       address: user.currentPasskeyInfo!.address,
       userIcon: user.currentPasskeyInfo!.pfpUrl,
@@ -209,6 +221,12 @@ const DirectMessage: React.FC<{}> = () => {
   const handleSubmitMessage = useCallback(
     async (message: string | object, inReplyTo?: string) => {
       if (!address) return; // Guard against undefined address
+
+      // Guard against missing registration data (offline)
+      if (!self?.registration || !registration?.registration) {
+        console.warn('Cannot send message: registration data unavailable (offline?)');
+        return;
+      }
 
       // Check if this is a deletion to prevent auto-scroll (for consistency with Channel.tsx)
       const isDeletion =

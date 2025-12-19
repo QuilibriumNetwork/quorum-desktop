@@ -554,9 +554,10 @@ If `dmContext` is not available at any point, the fallback path is used.
 
 ## Related Documentation
 
+- [Offline Support](offline-support.md) - Comprehensive offline capabilities including navigation and data viewing
 - [DM Action Queue Handlers Task](../../tasks/dm-action-queue-handlers.md) - Implementation details
 - [DM Code Comparison Audit](../../reports/action-queue/003-DM-message-code-comparison-audit.md) - Code analysis and verification
 
 ---
 
-*Updated: 2025-12-18 - Added DM action types, Space vs DM comparison, legacy fallback documentation*
+*Updated: 2025-12-19 - Added link to Offline Support documentation*

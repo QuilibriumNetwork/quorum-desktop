@@ -29,6 +29,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Modal Save Overlay System](docs/features/modal-save-overlay.md)
 - [Modal System Documentation](docs/features/modals.md)
 - [Mute User System Documentation](docs/features/mute-user-system.md)
+- [Offline Support](docs/features/offline-support.md)
 - [ReactTooltip Mobile Support Documentation](docs/features/reacttooltip-mobile.md)
 - [Responsive Layout System Documentation](docs/features/responsive-layout.md)
 - [Security Architecture](docs/features/security.md)
@@ -77,7 +78,6 @@ This is the main index for all documentation, bug reports, and task management.
 ### Active Issues
 - [Config Sync Space Loss Race Condition](bugs/config-sync-space-loss-race-condition.md)
 - [DirectMessage Invite Loading Performance Issue](bugs/directmessage-invite-loading-performance.md)
-- [DM Offline Navigation Shows Empty View](bugs/dm-offline-navigation-empty.md)
 - [Encryption State Evals Causing Config Sync Bloat](bugs/encryption-state-evals-bloat.md)
 - [Expired Invite Card Validation Timing Issue](bugs/expired-invite-card-validation-timing.md)
 - [JoinSpaceModal "Invalid JSON" Error Due to Network Issues](bugs/joinspacemodal-invalid-json-network-error.md)
@@ -95,6 +95,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Bug: Auto-Jump to First Unread Message - Blocked by Virtuoso Scroll Positioning](bugs/.solved/auto-jump-unread-virtuoso-scroll-conflict.md)
 - [Channel/Group Save Race Condition](bugs/.solved/channel-group-save-race-condition.md)
 - [Deleted Messages Reappear After Peer Sync](bugs/.solved/deleted-messages-reappear-via-sync.md)
+- [DM Offline Navigation Shows Empty View](bugs/.solved/dm-offline-navigation-empty.md)
 - [DM Send Fails with "Cannot read properties of undefined (reading 'address')"](bugs/.solved/dm-send-fails-address-undefined.md)
 - [DM Shows "Unknown User" After Conversation Starts](bugs/.solved/dm-unknown-user-identity-not-revealed.md)
 - [Folder Click to Expand/Collapse Not Working](bugs/.solved/folder-click-expand-not-working.md)
@@ -340,4 +341,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2025-12-19 17:09:49
+**Last Updated**: 2025-12-19 17:27:17
