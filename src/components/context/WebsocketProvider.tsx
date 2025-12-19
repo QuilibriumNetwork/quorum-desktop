@@ -32,7 +32,9 @@ export function WebSocketProvider({ children }: WebSocketProviderProps) {
   const wsRef = useRef<WebSocket | null>(null);
   const handlerRef = useRef<MessageHandler | null>(null);
   const resubscribeRef = useRef<(() => Promise<void>) | null>(null);
-  const processingRef = useRef(false);
+  // Separate locks for inbound and outbound processing to prevent blocking
+  const inboundProcessingRef = useRef(false);
+  const outboundProcessingRef = useRef(false);
   const lastNotificationTime = useRef<number>(0);
 
   const messageQueue = useRef<EncryptedMessage[]>([]);
@@ -71,19 +73,19 @@ export function WebSocketProvider({ children }: WebSocketProviderProps) {
     notificationService.showUnreadMessagesNotification(messageCount);
   };
 
-  const processQueue = async () => {
-    if (processingRef.current || !handlerRef.current) {
+  // Process inbound messages independently from outbound
+  const processInbound = async () => {
+    if (inboundProcessingRef.current || !handlerRef.current) {
       return;
     }
 
-    processingRef.current = true;
+    inboundProcessingRef.current = true;
     let message: EncryptedMessage | undefined;
-    let outbound: OutboundMessage | undefined;
 
     try {
       const inboxMap = new Map<string, EncryptedMessage[]>();
 
-      // Process inbound messages
+      // Group messages by inbox address
       while ((message = dequeue())) {
         if (!inboxMap.has(message.inboxAddress)) {
           inboxMap.set(message.inboxAddress, []);
@@ -119,30 +121,29 @@ export function WebSocketProvider({ children }: WebSocketProviderProps) {
       if (totalNewMessages > 0) {
         showNotificationForNewMessages(totalNewMessages);
       }
+    } catch (error) {
+      console.error(t`Error processing inbound queue:`, error);
+    } finally {
+      inboundProcessingRef.current = false;
+    }
+  };
 
+  // Process outbound messages independently from inbound
+  const processOutbound = async () => {
+    if (outboundProcessingRef.current) {
+      return;
+    }
+
+    outboundProcessingRef.current = true;
+    let outbound: OutboundMessage | undefined;
+
+    try {
       // Process outbound messages only if socket is open
       if (wsRef.current?.readyState === WebSocket.OPEN) {
         while ((outbound = dequeueOutbound())) {
           try {
             const messages = await outbound();
             for (const m of messages) {
-              // Log DM-related WebSocket sends for debugging
-              try {
-                const parsed = JSON.parse(m);
-                if (parsed.type === 'direct' || parsed.type === 'listen') {
-                  console.log(`[WS-SEND] ${parsed.type}`, {
-                    timestamp: new Date().toISOString(),
-                    ...(parsed.type === 'listen' ? { inboxCount: parsed.inbox_addresses?.length } : {}),
-                    ...(parsed.type === 'direct' ? {
-                      hasEnvelope: !!parsed.envelope,
-                      toInbox: parsed.inbox_address?.slice(0, 16) + '...',
-                      payloadSize: m.length,
-                    } : {}),
-                  });
-                }
-              } catch {
-                // Not JSON, skip logging
-              }
               wsRef.current.send(m);
             }
           } catch (error) {
@@ -151,9 +152,9 @@ export function WebSocketProvider({ children }: WebSocketProviderProps) {
         }
       }
     } catch (error) {
-      console.error(t`Error processing queue:`, error);
+      console.error(t`Error processing outbound queue:`, error);
     } finally {
-      processingRef.current = false;
+      outboundProcessingRef.current = false;
     }
   };
 
@@ -164,7 +165,9 @@ export function WebSocketProvider({ children }: WebSocketProviderProps) {
       ws.onopen = () => {
         setConnected(true);
         if (resubscribeRef.current) resubscribeRef.current();
-        processQueue(); // Process any pending outbound messages
+        // Process any pending messages on reconnect
+        processInbound();
+        processOutbound();
       };
 
       ws.onclose = () => {
@@ -176,7 +179,7 @@ export function WebSocketProvider({ children }: WebSocketProviderProps) {
         try {
           const message = JSON.parse(event.data) as EncryptedMessage;
           messageQueue.current = [...messageQueue.current, message];
-          processQueue();
+          processInbound(); // Only process inbound - outbound is independent
         } catch (error) {
           console.error(t`Failed to parse WebSocket message:`, error);
         }
@@ -194,7 +197,9 @@ export function WebSocketProvider({ children }: WebSocketProviderProps) {
 
   useEffect(() => {
     const i = setInterval(() => {
-      processQueue();
+      // Periodic check for any queued messages
+      processInbound();
+      processOutbound();
     }, 1000);
 
     return () => {
@@ -204,12 +209,12 @@ export function WebSocketProvider({ children }: WebSocketProviderProps) {
 
   const enqueueOutbound = (message: OutboundMessage) => {
     outboundQueue.current = [...outboundQueue.current, message];
-    processQueue();
+    processOutbound(); // Only process outbound - independent from inbound
   };
 
   const setMessageHandler = (handler: MessageHandler) => {
     handlerRef.current = handler;
-    processQueue();
+    processInbound(); // Process any queued inbound messages now that handler is set
   };
 
   const setResubscribe = (resubscribe: () => Promise<void>) => {
