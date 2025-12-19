@@ -11,7 +11,7 @@ import { useCopyToClipboard } from '../ui';
 import { useBookmarks } from '../bookmarks';
 import { buildMessagesKey } from '../../queries/messages/buildMessagesKey';
 import { t } from '@lingui/core/macro';
-import { isDmActionEnabled } from '../../../config/features';
+import { ENABLE_DM_ACTION_QUEUE } from '../../../config/features';
 
 /**
  * DM context for action queue handlers.
@@ -224,7 +224,7 @@ export function useMessageActions(options: UseMessageActionsOptions) {
       // Route to appropriate handler based on DM vs Space
       if (isDM) {
         // DM: Use Double Ratchet encryption via reaction-dm handler (if enabled)
-        const dmActionContext = isDmActionEnabled('REACTION') ? buildDmActionContext(spaceId) : null;
+        const dmActionContext = ENABLE_DM_ACTION_QUEUE ? buildDmActionContext(spaceId) : null;
         if (!dmActionContext) {
           // Fallback to legacy path if context unavailable or feature disabled
           onSubmitMessage({
@@ -327,7 +327,7 @@ export function useMessageActions(options: UseMessageActionsOptions) {
       // Route to appropriate handler based on DM vs Space
       if (isDM) {
         // DM: Use Double Ratchet encryption via delete-dm handler (if enabled)
-        const dmActionContext = isDmActionEnabled('DELETE') ? buildDmActionContext(spaceId) : null;
+        const dmActionContext = ENABLE_DM_ACTION_QUEUE ? buildDmActionContext(spaceId) : null;
         if (!dmActionContext) {
           // Fallback to legacy path if context unavailable or feature disabled
           onSubmitMessage({

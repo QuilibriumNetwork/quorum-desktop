@@ -17,31 +17,12 @@
 export const ENABLE_MARKDOWN = true;
 
 /**
- * DM Action Queue Feature Flags
+ * DM Action Queue Feature Flag
  *
- * Granular control over which DM actions use the action queue with
- * Double Ratchet encryption vs falling back to legacy paths.
+ * Controls whether DM actions (send, edit, delete, reaction) use the
+ * Action Queue with Double Ratchet encryption.
  *
- * When disabled (false): Falls back to legacy WebSocket outbound queue
- * When enabled (true): Uses action queue handlers with Double Ratchet
- *
- * Use these to isolate which action type might be causing issues.
+ * When false: Falls back to legacy WebSocket outbound queue
+ * When true: Uses action queue handlers with Double Ratchet
  */
-export const DM_ACTION_QUEUE = {
-  /** Master switch - if false, all DM actions use legacy path */
-  ENABLED: true,
-  /** reaction-dm handler */
-  REACTION: true,
-  /** delete-dm handler */
-  DELETE: true,
-  /** edit-dm handler */
-  EDIT: true,
-} as const;
-
-/** Helper to check if a specific DM action queue feature is enabled */
-export function isDmActionEnabled(action: 'REACTION' | 'DELETE' | 'EDIT'): boolean {
-  return DM_ACTION_QUEUE.ENABLED && DM_ACTION_QUEUE[action];
-}
-
-/** @deprecated Use DM_ACTION_QUEUE.ENABLED or isDmActionEnabled() instead */
-export const ENABLE_DM_ACTION_QUEUE = DM_ACTION_QUEUE.ENABLED;
+export const ENABLE_DM_ACTION_QUEUE = true;

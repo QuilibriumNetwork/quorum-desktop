@@ -12,7 +12,7 @@ import { useMessageDB } from '../context/useMessageDB';
 import { usePasskeysContext, channel as secureChannel } from '@quilibrium/quilibrium-js-sdk-channels';
 import { DefaultImages } from '../../utils';
 import { isTouchDevice } from '../../utils/platform';
-import { ENABLE_MARKDOWN, isDmActionEnabled } from '../../config/features';
+import { ENABLE_MARKDOWN, ENABLE_DM_ACTION_QUEUE } from '../../config/features';
 
 /**
  * DM context for action queue handlers.
@@ -290,7 +290,7 @@ export function MessageEditTextarea({
         if (actionQueueService && currentPasskeyInfo) {
           if (isDM) {
             // DM: Use Double Ratchet encryption via edit-dm handler (if enabled)
-            if (isDmActionEnabled('EDIT') && dmContext?.self && dmContext?.counterparty && keyset?.deviceKeyset && keyset?.userKeyset) {
+            if (ENABLE_DM_ACTION_QUEUE && dmContext?.self && dmContext?.counterparty && keyset?.deviceKeyset && keyset?.userKeyset) {
               await actionQueueService.enqueue(
                 'edit-dm',
                 {
