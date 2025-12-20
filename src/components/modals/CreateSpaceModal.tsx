@@ -7,6 +7,7 @@ import { Trans } from '@lingui/react/macro';
 import { t } from '@lingui/core/macro';
 import { ReactTooltip } from '../ui';
 import ModalSaveOverlay from './ModalSaveOverlay';
+import { useActionQueue } from '../context/ActionQueueContext';
 
 type CreateSpaceModalProps = {
   visible: boolean;
@@ -62,6 +63,8 @@ const CreateSpaceModal: React.FunctionComponent<CreateSpaceModalProps> = (
     setPublic,
   } = useSpaceSettings();
 
+  const { isOnline } = useActionQueue();
+
   // Handler that wraps createSpace with timeout protection
   const handleCreateSpace = React.useCallback(async () => {
     setCreateError(undefined); // Clear any previous errors
@@ -79,6 +82,11 @@ const CreateSpaceModal: React.FunctionComponent<CreateSpaceModalProps> = (
       title={t`Create a Space`}
     >
       <div>
+        {!isOnline && (
+          <Callout variant="warning" size="sm" className="mb-4">
+            <Trans>You're offline. Creating a Space requires an internet connection.</Trans>
+          </Callout>
+        )}
         <div className="flex flex-col md:flex-row md:items-center md:justify-center md:gap-6">
           <div className="flex justify-center">
             <div
@@ -240,7 +248,7 @@ const CreateSpaceModal: React.FunctionComponent<CreateSpaceModalProps> = (
           <Button
             type="primary"
             className="w-full sm:w-auto"
-            disabled={!canCreate || descriptionError || isSaving}
+            disabled={!canCreate || descriptionError || isSaving || !isOnline}
             onClick={handleCreateSpace}
           >
             {t`Create Space`}
