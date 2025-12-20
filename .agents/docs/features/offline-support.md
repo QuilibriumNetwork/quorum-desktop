@@ -6,9 +6,10 @@
 
 The application provides comprehensive offline support allowing users to continue using the app when network connectivity is unavailable. This includes viewing cached data, navigating between conversations, and queuing actions for later execution.
 
-Offline support is built on two complementary systems:
-1. **React Query networkMode configuration** - Ensures IndexedDB queries run regardless of network state
-2. **Action Queue** - Persists and retries user actions when connectivity is restored
+Offline support is built on three complementary systems:
+1. **Offline Detection** - Combines WebSocket connection state with `navigator.onLine` for reliable detection
+2. **React Query networkMode configuration** - Ensures IndexedDB queries run regardless of network state
+3. **Action Queue** - Persists and retries user actions when connectivity is restored
 
 ## Architecture
 
@@ -34,15 +35,58 @@ Offline support is built on two complementary systems:
 └─────────────────────────────────────────────────────────────────┘
 ```
 
+## Offline Detection
+
+Offline detection combines WebSocket connection state with `navigator.onLine` for reliable detection across all scenarios:
+
+```typescript
+// ActionQueueContext.tsx
+const { connected: wsConnected } = useWebSocket();
+const [navOnline, setNavOnline] = useState(navigator.onLine);
+
+// Offline if EITHER signal says offline
+const isOnline = wsConnected && navOnline;
+```
+
+The WebSocket `onclose` event fires reliably when network connectivity is lost, while `navigator.onLine` handles browser-specific offline triggers (DevTools, airplane mode).
+
+### Detection Timing
+
+| Event | Detection Time | Notes |
+|-------|----------------|-------|
+| DevTools "Offline" mode | Instant | Browser kills all connections immediately |
+| Wi-Fi disconnect | 10-30 seconds | TCP timeout before WebSocket `onclose` fires |
+| Airplane mode | Instant | OS-level network kill |
+| Server down | 10-30 seconds | Same as Wi-Fi disconnect |
+
+The delay for Wi-Fi disconnect is standard TCP timeout behavior at the OS level.
+
+### Browser & Platform Compatibility
+
+| Platform | Status | Notes |
+|----------|--------|-------|
+| Chrome | ✅ Supported | WebSocket API fully supported |
+| Brave | ✅ Supported | Chromium-based |
+| Firefox | ✅ Supported | WebSocket and Navigator APIs fully supported |
+| Safari | ✅ Supported | WebSocket and Navigator APIs fully supported |
+| Edge | ✅ Supported | Chromium-based |
+| Electron | ✅ Supported | Uses Chromium |
+| Mobile (React Native) | ⚠️ Unverified | Different WebSocket implementation |
+
+### Components
+
+| File | Purpose |
+|------|---------|
+| [ActionQueueContext.tsx](src/components/context/ActionQueueContext.tsx) | Combines WebSocket + Navigator signals for `isOnline` state |
+| [WebsocketProvider.tsx](src/components/context/WebsocketProvider.tsx) | Provides `connected` state from WebSocket events |
+| [ActionQueueService.ts](src/services/ActionQueueService.ts) | Uses `isOnlineCallback` to check connectivity before queue processing |
+| [OfflineBanner.tsx](src/components/ui/OfflineBanner.tsx) | Displays banner when offline |
+
+---
+
 ## React Query Configuration
 
-### The Problem
-
-React Query v5 defaults to `networkMode: 'online'`, which pauses all queries when `navigator.onLine` returns `false`. This blocks even IndexedDB queries (which don't need network) from executing.
-
-### The Solution
-
-All IndexedDB-based query hooks specify `networkMode: 'always'` to bypass React Query's network detection:
+All IndexedDB-based query hooks use `networkMode: 'always'` to ensure they run regardless of browser network state:
 
 ```typescript
 return useSuspenseQuery({
@@ -100,13 +144,7 @@ Space.tsx renders
 
 ## DM Navigation (Graceful Degradation)
 
-DM navigation uses a hybrid approach: IndexedDB for cached data with network fallback for registration data.
-
-### The Challenge
-
-`DirectMessage.tsx` requires registration data to display user info and enable message sending. This data comes from a network API (`apiClient.getUser()`).
-
-### Solution: Non-Suspense Query with Fallback
+DM navigation uses IndexedDB for cached data with a fallback chain for registration data:
 
 ```typescript
 // Uses useQuery instead of useSuspenseQuery
@@ -198,24 +236,13 @@ The offline banner displays queued action count:
 └─────────────────────────────────────────┘
 ```
 
-## Technical Decisions
+## Technical Notes
 
-### Why networkMode: 'always' for IndexedDB queries?
+- **networkMode: 'always'** - IndexedDB queries use this setting because they don't depend on network connectivity. React Query's default `networkMode: 'online'` would unnecessarily block local database queries.
 
-React Query v5's default `networkMode: 'online'` checks `navigator.onLine` before executing queries. This is appropriate for network requests but blocks local IndexedDB queries unnecessarily. Setting `networkMode: 'always'` tells React Query the query doesn't depend on network connectivity.
+- **useRegistrationOptional** - Uses a non-suspense query with fallback instead of caching registration in IndexedDB. This provides graceful degradation without schema migration complexity.
 
-### Why useRegistrationOptional instead of caching?
-
-Options considered:
-1. **Cache registration in IndexedDB** - Full offline support but requires schema migration and cache invalidation
-2. **Use React Query stale data** - Works within session but lost on refresh
-3. **Non-suspense query with fallback** - Minimal changes, graceful degradation (chosen)
-
-The chosen approach provides the best balance of implementation simplicity and user experience. Most DM offline use cases involve reading existing conversations (which works), not sending to new contacts.
-
-### Why not queue DM sends when offline?
-
-DM encryption requires the counterparty's registration data (public keys, inbox addresses). Without network access, we can't obtain this data for new conversations. For existing conversations where the data was previously cached in React Query's memory cache, sending could theoretically work, but the implementation complexity wasn't justified for this edge case.
+- **DM sends require network** - DM encryption requires the counterparty's registration data (public keys, inbox addresses). This data must be fetched from the network, so DM sending cannot be fully queued offline.
 
 ## Key Components
 
@@ -241,4 +268,4 @@ DM encryption requires the counterparty's registration data (public keys, inbox 
 
 ---
 
-*Updated: 2025-12-19*
+*Updated: 2025-12-20*

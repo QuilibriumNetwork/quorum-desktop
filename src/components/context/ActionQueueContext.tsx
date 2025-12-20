@@ -3,8 +3,12 @@
  *
  * Provides:
  * - Queue statistics (pending, processing, failed counts)
- * - Online/offline status
+ * - Online/offline status (combines WebSocket + navigator.onLine)
  * - Automatic refresh on queue updates
+ *
+ * Online detection uses WebSocket connection state as primary signal
+ * because navigator.onLine is unreliable on Wi-Fi disconnect in Chromium
+ * browsers. See: .agents/tasks/offline-detection-and-optimistic-message-reliability.md
  *
  * See: .agents/tasks/background-action-queue.md
  */
@@ -15,10 +19,12 @@ import React, {
   useState,
   useEffect,
   useCallback,
+  useRef,
   ReactNode,
 } from 'react';
 import type { QueueStats } from '../../types/actionQueue';
 import type { ActionQueueService } from '../../services/ActionQueueService';
+import { useWebSocket } from './WebsocketProvider';
 
 // Context interface
 interface ActionQueueContextType {
@@ -62,9 +68,28 @@ export const ActionQueueProvider: React.FC<ActionQueueProviderProps> = ({
   actionQueueService,
 }) => {
   const [stats, setStats] = useState<QueueStats>(defaultStats);
-  const [isOnline, setIsOnline] = useState(
+
+  // Get WebSocket connection state (most reliable for Wi-Fi disconnect)
+  const { connected: wsConnected } = useWebSocket();
+
+  // Get navigator.onLine state (reliable for false, unreliable for true)
+  const [navOnline, setNavOnline] = useState(
     typeof navigator !== 'undefined' ? navigator.onLine : true
   );
+
+  // Combined: offline if EITHER signal says offline
+  const isOnline = wsConnected && navOnline;
+
+  // Keep ref updated for the callback (avoids stale closure)
+  const isOnlineRef = useRef(isOnline);
+  isOnlineRef.current = isOnline;
+
+  // Wire up isOnline callback to ActionQueueService
+  useEffect(() => {
+    if (actionQueueService) {
+      actionQueueService.setIsOnlineCallback(() => isOnlineRef.current);
+    }
+  }, [actionQueueService]);
 
   const refreshStats = useCallback(async () => {
     if (actionQueueService) {
@@ -87,16 +112,12 @@ export const ActionQueueProvider: React.FC<ActionQueueProviderProps> = ({
     }
   }, [refreshStats]);
 
-  // Online/offline detection
+  // Listen to navigator.onLine events (defense in depth for captive portals, airplane mode)
   useEffect(() => {
     if (typeof window === 'undefined') return;
 
-    const handleOnline = () => {
-      setIsOnline(true);
-      // Trigger queue processing when back online
-      actionQueueService?.processQueue();
-    };
-    const handleOffline = () => setIsOnline(false);
+    const handleOnline = () => setNavOnline(true);
+    const handleOffline = () => setNavOnline(false);
 
     window.addEventListener('online', handleOnline);
     window.addEventListener('offline', handleOffline);
@@ -105,7 +126,14 @@ export const ActionQueueProvider: React.FC<ActionQueueProviderProps> = ({
       window.removeEventListener('online', handleOnline);
       window.removeEventListener('offline', handleOffline);
     };
-  }, [actionQueueService]);
+  }, []);
+
+  // Trigger queue processing when coming back online
+  useEffect(() => {
+    if (isOnline) {
+      actionQueueService?.processQueue();
+    }
+  }, [isOnline, actionQueueService]);
 
   // Initial stats load
   useEffect(() => {

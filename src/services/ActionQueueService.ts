@@ -21,6 +21,11 @@ export class ActionQueueService {
   private isProcessing = false;
   private processInterval: ReturnType<typeof setInterval> | null = null;
 
+  // Callback to check online status from ActionQueueContext
+  // Uses WebSocket state instead of unreliable navigator.onLine
+  // See: .agents/tasks/offline-detection-and-optimistic-message-reliability.md
+  private isOnlineCallback?: () => boolean;
+
   // Debounced queue update event
   private queueUpdateTimer: ReturnType<typeof setTimeout> | null = null;
   private readonly queueUpdateDebounceMs = 500;
@@ -40,6 +45,14 @@ export class ActionQueueService {
   constructor(messageDB: MessageDB) {
     this.messageDB = messageDB;
     // Note: handlers set later via setHandlers() to avoid circular deps
+  }
+
+  /**
+   * Set callback to check online status.
+   * Uses ActionQueueContext's isOnline which combines WebSocket + navigator.onLine.
+   */
+  setIsOnlineCallback(callback: () => boolean): void {
+    this.isOnlineCallback = callback;
   }
 
   /**
@@ -120,7 +133,16 @@ export class ActionQueueService {
    */
   async processQueue(): Promise<void> {
     if (this.isProcessing) return;
-    if (typeof navigator !== 'undefined' && !navigator.onLine) return;
+
+    // Check online status via callback (uses WebSocket + navigator.onLine)
+    // Falls back to navigator.onLine if callback not set yet
+    const isOnline = this.isOnlineCallback
+      ? this.isOnlineCallback()
+      : typeof navigator !== 'undefined'
+        ? navigator.onLine
+        : true;
+    if (!isOnline) return;
+
     if (!this.handlers) {
       console.warn('[ActionQueue] Handlers not initialized');
       return;
