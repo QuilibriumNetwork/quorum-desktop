@@ -136,7 +136,6 @@ This is the main index for all documentation, bug reports, and task management.
 - [Implement Message Forwarding with Privacy Controls](tasks/message-forwarding-with-privacy-controls.md)
 - [Implement Smart Context Extraction Around Mentions in NotificationPanel](tasks/notification-mention-context-extraction.md)
 - [Multi-User Invite Selection Enhancement](tasks/multi-user-invite-selection.md)
-- [Offline Detection and Optimistic Message Reliability](tasks/offline-detection-and-optimistic-message-reliability.md)
 - [Passkey Import UX Issue](tasks/passkey-import-ux-issue.md)
 - [SDK PasskeyModal Customization Props Enhancement](tasks/sdk-passkey-modal-customization-props.md)
 - [Service Worker for App Update Detection](tasks/service-worker-app-updates.md)
@@ -175,6 +174,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Docusaurus Setup & Implementation Task](tasks/docusaurus/docusaurus-setup-implementation.md)
 
 ### Messagedb
+- [Extract encryptAndSendToSpace() Helper](tasks/messagedb/messageservice-extract-encrypt-helper.md)
 - [handleNewMessage Integration Tests Guide](tasks/messagedb/messageservice-handlenewmessage-tests.md)
 - [handleNewMessage Refactoring Plan](tasks/messagedb/messageservice-handlenewmessage-refactor.md)
 - [High-Risk Optimization Opportunities](tasks/messagedb/messagedb-optimization-3.md)
@@ -275,6 +275,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Modal Animation Consistency Implementation](tasks/.done/new-modals-effect.md)
 - [Modal Migration Analysis & Progress Report](tasks/.done/DONE_modal-migration-plan.md)
 - [Notification Dropdown/Inbox UI Implementation](tasks/.done/notification-inbox-ui.md)
+- [Offline Detection and Optimistic Message Reliability](tasks/.done/offline-detection-and-optimistic-message-reliability.md)
 - [Per-Space Profile Data Flow Analysis](tasks/.done/per-space-profile-data-flow-analysis.md)
 - [Phase 1 Complete: Component Audit Infrastructure & Initial Analysis](tasks/.done/components-audit-dashboard.md)
 - [Pinned Messages Cross-Client Synchronization](tasks/.done/pinned-messages-sync.md)
@@ -322,6 +323,7 @@ This is the main index for all documentation, bug reports, and task management.
 
 ### Active Reports
 
+- [Cryptographic Code Best Practices: Abstraction vs Duplication](reports/cryptographic-code-best-practices_2025-12-20.md)
 - [dnd-kit Touch Drag-and-Drop Best Practices Research](reports/dnd-kit-touch-best-practices_2025-12-11.md)
 - [Quorum Privacy Analysis](reports/privacy-analysis-quorum-2025-12-03.md)
 - [Security Audit: Markdown Renderer & Mentions System](reports/security-audit-markdown-mentions-2025-11-18.md)
@@ -342,4 +344,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2025-12-20 09:49:52
+**Last Updated**: 2025-12-20 10:47:33

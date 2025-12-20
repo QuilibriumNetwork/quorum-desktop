@@ -24,13 +24,14 @@ Instructions:
    feat: new feature or enhancement
    fix: bug fix
    chore: maintenance / non-functional updates
-   style: formatting or visual tweaks
+   style: css, layout, formatting or visual tweaks
    refactor: code restructure, no behavior change
    test: add/update tests
    build: build system / dependency changes
    perf: performance improvements
-   doc: documentation updates (.md)
-   task: creation or update of task files (.md)
+   doc: changes to documentation (.md)
+   task: create/update task (.md) files
+   i18n: create/update translations
 
 6) After composing the message, run:
    git add -A && git commit -m "<type>: <short summary>" -m "<detailed description>"
