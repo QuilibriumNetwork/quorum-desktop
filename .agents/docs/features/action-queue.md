@@ -12,6 +12,63 @@ The Action Queue is a persistent background task processing system that handles 
 - **Automatic retries** with exponential backoff for transient failures
 - **Visibility** through offline banner counter ("n actions queued")
 
+## Offline Support Summary
+
+Not all actions can be queued for offline use. This table shows what works offline:
+
+### Actions That Work Offline (Queued)
+
+| Action | Category | Notes |
+|--------|----------|-------|
+| Send space message | Space | ✅ Fully queued, survives refresh |
+| Reactions (space) | Space | ✅ Fully queued, survives refresh |
+| Pin/unpin message | Space | ✅ Fully queued, survives refresh |
+| Edit message (space) | Space | ✅ Fully queued, survives refresh |
+| Delete message (space) | Space | ✅ Fully queued, survives refresh |
+| Save user config | Global | ✅ Fully queued, survives refresh |
+| Update space settings | Global | ✅ Fully queued, survives refresh |
+| Kick/mute/unmute user | Moderation | ✅ Fully queued, survives refresh |
+| Send DM | DM | ⚠️ Works if conversation was opened online (see note below) |
+| Reactions (DM) | DM | ⚠️ Works if conversation was opened online (see note below) |
+| Edit/delete DM | DM | ⚠️ Works if conversation was opened online (see note below) |
+
+### Why Space Messages Work Fully Offline But DM Messages Don't
+
+**Space messages** work fully offline because all encryption data is stored in IndexedDB:
+- Encryption keys are persisted locally when you join a space
+- You can send messages offline, close the app, reopen it, and they'll still be queued
+- Messages are sent automatically when you come back online
+
+**DM messages** have a limitation because counterparty registration data (public keys, inbox addresses) is only cached in React Query (memory), not persisted to IndexedDB:
+
+| Scenario | Space Message | DM Message |
+|----------|---------------|------------|
+| Send while online → go offline → come back | ✅ Sends | ✅ Sends |
+| Go offline → send → close app → reopen → come back | ✅ Sends | ❌ Lost (silent fail) |
+| Open conversation online → go offline → send | ✅ Sends | ✅ Sends (if no refresh) |
+| Start app offline → try to send | ✅ Sends | ❌ Silent fail |
+
+**Why the difference?** Space encryption uses keys stored in IndexedDB (persisted). DM encryption requires the counterparty's registration data which must be fetched from the server and is only cached in memory.
+
+**Known UX issue**: When DM sending fails due to missing registration, it fails silently (just a console.warn). This should show a user-visible error or disable the composer.
+
+### Actions That Require Online (Not Queued)
+
+| Action | Reason | UI Behavior |
+|--------|--------|-------------|
+| Create space | Server generates space ID | Warning callout + disabled button |
+| Join space | Requires server handshake | N/A |
+| Start new DM conversation | Needs counterparty registration | Silent fail |
+| DM after page refresh | Registration cache lost | Silent fail |
+| Delete conversation | Not yet integrated (see [Potential Future Actions](#potential-future-actions)) | N/A |
+| Delete space | Not yet integrated (see [Potential Future Actions](#potential-future-actions)) | N/A |
+
+### Why Some Actions Can't Be Queued
+
+1. **Server-generated IDs**: Space creation requires the server to generate the `spaceId`. The client can't create this locally.
+
+2. **Registration data not persisted**: DM encryption requires the counterparty's registration (public keys, inbox addresses). Unlike Space keys which are stored in IndexedDB, registration data is only cached in React Query memory. To fix this, registration data would need to be persisted to IndexedDB.
+
 ## Architecture
 
 ```
@@ -111,39 +168,25 @@ For DMs, the counterparty's wallet address is used for both `spaceId` and `chann
 
 ## Supported Action Types
 
-### Space Actions (Triple Ratchet)
+For a summary of which actions work offline, see [Offline Support Summary](#offline-support-summary) above.
 
-| Action Type | Description | Source Location |
-|-------------|-------------|-----------------|
-| `send-channel-message` | Send message to space channel | `MessageService.ts` |
-| `reaction` | Add/remove reaction to message | `useMessageActions.ts` |
-| `pin-message` | Pin a message | `usePinnedMessages.ts` |
-| `unpin-message` | Unpin a message | `usePinnedMessages.ts` |
-| `edit-message` | Edit a message | `MessageEditTextarea.tsx` |
-| `delete-message` | Delete a message | `useMessageActions.ts` |
-
-All Space actions use `submitChannelMessage()` which encrypts with Triple Ratchet and sends via Hub.
-
-### DM Actions (Double Ratchet)
-
-| Action Type | Description | Source Location |
-|-------------|-------------|-----------------|
-| `send-dm` | Send direct message | `MessageService.ts` |
-| `reaction-dm` | Add/remove reaction to DM | `useMessageActions.ts` |
-| `delete-dm` | Delete a DM | `useMessageActions.ts` |
-| `edit-dm` | Edit a DM | `MessageEditTextarea.tsx` |
-
-All DM actions use `encryptAndSendDm()` helper which encrypts with Double Ratchet and sends via WebSocket.
-
-### Global Actions (No Encryption)
-
-| Action Type | Description | Source Location |
-|-------------|-------------|-----------------|
-| `save-user-config` | Save user settings, folders, sidebar order | `useUserSettings.ts` |
-| `update-space` | Update space settings (name, roles, emojis) | `useSpaceManagement.ts` |
-| `kick-user` | Remove user from space | `useUserKicking.ts` |
-| `mute-user` | Mute user in space | `useUserMuting.ts` |
-| `unmute-user` | Unmute user in space | `useUserMuting.ts` |
+| Action Type | Category | Encryption | Source Location |
+|-------------|----------|------------|-----------------|
+| `send-channel-message` | Space | Triple Ratchet | `MessageService.ts` |
+| `reaction` | Space | Triple Ratchet | `useMessageActions.ts` |
+| `pin-message` | Space | Triple Ratchet | `usePinnedMessages.ts` |
+| `unpin-message` | Space | Triple Ratchet | `usePinnedMessages.ts` |
+| `edit-message` | Space | Triple Ratchet | `MessageEditTextarea.tsx` |
+| `delete-message` | Space | Triple Ratchet | `useMessageActions.ts` |
+| `send-dm` | DM | Double Ratchet | `MessageService.ts` |
+| `reaction-dm` | DM | Double Ratchet | `useMessageActions.ts` |
+| `delete-dm` | DM | Double Ratchet | `useMessageActions.ts` |
+| `edit-dm` | DM | Double Ratchet | `MessageEditTextarea.tsx` |
+| `save-user-config` | Global | None | `useUserSettings.ts` |
+| `update-space` | Global | None | `useSpaceManagement.ts` |
+| `kick-user` | Moderation | None | `useUserKicking.ts` |
+| `mute-user` | Moderation | None | `useUserMuting.ts` |
+| `unmute-user` | Moderation | None | `useUserMuting.ts` |
 
 ---
 
@@ -545,10 +588,34 @@ If `dmContext` is not available at any point, the fallback path is used.
 
 ## Potential Future Actions
 
-| Action Type | Description | Current Location | Notes |
-|-------------|-------------|------------------|-------|
-| `delete-conversation` | Delete DM conversation | `MessageService.deleteConversation()` | Currently blocks UI for 3-4s due to crypto |
-| `delete-space` | Delete a space | `useSpaceManagement.ts` | Same - has overlay but crypto blocks main thread |
+These actions could be integrated with the action queue but are not yet:
+
+| Action Type | Current Location | Notes |
+|-------------|------------------|-------|
+| `delete-conversation` | `MessageService.deleteConversation()` | Multiple DB operations + Double Ratchet encryption |
+| `delete-space` | `SpaceService.deleteSpace()` | Multiple DB operations + Hub envelope + API calls |
+
+### Recommended Integration Approach
+
+Both actions involve crypto (similar to `kick-user` which is already queued). Integration would follow this pattern:
+
+```
+User clicks Delete
+    │
+    ├─► Immediately: Delete local data (messages, keys, states)
+    ├─► Immediately: Update React Query cache (item disappears)
+    └─► Queue: 'delete-conversation-notify' or 'delete-space-notify'
+            │
+            ▼ (when online)
+        Send notification to counterparty/server
+```
+
+This provides:
+- **Instant feedback** - conversation/space disappears immediately
+- **Offline support** - works even when disconnected
+- **Best-effort notification** - counterparty gets notified when possible
+
+The counterparty notification is already "best effort" (wrapped in try/catch), so queuing it is safe.
 
 ---
 
@@ -560,4 +627,4 @@ If `dmContext` is not available at any point, the fallback path is used.
 
 ---
 
-*Updated: 2025-12-19 - Added link to Offline Support documentation*
+*Updated: 2025-12-20 - Added Offline Support Summary section*
