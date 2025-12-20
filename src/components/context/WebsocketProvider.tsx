@@ -27,6 +27,9 @@ interface WebSocketProviderProps {
   children: React.ReactNode;
 }
 
+// Grace period before reporting disconnect (prevents flicker during reconnection)
+const DISCONNECT_GRACE_MS = 3000;
+
 export function WebSocketProvider({ children }: WebSocketProviderProps) {
   const [connected, setConnected] = useState(false);
   const wsRef = useRef<WebSocket | null>(null);
@@ -36,6 +39,7 @@ export function WebSocketProvider({ children }: WebSocketProviderProps) {
   const inboundProcessingRef = useRef(false);
   const outboundProcessingRef = useRef(false);
   const lastNotificationTime = useRef<number>(0);
+  const disconnectTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const messageQueue = useRef<EncryptedMessage[]>([]);
   const outboundQueue = useRef<OutboundMessage[]>([]);
@@ -163,6 +167,11 @@ export function WebSocketProvider({ children }: WebSocketProviderProps) {
       const ws = new WebSocket(getConfig().quorumWsUrl);
 
       ws.onopen = () => {
+        // Cancel any pending disconnect timer - we reconnected in time
+        if (disconnectTimerRef.current) {
+          clearTimeout(disconnectTimerRef.current);
+          disconnectTimerRef.current = null;
+        }
         setConnected(true);
         if (resubscribeRef.current) resubscribeRef.current();
         // Process any pending messages on reconnect
@@ -171,7 +180,13 @@ export function WebSocketProvider({ children }: WebSocketProviderProps) {
       };
 
       ws.onclose = () => {
-        setConnected(false);
+        // Delay reporting disconnect to avoid flicker during quick reconnects
+        if (!disconnectTimerRef.current) {
+          disconnectTimerRef.current = setTimeout(() => {
+            setConnected(false);
+            disconnectTimerRef.current = null;
+          }, DISCONNECT_GRACE_MS);
+        }
         setTimeout(connect, 1000);
       };
 
@@ -191,6 +206,9 @@ export function WebSocketProvider({ children }: WebSocketProviderProps) {
     connect();
 
     return () => {
+      if (disconnectTimerRef.current) {
+        clearTimeout(disconnectTimerRef.current);
+      }
       wsRef.current?.close();
     };
   }, []);
