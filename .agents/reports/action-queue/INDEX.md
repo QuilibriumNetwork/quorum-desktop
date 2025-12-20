@@ -29,6 +29,8 @@ When investigating issues, we must determine:
 | 003 | [DM Code Comparison Audit](003-DM-message-code-comparison-audit.md) | ✅ Complete | N/A | Audit - No new bugs found |
 | 004 | [Space Message Code Comparison Audit](004-space-message-code-comparison-audit.md) | ✅ Fixed | 🚨 Critical | Audit - Found & fixed `pre-existing` bug in `submitChannelMessage()` |
 | 005 | [DM Sync Non-Deterministic Failures](005-dm-sync-non-deterministic-failures.md) | 📋 Documented | Medium | `network-issue` - Messages sent but not delivered by network |
+| 006 | [Plaintext Private Keys Bug](006-plaintext-private-keys-bug.md) | 🔴 Open | 🚨 Critical | `action-queue-bug` - Identity keys stored unencrypted |
+| 007 | [Plaintext Private Keys Fix](007-plaintext-private-keys-fix.md) | 📋 Actionable | N/A | Fix for 006 - Encrypt context with AES-GCM |
 
 ## Important: Network Issues
 
@@ -90,4 +92,4 @@ window.__actionQueue.processQueue()
 
 ---
 
-_Last Updated: 2025-12-19_
+_Last Updated: 2025-12-20_

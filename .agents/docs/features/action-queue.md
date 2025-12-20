@@ -4,9 +4,35 @@
 
 ## Overview
 
-The Action Queue is a persistent background task processing system that handles user operations asynchronously. It provides:
+The Action Queue is a persistent background task processing system that handles user operations asynchronously. It solves **two main problems**:
+
+### Problem 1: UI Freezing (Blocking Operations)
+
+**Before**: Heavy operations (encryption, API calls) blocked the main thread, causing the UI to freeze for seconds during saves.
+
+**After**: The main thread stays responsive. Operations complete instantly from the user's perspective:
+
+1. **Validate input** - instant
+2. **Update UI immediately** (optimistic update) - instant
+3. **Queue action to IndexedDB** - instant (~1ms)
+4. **Return to user** - instant
+
+Heavy work (crypto, network calls) happens in the background processor, not blocking the UI.
+
+**Examples of improved UX:**
+- Settings modals close immediately after clicking Save (previously froze for seconds)
+- Folder operations (create, edit, delete, reorder) are instant
+- Space settings save without delay
+- Message sending feels instantaneous
+
+### Problem 2: Offline Support
+
+Actions are persisted to IndexedDB and survive crashes/refreshes. When connectivity is restored, queued actions are automatically processed with exponential backoff retry.
+
+### Summary of Benefits
 
 - **Instant UI feedback** through optimistic updates
+- **No more UI freezing** - heavy operations run in background
 - **Crash recovery** via IndexedDB persistence
 - **Offline support** by queuing actions until connectivity is restored
 - **Automatic retries** with exponential backoff for transient failures
@@ -182,11 +208,18 @@ For a summary of which actions work offline, see [Offline Support Summary](#offl
 | `reaction-dm` | DM | Double Ratchet | `useMessageActions.ts` |
 | `delete-dm` | DM | Double Ratchet | `useMessageActions.ts` |
 | `edit-dm` | DM | Double Ratchet | `MessageEditTextarea.tsx` |
-| `save-user-config` | Global | None | `useUserSettings.ts` |
+| `save-user-config` | Global | None | `useUserSettings.ts`, `useFolderManagement.ts`, `useFolderDragAndDrop.ts`, `useDeleteFolder.ts`, `useSpaceDragAndDrop.ts` |
 | `update-space` | Global | None | `useSpaceManagement.ts` |
 | `kick-user` | Moderation | None | `useUserKicking.ts` |
 | `mute-user` | Moderation | None | `useUserMuting.ts` |
 | `unmute-user` | Moderation | None | `useUserMuting.ts` |
+
+> **Note**: The `save-user-config` action type handles many UI operations because user configuration (stored in IndexedDB and synced to server) includes:
+> - User profile settings (display name, avatar, preferences)
+> - Folder structure (create, edit, delete, reorder folders)
+> - Space organization (drag spaces into/out of folders, reorder spaces)
+>
+> All these operations use the same optimistic update + queue pattern, which is why folder and space organization operations are instant and non-blocking.
 
 ---
 
@@ -627,4 +660,4 @@ The counterparty notification is already "best effort" (wrapped in try/catch), s
 
 ---
 
-*Updated: 2025-12-20 - Added Offline Support Summary section*
+*Updated: 2025-12-20 - Clarified that Action Queue solves both UI freezing and offline support; documented that folder operations use save-user-config*
