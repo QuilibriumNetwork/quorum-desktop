@@ -8,6 +8,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Component Management & Development Guide](docs/component-management-guide.md)
 - [Config Sync System](docs/config-sync-system.md)
 - [Cross-Platform Repository Implementation](docs/cross-platform-repository-implementation.md)
+- [Cryptographic Architecture](docs/cryptographic-architecture.md)
 - [Expo Dev Testing Guide](docs/expo-dev-testing-guide.md)
 - [Quorum Data Management Architecture](docs/data-management-architecture-guide.md)
 - [Styling Guidelines](docs/styling-guidelines.md)
@@ -76,7 +77,7 @@ This is the main index for all documentation, bug reports, and task management.
 ## 🐛 Bug Reports
 
 ### Active Issues
-- [Action Queue Stores Private Keys in Plaintext IndexedDB](bugs/action-queue-plaintext-private-keys.md)
+- [Action Queue Bypasses SDK Encryption for Identity Keys](bugs/action-queue-plaintext-private-keys.md)
 - [Config Sync Space Loss Race Condition](bugs/config-sync-space-loss-race-condition.md)
 - [DirectMessage Invite Loading Performance Issue](bugs/directmessage-invite-loading-performance.md)
 - [Encryption State Evals Causing Config Sync Bloat](bugs/encryption-state-evals-bloat.md)
@@ -343,6 +344,8 @@ This is the main index for all documentation, bug reports, and task management.
 - [Action Queue vs Legacy DM Message Implementation - Code Comparison Audit](reports/action-queue/003-DM-message-code-comparison-audit.md)
 - [Action Queue vs Legacy Space Message Implementation - Code Comparison Audit](reports/action-queue/004-space-message-code-comparison-audit.md)
 - [DM Sync Non-Deterministic Failures](reports/action-queue/005-dm-sync-non-deterministic-failures.md)
+- [006: Action Queue Stores Identity Keys in Plaintext](reports/action-queue/006-plaintext-private-keys-bug.md)
+- [007: Fix - Encrypt Action Queue Context](reports/action-queue/007-plaintext-private-keys-fix.md)
 
 ### Onboarding Flow
 - [Passkey Authentication Flow Analysis](reports/onboarding-flow/passkey-authentication-flow-analysis-2025-11-23.md)
@@ -351,4 +354,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2025-12-20 15:35:05
+**Last Updated**: 2025-12-20 17:47:27
