@@ -1,18 +1,36 @@
 # MessageService.ts Analysis
 
-**Last Updated**: 2025-12-20
 **File**: `src/services/MessageService.ts`
-**Current Size**: 4,350 lines
-**Status**: Large but well-structured - new duplication patterns identified
+**Current Size**: ~4,150 lines
+**Last Updated**: 2025-12-20
 
 > **AI-Generated**: May contain errors. Verify before use.
-> **Reviewed by**: feature-analyzer agent (partial - see notes below)
+> **Reviewed by**: feature-analyzer agent (partial)
+
+---
+
+## Quick Summary
+
+MessageService.ts is large (~4,150 lines) but handles 4-5 distinct concerns that could be separated. Per [best practices research](../../reports/file-size-best-practices_2025-12-20.md), size alone isn't the issue — the file has **multiple reasons to change**.
+
+**Recommended action**: Extract `MessageCacheService` (~800 lines) as the safest, highest-value refactoring.
+
+---
+
+## Table of Contents
+
+1. [Current State](#current-state) — Size history, method breakdown
+2. [Service Extraction Opportunities](#service-extraction-opportunities) — **NEW** — Moving code to separate files
+3. [Code Deduplication](#code-deduplication) — Extracting helper methods within the file
+4. [Completed Refactoring](#completed-refactoring) — What's been done
+5. [On Hold](#on-hold) — Deferred work
+6. [Related Files](#related-files)
 
 ---
 
 ## Current State
 
-### Size & Growth
+### Size History
 
 | Period | Lines | Change | Cause |
 |--------|-------|--------|-------|
@@ -21,243 +39,115 @@
 | Dec 16, 2025 | 4,337 | +23% | Message sending indicator |
 | Dec 18, 2025 (AM) | 4,397 | +1.4% | Action Queue integration |
 | Dec 18, 2025 (PM) | 4,148 | -5.7% | Removed dead fallback code |
-| Dec 19, 2025 | **4,350** | **+4.9%** | Restored update-profile handler |
+| Dec 19, 2025 | 4,350 | +4.9% | Restored update-profile handler |
+| Dec 20, 2025 | **~4,150** | **-4.6%** | Extracted `encryptAndSendToSpace()` helper |
 
-**Growth rate**: +88% since initial extraction (Oct 2025)
+**Growth rate**: +79% since initial extraction (Oct 2025)
 
-### Method Breakdown (11 methods)
+### Method Breakdown (13 methods)
 
-| Method | Lines | Change | Description |
-|--------|-------|--------|-------------|
-| `saveMessage()` | 472 | 0 | Save message to DB (handles 7 message types) |
-| `updateMessageStatus()` | 44 | 0 | Optimistic status updates in cache |
-| `addMessage()` | 750 | **+5** | React Query cache updates (added update-profile handling) |
-| `submitMessage()` | 521 | 0 | DM submission via Action Queue |
-| `handleNewMessage()` | 1,354 | 0 | Incoming message handler |
-| `sanitizeError()` | 20 | 0 | Private helper for error sanitization |
-| `submitChannelMessage()` | 568 | **+117** | Space/channel submission (added update-profile handler) |
-| `retryMessage()` | 122 | 0 | Retry failed channel messages |
-| `retryDirectMessage()` | 196 | 0 | Retry failed direct messages |
-| `deleteConversation()` | 101 | 0 | Cleanup operations |
-| `setActionQueueService()` | 7 | 0 | Setter for ActionQueue dependency injection |
+| Method | Lines | Concern | Description |
+|--------|-------|---------|-------------|
+| `addMessage()` | 750 | Cache | React Query cache updates |
+| `updateMessageStatus()` | 44 | Cache | Optimistic status updates |
+| `submitMessage()` | 521 | DM Submission | DM submission via Action Queue |
+| `submitChannelMessage()` | ~470 | Channel Submission | Space/channel message submission |
+| `handleNewMessage()` | 1,354 | Incoming | Incoming message handler (decryption + dispatch) |
+| `saveMessage()` | 472 | Persistence | Save message to DB (7 message types) |
+| `retryMessage()` | ~95 | Retry | Retry failed channel messages |
+| `retryDirectMessage()` | 196 | Retry | Retry failed direct messages |
+| `deleteConversation()` | 101 | Cleanup | Cleanup operations |
+| `encryptAndSendToSpace()` | 70 | Crypto | Triple Ratchet encryption helper |
+| `getEncryptAndSendToSpace()` | 10 | Crypto | Getter for ActionQueueHandlers |
+| `sanitizeError()` | 20 | Utility | Error message sanitization |
+| `setActionQueueService()` | 7 | DI | ActionQueue dependency injection |
 
----
+### Concerns Analysis
 
-## Dec 19, 2025: Update Profile Handler Restored
+The file handles **5 distinct concerns** (different "reasons to change"):
 
-**Commit**: `49c19aeb845bc83257bf6a9556a2a82c506da340`
-**Change**: +122 lines (net)
-
-The `update-profile` handler was lost during the message sending indicator refactor and has been restored. This handler allows users to update their display name and avatar within a space.
-
-### New Code Added
-
-**Location**: `submitChannelMessage()` lines 3791-3908
-
-The handler:
-1. Generates message ID using SHA-256
-2. Creates message structure with `UpdateProfileMessage` content
-3. Retrieves encryption state for Triple Ratchet
-4. **Always signs** (required for profile updates - no repudiability option)
-5. Encrypts with Triple Ratchet
-6. Saves encryption state
-7. Sends to hub
-8. **Updates local database immediately** (optimistic update)
-9. **Updates React Query cache** for instant UI refresh
+| Concern | Methods | Lines | Changes When... |
+|---------|---------|-------|-----------------|
+| **Cache** | `addMessage`, `updateMessageStatus` | ~800 | React Query patterns change |
+| **DM Submission** | `submitMessage` | ~520 | DM encryption/ActionQueue changes |
+| **Channel Submission** | `submitChannelMessage` | ~470 | Space permissions/Triple Ratchet changes |
+| **Incoming Messages** | `handleNewMessage` | ~1,350 | New message types added |
+| **Retry/Cleanup** | `retryMessage`, `retryDirectMessage`, `deleteConversation` | ~390 | Error handling strategy changes |
 
 ---
 
-## Duplication Patterns Found
+## Service Extraction Opportunities
 
-### 1. Triple Ratchet Encryption Pattern (~85 lines duplicated 5x)
+> **Research**: See [File Size Best Practices Report](../../reports/file-size-best-practices_2025-12-20.md) for decision framework.
 
-The same encryption pattern is repeated in:
-- `submitChannelMessage()` for **edit-message** (lines 3593-3625)
-- `submitChannelMessage()` for **pin-message** (lines 3740-3772)
-- `submitChannelMessage()` for **update-profile** (lines 3843-3875)
-- `retryMessage()` (lines 3970-4002)
-- `ActionQueueHandlers.ts` for **send-channel-message** (lines 393-424)
+### Priority 1: MessageCacheService (~800 lines)
 
-**Pattern structure** (identical in all locations):
-```typescript
-// 1. Get encryption states
-const response = await this.messageDB.getEncryptionStates({
-  conversationId: spaceId + '/' + spaceId,
-});
-const sets = response.map((e) => JSON.parse(e.state));
+**Extract**: `addMessage()` + `updateMessageStatus()`
 
-// 2. Triple Ratchet encrypt
-const msg = secureChannel.TripleRatchetEncrypt(
-  JSON.stringify({
-    ratchet_state: sets[0].state,
-    message: [...new Uint8Array(Buffer.from(JSON.stringify(message), 'utf-8'))],
-  })
-);
-const result = JSON.parse(msg);
+| Factor | Assessment |
+|--------|------------|
+| **Lines moved** | ~800 |
+| **Risk** | Low |
+| **Reason to extract** | Pure React Query logic, no crypto, no DB writes |
+| **Testability gain** | High — can unit test cache operations in isolation |
+| **Dependencies** | QueryClient (injected), messageDB (read-only lookups) |
 
-// 3. Save updated state
-const newEncryptionState = {
-  state: JSON.stringify({ state: result.ratchet_state }),
-  timestamp: Date.now(),
-  inboxId: spaceId,
-  conversationId: spaceId + '/' + spaceId,
-  sentAccept: false,
-};
-await this.messageDB.saveEncryptionState(newEncryptionState, true);
-
-// 4. Send to hub
-outbounds.push(await this.sendHubMessage(spaceId, JSON.stringify({
-  type: 'message',
-  message: JSON.parse(result.envelope),
-})));
-```
-
-**Lines saved if extracted**: ~250 lines (5 instances × ~50 lines each)
-
-### 2. Message ID Generation Pattern (~12 lines duplicated 3x)
-
-**Location**: `submitChannelMessage()` - edit, pin, update-profile handlers
+**New file**: `src/services/MessageCacheService.ts`
 
 ```typescript
-const messageId = await crypto.subtle.digest(
-  'SHA-256',
-  Buffer.from(
-    nonce +
-      'type-name' +
-      currentPasskeyInfo.address +
-      canonicalize(messageObject),
-    'utf-8'
-  )
-);
-```
+export class MessageCacheService {
+  constructor(private messageDB: MessageDB) {}
 
-**Lines saved if extracted**: ~25 lines
-
-### 3. Ed448 Signing Pattern (~15 lines duplicated 3x)
-
-**Location**: edit-message (3578-3591), pin-message (3726-3738), update-profile (3830-3841)
-
-```typescript
-const inboxKey = await this.messageDB.getSpaceKey(spaceId, 'inbox');
-message.publicKey = inboxKey.publicKey;
-message.signature = Buffer.from(
-  JSON.parse(
-    ch.js_sign_ed448(
-      Buffer.from(inboxKey.privateKey, 'hex').toString('base64'),
-      Buffer.from(messageId).toString('base64')
-    )
-  ),
-  'base64'
-).toString('hex');
-```
-
-**Note**: `update-profile` always signs, while edit/pin have a repudiability check.
-
-### 4. Profile Update Cache Logic (~25 lines duplicated 2x)
-
-**Location 1**: `submitChannelMessage()` update-profile handler (lines 3880-3905)
-**Location 2**: `addMessage()` update-profile handler (lines 1080-1117)
-
-Both update local DB and React Query cache when a profile update occurs. The difference:
-- **submitChannelMessage**: Immediate local update (sender-side)
-- **addMessage**: Received message handling (receiver-side)
-
-This is **intentional** parallelism (like reactions) but worth noting.
-
-### 5. Retry Methods Partially Obsolete (~300 lines)
-
-**Location**: `retryMessage()` (122 lines), `retryDirectMessage()` (196 lines)
-
-With ActionQueue's automatic retry mechanism, manual retry methods are now secondary. Still needed for UI-triggered retry of permanently failed messages.
-
----
-
-## Refactoring Opportunities
-
-> **Research Context**: Academic research strongly supports abstraction for cryptographic code. See [Cryptographic Code Best Practices Report](../../reports/cryptographic-code-best-practices_2025-12-20.md) for detailed findings.
-
-### Feature Analyzer Review Notes
-
-The feature-analyzer agent reviewed these recommendations and raised valid concerns about **implementation differences** between the 5 instances. However, its reasoning that "crypto benefits from explicit duplication" is **not supported by research** (see report above).
-
-**Valid concerns from review:**
-- `retryMessage()` strips ephemeral fields (`sendStatus`, `sendError`) before encrypting
-- `ActionQueueHandlers.ts` saves encryption state AFTER sending (different order)
-- `update-profile` always signs (no repudiability check), while edit/pin have conditional signing
-
-**Invalid concern**: The claim that "explicit repetition is preferable to abstraction in crypto" - research shows the opposite.
-
-### Refactoring Recommendations (Updated)
-
-| Opportunity | Lines Saved | Risk | Verdict |
-|-------------|-------------|------|---------|
-| Extract `encryptAndSendToSpace()` helper | ~250 | **Medium** | **Recommended** (with options for differences) |
-| Extract `generateMessageId()` helper | ~25 | Low | Worth doing |
-| Extract `signMessage()` helper | ~30 | **Medium** | Worth doing (needs `forceSign` option) |
-
-#### Recommended: Extract encryptAndSendToSpace()
-
-**Risk: Medium** | **Lines Saved: ~250**
-
-The Triple Ratchet encrypt + save state + send pattern is now repeated **5 times**. Research shows centralized crypto code is easier to audit and less prone to inconsistencies.
-
-**Must handle real differences via options:**
-
-```typescript
-private async encryptAndSendToSpace(
-  spaceId: string,
-  message: Message,
-  options: {
-    stripEphemeralFields?: boolean;  // For retry scenarios
-    saveStateAfterSend?: boolean;    // For ActionQueue handler
-  } = {}
-): Promise<string> {
-  const response = await this.messageDB.getEncryptionStates({
-    conversationId: spaceId + '/' + spaceId,
-  });
-  const sets = response.map((e) => JSON.parse(e.state));
-
-  // Strip ephemeral fields if requested (for retries)
-  const messageToEncrypt = options.stripEphemeralFields
-    ? (({ sendStatus, sendError, ...rest }) => rest)(message as any)
-    : message;
-
-  const msg = secureChannel.TripleRatchetEncrypt(
-    JSON.stringify({
-      ratchet_state: sets[0].state,
-      message: [...new Uint8Array(Buffer.from(JSON.stringify(messageToEncrypt), 'utf-8'))],
-    })
-  );
-  const result = JSON.parse(msg);
-
-  const saveState = async () => {
-    await this.messageDB.saveEncryptionState({
-      state: JSON.stringify({ state: result.ratchet_state }),
-      timestamp: Date.now(),
-      inboxId: spaceId,
-      conversationId: spaceId + '/' + spaceId,
-      sentAccept: false,
-    }, true);
-  };
-
-  if (!options.saveStateAfterSend) {
-    await saveState();
-  }
-
-  const outbound = await this.sendHubMessage(spaceId, JSON.stringify({
-    type: 'message',
-    message: JSON.parse(result.envelope),
-  }));
-
-  if (options.saveStateAfterSend) {
-    await saveState();
-  }
-
-  return outbound;
+  addMessage(queryClient, spaceId, channelId, message, options): void
+  updateMessageStatus(queryClient, spaceId, channelId, messageId, status, error?): void
 }
 ```
 
-#### Worth Doing: Extract generateMessageId()
+### Priority 2: MessageReactionService (~200 lines)
+
+**Extract**: Reaction handling from `saveMessage()` and `addMessage()`
+
+| Factor | Assessment |
+|--------|------------|
+| **Lines moved** | ~200 |
+| **Risk** | Low |
+| **Reason to extract** | Self-contained, duplicated logic across save/add |
+| **Testability gain** | Medium |
+
+### Priority 3: ChannelMessageService (~470 lines)
+
+**Extract**: `submitChannelMessage()`
+
+| Factor | Assessment |
+|--------|------------|
+| **Lines moved** | ~470 |
+| **Risk** | Medium |
+| **Reason to extract** | Clear boundary, uses already-extracted `encryptAndSendToSpace` |
+| **Complication** | Needs access to messageDB, queryClient, encryptAndSendToSpace |
+
+### Not Recommended
+
+| What | Why Not |
+|------|---------|
+| `handleNewMessage()` | Too tightly coupled to decryption + 7 injected callbacks |
+| Decryption logic | High risk of crypto bugs, complex error handling |
+| `submitMessage()` | Tied to ActionQueue initialization flow |
+
+---
+
+## Code Deduplication
+
+Small helpers that reduce duplication **within** the file (not extraction to new files).
+
+### Remaining Opportunities
+
+| Pattern | Lines Saved | Risk | Status |
+|---------|-------------|------|--------|
+| Extract `generateMessageId()` helper | ~25 | Low | Worth doing |
+| Extract `signMessage()` helper | ~30 | Medium | Worth doing |
+| Extract `setOptimisticSendingStatus()` | ~30 | Low | Low priority |
+
+#### generateMessageId() — Recommended
 
 ```typescript
 private async generateMessageId(
@@ -273,97 +163,82 @@ private async generateMessageId(
 }
 ```
 
-#### Worth Doing: Extract signMessage()
+**Location**: Duplicated in edit-message, pin-message, update-profile handlers.
 
-**Must preserve conditional logic:**
+#### signMessage() — Recommended
 
 ```typescript
 private async signMessage(
   spaceId: string,
   message: Message,
   messageId: ArrayBuffer,
-  options: { forceSign?: boolean; skipSigning?: boolean; isRepudiable?: boolean } = {}
+  options: { forceSign?: boolean } = {}
 ): Promise<void> {
-  // update-profile always signs; edit/pin check repudiability
-  const shouldSign = options.forceSign || !options.isRepudiable || (options.isRepudiable && !options.skipSigning);
-
-  if (!shouldSign) return;
+  if (!options.forceSign) return; // Simplified; actual logic checks repudiability
 
   const inboxKey = await this.messageDB.getSpaceKey(spaceId, 'inbox');
   message.publicKey = inboxKey.publicKey;
   message.signature = Buffer.from(
-    JSON.parse(
-      ch.js_sign_ed448(
-        Buffer.from(inboxKey.privateKey, 'hex').toString('base64'),
-        Buffer.from(messageId).toString('base64')
-      )
-    ),
+    JSON.parse(ch.js_sign_ed448(...)),
     'base64'
   ).toString('hex');
 }
 ```
 
-### Previous Opportunities (unchanged)
-
-| Opportunity | Lines Saved | Risk | Verdict |
-|-------------|-------------|------|---------|
-| ~~Remove dead fallback code~~ | ~~249~~ | ~~Low~~ | **DONE** |
-| Refactor retry methods to use ActionQueue | ~200 | Medium | Worth considering |
-| Extract `setOptimisticSendingStatus()` helper | ~30 | Low | Low priority |
+**Note**: `update-profile` always signs; `edit`/`pin` check repudiability setting.
 
 ---
 
-## handleNewMessage Refactoring (ON HOLD)
+## Completed Refactoring
 
-The `handleNewMessage` function (1,354 lines) remains the only meaningful size-reduction opportunity.
+| Date | What | Lines Saved | Details |
+|------|------|-------------|---------|
+| Dec 20, 2025 | Extracted `encryptAndSendToSpace()` | ~200 | [Task file](./messageservice-extract-encrypt-helper.md) |
+| Dec 18, 2025 | Removed dead fallback code | 249 | Cleaned up `enqueueOutbound` paths |
 
-**Target**: 1,354 lines → 400-500 lines using Handler Registry Pattern
+### encryptAndSendToSpace() Details
 
-**Blockers:**
+Centralized Triple Ratchet encryption pattern with options:
+- `stripEphemeralFields` — For retry scenarios
+- `saveStateAfterSend` — For ActionQueue (saves state after send)
+
+**Unit tests added**: 7 tests in `MessageService.unit.test.tsx`
+
+---
+
+## On Hold
+
+### handleNewMessage Refactoring
+
+**Size**: 1,354 lines → target 400-500 lines
+
+**Blockers**:
 - Requires comprehensive test coverage first
 - Import chain issue blocks test creation
 - Risk outweighs benefit for current feature velocity
 
-**See**: [messageservice-handlenewmessage-refactor.md](./messageservice-handlenewmessage-refactor.md) for full plan (ON HOLD)
+**Plan**: [messageservice-handlenewmessage-refactor.md](./messageservice-handlenewmessage-refactor.md)
 
----
+### Retry Method Consolidation
 
-## Verdict
-
-**Medium-risk refactoring recommended.**
-
-The `update-profile` handler restoration introduced the 5th instance of the Triple Ratchet encryption pattern (including ActionQueueHandlers.ts). [Research supports](../reports/cryptographic-code-best-practices_2025-12-20.md) extracting crypto code to reduce misuse risk:
-- ~250 lines saved
-- Centralized crypto code is easier to audit
-- Reduces opportunity for inconsistent implementations
-- Makes adding future message types safer
-
-### Action Items
-
-1. **Extract `encryptAndSendToSpace()` helper** - High value, medium risk (must handle options)
-2. **Extract `generateMessageId()` helper** - Medium value, low risk
-3. **Extract `signMessage()` helper** - Medium value, medium risk (must preserve conditional logic)
-
-### Completed
-
-- **Removed dead `enqueueOutbound` fallback paths** — saved 249 lines (Dec 18, 2025)
-
-### Defer
-
-- Retry method refactoring (medium risk, needs careful testing)
-- `setOptimisticSendingStatus()` extraction (low value)
-- `handleNewMessage` refactoring (blocked by test infrastructure)
+`retryMessage()` and `retryDirectMessage()` could potentially use ActionQueue's retry mechanism, but manual retry is still needed for UI-triggered retries of permanently failed messages.
 
 ---
 
 ## Related Files
 
-- [MessageDB Current State](./messagedb-current-state.md) - Overall refactoring status
-- [handleNewMessage Refactor Plan](./messageservice-handlenewmessage-refactor.md) - ON HOLD
-- [Action Queue](../../docs/features/action-queue.md) - Background task processing system
-- [Cryptographic Code Best Practices](../../reports/cryptographic-code-best-practices_2025-12-20.md) - Research on abstraction vs duplication
+### Documentation
+- [MessageDB Current State](./messagedb-current-state.md) — Overall refactoring status
+- [File Size Best Practices](../../reports/file-size-best-practices_2025-12-20.md) — When to split files
+- [Cryptographic Code Best Practices](../../reports/cryptographic-code-best-practices_2025-12-20.md) — Abstraction for crypto
+
+### Task Files
+- [Extract encryptAndSendToSpace](./messageservice-extract-encrypt-helper.md) — ✅ Completed
+- [handleNewMessage Refactor Plan](./messageservice-handlenewmessage-refactor.md) — On Hold
+
+### Feature Documentation
+- [Action Queue](../../docs/features/action-queue.md) — Background task processing
 
 ---
 
 _Last updated: 2025-12-20_
-_Next action: Consider extracting encryptAndSendToSpace() helper with proper options to handle implementation differences_

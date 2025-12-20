@@ -1,24 +1,24 @@
 # High-Risk Optimization Opportunities
 
-**Status**: 📋 Future Reference (Blocked on handleNewMessage refactor)
+**Status**: 📋 Future Reference
 **Created**: 2025-10-03
-**Updated**: 2025-12-16
+**Updated**: 2025-12-20
 **Context**: High-risk large function refactorings in SpaceService and InvitationService
 
-> **Note**: These optimizations target large functions in **SpaceService** (`kickUser`, `createSpace`) and **InvitationService** (`joinInviteLink`). They are blocked on the `handleNewMessage` refactoring being completed first to validate the Handler Registry Pattern approach.
+> **Note**: These optimizations target large functions in **SpaceService** (`kickUser`, `createSpace`) and **InvitationService** (`joinInviteLink`). They are independent improvements that can be tackled when there's a clear need.
 
-> NOTE: verify manually first or via feature-analyzer agent to avoid over-engineering
+> **Dec 2025 Update**: The `handleNewMessage` refactoring is no longer planned (archived). These optimizations are **no longer blocked**, but remain low priority unless there's a specific need (e.g., adding features to kick flow, fixing bugs in space creation).
 
 ---
 
 ## Overview
 
-This document tracks **high-risk optimization opportunities** that involve breaking down large orchestration functions (300+ lines). These should only be tackled after:
-- ✅ Quick wins are complete
-- ✅ The `handleNewMessage` refactoring is complete
-- ✅ Low/medium risk optimizations from optimization-1.md are addressed
+This document tracks **high-risk optimization opportunities** that involve breaking down large orchestration functions (300+ lines). These are **low priority** and should only be tackled when:
+- There's a clear need (adding features, fixing bugs in these areas)
+- The specific function is causing maintenance pain
+- You have time for comprehensive testing
 
-**Note**: The `handleNewMessage` refactoring (1,321 lines) is documented separately in `messagedb-optimization-2.md` with a detailed implementation plan.
+**Note**: The `handleNewMessage` refactoring has been archived as not recommended. See [messagedb-current-state.md](./messagedb-current-state.md) for current direction.
 
 ---
 
@@ -115,10 +115,11 @@ kickUser (443 lines total)
 - Zero regressions in kick functionality
 - Clear error handling at each step
 
-#### Dependencies
+#### When to Do This
 
-- **Prerequisite**: The `handleNewMessage` refactoring must be complete to validate the pattern.
-- **Prerequisite**: Type safety improvements should be completed first for better TypeScript support.
+- When adding new kick-related features
+- When fixing bugs in the kick flow
+- When the function becomes a maintenance burden
 
 ---
 
@@ -201,10 +202,11 @@ Extract 5 focused sub-methods:
 - Zero regressions in space creation
 - Proper error handling and rollback
 
-#### Dependencies
+#### When to Do This
 
-- **Prerequisite**: The `handleNewMessage` refactoring must be complete to validate the pattern.
-- **Prerequisite**: Type safety improvements should be completed first.
+- When adding new space creation features
+- When fixing bugs in the creation flow
+- When the function becomes a maintenance burden
 
 ---
 
@@ -303,10 +305,11 @@ Extract 7 focused sub-methods:
 - Zero regressions in invite flow
 - Clear error messages at each step
 
-#### Dependencies
+#### When to Do This
 
-- **Prerequisite**: The `handleNewMessage` refactoring must be complete to validate the pattern.
-- **Prerequisite**: Type safety improvements should be completed first.
+- When adding new invite-related features
+- When fixing bugs in the join flow
+- When the function becomes a maintenance burden
 
 ---
 
@@ -346,26 +349,14 @@ Create a dedicated `CryptoService` to handle:
 
 ## Implementation Priority
 
-**Recommended Order** (only after the `handleNewMessage` refactoring is complete):
+These are **opportunistic refactorings** — do them when you're already working in that area:
 
-1. **Task 2: createSpace** (Medium priority)
-   - Clearest separation of concerns
-   - Less complex than kickUser
-   - Good practice before harder tasks
-
-2. **Task 1: kickUser** (Medium priority)
-   - More complex than createSpace
-   - More crypto operations
-   - Requires careful navigation handling
-
-3. **Task 3: joinInviteLink** (Medium priority)
-   - Similar complexity to kickUser
-   - Complex invite verification logic
-   - Multiple error cases
-
-4. **Task 4: CryptoService** (Low priority - probably never)
-   - Only if there's a compelling architectural reason
-   - High risk, questionable benefit
+| Task | When to Consider |
+|------|------------------|
+| `createSpace` | Adding space features, fixing creation bugs |
+| `kickUser` | Adding moderation features, fixing kick bugs |
+| `joinInviteLink` | Changing invite flow, fixing join bugs |
+| CryptoService | **Never** — risk far outweighs benefit |
 
 ---
 
@@ -373,10 +364,9 @@ Create a dedicated `CryptoService` to handle:
 
 ### Before Starting
 
-1. ✅ Ensure the `handleNewMessage` refactoring is complete and stable
-2. ✅ All low/medium risk optimizations are complete
-3. ✅ Test coverage is >90% for the service
-4. ✅ Have a clear rollback plan
+1. ✅ Have a clear reason (feature, bug fix, maintenance pain)
+2. ✅ Test coverage is adequate for the function
+3. ✅ Have a clear rollback plan (git commit before each step)
 
 ### During Refactoring
 
@@ -425,6 +415,6 @@ yarn vitest src/dev/refactoring/tests/ --run  # Verify tests pass
 
 ---
 
-_Last updated: 2025-12-16_
-_Status: 📋 Future Reference - Blocked on handleNewMessage refactor_
+_Last updated: 2025-12-20_
+_Status: 📋 Future Reference - Opportunistic refactorings_
 _Targets: SpaceService (kickUser, createSpace), InvitationService (joinInviteLink)_

@@ -174,14 +174,18 @@ This is the main index for all documentation, bug reports, and task management.
 - [Docusaurus Setup & Implementation Task](tasks/docusaurus/docusaurus-setup-implementation.md)
 
 ### Messagedb
-- [Extract encryptAndSendToSpace() Helper](tasks/messagedb/messageservice-extract-encrypt-helper.md)
-- [handleNewMessage Integration Tests Guide](tasks/messagedb/messageservice-handlenewmessage-tests.md)
-- [handleNewMessage Refactoring Plan](tasks/messagedb/messageservice-handlenewmessage-refactor.md)
 - [High-Risk Optimization Opportunities](tasks/messagedb/messagedb-optimization-3.md)
 - [Low/Medium Risk Optimization Opportunities](tasks/messagedb/messagedb-optimization-1.md)
 - [MessageDB Refactoring - Current State](tasks/messagedb/messagedb-current-state.md)
-- [MessageDB: Optimization Plan (Phase 4)](tasks/messagedb/messagedb-optimization-2.md)
 - [MessageService.ts Analysis](tasks/messagedb/messageservice-analysis.md)
+
+### Messagedb .Archived
+- [handleNewMessage Integration Tests Guide](tasks/messagedb/.archived/messageservice-handlenewmessage-tests.md)
+- [handleNewMessage Refactoring Plan](tasks/messagedb/.archived/messageservice-handlenewmessage-refactor.md)
+- [MessageDB: Optimization Plan (Phase 4)](tasks/messagedb/.archived/messagedb-optimization-2.md)
+
+### Messagedb .Done
+- [Extract encryptAndSendToSpace() Helper](tasks/messagedb/.done/messageservice-extract-encrypt-helper.md)
 
 ### Mobile Dev
 - [Business Logic Extraction & Native Preparation Plan](tasks/mobile-dev/business-logic-extraction-plan.md)
@@ -325,6 +329,7 @@ This is the main index for all documentation, bug reports, and task management.
 
 - [Cryptographic Code Best Practices: Abstraction vs Duplication](reports/cryptographic-code-best-practices_2025-12-20.md)
 - [dnd-kit Touch Drag-and-Drop Best Practices Research](reports/dnd-kit-touch-best-practices_2025-12-11.md)
+- [File Size & Service Extraction Best Practices](reports/file-size-best-practices_2025-12-20.md)
 - [Quorum Privacy Analysis](reports/privacy-analysis-quorum-2025-12-03.md)
 - [Security Audit: Markdown Renderer & Mentions System](reports/security-audit-markdown-mentions-2025-11-18.md)
 - [Sync Optimizations Report](reports/sync-optimizations_2025-12-19.md)
@@ -344,4 +349,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2025-12-20 10:47:33
+**Last Updated**: 2025-12-20 11:41:54

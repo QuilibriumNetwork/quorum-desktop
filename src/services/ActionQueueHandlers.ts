@@ -377,51 +377,15 @@ export class ActionQueueHandlers {
         return;
       }
 
-      // Get encryption state
-      const response = await this.deps.messageDB.getEncryptionStates({
-        conversationId: spaceId + '/' + spaceId,
-      });
-      const sets = response.map((e) => JSON.parse(e.state));
-
-      if (sets.length === 0) {
-        throw new Error('No encryption state available');
-      }
-
       // Strip ephemeral fields before encrypting
       const { sendStatus: _sendStatus, sendError: _sendError, ...messageToEncrypt } = signedMessage;
 
-      // Triple Ratchet encrypt
-      const msg = secureChannel.TripleRatchetEncrypt(
-        JSON.stringify({
-          ratchet_state: sets[0].state,
-          message: [
-            ...new Uint8Array(Buffer.from(JSON.stringify(messageToEncrypt), 'utf-8')),
-          ],
-        } as secureChannel.TripleRatchetStateAndMessage)
-      );
-      const result = JSON.parse(msg) as secureChannel.TripleRatchetStateAndEnvelope;
-
-      // Send via hub
-      const sendHubMessage = this.deps.messageService.getSendHubMessage();
-      await sendHubMessage(
-        spaceId,
-        JSON.stringify({
-          type: 'message',
-          message: JSON.parse(result.envelope),
-        })
-      );
-
-      // Save the updated Triple Ratchet state
-      const newEncryptionState = {
-        state: JSON.stringify({
-          state: result.ratchet_state,
-        }),
-        timestamp: Date.now(),
-        inboxId: spaceId,
-        conversationId: spaceId + '/' + spaceId,
-        sentAccept: false,
-      };
-      await this.deps.messageDB.saveEncryptionState(newEncryptionState, true);
+      // Triple Ratchet encrypt and send (saves state AFTER sending for queue resilience)
+      const encryptAndSend = this.deps.messageService.getEncryptAndSendToSpace();
+      await encryptAndSend(spaceId, signedMessage, {
+        stripEphemeralFields: true,
+        saveStateAfterSend: true,
+      });
 
       // Get conversation for user profile info
       const conversationId = spaceId + '/' + channelId;

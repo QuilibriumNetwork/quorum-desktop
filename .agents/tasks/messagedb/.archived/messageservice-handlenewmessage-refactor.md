@@ -1,10 +1,22 @@
 # handleNewMessage Refactoring Plan
 
-**Status**: ⏸️ ON HOLD (Low ROI per Dec 2025 Analysis)
-**Priority**: ⚪ Low (was Critical)
-**Last Updated**: 2025-12-16
+> **📦 ARCHIVED (Dec 20, 2025)**: This task has been archived as **NOT RECOMMENDED**.
+>
+> **Reason**: Per [file size best practices research](../../reports/file-size-best-practices_2025-12-20.md), `handleNewMessage` is tightly coupled to encryption context and decryption logic. Refactoring it would:
+> - Require leaking encryption state to other services
+> - Create high risk of cryptographic bugs
+> - Provide low ROI for the effort involved
+>
+> **Current direction**: Focus on **service extraction** (moving code to separate files by concern) rather than internal refactoring of tightly-coupled functions. See [messageservice-analysis.md](../messageservice-analysis.md) for recommended extractions.
 
-> **⚠️ Dec 2025 Analysis Verdict**: This refactoring is **ON HOLD indefinitely**. The test blocker was never resolved, and subsequent analysis concluded the refactoring provides low ROI for the risk involved. The 1,354-line function is large but well-structured with clear message type boundaries. See [messagedb-current-state.md](./messagedb-current-state.md) for details.
+---
+
+**Status**: 📦 ARCHIVED (Not Recommended)
+**Priority**: ⚪ N/A
+**Last Updated**: 2025-12-16
+**Archived**: 2025-12-20
+
+> **⚠️ Dec 2025 Analysis Verdict**: This refactoring is **NOT RECOMMENDED**. The test blocker was never resolved, and subsequent analysis concluded the refactoring provides low ROI for the risk involved. The 1,354-line function is large but well-structured with clear message type boundaries.
 
 ---
 

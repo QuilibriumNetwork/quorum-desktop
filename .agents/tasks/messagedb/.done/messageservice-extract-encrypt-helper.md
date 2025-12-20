@@ -2,7 +2,7 @@
 
 > **AI-Generated**: May contain errors. Verify before use.
 
-**Status**: Pending
+**Status**: Completed
 **Complexity**: Medium
 **Created**: 2025-12-20
 **Related**: [MessageService Analysis](./messageservice-analysis.md) | [Crypto Best Practices](../../reports/cryptographic-code-best-practices_2025-12-20.md)
@@ -32,7 +32,7 @@ The Triple Ratchet encryption pattern is duplicated 5 times across MessageServic
 
 ### Phase 1: Create Helper Method
 
-- [ ] **Add `encryptAndSendToSpace()` to MessageService** (`MessageService.ts`)
+- [x] **Add `encryptAndSendToSpace()` to MessageService** (`MessageService.ts`)
   - Done when: Method exists with correct signature and options
   - Location: Near other private helpers (around line 150)
 

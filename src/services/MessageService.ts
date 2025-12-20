@@ -162,6 +162,89 @@ export class MessageService {
   }
 
   /**
+   * Get encryptAndSendToSpace for use by ActionQueueHandlers.
+   * Returns a bound method that can be called externally.
+   */
+  getEncryptAndSendToSpace(): (
+    spaceId: string,
+    message: Message,
+    options?: { stripEphemeralFields?: boolean; saveStateAfterSend?: boolean }
+  ) => Promise<string> {
+    return this.encryptAndSendToSpace.bind(this);
+  }
+
+  /**
+   * Encrypts a message using Triple Ratchet and sends it to a Space channel.
+   * Centralizes the encryption pattern used across multiple message types.
+   *
+   * @param spaceId - The Space ID to send to
+   * @param message - The message to encrypt and send
+   * @param options - Configuration options
+   * @param options.stripEphemeralFields - Remove sendStatus/sendError before encrypting (for retries)
+   * @param options.saveStateAfterSend - Save encryption state after sending instead of before (for ActionQueue)
+   * @returns The outbound message string from sendHubMessage
+   */
+  async encryptAndSendToSpace(
+    spaceId: string,
+    message: Message,
+    options: {
+      stripEphemeralFields?: boolean;
+      saveStateAfterSend?: boolean;
+    } = {}
+  ): Promise<string> {
+    const response = await this.messageDB.getEncryptionStates({
+      conversationId: spaceId + '/' + spaceId,
+    });
+    const sets = response.map((e) => JSON.parse(e.state));
+
+    // Strip ephemeral fields if requested (for retries)
+    const messageToEncrypt = options.stripEphemeralFields
+      ? (({ sendStatus: _sendStatus, sendError: _sendError, ...rest }) => rest)(message as any)
+      : message;
+
+    const msg = secureChannel.TripleRatchetEncrypt(
+      JSON.stringify({
+        ratchet_state: sets[0].state,
+        message: [
+          ...new Uint8Array(Buffer.from(JSON.stringify(messageToEncrypt), 'utf-8')),
+        ],
+      } as secureChannel.TripleRatchetStateAndMessage)
+    );
+    const result = JSON.parse(msg) as secureChannel.TripleRatchetStateAndEnvelope;
+
+    const saveState = async () => {
+      await this.messageDB.saveEncryptionState(
+        {
+          state: JSON.stringify({ state: result.ratchet_state }),
+          timestamp: Date.now(),
+          inboxId: spaceId,
+          conversationId: spaceId + '/' + spaceId,
+          sentAccept: false,
+        },
+        true
+      );
+    };
+
+    if (!options.saveStateAfterSend) {
+      await saveState();
+    }
+
+    const outbound = await this.sendHubMessage(
+      spaceId,
+      JSON.stringify({
+        type: 'message',
+        message: JSON.parse(result.envelope),
+      })
+    );
+
+    if (options.saveStateAfterSend) {
+      await saveState();
+    }
+
+    return outbound;
+  }
+
+  /**
    * Send direct message(s) via WebSocket.
    * Used by ActionQueueHandlers for DM sending.
    * @param messages Array of pre-formatted message strings to send
@@ -672,7 +755,7 @@ export class MessageService {
 
           return {
             pageParams: oldData.pageParams,
-            pages: oldData.pages.map((page, index) => {
+            pages: oldData.pages.map((page, _index) => {
               return {
                 ...page,
                 messages: [
@@ -723,7 +806,7 @@ export class MessageService {
 
           return {
             pageParams: oldData.pageParams,
-            pages: oldData.pages.map((page, index) => {
+            pages: oldData.pages.map((page, _index) => {
               return {
                 ...page,
                 messages: [
@@ -960,7 +1043,7 @@ export class MessageService {
 
             return {
               pageParams: oldData.pageParams,
-              pages: oldData.pages.map((page, index) => {
+              pages: oldData.pages.map((page, _index) => {
                 return {
                   ...page,
                   messages: [
@@ -1509,7 +1592,7 @@ export class MessageService {
           message.signature = Buffer.from(JSON.parse(sig), 'base64').toString(
             'hex'
           );
-        } catch {}
+        } catch { /* Signature optional - continue without it */ }
       }
 
       // Add to cache with 'sending' status (optimistic update)
@@ -1656,7 +1739,7 @@ export class MessageService {
             message.signature = Buffer.from(JSON.parse(sig), 'base64').toString(
               'hex'
             );
-          } catch {}
+          } catch { /* Signature optional - continue without it */ }
         }
 
         for (const inbox of inboxes.filter(
@@ -1824,7 +1907,7 @@ export class MessageService {
           message.signature = Buffer.from(JSON.parse(sig), 'base64').toString(
             'hex'
           );
-        } catch {}
+        } catch { /* Signature optional - continue without it */ }
       }
 
       for (const inbox of inboxes.filter(
@@ -2086,7 +2169,7 @@ export class MessageService {
           [envelope.timestamp],
           this.apiClient
         );
-      } catch (error) {
+      } catch {
         await this.deleteInboxMessages(
           keyset.deviceKeyset.inbox_keyset,
           [message.timestamp],
@@ -2145,7 +2228,7 @@ export class MessageService {
             );
             return;
           }
-        } catch (error) {
+        } catch {
           await this.deleteInboxMessages(
             keys.receiving_inbox,
             [message.timestamp],
@@ -2197,7 +2280,7 @@ export class MessageService {
             );
             return;
           }
-        } catch (error) {
+        } catch {
           await this.deleteInboxMessages(
             keys.receiving_inbox,
             [message.timestamp],
@@ -3570,10 +3653,6 @@ export class MessageService {
         const conversation = await this.messageDB.getConversation({
           conversationId,
         });
-        const response = await this.messageDB.getEncryptionStates({
-          conversationId: spaceId + '/' + spaceId,
-        });
-        const sets = response.map((e) => JSON.parse(e.state));
 
         // enforce non-repudiability
         if (!space?.isRepudiable || (space?.isRepudiable && !skipSigning)) {
@@ -3590,39 +3669,7 @@ export class MessageService {
           ).toString('hex');
         }
 
-        const msg = secureChannel.TripleRatchetEncrypt(
-          JSON.stringify({
-            ratchet_state: sets[0].state,
-            message: [
-              ...new Uint8Array(Buffer.from(JSON.stringify(message), 'utf-8')),
-            ],
-          } as secureChannel.TripleRatchetStateAndMessage)
-        );
-        const result = JSON.parse(
-          msg
-        ) as secureChannel.TripleRatchetStateAndEnvelope;
-
-        // Save the updated Triple Ratchet state
-        const newEncryptionState = {
-          state: JSON.stringify({
-            state: result.ratchet_state,
-          }),
-          timestamp: Date.now(),
-          inboxId: spaceId,
-          conversationId: spaceId + '/' + spaceId,
-          sentAccept: false,
-        };
-        await this.messageDB.saveEncryptionState(newEncryptionState, true);
-
-        outbounds.push(
-          await this.sendHubMessage(
-            spaceId,
-            JSON.stringify({
-              type: 'message',
-              message: JSON.parse(result.envelope),
-            })
-          )
-        );
+        outbounds.push(await this.encryptAndSendToSpace(spaceId, message));
         await this.saveMessage(
           message,
           this.messageDB,
@@ -3717,10 +3764,6 @@ export class MessageService {
         const conversation = await this.messageDB.getConversation({
           conversationId,
         });
-        const response = await this.messageDB.getEncryptionStates({
-          conversationId: spaceId + '/' + spaceId,
-        });
-        const sets = response.map((e) => JSON.parse(e.state));
 
         // Enforce non-repudiability
         if (!space?.isRepudiable || (space?.isRepudiable && !skipSigning)) {
@@ -3737,39 +3780,7 @@ export class MessageService {
           ).toString('hex');
         }
 
-        const msg = secureChannel.TripleRatchetEncrypt(
-          JSON.stringify({
-            ratchet_state: sets[0].state,
-            message: [
-              ...new Uint8Array(Buffer.from(JSON.stringify(message), 'utf-8')),
-            ],
-          } as secureChannel.TripleRatchetStateAndMessage)
-        );
-        const result = JSON.parse(
-          msg
-        ) as secureChannel.TripleRatchetStateAndEnvelope;
-
-        // Save the updated Triple Ratchet state
-        const newEncryptionState = {
-          state: JSON.stringify({
-            state: result.ratchet_state,
-          }),
-          timestamp: Date.now(),
-          inboxId: spaceId,
-          conversationId: spaceId + '/' + spaceId,
-          sentAccept: false,
-        };
-        await this.messageDB.saveEncryptionState(newEncryptionState, true);
-
-        outbounds.push(
-          await this.sendHubMessage(
-            spaceId,
-            JSON.stringify({
-              type: 'message',
-              message: JSON.parse(result.envelope),
-            })
-          )
-        );
+        outbounds.push(await this.encryptAndSendToSpace(spaceId, message));
         await this.saveMessage(
           message,
           this.messageDB,
@@ -3822,11 +3833,6 @@ export class MessageService {
           } as UpdateProfileMessage,
         } as Message;
 
-        const response = await this.messageDB.getEncryptionStates({
-          conversationId: spaceId + '/' + spaceId,
-        });
-        const sets = response.map((e) => JSON.parse(e.state));
-
         // Enforce non-repudiability (required for profile updates to verify sender)
         const inboxKey = await this.messageDB.getSpaceKey(spaceId, 'inbox');
         message.publicKey = inboxKey.publicKey;
@@ -3840,40 +3846,8 @@ export class MessageService {
           'base64'
         ).toString('hex');
 
-        const msg = secureChannel.TripleRatchetEncrypt(
-          JSON.stringify({
-            ratchet_state: sets[0].state,
-            message: [
-              ...new Uint8Array(Buffer.from(JSON.stringify(message), 'utf-8')),
-            ],
-          } as secureChannel.TripleRatchetStateAndMessage)
-        );
-        const result = JSON.parse(
-          msg
-        ) as secureChannel.TripleRatchetStateAndEnvelope;
-
-        // Save the updated Triple Ratchet state
-        const newEncryptionState = {
-          state: JSON.stringify({
-            state: result.ratchet_state,
-          }),
-          timestamp: Date.now(),
-          inboxId: spaceId,
-          conversationId: spaceId + '/' + spaceId,
-          sentAccept: false,
-        };
-        await this.messageDB.saveEncryptionState(newEncryptionState, true);
-
         // Send to hub
-        outbounds.push(
-          await this.sendHubMessage(
-            spaceId,
-            JSON.stringify({
-              type: 'message',
-              message: JSON.parse(result.envelope),
-            })
-          )
-        );
+        outbounds.push(await this.encryptAndSendToSpace(spaceId, message));
 
         // Update local database immediately (don't wait for server echo)
         // This ensures the profile change is visible right away
@@ -3953,56 +3927,25 @@ export class MessageService {
     this.enqueueOutbound(async () => {
       const outbounds: string[] = [];
       try {
-        // Get encryption state (must be inside queue to avoid race conditions)
+        // Get conversation for user profile info
         const conversationId = spaceId + '/' + channelId;
         const conversation = await this.messageDB.getConversation({
           conversationId,
         });
-        const response = await this.messageDB.getEncryptionStates({
-          conversationId: spaceId + '/' + spaceId,
-        });
-        const sets = response.map((e) => JSON.parse(e.state));
 
-        // Strip ephemeral fields before encrypting
-        const { sendStatus: _sendStatus, sendError: _sendError, ...messageToEncrypt } = failedMessage;
-
-        // Triple Ratchet encrypt (creates fresh encrypted envelope)
-        const msg = secureChannel.TripleRatchetEncrypt(
-          JSON.stringify({
-            ratchet_state: sets[0].state,
-            message: [
-              ...new Uint8Array(
-                Buffer.from(JSON.stringify(messageToEncrypt), 'utf-8')
-              ),
-            ],
-          } as secureChannel.TripleRatchetStateAndMessage)
-        );
-        const result = JSON.parse(
-          msg
-        ) as secureChannel.TripleRatchetStateAndEnvelope;
-
-        // Save the updated Triple Ratchet state
-        const newEncryptionState = {
-          state: JSON.stringify({
-            state: result.ratchet_state,
-          }),
-          timestamp: Date.now(),
-          inboxId: spaceId,
-          conversationId: spaceId + '/' + spaceId,
-          sentAccept: false,
-        };
-        await this.messageDB.saveEncryptionState(newEncryptionState, true);
-
-        // Send via hub
+        // Triple Ratchet encrypt with fresh envelope (strips ephemeral fields)
         outbounds.push(
-          await this.sendHubMessage(
-            spaceId,
-            JSON.stringify({
-              type: 'message',
-              message: JSON.parse(result.envelope),
-            })
-          )
+          await this.encryptAndSendToSpace(spaceId, failedMessage, {
+            stripEphemeralFields: true,
+          })
         );
+
+        // Strip ephemeral fields for saving to IndexedDB
+        const {
+          sendStatus: _sendStatus,
+          sendError: _sendError,
+          ...messageToEncrypt
+        } = failedMessage;
 
         // Save to IndexedDB (without sendStatus/sendError)
         await this.saveMessage(
@@ -4306,7 +4249,7 @@ export class MessageService {
               false
             );
           }
-        } catch {}
+        } catch { /* Best effort notification - deletion still proceeds */ }
       }
       // Delete encryption states (keys) and latest state
       const states = await this.messageDB.getEncryptionStates({
@@ -4343,7 +4286,7 @@ export class MessageService {
       await queryClient.invalidateQueries({
         queryKey: buildConversationsKey({ type: 'direct' }),
       });
-    } catch (e) {
+    } catch {
       // no-op
     }
   }
