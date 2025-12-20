@@ -470,11 +470,6 @@ export class MessageService {
         : editedTextContent;
 
       if (editedMessageText && editedMessageText.length > MAX_MESSAGE_LENGTH) {
-        console.log(
-          `🔒 Rejecting oversized edit ${decryptedContent.messageId} ` +
-            `from ${editMessage.senderId} ` +
-            `(${editedMessageText.length} chars > ${MAX_MESSAGE_LENGTH} limit)`
-        );
         return;
       }
 
@@ -857,35 +852,6 @@ export class MessageService {
       );
     } else if (decryptedContent.content.type === 'edit-message') {
       const editMessage = decryptedContent.content as EditMessage;
-      console.log(`[MessageService:addMessage] Processing edit-message:`, {
-        originalMessageId: editMessage.originalMessageId,
-        editedAt: editMessage.editedAt,
-        editNonce: editMessage.editNonce,
-        editedText: String(editMessage.editedText).substring(0, 50),
-      });
-
-      // Check if saveEditHistory is enabled for this conversation/space (before the map callback)
-      const isDMForEdit = spaceId === channelId;
-      let saveEditHistoryEnabled = false;
-
-      try {
-        if (isDMForEdit) {
-          // For DMs, check conversation setting
-          const conversationId = `${spaceId}/${channelId}`;
-          const conversation = await this.messageDB.getConversation({
-            conversationId,
-          });
-          saveEditHistoryEnabled =
-            conversation?.conversation?.saveEditHistory ?? false;
-        } else {
-          // For spaces, check space setting
-          const space = await this.messageDB.getSpace(spaceId);
-          saveEditHistoryEnabled = space?.saveEditHistory ?? false;
-        }
-      } catch (error) {
-        console.error('Failed to get saveEditHistory setting:', error);
-        saveEditHistoryEnabled = false;
-      }
 
       queryClient.setQueryData(
         buildMessagesKey({ spaceId: spaceId, channelId: channelId }),
@@ -900,24 +866,12 @@ export class MessageService {
                 messages: [
                   ...page.messages.map((m: Message) => {
                     if (m.messageId === editMessage.originalMessageId) {
-                      console.log(`[MessageService:setQueryData] Found target message:`, {
-                        messageId: m.messageId,
-                        currentModifiedDate: m.modifiedDate,
-                        currentLastModifiedHash: m.lastModifiedHash,
-                        currentEditsCount: m.edits?.length || 0,
-                        currentText: m.content.type === 'post' ? String(m.content.text).substring(0, 50) : 'N/A',
-                        incomingEditedAt: editMessage.editedAt,
-                        incomingEditNonce: editMessage.editNonce,
-                      });
-
                       // Only update if the sender matches (permission check)
                       if (m.content.senderId !== editMessage.senderId) {
-                        console.log(`[MessageService:setQueryData] SKIP: sender mismatch`);
                         return m;
                       }
                       // Only allow editing post messages
                       if (m.content.type !== 'post') {
-                        console.log(`[MessageService:setQueryData] SKIP: not a post message`);
                         return m;
                       }
 
@@ -925,29 +879,17 @@ export class MessageService {
                       const editTimeWindow = 15 * 60 * 1000;
                       const timeSinceCreation = Date.now() - m.createdDate;
                       if (timeSinceCreation > editTimeWindow) {
-                        console.log(`[MessageService:setQueryData] SKIP: outside edit window`);
                         return m;
                       }
 
                       // CRITICAL: Skip if this edit or a newer edit was already applied
                       // This prevents duplicates from: 1) queue processing, 2) hub echoes
                       if (m.modifiedDate >= editMessage.editedAt) {
-                        console.log(`[MessageService:setQueryData] SKIP: edit already applied or stale`, {
-                          messageModifiedDate: m.modifiedDate,
-                          editEditedAt: editMessage.editedAt,
-                          alreadyApplied: m.lastModifiedHash === editMessage.editNonce,
-                        });
                         return m;
                       }
 
                       // Keep existing edits array - optimistic update already handles it
                       const existingEdits = m.edits || [];
-
-                      console.log(`[MessageService:setQueryData] APPLYING edit:`, {
-                        saveEditHistoryEnabled,
-                        existingEditsCount: existingEdits.length,
-                        newText: String(editMessage.editedText).substring(0, 50),
-                      });
 
                       // Update the message with edited text, keeping existing edits array
                       return {
@@ -1010,9 +952,6 @@ export class MessageService {
               );
               if (isManager) {
                 shouldHonorDelete = true;
-                console.log(
-                  '🔹 ADDMESSAGE: Honoring read-only manager delete in UI cache'
-                );
               }
             }
 
@@ -1025,9 +964,6 @@ export class MessageService {
               );
               if (hasDeleteRole) {
                 shouldHonorDelete = true;
-                console.log(
-                  '🔹 ADDMESSAGE: Honoring role-based delete in UI cache'
-                );
               }
             }
           }
@@ -1059,8 +995,6 @@ export class MessageService {
             };
           }
         );
-      } else {
-        console.log('🔹 ADDMESSAGE: Ignoring unauthorized delete request');
       }
     } else if (decryptedContent.content.type === 'pin') {
       const pinMessage = decryptedContent.content as PinMessage;
@@ -1295,9 +1229,6 @@ export class MessageService {
 
           // Check if channel has manager roles configured
           if (!channel.managerRoleIds || channel.managerRoleIds.length === 0) {
-            console.log(
-              `🔒 Rejecting message ${decryptedContent.messageId} from ${senderId} - read-only channel ${channelId} has no manager roles configured`
-            );
             return;
           }
 
@@ -1311,9 +1242,6 @@ export class MessageService {
             ) ?? false;
 
           if (!isChannelManager) {
-            console.log(
-              `🔒 Rejecting unauthorized message ${decryptedContent.messageId} from ${senderId} in read-only channel ${channelId}`
-            );
             return;
           }
         }
@@ -1327,11 +1255,6 @@ export class MessageService {
         const messageText = Array.isArray(text) ? text.join('') : text;
 
         if (messageText && messageText.length > MAX_MESSAGE_LENGTH) {
-          console.log(
-            `🔒 Rejecting oversized message ${decryptedContent.messageId} ` +
-              `from ${decryptedContent.content.senderId} ` +
-              `(${messageText.length} chars > ${MAX_MESSAGE_LENGTH} limit)`
-          );
           return;
         }
       }
@@ -1345,11 +1268,6 @@ export class MessageService {
           (decryptedContent.mentions.everyone ? 1 : 0);
 
         if (totalMentions > MAX_MENTIONS_PER_MESSAGE) {
-          console.log(
-            `🔒 Rejecting message ${decryptedContent.messageId} ` +
-              `from ${decryptedContent.content.senderId} ` +
-              `with excessive mentions (${totalMentions} > ${MAX_MENTIONS_PER_MESSAGE})`
-          );
           return;
         }
       }
@@ -1626,14 +1544,6 @@ export class MessageService {
     }
 
     // For edit-message, delete-conversation, reactions: use existing flow (no optimistic update)
-    const legacyTraceId = `DM-LEGACY-${Date.now().toString(36)}`;
-    const messageType = typeof pendingMessage === 'object' ? (pendingMessage as any).type : 'post';
-    console.log(`[${legacyTraceId}] submitMessage LEGACY PATH START`, {
-      type: messageType,
-      address: address?.slice(0, 16) + '...',
-      timestamp: new Date().toISOString(),
-    });
-
     this.enqueueOutbound(async () => {
       const outbounds: string[] = [];
       const nonce = crypto.randomUUID();
@@ -1829,7 +1739,6 @@ export class MessageService {
         );
         await this.addMessage(queryClient, address, address, message);
 
-        console.log(`[${legacyTraceId}] LEGACY PATH COMPLETE (edit-message)`, { outboundCount: outbounds.length });
         return outbounds;
       }
 
@@ -1984,7 +1893,6 @@ export class MessageService {
 
       // do not save delete-conversation message
       if (message.content.type === 'delete-conversation') {
-        console.log(`[${legacyTraceId}] LEGACY PATH COMPLETE (delete-conversation)`, { outboundCount: outbounds.length });
         return outbounds;
       }
 
@@ -2015,7 +1923,6 @@ export class MessageService {
         }
       );
 
-      console.log(`[${legacyTraceId}] LEGACY PATH COMPLETE`, { outboundCount: outbounds.length, messageType: message.content.type });
       return outbounds;
     });
   }
@@ -2322,12 +2229,6 @@ export class MessageService {
             new Uint8Array(decrypted.message)
           ).toString('utf-8');
           decryptedContent = JSON.parse(output);
-
-          console.log('[MessageService:handleNewMessage] Received channel message:', {
-            messageId: decryptedContent?.messageId,
-            type: decryptedContent?.content?.type,
-            channelId: decryptedContent?.channelId,
-          });
 
           if (decryptedContent) {
             const space = await this.messageDB.getSpace(

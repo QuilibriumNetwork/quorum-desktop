@@ -106,10 +106,7 @@ export class ActionQueueService {
     if (this.processInterval) return;
 
     // Reset stuck tasks from previous crash
-    const reset = await this.messageDB.resetStuckProcessingTasks();
-    if (reset > 0) {
-      console.log(`[ActionQueue] Reset ${reset} stuck tasks on startup`);
-    }
+    await this.messageDB.resetStuckProcessingTasks();
 
     this.processInterval = setInterval(
       () => this.processQueue(),

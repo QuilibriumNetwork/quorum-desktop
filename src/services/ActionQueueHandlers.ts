@@ -82,9 +82,6 @@ export class ActionQueueHandlers {
       // Check if space still exists
       const space = await this.deps.messageDB.getSpace(context.spaceId as string);
       if (!space) {
-        console.log(
-          `[ActionQueue] Discarding update for deleted space: ${context.spaceId}`
-        );
         return;
       }
       await this.deps.spaceService.updateSpace(
@@ -118,7 +115,6 @@ export class ActionQueueHandlers {
         (m) => m.user_address === context.userAddress
       );
       if (!userStillPresent) {
-        console.log('[ActionQueue] User already left space, skipping kick');
         return;
       }
       await this.deps.spaceService.kickUser(
@@ -266,26 +262,14 @@ export class ActionQueueHandlers {
    */
   private editMessage: TaskHandler = {
     execute: async (context) => {
-      const editMsg = context.editMessage as { editedAt: number; editedText: string | string[] };
-      console.log(`[ActionQueue:editMessage] START - messageId=${context.messageId}, editedAt=${editMsg.editedAt}`);
-
       const message = await this.deps.messageDB.getMessageById(
         context.messageId as string
       );
 
       if (!message) {
-        console.log(`[ActionQueue:editMessage] Message not found, skipping`);
         return;
       }
 
-      console.log(`[ActionQueue:editMessage] Current message state:`, {
-        modifiedDate: message.modifiedDate,
-        lastModifiedHash: message.lastModifiedHash,
-        editsCount: message.edits?.length || 0,
-        currentText: message.content.type === 'post' ? String(message.content.text).substring(0, 50) : 'N/A',
-      });
-
-      console.log(`[ActionQueue:editMessage] Processing edit, calling submitChannelMessage`);
       await this.deps.messageService.submitChannelMessage(
         context.spaceId as string,
         context.channelId as string,
@@ -293,7 +277,6 @@ export class ActionQueueHandlers {
         this.deps.queryClient,
         context.currentPasskeyInfo as any
       );
-      console.log(`[ActionQueue:editMessage] END`);
     },
     isPermanentError: (error) => error.message.includes('404'),
     successMessage: undefined,
@@ -348,8 +331,6 @@ export class ActionQueueHandlers {
       // Check if space/channel still exists
       const space = await this.deps.messageDB.getSpace(spaceId);
       if (!space) {
-        console.log(`[ActionQueue] Discarding message for deleted space: ${spaceId}`);
-        // Update status to indicate failure (space deleted)
         this.deps.messageService.updateMessageStatus(
           this.deps.queryClient,
           spaceId,
@@ -365,7 +346,6 @@ export class ActionQueueHandlers {
         ?.flatMap((g) => g.channels)
         .find((c) => c.channelId === channelId);
       if (!channel) {
-        console.log(`[ActionQueue] Discarding message for deleted channel: ${channelId}`);
         this.deps.messageService.updateMessageStatus(
           this.deps.queryClient,
           spaceId,
@@ -532,14 +512,6 @@ export class ActionQueueHandlers {
       const senderDisplayName = context.senderDisplayName as string | undefined;
       const senderUserIcon = context.senderUserIcon as string | undefined;
 
-      const traceId = `DM-${messageId.slice(0, 8)}`;
-      console.log(`[${traceId}] send-dm START`, {
-        address: address.slice(0, 16) + '...',
-        messageId: messageId.slice(0, 16) + '...',
-        contentType: signedMessage.content?.type,
-        timestamp: new Date().toISOString(),
-      });
-
       const conversationId = address + '/' + address;
       const conversation = await this.deps.messageDB.getConversation({
         conversationId,
@@ -582,13 +554,8 @@ export class ActionQueueHandlers {
 
       // Validate we have recipients to send to
       if (targetInboxes.length === 0) {
-        console.error(`[${traceId}] FAILED: No target inboxes available`);
         throw new Error('No target inboxes available for DM - counterparty may have no registered devices');
       }
-
-      console.log(`[${traceId}] Encrypting for ${targetInboxes.length} target inbox(es)`, {
-        encryptionStatesFound: sets.length,
-      });
 
       // Encrypt for each inbox (Double Ratchet)
       for (let i = 0; i < targetInboxes.length; i++) {
@@ -624,11 +591,10 @@ export class ActionQueueHandlers {
             .find((d) => d.inbox_registration.inbox_address === inbox);
 
           if (!targetDevice) {
-            console.warn(`[${traceId}] Inbox ${i + 1}/${targetInboxes.length}: No device registration found for ${inbox.slice(0, 16)}...`);
+            console.warn(`[send-dm] No device registration found for inbox`);
             continue; // Skip this inbox
           }
 
-          console.log(`[${traceId}] Inbox ${i + 1}/${targetInboxes.length}: Creating new session for ${inbox.slice(0, 16)}...`);
           try {
             const newSessions = await secureChannel.NewDoubleRatchetSenderSession(
               keyset.deviceKeyset,
@@ -639,9 +605,8 @@ export class ActionQueueHandlers {
               senderUserIcon
             );
             sessions = [...sessions, ...newSessions];
-            console.log(`[${traceId}] Inbox ${i + 1}/${targetInboxes.length}: Session created successfully`);
           } catch (err) {
-            console.error(`[${traceId}] Inbox ${i + 1}/${targetInboxes.length}: Failed to create session`, err);
+            console.error(`[send-dm] Failed to create session`, err);
             // Continue to next inbox instead of failing entire send
           }
         }
@@ -682,11 +647,7 @@ export class ActionQueueHandlers {
       }
 
       // Send all messages via WebSocket
-      console.log(`[${traceId}] Sending ${outboundMessages.length} outbound messages via WebSocket`, {
-        sessionCount: sessions.length,
-      });
       await this.deps.messageService.sendDirectMessages(outboundMessages);
-      console.log(`[${traceId}] WebSocket send completed`);
 
       // Save to IndexedDB (without sendStatus/sendError)
       await this.deps.messageService.saveMessage(
@@ -754,7 +715,6 @@ export class ActionQueueHandlers {
           };
         }
       );
-      console.log(`[${traceId}] send-dm COMPLETE - message sent successfully`);
     },
     isPermanentError: (error) => {
       return (
@@ -765,11 +725,6 @@ export class ActionQueueHandlers {
     onFailure: (context, error) => {
       const address = context.address as string;
       const messageId = context.messageId as string;
-      const traceId = `DM-${messageId.slice(0, 8)}`;
-      console.error(`[${traceId}] send-dm FAILED`, {
-        error: error.message,
-        timestamp: new Date().toISOString(),
-      });
       this.deps.messageService.updateMessageStatus(
         this.deps.queryClient,
         address,
@@ -796,7 +751,6 @@ export class ActionQueueHandlers {
    * @param keyset - Sender's device and user keysets
    * @param senderDisplayName - Optional sender display name for identity revelation
    * @param senderUserIcon - Optional sender profile picture URL
-   * @param traceId - Optional trace ID for logging
    */
   private async encryptAndSendDm(
     address: string,
@@ -808,11 +762,9 @@ export class ActionQueueHandlers {
       userKeyset: secureChannel.UserKeyset;
     },
     senderDisplayName?: string,
-    senderUserIcon?: string,
-    traceId?: string
+    senderUserIcon?: string
   ): Promise<void> {
     const conversationId = address + '/' + address;
-    const log = traceId ? (msg: string, data?: object) => console.log(`[${traceId}] ${msg}`, data ?? '') : () => {};
 
     // Get encryption states
     let response = await this.deps.messageDB.getEncryptionStates({
@@ -848,11 +800,8 @@ export class ActionQueueHandlers {
 
     // Validate we have recipients to send to
     if (targetInboxes.length === 0) {
-      log('FAILED: No target inboxes available');
       throw new Error('No target inboxes available for DM - counterparty may have no registered devices');
     }
-
-    log('Encrypting for target inboxes', { targetCount: targetInboxes.length, encryptionStates: sets.length });
 
     // Encrypt for each inbox (Double Ratchet)
     for (const inbox of targetInboxes) {
@@ -939,9 +888,7 @@ export class ActionQueueHandlers {
     }
 
     // Send all messages via WebSocket
-    log('Sending via WebSocket', { outboundCount: outboundMessages.length, sessions: sessions.length });
     await this.deps.messageService.sendDirectMessages(outboundMessages);
-    log('WebSocket send completed');
   }
 
   /**
@@ -970,30 +917,15 @@ export class ActionQueueHandlers {
       const senderDisplayName = context.senderDisplayName as string | undefined;
       const senderUserIcon = context.senderUserIcon as string | undefined;
 
-      const traceId = `DM-REACT-${(reactionMessage.messageId as string)?.slice(0, 8) ?? 'unknown'}`;
-      console.log(`[${traceId}] reaction-dm START`, {
-        type: reactionMessage.type,
-        reaction: reactionMessage.reaction,
-        messageId: (reactionMessage.messageId as string)?.slice(0, 16),
-        timestamp: new Date().toISOString(),
-      });
-
-      try {
-        await this.encryptAndSendDm(
-          address,
-          reactionMessage,
-          self,
-          counterparty,
-          keyset,
-          senderDisplayName,
-          senderUserIcon,
-          traceId
-        );
-        console.log(`[${traceId}] reaction-dm COMPLETE`);
-      } catch (error) {
-        console.error(`[${traceId}] reaction-dm FAILED`, { error: (error as Error).message });
-        throw error;
-      }
+      await this.encryptAndSendDm(
+        address,
+        reactionMessage,
+        self,
+        counterparty,
+        keyset,
+        senderDisplayName,
+        senderUserIcon
+      );
     },
     // Reactions are idempotent - re-adding same reaction is fine
     isPermanentError: (error) => {
@@ -1029,12 +961,6 @@ export class ActionQueueHandlers {
       const senderDisplayName = context.senderDisplayName as string | undefined;
       const senderUserIcon = context.senderUserIcon as string | undefined;
 
-      const traceId = `DM-DEL-${(deleteMessage.removeMessageId as string)?.slice(0, 8) ?? 'unknown'}`;
-      console.log(`[${traceId}] delete-dm START`, {
-        removeMessageId: (deleteMessage.removeMessageId as string)?.slice(0, 16),
-        timestamp: new Date().toISOString(),
-      });
-
       try {
         await this.encryptAndSendDm(
           address,
@@ -1043,17 +969,13 @@ export class ActionQueueHandlers {
           counterparty,
           keyset,
           senderDisplayName,
-          senderUserIcon,
-          traceId
+          senderUserIcon
         );
-        console.log(`[${traceId}] delete-dm COMPLETE`);
       } catch (err: any) {
         // If message already deleted, treat as success
         if (err.message?.includes('404')) {
-          console.log(`[${traceId}] delete-dm COMPLETE (already deleted)`);
           return;
         }
-        console.error(`[${traceId}] delete-dm FAILED`, { error: err.message });
         throw err;
       }
     },
@@ -1091,35 +1013,21 @@ export class ActionQueueHandlers {
       const senderDisplayName = context.senderDisplayName as string | undefined;
       const senderUserIcon = context.senderUserIcon as string | undefined;
 
-      const traceId = `DM-EDIT-${messageId.slice(0, 8)}`;
-      console.log(`[${traceId}] edit-dm START`, {
-        messageId: messageId.slice(0, 16),
-        timestamp: new Date().toISOString(),
-      });
-
       // Check if message still exists
       const message = await this.deps.messageDB.getMessageById(messageId);
       if (!message) {
-        console.log(`[${traceId}] edit-dm SKIPPED - message not found`);
         return;
       }
 
-      try {
-        await this.encryptAndSendDm(
-          address,
-          editMessage,
-          self,
-          counterparty,
-          keyset,
-          senderDisplayName,
-          senderUserIcon,
-          traceId
-        );
-        console.log(`[${traceId}] edit-dm COMPLETE`);
-      } catch (error) {
-        console.error(`[${traceId}] edit-dm FAILED`, { error: (error as Error).message });
-        throw error;
-      }
+      await this.encryptAndSendDm(
+        address,
+        editMessage,
+        self,
+        counterparty,
+        keyset,
+        senderDisplayName,
+        senderUserIcon
+      );
     },
     isPermanentError: (error) => error.message.includes('404'),
     successMessage: undefined,
