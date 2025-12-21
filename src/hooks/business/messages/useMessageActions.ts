@@ -88,7 +88,7 @@ export function useMessageActions(options: UseMessageActionsOptions) {
   const bookmarks = useBookmarks({ userAddress });
 
   // ActionQueue hooks for offline-resilient operations
-  const { messageDB, actionQueueService, keyset } = useMessageDB();
+  const { messageDB, actionQueueService } = useMessageDB();
   const { currentPasskeyInfo } = usePasskeysContext();
   const queryClient = useQueryClient();
 
@@ -109,19 +109,14 @@ export function useMessageActions(options: UseMessageActionsOptions) {
       console.warn('[useMessageActions] Missing DM registration context - dmContext prop not provided');
       return null;
     }
-    if (!keyset?.deviceKeyset || !keyset?.userKeyset) {
-      console.warn('[useMessageActions] Missing keyset');
-      return null;
-    }
     return {
       address,
       self: dmContext.self,
       counterparty: dmContext.counterparty,
-      keyset,
       senderDisplayName: currentPasskeyInfo?.displayName,
       senderUserIcon: currentPasskeyInfo?.pfpUrl,
     };
-  }, [dmContext, keyset, currentPasskeyInfo]);
+  }, [dmContext, currentPasskeyInfo]);
 
   // Handle reaction submission - optimistic update + queue
   const handleReaction = useCallback(

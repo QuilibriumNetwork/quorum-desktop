@@ -472,6 +472,10 @@ export class ConfigService {
         'base64'
       ).toString('hex');
 
+      console.log('[ConfigService] Posting settings to server...', {
+        address: config.address,
+        timestamp: ts,
+      });
       await this.apiClient.postUserSettings(config.address, {
         user_address: config.address,
         user_public_key: Buffer.from(
@@ -481,12 +485,15 @@ export class ConfigService {
         timestamp: ts,
         signature: signature,
       });
+      console.log('[ConfigService] Settings posted successfully');
 
       // Reset tombstones only after successful sync (Phase 7: Critical Fix)
       config.deletedBookmarkIds = [];
     }
 
+    console.log('[ConfigService] Saving config to local DB...');
     await this.messageDB.saveUserConfig(config);
+    console.log('[ConfigService] Config saved to local DB');
   }
 
   /**

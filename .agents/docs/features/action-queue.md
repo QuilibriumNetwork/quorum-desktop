@@ -115,7 +115,7 @@ Not all actions can be queued for offline use. This table shows what works offli
                       ▼
 ┌─────────────────────────────────────────────────────────────┐
 │              PERSISTENT QUEUE (IndexedDB)                    │
-│  - Plaintext task storage (browser sandbox is sufficient)    │
+│  - Task context stored WITHOUT private keys                  │
 │  - Survives crashes/refreshes                                │
 │  - Status tracking (pending/processing/failed/completed)     │
 └─────────────────────┬───────────────────────────────────────┘
@@ -123,10 +123,11 @@ Not all actions can be queued for offline use. This table shows what works offli
                       ▼
 ┌─────────────────────────────────────────────────────────────┐
 │              BACKGROUND PROCESSOR                            │
-│  1. Status-based gating (multi-tab safety)                   │
-│  2. Get next batch of pending tasks                          │
-│  3. Execute task (crypto, API calls, WebSocket sends)        │
-│  4. Update status, handle retries                            │
+│  1. Keyset gate (waits for auth to complete)                 │
+│  2. Status-based gating (multi-tab safety)                   │
+│  3. Get next batch of pending tasks                          │
+│  4. Execute task (crypto, API calls, WebSocket sends)        │
+│  5. Update status, handle retries                            │
 └─────────────────────────────────────────────────────────────┘
 ```
 
@@ -162,7 +163,13 @@ actionQueueService.setHandlers(handlers);
 
 // 6. Start processing
 actionQueueService.start();
+
+// 7. After passkey auth completes (in MessageDB.tsx):
+actionQueueService.setUserKeyset({ deviceKeyset, userKeyset });
+// Queue now starts processing tasks that require keys
 ```
+
+**Important**: The queue waits for `setUserKeyset()` before processing tasks that require cryptographic keys. This ensures keys are never stored in IndexedDB - they're pulled from memory at processing time.
 
 ---
 
@@ -321,10 +328,8 @@ ActionQueueHandlers.reactionDm.execute()
   messageId?: string;           // For edit-dm (to check if still exists)
   self: UserRegistration;       // Sender's registration
   counterparty: UserRegistration; // Recipient's registration
-  keyset: {
-    deviceKeyset: DeviceKeyset;
-    userKeyset: UserKeyset;
-  };
+  // NOTE: keyset is NOT stored in context (security)
+  // Handlers pull keyset from actionQueueService.getUserKeyset()
   senderDisplayName?: string;   // For identity revelation
   senderUserIcon?: string;      // For identity revelation
 }
@@ -516,7 +521,7 @@ interface QueueTask {
 | `batchSize` | 10 | Tasks per processing cycle |
 | `multiTabGraceMs` | 30000 | Multi-tab coordination grace period |
 | `MAX_QUEUE_SIZE` | 1000 | Maximum queue size |
-| `MAX_TASK_AGE_MS` | 604800000 | Task retention (7 days) |
+| `MAX_TASK_AGE_MS` | 259200000 | Task retention (3 days) |
 
 ### Exponential Backoff
 
@@ -584,9 +589,16 @@ The bottleneck is network latency (~80% of operation time), not CPU. Moving cryp
 
 With non-blocking queued saves, multiple rapid operations don't freeze the UI. Sequential processing handles them without user impact.
 
-### No Encryption-at-Rest
+### Keys Not Stored in Queue (Security)
 
-IndexedDB is origin-sandboxed. The user already has the key (they're logged in). Encryption would complicate debugging without meaningful security benefit.
+**Private keys are never stored in IndexedDB.** Instead of storing keysets in the task context, handlers pull keys from memory at processing time via `actionQueueService.getUserKeyset()`.
+
+This approach:
+- **Avoids keys on disk** - keys exist only in memory after passkey auth
+- **Auth gate** - queue waits for `setUserKeyset()` before processing key-requiring tasks
+- **App restart handling** - queue persists, keys don't; after re-auth, queue resumes
+
+See [007-plaintext-private-keys-fix.md](../../reports/action-queue/007-plaintext-private-keys-fix.md) for implementation details.
 
 ### Sequential Processing
 
@@ -657,7 +669,8 @@ The counterparty notification is already "best effort" (wrapped in try/catch), s
 - [Offline Support](offline-support.md) - Comprehensive offline capabilities including navigation and data viewing
 - [DM Action Queue Handlers Task](../../tasks/dm-action-queue-handlers.md) - Implementation details
 - [DM Code Comparison Audit](../../reports/action-queue/003-DM-message-code-comparison-audit.md) - Code analysis and verification
+- [Keyset Security Fix](../../reports/action-queue/007-plaintext-private-keys-fix.md) - Private keys not stored in queue
 
 ---
 
-*Updated: 2025-12-20 - Clarified that Action Queue solves both UI freezing and offline support; documented that folder operations use save-user-config*
+*Updated: 2025-12-21 - Added keyset security: keys no longer stored in IndexedDB, pulled from memory at processing time*

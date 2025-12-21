@@ -1,11 +1,11 @@
-# Persist DM Registration Data for Full Offline Support
+# 009: Persist DM Registration Data for Full Offline Support
 
 > **⚠️ AI-Generated**: May contain errors. Verify before use.
 
 **Status**: Pending
 **Complexity**: Medium-High (increased due to security requirements)
 **Created**: 2025-12-20
-**Last Updated**: 2025-12-20
+**Last Updated**: 2025-12-21
 **Files**:
 - `src/db/messages.ts` - Add user_registrations store (schema v8)
 - `src/hooks/queries/registration/buildRegistrationFetcher.ts` - Cache-first fetching logic
@@ -29,11 +29,11 @@
 - **Root cause**: Registration data was not prioritized for offline support during initial implementation
 
 **Related Documentation**:
-- [Action Queue - Offline Support Summary](../docs/features/action-queue.md#why-space-messages-work-fully-offline-but-dm-messages-dont)
-- [Offline Support](../docs/features/offline-support.md)
+- [Action Queue - Offline Support Summary](../../docs/features/action-queue.md#why-space-messages-work-fully-offline-but-dm-messages-dont)
+- [Offline Support](../../docs/features/offline-support.md)
 
 **Related Work**:
-- [007-plaintext-private-keys-fix.md](../reports/action-queue/007-plaintext-private-keys-fix.md) - Creates shared encryption utilities (`src/utils/encryption.ts`) that this task can reuse
+- [007-plaintext-private-keys-fix.md](007-plaintext-private-keys-fix.md) - Creates shared encryption utilities (`src/utils/encryption.ts`) that this task can reuse
 
 ---
 
@@ -170,7 +170,7 @@ Store only what's needed for offline encryption:
   ```
 
 ### Phase 2: Encryption Helpers
-- [ ] **Reuse shared encryption utilities** from `src/utils/encryption.ts` (created by action queue fix [007](../reports/action-queue/007-plaintext-private-keys-fix.md))
+- [ ] **Reuse shared encryption utilities** from `src/utils/encryption.ts` (created by action queue fix [007](007-plaintext-private-keys-fix.md))
   - `getOrDeriveAesKey(userKeyset)` - derive AES key from user's private key (cached)
   - `encryptContext(data, aesKey)` - AES-GCM encryption
   - `decryptContext(encrypted, iv, aesKey)` - AES-GCM decryption
@@ -313,4 +313,4 @@ Store only what's needed for offline encryption:
 ---
 
 _Created: 2025-12-20_
-_Last Updated: 2025-12-20 - Added link to shared encryption utilities from action queue fix (007)_
+_Last Updated: 2025-12-21 - Moved from tasks to action-queue reports_

@@ -139,7 +139,6 @@ This is the main index for all documentation, bug reports, and task management.
 - [Implement Smart Context Extraction Around Mentions in NotificationPanel](tasks/notification-mention-context-extraction.md)
 - [Multi-User Invite Selection Enhancement](tasks/multi-user-invite-selection.md)
 - [Passkey Import UX Issue](tasks/passkey-import-ux-issue.md)
-- [Persist DM Registration Data for Full Offline Support](tasks/dm-offline-registration-persistence.md)
 - [SDK PasskeyModal Customization Props Enhancement](tasks/sdk-passkey-modal-customization-props.md)
 - [Service Worker for App Update Detection](tasks/service-worker-app-updates.md)
 - [Task: Implement Delete Public Invite Link Feature](tasks/delete-public-invite-link.md)
@@ -344,8 +343,12 @@ This is the main index for all documentation, bug reports, and task management.
 - [Action Queue vs Legacy DM Message Implementation - Code Comparison Audit](reports/action-queue/003-DM-message-code-comparison-audit.md)
 - [Action Queue vs Legacy Space Message Implementation - Code Comparison Audit](reports/action-queue/004-space-message-code-comparison-audit.md)
 - [DM Sync Non-Deterministic Failures](reports/action-queue/005-dm-sync-non-deterministic-failures.md)
+- [006: Action Queue Stores Identity Keys in Plaintext](reports/action-queue/006-plaintext-private-keys-bug-old.md)
 - [006: Action Queue Stores Identity Keys in Plaintext](reports/action-queue/006-plaintext-private-keys-bug.md)
-- [007: Fix - Encrypt Action Queue Context](reports/action-queue/007-plaintext-private-keys-fix.md)
+- [007: Fix - Encrypt Action Queue Context](reports/action-queue/007-plaintext-private-keys-fix-old.md)
+- [007: Fix - Don't Store Keys in Action Queue](reports/action-queue/007-plaintext-private-keys-fix.md)
+- [008: Action Queue Endpoint Dependencies & Failure Modes](reports/action-queue/008-endpoint-dependencies.md)
+- [009: Persist DM Registration Data for Full Offline Support](reports/action-queue/009-dm-offline-registration-persistence.md)
 
 ### Onboarding Flow
 - [Passkey Authentication Flow Analysis](reports/onboarding-flow/passkey-authentication-flow-analysis-2025-11-23.md)
@@ -354,4 +357,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2025-12-20 17:47:27
+**Last Updated**: 2025-12-21 11:59:21

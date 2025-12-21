@@ -46,7 +46,7 @@ export function MessageEditTextarea({
   dmContext,
 }: MessageEditTextareaProps) {
   const queryClient = useQueryClient();
-  const { messageDB, actionQueueService, keyset } = useMessageDB();
+  const { messageDB, actionQueueService } = useMessageDB();
   const { currentPasskeyInfo } = usePasskeysContext();
 
   // Edit state
@@ -290,7 +290,7 @@ export function MessageEditTextarea({
         if (actionQueueService && currentPasskeyInfo) {
           if (isDM) {
             // DM: Use Double Ratchet encryption via edit-dm handler (if enabled)
-            if (ENABLE_DM_ACTION_QUEUE && dmContext?.self && dmContext?.counterparty && keyset?.deviceKeyset && keyset?.userKeyset) {
+            if (ENABLE_DM_ACTION_QUEUE && dmContext?.self && dmContext?.counterparty) {
               await actionQueueService.enqueue(
                 'edit-dm',
                 {
@@ -299,7 +299,6 @@ export function MessageEditTextarea({
                   editMessage,
                   self: dmContext.self,
                   counterparty: dmContext.counterparty,
-                  keyset,
                   senderDisplayName: currentPasskeyInfo.displayName,
                   senderUserIcon: currentPasskeyInfo.pfpUrl,
                 },

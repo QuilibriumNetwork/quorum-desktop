@@ -40,8 +40,6 @@ export const useUserKicking = () => {
           {
             spaceId,
             userAddress,
-            user_keyset: keyset.userKeyset,
-            device_keyset: keyset.deviceKeyset,
             registration: registration.registration,
           },
           `kick:${spaceId}:${userAddress}` // Dedup key

@@ -141,7 +141,7 @@ export const useFolderManagement = ({
     // Queue config save in background
     await actionQueueService.enqueue(
       'save-user-config',
-      { config: newConfig, keyset },
+      { config: newConfig },
       `config:${config.address}` // Dedup key
     );
   }, [

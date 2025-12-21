@@ -33,6 +33,11 @@ export interface HandlerDependencies {
   configService: ConfigService;
   spaceService: SpaceService;
   queryClient: QueryClient;
+  /** Get user keyset from ActionQueueService (avoids storing keys in task context) */
+  getUserKeyset: () => {
+    deviceKeyset: secureChannel.DeviceKeyset;
+    userKeyset: secureChannel.UserKeyset;
+  } | null;
 }
 
 export interface TaskHandler {
@@ -59,10 +64,23 @@ export class ActionQueueHandlers {
    */
   private saveUserConfig: TaskHandler = {
     execute: async (context) => {
-      await this.deps.configService.saveConfig({
-        config: context.config as any,
-        keyset: context.keyset as any,
+      console.log('[ActionQueue:saveUserConfig] Fetching keyset from service...');
+      const keyset = this.deps.getUserKeyset();
+      if (!keyset) {
+        throw new Error('Keyset not available');
+      }
+      const config = context.config as any;
+      console.log('[ActionQueue:saveUserConfig] Keyset obtained, saving config...', {
+        address: config?.address,
+        itemCount: config?.items?.length,
+        spaceCount: config?.spaceIds?.length,
+        items: config?.items?.map((i: any) => i.type === 'folder' ? `folder:${i.name}` : `space:${i.id?.slice(0, 8)}`),
       });
+      await this.deps.configService.saveConfig({
+        config,
+        keyset,
+      });
+      console.log('[ActionQueue:saveUserConfig] Config saved successfully');
     },
     isPermanentError: (error) => {
       return (
@@ -107,6 +125,10 @@ export class ActionQueueHandlers {
    */
   private kickUser: TaskHandler = {
     execute: async (context) => {
+      const keyset = this.deps.getUserKeyset();
+      if (!keyset) {
+        throw new Error('Keyset not available');
+      }
       // Check if user still in space (may have left while offline)
       const members = await this.deps.messageDB.getSpaceMembers(
         context.spaceId as string
@@ -120,8 +142,8 @@ export class ActionQueueHandlers {
       await this.deps.spaceService.kickUser(
         context.spaceId as string,
         context.userAddress as string,
-        context.user_keyset as any,
-        context.device_keyset as any,
+        keyset.userKeyset,
+        keyset.deviceKeyset,
         context.registration as any,
         this.deps.queryClient
       );
@@ -494,23 +516,29 @@ export class ActionQueueHandlers {
    * - messageId: string
    * - self: UserRegistration
    * - counterparty: UserRegistration
-   * - keyset: { deviceKeyset, userKeyset }
    * - senderDisplayName: string (optional, user's display name for identity revelation)
    * - senderUserIcon: string (optional, user's profile picture URL for identity revelation)
    */
   private sendDm: TaskHandler = {
     execute: async (context) => {
+      console.log('[ActionQueue:sendDm] Fetching keyset from service...');
+      const keyset = this.deps.getUserKeyset();
+      if (!keyset) {
+        throw new Error('Keyset not available');
+      }
       const address = context.address as string;
       const signedMessage = context.signedMessage as Message;
       const messageId = context.messageId as string;
       const self = context.self as secureChannel.UserRegistration;
       const counterparty = context.counterparty as secureChannel.UserRegistration;
-      const keyset = context.keyset as {
-        deviceKeyset: secureChannel.DeviceKeyset;
-        userKeyset: secureChannel.UserKeyset;
-      };
       const senderDisplayName = context.senderDisplayName as string | undefined;
       const senderUserIcon = context.senderUserIcon as string | undefined;
+
+      console.log('[ActionQueue:sendDm] Processing DM...', {
+        messageId: messageId?.slice(0, 16),
+        address: address?.slice(0, 16),
+        contentType: signedMessage?.content?.type,
+      });
 
       const conversationId = address + '/' + address;
       const conversation = await this.deps.messageDB.getConversation({
@@ -554,8 +582,14 @@ export class ActionQueueHandlers {
 
       // Validate we have recipients to send to
       if (targetInboxes.length === 0) {
+        console.error('[ActionQueue:sendDm] No target inboxes available');
         throw new Error('No target inboxes available for DM - counterparty may have no registered devices');
       }
+
+      console.log('[ActionQueue:sendDm] Encrypting for inboxes...', {
+        targetInboxCount: targetInboxes.length,
+        encryptionStatesCount: sets.length,
+      });
 
       // Encrypt for each inbox (Double Ratchet)
       for (let i = 0; i < targetInboxes.length; i++) {
@@ -647,7 +681,12 @@ export class ActionQueueHandlers {
       }
 
       // Send all messages via WebSocket
+      console.log('[ActionQueue:sendDm] Sending via WebSocket...', {
+        outboundMessagesCount: outboundMessages.length,
+        sessionsCount: sessions.length,
+      });
       await this.deps.messageService.sendDirectMessages(outboundMessages);
+      console.log('[ActionQueue:sendDm] WebSocket send completed');
 
       // Save to IndexedDB (without sendStatus/sendError)
       await this.deps.messageService.saveMessage(
@@ -715,6 +754,7 @@ export class ActionQueueHandlers {
           };
         }
       );
+      console.log('[ActionQueue:sendDm] DM sent successfully', { messageId: messageId?.slice(0, 16) });
     },
     isPermanentError: (error) => {
       return (
@@ -725,6 +765,7 @@ export class ActionQueueHandlers {
     onFailure: (context, error) => {
       const address = context.address as string;
       const messageId = context.messageId as string;
+      console.error('[ActionQueue:sendDm] DM send failed', { messageId: messageId?.slice(0, 16), error: error.message });
       this.deps.messageService.updateMessageStatus(
         this.deps.queryClient,
         address,
@@ -900,20 +941,19 @@ export class ActionQueueHandlers {
    * - reactionMessage: ReactionMessage | RemoveReactionMessage
    * - self: UserRegistration
    * - counterparty: UserRegistration
-   * - keyset: { deviceKeyset, userKeyset }
    * - senderDisplayName?: string
    * - senderUserIcon?: string
    */
   private reactionDm: TaskHandler = {
     execute: async (context) => {
+      const keyset = this.deps.getUserKeyset();
+      if (!keyset) {
+        throw new Error('Keyset not available');
+      }
       const address = context.address as string;
       const reactionMessage = context.reactionMessage as Record<string, unknown>;
       const self = context.self as secureChannel.UserRegistration;
       const counterparty = context.counterparty as secureChannel.UserRegistration;
-      const keyset = context.keyset as {
-        deviceKeyset: secureChannel.DeviceKeyset;
-        userKeyset: secureChannel.UserKeyset;
-      };
       const senderDisplayName = context.senderDisplayName as string | undefined;
       const senderUserIcon = context.senderUserIcon as string | undefined;
 
@@ -944,20 +984,19 @@ export class ActionQueueHandlers {
    * - deleteMessage: RemoveMessage
    * - self: UserRegistration
    * - counterparty: UserRegistration
-   * - keyset: { deviceKeyset, userKeyset }
    * - senderDisplayName?: string
    * - senderUserIcon?: string
    */
   private deleteDm: TaskHandler = {
     execute: async (context) => {
+      const keyset = this.deps.getUserKeyset();
+      if (!keyset) {
+        throw new Error('Keyset not available');
+      }
       const address = context.address as string;
       const deleteMessage = context.deleteMessage as Record<string, unknown>;
       const self = context.self as secureChannel.UserRegistration;
       const counterparty = context.counterparty as secureChannel.UserRegistration;
-      const keyset = context.keyset as {
-        deviceKeyset: secureChannel.DeviceKeyset;
-        userKeyset: secureChannel.UserKeyset;
-      };
       const senderDisplayName = context.senderDisplayName as string | undefined;
       const senderUserIcon = context.senderUserIcon as string | undefined;
 
@@ -995,21 +1034,20 @@ export class ActionQueueHandlers {
    * - messageId: string
    * - self: UserRegistration
    * - counterparty: UserRegistration
-   * - keyset: { deviceKeyset, userKeyset }
    * - senderDisplayName?: string
    * - senderUserIcon?: string
    */
   private editDm: TaskHandler = {
     execute: async (context) => {
+      const keyset = this.deps.getUserKeyset();
+      if (!keyset) {
+        throw new Error('Keyset not available');
+      }
       const address = context.address as string;
       const editMessage = context.editMessage as Record<string, unknown>;
       const messageId = context.messageId as string;
       const self = context.self as secureChannel.UserRegistration;
       const counterparty = context.counterparty as secureChannel.UserRegistration;
-      const keyset = context.keyset as {
-        deviceKeyset: secureChannel.DeviceKeyset;
-        userKeyset: secureChannel.UserKeyset;
-      };
       const senderDisplayName = context.senderDisplayName as string | undefined;
       const senderUserIcon = context.senderUserIcon as string | undefined;
 

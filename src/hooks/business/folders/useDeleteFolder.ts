@@ -59,11 +59,11 @@ export const useDeleteFolder = () => {
       // Queue config save in background - no more UI blocking!
       await actionQueueService.enqueue(
         'save-user-config',
-        { config: newConfig, keyset },
+        { config: newConfig },
         `config:${config.address}` // Dedup key
       );
     },
-    [config, keyset, queryClient, actionQueueService]
+    [config, queryClient, actionQueueService]
   );
 
   return { deleteFolder };

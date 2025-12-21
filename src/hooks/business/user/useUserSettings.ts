@@ -152,7 +152,7 @@ export const useUserSettings = (
     };
     await actionQueueService.enqueue(
       'save-user-config',
-      { config: newConfig, keyset },
+      { config: newConfig },
       `config:${currentPasskeyInfo.address}` // Dedup key
     );
 

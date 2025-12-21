@@ -1533,7 +1533,6 @@ export class MessageService {
           messageId: messageIdHex,
           self,
           counterparty,
-          keyset,
           senderDisplayName: currentPasskeyInfo.displayName,
           senderUserIcon: currentPasskeyInfo.pfpUrl,
         },

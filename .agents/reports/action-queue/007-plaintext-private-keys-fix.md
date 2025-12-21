@@ -1,278 +1,234 @@
-# 007: Fix - Encrypt Action Queue Context
+# 007: Fix - Don't Store Keys in Action Queue
 
 > **AI-Generated**: May contain errors. Verify before use.
 
 **Related Bug**: [006-plaintext-private-keys-bug.md](006-plaintext-private-keys-bug.md)
-**Effort**: ~50 lines of code
+**Effort**: ~30 lines of code
 **Risk**: Low
-**Pattern**: Already exists in codebase (`ConfigService.ts`)
+**Approach**: Wait for auth, pull keyset from service state - no keys stored
 
 ---
 
 ## Summary
 
-Encrypt the `context` field in `QueueTask` before storing to IndexedDB. Only 6 of 17 action types contain private keys and require encryption.
+Remove keyset from queue context entirely. The queue waits for auth to complete, then handlers pull keyset from service state at processing time.
 
----
-
-## Files to Modify
-
-1. **`src/utils/encryption.ts`** - New shared utility (or add to existing)
-2. **`src/services/ActionQueueService.ts`** - Add encrypt/decrypt + `setUserKeyset()`
-3. **`src/types/actionQueue.ts`** - Update interface
-4. **`src/components/context/RegistrationPersister.tsx`** - Wire up `setUserKeyset()`
-
----
-
-## Task Types by Security Requirement
-
-| Task Type | Has `keyset` in context? | Contains private keys? | Needs encryption? |
-|-----------|--------------------------|------------------------|-------------------|
-| **DM Tasks (Double Ratchet)** | | | |
-| `send-dm` | ✅ Yes (`keyset`) | ✅ **YES** - DeviceKeyset + UserKeyset | **CRITICAL** |
-| `reaction-dm` | ✅ Yes (via `dmActionContext`) | ✅ **YES** - DeviceKeyset + UserKeyset | **CRITICAL** |
-| `delete-dm` | ✅ Yes (via `dmActionContext`) | ✅ **YES** - DeviceKeyset + UserKeyset | **CRITICAL** |
-| `edit-dm` | ✅ Yes (via `dmActionContext`) | ✅ **YES** - DeviceKeyset + UserKeyset | **CRITICAL** |
-| **Config/Settings** | | | |
-| `save-user-config` | ✅ Yes (`keyset`) | ✅ **YES** - Full keyset | **CRITICAL** |
-| **Moderation (Space)** | | | |
-| `kick-user` | ✅ Yes (`user_keyset`, `device_keyset`) | ✅ **YES** - Both keysets | **CRITICAL** |
-| `mute-user` | ❌ No (`currentPasskeyInfo`) | ❌ No (just address) | Optional |
-| `unmute-user` | ❌ No (`currentPasskeyInfo`) | ❌ No (just address) | Optional |
-| **Space Tasks (Triple Ratchet)** | | | |
-| `send-channel-message` | ❌ No | ❌ No (signed message) | Optional |
-| `reaction` | ❌ No (`currentPasskeyInfo`) | ❌ No (just address) | Optional |
-| `pin-message` | ❌ No (`currentPasskeyInfo`) | ❌ No | Optional |
-| `unpin-message` | ❌ No (`currentPasskeyInfo`) | ❌ No | Optional |
-| `edit-message` | ❌ No (`currentPasskeyInfo`) | ❌ No | Optional |
-| `delete-message` | ❌ No (`currentPasskeyInfo`) | ❌ No | Optional |
-| `update-space` | ❌ No (just `spaceId`, `space`) | ❌ No | Optional |
-
-**Summary**: 6 task types contain private keys and require encryption:
-- `send-dm`, `reaction-dm`, `delete-dm`, `edit-dm` (DM actions)
-- `save-user-config` (config sync)
-- `kick-user` (moderation with key-based auth)
-
----
-
-## Implementation
-
-### 1. Encryption Utility
-
-```typescript
-// src/utils/encryption.ts (new shared utility)
-
-import { UserKeyset } from '@quilibrium/quilibrium-js-sdk-channels';
-
-// Cache the derived AES key for the tab lifecycle (performance optimization)
-// Safe because userKeyset is already in React state for the entire tab lifecycle
-let cachedAesKey: CryptoKey | null = null;
-
-export async function getOrDeriveAesKey(userKey: UserKeyset): Promise<CryptoKey> {
-  if (cachedAesKey) return cachedAesKey;
-
-  const derived = await crypto.subtle.digest(
-    'SHA-512',
-    Buffer.from(new Uint8Array(userKey.user_key.private_key))
-  );
-  cachedAesKey = await crypto.subtle.importKey(
-    'raw',
-    derived.slice(0, 32),
-    { name: 'AES-GCM' },
-    false,
-    ['encrypt', 'decrypt']
-  );
-  return cachedAesKey;
-}
-
-// Call on tab close or if user somehow logs out
-export function clearCachedAesKey(): void {
-  cachedAesKey = null;
-}
-
-export async function encryptContext(
-  context: Record<string, unknown>,
-  aesKey: CryptoKey
-): Promise<{ encryptedContext: string; iv: string }> {
-  const iv = crypto.getRandomValues(new Uint8Array(12));
-  const encrypted = await crypto.subtle.encrypt(
-    { name: 'AES-GCM', iv },
-    aesKey,
-    Buffer.from(JSON.stringify(context), 'utf-8')
-  );
-  return {
-    encryptedContext: Buffer.from(encrypted).toString('hex'),
-    iv: Buffer.from(iv).toString('hex'),
-  };
-}
-
-export async function decryptContext(
-  encryptedContext: string,
-  iv: string,
-  aesKey: CryptoKey
-): Promise<Record<string, unknown>> {
-  const decrypted = await crypto.subtle.decrypt(
-    { name: 'AES-GCM', iv: Buffer.from(iv, 'hex') },
-    aesKey,
-    Buffer.from(encryptedContext, 'hex')
-  );
-  return JSON.parse(Buffer.from(decrypted).toString('utf-8'));
-}
-```
-
-### 2. ActionQueueService Changes
-
-```typescript
-// ActionQueueService.ts - Add setUserKeyset() method
-
-private userKeyset: UserKeyset | null = null;
-
-/**
- * Set the user's keyset for encrypting/decrypting queue context.
- * Call this after passkey auth completes (same place as MessageDB.setKeyset).
- */
-setUserKeyset(keyset: UserKeyset): void {
-  this.userKeyset = keyset;
-  // Also cache the derived AES key for performance
-  getOrDeriveAesKey(keyset).catch(() => {});
-}
-
-clearUserKeyset(): void {
-  this.userKeyset = null;
-  clearCachedAesKey();
-}
-```
-
-**Why `setUserKeyset()` is needed**: On `processTask`, the context is encrypted - we can't read `keyset` from it to decrypt! The `setUserKeyset()` approach:
-- Follows existing patterns (`setHandlers()`, `setIsOnlineCallback()`)
-- Single source of truth for the keyset
-- Works for both enqueue and process
-- Integrates with AES key caching
-
-### 3. On Enqueue
-
-```typescript
-async enqueue(type: ActionType, context: Record<string, unknown>, key: string) {
-  // Extract userKeyset from context - different field names for different task types:
-  // - DM tasks, save-user-config: context.keyset.userKeyset
-  // - kick-user: context.user_keyset (direct UserKeyset)
-  const keyset = context.keyset as { userKeyset: UserKeyset } | undefined;
-  const userKeyset = keyset?.userKeyset ?? (context.user_keyset as UserKeyset | undefined);
-
-  let taskToStore: QueueTask;
-
-  if (userKeyset) {
-    // Tasks with private keys - MUST encrypt
-    const aesKey = await getOrDeriveAesKey(userKeyset);
-    const { encryptedContext, iv } = await encryptContext(context, aesKey);
-    taskToStore = { ...task, encryptedContext, iv, context: undefined };
-  } else {
-    // Space tasks (mute/unmute, reactions, pins, etc.) - no private keys, store as-is
-    taskToStore = { ...task, context, encryptedContext: undefined, iv: undefined };
-  }
-
-  // ... store taskToStore
-}
-```
-
-### 4. On Process
-
-```typescript
-async processTask(task: QueueTask) {
-  let context: Record<string, unknown>;
-
-  if (task.encryptedContext && task.iv) {
-    // Encrypted task - need to decrypt
-    if (!this.userKeyset) {
-      throw new Error('ActionQueueService: userKeyset not set, cannot decrypt task');
-    }
-    const aesKey = await getOrDeriveAesKey(this.userKeyset);
-    context = await decryptContext(task.encryptedContext, task.iv, aesKey);
-  } else {
-    // Unencrypted Space task
-    context = task.context!;
-  }
-
-  // ... pass context to handler
-}
-```
-
-### 5. Wire Up in Context
-
-```typescript
-// In RegistrationPersister.tsx or MessageDB context, after passkey auth:
-setKeyset({ deviceKeyset, userKeyset });  // existing
-actionQueueService.setUserKeyset(userKeyset);  // new - add this
-```
-
----
-
-## Updated Interface
-
-```typescript
-// src/types/actionQueue.ts
-
-export interface QueueTask {
-  id?: number;
-  taskType: ActionType;
-
-  // For encrypted tasks (DM, config, kick) - mutually exclusive with context
-  encryptedContext?: string;  // AES-GCM encrypted
-  iv?: string;                // 12-byte IV
-
-  // For unencrypted tasks (Space) - mutually exclusive with encryptedContext
-  context?: Record<string, unknown>;
-
-  key: string;
-  status: TaskStatus;
-  retryCount: number;
-  maxRetries: number;
-  nextRetryAt: number;
-  createdAt: number;
-  processedAt?: number;
-  processingStartedAt?: number;
-  error?: string;
-}
-```
+This is simpler and more secure than the original proposal (encrypting stored keys).
 
 ---
 
 ## Why This Works
 
-- **Keys already in memory**: After app open, `userKeyset` is in React state for the entire tab lifecycle
-- **No UX change**: No additional prompts or auth required
-- **Consistent pattern**: Matches `ConfigService.ts` encryption approach
-- **True protection for passkey users**: AES key derived from hardware-backed Ed448
-- **No performance impact**: Key derived once per tab, cached for all subsequent operations
-- **Selective encryption**: Only encrypts tasks that actually contain private keys
+1. **Auth always happens on app open** - the user must authenticate to use the app
+2. **Keyset is in memory after auth** - available in React state (`MessageDB.tsx`)
+3. **Queue already has gating** - waits for `setHandlers()` before processing
+4. **Just add one more gate** - `setUserKeyset()` after auth
+
+```
+App opens
+    ↓
+Passkey auth (already happens)
+    ↓
+setKeyset() in MessageDB (already happens)
+    ↓
+actionQueueService.setUserKeyset(keyset)  ← NEW
+    ↓
+Queue starts processing (pulls keyset from service)
+```
+
+**No extra prompts. No UX change. Keys never on disk.**
 
 ---
 
-## Performance Note
+## Scenarios
 
-The AES key is cached in memory for the tab lifecycle. This is safe because:
-- The source `userKeyset` is already stored in React state (`MessageDB.tsx`) for the entire tab
-- An attacker who can read the cached AES key can also read the source private key
-- Key derivation (~1ms) only happens once per tab, not per action
+| Scenario | Behavior |
+|----------|----------|
+| User online, sends DM | Queued without keys, processed immediately (keyset in memory) |
+| User goes offline, sends DM | Queued without keys, waits for online |
+| User comes back online | Processed (keyset still in memory from earlier auth) |
+| User closes app while offline | Queue persists, keys don't |
+| User reopens app | Auth happens, keyset in memory, queue processes |
+| Auth fails/cancelled | Queue waits (correct - can't process without keys) |
+
+---
+
+## Files to Modify
+
+1. **`src/services/ActionQueueService.ts`** - Add `setUserKeyset()` and keyset gate
+2. **`src/services/ActionQueueHandlers.ts`** - Pull keyset from deps, not context
+3. **`src/components/context/MessageDB.tsx`** - Wire up `setUserKeyset()` after auth
+4. **Enqueue call sites** - Remove keyset from context
+
+---
+
+## Implementation
+
+### 1. ActionQueueService - Add Keyset Gate
+
+```typescript
+// ActionQueueService.ts
+
+private userKeyset: {
+  deviceKeyset: DeviceKeyset;
+  userKeyset: UserKeyset;
+} | null = null;
+
+/**
+ * Set keyset after passkey auth completes.
+ * Queue waits for this before processing tasks that need keys.
+ */
+setUserKeyset(keyset: { deviceKeyset: DeviceKeyset; userKeyset: UserKeyset }): void {
+  this.userKeyset = keyset;
+}
+
+getUserKeyset(): { deviceKeyset: DeviceKeyset; userKeyset: UserKeyset } | null {
+  return this.userKeyset;
+}
+
+clearUserKeyset(): void {
+  this.userKeyset = null;
+}
+```
+
+### 2. ActionQueueService - Gate in processQueue()
+
+```typescript
+async processQueue(): Promise<void> {
+  if (this.isProcessing) return;
+  if (!this.isOnline()) return;
+  if (!this.handlers) return;
+
+  // NEW: Wait for keyset for tasks that need it
+  // (Could be more granular - only gate DM/config/kick tasks)
+  if (!this.userKeyset) {
+    return;  // Auth not complete yet
+  }
+
+  // ... rest of processing
+}
+```
+
+### 3. ActionQueueHandlers - Pull from Deps
+
+```typescript
+// Before
+const keyset = context.keyset as { deviceKeyset, userKeyset };
+
+// After
+const keyset = this.deps.actionQueueService.getUserKeyset();
+if (!keyset) {
+  throw new Error('Keyset not available');
+}
+```
+
+Update all 6 affected handlers:
+- `send-dm` (line ~508)
+- `reaction-dm` (line ~913)
+- `delete-dm` (line ~957)
+- `edit-dm` (line ~1009)
+- `save-user-config` (line ~64)
+- `kick-user` (line ~123)
+
+### 4. Wire Up After Auth
+
+```typescript
+// In MessageDB.tsx, after setKeyset()
+useEffect(() => {
+  if (keyset.userKeyset && keyset.deviceKeyset) {
+    actionQueueService.setUserKeyset(keyset);
+  }
+}, [keyset]);
+```
+
+Or in `RegistrationPersister.tsx` right after `setKeyset()`:
+
+```typescript
+setKeyset({ deviceKeyset: senderDevice, userKeyset: senderIdent });
+actionQueueService.setUserKeyset({
+  deviceKeyset: senderDevice,
+  userKeyset: senderIdent
+});
+```
+
+### 5. Remove Keyset from Enqueue Calls
+
+Update all enqueue call sites to not include keyset in context:
+
+**DM actions** (`MessageService.ts`, `useMessageActions.ts`, etc.):
+```typescript
+// Before
+context: { signedMessage, self, counterparty, keyset, ... }
+
+// After
+context: { signedMessage, self, counterparty, ... }  // No keyset
+```
+
+**save-user-config** (`useUserSettings.ts`, etc.):
+```typescript
+// Before
+context: { config, keyset }
+
+// After
+context: { config }  // No keyset
+```
+
+**kick-user** (`useUserKicking.ts`):
+```typescript
+// Before
+context: { spaceId, userAddress, user_keyset, device_keyset, registration }
+
+// After
+context: { spaceId, userAddress, registration }  // No keysets
+```
+
+---
+
+## Web Worker Compatibility
+
+If we add a web worker later, this approach still works:
+
+```
+Main thread: passkey auth → keyset in memory
+Main thread: postMessage({ type: 'setKeyset', keyset }) → Worker
+Worker: Stores keyset in its own memory, processes queue
+```
+
+No keys on disk either way.
 
 ---
 
 ## Verification Checklist
 
 - [ ] TypeScript compiles: `npx tsc --noEmit --jsx react-jsx --skipLibCheck`
-- [ ] Inspect IndexedDB in DevTools - confirm no plaintext keys in `action_queue`
-- [ ] DM sending still works
-- [ ] Config save still works
-- [ ] Kick user still works
-- [ ] Space messages work (unencrypted path)
-- [ ] App restart doesn't break queue processing
+- [ ] Inspect IndexedDB in DevTools - confirm no `keyset` in `action_queue` tasks
+- [ ] DM sending works (online)
+- [ ] DM sending works (offline → online)
+- [ ] Config save works
+- [ ] Kick user works
+- [ ] App restart with pending queue tasks works
+- [ ] Auth failure doesn't process queue (correct behavior)
+
+---
+
+## Comparison with Original Proposal
+
+| Aspect | Original (encrypt keys) | New (don't store keys) |
+|--------|------------------------|------------------------|
+| Keys on disk | Yes (encrypted) | No |
+| Code changes | ~50 lines | ~30 lines |
+| Complexity | Add encryption utils | Just wiring |
+| Web worker ready | Need to pass decryption key | Just postMessage keyset |
+| Security model | Encrypted at rest | Not stored at all |
+
+The new approach is simpler and more secure.
 
 ---
 
 ## Related
 
 - **Bug**: [006-plaintext-private-keys-bug.md](006-plaintext-private-keys-bug.md)
-- **Existing Pattern**: `src/services/ConfigService.ts` - encryption for config sync
+- **Old fix proposal**: [007-plaintext-private-keys-fix-old.md](007-plaintext-private-keys-fix-old.md)
 - **Doc**: [Action Queue Feature](../../docs/features/action-queue.md)
 
 ---

@@ -2163,6 +2163,47 @@ export class MessageDB {
   }
 
   /**
+   * Get pending tasks by dedup key.
+   * Used for deduplication - find existing pending tasks with same key.
+   */
+  async getPendingTasksByKey(key: string): Promise<QueueTask[]> {
+    await this.init();
+    return new Promise((resolve, reject) => {
+      const tx = this.db!.transaction('action_queue', 'readonly');
+      const store = tx.objectStore('action_queue');
+      const index = store.index('key');
+      const request = index.getAll(key);
+
+      request.onsuccess = () => {
+        const tasks = (request.result || []) as QueueTask[];
+        // Filter to only pending tasks
+        resolve(tasks.filter((t) => t.status === 'pending'));
+      };
+      request.onerror = () => reject(request.error);
+    });
+  }
+
+  /**
+   * Check if there's a currently processing task with the given key.
+   * Used to skip enqueueing new tasks while one is actively being processed.
+   */
+  async hasProcessingTaskWithKey(key: string): Promise<boolean> {
+    await this.init();
+    return new Promise((resolve, reject) => {
+      const tx = this.db!.transaction('action_queue', 'readonly');
+      const store = tx.objectStore('action_queue');
+      const index = store.index('key');
+      const request = index.getAll(key);
+
+      request.onsuccess = () => {
+        const tasks = (request.result || []) as QueueTask[];
+        resolve(tasks.some((t) => t.status === 'processing'));
+      };
+      request.onerror = () => reject(request.error);
+    });
+  }
+
+  /**
    * Get a single task by ID
    */
   async getQueueTask(id: number): Promise<QueueTask | undefined> {

@@ -65,11 +65,11 @@ export const useSpaceDragAndDrop = ({
       };
       actionQueueService.enqueue(
         'save-user-config',
-        { config: newConfig, keyset },
+        { config: newConfig },
         `config:space-order` // Dedup key
       );
     },
-    [mappedSpaces, setMappedSpaces, config, actionQueueService, keyset, setIsDragging]
+    [mappedSpaces, setMappedSpaces, config, actionQueueService, setIsDragging]
   );
 
   const sensors = useSensors(

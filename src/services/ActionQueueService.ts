@@ -14,12 +14,20 @@ import { MessageDB } from '../db/messages';
 import type { QueueTask, ActionType, QueueStats } from '../types/actionQueue';
 import type { ActionQueueHandlers } from './ActionQueueHandlers';
 import { showError } from '../utils/toast';
+import type { channel as secureChannel } from '@quilibrium/quilibrium-js-sdk-channels';
 
 export class ActionQueueService {
   private messageDB: MessageDB;
   private handlers: ActionQueueHandlers | null = null; // Lazy init to avoid circular deps
   private isProcessing = false;
   private processInterval: ReturnType<typeof setInterval> | null = null;
+
+  // User keyset - set after passkey auth completes
+  // Keys are stored in memory only, never persisted to disk
+  private userKeyset: {
+    deviceKeyset: secureChannel.DeviceKeyset;
+    userKeyset: secureChannel.UserKeyset;
+  } | null = null;
 
   // Callback to check online status from ActionQueueContext
   // Uses WebSocket state instead of unreliable navigator.onLine
@@ -40,7 +48,7 @@ export class ActionQueueService {
 
   // Queue limits
   private readonly MAX_QUEUE_SIZE = 1000;
-  private readonly MAX_TASK_AGE_MS = 7 * 24 * 60 * 60 * 1000; // 7 days
+  private readonly MAX_TASK_AGE_MS = 3 * 24 * 60 * 60 * 1000; // 3 days
 
   constructor(messageDB: MessageDB) {
     this.messageDB = messageDB;
@@ -64,13 +72,75 @@ export class ActionQueueService {
   }
 
   /**
-   * Enqueue a task for background processing
+   * Set keyset after passkey auth completes.
+   * Queue waits for this before processing tasks that need keys.
+   */
+  setUserKeyset(keyset: {
+    deviceKeyset: secureChannel.DeviceKeyset;
+    userKeyset: secureChannel.UserKeyset;
+  }): void {
+    console.log('[ActionQueue] setUserKeyset called - keyset now available');
+    this.userKeyset = keyset;
+    // Trigger processing now that keyset is available
+    this.processQueue();
+  }
+
+  /**
+   * Get the current user keyset (for handlers to use at processing time).
+   */
+  getUserKeyset(): {
+    deviceKeyset: secureChannel.DeviceKeyset;
+    userKeyset: secureChannel.UserKeyset;
+  } | null {
+    console.log('[ActionQueue] getUserKeyset called, hasKeyset:', !!this.userKeyset);
+    return this.userKeyset;
+  }
+
+  /**
+   * Clear keyset (e.g., on logout).
+   */
+  clearUserKeyset(): void {
+    this.userKeyset = null;
+  }
+
+  /**
+   * Enqueue a task for background processing.
+   * If a pending task with the same key exists, it will be replaced with the new context.
+   * This ensures the latest data is always used (e.g., latest config state).
    */
   async enqueue(
     type: ActionType,
     context: Record<string, unknown>,
     key: string
   ): Promise<number> {
+    // Debug: verify no keyset in context
+    const contextKeys = Object.keys(context);
+    const hasKeyset = contextKeys.includes('keyset') || contextKeys.includes('user_keyset') || contextKeys.includes('device_keyset');
+    console.log(`[ActionQueue] enqueue type=${type}, contextKeys=${contextKeys.join(',')}, hasKeyset=${hasKeyset}`);
+    if (hasKeyset) {
+      console.warn('[ActionQueue] WARNING: keyset found in context! This should not happen.');
+    }
+
+    // Check if there's already a task with this key being processed
+    // If so, just update the pending task (or create one) - don't start multiple API calls
+    const hasProcessing = await this.messageDB.hasProcessingTaskWithKey(key);
+
+    // Deduplication: Remove any existing pending tasks with the same key
+    // This ensures we always use the latest context (e.g., latest config state)
+    const existingTasks = await this.messageDB.getPendingTasksByKey(key);
+    if (existingTasks.length > 0) {
+      console.log(`[ActionQueue] Replacing ${existingTasks.length} existing pending task(s) with key=${key}`);
+      for (const existing of existingTasks) {
+        await this.messageDB.deleteQueueTask(existing.id!);
+      }
+    }
+
+    // If a task with this key is currently processing, just queue the new one
+    // It will be picked up after the current one completes (or fails/retries)
+    if (hasProcessing) {
+      console.log(`[ActionQueue] Task with key=${key} is processing, queuing update for after completion`);
+    }
+
     // Check queue size limits
     const stats = await this.messageDB.getQueueStats();
     if (stats.total >= this.MAX_QUEUE_SIZE) {
@@ -145,6 +215,12 @@ export class ActionQueueService {
       return;
     }
 
+    // Wait for keyset - auth not complete yet
+    // Tasks requiring keys will wait until setUserKeyset() is called
+    if (!this.userKeyset) {
+      return;
+    }
+
     this.isProcessing = true;
 
     try {
@@ -210,6 +286,13 @@ export class ActionQueueService {
 
       // Success - delete task
       await this.messageDB.deleteQueueTask(task.id!);
+
+      // Check if there's a pending task with the same key (user made more changes while processing)
+      // If so, that task has newer data - don't need to do anything, it will be processed next
+      const pendingWithSameKey = await this.messageDB.getPendingTasksByKey(task.key);
+      if (pendingWithSameKey.length > 0) {
+        console.log(`[ActionQueue] Task completed but found ${pendingWithSameKey.length} pending update(s) with key=${task.key}`);
+      }
     } catch (error) {
       const err = error instanceof Error ? error : new Error(String(error));
 

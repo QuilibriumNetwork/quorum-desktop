@@ -583,14 +583,14 @@ export const useFolderDragAndDrop = ({
       actionQueueService
         .enqueue(
           'save-user-config',
-          { config: newConfig, keyset },
+          { config: newConfig },
           `config:${newConfig.address}` // Dedup key - only latest config matters
         )
         .catch((err) => {
           console.error('[FolderDragAndDrop] Failed to queue config save:', err);
         });
     },
-    [config, keyset, actionQueueService, setIsDragging, setActiveItem, dropTarget, setDropTarget, queryClient, onFolderCreated]
+    [config, actionQueueService, setIsDragging, setActiveItem, dropTarget, setDropTarget, queryClient, onFolderCreated]
   );
 
   // Configure sensors for both mouse and touch

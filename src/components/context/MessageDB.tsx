@@ -865,8 +865,9 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
       configService,
       spaceService,
       queryClient,
+      getUserKeyset: () => actionQueueService.getUserKeyset(),
     });
-  }, [messageDB, messageService, configService, spaceService, queryClient]);
+  }, [messageDB, messageService, configService, spaceService, queryClient, actionQueueService]);
 
   // Wire handlers and start queue processing
   useEffect(() => {
@@ -878,6 +879,14 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
       actionQueueService.stop();
     };
   }, [actionQueueService, actionQueueHandlers, messageService]);
+
+  // Set keyset on ActionQueueService after passkey auth completes
+  // This allows the queue to process tasks that require keys
+  useEffect(() => {
+    if (keyset?.userKeyset && keyset?.deviceKeyset) {
+      actionQueueService.setUserKeyset(keyset);
+    }
+  }, [keyset, actionQueueService]);
 
   const createSpace = React.useCallback(
     async (
