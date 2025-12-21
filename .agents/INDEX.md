@@ -329,6 +329,7 @@ This is the main index for all documentation, bug reports, and task management.
 
 ### Active Reports
 
+- [Comprehensive Privacy & Security Audit - All Features](reports/privacy-security-comprehensive-audit_2025-12-21.md)
 - [Cryptographic Code Best Practices: Abstraction vs Duplication](reports/cryptographic-code-best-practices_2025-12-20.md)
 - [dnd-kit Touch Drag-and-Drop Best Practices Research](reports/dnd-kit-touch-best-practices_2025-12-11.md)
 - [File Size & Service Extraction Best Practices](reports/file-size-best-practices_2025-12-20.md)
@@ -348,7 +349,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [007: Fix - Encrypt Action Queue Context](reports/action-queue/007-plaintext-private-keys-fix-old.md)
 - [007: Fix - Don't Store Keys in Action Queue](reports/action-queue/007-plaintext-private-keys-fix.md)
 - [008: Action Queue Endpoint Dependencies & Failure Modes](reports/action-queue/008-endpoint-dependencies.md)
-- [009: Persist DM Registration Data for Full Offline Support](reports/action-queue/009-dm-offline-registration-persistence.md)
+- [009: Persist DM Registration Data for Full Offline Support](reports/action-queue/009-dm-offline-registration-persistence-fix.md)
 
 ### Onboarding Flow
 - [Passkey Authentication Flow Analysis](reports/onboarding-flow/passkey-authentication-flow-analysis-2025-11-23.md)
@@ -357,4 +358,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2025-12-21 11:59:21
+**Last Updated**: 2025-12-21 12:08:10
