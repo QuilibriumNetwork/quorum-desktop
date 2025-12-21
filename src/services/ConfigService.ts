@@ -494,6 +494,13 @@ export class ConfigService {
     console.log('[ConfigService] Saving config to local DB...');
     await this.messageDB.saveUserConfig(config);
     console.log('[ConfigService] Config saved to local DB');
+
+    // Update React Query cache to prevent stale reads
+    // (fixes: folder operations reading stale allowSync value)
+    this.queryClient.setQueryData(
+      buildConfigKey({ userAddress: config.address! }),
+      config
+    );
   }
 
   /**
