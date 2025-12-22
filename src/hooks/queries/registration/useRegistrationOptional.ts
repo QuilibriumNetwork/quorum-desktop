@@ -16,8 +16,8 @@ const useRegistrationOptional = ({ address }: { address: string }) => {
     queryKey: buildRegistrationKey({ address }),
     queryFn: buildRegistrationFetcher({ apiClient, address }),
     networkMode: 'always', // Allow query to run offline (will fail gracefully)
-    staleTime: Infinity, // Don't refetch if we have data
-    gcTime: Infinity, // Keep in cache forever
+    staleTime: 5 * 60 * 1000, // Refetch after 5 minutes to pick up device changes
+    gcTime: Infinity, // Keep in cache forever (stale data better than no data offline)
     retry: false, // Don't retry failed requests when offline
   });
 };
