@@ -195,6 +195,54 @@ const DirectMessage: React.FC<{}> = () => {
     return m;
   }, [registration, conversation, address, user.currentPasskeyInfo]);
 
+  // Clean up stale encryption states when registration data changes
+  // This fixes the DM inbox mismatch bug where Action Queue encrypts to old inboxes
+  useEffect(() => {
+    // Guard: Only run when BOTH self and counterparty registration are available
+    if (!self?.registration || !registration?.registration || !address) {
+      return;
+    }
+
+    const cleanupStaleEncryptionStates = async () => {
+      try {
+        const convId = `${address}/${address}`;
+        const states = await messageDB.getEncryptionStates({ conversationId: convId });
+
+        if (states.length === 0) return;
+
+        // Check BOTH self and counterparty inboxes (matches legacy path at MessageService.ts:1627-1634)
+        const validInboxes = [
+          ...self.registration.device_registrations
+            .map(d => d.inbox_registration.inbox_address),
+          ...registration.registration.device_registrations
+            .map(d => d.inbox_registration.inbox_address),
+        ];
+
+        let deletedCount = 0;
+        for (const state of states) {
+          const parsed = JSON.parse(state.state);
+          if (!validInboxes.includes(parsed.tag)) {
+            await messageDB.deleteEncryptionState(state);
+            deletedCount++;
+          }
+        }
+
+        if (deletedCount > 0) {
+          console.log('[DirectMessage] Cleaned up stale encryption states', {
+            conversationId: convId,
+            deletedCount,
+            remainingCount: states.length - deletedCount,
+          });
+        }
+      } catch (error) {
+        console.error('[DirectMessage] Failed to cleanup stale encryption states:', error);
+        // Don't throw - cleanup is best-effort, shouldn't break the page
+      }
+    };
+
+    cleanupStaleEncryptionStates();
+  }, [self?.registration, registration?.registration, address, messageDB]);
+
   // Helper for compatibility
   const otherUser = members[address!] || {
     displayName: t`Unknown User`,
