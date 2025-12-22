@@ -14,9 +14,11 @@ import SpaceIcon from '../navbar/SpaceIcon';
 import ModalSaveOverlay from './ModalSaveOverlay';
 import './JoinSpaceModal.scss';
 import { t } from '@lingui/core/macro';
+import { Trans } from '@lingui/react/macro';
 import { useSpaceJoining, useInviteValidation } from '../../hooks';
 import { useSpaces } from '../../hooks';
 import { useModalSaveState } from '../../hooks/business/ui/useModalSaveState';
+import { useActionQueue } from '../context/ActionQueueContext';
 import {
   getValidInvitePrefixes,
   parseInviteParams,
@@ -47,6 +49,7 @@ const AddSpaceModal: React.FunctionComponent<AddSpaceModalProps> = (props) => {
     clearValidation,
   } = useInviteValidation();
   const { data: spaces } = useSpaces({});
+  const { isOnline } = useActionQueue();
 
   // Modal save state for joining overlay
   const { isSaving, saveUntilComplete } = useModalSaveState({
@@ -132,6 +135,11 @@ const AddSpaceModal: React.FunctionComponent<AddSpaceModalProps> = (props) => {
       />
 
       <Container>
+        {!isOnline && (
+          <Callout variant="warning" size="sm" className="mb-4">
+            <Trans>You're offline. Adding or creating a Space requires an internet connection.</Trans>
+          </Callout>
+        )}
         <Container className="flex flex-col gap-3">
           {!manualMode && !validatedSpace && (
             <Input
@@ -195,7 +203,7 @@ const AddSpaceModal: React.FunctionComponent<AddSpaceModalProps> = (props) => {
                 <Button
                   className="w-full sm:w-auto sm:inline-block sm:px-8"
                   type="primary"
-                  disabled={!manualSpaceId || !manualConfigKey || isValidating}
+                  disabled={!manualSpaceId || !manualConfigKey || isValidating || !isOnline}
                   onClick={handleManualLookup}
                 >
                   {t`Lookup`}
@@ -253,7 +261,7 @@ const AddSpaceModal: React.FunctionComponent<AddSpaceModalProps> = (props) => {
                 <Button
                   className="w-full sm:w-auto sm:inline-block sm:px-8"
                   type="primary"
-                  disabled={joining || isSaving || isAlreadyMember}
+                  disabled={joining || isSaving || isAlreadyMember || !isOnline}
                   onClick={handleJoin}
                 >
                   {isAlreadyMember ? t`Already Joined` : t`Join Space`}
@@ -289,6 +297,7 @@ const AddSpaceModal: React.FunctionComponent<AddSpaceModalProps> = (props) => {
                   type="primary"
                   className="w-full sm:w-auto sm:inline-block sm:px-8"
                   onClick={() => props.onCreateSpace()}
+                  disabled={!isOnline}
                 >
                   {t`Create a Space`}
                 </Button>

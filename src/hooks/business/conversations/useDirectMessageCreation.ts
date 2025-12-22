@@ -43,16 +43,24 @@ export const useDirectMessageCreation = () => {
   }, []);
 
   // Handle form submission
+  // Allow navigation to existing conversations even if API lookup fails (e.g., offline)
   const handleSubmit = useCallback(() => {
-    if (!address || validationResult.error) return;
+    if (!address) return;
+    if (!existingConversation && validationResult.error) return;
 
     closeNewDirectMessage();
     navigate('/messages/' + address);
-  }, [address, validationResult.error, closeNewDirectMessage, navigate]);
+  }, [address, existingConversation, validationResult.error, closeNewDirectMessage, navigate]);
 
   // Determine if button should be disabled
+  // Allow navigation to existing conversations even if API lookup fails (e.g., offline)
   const isButtonDisabled =
-    !address || !!validationResult.error || validationResult.isValidating;
+    !address ||
+    validationResult.isValidating ||
+    (!existingConversation && !!validationResult.error);
+
+  // Suppress error for existing conversations (user lookup may fail but navigation still works)
+  const displayError = existingConversation ? null : validationResult.error;
 
   return {
     address,
@@ -60,7 +68,7 @@ export const useDirectMessageCreation = () => {
     handleSubmit,
     buttonText,
     isButtonDisabled,
-    error: validationResult.error,
+    error: displayError,
     existingConversation,
   };
 };
