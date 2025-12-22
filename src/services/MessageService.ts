@@ -45,6 +45,7 @@ import { hasPermission } from '../utils/permissions';
 import { showWarning, dismissToast, showPersistentToast } from '../utils/toast';
 import { SimpleRateLimiter, RATE_LIMITS } from '../utils/rateLimit';
 import type { ActionQueueService } from './ActionQueueService';
+import { ENABLE_DM_ACTION_QUEUE } from '../config/features';
 
 // Timer for dismissing sync toast after inactivity
 let syncDismissTimer: NodeJS.Timeout | undefined;
@@ -1519,7 +1520,7 @@ export class MessageService {
       const existingStates = await this.messageDB.getEncryptionStates({ conversationId });
       const hasEstablishedSessions = existingStates.length > 0;
 
-      if (hasEstablishedSessions) {
+      if (ENABLE_DM_ACTION_QUEUE && hasEstablishedSessions) {
         // Add to cache with 'sending' status (optimistic update)
         await this.addMessage(queryClient, address, address, {
           ...message,
