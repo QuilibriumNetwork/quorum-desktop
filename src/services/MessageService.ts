@@ -1921,7 +1921,7 @@ export class MessageService {
         }
       );
       await this.addMessage(queryClient, address, address, message);
-      this.addOrUpdateConversation(
+      await this.addOrUpdateConversation(
         queryClient,
         address,
         Date.now(),
@@ -2072,7 +2072,7 @@ export class MessageService {
             display_name:
               conversation?.conversation?.displayName ?? t`Unknown User`,
           };
-          this.addOrUpdateConversation(
+          await this.addOrUpdateConversation(
             queryClient,
             session.user_address,
             envelope.timestamp,
@@ -3227,7 +3227,7 @@ export class MessageService {
           decryptedContent,
           true // Skip rate limiting for DMs
         );
-        this.addOrUpdateConversation(
+        await this.addOrUpdateConversation(
           queryClient,
           conversationId.split('/')[0],
           message.timestamp,

@@ -312,7 +312,7 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
     await apiClient.deleteInbox(del);
   };
 
-  const addOrUpdateConversation = (
+  const addOrUpdateConversation = async (
     queryClient: QueryClient,
     address: string,
     timestamp: number,
@@ -320,6 +320,27 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
     updatedUserProfile?: Partial<secureChannel.UserProfile>
   ) => {
     const conversationId = address + '/' + address;
+
+    // Persist profile updates to IndexedDB (not just React Query cache)
+    // This ensures profile data survives page refresh
+    if (updatedUserProfile?.display_name || updatedUserProfile?.user_icon) {
+      try {
+        const existing = await messageDB.getConversation({ conversationId });
+        if (existing?.conversation) {
+          await messageDB.saveConversation({
+            ...existing.conversation,
+            displayName:
+              updatedUserProfile.display_name ?? existing.conversation.displayName,
+            icon: updatedUserProfile.user_icon ?? existing.conversation.icon,
+            timestamp: Math.max(timestamp, existing.conversation.timestamp),
+          });
+        }
+      } catch (error) {
+        console.warn('Failed to persist conversation profile update:', error);
+      }
+    }
+
+    // Update React Query cache for immediate UI feedback
     queryClient.setQueryData(
       buildConversationsKey({ type: 'direct' }),
       (oldData: InfiniteData<any>) => {
