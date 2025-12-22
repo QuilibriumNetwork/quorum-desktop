@@ -1,0 +1,458 @@
+# DM Messages Not Delivered - Device Registration Inbox Mismatch
+
+> **⚠️ AI-Generated**: May contain errors. Verify before use.
+> **Reviewed by**: feature-analyzer agent, security-analyst agent
+
+**Severity**: Critical
+**Status**: Fixed (Layer 2 + Layer 3)
+**Created**: 2025-12-22
+**Updated**: 2025-12-22
+
+---
+
+## TL;DR
+
+DMs fail because sender encrypts for stale inbox addresses. **Three-layer caching** causes this:
+
+1. **API** has stale device registrations → Receiver must remove via Privacy → Devices
+2. ~~**React Query** caches registrations forever (`staleTime: Infinity`)~~ → **FIXED**: Now refetches after 5 minutes
+3. ~~**Encryption States** in IndexedDB point to old inboxes~~ → **FIXED**: Cleanup on DM page load
+
+**User Workaround**: Receiver removes stale devices via Privacy → Devices, sender refreshes browser (F5), then resends.
+
+---
+
+## Symptoms
+
+- User A sends DM to User B - shows "sent" but never arrives
+- Both users online with active WebSocket connections
+- Both directions fail (A→B and B→A)
+- Works fine between other user pairs
+
+---
+
+## Root Cause Analysis
+
+### The Three-Layer Caching Problem
+
+| Layer | Location | What's Cached | Auto-Refresh? |
+|-------|----------|---------------|---------------|
+| 1. API Registration | Server | User's device list | N/A |
+| 2. React Query Cache | Sender's memory | `counterparty.device_registrations` | ~~`staleTime: Infinity`~~ **FIXED: 5 min** |
+| 3. Encryption States | Sender's IndexedDB | DM sessions per inbox | Only on send |
+
+### Why Messages Don't Arrive
+
+```
+User A sends to User B:
+1. A fetches B's registration (from React Query cache - may be stale!)
+2. A encrypts for B's cached inbox addresses: QmOld1, QmOld2...
+3. B's device is actually listening on: QmNew1, QmNew2...
+4. Zero overlap → messages go to inboxes nobody monitors
+```
+
+### The React Query Root Cause (FIXED)
+
+**File**: [useRegistrationOptional.ts:19](src/hooks/queries/registration/useRegistrationOptional.ts#L19)
+
+```typescript
+// BEFORE (caused the bug):
+return useQuery({
+  staleTime: Infinity,  // ← NEVER refetches!
+  gcTime: Infinity,     // ← Cached forever!
+});
+
+// AFTER (fix applied):
+return useQuery({
+  staleTime: 5 * 60 * 1000,  // ← Refetches after 5 minutes
+  gcTime: Infinity,           // ← Kept for offline resilience
+});
+```
+
+With this fix, sender's cache automatically refreshes after 5 minutes, picking up device changes.
+
+---
+
+## User Workaround
+
+### Step 1: Receiver Cleans API (Layer 1)
+1. Settings → Privacy → Devices
+2. Remove all unrecognized devices
+3. Save Changes
+
+### Step 2: Sender Refreshes Cache (Layer 2)
+1. Refresh browser (F5) - clears React Query cache
+2. Navigate to the DM conversation
+3. Send a new message
+
+Layer 3 (encryption states) auto-cleans when layers 1 & 2 are fixed.
+
+---
+
+## Implemented Fixes
+
+### Layer 2: Reduce staleTime ✅ IMPLEMENTED
+
+**File**: [useRegistrationOptional.ts](src/hooks/queries/registration/useRegistrationOptional.ts)
+
+```typescript
+// Changed from Infinity to 5 minutes
+staleTime: 5 * 60 * 1000,
+```
+
+**Pros**: Automatic, prevents NEW stale cache entries
+**Limitation**: Does NOT clean up EXISTING stale encryption states in IndexedDB
+
+---
+
+## Implemented Fix: Layer 3 Cleanup ✅
+
+### The Problem
+
+The staleTime fix ensures React Query fetches fresh registration data after 5 minutes. However:
+
+1. **DirectMessage.tsx** uses `useRegistrationOptional` to get counterparty registration
+2. This fresh data is passed to **MessageService.submitMessage** (legacy path)
+3. Legacy path has cleanup logic at [MessageService.ts:1636-1640](src/services/MessageService.ts#L1636-L1640)
+4. **BUT**: Action Queue path at [ActionQueueHandlers.ts:546-569](src/services/ActionQueueHandlers.ts#L546-L569) reads encryption states directly from IndexedDB and never cleans them
+
+**Result**: For established conversations using Action Queue, stale encryption states persist indefinitely.
+
+### Solution: Cleanup in DirectMessage.tsx ✅ IMPLEMENTED
+
+Added cleanup logic when registration data changes. Checks **BOTH self and counterparty inboxes** (matches legacy path pattern).
+
+**File**: [DirectMessage.tsx:198-245](src/components/direct/DirectMessage.tsx#L198-L245)
+
+```typescript
+// In DirectMessage.tsx - when registration changes, clean stale encryption states
+useEffect(() => {
+  // Guard: Only run when BOTH self and counterparty registration are available
+  if (!self?.registration || !registration?.registration || !address) {
+    return;
+  }
+
+  const cleanupStaleEncryptionStates = async () => {
+    try {
+      const conversationId = `${address}/${address}`;
+      const states = await messageDB.getEncryptionStates({ conversationId });
+
+      if (states.length === 0) return;
+
+      // Check BOTH self and counterparty inboxes (matches legacy path at MessageService.ts:1627-1634)
+      const validInboxes = [
+        ...self.registration.device_registrations
+          .map(d => d.inbox_registration.inbox_address),
+        ...registration.registration.device_registrations
+          .map(d => d.inbox_registration.inbox_address),
+      ];
+
+      let deletedCount = 0;
+      for (const state of states) {
+        const parsed = JSON.parse(state.state);
+        if (!validInboxes.includes(parsed.tag)) {
+          await messageDB.deleteEncryptionState(state);
+          deletedCount++;
+        }
+      }
+
+      if (deletedCount > 0) {
+        console.log('[DirectMessage] Cleaned up stale encryption states', {
+          conversationId,
+          deletedCount,
+          remainingCount: states.length - deletedCount,
+        });
+      }
+    } catch (error) {
+      console.error('[DirectMessage] Failed to cleanup stale encryption states:', error);
+      // Don't throw - cleanup is best-effort, shouldn't break the page
+    }
+  };
+
+  cleanupStaleEncryptionStates();
+}, [self?.registration, registration?.registration, address, messageDB]);
+```
+
+**Why this approach:**
+- Uses registration data **already being fetched** (no extra API call)
+- Runs on DM page load, not on send (keeps send path fast)
+- Checks **BOTH self and counterparty** inboxes (matches legacy path pattern)
+- Has proper error handling and logging
+- Action Queue handler stays offline-capable (no network calls during task execution)
+
+**Trade-off**: Cleanup only happens when user views the conversation. If user never opens the DM, stale states persist until they do.
+
+---
+
+## Known Limitation: New Device Detection
+
+### The Problem
+
+When Action Queue is enabled for DMs, **counterparty's NEW devices won't receive messages**.
+
+**Why this happens:**
+1. At enqueue time, routing checks if encryption states exist → routes to Action Queue
+2. Action Queue handler only encrypts to inboxes with **existing** encryption states
+3. New device's inbox has no state → **skipped entirely**
+4. Action Queue can't create new sessions because it doesn't have `counterparty.device_registrations`
+
+**Legacy path handles this** at [MessageService.ts:1862-1876](src/services/MessageService.ts#L1862-L1876):
+```typescript
+} else {
+  // No existing state for this inbox - create NEW session
+  sessions = [
+    ...sessions,
+    ...(await secureChannel.NewDoubleRatchetSenderSession(
+      keyset.deviceKeyset,
+      self.user_address,
+      // Uses counterparty.device_registrations to find the new device
+      self.device_registrations.concat(counterparty.device_registrations)
+        .find((d) => d.inbox_registration.inbox_address === inbox)!,
+      // ...
+    )),
+  ];
+}
+```
+
+### Why Action Queue Can't Do This
+
+Report [009-dm-offline-registration-persistence-fix.md](../reports/action-queue/009-dm-offline-registration-persistence-fix.md) deliberately removed `counterparty.device_registrations` from queue context to avoid storing sensitive registration data.
+
+**Trade-off**: Offline resilience vs new device support.
+
+### Impact
+
+| Scenario | Legacy Path | Action Queue |
+|----------|-------------|--------------|
+| Existing devices | ✅ Works | ✅ Works |
+| Stale devices | ✅ Cleaned + skipped | ⚠️ Cleaned by DirectMessage.tsx |
+| **New devices** | ✅ Creates new session | ❌ **Skipped permanently** |
+
+### Solution: Offline-Only Action Queue ✅ IMPLEMENTED
+
+Use Action Queue **only when offline**. When online, always use legacy path.
+
+| Scenario | Path | Result |
+|----------|------|--------|
+| Online + existing convo | Legacy | ✅ Works (creates new sessions for new devices) |
+| Online + new convo | Legacy | ✅ Works |
+| Offline + existing convo | Action Queue | ⚠️ Queued, new devices skipped |
+| Offline + new convo | Legacy | ❌ Fails (can't create sessions offline - expected) |
+
+**Why this works:**
+- **Online (99% of cases)**: Legacy path handles everything - stale cleanup, new device sessions
+- **Offline (rare)**: Action Queue queues for existing devices. When back online, user can resend and legacy path handles new devices
+
+**The remaining gap is minimal**: Only messages sent while offline to a counterparty who added a new device *during* the offline period would miss the new device. Edge case of an edge case.
+
+**Implementation** in [MessageService.ts](src/services/MessageService.ts):
+```typescript
+const isOnline = navigator.onLine;
+
+if (ENABLE_DM_ACTION_QUEUE && hasEstablishedSessions && !isOnline) {
+  // Only use Action Queue when offline
+  await this.actionQueueService.enqueue('send-dm', ...);
+} else {
+  // Online or new conversation → legacy path
+}
+```
+
+### Other Considered Solutions
+
+1. **Hybrid routing**: Compare encryption state inboxes vs fresh registration inboxes. If new device detected, use legacy path. (More complex, still requires online check)
+2. **Store minimal device data**: Store only new device registrations in queue context. (Security concern)
+3. **Accept limitation**: Document that new devices get messages after sender's encryption states are cleared. (Poor UX)
+
+### Agent Review Feedback (Incorporated)
+
+Issues identified and fixed in proposed solution:
+1. ✅ **Missing self device cleanup** - Now checks both self and counterparty inboxes
+2. ✅ **No error handling** - Added try/catch with logging
+3. ✅ **Silent failures** - Added console.log for observability
+4. ✅ **Missing dependencies** - Uses `messageDB` from `useMessageDB()` hook
+
+---
+
+## Why Stale Devices Accumulate
+
+### Triggers
+- User clears browser data and re-imports account
+- User regenerates device keys
+- Sync feature pulls old registrations from server
+- Registration upload fails silently
+
+### Why Auto-Cleanup Can't Help
+
+`ConstructUserRegistration` **appends** devices - it cannot identify which old entries belong to "this same device":
+
+```typescript
+device_registrations: [
+  ...existing_device_keysets,  // All kept
+  ...new_device_keysets        // Added
+]
+```
+
+No persistent device identifier exists across key regenerations.
+
+---
+
+## Existing Protections
+
+### Startup Sync Check
+**File**: [RegistrationPersister.tsx:187-210](src/components/context/RegistrationPersister.tsx#L187-L210)
+
+Adds current device to API if missing. **Limitation**: Only checks existence, not correctness.
+
+### Encryption State Cleanup
+**File**: [MessageService.ts:1636-1640](src/services/MessageService.ts#L1636-L1640)
+
+Deletes encryption states for inboxes not in current registration.
+
+**Limitations**:
+1. Only runs on **legacy path** (new DM conversations without established sessions)
+2. **Bypassed entirely** for established conversations which use Action Queue ([ActionQueueHandlers.ts:546-563](src/services/ActionQueueHandlers.ts#L546-L563))
+3. When executed, uses cached registration data (Layer 2 blocks effectiveness)
+
+**Impact**: Most DM sends (to established conversations) never execute cleanup logic.
+
+### Manual Device Removal
+**File**: [Privacy.tsx](src/components/modals/UserSettingsModal/Privacy.tsx)
+
+User can manually remove unrecognized devices. **This is the only reliable fix for Layer 1.**
+
+---
+
+## Diagnostic Commands
+
+### On SENDER's Console (Diagnose why messages don't arrive)
+
+Navigate to the DM conversation page (`/messages/RECEIVER_ADDRESS`), then run:
+
+```javascript
+// === SENDER DIAGNOSTIC ===
+// This checks if sender is encrypting to correct inboxes
+
+// Extract address from URL (handles both /messages/ and /dm/ formats)
+const receiverAddress = location.pathname.split('/messages/')[1]?.split('/')[0]
+  || location.pathname.split('/dm/')[1]?.split('/')[0];
+console.log('=== DM Diagnostic for:', receiverAddress, '===\n');
+
+// 1. What the API currently says receiver's inboxes are (fresh fetch)
+const response = await fetch(`https://api.quorummessenger.com/users/${receiverAddress}`);
+const apiData = await response.json();
+const apiInboxes = apiData.device_registrations?.map(d => d.inbox_registration?.inbox_address) || [];
+console.log(`1. API (fresh): Receiver has ${apiInboxes.length} device inbox(es)`);
+apiInboxes.forEach((i, idx) => console.log(`   [${idx}] ${i}`));
+
+// 2. What encryption states sender has cached for this conversation
+const states = await window.__messageDB.getEncryptionStates({
+  conversationId: `${receiverAddress}/${receiverAddress}`
+});
+const cachedInboxes = states.map(s => {
+  const parsed = JSON.parse(s.state);
+  return parsed.tag; // tag = the receiver inbox we encrypt TO
+});
+console.log(`\n2. Sender's cached sessions: ${cachedInboxes.length} inbox(es)`);
+cachedInboxes.forEach((i, idx) => console.log(`   [${idx}] ${i}`));
+
+// 3. Compare - do they match?
+const inApi = cachedInboxes.filter(i => apiInboxes.includes(i));
+const stale = cachedInboxes.filter(i => !apiInboxes.includes(i));
+const missing = apiInboxes.filter(i => !cachedInboxes.includes(i));
+
+console.log(`\n3. Analysis:`);
+console.log(`   Valid (in both): ${inApi.length}`);
+console.log(`   Stale (cached but not in API): ${stale.length}`);
+console.log(`   Missing (in API but not cached): ${missing.length}`);
+
+if (stale.length > 0 && inApi.length === 0) {
+  console.log('\n❌ BUG CONFIRMED: Sender encrypts to inboxes receiver no longer uses!');
+  console.log('   Messages go to old inboxes that nobody monitors.');
+  console.log('\n   FIX: Receiver should remove stale devices in Settings → Privacy → Devices');
+  console.log('   Then sender should refresh browser (F5) or wait 5 minutes.');
+} else if (inApi.length > 0) {
+  console.log('\n✅ At least one valid session exists - messages should deliver.');
+} else if (cachedInboxes.length === 0) {
+  console.log('\n⚠️ No cached sessions - this is a new conversation.');
+  console.log('   First message will establish sessions via legacy path.');
+}
+```
+
+### On RECEIVER's Console (Check if your device is properly registered)
+
+```javascript
+// === RECEIVER DIAGNOSTIC ===
+// This checks if YOUR current device is registered in the API
+
+const myAddress = '<PASTE_YOUR_ADDRESS_HERE>'; // Get from profile or URL
+
+// 1. What the API thinks your inboxes are
+const response = await fetch(`https://api.quorummessenger.com/users/${myAddress}`);
+const apiData = await response.json();
+const apiInboxes = apiData.device_registrations?.map(d => d.inbox_registration?.inbox_address) || [];
+console.log(`1. API says you have ${apiInboxes.length} device(s):`);
+apiInboxes.forEach((i, idx) => console.log(`   [${idx}] ${i}`));
+
+// 2. Check Settings → Privacy → Devices in the UI
+console.log('\n2. Check Settings → Privacy → Devices');
+console.log('   - One device should show "This device" label');
+console.log('   - If ALL devices show "Remove" button, your current device is NOT registered!');
+
+// 3. If you have stale devices
+if (apiInboxes.length > 1) {
+  console.log('\n⚠️ Multiple devices registered. If only using one device:');
+  console.log('   - Remove unrecognized devices in Privacy → Devices');
+  console.log('   - This cleans up stale registrations that senders cache');
+}
+```
+
+---
+
+## Risk Assessment
+
+**Edge case** primarily affecting:
+- Testers with frequent key regeneration
+- Users who clear browser data and re-import
+- Users with sync enabled after account re-import
+- **Offline users** - stale data persists across receiver's device cleanup
+- **Long-term users** - who never refresh browser accumulate stale cache
+
+**Normal users** (single device, no data clearing) unlikely to encounter this.
+
+**Security Note**: Messages are not delivered to wrong parties - they simply fail to deliver (privacy preserved).
+
+---
+
+## Summary
+
+| Component | Status | Notes |
+|-----------|--------|-------|
+| React Query `staleTime` | ✅ **FIXED** | Changed from `Infinity` to 5 minutes |
+| Layer 3 cleanup in DirectMessage | ✅ **FIXED** | Clean stale encryption states on DM page load |
+| Action Queue offline-only | ✅ **FIXED** | Only use Action Queue when offline |
+| Action Queue stale cleanup | ✅ Handled | Relies on DM page cleanup (stays offline-capable) |
+| Action Queue new devices | ✅ **MITIGATED** | Online uses legacy path; offline limitation accepted |
+| Manual device removal | ✅ Works | Only fix for stale API entries |
+| `ConstructUserRegistration` | ⚠️ Limitation | Appends only, can't dedupe |
+
+### Fix Implementation Order
+
+1. ✅ **Layer 2 (staleTime)** - Prevents new stale cache entries
+2. ✅ **Layer 3 (DM page cleanup)** - Cleans existing stale encryption states
+3. ℹ️ **Layer 1 (API)** - User must manually remove stale devices
+
+---
+
+## Related Files
+
+- [useRegistrationOptional.ts](src/hooks/queries/registration/useRegistrationOptional.ts) - React Query config (FIXED: staleTime 5 min)
+- [DirectMessage.tsx](src/components/direct/DirectMessage.tsx) - DM page (PROPOSED: Layer 3 cleanup)
+- [ActionQueueHandlers.ts](src/services/ActionQueueHandlers.ts) - DM send handler (no cleanup, by design)
+- [MessageService.ts](src/services/MessageService.ts) - Legacy DM path (has cleanup at lines 1636-1640)
+- [RegistrationPersister.tsx](src/components/context/RegistrationPersister.tsx) - Startup sync
+- [Privacy.tsx](src/components/modals/UserSettingsModal/Privacy.tsx) - Device removal UI
+
+---
+
+_Created: 2025-12-22_
+_Updated: 2025-12-22 - Layer 2 + Layer 3 fixes implemented, documented new device limitation (reviewed by feature-analyzer agent)_

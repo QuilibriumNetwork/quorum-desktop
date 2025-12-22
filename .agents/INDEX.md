@@ -80,7 +80,6 @@ This is the main index for all documentation, bug reports, and task management.
 - [Action Queue Bypasses SDK Encryption for Identity Keys](bugs/action-queue-plaintext-private-keys.md)
 - [Config Sync Space Loss Race Condition](bugs/config-sync-space-loss-race-condition.md)
 - [DirectMessage Invite Loading Performance Issue](bugs/directmessage-invite-loading-performance.md)
-- [DM Messages Not Delivered - Device Registration Inbox Mismatch](bugs/dm-registration-inbox-mismatch.md)
 - [Encryption State Evals Causing Config Sync Bloat](bugs/encryption-state-evals-bloat.md)
 - [Expired Invite Card Validation Timing Issue](bugs/expired-invite-card-validation-timing.md)
 - [JoinSpaceModal "Invalid JSON" Error Due to Network Issues](bugs/joinspacemodal-invalid-json-network-error.md)
@@ -349,8 +348,8 @@ This is the main index for all documentation, bug reports, and task management.
 - [006: Action Queue Stores Identity Keys in Plaintext](reports/action-queue/006-plaintext-private-keys-bug.md)
 - [007: Fix - Don't Store Keys in Action Queue](reports/action-queue/007-plaintext-private-keys-fix.md)
 - [008: Action Queue Endpoint Dependencies & Failure Modes](reports/action-queue/008-endpoint-dependencies.md)
-- [009: Persist DM Registration Data for Full Offline Support](reports/action-queue/009-dm-offline-registration-persistence-fix-old.md)
 - [009: DM Offline Support - Conditional Action Queue Routing](reports/action-queue/009-dm-offline-registration-persistence-fix.md)
+- [DM Messages Not Delivered - Device Registration Inbox Mismatch](reports/action-queue/010-dm-registration-inbox-mismatch-fix.md)
 
 ### Onboarding Flow
 - [Passkey Authentication Flow Analysis](reports/onboarding-flow/passkey-authentication-flow-analysis-2025-11-23.md)
@@ -359,4 +358,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2025-12-22 14:49:24
+**Last Updated**: 2025-12-22 17:27:10

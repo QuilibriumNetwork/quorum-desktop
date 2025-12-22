@@ -54,9 +54,34 @@ Not all actions can be queued for offline use. This table shows what works offli
 | Save user config | Global | ✅ Fully queued, survives refresh |
 | Update space settings | Global | ✅ Fully queued, survives refresh |
 | Kick/mute/unmute user | Moderation | ✅ Fully queued, survives refresh |
-| Send DM | DM | ⚠️ Works if conversation was opened online (see note below) |
-| Reactions (DM) | DM | ⚠️ Works if conversation was opened online (see note below) |
-| Edit/delete DM | DM | ⚠️ Works if conversation was opened online (see note below) |
+| Send DM | DM | ⚠️ Queued only when offline with existing sessions (see below) |
+| Reactions (DM) | DM | ⚠️ Queued only when offline with existing sessions (see below) |
+| Edit/delete DM | DM | ⚠️ Queued only when offline with existing sessions (see below) |
+
+### DM Offline-Only Routing
+
+**DM actions use a hybrid routing strategy** implemented in [MessageService.ts](src/services/MessageService.ts), [useMessageActions.ts](src/hooks/business/messages/useMessageActions.ts), and [MessageEditTextarea.tsx](src/components/message/MessageEditTextarea.tsx):
+
+| Scenario | Path | Why |
+|----------|------|-----|
+| **Online** | Legacy path | Handles new devices, creates new sessions, cleans stale states |
+| **Offline + existing sessions** | Action Queue | Persisted, crash-resilient, works with cached encryption states |
+| **Offline + new conversation** | Legacy path | Fails immediately (expected - can't create sessions offline) |
+
+**Implementation** checks `navigator.onLine` at enqueue time:
+
+```typescript
+const isOnline = navigator.onLine;
+if (ENABLE_DM_ACTION_QUEUE && hasEstablishedSessions && !isOnline) {
+  // Use Action Queue (offline only)
+} else {
+  // Use legacy path (online or new conversation)
+}
+```
+
+**Why offline-only?** The Action Queue doesn't store `counterparty.device_registrations` (for security - see [007-plaintext-private-keys-fix.md](../../reports/action-queue/007-plaintext-private-keys-fix.md)). This means it cannot create new sessions for counterparty's new devices. By routing through legacy path when online, new devices are always handled correctly.
+
+See [010-dm-registration-inbox-mismatch-fix.md](../../reports/action-queue/010-dm-registration-inbox-mismatch-fix.md) for the full analysis.
 
 ### Why Space Messages Work Fully Offline But DM Messages Don't
 
@@ -65,18 +90,19 @@ Not all actions can be queued for offline use. This table shows what works offli
 - You can send messages offline, close the app, reopen it, and they'll still be queued
 - Messages are sent automatically when you come back online
 
-**DM messages** have a limitation because counterparty registration data (public keys, inbox addresses) is only cached in React Query (memory), not persisted to IndexedDB:
+**DM messages** have additional constraints:
+- **Encryption states** are stored in IndexedDB (work offline for established sessions)
+- **BUT** the Action Queue can't create *new* sessions (requires counterparty registration data)
+- **AND** stale encryption states are cleaned up on DM page load (see [DirectMessage.tsx:198-245](src/components/direct/DirectMessage.tsx#L198-L245))
 
 | Scenario | Space Message | DM Message |
 |----------|---------------|------------|
-| Send while online → go offline → come back | ✅ Sends | ✅ Sends |
-| Go offline → send → close app → reopen → come back | ✅ Sends | ❌ Lost (silent fail) |
-| Open conversation online → go offline → send | ✅ Sends | ✅ Sends (if no refresh) |
-| Start app offline → try to send | ✅ Sends | ❌ Silent fail |
+| Online: send message | ✅ Via Action Queue | ✅ Via Legacy path |
+| Offline: existing conversation | ✅ Via Action Queue | ✅ Via Action Queue |
+| Offline: new conversation | ✅ Via Action Queue | ❌ Fails (expected) |
+| App restart with pending | ✅ Resumes | ✅ Resumes (if sessions exist) |
 
-**Why the difference?** Space encryption uses keys stored in IndexedDB (persisted). DM encryption requires the counterparty's registration data which must be fetched from the server and is only cached in memory.
-
-**Known UX issue**: When DM sending fails due to missing registration, it fails silently (just a console.warn). This should show a user-visible error or disable the composer.
+**Why the difference?** Space encryption uses static keys. DM encryption uses Double Ratchet with per-device sessions that require counterparty registration data to create.
 
 ### Actions That Require Online (Not Queued)
 
@@ -84,8 +110,7 @@ Not all actions can be queued for offline use. This table shows what works offli
 |--------|--------|-------------|
 | Create space | Server generates space ID | Warning callout + disabled button |
 | Join space | Requires server handshake | N/A |
-| Start new DM conversation | Needs counterparty registration | Silent fail |
-| DM after page refresh | Registration cache lost | Silent fail |
+| Start new DM conversation | Needs counterparty registration | Fails with error |
 | Delete conversation | Not yet integrated (see [Potential Future Actions](#potential-future-actions)) | N/A |
 | Delete space | Not yet integrated (see [Potential Future Actions](#potential-future-actions)) | N/A |
 
@@ -93,7 +118,7 @@ Not all actions can be queued for offline use. This table shows what works offli
 
 1. **Server-generated IDs**: Space creation requires the server to generate the `spaceId`. The client can't create this locally.
 
-2. **Registration data not persisted**: DM encryption requires the counterparty's registration (public keys, inbox addresses). Unlike Space keys which are stored in IndexedDB, registration data is only cached in React Query memory. To fix this, registration data would need to be persisted to IndexedDB.
+2. **New DM sessions require registration data**: Creating a new Double Ratchet session requires the counterparty's device registration (public keys, inbox addresses). The Action Queue deliberately doesn't store this data for security reasons. New conversations must be started online.
 
 ## Architecture
 
@@ -256,6 +281,8 @@ ActionQueueHandlers.sendChannelMessage.execute()
 
 ### DM Message Handler Flow
 
+DM messages use **offline-only routing** - Action Queue is only used when offline:
+
 ```
 User clicks Send in DM conversation
     │
@@ -264,25 +291,29 @@ MessageService.submitMessage() (for DMs)
     ├─► Generate messageId (nonce)
     ├─► Sign message with Ed448 ← HAPPENS ONCE
     ├─► Add to React Query cache (sendStatus: 'sending')
-    └─► actionQueueService.enqueue('send-dm', context)
-            │
-            ▼
-ActionQueueHandlers.sendDm.execute()
-    ├─► Get all inbox addresses (self + counterparty devices)
-    ├─► Clean up stale encryption states
-    ├─► For each target inbox:
-    │     ├─► Check for existing encryption state
-    │     ├─► Encrypt with DoubleRatchetInboxEncrypt() or
-    │     │   NewDoubleRatchetSenderSession() (first message)
-    │     └─► Collect sealed message
-    ├─► Save encryption states
-    ├─► Send all messages via sendDirectMessages()
-    └─► Update message status to 'sent'
+    ├─► Check: hasEstablishedSessions && !navigator.onLine?
+    │
+    ├─► [If ONLINE] → Legacy path (handles new devices)
+    │     └─► Full Double Ratchet flow with stale cleanup
+    │
+    └─► [If OFFLINE + sessions exist] → Action Queue
+            └─► actionQueueService.enqueue('send-dm', context)
+                    │
+                    ▼
+            ActionQueueHandlers.sendDm.execute()
+                ├─► Get encryption states from IndexedDB
+                ├─► For each existing session:
+                │     └─► Encrypt with DoubleRatchetInboxEncrypt()
+                ├─► Save updated encryption states
+                ├─► Send all messages via sendDirectMessages()
+                └─► Update message status to 'sent'
 ```
+
+**Why offline-only?** The Action Queue only stores `selfUserAddress` (not full registration). It cannot create new sessions for counterparty's new devices. Online routing through legacy path ensures new devices are always handled.
 
 ### DM Secondary Actions (Reactions, Deletes, Edits)
 
-DM secondary actions use a shared helper `encryptAndSendDm()`:
+DM secondary actions (reactions, deletes, edits) also use **offline-only routing**:
 
 ```
 User adds reaction in DM
@@ -292,15 +323,21 @@ useMessageActions.handleReaction()
     ├─► Optimistic UI update (React Query cache)
     ├─► Persist to IndexedDB
     ├─► Check isDM = spaceId === channelId → true
-    ├─► buildDmActionContext() → get self, counterparty, keyset
-    └─► actionQueueService.enqueue('reaction-dm', context)
-            │
-            ▼
-ActionQueueHandlers.reactionDm.execute()
-    └─► encryptAndSendDm(address, reactionMessage, ...)
-            ├─► Double Ratchet encryption per inbox
-            └─► sendDirectMessages()
+    ├─► Check: navigator.onLine?
+    │
+    ├─► [If ONLINE] → Legacy path via onSubmitMessage()
+    │
+    └─► [If OFFLINE] → buildDmActionContext() + enqueue
+            └─► actionQueueService.enqueue('reaction-dm', context)
+                    │
+                    ▼
+            ActionQueueHandlers.reactionDm.execute()
+                └─► encryptAndSendDm(address, reactionMessage, ...)
+                        ├─► Double Ratchet encryption per existing inbox
+                        └─► sendDirectMessages()
 ```
+
+The same pattern applies to `edit-dm` in [MessageEditTextarea.tsx](src/components/message/MessageEditTextarea.tsx) and `delete-dm` in [useMessageActions.ts](src/hooks/business/messages/useMessageActions.ts).
 
 ### Context Requirements by Action Type
 
@@ -326,12 +363,12 @@ ActionQueueHandlers.reactionDm.execute()
   editMessage?: object;         // For edit-dm
   deleteMessage?: object;       // For delete-dm
   messageId?: string;           // For edit-dm (to check if still exists)
-  self: UserRegistration;       // Sender's registration
-  counterparty: UserRegistration; // Recipient's registration
-  // NOTE: keyset is NOT stored in context (security)
-  // Handlers pull keyset from actionQueueService.getUserKeyset()
+  selfUserAddress: string;      // Sender's user address (only field needed from self)
   senderDisplayName?: string;   // For identity revelation
   senderUserIcon?: string;      // For identity revelation
+  // NOTE: keyset NOT stored (security - pulled from memory at processing time)
+  // NOTE: counterparty NOT stored (security - uses existing encryption states)
+  // See: 007-plaintext-private-keys-fix.md, 009-dm-offline-registration-persistence-fix.md
 }
 ```
 
@@ -354,41 +391,32 @@ Each action type uses a unique deduplication key to prevent duplicate actions:
 
 ---
 
-## Legacy Fallback Path
+## Legacy Path vs Action Queue
 
-DM secondary actions (reactions, deletes, edits) have a **legacy fallback** when `dmContext` is unavailable.
+DM actions use **offline-only routing**: Legacy path when online, Action Queue when offline.
 
-### When Fallback Triggers
+### When Each Path Is Used
 
-The fallback triggers when:
-- `dmContext` prop is not passed through component hierarchy
-- `buildDmActionContext()` returns `null` (missing registration or keyset)
-- Race conditions during component mounting
+| Condition | Path | Why |
+|-----------|------|-----|
+| Online + any DM action | Legacy | Handles new devices, creates new sessions |
+| Offline + existing sessions | Action Queue | Persisted, crash-resilient |
+| Offline + new conversation | Legacy | Fails (expected - can't create sessions) |
+| `dmContext` unavailable | Legacy | Fallback for race conditions |
+| `ENABLE_DM_ACTION_QUEUE = false` | Legacy | Feature disabled |
 
-### Fallback Flow
+### Path Comparison
 
-```
-handleReaction() (DM)
-    ├─► isDM = true
-    ├─► buildDmActionContext() → null (context unavailable)
-    └─► onSubmitMessage({ type: 'reaction', ... })  ← FALLBACK
-            │
-            ▼
-MessageService.submitMessage()
-    └─► enqueueOutbound() (WebSocket queue)
-            └─► Double Ratchet encryption + send
-```
-
-### Fallback Characteristics
-
-| Aspect | Action Queue Path | Legacy Fallback Path |
-|--------|-------------------|---------------------|
+| Aspect | Action Queue Path | Legacy Path |
+|--------|-------------------|-------------|
 | **Visibility** | Shows in offline banner | No visibility |
 | **Deduplication** | Yes (dedupe key) | No |
 | **Retry Logic** | Exponential backoff | WebSocket reconnection |
-| **Offline Support** | Yes | Yes (WebSocket queue) |
+| **Offline Support** | Yes (existing sessions) | Limited (WebSocket queue) |
+| **New device support** | ❌ No | ✅ Yes |
+| **Stale cleanup** | Relies on DM page load | ✅ Built-in |
 
-The fallback works correctly for both online and offline scenarios - it just lacks the action queue's visibility and deduplication features.
+**Key insight**: The legacy path handles more edge cases (new devices, stale cleanup). Action Queue provides better offline resilience for established sessions.
 
 ---
 
@@ -604,18 +632,24 @@ See [007-plaintext-private-keys-fix.md](../../reports/action-queue/007-plaintext
 
 Simpler, avoids race conditions, prevents server overload, maintains message ordering.
 
-### Legacy Fallback Preserved
+### Legacy Path as Primary for DMs
 
-The legacy `onSubmitMessage` path is intentionally preserved for DM secondary actions. This provides resilience for edge cases (race conditions, missing context) while the action queue path provides better visibility and deduplication.
+DM actions use **offline-only routing**: the legacy path is now the primary path when online. This design decision:
+- **Handles new devices** - legacy path creates new Double Ratchet sessions
+- **Cleans stale states** - legacy path has built-in stale encryption state cleanup
+- **Reserves Action Queue for offline** - where its persistence benefits matter most
+
+The Action Queue is only used for DMs when `navigator.onLine === false` and established sessions exist.
 
 ---
 
 ## Component Hierarchy for DM Context
 
-For DM actions to use the action queue (not fallback), `dmContext` must be passed through the component hierarchy:
+For DM actions to use the Action Queue path (when offline), `dmContext` must be passed through the component hierarchy:
 
 ```
 DirectMessage.tsx
+  ├─► Cleans stale encryption states on page load (Layer 3 fix)
   └─► Constructs dmContext: { self: self.registration, counterparty: registration.registration }
       │
       ▼
@@ -627,7 +661,7 @@ Message.tsx (dmContext prop)
   └─► MessageEditTextarea (dmContext prop) → for edits
 ```
 
-If `dmContext` is not available at any point, the fallback path is used.
+**Note**: When online, all DM actions use the legacy path regardless of `dmContext` availability. The hierarchy matters primarily for offline scenarios.
 
 ---
 
@@ -666,11 +700,22 @@ The counterparty notification is already "best effort" (wrapped in try/catch), s
 
 ## Related Documentation
 
+### Feature Documentation
 - [Offline Support](offline-support.md) - Comprehensive offline capabilities including navigation and data viewing
-- [DM Action Queue Handlers Task](../../tasks/dm-action-queue-handlers.md) - Implementation details
-- [DM Code Comparison Audit](../../reports/action-queue/003-DM-message-code-comparison-audit.md) - Code analysis and verification
-- [Keyset Security Fix](../../reports/action-queue/007-plaintext-private-keys-fix.md) - Private keys not stored in queue
+- [Feature Flag](../../src/config/features.ts) - `ENABLE_DM_ACTION_QUEUE` controls DM routing
+
+### Reports & Fixes
+- [Keyset Security Fix (007)](../../reports/action-queue/007-plaintext-private-keys-fix.md) - Private keys not stored in queue
+- [Offline-Only Routing Fix (009)](../../reports/action-queue/009-dm-offline-registration-persistence-fix.md) - Action Queue used only when offline
+- [Inbox Mismatch Fix (010)](../../reports/action-queue/010-dm-registration-inbox-mismatch-fix.md) - Stale encryption state cleanup + offline-only routing
+
+### Audits
+- [DM Code Comparison Audit (003)](../../reports/action-queue/003-DM-message-code-comparison-audit.md) - Code analysis and verification
+- [Space Message Audit (004)](../../reports/action-queue/004-space-message-code-comparison-audit.md) - Space message code comparison
+
+### Full Report Index
+- [Action Queue Report Index](../../reports/action-queue/INDEX.md) - All Action Queue related bugs and reports
 
 ---
 
-*Updated: 2025-12-21 - Added keyset security: keys no longer stored in IndexedDB, pulled from memory at processing time*
+*Updated: 2025-12-22 - Added offline-only DM routing: Action Queue used only when offline, legacy path handles new devices when online*

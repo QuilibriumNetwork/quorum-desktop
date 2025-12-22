@@ -32,7 +32,8 @@ When investigating issues, we must determine:
 | 006 | [Plaintext Private Keys Bug](006-plaintext-private-keys-bug.md) | ✅ Fixed | 🚨 Critical | `action-queue-bug` - Identity keys stored unencrypted |
 | 007 | [Plaintext Private Keys Fix](007-plaintext-private-keys-fix.md) | ✅ Implemented | N/A | Fix for 006 - Keys pulled from memory, not stored |
 | 008 | [Endpoint Dependencies](008-endpoint-dependencies.md) | 📋 Reference | N/A | Quick reference for debugging endpoint failures |
-| 009 | [DM Offline Registration Persistence](009-dm-offline-registration-persistence-fix.md) | 📋 Pending | Medium | Persist registration data for full DM offline support |
+| 009 | [DM Offline Registration Persistence](009-dm-offline-registration-persistence-fix.md) | ✅ Superseded | Medium | Replaced by offline-only routing (see 010) |
+| 010 | [DM Registration Inbox Mismatch Fix](010-dm-registration-inbox-mismatch-fix.md) | ✅ Implemented | High | Offline-only Action Queue + stale state cleanup |
 
 ## Important: Network Issues
 
@@ -94,4 +95,4 @@ window.__actionQueue.processQueue()
 
 ---
 
-_Last Updated: 2025-12-21_
+_Last Updated: 2025-12-22_
