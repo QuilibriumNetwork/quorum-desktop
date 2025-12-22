@@ -289,8 +289,10 @@ export function MessageEditTextarea({
         // Route to appropriate handler based on DM vs Space
         if (actionQueueService && currentPasskeyInfo) {
           if (isDM) {
-            // DM: Use Double Ratchet encryption via edit-dm handler (if enabled)
-            if (ENABLE_DM_ACTION_QUEUE && dmContext?.self) {
+            // DM: Use Double Ratchet encryption via edit-dm handler (if enabled and offline)
+            // When online, use legacy path to handle new devices properly
+            const isOnline = navigator.onLine;
+            if (ENABLE_DM_ACTION_QUEUE && dmContext?.self && !isOnline) {
               await actionQueueService.enqueue(
                 'edit-dm',
                 {

@@ -1515,12 +1515,13 @@ export class MessageService {
       }
 
       // Check if we have existing encryption states for this conversation
-      // If yes, use action queue (works offline). If no, use legacy path (creates new sessions).
+      // Use Action Queue ONLY when offline - when online, legacy path handles new devices better
       const conversationId = address + '/' + address;
       const existingStates = await this.messageDB.getEncryptionStates({ conversationId });
       const hasEstablishedSessions = existingStates.length > 0;
+      const isOnline = navigator.onLine;
 
-      if (ENABLE_DM_ACTION_QUEUE && hasEstablishedSessions) {
+      if (ENABLE_DM_ACTION_QUEUE && hasEstablishedSessions && !isOnline) {
         // Add to cache with 'sending' status (optimistic update)
         await this.addMessage(queryClient, address, address, {
           ...message,

@@ -217,8 +217,10 @@ export function useMessageActions(options: UseMessageActionsOptions) {
 
       // Route to appropriate handler based on DM vs Space
       if (isDM) {
-        // DM: Use Double Ratchet encryption via reaction-dm handler (if enabled)
-        const dmActionContext = ENABLE_DM_ACTION_QUEUE ? buildDmActionContext(spaceId) : null;
+        // DM: Use Double Ratchet encryption via reaction-dm handler (if enabled and offline)
+        // When online, use legacy path to handle new devices properly
+        const isOnline = navigator.onLine;
+        const dmActionContext = (ENABLE_DM_ACTION_QUEUE && !isOnline) ? buildDmActionContext(spaceId) : null;
         if (!dmActionContext) {
           // Fallback to legacy path if context unavailable or feature disabled
           onSubmitMessage({
@@ -320,10 +322,12 @@ export function useMessageActions(options: UseMessageActionsOptions) {
 
       // Route to appropriate handler based on DM vs Space
       if (isDM) {
-        // DM: Use Double Ratchet encryption via delete-dm handler (if enabled)
-        const dmActionContext = ENABLE_DM_ACTION_QUEUE ? buildDmActionContext(spaceId) : null;
+        // DM: Use Double Ratchet encryption via delete-dm handler (if enabled and offline)
+        // When online, use legacy path to handle new devices properly
+        const isOnline = navigator.onLine;
+        const dmActionContext = (ENABLE_DM_ACTION_QUEUE && !isOnline) ? buildDmActionContext(spaceId) : null;
         if (!dmActionContext) {
-          // Fallback to legacy path if context unavailable or feature disabled
+          // Fallback to legacy path if context unavailable, feature disabled, or online
           onSubmitMessage({
             type: 'remove-message',
             removeMessageId: message.messageId,
