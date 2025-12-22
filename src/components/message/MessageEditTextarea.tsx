@@ -290,15 +290,14 @@ export function MessageEditTextarea({
         if (actionQueueService && currentPasskeyInfo) {
           if (isDM) {
             // DM: Use Double Ratchet encryption via edit-dm handler (if enabled)
-            if (ENABLE_DM_ACTION_QUEUE && dmContext?.self && dmContext?.counterparty) {
+            if (ENABLE_DM_ACTION_QUEUE && dmContext?.self) {
               await actionQueueService.enqueue(
                 'edit-dm',
                 {
                   address: currentSpaceId,
                   messageId: message.messageId,
                   editMessage,
-                  self: dmContext.self,
-                  counterparty: dmContext.counterparty,
+                  selfUserAddress: dmContext.self.user_address,
                   senderDisplayName: currentPasskeyInfo.displayName,
                   senderUserIcon: currentPasskeyInfo.pfpUrl,
                 },

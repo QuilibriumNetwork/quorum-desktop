@@ -1513,33 +1513,43 @@ export class MessageService {
         } catch { /* Signature optional - continue without it */ }
       }
 
-      // Add to cache with 'sending' status (optimistic update)
-      await this.addMessage(queryClient, address, address, {
-        ...message,
-        sendStatus: 'sending',
-      });
+      // Check if we have existing encryption states for this conversation
+      // If yes, use action queue (works offline). If no, use legacy path (creates new sessions).
+      const conversationId = address + '/' + address;
+      const existingStates = await this.messageDB.getEncryptionStates({ conversationId });
+      const hasEstablishedSessions = existingStates.length > 0;
 
-      // Queue to ActionQueue for persistent, crash-resistant delivery
-      if (!this.actionQueueService) {
-        throw new Error(
-          'ActionQueueService not initialized. This is a bug - MessageService.setActionQueueService() must be called before sending messages.'
+      if (hasEstablishedSessions) {
+        // Add to cache with 'sending' status (optimistic update)
+        await this.addMessage(queryClient, address, address, {
+          ...message,
+          sendStatus: 'sending',
+        });
+
+        // Queue to ActionQueue for persistent, crash-resistant delivery
+        if (!this.actionQueueService) {
+          throw new Error(
+            'ActionQueueService not initialized. This is a bug - MessageService.setActionQueueService() must be called before sending messages.'
+          );
+        }
+        await this.actionQueueService.enqueue(
+          'send-dm',
+          {
+            address,
+            signedMessage: message,
+            messageId: messageIdHex,
+            selfUserAddress: self.user_address,
+            senderDisplayName: currentPasskeyInfo.displayName,
+            senderUserIcon: currentPasskeyInfo.pfpUrl,
+          },
+          `send-dm:${address}:${messageIdHex}`
         );
-      }
-      await this.actionQueueService.enqueue(
-        'send-dm',
-        {
-          address,
-          signedMessage: message,
-          messageId: messageIdHex,
-          self,
-          counterparty,
-          senderDisplayName: currentPasskeyInfo.displayName,
-          senderUserIcon: currentPasskeyInfo.pfpUrl,
-        },
-        `send-dm:${address}:${messageIdHex}`
-      );
 
-      return; // Post message handling complete
+        return; // Post message handling complete via action queue
+      }
+
+      // No established sessions - fall through to legacy path below
+      // which will create new sessions using full self/counterparty data
     }
 
     // For edit-message, delete-conversation, reactions: use existing flow (no optimistic update)

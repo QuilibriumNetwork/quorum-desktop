@@ -80,6 +80,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Action Queue Bypasses SDK Encryption for Identity Keys](bugs/action-queue-plaintext-private-keys.md)
 - [Config Sync Space Loss Race Condition](bugs/config-sync-space-loss-race-condition.md)
 - [DirectMessage Invite Loading Performance Issue](bugs/directmessage-invite-loading-performance.md)
+- [DM Messages Not Delivered - Device Registration Inbox Mismatch](bugs/dm-registration-inbox-mismatch.md)
 - [Encryption State Evals Causing Config Sync Bloat](bugs/encryption-state-evals-bloat.md)
 - [Expired Invite Card Validation Timing Issue](bugs/expired-invite-card-validation-timing.md)
 - [JoinSpaceModal "Invalid JSON" Error Due to Network Issues](bugs/joinspacemodal-invalid-json-network-error.md)
@@ -96,6 +97,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Android 7.0 File Download Fix - Implementation Plan](bugs/.solved/SOLVED_android-file-download-huawei-p9-lite.md)
 - [Bug: Auto-Jump to First Unread Message - Blocked by Virtuoso Scroll Positioning](bugs/.solved/auto-jump-unread-virtuoso-scroll-conflict.md)
 - [Channel/Group Save Race Condition](bugs/.solved/channel-group-save-race-condition.md)
+- [Config Save Missing React Query Cache Update Causes Stale allowSync](bugs/.solved/config-save-stale-cache-allowsync.md)
 - [Deleted Messages Reappear After Peer Sync](bugs/.solved/deleted-messages-reappear-via-sync.md)
 - [DM Offline Navigation Shows Empty View](bugs/.solved/dm-offline-navigation-empty.md)
 - [DM Send Fails with "Cannot read properties of undefined (reading 'address')"](bugs/.solved/dm-send-fails-address-undefined.md)
@@ -344,12 +346,11 @@ This is the main index for all documentation, bug reports, and task management.
 - [Action Queue vs Legacy DM Message Implementation - Code Comparison Audit](reports/action-queue/003-DM-message-code-comparison-audit.md)
 - [Action Queue vs Legacy Space Message Implementation - Code Comparison Audit](reports/action-queue/004-space-message-code-comparison-audit.md)
 - [DM Sync Non-Deterministic Failures](reports/action-queue/005-dm-sync-non-deterministic-failures.md)
-- [006: Action Queue Stores Identity Keys in Plaintext](reports/action-queue/006-plaintext-private-keys-bug-old.md)
 - [006: Action Queue Stores Identity Keys in Plaintext](reports/action-queue/006-plaintext-private-keys-bug.md)
-- [007: Fix - Encrypt Action Queue Context](reports/action-queue/007-plaintext-private-keys-fix-old.md)
 - [007: Fix - Don't Store Keys in Action Queue](reports/action-queue/007-plaintext-private-keys-fix.md)
 - [008: Action Queue Endpoint Dependencies & Failure Modes](reports/action-queue/008-endpoint-dependencies.md)
-- [009: Persist DM Registration Data for Full Offline Support](reports/action-queue/009-dm-offline-registration-persistence-fix.md)
+- [009: Persist DM Registration Data for Full Offline Support](reports/action-queue/009-dm-offline-registration-persistence-fix-old.md)
+- [009: DM Offline Support - Conditional Action Queue Routing](reports/action-queue/009-dm-offline-registration-persistence-fix.md)
 
 ### Onboarding Flow
 - [Passkey Authentication Flow Analysis](reports/onboarding-flow/passkey-authentication-flow-analysis-2025-11-23.md)
@@ -358,4 +359,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2025-12-21 12:08:10
+**Last Updated**: 2025-12-22 14:49:24

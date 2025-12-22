@@ -1,316 +1,242 @@
-# 009: Persist DM Registration Data for Full Offline Support
+# 009: DM Offline Support - Conditional Action Queue Routing
 
-> **⚠️ AI-Generated**: May contain errors. Verify before use.
+> **AI-Generated**: May contain errors. Verify before use.
 
-**Status**: Pending
-**Complexity**: Medium-High (increased due to security requirements)
-**Created**: 2025-12-20
-**Last Updated**: 2025-12-21
-**Files**:
-- `src/db/messages.ts` - Add user_registrations store (schema v8)
-- `src/hooks/queries/registration/buildRegistrationFetcher.ts` - Cache-first fetching logic
-- `src/hooks/queries/registration/useRegistration.ts` - Save to IndexedDB on fetch
-- `src/hooks/queries/registration/useRegistrationOptional.ts` - Load from IndexedDB first
-- `src/components/direct/DirectMessage.tsx:226` - Silent fail location
-- `src/services/ActionQueueHandlers.ts:501-730` - DM message handling with registration context
-
-## What & Why
-
-**Current State**: DM messages fail silently after page refresh when offline because counterparty registration data (public keys, inbox addresses) is only cached in React Query memory.
-
-**Desired State**: DM messages work fully offline like Space messages - users can send messages, close the app, reopen it offline, and messages will queue and send when back online.
-
-**Value**: Consistent offline UX between Spaces and DMs. Currently, Space messages survive app restart but DM messages don't, which is confusing and can lead to lost messages.
-
-## Context
-
-- **Existing pattern**: Space encryption keys are stored in IndexedDB (`space_keys` store) and survive refresh
-- **Current limitation**: `UserRegistration` data is fetched via API and cached only in React Query (memory)
-- **Root cause**: Registration data was not prioritized for offline support during initial implementation
-
-**Related Documentation**:
-- [Action Queue - Offline Support Summary](../../docs/features/action-queue.md#why-space-messages-work-fully-offline-but-dm-messages-dont)
-- [Offline Support](../../docs/features/offline-support.md)
-
-**Related Work**:
-- [007-plaintext-private-keys-fix.md](007-plaintext-private-keys-fix.md) - Creates shared encryption utilities (`src/utils/encryption.ts`) that this task can reuse
+**Status**: Implemented
+**Complexity**: Low
+**Created**: 2025-12-22
+**Supersedes**: [009-dm-offline-registration-persistence-fix-old.md](009-dm-offline-registration-persistence-fix-old.md)
 
 ---
 
-## Analysis Complete ✅
+## Summary
 
-### Feature Analysis (2025-12-20)
+Route DM sending through different paths based on conversation state:
 
-**Current Infrastructure Assessment:**
-- ✅ Action queue infrastructure already handles offline DM message sending
-- ✅ Registration hooks (`useRegistration`, `useRegistrationOptional`) work correctly
-- ✅ IndexedDB schema (v7) is well-organized with 7 object stores
-- ✅ Silent failure handling exists at `DirectMessage.tsx:226-228`
-- ❌ NO IndexedDB persistence for UserRegistration data
-- ❌ Registration data only lives in React Query cache (memory)
-- ❌ Page refresh = data loss when offline
+- **New conversation** → Skip action queue, use direct path (would fail offline anyway - requires fresh registration data)
+- **Existing conversation** → Use action queue (works offline with existing encryption state)
 
-**Data Structure Verification:**
-- `UserRegistration` contains: `user_address`, `device_registrations[]`, `user_keyset`
-- ✅ No circular references - serializable to JSON
-- ✅ Storage size: ~2-5KB per cached registration (negligible)
-- ✅ Both `self` and `counterparty` registrations can be cached
-
-**What Currently Works:**
-- DM messages queued in action queue include full context with `self` and `counterparty` UserRegistration
-- Encryption happens in the handler using queued registration data
-- This works for messages queued BEFORE going offline
-
-**What Fails:**
-- After page refresh offline, React Query cache is empty
-- New messages can't be encrypted without registration data
-- Silent `console.warn` with no user feedback
-
-### Security Analysis (2025-12-20)
-
-> **⚠️ CRITICAL SECURITY CONCERNS IDENTIFIED**
-
-The security analyst identified that `user_registrations` is **NOT equivalent** to `space_keys`:
-
-| Aspect | space_keys (Precedent) | user_registrations (Proposed) |
-|--------|------------------------|-------------------------------|
-| Contains | Private keys (necessary) | Public keys + network IDs |
-| Metadata sensitivity | Low (space participation) | **Critical** (social graph) |
-| Attack value | Limited | **High** (communication mapping) |
-
-**Critical Issues:**
-
-1. **Unencrypted Public Keys** (High)
-   - Enables device fingerprinting and cross-session user correlation
-   - Adversary with local access can build social graph of contacts
-
-2. **Inbox Address Metadata Leakage** (Critical)
-   - Inbox addresses are persistent network identifiers
-   - Creates communication map extractable from device/backups
-   - Enables traffic analysis and surveillance
-
-3. **Stale Registration Data Attack Vector** (High)
-   - No expiration = key rotation bypass vulnerability
-   - Messages sent to old keys silently fail
-
-4. **No Secure Deletion Mechanism** (Medium)
-   - Data persists after logout
-   - Extractable from device backups
-
-**Threat Model:**
-
-| Adversary | Risk Level |
-|-----------|------------|
-| Malware on device | **Critical** |
-| Physical device access | **Critical** |
-| Malicious browser extension | **High** |
-| Forensic analysis (backups) | **High** |
-
-**DO NOT follow unencrypted `space_keys` pattern** - different threat model applies.
+This follows the same pattern as [007-plaintext-private-keys-fix.md](007-plaintext-private-keys-fix.md) - don't store data that isn't needed.
 
 ---
 
-## Security Requirements (Mandatory)
+## Why the Previous Fix Was Over-Engineered
 
-Based on security analysis, these are **non-negotiable** requirements:
+The previous proposal (009-old) suggested storing full `self` and `counterparty` UserRegistration objects in IndexedDB with encryption. However, analysis of the SDK code reveals:
 
-### 1. Encryption at Rest (Required)
+### What's Actually Used from `self`:
+
+Looking at `DoubleRatchetInboxEncrypt` and `DoubleRatchetInboxEncryptForceSenderInit` in the SDK:
+
 ```typescript
-interface EncryptedRegistration {
-  user_address: string;     // Index key (unencrypted for lookup)
-  encrypted_data: string;   // AES-GCM encrypted payload
-  iv: string;               // Initialization vector
-  cachedAt: number;         // For expiration checking
+// Only acceptee.user_address is used (lines 882-883, 983 in channel.ts)
+user_address: acceptee.user_address,
+```
+
+**Only `self.user_address` is needed** - a simple string that identifies the sender.
+
+### What's Already Persisted:
+
+The encryption state (`DoubleRatchetStateAndInboxKeys`) already contains:
+
+```typescript
+{
+  ratchet_state: string;           // Double Ratchet cryptographic state
+  receiving_inbox: InboxKeyset;    // Our inbox keys for receiving replies
+  sending_inbox: SendingInbox;     // Counterparty's inbox address + encryption key
+  tag: string;                     // Inbox address for routing
+  sent_accept?: boolean;
 }
 ```
-- Encrypt using AES-GCM with passkey-derived key
-- Use Web Crypto API (already used for config encryption in codebase)
 
-### 2. Cache Expiration (Required)
-- **TTL: 7 days** - automatic expiration
-- Prune expired entries on app start
-- When online: background refresh before expiry
-- When offline: use cached even if stale (with warning)
+**For established sessions, the encryption state has everything needed to encrypt and send messages!**
 
-### 3. Secure Deletion (Required)
-- Clear all cached registrations on logout
-- Delete specific registration when DM conversation deleted
-- Implement `clearAllUserRegistrations()` method
+### When `counterparty` Data Is Actually Needed:
 
-### 4. Minimal Data Storage (Required)
-Store only what's needed for offline encryption:
+Only when creating a NEW Double Ratchet session (first message to a new device):
+
 ```typescript
-// DO store:
-- inbox_addresses (for Double Ratchet session)
-- user_public_key (for key agreement)
-
-// DO NOT store:
-- Full device_registrations detail
-- peer_public_key
-- signatures
+// ActionQueueHandlers.ts:621-625 - Finding target device for new session
+const targetDevice = self.device_registrations
+  .concat(counterparty.device_registrations)
+  .find((d) => d.inbox_registration.inbox_address === inbox);
 ```
 
+But this only happens when:
+1. First message ever to a contact (no encryption state exists)
+2. Counterparty added a new device after last contact
+
+**Both are rare edge cases that can gracefully require online.**
+
 ---
 
-## Proposed Implementation (Updated)
+## Proposed Fix
 
-### Phase 1: Database Schema
-- [ ] **Add `user_registrations_encrypted` store to IndexedDB** (`src/db/messages.ts`)
-  - Bump schema version to 8
-  - Key by `user_address`
-  - Store encrypted `EncryptedRegistration` object
-  - Add index on `cachedAt` for expiration queries
-  ```typescript
-  if (event.oldVersion < 8) {
-    const registrationCache = db.createObjectStore('user_registrations_encrypted', {
-      keyPath: 'user_address',
-    });
-    registrationCache.createIndex('by_cached_at', 'cachedAt');
+### Approach: Conditional Routing at Enqueue Time
+
+At the point of enqueueing, check if this is a new conversation:
+- **New conversation (no encryption state)** → Don't use action queue, call send directly
+- **Existing conversation (has encryption state)** → Use action queue for offline resilience
+
+### Files to Modify
+
+1. **Enqueue call site** - Add condition to check for existing encryption state before enqueueing
+2. **`src/services/ActionQueueHandlers.ts`** - Simplify `send-dm` handler (only handles existing conversations)
+
+---
+
+## Implementation
+
+### 1. Conditional Routing at Enqueue Time
+
+In [MessageService.ts:1516-1553](src/services/MessageService.ts#L1516-L1553):
+
+```typescript
+// Check if we have existing encryption states for this conversation
+// If yes, use action queue (works offline). If no, use legacy path (creates new sessions).
+const conversationId = address + '/' + address;
+const existingStates = await this.messageDB.getEncryptionStates({ conversationId });
+const hasEstablishedSessions = existingStates.length > 0;
+
+if (hasEstablishedSessions) {
+  // Add to cache with 'sending' status (optimistic update)
+  await this.addMessage(queryClient, address, address, {
+    ...message,
+    sendStatus: 'sending',
+  });
+
+  // Queue to ActionQueue for persistent, crash-resistant delivery
+  await this.actionQueueService.enqueue(
+    'send-dm',
+    {
+      address,
+      signedMessage: message,
+      messageId: messageIdHex,
+      selfUserAddress: self.user_address,  // Only store the address string
+      senderDisplayName: currentPasskeyInfo.displayName,
+      senderUserIcon: currentPasskeyInfo.pfpUrl,
+    },
+    `send-dm:${address}:${messageIdHex}`
+  );
+
+  return; // Post message handling complete via action queue
+}
+
+// No established sessions - fall through to legacy path below
+// which will create new sessions using full self/counterparty data
+```
+
+### 2. Handler Only Handles Existing Conversations
+
+In [ActionQueueHandlers.ts:521-604](src/services/ActionQueueHandlers.ts#L521-L604):
+
+```typescript
+// send-dm handler - only handles existing conversations with encryption state
+const selfUserAddress = context.selfUserAddress as string;
+
+// Get encryption states - these contain all the inbox info we need for established sessions
+const response = await this.deps.messageDB.getEncryptionStates({ conversationId });
+const sets = response.map((e) => JSON.parse(e.state));
+
+// For established sessions, we only need selfUserAddress (SDK only uses user_address field)
+const minimalSelf = { user_address: selfUserAddress } as secureChannel.UserRegistration;
+
+// Get target inboxes from existing encryption states (excluding our own device)
+const targetInboxes = sets
+  .map((s) => s.tag as string)
+  .filter((tag) => tag !== keyset.deviceKeyset.inbox_keyset.inbox_address);
+
+// Validate we have recipients to send to
+if (targetInboxes.length === 0) {
+  throw new Error('No established sessions available. Please connect to the internet to initialize the conversation.');
+}
+
+// Encrypt for each inbox using existing encryption states (Double Ratchet)
+for (const inbox of targetInboxes) {
+  const set = sets.find((s) => s.tag === inbox);
+  if (!set) continue;
+
+  if (set.sending_inbox.inbox_public_key === '') {
+    sessions.push(...secureChannel.DoubleRatchetInboxEncryptForceSenderInit(
+      keyset.deviceKeyset, [set], JSON.stringify(messageToEncrypt),
+      minimalSelf, senderDisplayName, senderUserIcon
+    ));
+  } else {
+    sessions.push(...secureChannel.DoubleRatchetInboxEncrypt(
+      keyset.deviceKeyset, [set], JSON.stringify(messageToEncrypt),
+      minimalSelf, senderDisplayName, senderUserIcon
+    ));
   }
-  ```
+}
+```
 
-### Phase 2: Encryption Helpers
-- [ ] **Reuse shared encryption utilities** from `src/utils/encryption.ts` (created by action queue fix [007](007-plaintext-private-keys-fix.md))
-  - `getOrDeriveAesKey(userKeyset)` - derive AES key from user's private key (cached)
-  - `encryptContext(data, aesKey)` - AES-GCM encryption
-  - `decryptContext(encrypted, iv, aesKey)` - AES-GCM decryption
-  - Wrap with registration-specific helpers if needed:
-    - `encryptRegistration(registration, userKeyset)` - encrypt before storage
-    - `decryptRegistration(encrypted, userKeyset)` - decrypt on load
+### 3. Remove Counterparty/Self from Context
 
-### Phase 3: Persistence Methods
-- [ ] **Add IndexedDB methods** (`src/db/messages.ts`)
-  - `saveUserRegistration(address, registration, userKeyset)` - encrypt and store
-  - `getUserRegistration(address, userKeyset)` - load and decrypt
-  - `deleteUserRegistration(address)` - remove single entry
-  - `clearAllUserRegistrations()` - logout cleanup
-  - `pruneExpiredRegistrations(cutoffTimestamp)` - remove stale entries
-
-### Phase 4: Update Fetcher
-- [ ] **Cache-first logic in fetcher** (`src/hooks/queries/registration/buildRegistrationFetcher.ts`)
-  ```typescript
-  async function fetchRegistration(address, messageDB, userKeyset) {
-    // 1. Try IndexedDB first
-    const cached = await messageDB.getUserRegistration(address, userKeyset);
-
-    // 2. Check expiration (7 days)
-    if (cached && !isExpired(cached.cachedAt)) {
-      return { registration: cached.registration, registered: true, fromCache: true };
-    }
-
-    // 3. Try API
-    try {
-      const response = await apiClient.getUser(address);
-      await messageDB.saveUserRegistration(address, response.data, userKeyset);
-      return { registration: response.data, registered: true };
-    } catch (e) {
-      // 4. Offline fallback - use cached even if stale
-      if (cached) {
-        console.warn(`Using stale cached registration for ${address}`);
-        return { registration: cached.registration, registered: true, stale: true };
-      }
-      if (e.status === 404) return { registered: false };
-      throw e;
-    }
-  }
-  ```
-
-### Phase 5: Lifecycle Hooks
-- [ ] **Add logout cleanup** (wherever logout is handled)
-  - Call `messageDB.clearAllUserRegistrations()` on logout
-- [ ] **Add startup cleanup** (app initialization)
-  - Call `messageDB.pruneExpiredRegistrations(Date.now() - 7 * 24 * 60 * 60 * 1000)`
-
-### Phase 6: UX Improvement
-- [ ] **Replace silent fail with user feedback** (`src/components/direct/DirectMessage.tsx:226`)
-  - Show warning toast: "Unable to send messages while offline. Connect to refresh registration data."
-  - Consider disabling composer with tooltip when registration unavailable
-  - Add visual indicator when using stale cached data
+Since the handler only processes existing conversations, it doesn't need:
+- `self` UserRegistration - replaced with `selfUserAddress` string
+- `counterparty` UserRegistration - not needed (encryption state has everything)
 
 ---
 
-## Verification
+## Scenarios
 
-### Functional Tests
-- [ ] **DM sends survive page refresh**
-  - Test: Open DM online → go offline → send message → refresh → come back online → message sends
-
-- [ ] **New DM conversations still require online**
-  - Test: Starting a conversation with someone you've never messaged still needs network
-
-- [ ] **TypeScript compiles**
-  - Run: `npx tsc --noEmit --jsx react-jsx --skipLibCheck`
-
-- [ ] **No regression in online behavior**
-  - Test: Normal DM flow works unchanged when online
-
-### Security Tests
-- [ ] **Encryption verification**
-  - Inspect IndexedDB in DevTools - confirm no plaintext keys visible
-  - Verify `encrypted_data` field contains ciphertext
-
-- [ ] **Cache expiration**
-  - Set short TTL for testing, verify entries are pruned after expiry
-
-- [ ] **Logout cleanup**
-  - Logout and verify `user_registrations_encrypted` store is empty
-
-- [ ] **Stale key handling**
-  - Test behavior when counterparty rotates keys
-  - Verify graceful degradation with user feedback
-
-- [ ] **Malware simulation**
-  - Test XSS/extension access to IndexedDB (should only get ciphertext)
-
-### Performance Tests
-- [ ] **Memory usage acceptable**
-  - UserRegistration is ~2-5KB per user
-  - Typical user: 10-50 contacts = 20-250KB total
-
-- [ ] **Query performance**
-  - IndexedDB lookup by `user_address` should be O(1)
+| Scenario | Path | Behavior |
+|----------|------|----------|
+| New conversation, online | Direct (no queue) | Works - fetches registration, creates session |
+| New conversation, offline | Direct (no queue) | Fails immediately (expected - needs network) |
+| Existing conversation, online | Action queue | Works - queued, processed, sent |
+| Existing conversation, offline | Action queue | **Queued, sent when online** |
+| Existing conversation, counterparty new device | Action queue | Sends to known inboxes (new device gets msg when online) |
+| App restart with pending DM | Action queue | Works - encryption state persists |
 
 ---
 
-## Definition of Done
-- [x] Codebase analysis completed (feature analyzer - 2025-12-20)
-- [x] Security analysis completed (security analyst - 2025-12-20)
-- [ ] Phase 1: Database schema implemented
-- [ ] Phase 2: Encryption helpers implemented
-- [ ] Phase 3: Persistence methods implemented
-- [ ] Phase 4: Fetcher updated with cache-first logic
-- [ ] Phase 5: Lifecycle hooks (logout/startup cleanup)
-- [ ] Phase 6: UX improvement (user feedback)
-- [ ] All functional tests pass
-- [ ] All security tests pass
-- [ ] Documentation updated (action-queue.md, offline-support.md)
-- [ ] No console errors
+## What This Removes
+
+Compared to the old 009 fix, this approach:
+
+- **Removes**: Need for `user_registrations_encrypted` IndexedDB store
+- **Removes**: AES-GCM encryption infrastructure for registrations
+- **Removes**: 7-day cache TTL and expiration logic
+- **Removes**: Logout cleanup for cached registrations
+- **Removes**: Storing inbox addresses and public keys (metadata concern)
 
 ---
 
-## Appendix: Security Recommendations Summary
+## Verification Checklist
 
-### Mandatory (Must Have)
-1. ✅ Encrypt all registration data using AES-GCM with passkey-derived key
-2. ✅ Implement 7-day cache TTL with automatic expiration
-3. ✅ Add logout handler to clear all cached registrations
-4. ✅ Store only minimal data needed (inbox addresses + user public key)
-5. ✅ Add cache validation on encryption failures (detect stale keys)
-
-### Recommended (Should Have)
-6. Implement secure deletion mechanism
-7. Add user-visible cache status in settings
-8. Log cache events for security auditing
-9. Implement forced refresh on key rotation detection
-10. Add warning UI when using cached (potentially stale) data
-
-### Optional (Nice to Have)
-11. Device fingerprint minimization (store only active inbox)
-12. Differential privacy for cached timestamps
-13. Encrypted backup/export functionality
-14. Admin console for cache inspection/debugging
+- [x] TypeScript compiles: `npx tsc --noEmit --jsx react-jsx --skipLibCheck`
+- [ ] DM sending works online (existing conversation)
+- [ ] DM sending works offline with existing encryption state
+- [ ] New conversation online works (legacy path)
+- [ ] New conversation offline fails gracefully (expected - needs network)
+- [ ] App restart with pending DM works (encryption state persists)
+- [x] No `self` or `counterparty` objects in action queue context (only `selfUserAddress` string)
 
 ---
 
-_Created: 2025-12-20_
-_Last Updated: 2025-12-21 - Moved from tasks to action-queue reports_
+## Comparison with Previous Approach
+
+| Aspect | Old 009 (store registrations) | New 009 (conditional routing) |
+|--------|------------------------------|-------------------------------|
+| Data stored | Full UserRegistration (encrypted) | Only `selfUserAddress` string |
+| Metadata risk | High (social graph, inbox addresses) | None |
+| Complexity | ~200 lines new code | ~20 lines conditional logic |
+| New conversation offline | Would fail in handler anyway | Fails immediately (clearer UX) |
+| Existing conversation offline | Works | Works |
+| Security review | Required (encryption at rest) | Not needed |
+
+**The new approach is simpler, more secure (less data stored), and provides clearer UX by failing fast for new conversations instead of queuing something that can't succeed.**
+
+---
+
+## Related
+
+- **Previous approach**: [009-dm-offline-registration-persistence-fix-old.md](009-dm-offline-registration-persistence-fix-old.md)
+- **Similar pattern**: [007-plaintext-private-keys-fix.md](007-plaintext-private-keys-fix.md)
+- **Action Queue Feature**: [../../docs/features/action-queue.md](../../docs/features/action-queue.md)
+
+---
+
+_Created: 2025-12-22_
+_Updated: 2025-12-22 - Verified implementation matches documentation_

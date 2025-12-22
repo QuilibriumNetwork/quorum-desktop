@@ -105,14 +105,13 @@ export function useMessageActions(options: UseMessageActionsOptions) {
 
   // Helper to build DM context for action queue handlers
   const buildDmActionContext = useCallback((address: string) => {
-    if (!dmContext?.self || !dmContext?.counterparty) {
+    if (!dmContext?.self) {
       console.warn('[useMessageActions] Missing DM registration context - dmContext prop not provided');
       return null;
     }
     return {
       address,
-      self: dmContext.self,
-      counterparty: dmContext.counterparty,
+      selfUserAddress: dmContext.self.user_address,
       senderDisplayName: currentPasskeyInfo?.displayName,
       senderUserIcon: currentPasskeyInfo?.pfpUrl,
     };

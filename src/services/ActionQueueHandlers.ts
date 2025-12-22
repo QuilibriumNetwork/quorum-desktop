@@ -514,8 +514,7 @@ export class ActionQueueHandlers {
    * - address: string (the DM conversation address)
    * - signedMessage: Message (already signed)
    * - messageId: string
-   * - self: UserRegistration
-   * - counterparty: UserRegistration
+   * - selfUserAddress: string (user's address for identity in envelope)
    * - senderDisplayName: string (optional, user's display name for identity revelation)
    * - senderUserIcon: string (optional, user's profile picture URL for identity revelation)
    */
@@ -529,8 +528,7 @@ export class ActionQueueHandlers {
       const address = context.address as string;
       const signedMessage = context.signedMessage as Message;
       const messageId = context.messageId as string;
-      const self = context.self as secureChannel.UserRegistration;
-      const counterparty = context.counterparty as secureChannel.UserRegistration;
+      const selfUserAddress = context.selfUserAddress as string;
       const senderDisplayName = context.senderDisplayName as string | undefined;
       const senderUserIcon = context.senderUserIcon as string | undefined;
 
@@ -545,45 +543,29 @@ export class ActionQueueHandlers {
         conversationId,
       });
 
-      // Get encryption states
-      let response = await this.deps.messageDB.getEncryptionStates({
+      // Get encryption states - these contain all the inbox info we need for established sessions
+      const response = await this.deps.messageDB.getEncryptionStates({
         conversationId,
       });
-
-      const inboxes = (self?.device_registrations ?? [])
-        .filter((d) => d.inbox_registration)
-        .map((d) => d.inbox_registration.inbox_address)
-        .concat(
-          (counterparty?.device_registrations ?? [])
-            .filter((d) => d.inbox_registration)
-            .map((d) => d.inbox_registration.inbox_address)
-        )
-        .sort();
-
-      // Clean up stale encryption states
-      for (const res of response) {
-        if (!inboxes.includes(JSON.parse(res.state).tag)) {
-          await this.deps.messageDB.deleteEncryptionState(res);
-        }
-      }
-
-      response = await this.deps.messageDB.getEncryptionStates({ conversationId });
       const sets = response.map((e) => JSON.parse(e.state));
+
+      // For established sessions, we only need selfUserAddress (SDK only uses user_address field)
+      const minimalSelf = { user_address: selfUserAddress } as secureChannel.UserRegistration;
 
       let sessions: secureChannel.SealedMessageAndMetadata[] = [];
 
       // Strip ephemeral fields before encrypting
       const { sendStatus: _sendStatus, sendError: _sendError, ...messageToEncrypt } = signedMessage;
 
-      // Get target inboxes (excluding our own device)
-      const targetInboxes = inboxes.filter(
-        (i) => i !== keyset.deviceKeyset.inbox_keyset.inbox_address
-      );
+      // Get target inboxes from existing encryption states (excluding our own device)
+      const targetInboxes = sets
+        .map((s) => s.tag as string)
+        .filter((tag) => tag !== keyset.deviceKeyset.inbox_keyset.inbox_address);
 
       // Validate we have recipients to send to
       if (targetInboxes.length === 0) {
-        console.error('[ActionQueue:sendDm] No target inboxes available');
-        throw new Error('No target inboxes available for DM - counterparty may have no registered devices');
+        console.error('[ActionQueue:sendDm] No established sessions available');
+        throw new Error('No established sessions available. Please connect to the internet to initialize the conversation.');
       }
 
       console.log('[ActionQueue:sendDm] Encrypting for inboxes...', {
@@ -591,58 +573,33 @@ export class ActionQueueHandlers {
         encryptionStatesCount: sets.length,
       });
 
-      // Encrypt for each inbox (Double Ratchet)
-      for (let i = 0; i < targetInboxes.length; i++) {
-        const inbox = targetInboxes[i];
+      // Encrypt for each inbox using existing encryption states (Double Ratchet)
+      for (const inbox of targetInboxes) {
         const set = sets.find((s) => s.tag === inbox);
-        if (set) {
-          if (set.sending_inbox.inbox_public_key === '') {
-            const newSessions = secureChannel.DoubleRatchetInboxEncryptForceSenderInit(
-              keyset.deviceKeyset,
-              [set],
-              JSON.stringify(messageToEncrypt),
-              self,
-              senderDisplayName,
-              senderUserIcon
-            );
-            sessions = [...sessions, ...newSessions];
-          } else {
-            const newSessions = secureChannel.DoubleRatchetInboxEncrypt(
-              keyset.deviceKeyset,
-              [set],
-              JSON.stringify(messageToEncrypt),
-              self,
-              senderDisplayName,
-              senderUserIcon
-            );
-            sessions = [...sessions, ...newSessions];
-          }
+        if (!set) {
+          continue; // Skip - no encryption state for this inbox
+        }
+
+        if (set.sending_inbox.inbox_public_key === '') {
+          const newSessions = secureChannel.DoubleRatchetInboxEncryptForceSenderInit(
+            keyset.deviceKeyset,
+            [set],
+            JSON.stringify(messageToEncrypt),
+            minimalSelf,
+            senderDisplayName,
+            senderUserIcon
+          );
+          sessions = [...sessions, ...newSessions];
         } else {
-          // Find the device registration for this inbox
-          const targetDevice = self.device_registrations
-            .concat(counterparty.device_registrations)
-            .filter((d) => d.inbox_registration)
-            .find((d) => d.inbox_registration.inbox_address === inbox);
-
-          if (!targetDevice) {
-            console.warn(`[send-dm] No device registration found for inbox`);
-            continue; // Skip this inbox
-          }
-
-          try {
-            const newSessions = await secureChannel.NewDoubleRatchetSenderSession(
-              keyset.deviceKeyset,
-              self.user_address,
-              targetDevice,
-              JSON.stringify(messageToEncrypt),
-              senderDisplayName,
-              senderUserIcon
-            );
-            sessions = [...sessions, ...newSessions];
-          } catch (err) {
-            console.error(`[send-dm] Failed to create session`, err);
-            // Continue to next inbox instead of failing entire send
-          }
+          const newSessions = secureChannel.DoubleRatchetInboxEncrypt(
+            keyset.deviceKeyset,
+            [set],
+            JSON.stringify(messageToEncrypt),
+            minimalSelf,
+            senderDisplayName,
+            senderUserIcon
+          );
+          sessions = [...sessions, ...newSessions];
         }
       }
 
@@ -796,8 +753,7 @@ export class ActionQueueHandlers {
   private async encryptAndSendDm(
     address: string,
     messageContent: Record<string, unknown>,
-    self: secureChannel.UserRegistration,
-    counterparty: secureChannel.UserRegistration,
+    selfUserAddress: string,
     keyset: {
       deviceKeyset: secureChannel.DeviceKeyset;
       userKeyset: secureChannel.UserKeyset;
@@ -807,90 +763,54 @@ export class ActionQueueHandlers {
   ): Promise<void> {
     const conversationId = address + '/' + address;
 
-    // Get encryption states
-    let response = await this.deps.messageDB.getEncryptionStates({
+    // Get encryption states - these contain all the inbox info we need for established sessions
+    const response = await this.deps.messageDB.getEncryptionStates({
       conversationId,
     });
-
-    const inboxes = (self?.device_registrations ?? [])
-      .filter((d) => d.inbox_registration)
-      .map((d) => d.inbox_registration.inbox_address)
-      .concat(
-        (counterparty?.device_registrations ?? [])
-          .filter((d) => d.inbox_registration)
-          .map((d) => d.inbox_registration.inbox_address)
-      )
-      .sort();
-
-    // Clean up stale encryption states
-    for (const res of response) {
-      if (!inboxes.includes(JSON.parse(res.state).tag)) {
-        await this.deps.messageDB.deleteEncryptionState(res);
-      }
-    }
-
-    response = await this.deps.messageDB.getEncryptionStates({ conversationId });
     const sets = response.map((e) => JSON.parse(e.state));
+
+    // For established sessions, we only need selfUserAddress (SDK only uses user_address field)
+    const minimalSelf = { user_address: selfUserAddress } as secureChannel.UserRegistration;
 
     let sessions: secureChannel.SealedMessageAndMetadata[] = [];
 
-    // Get target inboxes (excluding our own device)
-    const targetInboxes = inboxes.filter(
-      (i) => i !== keyset.deviceKeyset.inbox_keyset.inbox_address
-    );
+    // Get target inboxes from existing encryption states (excluding our own device)
+    const targetInboxes = sets
+      .map((s) => s.tag as string)
+      .filter((tag) => tag !== keyset.deviceKeyset.inbox_keyset.inbox_address);
 
     // Validate we have recipients to send to
     if (targetInboxes.length === 0) {
-      throw new Error('No target inboxes available for DM - counterparty may have no registered devices');
+      throw new Error('No established sessions available. Please connect to the internet to initialize the conversation.');
     }
 
-    // Encrypt for each inbox (Double Ratchet)
+    // Encrypt for each inbox using existing encryption states (Double Ratchet)
     for (const inbox of targetInboxes) {
       const set = sets.find((s) => s.tag === inbox);
-      if (set) {
-        if (set.sending_inbox.inbox_public_key === '') {
-          const newSessions = secureChannel.DoubleRatchetInboxEncryptForceSenderInit(
-            keyset.deviceKeyset,
-            [set],
-            JSON.stringify(messageContent),
-            self,
-            senderDisplayName,
-            senderUserIcon
-          );
-          sessions = [...sessions, ...newSessions];
-        } else {
-          const newSessions = secureChannel.DoubleRatchetInboxEncrypt(
-            keyset.deviceKeyset,
-            [set],
-            JSON.stringify(messageContent),
-            self,
-            senderDisplayName,
-            senderUserIcon
-          );
-          sessions = [...sessions, ...newSessions];
-        }
+      if (!set) {
+        continue; // Skip - no encryption state for this inbox
+      }
+
+      if (set.sending_inbox.inbox_public_key === '') {
+        const newSessions = secureChannel.DoubleRatchetInboxEncryptForceSenderInit(
+          keyset.deviceKeyset,
+          [set],
+          JSON.stringify(messageContent),
+          minimalSelf,
+          senderDisplayName,
+          senderUserIcon
+        );
+        sessions = [...sessions, ...newSessions];
       } else {
-        // Find the device registration for this inbox
-        const targetDevice = self.device_registrations
-          .concat(counterparty.device_registrations)
-          .filter((d) => d.inbox_registration)
-          .find((d) => d.inbox_registration.inbox_address === inbox);
-
-        if (!targetDevice) {
-          continue; // Skip this inbox
-        }
-
-        sessions = [
-          ...sessions,
-          ...(await secureChannel.NewDoubleRatchetSenderSession(
-            keyset.deviceKeyset,
-            self.user_address,
-            targetDevice,
-            JSON.stringify(messageContent),
-            senderDisplayName,
-            senderUserIcon
-          )),
-        ];
+        const newSessions = secureChannel.DoubleRatchetInboxEncrypt(
+          keyset.deviceKeyset,
+          [set],
+          JSON.stringify(messageContent),
+          minimalSelf,
+          senderDisplayName,
+          senderUserIcon
+        );
+        sessions = [...sessions, ...newSessions];
       }
     }
 
@@ -939,8 +859,7 @@ export class ActionQueueHandlers {
    * Context expected:
    * - address: string (DM conversation address)
    * - reactionMessage: ReactionMessage | RemoveReactionMessage
-   * - self: UserRegistration
-   * - counterparty: UserRegistration
+   * - selfUserAddress: string (user's address for identity in envelope)
    * - senderDisplayName?: string
    * - senderUserIcon?: string
    */
@@ -952,16 +871,14 @@ export class ActionQueueHandlers {
       }
       const address = context.address as string;
       const reactionMessage = context.reactionMessage as Record<string, unknown>;
-      const self = context.self as secureChannel.UserRegistration;
-      const counterparty = context.counterparty as secureChannel.UserRegistration;
+      const selfUserAddress = context.selfUserAddress as string;
       const senderDisplayName = context.senderDisplayName as string | undefined;
       const senderUserIcon = context.senderUserIcon as string | undefined;
 
       await this.encryptAndSendDm(
         address,
         reactionMessage,
-        self,
-        counterparty,
+        selfUserAddress,
         keyset,
         senderDisplayName,
         senderUserIcon
@@ -982,8 +899,7 @@ export class ActionQueueHandlers {
    * Context expected:
    * - address: string (DM conversation address)
    * - deleteMessage: RemoveMessage
-   * - self: UserRegistration
-   * - counterparty: UserRegistration
+   * - selfUserAddress: string (user's address for identity in envelope)
    * - senderDisplayName?: string
    * - senderUserIcon?: string
    */
@@ -995,8 +911,7 @@ export class ActionQueueHandlers {
       }
       const address = context.address as string;
       const deleteMessage = context.deleteMessage as Record<string, unknown>;
-      const self = context.self as secureChannel.UserRegistration;
-      const counterparty = context.counterparty as secureChannel.UserRegistration;
+      const selfUserAddress = context.selfUserAddress as string;
       const senderDisplayName = context.senderDisplayName as string | undefined;
       const senderUserIcon = context.senderUserIcon as string | undefined;
 
@@ -1004,8 +919,7 @@ export class ActionQueueHandlers {
         await this.encryptAndSendDm(
           address,
           deleteMessage,
-          self,
-          counterparty,
+          selfUserAddress,
           keyset,
           senderDisplayName,
           senderUserIcon
@@ -1032,8 +946,7 @@ export class ActionQueueHandlers {
    * - address: string (DM conversation address)
    * - editMessage: EditMessage
    * - messageId: string
-   * - self: UserRegistration
-   * - counterparty: UserRegistration
+   * - selfUserAddress: string (user's address for identity in envelope)
    * - senderDisplayName?: string
    * - senderUserIcon?: string
    */
@@ -1046,8 +959,7 @@ export class ActionQueueHandlers {
       const address = context.address as string;
       const editMessage = context.editMessage as Record<string, unknown>;
       const messageId = context.messageId as string;
-      const self = context.self as secureChannel.UserRegistration;
-      const counterparty = context.counterparty as secureChannel.UserRegistration;
+      const selfUserAddress = context.selfUserAddress as string;
       const senderDisplayName = context.senderDisplayName as string | undefined;
       const senderUserIcon = context.senderUserIcon as string | undefined;
 
@@ -1060,8 +972,7 @@ export class ActionQueueHandlers {
       await this.encryptAndSendDm(
         address,
         editMessage,
-        self,
-        counterparty,
+        selfUserAddress,
         keyset,
         senderDisplayName,
         senderUserIcon
