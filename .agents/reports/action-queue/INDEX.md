@@ -1,6 +1,8 @@
 # Action Queue Bug Index
 
 > Quick reference for all Action Queue related bugs and issues.
+>
+> **Start here**: [000-action-queue-summary.md](000-action-queue-summary.md) - High-level overview of design decisions, bugs fixed, and lessons learned.
 
 ## Testing Purpose
 
@@ -95,4 +97,4 @@ window.__actionQueue.processQueue()
 
 ---
 
-_Last Updated: 2025-12-22_
+_Last Updated: 2025-12-23_

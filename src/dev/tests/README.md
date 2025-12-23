@@ -19,6 +19,21 @@ These are **unit tests** using mocks and spies (`vi.fn()`), **NOT** integration 
 
 **Philosophy**: We trust underlying implementations work correctly. We test that our services **use them correctly**.
 
+### Why These Tests Matter
+
+**If tests pass**, you know:
+- Control flow executes correctly (enqueue → process → handler → success/failure)
+- Services call each other with correct parameters
+- Error routing works (permanent vs retryable errors, auth errors)
+- Business logic is correct (deduplication, backoff timing, gating conditions)
+
+**If tests pass but app doesn't work**, the issue is in:
+- Real encryption (SDK behavior)
+- Real database (IndexedDB schema mismatch)
+- Real network (API/WebSocket failures)
+
+**Practical value**: Regression protection during refactoring. If you restructure code and tests still pass, the behavior contract is preserved. Manual testing still required for end-to-end verification.
+
 ---
 
 ## 📁 Directory Structure
@@ -26,8 +41,10 @@ These are **unit tests** using mocks and spies (`vi.fn()`), **NOT** integration 
 ```
 src/dev/tests/
 ├── services/                    # Service unit tests
-│   ├── MessageService.unit.test.tsx      (16 tests)
-│   ├── SpaceService.unit.test.tsx        (13 tests)
+│   ├── ActionQueueService.unit.test.ts   (42 tests)
+│   ├── ActionQueueHandlers.unit.test.ts  (56 tests)
+│   ├── MessageService.unit.test.tsx      (24 tests)
+│   ├── SpaceService.unit.test.tsx        (12 tests)
 │   ├── InvitationService.unit.test.tsx   (15 tests)
 │   ├── SyncService.unit.test.tsx         (15 tests)
 │   ├── EncryptionService.unit.test.tsx   (8 tests)
@@ -125,14 +142,12 @@ yarn vitest src/dev/tests/ --watch
 
 ## 📝 Detailed Test Descriptions
 
-### 1. MessageService.unit.test.tsx (16 tests)
+### 1. MessageService.unit.test.tsx (24 tests)
 
 **Purpose**: Validates MessageService message handling, routing, and persistence.
 
 **Test Coverage**:
-- Service construction and dependency injection (2 tests)
-- Method signatures verification (6 tests)
-- `submitMessage()` - P2P message submission (1 test)
+- `submitMessage()` - P2P message submission (2 tests)
 - `handleNewMessage()` - Message routing for 7 message types (7 tests):
   - POST (text messages)
   - REACTION (emoji reactions)
@@ -141,16 +156,23 @@ yarn vitest src/dev/tests/ --watch
   - LEAVE (user leave events)
   - KICK (user kick events)
   - UPDATE_PROFILE (profile updates)
+- `addMessage()` - Cache updates for DM and Space messages (3 tests)
+- `saveMessage()` - Database persistence (3 tests)
+- `deleteConversation()` - Message deletion (1 test)
+- `submitChannelMessage()` - Channel message submission (1 test)
+- `encryptAndSendToSpace()` - Triple Ratchet encryption helper (7 tests)
 
 **Key Validations**:
 - Correct parameter order in method calls
 - Message routing logic (inbox vs group messages)
 - Database method calls (saveMessage, deleteMessage)
-- Cache updates (queryClient.setQueryData)
+- Cache updates for both DM and Space scenarios
+- ActionQueueService integration
+- Encryption state management
 
 ---
 
-### 2. SpaceService.unit.test.tsx (13 tests)
+### 2. SpaceService.unit.test.tsx (12 tests)
 
 **Purpose**: Validates SpaceService space/channel management operations.
 
@@ -274,13 +296,136 @@ yarn vitest src/dev/tests/ --watch
 
 ---
 
+### 7. ActionQueueService.unit.test.ts (42 tests)
+
+**Purpose**: Validates ActionQueueService queue mechanics for background task processing.
+
+**Test Coverage**:
+- Service construction (2 tests)
+- Keyset management (4 tests):
+  - Get/set/clear user keyset
+  - Trigger processQueue when keyset is set
+- Task enqueueing (6 tests):
+  - Add task and return ID
+  - Deduplication by key
+  - Queue size limits
+  - Prune old tasks
+- Queue processing (7 tests):
+  - Online/offline behavior
+  - Keyset gate (waits for auth)
+  - Handler initialization check
+  - Sequential task processing
+- Task execution (6 tests):
+  - Success (delete task)
+  - Permanent error (mark failed)
+  - Transient error (retry with backoff)
+  - Max retries exceeded
+  - Auth error (401 session-expired)
+  - onFailure callback
+- Multi-tab safety (4 tests):
+  - Status-based gating
+  - processingStartedAt timestamps
+  - Grace period handling
+- Start/stop (3 tests):
+  - Reset stuck tasks
+  - Interval management
+  - Stop processing interval
+- Handler not found (1 test)
+- Exponential backoff (2 tests):
+  - Increasing delays
+  - Max delay cap
+- Context integrity (1 test):
+  - Keyset leakage detection
+- Task key format (2 tests):
+  - Key lookup consistency
+  - Deduplication with multiple tasks
+- Handler-service contract (3 tests):
+  - Context passed unchanged
+  - Error passed to isPermanentError
+  - onFailure called with context and error
+
+**Key Validations**:
+- Queue deduplication and size limits
+- Online/offline processing behavior
+- Retry logic with exponential backoff
+- Multi-tab coordination
+- Keyset security (never stored in tasks)
+- Handler-service interface contract
+
+---
+
+### 8. ActionQueueHandlers.unit.test.ts (56 tests)
+
+**Purpose**: Validates all 16 ActionQueue task handlers for Space and DM actions.
+
+**Test Coverage**:
+- Handler registry (2 tests):
+  - All 15 action types registered
+  - Unknown types return undefined
+- save-user-config (3 tests)
+- update-space (3 tests)
+- kick-user (3 tests)
+- mute-user (2 tests)
+- unmute-user (1 test)
+- reaction (Space) (2 tests)
+- pin-message (2 tests)
+- unpin-message (1 test)
+- edit-message (2 tests)
+- delete-message (3 tests)
+- send-channel-message (5 tests):
+  - Encrypt and send via Triple Ratchet
+  - Space/channel deleted handling
+  - Permanent error classification
+  - onFailure callback
+- send-dm (4 tests):
+  - Keyset required
+  - No established sessions error
+  - Permanent error classification
+  - onFailure callback
+- reaction-dm (2 tests)
+- delete-dm (2 tests)
+- edit-dm (3 tests)
+- Error sanitization (2 tests):
+  - Network errors
+  - Encryption errors
+- Handler messages (3 tests):
+  - failureMessage for toast handlers
+  - Silent handlers (no toast)
+  - No success messages (silent success)
+- Context contract validation (4 tests):
+  - send-channel-message context fields
+  - send-dm context fields
+  - kick-user context fields
+  - reaction currentPasskeyInfo
+- SDK call verification (2 tests):
+  - DoubleRatchetInboxEncrypt parameters
+  - getEncryptAndSendToSpace call
+- Error classification edge cases (3 tests):
+  - "was deleted" permanent errors
+  - Network errors retryable
+  - Delete handlers idempotent
+- Message status update contracts (2 tests):
+  - Space message pattern (spaceId/channelId)
+  - DM pattern (address/address)
+
+**Key Validations**:
+- Each handler's execute() method
+- isPermanentError() classification
+- onFailure() callbacks
+- Keyset availability checks
+- Error sanitization for user-facing messages
+- Context contract between enqueue and handler
+- SDK encryption call signatures
+
+---
+
 ## 🛠️ Test Setup
 
 ### Global Setup (`setup.ts`)
 
 Provides global mocks for:
 - **WebSocket**: Mock WebSocket implementation
-- **crypto**: Mock crypto API (getRandomValues, subtle)
+- **crypto**: Mock crypto API (getRandomValues, randomUUID, subtle.digest, subtle.generateKey, etc.)
 - **React Testing Library**: Automatic cleanup after each test
 
 ### Test Structure Pattern
@@ -350,7 +495,4 @@ Each guide includes:
 
 ---
 
-_Last updated: 2025-11-18_
-_Tests created: 2025-10-02 to 2025-11-18_
-_Total test coverage: 78+ tests across 6 services + 3 utilities (100% passing)_
-_Test organization: Restructured for scalability with dedicated directories for components, hooks, integration, and E2E tests_
+_Last updated: 2025-12-23_

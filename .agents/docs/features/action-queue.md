@@ -630,7 +630,25 @@ See [007-plaintext-private-keys-fix.md](../../reports/action-queue/007-plaintext
 
 ### Sequential Processing
 
-Simpler, avoids race conditions, prevents server overload, maintains message ordering.
+Tasks are processed one at a time, not in parallel. This is a deliberate choice:
+
+**Why not parallel?** Actions to the **same target** share mutable state:
+- Space messages: Same Triple Ratchet encryption state
+- DM messages: Same Double Ratchet encryption states
+- User config: Same config object (folders, settings, profile)
+
+Parallel processing would cause race conditions:
+```
+Action A reads config → Action B reads config → A writes → B writes (overwrites A!)
+```
+
+**Could we parallelize across different targets?** Yes, in theory:
+- Space A message + Space B message → Safe (different encryption states)
+- Space message + DM message + user config → Safe (independent)
+
+But the complexity (lock groups, per-target semaphores, more failure modes) isn't justified by the benefit. The "slowness" users perceive is network/crypto latency, not queue ordering.
+
+**Current approach**: Sequential is simple, safe, and correct. Grouped parallelism is a potential future optimization if throughput becomes a real pain point.
 
 ### Legacy Path as Primary for DMs
 
@@ -698,6 +716,24 @@ The counterparty notification is already "best effort" (wrapped in try/catch), s
 
 ---
 
+## Testing
+
+Unit tests for the Action Queue are in `src/dev/tests/services/`:
+
+```bash
+# Run all Action Queue tests (98 tests)
+yarn vitest src/dev/tests/services/ActionQueue --run
+```
+
+| Test File | Tests | Coverage |
+|-----------|-------|----------|
+| `ActionQueueService.unit.test.ts` | 42 | Queue mechanics, retry logic, multi-tab safety |
+| `ActionQueueHandlers.unit.test.ts` | 56 | All 15 handlers, context contracts, error classification |
+
+Tests verify control flow and contracts, not real encryption (SDK is mocked). See [README](src/dev/tests/README.md) for details.
+
+---
+
 ## Related Documentation
 
 ### Feature Documentation
@@ -718,4 +754,4 @@ The counterparty notification is already "best effort" (wrapped in try/catch), s
 
 ---
 
-*Updated: 2025-12-22 - Added offline-only DM routing: Action Queue used only when offline, legacy path handles new devices when online*
+*Updated: 2025-12-23 - Expanded sequential processing rationale (why not parallel)*

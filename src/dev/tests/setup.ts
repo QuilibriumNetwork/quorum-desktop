@@ -33,12 +33,14 @@ beforeAll(() => {
         }
         return arr;
       }),
+      randomUUID: vi.fn(() => 'mock-uuid-1234-5678-9abc-def012345678'),
       subtle: {
         generateKey: vi.fn(),
         exportKey: vi.fn(),
         importKey: vi.fn(),
         encrypt: vi.fn(),
         decrypt: vi.fn(),
+        digest: vi.fn().mockResolvedValue(new ArrayBuffer(32)),
       },
     },
     configurable: true,

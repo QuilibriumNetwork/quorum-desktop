@@ -25,6 +25,7 @@ import { MessageService, MessageServiceDependencies } from '@/services/MessageSe
 import { QueryClient } from '@tanstack/react-query';
 
 // Mock the secure channel module for crypto operations
+// NOTE: crypto.randomUUID is mocked globally in setup.ts
 vi.mock('@quilibrium/quilibrium-js-sdk-channels', () => ({
   channel: {
     TripleRatchetEncrypt: vi.fn().mockReturnValue(
@@ -71,6 +72,17 @@ describe('MessageService - Unit Tests', () => {
         deleteMessagesForConversation: vi.fn().mockResolvedValue(undefined),
         getSpace: vi.fn().mockResolvedValue(null),
         getAllEncryptionStates: vi.fn().mockResolvedValue([]),
+        isMessageDeleted: vi.fn().mockResolvedValue(false),
+        getEncryptionStates: vi.fn().mockResolvedValue([]),
+        saveEncryptionState: vi.fn().mockResolvedValue(undefined),
+        getSpaceKey: vi.fn().mockResolvedValue({
+          keyId: 'hub',
+          publicKey: 'hub-pubkey-hex',
+          privateKey: 'hub-privkey-hex',
+          address: 'hub-address',
+        }),
+        getSpaceMember: vi.fn().mockResolvedValue(null),
+        isUserMuted: vi.fn().mockResolvedValue(false),
       } as any,
       enqueueOutbound: vi.fn(),
       addOrUpdateConversation: vi.fn(),
@@ -307,12 +319,60 @@ describe('MessageService - Unit Tests', () => {
   });
 
   describe('3. addMessage() - Cache Updates', () => {
-    it('should update queryClient cache when adding message', async () => {
-      const spaceId = 'space-123';
-      const channelId = 'channel-123';
+    it('should update queryClient cache when adding DM message', async () => {
+      // DM scenario: spaceId === channelId (both are partner's address)
+      const conversationId = 'dm-partner-address';
 
       const testMessage = {
-        messageId: 'msg-456',
+        messageId: 'msg-dm-456',
+        spaceId: conversationId,
+        channelId: conversationId,
+        createdDate: Date.now(),
+        modifiedDate: Date.now(),
+        digestAlgorithm: 'sha256' as const,
+        nonce: 'nonce',
+        lastModifiedHash: 'hash',
+        content: {
+          senderId: 'sender',
+          type: 'post' as const,
+          text: 'Test DM message',
+        },
+      };
+
+      const spy = vi.spyOn(queryClient, 'setQueryData');
+
+      await messageService.addMessage(
+        queryClient,
+        conversationId,
+        conversationId,
+        testMessage
+      );
+
+      // ✅ VERIFY: Cache was updated
+      expect(spy).toHaveBeenCalled();
+    });
+
+    it('should update queryClient cache when adding Space message', async () => {
+      // Space scenario: spaceId !== channelId
+      // Requires mocking space data with the channel
+      const spaceId = 'space-123';
+      const channelId = 'channel-456';
+
+      // Mock getSpace to return a valid space with the target channel
+      mockDeps.messageDB.getSpace = vi.fn().mockResolvedValue({
+        spaceId,
+        groups: [
+          {
+            groupId: 'group-1',
+            channels: [
+              { channelId, isReadOnly: false },
+            ],
+          },
+        ],
+      });
+
+      const testMessage = {
+        messageId: 'msg-space-789',
         spaceId,
         channelId,
         createdDate: Date.now(),
@@ -323,7 +383,7 @@ describe('MessageService - Unit Tests', () => {
         content: {
           senderId: 'sender',
           type: 'post' as const,
-          text: 'Test message',
+          text: 'Test Space message',
         },
       };
 
@@ -576,6 +636,13 @@ describe('MessageService - Unit Tests', () => {
       };
 
       mockDeps.messageDB.getSpace = vi.fn().mockResolvedValue(mockSpace);
+
+      // Mock ActionQueueService (required for channel message submission)
+      const mockActionQueueService = {
+        enqueue: vi.fn().mockResolvedValue(undefined),
+        getQueueLength: vi.fn().mockReturnValue(0),
+      } as any;
+      messageService.setActionQueueService(mockActionQueueService);
 
       // ✅ VERIFY: No errors thrown during channel message submission
       await expect(
