@@ -10,6 +10,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Cross-Platform Repository Implementation](docs/cross-platform-repository-implementation.md)
 - [Cryptographic Architecture](docs/cryptographic-architecture.md)
 - [Expo Dev Testing Guide](docs/expo-dev-testing-guide.md)
+- [IndexedDB Schema Reference: `quorum_db`](docs/quorum-db-schema.md)
 - [Quorum Data Management Architecture](docs/data-management-architecture-guide.md)
 - [Styling Guidelines](docs/styling-guidelines.md)
 
@@ -140,7 +141,6 @@ This is the main index for all documentation, bug reports, and task management.
 - [Implement Smart Context Extraction Around Mentions in NotificationPanel](tasks/notification-mention-context-extraction.md)
 - [Multi-User Invite Selection Enhancement](tasks/multi-user-invite-selection.md)
 - [Passkey Import UX Issue](tasks/passkey-import-ux-issue.md)
-- [Refresh DM Contact Profile on Conversation Open](tasks/dm-contact-profile-refresh.md)
 - [SDK PasskeyModal Customization Props Enhancement](tasks/sdk-passkey-modal-customization-props.md)
 - [Service Worker for App Update Detection](tasks/service-worker-app-updates.md)
 - [Task: Implement Delete Public Invite Link Feature](tasks/delete-public-invite-link.md)
@@ -285,6 +285,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Notification Dropdown/Inbox UI Implementation](tasks/.done/notification-inbox-ui.md)
 - [Offline Detection and Optimistic Message Reliability](tasks/.done/offline-detection-and-optimistic-message-reliability.md)
 - [Per-Space Profile Data Flow Analysis](tasks/.done/per-space-profile-data-flow-analysis.md)
+- [Persist DM Contact Profile from Message Data](tasks/.done/dm-contact-profile-refresh.md)
 - [Phase 1 Complete: Component Audit Infrastructure & Initial Analysis](tasks/.done/components-audit-dashboard.md)
 - [Pinned Messages Cross-Client Synchronization](tasks/.done/pinned-messages-sync.md)
 - [Pinned Messages Feature - Implementation Plan](tasks/.done/pinned-messages-feature.md)
@@ -341,6 +342,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Web-to-Native Feature Sync Compatibility Analysis](reports/web-native-feature-sync-analysis_2025-12-04.md)
 
 ### Action Queue
+- [Action Queue Summary](reports/action-queue/000-action-queue-summary.md)
 - [DM "Sending..." Indicator Hangs Indefinitely](reports/action-queue/001-dm-sending-indicator-hang.md)
 - [WebSocket Queue Starvation Causes DM Delays](reports/action-queue/002-websocket-queue-starvation.md)
 - [Action Queue vs Legacy DM Message Implementation - Code Comparison Audit](reports/action-queue/003-DM-message-code-comparison-audit.md)
@@ -351,6 +353,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [008: Action Queue Endpoint Dependencies & Failure Modes](reports/action-queue/008-endpoint-dependencies.md)
 - [009: DM Offline Support - Conditional Action Queue Routing](reports/action-queue/009-dm-offline-registration-persistence-fix.md)
 - [DM Messages Not Delivered - Device Registration Inbox Mismatch](reports/action-queue/010-dm-registration-inbox-mismatch-fix.md)
+- [DM Debug Console Snippets](reports/action-queue/011-dm-debug-console-snippets.md)
 
 ### Onboarding Flow
 - [Passkey Authentication Flow Analysis](reports/onboarding-flow/passkey-authentication-flow-analysis-2025-11-23.md)
@@ -359,4 +362,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2025-12-22 17:51:04
+**Last Updated**: 2025-12-23 13:55:19

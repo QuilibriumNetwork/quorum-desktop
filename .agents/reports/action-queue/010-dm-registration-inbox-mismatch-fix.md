@@ -324,87 +324,15 @@ User can manually remove unrecognized devices. **This is the only reliable fix f
 
 ## Diagnostic Commands
 
-### On SENDER's Console (Diagnose why messages don't arrive)
+See [011-dm-debug-console-snippets.md](011-dm-debug-console-snippets.md) for a complete collection of browser console snippets for debugging DM delivery issues.
 
-Navigate to the DM conversation page (`/messages/RECEIVER_ADDRESS`), then run:
-
-```javascript
-// === SENDER DIAGNOSTIC ===
-// This checks if sender is encrypting to correct inboxes
-
-// Extract address from URL (handles both /messages/ and /dm/ formats)
-const receiverAddress = location.pathname.split('/messages/')[1]?.split('/')[0]
-  || location.pathname.split('/dm/')[1]?.split('/')[0];
-console.log('=== DM Diagnostic for:', receiverAddress, '===\n');
-
-// 1. What the API currently says receiver's inboxes are (fresh fetch)
-const response = await fetch(`https://api.quorummessenger.com/users/${receiverAddress}`);
-const apiData = await response.json();
-const apiInboxes = apiData.device_registrations?.map(d => d.inbox_registration?.inbox_address) || [];
-console.log(`1. API (fresh): Receiver has ${apiInboxes.length} device inbox(es)`);
-apiInboxes.forEach((i, idx) => console.log(`   [${idx}] ${i}`));
-
-// 2. What encryption states sender has cached for this conversation
-const states = await window.__messageDB.getEncryptionStates({
-  conversationId: `${receiverAddress}/${receiverAddress}`
-});
-const cachedInboxes = states.map(s => {
-  const parsed = JSON.parse(s.state);
-  return parsed.tag; // tag = the receiver inbox we encrypt TO
-});
-console.log(`\n2. Sender's cached sessions: ${cachedInboxes.length} inbox(es)`);
-cachedInboxes.forEach((i, idx) => console.log(`   [${idx}] ${i}`));
-
-// 3. Compare - do they match?
-const inApi = cachedInboxes.filter(i => apiInboxes.includes(i));
-const stale = cachedInboxes.filter(i => !apiInboxes.includes(i));
-const missing = apiInboxes.filter(i => !cachedInboxes.includes(i));
-
-console.log(`\n3. Analysis:`);
-console.log(`   Valid (in both): ${inApi.length}`);
-console.log(`   Stale (cached but not in API): ${stale.length}`);
-console.log(`   Missing (in API but not cached): ${missing.length}`);
-
-if (stale.length > 0 && inApi.length === 0) {
-  console.log('\n❌ BUG CONFIRMED: Sender encrypts to inboxes receiver no longer uses!');
-  console.log('   Messages go to old inboxes that nobody monitors.');
-  console.log('\n   FIX: Receiver should remove stale devices in Settings → Privacy → Devices');
-  console.log('   Then sender should refresh browser (F5) or wait 5 minutes.');
-} else if (inApi.length > 0) {
-  console.log('\n✅ At least one valid session exists - messages should deliver.');
-} else if (cachedInboxes.length === 0) {
-  console.log('\n⚠️ No cached sessions - this is a new conversation.');
-  console.log('   First message will establish sessions via legacy path.');
-}
-```
-
-### On RECEIVER's Console (Check if your device is properly registered)
-
-```javascript
-// === RECEIVER DIAGNOSTIC ===
-// This checks if YOUR current device is registered in the API
-
-const myAddress = '<PASTE_YOUR_ADDRESS_HERE>'; // Get from profile or URL
-
-// 1. What the API thinks your inboxes are
-const response = await fetch(`https://api.quorummessenger.com/users/${myAddress}`);
-const apiData = await response.json();
-const apiInboxes = apiData.device_registrations?.map(d => d.inbox_registration?.inbox_address) || [];
-console.log(`1. API says you have ${apiInboxes.length} device(s):`);
-apiInboxes.forEach((i, idx) => console.log(`   [${idx}] ${i}`));
-
-// 2. Check Settings → Privacy → Devices in the UI
-console.log('\n2. Check Settings → Privacy → Devices');
-console.log('   - One device should show "This device" label');
-console.log('   - If ALL devices show "Remove" button, your current device is NOT registered!');
-
-// 3. If you have stale devices
-if (apiInboxes.length > 1) {
-  console.log('\n⚠️ Multiple devices registered. If only using one device:');
-  console.log('   - Remove unrecognized devices in Privacy → Devices');
-  console.log('   - This cleans up stale registrations that senders cache');
-}
-```
+**Quick reference:**
+- **Identity Check** - Verify local device matches API
+- **Sender Diagnostic** - Check encryption states vs API
+- **Receiver Diagnostic** - Check receiver's encryption state
+- **WebSocket Interceptors** - Log outgoing messages and subscriptions
+- **Delete Encryption States** - Force fresh session (run on BOTH sides)
+- **Double Ratchet Desync Check** - Compare ephemeral inboxes
 
 ---
 
@@ -423,6 +351,55 @@ if (apiInboxes.length > 1) {
 
 ---
 
+## Case Study: Network Layer Issue (2025-12-23)
+
+**Status**: ✅ Resolved - Confirmed NOT a codebase issue
+
+### Test Users
+
+| User | User Address | Device Inbox |
+|------|--------------|--------------|
+| **Gattopardo** | `QmQuCGpEgVKpYZKYuFu2J49zHXnA8vZtEqHMtpB4imXST1` | `QmXJ6SMvGkRsBdLQa88hbLhRKkGV4LxN94jPBdiSXj2XB5` |
+| **Jennifer** | `QmV5xWMo5CYSxgAAy6emKFZZPCPKwCsBZKZxXD3mCUZF2n` | `QmV6527S2QdWHieonTHUHV5wQS5H9weo9S33HjdJ2CB3a3` |
+
+### Summary
+
+Extensive debugging between two test users (with clean 1-device setups) showed:
+- ~90% of DM messages failed to deliver
+- Asymmetric pattern: One direction worked with delay, other direction never arrived
+
+### What Was Verified
+
+| Component | Status | Evidence |
+|-----------|--------|----------|
+| Double Ratchet ephemeral inboxes | ✅ MATCH | Sender's `sending_inbox` = Receiver's `receiving_inbox` |
+| Identity/Registration | ✅ Correct | Device inbox matches API |
+| WebSocket SEND | ✅ Correct | Sends to right inbox with valid ciphertext |
+| WebSocket SUBSCRIBE | ✅ Correct | Receiver subscribes to correct ephemeral inbox |
+
+### Conclusion
+
+**The gap:** Sender sends correctly → **Network** → Receiver receives nothing
+
+**VERDICT: Codebase is NOT the culprit.**
+
+The client-side code for encryption, ephemeral inbox handling, and WebSocket send/subscribe is all working correctly. The issue is in the **Quilibrium network routing layer** - somewhere between sender's WebSocket send and receiver's WebSocket receive, messages are lost.
+
+This is outside the scope of the quorum-desktop codebase.
+
+### Key Insight: Double Ratchet Ephemeral Inboxes
+
+The Double Ratchet protocol uses **ephemeral inboxes** for forward secrecy:
+- `tag`: The receiver's device inbox (initial target for session establishment)
+- `sending_inbox`: Ephemeral inbox where sender sends subsequent messages
+- `receiving_inbox`: Ephemeral inbox where receiver expects replies
+
+**To verify alignment:** Compare sender's `sending_inbox` with receiver's `receiving_inbox` - they should match.
+
+See [011-dm-debug-console-snippets.md](011-dm-debug-console-snippets.md) for diagnostic commands.
+
+---
+
 ## Summary
 
 | Component | Status | Notes |
@@ -434,6 +411,7 @@ if (apiInboxes.length > 1) {
 | Action Queue new devices | ✅ **MITIGATED** | Online uses legacy path; offline limitation accepted |
 | Manual device removal | ✅ Works | Only fix for stale API entries |
 | `ConstructUserRegistration` | ⚠️ Limitation | Appends only, can't dedupe |
+| Network layer delivery | ℹ️ **External** | Some failures are network-side, not codebase |
 
 ### Fix Implementation Order
 
@@ -446,13 +424,15 @@ if (apiInboxes.length > 1) {
 ## Related Files
 
 - [useRegistrationOptional.ts](src/hooks/queries/registration/useRegistrationOptional.ts) - React Query config (FIXED: staleTime 5 min)
-- [DirectMessage.tsx](src/components/direct/DirectMessage.tsx) - DM page (PROPOSED: Layer 3 cleanup)
+- [DirectMessage.tsx](src/components/direct/DirectMessage.tsx) - DM page (Layer 3 cleanup)
 - [ActionQueueHandlers.ts](src/services/ActionQueueHandlers.ts) - DM send handler (no cleanup, by design)
 - [MessageService.ts](src/services/MessageService.ts) - Legacy DM path (has cleanup at lines 1636-1640)
 - [RegistrationPersister.tsx](src/components/context/RegistrationPersister.tsx) - Startup sync
 - [Privacy.tsx](src/components/modals/UserSettingsModal/Privacy.tsx) - Device removal UI
+- [011-dm-debug-console-snippets.md](011-dm-debug-console-snippets.md) - Console debug snippets
 
 ---
 
 _Created: 2025-12-22_
+_Updated: 2025-12-23 - Merged network layer case study findings; moved console snippets to 011-dm-debug-console-snippets.md_
 _Updated: 2025-12-22 - Layer 2 + Layer 3 fixes implemented, documented new device limitation (reviewed by feature-analyzer agent)_

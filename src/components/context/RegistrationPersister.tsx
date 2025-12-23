@@ -213,6 +213,11 @@ const RegistrationProvider: FC<RegistrationContextProps> = ({ children }) => {
                   deviceKeyset: senderDevice,
                   userKeyset: senderIdent,
                 });
+                // Expose for debugging: window.__keyset.deviceKeyset.inbox_keyset.inbox_address
+                (window as any).__keyset = {
+                  deviceKeyset: senderDevice,
+                  userKeyset: senderIdent,
+                };
                 const userConfig = await getConfig({
                   address: currentPasskeyInfo!.address,
                   userKey: senderIdent,

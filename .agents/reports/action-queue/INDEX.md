@@ -36,6 +36,7 @@ When investigating issues, we must determine:
 | 008 | [Endpoint Dependencies](008-endpoint-dependencies.md) | 📋 Reference | N/A | Quick reference for debugging endpoint failures |
 | 009 | [DM Offline Registration Persistence](009-dm-offline-registration-persistence-fix.md) | ✅ Superseded | Medium | Replaced by offline-only routing (see 010) |
 | 010 | [DM Registration Inbox Mismatch Fix](010-dm-registration-inbox-mismatch-fix.md) | ✅ Implemented | High | Offline-only Action Queue + stale state cleanup |
+| 011 | [DM Debug Console Snippets](011-dm-debug-console-snippets.md) | 📋 Reference | N/A | Console snippets for debugging DM delivery issues |
 
 ## Important: Network Issues
 
