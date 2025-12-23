@@ -1298,9 +1298,12 @@ export class MessageService {
       }
 
       // Check if sender is muted in this space (filter muted users' messages)
-      const isSenderMuted = await this.messageDB.isUserMuted(spaceId, senderId);
-      if (isSenderMuted) {
-        return; // Drop message silently - sender is muted
+      // Skip for DMs - mute is Space-only feature
+      if (!isDM) {
+        const isSenderMuted = await this.messageDB.isUserMuted(spaceId, senderId);
+        if (isSenderMuted) {
+          return; // Drop message silently - sender is muted
+        }
       }
 
       // Authorized - add to cache
