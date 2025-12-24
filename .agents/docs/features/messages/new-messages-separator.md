@@ -6,11 +6,11 @@
 When auto-jumping to the first unread message in a channel or direct message, users need a clear visual indicator marking where the new unread messages begin. The existing subtle unread line was insufficient for drawing attention.
 
 ### Solution
-Display an accent-colored "New Messages" separator above the first unread message when auto-jumping. The separator shows the count of unread messages and persists until scrolled out of view.
+Display an accent-colored separator line above the first unread message when auto-jumping. The separator features a "New" pill on the right side and persists until scrolled out of view.
 
 **Key Features:**
-- Accent-colored horizontal line with centered text
-- Shows unread message count (e.g., "42 New Messages")
+- Accent-colored horizontal line spanning the full width
+- Compact "New" pill positioned on the right in accent color
 - Automatically dismisses when scrolled out of viewport
 - Reappears on next channel visit if unreads remain
 
@@ -38,19 +38,15 @@ Display an accent-colored "New Messages" separator above the first unread messag
 ### Visual Appearance
 
 **Styling:**
-- Border: `border-accent` (theme-aware accent color)
-- Text: `color="var(--accent)"` (dynamic accent color from CSS variables)
-- Layout: Same structure as DateSeparator (lines on both sides)
-- Internationalization: Lingui i18n with ICU message format
-- Label format:
-  - With count: "42 New Messages" (i18n with parameter)
-  - Without count: "New Messages" (i18n)
-  - Large numbers: "1,234 New Messages" (formatted with locale-aware commas)
+- Line: Full-width accent-colored line (`border-accent`)
+- Pill: "New" text in accent background with white text, positioned on the right
+- Layout: Line extends full width, pill attached to right end
+- Internationalization: Lingui i18n for "New" label
 
 **Example:**
 ```
 [...read messages...]
-━━━━━━━━━ 42 New Messages ━━━━━━━━━  ← Accent color
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ [NEW]  ← Accent color line + pill
 [First unread message]
 [More unread messages]
 [...newest messages...]
@@ -64,16 +60,12 @@ Display an accent-colored "New Messages" separator above the first unread messag
 
 ```typescript
 interface NewMessagesSeparatorProps {
-  count?: number;          // Optional unread count
   className?: string;      // Additional CSS classes
 }
 
 export const NewMessagesSeparator: React.FC<NewMessagesSeparatorProps> = ({
-  count,
   className = '',
 }) => {
-  const displayLabel = formatLabel(count);
-
   return (
     <FlexRow
       align="center"
@@ -81,34 +73,27 @@ export const NewMessagesSeparator: React.FC<NewMessagesSeparatorProps> = ({
       className={`my-4 px-4 ${className}`}
       data-testid="new-messages-separator"
     >
+      {/* Full-width separator line */}
       <div className="flex-1 h-px border-t border-accent" />
+
+      {/* "New" pill on the right */}
       <Text
-        size="sm"
-        color="var(--accent)"
-        className="mx-3 select-none"
+        size="xs"
+        className="ml-2 px-2 py-0.5 rounded-full bg-accent text-white select-none uppercase font-semibold tracking-wide"
         testId="new-messages-separator-label"
       >
-        {displayLabel}
+        {i18n._(t`New`)}
       </Text>
-      <div className="flex-1 h-px border-t border-accent" />
     </FlexRow>
   );
 };
-
-function formatLabel(count?: number): string {
-  if (count === undefined || count === 0) {
-    return i18n._(t`New Messages`);
-  }
-  const formattedCount = count.toLocaleString();
-  return i18n._('{count} New Messages', { count: formattedCount });
-}
 ```
 
 **Key Features:**
 - Uses primitive components (FlexRow, Text) for cross-platform compatibility
-- Accent color via CSS variable (`var(--accent)`) for theme adaptation
+- Accent-colored pill with white text for high visibility
 - Lingui i18n with `i18n._()` and `t` macro for translations
-- Format helper handles large numbers with locale-aware formatting
+- Compact design - just "New" label, no count
 - No ref forwarding needed (dismissal handled by Virtuoso)
 
 ### 2. State Management
@@ -119,7 +104,7 @@ function formatLabel(count?: number): string {
 // New Messages separator state (consolidated)
 const [newMessagesSeparator, setNewMessagesSeparator] = useState<{
   firstUnreadMessageId: string;
-  initialUnreadCount: number;
+  initialUnreadCount: number;  // Used for threshold logic, not displayed
 } | null>(null);
 ```
 
@@ -127,7 +112,7 @@ const [newMessagesSeparator, setNewMessagesSeparator] = useState<{
 - Set when auto-jump triggers **and thresholds met**
   - Channels: Channel.tsx:390-406, 435-452
   - Direct Messages: DirectMessage.tsx:390-411, 437-450
-- Contains snapshot of unread count (doesn't decrease as user reads)
+- `initialUnreadCount` used only for threshold checks (not displayed in UI)
 - Reset to `null` when channel/conversation changes
   - Channels: Channel.tsx:467-470
   - Direct Messages: DirectMessage.tsx:461-462
@@ -136,7 +121,6 @@ const [newMessagesSeparator, setNewMessagesSeparator] = useState<{
 **Key Design Decisions:**
 - **Thresholds**: 5+ unreads OR 5+ minutes old (prevents spam during active chat)
 - **Consolidated state**: Single object instead of multiple useState calls
-- **Fixed count**: `initialUnreadCount` captured once, doesn't recalculate
 - **DM-specific logic**: In Direct Messages, only counts messages from the other party (excludes current user's messages)
 
 ### 3. Integration in MessageList (MessageList.tsx)
@@ -147,16 +131,11 @@ interface MessageListProps {
   // ... existing props
   newMessagesSeparator?: {
     firstUnreadMessageId: string;
-    initialUnreadCount: number;
+    initialUnreadCount: number;  // For threshold logic only
   } | null;
   onDismissSeparator?: () => void;
 }
 ```
-
-**No Dynamic Count Calculation:**
-- Count is passed directly from parent (Channel.tsx or DirectMessage.tsx)
-- No `useMemo` needed - count is immutable once set
-- Prevents count from decreasing as user reads messages
 
 **Rendering Logic (MessageList.tsx:207-225):**
 ```typescript
@@ -174,11 +153,7 @@ const rowRenderer = useCallback((index: number) => {
       {needsDateSeparator && <DateSeparator ... />}
 
       {/* New Messages separator (if needed) */}
-      {needsNewMessagesSeparator && (
-        <NewMessagesSeparator
-          count={newMessagesSeparator.initialUnreadCount}
-        />
-      )}
+      {needsNewMessagesSeparator && <NewMessagesSeparator />}
 
       {/* Message */}
       <Message ... />
@@ -276,23 +251,15 @@ const handleRangeChanged = useCallback(
 - **Scenario**: URL contains `#msg-{messageId}`
 - **Behavior**: Separator NOT shown (hash navigation takes priority)
 
-### Count Persistence During Reading
-- **Scenario**: User reads messages after separator appears
-- **Behavior**: Count stays fixed (doesn't decrease as they read)
-
-### Large Unread Counts
-- **Behavior**: Formatted with locale-aware commas (e.g., "1,234 New Messages")
-
 ---
 
 ## Performance
 
-**Unread Count Calculation:**
+**Threshold Calculation:**
 - O(n) calculation happens once when auto-jump triggers (Channel.tsx or DirectMessage.tsx)
 - In Direct Messages, includes additional sender ID check (negligible overhead)
 - No additional database queries
-- No recalculation needed (count is fixed snapshot)
-- No memoization needed (count passed as immutable value)
+- No UI count display - simpler rendering
 
 **Virtuoso `rangeChanged` Callback:**
 - Leverages Virtuoso's existing range tracking (no additional overhead)
@@ -333,7 +300,7 @@ const handleRangeChanged = useCallback(
 1. **Hybrid thresholds**: 5+ unreads OR 5+ minutes old (prevents spam during active chat)
 2. **Virtuoso `rangeChanged` over Intersection Observer**: More reliable with virtualized lists
 3. **Consolidated state object**: Single `newMessagesSeparator` object instead of multiple useState calls
-4. **Fixed unread count**: Snapshot captured once, doesn't decrease as user reads
+4. **Simple "New" pill**: Compact design without count for cleaner UI
 5. **DM sender filtering**: Only count other party's messages in Direct Messages (better UX for 1-on-1 conversations)
 
 **Lessons Learned:**
@@ -344,5 +311,5 @@ const handleRangeChanged = useCallback(
 
 ---
 
-*Last updated: 2025-11-13 (DM sender filtering added)*
+*Last updated: 2025-12-24 - Simplified to "New" pill design (no count)*
 *Verified: 2025-12-09 - File paths confirmed current*

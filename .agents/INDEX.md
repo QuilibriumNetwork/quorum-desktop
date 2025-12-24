@@ -137,6 +137,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Custom ContentEditable Mention Pills for Message Composer](tasks/mention-pills-in-message-textarea.md)
 - [Date Translation with Moment.js Locale Configuration](tasks/i18n-date-translation-moment-locale.md)
 - [Device Identification Improvement](tasks/device-identification-improvement.md)
+- [Implement Collapsible Role Groups in Channel Members Sidebar](tasks/collapsible-role-groups-sidebar.md)
 - [Implement Message Forwarding with Privacy Controls](tasks/message-forwarding-with-privacy-controls.md)
 - [Implement Smart Context Extraction Around Mentions in NotificationPanel](tasks/notification-mention-context-extraction.md)
 - [Multi-User Invite Selection Enhancement](tasks/multi-user-invite-selection.md)
@@ -362,4 +363,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2025-12-23 13:55:19
+**Last Updated**: 2025-12-24 15:03:45
