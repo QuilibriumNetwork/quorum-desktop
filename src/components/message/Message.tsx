@@ -240,6 +240,8 @@ export const Message = React.memo(
         });
       },
       onEmojiPickerUserProfileClick: emojiPicker.handleUserProfileClick,
+      onReply: messageActions.handleReply,
+      isEditing: editingMessageId === message.messageId,
     });
 
     // Message formatting logic
@@ -417,6 +419,7 @@ export const Message = React.memo(
         onMouseOver={interactions.handleMouseOver}
         onMouseOut={interactions.handleMouseOut}
         onClick={interactions.handleMessageClick}
+        onDoubleClick={interactions.handleDoubleClick}
         onContextMenu={handleContextMenu}
       >
         {/* 3-Dots Menu Button for Touch Devices - Top Right Corner */}

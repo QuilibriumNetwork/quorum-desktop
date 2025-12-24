@@ -16,6 +16,10 @@ interface UseMessageInteractionsOptions {
     clientY: number,
     onProfileClick: () => void
   ) => void;
+  /** Callback to trigger reply - used for double-click to reply on desktop */
+  onReply?: () => void;
+  /** Whether the message is currently being edited */
+  isEditing?: boolean;
 }
 
 export function useMessageInteractions(options: UseMessageInteractionsOptions) {
@@ -27,6 +31,8 @@ export function useMessageInteractions(options: UseMessageInteractionsOptions) {
     onCloseEmojiPickers,
     onMobileActionsDrawer,
     onEmojiPickerUserProfileClick,
+    onReply,
+    isEditing,
   } = options;
 
   // Responsive layout and device detection
@@ -155,6 +161,34 @@ export function useMessageInteractions(options: UseMessageInteractionsOptions) {
     [setShowUserProfile]
   );
 
+  // Handle double-click to reply (desktop only)
+  const handleDoubleClick = useCallback(
+    (e: React.MouseEvent) => {
+      // Only enable on desktop (non-touch devices)
+      if (isTouchDevice) return;
+
+      // Don't trigger if editing
+      if (isEditing) return;
+
+      // Only for post messages (not join/leave/kick events)
+      if (message.content.type !== 'post') return;
+
+      // Don't trigger reply when double-clicking links or buttons
+      const target = e.target as HTMLElement;
+      if (target.closest('a, button, [role="button"]')) return;
+
+      // Clear any text selection caused by double-click
+      window.getSelection()?.removeAllRanges();
+
+      // Trigger reply
+      if (onReply) {
+        e.preventDefault();
+        onReply();
+      }
+    },
+    [isTouchDevice, isEditing, message.content.type, onReply]
+  );
+
   // Check if actions should be visible
   const shouldShowActions =
     (hoverTarget === message.messageId && useDesktopHover) ||
@@ -177,6 +211,7 @@ export function useMessageInteractions(options: UseMessageInteractionsOptions) {
     handleMouseOver,
     handleMouseOut,
     handleMessageClick,
+    handleDoubleClick,
     handleUserProfileClick,
     handleUserProfileBackgroundClick,
   };
