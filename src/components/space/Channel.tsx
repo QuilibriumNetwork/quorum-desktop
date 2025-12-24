@@ -107,6 +107,51 @@ const Channel: React.FC<ChannelProps> = ({
   const [activeSearch, setActiveSearch] = useState('');
   const [searchFocused, setSearchFocused] = useState(false);
 
+  // Collapsed role groups state (persisted per-space in localStorage)
+  const [collapsedRoles, setCollapsedRoles] = useState<Set<string>>(() => {
+    try {
+      const stored = localStorage.getItem(`space-role-groups-collapsed-${spaceId}`);
+      return stored ? new Set(JSON.parse(stored)) : new Set();
+    } catch {
+      return new Set();
+    }
+  });
+
+  // Save collapsed roles to localStorage when changed
+  useEffect(() => {
+    try {
+      localStorage.setItem(
+        `space-role-groups-collapsed-${spaceId}`,
+        JSON.stringify([...collapsedRoles])
+      );
+    } catch (e) {
+      console.warn('Failed to save collapsed roles to localStorage:', e);
+    }
+  }, [collapsedRoles, spaceId]);
+
+  // Reset collapsed roles when space changes
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem(`space-role-groups-collapsed-${spaceId}`);
+      setCollapsedRoles(stored ? new Set(JSON.parse(stored)) : new Set());
+    } catch {
+      setCollapsedRoles(new Set());
+    }
+  }, [spaceId]);
+
+  // Toggle role group collapse
+  const toggleRoleCollapse = useCallback((roleTitle: string) => {
+    setCollapsedRoles((prev) => {
+      const next = new Set(prev);
+      if (next.has(roleTitle)) {
+        next.delete(roleTitle);
+      } else {
+        next.add(roleTitle);
+      }
+      return next;
+    });
+  }, []);
+
   const headerRef = React.useRef<HTMLDivElement>(null);
   const { submitChannelMessage, retryMessage, messageDB } = useMessageDB();
 
@@ -1163,7 +1208,7 @@ const Channel: React.FC<ChannelProps> = ({
                 </div>
                 <div className="pb-3">
                   {activeSearch &&
-                    generateVirtualizedUserList(activeSearch).length === 0 && (
+                    generateVirtualizedUserList(activeSearch, collapsedRoles).length === 0 && (
                       <div className="text-xs text-subtle mt-1">
                         {t`No users found!`}
                       </div>
@@ -1172,7 +1217,7 @@ const Channel: React.FC<ChannelProps> = ({
               </div>
 
               <Virtuoso
-                data={generateVirtualizedUserList(activeSearch)}
+                data={generateVirtualizedUserList(activeSearch, collapsedRoles)}
                 overscan={10}
                 components={{
                   Footer: () => <div className="channel-users-fade-spacer" />,
@@ -1180,9 +1225,17 @@ const Channel: React.FC<ChannelProps> = ({
                 itemContent={(_index, item) => {
                   if (item.type === 'header') {
                     return (
-                      <div className="flex flex-col p-4 pb-0">
-                        <div className="mb-1 text-xs text-subtle pb-1">
-                          {item.title}
+                      <div
+                        className="role-group-header flex flex-col p-4 pb-0 cursor-pointer group"
+                        onClick={() => toggleRoleCollapse(item.title)}
+                      >
+                        <div className="mb-1 text-xs text-subtle pb-1 flex items-center gap-1 group-hover:text-main transition-colors">
+                          <Icon
+                            name="chevron-down"
+                            size="xs"
+                            className={`role-group-chevron transition-transform duration-150 ${item.isCollapsed ? '-rotate-90' : ''}`}
+                          />
+                          <span>{item.title}</span>
                         </div>
                       </div>
                     );
@@ -1337,7 +1390,7 @@ const Channel: React.FC<ChannelProps> = ({
               />
             </div>
             {activeSearch &&
-              generateVirtualizedUserList(activeSearch).length === 0 && (
+              generateVirtualizedUserList(activeSearch, collapsedRoles).length === 0 && (
                 <div className="px-4 pb-3 -mt-2">
                   <div className="text-xs text-subtle">
                     {t`No users found!`}
@@ -1348,7 +1401,7 @@ const Channel: React.FC<ChannelProps> = ({
 
           {/* User List - Virtualized for performance with large member counts */}
           <Virtuoso
-            data={generateVirtualizedUserList(activeSearch)}
+            data={generateVirtualizedUserList(activeSearch, collapsedRoles)}
             overscan={10}
             components={{
               Footer: () => <div className="h-4" />,
@@ -1356,8 +1409,16 @@ const Channel: React.FC<ChannelProps> = ({
             itemContent={(_index, item) => {
               if (item.type === 'header') {
                 return (
-                  <div className="mb-1 text-subtle text-xs pb-1 px-4 pt-3">
-                    {item.title}
+                  <div
+                    className="role-group-header role-group-header--mobile flex items-center gap-1 text-subtle text-xs pb-1 px-4 pt-3 cursor-pointer"
+                    onClick={() => toggleRoleCollapse(item.title)}
+                  >
+                    <Icon
+                      name="chevron-down"
+                      size="xs"
+                      className={`role-group-chevron transition-transform duration-150 ${item.isCollapsed ? '-rotate-90' : ''}`}
+                    />
+                    <span>{item.title}</span>
                   </div>
                 );
               }

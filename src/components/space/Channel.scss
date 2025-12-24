@@ -131,3 +131,20 @@
   height: $list-fade-gradient-height;
   flex-shrink: 0;
 }
+
+// Collapsible role group headers
+.role-group-header {
+  user-select: none;
+
+  // Mobile: ensure touch-friendly tap target
+  &--mobile {
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+  }
+}
+
+// Chevron icon rotation for collapsed state
+.role-group-chevron {
+  flex-shrink: 0;
+}

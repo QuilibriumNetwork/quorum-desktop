@@ -178,57 +178,74 @@ export function useChannelData({ spaceId, channelId }: UseChannelDataProps) {
     return userSections;
   }, [userSections]);
 
-  const generateVirtualizedUserList = useCallback((searchFilter = '') => {
-    // Flatten pre-computed sections into virtualization format
-    const flattenedItems: Array<
-      | { type: 'header'; title: string }
-      | { type: 'user'; address: string; userIcon?: string; displayName?: string }
-    > = [];
+  const generateVirtualizedUserList = useCallback(
+    (searchFilter = '', collapsedRoles: Set<string> = new Set()) => {
+      // Flatten pre-computed sections into virtualization format
+      const flattenedItems: Array<
+        | { type: 'header'; title: string; isCollapsed: boolean }
+        | { type: 'user'; address: string; userIcon?: string; displayName?: string }
+      > = [];
 
-    if (!searchFilter.trim()) {
-      // No search - return full list
-      userSections.forEach((section) => {
-        // Add section header
-        flattenedItems.push({ type: 'header', title: section.title });
-        // Add all users in this section
-        section.members.forEach((member) => {
-          flattenedItems.push({
-            type: 'user',
-            address: member.address,
-            userIcon: member.userIcon,
-            displayName: member.displayName,
-          });
+      // When searching (3+ chars), ignore collapsed state to show all matches
+      const effectiveCollapsed = searchFilter.trim().length >= 3
+        ? new Set<string>()
+        : collapsedRoles;
+
+      if (!searchFilter.trim()) {
+        // No search - return full list (respecting collapsed state)
+        userSections.forEach((section) => {
+          const isCollapsed = effectiveCollapsed.has(section.title);
+          // Add section header
+          flattenedItems.push({ type: 'header', title: section.title, isCollapsed });
+          // Add users only if section is not collapsed
+          if (!isCollapsed) {
+            section.members.forEach((member) => {
+              flattenedItems.push({
+                type: 'user',
+                address: member.address,
+                userIcon: member.userIcon,
+                displayName: member.displayName,
+              });
+            });
+          }
         });
-      });
-    } else {
-      // Filter users based on search term
-      const term = searchFilter.toLowerCase();
-      const filteredSections = userSections.map(section => ({
-        ...section,
-        members: section.members.filter(member =>
-          member.displayName?.toLowerCase().includes(term) ||
-          member.address?.toLowerCase().includes(term)
-        )
-      })).filter(section => section.members.length > 0);
+      } else {
+        // Filter users based on search term
+        const term = searchFilter.toLowerCase();
+        const filteredSections = userSections
+          .map((section) => ({
+            ...section,
+            members: section.members.filter(
+              (member) =>
+                member.displayName?.toLowerCase().includes(term) ||
+                member.address?.toLowerCase().includes(term)
+            ),
+          }))
+          .filter((section) => section.members.length > 0);
 
-      // Build flattened items from filtered sections
-      filteredSections.forEach((section) => {
-        // Add section header
-        flattenedItems.push({ type: 'header', title: section.title });
-        // Add filtered users in this section
-        section.members.forEach((member) => {
-          flattenedItems.push({
-            type: 'user',
-            address: member.address,
-            userIcon: member.userIcon,
-            displayName: member.displayName,
-          });
+        // Build flattened items from filtered sections
+        filteredSections.forEach((section) => {
+          const isCollapsed = effectiveCollapsed.has(section.title);
+          // Add section header
+          flattenedItems.push({ type: 'header', title: section.title, isCollapsed });
+          // Add filtered users only if section is not collapsed
+          if (!isCollapsed) {
+            section.members.forEach((member) => {
+              flattenedItems.push({
+                type: 'user',
+                address: member.address,
+                userIcon: member.userIcon,
+                displayName: member.displayName,
+              });
+            });
+          }
         });
-      });
-    }
+      }
 
-    return flattenedItems;
-  }, [userSections]);
+      return flattenedItems;
+    },
+    [userSections]
+  );
 
   return {
     space,
