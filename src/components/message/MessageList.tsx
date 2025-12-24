@@ -247,11 +247,7 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
                 className="message-date-separator"
               />
             )}
-            {needsNewMessagesSeparator && (
-              <NewMessagesSeparator
-                count={newMessagesSeparator.initialUnreadCount}
-              />
-            )}
+            {needsNewMessagesSeparator && <NewMessagesSeparator />}
             <Message
               senderRoles={roles}
               spaceRoles={roles}
