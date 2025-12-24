@@ -1,0 +1,66 @@
+@use '../../styles/variables' as *;
+
+// Banner height - used to offset layout when visible
+$offline-banner-height: 32px;
+
+.offline-banner {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: $offline-banner-height;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 $s-4;
+  font-size: $text-sm;
+  font-weight: 500;
+  z-index: 1001; // Above nav header (999)
+  background-color: rgb(var(--warning) / 0.15);
+  color: rgb(var(--warning));
+  border-bottom: 1px solid rgb(var(--warning) / 0.3);
+
+  &__count {
+    opacity: 0.8;
+  }
+
+  &__close {
+    position: absolute;
+    right: $s-3;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: $s-1;
+    background: none;
+    border: none;
+    color: rgb(var(--warning));
+    cursor: pointer;
+    opacity: 0.7;
+    transition: opacity $duration-100;
+
+    &:hover {
+      opacity: 1;
+    }
+  }
+}
+
+// Push layout down when banner is visible
+body.offline-banner-visible {
+  // NavMenu header
+  header {
+    top: $offline-banner-height;
+    height: calc(100% - #{$offline-banner-height});
+  }
+
+  // Main content container
+  .responsive-container {
+    top: calc(14px + #{$offline-banner-height});
+    height: calc(100vh - 14px - #{$offline-banner-height});
+
+    // Electron adjustment
+    .electron & {
+      top: calc(38px + #{$offline-banner-height});
+      height: calc(100vh - 38px - #{$offline-banner-height});
+    }
+  }
+}

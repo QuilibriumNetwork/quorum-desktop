@@ -15,6 +15,7 @@ const useEncryptionStates = ({
     queryKey: buildEncryptionStatesKey({ conversationId }),
     queryFn: buildEncryptionStatesFetcher({ messageDB, conversationId }),
     refetchOnMount: true,
+    networkMode: 'always', // This query uses IndexedDB, not network
   });
 };
 

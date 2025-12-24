@@ -272,7 +272,6 @@ export type Bookmark = {
   // Cached preview - avoids cross-context message resolution
   // Stored at bookmark creation time, acceptable if slightly stale
   cachedPreview: {
-    senderAddress: string;      // For avatar/name lookup
     senderName: string;         // Display name at bookmark time
     textSnippet: string;        // First ~150 chars, markdown stripped (empty for media-only)
     messageDate: number;        // Original message timestamp

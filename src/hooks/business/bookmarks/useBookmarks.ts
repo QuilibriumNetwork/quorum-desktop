@@ -91,7 +91,6 @@ export const useBookmarks = ({ userAddress }: UseBookmarksOptions) => {
       sourceType,
       createdAt: Date.now(),
       cachedPreview: {
-        senderAddress: message.content.senderId,
         senderName,
         textSnippet,
         messageDate: message.createdDate,

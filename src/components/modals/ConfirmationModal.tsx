@@ -3,6 +3,7 @@ import { Button, Modal, Container, Text, FlexRow, Spacer, ScrollContainer, Callo
 import { Trans } from '@lingui/react/macro';
 import { t } from '@lingui/core/macro';
 import { isTouchDevice } from '../../utils/platform';
+import ModalSaveOverlay from './ModalSaveOverlay';
 
 export interface ConfirmationModalProps {
   visible: boolean;
@@ -16,6 +17,7 @@ export interface ConfirmationModalProps {
   showProtip?: boolean; // Show PROTIP text (default: true)
   protipAction?: string; // Action name for PROTIP text (e.g., "delete message")
   busy?: boolean; // Disable controls and closing when busy
+  busyMessage?: string; // Message to show in overlay when busy (e.g., "Deleting...")
   onConfirm: () => void;
   onCancel: () => void;
 }
@@ -32,6 +34,7 @@ const ConfirmationModal: React.FunctionComponent<ConfirmationModalProps> = ({
   showProtip = true,
   protipAction,
   busy = false,
+  busyMessage,
   onConfirm,
   onCancel,
 }) => {
@@ -45,6 +48,7 @@ const ConfirmationModal: React.FunctionComponent<ConfirmationModalProps> = ({
       hideClose={true} // Hide X button to prevent conflicts with parent modals
       swipeToClose={false} // Keep swipe disabled for consistency
     >
+      {busyMessage && <ModalSaveOverlay visible={busy} message={busyMessage} />}
       <Container>
         {/* Main message */}
         <Container>

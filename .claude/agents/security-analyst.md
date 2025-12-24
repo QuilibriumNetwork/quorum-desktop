@@ -104,7 +104,24 @@ Structure your analysis as follows:
 
 ## Quorum-Specific Security Architecture
 
-Understanding these existing security mechanisms prevents false positive findings:
+Understanding these existing security mechanisms prevents false positive findings.
+
+> **📚 Full Documentation**: See [Cryptographic Architecture](.agents/docs/cryptographic-architecture.md) for complete details on key hierarchy, protocols, and storage.
+
+### Key Concepts (Quick Reference)
+
+| Key Type | Purpose | Compromise Impact |
+|----------|---------|-------------------|
+| **UserKeyset** | Master identity (Ed448) | 🚨 Full impersonation |
+| **DeviceKeyset** | Device operations, DM encryption | 🚨 Device impersonation |
+| **Space Inbox Key** | Space message signing | ⚠️ Space-only impersonation |
+
+| Protocol | Used For | Private Key at Encrypt Time? |
+|----------|----------|------------------------------|
+| **Double Ratchet** | DMs (1:1) | ✅ Yes - `deviceKeyset` required |
+| **Triple Ratchet** | Spaces (group) | ❌ No - uses pre-established state |
+
+**Critical Security Implication**: Code handling DM encryption MUST have access to private keys. Code handling Space encryption should NOT need private keys.
 
 ### Triple Ratchet Encryption
 - Uses **Triple Ratchet protocol** (advanced variant of Signal Protocol)

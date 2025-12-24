@@ -5,7 +5,6 @@ import { useConfig, buildConfigKey } from '../../queries';
 import { useMessageDB } from '../../../components/context/useMessageDB';
 import { NavItem, UserConfig } from '../../../db/messages';
 import { deriveSpaceIds } from '../../../utils/folderUtils';
-import { withWaitCursor } from '../../../utils/cursor';
 
 /**
  * Hook for deleting a folder and "spilling out" its spaces to standalone.
@@ -17,7 +16,7 @@ export const useDeleteFolder = () => {
   const { data: config } = useConfig({
     userAddress: user.currentPasskeyInfo?.address || '',
   });
-  const { saveConfig, keyset } = useMessageDB();
+  const { actionQueueService, keyset } = useMessageDB();
 
   const deleteFolder = useCallback(
     async (folderId: string) => {
@@ -57,15 +56,14 @@ export const useDeleteFolder = () => {
         );
       }
 
-      // Show wait cursor during sync (crypto operations can block)
-      const doSave = () => saveConfig({ config: newConfig, keyset });
-      if (newConfig.allowSync) {
-        await withWaitCursor(doSave);
-      } else {
-        await doSave();
-      }
+      // Queue config save in background - no more UI blocking!
+      await actionQueueService.enqueue(
+        'save-user-config',
+        { config: newConfig },
+        `config:${config.address}` // Dedup key
+      );
     },
-    [config, keyset, queryClient, saveConfig]
+    [config, queryClient, actionQueueService]
   );
 
   return { deleteFolder };

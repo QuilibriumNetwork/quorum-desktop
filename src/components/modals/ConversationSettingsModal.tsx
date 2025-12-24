@@ -272,6 +272,7 @@ const ConversationSettingsModal: React.FC<ConversationSettingsModalProps> = ({
           variant={deleteConfirmation.modalConfig.variant}
           showProtip={false}
           busy={deleteConfirmation.isConfirming}
+          busyMessage={t`Deleting...`}
           onConfirm={deleteConfirmation.modalConfig.onConfirm}
           onCancel={deleteConfirmation.modalConfig.onCancel}
         />

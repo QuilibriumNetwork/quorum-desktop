@@ -3,6 +3,7 @@ import { Conversation, Message, Space, Bookmark, BOOKMARKS_CONFIG } from '../api
 import type { NotificationSettings } from '../types/notifications';
 import type { IconColor } from '../components/space/IconPicker/types';
 import type { IconName } from '../components/primitives/Icon/types';
+import type { QueueTask, TaskStatus, QueueStats } from '../types/actionQueue';
 import MiniSearch from 'minisearch';
 
 export interface EncryptedMessage {
@@ -100,6 +101,17 @@ export interface MutedUserRecord {
   expiresAt?: number; // undefined = forever
 }
 
+/**
+ * Tombstone record for deleted messages.
+ * Prevents deleted messages from being re-added during peer sync.
+ */
+export interface DeletedMessageRecord {
+  messageId: string;
+  spaceId: string;
+  channelId: string;
+  deletedAt: number;
+}
+
 export interface SearchResult {
   message: Message;
   score: number;
@@ -109,7 +121,7 @@ export interface SearchResult {
 export class MessageDB {
   private db: IDBDatabase | null = null;
   private readonly DB_NAME = 'quorum_db';
-  private readonly DB_VERSION = 5;
+  private readonly DB_VERSION = 7;
   private searchIndices: Map<string, MiniSearch<SearchableMessage>> = new Map();
   private indexInitialized = false;
 
@@ -203,6 +215,28 @@ export class MessageDB {
           });
           mutedUsersStore.createIndex('by_space', 'spaceId');
           mutedUsersStore.createIndex('by_mute_id', 'lastMuteId');
+        }
+
+        if (event.oldVersion < 6) {
+          // Add action_queue object store for persistent background task queue
+          const queueStore = db.createObjectStore('action_queue', {
+            keyPath: 'id',
+            autoIncrement: true,
+          });
+          queueStore.createIndex('status', 'status', { unique: false });
+          queueStore.createIndex('taskType', 'taskType', { unique: false });
+          queueStore.createIndex('key', 'key', { unique: false });
+          queueStore.createIndex('nextRetryAt', 'nextRetryAt', { unique: false });
+        }
+
+        if (event.oldVersion < 7) {
+          // Add deleted_messages object store for tombstone tracking
+          // Prevents deleted messages from being re-added during peer sync
+          const deletedMessagesStore = db.createObjectStore('deleted_messages', {
+            keyPath: 'messageId',
+          });
+          deletedMessagesStore.createIndex('by_space_channel', ['spaceId', 'channelId']);
+          deletedMessagesStore.createIndex('by_deleted_at', 'deletedAt');
         }
       };
     });
@@ -747,7 +781,7 @@ export class MessageDB {
   async deleteMessage(messageId: string): Promise<void> {
     await this.init();
 
-    // Get message first to extract spaceId and channelId for search index removal
+    // Get message first to extract spaceId and channelId for search index removal and tombstone
     const message = await new Promise<Message | undefined>((resolve, reject) => {
       const transaction = this.db!.transaction(['messages'], 'readonly');
       const store = transaction.objectStore('messages');
@@ -757,14 +791,31 @@ export class MessageDB {
     });
 
     return new Promise((resolve, reject) => {
-      // Include 'bookmarks' store to cascade delete any bookmarks pointing to this message
-      const transaction = this.db!.transaction(['messages', 'bookmarks'], 'readwrite');
+      // Include 'bookmarks' and 'deleted_messages' stores
+      const transaction = this.db!.transaction(
+        ['messages', 'bookmarks', 'deleted_messages'],
+        'readwrite'
+      );
       const messageStore = transaction.objectStore('messages');
       const bookmarkStore = transaction.objectStore('bookmarks');
+      const deletedMessagesStore = transaction.objectStore('deleted_messages');
 
       // Delete the message
       const messageRequest = messageStore.delete(messageId);
       messageRequest.onerror = () => reject(messageRequest.error);
+
+      // Save tombstone to prevent re-sync (only for channel messages, not DMs)
+      // DMs don't have a sync mechanism, so tombstones aren't needed
+      // DM detection: spaceId === channelId (both are partner's address)
+      if (message && message.spaceId !== message.channelId) {
+        const tombstone: DeletedMessageRecord = {
+          messageId,
+          spaceId: message.spaceId,
+          channelId: message.channelId,
+          deletedAt: Date.now(),
+        };
+        deletedMessagesStore.put(tombstone);
+      }
 
       // Cascade delete: Remove any bookmark pointing to this message
       const bookmarkIndex = bookmarkStore.index('by_message');
@@ -790,6 +841,21 @@ export class MessageDB {
         resolve();
       };
       transaction.onerror = () => reject(transaction.error);
+    });
+  }
+
+  /**
+   * Check if a message has been deleted (tombstone exists).
+   * Used to prevent deleted messages from being re-added during peer sync.
+   */
+  async isMessageDeleted(messageId: string): Promise<boolean> {
+    await this.init();
+    return new Promise((resolve, reject) => {
+      const transaction = this.db!.transaction(['deleted_messages'], 'readonly');
+      const store = transaction.objectStore('deleted_messages');
+      const request = store.get(messageId);
+      request.onsuccess = () => resolve(!!request.result);
+      request.onerror = () => reject(request.error);
     });
   }
 
@@ -1323,6 +1389,21 @@ export class MessageDB {
       const transaction = this.db!.transaction(['latest_states'], 'readwrite');
       const store = transaction.objectStore('latest_states');
       const request = store.delete(conversationId);
+
+      request.onsuccess = () => resolve();
+      request.onerror = () => reject(request.error);
+    });
+  }
+
+  /**
+   * Update an existing message in IndexedDB (for optimistic updates)
+   */
+  async updateMessage(message: Message): Promise<void> {
+    await this.init();
+    return new Promise((resolve, reject) => {
+      const transaction = this.db!.transaction('messages', 'readwrite');
+      const store = transaction.objectStore('messages');
+      const request = store.put(message);
 
       request.onsuccess = () => resolve();
       request.onerror = () => reject(request.error);
@@ -2062,5 +2143,205 @@ export class MessageDB {
       };
       request.onerror = () => reject(request.error);
     });
+  }
+
+  // ===== Action Queue Methods =====
+
+  /**
+   * Add a task to the action queue
+   */
+  async addQueueTask(task: Omit<QueueTask, 'id'>): Promise<number> {
+    await this.init();
+    return new Promise((resolve, reject) => {
+      const tx = this.db!.transaction('action_queue', 'readwrite');
+      const store = tx.objectStore('action_queue');
+      const request = store.add(task);
+
+      request.onsuccess = () => resolve(request.result as number);
+      request.onerror = () => reject(request.error);
+    });
+  }
+
+  /**
+   * Get pending tasks by dedup key.
+   * Used for deduplication - find existing pending tasks with same key.
+   */
+  async getPendingTasksByKey(key: string): Promise<QueueTask[]> {
+    await this.init();
+    return new Promise((resolve, reject) => {
+      const tx = this.db!.transaction('action_queue', 'readonly');
+      const store = tx.objectStore('action_queue');
+      const index = store.index('key');
+      const request = index.getAll(key);
+
+      request.onsuccess = () => {
+        const tasks = (request.result || []) as QueueTask[];
+        // Filter to only pending tasks
+        resolve(tasks.filter((t) => t.status === 'pending'));
+      };
+      request.onerror = () => reject(request.error);
+    });
+  }
+
+  /**
+   * Check if there's a currently processing task with the given key.
+   * Used to skip enqueueing new tasks while one is actively being processed.
+   */
+  async hasProcessingTaskWithKey(key: string): Promise<boolean> {
+    await this.init();
+    return new Promise((resolve, reject) => {
+      const tx = this.db!.transaction('action_queue', 'readonly');
+      const store = tx.objectStore('action_queue');
+      const index = store.index('key');
+      const request = index.getAll(key);
+
+      request.onsuccess = () => {
+        const tasks = (request.result || []) as QueueTask[];
+        resolve(tasks.some((t) => t.status === 'processing'));
+      };
+      request.onerror = () => reject(request.error);
+    });
+  }
+
+  /**
+   * Get a single task by ID
+   */
+  async getQueueTask(id: number): Promise<QueueTask | undefined> {
+    await this.init();
+    return new Promise((resolve, reject) => {
+      const tx = this.db!.transaction('action_queue', 'readonly');
+      const store = tx.objectStore('action_queue');
+      const request = store.get(id);
+
+      request.onsuccess = () => resolve(request.result);
+      request.onerror = () => reject(request.error);
+    });
+  }
+
+  /**
+   * Get tasks by status with optional limit
+   */
+  async getQueueTasksByStatus(
+    status: TaskStatus,
+    limit = 50
+  ): Promise<QueueTask[]> {
+    await this.init();
+    return new Promise((resolve, reject) => {
+      const tx = this.db!.transaction('action_queue', 'readonly');
+      const store = tx.objectStore('action_queue');
+      const index = store.index('status');
+      const request = index.getAll(status, limit);
+
+      request.onsuccess = () => resolve(request.result || []);
+      request.onerror = () => reject(request.error);
+    });
+  }
+
+  /**
+   * Get all tasks in the queue
+   */
+  async getAllQueueTasks(): Promise<QueueTask[]> {
+    await this.init();
+    return new Promise((resolve, reject) => {
+      const tx = this.db!.transaction('action_queue', 'readonly');
+      const store = tx.objectStore('action_queue');
+      const request = store.getAll();
+
+      request.onsuccess = () => resolve(request.result || []);
+      request.onerror = () => reject(request.error);
+    });
+  }
+
+  /**
+   * Update an existing task
+   */
+  async updateQueueTask(task: QueueTask): Promise<void> {
+    await this.init();
+    return new Promise((resolve, reject) => {
+      const tx = this.db!.transaction('action_queue', 'readwrite');
+      const store = tx.objectStore('action_queue');
+      const request = store.put(task);
+
+      request.onsuccess = () => resolve();
+      request.onerror = () => reject(request.error);
+    });
+  }
+
+  /**
+   * Delete a task from the queue
+   */
+  async deleteQueueTask(id: number): Promise<void> {
+    await this.init();
+    return new Promise((resolve, reject) => {
+      const tx = this.db!.transaction('action_queue', 'readwrite');
+      const store = tx.objectStore('action_queue');
+      const request = store.delete(id);
+
+      request.onsuccess = () => resolve();
+      request.onerror = () => reject(request.error);
+    });
+  }
+
+  /**
+   * Get queue statistics
+   */
+  async getQueueStats(): Promise<QueueStats> {
+    await this.init();
+    const all = await this.getAllQueueTasks();
+
+    return {
+      pending: all.filter((t) => t.status === 'pending').length,
+      processing: all.filter((t) => t.status === 'processing').length,
+      failed: all.filter((t) => t.status === 'failed').length,
+      completed: all.filter((t) => t.status === 'completed').length,
+      total: all.length,
+    };
+  }
+
+  /**
+   * Prune completed tasks older than the specified age
+   */
+  async pruneCompletedTasks(olderThanMs = 24 * 60 * 60 * 1000): Promise<number> {
+    await this.init();
+    const cutoff = Date.now() - olderThanMs;
+    const completed = await this.getQueueTasksByStatus('completed', 1000);
+
+    let deleted = 0;
+    for (const task of completed) {
+      if (task.processedAt && task.processedAt < cutoff) {
+        await this.deleteQueueTask(task.id!);
+        deleted++;
+      }
+    }
+
+    return deleted;
+  }
+
+  /**
+   * Reset tasks stuck in 'processing' state after crash.
+   * Only resets tasks that have been processing for longer than the timeout.
+   * Call this on app startup.
+   */
+  async resetStuckProcessingTasks(stuckTimeoutMs = 60000): Promise<number> {
+    await this.init();
+    const cutoff = Date.now() - stuckTimeoutMs;
+    const processing = await this.getQueueTasksByStatus('processing');
+
+    let reset = 0;
+    for (const task of processing) {
+      // Only reset if stuck for more than timeout
+      if (task.processingStartedAt && task.processingStartedAt < cutoff) {
+        task.status = 'pending';
+        task.processingStartedAt = undefined;
+        task.retryCount = (task.retryCount || 0) + 1;
+        await this.updateQueueTask(task);
+        reset++;
+        console.log(
+          `[ActionQueue] Reset stuck task ${task.id} (${task.taskType})`
+        );
+      }
+    }
+
+    return reset;
   }
 }

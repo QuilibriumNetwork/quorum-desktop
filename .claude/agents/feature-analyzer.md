@@ -88,6 +88,13 @@ Before analyzing code, gather project context:
 - Components that know too much about their parents/siblings
 - State management that spans too many levels
 
+**Data storage security (CRITICAL):**
+- **Don't store what you don't need to store** - especially sensitive data (keys, credentials, tokens)
+- Serializing function parameters to persistence (IndexedDB, localStorage) may inadvertently expose sensitive data that was only meant to exist in memory
+- Ask: "Does this data NEED to be persisted, or can it be retrieved from an already-authenticated context?"
+- Ask: "If this data is already stored encrypted elsewhere, am I bypassing that encryption by storing it again in plaintext?"
+- Private keys, keysets, and credentials should stay in memory - pass references or wait for auth context, don't serialize to disk
+
 ## Severity Criteria
 
 **Critical** - Must fix before merge/release:

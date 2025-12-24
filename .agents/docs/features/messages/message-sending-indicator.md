@@ -225,22 +225,24 @@ const sanitizeError = (error: unknown): string => {
 
 This ensures users never see: IP addresses, hostnames, file paths, stack traces, or internal error codes.
 
-## Known Limitations
+## Action Queue Integration
 
-| Limitation | Impact | Future Solution |
-|------------|--------|-----------------|
-| **Not persisted to IndexedDB** | Messages mid-send are lost if the app closes or crashes | Background action queue with IndexedDB persistence |
-| **No automatic retry** | Users must manually tap "Retry" for failed messages | Exponential backoff retry with configurable limits |
-| **No offline queue** | Cannot compose messages while offline | Background action queue that syncs on reconnection |
-| **Single attempt before failure** | Network blips immediately show as failed | Configurable retry count before surfacing error |
+Message sending is now integrated with the [Action Queue](../action-queue.md), providing:
 
-The future background action queue (documented in `.agents/tasks/background-action-queue-with-worker-crypto.md`) will address these limitations by providing an IndexedDB-backed persistent queue that survives app restarts and automatically retries with backoff.
+| Feature | Description |
+|---------|-------------|
+| **Crash recovery** | Messages persist to IndexedDB and survive app restarts |
+| **Automatic retry** | Failed messages retry with exponential backoff (2s, 4s, 8s) |
+| **Offline support** | Messages queue while offline and send when connectivity is restored |
+| **Multi-tab safety** | Status-based gating prevents duplicate sends across tabs |
+
+The signing/encryption separation described above enables safe retries - the same signed message can be re-encrypted and sent without creating duplicates.
 
 ## Related Documentation
 
 - **Implementation Task**: `.agents/tasks/.done/message-sending-indicator.md` - Full implementation plan with phases
-- **Future Enhancement**: `.agents/tasks/background-action-queue-with-worker-crypto.md` - Persistent offline queue
+- **Action Queue**: [Action Queue](../action-queue.md) - Persistent queue with retry and offline support
 
 ---
 
-*Updated: 2025-12-16*
+*Updated: 2025-12-18*

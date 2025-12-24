@@ -10,6 +10,7 @@ const useSpace = ({ spaceId }: { spaceId: string }) => {
     queryKey: buildSpaceKey({ spaceId }),
     queryFn: buildSpaceFetcher({ messageDB, spaceId }),
     refetchOnMount: true,
+    networkMode: 'always', // This query uses IndexedDB, not network
   });
 };
 

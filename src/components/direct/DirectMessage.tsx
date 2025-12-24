@@ -10,11 +10,11 @@ import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
 import { EmbedMessage } from '../../api/quorumApi';
 import './DirectMessage.scss';
 import {
-  useRegistration,
   useMessageComposer,
   useDirectMessagesList,
   useUpdateReadTime,
 } from '../../hooks';
+import { useRegistrationOptional } from '../../hooks/queries/registration/useRegistrationOptional';
 import { useConversation } from '../../hooks/queries/conversation/useConversation';
 import { useMessageDB } from '../context/useMessageDB';
 import { useQueryClient } from '@tanstack/react-query';
@@ -88,9 +88,10 @@ const DirectMessage: React.FC<{}> = () => {
     }
   }, [address]);
 
-  // Get all the data we need (same as original)
-  const { data: registration } = useRegistration({ address: address! });
-  const { data: self } = useRegistration({
+  // Get all the data we need
+  // Use non-suspense registration queries for offline resilience
+  const { data: registration } = useRegistrationOptional({ address: address! });
+  const { data: self } = useRegistrationOptional({
     address: user.currentPasskeyInfo!.address,
   });
   const { data: conversation } = useConversation({
@@ -153,7 +154,8 @@ const DirectMessage: React.FC<{}> = () => {
     canDeleteMessages,
   } = useDirectMessagesList();
 
-  // Recreate members logic exactly as original (temporary fix)
+  // Build members with fallback chain: conversation (IndexedDB) > registration (network) > defaults
+  // This allows the component to render offline using cached conversation data
   const members = useMemo(() => {
     const m = {} as {
       [address: string]: {
@@ -163,18 +165,28 @@ const DirectMessage: React.FC<{}> = () => {
       };
     };
     if (conversation?.conversation) {
+      // Priority 1: Use conversation data from IndexedDB (available offline)
       m[address!] = {
-        displayName: conversation.conversation!.displayName,
-        userIcon: conversation.conversation!.icon,
+        displayName: conversation.conversation!.displayName ?? t`Unknown User`,
+        userIcon: conversation.conversation!.icon ?? DefaultImages.UNKNOWN_USER,
         address: address!,
       };
     } else if (registration?.registration) {
+      // Priority 2: Use registration data from network API
       m[registration.registration.user_address] = {
         displayName: t`Unknown User`,
         userIcon: DefaultImages.UNKNOWN_USER,
         address: registration.registration.user_address,
       };
+    } else {
+      // Priority 3: Offline fallback - use address as identifier
+      m[address!] = {
+        displayName: t`Unknown User`,
+        userIcon: DefaultImages.UNKNOWN_USER,
+        address: address!,
+      };
     }
+    // Self data - use passkey context as primary source (always available)
     m[user.currentPasskeyInfo!.address] = {
       address: user.currentPasskeyInfo!.address,
       userIcon: user.currentPasskeyInfo!.pfpUrl,
@@ -182,6 +194,54 @@ const DirectMessage: React.FC<{}> = () => {
     };
     return m;
   }, [registration, conversation, address, user.currentPasskeyInfo]);
+
+  // Clean up stale encryption states when registration data changes
+  // This fixes the DM inbox mismatch bug where Action Queue encrypts to old inboxes
+  useEffect(() => {
+    // Guard: Only run when BOTH self and counterparty registration are available
+    if (!self?.registration || !registration?.registration || !address) {
+      return;
+    }
+
+    const cleanupStaleEncryptionStates = async () => {
+      try {
+        const convId = `${address}/${address}`;
+        const states = await messageDB.getEncryptionStates({ conversationId: convId });
+
+        if (states.length === 0) return;
+
+        // Check BOTH self and counterparty inboxes (matches legacy path at MessageService.ts:1627-1634)
+        const validInboxes = [
+          ...self.registration.device_registrations
+            .map(d => d.inbox_registration.inbox_address),
+          ...registration.registration.device_registrations
+            .map(d => d.inbox_registration.inbox_address),
+        ];
+
+        let deletedCount = 0;
+        for (const state of states) {
+          const parsed = JSON.parse(state.state);
+          if (!validInboxes.includes(parsed.tag)) {
+            await messageDB.deleteEncryptionState(state);
+            deletedCount++;
+          }
+        }
+
+        if (deletedCount > 0) {
+          console.log('[DirectMessage] Cleaned up stale encryption states', {
+            conversationId: convId,
+            deletedCount,
+            remainingCount: states.length - deletedCount,
+          });
+        }
+      } catch (error) {
+        console.error('[DirectMessage] Failed to cleanup stale encryption states:', error);
+        // Don't throw - cleanup is best-effort, shouldn't break the page
+      }
+    };
+
+    cleanupStaleEncryptionStates();
+  }, [self?.registration, registration?.registration, address, messageDB]);
 
   // Helper for compatibility
   const otherUser = members[address!] || {
@@ -209,6 +269,12 @@ const DirectMessage: React.FC<{}> = () => {
   const handleSubmitMessage = useCallback(
     async (message: string | object, inReplyTo?: string) => {
       if (!address) return; // Guard against undefined address
+
+      // Guard against missing registration data (offline)
+      if (!self?.registration || !registration?.registration) {
+        console.warn('Cannot send message: registration data unavailable (offline?)');
+        return;
+      }
 
       // Check if this is a deletion to prevent auto-scroll (for consistency with Channel.tsx)
       const isDeletion =
@@ -364,8 +430,11 @@ const DirectMessage: React.FC<{}> = () => {
   }, [composer.inReplyTo]);
 
   // Calculate header height for mobile sidebar positioning
+  // Debounced to avoid excessive recalculations during window drag
   useEffect(() => {
     if (headerRef.current) {
+      let timeoutId: ReturnType<typeof setTimeout>;
+
       const updateHeaderHeight = () => {
         const rect = headerRef.current?.getBoundingClientRect();
         if (rect) {
@@ -378,11 +447,17 @@ const DirectMessage: React.FC<{}> = () => {
         }
       };
 
+      const debouncedUpdate = () => {
+        clearTimeout(timeoutId);
+        timeoutId = setTimeout(updateHeaderHeight, 150);
+      };
+
       updateHeaderHeight();
-      window.addEventListener('resize', updateHeaderHeight);
+      window.addEventListener('resize', debouncedUpdate);
 
       return () => {
-        window.removeEventListener('resize', updateHeaderHeight);
+        clearTimeout(timeoutId);
+        window.removeEventListener('resize', debouncedUpdate);
       };
     }
   }, []);
@@ -820,6 +895,11 @@ const DirectMessage: React.FC<{}> = () => {
                 }}
                 hasNextPage={hasNextPage}
                 onRetryMessage={handleRetryMessage}
+                dmContext={
+                  self?.registration && registration?.registration
+                    ? { self: self.registration, counterparty: registration.registration }
+                    : undefined
+                }
               />
             </Container>
             {/* Accept chat warning */}

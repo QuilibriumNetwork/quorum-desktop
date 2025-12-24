@@ -8,7 +8,9 @@ This is the main index for all documentation, bug reports, and task management.
 - [Component Management & Development Guide](docs/component-management-guide.md)
 - [Config Sync System](docs/config-sync-system.md)
 - [Cross-Platform Repository Implementation](docs/cross-platform-repository-implementation.md)
+- [Cryptographic Architecture](docs/cryptographic-architecture.md)
 - [Expo Dev Testing Guide](docs/expo-dev-testing-guide.md)
+- [IndexedDB Schema Reference: `quorum_db`](docs/quorum-db-schema.md)
 - [Quorum Data Management Architecture](docs/data-management-architecture-guide.md)
 - [Styling Guidelines](docs/styling-guidelines.md)
 
@@ -16,6 +18,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Unused Dependencies Analysis](docs/development/unused-dependencies-analysis.md)
 
 ### Features
+- [Action Queue](docs/features/action-queue.md)
 - [Avatar & Initials System](docs/features/avatar-initials-system.md)
 - [Cross-Platform Key Backup Implementation](docs/features/cross-platform-key-backup.md)
 - [Cross-Platform Theming System](docs/features/cross-platform-theming.md)
@@ -28,6 +31,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Modal Save Overlay System](docs/features/modal-save-overlay.md)
 - [Modal System Documentation](docs/features/modals.md)
 - [Mute User System Documentation](docs/features/mute-user-system.md)
+- [Offline Support](docs/features/offline-support.md)
 - [ReactTooltip Mobile Support Documentation](docs/features/reacttooltip-mobile.md)
 - [Responsive Layout System Documentation](docs/features/responsive-layout.md)
 - [Security Architecture](docs/features/security.md)
@@ -74,7 +78,7 @@ This is the main index for all documentation, bug reports, and task management.
 ## 🐛 Bug Reports
 
 ### Active Issues
-- [Brave Browser React Hook Errors - ONGOING INVESTIGATION](bugs/brave-browser-react-hook-errors.md)
+- [Action Queue Bypasses SDK Encryption for Identity Keys](bugs/action-queue-plaintext-private-keys.md)
 - [Config Sync Space Loss Race Condition](bugs/config-sync-space-loss-race-condition.md)
 - [DirectMessage Invite Loading Performance Issue](bugs/directmessage-invite-loading-performance.md)
 - [Encryption State Evals Causing Config Sync Bloat](bugs/encryption-state-evals-bloat.md)
@@ -85,7 +89,6 @@ This is the main index for all documentation, bug reports, and task management.
 - [Message Hash Navigation Conflict Bug](bugs/message-hash-navigation-conflict.md)
 - [MessageDB Context: IndexedDB Platform Compatibility Issue](bugs/messagedb-cross-platform-storage-issue.md)
 - [Modal Gesture Handling Technical Debt](bugs/modal-gesture-handling-technical-debt.md)
-- [Performance Issue: UserSettingsModal Save Times Scale Poorly with Number of Spaces](bugs/usersettingsmodal-scalability-performance.md)
 - [Pinned Messages Panel Button Clicks Bug](bugs/pinned-messages-panel-clicks-and-message-list-disappearing.md)
 - [Public Invite Link Intermittent Expiration Bug](bugs/public-invite-link-intermittent-expiration.md)
 - [Space Owner Privacy Limitation](bugs/space-owner-privacy-limitation.md)
@@ -94,13 +97,21 @@ This is the main index for all documentation, bug reports, and task management.
 - [Android 7.0 File Download Fix - Implementation Plan](bugs/.solved/SOLVED_android-file-download-huawei-p9-lite.md)
 - [Bug: Auto-Jump to First Unread Message - Blocked by Virtuoso Scroll Positioning](bugs/.solved/auto-jump-unread-virtuoso-scroll-conflict.md)
 - [Channel/Group Save Race Condition](bugs/.solved/channel-group-save-race-condition.md)
+- [Config Save Missing React Query Cache Update Causes Stale allowSync](bugs/.solved/config-save-stale-cache-allowsync.md)
+- [Deleted Messages Reappear After Peer Sync](bugs/.solved/deleted-messages-reappear-via-sync.md)
+- [DM Offline Navigation Shows Empty View](bugs/.solved/dm-offline-navigation-empty.md)
+- [DM Send Fails with "Cannot read properties of undefined (reading 'address')"](bugs/.solved/dm-send-fails-address-undefined.md)
+- [DM Shows "Unknown User" After Conversation Starts](bugs/.solved/dm-unknown-user-identity-not-revealed.md)
 - [Folder Click to Expand/Collapse Not Working](bugs/.solved/folder-click-expand-not-working.md)
 - [FolderEditorModal Race Condition on Auto-Open After Folder Creation](bugs/.solved/folder-editor-modal-race-condition.md)
+- [Ghost Message Appears After Deleting a Message](bugs/.solved/ghost-message-after-delete.md)
 - [Icon Color Not Saving Issue](bugs/.solved/icon-color-not-saving-issue.md)
 - [Kick User UX Improvements](bugs/.solved/kick-user-ux-improvements.md)
 - [MobileDrawer Virtuoso Double Scroller CSS Issues](bugs/.solved/mobiledrawer-virtuoso-double-scroller.md)
 - [New Messages Separator - Intersection Observer Dismissal Issues](bugs/.solved/new-messages-separator-intersection-observer-issues.md)
 - [NewDirectMessage Modal: URL-to-State Conversion](bugs/.solved/SOLVED_newdirectmessage-modal-url-to-state-conversion.md)
+- [Offline Navigation Issues](bugs/.solved/offline-navigation-issues.md)
+- [Performance Issue: UserSettingsModal Save Times Scale Poorly with Number of Spaces](bugs/.solved/usersettingsmodal-scalability-performance.md)
 - [React Hooks Violation: Conditional Return Before Hooks](bugs/.solved/SOLVED_react-hooks-violation-conditional-return.md)
 - [Solved Search Results Page Refresh And Focus Stealing](bugs/.solved/SOLVED_search-results-page-refresh-and-focus-stealing.md)
 - [SOLVED: Fast Refresh Export Incompatibility](bugs/.solved/SOLVED_fast-refresh-export-incompatibility.md)
@@ -109,8 +120,10 @@ This is the main index for all documentation, bug reports, and task management.
 - [Space Creation Config Save Race Condition](bugs/.solved/space-creation-config-save-race-condition.md)
 - [Tooltip Flickering at Top-Left on Fast Mouse Movement](bugs/.solved/SOLVED_tooltip-flickering-top-left-on-fast-mouse-movement.md)
 - [user:kick Role Permission is Non-Functional for Non-Owners](bugs/.solved/user-kick-role-permission-non-functional.md)
+- [WebSocket processQueue Stuck - Blocking Outbound Messages](bugs/.solved/websocket-processqueue-stuck-blocking-outbound.md)
 
 ### .Archived
+- [Brave Browser React Hook Errors - ONGOING INVESTIGATION](bugs/.archived/brave-browser-react-hook-errors.md)
 - [Bug: Auto-jump to First Unread Breaks Initial Message Sync](bugs/.archived/auto-jump-unread-breaks-message-sync.md)
 - [Role with message:delete permission can delete space owner's messages](bugs/.archived/message-delete-owner-vulnerability.md)
 - [Space Owner Delete Permissions Bug](bugs/.archived/space-owner-delete-permissions-bug.md)
@@ -119,7 +132,6 @@ This is the main index for all documentation, bug reports, and task management.
 
 ### Pending Tasks
 
-- [Background Action Queue with Web Worker Crypto](tasks/background-action-queue-with-worker-crypto.md)
 - [Combined Text + Image Messages](tasks/combined-text-image-messages.md)
 - [Conversation Deletion State Synchronization](tasks/conversation-deletion-state-sync.md)
 - [Custom ContentEditable Mention Pills for Message Composer](tasks/mention-pills-in-message-textarea.md)
@@ -133,11 +145,13 @@ This is the main index for all documentation, bug reports, and task management.
 - [Service Worker for App Update Detection](tasks/service-worker-app-updates.md)
 - [Task: Implement Delete Public Invite Link Feature](tasks/delete-public-invite-link.md)
 - [Test Suite Implementation Plan for Quorum Desktop](tasks/test-suite-plan.md)
+- [Tombstone Cleanup Strategy for Deleted Messages](tasks/tombstone-cleanup-strategy.md)
 - [User Status Feature Implementation Plan](tasks/user-status.md)
 
 ### .Archived
 - [🚀 Search Performance Optimization - Revised Implementation Plan](tasks/.archived/2025-11-12-search-performance-optimization-original.md)
 - [Auto-Jump to First Unread Message + Fix Hash Navigation](tasks/.archived/auto-jump-first-unread.md)
+- [Background Action Queue with Web Worker Crypto](tasks/.archived/background-action-queue-with-worker-crypto.md)
 - [Cache Space Key Metadata to Reduce Config Save Overhead](tasks/.archived/config-save-space-key-caching.md)
 - [ClickToCopyContent Component Analysis](tasks/.archived/click-to-copy-content-analysis.md)
 - [Font Size Management Analysis & Recommendations](tasks/.archived/font-size-management-analysis-2025.md)
@@ -164,13 +178,18 @@ This is the main index for all documentation, bug reports, and task management.
 - [Docusaurus Setup & Implementation Task](tasks/docusaurus/docusaurus-setup-implementation.md)
 
 ### Messagedb
-- [handleNewMessage Integration Tests Guide](tasks/messagedb/messageservice-handlenewmessage-tests.md)
-- [handleNewMessage Refactoring Plan](tasks/messagedb/messageservice-handlenewmessage-refactor.md)
 - [High-Risk Optimization Opportunities](tasks/messagedb/messagedb-optimization-3.md)
 - [Low/Medium Risk Optimization Opportunities](tasks/messagedb/messagedb-optimization-1.md)
 - [MessageDB Refactoring - Current State](tasks/messagedb/messagedb-current-state.md)
-- [MessageDB: Optimization Plan (Phase 4)](tasks/messagedb/messagedb-optimization-2.md)
 - [MessageService.ts Analysis](tasks/messagedb/messageservice-analysis.md)
+
+### Messagedb .Archived
+- [handleNewMessage Integration Tests Guide](tasks/messagedb/.archived/messageservice-handlenewmessage-tests.md)
+- [handleNewMessage Refactoring Plan](tasks/messagedb/.archived/messageservice-handlenewmessage-refactor.md)
+- [MessageDB: Optimization Plan (Phase 4)](tasks/messagedb/.archived/messagedb-optimization-2.md)
+
+### Messagedb .Done
+- [Extract encryptAndSendToSpace() Helper](tasks/messagedb/.done/messageservice-extract-encrypt-helper.md)
 
 ### Mobile Dev
 - [Business Logic Extraction & Native Preparation Plan](tasks/mobile-dev/business-logic-extraction-plan.md)
@@ -205,8 +224,10 @@ This is the main index for all documentation, bug reports, and task management.
 ## 📋 Completed Tasks
 
 - [AccentColorSwitcher Cross-Platform Migration + Persistence](tasks/.done/accent-color-switcher-cross-platform-migration.md)
+- [Add DM-Specific Action Queue Handlers](tasks/.done/dm-action-queue-handlers.md)
 - [Analysis Report & Implementation Plan: Strategic Portal Integration for Overlay Components (v7)](tasks/.done/modal-portal-refactor-analysis.md)
 - [Android 7.0 File Download Fix - Implementation Plan](tasks/.done/FAILED_android-file-download-fix.md)
+- [Background Action Queue](tasks/.done/background-action-queue.md)
 - [Callout Primitive Audit Report](tasks/.done/callout-primitive-audit.md)
 - [Callout Primitive System](tasks/.done/callout-primitive-system.md)
 - [Channel & Group Icon Selection Feature](tasks/.done/channel-group-icon-selection.md)
@@ -262,7 +283,9 @@ This is the main index for all documentation, bug reports, and task management.
 - [Modal Animation Consistency Implementation](tasks/.done/new-modals-effect.md)
 - [Modal Migration Analysis & Progress Report](tasks/.done/DONE_modal-migration-plan.md)
 - [Notification Dropdown/Inbox UI Implementation](tasks/.done/notification-inbox-ui.md)
+- [Offline Detection and Optimistic Message Reliability](tasks/.done/offline-detection-and-optimistic-message-reliability.md)
 - [Per-Space Profile Data Flow Analysis](tasks/.done/per-space-profile-data-flow-analysis.md)
+- [Persist DM Contact Profile from Message Data](tasks/.done/dm-contact-profile-refresh.md)
 - [Phase 1 Complete: Component Audit Infrastructure & Initial Analysis](tasks/.done/components-audit-dashboard.md)
 - [Pinned Messages Cross-Client Synchronization](tasks/.done/pinned-messages-sync.md)
 - [Pinned Messages Feature - Implementation Plan](tasks/.done/pinned-messages-feature.md)
@@ -278,6 +301,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Responsive Layout Implementation Plan](tasks/.done/responsive-layout.md)
 - [Responsive Layout Requirements](tasks/.done/responsive-layout_requirements.md)
 - [Role Mention Notifications Implementation](tasks/.done/role-mention-notifications.md)
+- [Scroll Performance Optimization](tasks/.done/scroll-performance-optimization.md)
 - [Search Components Primitive Migration](tasks/.done/search-primitive-migration.md)
 - [Security Analysis: MessageMarkdownRenderer Component](tasks/.done/security-analysis-message-markdown-renderer-2025-11-07.md)
 - [Space Folders - Discord-Style Grouping Feature](tasks/.done/space-folders-discord-style.md)
@@ -308,10 +332,28 @@ This is the main index for all documentation, bug reports, and task management.
 
 ### Active Reports
 
+- [Comprehensive Privacy & Security Audit - All Features](reports/privacy-security-comprehensive-audit_2025-12-21.md)
+- [Cryptographic Code Best Practices: Abstraction vs Duplication](reports/cryptographic-code-best-practices_2025-12-20.md)
 - [dnd-kit Touch Drag-and-Drop Best Practices Research](reports/dnd-kit-touch-best-practices_2025-12-11.md)
+- [File Size & Service Extraction Best Practices](reports/file-size-best-practices_2025-12-20.md)
 - [Quorum Privacy Analysis](reports/privacy-analysis-quorum-2025-12-03.md)
 - [Security Audit: Markdown Renderer & Mentions System](reports/security-audit-markdown-mentions-2025-11-18.md)
+- [Sync Optimizations Report](reports/sync-optimizations_2025-12-19.md)
 - [Web-to-Native Feature Sync Compatibility Analysis](reports/web-native-feature-sync-analysis_2025-12-04.md)
+
+### Action Queue
+- [Action Queue Summary](reports/action-queue/000-action-queue-summary.md)
+- [DM "Sending..." Indicator Hangs Indefinitely](reports/action-queue/001-dm-sending-indicator-hang.md)
+- [WebSocket Queue Starvation Causes DM Delays](reports/action-queue/002-websocket-queue-starvation.md)
+- [Action Queue vs Legacy DM Message Implementation - Code Comparison Audit](reports/action-queue/003-DM-message-code-comparison-audit.md)
+- [Action Queue vs Legacy Space Message Implementation - Code Comparison Audit](reports/action-queue/004-space-message-code-comparison-audit.md)
+- [DM Sync Non-Deterministic Failures](reports/action-queue/005-dm-sync-non-deterministic-failures.md)
+- [006: Action Queue Stores Identity Keys in Plaintext](reports/action-queue/006-plaintext-private-keys-bug.md)
+- [007: Fix - Don't Store Keys in Action Queue](reports/action-queue/007-plaintext-private-keys-fix.md)
+- [008: Action Queue Endpoint Dependencies & Failure Modes](reports/action-queue/008-endpoint-dependencies.md)
+- [009: DM Offline Support - Conditional Action Queue Routing](reports/action-queue/009-dm-offline-registration-persistence-fix.md)
+- [DM Messages Not Delivered - Device Registration Inbox Mismatch](reports/action-queue/010-dm-registration-inbox-mismatch-fix.md)
+- [DM Debug Console Snippets](reports/action-queue/011-dm-debug-console-snippets.md)
 
 ### Onboarding Flow
 - [Passkey Authentication Flow Analysis](reports/onboarding-flow/passkey-authentication-flow-analysis-2025-11-23.md)
@@ -320,4 +362,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2025-12-16 15:01:12
+**Last Updated**: 2025-12-23 13:55:19

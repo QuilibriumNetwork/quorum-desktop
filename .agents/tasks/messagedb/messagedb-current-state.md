@@ -1,7 +1,7 @@
 # MessageDB Refactoring - Current State
 
-**Last Updated**: 2025-12-16
-**Status**: Phases 1-3 Complete, Phase 4 On Hold (Low ROI)
+**Last Updated**: 2025-12-20
+**Status**: Phases 1-3 Complete | Service Extraction Recommended
 
 > **⚠️ AI-Generated**: May contain errors. Verify before use.
 
@@ -9,7 +9,12 @@
 
 ## Overview
 
-The MessageDB refactoring successfully extracted 6 services from the original 5,650-line monolithic file. The codebase has continued to grow with new features. **Dec 2025 analysis concludes that further refactoring has low ROI** — the current structure is well-designed despite the large file sizes.
+The MessageDB refactoring successfully extracted 6 services from the original 5,650-line monolithic file. MessageService.ts has grown to ~4,150 lines with 5 distinct concerns.
+
+**Dec 20, 2025**: New direction based on [best practices research](../../reports/file-size-best-practices_2025-12-20.md):
+- `handleNewMessage` refactoring is **NOT RECOMMENDED** (high risk, tightly coupled)
+- **Service extraction IS RECOMMENDED** (move code to separate files by concern)
+- Priority 1: Extract `MessageCacheService` (~800 lines, low risk)
 
 ---
 
@@ -18,69 +23,80 @@ The MessageDB refactoring successfully extracted 6 services from the original 5,
 ### Original State (Before Refactoring)
 - **File**: `src/components/context/MessageDB.tsx`
 - **Size**: 5,650 lines
-- **Functions**: 25+ mixed responsibilities
 
 ### Current State (Dec 2025)
-- **MessageDB.tsx**: 1,020 lines (82% reduction from original)
-- **6 Extracted Services**: 7,727 lines total
+- **MessageDB.tsx**: 1,020 lines (82% reduction)
+- **6 Original Services**: ~7,500 lines total
+- **2 ActionQueue Services**: ~1,030 lines total
 
 ---
 
 ## Service Breakdown
 
-| Service | Location | Lines | Status |
-|---------|----------|-------|--------|
-| **MessageService** | `src/services/MessageService.ts` | 4,337 | ⚠️ Large but well-structured |
-| SpaceService | `src/services/SpaceService.ts` | 1,181 | ✅ Complete |
-| InvitationService | `src/services/InvitationService.ts` | 902 | ✅ Complete |
-| ConfigService | `src/services/ConfigService.ts` | 531 | ✅ Complete |
-| SyncService | `src/services/SyncService.ts` | 512 | ✅ Complete |
-| EncryptionService | `src/services/EncryptionService.ts` | 264 | ✅ Complete |
-
-**MessageDB.tsx** (1,020 lines): Context provider responsibilities - clean, no further extraction needed.
-
-For detailed MessageService analysis, see [messageservice-analysis.md](./messageservice-analysis.md).
+| Service | Lines | Status |
+|---------|-------|--------|
+| **MessageService** | ~4,150 | ⚠️ Large — extraction recommended |
+| SpaceService | 1,178 | ✅ Complete |
+| InvitationService | 902 | ✅ Complete |
+| ConfigService | 531 | ✅ Complete |
+| SyncService | 512 | ✅ Complete |
+| EncryptionService | 264 | ✅ Complete |
+| ActionQueueService | 292 | ✅ Complete |
+| ActionQueueHandlers | 738 | ✅ Complete |
 
 ---
 
-## Metrics
+## Next Steps: Service Extraction
 
-| Metric | Original | Oct 2025 | Dec 14 | Dec 16 | Notes |
-|--------|----------|----------|--------|--------|-------|
-| MessageDB.tsx | 5,650 | 1,090 | 1,020 | 1,020 | ✅ Stable |
-| MessageService.ts | - | 2,314 | 3,527 | **4,337** | +23% (sending indicator) |
-| Total services | - | 6,004 | 6,917 | **7,727** | +12% from Dec 14 |
+Per [MessageService Analysis](./messageservice-analysis.md), the file has 5 distinct concerns:
+
+| Concern | Lines | Extraction Target |
+|---------|-------|-------------------|
+| Cache operations | ~800 | `MessageCacheService` ← **Priority 1** |
+| DM submission | ~520 | `DirectMessageService` |
+| Channel submission | ~470 | `ChannelMessageService` |
+| Incoming messages | ~1,350 | Keep in MessageService (too coupled) |
+| Retry/cleanup | ~390 | Keep in MessageService |
+
+**Recommended first extraction**: `MessageCacheService` — pure React Query logic, zero crypto, highly testable.
 
 ---
 
-## Refactoring Status
+## Completed Work
 
-### Completed (Phases 1-3)
-- ✅ Extracted 6 services from monolithic MessageDB.tsx
-- ✅ Reduced MessageDB.tsx from 5,650 → 1,020 lines (82% reduction)
-- ✅ Quick wins: `int64ToBytes`, `canonicalize`, hex utilities, JSDoc
+| Date | What | Impact |
+|------|------|--------|
+| Dec 20, 2025 | Extracted `encryptAndSendToSpace()` helper | -200 lines, 7 unit tests |
+| Dec 18, 2025 | Removed dead fallback code | -249 lines |
+| Oct 2025 | Extracted 6 services from MessageDB | -82% reduction |
 
-### On Hold (Phase 4)
-- ⏸️ `handleNewMessage` refactoring (1,354 → 400-500 lines)
-- ⏸️ Additional service-level optimizations
+---
 
-**Reason**: Low ROI confirmed by feature-analyzer. The current architecture is acceptable — large files with clear boundaries are better than over-abstracted small files.
+## Archived (Not Recommended)
+
+The `handleNewMessage` refactoring was analyzed and **deprioritized**:
+- Risk outweighs benefit
+- Tightly coupled to encryption context
+- Import chain blocks testing
+
+Archived files in `.archived/`:
+- `messageservice-handlenewmessage-refactor.md`
+- `messageservice-handlenewmessage-tests.md`
+- `messagedb-optimization-2.md`
 
 ---
 
 ## Related Documentation
 
 ### Active
-- [MessageService Analysis](./messageservice-analysis.md) - Detailed analysis & refactoring opportunities
+- [MessageService Analysis](./messageservice-analysis.md) — Detailed breakdown & extraction opportunities
+- [File Size Best Practices](../../reports/file-size-best-practices_2025-12-20.md) — When to split files
+- [Action Queue](../../docs/features/action-queue.md) — Background task processing
 
-### On Hold
-- [handleNewMessage Refactor Plan](./messageservice-handlenewmessage-refactor.md) - Phase 4 strategy
-- [handleNewMessage Tests Guide](./messageservice-handlenewmessage-tests.md) - Test creation guide
-- [Low-Risk Optimizations](./messagedb-optimization-1.md) - Assessed, mostly rejected
-- [Optimization Plan (Phase 4)](./messagedb-optimization-2.md) - Detailed task breakdown
-- [High-Risk Optimizations](./messagedb-optimization-3.md) - Future reference only
+### Reference Only
+- [Low-Risk Optimizations](./messagedb-optimization-1.md) — Type safety, React types removal
+- [High-Risk Optimizations](./messagedb-optimization-3.md) — SpaceService, InvitationService functions
 
 ---
 
-_Last updated: 2025-12-16_
-_Status: Phase 3 Complete ✅ | Phase 4 On Hold (Low ROI)_
+_Last updated: 2025-12-20_

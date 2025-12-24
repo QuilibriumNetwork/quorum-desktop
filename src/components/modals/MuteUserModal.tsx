@@ -1,8 +1,9 @@
 import * as React from 'react';
-import { Button, Modal, Container, Text, FlexRow, Spacer, Callout } from '../primitives';
+import { Button, Modal, Container, Text, FlexRow, Spacer } from '../primitives';
 import { UserAvatar } from '../user/UserAvatar';
 import { t } from '@lingui/core/macro';
 import { truncateAddress } from '../../utils';
+import { showError } from '../../utils/toast';
 
 interface MuteUserModalProps {
   visible: boolean;
@@ -23,23 +24,11 @@ const MuteUserModal: React.FunctionComponent<MuteUserModalProps> = ({
   userAddress,
   isUnmuting = false,
 }) => {
-  const [error, setError] = React.useState<string | null>(null);
-  const [isComplete, setIsComplete] = React.useState(false);
   const [days, setDays] = React.useState(1); // Default to 1 day
-
-  // Close modal after showing success message for 2 seconds
-  React.useEffect(() => {
-    if (isComplete) {
-      const timer = setTimeout(onClose, 2000);
-      return () => clearTimeout(timer);
-    }
-  }, [isComplete, onClose]);
 
   // Reset state when modal opens
   React.useEffect(() => {
     if (visible) {
-      setError(null);
-      setIsComplete(false);
       setDays(1); // Reset to default
     }
   }, [visible]);
@@ -59,25 +48,25 @@ const MuteUserModal: React.FunctionComponent<MuteUserModalProps> = ({
   }, []);
 
   const handleConfirm = React.useCallback(async () => {
-    setError(null);
     try {
       await onConfirm(days);
-      setIsComplete(true);
+      onClose(); // Close immediately on success
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : (isUnmuting ? t`Failed to unmute user` : t`Failed to mute user`);
-      setError(message);
+      showError(message);
+      onClose(); // Close modal, error shown via toast
     }
-  }, [onConfirm, isUnmuting, days]);
+  }, [onConfirm, onClose, isUnmuting, days]);
 
   return (
     <Modal
       visible={visible}
-      onClose={isComplete ? undefined : onClose}
-      closeOnBackdropClick={!isComplete}
-      closeOnEscape={!isComplete}
+      onClose={onClose}
+      closeOnBackdropClick={true}
+      closeOnEscape={true}
       title={isUnmuting ? t`Unmute User` : t`Mute User`}
       size="small"
-      swipeToClose={!isComplete}
+      swipeToClose={true}
     >
       <Container>
         <FlexRow gap="md" align="center">
@@ -100,7 +89,7 @@ const MuteUserModal: React.FunctionComponent<MuteUserModalProps> = ({
         <Spacer size="lg" />
 
         {/* Duration input - only show when muting */}
-        {!isUnmuting && !isComplete && (
+        {!isUnmuting && (
           <>
             <FlexRow gap="sm" align="center" className="flex-nowrap">
               <Text typography="body" className="whitespace-nowrap">{t`Mute for`}</Text>
@@ -121,19 +110,13 @@ const MuteUserModal: React.FunctionComponent<MuteUserModalProps> = ({
           </>
         )}
 
-        {error ? (
-          <Callout variant="error" size="sm">
-            {error}
-          </Callout>
-        ) : (
-          <Text typography="body" variant="subtle">
-            {isUnmuting
-              ? t`This user will be able to send messages in this Space again.`
-              : days === 0
-                ? t`This user will no longer be able to send messages in this Space.`
-                : t`This user will not be able to send messages for ${days} days.`}
-          </Text>
-        )}
+        <Text typography="body" variant="subtle">
+          {isUnmuting
+            ? t`This user will be able to send messages in this Space again.`
+            : days === 0
+              ? t`This user will no longer be able to send messages in this Space.`
+              : t`This user will not be able to send messages for ${days} days.`}
+        </Text>
 
         <Spacer size="lg" />
 
@@ -141,25 +124,21 @@ const MuteUserModal: React.FunctionComponent<MuteUserModalProps> = ({
           <Button
             type="subtle"
             onClick={onClose}
-            disabled={isComplete}
             fullWidth={true}
           >
             {t`Cancel`}
           </Button>
           <Button
-            type={isComplete ? 'secondary' : (isUnmuting ? 'primary' : 'danger')}
+            type={isUnmuting ? 'primary' : 'danger'}
             onClick={handleConfirm}
-            disabled={isComplete}
             hapticFeedback={true}
             fullWidth={true}
           >
-            {isComplete
-              ? (isUnmuting ? t`User Unmuted!` : t`User Muted!`)
-              : isUnmuting
-                ? t`Unmute`
-                : days === 0
-                  ? t`Mute Forever`
-                  : t`Mute for ${days} days`}
+            {isUnmuting
+              ? t`Unmute`
+              : days === 0
+                ? t`Mute Forever`
+                : t`Mute for ${days} days`}
           </Button>
         </FlexRow>
       </Container>

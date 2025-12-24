@@ -5,6 +5,8 @@ interface UseModalSaveStateOptions {
   defaultTimeout?: number;
   /** Maximum timeout before forcefully stopping the save operation (defaults to 30000ms / 30 seconds) */
   maxTimeout?: number;
+  /** Delay before showing overlay - prevents flash for fast operations (defaults to 1000ms) */
+  showOverlayDelay?: number;
   /** Callback to execute after save completes */
   onSaveComplete?: () => void;
   /** Callback to execute on save error */
@@ -57,6 +59,7 @@ interface UseModalSaveStateReturn {
 export const useModalSaveState = ({
   defaultTimeout = 2000,
   maxTimeout = 30000, // 30 seconds default max timeout
+  showOverlayDelay = 1000, // Only show overlay if operation takes >1s
   onSaveComplete,
   onSaveError,
   onTimeout,
@@ -64,6 +67,7 @@ export const useModalSaveState = ({
   const [isSaving, setIsSaving] = useState(false);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
   const maxTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const showOverlayTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   // Clear all timeouts helper
   const clearTimeouts = useCallback(() => {
@@ -74,6 +78,10 @@ export const useModalSaveState = ({
     if (maxTimeoutRef.current) {
       clearTimeout(maxTimeoutRef.current);
       maxTimeoutRef.current = null;
+    }
+    if (showOverlayTimerRef.current) {
+      clearTimeout(showOverlayTimerRef.current);
+      showOverlayTimerRef.current = null;
     }
   }, []);
 
@@ -107,10 +115,15 @@ export const useModalSaveState = ({
   );
 
   // Save until complete - only closes when operation finishes (with max timeout failsafe)
+  // Shows overlay only if operation takes longer than showOverlayDelay (prevents flash)
   const saveUntilComplete = useCallback(
     async (saveFn: () => Promise<void>): Promise<void> => {
-      setIsSaving(true);
       clearTimeouts();
+
+      // Delay showing overlay to prevent flash for fast operations
+      showOverlayTimerRef.current = setTimeout(() => {
+        setIsSaving(true);
+      }, showOverlayDelay);
 
       // Set maximum timeout as a failsafe
       maxTimeoutRef.current = setTimeout(() => {
@@ -124,7 +137,7 @@ export const useModalSaveState = ({
       try {
         await saveFn();
 
-        // Clear the max timeout if save completes successfully
+        // Clear all timers - if fast enough, overlay never showed
         clearTimeouts();
         setIsSaving(false);
         onSaveComplete?.();
@@ -135,7 +148,7 @@ export const useModalSaveState = ({
         throw error;
       }
     },
-    [maxTimeout, onSaveComplete, onSaveError, onTimeout, clearTimeouts]
+    [maxTimeout, showOverlayDelay, onSaveComplete, onSaveError, onTimeout, clearTimeouts]
   );
 
   return {

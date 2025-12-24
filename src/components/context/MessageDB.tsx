@@ -20,7 +20,10 @@ import {
   SyncService,
   ConfigService,
   InvitationService,
+  ActionQueueService,
+  ActionQueueHandlers,
 } from '../../services';
+import { ActionQueueProvider } from './ActionQueueContext';
 import {
   buildConversationsKey,
 } from '../../hooks';
@@ -236,6 +239,7 @@ type MessageDBContextValue = {
       completedOnboarding: boolean;
     }
   ) => Promise<void>;
+  actionQueueService: ActionQueueService;
 };
 
 type MessageDBContextProps = {
@@ -308,7 +312,7 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
     await apiClient.deleteInbox(del);
   };
 
-  const addOrUpdateConversation = (
+  const addOrUpdateConversation = async (
     queryClient: QueryClient,
     address: string,
     timestamp: number,
@@ -316,41 +320,63 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
     updatedUserProfile?: Partial<secureChannel.UserProfile>
   ) => {
     const conversationId = address + '/' + address;
+
+    // Persist profile updates to IndexedDB (not just React Query cache)
+    // This ensures profile data survives page refresh
+    if (updatedUserProfile?.display_name || updatedUserProfile?.user_icon) {
+      try {
+        const existing = await messageDB.getConversation({ conversationId });
+        if (existing?.conversation) {
+          await messageDB.saveConversation({
+            ...existing.conversation,
+            displayName:
+              updatedUserProfile.display_name ?? existing.conversation.displayName,
+            icon: updatedUserProfile.user_icon ?? existing.conversation.icon,
+            timestamp: Math.max(timestamp, existing.conversation.timestamp),
+          });
+        }
+      } catch (error) {
+        console.warn('Failed to persist conversation profile update:', error);
+      }
+    }
+
+    // Update React Query cache for immediate UI feedback
     queryClient.setQueryData(
       buildConversationsKey({ type: 'direct' }),
       (oldData: InfiniteData<any>) => {
-        if (!oldData?.pages) return oldData;
+        if (!oldData?.pages) {
+          return oldData;
+        }
 
         return {
           pageParams: oldData.pageParams,
           pages: oldData.pages.map((page, index) => {
             if (index === 0) {
+              // Find existing conversation to preserve its data (especially isRepudiable)
+              const existingConv = page.conversations.find(
+                (c: Conversation) => c.conversationId === conversationId
+              );
+              const newDisplayName = updatedUserProfile?.display_name ?? existingConv?.displayName;
+              const newIcon = updatedUserProfile?.user_icon ?? existingConv?.icon;
+
               return {
                 ...page,
                 conversations: [
                   ...page.conversations.filter(
                     (c: Conversation) => c.conversationId !== conversationId
                   ),
-                  (() => {
-                    // Find existing conversation to preserve its data (especially isRepudiable)
-                    const existingConv = page.conversations.find(
-                      (c: Conversation) => c.conversationId === conversationId
-                    );
-                    return {
-                      ...existingConv, // Preserve all existing fields including isRepudiable
-                      conversationId,
-                      address: address,
-                      icon: updatedUserProfile?.user_icon ?? existingConv?.icon,
-                      displayName:
-                        updatedUserProfile?.display_name ??
-                        existingConv?.displayName,
-                      type: 'direct' as const,
-                      timestamp: timestamp,
-                      lastReadTimestamp: lastReadTimestamp,
-                      // Explicitly preserve isRepudiable to ensure it's not lost
-                      isRepudiable: existingConv?.isRepudiable,
-                    };
-                  })(),
+                  {
+                    ...existingConv, // Preserve all existing fields including isRepudiable
+                    conversationId,
+                    address: address,
+                    icon: newIcon,
+                    displayName: newDisplayName,
+                    type: 'direct' as const,
+                    timestamp: timestamp,
+                    lastReadTimestamp: lastReadTimestamp,
+                    // Explicitly preserve isRepudiable to ensure it's not lost
+                    isRepudiable: existingConv?.isRepudiable,
+                  },
                 ],
                 nextCursor: page.nextCursor,
                 prevCursor: page.prevCursor,
@@ -844,6 +870,45 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
     });
   }, [messageDB, apiClient, enqueueOutbound, saveConfig, selfAddress, keyset, spaceInfo, saveMessage, addMessage]);
 
+  // ActionQueueService (depends on all other services)
+  const actionQueueService = useMemo(() => {
+    const service = new ActionQueueService(messageDB);
+    // Expose for debugging: window.__actionQueue
+    (window as any).__actionQueue = service;
+    return service;
+  }, [messageDB]);
+
+  // ActionQueueHandlers (wire handlers after services are ready)
+  const actionQueueHandlers = useMemo(() => {
+    return new ActionQueueHandlers({
+      messageDB,
+      messageService,
+      configService,
+      spaceService,
+      queryClient,
+      getUserKeyset: () => actionQueueService.getUserKeyset(),
+    });
+  }, [messageDB, messageService, configService, spaceService, queryClient, actionQueueService]);
+
+  // Wire handlers and start queue processing
+  useEffect(() => {
+    actionQueueService.setHandlers(actionQueueHandlers);
+    // Enable ActionQueue-based message sending in MessageService
+    messageService.setActionQueueService(actionQueueService);
+    actionQueueService.start();
+    return () => {
+      actionQueueService.stop();
+    };
+  }, [actionQueueService, actionQueueHandlers, messageService]);
+
+  // Set keyset on ActionQueueService after passkey auth completes
+  // This allows the queue to process tasks that require keys
+  useEffect(() => {
+    if (keyset?.userKeyset && keyset?.deviceKeyset) {
+      actionQueueService.setUserKeyset(keyset);
+    }
+  }, [keyset, actionQueueService]);
+
   const createSpace = React.useCallback(
     async (
       spaceName: string,
@@ -1059,9 +1124,12 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
         requestSync,
         sendVerifyKickedStatuses,
         deleteConversation,
+        actionQueueService,
       }}
     >
-      {children}
+      <ActionQueueProvider actionQueueService={actionQueueService}>
+        {children}
+      </ActionQueueProvider>
     </MessageDBContext.Provider>
   );
 };
@@ -1092,6 +1160,7 @@ const MessageDBContext = createContext<MessageDBContextValue>({
   requestSync: () => undefined as never,
   sendVerifyKickedStatuses: () => undefined as never,
   deleteConversation: () => undefined as never,
+  actionQueueService: undefined as never,
 });
 
 export { MessageDBProvider, MessageDBContext };

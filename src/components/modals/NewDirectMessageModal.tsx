@@ -10,10 +10,13 @@ import {
   Tooltip,
   FlexRow,
   Spacer,
+  Callout,
 } from '../primitives';
 import './NewDirectMessageModal.scss';
 import { t } from '@lingui/core/macro';
+import { Trans } from '@lingui/react/macro';
 import { useDirectMessageCreation } from '../../hooks';
+import { useActionQueue } from '../context/ActionQueueContext';
 import { useMessageDB } from '../context/useMessageDB';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
 import { DefaultImages } from '../../utils';
@@ -33,7 +36,10 @@ const NewDirectMessageModal: React.FunctionComponent<
     buttonText,
     isButtonDisabled,
     error,
+    existingConversation,
   } = useDirectMessageCreation();
+
+  const { isOnline } = useActionQueue();
 
   const { getConfig, keyset, messageDB } = useMessageDB();
   const user = usePasskeysContext();
@@ -53,9 +59,11 @@ const NewDirectMessageModal: React.FunctionComponent<
     })();
   }, [user.currentPasskeyInfo, keyset, getConfig]);
 
-  // Override handleSubmit to save conversation settings
+  // Override handleSubmit to save conversation settings (only for new conversations)
   const handleSubmitWithSettings = React.useCallback(async () => {
-    if (address) {
+    // Only save conversation record for NEW conversations
+    // For existing conversations, just navigate (don't overwrite their data)
+    if (address && !existingConversation) {
       // Persist the conversation record with the selected non-repudiability
       const now = Date.now();
       try {
@@ -74,7 +82,7 @@ const NewDirectMessageModal: React.FunctionComponent<
       }
     }
     handleSubmit();
-  }, [address, nonRepudiable, messageDB, handleSubmit]);
+  }, [address, existingConversation, nonRepudiable, messageDB, handleSubmit]);
 
   return (
     <Modal
@@ -89,6 +97,11 @@ const NewDirectMessageModal: React.FunctionComponent<
         maxWidth="500px"
         margin="auto"
       >
+        {!isOnline && address && !existingConversation && (
+          <Callout variant="warning" size="sm" className="mb-4 text-left">
+            <Trans>You're offline. Looking up new users requires an internet connection.</Trans>
+          </Callout>
+        )}
         <Container margin="none" className="mb-4">
           <Text typography="body" variant="subtle">
             {t`Enter a user's address to start messaging them.`}

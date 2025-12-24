@@ -11,6 +11,7 @@ const useSpaceMembers = ({ spaceId }: { spaceId: string }) => {
     queryKey: buildSpaceMembersKey({ spaceId }),
     queryFn: buildSpaceMembersFetcher({ spaceId, messageDB }),
     refetchOnMount: true,
+    networkMode: 'always', // This query uses IndexedDB, not network
   });
 };
 

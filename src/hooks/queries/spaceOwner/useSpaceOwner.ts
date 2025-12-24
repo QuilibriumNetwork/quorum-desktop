@@ -10,6 +10,7 @@ const useSpaceOwner = ({ spaceId }: { spaceId: string }) => {
     queryKey: buildSpaceOwnerKey({ spaceId }),
     queryFn: buildSpaceOwnerFetcher({ messageDB, spaceId }),
     refetchOnMount: true,
+    networkMode: 'always', // This query uses IndexedDB, not network
   });
 };
 

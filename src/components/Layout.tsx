@@ -14,6 +14,7 @@ import Connecting from './Connecting';
 import { useModalManagement, useElectronDetection } from '../hooks';
 import { useNavigationHotkeys } from '@/hooks/platform/interactions/useNavigationHotkeys';
 import { useSidebar } from './context/SidebarProvider';
+import { OfflineBanner } from './ui/OfflineBanner';
 
 const Layout: React.FunctionComponent<{
   children: React.ReactNode;
@@ -166,6 +167,7 @@ const Layout: React.FunctionComponent<{
       )}
 
       {/* {joinSpaceVisible && <JoinSpaceModal visible={joinSpaceVisible} onClose={() => setJoinSpaceVisible(false)}/>} */}
+      <OfflineBanner />
       <NavMenu
         showCreateSpaceModal={showAddSpaceModal}
         showJoinSpaceModal={() => {}}

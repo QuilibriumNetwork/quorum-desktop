@@ -1,193 +1,244 @@
 # MessageService.ts Analysis
 
-**Last Updated**: 2025-12-16
 **File**: `src/services/MessageService.ts`
-**Current Size**: 4,337 lines
-**Status**: Large but well-structured - refactoring deferred (low ROI)
+**Current Size**: ~4,150 lines
+**Last Updated**: 2025-12-20
 
-> **⚠️ AI-Generated**: May contain errors. Verify before use.
+> **AI-Generated**: May contain errors. Verify before use.
+> **Reviewed by**: feature-analyzer agent (partial)
+
+---
+
+## Quick Summary
+
+MessageService.ts is large (~4,150 lines) but handles 4-5 distinct concerns that could be separated. Per [best practices research](../../reports/file-size-best-practices_2025-12-20.md), size alone isn't the issue — the file has **multiple reasons to change**.
+
+**Recommended action**: Extract `MessageCacheService` (~800 lines) as the safest, highest-value refactoring.
+
+---
+
+## Table of Contents
+
+1. [Current State](#current-state) — Size history, method breakdown
+2. [Service Extraction Opportunities](#service-extraction-opportunities) — **NEW** — Moving code to separate files
+3. [Code Deduplication](#code-deduplication) — Extracting helper methods within the file
+4. [Completed Refactoring](#completed-refactoring) — What's been done
+5. [On Hold](#on-hold) — Deferred work
+6. [Related Files](#related-files)
 
 ---
 
 ## Current State
 
-### Size & Growth
+### Size History
 
 | Period | Lines | Change | Cause |
 |--------|-------|--------|-------|
 | Oct 2025 | 2,314 | - | Initial extraction from MessageDB |
 | Dec 14, 2025 | 3,527 | +52% | Feature growth |
-| Dec 16, 2025 | **4,337** | +23% | Message sending indicator |
+| Dec 16, 2025 | 4,337 | +23% | Message sending indicator |
+| Dec 18, 2025 (AM) | 4,397 | +1.4% | Action Queue integration |
+| Dec 18, 2025 (PM) | 4,148 | -5.7% | Removed dead fallback code |
+| Dec 19, 2025 | 4,350 | +4.9% | Restored update-profile handler |
+| Dec 20, 2025 | **~4,150** | **-4.6%** | Extracted `encryptAndSendToSpace()` helper |
 
-**Growth rate**: +87% since initial extraction (Oct 2025)
+**Growth rate**: +79% since initial extraction (Oct 2025)
 
-### Method Breakdown (10 methods)
+### Method Breakdown (13 methods)
 
-| Method | Lines | Change | Description |
-|--------|-------|--------|-------------|
-| `saveMessage()` | 428 | +8 | Save message to DB (handles 7 message types) |
-| `updateMessageStatus()` | 44 | **NEW** | Optimistic status updates in cache |
-| `addMessage()` | 737 | +95 | React Query cache updates |
-| `submitMessage()` | 663 | **+257** | DM submission with sending indicator |
-| `handleNewMessage()` | 1,354 | +9 | Incoming message handler |
-| `sanitizeError()` | 20 | **NEW** | Private helper for error sanitization |
-| `submitChannelMessage()` | 521 | +64 | Space/channel submission with sending indicator |
-| `retryMessage()` | 118 | **NEW** | Retry failed channel messages |
-| `retryDirectMessage()` | 193 | **NEW** | Retry failed direct messages |
-| `deleteConversation()` | 101 | 0 | Cleanup operations |
+| Method | Lines | Concern | Description |
+|--------|-------|---------|-------------|
+| `addMessage()` | 750 | Cache | React Query cache updates |
+| `updateMessageStatus()` | 44 | Cache | Optimistic status updates |
+| `submitMessage()` | 521 | DM Submission | DM submission via Action Queue |
+| `submitChannelMessage()` | ~470 | Channel Submission | Space/channel message submission |
+| `handleNewMessage()` | 1,354 | Incoming | Incoming message handler (decryption + dispatch) |
+| `saveMessage()` | 472 | Persistence | Save message to DB (7 message types) |
+| `retryMessage()` | ~95 | Retry | Retry failed channel messages |
+| `retryDirectMessage()` | 196 | Retry | Retry failed direct messages |
+| `deleteConversation()` | 101 | Cleanup | Cleanup operations |
+| `encryptAndSendToSpace()` | 70 | Crypto | Triple Ratchet encryption helper |
+| `getEncryptAndSendToSpace()` | 10 | Crypto | Getter for ActionQueueHandlers |
+| `sanitizeError()` | 20 | Utility | Error message sanitization |
+| `setActionQueueService()` | 7 | DI | ActionQueue dependency injection |
 
----
+### Concerns Analysis
 
-## Analysis History
+The file handles **5 distinct concerns** (different "reasons to change"):
 
-### Dec 2025: Initial Refactoring Assessment
-
-**What Was Analyzed:**
-1. Extract edit time window constant (`15 * 60 * 1000` appears 4 times)
-2. Extract edit validation logic (~30 lines duplicated 4 times)
-3. Extract reaction handlers (~180 lines in 2 places)
-4. Extract permission checks (~70 lines in 3+ places)
-5. Extract edit history logic (~100 lines in 2 places)
-
-**Feature Analyzer Verdict: Most Refactoring is Over-Engineering**
-
-**Approved (minimal value):**
-- Edit time constant → Add to `validation.ts` (saves ~0 lines, improves maintainability)
-- Edit validation → Extract as private method (saves ~30 lines)
-
-**Rejected as over-engineering:**
-- **ReactionHandler.ts** - The "duplication" is intentional parallel implementation (DB vs Cache). They SHOULD mirror each other for consistency.
-- **PermissionEvaluator.ts** - Already have `utils/permissions.ts`. The duplication is defense-in-depth security (validate on send AND receive).
-- **Edit history extraction** - Too complex (6+ params), different contexts, minimal benefit.
-
-**Key Insights:**
-1. **Not all duplication is bad** — Reaction handling duplication ensures DB and cache stay in sync.
-2. **Defense-in-depth is intentional** — Permission checks appear twice because:
-   - `submitChannelMessage()` validates outgoing (current user's permissions)
-   - `addMessage()` validates incoming (sender's permissions)
-3. **File size isn't the problem** — Large but has clear method boundaries and consistent patterns.
+| Concern | Methods | Lines | Changes When... |
+|---------|---------|-------|-----------------|
+| **Cache** | `addMessage`, `updateMessageStatus` | ~800 | React Query patterns change |
+| **DM Submission** | `submitMessage` | ~520 | DM encryption/ActionQueue changes |
+| **Channel Submission** | `submitChannelMessage` | ~470 | Space permissions/Triple Ratchet changes |
+| **Incoming Messages** | `handleNewMessage` | ~1,350 | New message types added |
+| **Retry/Cleanup** | `retryMessage`, `retryDirectMessage`, `deleteConversation` | ~390 | Error handling strategy changes |
 
 ---
 
-### Dec 16, 2025: Message Sending Indicator Analysis
+## Service Extraction Opportunities
 
-**New Code Added: +810 lines**
+> **Research**: See [File Size Best Practices Report](../../reports/file-size-best-practices_2025-12-20.md) for decision framework.
 
-**New Methods:**
-1. `updateMessageStatus()` (44 lines) - Clean helper for cache status updates
-2. `sanitizeError()` (20 lines) - Private error sanitization helper
-3. `retryMessage()` (118 lines) - Retry channel messages
-4. `retryDirectMessage()` (193 lines) - Retry direct messages
+### Priority 1: MessageCacheService (~800 lines)
 
-**Expanded Methods:**
-- `submitMessage()` +257 lines - Optimistic update logic, pre-signing, status management
-- `submitChannelMessage()` +64 lines - Same pattern for channel messages
+**Extract**: `addMessage()` + `updateMessageStatus()`
 
----
+| Factor | Assessment |
+|--------|------------|
+| **Lines moved** | ~800 |
+| **Risk** | Low |
+| **Reason to extract** | Pure React Query logic, no crypto, no DB writes |
+| **Testability gain** | High — can unit test cache operations in isolation |
+| **Dependencies** | QueryClient (injected), messageDB (read-only lookups) |
 
-## Duplication Patterns Found
-
-### 1. Retry Method Structure (~50 lines duplicated)
-
-`retryMessage()` and `retryDirectMessage()` share identical patterns:
-- Status validation check (`sendStatus !== 'failed'`)
-- Optimistic update to 'sending' (React Query cache update boilerplate)
-- Try/catch with `sanitizeError` + `updateMessageStatus` on failure
-
-### 2. Cache Update Boilerplate (10 occurrences)
+**New file**: `src/services/MessageCacheService.ts`
 
 ```typescript
-queryClient.setQueryData(key, (oldData) => ({
-  pageParams: oldData.pageParams,
-  pages: oldData.pages.map((page) => ({ ... }))
-}))
+export class MessageCacheService {
+  constructor(private messageDB: MessageDB) {}
+
+  addMessage(queryClient, spaceId, channelId, message, options): void
+  updateMessageStatus(queryClient, spaceId, channelId, messageId, status, error?): void
+}
 ```
 
-This React Query infinite query update pattern appears 10 times throughout the file.
+### Priority 2: MessageReactionService (~200 lines)
+
+**Extract**: Reaction handling from `saveMessage()` and `addMessage()`
+
+| Factor | Assessment |
+|--------|------------|
+| **Lines moved** | ~200 |
+| **Risk** | Low |
+| **Reason to extract** | Self-contained, duplicated logic across save/add |
+| **Testability gain** | Medium |
+
+### Priority 3: ChannelMessageService (~470 lines)
+
+**Extract**: `submitChannelMessage()`
+
+| Factor | Assessment |
+|--------|------------|
+| **Lines moved** | ~470 |
+| **Risk** | Medium |
+| **Reason to extract** | Clear boundary, uses already-extracted `encryptAndSendToSpace` |
+| **Complication** | Needs access to messageDB, queryClient, encryptAndSendToSpace |
+
+### Not Recommended
+
+| What | Why Not |
+|------|---------|
+| `handleNewMessage()` | Too tightly coupled to decryption + 7 injected callbacks |
+| Decryption logic | High risk of crypto bugs, complex error handling |
+| `submitMessage()` | Tied to ActionQueue initialization flow |
 
 ---
 
-## Low-Risk Refactoring Opportunities
+## Code Deduplication
 
-| Opportunity | Lines Saved | Risk | Verdict |
-|-------------|-------------|------|---------|
-| Extract `setOptimisticSendingStatus()` helper | ~30 | Low | Worth doing when touching retry logic |
-| Unify retry method structure | ~40 | Medium | Different encryption (Triple vs Double Ratchet) |
-| Extract cache update utility | ~50 | Medium | Loses context-specific clarity |
+Small helpers that reduce duplication **within** the file (not extraction to new files).
 
-### Recommended: Extract setOptimisticSendingStatus()
+### Remaining Opportunities
 
-The only low-risk extraction worth implementing:
+| Pattern | Lines Saved | Risk | Status |
+|---------|-------------|------|--------|
+| Extract `generateMessageId()` helper | ~25 | Low | Worth doing |
+| Extract `signMessage()` helper | ~30 | Medium | Worth doing |
+| Extract `setOptimisticSendingStatus()` | ~30 | Low | Low priority |
+
+#### generateMessageId() — Recommended
 
 ```typescript
-// Could extract from both retry methods (lines 3931-3948 and 4066-4083)
-private setOptimisticSendingStatus(
-  queryClient: QueryClient,
-  spaceId: string,
-  channelId: string,
-  messageId: string
-) {
-  queryClient.setQueryData(
-    buildMessagesKey({ spaceId, channelId }),
-    (oldData: InfiniteData<any>) => {
-      if (!oldData?.pages) return oldData;
-      return {
-        pageParams: oldData.pageParams,
-        pages: oldData.pages.map((page) => ({
-          ...page,
-          messages: page.messages.map((msg: Message) =>
-            msg.messageId === messageId
-              ? { ...msg, sendStatus: 'sending' as const, sendError: undefined }
-              : msg
-          ),
-          nextCursor: page.nextCursor,
-          prevCursor: page.prevCursor,
-        })),
-      };
-    }
+private async generateMessageId(
+  nonce: string,
+  type: string,
+  senderId: string,
+  content: object
+): Promise<ArrayBuffer> {
+  return crypto.subtle.digest(
+    'SHA-256',
+    Buffer.from(nonce + type + senderId + canonicalize(content), 'utf-8')
   );
 }
 ```
 
-**Impact**: Saves ~30 lines, improves consistency, zero risk.
+**Location**: Duplicated in edit-message, pin-message, update-profile handlers.
+
+#### signMessage() — Recommended
+
+```typescript
+private async signMessage(
+  spaceId: string,
+  message: Message,
+  messageId: ArrayBuffer,
+  options: { forceSign?: boolean } = {}
+): Promise<void> {
+  if (!options.forceSign) return; // Simplified; actual logic checks repudiability
+
+  const inboxKey = await this.messageDB.getSpaceKey(spaceId, 'inbox');
+  message.publicKey = inboxKey.publicKey;
+  message.signature = Buffer.from(
+    JSON.parse(ch.js_sign_ed448(...)),
+    'base64'
+  ).toString('hex');
+}
+```
+
+**Note**: `update-profile` always signs; `edit`/`pin` check repudiability setting.
 
 ---
 
-## handleNewMessage Refactoring (ON HOLD)
+## Completed Refactoring
 
-The `handleNewMessage` function (1,354 lines) remains the only meaningful size-reduction opportunity.
+| Date | What | Lines Saved | Details |
+|------|------|-------------|---------|
+| Dec 20, 2025 | Extracted `encryptAndSendToSpace()` | ~200 | [Task file](./messageservice-extract-encrypt-helper.md) |
+| Dec 18, 2025 | Removed dead fallback code | 249 | Cleaned up `enqueueOutbound` paths |
 
-**Target**: 1,354 lines → 400-500 lines using Handler Registry Pattern
+### encryptAndSendToSpace() Details
 
-**Blockers:**
+Centralized Triple Ratchet encryption pattern with options:
+- `stripEphemeralFields` — For retry scenarios
+- `saveStateAfterSend` — For ActionQueue (saves state after send)
+
+**Unit tests added**: 7 tests in `MessageService.unit.test.tsx`
+
+---
+
+## On Hold
+
+### handleNewMessage Refactoring
+
+**Size**: 1,354 lines → target 400-500 lines
+
+**Blockers**:
 - Requires comprehensive test coverage first
-- Import chain issue blocks test creation (MessageService can't be imported in tests)
+- Import chain issue blocks test creation
 - Risk outweighs benefit for current feature velocity
 
-**See**: [messageservice-handlenewmessage-refactor.md](./messageservice-handlenewmessage-refactor.md) for full plan (ON HOLD)
+**Plan**: [messageservice-handlenewmessage-refactor.md](./messageservice-handlenewmessage-refactor.md)
 
----
+### Retry Method Consolidation
 
-## Verdict
-
-**Defer refactoring unless already touching the code.**
-
-The file is large (4,337 lines) but well-structured:
-- Consistent optimistic update flow
-- Proper error handling with `sanitizeError()`
-- Reuses `updateMessageStatus()` for status changes
-- Clear separation between channel and DM retry logic
-
-The ~30 lines saved from `setOptimisticSendingStatus()` extraction isn't worth a dedicated PR, but should be done opportunistically when modifying retry logic.
+`retryMessage()` and `retryDirectMessage()` could potentially use ActionQueue's retry mechanism, but manual retry is still needed for UI-triggered retries of permanently failed messages.
 
 ---
 
 ## Related Files
 
-- [MessageDB Current State](./messagedb-current-state.md) - Overall refactoring status
-- [handleNewMessage Refactor Plan](./messageservice-handlenewmessage-refactor.md) - ON HOLD
+### Documentation
+- [MessageDB Current State](./messagedb-current-state.md) — Overall refactoring status
+- [File Size Best Practices](../../reports/file-size-best-practices_2025-12-20.md) — When to split files
+- [Cryptographic Code Best Practices](../../reports/cryptographic-code-best-practices_2025-12-20.md) — Abstraction for crypto
+
+### Task Files
+- [Extract encryptAndSendToSpace](./messageservice-extract-encrypt-helper.md) — ✅ Completed
+- [handleNewMessage Refactor Plan](./messageservice-handlenewmessage-refactor.md) — On Hold
+
+### Feature Documentation
+- [Action Queue](../../docs/features/action-queue.md) — Background task processing
 
 ---
 
-_Last updated: 2025-12-16_
-_Next action: Extract `setOptimisticSendingStatus()` when modifying retry logic_
+_Last updated: 2025-12-20_

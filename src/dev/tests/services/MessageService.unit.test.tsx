@@ -24,6 +24,25 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { MessageService, MessageServiceDependencies } from '@/services/MessageService';
 import { QueryClient } from '@tanstack/react-query';
 
+// Mock the secure channel module for crypto operations
+// NOTE: crypto.randomUUID is mocked globally in setup.ts
+vi.mock('@quilibrium/quilibrium-js-sdk-channels', () => ({
+  channel: {
+    TripleRatchetEncrypt: vi.fn().mockReturnValue(
+      JSON.stringify({
+        ratchet_state: { /* mock state */ },
+        envelope: JSON.stringify({ type: 'encrypted', data: 'mock-encrypted-data' }),
+      })
+    ),
+    DoubleRatchetInboxEncrypt: vi.fn().mockReturnValue([]),
+    DoubleRatchetInboxEncryptForceSenderInit: vi.fn().mockReturnValue([]),
+  },
+  channel_raw: {
+    js_sign_ed448: vi.fn().mockReturnValue(JSON.stringify('mock-signature')),
+    js_verify_ed448: vi.fn().mockReturnValue(true),
+  },
+}));
+
 describe('MessageService - Unit Tests', () => {
   let messageService: MessageService;
   let mockDeps: MessageServiceDependencies;
@@ -53,6 +72,17 @@ describe('MessageService - Unit Tests', () => {
         deleteMessagesForConversation: vi.fn().mockResolvedValue(undefined),
         getSpace: vi.fn().mockResolvedValue(null),
         getAllEncryptionStates: vi.fn().mockResolvedValue([]),
+        isMessageDeleted: vi.fn().mockResolvedValue(false),
+        getEncryptionStates: vi.fn().mockResolvedValue([]),
+        saveEncryptionState: vi.fn().mockResolvedValue(undefined),
+        getSpaceKey: vi.fn().mockResolvedValue({
+          keyId: 'hub',
+          publicKey: 'hub-pubkey-hex',
+          privateKey: 'hub-privkey-hex',
+          address: 'hub-address',
+        }),
+        getSpaceMember: vi.fn().mockResolvedValue(null),
+        isUserMuted: vi.fn().mockResolvedValue(false),
       } as any,
       enqueueOutbound: vi.fn(),
       addOrUpdateConversation: vi.fn(),
@@ -289,12 +319,60 @@ describe('MessageService - Unit Tests', () => {
   });
 
   describe('3. addMessage() - Cache Updates', () => {
-    it('should update queryClient cache when adding message', async () => {
-      const spaceId = 'space-123';
-      const channelId = 'channel-123';
+    it('should update queryClient cache when adding DM message', async () => {
+      // DM scenario: spaceId === channelId (both are partner's address)
+      const conversationId = 'dm-partner-address';
 
       const testMessage = {
-        messageId: 'msg-456',
+        messageId: 'msg-dm-456',
+        spaceId: conversationId,
+        channelId: conversationId,
+        createdDate: Date.now(),
+        modifiedDate: Date.now(),
+        digestAlgorithm: 'sha256' as const,
+        nonce: 'nonce',
+        lastModifiedHash: 'hash',
+        content: {
+          senderId: 'sender',
+          type: 'post' as const,
+          text: 'Test DM message',
+        },
+      };
+
+      const spy = vi.spyOn(queryClient, 'setQueryData');
+
+      await messageService.addMessage(
+        queryClient,
+        conversationId,
+        conversationId,
+        testMessage
+      );
+
+      // ✅ VERIFY: Cache was updated
+      expect(spy).toHaveBeenCalled();
+    });
+
+    it('should update queryClient cache when adding Space message', async () => {
+      // Space scenario: spaceId !== channelId
+      // Requires mocking space data with the channel
+      const spaceId = 'space-123';
+      const channelId = 'channel-456';
+
+      // Mock getSpace to return a valid space with the target channel
+      mockDeps.messageDB.getSpace = vi.fn().mockResolvedValue({
+        spaceId,
+        groups: [
+          {
+            groupId: 'group-1',
+            channels: [
+              { channelId, isReadOnly: false },
+            ],
+          },
+        ],
+      });
+
+      const testMessage = {
+        messageId: 'msg-space-789',
         spaceId,
         channelId,
         createdDate: Date.now(),
@@ -305,7 +383,7 @@ describe('MessageService - Unit Tests', () => {
         content: {
           senderId: 'sender',
           type: 'post' as const,
-          text: 'Test message',
+          text: 'Test Space message',
         },
       };
 
@@ -559,6 +637,13 @@ describe('MessageService - Unit Tests', () => {
 
       mockDeps.messageDB.getSpace = vi.fn().mockResolvedValue(mockSpace);
 
+      // Mock ActionQueueService (required for channel message submission)
+      const mockActionQueueService = {
+        enqueue: vi.fn().mockResolvedValue(undefined),
+        getQueueLength: vi.fn().mockReturnValue(0),
+      } as any;
+      messageService.setActionQueueService(mockActionQueueService);
+
       // ✅ VERIFY: No errors thrown during channel message submission
       await expect(
         messageService.submitChannelMessage(
@@ -571,6 +656,183 @@ describe('MessageService - Unit Tests', () => {
           mockKeyset
         )
       ).resolves.not.toThrow();
+    });
+  });
+
+  describe('7. encryptAndSendToSpace() - Triple Ratchet Encryption Helper', () => {
+    const mockEncryptionState = {
+      state: JSON.stringify({
+        state: {
+          /* mock ratchet state */
+        },
+      }),
+      timestamp: Date.now(),
+      inboxId: 'space-123',
+      conversationId: 'space-123/space-123',
+      sentAccept: false,
+    };
+
+    const createTestMessage = () =>
+      ({
+        messageId: 'msg-123',
+        spaceId: 'space-123',
+        channelId: 'channel-456',
+        createdDate: Date.now(),
+        modifiedDate: Date.now(),
+        digestAlgorithm: 'SHA-256',
+        nonce: 'test-nonce',
+        lastModifiedHash: '',
+        content: {
+          type: 'post',
+          senderId: 'sender-123',
+          text: 'Test message',
+        },
+      }) as any;
+
+    beforeEach(() => {
+      // Setup encryption state mock
+      mockDeps.messageDB.getEncryptionStates = vi
+        .fn()
+        .mockResolvedValue([mockEncryptionState]);
+      mockDeps.messageDB.saveEncryptionState = vi.fn().mockResolvedValue(undefined);
+    });
+
+    it('should save encryption state BEFORE sending by default', async () => {
+      const message = createTestMessage();
+      const saveStateCalls: number[] = [];
+      const sendHubCalls: number[] = [];
+      let callOrder = 0;
+
+      mockDeps.messageDB.saveEncryptionState = vi.fn().mockImplementation(() => {
+        saveStateCalls.push(++callOrder);
+        return Promise.resolve();
+      });
+      mockDeps.sendHubMessage = vi.fn().mockImplementation(() => {
+        sendHubCalls.push(++callOrder);
+        return Promise.resolve('outbound-id');
+      });
+
+      // Recreate service with updated mocks
+      messageService = new MessageService(mockDeps);
+
+      await messageService.encryptAndSendToSpace('space-123', message);
+
+      // ✅ VERIFY: saveEncryptionState was called
+      expect(mockDeps.messageDB.saveEncryptionState).toHaveBeenCalled();
+
+      // ✅ VERIFY: sendHubMessage was called
+      expect(mockDeps.sendHubMessage).toHaveBeenCalled();
+
+      // ✅ VERIFY: State saved BEFORE sending (default behavior)
+      expect(saveStateCalls[0]).toBeLessThan(sendHubCalls[0]);
+    });
+
+    it('should save encryption state AFTER sending when saveStateAfterSend is true', async () => {
+      const message = createTestMessage();
+      const saveStateCalls: number[] = [];
+      const sendHubCalls: number[] = [];
+      let callOrder = 0;
+
+      mockDeps.messageDB.saveEncryptionState = vi.fn().mockImplementation(() => {
+        saveStateCalls.push(++callOrder);
+        return Promise.resolve();
+      });
+      mockDeps.sendHubMessage = vi.fn().mockImplementation(() => {
+        sendHubCalls.push(++callOrder);
+        return Promise.resolve('outbound-id');
+      });
+
+      // Recreate service with updated mocks
+      messageService = new MessageService(mockDeps);
+
+      await messageService.encryptAndSendToSpace('space-123', message, {
+        saveStateAfterSend: true,
+      });
+
+      // ✅ VERIFY: saveEncryptionState was called
+      expect(mockDeps.messageDB.saveEncryptionState).toHaveBeenCalled();
+
+      // ✅ VERIFY: sendHubMessage was called
+      expect(mockDeps.sendHubMessage).toHaveBeenCalled();
+
+      // ✅ VERIFY: State saved AFTER sending (ActionQueue behavior)
+      expect(sendHubCalls[0]).toBeLessThan(saveStateCalls[0]);
+    });
+
+    it('should strip ephemeral fields when stripEphemeralFields is true', async () => {
+      const messageWithEphemeral = {
+        ...createTestMessage(),
+        sendStatus: 'failed' as const,
+        sendError: 'Network error',
+      };
+
+      // We can't easily test the encrypted payload, but we verify no errors
+      // and the method handles the stripping without throwing
+      await expect(
+        messageService.encryptAndSendToSpace('space-123', messageWithEphemeral, {
+          stripEphemeralFields: true,
+        })
+      ).resolves.toBeDefined();
+
+      // ✅ VERIFY: Method completed successfully with ephemeral fields
+      expect(mockDeps.sendHubMessage).toHaveBeenCalled();
+    });
+
+    it('should use correct conversationId format for Space encryption', async () => {
+      const message = createTestMessage();
+      const spaceId = 'space-xyz';
+
+      await messageService.encryptAndSendToSpace(spaceId, message);
+
+      // ✅ VERIFY: getEncryptionStates called with correct conversationId
+      expect(mockDeps.messageDB.getEncryptionStates).toHaveBeenCalledWith({
+        conversationId: `${spaceId}/${spaceId}`,
+      });
+
+      // ✅ VERIFY: saveEncryptionState called with correct conversationId
+      expect(mockDeps.messageDB.saveEncryptionState).toHaveBeenCalledWith(
+        expect.objectContaining({
+          conversationId: `${spaceId}/${spaceId}`,
+          inboxId: spaceId,
+        }),
+        true
+      );
+    });
+
+    it('should call sendHubMessage with correct message format', async () => {
+      const message = createTestMessage();
+      const spaceId = 'space-123';
+
+      await messageService.encryptAndSendToSpace(spaceId, message);
+
+      // ✅ VERIFY: sendHubMessage called with spaceId
+      expect(mockDeps.sendHubMessage).toHaveBeenCalledWith(
+        spaceId,
+        expect.stringContaining('"type":"message"')
+      );
+    });
+
+    it('should return the outbound message ID from sendHubMessage', async () => {
+      const message = createTestMessage();
+      const expectedOutboundId = 'outbound-msg-id-456';
+
+      mockDeps.sendHubMessage = vi.fn().mockResolvedValue(expectedOutboundId);
+      messageService = new MessageService(mockDeps);
+
+      const result = await messageService.encryptAndSendToSpace('space-123', message);
+
+      // ✅ VERIFY: Returns the outbound ID
+      expect(result).toBe(expectedOutboundId);
+    });
+
+    it('should expose helper via getEncryptAndSendToSpace() for ActionQueueHandlers', () => {
+      const helper = messageService.getEncryptAndSendToSpace();
+
+      // ✅ VERIFY: Returns a function
+      expect(typeof helper).toBe('function');
+
+      // ✅ VERIFY: Function is bound (can be called without 'this' context)
+      expect(helper.name).toBe('bound encryptAndSendToSpace');
     });
   });
 });

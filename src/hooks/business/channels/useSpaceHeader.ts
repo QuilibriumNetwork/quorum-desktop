@@ -1,4 +1,4 @@
-import { useMemo, useState, useCallback, useEffect } from 'react'
+import { useMemo, useState, useCallback, useEffect, useRef } from 'react'
 
 // Header height constants
 const HEADER_MAX_HEIGHT = 132
@@ -54,21 +54,45 @@ export const useSpaceHeader = (space: any) => {
 export const useCollapsingHeader = (hasBanner: boolean) => {
   const [scrollTop, setScrollTop] = useState(0)
   const [maxHeight, setMaxHeight] = useState(HEADER_MAX_HEIGHT)
+  const rafRef = useRef<number>()
 
   // Detect screen size for responsive max height
+  // Debounced to avoid excessive recalculations during window drag
   useEffect(() => {
+    let timeoutId: ReturnType<typeof setTimeout>
+
     const updateMaxHeight = () => {
       const is2xl = window.innerWidth >= SCREEN_2XL
       setMaxHeight(is2xl ? HEADER_MAX_HEIGHT_2XL : HEADER_MAX_HEIGHT)
     }
 
+    const debouncedUpdate = () => {
+      clearTimeout(timeoutId)
+      timeoutId = setTimeout(updateMaxHeight, 150)
+    }
+
     updateMaxHeight()
-    window.addEventListener('resize', updateMaxHeight)
-    return () => window.removeEventListener('resize', updateMaxHeight)
+    window.addEventListener('resize', debouncedUpdate)
+    return () => {
+      clearTimeout(timeoutId)
+      window.removeEventListener('resize', debouncedUpdate)
+    }
   }, [])
 
+  // Cleanup rAF on unmount
+  useEffect(() => {
+    return () => {
+      if (rafRef.current) cancelAnimationFrame(rafRef.current)
+    }
+  }, [])
+
+  // Throttle scroll updates with requestAnimationFrame to batch per animation frame
   const handleScroll = useCallback((e: React.UIEvent<HTMLDivElement>) => {
-    setScrollTop(e.currentTarget.scrollTop)
+    const newScrollTop = e.currentTarget.scrollTop
+    if (rafRef.current) cancelAnimationFrame(rafRef.current)
+    rafRef.current = requestAnimationFrame(() => {
+      setScrollTop(newScrollTop)
+    })
   }, [])
 
   // Calculate scroll threshold based on height difference

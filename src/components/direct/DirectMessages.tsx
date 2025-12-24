@@ -50,7 +50,7 @@ const DirectMessages: React.FunctionComponent = () => {
         className={`direct-messages-container-channels ${leftSidebarOpen && (isMobile || isTablet) ? 'open' : ''} ${!navMenuOpen ? 'nav-menu-hidden' : ''}`}
       >
         <React.Suspense>
-          {keyset.deviceKeyset?.inbox_keyset && <DirectMessageContactsList />}
+          {keyset?.deviceKeyset?.inbox_keyset && <DirectMessageContactsList />}
         </React.Suspense>
       </div>
       <React.Suspense>

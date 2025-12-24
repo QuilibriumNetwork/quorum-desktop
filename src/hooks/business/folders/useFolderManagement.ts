@@ -23,7 +23,7 @@ export const useFolderManagement = ({
   const { data: config } = useConfig({
     userAddress: user.currentPasskeyInfo?.address || '',
   });
-  const { saveConfig, keyset } = useMessageDB();
+  const { actionQueueService, keyset } = useMessageDB();
   const { deleteFolder: deleteFolderById } = useDeleteFolder();
 
   // Find existing folder if editing
@@ -138,7 +138,12 @@ export const useFolderManagement = ({
       );
     }
 
-    await saveConfig({ config: newConfig, keyset });
+    // Queue config save in background
+    await actionQueueService.enqueue(
+      'save-user-config',
+      { config: newConfig },
+      `config:${config.address}` // Dedup key
+    );
   }, [
     config,
     keyset,
@@ -149,7 +154,7 @@ export const useFolderManagement = ({
     name,
     icon,
     iconColor,
-    saveConfig,
+    actionQueueService,
     queryClient,
   ]);
 

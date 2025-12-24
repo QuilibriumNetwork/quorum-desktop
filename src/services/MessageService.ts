@@ -14,6 +14,7 @@ import {
   Space,
   EditMessage,
   PinMessage,
+  UpdateProfileMessage,
 } from '../api/quorumApi';
 import { sha256, base58btc, hexToSpreadArray } from '../utils/crypto';
 import { int64ToBytes } from '../utils/bytes';
@@ -43,6 +44,8 @@ import { MAX_MESSAGE_LENGTH } from '../utils/validation';
 import { hasPermission } from '../utils/permissions';
 import { showWarning, dismissToast, showPersistentToast } from '../utils/toast';
 import { SimpleRateLimiter, RATE_LIMITS } from '../utils/rateLimit';
+import type { ActionQueueService } from './ActionQueueService';
+import { ENABLE_DM_ACTION_QUEUE } from '../config/features';
 
 // Timer for dismissing sync toast after inactivity
 let syncDismissTimer: NodeJS.Timeout | undefined;
@@ -123,6 +126,9 @@ export class MessageService {
   // Per-sender rate limiters (receiving-side defense-in-depth)
   private receivingRateLimiters = new Map<string, SimpleRateLimiter>();
 
+  // ActionQueueService for persistent queue (optional, set via setter)
+  private actionQueueService?: ActionQueueService;
+
   constructor(dependencies: MessageServiceDependencies) {
     this.messageDB = dependencies.messageDB;
     this.enqueueOutbound = dependencies.enqueueOutbound;
@@ -139,6 +145,118 @@ export class MessageService {
     this.directSync = dependencies.directSync;
     this.saveConfig = dependencies.saveConfig;
     this.sendHubMessage = dependencies.sendHubMessage;
+  }
+
+  /**
+   * Set the ActionQueueService for persistent queue operations.
+   * Call this after MessageService is created to avoid circular dependencies.
+   */
+  setActionQueueService(service: ActionQueueService): void {
+    this.actionQueueService = service;
+  }
+
+  /**
+   * Get sendHubMessage for use by ActionQueueHandlers
+   */
+  getSendHubMessage(): (spaceId: string, message: string) => Promise<string> {
+    return this.sendHubMessage;
+  }
+
+  /**
+   * Get encryptAndSendToSpace for use by ActionQueueHandlers.
+   * Returns a bound method that can be called externally.
+   */
+  getEncryptAndSendToSpace(): (
+    spaceId: string,
+    message: Message,
+    options?: { stripEphemeralFields?: boolean; saveStateAfterSend?: boolean }
+  ) => Promise<string> {
+    return this.encryptAndSendToSpace.bind(this);
+  }
+
+  /**
+   * Encrypts a message using Triple Ratchet and sends it to a Space channel.
+   * Centralizes the encryption pattern used across multiple message types.
+   *
+   * @param spaceId - The Space ID to send to
+   * @param message - The message to encrypt and send
+   * @param options - Configuration options
+   * @param options.stripEphemeralFields - Remove sendStatus/sendError before encrypting (for retries)
+   * @param options.saveStateAfterSend - Save encryption state after sending instead of before (for ActionQueue)
+   * @returns The outbound message string from sendHubMessage
+   */
+  async encryptAndSendToSpace(
+    spaceId: string,
+    message: Message,
+    options: {
+      stripEphemeralFields?: boolean;
+      saveStateAfterSend?: boolean;
+    } = {}
+  ): Promise<string> {
+    const response = await this.messageDB.getEncryptionStates({
+      conversationId: spaceId + '/' + spaceId,
+    });
+    const sets = response.map((e) => JSON.parse(e.state));
+
+    // Strip ephemeral fields if requested (for retries)
+    const messageToEncrypt = options.stripEphemeralFields
+      ? (({ sendStatus: _sendStatus, sendError: _sendError, ...rest }) => rest)(message as any)
+      : message;
+
+    const msg = secureChannel.TripleRatchetEncrypt(
+      JSON.stringify({
+        ratchet_state: sets[0].state,
+        message: [
+          ...new Uint8Array(Buffer.from(JSON.stringify(messageToEncrypt), 'utf-8')),
+        ],
+      } as secureChannel.TripleRatchetStateAndMessage)
+    );
+    const result = JSON.parse(msg) as secureChannel.TripleRatchetStateAndEnvelope;
+
+    const saveState = async () => {
+      await this.messageDB.saveEncryptionState(
+        {
+          state: JSON.stringify({ state: result.ratchet_state }),
+          timestamp: Date.now(),
+          inboxId: spaceId,
+          conversationId: spaceId + '/' + spaceId,
+          sentAccept: false,
+        },
+        true
+      );
+    };
+
+    if (!options.saveStateAfterSend) {
+      await saveState();
+    }
+
+    const outbound = await this.sendHubMessage(
+      spaceId,
+      JSON.stringify({
+        type: 'message',
+        message: JSON.parse(result.envelope),
+      })
+    );
+
+    if (options.saveStateAfterSend) {
+      await saveState();
+    }
+
+    return outbound;
+  }
+
+  /**
+   * Send direct message(s) via WebSocket.
+   * Used by ActionQueueHandlers for DM sending.
+   * @param messages Array of pre-formatted message strings to send
+   */
+  sendDirectMessages(messages: string[]): Promise<void> {
+    return new Promise((resolve) => {
+      this.enqueueOutbound(async () => {
+        resolve();
+        return messages;
+      });
+    });
   }
 
   /**
@@ -353,11 +471,6 @@ export class MessageService {
         : editedTextContent;
 
       if (editedMessageText && editedMessageText.length > MAX_MESSAGE_LENGTH) {
-        console.log(
-          `🔒 Rejecting oversized edit ${decryptedContent.messageId} ` +
-            `from ${editMessage.senderId} ` +
-            `(${editedMessageText.length} chars > ${MAX_MESSAGE_LENGTH} limit)`
-        );
         return;
       }
 
@@ -555,6 +668,11 @@ export class MessageService {
       participant.inbox_address = inboxAddress;
       await messageDB.saveSpaceMember(decryptedContent.spaceId, participant);
     } else {
+      // Check tombstone before saving - prevents deleted messages from being re-added during sync
+      if (await messageDB.isMessageDeleted(decryptedContent.messageId)) {
+        return;
+      }
+
       await messageDB.saveMessage(
         { ...decryptedContent, channelId: channelId, spaceId: spaceId },
         0,
@@ -615,12 +733,14 @@ export class MessageService {
 
   /**
    * Adds message to query cache (optimistic update).
+   * @param skipRateLimit - If true, skips rate limiting (used for DMs where spam is less of a concern)
    */
   async addMessage(
     queryClient: QueryClient,
     spaceId: string,
     channelId: string,
-    decryptedContent: Message
+    decryptedContent: Message,
+    skipRateLimit = false
   ) {
     if (decryptedContent.content.type === 'reaction') {
       const reaction = decryptedContent.content as ReactionMessage;
@@ -631,7 +751,7 @@ export class MessageService {
 
           return {
             pageParams: oldData.pageParams,
-            pages: oldData.pages.map((page, index) => {
+            pages: oldData.pages.map((page, _index) => {
               return {
                 ...page,
                 messages: [
@@ -682,7 +802,7 @@ export class MessageService {
 
           return {
             pageParams: oldData.pageParams,
-            pages: oldData.pages.map((page, index) => {
+            pages: oldData.pages.map((page, _index) => {
               return {
                 ...page,
                 messages: [
@@ -734,29 +854,6 @@ export class MessageService {
     } else if (decryptedContent.content.type === 'edit-message') {
       const editMessage = decryptedContent.content as EditMessage;
 
-      // Check if saveEditHistory is enabled for this conversation/space (before the map callback)
-      const isDMForEdit = spaceId === channelId;
-      let saveEditHistoryEnabled = false;
-
-      try {
-        if (isDMForEdit) {
-          // For DMs, check conversation setting
-          const conversationId = `${spaceId}/${channelId}`;
-          const conversation = await this.messageDB.getConversation({
-            conversationId,
-          });
-          saveEditHistoryEnabled =
-            conversation?.conversation?.saveEditHistory ?? false;
-        } else {
-          // For spaces, check space setting
-          const space = await this.messageDB.getSpace(spaceId);
-          saveEditHistoryEnabled = space?.saveEditHistory ?? false;
-        }
-      } catch (error) {
-        console.error('Failed to get saveEditHistory setting:', error);
-        saveEditHistoryEnabled = false;
-      }
-
       queryClient.setQueryData(
         buildMessagesKey({ spaceId: spaceId, channelId: channelId }),
         (oldData: InfiniteData<any>) => {
@@ -786,38 +883,16 @@ export class MessageService {
                         return m;
                       }
 
-                      // Preserve current content in edits array before updating (only if saveEditHistory is enabled)
-                      const currentText =
-                        m.content.type === 'post' ? m.content.text : '';
+                      // CRITICAL: Skip if this edit or a newer edit was already applied
+                      // This prevents duplicates from: 1) queue processing, 2) hub echoes
+                      if (m.modifiedDate >= editMessage.editedAt) {
+                        return m;
+                      }
+
+                      // Keep existing edits array - optimistic update already handles it
                       const existingEdits = m.edits || [];
 
-                      // Build edits array: preserve previous versions only if saveEditHistory is enabled
-                      const edits = saveEditHistoryEnabled
-                        ? m.modifiedDate === m.createdDate
-                          ? // First edit: add original content to edits array
-                            [
-                              {
-                                text: currentText,
-                                modifiedDate: m.createdDate,
-                                lastModifiedHash: m.nonce,
-                              },
-                            ]
-                          : existingEdits.length > 0
-                            ? // Subsequent edits: add current version (which is now the previous version)
-                              [
-                                ...existingEdits,
-                                {
-                                  text: currentText,
-                                  modifiedDate: m.modifiedDate,
-                                  lastModifiedHash:
-                                    m.lastModifiedHash || m.nonce,
-                                },
-                              ]
-                            : // Edge case: edited before but edits array is empty (shouldn't happen, but handle gracefully)
-                              existingEdits
-                        : []; // If saveEditHistory is disabled, don't preserve edits
-
-                      // Update the message with edited text
+                      // Update the message with edited text, keeping existing edits array
                       return {
                         ...m,
                         modifiedDate: editMessage.editedAt,
@@ -826,7 +901,7 @@ export class MessageService {
                           ...m.content,
                           text: editMessage.editedText,
                         } as PostMessage,
-                        edits: edits,
+                        edits: existingEdits,
                       };
                     }
                     return m;
@@ -878,9 +953,6 @@ export class MessageService {
               );
               if (isManager) {
                 shouldHonorDelete = true;
-                console.log(
-                  '🔹 ADDMESSAGE: Honoring read-only manager delete in UI cache'
-                );
               }
             }
 
@@ -893,9 +965,6 @@ export class MessageService {
               );
               if (hasDeleteRole) {
                 shouldHonorDelete = true;
-                console.log(
-                  '🔹 ADDMESSAGE: Honoring role-based delete in UI cache'
-                );
               }
             }
           }
@@ -911,7 +980,7 @@ export class MessageService {
 
             return {
               pageParams: oldData.pageParams,
-              pages: oldData.pages.map((page, index) => {
+              pages: oldData.pages.map((page, _index) => {
                 return {
                   ...page,
                   messages: [
@@ -927,8 +996,6 @@ export class MessageService {
             };
           }
         );
-      } else {
-        console.log('🔹 ADDMESSAGE: Ignoring unauthorized delete request');
       }
     } else if (decryptedContent.content.type === 'pin') {
       const pinMessage = decryptedContent.content as PinMessage;
@@ -1163,9 +1230,6 @@ export class MessageService {
 
           // Check if channel has manager roles configured
           if (!channel.managerRoleIds || channel.managerRoleIds.length === 0) {
-            console.log(
-              `🔒 Rejecting message ${decryptedContent.messageId} from ${senderId} - read-only channel ${channelId} has no manager roles configured`
-            );
             return;
           }
 
@@ -1179,9 +1243,6 @@ export class MessageService {
             ) ?? false;
 
           if (!isChannelManager) {
-            console.log(
-              `🔒 Rejecting unauthorized message ${decryptedContent.messageId} from ${senderId} in read-only channel ${channelId}`
-            );
             return;
           }
         }
@@ -1195,11 +1256,6 @@ export class MessageService {
         const messageText = Array.isArray(text) ? text.join('') : text;
 
         if (messageText && messageText.length > MAX_MESSAGE_LENGTH) {
-          console.log(
-            `🔒 Rejecting oversized message ${decryptedContent.messageId} ` +
-              `from ${decryptedContent.content.senderId} ` +
-              `(${messageText.length} chars > ${MAX_MESSAGE_LENGTH} limit)`
-          );
           return;
         }
       }
@@ -1213,39 +1269,41 @@ export class MessageService {
           (decryptedContent.mentions.everyone ? 1 : 0);
 
         if (totalMentions > MAX_MENTIONS_PER_MESSAGE) {
-          console.log(
-            `🔒 Rejecting message ${decryptedContent.messageId} ` +
-              `from ${decryptedContent.content.senderId} ` +
-              `with excessive mentions (${totalMentions} > ${MAX_MENTIONS_PER_MESSAGE})`
-          );
           return;
         }
       }
 
       // Receiving-side rate limit detection (defense-in-depth)
+      // Skip rate limiting for DMs - spam is less of a concern in 1:1 conversations
+      // and rate limiting interferes with syncing historical messages
       const senderId = decryptedContent.content.senderId;
-      let limiter = this.receivingRateLimiters.get(senderId);
-      if (!limiter) {
-        limiter = new SimpleRateLimiter(
-          RATE_LIMITS.RECEIVING.maxMessages,
-          RATE_LIMITS.RECEIVING.windowMs
-        );
-        this.receivingRateLimiters.set(senderId, limiter);
-      }
+      if (!skipRateLimit) {
+        let limiter = this.receivingRateLimiters.get(senderId);
+        if (!limiter) {
+          limiter = new SimpleRateLimiter(
+            RATE_LIMITS.RECEIVING.maxMessages,
+            RATE_LIMITS.RECEIVING.windowMs
+          );
+          this.receivingRateLimiters.set(senderId, limiter);
+        }
 
-      const rateCheck = limiter.canSend();
-      if (!rateCheck.allowed) {
-        console.warn(
-          `🔒 Rate limit: Message from ${senderId} rejected (flood detected). ` +
-            `Message ID: ${decryptedContent.messageId}`
-        );
-        return; // Drop message silently (defense-in-depth)
+        const rateCheck = limiter.canSend();
+        if (!rateCheck.allowed) {
+          console.warn(
+            `🔒 Rate limit: Message from ${senderId} rejected (flood detected). ` +
+              `Message ID: ${decryptedContent.messageId}`
+          );
+          return; // Drop message silently (defense-in-depth)
+        }
       }
 
       // Check if sender is muted in this space (filter muted users' messages)
-      const isSenderMuted = await this.messageDB.isUserMuted(spaceId, senderId);
-      if (isSenderMuted) {
-        return; // Drop message silently - sender is muted
+      // Skip for DMs - mute is Space-only feature
+      if (!isDM) {
+        const isSenderMuted = await this.messageDB.isUserMuted(spaceId, senderId);
+        if (isSenderMuted) {
+          return; // Drop message silently - sender is muted
+        }
       }
 
       // Authorized - add to cache
@@ -1456,177 +1514,47 @@ export class MessageService {
           message.signature = Buffer.from(JSON.parse(sig), 'base64').toString(
             'hex'
           );
-        } catch {}
+        } catch { /* Signature optional - continue without it */ }
       }
 
-      // Add to cache with 'sending' status (optimistic update)
-      await this.addMessage(queryClient, address, address, {
-        ...message,
-        sendStatus: 'sending',
-      });
+      // Check if we have existing encryption states for this conversation
+      // Use Action Queue ONLY when offline - when online, legacy path handles new devices better
+      const conversationId = address + '/' + address;
+      const existingStates = await this.messageDB.getEncryptionStates({ conversationId });
+      const hasEstablishedSessions = existingStates.length > 0;
+      const isOnline = navigator.onLine;
 
-      // Enqueue network operation
-      this.enqueueOutbound(async () => {
-        const outbounds: string[] = [];
-        try {
-          const conversationId = address + '/' + address;
-          const conversation = await this.messageDB.getConversation({
-            conversationId,
-          });
-          let response = await this.messageDB.getEncryptionStates({
-            conversationId,
-          });
-          const inboxes = self.device_registrations
-            .map((d) => d.inbox_registration.inbox_address)
-            .concat(
-              counterparty.device_registrations.map(
-                (d) => d.inbox_registration.inbox_address
-              )
-            )
-            .sort();
-          for (const res of response) {
-            if (!inboxes.includes(JSON.parse(res.state).tag)) {
-              await this.messageDB.deleteEncryptionState(res);
-            }
-          }
+      if (ENABLE_DM_ACTION_QUEUE && hasEstablishedSessions && !isOnline) {
+        // Add to cache with 'sending' status (optimistic update)
+        await this.addMessage(queryClient, address, address, {
+          ...message,
+          sendStatus: 'sending',
+        });
 
-          response = await this.messageDB.getEncryptionStates({
-            conversationId,
-          });
-          const sets = response.map((e) => JSON.parse(e.state));
-
-          let sessions: secureChannel.SealedMessageAndMetadata[] = [];
-
-          // Strip ephemeral fields before encrypting
-          const { sendStatus, sendError, ...messageToEncrypt } = message;
-
-          for (const inbox of inboxes.filter(
-            (i) => i !== keyset.deviceKeyset.inbox_keyset.inbox_address
-          )) {
-            const set = sets.find((s) => s.tag === inbox);
-            if (set) {
-              if (set.sending_inbox.inbox_public_key === '') {
-                sessions = [
-                  ...sessions,
-                  ...secureChannel.DoubleRatchetInboxEncryptForceSenderInit(
-                    keyset.deviceKeyset,
-                    [set],
-                    JSON.stringify(messageToEncrypt),
-                    self,
-                    currentPasskeyInfo!.displayName,
-                    currentPasskeyInfo?.pfpUrl
-                  ),
-                ];
-              } else {
-                sessions = [
-                  ...sessions,
-                  ...secureChannel.DoubleRatchetInboxEncrypt(
-                    keyset.deviceKeyset,
-                    [set],
-                    JSON.stringify(messageToEncrypt),
-                    self,
-                    currentPasskeyInfo!.displayName,
-                    currentPasskeyInfo?.pfpUrl
-                  ),
-                ];
-              }
-            } else {
-              sessions = [
-                ...sessions,
-                ...(await secureChannel.NewDoubleRatchetSenderSession(
-                  keyset.deviceKeyset,
-                  self.user_address,
-                  self.device_registrations
-                    .concat(counterparty.device_registrations)
-                    .find((d) => d.inbox_registration.inbox_address === inbox)!,
-                  JSON.stringify(messageToEncrypt),
-                  currentPasskeyInfo!.displayName,
-                  currentPasskeyInfo?.pfpUrl
-                )),
-              ];
-            }
-          }
-
-          for (const session of sessions) {
-            const newEncryptionState: EncryptionState = {
-              state: JSON.stringify({
-                ratchet_state: session.ratchet_state,
-                receiving_inbox: session.receiving_inbox,
-                tag: session.tag,
-                sending_inbox: session.sending_inbox,
-              } as secureChannel.DoubleRatchetStateAndInboxKeys),
-              timestamp: Date.now(),
-              inboxId: session.receiving_inbox.inbox_address,
-              conversationId: address! + '/' + address!,
-              sentAccept: session.sent_accept,
-            };
-            await this.messageDB.saveEncryptionState(newEncryptionState, true);
-            outbounds.push(
-              JSON.stringify({
-                type: 'listen',
-                inbox_addresses: [session.receiving_inbox.inbox_address],
-              })
-            );
-            outbounds.push(
-              JSON.stringify({ type: 'direct', ...session.sealed_message })
-            );
-          }
-
-          // Save to IndexedDB (without sendStatus/sendError)
-          await this.saveMessage(
-            messageToEncrypt as Message,
-            this.messageDB,
-            address!,
-            address!,
-            'direct',
-            {
-              user_icon:
-                conversation?.conversation?.icon ?? DefaultImages.UNKNOWN_USER,
-              display_name:
-                conversation?.conversation?.displayName ?? t`Unknown User`,
-            }
+        // Queue to ActionQueue for persistent, crash-resistant delivery
+        if (!this.actionQueueService) {
+          throw new Error(
+            'ActionQueueService not initialized. This is a bug - MessageService.setActionQueueService() must be called before sending messages.'
           );
-
-          // Update status to 'sent'
-          this.updateMessageStatus(
-            queryClient,
-            address,
-            address,
-            messageIdHex,
-            'sent'
-          );
-
-          this.addOrUpdateConversation(
-            queryClient,
-            address,
-            Date.now(),
-            message.createdDate,
-            {
-              user_icon:
-                conversation?.conversation?.icon ?? DefaultImages.UNKNOWN_USER,
-              display_name:
-                conversation?.conversation?.displayName ?? 'Unknown User',
-            }
-          );
-
-          return outbounds;
-        } catch (error) {
-          // Update status to 'failed' with sanitized error
-          const sanitizedError = this.sanitizeError(error);
-          this.updateMessageStatus(
-            queryClient,
-            address,
-            address,
-            messageIdHex,
-            'failed',
-            sanitizedError
-          );
-          console.error('Failed to send DM:', error);
-          return outbounds;
         }
-      });
+        await this.actionQueueService.enqueue(
+          'send-dm',
+          {
+            address,
+            signedMessage: message,
+            messageId: messageIdHex,
+            selfUserAddress: self.user_address,
+            senderDisplayName: currentPasskeyInfo.displayName,
+            senderUserIcon: currentPasskeyInfo.pfpUrl,
+          },
+          `send-dm:${address}:${messageIdHex}`
+        );
 
-      return; // Post message handling complete
+        return; // Post message handling complete via action queue
+      }
+
+      // No established sessions - fall through to legacy path below
+      // which will create new sessions using full self/counterparty data
     }
 
     // For edit-message, delete-conversation, reactions: use existing flow (no optimistic update)
@@ -1735,7 +1663,7 @@ export class MessageService {
             message.signature = Buffer.from(JSON.parse(sig), 'base64').toString(
               'hex'
             );
-          } catch {}
+          } catch { /* Signature optional - continue without it */ }
         }
 
         for (const inbox of inboxes.filter(
@@ -1902,7 +1830,7 @@ export class MessageService {
           message.signature = Buffer.from(JSON.parse(sig), 'base64').toString(
             'hex'
           );
-        } catch {}
+        } catch { /* Signature optional - continue without it */ }
       }
 
       for (const inbox of inboxes.filter(
@@ -1996,7 +1924,7 @@ export class MessageService {
         }
       );
       await this.addMessage(queryClient, address, address, message);
-      this.addOrUpdateConversation(
+      await this.addOrUpdateConversation(
         queryClient,
         address,
         Date.now(),
@@ -2141,17 +2069,18 @@ export class MessageService {
             session.user_address,
             decryptedContent
           );
-          this.addOrUpdateConversation(
+          const profileToUse = updatedUserProfile ?? {
+            user_icon:
+              conversation?.conversation?.icon ?? DefaultImages.UNKNOWN_USER,
+            display_name:
+              conversation?.conversation?.displayName ?? t`Unknown User`,
+          };
+          await this.addOrUpdateConversation(
             queryClient,
             session.user_address,
             envelope.timestamp,
             0,
-            updatedUserProfile ?? {
-              user_icon:
-                conversation?.conversation?.icon ?? DefaultImages.UNKNOWN_USER,
-              display_name:
-                conversation?.conversation?.displayName ?? t`Unknown User`,
-            }
+            profileToUse
           );
         } else {
           console.error(t`Failed to decrypt message with any known state`);
@@ -2161,7 +2090,7 @@ export class MessageService {
           [envelope.timestamp],
           this.apiClient
         );
-      } catch (error) {
+      } catch {
         await this.deleteInboxMessages(
           keyset.deviceKeyset.inbox_keyset,
           [message.timestamp],
@@ -2220,7 +2149,7 @@ export class MessageService {
             );
             return;
           }
-        } catch (error) {
+        } catch {
           await this.deleteInboxMessages(
             keys.receiving_inbox,
             [message.timestamp],
@@ -2272,7 +2201,7 @@ export class MessageService {
             );
             return;
           }
-        } catch (error) {
+        } catch {
           await this.deleteInboxMessages(
             keys.receiving_inbox,
             [message.timestamp],
@@ -3282,32 +3211,31 @@ export class MessageService {
 
     if (decryptedContent) {
       if (keys.sending_inbox) {
+        const profileToUse = updatedUserProfile ?? {
+          user_icon: conversation.conversation?.icon,
+          display_name: conversation.conversation?.displayName,
+        };
         await this.saveMessage(
           decryptedContent,
           this.messageDB,
           conversationId.split('/')[0],
           conversationId.split('/')[0],
           keys.sending_inbox ? 'direct' : 'group',
-          updatedUserProfile ?? {
-            user_icon: conversation.conversation?.icon,
-            display_name: conversation.conversation?.displayName,
-          }
+          profileToUse
         );
         await this.addMessage(
           queryClient,
           conversationId.split('/')[0],
           conversationId.split('/')[0],
-          decryptedContent
+          decryptedContent,
+          true // Skip rate limiting for DMs
         );
-        this.addOrUpdateConversation(
+        await this.addOrUpdateConversation(
           queryClient,
           conversationId.split('/')[0],
           message.timestamp,
           conversation.conversation?.lastReadTimestamp ?? 0,
-          updatedUserProfile ?? {
-            user_icon: conversation.conversation?.icon,
-            display_name: conversation.conversation?.displayName,
-          }
+          profileToUse
         );
       } else {
         await this.saveMessage(
@@ -3548,97 +3476,23 @@ export class MessageService {
         sendStatus: 'sending',
       });
 
-      // Enqueue network operation
-      this.enqueueOutbound(async () => {
-        const outbounds: string[] = [];
-        try {
-          // Get encryption state (must be inside queue to avoid race conditions)
-          const conversationId = spaceId + '/' + channelId;
-          const conversation = await this.messageDB.getConversation({
-            conversationId,
-          });
-          const response = await this.messageDB.getEncryptionStates({
-            conversationId: spaceId + '/' + spaceId,
-          });
-          const sets = response.map((e) => JSON.parse(e.state));
-
-          // Triple Ratchet encrypt (message without ephemeral fields)
-          const { sendStatus, sendError, ...messageToEncrypt } = message;
-          const msg = secureChannel.TripleRatchetEncrypt(
-            JSON.stringify({
-              ratchet_state: sets[0].state,
-              message: [
-                ...new Uint8Array(
-                  Buffer.from(JSON.stringify(messageToEncrypt), 'utf-8')
-                ),
-              ],
-            } as secureChannel.TripleRatchetStateAndMessage)
-          );
-          const result = JSON.parse(
-            msg
-          ) as secureChannel.TripleRatchetStateAndEnvelope;
-
-          // Send via hub
-          outbounds.push(
-            await this.sendHubMessage(
-              spaceId,
-              JSON.stringify({
-                type: 'message',
-                message: JSON.parse(result.envelope),
-              })
-            )
-          );
-
-          // Save to IndexedDB (without sendStatus/sendError)
-          await this.saveMessage(
-            messageToEncrypt as Message,
-            this.messageDB,
-            spaceId,
-            channelId,
-            'group',
-            {
-              user_icon:
-                conversation.conversation?.icon ?? DefaultImages.UNKNOWN_USER,
-              display_name:
-                conversation.conversation?.displayName ?? t`Unknown User`,
-            }
-          );
-
-          // Update status to 'sent'
-          this.updateMessageStatus(
-            queryClient,
-            spaceId,
-            channelId,
-            messageIdHex,
-            'sent'
-          );
-
-          // Invalidate reply notification caches if this is a reply
-          if (message.replyMetadata) {
-            await queryClient.invalidateQueries({
-              queryKey: ['reply-counts', 'channel', spaceId],
-            });
-            await queryClient.invalidateQueries({
-              queryKey: ['reply-notifications', spaceId],
-            });
-          }
-
-          return outbounds;
-        } catch (error) {
-          // Update status to 'failed' with sanitized error
-          const sanitizedError = this.sanitizeError(error);
-          this.updateMessageStatus(
-            queryClient,
-            spaceId,
-            channelId,
-            messageIdHex,
-            'failed',
-            sanitizedError
-          );
-          console.error('Failed to send message:', error);
-          return outbounds;
-        }
-      });
+      // Queue to ActionQueue for persistent, crash-resistant delivery
+      if (!this.actionQueueService) {
+        throw new Error(
+          'ActionQueueService not initialized. This is a bug - MessageService.setActionQueueService() must be called before sending messages.'
+        );
+      }
+      await this.actionQueueService.enqueue(
+        'send-channel-message',
+        {
+          spaceId,
+          channelId,
+          signedMessage: message,
+          messageId: messageIdHex,
+          replyMetadata: message.replyMetadata,
+        },
+        `send:${spaceId}:${channelId}:${messageIdHex}`
+      );
 
       return; // Post message handling complete
     }
@@ -3714,10 +3568,6 @@ export class MessageService {
         const conversation = await this.messageDB.getConversation({
           conversationId,
         });
-        const response = await this.messageDB.getEncryptionStates({
-          conversationId: spaceId + '/' + spaceId,
-        });
-        const sets = response.map((e) => JSON.parse(e.state));
 
         // enforce non-repudiability
         if (!space?.isRepudiable || (space?.isRepudiable && !skipSigning)) {
@@ -3734,26 +3584,7 @@ export class MessageService {
           ).toString('hex');
         }
 
-        const msg = secureChannel.TripleRatchetEncrypt(
-          JSON.stringify({
-            ratchet_state: sets[0].state,
-            message: [
-              ...new Uint8Array(Buffer.from(JSON.stringify(message), 'utf-8')),
-            ],
-          } as secureChannel.TripleRatchetStateAndMessage)
-        );
-        const result = JSON.parse(
-          msg
-        ) as secureChannel.TripleRatchetStateAndEnvelope;
-        outbounds.push(
-          await this.sendHubMessage(
-            spaceId,
-            JSON.stringify({
-              type: 'message',
-              message: JSON.parse(result.envelope),
-            })
-          )
-        );
+        outbounds.push(await this.encryptAndSendToSpace(spaceId, message));
         await this.saveMessage(
           message,
           this.messageDB,
@@ -3848,10 +3679,6 @@ export class MessageService {
         const conversation = await this.messageDB.getConversation({
           conversationId,
         });
-        const response = await this.messageDB.getEncryptionStates({
-          conversationId: spaceId + '/' + spaceId,
-        });
-        const sets = response.map((e) => JSON.parse(e.state));
 
         // Enforce non-repudiability
         if (!space?.isRepudiable || (space?.isRepudiable && !skipSigning)) {
@@ -3868,26 +3695,7 @@ export class MessageService {
           ).toString('hex');
         }
 
-        const msg = secureChannel.TripleRatchetEncrypt(
-          JSON.stringify({
-            ratchet_state: sets[0].state,
-            message: [
-              ...new Uint8Array(Buffer.from(JSON.stringify(message), 'utf-8')),
-            ],
-          } as secureChannel.TripleRatchetStateAndMessage)
-        );
-        const result = JSON.parse(
-          msg
-        ) as secureChannel.TripleRatchetStateAndEnvelope;
-        outbounds.push(
-          await this.sendHubMessage(
-            spaceId,
-            JSON.stringify({
-              type: 'message',
-              message: JSON.parse(result.envelope),
-            })
-          )
-        );
+        outbounds.push(await this.encryptAndSendToSpace(spaceId, message));
         await this.saveMessage(
           message,
           this.messageDB,
@@ -3906,7 +3714,89 @@ export class MessageService {
         return outbounds;
       }
 
-      // No matching message type in this path (edit/pin only)
+      // Handle update-profile type
+      if (
+        typeof pendingMessage === 'object' &&
+        (pendingMessage as any).type === 'update-profile'
+      ) {
+        const updateProfileMessage = pendingMessage as UpdateProfileMessage;
+
+        // Generate message ID
+        const messageId = await crypto.subtle.digest(
+          'SHA-256',
+          Buffer.from(
+            nonce +
+              'update-profile' +
+              currentPasskeyInfo.address +
+              canonicalize(updateProfileMessage),
+            'utf-8'
+          )
+        );
+
+        const message = {
+          spaceId: spaceId,
+          channelId: channelId,
+          messageId: Buffer.from(messageId).toString('hex'),
+          digestAlgorithm: 'SHA-256',
+          nonce: nonce,
+          createdDate: Date.now(),
+          modifiedDate: Date.now(),
+          lastModifiedHash: '',
+          content: {
+            ...updateProfileMessage,
+            senderId: currentPasskeyInfo.address,
+          } as UpdateProfileMessage,
+        } as Message;
+
+        // Enforce non-repudiability (required for profile updates to verify sender)
+        const inboxKey = await this.messageDB.getSpaceKey(spaceId, 'inbox');
+        message.publicKey = inboxKey.publicKey;
+        message.signature = Buffer.from(
+          JSON.parse(
+            ch.js_sign_ed448(
+              Buffer.from(inboxKey.privateKey, 'hex').toString('base64'),
+              Buffer.from(messageId).toString('base64')
+            )
+          ),
+          'base64'
+        ).toString('hex');
+
+        // Send to hub
+        outbounds.push(await this.encryptAndSendToSpace(spaceId, message));
+
+        // Update local database immediately (don't wait for server echo)
+        // This ensures the profile change is visible right away
+        const participant = await this.messageDB.getSpaceMember(
+          spaceId,
+          currentPasskeyInfo.address
+        );
+        if (participant) {
+          participant.display_name = updateProfileMessage.displayName;
+          participant.user_icon = updateProfileMessage.userIcon;
+          await this.messageDB.saveSpaceMember(spaceId, participant);
+
+          // Update query cache for immediate UI refresh
+          queryClient.setQueryData(
+            buildSpaceMembersKey({ spaceId }),
+            (oldData: secureChannel.UserProfile[]) => {
+              if (!oldData) return oldData;
+              return oldData.map((member) =>
+                member.user_address === currentPasskeyInfo.address
+                  ? {
+                      ...member,
+                      display_name: updateProfileMessage.displayName,
+                      user_icon: updateProfileMessage.userIcon,
+                    }
+                  : member
+              );
+            }
+          );
+        }
+
+        return outbounds;
+      }
+
+      // No matching message type in this path
       return outbounds;
     });
   }
@@ -3952,44 +3842,25 @@ export class MessageService {
     this.enqueueOutbound(async () => {
       const outbounds: string[] = [];
       try {
-        // Get encryption state (must be inside queue to avoid race conditions)
+        // Get conversation for user profile info
         const conversationId = spaceId + '/' + channelId;
         const conversation = await this.messageDB.getConversation({
           conversationId,
         });
-        const response = await this.messageDB.getEncryptionStates({
-          conversationId: spaceId + '/' + spaceId,
-        });
-        const sets = response.map((e) => JSON.parse(e.state));
 
-        // Strip ephemeral fields before encrypting
-        const { sendStatus, sendError, ...messageToEncrypt } = failedMessage;
-
-        // Triple Ratchet encrypt (creates fresh encrypted envelope)
-        const msg = secureChannel.TripleRatchetEncrypt(
-          JSON.stringify({
-            ratchet_state: sets[0].state,
-            message: [
-              ...new Uint8Array(
-                Buffer.from(JSON.stringify(messageToEncrypt), 'utf-8')
-              ),
-            ],
-          } as secureChannel.TripleRatchetStateAndMessage)
-        );
-        const result = JSON.parse(
-          msg
-        ) as secureChannel.TripleRatchetStateAndEnvelope;
-
-        // Send via hub
+        // Triple Ratchet encrypt with fresh envelope (strips ephemeral fields)
         outbounds.push(
-          await this.sendHubMessage(
-            spaceId,
-            JSON.stringify({
-              type: 'message',
-              message: JSON.parse(result.envelope),
-            })
-          )
+          await this.encryptAndSendToSpace(spaceId, failedMessage, {
+            stripEphemeralFields: true,
+          })
         );
+
+        // Strip ephemeral fields for saving to IndexedDB
+        const {
+          sendStatus: _sendStatus,
+          sendError: _sendError,
+          ...messageToEncrypt
+        } = failedMessage;
 
         // Save to IndexedDB (without sendStatus/sendError)
         await this.saveMessage(
@@ -4114,7 +3985,7 @@ export class MessageService {
         let sessions: secureChannel.SealedMessageAndMetadata[] = [];
 
         // Strip ephemeral fields before encrypting
-        const { sendStatus, sendError, ...messageToEncrypt } = failedMessage;
+        const { sendStatus: _sendStatus, sendError: _sendError, ...messageToEncrypt } = failedMessage;
 
         for (const inbox of inboxes.filter(
           (i) => i !== keyset.deviceKeyset.inbox_keyset.inbox_address
@@ -4293,7 +4164,7 @@ export class MessageService {
               false
             );
           }
-        } catch {}
+        } catch { /* Best effort notification - deletion still proceeds */ }
       }
       // Delete encryption states (keys) and latest state
       const states = await this.messageDB.getEncryptionStates({
@@ -4330,7 +4201,7 @@ export class MessageService {
       await queryClient.invalidateQueries({
         queryKey: buildConversationsKey({ type: 'direct' }),
       });
-    } catch (e) {
+    } catch {
       // no-op
     }
   }

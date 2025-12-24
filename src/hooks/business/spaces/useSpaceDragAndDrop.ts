@@ -31,7 +31,7 @@ export const useSpaceDragAndDrop = ({
   config,
 }: UseSpaceDragAndDropProps): UseSpaceDragAndDropReturn => {
   const { setIsDragging } = useDragStateContext();
-  const { saveConfig, keyset } = useMessageDB();
+  const { actionQueueService, keyset } = useMessageDB();
 
   const handleDragStart = useCallback(
     (e: DragStartEvent) => {
@@ -58,16 +58,18 @@ export const useSpaceDragAndDrop = ({
       const sortedSpaces = arrayMove(mappedSpaces, activeIndex, overIndex);
       setMappedSpaces(sortedSpaces);
 
-      // Persist the new order
-      saveConfig({
-        config: {
-          ...config,
-          spaceIds: sortedSpaces.map((space) => space.spaceId),
-        },
-        keyset,
-      });
+      // Queue config save in background
+      const newConfig = {
+        ...config,
+        spaceIds: sortedSpaces.map((space) => space.spaceId),
+      };
+      actionQueueService.enqueue(
+        'save-user-config',
+        { config: newConfig },
+        `config:space-order` // Dedup key
+      );
     },
-    [mappedSpaces, setMappedSpaces, config, saveConfig, keyset, setIsDragging]
+    [mappedSpaces, setMappedSpaces, config, actionQueueService, setIsDragging]
   );
 
   const sensors = useSensors(

@@ -11,6 +11,7 @@ const useConversations = ({ type }: { type: 'direct' | 'group' }) => {
     initialPageParam: undefined,
     queryKey: buildConversationsKey({ type }),
     queryFn: buildConversationsFetcher({ messageDB, type }),
+    networkMode: 'always', // This query uses IndexedDB, not network
     getNextPageParam: (lastPage: unknown): number | undefined => {
       if ((lastPage as any).nextCursor) {
         return (lastPage as any).nextCursor;

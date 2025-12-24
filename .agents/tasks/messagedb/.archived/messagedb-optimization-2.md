@@ -1,13 +1,22 @@
 # MessageDB: Optimization Plan (Phase 4)
 
-**Status**: ⏸️ ON HOLD (Low ROI per Dec 2025 Analysis)
-**Priority**: Low (was High)
+> **📦 ARCHIVED (Dec 20, 2025)**: This Phase 4 plan has been archived as **NOT RECOMMENDED**.
+>
+> **Reason**: Per [file size best practices research](../../reports/file-size-best-practices_2025-12-20.md), the `handleNewMessage` refactoring (main focus of this plan) is tightly coupled to encryption and would:
+> - Require leaking encryption state
+> - Create high risk of cryptographic bugs
+> - Provide low ROI for the effort
+>
+> **Current direction**: Focus on **service extraction** (moving code to separate files by concern) rather than internal refactoring of `handleNewMessage`. See [messageservice-analysis.md](../messageservice-analysis.md).
+
+---
+
+**Status**: 📦 ARCHIVED (Not Recommended)
+**Priority**: N/A
 **Complexity**: High
 **Created**: 2025-10-01
 **Updated**: 2025-12-16
-**Prerequisite**: [MessageDB Refactoring Analysis](./.agents/tasks/messagedb-refactoring-analysis.md)
-
-> **⚠️ Dec 2025 Analysis Verdict**: This refactoring plan (Phase 4) is **ON HOLD indefinitely**. The handleNewMessage refactoring would require comprehensive test coverage first (blocked by import chain issues) and provides low ROI for the risk involved. The current architecture is acceptable - large files with clear boundaries are better than over-abstracted small files. See [messagedb-current-state.md](./messagedb-current-state.md) for details.
+**Archived**: 2025-12-20
 
 ## Context
 

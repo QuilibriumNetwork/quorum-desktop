@@ -80,7 +80,6 @@ export type Bookmark = {
   createdAt: number;            // Timestamp for sorting
 
   cachedPreview: {
-    senderAddress: string;      // For avatar/name lookup
     senderName: string;         // Display name at bookmark time
     textSnippet: string;        // First ~150 chars, plain text (empty for media-only)
     messageDate: number;        // Original message timestamp

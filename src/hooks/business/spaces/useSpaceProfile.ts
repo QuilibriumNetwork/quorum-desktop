@@ -6,7 +6,6 @@ import { DefaultImages } from '../../../utils';
 import { processAvatarImage, FILE_SIZE_LIMITS } from '../../../utils/imageProcessing';
 import { useMessageDB } from '../../../components/context/useMessageDB';
 import { useQueryClient } from '@tanstack/react-query';
-import { buildSpaceMembersKey } from '../../queries';
 import { showError } from '../../../utils/toast';
 import { useDisplayNameValidation } from '../validation';
 
@@ -202,10 +201,8 @@ export const useSpaceProfile = (
         undefined // isSpaceOwner - not needed for profile updates
       );
 
-      // Invalidate cache to refresh UI
-      await queryClient.invalidateQueries({
-        queryKey: buildSpaceMembersKey({ spaceId })
-      });
+      // Note: Cache is updated optimistically by MessageService.submitChannelMessage
+      // No need to invalidate here - that would cause unnecessary refetch
 
       // Call the optional callback (which closes the modal)
       onSaveCallback?.();

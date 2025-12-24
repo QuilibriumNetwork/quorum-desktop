@@ -12,6 +12,11 @@
  * (skin tones, ZWJ sequences, etc.), consider using a library like emoji-regex
  */
 export const getInitials = (displayName: string): string => {
+  // Guard against undefined/null displayName
+  if (!displayName) {
+    return '?';
+  }
+
   const trimmed = displayName.trim();
 
   // Special case: "Unknown User" should show "?" instead of "UU"
@@ -65,6 +70,11 @@ export const getInitials = (displayName: string): string => {
  * @returns Hex color string (pre-desaturated by 25% for subtle appearance)
  */
 export const getColorFromDisplayName = (displayName: string): string => {
+  // Guard against undefined/null displayName
+  if (!displayName) {
+    return '#5f8eeb'; // Default to first color (blue)
+  }
+
   // Pre-calculated desaturated colors (25% less saturation for subtle appearance)
   // Performance: Zero runtime cost - colors are hardcoded constants
   const colors = [

@@ -11,6 +11,7 @@ const useConversation = ({ conversationId }: { conversationId: string }) => {
     queryKey: buildConversationKey({ conversationId }),
     queryFn: buildConversationFetcher({ messageDB, conversationId }),
     refetchOnMount: true,
+    networkMode: 'always', // This query uses IndexedDB, not network
   });
 };
 

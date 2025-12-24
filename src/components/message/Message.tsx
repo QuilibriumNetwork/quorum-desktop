@@ -40,6 +40,7 @@ import {
   useMessageFormatting,
   usePinnedMessages,
 } from '../../hooks';
+import type { DmContext } from '../../hooks/business/messages/useMessageActions';
 import { useMessageHighlight } from '../../hooks/business/messages/useMessageHighlight';
 import { useViewportMentionHighlight } from '../../hooks/business/messages/useViewportMentionHighlight';
 import MessageActions from './MessageActions';
@@ -104,6 +105,8 @@ type MessageProps = {
   spaceRoles?: Role[];
   spaceName?: string;
   onRetryMessage?: (message: MessageType) => void;
+  /** DM context for offline-resilient reactions/deletes/edits (optional - only for DMs) */
+  dmContext?: DmContext;
 };
 
 export const Message = React.memo(
@@ -138,6 +141,7 @@ export const Message = React.memo(
     spaceRoles = [],
     spaceName,
     onRetryMessage,
+    dmContext,
   }: MessageProps) => {
     const user = usePasskeysContext();
     const { spaceId } = useParams();
@@ -207,6 +211,8 @@ export const Message = React.memo(
 
         return 'Unknown';
       })(),
+      // DM context for offline-resilient reactions/deletes
+      dmContext,
     });
 
     // Emoji picker business logic
@@ -846,6 +852,7 @@ export const Message = React.memo(
                       onCancel={() => setEditingMessageId(null)}
                       submitMessage={submitMessage}
                       mapSenderToUser={mapSenderToUser}
+                      dmContext={dmContext}
                     />
                   );
                 }
@@ -1210,7 +1217,7 @@ export const Message = React.memo(
                       showOnTouch={true}
                       autoHideAfter={3000}
                     >
-                      <Icon name="circle-question" size="xs" />
+                      <Icon name="question-circle" size="xs" />
                     </Tooltip>
                   )}
                 </FlexRow>

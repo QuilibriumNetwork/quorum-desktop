@@ -1,12 +1,17 @@
 # handleNewMessage Integration Tests Guide
 
-**Status**: ⏸️ ON HOLD (Dependent on refactor plan, which is on hold)
-**Priority**: ⚪ Low (was Critical)
-**Test Count Target**: 40-50 tests
-**Time Estimate**: 12-18 hours
-**Last Updated**: 2025-12-16
+> **📦 ARCHIVED (Dec 20, 2025)**: This test guide has been archived because the parent refactoring plan is **NOT RECOMMENDED**.
+>
+> **Reason**: The `handleNewMessage` refactoring was deprioritized — the function is tightly coupled to encryption and decryption, making refactoring high-risk with low ROI.
+>
+> **Note**: The import chain blocker (MessageService can't be imported in tests) was never resolved. If tests are needed in the future, first extract query key builders to `src/utils/queryKeys.ts`.
 
-> **⚠️ Dec 2025 Analysis Verdict**: This test guide is **ON HOLD** because the parent refactoring plan is on hold. The import chain blocker was never resolved, and subsequent analysis concluded the handleNewMessage refactoring provides low ROI. See [messagedb-current-state.md](./messagedb-current-state.md) for details.
+---
+
+**Status**: 📦 ARCHIVED
+**Priority**: ⚪ N/A
+**Last Updated**: 2025-12-16
+**Archived**: 2025-12-20
 
 ---
 
