@@ -1317,7 +1317,7 @@ const Channel: React.FC<ChannelProps> = ({
           enableSwipeToClose={true}
           ariaLabel={t`Channel members`}
         >
-          {/* Mobile Search Input - matches search results style */}
+          {/* Mobile Search Input */}
           <div
             className="sticky top-0 z-10"
             style={{ backgroundColor: 'var(--surface-0)' }}
@@ -1337,21 +1337,7 @@ const Channel: React.FC<ChannelProps> = ({
               />
             </div>
             {activeSearch &&
-              generateSidebarContent()
-                .map((section) => ({
-                  ...section,
-                  members: section.members.filter(
-                    (member) =>
-                      member.displayName
-                        ?.toLowerCase()
-                        .includes(activeSearch.toLowerCase()) ||
-                      member.address
-                        ?.toLowerCase()
-                        .includes(activeSearch.toLowerCase())
-                  ),
-                }))
-                .filter((section) => section.members.length > 0).length ===
-                0 && (
+              generateVirtualizedUserList(activeSearch).length === 0 && (
                 <div className="px-4 pb-3 -mt-2">
                   <div className="text-xs text-subtle">
                     {t`No users found!`}
@@ -1360,61 +1346,52 @@ const Channel: React.FC<ChannelProps> = ({
               )}
           </div>
 
-          {/* User List */}
-          <div className="overflow-y-auto">
-            {generateSidebarContent()
-              .map((section) => ({
-                ...section,
-                members: activeSearch
-                  ? section.members.filter(
-                      (member) =>
-                        member.displayName
-                          ?.toLowerCase()
-                          .includes(activeSearch.toLowerCase()) ||
-                        member.address
-                          ?.toLowerCase()
-                          .includes(activeSearch.toLowerCase())
-                    )
-                  : section.members,
-              }))
-              .filter((section) => section.members.length > 0)
-              .map((section) => (
-                <div className="flex flex-col mb-2" key={section.title}>
+          {/* User List - Virtualized for performance with large member counts */}
+          <Virtuoso
+            data={generateVirtualizedUserList(activeSearch)}
+            overscan={10}
+            components={{
+              Footer: () => <div className="h-4" />,
+            }}
+            itemContent={(_index, item) => {
+              if (item.type === 'header') {
+                return (
                   <div className="mb-1 text-subtle text-xs pb-1 px-4 pt-3">
-                    {section.title}
+                    {item.title}
                   </div>
-                  {section.members.map((member) => (
-                    <div
-                      key={member.address}
-                      className="w-full flex flex-row items-center mb-2 px-4 cursor-pointer py-1 min-w-0"
-                      onClick={(event) =>
-                        userProfileModal.handleUserClick(
-                          {
-                            address: member.address,
-                            displayName: member.displayName,
-                            userIcon: member.userIcon,
-                          },
-                          event
-                        )
-                      }
-                    >
-                      <UserAvatar
-                        userIcon={member.userIcon}
-                        displayName={member.displayName}
-                        address={member.address}
-                        size={30}
-                        className="opacity-80 flex-shrink-0"
-                      />
-                      <div className="flex flex-col ml-2 text-subtle min-w-0 flex-1">
-                        <span className="text-md font-bold truncate-user-name">
-                          {member.displayName}
-                        </span>
-                      </div>
-                    </div>
-                  ))}
+                );
+              }
+              return (
+                <div
+                  className="w-full flex flex-row items-center mb-2 px-4 cursor-pointer py-1 min-w-0"
+                  onClick={(event) =>
+                    userProfileModal.handleUserClick(
+                      {
+                        address: item.address,
+                        displayName: item.displayName,
+                        userIcon: item.userIcon,
+                      },
+                      event
+                    )
+                  }
+                >
+                  <UserAvatar
+                    userIcon={item.userIcon}
+                    displayName={item.displayName ?? item.address}
+                    address={item.address}
+                    size={30}
+                    className="opacity-80 flex-shrink-0"
+                  />
+                  <div className="flex flex-col ml-2 text-subtle min-w-0 flex-1">
+                    <span className="text-md font-bold truncate-user-name">
+                      {item.displayName ?? item.address}
+                    </span>
+                  </div>
                 </div>
-              ))}
-          </div>
+              );
+            }}
+            style={{ height: 'calc(80vh - 120px)' }}
+          />
         </MobileDrawer>
       )}
     </div>
