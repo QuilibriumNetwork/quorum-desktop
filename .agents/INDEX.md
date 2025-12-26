@@ -132,13 +132,15 @@ This is the main index for all documentation, bug reports, and task management.
 
 ### Pending Tasks
 
+- [Add Unified Context Menu System for Sidebar Items](tasks/dm-conversation-context-menu.md)
+- [Channel Mute System](tasks/channel-mute-system.md)
 - [Combined Text + Image Messages](tasks/combined-text-image-messages.md)
 - [Conversation Deletion State Synchronization](tasks/conversation-deletion-state-sync.md)
 - [Custom ContentEditable Mention Pills for Message Composer](tasks/mention-pills-in-message-textarea.md)
 - [Date Translation with Moment.js Locale Configuration](tasks/i18n-date-translation-moment-locale.md)
 - [Device Identification Improvement](tasks/device-identification-improvement.md)
-- [Implement Collapsible Role Groups in Channel Members Sidebar](tasks/collapsible-role-groups-sidebar.md)
 - [Implement Message Forwarding with Privacy Controls](tasks/message-forwarding-with-privacy-controls.md)
+- [Implement Role-Based Channel Visibility](tasks/channel-role-visibility.md)
 - [Implement Smart Context Extraction Around Mentions in NotificationPanel](tasks/notification-mention-context-extraction.md)
 - [Multi-User Invite Selection Enhancement](tasks/multi-user-invite-selection.md)
 - [Passkey Import UX Issue](tasks/passkey-import-ux-issue.md)
@@ -256,6 +258,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Fix Read-Only Channel Bypass Vulnerability](tasks/.done/fix-read-only-channel-bypass-vulnerability.md)
 - [Fix: React Query "undefined" Error in DM Conversations](tasks/.done/fix-react-query-undefined-error-in-dms.md)
 - [Implement Channel Mention Feature (#channelname)](tasks/.done/channel-mention-feature.md)
+- [Implement Collapsible Role Groups in Channel Members Sidebar](tasks/.done/collapsible-role-groups-sidebar.md)
 - [Implement Copy Message Raw Text Option](tasks/.done/copy-message-text.md)
 - [Implement Dm Unread Features](tasks/.done/implement-dm-unread-features.md)
 - [Implement Mention Notification Bubbles](tasks/.done/mention-notification-bubbles.md)
@@ -363,4 +366,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2025-12-24 15:03:45
+**Last Updated**: 2025-12-26 10:59:38
