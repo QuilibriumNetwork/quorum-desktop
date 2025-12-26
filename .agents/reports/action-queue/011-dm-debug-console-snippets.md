@@ -212,15 +212,38 @@ Clears encryption states to force fresh session. **Run on BOTH sides, navigate t
 
 ```javascript
 // === DELETE ENCRYPTION STATES (run on BOTH sides) ===
+// Navigate to DM conversation first, works without window.__messageDB
 const otherAddr = location.pathname.split('/messages/')[1]?.split('/')[0]
   || location.pathname.split('/dm/')[1]?.split('/')[0];
-const states = await window.__messageDB.getEncryptionStates({
-  conversationId: `${otherAddr}/${otherAddr}`
+if (!otherAddr) throw new Error('Navigate to a DM conversation first');
+
+const db = await new Promise((resolve, reject) => {
+  const req = indexedDB.open('quorum_db', 7);
+  req.onsuccess = () => resolve(req.result);
+  req.onerror = () => reject(req.error);
 });
-for (const s of states) {
-  await window.__messageDB.deleteEncryptionState(s);
+
+const states = await new Promise((resolve, reject) => {
+  const tx = db.transaction('encryption_states', 'readonly');
+  const req = tx.objectStore('encryption_states').getAll();
+  req.onsuccess = () => resolve(req.result);
+  req.onerror = () => reject(req.error);
+});
+
+const conversationId = `${otherAddr}/${otherAddr}`;
+const toDelete = states.filter(s => s.conversationId === conversationId);
+console.log('Found encryption states to delete:', toDelete.length);
+
+for (const state of toDelete) {
+  await new Promise((resolve, reject) => {
+    const tx = db.transaction('encryption_states', 'readwrite');
+    const req = tx.objectStore('encryption_states').delete([state.conversationId, state.inboxId]);
+    req.onsuccess = () => resolve();
+    req.onerror = () => reject(req.error);
+  });
 }
-console.log(`Deleted ${states.length} states for ${otherAddr}`);
+
+console.log(`Deleted ${toDelete.length} states for ${otherAddr}. Refresh and resend.`);
 ```
 
 ---
@@ -377,4 +400,4 @@ console.log('Check if any of their receiving_inbox matches sender\'s sending_inb
 ---
 
 _Created: 2025-12-23_
-_Updated: 2025-12-23 - Extracted from 011-dm-delivery-test-gattopardo-jennifer.md_
+_Updated: 2025-12-26 - Updated snippet #7 to use raw IndexedDB (no window.__messageDB dependency)_

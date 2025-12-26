@@ -351,6 +351,79 @@ See [011-dm-debug-console-snippets.md](011-dm-debug-console-snippets.md) for a c
 
 ---
 
+## Case Study: `sending_inbox` Mismatch with Valid `tag` (2025-12-26)
+
+**Status**: ✅ Resolved - User workaround applied
+
+### Symptoms
+
+- Sender could only send the **first message** in the conversation
+- All subsequent messages from sender failed to deliver
+- Receiver could send to sender normally (asymmetric failure)
+
+### Diagnostic Output
+
+```
+=== Sender Diagnostic ===
+1. Receiver API inboxes: 1
+   [0] QmcdZhrRKQimZzWypBrSFEBdEDRvbGR1khSLpNqjCRHkWR
+
+2. Sender encryption states: 1
+   [0] tag: QmcdZhrRKQimZzWypBrSFEBdEDRvbGR1khSLpNqjCRHkWR        ← CORRECT
+       sending_inbox: QmR1BVJuHUgjeKviRna6huxEKUPWo552e8eJsPidCk936Q  ← WRONG!
+       receiving_inbox: Qmf19SKP1yWGw7Tsv5rQ4yr68KXmowVVJysdSXagBeSBqK
+
+3. Analysis:
+   tag in API? ✅ YES
+   Will send to: QmR1BVJuHUgjeKviRna6huxEKUPWo552e8eJsPidCk936Q  ← Not receiver's inbox!
+
+=== Receiver Diagnostic ===
+My device inbox: QmcdZhrRKQimZzWypBrSFEBdEDRvbGR1khSLpNqjCRHkWR
+My encryption states for sender: 0  ← No state!
+```
+
+### Root Cause
+
+The cleanup logic only validates `tag`, not `sending_inbox`:
+
+```javascript
+if (!validInboxes.includes(parsed.tag)) {  // ← Only checks tag
+  await messageDB.deleteEncryptionState(state);
+}
+```
+
+In this case:
+- `tag` was correct (receiver's device inbox) → cleanup didn't trigger
+- But `sending_inbox` pointed to a stale ephemeral inbox → messages went nowhere
+
+### Why This Happens (Not a Bug)
+
+The `sending_inbox` only updates when the receiver's reply includes `user_profile` (identity revelation). This is **intentional for DM privacy**:
+
+1. A sends to B → A stores `sending_inbox` from session creation
+2. B receives → B generates new `receiving_inbox`, stores `sending_inbox` = A's return address
+3. **If B never replies** or **reply is lost** → A's `sending_inbox` is never updated
+4. A's next message goes to stale `sending_inbox` → B isn't listening there
+
+### Why Cleanup Can't Catch This
+
+The cleanup validates `tag` against device registrations. But `sending_inbox` is an **ephemeral Double Ratchet inbox** - it's not in any registration list. There's no external source of truth to validate it against.
+
+### Solution Applied
+
+Delete sender's encryption states and let session re-establish:
+
+```javascript
+// Run snippet #7 from 011-dm-debug-console-snippets.md on sender's browser
+// Then refresh and resend
+```
+
+### Key Insight
+
+This is a **pre-existing limitation from `develop` branch**, not something we introduced. The cleanup logic checking only `tag` is identical to the original codebase. The workaround (manual state deletion) is the only reliable fix when `sending_inbox` becomes stale while `tag` remains valid.
+
+---
+
 ## Case Study: Network Layer Issue (2025-12-23)
 
 **Status**: ✅ Resolved - Confirmed NOT a codebase issue
@@ -434,5 +507,6 @@ See [011-dm-debug-console-snippets.md](011-dm-debug-console-snippets.md) for dia
 ---
 
 _Created: 2025-12-22_
+_Updated: 2025-12-26 - Added case study: `sending_inbox` mismatch with valid `tag`; clarified this is pre-existing limitation from develop branch_
 _Updated: 2025-12-23 - Merged network layer case study findings; moved console snippets to 011-dm-debug-console-snippets.md_
 _Updated: 2025-12-22 - Layer 2 + Layer 3 fixes implemented, documented new device limitation (reviewed by feature-analyzer agent)_
