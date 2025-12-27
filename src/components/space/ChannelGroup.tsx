@@ -8,9 +8,12 @@ import { Icon } from '../primitives';
 import { getIconColorHex, IconColor } from './IconPicker/types';
 import { isTouchDevice } from '../../utils/platform';
 import { useLongPressWithDefaults } from '../../hooks/useLongPress';
-import { hapticLight, hapticMedium } from '../../utils/haptic';
+import { hapticMedium } from '../../utils/haptic';
 import { TOUCH_INTERACTION_TYPES } from '../../constants/touchInteraction';
 import ChannelItem from './ChannelItem';
+import { useChannelMute } from '../../hooks/business/channels';
+import { useSpace } from '../../hooks';
+import { useMessageDB } from '../context/useMessageDB';
 
 const ChannelGroup: React.FunctionComponent<{
   group: {
@@ -44,6 +47,13 @@ const ChannelGroup: React.FunctionComponent<{
   }>();
   const { data: isSpaceOwner } = useSpaceOwner({ spaceId: spaceId! });
   const isTouch = isTouchDevice();
+
+  // Channel mute functionality
+  const { isChannelMuted, toggleMute } = useChannelMute({ spaceId: spaceId! });
+
+  // Space data for pin toggle
+  const { data: space } = useSpace({ spaceId: spaceId! });
+  const { updateSpace } = useMessageDB();
 
   // Sort channels: pinned first (newest pin on top), then unpinned (by creation date)
   const sortedChannels = React.useMemo(() => {
@@ -93,6 +103,31 @@ const ChannelGroup: React.FunctionComponent<{
     }
   }, [isMobile, isTablet, closeLeftSidebar]);
 
+  // Handle pin toggle from context menu
+  const handleTogglePin = React.useCallback(
+    async (channelId: string, isPinned: boolean) => {
+      if (!space) return;
+
+      await updateSpace({
+        ...space,
+        groups: space.groups.map((g) => ({
+          ...g,
+          channels: g.channels.map((c) =>
+            c.channelId === channelId
+              ? {
+                  ...c,
+                  isPinned,
+                  pinnedAt: isPinned ? Date.now() : undefined,
+                  modifiedDate: Date.now(),
+                }
+              : c
+          ),
+        })),
+      });
+    },
+    [space, updateSpace]
+  );
+
   return (
     <div className="channel-group">
       <div className="channel-group-name small-caps flex flex-row justify-between">
@@ -104,7 +139,7 @@ const ChannelGroup: React.FunctionComponent<{
             (groupLongPressHandlers.className ? ` ${groupLongPressHandlers.className}` : '')
           }
           style={groupLongPressHandlers.style}
-          onClick={(e) => {
+          onClick={() => {
             if (!isTouch && isSpaceOwner) {
               props.onEditGroup(props.group.groupName);
             }
@@ -153,10 +188,13 @@ const ChannelGroup: React.FunctionComponent<{
           isMobile={isMobile}
           isTablet={isTablet}
           groupName={props.group.groupName}
+          isMuted={isChannelMuted(channel.channelId)}
           onChannelClick={handleChannelClick}
           onChannelNavigate={handleChannelNavigate}
           closeLeftSidebar={closeLeftSidebar}
           openChannelEditor={openChannelEditor}
+          onToggleMute={toggleMute}
+          onTogglePin={handleTogglePin}
         />
       ))}
     </div>

@@ -74,6 +74,12 @@ export type UserConfig = {
   };
   bookmarks?: Bookmark[];
   deletedBookmarkIds?: string[];
+  // Channel mute settings: maps spaceId to array of muted channelIds
+  mutedChannels?: {
+    [spaceId: string]: string[];
+  };
+  // Global preference for showing muted channels in list (default: true = visible with 60% opacity)
+  showMutedChannels?: boolean;
 };
 
 export interface SearchableMessage {

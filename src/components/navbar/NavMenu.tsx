@@ -30,6 +30,7 @@ import {
   useDirectMessageUnreadCount,
 } from '../../hooks/business/messages';
 import { useSpaceLeaving } from '../../hooks/business/spaces/useSpaceLeaving';
+import { useChannelMute } from '../../hooks/business/channels';
 import { useResponsiveLayoutContext } from '../context/ResponsiveLayoutProvider';
 import { useMessageDB } from '../context/useMessageDB';
 import './NavMenu.scss';
@@ -82,6 +83,11 @@ const NavMenuContent: React.FC<NavMenuProps> = (props) => {
 
   const { messageDB } = useMessageDB();
   const { handleLeaveClick: leaveSpace } = useSpaceLeaving();
+
+  // Channel mute settings for the currently selected space in context menu
+  const { showMutedChannels, toggleShowMutedChannels } = useChannelMute({
+    spaceId: spaceContextMenu.spaceId || '',
+  });
 
   // Folder context menu handlers
   const handleFolderContextMenu = React.useCallback(
@@ -182,6 +188,12 @@ const NavMenuContent: React.FC<NavMenuProps> = (props) => {
         label: t`My Account`,
         onClick: () => openSpaceEditor(spaceContextMenu.spaceId!, 'account'),
       },
+      {
+        id: 'toggle-muted-channels',
+        icon: showMutedChannels ? 'eye-off' : 'eye',
+        label: showMutedChannels ? t`Hide Muted Channels` : t`Show Muted Channels`,
+        onClick: () => toggleShowMutedChannels(),
+      },
     ];
 
     if (spaceContextMenu.isOwner) {
@@ -221,7 +233,7 @@ const NavMenuContent: React.FC<NavMenuProps> = (props) => {
     }
 
     return items;
-  }, [spaceContextMenu.spaceId, spaceContextMenu.isOwner, openSpaceEditor, leaveSpace]);
+  }, [spaceContextMenu.spaceId, spaceContextMenu.isOwner, openSpaceEditor, leaveSpace, showMutedChannels, toggleShowMutedChannels]);
 
   // Check if config has items (new format) or just spaceIds (legacy)
   const hasItems = config?.items && config.items.length > 0;

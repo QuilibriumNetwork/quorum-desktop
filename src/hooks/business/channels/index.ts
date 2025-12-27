@@ -1,6 +1,7 @@
 export * from './useChannelData';
 export * from './useChannelMessages';
 export * from './useChannelManagement';
+export * from './useChannelMute';
 export * from './useChannelPermissions';
 export * from './useGroupManagement';
 export * from './useSpaceGroups';

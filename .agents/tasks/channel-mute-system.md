@@ -203,17 +203,17 @@ Users currently cannot mute channels they don't want to see or receive notificat
     ```tsx
     <Spacer size="md" direction="vertical" borderTop={true} />
     <div className="text-subtitle-2">
-      <Trans>Channel Visibility</Trans>
+      <Trans>Other Settings</Trans>
     </div>
     <div className="pt-4">
       <FlexRow className="items-center justify-between">
         <div className="text-label-strong">
-          <Trans>Show muted channels</Trans>
+          <Trans>Hide muted channels</Trans>
         </div>
         <Switch
-          value={showMutedChannels}
+          value={!showMutedChannels}
           onChange={handleShowMutedToggle}
-          accessibilityLabel={t`Show muted channels in list`}
+          accessibilityLabel={t`Hide muted channels in list`}
         />
       </FlexRow>
     </div>
@@ -257,6 +257,101 @@ Users currently cannot mute channels they don't want to see or receive notificat
   - Implementation: Should automatically work if channel-level counts return 0 for muted channels
   - Verification: Mute a channel with notifications → space badge count decreases
 
+### Phase 5: Space-Level Muting (requires Phase 1 + Phase 4)
+
+Allows users to mute an entire space with a single action. This is a **user intent** stored separately from individual channel mutes, so:
+- When space is muted, ALL channels (including future ones) are muted
+- User can still unmute individual channels within a muted space if desired
+- Unmuting the space restores individual channel preferences
+
+- [ ] **Add isMuted field to NotificationSettings type** (`src/types/notifications.ts`)
+  - Done when: `NotificationSettings` includes `isMuted?: boolean` (default: false)
+  - Rationale: Integrates with existing per-space notification settings rather than creating parallel system
+  - Structure:
+    ```typescript
+    export interface NotificationSettings {
+      spaceId: string;
+      enabledNotificationTypes: NotificationTypeId[];
+      isMuted?: boolean;  // NEW: When true, suppresses ALL notifications for this space
+    }
+    ```
+
+- [ ] **Add space mute functions to useChannelMute hook** (`src/hooks/business/channels/useChannelMute.ts`)
+  - Done when: Hook exports `isSpaceMuted`, `muteSpace`, `unmuteSpace`, `toggleSpaceMute`
+  - Implementation:
+    ```typescript
+    interface UseChannelMuteReturn {
+      // ... existing fields ...
+      /** Check if the entire space is muted */
+      isSpaceMuted: boolean;
+      /** Mute the entire space (all channels, including future ones) */
+      muteSpace: () => Promise<void>;
+      /** Unmute the space (restores individual channel preferences) */
+      unmuteSpace: () => Promise<void>;
+      /** Toggle space mute status */
+      toggleSpaceMute: () => Promise<void>;
+    }
+    ```
+  - `isSpaceMuted`: Read from `notificationSettings[spaceId]?.isMuted`
+  - `muteSpace`: Set `notificationSettings[spaceId].isMuted = true`
+  - `unmuteSpace`: Set `notificationSettings[spaceId].isMuted = false`
+  - Uses same Action Queue pattern as channel muting for offline support
+
+- [ ] **Update notification hooks to respect space mute**
+  - Files: `useChannelMentionCounts.ts`, `useReplyNotificationCounts.ts`, `useAllMentions.ts`, `useAllReplies.ts`
+  - Done when: When `isMuted === true`, all notification counts return 0 immediately (O(1) check)
+  - Implementation (early return at start of queryFn):
+    ```typescript
+    // Check if entire space is muted (takes precedence over channel mutes)
+    if (settings?.isMuted) {
+      return {}; // or [] for arrays - all channels return 0 instantly
+    }
+    ```
+  - Rationale: More efficient than checking individual channels when space is muted
+
+- [ ] **Add Mute/Unmute Space to NavMenu space context menu** (`src/components/navbar/NavMenu.tsx`)
+  - Done when: Right-clicking space icon shows "Mute Space" or "Unmute Space" option
+  - Location in menu: After "Hide Muted Channels" toggle, before "Leave Space" (for non-owners)
+  - Implementation:
+    ```typescript
+    // In getSpaceContextMenuItems()
+    items.push({
+      id: 'toggle-space-mute',
+      icon: isSpaceMuted ? 'bell' : 'bell-slash',
+      label: isSpaceMuted ? t`Unmute Space` : t`Mute Space`,
+      onClick: () => toggleSpaceMute(),
+    });
+    ```
+  - Icon logic: `bell-slash` when unmuted (to mute), `bell` when muted (to unmute)
+
+- [ ] **Add Mute/Unmute Space toggle to Account.tsx** (`src/components/modals/SpaceSettingsModal/Account.tsx`)
+  - Done when: Toggle in "Other Settings" section controls space mute status
+  - Location: After "Hide muted channels" toggle, before "Leave Space" section
+  - Implementation:
+    ```tsx
+    <FlexRow className="items-center justify-between pt-4">
+      <div>
+        <div className="text-label-strong">
+          <Trans>Mute this Space</Trans>
+        </div>
+        <div className="text-body-subtle text-sm pt-1">
+          <Trans>Disable all notifications from this space</Trans>
+        </div>
+      </div>
+      <Switch
+        value={isSpaceMuted}
+        onChange={toggleSpaceMute}
+        accessibilityLabel={t`Mute all notifications from this space`}
+      />
+    </FlexRow>
+    ```
+  - Visual feedback: When space is muted, the notification type selector could show a disabled/dimmed state with tooltip explaining space is muted
+
+- [ ] **Update space-level notification count hooks** (`useSpaceMentionCounts.ts`, `useSpaceReplyCounts.ts`)
+  - Done when: Muted spaces return 0 for all notification counts
+  - Implementation: Check `isMuted` before processing any channels
+  - Effect: Space icon in NavMenu won't show notification badge when space is muted
+
 ## Verification
 
 ✅ **Desktop context menu works**
@@ -293,6 +388,16 @@ Users currently cannot mute channels they don't want to see or receive notificat
   - Test: (If sync enabled) Mute on Device A → switch to Device B → channel muted there too
   - Test: Check IndexedDB → `mutedChannels` and `showMutedChannels` saved correctly
 
+✅ **Space muting works (Phase 5)**
+  - Test: Right-click space icon → shows "Mute Space" option
+  - Test: Click "Mute Space" → space becomes muted, option changes to "Unmute Space"
+  - Test: Muted space → no notification badges on space icon
+  - Test: Muted space → no notifications in NotificationPanel from that space
+  - Test: Mute space → add new channel → new channel is also muted (no notifications)
+  - Test: Mute space in Account.tsx → space mutes, toggle shows "on" state
+  - Test: Unmute space → individual channel preferences restored
+  - Test: Mute space → individually unmute a channel → that channel shows notifications
+
 ✅ **TypeScript compiles**
   - Run: `npx tsc --noEmit --jsx react-jsx --skipLibCheck`
 
@@ -315,10 +420,15 @@ Users currently cannot mute channels they don't want to see or receive notificat
 | Very long channel name in context menu | Truncate with ellipsis using `truncate-channel-name` class | ✓ CSS handles this | P1 | Low |
 | Owner long-press channel | Shows ContextMenu with "Channel Settings" + "Pin/Unpin" + "Mute" (replaces direct modal open) | ✓ New pattern decided | P0 | Low |
 | Pin/unpin muted channel | Pin state and mute state are independent (can have pinned muted channels) | ⚠️ Needs verification | P1 | Low |
+| Mute space with individually muted channels | Space mute takes precedence; individual mutes preserved for when space is unmuted | ✓ Design decided | P1 | Low |
+| Unmute channel in muted space | Channel receives notifications even though space is muted (user intent override) | ⚠️ Needs implementation | P1 | Medium |
+| New channel added to muted space | Automatically muted (no notifications) since space-level isMuted=true | ✓ Design decided | P0 | Low |
+| Mute space from context menu | Sets notificationSettings[spaceId].isMuted=true, shows "Unmute Space" next time | ⚠️ Needs implementation | P0 | Low |
+| Mute space from Account.tsx | Same effect as context menu, toggle reflects current state | ⚠️ Needs implementation | P0 | Low |
 
 ## Definition of Done
 
-- [ ] All implementation phases complete
+- [ ] All implementation phases complete (including Phase 5: Space-Level Muting)
 - [ ] Unified context menu works for desktop (right-click) and touch (long-press)
 - [ ] Role-aware menu items (owners see Settings + Pin/Unpin + Mute, regular users see Mute)
 - [ ] Pin/unpin functionality works from context menu (owners only)
@@ -332,6 +442,10 @@ Users currently cannot mute channels they don't want to see or receive notificat
 - [ ] NotificationPanel excludes muted channels
 - [ ] ChannelList filtering works correctly
 - [ ] Context menu integration complete
+- [ ] **Space muting works from NavMenu context menu** (before "Leave Space" for non-owners)
+- [ ] **Space muting works from Account.tsx** (toggle in "Other Settings" section)
+- [ ] **New channels in muted space are automatically muted**
+- [ ] **Individual channel unmute works within muted space** (override)
 - [ ] Edge cases handled appropriately
 - [ ] Code follows existing patterns (ConfigService, hooks, utils)
 
@@ -370,6 +484,15 @@ _Updated during implementation_
   - Post-bug-fix typical configs should be 10-500KB, this feature adds 5-50KB
   - May need to add client-side validation if actual limit is confirmed
 
+**2025-12-27 - Claude**: Added Phase 5: Space-Level Muting based on feature-analyzer recommendation:
+  - **Design decision**: Use `isMuted?: boolean` in existing `NotificationSettings` type (not separate `mutedSpaces` array)
+  - **Rationale**: Integrates with existing per-space notification settings rather than creating parallel system
+  - **Key behavior**: Space mute is a **user intent** - new channels are automatically muted, but individual channels can be unmuted as override
+  - **UI locations**: NavMenu space context menu (before "Leave Space") + Account.tsx "Other Settings" section
+  - **Performance**: O(1) check for muted space vs O(n) channel checks
+  - **Preserves preferences**: Unmuting space restores individual channel mute states
+
 ---
 
 _Created: 2025-12-26_
+_Updated: 2025-12-27_

@@ -122,6 +122,11 @@ html.dark .channel-mentions-bubble {
 
 // Channel unread dot indicator - defined in src/styles/_components.scss
 
+// Muted channel styling
+.channel-item-muted {
+  opacity: 0.5;
+}
+
 // Mobile layout
 @media (max-width: 1023px) {
   .channel-group .channel {

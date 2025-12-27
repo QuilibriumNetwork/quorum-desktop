@@ -34,6 +34,13 @@ export type HeaderConfig =
       iconVariant?: IconVariant;
       iconColor: IconColor;
       name: string;
+    }
+  | {
+      type: 'channel';
+      channelName: string;
+      icon: IconName;
+      iconColor?: string;
+      iconVariant?: IconVariant;
     };
 
 // Menu item interface
@@ -210,6 +217,21 @@ const ContextMenu: React.FC<ContextMenuProps> = ({
             </div>
             <span className="context-menu-header-text">
               {header.name}
+            </span>
+          </div>
+        );
+      }
+      case 'channel': {
+        return (
+          <div className="context-menu-header">
+            <Icon
+              name={header.icon || 'hashtag'}
+              size="sm"
+              variant={header.iconVariant || 'outline'}
+              style={header.iconColor ? { color: header.iconColor } : undefined}
+            />
+            <span className="context-menu-header-text truncate-channel-name">
+              {header.channelName}
             </span>
           </div>
         );

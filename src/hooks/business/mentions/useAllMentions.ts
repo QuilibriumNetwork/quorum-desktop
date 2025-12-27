@@ -3,6 +3,7 @@ import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
 import { useMessageDB } from '../../../components/context/useMessageDB';
 import { isMentionedWithSettings } from '../../../utils/mentionUtils';
 import { getDefaultNotificationSettings } from '../../../utils/notificationSettingsUtils';
+import { getMutedChannelsForSpace } from '../../../utils/channelUtils';
 import type { Message } from '../../../api/quorumApi';
 
 export interface MentionNotification {
@@ -70,11 +71,18 @@ export function useAllMentions({
           return [];
         }
 
+        // Get muted channels to exclude from notifications
+        const mutedChannelIds = getMutedChannelsForSpace(spaceId, config?.mutedChannels);
+
         // Get space data to access channel names
         const space = await messageDB.getSpace(spaceId);
 
-        // Process each channel
+        // Process each channel (excluding muted ones)
         for (const channelId of channelIds) {
+          // Skip muted channels - they shouldn't show in notification panel
+          if (mutedChannelIds.includes(channelId)) {
+            continue;
+          }
           const conversationId = `${spaceId}/${channelId}`;
 
           // Get conversation to find last read timestamp

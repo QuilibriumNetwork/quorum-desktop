@@ -54,6 +54,7 @@ Not all actions can be queued for offline use. This table shows what works offli
 | Save user config | Global | ✅ Fully queued, survives refresh |
 | Update space settings | Global | ✅ Fully queued, survives refresh |
 | Kick/mute/unmute user | Moderation | ✅ Fully queued, survives refresh |
+| Channel mute/unmute | Global | ✅ Fully queued, survives refresh (via save-user-config) |
 | Send DM | DM | ⚠️ Queued only when offline with existing sessions (see below) |
 | Reactions (DM) | DM | ⚠️ Queued only when offline with existing sessions (see below) |
 | Edit/delete DM | DM | ⚠️ Queued only when offline with existing sessions (see below) |
@@ -240,7 +241,7 @@ For a summary of which actions work offline, see [Offline Support Summary](#offl
 | `reaction-dm` | DM | Double Ratchet | `useMessageActions.ts` |
 | `delete-dm` | DM | Double Ratchet | `useMessageActions.ts` |
 | `edit-dm` | DM | Double Ratchet | `MessageEditTextarea.tsx` |
-| `save-user-config` | Global | None | `useUserSettings.ts`, `useFolderManagement.ts`, `useFolderDragAndDrop.ts`, `useDeleteFolder.ts`, `useSpaceDragAndDrop.ts` |
+| `save-user-config` | Global | None | `useUserSettings.ts`, `useFolderManagement.ts`, `useFolderDragAndDrop.ts`, `useDeleteFolder.ts`, `useSpaceDragAndDrop.ts`, `useChannelMute.ts` |
 | `update-space` | Global | None | `useSpaceManagement.ts` |
 | `kick-user` | Moderation | None | `useUserKicking.ts` |
 | `mute-user` | Moderation | None | `useUserMuting.ts` |
@@ -250,8 +251,9 @@ For a summary of which actions work offline, see [Offline Support Summary](#offl
 > - User profile settings (display name, avatar, preferences)
 > - Folder structure (create, edit, delete, reorder folders)
 > - Space organization (drag spaces into/out of folders, reorder spaces)
+> - Channel mute settings (mute/unmute channels, show/hide muted channels toggle)
 >
-> All these operations use the same optimistic update + queue pattern, which is why folder and space organization operations are instant and non-blocking.
+> All these operations use the same optimistic update + queue pattern, which is why folder, space organization, and channel mute operations are instant and non-blocking.
 
 ---
 
@@ -754,4 +756,4 @@ Tests verify control flow and contracts, not real encryption (SDK is mocked). Se
 
 ---
 
-*Updated: 2025-12-23 - Expanded sequential processing rationale (why not parallel)*
+*Updated: 2025-12-27 - Added channel mute/unmute to Action Queue integration*

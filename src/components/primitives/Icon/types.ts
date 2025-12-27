@@ -89,6 +89,7 @@ export type IconName =
   | 'logout'
   | 'palette'
   | 'bell'
+  | 'bell-off'
 
   // Status & Alerts
   | 'warning'

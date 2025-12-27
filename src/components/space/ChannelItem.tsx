@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Icon } from '../primitives';
 import { getIconColorHex, IconColor } from './IconPicker/types';
@@ -6,6 +6,8 @@ import { useLongPressWithDefaults } from '../../hooks/useLongPress';
 import { hapticLight, hapticMedium } from '../../utils/haptic';
 import { TOUCH_INTERACTION_TYPES } from '../../constants/touchInteraction';
 import { formatMentionCount } from '../../utils/formatMentionCount';
+import ContextMenu, { MenuItem, HeaderConfig } from '../ui/ContextMenu';
+import { t } from '@lingui/core/macro';
 
 interface Channel {
   channelId: string;
@@ -30,6 +32,7 @@ interface ChannelItemProps {
   isMobile: boolean;
   isTablet: boolean;
   groupName: string;
+  isMuted?: boolean;
   onChannelClick?: () => void;
   onChannelNavigate: (channelId: string) => void;
   closeLeftSidebar: () => void;
@@ -38,6 +41,8 @@ interface ChannelItemProps {
     groupName: string,
     channelId: string
   ) => void;
+  onToggleMute?: (channelId: string) => Promise<void>;
+  onTogglePin?: (channelId: string, isPinned: boolean) => Promise<void>;
 }
 
 const ChannelContent: React.FC<{
@@ -140,19 +145,100 @@ const ChannelItem: React.FC<ChannelItemProps> = ({
   isMobile,
   isTablet,
   groupName,
+  isMuted = false,
   onChannelClick,
   onChannelNavigate,
   closeLeftSidebar,
   openChannelEditor,
+  onToggleMute,
+  onTogglePin,
 }) => {
   const navigate = useNavigate();
+
+  // Context menu state
+  const [contextMenuPosition, setContextMenuPosition] = useState<{
+    x: number;
+    y: number;
+  } | null>(null);
+
+  // Track last touch position for long press context menu
+  const lastTouchPosition = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
+
+  // Open context menu at given position
+  const openContextMenu = useCallback((x: number, y: number) => {
+    setContextMenuPosition({ x, y });
+  }, []);
+
+  // Close context menu
+  const closeContextMenu = useCallback(() => {
+    setContextMenuPosition(null);
+  }, []);
+
+  // Handle right-click for desktop
+  const handleContextMenu = useCallback(
+    (e: React.MouseEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
+      openContextMenu(e.clientX, e.clientY);
+    },
+    [openContextMenu]
+  );
+
+  // Build context menu header
+  const contextMenuHeader: HeaderConfig = {
+    type: 'channel',
+    channelName: channel.channelName,
+    icon: (channel.icon as any) || 'hashtag',
+    iconColor: getIconColorHex(channel.iconColor as IconColor),
+    iconVariant: channel.iconVariant || 'outline',
+  };
+
+  // Build context menu items (role-aware)
+  const contextMenuItems: MenuItem[] = [];
+
+  // Space owners get Channel Settings option
+  if (isSpaceOwner) {
+    contextMenuItems.push({
+      id: 'channel-settings',
+      icon: 'settings',
+      label: t`Channel Settings`,
+      onClick: () => openChannelEditor(spaceId, groupName, channel.channelId),
+    });
+
+    // Pin/Unpin option (owners only)
+    contextMenuItems.push({
+      id: 'toggle-pin',
+      icon: channel.isPinned ? 'pin-off' : 'pin',
+      label: channel.isPinned ? t`Unpin Channel` : t`Pin Channel`,
+      onClick: async () => {
+        if (onTogglePin) {
+          await onTogglePin(channel.channelId, !channel.isPinned);
+        }
+      },
+    });
+  }
+
+  // Everyone gets Mute/Unmute option
+  contextMenuItems.push({
+    id: 'toggle-mute',
+    icon: isMuted ? 'bell' : 'bell-off',
+    label: isMuted ? t`Unmute Channel` : t`Mute Channel`,
+    onClick: async () => {
+      if (onToggleMute) {
+        await onToggleMute(channel.channelId);
+      }
+    },
+  });
+
   // Create long press handlers within the component (proper hook usage)
   const longPressHandlers = useLongPressWithDefaults({
     delay: TOUCH_INTERACTION_TYPES.STANDARD.delay,
     onLongPress: () => {
-      if (isTouch && isSpaceOwner) {
+      // Open context menu for all users on long press (not just owners)
+      if (isTouch) {
         hapticMedium();
-        openChannelEditor(spaceId, groupName, channel.channelId);
+        // Use the stored touch position from onTouchStart
+        openContextMenu(lastTouchPosition.current.x, lastTouchPosition.current.y);
       }
     },
     onTap: () => {
@@ -181,37 +267,75 @@ const ChannelItem: React.FC<ChannelItemProps> = ({
     />
   );
 
+  // Muted channel styling (60% opacity)
+  const mutedClassName = isMuted ? 'channel-item-muted' : '';
+
+  // Wrap the original onTouchStart to capture position
+  const handleTouchStart = useCallback(
+    (e: React.TouchEvent) => {
+      const touch = e.touches[0];
+      if (touch) {
+        lastTouchPosition.current = { x: touch.clientX, y: touch.clientY };
+      }
+      // Call the original handler
+      longPressHandlers.onTouchStart(e);
+    },
+    [longPressHandlers]
+  );
+
   if (isTouch) {
     return (
-      <div
-        {...longPressHandlers}
-        className={`cursor-pointer ${longPressHandlers.className || ''}`}
-        style={longPressHandlers.style}
-      >
-        {channelContent}
-      </div>
+      <>
+        <div
+          {...longPressHandlers}
+          onTouchStart={handleTouchStart}
+          className={`cursor-pointer ${longPressHandlers.className || ''} ${mutedClassName}`}
+          style={longPressHandlers.style}
+        >
+          {channelContent}
+        </div>
+        {contextMenuPosition && (
+          <ContextMenu
+            header={contextMenuHeader}
+            items={contextMenuItems}
+            position={contextMenuPosition}
+            onClose={closeContextMenu}
+          />
+        )}
+      </>
     );
   }
 
   return (
-    <div
-      role="link"
-      tabIndex={0}
-      className="cursor-pointer"
-      onClick={() => {
-        onChannelClick?.();
-        navigate(`/spaces/${spaceId}/${channel.channelId}`);
-      }}
-      onKeyDown={(e) => {
-        if (e.key === 'Enter' || e.key === ' ') {
-          e.preventDefault();
+    <>
+      <div
+        role="link"
+        tabIndex={0}
+        className={`cursor-pointer ${mutedClassName}`}
+        onClick={() => {
           onChannelClick?.();
           navigate(`/spaces/${spaceId}/${channel.channelId}`);
-        }
-      }}
-    >
-      {channelContent}
-    </div>
+        }}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            onChannelClick?.();
+            navigate(`/spaces/${spaceId}/${channel.channelId}`);
+          }
+        }}
+        onContextMenu={handleContextMenu}
+      >
+        {channelContent}
+      </div>
+      {contextMenuPosition && (
+        <ContextMenu
+          header={contextMenuHeader}
+          items={contextMenuItems}
+          position={contextMenuPosition}
+          onClose={closeContextMenu}
+        />
+      )}
+    </>
   );
 };
 

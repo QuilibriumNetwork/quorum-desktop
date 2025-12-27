@@ -7,6 +7,8 @@ import {
   Callout,
   Text,
   Select,
+  Switch,
+  FlexRow,
 } from '../../primitives';
 import { Trans } from '@lingui/react/macro';
 import { t } from '@lingui/core/macro';
@@ -16,6 +18,7 @@ import { useSpaceOwner } from '../../../hooks/queries/spaceOwner/useSpaceOwner';
 import { useSpaceLeaving } from '../../../hooks/business/spaces/useSpaceLeaving';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
 import { useUserRoleDisplay } from '../../../hooks/business/user/useUserRoleDisplay';
+import { useChannelMute } from '../../../hooks/business/channels';
 import { Role } from '../../../api/quorumApi';
 import type { NotificationTypeId } from '../../../types/notifications';
 
@@ -81,7 +84,21 @@ const Account: React.FunctionComponent<AccountProps> = ({
   } = useSpaceLeaving();
 
   // Get current user's roles (including private roles since user is viewing their own account)
-  const { userRoles } = useUserRoleDisplay(userInfo?.address || '', roles, true);
+  const { userRoles } = useUserRoleDisplay(
+    userInfo?.address || '',
+    roles,
+    true
+  );
+
+  // Channel mute settings
+  const { showMutedChannels, toggleShowMutedChannels } = useChannelMute({
+    spaceId,
+  });
+
+  // Handler for hide muted channels toggle
+  const handleShowMutedToggle = React.useCallback(() => {
+    toggleShowMutedChannels();
+  }, [toggleShowMutedChannels]);
 
   return (
     <>
@@ -182,51 +199,74 @@ const Account: React.FunctionComponent<AccountProps> = ({
         )}
 
         {/* Notification Settings */}
+        <>
+          <Spacer size="md" direction="vertical" borderTop={true} />
+          <div className="text-subtitle-2">
+            <Trans>Notifications</Trans>
+          </div>
+          <div className="text-label-strong pt-1">
+            <Trans>
+              Select which types of notifications you want to receive
+            </Trans>
+          </div>
+          <div className="pt-4">
+            <Select
+              value={selectedMentionTypes}
+              onChange={(value: string | string[]) =>
+                setSelectedMentionTypes(value as NotificationTypeId[])
+              }
+              multiple={true}
+              placeholder={t`Select`}
+              showSelectAllOption={true}
+              selectAllLabel={t`All`}
+              clearAllLabel={t`Clear`}
+              options={[
+                {
+                  value: 'mention-you',
+                  label: t`@you`,
+                  subtitle: t`When someone mentions you directly`,
+                },
+                {
+                  value: 'mention-everyone',
+                  label: t`@everyone`,
+                  subtitle: t`When someone mentions @everyone`,
+                },
+                {
+                  value: 'mention-roles',
+                  label: t`@roles`,
+                  subtitle: t`When someone mentions a role you have`,
+                  disabled: false,
+                },
+                {
+                  value: 'reply',
+                  label: t`Replies`,
+                  subtitle: t`When someone replies to your messages`,
+                },
+              ]}
+              size="medium"
+              fullWidth={true}
+              disabled={isMentionSettingsLoading}
+            />
+          </div>
+          <Spacer size="lg" direction="vertical" />
+        </>
+
+        {/* Other Settings */}
         <Spacer size="md" direction="vertical" borderTop={true} />
         <div className="text-subtitle-2">
-          <Trans>Notifications</Trans>
-        </div>
-        <div className="text-label-strong pt-1">
-          <Trans>Select which types of notifications you want to receive</Trans>
+          <Trans>Other Settings</Trans>
         </div>
         <div className="pt-4">
-          <Select
-            value={selectedMentionTypes}
-            onChange={(value: string | string[]) =>
-              setSelectedMentionTypes(value as NotificationTypeId[])
-            }
-            multiple={true}
-            placeholder={t`Select`}
-            showSelectAllOption={true}
-            selectAllLabel={t`All`}
-            clearAllLabel={t`Clear`}
-            options={[
-              {
-                value: 'mention-you',
-                label: t`@you`,
-                subtitle: t`When someone mentions you directly`,
-              },
-              {
-                value: 'mention-everyone',
-                label: t`@everyone`,
-                subtitle: t`When someone mentions @everyone`,
-              },
-              {
-                value: 'mention-roles',
-                label: t`@roles`,
-                subtitle: t`When someone mentions a role you have`,
-                disabled: false,
-              },
-              {
-                value: 'reply',
-                label: t`Replies`,
-                subtitle: t`When someone replies to your messages`,
-              },
-            ]}
-            size="medium"
-            fullWidth={true}
-            disabled={isMentionSettingsLoading}
-          />
+          <FlexRow className="items-center justify-between">
+            <div className="text-label-strong">
+              <Trans>Hide muted channels</Trans>
+            </div>
+            <Switch
+              value={!showMutedChannels}
+              onChange={handleShowMutedToggle}
+              accessibilityLabel={t`Hide muted channels in list`}
+            />
+          </FlexRow>
         </div>
         <Spacer size="lg" direction="vertical" borderBottom={true} />
 

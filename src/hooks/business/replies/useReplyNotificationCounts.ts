@@ -2,6 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
 import { useMessageDB } from '../../../components/context/useMessageDB';
 import { isNotificationTypeEnabled } from '../../../utils/notificationSettingsUtils';
+import { getMutedChannelsForSpace } from '../../../utils/channelUtils';
 
 interface UseReplyNotificationCountsProps {
   spaceId: string;
@@ -59,8 +60,16 @@ export function useReplyNotificationCounts({
           return {}; // User has disabled reply notifications
         }
 
-        // Process each channel
+        // Get muted channels to exclude from counts
+        const mutedChannelIds = getMutedChannelsForSpace(spaceId, config?.mutedChannels);
+
+        // Process each channel (excluding muted ones)
         for (const channelId of channelIds) {
+          // Skip muted channels - they shouldn't contribute to notification counts
+          if (mutedChannelIds.includes(channelId)) {
+            continue;
+          }
+
           const conversationId = `${spaceId}/${channelId}`;
 
           // Get conversation to find last read timestamp

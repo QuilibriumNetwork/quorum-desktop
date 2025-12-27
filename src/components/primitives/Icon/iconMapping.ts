@@ -99,6 +99,7 @@ export const iconComponentMap: Record<IconName, string> = {
   logout: 'IconLogout2',
   palette: 'IconPalette',
   bell: 'IconBell',
+  'bell-off': 'IconBellOff',
 
   // Status & Alerts
   warning: 'IconAlertTriangle',

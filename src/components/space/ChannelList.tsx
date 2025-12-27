@@ -8,6 +8,7 @@ import {
   useSpaceHeader,
   useSpaceGroups,
   useCollapsingHeader,
+  useChannelMute,
 } from '../../hooks';
 import { useChannelMentionCounts } from '../../hooks/business/mentions';
 import { useReplyNotificationCounts } from '../../hooks/business/replies';
@@ -32,6 +33,9 @@ type GroupWithMentionCounts = Group & {
 const ChannelList: React.FC<ChannelListProps> = ({ spaceId }) => {
   const { data: space } = useSpace({ spaceId });
   const user = usePasskeysContext();
+
+  // Channel mute settings
+  const { getMutedChannelIds, showMutedChannels } = useChannelMute({ spaceId });
 
   // Extract business logic into hooks
   const { openNewGroupEditor, openEditGroupEditor } = useGroupEditor(spaceId);
@@ -105,6 +109,25 @@ const ChannelList: React.FC<ChannelListProps> = ({ spaceId }) => {
     [groups, mentionCounts, replyCounts, unreadCounts]
   );
 
+  // Filter out muted channels when showMutedChannels is false
+  const visibleGroups = React.useMemo<GroupWithMentionCounts[]>(() => {
+    if (showMutedChannels) {
+      // Show all channels (muted ones will have 60% opacity via CSS)
+      return groupsWithMentionCounts;
+    }
+
+    // Hide muted channels
+    const mutedChannelIds = getMutedChannelIds();
+    return groupsWithMentionCounts
+      .map((group) => ({
+        ...group,
+        channels: group.channels.filter(
+          (ch) => !mutedChannelIds.includes(ch.channelId)
+        ),
+      }))
+      .filter((group) => group.channels.length > 0); // Remove empty groups
+  }, [groupsWithMentionCounts, showMutedChannels, getMutedChannelIds]);
+
   return (
     <Container className="channels-list-wrapper list-bottom-fade">
       <Container className={headerClassName} style={collapsingHeaderStyle}>
@@ -142,7 +165,7 @@ const ChannelList: React.FC<ChannelListProps> = ({ spaceId }) => {
         </Container>
       </Container>
       <Container className="channels-list list-fade-content" onScroll={handleScroll}>
-        {groupsWithMentionCounts.map((group: GroupWithMentionCounts) => (
+        {visibleGroups.map((group: GroupWithMentionCounts) => (
           <ChannelGroup
             onEditGroup={openEditGroupEditor}
             key={group.groupName}
