@@ -1,7 +1,7 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { t } from '@lingui/core/macro';
 import { Message as MessageType } from '../../api/quorumApi';
-import { Portal, Button, Icon, Text } from '../primitives';
+import { Portal, Button, Icon } from '../primitives';
 import { useClickOutside } from '../../hooks/useClickOutside';
 import './MessageActionsMenu.scss';
 
@@ -221,65 +221,57 @@ const MessageActionsMenu: React.FC<MessageActionsMenuProps> = ({
 
         {/* Action items */}
         <div className="message-actions-menu__actions">
-          <div onClick={handleReply} className="message-actions-menu__item">
+          <button onClick={handleReply} className="message-actions-menu__item">
             <Icon name="reply" size="sm" />
-            <Text size="sm">{t`Reply`}</Text>
-          </div>
+            {t`Reply`}
+          </button>
 
-          <div onClick={handleCopyLink} className="message-actions-menu__item">
+          <button onClick={handleCopyLink} className="message-actions-menu__item">
             <Icon name="link" size="sm" />
-            <Text size="sm">
-              {copiedLinkId === message.messageId ? t`Copied!` : t`Copy link`}
-            </Text>
-          </div>
+            {copiedLinkId === message.messageId ? t`Copied!` : t`Copy link`}
+          </button>
 
-          <div onClick={handleCopyMessageText} className="message-actions-menu__item">
+          <button onClick={handleCopyMessageText} className="message-actions-menu__item">
             <Icon name="clipboard" size="sm" />
-            <Text size="sm">
-              {copiedMessageText ? t`Copied!` : t`Copy message`}
-            </Text>
-          </div>
+            {copiedMessageText ? t`Copied!` : t`Copy message`}
+          </button>
 
           {canEdit && onEdit && (
-            <div onClick={handleEdit} className="message-actions-menu__item">
+            <button onClick={handleEdit} className="message-actions-menu__item">
               <Icon name="edit" size="sm" />
-              <Text size="sm">{t`Edit`}</Text>
-            </div>
+              {t`Edit`}
+            </button>
           )}
 
           {canViewEditHistory && onViewEditHistory && (
-            <div onClick={handleViewEditHistory} className="message-actions-menu__item">
+            <button onClick={handleViewEditHistory} className="message-actions-menu__item">
               <Icon name="history" size="sm" />
-              <Text size="sm">{t`Edit history`}</Text>
-            </div>
+              {t`Edit history`}
+            </button>
           )}
 
           {onBookmarkToggle && (
-            <div onClick={handleBookmarkToggle} className="message-actions-menu__item">
+            <button onClick={handleBookmarkToggle} className="message-actions-menu__item">
               <Icon name={isBookmarked ? 'bookmark-off' : 'bookmark'} size="sm" />
-              <Text size="sm">
-                {isBookmarked ? t`Remove bookmark` : t`Bookmark`}
-              </Text>
-            </div>
+              {isBookmarked ? t`Remove bookmark` : t`Bookmark`}
+            </button>
           )}
 
           {canPinMessages && onPin && (
-            <div onClick={handlePin} className="message-actions-menu__item">
+            <button onClick={handlePin} className="message-actions-menu__item">
               <Icon name={message.isPinned ? 'pin-off' : 'pin'} size="sm" />
-              <Text size="sm">
-                {message.isPinned ? t`Unpin` : t`Pin`}
-              </Text>
-            </div>
+              {message.isPinned ? t`Unpin` : t`Pin`}
+            </button>
           )}
 
           {canDelete && (
-            <div
+            <button
               onClick={handleDelete}
               className="message-actions-menu__item message-actions-menu__item--danger"
             >
               <Icon name="trash" size="sm" />
-              <Text size="sm">{t`Delete`}</Text>
-            </div>
+              {t`Delete`}
+            </button>
           )}
         </div>
       </div>

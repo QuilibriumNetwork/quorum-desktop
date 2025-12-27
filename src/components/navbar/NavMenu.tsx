@@ -8,7 +8,7 @@ import SpaceButton from './SpaceButton';
 import SpaceIcon from './SpaceIcon';
 import FolderButton from './FolderButton';
 import FolderContainer from './FolderContainer';
-import FolderContextMenu from './FolderContextMenu';
+import ContextMenu, { MenuItem } from '../ui/ContextMenu';
 import { t } from '@lingui/core/macro';
 import { useModals } from '../context/ModalProvider';
 import { NavItem } from '../../db/messages';
@@ -29,7 +29,9 @@ import {
   useSpaceUnreadCounts,
   useDirectMessageUnreadCount,
 } from '../../hooks/business/messages';
+import { useSpaceLeaving } from '../../hooks/business/spaces/useSpaceLeaving';
 import { useResponsiveLayoutContext } from '../context/ResponsiveLayoutProvider';
+import { useMessageDB } from '../context/useMessageDB';
 import './NavMenu.scss';
 
 type NavMenuProps = {
@@ -37,9 +39,17 @@ type NavMenuProps = {
   showJoinSpaceModal: () => void;
 };
 
-// Context menu state type
-interface ContextMenuState {
+// Context menu state types
+interface FolderContextMenuState {
   folder: (NavItem & { type: 'folder' }) | null;
+  position: { x: number; y: number };
+}
+
+interface SpaceContextMenuState {
+  spaceId: string | null;
+  spaceName: string;
+  iconUrl?: string;
+  isOwner: boolean;
   position: { x: number; y: number };
 }
 
@@ -55,16 +65,29 @@ const NavMenuContent: React.FC<NavMenuProps> = (props) => {
   const { openFolderEditor } = useModals();
   const { deleteFolder } = useDeleteFolder();
 
-  // Context menu state
-  const [contextMenu, setContextMenu] = React.useState<ContextMenuState>({
+  // Folder context menu state
+  const [folderContextMenu, setFolderContextMenu] = React.useState<FolderContextMenuState>({
     folder: null,
     position: { x: 0, y: 0 },
   });
 
-  const handleContextMenu = React.useCallback(
+  // Space context menu state
+  const [spaceContextMenu, setSpaceContextMenu] = React.useState<SpaceContextMenuState>({
+    spaceId: null,
+    spaceName: '',
+    iconUrl: undefined,
+    isOwner: false,
+    position: { x: 0, y: 0 },
+  });
+
+  const { messageDB } = useMessageDB();
+  const { handleLeaveClick: leaveSpace } = useSpaceLeaving();
+
+  // Folder context menu handlers
+  const handleFolderContextMenu = React.useCallback(
     (folder: NavItem & { type: 'folder' }, e: React.MouseEvent) => {
       e.preventDefault();
-      setContextMenu({
+      setFolderContextMenu({
         folder,
         position: { x: e.clientX, y: e.clientY },
       });
@@ -72,24 +95,133 @@ const NavMenuContent: React.FC<NavMenuProps> = (props) => {
     []
   );
 
-  const closeContextMenu = React.useCallback(() => {
-    setContextMenu({ folder: null, position: { x: 0, y: 0 } });
+  const closeFolderContextMenu = React.useCallback(() => {
+    setFolderContextMenu({ folder: null, position: { x: 0, y: 0 } });
   }, []);
 
   const handleOpenFolderSettings = React.useCallback(() => {
-    if (contextMenu.folder) {
-      openFolderEditor(contextMenu.folder.id);
+    if (folderContextMenu.folder) {
+      openFolderEditor(folderContextMenu.folder.id);
     }
-    closeContextMenu();
-  }, [contextMenu.folder, openFolderEditor, closeContextMenu]);
+    closeFolderContextMenu();
+  }, [folderContextMenu.folder, openFolderEditor, closeFolderContextMenu]);
 
   const handleDeleteFolder = React.useCallback(async () => {
-    const folder = contextMenu.folder;
+    const folder = folderContextMenu.folder;
     if (!folder) return;
 
-    closeContextMenu();
+    closeFolderContextMenu();
     await deleteFolder(folder.id);
-  }, [contextMenu.folder, closeContextMenu, deleteFolder]);
+  }, [folderContextMenu.folder, closeFolderContextMenu, deleteFolder]);
+
+  // Get folder context menu items
+  const getFolderContextMenuItems = React.useCallback((): MenuItem[] => {
+    if (!folderContextMenu.folder) return [];
+
+    return [
+      {
+        id: 'settings',
+        icon: 'settings',
+        label: t`Edit Folder`,
+        onClick: handleOpenFolderSettings,
+      },
+      {
+        id: 'delete',
+        icon: 'trash',
+        label: t`Delete Folder`,
+        confirmLabel: t`Confirm Delete`,
+        danger: true,
+        onClick: handleDeleteFolder,
+      },
+    ];
+  }, [folderContextMenu.folder, handleOpenFolderSettings, handleDeleteFolder]);
+
+  // Space context menu handlers
+  const handleSpaceContextMenu = React.useCallback(
+    async (spaceId: string, spaceName: string, iconUrl: string | undefined, e: React.MouseEvent) => {
+      e.preventDefault();
+      // Check if user is owner of this space by checking for owner key
+      let isOwner = false;
+      try {
+        const ownerKey = await messageDB.getSpaceKey(spaceId, 'owner');
+        isOwner = !!ownerKey;
+      } catch {
+        isOwner = false;
+      }
+      setSpaceContextMenu({
+        spaceId,
+        spaceName,
+        iconUrl,
+        isOwner,
+        position: { x: e.clientX, y: e.clientY },
+      });
+    },
+    [messageDB]
+  );
+
+  const closeSpaceContextMenu = React.useCallback(() => {
+    setSpaceContextMenu({
+      spaceId: null,
+      spaceName: '',
+      iconUrl: undefined,
+      isOwner: false,
+      position: { x: 0, y: 0 },
+    });
+  }, []);
+
+  const { openSpaceEditor } = useModals();
+
+  // Get space context menu items based on ownership
+  const getSpaceContextMenuItems = React.useCallback((): MenuItem[] => {
+    if (!spaceContextMenu.spaceId) return [];
+
+    const items: MenuItem[] = [
+      {
+        id: 'account',
+        icon: 'user',
+        label: t`My Account`,
+        onClick: () => openSpaceEditor(spaceContextMenu.spaceId!, 'account'),
+      },
+    ];
+
+    if (spaceContextMenu.isOwner) {
+      items.push(
+        {
+          id: 'settings',
+          icon: 'settings',
+          label: t`Space Settings`,
+          onClick: () => openSpaceEditor(spaceContextMenu.spaceId!, 'general'),
+        },
+        {
+          id: 'invites',
+          icon: 'user-plus',
+          label: t`Invite Members`,
+          onClick: () => openSpaceEditor(spaceContextMenu.spaceId!, 'invites'),
+        },
+        {
+          id: 'roles',
+          icon: 'shield',
+          label: t`Manage Roles`,
+          onClick: () => openSpaceEditor(spaceContextMenu.spaceId!, 'roles'),
+        }
+      );
+    } else {
+      items.push({
+        id: 'leave',
+        icon: 'logout',
+        label: t`Leave Space`,
+        danger: true,
+        confirmLabel: t`Confirm Leave`,
+        onClick: () => {
+          if (spaceContextMenu.spaceId) {
+            leaveSpace(spaceContextMenu.spaceId);
+          }
+        },
+      });
+    }
+
+    return items;
+  }, [spaceContextMenu.spaceId, spaceContextMenu.isOwner, openSpaceEditor, leaveSpace]);
 
   // Check if config has items (new format) or just spaceIds (legacy)
   const hasItems = config?.items && config.items.length > 0;
@@ -202,6 +334,8 @@ const NavMenuContent: React.FC<NavMenuProps> = (props) => {
                       key={space.spaceId}
                       space={{ ...space, notifs: unreadCount }}
                       mentionCount={totalCount > 0 ? totalCount : undefined}
+                      onContextMenu={(e) => handleSpaceContextMenu(space.spaceId, space.spaceName, space.iconUrl, e)}
+                      onOpenSettings={() => openSpaceEditor(space.spaceId)}
                     />
                   );
                 } else if (navItem.item.type === 'folder' && navItem.spaces) {
@@ -225,7 +359,8 @@ const NavMenuContent: React.FC<NavMenuProps> = (props) => {
                       spaces={spacesWithNotifs}
                       isExpanded={isExpanded(folder.id)}
                       onToggleExpand={() => toggleFolder(folder.id)}
-                      onContextMenu={(e) => handleContextMenu(folder, e)}
+                      onContextMenu={(e) => handleFolderContextMenu(folder, e)}
+                      onSpaceContextMenu={handleSpaceContextMenu}
                       onEdit={() => openFolderEditor(folder.id)}
                       spaceMentionCounts={folderMentionCounts}
                     />
@@ -247,6 +382,8 @@ const NavMenuContent: React.FC<NavMenuProps> = (props) => {
                     key={space.spaceId}
                     space={{ ...space, notifs: unreadCount }}
                     mentionCount={totalCount > 0 ? totalCount : undefined}
+                    onContextMenu={(e) => handleSpaceContextMenu(space.spaceId, space.spaceName, space.iconUrl, e)}
+                    onOpenSettings={() => openSpaceEditor(space.spaceId)}
                   />
                 );
               })}
@@ -302,13 +439,33 @@ const NavMenuContent: React.FC<NavMenuProps> = (props) => {
       </div>
 
       {/* Folder context menu */}
-      {contextMenu.folder && (
-        <FolderContextMenu
-          folder={contextMenu.folder}
-          position={contextMenu.position}
-          onClose={closeContextMenu}
-          onOpenSettings={handleOpenFolderSettings}
-          onDelete={handleDeleteFolder}
+      {folderContextMenu.folder && (
+        <ContextMenu
+          header={{
+            type: 'folder',
+            icon: folderContextMenu.folder.icon || 'folder',
+            iconVariant: folderContextMenu.folder.iconVariant || 'outline',
+            iconColor: folderContextMenu.folder.color || 'default',
+            name: folderContextMenu.folder.name,
+          }}
+          items={getFolderContextMenuItems()}
+          position={folderContextMenu.position}
+          onClose={closeFolderContextMenu}
+        />
+      )}
+
+      {/* Space context menu */}
+      {spaceContextMenu.spaceId && (
+        <ContextMenu
+          header={{
+            type: 'space',
+            spaceId: spaceContextMenu.spaceId,
+            spaceName: spaceContextMenu.spaceName,
+            iconUrl: spaceContextMenu.iconUrl,
+          }}
+          items={getSpaceContextMenuItems()}
+          position={spaceContextMenu.position}
+          onClose={closeSpaceContextMenu}
         />
       )}
 

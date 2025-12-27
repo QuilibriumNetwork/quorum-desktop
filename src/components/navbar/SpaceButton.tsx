@@ -4,6 +4,9 @@ import { useNavigate } from 'react-router-dom';
 import SpaceIcon from './SpaceIcon';
 import { useSortable } from '@dnd-kit/sortable';
 import { useDragStateContext } from '../../context/DragStateContext';
+import { isTouchDevice } from '../../utils/platform';
+import { hapticMedium } from '../../utils/haptic';
+import { TOUCH_INTERACTION_TYPES } from '../../constants/touchInteraction';
 
 interface Space {
   spaceId: string;
@@ -18,11 +21,62 @@ type SpaceButtonProps = {
   mentionCount?: number;
   size?: 'small' | 'regular';
   parentFolderId?: string; // If this space is inside a folder
+  onContextMenu?: (e: React.MouseEvent) => void;
+  onOpenSettings?: () => void;
 };
 
-const SpaceButton: React.FunctionComponent<SpaceButtonProps> = ({ space, mentionCount, size = 'regular', parentFolderId }) => {
+const SpaceButton: React.FunctionComponent<SpaceButtonProps> = ({
+  space,
+  mentionCount,
+  size = 'regular',
+  parentFolderId,
+  onContextMenu,
+  onOpenSettings,
+}) => {
   const navigate = useNavigate();
   const { spaceId: currentSpaceId } = useParams<{ spaceId: string }>();
+  const isTouch = isTouchDevice();
+
+  // Long press timer for touch devices (like FolderContainer pattern)
+  const longPressTimer = React.useRef<NodeJS.Timeout | null>(null);
+  const touchStartPos = React.useRef<{ x: number; y: number } | null>(null);
+  const { threshold: MOVEMENT_THRESHOLD, delay: LONG_PRESS_DELAY } = TOUCH_INTERACTION_TYPES.DRAG_AND_DROP;
+
+  const clearLongPressTimer = () => {
+    if (longPressTimer.current) {
+      clearTimeout(longPressTimer.current);
+      longPressTimer.current = null;
+    }
+    touchStartPos.current = null;
+  };
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    if (isTouch && onOpenSettings && e.touches.length === 1) {
+      const touch = e.touches[0];
+      touchStartPos.current = { x: touch.clientX, y: touch.clientY };
+      longPressTimer.current = setTimeout(() => {
+        hapticMedium();
+        onOpenSettings();
+        clearLongPressTimer();
+      }, LONG_PRESS_DELAY);
+    }
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    if (touchStartPos.current && longPressTimer.current && e.touches.length === 1) {
+      const touch = e.touches[0];
+      const dx = touch.clientX - touchStartPos.current.x;
+      const dy = touch.clientY - touchStartPos.current.y;
+      const distance = Math.sqrt(dx * dx + dy * dy);
+      if (distance > MOVEMENT_THRESHOLD) {
+        clearLongPressTimer();
+      }
+    }
+  };
+
+  const handleTouchEnd = () => {
+    clearLongPressTimer();
+  };
 
   // Drag and drop functionality - platform-specific
   const { attributes, listeners, setNodeRef, isDragging } =
@@ -30,6 +84,13 @@ const SpaceButton: React.FunctionComponent<SpaceButtonProps> = ({ space, mention
       id: space.spaceId,
       data: { type: 'space', targetId: space.spaceId, parentFolderId },
     });
+
+  // Cancel long-press timer when drag starts
+  React.useEffect(() => {
+    if (isDragging) {
+      clearLongPressTimer();
+    }
+  }, [isDragging]);
 
   // Get drop target from context for visual feedback
   const { setIsDragging, dropTarget, activeItem } = useDragStateContext();
@@ -59,6 +120,14 @@ const SpaceButton: React.FunctionComponent<SpaceButtonProps> = ({ space, mention
   const isSelected = currentSpaceId === space.spaceId;
   const navigationUrl = `/spaces/${space.spaceId}/${space.defaultChannelId || '00000000-0000-0000-0000-000000000000'}`;
 
+  // Handle right-click context menu (desktop only)
+  const handleContextMenu = (e: React.MouseEvent) => {
+    if (!isTouch && onContextMenu) {
+      e.preventDefault();
+      onContextMenu(e);
+    }
+  };
+
   return (
     <>
       {/* Drop indicator - shown above this item when reordering */}
@@ -76,6 +145,11 @@ const SpaceButton: React.FunctionComponent<SpaceButtonProps> = ({ space, mention
         tabIndex={0}
         className={`block cursor-pointer ${showWiggle ? 'drop-target-wiggle' : ''}`}
         onClick={() => navigate(navigationUrl)}
+        onContextMenu={handleContextMenu}
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
+        onTouchCancel={handleTouchEnd}
         onKeyDown={(e) => {
           if (e.key === 'Enter' || e.key === ' ') {
             e.preventDefault();

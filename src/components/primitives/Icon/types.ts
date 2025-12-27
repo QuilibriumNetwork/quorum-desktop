@@ -26,7 +26,6 @@ export type IconName =
   | 'chevron-down'
   | 'bars'
   | 'compress-alt'
-  | 'door-open'
   | 'sliders'
 
   // Actions & Communication

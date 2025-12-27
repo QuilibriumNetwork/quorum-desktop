@@ -40,7 +40,8 @@ import Navigation from './Navigation';
 const SpaceSettingsModal: React.FunctionComponent<{
   spaceId: string;
   dismiss: () => void;
-}> = ({ spaceId, dismiss }) => {
+  initialTab?: 'account' | 'general' | 'invites' | 'roles';
+}> = ({ spaceId, dismiss, initialTab }) => {
   const { data: space } = useSpace({ spaceId });
   const { updateSpace, requestSync, messageDB, sendVerifyKickedStatuses } = useMessageDB();
   const { data: isSpaceOwner } = useSpaceOwner({ spaceId });
@@ -150,6 +151,7 @@ const SpaceSettingsModal: React.FunctionComponent<{
   } = useSpaceManagement({
     spaceId,
     onClose: dismiss,
+    initialCategory: initialTab,
   });
 
   // Role management hook

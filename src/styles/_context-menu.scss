@@ -24,11 +24,7 @@
   max-width: 240px;
   padding: $s-2 0;
   animation: contextMenuOpen $duration-150 $ease-out;
-  border: $border solid var(--surface-3);
-
-  .dark & {
-    border: none;
-  }
+  border: $border solid var(--color-border-subtle);
 }
 
 // Context menu item
@@ -37,14 +33,17 @@
   align-items: center;
   width: 100%;
   gap: $s-3;
-  padding: $s-2 $s-3;
+  padding: $s-1-5 $s-3;
   cursor: pointer;
   transition: background-color $duration-150 ease-in-out;
   color: rgb(var(--color-text-main));
   background: transparent;
   border: none;
   text-align: left;
-  font-size: inherit;
+  font-family: inherit;
+  font-size: $text-sm;
+  font-weight: $font-normal;
+  line-height: $text-sm-lh;
 
   &:hover {
     background-color: var(--color-bg-contextmenu-hover);
@@ -67,7 +66,7 @@
 // Divider between menu sections
 @mixin divider {
   height: $border;
-  background-color: var(--surface-3);
+  background-color: var(--color-border-subtle);
   margin: $s-2 $s-3;
 }
 

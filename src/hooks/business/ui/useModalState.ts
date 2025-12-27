@@ -23,6 +23,7 @@ export interface ModalState {
   spaceEditor: {
     isOpen: boolean;
     spaceId?: string;
+    initialTab?: 'account' | 'general' | 'invites' | 'roles';
   };
   channelEditor: {
     isOpen: boolean;
@@ -64,7 +65,7 @@ export interface ModalState {
 type ModalAction =
   | { type: 'OPEN_USER_SETTINGS' }
   | { type: 'CLOSE_USER_SETTINGS' }
-  | { type: 'OPEN_SPACE_EDITOR'; spaceId: string }
+  | { type: 'OPEN_SPACE_EDITOR'; spaceId: string; initialTab?: 'account' | 'general' | 'invites' | 'roles' }
   | { type: 'CLOSE_SPACE_EDITOR' }
   | {
       type: 'OPEN_CHANNEL_EDITOR';
@@ -113,7 +114,7 @@ function modalReducer(state: ModalState, action: ModalAction): ModalState {
     case 'OPEN_SPACE_EDITOR':
       return {
         ...state,
-        spaceEditor: { isOpen: true, spaceId: action.spaceId },
+        spaceEditor: { isOpen: true, spaceId: action.spaceId, initialTab: action.initialTab },
       };
     case 'CLOSE_SPACE_EDITOR':
       return { ...state, spaceEditor: { isOpen: false } };
@@ -214,8 +215,8 @@ export const useModalState = () => {
   }, []);
 
   // Space Editor Modal
-  const openSpaceEditor = useCallback((spaceId: string) => {
-    dispatch({ type: 'OPEN_SPACE_EDITOR', spaceId });
+  const openSpaceEditor = useCallback((spaceId: string, initialTab?: 'account' | 'general' | 'invites' | 'roles') => {
+    dispatch({ type: 'OPEN_SPACE_EDITOR', spaceId, initialTab });
   }, []);
 
   const closeSpaceEditor = useCallback(() => {

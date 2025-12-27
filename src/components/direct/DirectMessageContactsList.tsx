@@ -1,7 +1,11 @@
 import * as React from 'react';
-import DirectMessageContact from './DirectMessageContact';
-import './DirectMessageContactsList.scss';
+import { useNavigate, useParams } from 'react-router-dom';
+import { t } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
+import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
+import DirectMessageContact from './DirectMessageContact';
+import ContextMenu, { MenuItem } from '../ui/ContextMenu';
+import './DirectMessageContactsList.scss';
 import {
   Button,
   Container,
@@ -11,12 +15,116 @@ import {
 import { useModalContext } from '../context/ModalProvider';
 import { useConversationPolling } from '../../hooks';
 import { useConversationPreviews } from '../../hooks/business/conversations/useConversationPreviews';
+import { useMessageDB } from '../context/useMessageDB';
+
+interface ContextMenuState {
+  address: string;
+  position: { x: number; y: number };
+}
 
 const DirectMessageContactsList: React.FC<{}> = ({}) => {
   const { conversations: conversationsList } = useConversationPolling();
   const { data: conversationsWithPreviews = conversationsList } =
     useConversationPreviews(conversationsList);
-  const { openNewDirectMessage } = useModalContext();
+  const { openNewDirectMessage, openConversationSettings } = useModalContext();
+  const { deleteConversation } = useMessageDB();
+  const { currentPasskeyInfo } = usePasskeysContext();
+  const navigate = useNavigate();
+  const { address: currentAddress } = useParams<{ address: string }>();
+
+  // Context menu state
+  const [contextMenu, setContextMenu] = React.useState<ContextMenuState | null>(null);
+
+  const handleContextMenu = React.useCallback(
+    (address: string) => (e: React.MouseEvent) => {
+      setContextMenu({
+        address,
+        position: { x: e.clientX, y: e.clientY },
+      });
+    },
+    []
+  );
+
+  const handleCloseContextMenu = React.useCallback(() => {
+    setContextMenu(null);
+  }, []);
+
+  const handleOpenSettings = React.useCallback(
+    (address: string) => () => {
+      // Find the conversation to get the conversationId
+      const conversation = conversationsWithPreviews.find(
+        (c) => c.address === address
+      );
+      if (conversation) {
+        openConversationSettings(conversation.conversationId);
+      }
+    },
+    [conversationsWithPreviews, openConversationSettings]
+  );
+
+  const handleDeleteConversation = React.useCallback(
+    async (address: string) => {
+      if (!currentPasskeyInfo) return;
+
+      const conversation = conversationsWithPreviews.find(
+        (c) => c.address === address
+      );
+      if (!conversation) return;
+
+      const isActive = currentAddress === address;
+      await deleteConversation(conversation.conversationId, currentPasskeyInfo);
+
+      if (isActive) {
+        // Navigate to next conversation or empty state
+        const remainingConversations = conversationsWithPreviews
+          .filter((c) => c.address !== address)
+          .sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+
+        if (remainingConversations.length > 0) {
+          navigate(`/messages/${remainingConversations[0].address}`);
+        } else {
+          navigate('/messages');
+        }
+      }
+    },
+    [conversationsWithPreviews, currentAddress, currentPasskeyInfo, deleteConversation, navigate]
+  );
+
+  // Get context menu items for a conversation
+  const getContextMenuItems = React.useCallback(
+    (address: string): MenuItem[] => {
+      const conversation = conversationsWithPreviews.find(
+        (c) => c.address === address
+      );
+      if (!conversation) return [];
+
+      return [
+        {
+          id: 'settings',
+          icon: 'settings',
+          label: t`Conversation Settings`,
+          onClick: () => {
+            openConversationSettings(conversation.conversationId);
+          },
+        },
+        {
+          id: 'delete',
+          icon: 'trash',
+          label: t`Delete Conversation`,
+          confirmLabel: t`Confirm Delete`,
+          danger: true,
+          onClick: () => handleDeleteConversation(address),
+        },
+      ];
+    },
+    [conversationsWithPreviews, handleDeleteConversation, openConversationSettings]
+  );
+
+  // Get the contact data for context menu header
+  const contextMenuContact = React.useMemo(() => {
+    if (!contextMenu) return null;
+    return conversationsWithPreviews.find((c) => c.address === contextMenu.address);
+  }, [contextMenu, conversationsWithPreviews]);
 
   return (
     <Container className="direct-messages-list-wrapper list-bottom-fade flex flex-col h-full z-0 flex-grow select-none">
@@ -63,12 +171,29 @@ const DirectMessageContactsList: React.FC<{}> = ({}) => {
                   lastMessagePreview={c.preview}
                   previewIcon={c.previewIcon}
                   timestamp={c.timestamp}
+                  onContextMenu={handleContextMenu(c.address)}
+                  onOpenSettings={handleOpenSettings(c.address)}
                 />
               );
             })}
           </>
         )}
       </Container>
+
+      {/* Context menu */}
+      {contextMenu && contextMenuContact && (
+        <ContextMenu
+          header={{
+            type: 'user',
+            address: contextMenu.address,
+            displayName: contextMenuContact.displayName,
+            userIcon: contextMenuContact.icon,
+          }}
+          items={getContextMenuItems(contextMenu.address)}
+          position={contextMenu.position}
+          onClose={handleCloseContextMenu}
+        />
+      )}
     </Container>
   );
 };

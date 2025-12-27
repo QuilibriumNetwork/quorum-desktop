@@ -45,7 +45,9 @@ export const useFolderManagement = ({
   const [iconColor, setIconColor] = useState<IconColor>(
     existingFolder?.color || 'default'
   );
-  const [iconVariant, setIconVariant] = useState<IconVariant>('filled');
+  const [iconVariant, setIconVariant] = useState<IconVariant>(
+    existingFolder?.iconVariant || 'outline'
+  );
   const [deleteConfirmationStep, setDeleteConfirmationStep] = useState(0);
 
   // Sync with existing folder when it changes
@@ -54,6 +56,7 @@ export const useFolderManagement = ({
       setName(existingFolder.name);
       setIcon(existingFolder.icon || 'folder');
       setIconColor(existingFolder.color || 'default');
+      setIconVariant(existingFolder.iconVariant || 'outline');
     }
   }, [existingFolder]);
 
@@ -111,6 +114,7 @@ export const useFolderManagement = ({
             ...item,
             name: name.trim(),
             icon,
+            iconVariant,
             color: iconColor,
             modifiedDate: now,
           };
@@ -153,6 +157,7 @@ export const useFolderManagement = ({
     folderId,
     name,
     icon,
+    iconVariant,
     iconColor,
     actionQueueService,
     queryClient,

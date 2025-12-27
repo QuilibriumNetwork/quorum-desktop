@@ -36,7 +36,6 @@ export const iconComponentMap: Record<IconName, string> = {
   'chevron-down': 'IconChevronDown',
   bars: 'IconMenu2',
   'compress-alt': 'IconArrowsMinimize',
-  'door-open': 'IconDoorExit',
   sliders: 'IconAdjustments',
 
   // Actions & Communication
@@ -97,7 +96,7 @@ export const iconComponentMap: Record<IconName, string> = {
   lock: 'IconLock',
   unlock: 'IconLockOpen',
   login: 'IconLogin',
-  logout: 'IconLogout',
+  logout: 'IconLogout2',
   palette: 'IconPalette',
   bell: 'IconBell',
 

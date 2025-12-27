@@ -66,6 +66,7 @@ const FolderButton: React.FC<FolderButtonProps> = ({
           name={folder.icon || 'folder'}
           color="#ffffff"
           size={size === 'small' ? 'lg' : 'xl'}
+          variant={folder.iconVariant || 'outline'}
         />
         {showIndicators && mentionCount > 0 && (
           <span className="folder-button-mention-bubble">

@@ -1,0 +1,83 @@
+@use '@/styles/context-menu' as contextMenu;
+@use '@/styles/variables' as *;
+
+.context-menu {
+  @include contextMenu.base;
+  padding-top: 0; // Header handles top padding when present
+}
+
+.context-menu-header {
+  display: flex;
+  align-items: center;
+  gap: $s-2;
+  padding: $s-2 $s-3;
+  border-bottom: $border solid var(--color-border-subtle);
+  margin-bottom: $s-2;
+  max-width: 100%;
+  overflow: hidden;
+
+  // Ensure all avatars are perfectly round and consistently sized
+  // Override UserInitials.scss which sets rounded-lg for space-icon
+  .space-icon,
+  .space-icon-selected,
+  .user-initials.space-icon,
+  .user-initials.space-icon-selected {
+    width: 24px !important;
+    height: 24px !important;
+    min-width: 24px;
+    min-height: 24px;
+    border-radius: $rounded-full !important;
+    background-size: cover;
+    background-position: center;
+    font-size: $text-xs !important; // 12px initials for 24px avatar
+  }
+
+  // User avatars and initials should also be perfectly round
+  .user-avatar,
+  .user-initials {
+    border-radius: $rounded-full !important;
+    width: 24px !important;
+    height: 24px !important;
+    min-width: 24px;
+    min-height: 24px;
+    font-size: $text-xs !important; // 12px initials for 24px avatar
+  }
+
+  // Folder icon circle - white icon inside colored circle
+  .context-menu-folder-icon {
+    width: 24px;
+    height: 24px;
+    min-width: 24px;
+    min-height: 24px;
+    border-radius: $rounded-full;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+  }
+
+  // Header text styling - use nested selector for higher specificity
+  // Header is larger (16px base) than menu items (14px sm) to create visual hierarchy
+  .context-menu-header-text {
+    max-width: calc(100% - 32px); // Account for icon + gap
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: $text-base;
+    line-height: $text-base-lh;
+    font-weight: $font-medium;
+  }
+}
+
+.context-menu-item {
+  @include contextMenu.item;
+
+  &--danger {
+    @include contextMenu.item-danger;
+  }
+}
+
+// When no header, add top padding back
+.context-menu:not(:has(.context-menu-header)) {
+  padding-top: $s-2;
+}

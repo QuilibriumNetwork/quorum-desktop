@@ -22,7 +22,7 @@ interface ModalContextType {
   state: ModalState;
   openUserSettings: () => void;
   closeUserSettings: () => void;
-  openSpaceEditor: (spaceId: string) => void;
+  openSpaceEditor: (spaceId: string, initialTab?: 'account' | 'general' | 'invites' | 'roles') => void;
   closeSpaceEditor: () => void;
   openChannelEditor: (
     spaceId: string,
@@ -125,6 +125,7 @@ export const ModalProvider: React.FC<ModalProviderProps> = ({
           <SpaceSettingsModal
             spaceId={modalState.state.spaceEditor.spaceId}
             dismiss={modalState.closeSpaceEditor}
+            initialTab={modalState.state.spaceEditor.initialTab}
           />
         )}
 

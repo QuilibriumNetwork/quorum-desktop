@@ -38,6 +38,7 @@ export type NavItem =
       name: string;                 // User-defined name (default: "Spaces")
       spaceIds: string[];           // Spaces in this folder (ordered)
       icon?: IconName;              // Custom icon (always rendered white, default: 'folder')
+      iconVariant?: 'outline' | 'filled'; // Icon style variant (default: 'outline')
       color?: FolderColor;          // Folder background color (default: 'default' = gray)
       createdDate: number;
       modifiedDate: number;

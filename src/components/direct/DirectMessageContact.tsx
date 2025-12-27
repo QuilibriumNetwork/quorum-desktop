@@ -6,7 +6,7 @@ import { UserAvatar } from '../user/UserAvatar';
 import { Icon } from '../primitives';
 import { formatConversationTime } from '../../utils/dateFormatting';
 import { useLongPressWithDefaults } from '../../hooks/useLongPress';
-import { hapticLight } from '../../utils/haptic';
+import { hapticLight, hapticMedium } from '../../utils/haptic';
 import { TOUCH_INTERACTION_TYPES } from '../../constants/touchInteraction';
 import { isTouchDevice } from '../../utils/platform';
 
@@ -18,6 +18,8 @@ const DirectMessageContact: React.FunctionComponent<{
   lastMessagePreview?: string;
   previewIcon?: string;
   timestamp?: number;
+  onContextMenu?: (e: React.MouseEvent) => void;
+  onOpenSettings?: () => void;
 }> = (props) => {
   const navigate = useNavigate();
   const { address } = useParams<{ address: string }>();
@@ -37,7 +39,12 @@ const DirectMessageContact: React.FunctionComponent<{
   // Long press handlers for touch devices with scroll threshold detection
   const longPressHandlers = useLongPressWithDefaults({
     delay: TOUCH_INTERACTION_TYPES.STANDARD.delay,
-    onLongPress: undefined, // No long press action for DM contacts
+    onLongPress: props.onOpenSettings
+      ? () => {
+          hapticMedium();
+          props.onOpenSettings?.();
+        }
+      : undefined,
     onTap: () => {
       hapticLight();
       handleContactClick();
@@ -45,6 +52,14 @@ const DirectMessageContact: React.FunctionComponent<{
     shouldPreventDefault: true,
     threshold: TOUCH_INTERACTION_TYPES.STANDARD.threshold,
   });
+
+  // Context menu handler (desktop only)
+  const handleContextMenu = (e: React.MouseEvent) => {
+    if (!isTouch && props.onContextMenu) {
+      e.preventDefault();
+      props.onContextMenu(e);
+    }
+  };
 
   // Mouse handlers for desktop - only track pressed state
   const [isPressed, setIsPressed] = React.useState(false);
@@ -161,6 +176,7 @@ const DirectMessageContact: React.FunctionComponent<{
           : ' hover:bg-sidebar-hover')
       }
       onClick={handleContactClick}
+      onContextMenu={handleContextMenu}
       onKeyDown={(e) => {
         if (e.key === 'Enter' || e.key === ' ') {
           e.preventDefault();

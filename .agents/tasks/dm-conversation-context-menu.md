@@ -112,7 +112,7 @@ Three sidebar item types (DM contacts, spaces, folders) need context menus with 
     }
 
     interface ContextMenuProps {
-      header: HeaderConfig;
+      header?: HeaderConfig;  // OPTIONAL - when omitted, menu shows items only (no header)
       items: MenuItem[];
       position: { x: number; y: number };
       onClose: () => void;
@@ -120,10 +120,11 @@ Three sidebar item types (DM contacts, spaces, folders) need context menus with 
     }
     ```
 
-    Header rendering by type:
+    Header rendering (when provided):
     - `type: 'user'` → `<UserAvatar>` (handles initials fallback) + truncated name
     - `type: 'space'` → `<SpaceIcon>` (handles initials fallback) + truncated name
     - `type: 'folder'` → `<Icon>` with color + truncated name
+    - When `header` is omitted → no header section, just menu items
 
 - [ ] **Create SCSS file** (`src/components/ui/ContextMenu.scss`)
     - Done when: Styles match FolderContextMenu using shared `_context-menu.scss` mixins

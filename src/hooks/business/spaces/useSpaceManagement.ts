@@ -10,6 +10,7 @@ import { useSpace, buildSpaceKey } from '../../queries';
 export interface UseSpaceManagementOptions {
   spaceId: string;
   onClose?: () => void;
+  initialCategory?: string;
 }
 
 export interface UseSpaceManagementReturn {
@@ -40,13 +41,13 @@ export interface UseSpaceManagementReturn {
 export const useSpaceManagement = (
   options: UseSpaceManagementOptions
 ): UseSpaceManagementReturn => {
-  const { spaceId, onClose } = options;
+  const { spaceId, onClose, initialCategory } = options;
 
   const [spaceName, setSpaceName] = useState('');
   const [isPublic, setIsPublic] = useState(true);
   const [isRepudiable, setIsRepudiable] = useState(false);
   const [saveEditHistory, setSaveEditHistory] = useState(false);
-  const [selectedCategory, setSelectedCategory] = useState('general');
+  const [selectedCategory, setSelectedCategory] = useState(initialCategory || 'general');
   const [deleteError, setDeleteError] = useState<string | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
 

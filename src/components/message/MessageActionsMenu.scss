@@ -3,25 +3,26 @@
 
 .message-actions-menu {
   @include contextMenu.base;
+  padding-top: 0; // Reactions row handles top padding
 }
 
-// Quick reactions row
+// Quick reactions row - compact header similar to ContextMenu header
 .message-actions-menu__reactions {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: $s-1;
-  padding: $s-1 $s-3;
+  gap: $s-0-5;
+  padding: $s-1-5 $s-2;
 }
 
 .message-actions-menu__reaction {
-  width: $s-9;
-  height: $s-9;
+  width: $s-8;
+  height: $s-8;
   border-radius: $rounded-full;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: $text-lg;
+  font-size: $text-base;
   transition: transform $duration-200 ease-in-out;
   background-color: transparent;
 
@@ -47,9 +48,10 @@
   }
 }
 
-// Divider
+// Divider - tighter spacing than default to match ContextMenu header border
 .message-actions-menu__divider {
   @include contextMenu.divider;
+  margin: 0 0 $s-2 0; // 4px vertical to match header border spacing
 }
 
 // Actions list
