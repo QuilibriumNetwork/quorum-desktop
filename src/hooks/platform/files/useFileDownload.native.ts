@@ -1,9 +1,11 @@
 import { useCallback } from 'react';
 import * as FileSystem from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
-import { Alert } from 'react-native';
-import * as Clipboard from 'expo-clipboard';
-import * as Device from 'expo-device';
+import {
+  Alert,
+  // @ts-ignore - TypeScript config doesn't recognize React Native modules in this environment
+  Platform,
+} from 'react-native';
 import { t } from '@lingui/core/macro';
 import type { KeyBackupAdapter } from '../../business/files/useKeyBackupLogic';
 
@@ -17,109 +19,17 @@ import type { KeyBackupAdapter } from '../../business/files/useKeyBackupLogic';
  * - Same location where "upload" functionality can find the file
  * - NO SHARING - uses save dialog, not share dialog
  *
+ * Supported platforms:
+ * - Android 8.0+ (API 26+): Storage Access Framework
+ * - iOS: Native sharing with "Save to Files"
+ *
  * This adapter implements the KeyBackupAdapter interface for mobile platforms.
  */
 export const useFileDownloadAdapter = (): KeyBackupAdapter => {
-  // Check if device should use clipboard fallback (Android < 8.0)
-  const shouldUseClipboardFallback = useCallback((): boolean => {
-    try {
-      // Only Android devices need clipboard fallback
-      // Device.osName can be "Android" or full build string on some devices
-      const isAndroid =
-        Device.osName?.toLowerCase().includes('android') ||
-        Device.osName?.includes('/') || // Build string format
-        (Device.platformApiLevel && Device.platformApiLevel > 0); // Android has API level
-
-      if (!isAndroid) {
-        return false;
-      }
-
-      // For Android, check system version
-      const systemVersion = Device.osVersion;
-      if (systemVersion) {
-        // Parse major version (e.g., "7.1.2" -> 7, "8.0.0" -> 8)
-        const majorVersion = parseInt(systemVersion.split('.')[0], 10);
-
-        // Use clipboard fallback for Android < 8.0
-        return majorVersion < 8;
-      }
-
-      // Fallback: try platformApiLevel if osVersion is not available
-      if (Device.platformApiLevel) {
-        return Device.platformApiLevel < 26; // API 26 = Android 8.0
-      }
-
-      // If we can't determine the version, assume clipboard fallback is needed for safety
-      return true;
-    } catch (error) {
-      return true;
-    }
-  }, []);
-
-  // React Native-specific: Platform-aware file save (2024 best practice)
+  // React Native-specific: Platform-aware file save
   const downloadKeyFile = useCallback(
     async (keyData: string, filename: string): Promise<void> => {
       try {
-        // Check if we should use clipboard fallback (Android < 8.0 only)
-        if (shouldUseClipboardFallback()) {
-          // Extract the actual private key from JSON if needed
-          let privateKeyToShow = keyData;
-          try {
-            const parsed = JSON.parse(keyData);
-            if (parsed.privateKey) {
-              privateKeyToShow = parsed.privateKey;
-            }
-          } catch (e) {
-            // If it's not JSON, use as-is
-          }
-
-          // Show native Alert with copy functionality
-          Alert.alert(
-            t`Manual Backup Required`,
-            t`Your device doesn't support automatic file downloads. Your private key will be copied to clipboard so you can save it manually.`,
-            [
-              {
-                text: t`Cancel`,
-                style: 'cancel',
-                onPress: () => {
-                  // Don't resolve - this will keep the user on the current step
-                },
-              },
-              {
-                text: t`Copy Key & Continue`,
-                onPress: async () => {
-                  try {
-                    await Clipboard.setStringAsync(privateKeyToShow);
-
-                    // Show success message
-                    Alert.alert(
-                      t`Key Copied!`,
-                      t`Your private key has been copied to clipboard. Save it as "AccountID.key" (you can find your Account ID in Settings later). NEVER share this key!`,
-                      [
-                        {
-                          text: t`I've Saved It`,
-                          onPress: () => {
-                            // Continue with onboarding - this will be handled by the business logic
-                          },
-                        },
-                      ]
-                    );
-                  } catch (error) {
-                    Alert.alert(
-                      t`Copy Failed`,
-                      t`Failed to copy to clipboard. Please try again.`,
-                      [{ text: t`OK` }]
-                    );
-                  }
-                },
-              },
-            ]
-          );
-
-          // Return immediately - the Alert handles the user interaction
-          return;
-        }
-
         // Extract raw private key from JSON if needed
         let privateKeyToSave = keyData;
         try {
@@ -135,13 +45,7 @@ export const useFileDownloadAdapter = (): KeyBackupAdapter => {
         const tempFileUri = FileSystem.cacheDirectory + filename;
         await FileSystem.writeAsStringAsync(tempFileUri, privateKeyToSave);
 
-        // Check if Android device (handles both "Android" and build strings)
-        const isAndroid =
-          Device.osName?.toLowerCase().includes('android') ||
-          Device.osName?.includes('/') || // Build string format
-          (Device.platformApiLevel && Device.platformApiLevel > 0); // Android has API level
-
-        if (isAndroid) {
+        if (Platform.OS === 'android') {
           // Android: Use Storage Access Framework (best practice 2024)
           const { StorageAccessFramework } = FileSystem;
 
@@ -216,7 +120,7 @@ export const useFileDownloadAdapter = (): KeyBackupAdapter => {
         throw new Error(`Failed to save key file: ${error.message}`);
       }
     },
-    [shouldUseClipboardFallback]
+    []
   );
 
   // React Native-specific: Show error using native Alert
