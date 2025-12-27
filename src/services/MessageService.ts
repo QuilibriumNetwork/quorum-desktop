@@ -224,11 +224,16 @@ export class MessageService {
     const result = JSON.parse(msg) as secureChannel.TripleRatchetStateAndEnvelope;
 
     const saveState = async () => {
+      // Preserve template/evals fields needed for private invite generation
+      // Only update the ratchet state, keeping other fields intact
       await this.messageDB.saveEncryptionState(
         {
-          state: JSON.stringify({ state: result.ratchet_state }),
+          state: JSON.stringify({
+            ...sets[0],
+            state: result.ratchet_state,
+          }),
           timestamp: Date.now(),
-          inboxId: spaceId,
+          inboxId: response[0]?.inboxId || spaceId,
           conversationId: spaceId + '/' + spaceId,
           sentAccept: false,
         },
