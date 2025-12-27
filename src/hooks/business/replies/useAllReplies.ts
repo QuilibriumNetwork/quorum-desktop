@@ -54,6 +54,11 @@ export function useAllReplies({
         const config = await messageDB.getUserConfig({ address: userAddress });
         const settings = config?.notificationSettings?.[spaceId];
 
+        // Check if entire space is muted (takes precedence over individual settings)
+        if (settings?.isMuted) {
+          return []; // Space is muted - no notifications
+        }
+
         // Check if reply notifications are enabled
         // If enabled parameter provided from UI, use it; otherwise check persistent settings
         const shouldFetchReplies = enabled !== undefined

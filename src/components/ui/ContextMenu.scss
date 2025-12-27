@@ -77,6 +77,12 @@
   }
 }
 
+.context-menu-separator {
+  height: 1px;
+  background-color: var(--color-border-subtle);
+  margin: $s-1 $s-3;
+}
+
 // When no header, add top padding back
 .context-menu:not(:has(.context-menu-header)) {
   padding-top: $s-2;

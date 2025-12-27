@@ -408,6 +408,7 @@ const SpaceSettingsModal: React.FunctionComponent<{
                       return (
                         <Account
                           spaceId={spaceId}
+                          spaceName={spaceName}
                           displayName={spaceProfile.displayName}
                           setDisplayName={spaceProfile.setDisplayName}
                           currentPasskeyInfo={user?.currentPasskeyInfo || null}

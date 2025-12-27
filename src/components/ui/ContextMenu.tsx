@@ -11,6 +11,7 @@ import './ContextMenu.scss';
 const DEFAULT_MENU_WIDTH = 240;
 const ITEM_HEIGHT = 36; // Approximate height per item
 const HEADER_HEIGHT = 44; // Approximate height for header
+const SEPARATOR_HEIGHT = 9; // Height for separator (1px line + 8px margin)
 const PADDING = 8;
 const OFFSET_RIGHT = 12;
 
@@ -52,6 +53,8 @@ export interface MenuItem {
   danger?: boolean;
   confirmLabel?: string;
   hidden?: boolean;
+  /** When true, renders a separator line above this item */
+  separator?: boolean;
 }
 
 // Context menu props
@@ -101,9 +104,10 @@ const ContextMenu: React.FC<ContextMenuProps> = ({
   // Calculate menu height based on items
   const menuHeight = useMemo(() => {
     const itemsHeight = visibleItems.length * ITEM_HEIGHT;
+    const separatorsHeight = visibleItems.filter((item) => item.separator).length * SEPARATOR_HEIGHT;
     const headerHeight = header ? HEADER_HEIGHT : 0;
-    return itemsHeight + headerHeight + PADDING * 2;
-  }, [visibleItems.length, header]);
+    return itemsHeight + separatorsHeight + headerHeight + PADDING * 2;
+  }, [visibleItems, header]);
 
   const [adjustedPosition, setAdjustedPosition] = useState(() =>
     calculatePosition(position.x, position.y, width, menuHeight)
@@ -255,18 +259,20 @@ const ContextMenu: React.FC<ContextMenuProps> = ({
         {renderHeader()}
 
         {visibleItems.map((item) => (
-          <button
-            key={item.id}
-            className={`context-menu-item ${
-              item.danger ? 'context-menu-item--danger' : ''
-            }`}
-            onClick={() => handleItemClick(item)}
-          >
-            <Icon name={item.icon} size="sm" />
-            {confirmingItem === item.id && item.confirmLabel
-              ? item.confirmLabel
-              : item.label}
-          </button>
+          <React.Fragment key={item.id}>
+            {item.separator && <div className="context-menu-separator" />}
+            <button
+              className={`context-menu-item ${
+                item.danger ? 'context-menu-item--danger' : ''
+              }`}
+              onClick={() => handleItemClick(item)}
+            >
+              <Icon name={item.icon} size="sm" />
+              {confirmingItem === item.id && item.confirmLabel
+                ? item.confirmLabel
+                : item.label}
+            </button>
+          </React.Fragment>
         ))}
       </div>
     </Portal>

@@ -55,6 +55,11 @@ export function useReplyNotificationCounts({
         const config = await messageDB.getUserConfig({ address: userAddress });
         const settings = config?.notificationSettings?.[spaceId];
 
+        // Check if entire space is muted (takes precedence over individual settings)
+        if (settings?.isMuted) {
+          return {}; // Space is muted - no notifications
+        }
+
         // Check if reply notifications are enabled
         if (!isNotificationTypeEnabled(settings, 'reply')) {
           return {}; // User has disabled reply notifications

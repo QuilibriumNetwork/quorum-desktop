@@ -24,6 +24,7 @@ import type { NotificationTypeId } from '../../../types/notifications';
 
 interface AccountProps {
   spaceId: string;
+  spaceName: string;
   displayName: string;
   setDisplayName: (value: string) => void;
   currentPasskeyInfo: {
@@ -53,6 +54,7 @@ interface AccountProps {
 
 const Account: React.FunctionComponent<AccountProps> = ({
   spaceId,
+  spaceName,
   displayName,
   setDisplayName,
   currentPasskeyInfo,
@@ -91,7 +93,7 @@ const Account: React.FunctionComponent<AccountProps> = ({
   );
 
   // Channel mute settings
-  const { showMutedChannels, toggleShowMutedChannels } = useChannelMute({
+  const { showMutedChannels, toggleShowMutedChannels, isSpaceMuted, toggleSpaceMute } = useChannelMute({
     spaceId,
   });
 
@@ -108,7 +110,7 @@ const Account: React.FunctionComponent<AccountProps> = ({
             <Trans>Account Settings</Trans>
           </div>
           <div className="pt-2 text-body">
-            <Trans>Manage your settings for this Space.</Trans>
+            <Trans>Manage your settings for <strong>{spaceName}</strong>.</Trans>
           </div>
         </div>
       </div>
@@ -248,16 +250,17 @@ const Account: React.FunctionComponent<AccountProps> = ({
               disabled={isMentionSettingsLoading}
             />
           </div>
-          <Spacer size="lg" direction="vertical" />
-        </>
-
-        {/* Other Settings */}
-        <Spacer size="md" direction="vertical" borderTop={true} />
-        <div className="text-subtitle-2">
-          <Trans>Other Settings</Trans>
-        </div>
-        <div className="pt-4">
-          <FlexRow className="items-center justify-between">
+          <FlexRow className="items-center justify-between pt-4">
+            <div className="text-label-strong">
+              <Trans>Mute this Space</Trans>
+            </div>
+            <Switch
+              value={isSpaceMuted}
+              onChange={toggleSpaceMute}
+              accessibilityLabel={t`Mute all notifications from this space`}
+            />
+          </FlexRow>
+          <FlexRow className="items-center justify-between pt-4">
             <div className="text-label-strong">
               <Trans>Hide muted channels</Trans>
             </div>
@@ -267,8 +270,8 @@ const Account: React.FunctionComponent<AccountProps> = ({
               accessibilityLabel={t`Hide muted channels in list`}
             />
           </FlexRow>
-        </div>
-        <Spacer size="lg" direction="vertical" borderBottom={true} />
+          <Spacer size="lg" direction="vertical" borderBottom={true} />
+        </>
 
         {!isSpaceOwner && (
           <>

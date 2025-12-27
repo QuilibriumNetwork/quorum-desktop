@@ -82,10 +82,10 @@ const NavMenuContent: React.FC<NavMenuProps> = (props) => {
   });
 
   const { messageDB } = useMessageDB();
-  const { handleLeaveClick: leaveSpace } = useSpaceLeaving();
+  const { leaveSpace } = useSpaceLeaving();
 
   // Channel mute settings for the currently selected space in context menu
-  const { showMutedChannels, toggleShowMutedChannels } = useChannelMute({
+  const { showMutedChannels, toggleShowMutedChannels, isSpaceMuted, toggleSpaceMute } = useChannelMute({
     spaceId: spaceContextMenu.spaceId || '',
   });
 
@@ -194,6 +194,12 @@ const NavMenuContent: React.FC<NavMenuProps> = (props) => {
         label: showMutedChannels ? t`Hide Muted Channels` : t`Show Muted Channels`,
         onClick: () => toggleShowMutedChannels(),
       },
+      {
+        id: 'toggle-space-mute',
+        icon: isSpaceMuted ? 'bell' : 'bell-off',
+        label: isSpaceMuted ? t`Unmute Space` : t`Mute Space`,
+        onClick: () => toggleSpaceMute(),
+      },
     ];
 
     if (spaceContextMenu.isOwner) {
@@ -203,6 +209,7 @@ const NavMenuContent: React.FC<NavMenuProps> = (props) => {
           icon: 'settings',
           label: t`Space Settings`,
           onClick: () => openSpaceEditor(spaceContextMenu.spaceId!, 'general'),
+          separator: true, // Separate owner options from user options
         },
         {
           id: 'invites',
@@ -224,6 +231,7 @@ const NavMenuContent: React.FC<NavMenuProps> = (props) => {
         label: t`Leave Space`,
         danger: true,
         confirmLabel: t`Confirm Leave`,
+        separator: true, // Separate leave from user options
         onClick: () => {
           if (spaceContextMenu.spaceId) {
             leaveSpace(spaceContextMenu.spaceId);
@@ -233,7 +241,7 @@ const NavMenuContent: React.FC<NavMenuProps> = (props) => {
     }
 
     return items;
-  }, [spaceContextMenu.spaceId, spaceContextMenu.isOwner, openSpaceEditor, leaveSpace, showMutedChannels, toggleShowMutedChannels]);
+  }, [spaceContextMenu.spaceId, spaceContextMenu.isOwner, openSpaceEditor, leaveSpace, showMutedChannels, toggleShowMutedChannels, isSpaceMuted, toggleSpaceMute]);
 
   // Check if config has items (new format) or just spaceIds (legacy)
   const hasItems = config?.items && config.items.length > 0;

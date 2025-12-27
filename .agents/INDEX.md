@@ -20,7 +20,7 @@ This is the main index for all documentation, bug reports, and task management.
 ### Features
 - [Action Queue](docs/features/action-queue.md)
 - [Avatar & Initials System](docs/features/avatar-initials-system.md)
-- [Cross-Platform Key Backup Implementation](docs/features/cross-platform-key-backup.md)
+- [Channel and Space Mute System](docs/features/channel-space-mute-system.md)
 - [Cross-Platform Theming System](docs/features/cross-platform-theming.md)
 - [Delete Confirmation System](docs/features/delete-confirmation-system.md)
 - [Desktop Notifications Feature](docs/features/desktop-notifications.md)
@@ -133,7 +133,6 @@ This is the main index for all documentation, bug reports, and task management.
 ### Pending Tasks
 
 - [Add Unified Context Menu System for Sidebar Items](tasks/dm-conversation-context-menu.md)
-- [Channel Mute System](tasks/channel-mute-system.md)
 - [Combined Text + Image Messages](tasks/combined-text-image-messages.md)
 - [Conversation Deletion State Synchronization](tasks/conversation-deletion-state-sync.md)
 - [Custom ContentEditable Mention Pills for Message Composer](tasks/mention-pills-in-message-textarea.md)
@@ -157,6 +156,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Background Action Queue with Web Worker Crypto](tasks/.archived/background-action-queue-with-worker-crypto.md)
 - [Cache Space Key Metadata to Reduce Config Save Overhead](tasks/.archived/config-save-space-key-caching.md)
 - [ClickToCopyContent Component Analysis](tasks/.archived/click-to-copy-content-analysis.md)
+- [Cross-Platform Key Backup Implementation](tasks/.archived/cross-platform-key-backup.md)
 - [Font Size Management Analysis & Recommendations](tasks/.archived/font-size-management-analysis-2025.md)
 - [Modal System Consolidation via Route Wrapper Component](tasks/.archived/modal-system-consolidation.md)
 - [Optimize Mention Interactivity Disable Feature](tasks/.archived/optimize-mention-interactivity-disable-feature.md)
@@ -235,6 +235,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Callout Primitive System](tasks/.done/callout-primitive-system.md)
 - [Channel & Group Icon Selection Feature](tasks/.done/channel-group-icon-selection.md)
 - [Channel Business Logic Extraction - Lessons Learned](tasks/.done/channel-business-logic-extraction-lessons.md)
+- [Channel Mute System](tasks/.done/channel-mute-system.md)
 - [Client-Side Image Processing for Large File Uploads](tasks/.done/client-side-image-processing.md)
 - [Color Switcher Implementation](tasks/.done/color-switcher.md)
 - [Complex Modal Primitive Migration Template](tasks/.done/usersettingsmodal-primitive-migration.md)
@@ -366,4 +367,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2025-12-26 10:59:38
+**Last Updated**: 2025-12-27 17:14:29

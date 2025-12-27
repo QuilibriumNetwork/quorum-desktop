@@ -68,6 +68,7 @@ export const useSpaceLeaving = () => {
   return {
     confirmationStep,
     handleLeaveClick,
+    leaveSpace, // Direct leave without confirmation (use when caller provides its own confirmation UI)
     resetConfirmation,
     error,
   };

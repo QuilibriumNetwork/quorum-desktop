@@ -55,6 +55,11 @@ export function useAllMentions({
         const config = await messageDB.getUserConfig({ address: userAddress });
         const settings = config?.notificationSettings?.[spaceId];
 
+        // Check if entire space is muted (takes precedence over individual settings)
+        if (settings?.isMuted) {
+          return []; // Space is muted - no notifications
+        }
+
         // Determine which mention types to check (unified format)
         // If enabledTypes provided, use it; otherwise get from settings
         let typesToCheck: string[];

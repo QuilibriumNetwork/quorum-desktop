@@ -5,6 +5,9 @@
  * Settings are stored in IndexedDB user_config.mutedChannels[spaceId] and sync across devices.
  * Uses Action Queue for offline support and crash recovery (consistent with folder operations).
  *
+ * Also provides space-level muting via notificationSettings[spaceId].isMuted.
+ * Space mute is a user intent that mutes all channels (including future ones).
+ *
  */
 
 import { useCallback } from 'react';
@@ -12,6 +15,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { useMessageDB } from '../../../components/context/useMessageDB';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
 import { isChannelMuted, getMutedChannelsForSpace } from '../../../utils/channelUtils';
+import { getDefaultNotificationSettings } from '../../../utils/notificationSettingsUtils';
 import { useConfig, buildConfigKey } from '../../queries/config';
 
 interface UseChannelMuteProps {
@@ -33,6 +37,14 @@ interface UseChannelMuteReturn {
   toggleMute: (channelId: string) => Promise<void>;
   /** Toggle the showMutedChannels preference */
   toggleShowMutedChannels: () => Promise<void>;
+  /** Check if the entire space is muted */
+  isSpaceMuted: boolean;
+  /** Mute the entire space (all channels, including future ones) */
+  muteSpace: () => Promise<void>;
+  /** Unmute the space (restores individual channel preferences) */
+  unmuteSpace: () => Promise<void>;
+  /** Toggle space mute status */
+  toggleSpaceMute: () => Promise<void>;
 }
 
 /**
@@ -251,6 +263,112 @@ export function useChannelMute({
     }
   }, [userAddress, keyset, messageDB, queryClient, actionQueueService]);
 
+  // Check if the entire space is muted (from notificationSettings)
+  const isSpaceMuted = config?.notificationSettings?.[spaceId]?.isMuted ?? false;
+
+  // Mute the entire space
+  const muteSpace = useCallback(async (): Promise<void> => {
+    if (!userAddress || !keyset) return;
+
+    try {
+      // Get current config
+      const currentConfig = await messageDB.getUserConfig({ address: userAddress });
+
+      // Get current notification settings for this space
+      const currentSettings = currentConfig?.notificationSettings?.[spaceId] ||
+        getDefaultNotificationSettings(spaceId);
+
+      // Update notification settings with isMuted = true
+      const updatedConfig = {
+        ...currentConfig,
+        address: userAddress,
+        spaceIds: currentConfig?.spaceIds || [],
+        notificationSettings: {
+          ...(currentConfig?.notificationSettings || {}),
+          [spaceId]: {
+            ...currentSettings,
+            isMuted: true,
+          },
+        },
+      };
+
+      // Optimistically update React Query cache for instant UI feedback
+      queryClient.setQueryData(
+        buildConfigKey({ userAddress }),
+        updatedConfig
+      );
+
+      // Invalidate notification queries for immediate UI update
+      invalidateNotificationQueries();
+
+      // Queue config save in background (offline support, crash recovery)
+      await actionQueueService.enqueue(
+        'save-user-config',
+        { config: updatedConfig },
+        `config:${userAddress}` // Dedup key
+      );
+    } catch (error) {
+      console.error('[ChannelMute] Error muting space:', error);
+      throw error;
+    }
+  }, [spaceId, userAddress, keyset, messageDB, queryClient, actionQueueService, invalidateNotificationQueries]);
+
+  // Unmute the entire space
+  const unmuteSpace = useCallback(async (): Promise<void> => {
+    if (!userAddress || !keyset) return;
+
+    try {
+      // Get current config
+      const currentConfig = await messageDB.getUserConfig({ address: userAddress });
+
+      // Get current notification settings for this space
+      const currentSettings = currentConfig?.notificationSettings?.[spaceId] ||
+        getDefaultNotificationSettings(spaceId);
+
+      // Update notification settings with isMuted = false
+      const updatedConfig = {
+        ...currentConfig,
+        address: userAddress,
+        spaceIds: currentConfig?.spaceIds || [],
+        notificationSettings: {
+          ...(currentConfig?.notificationSettings || {}),
+          [spaceId]: {
+            ...currentSettings,
+            isMuted: false,
+          },
+        },
+      };
+
+      // Optimistically update React Query cache for instant UI feedback
+      queryClient.setQueryData(
+        buildConfigKey({ userAddress }),
+        updatedConfig
+      );
+
+      // Invalidate notification queries for immediate UI update
+      invalidateNotificationQueries();
+
+      // Queue config save in background (offline support, crash recovery)
+      await actionQueueService.enqueue(
+        'save-user-config',
+        { config: updatedConfig },
+        `config:${userAddress}` // Dedup key
+      );
+    } catch (error) {
+      console.error('[ChannelMute] Error unmuting space:', error);
+      throw error;
+    }
+  }, [spaceId, userAddress, keyset, messageDB, queryClient, actionQueueService, invalidateNotificationQueries]);
+
+  // Toggle space mute status
+  const toggleSpaceMute = useCallback(async (): Promise<void> => {
+    if (isSpaceMuted) {
+      await unmuteSpace();
+    } else {
+      await muteSpace();
+    }
+  }, [isSpaceMuted, muteSpace, unmuteSpace]);
+
   return {
     isChannelMuted: checkIsChannelMuted,
     getMutedChannelIds,
@@ -259,5 +377,9 @@ export function useChannelMute({
     unmuteChannel,
     toggleMute,
     toggleShowMutedChannels,
+    isSpaceMuted,
+    muteSpace,
+    unmuteSpace,
+    toggleSpaceMute,
   };
 }

@@ -30,6 +30,9 @@ export interface NotificationSettings {
 
   /** Array of enabled notification types (e.g., ['mention-you', 'mention-everyone', 'reply']) */
   enabledNotificationTypes: NotificationTypeId[];
+
+  /** When true, suppresses ALL notifications for this space (mutes entire space) */
+  isMuted?: boolean;
 }
 
 /**

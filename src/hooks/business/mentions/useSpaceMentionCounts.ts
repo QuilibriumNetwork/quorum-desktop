@@ -65,6 +65,12 @@ export function useSpaceMentionCounts({
 
           // Get notification settings for this space
           const settings = config?.notificationSettings?.[space.spaceId];
+
+          // Check if entire space is muted (takes precedence over individual settings)
+          if (settings?.isMuted) {
+            continue; // Space is muted - no notifications
+          }
+
           const enabledTypes = settings?.enabledNotificationTypes ||
             getDefaultNotificationSettings(space.spaceId).enabledNotificationTypes;
 

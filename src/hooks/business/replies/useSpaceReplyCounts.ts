@@ -58,6 +58,12 @@ export function useSpaceReplyCounts({
         for (const space of spaces) {
           // Check if reply notifications are enabled for this space
           const settings = config?.notificationSettings?.[space.spaceId];
+
+          // Check if entire space is muted (takes precedence over individual settings)
+          if (settings?.isMuted) {
+            continue; // Space is muted - no notifications
+          }
+
           if (!isNotificationTypeEnabled(settings, 'reply')) {
             continue; // Skip this space if reply notifications are disabled
           }
