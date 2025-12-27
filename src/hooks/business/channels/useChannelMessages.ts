@@ -117,7 +117,7 @@ export function useChannelMessages({
   );
 
   const canPinMessages = useCallback(
-    (message: MessageType) => {
+    (_message: MessageType) => {
       const userAddress = user.currentPasskeyInfo?.address;
       if (!userAddress) return false;
 
@@ -136,11 +136,11 @@ export function useChannelMessages({
         }
       }
 
-      // Use centralized permission utility (handles space owners + role permissions)
-      // Note: Unlike delete, pin permissions work correctly for space owners
-      return hasPermission(userAddress, 'message:pin', space, isSpaceOwner);
+      // IMPORTANT: NO isSpaceOwner bypass - space owners must have explicit message:pin role
+      // This matches usePinnedMessages.ts and receiving-side validation in MessageService.ts
+      return hasPermission(userAddress, 'message:pin', space ?? undefined, false);
     },
-    [roles, user.currentPasskeyInfo, isSpaceOwner, channel, space]
+    [roles, user.currentPasskeyInfo, channel, space]
   );
 
   const mapSenderToUser = useCallback(
