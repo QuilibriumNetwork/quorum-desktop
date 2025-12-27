@@ -258,7 +258,11 @@ const General: React.FunctionComponent<GeneralProps> = ({
           <Trans>Privacy Settings</Trans>
         </div>
         <div className="modal-content-info">
-          <div className="flex flex-row justify-between mb-2">
+          <div className="flex flex-row items-center gap-3 mb-3">
+            <Switch
+              onChange={() => setIsRepudiable(!isRepudiable)}
+              value={!isRepudiable}
+            />
             <div className="flex flex-row items-center">
               <div className="text-label-strong">
                 <Trans>Require Message Signing</Trans>
@@ -276,13 +280,14 @@ const General: React.FunctionComponent<GeneralProps> = ({
                 />
               </Tooltip>
             </div>
-            <Switch
-              onChange={() => setIsRepudiable(!isRepudiable)}
-              value={!isRepudiable}
-            />
           </div>
           {showEditHistoryToggle && (
-            <div className="flex flex-row justify-between">
+            <>
+            <div className="flex flex-row items-center gap-3">
+              <Switch
+                onChange={() => setSaveEditHistory(!saveEditHistory)}
+                value={saveEditHistory}
+              />
               <div className="flex flex-row items-center">
                 <div className="text-label-strong">
                   <Trans>Save Edit History</Trans>
@@ -300,11 +305,8 @@ const General: React.FunctionComponent<GeneralProps> = ({
                   />
                 </Tooltip>
               </div>
-              <Switch
-                onChange={() => setSaveEditHistory(!saveEditHistory)}
-                value={saveEditHistory}
-              />
             </div>
+            </>
           )}
         </div>
         {/* Fixes section (hidden if none) */}

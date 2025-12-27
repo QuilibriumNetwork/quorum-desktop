@@ -130,30 +130,30 @@ const ChannelEditorModal: React.FunctionComponent<{
         </Container>
 
         {isEditMode && (
-          <Container className="mb-2 max-sm:mb-1">
-            <FlexRow className="items-center justify-between">
-              <div className="text-label-strong">
-                <Trans>Pin to top</Trans>
-              </div>
+          <Container className="mb-3">
+            <FlexRow className="items-center gap-3">
               <Switch
                 value={isPinned}
                 onChange={handlePinChange}
                 accessibilityLabel={t`Pin channel to top`}
               />
+              <div className="text-label-strong">
+                <Trans>Pin to top</Trans>
+              </div>
             </FlexRow>
           </Container>
         )}
 
-        <Container className="mb-2 max-sm:mb-1">
-          <FlexRow className="items-center justify-between">
-            <div className="text-label-strong">
-              <Trans>Read only</Trans>
-            </div>
+        <Container className="mb-3">
+          <FlexRow className="items-center gap-3">
             <Switch
               value={isReadOnly}
               onChange={handleReadOnlyChange}
               accessibilityLabel={t`Read only channel`}
             />
+            <div className="text-label-strong">
+              <Trans>Read only</Trans>
+            </div>
           </FlexRow>
         </Container>
 

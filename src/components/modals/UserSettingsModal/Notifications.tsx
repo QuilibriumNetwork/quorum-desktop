@@ -29,7 +29,11 @@ const Notifications: React.FunctionComponent<NotificationsProps> = ({
       </div>
       <div className="modal-content-section">
         <div className="modal-content-info">
-          <div className="flex flex-row justify-between pb-2">
+          <div className="flex flex-row items-center gap-3 pb-2">
+            <Switch
+              value={notificationsEnabled}
+              onChange={handleNotificationToggle}
+            />
             <div className="flex flex-row items-center">
               <div className="text-label-strong">
                 {t`Desktop Notifications`}
@@ -45,11 +49,6 @@ const Notifications: React.FunctionComponent<NotificationsProps> = ({
                 />
               </Tooltip>
             </div>
-
-            <Switch
-              value={notificationsEnabled}
-              onChange={handleNotificationToggle}
-            />
           </div>
 
           {!isNotificationSupported && (

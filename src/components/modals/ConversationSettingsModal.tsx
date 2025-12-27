@@ -11,7 +11,6 @@ import {
   Container,
   FlexColumn,
   FlexRow,
-  FlexBetween,
   FlexCenter,
   Button,
   Switch,
@@ -186,8 +185,12 @@ const ConversationSettingsModal: React.FC<ConversationSettingsModalProps> = ({
       size="small"
     >
       <Container>
-        <FlexColumn gap="sm">
-          <FlexBetween align="center">
+        <FlexColumn>
+          <FlexRow gap="sm" align="center" className="mb-3">
+            <Switch
+              value={nonRepudiable}
+              onChange={() => setNonRepudiable((prev) => !prev)}
+            />
             <FlexRow gap="sm" align="center">
               <div className="text-label-strong">
                 {t`Always sign messages`}
@@ -202,39 +205,29 @@ const ConversationSettingsModal: React.FC<ConversationSettingsModalProps> = ({
                 <Icon name="info-circle" size="sm" />
               </Tooltip>
             </FlexRow>
-            <Switch
-              value={nonRepudiable}
-              onChange={() => setNonRepudiable((prev) => !prev)}
-            />
-          </FlexBetween>
-
-          <Spacer size="sm" />
+          </FlexRow>
 
           {showEditHistoryToggle && (
-            <>
-              <FlexBetween align="center">
-                <FlexRow gap="sm" align="center">
-                  <div className="text-label-strong">
-                    {t`Save Edit History`}
-                  </div>
-                  <Tooltip
-                    id="conv-save-edit-history-tooltip"
-                    content={t`When enabled, all previous versions of edited messages will be saved. When disabled, only the current edited version is kept.`}
-                    maxWidth={260}
-                    className="!text-left !max-w-[260px]"
-                    place="top"
-                  >
-                    <Icon name="info-circle" size="sm" />
-                  </Tooltip>
-                </FlexRow>
-                <Switch
-                  value={saveEditHistory}
-                  onChange={() => setSaveEditHistory((prev) => !prev)}
-                />
-              </FlexBetween>
-
-              <Spacer size="sm" />
-            </>
+            <FlexRow gap="sm" align="center" className="mb-3">
+              <Switch
+                value={saveEditHistory}
+                onChange={() => setSaveEditHistory((prev) => !prev)}
+              />
+              <FlexRow gap="sm" align="center">
+                <div className="text-label-strong">
+                  {t`Save Edit History`}
+                </div>
+                <Tooltip
+                  id="conv-save-edit-history-tooltip"
+                  content={t`When enabled, all previous versions of edited messages will be saved. When disabled, only the current edited version is kept.`}
+                  maxWidth={260}
+                  className="!text-left !max-w-[260px]"
+                  place="top"
+                >
+                  <Icon name="info-circle" size="sm" />
+                </Tooltip>
+              </FlexRow>
+            </FlexRow>
           )}
 
           <FlexRow justify="end">

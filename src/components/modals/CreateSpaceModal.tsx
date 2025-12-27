@@ -195,7 +195,11 @@ const CreateSpaceModal: React.FunctionComponent<CreateSpaceModalProps> = (
               </Trans>
             </div>
 
-            <div className="flex flex-row justify-between pb-2">
+            <div className="flex flex-row items-center gap-3 mb-3">
+              <Switch
+                onChange={() => setRepudiable(!repudiable)}
+                value={!repudiable}
+              />
               <div className="flex flex-row items-center">
                 <div className="text-label-strong">
                   <Trans>Require Message Signing</Trans>
@@ -214,12 +218,9 @@ const CreateSpaceModal: React.FunctionComponent<CreateSpaceModalProps> = (
                   />
                 </Tooltip>
               </div>
-              <Switch
-                onChange={() => setRepudiable(!repudiable)}
-                value={!repudiable}
-              />
             </div>
-            <div className="flex flex-row justify-between pb-2">
+            <div className="flex flex-row items-center gap-3">
+              <Switch onChange={setPublic} value={pub} />
               <div className="flex flex-row items-center">
                 <div className="text-label-strong">
                   Directly joinable by link
@@ -238,7 +239,6 @@ const CreateSpaceModal: React.FunctionComponent<CreateSpaceModalProps> = (
                   />
                 </Tooltip>
               </div>
-              <Switch onChange={setPublic} value={pub} />
             </div>
           </div>
         )}

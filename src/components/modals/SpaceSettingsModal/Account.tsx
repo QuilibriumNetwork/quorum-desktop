@@ -250,25 +250,25 @@ const Account: React.FunctionComponent<AccountProps> = ({
               disabled={isMentionSettingsLoading}
             />
           </div>
-          <FlexRow className="items-center justify-between pt-4">
-            <div className="text-label-strong">
-              <Trans>Mute this Space</Trans>
-            </div>
+          <FlexRow className="items-center gap-3 mt-4 mb-3">
             <Switch
               value={isSpaceMuted}
               onChange={toggleSpaceMute}
               accessibilityLabel={t`Mute all notifications from this space`}
             />
-          </FlexRow>
-          <FlexRow className="items-center justify-between pt-4">
             <div className="text-label-strong">
-              <Trans>Hide muted channels</Trans>
+              <Trans>Mute this Space</Trans>
             </div>
+          </FlexRow>
+          <FlexRow className="items-center gap-3">
             <Switch
               value={!showMutedChannels}
               onChange={handleShowMutedToggle}
               accessibilityLabel={t`Hide muted channels in list`}
             />
+            <div className="text-label-strong">
+              <Trans>Hide muted channels</Trans>
+            </div>
           </FlexRow>
           <Spacer size="lg" direction="vertical" borderBottom={true} />
         </>

@@ -101,7 +101,8 @@ const Privacy: React.FunctionComponent<PrivacyProps> = ({
           {t`Adjust security-related settings, which may impact user  experience but increase the security of your Quorum account.`}
         </div>
         <div className="modal-content-info">
-          <div className="flex flex-row justify-between pb-2">
+          <div className="flex flex-row items-center gap-3 mb-3">
+            <Switch value={allowSync} onChange={setAllowSync} disabled={!isConfigLoaded} />
             <div className="flex flex-row items-center">
               <div className="text-label-strong">
                 {t`Enable sync`}
@@ -118,10 +119,9 @@ const Privacy: React.FunctionComponent<PrivacyProps> = ({
                 />
               </Tooltip>
             </div>
-
-            <Switch value={allowSync} onChange={setAllowSync} disabled={!isConfigLoaded} />
           </div>
-          <div className="flex flex-row justify-between">
+          <div className="flex flex-row items-center gap-3">
+            <Switch value={nonRepudiable} onChange={setNonRepudiable} />
             <div className="flex flex-row items-center">
               <div className="text-label-strong">
                 {t`Always sign Direct Messages`}
@@ -138,8 +138,6 @@ const Privacy: React.FunctionComponent<PrivacyProps> = ({
                 />
               </Tooltip>
             </div>
-
-            <Switch value={nonRepudiable} onChange={setNonRepudiable} />
           </div>
         </div>
 
