@@ -119,6 +119,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [SOLVED: Right Sidebar Overlay Issue - Navbar Still Visible](bugs/.solved/SOLVED_right-sidebar-overlay.md)
 - [Space Creation Config Save Race Condition](bugs/.solved/space-creation-config-save-race-condition.md)
 - [Tooltip Flickering at Top-Left on Fast Mouse Movement](bugs/.solved/SOLVED_tooltip-flickering-top-left-on-fast-mouse-movement.md)
+- [Triple Ratchet State Save Destroys Template/Evals Fields](bugs/.solved/triple-ratchet-state-save-destroys-invite-fields.md)
 - [user:kick Role Permission is Non-Functional for Non-Owners](bugs/.solved/user-kick-role-permission-non-functional.md)
 - [WebSocket processQueue Stuck - Blocking Outbound Messages](bugs/.solved/websocket-processqueue-stuck-blocking-outbound.md)
 
@@ -367,4 +368,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2025-12-27 17:14:29
+**Last Updated**: 2025-12-27 17:39:03

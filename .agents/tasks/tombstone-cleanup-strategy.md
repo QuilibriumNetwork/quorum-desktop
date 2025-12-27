@@ -9,11 +9,51 @@
 
 ## What & Why
 
-The tombstone tracking system (DB_VERSION 7) prevents deleted messages from reappearing during peer sync. However, without cleanup, the `deleted_messages` table will grow unbounded over time. Each tombstone is ~100 bytes (messageId + spaceId + channelId + timestamp), so 10,000 deleted messages = ~1MB - likely acceptable but should be addressed eventually.
+The tombstone tracking system (DB_VERSION 7) prevents deleted messages from reappearing during peer sync. However, without cleanup, the `deleted_messages` table will grow unbounded over time.
 
 **Current state**: Tombstones are never cleaned up
 **Desired state**: Controlled tombstone growth with safe cleanup strategy
 **Risk**: If tombstones are cleaned too aggressively, deleted messages can resurface when a stale peer syncs
+
+### Storage Impact at Scale (Discord-like usage)
+
+Each tombstone is ~100 bytes (messageId + spaceId + channelId + deletedAt timestamp).
+
+**Assumptions**: ~100 message deletes/day/space average
+
+#### Without Cleanup (Unbounded Growth)
+
+| User Scale | Spaces | Daily Growth | Yearly Growth |
+|------------|--------|--------------|---------------|
+| Light user | 10 | 100KB/day | ~36MB/year |
+| Moderate user | 100 | 1MB/day | ~365MB/year |
+| Power user | 1,000 | 10MB/day | **~3.65GB/year** |
+| Heavy user | 10,000 | 100MB/day | **~36.5GB/year** |
+| Extreme | 100,000 | 1GB/day | **~365GB/year** |
+
+#### With 30-Day Cleanup (Bounded)
+
+| User Scale | Spaces | Max Storage |
+|------------|--------|-------------|
+| Light user | 10 | ~3MB |
+| Moderate user | 100 | ~30MB |
+| Power user | 1,000 | ~300MB |
+| Heavy user | 10,000 | **~3GB** |
+| Extreme | 100,000 | **~30GB** |
+
+#### With 90-Day Cleanup (Bounded)
+
+| User Scale | Spaces | Max Storage |
+|------------|--------|-------------|
+| Light user | 10 | ~9MB |
+| Moderate user | 100 | ~90MB |
+| Power user | 1,000 | ~900MB |
+| Heavy user | 10,000 | **~9GB** |
+| Extreme | 100,000 | **~90GB** |
+
+**Conclusion**: Cleanup is **required** for production. The tradeoff is:
+- **30 days**: Lower storage but higher zombie message risk for users offline >30 days
+- **90 days**: Higher storage but very low zombie message risk
 
 ## Context
 
