@@ -41,8 +41,8 @@ export const useRoleManagement = (
   const addRole = useCallback(() => {
     const newRole: Role = {
       roleId: crypto.randomUUID(),
-      roleTag: 'New Role' + (roles.length + 1),
-      displayName: 'New Role',
+      roleTag: 'role-tag',
+      displayName: 'Role Name',
       color: 'rgb(var(--success))',
       members: [],
       permissions: [],

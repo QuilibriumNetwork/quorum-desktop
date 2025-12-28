@@ -159,6 +159,11 @@ const ChannelEditorModal: React.FunctionComponent<{
 
         {isReadOnly && (
           <Container className="mb-4 max-sm:mb-1">
+            {availableRoles.length === 0 && (
+              <div className="text-danger text-sm mb-2">
+                <Trans>Create roles in Space Settings first.</Trans>
+              </div>
+            )}
             <FlexRow className="items-center justify-between max-sm:flex-col max-sm:items-stretch">
               <FlexRow className="items-center">
                 <div className="text-label-strong whitespace-nowrap max-sm:mb-2">
@@ -210,7 +215,7 @@ const ChannelEditorModal: React.FunctionComponent<{
               <Text
                 variant="danger"
                 className="cursor-pointer hover:text-danger-hover"
-                onClick={(e) => handleDeleteClick(e)}
+                onClick={(e: React.MouseEvent) => handleDeleteClick(e)}
               >
                 {deleteConfirmation.confirmationStep === 0
                   ? t`Delete Channel`

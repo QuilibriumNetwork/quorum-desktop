@@ -94,7 +94,7 @@ const Roles: React.FunctionComponent<RolesProps> = ({
                     <div>
                       @
                       <input
-                        className="border-0 bg-[rgba(0,0,0,0)] pr-2 outline-none focus:bg-surface-1 focus:px-2 focus:py-1 focus:rounded transition-all font-mono"
+                        className="border-0 bg-transparent outline-none font-mono"
                         style={{
                           width:
                             (roles.find((_, pi) => i == pi)
@@ -115,7 +115,7 @@ const Roles: React.FunctionComponent<RolesProps> = ({
                         style={{ backgroundColor: r.color }}
                       >
                         <input
-                          className="border-0 bg-[rgba(0,0,0,0)] outline-none focus:bg-[rgba(0,0,0,0.1)] focus:px-2 focus:py-1 focus:rounded transition-all"
+                          className="border-0 bg-transparent outline-none"
                           style={{
                             width:
                               Math.max(
