@@ -42,7 +42,7 @@
   }
 }
 
-// Mention badge on folder button
+// Mention badge on folder button - uses folder color (passed via inline style)
 .folder-button-mention-bubble {
   position: absolute;
   bottom: -$s-0-5;
@@ -59,14 +59,9 @@
   line-height: 1;
   text-align: center;
   color: white;
-  background-color: var(--accent-400);
+  border: 2px solid var(--color-bg-app);
   z-index: 1001;
   pointer-events: none;
-  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-}
-
-html.dark .folder-button-mention-bubble {
-  background-color: var(--accent-600);
 }
 
 // Folder container - handles both collapsed and expanded states
