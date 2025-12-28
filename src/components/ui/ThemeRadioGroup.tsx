@@ -17,16 +17,19 @@ const ThemeRadioGroup: React.FC<ThemeRadioGroupProps> = ({ horizontal }) => {
       value: 'light',
       label: t`Light`,
       icon: 'sun', // Maps to Icon primitive
+      tooltip: horizontal ? t`Light` : undefined,
     },
     {
       value: 'dark',
       label: t`Dark`,
       icon: 'moon', // Maps to Icon primitive
+      tooltip: horizontal ? t`Dark` : undefined,
     },
     {
       value: 'system',
       label: t`System`,
       icon: 'desktop', // Maps to Icon primitive
+      tooltip: horizontal ? t`System` : undefined,
     },
   ];
 

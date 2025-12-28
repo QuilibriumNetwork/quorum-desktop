@@ -1,7 +1,18 @@
 import * as React from 'react';
-import { Select, Button, Tooltip, Spacer } from '../../primitives';
+import { Select, Button, Tooltip, Spacer, ColorSwatch, FlexRow } from '../../primitives';
 import { t } from '@lingui/core/macro';
-import { ThemeRadioGroup, AccentColorSwitcher } from '../../ui';
+import { ThemeRadioGroup } from '../../ui';
+import { useTheme, type AccentColor } from '../../primitives/theme';
+import { useResponsiveLayout } from '../../../hooks/useResponsiveLayout';
+
+const ACCENT_COLORS: AccentColor[] = [
+  'blue',
+  'purple',
+  'fuchsia',
+  'orange',
+  'green',
+  'yellow',
+];
 
 interface AppearanceProps {
   language: string;
@@ -18,6 +29,10 @@ const Appearance: React.FunctionComponent<AppearanceProps> = ({
   localeOptions,
   forceUpdate,
 }) => {
+  const { accent, setAccent } = useTheme();
+  const { isMobile } = useResponsiveLayout();
+  const swatchSize = isMobile ? 'medium' : 'large';
+
   return (
     <>
       <div className="modal-content-header">
@@ -29,10 +44,21 @@ const Appearance: React.FunctionComponent<AppearanceProps> = ({
         </div>
       </div>
       <div className="modal-content-section">
-        <ThemeRadioGroup />
+        <ThemeRadioGroup horizontal />
 
-        <div className="mt-8">
-          <AccentColorSwitcher />
+        <div className="mt-8 ml-1">
+          <FlexRow gap={isMobile ? 'lg' : 'sm'}>
+            {ACCENT_COLORS.map((color) => (
+              <ColorSwatch
+                key={color}
+                color={color}
+                isActive={accent === color}
+                onPress={() => setAccent(color)}
+                size={swatchSize}
+                applyAccentTheme
+              />
+            ))}
+          </FlexRow>
         </div>
 
         <div className="mt-8">
@@ -42,10 +68,10 @@ const Appearance: React.FunctionComponent<AppearanceProps> = ({
             <Select
               value={language}
               options={localeOptions}
-              onChange={(value) => {
+              onChange={(value: string) => {
                 setLanguage(value);
               }}
-              width="300px"
+              width="200px"
               dropdownPlacement="bottom"
             />
             <Tooltip

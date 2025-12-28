@@ -1,5 +1,4 @@
 // UI Components barrel exports
-export { default as AccentColorSwitcher } from './AccentColorSwitcher';
 export { default as ClickToCopyContent } from './ClickToCopyContent';
 export { default as CloseButton } from './CloseButton';
 export { default as Container } from './Container';

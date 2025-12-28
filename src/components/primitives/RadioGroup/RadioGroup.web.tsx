@@ -1,6 +1,7 @@
 import React from 'react';
 import { RadioGroupWebProps } from './types';
 import { Icon } from '../Icon';
+import { Tooltip } from '../Tooltip';
 import { isValidIconName } from '../Icon/iconMapping';
 import './RadioGroup.scss';
 
@@ -41,7 +42,7 @@ export function RadioGroup<T extends string = string>({
         const isSelected = value === option.value;
         const isDisabled = disabled || option.disabled;
 
-        return (
+        const labelElement = (
           <label
             key={option.value}
             className={`
@@ -78,6 +79,21 @@ export function RadioGroup<T extends string = string>({
             )}
           </label>
         );
+
+        if (option.tooltip) {
+          return (
+            <Tooltip
+              key={option.value}
+              id={`radio-${name}-${option.value}`}
+              content={option.tooltip}
+              place={option.tooltipPlace || 'top'}
+            >
+              {labelElement}
+            </Tooltip>
+          );
+        }
+
+        return labelElement;
       })}
     </div>
   );

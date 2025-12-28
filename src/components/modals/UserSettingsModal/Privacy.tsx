@@ -142,7 +142,7 @@ const Privacy: React.FunctionComponent<PrivacyProps> = ({
         </div>
 
         <Spacer size="md" direction="vertical" borderTop={true} />
-        <div className="text-subtitle-2 pb-2">Devices</div>
+        <div className="text-subtitle-2 mb-2">{t`Devices`}</div>
         {removedDevices.length > 0 && (
           <div className="bg-warning/10 border border-warning/20 rounded p-2 mb-2 text-sm text-warning">
             <Icon name="warning" className="mr-1" />
@@ -218,22 +218,23 @@ const Privacy: React.FunctionComponent<PrivacyProps> = ({
           )}
         </ScrollContainer>
 
-        <div className="modal-content-info !pt-4">
-          <Spacer size="md" direction="vertical" borderTop={true} />
-          <div className="text-subtitle-2">{t`Key Export`}</div>
-
-          <div className="pt-2 text-label-strong">
-            {t`Export your key to a file by clicking this button. Do not share this file with anyone else or they can impersonate you or steal your Space's Apex earnings.`}
-          </div>
-          <div className="pt-4 pb-8 max-w-[100px]">
-            <Button
-              type="danger-outline"
-              onClick={() => {
-                downloadKey();
-              }}
-            >
-              {t`Export`}
-            </Button>
+        <Spacer size="md" direction="vertical" borderTop={true} className="mt-4" />
+        <div className="text-subtitle-2 mb-2">{t`Key Export`}</div>
+        <div className="modal-content-info">
+          <div className="flex flex-col gap-2">
+            <div className="flex items-start justify-between gap-3 p-3 rounded-md border">
+              <div className="text-sm" style={{ lineHeight: 1.3 }}>
+                {t`Export your key to a file. Do not share this file with anyone else or they can impersonate you or steal your Space's Apex earnings.`}
+              </div>
+              <Button
+                type="danger"
+                size="small"
+                className="whitespace-nowrap"
+                onClick={downloadKey}
+              >
+                {t`Export`}
+              </Button>
+            </div>
           </div>
         </div>
 
@@ -321,22 +322,28 @@ const Privacy: React.FunctionComponent<PrivacyProps> = ({
         )}
 
         {onRestoreMissingSpaces && (
-          <div className="modal-content-info">
+          <>
             <Spacer size="md" direction="vertical" borderTop={true} />
-            <div className="text-subtitle-2">{t`Data Recovery`}</div>
-            <div className="pt-2 text-label-strong">
-              {t`Restore Spaces that exist on this device but are missing from your navigation menu.`}
+            <div className="text-subtitle-2 mb-2">{t`Data Recovery`}</div>
+            <div className="modal-content-info">
+              <div className="flex flex-col gap-2">
+                <div className="flex items-start justify-between gap-3 p-3 rounded-md border">
+                  <div className="text-sm" style={{ lineHeight: 1.3 }}>
+                    {t`Restore Spaces that exist on this device but are missing from your navigation menu.`}
+                  </div>
+                  <Button
+                    type="secondary"
+                    size="small"
+                    className="whitespace-nowrap"
+                    onClick={onRestoreMissingSpaces}
+                    disabled={isRestoring}
+                  >
+                    {isRestoring ? t`Restoring...` : t`Restore`}
+                  </Button>
+                </div>
+              </div>
             </div>
-            <div className="pt-4 pb-8 max-w-[200px]">
-              <Button
-                type="secondary"
-                onClick={onRestoreMissingSpaces}
-                disabled={isRestoring}
-              >
-                {isRestoring ? t`Restoring...` : t`Restore Missing Spaces`}
-              </Button>
-            </div>
-          </div>
+          </>
         )}
       </div>
     </>

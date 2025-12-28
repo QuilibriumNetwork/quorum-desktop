@@ -5,6 +5,8 @@ export interface RadioOption<T = string> {
   label: string;
   icon?: string; // Emoji or FontAwesome icon (web only)
   disabled?: boolean;
+  tooltip?: string; // Tooltip text (web only)
+  tooltipPlace?: 'top' | 'bottom' | 'left' | 'right'; // Tooltip position (web only)
 }
 
 // Shared props between web and native
