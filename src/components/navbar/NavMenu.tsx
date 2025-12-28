@@ -355,7 +355,6 @@ const NavMenuContent: React.FC<NavMenuProps> = (props) => {
                       space={{ ...space, notifs: unreadCount }}
                       mentionCount={totalCount > 0 ? totalCount : undefined}
                       onContextMenu={(e) => handleSpaceContextMenu(space.spaceId, space.spaceName, space.iconUrl, e)}
-                      onOpenSettings={() => openSpaceEditor(space.spaceId)}
                     />
                   );
                 } else if (navItem.item.type === 'folder' && navItem.spaces) {
@@ -403,7 +402,6 @@ const NavMenuContent: React.FC<NavMenuProps> = (props) => {
                     space={{ ...space, notifs: unreadCount }}
                     mentionCount={totalCount > 0 ? totalCount : undefined}
                     onContextMenu={(e) => handleSpaceContextMenu(space.spaceId, space.spaceName, space.iconUrl, e)}
-                    onOpenSettings={() => openSpaceEditor(space.spaceId)}
                   />
                 );
               })}

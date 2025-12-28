@@ -22,7 +22,6 @@ type SpaceButtonProps = {
   size?: 'small' | 'regular';
   parentFolderId?: string; // If this space is inside a folder
   onContextMenu?: (e: React.MouseEvent) => void;
-  onOpenSettings?: () => void;
 };
 
 const SpaceButton: React.FunctionComponent<SpaceButtonProps> = ({
@@ -31,7 +30,6 @@ const SpaceButton: React.FunctionComponent<SpaceButtonProps> = ({
   size = 'regular',
   parentFolderId,
   onContextMenu,
-  onOpenSettings,
 }) => {
   const navigate = useNavigate();
   const { spaceId: currentSpaceId } = useParams<{ spaceId: string }>();
@@ -51,12 +49,20 @@ const SpaceButton: React.FunctionComponent<SpaceButtonProps> = ({
   };
 
   const handleTouchStart = (e: React.TouchEvent) => {
-    if (isTouch && onOpenSettings && e.touches.length === 1) {
+    if (isTouch && onContextMenu && e.touches.length === 1) {
+      // Stop propagation to prevent parent FolderContainer from also starting a long press timer
+      e.stopPropagation();
       const touch = e.touches[0];
       touchStartPos.current = { x: touch.clientX, y: touch.clientY };
       longPressTimer.current = setTimeout(() => {
         hapticMedium();
-        onOpenSettings();
+        // Create a synthetic mouse event with touch coordinates for context menu
+        const syntheticEvent = {
+          preventDefault: () => {},
+          clientX: touch.clientX,
+          clientY: touch.clientY,
+        } as React.MouseEvent;
+        onContextMenu(syntheticEvent);
         clearLongPressTimer();
       }, LONG_PRESS_DELAY);
     }
@@ -64,6 +70,7 @@ const SpaceButton: React.FunctionComponent<SpaceButtonProps> = ({
 
   const handleTouchMove = (e: React.TouchEvent) => {
     if (touchStartPos.current && longPressTimer.current && e.touches.length === 1) {
+      e.stopPropagation();
       const touch = e.touches[0];
       const dx = touch.clientX - touchStartPos.current.x;
       const dy = touch.clientY - touchStartPos.current.y;
@@ -74,7 +81,17 @@ const SpaceButton: React.FunctionComponent<SpaceButtonProps> = ({
     }
   };
 
-  const handleTouchEnd = () => {
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    if (longPressTimer.current) {
+      e.stopPropagation();
+    }
+    clearLongPressTimer();
+  };
+
+  const handleTouchCancel = (e: React.TouchEvent) => {
+    if (longPressTimer.current) {
+      e.stopPropagation();
+    }
     clearLongPressTimer();
   };
 
@@ -149,7 +166,7 @@ const SpaceButton: React.FunctionComponent<SpaceButtonProps> = ({
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
-        onTouchCancel={handleTouchEnd}
+        onTouchCancel={handleTouchCancel}
         onKeyDown={(e) => {
           if (e.key === 'Enter' || e.key === ' ') {
             e.preventDefault();
