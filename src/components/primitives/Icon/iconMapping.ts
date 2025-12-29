@@ -82,6 +82,7 @@ export const iconComponentMap: Record<IconName, string> = {
   'mood-happy': 'IconMoodHappy',
   heart: 'IconHeart',
   star: 'IconStar',
+  'star-off': 'IconStarOff',
   eye: 'IconEye',
   'eye-off': 'IconEyeOff',
   'life-ring': 'IconLifebuoy',

@@ -1,0 +1,64 @@
+.list-search-input {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  border-bottom: 1px solid var(--color-border-default);
+  padding-bottom: 0;
+  transition: border-color 0.15s ease-in-out;
+
+  &--focused {
+    border-bottom-color: var(--accent);
+  }
+
+  // Minimal variant - no border/underline
+  &--minimal {
+    border-bottom: none;
+
+    &.list-search-input--focused {
+      border-bottom: none;
+    }
+  }
+
+  &__search-icon {
+    flex-shrink: 0;
+  }
+
+  &__clear-icon {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    color: var(--color-text-subtle);
+    font-size: 1.125rem;
+    line-height: 1;
+    padding: 0.25rem;
+    cursor: pointer;
+    transition: color 0.15s ease-in-out;
+
+    &:hover {
+      color: var(--color-text-main);
+    }
+  }
+
+  // Override input styles within this component
+  .quorum-input--minimal {
+    border: none !important;
+    border-bottom: none !important;
+    box-shadow: none !important;
+
+    &:focus {
+      border: none !important;
+      border-bottom: none !important;
+      box-shadow: none !important;
+    }
+
+    // Hide native search clear button (we use our own)
+    &::-webkit-search-cancel-button {
+      -webkit-appearance: none;
+      appearance: none;
+      display: none;
+    }
+  }
+}

@@ -4,7 +4,7 @@
   flex: 1;
   min-width: 0; /* Allow shrinking when content is constrained */
   background: var(--color-bg-chat);
-  z-index: 11; /* Higher than sidebar space-header (z-index: 10) */
+  z-index: auto; /* Let tooltips (z-index: 10002) appear above */
   display: flex;
   flex-direction: row;
   height: calc(100vh - $layout-top-offset);

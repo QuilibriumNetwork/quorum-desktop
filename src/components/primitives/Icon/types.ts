@@ -72,6 +72,7 @@ export type IconName =
   | 'mood-happy'
   | 'heart'
   | 'star'
+  | 'star-off'
   | 'eye'
   | 'eye-off'
   | 'life-ring'

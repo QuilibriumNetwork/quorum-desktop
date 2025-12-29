@@ -23,8 +23,8 @@ import { t } from '@lingui/core/macro';
 import { GlobalSearch } from '../search';
 import { useResponsiveLayoutContext } from '../context/ResponsiveLayoutProvider';
 import { useSidebar } from '../context/SidebarProvider';
-import { Button, Tooltip, Icon, Input } from '../primitives';
-import { MobileDrawer } from '../ui';
+import { Button, Tooltip, Icon } from '../primitives';
+import { MobileDrawer, ListSearchInput } from '../ui';
 import { getIconColorHex } from './IconPicker/types';
 import { isTouchDevice } from '../../utils/platform';
 import MessageComposer, {
@@ -105,7 +105,6 @@ const Channel: React.FC<ChannelProps> = ({
   // Search state
   const [searchInput, setSearchInput] = useState('');
   const [activeSearch, setActiveSearch] = useState('');
-  const [searchFocused, setSearchFocused] = useState(false);
 
   // Collapsed role groups state (persisted per-space in localStorage)
   const [collapsedRoles, setCollapsedRoles] = useState<Set<string>>(() => {
@@ -656,33 +655,13 @@ const Channel: React.FC<ChannelProps> = ({
           className="sticky top-0 z-10"
           style={{ backgroundColor: 'inherit' }}
         >
-          <div
-            className="flex items-center gap-2 py-3"
-            style={{
-              borderBottom: `1px solid ${searchFocused ? 'var(--accent)' : 'var(--color-border-default)'}`,
-              paddingBottom: '0',
-              transition: 'border-color 0.15s ease-in-out',
-            }}
-          >
-            <Icon
-              name="search"
-              size="sm"
-              className={searchFocused ? 'text-accent' : 'text-subtle'}
-              style={{ transition: 'color 0.15s ease-in-out' }}
-            />
-            <Input
-              value={searchInput}
-              onChange={setSearchInput}
-              placeholder={t`Username or Address`}
-              variant="minimal"
-              className="flex-1"
-              onFocus={() => setSearchFocused(true)}
-              onBlur={() => setSearchFocused(false)}
-              style={{ border: 'none', borderBottom: 'none' }}
-              type="search"
-              autoComplete="off"
-            />
-          </div>
+          <ListSearchInput
+            value={searchInput}
+            onChange={setSearchInput}
+            placeholder={t`Username or Address`}
+            variant="underline"
+            className="py-3"
+          />
           <div className="pb-3">
             {activeSearch && filteredSections.length === 0 && (
               <div className="text-xs text-subtle mt-1">
@@ -1179,33 +1158,12 @@ const Channel: React.FC<ChannelProps> = ({
             <div className="channel-users-sidebar list-bottom-fade-chat hidden lg:block w-[260px] bg-chat border-l border-default flex-shrink-0">
               {/* Search Input */}
               <div className="px-4 pt-4 bg-chat sticky top-0 z-10">
-                <div
-                  className="flex items-center gap-2"
-                  style={{
-                    borderBottom: `1px solid ${searchFocused ? 'var(--accent)' : 'var(--color-border-default)'}`,
-                    paddingBottom: '0',
-                    transition: 'border-color 0.15s ease-in-out',
-                  }}
-                >
-                  <Icon
-                    name="search"
-                    size="sm"
-                    className={searchFocused ? 'text-accent' : 'text-muted'}
-                    style={{ transition: 'color 0.15s ease-in-out' }}
-                  />
-                  <Input
-                    value={searchInput}
-                    onChange={setSearchInput}
-                    placeholder={t`Username or Address`}
-                    variant="minimal"
-                    className="flex-1"
-                    onFocus={() => setSearchFocused(true)}
-                    onBlur={() => setSearchFocused(false)}
-                    style={{ border: 'none', borderBottom: 'none' }}
-                    type="search"
-                    autoComplete="off"
-                  />
-                </div>
+                <ListSearchInput
+                  value={searchInput}
+                  onChange={setSearchInput}
+                  placeholder={t`Username or Address`}
+                  variant="underline"
+                />
                 <div className="pb-3">
                   {activeSearch &&
                     generateVirtualizedUserList(activeSearch, collapsedRoles).length === 0 && (
@@ -1376,16 +1334,11 @@ const Channel: React.FC<ChannelProps> = ({
             style={{ backgroundColor: 'var(--surface-0)' }}
           >
             <div className="search-mobile-header p-4">
-              <Input
-                type="search"
-                variant="bordered"
-                placeholder={t`Search Username or Address`}
+              <ListSearchInput
                 value={searchInput}
-                onChange={(value: string) => {
-                  setSearchInput(value);
-                }}
-                className="search-mobile-input"
-                autoComplete="off"
+                onChange={setSearchInput}
+                placeholder={t`Search Username or Address`}
+                variant="bordered"
                 clearable={true}
               />
             </div>

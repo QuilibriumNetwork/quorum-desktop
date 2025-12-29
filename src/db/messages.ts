@@ -80,6 +80,8 @@ export type UserConfig = {
   };
   // Global preference for showing muted channels in list (default: true = visible with 60% opacity)
   showMutedChannels?: boolean;
+  // Favorite DM conversation IDs for quick access filtering
+  favoriteDMs?: string[];
 };
 
 export interface SearchableMessage {

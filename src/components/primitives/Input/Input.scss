@@ -42,6 +42,13 @@
 /* Ensure the input has right padding to avoid overlap with the clear button */
 .input-has-clear .quorum-input {
   padding-right: $s-9;
+
+  // Hide native search clear button when using our custom clearable button
+  &::-webkit-search-cancel-button {
+    -webkit-appearance: none;
+    appearance: none;
+    display: none;
+  }
 }
 
 .input-label {
