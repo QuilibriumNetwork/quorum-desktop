@@ -44,9 +44,11 @@ The [`src/dev/`](src/dev) folder contains development utilities:
 
 After running `yarn dev`, you can access the development tools at: `http://localhost:[port]/dev`
 
-#### Testing with Mock Users
+#### Testing with Mock Data
 
-To test a Space performance with large user lists (useful for testing virtualization):
+##### Mock Users (Space Members List)
+
+To test Space performance with large user lists (useful for testing virtualization):
 
 **URL Parameter (temporary):**
 ```
@@ -61,6 +63,25 @@ localStorage.setItem('debug_mock_count', '1000')  // Any number
 
 // Disable
 localStorage.removeItem('debug_mock_users')
+```
+
+##### Mock Conversations (Direct Messages List)
+
+To test the Direct Messages contact list with many contacts:
+
+**URL Parameter (temporary):**
+```
+http://localhost:port/messages?mockConversations=50
+```
+
+**localStorage (persistent across sessions):**
+```javascript
+// Enable mock conversations in browser console
+localStorage.setItem('debug_mock_conversations', 'true')
+localStorage.setItem('debug_mock_conversation_count', '50')  // Any number
+
+// Disable
+localStorage.removeItem('debug_mock_conversations')
 ```
 
 ## Setup and Development

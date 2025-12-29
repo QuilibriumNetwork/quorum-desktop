@@ -17,6 +17,17 @@ import { useConversationPolling } from '../../hooks';
 import { useConversationPreviews } from '../../hooks/business/conversations/useConversationPreviews';
 import { useMessageDB } from '../context/useMessageDB';
 
+// Safe development-only testing - automatically disabled in production
+const ENABLE_MOCK_CONVERSATIONS =
+  process.env.NODE_ENV === 'development' &&
+  (localStorage?.getItem('debug_mock_conversations') === 'true' ||
+    new URLSearchParams(window.location?.search || '').get('mockConversations') !== null);
+const MOCK_CONVERSATION_COUNT = parseInt(
+  new URLSearchParams(window.location?.search || '').get('mockConversations') ||
+    localStorage?.getItem('debug_mock_conversation_count') ||
+    '50'
+);
+
 interface ContextMenuState {
   address: string;
   position: { x: number; y: number };
@@ -27,6 +38,37 @@ const DirectMessageContactsList: React.FC<{}> = ({}) => {
   const { data: conversationsWithPreviews = conversationsList } =
     useConversationPreviews(conversationsList);
   const { openNewDirectMessage, openConversationSettings } = useModalContext();
+  const [mockUtils, setMockUtils] = React.useState<any>(null);
+
+  // Load mock utilities dynamically in development only
+  React.useEffect(() => {
+    if (ENABLE_MOCK_CONVERSATIONS) {
+      import('../../utils/mock')
+        .then((utils) => {
+          setMockUtils(utils);
+        })
+        .catch(() => {
+          setMockUtils(null);
+        });
+    }
+  }, []);
+
+  // Memoized mock conversations to prevent regeneration on every render
+  const mockConversations = React.useMemo(() => {
+    return ENABLE_MOCK_CONVERSATIONS && mockUtils
+      ? mockUtils.generateMockConversations(MOCK_CONVERSATION_COUNT)
+      : [];
+  }, [mockUtils]);
+
+  // Add mock conversations for testing
+  const enhancedConversations = React.useMemo(() => {
+    if (ENABLE_MOCK_CONVERSATIONS && mockConversations.length > 0) {
+      return [...conversationsWithPreviews, ...mockConversations].sort(
+        (a, b) => b.timestamp - a.timestamp
+      );
+    }
+    return conversationsWithPreviews;
+  }, [conversationsWithPreviews, mockConversations]);
   const { deleteConversation } = useMessageDB();
   const { currentPasskeyInfo } = usePasskeysContext();
   const navigate = useNavigate();
@@ -52,21 +94,21 @@ const DirectMessageContactsList: React.FC<{}> = ({}) => {
   const handleOpenSettings = React.useCallback(
     (address: string) => () => {
       // Find the conversation to get the conversationId
-      const conversation = conversationsWithPreviews.find(
+      const conversation = enhancedConversations.find(
         (c) => c.address === address
       );
       if (conversation) {
         openConversationSettings(conversation.conversationId);
       }
     },
-    [conversationsWithPreviews, openConversationSettings]
+    [enhancedConversations, openConversationSettings]
   );
 
   const handleDeleteConversation = React.useCallback(
     async (address: string) => {
       if (!currentPasskeyInfo) return;
 
-      const conversation = conversationsWithPreviews.find(
+      const conversation = enhancedConversations.find(
         (c) => c.address === address
       );
       if (!conversation) return;
@@ -76,7 +118,7 @@ const DirectMessageContactsList: React.FC<{}> = ({}) => {
 
       if (isActive) {
         // Navigate to next conversation or empty state
-        const remainingConversations = conversationsWithPreviews
+        const remainingConversations = enhancedConversations
           .filter((c) => c.address !== address)
           .sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
 
@@ -87,13 +129,13 @@ const DirectMessageContactsList: React.FC<{}> = ({}) => {
         }
       }
     },
-    [conversationsWithPreviews, currentAddress, currentPasskeyInfo, deleteConversation, navigate]
+    [enhancedConversations, currentAddress, currentPasskeyInfo, deleteConversation, navigate]
   );
 
   // Get context menu items for a conversation
   const getContextMenuItems = React.useCallback(
     (address: string): MenuItem[] => {
-      const conversation = conversationsWithPreviews.find(
+      const conversation = enhancedConversations.find(
         (c) => c.address === address
       );
       if (!conversation) return [];
@@ -117,14 +159,14 @@ const DirectMessageContactsList: React.FC<{}> = ({}) => {
         },
       ];
     },
-    [conversationsWithPreviews, handleDeleteConversation, openConversationSettings]
+    [enhancedConversations, handleDeleteConversation, openConversationSettings]
   );
 
   // Get the contact data for context menu header
   const contextMenuContact = React.useMemo(() => {
     if (!contextMenu) return null;
-    return conversationsWithPreviews.find((c) => c.address === contextMenu.address);
-  }, [contextMenu, conversationsWithPreviews]);
+    return enhancedConversations.find((c) => c.address === contextMenu.address);
+  }, [contextMenu, enhancedConversations]);
 
   return (
     <Container className="direct-messages-list-wrapper list-bottom-fade flex flex-col h-full z-0 flex-grow select-none">
@@ -145,7 +187,7 @@ const DirectMessageContactsList: React.FC<{}> = ({}) => {
         </FlexColumn>
       </FlexBetween>
       <Container className="direct-messages-list list-fade-content flex flex-col h-full overflow-y-auto overflow-x-hidden">
-        {conversationsList.length === 0 ? (
+        {conversationsList.length === 0 && !ENABLE_MOCK_CONVERSATIONS ? (
           <FlexColumn className="justify-center items-center flex-1 px-4">
             <Container className="w-full text-center mb-4 text-subtle">
               <Trans>Ready to start a truly private conversation?</Trans>
@@ -160,7 +202,7 @@ const DirectMessageContactsList: React.FC<{}> = ({}) => {
           </FlexColumn>
         ) : (
           <>
-            {conversationsWithPreviews.map((c) => {
+            {enhancedConversations.map((c) => {
               return (
                 <DirectMessageContact
                   unread={(c.lastReadTimestamp ?? 0) < c.timestamp}

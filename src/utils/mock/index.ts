@@ -20,7 +20,8 @@ export {
 } from './mockNames';
 
 export {
-  getMockAvatar,
-  getAvatarTemplateCount,
-  getAllAvatarTemplates,
-} from './mockAvatars';
+  generateMockConversations,
+  isMockConversationsEnabled,
+  getMockConversationCount,
+  type MockConversation,
+} from './mockConversations';

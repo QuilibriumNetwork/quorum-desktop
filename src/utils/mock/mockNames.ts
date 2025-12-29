@@ -4,48 +4,57 @@
  */
 
 export const MOCK_NAMES = [
-  // East Asian
-  'Akira', 'Yuki', 'Kenji', 'Sakura', 'Hiroshi', 'Mei', 'Takeshi', 'Hana',
-  'Ren', 'Sato', 'Wei', 'Lin', 'Chen', 'Xing', 'Li', 'Jun',
+  // East Asian (single + full names)
+  'Akira', 'Yuki Tanaka', 'Kenji', 'Sakura Yamamoto', 'Hiroshi', 'Mei Chen',
+  'Takeshi Nakamura', 'Hana', 'Ren', 'Sato Kimura', 'Wei Zhang', 'Lin',
 
-  // South Asian
-  'Priya', 'Arjun', 'Ravi', 'Anita', 'Raj', 'Kavya', 'Amit', 'Shreya',
-  'Vikram', 'Nisha', 'Rohan', 'Devi', 'Kiran', 'Maya',
+  // South Asian (single + full names)
+  'Priya Sharma', 'Arjun', 'Ravi Kumar', 'Anita', 'Raj Patel', 'Kavya',
+  'Amit Verma', 'Shreya Gupta', 'Vikram Singh', 'Nisha', 'Rohan Mehta', 'Maya',
 
-  // European
-  'Emma', 'Luca', 'Sofia', 'Magnus', 'Astrid', 'Lars', 'Olaf', 'Ingrid',
-  'Marco', 'Elena', 'Diego', 'Aria', 'Niko', 'Zara', 'Felix', 'Nina',
-  'Anton', 'Freya', 'Erik', 'Isla',
+  // European (single + full names)
+  'Emma', 'Luca Rossi', 'Sofia Martinez', 'Magnus Eriksson', 'Astrid', 'Lars',
+  'Marco Bianchi', 'Elena Petrova', 'Diego', 'Aria', 'Niko Papadopoulos', 'Zara',
+  'Felix Schneider', 'Nina', 'Anton', 'Freya Andersson', 'Erik', 'Isla MacLeod',
 
-  // African
-  'Amara', 'Kenzo', 'Jabari', 'Nia', 'Kofi', 'Aisha', 'Kwame', 'Nala',
-  'Bakari', 'Zuri', 'Jengo', 'Kaia', 'Tau', 'Asha', 'Omari', 'Safiya',
+  // African (single + full names)
+  'Amara Diallo', 'Kenzo', 'Jabari Okonkwo', 'Nia', 'Kofi Mensah', 'Aisha',
+  'Kwame Asante', 'Nala', 'Bakari', 'Zuri Ndegwa', 'Tau', 'Omari Hassan',
 
-  // Middle Eastern
-  'Omar', 'Layla', 'Hassan', 'Noor', 'Tariq', 'Amina', 'Samir', 'Yasmin',
-  'Khalil', 'Zahra', 'Faris', 'Lina', 'Karim', 'Mira',
+  // Middle Eastern (single + full names)
+  'Omar Al-Rashid', 'Layla', 'Hassan Mahmoud', 'Noor', 'Tariq', 'Amina Khalil',
+  'Samir', 'Yasmin Al-Farsi', 'Khalil', 'Zahra Nazari', 'Faris', 'Karim',
 
-  // Latin American
-  'Carlos', 'Isabella', 'Miguel', 'Lucia', 'Pablo', 'Carmen', 'Alejandro',
-  'Esperanza', 'Rafael', 'Valeria', 'Mateo', 'Camila', 'Jorge', 'Ana',
+  // Latin American (single + full names)
+  'Carlos Rodriguez', 'Isabella', 'Miguel', 'Lucia Fernandez', 'Pablo',
+  'Carmen Sanchez', 'Alejandro Morales', 'Esperanza', 'Rafael', 'Valeria',
+  'Mateo Garcia', 'Camila', 'Jorge Hernandez', 'Ana',
 
-  // Native/Indigenous
-  'Dakota', 'Phoenix', 'River', 'Sky', 'Storm', 'Wolf', 'Sage', 'Rain',
-  'Cedar', 'Luna', 'Arrow', 'Dawn',
+  // Long/Complex names for truncation testing
+  'Alexander Maximilian', 'Bartholomew', 'Christopherson', 'Evangelina Maria',
+  'Fitzgerald James', 'Guadalupe Esperanza', 'Hieronymus', 'Konstantinos',
+  'Maria Alejandra Fernandez', 'Nathaniel Christopher', 'Oluwaseun Adebayo',
+  'Persephone Aurora', 'Rajeshwari Venkataraman', 'Seraphina Celestine',
+  'Theofilos Alexandros', 'Uchechukwu Nnamdi', 'Valentina Isabella',
+  'Wolfeschlegelsteinhausen', 'Xiomara Esperanza', 'Yekaterina Alexandrovna',
 
-  // Slavic
-  'Dimitri', 'Katya', 'Alexei', 'Anya', 'Ivan', 'Olga', 'Pavel', 'Vera',
-  'Boris', 'Tanya', 'Mikhail', 'Sasha',
+  // Native/Indigenous (single + full names)
+  'Dakota', 'Phoenix Rising', 'River Stone', 'Sky', 'Storm Cloud', 'Wolf',
+  'Sage', 'Rain Walker', 'Cedar', 'Luna', 'Arrow', 'Dawn',
 
-  // Celtic/Gaelic
-  'Connor', 'Siobhan', 'Declan', 'Aoife', 'Finn', 'Niamh', 'Cian', 'Roisin',
-  'Eoin', 'Ciara', 'Oisin', 'Ailish',
+  // Slavic (single + full names)
+  'Dimitri Volkov', 'Katya', 'Alexei Petrov', 'Anya', 'Ivan Kozlov', 'Olga',
+  'Pavel Sokolov', 'Vera', 'Boris Ivanov', 'Tanya', 'Mikhail', 'Sasha',
 
-  // Nordic
-  'Bjorn', 'Sigrid', 'Gunnar', 'Thora', 'Leif', 'Astrid', 'Ragnar', 'Frida',
+  // Celtic/Gaelic (single + full names)
+  'Connor O\'Brien', 'Siobhan', 'Declan Murphy', 'Aoife', 'Finn MacCarthy',
+  'Niamh', 'Cian', 'Roisin', 'Eoin', 'Ciara', 'Oisin', 'Ailish',
+
+  // Nordic (single + full names)
+  'Bjorn Larsson', 'Sigrid', 'Gunnar', 'Thora Johansson', 'Leif', 'Ragnar',
 
   // Additional diverse names
-  'Kai', 'Zion', 'Aria', 'Neo', 'Nova', 'Orion', 'Indigo', 'Atlas',
+  'Kai', 'Zion', 'Neo', 'Nova Starlight', 'Orion', 'Indigo', 'Atlas',
 ] as const;
 
 /**

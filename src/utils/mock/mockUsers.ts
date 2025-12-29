@@ -4,7 +4,6 @@
  */
 
 import { getMockName } from './mockNames';
-import { getMockAvatar } from './mockAvatars';
 
 export interface MockUser {
   user_address: string;
@@ -20,8 +19,8 @@ export interface MockRole {
 }
 
 /**
- * Generate mock users with diverse names and avatars
- * Uses cycling arrays to ensure variety without performance impact
+ * Generate mock users with diverse names
+ * Uses empty icons to trigger initials fallback in UserAvatar for consistent styling
  */
 export function generateMockUsers(count: number): MockUser[] {
   const mockUsers: MockUser[] = [];
@@ -30,7 +29,7 @@ export function generateMockUsers(count: number): MockUser[] {
     mockUsers.push({
       user_address: `mock_user_${i}`,
       display_name: getMockName(i),
-      user_icon: getMockAvatar(i),
+      user_icon: '', // Empty to trigger initials fallback in UserAvatar
       inbox_address: 'mock_inbox',
     });
   }
