@@ -26,9 +26,9 @@ import { useDMFavorites } from '../../hooks/business/dm/useDMFavorites';
 const ENABLE_MOCK_CONVERSATIONS =
   process.env.NODE_ENV === 'development' &&
   (localStorage?.getItem('debug_mock_conversations') === 'true' ||
-    new URLSearchParams(window.location?.search || '').get('mockConversations') !== null);
+    new URLSearchParams(window.location?.search || '').get('users') !== null);
 const MOCK_CONVERSATION_COUNT = parseInt(
-  new URLSearchParams(window.location?.search || '').get('mockConversations') ||
+  new URLSearchParams(window.location?.search || '').get('users') ||
     localStorage?.getItem('debug_mock_conversation_count') ||
     '50'
 );

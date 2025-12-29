@@ -8,11 +8,11 @@ import { DefaultImages } from '../../../utils';
 const ENABLE_MOCK_USERS =
   process.env.NODE_ENV === 'development' &&
   (localStorage?.getItem('debug_mock_users') === 'true' ||
-   new URLSearchParams(window.location?.search || '').get('mockUsers') !== null);
+    new URLSearchParams(window.location?.search || '').get('users') !== null);
 const MOCK_USER_COUNT = parseInt(
-  new URLSearchParams(window.location?.search || '').get('mockUsers') ||
-  localStorage?.getItem('debug_mock_count') ||
-  '1000'
+  new URLSearchParams(window.location?.search || '').get('users') ||
+    localStorage?.getItem('debug_mock_count') ||
+    '1000'
 );
 
 interface UseChannelDataProps {
