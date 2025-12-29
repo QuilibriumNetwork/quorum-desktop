@@ -18,7 +18,6 @@ import { useRegistrationOptional } from '../../hooks/queries/registration/useReg
 import { useConversation } from '../../hooks/queries/conversation/useConversation';
 import { useMessageDB } from '../context/useMessageDB';
 import { useQueryClient } from '@tanstack/react-query';
-import { useSidebar } from '../context/SidebarProvider';
 import { loadMessagesAround } from '../../hooks/queries/messages/loadMessagesAround';
 import { buildMessagesKey } from '../../hooks/queries/messages/buildMessagesKey';
 import { MessageList, MessageListRef } from '../message/MessageList';
@@ -28,7 +27,7 @@ import MessageComposer, {
 
 import { t } from '@lingui/core/macro';
 import { i18n } from '@lingui/core';
-import { ClickToCopyContent, MobileDrawer } from '../ui';
+import { ClickToCopyContent } from '../ui';
 import { DefaultImages, truncateAddress } from '../../utils';
 import { isTouchDevice } from '../../utils/platform';
 
@@ -47,7 +46,7 @@ import {
 import { BookmarksPanel } from '../bookmarks/BookmarksPanel';
 
 const DirectMessage: React.FC<{}> = () => {
-  const { isMobile, isTablet, isDesktop, toggleLeftSidebar, navMenuOpen, toggleNavMenu } =
+  const { isMobile, isTablet, toggleLeftSidebar, navMenuOpen, toggleNavMenu } =
     useResponsiveLayoutContext();
 
   const { openConversationSettings } = useModalContext();
@@ -250,16 +249,9 @@ const DirectMessage: React.FC<{}> = () => {
     address: address!,
   };
 
-  // Compute responsive icon size for header icons (lg for desktop ≥1024px, md for mobile/tablet)
-  const headerIconSize = isDesktop ? 'lg' : 'lg';
+  // Icon size for header icons
+  const headerIconSize = 'lg';
 
-  // Sidebar state
-  const {
-    showRightSidebar: showUsers,
-    setShowRightSidebar: setShowUsers,
-    rightSidebarContent,
-    setRightSidebarContent,
-  } = useSidebar();
 
   // Message composition - using shared MessageComposer hook
   const messageComposerRef = useRef<MessageComposerRef>(null);
@@ -373,54 +365,6 @@ const DirectMessage: React.FC<{}> = () => {
     hasStickers: false, // DirectMessage doesn't have stickers
   });
 
-  // Set sidebar content in context (exactly as original)
-  React.useEffect(() => {
-    const sidebarContent = (
-      <div className="flex flex-col">
-        {Object.keys(members).map((s) => (
-          <div key={s} className="w-full flex flex-row items-center mb-2 min-w-0">
-            <UserAvatar
-              userIcon={members[s].userIcon}
-              displayName={members[s].displayName ?? members[s].address}
-              address={members[s].address || ''}
-              size={36}
-              className="flex-shrink-0"
-            />
-            <div className="flex flex-col ml-2 min-w-0 flex-1">
-              <span className="text-md font-bold truncate text-main/90">
-                {members[s].displayName ?? members[s].address}{' '}
-                {members[s].address === user.currentPasskeyInfo!.address && (
-                  <span className="text-xs text-subtle">({t`You`})</span>
-                )}
-              </span>
-              <span className="truncate">
-                <ClickToCopyContent
-                  text={members[s].address}
-                  tooltipText={t`Copy address`}
-                  tooltipLocation="left-start"
-                  iconClassName="text-muted hover:text-main"
-                  textVariant="subtle"
-                  textSize="xs"
-                  iconSize="xs"
-                >
-                  {truncateAddress(members[s].address)}
-                </ClickToCopyContent>
-              </span>
-            </div>
-          </div>
-        ))}
-      </div>
-    );
-
-    setRightSidebarContent(sidebarContent);
-  }, [members, user.currentPasskeyInfo, setRightSidebarContent]);
-
-  // Clean up sidebar content when component unmounts
-  React.useEffect(() => {
-    return () => {
-      setRightSidebarContent(null);
-    };
-  }, [setRightSidebarContent]);
 
   // Auto-focus textarea when replying (same logic as Channel.tsx)
   useEffect(() => {
@@ -576,7 +520,7 @@ const DirectMessage: React.FC<{}> = () => {
     }, 100);
 
     return () => clearTimeout(timer);
-  }, [address, lastReadTimestamp, messageDB, messageList, queryClient]);
+  }, [address, lastReadTimestamp, messageDB, messageList, queryClient, user.currentPasskeyInfo]);
 
   // Reset scrollToMessageId and separator when conversation changes
   useEffect(() => {
@@ -758,23 +702,6 @@ const DirectMessage: React.FC<{}> = () => {
                   iconOnly
                 />
               </Tooltip>
-              <Tooltip
-                id="dm-members-list"
-                content={t`Members List`}
-                showOnTouch={false}
-              >
-                <Button
-                  type="unstyled"
-                  onClick={() => {
-                    setShowUsers(!showUsers);
-                  }}
-                  className={`header-icon-button ${showUsers ? 'active' : ''}`}
-                  iconName="users"
-                  iconSize={headerIconSize}
-                  iconOnly
-                />
-              </Tooltip>
-
               {/* Bookmarks */}
               <div className="relative">
                 <Tooltip
@@ -840,20 +767,38 @@ const DirectMessage: React.FC<{}> = () => {
                   size={28}
                 />
               </FlexColumn>
-              <div className="pl-2 flex items-center gap-2 overflow-hidden min-w-0">
+              {/* xs and up: horizontal layout with separator */}
+              <div className="pl-2 hidden xs:flex items-center gap-2 overflow-hidden min-w-0">
                 <Text className="font-semibold truncate-user-name-chat">
                   {otherUser.displayName ?? otherUser.address}
                 </Text>
-                <Text className="text-subtle flex-shrink-0 hidden xs:block">|</Text>
+                <Text className="text-subtle flex-shrink-0">|</Text>
                 <ClickToCopyContent
                   text={address ?? ''}
                   tooltipText={t`Copy address`}
                   tooltipLocation="right"
-                  className="text-subtle flex-shrink-0 hidden xs:block"
+                  className="text-subtle flex-shrink-0"
                   iconPosition="right"
                   iconClassName="text-subtle hover:text-main"
                   iconSize="xs"
                   textSize="xs"
+                >
+                  {truncateAddress(address ?? '')}
+                </ClickToCopyContent>
+              </div>
+              {/* Below xs: vertical layout - name above address */}
+              <div className="pl-2 flex xs:hidden flex-col min-w-0">
+                <Text size="sm" className="font-semibold truncate">
+                  {otherUser.displayName ?? otherUser.address}
+                </Text>
+                <ClickToCopyContent
+                  text={address ?? ''}
+                  tooltipText={t`Copy address`}
+                  tooltipLocation="right"
+                  className="text-subtle text-[0.75rem]"
+                  iconPosition="right"
+                  iconClassName="text-subtle hover:text-main"
+                  iconSize="xs"
                 >
                   {truncateAddress(address ?? '')}
                 </ClickToCopyContent>
@@ -866,12 +811,7 @@ const DirectMessage: React.FC<{}> = () => {
         <div className="flex flex-1 min-w-0">
           {/* Messages and composer area */}
           <div className="flex flex-col flex-1 min-w-0">
-            <Container
-              className={
-                'message-list relative' +
-                (!showUsers ? ' message-list-expanded' : '')
-              }
-            >
+            <Container className="message-list message-list-expanded relative">
               <MessageList
                 ref={messageListRef}
                 roles={[]}
@@ -944,28 +884,7 @@ const DirectMessage: React.FC<{}> = () => {
             </div>
           </div>
 
-          {/* Desktop sidebar only - mobile sidebar renders via MobileDrawer below */}
-          {showUsers && (
-            <div className="hidden lg:block w-[260px] bg-chat border-l border-default overflow-y-auto flex-shrink-0 p-4">
-              {rightSidebarContent}
-            </div>
-          )}
         </div>
-
-        {/* Mobile drawer for user list below 1024px */}
-        {!isDesktop && (
-          <MobileDrawer
-            isOpen={showUsers}
-            onClose={() => setShowUsers(false)}
-            showCloseButton={false}
-            enableSwipeToClose={true}
-            ariaLabel={t`Members List`}
-          >
-            <div className="p-4">
-              {rightSidebarContent}
-            </div>
-          </MobileDrawer>
-        )}
       </FlexColumn>
     </div>
   );
