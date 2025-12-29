@@ -50,10 +50,10 @@ Add `?users=N` to any URL to generate mock users/contacts for testing:
 
 ```
 # Space members list (1000 mock users)
-http://localhost:port/space/your-space-id/channel/your-channel-id?users=1000
+http://localhost:5173/spaces/{space-id}/{channel-id}?users=1000
 
 # Direct messages list (50 mock contacts)
-http://localhost:port/messages?users=50
+http://localhost:5173/messages?users=50
 ```
 
 **localStorage (persistent across sessions):**

@@ -85,11 +85,8 @@ const Channel: React.FC<ChannelProps> = ({
     useResponsiveLayoutContext();
   const queryClient = useQueryClient();
   const user = usePasskeysContext();
-  const {
-    showRightSidebar: showUsers,
-    setShowRightSidebar: setShowUsers,
-    setRightSidebarContent,
-  } = useSidebar();
+  const { showRightSidebar: showUsers, setShowRightSidebar: setShowUsers } =
+    useSidebar();
   const [init, setInit] = useState(false);
   const [skipSigning, setSkipSigning] = useState<boolean>(false);
 
@@ -180,7 +177,6 @@ const Channel: React.FC<ChannelProps> = ({
     members,
     roles,
     stickers,
-    generateSidebarContent,
     generateVirtualizedUserList,
   } = useChannelData({ spaceId, channelId });
 
@@ -621,106 +617,6 @@ const Channel: React.FC<ChannelProps> = ({
     hasStickers: true,
   });
 
-  // Clean up sidebar content when component unmounts
-  React.useEffect(() => {
-    return () => {
-      setRightSidebarContent(null);
-    };
-  }, [setRightSidebarContent]);
-
-  // Set sidebar content in context (includes mobile search)
-  React.useEffect(() => {
-    const sections = generateSidebarContent();
-
-    // Filter sections for mobile search
-    let filteredSections = sections;
-    if (activeSearch) {
-      const term = activeSearch.toLowerCase();
-      filteredSections = sections
-        .map((section) => ({
-          ...section,
-          members: section.members.filter(
-            (member) =>
-              member.displayName?.toLowerCase().includes(term) ||
-              member.address?.toLowerCase().includes(term)
-          ),
-        }))
-        .filter((section) => section.members.length > 0);
-    }
-
-    const sidebarContent = (
-      <>
-        {/* Mobile Search Input */}
-        <div
-          className="sticky top-0 z-10"
-          style={{ backgroundColor: 'inherit' }}
-        >
-          <ListSearchInput
-            value={searchInput}
-            onChange={setSearchInput}
-            placeholder={t`Username or Address`}
-            variant="underline"
-            className="py-3"
-          />
-          <div className="pb-3">
-            {activeSearch && filteredSections.length === 0 && (
-              <div className="text-xs text-subtle mt-1">
-                {t`No users found!`}
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* User List */}
-        <div className="overflow-y-auto">
-          {filteredSections.map((section) => (
-            <div className="flex flex-col mb-2" key={section.title}>
-              <div className="mb-3 text-xs text-subtle pb-1 px-3 pt-3">
-                {section.title}
-              </div>
-              {section.members.map((member) => (
-                <div
-                  key={member.address}
-                  className="w-full flex flex-row items-center mb-2 px-3 cursor-pointer hover:bg-surface-2 rounded-md py-1 transition-colors duration-150 min-w-0"
-                  onClick={(event) =>
-                    userProfileModal.handleUserClick(
-                      {
-                        address: member.address,
-                        displayName: member.displayName,
-                        userIcon: member.userIcon,
-                      },
-                      event
-                    )
-                  }
-                >
-                  <UserAvatar
-                    userIcon={member.userIcon}
-                    displayName={member.displayName}
-                    address={member.address}
-                    size={30}
-                    className="opacity-80 flex-shrink-0"
-                  />
-                  <div className="flex flex-col ml-2 text-subtle min-w-0 flex-1">
-                    <span className="text-md font-bold truncate-user-name">
-                      {member.displayName}
-                    </span>
-                  </div>
-                </div>
-              ))}
-            </div>
-          ))}
-        </div>
-      </>
-    );
-    setRightSidebarContent(sidebarContent);
-  }, [
-    generateSidebarContent,
-    setRightSidebarContent,
-    searchInput,
-    activeSearch,
-    userProfileModal.handleUserClick,
-  ]);
-
   useEffect(() => {
     if (!init) {
       setTimeout(() => setInit(true), 200);
@@ -1153,7 +1049,7 @@ const Channel: React.FC<ChannelProps> = ({
             </div>
           </div>
 
-          {/* Desktop sidebar only - mobile sidebar renders via SidebarProvider at Layout level */}
+          {/* Desktop sidebar only - mobile uses MobileDrawer below */}
           {showUsers && (
             <div className="channel-users-sidebar list-bottom-fade-chat hidden lg:block w-[260px] bg-chat border-l border-default flex-shrink-0">
               {/* Search Input */}
@@ -1161,10 +1057,11 @@ const Channel: React.FC<ChannelProps> = ({
                 <ListSearchInput
                   value={searchInput}
                   onChange={setSearchInput}
-                  placeholder={t`Username or Address`}
+                  placeholder={t`Name or Address`}
                   variant="underline"
+                  showSearchIcon={false}
                 />
-                <div className="pb-3">
+                <div className="pb-2">
                   {activeSearch &&
                     generateVirtualizedUserList(activeSearch, collapsedRoles).length === 0 && (
                       <div className="text-xs text-subtle mt-1">
