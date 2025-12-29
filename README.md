@@ -46,41 +46,28 @@ After running `yarn dev`, you can access the development tools at: `http://local
 
 #### Testing with Mock Data
 
-##### Mock Users (Space Members List)
+Add `?users=N` to any URL to generate mock users/contacts for testing:
 
-To test Space performance with large user lists (useful for testing virtualization):
-
-**URL Parameter (temporary):**
 ```
-http://localhost:port/space/your-space-id/channel/your-channel-id?mockUsers=1000
+# Space members list (1000 mock users)
+http://localhost:port/space/your-space-id/channel/your-channel-id?users=1000
+
+# Direct messages list (50 mock contacts)
+http://localhost:port/messages?users=50
 ```
 
 **localStorage (persistent across sessions):**
 ```javascript
-// Enable mock users in browser console
+// Enable mock users (Space members)
 localStorage.setItem('debug_mock_users', 'true')
-localStorage.setItem('debug_mock_count', '1000')  // Any number
+localStorage.setItem('debug_mock_count', '1000')
+
+// Enable mock conversations (DM contacts)
+localStorage.setItem('debug_mock_conversations', 'true')
+localStorage.setItem('debug_mock_conversation_count', '50')
 
 // Disable
 localStorage.removeItem('debug_mock_users')
-```
-
-##### Mock Conversations (Direct Messages List)
-
-To test the Direct Messages contact list with many contacts:
-
-**URL Parameter (temporary):**
-```
-http://localhost:port/messages?mockConversations=50
-```
-
-**localStorage (persistent across sessions):**
-```javascript
-// Enable mock conversations in browser console
-localStorage.setItem('debug_mock_conversations', 'true')
-localStorage.setItem('debug_mock_conversation_count', '50')  // Any number
-
-// Disable
 localStorage.removeItem('debug_mock_conversations')
 ```
 

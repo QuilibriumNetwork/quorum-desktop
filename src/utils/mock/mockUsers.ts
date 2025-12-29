@@ -86,7 +86,7 @@ export function generateMockRoles(mockUsers: MockUser[]): MockRole[] {
 
 /**
  * Check if mock users are enabled in development
- * Controlled by localStorage or URL parameter
+ * Controlled by localStorage or URL parameter (?users=N)
  */
 export function isMockUsersEnabled(): boolean {
   if (process.env.NODE_ENV !== 'development') {
@@ -95,7 +95,7 @@ export function isMockUsersEnabled(): boolean {
 
   return (
     localStorage?.getItem('debug_mock_users') === 'true' ||
-    new URLSearchParams(window.location?.search || '').get('mockUsers') !== null
+    new URLSearchParams(window.location?.search || '').get('users') !== null
   );
 }
 
@@ -104,8 +104,8 @@ export function isMockUsersEnabled(): boolean {
  */
 export function getMockUserCount(): number {
   return parseInt(
-    new URLSearchParams(window.location?.search || '').get('mockUsers') ||
-    localStorage?.getItem('debug_mock_count') ||
-    '1000'
+    new URLSearchParams(window.location?.search || '').get('users') ||
+      localStorage?.getItem('debug_mock_count') ||
+      '1000'
   );
 }

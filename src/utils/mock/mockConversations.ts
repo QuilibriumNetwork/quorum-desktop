@@ -123,7 +123,7 @@ export function generateMockConversations(count: number): MockConversation[] {
 
 /**
  * Check if mock conversations are enabled in development
- * Controlled by localStorage or URL parameter
+ * Controlled by localStorage or URL parameter (?users=N)
  */
 export function isMockConversationsEnabled(): boolean {
   if (process.env.NODE_ENV !== 'development') {
@@ -132,7 +132,7 @@ export function isMockConversationsEnabled(): boolean {
 
   return (
     localStorage?.getItem('debug_mock_conversations') === 'true' ||
-    new URLSearchParams(window.location?.search || '').get('mockConversations') !== null
+    new URLSearchParams(window.location?.search || '').get('users') !== null
   );
 }
 
@@ -141,7 +141,7 @@ export function isMockConversationsEnabled(): boolean {
  */
 export function getMockConversationCount(): number {
   return parseInt(
-    new URLSearchParams(window.location?.search || '').get('mockConversations') ||
+    new URLSearchParams(window.location?.search || '').get('users') ||
       localStorage?.getItem('debug_mock_conversation_count') ||
       '50'
   );
