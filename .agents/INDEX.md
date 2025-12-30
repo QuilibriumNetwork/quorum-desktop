@@ -133,20 +133,21 @@ This is the main index for all documentation, bug reports, and task management.
 
 ### Pending Tasks
 
-- [Add Unified Context Menu System for Sidebar Items](tasks/dm-conversation-context-menu.md)
 - [Combined Text + Image Messages](tasks/combined-text-image-messages.md)
 - [Conversation Deletion State Synchronization](tasks/conversation-deletion-state-sync.md)
 - [Custom ContentEditable Mention Pills for Message Composer](tasks/mention-pills-in-message-textarea.md)
 - [Date Translation with Moment.js Locale Configuration](tasks/i18n-date-translation-moment-locale.md)
 - [Device Identification Improvement](tasks/device-identification-improvement.md)
-- [DM Contacts Search and Filtering Feature](tasks/dm-contacts-search-and-filtering.md)
 - [Implement Message Forwarding with Privacy Controls](tasks/message-forwarding-with-privacy-controls.md)
+- [Implement New Member Badge in Spaces](tasks/new-member-badge-spaces.md)
 - [Implement Role-Based Channel Visibility](tasks/channel-role-visibility.md)
 - [Implement Smart Context Extraction Around Mentions in NotificationPanel](tasks/notification-mention-context-extraction.md)
 - [Multi-User Invite Selection Enhancement](tasks/multi-user-invite-selection.md)
 - [Passkey Import UX Issue](tasks/passkey-import-ux-issue.md)
+- [Public Space Directory Feature](tasks/public-space-directory.md)
 - [SDK PasskeyModal Customization Props Enhancement](tasks/sdk-passkey-modal-customization-props.md)
 - [Service Worker for App Update Detection](tasks/service-worker-app-updates.md)
+- [Space Tags](tasks/space-tags.md)
 - [Task: Implement Delete Public Invite Link Feature](tasks/delete-public-invite-link.md)
 - [Test Suite Implementation Plan for Quorum Desktop](tasks/test-suite-plan.md)
 - [Tombstone Cleanup Strategy for Deleted Messages](tasks/tombstone-cleanup-strategy.md)
@@ -230,6 +231,7 @@ This is the main index for all documentation, bug reports, and task management.
 
 - [AccentColorSwitcher Cross-Platform Migration + Persistence](tasks/.done/accent-color-switcher-cross-platform-migration.md)
 - [Add DM-Specific Action Queue Handlers](tasks/.done/dm-action-queue-handlers.md)
+- [Add Unified Context Menu System for Sidebar Items](tasks/.done/dm-conversation-context-menu.md)
 - [Analysis Report & Implementation Plan: Strategic Portal Integration for Overlay Components (v7)](tasks/.done/modal-portal-refactor-analysis.md)
 - [Android 7.0 File Download Fix - Implementation Plan](tasks/.done/FAILED_android-file-download-fix.md)
 - [Background Action Queue](tasks/.done/background-action-queue.md)
@@ -249,6 +251,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Direct Message Deletion Feature](tasks/.done/dm-message-deletion.md)
 - [Direct Message Features Comparison Analysis](tasks/.done/direct-message-features-comparison.md)
 - [DirectMessage Navigation State Persistence](tasks/.done/dm-navigation-state-persistence.md)
+- [DM Contacts Search and Filtering Feature](tasks/.done/dm-contacts-search-and-filtering.md)
 - [DM Unread Indicators - Exclude Current User's Messages](tasks/.done/dm-unread-indicators-sender-filtering.md)
 - [Dropdown Panels Consolidation & Mobile Bottom Sheet Implementation](tasks/.done/dropdown-panels-consolidation.md)
 - [Edit Message Feature](tasks/.done/edit-message-feature.md)
@@ -369,4 +372,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2025-12-29 13:31:12
+**Last Updated**: 2025-12-30 13:35:56
