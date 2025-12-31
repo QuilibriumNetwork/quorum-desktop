@@ -64,6 +64,10 @@ export default defineConfig(({ command }) => ({
     emptyOutDir: true,
     rollupOptions: {
       external: (id) => {
+        // Externalize vite-plugin-node-polyfills shims (injected by SDK build)
+        if (id.includes('vite-plugin-node-polyfills/shims/')) {
+          return true;
+        }
         // Exclude dev folder from production builds
         // Only match src/dev/ or relative imports containing /dev/, not absolute system paths
         if (process.env.NODE_ENV === 'production') {
@@ -133,7 +137,7 @@ export default defineConfig(({ command }) => ({
       crypto: 'crypto-browserify',
       '@quilibrium/quilibrium-js-sdk-channels': resolve(
         __dirname,
-        '../node_modules/@quilibrium/quilibrium-js-sdk-channels/dist/index.js'
+        '../node_modules/@quilibrium/quilibrium-js-sdk-channels/dist/index.esm.js'
       ),
     },
     // Platform-specific resolution - prioritize .web files over .native files
