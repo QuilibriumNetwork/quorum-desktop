@@ -1,3 +1,5 @@
+import { logger } from '@quilibrium/quorum-shared';
+
 /**
  * Cross-platform haptic feedback utilities
  * Provides vibration feedback for better touch device UX
@@ -29,7 +31,7 @@ export function triggerHapticFeedback(
     } catch (error) {
       // Silently fail if vibration is blocked by browser
       // This can happen due to permissions or browser settings
-      console.debug('Haptic feedback blocked:', error);
+      logger.debug('Haptic feedback blocked:', error);
       return false;
     }
   }
@@ -72,7 +74,7 @@ export function hapticPattern(pattern: number[]): boolean {
       navigator.vibrate(pattern);
       return true;
     } catch (error) {
-      console.debug('Haptic pattern blocked:', error);
+      logger.debug('Haptic pattern blocked:', error);
       return false;
     }
   }

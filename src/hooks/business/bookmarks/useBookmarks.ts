@@ -1,3 +1,4 @@
+import { logger } from '@quilibrium/quorum-shared';
 import { useState, useCallback, useMemo } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useBookmarks as useBookmarksQuery } from '../../queries/bookmarks/useBookmarks';
@@ -171,17 +172,17 @@ export const useBookmarks = ({ userAddress }: UseBookmarksOptions) => {
 
     // Validate message structure
     if (!message || !message.messageId || !message.content) {
-      console.warn('Cannot add bookmark: invalid message structure');
+      logger.warn('Cannot add bookmark: invalid message structure');
       return;
     }
 
     // Validate context consistency with sourceType
     if (sourceType === 'channel' && (!context.spaceId || !context.channelId)) {
-      console.warn('Cannot add bookmark: channel bookmark requires spaceId and channelId');
+      logger.warn('Cannot add bookmark: channel bookmark requires spaceId and channelId');
       return;
     }
     if (sourceType === 'dm' && !context.conversationId) {
-      console.warn('Cannot add bookmark: DM bookmark requires conversationId');
+      logger.warn('Cannot add bookmark: DM bookmark requires conversationId');
       return;
     }
 
@@ -204,17 +205,17 @@ export const useBookmarks = ({ userAddress }: UseBookmarksOptions) => {
   ) => {
     // Validate message structure first (before accessing messageId)
     if (!message || !message.messageId || !message.content) {
-      console.warn('Cannot toggle bookmark: invalid message structure');
+      logger.warn('Cannot toggle bookmark: invalid message structure');
       return;
     }
 
     // Validate context consistency with sourceType
     if (sourceType === 'channel' && (!context.spaceId || !context.channelId)) {
-      console.warn('Cannot toggle bookmark: channel bookmark requires spaceId and channelId');
+      logger.warn('Cannot toggle bookmark: channel bookmark requires spaceId and channelId');
       return;
     }
     if (sourceType === 'dm' && !context.conversationId) {
-      console.warn('Cannot toggle bookmark: DM bookmark requires conversationId');
+      logger.warn('Cannot toggle bookmark: DM bookmark requires conversationId');
       return;
     }
 

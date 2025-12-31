@@ -2,6 +2,7 @@ import * as React from 'react';
 import { Button, Switch, Icon, Tooltip, Spacer, ScrollContainer } from '../../primitives';
 import { t } from '@lingui/core/macro';
 import { channel as secureChannel } from '@quilibrium/quilibrium-js-sdk-channels';
+import { QRCodeSVG } from 'qrcode.react';
 
 interface PrivacyProps {
   allowSync: boolean;
@@ -12,6 +13,7 @@ interface PrivacyProps {
   keyset: any;
   removeDevice: (key: string) => void;
   downloadKey: () => void;
+  getPrivateKeyHex?: () => Promise<string>;
   onSave: () => void;
   isSaving: boolean;
   removedDevices?: string[];
@@ -29,6 +31,7 @@ const Privacy: React.FunctionComponent<PrivacyProps> = ({
   keyset,
   removeDevice,
   downloadKey,
+  getPrivateKeyHex,
   onSave,
   isSaving,
   removedDevices = [],
@@ -36,6 +39,50 @@ const Privacy: React.FunctionComponent<PrivacyProps> = ({
   isRestoring = false,
   onRestoreMissingSpaces,
 }) => {
+  // QR code display state - requires explicit user confirmation
+  const [showQRConfirmation, setShowQRConfirmation] = React.useState(false);
+  const [showQRCode, setShowQRCode] = React.useState(false);
+  const [privateKeyHex, setPrivateKeyHex] = React.useState<string | null>(null);
+  const [isLoadingKey, setIsLoadingKey] = React.useState(false);
+
+  // Auto-hide QR code after 60 seconds for security
+  React.useEffect(() => {
+    if (showQRCode) {
+      const timer = setTimeout(() => {
+        setShowQRCode(false);
+        setPrivateKeyHex(null);
+        setShowQRConfirmation(false);
+      }, 60000);
+      return () => clearTimeout(timer);
+    }
+  }, [showQRCode]);
+
+  const handleShowQRClick = () => {
+    setShowQRConfirmation(true);
+  };
+
+  const handleConfirmShowQR = async () => {
+    if (!getPrivateKeyHex) return;
+
+    setIsLoadingKey(true);
+    try {
+      const keyHex = await getPrivateKeyHex();
+      setPrivateKeyHex(keyHex);
+      setShowQRCode(true);
+      setShowQRConfirmation(false);
+    } catch (error) {
+      console.error('Failed to get private key:', error);
+    } finally {
+      setIsLoadingKey(false);
+    }
+  };
+
+  const handleHideQR = () => {
+    setShowQRCode(false);
+    setPrivateKeyHex(null);
+    setShowQRConfirmation(false);
+  };
+
   return (
     <>
       <div className="modal-content-header">
@@ -191,6 +238,89 @@ const Privacy: React.FunctionComponent<PrivacyProps> = ({
             </Button>
           </div>
         </div>
+
+        {getPrivateKeyHex && (
+          <div className="modal-content-info">
+            <Spacer size="md" direction="vertical" borderTop={true} />
+            <div className="text-subtitle-2">{t`Mobile Import`}</div>
+
+            <div className="pt-2 text-label-strong">
+              {t`Display your private key as a QR code to scan with the Quorum mobile app. This allows you to import your account on mobile without typing the key.`}
+            </div>
+
+            {!showQRConfirmation && !showQRCode && (
+              <div className="pt-4 pb-4 max-w-[150px]">
+                <Button
+                  type="danger-outline"
+                  onClick={handleShowQRClick}
+                >
+                  {t`Show QR Code`}
+                </Button>
+              </div>
+            )}
+
+            {showQRConfirmation && !showQRCode && (
+              <div className="pt-4 pb-4">
+                <div className="bg-danger/10 border border-danger/30 rounded-lg p-4 mb-4">
+                  <div className="flex items-start gap-3">
+                    <Icon name="alert-triangle" className="text-danger mt-0.5" />
+                    <div>
+                      <div className="text-danger font-medium mb-2">
+                        {t`Security Warning`}
+                      </div>
+                      <div className="text-sm text-main">
+                        {t`Your private key will be displayed on screen. Anyone who sees or photographs this QR code can take full control of your Quorum account and steal any associated funds.`}
+                      </div>
+                      <div className="text-sm text-main mt-2">
+                        {t`Only proceed if you are in a private location and ready to scan immediately.`}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div className="flex gap-3">
+                  <Button
+                    type="secondary"
+                    onClick={() => setShowQRConfirmation(false)}
+                  >
+                    {t`Cancel`}
+                  </Button>
+                  <Button
+                    type="danger"
+                    onClick={handleConfirmShowQR}
+                    disabled={isLoadingKey}
+                  >
+                    {isLoadingKey ? t`Loading...` : t`I Understand, Show QR`}
+                  </Button>
+                </div>
+              </div>
+            )}
+
+            {showQRCode && privateKeyHex && (
+              <div className="pt-4 pb-4">
+                <div className="bg-surface-3 rounded-lg p-6 inline-block">
+                  <div className="bg-white p-4 rounded-lg">
+                    <QRCodeSVG
+                      value={privateKeyHex}
+                      size={200}
+                      level="M"
+                    />
+                  </div>
+                  <div className="text-xs text-muted text-center mt-3">
+                    {t`QR code will auto-hide in 60 seconds`}
+                  </div>
+                </div>
+                <div className="pt-4 max-w-[100px]">
+                  <Button
+                    type="secondary"
+                    onClick={handleHideQR}
+                  >
+                    {t`Hide`}
+                  </Button>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
 
         {onRestoreMissingSpaces && (
           <div className="modal-content-info">

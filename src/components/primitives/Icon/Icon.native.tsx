@@ -1,3 +1,4 @@
+import { logger } from '@quilibrium/quorum-shared';
 import React from 'react';
 import { TouchableOpacity } from 'react-native';
 import * as IconLibrary from '@tabler/icons-react-native';
@@ -41,7 +42,7 @@ export function Icon({
   const iconComponentName = iconComponentMap[name];
 
   if (!iconComponentName) {
-    console.warn(`Icon "${name}" not found in icon mapping`);
+    logger.warn(`Icon "${name}" not found in icon mapping`);
     return null;
   }
 
@@ -55,16 +56,16 @@ export function Icon({
   if (!IconComponent) {
     // If filled variant doesn't exist, try falling back to outline
     if (variant === 'filled') {
-      console.warn(
+      logger.warn(
         `Icon "${name}" does not have a filled variant. Falling back to outline.`
       );
       IconComponent = (IconLibrary as any)[iconComponentName];
       if (!IconComponent) {
-        console.warn(`Icon component "${iconComponentName}" not found in icon library`);
+        logger.warn(`Icon component "${iconComponentName}" not found in icon library`);
         return null;
       }
     } else {
-      console.warn(`Icon component "${finalComponentName}" not found in icon library`);
+      logger.warn(`Icon component "${finalComponentName}" not found in icon library`);
       return null;
     }
   }

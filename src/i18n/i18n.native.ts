@@ -3,6 +3,7 @@
 // Communities are welcome to proofread and correct them.
 // Proofreading completed for: English, Italian.
 
+import { logger } from '@quilibrium/quorum-shared';
 import { i18n } from '@lingui/core';
 import locales, { defaultLocale } from './locales';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -85,7 +86,7 @@ export function getUserLocale() {
 export function saveUserLocale(locale: string) {
   // Fire and forget for API compatibility
   AsyncStorage.setItem('language', locale).catch((error) => {
-    console.warn('Failed to save locale:', error);
+    logger.warn('Failed to save locale:', error);
   });
 }
 
@@ -97,7 +98,7 @@ export async function getMobileUserLocale() {
       return storedLocale;
     }
   } catch (error) {
-    console.warn('Failed to get stored locale:', error);
+    logger.warn('Failed to get stored locale:', error);
   }
 
   // TODO: Use react-native-localize for device locale detection
@@ -108,7 +109,7 @@ export async function saveMobileUserLocale(locale: string) {
   try {
     await AsyncStorage.setItem('language', locale);
   } catch (error) {
-    console.warn('Failed to save locale:', error);
+    logger.warn('Failed to save locale:', error);
   }
 }
 

@@ -1,3 +1,4 @@
+import { logger } from '@quilibrium/quorum-shared';
 import { useState, useEffect } from 'react';
 import { Space } from '../../../api/quorumApi';
 import { useMessageDB } from '../../../components/context/useMessageDB';
@@ -31,12 +32,16 @@ export const useInviteProcessing = (inviteLink: string) => {
 
       try {
         setError(undefined);
+        logger.log('[InviteProcessing] Processing invite link:', inviteLink.substring(0, 100));
         const spaceData = await processInviteLink(inviteLink);
+        logger.log('[InviteProcessing] Invite processed successfully, space:', spaceData?.spaceName);
         setSpace(spaceData);
         // Cache the successful result
         inviteCache.set(inviteLink, { space: spaceData });
       } catch (e: any) {
         const raw = e?.message || e?.toString?.() || '';
+        console.error('[InviteProcessing] Error processing invite:', raw);
+        console.error('[InviteProcessing] Full error:', e);
         // Surface specific, user-friendly errors from known conditions
         let friendly = t`Could not verify invite`;
         if (/invalid link/i.test(raw)) {

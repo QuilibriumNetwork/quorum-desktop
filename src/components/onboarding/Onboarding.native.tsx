@@ -1,3 +1,4 @@
+import { logger } from '@quilibrium/quorum-shared';
 import React, { useState, useCallback } from 'react';
 import {
   Pressable,
@@ -146,7 +147,7 @@ export const Onboarding: React.FC<OnboardingProps> = ({ setUser }) => {
       // TODO: Manual API registration will be added once we determine the correct
       // UserRegistration interface structure from the real SDK
       // For now, just save to local state - registration will happen when full SDK is integrated
-      console.warn(
+      logger.warn(
         '[Mobile] Skipping API user registration - will be handled by PasskeyModal when SDK is integrated'
       );
 

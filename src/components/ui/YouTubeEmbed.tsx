@@ -1,3 +1,4 @@
+import { logger } from '@quilibrium/quorum-shared';
 import React from 'react';
 import { YouTubeFacade } from './YouTubeFacade';
 import { extractYouTubeVideoId } from '../../utils/youtubeUtils';
@@ -29,7 +30,7 @@ export const YouTubeEmbed: React.FC<YouTubeEmbedProps> = ({
 
   if (!youtubeVideoId) {
     // Fallback for invalid YouTube URLs
-    console.warn('Invalid YouTube URL:', src);
+    logger.warn('Invalid YouTube URL:', src);
     return (
       <iframe
         src={src}

@@ -1,6 +1,7 @@
 // InvitationService.ts - Extracted from MessageDB.tsx with ZERO modifications
 // This service handles space invitation operations
 
+import { logger } from '@quilibrium/quorum-shared';
 import { MessageDB, NavItem } from '../db/messages';
 import { QuorumApiClient } from '../api/baseTypes';
 import { channel as secureChannel, channel_raw as ch } from '@quilibrium/quilibrium-js-sdk-channels';
@@ -227,7 +228,7 @@ export class InvitationService {
           filteredMembers.length + 200
         );
 
-      console.log('new link session', session);
+      logger.log('new link session', session);
       const outbounds: string[] = [];
       let newPeerIdSet = {
         [trState.id_peer_map[1].public_key]: 1,
@@ -506,7 +507,13 @@ export class InvitationService {
    * Validates and decrypts invite link to retrieve space info.
    */
   async processInviteLink(inviteLink: string) {
+    logger.log('[InvitationService.processInviteLink] Starting with link:', inviteLink?.substring(0, 100));
+    logger.log('[InvitationService.processInviteLink] Link total length:', inviteLink?.length);
     const params = parseInviteParams(inviteLink);
+    logger.log('[InvitationService.processInviteLink] parseInviteParams result:', params ? 'got params' : 'null');
+    if (params) {
+      logger.log('[InvitationService.processInviteLink] Params keys:', Object.keys(params));
+    }
     if (!params) throw new Error(t`invalid link`);
 
     const info = params as {
@@ -517,44 +524,67 @@ export class InvitationService {
       hubKey?: string;
     };
 
+    logger.log('[InvitationService.processInviteLink] spaceId:', info.spaceId);
+    logger.log('[InvitationService.processInviteLink] configKey present:', !!info.configKey);
+    logger.log('[InvitationService.processInviteLink] secret present:', !!info.secret);
+    logger.log('[InvitationService.processInviteLink] template present:', !!info.template);
+    logger.log('[InvitationService.processInviteLink] hubKey present:', !!info.hubKey);
+
     if (!info.spaceId || !info.configKey) {
+      logger.log('[InvitationService.processInviteLink] FAIL: missing spaceId or configKey');
       throw new Error(t`invalid link`);
     }
 
+    logger.log('[InvitationService.processInviteLink] Fetching manifest for spaceId:', info.spaceId);
     const manifest = await this.apiClient.getSpaceManifest(info.spaceId);
+    logger.log('[InvitationService.processInviteLink] Manifest received:', !!manifest);
     if (!manifest) {
+      logger.log('[InvitationService.processInviteLink] FAIL: no manifest returned');
       throw new Error(t`invalid response`);
     }
+    logger.log('[InvitationService.processInviteLink] Manifest data keys:', Object.keys(manifest.data || {}));
 
     const ciphertext = JSON.parse(manifest.data.space_manifest) as {
       ciphertext: string;
       initialization_vector: string;
       associated_data: string;
     };
-    const space = JSON.parse(
-      Buffer.from(
-        JSON.parse(
-          ch.js_decrypt_inbox_message(
-            JSON.stringify({
-              inbox_private_key: hexToSpreadArray(info.configKey),
-              ephemeral_public_key: hexToSpreadArray(
-                manifest.data.ephemeral_public_key
-              ),
-              ciphertext: ciphertext,
-            })
-          )
-        )
-      ).toString('utf-8')
-    ) as Space;
+    logger.log('[InvitationService.processInviteLink] Ciphertext parsed, decrypting...');
+    logger.log('[InvitationService.processInviteLink] configKey length:', info.configKey?.length);
+    logger.log('[InvitationService.processInviteLink] ephemeral_public_key:', manifest.data.ephemeral_public_key?.substring(0, 20));
 
-    if (
-      (space.inviteUrl == '' || !space.inviteUrl) &&
-      (!info.secret || !info.template || !info.hubKey)
-    ) {
-      throw new Error(t`invalid link`);
+    try {
+      const decrypted = ch.js_decrypt_inbox_message(
+        JSON.stringify({
+          inbox_private_key: hexToSpreadArray(info.configKey),
+          ephemeral_public_key: hexToSpreadArray(
+            manifest.data.ephemeral_public_key
+          ),
+          ciphertext: ciphertext,
+        })
+      );
+      logger.log('[InvitationService.processInviteLink] Decryption succeeded');
+
+      const space = JSON.parse(
+        Buffer.from(JSON.parse(decrypted)).toString('utf-8')
+      ) as Space;
+      logger.log('[InvitationService.processInviteLink] Space parsed:', space?.spaceName);
+      logger.log('[InvitationService.processInviteLink] Space inviteUrl present:', !!space?.inviteUrl);
+
+      if (
+        (space.inviteUrl == '' || !space.inviteUrl) &&
+        (!info.secret || !info.template || !info.hubKey)
+      ) {
+        logger.log('[InvitationService.processInviteLink] FAIL: no inviteUrl and missing secret/template/hubKey');
+        throw new Error(t`invalid link`);
+      }
+
+      logger.log('[InvitationService.processInviteLink] SUCCESS - returning space');
+      return space;
+    } catch (decryptErr: any) {
+      console.error('[InvitationService.processInviteLink] Decryption FAILED:', decryptErr?.message || decryptErr);
+      throw decryptErr;
     }
-
-    return space;
   }
 
   /**

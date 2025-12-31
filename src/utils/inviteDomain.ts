@@ -3,6 +3,7 @@
  * Automatically detects staging vs production and uses the appropriate domain
  */
 
+import { logger } from '@quilibrium/quorum-shared';
 import { buildValidPrefixes, getEnvironmentInfo } from './environmentDomains';
 
 /**
@@ -72,11 +73,25 @@ export function getValidInvitePrefixes(): string[] {
   const hashPrefixes = buildValidPrefixes('/#');
   const invitePrefixes = buildValidPrefixes('/invite/#');
 
+  // Production domains should ALWAYS be accepted regardless of current environment
+  // This allows mobile-generated links (using qm.one) to work on desktop localhost
+  const productionPrefixes = [
+    'https://qm.one/#',
+    'https://qm.one/invite/#',
+    'qm.one/#',
+    'qm.one/invite/#',
+    'https://app.quorummessenger.com/#',
+    'https://app.quorummessenger.com/invite/#',
+    'app.quorummessenger.com/#',
+    'app.quorummessenger.com/invite/#',
+  ];
+
   // Localhost development: also accept common test ports
   if (environment === 'localhost') {
     return [
       ...hashPrefixes,
       ...invitePrefixes,
+      ...productionPrefixes,
       // Keep legacy localhost ports for development
       'http://localhost:5173/#',
       'http://localhost:5173/invite/#',
@@ -85,7 +100,7 @@ export function getValidInvitePrefixes(): string[] {
     ];
   }
 
-  return [...hashPrefixes, ...invitePrefixes];
+  return [...hashPrefixes, ...invitePrefixes, ...productionPrefixes];
 }
 
 /**
@@ -110,10 +125,21 @@ export function parseInviteParams(inviteLink: string):
       hubKey?: string;
     }
   | null {
-  if (!inviteLink || typeof inviteLink !== 'string') return null;
+  logger.log('[parseInviteParams] Input link:', inviteLink?.substring(0, 150) + (inviteLink?.length > 150 ? '...' : ''));
+  logger.log('[parseInviteParams] Link length:', inviteLink?.length);
+  if (!inviteLink || typeof inviteLink !== 'string') {
+    logger.log('[parseInviteParams] FAIL: inviteLink is falsy or not a string');
+    return null;
+  }
   const idx = inviteLink.indexOf('#');
-  if (idx < 0 || idx === inviteLink.length - 1) return null;
+  logger.log('[parseInviteParams] Hash index:', idx);
+  if (idx < 0 || idx === inviteLink.length - 1) {
+    logger.log('[parseInviteParams] FAIL: no hash found or hash is at end of string');
+    return null;
+  }
   const hashContent = inviteLink.slice(idx + 1);
+  logger.log('[parseInviteParams] Hash content length:', hashContent.length);
+  logger.log('[parseInviteParams] Hash content preview:', hashContent.substring(0, 200));
   const params = Object.create(null) as Record<string, string>;
   for (const pair of hashContent.split('&')) {
     const [k, v] = pair.split('=');
@@ -126,7 +152,9 @@ export function parseInviteParams(inviteLink: string):
       k === 'hubKey'
     ) {
       params[k] = v;
+      logger.log(`[parseInviteParams] Found param: ${k} = ${v?.substring(0, 30)}...`);
     }
   }
+  logger.log('[parseInviteParams] Parsed params keys:', Object.keys(params));
   return Object.keys(params).length ? (params as any) : null;
 }

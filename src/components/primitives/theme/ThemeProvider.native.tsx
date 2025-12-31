@@ -1,3 +1,4 @@
+import { logger } from '@quilibrium/quorum-shared';
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { useColorScheme } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -60,7 +61,7 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
           setAccentState(savedAccent);
         }
       } catch (error) {
-        console.warn('Failed to load theme settings:', error);
+        logger.warn('Failed to load theme settings:', error);
       } finally {
         setIsLoading(false);
       }
@@ -86,7 +87,7 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
     for (const key of pathArray) {
       current = current[key];
       if (current === undefined) {
-        console.warn(`Color path "${path}" not found`);
+        logger.warn(`Color path "${path}" not found`);
         return colors.accent.DEFAULT;
       }
     }
@@ -100,7 +101,7 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
     try {
       await AsyncStorage.setItem('theme', value);
     } catch (error) {
-      console.warn('Failed to persist theme:', error);
+      logger.warn('Failed to persist theme:', error);
     }
   };
 
@@ -110,7 +111,7 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
     try {
       await AsyncStorage.setItem('accent-color', value);
     } catch (error) {
-      console.warn('Failed to persist accent color:', error);
+      logger.warn('Failed to persist accent color:', error);
     }
   };
 

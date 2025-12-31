@@ -145,12 +145,17 @@ export function useChannelMessages({
 
   const mapSenderToUser = useCallback(
     (senderId: string) => {
-      return (
-        members[senderId] || {
-          displayName: t`Unknown User`,
-          userIcon: DefaultImages.UNKNOWN_USER,
-        }
-      );
+      const member = members[senderId];
+      if (member) {
+        return {
+          ...member,
+          displayName: member.displayName || senderId.slice(-6),
+        };
+      }
+      return {
+        displayName: senderId?.slice(-6) || t`Unknown User`,
+        userIcon: DefaultImages.UNKNOWN_USER,
+      };
     },
     [members]
   );

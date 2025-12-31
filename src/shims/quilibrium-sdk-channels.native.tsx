@@ -19,6 +19,7 @@
  * See: .agents/tasks/todo/mobile-sdk-integration-issue.md for full details
  */
 
+import { logger } from '@quilibrium/quorum-shared';
 import React, { createContext, useContext, ReactNode, useState } from 'react';
 
 // ============================================================================
@@ -92,7 +93,7 @@ export const channel_raw = {
    * Currently returns true for all inputs
    */
   validateMessage: (message: any): boolean => {
-    console.warn('[SDK Mock] validateMessage called - returning true');
+    logger.warn('[SDK Mock] validateMessage called - returning true');
     return true;
   },
 
@@ -101,7 +102,7 @@ export const channel_raw = {
    * Currently returns true for all inputs
    */
   verifySignature: (message: any, signature: any, publicKey: any): boolean => {
-    console.warn('[SDK Mock] verifySignature called - returning true');
+    logger.warn('[SDK Mock] verifySignature called - returning true');
     return true;
   },
 
@@ -110,7 +111,7 @@ export const channel_raw = {
    * Currently returns the input as-is
    */
   parseMessage: (message: any): any => {
-    console.warn('[SDK Mock] parseMessage called - returning input');
+    logger.warn('[SDK Mock] parseMessage called - returning input');
     return message;
   },
 
@@ -123,7 +124,7 @@ export const channel_raw = {
     publicKey: string;
     address: string;
   } => {
-    console.warn('[SDK Mock] generateKeyset called - returning mock keys');
+    logger.warn('[SDK Mock] generateKeyset called - returning mock keys');
     return {
       privateKey: 'mock_private_key',
       publicKey: 'mock_public_key',
@@ -142,7 +143,7 @@ export const channel = {
    * This should interact with the backend API
    */
   uploadUserRegistration: async (registration: any): Promise<void> => {
-    console.warn('[SDK Mock] uploadUserRegistration called - no-op');
+    logger.warn('[SDK Mock] uploadUserRegistration called - no-op');
     // In real implementation, this would:
     // 1. Validate the registration data
     // 2. Sign it with the user's private key
@@ -155,7 +156,7 @@ export const channel = {
    * Should query the backend for user information
    */
   lookupUser: async (address: string): Promise<UserRegistration | null> => {
-    console.warn(
+    logger.warn(
       `[SDK Mock] lookupUser called for ${address} - returning null`
     );
     // In real implementation, this would:
@@ -170,7 +171,7 @@ export const channel = {
    * Should use proper E2E encryption
    */
   encryptMessage: (message: any, recipientPublicKey: string): any => {
-    console.warn(
+    logger.warn(
       '[SDK Mock] encryptMessage called - returning mock encrypted data'
     );
     return {
@@ -185,7 +186,7 @@ export const channel = {
    * Should decrypt E2E encrypted messages
    */
   decryptMessage: (encryptedMessage: any, privateKey: string): any => {
-    console.warn(
+    logger.warn(
       '[SDK Mock] decryptMessage called - returning mock decrypted data'
     );
     return encryptedMessage.data || encryptedMessage;
@@ -196,7 +197,7 @@ export const channel = {
    * Should sign messages with private key
    */
   signMessage: (message: any, privateKey: string): string => {
-    console.warn('[SDK Mock] signMessage called - returning mock signature');
+    logger.warn('[SDK Mock] signMessage called - returning mock signature');
     return 'mock_signature_' + Math.random().toString(36).substr(2, 9);
   },
 
@@ -246,27 +247,27 @@ export const PasskeysProvider: React.FC<{ children: ReactNode }> = ({
     currentPasskeyInfo: mockPasskeyInfo,
 
     login: async () => {
-      console.warn('[SDK Mock] Passkey login not available on mobile');
+      logger.warn('[SDK Mock] Passkey login not available on mobile');
       throw new Error('Passkey authentication not available on mobile');
     },
 
     logout: () => {
-      console.warn('[SDK Mock] Logout called - no-op');
+      logger.warn('[SDK Mock] Logout called - no-op');
     },
 
     register: async (username: string) => {
-      console.warn(
+      logger.warn(
         `[SDK Mock] Register called for ${username} - not available`
       );
       throw new Error('Passkey registration not available on mobile');
     },
 
     updateProfile: async (data: any) => {
-      console.warn('[SDK Mock] updateProfile called - no-op');
+      logger.warn('[SDK Mock] updateProfile called - no-op');
     },
 
     deleteAccount: async () => {
-      console.warn('[SDK Mock] deleteAccount called - not available');
+      logger.warn('[SDK Mock] deleteAccount called - not available');
       throw new Error('Account deletion not available on mobile');
     },
 
@@ -275,7 +276,7 @@ export const PasskeysProvider: React.FC<{ children: ReactNode }> = ({
       credentialId: string,
       updates: Partial<StoredPasskey>
     ) => {
-      console.warn('[SDK Mock] updateStoredPasskey called with:', updates);
+      logger.warn('[SDK Mock] updateStoredPasskey called with:', updates);
       setMockPasskeyInfo((prev) => ({
         ...prev,
         ...updates,
@@ -284,7 +285,7 @@ export const PasskeysProvider: React.FC<{ children: ReactNode }> = ({
 
     // Add exportKey method for key backup functionality
     exportKey: async (address: string): Promise<string> => {
-      console.warn('[SDK Mock] exportKey called - returning mock key data');
+      logger.warn('[SDK Mock] exportKey called - returning mock key data');
       return JSON.stringify({
         address: address,
         privateKey: 'mock_private_key_data_for_testing',
@@ -311,7 +312,7 @@ export const usePasskeysContext = (): PasskeysContextType => {
   if (!context) {
     // Return a default mock context to prevent crashes
     // TODO: In production, this should properly handle missing provider
-    console.warn(
+    logger.warn(
       '[SDK Mock] usePasskeysContext called outside provider - returning mock'
     );
     return {
@@ -335,7 +336,7 @@ export const usePasskeysContext = (): PasskeysContextType => {
         throw new Error('Not available');
       },
       updateStoredPasskey: () => {
-        console.warn('[SDK Mock] updateStoredPasskey - no provider');
+        logger.warn('[SDK Mock] updateStoredPasskey - no provider');
       },
     };
   }

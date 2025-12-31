@@ -1,3 +1,4 @@
+import { logger } from '@quilibrium/quorum-shared';
 import React, { useMemo, useState, useCallback } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
@@ -1084,7 +1085,7 @@ export const Message = React.memo(
 
                                         // Set up error handler before changing src
                                         const handleError = () => {
-                                          console.warn(
+                                          logger.warn(
                                             'Failed to load full GIF, reverting to thumbnail'
                                           );
                                           img.src = originalSrc;

@@ -1,3 +1,4 @@
+import { logger } from '@quilibrium/quorum-shared';
 import { useCallback } from 'react';
 
 export interface UseGlobalSearchNavigationReturn {
@@ -26,14 +27,14 @@ export const useGlobalSearchNavigation =
         // For now, log the navigation intent to maintain the same logic structure
         if (isDM) {
           // For DMs, would navigate to Messages screen with address
-          console.log(`Navigate to DM: /messages/${spaceId}#msg-${messageId}`);
+          logger.log(`Navigate to DM: /messages/${spaceId}#msg-${messageId}`);
           // navigation.navigate('Messages', {
           //   address: spaceId,
           //   messageId
           // });
         } else {
           // For spaces, would navigate to Space screen
-          console.log(
+          logger.log(
             `Navigate to Space: /spaces/${spaceId}/${channelId}#msg-${messageId}`
           );
           // navigation.navigate('Space', {

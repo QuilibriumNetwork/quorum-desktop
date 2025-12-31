@@ -1,3 +1,4 @@
+import { logger } from '@quilibrium/quorum-shared';
 import { useState, useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
@@ -114,7 +115,7 @@ export const useSpaceManagement = (
   const handleDeleteSpace = useCallback(async () => {
     setDeleteError(null);
     try {
-      console.log(
+      logger.log(
         'Attempting to delete space with ID:',
         spaceId,
         'Type:',

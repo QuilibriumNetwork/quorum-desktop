@@ -26,6 +26,7 @@ export interface UseUserSettingsReturn {
   setStagedRegistration: (registration: any) => void;
   removeDevice: (identityKey: string) => void;
   downloadKey: () => Promise<void>;
+  getPrivateKeyHex: () => Promise<string>;
   keyset: any;
   removedDevices: string[];
   isConfigLoaded: boolean;
@@ -114,6 +115,11 @@ export const useUserSettings = (
     window.URL.revokeObjectURL(url);
   };
 
+  const getPrivateKeyHex = async (): Promise<string> => {
+    if (!currentPasskeyInfo) throw new Error('No passkey info available');
+    return await exportKey(currentPasskeyInfo.address);
+  };
+
   const saveChanges = async (fileData?: ArrayBuffer, currentFile?: File) => {
     if (!currentPasskeyInfo) return;
 
@@ -195,6 +201,7 @@ export const useUserSettings = (
     setStagedRegistration,
     removeDevice,
     downloadKey,
+    getPrivateKeyHex,
     keyset,
     removedDevices,
     isConfigLoaded,

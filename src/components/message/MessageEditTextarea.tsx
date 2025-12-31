@@ -1,3 +1,4 @@
+import { logger } from '@quilibrium/quorum-shared';
 import React, { useState, useRef, useCallback } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { InfiniteData } from '@tanstack/react-query';
@@ -183,7 +184,7 @@ export function MessageEditTextarea({
 
     console.timeEnd('[Edit] 5. Close edit UI');
     console.timeEnd('[Edit] Total handleSaveEdit');
-    console.log('[Edit] Synchronous operations complete, starting async operations...');
+    logger.log('[Edit] Synchronous operations complete, starting async operations...');
 
     // Update IndexedDB and send asynchronously
     (async () => {
@@ -335,7 +336,7 @@ export function MessageEditTextarea({
           if (e.key === 'Enter' && !e.shiftKey) {
             e.preventDefault();
             console.time('[Edit] onKeyDown: Enter pressed to handleSaveEdit complete');
-            console.log('[Edit] onKeyDown: Enter key pressed, calling handleSaveEdit...');
+            logger.log('[Edit] onKeyDown: Enter key pressed, calling handleSaveEdit...');
             handleSaveEdit().catch((error) => {
               console.error('Failed to save edit:', error);
             });
@@ -367,7 +368,7 @@ export function MessageEditTextarea({
             size="sm"
             onClick={() => {
               console.time('[Edit] onClick: Save button clicked to handleSaveEdit complete');
-              console.log('[Edit] onClick: Save button clicked, calling handleSaveEdit...');
+              logger.log('[Edit] onClick: Save button clicked, calling handleSaveEdit...');
               handleSaveEdit().catch((error) => {
                 console.error('Failed to save edit:', error);
               });

@@ -68,6 +68,7 @@ const UserSettingsModal: React.FunctionComponent<{
     setStagedRegistration,
     removeDevice,
     downloadKey,
+    getPrivateKeyHex,
     keyset,
     removedDevices,
     isConfigLoaded,
@@ -185,6 +186,7 @@ const UserSettingsModal: React.FunctionComponent<{
                         keyset={keyset}
                         removeDevice={removeDevice}
                         downloadKey={downloadKey}
+                        getPrivateKeyHex={getPrivateKeyHex}
                         onSave={saveChanges}
                         isSaving={isSaving}
                         removedDevices={removedDevices}

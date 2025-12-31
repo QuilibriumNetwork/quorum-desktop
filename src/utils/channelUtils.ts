@@ -2,6 +2,7 @@
  * Utility functions for channel operations
  */
 
+import { logger } from '@quilibrium/quorum-shared';
 import type { Channel } from '../api/quorumApi';
 
 /**
@@ -15,7 +16,7 @@ import type { Channel } from '../api/quorumApi';
  * @example
  * const channel = findChannelByName('general', channels);
  * if (channel) {
- *   console.log('Found channel:', channel.channelId);
+ *   logger.log('Found channel:', channel.channelId);
  * }
  */
 export function findChannelByName(

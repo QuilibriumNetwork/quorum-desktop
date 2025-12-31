@@ -1,3 +1,4 @@
+import { logger } from '@quilibrium/quorum-shared';
 import React, { useState } from 'react';
 import { Input, Icon, FlexRow } from '@/components/primitives';
 import { ExampleBox } from '../ExampleBox';
@@ -27,7 +28,7 @@ export const InputExamples: React.FC = () => {
     ],
     codeExample: {
       title: "All Input Props",
-      code: "import { Input } from '@/components/primitives';\n\n<Input\n  // Core props\n  value={inputValue}\n  onChange={setInputValue}\n  placeholder=\"Enter text...\"\n  \n  // Variants\n  variant=\"filled\" // 'filled' | 'bordered' | 'minimal' | 'onboarding'\n  \n  // Input types\n  type=\"text\" // 'text' | 'email' | 'password' | 'number' | 'tel' | 'url' | 'search'\n  \n  // States\n  disabled={false}\n  autoFocus={false}\n  noFocusStyle={false}\n  \n  // Error handling\n  error={hasError}\n  errorMessage=\"This field is required\"\n  \n  // Labels\n  label=\"Field Label\"\n  labelType=\"static\" // 'static' | 'floating'\n  required={true}\n  helperText=\"Additional help text\"\n  \n  // Event handlers\n  onFocus={() => console.log('focused')}\n  onBlur={() => console.log('blurred')}\n  onKeyDown={(e) => console.log('key:', e.key)}\n  \n  // Styling\n  className=\"custom-class\"\n  style={{ width: '100%' }}\n  \n  // Accessibility\n  testID=\"input-test-id\"\n  accessibilityLabel=\"Accessible label\"\n/>"
+      code: "import { Input } from '@/components/primitives';\n\n<Input\n  // Core props\n  value={inputValue}\n  onChange={setInputValue}\n  placeholder=\"Enter text...\"\n  \n  // Variants\n  variant=\"filled\" // 'filled' | 'bordered' | 'minimal' | 'onboarding'\n  \n  // Input types\n  type=\"text\" // 'text' | 'email' | 'password' | 'number' | 'tel' | 'url' | 'search'\n  \n  // States\n  disabled={false}\n  autoFocus={false}\n  noFocusStyle={false}\n  \n  // Error handling\n  error={hasError}\n  errorMessage=\"This field is required\"\n  \n  // Labels\n  label=\"Field Label\"\n  labelType=\"static\" // 'static' | 'floating'\n  required={true}\n  helperText=\"Additional help text\"\n  \n  // Event handlers\n  onFocus={() => logger.log('focused')}\n  onBlur={() => logger.log('blurred')}\n  onKeyDown={(e) => logger.log('key:', e.key)}\n  \n  // Styling\n  className=\"custom-class\"\n  style={{ width: '100%' }}\n  \n  // Accessibility\n  testID=\"input-test-id\"\n  accessibilityLabel=\"Accessible label\"\n/>"
     }
   } as const;
   const [inputValues, setInputValues] = useState<Record<string, string>>({});

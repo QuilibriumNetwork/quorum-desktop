@@ -1,6 +1,7 @@
 // ConfigService.ts - Extracted from MessageDB.tsx with ZERO modifications
 // This service handles user configuration management
 
+import { logger } from '@quilibrium/quorum-shared';
 import { MessageDB, UserConfig } from '../db/messages';
 import { QuorumApiClient } from '../api/baseTypes';
 import { Bookmark } from '../api/quorumApi';
@@ -62,7 +63,7 @@ export class ConfigService {
     }
 
     if (savedConfig.timestamp < (storedConfig?.timestamp ?? 0)) {
-      console.warn(t`saved config is out of date`);
+      logger.warn(t`saved config is out of date`);
       return storedConfig;
     }
 
@@ -104,7 +105,7 @@ export class ConfigService {
         )
       )
     ) {
-      console.warn(t`received config with invalid signature!`);
+      logger.warn(t`received config with invalid signature!`);
       return storedConfig;
     }
 
@@ -139,13 +140,13 @@ export class ConfigService {
         try {
           const config = space.keys.find((k) => k.keyId == 'config');
           if (!config) {
-            console.warn(t`decrypted space with no known config key`);
+            logger.warn(t`decrypted space with no known config key`);
             continue;
           }
 
           const hub = space.keys.find((k) => k.keyId == 'hub');
           if (!hub) {
-            console.warn(t`Decrypted Space with no known hub key`);
+            logger.warn(t`Decrypted Space with no known hub key`);
             continue;
           }
 
@@ -160,7 +161,7 @@ export class ConfigService {
             space.spaceId
           );
           if (!manifestPayload) {
-            console.warn(t`Could not obtain manifest for Space`);
+            logger.warn(t`Could not obtain manifest for Space`);
             continue;
           }
 
@@ -322,7 +323,7 @@ export class ConfigService {
           await this.messageDB.addBookmark(bookmark);
         }
 
-        console.log(`Bookmark sync: ${toDelete.length} deleted, ${toAdd.length} added, ${toUpdate.length} updated`);
+        logger.log(`Bookmark sync: ${toDelete.length} deleted, ${toAdd.length} added, ${toUpdate.length} updated`);
       } catch (error) {
         console.error('Bookmark sync failed, attempting to restore local bookmarks:', error);
 
@@ -331,7 +332,7 @@ export class ConfigService {
           for (const bookmark of localBookmarks) {
             await this.messageDB.addBookmark(bookmark);
           }
-          console.warn('Successfully restored local bookmarks after sync failure');
+          logger.warn('Successfully restored local bookmarks after sync failure');
         } catch (restoreError) {
           console.error('Failed to restore local bookmarks:', restoreError);
           // At this point, user may have lost bookmarks - this is logged for debugging
@@ -412,7 +413,7 @@ export class ConfigService {
       // Log warning if spaces are being filtered out (helps debug potential sync issues)
       const spacesWithoutEncryption = allSpaceKeys.filter(sk => sk.encryptionState === undefined);
       if (spacesWithoutEncryption.length > 0) {
-        console.warn(
+        logger.warn(
           `[ConfigService] ${spacesWithoutEncryption.length} space(s) filtered from sync (missing encryption state):`,
           spacesWithoutEncryption.map(sk => sk.spaceId)
         );
