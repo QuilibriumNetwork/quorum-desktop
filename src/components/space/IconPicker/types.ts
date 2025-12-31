@@ -1,3 +1,4 @@
+import { logger } from '@quilibrium/quorum-shared';
 import { IconName, IconVariant } from '../../primitives/Icon/types';
 
 export type IconColor = 'default' | 'blue' | 'purple' | 'fuchsia' | 'green' | 'orange' | 'yellow' | 'red';
@@ -175,7 +176,7 @@ export const getIconColorHex = (iconColor?: IconColor): string => {
 
   const colorOption = ICON_COLORS.find(color => color.value === iconColor);
   if (!colorOption) {
-    console.warn(`getIconColorHex: Unknown color '${iconColor}', using default`);
+    logger.warn(`getIconColorHex: Unknown color '${iconColor}', using default`);
     return '#9ca3af'; // default gray
   }
 

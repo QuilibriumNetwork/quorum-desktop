@@ -88,6 +88,10 @@ export class SpaceService {
           manifest.space_address,
           'hub'
         );
+        const configKey = await this.messageDB.getSpaceKey(
+          manifest.space_address,
+          'config'
+        );
         const envelope = await secureChannel.SealHubEnvelope(
           hubKey.address!,
           {
@@ -105,7 +109,12 @@ export class SpaceService {
               type: 'space-manifest',
               manifest: manifest,
             },
-          })
+          }),
+          configKey ? {
+            type: 'x448',
+            public_key: [...hexToSpreadArray(configKey.publicKey)],
+            private_key: [...hexToSpreadArray(configKey.privateKey)],
+          } : undefined
         );
         return [JSON.stringify({ type: 'group', ...envelope })];
       });
@@ -540,6 +549,7 @@ export class SpaceService {
   async deleteSpace(spaceId: string, queryClient: QueryClient) {
     const hubKey = await this.messageDB.getSpaceKey(spaceId, 'hub');
     const inboxKey = await this.messageDB.getSpaceKey(spaceId, 'inbox');
+    const configKey = await this.messageDB.getSpaceKey(spaceId, 'config');
 
     // Check if hub key exists and has an address
     if (!hubKey || !hubKey.address) {
@@ -581,7 +591,14 @@ export class SpaceService {
             'base64'
           ).toString('hex'),
         },
-      })
+      }),
+      configKey
+        ? {
+            type: 'x448',
+            public_key: [...hexToSpreadArray(configKey.publicKey)],
+            private_key: [...hexToSpreadArray(configKey.privateKey)],
+          }
+        : undefined
     );
     const message = JSON.stringify({ type: 'group', ...envelope });
     this.enqueueOutbound(async () => [message]);
@@ -679,6 +696,10 @@ export class SpaceService {
       const spaceKey = await this.messageDB.getSpaceKey(spaceId, spaceId);
       const ownerKey = await this.messageDB.getSpaceKey(spaceId, 'owner');
       const hubKey = await this.messageDB.getSpaceKey(spaceId, 'hub');
+
+      // Get the OLD config key BEFORE generating new one - needed for sealing rekey messages
+      const oldConfigKey = await this.messageDB.getSpaceKey(spaceId, 'config');
+
       const cp = ch.js_generate_x448();
       const configPair = JSON.parse(cp);
 
@@ -940,7 +961,15 @@ export class SpaceService {
               info: JSON.stringify(innerEnvelope),
               kick: userAddress,
             },
-          })
+          }),
+          // Use OLD config key for encryption so recipients can decrypt with their current key
+          oldConfigKey
+            ? {
+                type: 'x448' as const,
+                public_key: [...hexToSpreadArray(oldConfigKey.publicKey)],
+                private_key: [...hexToSpreadArray(oldConfigKey.privateKey)],
+              }
+            : undefined
         );
         outbounds.push(JSON.stringify({ type: 'sync', ...envelope }));
         idCounter++;
@@ -972,7 +1001,15 @@ export class SpaceService {
             type: 'kick',
             kick: userAddress,
           },
-        })
+        }),
+        // Use OLD config key for encryption so kicked user can decrypt the kick message
+        oldConfigKey
+          ? {
+              type: 'x448' as const,
+              public_key: [...hexToSpreadArray(oldConfigKey.publicKey)],
+              private_key: [...hexToSpreadArray(oldConfigKey.privateKey)],
+            }
+          : undefined
       );
       outbounds.push(JSON.stringify({ type: 'sync', ...envelope }));
       const messageId = await crypto.subtle.digest(
@@ -1162,6 +1199,7 @@ export class SpaceService {
    */
   async sendHubMessage(spaceId: string, message: string) {
     const hubKey = await this.messageDB.getSpaceKey(spaceId, 'hub');
+    const configKey = await this.messageDB.getSpaceKey(spaceId, 'config');
     const envelope = await secureChannel.SealHubEnvelope(
       hubKey.address!,
       {
@@ -1171,7 +1209,14 @@ export class SpaceService {
         ],
         public_key: [...hexToSpreadArray(hubKey.publicKey)],
       },
-      message
+      message,
+      configKey
+        ? {
+            type: 'x448',
+            public_key: [...hexToSpreadArray(configKey.publicKey)],
+            private_key: [...hexToSpreadArray(configKey.privateKey)],
+          }
+        : undefined
     );
     return JSON.stringify({ type: 'group', ...envelope });
   }

@@ -1,3 +1,4 @@
+import { logger } from '@quilibrium/quorum-shared';
 import React, { Suspense } from 'react';
 import { Buffer } from 'buffer';
 import { useState, useEffect } from 'react';
@@ -37,8 +38,8 @@ class ErrorBoundary extends React.Component<
   }
 
   componentDidCatch(error: any, info: any) {
-    console.log(error);
-    console.log(info);
+    logger.log(error);
+    logger.log(info);
   }
 
   render() {

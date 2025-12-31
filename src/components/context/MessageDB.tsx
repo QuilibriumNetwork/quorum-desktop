@@ -656,9 +656,10 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
       spaceId: string,
       inboxAddress: string,
       messageCount: number,
-      memberCount: number
+      memberCount: number,
+      theirSummary?: any // New protocol: SyncSummary
     ) => {
-      return syncService.informSyncData(spaceId, inboxAddress, messageCount, memberCount);
+      return syncService.informSyncData(spaceId, inboxAddress, messageCount, memberCount, theirSummary);
     },
     [syncService]
   );
@@ -667,6 +668,22 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
   const initiateSync = React.useCallback(
     async (spaceId: string) => {
       return syncService.initiateSync(spaceId);
+    },
+    [syncService]
+  );
+
+  // NEW PROTOCOL: Handle sync-initiate with manifest
+  const handleSyncInitiateV2 = React.useCallback(
+    async (spaceId: string, message: any) => {
+      return syncService.handleSyncInitiateV2(spaceId, message);
+    },
+    [syncService]
+  );
+
+  // NEW PROTOCOL: Handle sync-manifest - compute and send delta
+  const handleSyncManifest = React.useCallback(
+    async (spaceId: string, targetInbox: string, payload: any) => {
+      return syncService.handleSyncManifest(spaceId, targetInbox, payload);
     },
     [syncService]
   );
@@ -763,6 +780,9 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
       directSync,
       saveConfig,
       sendHubMessage,
+      // New protocol methods
+      handleSyncInitiateV2,
+      handleSyncManifest,
     });
   }, [
     messageDB,
@@ -779,6 +799,8 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
     directSync,
     saveConfig,
     sendHubMessage,
+    handleSyncInitiateV2,
+    handleSyncManifest,
   ]);
 
   const handleNewMessage = useCallback(

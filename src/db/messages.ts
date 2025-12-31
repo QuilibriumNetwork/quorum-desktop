@@ -1,3 +1,4 @@
+import { logger } from '@quilibrium/quorum-shared';
 import { channel } from '@quilibrium/quilibrium-js-sdk-channels';
 import { Conversation, Message, Space, Bookmark, BOOKMARKS_CONFIG } from '../api/quorumApi';
 import type { NotificationSettings } from '../types/notifications';
@@ -770,7 +771,7 @@ export class MessageDB {
       transaction.oncomplete = () => {
         // Add message to search index after saving
         this.addMessageToIndex(message).catch((error) => {
-          console.warn('Failed to add message to search index:', error);
+          logger.warn('Failed to add message to search index:', error);
         });
         resolve();
       };
@@ -835,7 +836,7 @@ export class MessageDB {
             message.spaceId,
             message.channelId
           ).catch((error) => {
-            console.warn('Failed to remove message from search index:', error);
+            logger.warn('Failed to remove message from search index:', error);
           });
         }
         resolve();
@@ -1215,7 +1216,7 @@ export class MessageDB {
           });
         }
       } catch (error) {
-        console.warn(
+        logger.warn(
           'Failed to get message for search result:',
           result.id,
           error
@@ -2026,7 +2027,7 @@ export class MessageDB {
       const request = store.delete([conversationId, inboxId]);
 
       request.onsuccess = () => {
-        console.log(`Deleted encryption state for ${conversationId} / ${inboxId}`);
+        logger.log(`Deleted encryption state for ${conversationId} / ${inboxId}`);
         resolve(true);
       };
       request.onerror = () => reject(request.error);

@@ -1,3 +1,4 @@
+import { logger } from '@quilibrium/quorum-shared';
 import React from 'react';
 import { useDropzone } from 'react-dropzone';
 import { FileUploadWebProps, FileUploadFile } from './types';
@@ -83,7 +84,7 @@ export const FileUpload: React.FC<FileUploadWebProps> = ({
             const result = await processAvatarImage(file);
             finalFile = result.file;
           } catch (error) {
-            console.warn('Image compression failed, using original file:', error);
+            logger.warn('Image compression failed, using original file:', error);
             // Continue with original file if compression fails
           }
         }

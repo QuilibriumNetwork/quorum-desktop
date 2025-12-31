@@ -1,3 +1,4 @@
+import { logger } from '@quilibrium/quorum-shared';
 import { forwardRef, useImperativeHandle, useRef, useState, useEffect } from 'react';
 import {
   View,
@@ -179,7 +180,7 @@ export const MessageComposer = forwardRef<
     };
 
     const handleCollapse = () => {
-      console.log('Collapse button clicked');
+      logger.log('Collapse button clicked');
       setIsExpanded(false);
       // Keep keyboard open - don't blur the input
       // textareaRef.current?.blur();

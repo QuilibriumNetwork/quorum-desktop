@@ -1,4 +1,5 @@
  import { unified } from 'unified';
+import { logger } from '@quilibrium/quorum-shared';
 import remarkParse from 'remark-parse';
 import remarkGfm from 'remark-gfm';
 import remarkStringify from 'remark-stringify';
@@ -72,7 +73,7 @@ export function stripMarkdown(text: string): string {
     return final.trim();
   } catch (error) {
     // Fallback to original text if parsing fails
-    console.warn('Failed to strip markdown:', error);
+    logger.warn('Failed to strip markdown:', error);
     return text;
   }
 }

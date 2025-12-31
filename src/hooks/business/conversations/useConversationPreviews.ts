@@ -1,3 +1,4 @@
+import { logger } from '@quilibrium/quorum-shared';
 import { useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
 import { Conversation } from '../../../api/quorumApi';
@@ -33,7 +34,7 @@ export function useConversationPreviews(conversations: Conversation[]) {
           const previewData = generateMessagePreview(message);
           return { ...conv, preview: previewData.text, previewIcon: previewData.icon };
         } catch (error) {
-          console.warn('Failed to load preview:', conv.conversationId, error);
+          logger.warn('Failed to load preview:', conv.conversationId, error);
           return { ...conv, preview: '', previewIcon: undefined };
         }
       });

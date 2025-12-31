@@ -1,3 +1,4 @@
+import { logger } from '@quilibrium/quorum-shared';
 import { useState, useEffect, useCallback } from 'react';
 import {
   dynamicActivate,
@@ -25,7 +26,7 @@ export const useLocaleSettings = (): UseLocaleSettingsReturn => {
   }, [forceUpdate]);
 
   useEffect(() => {
-    console.log('Language changed to:', language);
+    logger.log('Language changed to:', language);
     dynamicActivate(language);
     setLanguageChanged(true);
     saveUserLocale(language);

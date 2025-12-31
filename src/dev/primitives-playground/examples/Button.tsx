@@ -1,3 +1,4 @@
+import { logger } from '@quilibrium/quorum-shared';
 import React, { useState } from 'react';
 import { Button } from '@/components/primitives';
 import { ExampleBox } from '../ExampleBox';
@@ -84,7 +85,7 @@ export const ButtonExamples: React.FC = () => {
   });
 
   const handleClick = () => {
-    console.log('Button clicked!');
+    logger.log('Button clicked!');
   };
 
   return (

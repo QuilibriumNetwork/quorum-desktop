@@ -1,6 +1,7 @@
 // MessageService.ts - Extracted from MessageDB.tsx with ZERO modifications
 // This service handles message CRUD operations, encryption/decryption, and reactions
 
+import { logger } from '@quilibrium/quorum-shared';
 import { MessageDB, EncryptionState, EncryptedMessage } from '../db/messages';
 import {
   Message,
@@ -77,12 +78,16 @@ export interface MessageServiceDependencies {
     spaceId: string,
     inboxAddress: string,
     messageCount: number,
-    memberCount: number
+    memberCount: number,
+    theirSummary?: any // New protocol: SyncSummary
   ) => Promise<void>;
   initiateSync: (spaceId: string) => Promise<void>;
   directSync: (spaceId: string, message: any) => Promise<void>;
   saveConfig: (args: { config: any; keyset: any }) => Promise<void>;
   sendHubMessage: (spaceId: string, message: string) => Promise<string>;
+  // New protocol methods
+  handleSyncInitiateV2: (spaceId: string, message: any) => Promise<void>;
+  handleSyncManifest: (spaceId: string, targetInbox: string, payload: any) => Promise<void>;
 }
 
 export class MessageService {
@@ -116,12 +121,15 @@ export class MessageService {
     spaceId: string,
     inboxAddress: string,
     messageCount: number,
-    memberCount: number
+    memberCount: number,
+    theirSummary?: any
   ) => Promise<void>;
   private initiateSync: (spaceId: string) => Promise<void>;
   private directSync: (spaceId: string, message: any) => Promise<void>;
   private saveConfig: (args: { config: any; keyset: any }) => Promise<void>;
   private sendHubMessage: (spaceId: string, message: string) => Promise<string>;
+  private handleSyncInitiateV2: (spaceId: string, message: any) => Promise<void>;
+  private handleSyncManifest: (spaceId: string, targetInbox: string, payload: any) => Promise<void>;
 
   // Per-sender rate limiters (receiving-side defense-in-depth)
   private receivingRateLimiters = new Map<string, SimpleRateLimiter>();
@@ -145,6 +153,8 @@ export class MessageService {
     this.directSync = dependencies.directSync;
     this.saveConfig = dependencies.saveConfig;
     this.sendHubMessage = dependencies.sendHubMessage;
+    this.handleSyncInitiateV2 = dependencies.handleSyncInitiateV2;
+    this.handleSyncManifest = dependencies.handleSyncManifest;
   }
 
   /**
@@ -471,6 +481,11 @@ export class MessageService {
         : editedTextContent;
 
       if (editedMessageText && editedMessageText.length > MAX_MESSAGE_LENGTH) {
+        logger.log(
+          `🔒 Rejecting oversized edit ${decryptedContent.messageId} ` +
+            `from ${editMessage.senderId} ` +
+            `(${editedMessageText.length} chars > ${MAX_MESSAGE_LENGTH} limit)`
+        );
         return;
       }
 
@@ -1205,7 +1220,7 @@ export class MessageService {
 
         // FAIL-SECURE: Reject if space data unavailable
         if (!space) {
-          console.warn(
+          logger.warn(
             `⚠️ Rejecting message ${decryptedContent.messageId} - space ${spaceId} data unavailable`
           );
           return;
@@ -1218,7 +1233,7 @@ export class MessageService {
 
         // FAIL-SECURE: Reject if channel not found
         if (!channel) {
-          console.warn(
+          logger.warn(
             `⚠️ Rejecting message ${decryptedContent.messageId} - channel ${channelId} not found in space ${spaceId}`
           );
           return;
@@ -2213,36 +2228,123 @@ export class MessageService {
       }
     } else {
       try {
-        const hub_key = await this.messageDB.getSpaceKey(
-          conversationId.split('/')[0],
-          'hub'
-        );
-        const result = Buffer.from(
-          new Uint8Array(
-            await secureChannel.UnsealHubEnvelope(
-              {
-                type: 'ed448',
-                public_key: hexToSpreadArray(hub_key.publicKey),
-                private_key: hexToSpreadArray(hub_key.privateKey),
-              },
-              JSON.parse(message.encryptedContent)
+        const spaceId = conversationId.split('/')[0];
+        const hub_key = await this.messageDB.getSpaceKey(spaceId, 'hub');
+        const config_key = await this.messageDB.getSpaceKey(spaceId, 'config');
+        if (config_key) {
+          const pubBytes = hexToSpreadArray(config_key.publicKey);
+          const privBytes = hexToSpreadArray(config_key.privateKey);
+        }
+
+        // Parse outer envelope to check type
+        const outerEnvelope = JSON.parse(message.encryptedContent);
+        let result: string;
+
+        if (outerEnvelope.type === 'sync') {
+          // Sync envelope - directed message using UnsealSyncEnvelope with config key
+          logger.log(`[MessageService] Received sync envelope from ${outerEnvelope.inbox_address?.substring(0, 12) || 'unknown'}`);
+          result = await secureChannel.UnsealSyncEnvelope(
+            {
+              type: 'ed448',
+              public_key: hexToSpreadArray(hub_key.publicKey),
+              private_key: hexToSpreadArray(hub_key.privateKey),
+            },
+            outerEnvelope,
+            config_key
+              ? {
+                  type: 'x448' as const,
+                  public_key: hexToSpreadArray(config_key.publicKey),
+                  private_key: hexToSpreadArray(config_key.privateKey),
+                }
+              : undefined
+          );
+        } else {
+          // Hub broadcast envelope - use UnsealHubEnvelope with config key
+          result = Buffer.from(
+            new Uint8Array(
+              await secureChannel.UnsealHubEnvelope(
+                {
+                  type: 'ed448',
+                  public_key: hexToSpreadArray(hub_key.publicKey),
+                  private_key: hexToSpreadArray(hub_key.privateKey),
+                },
+                outerEnvelope,
+                config_key
+                  ? {
+                      type: 'x448',
+                      public_key: hexToSpreadArray(config_key.publicKey),
+                      private_key: hexToSpreadArray(config_key.privateKey),
+                    }
+                  : undefined
+              )
             )
-          )
-        ).toString('utf-8');
+          ).toString('utf-8');
+        }
+
         const envelope = JSON.parse(result);
         if (envelope.type === 'message') {
-          const decrypted = JSON.parse(
-            await secureChannel.TripleRatchetDecrypt(
+          // Check if message is already plaintext (envelope-only encryption, no TR)
+          // Plaintext messages have messageId, channelId, and content fields directly
+          const isPlaintextMessage = typeof envelope.message === 'object' &&
+            envelope.message !== null &&
+            'messageId' in envelope.message &&
+            'channelId' in envelope.message &&
+            'content' in envelope.message;
+
+          if (isPlaintextMessage) {
+            // Message is already decrypted (envelope-only encryption path)
+            logger.log(`[MessageService] Message is plaintext (envelope-only encryption)`);
+            decryptedContent = envelope.message;
+          } else {
+            // Message is TR-encrypted, need to decrypt with Triple Ratchet (legacy path)
+            // Log peer map and ratchet state info for debugging decryption issues
+            const ratchetState = JSON.parse(keys.state);
+            const peerIdMapKeys = Object.keys(ratchetState.peer_id_map || {});
+            const idPeerMapKeys = Object.keys(ratchetState.id_peer_map || {});
+            logger.log(`[MessageService] TripleRatchetDecrypt: peer_id_map has ${peerIdMapKeys.length} entries, id_peer_map has ${idPeerMapKeys.length} entries`);
+            logger.log(`[MessageService] TripleRatchetDecrypt: id_peer_map keys: ${idPeerMapKeys.join(', ')}`);
+
+            // Log critical ratchet state fields for debugging AEAD errors
+            const dkgRatchet = ratchetState.dkg_ratchet ? JSON.parse(ratchetState.dkg_ratchet) : null;
+            logger.log(`[MessageService] RECEIVER critical fields:`, {
+              root_key: ratchetState.root_key,
+              dkg_ratchet_id: dkgRatchet?.id,
+              dkg_ratchet_total: dkgRatchet?.total,
+              async_dkg_pubkey_exists: !!ratchetState.async_dkg_pubkey,
+              receiving_group_key_exists: !!ratchetState.receiving_group_key,
+              sending_chain_key_exists: !!ratchetState.sending_chain_key,
+              receiving_chain_key_entries: Object.keys(ratchetState.receiving_chain_key || {}).length,
+              receiving_chain_key_keys: Object.keys(ratchetState.receiving_chain_key || {}),
+              envelope_sender: envelope.message?.sender,
+            });
+
+            const decryptResult = await secureChannel.TripleRatchetDecrypt(
               JSON.stringify({
                 ratchet_state: keys.state,
                 envelope: JSON.stringify(envelope.message),
               })
-            )
-          );
-          const output = Buffer.from(
-            new Uint8Array(decrypted.message)
-          ).toString('utf-8');
-          decryptedContent = JSON.parse(output);
+            );
+            logger.log(`[MessageService] TripleRatchetDecrypt result length: ${decryptResult?.length || 0}`);
+            logger.log(`[MessageService] TripleRatchetDecrypt raw result: ${decryptResult}`);
+
+            const decrypted = JSON.parse(decryptResult);
+            logger.log(`[MessageService] TripleRatchetDecrypt parsed:`, JSON.stringify(decrypted).substring(0, 200));
+
+            if (!decrypted.message || decrypted.message.length === 0) {
+              throw new Error('Decryption returned empty message');
+            }
+
+            const output = Buffer.from(
+              new Uint8Array(decrypted.message)
+            ).toString('utf-8');
+            logger.log(`[MessageService] Decrypted output length: ${output.length}, first 100 chars: ${output.substring(0, 100)}`);
+
+            if (!output || output.trim().length === 0) {
+              throw new Error('Decryption produced empty output');
+            }
+
+            decryptedContent = JSON.parse(output);
+          }
 
           if (decryptedContent) {
             const space = await this.messageDB.getSpace(
@@ -2282,7 +2384,7 @@ export class MessageService {
                 Buffer.from(messageId).toString('hex');
 
               if (inboxMismatch || messageIdMismatch) {
-                console.warn(t`invalid address for signature`);
+                logger.warn(t`invalid address for signature`);
                 decryptedContent.publicKey = undefined;
                 decryptedContent.signature = undefined;
               } else {
@@ -2297,7 +2399,7 @@ export class MessageService {
                     )
                   ) !== 'true'
                 ) {
-                  console.warn('invalid signature');
+                  logger.warn('invalid signature');
                   decryptedContent.publicKey = undefined;
                   decryptedContent.signature = undefined;
                 }
@@ -2312,6 +2414,7 @@ export class MessageService {
             }
           }
         } else if (envelope.type === 'control') {
+          logger.log(`[MessageService] Control message received: ${envelope.message?.type}`);
           const exteriorEnvelope = JSON.parse(message.encryptedContent);
           if (envelope.message.type === 'join') {
             const participant = envelope.message.participant;
@@ -2461,8 +2564,62 @@ export class MessageService {
               );
               if (verify) {
                 const ratchet = JSON.parse(keys.state);
-                ratchet.id_peer_map = envelope.message.peerMap.id_peer_map;
-                ratchet.peer_id_map = envelope.message.peerMap.peer_id_map;
+                const incomingIdPeerMap = envelope.message.peerMap.id_peer_map || {};
+                const incomingPeerIdMap = envelope.message.peerMap.peer_id_map || {};
+
+                // MERGE peer maps instead of replacing - preserve our own entries
+                // This is critical when syncing with a peer that doesn't have us in their map yet
+                const existingIdPeerMap = ratchet.id_peer_map || {};
+                const existingPeerIdMap = ratchet.peer_id_map || {};
+
+                logger.log(`[MessageService] sync-peer-map: Merging peer maps`);
+                logger.log(`[MessageService] sync-peer-map: Existing id_peer_map has ${Object.keys(existingIdPeerMap).length} entries`);
+                logger.log(`[MessageService] sync-peer-map: Incoming id_peer_map has ${Object.keys(incomingIdPeerMap).length} entries`);
+
+                ratchet.id_peer_map = {
+                  ...existingIdPeerMap,
+                  ...incomingIdPeerMap,
+                };
+                ratchet.peer_id_map = {
+                  ...existingPeerIdMap,
+                  ...incomingPeerIdMap,
+                };
+
+                logger.log(`[MessageService] sync-peer-map: Merged id_peer_map now has ${Object.keys(ratchet.id_peer_map).length} entries`);
+
+                // Sync critical ratchet state fields for decryption to work
+                const peerMap = envelope.message.peerMap;
+                logger.log(`[MessageService] sync-peer-map: Received peerMap keys: ${Object.keys(peerMap).join(', ')}`);
+                logger.log(`[MessageService] sync-peer-map: peerMap.root_key exists: ${!!peerMap.root_key}, peerMap.dkg_ratchet exists: ${!!peerMap.dkg_ratchet}`);
+                if (peerMap.root_key) {
+                  logger.log(`[MessageService] sync-peer-map: Updating root_key from ${ratchet.root_key?.substring(0, 20)} to ${peerMap.root_key?.substring(0, 20)}`);
+                  ratchet.root_key = peerMap.root_key;
+                }
+                if (peerMap.dkg_ratchet) {
+                  logger.log(`[MessageService] sync-peer-map: Updating dkg_ratchet`);
+                  ratchet.dkg_ratchet = peerMap.dkg_ratchet;
+                  ratchet.next_dkg_ratchet = peerMap.dkg_ratchet; // Keep in sync
+                }
+                if (peerMap.receiving_group_key) {
+                  ratchet.receiving_group_key = peerMap.receiving_group_key;
+                }
+                if (peerMap.receiving_chain_key) {
+                  logger.log(`[MessageService] sync-peer-map: Updating receiving_chain_key`);
+                  ratchet.receiving_chain_key = peerMap.receiving_chain_key;
+                }
+                if (peerMap.current_header_key) {
+                  ratchet.current_header_key = peerMap.current_header_key;
+                }
+                if (peerMap.next_header_key) {
+                  ratchet.next_header_key = peerMap.next_header_key;
+                }
+                if (peerMap.async_dkg_pubkey) {
+                  ratchet.async_dkg_pubkey = peerMap.async_dkg_pubkey;
+                }
+                if (peerMap.threshold) {
+                  ratchet.threshold = peerMap.threshold;
+                }
+
                 newState = JSON.stringify({
                   ...keys,
                   state: JSON.stringify(ratchet),
@@ -2785,7 +2942,7 @@ export class MessageService {
                     showWarning(
                       `You've been kicked from ${space?.spaceName || spaceId}`
                     );
-                  } catch { /* intentionally empty */ }
+                  } catch (e) { console.error('[MessageService] Error getting space for kick warning:', e); }
                   // Immediately navigate away from the space view when kicked
                   this.navigate('/messages', {
                     replace: true,
@@ -2926,45 +3083,75 @@ export class MessageService {
               envelope.message.inboxAddress
             );
           } else if (envelope.message.type === 'sync-request') {
-            if (envelope.message.expiry > Date.now()) {
+            // Get our inbox to check if this is our own request
+            const ourInboxKey = await this.messageDB.getSpaceKey(conversationId.split('/')[0], 'inbox');
+            const isOurOwnRequest = envelope.message.inboxAddress === ourInboxKey?.address;
+            logger.log(`[MessageService] sync-request from: ${envelope.message.inboxAddress?.substring(0, 12)}, ourInbox: ${ourInboxKey?.address?.substring(0, 12)}, isOurOwn: ${isOurOwnRequest}, expiry: ${envelope.message.expiry}, now: ${Date.now()}`);
+            if (isOurOwnRequest) {
+              logger.log(`[MessageService] sync-request: Ignoring our own broadcast`);
+            } else if (envelope.message.expiry > Date.now()) {
+              logger.log(`[MessageService] sync-request: Calling informSyncData`);
               await this.informSyncData(
                 conversationId.split('/')[0],
                 envelope.message.inboxAddress,
                 envelope.message.messageCount,
-                envelope.message.memberCount
+                envelope.message.memberCount,
+                envelope.message.summary // New protocol: pass summary for hash-based comparison
               );
+            } else {
+              logger.log(`[MessageService] sync-request: Expired, ignoring`);
             }
           } else if (envelope.message.type === 'sync-info') {
-            if (
-              this.syncInfo.current[conversationId.split('/')[0]] &&
-              this.syncInfo.current[conversationId.split('/')[0]].expiry >
-                Date.now()
-            ) {
+            const spaceId = conversationId.split('/')[0];
+            const hasSession = !!this.syncInfo.current[spaceId];
+            const sessionExpiry = this.syncInfo.current[spaceId]?.expiry;
+            const isExpired = sessionExpiry ? sessionExpiry <= Date.now() : true;
+            logger.log(`[MessageService] sync-info from: ${envelope.message.inboxAddress?.substring(0, 12)}, hasSession: ${hasSession}, sessionExpiry: ${sessionExpiry}, isExpired: ${isExpired}`);
+            logger.log(`[MessageService] sync-info payload:`, {
+              inboxAddress: envelope.message.inboxAddress?.substring(0, 12),
+              messageCount: envelope.message.messageCount,
+              memberCount: envelope.message.memberCount,
+              hasSummary: !!envelope.message.summary,
+            });
+            if (hasSession && !isExpired) {
               if (
                 envelope.message.inboxAddress &&
-                envelope.message.messageCount &&
-                envelope.message.memberCount
+                (envelope.message.messageCount || envelope.message.summary)
               ) {
-                this.syncInfo.current[
-                  conversationId.split('/')[0]
-                ].candidates.push(envelope.message);
+                logger.log(`[MessageService] sync-info: Adding candidate and scheduling sync`);
+                this.syncInfo.current[spaceId].candidates.push(envelope.message);
                 // reset the timeout to be 1s to more aggressively grab viable candidates for sync instead of waiting the full 30s
-                clearTimeout(
-                  this.syncInfo.current[conversationId.split('/')[0]].invokable
-                );
-                this.syncInfo.current[conversationId.split('/')[0]].invokable =
+                clearTimeout(this.syncInfo.current[spaceId].invokable);
+                this.syncInfo.current[spaceId].invokable =
                   setTimeout(
-                    () => this.initiateSync(conversationId.split('/')[0]),
+                    () => this.initiateSync(spaceId),
                     1000
                   );
+              } else {
+                logger.log(`[MessageService] sync-info: Missing inboxAddress or counts, ignoring`);
               }
+            } else {
+              logger.log(`[MessageService] sync-info: No active session or expired, ignoring`);
             }
           } else if (envelope.message.type === 'sync-initiate') {
+            logger.log(`[MessageService] sync-initiate received from: ${envelope.message.inboxAddress?.substring(0, 12)}`);
+            logger.log(`[MessageService] sync-initiate has manifest: ${!!envelope.message.manifest}`);
             if (envelope.message.inboxAddress) {
-              await this.directSync(
-                conversationId.split('/')[0],
-                envelope.message
-              );
+              // Check if new protocol (has manifest) or legacy
+              if (envelope.message.manifest) {
+                // New protocol: respond with manifest
+                logger.log(`[MessageService] sync-initiate: Using new protocol, calling handleSyncInitiateV2`);
+                await this.handleSyncInitiateV2(
+                  conversationId.split('/')[0],
+                  envelope.message
+                );
+              } else {
+                // Legacy: send raw data
+                await this.directSync(
+                  conversationId.split('/')[0],
+                  envelope.message
+                );
+              }
             }
           } else if (envelope.message.type === 'sync-members') {
             let reg = this.spaceInfo.current[conversationId.split('/')[0]];
@@ -3135,14 +3322,17 @@ export class MessageService {
                         'utf-8'
                       )
                     );
+                    // Handle case where participant is not found (e.g., sync received before member data)
                     if (
-                      (participant.inbox_address !== inboxAddress &&
-                        participant.inbox_address) ||
+                      (participant?.inbox_address !== inboxAddress &&
+                        participant?.inbox_address) ||
                       message.messageId !==
                         Buffer.from(messageId).toString('hex')
                     ) {
                       message.publicKey = undefined;
                       message.signature = undefined;
+                    } else if (!participant) {
+                      // Participant not found yet, can't verify - keep signature for later verification
                     } else {
                       if (
                         ch.js_verify_ed448(
@@ -3155,7 +3345,7 @@ export class MessageService {
                           )
                         ) !== 'true'
                       ) {
-                        console.warn('invalid signature');
+                        logger.warn('invalid signature');
                         message.publicKey = undefined;
                         message.signature = undefined;
                       }
@@ -3193,9 +3383,108 @@ export class MessageService {
                 }, 5000);
               }
             }
+          } else if (envelope.message.type === 'sync-manifest') {
+            // NEW PROTOCOL: Received manifest from peer - compute and send delta
+            const spaceId = conversationId.split('/')[0];
+            // The handleSyncManifest method will send deltas back
+            if (this.handleSyncManifest && envelope.message.manifest && envelope.message.inboxAddress) {
+              logger.log(`[MessageService] sync-manifest: Sending delta to ${envelope.message.inboxAddress.substring(0, 12)}`);
+              await this.handleSyncManifest(
+                spaceId,
+                envelope.message.inboxAddress,
+                envelope.message
+              );
+            } else {
+            }
+          } else if (envelope.message.type === 'sync-delta') {
+            // NEW PROTOCOL: Received delta from peer - apply to local storage
+            const spaceId = conversationId.split('/')[0];
+
+            // Apply message delta
+            if (envelope.message.messageDelta) {
+              const msgDelta = envelope.message.messageDelta;
+              logger.log(`[MessageService] sync-delta: ${msgDelta.newMessages?.length || 0} new, ${msgDelta.updatedMessages?.length || 0} updated, ${msgDelta.deletedMessageIds?.length || 0} deleted`);
+
+              const space = await this.messageDB.getSpace(spaceId);
+
+              for (const msg of msgDelta.newMessages || []) {
+                await this.saveMessage(
+                  msg,
+                  this.messageDB,
+                  spaceId,
+                  msg.channelId || msgDelta.channelId,
+                  'group',
+                  {}
+                );
+              }
+
+              for (const msg of msgDelta.updatedMessages || []) {
+                await this.saveMessage(
+                  msg,
+                  this.messageDB,
+                  spaceId,
+                  msg.channelId || msgDelta.channelId,
+                  'group',
+                  {}
+                );
+              }
+
+              for (const msgId of msgDelta.deletedMessageIds || []) {
+                await this.messageDB.deleteMessage(msgId);
+              }
+
+              // Refetch messages
+              queryClient.refetchQueries({
+                queryKey: buildMessagesKey({
+                  spaceId,
+                  channelId: msgDelta.channelId || space?.defaultChannelId || spaceId,
+                }),
+              });
+            }
+
+            // Apply member delta
+            if (envelope.message.memberDelta) {
+              logger.log(`[MessageService] sync-delta: ${envelope.message.memberDelta.members?.length || 0} member updates`);
+              for (const member of envelope.message.memberDelta.members || []) {
+                await this.messageDB.saveSpaceMember(spaceId, member);
+              }
+              queryClient.refetchQueries({
+                queryKey: ['spaceMembers', spaceId],
+              });
+            }
+
+            // Apply peer map delta
+            if (envelope.message.peerMapDelta && envelope.message.peerMapDelta.added?.length > 0) {
+              logger.log(`[MessageService] sync-delta: ${envelope.message.peerMapDelta.added.length} peer map additions`);
+              const encryptionState = await this.messageDB.getEncryptionStates({
+                conversationId: spaceId + '/' + spaceId,
+              });
+
+              if (encryptionState.length > 0) {
+                const stateData = encryptionState[0];
+                const parsed = JSON.parse(stateData.state);
+                const ratchetState = JSON.parse(parsed.state);
+
+                // Add new peers
+                for (const peer of envelope.message.peerMapDelta.added) {
+                  if (!ratchetState.id_peer_map) ratchetState.id_peer_map = {};
+                  if (!ratchetState.peer_id_map) ratchetState.peer_id_map = {};
+                  ratchetState.id_peer_map[peer.peerId] = peer.publicKey;
+                  ratchetState.peer_id_map[peer.publicKey] = peer.peerId;
+                }
+
+                // Save updated state
+                parsed.state = JSON.stringify(ratchetState);
+                await this.messageDB.saveEncryptionState({
+                  ...stateData,
+                  state: JSON.stringify(parsed),
+                  timestamp: Date.now(),
+                }, true);
+              }
+            }
           }
         }
-      } catch { /* intentionally empty */ }
+      } catch (e) { console.error('[MessageService] Error processing hub/sync message:', e); }
     }
 
     if (newState) {
@@ -3272,7 +3561,7 @@ export class MessageService {
 
       if (!inbox_key) {
         // Space was deleted, silently skip cleanup
-        console.debug(
+        logger.debug(
           `Skipping inbox cleanup for deleted space: ${conversationId.split('/')[0]}`
         );
         return;
@@ -3813,7 +4102,7 @@ export class MessageService {
   ) {
     // Validate message is in 'failed' state
     if (failedMessage.sendStatus !== 'failed') {
-      console.warn('Cannot retry message that is not in failed state');
+      logger.warn('Cannot retry message that is not in failed state');
       return;
     }
 
@@ -3929,7 +4218,7 @@ export class MessageService {
   ) {
     // Validate message is in 'failed' state
     if (failedMessage.sendStatus !== 'failed') {
-      console.warn('Cannot retry message that is not in failed state');
+      logger.warn('Cannot retry message that is not in failed state');
       return;
     }
 

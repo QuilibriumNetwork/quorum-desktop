@@ -1,3 +1,4 @@
+import { logger } from '@quilibrium/quorum-shared';
 import React, { useState, useRef, useCallback } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { InfiniteData } from '@tanstack/react-query';

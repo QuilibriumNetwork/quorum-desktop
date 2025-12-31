@@ -213,12 +213,17 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
 
     const mapSenderToUser = useCallback(
       (senderId: string) => {
-        return (
-          members[senderId] || {
-            displayName: 'Unknown User',
-            userIcon: DefaultImages.UNKNOWN_USER,
-          }
-        );
+        const member = members[senderId];
+        if (member) {
+          return {
+            ...member,
+            displayName: member.displayName || senderId.slice(-6),
+          };
+        }
+        return {
+          displayName: senderId?.slice(-6) || 'Unknown User',
+          userIcon: DefaultImages.UNKNOWN_USER,
+        };
       },
       [members]
     );

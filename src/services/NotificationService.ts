@@ -1,3 +1,4 @@
+import { logger } from '@quilibrium/quorum-shared';
 import { t } from '@lingui/core/macro';
 /**
  * Desktop Notification Service for Quorum
@@ -52,7 +53,7 @@ export class NotificationService {
    */
   public async requestPermission(): Promise<NotificationPermission> {
     if (!this.isSupported) {
-      console.warn(t`Notifications are not supported in this browser`);
+      logger.warn(t`Notifications are not supported in this browser`);
       return 'denied';
     }
 
@@ -177,12 +178,12 @@ export class NotificationService {
    */
   private canShowNotifications(): boolean {
     if (!this.isSupported) {
-      console.warn(t`Notifications are not supported in this browser`);
+      logger.warn(t`Notifications are not supported in this browser`);
       return false;
     }
 
     if (this.permission !== 'granted') {
-      console.warn(t`Notification permission not granted`);
+      logger.warn(t`Notification permission not granted`);
       return false;
     }
 
@@ -200,7 +201,7 @@ export class NotificationService {
   public clearNotifications(tag: string): void {
     // Note: There's no direct way to clear notifications by tag in the Web API
     // This is a placeholder for potential future functionality or service worker integration
-    console.log(t`Clearing notifications with tag: ${tag}`);
+    logger.log(t`Clearing notifications with tag: ${tag}`);
   }
 
   /**

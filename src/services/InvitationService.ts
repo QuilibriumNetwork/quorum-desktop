@@ -1,6 +1,7 @@
 // InvitationService.ts - Extracted from MessageDB.tsx with ZERO modifications
 // This service handles space invitation operations
 
+import { logger } from '@quilibrium/quorum-shared';
 import { MessageDB, NavItem } from '../db/messages';
 import { QuorumApiClient } from '../api/baseTypes';
 import { channel as secureChannel, channel_raw as ch } from '@quilibrium/quilibrium-js-sdk-channels';
@@ -227,7 +228,7 @@ export class InvitationService {
           filteredMembers.length + 200
         );
 
-      console.log('new link session', session);
+      logger.log('new link session', session);
       const outbounds: string[] = [];
       let newPeerIdSet = {
         [trState.id_peer_map[1].public_key]: 1,
@@ -531,30 +532,33 @@ export class InvitationService {
       initialization_vector: string;
       associated_data: string;
     };
-    const space = JSON.parse(
-      Buffer.from(
-        JSON.parse(
-          ch.js_decrypt_inbox_message(
-            JSON.stringify({
-              inbox_private_key: hexToSpreadArray(info.configKey),
-              ephemeral_public_key: hexToSpreadArray(
-                manifest.data.ephemeral_public_key
-              ),
-              ciphertext: ciphertext,
-            })
-          )
-        )
-      ).toString('utf-8')
-    ) as Space;
 
-    if (
-      (space.inviteUrl == '' || !space.inviteUrl) &&
-      (!info.secret || !info.template || !info.hubKey)
-    ) {
-      throw new Error(t`invalid link`);
+    try {
+      const decrypted = ch.js_decrypt_inbox_message(
+        JSON.stringify({
+          inbox_private_key: hexToSpreadArray(info.configKey),
+          ephemeral_public_key: hexToSpreadArray(
+            manifest.data.ephemeral_public_key
+          ),
+          ciphertext: ciphertext,
+        })
+      );
+
+      const space = JSON.parse(
+        Buffer.from(JSON.parse(decrypted)).toString('utf-8')
+      ) as Space;
+
+      if (
+        (space.inviteUrl == '' || !space.inviteUrl) &&
+        (!info.secret || !info.template || !info.hubKey)
+      ) {
+        throw new Error(t`invalid link`);
+      }
+
+      return space;
+    } catch (decryptErr: any) {
+      throw decryptErr;
     }
-
-    return space;
   }
 
   /**

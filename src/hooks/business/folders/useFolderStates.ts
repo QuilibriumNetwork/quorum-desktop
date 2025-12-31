@@ -1,3 +1,4 @@
+import { logger } from '@quilibrium/quorum-shared';
 import { useState, useCallback, useEffect } from 'react';
 
 const STORAGE_KEY = 'folderStates';
@@ -23,7 +24,7 @@ export const useFolderStates = () => {
         setFolderStates(JSON.parse(stored));
       }
     } catch (e) {
-      console.warn('Failed to load folder states from localStorage:', e);
+      logger.warn('Failed to load folder states from localStorage:', e);
     }
   }, []);
 
@@ -32,7 +33,7 @@ export const useFolderStates = () => {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(states));
     } catch (e) {
-      console.warn('Failed to save folder states to localStorage:', e);
+      logger.warn('Failed to save folder states to localStorage:', e);
     }
   }, []);
 

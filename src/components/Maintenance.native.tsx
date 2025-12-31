@@ -1,3 +1,4 @@
+import { logger } from '@quilibrium/quorum-shared';
 import React from 'react';
 import {
   Container,
@@ -19,7 +20,7 @@ import { t } from '@lingui/core/macro';
 export const Maintenance = () => {
   const handleRefresh = () => {
     // TODO: Add proper refresh logic for React Native
-    console.log('Refresh requested');
+    logger.log('Refresh requested');
   };
 
   return (

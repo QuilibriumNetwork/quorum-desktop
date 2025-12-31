@@ -1,3 +1,5 @@
+import { logger } from '@quilibrium/quorum-shared';
+
 // Cross-platform shared theme system
 // These values EXACTLY match the CSS variables in _colors.scss
 // DO NOT modify without updating CSS variables accordingly
@@ -376,7 +378,7 @@ export const getColor = (
   for (const key of path) {
     current = current[key];
     if (current === undefined) {
-      console.warn(`Color path "${colorPath}" not found in theme "${theme}"`);
+      logger.warn(`Color path "${colorPath}" not found in theme "${theme}"`);
       return colors.accent.DEFAULT; // Fallback
     }
   }

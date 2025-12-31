@@ -3,6 +3,7 @@
  * Automatically detects staging vs production and uses the appropriate domain
  */
 
+import { logger } from '@quilibrium/quorum-shared';
 import { buildValidPrefixes, getEnvironmentInfo } from './environmentDomains';
 
 /**
@@ -72,11 +73,25 @@ export function getValidInvitePrefixes(): string[] {
   const hashPrefixes = buildValidPrefixes('/#');
   const invitePrefixes = buildValidPrefixes('/invite/#');
 
+  // Production domains should ALWAYS be accepted regardless of current environment
+  // This allows mobile-generated links (using qm.one) to work on desktop localhost
+  const productionPrefixes = [
+    'https://qm.one/#',
+    'https://qm.one/invite/#',
+    'qm.one/#',
+    'qm.one/invite/#',
+    'https://app.quorummessenger.com/#',
+    'https://app.quorummessenger.com/invite/#',
+    'app.quorummessenger.com/#',
+    'app.quorummessenger.com/invite/#',
+  ];
+
   // Localhost development: also accept common test ports
   if (environment === 'localhost') {
     return [
       ...hashPrefixes,
       ...invitePrefixes,
+      ...productionPrefixes,
       // Keep legacy localhost ports for development
       'http://localhost:5173/#',
       'http://localhost:5173/invite/#',
@@ -85,7 +100,7 @@ export function getValidInvitePrefixes(): string[] {
     ];
   }
 
-  return [...hashPrefixes, ...invitePrefixes];
+  return [...hashPrefixes, ...invitePrefixes, ...productionPrefixes];
 }
 
 /**
@@ -110,9 +125,13 @@ export function parseInviteParams(inviteLink: string):
       hubKey?: string;
     }
   | null {
-  if (!inviteLink || typeof inviteLink !== 'string') return null;
+  if (!inviteLink || typeof inviteLink !== 'string') {
+    return null;
+  }
   const idx = inviteLink.indexOf('#');
-  if (idx < 0 || idx === inviteLink.length - 1) return null;
+  if (idx < 0 || idx === inviteLink.length - 1) {
+    return null;
+  }
   const hashContent = inviteLink.slice(idx + 1);
   const params = Object.create(null) as Record<string, string>;
   for (const pair of hashContent.split('&')) {
@@ -126,6 +145,7 @@ export function parseInviteParams(inviteLink: string):
       k === 'hubKey'
     ) {
       params[k] = v;
+      logger.log(`[parseInviteParams] Found param: ${k} = ${v?.substring(0, 30)}...`);
     }
   }
   return Object.keys(params).length ? (params as any) : null;

@@ -1,3 +1,4 @@
+import { logger } from '@quilibrium/quorum-shared';
 import { useCallback } from 'react';
 import type { KeyBackupAdapter } from '../../business/files/useKeyBackupLogic';
 
@@ -52,7 +53,7 @@ export const useFileDownloadAdapter = (): KeyBackupAdapter => {
   // Web-specific: Show success using browser console (could be replaced with toast)
   const showSuccess = useCallback((message: string) => {
     // TODO: Replace with proper toast notification
-    console.log('Key backup success:', message);
+    logger.log('Key backup success:', message);
     // For now, let the component handle success display
   }, []);
 

@@ -1,3 +1,4 @@
+import { logger } from '@quilibrium/quorum-shared';
 import { useCallback } from 'react';
 import React from 'react';
 import { useQueryClient, useQuery } from '@tanstack/react-query';
@@ -256,7 +257,7 @@ export const usePinnedMessages = (
   const pinMessage = useCallback(
     (messageId: string) => {
       if (!canUserPin()) {
-        console.warn('User does not have permission to pin messages');
+        logger.warn('User does not have permission to pin messages');
         return;
       }
       if (!spaceId || !channelId) {
@@ -271,7 +272,7 @@ export const usePinnedMessages = (
   const unpinMessage = useCallback(
     (messageId: string) => {
       if (!canUserPin()) {
-        console.warn('User does not have permission to unpin messages');
+        logger.warn('User does not have permission to unpin messages');
         return;
       }
       if (!spaceId || !channelId) {

@@ -1,3 +1,4 @@
+import { logger } from '@quilibrium/quorum-shared';
 import React, { useState } from 'react';
 import { FileUpload, Text, Icon } from '@/components/primitives';
 import { ExampleBox } from '../ExampleBox';
@@ -27,7 +28,7 @@ const config = {
   ],
   codeExample: {
     title: "Image Upload",
-    code: "import { FileUpload } from '@/components/primitives';\n\n<FileUpload\n  accept={{ 'image/*': ['.png', '.jpg'] }}\n  maxSize={5242880} // 5MB\n  onFilesSelected={(files) => {\n    console.log('Files:', files);\n  }}\n>\n  <div className=\"border-2 border-dashed p-8\">\n    Drop images here or click to browse\n  </div>\n</FileUpload>"
+    code: "import { FileUpload } from '@/components/primitives';\n\n<FileUpload\n  accept={{ 'image/*': ['.png', '.jpg'] }}\n  maxSize={5242880} // 5MB\n  onFilesSelected={(files) => {\n    logger.log('Files:', files);\n  }}\n>\n  <div className=\"border-2 border-dashed p-8\">\n    Drop images here or click to browse\n  </div>\n</FileUpload>"
   }
 } as const;
 

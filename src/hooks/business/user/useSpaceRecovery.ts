@@ -1,3 +1,4 @@
+import { logger } from '@quilibrium/quorum-shared';
 import { useState, useCallback } from 'react';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
 import { t } from '@lingui/core/macro';
@@ -60,7 +61,7 @@ export const useSpaceRecovery = (): UseSpaceRecoveryReturn => {
             // Skip bloated encryption states (>500KB) - these cause sync failures
             const stateSize = encState.state?.length || 0;
             if (stateSize > 500_000) {
-              console.log(`[SpaceRecovery] Skipping ${space.spaceId.slice(0, 12)}... - bloated state (${(stateSize / 1024 / 1024).toFixed(1)}MB)`);
+              logger.log(`[SpaceRecovery] Skipping ${space.spaceId.slice(0, 12)}... - bloated state (${(stateSize / 1024 / 1024).toFixed(1)}MB)`);
               continue;
             }
             recoverable.push(space.spaceId);
@@ -70,7 +71,7 @@ export const useSpaceRecovery = (): UseSpaceRecoveryReturn => {
         }
       }
 
-      console.log(`[SpaceRecovery] Found ${orphaned.length} orphaned, ${recoverable.length} recoverable`);
+      logger.log(`[SpaceRecovery] Found ${orphaned.length} orphaned, ${recoverable.length} recoverable`);
 
       if (recoverable.length === 0) {
         showToast(t`No missing spaces found`, { variant: 'info', bottomFixed: true });

@@ -1,3 +1,4 @@
+import { logger } from '@quilibrium/quorum-shared';
 import React, {
   createContext,
   FC,
@@ -624,7 +625,7 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
               );
               if (isManager) {
                 shouldHonorDelete = true;
-                console.log(
+                logger.log(
                   '🔹 ADDMESSAGE: Honoring read-only manager delete in UI cache'
                 );
               }
@@ -639,7 +640,7 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
               );
               if (hasDeleteRole) {
                 shouldHonorDelete = true;
-                console.log(
+                logger.log(
                   '🔹 ADDMESSAGE: Honoring role-based delete in UI cache'
                 );
               }
@@ -674,7 +675,7 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
           }
         );
       } else {
-        console.log('🔹 ADDMESSAGE: Ignoring unauthorized delete request');
+        logger.log('🔹 ADDMESSAGE: Ignoring unauthorized delete request');
       }
     } else if (decryptedContent.content.type === 'update-profile') {
       const participant = await messageDB.getSpaceMember(
@@ -1181,7 +1182,7 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
                   Buffer.from(messageId).toString('hex');
 
                 if (inboxMismatch || messageIdMismatch) {
-                  console.warn(t`invalid address for signature`);
+                  logger.warn(t`invalid address for signature`);
                   decryptedContent.publicKey = undefined;
                   decryptedContent.signature = undefined;
                 } else {
@@ -1196,7 +1197,7 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
                       )
                     ) !== 'true'
                   ) {
-                    console.warn('invalid signature');
+                    logger.warn('invalid signature');
                     decryptedContent.publicKey = undefined;
                     decryptedContent.signature = undefined;
                   }
@@ -2034,7 +2035,7 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
                             )
                           ) !== 'true'
                         ) {
-                          console.warn('invalid signature');
+                          logger.warn('invalid signature');
                           message.publicKey = undefined;
                           message.signature = undefined;
                         }
@@ -4400,7 +4401,7 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
             filteredMembers.length + 200
           );
 
-        console.log("new link session", session);
+        logger.log("new link session", session);
         const outbounds: string[] = [];
         let newPeerIdSet = {
           [trState.id_peer_map[1].public_key]: 1,
@@ -5340,7 +5341,7 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
       }
 
       if (savedConfig.timestamp < (storedConfig?.timestamp ?? 0)) {
-        console.warn(t`saved config is out of date`);
+        logger.warn(t`saved config is out of date`);
         return storedConfig;
       }
 
@@ -5382,7 +5383,7 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
           )
         )
       ) {
-        console.warn(t`received config with invalid signature!`);
+        logger.warn(t`received config with invalid signature!`);
         return storedConfig;
       }
 
@@ -5412,13 +5413,13 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
           try {
             const config = space.keys.find((k) => k.keyId == 'config');
             if (!config) {
-              console.warn(t`decrypted space with no known config key`);
+              logger.warn(t`decrypted space with no known config key`);
               continue;
             }
 
             const hub = space.keys.find((k) => k.keyId == 'hub');
             if (!hub) {
-              console.warn(t`Decrypted Space with no known hub key`);
+              logger.warn(t`Decrypted Space with no known hub key`);
               continue;
             }
 
@@ -5433,7 +5434,7 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
               space.spaceId
             );
             if (!manifestPayload) {
-              console.warn(t`Could not obtain manifest for Space`);
+              logger.warn(t`Could not obtain manifest for Space`);
               continue;
             }
 
@@ -5595,7 +5596,7 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
       config.timestamp = ts;
 
       if (config.allowSync) {
-        console.log('syncing config', config);
+        logger.log('syncing config', config);
         const userKey = keyset.userKeyset;
         const derived = await crypto.subtle.digest(
           'SHA-512',
