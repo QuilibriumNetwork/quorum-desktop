@@ -8,6 +8,39 @@ import vitePluginFaviconsInject from 'vite-plugin-favicons-inject';
 import { readFileSync, writeFileSync, existsSync } from 'fs';
 
 /**
+ * Plugin to resolve vite-plugin-node-polyfills shims for linked packages outside node_modules.
+ * The nodePolyfills plugin injects bare specifiers like 'vite-plugin-node-polyfills/shims/global'
+ * which Rollup can't resolve when the importer is outside the project's node_modules tree.
+ */
+function resolvePolyfillShims(): Plugin {
+  const shimMap: Record<string, string> = {
+    'vite-plugin-node-polyfills/shims/buffer': resolve(
+      __dirname,
+      '../node_modules/vite-plugin-node-polyfills/shims/buffer/dist/index.js'
+    ),
+    'vite-plugin-node-polyfills/shims/global': resolve(
+      __dirname,
+      '../node_modules/vite-plugin-node-polyfills/shims/global/dist/index.js'
+    ),
+    'vite-plugin-node-polyfills/shims/process': resolve(
+      __dirname,
+      '../node_modules/vite-plugin-node-polyfills/shims/process/dist/index.js'
+    ),
+  };
+
+  return {
+    name: 'resolve-polyfill-shims',
+    enforce: 'pre',
+    resolveId(id) {
+      if (id in shimMap) {
+        return shimMap[id];
+      }
+      return null;
+    },
+  };
+}
+
+/**
  * Plugin to inject favicons into 404.html after favicon plugin processes main HTML
  */
 function injectFaviconsInto404(): Plugin {
@@ -64,10 +97,6 @@ export default defineConfig(({ command }) => ({
     emptyOutDir: true,
     rollupOptions: {
       external: (id) => {
-        // Externalize vite-plugin-node-polyfills shims (injected by SDK build)
-        if (id.includes('vite-plugin-node-polyfills/shims/')) {
-          return true;
-        }
         // Exclude dev folder from production builds
         // Only match src/dev/ or relative imports containing /dev/, not absolute system paths
         if (process.env.NODE_ENV === 'production') {
@@ -87,6 +116,7 @@ export default defineConfig(({ command }) => ({
     // Define compile-time constants
   },
   plugins: [
+    resolvePolyfillShims(),
     lingui(),
     vitePluginFaviconsInject('public/quorumicon-blue.svg', {
       appName: 'Quorum',
