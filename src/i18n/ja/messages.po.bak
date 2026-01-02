@@ -277,7 +277,7 @@ msgstr "アクションがキューに入れられました"
 
 #: src/components/direct/DirectMessageContactsList.tsx:279
 msgid "Add a friend"
-msgstr ""
+msgstr "友達を追加"
 
 #: src/components/modals/AddSpaceModal.tsx:124
 #: src/components/navbar/ExpandableNavMenu.tsx:30
@@ -307,7 +307,7 @@ msgstr "ステッカーを追加"
 
 #: src/components/direct/DirectMessageContactsList.tsx:224
 msgid "Add to Favorites"
-msgstr ""
+msgstr "お気に入りに追加"
 
 #: src/components/modals/SpaceSettingsModal/Emojis.tsx:44
 msgid "Add up to 50 custom emoji. Custom emojis can only be used within a Space. You can upload PNG, JPG or GIF, max 5MB (automatically optimized)."
@@ -394,6 +394,10 @@ msgstr "アニメーション絵文字GIFは100KBを超えることはできま�
 #: src/utils/imageProcessing/errors.ts:26
 msgid "Animated sticker GIFs cannot be larger than 750KB. Please optimize your GIF for sticker use."
 msgstr "アニメーションステッカーGIFは750KBを超えることはできません。ステッカー用にGIFを最適化してください。"
+
+#: src/components/modals/UserSettingsModal/Privacy.tsx:268
+msgid "Anyone who sees or photographs this QR code can take full control of your Quorum account and steal any associated funds. Only proceed if you are in a private location and ready to scan immediately."
+msgstr ""
 
 #: src/components/modals/UserSettingsModal/Appearance.tsx:40
 #: src/components/modals/UserSettingsModal/Navigation.tsx:18
@@ -516,7 +520,7 @@ msgstr "写真を撮るにはカメラの権限が必要です"
 #: src/components/modals/ConversationSettingsModal.tsx:62
 #: src/components/modals/KickUserModal.tsx:98
 #: src/components/modals/MuteUserModal.tsx:129
-#: src/components/modals/UserSettingsModal/Privacy.tsx:284
+#: src/components/modals/UserSettingsModal/Privacy.tsx:277
 #: src/components/primitives/FileUpload/FileUpload.native.tsx:173
 #: src/hooks/business/channels/useChannelManagement.ts:253
 #: src/hooks/business/messages/useMessageActions.ts:382
@@ -769,7 +773,7 @@ msgstr "新しいアカウントを作成"
 
 #: src/components/modals/ChannelEditorModal.tsx:164
 msgid "Create roles in Space Settings first."
-msgstr ""
+msgstr "最初にスペース設定でロールを作成してください。"
 
 #: src/components/modals/CreateSpaceModal.tsx:254
 msgid "Create Space"
@@ -792,7 +796,7 @@ msgstr "現在の招待リンク"
 msgid "Dark"
 msgstr "ダーク"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:327
+#: src/components/modals/UserSettingsModal/Privacy.tsx:325
 msgid "Data Recovery"
 msgstr "データ復旧"
 
@@ -933,7 +937,7 @@ msgstr "このブラウザではデスクトップ通知はサポートされて
 
 #: src/components/modals/UserSettingsModal/Privacy.tsx:145
 msgid "Devices"
-msgstr ""
+msgstr "デバイス"
 
 #: src/hooks/business/search/useBatchSearchResultsDisplay.ts:158
 #: src/hooks/business/search/useSearchResultDisplay.ts:104
@@ -969,13 +973,13 @@ msgstr "表示名は必須です"
 msgid "Display name must be {MAX_NAME_LENGTH} characters or less"
 msgstr "表示名は{MAX_NAME_LENGTH}文字以下でなければなりません"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:247
+#: src/components/modals/UserSettingsModal/Privacy.tsx:251
 msgid "Display your private key as a QR code to scan with the Quorum mobile app. This allows you to import your account on mobile without typing the key."
-msgstr ""
+msgstr "QuorumモバイルアプリでスキャンするためにQRコードとしてプライベートキーを表示します。これにより、キーを入力せずにモバイルでアカウントをインポートできます。"
 
 #: src/components/direct/DirectMessageContactsList.tsx:260
 msgid "DM Requests"
-msgstr ""
+msgstr "DMリクエスト"
 
 #: src/components/ui/MobileDrawer.tsx:143
 msgid "Drawer"
@@ -1109,13 +1113,12 @@ msgstr "既存の会話"
 msgid "Export"
 msgstr "エクスポート"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:181
 #~ msgid "Export your key to a file by clicking this button. Do not share this file with anyone else or they can impersonate you or steal your Space's Apex earnings."
 #~ msgstr "このボタンをクリックして、キーをファイルにエクスポートします。このファイルを他の誰とも共有しないでください。そうしないと、彼らがあなたを偽装したり、あなたのスペースのApex収益を盗んだりする可能性があります。"
 
 #: src/components/modals/UserSettingsModal/Privacy.tsx:227
 msgid "Export your key to a file. Do not share this file with anyone else or they can impersonate you or steal your Space's Apex earnings."
-msgstr ""
+msgstr "キーをファイルにエクスポートします。このファイルを他の誰とも共有しないでください。そうしないと、あなたを偽装したり、あなたのスペースのApex収益を盗まれたりする可能性があります。"
 
 #~ msgid "Failed to copy to clipboard. Please try again."
 #~ msgstr "クリップボードへのコピーに失敗しました。もう一度お試しください。"
@@ -1211,7 +1214,7 @@ msgstr "プロフィールの更新に失敗しました"
 
 #: src/components/direct/DirectMessageContactsList.tsx:259
 msgid "Favorites"
-msgstr ""
+msgstr "お気に入り"
 
 #: src/utils/imageProcessing/errors.ts:16
 msgid "File cannot be larger than {maxSize}"
@@ -1370,9 +1373,9 @@ msgstr "グループ名は{MAX_NAME_LENGTH}文字以下でなければなりま�
 msgid "Hang in there..."
 msgstr "もう少し頑張ってください..."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:316
+#: src/components/modals/UserSettingsModal/Privacy.tsx:311
 msgid "Hide"
-msgstr ""
+msgstr "非表示"
 
 #: src/components/direct/EmptyDirectMessage.tsx:54
 msgid "hide home screen"
@@ -1395,9 +1398,9 @@ msgstr "リスト内のミュートされたチャンネルを非表示"
 msgid "I already saved mine"
 msgstr "私はすでに自分のを保存しました"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:291
+#: src/components/modals/UserSettingsModal/Privacy.tsx:285
 msgid "I Understand, Show QR"
-msgstr ""
+msgstr "理解しました、QRを表示"
 
 #~ msgid "I've Saved It"
 #~ msgstr "保存しました"
@@ -1613,9 +1616,9 @@ msgstr "ピン留めされたメッセージを読み込み中..."
 msgid "Loading your profile..."
 msgstr "プロフィールを読み込んでいます..."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:291
+#: src/components/modals/UserSettingsModal/Privacy.tsx:285
 msgid "Loading..."
-msgstr ""
+msgstr "読み込み中..."
 
 #: src/hooks/business/conversations/useDirectMessageCreation.ts:32
 msgid "Looking up user..."
@@ -1712,7 +1715,7 @@ msgstr "メッセージは署名されています！"
 
 #: src/components/modals/UserSettingsModal/Privacy.tsx:244
 msgid "Mobile Import"
-msgstr ""
+msgstr "モバイルインポート"
 
 #: src/components/message/MessageActions.tsx:92
 msgid "More reactions"
@@ -1765,7 +1768,7 @@ msgstr "マイアカウント"
 #: src/components/direct/DirectMessageContactsList.tsx:311
 #: src/components/space/Channel.tsx:1060
 msgid "Name or Address"
-msgstr ""
+msgstr "名前またはアドレス"
 
 #: src/hooks/business/validation/useDisplayNameValidation.ts:26
 #: src/hooks/business/validation/useDisplayNameValidation.ts:55
@@ -1813,7 +1816,7 @@ msgstr "まだブックマークがありません"
 
 #: src/components/direct/DirectMessageContactsList.tsx:325
 msgid "No contacts found"
-msgstr ""
+msgstr "連絡先が見つかりません"
 
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:155
 msgid "No conversations found"
@@ -1825,7 +1828,7 @@ msgstr "このスペースの暗号化状態が見つかりません。このス
 
 #: src/components/direct/DirectMessageContactsList.tsx:321
 msgid "No favorites yet"
-msgstr ""
+msgstr "お気に入りはまだありません"
 
 #: src/services/InvitationService.ts:79
 msgid "No invite evaluations available. Please generate a public invite link or ensure the space encryption state is properly initialized."
@@ -1833,7 +1836,7 @@ msgstr "招待評価は利用できません。公開招待リンクを生成す
 
 #: src/components/direct/DirectMessageContactsList.tsx:323
 msgid "No message requests"
-msgstr ""
+msgstr "メッセージリクエストはありません"
 
 #: src/components/search/SearchResults.tsx:103
 msgid "No messages found"
@@ -1910,8 +1913,8 @@ msgid "Online"
 msgstr "オンライン"
 
 #: src/components/modals/UserSettingsModal/Privacy.tsx:274
-msgid "Only proceed if you are in a private location and ready to scan immediately."
-msgstr ""
+#~ msgid "Only proceed if you are in a private location and ready to scan immediately."
+#~ msgstr "プライベートな場所にいて、すぐにスキャンする準備ができている場合のみ進んでください。"
 
 #: src/components/ui/YouTubeFacade.tsx:171
 msgid "Open video on YouTube"
@@ -2071,9 +2074,9 @@ msgstr "公開招待リンク"
 msgid "Public invite links allow anyone with access to the link to join your Space. Consider who you share the link with and where you post it."
 msgstr "公開招待リンクを使用すると、リンクにアクセスできる誰でもあなたのスペースに参加できます。リンクを共有する相手や投稿する場所を考慮してください。"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:308
+#: src/components/modals/UserSettingsModal/Privacy.tsx:302
 msgid "QR code will auto-hide in 60 seconds"
-msgstr ""
+msgstr "QRコードは60秒後に自動的に非表示になります"
 
 #: src/components/Maintenance.tsx:24
 msgid "Quorum infrastructure is being deployed at this time. Please try refreshing, and check <0>https://status.quilibrium.com/</0> for updates."
@@ -2136,7 +2139,7 @@ msgstr "ブックマークを削除"
 
 #: src/components/direct/DirectMessageContactsList.tsx:224
 msgid "Remove from Favorites"
-msgstr ""
+msgstr "お気に入りから削除"
 
 #: src/components/user/UserProfile.tsx:172
 msgid "Removing..."
@@ -2169,15 +2172,14 @@ msgstr "このSpace内で送信されたメッセージが送信者によって�
 msgid "Reset"
 msgstr "リセット"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:341
+#: src/components/modals/UserSettingsModal/Privacy.tsx:339
 msgid "Restore"
-msgstr ""
+msgstr "復元"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:208
 #~ msgid "Restore Missing Spaces"
 #~ msgstr "見つからないスペースを復元"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:332
+#: src/components/modals/UserSettingsModal/Privacy.tsx:330
 msgid "Restore Spaces that exist on this device but are missing from your navigation menu."
 msgstr "このデバイスに存在するがナビゲーションメニューから欠落しているスペースを復元します。"
 
@@ -2186,7 +2188,7 @@ msgstr "このデバイスに存在するがナビゲーションメニューか
 msgid "Restored {0} space(s)"
 msgstr "{0} スペースを復元しました"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:341
+#: src/components/modals/UserSettingsModal/Privacy.tsx:339
 msgid "Restoring..."
 msgstr "復元中..."
 
@@ -2291,7 +2293,7 @@ msgstr "ユーザー名またはアドレスを検索"
 
 #: src/components/ui/ListSearchInput.tsx:26
 msgid "Search..."
-msgstr ""
+msgstr "検索..."
 
 #: src/components/search/SearchResults.tsx:85
 msgid "Searching..."
@@ -2302,8 +2304,8 @@ msgid "Security"
 msgstr "セキュリティ"
 
 #: src/components/modals/UserSettingsModal/Privacy.tsx:268
-msgid "Security Warning"
-msgstr ""
+#~ msgid "Security Warning"
+#~ msgstr "セキュリティ警告"
 
 #: src/components/modals/SpaceSettingsModal/Account.tsx:221
 msgid "Select"
@@ -2397,9 +2399,13 @@ msgstr "ホーム画面を表示"
 msgid "Show Muted Channels"
 msgstr "ミュートされたチャンネルを表示"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:256
-msgid "Show QR Code"
+#: src/components/modals/UserSettingsModal/Privacy.tsx:259
+msgid "Show QR"
 msgstr ""
+
+#: src/components/modals/UserSettingsModal/Privacy.tsx:256
+#~ msgid "Show QR Code"
+#~ msgstr "QRコードを表示"
 
 #: src/components/search/SearchResults.tsx:187
 #: src/components/search/SearchResults.tsx:214
@@ -2839,7 +2845,6 @@ msgstr "ユーザーが認証されていません"
 #~ msgid "User Unmuted!"
 #~ msgstr "ユーザーのミュートが解除されました！"
 
-#: src/components/space/Channel.tsx:NaN
 #~ msgid "Username or Address"
 #~ msgstr "ユーザー名またはアドレス"
 
@@ -3026,8 +3031,8 @@ msgstr "あなたの詳細"
 #~ msgstr "プライベートキーがクリップボードにコピーされました。「AccountID.key」として保存してください（後で設定でアカウントIDを見つけることができます）。このキーを絶対に共有しないでください！"
 
 #: src/components/modals/UserSettingsModal/Privacy.tsx:271
-msgid "Your private key will be displayed on screen. Anyone who sees or photographs this QR code can take full control of your Quorum account and steal any associated funds."
-msgstr ""
+#~ msgid "Your private key will be displayed on screen. Anyone who sees or photographs this QR code can take full control of your Quorum account and steal any associated funds."
+#~ msgstr "あなたのプライベートキーが画面に表示されます。このQRコードを見たり写真を撮ったりした人は、あなたのQuorumアカウントを完全に制御し、関連する資金を盗むことができます。"
 
 #: src/utils/imageProcessing/errors.ts:40
 msgid "Your profile image size must be {maxSize} or less and must be a PNG, JPG, or JPEG file extension."

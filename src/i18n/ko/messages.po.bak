@@ -277,7 +277,7 @@ msgstr "작업이 대기 중입니다"
 
 #: src/components/direct/DirectMessageContactsList.tsx:279
 msgid "Add a friend"
-msgstr ""
+msgstr "친구 추가"
 
 #: src/components/modals/AddSpaceModal.tsx:124
 #: src/components/navbar/ExpandableNavMenu.tsx:30
@@ -307,7 +307,7 @@ msgstr "스티커 추가"
 
 #: src/components/direct/DirectMessageContactsList.tsx:224
 msgid "Add to Favorites"
-msgstr ""
+msgstr "즐겨찾기에 추가"
 
 #: src/components/modals/SpaceSettingsModal/Emojis.tsx:44
 msgid "Add up to 50 custom emoji. Custom emojis can only be used within a Space. You can upload PNG, JPG or GIF, max 5MB (automatically optimized)."
@@ -394,6 +394,10 @@ msgstr "애니메이션 이모지 GIF는 100KB를 초과할 수 없습니다. �
 #: src/utils/imageProcessing/errors.ts:26
 msgid "Animated sticker GIFs cannot be larger than 750KB. Please optimize your GIF for sticker use."
 msgstr "애니메이션 스티커 GIF는 750KB를 초과할 수 없습니다. 스티커 사용을 위해 GIF를 최적화해 주세요."
+
+#: src/components/modals/UserSettingsModal/Privacy.tsx:268
+msgid "Anyone who sees or photographs this QR code can take full control of your Quorum account and steal any associated funds. Only proceed if you are in a private location and ready to scan immediately."
+msgstr ""
 
 #: src/components/modals/UserSettingsModal/Appearance.tsx:40
 #: src/components/modals/UserSettingsModal/Navigation.tsx:18
@@ -517,7 +521,7 @@ msgstr "사진을 찍으려면 카메라 권한이 필요합니다"
 #: src/components/modals/ConversationSettingsModal.tsx:62
 #: src/components/modals/KickUserModal.tsx:98
 #: src/components/modals/MuteUserModal.tsx:129
-#: src/components/modals/UserSettingsModal/Privacy.tsx:284
+#: src/components/modals/UserSettingsModal/Privacy.tsx:277
 #: src/components/primitives/FileUpload/FileUpload.native.tsx:173
 #: src/hooks/business/channels/useChannelManagement.ts:253
 #: src/hooks/business/messages/useMessageActions.ts:382
@@ -770,7 +774,7 @@ msgstr "새 계정 만들기"
 
 #: src/components/modals/ChannelEditorModal.tsx:164
 msgid "Create roles in Space Settings first."
-msgstr ""
+msgstr "먼저 Space 설정에서 역할을 생성하세요."
 
 #: src/components/modals/CreateSpaceModal.tsx:254
 msgid "Create Space"
@@ -793,7 +797,7 @@ msgstr "현재 초대 링크"
 msgid "Dark"
 msgstr "어두운"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:327
+#: src/components/modals/UserSettingsModal/Privacy.tsx:325
 msgid "Data Recovery"
 msgstr "데이터 복구"
 
@@ -934,7 +938,7 @@ msgstr "이 브라우저에서는 데스크톱 알림이 지원되지 않습니�
 
 #: src/components/modals/UserSettingsModal/Privacy.tsx:145
 msgid "Devices"
-msgstr ""
+msgstr "장치"
 
 #: src/hooks/business/search/useBatchSearchResultsDisplay.ts:158
 #: src/hooks/business/search/useSearchResultDisplay.ts:104
@@ -970,13 +974,13 @@ msgstr "표시 이름은 필수입니다"
 msgid "Display name must be {MAX_NAME_LENGTH} characters or less"
 msgstr "표시 이름은 {MAX_NAME_LENGTH}자 이하이어야 합니다"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:247
+#: src/components/modals/UserSettingsModal/Privacy.tsx:251
 msgid "Display your private key as a QR code to scan with the Quorum mobile app. This allows you to import your account on mobile without typing the key."
-msgstr ""
+msgstr "Quorum 모바일 앱으로 스캔할 수 있도록 개인 키를 QR 코드로 표시합니다. 이를 통해 키를 입력하지 않고 모바일에서 계정을 가져올 수 있습니다."
 
 #: src/components/direct/DirectMessageContactsList.tsx:260
 msgid "DM Requests"
-msgstr ""
+msgstr "DM 요청"
 
 #: src/components/ui/MobileDrawer.tsx:143
 msgid "Drawer"
@@ -1110,13 +1114,12 @@ msgstr "기존 대화"
 msgid "Export"
 msgstr "내보내기"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:181
 #~ msgid "Export your key to a file by clicking this button. Do not share this file with anyone else or they can impersonate you or steal your Space's Apex earnings."
 #~ msgstr "이 버튼을 클릭하여 키를 파일로 내보내세요. 이 파일을 다른 사람과 공유하지 마세요. 그렇지 않으면 그들이 당신을 사칭하거나 당신의 Space의 Apex 수익을 훔칠 수 있습니다."
 
 #: src/components/modals/UserSettingsModal/Privacy.tsx:227
 msgid "Export your key to a file. Do not share this file with anyone else or they can impersonate you or steal your Space's Apex earnings."
-msgstr ""
+msgstr "키를 파일로 내보내세요. 이 파일을 다른 사람과 공유하지 마세요. 그렇지 않으면 그들이 당신을 사칭하거나 당신의 Space의 Apex 수익을 훔칠 수 있습니다."
 
 #~ msgid "Failed to copy to clipboard. Please try again."
 #~ msgstr "클립보드에 복사하는 데 실패했습니다. 다시 시도해 주세요."
@@ -1212,7 +1215,7 @@ msgstr "프로필 업데이트에 실패했습니다."
 
 #: src/components/direct/DirectMessageContactsList.tsx:259
 msgid "Favorites"
-msgstr ""
+msgstr "즐겨찾기"
 
 #: src/utils/imageProcessing/errors.ts:16
 msgid "File cannot be larger than {maxSize}"
@@ -1371,9 +1374,9 @@ msgstr "그룹 이름은 {MAX_NAME_LENGTH}자 이하이어야 합니다"
 msgid "Hang in there..."
 msgstr "조금만 기다려 주세요..."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:316
+#: src/components/modals/UserSettingsModal/Privacy.tsx:311
 msgid "Hide"
-msgstr ""
+msgstr "숨기기"
 
 #: src/components/direct/EmptyDirectMessage.tsx:54
 msgid "hide home screen"
@@ -1396,9 +1399,9 @@ msgstr "목록에서 음소거된 채널 숨기기"
 msgid "I already saved mine"
 msgstr "나는 이미 내 것을 저장했습니다"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:291
+#: src/components/modals/UserSettingsModal/Privacy.tsx:285
 msgid "I Understand, Show QR"
-msgstr ""
+msgstr "이해했습니다, QR 표시"
 
 #~ msgid "I've Saved It"
 #~ msgstr "저장했습니다"
@@ -1614,9 +1617,9 @@ msgstr "고정된 메시지를 로딩 중..."
 msgid "Loading your profile..."
 msgstr "프로필을 로딩 중입니다..."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:291
+#: src/components/modals/UserSettingsModal/Privacy.tsx:285
 msgid "Loading..."
-msgstr ""
+msgstr "로딩 중..."
 
 #: src/hooks/business/conversations/useDirectMessageCreation.ts:32
 msgid "Looking up user..."
@@ -1713,7 +1716,7 @@ msgstr "메시지가 서명되었습니다!"
 
 #: src/components/modals/UserSettingsModal/Privacy.tsx:244
 msgid "Mobile Import"
-msgstr ""
+msgstr "모바일 가져오기"
 
 #: src/components/message/MessageActions.tsx:92
 msgid "More reactions"
@@ -1766,7 +1769,7 @@ msgstr "내 계정"
 #: src/components/direct/DirectMessageContactsList.tsx:311
 #: src/components/space/Channel.tsx:1060
 msgid "Name or Address"
-msgstr ""
+msgstr "이름 또는 주소"
 
 #: src/hooks/business/validation/useDisplayNameValidation.ts:26
 #: src/hooks/business/validation/useDisplayNameValidation.ts:55
@@ -1814,7 +1817,7 @@ msgstr "아직 북마크가 없습니다"
 
 #: src/components/direct/DirectMessageContactsList.tsx:325
 msgid "No contacts found"
-msgstr ""
+msgstr "연락처를 찾을 수 없습니다"
 
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:155
 msgid "No conversations found"
@@ -1826,7 +1829,7 @@ msgstr "이 공간에 대한 암호화 상태가 없습니다. 공간을 초기�
 
 #: src/components/direct/DirectMessageContactsList.tsx:321
 msgid "No favorites yet"
-msgstr ""
+msgstr "아직 즐겨찾기가 없습니다"
 
 #: src/services/InvitationService.ts:79
 msgid "No invite evaluations available. Please generate a public invite link or ensure the space encryption state is properly initialized."
@@ -1834,7 +1837,7 @@ msgstr "초대 평가가 없습니다. 공개 초대 링크를 생성하거나 �
 
 #: src/components/direct/DirectMessageContactsList.tsx:323
 msgid "No message requests"
-msgstr ""
+msgstr "메시지 요청이 없습니다"
 
 #: src/components/search/SearchResults.tsx:103
 msgid "No messages found"
@@ -1911,8 +1914,8 @@ msgid "Online"
 msgstr "온라인"
 
 #: src/components/modals/UserSettingsModal/Privacy.tsx:274
-msgid "Only proceed if you are in a private location and ready to scan immediately."
-msgstr ""
+#~ msgid "Only proceed if you are in a private location and ready to scan immediately."
+#~ msgstr "개인 장소에 있고 즉시 스캔할 준비가 된 경우에만 진행하세요."
 
 #: src/components/ui/YouTubeFacade.tsx:171
 msgid "Open video on YouTube"
@@ -2072,9 +2075,9 @@ msgstr "공개 초대 링크"
 msgid "Public invite links allow anyone with access to the link to join your Space. Consider who you share the link with and where you post it."
 msgstr "공개 초대 링크는 링크에 접근할 수 있는 누구나 귀하의 Space에 참여할 수 있게 합니다. 링크를 공유하는 사람과 게시하는 위치를 고려하세요."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:308
+#: src/components/modals/UserSettingsModal/Privacy.tsx:302
 msgid "QR code will auto-hide in 60 seconds"
-msgstr ""
+msgstr "QR 코드는 60초 후에 자동으로 숨겨집니다"
 
 #: src/components/Maintenance.tsx:24
 msgid "Quorum infrastructure is being deployed at this time. Please try refreshing, and check <0>https://status.quilibrium.com/</0> for updates."
@@ -2137,7 +2140,7 @@ msgstr "북마크 제거"
 
 #: src/components/direct/DirectMessageContactsList.tsx:224
 msgid "Remove from Favorites"
-msgstr ""
+msgstr "즐겨찾기에서 제거"
 
 #: src/components/user/UserProfile.tsx:172
 msgid "Removing..."
@@ -2170,15 +2173,14 @@ msgstr "이 Space에서 전송된 메시지가 발신자에 의해 서명되도�
 msgid "Reset"
 msgstr "재설정"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:341
+#: src/components/modals/UserSettingsModal/Privacy.tsx:339
 msgid "Restore"
-msgstr ""
+msgstr "복원"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:208
 #~ msgid "Restore Missing Spaces"
 #~ msgstr "누락된 공간 복원"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:332
+#: src/components/modals/UserSettingsModal/Privacy.tsx:330
 msgid "Restore Spaces that exist on this device but are missing from your navigation menu."
 msgstr "이 장치에 존재하지만 탐색 메뉴에서 누락된 공간을 복원합니다."
 
@@ -2187,7 +2189,7 @@ msgstr "이 장치에 존재하지만 탐색 메뉴에서 누락된 공간을 �
 msgid "Restored {0} space(s)"
 msgstr "{0} 공간(들)을 복원했습니다"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:341
+#: src/components/modals/UserSettingsModal/Privacy.tsx:339
 msgid "Restoring..."
 msgstr "복원 중..."
 
@@ -2292,7 +2294,7 @@ msgstr "사용자 이름 또는 주소 검색"
 
 #: src/components/ui/ListSearchInput.tsx:26
 msgid "Search..."
-msgstr ""
+msgstr "검색..."
 
 #: src/components/search/SearchResults.tsx:85
 msgid "Searching..."
@@ -2303,8 +2305,8 @@ msgid "Security"
 msgstr "보안"
 
 #: src/components/modals/UserSettingsModal/Privacy.tsx:268
-msgid "Security Warning"
-msgstr ""
+#~ msgid "Security Warning"
+#~ msgstr "보안 경고"
 
 #: src/components/modals/SpaceSettingsModal/Account.tsx:221
 msgid "Select"
@@ -2398,9 +2400,13 @@ msgstr "홈 화면 표시"
 msgid "Show Muted Channels"
 msgstr "음소거된 채널 보기"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:256
-msgid "Show QR Code"
+#: src/components/modals/UserSettingsModal/Privacy.tsx:259
+msgid "Show QR"
 msgstr ""
+
+#: src/components/modals/UserSettingsModal/Privacy.tsx:256
+#~ msgid "Show QR Code"
+#~ msgstr "QR 코드 표시"
 
 #: src/components/search/SearchResults.tsx:187
 #: src/components/search/SearchResults.tsx:214
@@ -2840,7 +2846,6 @@ msgstr "사용자가 인증되지 않았습니다"
 #~ msgid "User Unmuted!"
 #~ msgstr "사용자의 음소거가 해제되었습니다!"
 
-#: src/components/space/Channel.tsx:NaN
 #~ msgid "Username or Address"
 #~ msgstr "사용자 이름 또는 주소"
 
@@ -3027,8 +3032,8 @@ msgstr "귀하의 세부정보"
 #~ msgstr "귀하의 개인 키가 클립보드에 복사되었습니다. \"AccountID.key\"로 저장하세요 (나중에 설정에서 귀하의 계정 ID를 찾을 수 있습니다). 이 키를 절대 공유하지 마세요!"
 
 #: src/components/modals/UserSettingsModal/Privacy.tsx:271
-msgid "Your private key will be displayed on screen. Anyone who sees or photographs this QR code can take full control of your Quorum account and steal any associated funds."
-msgstr ""
+#~ msgid "Your private key will be displayed on screen. Anyone who sees or photographs this QR code can take full control of your Quorum account and steal any associated funds."
+#~ msgstr "귀하의 개인 키가 화면에 표시됩니다. 이 QR 코드를 보거나 사진을 찍는 사람은 귀하의 Quorum 계정을 완전히 제어하고 관련 자금을 훔칠 수 있습니다."
 
 #: src/utils/imageProcessing/errors.ts:40
 msgid "Your profile image size must be {maxSize} or less and must be a PNG, JPG, or JPEG file extension."

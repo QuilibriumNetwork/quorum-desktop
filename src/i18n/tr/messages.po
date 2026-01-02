@@ -391,6 +391,16 @@ msgstr ""
 "Animasyonlu çıkartma GIF'leri 750KB'den büyük olamaz. Lütfen GIF'inizi "
 "çıkartma kullanımı için optimize edin."
 
+#: src/components/modals/UserSettingsModal/Privacy.tsx:268
+msgid ""
+"Anyone who sees or photographs this QR code can take full control of your "
+"Quorum account and steal any associated funds. Only proceed if you are in a "
+"private location and ready to scan immediately."
+msgstr ""
+"Bu QR kodunu gören veya fotoğrafını çeken herkes, Quorum hesabınıza tam "
+"kontrol sağlayabilir ve ilişkili fonları çalabilir. Sadece özel bir "
+"yerdeyseniz ve hemen taramaya hazırsanız devam edin."
+
 #: src/components/modals/UserSettingsModal/Appearance.tsx:40
 #: src/components/modals/UserSettingsModal/Navigation.tsx:18
 msgid "Appearance"
@@ -509,7 +519,7 @@ msgstr "Fotoğraf çekmek için kamera izni gereklidir"
 #: src/components/modals/ConversationSettingsModal.tsx:62
 #: src/components/modals/KickUserModal.tsx:98
 #: src/components/modals/MuteUserModal.tsx:129
-#: src/components/modals/UserSettingsModal/Privacy.tsx:284
+#: src/components/modals/UserSettingsModal/Privacy.tsx:277
 #: src/components/primitives/FileUpload/FileUpload.native.tsx:173
 #: src/hooks/business/channels/useChannelManagement.ts:253
 #: src/hooks/business/messages/useMessageActions.ts:382
@@ -800,7 +810,7 @@ msgstr "Mevcut Davet Bağlantısı"
 msgid "Dark"
 msgstr "Karanlık"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:327
+#: src/components/modals/UserSettingsModal/Privacy.tsx:325
 msgid "Data Recovery"
 msgstr "Veri Kurtarma"
 
@@ -966,7 +976,7 @@ msgstr "Görüntü adı gereklidir"
 msgid "Display name must be {MAX_NAME_LENGTH} characters or less"
 msgstr "Görünen ad {MAX_NAME_LENGTH} karakter veya daha az olmalıdır"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:247
+#: src/components/modals/UserSettingsModal/Privacy.tsx:251
 msgid ""
 "Display your private key as a QR code to scan with the Quorum mobile app. "
 "This allows you to import your account on mobile without typing the key."
@@ -1383,7 +1393,7 @@ msgstr "Grup adı {MAX_NAME_LENGTH} karakter veya daha az olmalıdır"
 msgid "Hang in there..."
 msgstr "Biraz sabırlı olun..."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:316
+#: src/components/modals/UserSettingsModal/Privacy.tsx:311
 msgid "Hide"
 msgstr "Gizle"
 
@@ -1408,7 +1418,7 @@ msgstr "Liste içinde susturulmuş kanalları gizle"
 msgid "I already saved mine"
 msgstr "Ben zaten kaydettim"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:291
+#: src/components/modals/UserSettingsModal/Privacy.tsx:285
 msgid "I Understand, Show QR"
 msgstr "Anladım, QR Göster"
 
@@ -1628,7 +1638,7 @@ msgstr "Sabit mesajlar yükleniyor..."
 msgid "Loading your profile..."
 msgstr "Profilinizi yüklüyoruz..."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:291
+#: src/components/modals/UserSettingsModal/Privacy.tsx:285
 msgid "Loading..."
 msgstr "Yükleniyor..."
 
@@ -1934,13 +1944,6 @@ msgstr "Bizden biri, bizden biri!"
 msgid "Online"
 msgstr "Çevrimiçi"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:274
-msgid ""
-"Only proceed if you are in a private location and ready to scan immediately."
-msgstr ""
-"Sadece özel bir konumdaysanız ve hemen taramaya hazır olduğunuzda devam "
-"edin."
-
 #: src/components/ui/YouTubeFacade.tsx:171
 msgid "Open video on YouTube"
 msgstr "YouTube'da videoyu aç"
@@ -2100,7 +2103,7 @@ msgstr ""
 "katılmasına izin verir. Bağlantıyı kiminle paylaştığınıza ve nerede "
 "paylaştığınıza dikkat edin."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:308
+#: src/components/modals/UserSettingsModal/Privacy.tsx:302
 msgid "QR code will auto-hide in 60 seconds"
 msgstr "QR kodu 60 saniye içinde otomatik olarak gizlenecektir"
 
@@ -2215,11 +2218,11 @@ msgstr ""
 msgid "Reset"
 msgstr "Sıfırla"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:341
+#: src/components/modals/UserSettingsModal/Privacy.tsx:339
 msgid "Restore"
 msgstr "Geri yükle"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:332
+#: src/components/modals/UserSettingsModal/Privacy.tsx:330
 msgid ""
 "Restore Spaces that exist on this device but are missing from your "
 "navigation menu."
@@ -2232,7 +2235,7 @@ msgstr ""
 msgid "Restored {0} space(s)"
 msgstr "{0} alan(lar) geri yüklendi"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:341
+#: src/components/modals/UserSettingsModal/Privacy.tsx:339
 msgid "Restoring..."
 msgstr "Geri Yükleniyor..."
 
@@ -2345,10 +2348,6 @@ msgstr "Aranıyor..."
 msgid "Security"
 msgstr "Güvenlik"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:268
-msgid "Security Warning"
-msgstr "Güvenlik Uyarısı"
-
 #: src/components/modals/SpaceSettingsModal/Account.tsx:221
 msgid "Select"
 msgstr "Seç"
@@ -2438,9 +2437,9 @@ msgstr "ana ekranı göster"
 msgid "Show Muted Channels"
 msgstr "Susturulmuş Kanalları Göster"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:256
-msgid "Show QR Code"
-msgstr "QR Kodunu Göster"
+#: src/components/modals/UserSettingsModal/Privacy.tsx:259
+msgid "Show QR"
+msgstr "QR'yi Göster"
 
 #: src/components/search/SearchResults.tsx:187
 #: src/components/search/SearchResults.tsx:214
@@ -3160,16 +3159,6 @@ msgstr "Bir Alan'a katılmanız için davet edildiniz"
 msgid "Your Details"
 msgstr "Detaylarınız"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:271
-msgid ""
-"Your private key will be displayed on screen. Anyone who sees or photographs"
-" this QR code can take full control of your Quorum account and steal any "
-"associated funds."
-msgstr ""
-"Özel anahtarınız ekranda gösterilecektir. Bu QR kodunu gören veya "
-"fotoğrafını çeken herkes, Quorum hesabınız üzerinde tam kontrol sağlayabilir"
-" ve ilişkili fonları çalabilir."
-
 #: src/utils/imageProcessing/errors.ts:40
 msgid ""
 "Your profile image size must be {maxSize} or less and must be a PNG, JPG, or"
@@ -3338,6 +3327,12 @@ msgstr "YouTube Video Küçültmesi"
 #~ msgid "No unread mentions"
 #~ msgstr "Okunmamış bahsetme yok"
 
+#~ msgid ""
+#~ "Only proceed if you are in a private location and ready to scan immediately."
+#~ msgstr ""
+#~ "Sadece özel bir konumdaysanız ve hemen taramaya hazır olduğunuzda devam "
+#~ "edin."
+
 #~ msgid "optional"
 #~ msgstr "isteğe bağlı"
 
@@ -3359,6 +3354,9 @@ msgstr "YouTube Video Küçültmesi"
 #~ msgid "Restore Missing Spaces"
 #~ msgstr "Kaybolan Alanları Geri Yükle"
 
+#~ msgid "Security Warning"
+#~ msgstr "Güvenlik Uyarısı"
+
 #~ msgid ""
 #~ "Select any existing role as managers for this channel. Managers have post, "
 #~ "delete, and pin permissions on ANY message by default. If no managers are "
@@ -3378,6 +3376,9 @@ msgstr "YouTube Video Küçültmesi"
 #~ msgstr ""
 #~ "Daha önce konuştuğunuz kişilere davet gönderin. Gelen kutularında bir davet "
 #~ "butonu belirecektir."
+
+#~ msgid "Show QR Code"
+#~ msgstr "QR Kodunu Göster"
 
 #~ msgid "Space Name"
 #~ msgstr "Alan Adı"
@@ -3449,3 +3450,12 @@ msgstr "YouTube Video Küçültmesi"
 #~ "Özel anahtarınız pano'ya kopyalandı. Bunu \"AccountID.key\" olarak kaydedin "
 #~ "(Hesap ID'nizi daha sonra Ayarlar'da bulabilirsiniz). ASLA bu anahtarı "
 #~ "paylaşmayın!"
+
+#~ msgid ""
+#~ "Your private key will be displayed on screen. Anyone who sees or photographs"
+#~ " this QR code can take full control of your Quorum account and steal any "
+#~ "associated funds."
+#~ msgstr ""
+#~ "Özel anahtarınız ekranda gösterilecektir. Bu QR kodunu gören veya "
+#~ "fotoğrafını çeken herkes, Quorum hesabınız üzerinde tam kontrol sağlayabilir"
+#~ " ve ilişkili fonları çalabilir."

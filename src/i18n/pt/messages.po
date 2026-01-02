@@ -391,6 +391,16 @@ msgstr ""
 "Os GIFs animados de adesivos não podem ser maiores que 750KB. Por favor, "
 "otimize seu GIF para uso de adesivos."
 
+#: src/components/modals/UserSettingsModal/Privacy.tsx:268
+msgid ""
+"Anyone who sees or photographs this QR code can take full control of your "
+"Quorum account and steal any associated funds. Only proceed if you are in a "
+"private location and ready to scan immediately."
+msgstr ""
+"Qualquer pessoa que veja ou fotografe este código QR pode assumir o controle"
+" total da sua conta Quorum e roubar quaisquer fundos associados. Prossiga "
+"apenas se estiver em um local privado e pronto para escanear imediatamente."
+
 #: src/components/modals/UserSettingsModal/Appearance.tsx:40
 #: src/components/modals/UserSettingsModal/Navigation.tsx:18
 msgid "Appearance"
@@ -508,7 +518,7 @@ msgstr "Permissão da câmera é necessária para tirar fotos"
 #: src/components/modals/ConversationSettingsModal.tsx:62
 #: src/components/modals/KickUserModal.tsx:98
 #: src/components/modals/MuteUserModal.tsx:129
-#: src/components/modals/UserSettingsModal/Privacy.tsx:284
+#: src/components/modals/UserSettingsModal/Privacy.tsx:277
 #: src/components/primitives/FileUpload/FileUpload.native.tsx:173
 #: src/hooks/business/channels/useChannelManagement.ts:253
 #: src/hooks/business/messages/useMessageActions.ts:382
@@ -803,7 +813,7 @@ msgstr "Link de Convite Atual"
 msgid "Dark"
 msgstr "Escuro"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:327
+#: src/components/modals/UserSettingsModal/Privacy.tsx:325
 msgid "Data Recovery"
 msgstr "Recuperação de Dados"
 
@@ -970,7 +980,7 @@ msgstr "Nome de exibição é obrigatório"
 msgid "Display name must be {MAX_NAME_LENGTH} characters or less"
 msgstr "O nome de exibição deve ter {MAX_NAME_LENGTH} caracteres ou menos"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:247
+#: src/components/modals/UserSettingsModal/Privacy.tsx:251
 msgid ""
 "Display your private key as a QR code to scan with the Quorum mobile app. "
 "This allows you to import your account on mobile without typing the key."
@@ -1387,7 +1397,7 @@ msgstr "O nome do grupo deve ter {MAX_NAME_LENGTH} caracteres ou menos"
 msgid "Hang in there..."
 msgstr "Aguente firme..."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:316
+#: src/components/modals/UserSettingsModal/Privacy.tsx:311
 msgid "Hide"
 msgstr "Ocultar"
 
@@ -1412,7 +1422,7 @@ msgstr "Ocultar canais silenciados na lista"
 msgid "I already saved mine"
 msgstr "Eu já salvei o meu"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:291
+#: src/components/modals/UserSettingsModal/Privacy.tsx:285
 msgid "I Understand, Show QR"
 msgstr "Eu Entendo, Mostrar QR"
 
@@ -1633,7 +1643,7 @@ msgstr "Carregando mensagens fixadas..."
 msgid "Loading your profile..."
 msgstr "Carregando seu perfil..."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:291
+#: src/components/modals/UserSettingsModal/Privacy.tsx:285
 msgid "Loading..."
 msgstr "Carregando..."
 
@@ -1945,13 +1955,6 @@ msgstr "Um de nós, um de nós!"
 msgid "Online"
 msgstr "Online"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:274
-msgid ""
-"Only proceed if you are in a private location and ready to scan immediately."
-msgstr ""
-"Prossiga apenas se estiver em um local privado e pronto para escanear "
-"imediatamente."
-
 #: src/components/ui/YouTubeFacade.tsx:171
 msgid "Open video on YouTube"
 msgstr "Abrir vídeo no YouTube"
@@ -2111,7 +2114,7 @@ msgstr ""
 "entre no seu Espaço. Considere com quem você compartilha o link e onde você "
 "o publica."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:308
+#: src/components/modals/UserSettingsModal/Privacy.tsx:302
 msgid "QR code will auto-hide in 60 seconds"
 msgstr "O código QR se ocultará automaticamente em 60 segundos"
 
@@ -2227,11 +2230,11 @@ msgstr ""
 msgid "Reset"
 msgstr "Redefinir"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:341
+#: src/components/modals/UserSettingsModal/Privacy.tsx:339
 msgid "Restore"
 msgstr "Restaurar"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:332
+#: src/components/modals/UserSettingsModal/Privacy.tsx:330
 msgid ""
 "Restore Spaces that exist on this device but are missing from your "
 "navigation menu."
@@ -2244,7 +2247,7 @@ msgstr ""
 msgid "Restored {0} space(s)"
 msgstr "Restaurado {0} espaço(s)"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:341
+#: src/components/modals/UserSettingsModal/Privacy.tsx:339
 msgid "Restoring..."
 msgstr "Restaurando..."
 
@@ -2357,10 +2360,6 @@ msgstr "Pesquisando..."
 msgid "Security"
 msgstr "Segurança"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:268
-msgid "Security Warning"
-msgstr "Aviso de Segurança"
-
 #: src/components/modals/SpaceSettingsModal/Account.tsx:221
 msgid "Select"
 msgstr "Selecionar"
@@ -2450,9 +2449,9 @@ msgstr "mostrar tela inicial"
 msgid "Show Muted Channels"
 msgstr "Mostrar Canais Silenciados"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:256
-msgid "Show QR Code"
-msgstr "Mostrar Código QR"
+#: src/components/modals/UserSettingsModal/Privacy.tsx:259
+msgid "Show QR"
+msgstr "Mostrar QR"
 
 #: src/components/search/SearchResults.tsx:187
 #: src/components/search/SearchResults.tsx:214
@@ -3170,16 +3169,6 @@ msgstr "Você foi convidado a se juntar a um Espaço"
 msgid "Your Details"
 msgstr "Seus Detalhes"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:271
-msgid ""
-"Your private key will be displayed on screen. Anyone who sees or photographs"
-" this QR code can take full control of your Quorum account and steal any "
-"associated funds."
-msgstr ""
-"Sua chave privada será exibida na tela. Qualquer pessoa que veja ou "
-"fotografe este código QR pode ter controle total da sua conta Quorum e "
-"roubar quaisquer fundos associados."
-
 #: src/utils/imageProcessing/errors.ts:40
 msgid ""
 "Your profile image size must be {maxSize} or less and must be a PNG, JPG, or"
@@ -3350,6 +3339,12 @@ msgstr "Miniatura do vídeo do YouTube"
 #~ msgid "No unread mentions"
 #~ msgstr "Nenhuma menção não lida"
 
+#~ msgid ""
+#~ "Only proceed if you are in a private location and ready to scan immediately."
+#~ msgstr ""
+#~ "Prossiga apenas se estiver em um local privado e pronto para escanear "
+#~ "imediatamente."
+
 #~ msgid "optional"
 #~ msgstr "opcional"
 
@@ -3371,6 +3366,9 @@ msgstr "Miniatura do vídeo do YouTube"
 #~ msgid "Restore Missing Spaces"
 #~ msgstr "Restaurar Espaços Ausentes"
 
+#~ msgid "Security Warning"
+#~ msgstr "Aviso de Segurança"
+
 #~ msgid ""
 #~ "Select any existing role as managers for this channel. Managers have post, "
 #~ "delete, and pin permissions on ANY message by default. If no managers are "
@@ -3390,6 +3388,9 @@ msgstr "Miniatura do vídeo do YouTube"
 #~ msgstr ""
 #~ "Envie convites para pessoas com quem você já teve conversas anteriormente. "
 #~ "Um botão de convite aparecerá na caixa de entrada delas."
+
+#~ msgid "Show QR Code"
+#~ msgstr "Mostrar Código QR"
 
 #~ msgid "Space Name"
 #~ msgstr "Nome do Espaço"
@@ -3462,3 +3463,12 @@ msgstr "Miniatura do vídeo do YouTube"
 #~ "Sua chave privada foi copiada para a área de transferência. Salve-a como "
 #~ "\"AccountID.key\" (você pode encontrar seu ID de Conta nas Configurações "
 #~ "mais tarde). NUNCA compartilhe esta chave!"
+
+#~ msgid ""
+#~ "Your private key will be displayed on screen. Anyone who sees or photographs"
+#~ " this QR code can take full control of your Quorum account and steal any "
+#~ "associated funds."
+#~ msgstr ""
+#~ "Sua chave privada será exibida na tela. Qualquer pessoa que veja ou "
+#~ "fotografe este código QR pode ter controle total da sua conta Quorum e "
+#~ "roubar quaisquer fundos associados."

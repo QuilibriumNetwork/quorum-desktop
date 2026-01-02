@@ -377,6 +377,15 @@ msgid ""
 "for sticker use."
 msgstr "애니메이션 스티커 GIF는 750KB를 초과할 수 없습니다. 스티커 사용을 위해 GIF를 최적화해 주세요."
 
+#: src/components/modals/UserSettingsModal/Privacy.tsx:268
+msgid ""
+"Anyone who sees or photographs this QR code can take full control of your "
+"Quorum account and steal any associated funds. Only proceed if you are in a "
+"private location and ready to scan immediately."
+msgstr ""
+"이 QR 코드를 보거나 사진을 찍는 누구나 귀하의 Quorum 계정을 완전히 제어하고 관련된 자금을 훔칠 수 있습니다. 개인적인 장소에 "
+"있고 즉시 스캔할 준비가 되어 있는 경우에만 진행하십시오."
+
 #: src/components/modals/UserSettingsModal/Appearance.tsx:40
 #: src/components/modals/UserSettingsModal/Navigation.tsx:18
 msgid "Appearance"
@@ -491,7 +500,7 @@ msgstr "사진을 찍으려면 카메라 권한이 필요합니다"
 #: src/components/modals/ConversationSettingsModal.tsx:62
 #: src/components/modals/KickUserModal.tsx:98
 #: src/components/modals/MuteUserModal.tsx:129
-#: src/components/modals/UserSettingsModal/Privacy.tsx:284
+#: src/components/modals/UserSettingsModal/Privacy.tsx:277
 #: src/components/primitives/FileUpload/FileUpload.native.tsx:173
 #: src/hooks/business/channels/useChannelManagement.ts:253
 #: src/hooks/business/messages/useMessageActions.ts:382
@@ -772,7 +781,7 @@ msgstr "현재 초대 링크"
 msgid "Dark"
 msgstr "어두운"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:327
+#: src/components/modals/UserSettingsModal/Privacy.tsx:325
 msgid "Data Recovery"
 msgstr "데이터 복구"
 
@@ -937,13 +946,13 @@ msgstr "표시 이름은 필수입니다"
 msgid "Display name must be {MAX_NAME_LENGTH} characters or less"
 msgstr "표시 이름은 {MAX_NAME_LENGTH}자 이하이어야 합니다"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:247
+#: src/components/modals/UserSettingsModal/Privacy.tsx:251
 msgid ""
 "Display your private key as a QR code to scan with the Quorum mobile app. "
 "This allows you to import your account on mobile without typing the key."
 msgstr ""
-"Quorum 모바일 앱으로 스캔할 수 있도록 개인 키를 QR 코드로 표시합니다. 이를 통해 키를 입력하지 않고 모바일에서 계정을 "
-"가져올 수 있습니다."
+"Quorum 모바일 앱으로 스캔할 수 있도록 개인 키를 QR 코드로 표시합니다. 이를 통해 키를 입력하지 않고 모바일에서 계정을 가져올 "
+"수 있습니다."
 
 #: src/components/direct/DirectMessageContactsList.tsx:260
 msgid "DM Requests"
@@ -1343,7 +1352,7 @@ msgstr "그룹 이름은 {MAX_NAME_LENGTH}자 이하이어야 합니다"
 msgid "Hang in there..."
 msgstr "조금만 기다려 주세요..."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:316
+#: src/components/modals/UserSettingsModal/Privacy.tsx:311
 msgid "Hide"
 msgstr "숨기기"
 
@@ -1368,7 +1377,7 @@ msgstr "목록에서 음소거된 채널 숨기기"
 msgid "I already saved mine"
 msgstr "나는 이미 내 것을 저장했습니다"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:291
+#: src/components/modals/UserSettingsModal/Privacy.tsx:285
 msgid "I Understand, Show QR"
 msgstr "이해했습니다, QR 표시"
 
@@ -1577,7 +1586,7 @@ msgstr "고정된 메시지를 로딩 중..."
 msgid "Loading your profile..."
 msgstr "프로필을 로딩 중입니다..."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:291
+#: src/components/modals/UserSettingsModal/Privacy.tsx:285
 msgid "Loading..."
 msgstr "로딩 중..."
 
@@ -1872,11 +1881,6 @@ msgstr "우리 중 하나, 우리 중 하나!"
 msgid "Online"
 msgstr "온라인"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:274
-msgid ""
-"Only proceed if you are in a private location and ready to scan immediately."
-msgstr "개인 장소에 있고 즉시 스캔할 준비가 된 경우에만 진행하세요."
-
 #: src/components/ui/YouTubeFacade.tsx:171
 msgid "Open video on YouTube"
 msgstr "YouTube에서 비디오 열기"
@@ -2033,7 +2037,7 @@ msgstr ""
 "공개 초대 링크는 링크에 접근할 수 있는 누구나 귀하의 Space에 참여할 수 있게 합니다. 링크를 공유하는 사람과 게시하는 위치를 "
 "고려하세요."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:308
+#: src/components/modals/UserSettingsModal/Privacy.tsx:302
 msgid "QR code will auto-hide in 60 seconds"
 msgstr "QR 코드는 60초 후에 자동으로 숨겨집니다"
 
@@ -2143,11 +2147,11 @@ msgstr ""
 msgid "Reset"
 msgstr "재설정"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:341
+#: src/components/modals/UserSettingsModal/Privacy.tsx:339
 msgid "Restore"
 msgstr "복원"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:332
+#: src/components/modals/UserSettingsModal/Privacy.tsx:330
 msgid ""
 "Restore Spaces that exist on this device but are missing from your "
 "navigation menu."
@@ -2158,7 +2162,7 @@ msgstr "이 장치에 존재하지만 탐색 메뉴에서 누락된 공간을 �
 msgid "Restored {0} space(s)"
 msgstr "{0} 공간(들)을 복원했습니다"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:341
+#: src/components/modals/UserSettingsModal/Privacy.tsx:339
 msgid "Restoring..."
 msgstr "복원 중..."
 
@@ -2271,10 +2275,6 @@ msgstr "검색 중..."
 msgid "Security"
 msgstr "보안"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:268
-msgid "Security Warning"
-msgstr "보안 경고"
-
 #: src/components/modals/SpaceSettingsModal/Account.tsx:221
 msgid "Select"
 msgstr "선택"
@@ -2363,9 +2363,9 @@ msgstr "홈 화면 표시"
 msgid "Show Muted Channels"
 msgstr "음소거된 채널 보기"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:256
-msgid "Show QR Code"
-msgstr "QR 코드 표시"
+#: src/components/modals/UserSettingsModal/Privacy.tsx:259
+msgid "Show QR"
+msgstr "QR 표시"
 
 #: src/components/search/SearchResults.tsx:187
 #: src/components/search/SearchResults.tsx:214
@@ -3023,15 +3023,6 @@ msgstr "당신은 공간에 가입하라는 초대를 받았습니다."
 msgid "Your Details"
 msgstr "귀하의 세부정보"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:271
-msgid ""
-"Your private key will be displayed on screen. Anyone who sees or photographs"
-" this QR code can take full control of your Quorum account and steal any "
-"associated funds."
-msgstr ""
-"귀하의 개인 키가 화면에 표시됩니다. 이 QR 코드를 보거나 사진을 찍는 사람은 귀하의 Quorum 계정을 완전히 제어하고 관련 자금을 "
-"훔칠 수 있습니다."
-
 #: src/utils/imageProcessing/errors.ts:40
 msgid ""
 "Your profile image size must be {maxSize} or less and must be a PNG, JPG, or"
@@ -3190,6 +3181,10 @@ msgstr "YouTube 비디오 썸네일"
 #~ msgid "No unread mentions"
 #~ msgstr "읽지 않은 멘션이 없습니다."
 
+#~ msgid ""
+#~ "Only proceed if you are in a private location and ready to scan immediately."
+#~ msgstr "개인 장소에 있고 즉시 스캔할 준비가 된 경우에만 진행하세요."
+
 #~ msgid "optional"
 #~ msgstr "선택 사항"
 
@@ -3209,6 +3204,9 @@ msgstr "YouTube 비디오 썸네일"
 #~ msgid "Restore Missing Spaces"
 #~ msgstr "누락된 공간 복원"
 
+#~ msgid "Security Warning"
+#~ msgstr "보안 경고"
+
 #~ msgid ""
 #~ "Select any existing role as managers for this channel. Managers have post, "
 #~ "delete, and pin permissions on ANY message by default. If no managers are "
@@ -3224,6 +3222,9 @@ msgstr "YouTube 비디오 썸네일"
 #~ "Send invites to people you've previously had conversations with. An invite "
 #~ "button will appear in their inbox."
 #~ msgstr "이전에 대화를 나눈 사람들에게 초대를 전송합니다. 초대 버튼이 그들의 받은 편지함에 나타납니다."
+
+#~ msgid "Show QR Code"
+#~ msgstr "QR 코드 표시"
 
 #~ msgid "Space Name"
 #~ msgstr "공간 이름"
@@ -3284,3 +3285,11 @@ msgstr "YouTube 비디오 썸네일"
 #~ msgstr ""
 #~ "귀하의 개인 키가 클립보드에 복사되었습니다. \"AccountID.key\"로 저장하세요 (나중에 설정에서 귀하의 계정 ID를 찾을 수 "
 #~ "있습니다). 이 키를 절대 공유하지 마세요!"
+
+#~ msgid ""
+#~ "Your private key will be displayed on screen. Anyone who sees or photographs"
+#~ " this QR code can take full control of your Quorum account and steal any "
+#~ "associated funds."
+#~ msgstr ""
+#~ "귀하의 개인 키가 화면에 표시됩니다. 이 QR 코드를 보거나 사진을 찍는 사람은 귀하의 Quorum 계정을 완전히 제어하고 관련 자금을 "
+#~ "훔칠 수 있습니다."

@@ -277,7 +277,7 @@ msgstr "Eylemler sıraya alındı"
 
 #: src/components/direct/DirectMessageContactsList.tsx:279
 msgid "Add a friend"
-msgstr ""
+msgstr "Arkadaş ekle"
 
 #: src/components/modals/AddSpaceModal.tsx:124
 #: src/components/navbar/ExpandableNavMenu.tsx:30
@@ -307,7 +307,7 @@ msgstr "sticker ekle"
 
 #: src/components/direct/DirectMessageContactsList.tsx:224
 msgid "Add to Favorites"
-msgstr ""
+msgstr "Favorilere ekle"
 
 #: src/components/modals/SpaceSettingsModal/Emojis.tsx:44
 msgid "Add up to 50 custom emoji. Custom emojis can only be used within a Space. You can upload PNG, JPG or GIF, max 5MB (automatically optimized)."
@@ -394,6 +394,10 @@ msgstr "Animasyonlu emoji GIF'leri 100KB'den büyük olamaz. Lütfen GIF'inizi e
 #: src/utils/imageProcessing/errors.ts:26
 msgid "Animated sticker GIFs cannot be larger than 750KB. Please optimize your GIF for sticker use."
 msgstr "Animasyonlu çıkartma GIF'leri 750KB'den büyük olamaz. Lütfen GIF'inizi çıkartma kullanımı için optimize edin."
+
+#: src/components/modals/UserSettingsModal/Privacy.tsx:268
+msgid "Anyone who sees or photographs this QR code can take full control of your Quorum account and steal any associated funds. Only proceed if you are in a private location and ready to scan immediately."
+msgstr ""
 
 #: src/components/modals/UserSettingsModal/Appearance.tsx:40
 #: src/components/modals/UserSettingsModal/Navigation.tsx:18
@@ -517,7 +521,7 @@ msgstr "Fotoğraf çekmek için kamera izni gereklidir"
 #: src/components/modals/ConversationSettingsModal.tsx:62
 #: src/components/modals/KickUserModal.tsx:98
 #: src/components/modals/MuteUserModal.tsx:129
-#: src/components/modals/UserSettingsModal/Privacy.tsx:284
+#: src/components/modals/UserSettingsModal/Privacy.tsx:277
 #: src/components/primitives/FileUpload/FileUpload.native.tsx:173
 #: src/hooks/business/channels/useChannelManagement.ts:253
 #: src/hooks/business/messages/useMessageActions.ts:382
@@ -770,7 +774,7 @@ msgstr "Yeni Hesap Oluştur"
 
 #: src/components/modals/ChannelEditorModal.tsx:164
 msgid "Create roles in Space Settings first."
-msgstr ""
+msgstr "Önce Uzay Ayarlarında roller oluşturun."
 
 #: src/components/modals/CreateSpaceModal.tsx:254
 msgid "Create Space"
@@ -793,7 +797,7 @@ msgstr "Mevcut Davet Bağlantısı"
 msgid "Dark"
 msgstr "Karanlık"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:327
+#: src/components/modals/UserSettingsModal/Privacy.tsx:325
 msgid "Data Recovery"
 msgstr "Veri Kurtarma"
 
@@ -934,7 +938,7 @@ msgstr "Bu tarayıcıda masaüstü bildirimleri desteklenmiyor."
 
 #: src/components/modals/UserSettingsModal/Privacy.tsx:145
 msgid "Devices"
-msgstr ""
+msgstr "Cihazlar"
 
 #: src/hooks/business/search/useBatchSearchResultsDisplay.ts:158
 #: src/hooks/business/search/useSearchResultDisplay.ts:104
@@ -970,13 +974,13 @@ msgstr "Görüntü adı gereklidir"
 msgid "Display name must be {MAX_NAME_LENGTH} characters or less"
 msgstr "Görünen ad {MAX_NAME_LENGTH} karakter veya daha az olmalıdır"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:247
+#: src/components/modals/UserSettingsModal/Privacy.tsx:251
 msgid "Display your private key as a QR code to scan with the Quorum mobile app. This allows you to import your account on mobile without typing the key."
-msgstr ""
+msgstr "Özel anahtarınızı Quorum mobil uygulaması ile taramak için bir QR kodu olarak gösterin. Bu, anahtarı yazmadan mobil cihazınızda hesabınızı içe aktarmanızı sağlar."
 
 #: src/components/direct/DirectMessageContactsList.tsx:260
 msgid "DM Requests"
-msgstr ""
+msgstr "DM Talepleri"
 
 #: src/components/ui/MobileDrawer.tsx:143
 msgid "Drawer"
@@ -1110,13 +1114,12 @@ msgstr "Mevcut Görüşmeler"
 msgid "Export"
 msgstr "Dışa Aktar"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:181
 #~ msgid "Export your key to a file by clicking this button. Do not share this file with anyone else or they can impersonate you or steal your Space's Apex earnings."
 #~ msgstr "Bu düğmeye tıklayarak anahtarınızı bir dosyaya dışa aktarın. Bu dosyayı başkalarıyla paylaşmayın, aksi takdirde sizi taklit edebilirler veya Alanınızın Apex kazançlarını çalabilirler."
 
 #: src/components/modals/UserSettingsModal/Privacy.tsx:227
 msgid "Export your key to a file. Do not share this file with anyone else or they can impersonate you or steal your Space's Apex earnings."
-msgstr ""
+msgstr "Anahtarınızı bir dosyaya aktarın. Bu dosyayı başkalarıyla paylaşmayın, aksi takdirde sizi taklit edebilirler veya Uzay'ın Apex kazançlarını çalabilirler."
 
 #~ msgid "Failed to copy to clipboard. Please try again."
 #~ msgstr "Pano'ya kopyalama başarısız. Lütfen tekrar deneyin."
@@ -1212,7 +1215,7 @@ msgstr "Profil güncellenemedi"
 
 #: src/components/direct/DirectMessageContactsList.tsx:259
 msgid "Favorites"
-msgstr ""
+msgstr "Favoriler"
 
 #: src/utils/imageProcessing/errors.ts:16
 msgid "File cannot be larger than {maxSize}"
@@ -1371,9 +1374,9 @@ msgstr "Grup adı {MAX_NAME_LENGTH} karakter veya daha az olmalıdır"
 msgid "Hang in there..."
 msgstr "Biraz sabırlı olun..."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:316
+#: src/components/modals/UserSettingsModal/Privacy.tsx:311
 msgid "Hide"
-msgstr ""
+msgstr "Gizle"
 
 #: src/components/direct/EmptyDirectMessage.tsx:54
 msgid "hide home screen"
@@ -1396,9 +1399,9 @@ msgstr "Liste içinde susturulmuş kanalları gizle"
 msgid "I already saved mine"
 msgstr "Ben zaten kaydettim"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:291
+#: src/components/modals/UserSettingsModal/Privacy.tsx:285
 msgid "I Understand, Show QR"
-msgstr ""
+msgstr "Anladım, QR Göster"
 
 #~ msgid "I've Saved It"
 #~ msgstr "Kaydettim"
@@ -1614,9 +1617,9 @@ msgstr "Sabit mesajlar yükleniyor..."
 msgid "Loading your profile..."
 msgstr "Profilinizi yüklüyoruz..."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:291
+#: src/components/modals/UserSettingsModal/Privacy.tsx:285
 msgid "Loading..."
-msgstr ""
+msgstr "Yükleniyor..."
 
 #: src/hooks/business/conversations/useDirectMessageCreation.ts:32
 msgid "Looking up user..."
@@ -1713,7 +1716,7 @@ msgstr "Mesajlar imzalanmıştır!"
 
 #: src/components/modals/UserSettingsModal/Privacy.tsx:244
 msgid "Mobile Import"
-msgstr ""
+msgstr "Mobil İçe Aktarma"
 
 #: src/components/message/MessageActions.tsx:92
 msgid "More reactions"
@@ -1766,7 +1769,7 @@ msgstr "Hesabım"
 #: src/components/direct/DirectMessageContactsList.tsx:311
 #: src/components/space/Channel.tsx:1060
 msgid "Name or Address"
-msgstr ""
+msgstr "İsim veya Adres"
 
 #: src/hooks/business/validation/useDisplayNameValidation.ts:26
 #: src/hooks/business/validation/useDisplayNameValidation.ts:55
@@ -1814,7 +1817,7 @@ msgstr "Henüz hiç yer işareti yok"
 
 #: src/components/direct/DirectMessageContactsList.tsx:325
 msgid "No contacts found"
-msgstr ""
+msgstr "Hiçbir kişi bulunamadı"
 
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:155
 msgid "No conversations found"
@@ -1826,7 +1829,7 @@ msgstr "Bu alan için şifreleme durumu bulunamadı. Alanın başlatılması ger
 
 #: src/components/direct/DirectMessageContactsList.tsx:321
 msgid "No favorites yet"
-msgstr ""
+msgstr "Henüz favori yok"
 
 #: src/services/InvitationService.ts:79
 msgid "No invite evaluations available. Please generate a public invite link or ensure the space encryption state is properly initialized."
@@ -1834,7 +1837,7 @@ msgstr "Davet değerlendirmesi yok. Lütfen bir genel davet bağlantısı oluşt
 
 #: src/components/direct/DirectMessageContactsList.tsx:323
 msgid "No message requests"
-msgstr ""
+msgstr "Hiçbir mesaj talebi yok"
 
 #: src/components/search/SearchResults.tsx:103
 msgid "No messages found"
@@ -1911,8 +1914,8 @@ msgid "Online"
 msgstr "Çevrimiçi"
 
 #: src/components/modals/UserSettingsModal/Privacy.tsx:274
-msgid "Only proceed if you are in a private location and ready to scan immediately."
-msgstr ""
+#~ msgid "Only proceed if you are in a private location and ready to scan immediately."
+#~ msgstr "Sadece özel bir konumdaysanız ve hemen taramaya hazır olduğunuzda devam edin."
 
 #: src/components/ui/YouTubeFacade.tsx:171
 msgid "Open video on YouTube"
@@ -2072,9 +2075,9 @@ msgstr "Herkese Açık Davet Bağlantıları"
 msgid "Public invite links allow anyone with access to the link to join your Space. Consider who you share the link with and where you post it."
 msgstr "Herkese açık davet bağlantıları, bağlantıya erişimi olan herkesin Alanınıza katılmasına izin verir. Bağlantıyı kiminle paylaştığınıza ve nerede paylaştığınıza dikkat edin."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:308
+#: src/components/modals/UserSettingsModal/Privacy.tsx:302
 msgid "QR code will auto-hide in 60 seconds"
-msgstr ""
+msgstr "QR kodu 60 saniye içinde otomatik olarak gizlenecektir"
 
 #: src/components/Maintenance.tsx:24
 msgid "Quorum infrastructure is being deployed at this time. Please try refreshing, and check <0>https://status.quilibrium.com/</0> for updates."
@@ -2137,7 +2140,7 @@ msgstr "Yer işaretini kaldır"
 
 #: src/components/direct/DirectMessageContactsList.tsx:224
 msgid "Remove from Favorites"
-msgstr ""
+msgstr "Favorilerden kaldır"
 
 #: src/components/user/UserProfile.tsx:172
 msgid "Removing..."
@@ -2170,15 +2173,14 @@ msgstr "Bu Space'te gönderilen mesajların gönderen tarafından imzalanmasın�
 msgid "Reset"
 msgstr "Sıfırla"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:341
+#: src/components/modals/UserSettingsModal/Privacy.tsx:339
 msgid "Restore"
-msgstr ""
+msgstr "Geri yükle"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:208
 #~ msgid "Restore Missing Spaces"
 #~ msgstr "Kaybolan Alanları Geri Yükle"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:332
+#: src/components/modals/UserSettingsModal/Privacy.tsx:330
 msgid "Restore Spaces that exist on this device but are missing from your navigation menu."
 msgstr "Bu cihazda mevcut olan ancak gezinme menünüzden kaybolan alanları geri yükleyin."
 
@@ -2187,7 +2189,7 @@ msgstr "Bu cihazda mevcut olan ancak gezinme menünüzden kaybolan alanları ger
 msgid "Restored {0} space(s)"
 msgstr "{0} alan(lar) geri yüklendi"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:341
+#: src/components/modals/UserSettingsModal/Privacy.tsx:339
 msgid "Restoring..."
 msgstr "Geri Yükleniyor..."
 
@@ -2292,7 +2294,7 @@ msgstr "Kullanıcı Adı veya Adres Ara"
 
 #: src/components/ui/ListSearchInput.tsx:26
 msgid "Search..."
-msgstr ""
+msgstr "Ara..."
 
 #: src/components/search/SearchResults.tsx:85
 msgid "Searching..."
@@ -2303,8 +2305,8 @@ msgid "Security"
 msgstr "Güvenlik"
 
 #: src/components/modals/UserSettingsModal/Privacy.tsx:268
-msgid "Security Warning"
-msgstr ""
+#~ msgid "Security Warning"
+#~ msgstr "Güvenlik Uyarısı"
 
 #: src/components/modals/SpaceSettingsModal/Account.tsx:221
 msgid "Select"
@@ -2398,9 +2400,13 @@ msgstr "ana ekranı göster"
 msgid "Show Muted Channels"
 msgstr "Susturulmuş Kanalları Göster"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:256
-msgid "Show QR Code"
+#: src/components/modals/UserSettingsModal/Privacy.tsx:259
+msgid "Show QR"
 msgstr ""
+
+#: src/components/modals/UserSettingsModal/Privacy.tsx:256
+#~ msgid "Show QR Code"
+#~ msgstr "QR Kodunu Göster"
 
 #: src/components/search/SearchResults.tsx:187
 #: src/components/search/SearchResults.tsx:214
@@ -2840,7 +2846,6 @@ msgstr "Kullanıcı kimliği doğrulanmadı"
 #~ msgid "User Unmuted!"
 #~ msgstr "Kullanıcı Susturması Kaldırıldı!"
 
-#: src/components/space/Channel.tsx:NaN
 #~ msgid "Username or Address"
 #~ msgstr "Kullanıcı Adı veya Adres"
 
@@ -3027,8 +3032,8 @@ msgstr "Detaylarınız"
 #~ msgstr "Özel anahtarınız pano'ya kopyalandı. Bunu \"AccountID.key\" olarak kaydedin (Hesap ID'nizi daha sonra Ayarlar'da bulabilirsiniz). ASLA bu anahtarı paylaşmayın!"
 
 #: src/components/modals/UserSettingsModal/Privacy.tsx:271
-msgid "Your private key will be displayed on screen. Anyone who sees or photographs this QR code can take full control of your Quorum account and steal any associated funds."
-msgstr ""
+#~ msgid "Your private key will be displayed on screen. Anyone who sees or photographs this QR code can take full control of your Quorum account and steal any associated funds."
+#~ msgstr "Özel anahtarınız ekranda gösterilecektir. Bu QR kodunu gören veya fotoğrafını çeken herkes, Quorum hesabınız üzerinde tam kontrol sağlayabilir ve ilişkili fonları çalabilir."
 
 #: src/utils/imageProcessing/errors.ts:40
 msgid "Your profile image size must be {maxSize} or less and must be a PNG, JPG, or JPEG file extension."

@@ -277,7 +277,7 @@ msgstr "การดำเนินการรอคิว"
 
 #: src/components/direct/DirectMessageContactsList.tsx:279
 msgid "Add a friend"
-msgstr ""
+msgstr "เพิ่มเพื่อน"
 
 #: src/components/modals/AddSpaceModal.tsx:124
 #: src/components/navbar/ExpandableNavMenu.tsx:30
@@ -307,7 +307,7 @@ msgstr "เพิ่มสติกเกอร์"
 
 #: src/components/direct/DirectMessageContactsList.tsx:224
 msgid "Add to Favorites"
-msgstr ""
+msgstr "เพิ่มไปยังรายการโปรด"
 
 #: src/components/modals/SpaceSettingsModal/Emojis.tsx:44
 msgid "Add up to 50 custom emoji. Custom emojis can only be used within a Space. You can upload PNG, JPG or GIF, max 5MB (automatically optimized)."
@@ -394,6 +394,10 @@ msgstr "GIF อนิเมชันสำหรับอีโมจิไม�
 #: src/utils/imageProcessing/errors.ts:26
 msgid "Animated sticker GIFs cannot be larger than 750KB. Please optimize your GIF for sticker use."
 msgstr "GIF อนิเมชันสำหรับสติกเกอร์ไม่สามารถมีขนาดใหญ่กว่า 750KB โปรดปรับขนาด GIF ของคุณให้เหมาะสมสำหรับการใช้เป็นสติกเกอร์"
+
+#: src/components/modals/UserSettingsModal/Privacy.tsx:268
+msgid "Anyone who sees or photographs this QR code can take full control of your Quorum account and steal any associated funds. Only proceed if you are in a private location and ready to scan immediately."
+msgstr ""
 
 #: src/components/modals/UserSettingsModal/Appearance.tsx:40
 #: src/components/modals/UserSettingsModal/Navigation.tsx:18
@@ -516,7 +520,7 @@ msgstr "ต้องการสิทธิ์กล้องเพื่อถ
 #: src/components/modals/ConversationSettingsModal.tsx:62
 #: src/components/modals/KickUserModal.tsx:98
 #: src/components/modals/MuteUserModal.tsx:129
-#: src/components/modals/UserSettingsModal/Privacy.tsx:284
+#: src/components/modals/UserSettingsModal/Privacy.tsx:277
 #: src/components/primitives/FileUpload/FileUpload.native.tsx:173
 #: src/hooks/business/channels/useChannelManagement.ts:253
 #: src/hooks/business/messages/useMessageActions.ts:382
@@ -769,7 +773,7 @@ msgstr "สร้างบัญชีใหม่"
 
 #: src/components/modals/ChannelEditorModal.tsx:164
 msgid "Create roles in Space Settings first."
-msgstr ""
+msgstr "สร้างบทบาทในการตั้งค่า Space ก่อน"
 
 #: src/components/modals/CreateSpaceModal.tsx:254
 msgid "Create Space"
@@ -792,7 +796,7 @@ msgstr "ลิงก์เชิญปัจจุบัน"
 msgid "Dark"
 msgstr "มืด"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:327
+#: src/components/modals/UserSettingsModal/Privacy.tsx:325
 msgid "Data Recovery"
 msgstr "การกู้คืนข้อมูล"
 
@@ -933,7 +937,7 @@ msgstr "การแจ้งเตือนบนเดสก์ท็อปไ
 
 #: src/components/modals/UserSettingsModal/Privacy.tsx:145
 msgid "Devices"
-msgstr ""
+msgstr "อุปกรณ์"
 
 #: src/hooks/business/search/useBatchSearchResultsDisplay.ts:158
 #: src/hooks/business/search/useSearchResultDisplay.ts:104
@@ -969,13 +973,13 @@ msgstr "ชื่อแสดงต้องการ"
 msgid "Display name must be {MAX_NAME_LENGTH} characters or less"
 msgstr "ชื่อแสดงต้องมีความยาวไม่เกิน {MAX_NAME_LENGTH} ตัวอักษร"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:247
+#: src/components/modals/UserSettingsModal/Privacy.tsx:251
 msgid "Display your private key as a QR code to scan with the Quorum mobile app. This allows you to import your account on mobile without typing the key."
-msgstr ""
+msgstr "แสดงคีย์ส่วนตัวของคุณเป็นรหัส QR เพื่อสแกนด้วยแอป Quorum บนมือถือ ซึ่งจะช่วยให้คุณนำเข้าบัญชีของคุณบนมือถือโดยไม่ต้องพิมพ์คีย์"
 
 #: src/components/direct/DirectMessageContactsList.tsx:260
 msgid "DM Requests"
-msgstr ""
+msgstr "คำขอ DM"
 
 #: src/components/ui/MobileDrawer.tsx:143
 msgid "Drawer"
@@ -1109,13 +1113,12 @@ msgstr "การสนทนาที่มีอยู่"
 msgid "Export"
 msgstr "ส่งออก"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:181
 #~ msgid "Export your key to a file by clicking this button. Do not share this file with anyone else or they can impersonate you or steal your Space's Apex earnings."
 #~ msgstr "ส่งออกกุญแจของคุณไปยังไฟล์โดยการคลิกปุ่มนี้ อย่าแชร์ไฟล์นี้กับใครมิฉะนั้นพวกเขาจะสามารถปลอมตัวคุณหรือขโมยรายได้ Apex ของ Space ของคุณได้"
 
 #: src/components/modals/UserSettingsModal/Privacy.tsx:227
 msgid "Export your key to a file. Do not share this file with anyone else or they can impersonate you or steal your Space's Apex earnings."
-msgstr ""
+msgstr "ส่งออกคีย์ของคุณไปยังไฟล์ อย่าแชร์ไฟล์นี้กับใครอื่นหรือพวกเขาอาจแอบอ้างเป็นคุณหรือขโมยรายได้ Apex ของ Space ของคุณ"
 
 #~ msgid "Failed to copy to clipboard. Please try again."
 #~ msgstr "ไม่สามารถคัดลอกไปยังคลิปบอร์ดได้ กรุณาลองอีกครั้ง"
@@ -1211,7 +1214,7 @@ msgstr "ไม่สามารถอัปเดตโปรไฟล์ได
 
 #: src/components/direct/DirectMessageContactsList.tsx:259
 msgid "Favorites"
-msgstr ""
+msgstr "รายการโปรด"
 
 #: src/utils/imageProcessing/errors.ts:16
 msgid "File cannot be larger than {maxSize}"
@@ -1370,9 +1373,9 @@ msgstr "ชื่อกลุ่มต้องมีความยาวไม
 msgid "Hang in there..."
 msgstr "อดทนหน่อยนะ..."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:316
+#: src/components/modals/UserSettingsModal/Privacy.tsx:311
 msgid "Hide"
-msgstr ""
+msgstr "ซ่อน"
 
 #: src/components/direct/EmptyDirectMessage.tsx:54
 msgid "hide home screen"
@@ -1395,9 +1398,9 @@ msgstr "ซ่อนช่องที่ปิดเสียงในราย
 msgid "I already saved mine"
 msgstr "ฉันได้บันทึกของฉันแล้ว"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:291
+#: src/components/modals/UserSettingsModal/Privacy.tsx:285
 msgid "I Understand, Show QR"
-msgstr ""
+msgstr "ฉันเข้าใจ แสดง QR"
 
 #~ msgid "I've Saved It"
 #~ msgstr "ฉันได้บันทึกมันแล้ว"
@@ -1613,9 +1616,9 @@ msgstr "กำลังโหลดข้อความที่ถูกปั
 msgid "Loading your profile..."
 msgstr "กำลังโหลดโปรไฟล์ของคุณ..."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:291
+#: src/components/modals/UserSettingsModal/Privacy.tsx:285
 msgid "Loading..."
-msgstr ""
+msgstr "กำลังโหลด..."
 
 #: src/hooks/business/conversations/useDirectMessageCreation.ts:32
 msgid "Looking up user..."
@@ -1712,7 +1715,7 @@ msgstr "ข้อความได้รับการลงนาม!"
 
 #: src/components/modals/UserSettingsModal/Privacy.tsx:244
 msgid "Mobile Import"
-msgstr ""
+msgstr "นำเข้าบนมือถือ"
 
 #: src/components/message/MessageActions.tsx:92
 msgid "More reactions"
@@ -1765,7 +1768,7 @@ msgstr "บัญชีของฉัน"
 #: src/components/direct/DirectMessageContactsList.tsx:311
 #: src/components/space/Channel.tsx:1060
 msgid "Name or Address"
-msgstr ""
+msgstr "ชื่อหรือที่อยู่"
 
 #: src/hooks/business/validation/useDisplayNameValidation.ts:26
 #: src/hooks/business/validation/useDisplayNameValidation.ts:55
@@ -1813,7 +1816,7 @@ msgstr "ยังไม่มีบุ๊กมาร์ก"
 
 #: src/components/direct/DirectMessageContactsList.tsx:325
 msgid "No contacts found"
-msgstr ""
+msgstr "ไม่พบผู้ติดต่อ"
 
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:155
 msgid "No conversations found"
@@ -1825,7 +1828,7 @@ msgstr "ไม่พบสถานะการเข้ารหัสสำห
 
 #: src/components/direct/DirectMessageContactsList.tsx:321
 msgid "No favorites yet"
-msgstr ""
+msgstr "ยังไม่มีรายการโปรด"
 
 #: src/services/InvitationService.ts:79
 msgid "No invite evaluations available. Please generate a public invite link or ensure the space encryption state is properly initialized."
@@ -1833,7 +1836,7 @@ msgstr "ไม่มีการประเมินเชิญที่มี
 
 #: src/components/direct/DirectMessageContactsList.tsx:323
 msgid "No message requests"
-msgstr ""
+msgstr "ไม่มีคำขอข้อความ"
 
 #: src/components/search/SearchResults.tsx:103
 msgid "No messages found"
@@ -1910,8 +1913,8 @@ msgid "Online"
 msgstr "ออนไลน์"
 
 #: src/components/modals/UserSettingsModal/Privacy.tsx:274
-msgid "Only proceed if you are in a private location and ready to scan immediately."
-msgstr ""
+#~ msgid "Only proceed if you are in a private location and ready to scan immediately."
+#~ msgstr "ดำเนินการต่อเฉพาะเมื่อคุณอยู่ในสถานที่ส่วนตัวและพร้อมที่จะสแกนทันที"
 
 #: src/components/ui/YouTubeFacade.tsx:171
 msgid "Open video on YouTube"
@@ -2071,9 +2074,9 @@ msgstr "ลิงก์เชิญสาธารณะ"
 msgid "Public invite links allow anyone with access to the link to join your Space. Consider who you share the link with and where you post it."
 msgstr "ลิงก์เชิญสาธารณะอนุญาตให้ใครก็ตามที่เข้าถึงลิงก์เข้าร่วม Space ของคุณ พิจารณาว่าคุณจะแบ่งปันลิงก์กับใครและที่ไหน"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:308
+#: src/components/modals/UserSettingsModal/Privacy.tsx:302
 msgid "QR code will auto-hide in 60 seconds"
-msgstr ""
+msgstr "รหัส QR จะซ่อนอัตโนมัติใน 60 วินาที"
 
 #: src/components/Maintenance.tsx:24
 msgid "Quorum infrastructure is being deployed at this time. Please try refreshing, and check <0>https://status.quilibrium.com/</0> for updates."
@@ -2136,7 +2139,7 @@ msgstr "ลบบุ๊กมาร์ก"
 
 #: src/components/direct/DirectMessageContactsList.tsx:224
 msgid "Remove from Favorites"
-msgstr ""
+msgstr "ลบออกจากรายการโปรด"
 
 #: src/components/user/UserProfile.tsx:172
 msgid "Removing..."
@@ -2169,15 +2172,14 @@ msgstr "ต้องการให้ข้อความที่ส่งใ
 msgid "Reset"
 msgstr "รีเซ็ต"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:341
+#: src/components/modals/UserSettingsModal/Privacy.tsx:339
 msgid "Restore"
-msgstr ""
+msgstr "กู้คืน"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:208
 #~ msgid "Restore Missing Spaces"
 #~ msgstr "กู้คืนพื้นที่ที่ขาดหายไป"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:332
+#: src/components/modals/UserSettingsModal/Privacy.tsx:330
 msgid "Restore Spaces that exist on this device but are missing from your navigation menu."
 msgstr "กู้คืนพื้นที่ที่มีอยู่ในอุปกรณ์นี้แต่ขาดหายไปจากเมนูนำทางของคุณ"
 
@@ -2186,7 +2188,7 @@ msgstr "กู้คืนพื้นที่ที่มีอยู่ใน
 msgid "Restored {0} space(s)"
 msgstr "กู้คืน {0} พื้นที่"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:341
+#: src/components/modals/UserSettingsModal/Privacy.tsx:339
 msgid "Restoring..."
 msgstr "กำลังคืนค่า..."
 
@@ -2291,7 +2293,7 @@ msgstr "ค้นหาชื่อผู้ใช้หรือที่อย
 
 #: src/components/ui/ListSearchInput.tsx:26
 msgid "Search..."
-msgstr ""
+msgstr "ค้นหา..."
 
 #: src/components/search/SearchResults.tsx:85
 msgid "Searching..."
@@ -2302,8 +2304,8 @@ msgid "Security"
 msgstr "ความปลอดภัย"
 
 #: src/components/modals/UserSettingsModal/Privacy.tsx:268
-msgid "Security Warning"
-msgstr ""
+#~ msgid "Security Warning"
+#~ msgstr "คำเตือนด้านความปลอดภัย"
 
 #: src/components/modals/SpaceSettingsModal/Account.tsx:221
 msgid "Select"
@@ -2397,9 +2399,13 @@ msgstr "แสดงหน้าจอหลัก"
 msgid "Show Muted Channels"
 msgstr "แสดงช่องที่ปิดเสียง"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:256
-msgid "Show QR Code"
+#: src/components/modals/UserSettingsModal/Privacy.tsx:259
+msgid "Show QR"
 msgstr ""
+
+#: src/components/modals/UserSettingsModal/Privacy.tsx:256
+#~ msgid "Show QR Code"
+#~ msgstr "แสดงรหัส QR"
 
 #: src/components/search/SearchResults.tsx:187
 #: src/components/search/SearchResults.tsx:214
@@ -2839,7 +2845,6 @@ msgstr "ผู้ใช้ไม่ได้รับการตรวจสอ
 #~ msgid "User Unmuted!"
 #~ msgstr "ผู้ใช้เปิดเสียงแล้ว!"
 
-#: src/components/space/Channel.tsx:NaN
 #~ msgid "Username or Address"
 #~ msgstr "ชื่อผู้ใช้หรือที่อยู่"
 
@@ -3026,8 +3031,8 @@ msgstr "รายละเอียดของคุณ"
 #~ msgstr "กุญแจส่วนตัวของคุณถูกคัดลอกไปยังคลิปบอร์ดแล้ว บันทึกเป็น \"AccountID.key\" (คุณสามารถค้นหาหมายเลขบัญชีของคุณในการตั้งค่าในภายหลัง) ห้ามแชร์กุญแจนี้!"
 
 #: src/components/modals/UserSettingsModal/Privacy.tsx:271
-msgid "Your private key will be displayed on screen. Anyone who sees or photographs this QR code can take full control of your Quorum account and steal any associated funds."
-msgstr ""
+#~ msgid "Your private key will be displayed on screen. Anyone who sees or photographs this QR code can take full control of your Quorum account and steal any associated funds."
+#~ msgstr "คีย์ส่วนตัวของคุณจะแสดงบนหน้าจอ ใครก็ตามที่เห็นหรือถ่ายภาพรหัส QR นี้สามารถควบคุมบัญชี Quorum ของคุณได้อย่างเต็มที่และขโมยเงินที่เกี่ยวข้องใดๆ"
 
 #: src/utils/imageProcessing/errors.ts:40
 msgid "Your profile image size must be {maxSize} or less and must be a PNG, JPG, or JPEG file extension."

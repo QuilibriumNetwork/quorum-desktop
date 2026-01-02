@@ -277,7 +277,7 @@ msgstr "Дії в черзі"
 
 #: src/components/direct/DirectMessageContactsList.tsx:279
 msgid "Add a friend"
-msgstr ""
+msgstr "Додати друга"
 
 #: src/components/modals/AddSpaceModal.tsx:124
 #: src/components/navbar/ExpandableNavMenu.tsx:30
@@ -307,7 +307,7 @@ msgstr "додати наліпку"
 
 #: src/components/direct/DirectMessageContactsList.tsx:224
 msgid "Add to Favorites"
-msgstr ""
+msgstr "Додати до обраного"
 
 #: src/components/modals/SpaceSettingsModal/Emojis.tsx:44
 msgid "Add up to 50 custom emoji. Custom emojis can only be used within a Space. You can upload PNG, JPG or GIF, max 5MB (automatically optimized)."
@@ -394,6 +394,10 @@ msgstr "Анімовані emoji GIF не можуть бути більшими
 #: src/utils/imageProcessing/errors.ts:26
 msgid "Animated sticker GIFs cannot be larger than 750KB. Please optimize your GIF for sticker use."
 msgstr "Анімовані стікерні GIF не можуть бути більшими за 750KB. Будь ласка, оптимізуйте свій GIF для використання стікерів."
+
+#: src/components/modals/UserSettingsModal/Privacy.tsx:268
+msgid "Anyone who sees or photographs this QR code can take full control of your Quorum account and steal any associated funds. Only proceed if you are in a private location and ready to scan immediately."
+msgstr ""
 
 #: src/components/modals/UserSettingsModal/Appearance.tsx:40
 #: src/components/modals/UserSettingsModal/Navigation.tsx:18
@@ -516,7 +520,7 @@ msgstr "Необхідно надати дозвіл на камеру, щоб �
 #: src/components/modals/ConversationSettingsModal.tsx:62
 #: src/components/modals/KickUserModal.tsx:98
 #: src/components/modals/MuteUserModal.tsx:129
-#: src/components/modals/UserSettingsModal/Privacy.tsx:284
+#: src/components/modals/UserSettingsModal/Privacy.tsx:277
 #: src/components/primitives/FileUpload/FileUpload.native.tsx:173
 #: src/hooks/business/channels/useChannelManagement.ts:253
 #: src/hooks/business/messages/useMessageActions.ts:382
@@ -769,7 +773,7 @@ msgstr "Створити новий акаунт"
 
 #: src/components/modals/ChannelEditorModal.tsx:164
 msgid "Create roles in Space Settings first."
-msgstr ""
+msgstr "Спочатку створіть ролі в налаштуваннях Простору."
 
 #: src/components/modals/CreateSpaceModal.tsx:254
 msgid "Create Space"
@@ -792,7 +796,7 @@ msgstr "Поточне посилання на запрошення"
 msgid "Dark"
 msgstr "Темний"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:327
+#: src/components/modals/UserSettingsModal/Privacy.tsx:325
 msgid "Data Recovery"
 msgstr "Відновлення даних"
 
@@ -933,7 +937,7 @@ msgstr "Сповіщення на робочому столі не підтри�
 
 #: src/components/modals/UserSettingsModal/Privacy.tsx:145
 msgid "Devices"
-msgstr ""
+msgstr "Пристрої"
 
 #: src/hooks/business/search/useBatchSearchResultsDisplay.ts:158
 #: src/hooks/business/search/useSearchResultDisplay.ts:104
@@ -969,13 +973,13 @@ msgstr "Ім'я для відображення є обов'язковим"
 msgid "Display name must be {MAX_NAME_LENGTH} characters or less"
 msgstr "Відображуване ім'я повинно містити не більше {MAX_NAME_LENGTH} символів"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:247
+#: src/components/modals/UserSettingsModal/Privacy.tsx:251
 msgid "Display your private key as a QR code to scan with the Quorum mobile app. This allows you to import your account on mobile without typing the key."
-msgstr ""
+msgstr "Відобразіть свій приватний ключ у вигляді QR-коду для сканування за допомогою мобільного додатку Quorum. Це дозволяє імпортувати ваш обліковий запис на мобільному без введення ключа."
 
 #: src/components/direct/DirectMessageContactsList.tsx:260
 msgid "DM Requests"
-msgstr ""
+msgstr "Запити в особистих повідомленнях"
 
 #: src/components/ui/MobileDrawer.tsx:143
 msgid "Drawer"
@@ -1109,13 +1113,12 @@ msgstr "Існуючі розмови"
 msgid "Export"
 msgstr "Експорт"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:181
 #~ msgid "Export your key to a file by clicking this button. Do not share this file with anyone else or they can impersonate you or steal your Space's Apex earnings."
 #~ msgstr "Експортуйте свій ключ у файл, натиснувши цю кнопку. Не діліться цим файлом з іншими, інакше вони можуть видати себе за вас або вкрасти заробіток Apex вашого Простору."
 
 #: src/components/modals/UserSettingsModal/Privacy.tsx:227
 msgid "Export your key to a file. Do not share this file with anyone else or they can impersonate you or steal your Space's Apex earnings."
-msgstr ""
+msgstr "Експортуйте свій ключ у файл. Не діліться цим файлом з іншими, інакше вони можуть видати себе за вас або вкрасти ваші доходи Apex у Просторі."
 
 #~ msgid "Failed to copy to clipboard. Please try again."
 #~ msgstr "Не вдалося скопіювати в буфер обміну. Спробуйте ще раз."
@@ -1211,7 +1214,7 @@ msgstr "Не вдалося оновити профіль"
 
 #: src/components/direct/DirectMessageContactsList.tsx:259
 msgid "Favorites"
-msgstr ""
+msgstr "Обране"
 
 #: src/utils/imageProcessing/errors.ts:16
 msgid "File cannot be larger than {maxSize}"
@@ -1370,9 +1373,9 @@ msgstr "Назва групи повинна містити не більше {M
 msgid "Hang in there..."
 msgstr "Тримайтеся..."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:316
+#: src/components/modals/UserSettingsModal/Privacy.tsx:311
 msgid "Hide"
-msgstr ""
+msgstr "Сховати"
 
 #: src/components/direct/EmptyDirectMessage.tsx:54
 msgid "hide home screen"
@@ -1395,9 +1398,9 @@ msgstr "Сховати заглушені канали у списку"
 msgid "I already saved mine"
 msgstr "Я вже зберіг свій"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:291
+#: src/components/modals/UserSettingsModal/Privacy.tsx:285
 msgid "I Understand, Show QR"
-msgstr ""
+msgstr "Я розумію, показати QR"
 
 #~ msgid "I've Saved It"
 #~ msgstr "Я зберіг це"
@@ -1613,9 +1616,9 @@ msgstr "Завантаження закріплених повідомлень..
 msgid "Loading your profile..."
 msgstr "Завантаження вашого профілю..."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:291
+#: src/components/modals/UserSettingsModal/Privacy.tsx:285
 msgid "Loading..."
-msgstr ""
+msgstr "Завантаження..."
 
 #: src/hooks/business/conversations/useDirectMessageCreation.ts:32
 msgid "Looking up user..."
@@ -1712,7 +1715,7 @@ msgstr "Повідомлення підписані!"
 
 #: src/components/modals/UserSettingsModal/Privacy.tsx:244
 msgid "Mobile Import"
-msgstr ""
+msgstr "Мобільний імпорт"
 
 #: src/components/message/MessageActions.tsx:92
 msgid "More reactions"
@@ -1765,7 +1768,7 @@ msgstr "Мій акаунт"
 #: src/components/direct/DirectMessageContactsList.tsx:311
 #: src/components/space/Channel.tsx:1060
 msgid "Name or Address"
-msgstr ""
+msgstr "Ім'я або адреса"
 
 #: src/hooks/business/validation/useDisplayNameValidation.ts:26
 #: src/hooks/business/validation/useDisplayNameValidation.ts:55
@@ -1813,7 +1816,7 @@ msgstr "Закладок ще немає"
 
 #: src/components/direct/DirectMessageContactsList.tsx:325
 msgid "No contacts found"
-msgstr ""
+msgstr "Контактів не знайдено"
 
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:155
 msgid "No conversations found"
@@ -1825,7 +1828,7 @@ msgstr "Не знайдено стану шифрування для цього 
 
 #: src/components/direct/DirectMessageContactsList.tsx:321
 msgid "No favorites yet"
-msgstr ""
+msgstr "Ще немає обраних"
 
 #: src/services/InvitationService.ts:79
 msgid "No invite evaluations available. Please generate a public invite link or ensure the space encryption state is properly initialized."
@@ -1833,7 +1836,7 @@ msgstr "Немає доступних оцінок запрошень. Будь 
 
 #: src/components/direct/DirectMessageContactsList.tsx:323
 msgid "No message requests"
-msgstr ""
+msgstr "Немає запитів на повідомлення"
 
 #: src/components/search/SearchResults.tsx:103
 msgid "No messages found"
@@ -1910,8 +1913,8 @@ msgid "Online"
 msgstr "Онлайн"
 
 #: src/components/modals/UserSettingsModal/Privacy.tsx:274
-msgid "Only proceed if you are in a private location and ready to scan immediately."
-msgstr ""
+#~ msgid "Only proceed if you are in a private location and ready to scan immediately."
+#~ msgstr "Продовжуйте лише якщо ви в приватному місці і готові сканувати негайно."
 
 #: src/components/ui/YouTubeFacade.tsx:171
 msgid "Open video on YouTube"
@@ -2071,9 +2074,9 @@ msgstr "Публічні запрошення"
 msgid "Public invite links allow anyone with access to the link to join your Space. Consider who you share the link with and where you post it."
 msgstr "Публічні запрошення дозволяють будь-кому з доступом до посилання приєднатися до вашого Space. Подумайте, з ким ви ділитеся посиланням і де ви його публікуєте."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:308
+#: src/components/modals/UserSettingsModal/Privacy.tsx:302
 msgid "QR code will auto-hide in 60 seconds"
-msgstr ""
+msgstr "QR-код автоматично сховається через 60 секунд"
 
 #: src/components/Maintenance.tsx:24
 msgid "Quorum infrastructure is being deployed at this time. Please try refreshing, and check <0>https://status.quilibrium.com/</0> for updates."
@@ -2136,7 +2139,7 @@ msgstr "Видалити закладку"
 
 #: src/components/direct/DirectMessageContactsList.tsx:224
 msgid "Remove from Favorites"
-msgstr ""
+msgstr "Видалити з обраного"
 
 #: src/components/user/UserProfile.tsx:172
 msgid "Removing..."
@@ -2169,15 +2172,14 @@ msgstr "Вимагати, щоб повідомлення, надіслані в
 msgid "Reset"
 msgstr "Скинути"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:341
+#: src/components/modals/UserSettingsModal/Privacy.tsx:339
 msgid "Restore"
-msgstr ""
+msgstr "Відновити"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:208
 #~ msgid "Restore Missing Spaces"
 #~ msgstr "Відновити відсутні простори"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:332
+#: src/components/modals/UserSettingsModal/Privacy.tsx:330
 msgid "Restore Spaces that exist on this device but are missing from your navigation menu."
 msgstr "Відновити простори, які існують на цьому пристрої, але відсутні у вашому навігаційному меню."
 
@@ -2186,7 +2188,7 @@ msgstr "Відновити простори, які існують на цьом
 msgid "Restored {0} space(s)"
 msgstr "Відновлено {0} простір(ів)"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:341
+#: src/components/modals/UserSettingsModal/Privacy.tsx:339
 msgid "Restoring..."
 msgstr "Відновлення..."
 
@@ -2291,7 +2293,7 @@ msgstr "Шукати ім'я користувача або адресу"
 
 #: src/components/ui/ListSearchInput.tsx:26
 msgid "Search..."
-msgstr ""
+msgstr "Пошук..."
 
 #: src/components/search/SearchResults.tsx:85
 msgid "Searching..."
@@ -2302,8 +2304,8 @@ msgid "Security"
 msgstr "Безпека"
 
 #: src/components/modals/UserSettingsModal/Privacy.tsx:268
-msgid "Security Warning"
-msgstr ""
+#~ msgid "Security Warning"
+#~ msgstr "Попередження безпеки"
 
 #: src/components/modals/SpaceSettingsModal/Account.tsx:221
 msgid "Select"
@@ -2397,9 +2399,13 @@ msgstr "показати головний екран"
 msgid "Show Muted Channels"
 msgstr "Показати заглушені канали"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:256
-msgid "Show QR Code"
+#: src/components/modals/UserSettingsModal/Privacy.tsx:259
+msgid "Show QR"
 msgstr ""
+
+#: src/components/modals/UserSettingsModal/Privacy.tsx:256
+#~ msgid "Show QR Code"
+#~ msgstr "Показати QR-код"
 
 #: src/components/search/SearchResults.tsx:187
 #: src/components/search/SearchResults.tsx:214
@@ -2839,7 +2845,6 @@ msgstr "Користувач не аутентифікований"
 #~ msgid "User Unmuted!"
 #~ msgstr "Користувача увімкнено!"
 
-#: src/components/space/Channel.tsx:NaN
 #~ msgid "Username or Address"
 #~ msgstr "Ім'я користувача або адреса"
 
@@ -3026,8 +3031,8 @@ msgstr "Ваші дані"
 #~ msgstr "Ваш приватний ключ був скопійований в буфер обміну. Збережіть його як \"AccountID.key\" (ви можете знайти свій ідентифікатор облікового запису в Налаштуваннях пізніше). НІКОЛИ не діліться цим ключем!"
 
 #: src/components/modals/UserSettingsModal/Privacy.tsx:271
-msgid "Your private key will be displayed on screen. Anyone who sees or photographs this QR code can take full control of your Quorum account and steal any associated funds."
-msgstr ""
+#~ msgid "Your private key will be displayed on screen. Anyone who sees or photographs this QR code can take full control of your Quorum account and steal any associated funds."
+#~ msgstr "Ваш приватний ключ буде відображено на екрані. Будь-хто, хто бачить або фотографує цей QR-код, може отримати повний контроль над вашим обліковим записом Quorum і вкрасти будь-які пов'язані кошти."
 
 #: src/utils/imageProcessing/errors.ts:40
 msgid "Your profile image size must be {maxSize} or less and must be a PNG, JPG, or JPEG file extension."

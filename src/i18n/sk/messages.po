@@ -390,6 +390,17 @@ msgstr ""
 "Animované nálepky GIFy nemôžu byť väčšie ako 750KB. Prosím, optimalizujte "
 "svoj GIF pre použitie nálepiek."
 
+#: src/components/modals/UserSettingsModal/Privacy.tsx:268
+msgid ""
+"Anyone who sees or photographs this QR code can take full control of your "
+"Quorum account and steal any associated funds. Only proceed if you are in a "
+"private location and ready to scan immediately."
+msgstr ""
+"Ktokoľvek, kto vidí alebo fotografuje tento QR kód, môže získať plnú "
+"kontrolu nad vaším Quorum účtom a ukradnúť akékoľvek priradené prostriedky. "
+"Pokračujte iba v prípade, že sa nachádzate na súkromnom mieste a ste "
+"pripravení okamžite skenovať."
+
 #: src/components/modals/UserSettingsModal/Appearance.tsx:40
 #: src/components/modals/UserSettingsModal/Navigation.tsx:18
 msgid "Appearance"
@@ -509,7 +520,7 @@ msgstr "Povolenie na kameru je potrebné na fotenie"
 #: src/components/modals/ConversationSettingsModal.tsx:62
 #: src/components/modals/KickUserModal.tsx:98
 #: src/components/modals/MuteUserModal.tsx:129
-#: src/components/modals/UserSettingsModal/Privacy.tsx:284
+#: src/components/modals/UserSettingsModal/Privacy.tsx:277
 #: src/components/primitives/FileUpload/FileUpload.native.tsx:173
 #: src/hooks/business/channels/useChannelManagement.ts:253
 #: src/hooks/business/messages/useMessageActions.ts:382
@@ -802,7 +813,7 @@ msgstr "Aktuálny pozývací odkaz"
 msgid "Dark"
 msgstr "Tmavý"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:327
+#: src/components/modals/UserSettingsModal/Privacy.tsx:325
 msgid "Data Recovery"
 msgstr "Obnova dát"
 
@@ -968,7 +979,7 @@ msgstr "Zobrazovacie meno je povinné"
 msgid "Display name must be {MAX_NAME_LENGTH} characters or less"
 msgstr "Zobrazované meno musí mať {MAX_NAME_LENGTH} znakov alebo menej"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:247
+#: src/components/modals/UserSettingsModal/Privacy.tsx:251
 msgid ""
 "Display your private key as a QR code to scan with the Quorum mobile app. "
 "This allows you to import your account on mobile without typing the key."
@@ -1382,7 +1393,7 @@ msgstr "Názov skupiny musí mať {MAX_NAME_LENGTH} znakov alebo menej"
 msgid "Hang in there..."
 msgstr "Vydržte..."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:316
+#: src/components/modals/UserSettingsModal/Privacy.tsx:311
 msgid "Hide"
 msgstr "Skryť"
 
@@ -1407,7 +1418,7 @@ msgstr "Skryť ztlmené kanály v zozname"
 msgid "I already saved mine"
 msgstr "Už som si uložil svoj"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:291
+#: src/components/modals/UserSettingsModal/Privacy.tsx:285
 msgid "I Understand, Show QR"
 msgstr "Chápem, zobraziť QR"
 
@@ -1625,7 +1636,7 @@ msgstr "Načítavam pripnuté správy..."
 msgid "Loading your profile..."
 msgstr "Načítavam váš profil..."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:291
+#: src/components/modals/UserSettingsModal/Privacy.tsx:285
 msgid "Loading..."
 msgstr "Načítava sa..."
 
@@ -1935,13 +1946,6 @@ msgstr "Jeden z nás, jeden z nás!"
 msgid "Online"
 msgstr "Online"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:274
-msgid ""
-"Only proceed if you are in a private location and ready to scan immediately."
-msgstr ""
-"Pokračujte iba v prípade, že sa nachádzate na súkromnom mieste a ste "
-"pripravení okamžite skenovať."
-
 #: src/components/ui/YouTubeFacade.tsx:171
 msgid "Open video on YouTube"
 msgstr "Otvor video na YouTube"
@@ -2101,7 +2105,7 @@ msgstr ""
 "pripojiť sa k vášmu Space. Zvážte, s kým zdieľate odkaz a kde ho "
 "zverejňujete."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:308
+#: src/components/modals/UserSettingsModal/Privacy.tsx:302
 msgid "QR code will auto-hide in 60 seconds"
 msgstr "QR kód sa automaticky skryje za 60 sekúnd"
 
@@ -2217,11 +2221,11 @@ msgstr ""
 msgid "Reset"
 msgstr "Obnoviť"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:341
+#: src/components/modals/UserSettingsModal/Privacy.tsx:339
 msgid "Restore"
 msgstr "Obnoviť"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:332
+#: src/components/modals/UserSettingsModal/Privacy.tsx:330
 msgid ""
 "Restore Spaces that exist on this device but are missing from your "
 "navigation menu."
@@ -2234,7 +2238,7 @@ msgstr ""
 msgid "Restored {0} space(s)"
 msgstr "Obnovený {0} priestor(ov)"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:341
+#: src/components/modals/UserSettingsModal/Privacy.tsx:339
 msgid "Restoring..."
 msgstr "Obnovujem..."
 
@@ -2347,10 +2351,6 @@ msgstr "Hľadám..."
 msgid "Security"
 msgstr "Bezpečnosť"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:268
-msgid "Security Warning"
-msgstr "Bezpečnostné upozornenie"
-
 #: src/components/modals/SpaceSettingsModal/Account.tsx:221
 msgid "Select"
 msgstr "Vybrať"
@@ -2440,9 +2440,9 @@ msgstr "zobraziť domovskú obrazovku"
 msgid "Show Muted Channels"
 msgstr "Zobraziť ztlmené kanály"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:256
-msgid "Show QR Code"
-msgstr "Zobraziť QR kód"
+#: src/components/modals/UserSettingsModal/Privacy.tsx:259
+msgid "Show QR"
+msgstr "Zobraziť QR"
 
 #: src/components/search/SearchResults.tsx:187
 #: src/components/search/SearchResults.tsx:214
@@ -3151,16 +3151,6 @@ msgstr "Boli ste pozvaní pripojiť sa k Priestoru"
 msgid "Your Details"
 msgstr "Vaše podrobnosti"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:271
-msgid ""
-"Your private key will be displayed on screen. Anyone who sees or photographs"
-" this QR code can take full control of your Quorum account and steal any "
-"associated funds."
-msgstr ""
-"Váš súkromný kľúč bude zobrazený na obrazovke. Každý, kto uvidí alebo odfotí"
-" tento QR kód, môže získať plnú kontrolu nad vaším účtom Quorum a ukradnúť "
-"akékoľvek priradené prostriedky."
-
 #: src/utils/imageProcessing/errors.ts:40
 msgid ""
 "Your profile image size must be {maxSize} or less and must be a PNG, JPG, or"
@@ -3329,6 +3319,12 @@ msgstr "Miniatúra YouTube videa"
 #~ msgid "No unread mentions"
 #~ msgstr "Žiadne neprečítané zmienky"
 
+#~ msgid ""
+#~ "Only proceed if you are in a private location and ready to scan immediately."
+#~ msgstr ""
+#~ "Pokračujte iba v prípade, že sa nachádzate na súkromnom mieste a ste "
+#~ "pripravení okamžite skenovať."
+
 #~ msgid "optional"
 #~ msgstr "voliteľné"
 
@@ -3349,6 +3345,9 @@ msgstr "Miniatúra YouTube videa"
 #~ msgid "Restore Missing Spaces"
 #~ msgstr "Obnoviť chýbajúce priestory"
 
+#~ msgid "Security Warning"
+#~ msgstr "Bezpečnostné upozornenie"
+
 #~ msgid ""
 #~ "Select any existing role as managers for this channel. Managers have post, "
 #~ "delete, and pin permissions on ANY message by default. If no managers are "
@@ -3368,6 +3367,9 @@ msgstr "Miniatúra YouTube videa"
 #~ msgstr ""
 #~ "Odoslať pozvánky ľuďom, s ktorými ste predtým mali konverzácie. Tlačidlo "
 #~ "pozvánky sa objaví v ich doručenej pošte."
+
+#~ msgid "Show QR Code"
+#~ msgstr "Zobraziť QR kód"
 
 #~ msgid "Space Name"
 #~ msgstr "Názov Priestoru"
@@ -3439,3 +3441,12 @@ msgstr "Miniatúra YouTube videa"
 #~ "Váš súkromný kľúč bol skopírovaný do schránky. Uložte ho ako "
 #~ "\"AccountID.key\" (svoj účet ID nájdete neskôr v nastaveniach). NIKDY tento "
 #~ "kľúč nezdieľajte!"
+
+#~ msgid ""
+#~ "Your private key will be displayed on screen. Anyone who sees or photographs"
+#~ " this QR code can take full control of your Quorum account and steal any "
+#~ "associated funds."
+#~ msgstr ""
+#~ "Váš súkromný kľúč bude zobrazený na obrazovke. Každý, kto uvidí alebo odfotí"
+#~ " tento QR kód, môže získať plnú kontrolu nad vaším účtom Quorum a ukradnúť "
+#~ "akékoľvek priradené prostriedky."

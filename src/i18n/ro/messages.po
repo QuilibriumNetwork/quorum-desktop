@@ -393,6 +393,16 @@ msgstr ""
 "GIF-urile animate cu autocolante nu pot fi mai mari de 750KB. Te rugăm să "
 "îți optimizezi GIF-ul pentru utilizarea autocolantelor."
 
+#: src/components/modals/UserSettingsModal/Privacy.tsx:268
+msgid ""
+"Anyone who sees or photographs this QR code can take full control of your "
+"Quorum account and steal any associated funds. Only proceed if you are in a "
+"private location and ready to scan immediately."
+msgstr ""
+"Oricine care vede sau fotografiază acest cod QR poate prelua controlul total"
+" al contului tău Quorum și poate fura orice fonduri asociate. Continuă doar "
+"dacă te afli într-o locație privată și ești pregătit să scanezi imediat."
+
 #: src/components/modals/UserSettingsModal/Appearance.tsx:40
 #: src/components/modals/UserSettingsModal/Navigation.tsx:18
 msgid "Appearance"
@@ -510,7 +520,7 @@ msgstr "Permisiunea pentru cameră este necesară pentru a face fotografii"
 #: src/components/modals/ConversationSettingsModal.tsx:62
 #: src/components/modals/KickUserModal.tsx:98
 #: src/components/modals/MuteUserModal.tsx:129
-#: src/components/modals/UserSettingsModal/Privacy.tsx:284
+#: src/components/modals/UserSettingsModal/Privacy.tsx:277
 #: src/components/primitives/FileUpload/FileUpload.native.tsx:173
 #: src/hooks/business/channels/useChannelManagement.ts:253
 #: src/hooks/business/messages/useMessageActions.ts:382
@@ -808,7 +818,7 @@ msgstr "Linkul actual de invitație"
 msgid "Dark"
 msgstr "Întunecat"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:327
+#: src/components/modals/UserSettingsModal/Privacy.tsx:325
 msgid "Data Recovery"
 msgstr "Recuperare date"
 
@@ -977,7 +987,7 @@ msgid "Display name must be {MAX_NAME_LENGTH} characters or less"
 msgstr ""
 "Numele de afișare trebuie să aibă {MAX_NAME_LENGTH} caractere sau mai puțin"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:247
+#: src/components/modals/UserSettingsModal/Privacy.tsx:251
 msgid ""
 "Display your private key as a QR code to scan with the Quorum mobile app. "
 "This allows you to import your account on mobile without typing the key."
@@ -1401,7 +1411,7 @@ msgstr ""
 msgid "Hang in there..."
 msgstr "Mai ai puțin..."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:316
+#: src/components/modals/UserSettingsModal/Privacy.tsx:311
 msgid "Hide"
 msgstr "Ascunde"
 
@@ -1426,7 +1436,7 @@ msgstr "Ascunde canalele închise din listă"
 msgid "I already saved mine"
 msgstr "Eu deja mi-am salvat al meu"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:291
+#: src/components/modals/UserSettingsModal/Privacy.tsx:285
 msgid "I Understand, Show QR"
 msgstr "Înțeleg, Afișează QR"
 
@@ -1645,7 +1655,7 @@ msgstr "Se încarcă mesajele fixate..."
 msgid "Loading your profile..."
 msgstr "Încărcarea profilului tău..."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:291
+#: src/components/modals/UserSettingsModal/Privacy.tsx:285
 msgid "Loading..."
 msgstr "Se încarcă..."
 
@@ -1957,13 +1967,6 @@ msgstr "Unul dintre noi, unul dintre noi!"
 msgid "Online"
 msgstr "Online"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:274
-msgid ""
-"Only proceed if you are in a private location and ready to scan immediately."
-msgstr ""
-"Continuă doar dacă ești într-o locație privată și pregătit să scanezi "
-"imediat."
-
 #: src/components/ui/YouTubeFacade.tsx:171
 msgid "Open video on YouTube"
 msgstr "Deschide video pe YouTube"
@@ -2125,7 +2128,7 @@ msgstr ""
 "Linkurile de invitație publice permit oricui are acces la link să se alăture"
 " Espaciului tău. Gândește-te cu cine împărtășești linkul și unde îl postezi."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:308
+#: src/components/modals/UserSettingsModal/Privacy.tsx:302
 msgid "QR code will auto-hide in 60 seconds"
 msgstr "Codul QR se va ascunde automat în 60 de secunde"
 
@@ -2241,11 +2244,11 @@ msgstr ""
 msgid "Reset"
 msgstr "Resetează"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:341
+#: src/components/modals/UserSettingsModal/Privacy.tsx:339
 msgid "Restore"
 msgstr "Restaurare"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:332
+#: src/components/modals/UserSettingsModal/Privacy.tsx:330
 msgid ""
 "Restore Spaces that exist on this device but are missing from your "
 "navigation menu."
@@ -2258,7 +2261,7 @@ msgstr ""
 msgid "Restored {0} space(s)"
 msgstr "Restaurat {0} spațiu(e)"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:341
+#: src/components/modals/UserSettingsModal/Privacy.tsx:339
 msgid "Restoring..."
 msgstr "Restaurare..."
 
@@ -2371,10 +2374,6 @@ msgstr "Căutare..."
 msgid "Security"
 msgstr "Securitate"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:268
-msgid "Security Warning"
-msgstr "Avertisment de Securitate"
-
 #: src/components/modals/SpaceSettingsModal/Account.tsx:221
 msgid "Select"
 msgstr "Selectați"
@@ -2464,9 +2463,9 @@ msgstr "arată ecranul principal"
 msgid "Show Muted Channels"
 msgstr "Arată Canalele Închise"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:256
-msgid "Show QR Code"
-msgstr "Afișează Codul QR"
+#: src/components/modals/UserSettingsModal/Privacy.tsx:259
+msgid "Show QR"
+msgstr "Arată QR"
 
 #: src/components/search/SearchResults.tsx:187
 #: src/components/search/SearchResults.tsx:214
@@ -3190,16 +3189,6 @@ msgstr "Ai fost invitat să te alături unui Spațiu"
 msgid "Your Details"
 msgstr "Detaliile tale"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:271
-msgid ""
-"Your private key will be displayed on screen. Anyone who sees or photographs"
-" this QR code can take full control of your Quorum account and steal any "
-"associated funds."
-msgstr ""
-"Cheia ta privată va fi afișată pe ecran. Oricine vede sau fotografiază acest"
-" cod QR poate prelua controlul total asupra contului tău Quorum și poate "
-"fura orice fonduri asociate."
-
 #: src/utils/imageProcessing/errors.ts:40
 msgid ""
 "Your profile image size must be {maxSize} or less and must be a PNG, JPG, or"
@@ -3370,6 +3359,12 @@ msgstr "Miniatură video YouTube"
 #~ msgid "No unread mentions"
 #~ msgstr "Nu sunt mențiuni necitite"
 
+#~ msgid ""
+#~ "Only proceed if you are in a private location and ready to scan immediately."
+#~ msgstr ""
+#~ "Continuă doar dacă ești într-o locație privată și pregătit să scanezi "
+#~ "imediat."
+
 #~ msgid "optional"
 #~ msgstr "opțional"
 
@@ -3391,6 +3386,9 @@ msgstr "Miniatură video YouTube"
 #~ msgid "Restore Missing Spaces"
 #~ msgstr "Restaurare spații lipsă"
 
+#~ msgid "Security Warning"
+#~ msgstr "Avertisment de Securitate"
+
 #~ msgid ""
 #~ "Select any existing role as managers for this channel. Managers have post, "
 #~ "delete, and pin permissions on ANY message by default. If no managers are "
@@ -3410,6 +3408,9 @@ msgstr "Miniatură video YouTube"
 #~ msgstr ""
 #~ "Trimite invitații persoanelor cu care ai avut anterior conversații. Un buton"
 #~ " de invitație va apărea în căsuța lor poștală."
+
+#~ msgid "Show QR Code"
+#~ msgstr "Afișează Codul QR"
 
 #~ msgid "Space Name"
 #~ msgstr "Numele Spațiului"
@@ -3483,3 +3484,12 @@ msgstr "Miniatură video YouTube"
 #~ "Cheia ta privată a fost copiată în clipboard. Salveaz-o ca \"AccountID.key\""
 #~ " (poți găsi ID-ul tău de cont în Setări mai târziu). NU împărtăși această "
 #~ "cheie!"
+
+#~ msgid ""
+#~ "Your private key will be displayed on screen. Anyone who sees or photographs"
+#~ " this QR code can take full control of your Quorum account and steal any "
+#~ "associated funds."
+#~ msgstr ""
+#~ "Cheia ta privată va fi afișată pe ecran. Oricine vede sau fotografiază acest"
+#~ " cod QR poate prelua controlul total asupra contului tău Quorum și poate "
+#~ "fura orice fonduri asociate."

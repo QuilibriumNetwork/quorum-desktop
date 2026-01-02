@@ -277,7 +277,7 @@ msgstr "Handling handling"
 
 #: src/components/direct/DirectMessageContactsList.tsx:279
 msgid "Add a friend"
-msgstr ""
+msgstr "Tilføj en ven"
 
 #: src/components/modals/AddSpaceModal.tsx:124
 #: src/components/navbar/ExpandableNavMenu.tsx:30
@@ -307,7 +307,7 @@ msgstr "tilføj klistermærke"
 
 #: src/components/direct/DirectMessageContactsList.tsx:224
 msgid "Add to Favorites"
-msgstr ""
+msgstr "Tilføj til favoritter"
 
 #: src/components/modals/SpaceSettingsModal/Emojis.tsx:44
 msgid "Add up to 50 custom emoji. Custom emojis can only be used within a Space. You can upload PNG, JPG or GIF, max 5MB (automatically optimized)."
@@ -394,6 +394,10 @@ msgstr "Animerede emoji GIF'er må ikke være større end 100KB. Venligst optime
 #: src/utils/imageProcessing/errors.ts:26
 msgid "Animated sticker GIFs cannot be larger than 750KB. Please optimize your GIF for sticker use."
 msgstr "Animerede klistermærke GIF'er må ikke være større end 750KB. Venligst optimer dit GIF til klistermærke brug."
+
+#: src/components/modals/UserSettingsModal/Privacy.tsx:268
+msgid "Anyone who sees or photographs this QR code can take full control of your Quorum account and steal any associated funds. Only proceed if you are in a private location and ready to scan immediately."
+msgstr ""
 
 #: src/components/modals/UserSettingsModal/Appearance.tsx:40
 #: src/components/modals/UserSettingsModal/Navigation.tsx:18
@@ -517,7 +521,7 @@ msgstr "Kameratilladelse er påkrævet for at tage billeder"
 #: src/components/modals/ConversationSettingsModal.tsx:62
 #: src/components/modals/KickUserModal.tsx:98
 #: src/components/modals/MuteUserModal.tsx:129
-#: src/components/modals/UserSettingsModal/Privacy.tsx:284
+#: src/components/modals/UserSettingsModal/Privacy.tsx:277
 #: src/components/primitives/FileUpload/FileUpload.native.tsx:173
 #: src/hooks/business/channels/useChannelManagement.ts:253
 #: src/hooks/business/messages/useMessageActions.ts:382
@@ -770,7 +774,7 @@ msgstr "Opret ny konto"
 
 #: src/components/modals/ChannelEditorModal.tsx:164
 msgid "Create roles in Space Settings first."
-msgstr ""
+msgstr "Opret roller i Space-indstillingerne først."
 
 #: src/components/modals/CreateSpaceModal.tsx:254
 msgid "Create Space"
@@ -793,7 +797,7 @@ msgstr "Nuværende invitationslink"
 msgid "Dark"
 msgstr "Mørk"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:327
+#: src/components/modals/UserSettingsModal/Privacy.tsx:325
 msgid "Data Recovery"
 msgstr "Datagendannelse"
 
@@ -934,7 +938,7 @@ msgstr "Skrivebordsmeddelelser understøttes ikke i denne browser."
 
 #: src/components/modals/UserSettingsModal/Privacy.tsx:145
 msgid "Devices"
-msgstr ""
+msgstr "Enheder"
 
 #: src/hooks/business/search/useBatchSearchResultsDisplay.ts:158
 #: src/hooks/business/search/useSearchResultDisplay.ts:104
@@ -970,13 +974,13 @@ msgstr "Visningsnavn er påkrævet"
 msgid "Display name must be {MAX_NAME_LENGTH} characters or less"
 msgstr "Visningsnavn skal være {MAX_NAME_LENGTH} tegn eller færre"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:247
+#: src/components/modals/UserSettingsModal/Privacy.tsx:251
 msgid "Display your private key as a QR code to scan with the Quorum mobile app. This allows you to import your account on mobile without typing the key."
-msgstr ""
+msgstr "Vis din private nøgle som en QR-kode, der kan scannes med Quorum-mobilappen. Dette giver dig mulighed for at importere din konto på mobilen uden at indtaste nøglen."
 
 #: src/components/direct/DirectMessageContactsList.tsx:260
 msgid "DM Requests"
-msgstr ""
+msgstr "DM-anmodninger"
 
 #: src/components/ui/MobileDrawer.tsx:143
 msgid "Drawer"
@@ -1110,13 +1114,12 @@ msgstr "Eksisterende samtaler"
 msgid "Export"
 msgstr "Eksportér"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:181
 #~ msgid "Export your key to a file by clicking this button. Do not share this file with anyone else or they can impersonate you or steal your Space's Apex earnings."
 #~ msgstr "Eksportér din nøgle til en fil ved at klikke på denne knap. Del ikke denne fil med nogen andre, ellers kan de udgive sig for dig eller stjæle dit Space's Apex-indtjening."
 
 #: src/components/modals/UserSettingsModal/Privacy.tsx:227
 msgid "Export your key to a file. Do not share this file with anyone else or they can impersonate you or steal your Space's Apex earnings."
-msgstr ""
+msgstr "Eksporter din nøgle til en fil. Del ikke denne fil med andre, da de kan udgive sig for at være dig eller stjæle dine Space's Apex-indtægter."
 
 #~ msgid "Failed to copy to clipboard. Please try again."
 #~ msgstr "Mislykkedes at kopiere til udklipsholder. Prøv venligst igen."
@@ -1212,7 +1215,7 @@ msgstr "Mislykkedes med at opdatere profil"
 
 #: src/components/direct/DirectMessageContactsList.tsx:259
 msgid "Favorites"
-msgstr ""
+msgstr "Favoritter"
 
 #: src/utils/imageProcessing/errors.ts:16
 msgid "File cannot be larger than {maxSize}"
@@ -1371,9 +1374,9 @@ msgstr "Gruppenavn skal være {MAX_NAME_LENGTH} tegn eller færre"
 msgid "Hang in there..."
 msgstr "Hold ud..."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:316
+#: src/components/modals/UserSettingsModal/Privacy.tsx:311
 msgid "Hide"
-msgstr ""
+msgstr "Skjul"
 
 #: src/components/direct/EmptyDirectMessage.tsx:54
 msgid "hide home screen"
@@ -1396,9 +1399,9 @@ msgstr "Skjul dæmpede kanaler i listen"
 msgid "I already saved mine"
 msgstr "Jeg har allerede gemt min"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:291
+#: src/components/modals/UserSettingsModal/Privacy.tsx:285
 msgid "I Understand, Show QR"
-msgstr ""
+msgstr "Jeg forstår, vis QR"
 
 #~ msgid "I've Saved It"
 #~ msgstr "Jeg har gemt det"
@@ -1614,9 +1617,9 @@ msgstr "Indlæser fastgjorte beskeder..."
 msgid "Loading your profile..."
 msgstr "Indlæser din profil..."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:291
+#: src/components/modals/UserSettingsModal/Privacy.tsx:285
 msgid "Loading..."
-msgstr ""
+msgstr "Indlæser..."
 
 #: src/hooks/business/conversations/useDirectMessageCreation.ts:32
 msgid "Looking up user..."
@@ -1713,7 +1716,7 @@ msgstr "Beskeder er underskrevet!"
 
 #: src/components/modals/UserSettingsModal/Privacy.tsx:244
 msgid "Mobile Import"
-msgstr ""
+msgstr "Mobilimport"
 
 #: src/components/message/MessageActions.tsx:92
 msgid "More reactions"
@@ -1766,7 +1769,7 @@ msgstr "Min konto"
 #: src/components/direct/DirectMessageContactsList.tsx:311
 #: src/components/space/Channel.tsx:1060
 msgid "Name or Address"
-msgstr ""
+msgstr "Navn eller adresse"
 
 #: src/hooks/business/validation/useDisplayNameValidation.ts:26
 #: src/hooks/business/validation/useDisplayNameValidation.ts:55
@@ -1814,7 +1817,7 @@ msgstr "Ingen bogmærker endnu"
 
 #: src/components/direct/DirectMessageContactsList.tsx:325
 msgid "No contacts found"
-msgstr ""
+msgstr "Ingen kontakter fundet"
 
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:155
 msgid "No conversations found"
@@ -1826,7 +1829,7 @@ msgstr "Ingen krypteringstilstand fundet for denne space. Space'en skal muligvis
 
 #: src/components/direct/DirectMessageContactsList.tsx:321
 msgid "No favorites yet"
-msgstr ""
+msgstr "Ingen favoritter endnu"
 
 #: src/services/InvitationService.ts:79
 msgid "No invite evaluations available. Please generate a public invite link or ensure the space encryption state is properly initialized."
@@ -1834,7 +1837,7 @@ msgstr "Ingen invite-evalueringer tilgængelige. Generer venligst et offentligt 
 
 #: src/components/direct/DirectMessageContactsList.tsx:323
 msgid "No message requests"
-msgstr ""
+msgstr "Ingen beskedforespørgsler"
 
 #: src/components/search/SearchResults.tsx:103
 msgid "No messages found"
@@ -1911,8 +1914,8 @@ msgid "Online"
 msgstr "Online"
 
 #: src/components/modals/UserSettingsModal/Privacy.tsx:274
-msgid "Only proceed if you are in a private location and ready to scan immediately."
-msgstr ""
+#~ msgid "Only proceed if you are in a private location and ready to scan immediately."
+#~ msgstr "Fortsæt kun, hvis du er på et privat sted og klar til at scanne med det samme."
 
 #: src/components/ui/YouTubeFacade.tsx:171
 msgid "Open video on YouTube"
@@ -2072,9 +2075,9 @@ msgstr "Offentlige invite links"
 msgid "Public invite links allow anyone with access to the link to join your Space. Consider who you share the link with and where you post it."
 msgstr "Offentlige invite links giver alle med adgang til linket mulighed for at deltage i dit Space. Overvej, hvem du deler linket med, og hvor du poster det."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:308
+#: src/components/modals/UserSettingsModal/Privacy.tsx:302
 msgid "QR code will auto-hide in 60 seconds"
-msgstr ""
+msgstr "QR-koden vil automatisk skjule sig om 60 sekunder"
 
 #: src/components/Maintenance.tsx:24
 msgid "Quorum infrastructure is being deployed at this time. Please try refreshing, and check <0>https://status.quilibrium.com/</0> for updates."
@@ -2137,7 +2140,7 @@ msgstr "Fjern bogmærke"
 
 #: src/components/direct/DirectMessageContactsList.tsx:224
 msgid "Remove from Favorites"
-msgstr ""
+msgstr "Fjern fra favoritter"
 
 #: src/components/user/UserProfile.tsx:172
 msgid "Removing..."
@@ -2170,15 +2173,14 @@ msgstr "Krav om, at beskeder sendt i dette Space skal underskrives af afsenderen
 msgid "Reset"
 msgstr "Nulstil"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:341
+#: src/components/modals/UserSettingsModal/Privacy.tsx:339
 msgid "Restore"
-msgstr ""
+msgstr "Gendan"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:208
 #~ msgid "Restore Missing Spaces"
 #~ msgstr "Gendan manglende rum"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:332
+#: src/components/modals/UserSettingsModal/Privacy.tsx:330
 msgid "Restore Spaces that exist on this device but are missing from your navigation menu."
 msgstr "Gendan rum, der findes på denne enhed, men mangler i din navigationsmenu."
 
@@ -2187,7 +2189,7 @@ msgstr "Gendan rum, der findes på denne enhed, men mangler i din navigationsmen
 msgid "Restored {0} space(s)"
 msgstr "Gendannet {0} rum"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:341
+#: src/components/modals/UserSettingsModal/Privacy.tsx:339
 msgid "Restoring..."
 msgstr "Gendanner..."
 
@@ -2292,7 +2294,7 @@ msgstr "Søg efter brugernavn eller adresse"
 
 #: src/components/ui/ListSearchInput.tsx:26
 msgid "Search..."
-msgstr ""
+msgstr "Søg..."
 
 #: src/components/search/SearchResults.tsx:85
 msgid "Searching..."
@@ -2303,8 +2305,8 @@ msgid "Security"
 msgstr "Sikkerhed"
 
 #: src/components/modals/UserSettingsModal/Privacy.tsx:268
-msgid "Security Warning"
-msgstr ""
+#~ msgid "Security Warning"
+#~ msgstr "Sikkerhedsadvarsel"
 
 #: src/components/modals/SpaceSettingsModal/Account.tsx:221
 msgid "Select"
@@ -2398,9 +2400,13 @@ msgstr "vis startskærm"
 msgid "Show Muted Channels"
 msgstr "Vis dæmpede kanaler"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:256
-msgid "Show QR Code"
+#: src/components/modals/UserSettingsModal/Privacy.tsx:259
+msgid "Show QR"
 msgstr ""
+
+#: src/components/modals/UserSettingsModal/Privacy.tsx:256
+#~ msgid "Show QR Code"
+#~ msgstr "Vis QR-kode"
 
 #: src/components/search/SearchResults.tsx:187
 #: src/components/search/SearchResults.tsx:214
@@ -2840,7 +2846,6 @@ msgstr "Bruger ikke godkendt"
 #~ msgid "User Unmuted!"
 #~ msgstr "Bruger tavshed ophævet!"
 
-#: src/components/space/Channel.tsx:NaN
 #~ msgid "Username or Address"
 #~ msgstr "Brugernavn eller adresse"
 
@@ -3027,8 +3032,8 @@ msgstr "Dine oplysninger"
 #~ msgstr "Din private nøgle er blevet kopieret til udklipsholderen. Gem den som \"AccountID.key\" (du kan finde dit konto-ID i indstillingerne senere). DEL ALDRIG denne nøgle!"
 
 #: src/components/modals/UserSettingsModal/Privacy.tsx:271
-msgid "Your private key will be displayed on screen. Anyone who sees or photographs this QR code can take full control of your Quorum account and steal any associated funds."
-msgstr ""
+#~ msgid "Your private key will be displayed on screen. Anyone who sees or photographs this QR code can take full control of your Quorum account and steal any associated funds."
+#~ msgstr "Din private nøgle vil blive vist på skærmen. Enhver, der ser eller fotograferer denne QR-kode, kan tage fuld kontrol over din Quorum-konto og stjæle eventuelle tilknyttede midler."
 
 #: src/utils/imageProcessing/errors.ts:40
 msgid "Your profile image size must be {maxSize} or less and must be a PNG, JPG, or JPEG file extension."

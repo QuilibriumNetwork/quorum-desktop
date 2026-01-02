@@ -390,6 +390,16 @@ msgstr ""
 "Animirani nalepnica GIF-ovi ne mogu biti veći od 750KB. Molimo optimizujte "
 "svoj GIF za upotrebu nalepnica."
 
+#: src/components/modals/UserSettingsModal/Privacy.tsx:268
+msgid ""
+"Anyone who sees or photographs this QR code can take full control of your "
+"Quorum account and steal any associated funds. Only proceed if you are in a "
+"private location and ready to scan immediately."
+msgstr ""
+"Svako ko vidi ili fotografiše ovaj QR kod može preuzeti punu kontrolu nad "
+"vašim Quorum nalogom i ukrasti sve povezane fondove. Nastavite samo ako ste "
+"na privatnom mestu i spremni da odmah skenirate."
+
 #: src/components/modals/UserSettingsModal/Appearance.tsx:40
 #: src/components/modals/UserSettingsModal/Navigation.tsx:18
 msgid "Appearance"
@@ -507,7 +517,7 @@ msgstr "Dozvola za kameru je potrebna za pravljenje fotografija"
 #: src/components/modals/ConversationSettingsModal.tsx:62
 #: src/components/modals/KickUserModal.tsx:98
 #: src/components/modals/MuteUserModal.tsx:129
-#: src/components/modals/UserSettingsModal/Privacy.tsx:284
+#: src/components/modals/UserSettingsModal/Privacy.tsx:277
 #: src/components/primitives/FileUpload/FileUpload.native.tsx:173
 #: src/hooks/business/channels/useChannelManagement.ts:253
 #: src/hooks/business/messages/useMessageActions.ts:382
@@ -799,7 +809,7 @@ msgstr "Trenutni link za poziv"
 msgid "Dark"
 msgstr "Tamno"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:327
+#: src/components/modals/UserSettingsModal/Privacy.tsx:325
 msgid "Data Recovery"
 msgstr "Obnova podataka"
 
@@ -965,7 +975,7 @@ msgstr "Ime za prikaz je obavezno"
 msgid "Display name must be {MAX_NAME_LENGTH} characters or less"
 msgstr "Prikazano ime mora imati {MAX_NAME_LENGTH} karaktera ili manje"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:247
+#: src/components/modals/UserSettingsModal/Privacy.tsx:251
 msgid ""
 "Display your private key as a QR code to scan with the Quorum mobile app. "
 "This allows you to import your account on mobile without typing the key."
@@ -1379,7 +1389,7 @@ msgstr "Ime grupe mora imati {MAX_NAME_LENGTH} karaktera ili manje"
 msgid "Hang in there..."
 msgstr "Izdržite..."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:316
+#: src/components/modals/UserSettingsModal/Privacy.tsx:311
 msgid "Hide"
 msgstr "Sakrij"
 
@@ -1404,7 +1414,7 @@ msgstr "Sakrij tihe kanale na listi"
 msgid "I already saved mine"
 msgstr "Već sam sačuvao svoj"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:291
+#: src/components/modals/UserSettingsModal/Privacy.tsx:285
 msgid "I Understand, Show QR"
 msgstr "Razumem, prikaži QR"
 
@@ -1623,7 +1633,7 @@ msgstr "Učitavanje zakačenih poruka..."
 msgid "Loading your profile..."
 msgstr "Učitavanje vašeg profila..."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:291
+#: src/components/modals/UserSettingsModal/Privacy.tsx:285
 msgid "Loading..."
 msgstr "Učitavanje..."
 
@@ -1931,12 +1941,6 @@ msgstr "Jedan od nas, jedan od nas!"
 msgid "Online"
 msgstr "Na mreži"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:274
-msgid ""
-"Only proceed if you are in a private location and ready to scan immediately."
-msgstr ""
-"Nastavite samo ako ste na privatnoj lokaciji i spremni da odmah skenirate."
-
 #: src/components/ui/YouTubeFacade.tsx:171
 msgid "Open video on YouTube"
 msgstr "Otvorite video na YouTube-u"
@@ -2094,7 +2098,7 @@ msgstr ""
 "Javni pozivni linkovi omogućavaju svakome ko ima pristup linku da se "
 "pridruži vašem Space. Razmislite s kim delite link i gde ga objavljujete."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:308
+#: src/components/modals/UserSettingsModal/Privacy.tsx:302
 msgid "QR code will auto-hide in 60 seconds"
 msgstr "QR kod će se automatski sakriti za 60 sekundi"
 
@@ -2207,11 +2211,11 @@ msgstr ""
 msgid "Reset"
 msgstr "Resetuj"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:341
+#: src/components/modals/UserSettingsModal/Privacy.tsx:339
 msgid "Restore"
 msgstr "Vrati"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:332
+#: src/components/modals/UserSettingsModal/Privacy.tsx:330
 msgid ""
 "Restore Spaces that exist on this device but are missing from your "
 "navigation menu."
@@ -2224,7 +2228,7 @@ msgstr ""
 msgid "Restored {0} space(s)"
 msgstr "Obnovljeno {0} prostor(a)"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:341
+#: src/components/modals/UserSettingsModal/Privacy.tsx:339
 msgid "Restoring..."
 msgstr "Obnavljanje..."
 
@@ -2337,10 +2341,6 @@ msgstr "Pretraživanje..."
 msgid "Security"
 msgstr "Bezbednost"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:268
-msgid "Security Warning"
-msgstr "Upozorenje o bezbednosti"
-
 #: src/components/modals/SpaceSettingsModal/Account.tsx:221
 msgid "Select"
 msgstr "Izaberi"
@@ -2430,9 +2430,9 @@ msgstr "prikaži početni ekran"
 msgid "Show Muted Channels"
 msgstr "Prikaži tihe kanale"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:256
-msgid "Show QR Code"
-msgstr "Prikaži QR kod"
+#: src/components/modals/UserSettingsModal/Privacy.tsx:259
+msgid "Show QR"
+msgstr "Prikaži QR"
 
 #: src/components/search/SearchResults.tsx:187
 #: src/components/search/SearchResults.tsx:214
@@ -3136,16 +3136,6 @@ msgstr "Pozvani ste da se pridružite Простору"
 msgid "Your Details"
 msgstr "Vaši detalji"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:271
-msgid ""
-"Your private key will be displayed on screen. Anyone who sees or photographs"
-" this QR code can take full control of your Quorum account and steal any "
-"associated funds."
-msgstr ""
-"Vaš privatni ključ će biti prikazan na ekranu. Svako ko vidi ili fotografiše"
-" ovaj QR kod može preuzeti potpunu kontrolu nad vašim Quorum nalogom i "
-"ukrasti sve povezane fondove."
-
 #: src/utils/imageProcessing/errors.ts:40
 msgid ""
 "Your profile image size must be {maxSize} or less and must be a PNG, JPG, or"
@@ -3314,6 +3304,11 @@ msgstr "YouTube video sličica"
 #~ msgid "No unread mentions"
 #~ msgstr "Nema nepročitanih pominjanja"
 
+#~ msgid ""
+#~ "Only proceed if you are in a private location and ready to scan immediately."
+#~ msgstr ""
+#~ "Nastavite samo ako ste na privatnoj lokaciji i spremni da odmah skenirate."
+
 #~ msgid "optional"
 #~ msgstr "opciono"
 
@@ -3334,6 +3329,9 @@ msgstr "YouTube video sličica"
 #~ msgid "Restore Missing Spaces"
 #~ msgstr "Obnovi nedostajuće prostore"
 
+#~ msgid "Security Warning"
+#~ msgstr "Upozorenje o bezbednosti"
+
 #~ msgid ""
 #~ "Select any existing role as managers for this channel. Managers have post, "
 #~ "delete, and pin permissions on ANY message by default. If no managers are "
@@ -3353,6 +3351,9 @@ msgstr "YouTube video sličica"
 #~ msgstr ""
 #~ "Pošaljite pozivnice ljudima sa kojima ste prethodno razgovarali. Dugme za "
 #~ "pozivnicu će se pojaviti u njihovoj pristigloj pošti."
+
+#~ msgid "Show QR Code"
+#~ msgstr "Prikaži QR kod"
 
 #~ msgid "Space Name"
 #~ msgstr "Ime Простора-a"
@@ -3423,3 +3424,12 @@ msgstr "YouTube video sličica"
 #~ "Vaš privatni ključ je kopiran u međuspremnik. Sačuvajte ga kao "
 #~ "\"AccountID.key\" (možete pronaći svoj ID naloga u podešavanjima kasnije). "
 #~ "NIKADA ne delite ovaj ključ!"
+
+#~ msgid ""
+#~ "Your private key will be displayed on screen. Anyone who sees or photographs"
+#~ " this QR code can take full control of your Quorum account and steal any "
+#~ "associated funds."
+#~ msgstr ""
+#~ "Vaš privatni ključ će biti prikazan na ekranu. Svako ko vidi ili fotografiše"
+#~ " ovaj QR kod može preuzeti potpunu kontrolu nad vašim Quorum nalogom i "
+#~ "ukrasti sve povezane fondove."

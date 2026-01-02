@@ -387,6 +387,16 @@ msgstr ""
 "GIF nhãn dán hoạt hình không được lớn hơn 750KB. Vui lòng tối ưu hóa GIF của"
 " bạn cho việc sử dụng nhãn dán."
 
+#: src/components/modals/UserSettingsModal/Privacy.tsx:268
+msgid ""
+"Anyone who sees or photographs this QR code can take full control of your "
+"Quorum account and steal any associated funds. Only proceed if you are in a "
+"private location and ready to scan immediately."
+msgstr ""
+"Bất kỳ ai nhìn thấy hoặc chụp ảnh mã QR này có thể kiểm soát hoàn toàn tài "
+"khoản Quorum của bạn và đánh cắp bất kỳ khoản tiền nào liên quan. Chỉ tiếp "
+"tục nếu bạn đang ở một địa điểm riêng tư và sẵn sàng quét ngay lập tức."
+
 #: src/components/modals/UserSettingsModal/Appearance.tsx:40
 #: src/components/modals/UserSettingsModal/Navigation.tsx:18
 msgid "Appearance"
@@ -504,7 +514,7 @@ msgstr "Cần có quyền truy cập máy ảnh để chụp ảnh"
 #: src/components/modals/ConversationSettingsModal.tsx:62
 #: src/components/modals/KickUserModal.tsx:98
 #: src/components/modals/MuteUserModal.tsx:129
-#: src/components/modals/UserSettingsModal/Privacy.tsx:284
+#: src/components/modals/UserSettingsModal/Privacy.tsx:277
 #: src/components/primitives/FileUpload/FileUpload.native.tsx:173
 #: src/hooks/business/channels/useChannelManagement.ts:253
 #: src/hooks/business/messages/useMessageActions.ts:382
@@ -794,7 +804,7 @@ msgstr "Liên kết mời hiện tại"
 msgid "Dark"
 msgstr "Tối"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:327
+#: src/components/modals/UserSettingsModal/Privacy.tsx:325
 msgid "Data Recovery"
 msgstr "Khôi phục dữ liệu"
 
@@ -961,7 +971,7 @@ msgstr "Tên hiển thị là bắt buộc"
 msgid "Display name must be {MAX_NAME_LENGTH} characters or less"
 msgstr "Tên hiển thị phải có {MAX_NAME_LENGTH} ký tự trở xuống"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:247
+#: src/components/modals/UserSettingsModal/Privacy.tsx:251
 msgid ""
 "Display your private key as a QR code to scan with the Quorum mobile app. "
 "This allows you to import your account on mobile without typing the key."
@@ -1376,7 +1386,7 @@ msgstr "Tên nhóm phải có {MAX_NAME_LENGTH} ký tự trở xuống"
 msgid "Hang in there..."
 msgstr "Chờ một chút..."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:316
+#: src/components/modals/UserSettingsModal/Privacy.tsx:311
 msgid "Hide"
 msgstr "Ẩn"
 
@@ -1401,7 +1411,7 @@ msgstr "Ẩn các kênh đã tắt tiếng trong danh sách"
 msgid "I already saved mine"
 msgstr "Tôi đã lưu của mình rồi"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:291
+#: src/components/modals/UserSettingsModal/Privacy.tsx:285
 msgid "I Understand, Show QR"
 msgstr "Tôi hiểu, Hiển thị QR"
 
@@ -1620,7 +1630,7 @@ msgstr "Đang tải tin nhắn đã ghim..."
 msgid "Loading your profile..."
 msgstr "Đang tải hồ sơ của bạn..."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:291
+#: src/components/modals/UserSettingsModal/Privacy.tsx:285
 msgid "Loading..."
 msgstr "Đang tải..."
 
@@ -1928,13 +1938,6 @@ msgstr "Một trong chúng ta, một trong chúng ta!"
 msgid "Online"
 msgstr "Trực tuyến"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:274
-msgid ""
-"Only proceed if you are in a private location and ready to scan immediately."
-msgstr ""
-"Chỉ tiếp tục nếu bạn đang ở một vị trí riêng tư và sẵn sàng quét ngay lập "
-"tức."
-
 #: src/components/ui/YouTubeFacade.tsx:171
 msgid "Open video on YouTube"
 msgstr "Mở video trên YouTube"
@@ -2094,7 +2097,7 @@ msgstr ""
 "tham gia Space của bạn. Hãy cân nhắc ai bạn chia sẻ liên kết và nơi bạn đăng"
 " nó."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:308
+#: src/components/modals/UserSettingsModal/Privacy.tsx:302
 msgid "QR code will auto-hide in 60 seconds"
 msgstr "Mã QR sẽ tự động ẩn trong 60 giây"
 
@@ -2211,11 +2214,11 @@ msgstr ""
 msgid "Reset"
 msgstr "Đặt lại"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:341
+#: src/components/modals/UserSettingsModal/Privacy.tsx:339
 msgid "Restore"
 msgstr "Khôi phục"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:332
+#: src/components/modals/UserSettingsModal/Privacy.tsx:330
 msgid ""
 "Restore Spaces that exist on this device but are missing from your "
 "navigation menu."
@@ -2228,7 +2231,7 @@ msgstr ""
 msgid "Restored {0} space(s)"
 msgstr "Đã khôi phục {0} không gian"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:341
+#: src/components/modals/UserSettingsModal/Privacy.tsx:339
 msgid "Restoring..."
 msgstr "Đang khôi phục..."
 
@@ -2341,10 +2344,6 @@ msgstr "Đang tìm kiếm..."
 msgid "Security"
 msgstr "Bảo mật"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:268
-msgid "Security Warning"
-msgstr "Cảnh báo Bảo mật"
-
 #: src/components/modals/SpaceSettingsModal/Account.tsx:221
 msgid "Select"
 msgstr "Chọn"
@@ -2434,9 +2433,9 @@ msgstr "hiện màn hình chính"
 msgid "Show Muted Channels"
 msgstr "Hiện Các Kênh Đã Tắt Tiếng"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:256
-msgid "Show QR Code"
-msgstr "Hiển thị Mã QR"
+#: src/components/modals/UserSettingsModal/Privacy.tsx:259
+msgid "Show QR"
+msgstr "Hiển thị QR"
 
 #: src/components/search/SearchResults.tsx:187
 #: src/components/search/SearchResults.tsx:214
@@ -3149,16 +3148,6 @@ msgstr "Bạn đã được mời tham gia một Không Gian"
 msgid "Your Details"
 msgstr "Thông tin của bạn"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:271
-msgid ""
-"Your private key will be displayed on screen. Anyone who sees or photographs"
-" this QR code can take full control of your Quorum account and steal any "
-"associated funds."
-msgstr ""
-"Khóa riêng của bạn sẽ được hiển thị trên màn hình. Bất kỳ ai nhìn thấy hoặc "
-"chụp ảnh mã QR này có thể kiểm soát hoàn toàn tài khoản Quorum của bạn và "
-"đánh cắp bất kỳ khoản tiền nào liên quan."
-
 #: src/utils/imageProcessing/errors.ts:40
 msgid ""
 "Your profile image size must be {maxSize} or less and must be a PNG, JPG, or"
@@ -3326,6 +3315,12 @@ msgstr "Hình thu nhỏ Video YouTube"
 #~ msgid "No unread mentions"
 #~ msgstr "Không có thông báo chưa đọc"
 
+#~ msgid ""
+#~ "Only proceed if you are in a private location and ready to scan immediately."
+#~ msgstr ""
+#~ "Chỉ tiếp tục nếu bạn đang ở một vị trí riêng tư và sẵn sàng quét ngay lập "
+#~ "tức."
+
 #~ msgid "optional"
 #~ msgstr "tùy chọn"
 
@@ -3347,6 +3342,9 @@ msgstr "Hình thu nhỏ Video YouTube"
 #~ msgid "Restore Missing Spaces"
 #~ msgstr "Khôi phục Không gian Bị thiếu"
 
+#~ msgid "Security Warning"
+#~ msgstr "Cảnh báo Bảo mật"
+
 #~ msgid ""
 #~ "Select any existing role as managers for this channel. Managers have post, "
 #~ "delete, and pin permissions on ANY message by default. If no managers are "
@@ -3365,6 +3363,9 @@ msgstr "Hình thu nhỏ Video YouTube"
 #~ msgstr ""
 #~ "Gửi lời mời đến những người mà bạn đã từng trò chuyện trước đây. Một nút mời"
 #~ " sẽ xuất hiện trong hộp thư đến của họ."
+
+#~ msgid "Show QR Code"
+#~ msgstr "Hiển thị Mã QR"
 
 #~ msgid "Space Name"
 #~ msgstr "Tên không gian"
@@ -3435,3 +3436,12 @@ msgstr "Hình thu nhỏ Video YouTube"
 #~ "Khóa riêng của bạn đã được sao chép vào clipboard. Lưu nó dưới dạng "
 #~ "\"AccountID.key\" (bạn có thể tìm thấy ID Tài khoản của mình trong Cài đặt "
 #~ "sau). KHÔNG bao giờ chia sẻ khóa này!"
+
+#~ msgid ""
+#~ "Your private key will be displayed on screen. Anyone who sees or photographs"
+#~ " this QR code can take full control of your Quorum account and steal any "
+#~ "associated funds."
+#~ msgstr ""
+#~ "Khóa riêng của bạn sẽ được hiển thị trên màn hình. Bất kỳ ai nhìn thấy hoặc "
+#~ "chụp ảnh mã QR này có thể kiểm soát hoàn toàn tài khoản Quorum của bạn và "
+#~ "đánh cắp bất kỳ khoản tiền nào liên quan."

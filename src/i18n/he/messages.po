@@ -385,6 +385,15 @@ msgstr ""
 "גיף אנימציה של מדבקות לא יכול להיות גדול מ-750KB. אנא אופטימיזו את הגיף שלכם"
 " לשימוש במדבקות."
 
+#: src/components/modals/UserSettingsModal/Privacy.tsx:268
+msgid ""
+"Anyone who sees or photographs this QR code can take full control of your "
+"Quorum account and steal any associated funds. Only proceed if you are in a "
+"private location and ready to scan immediately."
+msgstr ""
+"כל מי שרואה או מצלם את קוד ה-QR הזה יכול לקחת שליטה מלאה על חשבון ה-Quorum "
+"שלך ולגנוב כל כספים קשורים. המשך רק אם אתה במקום פרטי ומוכן לסרוק מיד."
+
 #: src/components/modals/UserSettingsModal/Appearance.tsx:40
 #: src/components/modals/UserSettingsModal/Navigation.tsx:18
 msgid "Appearance"
@@ -503,7 +512,7 @@ msgstr "דרושה הרשאת מצלמה כדי לצלם תמונות"
 #: src/components/modals/ConversationSettingsModal.tsx:62
 #: src/components/modals/KickUserModal.tsx:98
 #: src/components/modals/MuteUserModal.tsx:129
-#: src/components/modals/UserSettingsModal/Privacy.tsx:284
+#: src/components/modals/UserSettingsModal/Privacy.tsx:277
 #: src/components/primitives/FileUpload/FileUpload.native.tsx:173
 #: src/hooks/business/channels/useChannelManagement.ts:253
 #: src/hooks/business/messages/useMessageActions.ts:382
@@ -789,7 +798,7 @@ msgstr "קישור ההזמנה הנוכחי"
 msgid "Dark"
 msgstr "כהה"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:327
+#: src/components/modals/UserSettingsModal/Privacy.tsx:325
 msgid "Data Recovery"
 msgstr "שחזור נתונים"
 
@@ -955,7 +964,7 @@ msgstr "שם תצוגה נדרש"
 msgid "Display name must be {MAX_NAME_LENGTH} characters or less"
 msgstr "שם התצוגה חייב להיות באורך של {MAX_NAME_LENGTH} תווים או פחות"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:247
+#: src/components/modals/UserSettingsModal/Privacy.tsx:251
 msgid ""
 "Display your private key as a QR code to scan with the Quorum mobile app. "
 "This allows you to import your account on mobile without typing the key."
@@ -1363,7 +1372,7 @@ msgstr "שם הקבוצה חייב להיות באורך של {MAX_NAME_LENGTH} 
 msgid "Hang in there..."
 msgstr "חכה שם..."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:316
+#: src/components/modals/UserSettingsModal/Privacy.tsx:311
 msgid "Hide"
 msgstr "הסתר"
 
@@ -1388,7 +1397,7 @@ msgstr "הסתר ערוצים מושתקים ברשימה"
 msgid "I already saved mine"
 msgstr "אני כבר שמרתי את שלי"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:291
+#: src/components/modals/UserSettingsModal/Privacy.tsx:285
 msgid "I Understand, Show QR"
 msgstr "אני מבין, הצג QR"
 
@@ -1603,7 +1612,7 @@ msgstr "טוען הודעות מוצמדות..."
 msgid "Loading your profile..."
 msgstr "טוען את הפרופיל שלך..."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:291
+#: src/components/modals/UserSettingsModal/Privacy.tsx:285
 msgid "Loading..."
 msgstr "טוען..."
 
@@ -1904,11 +1913,6 @@ msgstr "אחד מאיתנו, אחד מאיתנו!"
 msgid "Online"
 msgstr "באינטרנט"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:274
-msgid ""
-"Only proceed if you are in a private location and ready to scan immediately."
-msgstr "המשך רק אם אתה במקום פרטי ומוכן לסרוק מיד."
-
 #: src/components/ui/YouTubeFacade.tsx:171
 msgid "Open video on YouTube"
 msgstr "פתח סרטון בYouTube"
@@ -2065,7 +2069,7 @@ msgstr ""
 "קישורים להזמנה ציבורית מאפשרים לכל מי שיש לו גישה לקישור להצטרף ל-Space שלך."
 " שקול עם מי אתה משתף את הקישור ואיפה אתה מפרסם אותו."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:308
+#: src/components/modals/UserSettingsModal/Privacy.tsx:302
 msgid "QR code will auto-hide in 60 seconds"
 msgstr "קוד QR יוסתר אוטומטית תוך 60 שניות"
 
@@ -2177,11 +2181,11 @@ msgstr ""
 msgid "Reset"
 msgstr "איפוס"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:341
+#: src/components/modals/UserSettingsModal/Privacy.tsx:339
 msgid "Restore"
 msgstr "שחזר"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:332
+#: src/components/modals/UserSettingsModal/Privacy.tsx:330
 msgid ""
 "Restore Spaces that exist on this device but are missing from your "
 "navigation menu."
@@ -2192,7 +2196,7 @@ msgstr "שחזר חללים הקיימים במכשיר זה אך חסרים ב�
 msgid "Restored {0} space(s)"
 msgstr "שוחזרו {0} חלל(ים)"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:341
+#: src/components/modals/UserSettingsModal/Privacy.tsx:339
 msgid "Restoring..."
 msgstr "שחזור..."
 
@@ -2305,10 +2309,6 @@ msgstr "מחפש..."
 msgid "Security"
 msgstr "אבטחה"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:268
-msgid "Security Warning"
-msgstr "אזהרת אבטחה"
-
 #: src/components/modals/SpaceSettingsModal/Account.tsx:221
 msgid "Select"
 msgstr "בחר"
@@ -2397,9 +2397,9 @@ msgstr "הצג מסך בית"
 msgid "Show Muted Channels"
 msgstr "הצג ערוצים מושתקים"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:256
-msgid "Show QR Code"
-msgstr "הצג קוד QR"
+#: src/components/modals/UserSettingsModal/Privacy.tsx:259
+msgid "Show QR"
+msgstr "הצג QR"
 
 #: src/components/search/SearchResults.tsx:187
 #: src/components/search/SearchResults.tsx:214
@@ -3082,15 +3082,6 @@ msgstr "נשלחת אליך הזמנה להצטרף למרחב"
 msgid "Your Details"
 msgstr "פרטי שלך"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:271
-msgid ""
-"Your private key will be displayed on screen. Anyone who sees or photographs"
-" this QR code can take full control of your Quorum account and steal any "
-"associated funds."
-msgstr ""
-"המפתח הפרטי שלך יוצג על המסך. כל מי שיראה או יצלם את קוד ה-QR הזה יכול לקחת "
-"שליטה מלאה על חשבון ה-Quorum שלך ולגנוב כל כספים קשורים."
-
 #: src/utils/imageProcessing/errors.ts:40
 msgid ""
 "Your profile image size must be {maxSize} or less and must be a PNG, JPG, or"
@@ -3256,6 +3247,10 @@ msgstr "תמונה ממוזערת של וידאו של YouTube"
 #~ msgid "No unread mentions"
 #~ msgstr "אין אזכורים שלא נקראו"
 
+#~ msgid ""
+#~ "Only proceed if you are in a private location and ready to scan immediately."
+#~ msgstr "המשך רק אם אתה במקום פרטי ומוכן לסרוק מיד."
+
 #~ msgid "optional"
 #~ msgstr "אופציונלי"
 
@@ -3276,6 +3271,9 @@ msgstr "תמונה ממוזערת של וידאו של YouTube"
 #~ msgid "Restore Missing Spaces"
 #~ msgstr "שחזר חללים חסרים"
 
+#~ msgid "Security Warning"
+#~ msgstr "אזהרת אבטחה"
+
 #~ msgid ""
 #~ "Select any existing role as managers for this channel. Managers have post, "
 #~ "delete, and pin permissions on ANY message by default. If no managers are "
@@ -3293,6 +3291,9 @@ msgstr "תמונה ממוזערת של וידאו של YouTube"
 #~ "button will appear in their inbox."
 #~ msgstr ""
 #~ "שלח הזמנות לאנשים שעםם כבר ניהלת שיחות. כפתור הזמנה יופיע בתיבת הדואר שלהם."
+
+#~ msgid "Show QR Code"
+#~ msgstr "הצג קוד QR"
 
 #~ msgid "Space Name"
 #~ msgstr "שם חלל"
@@ -3360,3 +3361,11 @@ msgstr "תמונה ממוזערת של וידאו של YouTube"
 #~ msgstr ""
 #~ "המפתח הפרטי שלך הועתק ללוח הגזירים. שמור אותו כ\"AccountID.key\" (תוכל למצוא"
 #~ " את מזהה החשבון שלך בהגדרות מאוחר יותר). אל תשתף מפתח זה!"
+
+#~ msgid ""
+#~ "Your private key will be displayed on screen. Anyone who sees or photographs"
+#~ " this QR code can take full control of your Quorum account and steal any "
+#~ "associated funds."
+#~ msgstr ""
+#~ "המפתח הפרטי שלך יוצג על המסך. כל מי שיראה או יצלם את קוד ה-QR הזה יכול לקחת "
+#~ "שליטה מלאה על חשבון ה-Quorum שלך ולגנוב כל כספים קשורים."

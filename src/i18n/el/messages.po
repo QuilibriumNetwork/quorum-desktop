@@ -393,6 +393,17 @@ msgstr ""
 "Animowane naklejki GIFy nie mogą być większe niż 750KB. Proszę "
 "zoptymalizować swój GIF do użycia naklejek."
 
+#: src/components/modals/UserSettingsModal/Privacy.tsx:268
+msgid ""
+"Anyone who sees or photographs this QR code can take full control of your "
+"Quorum account and steal any associated funds. Only proceed if you are in a "
+"private location and ready to scan immediately."
+msgstr ""
+"Οποιοσδήποτε δει ή φωτογραφίσει αυτόν τον κωδικό QR μπορεί να αποκτήσει "
+"πλήρη έλεγχο του λογαριασμού σας Quorum και να κλέψει οποιαδήποτε "
+"συσχετισμένα κεφάλαια. Προχωρήστε μόνο αν βρίσκεστε σε ιδιωτική τοποθεσία "
+"και είστε έτοιμοι να σαρώσετε αμέσως."
+
 #: src/components/modals/UserSettingsModal/Appearance.tsx:40
 #: src/components/modals/UserSettingsModal/Navigation.tsx:18
 msgid "Appearance"
@@ -511,7 +522,7 @@ msgstr "Η άδεια κάμερας είναι απαραίτητη για να
 #: src/components/modals/ConversationSettingsModal.tsx:62
 #: src/components/modals/KickUserModal.tsx:98
 #: src/components/modals/MuteUserModal.tsx:129
-#: src/components/modals/UserSettingsModal/Privacy.tsx:284
+#: src/components/modals/UserSettingsModal/Privacy.tsx:277
 #: src/components/primitives/FileUpload/FileUpload.native.tsx:173
 #: src/hooks/business/channels/useChannelManagement.ts:253
 #: src/hooks/business/messages/useMessageActions.ts:382
@@ -810,7 +821,7 @@ msgstr "Τρέχων Σύνδεσμος Πρόσκλησης"
 msgid "Dark"
 msgstr "Σκοτάδι"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:327
+#: src/components/modals/UserSettingsModal/Privacy.tsx:325
 msgid "Data Recovery"
 msgstr "Ανάκτηση Δεδομένων"
 
@@ -981,7 +992,7 @@ msgid "Display name must be {MAX_NAME_LENGTH} characters or less"
 msgstr ""
 "Το όνομα εμφάνισης πρέπει να είναι {MAX_NAME_LENGTH} χαρακτήρες ή λιγότερο"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:247
+#: src/components/modals/UserSettingsModal/Privacy.tsx:251
 msgid ""
 "Display your private key as a QR code to scan with the Quorum mobile app. "
 "This allows you to import your account on mobile without typing the key."
@@ -1407,7 +1418,7 @@ msgstr ""
 msgid "Hang in there..."
 msgstr "Κρατηθείτε..."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:316
+#: src/components/modals/UserSettingsModal/Privacy.tsx:311
 msgid "Hide"
 msgstr "Απόκρυψη"
 
@@ -1432,7 +1443,7 @@ msgstr "Απόκρυψη σιωπηλών καναλιών στη λίστα"
 msgid "I already saved mine"
 msgstr "Ήδη το αποθήκευσα"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:291
+#: src/components/modals/UserSettingsModal/Privacy.tsx:285
 msgid "I Understand, Show QR"
 msgstr "Κατανοώ, Εμφάνιση QR"
 
@@ -1652,7 +1663,7 @@ msgstr "Φόρτωση καρφιτσωμένων μηνυμάτων..."
 msgid "Loading your profile..."
 msgstr "Φορτώνω το προφίλ σας..."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:291
+#: src/components/modals/UserSettingsModal/Privacy.tsx:285
 msgid "Loading..."
 msgstr "Φόρτωση..."
 
@@ -1968,13 +1979,6 @@ msgstr "Ένας από εμάς, ένας από εμάς!"
 msgid "Online"
 msgstr "Συνδεδεμένος"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:274
-msgid ""
-"Only proceed if you are in a private location and ready to scan immediately."
-msgstr ""
-"Προχωρήστε μόνο αν βρίσκεστε σε ιδιωτική τοποθεσία και είστε έτοιμοι να "
-"σαρώσετε αμέσως."
-
 #: src/components/ui/YouTubeFacade.tsx:171
 msgid "Open video on YouTube"
 msgstr "Open video op YouTube"
@@ -2136,7 +2140,7 @@ msgstr ""
 " om je Space te betreden. Overweeg met wie je de link deelt en waar je deze "
 "plaatst."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:308
+#: src/components/modals/UserSettingsModal/Privacy.tsx:302
 msgid "QR code will auto-hide in 60 seconds"
 msgstr "Ο κωδικός QR θα κρυφτεί αυτόματα σε 60 δευτερόλεπτα"
 
@@ -2252,11 +2256,11 @@ msgstr ""
 msgid "Reset"
 msgstr "Reset"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:341
+#: src/components/modals/UserSettingsModal/Privacy.tsx:339
 msgid "Restore"
 msgstr "Αποκατάσταση"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:332
+#: src/components/modals/UserSettingsModal/Privacy.tsx:330
 msgid ""
 "Restore Spaces that exist on this device but are missing from your "
 "navigation menu."
@@ -2269,7 +2273,7 @@ msgstr ""
 msgid "Restored {0} space(s)"
 msgstr "Αποκαταστάθηκε {0} χώρος(οι)"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:341
+#: src/components/modals/UserSettingsModal/Privacy.tsx:339
 msgid "Restoring..."
 msgstr "Αποκατάσταση..."
 
@@ -2382,10 +2386,6 @@ msgstr "Αναζητώντας..."
 msgid "Security"
 msgstr "Ασφάλεια"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:268
-msgid "Security Warning"
-msgstr "Προειδοποίηση Ασφαλείας"
-
 #: src/components/modals/SpaceSettingsModal/Account.tsx:221
 msgid "Select"
 msgstr "Επιλογή"
@@ -2475,9 +2475,9 @@ msgstr "εμφάνιση αρχικής οθόνης"
 msgid "Show Muted Channels"
 msgstr "Εμφάνιση Σιωπηλών Καναλιών"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:256
-msgid "Show QR Code"
-msgstr "Εμφάνιση Κωδικού QR"
+#: src/components/modals/UserSettingsModal/Privacy.tsx:259
+msgid "Show QR"
+msgstr "Εμφάνιση QR"
 
 #: src/components/search/SearchResults.tsx:187
 #: src/components/search/SearchResults.tsx:214
@@ -3207,16 +3207,6 @@ msgstr "Έχεις προσκληθεί να ενταχθείς σε έναν Χ
 msgid "Your Details"
 msgstr "Τα Στοιχεία Σας"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:271
-msgid ""
-"Your private key will be displayed on screen. Anyone who sees or photographs"
-" this QR code can take full control of your Quorum account and steal any "
-"associated funds."
-msgstr ""
-"Το ιδιωτικό σας κλειδί θα εμφανιστεί στην οθόνη. Οποιοσδήποτε βλέπει ή "
-"φωτογραφίζει αυτόν τον κωδικό QR μπορεί να αποκτήσει πλήρη έλεγχο του "
-"λογαριασμού σας στο Quorum και να κλέψει οποιαδήποτε σχετική χρηματοδότηση."
-
 #: src/utils/imageProcessing/errors.ts:40
 msgid ""
 "Your profile image size must be {maxSize} or less and must be a PNG, JPG, or"
@@ -3387,6 +3377,12 @@ msgstr "Miniaturka filmiku YouTube"
 #~ msgid "No unread mentions"
 #~ msgstr "Δεν υπάρχουν μη αναγνωσμένες αναφορές"
 
+#~ msgid ""
+#~ "Only proceed if you are in a private location and ready to scan immediately."
+#~ msgstr ""
+#~ "Προχωρήστε μόνο αν βρίσκεστε σε ιδιωτική τοποθεσία και είστε έτοιμοι να "
+#~ "σαρώσετε αμέσως."
+
 #~ msgid "optional"
 #~ msgstr "προαιρετικό"
 
@@ -3408,6 +3404,9 @@ msgstr "Miniaturka filmiku YouTube"
 #~ msgid "Restore Missing Spaces"
 #~ msgstr "Αποκατάσταση Λείποντων Χώρων"
 
+#~ msgid "Security Warning"
+#~ msgstr "Προειδοποίηση Ασφαλείας"
+
 #~ msgid ""
 #~ "Select any existing role as managers for this channel. Managers have post, "
 #~ "delete, and pin permissions on ANY message by default. If no managers are "
@@ -3427,6 +3426,9 @@ msgstr "Miniaturka filmiku YouTube"
 #~ msgstr ""
 #~ "Αποστείλετε προσκλήσεις σε άτομα με τα οποία έχετε προηγουμένως συνομιλήσει."
 #~ " Ένα κουμπί πρόσκλησης θα εμφανιστεί στα εισερχόμενά τους."
+
+#~ msgid "Show QR Code"
+#~ msgstr "Εμφάνιση Κωδικού QR"
 
 #~ msgid "Space Name"
 #~ msgstr "Όνομα Χώρου"
@@ -3502,3 +3504,12 @@ msgstr "Miniaturka filmiku YouTube"
 #~ "Το ιδιωτικό σας κλειδί έχει αντιγραφεί στο πρόχειρο. Αποθηκεύστε το ως "
 #~ "\"AccountID.key\" (μπορείτε να βρείτε το Account ID σας στις Ρυθμίσεις "
 #~ "αργότερα). ΠΟΤΕ μην μοιραστείτε αυτό το κλειδί!"
+
+#~ msgid ""
+#~ "Your private key will be displayed on screen. Anyone who sees or photographs"
+#~ " this QR code can take full control of your Quorum account and steal any "
+#~ "associated funds."
+#~ msgstr ""
+#~ "Το ιδιωτικό σας κλειδί θα εμφανιστεί στην οθόνη. Οποιοσδήποτε βλέπει ή "
+#~ "φωτογραφίζει αυτόν τον κωδικό QR μπορεί να αποκτήσει πλήρη έλεγχο του "
+#~ "λογαριασμού σας στο Quorum και να κλέψει οποιαδήποτε σχετική χρηματοδότηση."

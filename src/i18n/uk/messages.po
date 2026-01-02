@@ -392,6 +392,16 @@ msgstr ""
 "Анімовані стікерні GIF не можуть бути більшими за 750KB. Будь ласка, "
 "оптимізуйте свій GIF для використання стікерів."
 
+#: src/components/modals/UserSettingsModal/Privacy.tsx:268
+msgid ""
+"Anyone who sees or photographs this QR code can take full control of your "
+"Quorum account and steal any associated funds. Only proceed if you are in a "
+"private location and ready to scan immediately."
+msgstr ""
+"Будь-хто, хто бачить або фотографує цей QR-код, може отримати повний "
+"контроль над вашим акаунтом Quorum і вкрасти будь-які пов'язані кошти. "
+"Продовжуйте лише якщо ви в приватному місці і готові сканувати негайно."
+
 #: src/components/modals/UserSettingsModal/Appearance.tsx:40
 #: src/components/modals/UserSettingsModal/Navigation.tsx:18
 msgid "Appearance"
@@ -509,7 +519,7 @@ msgstr "Необхідно надати дозвіл на камеру, щоб �
 #: src/components/modals/ConversationSettingsModal.tsx:62
 #: src/components/modals/KickUserModal.tsx:98
 #: src/components/modals/MuteUserModal.tsx:129
-#: src/components/modals/UserSettingsModal/Privacy.tsx:284
+#: src/components/modals/UserSettingsModal/Privacy.tsx:277
 #: src/components/primitives/FileUpload/FileUpload.native.tsx:173
 #: src/hooks/business/channels/useChannelManagement.ts:253
 #: src/hooks/business/messages/useMessageActions.ts:382
@@ -801,7 +811,7 @@ msgstr "Поточне посилання на запрошення"
 msgid "Dark"
 msgstr "Темний"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:327
+#: src/components/modals/UserSettingsModal/Privacy.tsx:325
 msgid "Data Recovery"
 msgstr "Відновлення даних"
 
@@ -968,7 +978,7 @@ msgid "Display name must be {MAX_NAME_LENGTH} characters or less"
 msgstr ""
 "Відображуване ім'я повинно містити не більше {MAX_NAME_LENGTH} символів"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:247
+#: src/components/modals/UserSettingsModal/Privacy.tsx:251
 msgid ""
 "Display your private key as a QR code to scan with the Quorum mobile app. "
 "This allows you to import your account on mobile without typing the key."
@@ -1386,7 +1396,7 @@ msgstr "Назва групи повинна містити не більше {M
 msgid "Hang in there..."
 msgstr "Тримайтеся..."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:316
+#: src/components/modals/UserSettingsModal/Privacy.tsx:311
 msgid "Hide"
 msgstr "Сховати"
 
@@ -1411,7 +1421,7 @@ msgstr "Сховати заглушені канали у списку"
 msgid "I already saved mine"
 msgstr "Я вже зберіг свій"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:291
+#: src/components/modals/UserSettingsModal/Privacy.tsx:285
 msgid "I Understand, Show QR"
 msgstr "Я розумію, показати QR"
 
@@ -1631,7 +1641,7 @@ msgstr "Завантаження закріплених повідомлень..
 msgid "Loading your profile..."
 msgstr "Завантаження вашого профілю..."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:291
+#: src/components/modals/UserSettingsModal/Privacy.tsx:285
 msgid "Loading..."
 msgstr "Завантаження..."
 
@@ -1942,12 +1952,6 @@ msgstr "Один з нас, один з нас!"
 msgid "Online"
 msgstr "Онлайн"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:274
-msgid ""
-"Only proceed if you are in a private location and ready to scan immediately."
-msgstr ""
-"Продовжуйте лише якщо ви в приватному місці і готові сканувати негайно."
-
 #: src/components/ui/YouTubeFacade.tsx:171
 msgid "Open video on YouTube"
 msgstr "Відкрити відео на YouTube"
@@ -2108,7 +2112,7 @@ msgstr ""
 " до вашого Space. Подумайте, з ким ви ділитеся посиланням і де ви його "
 "публікуєте."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:308
+#: src/components/modals/UserSettingsModal/Privacy.tsx:302
 msgid "QR code will auto-hide in 60 seconds"
 msgstr "QR-код автоматично сховається через 60 секунд"
 
@@ -2222,11 +2226,11 @@ msgstr ""
 msgid "Reset"
 msgstr "Скинути"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:341
+#: src/components/modals/UserSettingsModal/Privacy.tsx:339
 msgid "Restore"
 msgstr "Відновити"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:332
+#: src/components/modals/UserSettingsModal/Privacy.tsx:330
 msgid ""
 "Restore Spaces that exist on this device but are missing from your "
 "navigation menu."
@@ -2239,7 +2243,7 @@ msgstr ""
 msgid "Restored {0} space(s)"
 msgstr "Відновлено {0} простір(ів)"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:341
+#: src/components/modals/UserSettingsModal/Privacy.tsx:339
 msgid "Restoring..."
 msgstr "Відновлення..."
 
@@ -2352,10 +2356,6 @@ msgstr "Шукаю..."
 msgid "Security"
 msgstr "Безпека"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:268
-msgid "Security Warning"
-msgstr "Попередження безпеки"
-
 #: src/components/modals/SpaceSettingsModal/Account.tsx:221
 msgid "Select"
 msgstr "Вибрати"
@@ -2445,9 +2445,9 @@ msgstr "показати головний екран"
 msgid "Show Muted Channels"
 msgstr "Показати заглушені канали"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:256
-msgid "Show QR Code"
-msgstr "Показати QR-код"
+#: src/components/modals/UserSettingsModal/Privacy.tsx:259
+msgid "Show QR"
+msgstr "Показати QR"
 
 #: src/components/search/SearchResults.tsx:187
 #: src/components/search/SearchResults.tsx:214
@@ -3174,16 +3174,6 @@ msgstr "Вас запросили приєднатися до Простору"
 msgid "Your Details"
 msgstr "Ваші дані"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:271
-msgid ""
-"Your private key will be displayed on screen. Anyone who sees or photographs"
-" this QR code can take full control of your Quorum account and steal any "
-"associated funds."
-msgstr ""
-"Ваш приватний ключ буде відображено на екрані. Будь-хто, хто бачить або "
-"фотографує цей QR-код, може отримати повний контроль над вашим обліковим "
-"записом Quorum і вкрасти будь-які пов'язані кошти."
-
 #: src/utils/imageProcessing/errors.ts:40
 msgid ""
 "Your profile image size must be {maxSize} or less and must be a PNG, JPG, or"
@@ -3352,6 +3342,11 @@ msgstr "YouTube Відео Мініатюра"
 #~ msgid "No unread mentions"
 #~ msgstr "Немає непрочитаних згадок"
 
+#~ msgid ""
+#~ "Only proceed if you are in a private location and ready to scan immediately."
+#~ msgstr ""
+#~ "Продовжуйте лише якщо ви в приватному місці і готові сканувати негайно."
+
 #~ msgid "optional"
 #~ msgstr "додатково"
 
@@ -3373,6 +3368,9 @@ msgstr "YouTube Відео Мініатюра"
 #~ msgid "Restore Missing Spaces"
 #~ msgstr "Відновити відсутні простори"
 
+#~ msgid "Security Warning"
+#~ msgstr "Попередження безпеки"
+
 #~ msgid ""
 #~ "Select any existing role as managers for this channel. Managers have post, "
 #~ "delete, and pin permissions on ANY message by default. If no managers are "
@@ -3392,6 +3390,9 @@ msgstr "YouTube Відео Мініатюра"
 #~ msgstr ""
 #~ "Надсилайте запрошення людям, з якими ви раніше спілкувалися. Кнопка "
 #~ "запрошення з'явиться в їхньому вхідному."
+
+#~ msgid "Show QR Code"
+#~ msgstr "Показати QR-код"
 
 #~ msgid "Space Name"
 #~ msgstr "Назва Простору"
@@ -3464,3 +3465,12 @@ msgstr "YouTube Відео Мініатюра"
 #~ "Ваш приватний ключ був скопійований в буфер обміну. Збережіть його як "
 #~ "\"AccountID.key\" (ви можете знайти свій ідентифікатор облікового запису в "
 #~ "Налаштуваннях пізніше). НІКОЛИ не діліться цим ключем!"
+
+#~ msgid ""
+#~ "Your private key will be displayed on screen. Anyone who sees or photographs"
+#~ " this QR code can take full control of your Quorum account and steal any "
+#~ "associated funds."
+#~ msgstr ""
+#~ "Ваш приватний ключ буде відображено на екрані. Будь-хто, хто бачить або "
+#~ "фотографує цей QR-код, може отримати повний контроль над вашим обліковим "
+#~ "записом Quorum і вкрасти будь-які пов'язані кошти."

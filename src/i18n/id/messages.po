@@ -391,6 +391,16 @@ msgstr ""
 "GIF stiker animasi tidak boleh lebih besar dari 750KB. Silakan optimalkan "
 "GIF Anda untuk penggunaan stiker."
 
+#: src/components/modals/UserSettingsModal/Privacy.tsx:268
+msgid ""
+"Anyone who sees or photographs this QR code can take full control of your "
+"Quorum account and steal any associated funds. Only proceed if you are in a "
+"private location and ready to scan immediately."
+msgstr ""
+"Siapa pun yang melihat atau memotret kode QR ini dapat mengambil kendali "
+"penuh atas akun Quorum Anda dan mencuri dana yang terkait. Hanya lanjutkan "
+"jika Anda berada di lokasi pribadi dan siap untuk memindai segera."
+
 #: src/components/modals/UserSettingsModal/Appearance.tsx:40
 #: src/components/modals/UserSettingsModal/Navigation.tsx:18
 msgid "Appearance"
@@ -510,7 +520,7 @@ msgstr "Izin kamera diperlukan untuk mengambil foto"
 #: src/components/modals/ConversationSettingsModal.tsx:62
 #: src/components/modals/KickUserModal.tsx:98
 #: src/components/modals/MuteUserModal.tsx:129
-#: src/components/modals/UserSettingsModal/Privacy.tsx:284
+#: src/components/modals/UserSettingsModal/Privacy.tsx:277
 #: src/components/primitives/FileUpload/FileUpload.native.tsx:173
 #: src/hooks/business/channels/useChannelManagement.ts:253
 #: src/hooks/business/messages/useMessageActions.ts:382
@@ -804,7 +814,7 @@ msgstr "Tautan Undangan Saat Ini"
 msgid "Dark"
 msgstr "Gelap"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:327
+#: src/components/modals/UserSettingsModal/Privacy.tsx:325
 msgid "Data Recovery"
 msgstr "Pemulihan Data"
 
@@ -971,7 +981,7 @@ msgstr "Nama tampilan diperlukan"
 msgid "Display name must be {MAX_NAME_LENGTH} characters or less"
 msgstr "Nama tampilan harus {MAX_NAME_LENGTH} karakter atau kurang"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:247
+#: src/components/modals/UserSettingsModal/Privacy.tsx:251
 msgid ""
 "Display your private key as a QR code to scan with the Quorum mobile app. "
 "This allows you to import your account on mobile without typing the key."
@@ -1386,7 +1396,7 @@ msgstr "Nama grup harus {MAX_NAME_LENGTH} karakter atau kurang"
 msgid "Hang in there..."
 msgstr "Bersabarlah..."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:316
+#: src/components/modals/UserSettingsModal/Privacy.tsx:311
 msgid "Hide"
 msgstr "Sembunyikan"
 
@@ -1411,7 +1421,7 @@ msgstr "Sembunyikan saluran yang dibisukan dalam daftar"
 msgid "I already saved mine"
 msgstr "Saya sudah menyimpan milik saya"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:291
+#: src/components/modals/UserSettingsModal/Privacy.tsx:285
 msgid "I Understand, Show QR"
 msgstr "Saya Mengerti, Tampilkan QR"
 
@@ -1630,7 +1640,7 @@ msgstr "Memuat pesan yang dipin..."
 msgid "Loading your profile..."
 msgstr "Memuat profil Anda..."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:291
+#: src/components/modals/UserSettingsModal/Privacy.tsx:285
 msgid "Loading..."
 msgstr "Memuat..."
 
@@ -1938,13 +1948,6 @@ msgstr "Salah satu dari kita, salah satu dari kita!"
 msgid "Online"
 msgstr "Online"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:274
-msgid ""
-"Only proceed if you are in a private location and ready to scan immediately."
-msgstr ""
-"Hanya lanjutkan jika Anda berada di lokasi pribadi dan siap untuk memindai "
-"segera."
-
 #: src/components/ui/YouTubeFacade.tsx:171
 msgid "Open video on YouTube"
 msgstr "Buka video di YouTube"
@@ -2105,7 +2108,7 @@ msgstr ""
 " untuk bergabung dengan Space Anda. Pertimbangkan dengan siapa Anda "
 "membagikan tautan dan di mana Anda mempostingnya."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:308
+#: src/components/modals/UserSettingsModal/Privacy.tsx:302
 msgid "QR code will auto-hide in 60 seconds"
 msgstr "Kode QR akan otomatis tersembunyi dalam 60 detik"
 
@@ -2220,11 +2223,11 @@ msgstr ""
 msgid "Reset"
 msgstr "Atur Ulang"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:341
+#: src/components/modals/UserSettingsModal/Privacy.tsx:339
 msgid "Restore"
 msgstr "Pulihkan"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:332
+#: src/components/modals/UserSettingsModal/Privacy.tsx:330
 msgid ""
 "Restore Spaces that exist on this device but are missing from your "
 "navigation menu."
@@ -2237,7 +2240,7 @@ msgstr ""
 msgid "Restored {0} space(s)"
 msgstr "Berhasil memulihkan {0} ruang"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:341
+#: src/components/modals/UserSettingsModal/Privacy.tsx:339
 msgid "Restoring..."
 msgstr "Memulihkan..."
 
@@ -2350,10 +2353,6 @@ msgstr "Mencari..."
 msgid "Security"
 msgstr "Keamanan"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:268
-msgid "Security Warning"
-msgstr "Peringatan Keamanan"
-
 #: src/components/modals/SpaceSettingsModal/Account.tsx:221
 msgid "Select"
 msgstr "Pilih"
@@ -2443,9 +2442,9 @@ msgstr "tampilkan layar beranda"
 msgid "Show Muted Channels"
 msgstr "Tampilkan Saluran yang Dibisukan"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:256
-msgid "Show QR Code"
-msgstr "Tampilkan Kode QR"
+#: src/components/modals/UserSettingsModal/Privacy.tsx:259
+msgid "Show QR"
+msgstr "Tampilkan QR"
 
 #: src/components/search/SearchResults.tsx:187
 #: src/components/search/SearchResults.tsx:214
@@ -3172,16 +3171,6 @@ msgstr "Kamu telah diundang untuk bergabung dengan Space"
 msgid "Your Details"
 msgstr "Detail Anda"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:271
-msgid ""
-"Your private key will be displayed on screen. Anyone who sees or photographs"
-" this QR code can take full control of your Quorum account and steal any "
-"associated funds."
-msgstr ""
-"Kunci pribadi Anda akan ditampilkan di layar. Siapa pun yang melihat atau "
-"memotret kode QR ini dapat mengambil kendali penuh atas akun Quorum Anda dan"
-" mencuri dana terkait."
-
 #: src/utils/imageProcessing/errors.ts:40
 msgid ""
 "Your profile image size must be {maxSize} or less and must be a PNG, JPG, or"
@@ -3351,6 +3340,12 @@ msgstr "Thumbnail Video YouTube"
 #~ msgid "No unread mentions"
 #~ msgstr "Tidak ada penyebutan yang belum dibaca"
 
+#~ msgid ""
+#~ "Only proceed if you are in a private location and ready to scan immediately."
+#~ msgstr ""
+#~ "Hanya lanjutkan jika Anda berada di lokasi pribadi dan siap untuk memindai "
+#~ "segera."
+
 #~ msgid "optional"
 #~ msgstr "opsional"
 
@@ -3372,6 +3367,9 @@ msgstr "Thumbnail Video YouTube"
 #~ msgid "Restore Missing Spaces"
 #~ msgstr "Pulihkan Ruang yang Hilang"
 
+#~ msgid "Security Warning"
+#~ msgstr "Peringatan Keamanan"
+
 #~ msgid ""
 #~ "Select any existing role as managers for this channel. Managers have post, "
 #~ "delete, and pin permissions on ANY message by default. If no managers are "
@@ -3391,6 +3389,9 @@ msgstr "Thumbnail Video YouTube"
 #~ msgstr ""
 #~ "Kirim undangan kepada orang-orang yang sebelumnya telah Anda ajak bicara. "
 #~ "Tombol undangan akan muncul di kotak masuk mereka."
+
+#~ msgid "Show QR Code"
+#~ msgstr "Tampilkan Kode QR"
 
 #~ msgid "Space Name"
 #~ msgstr "Nama Ruang"
@@ -3464,3 +3465,12 @@ msgstr "Thumbnail Video YouTube"
 #~ "Kunci pribadi Anda telah disalin ke clipboard. Simpan sebagai "
 #~ "\"AccountID.key\" (Anda dapat menemukan ID Akun Anda di Pengaturan nanti). "
 #~ "JANGAN pernah bagikan kunci ini!"
+
+#~ msgid ""
+#~ "Your private key will be displayed on screen. Anyone who sees or photographs"
+#~ " this QR code can take full control of your Quorum account and steal any "
+#~ "associated funds."
+#~ msgstr ""
+#~ "Kunci pribadi Anda akan ditampilkan di layar. Siapa pun yang melihat atau "
+#~ "memotret kode QR ini dapat mengambil kendali penuh atas akun Quorum Anda dan"
+#~ " mencuri dana terkait."

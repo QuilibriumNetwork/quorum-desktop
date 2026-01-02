@@ -391,6 +391,16 @@ msgstr ""
 "Animoidit tarra GIFit eivät voi olla suurempia kuin 750KB. Optimoi GIFisi "
 "tarra käyttöä varten."
 
+#: src/components/modals/UserSettingsModal/Privacy.tsx:268
+msgid ""
+"Anyone who sees or photographs this QR code can take full control of your "
+"Quorum account and steal any associated funds. Only proceed if you are in a "
+"private location and ready to scan immediately."
+msgstr ""
+"Kuka tahansa, joka näkee tai valokuvaa tämän QR-koodin, voi ottaa täyden "
+"hallinnan Quorum-tilistäsi ja varastaa siihen liittyvät varat. Jatka vain, "
+"jos olet yksityisessä paikassa ja valmis skannaamaan heti."
+
 #: src/components/modals/UserSettingsModal/Appearance.tsx:40
 #: src/components/modals/UserSettingsModal/Navigation.tsx:18
 msgid "Appearance"
@@ -509,7 +519,7 @@ msgstr "Kameran käyttöoikeus on tarpeen valokuvien ottamiseen"
 #: src/components/modals/ConversationSettingsModal.tsx:62
 #: src/components/modals/KickUserModal.tsx:98
 #: src/components/modals/MuteUserModal.tsx:129
-#: src/components/modals/UserSettingsModal/Privacy.tsx:284
+#: src/components/modals/UserSettingsModal/Privacy.tsx:277
 #: src/components/primitives/FileUpload/FileUpload.native.tsx:173
 #: src/hooks/business/channels/useChannelManagement.ts:253
 #: src/hooks/business/messages/useMessageActions.ts:382
@@ -800,7 +810,7 @@ msgstr "Nykyinen kutsulinkki"
 msgid "Dark"
 msgstr "Tumma"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:327
+#: src/components/modals/UserSettingsModal/Privacy.tsx:325
 msgid "Data Recovery"
 msgstr "Tietojen palautus"
 
@@ -967,7 +977,7 @@ msgstr "Näyttönimi on pakollinen"
 msgid "Display name must be {MAX_NAME_LENGTH} characters or less"
 msgstr "Näyttönimen on oltava {MAX_NAME_LENGTH} merkkiä tai vähemmän"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:247
+#: src/components/modals/UserSettingsModal/Privacy.tsx:251
 msgid ""
 "Display your private key as a QR code to scan with the Quorum mobile app. "
 "This allows you to import your account on mobile without typing the key."
@@ -1380,7 +1390,7 @@ msgstr "Ryhmän nimen on oltava {MAX_NAME_LENGTH} merkkiä tai vähemmän"
 msgid "Hang in there..."
 msgstr "Pysy kärsivällisenä..."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:316
+#: src/components/modals/UserSettingsModal/Privacy.tsx:311
 msgid "Hide"
 msgstr "Piilota"
 
@@ -1405,7 +1415,7 @@ msgstr "Piilota mykistetyt kanavat listassa"
 msgid "I already saved mine"
 msgstr "Olen jo tallentanut omani"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:291
+#: src/components/modals/UserSettingsModal/Privacy.tsx:285
 msgid "I Understand, Show QR"
 msgstr "Ymmärrän, näytä QR"
 
@@ -1621,7 +1631,7 @@ msgstr "Ladataan kiinnitettyjä viestejä..."
 msgid "Loading your profile..."
 msgstr "Ladataan profiiliasi..."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:291
+#: src/components/modals/UserSettingsModal/Privacy.tsx:285
 msgid "Loading..."
 msgstr "Ladataan..."
 
@@ -1929,12 +1939,6 @@ msgstr "Yksi meistä, yksi meistä!"
 msgid "Online"
 msgstr "Online"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:274
-msgid ""
-"Only proceed if you are in a private location and ready to scan immediately."
-msgstr ""
-"Jatka vain, jos olet yksityisessä paikassa ja valmis skannaamaan heti."
-
 #: src/components/ui/YouTubeFacade.tsx:171
 msgid "Open video on YouTube"
 msgstr "Avaa video YouTubessa"
@@ -2093,7 +2097,7 @@ msgstr ""
 "Julkiset kutsulinkit antavat kaikille, joilla on pääsy linkkiin, liittyä "
 "Spaceosi. Mieti, kenelle jaat linkin ja minne julkaiset sen."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:308
+#: src/components/modals/UserSettingsModal/Privacy.tsx:302
 msgid "QR code will auto-hide in 60 seconds"
 msgstr "QR-koodi piiloutuu automaattisesti 60 sekunnissa"
 
@@ -2209,11 +2213,11 @@ msgstr ""
 msgid "Reset"
 msgstr "Nollaa"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:341
+#: src/components/modals/UserSettingsModal/Privacy.tsx:339
 msgid "Restore"
 msgstr "Palauta"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:332
+#: src/components/modals/UserSettingsModal/Privacy.tsx:330
 msgid ""
 "Restore Spaces that exist on this device but are missing from your "
 "navigation menu."
@@ -2226,7 +2230,7 @@ msgstr ""
 msgid "Restored {0} space(s)"
 msgstr "Palautettu {0} tila(a)"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:341
+#: src/components/modals/UserSettingsModal/Privacy.tsx:339
 msgid "Restoring..."
 msgstr "Palautetaan..."
 
@@ -2339,10 +2343,6 @@ msgstr "Etsitään..."
 msgid "Security"
 msgstr "Turvallisuus"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:268
-msgid "Security Warning"
-msgstr "Turvavaroitus"
-
 #: src/components/modals/SpaceSettingsModal/Account.tsx:221
 msgid "Select"
 msgstr "Valitse"
@@ -2431,9 +2431,9 @@ msgstr "näytä aloitusnäyttö"
 msgid "Show Muted Channels"
 msgstr "Näytä mykistetyt kanavat"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:256
-msgid "Show QR Code"
-msgstr "Näytä QR-koodi"
+#: src/components/modals/UserSettingsModal/Privacy.tsx:259
+msgid "Show QR"
+msgstr "Näytä QR"
 
 #: src/components/search/SearchResults.tsx:187
 #: src/components/search/SearchResults.tsx:214
@@ -3140,16 +3140,6 @@ msgstr "Olet saanut kutsun liittyä Spaceen"
 msgid "Your Details"
 msgstr "Omat tiedot"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:271
-msgid ""
-"Your private key will be displayed on screen. Anyone who sees or photographs"
-" this QR code can take full control of your Quorum account and steal any "
-"associated funds."
-msgstr ""
-"Yksityinen avain näytetään näytöllä. Kuka tahansa, joka näkee tai valokuvaa "
-"tämän QR-koodin, voi ottaa täyden hallinnan Quorum-tilistäsi ja varastaa "
-"siihen liittyvät varat."
-
 #: src/utils/imageProcessing/errors.ts:40
 msgid ""
 "Your profile image size must be {maxSize} or less and must be a PNG, JPG, or"
@@ -3318,6 +3308,11 @@ msgstr "YouTube-videon pikkukuva"
 #~ msgid "No unread mentions"
 #~ msgstr "Ei lukemattomia mainintoja"
 
+#~ msgid ""
+#~ "Only proceed if you are in a private location and ready to scan immediately."
+#~ msgstr ""
+#~ "Jatka vain, jos olet yksityisessä paikassa ja valmis skannaamaan heti."
+
 #~ msgid "optional"
 #~ msgstr "valinnainen"
 
@@ -3338,6 +3333,9 @@ msgstr "YouTube-videon pikkukuva"
 #~ msgid "Restore Missing Spaces"
 #~ msgstr "Palauta puuttuvat tilat"
 
+#~ msgid "Security Warning"
+#~ msgstr "Turvavaroitus"
+
 #~ msgid ""
 #~ "Select any existing role as managers for this channel. Managers have post, "
 #~ "delete, and pin permissions on ANY message by default. If no managers are "
@@ -3357,6 +3355,9 @@ msgstr "YouTube-videon pikkukuva"
 #~ msgstr ""
 #~ "Lähetä kutsuja ihmisille, joiden kanssa olet aiemmin keskustellut. "
 #~ "Kutsupainike ilmestyy heidän postilaatikkoonsa."
+
+#~ msgid "Show QR Code"
+#~ msgstr "Näytä QR-koodi"
 
 #~ msgid "Space Name"
 #~ msgstr "Tilan Nimi"
@@ -3427,3 +3428,12 @@ msgstr "YouTube-videon pikkukuva"
 #~ "Yksityinen avaimen on kopioitu leikepöydälle. Tallenna se nimellä "
 #~ "\"AccountID.key\" (löydät tilin ID:n Asetuksista myöhemmin). ÄLÄ jaa tätä "
 #~ "avainta!"
+
+#~ msgid ""
+#~ "Your private key will be displayed on screen. Anyone who sees or photographs"
+#~ " this QR code can take full control of your Quorum account and steal any "
+#~ "associated funds."
+#~ msgstr ""
+#~ "Yksityinen avain näytetään näytöllä. Kuka tahansa, joka näkee tai valokuvaa "
+#~ "tämän QR-koodin, voi ottaa täyden hallinnan Quorum-tilistäsi ja varastaa "
+#~ "siihen liittyvät varat."

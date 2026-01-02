@@ -374,6 +374,13 @@ msgid ""
 "for sticker use."
 msgstr "動畫貼圖 GIF 不能大於 750KB。請優化您的 GIF 以供貼圖使用。"
 
+#: src/components/modals/UserSettingsModal/Privacy.tsx:268
+msgid ""
+"Anyone who sees or photographs this QR code can take full control of your "
+"Quorum account and steal any associated funds. Only proceed if you are in a "
+"private location and ready to scan immediately."
+msgstr "任何看到或拍攝此 QR 碼的人都可以完全控制您的 Quorum 帳戶並竊取任何相關資金。只有在您處於私人位置並準備立即掃描時，才可以繼續。"
+
 #: src/components/modals/UserSettingsModal/Appearance.tsx:40
 #: src/components/modals/UserSettingsModal/Navigation.tsx:18
 msgid "Appearance"
@@ -487,7 +494,7 @@ msgstr "需要相機權限才能拍攝照片"
 #: src/components/modals/ConversationSettingsModal.tsx:62
 #: src/components/modals/KickUserModal.tsx:98
 #: src/components/modals/MuteUserModal.tsx:129
-#: src/components/modals/UserSettingsModal/Privacy.tsx:284
+#: src/components/modals/UserSettingsModal/Privacy.tsx:277
 #: src/components/primitives/FileUpload/FileUpload.native.tsx:173
 #: src/hooks/business/channels/useChannelManagement.ts:253
 #: src/hooks/business/messages/useMessageActions.ts:382
@@ -765,7 +772,7 @@ msgstr "當前邀請連結"
 msgid "Dark"
 msgstr "黑暗"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:327
+#: src/components/modals/UserSettingsModal/Privacy.tsx:325
 msgid "Data Recovery"
 msgstr "數據恢復"
 
@@ -929,7 +936,7 @@ msgstr "顯示名稱是必需的"
 msgid "Display name must be {MAX_NAME_LENGTH} characters or less"
 msgstr "顯示名稱必須少於 {MAX_NAME_LENGTH} 個字符"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:247
+#: src/components/modals/UserSettingsModal/Privacy.tsx:251
 msgid ""
 "Display your private key as a QR code to scan with the Quorum mobile app. "
 "This allows you to import your account on mobile without typing the key."
@@ -1328,7 +1335,7 @@ msgstr "群組名稱必須少於 {MAX_NAME_LENGTH} 個字符"
 msgid "Hang in there..."
 msgstr "稍等一下..."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:316
+#: src/components/modals/UserSettingsModal/Privacy.tsx:311
 msgid "Hide"
 msgstr "隱藏"
 
@@ -1353,7 +1360,7 @@ msgstr "在列表中隱藏靜音頻道"
 msgid "I already saved mine"
 msgstr "我已備份"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:291
+#: src/components/modals/UserSettingsModal/Privacy.tsx:285
 msgid "I Understand, Show QR"
 msgstr "我明白，顯示 QR"
 
@@ -1562,7 +1569,7 @@ msgstr "正在加載固定訊息..."
 msgid "Loading your profile..."
 msgstr "正在加載您的個人資料..."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:291
+#: src/components/modals/UserSettingsModal/Privacy.tsx:285
 msgid "Loading..."
 msgstr "加載中..."
 
@@ -1855,11 +1862,6 @@ msgstr "歡迎加入！"
 msgid "Online"
 msgstr "在線"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:274
-msgid ""
-"Only proceed if you are in a private location and ready to scan immediately."
-msgstr "僅在您位於私密位置並準備立即掃描時進行操作。"
-
 #: src/components/ui/YouTubeFacade.tsx:171
 msgid "Open video on YouTube"
 msgstr "在 YouTube 上打開視頻"
@@ -2014,7 +2016,7 @@ msgid ""
 " Consider who you share the link with and where you post it."
 msgstr "公開邀請連結允許任何擁有連結的人加入你的Space。考慮你與誰分享連結以及你在哪裡發布它。"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:308
+#: src/components/modals/UserSettingsModal/Privacy.tsx:302
 msgid "QR code will auto-hide in 60 seconds"
 msgstr "QR 碼將在 60 秒內自動隱藏"
 
@@ -2118,11 +2120,11 @@ msgstr "要求在此空間中發送的消息由發送者簽名。從技術上講
 msgid "Reset"
 msgstr "重置"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:341
+#: src/components/modals/UserSettingsModal/Privacy.tsx:339
 msgid "Restore"
 msgstr "恢復"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:332
+#: src/components/modals/UserSettingsModal/Privacy.tsx:330
 msgid ""
 "Restore Spaces that exist on this device but are missing from your "
 "navigation menu."
@@ -2133,7 +2135,7 @@ msgstr "恢復此設備上存在但在導航菜單中缺失的空間。"
 msgid "Restored {0} space(s)"
 msgstr "已恢復 {0} 個空間"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:341
+#: src/components/modals/UserSettingsModal/Privacy.tsx:339
 msgid "Restoring..."
 msgstr "正在恢復..."
 
@@ -2246,10 +2248,6 @@ msgstr "搜尋中..."
 msgid "Security"
 msgstr "安全"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:268
-msgid "Security Warning"
-msgstr "安全警告"
-
 #: src/components/modals/SpaceSettingsModal/Account.tsx:221
 msgid "Select"
 msgstr "選擇"
@@ -2336,8 +2334,8 @@ msgstr "顯示主屏幕"
 msgid "Show Muted Channels"
 msgstr "顯示靜音頻道"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:256
-msgid "Show QR Code"
+#: src/components/modals/UserSettingsModal/Privacy.tsx:259
+msgid "Show QR"
 msgstr "顯示 QR 碼"
 
 #: src/components/search/SearchResults.tsx:187
@@ -2981,13 +2979,6 @@ msgstr "你已被邀請加入一個空間"
 msgid "Your Details"
 msgstr "您的詳細資訊"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:271
-msgid ""
-"Your private key will be displayed on screen. Anyone who sees or photographs"
-" this QR code can take full control of your Quorum account and steal any "
-"associated funds."
-msgstr "您的私鑰將顯示在屏幕上。任何看到或拍攝此 QR 碼的人都可以完全控制您的 Quorum 帳戶並竊取任何相關資金。"
-
 #: src/utils/imageProcessing/errors.ts:40
 msgid ""
 "Your profile image size must be {maxSize} or less and must be a PNG, JPG, or"
@@ -3139,6 +3130,10 @@ msgstr "YouTube 影片縮圖"
 #~ msgid "No unread mentions"
 #~ msgstr "沒有未讀提及"
 
+#~ msgid ""
+#~ "Only proceed if you are in a private location and ready to scan immediately."
+#~ msgstr "僅在您位於私密位置並準備立即掃描時進行操作。"
+
 #~ msgid "optional"
 #~ msgstr "可選的"
 
@@ -3156,6 +3151,9 @@ msgstr "YouTube 影片縮圖"
 #~ msgid "Restore Missing Spaces"
 #~ msgstr "恢復缺失的空間"
 
+#~ msgid "Security Warning"
+#~ msgstr "安全警告"
+
 #~ msgid ""
 #~ "Select any existing role as managers for this channel. Managers have post, "
 #~ "delete, and pin permissions on ANY message by default. If no managers are "
@@ -3169,6 +3167,9 @@ msgstr "YouTube 影片縮圖"
 #~ "Send invites to people you've previously had conversations with. An invite "
 #~ "button will appear in their inbox."
 #~ msgstr "向曾有對話的對象發送邀請，他們的收件箱將顯示邀請按鈕。"
+
+#~ msgid "Show QR Code"
+#~ msgstr "顯示 QR 碼"
 
 #~ msgid "Space Name"
 #~ msgstr "空間名稱"
@@ -3226,3 +3227,9 @@ msgstr "YouTube 影片縮圖"
 #~ "Your private key has been copied to clipboard. Save it as \"AccountID.key\" "
 #~ "(you can find your Account ID in Settings later). NEVER share this key!"
 #~ msgstr "您的私鑰已被複製到剪貼簿。將其保存為“AccountID.key”（您可以稍後在設置中找到您的帳戶 ID）。切勿分享此密鑰！"
+
+#~ msgid ""
+#~ "Your private key will be displayed on screen. Anyone who sees or photographs"
+#~ " this QR code can take full control of your Quorum account and steal any "
+#~ "associated funds."
+#~ msgstr "您的私鑰將顯示在屏幕上。任何看到或拍攝此 QR 碼的人都可以完全控制您的 Quorum 帳戶並竊取任何相關資金。"
