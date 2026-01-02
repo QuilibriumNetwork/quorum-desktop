@@ -9,7 +9,7 @@ import {
   Icon,
   Portal,
 } from '@/components/primitives';
-import { ThemeRadioGroup, AccentColorSwitcher } from '@/components/ui';
+import { ThemeRadioGroup } from '@/components/ui';
 import { DevNavMenu } from '../DevNavMenu';
 import {
   ButtonExamples,
@@ -153,10 +153,9 @@ export const PrimitivesPlayground: React.FC = () => {
             <h1 className="text-2xl font-bold">Primitives Playground</h1>
           </div>
 
-          {/* Theme and Color Controls - horizontal like old playground */}
+          {/* Theme Controls */}
           <div className="flex items-center gap-6 ml-auto">
             <ThemeRadioGroup horizontal />
-            <AccentColorSwitcher />
           </div>
         </div>
       </div>
