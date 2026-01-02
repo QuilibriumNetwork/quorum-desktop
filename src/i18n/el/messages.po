@@ -31,7 +31,7 @@ msgid "No Role - {count}"
 msgstr "Χωρίς Ρόλο - {count}"
 
 #. js-lingui-explicit-id
-#: src/components/space/Channel.tsx:1137
+#: src/components/space/Channel.tsx:1012
 msgid "Send a message to #{channel_name}"
 msgstr "Στείλτε ένα μήνυμα στο #{channel_name}"
 
@@ -50,41 +50,41 @@ msgid "Replying to"
 msgstr "Απαντώντας σε"
 
 #. js-lingui-explicit-id
-#: src/components/message/MessageComposer.native.tsx:161
+#: src/components/message/MessageComposer.native.tsx:162
 msgid "Failed to process image"
 msgstr "Αποτυχία επεξεργασίας εικόνας"
 
 #. js-lingui-explicit-id
-#: src/components/message/MessageComposer.native.tsx:314
+#: src/components/message/MessageComposer.native.tsx:315
 msgid "Replying to {user}"
 msgstr "Απαντώντας στον {user}"
 
 #. js-lingui-explicit-id
-#: src/components/message/Message.tsx:313
+#: src/components/message/Message.tsx:314
 msgid "has joined"
 msgstr "έχει ενταχθεί"
 
 #. js-lingui-explicit-id
-#: src/components/message/Message.tsx:321
+#: src/components/message/Message.tsx:322
 msgid "has left"
 msgstr "έχει αποχωρήσει"
 
 #. js-lingui-explicit-id
-#: src/components/message/Message.tsx:329
+#: src/components/message/Message.tsx:330
 msgid "has been kicked"
 msgstr "έχει αποβληθεί"
 
 #. js-lingui-explicit-id
-#: src/components/direct/DirectMessage.tsx:921
+#: src/components/direct/DirectMessage.tsx:861
 msgid "Send a message to {user}"
 msgstr "Στείλτε ένα μήνυμα στον {user}"
 
-#: src/components/Maintenance.native.tsx:61
+#: src/components/Maintenance.native.tsx:62
 msgid " for updates."
 msgstr "για ενημερώσεις."
 
-#: src/components/message/Message.tsx:762
-#: src/components/message/Message.tsx:775
+#: src/components/message/Message.tsx:763
+#: src/components/message/Message.tsx:776
 msgid "(edited)"
 msgstr "(επεξεργασμένο)"
 
@@ -124,7 +124,7 @@ msgid "[Sticker]"
 msgstr "[Sticker]"
 
 #. placeholder {0}: removedDevices.length
-#: src/components/modals/UserSettingsModal/Privacy.tsx:106
+#: src/components/modals/UserSettingsModal/Privacy.tsx:151
 msgid "{0} devices marked for removal. Click \"Save Changes\" to confirm."
 msgstr ""
 "{0} apparaten gemarkeerd voor verwijdering. Klik op \"Wijzigingen opslaan\" "
@@ -176,23 +176,23 @@ msgstr "{days} ημέρες"
 msgid "{hours} hours"
 msgstr "{hours} ώρες"
 
-#: src/components/primitives/FileUpload/FileUpload.web.tsx:13
+#: src/components/primitives/FileUpload/FileUpload.web.tsx:14
 msgid "{size} Bytes"
 msgstr "{size} Bytes"
 
-#: src/components/primitives/FileUpload/FileUpload.web.tsx:16
+#: src/components/primitives/FileUpload/FileUpload.web.tsx:17
 msgid "{size} GB"
 msgstr "{size} GB"
 
-#: src/components/primitives/FileUpload/FileUpload.web.tsx:14
+#: src/components/primitives/FileUpload/FileUpload.web.tsx:15
 msgid "{size} KB"
 msgstr "{size} KB"
 
-#: src/components/primitives/FileUpload/FileUpload.web.tsx:15
+#: src/components/primitives/FileUpload/FileUpload.web.tsx:16
 msgid "{size} MB"
 msgstr "{size} MB"
 
-#: src/components/primitives/FileUpload/FileUpload.web.tsx:17
+#: src/components/primitives/FileUpload/FileUpload.web.tsx:18
 msgid "{size} TB"
 msgstr "{size} TB"
 
@@ -211,7 +211,7 @@ msgstr "@roles"
 msgid "@you"
 msgstr "@you"
 
-#: src/components/direct/DirectMessageContactsList.tsx:158
+#: src/components/direct/DirectMessageContactsList.tsx:343
 msgid "+ Add a friend"
 msgstr "Προσθήκη φίλου"
 
@@ -219,7 +219,7 @@ msgstr "Προσθήκη φίλου"
 msgid "0 = forever"
 msgstr "0 = για πάντα"
 
-#: src/components/primitives/FileUpload/FileUpload.web.tsx:8
+#: src/components/primitives/FileUpload/FileUpload.web.tsx:9
 msgid "0 Bytes"
 msgstr "0 Bytes"
 
@@ -227,7 +227,7 @@ msgstr "0 Bytes"
 msgid "0 hours"
 msgstr "0 ώρες"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:105
+#: src/components/modals/UserSettingsModal/Privacy.tsx:150
 msgid "1 device marked for removal. Click \"Save Changes\" to confirm."
 msgstr ""
 "1 apparaat gemarkeerd voor verwijdering. Klik op \"Wijzigingen opslaan\" om "
@@ -248,6 +248,10 @@ msgstr "Ρυθμίσεις Λογαριασμού"
 #: src/components/ui/OfflineBanner.tsx:57
 msgid "actions queued"
 msgstr "ενέργειες σε αναμονή"
+
+#: src/components/direct/DirectMessageContactsList.tsx:279
+msgid "Add a friend"
+msgstr "Προσθέστε έναν φίλο"
 
 #: src/components/modals/AddSpaceModal.tsx:124
 #: src/components/navbar/ExpandableNavMenu.tsx:30
@@ -274,6 +278,10 @@ msgstr "Προσθήκη Ρόλου"
 #: src/components/message/MessageComposer.tsx:613
 msgid "add sticker"
 msgstr "προσθήκη αυτοκόλλητου"
+
+#: src/components/direct/DirectMessageContactsList.tsx:224
+msgid "Add to Favorites"
+msgstr "Προσθήκη στα Αγαπημένα"
 
 #: src/components/modals/SpaceSettingsModal/Emojis.tsx:44
 msgid ""
@@ -307,7 +315,7 @@ msgstr "Οι διευθύνσεις πρέπει να είναι ακριβώς 
 msgid "Addresses start with \"Qm\"."
 msgstr "Οι διευθύνσεις ξεκινούν με \"Qm\"."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:54
+#: src/components/modals/UserSettingsModal/Privacy.tsx:101
 msgid ""
 "Adjust security-related settings, which may impact user  experience but "
 "increase the security of your Quorum account."
@@ -320,6 +328,7 @@ msgstr ""
 msgid "Advanced Settings"
 msgstr "Προχωρημένες Ρυθμίσεις"
 
+#: src/components/direct/DirectMessageContactsList.tsx:258
 #: src/components/modals/SpaceSettingsModal/Account.tsx:223
 #: src/components/primitives/Select/Select.native.tsx:38
 #: src/components/primitives/Select/Select.web.tsx:32
@@ -354,11 +363,11 @@ msgstr "Σχεδόν έτοιμοι..."
 msgid "Already Joined"
 msgstr "Al Lid"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:80
+#: src/components/modals/UserSettingsModal/Privacy.tsx:127
 msgid "Always sign Direct Messages"
 msgstr "Πάντα να υπογράφετε Άμεσες Μηνύματα"
 
-#: src/components/modals/ConversationSettingsModal.tsx:193
+#: src/components/modals/ConversationSettingsModal.tsx:196
 #: src/components/modals/NewDirectMessageModal.tsx:156
 msgid "Always sign messages"
 msgstr "Πάντα να υπογράφετε μηνύματα"
@@ -384,7 +393,7 @@ msgstr ""
 "Animowane naklejki GIFy nie mogą być większe niż 750KB. Proszę "
 "zoptymalizować swój GIF do użycia naklejek."
 
-#: src/components/modals/UserSettingsModal/Appearance.tsx:25
+#: src/components/modals/UserSettingsModal/Appearance.tsx:40
 #: src/components/modals/UserSettingsModal/Navigation.tsx:18
 msgid "Appearance"
 msgstr "Εμφάνιση"
@@ -397,7 +406,7 @@ msgstr ""
 "Είστε σίγουροι ότι θέλετε να διαγράψετε αυτό το κανάλι; Όλα τα μηνύματα θα "
 "χαθούν. Αυτή η ενέργεια δεν μπορεί να αναιρεθεί."
 
-#: src/components/modals/ConversationSettingsModal.tsx:60
+#: src/components/modals/ConversationSettingsModal.tsx:59
 msgid ""
 "Are you sure you want to delete this conversation?\n"
 "\n"
@@ -422,11 +431,11 @@ msgstr ""
 "Είστε σίγουροι ότι θέλετε να φύγετε από αυτό το Space; Δεν θα μπορείτε να "
 "ξαναενωθείτε εκτός αν σας ξανακαλέσουν."
 
-#: src/hooks/business/messages/usePinnedMessages.ts:312
+#: src/hooks/business/messages/usePinnedMessages.ts:313
 msgid "Are you sure you want to pin this message?"
 msgstr "Είστε σίγουροι ότι θέλετε να καρφιτσώσετε αυτό το μήνυμα;"
 
-#: src/hooks/business/messages/usePinnedMessages.ts:311
+#: src/hooks/business/messages/usePinnedMessages.ts:312
 msgid "Are you sure you want to unpin this message?"
 msgstr "Είστε σίγουροι ότι θέλετε να ξεκαρφιτσώσετε αυτό το μήνυμα;"
 
@@ -450,8 +459,8 @@ msgstr "Αποτυχία Αντίγραφης"
 msgid "Bookmark"
 msgstr "Σελιδοδείκτης"
 
-#: src/hooks/business/bookmarks/useBookmarks.ts:167
-#: src/hooks/business/bookmarks/useBookmarks.ts:247
+#: src/hooks/business/bookmarks/useBookmarks.ts:168
+#: src/hooks/business/bookmarks/useBookmarks.ts:248
 msgid "Bookmark limit reached! Remove some to add new ones."
 msgstr ""
 "Έφτασες το όριο σελιδοδεικτών! Αφαίρεσε μερικούς για να προσθέσεις νέους."
@@ -465,8 +474,8 @@ msgstr "Μήνυμα σελιδοδείκτη"
 msgid "Bookmark messages to save them for later reference"
 msgstr "Μηνύματα σελιδοδείκτη για να τα αποθηκεύσετε για μελλοντική αναφορά"
 
-#: src/components/message/Message.tsx:729
-#: src/components/message/Message.tsx:807
+#: src/components/message/Message.tsx:730
+#: src/components/message/Message.tsx:808
 msgid "Bookmarked"
 msgstr "Σελιδοδείκτης"
 
@@ -478,8 +487,8 @@ msgstr "Εικόνα σελιδοδείκτη"
 msgid "Bookmarked sticker"
 msgstr "Αυτοκόλλητο σελιδοδείκτη"
 
-#: src/components/direct/DirectMessage.tsx:782
-#: src/components/space/Channel.tsx:977
+#: src/components/direct/DirectMessage.tsx:709
+#: src/components/space/Channel.tsx:852
 msgid "Bookmarks"
 msgstr "Σελιδοδείκτες"
 
@@ -496,16 +505,17 @@ msgstr "Κάμερα"
 msgid "Camera permission is required to take photos"
 msgstr "Η άδεια κάμερας είναι απαραίτητη για να τραβήξετε φωτογραφίες"
 
-#: src/components/message/MessageEditTextarea.tsx:383
+#: src/components/message/MessageEditTextarea.tsx:384
 #: src/components/modals/ConfirmationModal.native.tsx:27
 #: src/components/modals/ConfirmationModal.tsx:31
-#: src/components/modals/ConversationSettingsModal.tsx:63
+#: src/components/modals/ConversationSettingsModal.tsx:62
 #: src/components/modals/KickUserModal.tsx:98
 #: src/components/modals/MuteUserModal.tsx:129
+#: src/components/modals/UserSettingsModal/Privacy.tsx:284
 #: src/components/primitives/FileUpload/FileUpload.native.tsx:173
 #: src/hooks/business/channels/useChannelManagement.ts:253
 #: src/hooks/business/messages/useMessageActions.ts:382
-#: src/hooks/business/messages/usePinnedMessages.ts:324
+#: src/hooks/business/messages/usePinnedMessages.ts:325
 #: src/hooks/business/spaces/useRoleManagement.ts:64
 #: src/hooks/business/user/useFileUpload.native.ts:48
 msgid "Cancel"
@@ -530,7 +540,7 @@ msgstr ""
 msgid "Change your avatar and name for this Space"
 msgstr "Αλλάξτε την εικόνα προφίλ και το όνομά σας για αυτό το Space"
 
-#: src/components/modals/UserSettingsModal/Appearance.tsx:53
+#: src/components/modals/UserSettingsModal/Appearance.tsx:79
 msgid ""
 "Changes are made automatically, but the active page may not be updated. "
 "Refresh the page to apply the new language."
@@ -542,11 +552,11 @@ msgstr ""
 msgid "Channel Icon"
 msgstr "Εικονίδιο καναλιού"
 
-#: src/components/modals/ChannelEditorModal.tsx:165
+#: src/components/modals/ChannelEditorModal.tsx:170
 msgid "Channel Managers"
 msgstr "Διαχειριστές καναλιού"
 
-#: src/components/space/Channel.tsx:1371
+#: src/components/space/Channel.tsx:1226
 msgid "Channel members"
 msgstr "Μέλη καναλιού"
 
@@ -591,7 +601,7 @@ msgstr ""
 "Το θέμα του καναλιού πρέπει να είναι {MAX_TOPIC_LENGTH} χαρακτήρες ή "
 "λιγότερο"
 
-#: src/components/Maintenance.native.tsx:52
+#: src/components/Maintenance.native.tsx:53
 msgid "Check "
 msgstr "Έλεγχος"
 
@@ -603,7 +613,7 @@ msgstr "Επιλέξτε πώς θα θέλατε να προσθέσετε μι
 msgid "Choose how you'd like to add your profile image"
 msgstr "Επιλέξτε πώς θα θέλατε να προσθέσετε την εικόνα προφίλ σας"
 
-#: src/components/modals/UserSettingsModal/Appearance.tsx:27
+#: src/components/modals/UserSettingsModal/Appearance.tsx:42
 msgid "Choose your preferred theme for Quorum."
 msgstr "Επιλέξτε το προτιμώμενο θέμα σας για το Quorum."
 
@@ -618,11 +628,11 @@ msgstr "Καθαρισμός"
 msgid "Clear search"
 msgstr "Καθαρισμός αναζήτησης"
 
-#: src/services/NotificationService.ts:203
+#: src/services/NotificationService.ts:204
 msgid "Clearing notifications with tag: {tag}"
 msgstr "Καθαρισμός ειδοποιήσεων με ετικέτα: {tag}"
 
-#: src/components/modals/ChannelEditorModal.tsx:217
+#: src/components/modals/ChannelEditorModal.tsx:222
 #: src/components/modals/FolderEditorModal.tsx:133
 #: src/components/modals/GroupEditorModal.tsx:131
 #: src/components/modals/KickUserModal.tsx:107
@@ -646,7 +656,7 @@ msgstr ""
 "των βασικών σας πληροφοριών, γιατί μόλις φύγει, φεύγει για πάντα. Μπορεί να "
 "σας ζητηθεί να πιστοποιηθείτε ξανά."
 
-#: src/components/onboarding/Onboarding.native.tsx:259
+#: src/components/onboarding/Onboarding.native.tsx:260
 msgid ""
 "Click the button below to create a backup of your key info, because once "
 "it's gone, it's gone forever. You may be prompted to authenticate again."
@@ -663,7 +673,7 @@ msgstr "Κάντε κλικ για αντιγραφή"
 msgid "Config Key"
 msgstr "Configuratiesleutel"
 
-#: src/components/direct/DirectMessageContactsList.tsx:114
+#: src/components/direct/DirectMessageContactsList.tsx:241
 #: src/components/navbar/NavMenu.tsx:138
 msgid "Confirm Delete"
 msgstr "Επιβεβαίωση Διαγραφής"
@@ -676,12 +686,12 @@ msgstr "Επιβεβαίωση Αποχώρησης"
 msgid "Connecting"
 msgstr "Σύνδεση"
 
-#: src/components/direct/DirectMessage.tsx:748
+#: src/components/direct/DirectMessage.tsx:692
 msgid "Conversation settings"
 msgstr "Ρυθμίσεις συνομιλίας"
 
-#: src/components/direct/DirectMessageContactsList.tsx:105
-#: src/components/modals/ConversationSettingsModal.tsx:185
+#: src/components/direct/DirectMessageContactsList.tsx:232
+#: src/components/modals/ConversationSettingsModal.tsx:184
 msgid "Conversation Settings"
 msgstr "Ρυθμίσεις Συνομιλίας"
 
@@ -696,9 +706,9 @@ msgstr "Ρυθμίσεις Συνομιλίας"
 msgid "Copied!"
 msgstr "Αντιγράφηκε!"
 
-#: src/components/direct/DirectMessage.tsx:399
-#: src/components/direct/DirectMessage.tsx:730
-#: src/components/direct/DirectMessage.tsx:850
+#: src/components/direct/DirectMessage.tsx:674
+#: src/components/direct/DirectMessage.tsx:778
+#: src/components/direct/DirectMessage.tsx:796
 #: src/components/modals/UserSettingsModal/General.tsx:118
 #: src/components/user/ExpandableUserAvatar.tsx:90
 #: src/components/user/UserProfile.tsx:123
@@ -729,22 +739,22 @@ msgstr "Αντιγραφή μηνύματος"
 msgid "Copy message link"
 msgstr "Αντιγραφή συνδέσμου μηνύματος"
 
-#: src/components/context/MessageDB.bak.tsx:5563
-#: src/services/ConfigService.ts:290
+#: src/components/context/MessageDB.bak.tsx:5564
+#: src/services/ConfigService.ts:291
 msgid "Could not add Space"
 msgstr "Δεν ήταν δυνατή η προσθήκη του Χώρος"
 
 #: src/components/message/InviteLink.tsx:38
-#: src/hooks/business/invites/useInviteProcessing.ts:45
+#: src/hooks/business/invites/useInviteProcessing.ts:46
 msgid "Could not fetch the Space details. Please try again."
 msgstr "Αποτυχία λήψης λεπτομερειών Χώρου. Παρακαλώ δοκιμάστε ξανά."
 
-#: src/components/context/MessageDB.bak.tsx:5436
-#: src/services/ConfigService.ts:163
+#: src/components/context/MessageDB.bak.tsx:5437
+#: src/services/ConfigService.ts:164
 msgid "Could not obtain manifest for Space"
 msgstr "Δεν ήταν δυνατή η απόκτηση του manifest για το Χώρος"
 
-#: src/hooks/business/invites/useInviteProcessing.ts:41
+#: src/hooks/business/invites/useInviteProcessing.ts:42
 #: src/hooks/business/spaces/useInviteValidation.ts:111
 msgid "Could not verify invite"
 msgstr "Δεν ήταν δυνατή η επαλήθευση της πρόσκλησης"
@@ -775,6 +785,10 @@ msgstr "Δημιουργία ενός Χώρος"
 msgid "Create New Account"
 msgstr "Δημιουργία Νέου Λογαριασμού"
 
+#: src/components/modals/ChannelEditorModal.tsx:164
+msgid "Create roles in Space Settings first."
+msgstr "Δημιουργήστε ρόλους πρώτα στις Ρυθμίσεις του Space."
+
 #: src/components/modals/CreateSpaceModal.tsx:254
 msgid "Create Space"
 msgstr "Δημιουργία Χώρος"
@@ -791,11 +805,12 @@ msgstr "Τρέχον"
 msgid "Current Invite Link"
 msgstr "Τρέχων Σύνδεσμος Πρόσκλησης"
 
-#: src/components/ui/ThemeRadioGroup.tsx:23
+#: src/components/ui/ThemeRadioGroup.tsx:24
+#: src/components/ui/ThemeRadioGroup.tsx:26
 msgid "Dark"
 msgstr "Σκοτάδι"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:198
+#: src/components/modals/UserSettingsModal/Privacy.tsx:327
 msgid "Data Recovery"
 msgstr "Ανάκτηση Δεδομένων"
 
@@ -803,13 +818,13 @@ msgstr "Ανάκτηση Δεδομένων"
 msgid "days"
 msgstr "ημέρες"
 
-#: src/components/context/MessageDB.bak.tsx:5415
-#: src/services/ConfigService.ts:142
+#: src/components/context/MessageDB.bak.tsx:5416
+#: src/services/ConfigService.ts:143
 msgid "decrypted space with no known config key"
 msgstr "αποκρυπτογραφημένο space χωρίς γνωστό κλειδί ρύθμισης"
 
-#: src/components/context/MessageDB.bak.tsx:5421
-#: src/services/ConfigService.ts:148
+#: src/components/context/MessageDB.bak.tsx:5422
+#: src/services/ConfigService.ts:149
 msgid "Decrypted Space with no known hub key"
 msgstr "Αποκρυπτογραφημένο Χώρος χωρίς γνωστό κλειδί hub"
 
@@ -833,7 +848,7 @@ msgstr "διαγραφή"
 #: src/components/message/MessageActionsMenu.tsx:273
 #: src/components/modals/ConfirmationModal.native.tsx:26
 #: src/components/modals/ConfirmationModal.tsx:30
-#: src/components/modals/ConversationSettingsModal.tsx:62
+#: src/components/modals/ConversationSettingsModal.tsx:61
 #: src/components/modals/SpaceSettingsModal/Emojis.tsx:103
 #: src/components/modals/SpaceSettingsModal/Stickers.tsx:105
 #: src/hooks/business/channels/useChannelManagement.ts:252
@@ -842,14 +857,14 @@ msgstr "διαγραφή"
 msgid "Delete"
 msgstr "Διαγραφή"
 
-#: src/components/modals/ChannelEditorModal.tsx:216
+#: src/components/modals/ChannelEditorModal.tsx:221
 #: src/hooks/business/channels/useChannelManagement.ts:246
 msgid "Delete Channel"
 msgstr "Διαγραφή Καναλιού"
 
-#: src/components/direct/DirectMessageContactsList.tsx:113
-#: src/components/modals/ConversationSettingsModal.tsx:59
-#: src/components/modals/ConversationSettingsModal.tsx:258
+#: src/components/direct/DirectMessageContactsList.tsx:240
+#: src/components/modals/ConversationSettingsModal.tsx:58
+#: src/components/modals/ConversationSettingsModal.tsx:251
 msgid "Delete Conversation"
 msgstr "Διαγραφή Συνομιλίας"
 
@@ -896,7 +911,7 @@ msgstr "Διαγραφή αυτού του Χώρος"
 msgid "Deleting Space..."
 msgstr "Διαγραφή Χώρου..."
 
-#: src/components/modals/ConversationSettingsModal.tsx:275
+#: src/components/modals/ConversationSettingsModal.tsx:268
 msgid "Deleting..."
 msgstr "Διαγραφή..."
 
@@ -917,15 +932,19 @@ msgstr ""
 msgid "Description must be {maxLength} characters or less"
 msgstr "Η περιγραφή πρέπει να είναι {maxLength} χαρακτήρες ή λιγότεροι"
 
-#: src/components/modals/UserSettingsModal/Notifications.tsx:35
+#: src/components/modals/UserSettingsModal/Notifications.tsx:39
 msgid "Desktop Notifications"
 msgstr "Ειδοποιήσεις επιτραπέζιου υπολογιστή"
 
-#: src/components/modals/UserSettingsModal/Notifications.tsx:57
+#: src/components/modals/UserSettingsModal/Notifications.tsx:56
 msgid "Desktop notifications are not supported in this browser."
 msgstr ""
 "Οι ειδοποιήσεις επιτραπέζιου υπολογιστή δεν υποστηρίζονται σε αυτόν τον "
 "περιηγητή."
+
+#: src/components/modals/UserSettingsModal/Privacy.tsx:145
+msgid "Devices"
+msgstr "Συσκευές"
 
 #: src/hooks/business/search/useBatchSearchResultsDisplay.ts:158
 #: src/hooks/business/search/useSearchResultDisplay.ts:104
@@ -933,7 +952,7 @@ msgstr ""
 msgid "Direct Message"
 msgstr "Άμεσο Μήνυμα"
 
-#: src/components/direct/DirectMessageContactsList.tsx:133
+#: src/components/direct/DirectMessageContactsList.tsx:267
 #: src/components/navbar/NavMenu.tsx:326
 msgid "Direct Messages"
 msgstr "Άμεσες Μηνύματα"
@@ -962,11 +981,24 @@ msgid "Display name must be {MAX_NAME_LENGTH} characters or less"
 msgstr ""
 "Το όνομα εμφάνισης πρέπει να είναι {MAX_NAME_LENGTH} χαρακτήρες ή λιγότερο"
 
+#: src/components/modals/UserSettingsModal/Privacy.tsx:247
+msgid ""
+"Display your private key as a QR code to scan with the Quorum mobile app. "
+"This allows you to import your account on mobile without typing the key."
+msgstr ""
+"Εμφανίστε το ιδιωτικό σας κλειδί ως κωδικό QR για σάρωση με την εφαρμογή "
+"Quorum. Αυτό σας επιτρέπει να εισάγετε τον λογαριασμό σας στο κινητό χωρίς "
+"να πληκτρολογήσετε το κλειδί."
+
+#: src/components/direct/DirectMessageContactsList.tsx:260
+msgid "DM Requests"
+msgstr "Αιτήματα DM"
+
 #: src/components/ui/MobileDrawer.tsx:143
 msgid "Drawer"
 msgstr "Συρτάρι"
 
-#: src/components/onboarding/Onboarding.native.tsx:177
+#: src/components/onboarding/Onboarding.native.tsx:178
 #: src/components/onboarding/Onboarding.tsx:131
 msgid "Drop your profile photo here"
 msgstr "Ρίξε τη φωτογραφία προφίλ σου εδώ"
@@ -1015,7 +1047,7 @@ msgstr "Επιλογέας emoji"
 msgid "Emojis"
 msgstr "Emojis"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:60
+#: src/components/modals/UserSettingsModal/Privacy.tsx:108
 msgid "Enable sync"
 msgstr "Ενεργοποίηση συγχρονισμού"
 
@@ -1023,7 +1055,7 @@ msgstr "Ενεργοποίηση συγχρονισμού"
 msgid "Encryption error"
 msgstr "Σφάλμα κρυπτογράφησης"
 
-#: src/services/InvitationService.ts:74
+#: src/services/InvitationService.ts:75
 msgid ""
 "Encryption state is missing required template data. Please generate a public"
 " invite link first."
@@ -1031,7 +1063,7 @@ msgstr ""
 "Η κατάσταση κρυπτογράφησης λείπει από τα απαιτούμενα δεδομένα προτύπου. "
 "Παρακαλώ δημιουργήστε πρώτα έναν δημόσιο σύνδεσμο πρόσκλησης."
 
-#: src/services/InvitationService.ts:86
+#: src/services/InvitationService.ts:87
 msgid ""
 "Encryption state is missing state data. Please generate a public invite link"
 " first."
@@ -1083,12 +1115,12 @@ msgstr "Σφάλμα κατά την επεξεργασία εξερχόμενη
 msgid "Error processing outbound:"
 msgstr "Σφάλμα κατά την επεξεργασία εξερχόμενου:"
 
-#: src/services/NotificationService.ts:77
+#: src/services/NotificationService.ts:78
 msgid "Error requesting notification permission:"
 msgstr "Σφάλμα κατά την αίτηση άδειας ειδοποίησης:"
 
-#: src/services/NotificationService.ts:133
-#: src/services/NotificationService.ts:170
+#: src/services/NotificationService.ts:134
+#: src/services/NotificationService.ts:171
 msgid "Error showing notification:"
 msgstr "Σφάλμα κατά την εμφάνιση ειδοποίησης:"
 
@@ -1096,26 +1128,25 @@ msgstr "Σφάλμα κατά την εμφάνιση ειδοποίησης:"
 msgid "Existing Conversations"
 msgstr "Υπάρχουσες Συνομιλίες"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:190
+#: src/components/modals/UserSettingsModal/Privacy.tsx:235
 msgid "Export"
 msgstr "Εξαγωγή"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:181
+#: src/components/modals/UserSettingsModal/Privacy.tsx:227
 msgid ""
-"Export your key to a file by clicking this button. Do not share this file "
-"with anyone else or they can impersonate you or steal your Space's Apex "
-"earnings."
+"Export your key to a file. Do not share this file with anyone else or they "
+"can impersonate you or steal your Space's Apex earnings."
 msgstr ""
-"Εξάγετε το κλειδί σας σε ένα αρχείο κάνοντας κλικ σε αυτό το κουμπί. Μην "
-"μοιραστείτε αυτό το αρχείο με κανέναν άλλον ή μπορεί να σας μιμηθούν ή να "
-"κλέψουν τα κέρδη Apex του Space σας."
+"Εξαγάγετε το κλειδί σας σε ένα αρχείο. Μην μοιράζεστε αυτό το αρχείο με "
+"κανέναν άλλο ή μπορεί να σας μιμηθούν ή να κλέψουν τα κέρδη Apex του Space "
+"σας."
 
 #: src/components/modals/CreateSpaceModal.tsx:29
 msgid "Failed to create space. Please try again."
 msgstr "Απέτυχε η δημιουργία του Space. Παρακαλώ δοκιμάστε ξανά."
 
-#: src/components/context/MessageDB.bak.tsx:984
-#: src/services/MessageService.ts:2091
+#: src/components/context/MessageDB.bak.tsx:985
+#: src/services/MessageService.ts:2106
 msgid "Failed to decrypt message with any known state"
 msgstr "Αποτυχία αποκρυπτογράφησης μηνύματος με οποιαδήποτε γνωστή κατάσταση"
 
@@ -1159,7 +1190,7 @@ msgstr "Αποτυχία ανάλυσης μηνύματος WebSocket:"
 msgid "Failed to pin message"
 msgstr "Αποτυχία επισήμανσης μηνύματος"
 
-#: src/hooks/business/user/useSpaceRecovery.ts:101
+#: src/hooks/business/user/useSpaceRecovery.ts:102
 msgid "Failed to restore spaces"
 msgstr "Αποτυχία στην αποκατάσταση των χώρων"
 
@@ -1183,7 +1214,7 @@ msgstr "Αποτυχία επιλογής εγγράφου"
 msgid "Failed to send invite. Please try again."
 msgstr "Verzenden van uitnodiging mislukt. Probeer het opnieuw."
 
-#: src/components/message/Message.tsx:1202
+#: src/components/message/Message.tsx:1203
 msgid "Failed to send."
 msgstr "Αποτυχία αποστολής."
 
@@ -1199,6 +1230,10 @@ msgstr "Αποτυχία αποεπισημάνσεως μηνύματος"
 #: src/hooks/business/spaces/useSpaceProfile.ts:213
 msgid "Failed to update profile"
 msgstr "Αποτυχία ενημέρωσης προφίλ"
+
+#: src/components/direct/DirectMessageContactsList.tsx:259
+msgid "Favorites"
+msgstr "Αγαπημένα"
 
 #: src/utils/imageProcessing/errors.ts:16
 msgid "File cannot be larger than {maxSize}"
@@ -1233,7 +1268,7 @@ msgstr "Το αρχείο δεν πρέπει να είναι μεγαλύτερ
 msgid "File rejected"
 msgstr "Το αρχείο απορρίφθηκε"
 
-#: src/components/primitives/FileUpload/FileUpload.web.tsx:52
+#: src/components/primitives/FileUpload/FileUpload.web.tsx:53
 msgid "File size too large. Maximum size: {maxSizeMB}"
 msgstr ""
 "Το μέγεθος του αρχείου είναι πολύ μεγάλο. Μέγιστο μέγεθος: {maxSizeMB}"
@@ -1244,12 +1279,12 @@ msgid "File size too large. Maximum size: {maxSizeMB}MB"
 msgstr ""
 "Το μέγεθος του αρχείου είναι πολύ μεγάλο. Μέγιστο μέγεθος: {maxSizeMB}MB"
 
-#: src/components/primitives/FileUpload/FileUpload.web.tsx:58
+#: src/components/primitives/FileUpload/FileUpload.web.tsx:59
 msgid "File size too small. Minimum size: {minSizeMB}"
 msgstr ""
 "Το μέγεθος του αρχείου είναι πολύ μικρό. Ελάχιστο μέγεθος: {minSizeMB}"
 
-#: src/components/primitives/FileUpload/FileUpload.web.tsx:69
+#: src/components/primitives/FileUpload/FileUpload.web.tsx:70
 msgid "File validation failed. Please try again."
 msgstr "Η επικύρωση του αρχείου απέτυχε. Παρακαλώ δοκιμάστε ξανά."
 
@@ -1257,11 +1292,11 @@ msgstr "Η επικύρωση του αρχείου απέτυχε. Παρακα
 msgid "Fix"
 msgstr "Fix"
 
-#: src/components/modals/SpaceSettingsModal/General.tsx:315
+#: src/components/modals/SpaceSettingsModal/General.tsx:317
 msgid "Fixes"
 msgstr "Fixes"
 
-#: src/components/modals/SpaceSettingsModal/General.tsx:334
+#: src/components/modals/SpaceSettingsModal/General.tsx:336
 msgid "Fixing..."
 msgstr "Bezig met fixen..."
 
@@ -1302,8 +1337,8 @@ msgstr ""
 "αποκαλύψουν ως τον ιδιοκτήτη—σκεφτείτε να μοιραστείτε ρόλους με άλλους "
 "αξιόπιστους χρήστες."
 
-#: src/components/context/MessageDB.bak.tsx:3186
-#: src/services/SpaceService.ts:233
+#: src/components/context/MessageDB.bak.tsx:3187
+#: src/services/SpaceService.ts:242
 msgid "general"
 msgstr "γενικό"
 
@@ -1312,8 +1347,8 @@ msgstr "γενικό"
 msgid "General"
 msgstr "Γενικό"
 
-#: src/components/context/MessageDB.bak.tsx:3187
-#: src/services/SpaceService.ts:234
+#: src/components/context/MessageDB.bak.tsx:3188
+#: src/services/SpaceService.ts:243
 msgid "General Chat"
 msgstr "Γενική Συνομιλία"
 
@@ -1372,11 +1407,15 @@ msgstr ""
 msgid "Hang in there..."
 msgstr "Κρατηθείτε..."
 
+#: src/components/modals/UserSettingsModal/Privacy.tsx:316
+msgid "Hide"
+msgstr "Απόκρυψη"
+
 #: src/components/direct/EmptyDirectMessage.tsx:54
 msgid "hide home screen"
 msgstr "κρύψτε την αρχική οθόνη"
 
-#: src/components/modals/SpaceSettingsModal/Account.tsx:265
+#: src/components/modals/SpaceSettingsModal/Account.tsx:270
 msgid "Hide muted channels"
 msgstr "Απόκρυψη σιωπηλών καναλιών"
 
@@ -1384,14 +1423,18 @@ msgstr "Απόκρυψη σιωπηλών καναλιών"
 msgid "Hide Muted Channels"
 msgstr "Απόκρυψη Σιωπηλών Καναλιών"
 
-#: src/components/modals/SpaceSettingsModal/Account.tsx:270
+#: src/components/modals/SpaceSettingsModal/Account.tsx:267
 msgid "Hide muted channels in list"
 msgstr "Απόκρυψη σιωπηλών καναλιών στη λίστα"
 
-#: src/components/onboarding/Onboarding.native.tsx:290
+#: src/components/onboarding/Onboarding.native.tsx:291
 #: src/components/onboarding/Onboarding.tsx:198
 msgid "I already saved mine"
 msgstr "Ήδη το αποθήκευσα"
+
+#: src/components/modals/UserSettingsModal/Privacy.tsx:291
+msgid "I Understand, Show QR"
+msgstr "Κατανοώ, Εμφάνιση QR"
 
 #: src/components/onboarding/Onboarding.tsx:333
 #: src/components/onboarding/Onboarding.tsx:340
@@ -1409,7 +1452,7 @@ msgstr ""
 "προγράμματα περιήγησης, τα παλιά σας μηνύματα και κλειδιά μπορεί να "
 "εξαφανιστούν."
 
-#: src/components/onboarding/Onboarding.native.tsx:254
+#: src/components/onboarding/Onboarding.native.tsx:255
 #: src/components/onboarding/Onboarding.tsx:172
 msgid ""
 "If you uninstall the app from your device, you will lose your old messages "
@@ -1423,7 +1466,7 @@ msgstr ""
 msgid "Import Existing Key"
 msgstr "Εισαγωγή Υπάρχοντος Κλειδιού"
 
-#: src/components/onboarding/Onboarding.native.tsx:244
+#: src/components/onboarding/Onboarding.native.tsx:245
 #: src/components/onboarding/Onboarding.tsx:154
 msgid "Important first-time user information:"
 msgstr "Σημαντικές πληροφορίες για νέους χρήστες:"
@@ -1432,8 +1475,8 @@ msgstr "Σημαντικές πληροφορίες για νέους χρήστ
 msgid "Important messages will be pinned here"
 msgstr "Σημαντικά μηνύματα θα καρφιτσωθούν εδώ"
 
-#: src/components/context/MessageDB.bak.tsx:1184
-#: src/services/MessageService.ts:2290
+#: src/components/context/MessageDB.bak.tsx:1185
+#: src/services/MessageService.ts:2392
 msgid "invalid address for signature"
 msgstr "μη έγκυρη διεύθυνση για υπογραφή"
 
@@ -1445,32 +1488,32 @@ msgstr ""
 "Μη έγκυρη μορφή διεύθυνσης. Οι διευθύνσεις πρέπει να χρησιμοποιούν έγκυρους "
 "αλφαριθμητικούς χαρακτήρες."
 
-#: src/components/primitives/FileUpload/FileUpload.web.tsx:63
+#: src/components/primitives/FileUpload/FileUpload.web.tsx:64
 msgid "Invalid file type. Please check accepted file formats."
 msgstr "Μη έγκυρος τύπος αρχείου. Ελέγξτε τους αποδεκτούς τύπους αρχείων."
 
-#: src/components/context/MessageDB.bak.tsx:4690
-#: src/components/context/MessageDB.bak.tsx:4701
-#: src/components/context/MessageDB.bak.tsx:4738
-#: src/components/context/MessageDB.bak.tsx:4809
-#: src/services/InvitationService.ts:510 src/services/InvitationService.ts:521
-#: src/services/InvitationService.ts:554 src/services/InvitationService.ts:623
+#: src/components/context/MessageDB.bak.tsx:4691
+#: src/components/context/MessageDB.bak.tsx:4702
+#: src/components/context/MessageDB.bak.tsx:4739
+#: src/components/context/MessageDB.bak.tsx:4810
+#: src/services/InvitationService.ts:511 src/services/InvitationService.ts:522
+#: src/services/InvitationService.ts:555 src/services/InvitationService.ts:627
 msgid "invalid link"
 msgstr "μη έγκυρος σύνδεσμος"
 
-#: src/hooks/business/messages/usePinnedMessages.ts:72
-#: src/hooks/business/messages/usePinnedMessages.ts:164
+#: src/hooks/business/messages/usePinnedMessages.ts:73
+#: src/hooks/business/messages/usePinnedMessages.ts:165
 msgid "Invalid message ID"
 msgstr "Μη έγκυρος αναγνωριστικός αριθμός μηνύματος"
 
-#: src/components/context/MessageDB.bak.tsx:5180 src/utils/canonicalize.ts:127
+#: src/components/context/MessageDB.bak.tsx:5181 src/utils/canonicalize.ts:127
 msgid "invalid message type"
 msgstr "μη έγκυρος τύπος μηνύματος"
 
-#: src/components/context/MessageDB.bak.tsx:4706
-#: src/components/context/MessageDB.bak.tsx:4772
+#: src/components/context/MessageDB.bak.tsx:4707
+#: src/components/context/MessageDB.bak.tsx:4773
 #: src/hooks/business/spaces/useInviteValidation.ts:81
-#: src/services/InvitationService.ts:526 src/services/InvitationService.ts:590
+#: src/services/InvitationService.ts:527 src/services/InvitationService.ts:594
 msgid "invalid response"
 msgstr "μη έγκυρη απάντηση"
 
@@ -1518,11 +1561,11 @@ msgstr "Συμμετοχή..."
 msgid "Jump"
 msgstr "Άλμα"
 
-#: src/components/message/MessageList.tsx:544
+#: src/components/message/MessageList.tsx:549
 msgid "Jump to present"
 msgstr "Μετάβαση στο παρόν"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:178
+#: src/components/modals/UserSettingsModal/Privacy.tsx:222
 msgid "Key Export"
 msgstr "Εξαγωγή Κλειδιού"
 
@@ -1551,7 +1594,7 @@ msgstr "Verwijderd!"
 msgid "Kicking..."
 msgstr "Αποβολή..."
 
-#: src/components/modals/UserSettingsModal/Appearance.tsx:40
+#: src/components/modals/UserSettingsModal/Appearance.tsx:66
 msgid "Language"
 msgstr "Γλώσσα"
 
@@ -1570,7 +1613,7 @@ msgstr "Αποχώρηση από το Χώρος"
 msgid "Leave this space"
 msgstr "Αφήστε αυτό το space"
 
-#: src/components/onboarding/Onboarding.native.tsx:312
+#: src/components/onboarding/Onboarding.native.tsx:313
 #: src/components/onboarding/Onboarding.tsx:212
 msgid ""
 "Let your friends know who you are! Pick a friendly name to display in your "
@@ -1579,12 +1622,13 @@ msgstr ""
 "Ενημέρωσε τους φίλους σου για το ποιος είσαι! Διάλεξε ένα φιλικό όνομα για "
 "να εμφανίζεται στις συνομιλίες σου, κάτι πιο ευανάγνωστο από:"
 
-#: src/components/onboarding/Onboarding.native.tsx:505
+#: src/components/onboarding/Onboarding.native.tsx:506
 #: src/components/onboarding/Onboarding.tsx:366
 msgid "Let's gooooooooo"
 msgstr "Ας πάμε!"
 
 #: src/components/ui/ThemeRadioGroup.tsx:18
+#: src/components/ui/ThemeRadioGroup.tsx:20
 msgid "Light"
 msgstr "Φως"
 
@@ -1592,7 +1636,7 @@ msgstr "Φως"
 msgid "Loading bookmarks..."
 msgstr "Φόρτωση σελιδοδεικτών..."
 
-#: src/components/message/MessageList.tsx:555
+#: src/components/message/MessageList.tsx:560
 msgid "Loading message..."
 msgstr "Φόρτωση μηνύματος..."
 
@@ -1608,6 +1652,10 @@ msgstr "Φόρτωση καρφιτσωμένων μηνυμάτων..."
 msgid "Loading your profile..."
 msgstr "Φορτώνω το προφίλ σας..."
 
+#: src/components/modals/UserSettingsModal/Privacy.tsx:291
+msgid "Loading..."
+msgstr "Φόρτωση..."
+
 #: src/hooks/business/conversations/useDirectMessageCreation.ts:32
 msgid "Looking up user..."
 msgstr "Αναζητώντας χρήστη..."
@@ -1616,7 +1664,7 @@ msgstr "Αναζητώντας χρήστη..."
 msgid "Lookup"
 msgstr "Zoeken"
 
-#: src/components/Maintenance.native.tsx:42 src/components/Maintenance.tsx:17
+#: src/components/Maintenance.native.tsx:43 src/components/Maintenance.tsx:17
 msgid "Maintenance in Progress"
 msgstr "Συντήρηση σε εξέλιξη"
 
@@ -1628,7 +1676,7 @@ msgstr "Κάντε τον ρόλο αόρατο"
 msgid "Make role public"
 msgstr "Κάντε τον ρόλο δημόσιο"
 
-#: src/components/onboarding/Onboarding.native.tsx:364
+#: src/components/onboarding/Onboarding.native.tsx:365
 #: src/components/onboarding/Onboarding.tsx:261
 msgid ""
 "Make your account uniquely yours – set a contact photo. This information is "
@@ -1643,7 +1691,7 @@ msgstr ""
 "Διαχείριση προτιμήσεων ειδοποιήσεων επιτραπέζιου υπολογιστή για νέα "
 "μηνύματα."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:45
+#: src/components/modals/UserSettingsModal/Privacy.tsx:92
 msgid ""
 "Manage devices, and privacy conditions for messaging and synchronization."
 msgstr ""
@@ -1669,13 +1717,11 @@ msgstr "Διαχειριστείτε τις ρυθμίσεις σας για <0>
 msgid "Mark all as read"
 msgstr "Σήμανση όλων ως αναγνωσμένων"
 
-#: src/components/direct/DirectMessage.tsx:763
-#: src/components/direct/DirectMessage.tsx:962
-#: src/components/space/Channel.tsx:1003
+#: src/components/space/Channel.tsx:878
 msgid "Members List"
 msgstr "Λίστα μελών"
 
-#: src/components/modals/ChannelEditorModal.tsx:169
+#: src/components/modals/ChannelEditorModal.tsx:174
 msgid ""
 "Members of selected roles can post, delete, and pin messages in this read-"
 "only channel. Note: Space owners must also be in a manager role to post "
@@ -1698,8 +1744,8 @@ msgstr "Ενέργειες μηνυμάτων"
 msgid "Message deleted"
 msgstr "Μήνυμα διαγράφηκε"
 
-#: src/components/message/Message.tsx:745
-#: src/components/message/Message.tsx:823
+#: src/components/message/Message.tsx:746
+#: src/components/message/Message.tsx:824
 msgid ""
 "Message does not have a valid signature, this may not be from the sender"
 msgstr ""
@@ -1718,6 +1764,10 @@ msgstr "Τα μηνύματα ΔΕΝ είναι υπογεγραμμένα!"
 msgid "Messages are signed!"
 msgstr "Τα μηνύματα είναι υπογεγραμμένα!"
 
+#: src/components/modals/UserSettingsModal/Privacy.tsx:244
+msgid "Mobile Import"
+msgstr "Εισαγωγή κινητού"
+
 #: src/components/message/MessageActions.tsx:92
 msgid "More reactions"
 msgstr "Περισσότερες αντιδράσεις"
@@ -1726,7 +1776,7 @@ msgstr "Περισσότερες αντιδράσεις"
 msgid "Mute"
 msgstr "Σίγαση"
 
-#: src/components/modals/SpaceSettingsModal/Account.tsx:260
+#: src/components/modals/SpaceSettingsModal/Account.tsx:257
 msgid "Mute all notifications from this space"
 msgstr "Σίγαση όλων των ειδοποιήσεων από αυτό το space"
 
@@ -1750,7 +1800,7 @@ msgstr "Σίγαση για πάντα"
 msgid "Mute Space"
 msgstr "Σίγαση Space"
 
-#: src/components/modals/SpaceSettingsModal/Account.tsx:255
+#: src/components/modals/SpaceSettingsModal/Account.tsx:260
 msgid "Mute this Space"
 msgstr "Σίγαση αυτού του Space"
 
@@ -1765,6 +1815,11 @@ msgstr "Σίγαση Χρηστών"
 #: src/components/navbar/NavMenu.tsx:188
 msgid "My Account"
 msgstr "Ο Λογαριασμός Μου"
+
+#: src/components/direct/DirectMessageContactsList.tsx:311
+#: src/components/space/Channel.tsx:1060
+msgid "Name or Address"
+msgstr "Όνομα ή Διεύθυνση"
 
 #: src/hooks/business/validation/useDisplayNameValidation.ts:26
 #: src/hooks/business/validation/useDisplayNameValidation.ts:55
@@ -1809,11 +1864,15 @@ msgstr "Δεν υπάρχουν σελιδοδείκτες σε αυτόν το�
 msgid "No bookmarks yet"
 msgstr "Δεν υπάρχουν σελιδοδείκτες ακόμα"
 
+#: src/components/direct/DirectMessageContactsList.tsx:325
+msgid "No contacts found"
+msgstr "Δεν βρέθηκαν επαφές"
+
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:155
 msgid "No conversations found"
 msgstr "Δεν βρέθηκαν συνομιλίες"
 
-#: src/services/InvitationService.ts:68
+#: src/services/InvitationService.ts:69
 msgid ""
 "No encryption state found for this space. The space may need to be "
 "initialized or you may need to generate a public invite link first."
@@ -1822,7 +1881,11 @@ msgstr ""
 "χρειάζεται να αρχικοποιηθεί ή μπορεί να χρειαστεί να δημιουργήσετε πρώτα "
 "έναν δημόσιο σύνδεσμο πρόσκλησης."
 
-#: src/services/InvitationService.ts:78
+#: src/components/direct/DirectMessageContactsList.tsx:321
+msgid "No favorites yet"
+msgstr "Δεν υπάρχουν ακόμη αγαπημένα"
+
+#: src/services/InvitationService.ts:79
 msgid ""
 "No invite evaluations available. Please generate a public invite link or "
 "ensure the space encryption state is properly initialized."
@@ -1831,11 +1894,15 @@ msgstr ""
 "δημόσιο σύνδεσμο πρόσκλησης ή βεβαιωθείτε ότι η κατάσταση κρυπτογράφησης του"
 " space έχει αρχικοποιηθεί σωστά."
 
+#: src/components/direct/DirectMessageContactsList.tsx:323
+msgid "No message requests"
+msgstr "Δεν υπάρχουν αιτήματα μηνυμάτων"
+
 #: src/components/search/SearchResults.tsx:103
 msgid "No messages found"
 msgstr "Δεν βρέθηκαν μηνύματα"
 
-#: src/hooks/business/user/useSpaceRecovery.ts:76
+#: src/hooks/business/user/useSpaceRecovery.ts:77
 msgid "No missing spaces found"
 msgstr "Δεν βρέθηκαν λείποντες χώροι"
 
@@ -1847,8 +1914,7 @@ msgstr "Δεν υπάρχουν καρφιτσωμένα μηνύματα ακό
 msgid "No unread notifications"
 msgstr "Δεν υπάρχουν μη αναγνωσμένες ειδοποιήσεις"
 
-#: src/components/space/Channel.tsx:689 src/components/space/Channel.tsx:1213
-#: src/components/space/Channel.tsx:1396
+#: src/components/space/Channel.tsx:1068 src/components/space/Channel.tsx:1246
 msgid "No users found!"
 msgstr "Δε βρέθηκαν χρήστες!"
 
@@ -1856,26 +1922,26 @@ msgstr "Δε βρέθηκαν χρήστες!"
 msgid "None"
 msgstr "Κανένα"
 
-#: src/services/NotificationService.ts:185
+#: src/services/NotificationService.ts:186
 msgid "Notification permission not granted"
 msgstr "Η άδεια ειδοποίησης δεν έχει παραχωρηθεί"
 
 #: src/components/modals/SpaceSettingsModal/Account.tsx:207
 #: src/components/modals/UserSettingsModal/Navigation.tsx:17
 #: src/components/modals/UserSettingsModal/Notifications.tsx:24
-#: src/components/space/Channel.tsx:942
+#: src/components/space/Channel.tsx:817
 msgid "Notifications"
 msgstr "Ειδοποιήσεις"
 
-#: src/components/modals/UserSettingsModal/Notifications.tsx:66
+#: src/components/modals/UserSettingsModal/Notifications.tsx:65
 msgid ""
 "Notifications are blocked. Please enable them in your browser settings."
 msgstr ""
 "Οι ειδοποιήσεις είναι αποκλεισμένες. Παρακαλώ ενεργοποίησέ τες στις "
 "ρυθμίσεις του περιηγητή σου."
 
-#: src/services/NotificationService.ts:55
-#: src/services/NotificationService.ts:180
+#: src/services/NotificationService.ts:56
+#: src/services/NotificationService.ts:181
 msgid "Notifications are not supported in this browser"
 msgstr "Οι ειδοποιήσεις δεν υποστηρίζονται σε αυτόν τον περιηγητή"
 
@@ -1893,7 +1959,7 @@ msgstr "Εκτός σύνδεσης"
 msgid "OK"
 msgstr "Εντάξει"
 
-#: src/components/onboarding/Onboarding.native.tsx:222
+#: src/components/onboarding/Onboarding.native.tsx:223
 #: src/components/onboarding/Onboarding.tsx:120
 msgid "One of us, one of us!"
 msgstr "Ένας από εμάς, ένας από εμάς!"
@@ -1901,6 +1967,13 @@ msgstr "Ένας από εμάς, ένας από εμάς!"
 #: src/components/user/UserOnlineStateIndicator.tsx:26
 msgid "Online"
 msgstr "Συνδεδεμένος"
+
+#: src/components/modals/UserSettingsModal/Privacy.tsx:274
+msgid ""
+"Only proceed if you are in a private location and ready to scan immediately."
+msgstr ""
+"Προχωρήστε μόνο αν βρίσκεστε σε ιδιωτική τοποθεσία και είστε έτοιμοι να "
+"σαρώσετε αμέσως."
 
 #: src/components/ui/YouTubeFacade.tsx:171
 msgid "Open video on YouTube"
@@ -1926,11 +1999,11 @@ msgstr "Η Σελίδα Δεν Βρέθηκε"
 msgid "Paste an invite link"
 msgstr "Plak een uitnodigingslink"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:157
+#: src/components/modals/UserSettingsModal/Privacy.tsx:202
 msgid "Pending"
 msgstr "In afwachting"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:143
+#: src/components/modals/UserSettingsModal/Privacy.tsx:188
 msgid "Pending removal - click Save to confirm"
 msgstr "In afwachting van verwijdering - klik op Opslaan om te bevestigen"
 
@@ -1939,7 +2012,7 @@ msgstr "In afwachting van verwijdering - klik op Opslaan om te bevestigen"
 msgid "Permissions:"
 msgstr "Δικαιώματα:"
 
-#: src/components/onboarding/Onboarding.native.tsx:223
+#: src/components/onboarding/Onboarding.native.tsx:224
 #: src/components/onboarding/Onboarding.tsx:121
 msgid "Personalize your account"
 msgstr "Προσωποποίησε τον λογαριασμό σου"
@@ -1959,12 +2032,12 @@ msgstr ""
 "Η άδεια πρόσβασης στη βιβλιοθήκη φωτογραφιών είναι απαραίτητη για την "
 "επιλογή εικόνων"
 
-#: src/hooks/business/messages/usePinnedMessages.ts:326
+#: src/hooks/business/messages/usePinnedMessages.ts:327
 msgid "pin"
 msgstr "pin"
 
 #: src/components/message/MessageActionsMenu.tsx:263
-#: src/hooks/business/messages/usePinnedMessages.ts:323
+#: src/hooks/business/messages/usePinnedMessages.ts:324
 msgid "Pin"
 msgstr "Καρφίτσωμα"
 
@@ -1972,7 +2045,7 @@ msgstr "Καρφίτσωμα"
 msgid "Pin Channel"
 msgstr "Καρφίτσωμα Καναλιού"
 
-#: src/components/modals/ChannelEditorModal.tsx:141
+#: src/components/modals/ChannelEditorModal.tsx:138
 msgid "Pin channel to top"
 msgstr "Καρφίτσωμα καναλιού στην κορυφή"
 
@@ -1981,7 +2054,7 @@ msgid "Pin important messages to keep them easily accessible"
 msgstr "Καρφιτσώστε σημαντικά μηνύματα για να είναι εύκολα προσβάσιμα"
 
 #. placeholder {0}: PINNED_MESSAGES_CONFIG.MAX_PINS
-#: src/hooks/business/messages/usePinnedMessages.ts:86
+#: src/hooks/business/messages/usePinnedMessages.ts:87
 msgid "Pin limit reached ({0})"
 msgstr "Έχει επιτευχθεί το όριο καρφιτσώματος ({0})"
 
@@ -1990,7 +2063,7 @@ msgstr "Έχει επιτευχθεί το όριο καρφιτσώματος (
 msgid "Pin message"
 msgstr "Καρφιτσώστε το μήνυμα"
 
-#: src/hooks/business/messages/usePinnedMessages.ts:309
+#: src/hooks/business/messages/usePinnedMessages.ts:310
 msgid "Pin Message"
 msgstr "Καρφίτσωμα Μηνύματος"
 
@@ -1998,23 +2071,23 @@ msgstr "Καρφίτσωμα Μηνύματος"
 msgid "Pin Messages"
 msgstr "Καρφιτσώστε μηνύματα"
 
-#: src/components/modals/ChannelEditorModal.tsx:136
+#: src/components/modals/ChannelEditorModal.tsx:141
 msgid "Pin to top"
 msgstr "Καρφίτσωμα στην κορυφή"
 
-#: src/components/message/Message.tsx:713
-#: src/components/message/Message.tsx:791
+#: src/components/message/Message.tsx:714
+#: src/components/message/Message.tsx:792
 msgid "Pinned"
 msgstr "Καρφιτσωμένα"
 
 #. placeholder {0}: mapSenderToUser(message.pinnedBy)?.displayName ||
 #. message.pinnedBy
-#: src/components/message/Message.tsx:712
-#: src/components/message/Message.tsx:790
+#: src/components/message/Message.tsx:713
+#: src/components/message/Message.tsx:791
 msgid "Pinned by {0}"
 msgstr "Καρφιτσωμένο από {0}"
 
-#: src/components/space/Channel.tsx:902
+#: src/components/space/Channel.tsx:777
 msgid "Pinned Messages"
 msgstr "Καρφιτσωμένα μηνύματα"
 
@@ -2022,12 +2095,12 @@ msgstr "Καρφιτσωμένα μηνύματα"
 msgid "Pinned!"
 msgstr "Καρφιτσωμένο!"
 
-#: src/components/onboarding/Onboarding.native.tsx:180
+#: src/components/onboarding/Onboarding.native.tsx:181
 #: src/components/onboarding/Onboarding.tsx:133
 msgid "PNG, JPG or JPEG • Optimal ratio 1:1"
 msgstr "PNG, JPG of JPEG • Optimale verhouding 1:1"
 
-#: src/components/message/MessageEditTextarea.tsx:375
+#: src/components/message/MessageEditTextarea.tsx:376
 msgid "Press Enter to save, Shift+Enter for new line, Esc to cancel"
 msgstr ""
 "Πατήστε Enter για αποθήκευση, Shift+Enter για νέα γραμμή, Esc για ακύρωση"
@@ -2037,7 +2110,7 @@ msgid "Privacy Settings"
 msgstr "Ρυθμίσεις Ιδιωτικότητας"
 
 #: src/components/modals/UserSettingsModal/Navigation.tsx:16
-#: src/components/modals/UserSettingsModal/Privacy.tsx:43
+#: src/components/modals/UserSettingsModal/Privacy.tsx:90
 msgid "Privacy/Security"
 msgstr "Ιδιωτικότητα/Ασφάλεια"
 
@@ -2063,6 +2136,10 @@ msgstr ""
 " om je Space te betreden. Overweeg met wie je de link deelt en waar je deze "
 "plaatst."
 
+#: src/components/modals/UserSettingsModal/Privacy.tsx:308
+msgid "QR code will auto-hide in 60 seconds"
+msgstr "Ο κωδικός QR θα κρυφτεί αυτόματα σε 60 δευτερόλεπτα"
+
 #: src/components/Maintenance.tsx:24
 msgid ""
 "Quorum infrastructure is being deployed at this time. Please try refreshing,"
@@ -2071,14 +2148,14 @@ msgstr ""
 "Quorum infrastructure is being deployed at this time. Please try refreshing,"
 " and check <0>https://status.quilibrium.com/</0> for updates."
 
-#: src/components/Maintenance.native.tsx:47
+#: src/components/Maintenance.native.tsx:48
 msgid ""
 "Quorum infrastructure is being deployed at this time. Please try refreshing."
 msgstr ""
 "Η υποδομή Quorum αναπτύσσεται αυτή τη στιγμή. Παρακαλώ δοκιμάστε να "
 "ανανεώσετε."
 
-#: src/components/onboarding/Onboarding.native.tsx:249
+#: src/components/onboarding/Onboarding.native.tsx:250
 #: src/components/onboarding/Onboarding.tsx:157
 msgid ""
 "Quorum is peer-to-peer and end-to-end encrypted. This means your messages "
@@ -2097,15 +2174,15 @@ msgstr ""
 "Quorum was loaded while the browser was not in focus or a passkey request "
 "was rejected. Please reauthorize to access your messages."
 
-#: src/components/modals/ChannelEditorModal.tsx:150
+#: src/components/modals/ChannelEditorModal.tsx:155
 msgid "Read only"
 msgstr "Μόνο για ανάγνωση"
 
-#: src/components/modals/ChannelEditorModal.tsx:155
+#: src/components/modals/ChannelEditorModal.tsx:152
 msgid "Read only channel"
 msgstr "Κανάλι μόνο για ανάγνωση"
 
-#: src/components/direct/DirectMessageContactsList.tsx:151
+#: src/components/direct/DirectMessageContactsList.tsx:336
 msgid "Ready to start a truly private conversation?"
 msgstr "Έτοιμοι να ξεκινήσουμε μια πραγματικά ιδιωτική συνομιλία;"
 
@@ -2113,8 +2190,8 @@ msgstr "Έτοιμοι να ξεκινήσουμε μια πραγματικά �
 msgid "Reauthorize"
 msgstr "Επαναεξουσιοδότηση"
 
-#: src/components/context/MessageDB.bak.tsx:5385
-#: src/services/ConfigService.ts:107
+#: src/components/context/MessageDB.bak.tsx:5386
+#: src/services/ConfigService.ts:108
 msgid "received config with invalid signature!"
 msgstr "received config with invalid signature!"
 
@@ -2122,12 +2199,12 @@ msgstr "received config with invalid signature!"
 msgid "Recipient has no devices"
 msgstr "Ο παραλήπτης δεν έχει συσκευές"
 
-#: src/components/Maintenance.native.tsx:73 src/components/Maintenance.tsx:46
-#: src/components/modals/UserSettingsModal/Appearance.tsx:61
+#: src/components/Maintenance.native.tsx:74 src/components/Maintenance.tsx:46
+#: src/components/modals/UserSettingsModal/Appearance.tsx:87
 msgid "Refresh"
 msgstr "Ανανέωση"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:157
+#: src/components/modals/UserSettingsModal/Privacy.tsx:202
 msgid "Remove"
 msgstr "Αφαίρεση"
 
@@ -2137,6 +2214,10 @@ msgstr "Αφαίρεση"
 #: src/components/message/MessageActionsMenu.tsx:256
 msgid "Remove bookmark"
 msgstr "Αφαίρεση σελιδοδείκτη"
+
+#: src/components/direct/DirectMessageContactsList.tsx:224
+msgid "Remove from Favorites"
+msgstr "Αφαίρεση από τα Αγαπημένα"
 
 #: src/components/user/UserProfile.tsx:172
 msgid "Removing..."
@@ -2153,12 +2234,12 @@ msgstr "Απαντήσεις"
 msgid "Reply"
 msgstr "Απάντηση"
 
-#: src/components/modals/CreateSpaceModal.tsx:201
-#: src/components/modals/SpaceSettingsModal/General.tsx:264
+#: src/components/modals/CreateSpaceModal.tsx:205
+#: src/components/modals/SpaceSettingsModal/General.tsx:268
 msgid "Require Message Signing"
 msgstr "Απαιτείται υπογραφή μηνύματος"
 
-#: src/components/modals/CreateSpaceModal.tsx:205
+#: src/components/modals/CreateSpaceModal.tsx:209
 msgid ""
 "Require messages sent in this Space to be signed by the sender. Technically "
 "speaking, this makes the messages in this Space non-repudiable."
@@ -2171,11 +2252,11 @@ msgstr ""
 msgid "Reset"
 msgstr "Reset"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:208
-msgid "Restore Missing Spaces"
-msgstr "Αποκατάσταση Λείποντων Χώρων"
+#: src/components/modals/UserSettingsModal/Privacy.tsx:341
+msgid "Restore"
+msgstr "Αποκατάσταση"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:200
+#: src/components/modals/UserSettingsModal/Privacy.tsx:332
 msgid ""
 "Restore Spaces that exist on this device but are missing from your "
 "navigation menu."
@@ -2184,15 +2265,15 @@ msgstr ""
 "το μενού πλοήγησής σας."
 
 #. placeholder {0}: recoverable.length
-#: src/hooks/business/user/useSpaceRecovery.ts:98
+#: src/hooks/business/user/useSpaceRecovery.ts:99
 msgid "Restored {0} space(s)"
 msgstr "Αποκαταστάθηκε {0} χώρος(οι)"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:208
+#: src/components/modals/UserSettingsModal/Privacy.tsx:341
 msgid "Restoring..."
 msgstr "Αποκατάσταση..."
 
-#: src/components/message/Message.tsx:1213
+#: src/components/message/Message.tsx:1214
 msgid "Retry"
 msgstr "Δοκιμάστε ξανά"
 
@@ -2201,32 +2282,32 @@ msgstr "Δοκιμάστε ξανά"
 msgid "Roles"
 msgstr "Ρόλοι"
 
-#: src/components/message/MessageEditTextarea.tsx:395
-#: src/components/modals/ConversationSettingsModal.tsx:242
+#: src/components/message/MessageEditTextarea.tsx:396
+#: src/components/modals/ConversationSettingsModal.tsx:235
 msgid "Save"
 msgstr "Αποθήκευση"
 
-#: src/components/modals/ChannelEditorModal.tsx:198
+#: src/components/modals/ChannelEditorModal.tsx:203
 #: src/components/modals/FolderEditorModal.tsx:113
 #: src/components/modals/GroupEditorModal.tsx:99
 #: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:595
-#: src/components/modals/UserSettingsModal/UserSettingsModal.tsx:249
+#: src/components/modals/UserSettingsModal/UserSettingsModal.tsx:251
 #: src/components/user/UserProfileEdit.tsx:158
 msgid "Save Changes"
 msgstr "Αποθήκευση Αλλαγών"
 
-#: src/components/onboarding/Onboarding.native.tsx:473
+#: src/components/onboarding/Onboarding.native.tsx:474
 #: src/components/onboarding/Onboarding.tsx:322
 msgid "Save Contact Photo"
 msgstr "Αποθήκευση Φωτογραφίας Επαφής"
 
 #: src/components/modals/ConversationSettingsModal.tsx:218
-#: src/components/modals/SpaceSettingsModal/General.tsx:288
+#: src/components/modals/SpaceSettingsModal/General.tsx:293
 msgid "Save Edit History"
 msgstr "Αποθήκευση Ιστορικού Επεξεργασίας"
 
 #: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:580
-#: src/components/modals/UserSettingsModal/UserSettingsModal.tsx:238
+#: src/components/modals/UserSettingsModal/UserSettingsModal.tsx:240
 msgid "Save Failed"
 msgstr "Αποτυχία αποθήκευσης"
 
@@ -2234,13 +2315,13 @@ msgstr "Αποτυχία αποθήκευσης"
 msgid "Save Private Key"
 msgstr "Αποθηκεύστε τον ιδιωτικό κωδικό"
 
-#: src/components/onboarding/Onboarding.native.tsx:269
+#: src/components/onboarding/Onboarding.native.tsx:270
 #: src/components/onboarding/Onboarding.tsx:191
 msgid "Save User Key"
 msgstr "Αποθήκευση Κλειδιού Χρήστη"
 
-#: src/components/context/MessageDB.bak.tsx:5343
-#: src/services/ConfigService.ts:65
+#: src/components/context/MessageDB.bak.tsx:5344
+#: src/services/ConfigService.ts:66
 msgid "saved config is out of date"
 msgstr "η αποθηκευμένη ρύθμιση είναι παλιά"
 
@@ -2268,8 +2349,8 @@ msgstr "Αναζήτηση σε αυτό το Χώρος"
 msgid "Search in this Space..."
 msgstr "Αναζήτηση σε αυτό το Χώρο..."
 
-#: src/components/direct/DirectMessage.tsx:809
-#: src/components/space/Channel.tsx:1022
+#: src/components/direct/DirectMessage.tsx:736
+#: src/components/space/Channel.tsx:897
 msgid "Search Messages"
 msgstr "Αναζήτηση Μηνυμάτων"
 
@@ -2285,17 +2366,25 @@ msgstr "Αποτελέσματα Αναζήτησης"
 msgid "Search username or address"
 msgstr "Αναζήτηση ονόματος χρήστη ή διεύθυνσης"
 
-#: src/components/space/Channel.tsx:1382
+#: src/components/space/Channel.tsx:1237
 msgid "Search Username or Address"
 msgstr "Αναζήτηση Όνομα χρήστη ή Διεύθυνση"
+
+#: src/components/ui/ListSearchInput.tsx:26
+msgid "Search..."
+msgstr "Αναζήτηση..."
 
 #: src/components/search/SearchResults.tsx:85
 msgid "Searching..."
 msgstr "Αναζητώντας..."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:51
+#: src/components/modals/UserSettingsModal/Privacy.tsx:98
 msgid "Security"
 msgstr "Ασφάλεια"
+
+#: src/components/modals/UserSettingsModal/Privacy.tsx:268
+msgid "Security Warning"
+msgstr "Προειδοποίηση Ασφαλείας"
 
 #: src/components/modals/SpaceSettingsModal/Account.tsx:221
 msgid "Select"
@@ -2327,7 +2416,7 @@ msgstr "Επιλέξτε δικαιώματα"
 msgid "Select Profile Image"
 msgstr "Επιλέξτε εικόνα προφίλ"
 
-#: src/components/modals/ChannelEditorModal.tsx:188
+#: src/components/modals/ChannelEditorModal.tsx:193
 msgid "Select Roles"
 msgstr "Επιλογή Ρόλων"
 
@@ -2351,7 +2440,7 @@ msgstr "Αποστολή Πρόσκλησης"
 msgid "Send Message"
 msgstr "Αποστολή Μηνύματος"
 
-#: src/components/message/Message.tsx:1195
+#: src/components/message/Message.tsx:1196
 msgid "Sending..."
 msgstr "Αποστολή..."
 
@@ -2359,7 +2448,7 @@ msgstr "Αποστολή..."
 msgid "Session Encrypted"
 msgstr "Η συνεδρία είναι κρυπτογραφημένη"
 
-#: src/components/onboarding/Onboarding.native.tsx:344
+#: src/components/onboarding/Onboarding.native.tsx:345
 #: src/components/onboarding/Onboarding.tsx:247
 msgid "Set Display Name"
 msgstr "Ορισμός Όνοματος Εμφάνισης"
@@ -2368,7 +2457,7 @@ msgstr "Ορισμός Όνοματος Εμφάνισης"
 msgid "Settings"
 msgstr "Ρυθμίσεις"
 
-#: src/components/modals/UserSettingsModal/Notifications.tsx:39
+#: src/components/modals/UserSettingsModal/Notifications.tsx:43
 msgid ""
 "Show desktop notifications when you receive new messages while Quorum is in "
 "the background. Your browser will ask for permission when you enable this "
@@ -2386,6 +2475,10 @@ msgstr "εμφάνιση αρχικής οθόνης"
 msgid "Show Muted Channels"
 msgstr "Εμφάνιση Σιωπηλών Καναλιών"
 
+#: src/components/modals/UserSettingsModal/Privacy.tsx:256
+msgid "Show QR Code"
+msgstr "Εμφάνιση Κωδικού QR"
+
 #: src/components/search/SearchResults.tsx:187
 #: src/components/search/SearchResults.tsx:214
 msgid ""
@@ -2394,7 +2487,7 @@ msgstr ""
 "Εμφάνιση των πρώτων 500 αποτελεσμάτων. Βελτιώστε την αναζήτησή σας για πιο "
 "συγκεκριμένα αποτελέσματα."
 
-#: src/components/onboarding/Onboarding.native.tsx:461
+#: src/components/onboarding/Onboarding.native.tsx:462
 #: src/components/onboarding/Onboarding.tsx:329
 msgid "Skip Adding Photo"
 msgstr "Παράλειψη Προσθήκης Φωτογραφίας"
@@ -2463,11 +2556,12 @@ msgstr "Επιτυχώς αποστάλθηκε πρόσκληση στον {0}"
 msgid "Sync Kick Status"
 msgstr "Synchroniseer Kick-status"
 
-#: src/services/MessageService.ts:3111
+#: src/services/MessageService.ts:3298
 msgid "Syncing Space..."
 msgstr "Συγχρονισμός Χώρου..."
 
-#: src/components/ui/ThemeRadioGroup.tsx:28
+#: src/components/ui/ThemeRadioGroup.tsx:30
+#: src/components/ui/ThemeRadioGroup.tsx:32
 msgid "System"
 msgstr "Σύστημα"
 
@@ -2475,13 +2569,13 @@ msgstr "Σύστημα"
 msgid "Tap to copy"
 msgstr "Πατήστε για αντιγραφή"
 
-#: src/components/onboarding/Onboarding.native.tsx:443
+#: src/components/onboarding/Onboarding.native.tsx:444
 msgid "Tap to select"
 msgstr "Πατήστε για επιλογή"
 
 #: src/components/message/InviteLink.tsx:34
 #: src/components/modals/AddSpaceModal.tsx:75
-#: src/hooks/business/invites/useInviteProcessing.ts:43
+#: src/hooks/business/invites/useInviteProcessing.ts:44
 msgid "The invite link format is invalid."
 msgstr "Het formaat van de uitnodigingslink is ongeldig."
 
@@ -2520,11 +2614,11 @@ msgstr ""
 "όταν αναζητούν ή συμμετέχουν στο Space σας χρησιμοποιώντας έναν σύνδεσμο "
 "πρόσκλησης."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:166
+#: src/components/modals/UserSettingsModal/Privacy.tsx:211
 msgid "This device"
 msgstr "Αυτή η συσκευή"
 
-#: src/components/onboarding/Onboarding.native.tsx:318
+#: src/components/onboarding/Onboarding.native.tsx:319
 #: src/components/onboarding/Onboarding.tsx:221
 msgid "This information is only provided to the Spaces you join."
 msgstr "Αυτές οι πληροφορίες παρέχονται μόνο στους Χώρους που συμμετέχετε."
@@ -2554,9 +2648,9 @@ msgstr ""
 msgid "This name conflicts with mention keywords."
 msgstr "Αυτή η ονομασία συγκρούεται με τις λέξεις-κλειδιά αναφοράς."
 
-#: src/components/context/MessageDB.bak.tsx:4819
+#: src/components/context/MessageDB.bak.tsx:4820
 #: src/components/message/InviteLink.tsx:44
-#: src/services/InvitationService.ts:633
+#: src/services/InvitationService.ts:637
 msgid "This public invite link is no longer valid."
 msgstr "Deze openbare uitnodigingslink is niet langer geldig."
 
@@ -2614,7 +2708,7 @@ msgstr ""
 "TIP: Houd shift ingedrukt terwijl je {protipAction} klikt om deze "
 "bevestiging volledig te omzeilen."
 
-#: src/components/modals/UserSettingsModal/Notifications.tsx:72
+#: src/components/modals/UserSettingsModal/Notifications.tsx:71
 msgid ""
 "To disable notifications, please change the setting in your browser "
 "settings. Notifications cannot be disabled programmatically."
@@ -2631,7 +2725,7 @@ msgstr "Σήμερα"
 msgid "Today at {timeFormatted}"
 msgstr "Σήμερα στις {timeFormatted}"
 
-#: src/components/primitives/FileUpload/FileUpload.web.tsx:65
+#: src/components/primitives/FileUpload/FileUpload.web.tsx:66
 msgid "Too many files selected. Please select fewer files."
 msgstr "Πάρα πολλά αρχεία επιλέχθηκαν. Παρακαλώ επιλέξτε λιγότερα αρχεία."
 
@@ -2673,8 +2767,8 @@ msgstr ""
 msgid "Unable to copy to clipboard"
 msgstr "Δεν είναι δυνατή η αντιγραφή στο πρόχειρο"
 
-#: src/components/context/MessageDB.bak.tsx:3482
-#: src/services/SpaceService.ts:550
+#: src/components/context/MessageDB.bak.tsx:3483
+#: src/services/SpaceService.ts:560
 msgid ""
 "Unable to leave space due to incomplete configuration. The space data may be"
 " corrupted."
@@ -2682,7 +2776,7 @@ msgstr ""
 "Kon het Space niet verlaten vanwege onvolledige configuratie. De gegevens "
 "van het Space kunnen beschadigd zijn."
 
-#: src/hooks/business/user/useSpaceRecovery.ts:39
+#: src/hooks/business/user/useSpaceRecovery.ts:40
 msgid "Unable to load user config"
 msgstr "Δεν μπορέσαμε να φορτώσουμε τη ρύθμιση χρήστη"
 
@@ -2698,7 +2792,7 @@ msgstr "Nie można przetworzyć obrazu. Proszę użyć mniejszego obrazu."
 msgid "Unable to process sticker image. Please use a smaller image."
 msgstr "Nie można przetworzyć obrazu naklejki. Proszę użyć mniejszego obrazu."
 
-#: src/hooks/business/user/useSpaceRecovery.ts:23
+#: src/hooks/business/user/useSpaceRecovery.ts:24
 msgid "Unable to restore: not logged in"
 msgstr "Δεν μπορέσαμε να αποκαταστήσουμε: δεν είστε συνδεδεμένοι"
 
@@ -2717,30 +2811,31 @@ msgid "Unknown time"
 msgstr "Άγνωστη ώρα"
 
 #: src/components/bookmarks/BookmarkItem.tsx:118
-#: src/components/context/MessageDB.bak.tsx:961
-#: src/components/context/MessageDB.bak.tsx:980
-#: src/components/context/MessageDB.bak.tsx:3043
-#: src/components/context/MessageDB.bak.tsx:4122
-#: src/components/context/MessageDB.bak.tsx:5292
-#: src/components/direct/DirectMessage.tsx:170
-#: src/components/direct/DirectMessage.tsx:177
-#: src/components/direct/DirectMessage.tsx:184
-#: src/components/direct/DirectMessage.tsx:248
-#: src/components/direct/DirectMessage.tsx:630
+#: src/components/context/MessageDB.bak.tsx:962
+#: src/components/context/MessageDB.bak.tsx:981
+#: src/components/context/MessageDB.bak.tsx:3044
+#: src/components/context/MessageDB.bak.tsx:4123
+#: src/components/context/MessageDB.bak.tsx:5293
+#: src/components/direct/DirectMessage.tsx:169
+#: src/components/direct/DirectMessage.tsx:176
+#: src/components/direct/DirectMessage.tsx:183
+#: src/components/direct/DirectMessage.tsx:247
+#: src/components/direct/DirectMessage.tsx:574
+#: src/components/direct/DirectMessageContactsList.tsx:41
 #: src/components/message/MessageComposer.tsx:499
 #: src/components/message/MessageComposer.tsx:506
-#: src/components/message/MessageEditTextarea.tsx:218
-#: src/components/message/MessageEditTextarea.tsx:250
-#: src/components/message/MessageEditTextarea.tsx:257
-#: src/components/message/MessageEditTextarea.tsx:261
-#: src/components/message/MessageEditTextarea.tsx:267
+#: src/components/message/MessageEditTextarea.tsx:219
+#: src/components/message/MessageEditTextarea.tsx:251
+#: src/components/message/MessageEditTextarea.tsx:258
+#: src/components/message/MessageEditTextarea.tsx:262
+#: src/components/message/MessageEditTextarea.tsx:268
 #: src/components/message/MessagePreview.tsx:196
 #: src/components/message/PinnedMessagesPanel.tsx:78
-#: src/components/modals/ConversationSettingsModal.tsx:104
+#: src/components/modals/ConversationSettingsModal.tsx:103
 #: src/components/modals/NewDirectMessageModal.tsx:74
 #: src/components/notifications/NotificationPanel.tsx:248
 #: src/components/notifications/NotificationPanel.tsx:268
-#: src/hooks/business/channels/useChannelMessages.ts:150
+#: src/hooks/business/channels/useChannelMessages.ts:156
 #: src/hooks/business/conversations/useDirectMessageData.ts:51
 #: src/hooks/business/conversations/useDirectMessageData.ts:57
 #: src/hooks/business/conversations/useDirectMessageData.ts:75
@@ -2752,11 +2847,11 @@ msgstr "Άγνωστη ώρα"
 #: src/hooks/business/search/useSearchResultDisplayDM.ts:33
 #: src/hooks/business/search/useSearchResultDisplaySpace.ts:45
 #: src/hooks/queries/userInfo/buildUserInfoFetcher.ts:15
-#: src/services/EncryptionService.ts:138 src/services/MessageService.ts:1756
-#: src/services/MessageService.ts:1928 src/services/MessageService.ts:2068
-#: src/services/MessageService.ts:2081 src/services/MessageService.ts:3603
-#: src/services/MessageService.ts:3714 src/services/MessageService.ts:3881
-#: src/services/MessageService.ts:4078
+#: src/services/EncryptionService.ts:138 src/services/MessageService.ts:1771
+#: src/services/MessageService.ts:1943 src/services/MessageService.ts:2083
+#: src/services/MessageService.ts:2096 src/services/MessageService.ts:3892
+#: src/services/MessageService.ts:4003 src/services/MessageService.ts:4170
+#: src/services/MessageService.ts:4367
 msgid "Unknown User"
 msgstr "Άγνωστος Χρήστης"
 
@@ -2777,12 +2872,12 @@ msgstr "Αποσιώπηση Space"
 msgid "Unmute User"
 msgstr "Αποσιώπηση Χρήστη"
 
-#: src/hooks/business/messages/usePinnedMessages.ts:326
+#: src/hooks/business/messages/usePinnedMessages.ts:327
 msgid "unpin"
 msgstr "unpin"
 
 #: src/components/message/MessageActionsMenu.tsx:263
-#: src/hooks/business/messages/usePinnedMessages.ts:323
+#: src/hooks/business/messages/usePinnedMessages.ts:324
 msgid "Unpin"
 msgstr "Ξεκαρφίτσωμα"
 
@@ -2795,7 +2890,7 @@ msgstr "Αφαίρεση Καναλιού από την Καρφίτσα"
 msgid "Unpin message"
 msgstr "Αφαίρεση καρφιτσώματος μηνύματος"
 
-#: src/hooks/business/messages/usePinnedMessages.ts:309
+#: src/hooks/business/messages/usePinnedMessages.ts:310
 msgid "Unpin Message"
 msgstr "Ξεκαρφίτσωμα Μηνύματος"
 
@@ -2807,7 +2902,7 @@ msgstr "Αφαίρεση αυτού του δημοσιεύματος"
 msgid "Unpinned!"
 msgstr "Αφαίρεση καρφιτσώματος!"
 
-#: src/components/direct/DirectMessage.tsx:909
+#: src/components/direct/DirectMessage.tsx:849
 msgid ""
 "Until you reply, this sender will not see your display name or profile "
 "picture"
@@ -2852,14 +2947,10 @@ msgstr "Διεύθυνση χρήστη εδώ"
 msgid "User does not exist."
 msgstr "Ο χρήστης δεν υπάρχει."
 
-#: src/hooks/business/messages/usePinnedMessages.ts:76
-#: src/hooks/business/messages/usePinnedMessages.ts:168
+#: src/hooks/business/messages/usePinnedMessages.ts:77
+#: src/hooks/business/messages/usePinnedMessages.ts:169
 msgid "User not authenticated"
 msgstr "Ο χρήστης δεν έχει πιστοποιηθεί"
-
-#: src/components/space/Channel.tsx:676 src/components/space/Channel.tsx:1199
-msgid "Username or Address"
-msgstr "Όνομα χρήστη ή Διεύθυνση"
 
 #: src/components/context/WebsocketProvider.tsx:259
 msgid "useWebSocket must be used within a WebSocketProvider"
@@ -2874,7 +2965,7 @@ msgstr "Uitnodiging aan het valideren..."
 msgid "View edit history"
 msgstr "Δείτε το ιστορικό επεξεργασίας"
 
-#: src/components/onboarding/Onboarding.native.tsx:239
+#: src/components/onboarding/Onboarding.native.tsx:240
 #: src/components/onboarding/Onboarding.tsx:117
 msgid "Welcome to Quorum!"
 msgstr "Καλώς ήρθες στο Quorum!"
@@ -2884,7 +2975,7 @@ msgid "What's on your mind today?"
 msgstr "Τι έχεις στο μυαλό σου σήμερα;"
 
 #: src/components/modals/ConversationSettingsModal.tsx:222
-#: src/components/modals/SpaceSettingsModal/General.tsx:292
+#: src/components/modals/SpaceSettingsModal/General.tsx:297
 msgid ""
 "When enabled, all previous versions of edited messages will be saved. When "
 "disabled, only the current edited version is kept."
@@ -2893,7 +2984,7 @@ msgstr ""
 "μηνυμάτων θα αποθηκεύονται. Όταν είναι απενεργοποιημένο, διατηρείται μόνο η "
 "τρέχουσα επεξεργασμένη έκδοση."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:64
+#: src/components/modals/UserSettingsModal/Privacy.tsx:112
 msgid ""
 "When enabled, synchronizes your user data, Spaces, and Space keys between "
 "devices. Enabling this increases metadata visibility of your account, which "
@@ -2905,7 +2996,7 @@ msgstr ""
 "ορατότητα μεταδεδομένων του λογαριασμού σου, κάτι που μπορεί να αποκαλύψει "
 "πότε έχεις ενταχθεί σε νέα Spaces, αν και όχι τα Spaces που έχεις ενταχθεί."
 
-#: src/components/modals/SpaceSettingsModal/General.tsx:268
+#: src/components/modals/SpaceSettingsModal/General.tsx:272
 msgid ""
 "When messages are signed, senders confirm they come from their key. When "
 "messages aren't signed, senders have plausible deniability. This setting "
@@ -2932,7 +3023,7 @@ msgstr "Όταν κάποιος σας αναφέρει απευθείας"
 msgid "When someone replies to your messages"
 msgstr "Όταν κάποιος απαντά στα μηνύματά σας"
 
-#: src/components/modals/CreateSpaceModal.tsx:229
+#: src/components/modals/CreateSpaceModal.tsx:230
 msgid ""
 "When this setting is enabled, invite links will automatically allow a user "
 "to join your Space. When it is not enabled, users following an invite link "
@@ -2958,7 +3049,7 @@ msgstr ""
 "Όταν χρησιμοποιείς το Quorum σε έναν περιηγητή, τα μηνύματά σου "
 "αποθηκεύονται τοπικά στον περιηγητή σου."
 
-#: src/components/modals/ConversationSettingsModal.tsx:197
+#: src/components/modals/ConversationSettingsModal.tsx:200
 msgid ""
 "When you sign a message, you are confirming that it comes from your key. "
 "When you don't sign a message, you have plausible deniability. The default "
@@ -2969,7 +3060,7 @@ msgstr ""
 "standaard voor alle gesprekken kan worden gewijzigd in "
 "Gebruikersinstellingen."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:84
+#: src/components/modals/UserSettingsModal/Privacy.tsx:131
 msgid ""
 "When you sign a message, you are confirming that it comes from your key. "
 "When you don't sign a message, you have plausible deniability. You can "
@@ -2987,7 +3078,6 @@ msgstr "Χθες"
 msgid "Yesterday at {timeFormatted}"
 msgstr "Χθες στις {timeFormatted}"
 
-#: src/components/direct/DirectMessage.tsx:393
 #: src/hooks/business/search/useBatchSearchResultsDisplay.ts:139
 msgid "You"
 msgstr "Εσύ"
@@ -2997,7 +3087,7 @@ msgid "You are already a member of this Space."
 msgstr "Είστε ήδη μέλος αυτού του Χώρου."
 
 #. placeholder {0}: formatMuteRemaining(currentMuteRecord.expiresAt)
-#: src/components/space/Channel.tsx:1162
+#: src/components/space/Channel.tsx:1037
 msgid "You are muted for {0}"
 msgstr "Είστε σιωπηλός για {0}"
 
@@ -3009,7 +3099,7 @@ msgstr ""
 "Μπορείτε να αλλάξετε αυτό αργότερα για αυτή τη συνομιλία κάνοντας κλικ στο "
 "εικονίδιο κλειδώματος στην προβολή Συνομιλίας."
 
-#: src/components/modals/UserSettingsModal/Notifications.tsx:77
+#: src/components/modals/UserSettingsModal/Notifications.tsx:76
 msgid ""
 "You can manage your Space mention notifications in each Space's settings."
 msgstr ""
@@ -3025,7 +3115,7 @@ msgstr ""
 "όλα τα {channelCount} κανάλια σε αυτήν την ομάδα."
 
 #: src/components/message/MessageComposer.tsx:334
-#: src/components/space/Channel.tsx:1165
+#: src/components/space/Channel.tsx:1040
 msgid "You cannot post in this channel"
 msgstr "Δεν μπορείτε να δημοσιεύσετε σε αυτό το κανάλι"
 
@@ -3034,15 +3124,15 @@ msgstr "Δεν μπορείτε να δημοσιεύσετε σε αυτό το
 msgid "You cannot send a direct message to yourself."
 msgstr "Δεν μπορείτε να στείλετε άμεσο μήνυμα στον εαυτό σας."
 
-#: src/services/NotificationService.ts:102
+#: src/services/NotificationService.ts:103
 msgid "You have a new unread message"
 msgstr "Έχεις ένα νέο μη αναγνωσμένο μήνυμα"
 
-#: src/components/space/Channel.tsx:1163
+#: src/components/space/Channel.tsx:1038
 msgid "You have been muted in this Space"
 msgstr "Έχετε σιωπηθεί σε αυτόν τον Χώρο"
 
-#: src/services/NotificationService.ts:103
+#: src/services/NotificationService.ts:104
 msgid "You have new unread messages"
 msgstr "Έχεις νέα μη αναγνωσμένα μηνύματα"
 
@@ -3067,7 +3157,7 @@ msgstr ""
 msgid "You're all caught up!"
 msgstr "Είστε ενήμεροι!"
 
-#: src/components/onboarding/Onboarding.native.tsx:494
+#: src/components/onboarding/Onboarding.native.tsx:495
 #: src/components/onboarding/Onboarding.tsx:354
 msgid "You're all set. Welcome to Quorum!"
 msgstr "Είσαι έτοιμος. Καλώς ήρθες στο Quorum!"
@@ -3117,6 +3207,16 @@ msgstr "Έχεις προσκληθεί να ενταχθείς σε έναν Χ
 msgid "Your Details"
 msgstr "Τα Στοιχεία Σας"
 
+#: src/components/modals/UserSettingsModal/Privacy.tsx:271
+msgid ""
+"Your private key will be displayed on screen. Anyone who sees or photographs"
+" this QR code can take full control of your Quorum account and steal any "
+"associated funds."
+msgstr ""
+"Το ιδιωτικό σας κλειδί θα εμφανιστεί στην οθόνη. Οποιοσδήποτε βλέπει ή "
+"φωτογραφίζει αυτόν τον κωδικό QR μπορεί να αποκτήσει πλήρη έλεγχο του "
+"λογαριασμού σας στο Quorum και να κλέψει οποιαδήποτε σχετική χρηματοδότηση."
+
 #: src/utils/imageProcessing/errors.ts:40
 msgid ""
 "Your profile image size must be {maxSize} or less and must be a PNG, JPG, or"
@@ -3125,7 +3225,7 @@ msgstr ""
 "Rozmiar obrazu profilowego musi wynosić {maxSize} lub mniej i musi mieć "
 "rozszerzenie pliku PNG, JPG lub JPEG."
 
-#: src/components/onboarding/Onboarding.native.tsx:369
+#: src/components/onboarding/Onboarding.native.tsx:370
 msgid ""
 "Your profile image size must be 2MB or less and must be a PNG, JPG, or JPEG "
 "file extension."
@@ -3245,6 +3345,15 @@ msgstr "Miniaturka filmiku YouTube"
 #~ msgid "Error processing queue:"
 #~ msgstr "Σφάλμα κατά την επεξεργασία ουράς:"
 
+#~ msgid ""
+#~ "Export your key to a file by clicking this button. Do not share this file "
+#~ "with anyone else or they can impersonate you or steal your Space's Apex "
+#~ "earnings."
+#~ msgstr ""
+#~ "Εξάγετε το κλειδί σας σε ένα αρχείο κάνοντας κλικ σε αυτό το κουμπί. Μην "
+#~ "μοιραστείτε αυτό το αρχείο με κανέναν άλλον ή μπορεί να σας μιμηθούν ή να "
+#~ "κλέψουν τα κέρδη Apex του Space σας."
+
 #~ msgid "Failed to copy to clipboard. Please try again."
 #~ msgstr "Αποτυχία αντιγραφής στο πρόχειρο. Παρακαλώ δοκιμάστε ξανά."
 
@@ -3295,6 +3404,9 @@ msgstr "Miniaturka filmiku YouTube"
 #~ " ενέργειές σας μπορεί να αποκαλύψουν ποιοι είστε. Για καλύτερη ιδιωτικότητα,"
 #~ " σκεφτείτε να έχετε πολλούς χρήστες (πραγματικούς ή επιπλέον λογαριασμούς) "
 #~ "να μοιράζονται τον ίδιο ρόλο."
+
+#~ msgid "Restore Missing Spaces"
+#~ msgstr "Αποκατάσταση Λείποντων Χώρων"
 
 #~ msgid ""
 #~ "Select any existing role as managers for this channel. Managers have post, "
@@ -3368,6 +3480,9 @@ msgstr "Miniaturka filmiku YouTube"
 
 #~ msgid "User Unmuted!"
 #~ msgstr "Χρήστης Αποσιωπημένος!"
+
+#~ msgid "Username or Address"
+#~ msgstr "Όνομα χρήστη ή Διεύθυνση"
 
 #~ msgid "When someone mentions a role you have (Coming Soon)"
 #~ msgstr "Όταν κάποιος αναφέρει έναν ρόλο που έχετε (Έρχεται σύντομα)"
