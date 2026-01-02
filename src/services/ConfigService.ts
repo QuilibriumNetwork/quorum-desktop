@@ -473,7 +473,7 @@ export class ConfigService {
         'base64'
       ).toString('hex');
 
-      console.log('[ConfigService] Posting settings to server...', {
+      logger.log('[ConfigService] Posting settings to server...', {
         address: config.address,
         timestamp: ts,
       });
@@ -486,15 +486,15 @@ export class ConfigService {
         timestamp: ts,
         signature: signature,
       });
-      console.log('[ConfigService] Settings posted successfully');
+      logger.log('[ConfigService] Settings posted successfully');
 
       // Reset tombstones only after successful sync (Phase 7: Critical Fix)
       config.deletedBookmarkIds = [];
     }
 
-    console.log('[ConfigService] Saving config to local DB...');
+    logger.log('[ConfigService] Saving config to local DB...');
     await this.messageDB.saveUserConfig(config);
-    console.log('[ConfigService] Config saved to local DB');
+    logger.log('[ConfigService] Config saved to local DB');
 
     // Update React Query cache to prevent stale reads
     // (fixes: folder operations reading stale allowSync value)

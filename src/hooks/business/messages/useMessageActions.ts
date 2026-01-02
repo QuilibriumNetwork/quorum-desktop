@@ -1,3 +1,4 @@
+import { logger } from '@quilibrium/quorum-shared';
 import { useCallback, useState } from 'react';
 import React from 'react';
 import { Message as MessageType, Role, Channel, ReactionMessage, RemoveReactionMessage, RemoveMessage } from '../../../api/quorumApi';
@@ -106,7 +107,7 @@ export function useMessageActions(options: UseMessageActionsOptions) {
   // Helper to build DM context for action queue handlers
   const buildDmActionContext = useCallback((address: string) => {
     if (!dmContext?.self) {
-      console.warn('[useMessageActions] Missing DM registration context - dmContext prop not provided');
+      logger.warn('[useMessageActions] Missing DM registration context - dmContext prop not provided');
       return null;
     }
     return {

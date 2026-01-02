@@ -10,6 +10,7 @@
  * See: .agents/tasks/background-action-queue.md
  */
 
+import { logger } from '@quilibrium/quorum-shared';
 import { MessageDB } from '../db/messages';
 import type { QueueTask, ActionType, QueueStats } from '../types/actionQueue';
 import type { ActionQueueHandlers } from './ActionQueueHandlers';
@@ -79,7 +80,7 @@ export class ActionQueueService {
     deviceKeyset: secureChannel.DeviceKeyset;
     userKeyset: secureChannel.UserKeyset;
   }): void {
-    console.log('[ActionQueue] setUserKeyset called - keyset now available');
+    logger.log('[ActionQueue] setUserKeyset called - keyset now available');
     this.userKeyset = keyset;
     // Trigger processing now that keyset is available
     this.processQueue();
@@ -92,7 +93,7 @@ export class ActionQueueService {
     deviceKeyset: secureChannel.DeviceKeyset;
     userKeyset: secureChannel.UserKeyset;
   } | null {
-    console.log('[ActionQueue] getUserKeyset called, hasKeyset:', !!this.userKeyset);
+    logger.log('[ActionQueue] getUserKeyset called, hasKeyset:', !!this.userKeyset);
     return this.userKeyset;
   }
 
@@ -116,9 +117,9 @@ export class ActionQueueService {
     // Debug: verify no keyset in context
     const contextKeys = Object.keys(context);
     const hasKeyset = contextKeys.includes('keyset') || contextKeys.includes('user_keyset') || contextKeys.includes('device_keyset');
-    console.log(`[ActionQueue] enqueue type=${type}, contextKeys=${contextKeys.join(',')}, hasKeyset=${hasKeyset}`);
+    logger.log(`[ActionQueue] enqueue type=${type}, contextKeys=${contextKeys.join(',')}, hasKeyset=${hasKeyset}`);
     if (hasKeyset) {
-      console.warn('[ActionQueue] WARNING: keyset found in context! This should not happen.');
+      logger.warn('[ActionQueue] WARNING: keyset found in context! This should not happen.');
     }
 
     // Check if there's already a task with this key being processed
@@ -129,7 +130,7 @@ export class ActionQueueService {
     // This ensures we always use the latest context (e.g., latest config state)
     const existingTasks = await this.messageDB.getPendingTasksByKey(key);
     if (existingTasks.length > 0) {
-      console.log(`[ActionQueue] Replacing ${existingTasks.length} existing pending task(s) with key=${key}`);
+      logger.log(`[ActionQueue] Replacing ${existingTasks.length} existing pending task(s) with key=${key}`);
       for (const existing of existingTasks) {
         await this.messageDB.deleteQueueTask(existing.id!);
       }
@@ -138,7 +139,7 @@ export class ActionQueueService {
     // If a task with this key is currently processing, just queue the new one
     // It will be picked up after the current one completes (or fails/retries)
     if (hasProcessing) {
-      console.log(`[ActionQueue] Task with key=${key} is processing, queuing update for after completion`);
+      logger.log(`[ActionQueue] Task with key=${key} is processing, queuing update for after completion`);
     }
 
     // Check queue size limits
@@ -211,7 +212,7 @@ export class ActionQueueService {
     if (!isOnline) return;
 
     if (!this.handlers) {
-      console.warn('[ActionQueue] Handlers not initialized');
+      logger.warn('[ActionQueue] Handlers not initialized');
       return;
     }
 
@@ -291,7 +292,7 @@ export class ActionQueueService {
       // If so, that task has newer data - don't need to do anything, it will be processed next
       const pendingWithSameKey = await this.messageDB.getPendingTasksByKey(task.key);
       if (pendingWithSameKey.length > 0) {
-        console.log(`[ActionQueue] Task completed but found ${pendingWithSameKey.length} pending update(s) with key=${task.key}`);
+        logger.log(`[ActionQueue] Task completed but found ${pendingWithSameKey.length} pending update(s) with key=${task.key}`);
       }
     } catch (error) {
       const err = error instanceof Error ? error : new Error(String(error));

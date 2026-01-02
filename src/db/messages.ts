@@ -2346,7 +2346,7 @@ export class MessageDB {
         task.retryCount = (task.retryCount || 0) + 1;
         await this.updateQueueTask(task);
         reset++;
-        console.log(
+        logger.log(
           `[ActionQueue] Reset stuck task ${task.id} (${task.taskType})`
         );
       }

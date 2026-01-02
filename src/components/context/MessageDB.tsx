@@ -1,3 +1,4 @@
+import { logger } from '@quilibrium/quorum-shared';
 import React, {
   createContext,
   FC,
@@ -336,7 +337,7 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
           });
         }
       } catch (error) {
-        console.warn('Failed to persist conversation profile update:', error);
+        logger.warn('[MessageDB] Failed to persist conversation profile update:', error);
       }
     }
 

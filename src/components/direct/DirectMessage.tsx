@@ -1,3 +1,4 @@
+import { logger } from '@quilibrium/quorum-shared';
 import React, {
   useEffect,
   useRef,
@@ -227,14 +228,14 @@ const DirectMessage: React.FC<{}> = () => {
         }
 
         if (deletedCount > 0) {
-          console.log('[DirectMessage] Cleaned up stale encryption states', {
+          logger.log('[DirectMessage] Cleaned up stale encryption states', {
             conversationId: convId,
             deletedCount,
             remainingCount: states.length - deletedCount,
           });
         }
       } catch (error) {
-        console.error('[DirectMessage] Failed to cleanup stale encryption states:', error);
+        logger.error('[DirectMessage] Failed to cleanup stale encryption states:', error);
         // Don't throw - cleanup is best-effort, shouldn't break the page
       }
     };
@@ -264,7 +265,7 @@ const DirectMessage: React.FC<{}> = () => {
 
       // Guard against missing registration data (offline)
       if (!self?.registration || !registration?.registration) {
-        console.warn('Cannot send message: registration data unavailable (offline?)');
+        logger.warn('[DirectMessage] Cannot send message: registration data unavailable (offline?)');
         return;
       }
 

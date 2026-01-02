@@ -1,3 +1,4 @@
+import { logger } from '@quilibrium/quorum-shared';
 import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './Channel.scss';
@@ -121,7 +122,7 @@ const Channel: React.FC<ChannelProps> = ({
         JSON.stringify([...collapsedRoles])
       );
     } catch (e) {
-      console.warn('Failed to save collapsed roles to localStorage:', e);
+      logger.warn('[Channel] Failed to save collapsed roles to localStorage:', e);
     }
   }, [collapsedRoles, spaceId]);
 

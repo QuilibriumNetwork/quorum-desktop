@@ -15,6 +15,7 @@
  * See: .agents/tasks/background-action-queue.md
  */
 
+import { logger } from '@quilibrium/quorum-shared';
 import { t } from '@lingui/core/macro';
 import type { MessageDB } from '../db/messages';
 import type { MessageService } from './MessageService';
@@ -64,13 +65,13 @@ export class ActionQueueHandlers {
    */
   private saveUserConfig: TaskHandler = {
     execute: async (context) => {
-      console.log('[ActionQueue:saveUserConfig] Fetching keyset from service...');
+      logger.log('[ActionQueue:saveUserConfig] Fetching keyset from service...');
       const keyset = this.deps.getUserKeyset();
       if (!keyset) {
         throw new Error('Keyset not available');
       }
       const config = context.config as any;
-      console.log('[ActionQueue:saveUserConfig] Keyset obtained, saving config...', {
+      logger.log('[ActionQueue:saveUserConfig] Keyset obtained, saving config...', {
         address: config?.address,
         itemCount: config?.items?.length,
         spaceCount: config?.spaceIds?.length,
@@ -80,7 +81,7 @@ export class ActionQueueHandlers {
         config,
         keyset,
       });
-      console.log('[ActionQueue:saveUserConfig] Config saved successfully');
+      logger.log('[ActionQueue:saveUserConfig] Config saved successfully');
     },
     isPermanentError: (error) => {
       return (
@@ -520,7 +521,7 @@ export class ActionQueueHandlers {
    */
   private sendDm: TaskHandler = {
     execute: async (context) => {
-      console.log('[ActionQueue:sendDm] Fetching keyset from service...');
+      logger.log('[ActionQueue:sendDm] Fetching keyset from service...');
       const keyset = this.deps.getUserKeyset();
       if (!keyset) {
         throw new Error('Keyset not available');
@@ -532,7 +533,7 @@ export class ActionQueueHandlers {
       const senderDisplayName = context.senderDisplayName as string | undefined;
       const senderUserIcon = context.senderUserIcon as string | undefined;
 
-      console.log('[ActionQueue:sendDm] Processing DM...', {
+      logger.log('[ActionQueue:sendDm] Processing DM...', {
         messageId: messageId?.slice(0, 16),
         address: address?.slice(0, 16),
         contentType: signedMessage?.content?.type,
@@ -564,11 +565,11 @@ export class ActionQueueHandlers {
 
       // Validate we have recipients to send to
       if (targetInboxes.length === 0) {
-        console.error('[ActionQueue:sendDm] No established sessions available');
+        logger.error('[ActionQueue:sendDm] No established sessions available');
         throw new Error('No established sessions available. Please connect to the internet to initialize the conversation.');
       }
 
-      console.log('[ActionQueue:sendDm] Encrypting for inboxes...', {
+      logger.log('[ActionQueue:sendDm] Encrypting for inboxes...', {
         targetInboxCount: targetInboxes.length,
         encryptionStatesCount: sets.length,
       });
@@ -638,12 +639,12 @@ export class ActionQueueHandlers {
       }
 
       // Send all messages via WebSocket
-      console.log('[ActionQueue:sendDm] Sending via WebSocket...', {
+      logger.log('[ActionQueue:sendDm] Sending via WebSocket...', {
         outboundMessagesCount: outboundMessages.length,
         sessionsCount: sessions.length,
       });
       await this.deps.messageService.sendDirectMessages(outboundMessages);
-      console.log('[ActionQueue:sendDm] WebSocket send completed');
+      logger.log('[ActionQueue:sendDm] WebSocket send completed');
 
       // Save to IndexedDB (without sendStatus/sendError)
       await this.deps.messageService.saveMessage(
@@ -711,7 +712,7 @@ export class ActionQueueHandlers {
           };
         }
       );
-      console.log('[ActionQueue:sendDm] DM sent successfully', { messageId: messageId?.slice(0, 16) });
+      logger.log('[ActionQueue:sendDm] DM sent successfully', { messageId: messageId?.slice(0, 16) });
     },
     isPermanentError: (error) => {
       return (
@@ -722,7 +723,7 @@ export class ActionQueueHandlers {
     onFailure: (context, error) => {
       const address = context.address as string;
       const messageId = context.messageId as string;
-      console.error('[ActionQueue:sendDm] DM send failed', { messageId: messageId?.slice(0, 16), error: error.message });
+      logger.error('[ActionQueue:sendDm] DM send failed', { messageId: messageId?.slice(0, 16), error: error.message });
       this.deps.messageService.updateMessageStatus(
         this.deps.queryClient,
         address,

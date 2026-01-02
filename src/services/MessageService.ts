@@ -1309,7 +1309,7 @@ export class MessageService {
 
         const rateCheck = limiter.canSend();
         if (!rateCheck.allowed) {
-          console.warn(
+          logger.warn(
             `🔒 Rate limit: Message from ${senderId} rejected (flood detected). ` +
               `Message ID: ${decryptedContent.messageId}`
           );
