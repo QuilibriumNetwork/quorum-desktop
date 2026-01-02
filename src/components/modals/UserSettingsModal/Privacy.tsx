@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Button, Switch, Icon, Tooltip, Spacer, ScrollContainer } from '../../primitives';
+import { Button, Switch, Icon, Tooltip, Spacer, ScrollContainer, Callout } from '../../primitives';
 import { t } from '@lingui/core/macro';
 import { channel as secureChannel } from '@quilibrium/quilibrium-js-sdk-channels';
 import { QRCodeSVG } from 'qrcode.react';
@@ -239,86 +239,84 @@ const Privacy: React.FunctionComponent<PrivacyProps> = ({
         </div>
 
         {getPrivateKeyHex && (
-          <div className="modal-content-info">
+          <>
             <Spacer size="md" direction="vertical" borderTop={true} />
-            <div className="text-subtitle-2">{t`Mobile Import`}</div>
-
-            <div className="pt-2 text-label-strong">
-              {t`Display your private key as a QR code to scan with the Quorum mobile app. This allows you to import your account on mobile without typing the key.`}
-            </div>
-
-            {!showQRConfirmation && !showQRCode && (
-              <div className="pt-4 pb-4 max-w-[150px]">
-                <Button
-                  type="danger-outline"
-                  onClick={handleShowQRClick}
-                >
-                  {t`Show QR Code`}
-                </Button>
-              </div>
-            )}
-
-            {showQRConfirmation && !showQRCode && (
-              <div className="pt-4 pb-4">
-                <div className="bg-danger/10 border border-danger/30 rounded-lg p-4 mb-4">
-                  <div className="flex items-start gap-3">
-                    <Icon name="alert-triangle" className="text-danger mt-0.5" />
-                    <div>
-                      <div className="text-danger font-medium mb-2">
-                        {t`Security Warning`}
+            <div className="text-subtitle-2 mb-2">{t`Mobile Import`}</div>
+            <div className="modal-content-info">
+              <div className="flex flex-col gap-2">
+                <div className="flex flex-col gap-3 p-3 rounded-md border">
+                  {!showQRConfirmation && !showQRCode && (
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="text-sm" style={{ lineHeight: 1.3 }}>
+                        {t`Display your private key as a QR code to scan with the Quorum mobile app. This allows you to import your account on mobile without typing the key.`}
                       </div>
-                      <div className="text-sm text-main">
-                        {t`Your private key will be displayed on screen. Anyone who sees or photographs this QR code can take full control of your Quorum account and steal any associated funds.`}
-                      </div>
-                      <div className="text-sm text-main mt-2">
-                        {t`Only proceed if you are in a private location and ready to scan immediately.`}
-                      </div>
+                      <Button
+                        type="danger"
+                        size="small"
+                        className="whitespace-nowrap"
+                        onClick={handleShowQRClick}
+                      >
+                        {t`Show QR`}
+                      </Button>
                     </div>
-                  </div>
-                </div>
-                <div className="flex gap-3">
-                  <Button
-                    type="secondary"
-                    onClick={() => setShowQRConfirmation(false)}
-                  >
-                    {t`Cancel`}
-                  </Button>
-                  <Button
-                    type="danger"
-                    onClick={handleConfirmShowQR}
-                    disabled={isLoadingKey}
-                  >
-                    {isLoadingKey ? t`Loading...` : t`I Understand, Show QR`}
-                  </Button>
-                </div>
-              </div>
-            )}
+                  )}
 
-            {showQRCode && privateKeyHex && (
-              <div className="pt-4 pb-4">
-                <div className="bg-surface-3 rounded-lg p-6 inline-block">
-                  <div className="bg-white p-4 rounded-lg">
-                    <QRCodeSVG
-                      value={privateKeyHex}
-                      size={200}
-                      level="M"
-                    />
-                  </div>
-                  <div className="text-xs text-muted text-center mt-3">
-                    {t`QR code will auto-hide in 60 seconds`}
-                  </div>
-                </div>
-                <div className="pt-4 max-w-[100px]">
-                  <Button
-                    type="secondary"
-                    onClick={handleHideQR}
-                  >
-                    {t`Hide`}
-                  </Button>
+                  {showQRConfirmation && !showQRCode && (
+                    <>
+                      <Callout variant="error" size="sm">
+                        <div className="text-sm">
+                          {t`Anyone who sees or photographs this QR code can take full control of your Quorum account and steal any associated funds. Only proceed if you are in a private location and ready to scan immediately.`}
+                        </div>
+                      </Callout>
+                      <div className="flex gap-2 justify-end">
+                        <Button
+                          type="secondary"
+                          size="small"
+                          onClick={() => setShowQRConfirmation(false)}
+                        >
+                          {t`Cancel`}
+                        </Button>
+                        <Button
+                          type="danger"
+                          size="small"
+                          onClick={handleConfirmShowQR}
+                          disabled={isLoadingKey}
+                        >
+                          {isLoadingKey ? t`Loading...` : t`I Understand, Show QR`}
+                        </Button>
+                      </div>
+                    </>
+                  )}
+
+                  {showQRCode && privateKeyHex && (
+                    <>
+                      <div className="flex flex-col items-center">
+                        <div className="bg-white p-4 rounded-lg">
+                          <QRCodeSVG
+                            value={privateKeyHex}
+                            size={200}
+                            level="M"
+                          />
+                        </div>
+                        <div className="text-xs text-muted text-center mt-3">
+                          {t`QR code will auto-hide in 60 seconds`}
+                        </div>
+                      </div>
+                      <div className="flex justify-end">
+                        <Button
+                          type="secondary"
+                          size="small"
+                          onClick={handleHideQR}
+                        >
+                          {t`Hide`}
+                        </Button>
+                      </div>
+                    </>
+                  )}
                 </div>
               </div>
-            )}
-          </div>
+            </div>
+          </>
         )}
 
         {onRestoreMissingSpaces && (
