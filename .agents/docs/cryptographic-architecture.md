@@ -1,12 +1,12 @@
 # Cryptographic Architecture
 
 > **AI-Generated**: May contain errors. Verify before use.
-> Verified by agent 12-20-2025
+> Verified by agent 01-02-2026
 
 This document explains the cryptographic protocols and key management used in Quorum. It focuses on the **mental model** needed to understand how encryption and signing work, rather than implementation details.
 
 **Created**: 2025-12-20
-**Last Updated**: 2025-12-20
+**Last Updated**: 2026-01-02
 
 ---
 
@@ -43,7 +43,9 @@ UserKeyset (Master Identity)
 |----------|-----------|---------|-------|
 | **UserKeyset** | Ed448 | Master identity, cross-device | Per-user, all devices |
 | **DeviceKeyset** | X448 + Ed448 | Device operations, DM encryption | Per-device |
+| **Space Hub Key** | Ed448 | Hub broadcast envelope sealing/unsealing | Per-space, per-user |
 | **Space Inbox Key** | Ed448 | Message signing within a Space | Per-space, per-user |
+| **Space Config Key** | X448 | Sync envelope encryption (optional layer) | Per-space, per-user |
 | **Ratchet State** | Symmetric (derived) | Message encryption state | Per-conversation |
 
 ### What Each Key Does
@@ -52,7 +54,11 @@ UserKeyset (Master Identity)
 
 - **DeviceKeyset**: Your device's capability to encrypt/decrypt DMs. Each device has its own keyset. When you add a new device, a new DeviceKeyset is generated.
 
+- **Space Hub Key**: Generated when you join a Space. Used for sealing/unsealing hub broadcast envelopes that reach all Space members.
+
 - **Space Inbox Key**: Generated when you join a Space. Used for signing messages to prove authorship within that Space. Separate from your UserKeyset for privacy (Spaces don't know your master identity).
+
+- **Space Config Key**: Optional X448 key for additional encryption layer on sync envelopes. Provides forward secrecy for peer-to-peer sync messages.
 
 - **Ratchet State**: Not a key itself, but the current state of a session. Contains derived symmetric keys that evolve with each message (forward secrecy).
 
@@ -173,7 +179,7 @@ All keys are stored in IndexedDB, but with different levels of protection:
 | Store | Contents | Encrypted? | Notes |
 |-------|----------|------------|-------|
 | **KeyDB id=2** | UserKeyset, DeviceKeyset | ✅ AES-GCM | SDK-managed, passkey-derived key |
-| **space_keys** | Space Inbox Keys | ❌ Plaintext | Contains private keys |
+| **space_keys** | Space Hub/Inbox/Config Keys | ❌ Plaintext | keyId: `hub`, `inbox`, or `config` |
 | **encryption_states** | Ratchet session states | ❌ Plaintext | Contains symmetric keys |
 | **user_config** | User preferences | ❌ Plaintext | May contain `spaceKeys` backup |
 
@@ -291,6 +297,54 @@ channel_raw.js_verify_ed448(
 )
 ```
 
+### Envelope Sealing (Space Messages)
+
+Two envelope types are used for Space communication:
+
+**Hub Envelope** - Broadcast to all Space members:
+
+```typescript
+// Seal a hub broadcast envelope
+secureChannel.SealHubEnvelope(
+  hubAddress,         // Space hub address
+  hubKey,             // Ed448 hub key { type, public_key, private_key }
+  messageJSON,        // Message payload
+  configKey?          // Optional X448 config key for additional encryption
+)
+
+// Unseal a hub broadcast envelope
+secureChannel.UnsealHubEnvelope(
+  hubKey,             // Ed448 hub key
+  envelope,           // Received envelope
+  configKey?          // Optional X448 config key
+)
+```
+
+**Sync Envelope** - Directed to specific peer:
+
+```typescript
+// Seal a sync envelope (directed message)
+secureChannel.SealSyncEnvelope(
+  targetInbox,        // Recipient's inbox address
+  hubAddress,         // Space hub address
+  hubKey,             // Ed448 hub key
+  inboxKey,           // Ed448 inbox key
+  messageJSON,        // Message payload
+  configKey?          // Optional X448 config key
+)
+
+// Unseal a sync envelope
+secureChannel.UnsealSyncEnvelope(
+  hubKey,             // Ed448 hub key
+  envelope,           // Received envelope
+  configKey?          // Optional X448 config key
+)
+```
+
+**When to use each:**
+- **Hub Envelope**: Regular Space messages (broadcast to all members)
+- **Sync Envelope**: Peer-to-peer sync messages (`sync-request`, `sync-info`, `sync-initiate`, `sync-manifest`, `sync-delta`)
+
 ---
 
 ## Related Documentation
@@ -302,4 +356,4 @@ channel_raw.js_verify_ed448(
 ---
 
 _Created: 2025-12-20_
-_Last Updated: 2025-12-20_
+_Last Updated: 2026-01-02_

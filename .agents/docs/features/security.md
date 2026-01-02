@@ -388,6 +388,34 @@ All messages are encrypted using the Quilibrium secure channel protocol:
 - **Forward Secrecy**: Ratcheting key updates
 - **Metadata Protection**: Encrypted DHT storage
 
+### Config Key Encryption Layer (Dec 2025)
+
+Hub and sync envelopes support an additional **config key parameter** (X448) for envelope-level encryption:
+
+```typescript
+// Sealing hub/sync envelopes with config key
+await secureChannel.SealHubEnvelope(
+  hubKey.address,
+  payload,
+  configKey ? {
+    type: 'x448',
+    public_key: [...hexToSpreadArray(configKey.publicKey)],
+    private_key: [...hexToSpreadArray(configKey.privateKey)],
+  } : undefined
+);
+
+// Unsealing with config key
+await secureChannel.UnsealSyncEnvelope(hubKey, envelope, configKey);
+await secureChannel.UnsealHubEnvelope(hubKey, envelope, configKey);
+```
+
+**Use Cases**:
+- **Space operations**: Manifest updates, member notifications
+- **Kick operations**: Uses **old** config key so recipients can decrypt before key rotation
+- **Sync protocol**: Peer-to-peer sync envelopes include config key encryption
+
+This provides an additional encryption layer on top of the hub key encryption, ensuring only space members with the config key can decrypt certain messages.
+
 ### Passkey Authentication
 
 User identity secured via WebAuthn passkeys:
@@ -430,8 +458,9 @@ User identity secured via WebAuthn passkeys:
 ---
 
 **Document Created**: 2025-11-08
-**Last Updated**: 2025-12-15
+**Last Updated**: 2026-01-02
 **Major Updates**:
+- 2026-01-02: Added config key encryption layer documentation (from qm delta commit)
 - 2025-12-15: Added mute user permission with full defense-in-depth validation
 - 2025-12-12: Added bookmark limit database-layer validation (defense-in-depth hardening)
 - 2025-12-12: Added pin message cross-client synchronization with full defense-in-depth validation

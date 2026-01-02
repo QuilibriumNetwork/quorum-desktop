@@ -469,6 +469,51 @@ Space creation logic is now encapsulated within the `SpaceService` (`src/service
 
 **Space Membership**: Managed through `space_members` object store with efficient indexing for membership queries.
 
+### Space Data Synchronization
+
+**Location**: `src/services/SyncService.ts`
+
+Quorum uses a **peer-to-peer hash-based delta sync protocol** to synchronize Space data (messages, members, peer maps) between devices. This runs separately from user config sync (see [Config Sync System](config-sync-system.md)).
+
+**New Protocol (v2) - Hash-Based Delta Sync:**
+
+The sync protocol uses manifest hashes to efficiently identify what data needs to be exchanged:
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                    SPACE SYNC PROTOCOL                           │
+├─────────────────────────────────────────────────────────────────┤
+│  1. sync-request (broadcast)                                     │
+│     → Includes SyncSummary with manifestHash                     │
+│     → Other peers compare hash to detect differences             │
+│                                                                  │
+│  2. sync-info (response)                                         │
+│     → Peers with different/more data respond                     │
+│     → Includes their SyncSummary for comparison                  │
+│                                                                  │
+│  3. sync-initiate (to best candidate)                            │
+│     → Sends full manifest (message digests)                      │
+│     → Triggers bidirectional sync                                │
+│                                                                  │
+│  4. sync-manifest (response)                                     │
+│     → Peer responds with their manifest                          │
+│     → Both sides compute deltas                                  │
+│                                                                  │
+│  5. sync-delta (chunked)                                         │
+│     → Contains only missing/updated messages                     │
+│     → Includes member and peer map deltas                        │
+│     → Marked with isFinal flag for last chunk                    │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+**Key Types** (from `@quilibrium/quorum-shared`):
+
+- `SyncSummary` - Compact hash + counts for quick comparison
+- `SyncManifest` - Per-message digests for precise diff computation
+- `SyncDeltaPayload` - Efficient delta with new/updated/deleted items
+
+**Storage Adapter**: The `IndexedDBAdapter` (`src/adapters/indexedDbAdapter.ts`) wraps MessageDB to provide a platform-agnostic storage interface, enabling shared sync logic across desktop and other platforms.
+
 ---
 
 ## Real-time Communication
@@ -925,13 +970,15 @@ class ErrorBoundary extends React.Component {
   - `MessageService.ts` - Handles message-related operations.
   - `SpaceService.ts` - Manages space creation, membership, and operations.
   - `EncryptionService.ts` - Encapsulates encryption/decryption logic.
-  - `SyncService.ts` - Manages data synchronization.
+  - `SyncService.ts` - Manages Space data synchronization using hash-based delta protocol.
   - `InvitationService.ts` - Handles invitation-related logic.
   - `ConfigService.ts` - Manages user and application configuration.
   - `SearchService.ts` - Implements full-text search functionality.
   - `NotificationService.ts` - Manages application notifications.
   - `ActionQueueService.ts` - Persistent background task queue with retry logic.
   - `ActionQueueHandlers.ts` - Task handlers for each action type.
+- **`src/adapters/`** - Storage adapters for cross-platform compatibility:
+  - `indexedDbAdapter.ts` - Wraps MessageDB to conform to `@quilibrium/quorum-shared` StorageAdapter interface.
 - **`src/components/context/WebsocketProvider.tsx`** - WebSocket management
 - **`src/components/context/RegistrationPersister.tsx`** - User authentication
 - **`src/api/baseTypes.ts`** - API client implementation
@@ -954,4 +1001,4 @@ class ErrorBoundary extends React.Component {
 
 ---
 
-_Last updated: 2025-12-18_
+_Last updated: 2026-01-02_

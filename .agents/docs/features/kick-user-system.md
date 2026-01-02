@@ -270,9 +270,31 @@ SpaceService.kickUser(
 ### Cryptographic Operations
 
 1. **Key Rotation**: New encryption keys generated excluding kicked user
-2. **Rekey Notifications**: Encrypted messages sent to remaining members
-3. **Access Revocation**: Kicked user excluded from future encryption sessions
-4. **Signature Verification**: All operations cryptographically signed
+2. **Rekey Notifications**: Encrypted messages sent to remaining members using the **old config key** (so recipients can decrypt with their current key)
+3. **Kick Notification**: Encrypted with the **old config key** so the kicked user can decrypt the kick message
+4. **Access Revocation**: Kicked user excluded from future encryption sessions
+5. **Signature Verification**: All operations cryptographically signed
+
+#### Config Key Encryption Layer
+
+As of Dec 2025, hub/sync envelopes include an optional **config key parameter** for additional encryption:
+
+```typescript
+await secureChannel.SealHubEnvelope(
+  hubKey.address,
+  { ... },
+  // Config key for envelope encryption (X448)
+  oldConfigKey ? {
+    type: 'x448',
+    public_key: [...hexToSpreadArray(oldConfigKey.publicKey)],
+    private_key: [...hexToSpreadArray(oldConfigKey.privateKey)],
+  } : undefined
+);
+```
+
+**Important**: During kick operations, the **old** config key is used for sealing rekey/kick messages. This ensures:
+- Remaining members can decrypt rekey notifications with their current key
+- The kicked user can decrypt their kick notification before losing access
 
 ## Error Handling
 
@@ -432,8 +454,10 @@ The `kickUser()` call in the hook returns after only ~16-20ms because `enqueueOu
 
 ---
 
-**Last Updated**: 2025-12-17
+**Last Updated**: 2026-01-02
 **Verified**: 2025-12-15 - Updated modal props and flow (user info display via ModalProvider)
 **Performance Tested**: 2025-12-17 - Added detailed timing analysis
 **Status**: Production Ready
 **Cross-Platform**: ✅ Web + Mobile Compatible
+
+*2026-01-02: Added config key encryption layer documentation (from qm delta commit)*
