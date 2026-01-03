@@ -1,13 +1,14 @@
 import './DirectMessage.scss';
-import { useShowHomeScreen } from '../../hooks';
+// import { useShowHomeScreen } from '../../hooks';
 import { t } from '@lingui/core/macro';
 import { useResponsiveLayoutContext } from '../context/ResponsiveLayoutProvider';
 import { Container, FlexRow, FlexColumn, Text, Icon } from '../primitives';
 
 export const EmptyDirectMessage = () => {
   const { isDesktop, toggleLeftSidebar } = useResponsiveLayoutContext();
-  const { showHomeScreen, hideHomeScreen, showHomeScreenView } =
-    useShowHomeScreen();
+  // Home screen feature commented out for now
+  // const { showHomeScreen, hideHomeScreen, showHomeScreenView } =
+  //   useShowHomeScreen();
 
   return (
     <Container className="chat-container">
@@ -28,6 +29,7 @@ export const EmptyDirectMessage = () => {
         {/* Main content */}
         <Container className="flex w-full flex-col justify-around flex-1">
           <Container className="w-full">
+            {/* Home screen with animated gif - commented out for now
             {showHomeScreen ? (
               <>
                 <FlexRow className="justify-around">
@@ -56,31 +58,32 @@ export const EmptyDirectMessage = () => {
                 </FlexRow>
               </>
             ) : (
-              <>
-                <FlexColumn className="items-center justify-center pt-8 w-full">
+            */}
+            <FlexColumn className="items-center justify-center pt-8 w-full">
+              <Icon
+                name="message-dots"
+                size={128}
+                className="text-accent opacity-70 dark:text-accent mb-4 block mx-auto"
+              />
+              <Container className="text-lg sm:text-2xl text-center mb-8">
+                <Text className="text-lg sm:text-2xl">{t`What's on your mind today?`}</Text>
+              </Container>
+              {/* Show home screen link - commented out for now
+              <FlexRow className="justify-center w-full">
+                <FlexRow
+                  onClick={showHomeScreenView}
+                  className="items-center gap-2 cursor-pointer"
+                >
                   <Icon
-                    name="message"
-                    size={128}
-                    className="text-accent opacity-70 dark:text-accent mb-4 block mx-auto"
+                    name="eye"
+                    className="text-subtle hover:text-main dark:text-muted dark:hover:text-subtle transition-colors text-sm"
                   />
-                  <Container className="text-lg sm:text-2xl text-center mb-8">
-                    <Text className="text-lg sm:text-2xl">{t`What's on your mind today?`}</Text>
-                  </Container>
-                  <FlexRow className="justify-center w-full">
-                    <FlexRow
-                      onClick={showHomeScreenView}
-                      className="items-center gap-2 cursor-pointer"
-                    >
-                      <Icon
-                        name="eye"
-                        className="text-subtle hover:text-main dark:text-muted dark:hover:text-subtle transition-colors text-sm"
-                      />
-                      <Text className="text-subtle hover:text-main dark:text-muted dark:hover:text-subtle transition-colors text-sm">{t`show home screen`}</Text>
-                    </FlexRow>
-                  </FlexRow>
-                </FlexColumn>
-              </>
-            )}
+                  <Text className="text-subtle hover:text-main dark:text-muted dark:hover:text-subtle transition-colors text-sm">{t`show home screen`}</Text>
+                </FlexRow>
+              </FlexRow>
+              */}
+            </FlexColumn>
+            {/* End of home screen conditional */}
           </Container>
         </Container>
       </FlexColumn>
