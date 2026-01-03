@@ -78,7 +78,6 @@ This is the main index for all documentation, bug reports, and task management.
 ## 🐛 Bug Reports
 
 ### Active Issues
-- [Action Queue Bypasses SDK Encryption for Identity Keys](bugs/action-queue-plaintext-private-keys.md)
 - [Config Sync Space Loss Race Condition](bugs/config-sync-space-loss-race-condition.md)
 - [DirectMessage Invite Loading Performance Issue](bugs/directmessage-invite-loading-performance.md)
 - [Encryption State Evals Causing Config Sync Bloat](bugs/encryption-state-evals-bloat.md)
@@ -92,8 +91,10 @@ This is the main index for all documentation, bug reports, and task management.
 - [Pinned Messages Panel Button Clicks Bug](bugs/pinned-messages-panel-clicks-and-message-list-disappearing.md)
 - [Public Invite Link Intermittent Expiration Bug](bugs/public-invite-link-intermittent-expiration.md)
 - [Space Owner Privacy Limitation](bugs/space-owner-privacy-limitation.md)
+- [UserProfile Modal Positioning - Viewport Boundary Detection](bugs/userprofile-modal-positioning-viewport-boundary.md)
 
 ### Solved Issues
+- [Action Queue Bypasses SDK Encryption for Identity Keys](bugs/.solved/action-queue-plaintext-private-keys.md)
 - [Android 7.0 File Download Fix - Implementation Plan](bugs/.solved/SOLVED_android-file-download-huawei-p9-lite.md)
 - [Bug: Auto-Jump to First Unread Message - Blocked by Virtuoso Scroll Positioning](bugs/.solved/auto-jump-unread-virtuoso-scroll-conflict.md)
 - [Channel/Group Save Race Condition](bugs/.solved/channel-group-save-race-condition.md)
@@ -372,4 +373,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2025-12-30 13:35:56
+**Last Updated**: 2026-01-03 17:21:30

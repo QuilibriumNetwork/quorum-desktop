@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useCallback, useRef, useEffect, useState } from 'react';
 import { t } from '@lingui/core/macro';
 import { Message as MessageType } from '../../api/quorumApi';
 import { Portal, Button, Icon } from '../primitives';
@@ -9,6 +9,7 @@ import './MessageActionsMenu.scss';
 const MENU_WIDTH = 240;
 const MENU_HEIGHT = 320;
 const PADDING = 8;
+const OFFSET_UP = 12; // Gap between cursor and menu bottom when flipped
 
 // Delay for copy actions to show "Copied!" feedback
 const COPY_CLOSE_DELAY = 500;
@@ -37,16 +38,18 @@ export interface MessageActionsMenuProps {
   onBookmarkToggle?: () => void;
 }
 
-function calculatePosition(clickX: number, clickY: number) {
+function calculatePosition(clickX: number, clickY: number, actualHeight?: number) {
   const viewportW = window.innerWidth;
   const viewportH = window.innerHeight;
 
+  const menuHeight = actualHeight || MENU_HEIGHT;
   const flipX = clickX + MENU_WIDTH + PADDING > viewportW;
-  const flipY = clickY + MENU_HEIGHT + PADDING > viewportH;
+  const flipY = clickY + menuHeight + PADDING > viewportH;
 
   return {
     x: flipX ? Math.max(PADDING, clickX - MENU_WIDTH) : clickX,
-    y: flipY ? Math.max(PADDING, clickY - MENU_HEIGHT) : clickY,
+    // When flipping Y, position menu bottom just above the cursor
+    y: flipY ? Math.max(PADDING, clickY - menuHeight - OFFSET_UP) : clickY,
   };
 }
 
@@ -73,9 +76,19 @@ const MessageActionsMenu: React.FC<MessageActionsMenuProps> = ({
   isBookmarked = false,
   onBookmarkToggle,
 }) => {
-  const menuRef = useRef<HTMLDivElement>(null);
-  const [adjustedPosition, setAdjustedPosition] = useState(() =>
-    calculatePosition(position.x, position.y)
+  const menuRef = useRef<HTMLDivElement | null>(null);
+  const [adjustedPosition, setAdjustedPosition] = useState<{ x: number; y: number } | null>(null);
+
+  // Callback ref to measure and position immediately when element mounts
+  const setMenuRef = useCallback(
+    (node: HTMLDivElement | null) => {
+      menuRef.current = node;
+      if (node) {
+        const actualHeight = node.getBoundingClientRect().height;
+        setAdjustedPosition(calculatePosition(position.x, position.y, actualHeight));
+      }
+    },
+    [position.x, position.y]
   );
 
   const quickReactions = ['❤️', '👍', '🔥'];
@@ -106,11 +119,6 @@ const MessageActionsMenu: React.FC<MessageActionsMenuProps> = ({
     window.addEventListener('scroll', handleScroll, { capture: true });
     return () => window.removeEventListener('scroll', handleScroll, { capture: true });
   }, [onClose]);
-
-  // Recalculate position if it changes
-  useEffect(() => {
-    setAdjustedPosition(calculatePosition(position.x, position.y));
-  }, [position.x, position.y]);
 
   // Check if the user has reacted with a specific emoji
   const hasReacted = (emoji: string) => {
@@ -186,11 +194,12 @@ const MessageActionsMenu: React.FC<MessageActionsMenuProps> = ({
   return (
     <Portal>
       <div
-        ref={menuRef}
+        ref={setMenuRef}
         className="message-actions-menu"
         style={{
-          left: adjustedPosition.x,
-          top: adjustedPosition.y,
+          left: adjustedPosition?.x ?? 0,
+          top: adjustedPosition?.y ?? 0,
+          visibility: adjustedPosition ? 'visible' : 'hidden',
         }}
       >
         {/* Quick reactions row */}
