@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Button, Input, Icon, Spacer } from '../../primitives';
+import { Button, Input, Icon, Spacer, Tooltip } from '../../primitives';
 import { t } from '@lingui/core/macro';
 import { ClickToCopyContent } from '../../ui';
 import { DefaultImages } from '../../../utils';
@@ -20,6 +20,8 @@ interface GeneralProps {
   getRootProps: () => any;
   getInputProps: () => any;
   clearFileError: () => void;
+  markedForDeletion: boolean;
+  markForDeletion: () => void;
   getProfileImageUrl: () => string;
   onSave: () => void;
   isSaving: boolean;
@@ -38,41 +40,51 @@ const General: React.FunctionComponent<GeneralProps> = ({
   getRootProps,
   getInputProps,
   clearFileError,
+  markedForDeletion,
+  markForDeletion,
   getProfileImageUrl,
   onSave,
   isSaving,
   validationError,
 }) => {
+  // Determine if there's an image to display (new upload or existing, not marked for deletion)
+  const hasImage = (() => {
+    if (markedForDeletion) return false;
+    if (fileData && currentFile) return true;
+    if (currentPasskeyInfo?.pfpUrl && !currentPasskeyInfo.pfpUrl.includes(DefaultImages.UNKNOWN_USER)) return true;
+    return false;
+  })();
   return (
     <>
       <div className="modal-content-header-avatar">
         <div
           id="user-icon-tooltip-target"
-          className={`avatar-upload ${!fileData && (!currentPasskeyInfo?.pfpUrl || currentPasskeyInfo.pfpUrl.includes(DefaultImages.UNKNOWN_USER)) ? 'empty' : ''}`}
-          style={
-            fileData ||
-            (currentPasskeyInfo?.pfpUrl &&
-              !currentPasskeyInfo.pfpUrl.includes(
-                DefaultImages.UNKNOWN_USER
-              ))
-              ? {
-                  backgroundImage: `url(${getProfileImageUrl()})`,
-                }
-              : {}
-          }
+          className={`avatar-upload ${!hasImage ? 'empty' : ''}`}
+          style={hasImage ? { backgroundImage: `url(${getProfileImageUrl()})` } : {}}
           {...getRootProps()}
         >
           <input {...getInputProps()} />
-          {!fileData &&
-            (!currentPasskeyInfo?.pfpUrl ||
-              currentPasskeyInfo.pfpUrl.includes(
-                DefaultImages.UNKNOWN_USER
-              )) && <Icon name="image" size="2xl" className="icon" />}
+          {!hasImage && <Icon name="image" size="2xl" className="icon" />}
+          {hasImage && (
+            <Tooltip id="user-avatar-delete" content={t`Delete this image`} place="bottom">
+              <button
+                type="button"
+                className="image-upload-delete-btn"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  markForDeletion();
+                }}
+                aria-label={t`Delete this image`}
+              >
+                <Icon name="trash" size="sm" />
+              </button>
+            </Tooltip>
+          )}
         </div>
-        {!isUserIconUploading && !isUserIconDragActive && (
+        {!isUserIconUploading && !isUserIconDragActive && !hasImage && (
           <ReactTooltip
             id="user-icon-tooltip"
-            content="Upload an avatar for your profile - PNG or JPG - Optimal ratio 1:1"
+            content={t`Upload an avatar for your profile - PNG or JPG - Optimal ratio 1:1`}
             place="bottom"
             className="!w-[400px]"
             anchorSelect="#user-icon-tooltip-target"

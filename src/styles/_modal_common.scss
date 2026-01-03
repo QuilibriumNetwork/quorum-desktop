@@ -672,24 +672,6 @@
     opacity: 0.8;
   }
 
-  // Upload "+" icon
-  &::after {
-    content: '+';
-    width: $s-6;
-    height: $s-6;
-    background: var(--color-bg-icon);
-    color: var(--accent);
-    display: block;
-    text-align: center;
-    border-radius: $rounded-xl;
-    font-weight: $font-bold;
-    position: absolute;
-    top: (-$s-1);
-    right: (-$s-1);
-    box-shadow: 0 $s-1 $s-1 rgba(0, 0, 0, 0.25);
-    line-height: $s-6;
-  }
-
   @media (max-width: $screen-md) {
     width: 70px;
     height: 70px;
@@ -724,24 +706,6 @@
 
   &:hover {
     opacity: 0.8;
-  }
-
-  &::after {
-    content: '+';
-    position: absolute;
-    bottom: $s-2;
-    right: $s-2;
-    width: $s-6;
-    height: $s-6;
-    background: var(--color-bg-icon);
-    color: var(--accent);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: $rounded-xl;
-    font-weight: $font-bold;
-    font-size: $text-sm;
-    box-shadow: 0 $s-1 $s-1 rgba(0, 0, 0, 0.25);
   }
 }
 
@@ -844,4 +808,40 @@
   &::placeholder {
     font-size: $text-sm !important;
   }
+}
+
+// Image upload delete button
+.image-upload-delete-btn {
+  position: absolute;
+  top: (-$s-1);
+  right: (-$s-1);
+  width: $s-6;
+  height: $s-6;
+  border-radius: $rounded-xl;
+  background: rgb(var(--danger));
+  color: white;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 $s-1 $s-1 rgba(0, 0, 0, 0.25);
+  z-index: 10;  
+
+  &:hover {
+    background: rgb(var(--danger-hover));
+  }
+
+  // Focus state for accessibility
+  &:focus-visible {
+    outline: 2px solid white;
+    outline-offset: 2px;
+  }
+}
+
+// Banner delete button positioning (bottom-right instead of top-right)
+.modal-banner-editable .image-upload-delete-btn {
+  top: auto;
+  bottom: $s-2;
+  right: $s-2;
 }

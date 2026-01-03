@@ -179,6 +179,8 @@ const SpaceSettingsModal: React.FunctionComponent<{
     getIconRootProps,
     getIconInputProps,
     clearIconFileError,
+    iconMarkedForDeletion,
+    markIconForDeletion,
 
     bannerData,
     currentBannerFile,
@@ -188,6 +190,8 @@ const SpaceSettingsModal: React.FunctionComponent<{
     getBannerRootProps,
     getBannerInputProps,
     clearBannerFileError,
+    bannerMarkedForDeletion,
+    markBannerForDeletion,
   } = useSpaceFileUploads();
 
   // Custom assets hook
@@ -321,22 +325,32 @@ const SpaceSettingsModal: React.FunctionComponent<{
     setSaveError('');
 
     await saveUntilComplete(async () => {
-      // Convert file data to URLs similar to original SpaceEditor
-      const iconUrl =
-        currentIconFile && iconData
-          ? 'data:' +
-            currentIconFile.type +
-            ';base64,' +
-            Buffer.from(iconData).toString('base64')
-          : space.iconUrl;
+      // Convert file data to URLs, handle deletion
+      let iconUrl: string;
+      if (iconMarkedForDeletion) {
+        iconUrl = ''; // Empty string signals deletion
+      } else if (currentIconFile && iconData) {
+        iconUrl =
+          'data:' +
+          currentIconFile.type +
+          ';base64,' +
+          Buffer.from(iconData).toString('base64');
+      } else {
+        iconUrl = space.iconUrl || '';
+      }
 
-      const bannerUrl =
-        currentBannerFile && bannerData
-          ? 'data:' +
-            currentBannerFile.type +
-            ';base64,' +
-            Buffer.from(bannerData).toString('base64')
-          : space.bannerUrl;
+      let bannerUrl: string;
+      if (bannerMarkedForDeletion) {
+        bannerUrl = ''; // Empty string signals deletion
+      } else if (currentBannerFile && bannerData) {
+        bannerUrl =
+          'data:' +
+          currentBannerFile.type +
+          ';base64,' +
+          Buffer.from(bannerData).toString('base64');
+      } else {
+        bannerUrl = space.bannerUrl || '';
+      }
 
       // Use the original updateSpace call with all our hook data
       await updateSpace({
@@ -369,6 +383,8 @@ const SpaceSettingsModal: React.FunctionComponent<{
     bannerData,
     currentBannerFile,
     description,
+    iconMarkedForDeletion,
+    bannerMarkedForDeletion,
   ]);
 
   // Determine if current category needs save button
@@ -420,6 +436,8 @@ const SpaceSettingsModal: React.FunctionComponent<{
                           getRootProps={spaceProfile.getRootProps}
                           getInputProps={spaceProfile.getInputProps}
                           clearFileError={spaceProfile.clearFileError}
+                          markedForDeletion={spaceProfile.markedForDeletion}
+                          markForDeletion={spaceProfile.markForDeletion}
                           getProfileImageUrl={spaceProfile.getProfileImageUrl}
                           onSave={spaceProfile.onSave}
                           isSaving={spaceProfile.isSaving}
@@ -458,6 +476,8 @@ const SpaceSettingsModal: React.FunctionComponent<{
                           getIconRootProps={getIconRootProps}
                           getIconInputProps={getIconInputProps}
                           clearIconFileError={clearIconFileError}
+                          iconMarkedForDeletion={iconMarkedForDeletion}
+                          markIconForDeletion={markIconForDeletion}
                           bannerData={bannerData}
                           currentBannerFile={currentBannerFile}
                           bannerFileError={bannerFileError}
@@ -466,6 +486,8 @@ const SpaceSettingsModal: React.FunctionComponent<{
                           getBannerRootProps={getBannerRootProps}
                           getBannerInputProps={getBannerInputProps}
                           clearBannerFileError={clearBannerFileError}
+                          bannerMarkedForDeletion={bannerMarkedForDeletion}
+                          markBannerForDeletion={markBannerForDeletion}
                           defaultChannel={defaultChannel}
                           setDefaultChannel={setDefaultChannel}
                           getChannelGroups={getChannelGroups}

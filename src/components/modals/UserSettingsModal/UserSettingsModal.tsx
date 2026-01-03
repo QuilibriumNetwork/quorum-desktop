@@ -83,6 +83,8 @@ const UserSettingsModal: React.FunctionComponent<{
     getRootProps,
     getInputProps,
     clearFileError,
+    markedForDeletion,
+    markForDeletion,
     getProfileImageUrl,
   } = useProfileImage();
 
@@ -106,25 +108,38 @@ const UserSettingsModal: React.FunctionComponent<{
     setSaveError('');
 
     await saveUntilComplete(async () => {
-      await saveUserChanges(fileData, currentFile);
+      // Pass markedForDeletion to saveUserChanges so it knows to clear the icon
+      await saveUserChanges(
+        markedForDeletion ? undefined : fileData,
+        markedForDeletion ? undefined : currentFile,
+        markedForDeletion
+      );
+
+      // Determine user icon for parent state update
+      let userIcon: string;
+      if (markedForDeletion) {
+        userIcon = DefaultImages.UNKNOWN_USER;
+      } else if (fileData && currentFile) {
+        userIcon =
+          'data:' +
+          currentFile.type +
+          ';base64,' +
+          Buffer.from(fileData).toString('base64');
+      } else {
+        userIcon = currentPasskeyInfo!.pfpUrl ?? DefaultImages.UNKNOWN_USER;
+      }
 
       // Update parent component's user state
       setUser!({
         displayName: displayName,
         state: 'online',
         status: '',
-        userIcon:
-          fileData && currentFile
-            ? 'data:' +
-              currentFile.type +
-              ';base64,' +
-              Buffer.from(fileData).toString('base64')
-            : (currentPasskeyInfo!.pfpUrl ?? DefaultImages.UNKNOWN_USER),
+        userIcon,
         address: currentPasskeyInfo!.address,
       });
       // Modal will close automatically via onSaveComplete callback
     });
-  }, [saveUntilComplete, saveUserChanges, fileData, currentFile, setUser, displayName, currentPasskeyInfo]);
+  }, [saveUntilComplete, saveUserChanges, fileData, currentFile, setUser, displayName, currentPasskeyInfo, markedForDeletion]);
 
   // Determine if current category needs save button
   const categoryNeedsSave = selectedCategory === 'general' || selectedCategory === 'privacy';
@@ -169,6 +184,8 @@ const UserSettingsModal: React.FunctionComponent<{
                         getRootProps={getRootProps}
                         getInputProps={getInputProps}
                         clearFileError={clearFileError}
+                        markedForDeletion={markedForDeletion}
+                        markForDeletion={markForDeletion}
                         getProfileImageUrl={getProfileImageUrl}
                         onSave={saveChanges}
                         isSaving={isSaving}

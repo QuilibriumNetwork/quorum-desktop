@@ -11,10 +11,10 @@ import {
 } from '../../primitives';
 import { Trans } from '@lingui/react/macro';
 import { t } from '@lingui/core/macro';
-import { ReactTooltip } from '../../ui';
 import { Channel, Group } from '../../../api/quorumApi';
 import { isFeatureEnabled } from '../../../utils/platform';
 import { validateSpaceName } from '../../../hooks/business/validation';
+import { ReactTooltip } from '../../ui';
 
 interface GeneralProps {
   space: any;
@@ -39,6 +39,8 @@ interface GeneralProps {
   getIconRootProps: () => any;
   getIconInputProps: () => any;
   clearIconFileError: () => void;
+  iconMarkedForDeletion: boolean;
+  markIconForDeletion: () => void;
   bannerData: ArrayBuffer | undefined;
   currentBannerFile: File | undefined;
   bannerFileError: string | null;
@@ -47,6 +49,8 @@ interface GeneralProps {
   getBannerRootProps: () => any;
   getBannerInputProps: () => any;
   clearBannerFileError: () => void;
+  bannerMarkedForDeletion: boolean;
+  markBannerForDeletion: () => void;
   defaultChannel: Channel | undefined;
   setDefaultChannel: (channel: Channel) => void;
   getChannelGroups: any;
@@ -76,6 +80,8 @@ const General: React.FunctionComponent<GeneralProps> = ({
   getIconRootProps,
   getIconInputProps,
   clearIconFileError,
+  iconMarkedForDeletion,
+  markIconForDeletion,
   bannerData,
   currentBannerFile,
   bannerFileError,
@@ -84,6 +90,8 @@ const General: React.FunctionComponent<GeneralProps> = ({
   getBannerRootProps,
   getBannerInputProps,
   clearBannerFileError,
+  bannerMarkedForDeletion,
+  markBannerForDeletion,
   defaultChannel,
   setDefaultChannel,
   getChannelGroups,
@@ -98,37 +106,51 @@ const General: React.FunctionComponent<GeneralProps> = ({
   // Feature flag: only show edit history toggle if enabled via environment variable
   const showEditHistoryToggle = isFeatureEnabled('ENABLE_EDIT_HISTORY');
 
+  // Determine if there's an icon to display (new upload or existing, not marked for deletion)
+  const hasIcon = (iconData && currentIconFile) || (space?.iconUrl && !iconMarkedForDeletion);
+  const iconImageUrl = iconData && currentIconFile
+    ? `url(data:${currentIconFile.type};base64,${Buffer.from(iconData).toString('base64')})`
+    : space?.iconUrl ? `url(${space.iconUrl})` : '';
+
+  // Determine if there's a banner to display (new upload or existing, not marked for deletion)
+  const hasBanner = (bannerData && currentBannerFile) || (space?.bannerUrl && !bannerMarkedForDeletion);
+  const bannerImageUrl = bannerData && currentBannerFile
+    ? `url(data:${currentBannerFile.type};base64,${Buffer.from(bannerData).toString('base64')})`
+    : space?.bannerUrl ? `url(${space.bannerUrl})` : '';
+
   return (
     <>
       <div className="modal-content-header-avatar">
         <div
           id="space-icon-tooltip-target"
-          className={`avatar-upload ${!iconData && !space?.iconUrl ? 'empty' : ''}`}
-          style={
-            (iconData && currentIconFile) || space?.iconUrl
-              ? {
-                  backgroundImage:
-                    iconData != undefined && currentIconFile
-                      ? 'url(data:' +
-                        currentIconFile.type +
-                        ';base64,' +
-                        Buffer.from(iconData).toString('base64') +
-                        ')'
-                      : `url(${space?.iconUrl})`,
-                }
-              : {}
-          }
+          className={`avatar-upload ${!hasIcon ? 'empty' : ''}`}
+          style={hasIcon ? { backgroundImage: iconImageUrl } : {}}
           {...getIconRootProps()}
         >
           <input {...getIconInputProps()} />
-          {!iconData && !space?.iconUrl && (
+          {!hasIcon && (
             <Icon name="image" size="2xl" className="icon" />
           )}
+          {hasIcon && (
+            <Tooltip id="space-icon-delete" content={t`Delete this image`} place="bottom">
+              <button
+                type="button"
+                className="image-upload-delete-btn"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  markIconForDeletion();
+                }}
+                aria-label={t`Delete this image`}
+              >
+                <Icon name="trash" size="sm" />
+              </button>
+            </Tooltip>
+          )}
         </div>
-        {!isIconUploading && !isIconDragActive && (
+        {!isIconUploading && !isIconDragActive && !hasIcon && (
           <ReactTooltip
             id="space-icon-tooltip"
-            content="Upload an avatar for this Space - PNG or JPG - Optimal ratio 1:1"
+            content={t`Upload an icon for your Space - PNG or JPG - Optimal ratio 1:1`}
             place="bottom"
             className="!w-[400px]"
             anchorSelect="#space-icon-tooltip-target"
@@ -180,29 +202,33 @@ const General: React.FunctionComponent<GeneralProps> = ({
             id="space-banner-tooltip-target"
             className={
               'modal-banner-editable ' +
-              (space?.bannerUrl || currentBannerFile
-                ? ''
-                : 'border-2 border-dashed border-accent-200')
+              (hasBanner ? '' : 'border-2 border-dashed border-accent-200')
             }
-            style={{
-              backgroundImage:
-                bannerData != undefined && currentBannerFile
-                  ? 'url(data:' +
-                    currentBannerFile.type +
-                    ';base64,' +
-                    Buffer.from(bannerData).toString('base64') +
-                    ')'
-                  : `url(${space?.bannerUrl})`,
-            }}
+            style={hasBanner ? { backgroundImage: bannerImageUrl } : {}}
             {...getBannerRootProps()}
           >
             <input {...getBannerInputProps()} />
+            {hasBanner && (
+              <Tooltip id="space-banner-delete" content={t`Delete this image`} place="top">
+                <button
+                  type="button"
+                  className="image-upload-delete-btn"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    markBannerForDeletion();
+                  }}
+                  aria-label={t`Delete this image`}
+                >
+                  <Icon name="trash" size="sm" />
+                </button>
+              </Tooltip>
+            )}
           </div>
-          {!isBannerUploading && !isBannerDragActive && (
+          {!isBannerUploading && !isBannerDragActive && !hasBanner && (
             <ReactTooltip
               id="space-banner-tooltip"
-              content="Upload a banner for this Space - PNG or JPG - Optimal ratio 16:9"
-              place="bottom"
+              content={t`Upload a banner for your Space - PNG or JPG - Optimal ratio 3:1`}
+              place="top"
               className="!w-[400px]"
               anchorSelect="#space-banner-tooltip-target"
             />

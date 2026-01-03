@@ -25,6 +25,9 @@ export interface UseSpaceProfileReturn {
   getRootProps: () => any;
   getInputProps: () => any;
   clearFileError: () => void;
+  clearFile: () => void;
+  markedForDeletion: boolean;
+  markForDeletion: () => void;
   getProfileImageUrl: () => string;
   onSave: () => Promise<void>;
   isSaving: boolean;
@@ -48,6 +51,7 @@ export const useSpaceProfile = (
   const [avatarFileError, setAvatarFileError] = useState<string | null>(null);
   const [isAvatarUploading, setIsAvatarUploading] = useState<boolean>(false);
   const [isSaving, setIsSaving] = useState<boolean>(false);
+  const [markedForDeletion, setMarkedForDeletion] = useState<boolean>(false);
 
   // Use proper display name validation (replaces basic validation)
   const displayNameValidation = useDisplayNameValidation(displayName);
@@ -94,6 +98,7 @@ export const useSpaceProfile = (
       setAvatarFileError(null);
       setFileData(undefined);
       setCurrentFile(files[0]);
+      setMarkedForDeletion(false); // Reset deletion flag on new upload
     },
     onDragEnter: () => {
       setIsAvatarUploading(true);
@@ -138,7 +143,28 @@ export const useSpaceProfile = (
     setAvatarFileError(null);
   }, []);
 
+  const clearFile = useCallback(() => {
+    setFileData(undefined);
+    setCurrentFile(undefined);
+    setAvatarFileError(null);
+    setIsAvatarUploading(false);
+    setMarkedForDeletion(false);
+  }, []);
+
+  const markForDeletion = useCallback(() => {
+    setFileData(undefined);
+    setCurrentFile(undefined);
+    setAvatarFileError(null);
+    setIsAvatarUploading(false);
+    setMarkedForDeletion(true);
+  }, []);
+
   const getProfileImageUrl = useCallback((): string => {
+    // If marked for deletion, show default
+    if (markedForDeletion) {
+      return 'var(--unknown-icon)';
+    }
+
     if (fileData && currentFile) {
       return `data:${currentFile.type};base64,${Buffer.from(fileData).toString('base64')}`;
     }
@@ -157,7 +183,7 @@ export const useSpaceProfile = (
     }
 
     return 'var(--unknown-icon)';
-  }, [fileData, currentFile, currentMember, currentPasskeyInfo]);
+  }, [fileData, currentFile, currentMember, currentPasskeyInfo, markedForDeletion]);
 
   const onSave = useCallback(async () => {
     if (!currentPasskeyInfo || displayNameValidation.error) {
@@ -172,10 +198,14 @@ export const useSpaceProfile = (
         throw new Error('Cannot update profile: missing inbox configuration');
       }
 
-      // Prepare user icon - use new upload or keep existing
-      let userIcon = member.user_icon || currentPasskeyInfo.pfpUrl || '';
-      if (fileData && currentFile) {
+      // Prepare user icon - handle deletion, new upload, or keep existing
+      let userIcon: string;
+      if (markedForDeletion) {
+        userIcon = ''; // Empty string signals deletion
+      } else if (fileData && currentFile) {
         userIcon = `data:${currentFile.type};base64,${Buffer.from(fileData).toString('base64')}`;
+      } else {
+        userIcon = member.user_icon || currentPasskeyInfo.pfpUrl || '';
       }
 
       // Get space's default channel
@@ -225,6 +255,7 @@ export const useSpaceProfile = (
     queryClient,
     onSaveCallback,
     displayNameValidation.error,
+    markedForDeletion,
   ]);
 
   return {
@@ -238,6 +269,9 @@ export const useSpaceProfile = (
     getRootProps,
     getInputProps,
     clearFileError,
+    clearFile,
+    markedForDeletion,
+    markForDeletion,
     getProfileImageUrl,
     onSave,
     isSaving,

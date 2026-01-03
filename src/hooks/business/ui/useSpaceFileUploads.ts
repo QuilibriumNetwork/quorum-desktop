@@ -18,6 +18,9 @@ export interface UseSpaceFileUploadsReturn {
   getIconRootProps: () => any;
   getIconInputProps: () => any;
   clearIconFileError: () => void;
+  clearIcon: () => void;
+  iconMarkedForDeletion: boolean;
+  markIconForDeletion: () => void;
 
   // Banner upload
   bannerData: ArrayBuffer | undefined;
@@ -28,6 +31,9 @@ export interface UseSpaceFileUploadsReturn {
   getBannerRootProps: () => any;
   getBannerInputProps: () => any;
   clearBannerFileError: () => void;
+  clearBanner: () => void;
+  bannerMarkedForDeletion: boolean;
+  markBannerForDeletion: () => void;
 }
 
 export const useSpaceFileUploads = (
@@ -40,6 +46,7 @@ export const useSpaceFileUploads = (
   const [currentIconFile, setCurrentIconFile] = useState<File | undefined>();
   const [iconFileError, setIconFileError] = useState<string | null>(null);
   const [isIconUploading, setIsIconUploading] = useState<boolean>(false);
+  const [iconMarkedForDeletion, setIconMarkedForDeletion] = useState<boolean>(false);
 
   // Banner upload state
   const [bannerData, setBannerData] = useState<ArrayBuffer | undefined>();
@@ -48,6 +55,7 @@ export const useSpaceFileUploads = (
   >();
   const [bannerFileError, setBannerFileError] = useState<string | null>(null);
   const [isBannerUploading, setIsBannerUploading] = useState<boolean>(false);
+  const [bannerMarkedForDeletion, setBannerMarkedForDeletion] = useState<boolean>(false);
 
   // Icon dropzone
   const {
@@ -81,6 +89,7 @@ export const useSpaceFileUploads = (
       onIconFileError?.(null);
       setIconData(undefined);
       setCurrentIconFile(files[0]);
+      setIconMarkedForDeletion(false); // Reset deletion flag on new upload
     },
     onDragEnter: () => {
       setIsIconUploading(true);
@@ -128,6 +137,7 @@ export const useSpaceFileUploads = (
       onBannerFileError?.(null);
       setBannerData(undefined);
       setCurrentBannerFile(files[0]);
+      setBannerMarkedForDeletion(false); // Reset deletion flag on new upload
     },
     onDragEnter: () => {
       setIsBannerUploading(true);
@@ -194,9 +204,45 @@ export const useSpaceFileUploads = (
     onIconFileError?.(null);
   };
 
+  const clearIcon = () => {
+    setIconData(undefined);
+    setCurrentIconFile(undefined);
+    setIconFileError(null);
+    onIconFileError?.(null);
+    setIsIconUploading(false);
+    setIconMarkedForDeletion(false);
+  };
+
+  const markIconForDeletion = () => {
+    setIconData(undefined);
+    setCurrentIconFile(undefined);
+    setIconFileError(null);
+    onIconFileError?.(null);
+    setIsIconUploading(false);
+    setIconMarkedForDeletion(true);
+  };
+
   const clearBannerFileError = () => {
     setBannerFileError(null);
     onBannerFileError?.(null);
+  };
+
+  const clearBanner = () => {
+    setBannerData(undefined);
+    setCurrentBannerFile(undefined);
+    setBannerFileError(null);
+    onBannerFileError?.(null);
+    setIsBannerUploading(false);
+    setBannerMarkedForDeletion(false);
+  };
+
+  const markBannerForDeletion = () => {
+    setBannerData(undefined);
+    setCurrentBannerFile(undefined);
+    setBannerFileError(null);
+    onBannerFileError?.(null);
+    setIsBannerUploading(false);
+    setBannerMarkedForDeletion(true);
   };
 
   return {
@@ -208,6 +254,9 @@ export const useSpaceFileUploads = (
     getIconRootProps,
     getIconInputProps,
     clearIconFileError,
+    clearIcon,
+    iconMarkedForDeletion,
+    markIconForDeletion,
 
     bannerData,
     currentBannerFile,
@@ -217,5 +266,8 @@ export const useSpaceFileUploads = (
     getBannerRootProps,
     getBannerInputProps,
     clearBannerFileError,
+    clearBanner,
+    bannerMarkedForDeletion,
+    markBannerForDeletion,
   };
 };

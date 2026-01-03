@@ -4,6 +4,7 @@ import './ReactTooltip.scss';
 import 'react-tooltip/dist/react-tooltip.css';
 
 import { useTheme } from '../primitives/theme';
+import { Portal } from '../primitives';
 import { isTouchDevice } from '../../utils/platform';
 
 type ReactTooltipProps = {
@@ -158,8 +159,34 @@ const ReactTooltip: React.FunctionComponent<ReactTooltipProps> = ({
 
   // On touch devices and showOnTouch, show controlled tooltip
   // Using isOpen for controlled mode - no need for disable* props
+  // Portal ensures tooltip escapes any stacking context (e.g., modals)
   if (isTouchDevice() && showOnTouch) {
     return (
+      <Portal>
+        <Tooltip
+          id={id}
+          content={content}
+          place={place}
+          noArrow={noArrow}
+          className={tooltipClassName}
+          anchorSelect={anchorSelect}
+          border={
+            resolvedThemeInUse === 'light' || highlighted
+              ? '1px solid var(--color-border-default)'
+              : undefined
+          }
+          isOpen={alwaysVisible ? true : visible}
+          positionStrategy="fixed"
+        />
+      </Portal>
+    );
+  }
+
+  // Normal desktop/hover operation
+  // Portal ensures tooltip escapes any stacking context (e.g., modals)
+  // delayShow fixes flickering at (0,0) by letting Floating UI calculate position first
+  return (
+    <Portal>
       <Tooltip
         id={id}
         content={content}
@@ -172,30 +199,10 @@ const ReactTooltip: React.FunctionComponent<ReactTooltipProps> = ({
             ? '1px solid var(--color-border-default)'
             : undefined
         }
-        isOpen={alwaysVisible ? true : visible}
         positionStrategy="fixed"
+        delayShow={50}
       />
-    );
-  }
-
-  // Normal desktop/hover operation
-  // delayShow fixes flickering at (0,0) by letting Floating UI calculate position first
-  return (
-    <Tooltip
-      id={id}
-      content={content}
-      place={place}
-      noArrow={noArrow}
-      className={tooltipClassName}
-      anchorSelect={anchorSelect}
-      border={
-        resolvedThemeInUse === 'light' || highlighted
-          ? '1px solid var(--color-border-default)'
-          : undefined
-      }
-      positionStrategy="fixed"
-      delayShow={50}
-    />
+    </Portal>
   );
 };
 

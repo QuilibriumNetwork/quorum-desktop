@@ -9,11 +9,11 @@ import {
   Select,
   Switch,
   FlexRow,
+  Tooltip,
 } from '../../primitives';
 import { Trans } from '@lingui/react/macro';
 import { t } from '@lingui/core/macro';
 import { DefaultImages } from '../../../utils';
-import { ReactTooltip } from '../../ui';
 import { useSpaceOwner } from '../../../hooks/queries/spaceOwner/useSpaceOwner';
 import { useSpaceLeaving } from '../../../hooks/business/spaces/useSpaceLeaving';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
@@ -21,6 +21,7 @@ import { useUserRoleDisplay } from '../../../hooks/business/user/useUserRoleDisp
 import { useChannelMute } from '../../../hooks/business/channels';
 import { Role } from '../../../api/quorumApi';
 import type { NotificationTypeId } from '../../../types/notifications';
+import { ReactTooltip } from '../../ui';
 
 interface AccountProps {
   spaceId: string;
@@ -39,6 +40,8 @@ interface AccountProps {
   getRootProps: () => any;
   getInputProps: () => any;
   clearFileError: () => void;
+  markedForDeletion: boolean;
+  markForDeletion: () => void;
   getProfileImageUrl: () => string;
   onSave: () => void;
   isSaving: boolean;
@@ -66,6 +69,8 @@ const Account: React.FunctionComponent<AccountProps> = ({
   getRootProps,
   getInputProps,
   clearFileError,
+  markedForDeletion,
+  markForDeletion,
   getProfileImageUrl,
   onSave,
   isSaving,
@@ -122,36 +127,51 @@ const Account: React.FunctionComponent<AccountProps> = ({
           <Trans>Change your avatar and name for this Space</Trans>
         </div>
         <div className="flex items-start gap-4 pt-4">
-          <div
-            id="space-profile-icon-tooltip-target"
-            className={`avatar-upload ${!fileData && (!currentPasskeyInfo?.pfpUrl || currentPasskeyInfo.pfpUrl.includes(DefaultImages.UNKNOWN_USER)) ? 'empty' : ''}`}
-            style={
-              fileData ||
-              (currentPasskeyInfo?.pfpUrl &&
-                !currentPasskeyInfo.pfpUrl.includes(DefaultImages.UNKNOWN_USER))
-                ? {
-                    backgroundImage: `url(${getProfileImageUrl()})`,
-                  }
-                : {}
-            }
-            {...getRootProps()}
-          >
-            <input {...getInputProps()} />
-            {!fileData &&
-              (!currentPasskeyInfo?.pfpUrl ||
-                currentPasskeyInfo.pfpUrl.includes(
-                  DefaultImages.UNKNOWN_USER
-                )) && <Icon name="image" size="2xl" className="icon" />}
-          </div>
-          {!isAvatarUploading && !isAvatarDragActive && (
-            <ReactTooltip
-              id="space-profile-icon-tooltip"
-              content={t`Upload an avatar for this Space - PNG or JPG - Optimal ratio 1:1`}
-              place="bottom"
-              className="!w-[400px]"
-              anchorSelect="#space-profile-icon-tooltip-target"
-            />
-          )}
+          {(() => {
+            // Determine if there's an avatar to display
+            const hasExistingAvatar = currentPasskeyInfo?.pfpUrl && !currentPasskeyInfo.pfpUrl.includes(DefaultImages.UNKNOWN_USER);
+            const hasAvatar = (fileData || hasExistingAvatar) && !markedForDeletion;
+            const avatarUrl = getProfileImageUrl();
+            const showImage = hasAvatar && avatarUrl !== 'var(--unknown-icon)';
+
+            return (
+              <>
+                <div
+                  id="space-profile-avatar-tooltip-target"
+                  className={`avatar-upload ${!showImage ? 'empty' : ''}`}
+                  style={showImage ? { backgroundImage: `url(${avatarUrl})` } : {}}
+                  {...getRootProps()}
+                >
+                  <input {...getInputProps()} />
+                  {!showImage && <Icon name="image" size="2xl" className="icon" />}
+                  {showImage && (
+                    <Tooltip id="space-profile-avatar-delete" content={t`Delete this image`} place="bottom">
+                      <button
+                        type="button"
+                        className="image-upload-delete-btn"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          markForDeletion();
+                        }}
+                        aria-label={t`Delete this image`}
+                      >
+                        <Icon name="trash" size="sm" />
+                      </button>
+                    </Tooltip>
+                  )}
+                </div>
+                {!isAvatarUploading && !isAvatarDragActive && !showImage && (
+                  <ReactTooltip
+                    id="space-profile-avatar-tooltip"
+                    content={t`Upload an avatar for this Space - PNG or JPG - Optimal ratio 1:1`}
+                    place="bottom"
+                    className="!w-[400px]"
+                    anchorSelect="#space-profile-avatar-tooltip-target"
+                  />
+                )}
+              </>
+            );
+          })()}
           <div className="flex-1">
             <Input
               className="w-full md:w-80 mt-3 ml-1"

@@ -41,7 +41,7 @@
 .quorum-react-tooltip-dark {
   @include tooltip-box;
   @include reset-text;
-  z-index: 10002 !important; // Higher than DropdownPanel (10001) to appear above panels
+  z-index: 10200 !important; // Higher than Modal (10100) to appear above modals
 
   * {
     @include inherit-text;

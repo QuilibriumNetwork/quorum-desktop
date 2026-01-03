@@ -20,7 +20,7 @@ export interface UseUserSettingsReturn {
   setAllowSync: (allow: boolean) => void;
   nonRepudiable: boolean;
   setNonRepudiable: (repudiable: boolean) => void;
-  saveChanges: (fileData?: ArrayBuffer, currentFile?: File) => Promise<void>;
+  saveChanges: (fileData?: ArrayBuffer, currentFile?: File, markedForDeletion?: boolean) => Promise<void>;
   currentPasskeyInfo: any;
   stagedRegistration: any;
   setStagedRegistration: (registration: any) => void;
@@ -120,16 +120,22 @@ export const useUserSettings = (
     return await exportKey(currentPasskeyInfo.address);
   };
 
-  const saveChanges = async (fileData?: ArrayBuffer, currentFile?: File) => {
+  const saveChanges = async (fileData?: ArrayBuffer, currentFile?: File, markedForDeletion?: boolean) => {
     if (!currentPasskeyInfo) return;
 
-    const profileImageUrl =
-      currentFile && fileData
-        ? 'data:' +
-          currentFile.type +
-          ';base64,' +
-          Buffer.from(fileData).toString('base64')
-        : currentPasskeyInfo.pfpUrl;
+    // Determine profile image URL: deletion clears it, new file uses data URL, otherwise keep existing
+    let profileImageUrl: string;
+    if (markedForDeletion) {
+      profileImageUrl = DefaultImages.UNKNOWN_USER;
+    } else if (currentFile && fileData) {
+      profileImageUrl =
+        'data:' +
+        currentFile.type +
+        ';base64,' +
+        Buffer.from(fileData).toString('base64');
+    } else {
+      profileImageUrl = currentPasskeyInfo.pfpUrl;
+    }
 
     // Update stored passkey
     updateStoredPasskey(currentPasskeyInfo.credentialId, {

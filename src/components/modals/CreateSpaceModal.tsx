@@ -5,9 +5,9 @@ import { useSpaceCreation, useFileUpload, useSpaceSettings, useModalSaveState } 
 import { validateSpaceName } from '../../hooks/business/validation';
 import { Trans } from '@lingui/react/macro';
 import { t } from '@lingui/core/macro';
-import { ReactTooltip } from '../ui';
 import ModalSaveOverlay from './ModalSaveOverlay';
 import { useActionQueue } from '../context/ActionQueueContext';
+import { ReactTooltip } from '../ui';
 
 type CreateSpaceModalProps = {
   visible: boolean;
@@ -52,6 +52,7 @@ const CreateSpaceModal: React.FunctionComponent<CreateSpaceModalProps> = (
     getRootProps,
     getInputProps,
     clearFileError,
+    clearFile,
   } = useFileUpload();
 
   const {
@@ -103,12 +104,26 @@ const CreateSpaceModal: React.FunctionComponent<CreateSpaceModalProps> = (
             >
               <input {...getInputProps()} />
               {!fileData && <Icon name="image" size="2xl" className="icon" />}
+              {fileData && (
+                <Tooltip id="create-space-icon-delete" content={t`Delete this image`} place="bottom">
+                  <button
+                    type="button"
+                    className="image-upload-delete-btn"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      clearFile();
+                    }}
+                    aria-label={t`Delete this image`}
+                  >
+                    <Icon name="trash" size="sm" />
+                  </button>
+                </Tooltip>
+              )}
             </div>
-            {!isUploading && !isDragActive && (
-              /* Keep ReactTooltip for file upload area - Tooltip primitive conflicts with react-dropzone */
+            {!isUploading && !isDragActive && !fileData && (
               <ReactTooltip
                 id="space-icon-tooltip"
-                content="Upload an avatar for this Space - PNG or JPG - Optimal ratio 1:1"
+                content={t`Upload an icon for your Space - PNG or JPG - Optimal ratio 1:1`}
                 place="bottom"
                 className="!w-[400px]"
                 anchorSelect="#space-icon-tooltip-target"

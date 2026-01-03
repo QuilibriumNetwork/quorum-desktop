@@ -21,6 +21,8 @@ export interface UseFileUploadReturn {
   getInputProps: () => any;
   clearFileError: () => void;
   clearFile: () => void;
+  markedForDeletion: boolean;
+  markForDeletion: () => void;
 }
 
 export const useFileUpload = (
@@ -30,6 +32,7 @@ export const useFileUpload = (
   const [currentFile, setCurrentFile] = useState<File | undefined>();
   const [fileError, setFileError] = useState<string | null>(null);
   const [isUploading, setIsUploading] = useState<boolean>(false);
+  const [markedForDeletion, setMarkedForDeletion] = useState<boolean>(false);
 
   const {
     accept = {
@@ -64,6 +67,7 @@ export const useFileUpload = (
       // Clear previous file data immediately when new file is accepted
       setFileData(undefined);
       setCurrentFile(files[0]);
+      setMarkedForDeletion(false); // Reset deletion flag on new upload
       onDropAccepted?.(files);
     },
     onDragEnter: () => {
@@ -107,6 +111,15 @@ export const useFileUpload = (
     setCurrentFile(undefined);
     setFileError(null);
     setIsUploading(false);
+    setMarkedForDeletion(false);
+  };
+
+  const markForDeletion = () => {
+    setFileData(undefined);
+    setCurrentFile(undefined);
+    setFileError(null);
+    setIsUploading(false);
+    setMarkedForDeletion(true);
   };
 
   return {
@@ -119,5 +132,7 @@ export const useFileUpload = (
     getInputProps,
     clearFileError,
     clearFile,
+    markedForDeletion,
+    markForDeletion,
   };
 };

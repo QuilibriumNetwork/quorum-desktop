@@ -19,6 +19,8 @@ export interface UseProfileImageReturn {
   getInputProps: () => any;
   clearFileError: () => void;
   clearFile: () => void;
+  markedForDeletion: boolean;
+  markForDeletion: () => void;
   getProfileImageUrl: () => string;
 }
 
@@ -32,6 +34,7 @@ export const useProfileImage = (
   );
   const [isUserIconUploading, setIsUserIconUploading] =
     useState<boolean>(false);
+  const [markedForDeletion, setMarkedForDeletion] = useState<boolean>(false);
 
   const { currentPasskeyInfo } = usePasskeysContext();
 
@@ -58,6 +61,7 @@ export const useProfileImage = (
       // Clear previous file data immediately when new file is accepted
       setFileData(undefined);
       setCurrentFile(files[0]);
+      setMarkedForDeletion(false); // Reset deletion flag on new upload
     },
     onDragEnter: () => {
       setIsUserIconUploading(true);
@@ -101,9 +105,23 @@ export const useProfileImage = (
     setCurrentFile(undefined);
     setUserIconFileError(null);
     setIsUserIconUploading(false);
+    setMarkedForDeletion(false);
+  };
+
+  const markForDeletion = () => {
+    setFileData(undefined);
+    setCurrentFile(undefined);
+    setUserIconFileError(null);
+    setIsUserIconUploading(false);
+    setMarkedForDeletion(true);
   };
 
   const getProfileImageUrl = (): string => {
+    // If marked for deletion, show default
+    if (markedForDeletion) {
+      return 'var(--unknown-icon)';
+    }
+
     if (fileData && currentFile) {
       return `data:${currentFile.type};base64,${Buffer.from(fileData).toString('base64')}`;
     }
@@ -128,6 +146,8 @@ export const useProfileImage = (
     getInputProps,
     clearFileError,
     clearFile,
+    markedForDeletion,
+    markForDeletion,
     getProfileImageUrl,
   };
 };
