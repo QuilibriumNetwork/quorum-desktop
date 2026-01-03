@@ -103,7 +103,7 @@ export const PrimitivesMenuScreen: React.FC<PrimitivesMenuScreenProps> = ({
       id: 'tooltip',
       title: 'Tooltip',
       description: 'Cross-platform tooltip for info icons in modals',
-      icon: 'comment-dots',
+      icon: 'message-dots',
       onPress: () => onSelectPrimitive('tooltip'),
     },
     {

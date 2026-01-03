@@ -81,7 +81,7 @@ export const BusinessMenuScreen: React.FC<BusinessMenuScreenProps> = ({
       id: 'direct',
       title: 'Direct Messages',
       description: 'DM conversations using useDirectMessageData hook',
-      icon: 'comment-dots',
+      icon: 'message-dots',
       status: 'planned',
       onPress: () => handlePlannedFeature('Direct Messages'),
     },

@@ -4,7 +4,7 @@
 
 export const MODAL_DIMENSIONS = {
   USER_PROFILE_WIDTH: 320,
-  USER_PROFILE_HEIGHT: 400,
+  USER_PROFILE_HEIGHT: 280, // Approximate height for typical profile (header + roles + buttons)
   RIGHT_SIDEBAR_WIDTH: 260,
 } as const;
 

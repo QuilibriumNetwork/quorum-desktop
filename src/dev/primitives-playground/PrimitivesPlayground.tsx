@@ -40,12 +40,12 @@ const navigationItems = [
   { id: 'colorswatch-primitive', label: 'ColorSwatch', icon: 'palette' },
   { id: 'container-primitive', label: 'Container', icon: 'square' },
   { id: 'fileupload-primitive', label: 'FileUpload', icon: 'upload' },
-  { id: 'flexcolumn-primitive', label: 'FlexColumn', icon: 'bars' },
+  { id: 'flexcolumn-primitive', label: 'FlexColumn', icon: 'menu' },
   { id: 'flex-primitives', label: 'FlexRow', icon: 'menu' },
   { id: 'icon-primitive', label: 'Icon', icon: 'star' },
   { id: 'input-primitive', label: 'Input', icon: 'edit' },
   { id: 'modal-primitive', label: 'Modal', icon: 'compress-alt' },
-  { id: 'radiogroup-primitive', label: 'RadioGroup', icon: 'dot-circle' },
+  { id: 'radiogroup-primitive', label: 'RadioGroup', icon: 'radio' },
   { id: 'scrollcontainer-primitive', label: 'ScrollContainer', icon: 'arrow-down' },
   { id: 'select-primitive', label: 'Select', icon: 'chevron-down' },
   { id: 'spacer-primitive', label: 'Spacer', icon: 'minus' },
@@ -53,7 +53,7 @@ const navigationItems = [
   { id: 'text-primitive', label: 'Text', icon: 'pencil' },
   { id: 'textarea-primitive', label: 'TextArea', icon: 'memo' },
   { id: 'toast-primitive', label: 'Toast', icon: 'bell' },
-  { id: 'tooltip-primitive', label: 'Tooltip', icon: 'comment-dots' },
+  { id: 'tooltip-primitive', label: 'Tooltip', icon: 'message-dots' },
   { id: 'user-initials-demo', label: 'User Initials', icon: 'user' },
 ];
 

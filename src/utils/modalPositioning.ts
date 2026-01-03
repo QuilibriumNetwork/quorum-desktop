@@ -25,9 +25,7 @@ export const calculateModalPosition = (config: ModalPositionConfig): ModalPositi
   const {
     elementRect,
     modalWidth = MODAL_DIMENSIONS.USER_PROFILE_WIDTH,
-    modalHeight = MODAL_DIMENSIONS.USER_PROFILE_HEIGHT,
     viewportWidth = window.innerWidth,
-    viewportHeight = window.innerHeight,
     rightSidebarWidth = 0,
     context
   } = config;

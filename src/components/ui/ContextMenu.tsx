@@ -81,7 +81,10 @@ function calculatePosition(
 
   return {
     x: flipX ? Math.max(PADDING, clickX - menuWidth) : offsetClickX,
-    y: flipY ? Math.max(PADDING, clickY - menuHeight) : clickY,
+    // When flipping Y, position menu bottom slightly above cursor
+    y: flipY
+      ? Math.max(PADDING, clickY - menuHeight)
+      : clickY,
   };
 }
 
