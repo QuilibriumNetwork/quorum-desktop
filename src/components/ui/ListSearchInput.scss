@@ -1,3 +1,5 @@
+@use '@/styles/variables' as *;
+
 .list-search-input {
   display: flex;
   align-items: center;
@@ -44,6 +46,7 @@
 
   // Override input styles within this component
   .quorum-input--minimal {
+    font-size: $text-sm; // 14px - compact size for filter inputs, matches SearchBar
     border: none !important;
     border-bottom: none !important;
     box-shadow: none !important;
