@@ -7,6 +7,7 @@ import ExpandableNavMenu from './ExpandableNavMenu';
 import SpaceButton from './SpaceButton';
 import SpaceIcon from './SpaceIcon';
 import FolderButton from './FolderButton';
+import { Icon, Tooltip } from '../primitives';
 import FolderContainer from './FolderContainer';
 import ContextMenu, { MenuItem } from '../ui/ContextMenu';
 import { t } from '@lingui/core/macro';
@@ -303,32 +304,52 @@ const NavMenuContent: React.FC<NavMenuProps> = (props) => {
         window.electron ? <div className="p-3"></div> : <></>
       }
       <div className="nav-menu-logo">
-        <div
-          role="link"
-          tabIndex={0}
-          className="block cursor-pointer"
-          onClick={() => {
-            const lastAddress = sessionStorage.getItem('lastDmAddress');
-            navigate(lastAddress ? `/messages/${lastAddress}` : '/messages');
-          }}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter' || e.key === ' ') {
-              e.preventDefault();
+        <Tooltip
+          id="dm-nav-icon"
+          content={t`Direct Messages`}
+          place="right"
+          highlighted={true}
+          showOnTouch={false}
+        >
+          <div
+            role="link"
+            tabIndex={0}
+            className="block cursor-pointer"
+            onClick={() => {
               const lastAddress = sessionStorage.getItem('lastDmAddress');
               navigate(lastAddress ? `/messages/${lastAddress}` : '/messages');
-            }
-          }}
-        >
-          <SpaceIcon
-            notifs={dmUnreadCount > 0}
-            size="regular"
-            selected={location.pathname.startsWith('/messages')}
-            spaceName={t`Direct Messages`}
-            iconUrl="/quorum-symbol-bg-blue.png"
-            spaceId="direct-messages"
-            highlightedTooltip={true}
-          />
-        </div>
+            }}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                const lastAddress = sessionStorage.getItem('lastDmAddress');
+                navigate(lastAddress ? `/messages/${lastAddress}` : '/messages');
+              }
+            }}
+          >
+            <div className="relative z-[999]">
+              <div
+                className={`space-icon-toggle ${
+                  location.pathname.startsWith('/messages')
+                    ? 'space-icon-toggle--selected'
+                    : dmUnreadCount > 0
+                      ? 'space-icon-toggle--unread'
+                      : ''
+                }`}
+              />
+              <div
+                className={`${location.pathname.startsWith('/messages') ? 'space-icon-selected' : 'space-icon'} dm-icon`}
+              >
+                <Icon name="message" size="2xl" />
+              </div>
+              {dmUnreadCount > 0 && (
+                <span className="space-icon-mention-bubble">
+                  {dmUnreadCount > 9 ? '9+' : dmUnreadCount}
+                </span>
+              )}
+            </div>
+          </div>
+        </Tooltip>
       </div>
       <div className="nav-menu-spaces grow">
         <DndContext

@@ -60,6 +60,47 @@ header {
     cursor: pointer;
   }
 
+  // Messages icon variant - needs flex for centering the Icon component
+  .space-icon.dm-icon,
+  .space-icon-selected.dm-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    svg {
+      width: $s-8; // 32px on desktop
+      height: $s-8;
+    }
+  }
+
+  // Glow effect only for DM icon when selected
+  .space-icon-selected.dm-icon {
+    box-shadow: 0 0 13px 1px var(--accent-500);
+
+    @media (max-width: $screen-xs) {
+      box-shadow: none;
+    }
+  }
+
+  // Mobile: scale icon down proportionally
+  @media (max-width: $screen-xs) {
+    .space-icon.dm-icon svg,
+    .space-icon-selected.dm-icon svg {
+      width: $s-7;
+      height: $s-7;
+    }
+  }
+
+  // Horizontal divider between DM icon and spaces
+  &::after {
+    content: '';
+    display: block;
+    width: $s-9;
+    height: 1px;
+    background-color: var(--color-border-default);
+    margin-top: $s-3;
+  }
+
   // Mobile phone optimization
   @media (max-width: $screen-xs) {
     .space-icon {
@@ -81,7 +122,7 @@ header {
   flex-direction: column;
   align-items: center;
   gap: $s-2-5; // Spacing between all items (10px)
-  padding-top: $s-2; // Top padding instead of margin on first item
+  padding-top: $s-0-5; // Reduced - divider in .nav-menu-logo provides most of the separation
   padding-bottom: 140px; // Space for fixed bottom buttons (+ button, avatar, padding)
   // Prevent browser pull-to-refresh gesture during drag operations
   // Required for touch drag-and-drop to work on mobile browsers

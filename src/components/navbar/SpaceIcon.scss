@@ -115,7 +115,6 @@
   // margin-top removed - container uses gap for consistent spacing
   // Use block instead of inline-block to avoid baseline alignment gap
   display: block;
-  box-shadow: 0 0 13px 1px var(--accent-500);
   border: none;
   border-radius: $rounded-lg;
   transition: all $duration-100 linear;
@@ -127,7 +126,6 @@
     width: $nav-space-icon-size-mobile !important;
     height: $nav-space-icon-size-mobile !important;
     border-radius: $rounded-lg;
-    box-shadow: none;
   }
 
 }
