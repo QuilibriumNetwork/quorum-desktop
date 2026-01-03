@@ -29,7 +29,7 @@ import MessageComposer, {
 import { t } from '@lingui/core/macro';
 import { i18n } from '@lingui/core';
 import { ClickToCopyContent } from '../ui';
-import { DefaultImages, truncateAddress } from '../../utils';
+import { DefaultImages, getAddressSuffix } from '../../utils';
 import { isTouchDevice } from '../../utils/platform';
 
 import { GlobalSearch } from '../search';
@@ -680,7 +680,7 @@ const DirectMessage: React.FC<{}> = () => {
                     iconSize="xs"
                     textSize="xs"
                   >
-                    {truncateAddress(address ?? '')}
+                    {getAddressSuffix(address ?? '')}
                   </ClickToCopyContent>
                 </div>
               </FlexRow>
@@ -784,7 +784,7 @@ const DirectMessage: React.FC<{}> = () => {
                   iconSize="xs"
                   textSize="xs"
                 >
-                  {truncateAddress(address ?? '')}
+                  {getAddressSuffix(address ?? '')}
                 </ClickToCopyContent>
               </div>
               {/* Below xs: vertical layout - name above address */}
@@ -801,7 +801,7 @@ const DirectMessage: React.FC<{}> = () => {
                   iconClassName="text-subtle hover:text-main"
                   iconSize="xs"
                 >
-                  {truncateAddress(address ?? '')}
+                  {getAddressSuffix(address ?? '')}
                 </ClickToCopyContent>
               </div>
             </FlexRow>

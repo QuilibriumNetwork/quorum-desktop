@@ -17,7 +17,7 @@ import { useModals } from '../context/ModalProvider';
 import { createChannelPermissionChecker } from '../../utils/channelPermissions';
 import { useMutedUsers } from '../../hooks/queries/mutedUsers';
 import { t } from '@lingui/core/macro';
-import { truncateAddress } from '../../utils';
+import { getAddressSuffix } from '../../utils';
 import { UserAvatar } from './UserAvatar';
 
 const UserProfile: React.FunctionComponent<{
@@ -116,7 +116,7 @@ const UserProfile: React.FunctionComponent<{
           </Container>
           <FlexRow className="py-1 text-subtle">
             <Text className="text-xs text-subtle">
-              {truncateAddress(props.user.address)}
+              {getAddressSuffix(props.user.address)}
             </Text>
             <ClickToCopyContent
               className="ml-2"

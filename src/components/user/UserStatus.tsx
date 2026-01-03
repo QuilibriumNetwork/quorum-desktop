@@ -5,7 +5,7 @@ import './UserStatus.scss';
 import { Icon } from '../primitives';
 import { t } from '@lingui/core/macro';
 import { ClickToCopyContent } from '../ui';
-import { DefaultImages, truncateAddress } from '../../utils';
+import { DefaultImages, getAddressSuffix } from '../../utils';
 import { UserAvatar } from './UserAvatar';
 
 type UserStatusProps = {
@@ -54,7 +54,7 @@ const UserStatus: React.FunctionComponent<UserStatusProps> = (props) => {
               copyOnContentClick={true}
               className="flex items-center w-fit"
             >
-              {truncateAddress(props.user.address)}
+              {getAddressSuffix(props.user.address)}
             </ClickToCopyContent>
           </div>
         </div>

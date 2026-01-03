@@ -33,3 +33,15 @@ export const truncateAddress = (
 
   return `${address.slice(0, startChars)}...${address.slice(-endChars)}`;
 };
+
+export const getAddressSuffix = (address: string, chars: number = 6): string => {
+  if (!address) {
+    return '';
+  }
+
+  if (address.length <= chars) {
+    return `#${address}`;
+  }
+
+  return `#${address.slice(-chars)}`;
+};

@@ -9,7 +9,7 @@ import { useRegistrationContext } from '../../../components/context/useRegistrat
 import { useQuorumApiClient } from '../../../components/context/QuorumApiContext';
 import { useConversations, useRegistration } from '../../queries';
 import { Conversation, Channel } from '../../../api/quorumApi';
-import { truncateAddress } from '../../../utils';
+import { getAddressSuffix } from '../../../utils';
 import { t } from '@lingui/core/macro';
 
 export interface UseInviteManagementOptions {
@@ -87,7 +87,7 @@ export const useInviteManagement = (
         avatar: conversation.icon,
         displayName: conversation.displayName,  // For user initials fallback
         userAddress: conversation.address,      // For deterministic color generation
-        subtitle: truncateAddress(conversation.address),
+        subtitle: getAddressSuffix(conversation.address),
       }));
   }, [conversations]);
 

@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { t } from '@lingui/core/macro';
 import { Icon } from '../primitives';
 import { ClickToCopyContent } from '../ui';
-import { truncateAddress } from '../../utils';
+import { getAddressSuffix } from '../../utils';
 import { isTouchDevice } from '../../utils/platform';
 import { useResponsiveLayout } from '../../hooks/useResponsiveLayout';
 import { UserAvatar } from './UserAvatar';
@@ -97,7 +97,7 @@ export const ExpandableUserAvatar: React.FunctionComponent<
                 copyOnContentClick={true}
                 className="flex items-center w-fit"
               >
-                {truncateAddress(address)}
+                {getAddressSuffix(address)}
               </ClickToCopyContent>
             </div>
           </div>

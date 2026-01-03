@@ -3,7 +3,7 @@ import { useParams } from 'react-router';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
 import { useRegistration } from '../../queries/registration/useRegistration';
 import { useConversation } from '../../queries/conversation/useConversation';
-import { DefaultImages, truncateAddress } from '../../../utils';
+import { DefaultImages } from '../../../utils';
 import { t } from '@lingui/core/macro';
 
 export interface DirectMessageMember {

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { truncateAddress } from '../../utils';
+import { getAddressSuffix } from '../../utils';
 import { useResponsiveLayoutContext } from '../context/ResponsiveLayoutProvider';
 import { UserAvatar } from '../user/UserAvatar';
 import { Icon } from '../primitives';
@@ -84,7 +84,7 @@ const DirectMessageContact: React.FunctionComponent<{
       )}
       <UserAvatar
         userIcon={props.userIcon}
-        displayName={props.displayName || truncateAddress(props.address)}
+        displayName={props.displayName || getAddressSuffix(props.address)}
         address={props.address}
         size={44}
         className="direct-message-contact-icon flex-shrink-0"
@@ -100,7 +100,7 @@ const DirectMessageContact: React.FunctionComponent<{
                 : 'font-semibold')
             }
           >
-            {props.displayName ?? truncateAddress(props.address)}
+            {props.displayName ?? getAddressSuffix(props.address)}
           </span>
           {props.timestamp && (
             <span
@@ -140,7 +140,7 @@ const DirectMessageContact: React.FunctionComponent<{
               (isActive ? 'text-subtle' : 'text-muted')
             }
           >
-            {truncateAddress(props.address)}
+            {getAddressSuffix(props.address)}
           </div>
         ) : null}
       </div>

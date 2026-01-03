@@ -5,7 +5,7 @@ import { useUserKicking } from '../../hooks';
 import { useModalSaveState } from '../../hooks';
 import ModalSaveOverlay from './ModalSaveOverlay';
 import { t } from '@lingui/core/macro';
-import { truncateAddress } from '../../utils';
+import { getAddressSuffix } from '../../utils';
 
 type KickUserModalProps = {
   visible: boolean;
@@ -75,7 +75,7 @@ const KickUserModal: React.FunctionComponent<KickUserModalProps> = (props) => {
               {props.userName}
             </Text>
             <Text typography="small">
-              {truncateAddress(props.userAddress)}
+              {getAddressSuffix(props.userAddress)}
             </Text>
           </Container>
         </FlexRow>

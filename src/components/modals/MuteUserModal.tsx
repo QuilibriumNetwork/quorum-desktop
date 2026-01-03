@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Button, Modal, Container, Text, FlexRow, Spacer } from '../primitives';
 import { UserAvatar } from '../user/UserAvatar';
 import { t } from '@lingui/core/macro';
-import { truncateAddress } from '../../utils';
+import { getAddressSuffix } from '../../utils';
 import { showError } from '../../utils/toast';
 
 interface MuteUserModalProps {
@@ -81,7 +81,7 @@ const MuteUserModal: React.FunctionComponent<MuteUserModalProps> = ({
               {userName}
             </Text>
             <Text typography="small">
-              {truncateAddress(userAddress)}
+              {getAddressSuffix(userAddress)}
             </Text>
           </Container>
         </FlexRow>

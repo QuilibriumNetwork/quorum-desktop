@@ -5,7 +5,7 @@ import { i18n } from '@lingui/core';
 import type { AttachmentProcessingResult } from '../../utils/imageProcessing';
 import { useMentionInput, type MentionOption } from '../../hooks/business/mentions';
 import type { Group } from '../../api/quorumApi';
-import { truncateAddress } from '../../utils';
+import { getAddressSuffix } from '../../utils';
 import { useResponsiveLayout } from '../../hooks/useResponsiveLayout';
 import { isTouchDevice } from '../../utils/platform';
 import './MessageComposer.scss';
@@ -506,7 +506,7 @@ export const MessageComposer = forwardRef<
                           {option.data.displayName || t`Unknown User`}
                         </span>
                         <span className="message-composer-mention-address">
-                          {truncateAddress(option.data.address)}
+                          {getAddressSuffix(option.data.address)}
                         </span>
                       </div>
                     </>
