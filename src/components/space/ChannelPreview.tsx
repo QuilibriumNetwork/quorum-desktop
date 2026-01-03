@@ -30,7 +30,7 @@ export const ChannelPreview: React.FC<ChannelPreviewProps> = ({
 
         {/* Message count */}
         <FlexRow align="center" gap="xs">
-          <Icon name="comment-dots" size="xs" />
+          <Icon name="message" size="xs" />
           <Text variant="main" size="sm">
             {messageCount} message{messageCount !== 1 ? 's' : ''}
           </Text>

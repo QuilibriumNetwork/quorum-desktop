@@ -17,7 +17,7 @@ export const EmptyDirectMessage = () => {
           <FlexRow className="items-center gap-2">
             {!isDesktop && (
               <Icon
-                name="bars"
+                name="menu"
                 onClick={toggleLeftSidebar}
                 className="cursor-pointer text-subtle hover:text-strong"
               />
@@ -59,7 +59,7 @@ export const EmptyDirectMessage = () => {
               <>
                 <FlexColumn className="items-center justify-center pt-8 w-full">
                   <Icon
-                    name="comment-dots"
+                    name="message"
                     size={128}
                     className="text-accent opacity-70 dark:text-accent mb-4 block mx-auto"
                   />

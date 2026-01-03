@@ -34,7 +34,6 @@ export const iconComponentMap: Record<IconName, string> = {
   'chevron-right': 'IconChevronRight',
   'chevron-up': 'IconChevronUp',
   'chevron-down': 'IconChevronDown',
-  bars: 'IconMenu2',
   'compress-alt': 'IconArrowsMinimize',
   sliders: 'IconAdjustments',
 
@@ -50,7 +49,6 @@ export const iconComponentMap: Record<IconName, string> = {
   save: 'IconDeviceFloppy',
   clipboard: 'IconClipboard',
   envelope: 'IconMail',
-  'comment-dots': 'IconMessage',
   send: 'IconSend',
   bullhorn: 'IconSpeakerphone',
   'dollar-sign': 'IconCurrencyDollar',
@@ -63,7 +61,6 @@ export const iconComponentMap: Record<IconName, string> = {
   gamepad: 'IconDeviceGamepad2',
   headset: 'IconHeadphones',
   sword: 'IconSword',
-  support: 'IconLifebuoy',
 
   // User & Social
   user: 'IconUser',
@@ -72,7 +69,6 @@ export const iconComponentMap: Record<IconName, string> = {
   'user-x': 'IconUserX',
   'user-minus': 'IconUserMinus',
   party: 'IconConfetti',
-  celebration: 'IconConfetti',
   gift: 'IconGift',
   'hand-peace': 'IconHandStop',
   ban: 'IconBan',
@@ -85,10 +81,12 @@ export const iconComponentMap: Record<IconName, string> = {
   'star-off': 'IconStarOff',
   eye: 'IconEye',
   'eye-off': 'IconEyeOff',
-  'life-ring': 'IconLifebuoy',
+  support: 'IconLifebuoy',
   volume: 'IconVolume',
   'volume-off': 'IconVolumeOff',
   message: 'IconMessage',
+  'message-dots': 'IconMessageDots',
+  messages: 'IconMessages',
 
   // Settings & Security
   settings: 'IconSettings',
@@ -136,7 +134,6 @@ export const iconComponentMap: Record<IconName, string> = {
   mobile: 'IconDeviceMobile',
   device: 'IconDevices',
   tablet: 'IconDeviceTablet',
-  'dot-circle': 'IconCircleDot',
   circle: 'IconCircle',
   radio: 'IconCircleDot',
   target: 'IconTarget',

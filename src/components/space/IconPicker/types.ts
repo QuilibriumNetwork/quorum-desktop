@@ -47,7 +47,7 @@ export const FILLED_ICONS: Set<IconName> = new Set([
   'eye',
   'bookmark',
   'circle',
-  'comment-dots', // IconMessageFilled
+  'message', // IconMessageFilled
   'smile', // IconMoodSmileFilled
   'info-circle', // IconInfoCircleFilled
   'question-circle', // IconHelpCircleFilled
@@ -80,7 +80,7 @@ export const ICON_OPTIONS: IconOption[] = [
   { name: 'hashtag', tier: 1, category: 'General' },
   { name: 'home', tier: 1, category: 'Main' },
   { name: 'users', tier: 1, category: 'Team' },
-  { name: 'comment-dots', tier: 1, category: 'Discussion' },
+  { name: 'message', tier: 1, category: 'Discussion' },
   { name: 'star', tier: 1, category: 'Important' },
   { name: 'folder', tier: 1, category: 'Organization' },
 

@@ -35,7 +35,7 @@ export const TooltipTestScreen: React.FC = () => {
             align="center"
             style={{ alignItems: 'flex-start', marginBottom: 8 }}
           >
-            <Icon name="comment-dots" size="xl" style={{ marginTop: 2 }} />
+            <Icon name="message" size="xl" style={{ marginTop: 2 }} />
             <Title>Tooltip</Title>
           </FlexRow>
           <Text size="base" variant="default" align="center">

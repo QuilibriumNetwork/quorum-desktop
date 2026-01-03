@@ -686,7 +686,7 @@ export const MessageMarkdownRenderer: React.FC<MessageMarkdownRendererProps> = (
           >
             #{channelName}
             <span className="message-mentions-message-link__separator"> › </span>
-            <Icon name="comment-dots" size="sm" variant="filled" className="message-mentions-message-link__icon" />
+            <Icon name="message" size="sm" variant="filled" className="message-mentions-message-link__icon" />
           </span>
         );
       }
