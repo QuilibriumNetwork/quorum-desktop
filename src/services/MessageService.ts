@@ -3316,7 +3316,7 @@ export class MessageService {
                 // Show toast when receiving actual sync messages (not preemptively)
                 // Only show for significant syncs (>= 20 messages in this chunk)
                 if (envelope.message.messages?.length >= 20) {
-                  showPersistentToast('sync', t`Syncing Space...`, 'info');
+                  showPersistentToast('sync', t`Syncing...`, 'info');
                 }
 
                 const space = await this.messageDB.getSpace(
@@ -3431,6 +3431,13 @@ export class MessageService {
               const msgDelta = envelope.message.messageDelta;
               logger.log(`[MessageService] sync-delta: ${msgDelta.newMessages?.length || 0} new, ${msgDelta.updatedMessages?.length || 0} updated, ${msgDelta.deletedMessageIds?.length || 0} deleted`);
 
+              // Show toast for significant syncs (>= 20 messages)
+              const totalMessages = (msgDelta.newMessages?.length || 0) +
+                                    (msgDelta.updatedMessages?.length || 0);
+              if (totalMessages >= 20) {
+                showPersistentToast('sync', t`Syncing...`, 'info');
+              }
+
               const space = await this.messageDB.getSpace(spaceId);
 
               for (const msg of msgDelta.newMessages || []) {
@@ -3466,6 +3473,12 @@ export class MessageService {
                   channelId: msgDelta.channelId || space?.defaultChannelId || spaceId,
                 }),
               });
+
+              // Reset dismiss timer on each sync chunk (5s after last chunk)
+              clearTimeout(syncDismissTimer);
+              syncDismissTimer = setTimeout(() => {
+                dismissToast('sync');
+              }, 5000);
             }
 
             // Apply member delta
