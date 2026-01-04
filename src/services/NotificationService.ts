@@ -15,12 +15,25 @@ export interface NotificationOptions {
   silent?: boolean;
 }
 
+/**
+ * Metadata for contextual desktop notifications.
+ * Contains information about the notification type and sender context.
+ */
+export type NotificationMetadata = {
+  type: 'dm' | 'mention' | 'reply';
+  senderName: string;
+  spaceName?: string;
+  mentionType?: 'user' | 'role' | 'everyone';
+  roleName?: string;
+};
+
 export class NotificationService {
   private static instance: NotificationService;
   private isSupported: boolean;
   private permission: NotificationPermission;
   private readonly quorumIcon = '/quorumicon-blue.png';
   private pendingNotificationCount = 0;
+  private latestNotification: NotificationMetadata | null = null;
   private mutedConversations: Set<string> = new Set();
 
   private constructor() {
@@ -214,27 +227,99 @@ export class NotificationService {
   }
 
   /**
-   * Resets the pending notification count to 0.
+   * Resets the pending notification count and metadata.
    * Called at the start of each WebSocket message batch.
    */
   public resetPendingNotificationCount(): void {
     this.pendingNotificationCount = 0;
+    this.latestNotification = null;
   }
 
   /**
-   * Increments the pending notification count by 1.
-   * Called by MessageService when a DM post from another user is received.
+   * Adds a pending notification with metadata.
+   * Called by MessageService when a notifiable message is received.
    */
-  public incrementPendingNotificationCount(): void {
+  public addPendingNotification(metadata: NotificationMetadata): void {
     this.pendingNotificationCount++;
+    this.latestNotification = metadata;
   }
 
   /**
-   * Returns the current pending notification count.
+   * Returns the pending notification count and latest metadata.
    * Valid only within a single WebSocket message batch.
    */
-  public getPendingNotificationCount(): number {
-    return this.pendingNotificationCount;
+  public getPendingNotificationData(): { count: number; metadata: NotificationMetadata | null } {
+    return { count: this.pendingNotificationCount, metadata: this.latestNotification };
+  }
+
+  /**
+   * Shows a contextual notification with sender and type information.
+   */
+  public showContextualNotification(
+    count: number,
+    metadata: NotificationMetadata | null
+  ): Notification | null {
+    if (!this.canShowNotifications() || count === 0 || !metadata) return null;
+
+    const body = this.formatNotificationBody(count, metadata);
+    const options: any = {
+      body,
+      tag: 'quorum-unread-messages',
+      requireInteraction: false,
+      silent: false,
+    };
+
+    if (!this.isSafari()) {
+      options.icon = this.quorumIcon;
+    }
+
+    try {
+      const notification = new Notification('Quorum', options);
+
+      setTimeout(() => {
+        notification.close();
+      }, 5000);
+
+      notification.onclick = () => {
+        window.focus();
+        notification.close();
+      };
+
+      return notification;
+    } catch (error) {
+      console.error(t`Error showing notification:`, error);
+      return null;
+    }
+  }
+
+  /**
+   * Formats the notification body based on count and metadata.
+   */
+  private formatNotificationBody(count: number, metadata: NotificationMetadata): string {
+    if (count === 1) {
+      if (metadata.type === 'dm') {
+        return t`New message from ${metadata.senderName}`;
+      }
+      if (metadata.type === 'mention') {
+        const spaceName = metadata.spaceName ?? t`a space`;
+        const roleName = metadata.roleName ?? t`a role`;
+        if (metadata.mentionType === 'user') {
+          return t`${metadata.senderName} mentioned you in ${spaceName}`;
+        }
+        if (metadata.mentionType === 'everyone') {
+          return t`${metadata.senderName} mentioned @everyone in ${spaceName}`;
+        }
+        if (metadata.mentionType === 'role') {
+          return t`${metadata.senderName} mentioned @${roleName} in ${spaceName}`;
+        }
+      }
+      if (metadata.type === 'reply') {
+        const spaceName = metadata.spaceName ?? t`a space`;
+        return t`${metadata.senderName} replied to your message in ${spaceName}`;
+      }
+    }
+
+    return t`${count} new notifications`;
   }
 
   /**

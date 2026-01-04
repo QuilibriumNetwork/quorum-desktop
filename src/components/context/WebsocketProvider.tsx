@@ -57,7 +57,7 @@ export function WebSocketProvider({ children }: WebSocketProviderProps) {
     return message;
   };
 
-  const showNotificationForNewMessages = (messageCount: number) => {
+  const showNotificationForNewMessages = () => {
     const now = Date.now();
     const timeSinceLastNotification = now - lastNotificationTime.current;
 
@@ -67,7 +67,10 @@ export function WebSocketProvider({ children }: WebSocketProviderProps) {
     }
 
     lastNotificationTime.current = now;
-    notificationService.showUnreadMessagesNotification(messageCount);
+    const { count, metadata } = notificationService.getPendingNotificationData();
+    if (count > 0) {
+      notificationService.showContextualNotification(count, metadata);
+    }
   };
 
   // Process inbound messages independently from outbound
@@ -114,12 +117,8 @@ export function WebSocketProvider({ children }: WebSocketProviderProps) {
 
       await Promise.allSettled(allPromises);
 
-      // Show notification only for DM posts from other users
-      const notificationCount =
-        notificationService.getPendingNotificationCount();
-      if (notificationCount > 0) {
-        showNotificationForNewMessages(notificationCount);
-      }
+      // Show contextual notification for new messages
+      showNotificationForNewMessages();
     } catch (error) {
       console.error(t`Error processing inbound queue:`, error);
     } finally {

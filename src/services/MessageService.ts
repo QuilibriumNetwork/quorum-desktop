@@ -2101,7 +2101,13 @@ export class MessageService {
             decryptedContent?.content?.type === 'post' &&
             !notificationService.isConversationMuted(conversationId)
           ) {
-            notificationService.incrementPendingNotificationCount();
+            const senderDisplayName = updatedUserProfile?.display_name
+              ?? conversation?.conversation?.displayName
+              ?? t`Unknown`;
+            notificationService.addPendingNotification({
+              type: 'dm',
+              senderName: senderDisplayName,
+            });
           }
 
           await this.addMessage(
@@ -3558,7 +3564,11 @@ export class MessageService {
           decryptedContent.content?.type === 'post' &&
           !notificationService.isConversationMuted(conversationId)
         ) {
-          notificationService.incrementPendingNotificationCount();
+          const senderDisplayName = profileToUse.display_name ?? t`Unknown`;
+          notificationService.addPendingNotification({
+            type: 'dm',
+            senderName: senderDisplayName,
+          });
         }
 
         await this.addMessage(
@@ -3620,7 +3630,39 @@ export class MessageService {
               decryptedContent.replyMetadata?.parentAuthor === self_address;
 
             if (isMentioned || isReplyToMe) {
-              notificationService.incrementPendingNotificationCount();
+              // Get sender name
+              const member = await this.messageDB.getSpaceMember(spaceId, decryptedContent.content.senderId);
+              const senderName = member?.display_name ?? t`Someone`;
+
+              // Determine mention type inline (priority: user > role > everyone)
+              let mentionType: 'user' | 'role' | 'everyone' | undefined;
+              let roleName: string | undefined;
+
+              if (isMentioned) {
+                const mentions = decryptedContent.mentions;
+                if (mentions?.memberIds?.includes(self_address)) {
+                  mentionType = 'user';
+                } else if (mentions?.roleIds && userRoles.length > 0) {
+                  const matchedRoleId = userRoles.find(roleId =>
+                    mentions.roleIds?.includes(roleId)
+                  );
+                  if (matchedRoleId) {
+                    mentionType = 'role';
+                    const role = space?.roles?.find(r => r.roleId === matchedRoleId);
+                    roleName = role?.displayName ?? role?.roleTag ?? t`a role`;
+                  }
+                } else if (mentions?.everyone === true) {
+                  mentionType = 'everyone';
+                }
+              }
+
+              notificationService.addPendingNotification({
+                type: isMentioned ? 'mention' : 'reply',
+                senderName,
+                spaceName: space?.spaceName ?? t`a space`,
+                mentionType,
+                roleName,
+              });
             }
           }
         }
