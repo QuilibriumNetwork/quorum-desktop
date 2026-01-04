@@ -17,3 +17,15 @@
 .icon-spin {
   animation: icon-spin 1s linear infinite;
 }
+
+// Remove focus outline on clickable icons (SVG elements with cursor: pointer)
+svg[style*='cursor: pointer'],
+svg[style*='cursor:pointer'] {
+  outline: none;
+
+  &:focus,
+  &:focus-visible {
+    outline: none;
+  }
+}
+
