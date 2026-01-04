@@ -68,6 +68,15 @@ export function useUpdateReadTime({
       queryClient.invalidateQueries({
         queryKey: ['unread-counts', 'direct-messages'],
       });
+
+      // 7. Invalidate conversations list (updates unread indicators in contact list)
+      // For DMs, spaceId === channelId (same address used for both)
+      const isDM = spaceId === channelId;
+      if (isDM) {
+        queryClient.invalidateQueries({
+          queryKey: ['Conversations', 'direct'],
+        });
+      }
     },
     onError: (error) => {
       console.error('[useUpdateReadTime] Failed to update read time:', error);

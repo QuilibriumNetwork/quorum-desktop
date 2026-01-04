@@ -523,10 +523,13 @@ const DirectMessage: React.FC<{}> = () => {
     return () => clearTimeout(timer);
   }, [address, lastReadTimestamp, messageDB, messageList, queryClient, user.currentPasskeyInfo]);
 
-  // Reset scrollToMessageId and separator when conversation changes
+  // Reset scrollToMessageId, separator, and timestamp refs when conversation changes
   useEffect(() => {
     setScrollToMessageId(undefined);
     setNewMessagesSeparator(null);
+    // Reset timestamp refs to ensure read time is saved for each conversation
+    latestTimestampRef.current = 0;
+    lastSavedTimestampRef.current = 0;
   }, [address]);
 
   // Hash navigation handler
@@ -588,15 +591,30 @@ const DirectMessage: React.FC<{}> = () => {
     [handleSubmitMessage]
   );
 
-  // Update latest timestamp ref whenever messageList changes
+  // Update latest timestamp ref whenever messageList or conversation changes
+  // Use the max of: last message in list OR conversation.timestamp
+  // This ensures we mark as read even if newest message isn't in the loaded list yet
+  const conversationTimestamp = conversation?.conversation?.timestamp || 0;
   useEffect(() => {
+    let maxTimestamp = latestTimestampRef.current;
+
+    // Check message list
     if (messageList && messageList.length > 0) {
       const latestMessage = messageList[messageList.length - 1];
-      if (latestMessage && latestMessage.createdDate > latestTimestampRef.current) {
-        latestTimestampRef.current = latestMessage.createdDate;
+      if (latestMessage && latestMessage.createdDate > maxTimestamp) {
+        maxTimestamp = latestMessage.createdDate;
       }
     }
-  }, [messageList]);
+
+    // Also check conversation timestamp (source of truth for unread comparison)
+    if (conversationTimestamp > maxTimestamp) {
+      maxTimestamp = conversationTimestamp;
+    }
+
+    if (maxTimestamp > latestTimestampRef.current) {
+      latestTimestampRef.current = maxTimestamp;
+    }
+  }, [messageList, conversationTimestamp]);
 
   // Periodic check to save read time (every 2 seconds)
   useEffect(() => {
