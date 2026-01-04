@@ -21,6 +21,7 @@ import { useConversationPolling } from '../../hooks';
 import { useConversationPreviews } from '../../hooks/business/conversations/useConversationPreviews';
 import { useMessageDB } from '../context/useMessageDB';
 import { useDMFavorites } from '../../hooks/business/dm/useDMFavorites';
+import { useDMMute } from '../../hooks/business/dm/useDMMute';
 
 // Safe development-only testing - automatically disabled in production
 const ENABLE_MOCK_CONVERSATIONS =
@@ -34,7 +35,7 @@ const MOCK_CONVERSATION_COUNT = parseInt(
 );
 
 // Filter types
-type FilterType = 'all' | 'favorites' | 'requests';
+type FilterType = 'all' | 'favorites' | 'unknown' | 'muted';
 
 // Helper to check if a conversation is from an "unknown user"
 const isUnknownUser = (displayName?: string): boolean => {
@@ -61,6 +62,9 @@ const DirectMessageContactsList: React.FC = () => {
 
   // DM favorites hook
   const { isFavorite, toggleFavorite, favoritesSet } = useDMFavorites();
+
+  // DM mute hook
+  const { isMuted, toggleMute, mutedSet } = useDMMute();
 
   // Load mock utilities dynamically in development only
   React.useEffect(() => {
@@ -99,8 +103,10 @@ const DirectMessageContactsList: React.FC = () => {
     // Apply filter
     if (filter === 'favorites') {
       result = result.filter((c) => favoritesSet.has(c.conversationId));
-    } else if (filter === 'requests') {
+    } else if (filter === 'unknown') {
       result = result.filter((c) => isUnknownUser(c.displayName));
+    } else if (filter === 'muted') {
+      result = result.filter((c) => mutedSet.has(c.conversationId));
     }
 
     // Apply search
@@ -124,7 +130,7 @@ const DirectMessageContactsList: React.FC = () => {
     }
 
     return result;
-  }, [enhancedConversations, filter, searchInput, favoritesSet]);
+  }, [enhancedConversations, filter, searchInput, favoritesSet, mutedSet]);
 
   const { deleteConversation } = useMessageDB();
   const { currentPasskeyInfo } = usePasskeysContext();
@@ -216,6 +222,7 @@ const DirectMessageContactsList: React.FC = () => {
       if (!conversation) return [];
 
       const favorited = isFavorite(conversationId);
+      const muted = isMuted(conversationId);
 
       return [
         {
@@ -224,6 +231,14 @@ const DirectMessageContactsList: React.FC = () => {
           label: favorited ? t`Remove from Favorites` : t`Add to Favorites`,
           onClick: () => {
             toggleFavorite(conversationId);
+          },
+        },
+        {
+          id: 'mute',
+          icon: muted ? 'bell' : 'bell-off',
+          label: muted ? t`Unmute Conversation` : t`Mute Conversation`,
+          onClick: () => {
+            toggleMute(conversationId);
           },
         },
         {
@@ -244,7 +259,7 @@ const DirectMessageContactsList: React.FC = () => {
         },
       ];
     },
-    [enhancedConversations, handleDeleteConversation, openConversationSettings, isFavorite, toggleFavorite]
+    [enhancedConversations, handleDeleteConversation, openConversationSettings, isFavorite, toggleFavorite, isMuted, toggleMute]
   );
 
   // Get the contact data for context menu header
@@ -253,12 +268,40 @@ const DirectMessageContactsList: React.FC = () => {
     return enhancedConversations.find((c) => c.address === contextMenu.address);
   }, [contextMenu, enhancedConversations]);
 
-  // Filter options for Select
-  const filterOptions = React.useMemo(() => [
-    { value: 'all', label: t`All` },
-    { value: 'favorites', label: t`Favorites` },
-    { value: 'requests', label: t`DM Requests` },
-  ], []);
+  // Calculate filter availability based on data
+  const hasFavorites = React.useMemo(
+    () => enhancedConversations.some((c) => favoritesSet.has(c.conversationId)),
+    [enhancedConversations, favoritesSet]
+  );
+  const hasUnknown = React.useMemo(
+    () => enhancedConversations.some((c) => isUnknownUser(c.displayName)),
+    [enhancedConversations]
+  );
+  const hasMuted = React.useMemo(
+    () => enhancedConversations.some((c) => mutedSet.has(c.conversationId)),
+    [enhancedConversations, mutedSet]
+  );
+  const hasAnyFilter = hasFavorites || hasUnknown || hasMuted;
+
+  // Filter options for Select - dynamically show only available filters
+  const filterOptions = React.useMemo(() => {
+    const options: { value: string; label: string }[] = [{ value: 'all', label: t`All` }];
+    if (hasFavorites) options.push({ value: 'favorites', label: t`Favorites` });
+    if (hasUnknown) options.push({ value: 'unknown', label: t`Unknown` });
+    if (hasMuted) options.push({ value: 'muted', label: t`Muted` });
+    return options;
+  }, [hasFavorites, hasUnknown, hasMuted]);
+
+  // Reset filter if active option becomes unavailable
+  React.useEffect(() => {
+    if (filter === 'muted' && !hasMuted) {
+      setFilter('all');
+    } else if (filter === 'favorites' && !hasFavorites) {
+      setFilter('all');
+    } else if (filter === 'unknown' && !hasUnknown) {
+      setFilter('all');
+    }
+  }, [filter, hasMuted, hasFavorites, hasUnknown]);
 
   return (
     <Container className="direct-messages-list-wrapper list-bottom-fade flex flex-col h-full z-0 flex-grow select-none">
@@ -296,14 +339,16 @@ const DirectMessageContactsList: React.FC = () => {
       {searchOpen && (
         <Container className="px-4 pb-3">
           <FlexRow className="items-center gap-2">
-            <Select
-              value={filter}
-              onChange={handleFilterChange}
-              options={filterOptions}
-              compactMode={true}
-              compactIcon="filter"
-              size="small"
-            />
+            {hasAnyFilter && (
+              <Select
+                value={filter}
+                onChange={handleFilterChange}
+                options={filterOptions}
+                compactMode={true}
+                compactIcon="filter"
+                size="small"
+              />
+            )}
             <Container className="flex-1">
               <ListSearchInput
                 value={searchInput}
@@ -319,8 +364,10 @@ const DirectMessageContactsList: React.FC = () => {
             <Container className="text-xs text-subtle mt-2">
               {filter === 'favorites' ? (
                 <Trans>No favorites yet</Trans>
-              ) : filter === 'requests' ? (
-                <Trans>No message requests</Trans>
+              ) : filter === 'unknown' ? (
+                <Trans>No unknown contacts</Trans>
+              ) : filter === 'muted' ? (
+                <Trans>No muted conversations</Trans>
               ) : (
                 <Trans>No contacts found</Trans>
               )}
@@ -348,7 +395,7 @@ const DirectMessageContactsList: React.FC = () => {
             {filteredConversations.map((c) => {
               return (
                 <DirectMessageContact
-                  unread={(c.lastReadTimestamp ?? 0) < c.timestamp}
+                  unread={(c.lastReadTimestamp ?? 0) < c.timestamp && !mutedSet.has(c.conversationId)}
                   key={'dmc-' + c.address}
                   address={c.address}
                   userIcon={c.icon}

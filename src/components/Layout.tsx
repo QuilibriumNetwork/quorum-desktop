@@ -15,6 +15,7 @@ import { useModalManagement, useElectronDetection } from '../hooks';
 import { useNavigationHotkeys } from '@/hooks/platform/interactions/useNavigationHotkeys';
 import { useSidebar } from './context/SidebarProvider';
 import { OfflineBanner } from './ui/OfflineBanner';
+import { useMutedConversationsSync } from '../hooks/business/dm/useMutedConversationsSync';
 
 const Layout: React.FunctionComponent<{
   children: React.ReactNode;
@@ -40,6 +41,9 @@ const Layout: React.FunctionComponent<{
   const { showRightSidebar, setShowRightSidebar, rightSidebarContent } =
     useSidebar();
   useNavigationHotkeys();
+
+  // Sync muted conversations to NotificationService for desktop notification filtering
+  useMutedConversationsSync();
 
   const [toast, setToast] = React.useState<{
     id?: string;

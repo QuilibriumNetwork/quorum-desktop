@@ -21,6 +21,7 @@ export class NotificationService {
   private permission: NotificationPermission;
   private readonly quorumIcon = '/quorumicon-blue.png';
   private pendingNotificationCount = 0;
+  private mutedConversations: Set<string> = new Set();
 
   private constructor() {
     this.isSupported = 'Notification' in window;
@@ -234,6 +235,21 @@ export class NotificationService {
    */
   public getPendingNotificationCount(): number {
     return this.pendingNotificationCount;
+  }
+
+  /**
+   * Sets the list of muted conversation IDs.
+   * Messages from muted conversations won't increment the notification count.
+   */
+  public setMutedConversations(mutedIds: Set<string>): void {
+    this.mutedConversations = mutedIds;
+  }
+
+  /**
+   * Checks if a conversation is muted.
+   */
+  public isConversationMuted(conversationId: string): boolean {
+    return this.mutedConversations.has(conversationId);
   }
 }
 

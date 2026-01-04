@@ -82,6 +82,8 @@ export type UserConfig = {
   showMutedChannels?: boolean;
   // Favorite DM conversation IDs for quick access filtering
   favoriteDMs?: string[];
+  // Muted DM conversation IDs (no unread indicators or notifications)
+  mutedConversations?: string[];
 };
 
 export interface SearchableMessage {

@@ -24,6 +24,7 @@ import { buildConversationKey } from '../../hooks/queries/conversation/buildConv
 import { useConfirmation } from '../../hooks/ui/useConfirmation';
 import ConfirmationModal from './ConfirmationModal';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
+import { useDMMute } from '../../hooks/business/dm/useDMMute';
 
 type ConversationSettingsModalProps = {
   conversationId: string;
@@ -45,6 +46,10 @@ const ConversationSettingsModal: React.FC<ConversationSettingsModalProps> = ({
 
   const [nonRepudiable, setNonRepudiable] = React.useState<boolean>(true);
   const [saveEditHistory, setSaveEditHistory] = React.useState<boolean>(false);
+
+  // DM mute hook
+  const { isMuted, toggleMute } = useDMMute();
+  const muted = isMuted(conversationId);
 
   // Feature flag: only show edit history toggle if enabled via environment variable
   const showEditHistoryToggle = isFeatureEnabled('ENABLE_EDIT_HISTORY');
@@ -198,6 +203,27 @@ const ConversationSettingsModal: React.FC<ConversationSettingsModalProps> = ({
               <Tooltip
                 id="conv-repudiability-tooltip"
                 content={t`When you sign a message, you are confirming that it comes from your key. When you don't sign a message, you have plausible deniability. The default for all conversations can be changed in User Settings.`}
+                maxWidth={260}
+                className="!text-left !max-w-[260px]"
+                place="top"
+              >
+                <Icon name="info-circle" size="sm" />
+              </Tooltip>
+            </FlexRow>
+          </FlexRow>
+
+          <FlexRow gap="sm" align="center" className="mb-3">
+            <Switch
+              value={muted}
+              onChange={() => toggleMute(conversationId)}
+            />
+            <FlexRow gap="sm" align="center">
+              <div className="text-label-strong">
+                {t`Mute conversation`}
+              </div>
+              <Tooltip
+                id="conv-mute-tooltip"
+                content={t`When muted, new messages won't show unread indicators or desktop notifications.`}
                 maxWidth={260}
                 className="!text-left !max-w-[260px]"
                 place="top"

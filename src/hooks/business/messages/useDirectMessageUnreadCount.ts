@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
 import { useConversations } from '../../queries/conversations/useConversations';
+import { useConfig } from '../../queries/config';
 
 /**
  * Hook to get total count of unread Direct Message conversations
@@ -18,9 +19,13 @@ export function useDirectMessageUnreadCount(): number {
   const user = usePasskeysContext();
   const userAddress = user.currentPasskeyInfo?.address;
   const { data: conversations } = useConversations({ type: 'direct' });
+  const { data: config } = useConfig({ userAddress: userAddress || '' });
+
+  // Create muted set for filtering
+  const mutedSet = new Set(config?.mutedConversations || []);
 
   const { data } = useQuery({
-    // Query key for DM unread count
+    // Query key for DM unread count - include config dependency for mute changes
     queryKey: ['unread-counts', 'direct-messages', userAddress],
     queryFn: async () => {
       if (!userAddress) return 0;
@@ -31,9 +36,13 @@ export function useDirectMessageUnreadCount(): number {
           conversations?.pages?.flatMap((p: any) => p.conversations) || [];
 
         // Count conversations with unread messages using existing logic
-        // This matches the logic used in DirectMessageContactsList.tsx:64
+        // This matches the logic used in DirectMessageContactsList.tsx
+        // Excludes muted conversations from the count
         let unreadCount = 0;
         for (const conversation of conversationsList) {
+          // Skip muted conversations
+          if (mutedSet.has(conversation.conversationId)) continue;
+
           const isUnread =
             (conversation.lastReadTimestamp ?? 0) < conversation.timestamp;
           if (isUnread) {

@@ -39,6 +39,7 @@ import { canonicalize } from '../utils/canonicalize';
 import { QuorumApiClient } from '../api/baseTypes';
 import {
   extractMentionsFromText,
+  isMentionedWithSettings,
   MAX_MENTIONS_PER_MESSAGE,
 } from '../utils/mentionUtils';
 import { MAX_MESSAGE_LENGTH } from '../utils/validation';
@@ -2094,10 +2095,11 @@ export class MessageService {
             }
           );
 
-          // Notify for DM posts from other users only
+          // Notify for DM posts from other users only (skip muted conversations)
           if (
             envelope.user_address !== self_address &&
-            decryptedContent?.content?.type === 'post'
+            decryptedContent?.content?.type === 'post' &&
+            !notificationService.isConversationMuted(conversationId)
           ) {
             notificationService.incrementPendingNotificationCount();
           }
@@ -3537,10 +3539,11 @@ export class MessageService {
           profileToUse
         );
 
-        // Notify for DM posts from other users only
+        // Notify for DM posts from other users only (skip muted conversations)
         if (
           decryptedContent.content?.senderId !== self_address &&
-          decryptedContent.content?.type === 'post'
+          decryptedContent.content?.type === 'post' &&
+          !notificationService.isConversationMuted(conversationId)
         ) {
           notificationService.incrementPendingNotificationCount();
         }
@@ -3571,6 +3574,44 @@ export class MessageService {
             display_name: conversation.conversation?.displayName,
           }
         );
+
+        // Check if this space message should trigger a desktop notification
+        if (
+          decryptedContent?.content?.type === 'post' &&
+          decryptedContent.content.senderId !== self_address
+        ) {
+          const spaceId = conversationId.split('/')[0];
+          const config = await this.messageDB.getUserConfig({ address: self_address });
+          const settings = config?.notificationSettings?.[spaceId];
+
+          // Don't notify if space is muted
+          if (settings?.isMuted !== true) {
+            const enabledTypes = settings?.enabledNotificationTypes ??
+              ['mention-you', 'mention-everyone', 'mention-roles', 'reply'];
+
+            // Get user's roles for @role mention checking
+            const space = await this.messageDB.getSpace(spaceId);
+            const userRoles = space?.roles
+              ?.filter(role => role.members?.includes(self_address))
+              ?.map(role => role.roleId) ?? [];
+
+            // Check for mentions
+            const isMentioned = isMentionedWithSettings(decryptedContent, {
+              userAddress: self_address,
+              enabledTypes,
+              userRoles,
+            });
+
+            // Check for reply to user's message
+            const isReplyToMe = enabledTypes.includes('reply') &&
+              decryptedContent.replyMetadata?.parentAuthor === self_address;
+
+            if (isMentioned || isReplyToMe) {
+              notificationService.incrementPendingNotificationCount();
+            }
+          }
+        }
+
         await this.addMessage(
           queryClient,
           conversationId.split('/')[0],
