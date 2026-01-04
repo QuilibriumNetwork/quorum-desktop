@@ -55,6 +55,7 @@ Not all actions can be queued for offline use. This table shows what works offli
 | Update space settings | Global | ✅ Fully queued, survives refresh |
 | Kick/mute/unmute user | Moderation | ✅ Fully queued, survives refresh |
 | Channel mute/unmute | Global | ✅ Fully queued, survives refresh (via save-user-config) |
+| DM conversation mute/unmute | Global | ✅ Fully queued, survives refresh (via save-user-config) |
 | DM favorites | Global | ✅ Fully queued, survives refresh (via save-user-config) |
 | Send DM | DM | ⚠️ Queued only when offline with existing sessions (see below) |
 | Reactions (DM) | DM | ⚠️ Queued only when offline with existing sessions (see below) |
@@ -242,7 +243,7 @@ For a summary of which actions work offline, see [Offline Support Summary](#offl
 | `reaction-dm` | DM | Double Ratchet | `useMessageActions.ts` |
 | `delete-dm` | DM | Double Ratchet | `useMessageActions.ts` |
 | `edit-dm` | DM | Double Ratchet | `MessageEditTextarea.tsx` |
-| `save-user-config` | Global | None | `useUserSettings.ts`, `useFolderManagement.ts`, `useFolderDragAndDrop.ts`, `useDeleteFolder.ts`, `useSpaceDragAndDrop.ts`, `useChannelMute.ts`, `useDMFavorites.ts` |
+| `save-user-config` | Global | None | `useUserSettings.ts`, `useFolderManagement.ts`, `useFolderDragAndDrop.ts`, `useDeleteFolder.ts`, `useSpaceDragAndDrop.ts`, `useChannelMute.ts`, `useDMMute.ts`, `useDMFavorites.ts` |
 | `update-space` | Global | None | `useSpaceManagement.ts` |
 | `kick-user` | Moderation | None | `useUserKicking.ts` |
 | `mute-user` | Moderation | None | `useUserMuting.ts` |
@@ -253,6 +254,7 @@ For a summary of which actions work offline, see [Offline Support Summary](#offl
 > - Folder structure (create, edit, delete, reorder folders)
 > - Space organization (drag spaces into/out of folders, reorder spaces)
 > - Channel mute settings (mute/unmute channels, show/hide muted channels toggle)
+> - DM conversation mute settings (mute/unmute individual DM conversations)
 > - DM favorites (add/remove favorite conversations)
 >
 > All these operations use the same optimistic update + queue pattern, which is why folder, space organization, channel mute, and DM favorite operations are instant and non-blocking.
@@ -758,4 +760,4 @@ Tests verify control flow and contracts, not real encryption (SDK is mocked). Se
 
 ---
 
-*Updated: 2025-12-29 - Added DM favorites to Action Queue integration*
+*Updated: 2026-01-04 - Added DM conversation mute/unmute to Action Queue integration*

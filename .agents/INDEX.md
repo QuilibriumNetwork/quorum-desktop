@@ -30,6 +30,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Kick User System Documentation](docs/features/kick-user-system.md)
 - [Modal Save Overlay System](docs/features/modal-save-overlay.md)
 - [Modal System Documentation](docs/features/modals.md)
+- [Mute Conversation System](docs/features/mute-conversation-system.md)
 - [Mute User System Documentation](docs/features/mute-user-system.md)
 - [Offline Support](docs/features/offline-support.md)
 - [ReactTooltip Mobile Support Documentation](docs/features/reacttooltip-mobile.md)
@@ -231,6 +232,7 @@ This is the main index for all documentation, bug reports, and task management.
 ## 📋 Completed Tasks
 
 - [AccentColorSwitcher Cross-Platform Migration + Persistence](tasks/.done/accent-color-switcher-cross-platform-migration.md)
+- [Add Context to Desktop Notifications](tasks/.done/rich-desktop-notifications-context.md)
 - [Add DM-Specific Action Queue Handlers](tasks/.done/dm-action-queue-handlers.md)
 - [Add Unified Context Menu System for Sidebar Items](tasks/.done/dm-conversation-context-menu.md)
 - [Analysis Report & Implementation Plan: Strategic Portal Integration for Overlay Components (v7)](tasks/.done/modal-portal-refactor-analysis.md)
@@ -260,8 +262,11 @@ This is the main index for all documentation, bug reports, and task management.
 - [Enhance Markdown Renderer Fallback System](tasks/.done/markdown-renderer-fallback-system-enhancement.md)
 - [Enhanced Mention Format with CSS Highlighting for Message Composer](tasks/.done/mentions-improve-UX-in-messagecomposer.md)
 - [Expo Go to Expo Dev Client Migration Plan - Simplified](tasks/.done/expo-go-to-dev-client-migration.md)
+- [Extend Desktop Notifications to Space Mentions and Replies](tasks/.done/extend-desktop-notifications-to-space-mentions-replies.md)
+- [Fix False Desktop Notifications in Background Tabs](tasks/.done/fix-false-desktop-notifications-background-tab.md)
 - [Fix Mention Interactivity Consistency](tasks/.done/fix-mention-interactivity-consistency.md)
 - [Fix Message Length Limit Bypass Vulnerability](tasks/.done/fix-message-length-bypass-vulnerability.md)
+- [Fix Own Messages Counted as Unread](tasks/.done/fix-own-messages-counted-as-unread.md)
 - [Fix Read-Only Channel Bypass Vulnerability](tasks/.done/fix-read-only-channel-bypass-vulnerability.md)
 - [Fix: React Query "undefined" Error in DM Conversations](tasks/.done/fix-react-query-undefined-error-in-dms.md)
 - [Implement Channel Mention Feature (#channelname)](tasks/.done/channel-mention-feature.md)
@@ -293,6 +298,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Mobile Message Options UX Enhancement](tasks/.done/message-options-mobile.md)
 - [Modal Animation Consistency Implementation](tasks/.done/new-modals-effect.md)
 - [Modal Migration Analysis & Progress Report](tasks/.done/DONE_modal-migration-plan.md)
+- [Mute DM Conversation](tasks/.done/mute-dm-conversation.md)
 - [Notification Dropdown/Inbox UI Implementation](tasks/.done/notification-inbox-ui.md)
 - [Offline Detection and Optimistic Message Reliability](tasks/.done/offline-detection-and-optimistic-message-reliability.md)
 - [Per-Space Profile Data Flow Analysis](tasks/.done/per-space-profile-data-flow-analysis.md)
@@ -373,4 +379,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2026-01-03 17:21:30
+**Last Updated**: 2026-01-04 17:52:43
