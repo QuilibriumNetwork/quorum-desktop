@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { SearchResult } from '../../db/messages';
 import { Icon, FlexBetween, FlexRow, Container, Text } from '../primitives';
+import { TouchAwareListItem } from '../ui';
 import {
   useSearchResultHighlight,
   useSearchResultFormatting,
@@ -27,7 +28,6 @@ const DMSearchResultItem: React.FC<SearchResultItemProps> = ({
   highlightTerms,
   className,
   searchTerms,
-  index,
   displayData,
   compactDate = false,
 }) => {
@@ -47,20 +47,17 @@ const DMSearchResultItem: React.FC<SearchResultItemProps> = ({
   // Strip markdown and mentions for clean display
   const cleanSnippet = stripMarkdownAndMentions(contextualSnippet);
 
-  const { formattedDate, handleClick, handleKeyDown } =
-    useSearchResultFormatting({
-      message,
-      onNavigate,
-      compactDate,
-    });
+  const { formattedDate, handleClick } = useSearchResultFormatting({
+    message,
+    onNavigate,
+    compactDate,
+  });
 
   return (
-    <Container
+    <TouchAwareListItem
       className={`search-result-item ${className || ''}`}
       onClick={handleClick}
-      role="button"
       tabIndex={-1}
-      onKeyDown={handleKeyDown}
     >
       <FlexBetween className="result-header">
         <FlexRow className="result-meta min-w-0">
@@ -86,7 +83,7 @@ const DMSearchResultItem: React.FC<SearchResultItemProps> = ({
           }}
         />
       </Container>
-    </Container>
+    </TouchAwareListItem>
   );
 };
 
@@ -97,7 +94,6 @@ const SpaceSearchResultItem: React.FC<SearchResultItemProps> = ({
   highlightTerms,
   className,
   searchTerms,
-  index,
   displayData,
   compactDate = false,
 }) => {
@@ -119,7 +115,7 @@ const SpaceSearchResultItem: React.FC<SearchResultItemProps> = ({
   // Strip markdown and mentions for clean display
   const cleanSnippet = stripMarkdownAndMentions(contextualSnippet);
 
-  const { formattedDate, messageTypeIcon, handleClick, handleKeyDown } =
+  const { formattedDate, messageTypeIcon, handleClick } =
     useSearchResultFormatting({
       message,
       onNavigate,
@@ -127,12 +123,10 @@ const SpaceSearchResultItem: React.FC<SearchResultItemProps> = ({
     });
 
   return (
-    <Container
+    <TouchAwareListItem
       className={`search-result-item ${className || ''}`}
       onClick={handleClick}
-      role="button"
       tabIndex={-1}
-      onKeyDown={handleKeyDown}
     >
       <FlexBetween className="result-header">
         <FlexRow className="result-meta min-w-0">
@@ -155,7 +149,7 @@ const SpaceSearchResultItem: React.FC<SearchResultItemProps> = ({
           }}
         />
       </Container>
-    </Container>
+    </TouchAwareListItem>
   );
 };
 

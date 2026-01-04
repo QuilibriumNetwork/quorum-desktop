@@ -7,4 +7,5 @@ export { default as ListSearchInput } from './ListSearchInput';
 export { default as MobileDrawer } from './MobileDrawer';
 export { default as ReactTooltip } from './ReactTooltip';
 export { default as ThemeRadioGroup } from './ThemeRadioGroup';
+export { TouchAwareListItem } from './TouchAwareListItem';
 export { default as UnknownAvatar } from './UnknownAvatar';

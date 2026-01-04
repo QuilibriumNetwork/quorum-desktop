@@ -1,5 +1,6 @@
 import React from 'react';
 import { Icon, FlexBetween, FlexRow, Container, Text } from '../primitives';
+import { TouchAwareListItem } from '../ui';
 import { useSearchResultFormatting } from '../../hooks/business/search';
 import { useMessageFormatting } from '../../hooks/business/messages/useMessageFormatting';
 import type { MentionNotification } from '../../hooks/business/mentions';
@@ -98,7 +99,7 @@ export const NotificationItem: React.FC<NotificationItemProps> = ({
     disableMentionInteractivity: true, // Non-interactive in notifications
   });
 
-  const { formattedDate, handleClick, handleKeyDown } = useSearchResultFormatting({
+  const { formattedDate, handleClick } = useSearchResultFormatting({
     message,
     onNavigate,
     compactDate,
@@ -119,12 +120,10 @@ export const NotificationItem: React.FC<NotificationItemProps> = ({
   const renderedContent = renderMessageContent(message, formatting, 200);
 
   return (
-    <Container
+    <TouchAwareListItem
       className={`notification-item ${className || ''}`}
       onClick={handleClick}
-      role="button"
       tabIndex={0}
-      onKeyDown={handleKeyDown}
     >
       <FlexBetween className="notification-header">
         <FlexRow className="notification-meta min-w-0">
@@ -144,7 +143,7 @@ export const NotificationItem: React.FC<NotificationItemProps> = ({
           {renderedContent}
         </Container>
       </Container>
-    </Container>
+    </TouchAwareListItem>
   );
 };
 

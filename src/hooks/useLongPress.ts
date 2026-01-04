@@ -56,10 +56,14 @@ export const useLongPress = (
   const timeout = useRef<NodeJS.Timeout>(undefined);
   const target = useRef<EventTarget>(undefined);
   const startPoint = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
+  // Track if movement exceeded threshold (scrolling) - should NOT trigger tap
+  const movementCancelled = useRef(false);
 
   const start = useCallback(
     (event: React.TouchEvent | React.MouseEvent) => {
-      if (shouldPreventDefault && event.target && event.cancelable) {
+      // Don't preventDefault on touchstart - it blocks native scrolling
+      // Only prevent default on mouse events if needed
+      if (shouldPreventDefault && !('touches' in event) && event.cancelable) {
         event.preventDefault();
       }
 
@@ -71,6 +75,7 @@ export const useLongPress = (
       startPoint.current = { x: clientX, y: clientY };
       target.current = event.target;
       setLongPressTriggered(false);
+      movementCancelled.current = false;
 
       timeout.current = setTimeout(() => {
         if (onLongPress) {
@@ -83,14 +88,19 @@ export const useLongPress = (
   );
 
   const clear = useCallback(
-    (event: React.TouchEvent | React.MouseEvent, shouldTriggerClick = true) => {
+    (_event: React.TouchEvent | React.MouseEvent, shouldTriggerClick = true) => {
       timeout.current && clearTimeout(timeout.current);
 
-      if (shouldTriggerClick && !longPressTriggered && onTap) {
+      // Only trigger tap if:
+      // - shouldTriggerClick is true
+      // - long press wasn't triggered
+      // - movement didn't exceed threshold (not scrolling)
+      if (shouldTriggerClick && !longPressTriggered && !movementCancelled.current && onTap) {
         onTap();
       }
 
       setLongPressTriggered(false);
+      movementCancelled.current = false;
     },
     [longPressTriggered, onTap]
   );
@@ -105,9 +115,11 @@ export const useLongPress = (
       const deltaX = Math.abs(clientX - startPoint.current.x);
       const deltaY = Math.abs(clientY - startPoint.current.y);
 
-      // If user moves finger/mouse too much, cancel long press
+      // If user moves finger/mouse too much, cancel long press AND tap
+      // This distinguishes scrolling from tapping
       if (deltaX > threshold || deltaY > threshold) {
         timeout.current && clearTimeout(timeout.current);
+        movementCancelled.current = true;
       }
     },
     [threshold]
