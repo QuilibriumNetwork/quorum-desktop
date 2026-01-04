@@ -1,7 +1,7 @@
 import { ReactNode } from 'react';
 
 export type IconName =
-  // Essential icons (currently used in primitives)
+  // Essential & Status
   | 'check'
   | 'check-circle'
   | 'check-square'
@@ -9,9 +9,15 @@ export type IconName =
   | 'close'
   | 'sun'
   | 'moon'
-  | 'desktop'
   | 'search'
   | 'info-circle'
+  | 'warning'
+  | 'error'
+  | 'spinner'
+  | 'clock'
+  | 'circle'
+  | 'radio'
+  | 'target'
 
   // Navigation & UI
   | 'plus'
@@ -26,34 +32,40 @@ export type IconName =
   | 'chevron-down'
   | 'compress-alt'
   | 'sliders'
+  | 'sidebar-left-expand'
+  | 'sidebar-left-collapse'
+  | 'home'
+  | 'menu'
+  | 'dots'
+  | 'dots-vertical'
+  | 'refresh'
+  | 'external-link'
+  | 'filter'
+  | 'sort'
 
-  // Actions & Communication
+  // Actions
   | 'reply'
   | 'link'
   | 'trash'
   | 'edit'
+  | 'pencil'
   | 'copy'
   | 'share'
   | 'download'
   | 'upload'
   | 'save'
   | 'clipboard'
+  | 'print'
+  | 'pin'
+  | 'pin-off'
+
+  // Communication & Social
   | 'envelope'
   | 'send'
   | 'bullhorn'
-  | 'dollar-sign'
-  | 'question-circle'
-  | 'leaf'
-  | 'paw'
-  | 'utensils'
-  | 'video'
-  | 'microphone'
-  | 'gamepad'
-  | 'headset'
-  | 'sword'
-  | 'support'
-
-  // User & Social
+  | 'message'
+  | 'message-dots'
+  | 'messages'
   | 'user'
   | 'users'
   | 'user-plus'
@@ -72,11 +84,9 @@ export type IconName =
   | 'star-off'
   | 'eye'
   | 'eye-off'
+  | 'support'
   | 'volume'
   | 'volume-off'
-  | 'message'
-  | 'message-dots'
-  | 'messages'
 
   // Settings & Security
   | 'settings'
@@ -90,66 +100,57 @@ export type IconName =
   | 'bell'
   | 'bell-off'
 
-  // Status & Alerts
-  | 'warning'
-  | 'error'
-  | 'spinner'
-  | 'clock'
-
   // Files & Media
   | 'image'
-  | 'tools'
-  | 'briefcase'
+  | 'folder'
+  | 'folder-minus'
+  | 'bookmark'
+  | 'bookmark-off'
+  | 'paperclip'
   | 'hashtag'
   | 'calendar-alt'
   | 'history'
-  | 'paperclip'
-  | 'folder'
-  | 'folder-minus'
+  | 'memo'
 
-  // Common additions for future use
-  | 'home'
-  | 'menu'
-  | 'dots'
-  | 'dots-vertical'
-  | 'refresh'
-  | 'external-link'
-  | 'bookmark'
-  | 'bookmark-off'
-  | 'filter'
-  | 'sort'
-  | 'print'
-  // Test screen icons for emoji replacements
+  // Devices & Hardware
+  | 'desktop'
   | 'mobile'
   | 'device'
   | 'tablet'
-  | 'circle'
-  | 'radio'
-  | 'target'
-  | 'pencil'
-  | 'memo'
-  | 'pin'
-  | 'pin-off'
-  | 'badge'
-  | 'id-badge'
-  | 'certificate'
-  // Dev navigation icons
+  | 'video'
+  | 'microphone'
+  | 'gamepad'
+  | 'headset'
+
+  // Development & Code
+  | 'code'
+  | 'terminal'
+  | 'file-code'
   | 'book'
   | 'clipboard-list'
   | 'bug'
   | 'flask'
   | 'chart-line'
-  // Code-related icons
-  | 'code'
-  | 'terminal'
-  | 'file-code'
-  // Text formatting icons
+  | 'badge'
+  | 'id-badge'
+  | 'certificate'
+  | 'tools'
+  | 'briefcase'
+
+  // Text formatting
   | 'bold'
   | 'italic'
   | 'strikethrough'
   | 'heading'
   | 'quote'
-  // Nature & sci-fi icons
+
+  // Miscellaneous
+  | 'dollar-sign'
+  | 'question-circle'
+  | 'leaf'
+  | 'paw'
+  | 'utensils'
+  | 'sword'
   | 'tree'
   | 'seedling'
   | 'robot'

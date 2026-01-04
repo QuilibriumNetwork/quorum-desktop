@@ -637,17 +637,17 @@ const DirectMessage: React.FC<{}> = () => {
               <FlexRow className="gap-3 sm:gap-2">
                 <Button
                   type="unstyled"
-                  onClick={toggleLeftSidebar}
+                  onClick={toggleNavMenu}
                   className="header-icon-button lg:hidden"
-                  iconName="bars"
+                  iconName={navMenuOpen ? 'chevron-left' : 'menu'}
                   iconOnly
                   iconSize={headerIconSize}
                 />
                 <Button
                   type="unstyled"
-                  onClick={toggleNavMenu}
+                  onClick={toggleLeftSidebar}
                   className="header-icon-button lg:hidden"
-                  iconName={navMenuOpen ? 'chevron-left' : 'chevron-right'}
+                  iconName="sidebar-left-expand"
                   iconOnly
                   iconSize={headerIconSize}
                 />

@@ -11,7 +11,7 @@ import { IconName } from './types';
  * Reference: https://tabler.io/icons
  */
 export const iconComponentMap: Record<IconName, string> = {
-  // Essential icons
+  // Essential & Status
   check: 'IconCheck',
   'check-circle': 'IconCircleCheck',
   'check-square': 'IconSquareCheck',
@@ -19,9 +19,15 @@ export const iconComponentMap: Record<IconName, string> = {
   close: 'IconX',
   sun: 'IconSun',
   moon: 'IconMoon',
-  desktop: 'IconDeviceDesktop',
   search: 'IconSearch',
   'info-circle': 'IconInfoCircle',
+  warning: 'IconAlertTriangle',
+  error: 'IconAlertCircle',
+  spinner: 'IconLoader',
+  clock: 'IconClock',
+  circle: 'IconCircle',
+  radio: 'IconCircleDot',
+  target: 'IconTarget',
 
   // Navigation & UI
   plus: 'IconPlus',
@@ -36,33 +42,40 @@ export const iconComponentMap: Record<IconName, string> = {
   'chevron-down': 'IconChevronDown',
   'compress-alt': 'IconArrowsMinimize',
   sliders: 'IconAdjustments',
+  'sidebar-left-expand': 'IconLayoutSidebarLeftExpand',
+  'sidebar-left-collapse': 'IconLayoutSidebarLeftCollapse',
+  home: 'IconHome',
+  menu: 'IconMenu2',
+  dots: 'IconDots',
+  'dots-vertical': 'IconDotsVertical',
+  refresh: 'IconRefresh',
+  'external-link': 'IconExternalLink',
+  filter: 'IconFilter',
+  sort: 'IconArrowsSort',
 
-  // Actions & Communication
+  // Actions
   reply: 'IconArrowBackUp',
   link: 'IconLink',
   trash: 'IconTrash',
   edit: 'IconEdit',
+  pencil: 'IconPencil',
   copy: 'IconCopy',
   share: 'IconShare',
   download: 'IconDownload',
   upload: 'IconUpload',
   save: 'IconDeviceFloppy',
   clipboard: 'IconClipboard',
+  print: 'IconPrinter',
+  pin: 'IconPin',
+  'pin-off': 'IconPinnedOff',
+
+  // Communication & Social
   envelope: 'IconMail',
   send: 'IconSend',
   bullhorn: 'IconSpeakerphone',
-  'dollar-sign': 'IconCurrencyDollar',
-  'question-circle': 'IconHelpCircle',
-  leaf: 'IconLeaf',
-  paw: 'IconPaw',
-  utensils: 'IconToolsKitchen2',
-  video: 'IconVideo',
-  microphone: 'IconMicrophone',
-  gamepad: 'IconDeviceGamepad2',
-  headset: 'IconHeadphones',
-  sword: 'IconSword',
-
-  // User & Social
+  message: 'IconMessage',
+  'message-dots': 'IconMessageDots',
+  messages: 'IconMessages',
   user: 'IconUser',
   users: 'IconUsers',
   'user-plus': 'IconUserPlus',
@@ -72,8 +85,8 @@ export const iconComponentMap: Record<IconName, string> = {
   gift: 'IconGift',
   'hand-peace': 'IconHandStop',
   ban: 'IconBan',
-  'cake': 'IconCake',
-  'glass': 'IconGlassFull',
+  cake: 'IconCake',
+  glass: 'IconGlassFull',
   smile: 'IconMoodSmile',
   'mood-happy': 'IconMoodHappy',
   heart: 'IconHeart',
@@ -84,9 +97,6 @@ export const iconComponentMap: Record<IconName, string> = {
   support: 'IconLifebuoy',
   volume: 'IconVolume',
   'volume-off': 'IconVolumeOff',
-  message: 'IconMessage',
-  'message-dots': 'IconMessageDots',
-  messages: 'IconMessages',
 
   // Settings & Security
   settings: 'IconSettings',
@@ -100,51 +110,32 @@ export const iconComponentMap: Record<IconName, string> = {
   bell: 'IconBell',
   'bell-off': 'IconBellOff',
 
-  // Status & Alerts
-  warning: 'IconAlertTriangle',
-  error: 'IconAlertCircle',
-  spinner: 'IconLoader',
-  clock: 'IconClock',
-
   // Files & Media
   image: 'IconPhoto',
-  tools: 'IconTools',
-  briefcase: 'IconBriefcase',
+  folder: 'IconFolder',
+  'folder-minus': 'IconFolderMinus',
+  bookmark: 'IconBookmark',
+  'bookmark-off': 'IconBookmarkOff',
+  paperclip: 'IconPaperclip',
   hashtag: 'IconHash',
   'calendar-alt': 'IconCalendar',
   history: 'IconHistory',
-  paperclip: 'IconPaperclip',
-  folder: 'IconFolder',
-  'folder-minus': 'IconFolderMinus',
+  memo: 'IconNote',
 
-  // Common additions
-  home: 'IconHome',
-  menu: 'IconMenu2',
-  dots: 'IconDots',
-  'dots-vertical': 'IconDotsVertical',
-  refresh: 'IconRefresh',
-  'external-link': 'IconExternalLink',
-  bookmark: 'IconBookmark',
-  'bookmark-off': 'IconBookmarkOff',
-  filter: 'IconFilter',
-  sort: 'IconArrowsSort',
-  print: 'IconPrinter',
-
-  // Test screen icons for emoji replacements
+  // Devices & Hardware
+  desktop: 'IconDeviceDesktop',
   mobile: 'IconDeviceMobile',
   device: 'IconDevices',
   tablet: 'IconDeviceTablet',
-  circle: 'IconCircle',
-  radio: 'IconCircleDot',
-  target: 'IconTarget',
-  pencil: 'IconPencil',
-  memo: 'IconNote',
+  video: 'IconVideo',
+  microphone: 'IconMicrophone',
+  gamepad: 'IconDeviceGamepad2',
+  headset: 'IconHeadphones',
 
-  // Pin-related icons
-  pin: 'IconPin',
-  'pin-off': 'IconPinnedOff',
-
-  // Dev navigation icons
+  // Development & Code
+  code: 'IconCode',
+  terminal: 'IconTerminal2',
+  'file-code': 'IconFileCode',
   book: 'IconBook',
   'clipboard-list': 'IconClipboardList',
   bug: 'IconBug',
@@ -153,20 +144,23 @@ export const iconComponentMap: Record<IconName, string> = {
   badge: 'IconBadge',
   'id-badge': 'IconId',
   certificate: 'IconRosetteDiscountCheck',
+  tools: 'IconTools',
+  briefcase: 'IconBriefcase',
 
-  // Code-related icons
-  code: 'IconCode',
-  terminal: 'IconTerminal2',
-  'file-code': 'IconFileCode',
-
-  // Text formatting icons
+  // Text formatting
   bold: 'IconBold',
   italic: 'IconItalic',
   strikethrough: 'IconStrikethrough',
   heading: 'IconHeading',
   quote: 'IconQuote',
 
-  // Nature & sci-fi icons
+  // Miscellaneous
+  'dollar-sign': 'IconCurrencyDollar',
+  'question-circle': 'IconHelpCircle',
+  leaf: 'IconLeaf',
+  paw: 'IconPaw',
+  utensils: 'IconToolsKitchen2',
+  sword: 'IconSword',
   tree: 'IconPlant2',
   seedling: 'IconSeedling',
   robot: 'IconRobot',

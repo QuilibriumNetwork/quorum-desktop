@@ -25,7 +25,7 @@ import { GlobalSearch } from '../search';
 import { useResponsiveLayoutContext } from '../context/ResponsiveLayoutProvider';
 import { useSidebar } from '../context/SidebarProvider';
 import { Button, Tooltip, Icon } from '../primitives';
-import { MobileDrawer, ListSearchInput } from '../ui';
+import { MobileDrawer, ListSearchInput, TouchAwareListItem } from '../ui';
 import { getIconColorHex } from './IconPicker/types';
 import { isTouchDevice } from '../../utils/platform';
 import MessageComposer, {
@@ -721,17 +721,17 @@ const Channel: React.FC<ChannelProps> = ({
               <div className="flex items-center gap-2">
                 <Button
                   type="unstyled"
-                  onClick={toggleLeftSidebar}
+                  onClick={toggleNavMenu}
                   className="header-icon-button lg:hidden"
-                  iconName="bars"
+                  iconName={navMenuOpen ? 'chevron-left' : 'menu'}
                   iconSize={headerIconSize}
                   iconOnly
                 />
                 <Button
                   type="unstyled"
-                  onClick={toggleNavMenu}
+                  onClick={toggleLeftSidebar}
                   className="header-icon-button lg:hidden"
-                  iconName={navMenuOpen ? 'chevron-left' : 'chevron-right'}
+                  iconName="sidebar-left-expand"
                   iconSize={headerIconSize}
                   iconOnly
                 />
@@ -1274,18 +1274,19 @@ const Channel: React.FC<ChannelProps> = ({
                 );
               }
               return (
-                <div
+                <TouchAwareListItem
                   className="w-full flex flex-row items-center mb-2 px-4 cursor-pointer py-1 min-w-0"
-                  onClick={(event) =>
+                  onClick={() => {
+                    // On mobile, user profile opens in drawer - no positioning needed
                     userProfileModal.handleUserClick(
                       {
                         address: item.address,
                         displayName: item.displayName,
                         userIcon: item.userIcon,
                       },
-                      event
-                    )
-                  }
+                      { stopPropagation: () => {} } as React.MouseEvent
+                    );
+                  }}
                 >
                   <UserAvatar
                     userIcon={item.userIcon}
@@ -1299,7 +1300,7 @@ const Channel: React.FC<ChannelProps> = ({
                       {item.displayName ?? item.address}
                     </span>
                   </div>
-                </div>
+                </TouchAwareListItem>
               );
             }}
             style={{ height: 'calc(80vh - 120px)' }}
