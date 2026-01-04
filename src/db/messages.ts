@@ -744,7 +744,8 @@ export class MessageDB {
     address: string,
     conversationType: string,
     icon: string,
-    displayName: string
+    displayName: string,
+    currentUserAddress?: string
   ): Promise<void> {
     await this.init();
     return new Promise((resolve, reject) => {
@@ -763,6 +764,9 @@ export class MessageDB {
       const getRequest = conversationStore.get([conversationId]);
       getRequest.onsuccess = () => {
         const existingConv = getRequest.result;
+        // Update lastReadTimestamp if this is our own message (prevents false unread indicators)
+        const isOwnMessage =
+          currentUserAddress && message.content?.senderId === currentUserAddress;
         const request = conversationStore.put({
           ...existingConv, // Preserve existing fields including isRepudiable
           conversationId,
@@ -772,6 +776,7 @@ export class MessageDB {
           type: conversationType,
           timestamp: message.createdDate,
           lastMessageId: message.messageId, // Track last message for previews
+          ...(isOwnMessage ? { lastReadTimestamp: message.createdDate } : {}),
         });
         request.onerror = () => reject(request.error);
       };

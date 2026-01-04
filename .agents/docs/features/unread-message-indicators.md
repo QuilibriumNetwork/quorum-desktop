@@ -81,6 +81,7 @@ src/components/direct/DirectMessageContact.scss       # Uses shared dm-unread-do
 **Automatic Updates**:
 
 - **When reading channels**: `useUpdateReadTime` invalidates unread caches → dots disappear
+- **When sending messages**: `saveMessage()` updates `lastReadTimestamp` for own messages → prevents false unread indicators
 - **When new messages arrive**: `MessageService` invalidates unread caches → dots appear
 - **React Query**: 90-second stale time with window focus refetch
 
@@ -122,5 +123,5 @@ src/components/direct/DirectMessageContact.scss       # Uses shared dm-unread-do
 - [Unread Indicators Unification Task](../../tasks/unify-unread-indicators-channels-dms.md)
 
 _Created: 2025-11-10_
-_Updated: 2025-01-13 - Unified channels and DMs to use shared timestamp-based approach_
+_Updated: 2026-01-04 - Fixed own messages being counted as unread (saveMessage now updates lastReadTimestamp for sender)_
 _Verified: 2025-12-09 - File paths confirmed current_

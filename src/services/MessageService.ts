@@ -277,6 +277,7 @@ export class MessageService {
 
   /**
    * Saves message to DB and updates query cache.
+   * @param currentUserAddress - Pass current user's address when sending messages to update lastReadTimestamp
    */
   async saveMessage(
     decryptedContent: Message,
@@ -284,7 +285,8 @@ export class MessageService {
     spaceId: string,
     channelId: string,
     conversationType: string,
-    updatedUserProfile: { user_icon?: string; display_name?: string }
+    updatedUserProfile: { user_icon?: string; display_name?: string },
+    currentUserAddress?: string
   ) {
     if (decryptedContent.content.type === 'reaction') {
       const reaction = decryptedContent.content as ReactionMessage;
@@ -321,7 +323,8 @@ export class MessageService {
           spaceId,
           conversationType,
           updatedUserProfile.user_icon!,
-          updatedUserProfile.display_name!
+          updatedUserProfile.display_name!,
+          currentUserAddress
         );
       } else {
         return;
@@ -367,7 +370,8 @@ export class MessageService {
             spaceId,
             conversationType,
             updatedUserProfile.user_icon!,
-            updatedUserProfile.display_name!
+            updatedUserProfile.display_name!,
+            currentUserAddress
           );
         }
       } else {
@@ -581,7 +585,8 @@ export class MessageService {
         spaceId,
         conversationType,
         updatedUserProfile.user_icon!,
-        updatedUserProfile.display_name!
+        updatedUserProfile.display_name!,
+        currentUserAddress
       );
     } else if (decryptedContent.content.type === 'pin') {
       const pinMessage = decryptedContent.content as PinMessage;
@@ -657,7 +662,8 @@ export class MessageService {
         spaceId,
         conversationType,
         updatedUserProfile.user_icon!,
-        updatedUserProfile.display_name!
+        updatedUserProfile.display_name!,
+        currentUserAddress
       );
     } else if (decryptedContent.content.type === 'update-profile') {
       const participant = await messageDB.getSpaceMember(
@@ -700,7 +706,8 @@ export class MessageService {
         spaceId,
         conversationType,
         updatedUserProfile.user_icon!,
-        updatedUserProfile.display_name!
+        updatedUserProfile.display_name!,
+        currentUserAddress
       );
     }
   }
@@ -1770,7 +1777,8 @@ export class MessageService {
               conversation?.conversation?.icon ?? DefaultImages.UNKNOWN_USER,
             display_name:
               conversation?.conversation?.displayName ?? t`Unknown User`,
-          }
+          },
+          currentPasskeyInfo.address // Update lastReadTimestamp for own messages
         );
         await this.addMessage(queryClient, address, address, message);
 
@@ -1942,7 +1950,8 @@ export class MessageService {
             conversation?.conversation?.icon ?? DefaultImages.UNKNOWN_USER,
           display_name:
             conversation?.conversation?.displayName ?? t`Unknown User`,
-        }
+        },
+        currentPasskeyInfo.address // Update lastReadTimestamp for own messages
       );
       await this.addMessage(queryClient, address, address, message);
       await this.addOrUpdateConversation(
@@ -3909,7 +3918,8 @@ export class MessageService {
               conversation.conversation?.icon ?? DefaultImages.UNKNOWN_USER,
             display_name:
               conversation.conversation?.displayName ?? t`Unknown User`,
-          }
+          },
+          currentPasskeyInfo.address // Update lastReadTimestamp for own messages
         );
         await this.addMessage(queryClient, spaceId, channelId, message);
 
@@ -4020,7 +4030,8 @@ export class MessageService {
               conversation.conversation?.icon ?? DefaultImages.UNKNOWN_USER,
             display_name:
               conversation.conversation?.displayName ?? t`Unknown User`,
-          }
+          },
+          currentPasskeyInfo.address // Update lastReadTimestamp for own messages
         );
         await this.addMessage(queryClient, spaceId, channelId, message);
 
@@ -4187,7 +4198,8 @@ export class MessageService {
               conversation.conversation?.icon ?? DefaultImages.UNKNOWN_USER,
             display_name:
               conversation.conversation?.displayName ?? t`Unknown User`,
-          }
+          },
+          failedMessage.content?.senderId // Update lastReadTimestamp for own messages
         );
 
         // Update status to 'sent'
@@ -4384,7 +4396,8 @@ export class MessageService {
               conversation?.conversation?.icon ?? DefaultImages.UNKNOWN_USER,
             display_name:
               conversation?.conversation?.displayName ?? t`Unknown User`,
-          }
+          },
+          failedMessage.content?.senderId // Update lastReadTimestamp for own messages
         );
 
         // Update status to 'sent'

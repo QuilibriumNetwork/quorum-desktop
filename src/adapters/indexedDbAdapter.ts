@@ -83,7 +83,8 @@ export class IndexedDBAdapter implements StorageAdapter {
     address: string,
     conversationType: string,
     icon: string,
-    displayName: string
+    displayName: string,
+    currentUserAddress?: string
   ): Promise<void> {
     return this.db.saveMessage(
       message,
@@ -91,7 +92,8 @@ export class IndexedDBAdapter implements StorageAdapter {
       address,
       conversationType,
       icon,
-      displayName
+      displayName,
+      currentUserAddress
     );
   }
 

@@ -397,6 +397,8 @@ export class ActionQueueHandlers {
       });
 
       // Save to IndexedDB (without sendStatus/sendError)
+      // Extract sender address to update lastReadTimestamp (prevents false unread indicators)
+      const senderAddress = signedMessage.content?.senderId;
       await this.deps.messageService.saveMessage(
         messageToEncrypt as Message,
         this.deps.messageDB,
@@ -406,7 +408,8 @@ export class ActionQueueHandlers {
         {
           user_icon: conversation?.conversation?.icon ?? DefaultImages.UNKNOWN_USER,
           display_name: conversation?.conversation?.displayName ?? 'Unknown User',
-        }
+        },
+        senderAddress
       );
 
       // Ensure message is in React Query cache AND update status to 'sent' in a single atomic operation
@@ -656,7 +659,8 @@ export class ActionQueueHandlers {
         {
           user_icon: conversation?.conversation?.icon ?? DefaultImages.UNKNOWN_USER,
           display_name: conversation?.conversation?.displayName ?? 'Unknown User',
-        }
+        },
+        selfUserAddress // Pass current user address to update lastReadTimestamp
       );
 
       // Ensure message is in React Query cache AND update status to 'sent' in a single atomic operation
