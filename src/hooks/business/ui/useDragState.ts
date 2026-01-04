@@ -23,6 +23,8 @@ interface UseDragStateReturn {
   setActiveItem: (item: ActiveDragItem | null) => void;
   dropTarget: DropTarget | null;
   setDropTarget: (target: DropTarget | null) => void;
+  isContextMenuOpen: boolean;
+  setIsContextMenuOpen: (open: boolean) => void;
 }
 
 // Delay before clearing isDragging after drop to prevent tooltip flash during crypto freeze
@@ -32,6 +34,7 @@ export const useDragState = (): UseDragStateReturn => {
   const [isDragging, setIsDraggingState] = useState(false);
   const [activeItem, setActiveItemState] = useState<ActiveDragItem | null>(null);
   const [dropTarget, setDropTargetState] = useState<DropTarget | null>(null);
+  const [isContextMenuOpen, setIsContextMenuOpen] = useState(false);
   const dragEndTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const setIsDragging = useCallback((dragging: boolean) => {
@@ -81,5 +84,7 @@ export const useDragState = (): UseDragStateReturn => {
     setActiveItem,
     dropTarget,
     setDropTarget,
+    isContextMenuOpen,
+    setIsContextMenuOpen,
   };
 };

@@ -32,13 +32,13 @@ const FolderButton: React.FC<FolderButtonProps> = ({
   const sizeClass = size === 'small' ? 'folder-button--small' : '';
 
   // Check if we're in a drag context (will be undefined if not in DragStateProvider)
-  let isDragging = false;
+  let shouldHideTooltip = false;
   try {
     const dragContext = useDragStateContext();
-    isDragging = dragContext.isDragging;
+    shouldHideTooltip = dragContext.isDragging || dragContext.isContextMenuOpen;
   } catch {
     // Not in drag context, tooltips should work normally
-    isDragging = false;
+    shouldHideTooltip = false;
   }
 
   // Hide indicators when folder is expanded (spaces inside show their own indicators)
@@ -47,7 +47,7 @@ const FolderButton: React.FC<FolderButtonProps> = ({
   const buttonElement = (
     <div className="relative">
       {/* Toggle indicator - reuses SpaceIcon toggle styles */}
-      {(!isDragging || showWiggle) && showIndicators && (
+      {(!shouldHideTooltip || showWiggle) && showIndicators && (
         <div
           className={`space-icon-toggle ${
             showWiggle
@@ -80,8 +80,8 @@ const FolderButton: React.FC<FolderButtonProps> = ({
     </div>
   );
 
-  // Don't show tooltip on touch devices or while dragging
-  if (isTouch || isDragging) {
+  // Don't show tooltip on touch devices, while dragging, or when context menu is open
+  if (isTouch || shouldHideTooltip) {
     return buttonElement;
   }
 

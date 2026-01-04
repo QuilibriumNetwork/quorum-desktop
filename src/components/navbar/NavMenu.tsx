@@ -66,6 +66,7 @@ const NavMenuContent: React.FC<NavMenuProps> = (props) => {
   const { navMenuOpen, isDesktop } = useResponsiveLayoutContext();
   const { openFolderEditor } = useModals();
   const { deleteFolder } = useDeleteFolder();
+  const { setIsContextMenuOpen } = useDragStateContext();
 
   // Folder context menu state
   const [folderContextMenu, setFolderContextMenu] = React.useState<FolderContextMenuState>({
@@ -94,17 +95,19 @@ const NavMenuContent: React.FC<NavMenuProps> = (props) => {
   const handleFolderContextMenu = React.useCallback(
     (folder: NavItem & { type: 'folder' }, e: React.MouseEvent) => {
       e.preventDefault();
+      setIsContextMenuOpen(true);
       setFolderContextMenu({
         folder,
         position: { x: e.clientX, y: e.clientY },
       });
     },
-    []
+    [setIsContextMenuOpen]
   );
 
   const closeFolderContextMenu = React.useCallback(() => {
     setFolderContextMenu({ folder: null, position: { x: 0, y: 0 } });
-  }, []);
+    setIsContextMenuOpen(false);
+  }, [setIsContextMenuOpen]);
 
   const handleOpenFolderSettings = React.useCallback(() => {
     if (folderContextMenu.folder) {
@@ -147,6 +150,7 @@ const NavMenuContent: React.FC<NavMenuProps> = (props) => {
   const handleSpaceContextMenu = React.useCallback(
     async (spaceId: string, spaceName: string, iconUrl: string | undefined, e: React.MouseEvent) => {
       e.preventDefault();
+      setIsContextMenuOpen(true);
       // Check if user is owner of this space by checking for owner key
       let isOwner = false;
       try {
@@ -163,7 +167,7 @@ const NavMenuContent: React.FC<NavMenuProps> = (props) => {
         position: { x: e.clientX, y: e.clientY },
       });
     },
-    [messageDB]
+    [messageDB, setIsContextMenuOpen]
   );
 
   const closeSpaceContextMenu = React.useCallback(() => {
@@ -174,7 +178,8 @@ const NavMenuContent: React.FC<NavMenuProps> = (props) => {
       isOwner: false,
       position: { x: 0, y: 0 },
     });
-  }, []);
+    setIsContextMenuOpen(false);
+  }, [setIsContextMenuOpen]);
 
   const { openSpaceEditor } = useModals();
 

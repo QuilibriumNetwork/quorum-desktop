@@ -29,13 +29,13 @@ const SpaceIcon: React.FunctionComponent<SpaceIconProps> = (props) => {
   });
 
   // Check if we're in a drag context (will be undefined if not in DragStateProvider)
-  let isDragging = false;
+  let shouldHideTooltip = false;
   try {
     const dragContext = useDragStateContext();
-    isDragging = dragContext.isDragging;
+    shouldHideTooltip = dragContext.isDragging || dragContext.isContextMenuOpen;
   } catch {
     // Not in drag context, tooltips should work normally
-    isDragging = false;
+    shouldHideTooltip = false;
   }
 
   // Check if there's a valid image
@@ -60,7 +60,7 @@ const SpaceIcon: React.FunctionComponent<SpaceIconProps> = (props) => {
 
   const iconElement = (
     <div className="relative z-[999]">
-      {!props.noToggle && (!isDragging || props.isDropTarget) && (
+      {!props.noToggle && (!shouldHideTooltip || props.isDropTarget) && (
         <div
           className={`space-icon-toggle ${
             props.selected
@@ -96,7 +96,7 @@ const SpaceIcon: React.FunctionComponent<SpaceIconProps> = (props) => {
     </div>
   );
 
-  return props.noTooltip || isDragging ? (
+  return props.noTooltip || shouldHideTooltip ? (
     iconElement
   ) : (
     <Tooltip

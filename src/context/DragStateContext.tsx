@@ -8,6 +8,8 @@ interface DragStateContextType {
   setActiveItem: (item: ActiveDragItem | null) => void;
   dropTarget: DropTarget | null;
   setDropTarget: (target: DropTarget | null) => void;
+  isContextMenuOpen: boolean;
+  setIsContextMenuOpen: (open: boolean) => void;
 }
 
 const DragStateContext = createContext<DragStateContextType | undefined>(
