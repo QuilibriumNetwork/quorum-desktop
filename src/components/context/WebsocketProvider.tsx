@@ -5,7 +5,6 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import { useQuorumApiClient } from './QuorumApiContext';
 import { getConfig } from '../../config/config';
 import { EncryptedMessage } from '../../db/messages';
 import { t } from '@lingui/core/macro';
@@ -45,22 +44,16 @@ export function WebSocketProvider({ children }: WebSocketProviderProps) {
   const outboundQueue = useRef<OutboundMessage[]>([]);
 
   const dequeue = () => {
-    let message: EncryptedMessage | undefined;
-
     if (messageQueue.current.length === 0) return undefined;
-    message = messageQueue.current[0];
+    const message = messageQueue.current[0];
     messageQueue.current = messageQueue.current.slice(1);
-
     return message;
   };
 
   const dequeueOutbound = () => {
-    let message: OutboundMessage | undefined;
-
     if (outboundQueue.current.length === 0) return undefined;
-    message = outboundQueue.current[0];
+    const message = outboundQueue.current[0];
     outboundQueue.current = outboundQueue.current.slice(1);
-
     return message;
   };
 
@@ -101,12 +94,13 @@ export function WebSocketProvider({ children }: WebSocketProviderProps) {
       }
 
       const allPromises = [] as Promise<void>[];
-      let totalNewMessages = 0;
+
+      // Reset notification count before processing batch
+      notificationService.resetPendingNotificationCount();
 
       for (const [_, messages] of inboxMap) {
-        totalNewMessages += messages.length;
         allPromises.push(
-          new Promise(async (resolve) => {
+          (async () => {
             for (const message of messages) {
               try {
                 await handlerRef.current!(message);
@@ -114,16 +108,17 @@ export function WebSocketProvider({ children }: WebSocketProviderProps) {
                 console.error(t`Error processing inbound:`, error);
               }
             }
-            resolve();
-          })
+          })()
         );
       }
 
       await Promise.allSettled(allPromises);
 
-      // Show notification for new messages if any were processed
-      if (totalNewMessages > 0) {
-        showNotificationForNewMessages(totalNewMessages);
+      // Show notification only for DM posts from other users
+      const notificationCount =
+        notificationService.getPendingNotificationCount();
+      if (notificationCount > 0) {
+        showNotificationForNewMessages(notificationCount);
       }
     } catch (error) {
       console.error(t`Error processing inbound queue:`, error);

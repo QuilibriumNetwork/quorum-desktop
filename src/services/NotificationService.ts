@@ -20,6 +20,7 @@ export class NotificationService {
   private isSupported: boolean;
   private permission: NotificationPermission;
   private readonly quorumIcon = '/quorumicon-blue.png';
+  private pendingNotificationCount = 0;
 
   private constructor() {
     this.isSupported = 'Notification' in window;
@@ -209,6 +210,30 @@ export class NotificationService {
    */
   public shouldRequestPermission(): boolean {
     return this.isSupported && this.permission === 'default';
+  }
+
+  /**
+   * Resets the pending notification count to 0.
+   * Called at the start of each WebSocket message batch.
+   */
+  public resetPendingNotificationCount(): void {
+    this.pendingNotificationCount = 0;
+  }
+
+  /**
+   * Increments the pending notification count by 1.
+   * Called by MessageService when a DM post from another user is received.
+   */
+  public incrementPendingNotificationCount(): void {
+    this.pendingNotificationCount++;
+  }
+
+  /**
+   * Returns the current pending notification count.
+   * Valid only within a single WebSocket message batch.
+   */
+  public getPendingNotificationCount(): number {
+    return this.pendingNotificationCount;
   }
 }
 

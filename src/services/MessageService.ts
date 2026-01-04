@@ -44,6 +44,7 @@ import {
 import { MAX_MESSAGE_LENGTH } from '../utils/validation';
 import { hasPermission } from '../utils/permissions';
 import { showWarning, dismissToast, showPersistentToast } from '../utils/toast';
+import { notificationService } from './NotificationService';
 import { SimpleRateLimiter, RATE_LIMITS } from '../utils/rateLimit';
 import type { ActionQueueService } from './ActionQueueService';
 import { ENABLE_DM_ACTION_QUEUE } from '../config/features';
@@ -2083,6 +2084,15 @@ export class MessageService {
                 conversation?.conversation?.displayName ?? t`Unknown User`,
             }
           );
+
+          // Notify for DM posts from other users only
+          if (
+            envelope.user_address !== self_address &&
+            decryptedContent?.content?.type === 'post'
+          ) {
+            notificationService.incrementPendingNotificationCount();
+          }
+
           await this.addMessage(
             queryClient,
             session.user_address,
@@ -3517,6 +3527,15 @@ export class MessageService {
           keys.sending_inbox ? 'direct' : 'group',
           profileToUse
         );
+
+        // Notify for DM posts from other users only
+        if (
+          decryptedContent.content?.senderId !== self_address &&
+          decryptedContent.content?.type === 'post'
+        ) {
+          notificationService.incrementPendingNotificationCount();
+        }
+
         await this.addMessage(
           queryClient,
           conversationId.split('/')[0],
