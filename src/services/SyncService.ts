@@ -13,16 +13,10 @@ import {
   SyncDeltaPayload,
   SyncManifestPayload,
   SyncInitiatePayload,
+  SyncRequestPayload,
+  SyncInfoPayload,
   MemberDigest,
-  createSyncSummary,
-  createManifest,
   createMemberDigest,
-  computeMessageDiff,
-  computeMemberDiff,
-  computePeerDiff,
-  buildMessageDelta,
-  buildMemberDelta,
-  chunkMessages,
   PeerEntry,
 } from '@quilibrium/quorum-shared';
 import { IndexedDBAdapter } from '../adapters/indexedDbAdapter';
@@ -221,53 +215,56 @@ export class SyncService {
 
   /**
    * Initiates sync to best candidate peer (highest message count).
+   * Uses SharedSyncService for candidate selection and payload building.
    */
   async initiateSync(spaceId: string): Promise<void> {
     logger.log(`[SyncService] initiateSync called for space ${spaceId.substring(0, 12)}`);
-    if (
-      !this.syncInfo.current[spaceId] ||
-      !this.syncInfo.current[spaceId].candidates.length
-    ) {
-      logger.log(`[SyncService] initiateSync: No candidates available`);
+
+    // Transfer candidates from local syncInfo to SharedSyncService
+    if (this.syncInfo.current[spaceId]?.candidates) {
+      for (const candidate of this.syncInfo.current[spaceId].candidates) {
+        if (candidate.inboxAddress && candidate.summary) {
+          this.sharedSyncService.addCandidate(spaceId, {
+            inboxAddress: candidate.inboxAddress,
+            summary: candidate.summary,
+          });
+        }
+      }
+    }
+
+    const space = await this.messageDB.getSpace(spaceId);
+    const channelId = space?.defaultChannelId || spaceId;
+    const inboxKey = await this.messageDB.getSpaceKey(spaceId, 'inbox');
+
+    // Get peer IDs
+    const encryptionState = await this.messageDB.getEncryptionStates({
+      conversationId: spaceId + '/' + spaceId,
+    });
+    let peerIds: number[] = [];
+    if (encryptionState.length > 0) {
+      const ratchet = JSON.parse(JSON.parse(encryptionState[0].state).state);
+      if (ratchet.id_peer_map) {
+        peerIds = Object.keys(ratchet.id_peer_map).map(Number);
+      }
+    }
+
+    // Build sync-initiate using SharedSyncService
+    const initiateResult = await this.sharedSyncService.buildSyncInitiate(
+      spaceId,
+      channelId,
+      inboxKey.address!,
+      peerIds
+    );
+
+    if (!initiateResult) {
+      logger.log(`[SyncService] initiateSync: No suitable candidates`);
       return;
     }
 
-    const memberSet = await this.messageDB.getSpaceMembers(spaceId);
-    const messageSet = await this.messageDB.getAllSpaceMessages({ spaceId });
-    logger.log(`[SyncService] initiateSync: We have ${messageSet.length} messages, ${memberSet.length} members`);
+    logger.log(`[SyncService] initiateSync: Syncing with: ${initiateResult.target.substring(0, 12)}`);
 
-    // Compute our manifest hash for comparison
-    const ourSummary = createSyncSummary(messageSet as any[], memberSet.length);
-
-    let candidates = this.syncInfo.current[spaceId].candidates;
-    logger.log(`[SyncService] initiateSync: ${candidates.length} raw candidates`);
-
-    // Helper to get message count and manifest hash from legacy or new protocol format
-    const getMessageCount = (c: any) => c.messageCount ?? c.summary?.messageCount ?? 0;
-    const getManifestHash = (c: any) => c.summary?.manifestHash;
-
-    // Filter to candidates that have more messages OR different messages than us
-    candidates = candidates
-      .filter((c) => {
-        const theirCount = getMessageCount(c);
-        const theirHash = getManifestHash(c);
-        const hasMore = theirCount > messageSet.length;
-        // If they have a manifest hash and it differs, they have different messages
-        const hasDifferent = theirHash && theirHash !== ourSummary.manifestHash;
-        logger.log(`[SyncService] initiateSync: Candidate ${c.inboxAddress?.substring(0, 12)} has ${theirCount} messages, hasMore: ${hasMore}, hasDifferent: ${hasDifferent}`);
-        return hasMore || hasDifferent;
-      })
-      .sort((a, b) => getMessageCount(b) - getMessageCount(a));
-
-    if (candidates.length == 0) {
-      logger.log(`[SyncService] initiateSync: No candidates with more or different messages than us`);
-      return;
-    }
-
-    logger.log(`[SyncService] initiateSync: Syncing with best candidate: ${candidates[0].inboxAddress?.substring(0, 12)}`);
     this.enqueueOutbound(async () => {
       const hubKey = await this.messageDB.getSpaceKey(spaceId, 'hub');
-      const inboxKey = await this.messageDB.getSpaceKey(spaceId, 'inbox');
       const configKey = await this.messageDB.getSpaceKey(spaceId, 'config');
       const configKeyParam = configKey
         ? {
@@ -278,7 +275,7 @@ export class SyncService {
         : undefined;
 
       const envelope = await secureChannel.SealSyncEnvelope(
-        candidates[0].inboxAddress,
+        initiateResult.target,
         hubKey.address!,
         {
           type: 'ed448',
@@ -292,18 +289,7 @@ export class SyncService {
         },
         JSON.stringify({
           type: 'control',
-          message: {
-            type: 'sync-initiate',
-            inboxAddress: inboxKey.address,
-            memberCount: memberSet.length,
-            messageCount: messageSet.length,
-            latestMessageTimestamp:
-              messageSet.length > 0
-                ? messageSet[messageSet.length - 1].createdDate
-                : -1,
-            oldestMessageTimestamp:
-              messageSet.length > 0 ? messageSet[0].createdDate : -1,
-          },
+          message: initiateResult.payload,
         }),
         configKeyParam
       );
@@ -478,24 +464,32 @@ export class SyncService {
 
   /**
    * Broadcasts sync request to all members via hub (30s expiry, schedules initiateSync).
-   * NEW PROTOCOL: Includes SyncSummary with manifest hash for efficient delta comparison.
+   * Uses SharedSyncService for O(1) cached payload generation.
    */
   async requestSync(spaceId: string): Promise<void> {
+    logger.log(`[SyncService] requestSync called for space ${spaceId}`);
     try {
+      const space = await this.messageDB.getSpace(spaceId);
+      const channelId = space?.defaultChannelId || spaceId;
+      const inboxKey = await this.messageDB.getSpaceKey(spaceId, 'inbox');
+
+      // Build sync request using SharedSyncService (uses cached XOR-based hash)
+      const syncRequest = await this.sharedSyncService.buildSyncRequest(
+        spaceId,
+        channelId,
+        inboxKey.address!
+      );
+
+      // Schedule sync initiation
+      this.sharedSyncService.scheduleSyncInitiation(
+        spaceId,
+        () => this.initiateSync(spaceId),
+        30000
+      );
+
       this.enqueueOutbound(async () => {
         const hubKey = await this.messageDB.getSpaceKey(spaceId, 'hub');
-        const inboxKey = await this.messageDB.getSpaceKey(spaceId, 'inbox');
         const configKey = await this.messageDB.getSpaceKey(spaceId, 'config');
-        if (configKey) {
-          const pubBytes = hexToSpreadArray(configKey.publicKey);
-          const privBytes = hexToSpreadArray(configKey.privateKey);
-        }
-        const expiry = Date.now() + 30000;
-        const memberSet = await this.messageDB.getSpaceMembers(spaceId);
-        const messageSet = await this.messageDB.getAllSpaceMessages({ spaceId });
-
-        // Create SyncSummary for new protocol (includes manifest hash)
-        const summary = createSyncSummary(messageSet as any[], memberSet.length);
 
         const envelope = await secureChannel.SealHubEnvelope(
           hubKey.address!,
@@ -507,14 +501,10 @@ export class SyncService {
           JSON.stringify({
             type: 'control',
             message: {
-              type: 'sync-request',
-              inboxAddress: inboxKey.address,
-              expiry: expiry,
-              // Legacy fields (kept for backwards compatibility)
-              memberCount: memberSet.length,
-              messageCount: messageSet.length,
-              // New protocol field
-              summary,
+              ...syncRequest,
+              // Legacy fields for backwards compatibility
+              memberCount: syncRequest.summary.memberCount,
+              messageCount: syncRequest.summary.messageCount,
             },
           }),
           configKey
@@ -525,14 +515,20 @@ export class SyncService {
               }
             : undefined
         );
+
+        // Track in local syncInfo for legacy compatibility
         this.syncInfo.current[spaceId] = {
-          expiry,
+          expiry: syncRequest.expiry,
           candidates: [],
-          invokable: setTimeout(() => this.initiateSync(spaceId), 30000),
+          invokable: undefined, // Handled by SharedSyncService
         };
+
+        logger.log(`[SyncService] requestSync: Sending sync-request for space ${spaceId}`);
         return [JSON.stringify({ type: 'group', ...envelope })];
       });
-    } catch {}
+    } catch (error) {
+      logger.error(`[SyncService] requestSync failed for space ${spaceId}:`, error);
+    }
   }
 
   /**
@@ -577,7 +573,7 @@ export class SyncService {
 
   /**
    * Responds to sync-request with our counts if we have more data.
-   * NEW PROTOCOL: If theirSummary is provided, uses hash-based comparison.
+   * Uses SharedSyncService for O(1) cached comparison.
    */
   async informSyncData(
     spaceId: string,
@@ -590,101 +586,78 @@ export class SyncService {
     try {
       const inboxKey = await this.messageDB.getSpaceKey(spaceId, 'inbox');
       logger.log(`[SyncService] informSyncData: Our inbox: ${inboxKey?.address?.substring(0, 12) || 'none'}`);
-      if (inboxKey && inboxKey.address != inboxAddress) {
-        const memberSet = await this.messageDB.getSpaceMembers(spaceId);
-        const messageSet = await this.messageDB.getAllSpaceMessages({ spaceId });
-        logger.log(`[SyncService] informSyncData: We have ${messageSet.length} messages, ${memberSet.length} members`);
-        logger.log(`[SyncService] informSyncData: They reported ${messageCount} messages, ${memberCount} members`);
 
-        // Create our summary
-        const ourSummary = createSyncSummary(messageSet as any[], memberSet.length);
-
-        // Check if we have anything useful to share
-        if (theirSummary) {
-          logger.log(`[SyncService] informSyncData: Using new protocol comparison`);
-          // New protocol: Use hash-based comparison
-          if (
-            ourSummary.manifestHash === theirSummary.manifestHash &&
-            ourSummary.memberCount === theirSummary.memberCount
-          ) {
-            // Already in sync
-            logger.log(`[SyncService] informSyncData: Already in sync (hash match), not responding`);
-            return;
-          }
-
-          // Check if we actually have more data or different data
-          const hasMoreMessages = ourSummary.messageCount > theirSummary.messageCount;
-          const hasMoreMembers = ourSummary.memberCount > theirSummary.memberCount;
-          const hasNewerMessages = ourSummary.newestMessageTimestamp > theirSummary.newestMessageTimestamp;
-          const hasOlderMessages = ourSummary.oldestMessageTimestamp < theirSummary.oldestMessageTimestamp;
-          // If hashes differ, we likely have different messages even if counts are equal
-          const hasDifferentMessages = ourSummary.manifestHash !== theirSummary.manifestHash;
-          logger.log(`[SyncService] informSyncData: hasMoreMessages=${hasMoreMessages}, hasMoreMembers=${hasMoreMembers}, hasNewerMessages=${hasNewerMessages}, hasOlderMessages=${hasOlderMessages}, hasDifferentMessages=${hasDifferentMessages}`);
-
-          if (!hasMoreMessages && !hasMoreMembers && !hasNewerMessages && !hasOlderMessages && !hasDifferentMessages) {
-            logger.log(`[SyncService] informSyncData: We have nothing more to offer, not responding`);
-            return;
-          }
-        } else {
-          logger.log(`[SyncService] informSyncData: Using legacy protocol comparison`);
-          // Legacy protocol: Simple count comparison
-          if (
-            messageCount >= messageSet.length &&
-            memberCount >= memberSet.length
-          ) {
-            logger.log(`[SyncService] informSyncData: They have >= our data (legacy), not responding`);
-            return;
-          }
-        }
-        logger.log(`[SyncService] informSyncData: We have data to share, sending sync-info`);
-
-        this.enqueueOutbound(async () => {
-          const hubKey = await this.messageDB.getSpaceKey(spaceId, 'hub');
-          const configKey = await this.messageDB.getSpaceKey(spaceId, 'config');
-          const configKeyParam = configKey
-            ? {
-                type: 'x448' as const,
-                public_key: hexToSpreadArray(configKey.publicKey),
-                private_key: hexToSpreadArray(configKey.privateKey),
-              }
-            : undefined;
-          const outbounds: string[] = [];
-
-          const envelope = await secureChannel.SealSyncEnvelope(
-            inboxAddress,
-            hubKey.address!,
-            {
-              type: 'ed448',
-              private_key: hexToSpreadArray(hubKey.privateKey),
-              public_key: hexToSpreadArray(hubKey.publicKey),
-            },
-            {
-              type: 'ed448',
-              private_key: hexToSpreadArray(inboxKey.privateKey),
-              public_key: hexToSpreadArray(inboxKey.publicKey),
-            },
-            JSON.stringify({
-              type: 'control',
-              message: {
-                type: 'sync-info',
-                inboxAddress: inboxKey.address,
-                // Legacy fields
-                messageCount: messageSet.length,
-                memberCount: memberSet.length,
-                // New protocol field
-                summary: ourSummary,
-              },
-            }),
-            configKeyParam
-          );
-          outbounds.push(JSON.stringify({ type: 'sync', ...envelope }));
-          logger.log(`[SyncService] informSyncData: Queued sync-info response`);
-
-          return outbounds;
-        });
-      } else {
+      if (!inboxKey || inboxKey.address === inboxAddress) {
         logger.log(`[SyncService] informSyncData: Skipping - either no inboxKey or target is ourselves`);
+        return;
       }
+
+      const space = await this.messageDB.getSpace(spaceId);
+      const channelId = space?.defaultChannelId || spaceId;
+
+      // Build a summary for legacy protocol if theirSummary not provided
+      const effectiveSummary: SyncSummary = theirSummary || {
+        messageCount,
+        memberCount,
+        newestMessageTimestamp: 0,
+        oldestMessageTimestamp: 0,
+        manifestHash: '', // Empty hash means legacy - will trigger diff check
+      };
+
+      // Use SharedSyncService to check if we have data to share
+      const syncInfo = await this.sharedSyncService.buildSyncInfo(
+        spaceId,
+        channelId,
+        inboxKey.address!,
+        effectiveSummary
+      );
+
+      if (!syncInfo) {
+        logger.log(`[SyncService] informSyncData: SharedSyncService says we have nothing to offer`);
+        return;
+      }
+
+      logger.log(`[SyncService] informSyncData: We have data to share, sending sync-info`);
+
+      this.enqueueOutbound(async () => {
+        const hubKey = await this.messageDB.getSpaceKey(spaceId, 'hub');
+        const configKey = await this.messageDB.getSpaceKey(spaceId, 'config');
+        const configKeyParam = configKey
+          ? {
+              type: 'x448' as const,
+              public_key: hexToSpreadArray(configKey.publicKey),
+              private_key: hexToSpreadArray(configKey.privateKey),
+            }
+          : undefined;
+
+        const envelope = await secureChannel.SealSyncEnvelope(
+          inboxAddress,
+          hubKey.address!,
+          {
+            type: 'ed448',
+            private_key: hexToSpreadArray(hubKey.privateKey),
+            public_key: hexToSpreadArray(hubKey.publicKey),
+          },
+          {
+            type: 'ed448',
+            private_key: hexToSpreadArray(inboxKey.privateKey),
+            public_key: hexToSpreadArray(inboxKey.publicKey),
+          },
+          JSON.stringify({
+            type: 'control',
+            message: {
+              ...syncInfo,
+              // Legacy fields for backwards compatibility
+              messageCount: syncInfo.summary.messageCount,
+              memberCount: syncInfo.summary.memberCount,
+            },
+          }),
+          configKeyParam
+        );
+
+        logger.log(`[SyncService] informSyncData: Queued sync-info response`);
+        return [JSON.stringify({ type: 'sync', ...envelope })];
+      });
     } catch (error) {
       console.error(`[SyncService] informSyncData error:`, error);
     }
@@ -693,6 +666,7 @@ export class SyncService {
   /**
    * NEW PROTOCOL: Handles sync-initiate with manifest.
    * Responds with our manifest AND sync-delta (bidirectional sync).
+   * Uses SharedSyncService for O(1) cached payload generation.
    */
   async handleSyncInitiateV2(
     spaceId: string,
@@ -704,12 +678,53 @@ export class SyncService {
 
     if (!message.manifest || !message.inboxAddress) {
       logger.log(`[SyncService] sync-initiate: Missing manifest or inboxAddress, falling back to legacy directSync`);
-      // Fall back to legacy directSync
       await this.directSync(spaceId, message as any);
       return;
     }
 
     logger.log(`[SyncService] sync-initiate: Their manifest has ${message.manifest.digests.length} digests`);
+
+    const space = await this.messageDB.getSpace(spaceId);
+    const channelId = space?.defaultChannelId || spaceId;
+
+    // Get peer entries for delta building
+    const encryptionState = await this.messageDB.getEncryptionStates({
+      conversationId: spaceId + '/' + spaceId,
+    });
+    let peerIds: number[] = [];
+    const ourPeerEntries = new Map<number, PeerEntry>();
+    if (encryptionState.length > 0) {
+      const ratchet = JSON.parse(JSON.parse(encryptionState[0].state).state);
+      if (ratchet.id_peer_map) {
+        peerIds = Object.keys(ratchet.id_peer_map).map(Number);
+        for (const [idStr, pubKey] of Object.entries(ratchet.id_peer_map)) {
+          const peerId = parseInt(idStr, 10);
+          ourPeerEntries.set(peerId, { peerId, publicKey: pubKey as string });
+        }
+      }
+    }
+
+    // Build manifest using SharedSyncService
+    const manifestPayload = await this.sharedSyncService.buildSyncManifest(
+      spaceId,
+      channelId,
+      peerIds,
+      (await this.messageDB.getSpaceKey(spaceId, 'inbox')).address!
+    );
+
+    logger.log(`[SyncService] sync-initiate: Our manifest has ${manifestPayload.manifest.digests.length} digests`);
+
+    // Build delta using SharedSyncService
+    const deltaPayloads = await this.sharedSyncService.buildSyncDelta(
+      spaceId,
+      channelId,
+      message.manifest,
+      message.memberDigests || [],
+      message.peerIds || [],
+      ourPeerEntries
+    );
+
+    logger.log(`[SyncService] sync-initiate: Built ${deltaPayloads.length} delta payload(s)`);
 
     this.enqueueOutbound(async () => {
       const hubKey = await this.messageDB.getSpaceKey(spaceId, 'hub');
@@ -722,44 +737,7 @@ export class SyncService {
             private_key: hexToSpreadArray(configKey.privateKey),
           }
         : undefined;
-      const messageSet = await this.messageDB.getAllSpaceMessages({ spaceId });
-      const memberSet = await this.messageDB.getSpaceMembers(spaceId);
       const outbounds: string[] = [];
-
-      logger.log(`[SyncService] sync-initiate: We have ${messageSet.length} messages, ${memberSet.length} members`);
-
-      // Get our peer entries
-      const encryptionState = await this.messageDB.getEncryptionStates({
-        conversationId: spaceId + '/' + spaceId,
-      });
-      let peerIds: number[] = [];
-      const ourPeerEntries = new Map<number, PeerEntry>();
-      if (encryptionState.length > 0) {
-        const ratchet = JSON.parse(JSON.parse(encryptionState[0].state).state);
-        if (ratchet.id_peer_map) {
-          peerIds = Object.keys(ratchet.id_peer_map).map(Number);
-          for (const [idStr, pubKey] of Object.entries(ratchet.id_peer_map)) {
-            const peerId = parseInt(idStr, 10);
-            ourPeerEntries.set(peerId, { peerId, publicKey: pubKey as string });
-          }
-        }
-      }
-
-      // Create our manifest
-      const space = await this.messageDB.getSpace(spaceId);
-      const channelId = space?.defaultChannelId || spaceId;
-      const ourManifest = createManifest(spaceId, channelId, messageSet as any[]);
-      const ourMemberDigests = memberSet.map((m) =>
-        createMemberDigest({
-          address: (m as any).user_address,
-          inbox_address: (m as any).inbox_address,
-          display_name: (m as any).display_name,
-          profile_image: (m as any).user_icon,
-        } as any)
-      );
-
-      logger.log(`[SyncService] sync-initiate: Our manifest has ${ourManifest.digests.length} digests, ${ourMemberDigests.length} member digests`);
-      logger.log(`[SyncService] sync-initiate: Sending manifest to ${message.inboxAddress.substring(0, 12)}`);
 
       // Send our manifest
       const manifestEnvelope = await secureChannel.SealSyncEnvelope(
@@ -777,143 +755,38 @@ export class SyncService {
         },
         JSON.stringify({
           type: 'control',
-          message: {
-            type: 'sync-manifest',
-            inboxAddress: inboxKey.address,
-            manifest: ourManifest,
-            memberDigests: ourMemberDigests,
-            peerIds,
-          } as SyncManifestPayload,
+          message: manifestPayload,
         }),
         configKeyParam
       );
       outbounds.push(JSON.stringify({ type: 'sync', ...manifestEnvelope }));
       logger.log(`[SyncService] sync-initiate: Manifest envelope added to outbounds`);
 
-      // Also build and send sync-delta with data they're missing (bidirectional sync)
-      const messageDiff = computeMessageDiff(ourManifest, message.manifest);
-      const memberDiff = computeMemberDiff(message.memberDigests || [], ourMemberDigests);
-      const peerDiff = computePeerDiff(message.peerIds || [], peerIds);
-
-      logger.log(`[SyncService] sync-initiate: messageDiff - extraIds: ${messageDiff.extraIds.length}, missingIds: ${messageDiff.missingIds.length}, outdatedIds: ${messageDiff.outdatedIds.length}`);
-      logger.log(`[SyncService] sync-initiate: memberDiff - extraAddresses: ${memberDiff.extraAddresses.length}, missingAddresses: ${memberDiff.missingAddresses.length}`);
-      logger.log(`[SyncService] sync-initiate: peerDiff - extraPeerIds: ${peerDiff.extraPeerIds.length}, missingPeerIds: ${peerDiff.missingPeerIds.length}`);
-
-      const messageMap = new Map(messageSet.map((m) => [m.messageId, m]));
-      const memberMap = new Map(memberSet.map((m) => [(m as any).user_address, m]));
-
-      const messageDelta = buildMessageDelta(
-        spaceId,
-        channelId,
-        messageDiff,
-        messageMap as any,
-        []
-      );
-
-      const memberDelta = buildMemberDelta(spaceId, memberDiff, memberMap as any);
-
-      const peerMapDelta = {
-        spaceId,
-        added: peerDiff.extraPeerIds
-          .map((id) => ourPeerEntries.get(id))
-          .filter((e): e is PeerEntry => e !== undefined),
-        updated: [] as PeerEntry[],
-        removed: [] as number[],
-      };
-
-      // Send delta if we have data they don't
-      const hasMessageDelta = messageDelta.newMessages.length > 0 || messageDelta.updatedMessages.length > 0;
-      const hasMemberDelta = memberDelta.members.length > 0;
-      const hasPeerDelta = peerMapDelta.added.length > 0;
-
-      logger.log(`[SyncService] sync-initiate: Delta check - hasMessageDelta: ${hasMessageDelta} (new: ${messageDelta.newMessages.length}, updated: ${messageDelta.updatedMessages.length})`);
-      logger.log(`[SyncService] sync-initiate: Delta check - hasMemberDelta: ${hasMemberDelta} (${memberDelta.members.length} members)`);
-      logger.log(`[SyncService] sync-initiate: Delta check - hasPeerDelta: ${hasPeerDelta} (${peerMapDelta.added.length} peers)`);
-
-      if (hasMessageDelta || hasMemberDelta || hasPeerDelta) {
-        logger.log(`[SyncService] sync-initiate: Sending delta(s) to ${message.inboxAddress.substring(0, 12)}`);
-        // Chunk and send message deltas
-        const allMessages = [...messageDelta.newMessages, ...messageDelta.updatedMessages];
-        if (allMessages.length > 0) {
-          const chunks = chunkMessages(allMessages as any[]);
-          for (let i = 0; i < chunks.length; i++) {
-            const chunk = chunks[i];
-            const isLast = i === chunks.length - 1 && !hasMemberDelta && !hasPeerDelta;
-
-            const deltaPayload: SyncDeltaPayload = {
-              type: 'sync-delta',
-              messageDelta: {
-                spaceId,
-                channelId,
-                newMessages: chunk.filter((m) =>
-                  messageDiff.extraIds.includes(m.messageId)
-                ) as any[],
-                updatedMessages: chunk.filter((m) =>
-                  messageDiff.outdatedIds.includes(m.messageId)
-                ) as any[],
-                deletedMessageIds: isLast ? messageDelta.deletedMessageIds : [],
-              },
-              isFinal: isLast,
-            };
-
-            const envelope = await secureChannel.SealSyncEnvelope(
-              message.inboxAddress,
-              hubKey.address!,
-              {
-                type: 'ed448',
-                private_key: hexToSpreadArray(hubKey.privateKey),
-                public_key: hexToSpreadArray(hubKey.publicKey),
-              },
-              {
-                type: 'ed448',
-                private_key: hexToSpreadArray(inboxKey.privateKey),
-                public_key: hexToSpreadArray(inboxKey.publicKey),
-              },
-              JSON.stringify({
-                type: 'control',
-                message: deltaPayload,
-              }),
-              configKeyParam
-            );
-            outbounds.push(JSON.stringify({ type: 'sync', ...envelope }));
-          }
-        }
-
-        // Send member and peer deltas
-        if (hasMemberDelta || hasPeerDelta || allMessages.length === 0) {
-          const finalPayload: SyncDeltaPayload = {
-            type: 'sync-delta',
-            memberDelta: hasMemberDelta ? memberDelta : undefined,
-            peerMapDelta: hasPeerDelta ? peerMapDelta : undefined,
-            isFinal: true,
-          };
-
-          const envelope = await secureChannel.SealSyncEnvelope(
-            message.inboxAddress,
-            hubKey.address!,
-            {
-              type: 'ed448',
-              private_key: hexToSpreadArray(hubKey.privateKey),
-              public_key: hexToSpreadArray(hubKey.publicKey),
-            },
-            {
-              type: 'ed448',
-              private_key: hexToSpreadArray(inboxKey.privateKey),
-              public_key: hexToSpreadArray(inboxKey.publicKey),
-            },
-            JSON.stringify({
-              type: 'control',
-              message: finalPayload,
-            }),
-            configKeyParam
-          );
-          outbounds.push(JSON.stringify({ type: 'sync', ...envelope }));
-        }
-      } else {
-        logger.log(`[SyncService] sync-initiate: No delta to send (all data matches)`);
+      // Send delta payloads
+      for (const deltaPayload of deltaPayloads) {
+        const envelope = await secureChannel.SealSyncEnvelope(
+          message.inboxAddress,
+          hubKey.address!,
+          {
+            type: 'ed448',
+            private_key: hexToSpreadArray(hubKey.privateKey),
+            public_key: hexToSpreadArray(hubKey.publicKey),
+          },
+          {
+            type: 'ed448',
+            private_key: hexToSpreadArray(inboxKey.privateKey),
+            public_key: hexToSpreadArray(inboxKey.publicKey),
+          },
+          JSON.stringify({
+            type: 'control',
+            message: deltaPayload,
+          }),
+          configKeyParam
+        );
+        outbounds.push(JSON.stringify({ type: 'sync', ...envelope }));
       }
 
-      // Also send sync-peer-map with ratchet state for encryption key sync
+      // Send sync-peer-map with ratchet state for encryption key sync
       if (encryptionState.length > 0) {
         const ratchet = JSON.parse(JSON.parse(encryptionState[0].state).state);
         if (ratchet.id_peer_map && ratchet.peer_id_map) {
@@ -966,6 +839,7 @@ export class SyncService {
   /**
    * NEW PROTOCOL: Handles sync-manifest.
    * Computes delta and sends sync-delta payloads.
+   * Uses SharedSyncService for O(1) cached payload generation.
    */
   async handleSyncManifest(
     spaceId: string,
@@ -975,6 +849,36 @@ export class SyncService {
     logger.log(`[SyncService] handleSyncManifest called for space ${spaceId.substring(0, 12)}`);
     logger.log(`[SyncService] sync-manifest: Target inbox: ${targetInbox.substring(0, 12)}`);
     logger.log(`[SyncService] sync-manifest: Their manifest has ${payload.manifest.digests.length} digests, ${payload.memberDigests.length} member digests, ${payload.peerIds.length} peer IDs`);
+
+    const space = await this.messageDB.getSpace(spaceId);
+    const channelId = payload.manifest.channelId || space?.defaultChannelId || spaceId;
+
+    // Get our peer entries
+    const encryptionState = await this.messageDB.getEncryptionStates({
+      conversationId: spaceId + '/' + spaceId,
+    });
+    const ourPeerEntries = new Map<number, PeerEntry>();
+    if (encryptionState.length > 0) {
+      const ratchet = JSON.parse(JSON.parse(encryptionState[0].state).state);
+      if (ratchet.id_peer_map) {
+        for (const [idStr, pubKey] of Object.entries(ratchet.id_peer_map)) {
+          const peerId = parseInt(idStr, 10);
+          ourPeerEntries.set(peerId, { peerId, publicKey: pubKey as string });
+        }
+      }
+    }
+
+    // Build delta using SharedSyncService
+    const deltaPayloads = await this.sharedSyncService.buildSyncDelta(
+      spaceId,
+      channelId,
+      payload.manifest,
+      payload.memberDigests,
+      payload.peerIds,
+      ourPeerEntries
+    );
+
+    logger.log(`[SyncService] sync-manifest: Built ${deltaPayloads.length} delta payload(s)`);
 
     this.enqueueOutbound(async () => {
       const hubKey = await this.messageDB.getSpaceKey(spaceId, 'hub');
@@ -987,138 +891,10 @@ export class SyncService {
             private_key: hexToSpreadArray(configKey.privateKey),
           }
         : undefined;
-      const messageSet = await this.messageDB.getAllSpaceMessages({ spaceId });
-      const memberSet = await this.messageDB.getSpaceMembers(spaceId);
       const outbounds: string[] = [];
 
-      logger.log(`[SyncService] sync-manifest: We have ${messageSet.length} messages, ${memberSet.length} members`);
-
-      // Get our peer entries
-      const encryptionState = await this.messageDB.getEncryptionStates({
-        conversationId: spaceId + '/' + spaceId,
-      });
-      const ourPeerEntries = new Map<number, PeerEntry>();
-      if (encryptionState.length > 0) {
-        const ratchet = JSON.parse(JSON.parse(encryptionState[0].state).state);
-        if (ratchet.id_peer_map) {
-          for (const [idStr, pubKey] of Object.entries(ratchet.id_peer_map)) {
-            const peerId = parseInt(idStr, 10);
-            ourPeerEntries.set(peerId, { peerId, publicKey: pubKey as string });
-          }
-        }
-      }
-
-      // Build our manifest
-      const space = await this.messageDB.getSpace(spaceId);
-      const channelId = payload.manifest.channelId || space?.defaultChannelId || spaceId;
-      const ourManifest = createManifest(spaceId, channelId, messageSet as any[]);
-      const ourMemberDigests = memberSet.map((m) =>
-        createMemberDigest({
-          address: (m as any).user_address,
-          inbox_address: (m as any).inbox_address,
-          display_name: (m as any).display_name,
-          profile_image: (m as any).user_icon,
-        } as any)
-      );
-      const ourPeerIds = [...ourPeerEntries.keys()];
-
-      // Compute diffs (ourManifest first - we want messages WE have that THEY don't)
-      const messageDiff = computeMessageDiff(ourManifest, payload.manifest);
-      const memberDiff = computeMemberDiff(payload.memberDigests, ourMemberDigests);
-      const peerDiff = computePeerDiff(payload.peerIds, ourPeerIds);
-
-      logger.log(`[SyncService] sync-manifest: Our manifest has ${ourManifest.digests.length} digests`);
-      logger.log(`[SyncService] sync-manifest: messageDiff - extraIds: ${messageDiff.extraIds.length}, missingIds: ${messageDiff.missingIds.length}, outdatedIds: ${messageDiff.outdatedIds.length}`);
-      logger.log(`[SyncService] sync-manifest: memberDiff - extraAddresses: ${memberDiff.extraAddresses.length}, missingAddresses: ${memberDiff.missingAddresses.length}`);
-      logger.log(`[SyncService] sync-manifest: peerDiff - extraPeerIds: ${peerDiff.extraPeerIds.length}, missingPeerIds: ${peerDiff.missingPeerIds.length}`);
-
-      // Build deltas
-      const messageMap = new Map(messageSet.map((m) => [m.messageId, m]));
-      const memberMap = new Map(memberSet.map((m) => [(m as any).user_address, m]));
-
-      const messageDelta = buildMessageDelta(
-        spaceId,
-        channelId,
-        messageDiff,
-        messageMap as any,
-        []
-      );
-
-      const memberDelta = buildMemberDelta(spaceId, memberDiff, memberMap as any);
-
-      // Build peer map delta
-      const peerMapDelta = {
-        spaceId,
-        added: peerDiff.extraPeerIds
-          .map((id) => ourPeerEntries.get(id))
-          .filter((e): e is PeerEntry => e !== undefined),
-        updated: [] as PeerEntry[],
-        removed: [] as number[],
-      };
-
-      // Chunk and send message deltas
-      const allMessages = [...messageDelta.newMessages, ...messageDelta.updatedMessages];
-      logger.log(`[SyncService] sync-manifest: Delta check - newMessages: ${messageDelta.newMessages.length}, updatedMessages: ${messageDelta.updatedMessages.length}, allMessages: ${allMessages.length}`);
-      logger.log(`[SyncService] sync-manifest: Delta check - members: ${memberDelta.members.length}, peers: ${peerMapDelta.added.length}`);
-
-      if (allMessages.length > 0) {
-        const chunks = chunkMessages(allMessages as any[]);
-        for (let i = 0; i < chunks.length; i++) {
-          const chunk = chunks[i];
-          const isLast = i === chunks.length - 1;
-
-          const deltaPayload: SyncDeltaPayload = {
-            type: 'sync-delta',
-            messageDelta: {
-              spaceId,
-              channelId,
-              newMessages: chunk.filter((m) =>
-                messageDiff.extraIds.includes(m.messageId)
-              ) as any[],
-              updatedMessages: chunk.filter((m) =>
-                messageDiff.outdatedIds.includes(m.messageId)
-              ) as any[],
-              deletedMessageIds: isLast ? messageDelta.deletedMessageIds : [],
-            },
-            isFinal: false,
-          };
-
-          const envelope = await secureChannel.SealSyncEnvelope(
-            targetInbox,
-            hubKey.address!,
-            {
-              type: 'ed448',
-              private_key: hexToSpreadArray(hubKey.privateKey),
-              public_key: hexToSpreadArray(hubKey.publicKey),
-            },
-            {
-              type: 'ed448',
-              private_key: hexToSpreadArray(inboxKey.privateKey),
-              public_key: hexToSpreadArray(inboxKey.publicKey),
-            },
-            JSON.stringify({
-              type: 'control',
-              message: deltaPayload,
-            }),
-            configKeyParam
-          );
-          outbounds.push(JSON.stringify({ type: 'sync', ...envelope }));
-        }
-      }
-
-      // Send member and peer deltas
-      if (
-        memberDelta.members.length > 0 ||
-        peerMapDelta.added.length > 0 ||
-        allMessages.length === 0
-      ) {
-        const finalPayload: SyncDeltaPayload = {
-          type: 'sync-delta',
-          memberDelta: memberDelta.members.length > 0 ? memberDelta : undefined,
-          peerMapDelta: peerMapDelta.added.length > 0 ? peerMapDelta : undefined,
-          isFinal: true,
-        };
-
+      // Send delta payloads
+      for (const deltaPayload of deltaPayloads) {
         const envelope = await secureChannel.SealSyncEnvelope(
           targetInbox,
           hubKey.address!,
@@ -1134,42 +910,14 @@ export class SyncService {
           },
           JSON.stringify({
             type: 'control',
-            message: finalPayload,
-          }),
-          configKeyParam
-        );
-        outbounds.push(JSON.stringify({ type: 'sync', ...envelope }));
-      } else if (outbounds.length > 0) {
-        // Mark last message chunk as final - need to re-seal with updated payload
-        // For simplicity, just send an empty final
-        const finalPayload: SyncDeltaPayload = {
-          type: 'sync-delta',
-          isFinal: true,
-        };
-
-        const envelope = await secureChannel.SealSyncEnvelope(
-          targetInbox,
-          hubKey.address!,
-          {
-            type: 'ed448',
-            private_key: hexToSpreadArray(hubKey.privateKey),
-            public_key: hexToSpreadArray(hubKey.publicKey),
-          },
-          {
-            type: 'ed448',
-            private_key: hexToSpreadArray(inboxKey.privateKey),
-            public_key: hexToSpreadArray(inboxKey.publicKey),
-          },
-          JSON.stringify({
-            type: 'control',
-            message: finalPayload,
+            message: deltaPayload,
           }),
           configKeyParam
         );
         outbounds.push(JSON.stringify({ type: 'sync', ...envelope }));
       }
 
-      // Also send sync-peer-map with ratchet state for encryption key sync
+      // Send sync-peer-map with ratchet state for encryption key sync
       if (encryptionState.length > 0) {
         const ratchet = JSON.parse(JSON.parse(encryptionState[0].state).state);
         if (ratchet.id_peer_map && ratchet.peer_id_map) {
@@ -1217,5 +965,36 @@ export class SyncService {
       logger.log(`[SyncService] sync-manifest: Returning ${outbounds.length} outbound envelope(s)`);
       return outbounds;
     });
+  }
+
+  /**
+   * Expose the shared sync service for cache updates
+   */
+  getSharedSyncService(): SharedSyncService {
+    return this.sharedSyncService;
+  }
+
+  /**
+   * Update sync cache with a new/updated message (O(1) operation)
+   * Note: Method may not exist in older versions of quorum-shared
+   */
+  updateCacheWithMessage(spaceId: string, channelId: string, message: Message): void {
+    (this.sharedSyncService as any).updateCacheWithMessage?.(spaceId, channelId, message);
+  }
+
+  /**
+   * Update sync cache with a new/updated member (O(1) operation)
+   * Note: Method may not exist in older versions of quorum-shared
+   */
+  updateCacheWithMember(spaceId: string, channelId: string, member: any): void {
+    (this.sharedSyncService as any).updateCacheWithMember?.(spaceId, channelId, member);
+  }
+
+  /**
+   * Remove a message from the sync cache (O(1) operation)
+   * Note: Method may not exist in older versions of quorum-shared
+   */
+  removeCacheMessage(spaceId: string, channelId: string, messageId: string): void {
+    (this.sharedSyncService as any).removeCacheMessage?.(spaceId, channelId, messageId);
   }
 }

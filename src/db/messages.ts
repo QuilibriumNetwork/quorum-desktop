@@ -876,6 +876,43 @@ export class MessageDB {
     });
   }
 
+  /**
+   * Clear all tombstones for a space.
+   * Used when rejoining a space to allow messages to be synced again.
+   */
+  async clearTombstonesForSpace(spaceId: string): Promise<number> {
+    await this.init();
+    return new Promise((resolve, reject) => {
+      const transaction = this.db!.transaction(['deleted_messages'], 'readwrite');
+      const store = transaction.objectStore('deleted_messages');
+      const index = store.index('by_space_channel');
+
+      // Get all tombstones for this space (any channel)
+      const range = IDBKeyRange.bound(
+        [spaceId, ''],
+        [spaceId, '\uffff']
+      );
+
+      const request = index.openCursor(range);
+      let deletedCount = 0;
+
+      request.onsuccess = (event) => {
+        const cursor = (event.target as IDBRequest).result;
+        if (cursor) {
+          cursor.delete();
+          deletedCount++;
+          cursor.continue();
+        }
+      };
+
+      transaction.oncomplete = () => {
+        logger.log(`[MessageDB] Cleared ${deletedCount} tombstones for space ${spaceId}`);
+        resolve(deletedCount);
+      };
+      transaction.onerror = () => reject(transaction.error);
+    });
+  }
+
   async saveEncryptionState(
     state: EncryptionState,
     wasFirstAttempt: boolean

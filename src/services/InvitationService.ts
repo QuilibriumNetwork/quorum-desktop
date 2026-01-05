@@ -793,6 +793,8 @@ export class InvitationService {
           new Uint8Array(inboxPair.private_key)
         ).toString('hex'),
       });
+      // Clear any tombstones from a previous join to allow messages to sync
+      await this.messageDB.clearTombstonesForSpace(space.spaceId);
       await this.messageDB.saveSpace(space);
       await this.messageDB.saveSpaceMember(space.spaceId, {
         user_address: currentPasskeyInfo.address,

@@ -205,59 +205,23 @@ export class MessageService {
       saveStateAfterSend?: boolean;
     } = {}
   ): Promise<string> {
-    const response = await this.messageDB.getEncryptionStates({
-      conversationId: spaceId + '/' + spaceId,
-    });
-    const sets = response.map((e) => JSON.parse(e.state));
-
     // Strip ephemeral fields if requested (for retries)
-    const messageToEncrypt = options.stripEphemeralFields
+    const messageToSend = options.stripEphemeralFields
       ? (({ sendStatus: _sendStatus, sendError: _sendError, ...rest }) => rest)(message as any)
       : message;
-
-    const msg = secureChannel.TripleRatchetEncrypt(
-      JSON.stringify({
-        ratchet_state: sets[0].state,
-        message: [
-          ...new Uint8Array(Buffer.from(JSON.stringify(messageToEncrypt), 'utf-8')),
-        ],
-      } as secureChannel.TripleRatchetStateAndMessage)
-    );
-    const result = JSON.parse(msg) as secureChannel.TripleRatchetStateAndEnvelope;
-
-    const saveState = async () => {
-      // Preserve template/evals fields needed for private invite generation
-      // Only update the ratchet state, keeping other fields intact
-      await this.messageDB.saveEncryptionState(
-        {
-          state: JSON.stringify({
-            ...sets[0],
-            state: result.ratchet_state,
-          }),
-          timestamp: Date.now(),
-          inboxId: response[0]?.inboxId || spaceId,
-          conversationId: spaceId + '/' + spaceId,
-          sentAccept: false,
-        },
-        true
-      );
-    };
-
-    if (!options.saveStateAfterSend) {
-      await saveState();
-    }
 
     const outbound = await this.sendHubMessage(
       spaceId,
       JSON.stringify({
         type: 'message',
-        message: JSON.parse(result.envelope),
+        message: messageToSend,
       })
     );
 
-    if (options.saveStateAfterSend) {
-      await saveState();
-    }
+    // Actually send the message via WebSocket
+    this.enqueueOutbound(async () => {
+      return [outbound];
+    });
 
     return outbound;
   }
@@ -3435,7 +3399,6 @@ export class MessageService {
             // Apply message delta
             if (envelope.message.messageDelta) {
               const msgDelta = envelope.message.messageDelta;
-              logger.log(`[MessageService] sync-delta: ${msgDelta.newMessages?.length || 0} new, ${msgDelta.updatedMessages?.length || 0} updated, ${msgDelta.deletedMessageIds?.length || 0} deleted`);
 
               // Show toast for significant syncs (>= 20 messages)
               const totalMessages = (msgDelta.newMessages?.length || 0) +
@@ -3446,39 +3409,58 @@ export class MessageService {
 
               const space = await this.messageDB.getSpace(spaceId);
 
+              // Collect unique channelIds that need to be refetched
+              const channelIdsToRefetch = new Set<string>();
+
               for (const msg of msgDelta.newMessages || []) {
+                const channelId = msg.channelId || msgDelta.channelId;
                 await this.saveMessage(
                   msg,
                   this.messageDB,
                   spaceId,
-                  msg.channelId || msgDelta.channelId,
+                  channelId,
                   'group',
                   {}
                 );
+                if (channelId) {
+                  channelIdsToRefetch.add(channelId);
+                }
               }
 
               for (const msg of msgDelta.updatedMessages || []) {
+                const channelId = msg.channelId || msgDelta.channelId;
                 await this.saveMessage(
                   msg,
                   this.messageDB,
                   spaceId,
-                  msg.channelId || msgDelta.channelId,
+                  channelId,
                   'group',
                   {}
                 );
+                if (channelId) {
+                  channelIdsToRefetch.add(channelId);
+                }
               }
 
               for (const msgId of msgDelta.deletedMessageIds || []) {
                 await this.messageDB.deleteMessage(msgId);
               }
 
-              // Refetch messages
-              queryClient.refetchQueries({
-                queryKey: buildMessagesKey({
-                  spaceId,
-                  channelId: msgDelta.channelId || space?.defaultChannelId || spaceId,
-                }),
-              });
+              // Refetch messages for all channels that had changes
+              // If no specific channels were found, fall back to default
+              if (channelIdsToRefetch.size === 0) {
+                const fallbackChannelId = msgDelta.channelId || space?.defaultChannelId || spaceId;
+                channelIdsToRefetch.add(fallbackChannelId);
+              }
+
+              for (const channelId of channelIdsToRefetch) {
+                queryClient.refetchQueries({
+                  queryKey: buildMessagesKey({
+                    spaceId,
+                    channelId,
+                  }),
+                });
+              }
 
               // Reset dismiss timer on each sync chunk (5s after last chunk)
               clearTimeout(syncDismissTimer);
@@ -3489,9 +3471,22 @@ export class MessageService {
 
             // Apply member delta
             if (envelope.message.memberDelta) {
-              logger.log(`[MessageService] sync-delta: ${envelope.message.memberDelta.members?.length || 0} member updates`);
               for (const member of envelope.message.memberDelta.members || []) {
-                await this.messageDB.saveSpaceMember(spaceId, member);
+                // Map shared SpaceMember type to desktop DB format:
+                // - address -> user_address
+                // - profile_image -> user_icon
+                // Handle both shared types and legacy field names
+                const userAddress = member.address || member.user_address;
+                if (!userAddress) {
+                  continue;
+                }
+                const dbMember = {
+                  ...member,
+                  user_address: userAddress,
+                  // Map profile_image to user_icon (desktop DB format)
+                  user_icon: member.profile_image || member.user_icon,
+                };
+                await this.messageDB.saveSpaceMember(spaceId, dbMember);
               }
               queryClient.refetchQueries({
                 queryKey: ['spaceMembers', spaceId],

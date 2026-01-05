@@ -66,7 +66,7 @@ export const EmptyDirectMessage = () => {
                 className="text-accent opacity-70 dark:text-accent mb-4 block mx-auto"
               />
               <Container className="text-lg sm:text-2xl text-center mb-8">
-                <Text className="text-lg sm:text-2xl">{t`What's on your mind today?`}</Text>
+                <Text className="text-lg sm:text-2xl" align="center">{t`What's on your mind today?`}</Text>
               </Container>
               {/* Show home screen link - commented out for now
               <FlexRow className="justify-center w-full">

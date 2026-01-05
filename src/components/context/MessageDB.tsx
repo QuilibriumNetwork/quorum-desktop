@@ -689,6 +689,28 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
     [syncService]
   );
 
+  // Sync cache update callbacks for O(1) incremental updates
+  const updateSyncCacheWithMessage = React.useCallback(
+    (spaceId: string, channelId: string, message: any) => {
+      syncService.updateCacheWithMessage(spaceId, channelId, message);
+    },
+    [syncService]
+  );
+
+  const updateSyncCacheWithMember = React.useCallback(
+    (spaceId: string, channelId: string, member: any) => {
+      syncService.updateCacheWithMember(spaceId, channelId, member);
+    },
+    [syncService]
+  );
+
+  const removeSyncCacheMessage = React.useCallback(
+    (spaceId: string, channelId: string, messageId: string) => {
+      syncService.removeCacheMessage(spaceId, channelId, messageId);
+    },
+    [syncService]
+  );
+
   // InvitationService (depends on requestSync, sendHubMessage)
   const invitationService = useMemo(() => {
     return new InvitationService({
@@ -854,7 +876,7 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
     conversationType: string,
     updatedUserProfile: { user_icon?: string; display_name?: string }
   ) => {
-    return messageService.saveMessage(
+    const result = await messageService.saveMessage(
       decryptedContent,
       messageDB,
       spaceId,
@@ -862,6 +884,11 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
       conversationType,
       updatedUserProfile
     );
+
+    // Update sync cache for O(1) incremental hash updates
+    updateSyncCacheWithMessage(spaceId, channelId, decryptedContent);
+
+    return result;
   };
 
   const addMessage = async (
