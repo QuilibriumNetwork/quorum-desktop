@@ -60,6 +60,45 @@ export function shouldShowDateSeparator(
   return currentDay !== previousDay;
 }
 
+// 5 minutes in milliseconds - messages within this window can be grouped
+const MESSAGE_GROUP_TIME_THRESHOLD = 5 * 60 * 1000;
+
+/**
+ * Determines if a message should display a compact header (no avatar/username).
+ * Messages are grouped when from same sender, within time threshold, and no separators between.
+ *
+ * @param current - Current message
+ * @param previous - Previous message (null if current is first)
+ * @param hasDateSeparator - Whether a date separator appears before current message
+ * @param hasNewMessagesSeparator - Whether a "new messages" separator appears before current message
+ * @returns True if message should render in compact mode
+ */
+export function shouldShowCompactHeader(
+  current: Message,
+  previous: Message | null,
+  hasDateSeparator: boolean,
+  hasNewMessagesSeparator: boolean
+): boolean {
+  // Never compact if no previous message or separators exist
+  if (!previous || hasDateSeparator || hasNewMessagesSeparator) return false;
+
+  // Never compact system messages (join/leave/kick)
+  if (['join', 'leave', 'kick'].includes(current.content.type)) return false;
+  if (['join', 'leave', 'kick'].includes(previous.content.type)) return false;
+
+  // Never compact if current message is a reply
+  if ((current.content as any).repliesToMessageId) return false;
+
+  // Must be same sender
+  const currentSenderId = (current.content as any).senderId;
+  const previousSenderId = (previous.content as any).senderId;
+  if (!currentSenderId || !previousSenderId || currentSenderId !== previousSenderId) return false;
+
+  // Must be within time threshold
+  const timeDiff = current.createdDate - previous.createdDate;
+  return timeDiff >= 0 && timeDiff <= MESSAGE_GROUP_TIME_THRESHOLD;
+}
+
 /**
  * Gets the start of day timestamp for a given date.
  * Uses the user's timezone for accurate calendar day calculations.

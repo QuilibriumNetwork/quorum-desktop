@@ -281,3 +281,19 @@
     opacity: 1;
   }
 }
+
+/* === MESSAGE GROUPING COMPACT STYLES === */
+// Compact messages: remove top border on touch devices
+.message-container.message-compact {
+  border-top: none !important;
+}
+
+// Message body padding - default 8px bottom, 0 for compact or when followed by compact
+.message-body {
+  padding-bottom: 8px;
+
+  &.message-body-compact,
+  &.message-body-has-compact-below {
+    padding-bottom: 0;
+  }
+}

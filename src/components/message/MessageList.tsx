@@ -24,7 +24,7 @@ import type { VirtuosoHandle } from 'react-virtuoso';
 import React from 'react';
 import { DefaultImages } from '../../utils';
 import { useMessageHighlight } from '../../hooks/business/messages/useMessageHighlight';
-import { shouldShowDateSeparator } from '../../utils/messageGrouping';
+import { shouldShowDateSeparator, shouldShowCompactHeader } from '../../utils/messageGrouping';
 import { useScrollTracking } from '../../hooks/ui/useScrollTracking';
 import { Button } from '../primitives';
 import { Trans } from '@lingui/react/macro';
@@ -228,31 +228,41 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
       [members]
     );
 
+    // Memoize message display info (date separators, new messages separators, compact headers)
+    // Two-pass calculation: first compute isCompact, then derive hasCompactBelow
+    const messageDisplayInfo = useMemo(() => {
+      // First pass: calculate basic display info
+      const info = messageList.map((message, index) => {
+        const previousMessage = index > 0 ? messageList[index - 1] : null;
+        const needsDateSeparator = shouldShowDateSeparator(message, previousMessage);
+        const needsNewMessagesSeparator = newMessagesSeparator &&
+          message.messageId === newMessagesSeparator.firstUnreadMessageId;
+        const isCompact = shouldShowCompactHeader(
+          message, previousMessage, needsDateSeparator, !!needsNewMessagesSeparator
+        );
+        return { needsDateSeparator, needsNewMessagesSeparator, isCompact, hasCompactBelow: false };
+      });
+      // Second pass: set hasCompactBelow based on next message
+      for (let i = 0; i < info.length - 1; i++) {
+        info[i].hasCompactBelow = info[i + 1].isCompact;
+      }
+      return info;
+    }, [messageList, newMessagesSeparator]);
+
     const rowRenderer = useCallback(
       (index: number) => {
         const message = messageList[index];
-        const previousMessage = index > 0 ? messageList[index - 1] : null;
-
-        // Check if we need a date separator before this message
-        const needsDateSeparator = shouldShowDateSeparator(
-          message,
-          previousMessage
-        );
-
-        // Check if we need to show the "New Messages" separator before this message
-        const needsNewMessagesSeparator =
-          newMessagesSeparator &&
-          message.messageId === newMessagesSeparator.firstUnreadMessageId;
+        const displayInfo = messageDisplayInfo[index];
 
         return (
           <React.Fragment>
-            {needsDateSeparator && (
+            {displayInfo.needsDateSeparator && (
               <DateSeparator
                 timestamp={message.createdDate}
                 className="message-date-separator"
               />
             )}
-            {needsNewMessagesSeparator && <NewMessagesSeparator />}
+            {displayInfo.needsNewMessagesSeparator && <NewMessagesSeparator />}
             <Message
               senderRoles={roles}
               spaceRoles={roles}
@@ -287,12 +297,15 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
               spaceName={spaceName}
               onRetryMessage={onRetryMessage}
               dmContext={dmContext}
+              isCompact={displayInfo.isCompact}
+              hasCompactBelow={displayInfo.hasCompactBelow}
             />
           </React.Fragment>
         );
       },
       [
         messageList,
+        messageDisplayInfo,
         roles,
         stickers,
         emojiPickerOpen,
@@ -317,9 +330,9 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
         onChannelClick,
         spaceChannels,
         lastReadTimestamp,
-        newMessagesSeparator,
         spaceName,
         onRetryMessage,
+        dmContext,
       ]
     );
 

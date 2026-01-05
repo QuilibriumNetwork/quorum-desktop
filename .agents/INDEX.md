@@ -273,6 +273,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Implement Channel Mention Feature (#channelname)](tasks/.done/channel-mention-feature.md)
 - [Implement Collapsible Role Groups in Channel Members Sidebar](tasks/.done/collapsible-role-groups-sidebar.md)
 - [Implement Copy Message Raw Text Option](tasks/.done/copy-message-text.md)
+- [Implement Discord-Style Message Grouping with Compact Headers](tasks/.done/message-grouping-compact-headers.md)
 - [Implement Dm Unread Features](tasks/.done/implement-dm-unread-features.md)
 - [Implement Mention Notification Bubbles](tasks/.done/mention-notification-bubbles.md)
 - [Implement Message Sending Indicator](tasks/.done/message-sending-indicator.md)
@@ -381,4 +382,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2026-01-05 12:39:19
+**Last Updated**: 2026-01-05 16:28:14

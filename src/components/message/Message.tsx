@@ -108,6 +108,10 @@ type MessageProps = {
   onRetryMessage?: (message: MessageType) => void;
   /** DM context for offline-resilient reactions/deletes/edits (optional - only for DMs) */
   dmContext?: DmContext;
+  /** Whether this message should render in compact mode (no avatar, no username row) */
+  isCompact?: boolean;
+  /** Whether the next message below is compact (for removing bottom padding) */
+  hasCompactBelow?: boolean;
 };
 
 export const Message = React.memo(
@@ -143,6 +147,8 @@ export const Message = React.memo(
     spaceName,
     onRetryMessage,
     dmContext,
+    isCompact = false,
+    hasCompactBelow = false,
   }: MessageProps) => {
     const user = usePasskeysContext();
     const { spaceId } = useParams();
@@ -407,9 +413,10 @@ export const Message = React.memo(
         ref={mentionRef}
         id={`msg-${message.messageId}`}
         className={
-          'text-base relative ' +
+          'message-container text-base relative ' +
+          (isCompact ? 'message-compact ' : '') +
           (isTouchDevice()
-            ? 'border-t-2 border-t-surface-00 pt-2' // Add thicker top border for touch devices
+            ? (isCompact ? '' : 'border-t-2 border-t-surface-00 pt-2') // No border for compact on touch
             : 'hover:bg-chat-hover ') + // Only add hover effect on non-touch devices
           // Note: Mentions now use 60-second highlight (message-highlighted-mention)
           // Other highlights (search, pinned, hash) use 6-second highlight (message-highlighted)
@@ -524,7 +531,9 @@ export const Message = React.memo(
         {!['join', 'leave', 'kick'].includes(message.content.type) && (
           <FlexRow
             className={
-              'w-full font-[11pt] px-[16px] pb-[8px] items-start ' +
+              'message-body w-full font-[11pt] px-[16px] items-start ' +
+              (isCompact ? 'message-body-compact ' : '') +
+              (hasCompactBelow ? 'message-body-has-compact-below ' : '') +
               ((
                 !(message.content as any).repliesToMessageId
                   ? undefined
@@ -533,7 +542,7 @@ export const Message = React.memo(
                     )
               )
                 ? ''
-                : 'pt-[8px]')
+                : (isCompact ? '' : 'pt-[8px]'))
             }
           >
             {showUserProfile && spaceId && (
@@ -562,34 +571,42 @@ export const Message = React.memo(
                 </Container>
               </FlexRow>
             )}
-            <UserAvatar
-              userIcon={sender.userIcon}
-              displayName={sender.displayName}
-              address={sender.address}
-              size={44}
-              className="message-sender-icon"
-              onClick={
-                isTouchDevice()
-                  ? interactions.handleUserProfileClick
-                  : (event: React.MouseEvent) => {
-                      event.stopPropagation();
-                      if (onUserClick) {
-                        onUserClick(
-                          {
-                            address: sender.address,
-                            displayName: sender.displayName,
-                            userIcon: sender.userIcon,
-                          },
-                          event,
-                          {
-                            type: 'message-avatar',
-                            element: event.currentTarget as HTMLElement,
-                          }
-                        );
+            {isCompact ? (
+              <div className="message-sender-spacer">
+                <span className="compact-timestamp">
+                  {new Date(message.createdDate).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                </span>
+              </div>
+            ) : (
+              <UserAvatar
+                userIcon={sender.userIcon}
+                displayName={sender.displayName}
+                address={sender.address}
+                size={44}
+                className="message-sender-icon"
+                onClick={
+                  isTouchDevice()
+                    ? interactions.handleUserProfileClick
+                    : (event: React.MouseEvent) => {
+                        event.stopPropagation();
+                        if (onUserClick) {
+                          onUserClick(
+                            {
+                              address: sender.address,
+                              displayName: sender.displayName,
+                              userIcon: sender.userIcon,
+                            },
+                            event,
+                            {
+                              type: 'message-avatar',
+                              element: event.currentTarget as HTMLElement,
+                            }
+                          );
+                        }
                       }
-                    }
-              }
-            />
+                }
+              />
+            )}
             <Container className="message-content">
               {interactions.shouldShowActions && (
                 <MessageActions
@@ -700,142 +717,163 @@ export const Message = React.memo(
                   </Modal>
                 )}
 
-              {/* Desktop layout: horizontal row with username and timestamp */}
-              <FlexRow align="center" className="items-center min-w-0 hidden xs:flex">
-                <Text className="message-sender-name truncate-user-name-chat flex-shrink min-w-0">
-                  {sender.displayName}
-                </Text>
-                {message.isPinned && (
+              {/* Compact mode: show only signature warning inline */}
+              {isCompact ? (
+                !message.signature && (
                   <Tooltip
-                    id={`pin-indicator-${message.messageId}`}
-                    content={
-                      message.pinnedBy
-                        ? t`Pinned by ${mapSenderToUser(message.pinnedBy)?.displayName || message.pinnedBy}`
-                        : t`Pinned`
-                    }
+                    id={`signature-warning-compact-${message.messageId}`}
+                    content={t`Message does not have a valid signature, this may not be from the sender`}
                     showOnTouch={true}
                     autoHideAfter={3000}
                   >
                     <Icon
-                      name="pin"
-                      size="sm"
+                      name="warning"
                       variant="filled"
-                      className="ml-2 text-accent"
+                      size="xs"
+                      className="text-warning mr-1"
                     />
                   </Tooltip>
-                )}
-                {messageActions.isBookmarked && (
-                  <Tooltip
-                    id={`bookmark-indicator-${message.messageId}`}
-                    content={t`Bookmarked`}
-                    showOnTouch={true}
-                    autoHideAfter={3000}
-                  >
-                    <Icon
-                      name="bookmark"
-                      size="sm"
-                      variant="filled"
-                      className="ml-2 text-accent"
-                    />
-                  </Tooltip>
-                )}
-                <Text className="pl-2">
-                  {!message.signature && (
-                    <Tooltip
-                      id={`signature-warning-${message.messageId}`}
-                      content={t`Message does not have a valid signature, this may not be from the sender`}
-                      showOnTouch={true}
-                      autoHideAfter={3000}
-                    >
-                      <Icon
-                        name="warning"
-                        variant="filled"
-                        size="xs"
-                        className="text-warning"
-                      />
-                    </Tooltip>
-                  )}
-                </Text>
-                <FlexRow align="center" gap="xs" className="flex-shrink-0 min-w-20 mr-4">
-                  <Text className="message-timestamp">{displayedTimestmap}</Text>
-                  {isEdited && (
-                    <Text variant="subtle" size="xs">
-                      {t`(edited)`}
+                )
+              ) : (
+                <>
+                  {/* Desktop layout: horizontal row with username and timestamp */}
+                  <FlexRow align="center" className="items-center min-w-0 hidden xs:flex">
+                    <Text className="message-sender-name truncate-user-name-chat flex-shrink min-w-0">
+                      {sender.displayName}
                     </Text>
-                  )}
-                </FlexRow>
-              </FlexRow>
-
-              {/* Mobile layout: vertical stack with timestamp above username */}
-              <FlexColumn className="xs:hidden items-start">
-                {/* Timestamp row on mobile - aligned to left edge */}
-                <FlexRow align="center" gap="xs" className="mb-1 flex-shrink-0 min-w-20 mr-4">
-                  <Text className="message-timestamp">{displayedTimestmap}</Text>
-                  {isEdited && (
-                    <Text variant="subtle" size="xs">
-                      {t`(edited)`}
-                    </Text>
-                  )}
-                </FlexRow>
-
-                {/* Username row on mobile */}
-                <FlexRow align="center" className="items-center min-w-0">
-                  <Text className="message-sender-name truncate-user-name-chat flex-shrink min-w-0">
-                    {sender.displayName}
-                  </Text>
-                  {message.isPinned && (
-                    <Tooltip
-                      id={`pin-indicator-mobile-${message.messageId}`}
-                      content={
-                        message.pinnedBy
-                          ? t`Pinned by ${mapSenderToUser(message.pinnedBy)?.displayName || message.pinnedBy}`
-                          : t`Pinned`
-                      }
-                      showOnTouch={true}
-                      autoHideAfter={3000}
-                    >
-                      <Icon
-                        name="pin"
-                        size="sm"
-                        variant="filled"
-                        className="ml-2 text-accent"
-                      />
-                    </Tooltip>
-                  )}
-                  {messageActions.isBookmarked && (
-                    <Tooltip
-                      id={`bookmark-indicator-mobile-${message.messageId}`}
-                      content={t`Bookmarked`}
-                      showOnTouch={true}
-                      autoHideAfter={3000}
-                    >
-                      <Icon
-                        name="bookmark"
-                        size="sm"
-                        variant="filled"
-                        className="ml-2 text-accent"
-                      />
-                    </Tooltip>
-                  )}
-                  <Text className="pl-2">
-                    {!message.signature && (
+                    {message.isPinned && (
                       <Tooltip
-                        id={`signature-warning-mobile-${message.messageId}`}
-                        content={t`Message does not have a valid signature, this may not be from the sender`}
+                        id={`pin-indicator-${message.messageId}`}
+                        content={
+                          message.pinnedBy
+                            ? t`Pinned by ${mapSenderToUser(message.pinnedBy)?.displayName || message.pinnedBy}`
+                            : t`Pinned`
+                        }
                         showOnTouch={true}
                         autoHideAfter={3000}
                       >
                         <Icon
-                          name="warning"
+                          name="pin"
+                          size="sm"
                           variant="filled"
-                          size="xs"
-                          className="text-warning"
+                          className="ml-2 text-accent"
                         />
                       </Tooltip>
                     )}
-                  </Text>
-                </FlexRow>
-              </FlexColumn>
+                    {messageActions.isBookmarked && (
+                      <Tooltip
+                        id={`bookmark-indicator-${message.messageId}`}
+                        content={t`Bookmarked`}
+                        showOnTouch={true}
+                        autoHideAfter={3000}
+                      >
+                        <Icon
+                          name="bookmark"
+                          size="sm"
+                          variant="filled"
+                          className="ml-2 text-accent"
+                        />
+                      </Tooltip>
+                    )}
+                    <Text className="pl-2">
+                      {!message.signature && (
+                        <Tooltip
+                          id={`signature-warning-${message.messageId}`}
+                          content={t`Message does not have a valid signature, this may not be from the sender`}
+                          showOnTouch={true}
+                          autoHideAfter={3000}
+                        >
+                          <Icon
+                            name="warning"
+                            variant="filled"
+                            size="xs"
+                            className="text-warning"
+                          />
+                        </Tooltip>
+                      )}
+                    </Text>
+                    <FlexRow align="center" gap="xs" className="flex-shrink-0 min-w-20 mr-4">
+                      <Text className="message-timestamp">{displayedTimestmap}</Text>
+                      {isEdited && (
+                        <Text variant="subtle" size="xs">
+                          {t`(edited)`}
+                        </Text>
+                      )}
+                    </FlexRow>
+                  </FlexRow>
+
+                  {/* Mobile layout: vertical stack with timestamp above username */}
+                  <FlexColumn className="xs:hidden items-start">
+                    {/* Timestamp row on mobile - aligned to left edge */}
+                    <FlexRow align="center" gap="xs" className="mb-1 flex-shrink-0 min-w-20 mr-4">
+                      <Text className="message-timestamp">{displayedTimestmap}</Text>
+                      {isEdited && (
+                        <Text variant="subtle" size="xs">
+                          {t`(edited)`}
+                        </Text>
+                      )}
+                    </FlexRow>
+
+                    {/* Username row on mobile */}
+                    <FlexRow align="center" className="items-center min-w-0">
+                      <Text className="message-sender-name truncate-user-name-chat flex-shrink min-w-0">
+                        {sender.displayName}
+                      </Text>
+                      {message.isPinned && (
+                        <Tooltip
+                          id={`pin-indicator-mobile-${message.messageId}`}
+                          content={
+                            message.pinnedBy
+                              ? t`Pinned by ${mapSenderToUser(message.pinnedBy)?.displayName || message.pinnedBy}`
+                              : t`Pinned`
+                          }
+                          showOnTouch={true}
+                          autoHideAfter={3000}
+                        >
+                          <Icon
+                            name="pin"
+                            size="sm"
+                            variant="filled"
+                            className="ml-2 text-accent"
+                          />
+                        </Tooltip>
+                      )}
+                      {messageActions.isBookmarked && (
+                        <Tooltip
+                          id={`bookmark-indicator-mobile-${message.messageId}`}
+                          content={t`Bookmarked`}
+                          showOnTouch={true}
+                          autoHideAfter={3000}
+                        >
+                          <Icon
+                            name="bookmark"
+                            size="sm"
+                            variant="filled"
+                            className="ml-2 text-accent"
+                          />
+                        </Tooltip>
+                      )}
+                      <Text className="pl-2">
+                        {!message.signature && (
+                          <Tooltip
+                            id={`signature-warning-mobile-${message.messageId}`}
+                            content={t`Message does not have a valid signature, this may not be from the sender`}
+                            showOnTouch={true}
+                            autoHideAfter={3000}
+                          >
+                            <Icon
+                              name="warning"
+                              variant="filled"
+                              size="xs"
+                              className="text-warning"
+                            />
+                          </Tooltip>
+                        )}
+                      </Text>
+                    </FlexRow>
+                  </FlexColumn>
+                </>
+              )}
 
               {(() => {
                 const contentData = formatting.getContentData();

@@ -205,15 +205,53 @@ html:not(.dark) .chat-container {
   align-self: flex-start;
   cursor: pointer;
   margin-top: 4px;
+  // Use CSS variable to override inline size from UserAvatar - keeps avatar and spacer coupled
+  width: $message-avatar-size !important;
+  height: $message-avatar-size !important;
+  min-width: $message-avatar-size !important;
 
   // Responsive sizing for smaller devices
   @media (max-width: $screen-xs) {
-    width: $s-9 !important;
-    height: $s-9 !important;
-    min-width: $s-9 !important;
+    width: $message-avatar-size-mobile !important;
+    height: $message-avatar-size-mobile !important;
+    min-width: $message-avatar-size-mobile !important;
 
     // Adjust font size for initials
     font-size: $text-sm !important;
+  }
+}
+
+// Spacer for compact messages - uses same size variables as .message-sender-icon
+.message-sender-spacer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  align-self: flex-start;
+  width: $message-avatar-size;
+  min-width: $message-avatar-size;
+  flex-shrink: 0;
+  margin-top: 4px;
+  box-sizing: border-box; // Ensure width includes any internal padding
+
+  // Hidden by default, shown on hover (desktop only)
+  .compact-timestamp {
+    display: none;
+    font-size: $text-xs;
+    color: var(--color-text-muted);
+    white-space: nowrap;
+    margin-right: $s-1; // Use margin instead of padding on parent
+  }
+
+  @media (max-width: $screen-xs) {
+    width: $message-avatar-size-mobile;
+    min-width: $message-avatar-size-mobile;
+  }
+}
+
+// Desktop: show timestamp on message hover
+@media (hover: hover) {
+  .message-container:hover .message-sender-spacer .compact-timestamp {
+    display: block;
   }
 }
 
@@ -238,7 +276,7 @@ html:not(.dark) .chat-container {
 }
 
 .message-timestamp {
-  color: var(--surface-8);
+  color: var(--color-text-muted);
   margin-left: $s-2;
   font-size: $text-sm;
   /* Note: white-space and flex-shrink are now handled by Tailwind classes in JSX */

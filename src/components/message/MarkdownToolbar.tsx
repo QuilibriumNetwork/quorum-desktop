@@ -17,7 +17,7 @@ export interface MarkdownToolbarProps {
 }
 
 /**
- * Discord-style markdown formatting toolbar
+ * Markdown formatting toolbar
  * Appears above selected text in MessageComposer
  */
 export function MarkdownToolbar({
