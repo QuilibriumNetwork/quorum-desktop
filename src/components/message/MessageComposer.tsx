@@ -307,7 +307,9 @@ export const MessageComposer = forwardRef<
         if (!value || value.trim() === '') {
           textarea.style.height = '32px'; // With box-sizing: border-box, this includes padding
           textarea.style.overflowY = 'hidden';
-          setIsMultiline(false);
+          // Delay multiline state change to allow CSS height transition to complete
+          // This prevents the pill shape from appearing while textarea is still visually tall
+          setTimeout(() => setIsMultiline(false), 100);
           return;
         }
 

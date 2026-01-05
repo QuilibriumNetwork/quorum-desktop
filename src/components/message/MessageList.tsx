@@ -33,6 +33,8 @@ import type { DmContext } from '../../hooks/business/messages/useMessageActions'
 export interface MessageListRef {
   scrollToBottom: () => void;
   getVirtuosoRef: () => VirtuosoHandle | null;
+  /** Set deletion flag synchronously to prevent followOutput scroll during deletions */
+  setDeletionInProgress: (value: boolean) => void;
 }
 
 interface MessageListProps {
@@ -52,7 +54,6 @@ interface MessageListProps {
   customEmoji?: Emoji[];
   spaceName?: string;
   roles: Role[];
-  isDeletionInProgress?: boolean;
   onUserClick?: (
     user: {
       address: string;
@@ -121,7 +122,6 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
       channel,
       customEmoji,
       roles,
-      isDeletionInProgress,
       onUserClick,
       onChannelClick,
       spaceChannels,
@@ -153,6 +153,10 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
     const virtuoso = useRef<VirtuosoHandle>(null);
     const [init, setInit] = useState(false);
     const location = useLocation();
+
+    // Ref for deletion state - must be a ref (not state) for synchronous updates
+    // This prevents followOutput from scrolling before React state updates propagate
+    const deletionInProgressRef = useRef(false);
 
     // Track if we've jumped to an old message via hash navigation
     // This disables auto-scroll during manual pagination
@@ -209,6 +213,9 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
         }
       },
       getVirtuosoRef: () => virtuoso.current,
+      setDeletionInProgress: (value: boolean) => {
+        deletionInProgressRef.current = value;
+      },
     }));
 
     const mapSenderToUser = useCallback(
@@ -299,6 +306,13 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
               dmContext={dmContext}
               isCompact={displayInfo.isCompact}
               hasCompactBelow={displayInfo.hasCompactBelow}
+              onBeforeDelete={() => {
+                deletionInProgressRef.current = true;
+                // Clear after delay to allow for follow-up operations
+                setTimeout(() => {
+                  deletionInProgressRef.current = false;
+                }, 500);
+              }}
             />
           </React.Fragment>
         );
@@ -527,8 +541,9 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
               : messageList.length - 1
           }
           followOutput={(isAtBottom: boolean) => {
-            // Don't auto-scroll during deletions, even if user is at bottom
-            if (isDeletionInProgress) {
+            // Don't auto-scroll during deletions - use ref for synchronous check
+            // (props update async and may not be ready when Virtuoso calls followOutput)
+            if (deletionInProgressRef.current) {
               return false;
             }
             // Don't auto-scroll after jumping to old message (prevents scroll during manual pagination)

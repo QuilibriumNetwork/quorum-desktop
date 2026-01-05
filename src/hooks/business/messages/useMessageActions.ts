@@ -47,6 +47,8 @@ interface UseMessageActionsOptions {
   sourceName?: string;
   // DM context for offline-resilient reactions/deletes (optional - only for DMs)
   dmContext?: DmContext;
+  // Callback fired BEFORE optimistic delete update - use to prevent auto-scroll
+  onBeforeDelete?: () => void;
 }
 
 export function useMessageActions(options: UseMessageActionsOptions) {
@@ -74,6 +76,8 @@ export function useMessageActions(options: UseMessageActionsOptions) {
     sourceName,
     // DM context for offline-resilient reactions/deletes
     dmContext,
+    // Callback before delete
+    onBeforeDelete,
   } = options;
 
   // State for copied link feedback
@@ -294,6 +298,10 @@ export function useMessageActions(options: UseMessageActionsOptions) {
 
       // Detect DM: spaceId === channelId means it's a DM conversation
       const isDM = spaceId === channelId;
+
+      // Call before-delete callback to set deletion flag BEFORE optimistic update
+      // This prevents Virtuoso's followOutput from auto-scrolling
+      onBeforeDelete?.();
 
       // Optimistic update: Remove message from React Query cache immediately
       const messagesKey = buildMessagesKey({ spaceId, channelId });

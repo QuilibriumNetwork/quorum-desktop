@@ -62,7 +62,6 @@ const DirectMessage: React.FC<{}> = () => {
   // State for message signing
   const [skipSigning, setSkipSigning] = useState<boolean>(false);
   const [nonRepudiable, setNonRepudiable] = useState<boolean>(true);
-  const [isDeletionInProgress, setIsDeletionInProgress] = useState(false);
   const headerRef = useRef<HTMLDivElement>(null);
 
   // Auto-jump to first unread state
@@ -269,16 +268,6 @@ const DirectMessage: React.FC<{}> = () => {
         return;
       }
 
-      // Check if this is a deletion to prevent auto-scroll (for consistency with Channel.tsx)
-      const isDeletion =
-        typeof message === 'object' &&
-        'type' in message &&
-        message.type === 'remove-message';
-
-      if (isDeletion) {
-        setIsDeletionInProgress(true);
-      }
-
       const effectiveSkip = nonRepudiable ? false : skipSigning;
 
       if (typeof message === 'string') {
@@ -309,22 +298,8 @@ const DirectMessage: React.FC<{}> = () => {
         );
       }
 
-      // Clear deletion flag after a short delay
-      if (isDeletion) {
-        setTimeout(() => setIsDeletionInProgress(false), 300);
-      }
-
-      // Auto-scroll to bottom after sending message (same logic as Channel.tsx)
-      const isReaction =
-        typeof message === 'object' &&
-        'type' in message &&
-        (message.type === 'reaction' || message.type === 'remove-reaction');
-
-      if (!isReaction && !isDeletion) {
-        setTimeout(() => {
-          messageListRef.current?.scrollToBottom();
-        }, 100);
-      }
+      // Scroll is handled by Virtuoso's followOutput - no manual scroll needed
+      // Deletion flag is set via onBeforeDelete callback in MessageList
     },
     [
       address,
@@ -840,7 +815,6 @@ const DirectMessage: React.FC<{}> = () => {
                 setInReplyTo={composer.setInReplyTo}
                 members={members}
                 submitMessage={submit}
-                isDeletionInProgress={isDeletionInProgress}
                 scrollToMessageId={scrollToMessageId}
                 newMessagesSeparator={newMessagesSeparator}
                 onDismissSeparator={() => setNewMessagesSeparator(null)}

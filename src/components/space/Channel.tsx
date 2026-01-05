@@ -95,8 +95,6 @@ const Channel: React.FC<ChannelProps> = ({
   type ActivePanel = 'pinned' | 'notifications' | 'bookmarks' | 'search' | null;
   const [activePanel, setActivePanel] = useState<ActivePanel>(null);
 
-  const [isDeletionInProgress, setIsDeletionInProgress] = useState(false);
-
   // User profile modal state and logic
   const userProfileModal = useUserProfileModal({ showUsers });
 
@@ -246,15 +244,6 @@ const Channel: React.FC<ChannelProps> = ({
   const handleSubmitMessage = useCallback(
     async (message: string | object, inReplyTo?: string) => {
       // Check if this is a deletion to prevent auto-scroll
-      const isDeletion =
-        typeof message === 'object' &&
-        'type' in message &&
-        message.type === 'remove-message';
-
-      if (isDeletion) {
-        setIsDeletionInProgress(true);
-      }
-
       // Fetch parent message if replying (for reply notifications)
       let parentMessage;
       if (inReplyTo) {
@@ -282,22 +271,8 @@ const Channel: React.FC<ChannelProps> = ({
         parentMessage
       );
 
-      // Clear deletion flag after a short delay
-      if (isDeletion) {
-        setTimeout(() => setIsDeletionInProgress(false), 300);
-      }
-
-      // Only auto-scroll for actual messages (text/embed), not reactions or deletions
-      const isReaction =
-        typeof message === 'object' &&
-        'type' in message &&
-        (message.type === 'reaction' || message.type === 'remove-reaction');
-
-      if (!isReaction && !isDeletion) {
-        setTimeout(() => {
-          messageListRef.current?.scrollToBottom();
-        }, 100);
-      }
+      // Scroll is handled by Virtuoso's followOutput - no manual scroll needed
+      // Deletion flag is set via onBeforeDelete callback in MessageList
     },
     [
       spaceId,
@@ -353,10 +328,7 @@ const Channel: React.FC<ChannelProps> = ({
         isSpaceOwner,
         parentMessage
       );
-      // Auto-scroll to bottom after sending sticker
-      setTimeout(() => {
-        messageListRef.current?.scrollToBottom();
-      }, 100);
+      // Scroll is handled by Virtuoso's followOutput - no manual scroll needed
     },
     [
       spaceId,
@@ -972,7 +944,6 @@ const Channel: React.FC<ChannelProps> = ({
                 customEmoji={space?.emojis}
                 members={members}
                 submitMessage={handleSubmitMessage}
-                isDeletionInProgress={isDeletionInProgress}
                 onUserClick={userProfileModal.handleUserClick}
                 lastReadTimestamp={lastReadTimestamp}
                 onHashMessageNotFound={handleHashMessageNotFound}

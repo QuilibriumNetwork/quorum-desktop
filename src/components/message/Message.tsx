@@ -112,6 +112,8 @@ type MessageProps = {
   isCompact?: boolean;
   /** Whether the next message below is compact (for removing bottom padding) */
   hasCompactBelow?: boolean;
+  /** Callback fired BEFORE optimistic delete - use to prevent auto-scroll */
+  onBeforeDelete?: () => void;
 };
 
 export const Message = React.memo(
@@ -149,6 +151,7 @@ export const Message = React.memo(
     dmContext,
     isCompact = false,
     hasCompactBelow = false,
+    onBeforeDelete,
   }: MessageProps) => {
     const user = usePasskeysContext();
     const { spaceId } = useParams();
@@ -220,6 +223,8 @@ export const Message = React.memo(
       })(),
       // DM context for offline-resilient reactions/deletes
       dmContext,
+      // Callback before delete to prevent auto-scroll
+      onBeforeDelete,
     });
 
     // Emoji picker business logic
