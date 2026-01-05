@@ -140,6 +140,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Custom ContentEditable Mention Pills for Message Composer](tasks/mention-pills-in-message-textarea.md)
 - [Date Translation with Moment.js Locale Configuration](tasks/i18n-date-translation-moment-locale.md)
 - [Device Identification Improvement](tasks/device-identification-improvement.md)
+- [Fix Lingui "Uncompiled Message Detected" Warning](tasks/fix-lingui-uncompiled-message-warning.md)
 - [Implement Message Forwarding with Privacy Controls](tasks/message-forwarding-with-privacy-controls.md)
 - [Implement New Member Badge in Spaces](tasks/new-member-badge-spaces.md)
 - [Implement Role-Based Channel Visibility](tasks/channel-role-visibility.md)
@@ -354,6 +355,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [dnd-kit Touch Drag-and-Drop Best Practices Research](reports/dnd-kit-touch-best-practices_2025-12-11.md)
 - [File Size & Service Extraction Best Practices](reports/file-size-best-practices_2025-12-20.md)
 - [Quorum Privacy Analysis](reports/privacy-analysis-quorum-2025-12-03.md)
+- [quorum-shared Migration Analysis](reports/quorum-shared-migration-analysis_2026-01-05.md)
 - [Security Audit: Markdown Renderer & Mentions System](reports/security-audit-markdown-mentions-2025-11-18.md)
 - [Sync Optimizations Report](reports/sync-optimizations_2025-12-19.md)
 - [Web-to-Native Feature Sync Compatibility Analysis](reports/web-native-feature-sync-analysis_2025-12-04.md)
@@ -379,4 +381,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2026-01-04 17:52:43
+**Last Updated**: 2026-01-05 12:39:19
