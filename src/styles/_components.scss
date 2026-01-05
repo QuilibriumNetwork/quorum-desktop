@@ -113,6 +113,30 @@ div[role='presentation'] {
   margin-top: $s-1; // Fine-tune vertical alignment for DM layout
 }
 
+/* Muted badge for DM conversations */
+/* Positioned at top-left corner of avatar with circular background */
+.dm-muted-badge {
+  position: absolute;
+  top: -$s-1;
+  left: -$s-1;
+  width: $s-5;
+  height: $s-5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--color-bg-sidebar);
+  border-radius: $rounded-full;
+  z-index: 10;
+  color: var(--color-text-muted);
+}
+
+/* Favorite indicator for DM conversations */
+/* Accent border around the avatar */
+.dm-favorite-avatar {
+  border: $s-0-5 solid var(--accent);
+  border-radius: $rounded-full;
+}
+
 /* === LIST FADE EFFECTS === */
 /* Bottom fade overlay for scrollable lists (desktop only) */
 /* Apply via className - fades content at bottom into background */

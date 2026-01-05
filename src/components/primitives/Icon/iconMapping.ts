@@ -109,6 +109,7 @@ export const iconComponentMap: Record<IconName, string> = {
   palette: 'IconPalette',
   bell: 'IconBell',
   'bell-off': 'IconBellOff',
+  'bell-x': 'IconBellX',
 
   // Files & Media
   image: 'IconPhoto',

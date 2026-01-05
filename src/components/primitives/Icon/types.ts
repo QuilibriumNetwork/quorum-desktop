@@ -99,6 +99,7 @@ export type IconName =
   | 'palette'
   | 'bell'
   | 'bell-off'
+  | 'bell-x'
 
   // Files & Media
   | 'image'

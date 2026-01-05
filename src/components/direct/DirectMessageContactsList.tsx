@@ -403,6 +403,8 @@ const DirectMessageContactsList: React.FC = () => {
                   lastMessagePreview={c.preview}
                   previewIcon={c.previewIcon}
                   timestamp={c.timestamp}
+                  isMuted={mutedSet.has(c.conversationId)}
+                  isFavorite={favoritesSet.has(c.conversationId)}
                   onContextMenu={handleContextMenu(c.address, c.conversationId)}
                   onOpenSettings={handleOpenSettings(c.address)}
                 />

@@ -18,6 +18,8 @@ const DirectMessageContact: React.FunctionComponent<{
   lastMessagePreview?: string;
   previewIcon?: string;
   timestamp?: number;
+  isMuted?: boolean;
+  isFavorite?: boolean;
   onContextMenu?: (e: React.MouseEvent) => void;
   onOpenSettings?: () => void;
 }> = (props) => {
@@ -79,16 +81,31 @@ const DirectMessageContact: React.FunctionComponent<{
   // Common content for both touch and desktop
   const contactContent = (
     <>
+      {/* Show unread dot (left side of row) */}
       {props.unread && address !== props.address && (
         <div className="dm-unread-dot" title="Unread messages" />
       )}
-      <UserAvatar
-        userIcon={props.userIcon}
-        displayName={props.displayName || getAddressSuffix(props.address)}
-        address={props.address}
-        size={44}
-        className="direct-message-contact-icon flex-shrink-0"
-      />
+      {/* Avatar with optional muted badge overlay and favorite border */}
+      <div className="relative flex-shrink-0">
+        <UserAvatar
+          userIcon={props.userIcon}
+          displayName={props.displayName || getAddressSuffix(props.address)}
+          address={props.address}
+          size={44}
+          className={
+            'direct-message-contact-icon' +
+            (props.isFavorite ? ' dm-favorite-avatar' : '')
+          }
+        />
+        {props.isMuted && (
+          <div
+            className="dm-muted-badge"
+            title="Muted"
+          >
+            <Icon name="bell-off" size="sm" />
+          </div>
+        )}
+      </div>
       <div className="flex flex-col flex-1 min-w-0 pl-2">
         {/* Line 1: Name + Time */}
         <div className="flex items-center justify-between gap-2">
