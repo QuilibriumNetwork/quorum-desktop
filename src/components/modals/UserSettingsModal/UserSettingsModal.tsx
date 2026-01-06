@@ -17,7 +17,7 @@ import {
   useModalSaveState,
   useSpaceRecovery,
 } from '../../../hooks';
-import { validateDisplayName } from '../../../hooks/business/validation';
+import { validateDisplayName, validateUserBio } from '../../../hooks/business/validation';
 import General from './General';
 import Privacy from './Privacy';
 import Notifications from './Notifications';
@@ -57,6 +57,8 @@ const UserSettingsModal: React.FunctionComponent<{
   const {
     displayName,
     setDisplayName,
+    bio,
+    setBio,
     selectedCategory,
     setSelectedCategory,
     allowSync,
@@ -103,6 +105,7 @@ const UserSettingsModal: React.FunctionComponent<{
   const { restoreMissingSpaces, isRestoring } = useSpaceRecovery();
 
   const displayNameError = validateDisplayName(displayName);
+  const bioErrors = validateUserBio(bio);
 
   // Custom save handler that updates setUser callback
   const saveChanges = React.useCallback(async () => {
@@ -176,6 +179,9 @@ const UserSettingsModal: React.FunctionComponent<{
                       <General
                         displayName={displayName}
                         setDisplayName={setDisplayName}
+                        bio={bio}
+                        setBio={setBio}
+                        bioErrors={bioErrors}
                         currentPasskeyInfo={currentPasskeyInfo}
                         fileData={fileData}
                         currentFile={currentFile}
@@ -269,7 +275,7 @@ const UserSettingsModal: React.FunctionComponent<{
                 <Button
                   type="primary"
                   onClick={saveChanges}
-                  disabled={isSaving || !!displayNameError}
+                  disabled={isSaving || !!displayNameError || bioErrors.length > 0}
                 >
                   {t`Save Changes`}
                 </Button>

@@ -14,6 +14,8 @@ export interface UseUserSettingsOptions {
 export interface UseUserSettingsReturn {
   displayName: string;
   setDisplayName: (name: string) => void;
+  bio: string;
+  setBio: (bio: string) => void;
   selectedCategory: string;
   setSelectedCategory: (category: string) => void;
   allowSync: boolean;
@@ -40,6 +42,7 @@ export const useUserSettings = (
   const [displayName, setDisplayName] = useState(
     currentPasskeyInfo?.displayName || ''
   );
+  const [bio, setBio] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('general');
   const [allowSync, setAllowSync] = useState(false);
   const [nonRepudiable, setNonRepudiable] = useState(true);
@@ -78,6 +81,7 @@ export const useUserSettings = (
         existingConfig.current = config;
         setAllowSync(config?.allowSync ?? false);
         setNonRepudiable(config?.nonRepudiable ?? true);
+        setBio(config?.bio ?? '');
         setIsConfigLoaded(true);
       })();
     }
@@ -134,7 +138,7 @@ export const useUserSettings = (
         ';base64,' +
         Buffer.from(fileData).toString('base64');
     } else {
-      profileImageUrl = currentPasskeyInfo.pfpUrl;
+      profileImageUrl = currentPasskeyInfo.pfpUrl ?? DefaultImages.UNKNOWN_USER;
     }
 
     // Update stored passkey
@@ -161,6 +165,7 @@ export const useUserSettings = (
       nonRepudiable: nonRepudiable,
       name: displayName,
       profile_image: profileImageUrl,
+      bio: bio.trim() || undefined,
     };
     await actionQueueService.enqueue(
       'save-user-config',
@@ -170,25 +175,21 @@ export const useUserSettings = (
 
     // If devices were removed, reconstruct and upload the registration
     if (removedDevices.length > 0 && stagedRegistration) {
-      try {
-        // Reconstruct the registration with the updated device list
-        // This ensures proper signing of the modified registration
-        const updatedRegistration = await secureChannel.ConstructUserRegistration(
-          keyset.userKeyset,
-          stagedRegistration.device_registrations,
-          [] // No new devices to add
-        );
+      // Reconstruct the registration with the updated device list
+      // This ensures proper signing of the modified registration
+      const updatedRegistration = await secureChannel.ConstructUserRegistration(
+        keyset.userKeyset,
+        stagedRegistration.device_registrations,
+        [] // No new devices to add
+      );
 
-        await uploadRegistration({
-          address: currentPasskeyInfo.address,
-          registration: updatedRegistration,
-        });
+      await uploadRegistration({
+        address: currentPasskeyInfo.address,
+        registration: updatedRegistration,
+      });
 
-        // Clear the removed devices list after successful save
-        setRemovedDevices([]);
-      } catch (error) {
-        throw error; // Re-throw to be handled by the modal
-      }
+      // Clear the removed devices list after successful save
+      setRemovedDevices([]);
     }
 
     options.onSave?.();
@@ -197,6 +198,8 @@ export const useUserSettings = (
   return {
     displayName,
     setDisplayName,
+    bio,
+    setBio,
     selectedCategory,
     setSelectedCategory,
     allowSync,

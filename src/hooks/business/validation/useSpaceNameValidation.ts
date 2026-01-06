@@ -3,6 +3,12 @@ import { t } from '@lingui/core/macro';
 import { validateNameForXSS, MAX_NAME_LENGTH } from '../../../utils/validation';
 
 /**
+ * Maximum length for user bio/description
+ * Matches mobile app limit for consistency
+ */
+export const MAX_BIO_LENGTH = 160;
+
+/**
  * Centralized space name validation logic
  * Used across: CreateSpaceModal, SpaceSettingsModal/General
  */
@@ -62,6 +68,27 @@ export const validateSpaceDescription = (
 
   if (description.length > maxLength) {
     errors.push(t`Description must be ${maxLength} characters or less`);
+  }
+
+  return errors;
+};
+
+/**
+ * Validation helper for user bio (non-hook version)
+ * Can be used in callbacks and non-component contexts
+ *
+ * @param bio - The bio to validate
+ * @returns Array of error messages (empty if valid)
+ */
+export const validateUserBio = (bio: string): string[] => {
+  const errors: string[] = [];
+
+  if (!validateNameForXSS(bio)) {
+    errors.push(t`Bio cannot contain special characters`);
+  }
+
+  if (bio.length > MAX_BIO_LENGTH) {
+    errors.push(t`Bio must be ${MAX_BIO_LENGTH} characters or less`);
   }
 
   return errors;

@@ -1,6 +1,7 @@
 import * as React from 'react';
-import { Button, Input, Icon, Spacer, Tooltip } from '../../primitives';
+import { Input, Icon, Spacer, Tooltip, TextArea } from '../../primitives';
 import { t } from '@lingui/core/macro';
+import { Trans } from '@lingui/react/macro';
 import { ClickToCopyContent } from '../../ui';
 import { DefaultImages } from '../../../utils';
 import { ReactTooltip } from '../../ui';
@@ -8,6 +9,9 @@ import { ReactTooltip } from '../../ui';
 interface GeneralProps {
   displayName: string;
   setDisplayName: (value: string) => void;
+  bio: string;
+  setBio: (value: string) => void;
+  bioErrors: string[];
   currentPasskeyInfo: {
     pfpUrl?: string;
     address: string;
@@ -31,6 +35,9 @@ interface GeneralProps {
 const General: React.FunctionComponent<GeneralProps> = ({
   displayName,
   setDisplayName,
+  bio,
+  setBio,
+  bioErrors,
   currentPasskeyInfo,
   fileData,
   currentFile,
@@ -103,6 +110,32 @@ const General: React.FunctionComponent<GeneralProps> = ({
         </div>
       </div>
       <div className="modal-content-section">
+        <Spacer size="md" direction="vertical" borderTop={true} />
+        <div className="text-subtitle-2 mb-2">
+          <Trans>Bio</Trans>
+        </div>
+        <div className="w-full mb-2">
+          <TextArea
+            value={bio}
+            onChange={setBio}
+            placeholder={t`Tell us about yourself...`}
+            rows={3}
+            variant="filled"
+            className="w-full"
+            error={bioErrors.length > 0}
+            errorMessage={
+              bioErrors.length > 0
+                ? bioErrors.join('. ')
+                : undefined
+            }
+          />
+        </div>
+        {/* Bio is local-only for now - not synced across devices. See .agents/tasks/add-user-bio-field.md for future sync work */}
+        <div className="text-label mb-4">
+          <Trans>
+            This bio will be visible to others when they view your profile.
+          </Trans>
+        </div>
         <Spacer size="md" direction="vertical" borderTop={true} />
         {userIconFileError && (
           <div className="mb-4">
