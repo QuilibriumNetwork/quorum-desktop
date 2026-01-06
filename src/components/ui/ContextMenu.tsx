@@ -42,6 +42,10 @@ export type HeaderConfig =
       icon: IconName;
       iconColor?: string;
       iconVariant?: IconVariant;
+    }
+  | {
+      type: 'dm';
+      label: string;
     };
 
 // Menu item interface
@@ -239,6 +243,21 @@ const ContextMenu: React.FC<ContextMenuProps> = ({
             />
             <span className="context-menu-header-text truncate-channel-name">
               {header.channelName}
+            </span>
+          </div>
+        );
+      }
+      case 'dm': {
+        return (
+          <div className="context-menu-header">
+            <div
+              className="context-menu-folder-icon"
+              style={{ backgroundColor: 'var(--accent)' }}
+            >
+              <Icon name="message" size="sm" />
+            </div>
+            <span className="context-menu-header-text">
+              {header.label}
             </span>
           </div>
         );

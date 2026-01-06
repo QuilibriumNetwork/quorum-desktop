@@ -22,6 +22,7 @@ import { useConversationPreviews } from '../../hooks/business/conversations/useC
 import { useMessageDB } from '../context/useMessageDB';
 import { useDMFavorites } from '../../hooks/business/dm/useDMFavorites';
 import { useDMMute } from '../../hooks/business/dm/useDMMute';
+import { useDmReadState } from '../../context/DmReadStateContext';
 
 // Safe development-only testing - automatically disabled in production
 const ENABLE_MOCK_CONVERSATIONS =
@@ -65,6 +66,9 @@ const DirectMessageContactsList: React.FC = () => {
 
   // DM mute hook
   const { isMuted, toggleMute, mutedSet } = useDMMute();
+
+  // DM read state context (for immediate UI updates on "mark all as read")
+  const { markAllReadTimestamp } = useDmReadState();
 
   // Load mock utilities dynamically in development only
   React.useEffect(() => {
@@ -393,9 +397,13 @@ const DirectMessageContactsList: React.FC = () => {
         ) : (
           <>
             {filteredConversations.map((c) => {
+              // Use context override timestamp if available (for immediate "mark all read" UI update)
+              const effectiveReadTimestamp = markAllReadTimestamp
+                ? Math.max(c.lastReadTimestamp ?? 0, markAllReadTimestamp)
+                : (c.lastReadTimestamp ?? 0);
               return (
                 <DirectMessageContact
-                  unread={(c.lastReadTimestamp ?? 0) < c.timestamp && !mutedSet.has(c.conversationId)}
+                  unread={effectiveReadTimestamp < c.timestamp && !mutedSet.has(c.conversationId)}
                   key={'dmc-' + c.address}
                   address={c.address}
                   userIcon={c.icon}

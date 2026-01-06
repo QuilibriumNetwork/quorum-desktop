@@ -2,6 +2,7 @@ import * as React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { DndContext, closestCenter, DragOverlay } from '@dnd-kit/core';
 import { SortableContext } from '@dnd-kit/sortable';
+import { useDmReadState } from '../../context/DmReadStateContext';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
 import ExpandableNavMenu from './ExpandableNavMenu';
 import SpaceButton from './SpaceButton';
@@ -34,6 +35,10 @@ import { useSpaceLeaving } from '../../hooks/business/spaces/useSpaceLeaving';
 import { useChannelMute } from '../../hooks/business/channels';
 import { useResponsiveLayoutContext } from '../context/ResponsiveLayoutProvider';
 import { useMessageDB } from '../context/useMessageDB';
+import { hapticLight, hapticMedium } from '../../utils/haptic';
+import { useLongPressWithDefaults } from '../../hooks/useLongPress';
+import { TOUCH_INTERACTION_TYPES } from '../../constants/touchInteraction';
+import { isTouchDevice } from '../../utils/platform';
 import './NavMenu.scss';
 
 type NavMenuProps = {
@@ -66,7 +71,7 @@ const NavMenuContent: React.FC<NavMenuProps> = (props) => {
   const { navMenuOpen, isDesktop } = useResponsiveLayoutContext();
   const { openFolderEditor } = useModals();
   const { deleteFolder } = useDeleteFolder();
-  const { setIsContextMenuOpen } = useDragStateContext();
+  const { isContextMenuOpen, setIsContextMenuOpen } = useDragStateContext();
 
   // Folder context menu state
   const [folderContextMenu, setFolderContextMenu] = React.useState<FolderContextMenuState>({
@@ -83,8 +88,17 @@ const NavMenuContent: React.FC<NavMenuProps> = (props) => {
     position: { x: 0, y: 0 },
   });
 
+  // DM context menu state
+  const [dmContextMenuPosition, setDmContextMenuPosition] = React.useState<{ x: number; y: number } | null>(null);
+
   const { messageDB } = useMessageDB();
   const { leaveSpace } = useSpaceLeaving();
+
+  // DM read state context for immediate UI updates on "mark all as read"
+  const { markAllAsRead } = useDmReadState();
+
+  // Get total unread direct message conversations count (used for context menu visibility)
+  const dmUnreadCount = useDirectMessageUnreadCount();
 
   // Channel mute settings for the currently selected space in context menu
   const { showMutedChannels, toggleShowMutedChannels, isSpaceMuted, toggleSpaceMute } = useChannelMute({
@@ -249,6 +263,82 @@ const NavMenuContent: React.FC<NavMenuProps> = (props) => {
     return items;
   }, [spaceContextMenu.spaceId, spaceContextMenu.isOwner, openSpaceEditor, leaveSpace, showMutedChannels, toggleShowMutedChannels, isSpaceMuted, toggleSpaceMute]);
 
+  // DM context menu handlers - only show if there are unread messages
+  const handleDmContextMenu = React.useCallback(
+    (e: React.MouseEvent) => {
+      e.preventDefault();
+      // Only show context menu if there are unread DMs
+      if (dmUnreadCount > 0) {
+        setIsContextMenuOpen(true);
+        setDmContextMenuPosition({ x: e.clientX, y: e.clientY });
+      }
+    },
+    [setIsContextMenuOpen, dmUnreadCount]
+  );
+
+  const closeDmContextMenu = React.useCallback(() => {
+    setDmContextMenuPosition(null);
+    setIsContextMenuOpen(false);
+  }, [setIsContextMenuOpen]);
+
+  const handleMarkAllDmsRead = React.useCallback(async () => {
+    // Immediately update UI via context (triggers re-render of all consumers)
+    const now = markAllAsRead();
+
+    // Get all DM conversations and save read timestamps to DB in background
+    const { conversations } = await messageDB.getConversations({ type: 'direct' });
+    for (const conv of conversations) {
+      if ((conv.lastReadTimestamp ?? 0) < conv.timestamp) {
+        await messageDB.saveReadTime({
+          conversationId: conv.conversationId,
+          lastMessageTimestamp: now,
+        });
+      }
+    }
+  }, [messageDB, markAllAsRead]);
+
+  const getDmContextMenuItems = React.useCallback((): MenuItem[] => {
+    return [
+      {
+        id: 'mark-all-read',
+        icon: 'check',
+        label: t`Mark All as Read`,
+        onClick: handleMarkAllDmsRead,
+      },
+    ];
+  }, [handleMarkAllDmsRead]);
+
+  // DM icon long press for touch devices
+  const isTouch = isTouchDevice();
+  const dmTouchPos = React.useRef<{ x: number; y: number }>({ x: 0, y: 0 });
+
+  const dmLongPressHandlers = useLongPressWithDefaults({
+    delay: TOUCH_INTERACTION_TYPES.STANDARD.delay,
+    threshold: TOUCH_INTERACTION_TYPES.STANDARD.threshold,
+    onLongPress: () => {
+      // Only show context menu if there are unread DMs
+      if (dmUnreadCount > 0) {
+        hapticMedium();
+        setIsContextMenuOpen(true);
+        setDmContextMenuPosition(dmTouchPos.current);
+      }
+    },
+    onTap: () => {
+      hapticLight();
+      const lastAddress = sessionStorage.getItem('lastDmAddress');
+      navigate(lastAddress ? `/messages/${lastAddress}` : '/messages');
+    },
+    shouldPreventDefault: true,
+  });
+
+  // Wrap touch start to capture position for context menu
+  const handleDmTouchStart = React.useCallback((e: React.TouchEvent) => {
+    if (e.touches.length === 1) {
+      dmTouchPos.current = { x: e.touches[0].clientX, y: e.touches[0].clientY };
+    }
+    dmLongPressHandlers.onTouchStart(e);
+  }, [dmLongPressHandlers]);
+
   // Check if config has items (new format) or just spaceIds (legacy)
   const hasItems = config?.items && config.items.length > 0;
 
@@ -284,9 +374,6 @@ const NavMenuContent: React.FC<NavMenuProps> = (props) => {
   // Get unread message counts for all spaces
   const spaceUnreadCounts = useSpaceUnreadCounts({ spaces: spacesForCounts });
 
-  // Get total unread direct message conversations count
-  const dmUnreadCount = useDirectMessageUnreadCount();
-
   // Hide NavMenu below 1024px when navMenuOpen is false
   const navMenuStyle: React.CSSProperties = {};
   if (!isDesktop && !navMenuOpen) {
@@ -309,29 +396,8 @@ const NavMenuContent: React.FC<NavMenuProps> = (props) => {
         window.electron ? <div className="p-3"></div> : <></>
       }
       <div className="nav-menu-logo">
-        <Tooltip
-          id="dm-nav-icon"
-          content={t`Direct Messages`}
-          place="right"
-          highlighted={true}
-          showOnTouch={false}
-        >
-          <div
-            role="link"
-            tabIndex={0}
-            className="block cursor-pointer"
-            onClick={() => {
-              const lastAddress = sessionStorage.getItem('lastDmAddress');
-              navigate(lastAddress ? `/messages/${lastAddress}` : '/messages');
-            }}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault();
-                const lastAddress = sessionStorage.getItem('lastDmAddress');
-                navigate(lastAddress ? `/messages/${lastAddress}` : '/messages');
-              }
-            }}
-          >
+        {(() => {
+          const dmIconContent = (
             <div className="relative z-[999]">
               <div
                 className={`space-icon-toggle ${
@@ -353,8 +419,66 @@ const NavMenuContent: React.FC<NavMenuProps> = (props) => {
                 </span>
               )}
             </div>
-          </div>
-        </Tooltip>
+          );
+
+          // Touch: use long press handlers (tap navigates, long press opens context menu)
+          // Desktop: use click + right-click
+          const dmIconElement = isTouch ? (
+            <div
+              role="link"
+              tabIndex={0}
+              className={`block cursor-pointer ${dmLongPressHandlers.className || ''}`}
+              style={dmLongPressHandlers.style}
+              onTouchStart={handleDmTouchStart}
+              onTouchMove={dmLongPressHandlers.onTouchMove}
+              onTouchEnd={dmLongPressHandlers.onTouchEnd}
+              onContextMenu={dmLongPressHandlers.onContextMenu}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  const lastAddress = sessionStorage.getItem('lastDmAddress');
+                  navigate(lastAddress ? `/messages/${lastAddress}` : '/messages');
+                }
+              }}
+            >
+              {dmIconContent}
+            </div>
+          ) : (
+            <div
+              role="link"
+              tabIndex={0}
+              className="block cursor-pointer"
+              onClick={() => {
+                const lastAddress = sessionStorage.getItem('lastDmAddress');
+                navigate(lastAddress ? `/messages/${lastAddress}` : '/messages');
+              }}
+              onContextMenu={handleDmContextMenu}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  const lastAddress = sessionStorage.getItem('lastDmAddress');
+                  navigate(lastAddress ? `/messages/${lastAddress}` : '/messages');
+                }
+              }}
+            >
+              {dmIconContent}
+            </div>
+          );
+
+          return isContextMenuOpen ? (
+            dmIconElement
+          ) : (
+            <Tooltip
+              id="dm-nav-icon"
+              content={t`Direct Messages`}
+              place="right"
+              highlighted={true}
+              showOnTouch={false}
+            >
+              {dmIconElement}
+            </Tooltip>
+          );
+        })()}
       </div>
       <div className="nav-menu-spaces grow">
         <DndContext
@@ -510,6 +634,19 @@ const NavMenuContent: React.FC<NavMenuProps> = (props) => {
           items={getSpaceContextMenuItems()}
           position={spaceContextMenu.position}
           onClose={closeSpaceContextMenu}
+        />
+      )}
+
+      {/* DM context menu */}
+      {dmContextMenuPosition && (
+        <ContextMenu
+          header={{
+            type: 'dm',
+            label: t`Direct Messages`,
+          }}
+          items={getDmContextMenuItems()}
+          position={dmContextMenuPosition}
+          onClose={closeDmContextMenu}
         />
       )}
 

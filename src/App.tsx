@@ -15,6 +15,7 @@ import { Onboarding } from './components/onboarding/Onboarding';
 import { Maintenance } from './components/Maintenance';
 import { RegistrationProvider } from './components/context/RegistrationPersister';
 import { ResponsiveLayoutProvider } from './components/context/ResponsiveLayoutProvider';
+import { DmReadStateProvider } from './context/DmReadStateContext';
 import { Router } from './components/Router';
 import { isElectron, isWeb } from './utils/platform';
 import { DefaultImages } from './utils';
@@ -120,11 +121,13 @@ const App = () => {
               {isWeb() && isElectron() && <CustomTitlebar />}
               <Suspense fallback={<Connecting />}>
                 <RegistrationProvider>
-                  <ResponsiveLayoutProvider>
-                    <Suspense>
-                      <Router user={user} setUser={setUser} />
-                    </Suspense>
-                  </ResponsiveLayoutProvider>
+                  <DmReadStateProvider>
+                    <ResponsiveLayoutProvider>
+                      <Suspense>
+                        <Router user={user} setUser={setUser} />
+                      </Suspense>
+                    </ResponsiveLayoutProvider>
+                  </DmReadStateProvider>
                 </RegistrationProvider>
               </Suspense>
             </div>
