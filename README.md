@@ -1,4 +1,4 @@
-# Quorum Cross-Platform
+# Quorum Desktop
 
 The world's first fully private and decentralized group messenger.
 Powered by Quilibrium and the libp2p stack, Quorum can be used over TCP, QUIC, Websockets, or even LoRa — so it can run across the traditional internet, local networks, or off-grid setups.
@@ -7,9 +7,21 @@ Powered by Quilibrium and the libp2p stack, Quorum can be used over TCP, QUIC, W
 
 - **Web Browser** - [Live app (beta)](https://app.quorummessenger.com/)
 - **Desktop** - Electron wrapper for native desktop experience
-- **Mobile** - React Native app (in development)
+- **Mobile** - [quorum-mobile](https://github.com/QuilibriumNetwork/quorum-mobile) (React Native + Expo)
 
 - [Official website](https://www.quorummessenger.com/) - [FAQ](https://www.quorummessenger.com/faq)
+
+## Repository Ecosystem
+
+Quorum is built as a **multi-repository ecosystem** where shared functionality is centralized:
+
+| Repository | Purpose |
+|------------|---------|
+| **[quorum-desktop](https://github.com/QuilibriumNetwork/quorum-desktop)** | Web + Electron desktop app (this repo) |
+| **[quorum-mobile](https://github.com/QuilibriumNetwork/quorum-mobile)** | React Native + Expo mobile app |
+| **[quorum-shared](https://github.com/QuilibriumNetwork/quorum-shared)** | Shared types, hooks, sync protocol (`@quilibrium/quorum-shared`) |
+
+All clients sync data via the same protocol defined in `quorum-shared`, ensuring messages, bookmarks, and user settings stay in sync across all devices.
 
 ## Documentation
 
@@ -17,10 +29,9 @@ For detailed documentation on specific features and components, please refer to 
 
 **Key Documentation:**
 
+- [Quorum Ecosystem Architecture](.agents/docs/quorum-shared-architecture.md) - Multi-repo system and shared package
 - [Component Management Guide](.agents/docs/component-management-guide.md) - Creating cross-platform components
 - [Cross-Platform Architecture](.agents/docs/cross-platform-repository-implementation.md) - How the shared codebase works
-
-A complete documentation website will be created at a later time.
 
 ## Development Resources
 
@@ -113,18 +124,9 @@ yarn build:preview
 
 ### Mobile Development
 
-The mobile app uses React Native with Expo Dev Client and shares components with the web app through a cross-platform architecture.
+The mobile app lives in a separate repository: **[quorum-mobile](https://github.com/QuilibriumNetwork/quorum-mobile)**
 
-**Quick Start:**
-
-```bash
-yarn mobile  # Start development server
-```
-
-For detailed setup and testing instructions, see:
-
-- [Mobile README](mobile/README.md) - Complete mobile development guide
-- [Expo Dev Testing Guide](.agents/docs/expo-dev-testing-guide.md) - Environment setup and troubleshooting
+Both apps share code via the `@quilibrium/quorum-shared` package. See [Quorum Ecosystem Architecture](.agents/docs/quorum-shared-architecture.md) for details on the multi-repo setup.
 
 ## Translation Workflow
 
@@ -161,4 +163,4 @@ For detailed setup and testing instructions, see:
 
 ---
 
-_Updated: 2025-09-10 16:10_
+_Updated: 2026-01-06_

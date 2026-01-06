@@ -1,12 +1,28 @@
 # AGENTS.md
 
-This is a React project using Vite and Electron with a **cross-platform web + mobile architecture**.
+This is the **Quorum Desktop** repository - the web and Electron desktop app for Quorum messenger.
+
+---
+
+## 🌐 Multi-Repository Ecosystem
+
+Quorum is built as a **multi-repo ecosystem**. This repo is one of three:
+
+| Repository | Purpose |
+|------------|---------|
+| **[quorum-desktop](https://github.com/QuilibriumNetwork/quorum-desktop)** | Web + Electron desktop app (this repo) |
+| **[quorum-mobile](https://github.com/QuilibriumNetwork/quorum-mobile)** | React Native + Expo mobile app |
+| **[quorum-shared](https://github.com/QuilibriumNetwork/quorum-shared)** | Shared types, hooks, sync protocol |
+
+All clients sync data via `@quilibrium/quorum-shared`. When implementing features, check if mobile has it and use shared types for sync compatibility.
+
+**Full Guide**: [Quorum Ecosystem Architecture](.agents/docs/quorum-shared-architecture.md)
 
 ---
 
 ## 🚀 Quick Start for AI Development
 
-**IMPORTANT**: Before starting ANY task, read these three files in order:
+**IMPORTANT**: Before starting ANY task, read these files:
 
 1. **[AGENTS.md](.agents/AGENTS.md)** - Fast lookup for file paths, patterns, and common tasks
 2. **[agents-workflow.md](.agents/agents-workflow.md)** - How to effectively use documentation
@@ -14,49 +30,33 @@ This is a React project using Vite and Electron with a **cross-platform web + mo
 
 ---
 
-## Cross-Platform Architecture - CRITICAL
-
-**IMPORTANT**: This project uses a shared codebase with primitive components designed for both web and mobile platforms. All development must consider mobile compatibility from the start.
-
-### Key Principles
-
-- **Shared Code Architecture**: Components are built using custom primitives that abstract platform differences
-- **Mobile-First Approach**: Every UI change must work on both desktop and mobile
-- **Pragmatic Primitive Usage**: Use primitives for interactive elements and layouts, but don't over-engineer (see [When to Use Primitives](.agents/docs/features/primitives/03-when-to-use-primitives.md))
-- **Platform Detection**: Use `src/utils/platform.ts` utilities (`isWeb()`, `isMobile()`, `isElectron()`)
-
-**When making any changes, always ask**: "Will this work on mobile?" If uncertain, use primitives and follow mobile-first design principles.
-
-**Reference**: [AGENTS.md - Core Architectural Patterns](.agents/AGENTS.md#-core-architectural-patterns)
-
----
-
 ## Repository Structure
 
 ```
-quorum/
-├── src/                          # SHARED CODE (90% of app)
-│   ├── components/              # Business logic components
-│   │   ├── primitives/         # Cross-platform UI components
-│   │   └── Router/             # Platform-aware routing
-│   ├── hooks/                  # 100% shared business logic
-│   ├── api/                    # 100% shared API layer
-│   ├── services/               # 100% shared services
-│   ├── types/                  # 100% shared TypeScript types
-│   └── utils/                  # 100% shared utilities (including platform detection)
+quorum-desktop/
+├── src/                          # Application source code
+│   ├── components/              # React components
+│   │   ├── primitives/         # UI primitives (Button, Input, Modal, etc.)
+│   │   └── Router/             # Routing components
+│   ├── hooks/                  # Custom React hooks
+│   ├── api/                    # API layer
+│   ├── services/               # Business logic services
+│   ├── types/                  # TypeScript types (local, extends quorum-shared)
+│   ├── utils/                  # Utility functions
+│   └── adapters/               # Storage adapters (IndexedDBAdapter)
 │
-├── web/                        # WEB-SPECIFIC FILES
+├── web/                        # Web/Electron entry points
 │   ├── index.html             # Web HTML entry
-│   ├── main.tsx               # Web React entry point
+│   ├── main.tsx               # React entry point
 │   ├── vite.config.ts         # Vite bundler config
 │   └── electron/              # Electron desktop wrapper
 │
-├── mobile/                     # MOBILE-SPECIFIC FILES
-│   ├── App.tsx                # React Native entry point
-│   └── app.json               # Expo configuration
+└── .agents/                    # Development documentation
+    ├── docs/                   # Architecture & feature guides
+    ├── tasks/                  # Task tracking
+    ├── bugs/                   # Bug reports
+    └── reports/                # Analysis & audits
 ```
-
-**Detailed Guide**: [Cross-Platform Repository Implementation](.agents/docs/cross-platform-repository-implementation.md)
 
 ---
 
@@ -65,6 +65,28 @@ quorum/
 - **NEVER use npm commands** - this project uses Yarn exclusively
 - **Always use `yarn` commands** - npm creates package-lock.json which conflicts with yarn.lock
 - **If package-lock.json appears, DELETE it immediately**
+
+---
+
+## @quilibrium/quorum-shared
+
+Import shared types, hooks, and utilities from the shared package:
+
+```typescript
+// Types
+import type { Space, Message, Channel, UserConfig } from '@quilibrium/quorum-shared';
+
+// Utilities (most common - used in 45+ files)
+import { logger } from '@quilibrium/quorum-shared';
+
+// Sync utilities
+import { SyncService, createMemberDigest } from '@quilibrium/quorum-shared';
+
+// Hooks
+import { useSpaces, useMessages } from '@quilibrium/quorum-shared';
+```
+
+**Full Reference**: [Quorum Ecosystem Architecture](.agents/docs/quorum-shared-architecture.md)
 
 ---
 
@@ -91,34 +113,48 @@ if (someCondition) return <SomeComponent />;
 
 ---
 
+## UI Primitives
+
+Use primitives for interactive elements:
+
+```tsx
+import { Button, Input, Modal, Text } from 'src/components/primitives';
+
+<Button onClick={save}>Save</Button>
+<Input value={name} onChange={setName} />
+<Modal isOpen={open} onClose={close}>...</Modal>
+```
+
+**When to use primitives**: Always for interactive elements (Button, Input, Modal, Select, Switch). For layout and text, evaluate case-by-case.
+
+**Reference**: [Primitives Guide](.agents/docs/features/primitives/INDEX.md)
+
+---
+
 ## Documentation Structure
 
-The `.agents/` folder contains all development context, tasks, and documentation:
+The `.agents/` folder contains all development context:
 
 - **[AGENTS.md](.agents/AGENTS.md)** - ⭐ START HERE - Fast lookup for everything
 - **[agents-workflow.md](.agents/agents-workflow.md)** - ⭐ READ THIS - How to work effectively
 - **[INDEX.md](.agents/INDEX.md)** - Complete documentation index
 
-**For specific topics**, see [INDEX.md](.agents/INDEX.md) which organizes all documentation by:
+**Topics covered**:
 - Architecture & Components
 - Features (Modals, Search, Theming, etc.)
-- Mobile Development
 - Active Bugs & Tasks
 - Reports & Audits
 
 ---
 
-## Development Workflow
+## Development Checklist
 
-**See**: [AGENTS.md - Workflow Guidelines](.agents/AGENTS.md#-workflow-guidelines)
-
-Quick checklist:
 - ✅ Read AGENTS.md for relevant patterns
+- ✅ Check if feature exists in quorum-mobile (use shared types for sync)
 - ✅ Use primitives for interactive elements
-- ✅ Think mobile-first
 - ✅ Follow React Hooks rules
 - ✅ Use Yarn (never npm)
 
 ---
 
-_Last updated: 2025-11-19_
+_Last updated: 2026-01-06_

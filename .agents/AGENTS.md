@@ -4,6 +4,22 @@ Fast lookup guide for file paths and essential patterns. **For detailed workflow
 
 ---
 
+## 🌐 Quorum Ecosystem
+
+This repo is part of a **multi-repo ecosystem**. Data syncs across all clients.
+
+| Repository | Purpose | URL |
+|------------|---------|-----|
+| **quorum-desktop** | Web + Electron (this repo) | `github.com/QuilibriumNetwork/quorum-desktop` |
+| **quorum-mobile** | React Native + Expo | `github.com/QuilibriumNetwork/quorum-mobile` |
+| **quorum-shared** | Shared types, hooks, sync | `github.com/QuilibriumNetwork/quorum-shared` |
+
+**Before implementing features**: Check if mobile has it → use same shared types for sync compatibility.
+
+→ **Full Guide**: [Quorum Ecosystem Architecture](docs/quorum-shared-architecture.md)
+
+---
+
 ## 📁 Key File Locations
 
 | Category | Location | Key Files |
@@ -73,6 +89,21 @@ cmd.exe /c "cd /d $WINDOWS_PATH && yarn validate"
 
 ## 📦 Package Management
 **Use `yarn` only** - never `npm` (creates conflicts)
+
+## 📦 @quilibrium/quorum-shared
+
+Shared package providing types, hooks, and utilities for Quorum apps (web + mobile).
+
+| Module | Purpose | Common Import |
+|--------|---------|---------------|
+| **Types** | Space, Message, Channel, User, etc. | `import type { Space, Message } from '@quilibrium/quorum-shared'` |
+| **Storage** | StorageAdapter interface | `import type { StorageAdapter } from '@quilibrium/quorum-shared'` |
+| **Sync** | Hash-based delta sync protocol | `import { SyncService, createMemberDigest } from '@quilibrium/quorum-shared'` |
+| **Hooks** | React Query hooks | `import { useSpaces, useMessages } from '@quilibrium/quorum-shared'` |
+| **Utils** | Logger, encoding, formatting | `import { logger } from '@quilibrium/quorum-shared'` |
+| **Crypto** | E2E encryption, Ed448 signing | `import { WasmCryptoProvider } from '@quilibrium/quorum-shared'` |
+
+→ **Full Guide**: [quorum-shared-architecture.md](docs/quorum-shared-architecture.md)
 
 ## 🎯 Quick Component Lookup
 

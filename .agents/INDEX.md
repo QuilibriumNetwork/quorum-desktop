@@ -4,6 +4,7 @@ This is the main index for all documentation, bug reports, and task management.
 
 ## 📖 Documentation
 
+- [@quilibrium/quorum-shared Package Architecture](docs/quorum-shared-architecture.md)
 - [Complete Guide: Cross-Platform React Components for Web + Native](docs/cross-platform-components-guide.md)
 - [Component Management & Development Guide](docs/component-management-guide.md)
 - [Config Sync System](docs/config-sync-system.md)
