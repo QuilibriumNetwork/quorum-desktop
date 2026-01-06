@@ -61,6 +61,7 @@
   --color-bg-sidebar-hover: var(--surface-1); 
   --color-bg-sidebar-active: var(--surface-2);
   --color-bg-sidebar-active-accent: rgb(var(--accent-rgb) / 0.25);
+  --color-bg-dm-icon: var(--surface-9);
   // --color-bg-sidebar-active-accent: var(--accent-800);
 
   /* chat area */
@@ -176,6 +177,9 @@ html.dark {
 
   /* Field semantic - dark theme override */
   --color-field-placeholder: var(--color-text-muted);
+
+  /* utilities */
+  --color-bg-dm-icon: var(--surface-5);
 
   /* utilities - RGB values for use with or without opacity */
   /* Usage: rgb(var(--danger)) for solid, rgb(var(--danger) / 0.5) for opacity */

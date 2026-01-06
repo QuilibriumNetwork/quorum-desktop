@@ -143,7 +143,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Date Translation with Moment.js Locale Configuration](tasks/i18n-date-translation-moment-locale.md)
 - [Device Identification Improvement](tasks/device-identification-improvement.md)
 - [Fix Lingui "Uncompiled Message Detected" Warning](tasks/fix-lingui-uncompiled-message-warning.md)
-- [Fix SpaceIcon Notification Bubble Cache Invalidation](tasks/spaceicon-notification-cache-invalidation.md)
+- [Full Markdown Support Inside Spoilers](tasks/spoiler-full-markdown-support.md)
 - [Implement Message Forwarding with Privacy Controls](tasks/message-forwarding-with-privacy-controls.md)
 - [Implement New Member Badge in Spaces](tasks/new-member-badge-spaces.md)
 - [Implement Role-Based Channel Visibility](tasks/channel-role-visibility.md)
@@ -272,6 +272,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Fix Message Length Limit Bypass Vulnerability](tasks/.done/fix-message-length-bypass-vulnerability.md)
 - [Fix Own Messages Counted as Unread](tasks/.done/fix-own-messages-counted-as-unread.md)
 - [Fix Read-Only Channel Bypass Vulnerability](tasks/.done/fix-read-only-channel-bypass-vulnerability.md)
+- [Fix SpaceIcon Notification Bubble Cache Invalidation](tasks/.done/spaceicon-notification-cache-invalidation.md)
 - [Fix: React Query "undefined" Error in DM Conversations](tasks/.done/fix-react-query-undefined-error-in-dms.md)
 - [Implement Channel Mention Feature (#channelname)](tasks/.done/channel-mention-feature.md)
 - [Implement Collapsible Role Groups in Channel Members Sidebar](tasks/.done/collapsible-role-groups-sidebar.md)
@@ -281,6 +282,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Implement Mention Notification Bubbles](tasks/.done/mention-notification-bubbles.md)
 - [Implement Message Sending Indicator](tasks/.done/message-sending-indicator.md)
 - [Implement Per-Space Display Names and Avatars with Account Section](tasks/.done/per-space-display-name-avatar.md)
+- [Implement Spoiler Syntax (||text||) in Markdown Renderer](tasks/.done/spoiler-syntax-markdown-renderer.md)
 - [Implement User Mute Feature](tasks/.done/implement-mute-feature.md)
 - [Implementation Plan: Repository Restructure for Cross-Platform Development](tasks/.done/implementation-plan-repo-restructure.md)
 - [Jump to Present Button](tasks/.done/jump-to-present-button-messages-list.md)
@@ -385,4 +387,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2026-01-06 11:27:12
+**Last Updated**: 2026-01-06 15:52:15

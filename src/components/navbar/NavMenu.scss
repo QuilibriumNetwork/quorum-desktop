@@ -52,7 +52,7 @@ header {
     border-radius: $rounded-lg;
     background-position: center;
     background-size: contain;
-    background-color: #373036ff;
+    background-color: var(--color-bg-dm-icon);
     background-repeat: no-repeat;
     // Use block to avoid baseline alignment gap that affects toggle positioning
     display: block;
@@ -70,6 +70,8 @@ header {
     svg {
       width: $s-8; // 32px on desktop
       height: $s-8;
+      // Always white since background is dark (#373036) on both themes
+      color: white;
     }
   }
 
