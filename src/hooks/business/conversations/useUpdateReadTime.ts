@@ -54,22 +54,32 @@ export function useUpdateReadTime({
         queryKey: ['mention-counts', 'space'],
       });
 
-      // 4. Invalidate channel-level unread counts (updates channel unread dots)
+      // 4. Invalidate channel-level reply counts (updates channel sidebar reply badges)
+      queryClient.invalidateQueries({
+        queryKey: ['reply-counts', 'channel', spaceId],
+      });
+
+      // 5. Invalidate space-level reply counts (updates space icon reply bubbles)
+      queryClient.invalidateQueries({
+        queryKey: ['reply-counts', 'space'],
+      });
+
+      // 6. Invalidate channel-level unread counts (updates channel unread dots)
       queryClient.invalidateQueries({
         queryKey: ['unread-counts', 'channel', spaceId],
       });
 
-      // 5. Invalidate space-level unread counts (updates space unread dots)
+      // 7. Invalidate space-level unread counts (updates space unread dots)
       queryClient.invalidateQueries({
         queryKey: ['unread-counts', 'space'],
       });
 
-      // 6. Invalidate direct message unread counts (updates DM icon)
+      // 8. Invalidate direct message unread counts (updates DM icon)
       queryClient.invalidateQueries({
         queryKey: ['unread-counts', 'direct-messages'],
       });
 
-      // 7. Invalidate conversations list (updates unread indicators in contact list)
+      // 9. Invalidate conversations list (updates unread indicators in contact list)
       // For DMs, spaceId === channelId (same address used for both)
       const isDM = spaceId === channelId;
       if (isDM) {

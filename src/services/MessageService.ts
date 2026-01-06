@@ -1376,6 +1376,17 @@ export class MessageService {
       });
     }
 
+    // Invalidate reply counts when a reply to any user's message arrives
+    // This ensures the notification bubble updates when someone replies to your message
+    if (decryptedContent.replyMetadata?.parentAuthor) {
+      await queryClient.invalidateQueries({
+        queryKey: ['reply-counts', spaceId],
+      });
+      await queryClient.invalidateQueries({
+        queryKey: ['reply-notifications', spaceId],
+      });
+    }
+
     // Invalidate unread counts for ALL messages (including DMs without mentions)
     // Check if this is a DM (spaceId === channelId for direct messages)
     if (spaceId === channelId) {

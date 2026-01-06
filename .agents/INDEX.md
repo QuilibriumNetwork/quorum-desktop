@@ -32,6 +32,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Modal System Documentation](docs/features/modals.md)
 - [Mute Conversation System](docs/features/mute-conversation-system.md)
 - [Mute User System Documentation](docs/features/mute-user-system.md)
+- [Notification Indicators System](docs/features/notification-indicators-system.md)
 - [Offline Support](docs/features/offline-support.md)
 - [ReactTooltip Mobile Support Documentation](docs/features/reacttooltip-mobile.md)
 - [Responsive Layout System Documentation](docs/features/responsive-layout.md)
@@ -41,7 +42,6 @@ This is the main index for all documentation, bug reports, and task management.
 - [Toast Notifications](docs/features/toast-notifications.md)
 - [Touch Interaction System](docs/features/touch-interaction-system.md)
 - [Unified Notification System (Mentions + Replies)](docs/features/mention-notification-system.md)
-- [Unread Message Visual Indicators](docs/features/unread-message-indicators.md)
 - [User Config Sync on Existing Accounts](docs/features/user-config-sync.md)
 - [🔍 Global Message Search - Implementation Guide & Documentation](docs/features/search-feature.md)
 
@@ -143,6 +143,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Date Translation with Moment.js Locale Configuration](tasks/i18n-date-translation-moment-locale.md)
 - [Device Identification Improvement](tasks/device-identification-improvement.md)
 - [Fix Lingui "Uncompiled Message Detected" Warning](tasks/fix-lingui-uncompiled-message-warning.md)
+- [Fix SpaceIcon Notification Bubble Cache Invalidation](tasks/spaceicon-notification-cache-invalidation.md)
 - [Implement Message Forwarding with Privacy Controls](tasks/message-forwarding-with-privacy-controls.md)
 - [Implement New Member Badge in Spaces](tasks/new-member-badge-spaces.md)
 - [Implement Role-Based Channel Visibility](tasks/channel-role-visibility.md)
@@ -384,4 +385,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2026-01-06 10:52:32
+**Last Updated**: 2026-01-06 11:27:12
