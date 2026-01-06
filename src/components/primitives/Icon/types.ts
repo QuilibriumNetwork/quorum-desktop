@@ -65,6 +65,7 @@ export type IconName =
   | 'bullhorn'
   | 'message'
   | 'message-dots'
+  | 'comment-dots' // Legacy alias (FontAwesome name)
   | 'messages'
   | 'user'
   | 'users'

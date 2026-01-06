@@ -81,7 +81,6 @@ This is the main index for all documentation, bug reports, and task management.
 ### Active Issues
 - [Config Sync Space Loss Race Condition](bugs/config-sync-space-loss-race-condition.md)
 - [DirectMessage Invite Loading Performance Issue](bugs/directmessage-invite-loading-performance.md)
-- [DM "Mark All as Read" Context Menu - UI Not Updating Immediately](bugs/dm-mark-all-read-no-immediate-ui-update.md)
 - [Encryption State Evals Causing Config Sync Bloat](bugs/encryption-state-evals-bloat.md)
 - [Expired Invite Card Validation Timing Issue](bugs/expired-invite-card-validation-timing.md)
 - [JoinSpaceModal "Invalid JSON" Error Due to Network Issues](bugs/joinspacemodal-invalid-json-network-error.md)
@@ -103,6 +102,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Channel/Group Save Race Condition](bugs/.solved/channel-group-save-race-condition.md)
 - [Config Save Missing React Query Cache Update Causes Stale allowSync](bugs/.solved/config-save-stale-cache-allowsync.md)
 - [Deleted Messages Reappear After Peer Sync](bugs/.solved/deleted-messages-reappear-via-sync.md)
+- [DM "Mark All as Read" Context Menu - UI Not Updating Immediately](bugs/.solved/dm-mark-all-read-no-immediate-ui-update.md)
 - [DM Offline Navigation Shows Empty View](bugs/.solved/dm-offline-navigation-empty.md)
 - [DM Send Fails with "Cannot read properties of undefined (reading 'address')"](bugs/.solved/dm-send-fails-address-undefined.md)
 - [DM Shows "Unknown User" After Conversation Starts](bugs/.solved/dm-unknown-user-identity-not-revealed.md)
@@ -384,4 +384,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2026-01-06 10:30:39
+**Last Updated**: 2026-01-06 10:52:32

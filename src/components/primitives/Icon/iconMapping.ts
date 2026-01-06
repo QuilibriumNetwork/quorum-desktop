@@ -75,6 +75,7 @@ export const iconComponentMap: Record<IconName, string> = {
   bullhorn: 'IconSpeakerphone',
   message: 'IconMessage',
   'message-dots': 'IconMessageDots',
+  'comment-dots': 'IconMessageDots', // Legacy alias
   messages: 'IconMessages',
   user: 'IconUser',
   users: 'IconUsers',
