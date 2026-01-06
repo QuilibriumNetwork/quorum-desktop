@@ -11,6 +11,7 @@ Messages automatically detect markdown patterns and render with enhanced formatt
 - **Bold text:** `**text**` or `__text__`
 - **Italic text:** `*text*` or `_text_`
 - **Strikethrough:** `~~text~~`
+- **Spoiler:** `||hidden text||` - Click to reveal hidden content
 - **Inline code:** `` `code` ``
 
 ### **Structural Elements**
@@ -379,6 +380,22 @@ MessageMarkdownRenderer uses special tokens to safely render dynamic content lik
 
 **Related**: See `src/utils/markdownStripping.ts` for token handling in plain text contexts
 
+### Spoilers
+- **Syntax**: `||hidden text||`
+- **Detection**: `processMentionTokens()` matches `||content||` pattern directly (not a preprocessing token)
+- **Rendering**: Clickable `<span className="message-spoiler">` with dot pattern overlay
+- **Reveal**: Click or keyboard (Enter/Space) toggles `.message-spoiler--revealed` class
+- **Styling**: Dot pattern background (`radial-gradient`), theme-aware (dark/light)
+- **Accessibility**: `tabIndex={0}`, `role="button"`, `aria-label`, keyboard support
+- **Limitation**: Only plain text content works inside spoilers. URLs, mentions, code, and other markdown syntax break the pattern because markdown processes them first.
+- **CSS Classes**: `.message-spoiler`, `.message-spoiler--revealed`
+- **Example**: `"This is ||secret|| text"` → Hidden content revealed on click
+
+**Why not a preprocessing token?**
+Multiple approaches were tried (token system, base64, placeholders) but markdown processing corrupted or split the tokens. The current post-markdown detection is the simplest solution that works for the primary use case (hiding short text).
+
+**Related Task**: `.agents/tasks/spoiler-full-markdown-support.md` (backlog for full markdown support inside spoilers)
+
 ## Dependencies
 
 - `react-markdown` - Core markdown parser
@@ -403,6 +420,7 @@ A Discord-style floating toolbar that appears above selected text in the Message
 - **Strikethrough:** Toggle strikethrough (`~~text~~`)
 - **Code:** Wrap in inline code (`` `code` ``)
 - **Blockquote:** Insert blockquote (`> quote`)
+- **Spoiler:** Hide text with spoiler syntax (`||text||`)
 
 ### **Behavior**
 - Appears on text selection in MessageComposer
@@ -506,10 +524,10 @@ All user-controlled content now follows this pattern:
 - [Bookmarks](bookmarks.md) - Hybrid preview rendering for bookmarks
 
 ---
-**Last Updated**: 2025-12-03
+**Last Updated**: 2026-01-06
 **Security Hardening**: Complete (rehype-raw removed, XSS vulnerabilities fixed, word boundary validation added)
 **Performance Optimization**: Complete
 **Enhanced Mention Formats**: Complete (backward-compatible support for readable mention display names)
 **Message Links**: Complete (Discord-style rendering with same-space validation)
-**Recent Changes**: Added message link rendering (`<<<MESSAGE_LINK:...>>>` tokens), protected contexts for code blocks/inline code/markdown links, link truncation (50 chars), CodeBlockContext for reliable inline vs block code detection
-**Verified**: 2025-12-09 - File paths confirmed current
+**Spoilers**: Complete (plain text only, dot pattern styling, keyboard accessible)
+**Recent Changes**: Added spoiler syntax (`||text||`) with dot pattern styling and toolbar button

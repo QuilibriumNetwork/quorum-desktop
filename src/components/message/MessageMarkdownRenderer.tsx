@@ -567,10 +567,11 @@ export const MessageMarkdownRenderer: React.FC<MessageMarkdownRendererProps> = (
     return processed;
   }, [currentSpaceId, spaceChannels]);
 
-  // Shared function to process mention tokens into React components
+  // Shared function to process mention tokens and spoiler syntax into React components
+  // Spoilers (||text||) are detected here directly - content renders as plain text
   const processMentionTokens = useCallback((text: string): React.ReactNode[] => {
-    // Check if text contains any mention or message link tokens
-    const hasTokens = text.includes('<<<MENTION_') || text.includes('<<<MESSAGE_LINK:');
+    // Check if text contains any mention, message link, or spoiler tokens
+    const hasTokens = text.includes('<<<MENTION_') || text.includes('<<<MESSAGE_LINK:') || text.includes('||');
 
     if (!hasTokens) {
       return [text];
@@ -580,28 +581,32 @@ export const MessageMarkdownRenderer: React.FC<MessageMarkdownRendererProps> = (
     const parts: React.ReactNode[] = [];
     let lastIndex = 0;
 
-    // Regex to find all mention tokens (everyone, user, role, channel) and message link tokens
+    // Regex to find all mention tokens (everyone, user, role, channel), message link tokens, and spoilers
     // Updated to support inline display names: USER:address:inlineDisplayName and CHANNEL:id:name:inlineDisplayName
     // Using centralized IPFS CID validation pattern
     // SECURITY: Added quantifier limits to prevent catastrophic backtracking attacks
     // Capture group mapping:
-    // match[1] = MENTION type (EVERYONE, USER:..., ROLE:..., CHANNEL:...)
-    // match[2] = USER address
-    // match[3] = USER inline display name
-    // match[4] = ROLE roleTag
-    // match[5] = ROLE displayName
-    // match[6] = CHANNEL channelId
-    // match[7] = CHANNEL channelName
-    // match[8] = CHANNEL inline display name
-    // match[9] = MESSAGE_LINK channelId
-    // match[10] = MESSAGE_LINK messageId
-    // match[11] = MESSAGE_LINK channelName
+    // match[1] = Full token content (MENTION_..., MESSAGE_LINK:...)
+    // match[2] = MENTION subtype (EVERYONE, USER:..., ROLE:..., CHANNEL:...)
+    // match[3] = USER address
+    // match[4] = USER inline display name
+    // match[5] = ROLE roleTag
+    // match[6] = ROLE displayName
+    // match[7] = CHANNEL channelId
+    // match[8] = CHANNEL channelName
+    // match[9] = CHANNEL inline display name
+    // match[10] = MESSAGE_LINK channelId
+    // match[11] = MESSAGE_LINK messageId
+    // match[12] = MESSAGE_LINK channelName
+    // match[13] = SPOILER content (plain text inside ||...||)
     const cidPattern = createIPFSCIDRegex().source; // Get the pattern without global flag
+    // Combined regex for <<< >>> tokens and ||spoiler|| syntax
     const tokenRegex = new RegExp(
       `<<<(` +
         `MENTION_(EVERYONE|USER:(${cidPattern}):([^>]{0,200})|ROLE:([^:]{1,50}):([^>]{1,200})|CHANNEL:([^:>]{1,50}):([^:>]{1,200}):([^>]{0,200}))|` +
         `MESSAGE_LINK:([^:>]{1,100}):([^:>]{1,100}):([^>]{0,200})` +
-      `)>>>`,
+      `)>>>|` +
+      `\\|\\|([^|]{1,500})\\|\\|`,
       'g'
     );
     let match;
@@ -689,6 +694,32 @@ export const MessageMarkdownRenderer: React.FC<MessageMarkdownRendererProps> = (
             <Icon name="message" size="sm" variant="filled" className="message-mentions-message-link__icon" />
           </span>
         );
+      } else if (match[13]) {
+        // Spoiler: ||content|| - renders as plain text when revealed
+        const spoilerContent = match[13];
+        parts.push(
+          <span
+            key={`spoiler-${match.index}`}
+            className="message-spoiler"
+            onClick={(e) => {
+              e.currentTarget.classList.toggle('message-spoiler--revealed');
+              e.stopPropagation();
+            }}
+            onKeyDown={(e) => {
+              // Keyboard accessibility: reveal spoiler with Enter or Space
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.currentTarget.classList.toggle('message-spoiler--revealed');
+                e.stopPropagation();
+                e.preventDefault(); // Prevent Space from scrolling page
+              }
+            }}
+            tabIndex={0}
+            role="button"
+            aria-label="Click to reveal spoiler"
+          >
+            {spoilerContent}
+          </span>
+        );
       }
 
       lastIndex = match.index + match[0].length;
@@ -704,6 +735,7 @@ export const MessageMarkdownRenderer: React.FC<MessageMarkdownRendererProps> = (
 
   // Simplified processing pipeline with stable dependencies
   // NOTE: processMessageLinks BEFORE processURLs to prevent double-processing
+  // NOTE: Spoilers (||text||) are detected in processMentionTokens after markdown rendering
   const processedContent = useMemo(() => {
     return fixUnclosedCodeBlocks(
       convertHeadersToH3(

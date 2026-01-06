@@ -6,6 +6,7 @@ import {
   toggleItalic,
   wrapCode,
   toggleStrikethrough,
+  toggleSpoiler,
   FormatFunction,
 } from '../../utils/markdownFormatting';
 import './MarkdownToolbar.scss';
@@ -73,6 +74,13 @@ export function MarkdownToolbar({
         iconName="strikethrough"
         iconOnly
         onClick={() => onFormat(toggleStrikethrough)}
+      />
+      <Button
+        type="unstyled"
+        size="compact"
+        iconName="eye-off"
+        iconOnly
+        onClick={() => onFormat(toggleSpoiler)}
       />
     </div>
   );

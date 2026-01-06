@@ -95,6 +95,17 @@ export function toggleStrikethrough(
 }
 
 /**
+ * Toggle spoiler formatting: ||text||
+ */
+export function toggleSpoiler(
+  text: string,
+  start: number,
+  end: number
+): FormatResult {
+  return wrapSelection(text, start, end, '||');
+}
+
+/**
  * Wrap text in inline code: `text`
  */
 export function wrapCode(

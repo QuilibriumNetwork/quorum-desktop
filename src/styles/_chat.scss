@@ -165,6 +165,50 @@ html:not(.dark) .chat-container {
   }
 }
 
+/* Spoiler - dot pattern effect */
+.message-spoiler {
+  position: relative;
+  color: transparent;
+  border-radius: $rounded;
+  padding: 0 $s-1;
+  cursor: pointer;
+  user-select: none;
+
+  /* Background with dot pattern */
+  background-color: var(--surface-5);
+  background-image: radial-gradient(var(--surface-8) 0.5px, transparent 0.5px);
+  background-size: 5px 5px;
+
+  /* Light theme: darker dots for better contrast */
+  html:not(.dark) & {
+    background-color: var(--surface-4);
+    background-image: radial-gradient(var(--surface-9) 0.5px, transparent 0.5px);
+
+    &:hover {
+      background-color: var(--surface-5);
+    }
+  }
+
+  &:hover {
+    background-color: var(--surface-6);
+  }
+
+  /* Revealed state - remove dots, show content */
+  &--revealed {
+    color: inherit;
+    background-color: transparent;
+    background-image: none;
+    cursor: default;
+    user-select: text;
+  }
+
+  /* Accessibility: focus ring for keyboard navigation */
+  &:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 1px;
+  }
+}
+
 .message-list {
   flex: 1 1 auto;
   overflow-y: auto;

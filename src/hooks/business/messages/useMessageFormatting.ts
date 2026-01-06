@@ -39,6 +39,7 @@ const markdownPatterns = [
   /^---+$/m,              // Horizontal rule ---
   /\[[^\]]+\]\([^)]+\)/,  // Markdown links [text](url)
   /<[^>]+>/,              // Angle bracket autolinks <url> or <email>
+  /\|\|[^|]+\|\|/,        // Spoiler content ||text||
 ];
 
 function hasMarkdownPatterns(text: string): boolean {
