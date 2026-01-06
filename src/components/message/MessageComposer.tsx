@@ -12,6 +12,7 @@ import './MessageComposer.scss';
 import { UserAvatar } from '../user/UserAvatar';
 import { MarkdownToolbar } from './MarkdownToolbar';
 import type { FormatFunction } from '../../utils/markdownFormatting';
+import { toggleBold, toggleItalic, toggleStrikethrough, wrapCode } from '../../utils/markdownFormatting';
 import { calculateToolbarPosition } from '../../utils/toolbarPositioning';
 import { ENABLE_MARKDOWN } from '../../config/features';
 
@@ -222,13 +223,58 @@ export const MessageComposer = forwardRef<
       [onChange]
     );
 
-    // Handle key down with mention support
+    // Handle key down with mention support and markdown shortcuts
     const handleKeyDown = useCallback(
       (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
         // Let mention dropdown handle keys first
         if (mentionInput.handleKeyDown(e)) {
           return;
         }
+
+        // Markdown keyboard shortcuts (Ctrl/Cmd + key)
+        if (ENABLE_MARKDOWN && (e.ctrlKey || e.metaKey)) {
+          const textarea = textareaRef.current;
+          if (!textarea) return;
+
+          const start = textarea.selectionStart;
+          const end = textarea.selectionEnd;
+
+          // Helper to apply formatting
+          const applyFormat = (formatFn: FormatFunction) => {
+            e.preventDefault();
+            const result = formatFn(value, start, end);
+            onChange(result.newText);
+            setTimeout(() => {
+              textareaRef.current?.setSelectionRange(result.newStart, result.newEnd);
+              textareaRef.current?.focus();
+            }, 0);
+          };
+
+          // Ctrl/Cmd + B: Bold
+          if (e.key === 'b' && !e.shiftKey) {
+            applyFormat(toggleBold);
+            return;
+          }
+
+          // Ctrl/Cmd + I: Italic
+          if (e.key === 'i' && !e.shiftKey) {
+            applyFormat(toggleItalic);
+            return;
+          }
+
+          // Ctrl/Cmd + Shift + X: Strikethrough
+          if (e.key === 'X' && e.shiftKey) {
+            applyFormat(toggleStrikethrough);
+            return;
+          }
+
+          // Ctrl/Cmd + Shift + M: Inline code
+          if (e.key === 'M' && e.shiftKey) {
+            applyFormat(wrapCode);
+            return;
+          }
+        }
+
         // Otherwise pass to original handler
         onKeyDown(e);
         // Update cursor position
@@ -236,7 +282,7 @@ export const MessageComposer = forwardRef<
           setCursorPosition(textareaRef.current?.selectionStart || 0);
         }, 0);
       },
-      [mentionInput, onKeyDown]
+      [mentionInput, onKeyDown, value, onChange]
     );
 
     // Update cursor position on click/selection

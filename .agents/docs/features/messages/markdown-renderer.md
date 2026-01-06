@@ -422,6 +422,14 @@ A Discord-style floating toolbar that appears above selected text in the Message
 - **Blockquote:** Insert blockquote (`> quote`)
 - **Spoiler:** Hide text with spoiler syntax (`||text||`)
 
+### **Keyboard Shortcuts**
+| Action | Windows/Linux | macOS |
+|--------|---------------|-------|
+| Bold | `Ctrl + B` | `Cmd + B` |
+| Italic | `Ctrl + I` | `Cmd + I` |
+| Strikethrough | `Ctrl + Shift + X` | `Cmd + Shift + X` |
+| Inline Code | `Ctrl + Shift + M` | `Cmd + Shift + M` |
+
 ### **Behavior**
 - Appears on text selection in MessageComposer
 - Positioned above selected text (floating)
@@ -530,4 +538,5 @@ All user-controlled content now follows this pattern:
 **Enhanced Mention Formats**: Complete (backward-compatible support for readable mention display names)
 **Message Links**: Complete (Discord-style rendering with same-space validation)
 **Spoilers**: Complete (plain text only, dot pattern styling, keyboard accessible)
-**Recent Changes**: Added spoiler syntax (`||text||`) with dot pattern styling and toolbar button
+**Keyboard Shortcuts**: Complete (Bold, Italic, Strikethrough, Inline Code)
+**Recent Changes**: Added keyboard shortcuts for markdown formatting (Ctrl/Cmd + B/Shift+I/Shift+X/Shift+M)
