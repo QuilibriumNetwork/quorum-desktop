@@ -22,6 +22,7 @@ import General from './General';
 import Privacy from './Privacy';
 import Notifications from './Notifications';
 import Appearance from './Appearance';
+import Help from './Help';
 import Navigation from './Navigation';
 
 const UserSettingsModal: React.FunctionComponent<{
@@ -208,8 +209,6 @@ const UserSettingsModal: React.FunctionComponent<{
                         isSaving={isSaving}
                         removedDevices={removedDevices}
                         isConfigLoaded={isConfigLoaded}
-                        isRestoring={isRestoring}
-                        onRestoreMissingSpaces={restoreMissingSpaces}
                       />
                     );
                   case 'notifications':
@@ -230,6 +229,13 @@ const UserSettingsModal: React.FunctionComponent<{
                         languageChanged={languageChanged}
                         localeOptions={localeOptions}
                         forceUpdate={forceUpdate}
+                      />
+                    );
+                  case 'help':
+                    return (
+                      <Help
+                        isRestoring={isRestoring}
+                        onRestoreMissingSpaces={restoreMissingSpaces}
                       />
                     );
                   default:

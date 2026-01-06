@@ -18,8 +18,6 @@ interface PrivacyProps {
   isSaving: boolean;
   removedDevices?: string[];
   isConfigLoaded?: boolean;
-  isRestoring?: boolean;
-  onRestoreMissingSpaces?: () => void;
 }
 
 const Privacy: React.FunctionComponent<PrivacyProps> = ({
@@ -36,8 +34,6 @@ const Privacy: React.FunctionComponent<PrivacyProps> = ({
   isSaving,
   removedDevices = [],
   isConfigLoaded = true,
-  isRestoring = false,
-  onRestoreMissingSpaces,
 }) => {
   // QR code display state - requires explicit user confirmation
   const [showQRConfirmation, setShowQRConfirmation] = React.useState(false);
@@ -319,30 +315,6 @@ const Privacy: React.FunctionComponent<PrivacyProps> = ({
           </>
         )}
 
-        {onRestoreMissingSpaces && (
-          <>
-            <Spacer size="md" direction="vertical" borderTop={true} />
-            <div className="text-subtitle-2 mb-2">{t`Data Recovery`}</div>
-            <div className="modal-content-info">
-              <div className="flex flex-col gap-2">
-                <div className="flex items-start justify-between gap-3 p-3 rounded-md border">
-                  <div className="text-sm" style={{ lineHeight: 1.3 }}>
-                    {t`Restore Spaces that exist on this device but are missing from your navigation menu.`}
-                  </div>
-                  <Button
-                    type="secondary"
-                    size="small"
-                    className="whitespace-nowrap"
-                    onClick={onRestoreMissingSpaces}
-                    disabled={isRestoring}
-                  >
-                    {isRestoring ? t`Restoring...` : t`Restore`}
-                  </Button>
-                </div>
-              </div>
-            </div>
-          </>
-        )}
       </div>
     </>
   );

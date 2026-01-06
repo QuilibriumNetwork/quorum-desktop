@@ -16,6 +16,7 @@ const Navigation: React.FunctionComponent<NavigationProps> = ({
     { id: 'privacy', icon: 'shield', label: t`Privacy/Security`, className: '' },
     { id: 'notifications', icon: 'bell', label: t`Notifications`, className: '' },
     { id: 'appearance', icon: 'palette', label: t`Appearance`, className: '' },
+    { id: 'help', icon: 'support', label: t`Help`, className: '' },
   ];
 
   return (
@@ -35,8 +36,8 @@ const Navigation: React.FunctionComponent<NavigationProps> = ({
         ))}
       </div>
 
-      {/* Mobile Single Column Menu */}
-      <div className="modal-nav-mobile-single">
+      {/* Mobile 2-Column Menu */}
+      <div className="modal-nav-mobile-2col">
         {categories.map((category) => (
           <div
             key={category.id}
