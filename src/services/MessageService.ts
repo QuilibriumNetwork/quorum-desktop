@@ -1358,10 +1358,13 @@ export class MessageService {
       decryptedContent.mentions?.memberIds &&
       decryptedContent.mentions.memberIds.length > 0
     ) {
-      // Get user address from current passkey (we need to pass this in or get it from context)
-      // For now, invalidate for the whole space to catch all potential mentions
+      // Invalidate space-level mention counts (matches ['mention-counts', 'space', ...])
       await queryClient.invalidateQueries({
-        queryKey: ['mention-counts', spaceId],
+        queryKey: ['mention-counts', 'space'],
+      });
+      // Invalidate channel-level mention counts (matches ['mention-counts', 'channel', spaceId, ...])
+      await queryClient.invalidateQueries({
+        queryKey: ['mention-counts', 'channel', spaceId],
       });
       // Also invalidate notification inbox query
       await queryClient.invalidateQueries({
@@ -1379,8 +1382,13 @@ export class MessageService {
     // Invalidate reply counts when a reply to any user's message arrives
     // This ensures the notification bubble updates when someone replies to your message
     if (decryptedContent.replyMetadata?.parentAuthor) {
+      // Invalidate space-level reply counts (matches ['reply-counts', 'space', ...])
       await queryClient.invalidateQueries({
-        queryKey: ['reply-counts', spaceId],
+        queryKey: ['reply-counts', 'space'],
+      });
+      // Invalidate channel-level reply counts (matches ['reply-counts', 'channel', spaceId, ...])
+      await queryClient.invalidateQueries({
+        queryKey: ['reply-counts', 'channel', spaceId],
       });
       await queryClient.invalidateQueries({
         queryKey: ['reply-notifications', spaceId],

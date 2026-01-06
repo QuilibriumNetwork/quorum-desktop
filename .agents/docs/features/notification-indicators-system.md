@@ -73,6 +73,8 @@ This provides O(1) unread status per conversation.
 | Toggle bar | `spaceUnreadCounts[spaceId]` | Any channel has unread messages |
 | Count bubble | `spaceMentionCounts + spaceReplyCounts` | Mentions or replies exist |
 
+**Context Menu**: Right-click (desktop) or long-press (touch) shows "Mark All as Read" when any notifications exist (unread messages, mentions, or replies). This marks ALL channels in the space as read, including muted channels.
+
 ### Folder Icon (NavMenu)
 
 **Files**: `src/components/navbar/FolderButton.tsx`, `FolderContainer.tsx`
@@ -163,18 +165,50 @@ After user stays in channel/DM for 2+ seconds:
 
 ```typescript
 // For messages with mentions
-['mention-counts', spaceId]
+['mention-counts', 'space']           // Space-level (SpaceIcon bubble)
+['mention-counts', 'channel', spaceId] // Channel-level (ChannelList bubble)
 ['mention-notifications', spaceId]
 ['unread-counts', 'channel', spaceId]
 ['unread-counts', 'space']
 
 // For reply messages
-['reply-counts', spaceId]
+['reply-counts', 'space']              // Space-level (SpaceIcon bubble)
+['reply-counts', 'channel', spaceId]   // Channel-level (ChannelList bubble)
 ['reply-notifications', spaceId]
 
 // For DM messages
 ['unread-counts', 'direct-messages']
 ```
+
+### Space "Mark All as Read" (Context Menu)
+
+**File**: `src/components/navbar/NavMenu.tsx` (`handleMarkSpaceAsRead`)
+
+When "Mark All as Read" is selected from a Space Icon context menu:
+
+1. Gets all channel IDs from the space's groups
+2. Saves `lastReadTimestamp` for each channel via `messageDB.saveReadTime()`
+3. Invalidates caches:
+   - Space-level: `['mention-counts', 'space']`, `['reply-counts', 'space']`, `['unread-counts', 'space']`
+   - Channel-level: `['mention-counts', 'channel', spaceId]`, `['reply-counts', 'channel', spaceId]`, `['unread-counts', 'channel', spaceId]`
+   - NotificationPanel: `['mention-notifications', spaceId]`, `['reply-notifications', spaceId]`
+   - Conversations: `['conversation']`
+
+This ensures SpaceIcon indicators, ChannelList indicators, and NotificationPanel all update correctly.
+
+### NotificationPanel "Mark All as Read"
+
+**File**: `src/components/notifications/NotificationPanel.tsx` (`handleMarkAllRead`)
+
+When "Mark All as Read" button is clicked in NotificationPanel:
+
+1. Gets channels that have notifications from current list
+2. Saves `lastReadTimestamp` for each channel via `messageDB.saveReadTime()`
+3. Invalidates caches (same pattern as Space context menu):
+   - Space-level: `['mention-counts', 'space']`, `['reply-counts', 'space']`, `['unread-counts', 'space']`
+   - Channel-level: `['mention-counts', 'channel', spaceId]`, `['reply-counts', 'channel', spaceId]`, `['unread-counts', 'channel', spaceId]`
+   - NotificationPanel: `['mention-notifications', spaceId]`, `['reply-notifications', spaceId]`
+   - Conversations: `['conversation']`
 
 ### DM "Mark All as Read" Context
 
@@ -244,6 +278,8 @@ src/
 │   │   ├── FolderButton.tsx                # Folder icon with indicators
 │   │   ├── FolderContainer.tsx             # Folder aggregation logic
 │   │   └── NavMenu.tsx                     # Wires all NavMenu indicators
+│   ├── notifications/
+│   │   └── NotificationPanel.tsx           # Mark all read button
 │   ├── space/
 │   │   ├── ChannelList.tsx                 # Wires channel indicators
 │   │   └── ChannelItem.tsx                 # Channel item with indicators
@@ -264,4 +300,4 @@ src/
 
 ---
 
-*Updated: 2026-01-06*
+*Updated: 2026-01-06 13:45*

@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { useQueryClient } from '@tanstack/react-query';
 import { DndContext, closestCenter, DragOverlay } from '@dnd-kit/core';
 import { SortableContext } from '@dnd-kit/sortable';
 import { useDmReadState } from '../../context/DmReadStateContext';
@@ -58,6 +59,7 @@ interface SpaceContextMenuState {
   iconUrl?: string;
   isOwner: boolean;
   position: { x: number; y: number };
+  hasNotifications: boolean;
 }
 
 const NavMenuContent: React.FC<NavMenuProps> = (props) => {
@@ -86,6 +88,7 @@ const NavMenuContent: React.FC<NavMenuProps> = (props) => {
     iconUrl: undefined,
     isOwner: false,
     position: { x: 0, y: 0 },
+    hasNotifications: false,
   });
 
   // DM context menu state
@@ -93,6 +96,7 @@ const NavMenuContent: React.FC<NavMenuProps> = (props) => {
 
   const { messageDB } = useMessageDB();
   const { leaveSpace } = useSpaceLeaving();
+  const queryClient = useQueryClient();
 
   // DM read state context for immediate UI updates on "mark all as read"
   const { markAllAsRead } = useDmReadState();
@@ -162,7 +166,13 @@ const NavMenuContent: React.FC<NavMenuProps> = (props) => {
 
   // Space context menu handlers
   const handleSpaceContextMenu = React.useCallback(
-    async (spaceId: string, spaceName: string, iconUrl: string | undefined, e: React.MouseEvent) => {
+    async (
+      spaceId: string,
+      spaceName: string,
+      iconUrl: string | undefined,
+      e: React.MouseEvent,
+      hasNotifications: boolean
+    ) => {
       e.preventDefault();
       setIsContextMenuOpen(true);
       // Check if user is owner of this space by checking for owner key
@@ -179,6 +189,7 @@ const NavMenuContent: React.FC<NavMenuProps> = (props) => {
         iconUrl,
         isOwner,
         position: { x: e.clientX, y: e.clientY },
+        hasNotifications,
       });
     },
     [messageDB, setIsContextMenuOpen]
@@ -191,6 +202,7 @@ const NavMenuContent: React.FC<NavMenuProps> = (props) => {
       iconUrl: undefined,
       isOwner: false,
       position: { x: 0, y: 0 },
+      hasNotifications: false,
     });
     setIsContextMenuOpen(false);
   }, [setIsContextMenuOpen]);
@@ -198,29 +210,43 @@ const NavMenuContent: React.FC<NavMenuProps> = (props) => {
   const { openSpaceEditor } = useModals();
 
   // Get space context menu items based on ownership
-  const getSpaceContextMenuItems = React.useCallback((): MenuItem[] => {
-    if (!spaceContextMenu.spaceId) return [];
+  // Note: handleMarkSpaceAsRead is defined later but will be available at call time
+  const getSpaceContextMenuItems = React.useCallback(
+    (markSpaceAsRead: () => Promise<void>): MenuItem[] => {
+      if (!spaceContextMenu.spaceId) return [];
 
-    const items: MenuItem[] = [
-      {
-        id: 'account',
-        icon: 'user',
-        label: t`My Account`,
-        onClick: () => openSpaceEditor(spaceContextMenu.spaceId!, 'account'),
-      },
-      {
-        id: 'toggle-muted-channels',
-        icon: showMutedChannels ? 'eye-off' : 'eye',
-        label: showMutedChannels ? t`Hide Muted Channels` : t`Show Muted Channels`,
-        onClick: () => toggleShowMutedChannels(),
-      },
-      {
-        id: 'toggle-space-mute',
-        icon: isSpaceMuted ? 'bell' : 'bell-off',
-        label: isSpaceMuted ? t`Unmute Space` : t`Mute Space`,
-        onClick: () => toggleSpaceMute(),
-      },
-    ];
+      const items: MenuItem[] = [];
+
+      items.push(
+        {
+          id: 'account',
+          icon: 'user',
+          label: t`My Account`,
+          onClick: () => openSpaceEditor(spaceContextMenu.spaceId!, 'account'),
+        },
+        {
+          id: 'toggle-muted-channels',
+          icon: showMutedChannels ? 'eye-off' : 'eye',
+          label: showMutedChannels ? t`Hide Muted Channels` : t`Show Muted Channels`,
+          onClick: () => toggleShowMutedChannels(),
+        },
+        {
+          id: 'toggle-space-mute',
+          icon: isSpaceMuted ? 'bell' : 'bell-off',
+          label: isSpaceMuted ? t`Unmute Space` : t`Mute Space`,
+          onClick: () => toggleSpaceMute(),
+        }
+      );
+
+      // Add Mark All as Read after mute options (no separator above)
+      if (spaceContextMenu.hasNotifications) {
+        items.push({
+          id: 'mark-all-read',
+          icon: 'check',
+          label: t`Mark All as Read`,
+          onClick: markSpaceAsRead,
+        });
+      }
 
     if (spaceContextMenu.isOwner) {
       items.push(
@@ -261,7 +287,7 @@ const NavMenuContent: React.FC<NavMenuProps> = (props) => {
     }
 
     return items;
-  }, [spaceContextMenu.spaceId, spaceContextMenu.isOwner, openSpaceEditor, leaveSpace, showMutedChannels, toggleShowMutedChannels, isSpaceMuted, toggleSpaceMute]);
+  }, [spaceContextMenu.spaceId, spaceContextMenu.isOwner, spaceContextMenu.hasNotifications, openSpaceEditor, leaveSpace, showMutedChannels, toggleShowMutedChannels, isSpaceMuted, toggleSpaceMute]);
 
   // DM context menu handlers - only show if there are unread messages
   const handleDmContextMenu = React.useCallback(
@@ -373,6 +399,46 @@ const NavMenuContent: React.FC<NavMenuProps> = (props) => {
 
   // Get unread message counts for all spaces
   const spaceUnreadCounts = useSpaceUnreadCounts({ spaces: spacesForCounts });
+
+  // Handler for marking all messages in a space as read
+  const handleMarkSpaceAsRead = React.useCallback(async () => {
+    if (!spaceContextMenu.spaceId) return;
+
+    const spaceId = spaceContextMenu.spaceId;
+    const now = Date.now();
+
+    // Get all channel IDs for this space
+    const allSpacesList = hasItems ? allSpaces : mappedSpaces;
+    const space = allSpacesList.find((s) => s.spaceId === spaceId);
+    if (!space) return;
+
+    const channelIds = space.groups.flatMap((g) => g.channels.map((c) => c.channelId));
+
+    // Save read time for each channel
+    for (const channelId of channelIds) {
+      await messageDB.saveReadTime({
+        conversationId: `${spaceId}/${channelId}`,
+        lastMessageTimestamp: now,
+      });
+    }
+
+    // Invalidate caches to trigger refetch
+    // Space-level counts (for SpaceIcon indicators)
+    queryClient.invalidateQueries({ queryKey: ['mention-counts', 'space'] });
+    queryClient.invalidateQueries({ queryKey: ['reply-counts', 'space'] });
+    queryClient.invalidateQueries({ queryKey: ['unread-counts', 'space'] });
+    // Channel-level counts (for channel list indicators)
+    queryClient.invalidateQueries({ queryKey: ['mention-counts', 'channel', spaceId] });
+    queryClient.invalidateQueries({ queryKey: ['reply-counts', 'channel', spaceId] });
+    queryClient.invalidateQueries({ queryKey: ['unread-counts', 'channel', spaceId] });
+    // NotificationPanel data
+    queryClient.invalidateQueries({ queryKey: ['mention-notifications', spaceId] });
+    queryClient.invalidateQueries({ queryKey: ['reply-notifications', spaceId] });
+    // Conversation data (for read timestamps)
+    queryClient.invalidateQueries({ queryKey: ['conversation'] });
+
+    closeSpaceContextMenu();
+  }, [spaceContextMenu.spaceId, hasItems, allSpaces, mappedSpaces, messageDB, queryClient, closeSpaceContextMenu]);
 
   // Hide NavMenu below 1024px when navMenuOpen is false
   const navMenuStyle: React.CSSProperties = {};
@@ -504,7 +570,10 @@ const NavMenuContent: React.FC<NavMenuProps> = (props) => {
                       key={space.spaceId}
                       space={{ ...space, notifs: unreadCount }}
                       mentionCount={totalCount > 0 ? totalCount : undefined}
-                      onContextMenu={(e) => handleSpaceContextMenu(space.spaceId, space.spaceName, space.iconUrl, e)}
+                      onContextMenu={(e) => {
+                        const hasNotifications = unreadCount > 0 || totalCount > 0;
+                        handleSpaceContextMenu(space.spaceId, space.spaceName, space.iconUrl, e, hasNotifications);
+                      }}
                     />
                   );
                 } else if (navItem.item.type === 'folder' && navItem.spaces) {
@@ -551,7 +620,10 @@ const NavMenuContent: React.FC<NavMenuProps> = (props) => {
                     key={space.spaceId}
                     space={{ ...space, notifs: unreadCount }}
                     mentionCount={totalCount > 0 ? totalCount : undefined}
-                    onContextMenu={(e) => handleSpaceContextMenu(space.spaceId, space.spaceName, space.iconUrl, e)}
+                    onContextMenu={(e) => {
+                      const hasNotifications = unreadCount > 0 || totalCount > 0;
+                      handleSpaceContextMenu(space.spaceId, space.spaceName, space.iconUrl, e, hasNotifications);
+                    }}
                   />
                 );
               })}
@@ -631,7 +703,7 @@ const NavMenuContent: React.FC<NavMenuProps> = (props) => {
             spaceName: spaceContextMenu.spaceName,
             iconUrl: spaceContextMenu.iconUrl,
           }}
-          items={getSpaceContextMenuItems()}
+          items={getSpaceContextMenuItems(handleMarkSpaceAsRead)}
           position={spaceContextMenu.position}
           onClose={closeSpaceContextMenu}
         />

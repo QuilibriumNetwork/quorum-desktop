@@ -25,7 +25,7 @@ interface FolderContainerProps {
   isExpanded: boolean;
   onToggleExpand: () => void;
   onContextMenu?: (e: React.MouseEvent) => void;
-  onSpaceContextMenu?: (spaceId: string, spaceName: string, iconUrl: string | undefined, e: React.MouseEvent) => void;
+  onSpaceContextMenu?: (spaceId: string, spaceName: string, iconUrl: string | undefined, e: React.MouseEvent, hasNotifications: boolean) => void;
   onEdit: () => void;
   spaceMentionCounts?: Record<string, number>;
 }
@@ -208,7 +208,10 @@ const FolderContainer: React.FC<FolderContainerProps> = ({
                     size="regular"
                     mentionCount={spaceMentionCounts[space.spaceId]}
                     parentFolderId={folder.id}
-                    onContextMenu={onSpaceContextMenu ? (e) => onSpaceContextMenu(space.spaceId, space.spaceName, space.iconUrl, e) : undefined}
+                    onContextMenu={onSpaceContextMenu ? (e) => {
+                      const hasNotifications = (space.notifs || 0) > 0 || (spaceMentionCounts[space.spaceId] || 0) > 0;
+                      onSpaceContextMenu(space.spaceId, space.spaceName, space.iconUrl, e, hasNotifications);
+                    } : undefined}
                   />
                 ))}
               </div>

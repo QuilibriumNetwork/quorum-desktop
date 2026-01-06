@@ -142,11 +142,19 @@ export const NotificationPanel: React.FC<NotificationPanelProps> = ({
         });
       }
 
-      // Invalidate both mention and reply count caches
+      // Invalidate all notification-related caches
+      // Space-level counts (for SpaceIcon indicators in NavMenu)
+      queryClient.invalidateQueries({ queryKey: ['mention-counts', 'space'] });
+      queryClient.invalidateQueries({ queryKey: ['reply-counts', 'space'] });
+      queryClient.invalidateQueries({ queryKey: ['unread-counts', 'space'] });
+      // Channel-level counts (for ChannelList indicators)
       queryClient.invalidateQueries({ queryKey: ['mention-counts', 'channel', spaceId] });
-      queryClient.invalidateQueries({ queryKey: ['mention-notifications', spaceId] });
       queryClient.invalidateQueries({ queryKey: ['reply-counts', 'channel', spaceId] });
+      queryClient.invalidateQueries({ queryKey: ['unread-counts', 'channel', spaceId] });
+      // NotificationPanel data
+      queryClient.invalidateQueries({ queryKey: ['mention-notifications', spaceId] });
       queryClient.invalidateQueries({ queryKey: ['reply-notifications', spaceId] });
+      // Conversation data (for read timestamps)
       queryClient.invalidateQueries({ queryKey: ['conversation'] });
 
       // Close dropdown
