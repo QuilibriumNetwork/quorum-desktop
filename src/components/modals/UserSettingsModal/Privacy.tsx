@@ -116,7 +116,7 @@ const Privacy: React.FunctionComponent<PrivacyProps> = ({
               </Tooltip>
             </div>
           </div>
-          <div className="flex flex-row items-center gap-3">
+          <div className="flex flex-row items-center gap-3 mb-3">
             <Switch value={nonRepudiable} onChange={setNonRepudiable} />
             <div className="flex flex-row items-center">
               <div className="text-label-strong">
@@ -125,6 +125,25 @@ const Privacy: React.FunctionComponent<PrivacyProps> = ({
               <Tooltip
                 id="settings-non-repudiable-tooltip"
                 content={t`When you sign a message, you are confirming that it comes from your key. When you don't sign a message, you have plausible deniability. You can control this setting for each conversation and message individually.`}
+                place="bottom"
+              >
+                <Icon
+                  name="info-circle"
+                  className="text-main hover:text-strong cursor-pointer ml-2"
+                  size="sm"
+                />
+              </Tooltip>
+            </div>
+          </div>
+          <div className="flex flex-row items-center gap-3">
+            <Switch value={false} onChange={() => {}} disabled={true} />
+            <div className="flex flex-row items-center">
+              <div className="text-label-strong text-muted">
+                {t`Show Online Status`}
+              </div>
+              <Tooltip
+                id="settings-show-online-status-tooltip"
+                content={t`When enabled, other users can see when you are active. This feature is not yet available.`}
                 place="bottom"
               >
                 <Icon
