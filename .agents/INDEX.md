@@ -4,7 +4,6 @@ This is the main index for all documentation, bug reports, and task management.
 
 ## 📖 Documentation
 
-- [@quilibrium/quorum-shared Package Architecture](docs/quorum-shared-architecture.md)
 - [Complete Guide: Cross-Platform React Components for Web + Native](docs/cross-platform-components-guide.md)
 - [Component Management & Development Guide](docs/component-management-guide.md)
 - [Config Sync System](docs/config-sync-system.md)
@@ -13,6 +12,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Expo Dev Testing Guide](docs/expo-dev-testing-guide.md)
 - [IndexedDB Schema Reference: `quorum_db`](docs/quorum-db-schema.md)
 - [Quorum Data Management Architecture](docs/data-management-architecture-guide.md)
+- [Quorum Ecosystem Architecture](docs/quorum-shared-architecture.md)
 - [Styling Guidelines](docs/styling-guidelines.md)
 
 ### Development
@@ -92,6 +92,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Modal Gesture Handling Technical Debt](bugs/modal-gesture-handling-technical-debt.md)
 - [Pinned Messages Panel Button Clicks Bug](bugs/pinned-messages-panel-clicks-and-message-list-disappearing.md)
 - [Public Invite Link Intermittent Expiration Bug](bugs/public-invite-link-intermittent-expiration.md)
+- [Safari Passkey Session Loss - Random Logout on Browser Restart](bugs/safari-passkey-session-loss-random-logout.md)
 - [Space Owner Privacy Limitation](bugs/space-owner-privacy-limitation.md)
 - [UserProfile Modal Positioning - Viewport Boundary Detection](bugs/userprofile-modal-positioning-viewport-boundary.md)
 
@@ -138,6 +139,7 @@ This is the main index for all documentation, bug reports, and task management.
 
 ### Pending Tasks
 
+- [Add User Bio Field to UserSettingsModal General Tab](tasks/add-user-bio-field.md)
 - [Combined Text + Image Messages](tasks/combined-text-image-messages.md)
 - [Conversation Deletion State Synchronization](tasks/conversation-deletion-state-sync.md)
 - [Custom ContentEditable Mention Pills for Message Composer](tasks/mention-pills-in-message-textarea.md)
@@ -145,6 +147,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Device Identification Improvement](tasks/device-identification-improvement.md)
 - [Fix Lingui "Uncompiled Message Detected" Warning](tasks/fix-lingui-uncompiled-message-warning.md)
 - [Full Markdown Support Inside Spoilers](tasks/spoiler-full-markdown-support.md)
+- [Implement Comprehensive Accessibility Features](tasks/accessibility-features-implementation.md)
 - [Implement Message Forwarding with Privacy Controls](tasks/message-forwarding-with-privacy-controls.md)
 - [Implement New Member Badge in Spaces](tasks/new-member-badge-spaces.md)
 - [Implement Role-Based Channel Visibility](tasks/channel-role-visibility.md)
@@ -158,6 +161,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Task: Implement Delete Public Invite Link Feature](tasks/delete-public-invite-link.md)
 - [Test Suite Implementation Plan for Quorum Desktop](tasks/test-suite-plan.md)
 - [Tombstone Cleanup Strategy for Deleted Messages](tasks/tombstone-cleanup-strategy.md)
+- [User Data Backup & Restore Feature](tasks/user-data-backup-restore-feature.md)
 - [User Status Feature Implementation Plan](tasks/user-status.md)
 
 ### .Archived
@@ -388,4 +392,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2026-01-06 15:52:15
+**Last Updated**: 2026-01-07 10:54:15

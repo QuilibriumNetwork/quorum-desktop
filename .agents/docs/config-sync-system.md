@@ -25,7 +25,7 @@ export type UserConfig = {
   // Encryption keys (for E2E encryption recovery)
   spaceKeys?: {
     spaceId: string;
-    encryptionState: EncryptionState; // Double Ratchet session state
+    encryptionState: EncryptionState; // Triple Ratchet session state (Space encryption)
     keys: SpaceKey[];                 // config, hub, inbox keys
   }[];
 
