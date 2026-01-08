@@ -420,12 +420,8 @@ export const Message = React.memo(
         className={
           'message-container text-base relative ' +
           (isCompact ? 'message-compact ' : '') +
-          (isTouchDevice()
-            ? (isCompact ? '' : 'border-t-2 border-t-surface-00 pt-2') // No border for compact on touch
-            : 'hover:bg-chat-hover ') + // Only add hover effect on non-touch devices
-          // Note: Mentions now use 60-second highlight (message-highlighted-mention)
-          // Other highlights (search, pinned, hash) use 6-second highlight (message-highlighted)
-          // The viewport hook auto-triggers the highlight when mentioned messages enter view
+          // Desktop: hover effect; Touch: no extra styling (gap/border handled by .message-row wrapper)
+          (isTouchDevice() ? '' : 'hover:bg-chat-hover ') +
           (highlightClassName ? ` ${highlightClassName}` : '')
         }
         // Desktop mouse interaction
@@ -538,16 +534,7 @@ export const Message = React.memo(
             className={
               'message-body w-full font-[11pt] px-[16px] items-start ' +
               (isCompact ? 'message-body-compact ' : '') +
-              (hasCompactBelow ? 'message-body-has-compact-below ' : '') +
-              ((
-                !(message.content as any).repliesToMessageId
-                  ? undefined
-                  : messageList.findIndex(
-                      (c) => c.messageId === message.messageId
-                    )
-              )
-                ? ''
-                : (isCompact ? '' : 'pt-[8px]'))
+              (hasCompactBelow ? 'message-body-has-compact-below ' : '')
             }
           >
             {showUserProfile && spaceId && (

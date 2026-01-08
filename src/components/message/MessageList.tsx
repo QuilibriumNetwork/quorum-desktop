@@ -261,8 +261,13 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
         const message = messageList[index];
         const displayInfo = messageDisplayInfo[index];
 
+        // Gap class: first message or compact messages get no gap
+        const gapClass = index === 0 || displayInfo.isCompact
+          ? 'message-row message-row-first'
+          : 'message-row';
+
         return (
-          <React.Fragment>
+          <div className={gapClass}>
             {displayInfo.needsDateSeparator && (
               <DateSeparator
                 timestamp={message.createdDate}
@@ -314,7 +319,7 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
                 }, 500);
               }}
             />
-          </React.Fragment>
+          </div>
         );
       },
       [
