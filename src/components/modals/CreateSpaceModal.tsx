@@ -234,7 +234,10 @@ const CreateSpaceModal: React.FunctionComponent<CreateSpaceModalProps> = (
                 </Tooltip>
               </div>
             </div>
-            <div className="flex flex-row items-center gap-3">
+            {/* TODO: isPublic approval flow not implemented yet.
+                Currently this flag is stored but doesn't enforce any approval flow.
+                Both public and private spaces can generate public invite links in Settings. */}
+            <div className="hidden flex-row items-center gap-3">
               <Switch onChange={setPublic} value={pub} />
               <div className="flex flex-row items-center">
                 <div className="text-label-strong">
@@ -242,7 +245,7 @@ const CreateSpaceModal: React.FunctionComponent<CreateSpaceModalProps> = (
                 </div>
                 <Tooltip
                   id="public-tooltip"
-                  content={t`When this setting is enabled, invite links will automatically allow a user to join your Space. When it is not enabled, users following an invite link will send you a request to join your Space that you must manually approve. Public links require some key material to be present in the link – be aware that possession of a public Space link can allow anyone with the link to read messages on the Space for the duration of the link being valid.`}
+                  content={t`Turn this on to let anyone with the invite link join automatically. Turn it off to preview and approve each person before they can join. Note: Public links give full read access to your Space while the link is active.`}
                   place="bottom"
                   className="!w-[400px]"
                   maxWidth={400}

@@ -40,6 +40,16 @@ msgid "Your profile image size must be {maxFileSize} or less and must be a PNG, 
 msgstr ""
 
 #. js-lingui-explicit-id
+#: src/components/message/MessageComposer.native.tsx:162
+msgid "Failed to process image"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/components/message/MessageComposer.native.tsx:315
+msgid "Replying to {user}"
+msgstr ""
+
+#. js-lingui-explicit-id
 #: src/components/message/MessageComposer.tsx:452
 msgid "Replying to"
 msgstr ""
@@ -57,16 +67,6 @@ msgstr ""
 #. js-lingui-explicit-id
 #: src/components/message/Message.tsx:341
 msgid "has been kicked"
-msgstr ""
-
-#. js-lingui-explicit-id
-#: src/components/message/MessageComposer.native.tsx:162
-msgid "Failed to process image"
-msgstr ""
-
-#. js-lingui-explicit-id
-#: src/components/message/MessageComposer.native.tsx:315
-msgid "Replying to {user}"
 msgstr ""
 
 #. js-lingui-explicit-id
@@ -850,11 +850,11 @@ msgstr ""
 msgid "Create roles in Space Settings first."
 msgstr ""
 
-#: src/components/modals/CreateSpaceModal.tsx:269
+#: src/components/modals/CreateSpaceModal.tsx:272
 msgid "Create Space"
 msgstr ""
 
-#: src/components/modals/CreateSpaceModal.tsx:273
+#: src/components/modals/CreateSpaceModal.tsx:276
 msgid "Creating Space..."
 msgstr ""
 
@@ -2873,6 +2873,10 @@ msgstr ""
 msgid "Try different keywords or check your spelling"
 msgstr ""
 
+#: src/components/modals/CreateSpaceModal.tsx:248
+msgid "Turn this on to let anyone with the invite link join automatically. Turn it off to preview and approve each person before they can join. Note: Public links give full read access to your Space while the link is active."
+msgstr ""
+
 #: src/hooks/business/ui/useCustomAssets.ts:195
 msgid "Unable to compress emoji images. Please use smaller images."
 msgstr ""
@@ -3176,8 +3180,8 @@ msgid "When someone replies to your messages"
 msgstr ""
 
 #: src/components/modals/CreateSpaceModal.tsx:245
-msgid "When this setting is enabled, invite links will automatically allow a user to join your Space. When it is not enabled, users following an invite link will send you a request to join your Space that you must manually approve. Public links require some key material to be present in the link – be aware that possession of a public Space link can allow anyone with the link to read messages on the Space for the duration of the link being valid."
-msgstr ""
+#~ msgid "When this setting is enabled, invite links will automatically allow a user to join your Space. When it is not enabled, users following an invite link will send you a request to join your Space that you must manually approve. Public links require some key material to be present in the link – be aware that possession of a public Space link can allow anyone with the link to read messages on the Space for the duration of the link being valid."
+#~ msgstr ""
 
 #: src/components/onboarding/Onboarding.tsx:164
 msgid "When using Quorum on a browser, your messages are saved locally to your browser."
