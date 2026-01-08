@@ -29,25 +29,37 @@ The invite system operates through several key components:
 
 ## Invite Types and Behavior
 
+### Private vs Public: Key Differences
+
+| Aspect | Private Invite | Public Invite |
+|--------|----------------|---------------|
+| **Evals stored** | Locally on inviter's device | Uploaded to server |
+| **Eval consumed when** | Link is **generated** | Link is **used to join** |
+| **URL changes each generation** | Yes (unique `secret` each time) | No (stable until regenerated) |
+| **One link = how many people** | 1 person per link | Unlimited (until server evals exhausted) |
+| **Crypto material in URL** | Full (`template`, `secret`, `hubKey`) | Minimal (`configKey` only) |
+| **How joiner gets crypto material** | Embedded in URL | Fetched from server via `getSpaceInviteEval()` |
+
 ### Private Invites
 
 Private invites are sent directly to users via existing conversations or manual address entry. They use unique cryptographic keys for each space and remain private between the sender and recipient.
 
 **Characteristics:**
-- Unique keys per invite
+- **One link per person**: Each generated link contains a unique `secret` that can only be used once
 - Sent through direct messages
-- **Single-use consumption**: Each invite generation consumes one secret from a finite pool
+- **Eval consumed on generation**: Each invite generation consumes one secret from the local `evals` array
 - **Limited supply**: Spaces have a limited number of secrets available for private invites
-- Cannot be shared publicly
+- URL contains all crypto material needed to join (no server fetch required)
 
 ### Public Invite Links
 
 Public invite links are shareable URLs that anyone can use to join a space. They use a different key system from private invites.
 
 **Characteristics:**
-- Same URL for all users
-- Can be shared anywhere
-- Regeneratable (invalidates previous public link)
+- **Same URL for everyone**: Share one link with unlimited people
+- **Eval consumed on join**: When someone uses the link, the server provides one eval from the uploaded pool
+- Can be shared anywhere (social media, websites, etc.)
+- Regeneratable (invalidates previous public link by creating new keys)
 - Switches system to public-only mode (private invites become public URL)
 
 ## Critical System Behavior
@@ -337,4 +349,5 @@ _Updated: September 22, 2025 - Corrected reversibility of public invite links_
 _Updated: September 25, 2025 - Added duplicate prevention fixes_
 _Updated: October 4, 2025 - Corrected deletion capability (requires backend API, not currently possible)_
 _Updated: December 9, 2025 - Added evals documentation (what they are, allocation amounts, consumption). Added config sync bloat issue reference._
+_Updated: January 8, 2026 - Added clear comparison table for private vs public invites (eval storage, consumption timing, URL behavior)_
 _Covers: SpaceEditor.tsx, useInviteManagement.ts, useInviteValidation.ts, useSpaceJoining.ts, InvitationService.ts, MessageDB Context, InviteLink.tsx, inviteDomain.ts_

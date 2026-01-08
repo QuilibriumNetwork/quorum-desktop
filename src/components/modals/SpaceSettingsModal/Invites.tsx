@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Button, Select, Input, Icon, Tooltip, Spacer, Callout } from '../../primitives';
+import { Button, Input, Icon, Tooltip, Spacer, Callout } from '../../primitives';
 import { Trans } from '@lingui/react/macro';
 import { t } from '@lingui/core/macro';
 import { ClickToCopyContent } from '../../ui';
@@ -254,6 +254,21 @@ const Invites: React.FunctionComponent<InvitesProps> = ({
         <div className="flex"></div>
         <div className=""></div>
         <div className="modal-content-info">
+          {/* Section header changes based on whether public link exists */}
+          <div className="text-subtitle-2 mb-1">
+            {space?.inviteUrl ? (
+              <Trans>Share Public Link</Trans>
+            ) : (
+              <Trans>Send Private Invite</Trans>
+            )}
+          </div>
+          <div className="text-label-strong pt-1 mb-4 max-w-[500px]">
+            {space?.inviteUrl ? (
+              <Trans>Send your public invite link directly to someone via DM.</Trans>
+            ) : (
+              <Trans>Send a unique invite link directly to someone. Each invite can only be used once.</Trans>
+            )}
+          </div>
           <div className="input-style-label">
             <Trans>Existing Conversations</Trans>
           </div>
@@ -321,7 +336,11 @@ const Invites: React.FunctionComponent<InvitesProps> = ({
                 }
               }}
             >
-              <Trans>Send Invite</Trans>
+              {space?.inviteUrl ? (
+                <Trans>Send Invite</Trans>
+              ) : (
+                <Trans>Send Private Invite</Trans>
+              )}
             </Button>
           </div>
           {success && (
@@ -350,13 +369,19 @@ const Invites: React.FunctionComponent<InvitesProps> = ({
             direction="vertical"
           />
           <div>
-            <div className="text-subtitle-2">
+            <div className="text-subtitle-2 mb-1">
               <Trans>Public Invite Links</Trans>
+            </div>
+            <div className="text-label-strong pt-1 mb-4 max-w-[500px]">
+              <Trans>
+                Public invite links allow anyone with access to the link to join your Space.
+                Consider who you share the link with and where you post it.
+              </Trans>
             </div>
 
             {/* Callouts for operations */}
             {generating && (
-              <Callout variant="warning" size="sm" className="mb-4 mt-4">
+              <Callout variant="warning" size="sm" className="mb-4">
                 <div className="flex items-center gap-2">
                   <Icon name="spinner" className="text-warning icon-spin" />
                   <span>Generating public invite link...</span>
@@ -365,26 +390,20 @@ const Invites: React.FunctionComponent<InvitesProps> = ({
             )}
 
             {generationSuccess && (
-              <Callout variant="success" size="sm" className="mb-4 mt-4" autoClose={3}>
+              <Callout variant="success" size="sm" className="mb-4" autoClose={3}>
                 <span>Public invite link generated successfully.</span>
               </Callout>
             )}
 
             {errorMessage && (
-              <Callout variant="error" size="sm" className="mb-4 mt-4">
+              <Callout variant="error" size="sm" className="mb-4">
                 <span>{errorMessage}</span>
               </Callout>
             )}
 
             {!space?.inviteUrl && !generating ? (
               // STATE 1: No link exists and not generating - Show generate button
-              <div className="mt-4">
-                <div className="text-label mb-4 max-w-[500px]">
-                  <Trans>
-                    Public invite links allow anyone with access to the link to join your Space.
-                    Consider who you share the link with and where you post it.
-                  </Trans>
-                </div>
+              <div>
                 <div className="flex">
                   <Button
                     type="secondary"
@@ -403,8 +422,8 @@ const Invites: React.FunctionComponent<InvitesProps> = ({
               null
             ) : (
               // STATE 2: Link exists and not generating - Show link + action buttons
-              <div className="mt-4">
-                <div className="flex pt-2 pb-1 items-center">
+              <div>
+                <div className="flex pb-1 items-center">
                   <div className="input-style-label">
                     <Trans>Current Invite Link</Trans>
                   </div>
