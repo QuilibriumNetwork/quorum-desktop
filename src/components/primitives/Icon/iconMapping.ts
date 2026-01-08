@@ -82,6 +82,7 @@ export const iconComponentMap: Record<IconName, string> = {
   'user-plus': 'IconUserPlus',
   'user-x': 'IconUserX',
   'user-minus': 'IconUserMinus',
+  'user-question': 'IconUserQuestion',
   party: 'IconConfetti',
   gift: 'IconGift',
   'hand-peace': 'IconHandStop',
@@ -159,6 +160,7 @@ export const iconComponentMap: Record<IconName, string> = {
   // Miscellaneous
   'dollar-sign': 'IconCurrencyDollar',
   'question-circle': 'IconHelpCircle',
+  'question-mark': 'IconQuestionMark',
   leaf: 'IconLeaf',
   paw: 'IconPaw',
   utensils: 'IconToolsKitchen2',

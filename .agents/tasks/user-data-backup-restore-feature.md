@@ -140,7 +140,7 @@ Minimal viable feature - just export. Test that the backup file is valid before 
 
 - [ ] **Add "Export Backup" button** (`UserSettingsModal/PrivacySecurity.tsx`)
     - Near existing "Export Key" button
-    - Filename: `${address}.qmbak`
+    - Filename: `quorum_backup_YYYYMMDD_HHMMSS_XXXXXX.qmbak` (XXXXXX = last 6 chars of user address)
     - Disable button while exporting (`isProcessing` state)
 
 **MVP Done when:** User can click button → encrypted .qmbak file downloads
@@ -354,3 +354,5 @@ Based on security analysis, these requirements should be addressed during implem
 **2026-01-07 - Claude**: Cryptographic expert review. Added 3 critical requirements: (1) Domain separation in key derivation - use `SHA-512('quorum-backup-v1' + key)` instead of plain `SHA-512(key)` to prevent cross-protocol attacks, (2) Sign ALL fields including version and IV, (3) Backup file size limit (100MB). Added high-priority replay protection warning. Dismissed filename privacy concern as non-issue (matches key export pattern). Double Ratchet edge case analysis validated as correct.
 
 **2026-01-07 - Claude**: Senior engineer data review. Validated understanding of data storage/sync is correct. Added complete list of excluded stores with reasons: inbox_mapping (reconstructable), conversation_users (re-fetchable), latest_states (derived), muted_users (low priority), deleted_messages (sync-only), space_members (re-fetchable). Fixed typo in config-sync-system.md: "Double Ratchet" → "Triple Ratchet" for spaceKeys (Space encryption uses Triple Ratchet, not Double).
+
+**2026-01-08 - Claude**: Updated backup filename format to `quorum_backup_YYYYMMDD_HHMMSS_XXXXXX.qmbak` where XXXXXX is the last 6 characters of the user's address. This helps users identify which account a backup belongs to, especially when managing multiple identities.

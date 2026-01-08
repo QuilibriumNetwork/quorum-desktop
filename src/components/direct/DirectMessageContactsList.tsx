@@ -289,10 +289,12 @@ const DirectMessageContactsList: React.FC = () => {
 
   // Filter options for Select - dynamically show only available filters
   const filterOptions = React.useMemo(() => {
-    const options: { value: string; label: string }[] = [{ value: 'all', label: t`All` }];
-    if (hasFavorites) options.push({ value: 'favorites', label: t`Favorites` });
-    if (hasUnknown) options.push({ value: 'unknown', label: t`Unknown` });
-    if (hasMuted) options.push({ value: 'muted', label: t`Muted` });
+    const options: { value: string; label: string; icon?: string }[] = [
+      { value: 'all', label: t`All`, icon: 'users' },
+    ];
+    if (hasFavorites) options.push({ value: 'favorites', label: t`Favorites`, icon: 'star' });
+    if (hasUnknown) options.push({ value: 'unknown', label: t`Unknown`, icon: 'question-mark' });
+    if (hasMuted) options.push({ value: 'muted', label: t`Muted`, icon: 'bell-off' });
     return options;
   }, [hasFavorites, hasUnknown, hasMuted]);
 
@@ -341,8 +343,8 @@ const DirectMessageContactsList: React.FC = () => {
 
       {/* Search row */}
       {searchOpen && (
-        <Container className="px-4 pb-3">
-          <FlexRow className="items-center gap-2">
+        <Container className="px-4 pt-2 pb-3">
+          <FlexRow className="dm-search-row items-center">
             {hasAnyFilter && (
               <Select
                 value={filter}

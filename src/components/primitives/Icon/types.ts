@@ -72,6 +72,7 @@ export type IconName =
   | 'user-plus'
   | 'user-x'
   | 'user-minus'
+  | 'user-question'
   | 'party'
   | 'gift'
   | 'hand-peace'
@@ -149,6 +150,7 @@ export type IconName =
   // Miscellaneous
   | 'dollar-sign'
   | 'question-circle'
+  | 'question-mark'
   | 'leaf'
   | 'paw'
   | 'utensils'

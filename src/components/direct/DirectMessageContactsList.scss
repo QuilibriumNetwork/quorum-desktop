@@ -32,3 +32,45 @@
     text-decoration: none;
   }
 }
+
+// Combined search row with filter + input as one bordered element
+.dm-search-row {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  background-color: var(--color-field-bg);
+  border: $border solid var(--color-field-border);
+  border-radius: $rounded-lg;
+  padding-left: $s-1;
+  transition: border-color $duration-150 $ease-in-out;
+
+  &:focus-within {
+    border-color: var(--color-field-border-focus);
+  }
+
+  // Adjust compact Select styling inside the search row
+  .quorum-select--compact {
+    .quorum-select__trigger {
+      background-color: transparent;
+      border-radius: $rounded;
+      padding: $s-1-5;
+
+      &:hover:not(:disabled) {
+        background-color: transparent;
+
+        .quorum-select__compact-icon {
+          color: var(--color-text-main);
+        }
+      }
+    }
+  }
+
+  // Remove ListSearchInput's own border styling since parent provides it
+  .list-search-input {
+    border-bottom: none;
+
+    &--focused {
+      border-bottom: none;
+    }
+  }
+}
