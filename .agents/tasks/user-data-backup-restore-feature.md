@@ -44,32 +44,31 @@ https://github.com/QuilibriumNetwork/quorum-desktop/issues/121
 │                        DATA LOCATION MATRIX                              │
 ├─────────────────────────────────────────────────────────────────────────┤
 │                                                                          │
-│  IndexedDB (quorum_db) - LOCAL:                                         │
-│  ├── messages           → All message content (Space + DM)              │
-│  ├── conversations      → DM conversation metadata                      │
-│  ├── encryption_states  → DM Double Ratchet states ⚠️ LOCAL ONLY       │
-│  ├── spaces             → Cached space definitions                      │
-│  ├── space_keys         → Hub/Inbox/Config keys (also in UserConfig)   │
-│  ├── space_members      → Cached member lists                           │
-│  ├── user_config        → Local copy of preferences                     │
-│  ├── bookmarks          → Saved message references                      │
-│  └── action_queue       → Pending background tasks                      │
+│  ✅ RECOVERABLE (via API/sync):                                         │
+│  ├── spaces             → Manifest on API: getSpaceManifest()           │
+│  ├── space_keys         → Via UserConfig.spaceKeys sync                 │
+│  ├── user_config        → API sync if allowSync=true                    │
+│  ├── bookmarks          → Via UserConfig.bookmarks sync                 │
+│  ├── space_members      → Re-fetchable from hub                         │
+│  └── Space messages     → P2P sync from other members                   │
 │                                                                          │
-│  API (POST /api/settings/{address}) - if allowSync=true:               │
-│  └── Encrypted UserConfig blob containing:                              │
-│      ├── spaceIds, items (navigation order)                             │
-│      ├── spaceKeys[] with encryptionState (Triple Ratchet) ✅          │
-│      ├── bookmarks, deletedBookmarkIds                                  │
-│      └── notificationSettings                                           │
+│  ⚠️ UNRECOVERABLE (DM data - LOCAL ONLY):                              │
+│  ├── DM messages        → No hub, no peer sync, deleted after fetch     │
+│  ├── DM conversations   → Metadata for DMs                              │
+│  └── encryption_states  → Double Ratchet state for DM decryption        │
 │                                                                          │
-│  WebAuthn / Passkey Credential:                                         │
-│  └── Ed448 private key (or IndexedDB fallback at KeyDB id=1/2)         │
+│  📋 Other local stores (reconstructable/transient):                     │
+│  ├── action_queue       → Transient task queue                          │
+│  ├── user_info          → Re-fetchable from API                         │
+│  ├── inbox_mapping      → Reconstructable from conversations            │
+│  ├── conversation_users → Re-fetchable profiles                         │
+│  ├── latest_states      → Derived from encryption_states                │
+│  └── deleted_messages   → Sync dedup tombstones                         │
 │                                                                          │
-│  Peer Devices - P2P SYNC (via Hub):                                     │
-│  └── Space messages → Recoverable via hash-based delta sync protocol    │
-│                       (only if peer is online and has the data)         │
+│  🔑 Key Storage:                                                        │
+│  └── WebAuthn/Passkey   → Ed448 private key (or IndexedDB fallback)    │
 │                                                                          │
-│  ⚠️ CRITICAL GAP: DM encryption_states have NO sync/backup mechanism   │
+│  ⚠️ CRITICAL: DM data has NO sync mechanism - backup is the ONLY way   │
 │                                                                          │
 └─────────────────────────────────────────────────────────────────────────┘
 ```
@@ -83,14 +82,16 @@ User Ed448 Private Key → SHA-512 → First 32 bytes → AES-256-GCM key
 
 This same pattern can encrypt backups - only the user with their private key can decrypt.
 
-### Recovery Scenarios Today
+### Recovery Scenarios Today (Without Backup)
 
-| Scenario | Space Messages | Space Encryption | DM Messages | DM Encryption States |
-|----------|---------------|------------------|-------------|---------------------|
-| Clear cache, `allowSync=true` | ✅ Peer sync | ✅ Via UserConfig | ❌ Lost | ❌ **GONE FOREVER** |
-| Clear cache, `allowSync=false` | ❌ Lost | ❌ Lost | ❌ Lost | ❌ **GONE FOREVER** |
-| New device, import key, `allowSync=true` | ✅ Peer sync | ✅ Via UserConfig | ❌ Lost | ❌ **GONE FOREVER** |
-| Safari passkey bug workaround | ❌ Lost | ❌ Lost | ❌ Lost | ❌ **GONE FOREVER** |
+| Scenario | Spaces | Space Keys | Space Messages | DM Messages | DM Encryption |
+|----------|--------|------------|----------------|-------------|---------------|
+| Clear cache, `allowSync=true` | ✅ API | ✅ UserConfig | ✅ Peer sync | ❌ **LOST** | ❌ **LOST** |
+| Clear cache, `allowSync=false` | ❌ Lost | ❌ Lost | ❌ Lost | ❌ **LOST** | ❌ **LOST** |
+| New device, import key, `allowSync=true` | ✅ API | ✅ UserConfig | ✅ Peer sync | ❌ **LOST** | ❌ **LOST** |
+| Safari passkey bug workaround | ✅ API | ✅ UserConfig | ✅ Peer sync | ❌ **LOST** | ❌ **LOST** |
+
+**Key insight:** For users with `allowSync=true`, only DM data is unrecoverable. Everything else syncs. 
 
 ### Understanding the Encryption Protocols
 
@@ -114,17 +115,31 @@ This same pattern can encrypt backups - only the user with their private key can
 
 Minimal viable feature - just export. Test that the backup file is valid before building restore.
 
+- [ ] **Add DM export method to MessageDB** (`src/db/messages.ts`)
+    - `getAllDMMessages()` - returns all DM messages (excludes Space messages)
+    - Implementation: Get all `type: 'direct'` conversations, then fetch messages for each
+    - Space messages are excluded because they resync from other members
+    - DM messages cannot resync (no hub, no peer sync) - must be backed up
+    - Note: `getConversations({ type: 'direct' })` already exists, just needs high limit
+
 - [ ] **Create BackupService** (`src/services/BackupService.ts`)
     - Follow same pattern as ConfigService (keyset passed to methods, used transiently, never stored)
     - Constructor receives: `{ messageDB: MessageDB }`
     - `exportBackup({ keyset })` method collects and encrypts data
-    - Collect all IndexedDB stores into single object
-    - Include: messages, conversations, encryption_states, spaces, user_config
-    - Exclude:
+    - Collect only unrecoverable data (keeps backup small and focused)
+    - Include (DM data only - the ONLY unrecoverable data):
+        - `messages` (DMs only) - no hub, no peer sync, truly lost without backup
+        - `conversations` (`type: 'direct'` only) - DM metadata
+        - `encryption_states` - critical for decrypting DM history (Double Ratchet state)
+    - Exclude (all recoverable via sync or API):
+        - `messages` (Space) - resync from other space members
+        - `conversations` (`type: 'group'`) - Space conversations, recoverable
+        - `spaces` - manifest stored on API server, recoverable via `getSpaceManifest()`
+        - `user_config` - syncs via API if `allowSync=true`
+        - `space_keys` - syncs via UserConfig.spaceKeys
+        - `bookmarks` - syncs via UserConfig.bookmarks
         - `action_queue` - transient task queue
         - `user_info` - re-fetchable from API
-        - `space_keys` - redundant (already in user_config.spaceKeys)
-        - `bookmarks` - redundant (already in user_config.bookmarks)
         - `inbox_mapping` - reconstructable from conversations
         - `conversation_users` - re-fetchable from API (cached profiles)
         - `latest_states` - derived from encryption_states (performance cache)
@@ -199,6 +214,24 @@ For fresh device / cache cleared scenarios.
 | Very large backup (years of messages) | May timeout or fail | Medium | Chunk processing, progress UI |
 | Restore on device with partial sync | Merge needed | High | Deduplicate by messageId |
 | User restores then peer syncs same messages | Duplicates possible | Medium | Dedupe on messageId |
+| **Single-member space messages lost** | Space recovers, messages don't | Low | ⚠️ **Not covered** - see below |
+| **Abandoned space (all peers offline)** | Space recovers, messages can't sync | Low | ⚠️ **Not covered** - see below |
+
+### Limitations: Space Messages Not Backed Up
+
+**By design, this backup feature focuses on DM data only.** Space messages are excluded because:
+1. They typically resync from other members via P2P
+2. Including them would make backups potentially huge (thousands of messages)
+
+**Edge cases NOT covered:**
+- **Single-member spaces**: If user creates a space, posts messages, and loses device before anyone joins → messages are lost (space definition recovers via API)
+- **Abandoned spaces**: If all other members are permanently offline → messages can't sync back
+
+**Why this is acceptable for MVP:**
+- These scenarios are rare (most spaces have active members)
+- Space definitions still recover (just not messages)
+- Users can mitigate by inviting members or using DMs for critical 1:1 content
+- Future enhancement: Optional "Include Space messages" checkbox for users with single-member spaces
 
 ### DM Encryption State Conflict - Detailed Analysis
 
@@ -356,3 +389,11 @@ Based on security analysis, these requirements should be addressed during implem
 **2026-01-07 - Claude**: Senior engineer data review. Validated understanding of data storage/sync is correct. Added complete list of excluded stores with reasons: inbox_mapping (reconstructable), conversation_users (re-fetchable), latest_states (derived), muted_users (low priority), deleted_messages (sync-only), space_members (re-fetchable). Fixed typo in config-sync-system.md: "Double Ratchet" → "Triple Ratchet" for spaceKeys (Space encryption uses Triple Ratchet, not Double).
 
 **2026-01-08 - Claude**: Updated backup filename format to `quorum_backup_YYYYMMDD_HHMMSS_XXXXXX.qmbak` where XXXXXX is the last 6 characters of the user's address. This helps users identify which account a backup belongs to, especially when managing multiple identities.
+
+**2026-01-08 - Claude**: Added prerequisite task for bulk export methods in MessageDB. Current methods are paginated (`getMessages`) or filtered by type (`getConversations`). Need `getAllMessages()` and `getAllConversations()` for backup export. Verified DM architecture: messages ARE truly unrecoverable - no hub storage, no peer sync for DMs, only temporary per-device inboxes that are deleted after fetch. Task assumptions are correct.
+
+**2026-01-08 - Claude**: Scoped backup to DM-only messages. Space messages (`type: 'group'`) excluded - they resync from other space members and could be thousands of messages. DM messages (`type: 'direct'`) are much smaller in volume and truly unrecoverable. Changed `getAllMessages()` to `getAllDMMessages()`. This keeps backups small and focused on unrecoverable data only.
+
+**2026-01-08 - Claude**: Major simplification after deep-dive into sync architecture. Discovered that spaces (including single-member/owned spaces) ARE recoverable - manifest is stored on API server via `postSpaceManifest()` and retrieved via `getSpaceManifest()`. Space keys (including owner key) sync via UserConfig.spaceKeys. For `allowSync=true` users, the ONLY unrecoverable data is DM-related: messages, conversations, and encryption_states. Removed `spaces` and `user_config` from required backup - they sync automatically. Updated data matrix and recovery scenarios to reflect this clearer understanding.
+
+**2026-01-08 - Claude**: Documented known limitations in Edge Cases section. Space messages are intentionally NOT backed up to keep backups small. Two edge cases not covered: (1) single-member space messages lost if device lost before anyone joins, (2) abandoned space messages can't sync if all peers offline. Accepted for MVP - these are rare scenarios, space definitions still recover, future enhancement could add optional "Include Space messages" checkbox.

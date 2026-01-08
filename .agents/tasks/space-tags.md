@@ -9,13 +9,16 @@
 **Prior Art**: `origin/feat/space-tags` branch (incomplete implementation)
 
 **Files**:
-- `src/api/quorumApi.ts:28-47` (Space type - add SpaceTag)
+- `src/api/quorumApi.ts` (SpaceTag type, Space.spaceTag field, UpdateProfileMessage.spaceTagId)
+- `src/db/messages.ts` (space_members schema + DB_VERSION increment)
 - `src/components/space/SpaceTag.tsx` (new)
 - `src/components/space/SpaceTag.scss` (new)
 - `src/components/modals/UserSettingsModal/General.tsx` (add Space Tag selector)
 - `src/components/message/Message.tsx` (display tag next to username)
-- `src/components/modals/SpaceEditorSettings/General.tsx` (Space owner configures tag)
-- `src/hooks/business/useUserSettings.ts` (add spaceTagId to config)
+- `src/components/modals/SpaceSettingsModal/` (Space owner configures tag)
+- `src/hooks/business/user/useUserSettings.ts` (add spaceTagId to config)
+- `src/services/MessageService.ts` (update-profile handler)
+- `src/utils/validation.ts` (validateSpaceTagLetters)
 
 ---
 
@@ -38,10 +41,12 @@ Users want to publicly display their Space membership alongside their username i
 ### SpaceTag Type (add to `src/api/quorumApi.ts`)
 
 ```typescript
+import { IconColor } from '../components/space/IconPicker/types';
+
 export type SpaceTag = {
-  letters: string;      // Exactly 4 uppercase letters/numbers (e.g., "GAME", "DEV1")
-  url: string;          // Tag image URL (data: URI or hosted URL)
-  backgroundColor: string;  // Hex color for pill background (e.g., "#7C3AED")
+  letters: string;           // Exactly 4 uppercase letters/numbers (e.g., "GAME", "DEV1")
+  url: string;               // Tag image URL (data: URI or hosted URL)
+  backgroundColor: IconColor; // Color from IconPicker palette (e.g., "purple", "blue")
 };
 ```
 
@@ -64,6 +69,44 @@ User's selected tag stored in their config (synced across devices):
   spaceTagId?: string;  // spaceId of the selected tag to display
 }
 ```
+
+### Database Schema Update (`src/db/messages.ts`)
+
+Add `spaceTag` (full tag data) to `space_members` object store:
+
+```typescript
+// In space_members object store schema
+{
+  spaceId: string;
+  user_address: string;
+  inbox_address: string;
+  isKicked?: boolean;
+  spaceTag?: SpaceTag & { spaceId: string };  // NEW: Full tag data from user's selected space
+  // ... UserProfile fields (displayName, bio, etc.)
+}
+```
+
+**Why full tag data instead of just spaceId?** Recipients may not be members of the Space that owns the tag. By embedding the full tag (letters, url, backgroundColor), any user can render the tag without needing access to the source Space.
+
+**Migration**: Increment `DB_VERSION` and add migration logic for existing data (no data transformation needed, field is optional).
+
+### UpdateProfileMessage Payload (`src/api/quorumApi.ts`)
+
+Broadcast the **full tag data** (not just spaceId) so recipients can render it:
+
+```typescript
+// Tag data sent in profile broadcasts
+export type BroadcastSpaceTag = SpaceTag & {
+  spaceId: string;  // Reference to source Space (for user's own validation)
+};
+
+export type UpdateProfileMessage = {
+  // ... existing fields (displayName, bio, avatar, etc.)
+  spaceTag?: BroadcastSpaceTag;  // NEW: Full tag data for rendering
+};
+```
+
+**Trade-off**: If the Space owner changes the tag design, users with that tag selected must re-broadcast their profile for others to see the update. This is acceptable for v1 - the slight staleness is a minor UX issue.
 
 ---
 
@@ -90,9 +133,11 @@ User's selected tag stored in their config (synced across devices):
 | `lg` | 32px | 12px | Space Settings editor |
 
 **Colors**:
-- Background color is customizable by Space owner (via ColorPicker)
-- Text color: white (or auto-contrast based on background)
-- Default background: `var(--primary)` if not set
+- Background color uses the same `IconColor` palette from IconPicker
+- Available colors: `default`, `blue`, `purple`, `fuchsia`, `green`, `orange`, `yellow`, `red`
+- Text color: white
+- Use `FOLDER_COLORS` hex values for dimmed background (consistent with folder icons)
+- Default background: `default` color if not set
 
 ### Image Upload (Space Owner)
 
@@ -128,12 +173,42 @@ export const SPACE_TAG_LETTERS_LENGTH = 4;
 - No XSS risk (alphanumeric only, no HTML patterns)
 - Auto-uppercase on input
 
-### ColorPicker Integration
+### Color Selection (IconPicker Pattern)
 
-Port `ColorPicker.tsx` from old branch (uses `@uiw/react-color-sketch`):
-- Show in Space Settings when configuring tag
-- Preset colors for quick selection
-- Alpha disabled (solid colors only)
+Use the same color swatch system from `IconPicker` instead of a ColorPicker:
+- Import `FOLDER_COLORS`, `getFolderColorHex`, `IconColor` from `IconPicker/types`
+- Display color swatches using `ColorSwatch` primitive
+- Show preview with selected color as background + white text
+- No need for external color picker library
+
+**Implementation Example:**
+
+```tsx
+import { FOLDER_COLORS, getFolderColorHex, IconColor } from '../space/IconPicker/types';
+import { ColorSwatch, FlexRow } from '../primitives';
+
+// In SpaceSettingsModal tag config section
+const [selectedColor, setSelectedColor] = useState<IconColor>('default');
+
+<FlexRow gap={3}>
+  {FOLDER_COLORS.map((colorOption) => (
+    <ColorSwatch
+      key={colorOption.value}
+      color={colorOption.value === 'default' ? 'gray' : colorOption.value}
+      isActive={selectedColor === colorOption.value}
+      onPress={() => setSelectedColor(colorOption.value)}
+      size="small"
+      showCheckmark={false}
+      style={colorOption.value === 'default' ? { backgroundColor: colorOption.hex } : undefined}
+    />
+  ))}
+</FlexRow>
+
+// Preview with selected color
+<div style={{ backgroundColor: getFolderColorHex(selectedColor, isDarkTheme) }}>
+  <span style={{ color: '#ffffff' }}>{letters}</span>
+</div>
+```
 
 ### User Settings Selector
 
@@ -142,47 +217,68 @@ Use existing `Select` primitive (NOT custom SpaceTagSelector from old branch):
 - "None" option to clear selection
 - Filter to only show eligible Spaces
 
+### Internationalization (i18n)
+
+All user-facing strings must use `<Trans>` from `@lingui/react/macro`:
+
+```tsx
+import { Trans } from '@lingui/react/macro';
+
+// Labels
+<Trans>Space Tag</Trans>
+<Trans>None</Trans>
+<Trans>4-letter code</Trans>
+
+// Validation errors
+<Trans>Code must be exactly 4 characters</Trans>
+<Trans>Only letters and numbers allowed</Trans>
+```
+
 ---
 
 ## Data Flow
 
-How `spaceTagId` flows from user selection to message display:
+How spaceTag flows from user selection to message display:
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────┐
 │  1. USER SAVES SELECTION                                                │
 │     UserSettingsModal → useUserSettings.saveChanges()                   │
 │     Stores spaceTagId in UserConfig (synced across devices)             │
+│     Fetches full tag data from selected Space                           │
 └─────────────────────────────────────────────────────────────────────────┘
                                     ↓
 ┌─────────────────────────────────────────────────────────────────────────┐
 │  2. PROFILE UPDATE BROADCAST                                            │
 │     When config saved, send `update-profile` message to all Spaces      │
-│     Include spaceTagId in profile payload                               │
+│     Include FULL spaceTag data: { spaceId, letters, url, bgColor }      │
 │     File: src/services/MessageService.ts (update-profile handler)       │
 └─────────────────────────────────────────────────────────────────────────┘
                                     ↓
 ┌─────────────────────────────────────────────────────────────────────────┐
 │  3. OTHER USERS RECEIVE UPDATE                                          │
 │     MessageService processes incoming update-profile                    │
-│     Updates space_members table with sender's spaceTagId                │
+│     Updates space_members table with sender's full spaceTag data        │
+│     Recipients can render tag WITHOUT being members of source Space     │
 │     File: src/db/messages.ts (space_members schema)                     │
 └─────────────────────────────────────────────────────────────────────────┘
                                     ↓
 ┌─────────────────────────────────────────────────────────────────────────┐
 │  4. MESSAGE RENDERING                                                   │
-│     useChannelData.ts → members object includes spaceTagId              │
-│     mapSenderToUser() returns { ...sender, spaceTagId }                 │
-│     Message.tsx receives sender.spaceTagId via props                    │
-│     Renders <SpaceTag spaceId={sender.spaceTagId} />                    │
+│     useChannelData.ts → members object includes full spaceTag           │
+│     mapSenderToUser() returns { ...sender, spaceTag }                   │
+│     Message.tsx receives sender.spaceTag via props                      │
+│     Renders <SpaceTag tag={sender.spaceTag} /> using embedded data      │
 └─────────────────────────────────────────────────────────────────────────┘
 ```
 
+**Key insight**: We broadcast the full tag data (not just spaceId) because recipients may not have access to the source Space. This allows anyone to render another user's tag.
+
 **Key files in the flow:**
-- `src/hooks/business/user/useUserSettings.ts` - Save spaceTagId to config
-- `src/services/MessageService.ts` - Broadcast profile update, handle incoming updates
-- `src/hooks/business/channels/useChannelData.ts` - Include spaceTagId in members
-- `src/hooks/business/channels/useChannelMessages.ts` - mapSenderToUser includes spaceTagId
+- `src/hooks/business/user/useUserSettings.ts` - Save spaceTagId to config, fetch tag data
+- `src/services/MessageService.ts` - Broadcast profile update with full tag, handle incoming updates
+- `src/hooks/business/channels/useChannelData.ts` - Include spaceTag in members
+- `src/hooks/business/channels/useChannelMessages.ts` - mapSenderToUser includes spaceTag
 - `src/components/message/Message.tsx` - Render the tag
 
 ---
@@ -191,13 +287,21 @@ How `spaceTagId` flows from user selection to message display:
 
 ### Phase 1: Data Model & Types
 
-- [ ] **Add SpaceTag type** (`src/api/quorumApi.ts:27`)
+- [ ] **Add SpaceTag types** (`src/api/quorumApi.ts`)
     - Done when: `SpaceTag` type exported and `Space.spaceTag` field added
-    - Reference: Follow existing `Emoji` type pattern at line 16-20
+    - Done when: `BroadcastSpaceTag` type exported (SpaceTag + spaceId)
+    - Done when: `UpdateProfileMessage` includes `spaceTag?: BroadcastSpaceTag`
+    - Reference: Follow existing `Emoji` type pattern
 
-- [ ] **Update useUserSettings hook** (`src/hooks/business/useUserSettings.ts`)
-    - Done when: `spaceTagId` is saved/loaded from config
-    - Reference: Follow `allowSync` / `nonRepudiable` pattern for boolean config fields
+- [ ] **Update database schema** (`src/db/messages.ts`)
+    - Done when: `space_members` store includes `spaceTag?: BroadcastSpaceTag`
+    - Done when: `DB_VERSION` incremented (7 → 8)
+    - Done when: Migration handles existing data (no-op, field is optional)
+
+- [ ] **Update useUserSettings hook** (`src/hooks/business/user/useUserSettings.ts`)
+    - Done when: `spaceTagId` is saved/loaded from config (user's selection)
+    - Done when: Hook can fetch full tag data from selected Space for broadcasting
+    - Reference: Follow `allowSync` / `nonRepudiable` pattern for config fields
 
 ### Phase 2: Space Owner Configuration (requires Phase 1)
 
@@ -208,24 +312,27 @@ How `spaceTagId` flows from user selection to message display:
 - [ ] **Create SpaceTag component** (`src/components/space/SpaceTag.tsx`)
     - Done when: Renders pill-shaped tag with circular image + letters
     - Design: See Design Specifications → Visual Design
-    - Props: `spaceId`, `size` ('sm' | 'md' | 'lg')
+    - Props: `tag: BroadcastSpaceTag`, `size` ('sm' | 'md' | 'lg')
+    - Component receives full tag data (no fetching needed)
     - Fallback: Show letters on colored background if no image
 
 - [ ] **Add SpaceTag styles** (`src/components/space/SpaceTag.scss`)
     - Done when: Pill shape with sizes (sm/md/lg) renders correctly
     - Reference: See Design Specifications → Sizes table
 
-- [ ] **Port ColorPicker component** (`src/components/ui/ColorPicker.tsx`)
-    - Done when: Color picker renders with preset colors
-    - Port from: `origin/feat/space-tags:src/components/ColorPicker.tsx`
-    - Dependency: `@uiw/react-color-sketch` (check if already installed)
+- [ ] **Add SpaceTag color constants** (`src/components/space/IconPicker/types.ts`)
+    - Done when: `SPACE_TAG_COLORS` (or reuse `FOLDER_COLORS`) exported
+    - Option A: Reuse existing `FOLDER_COLORS` from IconPicker
+    - Option B: Clone and customize if different saturation needed for tags
+    - Include helper function `getSpaceTagColorHex()` if creating new set
 
 - [ ] **Add tag config to SpaceSettingsModal** (`src/components/modals/SpaceSettingsModal/`)
     - Done when: Owner can upload image, set 4-letter code, pick background color
     - Condition: Only show when `space?.isPublic === true`
     - Image upload: Follow `Emojis.tsx` pattern (dropzone, compression, 5MB limit)
     - Validation: Use `validateSpaceTagLetters()` with auto-uppercase
-    - Includes: Image dropzone, letters input, ColorPicker
+    - Color selection: Use `ColorSwatch` primitives with `FOLDER_COLORS` palette
+    - Includes: Image dropzone, letters input, color swatches row
 
 ### Phase 3: User Settings Integration (requires Phase 2)
 
@@ -252,12 +359,68 @@ How `spaceTagId` flows from user selection to message display:
     ```tsx
     // In message header render
     <span className="message-sender-name">{sender.displayName}</span>
-    {sender.spaceTagId && <SpaceTag spaceId={sender.spaceTagId} size="sm" />}
+    {sender.spaceTag && <SpaceTag tag={sender.spaceTag} size="sm" />}
     ```
 
-- [ ] **Pass spaceTagId through sender mapping**
-    - Done when: `mapSenderToUser` includes `spaceTagId` in returned user object
+- [ ] **Pass spaceTag through sender mapping**
+    - Done when: `mapSenderToUser` includes `spaceTag` (full data) in returned user object
     - Files: Check `Channel.tsx`, `DirectMessage.tsx` where `mapSenderToUser` is defined
+
+- [ ] **Auto-clear tag when leaving space**
+    - Done when: Leaving a space auto-clears `spaceTagId` if it matches that space
+    - Done when: Profile re-broadcast with `spaceTag: undefined` after clearing
+    - Location: `leaveSpace` handler (space management hook/service)
+
+    ```typescript
+    // When user leaves a space
+    const handleLeaveSpace = async (spaceId: string) => {
+      // ... existing leave logic ...
+
+      // Clear space tag if it was from this space
+      const userConfig = await getUserConfig();
+      if (userConfig.spaceTagId === spaceId) {
+        await saveUserConfig({ ...userConfig, spaceTagId: undefined });
+        await broadcastProfileUpdate({ spaceTag: undefined });
+      }
+    };
+    ```
+
+- [ ] **Auto-refresh stale tag on app startup**
+    - Done when: App compares user's last broadcast tag with current Space tag on startup
+    - Done when: If tag data differs, auto-broadcast updated profile (no user action needed)
+    - Location: App initialization / startup hook
+    - Only runs if user has `spaceTagId` set in config
+    - Handles: Space owner changed tag design → user's tag auto-updates
+
+    ```typescript
+    // On app startup (after spaces loaded)
+    const checkAndRefreshSpaceTag = async () => {
+      const userConfig = await getUserConfig();
+      if (!userConfig.spaceTagId) return; // No tag selected
+
+      const space = await getSpace(userConfig.spaceTagId);
+      if (!space?.spaceTag) {
+        // Space no longer has a tag - clear user's selection
+        await clearSpaceTag();
+        return;
+      }
+
+      const lastBroadcast = await getLastBroadcastedTag(); // From local storage
+      const currentTag = space.spaceTag;
+
+      // Compare tag data (letters, url, backgroundColor)
+      if (!tagsEqual(lastBroadcast, currentTag)) {
+        // Tag changed - re-broadcast with fresh data
+        await broadcastProfileUpdate({ spaceTag: { ...currentTag, spaceId: space.spaceId } });
+        await saveLastBroadcastedTag(currentTag);
+      }
+    };
+    ```
+
+    **Why this approach:**
+    - Automatic - user never needs to manually refresh
+    - Minimal network - only broadcasts when tag actually changed
+    - Handles edge case: Space owner deletes tag → user's tag auto-clears
 
 ---
 
@@ -279,6 +442,15 @@ How `spaceTagId` flows from user selection to message display:
     - Test: Private space user is member of → NOT in dropdown
     - Test: Public space without tag defined → NOT in dropdown
 
+:white_check_mark: **Tag auto-clears when leaving space**
+    - Test: Select a tag from Space A → Leave Space A → Tag is cleared
+    - Test: Other users no longer see your tag after you leave
+
+:white_check_mark: **Tag auto-refreshes on app startup**
+    - Test: User A selects tag → Space owner changes tag design → User A restarts app → Tag updates automatically
+    - Test: Space owner deletes tag → User restarts app → Tag is cleared
+    - Test: If tag unchanged, no profile broadcast occurs (check network)
+
 :white_check_mark: **TypeScript compiles**
     - Run: `npx tsc --noEmit --jsx react-jsx --skipLibCheck`
 
@@ -286,38 +458,77 @@ How `spaceTagId` flows from user selection to message display:
 
 ## Edge Cases
 
-| Scenario | Expected Behavior | Status | Priority |
-|----------|-------------------|--------|----------|
-| Space tag deleted by owner | User's tag disappears, config cleared | :hammer_and_wrench: Needs handling | P1 |
-| User leaves space | Tag no longer displays | :hammer_and_wrench: Needs handling | P1 |
-| Space becomes private | Tag hidden, remains in config | :hammer_and_wrench: Needs handling | P1 |
-| User not member of selected space | Graceful fallback, no tag shown | :hammer_and_wrench: Needs handling | P0 |
+Since we embed full tag data in the profile broadcast, most edge cases are handled at **selection time** (User Settings) rather than **render time** (Message display).
+
+| Scenario | Expected Behavior | Handler Location | Implementation |
+|----------|-------------------|------------------|----------------|
+| Space tag deleted by owner | User's tag auto-cleared on next app startup | App startup hook | `checkAndRefreshSpaceTag()` detects missing tag, clears selection |
+| User leaves space | Tag auto-cleared, profile re-broadcast | `leaveSpace` handler | If `spaceTagId === leavingSpaceId`, clear tag and broadcast |
+| User selects tag from space they're not member of | Prevented at selection time | `UserSettingsModal` | Dropdown filters by membership |
+| No tag data in sender profile | No tag shown | `Message.tsx` | `{sender.spaceTag && <SpaceTag ... />}` |
+| Tag owner changes tag design | User's tag auto-updates on next app startup | App startup hook | `checkAndRefreshSpaceTag()` compares and re-broadcasts if different |
+
+**SpaceTag Component (simple - receives full data):**
+
+```tsx
+// In SpaceTag.tsx - receives embedded tag data, no fetching
+// MUST be memoized - renders on every message in the list
+type SpaceTagProps = {
+  tag: BroadcastSpaceTag;
+  size: 'sm' | 'md' | 'lg';
+};
+
+export const SpaceTag = React.memo<SpaceTagProps>(({ tag, size }) => {
+  if (!tag?.letters) return null;
+
+  const bgColor = getFolderColorHex(tag.backgroundColor, isDarkTheme);
+
+  return (
+    <div className={`space-tag space-tag--${size}`} style={{ backgroundColor: bgColor }}>
+      {tag.url && <img src={tag.url} className="space-tag__image" />}
+      <span className="space-tag__letters">{tag.letters}</span>
+    </div>
+  );
+});
+
+SpaceTag.displayName = 'SpaceTag';
+```
+
+**User Settings Validation (filters at selection time):**
+
+```tsx
+// In UserSettingsModal - filter eligible spaces
+const eligibleSpaces = spaces.filter(space =>
+  space.isPublic &&                    // Only public spaces
+  space.spaceTag?.letters &&           // Has tag defined
+  isMember(space, currentUser)         // User is a member
+);
+```
 
 ---
 
 ## Code to Port from `origin/feat/space-tags`
 
-### 1. ColorPicker.tsx (port as-is)
+### 1. ~~ColorPicker.tsx~~ (NOT NEEDED)
 
-```bash
-git show origin/feat/space-tags:src/components/ColorPicker.tsx
-```
+~~Port from: `origin/feat/space-tags:src/components/ColorPicker.tsx`~~
 
-Move to `src/components/ui/ColorPicker.tsx`. Uses `@uiw/react-color-sketch`.
+**Instead**: Use the existing `ColorSwatch` primitive with `FOLDER_COLORS` from `IconPicker/types.ts`. This keeps the color palette consistent across the app (folders, channel icons, space tags).
 
 ### 2. SpaceTag.tsx (redesign)
 
 The old branch has a basic circular badge. We need a **pill-shaped** design:
-- Port the logic (fetching space data, size classes)
+- **Don't port** the fetching logic - component now receives full tag data as props
+- Port the size classes concept
 - Redesign the visual to match Design Specifications
-- Add `backgroundColor` support
+- Use `IconColor` type and `getFolderColorHex()` for background colors
 
 ### 3. SpaceEditor.tsx changes (adapt to SpaceSettingsModal)
 
 The old branch modifies `SpaceEditor.tsx`. We should add to `SpaceSettingsModal/` instead:
 - Port the dropzone pattern
 - Port the 4-letter input
-- Add ColorPicker integration
+- Add color swatch row using `ColorSwatch` + `FOLDER_COLORS`
 - Follow `Emojis.tsx` pattern for image upload/compression
 
 ### 4. SpaceTagSelector.tsx (DO NOT PORT)
@@ -343,7 +554,9 @@ Just the tag display next to sender name.
 - [ ] All verification tests pass
 - [ ] Edge cases P0-P1 handled
 - [ ] No console errors or warnings
-- [ ] Tested on desktop and mobile viewports
+- [ ] All user-facing strings wrapped in `<Trans>` from `@lingui/react/macro`
+- [ ] Performance verified: Message list scroll smooth with 100+ messages containing tags
+- [ ] SpaceTag component MUST be memoized with `React.memo` (tags render on every message)
 
 ---
 
@@ -358,7 +571,14 @@ _Updated during implementation_
 **2025-12-30 - Claude**: Initial task creation from `feat/space-tags` branch analysis
 **2025-12-30 - Claude**: Added data flow specification, confirmed global tag selection (matching Discord)
 **2025-12-30 - Claude**: Added Design Specifications (pill shape, ColorPicker, validation, image upload patterns)
+**2026-01-08 - Claude**: Replaced ColorPicker with IconPicker color system (use `FOLDER_COLORS` + `ColorSwatch` primitive instead of `@uiw/react-color-sketch`)
+**2026-01-08 - Claude**: Added feature-analyzer recommendations: DB schema spec, UpdateProfileMessage payload, ColorSwatch code example, expanded edge cases with handler locations, i18n section, performance verification in DoD
+**2026-01-08 - Claude**: Changed to embed full tag data in profile broadcast (Option A) - recipients don't need access to source Space to render tags
+**2026-01-08 - Claude**: Added auto-clear tag when user leaves space (better UX than manual clearing)
+**2026-01-08 - Claude**: Removed "Space becomes private" edge case - `isPublic` is set at creation and cannot be changed
+**2026-01-08 - Claude**: Made SpaceTag memoization mandatory (renders on every message)
+**2026-01-08 - Claude**: Added auto-refresh stale tag on app startup - compares last broadcast with current Space tag, re-broadcasts only if different
 
 ---
 
-*Last Updated: 2025-12-30*
+*Last Updated: 2026-01-08 20:00*
