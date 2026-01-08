@@ -50,16 +50,6 @@ msgid "Replying to"
 msgstr "Απαντώντας σε"
 
 #. js-lingui-explicit-id
-#: src/components/message/MessageComposer.native.tsx:162
-msgid "Failed to process image"
-msgstr "Αποτυχία επεξεργασίας εικόνας"
-
-#. js-lingui-explicit-id
-#: src/components/message/MessageComposer.native.tsx:315
-msgid "Replying to {user}"
-msgstr "Απαντώντας στον {user}"
-
-#. js-lingui-explicit-id
 #: src/components/message/Message.tsx:325
 msgid "has joined"
 msgstr "έχει ενταχθεί"
@@ -73,6 +63,16 @@ msgstr "έχει αποχωρήσει"
 #: src/components/message/Message.tsx:341
 msgid "has been kicked"
 msgstr "έχει αποβληθεί"
+
+#. js-lingui-explicit-id
+#: src/components/message/MessageComposer.native.tsx:162
+msgid "Failed to process image"
+msgstr "Αποτυχία επεξεργασίας εικόνας"
+
+#. js-lingui-explicit-id
+#: src/components/message/MessageComposer.native.tsx:315
+msgid "Replying to {user}"
+msgstr "Απαντώντας στον {user}"
 
 #. js-lingui-explicit-id
 #: src/components/direct/DirectMessage.tsx:854
@@ -124,7 +124,7 @@ msgid "[Sticker]"
 msgstr "[Sticker]"
 
 #. placeholder {0}: removedDevices.length
-#: src/components/modals/UserSettingsModal/Privacy.tsx:147
+#: src/components/modals/UserSettingsModal/Privacy.tsx:166
 msgid "{0} devices marked for removal. Click \"Save Changes\" to confirm."
 msgstr ""
 "{0} apparaten gemarkeerd voor verwijdering. Klik op \"Wijzigingen opslaan\" "
@@ -235,7 +235,7 @@ msgstr "@roles"
 msgid "@you"
 msgstr "@you"
 
-#: src/components/direct/DirectMessageContactsList.tsx:394
+#: src/components/direct/DirectMessageContactsList.tsx:396
 msgid "+ Add a friend"
 msgstr "Προσθήκη φίλου"
 
@@ -251,7 +251,7 @@ msgstr "0 Bytes"
 msgid "0 hours"
 msgstr "0 ώρες"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:146
+#: src/components/modals/UserSettingsModal/Privacy.tsx:165
 msgid "1 device marked for removal. Click \"Save Changes\" to confirm."
 msgstr ""
 "1 apparaat gemarkeerd voor verwijdering. Klik op \"Wijzigingen opslaan\" om "
@@ -282,7 +282,7 @@ msgstr "Ρυθμίσεις Λογαριασμού"
 msgid "actions queued"
 msgstr "ενέργειες σε αναμονή"
 
-#: src/components/direct/DirectMessageContactsList.tsx:326
+#: src/components/direct/DirectMessageContactsList.tsx:328
 msgid "Add a friend"
 msgstr "Προσθέστε έναν φίλο"
 
@@ -361,7 +361,7 @@ msgstr ""
 msgid "Advanced Settings"
 msgstr "Προχωρημένες Ρυθμίσεις"
 
-#: src/components/direct/DirectMessageContactsList.tsx:292
+#: src/components/direct/DirectMessageContactsList.tsx:293
 #: src/components/modals/SpaceSettingsModal/Account.tsx:243
 #: src/components/primitives/Select/Select.native.tsx:38
 #: src/components/primitives/Select/Select.web.tsx:32
@@ -426,7 +426,7 @@ msgstr ""
 "Animowane naklejki GIFy nie mogą być większe niż 750KB. Proszę "
 "zoptymalizować swój GIF do użycia naklejek."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:264
+#: src/components/modals/UserSettingsModal/Privacy.tsx:283
 msgid ""
 "Anyone who sees or photographs this QR code can take full control of your "
 "Quorum account and steal any associated funds. Only proceed if you are in a "
@@ -571,7 +571,7 @@ msgstr "Η άδεια κάμερας είναι απαραίτητη για να
 #: src/components/modals/ConversationSettingsModal.tsx:67
 #: src/components/modals/KickUserModal.tsx:98
 #: src/components/modals/MuteUserModal.tsx:129
-#: src/components/modals/UserSettingsModal/Privacy.tsx:273
+#: src/components/modals/UserSettingsModal/Privacy.tsx:292
 #: src/components/primitives/FileUpload/FileUpload.native.tsx:173
 #: src/hooks/business/channels/useChannelManagement.ts:253
 #: src/hooks/business/messages/useMessageActions.ts:391
@@ -784,7 +784,7 @@ msgstr "Αντιγραφή διεύθυνσης"
 msgid "Copy Failed"
 msgstr "Αποτυχία Αντιγραφής"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:428
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:447
 msgid "Copy invite link to clipboard"
 msgstr "Αντιγραφή συνδέσμου πρόσκλησης στο πρόχειρο"
 
@@ -865,7 +865,7 @@ msgstr "Δημιουργία Χώρος..."
 msgid "Current"
 msgstr "Τρέχον"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:409
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:428
 msgid "Current Invite Link"
 msgstr "Τρέχων Σύνδεσμος Πρόσκλησης"
 
@@ -1023,7 +1023,7 @@ msgstr ""
 "Οι ειδοποιήσεις επιτραπέζιου υπολογιστή δεν υποστηρίζονται σε αυτόν τον "
 "περιηγητή."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:141
+#: src/components/modals/UserSettingsModal/Privacy.tsx:160
 msgid "Devices"
 msgstr "Συσκευές"
 
@@ -1033,7 +1033,7 @@ msgstr "Συσκευές"
 msgid "Direct Message"
 msgstr "Άμεσο Μήνυμα"
 
-#: src/components/direct/DirectMessageContactsList.tsx:314
+#: src/components/direct/DirectMessageContactsList.tsx:316
 #: src/components/navbar/NavMenu.tsx:539 src/components/navbar/NavMenu.tsx:717
 msgid "Direct Messages"
 msgstr "Άμεσες Μηνύματα"
@@ -1062,7 +1062,7 @@ msgid "Display name must be {MAX_NAME_LENGTH} characters or less"
 msgstr ""
 "Το όνομα εμφάνισης πρέπει να είναι {MAX_NAME_LENGTH} χαρακτήρες ή λιγότερο"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:247
+#: src/components/modals/UserSettingsModal/Privacy.tsx:266
 msgid ""
 "Display your private key as a QR code to scan with the Quorum mobile app. "
 "This allows you to import your account on mobile without typing the key."
@@ -1166,7 +1166,7 @@ msgstr ""
 "Εισάγετε τη διεύθυνση ενός χρήστη για να ξεκινήσετε να τους στέλνετε "
 "μηνύματα."
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:289
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:304
 msgid "Enter Address Manually"
 msgstr "Εισάγετε τη διεύθυνση χειροκίνητα"
 
@@ -1206,15 +1206,15 @@ msgstr "Σφάλμα κατά την αίτηση άδειας ειδοποίη�
 msgid "Error showing notification:"
 msgstr "Σφάλμα κατά την εμφάνιση ειδοποίησης:"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:258
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:273
 msgid "Existing Conversations"
 msgstr "Υπάρχουσες Συνομιλίες"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:231
+#: src/components/modals/UserSettingsModal/Privacy.tsx:250
 msgid "Export"
 msgstr "Εξαγωγή"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:223
+#: src/components/modals/UserSettingsModal/Privacy.tsx:242
 msgid ""
 "Export your key to a file. Do not share this file with anyone else or they "
 "can impersonate you or steal your Space's Apex earnings."
@@ -1313,7 +1313,7 @@ msgstr "Αποτυχία αποεπισημάνσεως μηνύματος"
 msgid "Failed to update profile"
 msgstr "Αποτυχία ενημέρωσης προφίλ"
 
-#: src/components/direct/DirectMessageContactsList.tsx:293
+#: src/components/direct/DirectMessageContactsList.tsx:295
 msgid "Favorites"
 msgstr "Αγαπημένα"
 
@@ -1443,12 +1443,12 @@ msgstr "Γενική Συνομιλία"
 msgid "Generate Link"
 msgstr "Genereer Link"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:446
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:465
 #: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:636
 msgid "Generate New Link"
 msgstr "Δημιουργία Νέου Συνδέσμου"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:394
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:413
 #: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:630
 msgid "Generate Public Invite Link"
 msgstr "Δημιουργία Δημόσιου Συνδέσμου Πρόσκλησης"
@@ -1502,7 +1502,7 @@ msgstr "Κρατηθείτε..."
 msgid "Help"
 msgstr "Βοήθεια"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:307
+#: src/components/modals/UserSettingsModal/Privacy.tsx:326
 msgid "Hide"
 msgstr "Απόκρυψη"
 
@@ -1523,7 +1523,7 @@ msgstr "Απόκρυψη σιωπηλών καναλιών στη λίστα"
 msgid "I already saved mine"
 msgstr "Ήδη το αποθήκευσα"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:281
+#: src/components/modals/UserSettingsModal/Privacy.tsx:300
 msgid "I Understand, Show QR"
 msgstr "Κατανοώ, Εμφάνιση QR"
 
@@ -1664,7 +1664,7 @@ msgstr "Άλμα"
 msgid "Jump to present"
 msgstr "Μετάβαση στο παρόν"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:218
+#: src/components/modals/UserSettingsModal/Privacy.tsx:237
 msgid "Key Export"
 msgstr "Εξαγωγή Κλειδιού"
 
@@ -1755,7 +1755,7 @@ msgstr "Φόρτωση καρφιτσωμένων μηνυμάτων..."
 msgid "Loading your profile..."
 msgstr "Φορτώνω το προφίλ σας..."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:281
+#: src/components/modals/UserSettingsModal/Privacy.tsx:300
 msgid "Loading..."
 msgstr "Φόρτωση..."
 
@@ -1872,7 +1872,7 @@ msgstr "Τα μηνύματα ΔΕΝ είναι υπογεγραμμένα!"
 msgid "Messages are signed!"
 msgstr "Τα μηνύματα είναι υπογεγραμμένα!"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:240
+#: src/components/modals/UserSettingsModal/Privacy.tsx:259
 msgid "Mobile Import"
 msgstr "Εισαγωγή κινητού"
 
@@ -1928,7 +1928,7 @@ msgstr "Σίγαση Χρήστη"
 msgid "Mute Users"
 msgstr "Σίγαση Χρηστών"
 
-#: src/components/direct/DirectMessageContactsList.tsx:295
+#: src/components/direct/DirectMessageContactsList.tsx:297
 msgid "Muted"
 msgstr "Σιγή"
 
@@ -1936,7 +1936,7 @@ msgstr "Σιγή"
 msgid "My Account"
 msgstr "Ο Λογαριασμός Μου"
 
-#: src/components/direct/DirectMessageContactsList.tsx:360
+#: src/components/direct/DirectMessageContactsList.tsx:362
 #: src/components/space/Channel.tsx:1032
 msgid "Name or Address"
 msgstr "Όνομα ή Διεύθυνση"
@@ -1989,7 +1989,7 @@ msgstr "Δεν υπάρχουν σελιδοδείκτες σε αυτόν το�
 msgid "No bookmarks yet"
 msgstr "Δεν υπάρχουν σελιδοδείκτες ακόμα"
 
-#: src/components/direct/DirectMessageContactsList.tsx:376
+#: src/components/direct/DirectMessageContactsList.tsx:378
 msgid "No contacts found"
 msgstr "Δεν βρέθηκαν επαφές"
 
@@ -2006,7 +2006,7 @@ msgstr ""
 "χρειάζεται να αρχικοποιηθεί ή μπορεί να χρειαστεί να δημιουργήσετε πρώτα "
 "έναν δημόσιο σύνδεσμο πρόσκλησης."
 
-#: src/components/direct/DirectMessageContactsList.tsx:370
+#: src/components/direct/DirectMessageContactsList.tsx:372
 msgid "No favorites yet"
 msgstr "Δεν υπάρχουν ακόμη αγαπημένα"
 
@@ -2027,7 +2027,7 @@ msgstr "Δεν βρέθηκαν μηνύματα"
 msgid "No missing spaces found"
 msgstr "Δεν βρέθηκαν λείποντες χώροι"
 
-#: src/components/direct/DirectMessageContactsList.tsx:374
+#: src/components/direct/DirectMessageContactsList.tsx:376
 msgid "No muted conversations"
 msgstr "Καμία σιωπηλή συνομιλία"
 
@@ -2035,7 +2035,7 @@ msgstr "Καμία σιωπηλή συνομιλία"
 msgid "No pinned messages yet"
 msgstr "Δεν υπάρχουν καρφιτσωμένα μηνύματα ακόμα"
 
-#: src/components/direct/DirectMessageContactsList.tsx:372
+#: src/components/direct/DirectMessageContactsList.tsx:374
 msgid "No unknown contacts"
 msgstr "Καμία άγνωστη επαφή"
 
@@ -2121,11 +2121,11 @@ msgstr "Η Σελίδα Δεν Βρέθηκε"
 msgid "Paste an invite link"
 msgstr "Plak een uitnodigingslink"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:198
+#: src/components/modals/UserSettingsModal/Privacy.tsx:217
 msgid "Pending"
 msgstr "In afwachting"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:184
+#: src/components/modals/UserSettingsModal/Privacy.tsx:203
 msgid "Pending removal - click Save to confirm"
 msgstr "In afwachting van verwijdering - klik op Opslaan om te bevestigen"
 
@@ -2249,11 +2249,11 @@ msgid "Processing image... This may take a moment for large files."
 msgstr ""
 "Przetwarzanie obrazu... To może zająć chwilę w przypadku dużych plików."
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:354
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:373
 msgid "Public Invite Links"
 msgstr "Δημόσιοι σύνδεσμοι πρόσκλησης"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:383
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:376
 msgid ""
 "Public invite links allow anyone with access to the link to join your Space."
 " Consider who you share the link with and where you post it."
@@ -2262,7 +2262,7 @@ msgstr ""
 " om je Space te betreden. Overweeg met wie je de link deelt en waar je deze "
 "plaatst."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:298
+#: src/components/modals/UserSettingsModal/Privacy.tsx:317
 msgid "QR code will auto-hide in 60 seconds"
 msgstr "Ο κωδικός QR θα κρυφτεί αυτόματα σε 60 δευτερόλεπτα"
 
@@ -2308,7 +2308,7 @@ msgstr "Μόνο για ανάγνωση"
 msgid "Read only channel"
 msgstr "Κανάλι μόνο για ανάγνωση"
 
-#: src/components/direct/DirectMessageContactsList.tsx:387
+#: src/components/direct/DirectMessageContactsList.tsx:389
 msgid "Ready to start a truly private conversation?"
 msgstr "Έτοιμοι να ξεκινήσουμε μια πραγματικά ιδιωτική συνομιλία;"
 
@@ -2330,7 +2330,7 @@ msgstr "Ο παραλήπτης δεν έχει συσκευές"
 msgid "Refresh"
 msgstr "Ανανέωση"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:198
+#: src/components/modals/UserSettingsModal/Privacy.tsx:217
 msgid "Remove"
 msgstr "Αφαίρεση"
 
@@ -2518,7 +2518,7 @@ msgid "Select an option"
 msgstr "Επιλέξτε μια επιλογή"
 
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:38
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:278
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:293
 msgid "Select conversation"
 msgstr "Επιλέξτε συνομιλία"
 
@@ -2550,17 +2550,34 @@ msgstr "Επιλέξτε ποιους τύπους ειδοποιήσεων θέ
 msgid "Send"
 msgstr "Αποστολή"
 
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:269
+msgid ""
+"Send a unique invite link directly to someone. Each invite can only be used "
+"once."
+msgstr ""
+"Στείλτε έναν μοναδικό σύνδεσμο πρόσκλησης απευθείας σε κάποιον. Κάθε "
+"πρόσκληση μπορεί να χρησιμοποιηθεί μόνο μία φορά."
+
 #: src/services/ActionQueueHandlers.ts:1005
 msgid "Send failed"
 msgstr "Αποστολή απέτυχε"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:324
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:340
 msgid "Send Invite"
 msgstr "Αποστολή Πρόσκλησης"
 
 #: src/components/user/UserProfile.tsx:218
 msgid "Send Message"
 msgstr "Αποστολή Μηνύματος"
+
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:262
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:342
+msgid "Send Private Invite"
+msgstr "Στείλτε Ιδιωτική Πρόσκληση"
+
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:267
+msgid "Send your public invite link directly to someone via DM."
+msgstr "Στείλτε τον δημόσιο σύνδεσμο πρόσκλησης απευθείας σε κάποιον μέσω DM."
 
 #: src/components/message/Message.tsx:1239
 msgid "Sending..."
@@ -2578,6 +2595,10 @@ msgstr "Ορισμός Όνοματος Εμφάνισης"
 #: src/components/modals/UserSettingsModal/Navigation.tsx:26
 msgid "Settings"
 msgstr "Ρυθμίσεις"
+
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:260
+msgid "Share Public Link"
+msgstr "Μοιραστείτε Δημόσιο Σύνδεσμο"
 
 #: src/components/modals/UserSettingsModal/Help.tsx:40
 #: src/components/modals/UserSettingsModal/Help.tsx:44
@@ -2598,7 +2619,11 @@ msgstr ""
 msgid "Show Muted Channels"
 msgstr "Εμφάνιση Σιωπηλών Καναλιών"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:255
+#: src/components/modals/UserSettingsModal/Privacy.tsx:142
+msgid "Show Online Status"
+msgstr "Εμφάνιση Κατάστασης Διαδικτυακής Συνδεσιμότητας"
+
+#: src/components/modals/UserSettingsModal/Privacy.tsx:274
 msgid "Show QR"
 msgstr "Εμφάνιση QR"
 
@@ -2675,7 +2700,7 @@ msgid "Strikethrough"
 msgstr "Διαγραφή με διαγραμμένο"
 
 #. placeholder {0}: selectedUser?.displayName
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:331
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:350
 msgid "Successfully sent invite to {0}"
 msgstr "Επιτυχώς αποστάλθηκε πρόσκληση στον {0}"
 
@@ -2749,7 +2774,7 @@ msgstr ""
 "όταν αναζητούν ή συμμετέχουν στο Space σας χρησιμοποιώντας έναν σύνδεσμο "
 "πρόσκλησης."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:207
+#: src/components/modals/UserSettingsModal/Privacy.tsx:226
 msgid "This device"
 msgstr "Αυτή η συσκευή"
 
@@ -2770,7 +2795,7 @@ msgstr ""
 "Αυτή είναι η δημόσια διεύθυνσή σας και είναι ασφαλής για να τη μοιραστείτε "
 "με οποιονδήποτε θέλετε να αλληλεπιδράσετε."
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:413
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:432
 msgid ""
 "This link will not expire, but you can generate a new one at any time, which"
 " will invalidate the old link."
@@ -2931,7 +2956,7 @@ msgstr "Nie można przetworzyć obrazu naklejki. Proszę użyć mniejszego obraz
 msgid "Unable to restore: not logged in"
 msgstr "Δεν μπορέσαμε να αποκαταστήσουμε: δεν είστε συνδεδεμένοι"
 
-#: src/components/direct/DirectMessageContactsList.tsx:294
+#: src/components/direct/DirectMessageContactsList.tsx:296
 #: src/components/modals/JoinSpaceModal.tsx:112
 #: src/services/MessageService.ts:2089 src/services/MessageService.ts:3581
 msgid "Unknown"
@@ -3139,6 +3164,14 @@ msgstr ""
 "Όταν είναι ενεργοποιημένο, όλες οι προηγούμενες εκδόσεις των επεξεργασμένων "
 "μηνυμάτων θα αποθηκεύονται. Όταν είναι απενεργοποιημένο, διατηρείται μόνο η "
 "τρέχουσα επεξεργασμένη έκδοση."
+
+#: src/components/modals/UserSettingsModal/Privacy.tsx:146
+msgid ""
+"When enabled, other users can see when you are active. This feature is not "
+"yet available."
+msgstr ""
+"Όταν είναι ενεργοποιημένο, οι άλλοι χρήστες μπορούν να δουν πότε είστε "
+"ενεργοί. Αυτή η δυνατότητα δεν είναι ακόμη διαθέσιμη."
 
 #: src/components/modals/UserSettingsModal/Privacy.tsx:108
 msgid ""

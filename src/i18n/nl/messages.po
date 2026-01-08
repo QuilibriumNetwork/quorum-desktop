@@ -50,16 +50,6 @@ msgid "Replying to"
 msgstr "Beantwoorden aan"
 
 #. js-lingui-explicit-id
-#: src/components/message/MessageComposer.native.tsx:162
-msgid "Failed to process image"
-msgstr "Kon het beeld niet verwerken"
-
-#. js-lingui-explicit-id
-#: src/components/message/MessageComposer.native.tsx:315
-msgid "Replying to {user}"
-msgstr "Beantwoorden aan {user}"
-
-#. js-lingui-explicit-id
 #: src/components/message/Message.tsx:325
 msgid "has joined"
 msgstr "is toegetreden"
@@ -73,6 +63,16 @@ msgstr "is vertrokken"
 #: src/components/message/Message.tsx:341
 msgid "has been kicked"
 msgstr "is eruit gegooid"
+
+#. js-lingui-explicit-id
+#: src/components/message/MessageComposer.native.tsx:162
+msgid "Failed to process image"
+msgstr "Kon het beeld niet verwerken"
+
+#. js-lingui-explicit-id
+#: src/components/message/MessageComposer.native.tsx:315
+msgid "Replying to {user}"
+msgstr "Beantwoorden aan {user}"
 
 #. js-lingui-explicit-id
 #: src/components/direct/DirectMessage.tsx:854
@@ -124,7 +124,7 @@ msgid "[Sticker]"
 msgstr "[Sticker]"
 
 #. placeholder {0}: removedDevices.length
-#: src/components/modals/UserSettingsModal/Privacy.tsx:147
+#: src/components/modals/UserSettingsModal/Privacy.tsx:166
 msgid "{0} devices marked for removal. Click \"Save Changes\" to confirm."
 msgstr ""
 "{0} apparaten gemarkeerd voor verwijdering. Klik op \"Wijzigingen Opslaan\" "
@@ -235,7 +235,7 @@ msgstr "@roles"
 msgid "@you"
 msgstr "@you"
 
-#: src/components/direct/DirectMessageContactsList.tsx:394
+#: src/components/direct/DirectMessageContactsList.tsx:396
 msgid "+ Add a friend"
 msgstr "Voeg een vriend toe"
 
@@ -251,7 +251,7 @@ msgstr "0 Bytes"
 msgid "0 hours"
 msgstr "0 uren"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:146
+#: src/components/modals/UserSettingsModal/Privacy.tsx:165
 msgid "1 device marked for removal. Click \"Save Changes\" to confirm."
 msgstr ""
 "1 apparaat gemarkeerd voor verwijdering. Klik op \"Wijzigingen Opslaan\" om "
@@ -282,7 +282,7 @@ msgstr "Accountinstellingen"
 msgid "actions queued"
 msgstr "Acties in de wachtrij"
 
-#: src/components/direct/DirectMessageContactsList.tsx:326
+#: src/components/direct/DirectMessageContactsList.tsx:328
 msgid "Add a friend"
 msgstr "Voeg een vriend toe"
 
@@ -360,7 +360,7 @@ msgstr ""
 msgid "Advanced Settings"
 msgstr "Geavanceerde instellingen"
 
-#: src/components/direct/DirectMessageContactsList.tsx:292
+#: src/components/direct/DirectMessageContactsList.tsx:293
 #: src/components/modals/SpaceSettingsModal/Account.tsx:243
 #: src/components/primitives/Select/Select.native.tsx:38
 #: src/components/primitives/Select/Select.web.tsx:32
@@ -426,7 +426,7 @@ msgstr ""
 "Geanimeerde sticker GIFs mogen niet groter zijn dan 750KB. Optimaliseer je "
 "GIF voor sticker gebruik."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:264
+#: src/components/modals/UserSettingsModal/Privacy.tsx:283
 msgid ""
 "Anyone who sees or photographs this QR code can take full control of your "
 "Quorum account and steal any associated funds. Only proceed if you are in a "
@@ -573,7 +573,7 @@ msgstr "Camera toestemming is vereist om foto's te maken"
 #: src/components/modals/ConversationSettingsModal.tsx:67
 #: src/components/modals/KickUserModal.tsx:98
 #: src/components/modals/MuteUserModal.tsx:129
-#: src/components/modals/UserSettingsModal/Privacy.tsx:273
+#: src/components/modals/UserSettingsModal/Privacy.tsx:292
 #: src/components/primitives/FileUpload/FileUpload.native.tsx:173
 #: src/hooks/business/channels/useChannelManagement.ts:253
 #: src/hooks/business/messages/useMessageActions.ts:391
@@ -780,7 +780,7 @@ msgstr "Kopieer adres"
 msgid "Copy Failed"
 msgstr "Kopiëren mislukt"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:428
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:447
 msgid "Copy invite link to clipboard"
 msgstr "Kopieer uitnodigingslink naar klembord"
 
@@ -861,7 +861,7 @@ msgstr "Space aanmaken..."
 msgid "Current"
 msgstr "Huidig"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:409
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:428
 msgid "Current Invite Link"
 msgstr "Huidige Uitnodigingslink"
 
@@ -1015,7 +1015,7 @@ msgstr "Bureaubladmeldingen"
 msgid "Desktop notifications are not supported in this browser."
 msgstr "Bureaubladmeldingen worden niet ondersteund in deze browser."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:141
+#: src/components/modals/UserSettingsModal/Privacy.tsx:160
 msgid "Devices"
 msgstr "Apparaten"
 
@@ -1025,7 +1025,7 @@ msgstr "Apparaten"
 msgid "Direct Message"
 msgstr "Directe Berichten"
 
-#: src/components/direct/DirectMessageContactsList.tsx:314
+#: src/components/direct/DirectMessageContactsList.tsx:316
 #: src/components/navbar/NavMenu.tsx:539 src/components/navbar/NavMenu.tsx:717
 msgid "Direct Messages"
 msgstr "Directe Berichten"
@@ -1053,7 +1053,7 @@ msgstr "Weergavenaam is vereist"
 msgid "Display name must be {MAX_NAME_LENGTH} characters or less"
 msgstr "Weergavenaam moet {MAX_NAME_LENGTH} tekens of minder zijn"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:247
+#: src/components/modals/UserSettingsModal/Privacy.tsx:266
 msgid ""
 "Display your private key as a QR code to scan with the Quorum mobile app. "
 "This allows you to import your account on mobile without typing the key."
@@ -1156,7 +1156,7 @@ msgid "Enter a user's address to start messaging them."
 msgstr ""
 "Voer het adres van een gebruiker in om met hen te beginnen met berichten."
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:289
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:304
 msgid "Enter Address Manually"
 msgstr "Voer adres handmatig in"
 
@@ -1194,15 +1194,15 @@ msgstr "Fout bij het aanvragen van meldingsrechten:"
 msgid "Error showing notification:"
 msgstr "Fout bij het tonen van de melding:"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:258
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:273
 msgid "Existing Conversations"
 msgstr "Bestaande gesprekken"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:231
+#: src/components/modals/UserSettingsModal/Privacy.tsx:250
 msgid "Export"
 msgstr "Exporteer"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:223
+#: src/components/modals/UserSettingsModal/Privacy.tsx:242
 msgid ""
 "Export your key to a file. Do not share this file with anyone else or they "
 "can impersonate you or steal your Space's Apex earnings."
@@ -1301,7 +1301,7 @@ msgstr "Bericht kon niet worden losgemaakt"
 msgid "Failed to update profile"
 msgstr "Het is niet gelukt om het profiel bij te werken"
 
-#: src/components/direct/DirectMessageContactsList.tsx:293
+#: src/components/direct/DirectMessageContactsList.tsx:295
 msgid "Favorites"
 msgstr "Favorieten"
 
@@ -1425,12 +1425,12 @@ msgstr "Algemene chat"
 msgid "Generate Link"
 msgstr "Genereer Link"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:446
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:465
 #: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:636
 msgid "Generate New Link"
 msgstr "Genereer Nieuwe Link"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:394
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:413
 #: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:630
 msgid "Generate Public Invite Link"
 msgstr "Genereer Openbare Uitnodigingslink"
@@ -1484,7 +1484,7 @@ msgstr "Hou vol..."
 msgid "Help"
 msgstr "Help"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:307
+#: src/components/modals/UserSettingsModal/Privacy.tsx:326
 msgid "Hide"
 msgstr "Verbergen"
 
@@ -1505,7 +1505,7 @@ msgstr "Verberg gemuteerde kanalen in lijst"
 msgid "I already saved mine"
 msgstr "Ik heb de mijne al opgeslagen"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:281
+#: src/components/modals/UserSettingsModal/Privacy.tsx:300
 msgid "I Understand, Show QR"
 msgstr "Ik begrijp het, toon QR"
 
@@ -1645,7 +1645,7 @@ msgstr "Spring"
 msgid "Jump to present"
 msgstr "Spring naar het heden"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:218
+#: src/components/modals/UserSettingsModal/Privacy.tsx:237
 msgid "Key Export"
 msgstr "Toets Exporteren"
 
@@ -1736,7 +1736,7 @@ msgstr "Vastgezette boodschappen laden..."
 msgid "Loading your profile..."
 msgstr "Je profiel wordt geladen..."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:281
+#: src/components/modals/UserSettingsModal/Privacy.tsx:300
 msgid "Loading..."
 msgstr "Laden..."
 
@@ -1850,7 +1850,7 @@ msgstr "Berichten zijn NIET ondertekend!"
 msgid "Messages are signed!"
 msgstr "Berichten zijn ondertekend!"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:240
+#: src/components/modals/UserSettingsModal/Privacy.tsx:259
 msgid "Mobile Import"
 msgstr "Mobiele import"
 
@@ -1906,7 +1906,7 @@ msgstr "Gebruiker muten"
 msgid "Mute Users"
 msgstr "Gebruikers muten"
 
-#: src/components/direct/DirectMessageContactsList.tsx:295
+#: src/components/direct/DirectMessageContactsList.tsx:297
 msgid "Muted"
 msgstr "Gedempt"
 
@@ -1914,7 +1914,7 @@ msgstr "Gedempt"
 msgid "My Account"
 msgstr "Mijn account"
 
-#: src/components/direct/DirectMessageContactsList.tsx:360
+#: src/components/direct/DirectMessageContactsList.tsx:362
 #: src/components/space/Channel.tsx:1032
 msgid "Name or Address"
 msgstr "Naam of Adres"
@@ -1966,7 +1966,7 @@ msgstr "Geen bladwijzers in deze space"
 msgid "No bookmarks yet"
 msgstr "Nog geen bladwijzers"
 
-#: src/components/direct/DirectMessageContactsList.tsx:376
+#: src/components/direct/DirectMessageContactsList.tsx:378
 msgid "No contacts found"
 msgstr "Geen contacten gevonden"
 
@@ -1983,7 +1983,7 @@ msgstr ""
 "worden geïnitialiseerd of je moet eerst een openbare uitnodigingslink "
 "genereren."
 
-#: src/components/direct/DirectMessageContactsList.tsx:370
+#: src/components/direct/DirectMessageContactsList.tsx:372
 msgid "No favorites yet"
 msgstr "Nog geen favorieten"
 
@@ -2004,7 +2004,7 @@ msgstr "Geen berichten gevonden"
 msgid "No missing spaces found"
 msgstr "Geen ontbrekende ruimtes gevonden"
 
-#: src/components/direct/DirectMessageContactsList.tsx:374
+#: src/components/direct/DirectMessageContactsList.tsx:376
 msgid "No muted conversations"
 msgstr "Geen gedempte gesprekken"
 
@@ -2012,7 +2012,7 @@ msgstr "Geen gedempte gesprekken"
 msgid "No pinned messages yet"
 msgstr "Nog geen vastgezette boodschappen"
 
-#: src/components/direct/DirectMessageContactsList.tsx:372
+#: src/components/direct/DirectMessageContactsList.tsx:374
 msgid "No unknown contacts"
 msgstr "Geen onbekende contacten"
 
@@ -2096,11 +2096,11 @@ msgstr "Pagina Niet Gevonden"
 msgid "Paste an invite link"
 msgstr "Plak een uitnodigingslink"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:198
+#: src/components/modals/UserSettingsModal/Privacy.tsx:217
 msgid "Pending"
 msgstr "In afwachting"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:184
+#: src/components/modals/UserSettingsModal/Privacy.tsx:203
 msgid "Pending removal - click Save to confirm"
 msgstr "In afwachting van verwijdering - klik op Opslaan om te bevestigen"
 
@@ -2225,11 +2225,11 @@ msgstr "Privésleutel opgeslagen in de geselecteerde map"
 msgid "Processing image... This may take a moment for large files."
 msgstr "Beeld aan het verwerken... Dit kan even duren voor grote bestanden."
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:354
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:373
 msgid "Public Invite Links"
 msgstr "Openbare uitnodigingslinks"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:383
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:376
 msgid ""
 "Public invite links allow anyone with access to the link to join your Space."
 " Consider who you share the link with and where you post it."
@@ -2238,7 +2238,7 @@ msgstr ""
 " om je Space te joinen. Overweeg met wie je de link deelt en waar je deze "
 "plaatst."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:298
+#: src/components/modals/UserSettingsModal/Privacy.tsx:317
 msgid "QR code will auto-hide in 60 seconds"
 msgstr "QR-code verbergt automatisch binnen 60 seconden"
 
@@ -2285,7 +2285,7 @@ msgstr "Alleen-lezen"
 msgid "Read only channel"
 msgstr "Alleen-lezen kanaal"
 
-#: src/components/direct/DirectMessageContactsList.tsx:387
+#: src/components/direct/DirectMessageContactsList.tsx:389
 msgid "Ready to start a truly private conversation?"
 msgstr "Klaar om een echt privégesprek te beginnen?"
 
@@ -2307,7 +2307,7 @@ msgstr "Ontvanger heeft geen apparaten"
 msgid "Refresh"
 msgstr "Vernieuwen"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:198
+#: src/components/modals/UserSettingsModal/Privacy.tsx:217
 msgid "Remove"
 msgstr "Verwijderen"
 
@@ -2495,7 +2495,7 @@ msgid "Select an option"
 msgstr "Selecteer een optie"
 
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:38
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:278
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:293
 msgid "Select conversation"
 msgstr "Selecteer gesprek"
 
@@ -2527,17 +2527,34 @@ msgstr "Selecteer welke soorten meldingen je wilt ontvangen"
 msgid "Send"
 msgstr "Verzenden"
 
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:269
+msgid ""
+"Send a unique invite link directly to someone. Each invite can only be used "
+"once."
+msgstr ""
+"Stuur een unieke uitnodigingslink rechtstreeks naar iemand. Elke uitnodiging"
+" kan maar één keer worden gebruikt."
+
 #: src/services/ActionQueueHandlers.ts:1005
 msgid "Send failed"
 msgstr "Verzenden mislukt"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:324
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:340
 msgid "Send Invite"
 msgstr "Uitnodiging Verzenden"
 
 #: src/components/user/UserProfile.tsx:218
 msgid "Send Message"
 msgstr "Bericht Verzenden"
+
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:262
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:342
+msgid "Send Private Invite"
+msgstr "Stuur Privé Uitnodiging"
+
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:267
+msgid "Send your public invite link directly to someone via DM."
+msgstr "Stuur je openbare uitnodigingslink rechtstreeks naar iemand via DM."
 
 #: src/components/message/Message.tsx:1239
 msgid "Sending..."
@@ -2555,6 +2572,10 @@ msgstr "Stel Weergavenaam In"
 #: src/components/modals/UserSettingsModal/Navigation.tsx:26
 msgid "Settings"
 msgstr "Instellingen"
+
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:260
+msgid "Share Public Link"
+msgstr "Deel Openbare Link"
 
 #: src/components/modals/UserSettingsModal/Help.tsx:40
 #: src/components/modals/UserSettingsModal/Help.tsx:44
@@ -2575,7 +2596,11 @@ msgstr ""
 msgid "Show Muted Channels"
 msgstr "Toon gemuteerde kanalen"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:255
+#: src/components/modals/UserSettingsModal/Privacy.tsx:142
+msgid "Show Online Status"
+msgstr "Toon Online Status"
+
+#: src/components/modals/UserSettingsModal/Privacy.tsx:274
 msgid "Show QR"
 msgstr "Toon QR"
 
@@ -2651,7 +2676,7 @@ msgid "Strikethrough"
 msgstr "Doorhalen"
 
 #. placeholder {0}: selectedUser?.displayName
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:331
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:350
 msgid "Successfully sent invite to {0}"
 msgstr "Uitnodiging succesvol verzonden naar {0}"
 
@@ -2724,7 +2749,7 @@ msgstr ""
 "Deze beschrijving is zichtbaar op uitnodigingen en wordt getoond aan mensen "
 "wanneer ze je Space opzoeken of zich aanmelden met een uitnodigingslink."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:207
+#: src/components/modals/UserSettingsModal/Privacy.tsx:226
 msgid "This device"
 msgstr "Dit apparaat"
 
@@ -2745,7 +2770,7 @@ msgstr ""
 "Dit is je openbare adres en is veilig om te delen met iedereen met wie je "
 "wilt interageren."
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:413
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:432
 msgid ""
 "This link will not expire, but you can generate a new one at any time, which"
 " will invalidate the old link."
@@ -2907,7 +2932,7 @@ msgstr ""
 msgid "Unable to restore: not logged in"
 msgstr "Kon niet herstellen: niet ingelogd"
 
-#: src/components/direct/DirectMessageContactsList.tsx:294
+#: src/components/direct/DirectMessageContactsList.tsx:296
 #: src/components/modals/JoinSpaceModal.tsx:112
 #: src/services/MessageService.ts:2089 src/services/MessageService.ts:3581
 msgid "Unknown"
@@ -3113,6 +3138,14 @@ msgstr ""
 "Wanneer ingeschakeld, worden alle eerdere versies van bewerkte berichten "
 "opgeslagen. Wanneer uitgeschakeld, wordt alleen de huidige bewerkte versie "
 "bewaard."
+
+#: src/components/modals/UserSettingsModal/Privacy.tsx:146
+msgid ""
+"When enabled, other users can see when you are active. This feature is not "
+"yet available."
+msgstr ""
+"Wanneer ingeschakeld, kunnen andere gebruikers zien wanneer je actief bent. "
+"Deze functie is nog niet beschikbaar."
 
 #: src/components/modals/UserSettingsModal/Privacy.tsx:108
 msgid ""

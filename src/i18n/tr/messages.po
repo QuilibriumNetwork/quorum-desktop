@@ -50,16 +50,6 @@ msgid "Replying to"
 msgstr "Yanıt veriliyor"
 
 #. js-lingui-explicit-id
-#: src/components/message/MessageComposer.native.tsx:162
-msgid "Failed to process image"
-msgstr "Görüntü işlenemedi"
-
-#. js-lingui-explicit-id
-#: src/components/message/MessageComposer.native.tsx:315
-msgid "Replying to {user}"
-msgstr "{user} ile yanıt veriliyor"
-
-#. js-lingui-explicit-id
 #: src/components/message/Message.tsx:325
 msgid "has joined"
 msgstr "katıldı"
@@ -73,6 +63,16 @@ msgstr "ayrıldı"
 #: src/components/message/Message.tsx:341
 msgid "has been kicked"
 msgstr "atıldı"
+
+#. js-lingui-explicit-id
+#: src/components/message/MessageComposer.native.tsx:162
+msgid "Failed to process image"
+msgstr "Görüntü işlenemedi"
+
+#. js-lingui-explicit-id
+#: src/components/message/MessageComposer.native.tsx:315
+msgid "Replying to {user}"
+msgstr "{user} ile yanıt veriliyor"
 
 #. js-lingui-explicit-id
 #: src/components/direct/DirectMessage.tsx:854
@@ -124,7 +124,7 @@ msgid "[Sticker]"
 msgstr "[Sticker]"
 
 #. placeholder {0}: removedDevices.length
-#: src/components/modals/UserSettingsModal/Privacy.tsx:147
+#: src/components/modals/UserSettingsModal/Privacy.tsx:166
 msgid "{0} devices marked for removal. Click \"Save Changes\" to confirm."
 msgstr ""
 "{0} cihaz kaldırma için işaretlendi. Değişiklikleri onaylamak için "
@@ -235,7 +235,7 @@ msgstr "@roles"
 msgid "@you"
 msgstr "@you"
 
-#: src/components/direct/DirectMessageContactsList.tsx:394
+#: src/components/direct/DirectMessageContactsList.tsx:396
 msgid "+ Add a friend"
 msgstr "Bir arkadaş ekle"
 
@@ -251,7 +251,7 @@ msgstr "0 Bayt"
 msgid "0 hours"
 msgstr "0 saat"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:146
+#: src/components/modals/UserSettingsModal/Privacy.tsx:165
 msgid "1 device marked for removal. Click \"Save Changes\" to confirm."
 msgstr ""
 "1 cihaz kaldırma için işaretlendi. Değişiklikleri onaylamak için "
@@ -282,7 +282,7 @@ msgstr "Hesap Ayarları"
 msgid "actions queued"
 msgstr "Eylemler sıraya alındı"
 
-#: src/components/direct/DirectMessageContactsList.tsx:326
+#: src/components/direct/DirectMessageContactsList.tsx:328
 msgid "Add a friend"
 msgstr "Arkadaş ekle"
 
@@ -360,7 +360,7 @@ msgstr ""
 msgid "Advanced Settings"
 msgstr "Gelişmiş Ayarlar"
 
-#: src/components/direct/DirectMessageContactsList.tsx:292
+#: src/components/direct/DirectMessageContactsList.tsx:293
 #: src/components/modals/SpaceSettingsModal/Account.tsx:243
 #: src/components/primitives/Select/Select.native.tsx:38
 #: src/components/primitives/Select/Select.web.tsx:32
@@ -424,7 +424,7 @@ msgstr ""
 "Animasyonlu çıkartma GIF'leri 750KB'den büyük olamaz. Lütfen GIF'inizi "
 "çıkartma kullanımı için optimize edin."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:264
+#: src/components/modals/UserSettingsModal/Privacy.tsx:283
 msgid ""
 "Anyone who sees or photographs this QR code can take full control of your "
 "Quorum account and steal any associated funds. Only proceed if you are in a "
@@ -568,7 +568,7 @@ msgstr "Fotoğraf çekmek için kamera izni gereklidir"
 #: src/components/modals/ConversationSettingsModal.tsx:67
 #: src/components/modals/KickUserModal.tsx:98
 #: src/components/modals/MuteUserModal.tsx:129
-#: src/components/modals/UserSettingsModal/Privacy.tsx:273
+#: src/components/modals/UserSettingsModal/Privacy.tsx:292
 #: src/components/primitives/FileUpload/FileUpload.native.tsx:173
 #: src/hooks/business/channels/useChannelManagement.ts:253
 #: src/hooks/business/messages/useMessageActions.ts:391
@@ -773,7 +773,7 @@ msgstr "Adresi kopyala"
 msgid "Copy Failed"
 msgstr "Kopyalama Başarısız"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:428
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:447
 msgid "Copy invite link to clipboard"
 msgstr "Davet bağlantısını panoya kopyala"
 
@@ -854,7 +854,7 @@ msgstr "Alan Oluşturuluyor..."
 msgid "Current"
 msgstr "Mevcut"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:409
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:428
 msgid "Current Invite Link"
 msgstr "Mevcut Davet Bağlantısı"
 
@@ -1008,7 +1008,7 @@ msgstr "Masaüstü Bildirimleri"
 msgid "Desktop notifications are not supported in this browser."
 msgstr "Bu tarayıcıda masaüstü bildirimleri desteklenmiyor."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:141
+#: src/components/modals/UserSettingsModal/Privacy.tsx:160
 msgid "Devices"
 msgstr "Cihazlar"
 
@@ -1018,7 +1018,7 @@ msgstr "Cihazlar"
 msgid "Direct Message"
 msgstr "Özel Mesaj"
 
-#: src/components/direct/DirectMessageContactsList.tsx:314
+#: src/components/direct/DirectMessageContactsList.tsx:316
 #: src/components/navbar/NavMenu.tsx:539 src/components/navbar/NavMenu.tsx:717
 msgid "Direct Messages"
 msgstr "Doğrudan Mesajlar"
@@ -1046,7 +1046,7 @@ msgstr "Görüntü adı gereklidir"
 msgid "Display name must be {MAX_NAME_LENGTH} characters or less"
 msgstr "Görünen ad {MAX_NAME_LENGTH} karakter veya daha az olmalıdır"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:247
+#: src/components/modals/UserSettingsModal/Privacy.tsx:266
 msgid ""
 "Display your private key as a QR code to scan with the Quorum mobile app. "
 "This allows you to import your account on mobile without typing the key."
@@ -1148,7 +1148,7 @@ msgstr "Space'iniz için bir ad girin"
 msgid "Enter a user's address to start messaging them."
 msgstr "Mesajlaşmaya başlamak için bir kullanıcının adresini girin."
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:289
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:304
 msgid "Enter Address Manually"
 msgstr "Adres Manuel Olarak Gir"
 
@@ -1187,15 +1187,15 @@ msgstr "Bildirim izni talep edilirken hata:"
 msgid "Error showing notification:"
 msgstr "Bildirim gösterirken hata:"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:258
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:273
 msgid "Existing Conversations"
 msgstr "Mevcut Görüşmeler"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:231
+#: src/components/modals/UserSettingsModal/Privacy.tsx:250
 msgid "Export"
 msgstr "Dışa Aktar"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:223
+#: src/components/modals/UserSettingsModal/Privacy.tsx:242
 msgid ""
 "Export your key to a file. Do not share this file with anyone else or they "
 "can impersonate you or steal your Space's Apex earnings."
@@ -1293,7 +1293,7 @@ msgstr "Mesaj sabitlenemedi"
 msgid "Failed to update profile"
 msgstr "Profil güncellenemedi"
 
-#: src/components/direct/DirectMessageContactsList.tsx:293
+#: src/components/direct/DirectMessageContactsList.tsx:295
 msgid "Favorites"
 msgstr "Favoriler"
 
@@ -1418,12 +1418,12 @@ msgstr "Genel Sohbet"
 msgid "Generate Link"
 msgstr "Bağlantı Oluştur"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:446
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:465
 #: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:636
 msgid "Generate New Link"
 msgstr "Yeni Bağlantı Oluştur"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:394
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:413
 #: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:630
 msgid "Generate Public Invite Link"
 msgstr "Kamu Davet Bağlantısı Oluştur"
@@ -1477,7 +1477,7 @@ msgstr "Biraz sabırlı olun..."
 msgid "Help"
 msgstr "Yardım"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:307
+#: src/components/modals/UserSettingsModal/Privacy.tsx:326
 msgid "Hide"
 msgstr "Gizle"
 
@@ -1498,7 +1498,7 @@ msgstr "Liste içinde susturulmuş kanalları gizle"
 msgid "I already saved mine"
 msgstr "Ben zaten kaydettim"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:281
+#: src/components/modals/UserSettingsModal/Privacy.tsx:300
 msgid "I Understand, Show QR"
 msgstr "Anladım, QR Göster"
 
@@ -1639,7 +1639,7 @@ msgstr "Atla"
 msgid "Jump to present"
 msgstr "Şu ana atla"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:218
+#: src/components/modals/UserSettingsModal/Privacy.tsx:237
 msgid "Key Export"
 msgstr "Anahtar Dışa Aktar"
 
@@ -1730,7 +1730,7 @@ msgstr "Sabit mesajlar yükleniyor..."
 msgid "Loading your profile..."
 msgstr "Profilinizi yüklüyoruz..."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:281
+#: src/components/modals/UserSettingsModal/Privacy.tsx:300
 msgid "Loading..."
 msgstr "Yükleniyor..."
 
@@ -1843,7 +1843,7 @@ msgstr "Mesajlar İMZALANMAMIŞTIR!"
 msgid "Messages are signed!"
 msgstr "Mesajlar imzalanmıştır!"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:240
+#: src/components/modals/UserSettingsModal/Privacy.tsx:259
 msgid "Mobile Import"
 msgstr "Mobil İçe Aktarma"
 
@@ -1899,7 +1899,7 @@ msgstr "Kullanıcıyı Sustur"
 msgid "Mute Users"
 msgstr "Kullanıcıları Sustur"
 
-#: src/components/direct/DirectMessageContactsList.tsx:295
+#: src/components/direct/DirectMessageContactsList.tsx:297
 msgid "Muted"
 msgstr "Sessize alındı"
 
@@ -1907,7 +1907,7 @@ msgstr "Sessize alındı"
 msgid "My Account"
 msgstr "Hesabım"
 
-#: src/components/direct/DirectMessageContactsList.tsx:360
+#: src/components/direct/DirectMessageContactsList.tsx:362
 #: src/components/space/Channel.tsx:1032
 msgid "Name or Address"
 msgstr "İsim veya Adres"
@@ -1958,7 +1958,7 @@ msgstr "Bu alanda hiç yer işareti yok"
 msgid "No bookmarks yet"
 msgstr "Henüz hiç yer işareti yok"
 
-#: src/components/direct/DirectMessageContactsList.tsx:376
+#: src/components/direct/DirectMessageContactsList.tsx:378
 msgid "No contacts found"
 msgstr "Hiçbir kişi bulunamadı"
 
@@ -1974,7 +1974,7 @@ msgstr ""
 "Bu alan için şifreleme durumu bulunamadı. Alanın başlatılması gerekebilir "
 "veya önce bir genel davet bağlantısı oluşturmanız gerekebilir."
 
-#: src/components/direct/DirectMessageContactsList.tsx:370
+#: src/components/direct/DirectMessageContactsList.tsx:372
 msgid "No favorites yet"
 msgstr "Henüz favori yok"
 
@@ -1994,7 +1994,7 @@ msgstr "Mesaj bulunamadı"
 msgid "No missing spaces found"
 msgstr "Kaybolan alan bulunamadı"
 
-#: src/components/direct/DirectMessageContactsList.tsx:374
+#: src/components/direct/DirectMessageContactsList.tsx:376
 msgid "No muted conversations"
 msgstr "Sessize alınmış sohbet yok"
 
@@ -2002,7 +2002,7 @@ msgstr "Sessize alınmış sohbet yok"
 msgid "No pinned messages yet"
 msgstr "Henüz sabitlenmiş mesaj yok"
 
-#: src/components/direct/DirectMessageContactsList.tsx:372
+#: src/components/direct/DirectMessageContactsList.tsx:374
 msgid "No unknown contacts"
 msgstr "Bilinmeyen kişiler yok"
 
@@ -2086,11 +2086,11 @@ msgstr "Sayfa Bulunamadı"
 msgid "Paste an invite link"
 msgstr "Bir davet bağlantısını yapıştırın"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:198
+#: src/components/modals/UserSettingsModal/Privacy.tsx:217
 msgid "Pending"
 msgstr "Beklemede"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:184
+#: src/components/modals/UserSettingsModal/Privacy.tsx:203
 msgid "Pending removal - click Save to confirm"
 msgstr "Bekleyen kaldırma - onaylamak için Kaydet'e tıklayın"
 
@@ -2212,11 +2212,11 @@ msgstr "Özel anahtar seçilen klasöre kaydedildi"
 msgid "Processing image... This may take a moment for large files."
 msgstr "Görüntü işleniyor... Bu, büyük dosyalar için bir süre alabilir."
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:354
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:373
 msgid "Public Invite Links"
 msgstr "Herkese Açık Davet Bağlantıları"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:383
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:376
 msgid ""
 "Public invite links allow anyone with access to the link to join your Space."
 " Consider who you share the link with and where you post it."
@@ -2225,7 +2225,7 @@ msgstr ""
 "katılmasına izin verir. Bağlantıyı kiminle paylaştığınıza ve nerede "
 "paylaştığınıza dikkat edin."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:298
+#: src/components/modals/UserSettingsModal/Privacy.tsx:317
 msgid "QR code will auto-hide in 60 seconds"
 msgstr "QR kodu 60 saniye içinde otomatik olarak gizlenecektir"
 
@@ -2270,7 +2270,7 @@ msgstr "Sadece okunur"
 msgid "Read only channel"
 msgstr "Sadece okunur kanal"
 
-#: src/components/direct/DirectMessageContactsList.tsx:387
+#: src/components/direct/DirectMessageContactsList.tsx:389
 msgid "Ready to start a truly private conversation?"
 msgstr "Gerçekten özel bir sohbete başlamaya hazır mısınız?"
 
@@ -2292,7 +2292,7 @@ msgstr "Alıcının cihazı yok"
 msgid "Refresh"
 msgstr "Yenile"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:198
+#: src/components/modals/UserSettingsModal/Privacy.tsx:217
 msgid "Remove"
 msgstr "Kaldır"
 
@@ -2480,7 +2480,7 @@ msgid "Select an option"
 msgstr "Bir seçenek seçin"
 
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:38
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:278
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:293
 msgid "Select conversation"
 msgstr "Sohbeti seç"
 
@@ -2512,17 +2512,34 @@ msgstr "Almak istediğiniz bildirim türlerini seçin"
 msgid "Send"
 msgstr "Gönder"
 
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:269
+msgid ""
+"Send a unique invite link directly to someone. Each invite can only be used "
+"once."
+msgstr ""
+"Birine doğrudan benzersiz bir davet bağlantısı gönderin. Her davet yalnızca "
+"bir kez kullanılabilir."
+
 #: src/services/ActionQueueHandlers.ts:1005
 msgid "Send failed"
 msgstr "Gönderim başarısız"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:324
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:340
 msgid "Send Invite"
 msgstr "Davet Gönder"
 
 #: src/components/user/UserProfile.tsx:218
 msgid "Send Message"
 msgstr "Mesaj Gönder"
+
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:262
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:342
+msgid "Send Private Invite"
+msgstr "Özel Davet Gönder"
+
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:267
+msgid "Send your public invite link directly to someone via DM."
+msgstr "DM aracılığıyla birine doğrudan genel davet bağlantınızı gönderin."
 
 #: src/components/message/Message.tsx:1239
 msgid "Sending..."
@@ -2540,6 +2557,10 @@ msgstr "Görüntü Adını Ayarla"
 #: src/components/modals/UserSettingsModal/Navigation.tsx:26
 msgid "Settings"
 msgstr "Ayarlar"
+
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:260
+msgid "Share Public Link"
+msgstr "Genel Bağlantıyı Paylaş"
 
 #: src/components/modals/UserSettingsModal/Help.tsx:40
 #: src/components/modals/UserSettingsModal/Help.tsx:44
@@ -2560,7 +2581,11 @@ msgstr ""
 msgid "Show Muted Channels"
 msgstr "Susturulmuş Kanalları Göster"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:255
+#: src/components/modals/UserSettingsModal/Privacy.tsx:142
+msgid "Show Online Status"
+msgstr "Çevrimiçi Durumu Göster"
+
+#: src/components/modals/UserSettingsModal/Privacy.tsx:274
 msgid "Show QR"
 msgstr "QR'yi Göster"
 
@@ -2635,7 +2660,7 @@ msgid "Strikethrough"
 msgstr "Üstü Çizili"
 
 #. placeholder {0}: selectedUser?.displayName
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:331
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:350
 msgid "Successfully sent invite to {0}"
 msgstr "{0} için davet başarıyla gönderildi"
 
@@ -2706,7 +2731,7 @@ msgstr ""
 "Bu açıklama davetlerde görünür olacak ve bir davet bağlantısı kullanarak "
 "Space'inizi arayan veya katılan kişilere gösterilecektir."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:207
+#: src/components/modals/UserSettingsModal/Privacy.tsx:226
 msgid "This device"
 msgstr "Bu cihaz"
 
@@ -2727,7 +2752,7 @@ msgstr ""
 "Bu, herkese etkileşimde bulunmak istediğinizde paylaşabileceğiniz güvenli "
 "bir genel adresinizdir."
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:413
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:432
 msgid ""
 "This link will not expire, but you can generate a new one at any time, which"
 " will invalidate the old link."
@@ -2887,7 +2912,7 @@ msgstr ""
 msgid "Unable to restore: not logged in"
 msgstr "Geri yüklenemiyor: giriş yapılmadı"
 
-#: src/components/direct/DirectMessageContactsList.tsx:294
+#: src/components/direct/DirectMessageContactsList.tsx:296
 #: src/components/modals/JoinSpaceModal.tsx:112
 #: src/services/MessageService.ts:2089 src/services/MessageService.ts:3581
 msgid "Unknown"
@@ -3089,6 +3114,14 @@ msgstr ""
 "Etkinleştirildiğinde, düzenlenmiş mesajların tüm önceki sürümleri "
 "kaydedilecektir. Devre dışı bırakıldığında, yalnızca mevcut düzenlenmiş "
 "sürüm saklanır."
+
+#: src/components/modals/UserSettingsModal/Privacy.tsx:146
+msgid ""
+"When enabled, other users can see when you are active. This feature is not "
+"yet available."
+msgstr ""
+"Etkinleştirildiğinde, diğer kullanıcılar ne zaman aktif olduğunuzu "
+"görebilir. Bu özellik henüz mevcut değil."
 
 #: src/components/modals/UserSettingsModal/Privacy.tsx:108
 msgid ""

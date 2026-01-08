@@ -50,16 +50,6 @@ msgid "Replying to"
 msgstr "מגיב ל"
 
 #. js-lingui-explicit-id
-#: src/components/message/MessageComposer.native.tsx:162
-msgid "Failed to process image"
-msgstr "לא הצלחנו לעבד את התמונה"
-
-#. js-lingui-explicit-id
-#: src/components/message/MessageComposer.native.tsx:315
-msgid "Replying to {user}"
-msgstr "עונה ל-{user}"
-
-#. js-lingui-explicit-id
 #: src/components/message/Message.tsx:325
 msgid "has joined"
 msgstr "הצטרף"
@@ -73,6 +63,16 @@ msgstr "עזב"
 #: src/components/message/Message.tsx:341
 msgid "has been kicked"
 msgstr "הודח"
+
+#. js-lingui-explicit-id
+#: src/components/message/MessageComposer.native.tsx:162
+msgid "Failed to process image"
+msgstr "לא הצלחנו לעבד את התמונה"
+
+#. js-lingui-explicit-id
+#: src/components/message/MessageComposer.native.tsx:315
+msgid "Replying to {user}"
+msgstr "עונה ל-{user}"
 
 #. js-lingui-explicit-id
 #: src/components/direct/DirectMessage.tsx:854
@@ -124,7 +124,7 @@ msgid "[Sticker]"
 msgstr "[סטיקר]"
 
 #. placeholder {0}: removedDevices.length
-#: src/components/modals/UserSettingsModal/Privacy.tsx:147
+#: src/components/modals/UserSettingsModal/Privacy.tsx:166
 msgid "{0} devices marked for removal. Click \"Save Changes\" to confirm."
 msgstr "{0} מכשירים שסומנו למחיקה. לחץ \"שמור שינויים\" כדי לאשר."
 
@@ -233,7 +233,7 @@ msgstr "@תפקידים"
 msgid "@you"
 msgstr "@אתה"
 
-#: src/components/direct/DirectMessageContactsList.tsx:394
+#: src/components/direct/DirectMessageContactsList.tsx:396
 msgid "+ Add a friend"
 msgstr "הוסף חבר"
 
@@ -249,7 +249,7 @@ msgstr "0 בתים"
 msgid "0 hours"
 msgstr "0 שעות"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:146
+#: src/components/modals/UserSettingsModal/Privacy.tsx:165
 msgid "1 device marked for removal. Click \"Save Changes\" to confirm."
 msgstr "מכשיר אחד שסומן למחיקה. לחץ \"שמור שינויים\" כדי לאשר."
 
@@ -278,7 +278,7 @@ msgstr "הגדרות חשבון"
 msgid "actions queued"
 msgstr "פעולות בתור"
 
-#: src/components/direct/DirectMessageContactsList.tsx:326
+#: src/components/direct/DirectMessageContactsList.tsx:328
 msgid "Add a friend"
 msgstr "הוסף חבר"
 
@@ -354,7 +354,7 @@ msgstr ""
 msgid "Advanced Settings"
 msgstr "הגדרות מתקדמות"
 
-#: src/components/direct/DirectMessageContactsList.tsx:292
+#: src/components/direct/DirectMessageContactsList.tsx:293
 #: src/components/modals/SpaceSettingsModal/Account.tsx:243
 #: src/components/primitives/Select/Select.native.tsx:38
 #: src/components/primitives/Select/Select.web.tsx:32
@@ -418,7 +418,7 @@ msgstr ""
 "גיף אנימציה של מדבקות לא יכול להיות גדול מ-750KB. אנא אופטימיזו את הגיף שלכם"
 " לשימוש במדבקות."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:264
+#: src/components/modals/UserSettingsModal/Privacy.tsx:283
 msgid ""
 "Anyone who sees or photographs this QR code can take full control of your "
 "Quorum account and steal any associated funds. Only proceed if you are in a "
@@ -561,7 +561,7 @@ msgstr "דרושה הרשאת מצלמה כדי לצלם תמונות"
 #: src/components/modals/ConversationSettingsModal.tsx:67
 #: src/components/modals/KickUserModal.tsx:98
 #: src/components/modals/MuteUserModal.tsx:129
-#: src/components/modals/UserSettingsModal/Privacy.tsx:273
+#: src/components/modals/UserSettingsModal/Privacy.tsx:292
 #: src/components/primitives/FileUpload/FileUpload.native.tsx:173
 #: src/hooks/business/channels/useChannelManagement.ts:253
 #: src/hooks/business/messages/useMessageActions.ts:391
@@ -763,7 +763,7 @@ msgstr "העתק כתובת"
 msgid "Copy Failed"
 msgstr "העתקה נכשלה"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:428
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:447
 msgid "Copy invite link to clipboard"
 msgstr "להעתיק קישור הזמנה ללוח"
 
@@ -842,7 +842,7 @@ msgstr "יוצר מרחב..."
 msgid "Current"
 msgstr "נוכחי"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:409
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:428
 msgid "Current Invite Link"
 msgstr "קישור ההזמנה הנוכחי"
 
@@ -996,7 +996,7 @@ msgstr "התראות שולחן עבודה"
 msgid "Desktop notifications are not supported in this browser."
 msgstr "התראות שולחן עבודה אינן נתמכות בדפדפן הזה."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:141
+#: src/components/modals/UserSettingsModal/Privacy.tsx:160
 msgid "Devices"
 msgstr "מכשירים"
 
@@ -1006,7 +1006,7 @@ msgstr "מכשירים"
 msgid "Direct Message"
 msgstr "הודעה ישירה"
 
-#: src/components/direct/DirectMessageContactsList.tsx:314
+#: src/components/direct/DirectMessageContactsList.tsx:316
 #: src/components/navbar/NavMenu.tsx:539 src/components/navbar/NavMenu.tsx:717
 msgid "Direct Messages"
 msgstr "הודעות ישירות"
@@ -1034,7 +1034,7 @@ msgstr "שם תצוגה נדרש"
 msgid "Display name must be {MAX_NAME_LENGTH} characters or less"
 msgstr "שם התצוגה חייב להיות באורך של {MAX_NAME_LENGTH} תווים או פחות"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:247
+#: src/components/modals/UserSettingsModal/Privacy.tsx:266
 msgid ""
 "Display your private key as a QR code to scan with the Quorum mobile app. "
 "This allows you to import your account on mobile without typing the key."
@@ -1131,7 +1131,7 @@ msgstr "הזן שם עבור ה-Space שלך"
 msgid "Enter a user's address to start messaging them."
 msgstr "הזן את כתובת המשתמש כדי להתחיל לשלוח לו הודעות."
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:289
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:304
 msgid "Enter Address Manually"
 msgstr "הזן כתובת ידנית"
 
@@ -1169,15 +1169,15 @@ msgstr "שגיאה בבקשת הרשאת התראה:"
 msgid "Error showing notification:"
 msgstr "שגיאה בהצגת התראה:"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:258
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:273
 msgid "Existing Conversations"
 msgstr "שיחות קיימות"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:231
+#: src/components/modals/UserSettingsModal/Privacy.tsx:250
 msgid "Export"
 msgstr "ייצוא"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:223
+#: src/components/modals/UserSettingsModal/Privacy.tsx:242
 msgid ""
 "Export your key to a file. Do not share this file with anyone else or they "
 "can impersonate you or steal your Space's Apex earnings."
@@ -1274,7 +1274,7 @@ msgstr "נכשל לשחרר הודעה מהדבקה"
 msgid "Failed to update profile"
 msgstr "נכשל בעדכון הפרופיל"
 
-#: src/components/direct/DirectMessageContactsList.tsx:293
+#: src/components/direct/DirectMessageContactsList.tsx:295
 msgid "Favorites"
 msgstr "מועדפים"
 
@@ -1397,12 +1397,12 @@ msgstr "שיחת צ'אט כללית"
 msgid "Generate Link"
 msgstr "צור קישור"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:446
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:465
 #: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:636
 msgid "Generate New Link"
 msgstr "ייצר קישור חדש"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:394
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:413
 #: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:630
 msgid "Generate Public Invite Link"
 msgstr "ייצר קישור הזמנה ציבורי"
@@ -1455,7 +1455,7 @@ msgstr "חכה שם..."
 msgid "Help"
 msgstr "עזרה"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:307
+#: src/components/modals/UserSettingsModal/Privacy.tsx:326
 msgid "Hide"
 msgstr "הסתר"
 
@@ -1476,7 +1476,7 @@ msgstr "הסתר ערוצים מושתקים ברשימה"
 msgid "I already saved mine"
 msgstr "אני כבר שמרתי את שלי"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:281
+#: src/components/modals/UserSettingsModal/Privacy.tsx:300
 msgid "I Understand, Show QR"
 msgstr "אני מבין, הצג QR"
 
@@ -1612,7 +1612,7 @@ msgstr "קפיצה"
 msgid "Jump to present"
 msgstr "קפיצה להווה"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:218
+#: src/components/modals/UserSettingsModal/Privacy.tsx:237
 msgid "Key Export"
 msgstr "ייצוא מפתח"
 
@@ -1703,7 +1703,7 @@ msgstr "טוען הודעות מוצמדות..."
 msgid "Loading your profile..."
 msgstr "טוען את הפרופיל שלך..."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:281
+#: src/components/modals/UserSettingsModal/Privacy.tsx:300
 msgid "Loading..."
 msgstr "טוען..."
 
@@ -1811,7 +1811,7 @@ msgstr "ההודעות אינן חתומות!"
 msgid "Messages are signed!"
 msgstr "ההודעות חתומות!"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:240
+#: src/components/modals/UserSettingsModal/Privacy.tsx:259
 msgid "Mobile Import"
 msgstr "ייבוא נייד"
 
@@ -1867,7 +1867,7 @@ msgstr "השתק משתמש"
 msgid "Mute Users"
 msgstr "השתק משתמשים"
 
-#: src/components/direct/DirectMessageContactsList.tsx:295
+#: src/components/direct/DirectMessageContactsList.tsx:297
 msgid "Muted"
 msgstr "מושתק"
 
@@ -1875,7 +1875,7 @@ msgstr "מושתק"
 msgid "My Account"
 msgstr "החשבון שלי"
 
-#: src/components/direct/DirectMessageContactsList.tsx:360
+#: src/components/direct/DirectMessageContactsList.tsx:362
 #: src/components/space/Channel.tsx:1032
 msgid "Name or Address"
 msgstr "שם או כתובת"
@@ -1926,7 +1926,7 @@ msgstr "אין סימנים בחלל הזה"
 msgid "No bookmarks yet"
 msgstr "עדיין אין סימנים"
 
-#: src/components/direct/DirectMessageContactsList.tsx:376
+#: src/components/direct/DirectMessageContactsList.tsx:378
 msgid "No contacts found"
 msgstr "לא נמצאו אנשי קשר"
 
@@ -1942,7 +1942,7 @@ msgstr ""
 "לא נמצא מצב הצפנה עבור ה-Space הזה. ייתכן שה-Space צריך להיות מאותחל או "
 "שתצטרך ליצור קישור הזמנה ציבורי קודם."
 
-#: src/components/direct/DirectMessageContactsList.tsx:370
+#: src/components/direct/DirectMessageContactsList.tsx:372
 msgid "No favorites yet"
 msgstr "עדיין אין מועדפים"
 
@@ -1962,7 +1962,7 @@ msgstr "לא נמצאו הודעות"
 msgid "No missing spaces found"
 msgstr "לא נמצאו חללים חסרים"
 
-#: src/components/direct/DirectMessageContactsList.tsx:374
+#: src/components/direct/DirectMessageContactsList.tsx:376
 msgid "No muted conversations"
 msgstr "אין שיחות מושתקות"
 
@@ -1970,7 +1970,7 @@ msgstr "אין שיחות מושתקות"
 msgid "No pinned messages yet"
 msgstr "אין הודעות מוצמדות עדיין"
 
-#: src/components/direct/DirectMessageContactsList.tsx:372
+#: src/components/direct/DirectMessageContactsList.tsx:374
 msgid "No unknown contacts"
 msgstr "אין אנשי קשר לא ידועים"
 
@@ -2054,11 +2054,11 @@ msgstr "הדף לא נמצא"
 msgid "Paste an invite link"
 msgstr "הדבק קישור הזמנה"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:198
+#: src/components/modals/UserSettingsModal/Privacy.tsx:217
 msgid "Pending"
 msgstr "ממתין"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:184
+#: src/components/modals/UserSettingsModal/Privacy.tsx:203
 msgid "Pending removal - click Save to confirm"
 msgstr "ממתין למחיקה - לחץ שמור כדי לאשר"
 
@@ -2178,11 +2178,11 @@ msgstr "המפתח הפרטי נשמר בתיקייה שנבחרה"
 msgid "Processing image... This may take a moment for large files."
 msgstr "מעבד תמונה... זה עשוי לקחת רגע עבור קבצים גדולים."
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:354
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:373
 msgid "Public Invite Links"
 msgstr "קישורים להזמנה ציבורית"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:383
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:376
 msgid ""
 "Public invite links allow anyone with access to the link to join your Space."
 " Consider who you share the link with and where you post it."
@@ -2190,7 +2190,7 @@ msgstr ""
 "קישורים להזמנה ציבורית מאפשרים לכל מי שיש לו גישה לקישור להצטרף ל-Space שלך."
 " שקול עם מי אתה משתף את הקישור ואיפה אתה מפרסם אותו."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:298
+#: src/components/modals/UserSettingsModal/Privacy.tsx:317
 msgid "QR code will auto-hide in 60 seconds"
 msgstr "קוד QR יוסתר אוטומטית תוך 60 שניות"
 
@@ -2233,7 +2233,7 @@ msgstr "קריאה בלבד"
 msgid "Read only channel"
 msgstr "ערוץ קריאה בלבד"
 
-#: src/components/direct/DirectMessageContactsList.tsx:387
+#: src/components/direct/DirectMessageContactsList.tsx:389
 msgid "Ready to start a truly private conversation?"
 msgstr "מוכן להתחיל שיחה פרטית באמת?"
 
@@ -2255,7 +2255,7 @@ msgstr "לנמען אין מכשירים"
 msgid "Refresh"
 msgstr "רענן"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:198
+#: src/components/modals/UserSettingsModal/Privacy.tsx:217
 msgid "Remove"
 msgstr "הסר"
 
@@ -2440,7 +2440,7 @@ msgid "Select an option"
 msgstr "בחר אפשרות"
 
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:38
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:278
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:293
 msgid "Select conversation"
 msgstr "בחר שיחה"
 
@@ -2472,17 +2472,32 @@ msgstr "בחר אילו סוגי הודעות ברצונך לקבל"
 msgid "Send"
 msgstr "שלח"
 
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:269
+msgid ""
+"Send a unique invite link directly to someone. Each invite can only be used "
+"once."
+msgstr "שלח קישור הזמנה ייחודי ישירות למישהו. כל הזמנה יכולה לשמש רק פעם אחת."
+
 #: src/services/ActionQueueHandlers.ts:1005
 msgid "Send failed"
 msgstr "שליחה נכשלה"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:324
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:340
 msgid "Send Invite"
 msgstr "שלח הזמנה"
 
 #: src/components/user/UserProfile.tsx:218
 msgid "Send Message"
 msgstr "שלח הודעה"
+
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:262
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:342
+msgid "Send Private Invite"
+msgstr "שלח הזמנה פרטית"
+
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:267
+msgid "Send your public invite link directly to someone via DM."
+msgstr "שלח את קישור ההזמנה הציבורי שלך ישירות למישהו דרך DM."
 
 #: src/components/message/Message.tsx:1239
 msgid "Sending..."
@@ -2500,6 +2515,10 @@ msgstr "קבע שם תצוגה"
 #: src/components/modals/UserSettingsModal/Navigation.tsx:26
 msgid "Settings"
 msgstr "הגדרות"
+
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:260
+msgid "Share Public Link"
+msgstr "שתף קישור ציבורי"
 
 #: src/components/modals/UserSettingsModal/Help.tsx:40
 #: src/components/modals/UserSettingsModal/Help.tsx:44
@@ -2519,7 +2538,11 @@ msgstr ""
 msgid "Show Muted Channels"
 msgstr "הצג ערוצים מושתקים"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:255
+#: src/components/modals/UserSettingsModal/Privacy.tsx:142
+msgid "Show Online Status"
+msgstr "הצג מצב מקוון"
+
+#: src/components/modals/UserSettingsModal/Privacy.tsx:274
 msgid "Show QR"
 msgstr "הצג QR"
 
@@ -2593,7 +2616,7 @@ msgid "Strikethrough"
 msgstr "קו חוצה"
 
 #. placeholder {0}: selectedUser?.displayName
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:331
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:350
 msgid "Successfully sent invite to {0}"
 msgstr "הזמנה נשלחה בהצלחה ל-{0}"
 
@@ -2663,7 +2686,7 @@ msgstr ""
 "תיאור זה יהיה גלוי בהזמנות ויוצג לאנשים כאשר הם מחפשים או מצטרפים ל-Space "
 "שלך באמצעות קישור הזמנה."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:207
+#: src/components/modals/UserSettingsModal/Privacy.tsx:226
 msgid "This device"
 msgstr "המכשיר הזה"
 
@@ -2683,7 +2706,7 @@ msgid ""
 msgstr ""
 "זו הכתובת הציבורית שלך והיא בטוחה לשיתוף עם כל מי שאתה רוצה לתקשר איתו."
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:413
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:432
 msgid ""
 "This link will not expire, but you can generate a new one at any time, which"
 " will invalidate the old link."
@@ -2833,7 +2856,7 @@ msgstr "לא ניתן לעבד את תמונת המדבקה. אנא השתמשו
 msgid "Unable to restore: not logged in"
 msgstr "לא ניתן לשחזר: לא מחובר"
 
-#: src/components/direct/DirectMessageContactsList.tsx:294
+#: src/components/direct/DirectMessageContactsList.tsx:296
 #: src/components/modals/JoinSpaceModal.tsx:112
 #: src/services/MessageService.ts:2089 src/services/MessageService.ts:3581
 msgid "Unknown"
@@ -3032,6 +3055,14 @@ msgid ""
 msgstr ""
 "כאשר זה מופעל, כל הגרסאות הקודמות של הודעות ערוכות יישמרו. כאשר זה מושבת, רק"
 " הגרסה הנוכחית המוערת נשמרת."
+
+#: src/components/modals/UserSettingsModal/Privacy.tsx:146
+msgid ""
+"When enabled, other users can see when you are active. This feature is not "
+"yet available."
+msgstr ""
+"כאשר זה מופעל, משתמשים אחרים יכולים לראות מתי אתה פעיל. תכונה זו עדיין אינה "
+"זמינה."
 
 #: src/components/modals/UserSettingsModal/Privacy.tsx:108
 msgid ""

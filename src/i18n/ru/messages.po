@@ -50,16 +50,6 @@ msgid "Replying to"
 msgstr "Отвечая на"
 
 #. js-lingui-explicit-id
-#: src/components/message/MessageComposer.native.tsx:162
-msgid "Failed to process image"
-msgstr "Не удалось обработать изображение"
-
-#. js-lingui-explicit-id
-#: src/components/message/MessageComposer.native.tsx:315
-msgid "Replying to {user}"
-msgstr "Ответ на {user}"
-
-#. js-lingui-explicit-id
 #: src/components/message/Message.tsx:325
 msgid "has joined"
 msgstr "присоединился"
@@ -73,6 +63,16 @@ msgstr "покинул"
 #: src/components/message/Message.tsx:341
 msgid "has been kicked"
 msgstr "был исключен"
+
+#. js-lingui-explicit-id
+#: src/components/message/MessageComposer.native.tsx:162
+msgid "Failed to process image"
+msgstr "Не удалось обработать изображение"
+
+#. js-lingui-explicit-id
+#: src/components/message/MessageComposer.native.tsx:315
+msgid "Replying to {user}"
+msgstr "Ответ на {user}"
 
 #. js-lingui-explicit-id
 #: src/components/direct/DirectMessage.tsx:854
@@ -124,7 +124,7 @@ msgid "[Sticker]"
 msgstr "[Стикер]"
 
 #. placeholder {0}: removedDevices.length
-#: src/components/modals/UserSettingsModal/Privacy.tsx:147
+#: src/components/modals/UserSettingsModal/Privacy.tsx:166
 msgid "{0} devices marked for removal. Click \"Save Changes\" to confirm."
 msgstr ""
 "{0} устройств, помеченных для удаления. Нажмите \"Сохранить изменения\", "
@@ -235,7 +235,7 @@ msgstr "@roles"
 msgid "@you"
 msgstr "@you"
 
-#: src/components/direct/DirectMessageContactsList.tsx:394
+#: src/components/direct/DirectMessageContactsList.tsx:396
 msgid "+ Add a friend"
 msgstr "Добавить друга"
 
@@ -251,7 +251,7 @@ msgstr "0 байт"
 msgid "0 hours"
 msgstr "0 часов"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:146
+#: src/components/modals/UserSettingsModal/Privacy.tsx:165
 msgid "1 device marked for removal. Click \"Save Changes\" to confirm."
 msgstr ""
 "1 устройство, помеченное для удаления. Нажмите \"Сохранить изменения\", "
@@ -282,7 +282,7 @@ msgstr "Настройки аккаунта"
 msgid "actions queued"
 msgstr "Действия в очереди"
 
-#: src/components/direct/DirectMessageContactsList.tsx:326
+#: src/components/direct/DirectMessageContactsList.tsx:328
 msgid "Add a friend"
 msgstr "Добавить друга"
 
@@ -360,7 +360,7 @@ msgstr ""
 msgid "Advanced Settings"
 msgstr "Дополнительные настройки"
 
-#: src/components/direct/DirectMessageContactsList.tsx:292
+#: src/components/direct/DirectMessageContactsList.tsx:293
 #: src/components/modals/SpaceSettingsModal/Account.tsx:243
 #: src/components/primitives/Select/Select.native.tsx:38
 #: src/components/primitives/Select/Select.web.tsx:32
@@ -425,7 +425,7 @@ msgstr ""
 "Анимированные стикеры GIF-файлы не могут превышать 750KB. Пожалуйста, "
 "оптимизируйте ваш GIF для использования стикеров."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:264
+#: src/components/modals/UserSettingsModal/Privacy.tsx:283
 msgid ""
 "Anyone who sees or photographs this QR code can take full control of your "
 "Quorum account and steal any associated funds. Only proceed if you are in a "
@@ -569,7 +569,7 @@ msgstr "Разрешение на использование камеры нео
 #: src/components/modals/ConversationSettingsModal.tsx:67
 #: src/components/modals/KickUserModal.tsx:98
 #: src/components/modals/MuteUserModal.tsx:129
-#: src/components/modals/UserSettingsModal/Privacy.tsx:273
+#: src/components/modals/UserSettingsModal/Privacy.tsx:292
 #: src/components/primitives/FileUpload/FileUpload.native.tsx:173
 #: src/hooks/business/channels/useChannelManagement.ts:253
 #: src/hooks/business/messages/useMessageActions.ts:391
@@ -777,7 +777,7 @@ msgstr "Скопировать адрес"
 msgid "Copy Failed"
 msgstr "Копирование не удалось"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:428
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:447
 msgid "Copy invite link to clipboard"
 msgstr "Скопировать ссылку приглашения в буфер обмена"
 
@@ -859,7 +859,7 @@ msgstr "Создание пространства..."
 msgid "Current"
 msgstr "Текущий"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:409
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:428
 msgid "Current Invite Link"
 msgstr "Текущая ссылка приглашения"
 
@@ -1014,7 +1014,7 @@ msgstr "Уведомления на рабочем столе"
 msgid "Desktop notifications are not supported in this browser."
 msgstr "Уведомления на рабочем столе не поддерживаются в этом браузере."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:141
+#: src/components/modals/UserSettingsModal/Privacy.tsx:160
 msgid "Devices"
 msgstr "Устройства"
 
@@ -1024,7 +1024,7 @@ msgstr "Устройства"
 msgid "Direct Message"
 msgstr "Прямое сообщение"
 
-#: src/components/direct/DirectMessageContactsList.tsx:314
+#: src/components/direct/DirectMessageContactsList.tsx:316
 #: src/components/navbar/NavMenu.tsx:539 src/components/navbar/NavMenu.tsx:717
 msgid "Direct Messages"
 msgstr "Прямые сообщения"
@@ -1052,7 +1052,7 @@ msgstr "Отображаемое имя обязательно"
 msgid "Display name must be {MAX_NAME_LENGTH} characters or less"
 msgstr "Отображаемое имя должно содержать не более {MAX_NAME_LENGTH} символов"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:247
+#: src/components/modals/UserSettingsModal/Privacy.tsx:266
 msgid ""
 "Display your private key as a QR code to scan with the Quorum mobile app. "
 "This allows you to import your account on mobile without typing the key."
@@ -1154,7 +1154,7 @@ msgstr "Введите название для вашего Пространст
 msgid "Enter a user's address to start messaging them."
 msgstr "Введите адрес пользователя, чтобы начать с ним переписку."
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:289
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:304
 msgid "Enter Address Manually"
 msgstr "Введите адрес вручную"
 
@@ -1192,15 +1192,15 @@ msgstr "Ошибка при запросе разрешения на уведо�
 msgid "Error showing notification:"
 msgstr "Ошибка при отображении уведомления:"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:258
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:273
 msgid "Existing Conversations"
 msgstr "Существующие разговоры"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:231
+#: src/components/modals/UserSettingsModal/Privacy.tsx:250
 msgid "Export"
 msgstr "Экспорт"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:223
+#: src/components/modals/UserSettingsModal/Privacy.tsx:242
 msgid ""
 "Export your key to a file. Do not share this file with anyone else or they "
 "can impersonate you or steal your Space's Apex earnings."
@@ -1299,7 +1299,7 @@ msgstr "Не удалось открепить сообщение"
 msgid "Failed to update profile"
 msgstr "Не удалось обновить профиль"
 
-#: src/components/direct/DirectMessageContactsList.tsx:293
+#: src/components/direct/DirectMessageContactsList.tsx:295
 msgid "Favorites"
 msgstr "Избранное"
 
@@ -1424,12 +1424,12 @@ msgstr "Общий чат"
 msgid "Generate Link"
 msgstr "Сгенерировать ссылку"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:446
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:465
 #: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:636
 msgid "Generate New Link"
 msgstr "Сгенерировать новую ссылку"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:394
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:413
 #: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:630
 msgid "Generate Public Invite Link"
 msgstr "Сгенерировать публичную ссылку-приглашение"
@@ -1482,7 +1482,7 @@ msgstr "Держитесь..."
 msgid "Help"
 msgstr "Помощь"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:307
+#: src/components/modals/UserSettingsModal/Privacy.tsx:326
 msgid "Hide"
 msgstr "Скрыть"
 
@@ -1503,7 +1503,7 @@ msgstr "Скрыть отключенные каналы в списке"
 msgid "I already saved mine"
 msgstr "Я уже сохранил свой"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:281
+#: src/components/modals/UserSettingsModal/Privacy.tsx:300
 msgid "I Understand, Show QR"
 msgstr "Я понимаю, показать QR"
 
@@ -1643,7 +1643,7 @@ msgstr "Перейти"
 msgid "Jump to present"
 msgstr "Перейти к настоящему"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:218
+#: src/components/modals/UserSettingsModal/Privacy.tsx:237
 msgid "Key Export"
 msgstr "Экспорт ключа"
 
@@ -1734,7 +1734,7 @@ msgstr "Загрузка закреплённых сообщений..."
 msgid "Loading your profile..."
 msgstr "Загрузка вашего профиля..."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:281
+#: src/components/modals/UserSettingsModal/Privacy.tsx:300
 msgid "Loading..."
 msgstr "Загрузка..."
 
@@ -1850,7 +1850,7 @@ msgstr "Сообщения НЕ подписаны!"
 msgid "Messages are signed!"
 msgstr "Сообщения подписаны!"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:240
+#: src/components/modals/UserSettingsModal/Privacy.tsx:259
 msgid "Mobile Import"
 msgstr "Мобильный импорт"
 
@@ -1906,7 +1906,7 @@ msgstr "Отключить звук пользователя"
 msgid "Mute Users"
 msgstr "Отключить звук пользователей"
 
-#: src/components/direct/DirectMessageContactsList.tsx:295
+#: src/components/direct/DirectMessageContactsList.tsx:297
 msgid "Muted"
 msgstr "Отключено"
 
@@ -1914,7 +1914,7 @@ msgstr "Отключено"
 msgid "My Account"
 msgstr "Мой аккаунт"
 
-#: src/components/direct/DirectMessageContactsList.tsx:360
+#: src/components/direct/DirectMessageContactsList.tsx:362
 #: src/components/space/Channel.tsx:1032
 msgid "Name or Address"
 msgstr "Имя или адрес"
@@ -1967,7 +1967,7 @@ msgstr "Нет закладок в этом пространстве"
 msgid "No bookmarks yet"
 msgstr "Закладок еще нет"
 
-#: src/components/direct/DirectMessageContactsList.tsx:376
+#: src/components/direct/DirectMessageContactsList.tsx:378
 msgid "No contacts found"
 msgstr "Контакты не найдены"
 
@@ -1984,7 +1984,7 @@ msgstr ""
 "потребовать инициализации или вам может потребоваться сначала создать "
 "публичную ссылку для приглашения."
 
-#: src/components/direct/DirectMessageContactsList.tsx:370
+#: src/components/direct/DirectMessageContactsList.tsx:372
 msgid "No favorites yet"
 msgstr "Пока нет избранных"
 
@@ -2005,7 +2005,7 @@ msgstr "Сообщений не найдено"
 msgid "No missing spaces found"
 msgstr "Не найдено пропавших пространств"
 
-#: src/components/direct/DirectMessageContactsList.tsx:374
+#: src/components/direct/DirectMessageContactsList.tsx:376
 msgid "No muted conversations"
 msgstr "Нет отключенных разговоров"
 
@@ -2013,7 +2013,7 @@ msgstr "Нет отключенных разговоров"
 msgid "No pinned messages yet"
 msgstr "Пока нет закреплённых сообщений"
 
-#: src/components/direct/DirectMessageContactsList.tsx:372
+#: src/components/direct/DirectMessageContactsList.tsx:374
 msgid "No unknown contacts"
 msgstr "Нет неизвестных контактов"
 
@@ -2099,11 +2099,11 @@ msgstr "Страница не найдена"
 msgid "Paste an invite link"
 msgstr "Вставьте ссылку приглашения"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:198
+#: src/components/modals/UserSettingsModal/Privacy.tsx:217
 msgid "Pending"
 msgstr "В ожидании"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:184
+#: src/components/modals/UserSettingsModal/Privacy.tsx:203
 msgid "Pending removal - click Save to confirm"
 msgstr "Ожидает удаления - нажмите Сохранить, чтобы подтвердить"
 
@@ -2226,11 +2226,11 @@ msgstr ""
 "Обработка изображения... Это может занять некоторое время для больших "
 "файлов."
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:354
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:373
 msgid "Public Invite Links"
 msgstr "Публичные приглашения"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:383
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:376
 msgid ""
 "Public invite links allow anyone with access to the link to join your Space."
 " Consider who you share the link with and where you post it."
@@ -2239,7 +2239,7 @@ msgstr ""
 "присоединиться к вашему Space. Подумайте, с кем вы делитесь ссылкой и где вы"
 " ее размещаете."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:298
+#: src/components/modals/UserSettingsModal/Privacy.tsx:317
 msgid "QR code will auto-hide in 60 seconds"
 msgstr "QR-код будет автоматически скрыт через 60 секунд"
 
@@ -2287,7 +2287,7 @@ msgstr "Только для чтения"
 msgid "Read only channel"
 msgstr "Канал только для чтения"
 
-#: src/components/direct/DirectMessageContactsList.tsx:387
+#: src/components/direct/DirectMessageContactsList.tsx:389
 msgid "Ready to start a truly private conversation?"
 msgstr "Готовы начать по-настоящему частный разговор?"
 
@@ -2309,7 +2309,7 @@ msgstr "У получателя нет устройств"
 msgid "Refresh"
 msgstr "Обновление"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:198
+#: src/components/modals/UserSettingsModal/Privacy.tsx:217
 msgid "Remove"
 msgstr "Удалить"
 
@@ -2496,7 +2496,7 @@ msgid "Select an option"
 msgstr "Выберите вариант"
 
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:38
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:278
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:293
 msgid "Select conversation"
 msgstr "Выбрать разговор"
 
@@ -2528,17 +2528,36 @@ msgstr "Выберите, какие типы уведомлений вы хот
 msgid "Send"
 msgstr "Отправить"
 
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:269
+msgid ""
+"Send a unique invite link directly to someone. Each invite can only be used "
+"once."
+msgstr ""
+"Отправьте уникальную ссылку приглашения напрямую кому-то. Каждое приглашение"
+" можно использовать только один раз."
+
 #: src/services/ActionQueueHandlers.ts:1005
 msgid "Send failed"
 msgstr "Не удалось отправить"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:324
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:340
 msgid "Send Invite"
 msgstr "Отправить приглашение"
 
 #: src/components/user/UserProfile.tsx:218
 msgid "Send Message"
 msgstr "Отправить сообщение"
+
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:262
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:342
+msgid "Send Private Invite"
+msgstr "Отправить личное приглашение"
+
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:267
+msgid "Send your public invite link directly to someone via DM."
+msgstr ""
+"Отправьте свою публичную ссылку приглашения напрямую кому-то через личные "
+"сообщения."
 
 #: src/components/message/Message.tsx:1239
 msgid "Sending..."
@@ -2556,6 +2575,10 @@ msgstr "Установить отображаемое имя"
 #: src/components/modals/UserSettingsModal/Navigation.tsx:26
 msgid "Settings"
 msgstr "Настройки"
+
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:260
+msgid "Share Public Link"
+msgstr "Поделиться публичной ссылкой"
 
 #: src/components/modals/UserSettingsModal/Help.tsx:40
 #: src/components/modals/UserSettingsModal/Help.tsx:44
@@ -2576,7 +2599,11 @@ msgstr ""
 msgid "Show Muted Channels"
 msgstr "Показать отключенные каналы"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:255
+#: src/components/modals/UserSettingsModal/Privacy.tsx:142
+msgid "Show Online Status"
+msgstr "Показать онлайн-статус"
+
+#: src/components/modals/UserSettingsModal/Privacy.tsx:274
 msgid "Show QR"
 msgstr "Показать QR"
 
@@ -2652,7 +2679,7 @@ msgid "Strikethrough"
 msgstr "Зачеркнутый текст"
 
 #. placeholder {0}: selectedUser?.displayName
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:331
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:350
 msgid "Successfully sent invite to {0}"
 msgstr "Успешно отправлено приглашение на {0}"
 
@@ -2726,7 +2753,7 @@ msgstr ""
 "Это описание будет видно в приглашениях и показано людям, когда они ищут или"
 " присоединяются к вашему Space, используя ссылку для приглашения."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:207
+#: src/components/modals/UserSettingsModal/Privacy.tsx:226
 msgid "This device"
 msgstr "Это устройство"
 
@@ -2749,7 +2776,7 @@ msgstr ""
 "Это ваш публичный адрес, и его безопасно делиться с любым, с кем вы хотите "
 "взаимодействовать."
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:413
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:432
 msgid ""
 "This link will not expire, but you can generate a new one at any time, which"
 " will invalidate the old link."
@@ -2917,7 +2944,7 @@ msgstr ""
 msgid "Unable to restore: not logged in"
 msgstr "Не удалось восстановить: не выполнен вход"
 
-#: src/components/direct/DirectMessageContactsList.tsx:294
+#: src/components/direct/DirectMessageContactsList.tsx:296
 #: src/components/modals/JoinSpaceModal.tsx:112
 #: src/services/MessageService.ts:2089 src/services/MessageService.ts:3581
 msgid "Unknown"
@@ -3128,6 +3155,14 @@ msgstr ""
 "Когда включено, все предыдущие версии отредактированных сообщений будут "
 "сохранены. Когда отключено, сохраняется только текущая отредактированная "
 "версия."
+
+#: src/components/modals/UserSettingsModal/Privacy.tsx:146
+msgid ""
+"When enabled, other users can see when you are active. This feature is not "
+"yet available."
+msgstr ""
+"Когда эта функция включена, другие пользователи могут видеть, когда вы "
+"активны. Эта функция пока недоступна."
 
 #: src/components/modals/UserSettingsModal/Privacy.tsx:108
 msgid ""

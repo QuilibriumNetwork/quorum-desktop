@@ -50,16 +50,6 @@ msgid "Replying to"
 msgstr "กำลังตอบกลับ"
 
 #. js-lingui-explicit-id
-#: src/components/message/MessageComposer.native.tsx:162
-msgid "Failed to process image"
-msgstr "ไม่สามารถประมวลผลภาพได้"
-
-#. js-lingui-explicit-id
-#: src/components/message/MessageComposer.native.tsx:315
-msgid "Replying to {user}"
-msgstr "กำลังตอบกลับ {user}"
-
-#. js-lingui-explicit-id
 #: src/components/message/Message.tsx:325
 msgid "has joined"
 msgstr "ได้เข้าร่วม"
@@ -73,6 +63,16 @@ msgstr "ได้ออก"
 #: src/components/message/Message.tsx:341
 msgid "has been kicked"
 msgstr "ถูกเตะออก"
+
+#. js-lingui-explicit-id
+#: src/components/message/MessageComposer.native.tsx:162
+msgid "Failed to process image"
+msgstr "ไม่สามารถประมวลผลภาพได้"
+
+#. js-lingui-explicit-id
+#: src/components/message/MessageComposer.native.tsx:315
+msgid "Replying to {user}"
+msgstr "กำลังตอบกลับ {user}"
 
 #. js-lingui-explicit-id
 #: src/components/direct/DirectMessage.tsx:854
@@ -124,7 +124,7 @@ msgid "[Sticker]"
 msgstr "[Sticker]"
 
 #. placeholder {0}: removedDevices.length
-#: src/components/modals/UserSettingsModal/Privacy.tsx:147
+#: src/components/modals/UserSettingsModal/Privacy.tsx:166
 msgid "{0} devices marked for removal. Click \"Save Changes\" to confirm."
 msgstr ""
 "{0} อุปกรณ์ที่ถูกทำเครื่องหมายสำหรับการลบ คลิก \"บันทึกการเปลี่ยนแปลง\" "
@@ -235,7 +235,7 @@ msgstr "@roles"
 msgid "@you"
 msgstr "@you"
 
-#: src/components/direct/DirectMessageContactsList.tsx:394
+#: src/components/direct/DirectMessageContactsList.tsx:396
 msgid "+ Add a friend"
 msgstr "เพิ่มเพื่อน"
 
@@ -251,7 +251,7 @@ msgstr "0 ไบต์"
 msgid "0 hours"
 msgstr "0 ชั่วโมง"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:146
+#: src/components/modals/UserSettingsModal/Privacy.tsx:165
 msgid "1 device marked for removal. Click \"Save Changes\" to confirm."
 msgstr ""
 "1 อุปกรณ์ที่ถูกทำเครื่องหมายสำหรับการลบ คลิก \"บันทึกการเปลี่ยนแปลง\" "
@@ -282,7 +282,7 @@ msgstr "การตั้งค่าบัญชี"
 msgid "actions queued"
 msgstr "การดำเนินการรอคิว"
 
-#: src/components/direct/DirectMessageContactsList.tsx:326
+#: src/components/direct/DirectMessageContactsList.tsx:328
 msgid "Add a friend"
 msgstr "เพิ่มเพื่อน"
 
@@ -361,7 +361,7 @@ msgstr ""
 msgid "Advanced Settings"
 msgstr "การตั้งค่าขั้นสูง"
 
-#: src/components/direct/DirectMessageContactsList.tsx:292
+#: src/components/direct/DirectMessageContactsList.tsx:293
 #: src/components/modals/SpaceSettingsModal/Account.tsx:243
 #: src/components/primitives/Select/Select.native.tsx:38
 #: src/components/primitives/Select/Select.web.tsx:32
@@ -425,7 +425,7 @@ msgstr ""
 "GIF อนิเมชันสำหรับสติกเกอร์ไม่สามารถมีขนาดใหญ่กว่า 750KB โปรดปรับขนาด GIF "
 "ของคุณให้เหมาะสมสำหรับการใช้เป็นสติกเกอร์"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:264
+#: src/components/modals/UserSettingsModal/Privacy.tsx:283
 msgid ""
 "Anyone who sees or photographs this QR code can take full control of your "
 "Quorum account and steal any associated funds. Only proceed if you are in a "
@@ -568,7 +568,7 @@ msgstr "ต้องการสิทธิ์กล้องเพื่อถ
 #: src/components/modals/ConversationSettingsModal.tsx:67
 #: src/components/modals/KickUserModal.tsx:98
 #: src/components/modals/MuteUserModal.tsx:129
-#: src/components/modals/UserSettingsModal/Privacy.tsx:273
+#: src/components/modals/UserSettingsModal/Privacy.tsx:292
 #: src/components/primitives/FileUpload/FileUpload.native.tsx:173
 #: src/hooks/business/channels/useChannelManagement.ts:253
 #: src/hooks/business/messages/useMessageActions.ts:391
@@ -773,7 +773,7 @@ msgstr "คัดลอกที่อยู่"
 msgid "Copy Failed"
 msgstr "การคัดลอกล้มเหลว"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:428
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:447
 msgid "Copy invite link to clipboard"
 msgstr "คัดลอกลิงก์เชิญไปยังคลิปบอร์ด"
 
@@ -854,7 +854,7 @@ msgstr "กำลังสร้าง พื้นที่..."
 msgid "Current"
 msgstr "ปัจจุบัน"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:409
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:428
 msgid "Current Invite Link"
 msgstr "ลิงก์เชิญปัจจุบัน"
 
@@ -1008,7 +1008,7 @@ msgstr "การแจ้งเตือนบนเดสก์ท็อป"
 msgid "Desktop notifications are not supported in this browser."
 msgstr "การแจ้งเตือนบนเดสก์ท็อปไม่รองรับในเบราว์เซอร์นี้"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:141
+#: src/components/modals/UserSettingsModal/Privacy.tsx:160
 msgid "Devices"
 msgstr "อุปกรณ์"
 
@@ -1018,7 +1018,7 @@ msgstr "อุปกรณ์"
 msgid "Direct Message"
 msgstr "ข้อความตรง"
 
-#: src/components/direct/DirectMessageContactsList.tsx:314
+#: src/components/direct/DirectMessageContactsList.tsx:316
 #: src/components/navbar/NavMenu.tsx:539 src/components/navbar/NavMenu.tsx:717
 msgid "Direct Messages"
 msgstr "ข้อความตรง"
@@ -1046,7 +1046,7 @@ msgstr "ชื่อแสดงต้องการ"
 msgid "Display name must be {MAX_NAME_LENGTH} characters or less"
 msgstr "ชื่อแสดงต้องมีความยาวไม่เกิน {MAX_NAME_LENGTH} ตัวอักษร"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:247
+#: src/components/modals/UserSettingsModal/Privacy.tsx:266
 msgid ""
 "Display your private key as a QR code to scan with the Quorum mobile app. "
 "This allows you to import your account on mobile without typing the key."
@@ -1144,7 +1144,7 @@ msgstr "กรอกชื่อสำหรับ Space ของคุณ"
 msgid "Enter a user's address to start messaging them."
 msgstr "กรุณาใส่ที่อยู่ของผู้ใช้เพื่อเริ่มส่งข้อความถึงพวกเขา"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:289
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:304
 msgid "Enter Address Manually"
 msgstr "กรุณาใส่ที่อยู่ด้วยตนเอง"
 
@@ -1182,15 +1182,15 @@ msgstr "เกิดข้อผิดพลาดในการขออนุ
 msgid "Error showing notification:"
 msgstr "เกิดข้อผิดพลาดในการแสดงการแจ้งเตือน:"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:258
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:273
 msgid "Existing Conversations"
 msgstr "การสนทนาที่มีอยู่"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:231
+#: src/components/modals/UserSettingsModal/Privacy.tsx:250
 msgid "Export"
 msgstr "ส่งออก"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:223
+#: src/components/modals/UserSettingsModal/Privacy.tsx:242
 msgid ""
 "Export your key to a file. Do not share this file with anyone else or they "
 "can impersonate you or steal your Space's Apex earnings."
@@ -1288,7 +1288,7 @@ msgstr "ยกเลิกการปักหมุดข้อความล
 msgid "Failed to update profile"
 msgstr "ไม่สามารถอัปเดตโปรไฟล์ได้"
 
-#: src/components/direct/DirectMessageContactsList.tsx:293
+#: src/components/direct/DirectMessageContactsList.tsx:295
 msgid "Favorites"
 msgstr "รายการโปรด"
 
@@ -1412,12 +1412,12 @@ msgstr "แชททั่วไป"
 msgid "Generate Link"
 msgstr "สร้างลิงก์"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:446
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:465
 #: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:636
 msgid "Generate New Link"
 msgstr "สร้างลิงก์ใหม่"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:394
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:413
 #: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:630
 msgid "Generate Public Invite Link"
 msgstr "สร้างลิงก์เชิญสาธารณะ"
@@ -1469,7 +1469,7 @@ msgstr "อดทนหน่อยนะ..."
 msgid "Help"
 msgstr "ช่วยเหลือ"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:307
+#: src/components/modals/UserSettingsModal/Privacy.tsx:326
 msgid "Hide"
 msgstr "ซ่อน"
 
@@ -1490,7 +1490,7 @@ msgstr "ซ่อนช่องที่ปิดเสียงในราย
 msgid "I already saved mine"
 msgstr "ฉันได้บันทึกของฉันแล้ว"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:281
+#: src/components/modals/UserSettingsModal/Privacy.tsx:300
 msgid "I Understand, Show QR"
 msgstr "ฉันเข้าใจ แสดง QR"
 
@@ -1625,7 +1625,7 @@ msgstr "กระโดด"
 msgid "Jump to present"
 msgstr "กระโดดไปยังปัจจุบัน"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:218
+#: src/components/modals/UserSettingsModal/Privacy.tsx:237
 msgid "Key Export"
 msgstr "ส่งออกคีย์"
 
@@ -1716,7 +1716,7 @@ msgstr "กำลังโหลดข้อความที่ถูกปั
 msgid "Loading your profile..."
 msgstr "กำลังโหลดโปรไฟล์ของคุณ..."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:281
+#: src/components/modals/UserSettingsModal/Privacy.tsx:300
 msgid "Loading..."
 msgstr "กำลังโหลด..."
 
@@ -1826,7 +1826,7 @@ msgstr "ข้อความไม่ได้รับการลงนาม
 msgid "Messages are signed!"
 msgstr "ข้อความได้รับการลงนาม!"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:240
+#: src/components/modals/UserSettingsModal/Privacy.tsx:259
 msgid "Mobile Import"
 msgstr "นำเข้าบนมือถือ"
 
@@ -1882,7 +1882,7 @@ msgstr "ปิดเสียงผู้ใช้"
 msgid "Mute Users"
 msgstr "ปิดเสียงผู้ใช้หลายคน"
 
-#: src/components/direct/DirectMessageContactsList.tsx:295
+#: src/components/direct/DirectMessageContactsList.tsx:297
 msgid "Muted"
 msgstr "ปิดเสียงแล้ว"
 
@@ -1890,7 +1890,7 @@ msgstr "ปิดเสียงแล้ว"
 msgid "My Account"
 msgstr "บัญชีของฉัน"
 
-#: src/components/direct/DirectMessageContactsList.tsx:360
+#: src/components/direct/DirectMessageContactsList.tsx:362
 #: src/components/space/Channel.tsx:1032
 msgid "Name or Address"
 msgstr "ชื่อหรือที่อยู่"
@@ -1941,7 +1941,7 @@ msgstr "ไม่มีบุ๊กมาร์กในพื้นที่น
 msgid "No bookmarks yet"
 msgstr "ยังไม่มีบุ๊กมาร์ก"
 
-#: src/components/direct/DirectMessageContactsList.tsx:376
+#: src/components/direct/DirectMessageContactsList.tsx:378
 msgid "No contacts found"
 msgstr "ไม่พบผู้ติดต่อ"
 
@@ -1957,7 +1957,7 @@ msgstr ""
 "ไม่พบสถานะการเข้ารหัสสำหรับ Space นี้ Space "
 "อาจต้องถูกเริ่มต้นใหม่หรือคุณอาจต้องสร้างลิงก์เชิญสาธารณะก่อน"
 
-#: src/components/direct/DirectMessageContactsList.tsx:370
+#: src/components/direct/DirectMessageContactsList.tsx:372
 msgid "No favorites yet"
 msgstr "ยังไม่มีรายการโปรด"
 
@@ -1978,7 +1978,7 @@ msgstr "ไม่พบข้อความ"
 msgid "No missing spaces found"
 msgstr "ไม่พบพื้นที่ที่ขาดหายไป"
 
-#: src/components/direct/DirectMessageContactsList.tsx:374
+#: src/components/direct/DirectMessageContactsList.tsx:376
 msgid "No muted conversations"
 msgstr "ไม่มีการสนทนาที่ปิดเสียง"
 
@@ -1986,7 +1986,7 @@ msgstr "ไม่มีการสนทนาที่ปิดเสียง
 msgid "No pinned messages yet"
 msgstr "ยังไม่มีข้อความที่ถูกปักหมุด"
 
-#: src/components/direct/DirectMessageContactsList.tsx:372
+#: src/components/direct/DirectMessageContactsList.tsx:374
 msgid "No unknown contacts"
 msgstr "ไม่มีผู้ติดต่อที่ไม่รู้จัก"
 
@@ -2070,11 +2070,11 @@ msgstr "ไม่พบหน้า"
 msgid "Paste an invite link"
 msgstr "วางลิงก์เชิญ"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:198
+#: src/components/modals/UserSettingsModal/Privacy.tsx:217
 msgid "Pending"
 msgstr "รอดำเนินการ"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:184
+#: src/components/modals/UserSettingsModal/Privacy.tsx:203
 msgid "Pending removal - click Save to confirm"
 msgstr "รอดำเนินการลบ - คลิกบันทึกเพื่อยืนยัน"
 
@@ -2194,11 +2194,11 @@ msgstr "คีย์ส่วนตัวถูกบันทึกไปยั
 msgid "Processing image... This may take a moment for large files."
 msgstr "กำลังประมวลผลภาพ... อาจใช้เวลาสักครู่สำหรับไฟล์ขนาดใหญ่"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:354
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:373
 msgid "Public Invite Links"
 msgstr "ลิงก์เชิญสาธารณะ"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:383
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:376
 msgid ""
 "Public invite links allow anyone with access to the link to join your Space."
 " Consider who you share the link with and where you post it."
@@ -2206,7 +2206,7 @@ msgstr ""
 "ลิงก์เชิญสาธารณะอนุญาตให้ใครก็ตามที่เข้าถึงลิงก์เข้าร่วม Space ของคุณ "
 "พิจารณาว่าคุณจะแบ่งปันลิงก์กับใครและที่ไหน"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:298
+#: src/components/modals/UserSettingsModal/Privacy.tsx:317
 msgid "QR code will auto-hide in 60 seconds"
 msgstr "รหัส QR จะซ่อนอัตโนมัติใน 60 วินาที"
 
@@ -2251,7 +2251,7 @@ msgstr "อ่านอย่างเดียว"
 msgid "Read only channel"
 msgstr "ช่องอ่านอย่างเดียว"
 
-#: src/components/direct/DirectMessageContactsList.tsx:387
+#: src/components/direct/DirectMessageContactsList.tsx:389
 msgid "Ready to start a truly private conversation?"
 msgstr "พร้อมที่จะเริ่มการสนทนาที่เป็นส่วนตัวอย่างแท้จริงหรือยัง?"
 
@@ -2273,7 +2273,7 @@ msgstr "ผู้รับไม่มีอุปกรณ์"
 msgid "Refresh"
 msgstr "รีเฟรช"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:198
+#: src/components/modals/UserSettingsModal/Privacy.tsx:217
 msgid "Remove"
 msgstr "ลบ"
 
@@ -2458,7 +2458,7 @@ msgid "Select an option"
 msgstr "เลือกตัวเลือก"
 
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:38
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:278
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:293
 msgid "Select conversation"
 msgstr "เลือกการสนทนา"
 
@@ -2490,17 +2490,34 @@ msgstr "เลือกประเภทการแจ้งเตือนท
 msgid "Send"
 msgstr "ส่ง"
 
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:269
+msgid ""
+"Send a unique invite link directly to someone. Each invite can only be used "
+"once."
+msgstr ""
+"ส่งลิงก์เชิญที่ไม่ซ้ำกันไปยังใครบางคนโดยตรง "
+"เชิญแต่ละรายการสามารถใช้ได้เพียงครั้งเดียวเท่านั้น"
+
 #: src/services/ActionQueueHandlers.ts:1005
 msgid "Send failed"
 msgstr "การส่งล้มเหลว"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:324
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:340
 msgid "Send Invite"
 msgstr "ส่งคำเชิญ"
 
 #: src/components/user/UserProfile.tsx:218
 msgid "Send Message"
 msgstr "ส่งข้อความ"
+
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:262
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:342
+msgid "Send Private Invite"
+msgstr "ส่งคำเชิญส่วนตัว"
+
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:267
+msgid "Send your public invite link directly to someone via DM."
+msgstr "ส่งลิงก์เชิญสาธารณะของคุณไปยังใครบางคนโดยตรงผ่าน DM"
 
 #: src/components/message/Message.tsx:1239
 msgid "Sending..."
@@ -2518,6 +2535,10 @@ msgstr "ตั้งค่าชื่อแสดง"
 #: src/components/modals/UserSettingsModal/Navigation.tsx:26
 msgid "Settings"
 msgstr "การตั้งค่า"
+
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:260
+msgid "Share Public Link"
+msgstr "แชร์ลิงก์สาธารณะ"
 
 #: src/components/modals/UserSettingsModal/Help.tsx:40
 #: src/components/modals/UserSettingsModal/Help.tsx:44
@@ -2537,7 +2558,11 @@ msgstr ""
 msgid "Show Muted Channels"
 msgstr "แสดงช่องที่ปิดเสียง"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:255
+#: src/components/modals/UserSettingsModal/Privacy.tsx:142
+msgid "Show Online Status"
+msgstr "แสดงสถานะออนไลน์"
+
+#: src/components/modals/UserSettingsModal/Privacy.tsx:274
 msgid "Show QR"
 msgstr "แสดง QR"
 
@@ -2613,7 +2638,7 @@ msgid "Strikethrough"
 msgstr "ขีดฆ่า"
 
 #. placeholder {0}: selectedUser?.displayName
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:331
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:350
 msgid "Successfully sent invite to {0}"
 msgstr "ส่งคำเชิญไปยัง {0} สำเร็จ"
 
@@ -2685,7 +2710,7 @@ msgstr ""
 "คำอธิบายนี้จะแสดงในคำเชิญและจะแสดงให้ผู้คนเห็นเมื่อพวกเขาค้นหาหรือเข้าร่วม "
 "Space ของคุณโดยใช้ลิงก์เชิญ"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:207
+#: src/components/modals/UserSettingsModal/Privacy.tsx:226
 msgid "This device"
 msgstr "อุปกรณ์นี้"
 
@@ -2705,7 +2730,7 @@ msgid ""
 msgstr ""
 "นี่คือที่อยู่สาธารณะของคุณและปลอดภัยที่จะแชร์กับใครก็ตามที่คุณต้องการติดต่อด้วย"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:413
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:432
 msgid ""
 "This link will not expire, but you can generate a new one at any time, which"
 " will invalidate the old link."
@@ -2857,7 +2882,7 @@ msgstr "ไม่สามารถประมวลผลภาพสติก
 msgid "Unable to restore: not logged in"
 msgstr "ไม่สามารถกู้คืน: ยังไม่ได้เข้าสู่ระบบ"
 
-#: src/components/direct/DirectMessageContactsList.tsx:294
+#: src/components/direct/DirectMessageContactsList.tsx:296
 #: src/components/modals/JoinSpaceModal.tsx:112
 #: src/services/MessageService.ts:2089 src/services/MessageService.ts:3581
 msgid "Unknown"
@@ -3060,6 +3085,14 @@ msgid ""
 msgstr ""
 "เมื่อเปิดใช้งาน, เวอร์ชันก่อนหน้าของข้อความที่แก้ไขทั้งหมดจะถูกบันทึก "
 "เมื่อปิดใช้งาน, จะเก็บเฉพาะเวอร์ชันที่แก้ไขปัจจุบันเท่านั้น"
+
+#: src/components/modals/UserSettingsModal/Privacy.tsx:146
+msgid ""
+"When enabled, other users can see when you are active. This feature is not "
+"yet available."
+msgstr ""
+"เมื่อเปิดใช้งาน ผู้ใช้อื่นสามารถเห็นเมื่อคุณกำลังออนไลน์ "
+"ฟีเจอร์นี้ยังไม่พร้อมใช้งาน"
 
 #: src/components/modals/UserSettingsModal/Privacy.tsx:108
 msgid ""

@@ -46,16 +46,6 @@ msgid "Replying to"
 msgstr "Odpovídání na"
 
 #. js-lingui-explicit-id
-#: src/components/message/MessageComposer.native.tsx:162
-msgid "Failed to process image"
-msgstr "Nepodařilo se zpracovat obrázek"
-
-#. js-lingui-explicit-id
-#: src/components/message/MessageComposer.native.tsx:315
-msgid "Replying to {user}"
-msgstr "Odpovídání {user}"
-
-#. js-lingui-explicit-id
 #: src/components/message/Message.tsx:325
 msgid "has joined"
 msgstr "se připojil"
@@ -69,6 +59,16 @@ msgstr "odešel"
 #: src/components/message/Message.tsx:341
 msgid "has been kicked"
 msgstr "byl vykopnut"
+
+#. js-lingui-explicit-id
+#: src/components/message/MessageComposer.native.tsx:162
+msgid "Failed to process image"
+msgstr "Nepodařilo se zpracovat obrázek"
+
+#. js-lingui-explicit-id
+#: src/components/message/MessageComposer.native.tsx:315
+msgid "Replying to {user}"
+msgstr "Odpovídání {user}"
 
 #. js-lingui-explicit-id
 #: src/components/direct/DirectMessage.tsx:854
@@ -127,7 +127,7 @@ msgid "[Sticker]"
 msgstr "[Sticker]"
 
 #. placeholder {0}: removedDevices.length
-#: src/components/modals/UserSettingsModal/Privacy.tsx:147
+#: src/components/modals/UserSettingsModal/Privacy.tsx:166
 msgid "{0} devices marked for removal. Click \"Save Changes\" to confirm."
 msgstr "{0} zařízení označených k odstranění. Klikněte na \"Uložit změny\" pro potvrzení."
 
@@ -260,7 +260,7 @@ msgstr "@roles"
 msgid "@you"
 msgstr "@you"
 
-#: src/components/direct/DirectMessageContactsList.tsx:394
+#: src/components/direct/DirectMessageContactsList.tsx:396
 msgid "+ Add a friend"
 msgstr "Přidat přítele"
 
@@ -276,7 +276,7 @@ msgstr "0 bajtů"
 msgid "0 hours"
 msgstr "0 hodin"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:146
+#: src/components/modals/UserSettingsModal/Privacy.tsx:165
 msgid "1 device marked for removal. Click \"Save Changes\" to confirm."
 msgstr "1 zařízení označené k odstranění. Klikněte na \"Uložit změny\" pro potvrzení."
 
@@ -310,7 +310,7 @@ msgstr "Nastavení účtu"
 msgid "actions queued"
 msgstr "Akce ve frontě"
 
-#: src/components/direct/DirectMessageContactsList.tsx:326
+#: src/components/direct/DirectMessageContactsList.tsx:328
 msgid "Add a friend"
 msgstr "Přidat přítele"
 
@@ -374,7 +374,7 @@ msgstr "Nastavte bezpečnostní související nastavení, která mohou ovlivnit 
 msgid "Advanced Settings"
 msgstr "Pokročilé nastavení"
 
-#: src/components/direct/DirectMessageContactsList.tsx:292
+#: src/components/direct/DirectMessageContactsList.tsx:293
 #: src/components/modals/SpaceSettingsModal/Account.tsx:243
 #: src/components/primitives/Select/Select.native.tsx:38
 #: src/components/primitives/Select/Select.web.tsx:32
@@ -430,7 +430,7 @@ msgstr "Animované emoji GIFy nemohou být větší než 100KB. Prosím, optimal
 msgid "Animated sticker GIFs cannot be larger than 750KB. Please optimize your GIF for sticker use."
 msgstr "Animované samolepkové GIFy nemohou být větší než 750KB. Prosím, optimalizujte svůj GIF pro použití samolepek."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:264
+#: src/components/modals/UserSettingsModal/Privacy.tsx:283
 msgid "Anyone who sees or photographs this QR code can take full control of your Quorum account and steal any associated funds. Only proceed if you are in a private location and ready to scan immediately."
 msgstr "Kdokoli, kdo vidí nebo fotografuje tento QR kód, může plně ovládnout váš účet Quorum a ukrást jakékoli přidružené prostředky. Pokračujte pouze v případě, že se nacházíte na soukromém místě a jste připraveni okamžitě skenovat."
 
@@ -499,19 +499,19 @@ msgstr "Záloha se nezdařila"
 
 #: src/components/modals/UserSettingsModal/General.tsx:115
 msgid "Bio"
-msgstr ""
+msgstr "Bio"
 
 #: src/hooks/business/validation/useSpaceNameValidation.ts:87
 msgid "Bio cannot contain special characters"
-msgstr ""
+msgstr "Bio nesmí obsahovat speciální znaky"
 
 #: src/hooks/business/validation/useSpaceNameValidation.ts:91
 msgid "Bio must be {MAX_BIO_LENGTH} characters or less"
-msgstr ""
+msgstr "Bio musí mít maximálně {MAX_BIO_LENGTH} znaků"
 
 #: src/components/modals/UserSettingsModal/Help.tsx:47
 msgid "Bold"
-msgstr ""
+msgstr "Tučně"
 
 #: src/components/message/MessageActionsMenu.tsx:265
 msgid "Bookmark"
@@ -571,7 +571,7 @@ msgstr "Kamera je vyžadována pro pořizování fotografií"
 #: src/components/modals/ConversationSettingsModal.tsx:67
 #: src/components/modals/KickUserModal.tsx:98
 #: src/components/modals/MuteUserModal.tsx:129
-#: src/components/modals/UserSettingsModal/Privacy.tsx:273
+#: src/components/modals/UserSettingsModal/Privacy.tsx:292
 #: src/components/primitives/FileUpload/FileUpload.native.tsx:173
 #: src/hooks/business/channels/useChannelManagement.ts:253
 #: src/hooks/business/messages/useMessageActions.ts:391
@@ -710,7 +710,7 @@ msgstr "Klikněte pro zkopírování"
 
 #: src/components/modals/UserSettingsModal/Help.tsx:29
 msgid "Coming soon"
-msgstr ""
+msgstr "Brzy bude"
 
 #: src/components/modals/AddSpaceModal.tsx:184
 msgid "Config Key"
@@ -766,7 +766,7 @@ msgstr "Kopírovat adresu"
 msgid "Copy Failed"
 msgstr "Kopírování se nezdařilo"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:428
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:447
 msgid "Copy invite link to clipboard"
 msgstr "Kopírovat pozvánkový odkaz do schránky"
 
@@ -842,7 +842,7 @@ msgstr "Vytvářím Prostor..."
 msgid "Current"
 msgstr "Aktuální"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:409
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:428
 msgid "Current Invite Link"
 msgstr "Aktuální pozvánkový odkaz"
 
@@ -930,7 +930,7 @@ msgstr "Smazat zprávu"
 
 #: src/components/modals/UserSettingsModal/Help.tsx:39
 msgid "Delete message without confirmation"
-msgstr ""
+msgstr "Smazat zprávu bez potvrzení"
 
 #: src/components/modals/SpaceSettingsModal/Roles.tsx:174
 msgid "Delete Messages"
@@ -1007,7 +1007,7 @@ msgstr "Oznámení na ploše"
 msgid "Desktop notifications are not supported in this browser."
 msgstr "Oznámení na ploše v tomto prohlížeči nejsou podporována."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:141
+#: src/components/modals/UserSettingsModal/Privacy.tsx:160
 msgid "Devices"
 msgstr "Zařízení"
 
@@ -1017,7 +1017,7 @@ msgstr "Zařízení"
 msgid "Direct Message"
 msgstr "Přímá zpráva"
 
-#: src/components/direct/DirectMessageContactsList.tsx:314
+#: src/components/direct/DirectMessageContactsList.tsx:316
 #: src/components/navbar/NavMenu.tsx:539
 #: src/components/navbar/NavMenu.tsx:717
 msgid "Direct Messages"
@@ -1046,7 +1046,7 @@ msgstr "Zobrazovací jméno je povinné"
 msgid "Display name must be {MAX_NAME_LENGTH} characters or less"
 msgstr "Zobrazované jméno musí mít maximálně {MAX_NAME_LENGTH} znaků"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:247
+#: src/components/modals/UserSettingsModal/Privacy.tsx:266
 msgid "Display your private key as a QR code to scan with the Quorum mobile app. This allows you to import your account on mobile without typing the key."
 msgstr "Zobrazte svůj soukromý klíč jako QR kód, který lze naskenovat pomocí mobilní aplikace Quorum. To vám umožní importovat váš účet na mobilu bez zadávání klíče."
 
@@ -1055,7 +1055,7 @@ msgstr "Zobrazte svůj soukromý klíč jako QR kód, který lze naskenovat pomo
 
 #: src/components/modals/UserSettingsModal/Help.tsx:26
 msgid "Documentation"
-msgstr ""
+msgstr "Dokumentace"
 
 #: src/components/ui/MobileDrawer.tsx:143
 msgid "Drawer"
@@ -1141,7 +1141,7 @@ msgstr "Zadejte název pro svůj Space"
 msgid "Enter a user's address to start messaging them."
 msgstr "Zadejte adresu uživatele, abyste s ním mohli začít komunikovat."
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:289
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:304
 msgid "Enter Address Manually"
 msgstr "Zadat adresu ručně"
 
@@ -1182,18 +1182,18 @@ msgstr "Chyba při žádosti o povolení oznámení:"
 msgid "Error showing notification:"
 msgstr "Chyba při zobrazování oznámení:"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:258
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:273
 msgid "Existing Conversations"
 msgstr "Existující konverzace"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:231
+#: src/components/modals/UserSettingsModal/Privacy.tsx:250
 msgid "Export"
 msgstr "Exportovat"
 
 #~ msgid "Export your key to a file by clicking this button. Do not share this file with anyone else or they can impersonate you or steal your Space's Apex earnings."
 #~ msgstr "Exportujte svůj klíč do souboru kliknutím na toto tlačítko. Tento soubor nesdílejte s nikým jiným, jinak vás mohou napodobit nebo ukrást vaše Apex výdělky ve Prostor."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:223
+#: src/components/modals/UserSettingsModal/Privacy.tsx:242
 msgid "Export your key to a file. Do not share this file with anyone else or they can impersonate you or steal your Space's Apex earnings."
 msgstr "Exportujte svůj klíč do souboru. Tento soubor nesdílejte s nikým jiným, jinak vás mohou napodobit nebo ukrást vaše výdělky Apex ve vašem prostoru."
 
@@ -1289,7 +1289,7 @@ msgstr "Nepodařilo se odpinout zprávu"
 msgid "Failed to update profile"
 msgstr "Nepodařilo se aktualizovat profil"
 
-#: src/components/direct/DirectMessageContactsList.tsx:293
+#: src/components/direct/DirectMessageContactsList.tsx:295
 msgid "Favorites"
 msgstr "Oblíbené"
 
@@ -1345,7 +1345,7 @@ msgstr "Ověření souboru selhalo. Zkuste to prosím znovu."
 
 #: src/components/modals/UserSettingsModal/Help.tsx:20
 msgid "Find documentation, keyboard shortcuts, and recovery tools."
-msgstr ""
+msgstr "Najděte dokumentaci, klávesové zkratky a nástroje pro obnovení."
 
 #: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:467
 msgid "Fix"
@@ -1405,19 +1405,19 @@ msgstr "Obecný chat"
 msgid "Generate Link"
 msgstr "Vygenerovat odkaz"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:446
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:465
 #: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:636
 msgid "Generate New Link"
 msgstr "Vygenerovat nový odkaz"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:394
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:413
 #: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:630
 msgid "Generate Public Invite Link"
 msgstr "Vygenerovat veřejný pozvánkový odkaz"
 
 #: src/components/modals/UserSettingsModal/Help.tsx:18
 msgid "Get Help Using Quorum"
-msgstr ""
+msgstr "Získejte pomoc při používání Quorum"
 
 #: src/utils/imageProcessing/errors.ts:20
 msgid "GIF files cannot be larger than {maxSize}. Please use a smaller GIF."
@@ -1460,9 +1460,9 @@ msgstr "Vydržte..."
 
 #: src/components/modals/UserSettingsModal/Navigation.tsx:19
 msgid "Help"
-msgstr ""
+msgstr "Nápověda"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:307
+#: src/components/modals/UserSettingsModal/Privacy.tsx:326
 msgid "Hide"
 msgstr "Skrýt"
 
@@ -1486,7 +1486,7 @@ msgstr "Skrýt ztlumené kanály v seznamu"
 msgid "I already saved mine"
 msgstr "Už jsem si ten svůj uložil"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:281
+#: src/components/modals/UserSettingsModal/Privacy.tsx:300
 msgid "I Understand, Show QR"
 msgstr "Rozumím, zobrazit QR"
 
@@ -1523,7 +1523,7 @@ msgstr "Důležité zprávy budou připnuty zde"
 
 #: src/components/modals/UserSettingsModal/Help.tsx:59
 msgid "Inline Code"
-msgstr ""
+msgstr "Inline kód"
 
 #: src/components/context/MessageDB.bak.tsx:1185
 #: src/services/MessageService.ts:2402
@@ -1583,7 +1583,7 @@ msgstr "Pozvánky"
 
 #: src/components/modals/UserSettingsModal/Help.tsx:51
 msgid "Italic"
-msgstr ""
+msgstr "Kurzíva"
 
 #: src/hooks/business/invites/useInviteUI.ts:33
 msgid "Join"
@@ -1623,7 +1623,7 @@ msgstr "Přejít na současnost"
 #~ msgid "Key Copied!"
 #~ msgstr "Klíč zkopírován!"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:218
+#: src/components/modals/UserSettingsModal/Privacy.tsx:237
 msgid "Key Export"
 msgstr "Export klíče"
 
@@ -1637,7 +1637,7 @@ msgstr "Klíč uložen"
 
 #: src/components/modals/UserSettingsModal/Help.tsx:35
 msgid "Keyboard Shortcuts"
-msgstr ""
+msgstr "Klávesové zkratky"
 
 #: src/components/modals/KickUserModal.tsx:107
 #: src/components/user/UserProfile.tsx:265
@@ -1716,7 +1716,7 @@ msgstr "Načítání připnutých zpráv..."
 msgid "Loading your profile..."
 msgstr "Načítání vašeho profilu..."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:281
+#: src/components/modals/UserSettingsModal/Privacy.tsx:300
 msgid "Loading..."
 msgstr "Načítání..."
 
@@ -1779,7 +1779,7 @@ msgstr "Označit vše jako přečtené"
 #: src/components/navbar/NavMenu.tsx:246
 #: src/components/navbar/NavMenu.tsx:331
 msgid "Mark All as Read"
-msgstr ""
+msgstr "Označit vše jako přečtené"
 
 #: src/components/space/Channel.tsx:851
 msgid "Members List"
@@ -1819,7 +1819,7 @@ msgstr "Zprávy NENÍ podepsané!"
 msgid "Messages are signed!"
 msgstr "Zprávy jsou podepsané!"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:240
+#: src/components/modals/UserSettingsModal/Privacy.tsx:259
 msgid "Mobile Import"
 msgstr "Mobilní import"
 
@@ -1875,7 +1875,7 @@ msgstr "Ztlumit uživatele"
 msgid "Mute Users"
 msgstr "Ztlumit uživatele"
 
-#: src/components/direct/DirectMessageContactsList.tsx:295
+#: src/components/direct/DirectMessageContactsList.tsx:297
 msgid "Muted"
 msgstr "Ztlumeno"
 
@@ -1883,7 +1883,7 @@ msgstr "Ztlumeno"
 msgid "My Account"
 msgstr "Můj účet"
 
-#: src/components/direct/DirectMessageContactsList.tsx:360
+#: src/components/direct/DirectMessageContactsList.tsx:362
 #: src/components/space/Channel.tsx:1032
 msgid "Name or Address"
 msgstr "Jméno nebo adresa"
@@ -1937,7 +1937,7 @@ msgstr "Žádné záložky v tomto prostoru"
 msgid "No bookmarks yet"
 msgstr "Žádné záložky zatím"
 
-#: src/components/direct/DirectMessageContactsList.tsx:376
+#: src/components/direct/DirectMessageContactsList.tsx:378
 msgid "No contacts found"
 msgstr "Žádní kontakty nenalezeny"
 
@@ -1949,7 +1949,7 @@ msgstr "Žádné konverzace nenalezeny"
 msgid "No encryption state found for this space. The space may need to be initialized or you may need to generate a public invite link first."
 msgstr "Nebyl nalezen žádný stav šifrování pro tento space. Space může být potřeba inicializovat nebo možná budete muset nejprve vygenerovat veřejný pozvánkový odkaz."
 
-#: src/components/direct/DirectMessageContactsList.tsx:370
+#: src/components/direct/DirectMessageContactsList.tsx:372
 msgid "No favorites yet"
 msgstr "Žádné oblíbené zatím"
 
@@ -1968,7 +1968,7 @@ msgstr "Žádné zprávy nenalezeny"
 msgid "No missing spaces found"
 msgstr "Žádné chybějící prostory nebyly nalezeny"
 
-#: src/components/direct/DirectMessageContactsList.tsx:374
+#: src/components/direct/DirectMessageContactsList.tsx:376
 msgid "No muted conversations"
 msgstr "Žádné ztlumené konverzace"
 
@@ -1979,7 +1979,7 @@ msgstr "Zatím žádné připnuté zprávy"
 #~ msgid "No topic"
 #~ msgstr "Žádné téma"
 
-#: src/components/direct/DirectMessageContactsList.tsx:372
+#: src/components/direct/DirectMessageContactsList.tsx:374
 msgid "No unknown contacts"
 msgstr "Žádné neznámé kontakty"
 
@@ -2072,11 +2072,11 @@ msgstr "Stránka nebyla nalezena"
 msgid "Paste an invite link"
 msgstr "Vložte pozvánkový odkaz"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:198
+#: src/components/modals/UserSettingsModal/Privacy.tsx:217
 msgid "Pending"
 msgstr "Čekající"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:184
+#: src/components/modals/UserSettingsModal/Privacy.tsx:203
 msgid "Pending removal - click Save to confirm"
 msgstr "Čekající na odstranění - klikněte na Uložit pro potvrzení"
 
@@ -2149,7 +2149,7 @@ msgstr "Připnout na vrchol"
 
 #: src/components/modals/UserSettingsModal/Help.tsx:43
 msgid "Pin/Unpin without confirmation"
-msgstr ""
+msgstr "Připnout/odepnout bez potvrzení"
 
 #: src/components/message/Message.tsx:755
 #: src/components/message/Message.tsx:833
@@ -2199,15 +2199,15 @@ msgstr "Zpracovávám obrázek... Může to chvíli trvat u velkých souborů."
 #~ msgid "Processing..."
 #~ msgstr "Zpracovává se..."
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:354
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:373
 msgid "Public Invite Links"
 msgstr "Veřejné pozvánkové odkazy"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:383
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:376
 msgid "Public invite links allow anyone with access to the link to join your Space. Consider who you share the link with and where you post it."
 msgstr "Veřejné pozvánkové odkazy umožňují každému, kdo má přístup k odkazu, připojit se k vašemu Prostor. Zvažte, s kým odkaz sdílíte a kde ho zveřejňujete."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:298
+#: src/components/modals/UserSettingsModal/Privacy.tsx:317
 msgid "QR code will auto-hide in 60 seconds"
 msgstr "QR kód se automaticky skryje za 60 sekund"
 
@@ -2236,7 +2236,7 @@ msgstr "Pouze pro čtení"
 msgid "Read only channel"
 msgstr "Pouze pro čtení kanál"
 
-#: src/components/direct/DirectMessageContactsList.tsx:387
+#: src/components/direct/DirectMessageContactsList.tsx:389
 msgid "Ready to start a truly private conversation?"
 msgstr "Připraveni začít skutečně soukromou konverzaci?"
 
@@ -2259,7 +2259,7 @@ msgstr "Příjemce nemá žádná zařízení"
 msgid "Refresh"
 msgstr "Obnovit"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:198
+#: src/components/modals/UserSettingsModal/Privacy.tsx:217
 msgid "Remove"
 msgstr "Odebrat"
 
@@ -2452,7 +2452,7 @@ msgstr "Vyberte možnost"
 #~ msgstr "Vyberte jakoukoli existující roli jako manažery pro tento kanál. Manažeři mají oprávnění k příspěvkům, mazání a připínání na LIBOVOLNOU zprávu ve výchozím nastavení. Pokud nejsou vybráni žádní manažeři, může kanál spravovat pouze vlastník Prostor."
 
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:38
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:278
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:293
 msgid "Select conversation"
 msgstr "Vybrat konverzaci"
 
@@ -2487,11 +2487,15 @@ msgstr "Vyberte, jaké typy oznámení chcete dostávat"
 msgid "Send"
 msgstr "Odeslat"
 
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:269
+msgid "Send a unique invite link directly to someone. Each invite can only be used once."
+msgstr ""
+
 #: src/services/ActionQueueHandlers.ts:1005
 msgid "Send failed"
 msgstr "Odeslání se nezdařilo"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:324
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:340
 msgid "Send Invite"
 msgstr "Odeslat pozvánku"
 
@@ -2501,6 +2505,15 @@ msgstr "Odeslat pozvánku"
 #: src/components/user/UserProfile.tsx:218
 msgid "Send Message"
 msgstr "Odeslat zprávu"
+
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:262
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:342
+msgid "Send Private Invite"
+msgstr ""
+
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:267
+msgid "Send your public invite link directly to someone via DM."
+msgstr ""
 
 #: src/components/message/Message.tsx:1239
 msgid "Sending..."
@@ -2519,10 +2532,14 @@ msgstr "Nastavit zobrazené jméno"
 msgid "Settings"
 msgstr "Nastavení"
 
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:260
+msgid "Share Public Link"
+msgstr ""
+
 #: src/components/modals/UserSettingsModal/Help.tsx:40
 #: src/components/modals/UserSettingsModal/Help.tsx:44
 msgid "Shift + Click"
-msgstr ""
+msgstr "Shift + Klik"
 
 #: src/components/modals/UserSettingsModal/Notifications.tsx:43
 msgid "Show desktop notifications when you receive new messages while Quorum is in the background. Your browser will ask for permission when you enable this feature."
@@ -2535,7 +2552,11 @@ msgstr "Zobrazit oznámení na ploše, když obdržíte nové zprávy, zatímco 
 msgid "Show Muted Channels"
 msgstr "Zobrazit ztlumené kanály"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:255
+#: src/components/modals/UserSettingsModal/Privacy.tsx:142
+msgid "Show Online Status"
+msgstr ""
+
+#: src/components/modals/UserSettingsModal/Privacy.tsx:274
 msgid "Show QR"
 msgstr "Zobrazit QR"
 
@@ -2614,10 +2635,10 @@ msgstr "Nálepky"
 
 #: src/components/modals/UserSettingsModal/Help.tsx:55
 msgid "Strikethrough"
-msgstr ""
+msgstr "Přeškrtnutí"
 
 #. placeholder {0}: selectedUser?.displayName
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:331
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:350
 msgid "Successfully sent invite to {0}"
 msgstr "Úspěšně odeslána pozvánka na {0}"
 
@@ -2651,7 +2672,7 @@ msgstr "Klepněte pro výběr"
 
 #: src/components/modals/UserSettingsModal/General.tsx:121
 msgid "Tell us about yourself..."
-msgstr ""
+msgstr "Povězte nám o sobě..."
 
 #: src/components/message/InviteLink.tsx:34
 #: src/components/modals/AddSpaceModal.tsx:75
@@ -2673,7 +2694,7 @@ msgstr "Tato akce nelze vrátit zpět a trvale odstraní všechna nastavení Spa
 
 #: src/components/modals/UserSettingsModal/General.tsx:135
 msgid "This bio will be visible to others when they view your profile."
-msgstr ""
+msgstr "Tento bio bude viditelný ostatním, když si prohlédnou váš profil."
 
 #: src/components/bookmarks/BookmarksPanel.tsx:64
 msgid "This conversation"
@@ -2684,7 +2705,7 @@ msgstr "Tento rozhovor"
 msgid "This description will be visible on invites and shown to people when they look up or join your Space using an invite link."
 msgstr "Tento popis bude viditelný na pozvánkách a zobrazen lidem, když hledají nebo se připojují k vašemu Space pomocí pozvánkového odkazu."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:207
+#: src/components/modals/UserSettingsModal/Privacy.tsx:226
 msgid "This device"
 msgstr "Toto zařízení"
 
@@ -2701,7 +2722,7 @@ msgstr "To je trapné..."
 msgid "This is your public address and is safe to share with anyone you want to interact with."
 msgstr "Toto je vaše veřejná adresa a je bezpečné ji sdílet s kýmkoli, s kým chcete interagovat."
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:413
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:432
 msgid "This link will not expire, but you can generate a new one at any time, which will invalidate the old link."
 msgstr "Tento odkaz nevyprší, ale můžete kdykoli vygenerovat nový, který zneplatní starý odkaz."
 
@@ -2836,7 +2857,7 @@ msgstr "Nelze zpracovat samolepkový obrázek. Prosím, použijte menší obráz
 msgid "Unable to restore: not logged in"
 msgstr "Nepodařilo se obnovit: nejste přihlášeni"
 
-#: src/components/direct/DirectMessageContactsList.tsx:294
+#: src/components/direct/DirectMessageContactsList.tsx:296
 #: src/components/modals/JoinSpaceModal.tsx:112
 #: src/services/MessageService.ts:2089
 #: src/services/MessageService.ts:3581
@@ -3048,6 +3069,10 @@ msgstr "Co máte dnes na srdci?"
 #: src/components/modals/SpaceSettingsModal/General.tsx:323
 msgid "When enabled, all previous versions of edited messages will be saved. When disabled, only the current edited version is kept."
 msgstr "Když je povoleno, všechny předchozí verze upravených zpráv budou uloženy. Když je zakázáno, bude uchována pouze aktuální upravená verze."
+
+#: src/components/modals/UserSettingsModal/Privacy.tsx:146
+msgid "When enabled, other users can see when you are active. This feature is not yet available."
+msgstr ""
 
 #: src/components/modals/UserSettingsModal/Privacy.tsx:108
 msgid "When enabled, synchronizes your user data, Spaces, and Space keys between devices. Enabling this increases metadata visibility of your account, which can reveal when you have joined new Spaces, although not the Spaces you have joined."

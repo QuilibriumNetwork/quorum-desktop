@@ -48,16 +48,6 @@ msgid "Replying to"
 msgstr "답글 중"
 
 #. js-lingui-explicit-id
-#: src/components/message/MessageComposer.native.tsx:162
-msgid "Failed to process image"
-msgstr "이미지 처리에 실패했습니다"
-
-#. js-lingui-explicit-id
-#: src/components/message/MessageComposer.native.tsx:315
-msgid "Replying to {user}"
-msgstr "{user}에게 답장 중"
-
-#. js-lingui-explicit-id
 #: src/components/message/Message.tsx:325
 msgid "has joined"
 msgstr "가입했습니다"
@@ -71,6 +61,16 @@ msgstr "퇴장했습니다"
 #: src/components/message/Message.tsx:341
 msgid "has been kicked"
 msgstr "추방되었습니다"
+
+#. js-lingui-explicit-id
+#: src/components/message/MessageComposer.native.tsx:162
+msgid "Failed to process image"
+msgstr "이미지 처리에 실패했습니다"
+
+#. js-lingui-explicit-id
+#: src/components/message/MessageComposer.native.tsx:315
+msgid "Replying to {user}"
+msgstr "{user}에게 답장 중"
 
 #. js-lingui-explicit-id
 #: src/components/direct/DirectMessage.tsx:854
@@ -122,7 +122,7 @@ msgid "[Sticker]"
 msgstr "[스티커]"
 
 #. placeholder {0}: removedDevices.length
-#: src/components/modals/UserSettingsModal/Privacy.tsx:147
+#: src/components/modals/UserSettingsModal/Privacy.tsx:166
 msgid "{0} devices marked for removal. Click \"Save Changes\" to confirm."
 msgstr "{0} 개의 장치가 제거를 위해 표시되었습니다. \"변경 사항 저장\"을 클릭하여 확인하십시오."
 
@@ -231,7 +231,7 @@ msgstr "@roles"
 msgid "@you"
 msgstr "@you"
 
-#: src/components/direct/DirectMessageContactsList.tsx:394
+#: src/components/direct/DirectMessageContactsList.tsx:396
 msgid "+ Add a friend"
 msgstr "친구 추가"
 
@@ -247,7 +247,7 @@ msgstr "0 바이트"
 msgid "0 hours"
 msgstr "0 시간"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:146
+#: src/components/modals/UserSettingsModal/Privacy.tsx:165
 msgid "1 device marked for removal. Click \"Save Changes\" to confirm."
 msgstr "1 개의 장치가 제거를 위해 표시되었습니다. \"변경 사항 저장\"을 클릭하여 확인하십시오."
 
@@ -276,7 +276,7 @@ msgstr "계정 설정"
 msgid "actions queued"
 msgstr "작업이 대기 중입니다"
 
-#: src/components/direct/DirectMessageContactsList.tsx:326
+#: src/components/direct/DirectMessageContactsList.tsx:328
 msgid "Add a friend"
 msgstr "친구 추가"
 
@@ -350,7 +350,7 @@ msgstr "보안 관련 설정을 조정하세요. 이는 사용자 경험에 영�
 msgid "Advanced Settings"
 msgstr "고급 설정"
 
-#: src/components/direct/DirectMessageContactsList.tsx:292
+#: src/components/direct/DirectMessageContactsList.tsx:293
 #: src/components/modals/SpaceSettingsModal/Account.tsx:243
 #: src/components/primitives/Select/Select.native.tsx:38
 #: src/components/primitives/Select/Select.web.tsx:32
@@ -410,7 +410,7 @@ msgid ""
 "for sticker use."
 msgstr "애니메이션 스티커 GIF는 750KB를 초과할 수 없습니다. 스티커 사용을 위해 GIF를 최적화해 주세요."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:264
+#: src/components/modals/UserSettingsModal/Privacy.tsx:283
 msgid ""
 "Anyone who sees or photographs this QR code can take full control of your "
 "Quorum account and steal any associated funds. Only proceed if you are in a "
@@ -549,7 +549,7 @@ msgstr "사진을 찍으려면 카메라 권한이 필요합니다"
 #: src/components/modals/ConversationSettingsModal.tsx:67
 #: src/components/modals/KickUserModal.tsx:98
 #: src/components/modals/MuteUserModal.tsx:129
-#: src/components/modals/UserSettingsModal/Privacy.tsx:273
+#: src/components/modals/UserSettingsModal/Privacy.tsx:292
 #: src/components/primitives/FileUpload/FileUpload.native.tsx:173
 #: src/hooks/business/channels/useChannelManagement.ts:253
 #: src/hooks/business/messages/useMessageActions.ts:391
@@ -748,7 +748,7 @@ msgstr "주소 복사"
 msgid "Copy Failed"
 msgstr "복사 실패"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:428
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:447
 msgid "Copy invite link to clipboard"
 msgstr "초대 링크를 클립보드에 복사"
 
@@ -825,7 +825,7 @@ msgstr "스페이스 생성 중..."
 msgid "Current"
 msgstr "현재"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:409
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:428
 msgid "Current Invite Link"
 msgstr "현재 초대 링크"
 
@@ -978,7 +978,7 @@ msgstr "데스크톱 알림"
 msgid "Desktop notifications are not supported in this browser."
 msgstr "이 브라우저에서는 데스크톱 알림이 지원되지 않습니다."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:141
+#: src/components/modals/UserSettingsModal/Privacy.tsx:160
 msgid "Devices"
 msgstr "장치"
 
@@ -988,7 +988,7 @@ msgstr "장치"
 msgid "Direct Message"
 msgstr "다이렉트 메시지"
 
-#: src/components/direct/DirectMessageContactsList.tsx:314
+#: src/components/direct/DirectMessageContactsList.tsx:316
 #: src/components/navbar/NavMenu.tsx:539 src/components/navbar/NavMenu.tsx:717
 msgid "Direct Messages"
 msgstr "다이렉트 메시지"
@@ -1016,7 +1016,7 @@ msgstr "표시 이름은 필수입니다"
 msgid "Display name must be {MAX_NAME_LENGTH} characters or less"
 msgstr "표시 이름은 {MAX_NAME_LENGTH}자 이하이어야 합니다"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:247
+#: src/components/modals/UserSettingsModal/Privacy.tsx:266
 msgid ""
 "Display your private key as a QR code to scan with the Quorum mobile app. "
 "This allows you to import your account on mobile without typing the key."
@@ -1113,7 +1113,7 @@ msgstr "Space의 이름을 입력하세요"
 msgid "Enter a user's address to start messaging them."
 msgstr "사용자의 주소를 입력하여 메시지를 시작하세요."
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:289
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:304
 msgid "Enter Address Manually"
 msgstr "주소 수동 입력"
 
@@ -1151,15 +1151,15 @@ msgstr "알림 권한 요청 오류:"
 msgid "Error showing notification:"
 msgstr "알림 표시 오류:"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:258
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:273
 msgid "Existing Conversations"
 msgstr "기존 대화"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:231
+#: src/components/modals/UserSettingsModal/Privacy.tsx:250
 msgid "Export"
 msgstr "내보내기"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:223
+#: src/components/modals/UserSettingsModal/Privacy.tsx:242
 msgid ""
 "Export your key to a file. Do not share this file with anyone else or they "
 "can impersonate you or steal your Space's Apex earnings."
@@ -1256,7 +1256,7 @@ msgstr "메시지 고정 해제에 실패했습니다"
 msgid "Failed to update profile"
 msgstr "프로필 업데이트에 실패했습니다."
 
-#: src/components/direct/DirectMessageContactsList.tsx:293
+#: src/components/direct/DirectMessageContactsList.tsx:295
 msgid "Favorites"
 msgstr "즐겨찾기"
 
@@ -1378,12 +1378,12 @@ msgstr "일반 채팅"
 msgid "Generate Link"
 msgstr "링크 생성"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:446
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:465
 #: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:636
 msgid "Generate New Link"
 msgstr "새 링크 생성"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:394
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:413
 #: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:630
 msgid "Generate Public Invite Link"
 msgstr "공개 초대 링크 생성"
@@ -1435,7 +1435,7 @@ msgstr "조금만 기다려 주세요..."
 msgid "Help"
 msgstr "도움"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:307
+#: src/components/modals/UserSettingsModal/Privacy.tsx:326
 msgid "Hide"
 msgstr "숨기기"
 
@@ -1456,7 +1456,7 @@ msgstr "목록에서 음소거된 채널 숨기기"
 msgid "I already saved mine"
 msgstr "나는 이미 내 것을 저장했습니다"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:281
+#: src/components/modals/UserSettingsModal/Privacy.tsx:300
 msgid "I Understand, Show QR"
 msgstr "이해했습니다, QR 표시"
 
@@ -1588,7 +1588,7 @@ msgstr "점프"
 msgid "Jump to present"
 msgstr "현재로 점프"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:218
+#: src/components/modals/UserSettingsModal/Privacy.tsx:237
 msgid "Key Export"
 msgstr "키 내보내기"
 
@@ -1677,7 +1677,7 @@ msgstr "고정된 메시지를 로딩 중..."
 msgid "Loading your profile..."
 msgstr "프로필을 로딩 중입니다..."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:281
+#: src/components/modals/UserSettingsModal/Privacy.tsx:300
 msgid "Loading..."
 msgstr "로딩 중..."
 
@@ -1783,7 +1783,7 @@ msgstr "메시지가 서명되지 않았습니다!"
 msgid "Messages are signed!"
 msgstr "메시지가 서명되었습니다!"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:240
+#: src/components/modals/UserSettingsModal/Privacy.tsx:259
 msgid "Mobile Import"
 msgstr "모바일 가져오기"
 
@@ -1839,7 +1839,7 @@ msgstr "사용자 음소거"
 msgid "Mute Users"
 msgstr "사용자 음소거"
 
-#: src/components/direct/DirectMessageContactsList.tsx:295
+#: src/components/direct/DirectMessageContactsList.tsx:297
 msgid "Muted"
 msgstr "음소거됨"
 
@@ -1847,7 +1847,7 @@ msgstr "음소거됨"
 msgid "My Account"
 msgstr "내 계정"
 
-#: src/components/direct/DirectMessageContactsList.tsx:360
+#: src/components/direct/DirectMessageContactsList.tsx:362
 #: src/components/space/Channel.tsx:1032
 msgid "Name or Address"
 msgstr "이름 또는 주소"
@@ -1898,7 +1898,7 @@ msgstr "이 스페이스에 북마크가 없습니다"
 msgid "No bookmarks yet"
 msgstr "아직 북마크가 없습니다"
 
-#: src/components/direct/DirectMessageContactsList.tsx:376
+#: src/components/direct/DirectMessageContactsList.tsx:378
 msgid "No contacts found"
 msgstr "연락처를 찾을 수 없습니다"
 
@@ -1912,7 +1912,7 @@ msgid ""
 "initialized or you may need to generate a public invite link first."
 msgstr "이 공간에 대한 암호화 상태가 없습니다. 공간을 초기화해야 하거나 먼저 공개 초대 링크를 생성해야 할 수 있습니다."
 
-#: src/components/direct/DirectMessageContactsList.tsx:370
+#: src/components/direct/DirectMessageContactsList.tsx:372
 msgid "No favorites yet"
 msgstr "아직 즐겨찾기가 없습니다"
 
@@ -1930,7 +1930,7 @@ msgstr "메시지가 없습니다"
 msgid "No missing spaces found"
 msgstr "누락된 공간이 없습니다"
 
-#: src/components/direct/DirectMessageContactsList.tsx:374
+#: src/components/direct/DirectMessageContactsList.tsx:376
 msgid "No muted conversations"
 msgstr "음소거된 대화가 없습니다"
 
@@ -1938,7 +1938,7 @@ msgstr "음소거된 대화가 없습니다"
 msgid "No pinned messages yet"
 msgstr "아직 고정된 메시지가 없습니다"
 
-#: src/components/direct/DirectMessageContactsList.tsx:372
+#: src/components/direct/DirectMessageContactsList.tsx:374
 msgid "No unknown contacts"
 msgstr "알 수 없는 연락처가 없습니다"
 
@@ -2022,11 +2022,11 @@ msgstr "페이지를 찾을 수 없습니다"
 msgid "Paste an invite link"
 msgstr "초대 링크 붙여넣기"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:198
+#: src/components/modals/UserSettingsModal/Privacy.tsx:217
 msgid "Pending"
 msgstr "대기 중"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:184
+#: src/components/modals/UserSettingsModal/Privacy.tsx:203
 msgid "Pending removal - click Save to confirm"
 msgstr "대기 중 제거 - 확인하려면 저장을 클릭하십시오."
 
@@ -2146,11 +2146,11 @@ msgstr "개인 키가 선택한 폴더에 저장되었습니다"
 msgid "Processing image... This may take a moment for large files."
 msgstr "이미지를 처리하는 중... 큰 파일의 경우 잠시 시간이 걸릴 수 있습니다."
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:354
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:373
 msgid "Public Invite Links"
 msgstr "공개 초대 링크"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:383
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:376
 msgid ""
 "Public invite links allow anyone with access to the link to join your Space."
 " Consider who you share the link with and where you post it."
@@ -2158,7 +2158,7 @@ msgstr ""
 "공개 초대 링크는 링크에 접근할 수 있는 누구나 귀하의 Space에 참여할 수 있게 합니다. 링크를 공유하는 사람과 게시하는 위치를 "
 "고려하세요."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:298
+#: src/components/modals/UserSettingsModal/Privacy.tsx:317
 msgid "QR code will auto-hide in 60 seconds"
 msgstr "QR 코드는 60초 후에 자동으로 숨겨집니다"
 
@@ -2199,7 +2199,7 @@ msgstr "읽기 전용"
 msgid "Read only channel"
 msgstr "읽기 전용 채널"
 
-#: src/components/direct/DirectMessageContactsList.tsx:387
+#: src/components/direct/DirectMessageContactsList.tsx:389
 msgid "Ready to start a truly private conversation?"
 msgstr "진정으로 비공식적인 대화를 시작할 준비가 되셨나요?"
 
@@ -2221,7 +2221,7 @@ msgstr "수신자가 장치가 없습니다"
 msgid "Refresh"
 msgstr "새로 고침"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:198
+#: src/components/modals/UserSettingsModal/Privacy.tsx:217
 msgid "Remove"
 msgstr "제거"
 
@@ -2406,7 +2406,7 @@ msgid "Select an option"
 msgstr "옵션 선택"
 
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:38
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:278
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:293
 msgid "Select conversation"
 msgstr "대화 선택"
 
@@ -2438,17 +2438,32 @@ msgstr "받고 싶은 알림 유형을 선택하세요"
 msgid "Send"
 msgstr "전송"
 
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:269
+msgid ""
+"Send a unique invite link directly to someone. Each invite can only be used "
+"once."
+msgstr "누군가에게 직접 고유 초대 링크를 보내세요. 각 초대는 한 번만 사용할 수 있습니다."
+
 #: src/services/ActionQueueHandlers.ts:1005
 msgid "Send failed"
 msgstr "전송 실패"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:324
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:340
 msgid "Send Invite"
 msgstr "초대 전송"
 
 #: src/components/user/UserProfile.tsx:218
 msgid "Send Message"
 msgstr "메시지 전송"
+
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:262
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:342
+msgid "Send Private Invite"
+msgstr "비공식 초대 보내기"
+
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:267
+msgid "Send your public invite link directly to someone via DM."
+msgstr "DM을 통해 누군가에게 직접 공개 초대 링크를 보내세요."
 
 #: src/components/message/Message.tsx:1239
 msgid "Sending..."
@@ -2466,6 +2481,10 @@ msgstr "표시 이름 설정"
 #: src/components/modals/UserSettingsModal/Navigation.tsx:26
 msgid "Settings"
 msgstr "설정"
+
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:260
+msgid "Share Public Link"
+msgstr "공식 링크 공유"
 
 #: src/components/modals/UserSettingsModal/Help.tsx:40
 #: src/components/modals/UserSettingsModal/Help.tsx:44
@@ -2485,7 +2504,11 @@ msgstr ""
 msgid "Show Muted Channels"
 msgstr "음소거된 채널 보기"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:255
+#: src/components/modals/UserSettingsModal/Privacy.tsx:142
+msgid "Show Online Status"
+msgstr "온라인 상태 표시"
+
+#: src/components/modals/UserSettingsModal/Privacy.tsx:274
 msgid "Show QR"
 msgstr "QR 표시"
 
@@ -2559,7 +2582,7 @@ msgid "Strikethrough"
 msgstr "취소선"
 
 #. placeholder {0}: selectedUser?.displayName
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:331
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:350
 msgid "Successfully sent invite to {0}"
 msgstr "{0}에게 초대를 성공적으로 전송했습니다"
 
@@ -2626,7 +2649,7 @@ msgid ""
 "look up or join your Space using an invite link."
 msgstr "이 설명은 초대에서 보이며, 사람들이 초대 링크를 사용하여 Space를 검색하거나 가입할 때 표시됩니다."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:207
+#: src/components/modals/UserSettingsModal/Privacy.tsx:226
 msgid "This device"
 msgstr "이 장치"
 
@@ -2645,7 +2668,7 @@ msgid ""
 "interact with."
 msgstr "이것은 당신의 공개 주소이며, 상호작용하고 싶은 누구와도 공유해도 안전합니다."
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:413
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:432
 msgid ""
 "This link will not expire, but you can generate a new one at any time, which"
 " will invalidate the old link."
@@ -2785,7 +2808,7 @@ msgstr "스티커 이미지를 처리할 수 없습니다. 더 작은 이미지�
 msgid "Unable to restore: not logged in"
 msgstr "복원할 수 없습니다: 로그인하지 않음"
 
-#: src/components/direct/DirectMessageContactsList.tsx:294
+#: src/components/direct/DirectMessageContactsList.tsx:296
 #: src/components/modals/JoinSpaceModal.tsx:112
 #: src/services/MessageService.ts:2089 src/services/MessageService.ts:3581
 msgid "Unknown"
@@ -2981,6 +3004,12 @@ msgid ""
 "When enabled, all previous versions of edited messages will be saved. When "
 "disabled, only the current edited version is kept."
 msgstr "활성화되면 편집된 메시지의 모든 이전 버전이 저장됩니다. 비활성화되면 현재 편집된 버전만 유지됩니다."
+
+#: src/components/modals/UserSettingsModal/Privacy.tsx:146
+msgid ""
+"When enabled, other users can see when you are active. This feature is not "
+"yet available."
+msgstr "활성화되면 다른 사용자가 귀하가 활동 중인지 볼 수 있습니다. 이 기능은 아직 제공되지 않습니다."
 
 #: src/components/modals/UserSettingsModal/Privacy.tsx:108
 msgid ""

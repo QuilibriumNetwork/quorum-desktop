@@ -46,16 +46,6 @@ msgid "Replying to"
 msgstr "返信中"
 
 #. js-lingui-explicit-id
-#: src/components/message/MessageComposer.native.tsx:162
-msgid "Failed to process image"
-msgstr "画像の処理に失敗しました"
-
-#. js-lingui-explicit-id
-#: src/components/message/MessageComposer.native.tsx:315
-msgid "Replying to {user}"
-msgstr "{user} に返信中"
-
-#. js-lingui-explicit-id
 #: src/components/message/Message.tsx:325
 msgid "has joined"
 msgstr "が参加しました"
@@ -69,6 +59,16 @@ msgstr "が退出しました"
 #: src/components/message/Message.tsx:341
 msgid "has been kicked"
 msgstr "がキックされました"
+
+#. js-lingui-explicit-id
+#: src/components/message/MessageComposer.native.tsx:162
+msgid "Failed to process image"
+msgstr "画像の処理に失敗しました"
+
+#. js-lingui-explicit-id
+#: src/components/message/MessageComposer.native.tsx:315
+msgid "Replying to {user}"
+msgstr "{user} に返信中"
 
 #. js-lingui-explicit-id
 #: src/components/direct/DirectMessage.tsx:854
@@ -127,7 +127,7 @@ msgid "[Sticker]"
 msgstr "[ステッカー]"
 
 #. placeholder {0}: removedDevices.length
-#: src/components/modals/UserSettingsModal/Privacy.tsx:147
+#: src/components/modals/UserSettingsModal/Privacy.tsx:166
 msgid "{0} devices marked for removal. Click \"Save Changes\" to confirm."
 msgstr "{0} 台のデバイスが削除のためにマークされました。「変更を保存」をクリックして確認してください。"
 
@@ -260,7 +260,7 @@ msgstr "@roles"
 msgid "@you"
 msgstr "@you"
 
-#: src/components/direct/DirectMessageContactsList.tsx:394
+#: src/components/direct/DirectMessageContactsList.tsx:396
 msgid "+ Add a friend"
 msgstr "友達を追加"
 
@@ -276,7 +276,7 @@ msgstr "0 バイト"
 msgid "0 hours"
 msgstr "0時間"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:146
+#: src/components/modals/UserSettingsModal/Privacy.tsx:165
 msgid "1 device marked for removal. Click \"Save Changes\" to confirm."
 msgstr "1 台のデバイスが削除のためにマークされました。「変更を保存」をクリックして確認してください。"
 
@@ -310,7 +310,7 @@ msgstr "アカウント設定"
 msgid "actions queued"
 msgstr "アクションがキューに入れられました"
 
-#: src/components/direct/DirectMessageContactsList.tsx:326
+#: src/components/direct/DirectMessageContactsList.tsx:328
 msgid "Add a friend"
 msgstr "友達を追加"
 
@@ -374,7 +374,7 @@ msgstr "セキュリティ関連の設定を調整します。これによりユ
 msgid "Advanced Settings"
 msgstr "詳細設定"
 
-#: src/components/direct/DirectMessageContactsList.tsx:292
+#: src/components/direct/DirectMessageContactsList.tsx:293
 #: src/components/modals/SpaceSettingsModal/Account.tsx:243
 #: src/components/primitives/Select/Select.native.tsx:38
 #: src/components/primitives/Select/Select.web.tsx:32
@@ -430,7 +430,7 @@ msgstr "アニメーション絵文字GIFは100KBを超えることはできま�
 msgid "Animated sticker GIFs cannot be larger than 750KB. Please optimize your GIF for sticker use."
 msgstr "アニメーションステッカーGIFは750KBを超えることはできません。ステッカー用にGIFを最適化してください。"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:264
+#: src/components/modals/UserSettingsModal/Privacy.tsx:283
 msgid "Anyone who sees or photographs this QR code can take full control of your Quorum account and steal any associated funds. Only proceed if you are in a private location and ready to scan immediately."
 msgstr "このQRコードを見たり写真を撮ったりした人は、あなたのQuorumアカウントを完全に制御し、関連する資金を盗むことができます。プライベートな場所にいて、すぐにスキャンする準備ができている場合のみ進んでください。"
 
@@ -499,19 +499,19 @@ msgstr "バックアップに失敗しました"
 
 #: src/components/modals/UserSettingsModal/General.tsx:115
 msgid "Bio"
-msgstr ""
+msgstr "バイオ"
 
 #: src/hooks/business/validation/useSpaceNameValidation.ts:87
 msgid "Bio cannot contain special characters"
-msgstr ""
+msgstr "バイオには特殊文字を含めることはできません"
 
 #: src/hooks/business/validation/useSpaceNameValidation.ts:91
 msgid "Bio must be {MAX_BIO_LENGTH} characters or less"
-msgstr ""
+msgstr "バイオは{MAX_BIO_LENGTH}文字以下でなければなりません"
 
 #: src/components/modals/UserSettingsModal/Help.tsx:47
 msgid "Bold"
-msgstr ""
+msgstr "太字"
 
 #: src/components/message/MessageActionsMenu.tsx:265
 msgid "Bookmark"
@@ -571,7 +571,7 @@ msgstr "写真を撮るにはカメラの権限が必要です"
 #: src/components/modals/ConversationSettingsModal.tsx:67
 #: src/components/modals/KickUserModal.tsx:98
 #: src/components/modals/MuteUserModal.tsx:129
-#: src/components/modals/UserSettingsModal/Privacy.tsx:273
+#: src/components/modals/UserSettingsModal/Privacy.tsx:292
 #: src/components/primitives/FileUpload/FileUpload.native.tsx:173
 #: src/hooks/business/channels/useChannelManagement.ts:253
 #: src/hooks/business/messages/useMessageActions.ts:391
@@ -710,7 +710,7 @@ msgstr "コピーするにはクリック"
 
 #: src/components/modals/UserSettingsModal/Help.tsx:29
 msgid "Coming soon"
-msgstr ""
+msgstr "近日公開"
 
 #: src/components/modals/AddSpaceModal.tsx:184
 msgid "Config Key"
@@ -766,7 +766,7 @@ msgstr "アドレスをコピー"
 msgid "Copy Failed"
 msgstr "コピーに失敗しました"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:428
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:447
 msgid "Copy invite link to clipboard"
 msgstr "招待リンクをクリップボードにコピー"
 
@@ -842,7 +842,7 @@ msgstr "スペースを作成中..."
 msgid "Current"
 msgstr "現在"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:409
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:428
 msgid "Current Invite Link"
 msgstr "現在の招待リンク"
 
@@ -930,7 +930,7 @@ msgstr "メッセージを削除"
 
 #: src/components/modals/UserSettingsModal/Help.tsx:39
 msgid "Delete message without confirmation"
-msgstr ""
+msgstr "確認なしでメッセージを削除"
 
 #: src/components/modals/SpaceSettingsModal/Roles.tsx:174
 msgid "Delete Messages"
@@ -1007,7 +1007,7 @@ msgstr "デスクトップ通知"
 msgid "Desktop notifications are not supported in this browser."
 msgstr "このブラウザではデスクトップ通知はサポートされていません。"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:141
+#: src/components/modals/UserSettingsModal/Privacy.tsx:160
 msgid "Devices"
 msgstr "デバイス"
 
@@ -1017,7 +1017,7 @@ msgstr "デバイス"
 msgid "Direct Message"
 msgstr "ダイレクトメッセージ"
 
-#: src/components/direct/DirectMessageContactsList.tsx:314
+#: src/components/direct/DirectMessageContactsList.tsx:316
 #: src/components/navbar/NavMenu.tsx:539
 #: src/components/navbar/NavMenu.tsx:717
 msgid "Direct Messages"
@@ -1046,7 +1046,7 @@ msgstr "表示名は必須です"
 msgid "Display name must be {MAX_NAME_LENGTH} characters or less"
 msgstr "表示名は{MAX_NAME_LENGTH}文字以下でなければなりません"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:247
+#: src/components/modals/UserSettingsModal/Privacy.tsx:266
 msgid "Display your private key as a QR code to scan with the Quorum mobile app. This allows you to import your account on mobile without typing the key."
 msgstr "QuorumモバイルアプリでスキャンするためにQRコードとしてプライベートキーを表示します。これにより、キーを入力せずにモバイルでアカウントをインポートできます。"
 
@@ -1055,7 +1055,7 @@ msgstr "QuorumモバイルアプリでスキャンするためにQRコードと�
 
 #: src/components/modals/UserSettingsModal/Help.tsx:26
 msgid "Documentation"
-msgstr ""
+msgstr "ドキュメント"
 
 #: src/components/ui/MobileDrawer.tsx:143
 msgid "Drawer"
@@ -1141,7 +1141,7 @@ msgstr "Spaceの名前を入力してください"
 msgid "Enter a user's address to start messaging them."
 msgstr "ユーザーのアドレスを入力して、メッセージを送信します。"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:289
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:304
 msgid "Enter Address Manually"
 msgstr "アドレスを手動で入力"
 
@@ -1182,18 +1182,18 @@ msgstr "通知の権限をリクエスト中にエラーが発生しました：
 msgid "Error showing notification:"
 msgstr "通知を表示中にエラーが発生しました："
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:258
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:273
 msgid "Existing Conversations"
 msgstr "既存の会話"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:231
+#: src/components/modals/UserSettingsModal/Privacy.tsx:250
 msgid "Export"
 msgstr "エクスポート"
 
 #~ msgid "Export your key to a file by clicking this button. Do not share this file with anyone else or they can impersonate you or steal your Space's Apex earnings."
 #~ msgstr "このボタンをクリックして、キーをファイルにエクスポートします。このファイルを他の誰とも共有しないでください。そうしないと、彼らがあなたを偽装したり、あなたのスペースのApex収益を盗んだりする可能性があります。"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:223
+#: src/components/modals/UserSettingsModal/Privacy.tsx:242
 msgid "Export your key to a file. Do not share this file with anyone else or they can impersonate you or steal your Space's Apex earnings."
 msgstr "キーをファイルにエクスポートします。このファイルを他の誰とも共有しないでください。そうしないと、あなたを偽装したり、あなたのスペースのApex収益を盗まれたりする可能性があります。"
 
@@ -1289,7 +1289,7 @@ msgstr "メッセージのピン留め解除に失敗しました"
 msgid "Failed to update profile"
 msgstr "プロフィールの更新に失敗しました"
 
-#: src/components/direct/DirectMessageContactsList.tsx:293
+#: src/components/direct/DirectMessageContactsList.tsx:295
 msgid "Favorites"
 msgstr "お気に入り"
 
@@ -1345,7 +1345,7 @@ msgstr "ファイルの検証に失敗しました。もう一度お試しくだ
 
 #: src/components/modals/UserSettingsModal/Help.tsx:20
 msgid "Find documentation, keyboard shortcuts, and recovery tools."
-msgstr ""
+msgstr "ドキュメント、キーボードショートカット、復旧ツールを見つけます。"
 
 #: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:467
 msgid "Fix"
@@ -1405,19 +1405,19 @@ msgstr "一般チャット"
 msgid "Generate Link"
 msgstr "リンクを生成"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:446
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:465
 #: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:636
 msgid "Generate New Link"
 msgstr "新しいリンクを生成"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:394
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:413
 #: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:630
 msgid "Generate Public Invite Link"
 msgstr "公開招待リンクを生成"
 
 #: src/components/modals/UserSettingsModal/Help.tsx:18
 msgid "Get Help Using Quorum"
-msgstr ""
+msgstr "Quorumの使い方をヘルプ"
 
 #: src/utils/imageProcessing/errors.ts:20
 msgid "GIF files cannot be larger than {maxSize}. Please use a smaller GIF."
@@ -1460,9 +1460,9 @@ msgstr "もう少し頑張ってください..."
 
 #: src/components/modals/UserSettingsModal/Navigation.tsx:19
 msgid "Help"
-msgstr ""
+msgstr "ヘルプ"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:307
+#: src/components/modals/UserSettingsModal/Privacy.tsx:326
 msgid "Hide"
 msgstr "非表示"
 
@@ -1486,7 +1486,7 @@ msgstr "リスト内のミュートされたチャンネルを非表示"
 msgid "I already saved mine"
 msgstr "私はすでに自分のを保存しました"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:281
+#: src/components/modals/UserSettingsModal/Privacy.tsx:300
 msgid "I Understand, Show QR"
 msgstr "理解しました、QRを表示"
 
@@ -1523,7 +1523,7 @@ msgstr "重要なメッセージはここにピン留めされます"
 
 #: src/components/modals/UserSettingsModal/Help.tsx:59
 msgid "Inline Code"
-msgstr ""
+msgstr "インラインコード"
 
 #: src/components/context/MessageDB.bak.tsx:1185
 #: src/services/MessageService.ts:2402
@@ -1583,7 +1583,7 @@ msgstr "招待"
 
 #: src/components/modals/UserSettingsModal/Help.tsx:51
 msgid "Italic"
-msgstr ""
+msgstr "イタリック"
 
 #: src/hooks/business/invites/useInviteUI.ts:33
 msgid "Join"
@@ -1623,7 +1623,7 @@ msgstr "現在にジャンプ"
 #~ msgid "Key Copied!"
 #~ msgstr "キーがコピーされました！"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:218
+#: src/components/modals/UserSettingsModal/Privacy.tsx:237
 msgid "Key Export"
 msgstr "キーエクスポート"
 
@@ -1637,7 +1637,7 @@ msgstr "キーが保存されました"
 
 #: src/components/modals/UserSettingsModal/Help.tsx:35
 msgid "Keyboard Shortcuts"
-msgstr ""
+msgstr "キーボードショートカット"
 
 #: src/components/modals/KickUserModal.tsx:107
 #: src/components/user/UserProfile.tsx:265
@@ -1716,7 +1716,7 @@ msgstr "ピン留めされたメッセージを読み込み中..."
 msgid "Loading your profile..."
 msgstr "プロフィールを読み込んでいます..."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:281
+#: src/components/modals/UserSettingsModal/Privacy.tsx:300
 msgid "Loading..."
 msgstr "読み込み中..."
 
@@ -1779,7 +1779,7 @@ msgstr "すべてを既読にする"
 #: src/components/navbar/NavMenu.tsx:246
 #: src/components/navbar/NavMenu.tsx:331
 msgid "Mark All as Read"
-msgstr ""
+msgstr "すべてを既読にマーク"
 
 #: src/components/space/Channel.tsx:851
 msgid "Members List"
@@ -1819,7 +1819,7 @@ msgstr "メッセージは署名されていません！"
 msgid "Messages are signed!"
 msgstr "メッセージは署名されています！"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:240
+#: src/components/modals/UserSettingsModal/Privacy.tsx:259
 msgid "Mobile Import"
 msgstr "モバイルインポート"
 
@@ -1875,7 +1875,7 @@ msgstr "ユーザーをミュート"
 msgid "Mute Users"
 msgstr "ユーザーをミュート"
 
-#: src/components/direct/DirectMessageContactsList.tsx:295
+#: src/components/direct/DirectMessageContactsList.tsx:297
 msgid "Muted"
 msgstr "ミュート済み"
 
@@ -1883,7 +1883,7 @@ msgstr "ミュート済み"
 msgid "My Account"
 msgstr "マイアカウント"
 
-#: src/components/direct/DirectMessageContactsList.tsx:360
+#: src/components/direct/DirectMessageContactsList.tsx:362
 #: src/components/space/Channel.tsx:1032
 msgid "Name or Address"
 msgstr "名前またはアドレス"
@@ -1937,7 +1937,7 @@ msgstr "このスペースにブックマークがありません"
 msgid "No bookmarks yet"
 msgstr "まだブックマークがありません"
 
-#: src/components/direct/DirectMessageContactsList.tsx:376
+#: src/components/direct/DirectMessageContactsList.tsx:378
 msgid "No contacts found"
 msgstr "連絡先が見つかりません"
 
@@ -1949,7 +1949,7 @@ msgstr "会話が見つかりません"
 msgid "No encryption state found for this space. The space may need to be initialized or you may need to generate a public invite link first."
 msgstr "このスペースの暗号化状態が見つかりません。このスペースは初期化する必要があるか、最初に公開招待リンクを生成する必要があります。"
 
-#: src/components/direct/DirectMessageContactsList.tsx:370
+#: src/components/direct/DirectMessageContactsList.tsx:372
 msgid "No favorites yet"
 msgstr "お気に入りはまだありません"
 
@@ -1968,7 +1968,7 @@ msgstr "メッセージが見つかりませんでした"
 msgid "No missing spaces found"
 msgstr "見つからないスペースはありません"
 
-#: src/components/direct/DirectMessageContactsList.tsx:374
+#: src/components/direct/DirectMessageContactsList.tsx:376
 msgid "No muted conversations"
 msgstr "ミュートされた会話はありません"
 
@@ -1979,7 +1979,7 @@ msgstr "まだピン留めされたメッセージはありません"
 #~ msgid "No topic"
 #~ msgstr "トピックはありません"
 
-#: src/components/direct/DirectMessageContactsList.tsx:372
+#: src/components/direct/DirectMessageContactsList.tsx:374
 msgid "No unknown contacts"
 msgstr "不明な連絡先はありません"
 
@@ -2072,11 +2072,11 @@ msgstr "ページが見つかりません"
 msgid "Paste an invite link"
 msgstr "招待リンクを貼り付け"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:198
+#: src/components/modals/UserSettingsModal/Privacy.tsx:217
 msgid "Pending"
 msgstr "保留中"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:184
+#: src/components/modals/UserSettingsModal/Privacy.tsx:203
 msgid "Pending removal - click Save to confirm"
 msgstr "保留中の削除 - 確認するには保存をクリック"
 
@@ -2149,7 +2149,7 @@ msgstr "上部にピン留め"
 
 #: src/components/modals/UserSettingsModal/Help.tsx:43
 msgid "Pin/Unpin without confirmation"
-msgstr ""
+msgstr "確認なしでピン留め/ピン留め解除"
 
 #: src/components/message/Message.tsx:755
 #: src/components/message/Message.tsx:833
@@ -2199,15 +2199,15 @@ msgstr "画像を処理中... 大きなファイルの場合、少々お待ち�
 #~ msgid "Processing..."
 #~ msgstr "処理中..."
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:354
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:373
 msgid "Public Invite Links"
 msgstr "公開招待リンク"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:383
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:376
 msgid "Public invite links allow anyone with access to the link to join your Space. Consider who you share the link with and where you post it."
 msgstr "公開招待リンクを使用すると、リンクにアクセスできる誰でもあなたのスペースに参加できます。リンクを共有する相手や投稿する場所を考慮してください。"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:298
+#: src/components/modals/UserSettingsModal/Privacy.tsx:317
 msgid "QR code will auto-hide in 60 seconds"
 msgstr "QRコードは60秒後に自動的に非表示になります"
 
@@ -2236,7 +2236,7 @@ msgstr "読み取り専用"
 msgid "Read only channel"
 msgstr "読み取り専用チャンネル"
 
-#: src/components/direct/DirectMessageContactsList.tsx:387
+#: src/components/direct/DirectMessageContactsList.tsx:389
 msgid "Ready to start a truly private conversation?"
 msgstr "本当にプライベートな会話を始める準備はできていますか？"
 
@@ -2259,7 +2259,7 @@ msgstr "受信者にデバイスがありません"
 msgid "Refresh"
 msgstr "リフレッシュ"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:198
+#: src/components/modals/UserSettingsModal/Privacy.tsx:217
 msgid "Remove"
 msgstr "削除"
 
@@ -2452,7 +2452,7 @@ msgstr "オプションを選択"
 #~ msgstr "このチャンネルの管理者として既存の役割を選択してください。管理者はデフォルトでANYメッセージに対して投稿、削除、ピン留めの権限を持ちます。管理者が選択されていない場合、スペースの所有者のみがチャンネルを管理できます。"
 
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:38
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:278
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:293
 msgid "Select conversation"
 msgstr "会話を選択"
 
@@ -2487,11 +2487,15 @@ msgstr "受け取りたい通知の種類を選択してください"
 msgid "Send"
 msgstr "送信"
 
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:269
+msgid "Send a unique invite link directly to someone. Each invite can only be used once."
+msgstr ""
+
 #: src/services/ActionQueueHandlers.ts:1005
 msgid "Send failed"
 msgstr "送信に失敗しました"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:324
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:340
 msgid "Send Invite"
 msgstr "招待を送信"
 
@@ -2501,6 +2505,15 @@ msgstr "招待を送信"
 #: src/components/user/UserProfile.tsx:218
 msgid "Send Message"
 msgstr "メッセージを送信"
+
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:262
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:342
+msgid "Send Private Invite"
+msgstr ""
+
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:267
+msgid "Send your public invite link directly to someone via DM."
+msgstr ""
 
 #: src/components/message/Message.tsx:1239
 msgid "Sending..."
@@ -2519,10 +2532,14 @@ msgstr "表示名を設定"
 msgid "Settings"
 msgstr "設定"
 
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:260
+msgid "Share Public Link"
+msgstr ""
+
 #: src/components/modals/UserSettingsModal/Help.tsx:40
 #: src/components/modals/UserSettingsModal/Help.tsx:44
 msgid "Shift + Click"
-msgstr ""
+msgstr "Shift + クリック"
 
 #: src/components/modals/UserSettingsModal/Notifications.tsx:43
 msgid "Show desktop notifications when you receive new messages while Quorum is in the background. Your browser will ask for permission when you enable this feature."
@@ -2535,7 +2552,11 @@ msgstr "Quorum がバックグラウンドにあるときに新しいメッセ�
 msgid "Show Muted Channels"
 msgstr "ミュートされたチャンネルを表示"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:255
+#: src/components/modals/UserSettingsModal/Privacy.tsx:142
+msgid "Show Online Status"
+msgstr ""
+
+#: src/components/modals/UserSettingsModal/Privacy.tsx:274
 msgid "Show QR"
 msgstr "QRを表示"
 
@@ -2614,10 +2635,10 @@ msgstr "ステッカー"
 
 #: src/components/modals/UserSettingsModal/Help.tsx:55
 msgid "Strikethrough"
-msgstr ""
+msgstr "取り消し線"
 
 #. placeholder {0}: selectedUser?.displayName
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:331
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:350
 msgid "Successfully sent invite to {0}"
 msgstr "{0}への招待を正常に送信しました"
 
@@ -2651,7 +2672,7 @@ msgstr "選択するにはタップしてください"
 
 #: src/components/modals/UserSettingsModal/General.tsx:121
 msgid "Tell us about yourself..."
-msgstr ""
+msgstr "自分について教えてください..."
 
 #: src/components/message/InviteLink.tsx:34
 #: src/components/modals/AddSpaceModal.tsx:75
@@ -2673,7 +2694,7 @@ msgstr "この操作は元に戻せず、すべてのスペース設定を永久
 
 #: src/components/modals/UserSettingsModal/General.tsx:135
 msgid "This bio will be visible to others when they view your profile."
-msgstr ""
+msgstr "このバイオは、他の人があなたのプロフィールを表示したときに見えるようになります。"
 
 #: src/components/bookmarks/BookmarksPanel.tsx:64
 msgid "This conversation"
@@ -2684,7 +2705,7 @@ msgstr "この会話"
 msgid "This description will be visible on invites and shown to people when they look up or join your Space using an invite link."
 msgstr "この説明は招待状に表示され、招待リンクを使用してSpaceを検索または参加する際に人々に表示されます。"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:207
+#: src/components/modals/UserSettingsModal/Privacy.tsx:226
 msgid "This device"
 msgstr "このデバイス"
 
@@ -2701,7 +2722,7 @@ msgstr "これは恥ずかしいです..."
 msgid "This is your public address and is safe to share with anyone you want to interact with."
 msgstr "これはあなたの公開アドレスであり、やり取りしたい相手と共有しても安全です。"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:413
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:432
 msgid "This link will not expire, but you can generate a new one at any time, which will invalidate the old link."
 msgstr "このリンクは期限切れになりませんが、いつでも新しいリンクを生成でき、古いリンクは無効になります。"
 
@@ -2836,7 +2857,7 @@ msgstr "ステッカー画像を処理できません。より小さい画像を
 msgid "Unable to restore: not logged in"
 msgstr "復元できません: ログインしていません"
 
-#: src/components/direct/DirectMessageContactsList.tsx:294
+#: src/components/direct/DirectMessageContactsList.tsx:296
 #: src/components/modals/JoinSpaceModal.tsx:112
 #: src/services/MessageService.ts:2089
 #: src/services/MessageService.ts:3581
@@ -3048,6 +3069,10 @@ msgstr "今日は何を考えていますか？"
 #: src/components/modals/SpaceSettingsModal/General.tsx:323
 msgid "When enabled, all previous versions of edited messages will be saved. When disabled, only the current edited version is kept."
 msgstr "有効にすると、編集されたメッセージのすべての以前のバージョンが保存されます。無効にすると、現在の編集バージョンのみが保持されます。"
+
+#: src/components/modals/UserSettingsModal/Privacy.tsx:146
+msgid "When enabled, other users can see when you are active. This feature is not yet available."
+msgstr ""
 
 #: src/components/modals/UserSettingsModal/Privacy.tsx:108
 msgid "When enabled, synchronizes your user data, Spaces, and Space keys between devices. Enabling this increases metadata visibility of your account, which can reveal when you have joined new Spaces, although not the Spaces you have joined."

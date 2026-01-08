@@ -50,16 +50,6 @@ msgid "Replying to"
 msgstr "Menjawab"
 
 #. js-lingui-explicit-id
-#: src/components/message/MessageComposer.native.tsx:162
-msgid "Failed to process image"
-msgstr "Gagal memproses gambar"
-
-#. js-lingui-explicit-id
-#: src/components/message/MessageComposer.native.tsx:315
-msgid "Replying to {user}"
-msgstr "Menjawab {user}"
-
-#. js-lingui-explicit-id
 #: src/components/message/Message.tsx:325
 msgid "has joined"
 msgstr "telah bergabung"
@@ -73,6 +63,16 @@ msgstr "telah keluar"
 #: src/components/message/Message.tsx:341
 msgid "has been kicked"
 msgstr "telah dikeluarkan"
+
+#. js-lingui-explicit-id
+#: src/components/message/MessageComposer.native.tsx:162
+msgid "Failed to process image"
+msgstr "Gagal memproses gambar"
+
+#. js-lingui-explicit-id
+#: src/components/message/MessageComposer.native.tsx:315
+msgid "Replying to {user}"
+msgstr "Menjawab {user}"
 
 #. js-lingui-explicit-id
 #: src/components/direct/DirectMessage.tsx:854
@@ -124,7 +124,7 @@ msgid "[Sticker]"
 msgstr "[Sticker]"
 
 #. placeholder {0}: removedDevices.length
-#: src/components/modals/UserSettingsModal/Privacy.tsx:147
+#: src/components/modals/UserSettingsModal/Privacy.tsx:166
 msgid "{0} devices marked for removal. Click \"Save Changes\" to confirm."
 msgstr ""
 "{0} perangkat ditandai untuk dihapus. Klik \"Simpan Perubahan\" untuk "
@@ -235,7 +235,7 @@ msgstr "@peran"
 msgid "@you"
 msgstr "@kamu"
 
-#: src/components/direct/DirectMessageContactsList.tsx:394
+#: src/components/direct/DirectMessageContactsList.tsx:396
 msgid "+ Add a friend"
 msgstr "Tambahkan teman"
 
@@ -251,7 +251,7 @@ msgstr "0 Byte"
 msgid "0 hours"
 msgstr "0 jam"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:146
+#: src/components/modals/UserSettingsModal/Privacy.tsx:165
 msgid "1 device marked for removal. Click \"Save Changes\" to confirm."
 msgstr ""
 "1 perangkat ditandai untuk dihapus. Klik \"Simpan Perubahan\" untuk "
@@ -282,7 +282,7 @@ msgstr "Pengaturan Akun"
 msgid "actions queued"
 msgstr "Tindakan antri"
 
-#: src/components/direct/DirectMessageContactsList.tsx:326
+#: src/components/direct/DirectMessageContactsList.tsx:328
 msgid "Add a friend"
 msgstr "Tambahkan teman"
 
@@ -360,7 +360,7 @@ msgstr ""
 msgid "Advanced Settings"
 msgstr "Pengaturan Lanjutan"
 
-#: src/components/direct/DirectMessageContactsList.tsx:292
+#: src/components/direct/DirectMessageContactsList.tsx:293
 #: src/components/modals/SpaceSettingsModal/Account.tsx:243
 #: src/components/primitives/Select/Select.native.tsx:38
 #: src/components/primitives/Select/Select.web.tsx:32
@@ -424,7 +424,7 @@ msgstr ""
 "GIF stiker animasi tidak boleh lebih besar dari 750KB. Silakan optimalkan "
 "GIF Anda untuk penggunaan stiker."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:264
+#: src/components/modals/UserSettingsModal/Privacy.tsx:283
 msgid ""
 "Anyone who sees or photographs this QR code can take full control of your "
 "Quorum account and steal any associated funds. Only proceed if you are in a "
@@ -569,7 +569,7 @@ msgstr "Izin kamera diperlukan untuk mengambil foto"
 #: src/components/modals/ConversationSettingsModal.tsx:67
 #: src/components/modals/KickUserModal.tsx:98
 #: src/components/modals/MuteUserModal.tsx:129
-#: src/components/modals/UserSettingsModal/Privacy.tsx:273
+#: src/components/modals/UserSettingsModal/Privacy.tsx:292
 #: src/components/primitives/FileUpload/FileUpload.native.tsx:173
 #: src/hooks/business/channels/useChannelManagement.ts:253
 #: src/hooks/business/messages/useMessageActions.ts:391
@@ -777,7 +777,7 @@ msgstr "Salin alamat"
 msgid "Copy Failed"
 msgstr "Salin Gagal"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:428
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:447
 msgid "Copy invite link to clipboard"
 msgstr "Salin tautan undangan ke papan klip"
 
@@ -858,7 +858,7 @@ msgstr "Membuat Space..."
 msgid "Current"
 msgstr "Saat ini"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:409
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:428
 msgid "Current Invite Link"
 msgstr "Tautan Undangan Saat Ini"
 
@@ -1013,7 +1013,7 @@ msgstr "Notifikasi Desktop"
 msgid "Desktop notifications are not supported in this browser."
 msgstr "Notifikasi desktop tidak didukung di browser ini."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:141
+#: src/components/modals/UserSettingsModal/Privacy.tsx:160
 msgid "Devices"
 msgstr "Perangkat"
 
@@ -1023,7 +1023,7 @@ msgstr "Perangkat"
 msgid "Direct Message"
 msgstr "Pesan Langsung"
 
-#: src/components/direct/DirectMessageContactsList.tsx:314
+#: src/components/direct/DirectMessageContactsList.tsx:316
 #: src/components/navbar/NavMenu.tsx:539 src/components/navbar/NavMenu.tsx:717
 msgid "Direct Messages"
 msgstr "Pesan Langsung"
@@ -1051,7 +1051,7 @@ msgstr "Nama tampilan diperlukan"
 msgid "Display name must be {MAX_NAME_LENGTH} characters or less"
 msgstr "Nama tampilan harus {MAX_NAME_LENGTH} karakter atau kurang"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:247
+#: src/components/modals/UserSettingsModal/Privacy.tsx:266
 msgid ""
 "Display your private key as a QR code to scan with the Quorum mobile app. "
 "This allows you to import your account on mobile without typing the key."
@@ -1153,7 +1153,7 @@ msgstr "Masukkan nama untuk Space Anda"
 msgid "Enter a user's address to start messaging them."
 msgstr "Masukkan alamat pengguna untuk mulai mengirim pesan kepada mereka."
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:289
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:304
 msgid "Enter Address Manually"
 msgstr "Masukkan Alamat Secara Manual"
 
@@ -1191,15 +1191,15 @@ msgstr "Kesalahan saat meminta izin notifikasi:"
 msgid "Error showing notification:"
 msgstr "Kesalahan saat menampilkan notifikasi:"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:258
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:273
 msgid "Existing Conversations"
 msgstr "Percakapan yang Ada"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:231
+#: src/components/modals/UserSettingsModal/Privacy.tsx:250
 msgid "Export"
 msgstr "Ekspor"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:223
+#: src/components/modals/UserSettingsModal/Privacy.tsx:242
 msgid ""
 "Export your key to a file. Do not share this file with anyone else or they "
 "can impersonate you or steal your Space's Apex earnings."
@@ -1296,7 +1296,7 @@ msgstr "Gagal menghapus sematan pesan"
 msgid "Failed to update profile"
 msgstr "Gagal memperbarui profil"
 
-#: src/components/direct/DirectMessageContactsList.tsx:293
+#: src/components/direct/DirectMessageContactsList.tsx:295
 msgid "Favorites"
 msgstr "Favorit"
 
@@ -1420,12 +1420,12 @@ msgstr "Obrolan Umum"
 msgid "Generate Link"
 msgstr "Hasilkan Tautan"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:446
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:465
 #: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:636
 msgid "Generate New Link"
 msgstr "Hasilkan Tautan Baru"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:394
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:413
 #: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:630
 msgid "Generate Public Invite Link"
 msgstr "Hasilkan Tautan Undangan Publik"
@@ -1479,7 +1479,7 @@ msgstr "Bersabarlah..."
 msgid "Help"
 msgstr "Bantuan"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:307
+#: src/components/modals/UserSettingsModal/Privacy.tsx:326
 msgid "Hide"
 msgstr "Sembunyikan"
 
@@ -1500,7 +1500,7 @@ msgstr "Sembunyikan saluran yang dibisukan dalam daftar"
 msgid "I already saved mine"
 msgstr "Saya sudah menyimpan milik saya"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:281
+#: src/components/modals/UserSettingsModal/Privacy.tsx:300
 msgid "I Understand, Show QR"
 msgstr "Saya Mengerti, Tampilkan QR"
 
@@ -1640,7 +1640,7 @@ msgstr "Lompat"
 msgid "Jump to present"
 msgstr "Lompat ke saat ini"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:218
+#: src/components/modals/UserSettingsModal/Privacy.tsx:237
 msgid "Key Export"
 msgstr "Ekspor Kunci"
 
@@ -1731,7 +1731,7 @@ msgstr "Memuat pesan yang dipin..."
 msgid "Loading your profile..."
 msgstr "Memuat profil Anda..."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:281
+#: src/components/modals/UserSettingsModal/Privacy.tsx:300
 msgid "Loading..."
 msgstr "Memuat..."
 
@@ -1844,7 +1844,7 @@ msgstr "Pesan TIDAK ditandatangani!"
 msgid "Messages are signed!"
 msgstr "Pesan ditandatangani!"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:240
+#: src/components/modals/UserSettingsModal/Privacy.tsx:259
 msgid "Mobile Import"
 msgstr "Impor Mobile"
 
@@ -1900,7 +1900,7 @@ msgstr "Bisu Pengguna"
 msgid "Mute Users"
 msgstr "Bisu Pengguna"
 
-#: src/components/direct/DirectMessageContactsList.tsx:295
+#: src/components/direct/DirectMessageContactsList.tsx:297
 msgid "Muted"
 msgstr "Dibisukan"
 
@@ -1908,7 +1908,7 @@ msgstr "Dibisukan"
 msgid "My Account"
 msgstr "Akun Saya"
 
-#: src/components/direct/DirectMessageContactsList.tsx:360
+#: src/components/direct/DirectMessageContactsList.tsx:362
 #: src/components/space/Channel.tsx:1032
 msgid "Name or Address"
 msgstr "Nama atau Alamat"
@@ -1960,7 +1960,7 @@ msgstr "Tidak ada bookmark di space ini"
 msgid "No bookmarks yet"
 msgstr "Belum ada bookmark"
 
-#: src/components/direct/DirectMessageContactsList.tsx:376
+#: src/components/direct/DirectMessageContactsList.tsx:378
 msgid "No contacts found"
 msgstr "Tidak ada kontak ditemukan"
 
@@ -1977,7 +1977,7 @@ msgstr ""
 "diinisialisasi atau Anda mungkin perlu membuat tautan undangan publik "
 "terlebih dahulu."
 
-#: src/components/direct/DirectMessageContactsList.tsx:370
+#: src/components/direct/DirectMessageContactsList.tsx:372
 msgid "No favorites yet"
 msgstr "Belum ada favorit"
 
@@ -1997,7 +1997,7 @@ msgstr "Tidak ada pesan yang ditemukan"
 msgid "No missing spaces found"
 msgstr "Tidak ada ruang yang hilang ditemukan"
 
-#: src/components/direct/DirectMessageContactsList.tsx:374
+#: src/components/direct/DirectMessageContactsList.tsx:376
 msgid "No muted conversations"
 msgstr "Tidak ada percakapan yang dibisukan"
 
@@ -2005,7 +2005,7 @@ msgstr "Tidak ada percakapan yang dibisukan"
 msgid "No pinned messages yet"
 msgstr "Belum ada pesan yang dipin"
 
-#: src/components/direct/DirectMessageContactsList.tsx:372
+#: src/components/direct/DirectMessageContactsList.tsx:374
 msgid "No unknown contacts"
 msgstr "Tidak ada kontak yang tidak dikenal"
 
@@ -2089,11 +2089,11 @@ msgstr "Halaman Tidak Ditemukan"
 msgid "Paste an invite link"
 msgstr "Tempel tautan undangan"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:198
+#: src/components/modals/UserSettingsModal/Privacy.tsx:217
 msgid "Pending"
 msgstr "Menunggu"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:184
+#: src/components/modals/UserSettingsModal/Privacy.tsx:203
 msgid "Pending removal - click Save to confirm"
 msgstr "Penghapusan yang tertunda - klik Simpan untuk mengonfirmasi"
 
@@ -2216,11 +2216,11 @@ msgid "Processing image... This may take a moment for large files."
 msgstr ""
 "Memproses gambar... Ini mungkin memakan waktu sejenak untuk file besar."
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:354
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:373
 msgid "Public Invite Links"
 msgstr "Tautan Undangan Publik"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:383
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:376
 msgid ""
 "Public invite links allow anyone with access to the link to join your Space."
 " Consider who you share the link with and where you post it."
@@ -2229,7 +2229,7 @@ msgstr ""
 " untuk bergabung dengan Space Anda. Pertimbangkan dengan siapa Anda "
 "membagikan tautan dan di mana Anda mempostingnya."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:298
+#: src/components/modals/UserSettingsModal/Privacy.tsx:317
 msgid "QR code will auto-hide in 60 seconds"
 msgstr "Kode QR akan otomatis tersembunyi dalam 60 detik"
 
@@ -2274,7 +2274,7 @@ msgstr "Hanya baca"
 msgid "Read only channel"
 msgstr "Saluran hanya baca"
 
-#: src/components/direct/DirectMessageContactsList.tsx:387
+#: src/components/direct/DirectMessageContactsList.tsx:389
 msgid "Ready to start a truly private conversation?"
 msgstr "Siap untuk memulai percakapan yang benar-benar pribadi?"
 
@@ -2296,7 +2296,7 @@ msgstr "Penerima tidak memiliki perangkat"
 msgid "Refresh"
 msgstr "Segarkan"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:198
+#: src/components/modals/UserSettingsModal/Privacy.tsx:217
 msgid "Remove"
 msgstr "Hapus"
 
@@ -2484,7 +2484,7 @@ msgid "Select an option"
 msgstr "Pilih opsi"
 
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:38
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:278
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:293
 msgid "Select conversation"
 msgstr "Pilih percakapan"
 
@@ -2516,17 +2516,35 @@ msgstr "Pilih jenis notifikasi yang ingin Anda terima"
 msgid "Send"
 msgstr "Kirim"
 
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:269
+msgid ""
+"Send a unique invite link directly to someone. Each invite can only be used "
+"once."
+msgstr ""
+"Kirim tautan undangan unik langsung kepada seseorang. Setiap undangan hanya "
+"dapat digunakan sekali."
+
 #: src/services/ActionQueueHandlers.ts:1005
 msgid "Send failed"
 msgstr "Pengiriman gagal"
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:324
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:340
 msgid "Send Invite"
 msgstr "Kirim Undangan"
 
 #: src/components/user/UserProfile.tsx:218
 msgid "Send Message"
 msgstr "Kirim Pesan"
+
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:262
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:342
+msgid "Send Private Invite"
+msgstr "Kirim Undangan Pribadi"
+
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:267
+msgid "Send your public invite link directly to someone via DM."
+msgstr ""
+"Kirim tautan undangan publik Anda langsung kepada seseorang melalui DM."
 
 #: src/components/message/Message.tsx:1239
 msgid "Sending..."
@@ -2544,6 +2562,10 @@ msgstr "Tetapkan Nama Tampilan"
 #: src/components/modals/UserSettingsModal/Navigation.tsx:26
 msgid "Settings"
 msgstr "Pengaturan"
+
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:260
+msgid "Share Public Link"
+msgstr "Bagikan Tautan Publik"
 
 #: src/components/modals/UserSettingsModal/Help.tsx:40
 #: src/components/modals/UserSettingsModal/Help.tsx:44
@@ -2564,7 +2586,11 @@ msgstr ""
 msgid "Show Muted Channels"
 msgstr "Tampilkan Saluran yang Dibisukan"
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:255
+#: src/components/modals/UserSettingsModal/Privacy.tsx:142
+msgid "Show Online Status"
+msgstr "Tampilkan Status Online"
+
+#: src/components/modals/UserSettingsModal/Privacy.tsx:274
 msgid "Show QR"
 msgstr "Tampilkan QR"
 
@@ -2640,7 +2666,7 @@ msgid "Strikethrough"
 msgstr "Coret"
 
 #. placeholder {0}: selectedUser?.displayName
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:331
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:350
 msgid "Successfully sent invite to {0}"
 msgstr "Berhasil mengirim undangan kepada {0}"
 
@@ -2715,7 +2741,7 @@ msgstr ""
 " saat mereka mencari atau bergabung dengan Space Anda menggunakan tautan "
 "undangan."
 
-#: src/components/modals/UserSettingsModal/Privacy.tsx:207
+#: src/components/modals/UserSettingsModal/Privacy.tsx:226
 msgid "This device"
 msgstr "Perangkat ini"
 
@@ -2736,7 +2762,7 @@ msgstr ""
 "Ini adalah alamat publik Anda dan aman untuk dibagikan kepada siapa saja "
 "yang ingin Anda ajak berinteraksi."
 
-#: src/components/modals/SpaceSettingsModal/Invites.tsx:413
+#: src/components/modals/SpaceSettingsModal/Invites.tsx:432
 msgid ""
 "This link will not expire, but you can generate a new one at any time, which"
 " will invalidate the old link."
@@ -2900,7 +2926,7 @@ msgstr ""
 msgid "Unable to restore: not logged in"
 msgstr "Tidak dapat memulihkan: tidak masuk"
 
-#: src/components/direct/DirectMessageContactsList.tsx:294
+#: src/components/direct/DirectMessageContactsList.tsx:296
 #: src/components/modals/JoinSpaceModal.tsx:112
 #: src/services/MessageService.ts:2089 src/services/MessageService.ts:3581
 msgid "Unknown"
@@ -3102,6 +3128,14 @@ msgstr ""
 "Saat diaktifkan, semua versi sebelumnya dari pesan yang diedit akan "
 "disimpan. Saat dinonaktifkan, hanya versi yang diedit saat ini yang "
 "disimpan."
+
+#: src/components/modals/UserSettingsModal/Privacy.tsx:146
+msgid ""
+"When enabled, other users can see when you are active. This feature is not "
+"yet available."
+msgstr ""
+"Ketika diaktifkan, pengguna lain dapat melihat kapan Anda aktif. Fitur ini "
+"belum tersedia."
 
 #: src/components/modals/UserSettingsModal/Privacy.tsx:108
 msgid ""
