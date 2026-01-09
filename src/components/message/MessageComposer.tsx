@@ -183,19 +183,15 @@ export const MessageComposer = forwardRef<
           const el = node as HTMLElement;
           if (el.dataset?.mentionType && el.dataset?.mentionAddress) {
             const prefix = el.dataset.mentionType === 'channel' ? '#' : '@';
-            const displayName = el.dataset.mentionDisplayName;
-            const useEnhanced = el.dataset.mentionEnhanced === 'true';
 
-            // Format based on type and enhanced flag
+            // Always use legacy format for new messages
+            // Pills provide the visual UX, so no need for enhanced format @[Name]<address>
             if (el.dataset.mentionType === 'role') {
               // Roles always use @roleTag format (no brackets)
               text += `@${el.dataset.mentionAddress}`;
             } else if (el.dataset.mentionType === 'everyone') {
               // @everyone always same format
               text += '@everyone';
-            } else if (useEnhanced && displayName) {
-              // Enhanced format: @[Display Name]<address> or #[Channel Name]<channelId>
-              text += `${prefix}[${displayName}]<${el.dataset.mentionAddress}>`;
             } else {
               // Legacy format: @<address> or #<channelId>
               text += `${prefix}<${el.dataset.mentionAddress}>`;
@@ -224,13 +220,11 @@ export const MessageComposer = forwardRef<
       let type: 'user' | 'role' | 'channel' | 'everyone';
       let displayName: string;
       let address: string;
-      let useEnhancedFormat = false;
 
       if (option.type === 'user') {
         type = 'user';
         displayName = option.data.displayName || 'Unknown User';
         address = option.data.address;
-        useEnhancedFormat = true;
       } else if (option.type === 'role') {
         type = 'role';
         displayName = option.data.displayName;
@@ -239,7 +233,6 @@ export const MessageComposer = forwardRef<
         type = 'channel';
         displayName = option.data.channelName || 'Unknown Channel';
         address = option.data.channelId;
-        useEnhancedFormat = true;
       } else {
         type = 'everyone';
         displayName = 'everyone';
@@ -252,7 +245,6 @@ export const MessageComposer = forwardRef<
       pillSpan.dataset.mentionType = type;
       pillSpan.dataset.mentionAddress = address;
       pillSpan.dataset.mentionDisplayName = displayName;
-      pillSpan.dataset.mentionEnhanced = useEnhancedFormat ? 'true' : 'false';
 
       // Use the same CSS classes as rendered mentions in Message.tsx
       const mentionClasses = {
@@ -416,20 +408,14 @@ export const MessageComposer = forwardRef<
         let insertText: string;
 
         if (option.type === 'user') {
-          // Users: @[Display Name]<address> (new readable format with display name)
-          const displayName = option.data.displayName || 'Unknown User';
-          // Escape brackets in display names to prevent format conflicts
-          const escapedDisplayName = displayName.replace(/[[\]]/g, '');
-          insertText = `@[${escapedDisplayName}]<${option.data.address}>`;
+          // Users: @<address> (legacy format - consistent with pills-enabled mode)
+          insertText = `@<${option.data.address}>`;
         } else if (option.type === 'role') {
           // Roles: @roleTag (NO brackets, unchanged)
           insertText = `@${option.data.roleTag}`;
         } else if (option.type === 'channel') {
-          // Channels: #[Channel Name]<channelId> (new readable format with channel name)
-          const channelName = option.data.channelName || 'Unknown Channel';
-          // Escape brackets in channel names to prevent format conflicts
-          const escapedChannelName = channelName.replace(/[[\]]/g, '');
-          insertText = `#[${escapedChannelName}]<${option.data.channelId}>`;
+          // Channels: #<channelId> (legacy format - consistent with pills-enabled mode)
+          insertText = `#<${option.data.channelId}>`;
         } else {
           // @everyone: plain @everyone (NO brackets, unchanged)
           insertText = '@everyone';

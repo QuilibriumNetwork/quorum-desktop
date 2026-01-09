@@ -105,14 +105,14 @@ reviewed_by: feature-analyzer
   - Paste behavior: Uses `document.execCommand('insertText')` to insert as plain text
 
 - [x] **Support all 4 mention types**
-  - Implementation: All types supported with correct storage formats
+  - Implementation: All types supported with legacy-only storage formats
   - Formats verified:
-    - ✅ User pills: Enhanced `@[Name]<address>` format ([MessageComposer.tsx:196-198](src/components/message/MessageComposer.tsx#L196-L198))
-    - ✅ Channel pills: Enhanced `#[Name]<id>` format (same logic as users)
+    - ✅ User pills: Legacy `@<address>` format (pills provide visual UX, no embedded names needed)
+    - ✅ Channel pills: Legacy `#<channelId>` format (pills provide visual UX, no embedded names needed)
     - ✅ Role pills: `@roleTag` format ([MessageComposer.tsx:191-193](src/components/message/MessageComposer.tsx#L191-L193))
     - ✅ Everyone: `@everyone` format ([MessageComposer.tsx:194-195](src/components/message/MessageComposer.tsx#L194-L195))
-  - Legacy support: Also supports legacy `@<address>` and `#<id>` formats ([MessageComposer.tsx:199-201](src/components/message/MessageComposer.tsx#L199-L201))
-  - Data attributes: Pills store type, address, displayName, enhanced flag for conversion back to storage
+  - **Enhanced format `@[Name]<address>` is NOT supported**: App is in beta, no backward compatibility needed
+  - Data attributes: Pills store type, address, displayName for visual rendering only
 
 - [x] **Add feature flag and graceful fallback**
   - Implementation: `ENABLE_MENTION_PILLS` flag controls contentEditable vs textarea
@@ -412,14 +412,21 @@ reviewed_by: feature-analyzer
 **Why This Matters**:
 - User consistency: Editing should match composing experience
 - When user clicks "Edit" on a message with mentions, they should see pills, not raw IDs
-- Prevents confusion when editing messages with `@[Name]<address>` format
+- Prevents confusion when editing messages with legacy `@<address>` format (raw addresses are hard to read)
 
 **Implementation Approach**:
 The MessageEditTextarea implementation will mirror MessageComposer's approach but with key differences:
-- **Input**: Receives `initialText` with stored format (e.g., `@[John Doe]<QmAbc123>`)
+- **Input**: Receives `initialText` with stored legacy format (e.g., `@<QmAbc123>`, `#<channelId>`)
 - **Parse on Load**: Convert stored mention format → pills in contentEditable
 - **Edit Flow**: User sees/edits pills visually
-- **Save**: Convert pills back → stored format via same `extractTextFromEditor()` logic
+- **Save**: Convert pills back → legacy storage format via same `extractTextFromEditor()` logic
+
+**Storage Format Note** (Updated 2026-01-09):
+- **Phase 1 (MessageComposer)**: Now writes legacy-only format `@<address>` and `#<id>` for new messages
+- **Rendering (useMessageFormatting)**: Now ONLY renders legacy format `@<address>` and `#<id>` - enhanced format `@[Name]<address>` is rejected entirely
+- **Rationale**: Pills provide visual UX, enhanced format unnecessary. App is in beta, no backward compatibility needed.
+- **Phase 2 (MessageEditTextarea)**: Should also only parse legacy format (no enhanced format support needed)
+- **Security**: All mentions validated with double-layer security (display name lookup + message.mentions validation)
 
 **Tasks**:
 
@@ -438,12 +445,11 @@ The MessageEditTextarea implementation will mirror MessageComposer's approach bu
   - Implementation:
     - Function: `parseMentionsAndCreatePills(text: string, message: MessageType, spaceRoles: Role[], spaceChannels: Channel[], mapSenderToUser: Function): DocumentFragment`
     - Parse regex patterns (with double-validation for each):
-      - Enhanced user: `/@\[([^\]]+)\]<([^>]+)>/g` → validate address in `message.mentions.memberIds`
-      - Enhanced channel: `/#\[([^\]]+)\]<([^>]+)>/g` → validate channelId in `message.mentions.channelIds`
-      - Legacy user: `/@<([^>]+)>/g` → validate address in `message.mentions.memberIds`
-      - Legacy channel: `/#<([^>]+)>/g` → validate channelId in `message.mentions.channelIds`
+      - User: `/@<([^>]+)>/g` → validate address in `message.mentions.memberIds`
+      - Channel: `/#<([^>]+)>/g` → validate channelId in `message.mentions.channelIds`
       - Role: `/@([a-zA-Z0-9_-]+)/g` → validate roleId in `message.mentions.roleIds`
       - Everyone: `/@everyone/g` → validate `message.mentions.everyone` is true
+    - **Note**: Enhanced format `@[Name]<address>` is NOT supported - will render as plain text
     - For each match:
       - **Security Layer 1**: Lookup real display name (NEVER trust embedded name)
       - **Security Layer 2**: Verify mention exists in `message.mentions` arrays
@@ -462,137 +468,41 @@ The MessageEditTextarea implementation will mirror MessageComposer's approach bu
 
   Phase 2 edit mode parses EXISTING message text that may contain manually-typed mention syntax (not created via autocomplete).
 
-  **TWO validation layers required** (same as MessageMarkdownRenderer.tsx):
+  **TWO validation layers required** (same pattern as useMessageFormatting.ts):
 
-  **1. Display Name Validation**: NEVER trust embedded display names - lookup real names
+  **1. Display Name Validation**: Always lookup real names from trusted sources (mapSenderToUser, spaceRoles, spaceChannels)
   **2. Mention Existence Validation**: ONLY create pills for mentions in `message.mentions` object
 
   **Why both layers are needed**:
-  - **Layer 1** prevents name-spoofing: Attacker types `@[Admin]<attackers_address>` → lookup shows real name, not "Admin"
-  - **Layer 2** prevents fake mentions: Attacker types `@[User]<address>` manually without triggering autocomplete → verify it exists in `message.mentions`
+  - **Layer 1** prevents incorrect display: Lookup shows current/real name
+  - **Layer 2** prevents fake mentions: Attacker types `@<address>` manually without triggering autocomplete → verify it exists in `message.mentions`
 
-  **Required Validation for ALL Mention Types**:
+  **Required Validation Pattern (ALL Mention Types)**:
 
-  **User Mentions** - Enhanced format `@[Name]<address>`:
   ```typescript
-  const enhancedUserMatch = /@\[([^\]]+)\]<([^>]+)>/g;
-  let match;
-  while ((match = enhancedUserMatch.exec(text)) !== null) {
-    const embeddedName = match[1];  // IGNORE THIS! Could be spoofed
-    const address = match[2];        // Use for validation
-
-    // Layer 1: Lookup real display name (don't trust embedded name)
-    const realUser = mapSenderToUser(address);
-    const displayName = realUser?.displayName || 'Unknown User';
-
-    // Layer 2: Verify mention exists in message.mentions
-    if (!message.mentions?.memberIds?.includes(address)) {
-      // Skip pill creation - this is plain text, not a real mention
-      continue;
-    }
-
-    // Both validations passed - create pill with validated data
-    createPillElement({
-      type: 'user',
-      displayName,  // Use looked-up name, NOT embeddedName
-      address,
-      enhanced: true
-    });
-  }
-  ```
-
-  **User Mentions** - Legacy format `@<address>`:
-  ```typescript
-  const legacyUserMatch = /@<([^>]+)>/g;
-  while ((match = legacyUserMatch.exec(text)) !== null) {
+  // Example: User Mentions - Legacy format `@<address>` (ONLY format supported)
+  const userMatch = /@<([^>]+)>/g;
+  while ((match = userMatch.exec(text)) !== null) {
     const address = match[1];
 
     // Layer 1: Lookup real display name
     const realUser = mapSenderToUser(address);
     const displayName = realUser?.displayName || 'Unknown User';
 
-    // Layer 2: Verify mention exists
+    // Layer 2: Verify mention exists in message.mentions
     if (!message.mentions?.memberIds?.includes(address)) {
-      continue; // Not a real mention
+      continue; // Leave as plain text - not a real mention
     }
 
-    createPillElement({ type: 'user', displayName, address, enhanced: false });
+    // Both validations passed - create pill
+    createPillElement({ type: 'user', displayName, address });
   }
+
+  // Similar pattern for channels, roles, @everyone
+  // See useMessageFormatting.ts lines 155-214 for reference implementation
   ```
 
-  **Channel Mentions** - Enhanced format `#[Name]<id>`:
-  ```typescript
-  const enhancedChannelMatch = /#\[([^\]]+)\]<([^>]+)>/g;
-  while ((match = enhancedChannelMatch.exec(text)) !== null) {
-    const embeddedName = match[1];  // IGNORE - could be spoofed
-    const channelId = match[2];
-
-    // Layer 1: Lookup real channel name from spaceChannels array
-    const realChannel = spaceChannels.find(c => c.channelId === channelId);
-    const channelName = realChannel?.channelName || 'Unknown Channel';
-
-    // Layer 2: Verify mention exists
-    if (!message.mentions?.channelIds?.includes(channelId)) {
-      continue; // Not a real mention
-    }
-
-    createPillElement({ type: 'channel', displayName: channelName, channelId, enhanced: true });
-  }
-  ```
-
-  **Channel Mentions** - Legacy format `#<id>`:
-  ```typescript
-  const legacyChannelMatch = /#<([^>]+)>/g;
-  while ((match = legacyChannelMatch.exec(text)) !== null) {
-    const channelId = match[1];
-
-    // Layer 1: Lookup real channel name
-    const realChannel = spaceChannels.find(c => c.channelId === channelId);
-    const channelName = realChannel?.channelName || 'Unknown Channel';
-
-    // Layer 2: Verify mention exists
-    if (!message.mentions?.channelIds?.includes(channelId)) {
-      continue;
-    }
-
-    createPillElement({ type: 'channel', displayName: channelName, channelId, enhanced: false });
-  }
-  ```
-
-  **Role Mentions** - Format `@roleTag`:
-  ```typescript
-  const roleMatch = /@([a-zA-Z0-9_-]+)/g;
-  while ((match = roleMatch.exec(text)) !== null) {
-    const roleTag = match[1];
-
-    // Layer 1: Lookup real role from spaceRoles array
-    const realRole = spaceRoles.find(r => r.roleTag === roleTag);
-    if (!realRole) {
-      continue; // Not a valid role
-    }
-
-    // Layer 2: Verify mention exists
-    if (!message.mentions?.roleIds?.includes(realRole.roleId)) {
-      continue; // Not a real mention
-    }
-
-    createPillElement({ type: 'role', displayName: realRole.displayName, roleTag });
-  }
-  ```
-
-  **@everyone Mentions** - Format `@everyone`:
-  ```typescript
-  const everyoneMatch = /@everyone/g;
-  if (everyoneMatch.test(text)) {
-    // Layer 2: Verify @everyone exists in message.mentions
-    if (message.mentions?.everyone) {
-      createPillElement({ type: 'everyone', displayName: '@everyone' });
-    }
-    // If not in message.mentions, leave as plain text
-  }
-  ```
-
-  **Reference Implementation**: MessageMarkdownRenderer.tsx lines 628-677 (uses same double-validation pattern)
+  **Reference Implementation**: [useMessageFormatting.ts:155-214](src/hooks/business/messages/useMessageFormatting.ts#L155-L214) (uses same double-validation pattern)
 
   **Why Phase 1 (MessageComposer) is Safe**:
   - Pills only created from autocomplete via `insertPill()` function
@@ -602,9 +512,9 @@ The MessageEditTextarea implementation will mirror MessageComposer's approach bu
 
   **Why Phase 2 (MessageEditTextarea) Needs Double Validation**:
   - Parses existing stored text that may contain manually-typed mentions (bypassing autocomplete)
-  - Attacker could have manually typed `@[Admin]<attackers_address>` in text
+  - Attacker could have manually typed `@<attackers_address>` without triggering autocomplete
   - Must validate BOTH display names AND mention existence
-  - Same security requirements as MessageMarkdownRenderer for rendering messages
+  - Same security requirements as useMessageFormatting for rendering messages
 
 - [ ] **Initialize contentEditable with pills on edit load**
   - Done when: Opening edit mode shows pills instead of raw IDs
@@ -627,17 +537,17 @@ The MessageEditTextarea implementation will mirror MessageComposer's approach bu
         }
       }, [initialText]);
       ```
-  - Verify: User clicks edit → sees `@John Doe` pills, not `@[John Doe]<QmAbc123>`
+  - Verify: User clicks edit → sees `@John Doe` pills, not `@<QmAbc123>`
 
   **Edge Case Handling in `parseMentionsAndCreatePills()`**:
 
-  1. **Malformed enhanced syntax**: `@[Unclosed`, `@[Name]<>`, `#[Channel]<>`
+  1. **Malformed syntax**: `@<>`, `#<>`
      - Detection: Regex match fails or captures empty address/channelId
      - Behavior: Leave as plain text (don't create pill)
 
-  2. **Invalid addresses/IDs**: `@[Name]<not-an-address>`, `#[Chan]<invalid-id>`
+  2. **Invalid addresses/IDs**: `@<not-an-address>`, `#<invalid-id>`
      - Detection: Lookup returns null/undefined
-     - Behavior: Create pill with "Unknown User"/"Unknown Channel" display (same as MessageMarkdownRenderer)
+     - Behavior: Create pill with "Unknown User"/"Unknown Channel" display (same as useMessageFormatting)
 
   3. **Mentions not in message.mentions**: Manually typed mention syntax
      - Detection: address/roleTag/channelId not in `message.mentions` arrays
@@ -646,12 +556,12 @@ The MessageEditTextarea implementation will mirror MessageComposer's approach bu
   4. **Empty or whitespace-only text**:
      - Behavior: Return empty DocumentFragment
 
-  5. **Mixed enhanced/legacy formats**: `@[New]<addr> and @<addr2>`
-     - Behavior: Parse both formats, create appropriate pills for each
-
-  6. **Deleted users/roles/channels**: Mentioned entity no longer exists
+  5. **Deleted users/roles/channels**: Mentioned entity no longer exists
      - Detection: Lookup returns null/undefined but mention exists in `message.mentions`
      - Behavior: Create pill with fallback text ("Unknown User", "Former Member", "Unknown Channel")
+
+  6. **Enhanced format in old messages**: `@[Name]<address>` or `#[Name]<channelId>`
+     - Behavior: Will NOT match regex (enhanced format not supported), renders as plain text
 
   **Display Name Resolution Strategy**:
 
@@ -660,14 +570,11 @@ The MessageEditTextarea implementation will mirror MessageComposer's approach bu
   **Rationale**:
   - Consistency with how mentions render in displayed messages
   - Users expect to see current names, not historical snapshots
-  - Enhanced format stores both name and address, but address is source of truth
+  - Address is source of truth
 
   **Implementation**:
-  - Enhanced format `@[Historical Name]<address>`: Parse address, lookup CURRENT name, create pill with current name
   - Legacy format `@<address>`: Parse address, lookup CURRENT name, create pill
   - If user no longer exists: Show "Unknown User" / "Former Member"
-
-  **Note**: The stored message text preserves historical names in enhanced format, but the edit UI shows current names (live lookup)
 
 - [ ] **Reuse pill editing logic from MessageComposer**
   - Done when: Backspace deletes pills, click removes pills, cursor navigation works
@@ -695,7 +602,7 @@ The MessageEditTextarea implementation will mirror MessageComposer's approach bu
         // ... rest of save logic unchanged
       };
       ```
-  - Verify: Pills convert to correct storage format (`@[Name]<address>`, `@roleTag`, etc.)
+  - Verify: Pills convert to correct storage format (`@<address>`, `#<channelId>`, `@roleTag`, `@everyone`)
   - Location: [MessageEditTextarea.tsx:106-335](src/components/message/MessageEditTextarea.tsx#L106-335)
 
 - [ ] **Handle markdown toolbar with contentEditable in edit mode**
@@ -713,12 +620,11 @@ The MessageEditTextarea implementation will mirror MessageComposer's approach bu
   - Test cases:
     - Edit message with single user mention → see pill → edit → save
     - Edit message with multiple mentions (user, role, channel, @everyone) → all show as pills
-    - Edit message with enhanced format `@[Name]<address>` → pill appears correctly
     - Edit message with legacy format `@<address>` → pill appears with looked-up display name
     - Edit message with no mentions → works normally
     - Backspace deletes pills atomically
     - Markdown toolbar works in edit mode
-    - Save preserves mention format correctly
+    - Save preserves mention format correctly (legacy format only)
     - **Deleted mention targets**:
       - Edit message where mentioned user has left space → pill shows "Unknown User"
       - Edit message where mentioned role has been deleted → pill shows "Unknown Role" or doesn't create pill
@@ -726,17 +632,19 @@ The MessageEditTextarea implementation will mirror MessageComposer's approach bu
       - Edit message with mix of valid and deleted mentions → valid pills render, deleted show fallback
       - Verify all deleted-mention scenarios save correctly without errors
     - **Malformed mention syntax**:
-      - Edit message with malformed syntax `@[Unclosed` → appears as plain text, no pill
-      - Edit message with empty address `@[Name]<>` → appears as plain text, no pill
+      - Edit message with malformed syntax `@<>` → appears as plain text, no pill
+      - Edit message with empty address `@<>` → appears as plain text, no pill
       - Edit message with invalid address → pill with "Unknown User" (if in message.mentions)
     - **Renamed entities**:
-      - Edit message where mentioned user has been renamed → pill shows CURRENT name, not historical
+      - Edit message where mentioned user has been renamed → pill shows CURRENT name
       - Edit message where mentioned channel has been renamed → pill shows CURRENT name
-      - Verify enhanced format preserves historical name in storage, but UI shows current
     - **Fake mentions** (manually typed, not in message.mentions):
-      - Edit message with manually-typed `@[Admin]<attackers_address>` not in message.mentions → appears as plain text (no pill created)
+      - Edit message with manually-typed `@<attackers_address>` not in message.mentions → appears as plain text (no pill created)
       - Verify security: Pills only created for mentions validated in `message.mentions` arrays
-  - Verification: Edit history shows correct mention storage format
+    - **Enhanced format in old messages** (if any exist):
+      - Edit message with `@[Name]<address>` → appears as plain text (not rendered as pill)
+      - Save preserves as-is or user can manually fix
+  - Verification: Edit history shows correct legacy mention storage format
 
 **Code Reuse Strategy**:
 
@@ -928,3 +836,5 @@ interface MessageEditTextareaProps {
 - Accessibility (TalkBack, VoiceOver) works correctly
 
 ---
+
+*Last updated: 2026-01-09 (Legacy format standardization - removed enhanced format support)*

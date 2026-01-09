@@ -152,23 +152,26 @@ export function useMessageFormatting(options: UseMessageFormattingOptions) {
         };
       }
 
-      // Check for user mentions: @<address> OR @[Display Name]<address> (both formats)
+      // Check for user mentions: @<address> (legacy format only)
       const cidPattern = createIPFSCIDRegex().source;
-      const userMentionRegex = new RegExp(`^@(?:\\[([^\\]]+)\\])?<(${cidPattern})>$`);
+      const userMentionRegex = new RegExp(`^@<(${cidPattern})>$`);
       const userMatch = token.match(userMentionRegex);
 
-      if (userMatch) {
-        // userMatch[1] is the optional display name (could be undefined)
-        // userMatch[2] is the address (always present)
-        const userId = userMatch[2];
-        const mention = mapSenderToUser(userId);
-        return {
-          type: 'mention' as const,
-          key: `${messageId}-${lineIndex}-${tokenIndex}`,
-          displayName: mention.displayName || `@${userId.substring(0, 8)}...`,
-          address: userId,
-          isInteractive: !disableMentionInteractivity,
-        };
+      if (userMatch && message.mentions?.memberIds && message.mentions.memberIds.length > 0) {
+        // userMatch[1] is the address
+        const userId = userMatch[1];
+
+        // Only render as mention if the user is in the message's memberIds
+        if (message.mentions.memberIds.includes(userId)) {
+          const mention = mapSenderToUser(userId);
+          return {
+            type: 'mention' as const,
+            key: `${messageId}-${lineIndex}-${tokenIndex}`,
+            displayName: mention.displayName || `@${userId.substring(0, 8)}...`,
+            address: userId,
+            isInteractive: !disableMentionInteractivity,
+          };
+        }
       }
 
       // Check for role mentions (only style if role exists in message.mentions.roleIds)
@@ -190,14 +193,13 @@ export function useMessageFormatting(options: UseMessageFormattingOptions) {
         }
       }
 
-      // Check for channel mentions: #<channelId> OR #[Channel Name]<channelId> (both formats)
-      const channelMentionRegex = /^#(?:\[([^\]]+)\])?<([^>]+)>$/;
+      // Check for channel mentions: #<channelId> (legacy format only)
+      const channelMentionRegex = /^#<([^>]+)>$/;
       const channelMatch = token.match(channelMentionRegex);
 
       if (channelMatch && message.mentions?.channelIds && message.mentions.channelIds.length > 0) {
-        // channelMatch[1] is the optional display name (could be undefined)
-        // channelMatch[2] is the channelId (always present)
-        const channelId = channelMatch[2];
+        // channelMatch[1] is the channelId
+        const channelId = channelMatch[1];
 
         // Find the channel in spaceChannels to verify it exists and get channel name
         const channel = spaceChannels.find(c => c.channelId === channelId);
