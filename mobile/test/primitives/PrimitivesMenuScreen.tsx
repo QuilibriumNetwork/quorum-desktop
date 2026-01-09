@@ -57,6 +57,13 @@ export const PrimitivesMenuScreen: React.FC<PrimitivesMenuScreenProps> = ({
       onPress: () => onSelectPrimitive('textarea'),
     },
     {
+      id: 'mentionpills',
+      title: 'Mention Pills (POC)',
+      description: 'Proof-of-concept for TextInput + overlay approach for mention pills',
+      icon: 'at',
+      onPress: () => onSelectPrimitive('mentionpills'),
+    },
+    {
       id: 'button',
       title: 'Button',
       description: 'Complete button system with 11 variants and all sizes',

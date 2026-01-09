@@ -3,6 +3,7 @@ export { PrimitivesMenuScreen } from './PrimitivesMenuScreen';
 export { PrimitivesTestScreen } from './PrimitivesTestScreen';
 export { TextTestScreen } from './TextTestScreen';
 export { InputTestScreen } from './InputTestScreen';
+export { MentionPillsTestScreen } from './MentionPillsTestScreen';
 export { TextAreaTestScreen } from './TextAreaTestScreen';
 export { SimpleButtonTestScreen } from './SimpleButtonTestScreen';
 export { SwitchTestScreen } from './SwitchTestScreen';

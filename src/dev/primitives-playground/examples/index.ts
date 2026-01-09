@@ -8,6 +8,7 @@ export { FlexColumnExamples } from './FlexColumn';
 export { FlexRowExamples } from './FlexRow';
 export { IconExamples } from './Icon';
 export { InputExamples } from './Input';
+export { MentionPillsExamples } from './MentionPills';
 export { ModalExamples } from './Modal';
 export { RadioGroupExamples } from './RadioGroup';
 export { ScrollContainerExamples } from './ScrollContainer';

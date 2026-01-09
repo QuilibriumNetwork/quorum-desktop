@@ -21,6 +21,7 @@ import {
   FlexRowExamples,
   IconExamples,
   InputExamples,
+  MentionPillsExamples,
   ModalExamples,
   RadioGroupExamples,
   ScrollContainerExamples,
@@ -44,6 +45,7 @@ const navigationItems = [
   { id: 'flex-primitives', label: 'FlexRow', icon: 'menu' },
   { id: 'icon-primitive', label: 'Icon', icon: 'star' },
   { id: 'input-primitive', label: 'Input', icon: 'edit' },
+  { id: 'mentionpills-demo', label: 'Mention Pills (POC)', icon: 'at' },
   { id: 'modal-primitive', label: 'Modal', icon: 'compress-alt' },
   { id: 'radiogroup-primitive', label: 'RadioGroup', icon: 'radio' },
   { id: 'scrollcontainer-primitive', label: 'ScrollContainer', icon: 'arrow-down' },
@@ -186,6 +188,7 @@ export const PrimitivesPlayground: React.FC = () => {
                 <FlexRowExamples />
                 <IconExamples />
                 <InputExamples />
+                <MentionPillsExamples />
                 <ModalExamples />
                 <RadioGroupExamples />
                 <ScrollContainerExamples />

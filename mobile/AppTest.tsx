@@ -23,6 +23,7 @@ import {
   TextTestScreen,
   InputTestScreen,
   TextAreaTestScreen,
+  MentionPillsTestScreen,
   SimpleButtonTestScreen,
   SwitchTestScreen,
   ModalTestScreen,
@@ -56,6 +57,7 @@ type PrimitiveScreen =
   | 'text'
   | 'input'
   | 'textarea'
+  | 'mentionpills'
   | 'button'
   | 'switch'
   | 'modal'
@@ -166,6 +168,8 @@ function ThemedAppContent() {
           return <InputTestScreen />;
         case 'textarea':
           return <TextAreaTestScreen />;
+        case 'mentionpills':
+          return <MentionPillsTestScreen />;
         case 'button':
           return <SimpleButtonTestScreen />;
         case 'switch':
