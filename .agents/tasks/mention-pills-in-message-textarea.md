@@ -404,10 +404,11 @@ reviewed_by: feature-analyzer
 - [ ] Performance measurement (bundle size, typing latency)
 - [ ] Full verification test suite execution
 
-### Phase 2: MessageEditTextarea Pills Implementation (2-3 days) 🛠️ (Deferred)
+### Phase 2: MessageEditTextarea Pills Implementation (2-3 days) ✅ **COMPLETED**
 
 **Focus**: Add pill support to message editing for consistency with composer
 
+**Status**: Core implementation complete (2026-01-09). Mention pills now work in message edit mode with full autocomplete support.
 
 **Why This Matters**:
 - User consistency: Editing should match composing experience
@@ -428,41 +429,31 @@ The MessageEditTextarea implementation will mirror MessageComposer's approach bu
 - **Phase 2 (MessageEditTextarea)**: Should also only parse legacy format (no enhanced format support needed)
 - **Security**: All mentions validated with double-layer security (display name lookup + message.mentions validation)
 
-**Tasks**:
+**Completed Tasks**:
 
-- [ ] **Add contentEditable support to MessageEditTextarea**
-  - Done when: Feature-flagged contentEditable replaces textarea (same pattern as MessageComposer)
-  - Implementation:
-    - Add `editorRef` for contentEditable div
-    - Reuse `extractTextFromEditor()` logic from MessageComposer (consider extracting to shared util)
-    - Reuse `handleEditorInput()`, `handleEditorKeyDown()`, `handleEditorPaste()` patterns
-    - Conditional render: contentEditable when `ENABLE_MENTION_PILLS`, else textarea
-  - Location: [MessageEditTextarea.tsx:337-371](src/components/message/MessageEditTextarea.tsx#L337-L371)
-  - Reference: Copy patterns from [MessageComposer.tsx:1103-1132](src/components/message/MessageComposer.tsx#L1103-L1132)
+- [x] **Add contentEditable support to MessageEditTextarea** ✅
+  - Implementation complete: Feature-flagged contentEditable replaces textarea (same pattern as MessageComposer)
+  - Location: [MessageEditTextarea.tsx:701-864](src/components/message/MessageEditTextarea.tsx#L701-L864)
+  - Key functions implemented:
+    - `extractVisualText()`: Gets display text for mention detection
+    - `extractTextFromEditor()`: Converts pills to storage format
+    - `insertPill()`: Creates and inserts pill elements with DOM tree preservation (lines 352-490)
+  - Conditional render: contentEditable when `ENABLE_MENTION_PILLS`, else textarea
+  - Successfully reused patterns from MessageComposer
 
-- [ ] **Create mention parser for edit mode**
-  - Done when: Function parses stored format and creates pills on edit load
-  - Implementation:
-    - Function: `parseMentionsAndCreatePills(text: string, message: MessageType, spaceRoles: Role[], spaceChannels: Channel[], mapSenderToUser: Function): DocumentFragment`
-    - Parse regex patterns (with double-validation for each):
-      - User: `/@<([^>]+)>/g` → validate address in `message.mentions.memberIds`
-      - Channel: `/#<([^>]+)>/g` → validate channelId in `message.mentions.channelIds`
-      - Role: `/@([a-zA-Z0-9_-]+)/g` → validate roleId in `message.mentions.roleIds`
-      - Everyone: `/@everyone/g` → validate `message.mentions.everyone` is true
-    - **Note**: Enhanced format `@[Name]<address>` is NOT supported - will render as plain text
-    - For each match:
-      - **Security Layer 1**: Lookup real display name (NEVER trust embedded name)
-      - **Security Layer 2**: Verify mention exists in `message.mentions` arrays
-      - If both validations pass: Create pill span with same pattern as `insertPill()` in MessageComposer
-      - Set data attributes (type, address/channelId/roleTag, displayName, enhanced flag)
-      - Apply CSS classes (`message-mentions-*` + `message-composer-pill`)
-      - If validation fails: Leave as plain text (don't create pill)
-    - Return DocumentFragment with pills and text nodes
-  - Location: New function in MessageEditTextarea.tsx (or extract to shared util)
-  - Reference: Similar to `insertPill()` in [MessageComposer.tsx:250-274](src/components/message/MessageComposer.tsx#L250-L274)
-  - Reference: MessageMarkdownRenderer.tsx lines 628-677 for validation pattern
-  - **Critical**: Must handle all mention formats from existing messages
-  - **Critical**: Must validate ALL mentions against `message.mentions` object (security requirement)
+- [x] **Create mention parser for edit mode** ✅
+  - Implementation complete: `parseMentionsAndCreatePills()` function created
+  - Location: [MessageEditTextarea.tsx:161-288](src/components/message/MessageEditTextarea.tsx#L161-L288)
+  - Double-validation security implemented:
+    - **Layer 1**: Lookup real display name via `mapSenderToUser()`, `spaceRoles`, `spaceChannels`
+    - **Layer 2**: Verify mention exists in `message.mentions` arrays
+  - All mention types supported with legacy-only format:
+    - User: `/@<([^>]+)>/g` with `message.mentions.memberIds` validation
+    - Channel: `/#<([^>]+)>/g` with `message.mentions.channelIds` validation
+    - Role: `/@([a-zA-Z0-9_-]+)(?!<)/g` (negative lookahead added) with `message.mentions.roleIds` validation
+    - Everyone: `/@everyone/g` with `message.mentions.everyone` validation
+  - Returns DocumentFragment with pills and text nodes
+  - Enhanced format `@[Name]<address>` NOT supported - renders as plain text
 
   **🔒 CRITICAL SECURITY WARNING - Double Validation Required**:
 
@@ -516,28 +507,15 @@ The MessageEditTextarea implementation will mirror MessageComposer's approach bu
   - Must validate BOTH display names AND mention existence
   - Same security requirements as useMessageFormatting for rendering messages
 
-- [ ] **Initialize contentEditable with pills on edit load**
-  - Done when: Opening edit mode shows pills instead of raw IDs
-  - Implementation:
-    - In component mount/edit mode entry:
-      ```typescript
-      useEffect(() => {
-        if (ENABLE_MENTION_PILLS && editorRef.current) {
-          const fragment = parseMentionsAndCreatePills(initialText);
-          editorRef.current.innerHTML = '';
-          editorRef.current.appendChild(fragment);
-          // Focus at end
-          editorRef.current.focus();
-          const range = document.createRange();
-          range.selectNodeContents(editorRef.current);
-          range.collapse(false);
-          const selection = window.getSelection();
-          selection?.removeAllRanges();
-          selection?.addRange(range);
-        }
-      }, [initialText]);
-      ```
-  - Verify: User clicks edit → sees `@John Doe` pills, not `@<QmAbc123>`
+- [x] **Initialize contentEditable with pills on edit load** ✅
+  - Implementation complete: Pills appear when entering edit mode
+  - Location: [MessageEditTextarea.tsx:541-586](src/components/message/MessageEditTextarea.tsx#L541-L586)
+  - useEffect implementation:
+    - Calls `parseMentionsAndCreatePills()` on component mount
+    - Sets contentEditable innerHTML with pills
+    - Focuses cursor at end of content
+    - Uses Selection API for proper cursor placement
+  - Verified: Opening edit mode shows pills instead of raw IDs (e.g., `@John Doe` instead of `@<QmAbc123>`)
 
   **Edge Case Handling in `parseMentionsAndCreatePills()`**:
 
@@ -576,46 +554,103 @@ The MessageEditTextarea implementation will mirror MessageComposer's approach bu
   - Legacy format `@<address>`: Parse address, lookup CURRENT name, create pill
   - If user no longer exists: Show "Unknown User" / "Former Member"
 
-- [ ] **Reuse pill editing logic from MessageComposer**
-  - Done when: Backspace deletes pills, click removes pills, cursor navigation works
+- [x] **Add mention autocomplete dropdown support** ✅
+  - Implementation complete: Dropdown shows all 4 mention types during editing
+  - Location: [MessageEditTextarea.tsx:660-915](src/components/message/MessageEditTextarea.tsx#L660-L915)
+  - Key features:
+    - `useMentionInput` hook integration with visual text extraction
+    - Dropdown positioning and keyboard navigation
+    - `handleMentionSelect()` creates pills when mention selected
+    - All 4 mention types supported (users, roles, channels, @everyone)
+  - Data flow established through component hierarchy:
+    - Channel.tsx → MessageList.tsx → Message.tsx → MessageEditTextarea
+    - Props: `users`, `mentionRoles`, `groups`, `canUseEveryone`
+
+- [x] **Fix dropdown data display** ✅
+  - Issue resolved: Channel icons and user addresses now display correctly
+  - Location: [MessageEditTextarea.tsx:817-910](src/components/message/MessageEditTextarea.tsx#L817-L910)
   - Implementation:
-    - Reuse `handleEditorKeyDown()` backspace logic from MessageComposer
-    - Reuse pill click handler pattern (delete on click)
-    - Reuse cursor position tracking
-  - Location: Copy from [MessageComposer.tsx:524-570](src/components/message/MessageComposer.tsx#L524-L570)
-  - No new logic needed - direct reuse of proven patterns
+    - Added `message-composer-mention-info` wrapper divs
+    - User addresses display via `getAddressSuffix()` helper
+    - Channel icons from `option.data.icon` and `option.data.iconColor`
+    - Proper badge classes: `message-composer-role-badge`, `message-composer-channel-badge`, etc.
+    - Matches MessageComposer dropdown structure exactly
 
-- [ ] **Convert pills to storage format on save**
-  - Done when: Saving edited message preserves mention format correctly
-  - Implementation:
-    - In `handleSaveEdit()`, use `extractTextFromEditor()` instead of plain `editText`
-    - Consider extracting `extractTextFromEditor()` to shared util for reuse
-    - Pattern:
-      ```typescript
-      const handleSaveEdit = async () => {
-        const editedTextString = ENABLE_MENTION_PILLS && editorRef.current
-          ? extractTextFromEditor() // Convert pills → storage format
-          : editText; // Original textarea value
+- [x] **Fix multiple mentions rendering issue** ✅
+  - Issue resolved: All mentions now render as pills, not just the last one
+  - Location: [MessageEditTextarea.tsx:352-490](src/components/message/MessageEditTextarea.tsx#L352-L490)
+  - Root cause: `insertPill()` was destroying existing pills by wiping innerHTML
+  - Solution: Implemented DOM walking algorithm from MessageComposer
+    - Preserves existing pill elements (not just their text)
+    - Splits text nodes at mention boundaries
+    - Two-phase approach: clone before mention → insert pill → clone after mention
+  - Debug logging added for troubleshooting (lines 260-263, 283, 292)
 
-        const editedTextArray = editedTextString.split('\n');
-        const editedText = editedTextArray.length === 1 ? editedTextArray[0] : editedTextArray;
-        // ... rest of save logic unchanged
-      };
-      ```
-  - Verify: Pills convert to correct storage format (`@<address>`, `#<channelId>`, `@roleTag`, `@everyone`)
-  - Location: [MessageEditTextarea.tsx:106-335](src/components/message/MessageEditTextarea.tsx#L106-335)
+- [x] **Props threading through component hierarchy** ✅
+  - Implementation complete: Data flows from Channel → MessageList → Message → MessageEditTextarea
+  - Files modified:
+    - [MessageList.tsx:80-87, 145-148, 326-329](src/components/message/MessageList.tsx)
+    - [Channel.tsx:538-546, 975-978](src/components/space/Channel.tsx)
+  - Props added to MessageListProps interface:
+    - `users`: User data for autocomplete
+    - `mentionRoles`: Public roles for autocomplete
+    - `groups`: Space groups with channels
+    - `canUseEveryone`: Permission check for @everyone
+  - Channel component improvements:
+    - Extracted `canUseEveryone` to useMemo for performance
+    - Simplified MessageComposer (removed IIFE wrapper)
 
-- [ ] **Handle markdown toolbar with contentEditable in edit mode**
-  - Done when: Markdown toolbar works with pills in edit mode
-  - Status: Already implemented! [MessageEditTextarea.tsx:62-104](src/components/message/MessageEditTextarea.tsx#L62-L104)
-  - Implementation:
-    - Replace `handleTextareaMouseUp` with `handleEditorMouseUp` pattern from MessageComposer
-    - Use Selection API for contentEditable (already pattern exists in MessageComposer)
-    - Formatting will convert pills to text (same simplification as MessageComposer)
-  - Location: [MessageEditTextarea.tsx:62-88](src/components/message/MessageEditTextarea.tsx#L62-L88)
-  - Reference: Copy from [MessageComposer.tsx:667-722](src/components/message/MessageComposer.tsx#L667-L722)
+- [x] **Reuse pill editing logic from MessageComposer** ✅
+  - Implementation complete: Backspace deletes pills, cursor navigation works
+  - Location: [MessageEditTextarea.tsx:588-658](src/components/message/MessageEditTextarea.tsx#L588-L658)
+  - Key handlers implemented:
+    - `handleEditorKeyDown()`: Backspace deletes entire pills atomically, Enter to save/newline
+    - `handleEditorInput()`: Updates state on content changes
+    - `handleEditorPaste()`: Forces plain text paste (prevents HTML injection)
+    - Click handlers on pills to remove them
+  - Reused patterns from MessageComposer successfully
 
-- [ ] **Test message editing with pills**
+- [x] **Convert pills to storage format on save** ✅
+  - Implementation complete: Pills convert to legacy format on save
+  - Location: Save logic uses `extractTextFromEditor()` function
+  - Function: [MessageEditTextarea.tsx:99-158](src/components/message/MessageEditTextarea.tsx#L99-L158)
+  - Converts pills back to storage format:
+    - User pills → `@<address>`
+    - Channel pills → `#<channelId>`
+    - Role pills → `@roleTag`
+    - Everyone pills → `@everyone`
+  - Preserves existing message storage format compatibility
+
+- [x] **Handle markdown toolbar with contentEditable in edit mode** ✅
+  - Implementation complete: Markdown toolbar works with contentEditable
+  - Location: [MessageEditTextarea.tsx:62-97](src/components/message/MessageEditTextarea.tsx#L62-L97)
+  - Key handlers:
+    - `handleEditorMouseUp()`: Detects text selection using Selection API
+    - `handleMarkdownFormat()`: Applies markdown formatting to contentEditable
+  - Note: Formatting converts pills to plain text (simplification, can enhance later)
+  - Same pattern as MessageComposer implementation
+
+- [x] **ESLint fixes** ✅
+  - Fixed `let skipUntil` → `const skipUntil` (line 446)
+  - Removed unused `extractVisualText` dependency from useCallback (line 516)
+  - TypeScript compilation verified with no errors
+
+- [x] **Fix mention extraction on save** ✅
+  - Issue resolved: Channel, role, and @everyone mentions now render correctly after editing
+  - Root cause: Edit messages didn't include extracted mentions, so `message.mentions` wasn't updated
+  - Solution implemented:
+    - Extract mentions from edited text using `extractMentionsFromText()` with validation options
+    - Include mentions in optimistic update ([MessageEditTextarea.tsx:704](src/components/message/MessageEditTextarea.tsx#L704))
+    - Include mentions in edit message payload ([MessageEditTextarea.tsx:846](src/components/message/MessageEditTextarea.tsx#L846))
+    - Update `EditMessage` type to include optional `mentions` field ([quorumApi.ts:245](src/api/quorumApi.ts#L245))
+    - Update MessageService to apply mentions when processing edits ([MessageService.ts:540, 894](src/services/MessageService.ts#L540))
+  - Files modified:
+    - MessageEditTextarea.tsx: Added mention extraction on save (lines 666-671, 704, 846)
+    - quorumApi.ts: Added `mentions?` field to EditMessage type
+    - MessageService.ts: Updated edit message handlers to use mentions field
+  - Removed debug console.log statements for cleaner production code
+
+- [ ] **Test message editing with pills** ⏳
   - Done when: All edit scenarios work correctly
   - Test cases:
     - Edit message with single user mention → see pill → edit → save
@@ -720,16 +755,37 @@ interface MessageEditTextareaProps {
 - [ ] Edit history preserved correctly
 - [ ] Cross-browser compatibility (Chrome, Firefox, Safari)
 
-### Phase 2 Definition of Done (When Implemented)
+### Phase 2 Definition of Done ✅ **COMPLETE** (Implementation Only)
 
-- [ ] contentEditable support added to MessageEditTextarea
-- [ ] Mention parser created for edit mode
-- [ ] Pills appear when editing messages with mentions
-- [ ] Save preserves correct storage format
-- [ ] Markdown toolbar works with contentEditable
-- [ ] All test cases pass
-- [ ] Feature flag fallback works
-- [ ] Cross-browser compatibility verified
+- [x] contentEditable support added to MessageEditTextarea ✅
+- [x] Mention parser created for edit mode ✅
+- [x] Pills appear when editing messages with mentions ✅
+- [x] Save preserves correct storage format ✅
+- [x] Markdown toolbar works with contentEditable ✅
+- [x] Mention autocomplete dropdown integrated ✅
+- [x] Props threading through component hierarchy complete ✅
+- [x] Multiple mentions rendering fixed ✅
+- [x] Dropdown data display fixed (channel icons, user addresses) ✅
+- [ ] All test cases pass ⏳ (Testing pending)
+- [ ] Feature flag fallback works ⏳ (Testing pending)
+- [ ] Cross-browser compatibility verified ⏳ (Testing pending)
+
+**Implementation Complete**: All core functionality implemented and working (2026-01-09)
+**Pending**: Comprehensive testing and verification
+
+**Files Modified**:
+- [MessageEditTextarea.tsx](src/components/message/MessageEditTextarea.tsx) - Main implementation (~450 lines of pill logic)
+- [MessageList.tsx](src/components/message/MessageList.tsx) - Props interface and threading
+- [Channel.tsx](src/components/space/Channel.tsx) - Data extraction and prop passing
+- [quorumApi.ts](src/api/quorumApi.ts) - Added `mentions?` field to EditMessage type
+- [MessageService.ts](src/services/MessageService.ts) - Updated edit message handlers to apply mentions
+
+**Key Implementation Details**:
+- Double-validation security: Display name lookup + message.mentions verification
+- DOM walking algorithm: Preserves existing pills when inserting new ones
+- Regex fix: Negative lookahead `/@([a-zA-Z0-9_-]+)(?!<)/g` for role mentions
+- Legacy-only format support: No enhanced format parsing
+- Debug logging: Added for troubleshooting mention parsing and pill insertion
 
 ### Phase 3 (Mobile Implementation - Deferred)
 - [ ] MentionPill.native.tsx component created
@@ -770,7 +826,8 @@ interface MessageEditTextareaProps {
 - ✅ Research & validation complete (see [Research Report](../reports/mention-pills-research.md))
 - ✅ Phase 1 implementation complete (MessageComposer web pills)
 - ⏳ Phase 1 testing pending
-- ⏳ Phase 2 planned (MessageEditTextarea pills)
+- ✅ Phase 2 implementation complete (MessageEditTextarea pills) - **2026-01-09**
+- ⏳ Phase 2 testing pending
 - ⏳ Phase 3 deferred (Mobile implementation)
 
 **Key Achievements**:
@@ -779,12 +836,23 @@ interface MessageEditTextareaProps {
 - Reused existing CSS classes for consistency
 - Direct DOM manipulation (no component over-abstraction)
 - All 4 mention types supported (users, roles, channels, @everyone)
-- Enhanced and legacy format support
+- Legacy-only format support (enhanced format not needed)
+- **Phase 2**: Mention pills work in edit mode with autocomplete
+- **Phase 2**: Props threading through component hierarchy complete
+- **Phase 2**: Multiple mention rendering bug fixed (DOM walking algorithm)
+- **Phase 2**: Dropdown data display fixed (channel icons, user addresses)
 
 **Files Modified**:
-- [MessageComposer.tsx](src/components/message/MessageComposer.tsx) - 192 lines added (contentEditable logic)
-- [MessageComposer.scss](src/components/message/MessageComposer.scss) - 8 lines added (pill styling)
-- [features.ts](src/config/features.ts) - 8 lines added (feature flag)
+- **Phase 1**:
+  - [MessageComposer.tsx](src/components/message/MessageComposer.tsx) - 192 lines added (contentEditable logic)
+  - [MessageComposer.scss](src/components/message/MessageComposer.scss) - 8 lines added (pill styling)
+  - [features.ts](src/config/features.ts) - 8 lines added (feature flag)
+- **Phase 2**:
+  - [MessageEditTextarea.tsx](src/components/message/MessageEditTextarea.tsx) - ~450 lines of pill logic + mention extraction
+  - [MessageList.tsx](src/components/message/MessageList.tsx) - Props interface and threading
+  - [Channel.tsx](src/components/space/Channel.tsx) - Data extraction and prop passing
+  - [quorumApi.ts](src/api/quorumApi.ts) - Added `mentions?` field to EditMessage type
+  - [MessageService.ts](src/services/MessageService.ts) - Updated edit message handlers to apply mentions
 
 **Ready for**:
 - Testing and verification
@@ -837,4 +905,81 @@ interface MessageEditTextareaProps {
 
 ---
 
-*Last updated: 2026-01-09 (Legacy format standardization - removed enhanced format support)*
+## Implementation Summary - Phase 2 (MessageEditTextarea)
+
+### What Was Implemented (2026-01-09)
+
+**Core Features**:
+1. **contentEditable Support**: Replaced textarea with contentEditable when `ENABLE_MENTION_PILLS` enabled
+2. **Mention Parser**: `parseMentionsAndCreatePills()` converts legacy format to pills on edit load
+3. **Autocomplete Integration**: Full dropdown support for all 4 mention types during editing
+4. **Pill Editing**: Backspace deletion, click removal, cursor navigation
+5. **Storage Conversion**: Pills convert back to legacy format on save via `extractTextFromEditor()`
+6. **Markdown Toolbar**: Works with contentEditable (converts pills to text)
+
+**Bug Fixes**:
+1. **Multiple Mentions Rendering**: Fixed DOM walking algorithm to preserve existing pills
+2. **Dropdown Data Display**: Added channel icons and user addresses to dropdown
+3. **Role Mention Regex**: Added negative lookahead `(?!<)` to prevent matching `@` in `@<address>`
+4. **Mention Extraction on Save**: Fixed channel/role/@everyone mentions not rendering after edit by extracting and including mentions in edit message
+
+**Security**:
+- Double-validation pattern: Display name lookup + message.mentions verification
+- Prevents name-spoofing attacks
+- Only creates pills for validated mentions
+
+**Component Hierarchy**:
+- Channel.tsx: Extracts mention data (users, roles, groups, canUseEveryone)
+- MessageList.tsx: Props interface and threading
+- Message.tsx: Already had infrastructure (no changes)
+- MessageEditTextarea.tsx: Main implementation
+
+### Technical Highlights
+
+**DOM Walking Algorithm** (lines 352-490):
+```typescript
+// Preserves existing pills while inserting new ones
+// Two-phase: clone before → insert pill → clone after
+// Handles text nodes and element nodes separately
+// Prevents innerHTML wipe that destroys existing pills
+```
+
+**Double Validation** (lines 161-288):
+```typescript
+// Layer 1: Lookup real display name
+const user = mapSenderToUser(address);
+const displayName = user?.displayName || 'Unknown User';
+
+// Layer 2: Verify mention exists in message.mentions
+if (message.mentions?.memberIds?.includes(address)) {
+  // Create pill only if both validations pass
+}
+```
+
+**Regex Patterns**:
+- User: `/@<([^>]+)>/g`
+- Channel: `/#<([^>]+)>/g`
+- Role: `/@([a-zA-Z0-9_-]+)(?!<)/g` (negative lookahead prevents matching @ in @<address>)
+- Everyone: `/@everyone/g`
+
+### Next Steps
+
+**Testing Required**:
+- [ ] Edit messages with single/multiple mentions
+- [ ] All 4 mention types (users, roles, channels, @everyone)
+- [ ] Backspace deletion, click removal
+- [ ] Save preserves storage format
+- [ ] Markdown toolbar interaction
+- [ ] Feature flag fallback
+- [ ] Cross-browser compatibility (Chrome, Firefox, Safari)
+- [ ] Edge cases: deleted users, malformed syntax, fake mentions
+
+**Future Enhancements** (Optional):
+- [ ] Remove debug logging after thorough testing
+- [ ] Extract shared utilities if third use case emerges (avoid premature abstraction)
+- [ ] Performance optimization if needed
+- [ ] Enhanced paste behavior (parse mentions from pasted text)
+
+---
+
+*Last updated: 2026-01-09 (Phase 2 complete - MessageEditTextarea pills with autocomplete and mention extraction bug fix)*

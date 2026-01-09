@@ -114,6 +114,14 @@ type MessageProps = {
   hasCompactBelow?: boolean;
   /** Callback fired BEFORE optimistic delete - use to prevent auto-scroll */
   onBeforeDelete?: () => void;
+  /** Users for mention autocomplete in edit mode */
+  users?: Array<{ address: string; displayName?: string; userIcon?: string }>;
+  /** Roles for mention autocomplete in edit mode */
+  roles?: Array<{ roleId: string; roleTag: string; displayName: string; color: string }>;
+  /** Channel groups for mention autocomplete in edit mode */
+  groups?: Array<{ groupName: string; channels: Channel[]; icon?: string; iconColor?: string }>;
+  /** Whether @everyone is allowed in edit mode */
+  canUseEveryone?: boolean;
 };
 
 export const Message = React.memo(
@@ -152,6 +160,10 @@ export const Message = React.memo(
     isCompact = false,
     hasCompactBelow = false,
     onBeforeDelete,
+    users = [],
+    roles = [],
+    groups = [],
+    canUseEveryone = false,
   }: MessageProps) => {
     const user = usePasskeysContext();
     const { spaceId } = useParams();
@@ -887,6 +899,12 @@ export const Message = React.memo(
                       submitMessage={submitMessage}
                       mapSenderToUser={mapSenderToUser}
                       dmContext={dmContext}
+                      spaceRoles={spaceRoles}
+                      spaceChannels={spaceChannels}
+                      users={users}
+                      roles={roles}
+                      groups={groups}
+                      canUseEveryone={canUseEveryone}
                     />
                   );
                 }

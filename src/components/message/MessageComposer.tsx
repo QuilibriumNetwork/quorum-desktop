@@ -754,6 +754,18 @@ export const MessageComposer = forwardRef<
       setIsTyping(value.length > 0);
     }, [value]);
 
+    // Sync contentEditable editor with value prop (clear editor when value is empty)
+    useEffect(() => {
+      if (ENABLE_MENTION_PILLS && editorRef.current) {
+        // If value is empty, clear the editor content
+        if (!value || value.trim() === '') {
+          if (editorRef.current.textContent !== '') {
+            editorRef.current.innerHTML = '';
+          }
+        }
+      }
+    }, [value]);
+
     // Update cursor position when contentEditable changes (for mention detection)
     useEffect(() => {
       if (ENABLE_MENTION_PILLS && editorRef.current) {

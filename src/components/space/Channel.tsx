@@ -535,6 +535,16 @@ const Channel: React.FC<ChannelProps> = ({
     return space.groups || [];
   }, [space]);
 
+  // Check @everyone permission for mentions
+  const canUseEveryone = React.useMemo(() => {
+    return hasPermission(
+      user.currentPasskeyInfo?.address || '',
+      'mention:everyone',
+      space || undefined,
+      isSpaceOwner || false
+    );
+  }, [user.currentPasskeyInfo?.address, space, isSpaceOwner]);
+
   // Handle channel navigation for channel mentions
   const handleChannelClick = useCallback((targetChannelId: string) => {
     navigate(`/spaces/${spaceId}/${targetChannelId}`);
@@ -962,21 +972,16 @@ const Channel: React.FC<ChannelProps> = ({
                 hasNextPage={hasNextPage}
                 spaceName={space?.spaceName}
                 onRetryMessage={handleRetryMessage}
+                users={Object.values(members)}
+                mentionRoles={roles?.filter(role => role.isPublic !== false)}
+                groups={spaceGroups}
+                canUseEveryone={canUseEveryone}
               />
             </div>
 
             <div className="message-editor-container">
-              {/* Check @everyone permission */}
-              {(() => {
-                const canUseEveryone = hasPermission(
-                  user.currentPasskeyInfo?.address || '',
-                  'mention:everyone',
-                  space || undefined,
-                  isSpaceOwner || false
-                );
-                return (
-                  <MessageComposer
-                    canUseEveryone={canUseEveryone}
+              <MessageComposer
+                canUseEveryone={canUseEveryone}
                 ref={messageComposerRef}
                 value={composer.pendingMessage}
                 onChange={composer.setPendingMessage}
@@ -1015,9 +1020,7 @@ const Channel: React.FC<ChannelProps> = ({
                 mentionError={composer.mentionError}
                 messageValidation={composer.messageValidation}
                 characterCount={composer.characterCount}
-                  />
-                );
-              })()}
+              />
             </div>
           </div>
 

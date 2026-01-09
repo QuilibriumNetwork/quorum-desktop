@@ -77,6 +77,14 @@ interface MessageListProps {
   onRetryMessage?: (message: MessageType) => void;
   /** DM context for offline-resilient reactions/deletes/edits (optional - only for DMs) */
   dmContext?: DmContext;
+  /** Users for mention autocomplete in message edit mode */
+  users?: Array<{ address: string; displayName?: string; userIcon?: string }>;
+  /** Roles for mention autocomplete in message edit mode (note: this is different from the roles prop which is for rendering) */
+  mentionRoles?: Array<{ roleId: string; roleTag: string; displayName: string; color: string }>;
+  /** Channel groups for mention autocomplete in message edit mode */
+  groups?: Array<{ groupName: string; channels: Channel[]; icon?: string; iconColor?: string }>;
+  /** Whether @everyone is allowed in message edit mode */
+  canUseEveryone?: boolean;
 }
 
 function useWindowSize() {
@@ -134,6 +142,10 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
       spaceName,
       onRetryMessage,
       dmContext,
+      users = [],
+      mentionRoles = [],
+      groups = [],
+      canUseEveryone = false,
     } = props;
 
     const [_width, height] = useWindowSize();
@@ -311,6 +323,10 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
               dmContext={dmContext}
               isCompact={displayInfo.isCompact}
               hasCompactBelow={displayInfo.hasCompactBelow}
+              users={users}
+              roles={mentionRoles}
+              groups={groups}
+              canUseEveryone={canUseEveryone}
               onBeforeDelete={() => {
                 deletionInProgressRef.current = true;
                 // Clear after delay to allow for follow-up operations

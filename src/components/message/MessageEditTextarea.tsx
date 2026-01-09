@@ -1,19 +1,22 @@
-import { logger } from '@quilibrium/quorum-shared';
 import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { InfiniteData } from '@tanstack/react-query';
-import { Container, FlexRow, Text, Button } from '../primitives';
+import { Container, FlexRow, Text, Icon } from '../primitives';
+import { UserAvatar } from '../user/UserAvatar';
 import { MarkdownToolbar } from './MarkdownToolbar';
 import { calculateToolbarPosition } from '../../utils/toolbarPositioning';
 import type { FormatFunction } from '../../utils/markdownFormatting';
-import type { Message as MessageType, PostMessage } from '../../api/quorumApi';
+import type { Message as MessageType, PostMessage, Role, Channel } from '../../api/quorumApi';
 import { t } from '@lingui/core/macro';
 import { buildMessagesKey } from '../../hooks/queries/messages/buildMessagesKey';
 import { useMessageDB } from '../context/useMessageDB';
 import { usePasskeysContext, channel as secureChannel } from '@quilibrium/quilibrium-js-sdk-channels';
-import { DefaultImages } from '../../utils';
+import { DefaultImages, getAddressSuffix } from '../../utils';
 import { isTouchDevice } from '../../utils/platform';
-import { ENABLE_MARKDOWN, ENABLE_DM_ACTION_QUEUE } from '../../config/features';
+import { ENABLE_MARKDOWN, ENABLE_DM_ACTION_QUEUE, ENABLE_MENTION_PILLS } from '../../config/features';
+import { createIPFSCIDRegex } from '../../utils/validation';
+import { useMentionInput, type MentionOption } from '../../hooks/business/mentions';
+import { extractMentionsFromText } from '../../utils/mentionUtils';
 
 /**
  * DM context for action queue handlers.
@@ -32,6 +35,18 @@ interface MessageEditTextareaProps {
   mapSenderToUser: (senderId: string) => any;
   /** DM context for offline-resilient edits (optional - only for DMs) */
   dmContext?: DmContext;
+  /** Space roles for role mention validation (required for pills) */
+  spaceRoles?: Role[];
+  /** Space channels for channel mention validation (required for pills) */
+  spaceChannels?: Channel[];
+  /** Users for mention autocomplete */
+  users?: Array<{ address: string; displayName?: string; userIcon?: string }>;
+  /** Roles for mention autocomplete */
+  roles?: Array<{ roleId: string; roleTag: string; displayName: string; color: string }>;
+  /** Channel groups for mention autocomplete */
+  groups?: Array<{ groupName: string; channels: Channel[]; icon?: string; iconColor?: string }>;
+  /** Whether @everyone is allowed */
+  canUseEveryone?: boolean;
 }
 
 /**
@@ -45,6 +60,12 @@ export function MessageEditTextarea({
   submitMessage,
   mapSenderToUser,
   dmContext,
+  spaceRoles = [],
+  spaceChannels = [],
+  users = [],
+  roles = [],
+  groups = [],
+  canUseEveryone = false,
 }: MessageEditTextareaProps) {
   const queryClient = useQueryClient();
   const { messageDB, actionQueueService } = useMessageDB();
@@ -53,11 +74,16 @@ export function MessageEditTextarea({
   // Edit state
   const [editText, setEditText] = useState(initialText);
   const editTextareaRef = useRef<HTMLTextAreaElement>(null);
+  const editorRef = useRef<HTMLDivElement>(null);
 
   // Markdown toolbar state
   const [showMarkdownToolbar, setShowMarkdownToolbar] = useState(false);
   const [toolbarPosition, setToolbarPosition] = useState({ top: 0, left: 0 });
   const [selectionRange, setSelectionRange] = useState({ start: 0, end: 0 });
+
+  // Mention autocomplete state
+  const [cursorPosition, setCursorPosition] = useState(0);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
 
   // Handle text selection for markdown toolbar
   const handleTextareaMouseUp = useCallback(() => {
@@ -103,15 +129,535 @@ export function MessageEditTextarea({
     [editText, selectionRange]
   );
 
+  // Get cursor position in contentEditable (for mention detection)
+  const getCursorPosition = useCallback((): number => {
+    if (!editorRef.current) return 0;
+
+    const selection = window.getSelection();
+    if (!selection || selection.rangeCount === 0) return 0;
+
+    const range = selection.getRangeAt(0);
+    const preCaretRange = range.cloneRange();
+    preCaretRange.selectNodeContents(editorRef.current);
+    preCaretRange.setEnd(range.endContainer, range.endOffset);
+
+    return preCaretRange.toString().length;
+  }, []);
+
+  // Extract visual text (without IDs) from contentEditable for mention detection
+  const extractVisualText = useCallback(() => {
+    if (!editorRef.current) return '';
+    return editorRef.current.textContent || '';
+  }, []);
+
+  // Extract text with IDs (storage format) from contentEditable
+  const extractTextFromEditor = useCallback(() => {
+    if (!editorRef.current) return '';
+
+    let text = '';
+    const walk = (node: Node) => {
+      if (node.nodeType === Node.TEXT_NODE) {
+        text += node.textContent;
+      } else if (node.nodeType === Node.ELEMENT_NODE) {
+        const el = node as HTMLElement;
+        if (el.dataset?.mentionType && el.dataset?.mentionAddress) {
+          const prefix = el.dataset.mentionType === 'channel' ? '#' : '@';
+
+          // Always use legacy format (same as MessageComposer)
+          if (el.dataset.mentionType === 'role') {
+            // Roles always use @roleTag format (no brackets)
+            text += `@${el.dataset.mentionAddress}`;
+          } else if (el.dataset.mentionType === 'everyone') {
+            // @everyone always same format
+            text += '@everyone';
+          } else {
+            // Legacy format: @<address> or #<channelId>
+            text += `${prefix}<${el.dataset.mentionAddress}>`;
+          }
+        } else {
+          node.childNodes.forEach(walk);
+        }
+      }
+    };
+
+    editorRef.current.childNodes.forEach(walk);
+    return text.trim();
+  }, []);
+
+  // Parse mentions from stored text and create pills (with double validation)
+  const parseMentionsAndCreatePills = useCallback(
+    (text: string): DocumentFragment => {
+      const fragment = document.createDocumentFragment();
+      let lastIndex = 0;
+
+      // Helper to create a pill element
+      const createPillElement = (
+        type: 'user' | 'role' | 'channel' | 'everyone',
+        displayName: string,
+        address: string
+      ): HTMLSpanElement => {
+        const pill = document.createElement('span');
+        pill.contentEditable = 'false';
+        pill.dataset.mentionType = type;
+        pill.dataset.mentionAddress = address;
+        pill.dataset.mentionDisplayName = displayName;
+
+        // Use the same CSS classes as rendered mentions in Message.tsx
+        const mentionClasses = {
+          user: 'message-mentions-user',
+          role: 'message-mentions-role',
+          channel: 'message-mentions-channel',
+          everyone: 'message-mentions-everyone',
+        };
+
+        pill.className = `${mentionClasses[type]} message-composer-pill`;
+        pill.textContent = type === 'channel' ? `#${displayName}` : `@${displayName}`;
+
+        return pill;
+      };
+
+      // Collect all mentions
+      const mentions: Array<{ type: 'user' | 'role' | 'channel' | 'everyone'; displayName: string; address: string; index: number; length: number }> = [];
+
+      // User mentions: @<address> (legacy format only)
+      const userRegex = new RegExp(`@<(${createIPFSCIDRegex().source})>`, 'g');
+      let match: RegExpMatchArray | null;
+      while ((match = userRegex.exec(text)) !== null) {
+        const address = match[1];
+        const index = match.index ?? 0;
+
+        // Layer 2: Verify mention exists in message.mentions
+        if (message.mentions?.memberIds?.includes(address)) {
+          // Layer 1: Lookup real display name
+          const user = mapSenderToUser(address);
+          const displayName = user?.displayName || `Unknown User`;
+          mentions.push({ type: 'user', displayName, address, index, length: match[0].length });
+        }
+      }
+
+      // Channel mentions: #<channelId> (legacy format only)
+      const channelRegex = /#<([^>]+)>/g;
+      while ((match = channelRegex.exec(text)) !== null) {
+        const channelId = match[1];
+        const index = match.index ?? 0;
+
+        // Layer 2: Verify mention exists in message.mentions
+        if (message.mentions?.channelIds?.includes(channelId)) {
+          // Layer 1: Lookup real channel name
+          const channel = spaceChannels.find(c => c.channelId === channelId);
+          const displayName = channel?.channelName || 'Unknown Channel';
+          mentions.push({ type: 'channel', displayName, address: channelId, index, length: match[0].length });
+        }
+      }
+
+      // Role mentions: @roleTag (no brackets, not followed by <)
+      const roleRegex = /@([a-zA-Z0-9_-]+)(?!<)/g;
+      while ((match = roleRegex.exec(text)) !== null) {
+        const roleTag = match[1];
+        const index = match.index ?? 0;
+
+        // Skip @everyone (handled separately)
+        if (roleTag.toLowerCase() === 'everyone') {
+          continue;
+        }
+
+        // Layer 1: Find role to get roleId
+        const role = spaceRoles.find(r => r.roleTag.toLowerCase() === roleTag.toLowerCase());
+        if (role && message.mentions?.roleIds?.includes(role.roleId)) {
+          // Layer 2: Verified - mention exists in message.mentions
+          mentions.push({ type: 'role', displayName: role.roleTag, address: role.roleTag, index, length: match[0].length });
+        }
+      }
+
+      // @everyone mentions
+      const everyoneRegex = /@everyone/gi;
+      while ((match = everyoneRegex.exec(text)) !== null) {
+        const index = match.index ?? 0;
+
+        // Layer 2: Verify @everyone exists in message.mentions
+        if (message.mentions?.everyone) {
+          mentions.push({ type: 'everyone', displayName: 'everyone', address: 'everyone', index, length: match[0].length });
+        }
+      }
+
+      // Sort mentions by index
+      mentions.sort((a, b) => a.index - b.index);
+
+      // Build fragment with pills and text nodes
+      mentions.forEach(mention => {
+        // Add text before mention
+        if (mention.index > lastIndex) {
+          fragment.appendChild(document.createTextNode(text.substring(lastIndex, mention.index)));
+        }
+
+        // Add pill
+        fragment.appendChild(createPillElement(mention.type, mention.displayName, mention.address));
+
+        lastIndex = mention.index + mention.length;
+      });
+
+      // Add remaining text
+      if (lastIndex < text.length) {
+        fragment.appendChild(document.createTextNode(text.substring(lastIndex)));
+      }
+
+      return fragment;
+    },
+    [message, mapSenderToUser, spaceRoles, spaceChannels]
+  );
+
+  // Insert a mention pill at cursor (for contentEditable mode)
+  const insertPill = useCallback((option: MentionOption, mentionStart: number, mentionEnd: number) => {
+    if (!editorRef.current) {
+      return;
+    }
+
+    const selection = window.getSelection();
+    if (!selection || selection.rangeCount === 0) {
+      return;
+    }
+
+    // Determine pill properties based on option type
+    let type: 'user' | 'role' | 'channel' | 'everyone';
+    let displayName: string;
+    let address: string;
+
+    if (option.type === 'user') {
+      type = 'user';
+      displayName = option.data.displayName || 'Unknown User';
+      address = option.data.address;
+    } else if (option.type === 'role') {
+      type = 'role';
+      displayName = option.data.displayName;
+      address = option.data.roleTag;
+    } else if (option.type === 'channel') {
+      type = 'channel';
+      displayName = option.data.channelName || 'Unknown Channel';
+      address = option.data.channelId;
+    } else {
+      type = 'everyone';
+      displayName = 'everyone';
+      address = 'everyone';
+    }
+
+    // Create pill element
+    const pillSpan = document.createElement('span');
+    pillSpan.contentEditable = 'false';
+    pillSpan.dataset.mentionType = type;
+    pillSpan.dataset.mentionAddress = address;
+    pillSpan.dataset.mentionDisplayName = displayName;
+
+    // Use the same CSS classes as rendered mentions in Message.tsx
+    const mentionClasses = {
+      user: 'message-mentions-user',
+      role: 'message-mentions-role',
+      channel: 'message-mentions-channel',
+      everyone: 'message-mentions-everyone',
+    };
+
+    pillSpan.className = `${mentionClasses[type]} message-composer-pill`;
+    const prefix = type === 'channel' ? '#' : '@';
+    pillSpan.textContent = `${prefix}${displayName}`;
+
+    // Add click handler to remove pill
+    pillSpan.addEventListener('click', () => {
+      pillSpan.remove();
+      const newText = extractTextFromEditor();
+      setEditText(newText);
+    });
+
+    // Rebuild editor preserving existing pills (same algorithm as MessageComposer)
+    const fragment = document.createDocumentFragment();
+    let charCount = 0;
+
+    // Walk through existing content and clone nodes up to mentionStart
+    const walkAndClone = (node: Node, targetFragment: DocumentFragment) => {
+      if (charCount >= mentionEnd) return false; // Stop if we've passed the mention end
+
+      if (node.nodeType === Node.TEXT_NODE) {
+        const text = node.textContent || '';
+        const textLength = text.length;
+
+        if (charCount + textLength <= mentionStart) {
+          // This text is entirely before the mention - clone it
+          targetFragment.appendChild(node.cloneNode(true));
+          charCount += textLength;
+        } else if (charCount < mentionStart) {
+          // This text spans the mention start - split it
+          const beforeLength = mentionStart - charCount;
+          const beforeText = text.substring(0, beforeLength);
+          targetFragment.appendChild(document.createTextNode(beforeText));
+          charCount = mentionStart;
+        } else if (charCount >= mentionEnd) {
+          // This text is after the mention - will be added later
+          return false;
+        } else {
+          // This text is within the mention range - skip it
+          charCount += textLength;
+        }
+      } else if (node.nodeType === Node.ELEMENT_NODE) {
+        const el = node as HTMLElement;
+        // Check if it's a pill
+        if (el.dataset?.mentionType) {
+          const pillText = el.textContent || '';
+          const pillLength = pillText.length;
+
+          if (charCount + pillLength <= mentionStart) {
+            // Pill is before mention - clone it
+            targetFragment.appendChild(el.cloneNode(true));
+            charCount += pillLength;
+          } else if (charCount < mentionStart) {
+            // Pill spans mention start (unlikely but handle it)
+            charCount += pillLength;
+          } else if (charCount >= mentionEnd) {
+            // Pill is after mention - will be added later
+            return false;
+          } else {
+            // Pill is within mention range - skip it
+            charCount += pillLength;
+          }
+        } else {
+          // Regular element - walk its children
+          node.childNodes.forEach(child => walkAndClone(child, targetFragment));
+        }
+      }
+      return true;
+    };
+
+    // Clone content before mention
+    editorRef.current.childNodes.forEach(child => walkAndClone(child, fragment));
+
+    // Insert the new pill
+    fragment.appendChild(pillSpan);
+    const space = document.createTextNode('\u00A0');
+    fragment.appendChild(space);
+
+    // Now add content after the mention
+    charCount = 0;
+    const skipUntil = mentionEnd;
+    const addAfterMention = (node: Node, targetFragment: DocumentFragment) => {
+      if (node.nodeType === Node.TEXT_NODE) {
+        const text = node.textContent || '';
+        const textLength = text.length;
+
+        if (charCount + textLength <= skipUntil) {
+          // This text is before/at the mention end - skip it
+          charCount += textLength;
+        } else if (charCount < skipUntil) {
+          // This text spans the mention end - split it
+          const afterLength = (charCount + textLength) - skipUntil;
+          const afterText = text.substring(textLength - afterLength);
+          targetFragment.appendChild(document.createTextNode(afterText));
+          charCount += textLength;
+        } else {
+          // This text is entirely after the mention - clone it
+          targetFragment.appendChild(node.cloneNode(true));
+          charCount += textLength;
+        }
+      } else if (node.nodeType === Node.ELEMENT_NODE) {
+        const el = node as HTMLElement;
+        if (el.dataset?.mentionType) {
+          const pillText = el.textContent || '';
+          const pillLength = pillText.length;
+
+          if (charCount + pillLength <= skipUntil) {
+            // Pill is before/at mention end - skip it
+            charCount += pillLength;
+          } else {
+            // Pill is after mention - clone it
+            targetFragment.appendChild(el.cloneNode(true));
+            charCount += pillLength;
+          }
+        } else {
+          // Regular element - walk its children
+          node.childNodes.forEach(child => addAfterMention(child, targetFragment));
+        }
+      }
+    };
+
+    // Add content after mention
+    editorRef.current.childNodes.forEach(child => addAfterMention(child, fragment));
+
+    // Replace editor content
+    editorRef.current.innerHTML = '';
+    editorRef.current.appendChild(fragment);
+
+    // Update state
+    const newText = extractTextFromEditor();
+    setEditText(newText);
+
+    // Move cursor after pill
+    setTimeout(() => {
+      if (editorRef.current) {
+        const range = document.createRange();
+        const sel = window.getSelection();
+
+        // Find the text node after the pill (the one with the space)
+        const textNodeAfterPill = pillSpan.nextSibling;
+        if (textNodeAfterPill && textNodeAfterPill.nodeType === Node.TEXT_NODE) {
+          range.setStart(textNodeAfterPill, 1); // After the space
+          range.collapse(true);
+          sel?.removeAllRanges();
+          sel?.addRange(range);
+        }
+
+        editorRef.current.focus();
+      }
+    }, 0);
+  }, [extractTextFromEditor]);
+
+  // Handle mention selection from dropdown
+  const handleMentionSelect = useCallback(
+    (option: MentionOption, mentionStart: number, mentionEnd: number) => {
+      if (ENABLE_MENTION_PILLS && editorRef.current) {
+        // Insert pill in contentEditable
+        insertPill(option, mentionStart, mentionEnd);
+        return;
+      }
+
+      // Fallback: text-based insertion for textarea mode
+      let insertText: string;
+
+      if (option.type === 'user') {
+        insertText = `@<${option.data.address}>`;
+      } else if (option.type === 'role') {
+        insertText = `@${option.data.roleTag}`;
+      } else if (option.type === 'channel') {
+        insertText = `#<${option.data.channelId}>`;
+      } else {
+        insertText = '@everyone';
+      }
+
+      const newValue =
+        editText.substring(0, mentionStart) +
+        insertText +
+        ' ' +
+        editText.substring(mentionEnd);
+
+      setEditText(newValue);
+
+      // Move cursor after inserted mention
+      setTimeout(() => {
+        const newCursorPos = mentionStart + insertText.length + 1;
+        editTextareaRef.current?.setSelectionRange(newCursorPos, newCursorPos);
+        editTextareaRef.current?.focus();
+      }, 0);
+    },
+    [editText, insertPill]
+  );
+
+  // Use mention input hook
+  const mentionInput = useMentionInput({
+    textValue: ENABLE_MENTION_PILLS ? extractVisualText() : editText,
+    cursorPosition,
+    users,
+    roles,
+    groups,
+    canUseEveryone,
+    onMentionSelect: handleMentionSelect,
+  });
+
+  // Handle input changes for contentEditable
+  const handleEditorInput = useCallback(() => {
+    const newText = extractTextFromEditor();
+    setEditText(newText);
+
+    // Update cursor position for mention detection
+    setTimeout(() => {
+      setCursorPosition(getCursorPosition());
+    }, 0);
+  }, [extractTextFromEditor, getCursorPosition]);
+
+  // Handle key down for contentEditable (forward declaration needed)
+  const handleEditorKeyDown = useCallback(
+    (e: React.KeyboardEvent<HTMLDivElement>) => {
+      // Let mention dropdown handle navigation keys if it's open
+      if (mentionInput.showDropdown) {
+        const handled = mentionInput.handleKeyDown(e);
+        if (handled) {
+          return; // Mention dropdown handled it
+        }
+      }
+
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        // Call handleSaveEdit directly (defined below)
+        handleSaveEdit().catch((error) => {
+          console.error('Failed to save edit:', error);
+        });
+      } else if (e.key === 'Escape') {
+        onCancel();
+      }
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [onCancel, mentionInput] // handleSaveEdit is defined below, so we can't include it here
+  );
+
+  // Sync dropdown state with mention input
+  useEffect(() => {
+    setDropdownOpen(mentionInput.showDropdown);
+  }, [mentionInput.showDropdown]);
+
+  // Update cursor position when contentEditable changes (for mention detection)
+  useEffect(() => {
+    if (ENABLE_MENTION_PILLS && editorRef.current) {
+      const updateCursor = () => {
+        setCursorPosition(getCursorPosition());
+      };
+
+      // Update cursor on selection change
+      document.addEventListener('selectionchange', updateCursor);
+      return () => {
+        document.removeEventListener('selectionchange', updateCursor);
+      };
+    }
+  }, [getCursorPosition]);
+
+  // Initialize contentEditable with pills on mount
+  useEffect(() => {
+    if (ENABLE_MENTION_PILLS && editorRef.current && initialText) {
+      const fragment = parseMentionsAndCreatePills(initialText);
+      editorRef.current.innerHTML = '';
+      editorRef.current.appendChild(fragment);
+
+      // Focus and move cursor to end
+      setTimeout(() => {
+        if (editorRef.current) {
+          const range = document.createRange();
+          range.selectNodeContents(editorRef.current);
+          range.collapse(false);
+          const selection = window.getSelection();
+          selection?.removeAllRanges();
+          selection?.addRange(range);
+          editorRef.current.focus();
+        }
+      }, 0);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Only run on mount - initialText and parseMentionsAndCreatePills are stable
+
   const handleSaveEdit = async () => {
     const editNonce = crypto.randomUUID();
     const editedAt = Date.now();
-    const editedTextArray = editText.split('\n');
+
+    // Extract text from contentEditable (with pills) or use textarea value
+    const editedTextString = ENABLE_MENTION_PILLS && editorRef.current
+      ? extractTextFromEditor()
+      : editText;
+
+    const editedTextArray = editedTextString.split('\n');
     const editedText = editedTextArray.length === 1 ? editedTextArray[0] : editedTextArray;
 
     const currentSpaceId = message.spaceId;
     const currentChannelId = message.channelId;
     const isDM = currentSpaceId === currentChannelId;
+
+    // Extract mentions from edited text
+    const mentions = extractMentionsFromText(editedTextString, {
+      allowEveryone: canUseEveryone,
+      spaceRoles: spaceRoles.map(r => ({ roleId: r.roleId, roleTag: r.roleTag })),
+      spaceChannels: spaceChannels.map(c => ({ channelId: c.channelId, channelName: c.channelName })),
+    });
 
     // Preserve current content in edits array before updating
     const currentText = message.content.type === 'post' ? message.content.text : '';
@@ -144,6 +690,7 @@ export function MessageEditTextarea({
       ...message,
       modifiedDate: editedAt,
       lastModifiedHash: editNonce,
+      mentions: mentions, // Update mentions with newly extracted mentions
       content: {
         ...message.content,
         text: editedText,
@@ -278,13 +825,14 @@ export function MessageEditTextarea({
           conversationDisplayName
         );
 
-        // Build the edit message object
+        // Build the edit message object with extracted mentions
         const editMessage = {
           type: 'edit-message' as const,
           originalMessageId: message.messageId,
           editedText,
           editedAt,
           editNonce,
+          mentions, // Include extracted mentions so they can be updated when message is received
         };
 
         // Route to appropriate handler based on DM vs Space
@@ -343,59 +891,200 @@ export function MessageEditTextarea({
         onFormat={handleMarkdownFormat}
       />
 
-      {/* Edit Textarea */}
-      <textarea
-        ref={editTextareaRef}
-        value={editText}
-        onChange={(e) => setEditText(e.target.value)}
-        onMouseUp={handleTextareaMouseUp}
-        onFocus={(e) => {
-          // Move cursor to end of text
-          const textarea = e.target as HTMLTextAreaElement;
-          const length = textarea.value.length;
-          textarea.setSelectionRange(length, length);
-        }}
-        onKeyDown={(e) => {
-          if (e.key === 'Enter' && !e.shiftKey) {
-            e.preventDefault();
-            handleSaveEdit().catch((error) => {
-              console.error('Failed to save edit:', error);
-            });
-          } else if (e.key === 'Escape') {
-            onCancel();
-          }
-        }}
-        className="message-edit-textarea"
-        autoFocus
-        rows={Math.min(editText.split('\n').length, 10)}
-      />
+      {/* Mention Dropdown - positioned above the input */}
+      {dropdownOpen && mentionInput.filteredOptions.length > 0 && (
+        <div className="message-composer-mention-dropdown">
+          <div className="message-composer-mention-container">
+            {mentionInput.filteredOptions.map((option, index) => (
+              <div
+                key={option.type === 'user' ? option.data.address :
+                     option.type === 'role' ? option.data.roleId :
+                     option.type === 'channel' ? option.data.channelId :
+                     option.type === 'group-header' ? `group-${option.data.groupName}` :
+                     'everyone'}
+                className={`${option.type === 'group-header' ? 'message-composer-group-header' : 'message-composer-mention-item'} ${
+                  option.type !== 'group-header' && index === mentionInput.selectedIndex ? 'selected' : ''
+                } ${
+                  index === 0 ? 'first' : ''
+                } ${
+                  index === mentionInput.filteredOptions.length - 1 ? 'last' : ''
+                } ${option.type === 'role' ? 'role-item' :
+                    option.type === 'everyone' ? 'everyone-item' :
+                    option.type === 'channel' ? 'channel-item' :
+                    option.type === 'group-header' ? 'group-item' : 'user-item'}`}
+                onMouseDown={(e) => {
+                  // Prevent focus loss from contentEditable when clicking dropdown
+                  e.preventDefault();
+                }}
+                onClick={() => {
+                  if (option.type !== 'group-header') {
+                    mentionInput.selectOption(option);
+                  }
+                }}
+              >
+                {option.type === 'group-header' ? (
+                  <>
+                    {option.data.icon && (
+                      <div
+                        className="message-composer-group-icon"
+                        style={{ color: option.data.iconColor }}
+                      >
+                        <Icon name={option.data.icon as any} size="sm" />
+                      </div>
+                    )}
+                    <span className="message-composer-group-name">
+                      {option.data.groupName}
+                    </span>
+                  </>
+                ) : option.type === 'user' ? (
+                  <>
+                    <UserAvatar
+                      userIcon={option.data.userIcon}
+                      displayName={option.data.displayName || t`Unknown User`}
+                      address={option.data.address}
+                      size={32}
+                      className="message-composer-mention-avatar"
+                    />
+                    <div className="message-composer-mention-info">
+                      <span className="message-composer-mention-name">
+                        {option.data.displayName || t`Unknown User`}
+                      </span>
+                      <span className="message-composer-mention-address">
+                        {getAddressSuffix(option.data.address)}
+                      </span>
+                    </div>
+                  </>
+                ) : option.type === 'role' ? (
+                  <>
+                    <div
+                      className="message-composer-role-badge"
+                      style={{ backgroundColor: option.data.color }}
+                    >
+                      <Icon name="users" size="sm" />
+                    </div>
+                    <div className="message-composer-mention-info">
+                      <span className="message-composer-mention-name">
+                        {option.data.displayName}
+                      </span>
+                      <span className="message-composer-mention-role-tag">
+                        @{option.data.roleTag}
+                      </span>
+                    </div>
+                  </>
+                ) : option.type === 'channel' ? (
+                  <>
+                    <div
+                      className="message-composer-channel-badge"
+                      style={option.data.icon && option.data.iconColor ? { color: option.data.iconColor } : undefined}
+                    >
+                      <Icon
+                        name={option.data.icon || "hashtag"}
+                        size="sm"
+                      />
+                    </div>
+                    <div className="message-composer-mention-info">
+                      <span className="message-composer-mention-name">
+                        {option.data.channelName}
+                      </span>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <div className="message-composer-everyone-badge">
+                      <Icon name="globe" size="sm" />
+                    </div>
+                    <div className="message-composer-mention-info">
+                      <span className="message-composer-mention-name">
+                        @everyone
+                      </span>
+                    </div>
+                  </>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
-      {/* Action Buttons */}
-      <FlexRow className="message-edit-actions" justify="between" align="start">
-        <Text variant="muted" size="sm" className="message-edit-hint hidden sm:block">
-          {t`Press Enter to save, Shift+Enter for new line, Esc to cancel`}
-        </Text>
-        <FlexRow gap="xs">
-          <Button
-            type="subtle"
-            size="sm"
+      {/* Edit Input - ContentEditable or Textarea */}
+      {ENABLE_MENTION_PILLS ? (
+        <div
+          ref={editorRef}
+          contentEditable
+          onInput={handleEditorInput}
+          onKeyDown={handleEditorKeyDown}
+          className="message-edit-textarea message-edit-contenteditable"
+          suppressContentEditableWarning
+        />
+      ) : (
+        <textarea
+          ref={editTextareaRef}
+          value={editText}
+          onChange={(e) => setEditText(e.target.value)}
+          onMouseUp={handleTextareaMouseUp}
+          onFocus={(e) => {
+            // Move cursor to end of text
+            const textarea = e.target as HTMLTextAreaElement;
+            const length = textarea.value.length;
+            textarea.setSelectionRange(length, length);
+          }}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+              e.preventDefault();
+              handleSaveEdit().catch((error) => {
+                console.error('Failed to save edit:', error);
+              });
+            } else if (e.key === 'Escape') {
+              onCancel();
+            }
+          }}
+          className="message-edit-textarea"
+          autoFocus
+          rows={Math.min(editText.split('\n').length, 10)}
+        />
+      )}
+
+      {/* Action Links */}
+      <FlexRow className="message-edit-actions" justify="start" align="start">
+        <Text variant="muted" size="sm" className="message-edit-hint">
+          {t`Esc to`}{' '}
+          <span
+            className="link"
             onClick={onCancel}
+            role="button"
+            tabIndex={0}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                onCancel();
+              }
+            }}
           >
-            {t`Cancel`}
-          </Button>
-          <Button
-            type="primary"
-            size="sm"
+            {t`CANCEL`}
+          </span>
+          {' - '}{t`Enter to`}{' '}
+          <span
+            className="link"
             onClick={() => {
               handleSaveEdit().catch((error) => {
                 console.error('Failed to save edit:', error);
               });
             }}
-            disabled={!editText.trim()}
+            role="button"
+            tabIndex={0}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                handleSaveEdit().catch((error) => {
+                  console.error('Failed to save edit:', error);
+                });
+              }
+            }}
           >
-            {t`Save`}
-          </Button>
-        </FlexRow>
+            {t`SAVE`}
+          </span>
+          {' - '}{t`Shift+Enter for new line`}
+        </Text>
       </FlexRow>
     </Container>
   );

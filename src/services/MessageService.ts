@@ -532,11 +532,12 @@ export class MessageService {
         edits = existingEdits;
       }
 
-      // Update the original message with edited text
+      // Update the original message with edited text and mentions
       const updatedMessage: Message = {
         ...targetMessage,
         modifiedDate: editMessage.editedAt,
         lastModifiedHash: editMessage.editNonce,
+        mentions: editMessage.mentions || targetMessage.mentions, // Update mentions if provided
         content: {
           ...targetMessage.content,
           text: editMessage.editedText,
@@ -885,11 +886,12 @@ export class MessageService {
                       // Keep existing edits array - optimistic update already handles it
                       const existingEdits = m.edits || [];
 
-                      // Update the message with edited text, keeping existing edits array
+                      // Update the message with edited text and mentions, keeping existing edits array
                       return {
                         ...m,
                         modifiedDate: editMessage.editedAt,
                         lastModifiedHash: editMessage.editNonce,
+                        mentions: editMessage.mentions || m.mentions, // Update mentions if provided
                         content: {
                           ...m.content,
                           text: editMessage.editedText,

@@ -242,6 +242,7 @@ export type EditMessage = {
   editedAt: number;
   editNonce: string;
   editSignature?: string;
+  mentions?: Mentions; // Optional: Updated mentions for the edited message
 };
 
 export type Reaction = {

@@ -184,6 +184,18 @@
   }
 }
 
+/* ContentEditable-specific styles for edit mode (with pills) */
+.message-edit-contenteditable {
+  /* Override contentEditable defaults to maintain textarea styling */
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  overflow-y: auto;
+
+  /* Ensure border and background are preserved (unlike message-composer-contenteditable) */
+  /* The base .message-edit-textarea styles above will apply */
+}
+
 .message-edit-actions {
   margin-top: $s-2;
 }
