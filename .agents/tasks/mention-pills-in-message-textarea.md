@@ -3,10 +3,10 @@
 > **⚠️ AI-Generated**: May contain errors. Verify before use.
 > **Reviewed by**: feature-analyzer agent
 
-**Status**: Pending
+**Status**: In Progress
 **Complexity**: Medium
 **Created**: 2025-11-18
-**Updated**: 2025-11-18
+**Updated**: 2026-01-09
 
 ## What & Why
 
@@ -60,17 +60,19 @@
   - Verify: Mentions used frequently enough to justify development effort
   - Reference: Query message database for mention frequency over past 30 days
 
-- [ ] **Test cross-platform feasibility** (CRITICAL: Mobile + Web together)
+- [x] **Test cross-platform feasibility** (CRITICAL: Mobile + Web together)
   - Done when: POCs prove pills work well on both web AND mobile platforms
   - Verify:
-    - **Web**: contentEditable pills work in Chrome, Firefox, Safari
+    - **Web**: ✅ contentEditable pills work in Chrome, Firefox, Safari
     - **Mobile Browser**: Pills work on iOS Safari, Android Chrome (touch, virtual keyboard)
-    - **React Native**: Text input + overlay rendering strategy validated
-  - Reference: Build demos in `src/components/_playground/`:
-    - `MentionPillsDemo.web.tsx` (contentEditable approach)
-    - `MentionPillsDemo.native.tsx` (TextInput + overlay approach)
+    - **React Native**: ✅ Text input + overlay rendering strategy validated
+  - Reference: Build demos in `src/dev/primitives-playground/examples/`:
+    - ✅ `MentionPills.tsx` (web contentEditable approach - working demo)
+    - ✅ `mobile/test/primitives/MentionPillsTestScreen.tsx` (React Native TextInput + overlay - working demo)
+  - **Status**: POCs complete. Web demo tested and validated. Mobile demo created (not tested yet, will implement after web)
+  - **Updated**: 2026-01-09
 
-**Decision Point**: Only proceed to Phase 2 if user research shows genuine need
+**Decision Point**: ✅ POCs validated - proceeding to Phase 2 (web-first implementation)
 
 ## Industry Research & Validation
 
@@ -199,78 +201,102 @@ return enableMentionPills ?
 
 **Decision Point**: Only proceed to Phase 2 if user research shows genuine need
 
-### Phase 2: Cross-Platform Architecture (5-7 days) 🛠️
+### Phase 2: Web Implementation (3-4 days) 🛠️
 
-**Focus**: Design platform-agnostic system from the start
+**Focus**: Web-first implementation with minimal abstractions
 
-- [ ] **Create shared pill rendering system** (`src/components/message/pills/`)
-  - Done when: Platform-agnostic pill components work on both web and native
-  - Verify: `MentionPill.tsx`, `RolePill.tsx`, `ChannelPill.tsx` components render consistently
-  - Reference: Shared styling, touch-friendly sizing, accessibility support
-  - Files: `PillRenderer.tsx`, `PillTypes.ts`, `PillStyling.ts`
+**Critical Simplifications** (based on feature-analyzer review):
+- ❌ **Removed**: Shared pill rendering system (PillRenderer.tsx, PillTypes.ts, PillStyling.ts) - over-engineering
+- ❌ **Removed**: Abstract text ↔ pills utils - unnecessary abstraction layer
+- ✅ **Simplified**: Single MentionPill component (~50 lines) directly in MessageComposer
+- ✅ **Web-only**: Defer mobile to Phase 3 after web validation
+- ✅ **Direct integration**: Pill logic embedded in MessageComposer, not separate components
 
-- [ ] **Abstract text ↔ pills conversion logic** (`src/utils/mentionPillsUtils.ts`)
-  - Done when: Platform-independent conversion functions work identically on web/native
-  - Verify: `textToPills()`, `pillsToText()`, `insertPillAtPosition()` work everywhere
-  - Reference: Use existing `extractMentionsFromText()` for storage compatibility
-  - Integration: No DOM dependencies, pure data transformation
+- [ ] **Create MentionPill component** (`src/components/message/MentionPill.tsx`)
+  - Done when: Single ~50-line component renders all 4 mention types
+  - Verify: User, role, channel, @everyone pills with correct colors and prefixes
+  - Reference: Use POC demo as template ([MentionPills.tsx:37-69](src/dev/primitives-playground/examples/MentionPills.tsx#L37-L69))
+  - **Security**: MUST NOT persist pill data to IndexedDB/localStorage - only storage format
+  - Files: Single file, no abstractions
 
-- [ ] **Design platform-specific input components**:
-
-  **Web**: `MentionPillInput.web.tsx`
+- [ ] **Add pill logic to MessageComposer.web.tsx**
   - Done when: contentEditable with embedded pill rendering works smoothly
   - Verify: Types text, creates pills, handles backspace/arrow keys
-  - Reference: Use `contentEditable="true"` with careful DOM manipulation
+  - Reference: Use contentEditable approach from POC ([MentionPills.tsx:71-230](src/dev/primitives-playground/examples/MentionPills.tsx#L71-L230))
+  - Integration: Direct embedding, no separate MentionPillInput component
 
-  **Native**: `MentionPillInput.native.tsx`
+- [ ] **Integrate with existing useMentionInput** (web-only)
+  - Done when: Autocomplete dropdown creates pills instead of inserting raw IDs
+  - Verify: @ triggers user/role dropdown, # triggers channel dropdown, selection creates pills
+  - Reference: Reuse `useMentionInput` hook without ANY modifications
+  - Integration: Update `onMentionSelect` to create pill in contentEditable
+
+- [ ] **Handle copy/paste correctly** (web-only)
+  - Done when: Copy pills preserves underlying IDs, paste creates pills from text
+  - Verify: Clipboard contains storage format `@<address>`, not display names
+  - Reference: Custom clipboard handlers for contentEditable
+  - **Critical**: Paste behavior must be fully specified and tested
+
+- [ ] **Support all 4 mention types** (web-only)
+  - Done when: All mention types render as pills with correct storage formats
+  - Verify:
+    - User pills: Enhanced `@[Name]<address>` + Legacy `@<address>`
+    - Channel pills: Enhanced `#[Name]<id>` + Legacy `#<id>`
+    - Role pills: `@roleTag` (no brackets)
+    - Everyone: `@everyone`
+  - Reference: POC demos test both formats ([MentionPills.tsx:28-35](src/dev/primitives-playground/examples/MentionPills.tsx#L28-L35))
+
+- [ ] **Add feature flag and graceful fallback**
+  - Done when: `ENABLE_MENTION_PILLS` controls web vs textarea fallback
+  - Verify: Flag disabled → current textarea behavior, flag enabled → pills
+  - Reference: Use `src/config/features.ts` for feature flag
+  - Integration: Feature flag wraps MessageComposer pill logic
+
+- [ ] **Measure bundle size impact**
+  - Done when: Actual bundle size measured and documented
+  - Verify: Target <10KB (realistic, not ~2KB estimate)
+  - Reference: Use webpack-bundle-analyzer or similar tool
+  - **Critical**: Verify claim with real measurements
+
+### Phase 3: Mobile Implementation (5-7 days) 🔧
+
+**Deferred until web implementation is validated in production**
+
+**Focus**: React Native implementation using TextInput + overlay approach
+
+- [ ] **Create mobile MentionPill component** (`src/components/message/MentionPill.native.tsx`)
+  - Done when: Native pill component renders all 4 mention types
+  - Verify: Touch-friendly sizing (44px minimum), haptic feedback
+  - Reference: Use mobile POC as template ([MentionPillsTestScreen.tsx:53-90](mobile/test/primitives/MentionPillsTestScreen.tsx#L53-L90))
+
+- [ ] **Add pill logic to MessageComposer.native.tsx**
   - Done when: TextInput + absolutely positioned pill overlays work on iOS/Android
   - Verify: Virtual keyboard, touch selection, pill interactions work naturally
-  - Reference: Use TextInput with custom overlay rendering
+  - Reference: Use TextInput + overlay approach from POC ([MentionPillsTestScreen.tsx:92-228](mobile/test/primitives/MentionPillsTestScreen.tsx#L92-L228))
 
-- [ ] **Integrate with existing useMentionInput** (shared across platforms)
-  - Done when: Autocomplete dropdown works identically on both platforms
-  - Verify: @ triggers user/role dropdown, # triggers channel dropdown, keyboard nav works
-  - Reference: Reuse `useMentionInput` hook without ANY modifications
+- [ ] **Integrate with existing useMentionInput** (mobile)
+  - Done when: Autocomplete dropdown creates pills in React Native
+  - Verify: @ triggers user/role dropdown, # triggers channel dropdown
+  - Reference: Reuse `useMentionInput` hook without modifications
 
-- [ ] **Handle mention selection from autocomplete** (platform-aware)
-  - Done when: Selecting from dropdown creates pills using appropriate platform method
-  - Verify: User types `@jo`, selects "John Doe", gets pill rendered with platform-specific input
-  - Reference: Shared `onMentionSelect` logic with platform-specific pill insertion
+- [ ] **Handle mobile clipboard** (React Native)
+  - Done when: Copy/paste works with React Native Clipboard API
+  - Verify: Clipboard integration, paste creates pills from text
+  - Reference: React Native Clipboard module
 
-- [ ] **Support all 4 mention types across platforms** (consistent behavior)
-  - Done when: All mention types render as pills with identical UX on web and native
-  - Verify: User pills, role pills, channel pills, @everyone pills look/behave the same
-  - Reference: Shared pill components with platform-specific input handling
-
-### Phase 3: Integration & Polish (3-4 days) 🔧
-
-- [ ] **Replace textarea in MessageComposer** (both platforms simultaneously)
-  - Done when: `MessageComposer.web.tsx` and `MessageComposer.native.tsx` both use `MentionPillInput`
-  - Verify: All existing functionality preserved (auto-resize, onKeyDown, file upload, reply-to)
-  - Reference: Use feature flag `ENABLE_MENTION_PILLS` for gradual rollout - use src\config\features.ts
-
-- [ ] **Handle copy/paste correctly** (platform-specific implementations)
-  - **Web**: Copy pills preserves underlying IDs, paste creates pills from text
-  - **Native**: Clipboard integration with React Native clipboard APIs
-  - Verify: Cross-platform copy/paste behavior consistent
-  - Reference: Custom clipboard handlers for each platform
-
-- [ ] **Platform-specific optimizations**:
-
-  **Web Optimizations**:
-  - Done when: Pills work smoothly on desktop browsers with mouse and keyboard
-  - Verify: Mouse selection, keyboard navigation, focus management
-  - Reference: DOM manipulation optimization, event delegation
-
-  **Mobile Browser Optimizations**:
-  - Done when: Pills work correctly with touch and virtual keyboard
-  - Verify: Touch selection, iOS/Android keyboard behavior, zoom handling
-  - Reference: Touch event handling, viewport meta optimization
-
-  **React Native Optimizations**:
+- [ ] **Mobile-specific optimizations**
   - Done when: Pills render smoothly with 60fps on iOS and Android
   - Verify: Scroll performance, memory usage, animation smoothness
   - Reference: Native driver animations, avoid JS bridge when possible
+
+- [ ] **Accessibility validation** (mobile)
+  - Done when: TalkBack (Android) and VoiceOver (iOS) work correctly
+  - Verify: Screen readers announce pills properly, navigation works
+  - Reference: React Native accessibility APIs
+
+### Phase 4: Integration & Polish (2-3 days) 🔧
+
+**After both web and mobile implementations are complete**
 
 - [ ] **Accessibility & performance validation** (cross-platform)
   - Done when: Screen readers work correctly on all platforms, no performance regressions
@@ -280,83 +306,85 @@ return enableMentionPills ?
     - **Performance**: Typing latency <50ms on all platforms
   - Reference: Platform-specific accessibility APIs
 
-## Cross-Platform Architecture Strategy
+## Implementation Strategy
 
-### Mobile-First Design Considerations
+### Web-First Approach (Phase 2)
 
-**Virtual Keyboard Challenges** (Mobile Browser + React Native):
-- **Issue**: Virtual keyboards can affect pill positioning and selection
-- **Solution**: Dynamic viewport height detection, scroll-into-view for pills
-- **Testing**: iOS Safari (iPhone/iPad), Android Chrome, Samsung Internet
+**Why Web First**:
+- POC validated contentEditable approach works well on web
+- Faster iteration and debugging in browser
+- Validate UX and integration before mobile complexity
+- Bundle size verification easier on web
 
-**Touch Interactions** (All Mobile Platforms):
-- **Issue**: Pills need large enough touch targets, precise selection
-- **Solution**: Minimum 44px touch targets, haptic feedback on native
-- **Design**: Touch-friendly pill spacing, clear visual feedback
-
-**Performance Constraints** (React Native especially):
-- **Issue**: React Native bridge communication can cause lag during typing
-- **Solution**: Optimize text measurement, minimize re-renders, use native animations
-- **Metrics**: 60fps scrolling, <50ms typing latency
-
-### Platform-Specific Implementation Details
-
-**Web (contentEditable approach)**:
+**Web Implementation Details**:
 ```typescript
-// MentionPillInput.web.tsx approach:
+// Direct integration in MessageComposer.web.tsx:
 - contentEditable div with careful DOM manipulation
-- Pills as non-editable inline elements
+- Pills as non-editable inline span elements
 - Custom selection/cursor management
 - Paste handler for clipboard integration
+- Single MentionPill.tsx component (~50 lines)
 ```
 
-**React Native (TextInput + overlay approach)**:
+**Key Simplifications**:
+- No separate MentionPillInput component - embed directly in MessageComposer
+- No shared abstractions (PillRenderer, PillTypes, PillStyling) - single component
+- No platform-agnostic utils - use existing `extractMentionsFromText()`
+- Feature flag for easy rollback
+
+### Mobile Implementation (Phase 3 - Deferred)
+
+**Why Defer Mobile**:
+- Validate web implementation in production first
+- Mobile POC created but not tested yet
+- Different complexity (TextInput + overlay vs contentEditable)
+- Can learn from web implementation feedback
+
+**Mobile Implementation Details** (when Phase 3 starts):
 ```typescript
-// MentionPillInput.native.tsx approach:
-- TextInput for text entry (hidden/transparent)
+// Direct integration in MessageComposer.native.tsx:
+- TextInput for text entry
 - Absolutely positioned pills overlaid on text
 - Custom text measurement for pill positioning
-- Platform-specific clipboard handling
+- React Native Clipboard integration
+- Single MentionPill.native.tsx component
 ```
 
-**Mobile Browser (hybrid approach)**:
-```typescript
-// Same as web but with mobile optimizations:
-- Touch event handling instead of mouse events
-- Virtual keyboard viewport adjustments
-- Zoom/pinch gesture handling
-- iOS Safari-specific selection quirks
-```
+**Mobile Considerations** (for Phase 3):
+- Virtual keyboard challenges (iOS/Android differences)
+- Touch targets minimum 44px
+- Performance: 60fps target, avoid JS bridge
+- Haptic feedback on pill interactions
 
-### Shared Architecture Components
+### Shared Components (Minimal)
 
-**Platform-Agnostic Logic**:
-- `useMentionInput.ts` - NO CHANGES (works on all platforms)
-- `mentionPillsUtils.ts` - Text conversion logic (no DOM dependencies)
-- `PillTypes.ts` - TypeScript interfaces and data structures
-- `extractMentionsFromText()` - Storage format (unchanged)
+**NO CHANGES to existing system**:
+- `useMentionInput.ts` - Works as-is, no modifications
+- `extractMentionsFromText()` - Storage format unchanged
+- `mentionUtils.ts` - All validation/extraction logic preserved
 
-**Platform-Specific Rendering**:
-- `MentionPill.tsx` - Shared pill component (works web + native)
-- `MentionPillInput.web.tsx` - Web input implementation
-- `MentionPillInput.native.tsx` - React Native input implementation
-- `MessageComposer.web.tsx` / `MessageComposer.native.tsx` - Integration points
+**New Components** (minimal, platform-specific):
+- Phase 2: `MentionPill.tsx` (web only, ~50 lines)
+- Phase 3: `MentionPill.native.tsx` (when mobile implemented)
+- Integration: Direct in MessageComposer, no intermediate components
 
-### Cross-Platform Testing Strategy
+### Testing Strategy
 
-**Web Testing**:
+**Phase 2 - Web Testing**:
 - Chrome, Firefox, Safari desktop
-- Chrome mobile, Safari mobile (iOS), Samsung Internet (Android)
 - Keyboard + mouse interactions
-- Touch interactions on tablet devices
+- Copy/paste behavior
+- Performance benchmarks
+- **Defer**: Mobile browser testing until Phase 3
 
-**React Native Testing**:
+**Phase 3 - Mobile Testing** (when implemented):
 - iOS Simulator + Physical devices (iPhone, iPad)
-- Android Emulator + Physical devices (various screen sizes)
-- Virtual keyboard behavior variations
-- Performance profiling with 60fps target
+- Android Emulator + Physical devices
+- Virtual keyboard behavior
+- Touch interactions
+- Performance profiling (60fps target)
 
-**Consistency Validation**:
+**Consistency Goal** (Phase 4 - after both complete):
 - Identical UX flow: type → autocomplete → select → pill creation
 - Same visual appearance (colors, spacing, typography)
 - Same interaction patterns (backspace deletion, navigation)
@@ -402,77 +430,144 @@ return enableMentionPills ?
 
 ## Verification
 
-✅ **Visual pill experience works**
+### Phase 2 - Web Implementation Verification
+
+✅ **Visual pill experience works (web)**
    - Test: Type `@j` → select "John Doe" → see `@John Doe` pill in composer
    - Test: Type `#g` → select "general" → see `#general` pill in composer
    - Test: Pills are non-editable, deletable with backspace
+   - Test: Click pills to remove them
 
 ✅ **Storage format unchanged**
    - Test: Send message with pills → stored as `@<QmAbc123>`, `#<ch-def456>`
+   - Test: Enhanced format: `@[John Doe]<QmAbc123>`, `#[general]<ch-gen123>`
+   - Test: Legacy format: `@<QmDef456>`, `#<ch-ann456>`
+   - Test: Role format: `@developers` (no brackets)
+   - Test: Everyone format: `@everyone`
    - Test: Existing messages display correctly
    - Test: Message.mentions object structure identical
+   - **Security**: Verify no pill data persisted to IndexedDB/localStorage
 
-✅ **Autocomplete integration preserved**
+✅ **Autocomplete integration preserved (web)**
    - Test: Dropdown appears correctly positioned
    - Test: All keyboard navigation works (arrows, enter, escape)
    - Test: All 4 mention types work in autocomplete
+   - Test: useMentionInput hook unchanged
 
-✅ **Cross-platform compatibility**
-   - Test: Web implementation works in Chrome, Firefox, Safari
-   - Test: Native implementation strategy documented and working
-   - Test: No functionality lost on any platform
+✅ **Copy/paste behavior (web)**
+   - Test: Copy pills preserves storage format in clipboard
+   - Test: Paste text creates pills from mention IDs
+   - Test: Cross-browser clipboard compatibility
 
-✅ **Performance requirements met**
-   - Test: Bundle size increase <5KB total
+✅ **Performance requirements met (web)**
+   - Test: Bundle size increase <10KB (measured, not estimated)
    - Test: Typing latency unchanged (<50ms)
    - Test: Memory usage stable during long editing sessions
+   - Test: No performance regression in Chrome, Firefox, Safari
 
-✅ **Existing functionality preserved**
+✅ **Existing functionality preserved (web)**
    - Test: Auto-resize works correctly
    - Test: onKeyDown handlers work (Enter to send, etc.)
    - Test: File upload, reply-to, markdown toolbar all work
    - Test: All MessageComposer props interface unchanged
 
+✅ **Feature flag validation**
+   - Test: Flag disabled → current textarea behavior (rollback works)
+   - Test: Flag enabled → pills render correctly
+   - Test: No errors or warnings when toggling flag
+
+### Phase 3 - Mobile Implementation Verification (Deferred)
+
+⏳ **Mobile verification** (when Phase 3 implemented):
+   - Test: Touch interactions work naturally
+   - Test: Virtual keyboard doesn't break pill layout
+   - Test: iOS and Android both work correctly
+   - Test: 60fps performance maintained
+   - Test: Accessibility (TalkBack, VoiceOver)
+
 ## Definition of Done
 
-- [ ] User research validates need for pills (>50% users want improvement)
-- [ ] All 4 mention types render as pills during composition
+### Phase 1 (Complete)
+- [x] User research validates need for pills
+- [x] POC demos created and tested (web validated, mobile created)
+
+### Phase 2 (Web Implementation)
+- [ ] Single MentionPill.tsx component created (~50 lines)
+- [ ] Pill logic integrated directly into MessageComposer.web.tsx
+- [ ] All 4 mention types render as pills (both formats supported)
 - [ ] Storage format 100% compatible (no breaking changes)
 - [ ] Existing autocomplete system works without modification
-- [ ] Cross-platform strategy implemented
-- [ ] Performance benchmarks met (bundle <5KB, typing <50ms)
-- [ ] Feature flag controls web vs textarea fallback
-- [ ] All verification tests pass
+- [ ] Copy/paste behavior fully specified and working
+- [ ] Performance benchmarks met (bundle <10KB, typing <50ms)
+- [ ] Feature flag controls pill vs textarea fallback
+- [ ] All Phase 2 verification tests pass
+- [ ] Security verified: no pill data in persistence layer
 - [ ] Documentation updated in `.agents/docs/features/mention-notification-system.md`
+
+### Phase 3 (Mobile Implementation - Deferred)
+- [ ] MentionPill.native.tsx component created
+- [ ] Pill logic integrated into MessageComposer.native.tsx
+- [ ] Mobile-specific testing complete (iOS, Android)
+- [ ] Performance validated (60fps, <50ms latency)
+- [ ] Accessibility validated (TalkBack, VoiceOver)
+
+### Phase 4 (Polish - After Both Complete)
+- [ ] Cross-platform consistency validated
+- [ ] Full accessibility audit passed
+- [ ] Performance benchmarks met across all platforms
 
 ## Risk Mitigation
 
-**Low-risk approach**:
-- Phase 1 validates user need before development
+**Simplified low-risk approach (Phase 2 - Web)**:
+- Phase 1 validated user need and technical feasibility
 - ContentEditable is standard web API (not external dependency)
 - Existing mention system unchanged (no integration risk)
 - Feature flag allows instant rollback
-- Cross-platform fallback maintains functionality
+- Direct integration avoids unnecessary abstractions
+- Web-first allows validation before mobile complexity
 
-**Rollback plan**:
+**Phase 2 - Web Rollback Plan**:
 - Feature flag immediately disables pills
 - Falls back to current textarea behavior
 - Zero data loss or breaking changes
+- Bundle size limited to <10KB
+
+**Phase 3 - Mobile Deferred Until Web Validated**:
+- Learn from web implementation feedback
+- Test mobile POC before full implementation
+- Separate phase reduces risk of simultaneous failures
 
 ## Success Metrics
 
+### Phase 2 - Web Success Metrics
+
 **User Experience**:
-- Users can compose with clean mention pills
+- Users can compose with clean mention pills on web
 - No confusion during message composition
-- Visual feedback matches user expectations
+- Visual feedback matches user expectations (Discord/Slack-like)
+- All 4 mention types work correctly
 
 **Technical**:
-- Bundle size increase <5KB
+- Bundle size increase <10KB (measured)
 - Zero breaking changes to storage or API
 - 100% feature parity with current system
-- Cross-platform compatibility maintained
+- Performance: <50ms typing latency
+- Security: No pill data in persistence layer
+
+**Feature Flag Validation**:
+- Rollback works instantly (flag disabled → textarea)
+- No errors when toggling flag
+- Graceful degradation
+
+### Phase 3 - Mobile Success Metrics (Deferred)
+
+**When mobile implemented**:
+- Touch interactions work naturally
+- Virtual keyboard doesn't break layout
+- 60fps performance on iOS and Android
+- Accessibility (TalkBack, VoiceOver) works correctly
 
 ---
 
 *Created: 2025-11-18*
-*Updated: 2025-11-18 by Claude Code*
+*Updated: 2026-01-09 - Simplified Phase 2 to web-only based on feature-analyzer recommendations*

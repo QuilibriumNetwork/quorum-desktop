@@ -1,6 +1,10 @@
 # Space Tags
 
+https://github.com/QuilibriumNetwork/quorum-desktop/issues/14
+
 > **:warning: AI-Generated**: May contain errors. Verify before use.
+> Reviewd by feature-analyzer agent, security-analyst agent, cryptographer agent
+> Soft-review by human
 
 **Status**: Pending
 **Complexity**: High
@@ -547,6 +551,43 @@ Just the tag display next to sender name.
 
 ---
 
+## Future Enhancements
+
+### Space Profile Modal on Tag Hover/Click (Requires Public Directory)
+
+**Status**: Deferred - Depends on Public Space Directory implementation
+
+**Concept**: Allow users to hover or click on a space tag to view a modal with the full space profile (avatar, name, description, member count) and a "Join" button.
+
+**Current Limitation**:
+- Space tags only contain minimal data (`spaceId`, `letters`, `url`, `backgroundColor`)
+- Full space metadata (name, description, icon) is NOT embedded in tags
+- Recipients may not be members of the tagged space, so no local data available
+- Quorum's decentralized architecture means there's no way to look up arbitrary space metadata without a coordination service
+
+**Implementation Approach** (after directory is available):
+1. User hovers/clicks on space tag → Extract `spaceId` from tag data
+2. Query directory API: `GET /api/spaces/{spaceId}/info` (or similar endpoint)
+3. Fetch space metadata: name, description, iconUrl, memberCount, ratings
+4. Display modal with space profile information
+5. Add "Join" button that uses directory invite flow (`GET /api/spaces/{spaceId}/directory-invite`)
+
+**Dependencies**:
+- [ ] Public Space Directory API must be implemented (see [public-space-directory.md](./public-space-directory.md))
+- [ ] Directory must expose a "get space info by ID" endpoint
+- [ ] Space must be publicly listed in directory (private spaces would show limited info or error)
+
+**Alternative** (limited scope - could implement now):
+- Only show modal for spaces the user is already a member of
+- Check local space database by `spaceId`
+- If user is member: Show modal with local space data
+- If not member: Show tooltip with "Unknown Space" or just the tag letters
+- **Downside**: Inconsistent UX, doesn't enable discovery of new spaces
+
+**Recommendation**: Wait for Public Space Directory implementation for consistent, complete UX.
+
+---
+
 ## Definition of Done
 
 - [ ] All Phase 1-4 checkboxes complete
@@ -578,7 +619,8 @@ _Updated during implementation_
 **2026-01-08 - Claude**: Removed "Space becomes private" edge case - `isPublic` is set at creation and cannot be changed
 **2026-01-08 - Claude**: Made SpaceTag memoization mandatory (renders on every message)
 **2026-01-08 - Claude**: Added auto-refresh stale tag on app startup - compares last broadcast with current Space tag, re-broadcasts only if different
+**2026-01-09 - Claude**: Added "Future Enhancements" section for space profile modal on tag hover/click - deferred until Public Space Directory is implemented due to decentralization constraints
 
 ---
 
-*Last Updated: 2026-01-08 20:00*
+*Last Updated: 2026-01-09*
