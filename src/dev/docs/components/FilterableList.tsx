@@ -4,16 +4,62 @@ import {
   Input,
   FlexRow,
   FlexColumn,
-  Container,
   Text,
   Icon,
 } from '../../../components/primitives';
 import { type MarkdownFile } from '../hooks/useMarkdownFiles';
+import { type IconName } from '../../../components/primitives/Icon/types';
 
 interface FilterOption {
   label: string;
   value: string;
   count: number;
+}
+
+// Icon mapping for status, complexity, and priority
+function getStatusIcon(status: string): IconName {
+  switch (status) {
+    case 'done':
+      return 'check-circle';
+    case 'in-progress':
+      return 'clock';
+    case 'on-hold':
+      return 'warning';
+    case 'open':
+      return 'circle';
+    default:
+      return 'circle';
+  }
+}
+
+function getComplexityIcon(complexity: string): IconName {
+  switch (complexity) {
+    case 'low':
+      return 'check';
+    case 'medium':
+      return 'target';
+    case 'high':
+      return 'fire';
+    case 'very-high':
+      return 'fire';
+    default:
+      return 'target';
+  }
+}
+
+function getPriorityIcon(priority: string): IconName {
+  switch (priority) {
+    case 'low':
+      return 'arrow-down';
+    case 'medium':
+      return 'minus';
+    case 'high':
+      return 'arrow-up';
+    case 'critical':
+      return 'warning';
+    default:
+      return 'minus';
+  }
 }
 
 interface FilterableListProps {
@@ -50,31 +96,43 @@ export const FilterableList: React.FC<FilterableListProps> = ({
       }
     });
 
+    // Define status order: open → in-progress → on-hold → done
+    const statusOrder = ['open', 'in-progress', 'on-hold', 'done'];
     const statusOptions: FilterOption[] = [
       { label: 'All', value: 'all', count: files.length },
-      ...Object.entries(statuses).map(([status, count]) => ({
-        label: status.charAt(0).toUpperCase() + status.slice(1),
-        value: status,
-        count,
-      })),
+      ...statusOrder
+        .filter(status => statuses[status] > 0)
+        .map(status => ({
+          label: status.charAt(0).toUpperCase() + status.slice(1),
+          value: status,
+          count: statuses[status],
+        })),
     ];
 
+    // Define complexity order: low → medium → high → very-high
+    const complexityOrder = ['low', 'medium', 'high', 'very-high'];
     const complexityOptions: FilterOption[] = [
       { label: 'All', value: 'all', count: files.length },
-      ...Object.entries(complexities).map(([complexity, count]) => ({
-        label: complexity.charAt(0).toUpperCase() + complexity.slice(1),
-        value: complexity,
-        count,
-      })),
+      ...complexityOrder
+        .filter(complexity => complexities[complexity] > 0)
+        .map(complexity => ({
+          label: complexity.charAt(0).toUpperCase() + complexity.slice(1),
+          value: complexity,
+          count: complexities[complexity],
+        })),
     ];
 
+    // Define priority order: low → medium → high → critical
+    const priorityOrder = ['low', 'medium', 'high', 'critical'];
     const priorityOptions: FilterOption[] = [
       { label: 'All', value: 'all', count: files.length },
-      ...Object.entries(priorities).map(([priority, count]) => ({
-        label: priority.charAt(0).toUpperCase() + priority.slice(1),
-        value: priority,
-        count,
-      })),
+      ...priorityOrder
+        .filter(priority => priorities[priority] > 0)
+        .map(priority => ({
+          label: priority.charAt(0).toUpperCase() + priority.slice(1),
+          value: priority,
+          count: priorities[priority],
+        })),
     ];
 
     return { statusOptions, complexityOptions, priorityOptions };
@@ -206,12 +264,15 @@ export const FilterableList: React.FC<FilterableListProps> = ({
                 <button
                   key={option.value}
                   onClick={() => setStatusFilter(option.value)}
-                  className={`px-3 py-1.5 rounded-md text-sm transition-colors ${
+                  className={`px-3 py-1.5 rounded-md text-sm transition-colors flex items-center gap-1.5 ${
                     statusFilter === option.value
                       ? 'bg-accent text-white'
                       : 'bg-surface-2 text-main hover:bg-surface-3'
                   }`}
                 >
+                  {option.value !== 'all' && (
+                    <Icon name={getStatusIcon(option.value)} size="sm" />
+                  )}
                   {option.label} ({option.count})
                 </button>
               ))}
@@ -229,12 +290,15 @@ export const FilterableList: React.FC<FilterableListProps> = ({
                   <button
                     key={option.value}
                     onClick={() => setComplexityFilter(option.value)}
-                    className={`px-3 py-1.5 rounded-md text-sm transition-colors ${
+                    className={`px-3 py-1.5 rounded-md text-sm transition-colors flex items-center gap-1.5 ${
                       complexityFilter === option.value
                         ? 'bg-accent text-white'
                         : 'bg-surface-2 text-main hover:bg-surface-3'
                     }`}
                   >
+                    {option.value !== 'all' && (
+                      <Icon name={getComplexityIcon(option.value)} size="sm" />
+                    )}
                     {option.label} ({option.count})
                   </button>
                 ))}
@@ -253,12 +317,15 @@ export const FilterableList: React.FC<FilterableListProps> = ({
                   <button
                     key={option.value}
                     onClick={() => setPriorityFilter(option.value)}
-                    className={`px-3 py-1.5 rounded-md text-sm transition-colors ${
+                    className={`px-3 py-1.5 rounded-md text-sm transition-colors flex items-center gap-1.5 ${
                       priorityFilter === option.value
                         ? 'bg-accent text-white'
                         : 'bg-surface-2 text-main hover:bg-surface-3'
                     }`}
                   >
+                    {option.value !== 'all' && (
+                      <Icon name={getPriorityIcon(option.value)} size="sm" />
+                    )}
                     {option.label} ({option.count})
                   </button>
                 ))}
@@ -295,28 +362,31 @@ export const FilterableList: React.FC<FilterableListProps> = ({
                           </Text>
                           {file.status && (
                             <span
-                              className={`px-2 py-0.5 rounded text-xs ${getStatusStyle(
+                              className={`px-2 py-0.5 rounded text-xs flex items-center gap-1 ${getStatusStyle(
                                 file.status
                               )}`}
                             >
+                              <Icon name={getStatusIcon(file.status)} size="xs" />
                               {file.status}
                             </span>
                           )}
                           {file.complexity && (
                             <span
-                              className={`px-2 py-0.5 rounded text-xs ${getComplexityStyle(
+                              className={`px-2 py-0.5 rounded text-xs flex items-center gap-1 ${getComplexityStyle(
                                 file.complexity
                               )}`}
                             >
+                              <Icon name={getComplexityIcon(file.complexity)} size="xs" />
                               {file.complexity}
                             </span>
                           )}
                           {file.priority && (
                             <span
-                              className={`px-2 py-0.5 rounded text-xs ${getPriorityStyle(
+                              className={`px-2 py-0.5 rounded text-xs flex items-center gap-1 ${getPriorityStyle(
                                 file.priority
                               )}`}
                             >
+                              <Icon name={getPriorityIcon(file.priority)} size="xs" />
                               {file.priority}
                             </span>
                           )}
@@ -377,9 +447,12 @@ const FolderView: React.FC<FolderViewProps> = ({ folder, basePath, level }) => {
     <div style={{ marginLeft: `${indent}px` }} className="space-y-3">
       {/* Folder Header */}
       <div className="mb-2">
-        <Text variant="main" size="lg" weight="semibold" className="text-accent">
-          📁 {folder.name.charAt(0).toUpperCase() + folder.name.slice(1)}
-        </Text>
+        <FlexRow gap="xs" align="center">
+          <Icon name="folder" size="md" className="text-accent" />
+          <Text variant="main" size="lg" weight="semibold" className="text-accent">
+            {folder.name.charAt(0).toUpperCase() + folder.name.slice(1)}
+          </Text>
+        </FlexRow>
         <div className="h-px bg-border mt-1" />
       </div>
 
@@ -398,28 +471,31 @@ const FolderView: React.FC<FolderViewProps> = ({ folder, basePath, level }) => {
                   </Text>
                   {file.status && (
                     <span
-                      className={`px-2 py-0.5 rounded text-xs ${getStatusStyle(
+                      className={`px-2 py-0.5 rounded text-xs flex items-center gap-1 ${getStatusStyle(
                         file.status
                       )}`}
                     >
+                      <Icon name={getStatusIcon(file.status)} size="xs" />
                       {file.status}
                     </span>
                   )}
                   {file.complexity && (
                     <span
-                      className={`px-2 py-0.5 rounded text-xs ${getComplexityStyle(
+                      className={`px-2 py-0.5 rounded text-xs flex items-center gap-1 ${getComplexityStyle(
                         file.complexity
                       )}`}
                     >
+                      <Icon name={getComplexityIcon(file.complexity)} size="xs" />
                       {file.complexity}
                     </span>
                   )}
                   {file.priority && (
                     <span
-                      className={`px-2 py-0.5 rounded text-xs ${getPriorityStyle(
+                      className={`px-2 py-0.5 rounded text-xs flex items-center gap-1 ${getPriorityStyle(
                         file.priority
                       )}`}
                     >
+                      <Icon name={getPriorityIcon(file.priority)} size="xs" />
                       {file.priority}
                     </span>
                   )}
@@ -447,44 +523,44 @@ const FolderView: React.FC<FolderViewProps> = ({ folder, basePath, level }) => {
 function getStatusStyle(status: string): string {
   switch (status) {
     case 'done':
-      return 'bg-success/20 text-success';
+      return 'bg-success/20 text-success border border-success/30';
     case 'in-progress':
-      return 'bg-accent/20 text-accent';
+      return 'bg-accent/20 text-accent border border-accent/30';
     case 'on-hold':
-      return 'bg-warning/20 text-warning';
+      return 'bg-warning/20 text-warning border border-warning/30';
     case 'open':
-      return 'bg-surface-2 text-subtle';
+      return 'bg-surface-2 text-subtle border border-default';
     default:
-      return 'bg-surface-2 text-subtle';
+      return 'bg-surface-2 text-subtle border border-default';
   }
 }
 
 function getComplexityStyle(complexity: string): string {
   switch (complexity) {
     case 'low':
-      return 'bg-success/20 text-success';
+      return 'bg-success/20 text-success border border-success/30';
     case 'medium':
-      return 'bg-accent/20 text-accent';
+      return 'bg-accent/20 text-accent border border-accent/30';
     case 'high':
-      return 'bg-warning/20 text-warning';
+      return 'bg-warning/20 text-warning border border-warning/30';
     case 'very-high':
-      return 'bg-danger/20 text-danger';
+      return 'bg-danger/20 text-danger border border-danger/30';
     default:
-      return 'bg-surface-2 text-subtle';
+      return 'bg-surface-2 text-subtle border border-default';
   }
 }
 
 function getPriorityStyle(priority: string): string {
   switch (priority) {
     case 'low':
-      return 'bg-success/20 text-success';
+      return 'bg-success/20 text-success border border-success/30';
     case 'medium':
-      return 'bg-accent/20 text-accent';
+      return 'bg-accent/20 text-accent border border-accent/30';
     case 'high':
-      return 'bg-warning/20 text-warning';
+      return 'bg-warning/20 text-warning border border-warning/30';
     case 'critical':
-      return 'bg-danger/20 text-danger';
+      return 'bg-danger/20 text-danger border border-danger/30';
     default:
-      return 'bg-surface-2 text-subtle';
+      return 'bg-surface-2 text-subtle border border-default';
   }
 }
