@@ -5,16 +5,16 @@ import { i18n } from '@lingui/core';
 import type { AttachmentProcessingResult } from '../../utils/imageProcessing';
 import { useMentionInput, type MentionOption, useMentionPillEditor } from '../../hooks/business/mentions';
 import type { Group } from '../../api/quorumApi';
-import { getAddressSuffix } from '../../utils';
 import { useResponsiveLayout } from '../../hooks/useResponsiveLayout';
 import { isTouchDevice } from '../../utils/platform';
 import './MessageComposer.scss';
-import { UserAvatar } from '../user/UserAvatar';
 import { MarkdownToolbar } from './MarkdownToolbar';
+import { MentionDropdown } from './MentionDropdown';
 import type { FormatFunction } from '../../utils/markdownFormatting';
 import { toggleBold, toggleItalic, toggleStrikethrough, wrapCode } from '../../utils/markdownFormatting';
 import { calculateToolbarPosition } from '../../utils/toolbarPositioning';
 import { ENABLE_MARKDOWN, ENABLE_MENTION_PILLS } from '../../config/features';
+import { getCaretCoordinates, type CaretCoordinates } from '../../utils/caretCoordinates';
 
 interface User {
   address: string;
@@ -130,6 +130,7 @@ export const MessageComposer = forwardRef<
     const composerRef = useRef<HTMLDivElement>(null);
     const [cursorPosition, setCursorPosition] = useState(0);
     const [dropdownOpen, setDropdownOpen] = useState(false);
+    const [caretCoords, setCaretCoords] = useState<CaretCoordinates | null>(null);
     const [isTyping, setIsTyping] = useState(false);
     const [isMultiline, setIsMultiline] = useState(false);
     const [responsivePlaceholder, setResponsivePlaceholder] = useState(placeholder);
@@ -230,6 +231,9 @@ export const MessageComposer = forwardRef<
         onChange(newValue);
         setTimeout(() => {
           setCursorPosition(textareaRef.current?.selectionStart || 0);
+          // Capture caret coordinates for dropdown positioning
+          const coords = getCaretCoordinates(textareaRef.current, false);
+          setCaretCoords(coords);
         }, 0);
       },
       [onChange]
@@ -240,6 +244,9 @@ export const MessageComposer = forwardRef<
       const newText = extractStorageText();
       onChange(newText);
       setCursorPosition(getCursorPosition());
+      // Capture caret coordinates for dropdown positioning
+      const coords = getCaretCoordinates(editorRef.current, true);
+      setCaretCoords(coords);
     }, [extractStorageText, onChange, getCursorPosition]);
 
     // Handle copy/paste for contentEditable
@@ -698,122 +705,16 @@ export const MessageComposer = forwardRef<
         )}
 
         {/* Mention Dropdown - positioned above the input */}
-        {dropdownOpen && mentionInput.filteredOptions.length > 0 && (
-          <div className="message-composer-mention-dropdown">
-            <div className="message-composer-mention-container">
-              {mentionInput.filteredOptions.map((option, index) => (
-                <div
-                  key={option.type === 'user' ? option.data.address :
-                       option.type === 'role' ? option.data.roleId :
-                       option.type === 'channel' ? option.data.channelId :
-                       option.type === 'group-header' ? `group-${option.data.groupName}` :
-                       'everyone'}
-                  className={`${option.type === 'group-header' ? 'message-composer-group-header' : 'message-composer-mention-item'} ${
-                    option.type !== 'group-header' && index === mentionInput.selectedIndex ? 'selected' : ''
-                  } ${
-                    index === 0 ? 'first' : ''
-                  } ${
-                    index === mentionInput.filteredOptions.length - 1 ? 'last' : ''
-                  } ${option.type === 'role' ? 'role-item' :
-                      option.type === 'everyone' ? 'everyone-item' :
-                      option.type === 'channel' ? 'channel-item' :
-                      option.type === 'group-header' ? 'group-item' : 'user-item'}`}
-                  onMouseDown={(e) => {
-                    // Prevent focus loss from contentEditable when clicking dropdown
-                    e.preventDefault();
-                  }}
-                  onClick={() => {
-                    if (option.type !== 'group-header') {
-                      mentionInput.selectOption(option);
-                    }
-                  }}
-                >
-                  {option.type === 'group-header' ? (
-                    <>
-                      {option.data.icon && (
-                        <div
-                          className="message-composer-group-icon"
-                          style={{ color: option.data.iconColor }}
-                        >
-                          <Icon name={option.data.icon as any} size="sm" />
-                        </div>
-                      )}
-                      <span className="message-composer-group-name">
-                        {option.data.groupName}
-                      </span>
-                    </>
-                  ) : option.type === 'user' ? (
-                    <>
-                      <UserAvatar
-                        userIcon={option.data.userIcon}
-                        displayName={option.data.displayName || t`Unknown User`}
-                        address={option.data.address}
-                        size={32}
-                        className="message-composer-mention-avatar"
-                      />
-                      <div className="message-composer-mention-info">
-                        <span className="message-composer-mention-name">
-                          {option.data.displayName || t`Unknown User`}
-                        </span>
-                        <span className="message-composer-mention-address">
-                          {getAddressSuffix(option.data.address)}
-                        </span>
-                      </div>
-                    </>
-                  ) : option.type === 'role' ? (
-                    <>
-                      <div
-                        className="message-composer-role-badge"
-                        style={{ backgroundColor: option.data.color }}
-                      >
-                        <Icon name="users" size="sm" />
-                      </div>
-                      <div className="message-composer-mention-info">
-                        <span className="message-composer-mention-name">
-                          {option.data.displayName}
-                        </span>
-                        <span className="message-composer-mention-role-tag">
-                          @{option.data.roleTag}
-                        </span>
-                      </div>
-                    </>
-                  ) : option.type === 'channel' ? (
-                    <>
-                      <div
-                        className="message-composer-channel-badge"
-                        style={option.data.icon && option.data.iconColor ? { color: option.data.iconColor } : undefined}
-                      >
-                        <Icon
-                          name={option.data.icon || "hashtag"}
-                          size="sm"
-                        />
-                      </div>
-                      <div className="message-composer-mention-info">
-                        <span className="message-composer-mention-name">
-                          {option.data.channelName}
-                        </span>
-                      </div>
-                    </>
-                  ) : (
-                    <>
-                      <div className="message-composer-everyone-badge">
-                        <Icon name="globe" size="sm" />
-                      </div>
-                      <div className="message-composer-mention-info">
-                        <span className="message-composer-mention-name">
-                          @everyone
-                        </span>
-                        <span className="message-composer-mention-address">
-                          {t`Notify all members`}
-                        </span>
-                      </div>
-                    </>
-                  )}
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
+        <MentionDropdown
+          isOpen={dropdownOpen}
+          filteredOptions={mentionInput.filteredOptions}
+          selectedIndex={mentionInput.selectedIndex}
+          onSelectOption={mentionInput.selectOption}
+          showEveryoneDescription={true}
+          usePortal={true}
+          portalTargetRef={ENABLE_MENTION_PILLS ? editorRef : textareaRef}
+          caretPosition={caretCoords}
+        />
 
         {/* Markdown Toolbar */}
         <MarkdownToolbar

@@ -1,0 +1,175 @@
+/* === MENTION DROPDOWN STYLES === */
+/* Shared dropdown component for mention autocomplete */
+@use '@/styles/variables' as *;
+@use '@/styles/base' as *;
+
+/* Dropdown wrapper */
+.mention-dropdown {
+  width: 250px;
+
+  @media (min-width: $screen-sm) {
+    width: 300px;
+  }
+
+  @media (min-width: $screen-lg) {
+    width: 400px;
+  }
+
+  /* Inline mode (MessageComposer): add margins */
+  &:not(.mention-dropdown--portal) {
+    margin-left: $s-3;
+    margin-bottom: $s-2;
+  }
+}
+
+/* Container with scrolling */
+.mention-dropdown__container {
+  background-color: var(--surface-0);
+  border: $border solid var(--color-border-default);
+  border-radius: $rounded-lg;
+  box-shadow: $shadow-lg;
+  max-height: 32rem; /* 320px - smaller height on small screens */
+  overflow-y: auto;
+
+  @media (min-width: $screen-xs) {
+    max-height: 40rem; /* 640px - taller on larger screens */
+  }
+}
+
+/* Individual option item */
+.mention-dropdown__item {
+  display: flex;
+  align-items: center;
+  gap: $s-3;
+  padding-left: $s-3;
+  padding-right: $s-3;
+  padding-top: $s-2;
+  padding-bottom: $s-2;
+  cursor: pointer;
+
+  &:hover {
+    background-color: var(--surface-2);
+  }
+
+  &--selected {
+    background-color: var(--color-field-option-bg-selected);
+  }
+
+  &--first {
+    border-top-left-radius: $rounded-lg;
+    border-top-right-radius: $rounded-lg;
+  }
+
+  &--last {
+    border-bottom-left-radius: $rounded-lg;
+    border-bottom-right-radius: $rounded-lg;
+  }
+}
+
+/* User avatar */
+.mention-dropdown__avatar {
+  width: $s-8;
+  height: $s-8;
+  border-radius: $rounded-full;
+  background-size: cover;
+  background-position: center;
+  flex-shrink: 0;
+}
+
+/* Info container (name + subtitle) */
+.mention-dropdown__info {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+/* Primary name/label */
+.mention-dropdown__name {
+  font-size: $text-sm;
+  font-weight: $font-medium;
+  color: var(--color-text-main);
+  @extend .truncate-base;
+}
+
+/* Secondary text (address, role tag, description) */
+.mention-dropdown__subtitle {
+  font-size: $font-label-small; // 14px mobile, 12px desktop
+  color: var(--color-text-subtle);
+  @extend .truncate-base;
+}
+
+/* Role tag (monospace) */
+.mention-dropdown__role-tag {
+  font-size: $font-label-small;
+  color: var(--color-text-subtle);
+  font-family: monospace;
+  @extend .truncate-base;
+}
+
+/* Badge styles (shared base) */
+.mention-dropdown__badge {
+  width: $s-8;
+  height: $s-8;
+  border-radius: $rounded-full;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+/* Role badge (colored background) */
+.mention-dropdown__badge--role {
+  color: white;
+  font-weight: $font-bold;
+}
+
+/* Channel badge */
+.mention-dropdown__badge--channel {
+  background-color: var(--surface-4);
+  color: var(--color-text-subtle);
+}
+
+/* @everyone badge */
+.mention-dropdown__badge--everyone {
+  background: var(--accent);
+  color: white;
+}
+
+/* Group header */
+.mention-dropdown__group-header {
+  display: flex;
+  align-items: center;
+  gap: $s-2;
+  padding-left: $s-3;
+  padding-right: $s-3;
+  padding-top: $s-3;
+  padding-bottom: $s-1;
+  background-color: var(--surface-2);
+  font-weight: 600;
+  color: var(--color-text-subtle);
+  font-size: $text-xs;
+  text-transform: uppercase;
+  letter-spacing: $tracking-wide;
+  cursor: default;
+
+  &:first-child {
+    border-top-left-radius: $rounded-lg;
+    border-top-right-radius: $rounded-lg;
+  }
+}
+
+/* Group header icon */
+.mention-dropdown__group-icon {
+  width: $s-4;
+  height: $s-4;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+/* Group header name */
+.mention-dropdown__group-name {
+  font-weight: 600;
+  flex-grow: 1;
+}

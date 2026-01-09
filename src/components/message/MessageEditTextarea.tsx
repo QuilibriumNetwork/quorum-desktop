@@ -1,9 +1,9 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { InfiniteData } from '@tanstack/react-query';
-import { Container, FlexRow, Text, Icon } from '../primitives';
-import { UserAvatar } from '../user/UserAvatar';
+import { Container, FlexRow, Text } from '../primitives';
 import { MarkdownToolbar } from './MarkdownToolbar';
+import { MentionDropdown } from './MentionDropdown';
 import { calculateToolbarPosition } from '../../utils/toolbarPositioning';
 import type { FormatFunction } from '../../utils/markdownFormatting';
 import type { Message as MessageType, PostMessage, Role, Channel } from '../../api/quorumApi';
@@ -11,12 +11,13 @@ import { t } from '@lingui/core/macro';
 import { buildMessagesKey } from '../../hooks/queries/messages/buildMessagesKey';
 import { useMessageDB } from '../context/useMessageDB';
 import { usePasskeysContext, channel as secureChannel } from '@quilibrium/quilibrium-js-sdk-channels';
-import { DefaultImages, getAddressSuffix } from '../../utils';
+import { DefaultImages } from '../../utils';
 import { isTouchDevice } from '../../utils/platform';
 import { ENABLE_MARKDOWN, ENABLE_DM_ACTION_QUEUE, ENABLE_MENTION_PILLS } from '../../config/features';
 import { createIPFSCIDRegex } from '../../utils/validation';
 import { useMentionInput, type MentionOption, useMentionPillEditor } from '../../hooks/business/mentions';
 import { extractMentionsFromText } from '../../utils/mentionUtils';
+import { getCaretCoordinates, type CaretCoordinates } from '../../utils/caretCoordinates';
 
 /**
  * DM context for action queue handlers.
@@ -74,6 +75,7 @@ export function MessageEditTextarea({
   // Edit state
   const [editText, setEditText] = useState(initialText);
   const editTextareaRef = useRef<HTMLTextAreaElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   // Mention pill editor hook (for contentEditable mode)
   const pillEditor = useMentionPillEditor({
@@ -89,6 +91,7 @@ export function MessageEditTextarea({
   // Mention autocomplete state
   const [cursorPosition, setCursorPosition] = useState(0);
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [caretCoords, setCaretCoords] = useState<CaretCoordinates | null>(null);
 
   // Handle text selection for markdown toolbar
   const handleTextareaMouseUp = useCallback(() => {
@@ -312,9 +315,12 @@ export function MessageEditTextarea({
     const newText = extractStorageText();
     setEditText(newText);
 
-    // Update cursor position for mention detection
+    // Update cursor position for mention detection and capture caret coordinates
     setTimeout(() => {
       setCursorPosition(getCursorPosition());
+      // Capture caret coordinates for dropdown positioning
+      const coords = getCaretCoordinates(editorRef.current, true);
+      setCaretCoords(coords);
     }, 0);
   }, [extractStorageText, getCursorPosition]);
 
@@ -385,6 +391,16 @@ export function MessageEditTextarea({
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []); // Only run on mount - initialText and parseMentionsAndCreatePills are stable
+
+  // Scroll edit container into view on mount (prevents being hidden by MessageComposer)
+  useEffect(() => {
+    if (containerRef.current) {
+      // Use setTimeout to ensure DOM is fully rendered
+      setTimeout(() => {
+        containerRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }, 50);
+    }
+  }, []);
 
   const handleSaveEdit = async () => {
     const editNonce = crypto.randomUUID();
@@ -633,7 +649,7 @@ export function MessageEditTextarea({
   };
 
   return (
-    <Container className="message-edit-container">
+    <Container ref={containerRef} className="message-edit-container">
       {/* Markdown Toolbar */}
       <MarkdownToolbar
         visible={showMarkdownToolbar}
@@ -641,120 +657,17 @@ export function MessageEditTextarea({
         onFormat={handleMarkdownFormat}
       />
 
-      {/* Mention Dropdown - positioned above the input */}
-      {dropdownOpen && mentionInput.filteredOptions.length > 0 && (
-        <div className="message-composer-mention-dropdown">
-          <div className="message-composer-mention-container">
-            {mentionInput.filteredOptions.map((option, index) => (
-              <div
-                key={option.type === 'user' ? option.data.address :
-                     option.type === 'role' ? option.data.roleId :
-                     option.type === 'channel' ? option.data.channelId :
-                     option.type === 'group-header' ? `group-${option.data.groupName}` :
-                     'everyone'}
-                className={`${option.type === 'group-header' ? 'message-composer-group-header' : 'message-composer-mention-item'} ${
-                  option.type !== 'group-header' && index === mentionInput.selectedIndex ? 'selected' : ''
-                } ${
-                  index === 0 ? 'first' : ''
-                } ${
-                  index === mentionInput.filteredOptions.length - 1 ? 'last' : ''
-                } ${option.type === 'role' ? 'role-item' :
-                    option.type === 'everyone' ? 'everyone-item' :
-                    option.type === 'channel' ? 'channel-item' :
-                    option.type === 'group-header' ? 'group-item' : 'user-item'}`}
-                onMouseDown={(e) => {
-                  // Prevent focus loss from contentEditable when clicking dropdown
-                  e.preventDefault();
-                }}
-                onClick={() => {
-                  if (option.type !== 'group-header') {
-                    mentionInput.selectOption(option);
-                  }
-                }}
-              >
-                {option.type === 'group-header' ? (
-                  <>
-                    {option.data.icon && (
-                      <div
-                        className="message-composer-group-icon"
-                        style={{ color: option.data.iconColor }}
-                      >
-                        <Icon name={option.data.icon as any} size="sm" />
-                      </div>
-                    )}
-                    <span className="message-composer-group-name">
-                      {option.data.groupName}
-                    </span>
-                  </>
-                ) : option.type === 'user' ? (
-                  <>
-                    <UserAvatar
-                      userIcon={option.data.userIcon}
-                      displayName={option.data.displayName || t`Unknown User`}
-                      address={option.data.address}
-                      size={32}
-                      className="message-composer-mention-avatar"
-                    />
-                    <div className="message-composer-mention-info">
-                      <span className="message-composer-mention-name">
-                        {option.data.displayName || t`Unknown User`}
-                      </span>
-                      <span className="message-composer-mention-address">
-                        {getAddressSuffix(option.data.address)}
-                      </span>
-                    </div>
-                  </>
-                ) : option.type === 'role' ? (
-                  <>
-                    <div
-                      className="message-composer-role-badge"
-                      style={{ backgroundColor: option.data.color }}
-                    >
-                      <Icon name="users" size="sm" />
-                    </div>
-                    <div className="message-composer-mention-info">
-                      <span className="message-composer-mention-name">
-                        {option.data.displayName}
-                      </span>
-                      <span className="message-composer-mention-role-tag">
-                        @{option.data.roleTag}
-                      </span>
-                    </div>
-                  </>
-                ) : option.type === 'channel' ? (
-                  <>
-                    <div
-                      className="message-composer-channel-badge"
-                      style={option.data.icon && option.data.iconColor ? { color: option.data.iconColor } : undefined}
-                    >
-                      <Icon
-                        name={option.data.icon || "hashtag"}
-                        size="sm"
-                      />
-                    </div>
-                    <div className="message-composer-mention-info">
-                      <span className="message-composer-mention-name">
-                        {option.data.channelName}
-                      </span>
-                    </div>
-                  </>
-                ) : (
-                  <>
-                    <div className="message-composer-everyone-badge">
-                      <Icon name="globe" size="sm" />
-                    </div>
-                    <div className="message-composer-mention-info">
-                      <span className="message-composer-mention-name">
-                        @everyone
-                      </span>
-                    </div>
-                  </>
-                )}
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
+      {/* Mention Dropdown - positioned above the input using Portal */}
+      <MentionDropdown
+        isOpen={dropdownOpen}
+        filteredOptions={mentionInput.filteredOptions}
+        selectedIndex={mentionInput.selectedIndex}
+        onSelectOption={mentionInput.selectOption}
+        showEveryoneDescription={false}
+        usePortal={true}
+        portalTargetRef={ENABLE_MENTION_PILLS ? editorRef : editTextareaRef}
+        caretPosition={caretCoords}
+      />
 
       {/* Edit Input - ContentEditable or Textarea */}
       {ENABLE_MENTION_PILLS ? (
