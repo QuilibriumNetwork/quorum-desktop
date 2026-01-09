@@ -15,7 +15,7 @@ import { DefaultImages, getAddressSuffix } from '../../utils';
 import { isTouchDevice } from '../../utils/platform';
 import { ENABLE_MARKDOWN, ENABLE_DM_ACTION_QUEUE, ENABLE_MENTION_PILLS } from '../../config/features';
 import { createIPFSCIDRegex } from '../../utils/validation';
-import { useMentionInput, type MentionOption } from '../../hooks/business/mentions';
+import { useMentionInput, type MentionOption, useMentionPillEditor } from '../../hooks/business/mentions';
 import { extractMentionsFromText } from '../../utils/mentionUtils';
 
 /**
@@ -74,7 +74,12 @@ export function MessageEditTextarea({
   // Edit state
   const [editText, setEditText] = useState(initialText);
   const editTextareaRef = useRef<HTMLTextAreaElement>(null);
-  const editorRef = useRef<HTMLDivElement>(null);
+
+  // Mention pill editor hook (for contentEditable mode)
+  const pillEditor = useMentionPillEditor({
+    onTextChange: setEditText,
+  });
+  const { editorRef, extractVisualText, extractStorageText, getCursorPosition, insertPill } = pillEditor;
 
   // Markdown toolbar state
   const [showMarkdownToolbar, setShowMarkdownToolbar] = useState(false);
@@ -128,61 +133,6 @@ export function MessageEditTextarea({
     },
     [editText, selectionRange]
   );
-
-  // Get cursor position in contentEditable (for mention detection)
-  const getCursorPosition = useCallback((): number => {
-    if (!editorRef.current) return 0;
-
-    const selection = window.getSelection();
-    if (!selection || selection.rangeCount === 0) return 0;
-
-    const range = selection.getRangeAt(0);
-    const preCaretRange = range.cloneRange();
-    preCaretRange.selectNodeContents(editorRef.current);
-    preCaretRange.setEnd(range.endContainer, range.endOffset);
-
-    return preCaretRange.toString().length;
-  }, []);
-
-  // Extract visual text (without IDs) from contentEditable for mention detection
-  const extractVisualText = useCallback(() => {
-    if (!editorRef.current) return '';
-    return editorRef.current.textContent || '';
-  }, []);
-
-  // Extract text with IDs (storage format) from contentEditable
-  const extractTextFromEditor = useCallback(() => {
-    if (!editorRef.current) return '';
-
-    let text = '';
-    const walk = (node: Node) => {
-      if (node.nodeType === Node.TEXT_NODE) {
-        text += node.textContent;
-      } else if (node.nodeType === Node.ELEMENT_NODE) {
-        const el = node as HTMLElement;
-        if (el.dataset?.mentionType && el.dataset?.mentionAddress) {
-          const prefix = el.dataset.mentionType === 'channel' ? '#' : '@';
-
-          // Always use legacy format (same as MessageComposer)
-          if (el.dataset.mentionType === 'role') {
-            // Roles always use @roleTag format (no brackets)
-            text += `@${el.dataset.mentionAddress}`;
-          } else if (el.dataset.mentionType === 'everyone') {
-            // @everyone always same format
-            text += '@everyone';
-          } else {
-            // Legacy format: @<address> or #<channelId>
-            text += `${prefix}<${el.dataset.mentionAddress}>`;
-          }
-        } else {
-          node.childNodes.forEach(walk);
-        }
-      }
-    };
-
-    editorRef.current.childNodes.forEach(walk);
-    return text.trim();
-  }, []);
 
   // Parse mentions from stored text and create pills (with double validation)
   const parseMentionsAndCreatePills = useCallback(
@@ -306,206 +256,6 @@ export function MessageEditTextarea({
     [message, mapSenderToUser, spaceRoles, spaceChannels]
   );
 
-  // Insert a mention pill at cursor (for contentEditable mode)
-  const insertPill = useCallback((option: MentionOption, mentionStart: number, mentionEnd: number) => {
-    if (!editorRef.current) {
-      return;
-    }
-
-    const selection = window.getSelection();
-    if (!selection || selection.rangeCount === 0) {
-      return;
-    }
-
-    // Determine pill properties based on option type
-    let type: 'user' | 'role' | 'channel' | 'everyone';
-    let displayName: string;
-    let address: string;
-
-    if (option.type === 'user') {
-      type = 'user';
-      displayName = option.data.displayName || 'Unknown User';
-      address = option.data.address;
-    } else if (option.type === 'role') {
-      type = 'role';
-      displayName = option.data.displayName;
-      address = option.data.roleTag;
-    } else if (option.type === 'channel') {
-      type = 'channel';
-      displayName = option.data.channelName || 'Unknown Channel';
-      address = option.data.channelId;
-    } else {
-      type = 'everyone';
-      displayName = 'everyone';
-      address = 'everyone';
-    }
-
-    // Create pill element
-    const pillSpan = document.createElement('span');
-    pillSpan.contentEditable = 'false';
-    pillSpan.dataset.mentionType = type;
-    pillSpan.dataset.mentionAddress = address;
-    pillSpan.dataset.mentionDisplayName = displayName;
-
-    // Use the same CSS classes as rendered mentions in Message.tsx
-    const mentionClasses = {
-      user: 'message-mentions-user',
-      role: 'message-mentions-role',
-      channel: 'message-mentions-channel',
-      everyone: 'message-mentions-everyone',
-    };
-
-    pillSpan.className = `${mentionClasses[type]} message-composer-pill`;
-    const prefix = type === 'channel' ? '#' : '@';
-    pillSpan.textContent = `${prefix}${displayName}`;
-
-    // Add click handler to remove pill
-    pillSpan.addEventListener('click', () => {
-      pillSpan.remove();
-      const newText = extractTextFromEditor();
-      setEditText(newText);
-    });
-
-    // Rebuild editor preserving existing pills (same algorithm as MessageComposer)
-    const fragment = document.createDocumentFragment();
-    let charCount = 0;
-
-    // Walk through existing content and clone nodes up to mentionStart
-    const walkAndClone = (node: Node, targetFragment: DocumentFragment) => {
-      if (charCount >= mentionEnd) return false; // Stop if we've passed the mention end
-
-      if (node.nodeType === Node.TEXT_NODE) {
-        const text = node.textContent || '';
-        const textLength = text.length;
-
-        if (charCount + textLength <= mentionStart) {
-          // This text is entirely before the mention - clone it
-          targetFragment.appendChild(node.cloneNode(true));
-          charCount += textLength;
-        } else if (charCount < mentionStart) {
-          // This text spans the mention start - split it
-          const beforeLength = mentionStart - charCount;
-          const beforeText = text.substring(0, beforeLength);
-          targetFragment.appendChild(document.createTextNode(beforeText));
-          charCount = mentionStart;
-        } else if (charCount >= mentionEnd) {
-          // This text is after the mention - will be added later
-          return false;
-        } else {
-          // This text is within the mention range - skip it
-          charCount += textLength;
-        }
-      } else if (node.nodeType === Node.ELEMENT_NODE) {
-        const el = node as HTMLElement;
-        // Check if it's a pill
-        if (el.dataset?.mentionType) {
-          const pillText = el.textContent || '';
-          const pillLength = pillText.length;
-
-          if (charCount + pillLength <= mentionStart) {
-            // Pill is before mention - clone it
-            targetFragment.appendChild(el.cloneNode(true));
-            charCount += pillLength;
-          } else if (charCount < mentionStart) {
-            // Pill spans mention start (unlikely but handle it)
-            charCount += pillLength;
-          } else if (charCount >= mentionEnd) {
-            // Pill is after mention - will be added later
-            return false;
-          } else {
-            // Pill is within mention range - skip it
-            charCount += pillLength;
-          }
-        } else {
-          // Regular element - walk its children
-          node.childNodes.forEach(child => walkAndClone(child, targetFragment));
-        }
-      }
-      return true;
-    };
-
-    // Clone content before mention
-    editorRef.current.childNodes.forEach(child => walkAndClone(child, fragment));
-
-    // Insert the new pill
-    fragment.appendChild(pillSpan);
-    const space = document.createTextNode('\u00A0');
-    fragment.appendChild(space);
-
-    // Now add content after the mention
-    charCount = 0;
-    const skipUntil = mentionEnd;
-    const addAfterMention = (node: Node, targetFragment: DocumentFragment) => {
-      if (node.nodeType === Node.TEXT_NODE) {
-        const text = node.textContent || '';
-        const textLength = text.length;
-
-        if (charCount + textLength <= skipUntil) {
-          // This text is before/at the mention end - skip it
-          charCount += textLength;
-        } else if (charCount < skipUntil) {
-          // This text spans the mention end - split it
-          const afterLength = (charCount + textLength) - skipUntil;
-          const afterText = text.substring(textLength - afterLength);
-          targetFragment.appendChild(document.createTextNode(afterText));
-          charCount += textLength;
-        } else {
-          // This text is entirely after the mention - clone it
-          targetFragment.appendChild(node.cloneNode(true));
-          charCount += textLength;
-        }
-      } else if (node.nodeType === Node.ELEMENT_NODE) {
-        const el = node as HTMLElement;
-        if (el.dataset?.mentionType) {
-          const pillText = el.textContent || '';
-          const pillLength = pillText.length;
-
-          if (charCount + pillLength <= skipUntil) {
-            // Pill is before/at mention end - skip it
-            charCount += pillLength;
-          } else {
-            // Pill is after mention - clone it
-            targetFragment.appendChild(el.cloneNode(true));
-            charCount += pillLength;
-          }
-        } else {
-          // Regular element - walk its children
-          node.childNodes.forEach(child => addAfterMention(child, targetFragment));
-        }
-      }
-    };
-
-    // Add content after mention
-    editorRef.current.childNodes.forEach(child => addAfterMention(child, fragment));
-
-    // Replace editor content
-    editorRef.current.innerHTML = '';
-    editorRef.current.appendChild(fragment);
-
-    // Update state
-    const newText = extractTextFromEditor();
-    setEditText(newText);
-
-    // Move cursor after pill
-    setTimeout(() => {
-      if (editorRef.current) {
-        const range = document.createRange();
-        const sel = window.getSelection();
-
-        // Find the text node after the pill (the one with the space)
-        const textNodeAfterPill = pillSpan.nextSibling;
-        if (textNodeAfterPill && textNodeAfterPill.nodeType === Node.TEXT_NODE) {
-          range.setStart(textNodeAfterPill, 1); // After the space
-          range.collapse(true);
-          sel?.removeAllRanges();
-          sel?.addRange(range);
-        }
-
-        editorRef.current.focus();
-      }
-    }, 0);
-  }, [extractTextFromEditor]);
-
   // Handle mention selection from dropdown
   const handleMentionSelect = useCallback(
     (option: MentionOption, mentionStart: number, mentionEnd: number) => {
@@ -559,14 +309,14 @@ export function MessageEditTextarea({
 
   // Handle input changes for contentEditable
   const handleEditorInput = useCallback(() => {
-    const newText = extractTextFromEditor();
+    const newText = extractStorageText();
     setEditText(newText);
 
     // Update cursor position for mention detection
     setTimeout(() => {
       setCursorPosition(getCursorPosition());
     }, 0);
-  }, [extractTextFromEditor, getCursorPosition]);
+  }, [extractStorageText, getCursorPosition]);
 
   // Handle key down for contentEditable (forward declaration needed)
   const handleEditorKeyDown = useCallback(
@@ -642,7 +392,7 @@ export function MessageEditTextarea({
 
     // Extract text from contentEditable (with pills) or use textarea value
     const editedTextString = ENABLE_MENTION_PILLS && editorRef.current
-      ? extractTextFromEditor()
+      ? extractStorageText()
       : editText;
 
     const editedTextArray = editedTextString.split('\n');

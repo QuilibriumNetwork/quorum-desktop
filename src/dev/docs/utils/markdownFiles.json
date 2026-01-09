@@ -228,8 +228,34 @@
         "type": "doc",
         "title": "Unified Notification System (Mentions + Replies)",
         "status": "done",
+        "ai_generated": true,
+        "reviewed_by": null,
         "created": "2026-01-09T00:00:00.000Z",
-        "updated": "2025-11-18T00:00:00.000Z"
+        "updated": "2026-01-09T09:00:00.000Z",
+        "related_docs": [
+          "mention-pills-ui-system.md"
+        ]
+      }
+    },
+    {
+      "name": "mention-pills-ui-system.md",
+      "path": ".agents/docs/features/mention-pills-ui-system.md",
+      "folder": "features",
+      "frontmatter": {
+        "type": "doc",
+        "title": "Mention Pills UI System",
+        "status": "done",
+        "ai_generated": true,
+        "reviewed_by": null,
+        "created": "2026-01-09T09:00:00.000Z",
+        "updated": "2026-01-09T09:00:00.000Z",
+        "related_docs": [
+          "mention-notification-system.md"
+        ],
+        "related_tasks": [
+          ".done/mention-pills-in-message-textarea.md",
+          ".done/mention-pills-abstraction-refactor.md"
+        ]
       }
     },
     {
@@ -1795,6 +1821,37 @@
       }
     },
     {
+      "name": "mention-pills-abstraction-refactor.md",
+      "path": ".agents/tasks/.done/mention-pills-abstraction-refactor.md",
+      "folder": ".done",
+      "frontmatter": {
+        "type": "task",
+        "title": "Mention Pills Code Abstraction & Refactoring",
+        "related_feature": "mention-pills-in-message-textarea",
+        "priority": "high",
+        "status": "done",
+        "created": "2026-01-09T00:00:00.000Z",
+        "updated": "2026-01-09T08:30:00.000Z"
+      }
+    },
+    {
+      "name": "mention-pills-in-message-textarea.md",
+      "path": ".agents/tasks/.done/mention-pills-in-message-textarea.md",
+      "folder": ".done",
+      "frontmatter": {
+        "type": "task",
+        "title": "Custom ContentEditable Mention Pills for Message Composer",
+        "status": "done",
+        "complexity": "medium",
+        "ai_generated": true,
+        "created": "2025-11-18T00:00:00.000Z",
+        "updated": "2026-01-09T00:00:00.000Z",
+        "related_report": "mention-pills-research",
+        "security_notes": "Phase 2 requires double-validation (display name lookup + message.mentions check) to prevent name-spoofing and fake mentions",
+        "reviewed_by": "feature-analyzer"
+      }
+    },
+    {
       "name": "mention-rendering-word-boundary-analysis.md",
       "path": ".agents/tasks/.done/mention-rendering-word-boundary-analysis.md",
       "folder": ".done",
@@ -2730,23 +2787,6 @@
         "complexity": "low",
         "created": "2025-01-14T00:00:00.000Z",
         "updated": "2026-01-09"
-      }
-    },
-    {
-      "name": "mention-pills-in-message-textarea.md",
-      "path": ".agents/tasks/mention-pills-in-message-textarea.md",
-      "folder": "root",
-      "frontmatter": {
-        "type": "task",
-        "title": "Custom ContentEditable Mention Pills for Message Composer",
-        "status": "in-progress",
-        "complexity": "medium",
-        "ai_generated": true,
-        "created": "2025-11-18T00:00:00.000Z",
-        "updated": "2026-01-09T00:00:00.000Z",
-        "related_report": "mention-pills-research",
-        "security_notes": "Phase 2 requires double-validation (display name lookup + message.mentions check) to prevent name-spoofing and fake mentions",
-        "reviewed_by": "feature-analyzer"
       }
     },
     {

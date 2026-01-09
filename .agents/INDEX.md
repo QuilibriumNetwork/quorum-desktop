@@ -29,6 +29,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Input & Textarea Validation Reference](docs/features/input-validation-reference.md)
 - [Invite System Documentation](docs/features/invite-system-analysis.md)
 - [Kick User System Documentation](docs/features/kick-user-system.md)
+- [Mention Pills UI System](docs/features/mention-pills-ui-system.md)
 - [Modal Save Overlay System](docs/features/modal-save-overlay.md)
 - [Modal System Documentation](docs/features/modals.md)
 - [Mute Conversation System](docs/features/mute-conversation-system.md)
@@ -140,9 +141,9 @@ This is the main index for all documentation, bug reports, and task management.
 ### Pending Tasks
 
 - [Add User Bio Field to UserSettingsModal General Tab](tasks/add-user-bio-field.md)
+- [Add YAML Frontmatter to Knowledge Base System](tasks/yaml-frontmatter-knowledge-base.md)
 - [Combined Text + Image Messages](tasks/combined-text-image-messages.md)
 - [Conversation Deletion State Synchronization](tasks/conversation-deletion-state-sync.md)
-- [Custom ContentEditable Mention Pills for Message Composer](tasks/mention-pills-in-message-textarea.md)
 - [Date Translation with Moment.js Locale Configuration](tasks/i18n-date-translation-moment-locale.md)
 - [Device Identification Improvement](tasks/device-identification-improvement.md)
 - [Fix Lingui "Uncompiled Message Detected" Warning](tasks/fix-lingui-uncompiled-message-warning.md)
@@ -259,6 +260,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [CRITICAL: Improve MessageDB Test Coverage for Refactoring Safety](tasks/.done/messagedb-unit-tests.md)
 - [Cross-Platform Component Audit](tasks/.done/components-audit.md)
 - [Cross-Platform Key Backup Implementation](tasks/.done/cross-platform-key-backup.md)
+- [Custom ContentEditable Mention Pills for Message Composer](tasks/.done/mention-pills-in-message-textarea.md)
 - [Date Separators UI Enhancement](tasks/.done/date-separators-messages-list.md)
 - [Delete Confirmation System Implementation](tasks/.done/delete-confirmation-system.md)
 - [Direct Message Deletion Feature](tasks/.done/dm-message-deletion.md)
@@ -298,6 +300,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Mention Highlight Duration - Extended to 60 Seconds](tasks/.done/mention-highlight-60s-duration.md)
 - [Mention Notification Settings - Phase 4](tasks/.done/mention-notification-settings-phase4.md)
 - [Mention Notification System - Critical Race Condition Fix](tasks/.done/mention-notification-ux-improvements.md)
+- [Mention Pills Code Abstraction & Refactoring](tasks/.done/mention-pills-abstraction-refactor.md)
 - [Mention Rendering: Word Boundary Analysis](tasks/.done/mention-rendering-word-boundary-analysis.md)
 - [Message Bookmarking Feature](tasks/.done/message-bookmarking-feature.md)
 - [Message Context Menu System](tasks/.done/message-context-menu-system.md)
@@ -367,6 +370,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Cryptographic Code Best Practices: Abstraction vs Duplication](reports/cryptographic-code-best-practices_2025-12-20.md)
 - [dnd-kit Touch Drag-and-Drop Best Practices Research](reports/dnd-kit-touch-best-practices_2025-12-11.md)
 - [File Size & Service Extraction Best Practices](reports/file-size-best-practices_2025-12-20.md)
+- [Mention Pills Feature Research & Validation](reports/mention-pills-research.md)
 - [Quorum Privacy Analysis](reports/privacy-analysis-quorum-2025-12-03.md)
 - [quorum-shared Migration Analysis](reports/quorum-shared-migration-analysis_2026-01-05.md)
 - [Security Audit: Markdown Renderer & Mentions System](reports/security-audit-markdown-mentions-2025-11-18.md)
@@ -394,4 +398,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2026-01-08 10:33:36
+**Last Updated**: 2026-01-09 16:53:13

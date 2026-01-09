@@ -3,7 +3,7 @@ import { Button, FlexRow, Tooltip, Icon, TextArea, Callout } from '../primitives
 import { t } from '@lingui/core/macro';
 import { i18n } from '@lingui/core';
 import type { AttachmentProcessingResult } from '../../utils/imageProcessing';
-import { useMentionInput, type MentionOption } from '../../hooks/business/mentions';
+import { useMentionInput, type MentionOption, useMentionPillEditor } from '../../hooks/business/mentions';
 import type { Group } from '../../api/quorumApi';
 import { getAddressSuffix } from '../../utils';
 import { useResponsiveLayout } from '../../hooks/useResponsiveLayout';
@@ -127,7 +127,6 @@ export const MessageComposer = forwardRef<
     ref
   ) => {
     const textareaRef = useRef<HTMLTextAreaElement>(null);
-    const editorRef = useRef<HTMLDivElement>(null);
     const composerRef = useRef<HTMLDivElement>(null);
     const [cursorPosition, setCursorPosition] = useState(0);
     const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -135,6 +134,12 @@ export const MessageComposer = forwardRef<
     const [isMultiline, setIsMultiline] = useState(false);
     const [responsivePlaceholder, setResponsivePlaceholder] = useState(placeholder);
     const { isDesktop } = useResponsiveLayout();
+
+    // Mention pill editor hook (for contentEditable mode)
+    const pillEditor = useMentionPillEditor({
+      onTextChange: onChange,
+    });
+    const { editorRef, extractVisualText, extractStorageText, getCursorPosition, insertPill } = pillEditor;
 
     // Markdown toolbar state
     const [showMarkdownToolbar, setShowMarkdownToolbar] = useState(false);
@@ -164,236 +169,6 @@ export const MessageComposer = forwardRef<
         }
       },
     }));
-
-    // Extract visual text from contentEditable (what user sees, for mention detection)
-    const extractVisualText = useCallback(() => {
-      if (!editorRef.current) return '';
-      return editorRef.current.textContent || '';
-    }, []);
-
-    // Extract text with IDs (storage format) from contentEditable
-    const extractTextFromEditor = useCallback(() => {
-      if (!editorRef.current) return '';
-
-      let text = '';
-      const walk = (node: Node) => {
-        if (node.nodeType === Node.TEXT_NODE) {
-          text += node.textContent;
-        } else if (node.nodeType === Node.ELEMENT_NODE) {
-          const el = node as HTMLElement;
-          if (el.dataset?.mentionType && el.dataset?.mentionAddress) {
-            const prefix = el.dataset.mentionType === 'channel' ? '#' : '@';
-
-            // Always use legacy format for new messages
-            // Pills provide the visual UX, so no need for enhanced format @[Name]<address>
-            if (el.dataset.mentionType === 'role') {
-              // Roles always use @roleTag format (no brackets)
-              text += `@${el.dataset.mentionAddress}`;
-            } else if (el.dataset.mentionType === 'everyone') {
-              // @everyone always same format
-              text += '@everyone';
-            } else {
-              // Legacy format: @<address> or #<channelId>
-              text += `${prefix}<${el.dataset.mentionAddress}>`;
-            }
-          } else {
-            node.childNodes.forEach(walk);
-          }
-        }
-      };
-      editorRef.current.childNodes.forEach(walk);
-      return text.trim();
-    }, []);
-
-    // Insert a mention pill at cursor (for contentEditable mode)
-    const insertPill = useCallback((option: MentionOption, mentionStart: number, mentionEnd: number) => {
-      if (!editorRef.current) {
-        return;
-      }
-
-      const selection = window.getSelection();
-      if (!selection || selection.rangeCount === 0) {
-        return;
-      }
-
-      // Determine pill properties based on option type
-      let type: 'user' | 'role' | 'channel' | 'everyone';
-      let displayName: string;
-      let address: string;
-
-      if (option.type === 'user') {
-        type = 'user';
-        displayName = option.data.displayName || 'Unknown User';
-        address = option.data.address;
-      } else if (option.type === 'role') {
-        type = 'role';
-        displayName = option.data.displayName;
-        address = option.data.roleTag;
-      } else if (option.type === 'channel') {
-        type = 'channel';
-        displayName = option.data.channelName || 'Unknown Channel';
-        address = option.data.channelId;
-      } else {
-        type = 'everyone';
-        displayName = 'everyone';
-        address = 'everyone';
-      }
-
-      // Create pill element
-      const pillSpan = document.createElement('span');
-      pillSpan.contentEditable = 'false';
-      pillSpan.dataset.mentionType = type;
-      pillSpan.dataset.mentionAddress = address;
-      pillSpan.dataset.mentionDisplayName = displayName;
-
-      // Use the same CSS classes as rendered mentions in Message.tsx
-      const mentionClasses = {
-        user: 'message-mentions-user',
-        role: 'message-mentions-role',
-        channel: 'message-mentions-channel',
-        everyone: 'message-mentions-everyone',
-      };
-
-      pillSpan.className = `${mentionClasses[type]} message-composer-pill`;
-      const prefix = type === 'channel' ? '#' : '@';
-      pillSpan.textContent = `${prefix}${displayName}`;
-
-      // Add click handler to remove pill
-      pillSpan.addEventListener('click', () => {
-        pillSpan.remove();
-        const newText = extractTextFromEditor();
-        onChange(newText);
-      });
-
-      // Rebuild editor preserving existing pills
-      // We need to walk the DOM and reconstruct, preserving pill elements
-      const fragment = document.createDocumentFragment();
-      let charCount = 0;
-
-      // Walk through existing content and clone nodes up to mentionStart
-      const walkAndClone = (node: Node, targetFragment: DocumentFragment) => {
-        if (charCount >= mentionEnd) return false; // Stop if we've passed the mention end
-
-        if (node.nodeType === Node.TEXT_NODE) {
-          const text = node.textContent || '';
-          const textLength = text.length;
-
-          if (charCount + textLength <= mentionStart) {
-            // This text is entirely before the mention - clone it
-            targetFragment.appendChild(node.cloneNode(true));
-            charCount += textLength;
-          } else if (charCount < mentionStart) {
-            // This text spans the mention start - split it
-            const beforeLength = mentionStart - charCount;
-            const beforeText = text.substring(0, beforeLength);
-            targetFragment.appendChild(document.createTextNode(beforeText));
-            charCount = mentionStart;
-          } else if (charCount >= mentionEnd) {
-            // This text is after the mention - will be added later
-            return false;
-          } else {
-            // This text is within the mention range - skip it
-            charCount += textLength;
-          }
-        } else if (node.nodeType === Node.ELEMENT_NODE) {
-          const el = node as HTMLElement;
-          // Check if it's a pill
-          if (el.dataset?.mentionType) {
-            const pillText = el.textContent || '';
-            const pillLength = pillText.length;
-
-            if (charCount + pillLength <= mentionStart) {
-              // Pill is before mention - clone it
-              targetFragment.appendChild(el.cloneNode(true));
-              charCount += pillLength;
-            } else if (charCount < mentionStart) {
-              // Pill spans mention start (unlikely but handle it)
-              charCount += pillLength;
-            } else if (charCount >= mentionEnd) {
-              // Pill is after mention - will be added later
-              return false;
-            } else {
-              // Pill is within mention range - skip it
-              charCount += pillLength;
-            }
-          } else {
-            // Regular element - walk its children
-            node.childNodes.forEach(child => walkAndClone(child, targetFragment));
-          }
-        }
-        return true;
-      };
-
-      // Clone content before mention
-      editorRef.current.childNodes.forEach(child => walkAndClone(child, fragment));
-
-      // Insert the new pill
-      fragment.appendChild(pillSpan);
-      const space = document.createTextNode('\u00A0');
-      fragment.appendChild(space);
-
-      // Now add content after the mention
-      charCount = 0;
-      let skipUntil = mentionEnd;
-      const addAfterMention = (node: Node, targetFragment: DocumentFragment) => {
-        if (node.nodeType === Node.TEXT_NODE) {
-          const text = node.textContent || '';
-          const textLength = text.length;
-
-          if (charCount + textLength <= skipUntil) {
-            // This text is before/at the mention end - skip it
-            charCount += textLength;
-          } else if (charCount < skipUntil) {
-            // This text spans the mention end - split it
-            const afterLength = (charCount + textLength) - skipUntil;
-            const afterText = text.substring(textLength - afterLength);
-            targetFragment.appendChild(document.createTextNode(afterText));
-            charCount += textLength;
-          } else {
-            // This text is entirely after the mention - clone it
-            targetFragment.appendChild(node.cloneNode(true));
-            charCount += textLength;
-          }
-        } else if (node.nodeType === Node.ELEMENT_NODE) {
-          const el = node as HTMLElement;
-          if (el.dataset?.mentionType) {
-            const pillText = el.textContent || '';
-            const pillLength = pillText.length;
-
-            if (charCount + pillLength <= skipUntil) {
-              // Pill is before/at mention end - skip it
-              charCount += pillLength;
-            } else {
-              // Pill is after mention - clone it
-              targetFragment.appendChild(el.cloneNode(true));
-              charCount += pillLength;
-            }
-          } else {
-            // Regular element - walk its children
-            node.childNodes.forEach(child => addAfterMention(child, targetFragment));
-          }
-        }
-      };
-
-      editorRef.current.childNodes.forEach(child => addAfterMention(child, fragment));
-
-      // Replace editor content with the fragment
-      editorRef.current.innerHTML = '';
-      editorRef.current.appendChild(fragment);
-
-      // Set cursor after the space
-      const range = document.createRange();
-      range.setStartAfter(space);
-      range.collapse(true);
-      selection.removeAllRanges();
-      selection.addRange(range);
-
-      // Focus the editor
-      editorRef.current.focus();
-
-      const newText = extractTextFromEditor();
-      onChange(newText);
-    }, [extractTextFromEditor, onChange]);
 
     // Handle mention selection (updated for users, roles, channels, and @everyone with enhanced readable format)
     const handleMentionSelect = useCallback(
@@ -460,27 +235,12 @@ export const MessageComposer = forwardRef<
       [onChange]
     );
 
-    // Get cursor position in contentEditable (character offset from start)
-    const getCursorPosition = useCallback(() => {
-      if (!editorRef.current) return 0;
-
-      const selection = window.getSelection();
-      if (!selection || selection.rangeCount === 0) return 0;
-
-      const range = selection.getRangeAt(0);
-      const preCaretRange = range.cloneRange();
-      preCaretRange.selectNodeContents(editorRef.current);
-      preCaretRange.setEnd(range.endContainer, range.endOffset);
-
-      return preCaretRange.toString().length;
-    }, []);
-
     // Handle input changes for contentEditable
     const handleEditorInput = useCallback(() => {
-      const newText = extractTextFromEditor();
+      const newText = extractStorageText();
       onChange(newText);
       setCursorPosition(getCursorPosition());
-    }, [extractTextFromEditor, onChange, getCursorPosition]);
+    }, [extractStorageText, onChange, getCursorPosition]);
 
     // Handle copy/paste for contentEditable
     const handleEditorPaste = useCallback((e: React.ClipboardEvent<HTMLDivElement>) => {
@@ -492,9 +252,9 @@ export const MessageComposer = forwardRef<
 
     const handleEditorCopy = useCallback((e: React.ClipboardEvent<HTMLDivElement>) => {
       e.preventDefault();
-      const text = extractTextFromEditor();
+      const text = extractStorageText();
       e.clipboardData.setData('text/plain', text);
-    }, [extractTextFromEditor]);
+    }, [extractStorageText]);
 
     // Handle key down for contentEditable (with pill deletion)
     const handleEditorKeyDown = useCallback(
@@ -725,7 +485,7 @@ export const MessageComposer = forwardRef<
             setShowMarkdownToolbar(false);
 
             // Update the value
-            const newText = extractTextFromEditor();
+            const newText = extractStorageText();
             onChange(newText);
           }, 0);
         } else {
@@ -741,7 +501,7 @@ export const MessageComposer = forwardRef<
           }, 0);
         }
       },
-      [value, selectionRange, onChange, extractVisualText, extractTextFromEditor]
+      [value, selectionRange, onChange, extractVisualText, extractStorageText]
     );
 
     // Manage dropdown open state based on mentionInput

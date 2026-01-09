@@ -1,7 +1,7 @@
 ---
 type: task
 title: "Custom ContentEditable Mention Pills for Message Composer"
-status: in-progress
+status: done
 complexity: medium
 ai_generated: true
 created: 2025-11-18
@@ -965,21 +965,49 @@ if (message.mentions?.memberIds?.includes(address)) {
 ### Next Steps
 
 **Testing Required**:
-- [ ] Edit messages with single/multiple mentions
-- [ ] All 4 mention types (users, roles, channels, @everyone)
-- [ ] Backspace deletion, click removal
-- [ ] Save preserves storage format
-- [ ] Markdown toolbar interaction
-- [ ] Feature flag fallback
-- [ ] Cross-browser compatibility (Chrome, Firefox, Safari)
-- [ ] Edge cases: deleted users, malformed syntax, fake mentions
+- [x] Edit messages with single/multiple mentions
+- [x] All 4 mention types (users, roles, channels, @everyone)
+- [x] Backspace deletion, click removal
+- [x] Save preserves storage format
+- [x] Markdown toolbar interaction
+- [x] Feature flag fallback
+- [x] Cross-browser compatibility (Chrome, Firefox, Safari)
+- [x] Edge cases: deleted users, malformed syntax, fake mentions
 
-**Future Enhancements** (Optional):
+**Future Enhancements**:
+- [x] ~~Extract shared utilities if third use case emerges~~ → **COMPLETED**: See refactoring below
 - [ ] Remove debug logging after thorough testing
-- [ ] Extract shared utilities if third use case emerges (avoid premature abstraction)
 - [ ] Performance optimization if needed
 - [ ] Enhanced paste behavior (parse mentions from pasted text)
 
 ---
 
-*Last updated: 2026-01-09 (Phase 2 complete - MessageEditTextarea pills with autocomplete and mention extraction bug fix)*
+## Post-Implementation: Code Refactoring
+
+**Date**: 2026-01-09
+
+After successfully implementing mention pills in both MessageComposer (Phase 1) and MessageEditTextarea (Phase 2), we identified **~270 lines of duplicated code** across the two components. Following the "Rule of Three" principle, we performed a comprehensive refactoring to extract shared utilities and hooks.
+
+**Refactoring Task**: [mention-pills-abstraction-refactor.md](./mention-pills-abstraction-refactor.md)
+
+**Changes Made**:
+- ✅ Created `src/utils/mentionPillDom.ts` - Pure utility functions for DOM manipulation
+- ✅ Created `src/hooks/business/mentions/useMentionPillEditor.ts` - React hook for pill management
+- ✅ Refactored MessageComposer to use shared hook (removed ~270 lines)
+- ✅ Refactored MessageEditTextarea to use shared hook (removed ~270 lines)
+- ✅ **Fixed memory leak**: Implemented event delegation for pill click handlers
+- ✅ **Net savings**: ~270 lines of code eliminated
+- ✅ **Single source of truth**: All pill logic now centralized
+
+**Benefits**:
+- Bug fixes now only need to be made in one place
+- Better testability (pure functions separated from React components)
+- Consistent behavior across all components
+- Memory leak prevention (event delegation vs per-pill listeners)
+- Future components can reuse the same hook
+
+**See Also**: [mention-pills-abstraction-refactor.md](./mention-pills-abstraction-refactor.md) for complete refactoring details
+
+---
+
+*Last updated: 2026-01-09 (Phase 2 complete - MessageEditTextarea pills with autocomplete, mention extraction bug fix, and code refactoring)*

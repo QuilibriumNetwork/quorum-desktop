@@ -2,8 +2,11 @@
 type: doc
 title: Unified Notification System (Mentions + Replies)
 status: done
+ai_generated: true
+reviewed_by: null
 created: 2026-01-09T00:00:00.000Z
-updated: 2025-11-18T00:00:00.000Z
+updated: 2026-01-09T09:00:00.000Z
+related_docs: ["mention-pills-ui-system.md"]
 ---
 
 # Unified Notification System (Mentions + Replies)
@@ -454,6 +457,25 @@ Parses message text and extracts:
 - **Private channels**: All channels in space are mentionable (no permission restrictions)
 - **Code blocks**: `#<channelId>` in code blocks doesn't trigger extraction
 - **Cross-space channels**: Only channels within the same space can be mentioned
+
+---
+
+## Mention Pills UI System
+
+For comprehensive documentation on the Mention Pills UI system (visual pills during message composition), see the dedicated documentation:
+
+**→ [Mention Pills UI System](./mention-pills-ui-system.md)**
+
+**Quick Overview**: The mention pills feature provides Discord/Slack-style visual pills (like `@John Doe`, `#general-discussion`) during message composition instead of raw IDs (`@<address>`, `#<channelId>`). This enhances the user experience while maintaining the robust ID-based storage system underneath.
+
+**Key Features**:
+- Visual clarity with readable names in the composer
+- Uses contentEditable with custom React hook (`useMentionPillEditor`)
+- Lightweight custom solution (~5KB total)
+- Event delegation pattern prevents memory leaks
+- Feature flag (`ENABLE_MENTION_PILLS`) for backward compatibility
+
+See the full documentation for architecture details, implementation examples, integration patterns, and performance characteristics.
 
 ---
 
