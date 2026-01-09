@@ -3,6 +3,7 @@
 
 const fs = require('fs');
 const path = require('path');
+const matter = require('gray-matter');
 
 const scanDirectory = (dirPath, baseFolder = '') => {
   const files = [];
@@ -27,10 +28,16 @@ const scanDirectory = (dirPath, baseFolder = '') => {
       const relativePath = path
         .relative(process.cwd(), fullPath)
         .replace(/\\/g, '/');
+
+      // Read file and extract frontmatter
+      const fileContent = fs.readFileSync(fullPath, 'utf-8');
+      const parsed = matter(fileContent);
+
       files.push({
         name: item,
         path: relativePath,
         folder: baseFolder || 'root',
+        frontmatter: parsed.data, // Add frontmatter data
       });
     }
   }

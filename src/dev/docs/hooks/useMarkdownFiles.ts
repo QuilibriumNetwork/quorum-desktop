@@ -1,4 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
+import { FrontmatterData } from '../types/frontmatter';
 
 export interface MarkdownFile {
   name: string;
@@ -6,9 +7,19 @@ export interface MarkdownFile {
   folder: string;
   title: string;
   slug: string; // URL-safe identifier
-  status?: 'pending' | 'done' | 'archived' | 'active' | 'solved';
+  status?: 'pending' | 'done' | 'archived' | 'active' | 'solved' | 'in-progress' | 'blocked';
   priority?: 'low' | 'medium' | 'high' | 'critical';
+  complexity?: 'low' | 'medium' | 'high' | 'very-high'; // tasks only
   content?: string;
+  frontmatter?: FrontmatterData; // Extracted YAML frontmatter
+  created?: string; // YYYY-MM-DD
+  updated?: string; // YYYY-MM-DD
+  ai_generated?: boolean;
+  reviewed_by?: 'human' | 'agent' | null;
+  related_issues?: string[];
+  related_docs?: string[];
+  related_tasks?: string[];
+  related_bugs?: string[];
 }
 
 // Import the generated data
@@ -117,14 +128,25 @@ export const useMarkdownFiles = (type: 'docs' | 'tasks' | 'bugs' | 'reports') =>
         const rawFiles = (markdownFilesData as any)[type] || [];
 
         // Process the files with titles, status, and slugs
+        // Priority: Use frontmatter if exists, otherwise fall back to detection functions
         const processedFiles: MarkdownFile[] = rawFiles.map((file: any) => ({
           name: file.name,
           path: file.path,
           folder: file.folder,
-          title: filenameToTitle(file.name),
+          title: file.frontmatter?.title || filenameToTitle(file.name),
           slug: generateSlug(file.path),
-          status: determineStatus(file.path, file.name, type),
+          status: file.frontmatter?.status || determineStatus(file.path, file.name, type),
           priority: type === 'bugs' ? determinePriority(file.name) : undefined,
+          complexity: file.frontmatter?.complexity,
+          frontmatter: file.frontmatter,
+          created: file.frontmatter?.created,
+          updated: file.frontmatter?.updated,
+          ai_generated: file.frontmatter?.ai_generated,
+          reviewed_by: file.frontmatter?.reviewed_by,
+          related_issues: file.frontmatter?.related_issues,
+          related_docs: file.frontmatter?.related_docs,
+          related_tasks: file.frontmatter?.related_tasks,
+          related_bugs: file.frontmatter?.related_bugs,
         }));
 
         setFiles(processedFiles);

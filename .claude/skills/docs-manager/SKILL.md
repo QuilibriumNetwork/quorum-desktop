@@ -133,10 +133,20 @@ Analyze the request to identify:
 
 #### For Bug Reports (`.agents/bugs/`):
 ```markdown
+---
+type: bug
+title: "[Clear Bug Description]"
+status: active
+ai_generated: true
+reviewed_by: null
+created: YYYY-MM-DD
+updated: YYYY-MM-DD
+---
+
 # [Clear Bug Description]
 
 > **⚠️ AI-Generated**: May contain errors. Verify before use.
-> **Reviewed by**: [agent-name] agent *(add only after agent review and implementation)*
+> **Reviewed by**: [agent-name] agent *(add only after agent review and implementation - also update frontmatter)*
 
 ## Symptoms
 [What goes wrong - observable behavior]
@@ -155,6 +165,7 @@ Analyze the request to identify:
 ---
 
 _Created: YYYY-MM-DD_
+_Updated: YYYY-MM-DD_
 ```
 
 #### For Tasks (`.agents/tasks/`):
@@ -162,10 +173,21 @@ Use complexity-appropriate template:
 
 **Low Complexity:**
 ```markdown
+---
+type: task
+title: "[Action-Oriented Title]"
+status: pending
+complexity: low
+ai_generated: true
+reviewed_by: null
+created: YYYY-MM-DD
+updated: YYYY-MM-DD
+---
+
 # [Action-Oriented Title]
 
 > **⚠️ AI-Generated**: May contain errors. Verify before use.
-> **Reviewed by**: [agent-name] agent *(add only after agent review and implementation)*
+> **Reviewed by**: [agent-name] agent *(add only after agent review and implementation - also update frontmatter)*
 
 **Status**: Pending
 **Complexity**: Low
@@ -197,14 +219,32 @@ Use complexity-appropriate template:
 - [ ] TypeScript passes
 - [ ] Manual testing successful
 - [ ] No console errors
+
+---
+
+_Updated: YYYY-MM-DD_
 ```
 
 **High Complexity:**
 ```markdown
+---
+type: task
+title: "[Complex Feature Title]"
+status: pending
+complexity: high
+ai_generated: true
+reviewed_by: null
+created: YYYY-MM-DD
+updated: YYYY-MM-DD
+related_issues: []  # Add if applicable, e.g., ["#14", "#15"]
+related_docs: []    # Add if applicable
+related_tasks: []   # Add if applicable
+---
+
 # [Complex Feature Title]
 
 > **⚠️ AI-Generated**: May contain errors. Verify before use.
-> **Reviewed by**: [agent-name] agent *(add only after agent review and implementation)*
+> **Reviewed by**: [agent-name] agent *(add only after agent review and implementation - also update frontmatter)*
 
 **Status**: Pending
 **Complexity**: High
@@ -279,10 +319,21 @@ Use complexity-appropriate template:
 - ✅ Reference related documentation and components
 
 ```markdown
+---
+type: doc
+title: "[Feature Name]"
+ai_generated: true
+reviewed_by: null
+created: YYYY-MM-DD
+updated: YYYY-MM-DD
+related_docs: []    # Add if applicable
+related_tasks: []   # Add if applicable
+---
+
 # [Feature Name]
 
 > **⚠️ AI-Generated**: May contain errors. Verify before use.
-> **Reviewed by**: [agent-name] agent *(add only after agent review and implementation)*
+> **Reviewed by**: [agent-name] agent *(add only after agent review and implementation - also update frontmatter)*
 
 ## Overview
 [What the feature does and why it exists - written as current state, not history]
@@ -318,10 +369,21 @@ Use complexity-appropriate template:
 
 #### For Reports (`.agents/reports/`):
 ```markdown
+---
+type: report
+title: "[Report Title]"
+ai_generated: true
+reviewed_by: null
+created: YYYY-MM-DD
+updated: YYYY-MM-DD
+related_tasks: []  # Add if applicable
+related_docs: []   # Add if applicable
+---
+
 # [Report Title]
 
 > **⚠️ AI-Generated**: May contain errors. Verify before use.
-> **Reviewed by**: [agent-name] agent *(add only after agent review and implementation)*
+> **Reviewed by**: [agent-name] agent *(add only after agent review and implementation - also update frontmatter)*
 
 ## Executive Summary
 [Brief overview of key findings and recommendations]
