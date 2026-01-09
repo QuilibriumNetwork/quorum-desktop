@@ -799,7 +799,7 @@ export const Message = React.memo(
                     <FlexRow align="center" gap="xs" className="flex-shrink-0 min-w-20 mr-4">
                       <Text className="message-timestamp">{displayedTimestmap}</Text>
                       {isEdited && (
-                        <Text variant="subtle" size="xs">
+                        <Text variant="muted" size="xs">
                           {t`(edited)`}
                         </Text>
                       )}
@@ -812,7 +812,7 @@ export const Message = React.memo(
                     <FlexRow align="center" gap="xs" className="mb-1 flex-shrink-0 min-w-20 mr-4">
                       <Text className="message-timestamp">{displayedTimestmap}</Text>
                       {isEdited && (
-                        <Text variant="subtle" size="xs">
+                        <Text variant="muted" size="xs">
                           {t`(edited)`}
                         </Text>
                       )}
