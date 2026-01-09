@@ -53,6 +53,62 @@
   }
 }
 
+/* ContentEditable styles (for mention pills) */
+.message-composer-contenteditable {
+  background-color: transparent !important;
+  border: none !important;
+  outline: none;
+  color: var(--color-text-main);
+  box-shadow: none !important;
+  box-sizing: border-box !important;
+  min-height: auto !important;
+  padding: $s-1;
+  line-height: $leading-normal;
+  font-size: $text-base;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  resize: none;
+  transition: height $duration-100 ease;
+  vertical-align: middle;
+  align-self: center;
+
+  &:focus {
+    background-color: transparent !important;
+  }
+
+  /* Placeholder for empty contentEditable */
+  &:empty:before {
+    content: attr(data-placeholder);
+    color: var(--color-text-subtle);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* Adjust placeholder vertical position on small screens only */
+  @media (max-width: $screen-md) {
+    &:empty:before {
+      transform: translateY(2px);
+    }
+  }
+
+  /* Allow more growth on larger screens */
+  @media (min-width: $screen-lg) {
+    max-height: $s-60;
+  }
+}
+
+/* Mention pills in composer (extends message-mentions-* classes with composer-specific behavior) */
+.message-composer-pill {
+  cursor: pointer;
+  user-select: none;
+
+  &:hover {
+    opacity: 0.8;
+  }
+}
+
 
 /* Composer container */
 .message-composer-container {

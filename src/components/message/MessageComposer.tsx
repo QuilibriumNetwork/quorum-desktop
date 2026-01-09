@@ -14,7 +14,7 @@ import { MarkdownToolbar } from './MarkdownToolbar';
 import type { FormatFunction } from '../../utils/markdownFormatting';
 import { toggleBold, toggleItalic, toggleStrikethrough, wrapCode } from '../../utils/markdownFormatting';
 import { calculateToolbarPosition } from '../../utils/toolbarPositioning';
-import { ENABLE_MARKDOWN } from '../../config/features';
+import { ENABLE_MARKDOWN, ENABLE_MENTION_PILLS } from '../../config/features';
 
 interface User {
   address: string;
@@ -127,6 +127,7 @@ export const MessageComposer = forwardRef<
     ref
   ) => {
     const textareaRef = useRef<HTMLTextAreaElement>(null);
+    const editorRef = useRef<HTMLDivElement>(null);
     const composerRef = useRef<HTMLDivElement>(null);
     const [cursorPosition, setCursorPosition] = useState(0);
     const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -156,13 +157,262 @@ export const MessageComposer = forwardRef<
 
     useImperativeHandle(ref, () => ({
       focus: () => {
-        textareaRef.current?.focus();
+        if (ENABLE_MENTION_PILLS) {
+          editorRef.current?.focus();
+        } else {
+          textareaRef.current?.focus();
+        }
       },
     }));
+
+    // Extract visual text from contentEditable (what user sees, for mention detection)
+    const extractVisualText = useCallback(() => {
+      if (!editorRef.current) return '';
+      return editorRef.current.textContent || '';
+    }, []);
+
+    // Extract text with IDs (storage format) from contentEditable
+    const extractTextFromEditor = useCallback(() => {
+      if (!editorRef.current) return '';
+
+      let text = '';
+      const walk = (node: Node) => {
+        if (node.nodeType === Node.TEXT_NODE) {
+          text += node.textContent;
+        } else if (node.nodeType === Node.ELEMENT_NODE) {
+          const el = node as HTMLElement;
+          if (el.dataset?.mentionType && el.dataset?.mentionAddress) {
+            const prefix = el.dataset.mentionType === 'channel' ? '#' : '@';
+            const displayName = el.dataset.mentionDisplayName;
+            const useEnhanced = el.dataset.mentionEnhanced === 'true';
+
+            // Format based on type and enhanced flag
+            if (el.dataset.mentionType === 'role') {
+              // Roles always use @roleTag format (no brackets)
+              text += `@${el.dataset.mentionAddress}`;
+            } else if (el.dataset.mentionType === 'everyone') {
+              // @everyone always same format
+              text += '@everyone';
+            } else if (useEnhanced && displayName) {
+              // Enhanced format: @[Display Name]<address> or #[Channel Name]<channelId>
+              text += `${prefix}[${displayName}]<${el.dataset.mentionAddress}>`;
+            } else {
+              // Legacy format: @<address> or #<channelId>
+              text += `${prefix}<${el.dataset.mentionAddress}>`;
+            }
+          } else {
+            node.childNodes.forEach(walk);
+          }
+        }
+      };
+      editorRef.current.childNodes.forEach(walk);
+      return text.trim();
+    }, []);
+
+    // Insert a mention pill at cursor (for contentEditable mode)
+    const insertPill = useCallback((option: MentionOption, mentionStart: number, mentionEnd: number) => {
+      if (!editorRef.current) {
+        return;
+      }
+
+      const selection = window.getSelection();
+      if (!selection || selection.rangeCount === 0) {
+        return;
+      }
+
+      // Determine pill properties based on option type
+      let type: 'user' | 'role' | 'channel' | 'everyone';
+      let displayName: string;
+      let address: string;
+      let useEnhancedFormat = false;
+
+      if (option.type === 'user') {
+        type = 'user';
+        displayName = option.data.displayName || 'Unknown User';
+        address = option.data.address;
+        useEnhancedFormat = true;
+      } else if (option.type === 'role') {
+        type = 'role';
+        displayName = option.data.displayName;
+        address = option.data.roleTag;
+      } else if (option.type === 'channel') {
+        type = 'channel';
+        displayName = option.data.channelName || 'Unknown Channel';
+        address = option.data.channelId;
+        useEnhancedFormat = true;
+      } else {
+        type = 'everyone';
+        displayName = 'everyone';
+        address = 'everyone';
+      }
+
+      // Create pill element
+      const pillSpan = document.createElement('span');
+      pillSpan.contentEditable = 'false';
+      pillSpan.dataset.mentionType = type;
+      pillSpan.dataset.mentionAddress = address;
+      pillSpan.dataset.mentionDisplayName = displayName;
+      pillSpan.dataset.mentionEnhanced = useEnhancedFormat ? 'true' : 'false';
+
+      // Use the same CSS classes as rendered mentions in Message.tsx
+      const mentionClasses = {
+        user: 'message-mentions-user',
+        role: 'message-mentions-role',
+        channel: 'message-mentions-channel',
+        everyone: 'message-mentions-everyone',
+      };
+
+      pillSpan.className = `${mentionClasses[type]} message-composer-pill`;
+      const prefix = type === 'channel' ? '#' : '@';
+      pillSpan.textContent = `${prefix}${displayName}`;
+
+      // Add click handler to remove pill
+      pillSpan.addEventListener('click', () => {
+        pillSpan.remove();
+        const newText = extractTextFromEditor();
+        onChange(newText);
+      });
+
+      // Rebuild editor preserving existing pills
+      // We need to walk the DOM and reconstruct, preserving pill elements
+      const fragment = document.createDocumentFragment();
+      let charCount = 0;
+
+      // Walk through existing content and clone nodes up to mentionStart
+      const walkAndClone = (node: Node, targetFragment: DocumentFragment) => {
+        if (charCount >= mentionEnd) return false; // Stop if we've passed the mention end
+
+        if (node.nodeType === Node.TEXT_NODE) {
+          const text = node.textContent || '';
+          const textLength = text.length;
+
+          if (charCount + textLength <= mentionStart) {
+            // This text is entirely before the mention - clone it
+            targetFragment.appendChild(node.cloneNode(true));
+            charCount += textLength;
+          } else if (charCount < mentionStart) {
+            // This text spans the mention start - split it
+            const beforeLength = mentionStart - charCount;
+            const beforeText = text.substring(0, beforeLength);
+            targetFragment.appendChild(document.createTextNode(beforeText));
+            charCount = mentionStart;
+          } else if (charCount >= mentionEnd) {
+            // This text is after the mention - will be added later
+            return false;
+          } else {
+            // This text is within the mention range - skip it
+            charCount += textLength;
+          }
+        } else if (node.nodeType === Node.ELEMENT_NODE) {
+          const el = node as HTMLElement;
+          // Check if it's a pill
+          if (el.dataset?.mentionType) {
+            const pillText = el.textContent || '';
+            const pillLength = pillText.length;
+
+            if (charCount + pillLength <= mentionStart) {
+              // Pill is before mention - clone it
+              targetFragment.appendChild(el.cloneNode(true));
+              charCount += pillLength;
+            } else if (charCount < mentionStart) {
+              // Pill spans mention start (unlikely but handle it)
+              charCount += pillLength;
+            } else if (charCount >= mentionEnd) {
+              // Pill is after mention - will be added later
+              return false;
+            } else {
+              // Pill is within mention range - skip it
+              charCount += pillLength;
+            }
+          } else {
+            // Regular element - walk its children
+            node.childNodes.forEach(child => walkAndClone(child, targetFragment));
+          }
+        }
+        return true;
+      };
+
+      // Clone content before mention
+      editorRef.current.childNodes.forEach(child => walkAndClone(child, fragment));
+
+      // Insert the new pill
+      fragment.appendChild(pillSpan);
+      const space = document.createTextNode('\u00A0');
+      fragment.appendChild(space);
+
+      // Now add content after the mention
+      charCount = 0;
+      let skipUntil = mentionEnd;
+      const addAfterMention = (node: Node, targetFragment: DocumentFragment) => {
+        if (node.nodeType === Node.TEXT_NODE) {
+          const text = node.textContent || '';
+          const textLength = text.length;
+
+          if (charCount + textLength <= skipUntil) {
+            // This text is before/at the mention end - skip it
+            charCount += textLength;
+          } else if (charCount < skipUntil) {
+            // This text spans the mention end - split it
+            const afterLength = (charCount + textLength) - skipUntil;
+            const afterText = text.substring(textLength - afterLength);
+            targetFragment.appendChild(document.createTextNode(afterText));
+            charCount += textLength;
+          } else {
+            // This text is entirely after the mention - clone it
+            targetFragment.appendChild(node.cloneNode(true));
+            charCount += textLength;
+          }
+        } else if (node.nodeType === Node.ELEMENT_NODE) {
+          const el = node as HTMLElement;
+          if (el.dataset?.mentionType) {
+            const pillText = el.textContent || '';
+            const pillLength = pillText.length;
+
+            if (charCount + pillLength <= skipUntil) {
+              // Pill is before/at mention end - skip it
+              charCount += pillLength;
+            } else {
+              // Pill is after mention - clone it
+              targetFragment.appendChild(el.cloneNode(true));
+              charCount += pillLength;
+            }
+          } else {
+            // Regular element - walk its children
+            node.childNodes.forEach(child => addAfterMention(child, targetFragment));
+          }
+        }
+      };
+
+      editorRef.current.childNodes.forEach(child => addAfterMention(child, fragment));
+
+      // Replace editor content with the fragment
+      editorRef.current.innerHTML = '';
+      editorRef.current.appendChild(fragment);
+
+      // Set cursor after the space
+      const range = document.createRange();
+      range.setStartAfter(space);
+      range.collapse(true);
+      selection.removeAllRanges();
+      selection.addRange(range);
+
+      // Focus the editor
+      editorRef.current.focus();
+
+      const newText = extractTextFromEditor();
+      onChange(newText);
+    }, [extractTextFromEditor, onChange]);
 
     // Handle mention selection (updated for users, roles, channels, and @everyone with enhanced readable format)
     const handleMentionSelect = useCallback(
       (option: MentionOption, mentionStart: number, mentionEnd: number) => {
+        // If mention pills are enabled, use contentEditable pill insertion
+        if (ENABLE_MENTION_PILLS) {
+          insertPill(option, mentionStart, mentionEnd);
+          return;
+        }
+
+        // Otherwise, use the original text-based insertion
         let insertText: string;
 
         if (option.type === 'user') {
@@ -198,12 +448,12 @@ export const MessageComposer = forwardRef<
           textareaRef.current?.focus();
         }, 0);
       },
-      [value, onChange]
+      [value, onChange, insertPill]
     );
 
     // Use mention input hook (now supports roles and grouped channels)
     const mentionInput = useMentionInput({
-      textValue: value,
+      textValue: ENABLE_MENTION_PILLS ? extractVisualText() : value,
       cursorPosition,
       users,
       roles,
@@ -211,6 +461,7 @@ export const MessageComposer = forwardRef<
       canUseEveryone,
       onMentionSelect: handleMentionSelect,
     });
+
 
     // Track cursor position
     const handleTextareaChange = useCallback(
@@ -223,8 +474,92 @@ export const MessageComposer = forwardRef<
       [onChange]
     );
 
-    // Handle key down with mention support and markdown shortcuts
-    const handleKeyDown = useCallback(
+    // Get cursor position in contentEditable (character offset from start)
+    const getCursorPosition = useCallback(() => {
+      if (!editorRef.current) return 0;
+
+      const selection = window.getSelection();
+      if (!selection || selection.rangeCount === 0) return 0;
+
+      const range = selection.getRangeAt(0);
+      const preCaretRange = range.cloneRange();
+      preCaretRange.selectNodeContents(editorRef.current);
+      preCaretRange.setEnd(range.endContainer, range.endOffset);
+
+      return preCaretRange.toString().length;
+    }, []);
+
+    // Handle input changes for contentEditable
+    const handleEditorInput = useCallback(() => {
+      const newText = extractTextFromEditor();
+      onChange(newText);
+      setCursorPosition(getCursorPosition());
+    }, [extractTextFromEditor, onChange, getCursorPosition]);
+
+    // Handle copy/paste for contentEditable
+    const handleEditorPaste = useCallback((e: React.ClipboardEvent<HTMLDivElement>) => {
+      e.preventDefault();
+      const text = e.clipboardData.getData('text/plain');
+      document.execCommand('insertText', false, text);
+      handleEditorInput();
+    }, [handleEditorInput]);
+
+    const handleEditorCopy = useCallback((e: React.ClipboardEvent<HTMLDivElement>) => {
+      e.preventDefault();
+      const text = extractTextFromEditor();
+      e.clipboardData.setData('text/plain', text);
+    }, [extractTextFromEditor]);
+
+    // Handle key down for contentEditable (with pill deletion)
+    const handleEditorKeyDown = useCallback(
+      (e: React.KeyboardEvent<HTMLDivElement>) => {
+        // Let mention dropdown handle keys first
+        if (mentionInput.handleKeyDown(e as any)) {
+          return;
+        }
+
+        // Handle backspace to delete pills
+        if (e.key === 'Backspace') {
+          const selection = window.getSelection();
+          if (!selection || selection.rangeCount === 0) return;
+
+          const range = selection.getRangeAt(0);
+          if (!range.collapsed) return; // Let default behavior handle text selection
+
+          // Check if cursor is right after a pill
+          const { startContainer, startOffset } = range;
+
+          if (startContainer.nodeType === Node.TEXT_NODE && startOffset === 0) {
+            const prevSibling = startContainer.previousSibling;
+            if (prevSibling && (prevSibling as HTMLElement).dataset?.mentionType) {
+              e.preventDefault();
+              prevSibling.remove();
+              handleEditorInput();
+              return;
+            }
+          } else if (startContainer.nodeType === Node.ELEMENT_NODE) {
+            const prevChild = (startContainer as HTMLElement).childNodes[startOffset - 1];
+            if (prevChild && (prevChild as HTMLElement).dataset?.mentionType) {
+              e.preventDefault();
+              prevChild.remove();
+              handleEditorInput();
+              return;
+            }
+          }
+        }
+
+        // Pass to original handler (cast to expected type)
+        onKeyDown(e as any);
+        // Update cursor position
+        setTimeout(() => {
+          setCursorPosition(getCursorPosition());
+        }, 0);
+      },
+      [mentionInput, onKeyDown, handleEditorInput, getCursorPosition]
+    );
+
+    // Handle key down for textarea (original implementation)
+    const handleTextareaKeyDown = useCallback(
       (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
         // Let mention dropdown handle keys first
         if (mentionInput.handleKeyDown(e)) {
@@ -290,7 +625,7 @@ export const MessageComposer = forwardRef<
       setCursorPosition(textareaRef.current?.selectionStart || 0);
     }, []);
 
-    // Handle text selection for markdown toolbar
+    // Handle text selection for markdown toolbar (textarea version)
     const handleTextareaMouseUp = useCallback(() => {
       // Skip markdown toolbar if feature is disabled or on touch devices
       if (!ENABLE_MARKDOWN || isTouchDevice()) return;
@@ -318,20 +653,109 @@ export const MessageComposer = forwardRef<
       }
     }, []);
 
+    // Handle text selection for markdown toolbar (contentEditable version)
+    const handleEditorMouseUp = useCallback(() => {
+      // Skip markdown toolbar if feature is disabled or on touch devices
+      if (!ENABLE_MARKDOWN || isTouchDevice()) return;
+
+      const editor = editorRef.current;
+      if (!editor) return;
+
+      const selection = window.getSelection();
+      if (!selection || selection.rangeCount === 0) {
+        setShowMarkdownToolbar(false);
+        return;
+      }
+
+      const range = selection.getRangeAt(0);
+      const selectedText = range.toString();
+
+      if (selectedText.length > 0) {
+        // Text is selected - get character positions
+        const preCaretRange = range.cloneRange();
+        preCaretRange.selectNodeContents(editor);
+        preCaretRange.setEnd(range.startContainer, range.startOffset);
+        const start = preCaretRange.toString().length;
+        const end = start + selectedText.length;
+
+        setSelectionRange({ start, end });
+
+        // Calculate position using native Selection API (works for contentEditable)
+        const rangeRect = range.getBoundingClientRect();
+        const editorRect = editor.getBoundingClientRect();
+
+        // Calculate centered position above the selection
+        const TOOLBAR_OFFSET = 52;
+        const TOOLBAR_WIDTH = 240;
+        const VIEWPORT_PADDING = 16;
+
+        const selectionCenterX = rangeRect.left + (rangeRect.width / 2);
+        let toolbarLeft = selectionCenterX - (TOOLBAR_WIDTH / 2);
+
+        // Clamp to viewport boundaries
+        const maxLeft = window.innerWidth - TOOLBAR_WIDTH - VIEWPORT_PADDING;
+        toolbarLeft = Math.max(VIEWPORT_PADDING, Math.min(toolbarLeft, maxLeft));
+
+        const toolbarTop = rangeRect.top - TOOLBAR_OFFSET;
+
+        // Only show if there's enough space above
+        if (toolbarTop > 10) {
+          setToolbarPosition({ top: toolbarTop, left: toolbarLeft });
+          setShowMarkdownToolbar(true);
+        } else {
+          setShowMarkdownToolbar(false);
+        }
+      } else {
+        setShowMarkdownToolbar(false);
+      }
+    }, []);
+
     // Handle markdown formatting
     const handleMarkdownFormat = useCallback(
       (formatFn: FormatFunction) => {
-        const result = formatFn(value, selectionRange.start, selectionRange.end);
-        onChange(result.newText);
+        if (ENABLE_MENTION_PILLS && editorRef.current) {
+          // For contentEditable: use visual text for formatting
+          const visualText = extractVisualText();
+          const result = formatFn(visualText, selectionRange.start, selectionRange.end);
 
-        // Restore selection and focus (same pattern as handleMentionSelect)
-        setTimeout(() => {
-          textareaRef.current?.setSelectionRange(result.newStart, result.newEnd);
-          textareaRef.current?.focus();
-          setShowMarkdownToolbar(false);
-        }, 0);
+          // For now, we'll just insert the formatted text as plain text
+          // TODO: A more sophisticated approach would preserve pills while formatting
+          editorRef.current.textContent = result.newText;
+
+          // Restore selection
+          setTimeout(() => {
+            const selection = window.getSelection();
+            if (selection && editorRef.current) {
+              const range = document.createRange();
+              const textNode = editorRef.current.firstChild;
+              if (textNode && textNode.nodeType === Node.TEXT_NODE) {
+                range.setStart(textNode, Math.min(result.newStart, textNode.textContent?.length || 0));
+                range.setEnd(textNode, Math.min(result.newEnd, textNode.textContent?.length || 0));
+                selection.removeAllRanges();
+                selection.addRange(range);
+              }
+              editorRef.current.focus();
+            }
+            setShowMarkdownToolbar(false);
+
+            // Update the value
+            const newText = extractTextFromEditor();
+            onChange(newText);
+          }, 0);
+        } else {
+          // For textarea: original behavior
+          const result = formatFn(value, selectionRange.start, selectionRange.end);
+          onChange(result.newText);
+
+          // Restore selection and focus (same pattern as handleMentionSelect)
+          setTimeout(() => {
+            textareaRef.current?.setSelectionRange(result.newStart, result.newEnd);
+            textareaRef.current?.focus();
+            setShowMarkdownToolbar(false);
+          }, 0);
+        }
       },
-      [value, selectionRange, onChange]
+      [value, selectionRange, onChange, extractVisualText, extractTextFromEditor]
     );
 
     // Manage dropdown open state based on mentionInput
@@ -344,29 +768,41 @@ export const MessageComposer = forwardRef<
       setIsTyping(value.length > 0);
     }, [value]);
 
-    // Auto-resize textarea based on content
+    // Update cursor position when contentEditable changes (for mention detection)
     useEffect(() => {
-      if (textareaRef.current) {
-        const textarea = textareaRef.current;
+      if (ENABLE_MENTION_PILLS && editorRef.current) {
+        const updateCursor = () => {
+          setCursorPosition(getCursorPosition());
+        };
 
-        // For empty textarea, use fixed height that matches button height
+        // Update cursor on selection change
+        document.addEventListener('selectionchange', updateCursor);
+        return () => document.removeEventListener('selectionchange', updateCursor);
+      }
+    }, [getCursorPosition]);
+
+    // Auto-resize textarea/editor based on content
+    useEffect(() => {
+      const element = ENABLE_MENTION_PILLS ? editorRef.current : textareaRef.current;
+      if (element) {
+        // For empty content, use fixed height that matches button height
         if (!value || value.trim() === '') {
-          textarea.style.height = '32px'; // With box-sizing: border-box, this includes padding
-          textarea.style.overflowY = 'hidden';
+          element.style.height = '32px'; // With box-sizing: border-box, this includes padding
+          element.style.overflowY = 'hidden';
           // Delay multiline state change to allow CSS height transition to complete
-          // This prevents the pill shape from appearing while textarea is still visually tall
+          // This prevents the pill shape from appearing while element is still visually tall
           setTimeout(() => setIsMultiline(false), 100);
           return;
         }
 
         // For content, calculate based on scrollHeight
-        textarea.style.height = 'auto';
-        const scrollHeight = textarea.scrollHeight;
+        element.style.height = 'auto';
+        const scrollHeight = element.scrollHeight;
         const maxHeight = isDesktop ? 240 : 100;
 
         const newHeight = Math.min(scrollHeight, maxHeight);
-        textarea.style.height = `${newHeight}px`;
-        textarea.style.overflowY = scrollHeight > maxHeight ? 'auto' : 'hidden';
+        element.style.height = `${newHeight}px`;
+        element.style.overflowY = scrollHeight > maxHeight ? 'auto' : 'hidden';
 
         // Update multiline state based on height - consider multiline if height > 32px (single line)
         setIsMultiline(newHeight > 32);
@@ -524,7 +960,15 @@ export const MessageComposer = forwardRef<
                       option.type === 'everyone' ? 'everyone-item' :
                       option.type === 'channel' ? 'channel-item' :
                       option.type === 'group-header' ? 'group-item' : 'user-item'}`}
-                  onClick={() => option.type !== 'group-header' && mentionInput.selectOption(option)}
+                  onMouseDown={(e) => {
+                    // Prevent focus loss from contentEditable when clicking dropdown
+                    e.preventDefault();
+                  }}
+                  onClick={() => {
+                    if (option.type !== 'group-header') {
+                      mentionInput.selectOption(option);
+                    }
+                  }}
                 >
                   {option.type === 'group-header' ? (
                     <>
@@ -640,21 +1084,36 @@ export const MessageComposer = forwardRef<
           </Tooltip>
 
           <div className="message-composer-textarea-container">
-            <TextArea
-              ref={textareaRef}
-              value={value}
-              onChange={handleTextareaChange}
-              onKeyDown={handleKeyDown}
-              onSelect={handleSelect}
-              onMouseUp={handleTextareaMouseUp}
-              placeholder={responsivePlaceholder}
-              autoResize={false}
-              rows={1}
-              variant="filled"
-              noFocusStyle={true}
-              resize={false}
-              className="message-composer-textarea"
-            />
+            {ENABLE_MENTION_PILLS ? (
+              <div
+                ref={editorRef}
+                contentEditable
+                onInput={handleEditorInput}
+                onKeyDown={handleEditorKeyDown}
+                onPaste={handleEditorPaste}
+                onCopy={handleEditorCopy}
+                onMouseUp={handleEditorMouseUp}
+                className="message-composer-contenteditable"
+                data-placeholder={responsivePlaceholder}
+                suppressContentEditableWarning
+              />
+            ) : (
+              <TextArea
+                ref={textareaRef}
+                value={value}
+                onChange={handleTextareaChange}
+                onKeyDown={handleTextareaKeyDown}
+                onSelect={handleSelect}
+                onMouseUp={handleTextareaMouseUp}
+                placeholder={responsivePlaceholder}
+                autoResize={false}
+                rows={1}
+                variant="filled"
+                noFocusStyle={true}
+                resize={false}
+                className="message-composer-textarea"
+              />
+            )}
           </div>
 
           {hasStickers && (

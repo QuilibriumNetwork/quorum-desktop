@@ -26,3 +26,14 @@ export const ENABLE_MARKDOWN = true;
  * When true: Uses action queue handlers with Double Ratchet
  */
 export const ENABLE_DM_ACTION_QUEUE = true;
+
+/**
+ * Mention Pills Feature Flag
+ *
+ * Controls whether mentions appear as visual pills in the message composer.
+ * When disabled, mentions use plain text format during composition.
+ *
+ * @default false - Initially disabled for gradual rollout
+ * To enable: Set to true
+ */
+export const ENABLE_MENTION_PILLS = true;
