@@ -31,7 +31,7 @@ msgid "No Role - {count}"
 msgstr "Không có vai trò - {count}"
 
 #. js-lingui-explicit-id
-#: src/components/space/Channel.tsx:984
+#: src/components/space/Channel.tsx:989
 msgid "Send a message to #{channel_name}"
 msgstr "Gửi tin nhắn đến #{channel_name}"
 
@@ -41,24 +41,9 @@ msgid "Your profile image size must be {maxFileSize} or less and must be a PNG, 
 msgstr "Kích thước hình ảnh hồ sơ của bạn phải là {maxFileSize} hoặc nhỏ hơn và phải có phần mở rộng tệp PNG, JPG hoặc JPEG."
 
 #. js-lingui-explicit-id
-#: src/components/message/MessageComposer.tsx:452
+#: src/components/message/MessageComposer.tsx:646
 msgid "Replying to"
 msgstr "Đang trả lời"
-
-#. js-lingui-explicit-id
-#: src/components/message/Message.tsx:325
-msgid "has joined"
-msgstr "đã tham gia"
-
-#. js-lingui-explicit-id
-#: src/components/message/Message.tsx:333
-msgid "has left"
-msgstr "đã rời khỏi"
-
-#. js-lingui-explicit-id
-#: src/components/message/Message.tsx:341
-msgid "has been kicked"
-msgstr "đã bị đá"
 
 #. js-lingui-explicit-id
 #: src/components/message/MessageComposer.native.tsx:162
@@ -69,6 +54,21 @@ msgstr "Không thể xử lý hình ảnh"
 #: src/components/message/MessageComposer.native.tsx:315
 msgid "Replying to {user}"
 msgstr "Đang trả lời {user}"
+
+#. js-lingui-explicit-id
+#: src/components/message/Message.tsx:337
+msgid "has joined"
+msgstr "đã tham gia"
+
+#. js-lingui-explicit-id
+#: src/components/message/Message.tsx:345
+msgid "has left"
+msgstr "đã rời khỏi"
+
+#. js-lingui-explicit-id
+#: src/components/message/Message.tsx:353
+msgid "has been kicked"
+msgstr "đã bị đá"
 
 #. js-lingui-explicit-id
 #: src/components/direct/DirectMessage.tsx:854
@@ -85,8 +85,8 @@ msgstr "cho các bản cập nhật."
 #~ msgid "'everyone' is a reserved name."
 #~ msgstr "'mọi người' là một tên đã được đặt trước."
 
-#: src/components/message/Message.tsx:804
-#: src/components/message/Message.tsx:817
+#: src/components/message/Message.tsx:803
+#: src/components/message/Message.tsx:816
 msgid "(edited)"
 msgstr "(đã chỉnh sửa)"
 
@@ -280,12 +280,12 @@ msgstr "0 giờ"
 msgid "1 device marked for removal. Click \"Save Changes\" to confirm."
 msgstr "1 thiết bị đã được đánh dấu để xóa. Nhấn \"Lưu thay đổi\" để xác nhận."
 
-#: src/services/MessageService.ts:3666
+#: src/services/MessageService.ts:3668
 #: src/services/NotificationService.ts:305
 msgid "a role"
 msgstr "một vai trò"
 
-#: src/services/MessageService.ts:3676
+#: src/services/MessageService.ts:3678
 #: src/services/NotificationService.ts:304
 #: src/services/NotificationService.ts:317
 msgid "a space"
@@ -336,7 +336,7 @@ msgstr "Thêm Nhóm"
 msgid "Add Role"
 msgstr "Thêm Vai trò"
 
-#: src/components/message/MessageComposer.tsx:661
+#: src/components/message/MessageComposer.tsx:878
 msgid "add sticker"
 msgstr "thêm nhãn dán"
 
@@ -481,7 +481,7 @@ msgstr "Bạn có chắc chắn muốn bỏ ghim tin nhắn này không?"
 #~ msgid "As a space owner, you need to assign yourself a role with delete permissions to delete other users' messages. <0><1>Learn more</1></0>"
 #~ msgstr "Là chủ không gian, bạn cần gán cho mình một vai trò có quyền xóa để xóa tin nhắn của người dùng khác. <0><1>Tìm hiểu thêm</1></0>"
 
-#: src/components/message/MessageComposer.tsx:628
+#: src/components/message/MessageComposer.tsx:830
 msgid "attach image"
 msgstr "đính kèm hình ảnh"
 
@@ -534,8 +534,8 @@ msgstr "Tin nhắn dấu trang"
 msgid "Bookmark messages to save them for later reference"
 msgstr "Tin nhắn dấu trang để lưu lại cho tham khảo sau"
 
-#: src/components/message/Message.tsx:771
-#: src/components/message/Message.tsx:849
+#: src/components/message/Message.tsx:770
+#: src/components/message/Message.tsx:848
 msgid "Bookmarked"
 msgstr "Đã đánh dấu"
 
@@ -548,7 +548,7 @@ msgid "Bookmarked sticker"
 msgstr "Nhãn dán đã đánh dấu"
 
 #: src/components/direct/DirectMessage.tsx:703
-#: src/components/space/Channel.tsx:825
+#: src/components/space/Channel.tsx:835
 msgid "Bookmarks"
 msgstr "Dấu trang"
 
@@ -565,7 +565,6 @@ msgstr "Máy ảnh"
 msgid "Camera permission is required to take photos"
 msgstr "Cần có quyền truy cập máy ảnh để chụp ảnh"
 
-#: src/components/message/MessageEditTextarea.tsx:384
 #: src/components/modals/ConfirmationModal.native.tsx:27
 #: src/components/modals/ConfirmationModal.tsx:31
 #: src/components/modals/ConversationSettingsModal.tsx:67
@@ -580,6 +579,10 @@ msgstr "Cần có quyền truy cập máy ảnh để chụp ảnh"
 #: src/hooks/business/user/useFileUpload.native.ts:48
 msgid "Cancel"
 msgstr "Hủy"
+
+#: src/components/message/MessageEditTextarea.tsx:813
+msgid "CANCEL"
+msgstr ""
 
 #: src/components/modals/SpaceSettingsModal/Danger.tsx:41
 msgid "Cannot delete Space with channels. Please delete all channels first."
@@ -610,7 +613,7 @@ msgstr "Biểu tượng Kênh"
 msgid "Channel Managers"
 msgstr "Quản lý Kênh"
 
-#: src/components/space/Channel.tsx:1198
+#: src/components/space/Channel.tsx:1201
 msgid "Channel members"
 msgstr "Thành viên kênh"
 
@@ -830,11 +833,11 @@ msgstr "Tạo Tài Khoản Mới"
 msgid "Create roles in Space Settings first."
 msgstr "Tạo vai trò trong Cài đặt Space trước."
 
-#: src/components/modals/CreateSpaceModal.tsx:269
+#: src/components/modals/CreateSpaceModal.tsx:272
 msgid "Create Space"
 msgstr "Tạo Không Gian"
 
-#: src/components/modals/CreateSpaceModal.tsx:273
+#: src/components/modals/CreateSpaceModal.tsx:276
 msgid "Creating Space..."
 msgstr "Đang tạo Không Gian..."
 
@@ -1153,6 +1156,10 @@ msgstr "Nhập cả ID Không gian và Khóa cấu hình để xác thực"
 msgid "Enter details manually"
 msgstr "Nhập chi tiết thủ công"
 
+#: src/components/message/MessageEditTextarea.tsx:815
+msgid "Enter to"
+msgstr ""
+
 #: src/components/context/WebsocketProvider.tsx:123
 msgid "Error processing inbound queue:"
 msgstr "Lỗi xử lý hàng đợi đến:"
@@ -1182,6 +1189,10 @@ msgstr "Lỗi khi yêu cầu quyền thông báo:"
 msgid "Error showing notification:"
 msgstr "Lỗi khi hiển thị thông báo:"
 
+#: src/components/message/MessageEditTextarea.tsx:800
+msgid "Esc to"
+msgstr ""
+
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:273
 msgid "Existing Conversations"
 msgstr "Các cuộc trò chuyện hiện có"
@@ -1205,7 +1216,7 @@ msgid "Failed to create space. Please try again."
 msgstr "Tạo không gian thất bại. Vui lòng thử lại."
 
 #: src/components/context/MessageDB.bak.tsx:985
-#: src/services/MessageService.ts:2116
+#: src/services/MessageService.ts:2118
 msgid "Failed to decrypt message with any known state"
 msgstr "Không thể giải mã tin nhắn với bất kỳ trạng thái nào đã biết"
 
@@ -1272,7 +1283,7 @@ msgstr "Không thể chọn tài liệu"
 msgid "Failed to send invite. Please try again."
 msgstr "Gửi lời mời không thành công. Vui lòng thử lại."
 
-#: src/components/message/Message.tsx:1246
+#: src/components/message/Message.tsx:1251
 msgid "Failed to send."
 msgstr "Gửi không thành công."
 
@@ -1526,7 +1537,7 @@ msgid "Inline Code"
 msgstr "Mã nội tuyến"
 
 #: src/components/context/MessageDB.bak.tsx:1185
-#: src/services/MessageService.ts:2402
+#: src/services/MessageService.ts:2404
 msgid "invalid address for signature"
 msgstr "địa chỉ không hợp lệ cho chữ ký"
 
@@ -1616,7 +1627,7 @@ msgstr "Đang tham gia..."
 msgid "Jump"
 msgstr "Nhảy"
 
-#: src/components/message/MessageList.tsx:577
+#: src/components/message/MessageList.tsx:598
 msgid "Jump to present"
 msgstr "Nhảy đến hiện tại"
 
@@ -1700,7 +1711,7 @@ msgstr "Ánh sáng"
 msgid "Loading bookmarks..."
 msgstr "Đang tải dấu trang..."
 
-#: src/components/message/MessageList.tsx:588
+#: src/components/message/MessageList.tsx:609
 msgid "Loading message..."
 msgstr "Đang tải tin nhắn..."
 
@@ -1781,7 +1792,7 @@ msgstr "Đánh dấu tất cả là đã đọc"
 msgid "Mark All as Read"
 msgstr "Đánh dấu tất cả là đã đọc"
 
-#: src/components/space/Channel.tsx:851
+#: src/components/space/Channel.tsx:861
 msgid "Members List"
 msgstr "Danh sách thành viên"
 
@@ -1801,21 +1812,21 @@ msgstr "Hành động tin nhắn"
 msgid "Message deleted"
 msgstr "Tin nhắn đã bị xóa"
 
-#: src/components/message/Message.tsx:730
-#: src/components/message/Message.tsx:787
-#: src/components/message/Message.tsx:865
+#: src/components/message/Message.tsx:729
+#: src/components/message/Message.tsx:786
+#: src/components/message/Message.tsx:864
 msgid "Message does not have a valid signature, this may not be from the sender"
 msgstr "Tin nhắn không có chữ ký hợp lệ, điều này có thể không phải từ người gửi"
 
-#: src/components/message/MessageComposer.tsx:147
+#: src/components/message/MessageComposer.tsx:153
 msgid "Message..."
 msgstr "Tin nhắn..."
 
-#: src/components/message/MessageComposer.tsx:678
+#: src/components/message/MessageComposer.tsx:895
 msgid "Messages are NOT signed!"
 msgstr "Tin nhắn KHÔNG được ký!"
 
-#: src/components/message/MessageComposer.tsx:679
+#: src/components/message/MessageComposer.tsx:896
 msgid "Messages are signed!"
 msgstr "Tin nhắn đã được ký!"
 
@@ -1884,7 +1895,7 @@ msgid "My Account"
 msgstr "Tài Khoản Của Tôi"
 
 #: src/components/direct/DirectMessageContactsList.tsx:362
-#: src/components/space/Channel.tsx:1032
+#: src/components/space/Channel.tsx:1035
 msgid "Name or Address"
 msgstr "Tên hoặc Địa chỉ"
 
@@ -1990,8 +2001,8 @@ msgstr "Không có liên hệ không xác định"
 msgid "No unread notifications"
 msgstr "Không có thông báo chưa đọc"
 
-#: src/components/space/Channel.tsx:1040
-#: src/components/space/Channel.tsx:1218
+#: src/components/space/Channel.tsx:1043
+#: src/components/space/Channel.tsx:1221
 msgid "No users found!"
 msgstr "Không tìm thấy người dùng!"
 
@@ -2006,7 +2017,7 @@ msgstr "Quyền thông báo chưa được cấp"
 #: src/components/modals/SpaceSettingsModal/Account.tsx:227
 #: src/components/modals/UserSettingsModal/Navigation.tsx:17
 #: src/components/modals/UserSettingsModal/Notifications.tsx:24
-#: src/components/space/Channel.tsx:790
+#: src/components/space/Channel.tsx:800
 msgid "Notifications"
 msgstr "Thông báo"
 
@@ -2019,7 +2030,7 @@ msgstr "Thông báo đã bị chặn. Vui lòng bật chúng trong cài đặt t
 msgid "Notifications are not supported in this browser"
 msgstr "Thông báo không được hỗ trợ trong trình duyệt này"
 
-#: src/components/message/MessageComposer.tsx:605
+#: src/components/message/MessageComposer.tsx:807
 msgid "Notify all members"
 msgstr "Thông báo cho tất cả các thành viên"
 
@@ -2151,18 +2162,18 @@ msgstr "Ghim lên đầu"
 msgid "Pin/Unpin without confirmation"
 msgstr "Ghim/Bỏ ghim mà không cần xác nhận"
 
-#: src/components/message/Message.tsx:755
-#: src/components/message/Message.tsx:833
+#: src/components/message/Message.tsx:754
+#: src/components/message/Message.tsx:832
 msgid "Pinned"
 msgstr "Đã ghim"
 
 #. placeholder {0}: mapSenderToUser(message.pinnedBy)?.displayName || message.pinnedBy
-#: src/components/message/Message.tsx:754
-#: src/components/message/Message.tsx:832
+#: src/components/message/Message.tsx:753
+#: src/components/message/Message.tsx:831
 msgid "Pinned by {0}"
 msgstr "Được ghim bởi {0}"
 
-#: src/components/space/Channel.tsx:750
+#: src/components/space/Channel.tsx:760
 msgid "Pinned Messages"
 msgstr "Tin nhắn đã ghim"
 
@@ -2176,8 +2187,8 @@ msgid "PNG, JPG or JPEG • Optimal ratio 1:1"
 msgstr "PNG, JPG hoặc JPEG • Tỷ lệ tối ưu 1:1"
 
 #: src/components/message/MessageEditTextarea.tsx:376
-msgid "Press Enter to save, Shift+Enter for new line, Esc to cancel"
-msgstr "Nhấn Enter để lưu, Shift+Enter để xuống dòng mới, Esc để hủy"
+#~ msgid "Press Enter to save, Shift+Enter for new line, Esc to cancel"
+#~ msgstr "Nhấn Enter để lưu, Shift+Enter để xuống dòng mới, Esc để hủy"
 
 #: src/components/modals/SpaceSettingsModal/General.tsx:284
 msgid "Privacy Settings"
@@ -2192,7 +2203,7 @@ msgstr "Quyền riêng tư/Bảo mật"
 msgid "Private key saved to selected folder"
 msgstr "Khóa riêng đã được lưu vào thư mục đã chọn"
 
-#: src/components/message/MessageComposer.tsx:403
+#: src/components/message/MessageComposer.tsx:597
 msgid "Processing image... This may take a moment for large files."
 msgstr "Đang xử lý hình ảnh... Điều này có thể mất một chút thời gian cho các tệp lớn."
 
@@ -2325,7 +2336,7 @@ msgstr "Đã khôi phục {0} không gian"
 msgid "Restoring..."
 msgstr "Đang khôi phục..."
 
-#: src/components/message/Message.tsx:1257
+#: src/components/message/Message.tsx:1262
 msgid "Retry"
 msgstr "Thử lại"
 
@@ -2334,10 +2345,13 @@ msgstr "Thử lại"
 msgid "Roles"
 msgstr "Các vai trò"
 
-#: src/components/message/MessageEditTextarea.tsx:396
 #: src/components/modals/ConversationSettingsModal.tsx:261
 msgid "Save"
 msgstr "Lưu"
+
+#: src/components/message/MessageEditTextarea.tsx:834
+msgid "SAVE"
+msgstr ""
 
 #: src/components/modals/ChannelEditorModal.tsx:203
 #: src/components/modals/FolderEditorModal.tsx:113
@@ -2404,7 +2418,7 @@ msgid "Search in this Space..."
 msgstr "Tìm kiếm trong không gian này..."
 
 #: src/components/direct/DirectMessage.tsx:730
-#: src/components/space/Channel.tsx:870
+#: src/components/space/Channel.tsx:880
 msgid "Search Messages"
 msgstr "Tìm kiếm Tin nhắn"
 
@@ -2420,7 +2434,7 @@ msgstr "Kết quả tìm kiếm"
 msgid "Search username or address"
 msgstr "Tìm kiếm tên người dùng hoặc địa chỉ"
 
-#: src/components/space/Channel.tsx:1209
+#: src/components/space/Channel.tsx:1212
 msgid "Search Username or Address"
 msgstr "Tìm kiếm Tên người dùng hoặc Địa chỉ"
 
@@ -2489,7 +2503,7 @@ msgstr "Gửi"
 
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:269
 msgid "Send a unique invite link directly to someone. Each invite can only be used once."
-msgstr ""
+msgstr "Gửi một liên kết mời duy nhất trực tiếp đến ai đó. Mỗi liên kết mời chỉ có thể được sử dụng một lần."
 
 #: src/services/ActionQueueHandlers.ts:1005
 msgid "Send failed"
@@ -2509,13 +2523,13 @@ msgstr "Gửi tin nhắn"
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:262
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:342
 msgid "Send Private Invite"
-msgstr ""
+msgstr "Gửi Lời Mời Riêng Tư"
 
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:267
 msgid "Send your public invite link directly to someone via DM."
-msgstr ""
+msgstr "Gửi liên kết mời công khai của bạn trực tiếp đến ai đó qua DM."
 
-#: src/components/message/Message.tsx:1239
+#: src/components/message/Message.tsx:1244
 msgid "Sending..."
 msgstr "Đang gửi..."
 
@@ -2534,12 +2548,16 @@ msgstr "Cài đặt"
 
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:260
 msgid "Share Public Link"
-msgstr ""
+msgstr "Chia Sẻ Liên Kết Công Khai"
 
 #: src/components/modals/UserSettingsModal/Help.tsx:40
 #: src/components/modals/UserSettingsModal/Help.tsx:44
 msgid "Shift + Click"
 msgstr "Shift + Click"
+
+#: src/components/message/MessageEditTextarea.tsx:836
+msgid "Shift+Enter for new line"
+msgstr ""
 
 #: src/components/modals/UserSettingsModal/Notifications.tsx:43
 msgid "Show desktop notifications when you receive new messages while Quorum is in the background. Your browser will ask for permission when you enable this feature."
@@ -2554,7 +2572,7 @@ msgstr "Hiện Các Kênh Đã Tắt Tiếng"
 
 #: src/components/modals/UserSettingsModal/Privacy.tsx:142
 msgid "Show Online Status"
-msgstr ""
+msgstr "Hiển Thị Trạng Thái Trực Tuyến"
 
 #: src/components/modals/UserSettingsModal/Privacy.tsx:274
 msgid "Show QR"
@@ -2573,7 +2591,7 @@ msgstr "Hiển thị 500 kết quả đầu tiên. Tinh chỉnh tìm kiếm củ
 msgid "Skip Adding Photo"
 msgstr "Bỏ qua thêm ảnh"
 
-#: src/services/MessageService.ts:3649
+#: src/services/MessageService.ts:3651
 msgid "Someone"
 msgstr "Một ai đó"
 
@@ -2652,8 +2670,8 @@ msgstr "Đồng bộ trạng thái đá"
 #~ msgid "Syncing Space..."
 #~ msgstr "Đang đồng bộ hóa Space..."
 
-#: src/services/MessageService.ts:3308
-#: src/services/MessageService.ts:3426
+#: src/services/MessageService.ts:3310
+#: src/services/MessageService.ts:3428
 msgid "Syncing..."
 msgstr "Đang đồng bộ hóa..."
 
@@ -2811,6 +2829,10 @@ msgstr "Quá nhiều đề cập trong tin nhắn. Tối đa {MAX_MENTIONS_PER_M
 msgid "Try different keywords or check your spelling"
 msgstr "Hãy thử từ khóa khác hoặc kiểm tra chính tả của bạn"
 
+#: src/components/modals/CreateSpaceModal.tsx:248
+msgid "Turn this on to let anyone with the invite link join automatically. Turn it off to preview and approve each person before they can join. Note: Public links give full read access to your Space while the link is active."
+msgstr ""
+
 #: src/hooks/business/ui/useCustomAssets.ts:195
 msgid "Unable to compress emoji images. Please use smaller images."
 msgstr "Không thể nén hình ảnh emoji. Vui lòng sử dụng hình ảnh nhỏ hơn."
@@ -2859,8 +2881,8 @@ msgstr "Không thể khôi phục: chưa đăng nhập"
 
 #: src/components/direct/DirectMessageContactsList.tsx:296
 #: src/components/modals/JoinSpaceModal.tsx:112
-#: src/services/MessageService.ts:2089
-#: src/services/MessageService.ts:3581
+#: src/services/MessageService.ts:2091
+#: src/services/MessageService.ts:3583
 msgid "Unknown"
 msgstr "Không xác định"
 
@@ -2886,13 +2908,15 @@ msgstr "Thời gian không xác định"
 #: src/components/direct/DirectMessage.tsx:247
 #: src/components/direct/DirectMessage.tsx:553
 #: src/components/direct/DirectMessageContactsList.tsx:43
-#: src/components/message/MessageComposer.tsx:547
-#: src/components/message/MessageComposer.tsx:554
-#: src/components/message/MessageEditTextarea.tsx:219
-#: src/components/message/MessageEditTextarea.tsx:251
-#: src/components/message/MessageEditTextarea.tsx:258
-#: src/components/message/MessageEditTextarea.tsx:262
-#: src/components/message/MessageEditTextarea.tsx:268
+#: src/components/message/MessageComposer.tsx:749
+#: src/components/message/MessageComposer.tsx:756
+#: src/components/message/MessageEditTextarea.tsx:516
+#: src/components/message/MessageEditTextarea.tsx:548
+#: src/components/message/MessageEditTextarea.tsx:555
+#: src/components/message/MessageEditTextarea.tsx:559
+#: src/components/message/MessageEditTextarea.tsx:565
+#: src/components/message/MessageEditTextarea.tsx:693
+#: src/components/message/MessageEditTextarea.tsx:700
 #: src/components/message/MessagePreview.tsx:196
 #: src/components/message/PinnedMessagesPanel.tsx:78
 #: src/components/modals/ConversationSettingsModal.tsx:108
@@ -2912,14 +2936,14 @@ msgstr "Thời gian không xác định"
 #: src/hooks/business/search/useSearchResultDisplaySpace.ts:45
 #: src/hooks/queries/userInfo/buildUserInfoFetcher.ts:15
 #: src/services/EncryptionService.ts:138
-#: src/services/MessageService.ts:1763
-#: src/services/MessageService.ts:1936
-#: src/services/MessageService.ts:2077
-#: src/services/MessageService.ts:2106
-#: src/services/MessageService.ts:4030
-#: src/services/MessageService.ts:4142
-#: src/services/MessageService.ts:4310
-#: src/services/MessageService.ts:4508
+#: src/services/MessageService.ts:1765
+#: src/services/MessageService.ts:1938
+#: src/services/MessageService.ts:2079
+#: src/services/MessageService.ts:2108
+#: src/services/MessageService.ts:4032
+#: src/services/MessageService.ts:4144
+#: src/services/MessageService.ts:4312
+#: src/services/MessageService.ts:4510
 msgid "Unknown User"
 msgstr "Người dùng không xác định"
 
@@ -3072,7 +3096,7 @@ msgstr "Khi được bật, tất cả các phiên bản trước của các tin
 
 #: src/components/modals/UserSettingsModal/Privacy.tsx:146
 msgid "When enabled, other users can see when you are active. This feature is not yet available."
-msgstr ""
+msgstr "Khi được kích hoạt, người dùng khác có thể thấy khi bạn đang hoạt động. Tính năng này vẫn chưa có sẵn."
 
 #: src/components/modals/UserSettingsModal/Privacy.tsx:108
 msgid "When enabled, synchronizes your user data, Spaces, and Space keys between devices. Enabling this increases metadata visibility of your account, which can reveal when you have joined new Spaces, although not the Spaces you have joined."
@@ -3106,8 +3130,8 @@ msgid "When someone replies to your messages"
 msgstr "Khi ai đó phản hồi tin nhắn của bạn"
 
 #: src/components/modals/CreateSpaceModal.tsx:245
-msgid "When this setting is enabled, invite links will automatically allow a user to join your Space. When it is not enabled, users following an invite link will send you a request to join your Space that you must manually approve. Public links require some key material to be present in the link – be aware that possession of a public Space link can allow anyone with the link to read messages on the Space for the duration of the link being valid."
-msgstr "Khi cài đặt này được bật, liên kết mời sẽ tự động cho phép người dùng tham gia Space của bạn. Khi nó không được bật, người dùng theo dõi liên kết mời sẽ gửi cho bạn một yêu cầu tham gia Space của bạn mà bạn phải phê duyệt thủ công. Các liên kết công khai yêu cầu một số vật liệu khóa phải có trong liên kết - hãy lưu ý rằng việc sở hữu một liên kết Space công khai có thể cho phép bất kỳ ai có liên kết đọc tin nhắn trên Space trong thời gian liên kết còn hợp lệ."
+#~ msgid "When this setting is enabled, invite links will automatically allow a user to join your Space. When it is not enabled, users following an invite link will send you a request to join your Space that you must manually approve. Public links require some key material to be present in the link – be aware that possession of a public Space link can allow anyone with the link to read messages on the Space for the duration of the link being valid."
+#~ msgstr "Khi cài đặt này được bật, liên kết mời sẽ tự động cho phép người dùng tham gia Space của bạn. Khi nó không được bật, người dùng theo dõi liên kết mời sẽ gửi cho bạn một yêu cầu tham gia Space của bạn mà bạn phải phê duyệt thủ công. Các liên kết công khai yêu cầu một số vật liệu khóa phải có trong liên kết - hãy lưu ý rằng việc sở hữu một liên kết Space công khai có thể cho phép bất kỳ ai có liên kết đọc tin nhắn trên Space trong thời gian liên kết còn hợp lệ."
 
 #: src/components/onboarding/Onboarding.tsx:164
 msgid "When using Quorum on a browser, your messages are saved locally to your browser."
@@ -3139,7 +3163,7 @@ msgid "You are already a member of this Space."
 msgstr "Bạn đã là thành viên của Không gian này."
 
 #. placeholder {0}: formatMuteRemaining(currentMuteRecord.expiresAt)
-#: src/components/space/Channel.tsx:1009
+#: src/components/space/Channel.tsx:1014
 msgid "You are muted for {0}"
 msgstr "Bạn bị tắt tiếng trong {0}"
 
@@ -3155,8 +3179,8 @@ msgstr "Bạn có thể quản lý thông báo nhắc nhở không gian của m�
 msgid "You cannot delete a group that contains channels. Delete all {channelCount} channels in this group first."
 msgstr "Bạn không thể xóa một nhóm chứa các kênh. Hãy xóa tất cả {channelCount} kênh trong nhóm này trước."
 
-#: src/components/message/MessageComposer.tsx:382
-#: src/components/space/Channel.tsx:1012
+#: src/components/message/MessageComposer.tsx:576
+#: src/components/space/Channel.tsx:1017
 msgid "You cannot post in this channel"
 msgstr "Bạn không thể đăng trong kênh này"
 
@@ -3169,7 +3193,7 @@ msgstr "Bạn không thể gửi tin nhắn trực tiếp cho chính mình."
 msgid "You have a new unread message"
 msgstr "Bạn có một tin nhắn chưa đọc mới"
 
-#: src/components/space/Channel.tsx:1010
+#: src/components/space/Channel.tsx:1015
 msgid "You have been muted in this Space"
 msgstr "Bạn đã bị tắt tiếng trong Space này"
 

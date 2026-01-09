@@ -31,7 +31,7 @@ msgid "No Role - {count}"
 msgstr "役割なし - {count}"
 
 #. js-lingui-explicit-id
-#: src/components/space/Channel.tsx:984
+#: src/components/space/Channel.tsx:989
 msgid "Send a message to #{channel_name}"
 msgstr "#{channel_name} にメッセージを送信"
 
@@ -41,24 +41,9 @@ msgid "Your profile image size must be {maxFileSize} or less and must be a PNG, 
 msgstr "プロフィール画像のサイズは {maxFileSize} 以下で、PNG、JPG、またはJPEGファイル拡張子である必要があります。"
 
 #. js-lingui-explicit-id
-#: src/components/message/MessageComposer.tsx:452
+#: src/components/message/MessageComposer.tsx:646
 msgid "Replying to"
 msgstr "返信中"
-
-#. js-lingui-explicit-id
-#: src/components/message/Message.tsx:325
-msgid "has joined"
-msgstr "が参加しました"
-
-#. js-lingui-explicit-id
-#: src/components/message/Message.tsx:333
-msgid "has left"
-msgstr "が退出しました"
-
-#. js-lingui-explicit-id
-#: src/components/message/Message.tsx:341
-msgid "has been kicked"
-msgstr "がキックされました"
 
 #. js-lingui-explicit-id
 #: src/components/message/MessageComposer.native.tsx:162
@@ -69,6 +54,21 @@ msgstr "画像の処理に失敗しました"
 #: src/components/message/MessageComposer.native.tsx:315
 msgid "Replying to {user}"
 msgstr "{user} に返信中"
+
+#. js-lingui-explicit-id
+#: src/components/message/Message.tsx:337
+msgid "has joined"
+msgstr "が参加しました"
+
+#. js-lingui-explicit-id
+#: src/components/message/Message.tsx:345
+msgid "has left"
+msgstr "が退出しました"
+
+#. js-lingui-explicit-id
+#: src/components/message/Message.tsx:353
+msgid "has been kicked"
+msgstr "がキックされました"
 
 #. js-lingui-explicit-id
 #: src/components/direct/DirectMessage.tsx:854
@@ -85,8 +85,8 @@ msgstr "更新のため。"
 #~ msgid "'everyone' is a reserved name."
 #~ msgstr "「everyone」は予約された名前です。"
 
-#: src/components/message/Message.tsx:804
-#: src/components/message/Message.tsx:817
+#: src/components/message/Message.tsx:803
+#: src/components/message/Message.tsx:816
 msgid "(edited)"
 msgstr "(編集済み)"
 
@@ -280,12 +280,12 @@ msgstr "0時間"
 msgid "1 device marked for removal. Click \"Save Changes\" to confirm."
 msgstr "1 台のデバイスが削除のためにマークされました。「変更を保存」をクリックして確認してください。"
 
-#: src/services/MessageService.ts:3666
+#: src/services/MessageService.ts:3668
 #: src/services/NotificationService.ts:305
 msgid "a role"
 msgstr "役割"
 
-#: src/services/MessageService.ts:3676
+#: src/services/MessageService.ts:3678
 #: src/services/NotificationService.ts:304
 #: src/services/NotificationService.ts:317
 msgid "a space"
@@ -336,7 +336,7 @@ msgstr "グループを追加"
 msgid "Add Role"
 msgstr "役割を追加"
 
-#: src/components/message/MessageComposer.tsx:661
+#: src/components/message/MessageComposer.tsx:878
 msgid "add sticker"
 msgstr "ステッカーを追加"
 
@@ -481,7 +481,7 @@ msgstr "このメッセージのピン留めを解除してもよろしいです
 #~ msgid "As a space owner, you need to assign yourself a role with delete permissions to delete other users' messages. <0><1>Learn more</1></0>"
 #~ msgstr "スペースのオーナーとして、他のユーザーのメッセージを削除するには、削除権限を持つ役割を自分に割り当てる必要があります。<0><1>詳細を学ぶ</1></0>"
 
-#: src/components/message/MessageComposer.tsx:628
+#: src/components/message/MessageComposer.tsx:830
 msgid "attach image"
 msgstr "画像を添付"
 
@@ -534,8 +534,8 @@ msgstr "ブックマークメッセージ"
 msgid "Bookmark messages to save them for later reference"
 msgstr "後で参照するためにブックマークメッセージを保存"
 
-#: src/components/message/Message.tsx:771
-#: src/components/message/Message.tsx:849
+#: src/components/message/Message.tsx:770
+#: src/components/message/Message.tsx:848
 msgid "Bookmarked"
 msgstr "ブックマーク済み"
 
@@ -548,7 +548,7 @@ msgid "Bookmarked sticker"
 msgstr "ブックマーク済みのステッカー"
 
 #: src/components/direct/DirectMessage.tsx:703
-#: src/components/space/Channel.tsx:825
+#: src/components/space/Channel.tsx:835
 msgid "Bookmarks"
 msgstr "ブックマーク"
 
@@ -565,7 +565,6 @@ msgstr "カメラ"
 msgid "Camera permission is required to take photos"
 msgstr "写真を撮るにはカメラの権限が必要です"
 
-#: src/components/message/MessageEditTextarea.tsx:384
 #: src/components/modals/ConfirmationModal.native.tsx:27
 #: src/components/modals/ConfirmationModal.tsx:31
 #: src/components/modals/ConversationSettingsModal.tsx:67
@@ -580,6 +579,10 @@ msgstr "写真を撮るにはカメラの権限が必要です"
 #: src/hooks/business/user/useFileUpload.native.ts:48
 msgid "Cancel"
 msgstr "キャンセル"
+
+#: src/components/message/MessageEditTextarea.tsx:813
+msgid "CANCEL"
+msgstr ""
 
 #: src/components/modals/SpaceSettingsModal/Danger.tsx:41
 msgid "Cannot delete Space with channels. Please delete all channels first."
@@ -610,7 +613,7 @@ msgstr "チャンネルアイコン"
 msgid "Channel Managers"
 msgstr "チャンネルマネージャー"
 
-#: src/components/space/Channel.tsx:1198
+#: src/components/space/Channel.tsx:1201
 msgid "Channel members"
 msgstr "チャンネルメンバー"
 
@@ -830,11 +833,11 @@ msgstr "新しいアカウントを作成"
 msgid "Create roles in Space Settings first."
 msgstr "最初にスペース設定でロールを作成してください。"
 
-#: src/components/modals/CreateSpaceModal.tsx:269
+#: src/components/modals/CreateSpaceModal.tsx:272
 msgid "Create Space"
 msgstr "スペースを作成"
 
-#: src/components/modals/CreateSpaceModal.tsx:273
+#: src/components/modals/CreateSpaceModal.tsx:276
 msgid "Creating Space..."
 msgstr "スペースを作成中..."
 
@@ -1153,6 +1156,10 @@ msgstr "スペースIDと設定キーの両方を入力して検証してくだ�
 msgid "Enter details manually"
 msgstr "詳細を手動で入力"
 
+#: src/components/message/MessageEditTextarea.tsx:815
+msgid "Enter to"
+msgstr ""
+
 #: src/components/context/WebsocketProvider.tsx:123
 msgid "Error processing inbound queue:"
 msgstr "受信キューの処理中にエラーが発生しました:"
@@ -1182,6 +1189,10 @@ msgstr "通知の権限をリクエスト中にエラーが発生しました：
 msgid "Error showing notification:"
 msgstr "通知を表示中にエラーが発生しました："
 
+#: src/components/message/MessageEditTextarea.tsx:800
+msgid "Esc to"
+msgstr ""
+
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:273
 msgid "Existing Conversations"
 msgstr "既存の会話"
@@ -1205,7 +1216,7 @@ msgid "Failed to create space. Please try again."
 msgstr "スペースの作成に失敗しました。もう一度お試しください。"
 
 #: src/components/context/MessageDB.bak.tsx:985
-#: src/services/MessageService.ts:2116
+#: src/services/MessageService.ts:2118
 msgid "Failed to decrypt message with any known state"
 msgstr "既知の状態でメッセージを復号化できませんでした"
 
@@ -1272,7 +1283,7 @@ msgstr "ドキュメントの選択に失敗しました"
 msgid "Failed to send invite. Please try again."
 msgstr "招待の送信に失敗しました。もう一度お試しください。"
 
-#: src/components/message/Message.tsx:1246
+#: src/components/message/Message.tsx:1251
 msgid "Failed to send."
 msgstr "送信に失敗しました。"
 
@@ -1526,7 +1537,7 @@ msgid "Inline Code"
 msgstr "インラインコード"
 
 #: src/components/context/MessageDB.bak.tsx:1185
-#: src/services/MessageService.ts:2402
+#: src/services/MessageService.ts:2404
 msgid "invalid address for signature"
 msgstr "署名用の無効なアドレス"
 
@@ -1616,7 +1627,7 @@ msgstr "参加中..."
 msgid "Jump"
 msgstr "ジャンプ"
 
-#: src/components/message/MessageList.tsx:577
+#: src/components/message/MessageList.tsx:598
 msgid "Jump to present"
 msgstr "現在にジャンプ"
 
@@ -1700,7 +1711,7 @@ msgstr "ライト"
 msgid "Loading bookmarks..."
 msgstr "ブックマークを読み込んでいます..."
 
-#: src/components/message/MessageList.tsx:588
+#: src/components/message/MessageList.tsx:609
 msgid "Loading message..."
 msgstr "メッセージを読み込んでいます..."
 
@@ -1781,7 +1792,7 @@ msgstr "すべてを既読にする"
 msgid "Mark All as Read"
 msgstr "すべてを既読にマーク"
 
-#: src/components/space/Channel.tsx:851
+#: src/components/space/Channel.tsx:861
 msgid "Members List"
 msgstr "メンバーリスト"
 
@@ -1801,21 +1812,21 @@ msgstr "メッセージアクション"
 msgid "Message deleted"
 msgstr "メッセージが削除されました"
 
-#: src/components/message/Message.tsx:730
-#: src/components/message/Message.tsx:787
-#: src/components/message/Message.tsx:865
+#: src/components/message/Message.tsx:729
+#: src/components/message/Message.tsx:786
+#: src/components/message/Message.tsx:864
 msgid "Message does not have a valid signature, this may not be from the sender"
 msgstr "メッセージには有効な署名がありません。これは送信者からのものではない可能性があります"
 
-#: src/components/message/MessageComposer.tsx:147
+#: src/components/message/MessageComposer.tsx:153
 msgid "Message..."
 msgstr "メッセージ..."
 
-#: src/components/message/MessageComposer.tsx:678
+#: src/components/message/MessageComposer.tsx:895
 msgid "Messages are NOT signed!"
 msgstr "メッセージは署名されていません！"
 
-#: src/components/message/MessageComposer.tsx:679
+#: src/components/message/MessageComposer.tsx:896
 msgid "Messages are signed!"
 msgstr "メッセージは署名されています！"
 
@@ -1884,7 +1895,7 @@ msgid "My Account"
 msgstr "マイアカウント"
 
 #: src/components/direct/DirectMessageContactsList.tsx:362
-#: src/components/space/Channel.tsx:1032
+#: src/components/space/Channel.tsx:1035
 msgid "Name or Address"
 msgstr "名前またはアドレス"
 
@@ -1990,8 +2001,8 @@ msgstr "不明な連絡先はありません"
 msgid "No unread notifications"
 msgstr "未読の通知はありません"
 
-#: src/components/space/Channel.tsx:1040
-#: src/components/space/Channel.tsx:1218
+#: src/components/space/Channel.tsx:1043
+#: src/components/space/Channel.tsx:1221
 msgid "No users found!"
 msgstr "ユーザーが見つかりません！"
 
@@ -2006,7 +2017,7 @@ msgstr "通知の権限が付与されていません"
 #: src/components/modals/SpaceSettingsModal/Account.tsx:227
 #: src/components/modals/UserSettingsModal/Navigation.tsx:17
 #: src/components/modals/UserSettingsModal/Notifications.tsx:24
-#: src/components/space/Channel.tsx:790
+#: src/components/space/Channel.tsx:800
 msgid "Notifications"
 msgstr "通知"
 
@@ -2019,7 +2030,7 @@ msgstr "通知がブロックされています。このサイトのブラウザ
 msgid "Notifications are not supported in this browser"
 msgstr "このブラウザでは通知はサポートされていません"
 
-#: src/components/message/MessageComposer.tsx:605
+#: src/components/message/MessageComposer.tsx:807
 msgid "Notify all members"
 msgstr "全メンバーに通知する"
 
@@ -2151,18 +2162,18 @@ msgstr "上部にピン留め"
 msgid "Pin/Unpin without confirmation"
 msgstr "確認なしでピン留め/ピン留め解除"
 
-#: src/components/message/Message.tsx:755
-#: src/components/message/Message.tsx:833
+#: src/components/message/Message.tsx:754
+#: src/components/message/Message.tsx:832
 msgid "Pinned"
 msgstr "ピン留め済み"
 
 #. placeholder {0}: mapSenderToUser(message.pinnedBy)?.displayName || message.pinnedBy
-#: src/components/message/Message.tsx:754
-#: src/components/message/Message.tsx:832
+#: src/components/message/Message.tsx:753
+#: src/components/message/Message.tsx:831
 msgid "Pinned by {0}"
 msgstr "{0} によってピン留めされました"
 
-#: src/components/space/Channel.tsx:750
+#: src/components/space/Channel.tsx:760
 msgid "Pinned Messages"
 msgstr "ピン留めされたメッセージ"
 
@@ -2176,8 +2187,8 @@ msgid "PNG, JPG or JPEG • Optimal ratio 1:1"
 msgstr "PNG、JPG、またはJPEG • 最適な比率 1:1"
 
 #: src/components/message/MessageEditTextarea.tsx:376
-msgid "Press Enter to save, Shift+Enter for new line, Esc to cancel"
-msgstr "Enterを押して保存、Shift+Enterで改行、Escでキャンセル"
+#~ msgid "Press Enter to save, Shift+Enter for new line, Esc to cancel"
+#~ msgstr "Enterを押して保存、Shift+Enterで改行、Escでキャンセル"
 
 #: src/components/modals/SpaceSettingsModal/General.tsx:284
 msgid "Privacy Settings"
@@ -2192,7 +2203,7 @@ msgstr "プライバシー/セキュリティ"
 msgid "Private key saved to selected folder"
 msgstr "プライベートキーが選択したフォルダに保存されました"
 
-#: src/components/message/MessageComposer.tsx:403
+#: src/components/message/MessageComposer.tsx:597
 msgid "Processing image... This may take a moment for large files."
 msgstr "画像を処理中... 大きなファイルの場合、少々お待ちください。"
 
@@ -2325,7 +2336,7 @@ msgstr "{0} スペースを復元しました"
 msgid "Restoring..."
 msgstr "復元中..."
 
-#: src/components/message/Message.tsx:1257
+#: src/components/message/Message.tsx:1262
 msgid "Retry"
 msgstr "再試行"
 
@@ -2334,10 +2345,13 @@ msgstr "再試行"
 msgid "Roles"
 msgstr "役割"
 
-#: src/components/message/MessageEditTextarea.tsx:396
 #: src/components/modals/ConversationSettingsModal.tsx:261
 msgid "Save"
 msgstr "保存"
+
+#: src/components/message/MessageEditTextarea.tsx:834
+msgid "SAVE"
+msgstr ""
 
 #: src/components/modals/ChannelEditorModal.tsx:203
 #: src/components/modals/FolderEditorModal.tsx:113
@@ -2404,7 +2418,7 @@ msgid "Search in this Space..."
 msgstr "このスペースで検索..."
 
 #: src/components/direct/DirectMessage.tsx:730
-#: src/components/space/Channel.tsx:870
+#: src/components/space/Channel.tsx:880
 msgid "Search Messages"
 msgstr "メッセージを検索"
 
@@ -2420,7 +2434,7 @@ msgstr "検索結果"
 msgid "Search username or address"
 msgstr "ユーザー名またはアドレスを検索"
 
-#: src/components/space/Channel.tsx:1209
+#: src/components/space/Channel.tsx:1212
 msgid "Search Username or Address"
 msgstr "ユーザー名またはアドレスを検索"
 
@@ -2489,7 +2503,7 @@ msgstr "送信"
 
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:269
 msgid "Send a unique invite link directly to someone. Each invite can only be used once."
-msgstr ""
+msgstr "誰かに直接ユニークな招待リンクを送信します。各招待は一度だけ使用できます。"
 
 #: src/services/ActionQueueHandlers.ts:1005
 msgid "Send failed"
@@ -2509,13 +2523,13 @@ msgstr "メッセージを送信"
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:262
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:342
 msgid "Send Private Invite"
-msgstr ""
+msgstr "プライベート招待を送信"
 
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:267
 msgid "Send your public invite link directly to someone via DM."
-msgstr ""
+msgstr "DMを通じて誰かに直接あなたの公開招待リンクを送信します。"
 
-#: src/components/message/Message.tsx:1239
+#: src/components/message/Message.tsx:1244
 msgid "Sending..."
 msgstr "送信中..."
 
@@ -2534,12 +2548,16 @@ msgstr "設定"
 
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:260
 msgid "Share Public Link"
-msgstr ""
+msgstr "公開リンクを共有"
 
 #: src/components/modals/UserSettingsModal/Help.tsx:40
 #: src/components/modals/UserSettingsModal/Help.tsx:44
 msgid "Shift + Click"
 msgstr "Shift + クリック"
+
+#: src/components/message/MessageEditTextarea.tsx:836
+msgid "Shift+Enter for new line"
+msgstr ""
 
 #: src/components/modals/UserSettingsModal/Notifications.tsx:43
 msgid "Show desktop notifications when you receive new messages while Quorum is in the background. Your browser will ask for permission when you enable this feature."
@@ -2554,7 +2572,7 @@ msgstr "ミュートされたチャンネルを表示"
 
 #: src/components/modals/UserSettingsModal/Privacy.tsx:142
 msgid "Show Online Status"
-msgstr ""
+msgstr "オンラインステータスを表示"
 
 #: src/components/modals/UserSettingsModal/Privacy.tsx:274
 msgid "Show QR"
@@ -2573,7 +2591,7 @@ msgstr "最初の500件の結果を表示しています。より具体的な結
 msgid "Skip Adding Photo"
 msgstr "写真の追加をスキップ"
 
-#: src/services/MessageService.ts:3649
+#: src/services/MessageService.ts:3651
 msgid "Someone"
 msgstr "誰か"
 
@@ -2652,8 +2670,8 @@ msgstr "キックステータスを同期"
 #~ msgid "Syncing Space..."
 #~ msgstr "スペースを同期中..."
 
-#: src/services/MessageService.ts:3308
-#: src/services/MessageService.ts:3426
+#: src/services/MessageService.ts:3310
+#: src/services/MessageService.ts:3428
 msgid "Syncing..."
 msgstr "同期中..."
 
@@ -2811,6 +2829,10 @@ msgstr "メッセージ内の言及が多すぎます。最大{MAX_MENTIONS_PER_
 msgid "Try different keywords or check your spelling"
 msgstr "異なるキーワードを試すか、スペルを確認してください"
 
+#: src/components/modals/CreateSpaceModal.tsx:248
+msgid "Turn this on to let anyone with the invite link join automatically. Turn it off to preview and approve each person before they can join. Note: Public links give full read access to your Space while the link is active."
+msgstr ""
+
 #: src/hooks/business/ui/useCustomAssets.ts:195
 msgid "Unable to compress emoji images. Please use smaller images."
 msgstr "絵文字画像を圧縮できません。より小さい画像を使用してください。"
@@ -2859,8 +2881,8 @@ msgstr "復元できません: ログインしていません"
 
 #: src/components/direct/DirectMessageContactsList.tsx:296
 #: src/components/modals/JoinSpaceModal.tsx:112
-#: src/services/MessageService.ts:2089
-#: src/services/MessageService.ts:3581
+#: src/services/MessageService.ts:2091
+#: src/services/MessageService.ts:3583
 msgid "Unknown"
 msgstr "不明"
 
@@ -2886,13 +2908,15 @@ msgstr "不明な時間"
 #: src/components/direct/DirectMessage.tsx:247
 #: src/components/direct/DirectMessage.tsx:553
 #: src/components/direct/DirectMessageContactsList.tsx:43
-#: src/components/message/MessageComposer.tsx:547
-#: src/components/message/MessageComposer.tsx:554
-#: src/components/message/MessageEditTextarea.tsx:219
-#: src/components/message/MessageEditTextarea.tsx:251
-#: src/components/message/MessageEditTextarea.tsx:258
-#: src/components/message/MessageEditTextarea.tsx:262
-#: src/components/message/MessageEditTextarea.tsx:268
+#: src/components/message/MessageComposer.tsx:749
+#: src/components/message/MessageComposer.tsx:756
+#: src/components/message/MessageEditTextarea.tsx:516
+#: src/components/message/MessageEditTextarea.tsx:548
+#: src/components/message/MessageEditTextarea.tsx:555
+#: src/components/message/MessageEditTextarea.tsx:559
+#: src/components/message/MessageEditTextarea.tsx:565
+#: src/components/message/MessageEditTextarea.tsx:693
+#: src/components/message/MessageEditTextarea.tsx:700
 #: src/components/message/MessagePreview.tsx:196
 #: src/components/message/PinnedMessagesPanel.tsx:78
 #: src/components/modals/ConversationSettingsModal.tsx:108
@@ -2912,14 +2936,14 @@ msgstr "不明な時間"
 #: src/hooks/business/search/useSearchResultDisplaySpace.ts:45
 #: src/hooks/queries/userInfo/buildUserInfoFetcher.ts:15
 #: src/services/EncryptionService.ts:138
-#: src/services/MessageService.ts:1763
-#: src/services/MessageService.ts:1936
-#: src/services/MessageService.ts:2077
-#: src/services/MessageService.ts:2106
-#: src/services/MessageService.ts:4030
-#: src/services/MessageService.ts:4142
-#: src/services/MessageService.ts:4310
-#: src/services/MessageService.ts:4508
+#: src/services/MessageService.ts:1765
+#: src/services/MessageService.ts:1938
+#: src/services/MessageService.ts:2079
+#: src/services/MessageService.ts:2108
+#: src/services/MessageService.ts:4032
+#: src/services/MessageService.ts:4144
+#: src/services/MessageService.ts:4312
+#: src/services/MessageService.ts:4510
 msgid "Unknown User"
 msgstr "不明なユーザー"
 
@@ -3072,7 +3096,7 @@ msgstr "有効にすると、編集されたメッセージのすべての以前
 
 #: src/components/modals/UserSettingsModal/Privacy.tsx:146
 msgid "When enabled, other users can see when you are active. This feature is not yet available."
-msgstr ""
+msgstr "有効にすると、他のユーザーはあなたがアクティブなときに見ることができます。この機能はまだ利用できません。"
 
 #: src/components/modals/UserSettingsModal/Privacy.tsx:108
 msgid "When enabled, synchronizes your user data, Spaces, and Space keys between devices. Enabling this increases metadata visibility of your account, which can reveal when you have joined new Spaces, although not the Spaces you have joined."
@@ -3106,8 +3130,8 @@ msgid "When someone replies to your messages"
 msgstr "誰かがあなたのメッセージに返信したとき"
 
 #: src/components/modals/CreateSpaceModal.tsx:245
-msgid "When this setting is enabled, invite links will automatically allow a user to join your Space. When it is not enabled, users following an invite link will send you a request to join your Space that you must manually approve. Public links require some key material to be present in the link – be aware that possession of a public Space link can allow anyone with the link to read messages on the Space for the duration of the link being valid."
-msgstr "この設定が有効になっている場合、招待リンクは自動的にユーザーがあなたのスペースに参加することを許可します。有効でない場合、招待リンクをフォローしているユーザーは、あなたのスペースに参加するためのリクエストを送信し、手動で承認する必要があります。公開リンクには、リンクに存在する必要があるいくつかのキー素材が必要です。公開スペースリンクを所持していると、リンクが有効な間、誰でもそのリンクを使ってスペースのメッセージを読むことができることに注意してください。"
+#~ msgid "When this setting is enabled, invite links will automatically allow a user to join your Space. When it is not enabled, users following an invite link will send you a request to join your Space that you must manually approve. Public links require some key material to be present in the link – be aware that possession of a public Space link can allow anyone with the link to read messages on the Space for the duration of the link being valid."
+#~ msgstr "この設定が有効になっている場合、招待リンクは自動的にユーザーがあなたのスペースに参加することを許可します。有効でない場合、招待リンクをフォローしているユーザーは、あなたのスペースに参加するためのリクエストを送信し、手動で承認する必要があります。公開リンクには、リンクに存在する必要があるいくつかのキー素材が必要です。公開スペースリンクを所持していると、リンクが有効な間、誰でもそのリンクを使ってスペースのメッセージを読むことができることに注意してください。"
 
 #: src/components/onboarding/Onboarding.tsx:164
 msgid "When using Quorum on a browser, your messages are saved locally to your browser."
@@ -3139,7 +3163,7 @@ msgid "You are already a member of this Space."
 msgstr "あなたはすでにこのスペースのメンバーです。"
 
 #. placeholder {0}: formatMuteRemaining(currentMuteRecord.expiresAt)
-#: src/components/space/Channel.tsx:1009
+#: src/components/space/Channel.tsx:1014
 msgid "You are muted for {0}"
 msgstr "あなたは{0}の間ミュートされています。"
 
@@ -3155,8 +3179,8 @@ msgstr "各スペースの設定でスペースのメンション通知を管理
 msgid "You cannot delete a group that contains channels. Delete all {channelCount} channels in this group first."
 msgstr "チャンネルを含むグループを削除することはできません。このグループ内のすべての{channelCount}チャンネルを最初に削除してください。"
 
-#: src/components/message/MessageComposer.tsx:382
-#: src/components/space/Channel.tsx:1012
+#: src/components/message/MessageComposer.tsx:576
+#: src/components/space/Channel.tsx:1017
 msgid "You cannot post in this channel"
 msgstr "このチャンネルに投稿することはできません"
 
@@ -3169,7 +3193,7 @@ msgstr "自分自身にダイレクトメッセージを送信することはで
 msgid "You have a new unread message"
 msgstr "新しい未読メッセージがあります"
 
-#: src/components/space/Channel.tsx:1010
+#: src/components/space/Channel.tsx:1015
 msgid "You have been muted in this Space"
 msgstr "あなたはこのスペースでミュートされました"
 
