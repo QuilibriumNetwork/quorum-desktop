@@ -334,6 +334,7 @@ html:not(.dark) .chat-container {
   max-width: 100%; // Constrain to parent width
   overflow-wrap: break-word; // Break long words
   word-break: break-word; // Fallback for older browsers
+  cursor: text; // Show text cursor to indicate selectable text
 }
 
 .message-editor {

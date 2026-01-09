@@ -27,6 +27,7 @@
   transition: height $duration-100 ease;
   vertical-align: middle; /* Ensure consistent vertical alignment */
   align-self: center; /* Center within flex parent */
+  cursor: text; /* Show text cursor */
 
   /* Override TextArea primitive's focus background color */
   &:focus {
@@ -72,6 +73,7 @@
   transition: height $duration-100 ease;
   vertical-align: middle;
   align-self: center;
+  cursor: text; /* Show text cursor */
 
   &:focus {
     background-color: transparent !important;
