@@ -1,7 +1,7 @@
 ---
 type: task
 title: Space Tags
-status: in-progress
+status: on-hold
 complexity: high
 created: 2025-12-30T00:00:00.000Z
 updated: '2026-01-09'

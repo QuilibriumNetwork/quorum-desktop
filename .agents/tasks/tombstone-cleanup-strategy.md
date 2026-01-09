@@ -1,7 +1,7 @@
 ---
 type: task
 title: Tombstone Cleanup Strategy for Deleted Messages
-status: in-progress
+status: open
 complexity: medium
 ai_generated: true
 created: 2025-12-18T00:00:00.000Z

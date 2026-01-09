@@ -122,10 +122,20 @@ Analyze the request to identify:
 - Tasks involving security considerations (authentication, encryption, user data, network communications, permissions) should be analyzed by the security-analyst agent before implementation.
 
 **Status System** (applies to all file types):
-- **`open`**: Not started yet, ready to work on (default for new tasks/bugs)
-- **`in-progress`**: Currently being worked on
-- **`on-hold`**: Blocked, waiting, or paused
+- **`open`**: Not started yet, ready to work on (**ALWAYS the default for new tasks/bugs**)
+- **`in-progress`**: **ONLY** when actively implementing a task right now, or when a task was partially implemented
+- **`on-hold`**: Blocked by external factors, waiting on dependencies, or paused due to technical blockers that prevent full implementation
 - **`done`**: Completed, fixed, or finalized (default for documentation and reports)
+- **`archived`**: Task/bug is no longer relevant, superseded, or abandoned (only for files in `.archived/` folders)
+
+**IMPORTANT - Task Status Rules:**
+- When **creating** a new task → ALWAYS use `status: open`
+- When **actively working** on implementation → change to `status: in-progress`
+- When **blocked** (missing dependencies, external blockers, can't complete fully) → use `status: on-hold`
+- When **completed** → use `status: done` and move to `.done/` folder
+- When **archiving** (no longer relevant, superseded, abandoned) → use `status: archived` and move to `.archived/` folder
+- **Never** create a new task with `status: in-progress` unless you are immediately implementing it
+- **Note**: You rarely need to set `archived` status unless explicitly asked to archive a task/bug
 
 **Complexity System** (tasks only):
 - **`low`**: Simple changes, 1-2 files, clear solution
@@ -153,14 +163,14 @@ When moving files between folders, the status MUST be updated to match the folde
   - Update `updated` date to current date
 
 - **Moving to `.archived/` folder** (tasks or bugs):
-  - Update `status: on-hold`
+  - Update `status: archived`
   - Update `updated` date to current date
-  - Archived items are not actively being worked on but preserved for reference
+  - Archived items are no longer relevant, superseded, or abandoned but preserved for reference
 
 **Default Status by Location**:
 - Files in `.done/` or `.solved/` folders → `status: done`
-- Files in `.archived/` folders → `status: on-hold`
-- Files in root task folders → `status: in-progress`
+- Files in `.archived/` folders → `status: archived`
+- Files in root task folders → `status: open` (or `in-progress` if actively being implemented, or `on-hold` if blocked)
 - Files in root bug folders → `status: open`
 - Files in docs folders → `status: done`
 
@@ -493,7 +503,7 @@ _Report Type: [Audit/Research/Analysis/Assessment]_
 **For Status Changes:**
 - Moving bugs to `.solved/` when fixed → **MUST update `status: done`**
 - Moving tasks to `.done/` when complete → **MUST update `status: done`**
-- Moving files to `.archived/` folders → **MUST update `status: on-hold`**
+- Moving files to `.archived/` folders → **MUST update `status: archived`**
 - Archiving outdated documentation
 - Updating cross-references when files move
 - **ALWAYS update the `updated` date when changing status**
@@ -688,4 +698,4 @@ node .claude/skills/docs-manager/add-yaml-frontmatter.cjs --apply
 
 ---
 
-_Updated: 2026-01-09_
+_Updated: 2026-01-09 18:48_

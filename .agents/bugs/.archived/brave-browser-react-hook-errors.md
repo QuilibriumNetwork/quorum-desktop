@@ -1,7 +1,7 @@
 ---
 type: bug
 title: Brave Browser React Hook Errors - ONGOING INVESTIGATION
-status: on-hold
+status: archived
 created: 2026-01-09T00:00:00.000Z
 updated: '2026-01-09'
 ---

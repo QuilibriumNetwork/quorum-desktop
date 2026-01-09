@@ -1,7 +1,7 @@
 ---
 type: task
 title: Public Space Directory Feature
-status: in-progress
+status: open
 ai_generated: true
 created: 2025-12-30T00:00:00.000Z
 updated: '2026-01-09'

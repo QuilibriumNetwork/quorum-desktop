@@ -1,7 +1,7 @@
 ---
 type: task
 title: Space/Channel Message Deletion Placeholders
-status: on-hold
+status: archived
 complexity: low
 ai_generated: true
 created: 2026-01-09T00:00:00.000Z

@@ -1,7 +1,7 @@
 ---
 type: task
 title: SDK PasskeyModal Customization Props Enhancement
-status: in-progress
+status: open
 complexity: high
 ai_generated: true
 created: 2025-11-21T00:00:00.000Z

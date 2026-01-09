@@ -1,7 +1,7 @@
 ---
 type: task
 title: User Data Backup & Restore Feature
-status: in-progress
+status: open
 complexity: medium
 ai_generated: true
 created: 2026-01-07T00:00:00.000Z

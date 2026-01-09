@@ -83,9 +83,9 @@ export const MENTION_PILL_CLASSES = {
 
 3. **`extractStorageTextFromEditor(editorElement: HTMLElement): string`**
    - Walks DOM tree and converts pills to storage format
-   - Users: `@<address>` (legacy format)
+   - Users: `@<address>`
    - Roles: `@roleTag` (no brackets)
-   - Channels: `#<channelId>` (legacy format)
+   - Channels: `#<channelId>`
    - Everyone: `@everyone`
 
 4. **`getCursorPositionInElement(editorElement: HTMLElement): number`**

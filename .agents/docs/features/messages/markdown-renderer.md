@@ -74,13 +74,13 @@ The message rendering system maintains **two independent rendering paths** for r
 
 **Supported Features**:
 - ✅ Markdown formatting (`**bold**`, `*italic*`, code blocks, tables, etc.)
-- ✅ User mentions (both formats: `@<address>` and `@[Display Name]<address>`) via safe placeholder tokens
+- ✅ User mentions (`@<address>`) via safe placeholder tokens with display name lookup
 - ✅ Role mentions (`@role`) via safe placeholder tokens
-- ✅ Channel mentions (both formats: `#<channelId>` and `#[Channel Name]<channelId>`) via safe placeholder tokens
+- ✅ Channel mentions (`#<channelId>`) via safe placeholder tokens with channel name lookup
 - ✅ YouTube embeds (standalone URLs) and links (inline URLs)
 - ✅ Regular URL auto-linking
 - ✅ Invite links (via placeholder tokens)
-- ✅ Security hardened (no HTML injection, XSS protection)
+- ✅ Security hardened (no HTML injection, XSS protection, display name security)
 
 **Security Architecture**:
 - Uses placeholder token system (`<<<TOKEN>>>`) for dynamic content
@@ -331,20 +331,16 @@ MessageMarkdownRenderer uses special tokens to safely render dynamic content lik
 - **Example**: `"https://invite.url"` → `"![invite-card](https://invite.url)"` → Invite card
 
 ### User Mentions
-- **Token Pattern**: `<<<MENTION_USER:address>>>`
-- **Creation**: `processMentions()` converts both mention formats to safe tokens:
-  - Legacy format: `@<Qm...>` → `<<<MENTION_USER:Qm...>>>`
-  - Enhanced format: `@[Display Name]<Qm...>` → `<<<MENTION_USER:Qm...>>>`
+- **Token Pattern**: `<<<MENTION_USER:address:displayName>>>`
+- **Creation**: `processMentions()` converts `@<address>` format to safe tokens
+- **Format**: Only `@<Qm...>` is supported
 - **Rendering**: `text` and `p` components catch tokens and render styled spans
 - **Security**: Prevents markdown interpretation and XSS attacks
-- **Backward Compatibility**: Both old and new formats work seamlessly
 - **Display Name Handling**: ALWAYS uses `mapSenderToUser()` lookup for security
-  - Both formats extract address → lookup real display name
-  - Embedded names in enhanced format are ignored (prevents name-spoofing)
-  - See [useMessageFormatting.ts:164](src/hooks/business/messages/useMessageFormatting.ts#L164)
-- **Examples**:
-  - Legacy: `"Hey @<Qm123>"` → `"Hey <<<MENTION_USER:Qm123>>>"` → Styled mention with lookup name
-  - Enhanced: `"Hey @[John Doe]<Qm123>"` → `"Hey <<<MENTION_USER:Qm123>>>"` → Styled mention with lookup name (NOT "John Doe")
+  - Extracts address → lookup real display name from space data
+  - Prevents name-spoofing and impersonation attacks
+  - See [useMessageFormatting.ts:157-175](src/hooks/business/messages/useMessageFormatting.ts#L157-L175)
+- **Example**: `"Hey @<Qm123>"` → `"Hey <<<MENTION_USER:Qm123:displayName>>>"` → Styled mention with lookup name
 
 ### Everyone Mentions
 - **Token Pattern**: `<<<MENTION_EVERYONE>>>`
@@ -363,19 +359,16 @@ MessageMarkdownRenderer uses special tokens to safely render dynamic content lik
 - Security: No raw HTML injection possible
 
 ### Channel Mentions
-- **Token Pattern**: `<<<MENTION_CHANNEL:channelId>>>`
-- **Creation**: `processChannelMentions()` converts both channel mention formats to safe tokens:
-  - Legacy format: `#<ch-abc123>` → `<<<MENTION_CHANNEL:ch-abc123>>>`
-  - Enhanced format: `#[general-chat]<ch-abc123>` → `<<<MENTION_CHANNEL:ch-abc123>>>`
+- **Token Pattern**: `<<<MENTION_CHANNEL:channelId:channelName:displayName>>>`
+- **Creation**: `processChannelMentions()` converts `#<channelId>` format to safe tokens
+- **Format**: Only `#<ch-abc123>` is supported
 - **Rendering**: `text` and `p` components catch tokens and render clickable channel spans
 - **Navigation**: Click handler navigates to the referenced channel
 - **Display Name Handling**: ALWAYS looks up channel name from `spaceChannels` array for security
-  - Both formats extract channelId → lookup real channel name
-  - Embedded names in enhanced format are ignored (prevents spoofing)
-  - See [useMessageFormatting.ts:193-216](src/hooks/business/messages/useMessageFormatting.ts#L193-L216)
-- **Examples**:
-  - Legacy: `"Check #<ch-123>"` → Clickable span showing channel lookup name
-  - Enhanced: `"Check #[general]<ch-123>"` → Clickable span showing channel lookup name (NOT "general")
+  - Extracts channelId → lookup real channel name from space data
+  - Prevents spoofing attacks
+  - See [useMessageFormatting.ts:196-218](src/hooks/business/messages/useMessageFormatting.ts#L196-L218)
+- **Example**: `"Check #<ch-123>"` → `"<<<MENTION_CHANNEL:ch-123:channelName:displayName>>>"` → Clickable span showing lookup name
 
 ### Message Links (Discord-style)
 - **Token Pattern**: `<<<MESSAGE_LINK:channelId:messageId:channelName>>>`
@@ -545,11 +538,11 @@ All user-controlled content now follows this pattern:
 - [Bookmarks](bookmarks.md) - Hybrid preview rendering for bookmarks
 
 ---
-**Last Updated**: 2026-01-06
-**Security Hardening**: Complete (rehype-raw removed, XSS vulnerabilities fixed, word boundary validation added)
+**Last Updated**: 2026-01-09
+**Security Hardening**: Complete (rehype-raw removed, XSS vulnerabilities fixed, word boundary validation added, display name lookup for security)
 **Performance Optimization**: Complete
-**Enhanced Mention Formats**: Complete (backward-compatible support for readable mention display names)
+**Mention Formats**: Only `@<address>` and `#<channelId>` supported (display names looked up from space data for security)
 **Message Links**: Complete (Discord-style rendering with same-space validation)
 **Spoilers**: Complete (plain text only, dot pattern styling, keyboard accessible)
 **Keyboard Shortcuts**: Complete (Bold, Italic, Strikethrough, Inline Code)
-**Recent Changes**: Added keyboard shortcuts for markdown formatting (Ctrl/Cmd + B/Shift+I/Shift+X/Shift+M)
+**Recent Changes**: Updated documentation to reflect current mention format support (no enhanced formats with embedded names)

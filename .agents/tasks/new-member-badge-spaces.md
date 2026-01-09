@@ -1,7 +1,7 @@
 ---
 type: task
 title: Implement New Member Badge in Spaces
-status: in-progress
+status: open
 complexity: medium
 ai_generated: true
 created: 2025-12-29T00:00:00.000Z

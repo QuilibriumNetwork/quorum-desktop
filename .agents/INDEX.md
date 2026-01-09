@@ -157,6 +157,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Multi-User Invite Selection Enhancement](tasks/multi-user-invite-selection.md)
 - [Passkey Import UX Issue](tasks/passkey-import-ux-issue.md)
 - [Public Space Directory Feature](tasks/public-space-directory.md)
+- [Remove Deprecated Enhanced Mention Format Backward Compatibility Code](tasks/remove-enhanced-mention-format-compat.md)
 - [SDK PasskeyModal Customization Props Enhancement](tasks/sdk-passkey-modal-customization-props.md)
 - [Service Worker for App Update Detection](tasks/service-worker-app-updates.md)
 - [Space Tags](tasks/space-tags.md)
@@ -398,4 +399,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2026-01-09 16:53:13
+**Last Updated**: 2026-01-09 17:27:56

@@ -1,7 +1,7 @@
 export interface FrontmatterData {
   type?: 'task' | 'bug' | 'doc' | 'report';
   title?: string;
-  status?: 'open' | 'in-progress' | 'on-hold' | 'done';
+  status?: 'open' | 'in-progress' | 'on-hold' | 'done' | 'archived';
   complexity?: 'low' | 'medium' | 'high' | 'very-high'; // tasks only
   priority?: 'low' | 'medium' | 'high' | 'critical'; // bugs only
   ai_generated?: boolean;

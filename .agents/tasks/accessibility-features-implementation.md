@@ -1,7 +1,7 @@
 ---
 type: task
 title: Implement Comprehensive Accessibility Features
-status: in-progress
+status: open
 complexity: very-high
 ai_generated: true
 created: 2026-01-06T00:00:00.000Z

@@ -1,7 +1,7 @@
 ---
 type: task
 title: Device Identification Improvement
-status: in-progress
+status: on-hold
 created: 2026-01-09T00:00:00.000Z
 updated: '2026-01-09'
 ---

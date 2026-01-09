@@ -1,7 +1,7 @@
 ---
 type: task
 title: Auto-Jump to First Unread Message + Fix Hash Navigation
-status: on-hold
+status: archived
 complexity: medium
 created: 2026-01-09T00:00:00.000Z
 updated: '2026-01-09'

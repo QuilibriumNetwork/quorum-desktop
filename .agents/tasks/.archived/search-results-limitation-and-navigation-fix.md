@@ -1,7 +1,7 @@
 ---
 type: task
 title: 'Task: Fix Search Results Limitation and Pagination'
-status: on-hold
+status: archived
 created: 2025-11-11T00:00:00.000Z
 updated: '2026-01-09'
 ---

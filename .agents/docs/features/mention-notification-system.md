@@ -17,10 +17,10 @@ The Unified Notification System provides real-time visual feedback for mentions 
 
 ### Supported Notification Types
 
-- **@you mentions**: Direct user mentions (both formats: `@<address>` and `@[Display Name]<address>`)
+- **@you mentions**: Direct user mentions (`@<address>`)
 - **@everyone mentions**: Channel-wide mentions (permission-based)
 - **@role mentions**: Role-based mentions (`@moderators`, `@admins`) with user role checking
-- **#channel mentions**: Channel references (both formats: `#<channelId>` and `#[Channel Name]<channelId>`) with clickable navigation
+- **#channel mentions**: Channel references (`#<channelId>`) with clickable navigation
 - **Replies**: Notifications when someone replies to your messages
 
 ### Key Design
@@ -94,11 +94,11 @@ This is a **self-highlighting** pattern where the Message component highlights i
 ### Utilities
 
 **`src/utils/mentionUtils.ts`**
-- `extractMentionsFromText(text, options)`: Parses mention patterns (supports both old and new formats):
-  - User mentions: `@<address>` and `@[Display Name]<address>`
+- `extractMentionsFromText(text, options)`: Parses mention patterns:
+  - User mentions: `@<address>`
   - Role mentions: `@roleTag`
   - Everyone mentions: `@everyone`
-  - Channel mentions: `#<channelId>` and `#[Channel Name]<channelId>`
+  - Channel mentions: `#<channelId>`
 - `hasWordBoundaries(text, match)`: Validates mentions have whitespace boundaries (used by both backend and frontend)
 - `isMentioned(message, options)`: Checks if user is mentioned
 - `isMentionedWithSettings(message, options)`: Checks mention with user settings and role membership
@@ -188,9 +188,9 @@ This is a **self-highlighting** pattern where the Message component highlights i
 
 **`src/components/message/MessageComposer.tsx`**
 - Mention autocomplete dropdown with user, role, and channel suggestions
-- Users format: `@[Display Name]<address>` (new format, backward compatible with `@<address>`)
+- Users format: `@<address>`
 - Roles format: `@roleTag` (without brackets)
-- Channels format: `#[Channel Name]<channelId>` (new format, backward compatible with `#<channelId>`)
+- Channels format: `#<channelId>`
 - Displays role badges with colors and channel icons in dropdown
 - Separate dropdowns for `@` and `#` triggers
 - CSS: `MessageComposer.scss` includes role badge and channel styling
@@ -215,12 +215,12 @@ This is a **self-highlighting** pattern where the Message component highlights i
 
 **`src/components/message/MessageMarkdownRenderer.tsx`**
 - Renders markdown-formatted messages
-- Processes user mentions: Both `@<address>` and `@[Display Name]<address>` formats
+- Processes user mentions: `@<address>` format → styled span with display name lookup
 - Processes role mentions: `@roleTag` → styled span
-- Processes channel mentions: Both `#<channelId>` and `#[Channel Name]<channelId>` formats → clickable span with navigation
+- Processes channel mentions: `#<channelId>` → clickable span with navigation and channel name lookup
 - Only styles roles that exist in `message.mentions.roleIds`
 - Only styles channels that exist in `message.mentions.channelIds`
-- Prefers inline display names when available, falls back to lookup names
+- Display names always looked up from space data for security
 - Accepts `roleMentions`, `channelMentions`, `spaceRoles`, and `spaceChannels` props
 - CSS: `.message-name-mentions-you` for consistent styling across all mention types
 
@@ -284,7 +284,7 @@ Role mentions allow users to notify all members of a role (e.g., `@moderators`, 
 
 ### Format
 
-- **User mentions**: `@<address>` (legacy format) and `@[Display Name]<address>` (enhanced format)
+- **User mentions**: `@<address>`
 - **Role mentions**: `@roleTag` (without brackets, e.g., `@moderators`)
 - **@everyone**: `@everyone` (special case, permission-based)
 
@@ -300,14 +300,14 @@ When typing `@`, the dropdown shows:
 - Discriminated union type: `MentionOption = { type: 'user', data: User } | { type: 'role', data: Role }`
 - Filters roles by `displayName` and `roleTag`
 - Sorts by relevance (exact match > starts with > contains)
-- Selection inserts appropriate format (`@[Display Name]<address>` for users or `@roleTag` for roles)
+- Selection inserts appropriate format (`@<address>` for users or `@roleTag` for roles)
 
 ### Extraction
 
 **Function**: `extractMentionsFromText(text, { spaceRoles })`
 
 Parses message text and extracts:
-- User mentions: `/@(?:\[([^\]]+)\])?<([^>]+)>/g` (supports both formats) → `mentions.memberIds[]`
+- User mentions: `/@<([^>]+)>/g` → `mentions.memberIds[]`
 - Role mentions: `/@([a-zA-Z0-9_-]+)(?!\w)/g` → `mentions.roleIds[]`
 - @everyone: `/@everyone\b/i` → `mentions.everyone = true`
 
@@ -391,7 +391,7 @@ Channel mentions allow users to reference channels within messages using `#<chan
 
 ### Format
 
-- **Channel mentions**: `#<channelId>` (legacy format) and `#[Channel Name]<channelId>` (enhanced format)
+- **Channel mentions**: `#<channelId>`
 - **Navigation**: Clicking navigates to `/spaces/{spaceId}/{channelId}`
 
 ### Autocomplete
@@ -409,14 +409,14 @@ When typing `#`, the dropdown shows:
 - Filters channels by `channelName`
 - Sorts by relevance (exact match > starts with > contains)
 - Limited to 25 results for better UX
-- Selection inserts `#[Channel Name]<channelId>` format (enhanced format)
+- Selection inserts `#<channelId>` format
 
 ### Extraction
 
 **Function**: `extractMentionsFromText(text, { spaceChannels })`
 
 Parses message text and extracts:
-- Channel mentions: `/#(?:\[([^\]]+)\])?<([^>]+)>/g` (supports both formats) → `mentions.channelIds[]`
+- Channel mentions: `/#<([^>]+)>/g` → `mentions.channelIds[]`
 
 **Validation**:
 - Channel IDs are validated against `spaceChannels` array by ID
@@ -430,7 +430,7 @@ Parses message text and extracts:
 - Processes `#<channelId>` patterns in markdown text
 - Validates against `message.mentions.channelIds` (only style if actually mentioned)
 - Replaces with clickable span: `<span class="message-name-mentions-you" data-channel-id="{channelId}">#{channelName}</span>`
-- Prefers inline channel names from enhanced format, falls back to channel lookup
+- Channel names looked up from space channels for security
 - Uses same CSS class as other mentions for consistency
 
 **Web (Token-based)**: `useMessageFormatting.ts`
@@ -727,7 +727,6 @@ All mention components use `tokenData.isInteractive` flag to determine CSS class
 
 ---
 
-*Last updated: 2025-11-18*
-*Reviewed by Claude Code: 2025-11-18*
-*Enhanced mention formats implemented: 2025-11-18*
-*Verified: 2025-12-09 - File paths confirmed current*
+*Last updated: 2026-01-09*
+*Reviewed by Claude Code: 2026-01-09*
+*Verified: 2026-01-09 - Removed references to unsupported enhanced mention formats*

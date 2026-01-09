@@ -1,7 +1,7 @@
 ---
 type: task
 title: Tooltip Shared Mode for NavMenu Flickering Fix
-status: on-hold
+status: archived
 complexity: high
 created: 2025-12-10T00:00:00.000Z
 updated: '2026-01-09'

@@ -1,7 +1,7 @@
 ---
 type: task
 title: Optimize Mention Interactivity Disable Feature
-status: on-hold
+status: archived
 complexity: high
 ai_generated: true
 created: 2025-11-17T00:00:00.000Z

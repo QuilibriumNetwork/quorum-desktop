@@ -1,7 +1,7 @@
 ---
 type: task
 title: Fix Lingui "Uncompiled Message Detected" Warning
-status: in-progress
+status: open
 complexity: low
 ai_generated: true
 created: 2026-01-04T00:00:00.000Z

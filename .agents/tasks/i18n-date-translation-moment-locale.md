@@ -1,7 +1,7 @@
 ---
 type: task
 title: Date Translation with Moment.js Locale Configuration
-status: in-progress
+status: open
 complexity: low
 created: 2025-01-14T00:00:00.000Z
 updated: '2026-01-09'

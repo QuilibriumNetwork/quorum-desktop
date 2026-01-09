@@ -1,7 +1,7 @@
 ---
 type: task
 title: Passkey Import UX Issue
-status: in-progress
+status: open
 created: 2025-11-13T00:00:00.000Z
 updated: '2026-01-09'
 related_issues:

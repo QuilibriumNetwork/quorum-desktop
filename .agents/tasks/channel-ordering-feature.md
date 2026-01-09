@@ -1,7 +1,7 @@
 ---
 type: task
 title: Implement Channel Ordering Feature
-status: in-progress
+status: on-hold
 complexity: high
 ai_generated: true
 created: 2026-01-07T00:00:00.000Z

@@ -1,7 +1,7 @@
 ---
 type: task
 title: Cache Space Key Metadata to Reduce Config Save Overhead
-status: on-hold
+status: archived
 complexity: medium
 ai_generated: true
 created: 2025-12-13T00:00:00.000Z
