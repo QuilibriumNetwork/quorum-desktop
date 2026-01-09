@@ -1,3 +1,11 @@
+---
+type: task
+title: "🔍 Users List Filtering Feature"
+status: done
+created: 2026-01-09
+updated: 2026-01-09
+---
+
 # 🔍 Users List Filtering Feature
 
 _Add search/filtering capabilities to Channel right sidebar users list for improved user discovery in large spaces_
@@ -39,7 +47,7 @@ Add a search input field directly above the users list in the Channel right side
 type UserItem = {
   type: 'user';
   address: string;        // Searchable: immutable user public key
-  displayName?: string;   // Searchable: mutable user display name  
+  displayName?: string;   // Searchable: mutable user display name
   userIcon?: string;
 }
 ```
@@ -80,7 +88,7 @@ const debouncedSearch = useCallback(
 ```
 
 #### 1.2 Implement Search Filtering Logic
-- [ ] **Status**: Not Started  
+- [ ] **Status**: Not Started
 - [ ] **Risk Level**: Low
 - [ ] **Files**: `src/hooks/business/channels/useChannelData.ts`
 
@@ -93,7 +101,7 @@ const debouncedSearch = useCallback(
 ```typescript
 const generateVirtualizedUserList = useCallback((searchFilter = '') => {
   if (!searchFilter.trim()) return generateFullUserList();
-  
+
   const term = searchFilter.toLowerCase();
   const filteredSections = userSections.map(section => ({
     ...section,
@@ -102,7 +110,7 @@ const generateVirtualizedUserList = useCallback((searchFilter = '') => {
       member.address?.toLowerCase().includes(term)
     )
   })).filter(section => section.members.length > 0);
-  
+
   return flattenSectionsForVirtuoso(filteredSections);
 }, [userSections]);
 ```
@@ -130,7 +138,7 @@ Placeholder: "Username or Address"
 
 **Tasks**:
 - [ ] Show "Type 2 more characters..." prompt for < 3 characters
-- [ ] Display "No users found for 'query'" empty state  
+- [ ] Display "No users found for 'query'" empty state
 - [ ] Add result count in section headers
 - [ ] Clear search on X button click
 
@@ -176,7 +184,7 @@ Placeholder: "Username or Address"
 
 ### User Experience Goals
 - **Discoverability**: Users can find any user in < 5 seconds
-- **Intuitive UX**: Clear feedback for search states and results  
+- **Intuitive UX**: Clear feedback for search states and results
 - **Cross-Platform**: Consistent experience on desktop and mobile
 - **Non-Intrusive**: Search doesn't interfere with existing user list functionality
 
@@ -235,6 +243,6 @@ These could be added later based on user feedback:
 
 ---
 
-_Created: September 12, 2025_  
-_Priority: Medium - User Experience Enhancement_  
+_Created: September 12, 2025_
+_Priority: Medium - User Experience Enhancement_
 _Estimated Effort: 3-4 hours development + 1 hour testing_

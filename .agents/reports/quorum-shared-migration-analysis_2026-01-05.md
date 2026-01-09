@@ -1,3 +1,11 @@
+---
+type: report
+title: quorum-shared Migration Analysis
+status: done
+created: 2026-01-09T00:00:00.000Z
+updated: '2026-01-09'
+---
+
 # quorum-shared Migration Analysis
 
 > **AI-Generated**: May contain errors. Verify before use.
@@ -448,5 +456,5 @@ Before proceeding with migration, the following should be clarified:
 
 ---
 
-_Created: 2026-01-05_
+
 _Report Type: Analysis/Migration Planning_

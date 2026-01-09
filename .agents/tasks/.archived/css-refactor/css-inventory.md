@@ -1,9 +1,17 @@
+---
+type: task
+title: CSS Inventory - Complete Codebase Analysis
+status: on-hold
+created: 2026-01-09T00:00:00.000Z
+updated: '2026-01-09'
+---
+
 # CSS Inventory - Complete Codebase Analysis
 
 ## 📋 Document Information
 
-**Last Updated:** January 19, 2025  
-**Analysis Type:** Comprehensive CSS/SCSS Selector Inventory  
+**Last Updated:** January 19, 2025
+**Analysis Type:** Comprehensive CSS/SCSS Selector Inventory
 **Purpose:** This document provides a detailed inventory of all CSS selectors across the Quilibrium quorum-desktop codebase, classified for systematic Tailwind CSS conversion planning.
 
 **Context:** This inventory supports the CSS refactoring initiative to migrate custom SCSS to Tailwind utilities using `@apply` while preserving semantic class names and theme functionality. Classifications help prioritize conversion efforts and identify areas requiring special handling.
@@ -148,8 +156,8 @@ Well-structured semantic classes already following best practices:
 
 **Status:** SUCCESSFULLY CONVERTED - Pattern reference
 
-**Previous state:** Raw CSS with color properties  
-**Current state:** Semantic classes using `@apply` with placeholder pattern  
+**Previous state:** Raw CSS with color properties
+**Current state:** Semantic classes using `@apply` with placeholder pattern
 **Pattern established:** Use `%btn-base` placeholder with `@extend` for shared styles
 
 - `%btn-base` - **semantic-class** - Shared button foundation using `@apply`

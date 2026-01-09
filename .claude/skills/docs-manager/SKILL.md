@@ -71,7 +71,7 @@ This skill focuses on **document creation and content management** within the `.
 - Follows complexity-based templates (Trivial/Low/Medium/High/Critical)
 - Includes proper status tracking, file references, verification steps
 - Updates existing tasks with current codebase state
-- Manages task lifecycle from Pending → In Progress → Complete
+- Manages task lifecycle: **open** → **in-progress** → **on-hold** → **done**
 
 ### 3. Documentation Creation
 - Creates feature documentation in `.agents/docs/features/`
@@ -121,6 +121,49 @@ Analyze the request to identify:
 - Complex tasks (Medium/High/Critical complexity) should always be analyzed by the feature-analyzer agent before implementation to avoid over-engineering and ensure best practices.
 - Tasks involving security considerations (authentication, encryption, user data, network communications, permissions) should be analyzed by the security-analyst agent before implementation.
 
+**Status System** (applies to all file types):
+- **`open`**: Not started yet, ready to work on (default for new tasks/bugs)
+- **`in-progress`**: Currently being worked on
+- **`on-hold`**: Blocked, waiting, or paused
+- **`done`**: Completed, fixed, or finalized (default for documentation and reports)
+
+**Complexity System** (tasks only):
+- **`low`**: Simple changes, 1-2 files, clear solution
+- **`medium`**: Moderate complexity, multiple files, some design decisions
+- **`high`**: Complex feature, many files, significant architectural decisions
+- **`very-high`**: Critical infrastructure changes, system-wide impact, major refactoring
+
+**Priority System** (bugs only):
+- **`low`**: Minor issue, workaround available, low impact
+- **`medium`**: Moderate impact, affects some users, should be fixed soon
+- **`high`**: Significant impact, affects many users, needs prompt attention
+- **`critical`**: Severe impact, breaks core functionality, immediate fix required
+
+**Note**: Documentation and report files should use `status: done` since they represent finalized documentation and completed analysis/audit reports.
+
+**Folder-Based Status Rules** (CRITICAL):
+When moving files between folders, the status MUST be updated to match the folder's purpose:
+
+- **Moving to `.done/` folder** (tasks):
+  - Update `status: done`
+  - Update `updated` date to current date
+
+- **Moving to `.solved/` folder** (bugs):
+  - Update `status: done`
+  - Update `updated` date to current date
+
+- **Moving to `.archived/` folder** (tasks or bugs):
+  - Update `status: on-hold`
+  - Update `updated` date to current date
+  - Archived items are not actively being worked on but preserved for reference
+
+**Default Status by Location**:
+- Files in `.done/` or `.solved/` folders → `status: done`
+- Files in `.archived/` folders → `status: on-hold`
+- Files in root task folders → `status: in-progress`
+- Files in root bug folders → `status: open`
+- Files in docs folders → `status: done`
+
 **Agent Review Notation**:
 - **Initially**: Create documents with only the basic AI warning: `> **⚠️ AI-Generated**: May contain errors. Verify before use.`
 - **After specialized agent review**: Add the review line: `> **Reviewed by**: [agent-name] agent`
@@ -136,7 +179,8 @@ Analyze the request to identify:
 ---
 type: bug
 title: "[Clear Bug Description]"
-status: active
+status: open
+priority: medium
 ai_generated: true
 reviewed_by: null
 created: YYYY-MM-DD
@@ -161,11 +205,6 @@ updated: YYYY-MM-DD
 
 ## Prevention
 [How to avoid in future - patterns/practices]
-
----
-
-_Created: YYYY-MM-DD_
-_Updated: YYYY-MM-DD_
 ```
 
 #### For Tasks (`.agents/tasks/`):
@@ -176,7 +215,7 @@ Use complexity-appropriate template:
 ---
 type: task
 title: "[Action-Oriented Title]"
-status: pending
+status: open
 complexity: low
 ai_generated: true
 reviewed_by: null
@@ -189,9 +228,6 @@ updated: YYYY-MM-DD
 > **⚠️ AI-Generated**: May contain errors. Verify before use.
 > **Reviewed by**: [agent-name] agent *(add only after agent review and implementation - also update frontmatter)*
 
-**Status**: Pending
-**Complexity**: Low
-**Created**: YYYY-MM-DD
 **Files**:
 - `src/path/to/file.ts:123`
 
@@ -219,10 +255,6 @@ updated: YYYY-MM-DD
 - [ ] TypeScript passes
 - [ ] Manual testing successful
 - [ ] No console errors
-
----
-
-_Updated: YYYY-MM-DD_
 ```
 
 **High Complexity:**
@@ -230,7 +262,7 @@ _Updated: YYYY-MM-DD_
 ---
 type: task
 title: "[Complex Feature Title]"
-status: pending
+status: open
 complexity: high
 ai_generated: true
 reviewed_by: null
@@ -246,9 +278,6 @@ related_tasks: []   # Add if applicable
 > **⚠️ AI-Generated**: May contain errors. Verify before use.
 > **Reviewed by**: [agent-name] agent *(add only after agent review and implementation - also update frontmatter)*
 
-**Status**: Pending
-**Complexity**: High
-**Created**: YYYY-MM-DD
 **Files**: [list of all affected files with line numbers]
 
 ## What & Why
@@ -322,6 +351,7 @@ related_tasks: []   # Add if applicable
 ---
 type: doc
 title: "[Feature Name]"
+status: done
 ai_generated: true
 reviewed_by: null
 created: YYYY-MM-DD
@@ -361,10 +391,6 @@ related_tasks: []   # Add if applicable
 - [Cross-references to other relevant docs]
 - [Links to API references]
 - [Related tasks or bugs]
-
----
-
-*Updated: YYYY-MM-DD*
 ```
 
 #### For Reports (`.agents/reports/`):
@@ -465,10 +491,12 @@ _Report Type: [Audit/Research/Analysis/Assessment]_
 5. **Document changes** - Add to Updates section with timestamp
 
 **For Status Changes:**
-- Moving bugs to `.solved/` when fixed
-- Moving tasks to `.done/` when complete
+- Moving bugs to `.solved/` when fixed → **MUST update `status: done`**
+- Moving tasks to `.done/` when complete → **MUST update `status: done`**
+- Moving files to `.archived/` folders → **MUST update `status: on-hold`**
 - Archiving outdated documentation
 - Updating cross-references when files move
+- **ALWAYS update the `updated` date when changing status**
 
 ### Step 6: Agent Review Integration
 When creating or updating documents that would benefit from specialized review:
@@ -632,6 +660,32 @@ This skill integrates seamlessly with your existing workflow:
 
 The skill essentially automates what you would do manually following your `agents-workflow.md`, but with intelligent context awareness, consistent application of your established patterns, **comprehensive documentation synchronization** (both project-wide and .agents-specific), and **integrated quality reviews by specialized agents** to ensure the entire documentation ecosystem is well-maintained and synchronized.
 
+## Utility Scripts
+
+### YAML Frontmatter Migration (`add-yaml-frontmatter.cjs`)
+
+Adds YAML frontmatter metadata to markdown files in `.agents/` folder.
+
+**When to use:**
+- Migrating new documentation categories
+- Adding new frontmatter fields to existing files
+- Backfilling metadata
+
+**Usage:**
+```bash
+# Preview changes
+node .claude/skills/docs-manager/add-yaml-frontmatter.cjs --dry-run
+
+# Apply changes
+node .claude/skills/docs-manager/add-yaml-frontmatter.cjs --apply
+```
+
+**What it extracts:**
+- Type (from folder), Title (from H1), Status (from content/folder)
+- Dates (from content/filesystem), AI-generated flag, Related issues
+
+**Safety:** Always run `--dry-run` first. Skips files with existing frontmatter.
+
 ---
 
-_Updated: 2025-12-02_
+_Updated: 2026-01-09_

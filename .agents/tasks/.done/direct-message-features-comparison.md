@@ -1,7 +1,14 @@
+---
+type: task
+title: "Direct Message Features Comparison Analysis"
+status: done
+created: 2025-11-12
+updated: 2025-11-12
+---
+
 # Direct Message Features Comparison Analysis
 
-**Status**: ⚠️ Missing Critical Features
-**Date**: 2025-11-12
+
 **Scope**: Compare DirectMessage.tsx vs Channel.tsx for feature parity
 
 ---
@@ -21,7 +28,7 @@ The infrastructure exists (MessageList supports all features), but DirectMessage
 
 ### 1. Date Separators ✅ **WORKING**
 
-**Status**: Already active in DirectMessage.tsx
+
 **Location**: Shared via MessageList.tsx:203-219
 
 **Why it works:**
@@ -48,7 +55,7 @@ return (
 
 ### 2. Auto-Jump to First Unread Message ❌ **MISSING**
 
-**Status**: Not implemented in DirectMessage.tsx
+
 **Required in**: Channel.tsx:350-466, MessageList.tsx:352-378
 
 **Missing Implementation:**
@@ -125,7 +132,7 @@ The database uses `[spaceId, channelId, timestamp]` as index, so passing the sam
 
 ### 3. New Messages Separator ❌ **MISSING**
 
-**Status**: Not implemented in DirectMessage.tsx
+
 **Required in**: Channel.tsx:124-128, 390-406, 435-452, 467-472, MessageList.tsx:71-75, 118-119, 207-225, 405-446
 
 **Missing Implementation:**

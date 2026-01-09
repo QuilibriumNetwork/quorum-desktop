@@ -1,6 +1,17 @@
+---
+type: task
+title: Docusaurus Setup & Implementation Task
+status: in-progress
+created: 2025-11-08T00:00:00.000Z
+updated: '2026-01-09'
+related_issues:
+  - '#87'
+  - '#0287'
+---
+
 # Docusaurus Setup & Implementation Task
 
-**Created**: 2025-11-08
+
 **Related**: See `docusaurus-blueprint-v2.md` for content strategy and structure
 **GitHub Issue**: https://github.com/QuilibriumNetwork/quorum-desktop/issues/87
 

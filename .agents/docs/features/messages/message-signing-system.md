@@ -1,3 +1,11 @@
+---
+type: doc
+title: Message Signing System
+status: done
+created: 2026-01-09T00:00:00.000Z
+updated: 2026-01-09T00:00:00.000Z
+---
+
 # Message Signing System
 
 **Last Updated:** December 9, 2025

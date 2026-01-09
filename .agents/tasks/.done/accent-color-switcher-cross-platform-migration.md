@@ -1,3 +1,11 @@
+---
+type: task
+title: AccentColorSwitcher Cross-Platform Migration + Persistence
+status: done
+created: 2026-01-09T00:00:00.000Z
+updated: '2026-01-09'
+---
+
 # AccentColorSwitcher Cross-Platform Migration + Persistence
 
 ## Task Overview
@@ -345,6 +353,6 @@ src/dev/playground/mobile/
 
 ---
 
-_Created: 2025-08-04_
+
 _Status: Todo_
 _Assigned: TBD_

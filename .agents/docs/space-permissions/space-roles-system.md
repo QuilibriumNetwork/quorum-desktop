@@ -1,3 +1,11 @@
+---
+type: doc
+title: Space Roles System
+status: done
+created: 2026-01-09T00:00:00.000Z
+updated: 2025-12-15T00:00:00.000Z
+---
+
 # Space Roles System
 
 ## Overview

@@ -1,3 +1,13 @@
+---
+type: task
+title: Space/Channel Message Deletion Placeholders
+status: on-hold
+complexity: low
+ai_generated: true
+created: 2026-01-09T00:00:00.000Z
+updated: '2026-01-09'
+---
+
 # Space/Channel Message Deletion Placeholders
 
 Could create a messy situation when mods delete many spam messages at the same time.
@@ -8,9 +18,9 @@ Could create a messy situation when mods delete many spam messages at the same t
 
 Add deletion placeholders to Space/Channel messages to improve UX and conversation context preservation. Currently, when messages are deleted in Channels, they disappear completely with no indication.
 
-**Status**: Pending
+
 **Priority**: Medium
-**Complexity**: Low (~3-4 hours)
+
 **Type**: UX Enhancement
 **Depends On**: None (can be implemented independently or alongside DM deletion placeholders)
 
@@ -623,5 +633,5 @@ Follow all steps as documented above.
 
 ---
 
-_Created: 2025-10-05 by Claude Code_
+
 _Last Updated: 2025-10-05_

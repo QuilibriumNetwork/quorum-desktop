@@ -1,10 +1,18 @@
+---
+type: task
+title: Implement Message Forwarding with Privacy Controls
+status: in-progress
+complexity: high
+ai_generated: true
+created: 2025-11-16T00:00:00.000Z
+updated: '2026-01-09'
+---
+
 # Implement Message Forwarding with Privacy Controls
 
 > **⚠️ AI-Generated**: May contain errors. Verify before use.
 
-**Status**: Pending
-**Complexity**: High
-**Created**: 2025-11-16
+
 **Files**:
 - `src/api/quorumApi.ts` - Message type definitions and Space forwarding property
 - `src/services/MessageService.ts` - Forwarding logic
@@ -168,6 +176,3 @@ After core implementation, consider:
 - **Implementation**: Added space settings UI and simplified forwarding validation logic
 
 ---
-
-_Created: 2025-11-16_
-_Updated: 2025-11-16_

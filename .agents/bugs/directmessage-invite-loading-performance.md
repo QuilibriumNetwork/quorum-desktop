@@ -1,3 +1,11 @@
+---
+type: bug
+title: DirectMessage Invite Loading Performance Issue
+status: open
+created: 2026-01-09T00:00:00.000Z
+updated: 2026-01-09T00:00:00.000Z
+---
+
 # DirectMessage Invite Loading Performance Issue
 
 ## Problem
@@ -86,5 +94,5 @@ if (cached && Date.now() - cached.timestamp < 300000) { // 5 min TTL
 - `src/components/direct/DirectMessage.tsx` - DirectMessage conversation view
 
 ---
-*Created: 2025-09-22*
+
 *Analysis by: Claude Code investigation*

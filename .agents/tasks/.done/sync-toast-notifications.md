@@ -1,10 +1,18 @@
+---
+type: task
+title: Sync Toast Notifications
+status: done
+complexity: medium
+ai_generated: true
+created: 2025-12-14T00:00:00.000Z
+updated: '2026-01-09'
+---
+
 # Sync Toast Notifications
 
 > **⚠️ AI-Generated**: May contain errors. Verify before use.
 
-**Status**: Pending
-**Complexity**: Medium
-**Created**: 2025-12-14
+
 **Files**:
 - `src/utils/toast.ts`
 - `src/components/Layout.tsx:43-86`

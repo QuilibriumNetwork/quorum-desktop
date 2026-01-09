@@ -1,3 +1,11 @@
+---
+type: task
+title: "Read-Only Channels with Role Managers"
+status: done
+created: 2026-01-09
+updated: 2026-01-09
+---
+
 # Read-Only Channels with Role Managers
 
 ## Overview
@@ -131,7 +139,7 @@ const canPin = !channel.isReadOnly || isSpaceOwner || isChannelManager;
 
 ---
 
-_Created: January 9, 2025_
+
 _Priority: Medium_
 _Complexity: Low-Medium_
 _Impact: High (enables announcement channels, moderated discussions)_

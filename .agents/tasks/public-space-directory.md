@@ -1,3 +1,12 @@
+---
+type: task
+title: Public Space Directory Feature
+status: in-progress
+ai_generated: true
+created: 2025-12-30T00:00:00.000Z
+updated: '2026-01-09'
+---
+
 # Public Space Directory Feature
 
 > **⚠️ AI-Generated**: May contain errors. Verify before use.
@@ -5,8 +14,7 @@
 
 A technical proposal for implementing a discoverable public space directory in Quorum.
 
-**Created**: 2025-12-30
-**Status**: Proposal (Requires Backend API Support)
+
 **Security Review**: 2025-12-30 (Critical issues identified and addressed)
 
 ---
@@ -522,7 +530,7 @@ Add "Explore Spaces" button alongside "Create Space" and "Join Space".
 ├─────────────────────────────────────────────────────────────────────┤
 │                                                                     │
 │  ┌─────────────────────────────────────────────────────────────┐    │
-│  │ 🔍 Search spaces...                                        │     
+│  │ 🔍 Search spaces...                                        │
 │  └─────────────────────────────────────────────────────────────┘    │
 │                                                                     │
 │  Categories:                                                        │

@@ -1,6 +1,14 @@
+---
+type: task
+title: "DM Unread Indicators - Exclude Current User's Messages"
+status: done
+created: 2026-01-09
+updated: 2026-01-09
+---
+
 # DM Unread Indicators - Exclude Current User's Messages
 
-**Status**: 📋 Planned
+
 **Priority**: Medium
 **Type**: UX Enhancement
 **Related**: [unread-message-indicators.md](../docs/features/unread-message-indicators.md)
@@ -254,5 +262,5 @@ export function useDirectMessageContactUnread({
 
 ---
 
-*Created: 2025-11-13*
+
 *Note: Analysis and planning phase - do not implement without further investigation*

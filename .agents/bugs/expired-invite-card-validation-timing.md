@@ -1,3 +1,11 @@
+---
+type: bug
+title: Expired Invite Card Validation Timing Issue
+status: open
+created: 2026-01-09T00:00:00.000Z
+updated: 2025-11-09T00:00:00.000Z
+---
+
 # Expired Invite Card Validation Timing Issue
 
 ## Problem
@@ -236,7 +244,7 @@ const useInviteExpiration = (inviteLink, space) => {
 - Similar to `directmessage-invite-loading-performance.md` (caching tradeoffs)
 
 ---
-*Created: 2025-11-09*
-*Updated: 2025-11-09*
+
+
 *Status: Blocked - Requires Server-Side Investigation*
 *Conclusion: Cannot be fixed client-side due to API behavior. Invite evals appear valid during processing but fail during join. Likely single-use or intermittent API issue.*

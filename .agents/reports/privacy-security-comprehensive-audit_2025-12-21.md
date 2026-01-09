@@ -1,3 +1,12 @@
+---
+type: report
+title: Comprehensive Privacy & Security Audit - All Features
+status: done
+ai_generated: true
+created: 2026-01-09T00:00:00.000Z
+updated: '2026-01-09'
+---
+
 # Comprehensive Privacy & Security Audit - All Features
 
 > **⚠️ AI-Generated**: May contain errors. Verify before use.
@@ -89,7 +98,6 @@ The only critical issue (plaintext private keys in action queue) has been fixed.
 
 **Recommendation**: Consider encrypting space_keys store with user-derived key (similar to SDK's approach for identity keys).
 
-**Status**: Known limitation, documented in [cryptographic-architecture.md](../docs/cryptographic-architecture.md)
 
 ---
 
@@ -124,7 +132,6 @@ interface EncryptionState {
 
 **Recommendation**: Consider encrypting encryption_states with user-derived key.
 
-**Status**: Known limitation, documented in [cryptographic-architecture.md](../docs/cryptographic-architecture.md)
 
 ---
 
@@ -167,7 +174,6 @@ spaceKeys?: {
 
 **Location**: `src/hooks/platform/files/useKeyBackup.ts`
 
-**Status**: ⚠️ **Not implemented** - Mobile app is not yet released and this feature may never be implemented. Documented here for completeness based on design docs.
 
 **Issue**: On Android 7.0 and below, private keys would be copied to clipboard as fallback:
 ```typescript
@@ -378,6 +384,6 @@ cachedPreview: {
 
 ---
 
-_Created: 2025-12-21_
+
 _Report Type: Security/Privacy Audit_
 _Trigger: Discovery of plaintext private keys in action queue (now fixed)_

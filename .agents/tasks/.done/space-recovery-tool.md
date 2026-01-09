@@ -1,11 +1,19 @@
+---
+type: task
+title: Space Recovery Tool in UserSettingsModal
+status: done
+complexity: medium
+ai_generated: true
+created: 2025-12-13T00:00:00.000Z
+updated: '2026-01-09'
+---
+
 # Space Recovery Tool in UserSettingsModal
 
 > **⚠️ AI-Generated**: May contain errors. Verify before use.
 > **Reviewed by**: feature-analyzer agent, security-analyst agent
 
-**Status**: Pending
-**Complexity**: Medium
-**Created**: 2025-12-13
+
 **Files**:
 - `src/components/modals/UserSettingsModal/Privacy.tsx`
 - `src/hooks/business/user/useSpaceRecovery.ts` (new)
@@ -227,5 +235,3 @@ This provides user self-service recovery while the underlying sync bug is being 
 - [useUserSettings.ts](../../src/hooks/business/user/useUserSettings.ts) - Similar hook pattern
 
 ---
-
-_Created: 2025-12-13_

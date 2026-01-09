@@ -1,3 +1,11 @@
+---
+type: doc
+title: ReactTooltip Mobile Support Documentation
+status: done
+created: 2026-01-09T00:00:00.000Z
+updated: 2026-01-09T00:00:00.000Z
+---
+
 # ReactTooltip Mobile Support Documentation
 
 ## Overview

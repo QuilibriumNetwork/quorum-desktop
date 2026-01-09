@@ -1,3 +1,13 @@
+---
+type: task
+title: Passkey Import UX Issue
+status: in-progress
+created: 2025-11-13T00:00:00.000Z
+updated: '2026-01-09'
+related_issues:
+  - '#99'
+---
+
 # Passkey Import UX Issue
 
 ## Status
@@ -183,7 +193,7 @@ If the passkey API is required for security reasons, consider:
 
 ---
 
-**Created**: 2025-11-13
+
 **Last Updated**: 2025-11-13
 **Assigned To**: SDK Team
 **Related Issues**: None yet

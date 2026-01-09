@@ -1,3 +1,12 @@
+---
+type: bug
+title: Ghost Message Appears After Deleting a Message
+status: done
+ai_generated: true
+created: 2026-01-09T00:00:00.000Z
+updated: 2026-01-09T00:00:00.000Z
+---
+
 # Ghost Message Appears After Deleting a Message
 
 > **⚠️ AI-Generated**: May contain errors. Verify before use.
@@ -137,5 +146,3 @@ To verify fix:
 4. Check ActionQueue stats - only one task should be created per action
 
 ---
-
-_Created: 2025-12-18_

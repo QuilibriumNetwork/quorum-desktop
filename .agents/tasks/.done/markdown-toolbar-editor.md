@@ -1,3 +1,11 @@
+---
+type: task
+title: "Markdown Toolbar Editor"
+status: done
+created: 2026-01-09
+updated: 2026-01-09
+---
+
 # Markdown Toolbar Editor
 
 **Status:** ✅ Desktop Complete | ✅ Mobile Decision Made

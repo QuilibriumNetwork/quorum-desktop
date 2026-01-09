@@ -1,3 +1,11 @@
+---
+type: doc
+title: Kick User System Documentation
+status: done
+created: 2026-01-09T00:00:00.000Z
+updated: 2026-01-09T00:00:00.000Z
+---
+
 # Kick User System Documentation
 
 ## Overview
@@ -457,7 +465,7 @@ The `kickUser()` call in the hook returns after only ~16-20ms because `enqueueOu
 **Last Updated**: 2026-01-02
 **Verified**: 2025-12-15 - Updated modal props and flow (user info display via ModalProvider)
 **Performance Tested**: 2025-12-17 - Added detailed timing analysis
-**Status**: Production Ready
+
 **Cross-Platform**: ✅ Web + Mobile Compatible
 
 *2026-01-02: Added config key encryption layer documentation (from qm delta commit)*

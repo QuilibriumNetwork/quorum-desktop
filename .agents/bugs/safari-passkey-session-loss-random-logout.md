@@ -1,3 +1,12 @@
+---
+type: bug
+title: Safari Passkey Session Loss - Random Logout on Browser Restart
+status: open
+ai_generated: true
+created: 2026-01-09T00:00:00.000Z
+updated: 2026-01-09T00:00:00.000Z
+---
+
 # Safari Passkey Session Loss - Random Logout on Browser Restart
 
 > **⚠️ AI-Generated**: May contain errors. Verify before use.
@@ -140,6 +149,6 @@ Once root cause is identified:
 
 ---
 
-_Created: 2026-01-07_
+
 _Reported by: User "Oumlaut" via Telegram support chat_
 _Environment: macOS Tahoe 26.2, Safari 26.2_

@@ -1,3 +1,11 @@
+---
+type: task
+title: "Mention Notification System - Critical Race Condition Fix"
+status: done
+created: 2026-01-09
+updated: 2025-10-09
+---
+
 # Mention Notification System - Critical Race Condition Fix
 
 **Status:** ✅ COMPLETE - React Query Migration Implemented

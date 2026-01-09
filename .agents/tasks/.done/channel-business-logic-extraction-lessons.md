@@ -1,3 +1,11 @@
+---
+type: task
+title: "Channel Business Logic Extraction - Lessons Learned"
+status: done
+created: 2026-01-09
+updated: 2026-01-09
+---
+
 # Channel Business Logic Extraction - Lessons Learned
 
 ## Overview
@@ -100,6 +108,6 @@ useMessageComposer(); // Input state, file uploads, submission
 
 ---
 
-_Created: 2025-08-02_
+
 _Component: Channel.tsx → useChannelData, useChannelMessages, useMessageComposer_
 _Result: 730+ lines → ~400 lines, navigation preserved, primitives integrated_

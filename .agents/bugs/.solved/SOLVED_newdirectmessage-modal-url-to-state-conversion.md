@@ -1,9 +1,17 @@
+---
+type: bug
+title: 'NewDirectMessage Modal: URL-to-State Conversion'
+status: done
+created: 2025-01-19T00:00:00.000Z
+updated: '2026-01-09'
+---
+
 # NewDirectMessage Modal: URL-to-State Conversion
 
-**Date**: 2025-01-19  
-**Issue**: Modal reopening/flickering when closing from existing conversations  
-**Solution**: Converted from URL-based to state-based modal management  
-**Status**: Resolved - Additional React hooks issue fixed  
+
+**Issue**: Modal reopening/flickering when closing from existing conversations
+**Solution**: Converted from URL-based to state-based modal management
+
 **Last Updated**: 2025-01-20
 
 ## Resolution Summary

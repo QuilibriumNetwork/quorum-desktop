@@ -1,10 +1,18 @@
+---
+type: task
+title: "Implement Spoiler Syntax (||text||) in Markdown Renderer"
+status: done
+complexity: medium
+ai_generated: true
+created: 2026-01-06
+updated: 2026-01-09
+---
+
 # Implement Spoiler Syntax (||text||) in Markdown Renderer
 
 > **⚠️ AI-Generated**: May contain errors. Verify before use.
 
-**Status**: ✅ Completed (with limitations)
-**Complexity**: Medium → High (due to markdown interaction complexity)
-**Created**: 2026-01-06
+
 **Completed**: 2026-01-06
 **Files**:
 - `src/components/message/MessageMarkdownRenderer.tsx:294-360` (processMentions pattern)

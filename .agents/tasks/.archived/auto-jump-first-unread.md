@@ -1,9 +1,18 @@
+---
+type: task
+title: Auto-Jump to First Unread Message + Fix Hash Navigation
+status: on-hold
+complexity: medium
+created: 2026-01-09T00:00:00.000Z
+updated: '2026-01-09'
+---
+
 # Auto-Jump to First Unread Message + Fix Hash Navigation
 
-**Status**: 🔴 Blocked - Needs Bug Fix  
-**Priority**: High (affects pinned messages, search, notifications)  
-**Type**: UX Enhancement + Bug Fix  
-**Complexity**: Medium (2-3 days)  
+
+**Priority**: High (affects pinned messages, search, notifications)
+**Type**: UX Enhancement + Bug Fix
+
 **Affects**: Channel navigation, Message loading, Hash navigation, Pinned messages, Search results, Notifications
 
 **Related Bug**: [auto-jump-unread-breaks-message-sync.md](../bugs/auto-jump-unread-breaks-message-sync.md)
@@ -638,5 +647,5 @@ After core implementation works well, consider:
 
 **Estimated Timeline**: 1-2 days
 
-_Created: 2025-11-11_  
+_Created: 2025-11-11_
 _Replaces: smart-channel-navigation/ folder (over-engineered analysis)_

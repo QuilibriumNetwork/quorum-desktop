@@ -1,11 +1,19 @@
+---
+type: task
+title: Implement Channel Mention Feature (#channelname)
+status: done
+complexity: high
+ai_generated: true
+created: 2025-11-17T00:00:00.000Z
+updated: '2026-01-09'
+---
+
 # Implement Channel Mention Feature (#channelname)
 
 > **⚠️ AI-Generated**: May contain errors. Verify before use.
 > **Reviewed by**: feature-analyzer agent
 
-**Status**: Pending
-**Complexity**: High
-**Created**: 2025-11-17
+
 **Files**:
 - `src/hooks/business/mentions/useMentionInput.ts`
 - `src/components/message/MessageComposer.tsx`

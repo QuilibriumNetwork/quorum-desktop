@@ -1,3 +1,11 @@
+---
+type: doc
+title: Primitives API Reference
+status: done
+created: 2026-01-09T00:00:00.000Z
+updated: 2025-10-28T00:00:00.000Z
+---
+
 # Primitives API Reference
 
 **[← Back to Primitives INDEX](./INDEX.md)**
@@ -1038,6 +1046,6 @@ The `variant` prop can override typography's default color:
 
 ---
 
-_Created: 2025-10-08_
+
 _Last updated: 2025-10-28 - Added missing Icon primitive props (variant, disabled, onClick, id, additional size values)_
 _Verified: 2025-12-09 - All primitive components confirmed present_

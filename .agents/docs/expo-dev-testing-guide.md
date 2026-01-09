@@ -1,3 +1,11 @@
+---
+type: doc
+title: Expo Dev Testing Guide
+status: done
+created: 2026-01-09T00:00:00.000Z
+updated: 2025-09-03T00:00:00.000Z
+---
+
 # Expo Dev Testing Guide
 
 Quick setup guide for testing Quorum mobile app with Expo Dev Client.

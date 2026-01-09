@@ -1,3 +1,12 @@
+---
+type: bug
+title: UserProfile Modal Positioning - Viewport Boundary Detection
+status: open
+ai_generated: true
+created: 2026-01-09T00:00:00.000Z
+updated: 2026-01-09T00:00:00.000Z
+---
+
 # UserProfile Modal Positioning - Viewport Boundary Detection
 
 > **⚠️ AI-Generated**: May contain errors. Verify before use.
@@ -132,5 +141,3 @@ When implementing viewport-aware positioning for modals/popups:
 - `src/components/message/MessageActionsMenu.tsx` - Reference implementation that works
 
 ---
-
-_Created: 2026-01-03_

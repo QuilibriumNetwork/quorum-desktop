@@ -1,3 +1,12 @@
+---
+type: bug
+title: Space Creation Config Save Race Condition
+status: done
+ai_generated: true
+created: 2026-01-09T00:00:00.000Z
+updated: 2026-01-09T00:00:00.000Z
+---
+
 # Space Creation Config Save Race Condition
 
 > **⚠️ AI-Generated**: May contain errors. Verify before use.
@@ -174,5 +183,5 @@ If `spaceIds > spaceKeys` after a space operation, encryption is being saved too
 
 ---
 
-_Created: 2025-12-12_
+
 _Fixed: 2025-12-12_

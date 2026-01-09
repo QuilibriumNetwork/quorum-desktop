@@ -1,10 +1,18 @@
+---
+type: task
+title: "MessageDB.tsx Refactoring Analysis and TAsk"
+status: done
+complexity: very-high
+created: 2025-09-25
+updated: 2025-09-30
+related_issues: ["#78"]
+---
+
 # MessageDB.tsx Refactoring Analysis and TAsk
 
-**Status**: DONE
+
 **Priority**: High
-**Complexity**: Very High
-**Created**: 2025-09-25
-**Updated**: 2025-09-30
+
 
 https://github.com/QuilibriumNetwork/quorum-desktop/issues/78
 

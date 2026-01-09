@@ -1,3 +1,11 @@
+---
+type: task
+title: Mobile/Desktop Behavioral Differences Audit Plan
+status: in-progress
+created: 2026-01-09T00:00:00.000Z
+updated: '2026-01-09'
+---
+
 # Mobile/Desktop Behavioral Differences Audit Plan
 
 ## Objective

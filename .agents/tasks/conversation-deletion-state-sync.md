@@ -1,3 +1,11 @@
+---
+type: task
+title: Conversation Deletion State Synchronization
+status: in-progress
+created: 2026-01-09T00:00:00.000Z
+updated: '2026-01-09'
+---
+
 # Conversation Deletion State Synchronization
 
 Added to GitHub issues
@@ -72,5 +80,3 @@ Show warning when sending to potentially inactive conversations - **Actually com
 - Assess impact on existing message flows
 
 ---
-
-_Created: 2025-01-27_

@@ -1,3 +1,11 @@
+---
+type: doc
+title: Styling Guidelines
+status: done
+created: 2026-01-09T00:00:00.000Z
+updated: 2025-10-12T00:00:00.000Z
+---
+
 # Styling Guidelines
 
 **Styling standards for the Quorum Desktop cross-platform codebase.**
@@ -90,7 +98,7 @@ padding: 16px;
 
 **Common Values:** `0.25rem` (1), `0.5rem` (2), `0.75rem` (3), `1rem` (4), `1.5rem` (6), `2rem` (8), `3rem` (12)
 
-**Approximation:** If a raw pixel value is off by only 1px (for small sizes) or 2-4px (for large sizes) from a variable in the scale, it's acceptable to use the closest variable to maintain consistency. 
+**Approximation:** If a raw pixel value is off by only 1px (for small sizes) or 2-4px (for large sizes) from a variable in the scale, it's acceptable to use the closest variable to maintain consistency.
 - Small sizes: A `3px` width can use the `$s-1` variable (4px) or `$s-0-5` variable (2px).
 - Medium sizes: A `50px` width can use the `$s-12` variable (48px).
 - Large sizes: A `140px` width can use the `$s-36` variable (144px).

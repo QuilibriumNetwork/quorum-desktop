@@ -1,3 +1,11 @@
+---
+type: task
+title: "Channel & Group Icon Selection Feature"
+status: done
+created: 2026-01-09
+updated: 2026-01-09
+---
+
 # Channel & Group Icon Selection Feature
 
 **Status:** Pending

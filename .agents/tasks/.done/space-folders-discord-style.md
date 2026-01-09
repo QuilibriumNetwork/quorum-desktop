@@ -1,3 +1,14 @@
+---
+type: task
+title: Space Folders - Discord-Style Grouping Feature
+status: done
+complexity: high
+created: 2026-01-09T00:00:00.000Z
+updated: '2026-01-09'
+related_issues:
+  - '#89'
+---
+
 # Space Folders - Discord-Style Grouping Feature
 
 https://github.com/QuilibriumNetwork/quorum-desktop/issues/89
@@ -1091,7 +1102,7 @@ This is consistent with existing config sync (spaceIds, bookmarks) - not a new l
 
 ---
 
-_Created: 2025-09-26_
+
 _Last Updated: 2025-12-10 (Phase 5 complete - reference sections updated to reflect actual codebase, limits updated to 20 folders / 100 spaces per folder)_
 
 **Dependencies**: @dnd-kit, existing IconPicker, existing drag-and-drop infrastructure

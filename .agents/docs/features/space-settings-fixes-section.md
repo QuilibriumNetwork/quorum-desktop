@@ -1,3 +1,12 @@
+---
+type: doc
+title: Space Settings Modal - Fixes Section
+status: done
+ai_generated: true
+created: 2026-01-09T00:00:00.000Z
+updated: 2026-01-09T00:00:00.000Z
+---
+
 # Space Settings Modal - Fixes Section
 
 > **⚠️ AI-Generated**: May contain errors. Verify before use.
@@ -259,5 +268,5 @@ Toasts automatically:
 
 ---
 
-_Created: 2025-10-05 by Claude Code_
+
 _Verified: 2025-12-09 - File paths confirmed current_

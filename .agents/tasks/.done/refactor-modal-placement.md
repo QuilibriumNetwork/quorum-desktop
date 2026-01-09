@@ -1,3 +1,11 @@
+---
+type: task
+title: Refactor Modal Placement in Layout.tsx
+status: done
+created: 2026-01-09T00:00:00.000Z
+updated: '2026-01-09'
+---
+
 # Refactor Modal Placement in Layout.tsx
 
 > **⚠️ OBSOLETE - DO NOT IMPLEMENT**
@@ -55,5 +63,3 @@ Initial analysis suggests that NewDirectMessageModal and KickUserModal don't nee
 - `src/components/context/ModalProvider.tsx`
 
 ---
-
-_Created: 2025-08-03_

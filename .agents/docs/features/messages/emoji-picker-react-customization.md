@@ -1,3 +1,11 @@
+---
+type: doc
+title: Emoji Picker React - Styling & Customization
+status: done
+created: 2026-01-09T00:00:00.000Z
+updated: 2025-12-09T00:00:00.000Z
+---
+
 # Emoji Picker React - Styling & Customization
 
 ## Basic Information

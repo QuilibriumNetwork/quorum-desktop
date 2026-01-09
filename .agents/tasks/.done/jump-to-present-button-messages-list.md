@@ -1,17 +1,26 @@
+---
+type: task
+title: "Jump to Present Button"
+status: done
+complexity: medium
+created: 2026-01-09
+updated: 2025-11-10
+---
+
 # Jump to Present Button
 
-**Status**: ✅ Completed  
-**Priority**: Medium  
-**Type**: UX Enhancement  
-**Complexity**: Medium (1-2 days)  
-**Affects**: Message navigation, Scroll tracking  
-**Dependencies**: None - Can be implemented standalone  
+
+**Priority**: Medium
+**Type**: UX Enhancement
+
+**Affects**: Message navigation, Scroll tracking
+**Dependencies**: None - Can be implemented standalone
 **Note**: Originally designed to complement Task 01 (smart navigation), but provides value independently
 
 ## ✅ IMPLEMENTATION COMPLETED
 
-**Date Completed**: November 11, 2025  
-**Files Created/Modified**: 
+**Date Completed**: November 11, 2025
+**Files Created/Modified**:
 - `src/hooks/ui/useScrollTracking.ts` (new)
 - `src/components/message/MessageList.tsx` (modified)
 
@@ -170,7 +179,6 @@ const MessageListWithInlineNavigation: React.FC<MessageListProps> = (props) => {
     </View>
   );
 };
-
 
 
 ### 3. Integration with Message List
@@ -370,6 +378,6 @@ Before implementation, need to analyze:
 
 **Estimated Timeline:** 1-2 days (including analysis phase)
 
-_Created: 2025-11-10_
+
 _Last Updated: 2025-11-10_
 ````

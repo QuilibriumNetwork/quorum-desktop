@@ -1,8 +1,14 @@
+---
+type: task
+title: High-Risk Optimization Opportunities
+status: in-progress
+created: 2025-10-03T00:00:00.000Z
+updated: '2026-01-09'
+---
+
 # High-Risk Optimization Opportunities
 
-**Status**: 📋 Future Reference
-**Created**: 2025-10-03
-**Updated**: 2025-12-20
+
 **Context**: High-risk large function refactorings in SpaceService and InvitationService
 
 > **Note**: These optimizations target large functions in **SpaceService** (`kickUser`, `createSpace`) and **InvitationService** (`joinInviteLink`). They are independent improvements that can be tackled when there's a clear need.

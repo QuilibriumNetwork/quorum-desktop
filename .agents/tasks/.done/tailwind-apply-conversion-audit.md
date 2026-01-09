@@ -1,10 +1,19 @@
+---
+type: task
+title: "Tailwind @apply Conversion Audit"
+status: done
+complexity: high
+created: 2026-01-09
+updated: 2025-10-12
+---
+
 # Tailwind @apply Conversion Audit
 
 ## Overview
 
 This document audits all remaining `@apply` usage in the codebase to guide conversion to raw CSS with SCSS variables following our [styling guidelines](.agents/docs/styling-in-react.md).
 
-**Status**: ✅ Button.scss already converted (reference implementation)
+
 **Remaining files**: 3 files with 110 @apply instances
 
 ---
@@ -34,7 +43,7 @@ This document audits all remaining `@apply` usage in the codebase to guide conve
 #### 1. MessageComposer.scss DONE
 **Location**: `src/components/message/MessageComposer.scss`
 **@apply count**: 64 instances
-**Complexity**: High
+
 **Reason**: Most heavily used component, many instances
 
 <details>
@@ -94,7 +103,7 @@ Key classes to convert:
 #### 2. RadioGroup.scss
 **Location**: `src/components/primitives/RadioGroup/RadioGroup.scss`
 **@apply count**: 28 instances
-**Complexity**: Medium
+
 **Reason**: Primitive component used throughout app
 
 <details>
@@ -122,7 +131,7 @@ Lines with @apply:
 #### 3. ExpandableNavMenu.scss - DONE
 **Location**: `src/components/navbar/ExpandableNavMenu.scss`
 **@apply count**: 14 instances
-**Complexity**: Medium
+
 **Reason**: Navigation component
 
 <details>
@@ -150,7 +159,7 @@ Lines with @apply:
 #### 4. _modal_common.scss
 **Location**: `src/styles/_modal_common.scss`
 **@apply count**: 1 instance
-**Complexity**: Low
+
 **Priority**: Medium (high visibility component)
 
 <details>
@@ -183,7 +192,7 @@ transition: background-color $duration-200 $ease-in-out;
 #### 5. MessageActionsDrawer.scss - DONE
 **Location**: `src/components/message/MessageActionsDrawer.scss`
 **@apply count**: 14 instances
-**Complexity**: Low
+
 **Reason**: Mobile-only drawer component
 
 <details>
@@ -215,7 +224,7 @@ Lines with @apply:
 #### 6. _components.scss - DONE
 **Location**: `src/styles/_components.scss`
 **@apply count**: 5 instances
-**Complexity**: Low
+
 
 <details>
 <summary>Detailed breakdown (5 instances)</summary>
@@ -235,7 +244,7 @@ Lines with @apply:
 #### 7. UserProfile.scss - DONE
 **Location**: `src/components/user/UserProfile.scss`
 **@apply count**: 1 instance
-**Complexity**: Low
+
 
 <details>
 <summary>Detailed breakdown (1 instance)</summary>
@@ -262,7 +271,7 @@ user-select: none;
 #### 8. UserInitials.scss - DONE
 **Location**: `src/components/user/UserInitials/UserInitials.scss`
 **@apply count**: 5 instances
-**Complexity**: Low
+
 
 <details>
 <summary>Detailed breakdown (5 instances)</summary>
@@ -283,7 +292,7 @@ Lines with @apply:
 #### 9. ColorSwatch.scss- DONE
 **Location**: `src/components/primitives/ColorSwatch/ColorSwatch.scss`
 **@apply count**: 12 instances
-**Complexity**: Low
+
 
 <details>
 <summary>Detailed breakdown (12 instances)</summary>

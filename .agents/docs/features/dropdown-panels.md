@@ -1,3 +1,11 @@
+---
+type: doc
+title: Dropdown Panels
+status: done
+created: 2026-01-09T00:00:00.000Z
+updated: 2026-01-09T00:00:00.000Z
+---
+
 # Dropdown Panels
 
 ## Overview

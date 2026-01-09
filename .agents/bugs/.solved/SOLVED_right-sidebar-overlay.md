@@ -1,3 +1,11 @@
+---
+type: bug
+title: 'SOLVED: Right Sidebar Overlay Issue - Navbar Still Visible'
+status: done
+created: 2026-01-09T00:00:00.000Z
+updated: 2026-01-09T00:00:00.000Z
+---
+
 # SOLVED: Right Sidebar Overlay Issue - Navbar Still Visible
 
 ## Problem Summary
@@ -284,7 +292,7 @@ Consider implementing a z-index scale/system to prevent future conflicts:
 
 ---
 
-**Date Solved**: 2025-01-16  
-**Severity**: High (Mobile UX breaking)  
-**Time to Resolution**: Multiple debugging sessions  
+**Date Solved**: 2025-01-16
+**Severity**: High (Mobile UX breaking)
+**Time to Resolution**: Multiple debugging sessions
 **Root Cause**: Stacking context isolation from Container component

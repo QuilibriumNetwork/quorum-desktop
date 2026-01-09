@@ -1,3 +1,11 @@
+---
+type: task
+title: 'Research: Mobile Markdown Formatting Options'
+status: on-hold
+created: 2026-01-09T00:00:00.000Z
+updated: '2026-01-09'
+---
+
 # Research: Mobile Markdown Formatting Options
 
 **Status:** ✅ Complete | **Priority:** Medium

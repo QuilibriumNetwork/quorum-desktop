@@ -1,11 +1,19 @@
+---
+type: task
+title: "Refactor Message Highlighting System"
+status: done
+complexity: high
+ai_generated: true
+created: 2025-12-05
+updated: 2025-12-05
+---
+
 # Refactor Message Highlighting System
 
 > **⚠️ AI-Generated**: May contain errors. Verify before use.
 > **Reviewed by**: feature-analyzer agent
 
-**Status**: Completed
-**Complexity**: High
-**Created**: 2025-12-05
+
 **Completed**: 2025-12-05
 **Files**:
 - `src/hooks/business/messages/useMessageHighlight.ts` (main hook - needs refactor)
@@ -271,6 +279,3 @@ Both are needed because:
    - Documented the dual-mechanism architecture
 
 ---
-
-_Created: 2025-12-05_
-_Updated: 2025-12-05 (implementation completed)_

@@ -1,3 +1,11 @@
+---
+type: task
+title: "Emoji Picker Responsive Design Improvement"
+status: done
+created: 2026-01-09
+updated: 2026-01-09
+---
+
 # Emoji Picker Responsive Design Improvement
 
 ## Overview

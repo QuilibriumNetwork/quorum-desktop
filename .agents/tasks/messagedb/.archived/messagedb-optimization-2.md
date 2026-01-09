@@ -1,3 +1,12 @@
+---
+type: task
+title: 'MessageDB: Optimization Plan (Phase 4)'
+status: on-hold
+complexity: high
+created: 2025-10-01T00:00:00.000Z
+updated: '2026-01-09'
+---
+
 # MessageDB: Optimization Plan (Phase 4)
 
 > **📦 ARCHIVED (Dec 20, 2025)**: This Phase 4 plan has been archived as **NOT RECOMMENDED**.
@@ -11,11 +20,10 @@
 
 ---
 
-**Status**: 📦 ARCHIVED (Not Recommended)
+
 **Priority**: N/A
-**Complexity**: High
-**Created**: 2025-10-01
-**Updated**: 2025-12-16
+
+
 **Archived**: 2025-12-20
 
 ## Context

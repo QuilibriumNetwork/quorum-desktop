@@ -1,12 +1,19 @@
+---
+type: report
+title: DM Messages Not Delivered - Device Registration Inbox Mismatch
+status: done
+ai_generated: true
+created: 2025-12-22T00:00:00.000Z
+updated: 2025-12-26T00:00:00.000Z
+---
+
 # DM Messages Not Delivered - Device Registration Inbox Mismatch
 
 > **⚠️ AI-Generated**: May contain errors. Verify before use.
 > **Reviewed by**: feature-analyzer agent, security-analyst agent
 
 **Severity**: Critical
-**Status**: Fixed (Layer 2 + Layer 3)
-**Created**: 2025-12-22
-**Updated**: 2025-12-22
+
 
 ---
 
@@ -353,7 +360,6 @@ See [011-dm-debug-console-snippets.md](011-dm-debug-console-snippets.md) for a c
 
 ## Case Study: `sending_inbox` Mismatch with Valid `tag` (2025-12-26)
 
-**Status**: ✅ Resolved - User workaround applied
 
 ### Symptoms
 
@@ -426,7 +432,6 @@ This is a **pre-existing limitation from `develop` branch**, not something we in
 
 ## Case Study: Network Layer Issue (2025-12-23)
 
-**Status**: ✅ Resolved - Confirmed NOT a codebase issue
 
 ### Test Users
 
@@ -505,8 +510,3 @@ See [011-dm-debug-console-snippets.md](011-dm-debug-console-snippets.md) for dia
 - [011-dm-debug-console-snippets.md](011-dm-debug-console-snippets.md) - Console debug snippets
 
 ---
-
-_Created: 2025-12-22_
-_Updated: 2025-12-26 - Added case study: `sending_inbox` mismatch with valid `tag`; clarified this is pre-existing limitation from develop branch_
-_Updated: 2025-12-23 - Merged network layer case study findings; moved console snippets to 011-dm-debug-console-snippets.md_
-_Updated: 2025-12-22 - Layer 2 + Layer 3 fixes implemented, documented new device limitation (reviewed by feature-analyzer agent)_

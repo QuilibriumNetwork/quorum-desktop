@@ -1,3 +1,12 @@
+---
+type: doc
+title: Notification Indicators System
+status: done
+ai_generated: true
+created: 2026-01-09T00:00:00.000Z
+updated: 2026-01-06T00:00:00.000Z
+---
+
 # Notification Indicators System
 
 > **⚠️ AI-Generated**: May contain errors. Verify before use.
@@ -299,5 +308,3 @@ src/
 - [Space Folders](./space-folders.md) - Folder aggregation behavior
 
 ---
-
-*Updated: 2026-01-06 13:45*

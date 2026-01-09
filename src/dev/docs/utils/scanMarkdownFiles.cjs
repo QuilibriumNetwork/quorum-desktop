@@ -21,7 +21,9 @@ const scanDirectory = (dirPath, baseFolder = '') => {
 
     if (stat.isDirectory()) {
       // Recursively scan subdirectories
-      const subFiles = scanDirectory(fullPath, item);
+      // Build full folder path for nested folders
+      const folderPath = baseFolder ? `${baseFolder}/${item}` : item;
+      const subFiles = scanDirectory(fullPath, folderPath);
       files.push(...subFiles);
     } else if (item.endsWith('.md')) {
       // Add markdown files

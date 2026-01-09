@@ -1,3 +1,12 @@
+---
+type: doc
+title: Message Sending Indicator
+status: done
+ai_generated: true
+created: 2026-01-09T00:00:00.000Z
+updated: 2025-12-18T00:00:00.000Z
+---
+
 # Message Sending Indicator
 
 > **⚠️ AI-Generated**: May contain errors. Verify before use.
@@ -244,5 +253,3 @@ The signing/encryption separation described above enables safe retries - the sam
 - **Action Queue**: [Action Queue](../action-queue.md) - Persistent queue with retry and offline support
 
 ---
-
-*Updated: 2025-12-18*

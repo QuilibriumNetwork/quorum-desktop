@@ -1,3 +1,12 @@
+---
+type: report
+title: WebSocket Queue Starvation Causes DM Delays
+status: done
+ai_generated: true
+created: 2026-01-09T00:00:00.000Z
+updated: '2026-01-09'
+---
+
 # WebSocket Queue Starvation Causes DM Delays
 
 > **⚠️ AI-Generated**: May contain errors. Verify before use.
@@ -90,5 +99,5 @@ None currently. This is a known limitation during heavy sync activity.
 
 ---
 
-_Created: 2025-12-19_
+
 _Status: 📋 Documented (pre-existing, not blocking)_

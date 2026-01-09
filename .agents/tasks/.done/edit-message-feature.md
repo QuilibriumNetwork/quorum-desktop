@@ -1,7 +1,16 @@
+---
+type: task
+title: Edit Message Feature
+status: done
+created: 2025-01-24T00:00:00.000Z
+updated: '2026-01-09'
+related_issues:
+  - '#77'
+---
+
 # Edit Message Feature
 
-**Created**: 2025-01-24
-**Status**: Pending
+
 **Priority**: Medium
 
 GitHub Issues: https://github.com/QuilibriumNetwork/quorum-desktop/issues/77
@@ -147,5 +156,3 @@ export type EditMessage = {
 - Maintains security and audit requirements
 
 ---
-
-**Updated**: 2025-01-24

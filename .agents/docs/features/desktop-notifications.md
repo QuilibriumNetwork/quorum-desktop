@@ -1,3 +1,11 @@
+---
+type: doc
+title: Desktop Notifications Feature
+status: done
+created: 2026-01-09T00:00:00.000Z
+updated: 2026-01-04T00:00:00.000Z
+---
+
 # Desktop Notifications Feature
 
 ## Overview
@@ -184,7 +192,3 @@ When testing the notification feature:
 
 _Last updated: 2026-01-04_
 _Verified: 2025-12-09 - File path corrected (NotificationService.ts)_
-_Updated: 2026-01-04 - Documented DM-only notification filtering (commit 9792374f)_
-_Updated: 2026-01-04 - Added space mention and reply notifications (respects per-space settings)_
-_Updated: 2026-01-04 - Added DM mute integration (commit 413fb69) - muted DMs suppress notifications_
-_Updated: 2026-01-04 - Added contextual notifications with sender name and notification type_

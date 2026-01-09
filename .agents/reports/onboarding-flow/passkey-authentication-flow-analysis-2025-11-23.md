@@ -1,3 +1,11 @@
+---
+type: report
+title: Passkey Authentication Flow Analysis
+status: done
+created: 2026-01-09T00:00:00.000Z
+updated: '2026-01-09'
+---
+
 # Passkey Authentication Flow Analysis
 
 **Date:** 2025-11-23
@@ -315,5 +323,3 @@ The passkey is just a secure vault to hold the private key. When you export, you
 - `src/hooks/business/files/useKeyBackupLogic.ts` - Key export functionality
 
 ---
-
-*Updated: 2025-11-23*

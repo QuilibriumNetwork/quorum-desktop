@@ -1,10 +1,16 @@
+---
+type: report
+title: '009: DM Offline Support - Conditional Action Queue Routing'
+status: done
+created: 2025-12-22T00:00:00.000Z
+updated: '2026-01-09'
+---
+
 # 009: DM Offline Support - Conditional Action Queue Routing
 
 > **AI-Generated**: May contain errors. Verify before use.
 
-**Status**: Implemented
-**Complexity**: Low
-**Created**: 2025-12-22
+
 **Supersedes**: [009-dm-offline-registration-persistence-fix-old.md](009-dm-offline-registration-persistence-fix-old.md)
 
 ---
@@ -237,6 +243,3 @@ Compared to the old 009 fix, this approach:
 - **Action Queue Feature**: [../../docs/features/action-queue.md](../../docs/features/action-queue.md)
 
 ---
-
-_Created: 2025-12-22_
-_Updated: 2025-12-22 - Verified implementation matches documentation_

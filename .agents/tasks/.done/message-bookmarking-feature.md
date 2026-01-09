@@ -1,12 +1,20 @@
+---
+type: task
+title: Message Bookmarking Feature
+status: done
+complexity: high
+ai_generated: true
+created: 2025-11-24T00:00:00.000Z
+updated: '2026-01-09'
+---
+
 # Message Bookmarking Feature
 
 > **⚠️ AI-Generated**: May contain errors. Verify before use.
 > **Reviewed by**: feature-analyzer agent
 > **Soft-review by human.**
 
-**Status**: Phase 5 Complete (Header Integration) - Ready for Phase 6 (Cross-Context Navigation)
-**Complexity**: High
-**Created**: 2025-11-24
+
 **Related**:
 - `src/components/message/PinnedMessagesPanel.tsx`
 - `src/components/notifications/NotificationPanel.tsx`
@@ -972,6 +980,3 @@ useQuery({
 | **Position in MessageActionsDrawer** | After "Copy message", before "Edit message" |
 
 ---
-
-_Created: 2025-11-24_
-_Updated: 2025-12-01 - Phase 5 complete, header integration and DM filtering fixes completed_

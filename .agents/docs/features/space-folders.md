@@ -1,3 +1,11 @@
+---
+type: doc
+title: Space Folders
+status: done
+created: 2026-01-09T00:00:00.000Z
+updated: 2025-12-11T00:00:00.000Z
+---
+
 # Space Folders
 
 > **AI-Generated**: May contain errors. Verify before use.
@@ -790,5 +798,3 @@ const NavItemSchema = z.discriminatedUnion('type', [
 - [Task: Space Folders Discord-Style](../../tasks/done/space-folders-discord-style.md) - Implementation task with phase details
 
 ---
-
-*Updated: 2025-12-11*

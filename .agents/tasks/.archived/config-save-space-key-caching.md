@@ -1,11 +1,18 @@
+---
+type: task
+title: Cache Space Key Metadata to Reduce Config Save Overhead
+status: on-hold
+complexity: medium
+ai_generated: true
+created: 2025-12-13T00:00:00.000Z
+updated: '2026-01-09'
+---
+
 # Cache Space Key Metadata to Reduce Config Save Overhead
 
 > **⚠️ AI-Generated**: May contain errors. Verify before use.
 
-**Status**: ❌ Archived - Not Worth Implementing
-**Complexity**: Medium
-**Created**: 2025-12-13
-**Updated**: 2025-12-13 (Security & Feature Analysis Review)
+
 **Archived**: 2025-12-13
 
 ## ❌ Why This Task Was Archived
@@ -570,7 +577,6 @@ interface UserConfig {
 
 ---
 
-_Created: 2025-12-13_
-_Updated: 2025-12-13 (Security & Feature Analysis)_
+
 _Risk: Low-Medium (with security mitigations)_
 _Dependencies: None_

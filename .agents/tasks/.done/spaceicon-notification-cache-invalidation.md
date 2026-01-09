@@ -1,10 +1,18 @@
+---
+type: task
+title: Fix SpaceIcon Notification Bubble Cache Invalidation
+status: done
+complexity: low
+ai_generated: true
+created: 2026-01-06T00:00:00.000Z
+updated: '2026-01-09'
+---
+
 # Fix SpaceIcon Notification Bubble Cache Invalidation
 
 > **⚠️ AI-Generated**: May contain errors. Verify before use.
 
-**Status**: Pending
-**Complexity**: Low
-**Created**: 2026-01-06
+
 **Files**:
 - `src/hooks/business/conversations/useUpdateReadTime.ts:38-80`
 - `src/services/MessageService.ts:1356-1399`
@@ -88,5 +96,3 @@ if (decryptedContent.replyMetadata?.parentAuthor) {
 - [useReplyNotificationCounts](src/hooks/business/replies/useReplyNotificationCounts.ts) - Query key: `['reply-counts', 'channel', spaceId, ...]`
 
 ---
-
-_Created: 2026-01-06_

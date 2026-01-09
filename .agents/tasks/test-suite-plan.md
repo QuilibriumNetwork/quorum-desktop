@@ -1,3 +1,11 @@
+---
+type: task
+title: Test Suite Implementation Plan for Quorum Desktop
+status: in-progress
+created: 2026-01-09T00:00:00.000Z
+updated: '2026-01-09'
+---
+
 # Test Suite Implementation Plan for Quorum Desktop
 
 This document outlines the plan to create a comprehensive testing suite for the Quorum Desktop application. The goal is to improve code quality, reduce regressions, and enable safe refactoring.

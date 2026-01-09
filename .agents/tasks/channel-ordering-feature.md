@@ -1,11 +1,19 @@
+---
+type: task
+title: Implement Channel Ordering Feature
+status: in-progress
+complexity: high
+ai_generated: true
+created: 2026-01-07T00:00:00.000Z
+updated: '2026-01-09'
+---
+
 # Implement Channel Ordering Feature
 
 > **⚠️ AI-Generated**: May contain errors. Verify before use.
 > **Reviewed by**: feature-analyzer agent
 
-**Status**: Blocked
-**Complexity**: High
-**Created**: 2026-01-07
+
 **Blocked By**: Need to review mobile implementation (currently in private branch) to verify hook patterns and ensure cross-platform consistency before implementation
 
 ## What & Why
@@ -463,6 +471,3 @@ Alternatively, keep it simpler with inline components in Channels.tsx and extrac
 - [ ] No console errors
 
 ---
-
-_Created: 2026-01-07_
-_Updated: 2026-01-07 17:30_

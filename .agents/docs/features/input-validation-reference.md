@@ -1,3 +1,12 @@
+---
+type: doc
+title: Input & Textarea Validation Reference
+status: done
+ai_generated: true
+created: 2026-01-09T00:00:00.000Z
+updated: 2025-11-23T00:00:00.000Z
+---
+
 # Input & Textarea Validation Reference
 
 > **⚠️ AI-Generated**: May contain errors. Verify before use.
@@ -318,6 +327,6 @@ const isValidAddress = isValidIPFSCID(address);
 
 ---
 
-_Created: 2025-11-19_
+
 _Last Updated: 2025-11-23 (Pattern-based XSS validation; allows emoticons, arrows, quotes; fixed SearchService XSS)_
 _Verified: 2025-12-09 - File paths confirmed current_

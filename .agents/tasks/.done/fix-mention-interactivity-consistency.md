@@ -1,12 +1,20 @@
+---
+type: task
+title: Fix Mention Interactivity Consistency
+status: done
+complexity: low
+created: 2025-11-18T00:00:00.000Z
+updated: '2026-01-09'
+---
+
 # Fix Mention Interactivity Consistency
 
 > **✅ AI-Reviewed**: Analyzed by feature-analyzer agent
 > **Original task**: optimize-mention-interactivity-disable-feature.md (over-engineered)
 
-**Status**: Ready to implement
-**Complexity**: Low
+
 **Estimated effort**: 15-30 minutes
-**Created**: 2025-11-18
+
 
 ## What & Why
 
@@ -153,5 +161,3 @@ Consistent behavior across all mention types
 - `optimize-mention-interactivity-disable-feature.md` (over-engineered Context API approach)
 
 ---
-
-_Created: 2025-11-18 | Based on feature-analyzer recommendations_

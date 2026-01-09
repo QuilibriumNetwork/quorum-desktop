@@ -1,10 +1,18 @@
+---
+type: task
+title: SDK PasskeyModal Customization Props Enhancement
+status: in-progress
+complexity: high
+ai_generated: true
+created: 2025-11-21T00:00:00.000Z
+updated: '2026-01-09'
+---
+
 # SDK PasskeyModal Customization Props Enhancement
 
 > **⚠️ AI-Generated**: May contain errors. Verify before use.
 
-**Status**: Pending
-**Complexity**: High
-**Created**: 2025-11-21
+
 **Target Repository**: `quilibrium-js-sdk-channels`
 **Consumer Repository**: `quorum-desktop`
 
@@ -604,7 +612,3 @@ import { t } from '@lingui/core/macro';
 - README Integration Info: `README.md:70-81`
 
 ---
-
-_Created: 2025-11-21_
-_Updated: 2025-11-21 - Added i18n architecture section explaining how Lingui works with props_
-_Updated: 2025-11-21 - Added verified SDK analysis with complete string inventory and context interaction notes_

@@ -1,3 +1,11 @@
+---
+type: task
+title: Design Decisions & Rationale
+status: in-progress
+created: 2025-11-12T00:00:00.000Z
+updated: '2026-01-09'
+---
+
 # Design Decisions & Rationale
 
 **Last Updated**: 2025-11-12
@@ -10,7 +18,6 @@ This document captures key design decisions made during search optimization, inc
 
 ### Decision: **Virtuoso (Virtual Scrolling)**
 
-**Date**: 2025-11-12
 
 **Context**:
 Users could only see first 50 search results. Need to show hundreds of results without performance degradation.
@@ -46,7 +53,6 @@ Users could only see first 50 search results. Need to show hundreds of results w
 
 ### Decision: **Relevance-First**
 
-**Date**: 2025-11-12
 
 **Context**:
 Need to decide how to order search results for best UX in a messaging app.
@@ -95,7 +101,7 @@ const recencyBoost = ageDays < 1 ? 1.2 : ageDays < 7 ? 1.1 : 1.0;
 const finalScore = relevanceScore * recencyBoost;
 ```
 
-**Status**: Not implemented yet
+
 **Reasoning**: Wait for user feedback - add only if needed
 **When to reconsider**: If users complain that old messages dominate results
 
@@ -105,7 +111,6 @@ const finalScore = relevanceScore * recencyBoost;
 
 ### Decision: **500 Results**
 
-**Date**: 2025-11-12
 
 **Context**:
 Need to balance between showing enough results and preventing performance issues.
@@ -140,7 +145,6 @@ Need to balance between showing enough results and preventing performance issues
 
 ### Decision: **Automatic Incremental Updates**
 
-**Date**: 2025-11-12
 
 **Context**:
 New messages were invisible to search until app reload because index wasn't updated.
@@ -180,7 +184,6 @@ transaction.oncomplete = () => {
 
 ### Decision: **Fix Later (Phase 1.2)**
 
-**Date**: 2025-11-12
 
 **Context**:
 Search index building blocks UI for 2-5 seconds on app startup.
@@ -207,7 +210,6 @@ Search index building blocks UI for 2-5 seconds on app startup.
 
 ### Decision: **Avoid Web Workers (for now)**
 
-**Date**: 2025-11-12
 
 **Context**:
 Debated using Web Workers to offload search index building from main thread.
@@ -238,7 +240,6 @@ Debated using Web Workers to offload search index building from main thread.
 
 ### Decision: **Keep Changes Compatible with Future Optimization**
 
-**Date**: 2025-11-12
 
 **Principle**: Quick wins should NOT create technical debt or block future improvements.
 
@@ -273,7 +274,6 @@ Debated using Web Workers to offload search index building from main thread.
 
 ### Decision: **Manual Testing for Phase 1, Automated Later**
 
-**Date**: 2025-11-12
 
 **Rationale**:
 - Phase 1 changes are UI/UX focused (hard to automate)

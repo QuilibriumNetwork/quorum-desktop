@@ -1,3 +1,11 @@
+---
+type: report
+title: Quorum Authentication Flows
+status: done
+created: 2026-01-09T00:00:00.000Z
+updated: '2026-01-09'
+---
+
 # Quorum Authentication Flows
 
 ## New Account Flow
@@ -252,5 +260,3 @@ parseKeyFile(fileContents)               // Backup key login
 **Current behavior:** Auto-fallback to IndexedDB, orphan passkey remains.
 
 ---
-
-*Created: 2025-12-08*

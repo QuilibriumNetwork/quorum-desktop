@@ -1,3 +1,11 @@
+---
+type: task
+title: handleNewMessage Refactoring Plan
+status: on-hold
+created: 2026-01-09T00:00:00.000Z
+updated: '2026-01-09'
+---
+
 # handleNewMessage Refactoring Plan
 
 > **📦 ARCHIVED (Dec 20, 2025)**: This task has been archived as **NOT RECOMMENDED**.
@@ -11,7 +19,7 @@
 
 ---
 
-**Status**: 📦 ARCHIVED (Not Recommended)
+
 **Priority**: ⚪ N/A
 **Last Updated**: 2025-12-16
 **Archived**: 2025-12-20
@@ -26,7 +34,7 @@
 
 **Current Tests**: Insufficient (only 2 basic tests)
 **Test Blocker**: MessageService cannot be imported in tests due to dependency chain (UNRESOLVED)
-**Status**: ON HOLD - Risk outweighs benefit
+
 
 ---
 

@@ -1,3 +1,11 @@
+---
+type: task
+title: "Task: Markdown Stripping Utility"
+status: done
+created: 2026-01-09
+updated: 2025-01-13
+---
+
 # Task: Markdown Stripping Utility
 
 ## Overview

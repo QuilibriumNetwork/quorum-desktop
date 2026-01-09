@@ -1,3 +1,12 @@
+---
+type: bug
+title: DM "Mark All as Read" Context Menu - UI Not Updating Immediately
+status: done
+ai_generated: true
+created: 2026-01-09T00:00:00.000Z
+updated: 2026-01-09T00:00:00.000Z
+---
+
 # DM "Mark All as Read" Context Menu - UI Not Updating Immediately
 
 > **⚠️ AI-Generated**: May contain errors. Verify before use.
@@ -222,5 +231,5 @@ const handleMarkAllDmsRead = React.useCallback(async () => {
 
 ---
 
-_Created: 2026-01-06_
+
 _Solved: 2026-01-06_

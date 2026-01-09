@@ -1,13 +1,20 @@
+---
+type: task
+title: Add Unified Context Menu System for Sidebar Items
+status: done
+complexity: medium
+ai_generated: true
+created: 2024-12-24T00:00:00.000Z
+updated: '2026-01-09'
+---
+
 # Add Unified Context Menu System for Sidebar Items
 
 > **⚠️ AI-Generated**: May contain errors. Verify before use.
 
 > Verified by feature-analyzer agent
 
-**Status**: Pending
-**Complexity**: Medium
-**Created**: 2024-12-24
-**Updated**: 2024-12-24
+
 **Files**:
 - `src/components/ui/ContextMenu.tsx` (new - shared component)
 - `src/components/ui/ContextMenu.scss` (new)

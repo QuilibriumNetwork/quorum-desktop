@@ -1,10 +1,22 @@
+---
+type: task
+title: Fix Lingui "Uncompiled Message Detected" Warning
+status: in-progress
+complexity: low
+ai_generated: true
+created: 2026-01-04T00:00:00.000Z
+updated: '2026-01-09'
+related_issues:
+  - '#2104'
+  - '#834'
+  - '#839'
+---
+
 # Fix Lingui "Uncompiled Message Detected" Warning
 
 > **⚠️ AI-Generated**: May contain errors. Verify before use.
 
-**Status**: Pending
-**Complexity**: Low
-**Created**: 2026-01-04
+
 **Files**:
 - `web/main.tsx:28-34`
 - `src/i18n/index.js`

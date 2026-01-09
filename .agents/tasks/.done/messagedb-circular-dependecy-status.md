@@ -1,3 +1,11 @@
+---
+type: task
+title: "MessageDB Circular Dependency Status"
+status: done
+created: 2026-01-09
+updated: 2026-01-09
+---
+
 # MessageDB Circular Dependency Status
 
 **Last Updated:** 2025-10-01

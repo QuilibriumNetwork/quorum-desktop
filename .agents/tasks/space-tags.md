@@ -1,3 +1,15 @@
+---
+type: task
+title: Space Tags
+status: in-progress
+complexity: high
+created: 2025-12-30T00:00:00.000Z
+updated: '2026-01-09'
+related_issues:
+  - '#14'
+  - '#15'
+---
+
 # Space Tags
 
 https://github.com/QuilibriumNetwork/quorum-desktop/issues/14
@@ -6,9 +18,7 @@ https://github.com/QuilibriumNetwork/quorum-desktop/issues/14
 > Reviewd by feature-analyzer agent, security-analyst agent, cryptographer agent
 > Soft-review by human
 
-**Status**: Pending
-**Complexity**: High
-**Created**: 2025-12-30
+
 **Reference**: [GitHub Issue #14](https://github.com/QuilibriumNetwork/quorum-desktop/issues/14), [PR #15](https://github.com/QuilibriumNetwork/quorum-desktop/pull/15)
 **Prior Art**: `origin/feat/space-tags` branch (incomplete implementation)
 
@@ -555,7 +565,6 @@ Just the tag display next to sender name.
 
 ### Space Profile Modal on Tag Hover/Click (Requires Public Directory)
 
-**Status**: Deferred - Depends on Public Space Directory implementation
 
 **Concept**: Allow users to hover or click on a space tag to view a modal with the full space profile (avatar, name, description, member count) and a "Join" button.
 

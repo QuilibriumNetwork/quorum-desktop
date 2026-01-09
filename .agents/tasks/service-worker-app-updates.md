@@ -1,3 +1,15 @@
+---
+type: task
+title: Service Worker for App Update Detection
+status: in-progress
+complexity: low
+ai_generated: true
+created: 2025-12-14T00:00:00.000Z
+updated: '2026-01-09'
+related_issues:
+  - '#26'
+---
+
 # Service Worker for App Update Detection
 
 https://github.com/QuilibriumNetwork/quorum-desktop/issues/26
@@ -5,9 +17,7 @@ https://github.com/QuilibriumNetwork/quorum-desktop/issues/26
 > **⚠️ AI-Generated**: May contain errors. Verify before use.
 > **Reviewed by**: feature-analyzer agent, security-analyst agent
 
-**Status**: Pending
-**Complexity**: Low
-**Created**: 2025-12-14
+
 **Platform**: Web only (Electron uses electron-updater)
 
 ---
@@ -458,5 +468,5 @@ yarn build:web
 
 ---
 
-_Created: 2025-12-14_
+
 _Reviewed: 2025-12-14 by feature-analyzer and security-analyst agents_

@@ -1,3 +1,12 @@
+---
+type: bug
+title: Triple Ratchet State Save Destroys Template/Evals Fields
+status: done
+ai_generated: true
+created: 2026-01-09T00:00:00.000Z
+updated: 2026-01-09T00:00:00.000Z
+---
+
 # Triple Ratchet State Save Destroys Template/Evals Fields
 
 > **⚠️ AI-Generated**: May contain errors. Verify before use.
@@ -184,6 +193,6 @@ Before implementing the fix, verify:
 
 ---
 
-_Created: 2025-12-27_
+
 _Branch: cross-platform_
 _Introduced by: Service extraction refactor + commit a37bb283_

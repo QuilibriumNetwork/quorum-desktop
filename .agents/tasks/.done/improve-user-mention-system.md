@@ -1,9 +1,17 @@
+---
+type: task
+title: 'Task: Improve User Mention System'
+status: done
+created: 2025-01-22T00:00:00.000Z
+updated: '2026-01-09'
+---
+
 # Task: Improve User Mention System
 
-**Status**: Pending
+
 **Priority**: High
 **Category**: Feature Enhancement
-**Created**: 2025-01-22
+
 
 ## Overview
 

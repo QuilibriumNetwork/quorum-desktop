@@ -1,10 +1,18 @@
+---
+type: task
+title: Lazy Loading Implementation for Message Lists
+status: done
+created: 2025-01-19T00:00:00.000Z
+updated: '2026-01-09'
+---
+
 # Lazy Loading Implementation for Message Lists
 
-**Status**: Pending
+
 **Priority**: High
 **Type**: Performance Optimization
 **Platform**: Cross-platform (Web + Mobile)
-**Created**: 2025-01-19
+
 
 ## Overview
 
@@ -138,7 +146,7 @@ export const LazyIframe: React.FC<{
    - Messages outside initial viewport
 
 3. **YouTube Placeholder States**:
-   - **Static Video Placeholder**: 
+   - **Static Video Placeholder**:
      - Generic video play icon (text-subtle) on surface-4 background (use Icon primitive)
      - rounded borders matching current video embed styling (`rounded-lg`)
      - responsive like current video embed styling

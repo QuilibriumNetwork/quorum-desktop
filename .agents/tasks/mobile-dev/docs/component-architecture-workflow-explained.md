@@ -1,3 +1,11 @@
+---
+type: task
+title: Component Architecture Workflow - Detailed Explanation
+status: in-progress
+created: 2026-01-09T00:00:00.000Z
+updated: '2026-01-09'
+---
+
 # Component Architecture Workflow - Detailed Explanation
 
 ## Overview
@@ -657,5 +665,5 @@ This approach gives us the best of both worlds: **code reuse for efficiency** an
 
 ---
 
-_Last updated: 2025-07-25_  
+_Last updated: 2025-07-25_
 _For questions about specific components, see the masterplan or create a GitHub issue._

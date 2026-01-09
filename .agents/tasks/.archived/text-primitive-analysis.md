@@ -1,3 +1,12 @@
+---
+type: task
+title: 'Text Primitive Analysis: Typography Prop & Helpers Confusion'
+status: on-hold
+ai_generated: true
+created: 2026-01-09T00:00:00.000Z
+updated: '2026-01-09'
+---
+
 # Text Primitive Analysis: Typography Prop & Helpers Confusion
 
 > **⚠️ AI-Generated**: May contain errors. Verify before use.
@@ -617,5 +626,3 @@ Beyond the helper/Text decision, developers also need to choose between typograp
 - Choose based on whether your use case fits typography patterns or needs custom styling
 
 ---
-
-_Created: 2025-11-16_

@@ -1,3 +1,11 @@
+---
+type: task
+title: Combined Text + Image Messages
+status: in-progress
+created: 2026-01-09T00:00:00.000Z
+updated: '2026-01-09'
+---
+
 # Combined Text + Image Messages
 
 ## Overview
@@ -189,6 +197,6 @@ const submitMessage = useCallback(async () => {
 
 ---
 
-_Created: 2025-08-02_
+
 _Context: Business logic extraction - Channel.tsx message composer improvements_
 _Status: Analysis Complete - Ready for Implementation Planning_

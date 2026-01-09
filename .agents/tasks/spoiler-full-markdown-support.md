@@ -1,11 +1,20 @@
+---
+type: task
+title: Full Markdown Support Inside Spoilers
+status: in-progress
+complexity: medium
+created: 2026-01-06T00:00:00.000Z
+updated: '2026-01-09'
+---
+
 # Full Markdown Support Inside Spoilers
 
 > **AI-Generated**: May contain errors. Verify before use.
 
-**Status**: Backlog
+
 **Priority**: Low (implement if users request)
-**Complexity**: Medium
-**Created**: 2026-01-06
+
+
 **Estimated Effort**: 2-3 days
 **Depends On**: Spoiler basic implementation (completed)
 **Files**:

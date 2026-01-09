@@ -1,7 +1,14 @@
+---
+type: task
+title: "Rehype-Raw Security Fix - Complete Recap"
+status: done
+created: 2025-11-07
+updated: 2026-01-09
+---
+
 # Rehype-Raw Security Fix - Complete Recap
 
-**Date**: 2025-11-07
-**Status**: ✅ Complete & Deployed
+
 **Priority**: P0 (Critical Security Issue)
 **Original Task**: `.agents/tasks/remove-rehype-raw-security-fix.md`
 
@@ -308,4 +315,3 @@ If `ENABLE_MARKDOWN` is set to `false` or `shouldUseMarkdown()` logic is reverte
 
 **Document Created**: 2025-11-07
 **Last Updated**: 2025-11-07
-**Status**: Complete ✅

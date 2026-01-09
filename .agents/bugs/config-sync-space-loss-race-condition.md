@@ -1,3 +1,12 @@
+---
+type: bug
+title: Config Sync Space Loss Race Condition
+status: open
+ai_generated: true
+created: 2026-01-09T00:00:00.000Z
+updated: 2025-12-13T00:00:00.000Z
+---
+
 # Config Sync Space Loss Race Condition
 
 > **⚠️ AI-Generated**: May contain errors. Verify before use.
@@ -152,7 +161,6 @@ Before `saveConfig()` overwrites remote, merge local and remote space lists:
 2. Merge `spaceKeys`: local takes precedence for conflicts, but preserve remote-only spaces
 3. Only remove a space if explicitly deleted (add `deletedSpaceIds` tombstone array like bookmarks have)
 
-**Complexity**: High - requires duplicating decryption logic or refactoring to share it
 
 ### Option B: Delay saveConfig Until Sync Complete
 Add a sync state flag to prevent `saveConfig()` during active space sync:
@@ -160,7 +168,6 @@ Add a sync state flag to prevent `saveConfig()` during active space sync:
 2. Block `saveConfig()` while flag is set (queue the save)
 3. Only allow save after all spaces have valid encryption states
 
-**Complexity**: Medium - but may cause UX issues if sync takes long
 
 ### Option C: Mark Incomplete Spaces
 Track spaces that failed to sync and exclude them from filtering:
@@ -169,7 +176,6 @@ Track spaces that failed to sync and exclude them from filtering:
 3. In `saveConfig()`, preserve `pendingSyncSpaces` in remote config
 4. Retry sync for pending spaces periodically
 
-**Complexity**: Medium - needs new state management
 
 ### Option D: Block Sync on Significant Space Loss (Considered, Not Implemented)
 Before uploading, check if we'd lose many spaces compared to local DB:
@@ -219,6 +225,5 @@ Spaces need similar treatment but currently lack any merge or tombstone logic.
 
 ---
 
-_Created: 2025-12-13_
-_Updated: 2025-12-13_
+
 _Status: Mitigated (recovery tool available, diagnostic logging added)_

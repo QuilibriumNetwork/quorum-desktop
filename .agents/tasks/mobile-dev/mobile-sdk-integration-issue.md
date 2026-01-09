@@ -1,8 +1,16 @@
+---
+type: task
+title: Quilibrium SDK Mobile Integration Issue
+status: in-progress
+created: 2025-08-08T00:00:00.000Z
+updated: '2026-01-09'
+---
+
 # Quilibrium SDK Mobile Integration Issue
 
-**Status**: 🔴 Blocked  
-**Priority**: High  
-**Date**: 2025-08-08  
+
+**Priority**: High
+
 **Last Updated**: 2025-01-07
 
 **Issue confirmed with both Expo GO and Expo Dev Build**
@@ -167,7 +175,7 @@ Create native iOS/Android modules that replicate SDK functionality:
 
 A temporary shim implementation is currently in place that provides mock functionality for mobile development and testing. See: [SDK Shim Temporary Solutions](./sdk-shim-temporary-solutions.md)
 
-**Status**: ✅ In use
+
 **Purpose**: Allow mobile app development to continue while permanent solution is implemented
 **Limitations**: No actual crypto or passkey functionality
 

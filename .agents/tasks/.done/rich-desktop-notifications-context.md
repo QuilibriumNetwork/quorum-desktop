@@ -1,10 +1,17 @@
+---
+type: task
+title: Add Context to Desktop Notifications
+status: done
+complexity: medium
+created: 2026-01-04T00:00:00.000Z
+updated: '2026-01-09'
+---
+
 # Add Context to Desktop Notifications
 
 > **Reviewed by**: feature-analyzer agent (4 passes) + manual code review
 
-**Status**: Pending
-**Complexity**: Medium
-**Created**: 2026-01-04
+
 **Files**:
 - `src/services/NotificationService.ts:220-238` (pending count methods)
 - `src/services/MessageService.ts:3542-3549` (DM path)

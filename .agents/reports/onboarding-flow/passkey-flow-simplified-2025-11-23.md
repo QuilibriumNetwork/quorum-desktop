@@ -1,3 +1,13 @@
+---
+type: report
+title: Passkey Flow - Simplified User Journey
+status: done
+created: 2026-01-09T00:00:00.000Z
+updated: '2026-01-09'
+related_issues:
+  - '#1'
+---
+
 # Passkey Flow - Simplified User Journey
 
 **Date:** 2025-11-23
@@ -206,5 +216,3 @@ This is a WebAuthn limitation, not a design choice.
 4. **The "double step" messaging** is currently shown upfront - users should understand they'll authenticate twice
 
 ---
-
-*Updated: 2025-11-23*

@@ -1,3 +1,12 @@
+---
+type: report
+title: Web-to-Native Feature Sync Compatibility Analysis
+status: done
+ai_generated: true
+created: 2026-01-09T00:00:00.000Z
+updated: '2026-01-09'
+---
+
 # Web-to-Native Feature Sync Compatibility Analysis
 
 > **⚠️ AI-Generated**: May contain errors. Verify before use.
@@ -284,6 +293,5 @@ These are display-only, already implemented, more restrictive on native, or feat
 
 ---
 
-_Created: 2025-12-04_
-_Updated: 2025-12-04_
+
 _Report Type: Compatibility Analysis / Security Gap Assessment_

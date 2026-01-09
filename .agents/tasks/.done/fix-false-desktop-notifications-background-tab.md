@@ -1,11 +1,19 @@
+---
+type: task
+title: Fix False Desktop Notifications in Background Tabs
+status: done
+complexity: low
+ai_generated: true
+created: 2025-01-04T00:00:00.000Z
+updated: '2026-01-09'
+---
+
 # Fix False Desktop Notifications in Background Tabs
 
 > **⚠️ AI-Generated**: May contain errors. Verify before use.
 > **Reviewed by**: feature-analyzer agent
 
-**Status**: Pending
-**Complexity**: Low
-**Created**: 2025-01-04
+
 **Reported by**: User (browser web app)
 
 ## What & Why
@@ -218,5 +226,3 @@ Once this basic fix is in place, we can later add:
 - Per-space notification settings (already partially implemented)
 
 ---
-
-_Created: 2025-01-04_

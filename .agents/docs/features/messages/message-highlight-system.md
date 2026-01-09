@@ -1,3 +1,12 @@
+---
+type: doc
+title: Message Highlight System
+status: done
+ai_generated: true
+created: 2026-01-09T00:00:00.000Z
+updated: 2025-12-05T00:00:00.000Z
+---
+
 # Message Highlight System
 
 > **⚠️ AI-Generated**: May contain errors. Verify before use.
@@ -203,5 +212,5 @@ Cleaning up the hash earlier would cause the highlight to stop mid-animation.
 
 ---
 
-_Updated: 2025-12-05_
+
 _Verified: 2025-12-09 - File paths confirmed current_

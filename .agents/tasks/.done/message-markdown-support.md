@@ -1,3 +1,11 @@
+---
+type: task
+title: "Message Markdown Support Implementation"
+status: done
+created: 2026-01-09
+updated: 2026-01-09
+---
+
 # Message Markdown Support Implementation
 
 **Status:** Pending

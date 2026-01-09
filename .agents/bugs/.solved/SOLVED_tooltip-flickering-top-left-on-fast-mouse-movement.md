@@ -1,3 +1,11 @@
+---
+type: bug
+title: Tooltip Flickering at Top-Left on Fast Mouse Movement
+status: done
+created: 2026-01-09T00:00:00.000Z
+updated: 2026-01-09T00:00:00.000Z
+---
+
 # Tooltip Flickering at Top-Left on Fast Mouse Movement
 
 > **AI-Generated**: May contain errors. Verify before use.
@@ -63,5 +71,5 @@ The key insight: react-tooltip defaults to `--rt-opacity: 0.9` (90% opaque). Its
 
 ---
 
-_Created: 2025-12-10_
+
 _Solved: 2025-12-15 - Fix: delayShow + let react-tooltip handle opacity transition + override --rt-opacity to 1_

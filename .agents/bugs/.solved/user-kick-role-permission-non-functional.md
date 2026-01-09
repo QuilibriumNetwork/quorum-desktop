@@ -1,3 +1,12 @@
+---
+type: bug
+title: 'user:kick Role Permission is Non-Functional for Non-Owners'
+status: done
+ai_generated: true
+created: 2026-01-09T00:00:00.000Z
+updated: 2026-01-09T00:00:00.000Z
+---
+
 # user:kick Role Permission is Non-Functional for Non-Owners
 
 > **⚠️ AI-Generated**: May contain errors. Verify before use.
@@ -114,6 +123,6 @@ When adding permission-based features:
 
 ---
 
-_Created: 2025-12-14_
+
 _Severity: Medium (broken feature, no security impact)_
 _Type: Feature that was implemented incompletely_

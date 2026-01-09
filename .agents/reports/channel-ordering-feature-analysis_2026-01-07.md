@@ -1,3 +1,11 @@
+---
+type: report
+title: Channel Ordering Feature Analysis
+status: done
+created: 2026-01-09T00:00:00.000Z
+updated: '2026-01-09'
+---
+
 # Channel Ordering Feature Analysis
 
 > **AI-Generated**: May contain errors. Verify before use.
@@ -306,6 +314,5 @@ Cons:
 
 ---
 
-_Created: 2026-01-07_
-_Updated: 2026-01-07_
+
 _Report Type: Research/Analysis_

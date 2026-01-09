@@ -1,11 +1,18 @@
+---
+type: task
+title: Implement Per-Space Display Names and Avatars with Account Section
+status: done
+complexity: high
+ai_generated: true
+created: 2025-10-06T00:00:00.000Z
+updated: '2026-01-09'
+---
+
 # Implement Per-Space Display Names and Avatars with Account Section
 
 > **⚠️ AI-Generated**: May contain errors. Verify before use.
 
-**Status**: Pending
-**Complexity**: High
-**Created**: 2025-10-06
-**Updated**: 2025-10-06
+
 **Files**:
 - `src/components/modals/SpaceSettingsModal/Account.tsx` (new)
 - `src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:34-534`
@@ -257,6 +264,3 @@ _Updated during implementation_
 **2025-10-06 - Claude Code**: Updated per feature-analyzer recommendations (validation, default tabs, tooltips, cache syntax)
 
 ---
-
-_Created: 2025-10-06 by Claude Code_
-_Updated: 2025-10-06 by Claude Code_

@@ -1,3 +1,11 @@
+---
+type: task
+title: "Mention Counts Performance Optimization"
+status: done
+created: 2026-01-09
+updated: 2025-10-12
+---
+
 # Mention Counts Performance Optimization
 
 ## Status
@@ -404,5 +412,5 @@ Move mention counting to Web Worker
 
 ---
 
-_Created: 2025-10-12_
+
 _Last Updated: 2025-10-12_

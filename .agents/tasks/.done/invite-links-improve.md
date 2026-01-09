@@ -1,3 +1,11 @@
+---
+type: task
+title: "Public Invite Links Improvement Task"
+status: done
+created: 2026-01-09
+updated: 2026-01-09
+---
+
 # Public Invite Links Improvement Task
 
 Improve the public invite links feature in SpaceEditor to provide clearer UX with confirmation modals and actual enable/disable functionality. Currently, the toggle only shows/hides UI elements without actually enabling/disabling the public link functionality.

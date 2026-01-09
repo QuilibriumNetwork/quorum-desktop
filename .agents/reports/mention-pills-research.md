@@ -1,10 +1,10 @@
 ---
 type: report
-title: "Mention Pills Feature Research & Validation"
+title: Mention Pills Feature Research & Validation
 related_task: mention-pills-in-message-textarea
-status: complete
-created: 2025-11-18
-updated: 2026-01-09
+status: done
+created: 2025-11-18T00:00:00.000Z
+updated: 2026-01-09T00:00:00.000Z
 ---
 
 # Mention Pills Feature Research & Validation

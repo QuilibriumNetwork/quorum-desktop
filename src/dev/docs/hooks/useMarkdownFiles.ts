@@ -25,6 +25,12 @@ export interface MarkdownFile {
 // Import the generated data
 import markdownFilesData from '../utils/markdownFiles.json';
 
+// Extract number prefix from filename (e.g., "001-" or "006:")
+const extractNumberPrefix = (filename: string): string | null => {
+  const match = filename.match(/^(\d{3,4})[-:]/);
+  return match ? match[1] : null;
+};
+
 // Utility to convert filename to title
 const filenameToTitle = (filename: string): string => {
   return filename
@@ -129,25 +135,36 @@ export const useMarkdownFiles = (type: 'docs' | 'tasks' | 'bugs' | 'reports') =>
 
         // Process the files with titles, status, and slugs
         // Priority: Use frontmatter if exists, otherwise fall back to detection functions
-        const processedFiles: MarkdownFile[] = rawFiles.map((file: any) => ({
-          name: file.name,
-          path: file.path,
-          folder: file.folder,
-          title: file.frontmatter?.title || filenameToTitle(file.name),
-          slug: generateSlug(file.path),
-          status: file.frontmatter?.status || determineStatus(file.path, file.name, type),
-          priority: type === 'bugs' ? determinePriority(file.name) : undefined,
-          complexity: file.frontmatter?.complexity,
-          frontmatter: file.frontmatter,
-          created: file.frontmatter?.created,
-          updated: file.frontmatter?.updated,
-          ai_generated: file.frontmatter?.ai_generated,
-          reviewed_by: file.frontmatter?.reviewed_by,
-          related_issues: file.frontmatter?.related_issues,
-          related_docs: file.frontmatter?.related_docs,
-          related_tasks: file.frontmatter?.related_tasks,
-          related_bugs: file.frontmatter?.related_bugs,
-        }));
+        const processedFiles: MarkdownFile[] = rawFiles.map((file: any) => {
+          // Get base title from frontmatter or filename
+          let title = file.frontmatter?.title || filenameToTitle(file.name);
+
+          // Preserve numbering from filename if not already in title
+          const numberPrefix = extractNumberPrefix(file.name);
+          if (numberPrefix && !title.match(/^\d{3,4}[:-]/)) {
+            title = `${numberPrefix}: ${title}`;
+          }
+
+          return {
+            name: file.name,
+            path: file.path,
+            folder: file.folder,
+            title,
+            slug: generateSlug(file.path),
+            status: file.frontmatter?.status || determineStatus(file.path, file.name, type),
+            priority: type === 'bugs' ? (file.frontmatter?.priority || determinePriority(file.name)) : undefined,
+            complexity: file.frontmatter?.complexity,
+            frontmatter: file.frontmatter,
+            created: file.frontmatter?.created,
+            updated: file.frontmatter?.updated,
+            ai_generated: file.frontmatter?.ai_generated,
+            reviewed_by: file.frontmatter?.reviewed_by,
+            related_issues: file.frontmatter?.related_issues,
+            related_docs: file.frontmatter?.related_docs,
+            related_tasks: file.frontmatter?.related_tasks,
+            related_bugs: file.frontmatter?.related_bugs,
+          };
+        });
 
         setFiles(processedFiles);
       } catch (err) {

@@ -1,11 +1,19 @@
+---
+type: task
+title: Implement Collapsible Role Groups in Channel Members Sidebar
+status: done
+complexity: medium
+ai_generated: true
+created: 2025-12-24T00:00:00.000Z
+updated: '2026-01-09'
+---
+
 # Implement Collapsible Role Groups in Channel Members Sidebar
 
 > **⚠️ AI-Generated**: May contain errors. Verify before use.
 > **Reviewed by**: feature-analyzer agent
 
-**Status**: Pending
-**Complexity**: Medium
-**Created**: 2025-12-24
+
 **Files**:
 - `src/components/space/Channel.tsx:1133-1225` (desktop sidebar)
 - `src/components/space/Channel.tsx:1350-1394` (mobile drawer - Virtuoso)
@@ -131,6 +139,3 @@ The channel members sidebar displays users grouped by roles (e.g., "ADMIN - 3", 
 - Icon component: `src/components/primitives/Icon/`
 
 ---
-
-_Created: 2025-12-24_
-_Updated: 2025-12-24 (feature-analyzer review)_

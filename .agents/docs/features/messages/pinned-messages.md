@@ -1,3 +1,11 @@
+---
+type: doc
+title: Pinned Messages Feature
+status: done
+created: 2026-01-09T00:00:00.000Z
+updated: 2025-12-12T00:00:00.000Z
+---
+
 # Pinned Messages Feature
 
 ## Overview
@@ -377,6 +385,6 @@ All magic numbers have been extracted into configuration objects:
 
 ---
 
-_Created: 2025-12-02_
+
 _Last updated: 2025-12-12_
 _Major Update: Added cross-client synchronization with full defense-in-depth validation_

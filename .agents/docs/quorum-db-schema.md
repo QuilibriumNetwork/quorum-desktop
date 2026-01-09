@@ -1,3 +1,11 @@
+---
+type: doc
+title: 'IndexedDB Schema Reference: `quorum_db`'
+status: done
+created: 2026-01-09T00:00:00.000Z
+updated: 2025-12-23T00:00:00.000Z
+---
+
 # IndexedDB Schema Reference: `quorum_db`
 
 Quick reference for debugging and creating console snippets.

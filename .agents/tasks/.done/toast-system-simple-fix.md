@@ -1,3 +1,11 @@
+---
+type: task
+title: Toast System - Simple Bug Fixes
+status: done
+created: 2026-01-09T00:00:00.000Z
+updated: '2026-01-09'
+---
+
 # Toast System - Simple Bug Fixes
 
 > **Status**: Ready for Implementation
@@ -402,5 +410,5 @@ This simple fix approach was validated by feature-analyzer agent analysis on 202
 
 ---
 
-_Created: 2025-10-17 by Claude Code_
+
 _Analysis by: feature-analyzer agent (2025-10-17)_

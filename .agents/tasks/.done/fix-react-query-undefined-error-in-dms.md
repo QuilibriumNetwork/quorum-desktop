@@ -1,3 +1,11 @@
+---
+type: task
+title: "Fix: React Query \"undefined\" Error in DM Conversations"
+status: done
+created: 2026-01-09
+updated: 2025-01-09
+---
+
 # Fix: React Query "undefined" Error in DM Conversations
 
 **Date:** 2025-01-09

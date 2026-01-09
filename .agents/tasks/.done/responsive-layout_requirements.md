@@ -1,3 +1,11 @@
+---
+type: task
+title: "Responsive Layout Requirements"
+status: done
+created: 2026-01-09
+updated: 2026-01-09
+---
+
 # Responsive Layout Requirements
 
 ## Overview

@@ -1,3 +1,12 @@
+---
+type: bug
+title: Offline Navigation Issues
+status: done
+ai_generated: true
+created: 2026-01-09T00:00:00.000Z
+updated: 2025-12-19T00:00:00.000Z
+---
+
 # Offline Navigation Issues
 
 > **⚠️ AI-Generated**: May contain errors. Verify before use.
@@ -152,6 +161,3 @@ For future development:
 - [Action Queue Feature](../.agents/docs/features/action-queue.md) - Handles offline actions correctly
 
 ---
-
-_Created: 2025-12-19_
-_Updated: 2025-12-19 - Issue 1 resolved, root cause identified as React Query v5 networkMode default_

@@ -1,3 +1,11 @@
+---
+type: report
+title: '008: Action Queue Endpoint Dependencies & Failure Modes'
+status: done
+created: 2026-01-09T00:00:00.000Z
+updated: '2026-01-09'
+---
+
 # 008: Action Queue Endpoint Dependencies & Failure Modes
 
 > **AI-Generated**: May contain errors. Verify before use.
@@ -209,7 +217,6 @@ If keyset-requiring actions fail with "Keyset not available", check:
 2. Check `chrome://crashes` after crash
 3. Note actions performed before crash
 
-**Status**: Needs investigation - may be server performance related
 
 ---
 
@@ -231,5 +238,3 @@ If keyset-requiring actions fail with "Keyset not available", check:
 - [Action Queue Feature](../../docs/features/action-queue.md)
 
 ---
-
-_Created: 2025-12-21_

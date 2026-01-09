@@ -1,11 +1,19 @@
+---
+type: task
+title: Scroll Performance Optimization
+status: done
+complexity: high
+ai_generated: true
+created: 2025-12-19T00:00:00.000Z
+updated: '2026-01-09'
+---
+
 # Scroll Performance Optimization
 
 > **⚠️ AI-Generated**: May contain errors. Verify before use.
 > **Reviewed by**: feature-analyzer agent
 
-**Status**: Pending
-**Complexity**: High
-**Created**: 2025-12-19
+
 **Files**:
 - `src/components/message/MessageList.tsx`
 - `src/components/message/MessageActionsMenu.tsx`
@@ -313,5 +321,5 @@ This triggers fetchNextPage when 5000px from bottom (~4-5 screens on 1080p). Thi
 
 ---
 
-_Created: 2025-12-19_
+
 _Reviewed: 2025-12-19 by feature-analyzer agent_

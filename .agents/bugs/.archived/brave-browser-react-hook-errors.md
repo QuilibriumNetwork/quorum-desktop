@@ -1,8 +1,16 @@
+---
+type: bug
+title: Brave Browser React Hook Errors - ONGOING INVESTIGATION
+status: on-hold
+created: 2026-01-09T00:00:00.000Z
+updated: '2026-01-09'
+---
+
 # Brave Browser React Hook Errors - ONGOING INVESTIGATION
 
-**Date:** July 30, 2025  
-**Status:** 🔄 **ONGOING** - Multiple Solutions Attempted, Still Experiencing Hook Errors  
-**Branch:** feat/mobile-app  
+**Date:** July 30, 2025
+**Status:** 🔄 **ONGOING** - Multiple Solutions Attempted, Still Experiencing Hook Errors
+**Branch:** feat/mobile-app
 **Priority:** Medium (Development Experience Issue - Non-blocking)
 
 ## Bug Description
@@ -30,7 +38,7 @@ chunk-YMK7XHJB.js?v=0d8c5ba4:1347 Uncaught TypeError: Cannot read properties of 
 
 ### Git Bisect Investigation Results
 
-**✅ Commit e748ef8** (last new-style commit): **NO** hook errors in Brave  
+**✅ Commit e748ef8** (last new-style commit): **NO** hook errors in Brave
 **❌ Commit 4f15c06** ("Implement cross-platform theming foundation and Button primitive"): **YES** hook errors in Brave
 
 **Primary Issue**: React hooks being loaded during module initialization due to direct exports from primitive theme system, causing browser-specific compatibility issues.
@@ -248,13 +256,12 @@ While we've made significant progress understanding and addressing the root caus
 
 Given the **non-blocking nature** and **available workarounds**, the decision is to **leave the current architecture as-is** and focus development efforts on higher-priority features.
 
-**Status**: 🔄 **ONGOING INVESTIGATION PAUSED**
 
 ---
 
-_Investigation period: July 30, 2025_  
-_Solutions attempted: Factory functions, dual exports, conditional lazy loading_  
-_Result: Partial improvement, issue remains non-deterministic_  
+_Investigation period: July 30, 2025_
+_Solutions attempted: Factory functions, dual exports, conditional lazy loading_
+_Result: Partial improvement, issue remains non-deterministic_
 _Decision: Accept current state due to low priority and available workarounds_
 
 Updated: July 30, 2025 14:30 UTC

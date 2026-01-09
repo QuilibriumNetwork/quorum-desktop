@@ -1,11 +1,19 @@
+---
+type: bug
+title: 'Bug: Message Scroll Issues - Send Jank & Delete Auto-Scroll'
+status: done
+created: 2026-01-05T00:00:00.000Z
+updated: '2026-01-09'
+---
+
 # Bug: Message Scroll Issues - Send Jank & Delete Auto-Scroll
 
-**Status**: RESOLVED
+
 **Priority**: Medium (UX issue)
 **Type**: Bug
 **Component**: Channel, DirectMessage, MessageList, Virtuoso
 **Affects**: Message sending and deletion UX in channels and DMs
-**Created**: 2026-01-05
+
 **Resolved**: 2026-01-05
 
 ---

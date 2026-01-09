@@ -1,10 +1,17 @@
+---
+type: task
+title: "Persist DM Contact Profile from Message Data"
+status: done
+complexity: low
+created: 2025-12-22
+updated: 2025-12-22
+---
+
 # Persist DM Contact Profile from Message Data
 
 > **AI-Generated**: May contain errors. Verify before use.
 
-**Status**: Done
-**Complexity**: Low
-**Created**: 2025-12-22
+
 **Files**:
 - `src/components/context/MessageDB.tsx:315` (addOrUpdateConversation)
 - `src/services/MessageService.ts` (callers)
@@ -130,5 +137,3 @@ The function is called in 3 places in MessageService.ts, all already pass `updat
 - [ ] Privacy verified: delete conversation → message again → shows "Unknown User"
 
 ---
-
-*Updated: 2025-12-22 18:45*

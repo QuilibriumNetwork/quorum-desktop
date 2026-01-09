@@ -1,11 +1,20 @@
+---
+type: task
+title: Tooltip Shared Mode for NavMenu Flickering Fix
+status: on-hold
+complexity: high
+created: 2025-12-10T00:00:00.000Z
+updated: '2026-01-09'
+related_issues:
+  - '#1010'
+---
+
 # Tooltip Shared Mode for NavMenu Flickering Fix
 
 > **AI-Generated**: May contain errors. Verify before use.
 > **Reviewed by**: feature-analyzer agent
 
-**Status**: Abandoned
-**Complexity**: High
-**Created**: 2025-12-10
+
 **Related Bug**: [Tooltip Flickering at Top-Left on Fast Mouse Movement](../bugs/tooltip-flickering-top-left-on-fast-mouse-movement.md)
 
 ## Outcome
@@ -88,6 +97,3 @@ These files were created but have been removed:
 Types added to `types.ts` and exports in `index.ts` were also removed.
 
 ---
-
-_Created: 2025-12-10_
-_Updated: 2025-12-11 - Status: Abandoned. Implementation worked but improvement was marginal. Reverted to simple tooltips._

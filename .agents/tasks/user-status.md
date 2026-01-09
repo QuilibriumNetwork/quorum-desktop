@@ -1,8 +1,15 @@
+---
+type: task
+title: User Status Feature Implementation Plan
+status: in-progress
+complexity: high
+created: 2025-01-20T00:00:00.000Z
+updated: '2026-01-09'
+---
+
 # User Status Feature Implementation Plan
 
-**Created**: 2025-01-20  
-**Updated**: 2025-08-10  
-**Status**: Planning  
+
 **Priority**: High → Medium (Simplified to Phase 1)
 
 ## Feature Summary
@@ -367,5 +374,5 @@ type SpaceMemberWithPresence = {
 
 ---
 
-_Plan created: 2025-01-20_  
+_Plan created: 2025-01-20_
 _Last updated: 2025-08-10_

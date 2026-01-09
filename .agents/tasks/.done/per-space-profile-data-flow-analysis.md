@@ -1,3 +1,12 @@
+---
+type: task
+title: "Per-Space Profile Data Flow Analysis"
+status: done
+ai_generated: true
+created: 2026-01-09
+updated: 2026-01-09
+---
+
 # Per-Space Profile Data Flow Analysis
 
 > **⚠️ AI-Generated**: May contain errors. Verify before use.

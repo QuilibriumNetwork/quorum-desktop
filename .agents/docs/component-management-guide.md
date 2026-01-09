@@ -1,3 +1,11 @@
+---
+type: doc
+title: Component Management & Development Guide
+status: done
+created: 2026-01-09T00:00:00.000Z
+updated: 2025-08-14T00:00:00.000Z
+---
+
 # Component Management & Development Guide
 
 **READY FOR OFFICIAL DOCS: _Last review: 2025-08-14 10:45 UTC_**
@@ -524,6 +532,6 @@ import { Button } from '../primitives/Button';
 
 ---
 
-_Created: 2025-07-31_  
-_Updated: 2025-08-14 10:45 UTC_  
+_Created: 2025-07-31_
+_Updated: 2025-08-14 10:45 UTC_
 _This guide focuses on practical decision-making for component development in our cross-platform architecture._

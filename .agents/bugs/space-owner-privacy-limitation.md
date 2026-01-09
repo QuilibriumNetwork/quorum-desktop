@@ -1,3 +1,14 @@
+---
+type: bug
+title: Space Owner Privacy Limitation
+status: open
+ai_generated: true
+created: 2026-01-09T00:00:00.000Z
+updated: 2026-01-09T00:00:00.000Z
+related_issues:
+  - '#111'
+---
+
 # Space Owner Privacy Limitation
 
 https://github.com/QuilibriumNetwork/quorum-desktop/issues/111
@@ -75,5 +86,5 @@ Owner generates ZK proof proving knowledge of owner private key without revealin
 
 ---
 
-_Created: 2025-12-15_
+
 _Status: Design Limitation (accepted trade-off for privacy)_

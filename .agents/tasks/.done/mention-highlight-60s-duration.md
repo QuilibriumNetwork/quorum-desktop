@@ -1,3 +1,11 @@
+---
+type: task
+title: "Mention Highlight Duration - Extended to 60 Seconds"
+status: done
+created: 2026-01-09
+updated: 2026-01-09
+---
+
 # Mention Highlight Duration - Extended to 60 Seconds
 
 ## Implementation Summary

@@ -1,13 +1,21 @@
+---
+type: report
+title: '006: Action Queue Stores Identity Keys in Plaintext'
+status: done
+created: 2025-12-20T00:00:00.000Z
+updated: '2026-01-09'
+---
+
 # 006: Action Queue Stores Identity Keys in Plaintext
 
 > **AI-Generated**: May contain errors. Verify before use.
 
 **Severity**: Critical (passkey users) / High (fallback mode users)
 **Type**: Security Regression
-**Status**: Open
+
 **Classification**: `action-queue-bug` - New vulnerability introduced by Action Queue
-**Created**: 2025-12-20
-**Updated**: 2025-12-20
+
+
 **Discovered During**: DM offline registration persistence analysis
 **Fix**: See [007-plaintext-private-keys-fix.md](007-plaintext-private-keys-fix.md)
 
@@ -187,5 +195,5 @@ This lesson has been added to the `feature-analyzer` agent instructions.
 
 ---
 
-_Created: 2025-12-20_
+
 _Last Updated: 2025-12-20_

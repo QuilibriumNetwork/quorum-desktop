@@ -1,8 +1,17 @@
+---
+type: task
+title: "DirectMessage Navigation State Persistence"
+status: done
+ai_generated: true
+created: 2026-01-09
+updated: 2025-12-03
+---
+
 # DirectMessage Navigation State Persistence
 
 > **⚠️ AI-Generated**: May contain errors. Verify before use.
 
-**Status**: ❌ NOT RECOMMENDED - Over-engineered
+
 **Analyzed**: 2025-12-03 by feature-analyzer agent
 **Simple Alternative**: See [Recommended Fix](#recommended-simple-fix-10-lines) below
 
@@ -212,6 +221,3 @@ export const useDirectMessageNavigation = () => {
 - [ ] Cross-platform compatibility maintained
 
 ---
-
-_Created: 2025-11-15_
-_Updated: 2025-12-03 - Added feature-analyzer assessment, marked as over-engineered, added simple alternative_

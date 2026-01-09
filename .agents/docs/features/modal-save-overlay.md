@@ -1,3 +1,11 @@
+---
+type: doc
+title: Modal Save Overlay System
+status: done
+created: 2026-01-09T00:00:00.000Z
+updated: 2025-01-16T00:00:00.000Z
+---
+
 # Modal Save Overlay System
 
 A centralized system for displaying loading overlays during async operations in modals, preventing user interaction and providing visual feedback during save operations.
@@ -187,6 +195,6 @@ const handleSave = useCallback(async () => {
 
 ---
 
-*Created: 2025-01-16*
+
 *Last Updated: 2025-01-16 (Complete migration)*
 *Verified: 2025-12-09 - File paths confirmed current*

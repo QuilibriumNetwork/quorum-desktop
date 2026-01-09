@@ -1,7 +1,15 @@
+---
+type: bug
+title: 'MessageDB Context: IndexedDB Platform Compatibility Issue'
+status: open
+created: 2026-01-09T00:00:00.000Z
+updated: 2025-08-21T00:00:00.000Z
+---
+
 # MessageDB Context: IndexedDB Platform Compatibility Issue
 
-**Status:** Medium Priority - Requires platform-specific implementation  
-**Affects:** React Native/Expo Go builds  
+**Status:** Medium Priority - Requires platform-specific implementation
+**Affects:** React Native/Expo Go builds
 **Culprit Commit:** `a51ea3f663e43957a6b1f477eabe5ae1100c3616`
 
 ## Issue Description
@@ -85,5 +93,4 @@ const { getConfig } = useMessageDB(); // This loads IndexedDB code
 
 ---
 
-_Created: 2025-08-16_  
-_Updated: 2025-08-21 - Corrected analysis after commit review_
+_Created: 2025-08-16_

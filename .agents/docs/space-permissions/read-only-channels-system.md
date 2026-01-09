@@ -1,3 +1,11 @@
+---
+type: doc
+title: Read-Only Channels System
+status: done
+created: 2026-01-09T00:00:00.000Z
+updated: 2025-12-11T00:00:00.000Z
+---
+
 # Read-Only Channels System
 
 ## Overview

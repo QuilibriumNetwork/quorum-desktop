@@ -1,3 +1,12 @@
+---
+type: doc
+title: Mute Conversation System
+status: done
+ai_generated: true
+created: 2026-01-09T00:00:00.000Z
+updated: 2026-01-09T00:00:00.000Z
+---
+
 # Mute Conversation System
 
 > **⚠️ AI-Generated**: May contain errors. Verify before use.
@@ -165,5 +174,3 @@ The notification filtering is implemented in NotificationService rather than pas
 Unlike channel mute which shows muted channels at 60% opacity, muted DM conversations have no visual distinction. This was a deliberate choice to keep the UI clean - users can use the "Muted" filter to find muted conversations when needed.
 
 ---
-
-_Created: 2026-01-04_

@@ -1,3 +1,15 @@
+---
+type: task
+title: Background Action Queue with Web Worker Crypto
+status: on-hold
+complexity: very-high
+ai_generated: true
+created: 2025-12-13T00:00:00.000Z
+updated: '2026-01-09'
+related_issues:
+  - '#110'
+---
+
 # Background Action Queue with Web Worker Crypto
 
 https://github.com/QuilibriumNetwork/quorum-desktop/issues/110
@@ -5,10 +17,7 @@ https://github.com/QuilibriumNetwork/quorum-desktop/issues/110
 > **⚠️ AI-Generated**: May contain errors. Verify before use.
 > **Reviewed by**: feature-analyzer, security-analyst, and Explore agents (2025-12-13)
 
-**Status**: Archived
-**Complexity**: Critical
-**Created**: 2025-12-13
-**Updated**: 2025-12-17 (archived - web worker approach deprecated)
+
 **Branch**: `cross-platform_web-worker`
 
 **Estimated Effort**: 15-20 hours (incremental milestones)
@@ -1709,6 +1718,6 @@ This milestone is intentionally less detailed because:
 
 ---
 
-_Created: 2025-12-13_
+
 _Last Updated: 2025-12-13 (timing data corrected based on actual measurements)_
 _Status: Ready for Implementation_

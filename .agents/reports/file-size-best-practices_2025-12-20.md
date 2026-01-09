@@ -1,3 +1,12 @@
+---
+type: report
+title: File Size & Service Extraction Best Practices
+status: done
+ai_generated: true
+created: 2026-01-09T00:00:00.000Z
+updated: '2026-01-09'
+---
+
 # File Size & Service Extraction Best Practices
 
 > **⚠️ AI-Generated**: May contain errors. Verify before use.
@@ -171,5 +180,5 @@ Before extracting code to a new file:
 
 ---
 
-_Created: 2025-12-20_
+
 _Report Type: Research_

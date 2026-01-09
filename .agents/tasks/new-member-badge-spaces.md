@@ -1,10 +1,18 @@
+---
+type: task
+title: Implement New Member Badge in Spaces
+status: in-progress
+complexity: medium
+ai_generated: true
+created: 2025-12-29T00:00:00.000Z
+updated: '2026-01-09'
+---
+
 # Implement New Member Badge in Spaces
 
 > **⚠️ AI-Generated**: May contain errors. Verify before use.
 
-**Status**: Pending
-**Complexity**: Medium
-**Created**: 2025-12-29
+
 **Files**:
 - `src/services/InvitationService.ts:840-897`
 - `src/services/MessageService.ts:2319-2433`

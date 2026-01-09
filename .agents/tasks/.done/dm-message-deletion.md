@@ -1,3 +1,13 @@
+---
+type: task
+title: "Direct Message Deletion Feature"
+status: done
+complexity: medium
+ai_generated: true
+created: 2026-01-09
+updated: 2025-10-06
+---
+
 # Direct Message Deletion Feature
 
 > **⚠️ AI-Generated**: May contain errors. Verify before use.
@@ -6,9 +16,9 @@
 
 Enable users to delete their own messages in private conversations (DirectMessage), matching the existing deletion behavior used in Channels.
 
-**Status**: ✅ Completed
+
 **Priority**: Medium
-**Complexity**: Medium (~6 hours including bug fixes)
+
 **Type**: Feature parity
 
 **Related Files**:
@@ -333,5 +343,5 @@ See original task document for detailed placeholder implementation steps.
 
 ---
 
-_Created: 2025-10-05_
+
 _Last Updated: 2025-10-06 - Completed implementation with DM ID mismatch fix and cache update fix_

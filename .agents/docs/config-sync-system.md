@@ -1,3 +1,12 @@
+---
+type: doc
+title: Config Sync System
+status: done
+ai_generated: true
+created: 2026-01-09T00:00:00.000Z
+updated: 2025-12-12T00:00:00.000Z
+---
+
 # Config Sync System
 
 > **⚠️ AI-Generated**: May contain errors. Verify before use.
@@ -354,5 +363,5 @@ The 100KB per-encryption-state filter keeps total payload well under limits.
 
 ---
 
-*Created: 2025-12-09*
+
 *Updated: 2025-12-12* - Added spaceIds/items filtering for server validation consistency

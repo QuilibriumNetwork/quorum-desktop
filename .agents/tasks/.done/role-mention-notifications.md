@@ -1,11 +1,19 @@
+---
+type: task
+title: Role Mention Notifications Implementation
+status: done
+complexity: medium
+created: 2026-01-09T00:00:00.000Z
+updated: '2026-01-09'
+---
+
 # Role Mention Notifications Implementation
 
 ## Overview
 
 Implement role mention notifications to allow users to mention entire roles (e.g., `@moderators`, `@admins`) instead of individual users. Users type `@roleTag` directly or select from autocomplete dropdown. This feature is **50% complete** - the data model, notification infrastructure, and role system are already in place. This task completes the remaining implementation.
 
-**Complexity**: Medium (3.5-5.5 hours)
-**Status**: Not started
+
 **Priority**: Medium
 
 **Feature-Analyzer Review**: ✅ Reviewed and simplified based on user decisions

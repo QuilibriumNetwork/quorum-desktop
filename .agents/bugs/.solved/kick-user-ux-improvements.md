@@ -1,3 +1,13 @@
+---
+type: bug
+title: Kick User UX Improvements
+status: done
+created: 2025-01-30T00:00:00.000Z
+updated: 2026-01-09T00:00:00.000Z
+related_issues:
+  - '#62'
+---
+
 # Kick User UX Improvements
 
 Added to GitHub Issues: https://github.com/QuilibriumNetwork/quorum-desktop/issues/62
@@ -91,7 +101,5 @@ After a user is kicked, the UserProfile still shows an enabled "Kick User" butto
 
 ---
 
-**Created**: 2025-01-30
-**Updated**: 2025-09-16
-**Status**: Modal overlay implemented, UI blocking issue documented
+
 **Affects**: Admin user experience during kick operations

@@ -1,3 +1,11 @@
+---
+type: bug
+title: DM Send Fails with "Cannot read properties of undefined (reading 'address')"
+status: done
+created: 2026-01-09T00:00:00.000Z
+updated: 2026-01-09T00:00:00.000Z
+---
+
 # DM Send Fails with "Cannot read properties of undefined (reading 'address')"
 
 > **✅ FIXED**: 2025-12-18
@@ -140,5 +148,5 @@ private sanitizeError(error: Error): string {
 
 ---
 
-_Created: 2025-12-18_
+
 _Fixed: 2025-12-18_

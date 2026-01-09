@@ -1,10 +1,18 @@
+---
+type: task
+title: Add YAML Frontmatter to Knowledge Base System
+status: in-progress
+complexity: medium
+ai_generated: true
+created: 2026-01-09T00:00:00.000Z
+updated: '2026-01-09'
+---
+
 # Add YAML Frontmatter to Knowledge Base System
 
 > **⚠️ AI-Generated**: May contain errors. Verify before use.
 
-**Status**: Pending
-**Complexity**: Medium
-**Created**: 2026-01-09
+
 **Files**:
 - `src/dev/docs/hooks/useMarkdownFiles.ts:1-150`
 - `src/dev/docs/Tasks.tsx:1-330`

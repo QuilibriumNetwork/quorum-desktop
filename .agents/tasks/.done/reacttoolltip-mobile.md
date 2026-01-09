@@ -1,3 +1,11 @@
+---
+type: task
+title: "ReactTooltip Mobile Optimization"
+status: done
+created: 2026-01-09
+updated: 2026-01-09
+---
+
 # ReactTooltip Mobile Optimization
 
 Dear Claude, read the text and code below and decide if it's a good idea to implement it, or if it could be improved upon.
@@ -26,7 +34,7 @@ The new version of the ReactTooltip component adds two optional props:
     - Listeners are attached to the anchor element matching `anchorSelect`.
     - Tooltip visibility is controlled internally through React state.
 
-**Summary:**  
+**Summary:**
 By default, no tooltips show on mobile/touch. But now, by opting in (`showOnTouch`), you can provide interactive tooltips on mobile using tap or long press, for specific tooltips where they're helpful. This gives you control and improves accessibility for both desktop and mobile users.
 
 Current ReactTooltip.tsx may have added features compared to the below one, we must alwys maintain the latest features we implemented (like the "highlighted" prop).

@@ -1,3 +1,11 @@
+---
+type: doc
+title: Markdown Renderer
+status: done
+created: 2026-01-09T00:00:00.000Z
+updated: 2026-01-09T00:00:00.000Z
+---
+
 # Markdown Renderer
 
 ## Overview
@@ -59,7 +67,7 @@ Messages automatically detect markdown patterns and render with enhanced formatt
 The message rendering system maintains **two independent rendering paths** for reliability and backward compatibility:
 
 ### System 1: MessageMarkdownRenderer (Primary Path)
-**Status**: Currently active (default)
+
 **Location**: `src/components/message/MessageMarkdownRenderer.tsx`
 **Activation**: When `ENABLE_MARKDOWN && shouldUseMarkdown()` returns true
 **Current behavior**: `shouldUseMarkdown()` always returns `true` (all messages use this path)
@@ -81,7 +89,7 @@ The message rendering system maintains **two independent rendering paths** for r
 - No raw HTML parsing
 
 ### System 2: Token-Based Rendering (Fallback Path)
-**Status**: Inactive (fallback only)
+
 **Location**: `src/components/message/Message.tsx` (lines 664-744)
 **Activation**: When `ENABLE_MARKDOWN === false` OR `shouldUseMarkdown()` returns false
 **Current behavior**: Unreachable code (kept for emergency fallback)
@@ -330,10 +338,13 @@ MessageMarkdownRenderer uses special tokens to safely render dynamic content lik
 - **Rendering**: `text` and `p` components catch tokens and render styled spans
 - **Security**: Prevents markdown interpretation and XSS attacks
 - **Backward Compatibility**: Both old and new formats work seamlessly
-- **Display Name Priority**: Enhanced format uses inline display name, legacy format falls back to user lookup
+- **Display Name Handling**: ALWAYS uses `mapSenderToUser()` lookup for security
+  - Both formats extract address → lookup real display name
+  - Embedded names in enhanced format are ignored (prevents name-spoofing)
+  - See [useMessageFormatting.ts:164](src/hooks/business/messages/useMessageFormatting.ts#L164)
 - **Examples**:
   - Legacy: `"Hey @<Qm123>"` → `"Hey <<<MENTION_USER:Qm123>>>"` → Styled mention with lookup name
-  - Enhanced: `"Hey @[John Doe]<Qm123>"` → `"Hey <<<MENTION_USER:Qm123>>>"` → Styled mention showing "John Doe"
+  - Enhanced: `"Hey @[John Doe]<Qm123>"` → `"Hey <<<MENTION_USER:Qm123>>>"` → Styled mention with lookup name (NOT "John Doe")
 
 ### Everyone Mentions
 - **Token Pattern**: `<<<MENTION_EVERYONE>>>`
@@ -358,10 +369,13 @@ MessageMarkdownRenderer uses special tokens to safely render dynamic content lik
   - Enhanced format: `#[general-chat]<ch-abc123>` → `<<<MENTION_CHANNEL:ch-abc123>>>`
 - **Rendering**: `text` and `p` components catch tokens and render clickable channel spans
 - **Navigation**: Click handler navigates to the referenced channel
-- **Display Name Priority**: Enhanced format uses inline channel name, legacy format falls back to channel lookup
+- **Display Name Handling**: ALWAYS looks up channel name from `spaceChannels` array for security
+  - Both formats extract channelId → lookup real channel name
+  - Embedded names in enhanced format are ignored (prevents spoofing)
+  - See [useMessageFormatting.ts:193-216](src/hooks/business/messages/useMessageFormatting.ts#L193-L216)
 - **Examples**:
   - Legacy: `"Check #<ch-123>"` → Clickable span showing channel lookup name
-  - Enhanced: `"Check #[general]<ch-123>"` → Clickable span showing "general"
+  - Enhanced: `"Check #[general]<ch-123>"` → Clickable span showing channel lookup name (NOT "general")
 
 ### Message Links (Discord-style)
 - **Token Pattern**: `<<<MESSAGE_LINK:channelId:messageId:channelName>>>`
@@ -493,7 +507,6 @@ if (contentData.type === 'post') {
   return <TokenBasedRenderer />;
 }
 ```
-
 
 
 ## Security Hardening (2025-11-07)

@@ -1,3 +1,11 @@
+---
+type: doc
+title: Cross-Platform Theming System
+status: done
+created: 2026-01-09T00:00:00.000Z
+updated: 2025-08-04T00:00:00.000Z
+---
+
 # Cross-Platform Theming System
 
 This document describes our comprehensive cross-platform theming architecture that provides consistent theme switching and color management across web and React Native platforms.
@@ -387,5 +395,5 @@ backgroundColor: '#ffffff'; // Use colors.bg.app instead
 
 ---
 
-_Updated: 2025-08-04_
+
 _Verified: 2025-12-09 - File structure confirmed current_

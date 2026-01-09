@@ -18,23 +18,33 @@ if (!isDryRun && !shouldApply) {
 
 const AGENTS_DIR = path.join(process.cwd(), '.agents');
 
-// Helper function to normalize status strings
+// Helper function to normalize status strings to new 4-status system
 function normalizeStatus(rawStatus) {
   const normalized = rawStatus.toLowerCase().replace(/\s+/g, '-');
   const mapping = {
-    'pending': 'pending',
+    // Map to 'open'
+    'pending': 'open',
+    'active': 'open',
+    'new': 'open',
+    'planning': 'open',
+    // Map to 'in-progress'
     'in-progress': 'in-progress',
     'in progress': 'in-progress',
-    'blocked': 'blocked',
+    'wip': 'in-progress',
+    // Map to 'on-hold'
+    'blocked': 'on-hold',
+    'on-hold': 'on-hold',
+    'waiting': 'on-hold',
+    'paused': 'on-hold',
+    // Map to 'done'
     'done': 'done',
     'completed': 'done',
     'complete': 'done',
-    'solved': 'solved',
-    'fixed': 'solved',
-    'archived': 'archived',
-    'active': 'active'
+    'solved': 'done',
+    'fixed': 'done',
+    'archived': 'done'
   };
-  return mapping[normalized] || normalized;
+  return mapping[normalized] || 'open'; // Default to 'open' if unknown
 }
 
 // Extract metadata from file content
@@ -72,13 +82,13 @@ function extractMetadata(content, filePath, filename, type) {
   else if (normalizedPath.includes('/.done/') || filename.startsWith('DONE_')) {
     metadata.status = 'done';
   } else if (normalizedPath.includes('/.archived/') || normalizedPath.includes('/.archive/') || filename.startsWith('ARCHIVED_')) {
-    metadata.status = 'archived';
+    metadata.status = 'done';
   } else if (normalizedPath.includes('/.solved/') || filename.startsWith('SOLVED_')) {
-    metadata.status = 'solved';
+    metadata.status = 'done';
   }
   // Default based on type
   else {
-    metadata.status = type === 'bug' ? 'active' : 'pending';
+    metadata.status = 'open';
   }
 
   // Extract created date
@@ -183,6 +193,7 @@ function generateFrontmatter(metadata) {
 
   lines.push('---');
   lines.push(''); // Empty line after frontmatter
+  lines.push(''); // Second line to create visual blank line
 
   return lines.join('\n');
 }

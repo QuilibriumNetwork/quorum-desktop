@@ -1,3 +1,12 @@
+---
+type: task
+title: "Color Switcher Implementation"
+status: done
+created: 2026-01-09
+updated: 2026-01-09
+related_issues: ["#060421"]
+---
+
 # Color Switcher Implementation
 
 Create a comprehensive implementation plan to add a "color switcher" to `UserSettingsModal.tsx`, allowing users to:
@@ -29,16 +38,16 @@ Current Setup:
 
 The Plan Should Cover:
 
-1. Defining More Accent Palettes in CSS  
+1. Defining More Accent Palettes in CSS
    Add multiple accent color themes (e.g. blue, green, red, purple) as CSS variables in `index.css`. Each theme should have its own --accent-50 to --accent-900, --accent, and --accent-rgb.
 
-2. Switching CSS Variable Groups Dynamically  
+2. Switching CSS Variable Groups Dynamically
    Describe how to implement switching between these variable groups (e.g., using CSS classes like .accent-blue, .accent-red on the root element or body) so that the chosen palette overrides the default.
 
-3. Tailwind Compatibility with Opacity Utilities  
+3. Tailwind Compatibility with Opacity Utilities
    Ensure Tailwind works with the dynamic accent color using a withOpacityValue('--accent-rgb') helper so utilities like bg-accent/30 behave as expected.
 
-4. Updating `UserSettingsModal.tsx`  
+4. Updating `UserSettingsModal.tsx`
    Insert a color switcher UI below the existing theme switcher. The color switcher should:
    - Display visual color swatches for each accent option
    - Show the currently selected color

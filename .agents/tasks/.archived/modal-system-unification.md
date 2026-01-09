@@ -1,11 +1,19 @@
+---
+type: task
+title: 'Unify Modal Systems: Migrate Layout-Level Modals to ModalProvider'
+status: on-hold
+complexity: high
+ai_generated: true
+created: 2025-12-03T00:00:00.000Z
+updated: '2026-01-09'
+---
+
 # Unify Modal Systems: Migrate Layout-Level Modals to ModalProvider
 
 > **⚠️ AI-Generated**: May contain errors. Verify before use.
 > **Reviewed by**: feature-analyzer agent
 
-**Status**: Archived
-**Complexity**: High
-**Created**: 2025-12-03
+
 **Archived**: 2025-12-03
 
 ## Archive Reason
@@ -363,5 +371,3 @@ const {
 ```
 
 ---
-
-_Created: 2025-12-03_

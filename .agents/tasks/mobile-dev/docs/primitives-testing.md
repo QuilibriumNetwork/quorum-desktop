@@ -1,3 +1,11 @@
+---
+type: task
+title: Primitives Testing Guide
+status: in-progress
+created: 2026-01-09T00:00:00.000Z
+updated: '2026-01-09'
+---
+
 # Primitives Testing Guide
 
 ## Accessing the Primitives Playground
@@ -106,9 +114,9 @@ We successfully implemented mobile testing during **Phase 1D**. Our primitives n
 
 ### Mobile Test Environment Location
 
-**Path**: `src/playground/mobile/quorum-mobile-test/`  
-**Tool**: Expo Go app with tunnel mode  
-**Status**: Fully functional for primitive testing
+**Path**: `src/playground/mobile/quorum-mobile-test/`
+**Tool**: Expo Go app with tunnel mode
+
 
 ## Part 3: How to Test Mobile (Actual Working Process)
 
@@ -161,8 +169,8 @@ yarn start --tunnel
 
 #### Android Testing (Primary Platform)
 
-**Setup**: Expo Go app from Google Play Store  
-**Access**: Same tunnel URL process as described above  
+**Setup**: Expo Go app from Google Play Store
+**Access**: Same tunnel URL process as described above
 **Testing Coverage**: 90% of mobile validation needs
 
 **What Android testing validates**:
@@ -176,8 +184,8 @@ yarn start --tunnel
 
 #### iPhone Testing (Secondary Platform)
 
-**Setup**: Expo Go app from iOS App Store (free)  
-**Access**: Identical process - scan same QR code or enter same tunnel URL  
+**Setup**: Expo Go app from iOS App Store (free)
+**Access**: Identical process - scan same QR code or enter same tunnel URL
 **Testing Coverage**: Platform-specific iOS behaviors
 
 **What iPhone testing adds**:
@@ -252,17 +260,17 @@ Our current mobile test app shows:
 
 ### Mobile-Specific Features We Test
 
-✅ **Touch Interactions**: Native tap responses  
-✅ **SafeAreaView**: Proper content positioning around notches  
-✅ **React Native Styling**: StyleSheet instead of CSS  
-✅ **Performance**: 60fps native animations  
+✅ **Touch Interactions**: Native tap responses
+✅ **SafeAreaView**: Proper content positioning around notches
+✅ **React Native Styling**: StyleSheet instead of CSS
+✅ **Performance**: 60fps native animations
 ✅ **Platform Resolution**: Correct .native.tsx file usage
 
 ## Part 4: Current Testing Workflow (Updated)
 
 ### Dual-Platform Testing Available
 
-✅ **Desktop Testing**: `http://localhost:5173/primitives` (main app)  
+✅ **Desktop Testing**: `http://localhost:5173/primitives` (main app)
 ✅ **Mobile Testing**: `src/playground/mobile/quorum-mobile-test/` (Expo environment)
 
 ### Recommended Development Cycle
@@ -307,27 +315,27 @@ Our current mobile test app shows:
 
 ### Common Issues & Solutions
 
-**Problem**: Android Expo Go shows loading but nothing appears  
+**Problem**: Android Expo Go shows loading but nothing appears
 **Solution**: Use tunnel mode (`yarn start --tunnel`) instead of LAN mode
 
-**Problem**: QR code scan fails  
+**Problem**: QR code scan fails
 **Solution**: Manual URL entry with tunnel URL from terminal
 
-**Problem**: `ERR_CONNECTION_REFUSED` on localhost  
+**Problem**: `ERR_CONNECTION_REFUSED` on localhost
 **Solution**: WSL2 networking issue - use tunnel mode, not localhost
 
-**Problem**: Web shows different content than mobile  
+**Problem**: Web shows different content than mobile
 **Expected**: Web uses `.web.tsx` files, mobile uses `.native.tsx` files
 
 ### WSL2 Specific Fixes
 
-**Issue**: Localhost not accessible from Windows  
-**Root Cause**: WSL2 networking isolation  
+**Issue**: Localhost not accessible from Windows
+**Root Cause**: WSL2 networking isolation
 **Solution**: Always use `--tunnel` flag for mobile testing
 
 ### Dependency Issues
 
-**Problem**: React Native bundling errors  
+**Problem**: React Native bundling errors
 **Solution**: Use Expo-compatible versions:
 
 ```bash
@@ -338,9 +346,9 @@ npx expo install react-dom@19.0.0 react-native-gesture-handler@~2.24.0
 
 ### Current Capabilities (Phase 1D Complete)
 
-✅ **Cross-platform Architecture Proven**  
-✅ **Basic Primitives Working**: FlexRow, FlexBetween, FlexCenter  
-✅ **Mobile Test Environment Functional**  
+✅ **Cross-platform Architecture Proven**
+✅ **Basic Primitives Working**: FlexRow, FlexBetween, FlexCenter
+✅ **Mobile Test Environment Functional**
 ✅ **Tunnel Mode for WSL2 Compatibility**
 
 ### Testing Workflow

@@ -1,3 +1,11 @@
+---
+type: task
+title: "Expo Go to Expo Dev Client Migration Plan - Simplified"
+status: done
+created: 2026-01-09
+updated: 2026-01-09
+---
+
 # Expo Go to Expo Dev Client Migration Plan - Simplified
 
 ## Why Migrate?

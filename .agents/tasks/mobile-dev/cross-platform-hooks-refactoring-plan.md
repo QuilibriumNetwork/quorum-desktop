@@ -1,3 +1,11 @@
+---
+type: task
+title: Cross-Platform Hooks Refactoring Plan
+status: in-progress
+created: 2026-01-09T00:00:00.000Z
+updated: '2026-01-09'
+---
+
 # Cross-Platform Hooks Refactoring Plan
 
 **Priority: High | Type: Architecture**
@@ -275,7 +283,7 @@ Even though Onboarding never uses search hooks, Metro processes all exports and 
 
 ### Solution Strategy
 
-**Not**: Abandon barrel exports entirely  
+**Not**: Abandon barrel exports entirely
 **But**: Structure them properly for cross-platform compatibility
 
 #### ✅ Good Barrel Exports (Keep Using)

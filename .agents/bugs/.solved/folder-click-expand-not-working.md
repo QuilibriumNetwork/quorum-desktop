@@ -1,3 +1,12 @@
+---
+type: bug
+title: Folder Click to Expand/Collapse Not Working
+status: done
+ai_generated: true
+created: 2026-01-09T00:00:00.000Z
+updated: 2026-01-09T00:00:00.000Z
+---
+
 # Folder Click to Expand/Collapse Not Working
 
 > **⚠️ AI-Generated**: May contain errors. Verify before use.
@@ -102,7 +111,7 @@ The following debug code was added to FolderContainer.tsx during investigation a
 
 ---
 
-_Created: 2025-12-06_
+
 _Solved: 2025-12-06_
 _Total debugging time: ~2.5 hours_
 _Root cause: CSS overlay blocking pointer events_

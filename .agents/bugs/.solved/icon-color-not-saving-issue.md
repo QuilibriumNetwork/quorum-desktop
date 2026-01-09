@@ -1,7 +1,14 @@
+---
+type: bug
+title: Icon Color Not Saving Issue
+status: done
+created: 2025-01-15T00:00:00.000Z
+updated: '2026-01-09'
+---
+
 # Icon Color Not Saving Issue
 
-**Date**: 2025-01-15
-**Status**: RESOLVED
+
 **Impact**: High - Icon colors were not persisting for channels and groups
 
 ## Problem Description

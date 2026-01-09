@@ -1,7 +1,14 @@
+---
+type: doc
+title: Introduction and Core Concepts
+status: done
+created: 2026-01-09T00:00:00.000Z
+updated: 2025-10-14T00:00:00.000Z
+---
+
 # Introduction and Core Concepts
 
 **[← Back to Primitives INDEX](./INDEX.md)**
-
 
 
 ## What Are Primitive Components?

@@ -1,3 +1,12 @@
+---
+type: doc
+title: Invite System Documentation
+status: done
+ai_generated: true
+created: 2026-01-09T00:00:00.000Z
+updated: 2026-01-09T00:00:00.000Z
+---
+
 # Invite System Documentation
 
 > **⚠️ AI-Generated**: May contain errors. Verify before use.
@@ -344,10 +353,5 @@ The invite system now dynamically detects the environment and uses appropriate d
 
 ---
 
-_Created: July 30, 2025 by Claude Code_
-_Updated: September 22, 2025 - Corrected reversibility of public invite links_
-_Updated: September 25, 2025 - Added duplicate prevention fixes_
-_Updated: October 4, 2025 - Corrected deletion capability (requires backend API, not currently possible)_
-_Updated: December 9, 2025 - Added evals documentation (what they are, allocation amounts, consumption). Added config sync bloat issue reference._
-_Updated: January 8, 2026 - Added clear comparison table for private vs public invites (eval storage, consumption timing, URL behavior)_
+
 _Covers: SpaceEditor.tsx, useInviteManagement.ts, useInviteValidation.ts, useSpaceJoining.ts, InvitationService.ts, MessageDB Context, InviteLink.tsx, inviteDomain.ts_

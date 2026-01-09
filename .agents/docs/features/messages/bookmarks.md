@@ -1,3 +1,12 @@
+---
+type: doc
+title: Bookmarks Feature
+status: done
+ai_generated: true
+created: 2026-01-09T00:00:00.000Z
+updated: 2025-12-02T00:00:00.000Z
+---
+
 # Bookmarks Feature
 
 > **⚠️ AI-Generated**: May contain errors. Verify before use.
@@ -451,5 +460,5 @@ Sync requires network connectivity. Local changes are preserved but won't sync u
 
 ---
 
-*Updated: 2025-12-02 (hybrid MessagePreview: full render when message available, cached fallback otherwise)*
+
 *Verified: 2025-12-09 - File paths confirmed current*

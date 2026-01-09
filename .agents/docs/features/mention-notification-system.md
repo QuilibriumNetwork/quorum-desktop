@@ -1,3 +1,11 @@
+---
+type: doc
+title: Unified Notification System (Mentions + Replies)
+status: done
+created: 2026-01-09T00:00:00.000Z
+updated: 2025-11-18T00:00:00.000Z
+---
+
 # Unified Notification System (Mentions + Replies)
 
 ## Overview
@@ -559,7 +567,6 @@ mentions = extractMentionsFromText(messageText, {
 
 ## Cross-Device Synchronization
 
-**Status**: ✅ Supported via IndexedDB and SyncService
 
 ### How It Works
 

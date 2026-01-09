@@ -1,8 +1,17 @@
+---
+type: task
+title: Unread Message Visual Indicators Implementation
+status: done
+complexity: medium
+created: 2026-01-09T00:00:00.000Z
+updated: '2026-01-09'
+---
+
 # Unread Message Visual Indicators Implementation
 
-**Status**: TODO  
-**Priority**: High  
-**Complexity**: Medium  
+
+**Priority**: High
+
 **Estimated Time**: 4-6 hours
 
 ## Overview
@@ -304,7 +313,7 @@ The visual indicators (`.space-icon-has-notifs-toggle` for spaces) include mobil
 ### Error Handling & Robustness
 
 **Database Failures**: Hooks should gracefully degrade to empty counts if database queries fail
-**Network Issues**: React Query's built-in retry and error handling will manage temporary failures  
+**Network Issues**: React Query's built-in retry and error handling will manage temporary failures
 **Performance**: Early-exit optimization ensures large channels don't cause UI lag
 **Race Conditions**: React Query's deduplication prevents multiple simultaneous queries
 
@@ -315,5 +324,3 @@ The visual indicators (`.space-icon-has-notifs-toggle` for spaces) include mobil
 - [Mention Notification System Documentation](../docs/features/mention-notification-system.md)
 - [Space Icon Mention Bubbles Task](../tasks/.done/space-icon-mention-bubbles.md)
 - [Reply Notification System Task](../tasks/.done/reply-notification-system.md)
-
-_Created: 2025-11-10_

@@ -1,11 +1,18 @@
+---
+type: task
+title: DM Contacts Search and Filtering Feature
+status: done
+complexity: medium
+created: 2025-12-29T00:00:00.000Z
+updated: '2026-01-09'
+---
+
 # DM Contacts Search and Filtering Feature
 
 > **AI-Generated**: May contain errors. Verify before use.
 > **Reviewed by**: feature-analyzer agent
 
-**Status**: Pending
-**Complexity**: Medium
-**Created**: 2025-12-29
+
 **Files**:
 - `src/components/ui/ListSearchInput.tsx` (new)
 - `src/components/space/Channel.tsx:659-693, 1181-1217, 1378-1391` (refactor)
@@ -223,9 +230,3 @@ The search input pattern is duplicated 3x in Channel.tsx alone. Before adding a 
 - [Config Sync System](../docs/config-sync-system.md) - For UserConfig storage pattern
 
 ---
-
-_Created: 2025-12-29_
-_Updated: 2025-12-29 - Added Phase 0 for ListSearchInput component centralization_
-_Updated: 2025-12-29 - Applied feature-analyzer recommendations: simplified ListSearchInput props, changed storage from IndexedDB to UserConfig, defined "Unknown user" detection, clarified filter persistence_
-_Updated: 2025-12-29 - Removed star indicator to keep UI clean; favorites now sort to top instead (avoids future badge clutter for Q names, subscriptions, etc.)_
-_Updated: 2025-12-29 - Use Select primitive with compactMode for filter (consistent with NotificationPanel, BookmarksPanel)_

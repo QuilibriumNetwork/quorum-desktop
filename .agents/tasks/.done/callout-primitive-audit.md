@@ -1,3 +1,11 @@
+---
+type: task
+title: "Callout Primitive Audit Report"
+status: done
+created: 2026-01-09
+updated: 2025-09-14
+---
+
 # Callout Primitive Audit Report
 
 ## Overview
@@ -398,5 +406,3 @@ Found many `console.error()` statements throughout hooks and services. These are
 - Both solid colors and opacity effects use single color source
 
 ---
-
-*Updated: 2025-09-14*

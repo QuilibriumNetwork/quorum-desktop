@@ -1,3 +1,11 @@
+---
+type: report
+title: '007: Fix - Don''t Store Keys in Action Queue'
+status: done
+created: 2026-01-09T00:00:00.000Z
+updated: '2026-01-09'
+---
+
 # 007: Fix - Don't Store Keys in Action Queue
 
 > **AI-Generated**: May contain errors. Verify before use.
@@ -233,5 +241,5 @@ The new approach is simpler and more secure.
 
 ---
 
-_Created: 2025-12-20_
+
 _Last Updated: 2025-12-20_

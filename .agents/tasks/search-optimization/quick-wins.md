@@ -1,7 +1,14 @@
+---
+type: task
+title: Quick Wins - Search Improvements
+status: in-progress
+created: 2025-11-12T00:00:00.000Z
+updated: '2026-01-09'
+---
+
 # Quick Wins - Search Improvements
 
-**Status**: ✅ Completed
-**Date**: 2025-11-12
+
 **Time Invested**: ~1.5 hours
 **Phase**: 1.1 (Foundation Quick Wins)
 
@@ -242,7 +249,6 @@ return results.sort((a, b) => b.score - a.score);
 - Add database-level pagination (see `../search-results-limitation-and-navigation-fix.md`)
 - Increase to 1000 if Virtuoso handles well
 
-**Status**: Acceptable for now, monitor user feedback
 
 ---
 

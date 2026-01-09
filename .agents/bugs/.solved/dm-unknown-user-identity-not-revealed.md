@@ -1,3 +1,11 @@
+---
+type: bug
+title: DM Shows "Unknown User" After Conversation Starts
+status: done
+created: 2026-01-09T00:00:00.000Z
+updated: 2026-01-09T00:00:00.000Z
+---
+
 # DM Shows "Unknown User" After Conversation Starts
 
 > **✅ FIXED**: 2025-12-18
@@ -231,5 +239,5 @@ await secureChannel.NewDoubleRatchetSenderSession(
 
 ---
 
-_Created: 2025-12-18_
+
 _Fixed: 2025-12-18_

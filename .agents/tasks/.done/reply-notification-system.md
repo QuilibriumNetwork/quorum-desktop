@@ -1,8 +1,17 @@
+---
+type: task
+title: "Reply Notification System"
+status: done
+complexity: medium
+created: 2026-01-09
+updated: 2025-10-16
+---
+
 # Reply Notification System
 
-**Status**: 📋 Planned
+
 **Priority**: Medium
-**Complexity**: Medium (6-8 hours)
+
 **Related**: [mention-notification-system.md](../docs/features/mention-notification-system.md)
 
 ---

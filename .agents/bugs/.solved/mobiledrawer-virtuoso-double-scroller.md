@@ -1,3 +1,12 @@
+---
+type: bug
+title: MobileDrawer Virtuoso Double Scroller CSS Issues
+status: done
+ai_generated: true
+created: 2026-01-09T00:00:00.000Z
+updated: 2026-01-09T00:00:00.000Z
+---
+
 # MobileDrawer Virtuoso Double Scroller CSS Issues
 
 > **⚠️ AI-Generated**: May contain errors. Verify before use.
@@ -164,5 +173,3 @@ When modifying MobileDrawer + Virtuoso components:
 - [ ] Last list items fully visible
 
 ---
-
-_Created: 2025-11-17_

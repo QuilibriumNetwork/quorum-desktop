@@ -1,3 +1,11 @@
+---
+type: task
+title: File Upload Hooks Consolidation Task
+status: in-progress
+created: 2026-01-09T00:00:00.000Z
+updated: '2026-01-09'
+---
+
 # File Upload Hooks Consolidation Task
 
 ## Overview
@@ -101,6 +109,6 @@ Currently, we have multiple file upload implementations that could be consolidat
 
 ---
 
-_Created: August 8, 2025_
+
 _Status: Planning_
 _Priority: Medium_

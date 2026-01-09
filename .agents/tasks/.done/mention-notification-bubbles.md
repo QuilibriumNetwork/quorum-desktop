@@ -1,3 +1,12 @@
+---
+type: task
+title: "Implement Mention Notification Bubbles"
+status: done
+created: 2026-01-09
+updated: 2025-10-05
+related_issues: ["#76"]
+---
+
 # Implement Mention Notification Bubbles
 
 Added to GitHub Issues: https://github.com/QuilibriumNetwork/quorum-desktop/issues/76
@@ -111,7 +120,6 @@ export type Mentions = {
 ### Step 1: Investigate Current Read Status System ✅ COMPLETED
 **Goal**: Understand if/how message read status is currently tracked
 
-**Status**: COMPLETED - Read status system found and documented
 
 **Findings**:
 
@@ -157,7 +165,6 @@ export type Mentions = {
 ### Step 2: Add `isMention` Property to Message ❌ NOT NEEDED
 **Goal**: Add boolean flag to messages that mention current user
 
-**Status**: SKIPPED - Not needed, existing `mentions.memberIds` array is sufficient
 
 **Reasoning**:
 - Messages already have `mentions.memberIds[]` array containing mentioned user addresses
@@ -171,7 +178,6 @@ export type Mentions = {
 ### Step 3: Database Indexing ✅ ANALYSIS COMPLETE
 **Goal**: Optimize queries for mention counts
 
-**Status**: Analysis complete - No new indexes needed
 
 **Current Indexes** (from src/db/messages.ts:91-149):
 - `by_conversation_time` on `[spaceId, channelId, createdDate]` - Already exists! ✅
@@ -392,7 +398,6 @@ src/
 7. **Testing**: Test with realistic message volumes and verify index performance
 
 
-
 ---
 
 ## Next Actions
@@ -576,9 +581,7 @@ src/
 ---
 
 *Task created: 2025-09-24*
-*Updated: 2025-10-05 - Simplified per lead dev's approach*
-*Updated: 2025-10-09 - Investigation complete, design decisions finalized*
-*Updated: 2025-10-09 - Phase 1 implementation complete, tested working*
-*Updated: 2025-10-09 - Code review complete, all high-priority issues fixed*
+
+
 *Future phases: @everyone mentions, notification dropdown, settings toggle*
 *Analysis conducted via Claude Code - manual verification confirms working*

@@ -1,10 +1,17 @@
+---
+type: task
+title: "Extract encryptAndSendToSpace() Helper"
+status: done
+complexity: medium
+created: 2025-12-20
+updated: 2026-01-09
+---
+
 # Extract encryptAndSendToSpace() Helper
 
 > **AI-Generated**: May contain errors. Verify before use.
 
-**Status**: Completed
-**Complexity**: Medium
-**Created**: 2025-12-20
+
 **Related**: [MessageService Analysis](./messageservice-analysis.md) | [Crypto Best Practices](../../reports/cryptographic-code-best-practices_2025-12-20.md)
 
 **Files**:
@@ -173,5 +180,3 @@ If issues are found:
 3. Reassess whether differences require separate implementations
 
 ---
-
-_Created: 2025-12-20_

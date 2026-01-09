@@ -1,3 +1,12 @@
+---
+type: bug
+title: DM Offline Navigation Shows Empty View
+status: done
+ai_generated: true
+created: 2026-01-09T00:00:00.000Z
+updated: 2026-01-09T00:00:00.000Z
+---
+
 # DM Offline Navigation Shows Empty View
 
 > **⚠️ AI-Generated**: May contain errors. Verify before use.
@@ -219,5 +228,3 @@ For future network-dependent queries:
 4. **Test offline scenarios** as part of feature development
 
 ---
-
-_Created: 2025-12-19_

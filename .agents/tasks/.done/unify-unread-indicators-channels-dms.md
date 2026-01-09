@@ -1,9 +1,17 @@
+---
+type: task
+title: 'Unify Unread Message Indicators: Channels & DMs'
+status: done
+complexity: medium
+created: 2025-01-13T00:00:00.000Z
+updated: '2026-01-09'
+---
+
 # Unify Unread Message Indicators: Channels & DMs
 
-**Created**: 2025-01-13
-**Status**: Planning
+
 **Priority**: High
-**Complexity**: Medium
+
 **Estimated Time**: 4-6 hours
 
 ## Problem Statement

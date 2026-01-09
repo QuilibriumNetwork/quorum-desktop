@@ -1,8 +1,17 @@
+---
+type: task
+title: Mention Notification Settings - Phase 4
+status: done
+complexity: medium
+created: 2026-01-09T00:00:00.000Z
+updated: '2026-01-09'
+---
+
 # Mention Notification Settings - Phase 4
 
-**Status**: Ready to Implement
+
 **Priority**: High
-**Complexity**: Medium
+
 **Estimated Effort**: 1 day (6-8 hours)
 **Phase**: 4 of 4 (Mention Notification System)
 
@@ -114,7 +123,6 @@ From `.agents/docs/features/mention-notification-system.md`:
 | **@you** | `true` | Show notifications for `@<address>` mentions |
 | **@everyone** | `true` | Show notifications for `@everyone` mentions |
 | **@roles** | `true` | Show notifications for `@<roleTag>` mentions (Phase 2b) |
-
 
 
 **FR4: Settings Behavior**

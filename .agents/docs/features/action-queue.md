@@ -1,3 +1,11 @@
+---
+type: doc
+title: Action Queue
+status: done
+created: 2026-01-09T00:00:00.000Z
+updated: 2026-01-04T00:00:00.000Z
+---
+
 # Action Queue
 
 > **AI-Generated**: May contain errors. Verify before use.
@@ -759,5 +767,3 @@ Tests verify control flow and contracts, not real encryption (SDK is mocked). Se
 - [Action Queue Report Index](../../reports/action-queue/INDEX.md) - All Action Queue related bugs and reports
 
 ---
-
-*Updated: 2026-01-04 - Added DM conversation mute/unmute to Action Queue integration*

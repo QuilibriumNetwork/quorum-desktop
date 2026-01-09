@@ -1,13 +1,19 @@
+---
+type: task
+title: "Background Action Queue"
+status: done
+complexity: high
+created: 2025-12-17
+updated: 2025-12-17
+related_issues: ["#110"]
+---
+
 # Background Action Queue
 
 https://github.com/QuilibriumNetwork/quorum-desktop/issues/110
 
 > **AI-Generated**: May contain errors. Verify before use.
 
-**Status**: ✅ Implemented (Core Features)
-**Complexity**: High
-**Created**: 2025-12-17
-**Updated**: 2025-12-17
 
 **Reference Implementation**: [Commit 81c2c5ca](https://github.com/QuilibriumNetwork/quorum-desktop/commit/81c2c5caaf92f7ecd5fdd157847ec773a63cd91b) - Previous action queue implementation (not merged)
 
@@ -1345,6 +1351,3 @@ window.__actionQueue.processQueue()
 ```
 
 ---
-
-_Created: 2025-12-17_
-_Updated: 2025-12-17 19:00_

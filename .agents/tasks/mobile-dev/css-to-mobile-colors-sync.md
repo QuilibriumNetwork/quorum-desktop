@@ -1,3 +1,11 @@
+---
+type: task
+title: CSS to Mobile Colors Sync Script
+status: in-progress
+created: 2026-01-09T00:00:00.000Z
+updated: '2026-01-09'
+---
+
 # CSS to Mobile Colors Sync Script
 
 **Goal**: Auto-sync color changes from `src/styles/_colors.scss` to `src/components/primitives/theme/colors.ts` while preserving mobile-specific overrides.
@@ -65,5 +73,3 @@
 - Consider watching `_colors.scss` for changes and auto-running
 
 ---
-
-_Created: 2025-01-26_

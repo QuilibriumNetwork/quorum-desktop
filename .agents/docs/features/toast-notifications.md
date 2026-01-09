@@ -1,3 +1,11 @@
+---
+type: doc
+title: Toast Notifications
+status: done
+created: 2026-01-09T00:00:00.000Z
+updated: 2025-10-17T00:00:00.000Z
+---
+
 # Toast Notifications
 
 Simple utility for displaying temporary toast notifications using an event-based system.

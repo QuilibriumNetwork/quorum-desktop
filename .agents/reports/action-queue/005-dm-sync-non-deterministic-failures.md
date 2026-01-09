@@ -1,3 +1,12 @@
+---
+type: report
+title: DM Sync Non-Deterministic Failures
+status: done
+ai_generated: true
+created: 2026-01-09T00:00:00.000Z
+updated: '2026-01-09'
+---
+
 # DM Sync Non-Deterministic Failures
 
 > **⚠️ AI-Generated**: May contain errors. Verify before use.
@@ -265,5 +274,3 @@ Once issue is resolved, remove debugging logs from:
 - Feature flags: `src/config/features.ts`
 
 ---
-
-_Created: 2025-12-18_

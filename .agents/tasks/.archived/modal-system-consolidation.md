@@ -1,11 +1,21 @@
+---
+type: task
+title: Modal System Consolidation via Route Wrapper Component
+status: on-hold
+complexity: low
+ai_generated: true
+created: 2026-01-09T00:00:00.000Z
+updated: '2026-01-09'
+---
+
 # Modal System Consolidation via Route Wrapper Component
 
 > **⚠️ AI-Generated**: May contain errors. Verify before use.
 > TESTED, BUT NOT WORTH IT (improvement is small)
 
-**Status**: Proposed (Revised after feature-analyzer review)
+
 **Priority**: Medium
-**Complexity**: Low-Medium
+
 **Estimated Effort**: 3-4 hours
 **Risk Level**: Low
 
@@ -749,5 +759,5 @@ User in /spaces/A/channel-1:
 
 ---
 
-_Created: 2025-10-05 by Claude Code_
+
 _Revised: 2025-10-05 after feature-analyzer review_

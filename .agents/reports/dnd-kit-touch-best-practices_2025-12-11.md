@@ -1,3 +1,11 @@
+---
+type: report
+title: dnd-kit Touch Drag-and-Drop Best Practices Research
+status: done
+created: 2026-01-09T00:00:00.000Z
+updated: '2026-01-09'
+---
+
 # dnd-kit Touch Drag-and-Drop Best Practices Research
 
 > **AI-Generated**: May contain errors. Verify before use.
@@ -214,5 +222,5 @@ const handleTouchMove = (e: React.TouchEvent) => {
 
 ---
 
-_Created: 2025-12-11_
+
 _Report Type: Research_

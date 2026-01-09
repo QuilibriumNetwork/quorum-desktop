@@ -1,3 +1,12 @@
+---
+type: bug
+title: Config Save Missing React Query Cache Update Causes Stale allowSync
+status: done
+ai_generated: true
+created: 2026-01-09T00:00:00.000Z
+updated: 2026-01-09T00:00:00.000Z
+---
+
 # Config Save Missing React Query Cache Update Causes Stale allowSync
 
 > **⚠️ AI-Generated**: May contain errors. Verify before use.
@@ -194,5 +203,5 @@ await actionQueueService.enqueue(
 
 ---
 
-_Created: 2025-12-21_
+
 _Bug existed in: develop branch (latent), cross-platform_action-queue branch (visible)_

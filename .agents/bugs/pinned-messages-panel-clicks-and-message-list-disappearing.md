@@ -1,3 +1,11 @@
+---
+type: bug
+title: Pinned Messages Panel Button Clicks Bug
+status: open
+created: 2026-01-09T00:00:00.000Z
+updated: 2025-01-08T00:00:00.000Z
+---
+
 # Pinned Messages Panel Button Clicks Bug
 
 ## Date
@@ -116,5 +124,3 @@ The message list disappearing issue discovered during debugging appears to be a 
 - Panel opening/closing behavior works as expected
 
 ---
-
-_Updated: 2025-01-08_

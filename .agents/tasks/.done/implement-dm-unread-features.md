@@ -1,6 +1,13 @@
+---
+type: task
+status: done
+created: 2026-01-09
+updated: 2026-01-09
+---
+
 /co# Implement Unread Message Features for Direct Messages
 
-**Status**: In Progress
+
 **Priority**: High
 **Estimated Effort**: 1.5 hours
 **Related**: `.agents/tasks/direct-message-features-comparison.md` (analysis)
@@ -568,5 +575,5 @@ Implement the complete unread message feature set for DirectMessage.tsx to achie
 
 ---
 
-*Created: 2025-11-12*
+
 *Last updated: 2025-11-12*

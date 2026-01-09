@@ -1,9 +1,17 @@
+---
+type: bug
+title: New Messages Separator - Intersection Observer Dismissal Issues
+status: done
+created: 2025-11-12T00:00:00.000Z
+updated: 2025-11-12T00:00:00.000Z
+---
+
 # New Messages Separator - Intersection Observer Dismissal Issues
 
-**Status**: ✅ Resolved
+
 **Priority**: High
 **Component**: MessageList, NewMessagesSeparator
-**Created**: 2025-11-12
+
 **Resolved**: 2025-11-12
 **Solution**: Replaced Intersection Observer with Virtuoso's `rangeChanged` callback
 

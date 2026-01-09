@@ -1,11 +1,19 @@
+---
+type: task
+title: "Implement User Mute Feature"
+status: done
+complexity: medium
+ai_generated: true
+created: 2025-12-14
+updated: 2026-01-09
+---
+
 # Implement User Mute Feature
 
 > **⚠️ AI-Generated**: May contain errors. Verify before use.
 > **Reviewed by**: feature-analyzer agent, security-analyst agent
 
-**Status**: ✅ Complete
-**Complexity**: Medium
-**Created**: 2025-12-14
+
 **Completed**: 2025-12-15
 **Files**:
 - `src/api/quorumApi.ts` - Permission type `'user:mute'`, MuteMessage/UnmuteMessage types

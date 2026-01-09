@@ -1,8 +1,16 @@
+---
+type: doc
+title: Quorum Data Management Architecture
+status: done
+created: 2025-01-20T00:00:00.000Z
+updated: 2026-01-02T00:00:00.000Z
+---
+
 # Quorum Data Management Architecture
 
 A comprehensive guide to data storage, management, and flow patterns in the Quorum desktop application.
 
-**Created**: 2025-01-20
+
 **Last Updated**: 2025-12-18
 
 ## Table of Contents

@@ -1,15 +1,23 @@
+---
+type: task
+title: "Complex Modal Primitive Migration Template"
+status: done
+created: 2026-01-09
+updated: 2026-01-09
+---
+
 # Complex Modal Primitive Migration Template
 
-**Based on:** UserSettingsModal migration (2025-07-28)  
-**Purpose:** Template for migrating complex modals to primitive architecture  
+**Based on:** UserSettingsModal migration (2025-07-28)
+**Purpose:** Template for migrating complex modals to primitive architecture
 **Result:** 95% primitive architecture achieved
 
 ---
 
 ## Quick Summary - UserSettingsModal
 
-✅ **Migrated:** Modal, Switch (3), Input (1), Icon (8), Tooltip (4/5), RadioGroup, ColorSwatch  
-❌ **Exception:** 1 tooltip (file upload), ClickToCopyContent (complex component)  
+✅ **Migrated:** Modal, Switch (3), Input (1), Icon (8), Tooltip (4/5), RadioGroup, ColorSwatch
+❌ **Exception:** 1 tooltip (file upload), ClickToCopyContent (complex component)
 🔧 **Enhanced:** Icon primitive (added `id` prop), ColorSwatch primitive (color handling)
 
 ---
@@ -48,18 +56,18 @@
 
 ### 1. Tooltip + react-dropzone Conflict
 
-**Issue:** Tooltip primitive's `cloneElement` breaks `{...getRootProps()}`  
-**Solution:** Use ReactTooltip for file upload areas  
+**Issue:** Tooltip primitive's `cloneElement` breaks `{...getRootProps()}`
+**Solution:** Use ReactTooltip for file upload areas
 **Affected:** Any drag-drop, file upload, or complex interactive elements
 
 ### 2. ColorSwatch Color Variables
 
-**Issue:** CSS variables don't work with primitive color props  
+**Issue:** CSS variables don't work with primitive color props
 **Solution:** Use direct color names (`'blue'`, `'purple'`), primitive converts to hex
 
 ### 3. Icon Primitive Enhancement Required
 
-**Issue:** Icon primitive doesn't accept `id` prop needed for tooltips  
+**Issue:** Icon primitive doesn't accept `id` prop needed for tooltips
 **Solution:** Add `id?: string` to IconProps and forward to FontAwesome component
 
 ---

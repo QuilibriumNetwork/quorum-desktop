@@ -1,10 +1,18 @@
+---
+type: task
+title: Tombstone Cleanup Strategy for Deleted Messages
+status: in-progress
+complexity: medium
+ai_generated: true
+created: 2025-12-18T00:00:00.000Z
+updated: '2026-01-09'
+---
+
 # Tombstone Cleanup Strategy for Deleted Messages
 
 > **⚠️ AI-Generated**: May contain errors. Verify before use.
 
-**Status**: Pending
-**Complexity**: Medium
-**Created**: 2025-12-18
+
 **Related**: [deleted-messages-reappear-via-sync.md](../bugs/deleted-messages-reappear-via-sync.md)
 
 ## What & Why
@@ -219,5 +227,3 @@ When implemented:
 - [ ] Bug report updated with final solution
 
 ---
-
-_Created: 2025-12-18_

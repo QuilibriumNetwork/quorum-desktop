@@ -1,3 +1,11 @@
+---
+type: doc
+title: YouTube Facade Optimization
+status: done
+created: 2026-01-09T00:00:00.000Z
+updated: 2026-01-09T00:00:00.000Z
+---
+
 # YouTube Facade Optimization
 
 ## Overview
@@ -302,7 +310,6 @@ YouTube embeds maintain responsive design with hardware acceleration:
   contain: layout style paint; /* CSS containment */
 }
 ```
-
 
 
 ## Security & Privacy Considerations

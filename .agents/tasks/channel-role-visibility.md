@@ -1,11 +1,18 @@
+---
+type: task
+title: Implement Role-Based Channel Visibility
+status: in-progress
+complexity: high
+ai_generated: true
+created: 2025-12-26T00:00:00.000Z
+updated: '2026-01-09'
+---
+
 # Implement Role-Based Channel Visibility
 
 > **⚠️ AI-Generated**: May contain errors. Verify before use.
 
-**Status**: On Hold - Cosmetic Only
-**Complexity**: High
-**Created**: 2025-12-26
-**Updated**: 2025-12-26
+
 **Files**:
 - `src/api/quorumApi.ts:57-74` (Channel type)
 - `src/components/modals/ChannelEditorModal.tsx`

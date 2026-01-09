@@ -1,3 +1,11 @@
+---
+type: task
+title: Web/Native Repository Structure
+status: in-progress
+created: 2026-01-09T00:00:00.000Z
+updated: '2026-01-09'
+---
+
 # Web/Native Repository Structure
 
 This document explains the optimal repository structure for the cross-platform Quorum app that enables parallel development of web and mobile applications while maximizing code sharing.

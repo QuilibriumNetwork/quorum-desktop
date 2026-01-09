@@ -1,3 +1,11 @@
+---
+type: task
+title: "Callout Primitive System"
+status: done
+created: 2026-01-09
+updated: 2026-01-09
+---
+
 # Callout Primitive System
 
 ## Overview
@@ -112,4 +120,3 @@ STOP HERE SO WE CAN TEST AND ADJUST STYLE
 - [ ] Well-documented with playground examples
 
 ---
-*Created: 2025-09-13*

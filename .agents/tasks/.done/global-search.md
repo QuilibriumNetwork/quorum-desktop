@@ -1,3 +1,11 @@
+---
+type: task
+title: "🔍 Global Message Search Implementation Plan"
+status: done
+created: 2026-01-09
+updated: 2026-01-09
+---
+
 # 🔍 Global Message Search Implementation Plan
 
 ## 📋 Overview

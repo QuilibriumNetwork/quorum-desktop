@@ -1,3 +1,12 @@
+---
+type: bug
+title: Deleted Messages Reappear After Peer Sync
+status: done
+ai_generated: true
+created: 2026-01-09T00:00:00.000Z
+updated: 2025-12-18T00:00:00.000Z
+---
+
 # Deleted Messages Reappear After Peer Sync
 
 > **⚠️ AI-Generated**: May contain errors. Verify before use.
@@ -153,7 +162,3 @@ To prevent unbounded growth of tombstones:
 - [ghost-message-after-delete.md](.agents/bugs/ghost-message-after-delete.md) - Different bug where `remove-message` type was misclassified (already fixed with type guard)
 
 ---
-
-_Created: 2025-12-18_
-_Updated: 2025-12-18 - Fix implemented (tombstone tracking)_
-_Updated: 2025-12-18 - DMs excluded from tombstone tracking (no sync mechanism)_

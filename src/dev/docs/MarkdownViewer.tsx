@@ -7,7 +7,7 @@ import {
   Icon,
 } from '../../components/primitives';
 import { DevNavMenu } from '../DevNavMenu';
-import { useMarkdownContent } from './hooks/useMarkdownFiles';
+import { useMarkdownContent, MarkdownFile } from './hooks/useMarkdownFiles';
 import Prism from 'prismjs';
 import 'prismjs/themes/prism-dark.css';
 import 'prismjs/components/prism-javascript';
@@ -22,17 +22,42 @@ interface MarkdownViewerProps {
   filePath: string;
   onBack: () => void;
   title: string;
+  file?: MarkdownFile; // Add file prop for frontmatter access
 }
 
 export const MarkdownViewer: React.FC<MarkdownViewerProps> = ({
   filePath,
   onBack,
   title,
+  file,
 }) => {
   const { content, loading, error } = useMarkdownContent(filePath);
 
+  // Format date to human-readable format
+  const formatDate = (dateString: string): string => {
+    try {
+      const date = new Date(dateString);
+      return date.toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric'
+      });
+    } catch {
+      return dateString;
+    }
+  };
+
+  // Strip YAML frontmatter from content
+  const stripFrontmatter = (markdown: string): string => {
+    // Remove YAML frontmatter (--- ... ---)
+    return markdown.replace(/^---\n[\s\S]*?\n---\n\n?/, '');
+  };
+
   // Enhanced markdown-to-HTML conversion
   const renderMarkdown = (markdown: string) => {
+    // Strip frontmatter first
+    const cleanedMarkdown = stripFrontmatter(markdown);
+
     // First, protect code blocks from paragraph processing
     const codeBlockPlaceholders: string[] = [];
     const tablePlaceholders: string[] = [];
@@ -51,7 +76,7 @@ export const MarkdownViewer: React.FC<MarkdownViewerProps> = ({
     };
     
     // Process tables first (before other replacements)
-    const html = markdown
+    const html = cleanedMarkdown
       // Extract and protect tables
       .replace(/(\|[^\n]+\|\n)(\|[\s:|-]+\|\n)((?:\|[^\n]+\|\n?)+)/g, (match, header, separator, body) => {
         const placeholder = `__TABLE_${tablePlaceholders.length}__`;
@@ -265,6 +290,67 @@ export const MarkdownViewer: React.FC<MarkdownViewerProps> = ({
 
         {!loading && content && (
           <div className="bg-surface-1 rounded-lg border border-default p-6">
+            {/* Frontmatter Metadata Box - Inside main content */}
+            {file && (
+              <div className="bg-surface-2 rounded-lg border border-default p-3 mb-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-2 text-xs">
+                  {file.frontmatter?.type && (
+                    <div className="flex items-center gap-2">
+                      <Text variant="subtle" size="sm">Type:</Text>
+                      <Text variant="main" size="sm" weight="medium" className="capitalize">{file.frontmatter.type}</Text>
+                    </div>
+                  )}
+                  {file.status && (
+                    <div className="flex items-center gap-2">
+                      <Text variant="subtle" size="sm">Status:</Text>
+                      <Text variant="main" size="sm" weight="medium" className="capitalize">{file.status.replace(/-/g, ' ')}</Text>
+                    </div>
+                  )}
+                  {file.complexity && (
+                    <div className="flex items-center gap-2">
+                      <Text variant="subtle" size="sm">Complexity:</Text>
+                      <Text variant="main" size="sm" weight="medium" className="capitalize">{file.complexity.replace(/-/g, ' ')}</Text>
+                    </div>
+                  )}
+                  {file.created && (
+                    <div className="flex items-center gap-2">
+                      <Text variant="subtle" size="sm">Created:</Text>
+                      <Text variant="main" size="sm">{formatDate(file.created)}</Text>
+                    </div>
+                  )}
+                  {file.updated && (
+                    <div className="flex items-center gap-2">
+                      <Text variant="subtle" size="sm">Updated:</Text>
+                      <Text variant="main" size="sm">{formatDate(file.updated)}</Text>
+                    </div>
+                  )}
+                  {file.ai_generated && (
+                    <div className="flex items-center gap-2">
+                      <Text variant="subtle" size="sm">AI Generated:</Text>
+                      <Text variant="main" size="sm">Yes</Text>
+                    </div>
+                  )}
+                  {file.reviewed_by && (
+                    <div className="flex items-center gap-2">
+                      <Text variant="subtle" size="sm">Reviewed By:</Text>
+                      <Text variant="main" size="sm" className="capitalize">{file.reviewed_by}</Text>
+                    </div>
+                  )}
+                  {file.related_issues && file.related_issues.length > 0 && (
+                    <div className="flex items-center gap-2 sm:col-span-2 lg:col-span-3">
+                      <Text variant="subtle" size="sm">Related Issues:</Text>
+                      <div className="flex flex-wrap gap-1">
+                        {file.related_issues.map((issue) => (
+                          <Text key={issue} variant="main" size="sm" className="bg-surface-3 px-1.5 py-0.5 rounded">{issue}</Text>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* Markdown Content */}
             <div
               className="prose max-w-none text-main"
               dangerouslySetInnerHTML={{ __html: renderMarkdown(content) }}

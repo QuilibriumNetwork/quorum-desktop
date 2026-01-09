@@ -1,3 +1,11 @@
+---
+type: doc
+title: Security Architecture
+status: done
+created: 2026-01-09T00:00:00.000Z
+updated: 2026-01-09T00:00:00.000Z
+---
+
 # Security Architecture
 
 This document provides a comprehensive overview of the security mechanisms implemented in the Quorum Desktop application. It covers client-side protections, defense-in-depth validation, and cryptographic security.

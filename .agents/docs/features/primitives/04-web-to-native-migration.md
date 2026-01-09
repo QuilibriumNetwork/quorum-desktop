@@ -1,7 +1,14 @@
+---
+type: doc
+title: Web-to-Native Migration Guide
+status: done
+created: 2026-01-09T00:00:00.000Z
+updated: 2025-10-14T00:00:00.000Z
+---
+
 # Web-to-Native Migration Guide
 
 **[← Back to Primitives INDEX](./INDEX.md)**
-
 
 
 Complete guide for converting web components to React Native using our cross-platform primitives.

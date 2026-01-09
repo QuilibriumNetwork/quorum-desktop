@@ -1,3 +1,11 @@
+---
+type: bug
+title: WebSocket processQueue Stuck - Blocking Outbound Messages
+status: done
+created: 2026-01-09T00:00:00.000Z
+updated: 2025-12-19T00:00:00.000Z
+---
+
 # WebSocket processQueue Stuck - Blocking Outbound Messages
 
 > **AI-Generated**: May contain errors. Verify before use.
@@ -239,7 +247,7 @@ These should be removed after the fix is implemented.
 
 ---
 
-_Created: 2025-12-19_
+
 _Updated: 2025-12-19_ (corrected blocking mechanism, added all affected features, added feature-analyzer verification, chose Option 2)
 _Discovered while: Debugging Space profile avatar not updating_
 _Status: Ready for implementation_

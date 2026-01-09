@@ -1,3 +1,11 @@
+---
+type: task
+title: "Android 7.0 File Download Fix - Implementation Plan"
+status: done
+created: 2026-01-09
+updated: 2025-08-11
+---
+
 # Android 7.0 File Download Fix - Implementation Plan
 
 Tried and failed (see: .agents/bugs/CRITICAL_android-file-download-huawei-p9-lite.md)

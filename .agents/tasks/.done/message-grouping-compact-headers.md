@@ -1,11 +1,18 @@
+---
+type: task
+title: Implement Discord-Style Message Grouping with Compact Headers
+status: done
+complexity: medium
+ai_generated: true
+created: 2025-01-05T00:00:00.000Z
+updated: '2026-01-09'
+---
+
 # Implement Discord-Style Message Grouping with Compact Headers
 
 > **⚠️ AI-Generated**: May contain errors. Verify before use.
 
-**Status**: Pending
-**Complexity**: Medium
-**Created**: 2025-01-05
-**Updated**: 2025-01-05
+
 **Files**:
 - `src/utils/messageGrouping.ts:51-61`
 - `src/components/message/MessageList.tsx:231-293`

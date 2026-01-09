@@ -1,3 +1,11 @@
+---
+type: doc
+title: Cryptographic Architecture
+status: done
+created: 2025-12-20T00:00:00.000Z
+updated: 2026-01-02T00:00:00.000Z
+---
+
 # Cryptographic Architecture
 
 > **AI-Generated**: May contain errors. Verify before use.
@@ -5,7 +13,7 @@
 
 This document explains the cryptographic protocols and key management used in Quorum. It focuses on the **mental model** needed to understand how encryption and signing work, rather than implementation details.
 
-**Created**: 2025-12-20
+
 **Last Updated**: 2026-01-02
 
 ---
@@ -355,5 +363,5 @@ secureChannel.UnsealSyncEnvelope(
 
 ---
 
-_Created: 2025-12-20_
+
 _Last Updated: 2026-01-02_

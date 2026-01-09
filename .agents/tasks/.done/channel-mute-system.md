@@ -1,11 +1,19 @@
+---
+type: task
+title: Channel Mute System
+status: done
+complexity: medium
+ai_generated: true
+created: 2025-12-26T00:00:00.000Z
+updated: '2026-01-09'
+---
+
 # Channel Mute System
 
 > **⚠️ AI-Generated**: May contain errors. Verify before use.
 > **Reviewed by**: feature-analyzer agent
 
-**Status**: Pending
-**Complexity**: Medium
-**Created**: 2025-12-26
+
 **Files**:
 - `src/components/space/ChannelItem.tsx` (context menu integration)
 - `src/components/space/ChannelList.tsx` (filtering logic)
@@ -493,6 +501,3 @@ _Updated during implementation_
   - **Preserves preferences**: Unmuting space restores individual channel mute states
 
 ---
-
-_Created: 2025-12-26_
-_Updated: 2025-12-27_

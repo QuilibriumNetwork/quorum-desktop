@@ -1,10 +1,18 @@
+---
+type: task
+title: Implement Smart Context Extraction Around Mentions in NotificationPanel
+status: in-progress
+complexity: medium
+ai_generated: true
+created: 2025-11-19T00:00:00.000Z
+updated: '2026-01-09'
+---
+
 # Implement Smart Context Extraction Around Mentions in NotificationPanel
 
 > **⚠️ AI-Generated**: May contain errors. Verify before use.
 
-**Status**: Pending
-**Complexity**: Medium
-**Created**: 2025-11-19
+
 **Files**:
 - `src/components/notifications/NotificationItem.tsx:20-75`
 - `src/components/notifications/NotificationPanel.tsx:224-271`
@@ -105,5 +113,3 @@
 - Performance monitoring for large notification volumes
 
 ---
-
-_Created: 2025-11-19_

@@ -1,3 +1,13 @@
+---
+type: task
+title: Business Logic Extraction & Native Preparation Plan
+status: in-progress
+created: 2025-08-01T00:00:00.000Z
+updated: '2026-01-09'
+related_issues:
+  - '#1'
+---
+
 # Business Logic Extraction & Native Preparation Plan
 
 ## Overview
@@ -456,7 +466,6 @@ const useSpaceManagement = (options) => {
 
 ### When NOT to Extract: Lessons from SpaceButton
 
-**Date**: 2025-08-01
 
 **Learning**: Not every component needs business logic extraction, even in a cross-platform architecture.
 
@@ -555,7 +564,6 @@ const SpaceButton = ({ space }) => {
 
 ### Platform-Specific Components Pattern
 
-**Date**: 2025-08-01
 
 **Pattern**: How to handle components with platform-specific behavior like drag/drop, gestures, or navigation.
 
@@ -757,7 +765,6 @@ This pattern ensures clean, maintainable code that leverages each platform's str
 
 ---
 
-_Created: 2025-07-29_
-_Updated: 2025-08-01_
+
 _Priority: Business Logic First → Native Preparation Second_
 _Objective: Fully working web app ready for native components_

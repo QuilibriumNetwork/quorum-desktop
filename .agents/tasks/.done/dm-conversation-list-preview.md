@@ -1,3 +1,11 @@
+---
+type: task
+title: "Task: Enhanced Direct Message Conversation List"
+status: done
+created: 2026-01-09
+updated: 2026-01-09
+---
+
 # Task: Enhanced Direct Message Conversation List
 
 ## Overview

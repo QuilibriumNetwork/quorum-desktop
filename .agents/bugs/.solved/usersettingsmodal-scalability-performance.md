@@ -1,3 +1,15 @@
+---
+type: bug
+title: >-
+  Performance Issue: UserSettingsModal Save Times Scale Poorly with Number of
+  Spaces
+status: done
+created: 2026-01-09T00:00:00.000Z
+updated: 2026-01-09T00:00:00.000Z
+related_issues:
+  - '#65'
+---
+
 # Performance Issue: UserSettingsModal Save Times Scale Poorly with Number of Spaces
 
 Added to Github Issues: https://github.com/QuilibriumNetwork/quorum-desktop/issues/65
@@ -98,7 +110,7 @@ const changedSpaces = spaces.filter(
 );
 ```
 
-**Pros:** Easy to implement, immediate improvement  
+**Pros:** Easy to implement, immediate improvement
 **Cons:** Still processes all spaces on first sync
 
 ### 2. Incremental Sync (Better) 🟠
@@ -115,7 +127,7 @@ if (spaceKeysChanged) {
 }
 ```
 
-**Pros:** Scales better, more targeted syncing  
+**Pros:** Scales better, more targeted syncing
 **Cons:** Requires API changes, more complex state tracking
 
 ### 3. Background Sync (Best) 🟢
@@ -130,7 +142,7 @@ await saveProfileLocally(config);
 backgroundSync.queue(() => syncSpacesToServer(config));
 ```
 
-**Pros:** Best UX, true scalability  
+**Pros:** Best UX, true scalability
 **Cons:** Most complex, requires offline-first architecture
 
 ### 4. Hybrid Approach 🔵
@@ -199,5 +211,3 @@ And then the Queue works through each task in the order they are submitted (top 
 There may be a library for this such that we don't have to re-invent the wheel on this.
 
 ---
-
-_Created: 2025-09-09_

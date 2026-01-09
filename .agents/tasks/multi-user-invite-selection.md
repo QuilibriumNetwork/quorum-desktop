@@ -1,3 +1,12 @@
+---
+type: task
+title: Multi-User Invite Selection Enhancement
+status: in-progress
+ai_generated: true
+created: 2026-01-09T00:00:00.000Z
+updated: '2026-01-09'
+---
+
 # Multi-User Invite Selection Enhancement
 
 > **⚠️ AI-Generated**: May contain errors. Verify before use.
@@ -412,7 +421,7 @@ SpaceSettingsModal.tsx
 
 ---
 
-_Created: 2025-11-15 by Claude Code_
+
 _Priority: Medium - UX enhancement, no blocking issues_
 _Complexity: Medium - Mostly frontend work, some hook logic_
 _Estimated: 1-2 weeks_

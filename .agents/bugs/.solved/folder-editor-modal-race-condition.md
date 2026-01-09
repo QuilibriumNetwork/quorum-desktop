@@ -1,3 +1,11 @@
+---
+type: bug
+title: FolderEditorModal Race Condition on Auto-Open After Folder Creation
+status: done
+created: 2026-01-09T00:00:00.000Z
+updated: 2026-01-09T00:00:00.000Z
+---
+
 # FolderEditorModal Race Condition on Auto-Open After Folder Creation
 
 > **✅ SOLVED** - Implemented Option 1: await saveConfig before opening modal
@@ -111,5 +119,5 @@ Implement a lock mechanism during folder creation flow to prevent concurrent con
 
 ---
 
-_Created: 2025-12-07_
+
 _Solved: 2025-12-10_

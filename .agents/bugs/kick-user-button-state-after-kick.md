@@ -1,3 +1,13 @@
+---
+type: bug
+title: Kick User Button Remains Enabled After User is Kicked
+status: open
+created: 2025-09-16T00:00:00.000Z
+updated: 2026-01-09T00:00:00.000Z
+related_issues:
+  - '#74'
+---
+
 # Kick User Button Remains Enabled After User is Kicked
 
 https://github.com/QuilibriumNetwork/quorum-desktop/issues/74
@@ -189,6 +199,5 @@ This provides:
 
 ---
 
-**Created**: 2025-09-16
-**Status**: Bug documented, solution designed
+
 **Affects**: Space administrators managing large member lists

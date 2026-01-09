@@ -1,11 +1,19 @@
+---
+type: task
+title: "Task: Fix Hash Navigation to Old Messages (#msg-messageId Pattern)"
+status: done
+created: 2025-11-11
+updated: 2026-01-09
+---
+
 # Task: Fix Hash Navigation to Old Messages (#msg-messageId Pattern)
 
-**Status**: ✅ Completed - Moved to Documentation
+
 **Priority**: High
 **Type**: Bug Fix
 **Component**: MessageList, Channel, useMessages hook
 **Affects**: Search results, Pinned messages, Notifications, Direct URL hashes
-**Created**: 2025-11-11
+
 **Completed**: 2025-11-12
 
 ---

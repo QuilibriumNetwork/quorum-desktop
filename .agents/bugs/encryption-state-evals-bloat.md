@@ -1,3 +1,13 @@
+---
+type: bug
+title: Encryption State Evals Causing Config Sync Bloat
+status: open
+created: 2026-01-09T00:00:00.000Z
+updated: 2025-12-09T00:00:00.000Z
+related_issues:
+  - '#108'
+---
+
 # Encryption State Evals Causing Config Sync Bloat
 
 https://github.com/QuilibriumNetwork/quorum-desktop/issues/108
@@ -46,6 +56,3 @@ This would allow:
 Note: Consumed evals are already removed from state when private invites are sent (`InvitationService.ts:95-102`). The issue is the initial 10K allocation.
 
 ---
-
-_Created: 2025-12-09_
-_Updated: 2025-12-09 - Confirmed pre-existing bug in develop branch. Added workaround (disable sync). Removed temp hack._

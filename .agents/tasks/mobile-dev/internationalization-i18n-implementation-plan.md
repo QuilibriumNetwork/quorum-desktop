@@ -1,8 +1,17 @@
+---
+type: task
+title: Mobile Internationalization (i18n) Implementation Plan
+status: in-progress
+complexity: medium
+created: 2026-01-09T00:00:00.000Z
+updated: '2026-01-09'
+---
+
 # Mobile Internationalization (i18n) Implementation Plan
 
-**Status**: Planning  
-**Priority**: Medium  
-**Complexity**: Moderate  
+
+**Priority**: Medium
+
 **Estimated Time**: 4-6 hours
 
 ## Current Situation Analysis
@@ -270,5 +279,3 @@ mobile/
 ---
 
 **Next Steps**: Start with Phase 1 and Option B implementation for quickest path to full language support.
-
-_Created: 2024-08-07_

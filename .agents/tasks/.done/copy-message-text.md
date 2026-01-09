@@ -1,10 +1,18 @@
+---
+type: task
+title: Implement Copy Message Raw Text Option
+status: done
+complexity: low
+ai_generated: true
+created: 2025-11-16T00:00:00.000Z
+updated: '2026-01-09'
+---
+
 # Implement Copy Message Raw Text Option
 
 > **⚠️ AI-Generated**: May contain errors. Verify before use.
 
-**Status**: Pending
-**Complexity**: Low
-**Created**: 2025-11-16
+
 **Files**:
 - `src/components/message/MessageActions.tsx` - Add copy message icon (desktop)
 - `src/components/message/MessageActionsDrawer.tsx` - Add copy message button (mobile/touch)
@@ -183,5 +191,3 @@ function extractRawText(message: Message): string {
 - Toast notification for feedback (consistent with other mobile actions)
 
 ---
-
-_Created: 2025-11-16_

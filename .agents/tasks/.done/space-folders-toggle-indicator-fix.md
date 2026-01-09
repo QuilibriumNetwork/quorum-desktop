@@ -1,10 +1,18 @@
+---
+type: task
+title: "Space Folders: Toggle Indicator Fix for Spaces Inside Folders"
+status: done
+complexity: medium
+ai_generated: true
+created: 2025-12-06
+updated: 2026-01-09
+---
+
 # Space Folders: Toggle Indicator Fix for Spaces Inside Folders
 
 > **⚠️ AI-Generated**: May contain errors. Verify before use.
 
-**Status**: Complete
-**Complexity**: Medium
-**Created**: 2025-12-06
+
 **Related**: `.agents/tasks/space-folders-discord-style.md` (Phase 4)
 
 ## Problem
@@ -105,5 +113,5 @@ The `clip-path` approach worked successfully:
 
 ---
 
-_Created: 2025-12-06_
+
 _Completed: 2025-12-06_

@@ -1,10 +1,18 @@
+---
+type: task
+title: Component Architecture Masterplan - Desktop/Mobile Unification
+status: in-progress
+created: 2026-01-09T00:00:00.000Z
+updated: '2026-01-09'
+---
+
 # Component Architecture Masterplan - Desktop/Mobile Unification
 
 ## Executive Summary
 
 This masterplan defines the **architectural philosophy and technical approach** for creating a unified codebase that supports both desktop and mobile platforms. The approach extracts only the "raw HTML portion" into platform-specific primitives while keeping 90%+ of the codebase shared.
 
-**For step-by-step implementation**, see [`mobile-dev-plan.md`](./mobile-dev-plan.md).  
+**For step-by-step implementation**, see [`mobile-dev-plan.md`](./mobile-dev-plan.md).
 **For detailed development workflows**, see [`component-dev-guidelines.md`](../../docs/component-dev-guidelines.md).
 
 ## Current State Analysis

@@ -1,3 +1,12 @@
+---
+type: doc
+title: Offline Support
+status: done
+ai_generated: true
+created: 2026-01-09T00:00:00.000Z
+updated: 2025-12-20T00:00:00.000Z
+---
+
 # Offline Support
 
 > **⚠️ AI-Generated**: May contain errors. Verify before use.
@@ -267,5 +276,3 @@ The offline banner displays queued action count:
 - [Space Offline Navigation Bug (Solved)](../../bugs/.solved/offline-navigation-issues.md) - Root cause analysis
 
 ---
-
-*Updated: 2025-12-20*

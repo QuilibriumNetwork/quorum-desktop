@@ -1,10 +1,18 @@
+---
+type: task
+title: "Notification Dropdown/Inbox UI Implementation"
+status: done
+created: 2026-01-09
+updated: 2026-01-09
+---
+
 # Notification Dropdown/Inbox UI Implementation
 
 ## Overview
 
 Implement a comprehensive notification dropdown/inbox UI that displays all unread mentions across all channels in the current space. This feature builds on the existing mention notification system (Phases 1 & 2) and integrates with the established highlight and navigation patterns used in pinned messages and search results.
 
-**Status**: 🔴 Not Started
+
 **Priority**: Medium
 **Related**: [Mention Notification System](../docs/features/mention-notification-system.md)
 
@@ -1080,4 +1088,3 @@ src/
 ---
 
 **Last updated**: 2025-10-10
-

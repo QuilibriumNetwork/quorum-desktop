@@ -1,3 +1,11 @@
+---
+type: doc
+title: New Messages Separator
+status: done
+created: 2026-01-09T00:00:00.000Z
+updated: 2025-12-24T00:00:00.000Z
+---
+
 # New Messages Separator
 
 ## Overview

@@ -1,11 +1,19 @@
+---
+type: task
+title: Extend Desktop Notifications to Space Mentions and Replies
+status: done
+complexity: low
+ai_generated: true
+created: 2026-01-04T00:00:00.000Z
+updated: '2026-01-09'
+---
+
 # Extend Desktop Notifications to Space Mentions and Replies
 
 > **⚠️ AI-Generated**: May contain errors. Verify before use.
 > **Reviewed by**: feature-analyzer agent
 
-**Status**: Pending
-**Complexity**: Low
-**Created**: 2026-01-04
+
 **Files**:
 - `src/services/MessageService.ts:~3573` (after saveMessage in space path)
 - `src/utils/mentionUtils.ts` (existing, no changes needed)

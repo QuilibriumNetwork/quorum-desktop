@@ -1,3 +1,11 @@
+---
+type: task
+title: "Message Handling Report"
+status: done
+created: 2026-01-09
+updated: 2026-01-09
+---
+
 # Message Handling Report
 
 This document outlines how messages are handled in the Quilibrium desktop application, and proposes a plan for implementing a search feature.

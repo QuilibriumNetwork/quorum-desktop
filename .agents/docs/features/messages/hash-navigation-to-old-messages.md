@@ -1,3 +1,11 @@
+---
+type: doc
+title: Hash Navigation to Old Messages
+status: done
+created: 2026-01-09T00:00:00.000Z
+updated: 2025-11-13T00:00:00.000Z
+---
+
 # Hash Navigation to Old Messages
 
 ## Overview

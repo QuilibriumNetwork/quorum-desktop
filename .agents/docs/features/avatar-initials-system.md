@@ -1,6 +1,14 @@
+---
+type: doc
+title: Avatar & Initials System
+status: done
+created: 2026-01-09T00:00:00.000Z
+updated: 2025-10-26T00:00:00.000Z
+---
+
 # Avatar & Initials System
 
-**Status**: ✅ Implemented
+
 **Platforms**: Web + Mobile
 **Components**: `UserAvatar`, `UserInitials`, `SpaceAvatar`
 **Pattern**: Deterministic fallback rendering

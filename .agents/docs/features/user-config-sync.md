@@ -1,3 +1,12 @@
+---
+type: doc
+title: User Config Sync on Existing Accounts
+status: done
+ai_generated: true
+created: 2026-01-09T00:00:00.000Z
+updated: 2025-12-13T00:00:00.000Z
+---
+
 # User Config Sync on Existing Accounts
 
 > **⚠️ AI-Generated**: May contain errors. Verify before use.
@@ -85,5 +94,3 @@ When profile fetch fails for registered users, a toast notification is shown:
 - [useProfileValidation.ts](src/hooks/business/validation/useProfileValidation.ts) - Image validation utility
 
 ---
-
-*Updated: 2025-12-13*

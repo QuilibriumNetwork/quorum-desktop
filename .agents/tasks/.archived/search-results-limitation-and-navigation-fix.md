@@ -1,12 +1,19 @@
+---
+type: task
+title: 'Task: Fix Search Results Limitation and Pagination'
+status: on-hold
+created: 2025-11-11T00:00:00.000Z
+updated: '2026-01-09'
+---
+
 # Task: Fix Search Results Limitation and Pagination
 
-**Status**: 📋 ARCHIVED
+
 **Priority**: Medium
 **Type**: Enhancement
 **Component**: Search
 **Affects**: Search functionality
-**Created**: 2025-11-11
-**Updated**: 2025-11-11
+
 
 > ARCHIVED because redundant compared to the larger optimization task: search-performance-optimization.md
 ---
@@ -329,5 +336,3 @@ This separation allows:
 10. ✅ No conflicts with separate navigation fix task
 
 ---
-
-**Updated**: 2025-11-11

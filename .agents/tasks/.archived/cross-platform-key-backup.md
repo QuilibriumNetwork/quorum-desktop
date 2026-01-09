@@ -1,3 +1,11 @@
+---
+type: task
+title: Cross-Platform Key Backup Implementation
+status: on-hold
+created: 2026-01-09T00:00:00.000Z
+updated: '2026-01-09'
+---
+
 # Cross-Platform Key Backup Implementation
 
 > **ARCHIVED**: 2025-12-27

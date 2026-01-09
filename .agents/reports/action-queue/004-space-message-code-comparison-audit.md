@@ -1,3 +1,12 @@
+---
+type: report
+title: Action Queue vs Legacy Space Message Implementation - Code Comparison Audit
+status: done
+ai_generated: true
+created: 2026-01-09T00:00:00.000Z
+updated: '2026-01-09'
+---
+
 # Action Queue vs Legacy Space Message Implementation - Code Comparison Audit
 
 > **⚠️ AI-Generated**: May contain errors. Verify before use.
@@ -437,6 +446,5 @@ Aligned channel handler status update with DM atomic pattern in `ActionQueueHand
 
 ---
 
-_Created: 2025-12-19_
-_Updated: 2025-12-19_
+
 _Status: ✅ Bug Fixed_

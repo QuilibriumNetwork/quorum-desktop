@@ -1,3 +1,12 @@
+---
+type: doc
+title: Channel and Space Mute System
+status: done
+ai_generated: true
+created: 2026-01-09T00:00:00.000Z
+updated: 2025-12-27T00:00:00.000Z
+---
+
 # Channel and Space Mute System
 
 > **⚠️ AI-Generated**: May contain errors. Verify before use.
@@ -381,5 +390,3 @@ Space-level mute checks happen first (O(1)) to avoid unnecessary channel iterati
 - [Config Sync System](../config-sync-system.md)
 
 ---
-
-*Updated: 2025-12-27*

@@ -1,11 +1,18 @@
+---
+type: task
+title: Add User Bio Field to UserSettingsModal General Tab
+status: in-progress
+complexity: low
+ai_generated: true
+created: 2025-01-06T00:00:00.000Z
+updated: '2026-01-09'
+---
+
 # Add User Bio Field to UserSettingsModal General Tab
 
 > **⚠️ AI-Generated**: May contain errors. Verify before use.
 
-**Status**: Pending
-**Complexity**: Low
-**Created**: 2025-01-06
-**Updated**: 2025-01-06
+
 **Files**:
 - `src/db/messages.ts:47-87`
 - `src/hooks/business/user/useUserSettings.ts:10-217`

@@ -1,3 +1,11 @@
+---
+type: task
+title: "🎯 Objective: Implement Global Message Search"
+status: done
+created: 2026-01-09
+updated: 2026-01-09
+---
+
 # 🎯 Objective: Implement Global Message Search
 
 Your task is to design and implement a **global search feature** for messages inside our Quorum app.

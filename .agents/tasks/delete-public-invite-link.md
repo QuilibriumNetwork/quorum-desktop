@@ -1,3 +1,14 @@
+---
+type: task
+title: 'Task: Implement Delete Public Invite Link Feature'
+status: in-progress
+ai_generated: true
+created: 2026-01-09T00:00:00.000Z
+updated: '2026-01-09'
+related_issues:
+  - '#101'
+---
+
 # Task: Implement Delete Public Invite Link Feature
 
 > **⚠️ AI-Generated**: May contain errors. Verify before use.
@@ -211,6 +222,3 @@ const deleteInviteLink = useCallback(async () => {
 6. ⏸️ **Testing** (final step)
 
 ---
-
-_Created: 2025-10-04 by Claude Code_
-_Updated: 2025-11-13 - Added error handling, rollback strategy, detailed testing scenarios, and clarified prerequisites_

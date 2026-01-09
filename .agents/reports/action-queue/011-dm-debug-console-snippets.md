@@ -1,3 +1,24 @@
+---
+type: report
+title: DM Debug Console Snippets
+status: done
+ai_generated: true
+created: 2026-01-09T00:00:00.000Z
+updated: '2026-01-09'
+related_issues:
+  - '#1'
+  - '#2'
+  - '#3'
+  - '#4'
+  - '#5'
+  - '#6'
+  - '#7'
+  - '#8'
+  - '#9'
+  - '#10'
+  - '#11'
+---
+
 # DM Debug Console Snippets
 
 > **⚠️ AI-Generated**: May contain errors. Verify before use.
@@ -398,6 +419,3 @@ console.log('Check if any of their receiving_inbox matches sender\'s sending_inb
 ```
 
 ---
-
-_Created: 2025-12-23_
-_Updated: 2025-12-26 - Updated snippet #7 to use raw IndexedDB (no window.__messageDB dependency)_

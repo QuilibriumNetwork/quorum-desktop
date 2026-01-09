@@ -1,3 +1,11 @@
+---
+type: task
+title: "Text Styling Consolidation"
+status: done
+created: 2026-01-09
+updated: 2025-10-25
+---
+
 # Text Styling Consolidation
 
 **Created:** 2025-10-25

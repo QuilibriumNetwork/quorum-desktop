@@ -1,10 +1,17 @@
+---
+type: task
+title: "Add DM-Specific Action Queue Handlers"
+status: done
+complexity: high
+created: 2025-12-18
+updated: 2026-01-09
+---
+
 # Add DM-Specific Action Queue Handlers
 
 > **AI-Generated**: May contain errors. Verify before use.
 
-**Status**: Completed
-**Complexity**: High
-**Created**: 2025-12-18
+
 **Completed**: 2025-12-18
 **Related Audit**: [003-DM-message-code-comparison-audit.md](../reports/action-queue/003-DM-message-code-comparison-audit.md)
 
@@ -145,5 +152,5 @@ The implementation extracts shared Double Ratchet encryption logic into `encrypt
 
 ---
 
-_Created: 2025-12-18_
+
 _Completed: 2025-12-18_

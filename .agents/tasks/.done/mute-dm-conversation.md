@@ -1,11 +1,19 @@
+---
+type: task
+title: Mute DM Conversation
+status: done
+complexity: medium
+ai_generated: true
+created: 2026-01-04T00:00:00.000Z
+updated: '2026-01-09'
+---
+
 # Mute DM Conversation
 
 > **⚠️ AI-Generated**: May contain errors. Verify before use.
 > **Reviewed by**: feature-analyzer agent
 
-**Status**: Pending
-**Complexity**: Medium
-**Created**: 2026-01-04
+
 **Files**:
 - `src/db/messages.ts:47-85` (UserConfig type)
 - `src/hooks/business/dm/useDMFavorites.ts` (pattern reference)
@@ -327,6 +335,3 @@ _To be updated during implementation_
 - **Security verified**: `conversationId` format is `address/address` (public wallet address only, same as `favoriteDMs`) - no sensitive data exposure
 
 ---
-
-_Created: 2026-01-04_
-_Updated: 2026-01-04_

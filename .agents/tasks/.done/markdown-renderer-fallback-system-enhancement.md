@@ -1,10 +1,18 @@
+---
+type: task
+title: Enhance Markdown Renderer Fallback System
+status: done
+complexity: medium
+ai_generated: true
+created: 2025-11-19T00:00:00.000Z
+updated: '2026-01-09'
+---
+
 # Enhance Markdown Renderer Fallback System
 
 > **⚠️ AI-Generated**: May contain errors. Verify before use.
 
-**Status**: Pending
-**Complexity**: Medium-Low
-**Created**: 2025-11-19
+
 **Files**:
 - `src/components/message/Message.tsx:728-852` (routing + token rendering to be extracted)
 - `src/components/message/MessageTokenRenderer.tsx` (new component to be created)
@@ -185,5 +193,3 @@
 - **Minimal changes needed**: Most functionality already works correctly
 
 ---
-
-_Created: 2025-11-19_

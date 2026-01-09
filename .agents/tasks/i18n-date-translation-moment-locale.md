@@ -1,9 +1,17 @@
+---
+type: task
+title: Date Translation with Moment.js Locale Configuration
+status: in-progress
+complexity: low
+created: 2025-01-14T00:00:00.000Z
+updated: '2026-01-09'
+---
+
 # Date Translation with Moment.js Locale Configuration
 
-**Created**: 2025-01-14
-**Status**: Planning
+
 **Priority**: Medium
-**Complexity**: Low-Medium
+
 
 ## Problem Summary
 

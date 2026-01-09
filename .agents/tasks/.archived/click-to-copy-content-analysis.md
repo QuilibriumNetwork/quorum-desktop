@@ -1,3 +1,11 @@
+---
+type: task
+title: ClickToCopyContent Component Analysis
+status: on-hold
+created: 2026-01-09T00:00:00.000Z
+updated: '2026-01-09'
+---
+
 # ClickToCopyContent Component Analysis
 
 **Date:** 2025-10-29

@@ -1,7 +1,14 @@
+---
+type: doc
+title: When to Use Primitives vs Raw HTML
+status: done
+created: 2026-01-09T00:00:00.000Z
+updated: 2025-10-14T00:00:00.000Z
+---
+
 # When to Use Primitives vs Raw HTML
 
 **[← Back to Primitives INDEX](./INDEX.md)**
-
 
 
 ## Overview

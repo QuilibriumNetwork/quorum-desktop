@@ -1,11 +1,21 @@
+---
+type: bug
+title: >-
+  Bug: Auto-Jump to First Unread Message - Blocked by Virtuoso Scroll
+  Positioning
+status: done
+created: 2025-11-11T00:00:00.000Z
+updated: 2026-01-09T00:00:00.000Z
+---
+
 # Bug: Auto-Jump to First Unread Message - Blocked by Virtuoso Scroll Positioning
 
-**Status**: ✅ RESOLVED
+
 **Priority**: Medium (UX enhancement, not critical bug)
 **Type**: Feature Request / Technical Limitation
 **Component**: MessageList, Virtuoso, Message Loading
 **Affects**: Channel navigation UX
-**Created**: 2025-11-11
+
 **Last Updated**: 2025-11-12
 **Resolved**: 2025-11-12
 
@@ -234,10 +244,10 @@ const buildMessagesFetcher = ({ messageDB, spaceId, channelId }) =>
 
 ### Behavior
 
-✅ **Normal channel entry**: Loads 100 recent messages, positions at bottom  
-✅ **Hash navigation**: Works if target message in recent 100  
-✅ **No bugs**: Clean, stable, predictable  
-⚠️ **No auto-jump**: Users must manually scroll to find unreads  
+✅ **Normal channel entry**: Loads 100 recent messages, positions at bottom
+✅ **Hash navigation**: Works if target message in recent 100
+✅ **No bugs**: Clean, stable, predictable
+⚠️ **No auto-jump**: Users must manually scroll to find unreads
 ⚠️ **Hash limitation**: Old message links may not work
 
 ---

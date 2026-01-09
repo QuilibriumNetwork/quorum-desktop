@@ -1,3 +1,13 @@
+---
+type: bug
+title: Space Owner Delete Permissions Bug
+status: on-hold
+created: 2025-09-11T00:00:00.000Z
+updated: '2026-01-09'
+related_issues:
+  - '#68'
+---
+
 # Space Owner Delete Permissions Bug
 
 https://github.com/QuilibriumNetwork/quorum-desktop/issues/68
@@ -197,9 +207,9 @@ if (!space.ownerAddress && owner_key) {
 
 ---
 
-**Status**: ❌ **OPEN** - Core space management functionality missing  
-**Priority**: High - Space owners cannot perform expected administrative actions  
-**Migration Impact**: MEDIUM - Existing spaces CAN be migrated using existing secure update mechanism  
-**Implementation Difficulty**: LOW-MEDIUM - Uses existing infrastructure  
-**Created**: 2025-09-11  
+
+**Priority**: High - Space owners cannot perform expected administrative actions
+**Migration Impact**: MEDIUM - Existing spaces CAN be migrated using existing secure update mechanism
+**Implementation Difficulty**: LOW-MEDIUM - Uses existing infrastructure
+
 **Last Updated**: 2025-09-13

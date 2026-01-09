@@ -1,3 +1,11 @@
+---
+type: report
+title: Action Queue Bug Index
+status: done
+created: 2026-01-09T00:00:00.000Z
+updated: '2026-01-09'
+---
+
 # Action Queue Bug Index
 
 > Quick reference for all Action Queue related bugs and issues.

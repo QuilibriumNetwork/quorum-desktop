@@ -1,7 +1,15 @@
+---
+type: bug
+title: 'Bug: Auto-jump to First Unread Breaks Initial Message Sync'
+status: on-hold
+created: 2026-01-09T00:00:00.000Z
+updated: '2026-01-09'
+---
+
 # Bug: Auto-jump to First Unread Breaks Initial Message Sync
 
-**Status:** 🔴 Critical - Affects core messaging functionality  
-**Created:** 2025-11-11  
+**Status:** 🔴 Critical - Affects core messaging functionality
+**Created:** 2025-11-11
 **Commit Range:** `e617d63f` (working) → `a63f609f` (broken)
 
 ---

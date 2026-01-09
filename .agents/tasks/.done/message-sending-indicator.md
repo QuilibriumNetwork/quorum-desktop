@@ -1,11 +1,20 @@
+---
+type: task
+title: "Implement Message Sending Indicator"
+status: done
+complexity: high
+ai_generated: true
+created: 2025-12-14
+updated: 2025-12-16
+related_issues: ["#51"]
+---
+
 # Implement Message Sending Indicator
 
 > **⚠️ AI-Generated**: May contain errors. Verify before use.
 > **Reviewed by**: feature-analyzer agent, security-analyst agent
 
-**Status**: ✅ Complete
-**Complexity**: High
-**Created**: 2025-12-14
+
 **Completed**: 2025-12-16
 **GitHub Issue**: https://github.com/QuilibriumNetwork/quorum-desktop/issues/51
 **Files Modified**:
@@ -456,5 +465,3 @@ The current implementation is designed to be forward-compatible. When upgrading:
 - Background Action Queue Task: `.agents/tasks/background-action-queue-with-worker-crypto.md`
 
 ---
-
-_Updated: 2025-12-16 - Feature complete. Added Phase 7 (DM Support), marked all phases complete, updated Definition of Done._

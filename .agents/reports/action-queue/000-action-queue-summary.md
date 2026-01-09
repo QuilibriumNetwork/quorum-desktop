@@ -1,9 +1,15 @@
+---
+type: report
+title: Action Queue Summary
+status: done
+created: 2025-12-23T00:00:00.000Z
+updated: '2026-01-09'
+---
+
 # Action Queue Summary
 
 > **Start here** for a high-level overview of the Action Queue system, its current state, bugs fixed, and lessons learned.
 
-**Status**: Production-ready with known limitations
-**Created**: 2025-12-23
 
 ---
 
@@ -198,5 +204,3 @@ All reports in chronological order:
 - **Feature flag**: `ENABLE_DM_ACTION_QUEUE` in [features.ts](src/config/features.ts)
 
 ---
-
-*Created: 2025-12-23*

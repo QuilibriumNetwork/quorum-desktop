@@ -1,3 +1,11 @@
+---
+type: bug
+title: Action Queue Bypasses SDK Encryption for Identity Keys
+status: done
+created: 2025-12-20T00:00:00.000Z
+updated: '2026-01-09'
+---
+
 # Action Queue Bypasses SDK Encryption for Identity Keys
 
 > **AI-Generated**: May contain errors. Verify before use.
@@ -8,8 +16,8 @@
 
 **Severity**: Critical
 **Type**: Security Regression
-**Status**: Open
-**Created**: 2025-12-20
+
+
 **Discovered During**: DM offline registration persistence analysis
 
 **TL;DR**: The SDK encrypts DeviceKeyset and UserKeyset at IndexedDB id=2 using AES-GCM. The action queue stores the **exact same keys** in plaintext, bypassing this encryption.
@@ -883,7 +891,7 @@ This is not a minor metadata leak - it's a complete identity compromise.
 
 ---
 
-_Created: 2025-12-20_
+
 _Updated: 2025-12-20_ - Added `setUserKeyset()` approach for decryption (solves chicken-and-egg problem)
 _Severity: Critical (passkey users) / High (fallback mode users)_
 _Type: Security Regression_

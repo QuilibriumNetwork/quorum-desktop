@@ -1,7 +1,15 @@
+---
+type: bug
+title: "JoinSpaceModal \"Invalid JSON\" Error Due to Network Issues"
+status: open
+created: 2026-01-09
+updated: 2025-01-08
+---
+
 # JoinSpaceModal "Invalid JSON" Error Due to Network Issues
 
-**Status**: Open (Low Priority)  
-**Priority**: Low  
+
+**Priority**: Low
 **Component**: Various
 **Discovered**: 2025-08-03
 
@@ -83,5 +91,3 @@ Users regenerate public invite links when encountering the error, which appears 
 Medium-High - Affects user onboarding experience and creates confusion about invite system reliability.
 
 ---
-
-_Updated: 2025-01-08_

@@ -1,3 +1,12 @@
+---
+type: doc
+title: Mute User System Documentation
+status: done
+ai_generated: true
+created: 2026-01-09T00:00:00.000Z
+updated: 2025-12-17T00:00:00.000Z
+---
+
 # Mute User System Documentation
 
 > **⚠️ AI-Generated**: May contain errors. Verify before use.
@@ -368,7 +377,6 @@ Mute is enforced by each client independently. A malicious custom client could c
 
 ---
 
-*Created: 2025-12-15*
-*Updated: 2025-12-17 (added action queue link)*
+
 *Status: Production Ready*
 *Cross-Platform: ✅ Web + Mobile Compatible*

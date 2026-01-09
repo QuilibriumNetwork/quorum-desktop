@@ -1,3 +1,10 @@
+---
+type: task
+status: in-progress
+created: 2026-01-09T00:00:00.000Z
+updated: '2026-01-09'
+---
+
 Getting Started & Basics
 What is Quorum Messenger and how do I start using it?
 Quorum Messenger is the world’s first secure, peer-to-peer, end-to-end encrypted (E2EE) group messaging app. It's capable of handling extremely large groups with the same bandwidth required as direct messages.
@@ -106,9 +113,9 @@ User Guide (Docusaurus main section)
        * Introduction (category)
            * What is Quorum? (An expansion of the core concept) (page)
            * How Quorum Compares to Other Chat Apps
-           * Our Philosophy: Free Speech, Privacy, and Decentralization  
+           * Our Philosophy: Free Speech, Privacy, and Decentralization
 		   * Frequently Asked Questions (FAQ)
-           * Getting Support & Reporting Issues		   
+           * Getting Support & Reporting Issues
        * Using Quorum: Core Features (category)
 	       * Getting Started (page)
 		        * Creating Your Account (page section)

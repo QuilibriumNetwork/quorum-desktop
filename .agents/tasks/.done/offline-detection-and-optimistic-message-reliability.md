@@ -1,11 +1,19 @@
+---
+type: task
+title: Offline Detection and Optimistic Message Reliability
+status: done
+complexity: medium
+ai_generated: true
+created: 2025-12-20T00:00:00.000Z
+updated: '2026-01-09'
+---
+
 # Offline Detection and Optimistic Message Reliability
 
 > **⚠️ AI-Generated**: May contain errors. Verify before use.
 > **Reviewed by**: feature-analyzer agent (Issue 1, Issue 2)
 
-**Status**: Pending
-**Complexity**: Medium
-**Created**: 2025-12-20
+
 **Related Documentation**:
 - [Offline Support](../docs/features/offline-support.md)
 - [Action Queue](../docs/features/action-queue.md)
@@ -228,5 +236,3 @@ const isOnline = wsConnected && navOnline;
 - Combined implementation: ~24 lines - minimal, targeted fixes
 
 ---
-
-*Updated: 2025-12-20 15:30*

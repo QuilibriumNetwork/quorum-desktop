@@ -1,48 +1,23 @@
-import React, { useState, useMemo, useEffect } from 'react';
-import { useParams, useNavigate, Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import {
-  Button,
   FlexRow,
-  FlexColumn,
   Container,
   Text,
   Icon,
 } from '../../components/primitives';
 import { DevNavMenu } from '../DevNavMenu';
 import { MarkdownViewer } from './MarkdownViewer';
+import { FilterableList } from './components/FilterableList';
 import { useMarkdownFiles, type MarkdownFile } from './hooks/useMarkdownFiles';
 
 export const Reports: React.FC = () => {
   const { reportId } = useParams<{ reportId?: string }>();
   const navigate = useNavigate();
   const [selectedFile, setSelectedFile] = useState<MarkdownFile | null>(null);
-  const [expandedSections, setExpandedSections] = useState<Set<string>>(
-    new Set(['active'])
-  ); // Active section open by default
 
   // Load markdown files dynamically
   const { files: reportFiles, loading, error, findBySlug } = useMarkdownFiles('reports');
-
-  // Simple grouping: archived vs active
-  const groupedFiles = useMemo(() => {
-    const archived = reportFiles.filter((file) => file.status === 'archived');
-    const active = reportFiles.filter((file) => file.status !== 'archived');
-
-    return {
-      active,
-      archived,
-    };
-  }, [reportFiles]);
-
-  const toggleSection = (section: string) => {
-    const newExpanded = new Set(expandedSections);
-    if (newExpanded.has(section)) {
-      newExpanded.delete(section);
-    } else {
-      newExpanded.add(section);
-    }
-    setExpandedSections(newExpanded);
-  };
 
   // Handle URL-based navigation
   useEffect(() => {
@@ -69,6 +44,7 @@ export const Reports: React.FC = () => {
         filePath={selectedFile.path}
         onBack={handleBackToList}
         title={selectedFile.title}
+        file={selectedFile}
       />
     );
   }
@@ -125,115 +101,9 @@ export const Reports: React.FC = () => {
           </div>
         )}
 
-        {/* Report Groups */}
+        {/* Filterable Reports List */}
         {!loading && (
-          <div className="space-y-6">
-            {/* Active Reports Section */}
-            <div className="bg-surface-1 rounded-lg border border-default overflow-hidden">
-              <div className="bg-surface-2 px-6 py-4 border-b border-default">
-                <FlexRow gap="sm" align="center" justify="between">
-                  <FlexRow gap="sm" align="center">
-                    <Icon
-                      name="clipboard"
-                      size="md"
-                      className="text-accent"
-                    />
-                    <Text variant="strong" size="lg" weight="medium">
-                      Active Reports
-                    </Text>
-                    <Text variant="subtle" size="sm">
-                      ({groupedFiles.active.length} reports)
-                    </Text>
-                  </FlexRow>
-                </FlexRow>
-              </div>
-
-              <div className="p-6">
-                <ul className="space-y-2">
-                  {groupedFiles.active
-                    .sort((a, b) => a.title.localeCompare(b.title))
-                    .map((file) => (
-                      <li key={file.path}>
-                        <Link
-                          to={`/dev/reports/${file.slug}`}
-                          className="block hover:text-accent transition-colors"
-                        >
-                          <Text variant="main" size="md">
-                            • {file.title}
-                          </Text>
-                        </Link>
-                      </li>
-                    ))}
-                </ul>
-
-                {groupedFiles.active.length === 0 && (
-                  <div className="text-center py-8">
-                    <Text variant="subtle">No active reports found</Text>
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {/* Archived Reports Section - Collapsible */}
-            <div className="bg-surface-1 rounded-lg border border-default overflow-hidden">
-              <div
-                onClick={() => toggleSection('archived')}
-                className="w-full bg-surface-2 px-6 py-4 border-b border-default hover:bg-surface-3 transition-colors cursor-pointer"
-              >
-                <FlexRow gap="sm" align="center" justify="between">
-                  <FlexRow gap="sm" align="center">
-                    <Icon
-                      name="archive"
-                      size="md"
-                      className="text-subtle"
-                    />
-                    <Text variant="strong" size="lg" weight="medium">
-                      Archived Reports
-                    </Text>
-                    <Text variant="subtle" size="sm">
-                      ({groupedFiles.archived.length} reports)
-                    </Text>
-                  </FlexRow>
-                  <Icon
-                    name={
-                      expandedSections.has('archived')
-                        ? 'chevron-up'
-                        : 'chevron-down'
-                    }
-                    size="sm"
-                    className="text-subtle"
-                  />
-                </FlexRow>
-              </div>
-
-              {expandedSections.has('archived') && (
-                <div className="p-6">
-                  <ul className="space-y-2 opacity-75">
-                    {groupedFiles.archived
-                      .sort((a, b) => a.title.localeCompare(b.title))
-                      .map((file) => (
-                        <li key={file.path}>
-                          <Link
-                            to={`/dev/reports/${file.slug}`}
-                            className="block hover:text-accent transition-colors"
-                          >
-                            <Text variant="main" size="md">
-                              • {file.title}
-                            </Text>
-                          </Link>
-                        </li>
-                      ))}
-                  </ul>
-
-                  {groupedFiles.archived.length === 0 && (
-                    <div className="text-center py-8">
-                      <Text variant="subtle">No archived reports found</Text>
-                    </div>
-                  )}
-                </div>
-              )}
-            </div>
-          </div>
+          <FilterableList files={reportFiles} type="reports" basePath="/dev/reports" />
         )}
       </Container>
     </Container>

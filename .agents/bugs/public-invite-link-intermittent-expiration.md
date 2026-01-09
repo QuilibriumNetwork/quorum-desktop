@@ -1,3 +1,11 @@
+---
+type: bug
+title: Public Invite Link Intermittent Expiration Bug
+status: open
+created: 2026-01-09T00:00:00.000Z
+updated: 2026-01-09T00:00:00.000Z
+---
+
 # Public Invite Link Intermittent Expiration Bug
 
 **Reported:** September 22, 2025

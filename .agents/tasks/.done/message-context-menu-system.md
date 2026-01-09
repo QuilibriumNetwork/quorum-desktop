@@ -1,11 +1,19 @@
+---
+type: task
+title: Message Context Menu System
+status: done
+complexity: medium
+ai_generated: true
+created: 2025-12-05T00:00:00.000Z
+updated: '2026-01-09'
+---
+
 # Message Context Menu System
 
 > **⚠️ AI-Generated**: May contain errors. Verify before use.
 > **Reviewed by**: feature-analyzer agent
 
-**Status**: Pending
-**Complexity**: Medium
-**Created**: 2025-12-05
+
 **Files**:
 - `src/components/message/Message.tsx`
 - `src/components/message/MessageActions.tsx`
@@ -258,5 +266,5 @@ function calculatePosition(clickX: number, clickY: number) {
 
 ---
 
-*Created: 2025-12-05*
+
 *Reviewed: 2025-12-05 by feature-analyzer agent*

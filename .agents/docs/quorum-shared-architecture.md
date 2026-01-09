@@ -1,3 +1,11 @@
+---
+type: doc
+title: Quorum Ecosystem Architecture
+status: done
+created: 2026-01-09T00:00:00.000Z
+updated: 2026-01-09T00:00:00.000Z
+---
+
 # Quorum Ecosystem Architecture
 
 > **AI-Generated**: May contain errors. Verify before use.
@@ -623,5 +631,3 @@ function MyComponent() {
 - [quorum-shared Migration Analysis](../reports/quorum-shared-migration-analysis_2026-01-05.md) - Future migration planning and gap analysis
 
 ---
-
-_Created: 2026-01-06_

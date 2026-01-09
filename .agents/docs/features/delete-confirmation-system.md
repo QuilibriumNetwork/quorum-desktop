@@ -1,3 +1,11 @@
+---
+type: doc
+title: Delete Confirmation System
+status: done
+created: 2026-01-09T00:00:00.000Z
+updated: 2026-01-09T00:00:00.000Z
+---
+
 # Delete Confirmation System
 
 ## Overview
@@ -22,7 +30,7 @@ The delete confirmation system provides unified protection for all delete operat
 
 **Preview Components**
 - `MessagePreview.tsx` - Shows message content, author, timestamp
-- `RolePreview.tsx` - Displays role name, member count, permissions  
+- `RolePreview.tsx` - Displays role name, member count, permissions
 - `ChannelPreview.tsx` - Shows channel name and message count
 
 **Layout Integration**
@@ -37,7 +45,7 @@ The delete confirmation system provides unified protection for all delete operat
 - **Timeout**: 5 seconds to reset confirmation state
 - **Example**: Empty channel deletion, space deletion
 
-### Pattern B: Modal Confirmation  
+### Pattern B: Modal Confirmation
 - **Use case**: High-risk operations requiring context
 - **Features**: Title, message, content preview, action buttons
 - **Shift bypass**: Hold Shift+click to skip modal (desktop only)
@@ -58,7 +66,7 @@ The system automatically chooses the appropriate confirmation level:
 - Empty channel (0 messages) → Double-click confirmation
 - Channel with messages → Modal with content preview
 
-// Group Deletion  
+// Group Deletion
 - Empty group (0 channels) → Double-click confirmation
 - Group with channels → Blocked with error message
 
@@ -129,7 +137,7 @@ const handleDelete = (e: React.MouseEvent) => {
 
 **Integration Points:**
 - `useRoleManagement.ts` - Role deletion in SpaceSettingsModal
-- `useMessageActions.ts` - Message deletion 
+- `useMessageActions.ts` - Message deletion
 - `usePinnedMessages.ts` - Pin/Unpin operations
 - `useChannelManagement.ts` - Channel deletion
 - `ConversationSettingsModal.tsx` - Conversation deletion
@@ -140,7 +148,7 @@ const handleDelete = (e: React.MouseEvent) => {
 interface UseConfirmationOptions {
   type: 'inline' | 'modal';
   escalateWhen?: () => boolean;    // Smart escalation trigger
-  blockedWhen?: () => boolean;     // Block operation trigger  
+  blockedWhen?: () => boolean;     // Block operation trigger
   enableShiftBypass?: boolean;     // Allow Shift+click bypass
   doubleClickTimeout?: number;     // Timeout for double-click (default: 5s)
   modalConfig?: {
@@ -163,13 +171,13 @@ src/
 │   └── useConfirmation.ts           # Core confirmation logic
 ├── components/
 │   ├── modals/
-│   │   ├── ConfirmationModal.tsx    # Web modal component  
+│   │   ├── ConfirmationModal.tsx    # Web modal component
 │   │   └── ConfirmationModal.native.tsx # Mobile modal component
 │   ├── context/
 │   │   └── ConfirmationModalProvider.tsx # Context provider
 │   ├── message/
 │   │   └── MessagePreview.tsx       # Message preview component
-│   ├── role/  
+│   ├── role/
 │   │   └── RolePreview.tsx         # Role preview component
 │   └── channel/
 │       └── ChannelPreview.tsx      # Channel preview component
@@ -181,5 +189,5 @@ src/
 
 ---
 
-*Created: 2025-09-13*
+
 *Verified: 2025-12-09 - File paths confirmed current*

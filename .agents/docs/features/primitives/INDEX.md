@@ -1,3 +1,11 @@
+---
+type: doc
+title: Primitives Documentation Index
+status: done
+created: 2026-01-09T00:00:00.000Z
+updated: 2025-10-14T00:00:00.000Z
+---
+
 # Primitives Documentation Index
 
 Complete guide to the cross-platform primitive component system for React Native + Web development.

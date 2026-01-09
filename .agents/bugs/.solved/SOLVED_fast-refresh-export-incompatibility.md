@@ -1,3 +1,11 @@
+---
+type: bug
+title: 'SOLVED: Fast Refresh Export Incompatibility'
+status: done
+created: 2026-01-09T00:00:00.000Z
+updated: 2026-01-09T00:00:00.000Z
+---
+
 # SOLVED: Fast Refresh Export Incompatibility
 
 ## Problem

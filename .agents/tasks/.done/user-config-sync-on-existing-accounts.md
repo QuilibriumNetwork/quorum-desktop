@@ -1,3 +1,12 @@
+---
+type: task
+title: "User Config Sync on Existing Accounts"
+status: done
+created: 2026-01-09
+updated: 2025-12-13
+related_issues: ["#88"]
+---
+
 # User Config Sync on Existing Accounts
 
 **Status:** COMPLETE
@@ -363,7 +372,7 @@ When mobile parity is needed, implement cross-platform crypto abstraction:
 
 **Commit**: `a51ea3f663e43957a6b1f477eabe5ae1100c3616`
 **Author**: Tyler Sturos <55340199+tjsturos@users.noreply.github.com>
-**Date**: Wed Aug 13 19:24:26 2025 -0800
+
 **Message**: "load user settings/config for existing accounts"
 
 **Files Changed** (8 files, 186 insertions, 31 deletions):
@@ -380,7 +389,7 @@ When mobile parity is needed, implement cross-platform crypto abstraction:
 
 **Commit**: `ab82d8e6e12386a0700511a664700c5eaa8aa467`
 **Author**: lamat1111 <65860122+lamat1111@users.noreply.github.com>
-**Date**: Mon Sep 1 10:23:32 2025 +0200
+
 **Message**: "Revert 'load user settings/config for existing accounts'"
 **Reason**: Mobile app crash due to IndexedDB usage in cross-platform code
 
@@ -400,7 +409,7 @@ This task was reviewed by the security-analyst agent on 2025-12-13. Key findings
 
 ---
 
-_Created: 2025-10-04_
+
 _Last Updated: 2025-12-13_
 _Security Review: 2025-12-13_
 _Completed: 2025-12-13_

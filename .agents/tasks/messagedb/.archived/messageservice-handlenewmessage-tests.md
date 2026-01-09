@@ -1,3 +1,11 @@
+---
+type: task
+title: handleNewMessage Integration Tests Guide
+status: on-hold
+created: 2026-01-09T00:00:00.000Z
+updated: '2026-01-09'
+---
+
 # handleNewMessage Integration Tests Guide
 
 > **📦 ARCHIVED (Dec 20, 2025)**: This test guide has been archived because the parent refactoring plan is **NOT RECOMMENDED**.
@@ -8,7 +16,7 @@
 
 ---
 
-**Status**: 📦 ARCHIVED
+
 **Priority**: ⚪ N/A
 **Last Updated**: 2025-12-16
 **Archived**: 2025-12-20

@@ -1,3 +1,11 @@
+---
+type: task
+title: Shared Git Hooks Setup
+status: on-hold
+created: 2026-01-09T00:00:00.000Z
+updated: '2026-01-09'
+---
+
 # Shared Git Hooks Setup
 
 ## Overview
@@ -56,5 +64,3 @@ The pre-commit hook prevents accidental npm usage by:
 **Medium** - This prevents future developer frustration and build issues, but current .gitignore provides basic protection.
 
 ---
-
-_Created: 2025-08-10_

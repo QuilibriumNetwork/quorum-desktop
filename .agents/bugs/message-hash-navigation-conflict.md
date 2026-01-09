@@ -1,9 +1,17 @@
+---
+type: bug
+title: "Message Hash Navigation Conflict Bug"
+status: open
+created: 2026-01-09
+updated: 2025-08-03
+---
+
 # Message Hash Navigation Conflict Bug
 
-**Status**: Open (Low Priority)  
-**Priority**: Low  
-**Component**: MessageList.tsx  
-**Discovered**: 2025-08-03  
+
+**Priority**: Low
+**Component**: MessageList.tsx
+**Discovered**: 2025-08-03
 **Reporter**: During Message.tsx business logic extraction
 
 **Issue Opened**
@@ -94,7 +102,7 @@ Added `hasProcessedHash` flag to prevent re-navigation, but issue persists. The 
 
 ### Applied Fix
 
-**File**: `MessageList.tsx` line 168  
+**File**: `MessageList.tsx` line 168
 **Change**: Removed `messageList` and `hasProcessedHash` from useEffect dependency array
 
 ```typescript
@@ -188,7 +196,7 @@ When fixed, ensure these scenarios work:
 
 ---
 
-_Created: 2025-08-03_  
-_Updated: 2025-08-03_  
-_Priority: Low (UX issue, rare workflow, not blocking functionality)_  
+_Created: 2025-08-03_
+_Updated: 2025-08-03_
+_Priority: Low (UX issue, rare workflow, not blocking functionality)_
 _Status: Open for future investigation when higher priority items are resolved_

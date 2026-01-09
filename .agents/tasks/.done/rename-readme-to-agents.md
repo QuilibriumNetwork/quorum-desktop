@@ -1,3 +1,12 @@
+---
+type: task
+title: "Rename .agents to .agents"
+status: done
+ai_generated: true
+created: 2026-01-09
+updated: 2026-01-09
+---
+
 # Rename .agents to .agents
 
 > **⚠️ AI-Generated**: May contain errors. Verify before use.
@@ -162,5 +171,3 @@ If issues arise:
 - Consider whether `.agents` is the best name - alternatives: `.dev`, `.docs`, `.meta`
 
 ---
-
-_Created: 2025-10-07 by Claude Code_

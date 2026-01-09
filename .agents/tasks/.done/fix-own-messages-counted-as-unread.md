@@ -1,10 +1,18 @@
+---
+type: task
+title: "Fix Own Messages Counted as Unread"
+status: done
+complexity: medium
+ai_generated: true
+created: 2026-01-04
+updated: 2026-01-09
+---
+
 # Fix Own Messages Counted as Unread
 
 > **⚠️ AI-Generated**: May contain errors. Verify before use.
 
-**Status**: In Progress
-**Complexity**: Medium
-**Created**: 2026-01-04
+
 **Files**:
 - `src/db/messages.ts:741-789`
 - `src/services/MessageService.ts:280-330`

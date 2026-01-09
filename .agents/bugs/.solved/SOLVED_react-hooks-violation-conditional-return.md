@@ -1,9 +1,17 @@
+---
+type: bug
+title: 'React Hooks Violation: Conditional Return Before Hooks'
+status: done
+created: 2025-01-20T00:00:00.000Z
+updated: '2026-01-09'
+---
+
 # React Hooks Violation: Conditional Return Before Hooks
 
-**Date**: 2025-01-20  
-**Issue**: React hooks called conditionally due to early return statement  
-**Files Affected**: src/App.tsx, src/App-prod-new.tsx  
-**Status**: Fixed in App.tsx, App-prod-new.tsx still needs fix  
+
+**Issue**: React hooks called conditionally due to early return statement
+**Files Affected**: src/App.tsx, src/App-prod-new.tsx
+
 **Severity**: High - Can cause React errors and unpredictable behavior
 
 ## Problem Description

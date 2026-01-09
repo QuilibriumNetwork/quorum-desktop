@@ -1,6 +1,16 @@
+---
+type: task
+title: Docusaurus Developer Documentation Blueprint
+status: in-progress
+created: 2025-10-03T00:00:00.000Z
+updated: '2026-01-09'
+related_issues:
+  - '#87'
+---
+
 # Docusaurus Developer Documentation Blueprint
 
-**Created**: 2025-10-03
+
 **Last Updated**: 2025-11-08
 **Objective**: Create developer-centric documentation that enables developers to understand, extend, and build on top of Quorum's decentralized messenger platform
 
@@ -399,7 +409,7 @@ quorum-desktop/
 **Wallet Features** (planned):
 - Account/wallet creation
 - Key backup and recovery
-- Multi-signature support 
+- Multi-signature support
 
 **Transaction Features** (planned):
 - Sending and receiving

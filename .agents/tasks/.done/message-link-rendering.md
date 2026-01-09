@@ -1,11 +1,19 @@
+---
+type: task
+title: Message Link Rendering (Discord-style)
+status: done
+complexity: medium
+ai_generated: true
+created: 2025-12-03T00:00:00.000Z
+updated: '2026-01-09'
+---
+
 # Message Link Rendering (Discord-style)
 
 > **⚠️ AI-Generated**: May contain errors. Verify before use.
 > **Reviewed by**: feature-analyzer agent
 
-**Status**: Pending
-**Complexity**: Medium
-**Created**: 2025-12-03
+
 **Files**:
 - `src/utils/environmentDomains.ts` (new - centralized domain detection)
 - `src/utils/messageLinkUtils.ts` (new - message link parsing)
@@ -683,5 +691,5 @@ The `currentSpaceId` needs to be passed through the component hierarchy:
 
 ---
 
-*Created: 2025-12-03*
+
 *Reviewed: 2025-12-03 by feature-analyzer agent*

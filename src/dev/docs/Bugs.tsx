@@ -1,48 +1,23 @@
-import React, { useState, useMemo, useEffect } from 'react';
-import { useParams, useNavigate, Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import {
-  Button,
   FlexRow,
-  FlexColumn,
   Container,
   Text,
   Icon,
 } from '../../components/primitives';
 import { DevNavMenu } from '../DevNavMenu';
 import { MarkdownViewer } from './MarkdownViewer';
+import { FilterableList } from './components/FilterableList';
 import { useMarkdownFiles, type MarkdownFile } from './hooks/useMarkdownFiles';
 
 export const Bugs: React.FC = () => {
   const { bugId } = useParams<{ bugId?: string }>();
   const navigate = useNavigate();
   const [selectedFile, setSelectedFile] = useState<MarkdownFile | null>(null);
-  const [expandedSections, setExpandedSections] = useState<Set<string>>(
-    new Set(['active'])
-  ); // Active section open by default
 
   // Load markdown files dynamically
   const { files: bugFiles, loading, error, findBySlug } = useMarkdownFiles('bugs');
-
-  // Simple grouping: solved vs active
-  const groupedFiles = useMemo(() => {
-    const solved = bugFiles.filter((file) => file.status === 'solved');
-    const active = bugFiles.filter((file) => file.status !== 'solved');
-
-    return {
-      active,
-      solved,
-    };
-  }, [bugFiles]);
-
-  const toggleSection = (section: string) => {
-    const newExpanded = new Set(expandedSections);
-    if (newExpanded.has(section)) {
-      newExpanded.delete(section);
-    } else {
-      newExpanded.add(section);
-    }
-    setExpandedSections(newExpanded);
-  };
 
   // Handle URL-based navigation
   useEffect(() => {
@@ -69,6 +44,7 @@ export const Bugs: React.FC = () => {
         filePath={selectedFile.path}
         onBack={handleBackToList}
         title={selectedFile.title}
+        file={selectedFile}
       />
     );
   }
@@ -125,115 +101,9 @@ export const Bugs: React.FC = () => {
           </div>
         )}
 
-        {/* Bug Groups */}
+        {/* Filterable Bug List */}
         {!loading && (
-          <div className="space-y-6">
-            {/* Active Bugs Section */}
-            <div className="bg-surface-1 rounded-lg border border-default overflow-hidden">
-              <div className="bg-surface-2 px-6 py-4 border-b border-default">
-                <FlexRow gap="sm" align="center" justify="between">
-                  <FlexRow gap="sm" align="center">
-                    <Icon
-                      name="alert-circle"
-                      size="md"
-                      className="text-danger"
-                    />
-                    <Text variant="strong" size="lg" weight="medium">
-                      Active
-                    </Text>
-                    <Text variant="subtle" size="sm">
-                      ({groupedFiles.active.length} issues)
-                    </Text>
-                  </FlexRow>
-                </FlexRow>
-              </div>
-
-              <div className="p-6">
-                <ul className="space-y-2">
-                  {groupedFiles.active
-                    .sort((a, b) => a.title.localeCompare(b.title))
-                    .map((file) => (
-                      <li key={file.path}>
-                        <Link
-                          to={`/dev/bugs/${file.slug}`}
-                          className="block hover:text-accent transition-colors"
-                        >
-                          <Text variant="main" size="md">
-                            • {file.title}
-                          </Text>
-                        </Link>
-                      </li>
-                    ))}
-                </ul>
-
-                {groupedFiles.active.length === 0 && (
-                  <div className="text-center py-8">
-                    <Text variant="subtle">No active bugs found</Text>
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {/* Solved Bugs Section - Collapsible */}
-            <div className="bg-surface-1 rounded-lg border border-default overflow-hidden">
-              <div
-                onClick={() => toggleSection('solved')}
-                className="w-full bg-surface-2 px-6 py-4 border-b border-default hover:bg-surface-3 transition-colors cursor-pointer"
-              >
-                <FlexRow gap="sm" align="center" justify="between">
-                  <FlexRow gap="sm" align="center">
-                    <Icon
-                      name="check-circle"
-                      size="md"
-                      className="text-success"
-                    />
-                    <Text variant="strong" size="lg" weight="medium">
-                      Solved
-                    </Text>
-                    <Text variant="subtle" size="sm">
-                      ({groupedFiles.solved.length} issues)
-                    </Text>
-                  </FlexRow>
-                  <Icon
-                    name={
-                      expandedSections.has('solved')
-                        ? 'chevron-up'
-                        : 'chevron-down'
-                    }
-                    size="sm"
-                    className="text-subtle"
-                  />
-                </FlexRow>
-              </div>
-
-              {expandedSections.has('solved') && (
-                <div className="p-6">
-                  <ul className="space-y-2 opacity-75">
-                    {groupedFiles.solved
-                      .sort((a, b) => a.title.localeCompare(b.title))
-                      .map((file) => (
-                        <li key={file.path}>
-                          <div
-                            className="hover:text-accent transition-colors cursor-pointer"
-                            onClick={() => handleFileClick(file)}
-                          >
-                            <Text variant="main" size="md">
-                              • {file.title}
-                            </Text>
-                          </div>
-                        </li>
-                      ))}
-                  </ul>
-
-                  {groupedFiles.solved.length === 0 && (
-                    <div className="text-center py-8">
-                      <Text variant="subtle">No solved bugs found</Text>
-                    </div>
-                  )}
-                </div>
-              )}
-            </div>
-          </div>
+          <FilterableList files={bugFiles} type="bugs" basePath="/dev/bugs" />
         )}
       </Container>
     </Container>

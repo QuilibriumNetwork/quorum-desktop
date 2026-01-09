@@ -1,3 +1,11 @@
+---
+type: task
+title: Native Business Components Implementation Plan
+status: in-progress
+created: 2026-01-09T00:00:00.000Z
+updated: '2026-01-09'
+---
+
 # Native Business Components Implementation Plan
 
 ## Overview
@@ -251,5 +259,4 @@ This approach leverages our existing investment in the primitive system and foll
 
 ---
 
-_Created: 2025-08-08_  
-_Updated: 2025-08-08 - Added Native Styling Guidelines_
+_Created: 2025-08-08_

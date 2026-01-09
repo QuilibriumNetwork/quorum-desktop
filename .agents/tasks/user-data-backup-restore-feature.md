@@ -1,3 +1,15 @@
+---
+type: task
+title: User Data Backup & Restore Feature
+status: in-progress
+complexity: medium
+ai_generated: true
+created: 2026-01-07T00:00:00.000Z
+updated: '2026-01-09'
+related_issues:
+  - '#121'
+---
+
 # User Data Backup & Restore Feature
 
 https://github.com/QuilibriumNetwork/quorum-desktop/issues/121
@@ -6,9 +18,7 @@ https://github.com/QuilibriumNetwork/quorum-desktop/issues/121
 > Reviewd by feature-analyzer agent, security-analyst agent, cryptographer agent
 > Soft-review by human
 
-**Status**: Pending
-**Complexity**: Medium (MVP), High (Full Feature)
-**Created**: 2026-01-07
+
 **Files**:
 - `src/db/messages.ts` - IndexedDB schema and MessageDB class
 - `src/services/BackupService.ts` - NEW: Backup encryption/export/import logic
@@ -91,7 +101,7 @@ This same pattern can encrypt backups - only the user with their private key can
 | New device, import key, `allowSync=true` | ✅ API | ✅ UserConfig | ✅ Peer sync | ❌ **LOST** | ❌ **LOST** |
 | Safari passkey bug workaround | ✅ API | ✅ UserConfig | ✅ Peer sync | ❌ **LOST** | ❌ **LOST** |
 
-**Key insight:** For users with `allowSync=true`, only DM data is unrecoverable. Everything else syncs. 
+**Key insight:** For users with `allowSync=true`, only DM data is unrecoverable. Everything else syncs.
 
 ### Understanding the Encryption Protocols
 

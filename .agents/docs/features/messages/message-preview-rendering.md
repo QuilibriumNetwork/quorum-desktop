@@ -1,3 +1,11 @@
+---
+type: doc
+title: Message Preview Rendering
+status: done
+created: 2026-01-09T00:00:00.000Z
+updated: 2026-01-09T00:00:00.000Z
+---
+
 # Message Preview Rendering
 
 ## Overview
@@ -276,5 +284,5 @@ MessagePreview is **20-100x faster** than full markdown rendering, making it sui
 
 ---
 
-*Created: 2025-12-02*
+
 *Verified: 2025-12-09 - File paths confirmed current*

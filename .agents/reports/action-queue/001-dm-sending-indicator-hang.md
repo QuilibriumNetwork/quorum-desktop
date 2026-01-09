@@ -1,3 +1,12 @@
+---
+type: report
+title: DM "Sending..." Indicator Hangs Indefinitely
+status: done
+ai_generated: true
+created: 2026-01-09T00:00:00.000Z
+updated: '2026-01-09'
+---
+
 # DM "Sending..." Indicator Hangs Indefinitely
 
 > **⚠️ AI-Generated**: May contain errors. Verify before use.
@@ -143,5 +152,5 @@ After cleanup, first-message times should be normal (~4-5 seconds).
 
 ---
 
-_Created: 2025-12-19_
+
 _Status: ✅ Fixed_

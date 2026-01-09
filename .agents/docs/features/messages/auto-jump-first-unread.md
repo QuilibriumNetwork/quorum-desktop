@@ -1,3 +1,11 @@
+---
+type: doc
+title: Auto-Jump to First Unread Message
+status: done
+created: 2026-01-09T00:00:00.000Z
+updated: 2025-11-13T00:00:00.000Z
+---
+
 # Auto-Jump to First Unread Message
 
 ## Overview

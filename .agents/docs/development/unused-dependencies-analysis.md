@@ -1,3 +1,11 @@
+---
+type: doc
+title: Unused Dependencies Analysis
+status: done
+created: 2026-01-09T00:00:00.000Z
+updated: 2026-01-09T00:00:00.000Z
+---
+
 # Unused Dependencies Analysis
 
 ## Safe to Remove (Verified)
