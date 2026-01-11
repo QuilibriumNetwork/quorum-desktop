@@ -277,15 +277,16 @@ html:not(.dark) .chat-container {
   min-width: $message-avatar-size;
   flex-shrink: 0;
   margin-top: 4px;
-  box-sizing: border-box; // Ensure width includes any internal padding
+  box-sizing: border-box;
 
   // Hidden by default, shown on hover (desktop only)
+  // Use visibility instead of display to prevent layout shift
   .compact-timestamp {
-    display: none;
+    visibility: hidden;
     font-size: $text-xs;
     color: var(--color-text-muted);
     white-space: nowrap;
-    margin-right: $s-1; // Use margin instead of padding on parent
+    margin-right: $s-1;
   }
 
   @media (max-width: $screen-xs) {
@@ -297,7 +298,7 @@ html:not(.dark) .chat-container {
 // Desktop: show timestamp on message hover
 @media (hover: hover) {
   .message-container:hover .message-sender-spacer .compact-timestamp {
-    display: block;
+    visibility: visible;
   }
 }
 

@@ -91,6 +91,7 @@ const FolderButton: React.FC<FolderButtonProps> = ({
       content={folder.name}
       place="right"
       showOnTouch={false}
+      className="tooltip-text-large"
     >
       {buttonElement}
     </Tooltip>

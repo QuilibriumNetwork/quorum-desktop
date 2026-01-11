@@ -97,6 +97,12 @@
   }
 }
 
+/* Larger text variant for nav menu tooltips */
+.tooltip-text-large {
+  font-size: $text-base !important;
+  line-height: $text-base-lh !important;
+}
+
 /* Fix tooltip flickering: let react-tooltip handle the fade-in transition,
    but ensure fully opaque when shown. The transition masks the (0,0) positioning.
    react-tooltip defaults to --rt-opacity: 0.9 (90%), we override to 1 (100%). */

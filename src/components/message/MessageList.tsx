@@ -248,10 +248,8 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
     );
 
     // Memoize message display info (date separators, new messages separators, compact headers)
-    // Two-pass calculation: first compute isCompact, then derive hasCompactBelow
     const messageDisplayInfo = useMemo(() => {
-      // First pass: calculate basic display info
-      const info = messageList.map((message, index) => {
+      return messageList.map((message, index) => {
         const previousMessage = index > 0 ? messageList[index - 1] : null;
         const needsDateSeparator = shouldShowDateSeparator(message, previousMessage);
         const needsNewMessagesSeparator = newMessagesSeparator &&
@@ -259,13 +257,8 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
         const isCompact = shouldShowCompactHeader(
           message, previousMessage, needsDateSeparator, !!needsNewMessagesSeparator
         );
-        return { needsDateSeparator, needsNewMessagesSeparator, isCompact, hasCompactBelow: false };
+        return { needsDateSeparator, needsNewMessagesSeparator, isCompact };
       });
-      // Second pass: set hasCompactBelow based on next message
-      for (let i = 0; i < info.length - 1; i++) {
-        info[i].hasCompactBelow = info[i + 1].isCompact;
-      }
-      return info;
     }, [messageList, newMessagesSeparator]);
 
     const rowRenderer = useCallback(
@@ -322,7 +315,6 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
               onRetryMessage={onRetryMessage}
               dmContext={dmContext}
               isCompact={displayInfo.isCompact}
-              hasCompactBelow={displayInfo.hasCompactBelow}
               users={users}
               roles={mentionRoles}
               groups={groups}

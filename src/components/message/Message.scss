@@ -296,20 +296,16 @@
 }
 
 /* === MESSAGE ROW GAP STYLES === */
-// Gap between messages (outside, not padding inside)
+// Gap between messages - controlled entirely by parent, no internal padding
 .message-row {
-  margin-top: $s-4; // 16px gap on desktop
+  margin-top: $s-6; // 24px gap on desktop (increased from 16px to compensate for removed internal padding)
 
   // Touch devices: smaller gap + dark border separator
   @media (hover: none) and (pointer: coarse) {
-    margin-top: $s-1; // 4px gap
+    margin-top: $s-3; // 12px gap
     border-top: 2px solid var(--surface-00);
-
-    // Padding for visual spacing from border and 3-dots menu clearance
-    .message-container {
-      padding-top: $s-3; // 12px top padding (space from border to avatar)
-      padding-bottom: $s-2; // 8px bottom padding for 3-dots menu clearance
-    }
+    padding-top: $s-3; // 12px top padding (space from border to avatar)
+    padding-bottom: $s-2; // 8px bottom padding for 3-dots menu clearance
   }
 
   // First message or compact messages: no gap/border
@@ -319,18 +315,14 @@
     @media (hover: none) and (pointer: coarse) {
       margin-top: 0;
       border-top: none;
-      // Keep padding for 3-dots menu spacing (inherited from above)
+      padding-top: 0;
+      // Keep bottom padding for 3-dots menu clearance
     }
   }
 }
 
 /* === MESSAGE GROUPING COMPACT STYLES === */
-// Message body padding - default 8px bottom, 0 for compact or when followed by compact
+// Message body - no internal padding, spacing controlled by parent .message-row
 .message-body {
-  padding-bottom: 8px;
-
-  &.message-body-compact,
-  &.message-body-has-compact-below {
-    padding-bottom: 0;
-  }
+  // No padding - parent handles all spacing
 }

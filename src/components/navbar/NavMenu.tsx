@@ -539,6 +539,7 @@ const NavMenuContent: React.FC<NavMenuProps> = (props) => {
               content={t`Direct Messages`}
               place="right"
               showOnTouch={false}
+              className="tooltip-text-large"
             >
               {dmIconElement}
             </Tooltip>

@@ -107,21 +107,13 @@ type MessageProps = {
   spaceRoles?: Role[];
   spaceName?: string;
   onRetryMessage?: (message: MessageType) => void;
-  /** DM context for offline-resilient reactions/deletes/edits (optional - only for DMs) */
   dmContext?: DmContext;
-  /** Whether this message should render in compact mode (no avatar, no username row) */
   isCompact?: boolean;
-  /** Whether the next message below is compact (for removing bottom padding) */
-  hasCompactBelow?: boolean;
-  /** Callback fired BEFORE optimistic delete - use to prevent auto-scroll */
   onBeforeDelete?: () => void;
-  /** Users for mention autocomplete in edit mode */
+  // Edit mode autocomplete
   users?: Array<{ address: string; displayName?: string; userIcon?: string }>;
-  /** Roles for mention autocomplete in edit mode */
   roles?: Array<{ roleId: string; roleTag: string; displayName: string; color: string }>;
-  /** Channel groups for mention autocomplete in edit mode */
   groups?: Array<{ groupName: string; channels: Channel[]; icon?: string; iconColor?: string }>;
-  /** Whether @everyone is allowed in edit mode */
   canUseEveryone?: boolean;
 };
 
@@ -159,7 +151,6 @@ export const Message = React.memo(
     onRetryMessage,
     dmContext,
     isCompact = false,
-    hasCompactBelow = false,
     onBeforeDelete,
     users = [],
     roles = [],
@@ -544,11 +535,7 @@ export const Message = React.memo(
         )}
         {!['join', 'leave', 'kick'].includes(message.content.type) && (
           <FlexRow
-            className={
-              'message-body w-full font-[11pt] px-[16px] items-start ' +
-              (isCompact ? 'message-body-compact ' : '') +
-              (hasCompactBelow ? 'message-body-has-compact-below ' : '')
-            }
+            className="message-body w-full font-[11pt] px-[16px] items-start"
           >
             {showUserProfile && spaceId && (
               <FlexRow
