@@ -1,5 +1,7 @@
 import { useState, useCallback } from 'react';
-import type { Message as MessageType } from '../../../api/quorumApi';
+import type { Message as MessageType, Reaction } from '../../../api/quorumApi';
+import type { CustomEmoji } from 'emoji-picker-react/dist/config/customEmojiConfig';
+import type { MemberInfo } from '../../../components/modals/ReactionsModal';
 
 interface UseModalManagementReturn {
   addSpaceVisible: boolean;
@@ -45,6 +47,18 @@ interface UseModalManagementReturn {
   };
   showEditHistoryModal: (message: MessageType) => void;
   hideEditHistoryModal: () => void;
+  reactionsModal: {
+    visible: boolean;
+    reactions: Reaction[];
+    customEmojis: CustomEmoji[];
+    members: Record<string, MemberInfo>;
+  };
+  showReactionsModal: (config: {
+    reactions: Reaction[];
+    customEmojis: CustomEmoji[];
+    members: Record<string, MemberInfo>;
+  }) => void;
+  hideReactionsModal: () => void;
 }
 
 export const useModalManagement = (): UseModalManagementReturn => {
@@ -80,6 +94,17 @@ export const useModalManagement = (): UseModalManagementReturn => {
   }>({
     visible: false,
     message: null,
+  });
+  const [reactionsModal, setReactionsModal] = useState<{
+    visible: boolean;
+    reactions: Reaction[];
+    customEmojis: CustomEmoji[];
+    members: Record<string, MemberInfo>;
+  }>({
+    visible: false,
+    reactions: [],
+    customEmojis: [],
+    members: {},
   });
 
   const showAddSpaceModal = useCallback(() => {
@@ -139,6 +164,26 @@ export const useModalManagement = (): UseModalManagementReturn => {
     setEditHistoryModal({ visible: false, message: null });
   }, []);
 
+  const showReactionsModal = useCallback((config: {
+    reactions: Reaction[];
+    customEmojis: CustomEmoji[];
+    members: Record<string, MemberInfo>;
+  }) => {
+    setReactionsModal({
+      visible: true,
+      ...config,
+    });
+  }, []);
+
+  const hideReactionsModal = useCallback(() => {
+    setReactionsModal({
+      visible: false,
+      reactions: [],
+      customEmojis: [],
+      members: {},
+    });
+  }, []);
+
   return {
     addSpaceVisible,
     showAddSpaceModal,
@@ -155,5 +200,8 @@ export const useModalManagement = (): UseModalManagementReturn => {
     editHistoryModal,
     showEditHistoryModal,
     hideEditHistoryModal,
+    reactionsModal,
+    showReactionsModal,
+    hideReactionsModal,
   };
 };

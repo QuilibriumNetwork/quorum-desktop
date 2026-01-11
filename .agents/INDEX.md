@@ -141,8 +141,6 @@ This is the main index for all documentation, bug reports, and task management.
 ### Pending Tasks
 
 - [Add User Bio Field to UserSettingsModal General Tab](tasks/add-user-bio-field.md)
-- [Add YAML Frontmatter to Knowledge Base System](tasks/yaml-frontmatter-knowledge-base.md)
-- [Combined Text + Image Messages](tasks/combined-text-image-messages.md)
 - [Conversation Deletion State Synchronization](tasks/conversation-deletion-state-sync.md)
 - [Date Translation with Moment.js Locale Configuration](tasks/i18n-date-translation-moment-locale.md)
 - [Device Identification Improvement](tasks/device-identification-improvement.md)
@@ -160,6 +158,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Remove Deprecated Enhanced Mention Format Backward Compatibility Code](tasks/remove-enhanced-mention-format-compat.md)
 - [SDK PasskeyModal Customization Props Enhancement](tasks/sdk-passkey-modal-customization-props.md)
 - [Service Worker for App Update Detection](tasks/service-worker-app-updates.md)
+- [Show Users Who Reacted in Tooltip](tasks/show-reaction-users-tooltip.md)
 - [Space Tags](tasks/space-tags.md)
 - [Task: Implement Delete Public Invite Link Feature](tasks/delete-public-invite-link.md)
 - [Test Suite Implementation Plan for Quorum Desktop](tasks/test-suite-plan.md)
@@ -247,6 +246,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Add Context to Desktop Notifications](tasks/.done/rich-desktop-notifications-context.md)
 - [Add DM-Specific Action Queue Handlers](tasks/.done/dm-action-queue-handlers.md)
 - [Add Unified Context Menu System for Sidebar Items](tasks/.done/dm-conversation-context-menu.md)
+- [Add YAML Frontmatter to Knowledge Base System](tasks/.done/yaml-frontmatter-knowledge-base.md)
 - [Analysis Report & Implementation Plan: Strategic Portal Integration for Overlay Components (v7)](tasks/.done/modal-portal-refactor-analysis.md)
 - [Android 7.0 File Download Fix - Implementation Plan](tasks/.done/FAILED_android-file-download-fix.md)
 - [Background Action Queue](tasks/.done/background-action-queue.md)
@@ -257,6 +257,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Channel Mute System](tasks/.done/channel-mute-system.md)
 - [Client-Side Image Processing for Large File Uploads](tasks/.done/client-side-image-processing.md)
 - [Color Switcher Implementation](tasks/.done/color-switcher.md)
+- [Combined Text + Image Messages](tasks/.done/combined-text-image-messages.md)
 - [Complex Modal Primitive Migration Template](tasks/.done/usersettingsmodal-primitive-migration.md)
 - [CRITICAL: Improve MessageDB Test Coverage for Refactoring Safety](tasks/.done/messagedb-unit-tests.md)
 - [Cross-Platform Component Audit](tasks/.done/components-audit.md)
@@ -399,4 +400,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2026-01-09 17:27:56
+**Last Updated**: 2026-01-10 03:11:03

@@ -7,9 +7,11 @@ import AddSpaceModal from './modals/AddSpaceModal';
 import ConfirmationModal from './modals/ConfirmationModal';
 import ImageModal from './modals/ImageModal';
 import { EditHistoryModal } from './modals/EditHistoryModal';
+import { ReactionsModal } from './modals/ReactionsModal';
 import { ConfirmationModalProvider } from './context/ConfirmationModalProvider';
 import { ImageModalProvider } from './context/ImageModalProvider';
 import { EditHistoryModalProvider } from './context/EditHistoryModalProvider';
+import { ReactionsModalProvider } from './context/ReactionsModalProvider';
 import Connecting from './Connecting';
 import { useModalManagement, useElectronDetection } from '../hooks';
 import { useNavigationHotkeys } from '@/hooks/platform/interactions/useNavigationHotkeys';
@@ -36,6 +38,9 @@ const Layout: React.FunctionComponent<{
     editHistoryModal,
     showEditHistoryModal,
     hideEditHistoryModal,
+    reactionsModal,
+    showReactionsModal,
+    hideReactionsModal,
   } = useModalManagement();
   const { isElectron } = useElectronDetection();
   const { showRightSidebar, setShowRightSidebar, rightSidebarContent } =
@@ -170,6 +175,17 @@ const Layout: React.FunctionComponent<{
         />
       )}
 
+      {/* Reactions Modal */}
+      {reactionsModal.visible && reactionsModal.reactions.length > 0 && (
+        <ReactionsModal
+          visible={reactionsModal.visible}
+          reactions={reactionsModal.reactions}
+          customEmojis={reactionsModal.customEmojis}
+          members={reactionsModal.members}
+          onClose={hideReactionsModal}
+        />
+      )}
+
       {/* {joinSpaceVisible && <JoinSpaceModal visible={joinSpaceVisible} onClose={() => setJoinSpaceVisible(false)}/>} */}
       <OfflineBanner />
       <NavMenu
@@ -180,7 +196,8 @@ const Layout: React.FunctionComponent<{
       <ConfirmationModalProvider showConfirmationModal={showConfirmationModal}>
         <ImageModalProvider showImageModal={showImageModal}>
           <EditHistoryModalProvider showEditHistoryModal={showEditHistoryModal}>
-            <ResponsiveContainer>
+            <ReactionsModalProvider showReactionsModal={showReactionsModal}>
+              <ResponsiveContainer>
             {props.children}
             {toast && (
               <Portal>
@@ -201,7 +218,8 @@ const Layout: React.FunctionComponent<{
                 </div>
               </Portal>
             )}
-            </ResponsiveContainer>
+              </ResponsiveContainer>
+            </ReactionsModalProvider>
           </EditHistoryModalProvider>
         </ImageModalProvider>
       </ConfirmationModalProvider>

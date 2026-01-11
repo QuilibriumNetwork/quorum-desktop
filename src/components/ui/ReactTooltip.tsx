@@ -9,7 +9,7 @@ import { isTouchDevice } from '../../utils/platform';
 
 type ReactTooltipProps = {
   id: string;
-  content: string;
+  content: React.ReactNode;
   place?:
     | 'top'
     | 'top-start'
@@ -33,6 +33,8 @@ type ReactTooltipProps = {
   longPressDuration?: number;
   alwaysVisible?: boolean;
   autoHideAfter?: number; // Optional auto-hide timeout in milliseconds
+  clickable?: boolean; // Allow hovering/clicking inside tooltip content
+  variant?: 'simple' | 'rich'; // 'simple' = text-only (default), 'rich' = custom content with images/emojis
 };
 
 const ReactTooltip: React.FunctionComponent<ReactTooltipProps> = ({
@@ -49,6 +51,8 @@ const ReactTooltip: React.FunctionComponent<ReactTooltipProps> = ({
   longPressDuration = 700,
   alwaysVisible = false,
   autoHideAfter,
+  clickable = false,
+  variant = 'simple',
 }) => {
   const { resolvedTheme } = useTheme();
   const resolvedThemeInUse = theme || resolvedTheme;
@@ -57,7 +61,8 @@ const ReactTooltip: React.FunctionComponent<ReactTooltipProps> = ({
 
   // Auto-apply responsive width and text wrapping for showOnTouch tooltips
   const touchClass = showOnTouch ? 'quorum-react-tooltip-touch' : '';
-  const tooltipClassName = `${resolvedThemeInUse === 'dark' ? 'quorum-react-tooltip-dark' : 'quorum-react-tooltip'} ${highlighted ? 'quorum-react-tooltip-highlighted' : ''} ${touchClass} ${className}`;
+  const variantClass = variant === 'rich' ? 'tooltip-rich' : '';
+  const tooltipClassName = `${resolvedThemeInUse === 'dark' ? 'quorum-react-tooltip-dark' : 'quorum-react-tooltip'} ${highlighted ? 'quorum-react-tooltip-highlighted' : ''} ${touchClass} ${variantClass} ${className}`;
 
   // Handle opening/closing on touch devices with click or long-press, and outside click/touch to close
   React.useEffect(() => {
@@ -157,6 +162,9 @@ const ReactTooltip: React.FunctionComponent<ReactTooltipProps> = ({
     return null;
   }
 
+  // Determine if content is a string or ReactNode
+  const isStringContent = typeof content === 'string';
+
   // On touch devices and showOnTouch, show controlled tooltip
   // Using isOpen for controlled mode - no need for disable* props
   // Portal ensures tooltip escapes any stacking context (e.g., modals)
@@ -165,7 +173,7 @@ const ReactTooltip: React.FunctionComponent<ReactTooltipProps> = ({
       <Portal>
         <Tooltip
           id={id}
-          content={content}
+          {...(isStringContent ? { content: content as string } : { render: () => <>{content}</> })}
           place={place}
           noArrow={noArrow}
           className={tooltipClassName}
@@ -189,7 +197,7 @@ const ReactTooltip: React.FunctionComponent<ReactTooltipProps> = ({
     <Portal>
       <Tooltip
         id={id}
-        content={content}
+        {...(isStringContent ? { content: content as string } : { render: () => <>{content}</> })}
         place={place}
         noArrow={noArrow}
         className={tooltipClassName}
@@ -201,6 +209,7 @@ const ReactTooltip: React.FunctionComponent<ReactTooltipProps> = ({
         }
         positionStrategy="fixed"
         delayShow={50}
+        clickable={clickable}
       />
     </Portal>
   );

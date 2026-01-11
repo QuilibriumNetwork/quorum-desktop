@@ -17,7 +17,7 @@ export type TooltipPlacement =
 
 export interface TooltipProps {
   id: string;
-  content: string;
+  content: ReactNode;
   children: ReactNode;
   place?: TooltipPlacement;
   noArrow?: boolean;
@@ -26,11 +26,12 @@ export interface TooltipProps {
   showCloseButton?: boolean;
   maxWidth?: number;
   disabled?: boolean;
-  // Touch-specific props for mobile web UX
   touchTrigger?: 'click' | 'long-press';
   longPressDuration?: number;
   showOnTouch?: boolean;
-  autoHideAfter?: number; // Auto-hide timeout in milliseconds for touch devices
+  autoHideAfter?: number;
+  clickable?: boolean;
+  variant?: 'simple' | 'rich';
 }
 
 export interface TooltipWebProps extends TooltipProps {

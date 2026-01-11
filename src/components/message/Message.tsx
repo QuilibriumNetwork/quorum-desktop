@@ -28,6 +28,7 @@ import {
   Portal,
 } from '../primitives';
 import { useImageModal } from '../context/ImageModalProvider';
+import { ReactionsList } from './ReactionsList';
 import './Message.scss';
 import { t } from '@lingui/core/macro';
 import { i18n } from '@lingui/core';
@@ -1203,39 +1204,13 @@ export const Message = React.memo(
                   );
                 }
               })()}
-              <FlexRow className="flex-wrap pt-1 -mr-1">
-                {message.reactions?.map((r) => (
-                  <FlexRow
-                    key={message.messageId + '-reactions-' + r.emojiId}
-                    className={
-                      'cursor-pointer items-center mr-1 mb-1 rounded-lg py-[1pt] px-2 whitespace-nowrap ' +
-                      (r.memberIds.includes(user.currentPasskeyInfo!.address)
-                        ? 'bg-accent-rgb/30 hover:bg-accent-rgb/60 border border-accent'
-                        : 'bg-surface-5 hover:bg-surface-00 border border-surface-5 hover:border-surface-00')
-                    }
-                    onClick={() => {
-                      messageActions.handleReaction(r.emojiId);
-                    }}
-                  >
-                    {emojiPicker.customEmojis.find(
-                      (e) => e.id === r.emojiName
-                    ) ? (
-                      <img
-                        width="24"
-                        className="mr-1"
-                        src={
-                          emojiPicker.customEmojis.find(
-                            (e) => e.id === r.emojiName
-                          )?.imgUrl
-                        }
-                      />
-                    ) : (
-                      <Text className="mr-1">{r.emojiName}</Text>
-                    )}
-                    <Text className="text-sm">{r.count}</Text>
-                  </FlexRow>
-                ))}
-              </FlexRow>
+              <ReactionsList
+                message={message}
+                userAddress={user.currentPasskeyInfo!.address}
+                customEmojis={emojiPicker.customEmojis}
+                mapSenderToUser={mapSenderToUser}
+                onReactionClick={messageActions.handleReaction}
+              />
 
               {/* Message Send Status Indicator */}
               {message.sendStatus === 'sending' && (

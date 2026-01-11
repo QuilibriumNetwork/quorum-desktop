@@ -43,8 +43,42 @@
   @include reset-text;
   z-index: 10200 !important; // Higher than Modal (10100) to appear above modals
 
-  * {
+  // Default: force text inheritance on all children (simple text tooltips)
+  &:not(.tooltip-rich) * {
     @include inherit-text;
+  }
+
+  // Allow .link class to show its own styling
+  .link {
+    color: var(--accent) !important;
+    cursor: pointer !important;
+
+    &:hover {
+      text-decoration: underline !important;
+    }
+  }
+}
+
+// Rich tooltips: elements control their own styles, no forced inheritance
+// Use variant="rich" prop on Tooltip component
+.quorum-react-tooltip.tooltip-rich,
+.quorum-react-tooltip-dark.tooltip-rich {
+  // Base text style for the tooltip container
+  font-size: $text-xs !important;
+  line-height: $leading-4 !important;
+
+  // Text elements inherit base styles
+  span,
+  p,
+  div {
+    color: rgb(var(--color-text-main));
+  }
+
+  // .link styling inherited from base tooltip class above
+
+  // Images use their HTML attributes (no forced sizing)
+  img {
+    display: block;
   }
 }
 
