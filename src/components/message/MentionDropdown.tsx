@@ -148,6 +148,7 @@ export const MentionDropdown: React.FC<MentionDropdownProps> = ({
 
     const classes = ['mention-dropdown__item'];
 
+    // Selected state for keyboard navigation
     if (index === selectedIndex) {
       classes.push('mention-dropdown__item--selected');
     }

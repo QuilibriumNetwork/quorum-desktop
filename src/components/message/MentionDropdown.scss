@@ -40,11 +40,8 @@
 .mention-dropdown__item {
   display: flex;
   align-items: center;
-  gap: $s-3;
-  padding-left: $s-3;
-  padding-right: $s-3;
-  padding-top: $s-2;
-  padding-bottom: $s-2;
+  gap: $s-2;
+  padding: 4px $s-3;
   cursor: pointer;
 
   &:hover {
@@ -123,9 +120,9 @@
   font-weight: $font-bold;
 }
 
-/* Channel badge */
+/* Channel icon (no background) */
 .mention-dropdown__badge--channel {
-  background-color: var(--surface-4);
+  background-color: transparent;
   color: var(--color-text-subtle);
 }
 
@@ -142,7 +139,7 @@
   gap: $s-2;
   padding-left: $s-3;
   padding-right: $s-3;
-  padding-top: $s-3;
+  padding-top: $s-2;
   padding-bottom: $s-1;
   background-color: var(--surface-2);
   font-weight: 600;

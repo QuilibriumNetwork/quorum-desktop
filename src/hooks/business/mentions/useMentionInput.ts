@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import type { Channel, Group } from '../../../api/quorumApi';
 
 interface User {
@@ -66,7 +66,39 @@ export function useMentionInput({
   const [filteredOptions, setFilteredOptions] = useState<MentionOption[]>([]);
   const [dropdownPosition] = useState({ x: 0, y: 0 }); // Will be positioned by CSS relative to textarea
 
-  // Filter and rank users based on query
+  // Helper to sort by relevance: exact match > starts with > contains > alphabetical
+  const sortByRelevance = useCallback(
+    <T extends { displayName?: string; name?: string }>(
+      items: T[],
+      query: string,
+      getName: (item: T) => string
+    ): T[] => {
+      if (!query) {
+        // No query: sort alphabetically
+        return [...items].sort((a, b) => getName(a).localeCompare(getName(b)));
+      }
+
+      const queryLower = query.toLowerCase();
+      return [...items].sort((a, b) => {
+        const aName = getName(a).toLowerCase();
+        const bName = getName(b).toLowerCase();
+
+        // Exact match gets highest priority
+        if (aName === queryLower && bName !== queryLower) return -1;
+        if (bName === queryLower && aName !== queryLower) return 1;
+
+        // Starts with gets second priority
+        if (aName.startsWith(queryLower) && !bName.startsWith(queryLower)) return -1;
+        if (bName.startsWith(queryLower) && !aName.startsWith(queryLower)) return 1;
+
+        // Then alphabetical order
+        return aName.localeCompare(bName);
+      });
+    },
+    []
+  );
+
+  // Filter and rank users based on query (Tier 3: requires minQueryLength)
   const filterUsers = useCallback(
     (query: string): User[] => {
       // Require minimum query length to avoid showing too many results
@@ -81,30 +113,35 @@ export function useMentionInput({
         return name.includes(queryLower) || addr.includes(queryLower);
       });
 
-      // Sort by relevance: exact match > starts with > contains
-      const sortedMatches = matches.sort((a, b) => {
-        const aName = a.displayName?.toLowerCase() || '';
-        const bName = b.displayName?.toLowerCase() || '';
-
-        // Exact match gets highest priority
-        if (aName === queryLower && bName !== queryLower) return -1;
-        if (bName === queryLower && aName !== queryLower) return 1;
-
-        // Starts with gets second priority
-        if (aName.startsWith(queryLower) && !bName.startsWith(queryLower)) return -1;
-        if (bName.startsWith(queryLower) && !aName.startsWith(queryLower)) return 1;
-
-        // Then alphabetical order
-        return aName.localeCompare(bName);
-      });
-
-      // Limit results for performance
-      return sortedMatches.slice(0, maxDisplayResults);
+      // Sort by relevance and limit results
+      const sorted = sortByRelevance(matches, query, u => u.displayName || '');
+      return sorted.slice(0, maxDisplayResults);
     },
-    [users, minQueryLength, maxDisplayResults]
+    [users, minQueryLength, maxDisplayResults, sortByRelevance]
   );
 
-  // NEW: Filter and rank roles based on query
+  // Filter users for Tier 2 (1-2 chars) - bypasses minQueryLength
+  const filterUsersForTier2 = useCallback(
+    (query: string): User[] => {
+      if (!query) return [];
+
+      const queryLower = query.toLowerCase();
+
+      // Filter users whose displayName or address matches the query
+      const matches = users.filter(user => {
+        const name = user.displayName?.toLowerCase() || '';
+        const addr = user.address.toLowerCase();
+        return name.includes(queryLower) || addr.includes(queryLower);
+      });
+
+      // Sort by relevance and limit results
+      const sorted = sortByRelevance(matches, query, u => u.displayName || '');
+      return sorted.slice(0, maxDisplayResults);
+    },
+    [users, maxDisplayResults, sortByRelevance]
+  );
+
+  // Filter and rank roles based on query (Tier 3: requires minQueryLength)
   const filterRoles = useCallback(
     (query: string): Role[] => {
       if (!query || query.length < minQueryLength || !roles) return [];
@@ -118,26 +155,32 @@ export function useMentionInput({
         return name.includes(queryLower) || tag.includes(queryLower);
       });
 
-      // Sort by relevance: exact match > starts with > contains
-      const sortedMatches = matches.sort((a, b) => {
-        const aName = a.displayName.toLowerCase();
-        const bName = b.displayName.toLowerCase();
+      // Sort by relevance and limit results
+      const sorted = sortByRelevance(matches, query, r => r.displayName);
+      return sorted.slice(0, maxDisplayResults);
+    },
+    [roles, minQueryLength, maxDisplayResults, sortByRelevance]
+  );
 
-        // Exact match gets highest priority
-        if (aName === queryLower && bName !== queryLower) return -1;
-        if (bName === queryLower && aName !== queryLower) return 1;
+  // Filter roles for Tier 2 (1-2 chars) - bypasses minQueryLength
+  const filterRolesForTier2 = useCallback(
+    (query: string): Role[] => {
+      if (!query || !roles) return [];
 
-        // Starts with gets second priority
-        if (aName.startsWith(queryLower) && !bName.startsWith(queryLower)) return -1;
-        if (bName.startsWith(queryLower) && !aName.startsWith(queryLower)) return 1;
+      const queryLower = query.toLowerCase();
 
-        // Then alphabetical order
-        return aName.localeCompare(bName);
+      // Filter roles whose displayName or roleTag matches the query
+      const matches = roles.filter(role => {
+        const name = role.displayName.toLowerCase();
+        const tag = role.roleTag.toLowerCase();
+        return name.includes(queryLower) || tag.includes(queryLower);
       });
 
-      return sortedMatches.slice(0, maxDisplayResults);
+      // Sort by relevance and limit results
+      const sorted = sortByRelevance(matches, query, r => r.displayName);
+      return sorted.slice(0, maxDisplayResults);
     },
-    [roles, minQueryLength, maxDisplayResults]
+    [roles, maxDisplayResults, sortByRelevance]
   );
 
   // NEW: Filter channels by groups based on query
@@ -227,32 +270,55 @@ export function useMentionInput({
   );
 
   // Filter function - combines users, roles, channels, and @everyone
+  // Uses tiered filtering for @ mentions:
+  //   Tier 1 (empty query): alphabetical users (first 10)
+  //   Tier 2 (1-2 chars): @everyone + matching roles + matching users
+  //   Tier 3 (3+ chars): full search (existing behavior)
   const filterMentions = useCallback((query: string, mentionType: '@' | '#' = '@') => {
     let options: MentionOption[];
 
     if (mentionType === '#') {
-      // Channel mentions: show grouped channels
+      // Channel mentions: show grouped channels (already works for empty query)
       options = filterChannelGroups(query);
-      setFilteredOptions(options);
     } else {
-      // User/role mentions: show users, roles, and @everyone
-      const filteredUsers = filterUsers(query);
-      const filteredRoles = filterRoles(query);
-      const everyoneMatches = checkEveryoneMatch(query);
+      // User/role mentions with tiered filtering
+      if (!query || query.length === 0) {
+        // TIER 1: Empty query - show alphabetical users (first 10)
+        const alphabeticalUsers = sortByRelevance(users, '', u => u.displayName || '');
+        options = alphabeticalUsers
+          .slice(0, 10)
+          .map(u => ({ type: 'user' as const, data: u }));
+      } else if (query.length < minQueryLength) {
+        // TIER 2: 1-2 chars - show @everyone + roles + users (bypass minQueryLength)
+        const everyoneMatches = checkEveryoneMatch(query);
+        const matchedRoles = filterRolesForTier2(query);
+        const matchedUsers = filterUsersForTier2(query);
 
-      options = [
-        // Put @everyone first if it matches (most prominent)
-        ...(everyoneMatches ? [{ type: 'everyone' as const }] : []),
-        ...filteredUsers.map(u => ({ type: 'user' as const, data: u })),
-        ...filteredRoles.map(r => ({ type: 'role' as const, data: r })),
-      ];
-      setFilteredOptions(options);
+        options = [
+          ...(everyoneMatches ? [{ type: 'everyone' as const }] : []),
+          ...matchedRoles.map(r => ({ type: 'role' as const, data: r })),
+          ...matchedUsers.map(u => ({ type: 'user' as const, data: u })),
+        ];
+      } else {
+        // TIER 3: 3+ chars - existing full search behavior
+        const everyoneMatches = checkEveryoneMatch(query);
+        const matchedRoles = filterRoles(query);
+        const matchedUsers = filterUsers(query);
+
+        options = [
+          ...(everyoneMatches ? [{ type: 'everyone' as const }] : []),
+          ...matchedUsers.map(u => ({ type: 'user' as const, data: u })),
+          ...matchedRoles.map(r => ({ type: 'role' as const, data: r })),
+        ];
+      }
     }
+
+    setFilteredOptions(options);
 
     // Find first selectable index (skip group headers)
     const firstSelectableIndex = options.findIndex(option => option.type !== 'group-header');
     setSelectedIndex(Math.max(0, firstSelectableIndex));
-  }, [filterUsers, filterRoles, filterChannelGroups, checkEveryoneMatch]);
+  }, [users, minQueryLength, sortByRelevance, filterUsers, filterUsersForTier2, filterRoles, filterRolesForTier2, filterChannelGroups, checkEveryoneMatch]);
 
   // Detect @ and # mentions and extract query
   useEffect(() => {
@@ -311,6 +377,30 @@ export function useMentionInput({
     }
   }, [textValue, cursorPosition, filterMentions, debounceMs]);
 
+  // Dismiss the dropdown
+  const dismissDropdown = useCallback(() => {
+    setShowDropdown(false);
+    setMentionQuery('');
+    setMentionStart(-1);
+    setSelectedIndex(0);
+    setFilteredOptions([]);
+  }, []);
+
+  // Select an option (user, role, or channel) from the dropdown
+  const selectOption = useCallback(
+    (option: MentionOption) => {
+      // Only allow selection of actionable items (not group headers)
+      if (option.type === 'group-header') return;
+
+      if (mentionStart !== -1) {
+        const mentionEnd = mentionStart + mentionQuery.length + 1; // +1 for @ or #
+        onMentionSelect(option, mentionStart, mentionEnd);
+        dismissDropdown();
+      }
+    },
+    [mentionStart, mentionQuery, onMentionSelect, dismissDropdown]
+  );
+
   // Handle keyboard navigation (skip group headers)
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent): boolean => {
@@ -347,13 +437,14 @@ export function useMentionInput({
           return true;
 
         case 'Enter':
-        case 'Tab':
+        case 'Tab': {
           e.preventDefault();
           const selectedOption = filteredOptions[selectedIndex];
           if (selectedOption && selectedOption.type !== 'group-header') {
             selectOption(selectedOption);
           }
           return true;
+        }
 
         case 'Escape':
           e.preventDefault();
@@ -364,32 +455,8 @@ export function useMentionInput({
           return false;
       }
     },
-    [showDropdown, filteredOptions, selectedIndex]
+    [showDropdown, filteredOptions, selectedIndex, selectOption, dismissDropdown]
   );
-
-  // Select an option (user, role, or channel) from the dropdown
-  const selectOption = useCallback(
-    (option: MentionOption) => {
-      // Only allow selection of actionable items (not group headers)
-      if (option.type === 'group-header') return;
-
-      if (mentionStart !== -1) {
-        const mentionEnd = mentionStart + mentionQuery.length + 1; // +1 for @ or #
-        onMentionSelect(option, mentionStart, mentionEnd);
-        dismissDropdown();
-      }
-    },
-    [mentionStart, mentionQuery, onMentionSelect]
-  );
-
-  // Dismiss the dropdown
-  const dismissDropdown = useCallback(() => {
-    setShowDropdown(false);
-    setMentionQuery('');
-    setMentionStart(-1);
-    setSelectedIndex(0);
-    setFilteredOptions([]);
-  }, []);
 
   return {
     showDropdown: showDropdown && filteredOptions.length > 0,

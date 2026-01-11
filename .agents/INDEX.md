@@ -101,6 +101,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Action Queue Bypasses SDK Encryption for Identity Keys](bugs/.solved/action-queue-plaintext-private-keys.md)
 - [Android 7.0 File Download Fix - Implementation Plan](bugs/.solved/SOLVED_android-file-download-huawei-p9-lite.md)
 - [Bug: Auto-Jump to First Unread Message - Blocked by Virtuoso Scroll Positioning](bugs/.solved/auto-jump-unread-virtuoso-scroll-conflict.md)
+- [Bug: Mention Dropdown Not Showing When Typing Just `@` or `#`](bugs/.solved/mention-dropdown-not-showing-on-empty-query.md)
 - [Bug: Message Scroll Issues - Send Jank & Delete Auto-Scroll](bugs/.solved/message-scroll-jank-on-send.md)
 - [Channel/Group Save Race Condition](bugs/.solved/channel-group-save-race-condition.md)
 - [Config Save Missing React Query Cache Update Causes Stale allowSync](bugs/.solved/config-save-stale-cache-allowsync.md)
@@ -158,7 +159,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Remove Deprecated Enhanced Mention Format Backward Compatibility Code](tasks/remove-enhanced-mention-format-compat.md)
 - [SDK PasskeyModal Customization Props Enhancement](tasks/sdk-passkey-modal-customization-props.md)
 - [Service Worker for App Update Detection](tasks/service-worker-app-updates.md)
-- [Show Users Who Reacted in Tooltip](tasks/show-reaction-users-tooltip.md)
+- [Show Users Who Reacted (Tooltip + Modal)](tasks/show-reaction-users-tooltip.md)
 - [Space Tags](tasks/space-tags.md)
 - [Task: Implement Delete Public Invite Link Feature](tasks/delete-public-invite-link.md)
 - [Test Suite Implementation Plan for Quorum Desktop](tasks/test-suite-plan.md)
@@ -295,6 +296,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Implement Spoiler Syntax (||text||) in Markdown Renderer](tasks/.done/spoiler-syntax-markdown-renderer.md)
 - [Implement User Mute Feature](tasks/.done/implement-mute-feature.md)
 - [Implementation Plan: Repository Restructure for Cross-Platform Development](tasks/.done/implementation-plan-repo-restructure.md)
+- [Improve Mention Dropdown UX - Show Immediately on @ or #](tasks/.done/mention-dropdown-immediate-display.md)
 - [Jump to Present Button](tasks/.done/jump-to-present-button-messages-list.md)
 - [Lazy Loading Implementation for Message Lists](tasks/.done/lazy-loading-implementation.md)
 - [Markdown Toolbar Editor](tasks/.done/markdown-toolbar-editor.md)
@@ -400,4 +402,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2026-01-10 03:11:03
+**Last Updated**: 2026-01-11 15:05:52
