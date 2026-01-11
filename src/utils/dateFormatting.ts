@@ -6,8 +6,8 @@ import { t } from '@lingui/core/macro';
  * This is the standard format used across all message-related components.
  *
  * Format:
- * - Today: "Today at 3:45 pm" (or just "Today" if compact)
- * - Yesterday: "Yesterday at 3:45 pm" (or just "Yesterday" if compact)
+ * - Today: "14:45" (just the time in 24h format, or just "Today" if compact)
+ * - Yesterday: "Yesterday at 14:45" (or just "Yesterday" if compact)
  * - Last week: Day name (e.g., "Monday")
  * - Older: Relative time (e.g., "3 days ago", "2 months ago")
  *
@@ -21,7 +21,7 @@ export const formatMessageDate = (timestamp: number, compact = false): string =>
     Intl.DateTimeFormat().resolvedOptions().timeZone
   );
   const fromNow = time.fromNow();
-  const timeFormatted = time.format('h:mm a');
+  const timeFormatted = time.format('HH:mm');
 
   if (compact) {
     return time.calendar(null, {
@@ -34,7 +34,7 @@ export const formatMessageDate = (timestamp: number, compact = false): string =>
 
   return time.calendar(null, {
     sameDay: function () {
-      return `[${t`Today at ${timeFormatted}`}]`;
+      return `[${timeFormatted}]`;
     },
     lastWeek: 'dddd',
     lastDay: `[${t`Yesterday at ${timeFormatted}`}]`,
@@ -49,9 +49,10 @@ export const formatMessageDate = (timestamp: number, compact = false): string =>
  * Used in DirectMessageContact and similar preview components.
  *
  * Format:
- * - Today: "3:45 PM"
- * - Yesterday: "Yesterday"
- * - Older: "11 Nov", "6 Dec"
+ * - 0-24h: "14:45" (24h format)
+ * - 1-6 days: "1d", "2d", etc.
+ * - 7+ days (same year): "Jan 8"
+ * - 1+ year ago: "Jan 8, 2024"
  *
  * @param timestamp - Unix timestamp in milliseconds
  * @returns Compact formatted time string
@@ -59,11 +60,19 @@ export const formatMessageDate = (timestamp: number, compact = false): string =>
 export const formatConversationTime = (timestamp: number): string => {
   const time = moment.tz(timestamp, Intl.DateTimeFormat().resolvedOptions().timeZone);
   const now = moment();
-  const daysDiff = now.diff(time, 'days');
+  const daysDiff = now.startOf('day').diff(time.clone().startOf('day'), 'days');
 
-  if (daysDiff === 0) return time.format('h:mm A');
-  if (daysDiff === 1) return t`Yesterday`;
-  return time.format('D MMM'); // "11 Nov"
+  // Today: show time
+  if (daysDiff === 0) return time.format('HH:mm');
+
+  // 1-6 days ago: show "1d", "2d", etc.
+  if (daysDiff >= 1 && daysDiff <= 6) return `${daysDiff}d`;
+
+  // Different year: include year
+  if (time.year() !== now.year()) return time.format('MMM D, YYYY');
+
+  // 7+ days, same year: short date
+  return time.format('MMM D');
 };
 
 /**
