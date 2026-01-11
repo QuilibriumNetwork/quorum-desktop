@@ -12,7 +12,7 @@ const config = {
   staticExamples: [
     { name: "Basic Tooltip", props: { id: "basic", content: "This is a helpful tooltip message", place: "top" }, children: "Hover me" },
     { name: "Custom Width", props: { id: "custom", content: "Short", maxWidth: 80, place: "top" }, children: "Small" },
-    { name: "With Border", props: { id: "bordered", content: "Highlighted tooltip with border", highlighted: true, place: "top" }, children: "Bordered" }
+    { name: "No Border", props: { id: "no-border", content: "Tooltip without border", noBorder: true, place: "top" }, children: "No Border" }
   ],
   quickTips: [
     "Use for providing additional context",

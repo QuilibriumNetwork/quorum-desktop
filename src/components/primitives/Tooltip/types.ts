@@ -22,7 +22,7 @@ export interface TooltipProps {
   place?: TooltipPlacement;
   noArrow?: boolean;
   className?: string;
-  highlighted?: boolean;
+  noBorder?: boolean;
   showCloseButton?: boolean;
   maxWidth?: number;
   disabled?: boolean;

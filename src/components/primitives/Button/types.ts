@@ -27,7 +27,6 @@ export interface BaseButtonProps {
   className?: string;
   onClick: (event?: React.MouseEvent) => void;
   tooltip?: string;
-  highlightedTooltip?: boolean;
   children?: React.ReactNode;
 }
 

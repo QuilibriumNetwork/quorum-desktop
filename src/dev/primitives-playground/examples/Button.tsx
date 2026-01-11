@@ -68,7 +68,6 @@ const config = {
 
   // Tooltips
   tooltip="Helpful tooltip text"
-  highlightedTooltip={false}
 
   // Styling
   className="custom-class"

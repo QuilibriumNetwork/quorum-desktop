@@ -538,7 +538,6 @@ const NavMenuContent: React.FC<NavMenuProps> = (props) => {
               id="dm-nav-icon"
               content={t`Direct Messages`}
               place="right"
-              highlighted={true}
               showOnTouch={false}
             >
               {dmIconElement}

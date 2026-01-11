@@ -59,7 +59,6 @@ const Button: React.FC<WebButtonProps> = (props) => {
           content={props.tooltip}
           place="right"
           anchorSelect={`#${buttonId}`}
-          highlighted={props.highlightedTooltip}
         />
       )}
     </>

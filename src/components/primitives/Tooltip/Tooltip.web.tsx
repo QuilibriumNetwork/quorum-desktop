@@ -9,7 +9,7 @@ export function Tooltip({
   place = 'top',
   noArrow = false,
   className = '',
-  highlighted = false,
+  noBorder = false,
   showCloseButton = false, // Not used on web, for API consistency
   maxWidth = 400,
   disabled = false,
@@ -49,7 +49,7 @@ export function Tooltip({
         noArrow={noArrow}
         className={tooltipClassName}
         anchorSelect={`#${anchorId}`}
-        highlighted={highlighted}
+        noBorder={noBorder}
         showOnTouch={showOnTouch}
         touchTrigger={touchTrigger}
         longPressDuration={longPressDuration}

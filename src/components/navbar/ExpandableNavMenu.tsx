@@ -29,7 +29,6 @@ const ExpandableNavMenu: React.FunctionComponent<ExpandableNavMenuProps> = (
           id="create-space-desktop"
           content={t`Add a Space`}
           place="right"
-          highlighted={true}
         >
           <Container
             className="expanded-nav-button-primary"

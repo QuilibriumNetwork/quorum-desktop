@@ -90,7 +90,6 @@ const FolderButton: React.FC<FolderButtonProps> = ({
       id={`folder-${folder.id}`}
       content={folder.name}
       place="right"
-      highlighted={true}
       showOnTouch={false}
     >
       {buttonElement}

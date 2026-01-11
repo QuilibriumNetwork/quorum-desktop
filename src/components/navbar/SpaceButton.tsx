@@ -185,7 +185,6 @@ const SpaceButton: React.FunctionComponent<SpaceButtonProps> = ({
             iconUrl={space.iconUrl}
             spaceName={space.spaceName}
             spaceId={space.spaceId}
-            highlightedTooltip={true}
             mentionCount={mentionCount}
             isDropTarget={showWiggle}
           />

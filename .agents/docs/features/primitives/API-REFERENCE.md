@@ -196,7 +196,6 @@ The `variant` prop can override typography's default color:
 - `hapticFeedback?: boolean` - Enable haptic feedback on press (native only)
 - `accessibilityLabel?: string` - Accessibility label (native only)
 - `tooltip?: string` - Tooltip text
-- `highlightedTooltip?: boolean` - Highlighted tooltip style
 - `className?: string` - CSS classes (web only)
 - `style?: CSSProperties | StyleProp<ViewStyle>` - Additional styles
 - `testID?: string` - Test identifier
@@ -844,14 +843,26 @@ The `variant` prop can override typography's default color:
 **Location**: `src/components/primitives/Tooltip/Tooltip.tsx`
 
 **Props**:
-- `content: string` - Tooltip text (required)
-- `position?: 'top' | 'bottom' | 'left' | 'right'` - Tooltip position
-- `trigger?: 'hover' | 'click' | 'focus'` - Trigger type
-- `children: ReactNode` - Element to attach tooltip to
+- `id: string` - Unique identifier (required)
+- `content: ReactNode` - Tooltip content (required)
+- `children: ReactNode` - Element to attach tooltip to (required)
+- `place?: 'top' | 'top-start' | 'top-end' | 'right' | 'right-start' | 'right-end' | 'bottom' | 'bottom-start' | 'bottom-end' | 'left' | 'left-start' | 'left-end'` - Tooltip placement (default: 'top')
+- `noArrow?: boolean` - Hide tooltip arrow
+- `className?: string` - CSS classes
+- `noBorder?: boolean` - Remove border (border is shown by default)
+- `showCloseButton?: boolean` - Show close button (native only)
+- `maxWidth?: number` - Maximum tooltip width (default: 400)
+- `disabled?: boolean` - Disable tooltip
+- `touchTrigger?: 'click' | 'long-press'` - Touch trigger type (default: 'click')
+- `longPressDuration?: number` - Long press duration in ms (default: 700)
+- `showOnTouch?: boolean` - Show tooltip on touch devices (default: true)
+- `autoHideAfter?: number` - Auto-hide timeout in ms for touch devices
+- `clickable?: boolean` - Allow hovering/clicking inside tooltip content (desktop only)
+- `variant?: 'simple' | 'rich'` - Content variant: 'simple' for text-only, 'rich' for custom content
 
 **Example**:
 ```tsx
-<Tooltip content="Click to edit" position="top">
+<Tooltip id="edit-tooltip" content="Click to edit" place="top">
   <Button iconName="edit" iconOnly />
 </Tooltip>
 ```
@@ -1047,5 +1058,5 @@ The `variant` prop can override typography's default color:
 ---
 
 
-_Last updated: 2025-10-28 - Added missing Icon primitive props (variant, disabled, onClick, id, additional size values)_
+_Last updated: 2026-01-11 - Tooltip: made border default, added noBorder prop, removed deprecated highlighted prop; Button: removed highlightedTooltip prop_
 _Verified: 2025-12-09 - All primitive components confirmed present_

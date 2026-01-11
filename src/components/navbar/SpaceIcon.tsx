@@ -18,7 +18,6 @@ type SpaceIconProps = {
   noTooltip?: boolean;
   noToggle?: boolean;
   spaceId?: string; // Add spaceId to make IDs unique
-  highlightedTooltip?: boolean;
   mentionCount?: number;
   isDropTarget?: boolean; // Show toggle indicator when this is a drop target for merge
 };
@@ -103,7 +102,6 @@ const SpaceIcon: React.FunctionComponent<SpaceIconProps> = (props) => {
       id={iconId}
       content={props.spaceName}
       place="right"
-      highlighted={props.highlightedTooltip}
       showOnTouch={false}
     >
       {iconElement}

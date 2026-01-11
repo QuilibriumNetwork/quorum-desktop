@@ -102,7 +102,6 @@ Fast lookup guide for all primitive components with essential props and examples
   hapticFeedback={boolean} // Native only
   accessibilityLabel="description" // Native only
   tooltip="tooltip text"
-  highlightedTooltip={boolean}
   className="css-classes" // Web only
 >
   Button Text
@@ -445,9 +444,16 @@ Fast lookup guide for all primitive components with essential props and examples
 
 ```tsx
 <Tooltip
+  id="unique-id"
   content="Tooltip text"
-  position="top|bottom|left|right"
-  trigger="hover|click|focus"
+  place="top|top-start|top-end|right|bottom|left" // Default: 'top'
+  noBorder={boolean} // Border is shown by default
+  noArrow={boolean}
+  maxWidth={400}
+  disabled={boolean}
+  showOnTouch={boolean} // Default: true
+  clickable={boolean} // Allow hovering/clicking inside tooltip
+  variant="simple|rich" // 'simple' for text, 'rich' for custom content
 >
   <Button>Hover me</Button>
 </Tooltip>
@@ -796,7 +802,7 @@ theme.colors.utilities.info; // Info
 
 ---
 
-_Last updated: 2025-10-14 - Added Portal primitive documentation_
+_Last updated: 2026-01-11 - Tooltip: made border default, added noBorder prop, removed highlighted prop; Button: removed highlightedTooltip prop_
 _Verified: 2025-12-09 - All primitive components confirmed present_
 
 ---

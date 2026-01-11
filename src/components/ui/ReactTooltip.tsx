@@ -27,7 +27,7 @@ type ReactTooltipProps = {
   theme?: 'dark' | 'light' | 'system';
   anchorSelect?: string;
   className?: string;
-  highlighted?: boolean;
+  noBorder?: boolean;
   showOnTouch?: boolean;
   touchTrigger?: 'click' | 'long-press';
   longPressDuration?: number;
@@ -45,7 +45,7 @@ const ReactTooltip: React.FunctionComponent<ReactTooltipProps> = ({
   className = '',
   theme,
   anchorSelect,
-  highlighted = false,
+  noBorder = false,
   showOnTouch = false,
   touchTrigger = 'click',
   longPressDuration = 700,
@@ -62,7 +62,7 @@ const ReactTooltip: React.FunctionComponent<ReactTooltipProps> = ({
   // Auto-apply responsive width and text wrapping for showOnTouch tooltips
   const touchClass = showOnTouch ? 'quorum-react-tooltip-touch' : '';
   const variantClass = variant === 'rich' ? 'tooltip-rich' : '';
-  const tooltipClassName = `${resolvedThemeInUse === 'dark' ? 'quorum-react-tooltip-dark' : 'quorum-react-tooltip'} ${highlighted ? 'quorum-react-tooltip-highlighted' : ''} ${touchClass} ${variantClass} ${className}`;
+  const tooltipClassName = `${resolvedThemeInUse === 'dark' ? 'quorum-react-tooltip-dark' : 'quorum-react-tooltip'} ${touchClass} ${variantClass} ${className}`;
 
   // Handle opening/closing on touch devices with click or long-press, and outside click/touch to close
   React.useEffect(() => {
@@ -179,9 +179,7 @@ const ReactTooltip: React.FunctionComponent<ReactTooltipProps> = ({
           className={tooltipClassName}
           anchorSelect={anchorSelect}
           border={
-            resolvedThemeInUse === 'light' || highlighted
-              ? '1px solid var(--color-border-default)'
-              : undefined
+            noBorder ? undefined : '1px solid var(--color-border-default)'
           }
           isOpen={alwaysVisible ? true : visible}
           positionStrategy="fixed"
@@ -203,9 +201,7 @@ const ReactTooltip: React.FunctionComponent<ReactTooltipProps> = ({
         className={tooltipClassName}
         anchorSelect={anchorSelect}
         border={
-          resolvedThemeInUse === 'light' || highlighted
-            ? '1px solid var(--color-border-default)'
-            : undefined
+          noBorder ? undefined : '1px solid var(--color-border-default)'
         }
         positionStrategy="fixed"
         delayShow={50}
