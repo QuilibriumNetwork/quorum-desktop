@@ -15,6 +15,18 @@ msgstr ""
 "X-Generator: @lingui/cli\n"
 
 #. js-lingui-explicit-id
+#: src/components/message/ReactionsList.tsx:92
+#: src/components/message/ReactionsList.tsx:106
+msgid "more"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/components/message/ReactionsList.tsx:94
+#: src/components/message/ReactionsList.tsx:99
+msgid "Reacted by"
+msgstr ""
+
+#. js-lingui-explicit-id
 #: src/hooks/business/user/useFileUpload.native.ts:107
 #: src/hooks/business/user/useWebFileUpload.ts:34
 msgid "File cannot be larger than {maxFileSize}"
@@ -37,15 +49,11 @@ msgstr "Envoyer un message à #{channel_name}"
 
 #. js-lingui-explicit-id
 #: src/components/onboarding/Onboarding.tsx:270
-msgid ""
-"Your profile image size must be {maxFileSize} or less and must be a PNG, "
-"JPG, or JPEG file extension."
-msgstr ""
-"La taille de votre image de profil doit être de {maxFileSize} ou moins et "
-"doit être au format PNG, JPG ou JPEG."
+msgid "Your profile image size must be {maxFileSize} or less and must be a PNG, JPG, or JPEG file extension."
+msgstr "La taille de votre image de profil doit être de {maxFileSize} ou moins et doit être au format PNG, JPG ou JPEG."
 
 #. js-lingui-explicit-id
-#: src/components/message/MessageComposer.tsx:646
+#: src/components/message/MessageComposer.tsx:653
 msgid "Replying to"
 msgstr "Répondre à"
 
@@ -60,17 +68,17 @@ msgid "Replying to {user}"
 msgstr "En réponse à {user}"
 
 #. js-lingui-explicit-id
-#: src/components/message/Message.tsx:337
+#: src/components/message/Message.tsx:329
 msgid "has joined"
 msgstr "a rejoint"
 
 #. js-lingui-explicit-id
-#: src/components/message/Message.tsx:345
+#: src/components/message/Message.tsx:337
 msgid "has left"
 msgstr "a quitté"
 
 #. js-lingui-explicit-id
-#: src/components/message/Message.tsx:353
+#: src/components/message/Message.tsx:345
 msgid "has been kicked"
 msgstr "a été expulsé"
 
@@ -79,12 +87,18 @@ msgstr "a été expulsé"
 msgid "Send a message to {user}"
 msgstr "Envoyer un message à {user}"
 
+#~ msgid " Default Space settings provide the most typical chat experience, but for higher privacy guarantees, review the Advanced Settings."
+#~ msgstr "Les paramètres par défaut de l'Espace offrent l'expérience de chat la plus typique, mais pour des garanties de confidentialité plus élevées, consultez les paramètres avancés."
+
 #: src/components/Maintenance.native.tsx:62
 msgid " for updates."
 msgstr "pour les mises à jour."
 
-#: src/components/message/Message.tsx:803
-#: src/components/message/Message.tsx:816
+#~ msgid "'everyone' is a reserved name."
+#~ msgstr "' tout le monde' est un nom réservé."
+
+#: src/components/message/Message.tsx:791
+#: src/components/message/Message.tsx:804
 msgid "(edited)"
 msgstr "(édité)"
 
@@ -97,7 +111,8 @@ msgstr "(vide)"
 msgid "[Empty message]"
 msgstr "[Message vide]"
 
-#: src/components/bookmarks/BookmarkItem.tsx:60 src/utils/clipboard.ts:28
+#: src/components/bookmarks/BookmarkItem.tsx:60
+#: src/utils/clipboard.ts:28
 msgid "[Image]"
 msgstr "[Image]"
 
@@ -126,9 +141,7 @@ msgstr "[Autocollant]"
 #. placeholder {0}: removedDevices.length
 #: src/components/modals/UserSettingsModal/Privacy.tsx:166
 msgid "{0} devices marked for removal. Click \"Save Changes\" to confirm."
-msgstr ""
-"{0} appareils marqués pour suppression. Cliquez sur \"Enregistrer les "
-"modifications\" pour confirmer."
+msgstr "{0} appareils marqués pour suppression. Cliquez sur \"Enregistrer les modifications\" pour confirmer."
 
 #. placeholder {0}: metadata.senderName
 #: src/services/NotificationService.ts:313
@@ -155,10 +168,16 @@ msgstr "Notification {0}"
 msgid "{0} notifications"
 msgstr "Notifications {0}"
 
+#~ msgid "{0} pinned message"
+#~ msgstr "{0} message épinglé"
+
 #. placeholder {0}: pinnedMessages.length
 #: src/components/message/PinnedMessagesPanel.tsx:213
 msgid "{0} pinned message in this Channel"
 msgstr "{0} message épinglé dans ce canal"
+
+#~ msgid "{0} pinned messages"
+#~ msgstr "{0} messages épinglés"
 
 #. placeholder {0}: pinnedMessages.length
 #: src/components/message/PinnedMessagesPanel.tsx:214
@@ -180,6 +199,12 @@ msgstr "{0} résultat"
 msgid "{0} results"
 msgstr "{0} résultats"
 
+#~ msgid "{0} unread mention"
+#~ msgstr "{0} mention non lue"
+
+#~ msgid "{0} unread mentions"
+#~ msgstr "{0} mentions non lues"
+
 #: src/components/bookmarks/BookmarksPanel.tsx:276
 msgid "{bookmarkCount} bookmark"
 msgstr "{bookmarkCount} signet"
@@ -188,15 +213,18 @@ msgstr "{bookmarkCount} signet"
 msgid "{bookmarkCount} bookmarks"
 msgstr "{bookmarkCount} signets"
 
+#~ msgid "{count} New Messages"
+#~ msgstr "{count} Nouveaux Messages"
+
 #: src/services/NotificationService.ts:322
 msgid "{count} new notifications"
 msgstr "{count} nouvelles notifications"
 
-#: src/utils/dateFormatting.ts:90
+#: src/utils/dateFormatting.ts:99
 msgid "{days} days"
 msgstr "{days} jours"
 
-#: src/utils/dateFormatting.ts:92
+#: src/utils/dateFormatting.ts:101
 msgid "{hours} hours"
 msgstr "{hours} heures"
 
@@ -219,6 +247,15 @@ msgstr "{size} Mo"
 #: src/components/primitives/FileUpload/FileUpload.web.tsx:18
 msgid "{size} TB"
 msgstr "{size} To"
+
+#~ msgid "{user} has been kicked"
+#~ msgstr "{user} a été exclu"
+
+#~ msgid "{user} has joined"
+#~ msgstr "{user} a adhéré"
+
+#~ msgid "{user} has left"
+#~ msgstr "{user} est parti"
 
 #: src/components/modals/SpaceSettingsModal/Account.tsx:253
 #: src/components/notifications/NotificationPanel.tsx:88
@@ -247,21 +284,21 @@ msgstr "0 = pour toujours"
 msgid "0 Bytes"
 msgstr "0 Octets"
 
-#: src/utils/dateFormatting.ts:84
+#: src/utils/dateFormatting.ts:93
 msgid "0 hours"
 msgstr "0 heures"
 
 #: src/components/modals/UserSettingsModal/Privacy.tsx:165
 msgid "1 device marked for removal. Click \"Save Changes\" to confirm."
-msgstr ""
-"1 appareil marqué pour suppression. Cliquez sur \"Enregistrer les "
-"modifications\" pour confirmer."
+msgstr "1 appareil marqué pour suppression. Cliquez sur \"Enregistrer les modifications\" pour confirmer."
 
-#: src/services/MessageService.ts:3668 src/services/NotificationService.ts:305
+#: src/services/MessageService.ts:3668
+#: src/services/NotificationService.ts:305
 msgid "a role"
 msgstr "un rôle"
 
-#: src/services/MessageService.ts:3678 src/services/NotificationService.ts:304
+#: src/services/MessageService.ts:3678
+#: src/services/NotificationService.ts:304
 #: src/services/NotificationService.ts:317
 msgid "a space"
 msgstr "un espace"
@@ -277,6 +314,9 @@ msgstr "Adresse du compte"
 #: src/components/modals/SpaceSettingsModal/Account.tsx:115
 msgid "Account Settings"
 msgstr "Paramètres du compte"
+
+#~ msgid "Account Settings for This Space"
+#~ msgstr "Paramètres du compte pour cet Espace"
 
 #: src/components/ui/OfflineBanner.tsx:57
 msgid "actions queued"
@@ -308,7 +348,7 @@ msgstr "Ajouter un groupe"
 msgid "Add Role"
 msgstr "Ajouter un rôle"
 
-#: src/components/message/MessageComposer.tsx:878
+#: src/components/message/MessageComposer.tsx:779
 msgid "add sticker"
 msgstr "ajouter un autocollant"
 
@@ -317,22 +357,12 @@ msgid "Add to Favorites"
 msgstr "Ajouter aux Favoris"
 
 #: src/components/modals/SpaceSettingsModal/Emojis.tsx:44
-msgid ""
-"Add up to 50 custom emoji. Custom emojis can only be used within a Space. "
-"You can upload PNG, JPG or GIF, max 5MB (automatically optimized)."
-msgstr ""
-"Ajoutez jusqu'à 50 émojis personnalisés. Les émojis personnalisés ne peuvent"
-" être utilisés que dans un Espace. Vous pouvez télécharger des PNG, JPG ou "
-"GIF, max 5 Mo (optimisé automatiquement)."
+msgid "Add up to 50 custom emoji. Custom emojis can only be used within a Space. You can upload PNG, JPG or GIF, max 5MB (automatically optimized)."
+msgstr "Ajoutez jusqu'à 50 émojis personnalisés. Les émojis personnalisés ne peuvent être utilisés que dans un Espace. Vous pouvez télécharger des PNG, JPG ou GIF, max 5 Mo (optimisé automatiquement)."
 
 #: src/components/modals/SpaceSettingsModal/Stickers.tsx:44
-msgid ""
-"Add up to 50 custom stickers. Custom stickers can only be used within a "
-"Space. You can upload PNG, JPG or GIF, max 25MB (automatically optimized)."
-msgstr ""
-"Ajoutez jusqu'à 50 autocollants personnalisés. Les autocollants "
-"personnalisés ne peuvent être utilisés que dans un Espace. Vous pouvez "
-"télécharger des PNG, JPG ou GIF, max 25 Mo (optimisé automatiquement)."
+msgid "Add up to 50 custom stickers. Custom stickers can only be used within a Space. You can upload PNG, JPG or GIF, max 25MB (automatically optimized)."
+msgstr "Ajoutez jusqu'à 50 autocollants personnalisés. Les autocollants personnalisés ne peuvent être utilisés que dans un Espace. Vous pouvez télécharger des PNG, JPG ou GIF, max 25 Mo (optimisé automatiquement)."
 
 #: src/components/user/UserProfile.tsx:200
 msgid "Adding..."
@@ -349,12 +379,8 @@ msgid "Addresses start with \"Qm\"."
 msgstr "Les adresses commencent par \"Qm\"."
 
 #: src/components/modals/UserSettingsModal/Privacy.tsx:97
-msgid ""
-"Adjust security-related settings, which may impact user  experience but "
-"increase the security of your Quorum account."
-msgstr ""
-"Ajustez les paramètres liés à la sécurité, ce qui peut affecter l'expérience"
-" utilisateur mais augmenter la sécurité de votre compte Quorum."
+msgid "Adjust security-related settings, which may impact user  experience but increase the security of your Quorum account."
+msgstr "Ajustez les paramètres liés à la sécurité, ce qui peut affecter l'expérience utilisateur mais augmenter la sécurité de votre compte Quorum."
 
 #: src/components/modals/CreateSpaceModal.tsx:196
 msgid "Advanced Settings"
@@ -406,35 +432,19 @@ msgstr "Toujours signer les messages"
 
 #: src/components/modals/SpaceSettingsModal/Danger.tsx:43
 msgid "An error occurred while deleting the Space. Please try again."
-msgstr ""
-"Une erreur s'est produite lors de la suppression de l'Espace. Veuillez "
-"réessayer."
+msgstr "Une erreur s'est produite lors de la suppression de l'Espace. Veuillez réessayer."
 
 #: src/utils/imageProcessing/errors.ts:23
-msgid ""
-"Animated emoji GIFs cannot be larger than 100KB. Please optimize your GIF "
-"for emoji use."
-msgstr ""
-"Les GIFs animés d'emoji ne peuvent pas dépasser 100 Ko. Veuillez optimiser "
-"votre GIF pour l'utilisation d'emoji."
+msgid "Animated emoji GIFs cannot be larger than 100KB. Please optimize your GIF for emoji use."
+msgstr "Les GIFs animés d'emoji ne peuvent pas dépasser 100 Ko. Veuillez optimiser votre GIF pour l'utilisation d'emoji."
 
 #: src/utils/imageProcessing/errors.ts:26
-msgid ""
-"Animated sticker GIFs cannot be larger than 750KB. Please optimize your GIF "
-"for sticker use."
-msgstr ""
-"Les GIFs animés d'autocollants ne peuvent pas dépasser 750KB. Veuillez "
-"optimiser votre GIF pour l'utilisation d'autocollants."
+msgid "Animated sticker GIFs cannot be larger than 750KB. Please optimize your GIF for sticker use."
+msgstr "Les GIFs animés d'autocollants ne peuvent pas dépasser 750KB. Veuillez optimiser votre GIF pour l'utilisation d'autocollants."
 
 #: src/components/modals/UserSettingsModal/Privacy.tsx:283
-msgid ""
-"Anyone who sees or photographs this QR code can take full control of your "
-"Quorum account and steal any associated funds. Only proceed if you are in a "
-"private location and ready to scan immediately."
-msgstr ""
-"Quiconque voit ou photographie ce code QR peut prendre le contrôle total de "
-"votre compte Quorum et voler tous les fonds associés. Ne procédez que si "
-"vous êtes dans un endroit privé et prêt à scanner immédiatement."
+msgid "Anyone who sees or photographs this QR code can take full control of your Quorum account and steal any associated funds. Only proceed if you are in a private location and ready to scan immediately."
+msgstr "Quiconque voit ou photographie ce code QR peut prendre le contrôle total de votre compte Quorum et voler tous les fonds associés. Ne procédez que si vous êtes dans un endroit privé et prêt à scanner immédiatement."
 
 #: src/components/modals/UserSettingsModal/Appearance.tsx:40
 #: src/components/modals/UserSettingsModal/Navigation.tsx:18
@@ -442,12 +452,8 @@ msgid "Appearance"
 msgstr "Apparence"
 
 #: src/hooks/business/channels/useChannelManagement.ts:247
-msgid ""
-"Are you sure you want to delete this channel? All messages will be lost. "
-"This action cannot be undone."
-msgstr ""
-"Êtes-vous sûr de vouloir supprimer ce canal ? Tous les messages seront "
-"perdus. Cette action ne peut pas être annulée."
+msgid "Are you sure you want to delete this channel? All messages will be lost. This action cannot be undone."
+msgstr "Êtes-vous sûr de vouloir supprimer ce canal ? Tous les messages seront perdus. Cette action ne peut pas être annulée."
 
 #: src/components/modals/ConversationSettingsModal.tsx:64
 msgid ""
@@ -467,12 +473,11 @@ msgid "Are you sure you want to delete this role?"
 msgstr "Êtes-vous sûr de vouloir supprimer ce rôle ?"
 
 #: src/components/modals/LeaveSpaceModal.tsx:40
-msgid ""
-"Are you sure you want to leave this Space? You won't be able to rejoin "
-"unless you are re-invited."
-msgstr ""
-"Êtes-vous sûr de vouloir quitter cet Space ? Vous ne pourrez pas revenir à "
-"moins d'être réinvité."
+msgid "Are you sure you want to leave this Space? You won't be able to rejoin unless you are re-invited."
+msgstr "Êtes-vous sûr de vouloir quitter cet Space ? Vous ne pourrez pas revenir à moins d'être réinvité."
+
+#~ msgid "Are you sure you want to leave this Space? You won't be able to rejoin unless you are re-invited. Your existing messages will NOT be deleted."
+#~ msgstr "Êtes-vous sûr de vouloir quitter cet Espace ? Vous ne pourrez pas revenir à moins d'être réinvité. Vos messages existants ne seront PAS supprimés."
 
 #: src/hooks/business/messages/usePinnedMessages.ts:313
 msgid "Are you sure you want to pin this message?"
@@ -482,7 +487,13 @@ msgstr "Êtes-vous sûr de vouloir épingler ce message ?"
 msgid "Are you sure you want to unpin this message?"
 msgstr "Êtes-vous sûr de vouloir désépingler ce message ?"
 
-#: src/components/message/MessageComposer.tsx:830
+#~ msgid "As a space owner, you must assign yourself a role to perform moderation actions. Kicking users is the only action that doesn't require a role. <0><1>Learn more</1></0>"
+#~ msgstr "En tant que propriétaire de l'espace, vous devez vous attribuer un rôle pour effectuer des actions de modération. Le fait de renvoyer des utilisateurs est la seule action qui ne nécessite pas de rôle. <0><1>En savoir plus</1></0>"
+
+#~ msgid "As a space owner, you need to assign yourself a role with delete permissions to delete other users' messages. <0><1>Learn more</1></0>"
+#~ msgstr "En tant que propriétaire de l'espace, vous devez vous attribuer un rôle avec des permissions de suppression pour supprimer les messages des autres utilisateurs. <0><1>En savoir plus</1></0>"
+
+#: src/components/message/MessageComposer.tsx:731
 msgid "attach image"
 msgstr "joindre une image"
 
@@ -518,12 +529,13 @@ msgstr "Gras"
 msgid "Bookmark"
 msgstr "Marque-page"
 
+#~ msgid "Bookmark limit reached"
+#~ msgstr "Limite de signets atteinte"
+
 #: src/hooks/business/bookmarks/useBookmarks.ts:168
 #: src/hooks/business/bookmarks/useBookmarks.ts:248
 msgid "Bookmark limit reached! Remove some to add new ones."
-msgstr ""
-"Limite de marque-pages atteint ! Supprimez-en quelques-uns pour en ajouter "
-"de nouveaux."
+msgstr "Limite de marque-pages atteint ! Supprimez-en quelques-uns pour en ajouter de nouveaux."
 
 #: src/components/message/MessageActions.tsx:110
 #: src/components/message/MessageActionsDrawer.tsx:241
@@ -534,8 +546,8 @@ msgstr "Message de signet"
 msgid "Bookmark messages to save them for later reference"
 msgstr "Messages de signet à enregistrer pour référence ultérieure"
 
-#: src/components/message/Message.tsx:770
-#: src/components/message/Message.tsx:848
+#: src/components/message/Message.tsx:758
+#: src/components/message/Message.tsx:836
 msgid "Bookmarked"
 msgstr "Signet enregistré"
 
@@ -580,37 +592,30 @@ msgstr "L'autorisation de la caméra est requise pour prendre des photos"
 msgid "Cancel"
 msgstr "Annuler"
 
-#: src/components/message/MessageEditTextarea.tsx:813
+#: src/components/message/MessageEditTextarea.tsx:726
 msgid "CANCEL"
 msgstr "ANNULER"
 
 #: src/components/modals/SpaceSettingsModal/Danger.tsx:41
 msgid "Cannot delete Space with channels. Please delete all channels first."
-msgstr ""
-"Impossible de supprimer l'Espace avec des canaux. Veuillez d'abord supprimer"
-" tous les canaux."
+msgstr "Impossible de supprimer l'Espace avec des canaux. Veuillez d'abord supprimer tous les canaux."
 
 #. placeholder {0}: Math.min(10, remaining)
 #: src/hooks/business/ui/useCustomAssets.ts:101
 #: src/hooks/business/ui/useCustomAssets.ts:146
-msgid ""
-"Cannot upload more than {0} files at once ({remaining} slots remaining)"
-msgstr ""
-"Impossible de télécharger plus de {0} fichiers à la fois ({remaining} "
-"emplacements restants)"
+msgid "Cannot upload more than {0} files at once ({remaining} slots remaining)"
+msgstr "Impossible de télécharger plus de {0} fichiers à la fois ({remaining} emplacements restants)"
 
 #: src/components/modals/SpaceSettingsModal/Account.tsx:127
 msgid "Change your avatar and name for this Space"
 msgstr "Changez votre avatar et votre nom pour cet Espace"
 
+#~ msgid "Change your avatar and name for this Space."
+#~ msgstr "Changez votre avatar et votre nom pour cet Espace."
+
 #: src/components/modals/UserSettingsModal/Appearance.tsx:79
-msgid ""
-"Changes are made automatically, but the active page may not be updated. "
-"Refresh the page to apply the new language."
-msgstr ""
-"Les modifications sont effectuées automatiquement, mais la page active peut "
-"ne pas être mise à jour. Actualisez la page pour appliquer la nouvelle "
-"langue."
+msgid "Changes are made automatically, but the active page may not be updated. Refresh the page to apply the new language."
+msgstr "Les modifications sont effectuées automatiquement, mais la page active peut ne pas être mise à jour. Actualisez la page pour appliquer la nouvelle langue."
 
 #: src/components/modals/ChannelEditorModal.tsx:127
 msgid "Channel Icon"
@@ -659,8 +664,7 @@ msgstr "Le sujet du canal ne peut pas contenir de caractères spéciaux"
 #: src/hooks/business/validation/useChannelValidation.ts:35
 #: src/hooks/business/validation/useChannelValidation.ts:71
 msgid "Channel topic must be {MAX_TOPIC_LENGTH} characters or less"
-msgstr ""
-"Le sujet du canal doit comporter {MAX_TOPIC_LENGTH} caractères ou moins"
+msgstr "Le sujet du canal doit comporter {MAX_TOPIC_LENGTH} caractères ou moins"
 
 #: src/components/Maintenance.native.tsx:53
 msgid "Check "
@@ -708,22 +712,12 @@ msgid "Click on the role name and tag to edit them."
 msgstr "Cliquez sur le nom du rôle et l'étiquette pour les modifier."
 
 #: src/components/onboarding/Onboarding.tsx:177
-msgid ""
-"Click the button below to create a backup of your key info, because once "
-"it's gone, it's gone  forever. You may be prompted to authenticate again."
-msgstr ""
-"Cliquez sur le bouton ci-dessous pour créer une sauvegarde de vos "
-"informations clés, car une fois perdues, elles le sont pour toujours. Vous "
-"pourriez être invité à vous authentifier à nouveau."
+msgid "Click the button below to create a backup of your key info, because once it's gone, it's gone  forever. You may be prompted to authenticate again."
+msgstr "Cliquez sur le bouton ci-dessous pour créer une sauvegarde de vos informations clés, car une fois perdues, elles le sont pour toujours. Vous pourriez être invité à vous authentifier à nouveau."
 
 #: src/components/onboarding/Onboarding.native.tsx:260
-msgid ""
-"Click the button below to create a backup of your key info, because once "
-"it's gone, it's gone forever. You may be prompted to authenticate again."
-msgstr ""
-"Cliquez sur le bouton ci-dessous pour créer une sauvegarde de vos "
-"informations clés, car une fois qu'elles sont perdues, elles sont perdues "
-"pour toujours. Vous pourriez être invité à vous authentifier à nouveau."
+msgid "Click the button below to create a backup of your key info, because once it's gone, it's gone forever. You may be prompted to authenticate again."
+msgstr "Cliquez sur le bouton ci-dessous pour créer une sauvegarde de vos informations clés, car une fois qu'elles sont perdues, elles sont perdues pour toujours. Vous pourriez être invité à vous authentifier à nouveau."
 
 #: src/components/ui/ClickToCopyContent.tsx:48
 msgid "Click to copy"
@@ -736,6 +730,9 @@ msgstr "À venir bientôt"
 #: src/components/modals/AddSpaceModal.tsx:184
 msgid "Config Key"
 msgstr "Clé de configuration"
+
+#~ msgid "Confirm"
+#~ msgstr "Confirmer"
 
 #: src/components/direct/DirectMessageContactsList.tsx:260
 #: src/components/navbar/NavMenu.tsx:160
@@ -788,6 +785,9 @@ msgstr "Échec de la copie"
 msgid "Copy invite link to clipboard"
 msgstr "Copier le lien d'invitation dans le presse-papiers"
 
+#~ msgid "Copy Key & Continue"
+#~ msgstr "Copier la clé et continuer"
+
 #: src/components/message/MessageActionsMenu.tsx:240
 msgid "Copy link"
 msgstr "Copier le lien"
@@ -824,20 +824,12 @@ msgid "Could not verify invite"
 msgstr "Impossible de vérifier l'invitation"
 
 #: src/hooks/business/user/useOnboardingFlowLogic.ts:273
-msgid ""
-"Couldn't decrypt your saved profile. Please re-enter your name and profile "
-"image."
-msgstr ""
-"Impossible de déchiffrer votre profil enregistré. Veuillez réentrer votre "
-"nom et votre image de profil."
+msgid "Couldn't decrypt your saved profile. Please re-enter your name and profile image."
+msgstr "Impossible de déchiffrer votre profil enregistré. Veuillez réentrer votre nom et votre image de profil."
 
 #: src/hooks/business/user/useOnboardingFlowLogic.ts:278
-msgid ""
-"Couldn't load your saved profile. Please re-enter your name and profile "
-"image."
-msgstr ""
-"Impossible de charger votre profil enregistré. Veuillez réentrer votre nom "
-"et votre image de profil."
+msgid "Couldn't load your saved profile. Please re-enter your name and profile image."
+msgstr "Impossible de charger votre profil enregistré. Veuillez réentrer votre nom et votre image de profil."
 
 #: src/components/modals/AddSpaceModal.tsx:302
 #: src/components/modals/CreateSpaceModal.tsx:83
@@ -897,13 +889,8 @@ msgid "Default Channel"
 msgstr "Chaîne par défaut"
 
 #: src/components/modals/CreateSpaceModal.tsx:208
-msgid ""
-"Default Space settings provide the most typical chat experience, but for "
-"higher privacy guarantees, review these advanced settings."
-msgstr ""
-"Les paramètres par défaut de l'Espace offrent l'expérience de chat la plus "
-"typique, mais pour des garanties de confidentialité plus élevées, examinez "
-"ces paramètres avancés."
+msgid "Default Space settings provide the most typical chat experience, but for higher privacy guarantees, review these advanced settings."
+msgstr "Les paramètres par défaut de l'Espace offrent l'expérience de chat la plus typique, mais pour des garanties de confidentialité plus élevées, examinez ces paramètres avancés."
 
 #: src/hooks/business/messages/useMessageActions.ts:393
 msgid "delete"
@@ -932,6 +919,9 @@ msgstr "Supprimer la chaîne"
 msgid "Delete Conversation"
 msgstr "Supprimer la conversation"
 
+#~ msgid "Delete Current Link"
+#~ msgstr "Supprimer le lien actuel"
+
 #: src/components/modals/FolderEditorModal.tsx:132
 #: src/components/navbar/NavMenu.tsx:159
 msgid "Delete Folder"
@@ -940,6 +930,9 @@ msgstr "Supprimer le dossier"
 #: src/components/modals/GroupEditorModal.tsx:130
 msgid "Delete Group"
 msgstr "Supprimer un groupe"
+
+#~ msgid "Delete Link"
+#~ msgstr "Supprimer le lien"
 
 #: src/components/message/MessageActions.tsx:112
 #: src/components/message/MessageActionsDrawer.tsx:252
@@ -957,6 +950,9 @@ msgstr "Supprimer le message sans confirmation"
 #: src/components/modals/SpaceSettingsModal/Roles.tsx:174
 msgid "Delete Messages"
 msgstr "Supprimer les messages"
+
+#~ msgid "Delete Public Invite Link"
+#~ msgstr "Supprimer le lien d'invitation public"
 
 #: src/components/modals/SpaceSettingsModal/Roles.tsx:207
 msgid "Delete role"
@@ -1000,14 +996,19 @@ msgstr "Suppression en cours..."
 msgid "Describe what this Space is about..."
 msgstr "Décrivez de quoi parle cet Espace..."
 
+#~ msgid "Description"
+#~ msgstr "Description"
+
 #: src/hooks/business/validation/useSpaceNameValidation.ts:66
 msgid "Description cannot contain special characters"
 msgstr "La description ne peut pas contenir de caractères spéciaux"
 
 #: src/components/modals/CreateSpaceModal.tsx:178
 msgid "Description must be {MAX_DESCRIPTION_LENGTH} characters or less"
-msgstr ""
-"La description doit comporter {MAX_DESCRIPTION_LENGTH} caractères ou moins"
+msgstr "La description doit comporter {MAX_DESCRIPTION_LENGTH} caractères ou moins"
+
+#~ msgid "Description must be {maxDescriptionLength} characters or less"
+#~ msgstr "La description doit comporter {maxDescriptionLength} caractères ou moins"
 
 #: src/hooks/business/validation/useSpaceNameValidation.ts:70
 msgid "Description must be {maxLength} characters or less"
@@ -1019,8 +1020,7 @@ msgstr "Notifications de bureau"
 
 #: src/components/modals/UserSettingsModal/Notifications.tsx:56
 msgid "Desktop notifications are not supported in this browser."
-msgstr ""
-"Les notifications de bureau ne sont pas prises en charge dans ce navigateur."
+msgstr "Les notifications de bureau ne sont pas prises en charge dans ce navigateur."
 
 #: src/components/modals/UserSettingsModal/Privacy.tsx:160
 msgid "Devices"
@@ -1033,7 +1033,8 @@ msgid "Direct Message"
 msgstr "Message Direct"
 
 #: src/components/direct/DirectMessageContactsList.tsx:316
-#: src/components/navbar/NavMenu.tsx:539 src/components/navbar/NavMenu.tsx:717
+#: src/components/navbar/NavMenu.tsx:539
+#: src/components/navbar/NavMenu.tsx:717
 msgid "Direct Messages"
 msgstr "Messages directs"
 
@@ -1058,17 +1059,14 @@ msgstr "Le nom d'affichage est requis"
 #: src/hooks/business/validation/useDisplayNameValidation.ts:19
 #: src/hooks/business/validation/useDisplayNameValidation.ts:48
 msgid "Display name must be {MAX_NAME_LENGTH} characters or less"
-msgstr ""
-"Le nom d'affichage doit comporter {MAX_NAME_LENGTH} caractères ou moins"
+msgstr "Le nom d'affichage doit comporter {MAX_NAME_LENGTH} caractères ou moins"
 
 #: src/components/modals/UserSettingsModal/Privacy.tsx:266
-msgid ""
-"Display your private key as a QR code to scan with the Quorum mobile app. "
-"This allows you to import your account on mobile without typing the key."
-msgstr ""
-"Affichez votre clé privée sous forme de code QR à scanner avec l'application"
-" mobile Quorum. Cela vous permet d'importer votre compte sur mobile sans "
-"taper la clé."
+msgid "Display your private key as a QR code to scan with the Quorum mobile app. This allows you to import your account on mobile without typing the key."
+msgstr "Affichez votre clé privée sous forme de code QR à scanner avec l'application mobile Quorum. Cela vous permet d'importer votre compte sur mobile sans taper la clé."
+
+#~ msgid "DM Requests"
+#~ msgstr "Demandes de DM"
 
 #: src/components/modals/UserSettingsModal/Help.tsx:26
 msgid "Documentation"
@@ -1136,24 +1134,19 @@ msgid "Encryption error"
 msgstr "Erreur de chiffrement"
 
 #: src/services/InvitationService.ts:75
-msgid ""
-"Encryption state is missing required template data. Please generate a public"
-" invite link first."
-msgstr ""
-"L'état de cryptage manque des données de modèle requises. Veuillez d'abord "
-"générer un lien d'invitation public."
+msgid "Encryption state is missing required template data. Please generate a public invite link first."
+msgstr "L'état de cryptage manque des données de modèle requises. Veuillez d'abord générer un lien d'invitation public."
 
 #: src/services/InvitationService.ts:87
-msgid ""
-"Encryption state is missing state data. Please generate a public invite link"
-" first."
-msgstr ""
-"L'état de cryptage manque des données d'état. Veuillez d'abord générer un "
-"lien d'invitation public."
+msgid "Encryption state is missing state data. Please generate a public invite link first."
+msgstr "L'état de cryptage manque des données d'état. Veuillez d'abord générer un lien d'invitation public."
 
 #: src/components/modals/CreateSpaceModal.tsx:171
 msgid "Enter a description for your Space (optional)"
 msgstr "Entrez une description pour votre Espace (facultatif)"
+
+#~ msgid "Enter a name for your new Space"
+#~ msgstr "Entrez un nom pour votre nouvel Espace"
 
 #: src/components/modals/CreateSpaceModal.tsx:137
 msgid "Enter a name for your Space"
@@ -1161,8 +1154,7 @@ msgstr "Entrez un nom pour votre Espace"
 
 #: src/components/modals/NewDirectMessageModal.tsx:107
 msgid "Enter a user's address to start messaging them."
-msgstr ""
-"Entrez l'adresse d'un utilisateur pour commencer à lui envoyer des messages."
+msgstr "Entrez l'adresse d'un utilisateur pour commencer à lui envoyer des messages."
 
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:304
 msgid "Enter Address Manually"
@@ -1170,14 +1162,13 @@ msgstr "Saisir l'adresse manuellement"
 
 #: src/components/modals/AddSpaceModal.tsx:171
 msgid "Enter both Space ID and Config Key to validate"
-msgstr ""
-"Entrez à la fois l'ID de l'Espace et la clé de configuration pour valider"
+msgstr "Entrez à la fois l'ID de l'Espace et la clé de configuration pour valider"
 
 #: src/components/modals/AddSpaceModal.tsx:163
 msgid "Enter details manually"
 msgstr "Entrez les détails manuellement"
 
-#: src/components/message/MessageEditTextarea.tsx:815
+#: src/components/message/MessageEditTextarea.tsx:728
 msgid "Enter to"
 msgstr "Entrer pour"
 
@@ -1197,6 +1188,9 @@ msgstr "Erreur lors du traitement de la file d'attente sortante :"
 msgid "Error processing outbound:"
 msgstr "Erreur lors du traitement sortant :"
 
+#~ msgid "Error processing queue:"
+#~ msgstr "Erreur lors du traitement de la file d'attente :"
+
 #: src/services/NotificationService.ts:93
 msgid "Error requesting notification permission:"
 msgstr "Erreur lors de la demande de permission de notification :"
@@ -1207,7 +1201,7 @@ msgstr "Erreur lors de la demande de permission de notification :"
 msgid "Error showing notification:"
 msgstr "Erreur lors de l'affichage de la notification :"
 
-#: src/components/message/MessageEditTextarea.tsx:800
+#: src/components/message/MessageEditTextarea.tsx:713
 msgid "Esc to"
 msgstr "Échap pour"
 
@@ -1219,14 +1213,15 @@ msgstr "Conversations existantes"
 msgid "Export"
 msgstr "Exporter"
 
+#~ msgid "Export your key to a file by clicking this button. Do not share this file with anyone else or they can impersonate you or steal your Space's Apex earnings."
+#~ msgstr "Exportez votre clé vers un fichier en cliquant sur ce bouton. Ne partagez pas ce fichier avec qui que ce soit, sinon ils pourraient se faire passer pour vous ou voler les gains Apex de votre Espace."
+
 #: src/components/modals/UserSettingsModal/Privacy.tsx:242
-msgid ""
-"Export your key to a file. Do not share this file with anyone else or they "
-"can impersonate you or steal your Space's Apex earnings."
-msgstr ""
-"Exportez votre clé vers un fichier. Ne partagez pas ce fichier avec qui que "
-"ce soit d'autre ou ils peuvent vous usurper ou voler les gains Apex de votre"
-" Espace."
+msgid "Export your key to a file. Do not share this file with anyone else or they can impersonate you or steal your Space's Apex earnings."
+msgstr "Exportez votre clé vers un fichier. Ne partagez pas ce fichier avec qui que ce soit d'autre ou ils peuvent vous usurper ou voler les gains Apex de votre Espace."
+
+#~ msgid "Failed to copy to clipboard. Please try again."
+#~ msgstr "Échec de la copie dans le presse-papiers. Veuillez réessayer."
 
 #: src/components/modals/CreateSpaceModal.tsx:29
 msgid "Failed to create space. Please try again."
@@ -1300,7 +1295,7 @@ msgstr "Échec de la sélection du document"
 msgid "Failed to send invite. Please try again."
 msgstr "Échec de l'envoi de l'invitation. Veuillez réessayer."
 
-#: src/components/message/Message.tsx:1251
+#: src/components/message/Message.tsx:1213
 msgid "Failed to send."
 msgstr "Échec de l'envoi."
 
@@ -1373,9 +1368,7 @@ msgstr "La validation du fichier a échoué. Veuillez réessayer."
 
 #: src/components/modals/UserSettingsModal/Help.tsx:20
 msgid "Find documentation, keyboard shortcuts, and recovery tools."
-msgstr ""
-"Trouvez la documentation, les raccourcis clavier et les outils de "
-"récupération."
+msgstr "Trouvez la documentation, les raccourcis clavier et les outils de récupération."
 
 #: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:467
 msgid "Fix"
@@ -1409,22 +1402,12 @@ msgstr "Le nom du dossier est requis"
 msgid "Folder name must be {MAX_NAME_LENGTH} characters or less"
 msgstr "Le nom du dossier doit contenir {MAX_NAME_LENGTH} caractères ou moins"
 
+#~ msgid "Folder Settings"
+#~ msgstr "Paramètres du dossier"
+
 #: src/components/modals/SpaceSettingsModal/Roles.tsx:58
-msgid ""
-"For privacy, your ownership is hidden from other clients. This means: Delete"
-" permission holders can delete your messages permanently, Mute permission "
-"holders can mute you (reversible). Only grant these to trusted users. Also "
-"note: if you're the only one with a role, your actions may reveal you as the"
-" owner—consider sharing roles with other trusted users."
-msgstr ""
-"Pour des raisons de confidentialité, votre propriété est cachée des autres "
-"clients. Cela signifie : Les titulaires de la permission de suppression "
-"peuvent supprimer vos messages de manière permanente, les titulaires de la "
-"permission de mise en sourdine peuvent vous mettre en sourdine (réversible)."
-" Accordez-les uniquement à des utilisateurs de confiance. Notez également : "
-"si vous êtes le seul à avoir un rôle, vos actions peuvent vous révéler en "
-"tant que propriétaire - envisagez de partager des rôles avec d'autres "
-"utilisateurs de confiance."
+msgid "For privacy, your ownership is hidden from other clients. This means: Delete permission holders can delete your messages permanently, Mute permission holders can mute you (reversible). Only grant these to trusted users. Also note: if you're the only one with a role, your actions may reveal you as the owner—consider sharing roles with other trusted users."
+msgstr "Pour des raisons de confidentialité, votre propriété est cachée des autres clients. Cela signifie : Les titulaires de la permission de suppression peuvent supprimer vos messages de manière permanente, les titulaires de la permission de mise en sourdine peuvent vous mettre en sourdine (réversible). Accordez-les uniquement à des utilisateurs de confiance. Notez également : si vous êtes le seul à avoir un rôle, vos actions peuvent vous révéler en tant que propriétaire - envisagez de partager des rôles avec d'autres utilisateurs de confiance."
 
 #: src/components/context/MessageDB.bak.tsx:3187
 #: src/services/SpaceService.ts:242
@@ -1461,9 +1444,7 @@ msgstr "Obtenez de l'aide en utilisant Quorum"
 
 #: src/utils/imageProcessing/errors.ts:20
 msgid "GIF files cannot be larger than {maxSize}. Please use a smaller GIF."
-msgstr ""
-"Les fichiers GIF ne peuvent pas dépasser {maxSize}. Veuillez utiliser un GIF"
-" plus petit."
+msgstr "Les fichiers GIF ne peuvent pas dépasser {maxSize}. Veuillez utiliser un GIF plus petit."
 
 #: src/hooks/business/conversations/useDirectMessageCreation.ts:35
 msgid "Go to conversation"
@@ -1508,6 +1489,9 @@ msgstr "Aide"
 msgid "Hide"
 msgstr "Cacher"
 
+#~ msgid "hide home screen"
+#~ msgstr "cacher l'écran d'accueil"
+
 #: src/components/modals/SpaceSettingsModal/Account.tsx:290
 msgid "Hide muted channels"
 msgstr "Masquer les canaux muets"
@@ -1529,29 +1513,22 @@ msgstr "J'ai déjà sauvegardé le mien"
 msgid "I Understand, Show QR"
 msgstr "Je comprends, Afficher le QR"
 
+#~ msgid "I've Saved It"
+#~ msgstr "Je l'ai enregistré"
+
 #: src/components/onboarding/Onboarding.tsx:333
 #: src/components/onboarding/Onboarding.tsx:340
 msgid "If skipped, you'll get the default profile image and can set it later"
-msgstr ""
-"Si vous passez cette étape, vous obtiendrez l'image de profil par défaut et "
-"pourrez la définir plus tard"
+msgstr "Si vous passez cette étape, vous obtiendrez l'image de profil par défaut et pourrez la définir plus tard"
 
 #: src/components/onboarding/Onboarding.tsx:167
-msgid ""
-"If you clear your browser storage or switch browsers, your old messages and "
-"keys may disappear."
-msgstr ""
-"Si vous effacez le stockage de votre navigateur ou changez de navigateur, "
-"vos anciens messages et clés peuvent disparaître."
+msgid "If you clear your browser storage or switch browsers, your old messages and keys may disappear."
+msgstr "Si vous effacez le stockage de votre navigateur ou changez de navigateur, vos anciens messages et clés peuvent disparaître."
 
 #: src/components/onboarding/Onboarding.native.tsx:255
 #: src/components/onboarding/Onboarding.tsx:172
-msgid ""
-"If you uninstall the app from your device, you will lose your old messages "
-"and keys."
-msgstr ""
-"Si vous désinstallez l'application de votre appareil, vous perdrez vos "
-"anciens messages et clés."
+msgid "If you uninstall the app from your device, you will lose your old messages and keys."
+msgstr "Si vous désinstallez l'application de votre appareil, vous perdrez vos anciens messages et clés."
 
 #: src/components/onboarding/Login.native.tsx:115
 #: src/components/onboarding/Login.tsx:76
@@ -1578,23 +1555,21 @@ msgstr "adresse invalide pour la signature"
 
 #: src/hooks/business/validation/useAddressValidation.native.ts:97
 #: src/hooks/business/validation/useAddressValidation.ts:98
-msgid ""
-"Invalid address format. Addresses must use valid alphanumeric characters."
-msgstr ""
-"Format d'adresse invalide. Les adresses doivent utiliser des caractères "
-"alphanumériques valides."
+msgid "Invalid address format. Addresses must use valid alphanumeric characters."
+msgstr "Format d'adresse invalide. Les adresses doivent utiliser des caractères alphanumériques valides."
 
 #: src/components/primitives/FileUpload/FileUpload.web.tsx:64
 msgid "Invalid file type. Please check accepted file formats."
-msgstr ""
-"Type de fichier invalide. Veuillez vérifier les formats de fichier acceptés."
+msgstr "Type de fichier invalide. Veuillez vérifier les formats de fichier acceptés."
 
 #: src/components/context/MessageDB.bak.tsx:4691
 #: src/components/context/MessageDB.bak.tsx:4702
 #: src/components/context/MessageDB.bak.tsx:4739
 #: src/components/context/MessageDB.bak.tsx:4810
-#: src/services/InvitationService.ts:511 src/services/InvitationService.ts:522
-#: src/services/InvitationService.ts:555 src/services/InvitationService.ts:627
+#: src/services/InvitationService.ts:511
+#: src/services/InvitationService.ts:522
+#: src/services/InvitationService.ts:555
+#: src/services/InvitationService.ts:627
 msgid "invalid link"
 msgstr "lien invalide"
 
@@ -1603,14 +1578,16 @@ msgstr "lien invalide"
 msgid "Invalid message ID"
 msgstr "ID de message invalide"
 
-#: src/components/context/MessageDB.bak.tsx:5181 src/utils/canonicalize.ts:127
+#: src/components/context/MessageDB.bak.tsx:5181
+#: src/utils/canonicalize.ts:127
 msgid "invalid message type"
 msgstr "type de message invalide"
 
 #: src/components/context/MessageDB.bak.tsx:4707
 #: src/components/context/MessageDB.bak.tsx:4773
 #: src/hooks/business/spaces/useInviteValidation.ts:81
-#: src/services/InvitationService.ts:527 src/services/InvitationService.ts:594
+#: src/services/InvitationService.ts:527
+#: src/services/InvitationService.ts:594
 msgid "invalid response"
 msgstr "réponse invalide"
 
@@ -1662,9 +1639,12 @@ msgstr "En cours de connexion..."
 msgid "Jump"
 msgstr "Sauter"
 
-#: src/components/message/MessageList.tsx:598
+#: src/components/message/MessageList.tsx:590
 msgid "Jump to present"
 msgstr "Aller au présent"
+
+#~ msgid "Key Copied!"
+#~ msgstr "Clé copiée !"
 
 #: src/components/modals/UserSettingsModal/Privacy.tsx:237
 msgid "Key Export"
@@ -1690,6 +1670,12 @@ msgstr "Expulser"
 #: src/components/modals/KickUserModal.tsx:59
 msgid "Kick User"
 msgstr "Utilisateur de coups de pied"
+
+#~ msgid "Kick Users"
+#~ msgstr "Expulser les utilisateurs"
+
+#~ msgid "Kick!"
+#~ msgstr "Expulser !"
 
 #: src/components/user/UserProfile.tsx:265
 msgid "Kicked!"
@@ -1720,12 +1706,8 @@ msgstr "Quitter cet Espace"
 
 #: src/components/onboarding/Onboarding.native.tsx:313
 #: src/components/onboarding/Onboarding.tsx:212
-msgid ""
-"Let your friends know who you are! Pick a friendly name to display in your "
-"conversations, something easier to read than:"
-msgstr ""
-"Faites savoir à vos amis qui vous êtes ! Choisissez un nom amical à afficher"
-" dans vos conversations, quelque chose de plus facile à lire que :"
+msgid "Let your friends know who you are! Pick a friendly name to display in your conversations, something easier to read than:"
+msgstr "Faites savoir à vos amis qui vous êtes ! Choisissez un nom amical à afficher dans vos conversations, quelque chose de plus facile à lire que :"
 
 #: src/components/onboarding/Onboarding.native.tsx:506
 #: src/components/onboarding/Onboarding.tsx:366
@@ -1741,7 +1723,7 @@ msgstr "Lumière"
 msgid "Loading bookmarks..."
 msgstr "Chargement des signets..."
 
-#: src/components/message/MessageList.tsx:609
+#: src/components/message/MessageList.tsx:601
 msgid "Loading message..."
 msgstr "Chargement du message..."
 
@@ -1769,7 +1751,8 @@ msgstr "Recherche de l'utilisateur..."
 msgid "Lookup"
 msgstr "Recherche"
 
-#: src/components/Maintenance.native.tsx:43 src/components/Maintenance.tsx:17
+#: src/components/Maintenance.native.tsx:43
+#: src/components/Maintenance.tsx:17
 msgid "Maintenance in Progress"
 msgstr "Maintenance en cours"
 
@@ -1783,32 +1766,20 @@ msgstr "Rendre le rôle public"
 
 #: src/components/onboarding/Onboarding.native.tsx:365
 #: src/components/onboarding/Onboarding.tsx:261
-msgid ""
-"Make your account uniquely yours – set a contact photo. This information is "
-"only provided to the Spaces you join."
-msgstr ""
-"Rendez votre compte unique – définissez une photo de contact. Cette "
-"information est uniquement fournie aux Espaces que vous rejoignez."
+msgid "Make your account uniquely yours – set a contact photo. This information is only provided to the Spaces you join."
+msgstr "Rendez votre compte unique – définissez une photo de contact. Cette information est uniquement fournie aux Espaces que vous rejoignez."
 
 #: src/components/modals/UserSettingsModal/Notifications.tsx:26
 msgid "Manage desktop notification preferences for new messages."
-msgstr ""
-"Gérer les préférences de notification de bureau pour les nouveaux messages."
+msgstr "Gérer les préférences de notification de bureau pour les nouveaux messages."
 
 #: src/components/modals/UserSettingsModal/Privacy.tsx:88
-msgid ""
-"Manage devices, and privacy conditions for messaging and synchronization."
-msgstr ""
-"Gérez les appareils et les conditions de confidentialité pour la messagerie "
-"et la synchronisation."
+msgid "Manage devices, and privacy conditions for messaging and synchronization."
+msgstr "Gérez les appareils et les conditions de confidentialité pour la messagerie et la synchronisation."
 
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:246
-msgid ""
-"Manage Inivte links and send invites to people you've previously had "
-"conversations with."
-msgstr ""
-"Gérer les liens d'invitation et envoyer des invitations aux personnes avec "
-"qui vous avez déjà eu des conversations."
+msgid "Manage Inivte links and send invites to people you've previously had conversations with."
+msgstr "Gérer les liens d'invitation et envoyer des invitations aux personnes avec qui vous avez déjà eu des conversations."
 
 #: src/components/navbar/NavMenu.tsx:269
 msgid "Manage Roles"
@@ -1818,11 +1789,18 @@ msgstr "Gérer les rôles"
 msgid "Manage your settings for <0>{spaceName}</0>."
 msgstr "Gérez vos paramètres pour <0>{spaceName}</0>."
 
+#~ msgid "Manage your settings for this Space."
+#~ msgstr "Gérez vos paramètres pour cet Espace."
+
+#~ msgid "Manual Backup Required"
+#~ msgstr "Sauvegarde manuelle requise"
+
 #: src/components/notifications/NotificationPanel.tsx:223
 msgid "Mark all as read"
 msgstr "Marquer tout comme lu"
 
-#: src/components/navbar/NavMenu.tsx:246 src/components/navbar/NavMenu.tsx:331
+#: src/components/navbar/NavMenu.tsx:246
+#: src/components/navbar/NavMenu.tsx:331
 msgid "Mark All as Read"
 msgstr "Marquer tout comme lu"
 
@@ -1831,15 +1809,8 @@ msgid "Members List"
 msgstr "Liste des membres"
 
 #: src/components/modals/ChannelEditorModal.tsx:174
-msgid ""
-"Members of selected roles can post, delete, and pin messages in this read-"
-"only channel. Note: Space owners must also be in a manager role to post "
-"here."
-msgstr ""
-"Les membres des rôles sélectionnés peuvent publier, supprimer et épingler "
-"des messages dans ce canal en lecture seule. Remarque : les propriétaires "
-"d'espace doivent également être dans un rôle de gestionnaire pour publier "
-"ici."
+msgid "Members of selected roles can post, delete, and pin messages in this read-only channel. Note: Space owners must also be in a manager role to post here."
+msgstr "Les membres des rôles sélectionnés peuvent publier, supprimer et épingler des messages dans ce canal en lecture seule. Remarque : les propriétaires d'espace doivent également être dans un rôle de gestionnaire pour publier ici."
 
 #: src/components/modals/SpaceSettingsModal/Roles.tsx:162
 msgid "Mention Everyone"
@@ -1853,24 +1824,21 @@ msgstr "Actions de message"
 msgid "Message deleted"
 msgstr "Message supprimé"
 
-#: src/components/message/Message.tsx:729
-#: src/components/message/Message.tsx:786
-#: src/components/message/Message.tsx:864
-msgid ""
-"Message does not have a valid signature, this may not be from the sender"
-msgstr ""
-"Le message n'a pas de signature valide, cela peut ne pas provenir de "
-"l'expéditeur"
+#: src/components/message/Message.tsx:717
+#: src/components/message/Message.tsx:774
+#: src/components/message/Message.tsx:852
+msgid "Message does not have a valid signature, this may not be from the sender"
+msgstr "Le message n'a pas de signature valide, cela peut ne pas provenir de l'expéditeur"
 
-#: src/components/message/MessageComposer.tsx:153
+#: src/components/message/MessageComposer.tsx:154
 msgid "Message..."
 msgstr "Message..."
 
-#: src/components/message/MessageComposer.tsx:895
+#: src/components/message/MessageComposer.tsx:796
 msgid "Messages are NOT signed!"
 msgstr "Les messages ne sont PAS signés !"
 
-#: src/components/message/MessageComposer.tsx:896
+#: src/components/message/MessageComposer.tsx:797
 msgid "Messages are signed!"
 msgstr "Les messages sont signés !"
 
@@ -1969,6 +1937,9 @@ msgstr "Nouveau dossier"
 msgid "New message from {0}"
 msgstr "Nouveau message de {0}"
 
+#~ msgid "New Messages"
+#~ msgstr "Nouveaux Messages"
+
 #: src/components/bookmarks/BookmarksPanel.tsx:208
 msgid "No bookmarks found"
 msgstr "Aucun signet trouvé"
@@ -1998,26 +1969,19 @@ msgid "No conversations found"
 msgstr "Aucune conversation trouvée"
 
 #: src/services/InvitationService.ts:69
-msgid ""
-"No encryption state found for this space. The space may need to be "
-"initialized or you may need to generate a public invite link first."
-msgstr ""
-"Aucun état de cryptage trouvé pour cet espace. L'espace peut devoir être "
-"initialisé ou vous devrez peut-être générer un lien d'invitation public "
-"d'abord."
+msgid "No encryption state found for this space. The space may need to be initialized or you may need to generate a public invite link first."
+msgstr "Aucun état de cryptage trouvé pour cet espace. L'espace peut devoir être initialisé ou vous devrez peut-être générer un lien d'invitation public d'abord."
 
 #: src/components/direct/DirectMessageContactsList.tsx:372
 msgid "No favorites yet"
 msgstr "Pas encore de favoris"
 
 #: src/services/InvitationService.ts:79
-msgid ""
-"No invite evaluations available. Please generate a public invite link or "
-"ensure the space encryption state is properly initialized."
-msgstr ""
-"Aucune évaluation d'invitation disponible. Veuillez générer un lien "
-"d'invitation public ou vous assurer que l'état de cryptage de l'espace est "
-"correctement initialisé."
+msgid "No invite evaluations available. Please generate a public invite link or ensure the space encryption state is properly initialized."
+msgstr "Aucune évaluation d'invitation disponible. Veuillez générer un lien d'invitation public ou vous assurer que l'état de cryptage de l'espace est correctement initialisé."
+
+#~ msgid "No message requests"
+#~ msgstr "Aucune demande de message"
 
 #: src/components/search/SearchResults.tsx:103
 msgid "No messages found"
@@ -2035,15 +1999,22 @@ msgstr "Aucune conversation mise en sourdine"
 msgid "No pinned messages yet"
 msgstr "Aucun message épinglé pour le moment"
 
+#~ msgid "No topic"
+#~ msgstr "Aucun sujet"
+
 #: src/components/direct/DirectMessageContactsList.tsx:374
 msgid "No unknown contacts"
 msgstr "Aucun contact inconnu"
+
+#~ msgid "No unread mentions"
+#~ msgstr "Aucune mention non lue"
 
 #: src/components/notifications/NotificationPanel.tsx:181
 msgid "No unread notifications"
 msgstr "Aucune notification non lue"
 
-#: src/components/space/Channel.tsx:1043 src/components/space/Channel.tsx:1221
+#: src/components/space/Channel.tsx:1043
+#: src/components/space/Channel.tsx:1221
 msgid "No users found!"
 msgstr "Aucun utilisateur trouvé !"
 
@@ -2063,18 +2034,15 @@ msgid "Notifications"
 msgstr "Notifications"
 
 #: src/components/modals/UserSettingsModal/Notifications.tsx:65
-msgid ""
-"Notifications are blocked. Please enable them in your browser settings."
-msgstr ""
-"Les notifications sont bloquées. Veuillez les activer dans les paramètres de"
-" votre navigateur."
+msgid "Notifications are blocked. Please enable them in your browser settings."
+msgstr "Les notifications sont bloquées. Veuillez les activer dans les paramètres de votre navigateur."
 
 #: src/services/NotificationService.ts:71
 #: src/services/NotificationService.ts:196
 msgid "Notifications are not supported in this browser"
 msgstr "Les notifications ne sont pas prises en charge dans ce navigateur"
 
-#: src/components/message/MessageComposer.tsx:807
+#: src/components/message/MentionDropdown.tsx:257
 msgid "Notify all members"
 msgstr "Notifier tous les membres"
 
@@ -2097,6 +2065,9 @@ msgstr "L'un d'entre nous, l'un d'entre nous !"
 msgid "Online"
 msgstr "En ligne"
 
+#~ msgid "Only proceed if you are in a private location and ready to scan immediately."
+#~ msgstr "Procédez uniquement si vous êtes dans un endroit privé et prêt à scanner immédiatement."
+
 #: src/components/ui/YouTubeFacade.tsx:171
 msgid "Open video on YouTube"
 msgstr "Ouvrir la vidéo sur YouTube"
@@ -2104,6 +2075,9 @@ msgstr "Ouvrir la vidéo sur YouTube"
 #: src/components/modals/CreateSpaceModal.tsx:32
 msgid "Operation timed out. Please try again."
 msgstr "L'opération a expiré. Veuillez réessayer."
+
+#~ msgid "optional"
+#~ msgstr "optionnel"
 
 #: src/components/modals/AddSpaceModal.tsx:291
 msgid "OR"
@@ -2139,7 +2113,8 @@ msgstr "Autorisations :"
 msgid "Personalize your account"
 msgstr "Personnalisez votre compte"
 
-#: src/utils/messagePreview.ts:37 src/utils/messagePreview.ts:41
+#: src/utils/messagePreview.ts:37
+#: src/utils/messagePreview.ts:41
 msgid "Photo"
 msgstr "Photo"
 
@@ -2150,9 +2125,7 @@ msgstr "Bibliothèque de photos"
 
 #: src/components/primitives/FileUpload/FileUpload.native.tsx:47
 msgid "Photo library permission is required to select images"
-msgstr ""
-"L'autorisation de la bibliothèque de photos est requise pour sélectionner "
-"des images"
+msgstr "L'autorisation de la bibliothèque de photos est requise pour sélectionner des images"
 
 #: src/hooks/business/messages/usePinnedMessages.ts:327
 msgid "pin"
@@ -2173,8 +2146,7 @@ msgstr "Épingler le canal en haut"
 
 #: src/components/message/PinnedMessagesPanel.tsx:196
 msgid "Pin important messages to keep them easily accessible"
-msgstr ""
-"Épinglez les messages importants pour les garder facilement accessibles"
+msgstr "Épinglez les messages importants pour les garder facilement accessibles"
 
 #. placeholder {0}: PINNED_MESSAGES_CONFIG.MAX_PINS
 #: src/hooks/business/messages/usePinnedMessages.ts:87
@@ -2202,15 +2174,14 @@ msgstr "Épingler en haut"
 msgid "Pin/Unpin without confirmation"
 msgstr "Épingler/Désépingler sans confirmation"
 
-#: src/components/message/Message.tsx:754
-#: src/components/message/Message.tsx:832
+#: src/components/message/Message.tsx:742
+#: src/components/message/Message.tsx:820
 msgid "Pinned"
 msgstr "Épinglé"
 
-#. placeholder {0}: mapSenderToUser(message.pinnedBy)?.displayName ||
-#. message.pinnedBy
-#: src/components/message/Message.tsx:753
-#: src/components/message/Message.tsx:831
+#. placeholder {0}: mapSenderToUser(message.pinnedBy)?.displayName || message.pinnedBy
+#: src/components/message/Message.tsx:741
+#: src/components/message/Message.tsx:819
 msgid "Pinned by {0}"
 msgstr "Épinglé par {0}"
 
@@ -2227,6 +2198,9 @@ msgstr "Épinglé !"
 msgid "PNG, JPG or JPEG • Optimal ratio 1:1"
 msgstr "PNG, JPG ou JPEG • Ratio optimal 1:1"
 
+#~ msgid "Press Enter to save, Shift+Enter for new line, Esc to cancel"
+#~ msgstr "Appuyez sur Entrée pour enregistrer, Maj+Entrée pour une nouvelle ligne, Échap pour annuler"
+
 #: src/components/modals/SpaceSettingsModal/General.tsx:284
 msgid "Privacy Settings"
 msgstr "Paramètres de confidentialité"
@@ -2240,65 +2214,45 @@ msgstr "Confidentialité/Sécurité"
 msgid "Private key saved to selected folder"
 msgstr "Clé privée enregistrée dans le dossier sélectionné"
 
-#: src/components/message/MessageComposer.tsx:597
+#: src/components/message/MessageComposer.tsx:604
 msgid "Processing image... This may take a moment for large files."
-msgstr ""
-"Traitement de l'image... Cela peut prendre un moment pour les fichiers "
-"volumineux."
+msgstr "Traitement de l'image... Cela peut prendre un moment pour les fichiers volumineux."
+
+#~ msgid "Processing..."
+#~ msgstr "Traitement..."
 
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:373
 msgid "Public Invite Links"
 msgstr "Liens d'invitation publics"
 
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:376
-msgid ""
-"Public invite links allow anyone with access to the link to join your Space."
-" Consider who you share the link with and where you post it."
-msgstr ""
-"Les liens d'invitation publics permettent à quiconque ayant accès au lien de"
-" rejoindre votre Space. Réfléchissez à qui vous partagez le lien et où vous "
-"le publiez."
+msgid "Public invite links allow anyone with access to the link to join your Space. Consider who you share the link with and where you post it."
+msgstr "Les liens d'invitation publics permettent à quiconque ayant accès au lien de rejoindre votre Space. Réfléchissez à qui vous partagez le lien et où vous le publiez."
 
 #: src/components/modals/UserSettingsModal/Privacy.tsx:317
 msgid "QR code will auto-hide in 60 seconds"
 msgstr "Le code QR se cachera automatiquement dans 60 secondes"
 
 #: src/components/Maintenance.tsx:24
-msgid ""
-"Quorum infrastructure is being deployed at this time. Please try refreshing,"
-" and check <0>https://status.quilibrium.com/</0> for updates."
-msgstr ""
-"L'infrastructure Quorum est en cours de déploiement. Veuillez essayer "
-"d'actualiser et vérifier <0>https://status.quilibrium.com/</0> pour les "
-"mises à jour."
+msgid "Quorum infrastructure is being deployed at this time. Please try refreshing, and check <0>https://status.quilibrium.com/</0> for updates."
+msgstr "L'infrastructure Quorum est en cours de déploiement. Veuillez essayer d'actualiser et vérifier <0>https://status.quilibrium.com/</0> pour les mises à jour."
 
 #: src/components/Maintenance.native.tsx:48
-msgid ""
-"Quorum infrastructure is being deployed at this time. Please try refreshing."
-msgstr ""
-"L'infrastructure Quorum est en cours de déploiement à ce moment. Veuillez "
-"essayer de rafraîchir."
+msgid "Quorum infrastructure is being deployed at this time. Please try refreshing."
+msgstr "L'infrastructure Quorum est en cours de déploiement à ce moment. Veuillez essayer de rafraîchir."
 
 #: src/components/onboarding/Onboarding.native.tsx:250
 #: src/components/onboarding/Onboarding.tsx:157
-msgid ""
-"Quorum is peer-to-peer and end-to-end encrypted. This means your messages "
-"stay private, but equally important, they only live on the network for the "
-"time required to reach you and your recipients."
-msgstr ""
-"Quorum est pair-à-pair et chiffré de bout en bout. Cela signifie que vos "
-"messages restent privés, mais tout aussi important, ils ne vivent sur le "
-"réseau que le temps nécessaire pour vous atteindre, vous et vos "
-"destinataires."
+msgid "Quorum is peer-to-peer and end-to-end encrypted. This means your messages stay private, but equally important, they only live on the network for the time required to reach you and your recipients."
+msgstr "Quorum est pair-à-pair et chiffré de bout en bout. Cela signifie que vos messages restent privés, mais tout aussi important, ils ne vivent sur le réseau que le temps nécessaire pour vous atteindre, vous et vos destinataires."
 
 #: src/components/context/RegistrationPersister.tsx:275
-msgid ""
-"Quorum was loaded while the browser was not in focus or a passkey request "
-"was rejected. Please reauthorize to access your messages."
+msgid "Quorum was loaded while the browser was not in focus or a passkey request was rejected. Please reauthorize to access your messages."
+msgstr "Quorum a été chargé alors que le navigateur n'était pas au premier plan ou qu'une demande de clé d'accès a été rejetée. Veuillez réautoriser pour accéder à vos messages."
+
+#: src/components/modals/ReactionsModal.tsx:73
+msgid "Reactions"
 msgstr ""
-"Quorum a été chargé alors que le navigateur n'était pas au premier plan ou "
-"qu'une demande de clé d'accès a été rejetée. Veuillez réautoriser pour "
-"accéder à vos messages."
 
 #: src/components/modals/ChannelEditorModal.tsx:155
 msgid "Read only"
@@ -2325,7 +2279,8 @@ msgstr "configuration reçue avec une signature invalide !"
 msgid "Recipient has no devices"
 msgstr "Le destinataire n'a pas d'appareils"
 
-#: src/components/Maintenance.native.tsx:74 src/components/Maintenance.tsx:46
+#: src/components/Maintenance.native.tsx:74
+#: src/components/Maintenance.tsx:46
 #: src/components/modals/UserSettingsModal/Appearance.tsx:87
 msgid "Refresh"
 msgstr "Rafraîchir"
@@ -2366,13 +2321,11 @@ msgid "Require Message Signing"
 msgstr "Exiger la signature des messages"
 
 #: src/components/modals/CreateSpaceModal.tsx:224
-msgid ""
-"Require messages sent in this Space to be signed by the sender. Technically "
-"speaking, this makes the messages in this Space non-repudiable."
-msgstr ""
-"Exiger que les messages envoyés dans cet Space soient signés par "
-"l'expéditeur. Techniquement parlant, cela rend les messages dans cet Space "
-"non répudiables."
+msgid "Require messages sent in this Space to be signed by the sender. Technically speaking, this makes the messages in this Space non-repudiable."
+msgstr "Exiger que les messages envoyés dans cet Space soient signés par l'expéditeur. Techniquement parlant, cela rend les messages dans cet Space non répudiables."
+
+#~ msgid "Requiring roles for moderation actions protects your identity as the space owner. However, if you're the only one with a specific role, your actions may reveal who you are. For better privacy, consider having multiple users (real or additional accounts) share the same role."
+#~ msgstr "Exiger des rôles pour les actions de modération protège votre identité en tant que propriétaire de l'espace. Cependant, si vous êtes le seul à avoir un rôle spécifique, vos actions peuvent révéler qui vous êtes. Pour une meilleure confidentialité, envisagez d'avoir plusieurs utilisateurs (réels ou comptes supplémentaires) partageant le même rôle."
 
 #: src/components/modals/AddSpaceModal.tsx:274
 msgid "Reset"
@@ -2382,13 +2335,12 @@ msgstr "Réinitialiser"
 msgid "Restore"
 msgstr "Restaurer"
 
+#~ msgid "Restore Missing Spaces"
+#~ msgstr "Restaurer les espaces manquants"
+
 #: src/components/modals/UserSettingsModal/Help.tsx:74
-msgid ""
-"Restore Spaces that exist on this device but are missing from your "
-"navigation menu."
-msgstr ""
-"Restaurer les espaces qui existent sur cet appareil mais qui manquent dans "
-"votre menu de navigation."
+msgid "Restore Spaces that exist on this device but are missing from your navigation menu."
+msgstr "Restaurer les espaces qui existent sur cet appareil mais qui manquent dans votre menu de navigation."
 
 #. placeholder {0}: recoverable.length
 #: src/hooks/business/user/useSpaceRecovery.ts:99
@@ -2399,7 +2351,7 @@ msgstr "Restauré {0} espace(s)"
 msgid "Restoring..."
 msgstr "Restauration..."
 
-#: src/components/message/Message.tsx:1262
+#: src/components/message/Message.tsx:1224
 msgid "Retry"
 msgstr "Réessayer"
 
@@ -2412,7 +2364,7 @@ msgstr "Rôles"
 msgid "Save"
 msgstr "Sauvegarder"
 
-#: src/components/message/MessageEditTextarea.tsx:834
+#: src/components/message/MessageEditTextarea.tsx:747
 msgid "SAVE"
 msgstr "ENREGISTRER"
 
@@ -2466,11 +2418,13 @@ msgstr "Enregistrement..."
 msgid "Search failed: {0}"
 msgstr "Échec de la recherche : {0}"
 
-#: src/hooks/useSearchContext.native.ts:98 src/hooks/useSearchContext.ts:90
+#: src/hooks/useSearchContext.native.ts:98
+#: src/hooks/useSearchContext.ts:90
 msgid "Search here"
 msgstr "Recherchez ici"
 
-#: src/hooks/useSearchContext.native.ts:96 src/hooks/useSearchContext.ts:88
+#: src/hooks/useSearchContext.native.ts:96
+#: src/hooks/useSearchContext.ts:88
 msgid "Search in this Space"
 msgstr "Rechercher dans cet Espace"
 
@@ -2511,6 +2465,9 @@ msgstr "Recherche en cours..."
 msgid "Security"
 msgstr "Sécurité"
 
+#~ msgid "Security Warning"
+#~ msgstr "Avertissement de sécurité"
+
 #: src/components/modals/SpaceSettingsModal/Account.tsx:241
 msgid "Select"
 msgstr "Sélectionner"
@@ -2520,6 +2477,9 @@ msgstr "Sélectionner"
 msgid "Select an option"
 msgstr "Sélectionner une option"
 
+#~ msgid "Select any existing role as managers for this channel. Managers have post, delete, and pin permissions on ANY message by default. If no managers are selected, only the Space owner can manage the channel."
+#~ msgstr "Sélectionnez tout rôle existant comme gestionnaires pour ce canal. Les gestionnaires ont des permissions de publication, de suppression et d'épinglage sur TOUT message par défaut. Si aucun gestionnaire n'est sélectionné, seul le propriétaire de l'Space peut gérer le canal."
+
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:38
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:293
 msgid "Select conversation"
@@ -2528,6 +2488,9 @@ msgstr "Sélectionner la conversation"
 #: src/components/modals/SpaceSettingsModal/General.tsx:278
 msgid "Select default channel"
 msgstr "Sélectionner le canal par défaut"
+
+#~ msgid "Select for which mentions you will receive notifications"
+#~ msgstr "Sélectionner pour quelles mentions vous recevrez des notifications"
 
 #: src/components/primitives/FileUpload/FileUpload.native.tsx:161
 msgid "Select Image"
@@ -2554,12 +2517,8 @@ msgid "Send"
 msgstr "Envoyer"
 
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:269
-msgid ""
-"Send a unique invite link directly to someone. Each invite can only be used "
-"once."
-msgstr ""
-"Envoyez un lien d'invitation unique directement à quelqu'un. Chaque "
-"invitation ne peut être utilisée qu'une seule fois."
+msgid "Send a unique invite link directly to someone. Each invite can only be used once."
+msgstr "Envoyez un lien d'invitation unique directement à quelqu'un. Chaque invitation ne peut être utilisée qu'une seule fois."
 
 #: src/services/ActionQueueHandlers.ts:1005
 msgid "Send failed"
@@ -2568,6 +2527,9 @@ msgstr "Échec de l'envoi"
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:340
 msgid "Send Invite"
 msgstr "Envoyer l'invitation"
+
+#~ msgid "Send invites to people you've previously had conversations with. An invite button will appear in their inbox."
+#~ msgstr "Envoyez des invitations aux personnes avec lesquelles vous avez déjà eu des conversations. Un bouton d'invitation apparaîtra dans leur boîte de réception."
 
 #: src/components/user/UserProfile.tsx:218
 msgid "Send Message"
@@ -2580,10 +2542,9 @@ msgstr "Envoyer une invitation privée"
 
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:267
 msgid "Send your public invite link directly to someone via DM."
-msgstr ""
-"Envoyez votre lien d'invitation public directement à quelqu'un par DM."
+msgstr "Envoyez votre lien d'invitation public directement à quelqu'un par DM."
 
-#: src/components/message/Message.tsx:1244
+#: src/components/message/Message.tsx:1206
 msgid "Sending..."
 msgstr "Envoi..."
 
@@ -2609,19 +2570,16 @@ msgstr "Partager le lien public"
 msgid "Shift + Click"
 msgstr "Maj + Clic"
 
-#: src/components/message/MessageEditTextarea.tsx:836
+#: src/components/message/MessageEditTextarea.tsx:749
 msgid "Shift+Enter for new line"
 msgstr "Maj+Entrée pour nouvelle ligne"
 
 #: src/components/modals/UserSettingsModal/Notifications.tsx:43
-msgid ""
-"Show desktop notifications when you receive new messages while Quorum is in "
-"the background. Your browser will ask for permission when you enable this "
-"feature."
-msgstr ""
-"Afficher les notifications de bureau lorsque vous recevez de nouveaux "
-"messages pendant que Quorum est en arrière-plan. Votre navigateur demandera "
-"la permission lorsque vous activerez cette fonctionnalité."
+msgid "Show desktop notifications when you receive new messages while Quorum is in the background. Your browser will ask for permission when you enable this feature."
+msgstr "Afficher les notifications de bureau lorsque vous recevez de nouveaux messages pendant que Quorum est en arrière-plan. Votre navigateur demandera la permission lorsque vous activerez cette fonctionnalité."
+
+#~ msgid "show home screen"
+#~ msgstr "afficher l'écran d'accueil"
 
 #: src/components/navbar/NavMenu.tsx:230
 msgid "Show Muted Channels"
@@ -2635,13 +2593,13 @@ msgstr "Afficher le statut en ligne"
 msgid "Show QR"
 msgstr "Afficher le QR"
 
+#~ msgid "Show QR Code"
+#~ msgstr "Afficher le code QR"
+
 #: src/components/search/SearchResults.tsx:187
 #: src/components/search/SearchResults.tsx:214
-msgid ""
-"Showing first 500 results. Refine your search for more specific results."
-msgstr ""
-"Affichage des 500 premiers résultats. Affinez votre recherche pour des "
-"résultats plus spécifiques."
+msgid "Showing first 500 results. Refine your search for more specific results."
+msgstr "Affichage des 500 premiers résultats. Affinez votre recherche pour des résultats plus spécifiques."
 
 #: src/components/onboarding/Onboarding.native.tsx:462
 #: src/components/onboarding/Onboarding.tsx:329
@@ -2668,6 +2626,9 @@ msgstr "ID de l'Espace"
 msgid "Space name"
 msgstr "Nom de l'espace"
 
+#~ msgid "Space Name"
+#~ msgstr "Nom de l'Espace"
+
 #: src/hooks/business/validation/useSpaceNameValidation.ts:24
 #: src/hooks/business/validation/useSpaceNameValidation.ts:46
 msgid "Space name cannot contain special characters"
@@ -2681,8 +2642,7 @@ msgstr "Le nom de l'Espace est requis"
 #: src/hooks/business/validation/useSpaceNameValidation.ts:21
 #: src/hooks/business/validation/useSpaceNameValidation.ts:43
 msgid "Space name must be {MAX_NAME_LENGTH} characters or less"
-msgstr ""
-"Le nom de l'Espace doit comporter {MAX_NAME_LENGTH} caractères ou moins"
+msgstr "Le nom de l'Espace doit comporter {MAX_NAME_LENGTH} caractères ou moins"
 
 #: src/components/modals/SpaceSettingsModal/Navigation.tsx:38
 #: src/components/navbar/NavMenu.tsx:256
@@ -2697,6 +2657,9 @@ msgstr "Commencez à taper pour rechercher des messages..."
 #: src/components/user/UserProfileEdit.tsx:102
 msgid "Status goes here"
 msgstr "Le statut va ici"
+
+#~ msgid "Stay Connected, Stay Invisible"
+#~ msgstr "Restez connecté, restez invisible"
 
 #: src/components/modals/SpaceSettingsModal/Navigation.tsx:24
 #: src/components/modals/SpaceSettingsModal/Stickers.tsx:41
@@ -2716,7 +2679,14 @@ msgstr "Envoi réussi de l'invitation à {0}"
 msgid "Sync Kick Status"
 msgstr "Synchroniser l'état d'expulsion"
 
-#: src/services/MessageService.ts:3310 src/services/MessageService.ts:3428
+#~ msgid "Sync kick status for previously kicked users. This verifies kicks without posting visible messages."
+#~ msgstr "Synchroniser l'état d'expulsion pour les utilisateurs précédemment expulsés. Cela vérifie les expulsions sans publier de messages visibles."
+
+#~ msgid "Syncing Space..."
+#~ msgstr "Synchronisation de l'Espace..."
+
+#: src/services/MessageService.ts:3310
+#: src/services/MessageService.ts:3428
 msgid "Syncing..."
 msgstr "Synchronisation..."
 
@@ -2748,26 +2718,16 @@ msgid "The invite link has expired or is invalid."
 msgstr "Le lien d'invitation a expiré ou n'est pas valide."
 
 #: src/components/NotFound.tsx:21
-msgid ""
-"The page you're looking for doesn't exist or has been moved. Let's get you "
-"back on track."
-msgstr ""
-"La page que vous recherchez n'existe pas ou a été déplacée. Revenons sur la "
-"bonne voie."
+msgid "The page you're looking for doesn't exist or has been moved. Let's get you back on track."
+msgstr "La page que vous recherchez n'existe pas ou a été déplacée. Revenons sur la bonne voie."
 
 #: src/components/modals/SpaceSettingsModal/Danger.tsx:30
-msgid ""
-"This action cannot be undone and will permanently remove all the Space "
-"settings. To delete the Space, you must first delete all Channels."
-msgstr ""
-"Cette action ne peut pas être annulée et supprimera définitivement tous les "
-"paramètres de l'Espace. Pour supprimer l'Espace, vous devez d'abord "
-"supprimer tous les canaux."
+msgid "This action cannot be undone and will permanently remove all the Space settings. To delete the Space, you must first delete all Channels."
+msgstr "Cette action ne peut pas être annulée et supprimera définitivement tous les paramètres de l'Espace. Pour supprimer l'Espace, vous devez d'abord supprimer tous les canaux."
 
 #: src/components/modals/UserSettingsModal/General.tsx:135
 msgid "This bio will be visible to others when they view your profile."
-msgstr ""
-"Ce bio sera visible par d'autres lorsqu'ils consulteront votre profil."
+msgstr "Ce bio sera visible par d'autres lorsqu'ils consulteront votre profil."
 
 #: src/components/bookmarks/BookmarksPanel.tsx:64
 msgid "This conversation"
@@ -2775,13 +2735,8 @@ msgstr "Cette conversation"
 
 #: src/components/modals/CreateSpaceModal.tsx:183
 #: src/components/modals/SpaceSettingsModal/General.tsx:191
-msgid ""
-"This description will be visible on invites and shown to people when they "
-"look up or join your Space using an invite link."
-msgstr ""
-"Cette description sera visible sur les invitations et montrée aux personnes "
-"lorsqu'elles recherchent ou rejoignent votre Espace en utilisant un lien "
-"d'invitation."
+msgid "This description will be visible on invites and shown to people when they look up or join your Space using an invite link."
+msgstr "Cette description sera visible sur les invitations et montrée aux personnes lorsqu'elles recherchent ou rejoignent votre Espace en utilisant un lien d'invitation."
 
 #: src/components/modals/UserSettingsModal/Privacy.tsx:226
 msgid "This device"
@@ -2797,25 +2752,23 @@ msgid "This is embarrassing..."
 msgstr "C'est embarrassant..."
 
 #: src/components/modals/UserSettingsModal/General.tsx:155
-msgid ""
-"This is your public address and is safe to share with anyone you want to "
-"interact with."
-msgstr ""
-"Ceci est votre adresse publique et elle est sûre à partager avec quiconque "
-"avec qui vous souhaitez interagir."
+msgid "This is your public address and is safe to share with anyone you want to interact with."
+msgstr "Ceci est votre adresse publique et elle est sûre à partager avec quiconque avec qui vous souhaitez interagir."
 
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:432
-msgid ""
-"This link will not expire, but you can generate a new one at any time, which"
-" will invalidate the old link."
-msgstr ""
-"Ce lien n'expirera pas, mais vous pouvez en générer un nouveau à tout "
-"moment, ce qui invalidera l'ancien lien."
+msgid "This link will not expire, but you can generate a new one at any time, which will invalidate the old link."
+msgstr "Ce lien n'expirera pas, mais vous pouvez en générer un nouveau à tout moment, ce qui invalidera l'ancien lien."
+
+#~ msgid "This name conflicts with @everyone mentions."
+#~ msgstr "Ce nom entre en conflit avec les mentions @everyone."
 
 #: src/hooks/business/validation/useDisplayNameValidation.ts:23
 #: src/hooks/business/validation/useDisplayNameValidation.ts:52
 msgid "This name conflicts with mention keywords."
 msgstr "Ce nom entre en conflit avec des mots-clés de mention."
+
+#~ msgid "This protects your identity as the space owner. However, if you're the only one with this role, your identity becomes obvious. Consider having multiple users (real or fake accounts) with the same role for better privacy protection."
+#~ msgstr "Cela protège votre identité en tant que propriétaire de l'espace. Cependant, si vous êtes le seul à avoir ce rôle, votre identité devient évidente. Envisagez d'avoir plusieurs utilisateurs (comptes réels ou faux) avec le même rôle pour une meilleure protection de la vie privée."
 
 #: src/components/context/MessageDB.bak.tsx:4820
 #: src/components/message/InviteLink.tsx:44
@@ -2833,8 +2786,7 @@ msgstr "Cet utilisateur est déjà membre de cet Espace."
 
 #: src/components/modals/MuteUserModal.tsx:115
 msgid "This user will be able to send messages in this Space again."
-msgstr ""
-"Cet utilisateur pourra à nouveau envoyer des messages dans cet Espace."
+msgstr "Cet utilisateur pourra à nouveau envoyer des messages dans cet Espace."
 
 #: src/components/modals/KickUserModal.tsx:86
 msgid "This user will be removed from the Space."
@@ -2846,24 +2798,18 @@ msgstr "Cet utilisateur ne pourra plus envoyer de messages dans cet Espace."
 
 #: src/components/modals/MuteUserModal.tsx:118
 msgid "This user will not be able to send messages for {days} days."
-msgstr ""
-"Cet utilisateur ne pourra pas envoyer de messages pendant {days} jours."
+msgstr "Cet utilisateur ne pourra pas envoyer de messages pendant {days} jours."
 
 #: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:634
-msgid ""
-"This will create a public invite link that anyone can use to join your "
-"Space. Consider who you share this link with."
-msgstr ""
-"Cela créera un lien d'invitation public que quiconque peut utiliser pour "
-"rejoindre votre Espace. Réfléchissez à qui vous partagez ce lien."
+msgid "This will create a public invite link that anyone can use to join your Space. Consider who you share this link with."
+msgstr "Cela créera un lien d'invitation public que quiconque peut utiliser pour rejoindre votre Espace. Réfléchissez à qui vous partagez ce lien."
 
 #: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:633
-msgid ""
-"This will generate a new public invite link and invalidate the current one. "
-"Anyone with the old link will no longer be able to use it."
-msgstr ""
-"Cela générera un nouveau lien d'invitation public et invalidera l'ancien. "
-"Quiconque possède l'ancien lien ne pourra plus l'utiliser."
+msgid "This will generate a new public invite link and invalidate the current one. Anyone with the old link will no longer be able to use it."
+msgstr "Cela générera un nouveau lien d'invitation public et invalidera l'ancien. Quiconque possède l'ancien lien ne pourra plus l'utiliser."
+
+#~ msgid "This will permanently delete the current public invite link. Anyone who has this link will no longer be able to use it to join your Space."
+#~ msgstr "Cela supprimera définitivement l'ancien lien d'invitation public. Quiconque possède ce lien ne pourra plus l'utiliser pour rejoindre votre Espace."
 
 #: src/components/modals/ModalSaveOverlay.tsx:97
 msgid "Timeout in 10 seconds anyway..."
@@ -2871,63 +2817,40 @@ msgstr "Délai d'attente dans 10 secondes de toute façon..."
 
 #: src/components/modals/ConfirmationModal.native.tsx:57
 #: src/components/modals/ConfirmationModal.tsx:82
-msgid ""
-"TIP: Hold down shift when clicking {protipAction} to bypass this "
-"confirmation entirely."
-msgstr ""
-"CONSEIL : Maintenez la touche majuscule en cliquant sur {protipAction} pour "
-"contourner cette confirmation entièrement."
+msgid "TIP: Hold down shift when clicking {protipAction} to bypass this confirmation entirely."
+msgstr "CONSEIL : Maintenez la touche majuscule en cliquant sur {protipAction} pour contourner cette confirmation entièrement."
 
 #: src/components/modals/UserSettingsModal/Notifications.tsx:71
-msgid ""
-"To disable notifications, please change the setting in your browser "
-"settings. Notifications cannot be disabled programmatically."
-msgstr ""
-"Pour désactiver les notifications, veuillez modifier le paramètre dans les "
-"paramètres de votre navigateur. Les notifications ne peuvent pas être "
-"désactivées par programme."
+msgid "To disable notifications, please change the setting in your browser settings. Notifications cannot be disabled programmatically."
+msgstr "Pour désactiver les notifications, veuillez modifier le paramètre dans les paramètres de votre navigateur. Les notifications ne peuvent pas être désactivées par programme."
 
 #: src/utils/dateFormatting.ts:28
 msgid "Today"
 msgstr "Aujourd'hui"
 
 #: src/utils/dateFormatting.ts:37
-msgid "Today at {timeFormatted}"
-msgstr "Aujourd'hui à {timeFormatted}"
+#~ msgid "Today at {timeFormatted}"
+#~ msgstr "Aujourd'hui à {timeFormatted}"
 
 #: src/components/primitives/FileUpload/FileUpload.web.tsx:66
 msgid "Too many files selected. Please select fewer files."
-msgstr ""
-"Trop de fichiers sélectionnés. Veuillez sélectionner moins de fichiers."
+msgstr "Trop de fichiers sélectionnés. Veuillez sélectionner moins de fichiers."
 
 #: src/hooks/business/messages/useMessageComposer.ts:140
-msgid ""
-"Too many mentions in message. Maximum {MAX_MENTIONS_PER_MESSAGE} allowed."
-msgstr ""
-"Trop de mentions dans le message. Maximum {MAX_MENTIONS_PER_MESSAGE} "
-"autorisées."
+msgid "Too many mentions in message. Maximum {MAX_MENTIONS_PER_MESSAGE} allowed."
+msgstr "Trop de mentions dans le message. Maximum {MAX_MENTIONS_PER_MESSAGE} autorisées."
 
 #: src/components/search/SearchResults.tsx:105
 msgid "Try different keywords or check your spelling"
 msgstr "Essayez des mots-clés différents ou vérifiez votre orthographe"
 
 #: src/components/modals/CreateSpaceModal.tsx:248
-msgid ""
-"Turn this on to let anyone with the invite link join automatically. Turn it "
-"off to preview and approve each person before they can join. Note: Public "
-"links give full read access to your Space while the link is active."
-msgstr ""
-"Activez ceci pour permettre à quiconque ayant le lien d'invitation de "
-"rejoindre automatiquement. Désactivez-le pour prévisualiser et approuver "
-"chaque personne avant qu'elle ne puisse rejoindre. Remarque : Les liens "
-"publics donnent un accès complet en lecture à votre Space tant que le lien "
-"est actif."
+msgid "Turn this on to let anyone with the invite link join automatically. Turn it off to preview and approve each person before they can join. Note: Public links give full read access to your Space while the link is active."
+msgstr "Activez ceci pour permettre à quiconque ayant le lien d'invitation de rejoindre automatiquement. Désactivez-le pour prévisualiser et approuver chaque personne avant qu'elle ne puisse rejoindre. Remarque : Les liens publics donnent un accès complet en lecture à votre Space tant que le lien est actif."
 
 #: src/hooks/business/ui/useCustomAssets.ts:195
 msgid "Unable to compress emoji images. Please use smaller images."
-msgstr ""
-"Impossible de compresser les images emoji. Veuillez utiliser des images plus"
-" petites."
+msgstr "Impossible de compresser les images emoji. Veuillez utiliser des images plus petites."
 
 #: src/hooks/business/spaces/useSpaceProfile.ts:132
 #: src/hooks/business/ui/useFileUpload.ts:100
@@ -2936,14 +2859,11 @@ msgstr ""
 #: src/hooks/business/user/useProfileImage.ts:94
 #: src/hooks/business/user/useWebFileUpload.ts:63
 msgid "Unable to compress image. Please use a smaller image."
-msgstr ""
-"Impossible de compresser l'image. Veuillez utiliser une image plus petite."
+msgstr "Impossible de compresser l'image. Veuillez utiliser une image plus petite."
 
 #: src/hooks/business/ui/useCustomAssets.ts:234
 msgid "Unable to compress sticker images. Please use smaller images."
-msgstr ""
-"Impossible de compresser les images d'autocollants. Veuillez utiliser des "
-"images plus petites."
+msgstr "Impossible de compresser les images d'autocollants. Veuillez utiliser des images plus petites."
 
 #: src/components/ui/ClickToCopyContent.native.tsx:167
 msgid "Unable to copy to clipboard"
@@ -2951,12 +2871,8 @@ msgstr "Impossible de copier dans le presse-papiers"
 
 #: src/components/context/MessageDB.bak.tsx:3483
 #: src/services/SpaceService.ts:560
-msgid ""
-"Unable to leave space due to incomplete configuration. The space data may be"
-" corrupted."
-msgstr ""
-"Impossible de quitter l'espace en raison d'une configuration incomplète. Les"
-" données de l'espace peuvent être corrompues."
+msgid "Unable to leave space due to incomplete configuration. The space data may be corrupted."
+msgstr "Impossible de quitter l'espace en raison d'une configuration incomplète. Les données de l'espace peuvent être corrompues."
 
 #: src/hooks/business/user/useSpaceRecovery.ts:40
 msgid "Unable to load user config"
@@ -2964,20 +2880,15 @@ msgstr "Impossible de charger la configuration utilisateur"
 
 #: src/utils/imageProcessing/errors.ts:33
 msgid "Unable to process emoji image. Please use a smaller image."
-msgstr ""
-"Impossible de traiter l'image d'emoji. Veuillez utiliser une image plus "
-"petite."
+msgstr "Impossible de traiter l'image d'emoji. Veuillez utiliser une image plus petite."
 
 #: src/utils/imageProcessing/errors.ts:30
 msgid "Unable to process image. Please use a smaller image."
-msgstr ""
-"Impossible de traiter l'image. Veuillez utiliser une image plus petite."
+msgstr "Impossible de traiter l'image. Veuillez utiliser une image plus petite."
 
 #: src/utils/imageProcessing/errors.ts:36
 msgid "Unable to process sticker image. Please use a smaller image."
-msgstr ""
-"Impossible de traiter l'image d'autocollant. Veuillez utiliser une image "
-"plus petite."
+msgstr "Impossible de traiter l'image d'autocollant. Veuillez utiliser une image plus petite."
 
 #: src/hooks/business/user/useSpaceRecovery.ts:24
 msgid "Unable to restore: not logged in"
@@ -2985,7 +2896,8 @@ msgstr "Impossible de restaurer : non connecté"
 
 #: src/components/direct/DirectMessageContactsList.tsx:296
 #: src/components/modals/JoinSpaceModal.tsx:112
-#: src/services/MessageService.ts:2091 src/services/MessageService.ts:3583
+#: src/services/MessageService.ts:2091
+#: src/services/MessageService.ts:3583
 msgid "Unknown"
 msgstr "Inconnu"
 
@@ -3011,15 +2923,13 @@ msgstr "Temps inconnu"
 #: src/components/direct/DirectMessage.tsx:247
 #: src/components/direct/DirectMessage.tsx:553
 #: src/components/direct/DirectMessageContactsList.tsx:43
-#: src/components/message/MessageComposer.tsx:749
-#: src/components/message/MessageComposer.tsx:756
-#: src/components/message/MessageEditTextarea.tsx:516
-#: src/components/message/MessageEditTextarea.tsx:548
-#: src/components/message/MessageEditTextarea.tsx:555
-#: src/components/message/MessageEditTextarea.tsx:559
-#: src/components/message/MessageEditTextarea.tsx:565
-#: src/components/message/MessageEditTextarea.tsx:693
-#: src/components/message/MessageEditTextarea.tsx:700
+#: src/components/message/MentionDropdown.tsx:190
+#: src/components/message/MentionDropdown.tsx:197
+#: src/components/message/MessageEditTextarea.tsx:532
+#: src/components/message/MessageEditTextarea.tsx:564
+#: src/components/message/MessageEditTextarea.tsx:571
+#: src/components/message/MessageEditTextarea.tsx:575
+#: src/components/message/MessageEditTextarea.tsx:581
 #: src/components/message/MessagePreview.tsx:196
 #: src/components/message/PinnedMessagesPanel.tsx:78
 #: src/components/modals/ConversationSettingsModal.tsx:108
@@ -3038,10 +2948,14 @@ msgstr "Temps inconnu"
 #: src/hooks/business/search/useSearchResultDisplayDM.ts:33
 #: src/hooks/business/search/useSearchResultDisplaySpace.ts:45
 #: src/hooks/queries/userInfo/buildUserInfoFetcher.ts:15
-#: src/services/EncryptionService.ts:138 src/services/MessageService.ts:1765
-#: src/services/MessageService.ts:1938 src/services/MessageService.ts:2079
-#: src/services/MessageService.ts:2108 src/services/MessageService.ts:4032
-#: src/services/MessageService.ts:4144 src/services/MessageService.ts:4312
+#: src/services/EncryptionService.ts:138
+#: src/services/MessageService.ts:1765
+#: src/services/MessageService.ts:1938
+#: src/services/MessageService.ts:2079
+#: src/services/MessageService.ts:2108
+#: src/services/MessageService.ts:4032
+#: src/services/MessageService.ts:4144
+#: src/services/MessageService.ts:4312
 #: src/services/MessageService.ts:4510
 msgid "Unknown User"
 msgstr "Utilisateur inconnu"
@@ -3098,42 +3012,35 @@ msgid "Unpinned!"
 msgstr "Déépinglé !"
 
 #: src/components/direct/DirectMessage.tsx:842
-msgid ""
-"Until you reply, this sender will not see your display name or profile "
-"picture"
-msgstr ""
-"Jusqu'à ce que vous répondiez, cet expéditeur ne verra pas votre nom "
-"d'affichage ou votre photo de profil"
+msgid "Until you reply, this sender will not see your display name or profile picture"
+msgstr "Jusqu'à ce que vous répondiez, cet expéditeur ne verra pas votre nom d'affichage ou votre photo de profil"
 
 #: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:470
-msgid ""
-"Update kick records for all members. Use this if kicked users still appear "
-"active to some members."
-msgstr ""
-"Mettre à jour les enregistrements de kick pour tous les membres. Utilisez "
-"ceci si les utilisateurs expulsés apparaissent toujours actifs pour certains"
-" membres."
+msgid "Update kick records for all members. Use this if kicked users still appear active to some members."
+msgstr "Mettre à jour les enregistrements de kick pour tous les membres. Utilisez ceci si les utilisateurs expulsés apparaissent toujours actifs pour certains membres."
 
 #: src/components/modals/SpaceSettingsModal/General.tsx:230
 msgid "Upload a banner for your Space - PNG or JPG - Optimal ratio 3:1"
-msgstr ""
-"Téléchargez une bannière pour votre Espace - PNG ou JPG - Ratio optimal 3:1"
+msgstr "Téléchargez une bannière pour votre Espace - PNG ou JPG - Ratio optimal 3:1"
 
 #: src/components/modals/SpaceSettingsModal/Account.tsx:166
 msgid "Upload an avatar for this Space - PNG or JPG - Optimal ratio 1:1"
-msgstr ""
-"Téléchargez un avatar pour cet Espace - PNG ou JPG - Ratio optimal 1:1"
+msgstr "Téléchargez un avatar pour cet Espace - PNG ou JPG - Ratio optimal 1:1"
 
 #: src/components/modals/UserSettingsModal/General.tsx:94
 msgid "Upload an avatar for your profile - PNG or JPG - Optimal ratio 1:1"
-msgstr ""
-"Téléchargez un avatar pour votre profil - PNG ou JPG - Ratio optimal 1:1"
+msgstr "Téléchargez un avatar pour votre profil - PNG ou JPG - Ratio optimal 1:1"
 
 #: src/components/modals/CreateSpaceModal.tsx:126
 #: src/components/modals/SpaceSettingsModal/General.tsx:153
 msgid "Upload an icon for your Space - PNG or JPG - Optimal ratio 1:1"
-msgstr ""
-"Téléchargez une icône pour votre Espace - PNG ou JPG - Ratio optimal 1:1"
+msgstr "Téléchargez une icône pour votre Espace - PNG ou JPG - Ratio optimal 1:1"
+
+#~ msgid "Upload an image and choose a name for your Space."
+#~ msgstr "Téléchargez une image et choisissez un nom pour votre Space."
+
+#~ msgid "Upload an image, choose a name, and optionally add a description for your Space."
+#~ msgstr "Téléchargez une image, choisissez un nom et ajoutez éventuellement une description pour votre Espace."
 
 #: src/components/modals/SpaceSettingsModal/Emojis.tsx:59
 msgid "Upload Emoji"
@@ -3145,8 +3052,10 @@ msgstr "Télécharger l'autocollant"
 
 #: src/hooks/platform/files/useFileDownload.native.ts:108
 msgid "Use \"Save to Files\" to save your private key"
-msgstr ""
-"Utilisez \"Enregistrer dans les fichiers\" pour enregistrer votre clé privée"
+msgstr "Utilisez \"Enregistrer dans les fichiers\" pour enregistrer votre clé privée"
+
+#~ msgid "Use the below button to kick this user out of the Space"
+#~ msgstr "Utilisez le bouton ci-dessous pour expulser cet utilisateur du Space"
 
 #: src/components/modals/NewDirectMessageModal.tsx:120
 msgid "User address here"
@@ -3157,10 +3066,19 @@ msgstr "Adresse de l'utilisateur ici"
 msgid "User does not exist."
 msgstr "L'utilisateur n'existe pas."
 
+#~ msgid "User Muted!"
+#~ msgstr "Utilisateur mis en sourdine !"
+
 #: src/hooks/business/messages/usePinnedMessages.ts:77
 #: src/hooks/business/messages/usePinnedMessages.ts:169
 msgid "User not authenticated"
 msgstr "Utilisateur non authentifié"
+
+#~ msgid "User Unmuted!"
+#~ msgstr "Utilisateur désactivé !"
+
+#~ msgid "Username or Address"
+#~ msgstr "Nom d'utilisateur ou adresse"
 
 #: src/components/context/WebsocketProvider.tsx:253
 msgid "useWebSocket must be used within a WebSocketProvider"
@@ -3186,52 +3104,24 @@ msgstr "Qu'avez-vous en tête aujourd'hui ?"
 
 #: src/components/modals/ConversationSettingsModal.tsx:248
 #: src/components/modals/SpaceSettingsModal/General.tsx:323
-msgid ""
-"When enabled, all previous versions of edited messages will be saved. When "
-"disabled, only the current edited version is kept."
-msgstr ""
-"Lorsqu'il est activé, toutes les versions précédentes des messages modifiés "
-"seront enregistrées. Lorsqu'il est désactivé, seule la version actuelle "
-"modifiée est conservée."
+msgid "When enabled, all previous versions of edited messages will be saved. When disabled, only the current edited version is kept."
+msgstr "Lorsqu'il est activé, toutes les versions précédentes des messages modifiés seront enregistrées. Lorsqu'il est désactivé, seule la version actuelle modifiée est conservée."
 
 #: src/components/modals/UserSettingsModal/Privacy.tsx:146
-msgid ""
-"When enabled, other users can see when you are active. This feature is not "
-"yet available."
-msgstr ""
-"Lorsque cette option est activée, d'autres utilisateurs peuvent voir quand "
-"vous êtes actif. Cette fonctionnalité n'est pas encore disponible."
+msgid "When enabled, other users can see when you are active. This feature is not yet available."
+msgstr "Lorsque cette option est activée, d'autres utilisateurs peuvent voir quand vous êtes actif. Cette fonctionnalité n'est pas encore disponible."
 
 #: src/components/modals/UserSettingsModal/Privacy.tsx:108
-msgid ""
-"When enabled, synchronizes your user data, Spaces, and Space keys between "
-"devices. Enabling this increases metadata visibility of your account, which "
-"can reveal when you have joined new Spaces, although not the Spaces you have"
-" joined."
-msgstr ""
-"Lorsqu'elle est activée, synchronise vos données utilisateur, Spaces et clés"
-" de Space entre les appareils. Activer cette option augmente la visibilité "
-"des métadonnées de votre compte, ce qui peut révéler quand vous avez rejoint"
-" de nouveaux Spaces, bien que pas les Spaces que vous avez rejoints."
+msgid "When enabled, synchronizes your user data, Spaces, and Space keys between devices. Enabling this increases metadata visibility of your account, which can reveal when you have joined new Spaces, although not the Spaces you have joined."
+msgstr "Lorsqu'elle est activée, synchronise vos données utilisateur, Spaces et clés de Space entre les appareils. Activer cette option augmente la visibilité des métadonnées de votre compte, ce qui peut révéler quand vous avez rejoint de nouveaux Spaces, bien que pas les Spaces que vous avez rejoints."
 
 #: src/components/modals/SpaceSettingsModal/General.tsx:298
-msgid ""
-"When messages are signed, senders confirm they come from their key. When "
-"messages aren't signed, senders have plausible deniability. This setting "
-"applies to all messages in this Space."
-msgstr ""
-"Lorsque les messages sont signés, les expéditeurs confirment qu'ils "
-"proviennent de leur clé. Lorsque les messages ne sont pas signés, les "
-"expéditeurs ont une dénégation plausible. Ce paramètre s'applique à tous les"
-" messages dans cet Espace."
+msgid "When messages are signed, senders confirm they come from their key. When messages aren't signed, senders have plausible deniability. This setting applies to all messages in this Space."
+msgstr "Lorsque les messages sont signés, les expéditeurs confirment qu'ils proviennent de leur clé. Lorsque les messages ne sont pas signés, les expéditeurs ont une dénégation plausible. Ce paramètre s'applique à tous les messages dans cet Espace."
 
 #: src/components/modals/ConversationSettingsModal.tsx:226
-msgid ""
-"When muted, new messages won't show unread indicators or desktop "
-"notifications."
-msgstr ""
-"Lorsque la conversation est mise en sourdine, les nouveaux messages ne "
-"montreront pas d'indicateurs de non lus ou de notifications de bureau."
+msgid "When muted, new messages won't show unread indicators or desktop notifications."
+msgstr "Lorsque la conversation est mise en sourdine, les nouveaux messages ne montreront pas d'indicateurs de non lus ou de notifications de bureau."
 
 #: src/components/modals/SpaceSettingsModal/Account.tsx:254
 msgid "When someone mentions @everyone"
@@ -3241,6 +3131,9 @@ msgstr "Lorsque quelqu'un mentionne @tout le monde"
 msgid "When someone mentions a role you have"
 msgstr "Lorsque quelqu'un mentionne un rôle que vous avez"
 
+#~ msgid "When someone mentions a role you have (Coming Soon)"
+#~ msgstr "Lorsque quelqu'un mentionne un rôle que vous avez (Bientôt disponible)"
+
 #: src/components/modals/SpaceSettingsModal/Account.tsx:249
 msgid "When someone mentions you directly"
 msgstr "Lorsque quelqu'un vous mentionne directement"
@@ -3249,37 +3142,22 @@ msgstr "Lorsque quelqu'un vous mentionne directement"
 msgid "When someone replies to your messages"
 msgstr "Lorsque quelqu'un répond à vos messages"
 
+#~ msgid "When this setting is enabled, invite links will automatically allow a user to join your Space. When it is not enabled, users following an invite link will send you a request to join your Space that you must manually approve. Public links require some key material to be present in the link – be aware that possession of a public Space link can allow anyone with the link to read messages on the Space for the duration of the link being valid."
+#~ msgstr "Lorsque ce paramètre est activé, les liens d'invitation permettront automatiquement à un utilisateur de rejoindre votre Space. Lorsqu'il n'est pas activé, les utilisateurs suivant un lien d'invitation vous enverront une demande pour rejoindre votre Space que vous devez approuver manuellement. Les liens publics nécessitent que certains matériaux clés soient présents dans le lien – soyez conscient que la possession d'un lien public de Space peut permettre à quiconque ayant le lien de lire les messages sur le Space pendant la durée de validité du lien."
+
 #: src/components/onboarding/Onboarding.tsx:164
-msgid ""
-"When using Quorum on a browser, your messages are saved locally to your "
-"browser."
-msgstr ""
-"Lors de l'utilisation de Quorum sur un navigateur, vos messages sont "
-"enregistrés localement sur votre navigateur."
+msgid "When using Quorum on a browser, your messages are saved locally to your browser."
+msgstr "Lors de l'utilisation de Quorum sur un navigateur, vos messages sont enregistrés localement sur votre navigateur."
 
 #: src/components/modals/ConversationSettingsModal.tsx:205
-msgid ""
-"When you sign a message, you are confirming that it comes from your key. "
-"When you don't sign a message, you have plausible deniability. The default "
-"for all conversations can be changed in User Settings."
-msgstr ""
-"Lorsque vous signez un message, vous confirmez qu'il provient de votre clé. "
-"Lorsque vous ne signez pas un message, vous avez une dénégation plausible. "
-"Le paramètre par défaut pour toutes les conversations peut être modifié dans"
-" les paramètres utilisateur."
+msgid "When you sign a message, you are confirming that it comes from your key. When you don't sign a message, you have plausible deniability. The default for all conversations can be changed in User Settings."
+msgstr "Lorsque vous signez un message, vous confirmez qu'il provient de votre clé. Lorsque vous ne signez pas un message, vous avez une dénégation plausible. Le paramètre par défaut pour toutes les conversations peut être modifié dans les paramètres utilisateur."
 
 #: src/components/modals/UserSettingsModal/Privacy.tsx:127
-msgid ""
-"When you sign a message, you are confirming that it comes from your key. "
-"When you don't sign a message, you have plausible deniability. You can "
-"control this setting for each conversation and message individually."
-msgstr ""
-"Lorsque vous signez un message, vous confirmez qu'il provient de votre clé. "
-"Lorsque vous ne signez pas un message, vous avez une dénégation plausible. "
-"Vous pouvez contrôler ce paramètre pour chaque conversation et message "
-"individuellement."
+msgid "When you sign a message, you are confirming that it comes from your key. When you don't sign a message, you have plausible deniability. You can control this setting for each conversation and message individually."
+msgstr "Lorsque vous signez un message, vous confirmez qu'il provient de votre clé. Lorsque vous ne signez pas un message, vous avez une dénégation plausible. Vous pouvez contrôler ce paramètre pour chaque conversation et message individuellement."
 
-#: src/utils/dateFormatting.ts:29 src/utils/dateFormatting.ts:65
+#: src/utils/dateFormatting.ts:29
 msgid "Yesterday"
 msgstr "Hier"
 
@@ -3301,29 +3179,18 @@ msgid "You are muted for {0}"
 msgstr "Vous êtes muet pour {0}"
 
 #: src/components/modals/NewDirectMessageModal.tsx:159
-msgid ""
-"You can change this later for this conversation by clicking the lock icon in"
-" the Conversation view."
-msgstr ""
-"Vous pouvez changer cela plus tard pour cette conversation en cliquant sur "
-"l'icône de verrou dans la vue de conversation."
+msgid "You can change this later for this conversation by clicking the lock icon in the Conversation view."
+msgstr "Vous pouvez changer cela plus tard pour cette conversation en cliquant sur l'icône de verrou dans la vue de conversation."
 
 #: src/components/modals/UserSettingsModal/Notifications.tsx:76
-msgid ""
-"You can manage your Space mention notifications in each Space's settings."
-msgstr ""
-"Vous pouvez gérer vos notifications de mention d'espace dans les paramètres "
-"de chaque espace."
+msgid "You can manage your Space mention notifications in each Space's settings."
+msgstr "Vous pouvez gérer vos notifications de mention d'espace dans les paramètres de chaque espace."
 
 #: src/components/modals/GroupEditorModal.tsx:118
-msgid ""
-"You cannot delete a group that contains channels. Delete all {channelCount} "
-"channels in this group first."
-msgstr ""
-"Vous ne pouvez pas supprimer un groupe contenant des canaux. Supprimez "
-"d'abord tous les {channelCount} canaux de ce groupe."
+msgid "You cannot delete a group that contains channels. Delete all {channelCount} channels in this group first."
+msgstr "Vous ne pouvez pas supprimer un groupe contenant des canaux. Supprimez d'abord tous les {channelCount} canaux de ce groupe."
 
-#: src/components/message/MessageComposer.tsx:576
+#: src/components/message/MessageComposer.tsx:583
 #: src/components/space/Channel.tsx:1017
 msgid "You cannot post in this channel"
 msgstr "Vous ne pouvez pas publier dans ce canal"
@@ -3346,21 +3213,12 @@ msgid "You have new unread messages"
 msgstr "Vous avez de nouveaux messages non lus"
 
 #: src/components/modals/SpaceSettingsModal/Roles.tsx:54
-msgid ""
-"You must assign yourself a role for moderation actions (except kicking). "
-"Grant delete and mute permissions carefully. <0><1>Learn more</1></0>"
-msgstr ""
-"Vous devez vous attribuer un rôle pour les actions de modération (sauf pour "
-"expulser). Accordez les permissions de suppression et de mise en sourdine "
-"avec précaution. <0><1>En savoir plus</1></0>"
+msgid "You must assign yourself a role for moderation actions (except kicking). Grant delete and mute permissions carefully. <0><1>Learn more</1></0>"
+msgstr "Vous devez vous attribuer un rôle pour les actions de modération (sauf pour expulser). Accordez les permissions de suppression et de mise en sourdine avec précaution. <0><1>En savoir plus</1></0>"
 
 #: src/components/modals/SpaceSettingsModal/Account.tsx:304
-msgid ""
-"You won't be able to rejoin unless you are re-invited. Your existing "
-"messages will NOT be deleted."
-msgstr ""
-"Vous ne pourrez pas rejoindre à nouveau à moins d'être réinvité. Vos "
-"messages existants NE seront PAS supprimés."
+msgid "You won't be able to rejoin unless you are re-invited. Your existing messages will NOT be deleted."
+msgstr "Vous ne pourrez pas rejoindre à nouveau à moins d'être réinvité. Vos messages existants NE seront PAS supprimés."
 
 #: src/components/notifications/NotificationPanel.tsx:183
 msgid "You're all caught up!"
@@ -3372,41 +3230,28 @@ msgid "You're all set. Welcome to Quorum!"
 msgstr "Vous êtes prêt. Bienvenue à Quorum !"
 
 #: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:466
-msgid ""
-"You're not listed in this Space's members. Correcting this will add you to "
-"the Space Members list (stores your profile locally with your inbox "
-"address)."
-msgstr ""
-"Vous n'êtes pas répertorié parmi les membres de cet Espace. Corriger cela "
-"vous ajoutera à la liste des membres de l'Espace (stocke votre profil "
-"localement avec votre adresse de boîte de réception)."
+msgid "You're not listed in this Space's members. Correcting this will add you to the Space Members list (stores your profile locally with your inbox address)."
+msgstr "Vous n'êtes pas répertorié parmi les membres de cet Espace. Corriger cela vous ajoutera à la liste des membres de l'Espace (stocke votre profil localement avec votre adresse de boîte de réception)."
 
 #: src/components/ui/OfflineBanner.tsx:56
 msgid "You're offline"
 msgstr "Vous êtes hors ligne"
 
 #: src/components/modals/AddSpaceModal.tsx:140
-msgid ""
-"You're offline. Adding or creating a Space requires an internet connection."
-msgstr ""
-"Vous êtes hors ligne. Ajouter ou créer un Espace nécessite une connexion "
-"Internet."
+msgid "You're offline. Adding or creating a Space requires an internet connection."
+msgstr "Vous êtes hors ligne. Ajouter ou créer un Espace nécessite une connexion Internet."
 
 #: src/components/modals/CreateSpaceModal.tsx:88
 msgid "You're offline. Creating a Space requires an internet connection."
-msgstr ""
-"Vous êtes hors ligne. Créer un Espace nécessite une connexion Internet."
+msgstr "Vous êtes hors ligne. Créer un Espace nécessite une connexion Internet."
 
 #: src/components/modals/NewDirectMessageModal.tsx:102
 msgid "You're offline. Looking up new users requires an internet connection."
-msgstr ""
-"Vous êtes hors ligne. La recherche de nouveaux utilisateurs nécessite une "
-"connexion Internet."
+msgstr "Vous êtes hors ligne. La recherche de nouveaux utilisateurs nécessite une connexion Internet."
 
 #: src/hooks/business/messages/useMessageComposer.ts:170
 msgid "You're sending messages too quickly. Please wait a moment."
-msgstr ""
-"Vous envoyez des messages trop rapidement. Veuillez patienter un moment."
+msgstr "Vous envoyez des messages trop rapidement. Veuillez patienter un moment."
 
 #: src/components/message/InviteLink.tsx:60
 #: src/components/message/InviteLink.tsx:82
@@ -3417,21 +3262,22 @@ msgstr "Vous avez été invité à rejoindre un Space"
 msgid "Your Details"
 msgstr "Vos Détails"
 
+#~ msgid "Your device doesn't support automatic file downloads. Your private key will be copied to clipboard so you can save it manually."
+#~ msgstr "Votre appareil ne prend pas en charge les téléchargements de fichiers automatiques. Votre clé privée sera copiée dans le presse-papiers afin que vous puissiez l'enregistrer manuellement."
+
+#~ msgid "Your private key has been copied to clipboard. Save it as \"AccountID.key\" (you can find your Account ID in Settings later). NEVER share this key!"
+#~ msgstr "Votre clé privée a été copiée dans le presse-papiers. Enregistrez-la sous \"AccountID.key\" (vous pouvez trouver votre identifiant de compte dans les paramètres plus tard). NE PARTAGEZ JAMAIS cette clé !"
+
+#~ msgid "Your private key will be displayed on screen. Anyone who sees or photographs this QR code can take full control of your Quorum account and steal any associated funds."
+#~ msgstr "Votre clé privée sera affichée à l'écran. Quiconque voit ou photographie ce code QR peut prendre le contrôle total de votre compte Quorum et voler tous les fonds associés."
+
 #: src/utils/imageProcessing/errors.ts:40
-msgid ""
-"Your profile image size must be {maxSize} or less and must be a PNG, JPG, or"
-" JPEG file extension."
-msgstr ""
-"La taille de votre image de profil doit être de {maxSize} ou moins et doit "
-"avoir une extension de fichier PNG, JPG ou JPEG."
+msgid "Your profile image size must be {maxSize} or less and must be a PNG, JPG, or JPEG file extension."
+msgstr "La taille de votre image de profil doit être de {maxSize} ou moins et doit avoir une extension de fichier PNG, JPG ou JPEG."
 
 #: src/components/onboarding/Onboarding.native.tsx:370
-msgid ""
-"Your profile image size must be 2MB or less and must be a PNG, JPG, or JPEG "
-"file extension."
-msgstr ""
-"La taille de votre image de profil doit être de 2 Mo ou moins et doit avoir "
-"une extension de fichier PNG, JPG ou JPEG."
+msgid "Your profile image size must be 2MB or less and must be a PNG, JPG, or JPEG file extension."
+msgstr "La taille de votre image de profil doit être de 2 Mo ou moins et doit avoir une extension de fichier PNG, JPG ou JPEG."
 
 #: src/components/modals/SpaceSettingsModal/Account.tsx:204
 msgid "Your Roles"
@@ -3448,318 +3294,3 @@ msgstr "Vidéo YouTube"
 #: src/components/ui/YouTubeFacade.tsx:115
 msgid "YouTube Video Thumbnail"
 msgstr "Miniature de vidéo YouTube"
-
-#~ msgid ""
-#~ " Default Space settings provide the most typical chat experience, but for "
-#~ "higher privacy guarantees, review the Advanced Settings."
-#~ msgstr ""
-#~ "Les paramètres par défaut de l'Espace offrent l'expérience de chat la plus "
-#~ "typique, mais pour des garanties de confidentialité plus élevées, consultez "
-#~ "les paramètres avancés."
-
-#~ msgid "'everyone' is a reserved name."
-#~ msgstr "' tout le monde' est un nom réservé."
-
-#~ msgid "{0} pinned message"
-#~ msgstr "{0} message épinglé"
-
-#~ msgid "{0} pinned messages"
-#~ msgstr "{0} messages épinglés"
-
-#~ msgid "{0} unread mention"
-#~ msgstr "{0} mention non lue"
-
-#~ msgid "{0} unread mentions"
-#~ msgstr "{0} mentions non lues"
-
-#~ msgid "{count} New Messages"
-#~ msgstr "{count} Nouveaux Messages"
-
-#~ msgid "{user} has been kicked"
-#~ msgstr "{user} a été exclu"
-
-#~ msgid "{user} has joined"
-#~ msgstr "{user} a adhéré"
-
-#~ msgid "{user} has left"
-#~ msgstr "{user} est parti"
-
-#~ msgid "Account Settings for This Space"
-#~ msgstr "Paramètres du compte pour cet Espace"
-
-#~ msgid ""
-#~ "Are you sure you want to leave this Space? You won't be able to rejoin "
-#~ "unless you are re-invited. Your existing messages will NOT be deleted."
-#~ msgstr ""
-#~ "Êtes-vous sûr de vouloir quitter cet Espace ? Vous ne pourrez pas revenir à "
-#~ "moins d'être réinvité. Vos messages existants ne seront PAS supprimés."
-
-#~ msgid ""
-#~ "As a space owner, you must assign yourself a role to perform moderation "
-#~ "actions. Kicking users is the only action that doesn't require a role. "
-#~ "<0><1>Learn more</1></0>"
-#~ msgstr ""
-#~ "En tant que propriétaire de l'espace, vous devez vous attribuer un rôle pour"
-#~ " effectuer des actions de modération. Le fait de renvoyer des utilisateurs "
-#~ "est la seule action qui ne nécessite pas de rôle. <0><1>En savoir "
-#~ "plus</1></0>"
-
-#~ msgid ""
-#~ "As a space owner, you need to assign yourself a role with delete permissions"
-#~ " to delete other users' messages. <0><1>Learn more</1></0>"
-#~ msgstr ""
-#~ "En tant que propriétaire de l'espace, vous devez vous attribuer un rôle avec"
-#~ " des permissions de suppression pour supprimer les messages des autres "
-#~ "utilisateurs. <0><1>En savoir plus</1></0>"
-
-#~ msgid "Bookmark limit reached"
-#~ msgstr "Limite de signets atteinte"
-
-#~ msgid "Change your avatar and name for this Space."
-#~ msgstr "Changez votre avatar et votre nom pour cet Espace."
-
-#~ msgid "Confirm"
-#~ msgstr "Confirmer"
-
-#~ msgid "Copy Key & Continue"
-#~ msgstr "Copier la clé et continuer"
-
-#~ msgid "Delete Current Link"
-#~ msgstr "Supprimer le lien actuel"
-
-#~ msgid "Delete Link"
-#~ msgstr "Supprimer le lien"
-
-#~ msgid "Delete Public Invite Link"
-#~ msgstr "Supprimer le lien d'invitation public"
-
-#~ msgid "Description"
-#~ msgstr "Description"
-
-#~ msgid "Description must be {maxDescriptionLength} characters or less"
-#~ msgstr ""
-#~ "La description doit comporter {maxDescriptionLength} caractères ou moins"
-
-#~ msgid "DM Requests"
-#~ msgstr "Demandes de DM"
-
-#~ msgid "Enter a name for your new Space"
-#~ msgstr "Entrez un nom pour votre nouvel Espace"
-
-#~ msgid "Error processing queue:"
-#~ msgstr "Erreur lors du traitement de la file d'attente :"
-
-#~ msgid ""
-#~ "Export your key to a file by clicking this button. Do not share this file "
-#~ "with anyone else or they can impersonate you or steal your Space's Apex "
-#~ "earnings."
-#~ msgstr ""
-#~ "Exportez votre clé vers un fichier en cliquant sur ce bouton. Ne partagez "
-#~ "pas ce fichier avec qui que ce soit, sinon ils pourraient se faire passer "
-#~ "pour vous ou voler les gains Apex de votre Espace."
-
-#~ msgid "Failed to copy to clipboard. Please try again."
-#~ msgstr "Échec de la copie dans le presse-papiers. Veuillez réessayer."
-
-#~ msgid "Folder Settings"
-#~ msgstr "Paramètres du dossier"
-
-#~ msgid "hide home screen"
-#~ msgstr "cacher l'écran d'accueil"
-
-#~ msgid "I've Saved It"
-#~ msgstr "Je l'ai enregistré"
-
-#~ msgid "Key Copied!"
-#~ msgstr "Clé copiée !"
-
-#~ msgid "Kick Users"
-#~ msgstr "Expulser les utilisateurs"
-
-#~ msgid "Kick!"
-#~ msgstr "Expulser !"
-
-#~ msgid "Manage your settings for this Space."
-#~ msgstr "Gérez vos paramètres pour cet Espace."
-
-#~ msgid "Manual Backup Required"
-#~ msgstr "Sauvegarde manuelle requise"
-
-#~ msgid "New Messages"
-#~ msgstr "Nouveaux Messages"
-
-#~ msgid "No message requests"
-#~ msgstr "Aucune demande de message"
-
-#~ msgid "No topic"
-#~ msgstr "Aucun sujet"
-
-#~ msgid "No unread mentions"
-#~ msgstr "Aucune mention non lue"
-
-#~ msgid ""
-#~ "Only proceed if you are in a private location and ready to scan immediately."
-#~ msgstr ""
-#~ "Procédez uniquement si vous êtes dans un endroit privé et prêt à scanner "
-#~ "immédiatement."
-
-#~ msgid "optional"
-#~ msgstr "optionnel"
-
-#~ msgid "Press Enter to save, Shift+Enter for new line, Esc to cancel"
-#~ msgstr ""
-#~ "Appuyez sur Entrée pour enregistrer, Maj+Entrée pour une nouvelle ligne, "
-#~ "Échap pour annuler"
-
-#~ msgid "Processing..."
-#~ msgstr "Traitement..."
-
-#~ msgid ""
-#~ "Requiring roles for moderation actions protects your identity as the space "
-#~ "owner. However, if you're the only one with a specific role, your actions "
-#~ "may reveal who you are. For better privacy, consider having multiple users "
-#~ "(real or additional accounts) share the same role."
-#~ msgstr ""
-#~ "Exiger des rôles pour les actions de modération protège votre identité en "
-#~ "tant que propriétaire de l'espace. Cependant, si vous êtes le seul à avoir "
-#~ "un rôle spécifique, vos actions peuvent révéler qui vous êtes. Pour une "
-#~ "meilleure confidentialité, envisagez d'avoir plusieurs utilisateurs (réels "
-#~ "ou comptes supplémentaires) partageant le même rôle."
-
-#~ msgid "Restore Missing Spaces"
-#~ msgstr "Restaurer les espaces manquants"
-
-#~ msgid "Security Warning"
-#~ msgstr "Avertissement de sécurité"
-
-#~ msgid ""
-#~ "Select any existing role as managers for this channel. Managers have post, "
-#~ "delete, and pin permissions on ANY message by default. If no managers are "
-#~ "selected, only the Space owner can manage the channel."
-#~ msgstr ""
-#~ "Sélectionnez tout rôle existant comme gestionnaires pour ce canal. Les "
-#~ "gestionnaires ont des permissions de publication, de suppression et "
-#~ "d'épinglage sur TOUT message par défaut. Si aucun gestionnaire n'est "
-#~ "sélectionné, seul le propriétaire de l'Space peut gérer le canal."
-
-#~ msgid "Select for which mentions you will receive notifications"
-#~ msgstr "Sélectionner pour quelles mentions vous recevrez des notifications"
-
-#~ msgid ""
-#~ "Send invites to people you've previously had conversations with. An invite "
-#~ "button will appear in their inbox."
-#~ msgstr ""
-#~ "Envoyez des invitations aux personnes avec lesquelles vous avez déjà eu des "
-#~ "conversations. Un bouton d'invitation apparaîtra dans leur boîte de "
-#~ "réception."
-
-#~ msgid "show home screen"
-#~ msgstr "afficher l'écran d'accueil"
-
-#~ msgid "Show QR Code"
-#~ msgstr "Afficher le code QR"
-
-#~ msgid "Space Name"
-#~ msgstr "Nom de l'Espace"
-
-#~ msgid "Stay Connected, Stay Invisible"
-#~ msgstr "Restez connecté, restez invisible"
-
-#~ msgid ""
-#~ "Sync kick status for previously kicked users. This verifies kicks without "
-#~ "posting visible messages."
-#~ msgstr ""
-#~ "Synchroniser l'état d'expulsion pour les utilisateurs précédemment expulsés."
-#~ " Cela vérifie les expulsions sans publier de messages visibles."
-
-#~ msgid "Syncing Space..."
-#~ msgstr "Synchronisation de l'Espace..."
-
-#~ msgid "This name conflicts with @everyone mentions."
-#~ msgstr "Ce nom entre en conflit avec les mentions @everyone."
-
-#~ msgid ""
-#~ "This protects your identity as the space owner. However, if you're the only "
-#~ "one with this role, your identity becomes obvious. Consider having multiple "
-#~ "users (real or fake accounts) with the same role for better privacy "
-#~ "protection."
-#~ msgstr ""
-#~ "Cela protège votre identité en tant que propriétaire de l'espace. Cependant,"
-#~ " si vous êtes le seul à avoir ce rôle, votre identité devient évidente. "
-#~ "Envisagez d'avoir plusieurs utilisateurs (comptes réels ou faux) avec le "
-#~ "même rôle pour une meilleure protection de la vie privée."
-
-#~ msgid ""
-#~ "This will permanently delete the current public invite link. Anyone who has "
-#~ "this link will no longer be able to use it to join your Space."
-#~ msgstr ""
-#~ "Cela supprimera définitivement l'ancien lien d'invitation public. Quiconque "
-#~ "possède ce lien ne pourra plus l'utiliser pour rejoindre votre Espace."
-
-#~ msgid "Upload an image and choose a name for your Space."
-#~ msgstr "Téléchargez une image et choisissez un nom pour votre Space."
-
-#~ msgid ""
-#~ "Upload an image, choose a name, and optionally add a description for your "
-#~ "Space."
-#~ msgstr ""
-#~ "Téléchargez une image, choisissez un nom et ajoutez éventuellement une "
-#~ "description pour votre Espace."
-
-#~ msgid "Use the below button to kick this user out of the Space"
-#~ msgstr "Utilisez le bouton ci-dessous pour expulser cet utilisateur du Space"
-
-#~ msgid "User Muted!"
-#~ msgstr "Utilisateur mis en sourdine !"
-
-#~ msgid "User Unmuted!"
-#~ msgstr "Utilisateur désactivé !"
-
-#~ msgid "Username or Address"
-#~ msgstr "Nom d'utilisateur ou adresse"
-
-#~ msgid "When someone mentions a role you have (Coming Soon)"
-#~ msgstr ""
-#~ "Lorsque quelqu'un mentionne un rôle que vous avez (Bientôt disponible)"
-
-#~ msgid ""
-#~ "When this setting is enabled, invite links will automatically allow a user "
-#~ "to join your Space. When it is not enabled, users following an invite link "
-#~ "will send you a request to join your Space that you must manually approve. "
-#~ "Public links require some key material to be present in the link – be aware "
-#~ "that possession of a public Space link can allow anyone with the link to "
-#~ "read messages on the Space for the duration of the link being valid."
-#~ msgstr ""
-#~ "Lorsque ce paramètre est activé, les liens d'invitation permettront "
-#~ "automatiquement à un utilisateur de rejoindre votre Space. Lorsqu'il n'est "
-#~ "pas activé, les utilisateurs suivant un lien d'invitation vous enverront une"
-#~ " demande pour rejoindre votre Space que vous devez approuver manuellement. "
-#~ "Les liens publics nécessitent que certains matériaux clés soient présents "
-#~ "dans le lien – soyez conscient que la possession d'un lien public de Space "
-#~ "peut permettre à quiconque ayant le lien de lire les messages sur le Space "
-#~ "pendant la durée de validité du lien."
-
-#~ msgid ""
-#~ "Your device doesn't support automatic file downloads. Your private key will "
-#~ "be copied to clipboard so you can save it manually."
-#~ msgstr ""
-#~ "Votre appareil ne prend pas en charge les téléchargements de fichiers "
-#~ "automatiques. Votre clé privée sera copiée dans le presse-papiers afin que "
-#~ "vous puissiez l'enregistrer manuellement."
-
-#~ msgid ""
-#~ "Your private key has been copied to clipboard. Save it as \"AccountID.key\" "
-#~ "(you can find your Account ID in Settings later). NEVER share this key!"
-#~ msgstr ""
-#~ "Votre clé privée a été copiée dans le presse-papiers. Enregistrez-la sous "
-#~ "\"AccountID.key\" (vous pouvez trouver votre identifiant de compte dans les "
-#~ "paramètres plus tard). NE PARTAGEZ JAMAIS cette clé !"
-
-#~ msgid ""
-#~ "Your private key will be displayed on screen. Anyone who sees or photographs"
-#~ " this QR code can take full control of your Quorum account and steal any "
-#~ "associated funds."
-#~ msgstr ""
-#~ "Votre clé privée sera affichée à l'écran. Quiconque voit ou photographie ce "
-#~ "code QR peut prendre le contrôle total de votre compte Quorum et voler tous "
-#~ "les fonds associés."

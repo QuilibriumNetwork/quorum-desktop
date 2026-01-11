@@ -15,6 +15,18 @@ msgstr ""
 "X-Generator: @lingui/cli\n"
 
 #. js-lingui-explicit-id
+#: src/components/message/ReactionsList.tsx:92
+#: src/components/message/ReactionsList.tsx:106
+msgid "more"
+msgstr "more"
+
+#. js-lingui-explicit-id
+#: src/components/message/ReactionsList.tsx:94
+#: src/components/message/ReactionsList.tsx:99
+msgid "Reacted by"
+msgstr "Reacted by"
+
+#. js-lingui-explicit-id
 #: src/hooks/business/user/useFileUpload.native.ts:107
 #: src/hooks/business/user/useWebFileUpload.ts:34
 msgid "File cannot be larger than {maxFileSize}"
@@ -41,7 +53,7 @@ msgid "Your profile image size must be {maxFileSize} or less and must be a PNG, 
 msgstr "Your profile image size must be {maxFileSize} or less and must be a PNG, JPG, or JPEG file extension."
 
 #. js-lingui-explicit-id
-#: src/components/message/MessageComposer.tsx:646
+#: src/components/message/MessageComposer.tsx:653
 msgid "Replying to"
 msgstr "Replying to"
 
@@ -56,17 +68,17 @@ msgid "Replying to {user}"
 msgstr "Replying to {user}"
 
 #. js-lingui-explicit-id
-#: src/components/message/Message.tsx:337
+#: src/components/message/Message.tsx:329
 msgid "has joined"
 msgstr "has joined"
 
 #. js-lingui-explicit-id
-#: src/components/message/Message.tsx:345
+#: src/components/message/Message.tsx:337
 msgid "has left"
 msgstr "has left"
 
 #. js-lingui-explicit-id
-#: src/components/message/Message.tsx:353
+#: src/components/message/Message.tsx:345
 msgid "has been kicked"
 msgstr "has been kicked"
 
@@ -108,8 +120,8 @@ msgstr " for updates."
 #~ msgid "'everyone' is a reserved name."
 #~ msgstr "'everyone' is a reserved name."
 
-#: src/components/message/Message.tsx:803
-#: src/components/message/Message.tsx:816
+#: src/components/message/Message.tsx:791
+#: src/components/message/Message.tsx:804
 msgid "(edited)"
 msgstr "(edited)"
 
@@ -232,11 +244,11 @@ msgstr "{bookmarkCount} bookmarks"
 msgid "{count} new notifications"
 msgstr "{count} new notifications"
 
-#: src/utils/dateFormatting.ts:90
+#: src/utils/dateFormatting.ts:99
 msgid "{days} days"
 msgstr "{days} days"
 
-#: src/utils/dateFormatting.ts:92
+#: src/utils/dateFormatting.ts:101
 msgid "{hours} hours"
 msgstr "{hours} hours"
 
@@ -287,7 +299,7 @@ msgstr "0 = forever"
 msgid "0 Bytes"
 msgstr "0 Bytes"
 
-#: src/utils/dateFormatting.ts:84
+#: src/utils/dateFormatting.ts:93
 msgid "0 hours"
 msgstr "0 hours"
 
@@ -352,7 +364,7 @@ msgstr "Add Group"
 msgid "Add Role"
 msgstr "Add Role"
 
-#: src/components/message/MessageComposer.tsx:878
+#: src/components/message/MessageComposer.tsx:779
 msgid "add sticker"
 msgstr "add sticker"
 
@@ -501,7 +513,7 @@ msgstr "Are you sure you want to unpin this message?"
 #~ msgid "As a space owner, you need to assign yourself a role with delete permissions to delete other users' messages. <0><1>Learn more</1></0>"
 #~ msgstr "As a space owner, you need to assign yourself a role with delete permissions to delete other users' messages. <0><1>Learn more</1></0>"
 
-#: src/components/message/MessageComposer.tsx:830
+#: src/components/message/MessageComposer.tsx:731
 msgid "attach image"
 msgstr "attach image"
 
@@ -555,8 +567,8 @@ msgstr "Bookmark message"
 msgid "Bookmark messages to save them for later reference"
 msgstr "Bookmark messages to save them for later reference"
 
-#: src/components/message/Message.tsx:770
-#: src/components/message/Message.tsx:848
+#: src/components/message/Message.tsx:758
+#: src/components/message/Message.tsx:836
 msgid "Bookmarked"
 msgstr "Bookmarked"
 
@@ -601,7 +613,7 @@ msgstr "Camera permission is required to take photos"
 msgid "Cancel"
 msgstr "Cancel"
 
-#: src/components/message/MessageEditTextarea.tsx:813
+#: src/components/message/MessageEditTextarea.tsx:726
 msgid "CANCEL"
 msgstr "CANCEL"
 
@@ -1187,7 +1199,7 @@ msgstr "Enter both Space ID and Config Key to validate"
 msgid "Enter details manually"
 msgstr "Enter details manually"
 
-#: src/components/message/MessageEditTextarea.tsx:815
+#: src/components/message/MessageEditTextarea.tsx:728
 msgid "Enter to"
 msgstr "Enter to"
 
@@ -1221,7 +1233,7 @@ msgstr "Error requesting notification permission:"
 msgid "Error showing notification:"
 msgstr "Error showing notification:"
 
-#: src/components/message/MessageEditTextarea.tsx:800
+#: src/components/message/MessageEditTextarea.tsx:713
 msgid "Esc to"
 msgstr "Esc to"
 
@@ -1317,7 +1329,7 @@ msgstr "Failed to select document"
 msgid "Failed to send invite. Please try again."
 msgstr "Failed to send invite. Please try again."
 
-#: src/components/message/Message.tsx:1251
+#: src/components/message/Message.tsx:1213
 msgid "Failed to send."
 msgstr "Failed to send."
 
@@ -1664,7 +1676,7 @@ msgstr "Joining..."
 msgid "Jump"
 msgstr "Jump"
 
-#: src/components/message/MessageList.tsx:598
+#: src/components/message/MessageList.tsx:590
 msgid "Jump to present"
 msgstr "Jump to present"
 
@@ -1751,7 +1763,7 @@ msgstr "Light"
 msgid "Loading bookmarks..."
 msgstr "Loading bookmarks..."
 
-#: src/components/message/MessageList.tsx:609
+#: src/components/message/MessageList.tsx:601
 msgid "Loading message..."
 msgstr "Loading message..."
 
@@ -1854,21 +1866,21 @@ msgstr "Message actions"
 msgid "Message deleted"
 msgstr "Message deleted"
 
-#: src/components/message/Message.tsx:729
-#: src/components/message/Message.tsx:786
-#: src/components/message/Message.tsx:864
+#: src/components/message/Message.tsx:717
+#: src/components/message/Message.tsx:774
+#: src/components/message/Message.tsx:852
 msgid "Message does not have a valid signature, this may not be from the sender"
 msgstr "Message does not have a valid signature, this may not be from the sender"
 
-#: src/components/message/MessageComposer.tsx:153
+#: src/components/message/MessageComposer.tsx:154
 msgid "Message..."
 msgstr "Message..."
 
-#: src/components/message/MessageComposer.tsx:895
+#: src/components/message/MessageComposer.tsx:796
 msgid "Messages are NOT signed!"
 msgstr "Messages are NOT signed!"
 
-#: src/components/message/MessageComposer.tsx:896
+#: src/components/message/MessageComposer.tsx:797
 msgid "Messages are signed!"
 msgstr "Messages are signed!"
 
@@ -2076,7 +2088,7 @@ msgstr "Notifications are blocked. Please enable them in your browser settings."
 msgid "Notifications are not supported in this browser"
 msgstr "Notifications are not supported in this browser"
 
-#: src/components/message/MessageComposer.tsx:807
+#: src/components/message/MentionDropdown.tsx:257
 msgid "Notify all members"
 msgstr "Notify all members"
 
@@ -2210,14 +2222,14 @@ msgstr "Pin to top"
 msgid "Pin/Unpin without confirmation"
 msgstr "Pin/Unpin without confirmation"
 
-#: src/components/message/Message.tsx:754
-#: src/components/message/Message.tsx:832
+#: src/components/message/Message.tsx:742
+#: src/components/message/Message.tsx:820
 msgid "Pinned"
 msgstr "Pinned"
 
 #. placeholder {0}: mapSenderToUser(message.pinnedBy)?.displayName || message.pinnedBy
-#: src/components/message/Message.tsx:753
-#: src/components/message/Message.tsx:831
+#: src/components/message/Message.tsx:741
+#: src/components/message/Message.tsx:819
 msgid "Pinned by {0}"
 msgstr "Pinned by {0}"
 
@@ -2251,7 +2263,7 @@ msgstr "Privacy/Security"
 msgid "Private key saved to selected folder"
 msgstr "Private key saved to selected folder"
 
-#: src/components/message/MessageComposer.tsx:597
+#: src/components/message/MessageComposer.tsx:604
 msgid "Processing image... This may take a moment for large files."
 msgstr "Processing image... This may take a moment for large files."
 
@@ -2288,6 +2300,10 @@ msgstr "Quorum is peer-to-peer and end-to-end encrypted. This means your message
 #: src/components/context/RegistrationPersister.tsx:275
 msgid "Quorum was loaded while the browser was not in focus or a passkey request was rejected. Please reauthorize to access your messages."
 msgstr "Quorum was loaded while the browser was not in focus or a passkey request was rejected. Please reauthorize to access your messages."
+
+#: src/components/modals/ReactionsModal.tsx:73
+msgid "Reactions"
+msgstr "Reactions"
 
 #: src/components/modals/ChannelEditorModal.tsx:155
 msgid "Read only"
@@ -2388,7 +2404,7 @@ msgstr "Restored {0} space(s)"
 msgid "Restoring..."
 msgstr "Restoring..."
 
-#: src/components/message/Message.tsx:1262
+#: src/components/message/Message.tsx:1224
 msgid "Retry"
 msgstr "Retry"
 
@@ -2401,7 +2417,7 @@ msgstr "Roles"
 msgid "Save"
 msgstr "Save"
 
-#: src/components/message/MessageEditTextarea.tsx:834
+#: src/components/message/MessageEditTextarea.tsx:747
 msgid "SAVE"
 msgstr "SAVE"
 
@@ -2585,7 +2601,7 @@ msgstr "Send Private Invite"
 msgid "Send your public invite link directly to someone via DM."
 msgstr "Send your public invite link directly to someone via DM."
 
-#: src/components/message/Message.tsx:1244
+#: src/components/message/Message.tsx:1206
 msgid "Sending..."
 msgstr "Sending..."
 
@@ -2611,7 +2627,7 @@ msgstr "Share Public Link"
 msgid "Shift + Click"
 msgstr "Shift + Click"
 
-#: src/components/message/MessageEditTextarea.tsx:836
+#: src/components/message/MessageEditTextarea.tsx:749
 msgid "Shift+Enter for new line"
 msgstr "Shift+Enter for new line"
 
@@ -2880,8 +2896,8 @@ msgid "Today"
 msgstr "Today"
 
 #: src/utils/dateFormatting.ts:37
-msgid "Today at {timeFormatted}"
-msgstr "Today at {timeFormatted}"
+#~ msgid "Today at {timeFormatted}"
+#~ msgstr "Today at {timeFormatted}"
 
 #: src/components/primitives/FileUpload/FileUpload.web.tsx:66
 msgid "Too many files selected. Please select fewer files."
@@ -2974,15 +2990,13 @@ msgstr "Unknown time"
 #: src/components/direct/DirectMessage.tsx:247
 #: src/components/direct/DirectMessage.tsx:553
 #: src/components/direct/DirectMessageContactsList.tsx:43
-#: src/components/message/MessageComposer.tsx:749
-#: src/components/message/MessageComposer.tsx:756
-#: src/components/message/MessageEditTextarea.tsx:516
-#: src/components/message/MessageEditTextarea.tsx:548
-#: src/components/message/MessageEditTextarea.tsx:555
-#: src/components/message/MessageEditTextarea.tsx:559
-#: src/components/message/MessageEditTextarea.tsx:565
-#: src/components/message/MessageEditTextarea.tsx:693
-#: src/components/message/MessageEditTextarea.tsx:700
+#: src/components/message/MentionDropdown.tsx:190
+#: src/components/message/MentionDropdown.tsx:197
+#: src/components/message/MessageEditTextarea.tsx:532
+#: src/components/message/MessageEditTextarea.tsx:564
+#: src/components/message/MessageEditTextarea.tsx:571
+#: src/components/message/MessageEditTextarea.tsx:575
+#: src/components/message/MessageEditTextarea.tsx:581
 #: src/components/message/MessagePreview.tsx:196
 #: src/components/message/PinnedMessagesPanel.tsx:78
 #: src/components/modals/ConversationSettingsModal.tsx:108
@@ -3220,7 +3234,6 @@ msgid "When you sign a message, you are confirming that it comes from your key. 
 msgstr "When you sign a message, you are confirming that it comes from your key. When you don't sign a message, you have plausible deniability. You can control this setting for each conversation and message individually."
 
 #: src/utils/dateFormatting.ts:29
-#: src/utils/dateFormatting.ts:65
 msgid "Yesterday"
 msgstr "Yesterday"
 
@@ -3253,7 +3266,7 @@ msgstr "You can manage your Space mention notifications in each Space's settings
 msgid "You cannot delete a group that contains channels. Delete all {channelCount} channels in this group first."
 msgstr "You cannot delete a group that contains channels. Delete all {channelCount} channels in this group first."
 
-#: src/components/message/MessageComposer.tsx:576
+#: src/components/message/MessageComposer.tsx:583
 #: src/components/space/Channel.tsx:1017
 msgid "You cannot post in this channel"
 msgstr "You cannot post in this channel"
