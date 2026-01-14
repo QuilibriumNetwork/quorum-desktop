@@ -4,8 +4,7 @@ import {
   Input,
   Select,
   Button,
-  FlexRow,
-  FlexColumn,
+  Flex,
   Container,
   Text,
 } from '../../components/primitives';
@@ -634,7 +633,7 @@ export const ComponentAuditViewer: React.FC = () => {
         {/* Ready to Build Panel */}
         {data.mobile_strategy && (
           <div className="bg-accent/10 rounded-lg p-4 border border-accent/30 mb-6">
-            <FlexRow gap="sm" className="mb-3 items-center">
+            <Flex gap="sm" className="mb-3 items-center">
               <Text
                 variant="strong"
                 size="md"
@@ -642,7 +641,7 @@ export const ComponentAuditViewer: React.FC = () => {
               >
                 🚀 Ready to Build Now - {data.mobile_strategy.current_phase}
               </Text>
-            </FlexRow>
+            </Flex>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
               {data.mobile_strategy.ready_to_build.map((item, idx) => (
                 <div
@@ -652,11 +651,11 @@ export const ComponentAuditViewer: React.FC = () => {
                   <Text variant="strong" size="sm" className="mb-1">
                     {item.name}
                   </Text>
-                  <FlexRow gap="xs" className="mb-1 items-center">
+                  <Flex gap="xs" className="mb-1 items-center">
                     <Text variant="subtle" size="xs">
                       {item.effort}
                     </Text>
-                  </FlexRow>
+                  </Flex>
                   <Text variant="main" size="xs">
                     {item.reason}
                   </Text>
@@ -667,8 +666,8 @@ export const ComponentAuditViewer: React.FC = () => {
         )}
 
         {/* View Mode Toggle */}
-        <FlexRow gap="md" wrap className="mb-6">
-          <FlexColumn className="min-w-[200px]">
+        <Flex gap="md" wrap className="mb-6">
+          <Flex direction="column" className="min-w-[200px]">
             <Text variant="subtle" size="xs" className="mb-1">
               View Mode
             </Text>
@@ -683,12 +682,12 @@ export const ComponentAuditViewer: React.FC = () => {
                 { value: 'hierarchy', label: 'Native Roadmap' },
               ]}
             />
-          </FlexColumn>
-        </FlexRow>
+          </Flex>
+        </Flex>
 
         {/* Filters */}
-        <FlexRow gap="md" wrap className="mb-6">
-          <FlexColumn className="w-[250px] flex-shrink-0">
+        <Flex gap="md" wrap className="mb-6">
+          <Flex direction="column" className="w-[250px] flex-shrink-0">
             <Text variant="subtle" size="xs" className="mb-1">
               Search
             </Text>
@@ -699,9 +698,9 @@ export const ComponentAuditViewer: React.FC = () => {
               value={searchTerm}
               onChange={(value: string) => setSearchTerm(value)}
             />
-          </FlexColumn>
+          </Flex>
 
-          <FlexColumn className="min-w-[160px]">
+          <Flex direction="column" className="min-w-[160px]">
             <Text variant="subtle" size="xs" className="mb-1">
               Categories
             </Text>
@@ -718,9 +717,9 @@ export const ComponentAuditViewer: React.FC = () => {
                 { value: 'complex_refactor', label: 'Complex Refactor' },
               ]}
             />
-          </FlexColumn>
+          </Flex>
 
-          <FlexColumn className="min-w-[140px]">
+          <Flex direction="column" className="min-w-[140px]">
             <Text variant="subtle" size="xs" className="mb-1">
               Primitives
             </Text>
@@ -737,9 +736,9 @@ export const ComponentAuditViewer: React.FC = () => {
                 { value: 'done', label: 'Done' },
               ]}
             />
-          </FlexColumn>
+          </Flex>
 
-          <FlexColumn className="min-w-[120px]">
+          <Flex direction="column" className="min-w-[120px]">
             <Text variant="subtle" size="xs" className="mb-1">
               Logic
             </Text>
@@ -757,9 +756,9 @@ export const ComponentAuditViewer: React.FC = () => {
                 { value: 'keep', label: 'Keep' },
               ]}
             />
-          </FlexColumn>
+          </Flex>
 
-          <FlexColumn className="min-w-[120px]">
+          <Flex direction="column" className="min-w-[120px]">
             <Text variant="subtle" size="xs" className="mb-1">
               Native
             </Text>
@@ -778,9 +777,9 @@ export const ComponentAuditViewer: React.FC = () => {
                 { value: 'not_needed', label: 'Not Needed' },
               ]}
             />
-          </FlexColumn>
+          </Flex>
 
-          <FlexColumn className="min-w-[120px]">
+          <Flex direction="column" className="min-w-[120px]">
             <Text variant="subtle" size="xs" className="mb-1">
               Usage
             </Text>
@@ -800,9 +799,9 @@ export const ComponentAuditViewer: React.FC = () => {
                 { value: 'suspended', label: 'Suspended' },
               ]}
             />
-          </FlexColumn>
+          </Flex>
 
-          <FlexColumn className="min-w-[140px]">
+          <Flex direction="column" className="min-w-[140px]">
             <Text variant="subtle" size="xs" className="mb-1">
               Sort Order
             </Text>
@@ -818,9 +817,9 @@ export const ComponentAuditViewer: React.FC = () => {
                 { value: 'dependency', label: 'Dependency Level' },
               ]}
             />
-          </FlexColumn>
+          </Flex>
 
-          <FlexColumn className="min-w-[140px]">
+          <Flex direction="column" className="min-w-[140px]">
             <Text variant="subtle" size="xs" className="mb-1">
               Complexity
             </Text>
@@ -838,9 +837,9 @@ export const ComponentAuditViewer: React.FC = () => {
                 { value: 'complex', label: 'Complex' },
               ]}
             />
-          </FlexColumn>
+          </Flex>
 
-          <FlexColumn className="min-w-[120px]">
+          <Flex direction="column" className="min-w-[120px]">
             <Text variant="subtle" size="xs" className="mb-1">
               &nbsp;
             </Text>
@@ -851,8 +850,8 @@ export const ComponentAuditViewer: React.FC = () => {
             >
               Reset
             </Button>
-          </FlexColumn>
-        </FlexRow>
+          </Flex>
+        </Flex>
 
         {/* Component Views */}
         {viewMode === 'table' ? (
@@ -1458,7 +1457,7 @@ export const ComponentAuditViewer: React.FC = () => {
         </Container>
 
         {/* Back to Top Link */}
-        <FlexRow justify="center" className="mt-8">
+        <Flex justify="center" className="mt-8">
           <a
             href="#"
             onClick={(e) => {
@@ -1469,7 +1468,7 @@ export const ComponentAuditViewer: React.FC = () => {
           >
             Back to Top
           </a>
-        </FlexRow>
+        </Flex>
       </Container>
     </Container>
   );

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Spacer, FlexColumn, FlexRow } from '@/components/primitives';
+import { Spacer, Flex } from '@/components/primitives';
 import { ExampleBox } from '../ExampleBox';
 
 const config = {
@@ -57,7 +57,7 @@ export const SpacerExamples: React.FC = () => {
             <div className="border border-surface-4 rounded p-2 min-h-[100px] flex items-center justify-center">
               {/* Horizontal Spacing - 3 items */}
               {index === 0 && (
-                <FlexRow className="h-full w-full" align="center" justify="center">
+                <Flex className="h-full w-full" align="center" justify="center">
                   <div className="bg-accent-500 text-white px-2 py-1 rounded text-xs text-center">
                     Item 1
                   </div>
@@ -65,11 +65,11 @@ export const SpacerExamples: React.FC = () => {
                   <div className="bg-accent-500 text-white px-2 py-1 rounded text-xs text-center">
                     Item 2
                   </div>
-                </FlexRow>
+                </Flex>
               )}
               {/* Vertical Spacing - 3 items */}
               {index === 1 && (
-                <FlexColumn className="h-full w-full" align="center" justify="center">
+                <Flex direction="column" className="h-full w-full" align="center" justify="center">
                   <div className="bg-accent-500 text-white px-2 py-1 rounded text-xs text-center">
                     Item A
                   </div>
@@ -77,7 +77,7 @@ export const SpacerExamples: React.FC = () => {
                   <div className="bg-accent-500 text-white px-2 py-1 rounded text-xs text-center">
                     Item B
                   </div>
-                </FlexColumn>
+                </Flex>
               )}
               {/* SPACER-BORDER-SPACER pattern */}
               {index === 2 && (

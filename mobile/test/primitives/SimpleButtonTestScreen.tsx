@@ -4,7 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTheme } from '@/components/primitives/theme';
 import Button from '@/components/primitives/Button';
 import { Icon } from '@/components/primitives/Icon';
-import { Text, Paragraph, Title, FlexColumn, FlexRow } from '@/components/primitives';
+import { Text, Paragraph, Title, Flex } from '@/components/primitives';
 import {
   commonTestStyles,
   createThemedStyles,
@@ -21,20 +21,20 @@ export const SimpleButtonTestScreen: React.FC = () => {
       ]}
     >
       <ScrollView contentContainerStyle={commonTestStyles.contentPadding}>
-        <FlexColumn style={commonTestStyles.header}>
-          <FlexRow gap="md" align="center" style={{ alignItems: 'flex-start' }}>
+        <Flex direction="column" style={commonTestStyles.header}>
+          <Flex gap="md" align="center" style={{ alignItems: 'flex-start' }}>
             <Icon name="radio" size="xl" style={{ marginTop: 2 }} />
             <Title>Simple Button Test</Title>
-          </FlexRow>
+          </Flex>
           <Paragraph align="center">
             Testing Button primitive without flex layouts
           </Paragraph>
-        </FlexColumn>
+        </Flex>
 
         <View style={themedStyles.section}>
           <Title size="sm">Primary Variants</Title>
 
-          <FlexColumn gap={12}>
+          <Flex direction="column" gap={12}>
             <Button type="primary" onClick={() => {}}>
               Primary
             </Button>
@@ -50,13 +50,13 @@ export const SimpleButtonTestScreen: React.FC = () => {
             <Button type="light-outline" onClick={() => {}}>
               Light Outline
             </Button>
-          </FlexColumn>
+          </Flex>
         </View>
 
         <View style={themedStyles.section}>
           <Title size="sm">Subtle & Utility Variants</Title>
 
-          <FlexColumn gap={12}>
+          <Flex direction="column" gap={12}>
             <Button type="subtle" onClick={() => {}}>
               Subtle
             </Button>
@@ -72,7 +72,7 @@ export const SimpleButtonTestScreen: React.FC = () => {
             <Button type="danger-outline" onClick={() => {}}>
               Danger Outline
             </Button>
-          </FlexColumn>
+          </Flex>
         </View>
 
         <View
@@ -85,7 +85,7 @@ export const SimpleButtonTestScreen: React.FC = () => {
             White Variants (on colored bg)
           </Title>
 
-          <FlexColumn gap={12}>
+          <Flex direction="column" gap={12}>
             <Button type="primary-white" onClick={() => {}}>
               Primary White
             </Button>
@@ -97,13 +97,13 @@ export const SimpleButtonTestScreen: React.FC = () => {
             <Button type="light-outline-white" onClick={() => {}}>
               Light Outline White
             </Button>
-          </FlexColumn>
+          </Flex>
         </View>
 
         <View style={themedStyles.section}>
           <Title size="sm">Button Sizes</Title>
 
-          <FlexColumn gap={12}>
+          <Flex direction="column" gap={12}>
             <Button type="primary" size="large" onClick={() => {}}>
               Large Size
             </Button>
@@ -119,13 +119,13 @@ export const SimpleButtonTestScreen: React.FC = () => {
             <Button type="primary" size="compact" onClick={() => {}}>
               Compact Size
             </Button>
-          </FlexColumn>
+          </Flex>
         </View>
 
         <View style={themedStyles.section}>
           <Title size="sm">Buttons with Icons</Title>
 
-          <FlexColumn gap={12}>
+          <Flex direction="column" gap={12}>
             <Button type="primary" iconName="plus" onClick={() => {}}>
               Add Item
             </Button>
@@ -154,7 +154,7 @@ export const SimpleButtonTestScreen: React.FC = () => {
               onClick={() => {}}
             />
 
-            <FlexRow gap={8} style={{ alignItems: 'center' }}>
+            <Flex gap={8} style={{ alignItems: 'center' }}>
               <Button
                 type="unstyled"
                 iconName="arrow-right"
@@ -172,18 +172,18 @@ export const SimpleButtonTestScreen: React.FC = () => {
               <Paragraph>
                 Compact icon-only buttons (like in pinned messages)
               </Paragraph>
-            </FlexRow>
-          </FlexColumn>
+            </Flex>
+          </Flex>
         </View>
 
         <View style={themedStyles.section}>
           <Title size="sm">Disabled State</Title>
 
-          <FlexColumn gap={12}>
+          <Flex direction="column" gap={12}>
             <Button type="primary" disabled onClick={() => {}}>
               Disabled Button
             </Button>
-          </FlexColumn>
+          </Flex>
         </View>
       </ScrollView>
     </SafeAreaView>

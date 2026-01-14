@@ -3,7 +3,7 @@ import { ScrollView, View, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTheme, Text, Title, Icon } from '@/components/primitives';
 import Callout from '@/components/primitives/Callout';
-import { FlexRow, FlexColumn } from '@/components/primitives';
+import { Flex } from '@/components/primitives';
 import { commonTestStyles } from '@/styles/commonTestStyles';
 
 export const CalloutTestScreen: React.FC = () => {
@@ -17,15 +17,15 @@ export const CalloutTestScreen: React.FC = () => {
       ]}
     >
       <ScrollView contentContainerStyle={commonTestStyles.contentPadding}>
-        <FlexColumn style={commonTestStyles.header}>
-          <FlexRow gap="md" align="center" style={{ alignItems: 'flex-start' }}>
+        <Flex direction="column" style={commonTestStyles.header}>
+          <Flex gap="md" align="center" style={{ alignItems: 'flex-start' }}>
             <Icon name="info-circle" size="xl" style={{ marginTop: 2 }} />
             <Title>Callout</Title>
-          </FlexRow>
+          </Flex>
           <Text align="center">
             Centralized messaging component with variants, sizes, and dismissible options
           </Text>
-        </FlexColumn>
+        </Flex>
 
         <View style={[styles.section, { backgroundColor: theme.colors.surface[1] }]}>
           <Text style={[styles.sectionTitle, { color: theme.colors.text.strong }]}>Callout Variants</Text>

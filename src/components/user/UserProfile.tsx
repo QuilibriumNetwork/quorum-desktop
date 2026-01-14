@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
-import { Button, Container, FlexRow, Text, Icon } from '../primitives';
+import { Button, Container, Flex, Text, Icon } from '../primitives';
 // import UserOnlineStateIndicator from './UserOnlineStateIndicator'; // TODO: Re-enable when online/offline status is implemented
 import { ClickToCopyContent } from '../ui';
 import './UserProfile.scss';
@@ -114,7 +114,7 @@ const UserProfile: React.FunctionComponent<{
           <Container className="user-profile-username">
             <Text>{props.user.displayName}</Text>
           </Container>
-          <FlexRow className="py-1 text-subtle">
+          <Flex className="py-1 text-subtle">
             <Text className="text-xs text-subtle">
               {getAddressSuffix(props.user.address)}
             </Text>
@@ -127,7 +127,7 @@ const UserProfile: React.FunctionComponent<{
             >
               <></>
             </ClickToCopyContent>
-          </FlexRow>
+          </Flex>
           <Container className="user-profile-state">
             {/* TODO: Re-enable when online/offline status is implemented
                 See .agents/tasks/todo/user-status.md for implementation plan

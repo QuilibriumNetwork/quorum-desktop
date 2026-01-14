@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Button, Modal, Container, Text, FlexRow, Spacer } from '@/components/primitives';
+import { Button, Modal, Container, Text, Flex, Spacer } from '@/components/primitives';
 import { t } from '@lingui/core/macro';
 import { useState, useCallback, useEffect } from 'react';
 
@@ -110,7 +110,7 @@ const TestKickUserModal: React.FunctionComponent<TestKickUserModalProps> = (
           </Text>
         </Container>
         <Spacer size="lg"></Spacer>
-        <FlexRow>
+        <Flex>
           <Button
             type="danger"
             disabled={kicking}
@@ -119,7 +119,7 @@ const TestKickUserModal: React.FunctionComponent<TestKickUserModalProps> = (
           >
             {confirmationStep === 0 ? t`Kick!` : t`Click again to confirm`}
           </Button>
-        </FlexRow>
+        </Flex>
       </Container>
     </Modal>
   );

@@ -4,8 +4,7 @@ import {
   Input,
   Button,
   Icon,
-  FlexRow,
-  FlexCenter,
+  Flex,
   Container,
   Text,
 } from '../primitives';
@@ -111,7 +110,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
 
   return (
     <Container className={`search-bar ${className || ''}`}>
-      <FlexRow
+      <Flex
         ref={inputContainerRef}
         className={`search-input-container ${isFocused ? 'focused' : ''}`}
         onKeyDown={handleKeyDown}
@@ -131,7 +130,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
           disabled={disabled}
         />
         {query && (
-          <FlexCenter className="search-clear-button-wrapper">
+          <Flex justify="center" align="center" className="search-clear-button-wrapper">
             <Button
               type="subtle"
               size="small"
@@ -141,14 +140,14 @@ export const SearchBar: React.FC<SearchBarProps> = ({
               iconOnly
               tooltip={t`Clear search`}
             />
-          </FlexCenter>
+          </Flex>
         )}
         {!query && (
           <Text className="search-shortcut invisible">
             {navigator.userAgent.toLowerCase().includes('mac') ? '⌘K' : 'Ctrl+K'}
           </Text>
         )}
-      </FlexRow>
+      </Flex>
 
       {showSuggestions && suggestions.length > 0 && (
         <Container
@@ -157,7 +156,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
           role="listbox"
         >
           {suggestions.map((suggestion, index) => (
-            <FlexRow
+            <Flex
               key={suggestion}
               className={`search-suggestion ${
                 index === selectedSuggestionIndex ? 'selected' : ''
@@ -170,7 +169,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
             >
               <Icon name="search" className="suggestion-icon" />
               <Text>{suggestion}</Text>
-            </FlexRow>
+            </Flex>
           ))}
         </Container>
       )}

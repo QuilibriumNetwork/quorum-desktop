@@ -7,8 +7,7 @@ import {
   Icon,
   Title,
   Paragraph,
-  FlexRow,
-  FlexColumn,
+  Flex,
 } from './primitives';
 import {
   AuthScreenWrapper,
@@ -28,13 +27,13 @@ export const Maintenance = () => {
       <AuthSpacer />
 
       {/* Content Container with reduced gaps */}
-      <FlexRow justify="center">
+      <Flex justify="center">
         <Container
           width="full"
           maxWidth={AUTH_LAYOUT.MAX_CONTENT_WIDTH}
           padding={AUTH_LAYOUT.PADDING}
         >
-          <FlexColumn gap="sm" align="center">
+          <Flex direction="column" gap="sm" align="center">
             {/* Icon Section - large and above title */}
             <Icon name="tools" size="2xl" color="white" />
 
@@ -73,9 +72,9 @@ export const Maintenance = () => {
             >
               {t`Refresh`}
             </Button>
-          </FlexColumn>
+          </Flex>
         </Container>
-      </FlexRow>
+      </Flex>
 
       <AuthSpacer />
     </AuthScreenWrapper>

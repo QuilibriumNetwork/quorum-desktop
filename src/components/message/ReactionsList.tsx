@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import { i18n } from '@lingui/core';
-import { FlexRow, Text, Tooltip } from '../primitives';
+import { Flex, Text, Tooltip } from '../primitives';
 import { useReactionsModal } from '../context/ReactionsModalProvider';
 import { isTouchDevice } from '../../utils/platform';
 import type { Message as MessageType } from '../../api/quorumApi';
@@ -66,7 +66,7 @@ export const ReactionsList: React.FC<ReactionsListProps> = ({
   if (!message.reactions?.length) return null;
 
   return (
-    <FlexRow className="flex-wrap pt-1 -mr-1">
+    <Flex className="flex-wrap pt-1 -mr-1">
       {message.reactions.map((r) => {
         // Build tooltip content showing who reacted
         const maxNames = 3;
@@ -125,7 +125,7 @@ export const ReactionsList: React.FC<ReactionsListProps> = ({
             clickable={needsClickable}
             variant={isTouch ? 'simple' : 'rich'}
           >
-            <FlexRow
+            <Flex
               className={
                 'cursor-pointer items-center mr-1 mb-1 rounded-lg py-[1pt] px-2 whitespace-nowrap ' +
                 (r.memberIds.includes(userAddress)
@@ -146,10 +146,10 @@ export const ReactionsList: React.FC<ReactionsListProps> = ({
                 <Text className="mr-1">{r.emojiName}</Text>
               )}
               <Text className="text-sm">{r.count}</Text>
-            </FlexRow>
+            </Flex>
           </Tooltip>
         );
       })}
-    </FlexRow>
+    </Flex>
   );
 };

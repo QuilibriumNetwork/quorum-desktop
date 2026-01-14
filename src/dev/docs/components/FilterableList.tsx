@@ -2,8 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import {
   Input,
-  FlexRow,
-  FlexColumn,
+  Flex,
   Text,
   Icon,
 } from '../../../components/primitives';
@@ -241,7 +240,7 @@ export const FilterableList: React.FC<FilterableListProps> = ({
     <div>
       {/* Filters Section */}
       <div className="bg-surface-1 rounded-lg border border-default p-4 mb-6">
-        <FlexColumn gap="md">
+        <Flex direction="column" gap="md">
           {/* Search */}
           <div>
             <Text variant="subtle" size="sm" weight="medium" className="mb-2">
@@ -261,7 +260,7 @@ export const FilterableList: React.FC<FilterableListProps> = ({
             <Text variant="subtle" size="sm" weight="medium" className="mb-2">
               Status
             </Text>
-            <FlexRow gap="xs" className="flex-wrap">
+            <Flex gap="xs" className="flex-wrap">
               {filterOptions.statusOptions.map((option) => (
                 <button
                   key={option.value}
@@ -278,7 +277,7 @@ export const FilterableList: React.FC<FilterableListProps> = ({
                   {option.label} ({option.count})
                 </button>
               ))}
-            </FlexRow>
+            </Flex>
           </div>
 
           {/* Complexity Filter (only for tasks) */}
@@ -287,7 +286,7 @@ export const FilterableList: React.FC<FilterableListProps> = ({
               <Text variant="subtle" size="sm" weight="medium" className="mb-2">
                 Complexity
               </Text>
-              <FlexRow gap="xs" className="flex-wrap">
+              <Flex gap="xs" className="flex-wrap">
                 {filterOptions.complexityOptions.map((option) => (
                   <button
                     key={option.value}
@@ -304,7 +303,7 @@ export const FilterableList: React.FC<FilterableListProps> = ({
                     {option.label} ({option.count})
                   </button>
                 ))}
-              </FlexRow>
+              </Flex>
             </div>
           )}
 
@@ -314,7 +313,7 @@ export const FilterableList: React.FC<FilterableListProps> = ({
               <Text variant="subtle" size="sm" weight="medium" className="mb-2">
                 Priority
               </Text>
-              <FlexRow gap="xs" className="flex-wrap">
+              <Flex gap="xs" className="flex-wrap">
                 {filterOptions.priorityOptions.map((option) => (
                   <button
                     key={option.value}
@@ -331,7 +330,7 @@ export const FilterableList: React.FC<FilterableListProps> = ({
                     {option.label} ({option.count})
                   </button>
                 ))}
-              </FlexRow>
+              </Flex>
             </div>
           )}
 
@@ -341,7 +340,7 @@ export const FilterableList: React.FC<FilterableListProps> = ({
               Showing {filteredFiles.length} of {files.length} {type}
             </Text>
           </div>
-        </FlexColumn>
+        </Flex>
       </div>
 
       {/* List Section */}
@@ -358,7 +357,7 @@ export const FilterableList: React.FC<FilterableListProps> = ({
                         to={`${basePath}/${file.slug}`}
                         className="block hover:text-accent transition-colors"
                       >
-                        <FlexRow gap="sm" align="center">
+                        <Flex gap="sm" align="center">
                           <Text variant="main" size="md">
                             • {file.title}
                           </Text>
@@ -392,7 +391,7 @@ export const FilterableList: React.FC<FilterableListProps> = ({
                               {file.priority}
                             </span>
                           )}
-                        </FlexRow>
+                        </Flex>
                       </Link>
                     </li>
                   ))}
@@ -449,12 +448,12 @@ const FolderView: React.FC<FolderViewProps> = ({ folder, basePath, level }) => {
     <div style={{ marginLeft: `${indent}px` }} className="space-y-3">
       {/* Folder Header */}
       <div className="mb-2">
-        <FlexRow gap="xs" align="center">
+        <Flex gap="xs" align="center">
           <Icon name="folder" size="md" className="text-accent" />
           <Text variant="main" size="lg" weight="semibold" className="text-accent">
             {folder.name.charAt(0).toUpperCase() + folder.name.slice(1)}
           </Text>
-        </FlexRow>
+        </Flex>
         <div className="h-px bg-border mt-1" />
       </div>
 
@@ -467,7 +466,7 @@ const FolderView: React.FC<FolderViewProps> = ({ folder, basePath, level }) => {
                 to={`${basePath}/${file.slug}`}
                 className="block hover:text-accent transition-colors"
               >
-                <FlexRow gap="sm" align="center">
+                <Flex gap="sm" align="center">
                   <Text variant="main" size="md">
                     • {file.title}
                   </Text>
@@ -501,7 +500,7 @@ const FolderView: React.FC<FolderViewProps> = ({ folder, basePath, level }) => {
                       {file.priority}
                     </span>
                   )}
-                </FlexRow>
+                </Flex>
               </Link>
             </li>
           ))}

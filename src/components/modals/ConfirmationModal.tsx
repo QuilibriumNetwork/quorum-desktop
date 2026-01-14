@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Button, Modal, Container, Text, FlexRow, Spacer, ScrollContainer, Callout } from '../primitives';
+import { Button, Modal, Container, Text, Flex, Spacer, ScrollContainer, Callout } from '../primitives';
 import { Trans } from '@lingui/react/macro';
 import { t } from '@lingui/core/macro';
 import { isTouchDevice } from '../../utils/platform';
@@ -88,7 +88,7 @@ const ConfirmationModal: React.FunctionComponent<ConfirmationModalProps> = ({
         )}
 
         {/* Action buttons */}
-        <FlexRow gap="sm">
+        <Flex gap="sm">
           <Button
             type="subtle"
             onClick={onCancel}
@@ -105,7 +105,7 @@ const ConfirmationModal: React.FunctionComponent<ConfirmationModalProps> = ({
           >
             {confirmText}
           </Button>
-        </FlexRow>
+        </Flex>
       </Container>
     </Modal>
   );

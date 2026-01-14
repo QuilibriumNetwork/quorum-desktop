@@ -5,8 +5,7 @@ import { t } from '@lingui/core/macro';
 import type { Bookmark, Sticker } from '../../api/quorumApi';
 import { BookmarkItem } from './BookmarkItem';
 import {
-  FlexRow,
-  FlexCenter,
+  Flex,
   Text,
   Container,
   Icon,
@@ -147,7 +146,7 @@ export const BookmarksPanel: React.FC<BookmarksPanelProps> = ({
 
     return (
       <Container className="bookmarks-panel__controls">
-        <FlexRow className="items-center justify-between gap-2">
+        <Flex className="items-center justify-between gap-2">
           <Select
             value={selectedFilter}
             onChange={handleFilterChange}
@@ -157,7 +156,7 @@ export const BookmarksPanel: React.FC<BookmarksPanelProps> = ({
             showSelectionCount={false}
             size="medium"
           />
-        </FlexRow>
+        </Flex>
       </Container>
     );
   }, [bookmarkCount, selectedFilter, handleFilterChange, filterOptions]);
@@ -166,37 +165,37 @@ export const BookmarksPanel: React.FC<BookmarksPanelProps> = ({
   const renderEmptyState = useCallback(() => {
     if (isLoading) {
       return (
-        <FlexCenter className="bookmark-empty-state">
+        <Flex justify="center" align="center" className="bookmark-empty-state">
           <Icon name="loader" className="empty-icon animate-spin" />
           <Text className="empty-message">{t`Loading bookmarks...`}</Text>
-        </FlexCenter>
+        </Flex>
       );
     }
 
     if (error) {
       return (
-        <FlexCenter className="bookmark-empty-state">
+        <Flex justify="center" align="center" className="bookmark-empty-state">
           <Icon name="alert-triangle" className="empty-icon text-danger" />
           <Text className="empty-message">{t`Failed to load bookmarks`}</Text>
-        </FlexCenter>
+        </Flex>
       );
     }
 
     if (bookmarkCount === 0) {
       return (
-        <FlexCenter className="bookmark-empty-state">
+        <Flex justify="center" align="center" className="bookmark-empty-state">
           <Icon name="bookmark" size="3xl" className="empty-icon" />
           <Text className="empty-message">{t`No bookmarks yet`}</Text>
           <Text className="empty-hint">
             {t`Bookmark messages to save them for later reference`}
           </Text>
-        </FlexCenter>
+        </Flex>
       );
     }
 
     // Filtered results are empty
     return (
-      <FlexCenter className="bookmark-empty-state">
+      <Flex justify="center" align="center" className="bookmark-empty-state">
         <Icon name="filter" className="empty-icon" />
         <Text className="empty-message">
           {selectedFilter === 'spaces'
@@ -208,7 +207,7 @@ export const BookmarksPanel: React.FC<BookmarksPanelProps> = ({
             : t`No bookmarks found`
           }
         </Text>
-      </FlexCenter>
+      </Flex>
     );
   }, [isLoading, error, bookmarkCount, selectedFilter]);
 

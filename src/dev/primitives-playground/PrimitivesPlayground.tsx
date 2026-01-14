@@ -1,8 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import {
   Container,
-  FlexRow,
-  FlexColumn,
+  Flex,
   Text,
   Spacer,
   Callout,
@@ -17,8 +16,7 @@ import {
   ColorSwatchExamples,
   ContainerExamples,
   FileUploadExamples,
-  FlexColumnExamples,
-  FlexRowExamples,
+  FlexExamples,
   IconExamples,
   InputExamples,
   MentionPillsExamples,
@@ -41,8 +39,7 @@ const navigationItems = [
   { id: 'colorswatch-primitive', label: 'ColorSwatch', icon: 'palette' },
   { id: 'container-primitive', label: 'Container', icon: 'square' },
   { id: 'fileupload-primitive', label: 'FileUpload', icon: 'upload' },
-  { id: 'flexcolumn-primitive', label: 'FlexColumn', icon: 'menu' },
-  { id: 'flex-primitives', label: 'FlexRow', icon: 'menu' },
+  { id: 'flex-primitive', label: 'Flex', icon: 'compress-alt' },
   { id: 'icon-primitive', label: 'Icon', icon: 'star' },
   { id: 'input-primitive', label: 'Input', icon: 'edit' },
   { id: 'mentionpills-demo', label: 'Mention Pills (POC)', icon: 'at' },
@@ -184,8 +181,7 @@ export const PrimitivesPlayground: React.FC = () => {
                 <ColorSwatchExamples />
                 <ContainerExamples />
                 <FileUploadExamples />
-                <FlexColumnExamples />
-                <FlexRowExamples />
+                <FlexExamples />
                 <IconExamples />
                 <InputExamples />
                 <MentionPillsExamples />

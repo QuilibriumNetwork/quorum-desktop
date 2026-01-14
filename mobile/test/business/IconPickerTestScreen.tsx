@@ -3,8 +3,7 @@ import { ScrollView, View, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import {
   Container,
-  FlexColumn,
-  FlexRow,
+  Flex,
   Text,
   Title,
   Paragraph,
@@ -80,32 +79,32 @@ export const IconPickerTestScreen: React.FC = () => {
         showsVerticalScrollIndicator={false}
       >
         <View style={commonTestStyles.header}>
-          <FlexColumn gap="xs" align="center">
+          <Flex direction="column" gap="xs" align="center">
             <Title size="lg" align="center">
               IconPicker Component Test
             </Title>
             <Paragraph variant="subtle" align="center">
               Test icon selection for channels and groups
             </Paragraph>
-            <FlexRow gap="md">
+            <Flex gap="md">
               <Text size="sm" variant="muted">
                 Channel: {channelIcon || 'hashtag'} ({channelIconColor})
               </Text>
               <Text size="sm" variant="muted">
                 Group: {groupIcon || 'none'} ({groupIconColor})
               </Text>
-            </FlexRow>
-          </FlexColumn>
+            </Flex>
+          </Flex>
         </View>
 
-        <FlexColumn gap="lg">
+        <Flex direction="column" gap="lg">
           {/* Modal Test Controls */}
           <View style={themedStyles.section}>
             <Title size="md" style={{ marginBottom: 12 }}>
               Bottom Sheet Modals
             </Title>
 
-            <FlexColumn gap="md">
+            <Flex direction="column" gap="md">
               <Button
                 type="primary"
                 iconName="hashtag"
@@ -129,7 +128,7 @@ export const IconPickerTestScreen: React.FC = () => {
               >
                 Edit Group (optional icon)
               </Button>
-            </FlexColumn>
+            </Flex>
           </View>
 
           {/* Current State Display */}
@@ -138,30 +137,30 @@ export const IconPickerTestScreen: React.FC = () => {
               Current Selections
             </Title>
 
-            <FlexColumn gap="md">
-              <FlexRow gap="sm" align="center">
+            <Flex direction="column" gap="md">
+              <Flex gap="sm" align="center">
                 <Text variant="semibold" style={{ minWidth: 70 }}>Channel:</Text>
                 {channelIcon ? (
-                  <FlexRow gap="xs" align="center">
+                  <Flex gap="xs" align="center">
                     <Icon name={channelIcon} size="sm" style={{ color: theme.colors.accent.DEFAULT }} />
                     <Text size="sm">{channelIcon} · {channelIconColor}</Text>
-                  </FlexRow>
+                  </Flex>
                 ) : (
                   <Text size="sm" variant="subtle">Default hashtag</Text>
                 )}
-              </FlexRow>
+              </Flex>
 
-              <FlexRow gap="sm" align="center">
+              <Flex gap="sm" align="center">
                 <Text variant="semibold" style={{ minWidth: 70 }}>Group:</Text>
                 {groupIcon ? (
-                  <FlexRow gap="xs" align="center">
+                  <Flex gap="xs" align="center">
                     <Icon name={groupIcon} size="sm" style={{ color: theme.colors.accent.DEFAULT }} />
                     <Text size="sm">{groupIcon} · {groupIconColor}</Text>
-                  </FlexRow>
+                  </Flex>
                 ) : (
                   <Text size="sm" variant="subtle">No icon selected</Text>
                 )}
-              </FlexRow>
+              </Flex>
 
               <Button
                 type="secondary"
@@ -177,7 +176,7 @@ export const IconPickerTestScreen: React.FC = () => {
               >
                 Reset All Selections
               </Button>
-            </FlexColumn>
+            </Flex>
           </View>
 
           {/* Implementation Notes */}
@@ -186,7 +185,7 @@ export const IconPickerTestScreen: React.FC = () => {
               Implementation Notes
             </Title>
 
-            <FlexColumn gap="xs">
+            <Flex direction="column" gap="xs">
               <Text size="sm" variant="subtle">
                 • Uses shared primitives for cross-platform consistency
               </Text>
@@ -202,9 +201,9 @@ export const IconPickerTestScreen: React.FC = () => {
               <Text size="sm" variant="subtle">
                 • Optimized for mobile bottom sheet interactions
               </Text>
-            </FlexColumn>
+            </Flex>
           </View>
-        </FlexColumn>
+        </Flex>
       </ScrollView>
 
       {/* Channel Editor Modal */}
@@ -215,7 +214,7 @@ export const IconPickerTestScreen: React.FC = () => {
         size="large"
       >
         <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
-          <FlexColumn style={{ gap: 16 }}>
+          <Flex direction="column" style={{ gap: 16 }}>
             {/* Channel Name Input */}
             <View>
               <Text style={{ fontWeight: 'bold', marginBottom: 8 }}>Channel Name</Text>
@@ -250,7 +249,7 @@ export const IconPickerTestScreen: React.FC = () => {
             </View>
 
             {/* Action Buttons */}
-            <FlexRow style={{ gap: 12, marginTop: 20 }}>
+            <Flex style={{ gap: 12, marginTop: 20 }}>
               <Button
                 type="secondary"
                 onClick={() => setIsChannelModalOpen(false)}
@@ -265,8 +264,8 @@ export const IconPickerTestScreen: React.FC = () => {
               >
                 Save Channel
               </Button>
-            </FlexRow>
-          </FlexColumn>
+            </Flex>
+          </Flex>
         </ScrollView>
       </Modal>
 
@@ -278,7 +277,7 @@ export const IconPickerTestScreen: React.FC = () => {
         size="large"
       >
         <ScrollView contentContainerStyle={{ flexGrow: 1 }}>
-          <FlexColumn style={{ gap: 16 }}>
+          <Flex direction="column" style={{ gap: 16 }}>
             {/* Group Name Input */}
             <View>
               <Text style={{ fontWeight: 'bold', marginBottom: 8 }}>Group Name</Text>
@@ -301,7 +300,7 @@ export const IconPickerTestScreen: React.FC = () => {
             </View>
 
             {/* Action Buttons */}
-            <FlexRow style={{ gap: 12, marginTop: 20 }}>
+            <Flex style={{ gap: 12, marginTop: 20 }}>
               <Button
                 type="secondary"
                 onClick={() => setIsGroupModalOpen(false)}
@@ -316,8 +315,8 @@ export const IconPickerTestScreen: React.FC = () => {
               >
                 Save Group
               </Button>
-            </FlexRow>
-          </FlexColumn>
+            </Flex>
+          </Flex>
         </ScrollView>
       </Modal>
     </SafeAreaView>

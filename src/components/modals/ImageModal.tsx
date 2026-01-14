@@ -1,5 +1,5 @@
 import React from 'react';
-import { Modal, FlexCenter, Icon } from '../primitives';
+import { Modal, Flex, Icon } from '../primitives';
 
 interface ImageModalProps {
   visible: boolean;
@@ -24,7 +24,7 @@ const ImageModal: React.FC<ImageModalProps> = ({
       noPadding={true}
       size="full"
     >
-      <FlexCenter className="relative h-full w-full">
+      <Flex justify="center" align="center" className="relative h-full w-full">
         <img
           src={imageUrl}
           style={{
@@ -42,7 +42,7 @@ const ImageModal: React.FC<ImageModalProps> = ({
         >
           <Icon name="close" size="sm" />
         </button>
-      </FlexCenter>
+      </Flex>
     </Modal>
   );
 };

@@ -1,6 +1,6 @@
 import React from 'react';
 import { SearchResult } from '../../db/messages';
-import { Icon, FlexBetween, FlexRow, Container, Text } from '../primitives';
+import { Icon, Flex, Container, Text } from '../primitives';
 import { TouchAwareListItem } from '../ui';
 import {
   useSearchResultHighlight,
@@ -59,8 +59,8 @@ const DMSearchResultItem: React.FC<SearchResultItemProps> = ({
       onClick={handleClick}
       tabIndex={-1}
     >
-      <FlexBetween className="result-header">
-        <FlexRow className="result-meta min-w-0">
+      <Flex justify="between" className="result-header">
+        <Flex className="result-meta min-w-0">
           {icon && (
             <Container
               className="result-user-profile-image flex-shrink-0"
@@ -68,12 +68,12 @@ const DMSearchResultItem: React.FC<SearchResultItemProps> = ({
             />
           )}
           <Text className="result-channel mr-2 truncate-channel-name flex-shrink min-w-0">{channelName}</Text>
-        </FlexRow>
-        <FlexRow className="result-meta flex-shrink-0 whitespace-nowrap">
+        </Flex>
+        <Flex className="result-meta flex-shrink-0 whitespace-nowrap">
           <Icon name="calendar-alt" className="result-date-icon flex-shrink-0" />
           <Text className="result-date">{formattedDate}</Text>
-        </FlexRow>
-      </FlexBetween>
+        </Flex>
+      </Flex>
 
       <Container className="result-content">
         <Container
@@ -128,18 +128,18 @@ const SpaceSearchResultItem: React.FC<SearchResultItemProps> = ({
       onClick={handleClick}
       tabIndex={-1}
     >
-      <FlexBetween className="result-header">
-        <FlexRow className="result-meta min-w-0">
+      <Flex justify="between" className="result-header">
+        <Flex className="result-meta min-w-0">
           <Icon name={messageTypeIcon} className="result-type-icon flex-shrink-0" />
           <Text className="result-channel mr-2 truncate-channel-name flex-shrink min-w-0">{channelName}</Text>
           <Icon name="user" className="result-user-icon flex-shrink-0" />
           <Text className="result-sender truncate-user-name flex-shrink min-w-0">{displayName}</Text>
-        </FlexRow>
-        <FlexRow className="result-meta flex-shrink-0 whitespace-nowrap">
+        </Flex>
+        <Flex className="result-meta flex-shrink-0 whitespace-nowrap">
           <Icon name="calendar-alt" className="result-date-icon flex-shrink-0" />
           <Text className="result-date">{formattedDate}</Text>
-        </FlexRow>
-      </FlexBetween>
+        </Flex>
+      </Flex>
 
       <Container className="result-content">
         <Container

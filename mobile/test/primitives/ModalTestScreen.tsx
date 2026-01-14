@@ -9,8 +9,7 @@ import {
   Text,
   Paragraph,
   Title,
-  FlexColumn,
-  FlexRow,
+  Flex,
 } from '@/components/primitives';
 import {
   commonTestStyles,
@@ -42,36 +41,36 @@ export const ModalTestScreen: React.FC = () => {
     >
       <ScrollView contentContainerStyle={commonTestStyles.contentPadding}>
         <View style={commonTestStyles.header}>
-          <FlexColumn gap="sm" align="center">
-            <FlexRow
+          <Flex direction="column" gap="sm" align="center">
+            <Flex
               gap="md"
               align="center"
               style={{ alignItems: 'flex-start' }}
             >
               <Icon name="clipboard" size="xl" style={{ marginTop: 2 }} />
               <Title>Modal</Title>
-            </FlexRow>
+            </Flex>
             <Paragraph align="center">
               Cross-platform modal that transforms to drawer on mobile
             </Paragraph>
-          </FlexColumn>
+          </Flex>
         </View>
 
         <View style={themedStyles.section}>
-          <FlexColumn gap="md">
+          <Flex direction="column" gap="md">
             <Title size="sm">Basic Modal</Title>
-            <FlexRow gap="sm">
+            <Flex gap="sm">
               <Button type="primary" onClick={() => setBasicModal(true)}>
                 Open Basic Modal
               </Button>
-            </FlexRow>
-          </FlexColumn>
+            </Flex>
+          </Flex>
         </View>
 
         <View style={themedStyles.section}>
-          <FlexColumn gap="md">
+          <Flex direction="column" gap="md">
             <Title size="sm">Modal Sizes</Title>
-            <FlexColumn gap="sm">
+            <Flex direction="column" gap="sm">
               <Button type="primary" onClick={() => setSmallModal(true)}>
                 Small Modal (40% height)
               </Button>
@@ -81,14 +80,14 @@ export const ModalTestScreen: React.FC = () => {
               <Button type="primary" onClick={() => setLargeModal(true)}>
                 Large Modal (90% height)
               </Button>
-            </FlexColumn>
-          </FlexColumn>
+            </Flex>
+          </Flex>
         </View>
 
         <View style={themedStyles.section}>
-          <FlexColumn gap="md">
+          <Flex direction="column" gap="md">
             <Title size="sm">Modal Options</Title>
-            <FlexColumn gap="sm">
+            <Flex direction="column" gap="sm">
               <Button type="primary" onClick={() => setNoCloseModal(true)}>
                 No Close Button
               </Button>
@@ -104,8 +103,8 @@ export const ModalTestScreen: React.FC = () => {
               >
                 Navigation Example
               </Button>
-            </FlexColumn>
-          </FlexColumn>
+            </Flex>
+          </Flex>
         </View>
 
         {/* Basic Modal */}
@@ -116,23 +115,23 @@ export const ModalTestScreen: React.FC = () => {
           size="medium"
         >
           <View>
-            <FlexColumn gap="md">
+            <Flex direction="column" gap="md">
               <Paragraph>
                 This is a basic modal that transforms into a drawer on mobile.
                 You can close it by:
               </Paragraph>
-              <FlexColumn gap="xs">
+              <Flex direction="column" gap="xs">
                 <Text size="sm" color={colors.text.subtle}>
                   • Tapping outside the modal
                 </Text>
                 <Text size="sm" color={colors.text.subtle}>
                   • Swiping down from the handle area
                 </Text>
-              </FlexColumn>
+              </Flex>
               <Button type="primary" onClick={() => setBasicModal(false)}>
                 Close Modal
               </Button>
-            </FlexColumn>
+            </Flex>
           </View>
         </Modal>
 
@@ -144,14 +143,14 @@ export const ModalTestScreen: React.FC = () => {
           size="small"
         >
           <View>
-            <FlexColumn gap="md">
+            <Flex direction="column" gap="md">
               <Paragraph>
                 This is a small modal that takes up 40% of the screen height.
               </Paragraph>
               <Button type="danger" onClick={() => setSmallModal(false)}>
                 Close
               </Button>
-            </FlexColumn>
+            </Flex>
           </View>
         </Modal>
 
@@ -163,7 +162,7 @@ export const ModalTestScreen: React.FC = () => {
           size="medium"
         >
           <View>
-            <FlexColumn gap="md">
+            <Flex direction="column" gap="md">
               <Paragraph>
                 This is a medium modal that takes up 70% of the screen height.
                 This is the default size.
@@ -175,22 +174,22 @@ export const ModalTestScreen: React.FC = () => {
                   borderRadius: 8,
                 }}
               >
-                <FlexColumn gap="sm">
-                  <FlexRow gap="sm" style={{ alignItems: 'center' }}>
+                <Flex direction="column" gap="sm">
+                  <Flex gap="sm" style={{ alignItems: 'center' }}>
                     <Icon name="mobile" size="xl" />
                     <Title size="sm">Swipe Gesture Test</Title>
-                  </FlexRow>
+                  </Flex>
                   <Text size="sm" color={colors.text.subtle}>
                     Try swiping down from the top handle area to close this
                     modal. The gesture only works from the handle and header
                     area.
                   </Text>
-                </FlexColumn>
+                </Flex>
               </View>
               <Button type="primary" onClick={() => setMediumModal(false)}>
                 Close
               </Button>
-            </FlexColumn>
+            </Flex>
           </View>
         </Modal>
 
@@ -201,7 +200,7 @@ export const ModalTestScreen: React.FC = () => {
           onClose={() => setLargeModal(false)}
           size="large"
         >
-          <FlexColumn gap="md">
+          <Flex direction="column" gap="md">
             <Paragraph>
               This is a large modal that takes up 90% of the screen height.
             </Paragraph>
@@ -222,7 +221,7 @@ export const ModalTestScreen: React.FC = () => {
                   marginBottom: 12,
                 }}
               >
-                <FlexColumn gap="sm">
+                <Flex direction="column" gap="sm">
                   <Title size="sm">
                     🔄 Scrollable Test Section {index + 1}
                   </Title>
@@ -254,7 +253,7 @@ export const ModalTestScreen: React.FC = () => {
                       working! 🎉
                     </Text>
                   </View>
-                </FlexColumn>
+                </Flex>
               </View>
             ))}
 
@@ -265,7 +264,7 @@ export const ModalTestScreen: React.FC = () => {
                 borderRadius: 8,
               }}
             >
-              <FlexColumn gap="sm">
+              <Flex direction="column" gap="sm">
                 <Title size="sm">Final Scrollable Section</Title>
                 <Paragraph>
                   This is the final section that demonstrates the modal content
@@ -273,7 +272,7 @@ export const ModalTestScreen: React.FC = () => {
                   You can scroll through all this content while maintaining the
                   header and swipe-to-close functionality at the top.
                 </Paragraph>
-              </FlexColumn>
+              </Flex>
             </View>
 
             <View
@@ -300,7 +299,7 @@ export const ModalTestScreen: React.FC = () => {
             >
               🎯 Close Large Modal (Bottom Button)
             </Button>
-          </FlexColumn>
+          </Flex>
         </Modal>
 
         {/* No Close Button Modal */}
@@ -312,23 +311,23 @@ export const ModalTestScreen: React.FC = () => {
           size="medium"
         >
           <View>
-            <FlexColumn gap="md">
+            <Flex direction="column" gap="md">
               <Paragraph>
                 This modal has no close button in the header. You can still
                 close it by:
               </Paragraph>
-              <FlexColumn gap="xs">
+              <Flex direction="column" gap="xs">
                 <Text size="sm" color={colors.text.subtle}>
                   • Tapping outside the modal
                 </Text>
                 <Text size="sm" color={colors.text.subtle}>
                   • Swiping down from the handle area
                 </Text>
-              </FlexColumn>
+              </Flex>
               <Button type="primary" onClick={() => setNoCloseModal(false)}>
                 Manual Close
               </Button>
-            </FlexColumn>
+            </Flex>
           </View>
         </Modal>
 
@@ -341,23 +340,23 @@ export const ModalTestScreen: React.FC = () => {
           size="medium"
         >
           <View>
-            <FlexColumn gap="md">
+            <Flex direction="column" gap="md">
               <Paragraph>
                 This modal has swipe-to-close disabled. Notice there's no handle
                 at the top. You can only close it by:
               </Paragraph>
-              <FlexColumn gap="xs">
+              <Flex direction="column" gap="xs">
                 <Text size="sm" color={colors.text.subtle}>
                   • Tapping the ✕ button
                 </Text>
                 <Text size="sm" color={colors.text.subtle}>
                   • Tapping outside the modal
                 </Text>
-              </FlexColumn>
+              </Flex>
               <Button type="primary" onClick={() => setNoSwipeModal(false)}>
                 Close Modal
               </Button>
-            </FlexColumn>
+            </Flex>
           </View>
         </Modal>
 
@@ -377,13 +376,13 @@ export const ModalTestScreen: React.FC = () => {
           <View style={{ flex: 1 }}>
             {currentPage === 'menu' ? (
               <View>
-                <FlexColumn gap="lg">
+                <Flex direction="column" gap="lg">
                   <Paragraph>
                     This demonstrates navigation within a modal, similar to
                     UserSettingsModal on desktop.
                   </Paragraph>
 
-                  <FlexColumn gap="sm">
+                  <Flex direction="column" gap="sm">
                     <Button
                       type="subtle"
                       onClick={() => setCurrentPage('profile')}
@@ -404,12 +403,12 @@ export const ModalTestScreen: React.FC = () => {
                     >
                       Close Settings
                     </Button>
-                  </FlexColumn>
-                </FlexColumn>
+                  </Flex>
+                </Flex>
               </View>
             ) : currentPage === 'profile' ? (
               <View>
-                <FlexColumn gap="lg">
+                <Flex direction="column" gap="lg">
                   <Button
                     type="unstyled"
                     onClick={() => setCurrentPage('menu')}
@@ -419,18 +418,18 @@ export const ModalTestScreen: React.FC = () => {
                     </Text>
                   </Button>
 
-                  <FlexColumn gap="md">
+                  <Flex direction="column" gap="md">
                     <Title size="sm">Profile Settings</Title>
                     <Paragraph>
                       Configure your profile, username, avatar, and other
                       personal settings here.
                     </Paragraph>
-                  </FlexColumn>
-                </FlexColumn>
+                  </Flex>
+                </Flex>
               </View>
             ) : (
               <View>
-                <FlexColumn gap="lg">
+                <Flex direction="column" gap="lg">
                   <Button
                     type="unstyled"
                     onClick={() => setCurrentPage('menu')}
@@ -440,33 +439,33 @@ export const ModalTestScreen: React.FC = () => {
                     </Text>
                   </Button>
 
-                  <FlexColumn gap="md">
+                  <Flex direction="column" gap="md">
                     <Title size="sm">Appearance Settings</Title>
                     <Paragraph>
                       Choose your theme, accent color, and other visual
                       preferences.
                     </Paragraph>
-                  </FlexColumn>
-                </FlexColumn>
+                  </Flex>
+                </Flex>
               </View>
             )}
           </View>
         </Modal>
 
         <View style={themedStyles.notesSection}>
-          <FlexColumn gap="md">
+          <Flex direction="column" gap="md">
             <Title size="sm">Mobile Notes</Title>
-            <FlexColumn gap="sm">
-              <FlexRow gap="xs" align="start">
+            <Flex direction="column" gap="sm">
+              <Flex gap="xs" align="start">
                 <Text size="sm">•</Text>
                 <View style={{ flex: 1 }}>
                   <Text size="sm">
                     Web: Centered modal with backdrop and ESC key support
                   </Text>
                 </View>
-              </FlexRow>
+              </Flex>
 
-              <FlexRow gap="xs" align="start">
+              <Flex gap="xs" align="start">
                 <Text size="sm">•</Text>
                 <View style={{ flex: 1 }}>
                   <Text size="sm">
@@ -474,27 +473,27 @@ export const ModalTestScreen: React.FC = () => {
                     gestures
                   </Text>
                 </View>
-              </FlexRow>
+              </Flex>
 
-              <FlexRow gap="xs" align="start">
+              <Flex gap="xs" align="start">
                 <Text size="sm">•</Text>
                 <View style={{ flex: 1 }}>
                   <Text size="sm">
                     All sizes adapt to mobile screen dimensions (40%, 70%, 90%)
                   </Text>
                 </View>
-              </FlexRow>
+              </Flex>
 
-              <FlexRow gap="xs" align="start">
+              <Flex gap="xs" align="start">
                 <Text size="sm">•</Text>
                 <View style={{ flex: 1 }}>
                   <Text size="sm">
                     Swipe gestures work from handle and header area only
                   </Text>
                 </View>
-              </FlexRow>
+              </Flex>
 
-              <FlexRow gap="xs" align="start">
+              <Flex gap="xs" align="start">
                 <Text size="sm">•</Text>
                 <View style={{ flex: 1 }}>
                   <Text size="sm">
@@ -502,27 +501,27 @@ export const ModalTestScreen: React.FC = () => {
                     swiping up on the handle
                   </Text>
                 </View>
-              </FlexRow>
+              </Flex>
 
-              <FlexRow gap="xs" align="start">
+              <Flex gap="xs" align="start">
                 <Text size="sm">•</Text>
                 <View style={{ flex: 1 }}>
                   <Text size="sm">
                     Theme-aware colors adapt to light/dark mode automatically
                   </Text>
                 </View>
-              </FlexRow>
+              </Flex>
 
-              <FlexRow gap="xs" align="start">
+              <Flex gap="xs" align="start">
                 <Text size="sm">•</Text>
                 <View style={{ flex: 1 }}>
                   <Text size="sm">
                     Uses FontAwesome icons for consistent cross-platform design
                   </Text>
                 </View>
-              </FlexRow>
-            </FlexColumn>
-          </FlexColumn>
+              </Flex>
+            </Flex>
+          </Flex>
         </View>
       </ScrollView>
     </SafeAreaView>

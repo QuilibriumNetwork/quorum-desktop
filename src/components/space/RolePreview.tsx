@@ -1,6 +1,6 @@
 import React from 'react';
 import { Role } from '../../api/quorumApi';
-import { Container, Text, Icon, FlexRow, FlexColumn, Spacer } from '../primitives';
+import { Container, Text, Icon, Flex } from '../primitives';
 import { t } from '@lingui/core/macro';
 
 interface RolePreviewProps {
@@ -10,25 +10,25 @@ interface RolePreviewProps {
 export const RolePreview: React.FC<RolePreviewProps> = ({ role }) => {
   return (
     <Container padding="sm" backgroundColor="var(--color-bg-chat)">
-      <FlexColumn gap="sm">
+      <Flex direction="column" gap="sm">
         {/* Role name with icon */}
-        <FlexRow align="center" gap="xs">
+        <Flex align="center" gap="xs">
           <Icon name="star" size="xs" />
           <Text variant="main" size="sm">
             {role.displayName}
           </Text>
-        </FlexRow>
+        </Flex>
         
         {/* Member count */}
-        <FlexRow align="center" gap="xs">
+        <Flex align="center" gap="xs">
           <Icon name="users" size="xs" />
           <Text variant="main" size="sm">
             {role.members?.length || 0} member{role.members?.length !== 1 ? 's' : ''}
           </Text>
-        </FlexRow>
+        </Flex>
 
         {/* Permissions */}
-        <FlexRow align="start" gap="xs">
+        <Flex align="start" gap="xs">
           <Icon name="shield" size="xs" style={{ marginTop: 2 }} />
           <Text variant="main" size="sm">
             {t`Permissions:`}{' '}
@@ -39,8 +39,8 @@ export const RolePreview: React.FC<RolePreviewProps> = ({ role }) => {
               : t`None`
             }
           </Text>
-        </FlexRow>
-      </FlexColumn>
+        </Flex>
+      </Flex>
     </Container>
   );
 };

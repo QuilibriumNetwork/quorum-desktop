@@ -3,7 +3,7 @@ import { Virtuoso } from 'react-virtuoso';
 import { t } from '@lingui/core/macro';
 import { SearchResult, SearchContext } from '../../db/messages';
 import { SearchResultItem } from './SearchResultItem';
-import { Icon, FlexCenter, Container, Text, Callout, Input, Button } from '../primitives';
+import { Icon, Flex, Container, Text, Callout, Input, Button } from '../primitives';
 import { DropdownPanel } from '../ui';
 import { isTouchDevice } from '../../utils/platform';
 import {
@@ -71,19 +71,19 @@ export const SearchResults: React.FC<SearchResultsProps> = ({
   const renderEmptyState = () => {
     if (!query.trim()) {
       return (
-        <FlexCenter className="search-empty-state">
+        <Flex justify="center" align="center" className="search-empty-state">
           <Icon name="search" size="3xl" className="empty-icon" />
           <Text className="empty-message">{t`Start typing to search messages...`}</Text>
-        </FlexCenter>
+        </Flex>
       );
     }
 
     if (isLoading) {
       return (
-        <FlexCenter className="search-loading-state">
+        <Flex justify="center" align="center" className="search-loading-state">
           <Icon name="spinner" className="loading-icon icon-spin" />
           <Text className="loading-message">{t`Searching...`}</Text>
-        </FlexCenter>
+        </Flex>
       );
     }
 
@@ -98,13 +98,13 @@ export const SearchResults: React.FC<SearchResultsProps> = ({
     }
 
     return (
-      <FlexCenter className="search-no-results">
+      <Flex justify="center" align="center" className="search-no-results">
         <Icon name="search" size="3xl" className="empty-icon" />
         <Text className="empty-message">{t`No messages found`}</Text>
         <Text className="empty-hint">
           {t`Try different keywords or check your spelling`}
         </Text>
-      </FlexCenter>
+      </Flex>
     );
   };
 

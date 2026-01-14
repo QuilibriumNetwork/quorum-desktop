@@ -4,8 +4,7 @@ import {
   Modal,
   Input,
   Container,
-  FlexRow,
-  FlexCenter,
+  Flex,
   Text,
   Spacer,
 } from '../primitives';
@@ -89,7 +88,7 @@ const FolderEditorModal: React.FC<FolderEditorModalProps> = ({
         </Container>
 
         <Container className="mb-4">
-          <FlexRow className="items-center gap-2">
+          <Flex className="items-center gap-2">
             <IconPicker
               selectedIcon={icon}
               selectedIconColor={iconColor}
@@ -100,10 +99,10 @@ const FolderEditorModal: React.FC<FolderEditorModalProps> = ({
             <div className="text-label-strong">
               <Trans>Folder Icon & Color</Trans>
             </div>
-          </FlexRow>
+          </Flex>
         </Container>
 
-        <FlexRow className="justify-end gap-2 mt-6 max-sm:flex-col max-sm:gap-4">
+        <Flex className="justify-end gap-2 mt-6 max-sm:flex-col max-sm:gap-4">
           <Button
             type="primary"
             className="max-sm:w-full"
@@ -112,7 +111,7 @@ const FolderEditorModal: React.FC<FolderEditorModalProps> = ({
           >
             {t`Save Changes`}
           </Button>
-        </FlexRow>
+        </Flex>
 
         {isEditMode && (
           <>
@@ -122,7 +121,7 @@ const FolderEditorModal: React.FC<FolderEditorModalProps> = ({
               border
               direction="vertical"
             />
-            <FlexCenter>
+            <Flex justify="center" align="center">
               <Text
                 variant="danger"
                 className="cursor-pointer hover:text-danger-hover"
@@ -132,13 +131,13 @@ const FolderEditorModal: React.FC<FolderEditorModalProps> = ({
                   ? t`Delete Folder`
                   : t`Click again to confirm`}
               </Text>
-            </FlexCenter>
+            </Flex>
             {spaceCount > 0 && deleteConfirmationStep === 0 && (
-              <FlexCenter className="mt-2">
+              <Flex justify="center" align="center" className="mt-2">
                 <Text variant="subtle" size="xs">
                   <Trans>Your Spaces will NOT be deleted</Trans>
                 </Text>
-              </FlexCenter>
+              </Flex>
             )}
           </>
         )}

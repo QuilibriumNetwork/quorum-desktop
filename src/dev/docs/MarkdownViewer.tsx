@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import {
   Container,
   Text,
-  FlexRow,
+  Flex,
   Button,
   Icon,
 } from '../../components/primitives';
@@ -264,7 +264,7 @@ export const MarkdownViewer: React.FC<MarkdownViewerProps> = ({
     <Container className="min-h-screen bg-app">
       <DevNavMenu currentPath={window.location.pathname} />
       <Container padding="lg" className="mx-auto max-w-4xl">
-        <FlexRow gap="md" align="center" className="mb-6">
+        <Flex gap="md" align="center" className="mb-6">
           <Button type="subtle" size="small" onClick={onBack}>
             <Icon name="arrow-left" size="sm" />
             Back
@@ -272,7 +272,7 @@ export const MarkdownViewer: React.FC<MarkdownViewerProps> = ({
           <Text variant="subtle" size="sm" className="font-mono">
             {filePath}
           </Text>
-        </FlexRow>
+        </Flex>
 
         {loading && (
           <div className="text-center py-8">

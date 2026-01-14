@@ -5,8 +5,7 @@ import {
   Input,
   Icon,
   Container,
-  FlexRow,
-  FlexCenter,
+  Flex,
   Text,
   Spacer,
   Switch,
@@ -115,7 +114,7 @@ const ChannelEditorModal: React.FunctionComponent<{
         </Container>
 
         <Container className="mb-4">
-          <FlexRow className="items-center gap-2">
+          <Flex className="items-center gap-2">
             <IconPicker
               selectedIcon={icon}
               selectedIconColor={iconColor}
@@ -126,12 +125,12 @@ const ChannelEditorModal: React.FunctionComponent<{
             <div className="text-label-strong">
               <Trans>Channel Icon</Trans>
             </div>
-          </FlexRow>
+          </Flex>
         </Container>
 
         {isEditMode && (
           <Container className="mb-3">
-            <FlexRow className="items-center gap-3">
+            <Flex className="items-center gap-3">
               <Switch
                 value={isPinned}
                 onChange={handlePinChange}
@@ -140,12 +139,12 @@ const ChannelEditorModal: React.FunctionComponent<{
               <div className="text-label-strong">
                 <Trans>Pin to top</Trans>
               </div>
-            </FlexRow>
+            </Flex>
           </Container>
         )}
 
         <Container className="mb-3">
-          <FlexRow className="items-center gap-3">
+          <Flex className="items-center gap-3">
             <Switch
               value={isReadOnly}
               onChange={handleReadOnlyChange}
@@ -154,7 +153,7 @@ const ChannelEditorModal: React.FunctionComponent<{
             <div className="text-label-strong">
               <Trans>Read only</Trans>
             </div>
-          </FlexRow>
+          </Flex>
         </Container>
 
         {isReadOnly && (
@@ -164,8 +163,8 @@ const ChannelEditorModal: React.FunctionComponent<{
                 <Trans>Create roles in Space Settings first.</Trans>
               </div>
             )}
-            <FlexRow className="items-center justify-between max-sm:flex-col max-sm:items-stretch">
-              <FlexRow className="items-center">
+            <Flex className="items-center justify-between max-sm:flex-col max-sm:items-stretch">
+              <Flex className="items-center">
                 <div className="text-label-strong whitespace-nowrap max-sm:mb-2">
                   <Trans>Channel Managers</Trans>
                 </div>
@@ -182,7 +181,7 @@ const ChannelEditorModal: React.FunctionComponent<{
                     className="text-main hover:text-strong cursor-pointer ml-2 max-sm:mb-2"
                   />
                 </Tooltip>
-              </FlexRow>
+              </Flex>
               <Select
                 value={managerRoleIds}
                 options={availableRoles.map((role) => ({
@@ -194,15 +193,15 @@ const ChannelEditorModal: React.FunctionComponent<{
                 multiple={true}
                 className="flex-1 max-w-xs max-sm:max-w-full"
               />
-            </FlexRow>
+            </Flex>
           </Container>
         )}
 
-        <FlexRow className="justify-end gap-2 mt-6 max-sm:flex-col max-sm:gap-4">
+        <Flex className="justify-end gap-2 mt-6 max-sm:flex-col max-sm:gap-4">
           <Button type="primary" className="max-sm:w-full" onClick={handleSave} disabled={!canSave || isSaving}>
             <Trans>Save Changes</Trans>
           </Button>
-        </FlexRow>
+        </Flex>
         {isEditMode && (
           <>
             <Spacer
@@ -211,7 +210,7 @@ const ChannelEditorModal: React.FunctionComponent<{
               border
               direction="vertical"
             />
-            <FlexCenter>
+            <Flex justify="center" align="center">
               <Text
                 variant="danger"
                 className="cursor-pointer hover:text-danger-hover"
@@ -221,7 +220,7 @@ const ChannelEditorModal: React.FunctionComponent<{
                   ? t`Delete Channel`
                   : t`Click again to confirm`}
               </Text>
-            </FlexCenter>
+            </Flex>
           </>
         )}
       </Container>

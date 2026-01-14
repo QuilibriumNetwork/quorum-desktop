@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Button, Modal, Container, Text, FlexRow, Spacer, ScrollContainer, Icon, Callout } from '../primitives';
+import { Button, Modal, Container, Text, Flex, Spacer, ScrollContainer, Icon, Callout } from '../primitives';
 import { Trans } from '@lingui/react/macro';
 import { t } from '@lingui/core/macro';
 
@@ -76,7 +76,7 @@ const ConfirmationModal: React.FunctionComponent<ConfirmationModalProps> = ({
         <Spacer size="lg" />
 
         {/* Action buttons */}
-        <FlexRow className="gap-3">
+        <Flex className="gap-3">
           <Button
             type="subtle"
             onClick={onCancel}
@@ -93,7 +93,7 @@ const ConfirmationModal: React.FunctionComponent<ConfirmationModalProps> = ({
           >
             {confirmText}
           </Button>
-        </FlexRow>
+        </Flex>
       </Container>
     </Modal>
   );

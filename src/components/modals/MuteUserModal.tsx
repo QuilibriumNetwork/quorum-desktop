@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Button, Modal, Container, Text, FlexRow, Spacer } from '../primitives';
+import { Button, Modal, Container, Text, Flex, Spacer } from '../primitives';
 import { UserAvatar } from '../user/UserAvatar';
 import { t } from '@lingui/core/macro';
 import { getAddressSuffix } from '../../utils';
@@ -69,7 +69,7 @@ const MuteUserModal: React.FunctionComponent<MuteUserModalProps> = ({
       swipeToClose={true}
     >
       <Container>
-        <FlexRow gap="md" align="center">
+        <Flex gap="md" align="center">
           <UserAvatar
             userIcon={userIcon}
             displayName={userName}
@@ -84,14 +84,14 @@ const MuteUserModal: React.FunctionComponent<MuteUserModalProps> = ({
               {getAddressSuffix(userAddress)}
             </Text>
           </Container>
-        </FlexRow>
+        </Flex>
 
         <Spacer size="lg" />
 
         {/* Duration input - only show when muting */}
         {!isUnmuting && (
           <>
-            <FlexRow gap="sm" align="center" className="flex-nowrap">
+            <Flex gap="sm" align="center" className="flex-nowrap">
               <Text typography="body" className="whitespace-nowrap">{t`Mute for`}</Text>
               <input
                 type="text"
@@ -102,7 +102,7 @@ const MuteUserModal: React.FunctionComponent<MuteUserModalProps> = ({
                 className="w-12 h-8 px-2 text-center text-sm rounded-lg bg-[var(--color-field-bg)] text-[var(--color-field-text)] border border-transparent hover:bg-[var(--color-field-bg-focus)] focus:outline-none focus:bg-[var(--color-field-bg-focus)] focus:border-[var(--color-field-border-focus)] focus:shadow-[0_0_0_4px_var(--color-field-focus-shadow)]"
               />
               <Text typography="body">{t`days`}</Text>
-            </FlexRow>
+            </Flex>
             <Text typography="small" variant="subtle" className="mt-1">
               {t`0 = forever`}
             </Text>
@@ -120,7 +120,7 @@ const MuteUserModal: React.FunctionComponent<MuteUserModalProps> = ({
 
         <Spacer size="lg" />
 
-        <FlexRow gap="sm">
+        <Flex gap="sm">
           <Button
             type="subtle"
             onClick={onClose}
@@ -140,7 +140,7 @@ const MuteUserModal: React.FunctionComponent<MuteUserModalProps> = ({
                 ? t`Mute Forever`
                 : t`Mute for ${days} days`}
           </Button>
-        </FlexRow>
+        </Flex>
       </Container>
     </Modal>
   );

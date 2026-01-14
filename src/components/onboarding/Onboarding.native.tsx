@@ -19,8 +19,7 @@ import {
   Button,
   Icon,
   FileUpload,
-  FlexColumn,
-  FlexRow,
+  Flex,
   Spacer,
 } from '@/components/primitives';
 import {
@@ -228,13 +227,13 @@ export const Onboarding: React.FC<OnboardingProps> = ({ setUser }) => {
             {/* Key Backup Step */}
             {onboardingFlow.currentStep === 'key-backup' && (
               <>
-                <FlexRow justify="center">
+                <Flex justify="center">
                   <Container
                     width="full"
                     maxWidth={AUTH_LAYOUT.MAX_CONTENT_WIDTH}
                     padding={AUTH_LAYOUT.PADDING}
                   >
-                    <FlexColumn gap="md" align="center">
+                    <Flex direction="column" gap="md" align="center">
                       {/* Title using Title helper */}
                       <Title size="xl" align="center" color="white">
                         {t`Welcome to Quorum!`}
@@ -292,22 +291,22 @@ export const Onboarding: React.FC<OnboardingProps> = ({ setUser }) => {
                         </Text>
                         <Spacer size="lg" />
                       </Pressable>
-                    </FlexColumn>
+                    </Flex>
                   </Container>
-                </FlexRow>
+                </Flex>
               </>
             )}
 
             {/* Display Name Step */}
             {onboardingFlow.currentStep === 'display-name' && (
               <>
-                <FlexRow justify="center">
+                <Flex justify="center">
                   <Container
                     width="full"
                     maxWidth={AUTH_LAYOUT.MAX_CONTENT_WIDTH}
                     padding={AUTH_LAYOUT.PADDING}
                   >
-                    <FlexColumn gap="md" align="center">
+                    <Flex direction="column" gap="md" align="center">
                       {/* Instruction paragraph */}
                       <Paragraph color="white" align="center">
                         {t`Let your friends know who you are! Pick a friendly name to display in your conversations, something easier to read than:`}{' '}
@@ -344,22 +343,22 @@ export const Onboarding: React.FC<OnboardingProps> = ({ setUser }) => {
                       >
                         {t`Set Display Name`}
                       </Button>
-                    </FlexColumn>
+                    </Flex>
                   </Container>
-                </FlexRow>
+                </Flex>
               </>
             )}
 
             {/* Profile Photo Step */}
             {onboardingFlow.currentStep === 'profile-photo' && (
               <>
-                <FlexRow justify="center">
+                <Flex justify="center">
                   <Container
                     width="full"
                     maxWidth={AUTH_LAYOUT.MAX_CONTENT_WIDTH}
                     padding={AUTH_LAYOUT.PADDING}
                   >
-                    <FlexColumn gap="md" align="center">
+                    <Flex direction="column" gap="md" align="center">
                       {/* Instruction paragraph */}
                       <Paragraph color="white" align="center">
                         {t`Make your account uniquely yours – set a contact photo. This information is only provided to the Spaces you join.`}
@@ -429,7 +428,7 @@ export const Onboarding: React.FC<OnboardingProps> = ({ setUser }) => {
                                 alignItems: 'center',
                               }}
                             >
-                              <FlexColumn gap="sm" align="center">
+                              <Flex direction="column" gap="sm" align="center">
                                 <Icon
                                   name="image"
                                   size="xl"
@@ -443,7 +442,7 @@ export const Onboarding: React.FC<OnboardingProps> = ({ setUser }) => {
                                 >
                                   {t`Tap to select`}
                                 </Paragraph>
-                              </FlexColumn>
+                              </Flex>
                             </Container>
                           )}
                         </Container>
@@ -474,22 +473,22 @@ export const Onboarding: React.FC<OnboardingProps> = ({ setUser }) => {
                           {t`Save Contact Photo`}
                         </Button>
                       )}
-                    </FlexColumn>
+                    </Flex>
                   </Container>
-                </FlexRow>
+                </Flex>
               </>
             )}
 
             {/* Complete Step */}
             {onboardingFlow.currentStep === 'complete' && (
               <>
-                <FlexRow justify="center">
+                <Flex justify="center">
                   <Container
                     width="full"
                     maxWidth={AUTH_LAYOUT.MAX_CONTENT_WIDTH}
                     padding={AUTH_LAYOUT.PADDING}
                   >
-                    <FlexColumn gap="md" align="center">
+                    <Flex direction="column" gap="md" align="center">
                       {/* Welcome message */}
                       <Paragraph color="white" align="center">
                         {t`You're all set. Welcome to Quorum!`}
@@ -505,9 +504,9 @@ export const Onboarding: React.FC<OnboardingProps> = ({ setUser }) => {
                       >
                         {t`Let's gooooooooo`}
                       </Button>
-                    </FlexColumn>
+                    </Flex>
                   </Container>
-                </FlexRow>
+                </Flex>
               </>
             )}
 

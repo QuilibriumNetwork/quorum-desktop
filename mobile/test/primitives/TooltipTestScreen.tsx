@@ -7,8 +7,7 @@ import {
   Text,
   Icon,
   Title,
-  FlexColumn,
-  FlexRow,
+  Flex,
   Button,
 } from '@/components/primitives';
 import {
@@ -30,14 +29,14 @@ export const TooltipTestScreen: React.FC = () => {
     >
       <ScrollView contentContainerStyle={commonTestStyles.contentPadding}>
         <View style={{ alignItems: 'center', marginBottom: 32 }}>
-          <FlexRow
+          <Flex
             gap="md"
             align="center"
             style={{ alignItems: 'flex-start', marginBottom: 8 }}
           >
             <Icon name="message" size="xl" style={{ marginTop: 2 }} />
             <Title>Tooltip</Title>
-          </FlexRow>
+          </Flex>
           <Text size="base" variant="default" align="center">
             Cross-platform tooltip for info icons in modals
           </Text>
@@ -45,10 +44,10 @@ export const TooltipTestScreen: React.FC = () => {
 
         {/* Basic Tooltips */}
         <View style={themedStyles.section}>
-          <FlexColumn gap="md">
+          <Flex direction="column" gap="md">
             <Title size="sm">Basic Tooltips</Title>
 
-            <FlexRow gap="md" style={{ justifyContent: 'center' }}>
+            <Flex gap="md" style={{ justifyContent: 'center' }}>
               <Tooltip
                 id="basic-tooltip"
                 content="This is a basic tooltip that appears when you tap this button. Tap outside or the X button to close."
@@ -76,19 +75,19 @@ export const TooltipTestScreen: React.FC = () => {
                   </Text>
                 </View>
               </Tooltip>
-            </FlexRow>
-          </FlexColumn>
+            </Flex>
+          </Flex>
         </View>
 
         {/* Positioning Examples */}
         <View style={themedStyles.section}>
-          <FlexColumn gap="md">
+          <Flex direction="column" gap="md">
             <Title size="sm">Positioning Options</Title>
             <Text size="sm" variant="subtle">
               Each button is tested individually with proper spacing:
             </Text>
 
-            <FlexColumn gap="lg" align="center">
+            <Flex direction="column" gap="lg" align="center">
               {/* Top positioning test */}
               <Tooltip
                 id="tooltip-top"
@@ -124,16 +123,16 @@ export const TooltipTestScreen: React.FC = () => {
                   Left Test
                 </Button>
               </Tooltip>
-            </FlexColumn>
-          </FlexColumn>
+            </Flex>
+          </Flex>
         </View>
 
         {/* Testing Notes */}
         <View style={themedStyles.notesSection}>
-          <FlexColumn gap="sm">
+          <Flex direction="column" gap="sm">
             <Title size="sm">Mobile Notes</Title>
 
-            <FlexRow gap="xs" align="start">
+            <Flex gap="xs" align="start">
               <Text size="sm" variant="default">
                 •
               </Text>
@@ -142,9 +141,9 @@ export const TooltipTestScreen: React.FC = () => {
                   Custom modal-based tooltip with positioning
                 </Text>
               </View>
-            </FlexRow>
+            </Flex>
 
-            <FlexRow gap="xs" align="start">
+            <Flex gap="xs" align="start">
               <Text size="sm" variant="default">
                 •
               </Text>
@@ -153,9 +152,9 @@ export const TooltipTestScreen: React.FC = () => {
                   Short tap opens tooltip, tap outside or X button closes
                 </Text>
               </View>
-            </FlexRow>
+            </Flex>
 
-            <FlexRow gap="xs" align="start">
+            <Flex gap="xs" align="start">
               <Text size="sm" variant="default">
                 •
               </Text>
@@ -164,9 +163,9 @@ export const TooltipTestScreen: React.FC = () => {
                   Automatically positions to stay within screen bounds
                 </Text>
               </View>
-            </FlexRow>
+            </Flex>
 
-            <FlexRow gap="xs" align="start">
+            <Flex gap="xs" align="start">
               <Text size="sm" variant="default">
                 •
               </Text>
@@ -175,9 +174,9 @@ export const TooltipTestScreen: React.FC = () => {
                   Default close button on mobile for better UX
                 </Text>
               </View>
-            </FlexRow>
+            </Flex>
 
-            <FlexRow gap="xs" align="start">
+            <Flex gap="xs" align="start">
               <Text size="sm" variant="default">
                 •
               </Text>
@@ -186,9 +185,9 @@ export const TooltipTestScreen: React.FC = () => {
                   Ideal for info icons in UserSettingsModal and SpaceEditor
                 </Text>
               </View>
-            </FlexRow>
+            </Flex>
 
-            <FlexRow gap="xs" align="start">
+            <Flex gap="xs" align="start">
               <Text size="sm" variant="default">
                 •
               </Text>
@@ -197,9 +196,9 @@ export const TooltipTestScreen: React.FC = () => {
                   Supports all 12 positioning options
                 </Text>
               </View>
-            </FlexRow>
+            </Flex>
 
-            <FlexRow gap="xs" align="start">
+            <Flex gap="xs" align="start">
               <Text size="sm" variant="default">
                 •
               </Text>
@@ -208,8 +207,8 @@ export const TooltipTestScreen: React.FC = () => {
                   Configurable max width for content wrapping
                 </Text>
               </View>
-            </FlexRow>
-          </FlexColumn>
+            </Flex>
+          </Flex>
         </View>
       </ScrollView>
     </SafeAreaView>

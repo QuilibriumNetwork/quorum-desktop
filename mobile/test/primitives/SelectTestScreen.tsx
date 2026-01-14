@@ -4,8 +4,7 @@ import {
   Text,
   Title,
   Label,
-  FlexColumn,
-  FlexRow,
+  Flex,
   Select,
   Button,
   Icon,
@@ -180,10 +179,10 @@ export const SelectTestScreen: React.FC = () => {
       >
         {/* Header */}
         <View style={commonTestStyles.header}>
-          <FlexRow gap="md" align="center" style={{ alignItems: 'flex-start' }}>
+          <Flex gap="md" align="center" style={{ alignItems: 'flex-start' }}>
             <Icon name="clipboard" size="xl" style={{ marginTop: 2 }} />
             <Title>Select</Title>
-          </FlexRow>
+          </Flex>
           <View style={{ marginTop: 8 }}>
             <Text size="base" variant="default" align="center">
               Mobile dropdown/picker component with modal overlay
@@ -193,9 +192,9 @@ export const SelectTestScreen: React.FC = () => {
 
         {/* Basic Select */}
         <View style={themedStyles.section}>
-          <FlexColumn gap="md">
+          <Flex direction="column" gap="md">
             <Title size="sm">Basic Select</Title>
-            <FlexColumn gap="xs">
+            <Flex direction="column" gap="xs">
               <Label>Simple Select:</Label>
               <Select
                 value={basicValue}
@@ -203,15 +202,15 @@ export const SelectTestScreen: React.FC = () => {
                 placeholder="Choose an option"
                 options={basicOptions}
               />
-            </FlexColumn>
-          </FlexColumn>
+            </Flex>
+          </Flex>
         </View>
 
         {/* Select with Icons */}
         <View style={themedStyles.section}>
-          <FlexColumn gap="md">
+          <Flex direction="column" gap="md">
             <Title size="sm">With Icons</Title>
-            <FlexColumn gap="xs">
+            <Flex direction="column" gap="xs">
               <Label>Action Picker:</Label>
               <Select
                 value={iconValue}
@@ -219,16 +218,16 @@ export const SelectTestScreen: React.FC = () => {
                 placeholder="Choose an action"
                 options={iconOptions}
               />
-            </FlexColumn>
-          </FlexColumn>
+            </Flex>
+          </Flex>
         </View>
 
         {/* Select Sizes */}
         <View style={themedStyles.section}>
-          <FlexColumn gap="md">
+          <Flex direction="column" gap="md">
             <Title size="sm">Size Variants</Title>
 
-            <FlexColumn gap="xs">
+            <Flex direction="column" gap="xs">
               <Label>Small Size:</Label>
               <Select
                 size="small"
@@ -237,9 +236,9 @@ export const SelectTestScreen: React.FC = () => {
                 placeholder="Small select"
                 options={sizeOptions}
               />
-            </FlexColumn>
+            </Flex>
 
-            <FlexColumn gap="xs">
+            <Flex direction="column" gap="xs">
               <Label>Medium Size (Default):</Label>
               <Select
                 size="medium"
@@ -248,9 +247,9 @@ export const SelectTestScreen: React.FC = () => {
                 placeholder="Medium select"
                 options={sizeOptions}
               />
-            </FlexColumn>
+            </Flex>
 
-            <FlexColumn gap="xs">
+            <Flex direction="column" gap="xs">
               <Label>Large Size:</Label>
               <Select
                 size="large"
@@ -259,16 +258,16 @@ export const SelectTestScreen: React.FC = () => {
                 placeholder="Large select"
                 options={sizeOptions}
               />
-            </FlexColumn>
-          </FlexColumn>
+            </Flex>
+          </Flex>
         </View>
 
         {/* Select Variants */}
         <View style={themedStyles.section}>
-          <FlexColumn gap="md">
+          <Flex direction="column" gap="md">
             <Title size="sm">Select Variants</Title>
 
-            <FlexColumn gap="xs">
+            <Flex direction="column" gap="xs">
               <Label>Bordered:</Label>
               <Select
                 variant="bordered"
@@ -277,9 +276,9 @@ export const SelectTestScreen: React.FC = () => {
                 placeholder="Bordered style"
                 options={basicOptions}
               />
-            </FlexColumn>
+            </Flex>
 
-            <FlexColumn gap="xs">
+            <Flex direction="column" gap="xs">
               <Label>Filled (Default):</Label>
               <Select
                 value={variantTestValue}
@@ -287,16 +286,16 @@ export const SelectTestScreen: React.FC = () => {
                 placeholder="Filled style"
                 options={basicOptions}
               />
-            </FlexColumn>
-          </FlexColumn>
+            </Flex>
+          </Flex>
         </View>
 
         {/* Error States */}
         <View style={themedStyles.section}>
-          <FlexColumn gap="md">
+          <Flex direction="column" gap="md">
             <Title size="sm">Error States</Title>
 
-            <FlexColumn gap="xs">
+            <Flex direction="column" gap="xs">
               <Label>With Error:</Label>
               <Select
                 value={errorValue}
@@ -328,9 +327,9 @@ export const SelectTestScreen: React.FC = () => {
               >
                 Clear Selection
               </Button>
-            </FlexColumn>
+            </Flex>
 
-            <FlexColumn gap="xs">
+            <Flex direction="column" gap="xs">
               <Label>Disabled Select:</Label>
               <Select
                 value="disabled"
@@ -341,16 +340,16 @@ export const SelectTestScreen: React.FC = () => {
                   { value: 'other', label: 'Other option' },
                 ]}
               />
-            </FlexColumn>
-          </FlexColumn>
+            </Flex>
+          </Flex>
         </View>
 
         {/* Advanced Features */}
         <View style={themedStyles.section}>
-          <FlexColumn gap="md">
+          <Flex direction="column" gap="md">
             <Title size="sm">Advanced Features</Title>
 
-            <FlexColumn gap="xs">
+            <Flex direction="column" gap="xs">
               <Label>Full Width:</Label>
               <Select
                 fullWidth
@@ -359,9 +358,9 @@ export const SelectTestScreen: React.FC = () => {
                 placeholder="Full width select"
                 options={basicOptions}
               />
-            </FlexColumn>
+            </Flex>
 
-            <FlexColumn gap="xs">
+            <Flex direction="column" gap="xs">
               <Label>With Disabled Options:</Label>
               <Select
                 value=""
@@ -382,16 +381,16 @@ export const SelectTestScreen: React.FC = () => {
                   },
                 ]}
               />
-            </FlexColumn>
-          </FlexColumn>
+            </Flex>
+          </Flex>
         </View>
 
         {/* Custom Width */}
         <View style={themedStyles.section}>
-          <FlexColumn gap="md">
+          <Flex direction="column" gap="md">
             <Title size="sm">Custom Width</Title>
 
-            <FlexColumn gap="xs">
+            <Flex direction="column" gap="xs">
               <Label>Custom 200px Width:</Label>
               <Select
                 width={200}
@@ -403,9 +402,9 @@ export const SelectTestScreen: React.FC = () => {
               <Text size="sm" variant="subtle">
                 Uses width=200 prop
               </Text>
-            </FlexColumn>
+            </Flex>
 
-            <FlexColumn gap="xs">
+            <Flex direction="column" gap="xs">
               <Label>Custom 120px Width (Narrow):</Label>
               <Select
                 width={120}
@@ -417,15 +416,15 @@ export const SelectTestScreen: React.FC = () => {
               <Text size="sm" variant="subtle">
                 Demonstrates text ellipsis
               </Text>
-            </FlexColumn>
-          </FlexColumn>
+            </Flex>
+          </Flex>
         </View>
 
         {/* Grouped Options */}
         <View style={themedStyles.section}>
-          <FlexColumn gap="md">
+          <Flex direction="column" gap="md">
             <Title size="sm">Grouped Options (SpaceEditor Style)</Title>
-            <FlexColumn gap="xs">
+            <Flex direction="column" gap="xs">
               <Label>Select Channel:</Label>
               <Select
                 value={groupedValue}
@@ -437,15 +436,15 @@ export const SelectTestScreen: React.FC = () => {
               <Text size="sm" variant="subtle">
                 Options organized by category with group headers
               </Text>
-            </FlexColumn>
-          </FlexColumn>
+            </Flex>
+          </Flex>
         </View>
 
         {/* User Selection with Avatars */}
         <View style={themedStyles.section}>
-          <FlexColumn gap="md">
+          <Flex direction="column" gap="md">
             <Title size="sm">User Selection with Avatars</Title>
-            <FlexColumn gap="xs">
+            <Flex direction="column" gap="xs">
               <Label>Select Conversation:</Label>
               <Select
                 value={userValue}
@@ -457,16 +456,16 @@ export const SelectTestScreen: React.FC = () => {
               <Text size="sm" variant="subtle">
                 Shows user avatars and addresses (subtitle)
               </Text>
-            </FlexColumn>
-          </FlexColumn>
+            </Flex>
+          </Flex>
         </View>
 
         {/* Multiselect Examples */}
         <View style={themedStyles.section}>
-          <FlexColumn gap="md">
+          <Flex direction="column" gap="md">
             <Title size="sm">Multiselect Features</Title>
 
-            <FlexColumn gap="xs">
+            <Flex direction="column" gap="xs">
               <Label>Basic Multiselect:</Label>
               <Select
                 multiple
@@ -479,9 +478,9 @@ export const SelectTestScreen: React.FC = () => {
               <Text size="sm" variant="subtle">
                 Touch items to select multiple
               </Text>
-            </FlexColumn>
+            </Flex>
 
-            <FlexColumn gap="xs">
+            <Flex direction="column" gap="xs">
               <Label>Permission Multiselect:</Label>
               <Select
                 multiple
@@ -494,9 +493,9 @@ export const SelectTestScreen: React.FC = () => {
               <Text size="sm" variant="subtle">
                 Grouped permissions with Select All/Clear All
               </Text>
-            </FlexColumn>
+            </Flex>
 
-            <FlexColumn gap="xs">
+            <Flex direction="column" gap="xs">
               <Label>Tags (No Select All):</Label>
               <Select
                 multiple
@@ -510,9 +509,9 @@ export const SelectTestScreen: React.FC = () => {
               <Text size="sm" variant="subtle">
                 Without Select All/Clear All options
               </Text>
-            </FlexColumn>
+            </Flex>
 
-            <FlexColumn gap="xs">
+            <Flex direction="column" gap="xs">
               <Label>Pre-selected Options:</Label>
               <Select
                 multiple
@@ -531,9 +530,9 @@ export const SelectTestScreen: React.FC = () => {
               <Text size="sm" variant="subtle">
                 Starts with pre-selected values
               </Text>
-            </FlexColumn>
+            </Flex>
 
-            <FlexColumn gap="xs">
+            <Flex direction="column" gap="xs">
               <Label>Many Options (Chip Limit):</Label>
               <Select
                 multiple
@@ -550,16 +549,16 @@ export const SelectTestScreen: React.FC = () => {
               <Text size="sm" variant="subtle">
                 Shows "+N more" after 2 selections
               </Text>
-            </FlexColumn>
-          </FlexColumn>
+            </Flex>
+          </Flex>
         </View>
 
         {/* Implementation Notes */}
         <View style={themedStyles.notesSection}>
-          <FlexColumn gap="sm">
+          <Flex direction="column" gap="sm">
             <Title size="sm">Mobile Notes</Title>
 
-            <FlexRow gap="xs" align="start">
+            <Flex gap="xs" align="start">
               <Text size="sm" variant="default">
                 •
               </Text>
@@ -568,9 +567,9 @@ export const SelectTestScreen: React.FC = () => {
                   Uses React Native Modal for dropdown overlay
                 </Text>
               </View>
-            </FlexRow>
+            </Flex>
 
-            <FlexRow gap="xs" align="start">
+            <Flex gap="xs" align="start">
               <Text size="sm" variant="default">
                 •
               </Text>
@@ -579,9 +578,9 @@ export const SelectTestScreen: React.FC = () => {
                   Touch-optimized for mobile interaction
                 </Text>
               </View>
-            </FlexRow>
+            </Flex>
 
-            <FlexRow gap="xs" align="start">
+            <Flex gap="xs" align="start">
               <Text size="sm" variant="default">
                 •
               </Text>
@@ -590,9 +589,9 @@ export const SelectTestScreen: React.FC = () => {
                   Consistent width management (min 150px, max 280px)
                 </Text>
               </View>
-            </FlexRow>
+            </Flex>
 
-            <FlexRow gap="xs" align="start">
+            <Flex gap="xs" align="start">
               <Text size="sm" variant="default">
                 •
               </Text>
@@ -601,9 +600,9 @@ export const SelectTestScreen: React.FC = () => {
                   Text truncation with ellipsis for long options
                 </Text>
               </View>
-            </FlexRow>
+            </Flex>
 
-            <FlexRow gap="xs" align="start">
+            <Flex gap="xs" align="start">
               <Text size="sm" variant="default">
                 •
               </Text>
@@ -612,9 +611,9 @@ export const SelectTestScreen: React.FC = () => {
                   Custom width support via numeric prop
                 </Text>
               </View>
-            </FlexRow>
+            </Flex>
 
-            <FlexRow gap="xs" align="start">
+            <Flex gap="xs" align="start">
               <Text size="sm" variant="default">
                 •
               </Text>
@@ -623,9 +622,9 @@ export const SelectTestScreen: React.FC = () => {
                   Grouped options with sticky headers
                 </Text>
               </View>
-            </FlexRow>
+            </Flex>
 
-            <FlexRow gap="xs" align="start">
+            <Flex gap="xs" align="start">
               <Text size="sm" variant="default">
                 •
               </Text>
@@ -634,9 +633,9 @@ export const SelectTestScreen: React.FC = () => {
                   Avatar support with 32px circular images
                 </Text>
               </View>
-            </FlexRow>
+            </Flex>
 
-            <FlexRow gap="xs" align="start">
+            <Flex gap="xs" align="start">
               <Text size="sm" variant="default">
                 •
               </Text>
@@ -645,9 +644,9 @@ export const SelectTestScreen: React.FC = () => {
                   Subtitle text for secondary information
                 </Text>
               </View>
-            </FlexRow>
+            </Flex>
 
-            <FlexRow gap="xs" align="start">
+            <Flex gap="xs" align="start">
               <Text size="sm" variant="default">
                 •
               </Text>
@@ -656,8 +655,8 @@ export const SelectTestScreen: React.FC = () => {
                   Icons are temporary emoji (FontAwesome pending)
                 </Text>
               </View>
-            </FlexRow>
-          </FlexColumn>
+            </Flex>
+          </Flex>
         </View>
       </ScrollView>
     </SafeAreaView>

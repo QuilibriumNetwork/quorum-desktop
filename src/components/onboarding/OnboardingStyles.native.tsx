@@ -1,7 +1,7 @@
 import React from 'react';
 import { LinearGradient } from 'expo-linear-gradient';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Container, FlexColumn, FlexRow, Text } from '@/components/primitives';
+import { Container, Flex, Text } from '@/components/primitives';
 
 // Shared gradient colors matching web version (bg-radial--accent-noise) - EXACT WEB COLORS
 // Using the exact bright colors from the web: #034081, #0287f2, #b4e235
@@ -99,11 +99,11 @@ export const AuthScreenWrapper: React.FC<AuthScreenWrapperProps> = ({
     >
       <SafeAreaView style={{ flex: 1 }}>
         {dragOverlay}
-        <FlexColumn style={{ flex: 1 }}>
-          <FlexColumn style={{ flex: 1 }} />
-          <FlexColumn style={{ userSelect: 'none' }}>{children}</FlexColumn>
-          <FlexColumn style={{ flex: 1 }} />
-        </FlexColumn>
+        <Flex direction="column" style={{ flex: 1 }}>
+          <Flex direction="column" style={{ flex: 1 }} />
+          <Flex direction="column" style={{ userSelect: 'none' }}>{children}</Flex>
+          <Flex direction="column" style={{ flex: 1 }} />
+        </Flex>
       </SafeAreaView>
     </LinearGradient>
   </>
@@ -115,7 +115,7 @@ interface AuthTitleProps {
 }
 
 export const AuthTitle: React.FC<AuthTitleProps> = ({ children }) => (
-  <FlexRow
+  <Flex
     style={{
       flex: 1,
       justifyContent: 'center',
@@ -125,7 +125,7 @@ export const AuthTitle: React.FC<AuthTitleProps> = ({ children }) => (
     <Text size="2xl" weight="semibold" style={AUTH_TEXT_STYLES.title}>
       {children}
     </Text>
-  </FlexRow>
+  </Flex>
 );
 
 // Content section component with consistent max-width and centering
@@ -138,8 +138,8 @@ export const AuthContent: React.FC<AuthContentProps> = ({
   children,
   centerContent = false,
 }) => (
-  <FlexRow style={{ justifyContent: 'center' }}>
-    <FlexColumn style={{ flex: 1 }} />
+  <Flex style={{ justifyContent: 'center' }}>
+    <Flex direction="column" style={{ flex: 1 }} />
     <Container
       style={{
         width: '100%',
@@ -151,12 +151,12 @@ export const AuthContent: React.FC<AuthContentProps> = ({
     >
       {children}
     </Container>
-    <FlexColumn style={{ flex: 1 }} />
-  </FlexRow>
+    <Flex direction="column" style={{ flex: 1 }} />
+  </Flex>
 );
 
 // Spacer component for consistent spacing
-export const AuthSpacer: React.FC = () => <FlexRow style={{ flex: 1 }} />;
+export const AuthSpacer: React.FC = () => <Flex style={{ flex: 1 }} />;
 
 // Step Indicator component for onboarding progress
 interface StepIndicatorProps {
@@ -168,8 +168,8 @@ export const StepIndicator: React.FC<StepIndicatorProps> = ({
   currentStep,
   totalSteps,
 }) => (
-  <FlexRow justify="center" style={{ marginBottom: 24, marginTop: 16 }}>
-    <FlexRow gap="sm">
+  <Flex justify="center" style={{ marginBottom: 24, marginTop: 16 }}>
+    <Flex gap="sm">
       {Array.from({ length: totalSteps }, (_, index) => (
         <Container
           key={index}
@@ -182,8 +182,8 @@ export const StepIndicator: React.FC<StepIndicatorProps> = ({
           }}
         />
       ))}
-    </FlexRow>
-  </FlexRow>
+    </Flex>
+  </Flex>
 );
 
 // Updated: August 9, 2025 at 4:50 PM

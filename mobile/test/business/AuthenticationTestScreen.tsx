@@ -3,8 +3,7 @@ import { ScrollView, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import {
   Container,
-  FlexColumn,
-  FlexRow,
+  Flex,
   Text,
   Button,
   Icon,
@@ -47,7 +46,7 @@ export const AuthenticationTestScreen: React.FC<
 
   const renderMenu = () => (
     <Container>
-      <FlexColumn gap="lg">
+      <Flex direction="column" gap="lg">
         <Text size="xl" weight="bold" align="center">
           Authentication Flow Test
         </Text>
@@ -66,7 +65,7 @@ export const AuthenticationTestScreen: React.FC<
           </Text>
         </View>
 
-        <FlexColumn gap="md">
+        <Flex direction="column" gap="md">
           <Button
             type="primary"
             size="large"
@@ -75,7 +74,7 @@ export const AuthenticationTestScreen: React.FC<
           >
             Start Authentication Flow
           </Button>
-        </FlexColumn>
+        </Flex>
 
         {user && (
           <View
@@ -88,7 +87,7 @@ export const AuthenticationTestScreen: React.FC<
               marginTop: 20,
             }}
           >
-            <FlexRow gap="sm" align="start">
+            <Flex gap="sm" align="start">
               <Icon
                 name="check-circle"
                 size="md"
@@ -110,7 +109,7 @@ export const AuthenticationTestScreen: React.FC<
                   Reset Flow
                 </Button>
               </View>
-            </FlexRow>
+            </Flex>
           </View>
         )}
 
@@ -124,7 +123,7 @@ export const AuthenticationTestScreen: React.FC<
             marginTop: 20,
           }}
         >
-          <FlexRow gap="sm" align="start">
+          <Flex gap="sm" align="start">
             <Icon name="info-circle" size="md" color={theme.colors.info} />
             <View style={{ flex: 1 }}>
               <Text size="sm" weight="semibold" color={theme.colors.info}>
@@ -139,9 +138,9 @@ export const AuthenticationTestScreen: React.FC<
                 🚧 SDK integration pending for full functionality
               </Text>
             </View>
-          </FlexRow>
+          </Flex>
         </View>
-      </FlexColumn>
+      </Flex>
     </Container>
   );
 
@@ -150,7 +149,7 @@ export const AuthenticationTestScreen: React.FC<
     if (user) {
       return (
         <Container padding={20}>
-          <FlexColumn gap="md">
+          <Flex direction="column" gap="md">
             <Text size="lg" weight="bold" align="center">
               Welcome to Quorum! 🎉
             </Text>
@@ -166,7 +165,7 @@ export const AuthenticationTestScreen: React.FC<
             <Button type="secondary" onClick={() => setCurrentView('menu')}>
               Back to Menu
             </Button>
-          </FlexColumn>
+          </Flex>
         </Container>
       );
     }
@@ -185,7 +184,7 @@ export const AuthenticationTestScreen: React.FC<
     if (user) {
       return (
         <Container padding={20}>
-          <FlexColumn gap="md">
+          <Flex direction="column" gap="md">
             <Text size="lg" weight="bold" align="center">
               Welcome to Quorum! 🎉
             </Text>
@@ -201,7 +200,7 @@ export const AuthenticationTestScreen: React.FC<
             <Button type="secondary" onClick={() => setCurrentView('menu')}>
               Back to Menu
             </Button>
-          </FlexColumn>
+          </Flex>
         </Container>
       );
     }

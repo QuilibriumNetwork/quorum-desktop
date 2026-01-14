@@ -9,8 +9,7 @@ import {
   Paragraph,
   Label,
   Title,
-  FlexColumn,
-  FlexRow,
+  Flex,
 } from '@/components/primitives';
 import {
   commonTestStyles,
@@ -36,22 +35,22 @@ export const InputTestScreen: React.FC = () => {
       ]}
     >
       <ScrollView contentContainerStyle={commonTestStyles.contentPadding}>
-        <FlexColumn style={commonTestStyles.header}>
-          <FlexRow gap="md" align="center" style={{ alignItems: 'flex-start' }}>
+        <Flex direction="column" style={commonTestStyles.header}>
+          <Flex gap="md" align="center" style={{ alignItems: 'flex-start' }}>
             <Icon name="memo" size="xl" style={{ marginTop: 2 }} />
             <Title>Input</Title>
-          </FlexRow>
+          </Flex>
           <Paragraph align="center">
             Testing Input primitive on React Native
           </Paragraph>
-        </FlexColumn>
+        </Flex>
 
         {/* Basic Input Types */}
         <View style={themedStyles.sectionCompact}>
-          <FlexColumn gap="md">
+          <Flex direction="column" gap="md">
             <Title size="sm">Input Types</Title>
 
-            <FlexColumn gap="xs">
+            <Flex direction="column" gap="xs">
               <Label>Text Input:</Label>
               <Input
                 value={textValue}
@@ -62,9 +61,9 @@ export const InputTestScreen: React.FC = () => {
               <Text size="sm" variant="subtle">
                 Value: "{textValue}"
               </Text>
-            </FlexColumn>
+            </Flex>
 
-            <FlexColumn gap="xs">
+            <Flex direction="column" gap="xs">
               <Label>Email Input:</Label>
               <Input
                 value={emailValue}
@@ -75,9 +74,9 @@ export const InputTestScreen: React.FC = () => {
               <Text size="sm" variant="subtle">
                 Value: "{emailValue}"
               </Text>
-            </FlexColumn>
+            </Flex>
 
-            <FlexColumn gap="xs">
+            <Flex direction="column" gap="xs">
               <Label>Password Input:</Label>
               <Input
                 value={passwordValue}
@@ -88,25 +87,25 @@ export const InputTestScreen: React.FC = () => {
               <Text size="sm" variant="subtle">
                 Value: "{passwordValue ? '•'.repeat(passwordValue.length) : ''}"
               </Text>
-            </FlexColumn>
+            </Flex>
 
-            <FlexColumn gap="xs">
+            <Flex direction="column" gap="xs">
               <Label>Disabled Input:</Label>
               <Input
                 value="Cannot edit this"
                 placeholder="Disabled input..."
                 disabled
               />
-            </FlexColumn>
-          </FlexColumn>
+            </Flex>
+          </Flex>
         </View>
 
         {/* Error States */}
         <View style={themedStyles.sectionCompact}>
-          <FlexColumn gap="md">
+          <Flex direction="column" gap="md">
             <Title size="sm">Error States</Title>
 
-            <FlexColumn gap="xs">
+            <Flex direction="column" gap="xs">
               <Label>Input with Error (type less than 3 chars):</Label>
               <Input
                 value={errorInput}
@@ -122,9 +121,9 @@ export const InputTestScreen: React.FC = () => {
                     : undefined
                 }
               />
-            </FlexColumn>
+            </Flex>
 
-            <FlexColumn gap="xs">
+            <Flex direction="column" gap="xs">
               <Label>Always Error:</Label>
               <Input
                 value=""
@@ -132,40 +131,40 @@ export const InputTestScreen: React.FC = () => {
                 error={true}
                 errorMessage="This is a persistent error message"
               />
-            </FlexColumn>
-          </FlexColumn>
+            </Flex>
+          </Flex>
         </View>
 
         {/* Input Variants */}
         <View style={themedStyles.sectionCompact}>
-          <FlexColumn gap="md">
+          <Flex direction="column" gap="md">
             <Title size="sm">Input Variants</Title>
 
-            <FlexColumn gap="xs">
+            <Flex direction="column" gap="xs">
               <Label>Filled (Default):</Label>
               <Input placeholder="Default filled style" />
               <Text size="sm" variant="subtle">
                 Filled background, accent border on focus
               </Text>
-            </FlexColumn>
+            </Flex>
 
-            <FlexColumn gap="xs">
+            <Flex direction="column" gap="xs">
               <Label>Bordered Variant:</Label>
               <Input variant="bordered" placeholder="Bordered input style" />
               <Text size="sm" variant="subtle">
                 Traditional bordered style (explicit variant)
               </Text>
-            </FlexColumn>
+            </Flex>
 
-            <FlexColumn gap="xs">
+            <Flex direction="column" gap="xs">
               <Label>Onboarding Style (pill shape):</Label>
               <Input variant="onboarding" placeholder="Bongocat" />
               <Text size="sm" variant="subtle">
                 Full pill shape with brand blue colors
               </Text>
-            </FlexColumn>
+            </Flex>
 
-            <FlexColumn gap="xs">
+            <Flex direction="column" gap="xs">
               <Label>Minimal Search:</Label>
               <View
                 style={{
@@ -204,36 +203,36 @@ export const InputTestScreen: React.FC = () => {
               <Text size="sm" variant="subtle">
                 Minimal style with only bottom border
               </Text>
-            </FlexColumn>
-          </FlexColumn>
+            </Flex>
+          </Flex>
         </View>
 
         {/* Focus and Styling */}
         <View style={themedStyles.sectionCompact}>
-          <FlexColumn gap="md">
+          <Flex direction="column" gap="md">
             <Title size="sm">Focus Features</Title>
 
-            <FlexColumn gap="xs">
+            <Flex direction="column" gap="xs">
               <Label>Auto Focus Input:</Label>
               <Input placeholder="This input auto-focuses" autoFocus />
-            </FlexColumn>
+            </Flex>
 
-            <FlexColumn gap="xs">
+            <Flex direction="column" gap="xs">
               <Label>No Focus Style:</Label>
               <Input
                 placeholder="This input has no focus styling"
                 noFocusStyle
               />
-            </FlexColumn>
-          </FlexColumn>
+            </Flex>
+          </Flex>
         </View>
 
         {/* Label Management */}
         <View style={themedStyles.sectionCompact}>
-          <FlexColumn gap="md">
+          <Flex direction="column" gap="md">
             <Title size="sm">Label Management</Title>
 
-            <FlexColumn gap="xs">
+            <Flex direction="column" gap="xs">
               <Input
                 label="Static Label"
                 labelType="static"
@@ -244,9 +243,9 @@ export const InputTestScreen: React.FC = () => {
               <Text size="sm" variant="subtle">
                 Traditional static label above the input
               </Text>
-            </FlexColumn>
+            </Flex>
 
-            <FlexColumn gap="xs">
+            <Flex direction="column" gap="xs">
               <Input
                 label="Floating Label"
                 labelType="floating"
@@ -258,9 +257,9 @@ export const InputTestScreen: React.FC = () => {
               <Text size="sm" variant="subtle">
                 Animated floating label (Material-UI style)
               </Text>
-            </FlexColumn>
+            </Flex>
 
-            <FlexColumn gap="xs">
+            <Flex direction="column" gap="xs">
               <Input
                 label="Required Field"
                 labelType="static"
@@ -271,9 +270,9 @@ export const InputTestScreen: React.FC = () => {
               <Text size="sm" variant="subtle">
                 Shows required asterisk and helper text
               </Text>
-            </FlexColumn>
+            </Flex>
 
-            <FlexColumn gap="xs">
+            <Flex direction="column" gap="xs">
               <Input
                 label="Floating Required"
                 labelType="floating"
@@ -288,9 +287,9 @@ export const InputTestScreen: React.FC = () => {
               <Text size="sm" variant="subtle">
                 Floating label with required indicator and error state
               </Text>
-            </FlexColumn>
+            </Flex>
 
-            <FlexColumn gap="xs">
+            <Flex direction="column" gap="xs">
               <Input
                 label="Password with Label"
                 labelType="floating"
@@ -301,9 +300,9 @@ export const InputTestScreen: React.FC = () => {
               <Text size="sm" variant="subtle">
                 Floating label with password field and helper text
               </Text>
-            </FlexColumn>
+            </Flex>
 
-            <FlexColumn gap="xs">
+            <Flex direction="column" gap="xs">
               <Input
                 label="Disabled with Label"
                 labelType="static"
@@ -314,8 +313,8 @@ export const InputTestScreen: React.FC = () => {
               <Text size="sm" variant="subtle">
                 Disabled input with static label and helper text
               </Text>
-            </FlexColumn>
-          </FlexColumn>
+            </Flex>
+          </Flex>
         </View>
 
         {/* Mobile Notes */}
@@ -325,10 +324,10 @@ export const InputTestScreen: React.FC = () => {
             { backgroundColor: theme.colors.surface[3] },
           ]}
         >
-          <FlexColumn gap="sm">
+          <Flex direction="column" gap="sm">
             <Title size="sm">Mobile Notes</Title>
 
-            <FlexRow gap="xs" align="start">
+            <Flex gap="xs" align="start">
               <Text size="sm" variant="default">
                 •
               </Text>
@@ -337,9 +336,9 @@ export const InputTestScreen: React.FC = () => {
                   Input types trigger correct mobile keyboards
                 </Text>
               </View>
-            </FlexRow>
+            </Flex>
 
-            <FlexRow gap="xs" align="start">
+            <Flex gap="xs" align="start">
               <Text size="sm" variant="default">
                 •
               </Text>
@@ -348,9 +347,9 @@ export const InputTestScreen: React.FC = () => {
                   Touch targets are 42px high for accessibility
                 </Text>
               </View>
-            </FlexRow>
+            </Flex>
 
-            <FlexRow gap="xs" align="start">
+            <Flex gap="xs" align="start">
               <Text size="sm" variant="default">
                 •
               </Text>
@@ -359,9 +358,9 @@ export const InputTestScreen: React.FC = () => {
                   Focus states work without web-style borders
                 </Text>
               </View>
-            </FlexRow>
+            </Flex>
 
-            <FlexRow gap="xs" align="start">
+            <Flex gap="xs" align="start">
               <Text size="sm" variant="default">
                 •
               </Text>
@@ -370,9 +369,9 @@ export const InputTestScreen: React.FC = () => {
                   Error messages display below inputs
                 </Text>
               </View>
-            </FlexRow>
+            </Flex>
 
-            <FlexRow gap="xs" align="start">
+            <Flex gap="xs" align="start">
               <Text size="sm" variant="default">
                 •
               </Text>
@@ -381,9 +380,9 @@ export const InputTestScreen: React.FC = () => {
                   Onboarding variant matches desktop pill shape
                 </Text>
               </View>
-            </FlexRow>
+            </Flex>
 
-            <FlexRow gap="xs" align="start">
+            <Flex gap="xs" align="start">
               <Text size="sm" variant="default">
                 •
               </Text>
@@ -392,9 +391,9 @@ export const InputTestScreen: React.FC = () => {
                   Platform-specific keyboard types work
                 </Text>
               </View>
-            </FlexRow>
+            </Flex>
 
-            <FlexRow gap="xs" align="start">
+            <Flex gap="xs" align="start">
               <Text size="sm" variant="default">
                 •
               </Text>
@@ -403,9 +402,9 @@ export const InputTestScreen: React.FC = () => {
                   Label management works with consistent styling
                 </Text>
               </View>
-            </FlexRow>
+            </Flex>
 
-            <FlexRow gap="xs" align="start">
+            <Flex gap="xs" align="start">
               <Text size="sm" variant="default">
                 •
               </Text>
@@ -414,8 +413,8 @@ export const InputTestScreen: React.FC = () => {
                   Floating labels use smooth native animations
                 </Text>
               </View>
-            </FlexRow>
-          </FlexColumn>
+            </Flex>
+          </Flex>
         </View>
       </ScrollView>
     </SafeAreaView>

@@ -21,8 +21,7 @@ import {
   Modal,
   Text,
   Container,
-  FlexRow,
-  FlexColumn,
+  Flex,
   Icon,
   Tooltip,
   Portal,
@@ -418,7 +417,8 @@ export const Message = React.memo(
     );
 
     return (
-      <FlexColumn
+      <Flex
+        direction="column"
         ref={mentionRef}
         id={`msg-${message.messageId}`}
         className={
@@ -524,21 +524,21 @@ export const Message = React.memo(
           }
         })()}
         {['join', 'leave', 'kick'].includes(message.content.type) && (
-          <FlexRow className="px-4 py-2 italic items-center min-w-0" align="center">
+          <Flex className="px-4 py-2 italic items-center min-w-0" align="center">
             <Text
               variant={message.content.type === 'kick' ? 'danger' : 'subtle'}
               className="flex items-center min-w-0 flex-1"
             >
               {formatEventMessage(sender.displayName, message.content.type)}
             </Text>
-          </FlexRow>
+          </Flex>
         )}
         {!['join', 'leave', 'kick'].includes(message.content.type) && (
-          <FlexRow
+          <Flex
             className="message-body w-full font-[11pt] px-[16px] items-start"
           >
             {showUserProfile && spaceId && (
-              <FlexRow
+              <Flex
                 onClick={interactions.handleUserProfileBackgroundClick}
                 className={
                   'absolute left-0 top-0 w-full mt-[-1000px] pb-[200px] pt-[1000px] z-[1000]'
@@ -561,7 +561,7 @@ export const Message = React.memo(
                     }}
                   />
                 </Container>
-              </FlexRow>
+              </Flex>
             )}
             {isCompact ? (
               <div className="message-sender-spacer">
@@ -729,7 +729,7 @@ export const Message = React.memo(
               ) : (
                 <>
                   {/* Desktop layout: horizontal row with username and timestamp */}
-                  <FlexRow align="center" className="items-center min-w-0 hidden xs:flex">
+                  <Flex align="center" className="items-center min-w-0 hidden xs:flex">
                     <Text className="message-sender-name truncate-user-name-chat flex-shrink min-w-0">
                       {sender.displayName}
                     </Text>
@@ -784,30 +784,30 @@ export const Message = React.memo(
                         </Tooltip>
                       )}
                     </Text>
-                    <FlexRow align="center" gap="xs" className="flex-shrink-0 min-w-20 mr-4">
+                    <Flex align="center" gap="xs" className="flex-shrink-0 min-w-20 mr-4">
                       <Text className="message-timestamp">{displayedTimestmap}</Text>
                       {isEdited && (
                         <Text variant="muted" size="xs">
                           {t`(edited)`}
                         </Text>
                       )}
-                    </FlexRow>
-                  </FlexRow>
+                    </Flex>
+                  </Flex>
 
                   {/* Mobile layout: vertical stack with timestamp above username */}
-                  <FlexColumn className="xs:hidden items-start">
+                  <Flex direction="column" className="xs:hidden items-start">
                     {/* Timestamp row on mobile - aligned to left edge */}
-                    <FlexRow align="center" gap="xs" className="mb-1 flex-shrink-0 min-w-20 mr-4">
+                    <Flex align="center" gap="xs" className="mb-1 flex-shrink-0 min-w-20 mr-4">
                       <Text className="message-timestamp">{displayedTimestmap}</Text>
                       {isEdited && (
                         <Text variant="muted" size="xs">
                           {t`(edited)`}
                         </Text>
                       )}
-                    </FlexRow>
+                    </Flex>
 
                     {/* Username row on mobile */}
-                    <FlexRow align="center" className="items-center min-w-0">
+                    <Flex align="center" className="items-center min-w-0">
                       <Text className="message-sender-name truncate-user-name-chat flex-shrink min-w-0">
                         {sender.displayName}
                       </Text>
@@ -862,8 +862,8 @@ export const Message = React.memo(
                           </Tooltip>
                         )}
                       </Text>
-                    </FlexRow>
-                  </FlexColumn>
+                    </Flex>
+                  </Flex>
                 </>
               )}
 
@@ -1201,13 +1201,13 @@ export const Message = React.memo(
 
               {/* Message Send Status Indicator */}
               {message.sendStatus === 'sending' && (
-                <FlexRow align="center" gap="xs" className="message-status sending pt-1">
+                <Flex align="center" gap="xs" className="message-status sending pt-1">
                   <Icon name="clock" size="xs" />
                   <Text size="sm" variant="warning">{t`Sending...`}</Text>
-                </FlexRow>
+                </Flex>
               )}
               {message.sendStatus === 'failed' && (
-                <FlexRow align="center" gap="xs" className="message-status failed pt-1">
+                <Flex align="center" gap="xs" className="message-status failed pt-1">
                   <Icon name="warning" size="xs" />
                   <Text size="sm" variant="danger">
                     {t`Failed to send.`}{' '}
@@ -1234,10 +1234,10 @@ export const Message = React.memo(
                       <Icon name="question-circle" size="xs" />
                     </Tooltip>
                   )}
-                </FlexRow>
+                </Flex>
               )}
             </Container>
-          </FlexRow>
+          </Flex>
         )}
 
         {/* Desktop Context Menu */}
@@ -1301,7 +1301,7 @@ export const Message = React.memo(
           />
         )}
 
-      </FlexColumn>
+      </Flex>
     );
   },
   (prevProps, nextProps) => {

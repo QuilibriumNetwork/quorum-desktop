@@ -1,5 +1,5 @@
 import React from 'react';
-import { Container, Text, FlexRow, Icon } from '../components/primitives';
+import { Container, Text, Flex, Icon } from '../components/primitives';
 
 interface DevNavItem {
   name: string;
@@ -59,7 +59,7 @@ export const DevNavMenu: React.FC<DevNavMenuProps> = ({
       className={`bg-surface-00 border-b border-default ${sticky ? 'sticky top-0 z-20' : ''}`}
     >
       <Container padding="sm" className="mx-auto max-w-screen-2xl">
-        <FlexRow gap="md" className="items-center justify-center">
+        <Flex gap="md" className="items-center justify-center">
           {devNavItems.map((item) => {
             const isActive = currentPath === item.path;
             return (
@@ -77,7 +77,7 @@ export const DevNavMenu: React.FC<DevNavMenuProps> = ({
               </a>
             );
           })}
-        </FlexRow>
+        </Flex>
       </Container>
     </div>
   );

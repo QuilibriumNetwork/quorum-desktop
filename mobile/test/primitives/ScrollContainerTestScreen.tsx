@@ -4,7 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTheme } from '@/components/primitives/theme';
 import { ScrollContainer } from '@/components/primitives';
 import { Icon } from '@/components/primitives/Icon';
-import { Text, Paragraph, Title, FlexColumn, FlexRow } from '@/components/primitives';
+import { Text, Paragraph, Title, Flex } from '@/components/primitives';
 import {
   commonTestStyles,
   createThemedStyles,
@@ -26,18 +26,18 @@ export const ScrollContainerTestScreen: React.FC = () => {
         scrollEventThrottle={16}
         keyboardShouldPersistTaps="handled"
       >
-        <FlexColumn style={commonTestStyles.header}>
-          <FlexRow gap="md" align="center" style={{ alignItems: 'flex-start' }}>
+        <Flex direction="column" style={commonTestStyles.header}>
+          <Flex gap="md" align="center" style={{ alignItems: 'flex-start' }}>
             <Icon name="clipboard" size="xl" style={{ marginTop: 2 }} />
             <Title>ScrollContainer Test</Title>
-          </FlexRow>
+          </Flex>
           <Paragraph align="center">
             Testing ScrollContainer primitive with 3 minimal examples + 1 full content example
           </Paragraph>
           <Text size="xs" variant="subtle" align="center" style={{ marginTop: 8 }}>
             📝 Nested scrolling: Tap and drag directly inside the bordered containers below
           </Text>
-        </FlexColumn>
+        </Flex>
 
         {/* Example 1: Normal sm - DEFINITELY SCROLLABLE */}
         <View style={themedStyles.section}>
@@ -112,7 +112,7 @@ export const ScrollContainerTestScreen: React.FC = () => {
           <Title size="sm">Full content sm (long article - definitely scrollable)</Title>
           <ScrollContainer height="sm">
             <View style={{ padding: 16 }}>
-              <FlexColumn gap={16}>
+              <Flex direction="column" gap={16}>
                 <View>
                   <Text size="md" weight="bold" style={{ marginBottom: 8 }}>
                     ScrollContainer Usage Guide
@@ -191,7 +191,7 @@ export const ScrollContainerTestScreen: React.FC = () => {
                     just like other scrollable components such as modal sheets.
                   </Text>
                 </View>
-              </FlexColumn>
+              </Flex>
             </View>
           </ScrollContainer>
         </View>
@@ -199,7 +199,7 @@ export const ScrollContainerTestScreen: React.FC = () => {
         {/* ScrollContainer Options Section */}
         <View style={themedStyles.section}>
           <Title size="sm">ScrollContainer Options</Title>
-          <FlexColumn gap={8} style={{ marginTop: 16 }}>
+          <Flex direction="column" gap={8} style={{ marginTop: 16 }}>
             <Text size="sm" variant="subtle">
               • Height options: xs (200px), sm (280px), md (400px), lg (500px), xl (600px), auto, custom
             </Text>
@@ -224,7 +224,7 @@ export const ScrollContainerTestScreen: React.FC = () => {
             <Text size="sm" variant="subtle">
               • Semantic styling (border-surface-6, rounded-lg equivalent)
             </Text>
-          </FlexColumn>
+          </Flex>
         </View>
       </ScrollView>
     </SafeAreaView>

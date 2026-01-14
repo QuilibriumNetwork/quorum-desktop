@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect, useMemo } from 'react';
-import { Button, Icon, FlexRow, ColorSwatch, useTheme } from '../../primitives';
+import { Button, Icon, Flex, ColorSwatch, useTheme } from '../../primitives';
 import { DropdownPanel } from '../../ui';
 import {
   IconPickerProps,
@@ -179,7 +179,7 @@ export const IconPicker: React.FC<IconPickerProps> = ({
           {/* Top row: Variant toggle (left) and Clear button (right) */}
           <div className="flex justify-between items-center mb-3">
             {/* Variant toggle - styled to match icon grid */}
-            <FlexRow gap={1}>
+            <Flex gap={1}>
               <button
                 onClick={() => handleVariantChange('outline')}
                 className={`icon-picker-variant-btn ${selectedVariant === 'outline' ? 'icon-picker-variant-btn--active' : ''}`}
@@ -196,7 +196,7 @@ export const IconPicker: React.FC<IconPickerProps> = ({
               >
                 <Icon name="circle" size="sm" color={displayIconColor} variant="filled" />
               </button>
-            </FlexRow>
+            </Flex>
 
             {/* Clear selection button */}
             <Button
@@ -211,7 +211,7 @@ export const IconPicker: React.FC<IconPickerProps> = ({
           </div>
 
           {/* Color swatches row */}
-          <FlexRow gap={3} justify="between">
+          <Flex gap={3} justify="between">
             {isBackgroundColorMode ? (
               // Background-color mode: show colored circles with white icon inside (using dimmed folder colors)
               FOLDER_COLORS.map((colorOption) => (
@@ -250,7 +250,7 @@ export const IconPicker: React.FC<IconPickerProps> = ({
                 />
               ))
             )}
-          </FlexRow>
+          </Flex>
         </div>
 
         {/* Scrollable Icon Grid */}

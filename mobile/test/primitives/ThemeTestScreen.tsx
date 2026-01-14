@@ -4,9 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 // Import primitives for theme testing
 import {
-  FlexRow,
-  FlexColumn,
-  FlexBetween,
+  Flex,
   Button,
   Modal,
   Text,
@@ -38,10 +36,10 @@ export const ThemeTestScreen: React.FC = () => {
       style={[commonTestStyles.container, { backgroundColor: colors.bg.app }]}
     >
       <ScrollView contentContainerStyle={commonTestStyles.contentPadding}>
-        <FlexRow gap="md" align="center" style={{ alignItems: 'flex-start' }}>
+        <Flex gap="md" align="center" style={{ alignItems: 'flex-start' }}>
           <Icon name="palette" size="xl" style={{ marginTop: 2 }} />
           <Title>Theme System Test</Title>
-        </FlexRow>
+        </Flex>
         <View style={{ marginBottom: 24 }}>
           <Text size="base" variant="default" align="center">
             Testing cross-platform theme system on React Native
@@ -50,48 +48,48 @@ export const ThemeTestScreen: React.FC = () => {
 
         {/* Current Theme Info */}
         <View style={themedStyles.section}>
-          <FlexColumn gap="md">
+          <Flex direction="column" gap="md">
             <Title size="sm">Current Theme</Title>
 
-            <FlexBetween style={{ paddingVertical: 8, marginBottom: 8 }}>
+            <Flex justify="between" style={{ paddingVertical: 8, marginBottom: 8 }}>
               <Text size="sm" weight="medium" variant="default">
                 Mode:
               </Text>
               <Text size="sm" weight="semibold" variant="strong">
                 {resolvedTheme}
               </Text>
-            </FlexBetween>
+            </Flex>
 
-            <FlexBetween style={{ paddingVertical: 8, marginBottom: 8 }}>
+            <Flex justify="between" style={{ paddingVertical: 8, marginBottom: 8 }}>
               <Text size="sm" weight="medium" variant="default">
                 Accent Color:
               </Text>
               <Text size="sm" weight="semibold" color={colors.accent[500]}>
                 {accent}
               </Text>
-            </FlexBetween>
+            </Flex>
 
             <ThemeRadioGroup horizontal />
-          </FlexColumn>
+          </Flex>
         </View>
 
         {/* Accent Colors */}
         <View style={themedStyles.section}>
-          <FlexColumn gap="md">
+          <Flex direction="column" gap="md">
             <Title size="sm">Accent Colors</Title>
 
             <AccentColorSwitcher />
-          </FlexColumn>
+          </Flex>
         </View>
 
         {/* Color Samples */}
         <View style={themedStyles.section}>
-          <FlexColumn gap="md">
+          <Flex direction="column" gap="md">
             <Title size="sm">Color Samples</Title>
 
-            <FlexColumn gap="lg">
+            <Flex direction="column" gap="lg">
               {/* Text Colors */}
-              <FlexColumn gap="sm">
+              <Flex direction="column" gap="sm">
                 <Label weight="semibold">Text Colors</Label>
                 <Text size="sm" weight="medium" color={colors.text.strong}>
                   text-strong
@@ -105,10 +103,10 @@ export const ThemeTestScreen: React.FC = () => {
                 <Text size="sm" weight="medium" color={colors.text.muted}>
                   text-muted
                 </Text>
-              </FlexColumn>
+              </Flex>
 
               {/* Surface Colors */}
-              <FlexColumn gap="sm">
+              <Flex direction="column" gap="sm">
                 <Label weight="semibold">Surface Colors</Label>
                 <View
                   style={[
@@ -140,10 +138,10 @@ export const ThemeTestScreen: React.FC = () => {
                     surface-3
                   </Text>
                 </View>
-              </FlexColumn>
+              </Flex>
 
               {/* Accent Colors */}
-              <FlexColumn gap="sm">
+              <Flex direction="column" gap="sm">
                 <Label weight="semibold">Accent Variants</Label>
                 <View
                   style={[
@@ -175,14 +173,14 @@ export const ThemeTestScreen: React.FC = () => {
                     accent-900
                   </Text>
                 </View>
-              </FlexColumn>
-            </FlexColumn>
-          </FlexColumn>
+              </Flex>
+            </Flex>
+          </Flex>
         </View>
 
         {/* Theme Modal Test */}
         <View style={themedStyles.section}>
-          <FlexColumn gap="md">
+          <Flex direction="column" gap="md">
             <Title size="sm">Theme in Modal</Title>
             <Paragraph size="sm" variant="subtle">
               Test theme consistency within modal components
@@ -191,7 +189,7 @@ export const ThemeTestScreen: React.FC = () => {
             <Button type="primary" onClick={() => setShowThemeModal(true)}>
               Open Themed Modal
             </Button>
-          </FlexColumn>
+          </Flex>
         </View>
       </ScrollView>
 
@@ -202,7 +200,7 @@ export const ThemeTestScreen: React.FC = () => {
         onClose={() => setShowThemeModal(false)}
         size="medium"
       >
-        <FlexColumn gap="md" style={{ padding: 16 }}>
+        <Flex direction="column" gap="md" style={{ padding: 16 }}>
           <Paragraph size="sm" variant="default">
             This modal demonstrates theme consistency across components. The
             theme system ensures all colors and styles remain consistent.
@@ -215,7 +213,7 @@ export const ThemeTestScreen: React.FC = () => {
               backgroundColor: colors.surface[1],
             }}
           >
-            <FlexColumn gap="xs">
+            <Flex direction="column" gap="xs">
               <Label weight="semibold">Theme Demo</Label>
               <Text size="sm" variant="subtle">
                 Current mode: {resolvedTheme}
@@ -223,18 +221,18 @@ export const ThemeTestScreen: React.FC = () => {
               <Text size="sm" color={colors.accent[500]}>
                 Accent: {accent}
               </Text>
-            </FlexColumn>
+            </Flex>
           </View>
 
-          <FlexRow gap="md" justify="end">
+          <Flex gap="md" justify="end">
             <Button type="secondary" onClick={() => setShowThemeModal(false)}>
               Close
             </Button>
             <View style={{ width: 200 }}>
               <ThemeRadioGroup horizontal />
             </View>
-          </FlexRow>
-        </FlexColumn>
+          </Flex>
+        </Flex>
       </Modal>
     </SafeAreaView>
   );

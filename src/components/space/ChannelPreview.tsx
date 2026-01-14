@@ -3,9 +3,7 @@ import {
   Container,
   Text,
   Icon,
-  FlexRow,
-  FlexColumn,
-  Spacer,
+  Flex,
 } from '../primitives';
 
 interface ChannelPreviewProps {
@@ -19,23 +17,23 @@ export const ChannelPreview: React.FC<ChannelPreviewProps> = ({
 }) => {
   return (
     <Container padding="sm" backgroundColor="var(--color-bg-chat)">
-      <FlexColumn gap="sm">
+      <Flex direction="column" gap="sm">
         {/* Channel name with icon */}
-        <FlexRow align="center" gap="xs">
+        <Flex align="center" gap="xs">
           <Icon name="hashtag" size="xs" />
           <Text variant="main" size="sm">
             {channelName}
           </Text>
-        </FlexRow>
+        </Flex>
 
         {/* Message count */}
-        <FlexRow align="center" gap="xs">
+        <Flex align="center" gap="xs">
           <Icon name="message" size="xs" />
           <Text variant="main" size="sm">
             {messageCount} message{messageCount !== 1 ? 's' : ''}
           </Text>
-        </FlexRow>
-      </FlexColumn>
+        </Flex>
+      </Flex>
     </Container>
   );
 };

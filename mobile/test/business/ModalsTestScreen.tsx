@@ -3,8 +3,7 @@ import { ScrollView, View, TouchableOpacity, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import {
   Container,
-  FlexColumn,
-  FlexRow,
+  Flex,
   Text,
   Icon,
   Title,
@@ -150,7 +149,7 @@ export const ModalsTestScreen: React.FC<ModalsTestScreenProps> = ({
       onPress={modal.testAction}
       activeOpacity={0.7}
     >
-      <FlexRow gap="md" align="start">
+      <Flex gap="md" align="start">
         <Icon
           name={modal.icon}
           size="lg"
@@ -162,7 +161,7 @@ export const ModalsTestScreen: React.FC<ModalsTestScreenProps> = ({
           style={{ marginTop: 2 }}
         />
         <View style={{ flex: 1 }}>
-          <FlexRow gap="sm" align="center" style={{ marginBottom: 4 }}>
+          <Flex gap="sm" align="center" style={{ marginBottom: 4 }}>
             <Text size="lg" weight="medium">
               {modal.title}
             </Text>
@@ -182,12 +181,12 @@ export const ModalsTestScreen: React.FC<ModalsTestScreenProps> = ({
                 {getStatusText(modal.status)}
               </Text>
             </View>
-          </FlexRow>
+          </Flex>
           <Text size="sm" variant="subtle">
             {modal.description}
           </Text>
         </View>
-      </FlexRow>
+      </Flex>
     </TouchableOpacity>
   );
 
@@ -204,7 +203,7 @@ export const ModalsTestScreen: React.FC<ModalsTestScreenProps> = ({
       >
         {/* Header */}
         <View style={commonTestStyles.header}>
-          <FlexRow gap="md" align="center" style={{ marginBottom: 16 }}>
+          <Flex gap="md" align="center" style={{ marginBottom: 16 }}>
             <TouchableOpacity
               onPress={onGoBack}
               style={{
@@ -219,15 +218,15 @@ export const ModalsTestScreen: React.FC<ModalsTestScreenProps> = ({
                 color={theme.colors.text.main}
               />
             </TouchableOpacity>
-            <FlexColumn gap="xs" align="start" style={{ flex: 1 }}>
+            <Flex direction="column" gap="xs" align="start" style={{ flex: 1 }}>
               <Text size="2xl" weight="bold">
                 Modal Components
               </Text>
               <Text size="sm" variant="subtle">
                 Test cross-platform modal behavior
               </Text>
-            </FlexColumn>
-          </FlexRow>
+            </Flex>
+          </Flex>
         </View>
 
         {/* Instructions Card */}
@@ -241,13 +240,13 @@ export const ModalsTestScreen: React.FC<ModalsTestScreenProps> = ({
             marginBottom: 20,
           }}
         >
-          <FlexRow gap="sm" style={{ marginBottom: 12 }}>
+          <Flex gap="sm" style={{ marginBottom: 12 }}>
             <Icon name="info-circle" size="md" color={theme.colors.info} />
             <Text size="lg" weight="medium" color={theme.colors.info}>
               Testing Instructions
             </Text>
-          </FlexRow>
-          <FlexColumn gap="sm">
+          </Flex>
+          <Flex direction="column" gap="sm">
             <Text size="sm" variant="main">
               • Modals appear as bottom sheets on mobile
             </Text>
@@ -260,7 +259,7 @@ export const ModalsTestScreen: React.FC<ModalsTestScreenProps> = ({
             <Text size="sm" variant="main">
               • Verify proper gesture handling
             </Text>
-          </FlexColumn>
+          </Flex>
         </View>
 
         {/* Modal Tests */}

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { FlexRow, FlexColumn, Text, Button, Select } from '@/components/primitives';
+import { Flex, Text, Button, Select } from '@/components/primitives';
 
 interface PropConfig {
   type: 'select' | 'boolean' | 'number';
@@ -63,22 +63,22 @@ export const InteractivePropsPanel: React.FC<InteractivePropsPanelProps> = ({
   };
 
   return (
-    <FlexColumn gap="md">
-      <FlexRow justify="between" align="center">
+    <Flex direction="column" gap="md">
+      <Flex justify="between" align="center">
         <Text variant="strong" size="sm">Interactive Properties</Text>
-        <FlexRow gap="xs">
+        <Flex gap="xs">
           <Button type="subtle" size="small" onClick={copyCurrentProps}>
             {showCopied ? 'Copied!' : 'Copy Props'}
           </Button>
           <Button type="subtle-outline" size="small" onClick={resetToDefaults}>
             Reset
           </Button>
-        </FlexRow>
-      </FlexRow>
+        </Flex>
+      </Flex>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {Object.entries(dynamicProps).map(([propName, config]) => (
-          <FlexColumn key={propName} gap="xs">
+          <Flex direction="column" key={propName} gap="xs">
             <Text variant="subtle" size="sm">{config.label}</Text>
 
             {config.type === 'select' && config.options && (
@@ -94,7 +94,7 @@ export const InteractivePropsPanel: React.FC<InteractivePropsPanelProps> = ({
             )}
 
             {config.type === 'boolean' && (
-              <FlexRow gap="xs">
+              <Flex gap="xs">
                 <Button
                   type={currentValues[propName] === false ? "primary" : "light"}
                   size="small"
@@ -109,7 +109,7 @@ export const InteractivePropsPanel: React.FC<InteractivePropsPanelProps> = ({
                 >
                   True
                 </Button>
-              </FlexRow>
+              </Flex>
             )}
 
             {config.type === 'number' && (
@@ -128,7 +128,7 @@ export const InteractivePropsPanel: React.FC<InteractivePropsPanelProps> = ({
                 </Text>
               </div>
             )}
-          </FlexColumn>
+          </Flex>
         ))}
       </div>
 
@@ -142,6 +142,6 @@ export const InteractivePropsPanel: React.FC<InteractivePropsPanelProps> = ({
           </code>
         </pre>
       </div>
-    </FlexColumn>
+    </Flex>
   );
 };

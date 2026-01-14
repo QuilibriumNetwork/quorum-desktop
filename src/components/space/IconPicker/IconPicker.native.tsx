@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { View, TouchableOpacity, Animated } from 'react-native';
-import { Button, Icon, FlexRow, ColorSwatch, ScrollContainer, Spacer, useTheme } from '../../primitives';
+import { Button, Icon, Flex, ColorSwatch, ScrollContainer, Spacer, useTheme } from '../../primitives';
 import { IconPickerProps, ICON_OPTIONS, ICON_COLORS, FILLED_ICONS, getIconColorHex, IconColor } from './types';
 import { IconName, IconVariant } from '../../primitives/Icon/types';
 import { createIconPickerStyles } from './IconPicker.native.styles';
@@ -133,9 +133,9 @@ export const IconPicker: React.FC<IconPickerProps> = ({
             {/* Header with variant toggle, color swatches, and clear button */}
             <View style={styles.headerContainer}>
               {/* Top row: Variant toggle (left) and Clear button (right) */}
-              <FlexRow justify="space-between" align="center" style={{ marginBottom: 12 }}>
+              <Flex justify="space-between" align="center" style={{ marginBottom: 12 }}>
                 {/* Variant toggle - styled to match icon grid */}
-                <FlexRow gap="xs">
+                <Flex gap="xs">
                   <TouchableOpacity
                     onPress={() => handleVariantChange('outline')}
                     style={[
@@ -158,7 +158,7 @@ export const IconPicker: React.FC<IconPickerProps> = ({
                   >
                     <Icon name="circle" size="sm" color={displayIconColor} variant="filled" />
                   </TouchableOpacity>
-                </FlexRow>
+                </Flex>
 
                 {/* Clear selection button */}
                 <Button
@@ -169,10 +169,10 @@ export const IconPicker: React.FC<IconPickerProps> = ({
                 >
                   Clear
                 </Button>
-              </FlexRow>
+              </Flex>
 
               {/* Color selection */}
-              <FlexRow gap="md" justify="between" style={styles.colorRow}>
+              <Flex gap="md" justify="between" style={styles.colorRow}>
                 {isBackgroundColorMode ? (
                   // Background-color mode: show colored circles with white icon inside
                   ICON_COLORS.map((colorOption) => (
@@ -209,7 +209,7 @@ export const IconPicker: React.FC<IconPickerProps> = ({
                     />
                   ))
                 )}
-              </FlexRow>
+              </Flex>
             </View>
 
             {/* Custom spacer with theme-aware border */}

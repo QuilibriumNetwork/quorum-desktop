@@ -1,6 +1,6 @@
 import React from 'react';
 import { Message as MessageType, Sticker, Role, Channel } from '../../api/quorumApi';
-import { Container, Text, FlexRow, FlexColumn, Spacer, Icon } from '../primitives';
+import { Container, Text, Flex, Spacer, Icon } from '../primitives';
 import { t } from '@lingui/core/macro';
 import { useMessageFormatting } from '../../hooks/business/messages/useMessageFormatting';
 import { YouTubeEmbed } from '../ui/YouTubeEmbed';
@@ -292,15 +292,15 @@ export const MessagePreview: React.FC<MessagePreviewProps> = ({
       padding="sm"
       backgroundColor={showBackground ? "var(--color-bg-chat)" : undefined}
     >
-      <FlexColumn gap="sm">
+      <Flex direction="column" gap="sm">
         {/* Message header */}
         {!hideHeader && (
-          <FlexRow align="center" className="dropdown-result-meta min-w-0">
+          <Flex align="center" className="dropdown-result-meta min-w-0">
             <Icon name="user" className="dropdown-result-user-icon flex-shrink-0" />
             <Text className="dropdown-result-sender mr-4 truncate-user-name flex-shrink min-w-0">{getDisplayName()}</Text>
             <Icon name="calendar-alt" className="dropdown-result-date-icon flex-shrink-0" />
             <Text className="dropdown-result-date">{formattedTimestamp}</Text>
-          </FlexRow>
+          </Flex>
         )}
 
         {!hideHeader && (
@@ -313,7 +313,7 @@ export const MessagePreview: React.FC<MessagePreviewProps> = ({
 
         {/* Message content */}
         {renderMessageContent()}
-      </FlexColumn>
+      </Flex>
     </Container>
   );
 };

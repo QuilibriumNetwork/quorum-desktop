@@ -1,14 +1,20 @@
 import React, { useState } from 'react';
-import { FlexRow, Text } from '@/components/primitives';
+import { Flex } from '@/components/primitives';
 import { ExampleBox } from '../ExampleBox';
 
 const config = {
-  id: "flex-primitives",
-  title: "FlexRow",
-  description: "Horizontal flex layout container",
+  id: "flex-primitive",
+  title: "Flex",
+  description: "Unified flex layout container with direction prop (replaces FlexRow, FlexColumn, FlexCenter, FlexBetween)",
   background: "surface-1",
   columns: 1,
   dynamicProps: {
+    direction: {
+      type: "select",
+      options: ["row", "column"],
+      default: "row",
+      label: "Direction"
+    },
     gap: {
       type: "select",
       options: ["none", "xs", "sm", "md", "lg", "xl"],
@@ -18,7 +24,7 @@ const config = {
     justify: {
       type: "select",
       options: ["start", "end", "center", "between", "around", "evenly"],
-      default: "center",
+      default: "start",
       label: "Justify"
     },
     align: {
@@ -32,21 +38,33 @@ const config = {
     { name: "Four Items", props: {}, children: ["Home", "About", "Services", "Contact"] }
   ],
   quickTips: [
-    "Use gap prop instead of manual spacing",
-    "justify controls horizontal distribution",
-    "align controls vertical alignment",
-    "wrap=true allows items to flow to next line"
+    "direction='row' is default (like FlexRow)",
+    "direction='column' for vertical layouts (like FlexColumn)",
+    "Default align depends on direction: row->center, column->stretch",
+    "justify='between' replaces FlexBetween",
+    "justify='center' align='center' replaces FlexCenter"
   ],
   codeExample: {
-    title: "Header Layout",
-    code: "import { FlexRow, Text, Button } from '@/components/primitives';\n\n<FlexRow justify=\"between\" align=\"center\">\n  <Text variant=\"strong\">Page Title</Text>\n  <Button type=\"primary\">Action</Button>\n</FlexRow>"
+    title: "Migration Examples",
+    code: `// FlexRow -> Flex (direction="row" is default)
+<FlexRow gap="md">       ->  <Flex gap="md">
+
+// FlexColumn -> Flex direction="column"
+<FlexColumn gap="md">    ->  <Flex direction="column" gap="md">
+
+// FlexBetween -> Flex justify="between"
+<FlexBetween>            ->  <Flex justify="between">
+
+// FlexCenter -> Flex justify="center" align="center"
+<FlexCenter>             ->  <Flex justify="center" align="center">`
   }
 } as const;
 
-export const FlexRowExamples: React.FC = () => {
+export const FlexExamples: React.FC = () => {
   const [dynamicProps, setDynamicProps] = useState<Record<string, any>>({
+    direction: config.dynamicProps.direction?.default || 'row',
     gap: config.dynamicProps.gap?.default || 'md',
-    justify: config.dynamicProps.justify?.default || 'center',
+    justify: config.dynamicProps.justify?.default || 'start',
     align: config.dynamicProps.align?.default || 'center',
   });
 
@@ -65,25 +83,25 @@ export const FlexRowExamples: React.FC = () => {
         }}
       >
         {config.staticExamples.map((example, index) => (
-          <div key={index} className="flex flex-col gap-2 p-3 min-h-[120px]">
-            <FlexRow
+          <div key={index} className="flex flex-col gap-2 p-3 min-h-[200px]">
+            <Flex
               {...example.props}
               {...dynamicProps}
-              className="h-20 w-full min-w-[300px]"
+              className={dynamicProps.direction === 'column' ? "min-h-[150px] w-full" : "h-20 w-full min-w-[300px]"}
             >
               {Array.isArray(example.children)
                 ? example.children.map((child, childIndex) => (
-                    <div key={childIndex} className="bg-accent-500 text-white px-1 py-1 rounded text-xs font-medium flex-shrink-0 min-w-[20px] text-center">
+                    <div key={childIndex} className="bg-accent-500 text-white px-2 py-1 rounded text-xs font-medium flex-shrink-0 min-w-[20px] text-center">
                       {child}
                     </div>
                   ))
                 : (
-                    <div className="bg-accent-500 text-white px-1 py-1 rounded text-xs font-medium flex-shrink-0 min-w-[20px] text-center">
+                    <div className="bg-accent-500 text-white px-2 py-1 rounded text-xs font-medium flex-shrink-0 min-w-[20px] text-center">
                       {example.children}
                     </div>
                   )
               }
-            </FlexRow>
+            </Flex>
             <span className="text-xs text-subtle text-center">
               {example.name}
             </span>

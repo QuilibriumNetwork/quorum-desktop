@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import {
-  FlexRow,
+  Flex,
   Container,
   Text,
   Icon,
@@ -54,12 +54,12 @@ export const Docs: React.FC = () => {
       <DevNavMenu currentPath={window.location.pathname} />
       <Container padding="lg" className="mx-auto max-w-6xl">
         <div className="text-center mb-8">
-          <FlexRow justify="center" gap="sm" className="mb-4">
+          <Flex justify="center" gap="sm" className="mb-4">
             <Icon name="book" size="2xl" className="text-strong" />
             <Text as="h1" variant="strong" size="3xl" weight="bold">
               Documentation
             </Text>
-          </FlexRow>
+          </Flex>
           <Text as="p" variant="main" size="lg" className="mb-2" align="center">
             Project Documentation & Guides
           </Text>
@@ -85,12 +85,12 @@ export const Docs: React.FC = () => {
         {/* Error State */}
         {error && (
           <div className="bg-danger/10 border border-danger/30 rounded-lg p-6 mb-8">
-            <FlexRow gap="sm" align="center" className="mb-2">
+            <Flex gap="sm" align="center" className="mb-2">
               <Icon name="alert-triangle" size="md" className="text-danger" />
               <Text variant="strong" size="lg" className="text-danger">
                 Error Loading Documentation
               </Text>
-            </FlexRow>
+            </Flex>
             <Text variant="main" size="sm" className="mb-4">
               {error}
             </Text>

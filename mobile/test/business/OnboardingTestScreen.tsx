@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Container, FlexColumn, Text, Button } from '@/components/primitives';
+import { Container, Flex, Text, Button } from '@/components/primitives';
 import { Onboarding } from '@/components/onboarding/Onboarding.native';
 import {
   AuthScreenWrapper,
@@ -40,7 +40,7 @@ export const OnboardingTestScreen: React.FC = () => {
 
       {user && (
         <AuthContent centerContent>
-          <FlexColumn gap="md" align="center">
+          <Flex direction="column" gap="md" align="center">
             <Text
               size="lg"
               weight="medium"
@@ -60,7 +60,7 @@ export const OnboardingTestScreen: React.FC = () => {
             >
               Status: {user.status}
             </Text>
-          </FlexColumn>
+          </Flex>
         </AuthContent>
       )}
 

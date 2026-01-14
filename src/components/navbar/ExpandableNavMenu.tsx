@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Icon, Tooltip, FlexColumn, Container } from '../primitives';
+import { Icon, Tooltip, Flex, Container } from '../primitives';
 import './ExpandableNavMenu.scss';
 import { t } from '@lingui/core/macro';
 import { useModalContext } from '../context/ModalProvider';
@@ -23,7 +23,7 @@ const ExpandableNavMenu: React.FunctionComponent<ExpandableNavMenuProps> = (
   // On desktop non-touch devices, avatar expands on hover to show user status
   // On touch devices / smaller screens, avatar click opens settings
   return (
-    <FlexColumn className="nav-buttons-centered-container">
+    <Flex direction="column" className="nav-buttons-centered-container">
       {isDesktop ? (
         <Tooltip
           id="create-space-desktop"
@@ -54,7 +54,7 @@ const ExpandableNavMenu: React.FunctionComponent<ExpandableNavMenuProps> = (
         className="expanded-nav-button-avatar"
         onOpenSettings={openUserSettings}
       />
-    </FlexColumn>
+    </Flex>
   );
 };
 

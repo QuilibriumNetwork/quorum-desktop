@@ -3,8 +3,7 @@ import { ScrollView, View, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import {
   Container,
-  FlexColumn,
-  FlexRow,
+  Flex,
   Text,
   Button,
   Icon,
@@ -59,14 +58,14 @@ export const FileUploadTestScreen: React.FC = () => {
       <ScrollView contentContainerStyle={commonTestStyles.contentPadding}>
         {/* Header */}
         <View style={commonTestStyles.header}>
-          <FlexColumn gap="xs" align="center">
+          <Flex direction="column" gap="xs" align="center">
             <Text size="2xl" weight="bold">
               FileUpload Primitive
             </Text>
             <Text size="sm" variant="subtle" align="center">
               Cross-platform file upload with native picker integration
             </Text>
-          </FlexColumn>
+          </Flex>
         </View>
 
         {/* Image Upload Test */}
@@ -77,7 +76,7 @@ export const FileUploadTestScreen: React.FC = () => {
             marginBottom: 16,
           }}
         >
-          <FlexColumn gap="md">
+          <Flex direction="column" gap="md">
             <Text size="lg" weight="semibold">
               Image Upload
             </Text>
@@ -128,7 +127,7 @@ export const FileUploadTestScreen: React.FC = () => {
                 </Text>
               </View>
             </FileUpload>
-          </FlexColumn>
+          </Flex>
         </Container>
 
         {/* Document Upload Test */}
@@ -139,7 +138,7 @@ export const FileUploadTestScreen: React.FC = () => {
             marginBottom: 16,
           }}
         >
-          <FlexColumn gap="md">
+          <Flex direction="column" gap="md">
             <Text size="lg" weight="semibold">
               Document Upload
             </Text>
@@ -185,7 +184,7 @@ export const FileUploadTestScreen: React.FC = () => {
                 </Text>
               </View>
             </FileUpload>
-          </FlexColumn>
+          </Flex>
         </Container>
 
         {/* Upload Results */}
@@ -196,8 +195,8 @@ export const FileUploadTestScreen: React.FC = () => {
             marginBottom: 16,
           }}
         >
-          <FlexColumn gap="md">
-            <FlexRow justify="between" align="center">
+          <Flex direction="column" gap="md">
+            <Flex justify="between" align="center">
               <Text size="lg" weight="semibold">
                 Upload Results
               </Text>
@@ -206,7 +205,7 @@ export const FileUploadTestScreen: React.FC = () => {
                   Clear All
                 </Button>
               )}
-            </FlexRow>
+            </Flex>
 
             {uploadError && (
               <Container
@@ -217,17 +216,17 @@ export const FileUploadTestScreen: React.FC = () => {
                   borderWidth: 1,
                 }}
               >
-                <FlexRow gap="sm" align="start">
+                <Flex gap="sm" align="start">
                   <Icon name="error" color={theme.colors.utilities.danger} />
                   <Text variant="error" size="sm" style={{ flex: 1 }}>
                     {uploadError}
                   </Text>
-                </FlexRow>
+                </Flex>
               </Container>
             )}
 
             {uploadedFiles.length > 0 ? (
-              <FlexColumn gap="sm">
+              <Flex direction="column" gap="sm">
                 <Text weight="medium">
                   {uploadedFiles.length} file(s) selected:
                 </Text>
@@ -240,8 +239,8 @@ export const FileUploadTestScreen: React.FC = () => {
                       borderRadius: 8,
                     }}
                   >
-                    <FlexColumn gap="xs">
-                      <FlexRow gap="sm" align="center">
+                    <Flex direction="column" gap="xs">
+                      <Flex gap="sm" align="center">
                         <Icon
                           name="image"
                           color={theme.colors.accent.DEFAULT}
@@ -254,19 +253,19 @@ export const FileUploadTestScreen: React.FC = () => {
                         >
                           {file.name}
                         </Text>
-                      </FlexRow>
-                      <FlexRow justify="between">
+                      </Flex>
+                      <Flex justify="between">
                         <Text size="sm" variant="subtle">
                           Size: {formatFileSize(file.size)}
                         </Text>
                         <Text size="sm" variant="subtle">
                           Type: {file.type}
                         </Text>
-                      </FlexRow>
-                    </FlexColumn>
+                      </Flex>
+                    </Flex>
                   </Container>
                 ))}
-              </FlexColumn>
+              </Flex>
             ) : (
               <Container
                 padding="lg"
@@ -289,7 +288,7 @@ export const FileUploadTestScreen: React.FC = () => {
                 </Text>
               </Container>
             )}
-          </FlexColumn>
+          </Flex>
         </Container>
 
         {/* Test Information */}
@@ -299,43 +298,43 @@ export const FileUploadTestScreen: React.FC = () => {
             backgroundColor: theme.colors.surface[3],
           }}
         >
-          <FlexColumn gap="md">
+          <Flex direction="column" gap="md">
             <Text size="lg" weight="semibold">
               Native Implementation Details
             </Text>
-            <FlexColumn gap="sm">
-              <FlexRow gap="xs" align="start">
+            <Flex direction="column" gap="sm">
+              <Flex gap="xs" align="start">
                 <Text>•</Text>
                 <Text size="sm" style={{ flex: 1 }}>
                   Uses expo-image-picker for image selection
                 </Text>
-              </FlexRow>
-              <FlexRow gap="xs" align="start">
+              </Flex>
+              <Flex gap="xs" align="start">
                 <Text>•</Text>
                 <Text size="sm" style={{ flex: 1 }}>
                   Uses expo-document-picker for document selection
                 </Text>
-              </FlexRow>
-              <FlexRow gap="xs" align="start">
+              </Flex>
+              <Flex gap="xs" align="start">
                 <Text>•</Text>
                 <Text size="sm" style={{ flex: 1 }}>
                   Supports camera and photo library for images
                 </Text>
-              </FlexRow>
-              <FlexRow gap="xs" align="start">
+              </Flex>
+              <Flex gap="xs" align="start">
                 <Text>•</Text>
                 <Text size="sm" style={{ flex: 1 }}>
                   File validation includes size and MIME type checking
                 </Text>
-              </FlexRow>
-              <FlexRow gap="xs" align="start">
+              </Flex>
+              <Flex gap="xs" align="start">
                 <Text>•</Text>
                 <Text size="sm" style={{ flex: 1 }}>
                   Platform permissions are requested automatically
                 </Text>
-              </FlexRow>
-            </FlexColumn>
-          </FlexColumn>
+              </Flex>
+            </Flex>
+          </Flex>
         </Container>
       </ScrollView>
     </SafeAreaView>

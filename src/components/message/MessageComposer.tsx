@@ -1,5 +1,5 @@
 import React, { forwardRef, useImperativeHandle, useRef, useState, useCallback, useEffect } from 'react';
-import { Button, FlexRow, Tooltip, Icon, TextArea, Callout } from '../primitives';
+import { Button, Flex, Tooltip, Icon, TextArea, Callout } from '../primitives';
 import { t } from '@lingui/core/macro';
 import { i18n } from '@lingui/core';
 import type { AttachmentProcessingResult } from '../../utils/imageProcessing';
@@ -724,7 +724,7 @@ export const MessageComposer = forwardRef<
         />
 
         {/* Message input row */}
-        <FlexRow
+        <Flex
           ref={composerRef}
           className={`message-composer-row ${inReplyTo ? 'has-reply' : ''} ${isTyping ? 'typing' : ''} ${isMultiline ? 'multiline' : ''} ${messageValidation?.isOverLimit ? 'character-limit-exceeded' : ''}`}
         >
@@ -818,7 +818,7 @@ export const MessageComposer = forwardRef<
             onClick={messageValidation?.isOverLimit ? undefined : onSubmitMessage}
             className={`message-composer-send-btn ${messageValidation?.isOverLimit ? 'disabled' : ''}`}
           />
-        </FlexRow>
+        </Flex>
       </div>
     );
   }

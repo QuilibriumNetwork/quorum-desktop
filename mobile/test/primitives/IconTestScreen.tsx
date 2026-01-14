@@ -2,7 +2,7 @@ import React from 'react';
 import { View, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Icon, useTheme, Text, Paragraph, Title } from '@/components/primitives';
-import { FlexRow, FlexColumn } from '@/components/primitives';
+import { Flex } from '@/components/primitives';
 import { commonTestStyles } from '@/styles/commonTestStyles';
 
 export const IconTestScreen: React.FC = () => {
@@ -17,248 +17,248 @@ export const IconTestScreen: React.FC = () => {
       ]}
     >
       <ScrollView contentContainerStyle={commonTestStyles.contentPadding}>
-        <FlexColumn style={commonTestStyles.header}>
-          <FlexRow gap="md" align="center" style={{ alignItems: 'flex-start' }}>
+        <Flex direction="column" style={commonTestStyles.header}>
+          <Flex gap="md" align="center" style={{ alignItems: 'flex-start' }}>
             <Icon name="target" size="xl" style={{ marginTop: 2 }} />
             <Title>Icon</Title>
-          </FlexRow>
+          </Flex>
           <Paragraph align="center">
             Cross-platform icon system using FontAwesome with unified API
           </Paragraph>
-        </FlexColumn>
+        </Flex>
 
         {/* Basic Icons */}
-        <FlexColumn style={commonTestStyles.sectionSimple}>
+        <Flex direction="column" style={commonTestStyles.sectionSimple}>
           <Title size="sm">Basic Icons</Title>
 
-          <FlexRow wrap gap="md" style={commonTestStyles.iconGrid}>
-            <FlexColumn align="center" style={commonTestStyles.iconItem}>
+          <Flex wrap gap="md" style={commonTestStyles.iconGrid}>
+            <Flex direction="column" align="center" style={commonTestStyles.iconItem}>
               <Icon name="check" />
               <Text size="sm" variant="subtle">
                 check
               </Text>
-            </FlexColumn>
-            <FlexColumn align="center" style={commonTestStyles.iconItem}>
+            </Flex>
+            <Flex direction="column" align="center" style={commonTestStyles.iconItem}>
               <Icon name="close" />
               <Text size="sm" variant="subtle">
                 close
               </Text>
-            </FlexColumn>
-            <FlexColumn align="center" style={commonTestStyles.iconItem}>
+            </Flex>
+            <Flex direction="column" align="center" style={commonTestStyles.iconItem}>
               <Icon name="user" />
               <Text size="sm" variant="subtle">
                 user
               </Text>
-            </FlexColumn>
-          </FlexRow>
-        </FlexColumn>
+            </Flex>
+          </Flex>
+        </Flex>
 
         {/* Theme Icons */}
-        <FlexColumn style={commonTestStyles.sectionSimple}>
+        <Flex direction="column" style={commonTestStyles.sectionSimple}>
           <Title size="sm">Theme Icons</Title>
 
-          <FlexRow wrap gap="md" style={commonTestStyles.iconGrid}>
-            <FlexColumn align="center" style={commonTestStyles.iconItem}>
+          <Flex wrap gap="md" style={commonTestStyles.iconGrid}>
+            <Flex direction="column" align="center" style={commonTestStyles.iconItem}>
               <Icon name="sun" color={theme.colors.utilities.warning} />
               <Text size="xs" variant="subtle">
                 sun
               </Text>
-            </FlexColumn>
-            <FlexColumn align="center" style={commonTestStyles.iconItem}>
+            </Flex>
+            <Flex direction="column" align="center" style={commonTestStyles.iconItem}>
               <Icon name="moon" color={theme.colors.accent[600]} />
               <Text size="xs" variant="subtle">
                 moon
               </Text>
-            </FlexColumn>
-            <FlexColumn align="center" style={commonTestStyles.iconItem}>
+            </Flex>
+            <Flex direction="column" align="center" style={commonTestStyles.iconItem}>
               <Icon name="desktop" color={theme.colors.text.subtle} />
               <Text size="xs" variant="subtle">
                 desktop
               </Text>
-            </FlexColumn>
-          </FlexRow>
-        </FlexColumn>
+            </Flex>
+          </Flex>
+        </Flex>
 
         {/* Sizes */}
-        <FlexColumn style={commonTestStyles.sectionSimple}>
+        <Flex direction="column" style={commonTestStyles.sectionSimple}>
           <Title size="sm">Icon Sizes</Title>
 
-          <FlexRow
+          <Flex
             wrap
             justify="between"
             align="center"
             style={commonTestStyles.sizeRow}
           >
-            <FlexColumn align="center" style={commonTestStyles.sizeItem}>
+            <Flex direction="column" align="center" style={commonTestStyles.sizeItem}>
               <Icon name="heart" size="xs" />
               <Text size="xs" variant="subtle">
                 xs (12px)
               </Text>
-            </FlexColumn>
-            <FlexColumn align="center" style={commonTestStyles.sizeItem}>
+            </Flex>
+            <Flex direction="column" align="center" style={commonTestStyles.sizeItem}>
               <Icon name="heart" size="sm" />
               <Text size="xs" variant="subtle">
                 sm (14px)
               </Text>
-            </FlexColumn>
-            <FlexColumn align="center" style={commonTestStyles.sizeItem}>
+            </Flex>
+            <Flex direction="column" align="center" style={commonTestStyles.sizeItem}>
               <Icon name="heart" size="md" />
               <Text size="xs" variant="subtle">
                 md (16px)
               </Text>
-            </FlexColumn>
-            <FlexColumn align="center" style={commonTestStyles.sizeItem}>
+            </Flex>
+            <Flex direction="column" align="center" style={commonTestStyles.sizeItem}>
               <Icon name="heart" size="lg" />
               <Text size="xs" variant="subtle">
                 lg (20px)
               </Text>
-            </FlexColumn>
-            <FlexColumn align="center" style={commonTestStyles.sizeItem}>
+            </Flex>
+            <Flex direction="column" align="center" style={commonTestStyles.sizeItem}>
               <Icon name="heart" size="xl" />
               <Text size="xs" variant="subtle">
                 xl (24px)
               </Text>
-            </FlexColumn>
-            <FlexColumn align="center" style={commonTestStyles.sizeItem}>
+            </Flex>
+            <Flex direction="column" align="center" style={commonTestStyles.sizeItem}>
               <Icon name="heart" size={32} />
               <Text size="xs" variant="subtle">
                 32px
               </Text>
-            </FlexColumn>
-          </FlexRow>
-        </FlexColumn>
+            </Flex>
+          </Flex>
+        </Flex>
 
         {/* Actions & Communication */}
-        <FlexColumn style={commonTestStyles.sectionSimple}>
+        <Flex direction="column" style={commonTestStyles.sectionSimple}>
           <Title size="sm">Actions & Communication</Title>
 
-          <FlexRow wrap gap="md" style={commonTestStyles.iconGrid}>
-            <FlexColumn align="center" style={commonTestStyles.iconItem}>
+          <Flex wrap gap="md" style={commonTestStyles.iconGrid}>
+            <Flex direction="column" align="center" style={commonTestStyles.iconItem}>
               <Icon name="reply" color={theme.colors.utilities.success} />
               <Text size="xs" variant="subtle">
                 reply
               </Text>
-            </FlexColumn>
-            <FlexColumn align="center" style={commonTestStyles.iconItem}>
+            </Flex>
+            <Flex direction="column" align="center" style={commonTestStyles.iconItem}>
               <Icon name="trash" color={theme.colors.utilities.danger} />
               <Text size="xs" variant="subtle">
                 trash
               </Text>
-            </FlexColumn>
-            <FlexColumn align="center" style={commonTestStyles.iconItem}>
+            </Flex>
+            <Flex direction="column" align="center" style={commonTestStyles.iconItem}>
               <Icon name="link" color={theme.colors.accent[500]} />
               <Text size="xs" variant="subtle">
                 link
               </Text>
-            </FlexColumn>
-            <FlexColumn align="center" style={commonTestStyles.iconItem}>
+            </Flex>
+            <Flex direction="column" align="center" style={commonTestStyles.iconItem}>
               <Icon name="bell" disabled />
               <Text size="xs" variant="subtle">
                 bell (disabled)
               </Text>
-            </FlexColumn>
-            <FlexColumn align="center" style={commonTestStyles.iconItem}>
+            </Flex>
+            <Flex direction="column" align="center" style={commonTestStyles.iconItem}>
               <Icon name="envelope" />
               <Text size="xs" variant="subtle">
                 envelope
               </Text>
-            </FlexColumn>
-            <FlexColumn align="center" style={commonTestStyles.iconItem}>
+            </Flex>
+            <Flex direction="column" align="center" style={commonTestStyles.iconItem}>
               <Icon name="clipboard" />
               <Text size="xs" variant="subtle">
                 clipboard
               </Text>
-            </FlexColumn>
-          </FlexRow>
-        </FlexColumn>
+            </Flex>
+          </Flex>
+        </Flex>
 
         {/* Navigation */}
-        <FlexColumn style={commonTestStyles.sectionSimple}>
+        <Flex direction="column" style={commonTestStyles.sectionSimple}>
           <Title size="sm">Navigation Icons</Title>
 
-          <FlexRow wrap gap="md" style={commonTestStyles.iconGrid}>
-            <FlexColumn align="center" style={commonTestStyles.iconItem}>
+          <Flex wrap gap="md" style={commonTestStyles.iconGrid}>
+            <Flex direction="column" align="center" style={commonTestStyles.iconItem}>
               <Icon name="chevron-left" />
               <Text size="xs" variant="subtle">
                 chevron-left
               </Text>
-            </FlexColumn>
-            <FlexColumn align="center" style={commonTestStyles.iconItem}>
+            </Flex>
+            <Flex direction="column" align="center" style={commonTestStyles.iconItem}>
               <Icon name="chevron-right" />
               <Text size="xs" variant="subtle">
                 chevron-right
               </Text>
-            </FlexColumn>
-            <FlexColumn align="center" style={commonTestStyles.iconItem}>
+            </Flex>
+            <Flex direction="column" align="center" style={commonTestStyles.iconItem}>
               <Icon name="arrow-up" />
               <Text size="xs" variant="subtle">
                 arrow-up
               </Text>
-            </FlexColumn>
-            <FlexColumn align="center" style={commonTestStyles.iconItem}>
+            </Flex>
+            <Flex direction="column" align="center" style={commonTestStyles.iconItem}>
               <Icon name="arrow-down" />
               <Text size="xs" variant="subtle">
                 arrow-down
               </Text>
-            </FlexColumn>
-            <FlexColumn align="center" style={commonTestStyles.iconItem}>
+            </Flex>
+            <Flex direction="column" align="center" style={commonTestStyles.iconItem}>
               <Icon name="home" />
               <Text size="xs" variant="subtle">
                 home
               </Text>
-            </FlexColumn>
-            <FlexColumn align="center" style={commonTestStyles.iconItem}>
+            </Flex>
+            <Flex direction="column" align="center" style={commonTestStyles.iconItem}>
               <Icon name="menu" />
               <Text size="xs" variant="subtle">
                 menu
               </Text>
-            </FlexColumn>
-          </FlexRow>
-        </FlexColumn>
+            </Flex>
+          </Flex>
+        </Flex>
 
         {/* User & Social */}
-        <FlexColumn style={commonTestStyles.sectionSimple}>
+        <Flex direction="column" style={commonTestStyles.sectionSimple}>
           <Title size="sm">User & Social Icons</Title>
 
-          <FlexRow wrap gap="md" style={commonTestStyles.iconGrid}>
-            <FlexColumn align="center" style={commonTestStyles.iconItem}>
+          <Flex wrap gap="md" style={commonTestStyles.iconGrid}>
+            <Flex direction="column" align="center" style={commonTestStyles.iconItem}>
               <Icon name="users" />
               <Text size="xs" variant="subtle">
                 users
               </Text>
-            </FlexColumn>
-            <FlexColumn align="center" style={commonTestStyles.iconItem}>
+            </Flex>
+            <Flex direction="column" align="center" style={commonTestStyles.iconItem}>
               <Icon name="user-plus" />
               <Text size="xs" variant="subtle">
                 user-plus
               </Text>
-            </FlexColumn>
-            <FlexColumn align="center" style={commonTestStyles.iconItem}>
+            </Flex>
+            <Flex direction="column" align="center" style={commonTestStyles.iconItem}>
               <Icon name="smile" />
               <Text size="xs" variant="subtle">
                 smile
               </Text>
-            </FlexColumn>
-            <FlexColumn align="center" style={commonTestStyles.iconItem}>
+            </Flex>
+            <Flex direction="column" align="center" style={commonTestStyles.iconItem}>
               <Icon name="mood-happy" />
               <Text size="xs" variant="subtle">
                 mood-happy
               </Text>
-            </FlexColumn>
-            <FlexColumn align="center" style={commonTestStyles.iconItem}>
+            </Flex>
+            <Flex direction="column" align="center" style={commonTestStyles.iconItem}>
               <Icon name="eye" />
               <Text size="xs" variant="subtle">
                 eye
               </Text>
-            </FlexColumn>
-            <FlexColumn align="center" style={commonTestStyles.iconItem}>
+            </Flex>
+            <Flex direction="column" align="center" style={commonTestStyles.iconItem}>
               <Icon name="eye-off" />
               <Text size="xs" variant="subtle">
                 eye-slash
               </Text>
-            </FlexColumn>
-          </FlexRow>
-        </FlexColumn>
+            </Flex>
+          </Flex>
+        </Flex>
 
         {/* Testing Notes */}
         <View
@@ -271,8 +271,8 @@ export const IconTestScreen: React.FC = () => {
             Mobile Icon Testing
           </Text>
 
-          <FlexColumn gap="xs">
-            <FlexRow gap="xs" align="start">
+          <Flex direction="column" gap="xs">
+            <Flex gap="xs" align="start">
               <Text size="sm" variant="default">
                 •
               </Text>
@@ -281,9 +281,9 @@ export const IconTestScreen: React.FC = () => {
                   Native: Uses react-native-vector-icons with FontAwesome font
                 </Text>
               </View>
-            </FlexRow>
+            </Flex>
 
-            <FlexRow gap="xs" align="start">
+            <Flex gap="xs" align="start">
               <Text size="sm" variant="default">
                 •
               </Text>
@@ -292,9 +292,9 @@ export const IconTestScreen: React.FC = () => {
                   Unified API: Same props work across web and mobile
                 </Text>
               </View>
-            </FlexRow>
+            </Flex>
 
-            <FlexRow gap="xs" align="start">
+            <Flex gap="xs" align="start">
               <Text size="sm" variant="default">
                 •
               </Text>
@@ -303,9 +303,9 @@ export const IconTestScreen: React.FC = () => {
                   Automatic theme integration with color system
                 </Text>
               </View>
-            </FlexRow>
+            </Flex>
 
-            <FlexRow gap="xs" align="start">
+            <Flex gap="xs" align="start">
               <Text size="sm" variant="default">
                 •
               </Text>
@@ -314,9 +314,9 @@ export const IconTestScreen: React.FC = () => {
                   60+ icons mapped from comprehensive codebase audit
                 </Text>
               </View>
-            </FlexRow>
+            </Flex>
 
-            <FlexRow gap="xs" align="start">
+            <Flex gap="xs" align="start">
               <Text size="sm" variant="default">
                 •
               </Text>
@@ -325,9 +325,9 @@ export const IconTestScreen: React.FC = () => {
                   Touch-friendly sizing with semantic size options
                 </Text>
               </View>
-            </FlexRow>
+            </Flex>
 
-            <FlexRow gap="xs" align="start">
+            <Flex gap="xs" align="start">
               <Text size="sm" variant="default">
                 •
               </Text>
@@ -336,9 +336,9 @@ export const IconTestScreen: React.FC = () => {
                   Ready to replace placeholder characters in primitives
                 </Text>
               </View>
-            </FlexRow>
+            </Flex>
 
-            <FlexRow gap="xs" align="start">
+            <Flex gap="xs" align="start">
               <Text size="sm" variant="default">
                 •
               </Text>
@@ -348,8 +348,8 @@ export const IconTestScreen: React.FC = () => {
                   buttons
                 </Text>
               </View>
-            </FlexRow>
-          </FlexColumn>
+            </Flex>
+          </Flex>
         </View>
       </ScrollView>
     </SafeAreaView>

@@ -4,8 +4,7 @@ import { Image } from 'expo-image';
 import {
   Button,
   Container,
-  FlexRow,
-  FlexColumn,
+  Flex,
   Spacer,
 } from '@/components/primitives';
 import {
@@ -78,25 +77,25 @@ export const Login: React.FC<LoginProps> = ({
       <AuthSpacer />
 
       {/* Logo Section - using FlexRow with justify prop */}
-      <FlexRow justify="center">
+      <Flex justify="center">
         <Image
           style={{ height: 64, width: 280 }}
           source={require('../../../mobile/assets/quorum.png')}
           contentFit="contain"
         />
-      </FlexRow>
+      </Flex>
 
       {/* Spacer between logo and buttons */}
       <Spacer size="xl" />
 
       {/* Buttons Section - using FlexRow and Container with props */}
-      <FlexRow justify="center">
+      <Flex justify="center">
         <Container
           width="full"
           maxWidth={AUTH_LAYOUT.MAX_CONTENT_WIDTH}
           padding={AUTH_LAYOUT.PADDING}
         >
-          <FlexColumn gap="lg">
+          <Flex direction="column" gap="lg">
             {/* Create New Account Button */}
             <Button
               type="primary-white"
@@ -114,9 +113,9 @@ export const Login: React.FC<LoginProps> = ({
             >
               {t`Import Existing Key`}
             </Button>
-          </FlexColumn>
+          </Flex>
         </Container>
-      </FlexRow>
+      </Flex>
 
       <AuthSpacer />
     </AuthScreenWrapper>

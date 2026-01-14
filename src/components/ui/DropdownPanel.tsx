@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import { Container, FlexRow, Icon, Button } from '../primitives';
+import { Container, Flex, Icon, Button } from '../primitives';
 import { isTouchDevice } from '../../utils/platform';
 import MobileDrawer from './MobileDrawer';
 import './DropdownPanel.scss';
@@ -167,7 +167,7 @@ export const DropdownPanel: React.FC<DropdownPanelProps> = ({
     >
       {(title || resultsCount !== undefined) && (
         <Container className="dropdown-panel__header">
-          <FlexRow className="items-center justify-between">
+          <Flex className="items-center justify-between">
             <span className="dropdown-panel__title">
               {title ||
                 (resultsCount === 1
@@ -183,7 +183,7 @@ export const DropdownPanel: React.FC<DropdownPanelProps> = ({
                 <Icon name="close" size="sm" />
               </Button>
             )}
-          </FlexRow>
+          </Flex>
         </Container>
       )}
 

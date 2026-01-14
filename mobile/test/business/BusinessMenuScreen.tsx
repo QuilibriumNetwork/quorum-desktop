@@ -3,8 +3,7 @@ import { ScrollView, View, TouchableOpacity, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import {
   Container,
-  FlexColumn,
-  FlexRow,
+  Flex,
   Text,
   Icon,
   Title,
@@ -181,7 +180,7 @@ export const BusinessMenuScreen: React.FC<BusinessMenuScreenProps> = ({
       onPress={feature.onPress}
       activeOpacity={0.7}
     >
-      <FlexRow gap="md" align="start">
+      <Flex gap="md" align="start">
         <Icon
           name={feature.icon}
           size="lg"
@@ -193,7 +192,7 @@ export const BusinessMenuScreen: React.FC<BusinessMenuScreenProps> = ({
           style={{ marginTop: 2 }}
         />
         <View style={{ flex: 1 }}>
-          <FlexRow gap="sm" align="center" style={{ marginBottom: 4 }}>
+          <Flex gap="sm" align="center" style={{ marginBottom: 4 }}>
             <Text size="lg" weight="medium">
               {feature.title}
             </Text>
@@ -213,12 +212,12 @@ export const BusinessMenuScreen: React.FC<BusinessMenuScreenProps> = ({
                 {getStatusText(feature.status)}
               </Text>
             </View>
-          </FlexRow>
+          </Flex>
           <Text size="sm" variant="subtle">
             {feature.description}
           </Text>
         </View>
-      </FlexRow>
+      </Flex>
     </TouchableOpacity>
   );
 
@@ -234,14 +233,14 @@ export const BusinessMenuScreen: React.FC<BusinessMenuScreenProps> = ({
         showsVerticalScrollIndicator={false}
       >
         <View style={commonTestStyles.header}>
-          <FlexColumn gap="xs" align="center">
+          <Flex direction="column" gap="xs" align="center">
             <Text size="2xl" weight="bold">
               Business Components
             </Text>
             <Text size="sm" variant="subtle">
               Test real app features with business logic
             </Text>
-          </FlexColumn>
+          </Flex>
         </View>
 
         <View>{features.map(renderFeatureCard)}</View>

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Button, Modal, Container, Text, FlexRow, Spacer } from '../primitives';
+import { Button, Modal, Container, Text, Flex, Spacer } from '../primitives';
 import { UserAvatar } from '../user/UserAvatar';
 import { useUserKicking } from '../../hooks';
 import { useModalSaveState } from '../../hooks';
@@ -63,7 +63,7 @@ const KickUserModal: React.FunctionComponent<KickUserModalProps> = (props) => {
       <ModalSaveOverlay visible={isSaving} message={t`Kicking...`} />
 
       <Container>
-        <FlexRow gap="md" align="center">
+        <Flex gap="md" align="center">
           <UserAvatar
             userIcon={props.userIcon}
             displayName={props.userName}
@@ -78,7 +78,7 @@ const KickUserModal: React.FunctionComponent<KickUserModalProps> = (props) => {
               {getAddressSuffix(props.userAddress)}
             </Text>
           </Container>
-        </FlexRow>
+        </Flex>
 
         <Spacer size="lg" />
 
@@ -88,7 +88,7 @@ const KickUserModal: React.FunctionComponent<KickUserModalProps> = (props) => {
 
         <Spacer size="lg" />
 
-        <FlexRow gap="sm">
+        <Flex gap="sm">
           <Button
             type="subtle"
             onClick={props.onClose}
@@ -106,7 +106,7 @@ const KickUserModal: React.FunctionComponent<KickUserModalProps> = (props) => {
           >
             {confirmationStep === 0 ? t`Kick` : t`Click again to confirm`}
           </Button>
-        </FlexRow>
+        </Flex>
       </Container>
     </Modal>
   );

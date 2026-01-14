@@ -4,7 +4,6 @@ import {
   Button,
   Modal,
   Container,
-  FlexCenter,
   Text,
   Spacer,
 } from '../primitives';

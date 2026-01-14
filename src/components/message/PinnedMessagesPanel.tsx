@@ -4,9 +4,7 @@ import { Virtuoso } from 'react-virtuoso';
 import type { Message as MessageType, Channel, Sticker, Role } from '../../api/quorumApi';
 import MessagePreview from './MessagePreview';
 import {
-  FlexRow,
-  FlexBetween,
-  FlexCenter,
+  Flex,
   Text,
   Button,
   Container,
@@ -71,8 +69,8 @@ const PinnedMessageItem: React.FC<PinnedMessageItemProps> = ({
       className="pinned-message-item"
     >
       <Container className="result-header">
-        <FlexBetween className="result-meta-container">
-          <FlexRow className="result-meta items-center min-w-0 flex-1 mr-2">
+        <Flex justify="between" className="result-meta-container">
+          <Flex className="result-meta items-center min-w-0 flex-1 mr-2">
             <Icon name="user" className="result-user-icon flex-shrink-0" />
             <Text className="result-sender mr-2 truncate flex-shrink min-w-0">
               {sender?.displayName || t`Unknown User`}
@@ -81,8 +79,8 @@ const PinnedMessageItem: React.FC<PinnedMessageItemProps> = ({
             <Text className="result-date flex-shrink-0 whitespace-nowrap ml-1">
               {formatMessageDate(message.createdDate, compactDate)}
             </Text>
-          </FlexRow>
-          <FlexRow
+          </Flex>
+          <Flex
             className={`message-actions items-center flex-shrink-0${isTouchDevice() ? ' always-visible' : ''}`}
           >
             <Button
@@ -112,8 +110,8 @@ const PinnedMessageItem: React.FC<PinnedMessageItemProps> = ({
                 />
               </Tooltip>
             )}
-          </FlexRow>
-        </FlexBetween>
+          </Flex>
+        </Flex>
       </Container>
 
       <Container className="result-content">
@@ -180,15 +178,15 @@ export const PinnedMessagesPanel: React.FC<PinnedMessagesPanelProps> = ({
   const renderEmptyState = () => {
     if (isLoading) {
       return (
-        <FlexCenter className="pinned-loading-state">
+        <Flex justify="center" align="center" className="pinned-loading-state">
           <Icon name="spinner" className="loading-icon icon-spin" />
           <Text className="loading-message">{t`Loading pinned messages...`}</Text>
-        </FlexCenter>
+        </Flex>
       );
     }
 
     return (
-      <FlexCenter className="pinned-empty-state">
+      <Flex justify="center" align="center" className="pinned-empty-state">
         <Icon name="pin" size="3xl" className="empty-icon" />
         <Text className="empty-message">{t`No pinned messages yet`}</Text>
         <Text className="empty-hint">
@@ -196,7 +194,7 @@ export const PinnedMessagesPanel: React.FC<PinnedMessagesPanelProps> = ({
             ? t`Pin important messages to keep them easily accessible`
             : t`Important messages will be pinned here`}
         </Text>
-      </FlexCenter>
+      </Flex>
     );
   };
 

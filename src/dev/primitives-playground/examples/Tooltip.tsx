@@ -1,5 +1,5 @@
 import React from 'react';
-import { Tooltip, Button, FlexRow } from '@/components/primitives';
+import { Tooltip, Button, Flex } from '@/components/primitives';
 import { ExampleBox } from '../ExampleBox';
 
 const config = {
@@ -51,7 +51,7 @@ export const TooltipExamples: React.FC = () => {
       >
         {/* First row: Basic, Custom Width, and Bordered examples */}
         <div className="w-full">
-          <FlexRow justify="center" gap="xl" className="mb-8">
+          <Flex justify="center" gap="xl" className="mb-8">
             {config.staticExamples.map((example, index) => (
               <div key={index} className="flex flex-col items-center gap-2">
                 <Tooltip {...example.props}>
@@ -64,14 +64,14 @@ export const TooltipExamples: React.FC = () => {
                 </span>
               </div>
             ))}
-          </FlexRow>
+          </Flex>
 
           {/* Second row: 4 positioning examples */}
           <div className="border-t border-surface-3 pt-6">
             <div className="text-center mb-4">
               <span className="text-xs text-subtle">Tooltip Positions</span>
             </div>
-            <FlexRow justify="center" gap="lg">
+            <Flex justify="center" gap="lg">
               {placements.map((placement) => (
                 <Tooltip
                   key={placement.id}
@@ -84,7 +84,7 @@ export const TooltipExamples: React.FC = () => {
                   </Button>
                 </Tooltip>
               ))}
-            </FlexRow>
+            </Flex>
           </div>
         </div>
       </ExampleBox>

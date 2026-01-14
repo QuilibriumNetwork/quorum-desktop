@@ -7,8 +7,7 @@ import {
   Paragraph,
   Label,
   Title,
-  FlexColumn,
-  FlexRow,
+  Flex,
   Icon,
   Button,
 } from '@/components/primitives';
@@ -145,8 +144,8 @@ const MentionPillInputDemo: React.FC<{
   };
 
   return (
-    <FlexColumn gap="md">
-      <FlexColumn gap="xs">
+    <Flex direction="column" gap="md">
+      <Flex direction="column" gap="xs">
         <Label>Input with Pills (TextInput + Overlay Approach):</Label>
 
         {/* Container for TextInput and Pills */}
@@ -176,7 +175,7 @@ const MentionPillInputDemo: React.FC<{
 
           {/* Pills Overlay */}
           <View style={styles.pillsOverlay} pointerEvents="box-none">
-            <FlexRow gap="xs" wrap>
+            <Flex gap="xs" wrap>
               {pills.map(pill => (
                 <MentionPillComponent
                   key={pill.id}
@@ -185,19 +184,19 @@ const MentionPillInputDemo: React.FC<{
                   theme={theme}
                 />
               ))}
-            </FlexRow>
+            </Flex>
           </View>
         </View>
 
         <Text size="sm" variant="subtle">
           Tap pills to remove them. This demo uses overlay rendering.
         </Text>
-      </FlexColumn>
+      </Flex>
 
       {/* Insert Buttons */}
-      <FlexColumn gap="xs">
+      <Flex direction="column" gap="xs">
         <Label>Insert Mock Mentions:</Label>
-        <FlexRow gap="xs" wrap>
+        <Flex gap="xs" wrap>
           {MOCK_MENTIONS.map((mention, index) => (
             <Button
               key={index}
@@ -208,8 +207,8 @@ const MentionPillInputDemo: React.FC<{
               {mention.type === 'channel' ? '#' : '@'}{mention.displayName}
             </Button>
           ))}
-        </FlexRow>
-      </FlexColumn>
+        </Flex>
+      </Flex>
 
       {/* Storage Format Display */}
       <View
@@ -223,7 +222,7 @@ const MentionPillInputDemo: React.FC<{
           {extractStorageFormat()}
         </Text>
       </View>
-    </FlexColumn>
+    </Flex>
   );
 };
 
@@ -239,54 +238,54 @@ export const MentionPillsTestScreen: React.FC = () => {
       ]}
     >
       <ScrollView contentContainerStyle={commonTestStyles.contentPadding}>
-        <FlexColumn style={commonTestStyles.header}>
-          <FlexRow gap="md" align="center" style={{ alignItems: 'flex-start' }}>
+        <Flex direction="column" style={commonTestStyles.header}>
+          <Flex gap="md" align="center" style={{ alignItems: 'flex-start' }}>
             <Icon name="at" size="xl" style={{ marginTop: 2 }} />
             <Title>Mention Pills (POC)</Title>
-          </FlexRow>
+          </Flex>
           <Paragraph align="center">
             Testing TextInput + overlay approach for mention pills on React Native
           </Paragraph>
-        </FlexColumn>
+        </Flex>
 
         {/* POC Information */}
         <View style={themedStyles.sectionCompact}>
-          <FlexColumn gap="md">
+          <Flex direction="column" gap="md">
             <Title size="sm">Proof of Concept</Title>
             <Paragraph>
               This demo tests the React Native implementation approach for mention pills using TextInput with absolutely positioned overlays.
             </Paragraph>
 
-            <FlexColumn gap="xs">
+            <Flex direction="column" gap="xs">
               <Text size="sm" weight="bold">What this tests:</Text>
               <Text size="sm">• TextInput with pill overlay rendering</Text>
               <Text size="sm">• Touch interactions with pills</Text>
               <Text size="sm">• Virtual keyboard behavior</Text>
               <Text size="sm">• Different mention types (user, role, channel)</Text>
               <Text size="sm">• Storage format extraction</Text>
-            </FlexColumn>
+            </Flex>
 
-            <FlexColumn gap="xs">
+            <Flex direction="column" gap="xs">
               <Text size="sm" weight="bold">NOT included yet:</Text>
               <Text size="sm">• Integration with real mention system</Text>
               <Text size="sm">• Autocomplete dropdown</Text>
               <Text size="sm">• Cursor position tracking</Text>
               <Text size="sm">• Text measurement for pill positioning</Text>
-            </FlexColumn>
-          </FlexColumn>
+            </Flex>
+          </Flex>
         </View>
 
         {/* Demo Section */}
         <View style={themedStyles.sectionCompact}>
-          <FlexColumn gap="md">
+          <Flex direction="column" gap="md">
             <Title size="sm">Interactive Demo</Title>
             <MentionPillInputDemo theme={theme} themedStyles={themedStyles} />
-          </FlexColumn>
+          </Flex>
         </View>
 
         {/* Technical Notes */}
         <View style={themedStyles.sectionCompact}>
-          <FlexColumn gap="md">
+          <Flex direction="column" gap="md">
             <Title size="sm">Technical Approach</Title>
             <Paragraph>
               <Text weight="bold">React Native Implementation Strategy:</Text>
@@ -308,12 +307,12 @@ export const MentionPillsTestScreen: React.FC = () => {
             <Paragraph style={{ marginTop: 8 }}>
               This approach differs from web (contentEditable) but achieves the same UX goals on mobile.
             </Paragraph>
-          </FlexColumn>
+          </Flex>
         </View>
 
         {/* Next Steps */}
         <View style={themedStyles.sectionCompact}>
-          <FlexColumn gap="md">
+          <Flex direction="column" gap="md">
             <Title size="sm">Next Steps for Full Implementation</Title>
 
             <Text size="sm">
@@ -337,7 +336,7 @@ export const MentionPillsTestScreen: React.FC = () => {
             <Text size="sm">
               7. Performance optimization for 60fps
             </Text>
-          </FlexColumn>
+          </Flex>
         </View>
       </ScrollView>
     </SafeAreaView>

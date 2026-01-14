@@ -3,10 +3,8 @@ import {
   Button,
   Modal,
   Input,
-  Icon,
   Container,
-  FlexRow,
-  FlexCenter,
+  Flex,
   Text,
   Spacer,
   Callout,
@@ -77,7 +75,7 @@ const GroupEditorModal: React.FunctionComponent<{
         </Container>
 
         <Container className="mb-4">
-          <FlexRow className="items-center gap-2">
+          <Flex className="items-center gap-2">
             <IconPicker
               selectedIcon={icon}
               selectedIconColor={iconColor}
@@ -87,9 +85,9 @@ const GroupEditorModal: React.FunctionComponent<{
             <div className="text-label-strong">
               <Trans>Group Icon (optional)</Trans>
             </div>
-          </FlexRow>
+          </Flex>
         </Container>
-        <FlexRow className="justify-end gap-2 mt-6 max-sm:flex-col max-sm:gap-4">
+        <Flex className="justify-end gap-2 mt-6 max-sm:flex-col max-sm:gap-4">
           <Button
             type="primary"
             className="max-sm:w-full"
@@ -98,7 +96,7 @@ const GroupEditorModal: React.FunctionComponent<{
           >
             {t`Save Changes`}
           </Button>
-        </FlexRow>
+        </Flex>
         {isEditMode && (
           <>
             <Spacer
@@ -120,7 +118,7 @@ const GroupEditorModal: React.FunctionComponent<{
                 </Trans>
               </Callout>
             )}
-            <FlexCenter>
+            <Flex justify="center" align="center">
               <Text
                 variant="danger"
                 className="cursor-pointer hover:text-danger-hover"
@@ -130,7 +128,7 @@ const GroupEditorModal: React.FunctionComponent<{
                   ? t`Delete Group`
                   : t`Click again to confirm`}
               </Text>
-            </FlexCenter>
+            </Flex>
           </>
         )}
       </Container>

@@ -8,7 +8,7 @@ import {
   Text,
   Select,
   Switch,
-  FlexRow,
+  Flex,
   Tooltip,
 } from '../../primitives';
 import { Trans } from '@lingui/react/macro';
@@ -270,7 +270,7 @@ const Account: React.FunctionComponent<AccountProps> = ({
               disabled={isMentionSettingsLoading}
             />
           </div>
-          <FlexRow className="items-center gap-3 mt-4 mb-3">
+          <Flex className="items-center gap-3 mt-4 mb-3">
             <Switch
               value={isSpaceMuted}
               onChange={toggleSpaceMute}
@@ -279,8 +279,8 @@ const Account: React.FunctionComponent<AccountProps> = ({
             <div className="text-label-strong">
               <Trans>Mute this Space</Trans>
             </div>
-          </FlexRow>
-          <FlexRow className="items-center gap-3">
+          </Flex>
+          <Flex className="items-center gap-3">
             <Switch
               value={!showMutedChannels}
               onChange={handleShowMutedToggle}
@@ -289,7 +289,7 @@ const Account: React.FunctionComponent<AccountProps> = ({
             <div className="text-label-strong">
               <Trans>Hide muted channels</Trans>
             </div>
-          </FlexRow>
+          </Flex>
           <Spacer size="lg" direction="vertical" borderBottom={true} />
         </>
 

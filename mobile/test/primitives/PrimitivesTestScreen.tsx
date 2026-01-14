@@ -4,10 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTheme } from '@/components/primitives/theme';
 
 // Import our primitives
-import { FlexRow } from '@/components/primitives/FlexRow';
-import { FlexColumn } from '@/components/primitives/FlexColumn';
-import { FlexBetween } from '@/components/primitives/FlexBetween';
-import { FlexCenter } from '@/components/primitives/FlexCenter';
+import { Flex } from '@/components/primitives/Flex';
 import { ResponsiveContainer } from '@/components/primitives/ResponsiveContainer';
 import { Spacer } from '@/components/primitives/Spacer';
 import Button from '@/components/primitives/Button';
@@ -36,20 +33,20 @@ export const PrimitivesTestScreen: React.FC = () => {
       <ScrollView
         contentContainerStyle={commonTestStyles.contentPaddingCompact}
       >
-        <FlexColumn style={commonTestStyles.header}>
-          <FlexRow
+        <Flex direction="column" style={commonTestStyles.header}>
+          <Flex
             gap="md"
             align="center"
             style={{ alignItems: 'flex-start', marginBottom: 16 }}
           >
             <Icon name="tools" size="xl" style={{ marginTop: 2 }} />
             <Title>Layout Primitives Test</Title>
-          </FlexRow>
+          </Flex>
 
           <Text size="base" variant="default" align="center">
             Testing Container, Flex components, and ResponsiveContainer
           </Text>
-        </FlexColumn>
+        </Flex>
 
         {/* Button Primitive Section */}
         <View style={themedStyles.sectionCompact}>
@@ -65,7 +62,7 @@ export const PrimitivesTestScreen: React.FC = () => {
                 Button Types:
               </Text>
             </View>
-            <FlexRow gap="md" wrap style={{ paddingVertical: 8 }}>
+            <Flex gap="md" wrap style={{ paddingVertical: 8 }}>
               <Button type="primary" onClick={() => {}}>
                 Primary
               </Button>
@@ -75,7 +72,7 @@ export const PrimitivesTestScreen: React.FC = () => {
               <Button type="light" onClick={() => {}}>
                 Light
               </Button>
-            </FlexRow>
+            </Flex>
           </View>
 
           <View style={commonTestStyles.inputGroup}>
@@ -84,14 +81,14 @@ export const PrimitivesTestScreen: React.FC = () => {
                 Button Sizes:
               </Text>
             </View>
-            <FlexRow gap="md" align="center" style={{ paddingVertical: 8 }}>
+            <Flex gap="md" align="center" style={{ paddingVertical: 8 }}>
               <Button type="primary" size="normal" onClick={() => {}}>
                 Normal Size
               </Button>
               <Button type="primary" size="small" onClick={() => {}}>
                 Small Size
               </Button>
-            </FlexRow>
+            </Flex>
           </View>
 
           <View style={commonTestStyles.inputGroup}>
@@ -100,14 +97,14 @@ export const PrimitivesTestScreen: React.FC = () => {
                 Disabled State:
               </Text>
             </View>
-            <FlexRow gap="md" style={{ paddingVertical: 8 }}>
+            <Flex gap="md" style={{ paddingVertical: 8 }}>
               <Button type="primary" disabled onClick={() => {}}>
                 Disabled Primary
               </Button>
               <Button type="secondary" disabled onClick={() => {}}>
                 Disabled Secondary
               </Button>
-            </FlexRow>
+            </Flex>
           </View>
         </View>
 
@@ -178,7 +175,7 @@ export const PrimitivesTestScreen: React.FC = () => {
                 FlexRow with gap:
               </Text>
             </View>
-            <FlexRow
+            <Flex
               gap="md"
               style={[
                 commonTestStyles.testGroup,
@@ -229,7 +226,7 @@ export const PrimitivesTestScreen: React.FC = () => {
                   Item 3
                 </Text>
               </View>
-            </FlexRow>
+            </Flex>
           </View>
 
           <View style={commonTestStyles.inputGroup}>
@@ -238,7 +235,8 @@ export const PrimitivesTestScreen: React.FC = () => {
                 FlexBetween:
               </Text>
             </View>
-            <FlexBetween
+            <Flex
+              justify="between"
               style={[
                 commonTestStyles.testGroup,
                 {
@@ -255,7 +253,7 @@ export const PrimitivesTestScreen: React.FC = () => {
               <Button type="secondary" size="small" onClick={() => {}}>
                 Right Action
               </Button>
-            </FlexBetween>
+            </Flex>
           </View>
 
           <View style={commonTestStyles.inputGroup}>
@@ -264,7 +262,9 @@ export const PrimitivesTestScreen: React.FC = () => {
                 FlexCenter:
               </Text>
             </View>
-            <FlexCenter
+            <Flex
+              justify="center"
+              align="center"
               style={[
                 commonTestStyles.testGroup,
                 {
@@ -279,7 +279,7 @@ export const PrimitivesTestScreen: React.FC = () => {
               <Text size="sm" variant="default">
                 Centered Content
               </Text>
-            </FlexCenter>
+            </Flex>
           </View>
 
           <View style={commonTestStyles.inputGroup}>
@@ -288,7 +288,8 @@ export const PrimitivesTestScreen: React.FC = () => {
                 FlexColumn with gap:
               </Text>
             </View>
-            <FlexColumn
+            <Flex
+              direction="column"
               gap="md"
               style={[
                 commonTestStyles.testGroup,
@@ -339,7 +340,7 @@ export const PrimitivesTestScreen: React.FC = () => {
                   Item 3
                 </Text>
               </View>
-            </FlexColumn>
+            </Flex>
           </View>
 
           <View style={commonTestStyles.inputGroup}>
@@ -348,7 +349,8 @@ export const PrimitivesTestScreen: React.FC = () => {
                 FlexColumn with alignment:
               </Text>
             </View>
-            <FlexColumn
+            <Flex
+              direction="column"
               gap="sm"
               align="center"
               style={[
@@ -371,7 +373,7 @@ export const PrimitivesTestScreen: React.FC = () => {
               <Text size="sm" variant="default">
                 In column
               </Text>
-            </FlexColumn>
+            </Flex>
           </View>
         </View>
 
@@ -494,7 +496,7 @@ export const PrimitivesTestScreen: React.FC = () => {
                 },
               ]}
             >
-              <FlexRow align="center">
+              <Flex align="center">
                 <Text size="sm" variant="default">
                   Left
                 </Text>
@@ -558,7 +560,7 @@ export const PrimitivesTestScreen: React.FC = () => {
                 <Text size="sm" variant="default">
                   Right
                 </Text>
-              </FlexRow>
+              </Flex>
             </View>
           </View>
 

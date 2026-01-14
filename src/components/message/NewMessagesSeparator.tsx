@@ -1,5 +1,5 @@
 import React from 'react';
-import { FlexRow } from '../primitives';
+import { Flex } from '../primitives';
 import { i18n } from '@lingui/core';
 import { t } from '@lingui/core/macro';
 
@@ -23,7 +23,7 @@ export const NewMessagesSeparator: React.FC<NewMessagesSeparatorProps> = ({
   className = '',
 }) => {
   return (
-    <FlexRow
+    <Flex
       align="center"
       justify="center"
       className={`my-4 px-4 ${className}`}
@@ -39,6 +39,6 @@ export const NewMessagesSeparator: React.FC<NewMessagesSeparatorProps> = ({
       >
         {i18n._(t`New`)}
       </span>
-    </FlexRow>
+    </Flex>
   );
 };

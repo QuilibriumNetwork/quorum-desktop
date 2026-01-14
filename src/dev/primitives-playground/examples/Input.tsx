@@ -1,6 +1,6 @@
 import { logger } from '@quilibrium/quorum-shared';
 import React, { useState } from 'react';
-import { Input, Icon, FlexRow } from '@/components/primitives';
+import { Input, Icon } from '@/components/primitives';
 import { ExampleBox } from '../ExampleBox';
 
 export const InputExamples: React.FC = () => {

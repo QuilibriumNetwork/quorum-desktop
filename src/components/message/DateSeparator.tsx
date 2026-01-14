@@ -1,5 +1,5 @@
 import React from 'react';
-import { FlexRow, Text } from '../primitives';
+import { Flex, Text } from '../primitives';
 import * as moment from 'moment-timezone';
 
 interface DateSeparatorProps {
@@ -30,7 +30,7 @@ export const DateSeparator: React.FC<DateSeparatorProps> = ({
   const displayLabel = label || getDateLabel(timestamp);
 
   return (
-    <FlexRow
+    <Flex
       align="center"
       justify="center"
       className={`my-4 px-4 ${className}`}
@@ -51,7 +51,7 @@ export const DateSeparator: React.FC<DateSeparatorProps> = ({
 
       {/* Right separator line */}
       <div className="flex-1 h-px border-t border-subtle" />
-    </FlexRow>
+    </Flex>
   );
 };
 

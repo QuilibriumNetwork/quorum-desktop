@@ -3,10 +3,7 @@ export { ModalContainer } from './ModalContainer';
 export { OverlayBackdrop } from './OverlayBackdrop';
 export { Portal } from './Portal';
 export { Container } from './Container';
-export { FlexRow } from './FlexRow';
-export { FlexColumn } from './FlexColumn';
-export { FlexBetween } from './FlexBetween';
-export { FlexCenter } from './FlexCenter';
+export { Flex } from './Flex';
 export { ResponsiveContainer } from './ResponsiveContainer';
 export { Spacer } from './Spacer';
 export { ScrollContainer } from './ScrollContainer';
@@ -37,10 +34,7 @@ export type {
   WebContainerProps,
   NativeContainerProps,
 } from './Container';
-export type { FlexRowProps } from './FlexRow';
-export type { FlexColumnProps } from './FlexColumn';
-export type { FlexBetweenProps } from './FlexBetween';
-export type { FlexCenterProps } from './FlexCenter';
+export type { FlexProps } from './Flex';
 export type { ResponsiveContainerProps } from './ResponsiveContainer';
 export type { SpacerProps, SpacerSize, SpacerDirection } from './Spacer';
 export type {

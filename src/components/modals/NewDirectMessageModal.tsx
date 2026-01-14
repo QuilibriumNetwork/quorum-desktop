@@ -8,7 +8,7 @@ import {
   Switch,
   Icon,
   Tooltip,
-  FlexRow,
+  Flex,
   Spacer,
   Callout,
 } from '../primitives';
@@ -151,8 +151,8 @@ const NewDirectMessageModal: React.FunctionComponent<
 
         <Spacer spaceBefore="lg" spaceAfter="md" border={true} direction="vertical" />
         <Container margin="none">
-          <FlexRow className="items-center justify-between">
-            <FlexRow className="items-center">
+          <Flex className="items-center justify-between">
+            <Flex className="items-center">
               <Text typography="label-strong">{t`Always sign messages`}</Text>
               <Tooltip
                 id="dm-nonrepudiable-tip"
@@ -167,12 +167,12 @@ const NewDirectMessageModal: React.FunctionComponent<
                   className="text-subtle hover:text-strong cursor-pointer ml-2"
                 />
               </Tooltip>
-            </FlexRow>
+            </Flex>
             <Switch
               value={nonRepudiable}
               onChange={() => setNonRepudiable(!nonRepudiable)}
             />
-          </FlexRow>
+          </Flex>
         </Container>
       </Container>
     </Modal>

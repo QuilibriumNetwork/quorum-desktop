@@ -6,7 +6,7 @@ import ThemeRadioGroup from '@/components/ui/ThemeRadioGroup';
 import AccentColorSwitcher from '@/components/ui/AccentColorSwitcher';
 import { Icon } from '@/components/primitives/Icon';
 import { IconName } from '@/components/primitives/Icon/types';
-import { FlexColumn, FlexRow, Text, Title } from '@/components/primitives';
+import { Flex, Text, Title } from '@/components/primitives';
 import { commonTestStyles } from '@/styles/commonTestStyles';
 
 interface PrimitiveItem {
@@ -185,14 +185,14 @@ export const PrimitivesMenuScreen: React.FC<PrimitivesMenuScreenProps> = ({
     >
       <ScrollView contentContainerStyle={commonTestStyles.contentPadding}>
         <View style={commonTestStyles.header}>
-          <FlexColumn gap="xs" align="center">
+          <Flex direction="column" gap="xs" align="center">
             <Text size="2xl" weight="bold">
               UI Primitives
             </Text>
             <Text size="sm" variant="subtle">
               Test individual primitive components in isolation
             </Text>
-          </FlexColumn>
+          </Flex>
 
           <View
             style={[
@@ -205,10 +205,10 @@ export const PrimitivesMenuScreen: React.FC<PrimitivesMenuScreenProps> = ({
               },
             ]}
           >
-            <FlexColumn gap="md" align="center">
+            <Flex direction="column" gap="md" align="center">
               <ThemeRadioGroup horizontal />
               <AccentColorSwitcher />
-            </FlexColumn>
+            </Flex>
           </View>
         </View>
 
@@ -234,7 +234,7 @@ export const PrimitivesMenuScreen: React.FC<PrimitivesMenuScreenProps> = ({
           <View style={commonTestStyles.titleContainer}>
             <Title size="sm">Testing Notes</Title>
           </View>
-          <FlexRow gap="xs" align="start">
+          <Flex gap="xs" align="start">
             <Text size="sm" variant="default">
               •
             </Text>
@@ -244,8 +244,8 @@ export const PrimitivesMenuScreen: React.FC<PrimitivesMenuScreenProps> = ({
                 implementations
               </Text>
             </View>
-          </FlexRow>
-          <FlexRow gap="xs" align="start">
+          </Flex>
+          <Flex gap="xs" align="start">
             <Text size="sm" variant="default">
               •
             </Text>
@@ -254,8 +254,8 @@ export const PrimitivesMenuScreen: React.FC<PrimitivesMenuScreenProps> = ({
                 Focus on Android testing - Expo web can be unreliable
               </Text>
             </View>
-          </FlexRow>
-          <FlexRow gap="xs" align="start">
+          </Flex>
+          <Flex gap="xs" align="start">
             <Text size="sm" variant="default">
               •
             </Text>
@@ -264,7 +264,7 @@ export const PrimitivesMenuScreen: React.FC<PrimitivesMenuScreenProps> = ({
                 Use shake gesture to open developer menu if needed
               </Text>
             </View>
-          </FlexRow>
+          </Flex>
         </View>
       </ScrollView>
     </SafeAreaView>

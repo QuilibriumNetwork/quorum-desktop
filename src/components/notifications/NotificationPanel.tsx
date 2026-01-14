@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { t } from '@lingui/core/macro';
-import { Container, FlexRow, Text, Icon, Button, Tooltip, FlexCenter, Select } from '../primitives';
+import { Container, Flex, Text, Icon, Button, Tooltip, Select } from '../primitives';
 import { DropdownPanel } from '../ui';
 import { isTouchDevice } from '../../utils/platform';
 import { NotificationItem } from './NotificationItem';
@@ -168,21 +168,21 @@ export const NotificationPanel: React.FC<NotificationPanelProps> = ({
   const renderEmptyState = () => {
     if (isLoading) {
       return (
-        <FlexCenter className="notification-loading-state">
+        <Flex justify="center" align="center" className="notification-loading-state">
           <Icon name="spinner" className="loading-icon icon-spin" />
           <Text className="loading-message">{t`Loading notifications...`}</Text>
-        </FlexCenter>
+        </Flex>
       );
     }
 
     return (
-      <FlexCenter className="notification-empty-state">
+      <Flex justify="center" align="center" className="notification-empty-state">
         <Icon name="bell" size="3xl" className="empty-icon" />
         <Text className="empty-message">{t`No unread notifications`}</Text>
         <Text className="empty-hint">
           {t`You're all caught up!`}
         </Text>
-      </FlexCenter>
+      </Flex>
     );
   };
 
@@ -205,7 +205,7 @@ export const NotificationPanel: React.FC<NotificationPanelProps> = ({
       {/* Filter controls - only show when there are notifications */}
       {!isLoading && allNotifications.length > 0 && (
         <Container className="notification-panel__controls">
-          <FlexRow className="items-center justify-between gap-2">
+          <Flex className="items-center justify-between gap-2">
             <Select
               value={selectedTypes}
               onChange={handleFilterChange}
@@ -231,7 +231,7 @@ export const NotificationPanel: React.FC<NotificationPanelProps> = ({
                 iconOnly
               />
             </Tooltip>
-          </FlexRow>
+          </Flex>
         </Container>
       )}
 

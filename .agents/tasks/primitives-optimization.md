@@ -158,7 +158,7 @@ Instead of keeping `FlexRow`/`FlexColumn` as aliases:
 
 ## Implementation Plan
 
-### Phase 1: Create Flex Primitive
+### Phase 1: Create Flex Primitive - DONE
 
 | Task | Status |
 |------|--------|
@@ -182,7 +182,7 @@ yarn build                                        # Must pass
 
 ### Phase 2: Migrate All Flex Usages
 
-Migration is split into 4 batches with verification stops between each.
+Migration is split into 4 batches.
 
 #### Batch 2.1: FlexBetween (13 usages) - Smallest, test the process
 
@@ -192,13 +192,13 @@ Migration is split into 4 batches with verification stops between each.
 | Replace with `<Flex justify="between">` | ⬜ |
 | Update imports in affected files | ⬜ |
 
-**🛑 STOP: Batch 2.1 Checkpoint**
+
 ```bash
 npx tsc --noEmit --jsx react-jsx --skipLibCheck
 ```
 - [ ] Visual check: Open a page that used FlexBetween (e.g., a modal header)
 
-#### Batch 2.2: FlexCenter (21 usages)
+#### Batch 2.2: FlexCenter (21 usages) - DONE
 
 | Task | Status |
 |------|--------|
@@ -206,13 +206,13 @@ npx tsc --noEmit --jsx react-jsx --skipLibCheck
 | Replace with `<Flex justify="center" align="center">` | ⬜ |
 | Update imports in affected files | ⬜ |
 
-**🛑 STOP: Batch 2.2 Checkpoint**
+
 ```bash
 npx tsc --noEmit --jsx react-jsx --skipLibCheck
 ```
 - [ ] Visual check: Open a page with centered content (e.g., loading states, empty states)
 
-#### Batch 2.3: FlexRow (290 usages) - Largest batch
+#### Batch 2.3: FlexRow (290 usages) - Largest batch DONE
 
 | Task | Status |
 |------|--------|
@@ -220,7 +220,7 @@ npx tsc --noEmit --jsx react-jsx --skipLibCheck
 | Replace with `<Flex>` (direction="row" is default) | ⬜ |
 | Update imports in affected files | ⬜ |
 
-**🛑 STOP: Batch 2.3 Checkpoint**
+
 ```bash
 npx tsc --noEmit --jsx react-jsx --skipLibCheck
 yarn build  # Full build check after largest migration
@@ -231,7 +231,7 @@ Visual checks (these pages have heavy FlexRow usage):
 - [ ] Modal headers - buttons should be inline
 - [ ] User profile - avatar and name should be side-by-side
 
-#### Batch 2.4: FlexColumn (314 usages)
+#### Batch 2.4: FlexColumn (314 usages) DONE
 
 | Task | Status |
 |------|--------|
@@ -260,7 +260,7 @@ Visual checks (these pages have heavy FlexColumn usage):
 | 2.4 | FlexColumn | ~52 | ⬜ |
 | **Total** | | **~222** | ⬜ |
 
-### Phase 3: Delete Old Flex Primitives
+### Phase 3: Delete Old Flex Primitives - DONE
 
 **Pre-condition:** Phase 2 must be 100% complete with no remaining usages.
 
@@ -304,7 +304,7 @@ yarn build
 |------|--------|
 | Audit all ResponsiveContainer usages | ⬜ |
 | Inline ResponsiveContainer logic directly into Layout.tsx | ⬜ |
-| Move `ResponsiveContainer.scss` styles to Layout styles | ⬜ |
+| Move `ResponsiveContainer.scss` styles to Layout styles (src\styles\_base.scss ?) | ⬜ |
 | Update mobile test screens (remove import, update text) | ⬜ |
 | Remove `ResponsiveContainer` export from primitives index | ⬜ |
 | Remove `ResponsiveContainerProps` type export from primitives index | ⬜ |

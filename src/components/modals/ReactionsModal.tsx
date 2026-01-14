@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { t } from '@lingui/core/macro';
-import { Modal, Text, FlexColumn, FlexRow, ScrollContainer } from '../primitives';
+import { Modal, Text, Flex, ScrollContainer } from '../primitives';
 import { UserAvatar } from '../user/UserAvatar';
 import type { Reaction } from '../../api/quorumApi';
 import type { CustomEmoji } from 'emoji-picker-react/dist/config/customEmojiConfig';
@@ -77,12 +77,12 @@ export const ReactionsModal: React.FC<ReactionsModalProps> = ({
       closeOnBackdropClick={true}
       closeOnEscape={true}
     >
-      <FlexRow className="items-stretch">
+      <Flex className="items-stretch">
         {/* Left column: Reaction tabs (scrollable for long lists) */}
         <ScrollContainer height="250px" showBorder={false} className="flex-shrink-0 pr-3 border-r border-surface-5">
-          <FlexColumn gap="xs">
+          <Flex direction="column" gap="xs">
             {reactions.map((reaction) => (
-              <FlexRow
+              <Flex
                 key={reaction.emojiId}
                 className={`cursor-pointer items-center gap-1 py-[1pt] px-2 rounded-lg whitespace-nowrap ${
                   activeEmojiId === reaction.emojiId
@@ -93,16 +93,16 @@ export const ReactionsModal: React.FC<ReactionsModalProps> = ({
               >
                 {getEmojiDisplay(reaction)}
                 <Text size="sm">{reaction.count}</Text>
-              </FlexRow>
+              </Flex>
             ))}
-          </FlexColumn>
+          </Flex>
         </ScrollContainer>
 
         {/* Right column: Users who reacted (scrollable for long lists) */}
         <ScrollContainer height="250px" showBorder={false} className="flex-1 pl-3">
-          <FlexColumn gap="none" className="justify-start">
+          <Flex direction="column" gap="none" className="justify-start">
             {reactionUsers.map((user) => (
-              <FlexRow
+              <Flex
                 key={user.address}
                 className="items-center gap-2 py-1 min-w-0"
               >
@@ -113,11 +113,11 @@ export const ReactionsModal: React.FC<ReactionsModalProps> = ({
                   size={24}
                 />
                 <Text className="truncate-user-name flex-1 min-w-0">{user.displayName}</Text>
-              </FlexRow>
+              </Flex>
             ))}
-          </FlexColumn>
+          </Flex>
         </ScrollContainer>
-      </FlexRow>
+      </Flex>
     </Modal>
   );
 };

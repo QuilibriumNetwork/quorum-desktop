@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import { t } from '@lingui/core/macro';
-import { Modal, Text, Container, FlexColumn, FlexRow, ScrollContainer, Spacer } from '../primitives';
+import { Modal, Text, Container, Flex, ScrollContainer, Spacer } from '../primitives';
 import { Message as MessageType } from '../../api/quorumApi';
 import { formatMessageDate } from '../../utils';
 
@@ -63,7 +63,7 @@ export const EditHistoryModal: React.FC<EditHistoryModalProps> = ({
       closeOnEscape={true}
     >
       <ScrollContainer height="lg" showBorder={false}>
-        <FlexColumn gap="sm" padding="sm" className="pr-3">
+        <Flex direction="column" gap="sm" padding="sm" className="pr-3">
           {editHistory.map((item, index) => {
             const text = Array.isArray(item.text) ? item.text.join('\n') : item.text;
             const isOriginal = item.modifiedDate === message.createdDate;
@@ -81,8 +81,8 @@ export const EditHistoryModal: React.FC<EditHistoryModalProps> = ({
                   }
                 `}
               >
-                <FlexColumn gap="xs">
-                  <FlexRow gap="sm" alignItems="center">
+                <Flex direction="column" gap="xs">
+                  <Flex gap="sm" alignItems="center">
                     <Text variant="subtle" size="sm" weight="medium">
                       {item.isCurrent
                         ? t`Current`
@@ -93,7 +93,7 @@ export const EditHistoryModal: React.FC<EditHistoryModalProps> = ({
                     <Text variant="subtle" size="xs">
                       {formatMessageDate(item.modifiedDate)}
                     </Text>
-                  </FlexRow>
+                  </Flex>
                   <Spacer
                     spaceBefore="xs"
                     spaceAfter="xs"
@@ -103,11 +103,11 @@ export const EditHistoryModal: React.FC<EditHistoryModalProps> = ({
                   <Text variant="body" size="sm" className="whitespace-pre-wrap break-words">
                     {text || t`(empty)`}
                   </Text>
-                </FlexColumn>
+                </Flex>
               </Container>
             );
           })}
-        </FlexColumn>
+        </Flex>
       </ScrollContainer>
     </Modal>
   );

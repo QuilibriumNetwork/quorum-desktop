@@ -4,8 +4,7 @@ export { CalloutExamples } from './Callout';
 export { ColorSwatchExamples } from './ColorSwatch';
 export { ContainerExamples } from './Container';
 export { FileUploadExamples } from './FileUpload';
-export { FlexColumnExamples } from './FlexColumn';
-export { FlexRowExamples } from './FlexRow';
+export { FlexExamples } from './Flex';
 export { IconExamples } from './Icon';
 export { InputExamples } from './Input';
 export { MentionPillsExamples } from './MentionPills';
@@ -28,8 +27,7 @@ export const navigationItems = [
   { id: 'colorswatch-primitive', label: 'ColorSwatch', component: 'ColorSwatchExamples' },
   { id: 'container-primitive', label: 'Container', component: 'ContainerExamples' },
   { id: 'fileupload-primitive', label: 'FileUpload', component: 'FileUploadExamples' },
-  { id: 'flexcolumn-primitive', label: 'FlexColumn', component: 'FlexColumnExamples' },
-  { id: 'flex-primitives', label: 'FlexRow', component: 'FlexRowExamples' },
+  { id: 'flex-primitive', label: 'Flex', component: 'FlexExamples' },
   { id: 'icon-primitive', label: 'Icon', component: 'IconExamples' },
   { id: 'input-primitive', label: 'Input', component: 'InputExamples' },
   { id: 'modal-primitive', label: 'Modal', component: 'ModalExamples' },
@@ -51,8 +49,7 @@ export const componentRegistry = {
   ColorSwatchExamples: () => import('./ColorSwatch').then(m => m.ColorSwatchExamples),
   ContainerExamples: () => import('./Container').then(m => m.ContainerExamples),
   FileUploadExamples: () => import('./FileUpload').then(m => m.FileUploadExamples),
-  FlexColumnExamples: () => import('./FlexColumn').then(m => m.FlexColumnExamples),
-  FlexRowExamples: () => import('./FlexRow').then(m => m.FlexRowExamples),
+  FlexExamples: () => import('./Flex').then(m => m.FlexExamples),
   IconExamples: () => import('./Icon').then(m => m.IconExamples),
   InputExamples: () => import('./Input').then(m => m.InputExamples),
   ModalExamples: () => import('./Modal').then(m => m.ModalExamples),

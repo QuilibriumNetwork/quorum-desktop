@@ -2,8 +2,7 @@ import React from 'react';
 import { t } from '@lingui/core/macro';
 import type { Bookmark, Sticker } from '../../api/quorumApi';
 import {
-  FlexRow,
-  FlexBetween,
+  Flex,
   Text,
   Button,
   Container,
@@ -111,8 +110,8 @@ export const BookmarkItem: React.FC<BookmarkItemProps> = ({
       className="bookmark-item"
     >
       <Container className="result-header">
-        <FlexBetween className="result-meta-container">
-          <FlexRow className="result-meta items-center min-w-0 flex-1 mr-2">
+        <Flex justify="between" className="result-meta-container">
+          <Flex className="result-meta items-center min-w-0 flex-1 mr-2">
             <Icon name="user" className="result-user-icon flex-shrink-0" />
             <Text className="result-sender mr-2 truncate flex-shrink min-w-0">
               {cachedPreview.senderName || t`Unknown User`}
@@ -121,8 +120,8 @@ export const BookmarkItem: React.FC<BookmarkItemProps> = ({
             <Text className="result-date flex-shrink-0 whitespace-nowrap ml-1">
               {formatMessageDate(cachedPreview.messageDate, compactDate)}
             </Text>
-          </FlexRow>
-          <FlexRow
+          </Flex>
+          <Flex
             className={`message-actions items-center flex-shrink-0${isTouchDevice() ? ' always-visible' : ''}`}
           >
             <Button
@@ -150,14 +149,14 @@ export const BookmarkItem: React.FC<BookmarkItemProps> = ({
                 iconSize="lg"
               />
             </Tooltip>
-          </FlexRow>
-        </FlexBetween>
+          </Flex>
+        </Flex>
       </Container>
 
       {/* Source context line - only show for channels, not DMs */}
       {bookmark.sourceType === 'channel' && (
         <Container className="result-source">
-          <FlexRow className="items-center">
+          <Flex className="items-center">
             <Icon
               name="hashtag"
               className="source-icon flex-shrink-0"
@@ -165,7 +164,7 @@ export const BookmarkItem: React.FC<BookmarkItemProps> = ({
             <Text className="source-name truncate flex-1">
               {cachedPreview.sourceName}
             </Text>
-          </FlexRow>
+          </Flex>
         </Container>
       )}
 

@@ -8,8 +8,7 @@ import {
   Title,
   Label,
   Paragraph,
-  FlexColumn,
-  FlexRow,
+  Flex,
   Text,
 } from '@/components/primitives';
 import {
@@ -33,25 +32,25 @@ export const RadioGroupTestScreen: React.FC = () => {
     >
       <ScrollView contentContainerStyle={commonTestStyles.contentPadding}>
         <View style={commonTestStyles.header}>
-          <FlexColumn gap="sm" align="center">
-            <FlexRow
+          <Flex direction="column" gap="sm" align="center">
+            <Flex
               gap="md"
               align="center"
               style={{ alignItems: 'flex-start' }}
             >
               <Icon name="radio" size="xl" style={{ marginTop: 2 }} />
               <Title>RadioGroup</Title>
-            </FlexRow>
+            </Flex>
             <Paragraph align="center">
               Accessible radio button group with icon support and flexible
               layouts
             </Paragraph>
-          </FlexColumn>
+          </Flex>
         </View>
 
         {/* Theme Selection */}
         <View style={themedStyles.section}>
-          <FlexColumn gap="md">
+          <Flex direction="column" gap="md">
             <Title size="sm">Theme Selection</Title>
             <Label color="strong">Using FontAwesome icons:</Label>
             <RadioGroup
@@ -64,12 +63,12 @@ export const RadioGroupTestScreen: React.FC = () => {
               onChange={setSelectedTheme}
               direction="vertical"
             />
-          </FlexColumn>
+          </Flex>
         </View>
 
         {/* Horizontal Layout */}
         <View style={themedStyles.section}>
-          <FlexColumn gap="md">
+          <Flex direction="column" gap="md">
             <Title size="sm">Horizontal Layout</Title>
             <Label color="strong">Horizontal layout example:</Label>
             <RadioGroup
@@ -82,12 +81,12 @@ export const RadioGroupTestScreen: React.FC = () => {
               onChange={setSelectedSize}
               direction="horizontal"
             />
-          </FlexColumn>
+          </Flex>
         </View>
 
         {/* Disabled Options */}
         <View style={themedStyles.section}>
-          <FlexColumn gap="md">
+          <Flex direction="column" gap="md">
             <Title size="sm">Disabled Options</Title>
             <Label color="strong">Some options can be disabled:</Label>
             <RadioGroup
@@ -99,12 +98,12 @@ export const RadioGroupTestScreen: React.FC = () => {
               value="basic"
               onChange={() => {}}
             />
-          </FlexColumn>
+          </Flex>
         </View>
 
         {/* Without Icons */}
         <View style={themedStyles.section}>
-          <FlexColumn gap="md">
+          <Flex direction="column" gap="md">
             <Title size="sm">Without Icons</Title>
             <Label>Simple text-only radio group:</Label>
             <RadioGroup
@@ -116,12 +115,12 @@ export const RadioGroupTestScreen: React.FC = () => {
               value={selectedOption}
               onChange={setSelectedOption}
             />
-          </FlexColumn>
+          </Flex>
         </View>
 
         {/* Testing Notes */}
         <View style={themedStyles.infoSection}>
-          <FlexColumn gap="sm">
+          <Flex direction="column" gap="sm">
             <Title size="sm">Mobile Notes</Title>
             <Text size="sm" variant="default">
               • Web: Native HTML radio inputs with custom styling
@@ -144,7 +143,7 @@ export const RadioGroupTestScreen: React.FC = () => {
             <Text size="sm" variant="default">
               • Ready for ThemeRadioGroup integration
             </Text>
-          </FlexColumn>
+          </Flex>
         </View>
       </ScrollView>
     </SafeAreaView>

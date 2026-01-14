@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Button, Modal, Container, Text, FlexRow, Spacer } from '@/components/primitives';
+import { Button, Modal, Container, Text, Flex, Spacer } from '@/components/primitives';
 import { Trans } from '@lingui/react/macro';
 import { t } from '@lingui/core/macro';
 import { useState, useCallback, useEffect } from 'react';
@@ -108,7 +108,7 @@ const TestLeaveSpaceModal: React.FunctionComponent<
           </Text>
         </Container>
         <Spacer size="lg"></Spacer>
-        <FlexRow>
+        <Flex>
           <Button
             type="danger"
             onClick={() => handleLeaveClick(spaceId, onClose)}
@@ -120,7 +120,7 @@ const TestLeaveSpaceModal: React.FunctionComponent<
               <Trans>Click again to confirm</Trans>
             )}
           </Button>
-        </FlexRow>
+        </Flex>
       </Container>
     </Modal>
   );

@@ -9,9 +9,7 @@ import { isFeatureEnabled } from '../../utils/platform';
 import {
   Modal,
   Container,
-  FlexColumn,
-  FlexRow,
-  FlexCenter,
+  Flex,
   Button,
   Switch,
   Icon,
@@ -190,13 +188,13 @@ const ConversationSettingsModal: React.FC<ConversationSettingsModalProps> = ({
       size="small"
     >
       <Container>
-        <FlexColumn>
-          <FlexRow gap="sm" align="center" className="mb-3">
+        <Flex direction="column">
+          <Flex gap="sm" align="center" className="mb-3">
             <Switch
               value={nonRepudiable}
               onChange={() => setNonRepudiable((prev) => !prev)}
             />
-            <FlexRow gap="sm" align="center">
+            <Flex gap="sm" align="center">
               <div className="text-label-strong">
                 {t`Always sign messages`}
               </div>
@@ -209,15 +207,15 @@ const ConversationSettingsModal: React.FC<ConversationSettingsModalProps> = ({
               >
                 <Icon name="info-circle" size="sm" />
               </Tooltip>
-            </FlexRow>
-          </FlexRow>
+            </Flex>
+          </Flex>
 
-          <FlexRow gap="sm" align="center" className="mb-3">
+          <Flex gap="sm" align="center" className="mb-3">
             <Switch
               value={muted}
               onChange={() => toggleMute(conversationId)}
             />
-            <FlexRow gap="sm" align="center">
+            <Flex gap="sm" align="center">
               <div className="text-label-strong">
                 {t`Mute conversation`}
               </div>
@@ -230,16 +228,16 @@ const ConversationSettingsModal: React.FC<ConversationSettingsModalProps> = ({
               >
                 <Icon name="info-circle" size="sm" />
               </Tooltip>
-            </FlexRow>
-          </FlexRow>
+            </Flex>
+          </Flex>
 
           {showEditHistoryToggle && (
-            <FlexRow gap="sm" align="center" className="mb-3">
+            <Flex gap="sm" align="center" className="mb-3">
               <Switch
                 value={saveEditHistory}
                 onChange={() => setSaveEditHistory((prev) => !prev)}
               />
-              <FlexRow gap="sm" align="center">
+              <Flex gap="sm" align="center">
                 <div className="text-label-strong">
                   {t`Save Edit History`}
                 </div>
@@ -252,21 +250,21 @@ const ConversationSettingsModal: React.FC<ConversationSettingsModalProps> = ({
                 >
                   <Icon name="info-circle" size="sm" />
                 </Tooltip>
-              </FlexRow>
-            </FlexRow>
+              </Flex>
+            </Flex>
           )}
 
-          <FlexRow justify="end">
+          <Flex justify="end">
             <Button type="primary" onClick={saveRepudiability} disabled={deleteConfirmation.isConfirming}>
               {t`Save`}
             </Button>
-          </FlexRow>
-        </FlexColumn>
+          </Flex>
+        </Flex>
 
         <Spacer spaceBefore="lg" spaceAfter="md" border direction="vertical" />
 
         {/* Delete Section */}
-        <FlexCenter>
+        <Flex justify="center" align="center">
           <Text
             variant="danger"
             className="cursor-pointer hover:text-danger-hover"
@@ -276,7 +274,7 @@ const ConversationSettingsModal: React.FC<ConversationSettingsModalProps> = ({
           >
             {t`Delete Conversation`}
           </Text>
-        </FlexCenter>
+        </Flex>
       </Container>
 
       {/* Delete confirmation modal */}

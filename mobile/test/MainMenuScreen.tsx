@@ -1,7 +1,7 @@
 import React from 'react';
 import { ScrollView, View, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Container, FlexColumn, FlexRow, Text, Icon } from '@/components/primitives';
+import { Container, Flex, Text, Icon } from '@/components/primitives';
 import { useTheme } from '@/components/primitives/theme';
 import { IconName } from '@/components/primitives/Icon/types';
 import {
@@ -72,7 +72,7 @@ export const MainMenuScreen: React.FC<MainMenuScreenProps> = ({
       onPress={option.onPress}
       activeOpacity={0.7}
     >
-      <FlexRow gap="md" align="center">
+      <Flex gap="md" align="center">
         <View style={{ flex: 1 }}>
           <Text size="xl" weight="semibold" style={{ marginBottom: 4 }}>
             {option.title}
@@ -82,7 +82,7 @@ export const MainMenuScreen: React.FC<MainMenuScreenProps> = ({
           </Text>
         </View>
         <Icon name="chevron-right" size="lg" color={theme.colors.text.subtle} />
-      </FlexRow>
+      </Flex>
     </TouchableOpacity>
   );
 
@@ -101,14 +101,14 @@ export const MainMenuScreen: React.FC<MainMenuScreenProps> = ({
         showsVerticalScrollIndicator={false}
       >
         <View style={commonTestStyles.header}>
-          <FlexColumn align="center" gap="xs">
+          <Flex direction="column" align="center" gap="xs">
             <Text size="3xl" weight="bold" color={theme.colors.accent[500]}>
               Quorum Mobile
             </Text>
             <Text size="xl" weight="normal" variant="subtle">
               Development Playground
             </Text>
-          </FlexColumn>
+          </Flex>
         </View>
 
         <View style={{ marginTop: 40, marginBottom: 20 }}>
@@ -125,10 +125,10 @@ export const MainMenuScreen: React.FC<MainMenuScreenProps> = ({
             },
           ]}
         >
-          <FlexColumn gap="md" align="center">
+          <Flex direction="column" gap="md" align="center">
             <ThemeRadioGroup horizontal />
             <AccentColorSwitcher />
-          </FlexColumn>
+          </Flex>
         </View>
       </ScrollView>
     </SafeAreaView>

@@ -1,6 +1,6 @@
 import React from 'react';
 import clsx from 'clsx';
-import { FlexRowProps } from './types';
+import { FlexProps } from './types';
 
 const justifyMap = {
   start: 'justify-start',
@@ -28,20 +28,25 @@ const gapMap = {
   xl: 'gap-8',
 };
 
-export const FlexRow = React.forwardRef<HTMLDivElement, FlexRowProps>(
+export const Flex = React.forwardRef<HTMLDivElement, FlexProps>(
   (
     {
       children,
+      direction = 'row',
       justify = 'start',
-      align = 'center',
+      align,
       gap = 'none',
       wrap = false,
       className,
       style,
+      testId,
       ...rest
     },
     ref
   ) => {
+    // Direction-dependent align default: row → center, column → stretch
+    const effectiveAlign = align ?? (direction === 'row' ? 'center' : 'stretch');
+
     const gapClass =
       typeof gap === 'string' && gap in gapMap
         ? gapMap[gap as keyof typeof gapMap]
@@ -52,16 +57,17 @@ export const FlexRow = React.forwardRef<HTMLDivElement, FlexRowProps>(
             : 'gap-0';
 
     const classes = clsx(
-      'flex flex-row',
+      'flex',
+      direction === 'row' ? 'flex-row' : 'flex-col',
       justifyMap[justify],
-      alignMap[align],
+      alignMap[effectiveAlign],
       gapClass,
       wrap && 'flex-wrap',
       className
     );
 
     return (
-      <div ref={ref} className={classes} style={style} {...rest}>
+      <div ref={ref} className={classes} style={style} data-testid={testId} {...rest}>
         {children}
       </div>
     );

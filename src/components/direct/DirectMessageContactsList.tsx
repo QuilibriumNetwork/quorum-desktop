@@ -10,9 +10,7 @@ import './DirectMessageContactsList.scss';
 import {
   Button,
   Container,
-  FlexColumn,
-  FlexBetween,
-  FlexRow,
+  Flex,
   Select,
   Tooltip,
 } from '../primitives';
@@ -311,11 +309,11 @@ const DirectMessageContactsList: React.FC = () => {
 
   return (
     <Container className="direct-messages-list-wrapper list-bottom-fade flex flex-col h-full z-0 flex-grow select-none">
-      <FlexBetween className="direct-messages-header px-4 pt-4 pb-2 lg:py-2 font-semibold flex-shrink-0">
+      <Flex justify="between" className="direct-messages-header px-4 pt-4 pb-2 lg:py-2 font-semibold flex-shrink-0">
         <Container>
           <Trans>Direct Messages</Trans>
         </Container>
-        <FlexRow className="gap-1">
+        <Flex className="gap-1">
             <Button
               type="unstyled"
               iconName="search"
@@ -338,13 +336,13 @@ const DirectMessageContactsList: React.FC = () => {
               onClick={openNewDirectMessage}
             />
           </Tooltip>
-        </FlexRow>
-      </FlexBetween>
+        </Flex>
+      </Flex>
 
       {/* Search row */}
       {searchOpen && (
         <Container className="px-4 pt-2 pb-3">
-          <FlexRow className="dm-search-row items-center">
+          <Flex className="dm-search-row items-center">
             {hasAnyFilter && (
               <Select
                 value={filter}
@@ -364,7 +362,7 @@ const DirectMessageContactsList: React.FC = () => {
                 showSearchIcon={false}
               />
             </Container>
-          </FlexRow>
+          </Flex>
           {/* No results message */}
           {filteredConversations.length === 0 && (filter !== 'all' || searchInput) && (
             <Container className="text-xs text-subtle mt-2">
@@ -384,7 +382,7 @@ const DirectMessageContactsList: React.FC = () => {
 
       <Container className="direct-messages-list list-fade-content flex flex-col h-full overflow-y-auto overflow-x-hidden">
         {conversationsList.length === 0 && !ENABLE_MOCK_CONVERSATIONS ? (
-          <FlexColumn className="justify-center items-center flex-1 px-4">
+          <Flex direction="column" className="justify-center items-center flex-1 px-4">
             <Container className="w-full text-center mb-4 text-subtle">
               <Trans>Ready to start a truly private conversation?</Trans>
             </Container>
@@ -395,7 +393,7 @@ const DirectMessageContactsList: React.FC = () => {
             >
               <Trans>+ Add a friend</Trans>
             </Button>
-          </FlexColumn>
+          </Flex>
         ) : (
           <>
             {filteredConversations.map((c) => {

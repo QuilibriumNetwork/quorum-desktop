@@ -1,4 +1,4 @@
-import { Button, Container, Text, FlexRow, Callout } from '../primitives';
+import { Button, Container, Text, Flex, Callout } from '../primitives';
 import {
   useInviteProcessing,
   useInviteJoining,
@@ -60,19 +60,19 @@ export const InviteLink = ({
               <Trans>You've been invited to join a Space</Trans>
             </Text>
           </Container>
-          <FlexRow className="flex-col lg:flex-row lg:items-center gap-2 lg:gap-3 w-full">
-            <FlexRow className="items-center bg-surface-4 rounded-lg px-1 sm:px-2 py-1 sm:py-2 gap-1 sm:gap-2 lg:gap-3 w-full lg:flex-1 overflow-hidden">
+          <Flex className="flex-col lg:flex-row lg:items-center gap-2 lg:gap-3 w-full">
+            <Flex className="items-center bg-surface-4 rounded-lg px-1 sm:px-2 py-1 sm:py-2 gap-1 sm:gap-2 lg:gap-3 w-full lg:flex-1 overflow-hidden">
               <Container
                 className="w-8 sm:w-10 lg:w-12 h-8 sm:h-10 lg:h-12 rounded-md sm:rounded-lg overflow-hidden flex-shrink-0 bg-surface-3"
               />
               <Container className="flex-1 min-w-0 overflow-hidden">
                 <Container className="h-4 bg-surface-3 rounded w-3/4 sm:w-1/2" />
               </Container>
-            </FlexRow>
+            </Flex>
             <Container className="flex justify-center w-full lg:w-auto lg:flex-shrink-0">
               <Container className="h-9 sm:h-10 bg-surface-4 rounded w-full lg:w-[110px]" />
             </Container>
-          </FlexRow>
+          </Flex>
         </Container>
       )}
       {space && (
@@ -82,8 +82,8 @@ export const InviteLink = ({
               <Trans>You've been invited to join a Space</Trans>
             </Text>
           </Container>
-          <FlexRow className="flex-col lg:flex-row lg:items-center gap-2 lg:gap-3 w-full">
-            <FlexRow className="items-center bg-surface-4 rounded-lg px-1 sm:px-2 py-1 sm:py-2 gap-1 sm:gap-2 lg:gap-3 w-full lg:flex-1 overflow-hidden">
+          <Flex className="flex-col lg:flex-row lg:items-center gap-2 lg:gap-3 w-full">
+            <Flex className="items-center bg-surface-4 rounded-lg px-1 sm:px-2 py-1 sm:py-2 gap-1 sm:gap-2 lg:gap-3 w-full lg:flex-1 overflow-hidden">
               <Container
                 className="w-8 sm:w-10 lg:w-12 h-8 sm:h-10 lg:h-12 rounded-md sm:rounded-lg overflow-hidden flex-shrink-0"
                 style={{
@@ -105,7 +105,7 @@ export const InviteLink = ({
                   </Text>
                 )}
               </Container>
-            </FlexRow>
+            </Flex>
             <Container className="flex justify-center w-full lg:w-auto lg:flex-shrink-0">
               <Button
                 className="px-4 sm:px-6 whitespace-nowrap text-sm w-full lg:w-auto"
@@ -116,7 +116,7 @@ export const InviteLink = ({
                 {buttonText}
               </Button>
             </Container>
-          </FlexRow>
+          </Flex>
         </Container>
       )}
     </Container>

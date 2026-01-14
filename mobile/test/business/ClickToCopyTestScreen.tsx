@@ -3,7 +3,7 @@ import { ScrollView, View, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import {
   Container,
-  FlexColumn,
+  Flex,
   FlexRow,
   Text,
   Title,
@@ -51,7 +51,7 @@ export const ClickToCopyTestScreen: React.FC = () => {
         showsVerticalScrollIndicator={false}
       >
         <View style={commonTestStyles.header}>
-          <FlexColumn gap="xs" align="center">
+          <Flex direction="column" gap="xs" align="center">
             <Title size="lg" align="center">
               ClickToCopyContent Test
             </Title>
@@ -61,17 +61,17 @@ export const ClickToCopyTestScreen: React.FC = () => {
             <Text size="sm" variant="muted">
               Total copies: {copyCount}
             </Text>
-          </FlexColumn>
+          </Flex>
         </View>
 
-        <FlexColumn gap="lg">
+        <Flex direction="column" gap="lg">
           {/* Basic Icon Click Tests */}
           <View style={themedStyles.section}>
             <Title size="md" style={{ marginBottom: 12 }}>
               Icon Click (Default)
             </Title>
 
-            <FlexColumn gap="md">
+            <Flex direction="column" gap="md">
               <ClickToCopyContent
                 text={sampleTexts.short}
                 onCopy={handleCopy}
@@ -90,7 +90,7 @@ export const ClickToCopyTestScreen: React.FC = () => {
               >
                 <Text variant="subtle">Text with icon to the right</Text>
               </ClickToCopyContent>
-            </FlexColumn>
+            </Flex>
           </View>
 
           {/* Copy On Content Click Tests */}
@@ -99,7 +99,7 @@ export const ClickToCopyTestScreen: React.FC = () => {
               Content Click Tests
             </Title>
 
-            <FlexColumn gap="md">
+            <Flex direction="column" gap="md">
               <ClickToCopyContent
                 text="Tap anywhere on this text to copy it"
                 onCopy={handleCopy}
@@ -122,7 +122,7 @@ export const ClickToCopyTestScreen: React.FC = () => {
               >
                 <Text>Long press anywhere to copy</Text>
               </ClickToCopyContent>
-            </FlexColumn>
+            </Flex>
           </View>
 
           {/* Test Controls */}
@@ -131,7 +131,7 @@ export const ClickToCopyTestScreen: React.FC = () => {
               Test Controls
             </Title>
 
-            <FlexColumn gap="sm">
+            <Flex direction="column" gap="sm">
               <Button
                 variant="secondary"
                 size="sm"
@@ -154,7 +154,7 @@ export const ClickToCopyTestScreen: React.FC = () => {
               >
                 Show Info
               </Button>
-            </FlexColumn>
+            </Flex>
           </View>
 
           {/* Implementation Notes */}
@@ -163,7 +163,7 @@ export const ClickToCopyTestScreen: React.FC = () => {
               Implementation Notes
             </Title>
 
-            <FlexColumn gap="xs">
+            <Flex direction="column" gap="xs">
               <Text size="sm" variant="subtle">
                 • Uses adapter pattern for cross-platform clipboard
               </Text>
@@ -179,9 +179,9 @@ export const ClickToCopyTestScreen: React.FC = () => {
               <Text size="sm" variant="subtle">
                 • Business logic shared between web and native
               </Text>
-            </FlexColumn>
+            </Flex>
           </View>
-        </FlexColumn>
+        </Flex>
       </ScrollView>
     </SafeAreaView>
   );

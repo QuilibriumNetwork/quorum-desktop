@@ -39,8 +39,7 @@ import { UserAvatar } from '../user/UserAvatar';
 import {
   Button,
   Container,
-  FlexRow,
-  FlexColumn,
+  Flex,
   Text,
   Tooltip,
 } from '../primitives';
@@ -617,7 +616,7 @@ const DirectMessage: React.FC<{}> = () => {
 
   return (
     <div className="chat-container">
-      <FlexColumn>
+      <Flex direction="column">
         {/* Header - full width at top */}
         <Container
           ref={headerRef}
@@ -627,7 +626,7 @@ const DirectMessage: React.FC<{}> = () => {
           <div className="w-full lg:w-auto flex items-center justify-between lg:contents">
             {/* Mobile controls - burger + NavMenu toggle */}
             {(isMobile || isTablet) && (
-              <FlexRow className="gap-3 sm:gap-2">
+              <Flex className="gap-3 sm:gap-2">
                 <Button
                   type="unstyled"
                   onClick={toggleNavMenu}
@@ -644,20 +643,20 @@ const DirectMessage: React.FC<{}> = () => {
                   iconOnly
                   iconSize={headerIconSize}
                 />
-              </FlexRow>
+              </Flex>
             )}
 
             {/* User info - hidden on mobile first row, shown on desktop */}
             <Container className="hidden lg:flex flex-1 min-w-0">
-              <FlexRow className="items-center min-w-0">
-                <FlexColumn className="justify-around flex-shrink-0">
+              <Flex className="items-center min-w-0">
+                <Flex direction="column" className="justify-around flex-shrink-0">
                   <UserAvatar
                     userIcon={otherUser.userIcon}
                     displayName={otherUser.displayName ?? otherUser.address}
                     address={otherUser.address || ''}
                     size={28}
                   />
-                </FlexColumn>
+                </Flex>
                 <div className="pl-2 flex items-center gap-2 overflow-hidden min-w-0">
                   <Text className="font-semibold truncate-user-name-chat flex-shrink min-w-0">
                     {otherUser.displayName ?? otherUser.address}
@@ -676,11 +675,11 @@ const DirectMessage: React.FC<{}> = () => {
                     {getAddressSuffix(address ?? '')}
                   </ClickToCopyContent>
                 </div>
-              </FlexRow>
+              </Flex>
             </Container>
 
             {/* Controls - right side on both mobile and desktop */}
-            <FlexRow className="items-center gap-3 sm:gap-2">
+            <Flex className="items-center gap-3 sm:gap-2">
               <Tooltip
                 id="dm-settings-toggle"
                 content={t`Conversation settings`}
@@ -747,20 +746,20 @@ const DirectMessage: React.FC<{}> = () => {
                 onOpen={() => setActivePanel('search')}
                 onClose={() => setActivePanel(null)}
               />
-            </FlexRow>
+            </Flex>
           </div>
 
           {/* Second row on mobile: user info / Hidden on desktop (shown above) */}
           <Container className="w-full lg:hidden mt-3">
-            <FlexRow className="items-center min-w-0">
-              <FlexColumn className="justify-around flex-shrink-0">
+            <Flex className="items-center min-w-0">
+              <Flex direction="column" className="justify-around flex-shrink-0">
                 <UserAvatar
                   userIcon={otherUser.userIcon}
                   displayName={otherUser.displayName ?? otherUser.address}
                   address={otherUser.address || ''}
                   size={28}
                 />
-              </FlexColumn>
+              </Flex>
               {/* xs and up: horizontal layout with separator */}
               <div className="pl-2 hidden xs:flex items-center gap-2 overflow-hidden min-w-0">
                 <Text className="font-semibold truncate-user-name-chat">
@@ -797,7 +796,7 @@ const DirectMessage: React.FC<{}> = () => {
                   {getAddressSuffix(address ?? '')}
                 </ClickToCopyContent>
               </div>
-            </FlexRow>
+            </Flex>
           </Container>
         </Container>
 
@@ -837,11 +836,11 @@ const DirectMessage: React.FC<{}> = () => {
             </Container>
             {/* Accept chat warning */}
             {!acceptChat && (
-              <FlexRow className="justify-center">
+              <Flex className="justify-center">
                 <Container className="w-auto mx-4 p-2 sm:px-4 mb-2 text-sm text-center rounded-lg bg-surface-4 text-subtle">
                   {t`Until you reply, this sender will not see your display name or profile picture`}
                 </Container>
-              </FlexRow>
+              </Flex>
             )}
 
             {/* Message Composer */}
@@ -878,7 +877,7 @@ const DirectMessage: React.FC<{}> = () => {
           </div>
 
         </div>
-      </FlexColumn>
+      </Flex>
     </div>
   );
 };

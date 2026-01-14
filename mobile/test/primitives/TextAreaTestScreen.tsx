@@ -8,8 +8,7 @@ import {
   Text,
   Title,
   Label,
-  FlexColumn,
-  FlexRow,
+  Flex,
 } from '@/components/primitives';
 import {
   commonTestStyles,
@@ -33,27 +32,27 @@ export const TextAreaTestScreen: React.FC = () => {
     >
       <ScrollView contentContainerStyle={commonTestStyles.contentPadding}>
         <View style={commonTestStyles.header}>
-          <FlexColumn gap="sm" align="center">
-            <FlexRow
+          <Flex direction="column" gap="sm" align="center">
+            <Flex
               gap="md"
               align="center"
               style={{ alignItems: 'flex-start' }}
             >
               <Icon name="memo" size="xl" style={{ marginTop: 2 }} />
               <Title>TextArea</Title>
-            </FlexRow>
+            </Flex>
             <Text size="base" variant="default" align="center">
               Testing TextArea primitive on React Native
             </Text>
-          </FlexColumn>
+          </Flex>
         </View>
 
         {/* Basic TextArea Types */}
         <View style={themedStyles.sectionCompact}>
-          <FlexColumn gap="md">
+          <Flex direction="column" gap="md">
             <Title size="sm">Basic TextArea</Title>
 
-            <FlexColumn gap="xs">
+            <Flex direction="column" gap="xs">
               <Label>Standard TextArea (3 rows):</Label>
               <TextArea
                 value={textAreaValue}
@@ -65,9 +64,9 @@ export const TextAreaTestScreen: React.FC = () => {
                 Lines: {textAreaValue.split('\n').length} | Chars:{' '}
                 {textAreaValue.length}
               </Text>
-            </FlexColumn>
+            </Flex>
 
-            <FlexColumn gap="xs">
+            <Flex direction="column" gap="xs">
               <Label>Auto-Resize TextArea (2-6 rows):</Label>
               <TextArea
                 value={autoResizeValue}
@@ -80,17 +79,17 @@ export const TextAreaTestScreen: React.FC = () => {
               <Text size="sm" variant="subtle">
                 Auto-resizes between 2-6 rows
               </Text>
-            </FlexColumn>
+            </Flex>
 
-            <FlexColumn gap="xs">
+            <Flex direction="column" gap="xs">
               <Label>Large TextArea (5 rows):</Label>
               <TextArea
                 placeholder="Large text area for longer content..."
                 rows={5}
               />
-            </FlexColumn>
+            </Flex>
 
-            <FlexColumn gap="xs">
+            <Flex direction="column" gap="xs">
               <Label>Disabled TextArea:</Label>
               <TextArea
                 value="This content cannot be edited on mobile"
@@ -98,16 +97,16 @@ export const TextAreaTestScreen: React.FC = () => {
                 disabled
                 rows={3}
               />
-            </FlexColumn>
-          </FlexColumn>
+            </Flex>
+          </Flex>
         </View>
 
         {/* Error States */}
         <View style={themedStyles.sectionCompact}>
-          <FlexColumn gap="md">
+          <Flex direction="column" gap="md">
             <Title size="sm">Error States</Title>
 
-            <FlexColumn gap="xs">
+            <Flex direction="column" gap="xs">
               <Label>TextArea with Error (type less than 10 chars):</Label>
               <TextArea
                 value={errorTextArea}
@@ -124,9 +123,9 @@ export const TextAreaTestScreen: React.FC = () => {
                 }
                 rows={4}
               />
-            </FlexColumn>
+            </Flex>
 
-            <FlexColumn gap="xs">
+            <Flex direction="column" gap="xs">
               <Label>Always Error:</Label>
               <TextArea
                 value=""
@@ -135,24 +134,24 @@ export const TextAreaTestScreen: React.FC = () => {
                 errorMessage="This is a persistent error message for textarea"
                 rows={3}
               />
-            </FlexColumn>
-          </FlexColumn>
+            </Flex>
+          </Flex>
         </View>
 
         {/* TextArea Variants */}
         <View style={themedStyles.sectionCompact}>
-          <FlexColumn gap="md">
+          <Flex direction="column" gap="md">
             <Title size="sm">TextArea Variants</Title>
 
-            <FlexColumn gap="xs">
+            <Flex direction="column" gap="xs">
               <Label>Filled (Default):</Label>
               <TextArea placeholder="Default filled style..." rows={4} />
               <Text size="sm" variant="subtle">
                 Filled background, accent border on focus
               </Text>
-            </FlexColumn>
+            </Flex>
 
-            <FlexColumn gap="xs">
+            <Flex direction="column" gap="xs">
               <Label>Bordered Variant:</Label>
               <TextArea
                 variant="bordered"
@@ -162,9 +161,9 @@ export const TextAreaTestScreen: React.FC = () => {
               <Text size="sm" variant="subtle">
                 Traditional bordered style (explicit variant)
               </Text>
-            </FlexColumn>
+            </Flex>
 
-            <FlexColumn gap="xs">
+            <Flex direction="column" gap="xs">
               <Label>Onboarding Style (rounded corners):</Label>
               <TextArea
                 variant="onboarding"
@@ -174,9 +173,9 @@ export const TextAreaTestScreen: React.FC = () => {
               <Text size="sm" variant="subtle">
                 Rounded corners with brand blue colors
               </Text>
-            </FlexColumn>
+            </Flex>
 
-            <FlexColumn gap="xs">
+            <Flex direction="column" gap="xs">
               <Label>Onboarding Auto-Resize:</Label>
               <TextArea
                 variant="onboarding"
@@ -188,33 +187,33 @@ export const TextAreaTestScreen: React.FC = () => {
               <Text size="sm" variant="subtle">
                 Onboarding style with auto-resize
               </Text>
-            </FlexColumn>
-          </FlexColumn>
+            </Flex>
+          </Flex>
         </View>
 
         {/* Focus Features */}
         <View style={themedStyles.sectionCompact}>
-          <FlexColumn gap="md">
+          <Flex direction="column" gap="md">
             <Title size="sm">Focus Features</Title>
 
-            <FlexColumn gap="xs">
+            <Flex direction="column" gap="xs">
               <Label>Auto Focus TextArea:</Label>
               <TextArea
                 placeholder="This textarea auto-focuses"
                 autoFocus
                 rows={3}
               />
-            </FlexColumn>
+            </Flex>
 
-            <FlexColumn gap="xs">
+            <Flex direction="column" gap="xs">
               <Label>No Focus Style:</Label>
               <TextArea
                 placeholder="This textarea has no focus styling"
                 noFocusStyle
                 rows={3}
               />
-            </FlexColumn>
-          </FlexColumn>
+            </Flex>
+          </Flex>
         </View>
 
         {/* Mobile Notes */}
@@ -224,10 +223,10 @@ export const TextAreaTestScreen: React.FC = () => {
             { backgroundColor: theme.colors.surface[3] },
           ]}
         >
-          <FlexColumn gap="sm">
+          <Flex direction="column" gap="sm">
             <Title size="sm">Mobile Notes</Title>
 
-            <FlexRow gap="xs" align="start">
+            <Flex gap="xs" align="start">
               <Text size="sm" variant="default">
                 •
               </Text>
@@ -236,9 +235,9 @@ export const TextAreaTestScreen: React.FC = () => {
                   Auto-resize functionality works on mobile
                 </Text>
               </View>
-            </FlexRow>
+            </Flex>
 
-            <FlexRow gap="xs" align="start">
+            <Flex gap="xs" align="start">
               <Text size="sm" variant="default">
                 •
               </Text>
@@ -247,9 +246,9 @@ export const TextAreaTestScreen: React.FC = () => {
                   Touch targets optimized for mobile
                 </Text>
               </View>
-            </FlexRow>
+            </Flex>
 
-            <FlexRow gap="xs" align="start">
+            <Flex gap="xs" align="start">
               <Text size="sm" variant="default">
                 •
               </Text>
@@ -258,9 +257,9 @@ export const TextAreaTestScreen: React.FC = () => {
                   Focus states work without web-style borders
                 </Text>
               </View>
-            </FlexRow>
+            </Flex>
 
-            <FlexRow gap="xs" align="start">
+            <Flex gap="xs" align="start">
               <Text size="sm" variant="default">
                 •
               </Text>
@@ -269,9 +268,9 @@ export const TextAreaTestScreen: React.FC = () => {
                   Error messages display below textarea
                 </Text>
               </View>
-            </FlexRow>
+            </Flex>
 
-            <FlexRow gap="xs" align="start">
+            <Flex gap="xs" align="start">
               <Text size="sm" variant="default">
                 •
               </Text>
@@ -280,9 +279,9 @@ export const TextAreaTestScreen: React.FC = () => {
                   Onboarding variant matches desktop style
                 </Text>
               </View>
-            </FlexRow>
+            </Flex>
 
-            <FlexRow gap="xs" align="start">
+            <Flex gap="xs" align="start">
               <Text size="sm" variant="default">
                 •
               </Text>
@@ -291,9 +290,9 @@ export const TextAreaTestScreen: React.FC = () => {
                   Multiline text input with mobile keyboard
                 </Text>
               </View>
-            </FlexRow>
+            </Flex>
 
-            <FlexRow gap="xs" align="start">
+            <Flex gap="xs" align="start">
               <Text size="sm" variant="default">
                 •
               </Text>
@@ -302,8 +301,8 @@ export const TextAreaTestScreen: React.FC = () => {
                   Text alignment starts at top for multiline
                 </Text>
               </View>
-            </FlexRow>
-          </FlexColumn>
+            </Flex>
+          </Flex>
         </View>
       </ScrollView>
     </SafeAreaView>

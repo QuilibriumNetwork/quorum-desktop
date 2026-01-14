@@ -2,7 +2,7 @@ import React from 'react';
 import {
   Container,
   Text,
-  FlexRow,
+  Flex,
   FlexColumn,
   Button,
   Spacer,
@@ -60,12 +60,12 @@ export const DevMainPage: React.FC = () => {
       <DevNavMenu currentPath="/dev" />
       <Container padding="lg" className="mx-auto max-w-2xl">
         <div className="text-center my-12">
-          <FlexRow justify="center" gap="sm" className="mb-4">
+          <Flex justify="center" gap="sm" className="mb-4">
             <Icon name="tools" size="2xl" className="text-strong" />
             <Text as="h1" variant="strong" size="3xl" weight="bold">
               Development Tools
             </Text>
-          </FlexRow>
+          </Flex>
         </div>
 
         {/* Development Tools List */}
@@ -76,12 +76,12 @@ export const DevMainPage: React.FC = () => {
               onClick={() => handleNavigate(tool.path)}
               className="bg-surface-1 hover:bg-surface-2 rounded-lg p-6 border border-default hover:border-accent/50 hover:shadow-lg transition-all cursor-pointer"
             >
-              <FlexRow gap="sm" align="center" className="mb-2">
+              <Flex gap="sm" align="center" className="mb-2">
                 <Icon name={tool.icon} size="md" className="text-accent" />
                 <Text variant="strong" size="lg">
                   {tool.name}
                 </Text>
-              </FlexRow>
+              </Flex>
               <Text variant="main" size="sm">
                 {tool.description}
               </Text>

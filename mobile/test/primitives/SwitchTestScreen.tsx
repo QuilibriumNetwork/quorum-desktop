@@ -9,8 +9,7 @@ import {
   Label,
   Title,
   Icon,
-  FlexRow,
-  FlexColumn,
+  Flex,
 } from '@/components/primitives';
 import {
   commonTestStyles,
@@ -34,21 +33,21 @@ export const SwitchTestScreen: React.FC = () => {
       ]}
     >
       <ScrollView contentContainerStyle={commonTestStyles.contentPadding}>
-        <FlexColumn style={commonTestStyles.header}>
-          <FlexRow gap="md" align="center" style={{ alignItems: 'flex-start' }}>
+        <Flex direction="column" style={commonTestStyles.header}>
+          <Flex gap="md" align="center" style={{ alignItems: 'flex-start' }}>
             <Icon name="sliders" size="xl" style={{ marginTop: 2 }} />
             <Title>Switch</Title>
-          </FlexRow>
+          </Flex>
           <Paragraph align="center">
             Cross-platform toggle switch with multiple sizes and variants
           </Paragraph>
-        </FlexColumn>
+        </Flex>
 
         <View style={themedStyles.section}>
           <Label>Basic Switch</Label>
 
-          <FlexColumn gap="lg">
-            <FlexRow gap="sm" align="center">
+          <Flex direction="column" gap="lg">
+            <Flex gap="sm" align="center">
               <Switch
                 value={basicSwitch}
                 onChange={setBasicSwitch}
@@ -57,9 +56,9 @@ export const SwitchTestScreen: React.FC = () => {
               <Text size="sm" variant="default">
                 Basic Switch ({basicSwitch ? 'ON' : 'OFF'})
               </Text>
-            </FlexRow>
+            </Flex>
 
-            <FlexRow gap="sm" align="center">
+            <Flex gap="sm" align="center">
               <Switch
                 value={disabledSwitchOff}
                 onChange={setDisabledSwitchOff}
@@ -69,9 +68,9 @@ export const SwitchTestScreen: React.FC = () => {
               <Text size="sm" variant="subtle">
                 Disabled Switch (OFF) - Cannot be toggled
               </Text>
-            </FlexRow>
+            </Flex>
 
-            <FlexRow gap="sm" align="center">
+            <Flex gap="sm" align="center">
               <Switch
                 value={disabledSwitchOn}
                 onChange={setDisabledSwitchOn}
@@ -81,14 +80,14 @@ export const SwitchTestScreen: React.FC = () => {
               <Text size="sm" variant="subtle">
                 Disabled Switch (ON) - Cannot be toggled
               </Text>
-            </FlexRow>
-          </FlexColumn>
+            </Flex>
+          </Flex>
         </View>
 
         <View style={themedStyles.section}>
           <Label>Mobile Switch Size</Label>
 
-          <FlexRow gap="sm" align="center">
+          <Flex gap="sm" align="center">
             <Switch
               value={mobileSwitch}
               onChange={setMobileSwitch}
@@ -97,14 +96,14 @@ export const SwitchTestScreen: React.FC = () => {
             <Text size="sm" variant="default">
               Standard Mobile Size (52×28px - matches platform guidelines)
             </Text>
-          </FlexRow>
+          </Flex>
         </View>
 
         <View style={themedStyles.notesSection}>
-          <FlexColumn gap="sm">
+          <Flex direction="column" gap="sm">
             <Title size="sm">Mobile Notes</Title>
 
-            <FlexRow gap="xs" align="start">
+            <Flex gap="xs" align="start">
               <Text size="sm" variant="default">
                 •
               </Text>
@@ -114,9 +113,9 @@ export const SwitchTestScreen: React.FC = () => {
                   color
                 </Text>
               </View>
-            </FlexRow>
+            </Flex>
 
-            <FlexRow gap="xs" align="start">
+            <Flex gap="xs" align="start">
               <Text size="sm" variant="default">
                 •
               </Text>
@@ -125,9 +124,9 @@ export const SwitchTestScreen: React.FC = () => {
                   Mobile: Custom switch component (no Android ripple effects)
                 </Text>
               </View>
-            </FlexRow>
+            </Flex>
 
-            <FlexRow gap="xs" align="start">
+            <Flex gap="xs" align="start">
               <Text size="sm" variant="default">
                 •
               </Text>
@@ -137,9 +136,9 @@ export const SwitchTestScreen: React.FC = () => {
                   standards)
                 </Text>
               </View>
-            </FlexRow>
+            </Flex>
 
-            <FlexRow gap="xs" align="start">
+            <Flex gap="xs" align="start">
               <Text size="sm" variant="default">
                 •
               </Text>
@@ -148,9 +147,9 @@ export const SwitchTestScreen: React.FC = () => {
                   Uses theme-aware surface colors (adapts to light/dark themes)
                 </Text>
               </View>
-            </FlexRow>
+            </Flex>
 
-            <FlexRow gap="xs" align="start">
+            <Flex gap="xs" align="start">
               <Text size="sm" variant="default">
                 •
               </Text>
@@ -159,9 +158,9 @@ export const SwitchTestScreen: React.FC = () => {
                   Touch targets are optimized for mobile accessibility
                 </Text>
               </View>
-            </FlexRow>
+            </Flex>
 
-            <FlexRow gap="xs" align="start">
+            <Flex gap="xs" align="start">
               <Text size="sm" variant="default">
                 •
               </Text>
@@ -170,8 +169,8 @@ export const SwitchTestScreen: React.FC = () => {
                   Smooth animated transitions with proper spacing consistency
                 </Text>
               </View>
-            </FlexRow>
-          </FlexColumn>
+            </Flex>
+          </Flex>
         </View>
       </ScrollView>
     </SafeAreaView>

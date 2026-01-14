@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Select, Button, Tooltip, Spacer, ColorSwatch, FlexRow } from '../../primitives';
+import { Select, Button, Tooltip, Spacer, ColorSwatch, Flex } from '../../primitives';
 import { t } from '@lingui/core/macro';
 import { ThemeRadioGroup } from '../../ui';
 import { useTheme, type AccentColor } from '../../primitives/theme';
@@ -47,7 +47,7 @@ const Appearance: React.FunctionComponent<AppearanceProps> = ({
         <ThemeRadioGroup horizontal />
 
         <div className="mt-8 ml-1">
-          <FlexRow gap={isMobile ? 'lg' : 'sm'}>
+          <Flex gap={isMobile ? 'lg' : 'sm'}>
             {ACCENT_COLORS.map((color) => (
               <ColorSwatch
                 key={color}
@@ -58,7 +58,7 @@ const Appearance: React.FunctionComponent<AppearanceProps> = ({
                 applyAccentTheme
               />
             ))}
-          </FlexRow>
+          </Flex>
         </div>
 
         <div className="mt-8">

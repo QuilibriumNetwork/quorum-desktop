@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { FlexColumn, FlexRow, FlexBetween, Text, Container, Button } from '@/components/primitives';
+import { Flex, Text, Container, Button } from '@/components/primitives';
 import { Icon } from '@/components/primitives';
 import { InteractivePropsPanel } from './InteractivePropsPanel';
 
@@ -70,13 +70,13 @@ export const ExampleBox: React.FC<ExampleBoxProps> = ({
   return (
     <Container className={`space-y-4 ${className}`}>
       {/* Header */}
-      <FlexBetween>
-        <FlexColumn gap="xs">
+      <Flex justify="between">
+        <Flex direction="column" gap="xs">
           <Text size="3xl">{title}</Text>
           <Text variant="subtle">{description}</Text>
-        </FlexColumn>
+        </Flex>
 
-        <FlexRow gap="xs">
+        <Flex gap="xs">
           {dynamicProps && (
             <Button
               type="subtle"
@@ -86,8 +86,8 @@ export const ExampleBox: React.FC<ExampleBoxProps> = ({
               tooltip={showPropsPanel ? "Hide Props Panel" : "Show Props Panel"}
             />
           )}
-        </FlexRow>
-      </FlexBetween>
+        </Flex>
+      </Flex>
 
       {/* Interactive Props Panel */}
       {dynamicProps && showPropsPanel && (
@@ -107,23 +107,23 @@ export const ExampleBox: React.FC<ExampleBoxProps> = ({
       </div>
 
       {/* Footer Notes */}
-      <FlexColumn gap="sm" className="border-t border-surface-4 pt-4">
+      <Flex direction="column" gap="sm" className="border-t border-surface-4 pt-4">
         {/* Quick Tips */}
-        <FlexColumn gap="xs">
+        <Flex direction="column" gap="xs">
           <Text variant="strong" size="sm">Quick Tips:</Text>
           <div className="space-y-1">
             {notes.quickTips.map((tip, index) => (
-              <FlexRow key={index} gap="xs" align="start">
+              <Flex key={index} gap="xs" align="start">
                 <Text variant="subtle" size="sm" className="mt-0.5">•</Text>
                 <Text variant="subtle" size="sm">{tip}</Text>
-              </FlexRow>
+              </Flex>
             ))}
           </div>
-        </FlexColumn>
+        </Flex>
 
         {/* Code Example Toggle */}
         {notes.codeExample && (
-          <FlexColumn gap="sm">
+          <Flex direction="column" gap="sm">
             <div className="self-start">
               <Button
                 type="subtle"
@@ -137,7 +137,7 @@ export const ExampleBox: React.FC<ExampleBoxProps> = ({
 
             {showCodeExample && (
               <div className="bg-surface-0 rounded-md border border-surface-4">
-                <FlexBetween className="px-3 py-2 border-b border-surface-4">
+                <Flex justify="between" className="px-3 py-2 border-b border-surface-4">
                   <Text variant="subtle" size="sm">Code Example</Text>
                   <Button
                     type="subtle"
@@ -147,16 +147,16 @@ export const ExampleBox: React.FC<ExampleBoxProps> = ({
                   >
                     {showCodeCopied ? 'Copied!' : 'Copy'}
                   </Button>
-                </FlexBetween>
+                </Flex>
                 <pre className="text-sm text-subtle overflow-x-auto p-3">
                   <code>{notes.codeExample.code}</code>
                 </pre>
               </div>
             )}
-          </FlexColumn>
+          </Flex>
         )}
 
-      </FlexColumn>
+      </Flex>
     </Container>
   );
 };

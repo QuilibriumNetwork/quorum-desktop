@@ -8,17 +8,22 @@ try {
   ViewStyle = any;
 }
 
-export interface FlexRowProps {
+export interface FlexProps {
   /**
    * Child elements
    */
   children: ReactNode;
   /**
-   * Horizontal alignment of items
+   * Flex direction - 'row' (default) or 'column'
+   */
+  direction?: 'row' | 'column';
+  /**
+   * Main axis alignment (justify-content)
    */
   justify?: 'start' | 'end' | 'center' | 'between' | 'around' | 'evenly';
   /**
-   * Vertical alignment of items
+   * Cross axis alignment (align-items)
+   * Default depends on direction: 'center' for row, 'stretch' for column
    */
   align?: 'start' | 'end' | 'center' | 'stretch' | 'baseline';
   /**
@@ -30,7 +35,7 @@ export interface FlexRowProps {
    */
   wrap?: boolean;
   /**
-   * Additional CSS classes
+   * Additional CSS classes (web only)
    */
   className?: string;
   /**
@@ -38,7 +43,11 @@ export interface FlexRowProps {
    */
   style?: CSSProperties | ViewStyle | any;
   /**
-   * HTML attributes
+   * Test ID for testing
+   */
+  testId?: string;
+  /**
+   * HTML attributes passthrough
    */
   [key: string]: any;
 }
