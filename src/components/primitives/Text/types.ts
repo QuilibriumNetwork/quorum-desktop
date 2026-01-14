@@ -2,18 +2,6 @@ import React from 'react';
 
 export interface BaseTextProps {
   children: React.ReactNode;
-  // NEW: Semantic typography prop for cross-platform consistency
-  // When used, this takes precedence over variant/size/weight
-  typography?:
-    | 'title-large'
-    | 'title'
-    | 'subtitle'
-    | 'subtitle-2'
-    | 'body'
-    | 'label'
-    | 'label-strong'
-    | 'small'
-    | 'small-desktop';
   variant?:
     | 'default'
     | 'strong'

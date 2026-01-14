@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Button, Modal, Container, Text, Flex, Spacer } from '../primitives';
+import { Button, Modal, Container, Flex, Spacer } from '../primitives';
 import { UserAvatar } from '../user/UserAvatar';
 import { t } from '@lingui/core/macro';
 import { getAddressSuffix } from '../../utils';
@@ -76,14 +76,14 @@ const MuteUserModal: React.FunctionComponent<MuteUserModalProps> = ({
             address={userAddress}
             size={40}
           />
-          <Container className="flex-1 min-w-0 flex flex-col">
-            <Text typography="body" className="font-semibold truncate-user-name">
+          <div className="flex-1 min-w-0 flex flex-col">
+            <span className="text-body font-semibold truncate-user-name">
               {userName}
-            </Text>
-            <Text typography="small">
+            </span>
+            <span className="text-small">
               {getAddressSuffix(userAddress)}
-            </Text>
-          </Container>
+            </span>
+          </div>
         </Flex>
 
         <Spacer size="lg" />
@@ -92,7 +92,7 @@ const MuteUserModal: React.FunctionComponent<MuteUserModalProps> = ({
         {!isUnmuting && (
           <>
             <Flex gap="sm" align="center" className="flex-nowrap">
-              <Text typography="body" className="whitespace-nowrap">{t`Mute for`}</Text>
+              <span className="text-body whitespace-nowrap">{t`Mute for`}</span>
               <input
                 type="text"
                 inputMode="numeric"
@@ -101,22 +101,22 @@ const MuteUserModal: React.FunctionComponent<MuteUserModalProps> = ({
                 onKeyDown={handleDaysKeyDown}
                 className="w-12 h-8 px-2 text-center text-sm rounded-lg bg-[var(--color-field-bg)] text-[var(--color-field-text)] border border-transparent hover:bg-[var(--color-field-bg-focus)] focus:outline-none focus:bg-[var(--color-field-bg-focus)] focus:border-[var(--color-field-border-focus)] focus:shadow-[0_0_0_4px_var(--color-field-focus-shadow)]"
               />
-              <Text typography="body">{t`days`}</Text>
+              <span className="text-body">{t`days`}</span>
             </Flex>
-            <Text typography="small" variant="subtle" className="mt-1">
+            <span className="text-small text-subtle mt-1">
               {t`0 = forever`}
-            </Text>
+            </span>
             <Spacer size="md" />
           </>
         )}
 
-        <Text typography="body" variant="subtle">
+        <p className="text-body text-subtle">
           {isUnmuting
             ? t`This user will be able to send messages in this Space again.`
             : days === 0
               ? t`This user will no longer be able to send messages in this Space.`
               : t`This user will not be able to send messages for ${days} days.`}
-        </Text>
+        </p>
 
         <Spacer size="lg" />
 

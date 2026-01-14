@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Button, Modal, Container, Text, Flex, Spacer, ScrollContainer, Callout } from '../primitives';
+import { Button, Modal, Container, Flex, Spacer, ScrollContainer, Callout } from '../primitives';
 import { Trans } from '@lingui/react/macro';
 import { t } from '@lingui/core/macro';
 import { isTouchDevice } from '../../utils/platform';
@@ -51,11 +51,9 @@ const ConfirmationModal: React.FunctionComponent<ConfirmationModalProps> = ({
       {busyMessage && <ModalSaveOverlay visible={busy} message={busyMessage} />}
       <Container>
         {/* Main message */}
-        <Container>
-          <Text typography="body">
-            {message}
-          </Text>
-        </Container>
+        <p className="text-body">
+          {message}
+        </p>
 
         <Spacer size="md" />
 

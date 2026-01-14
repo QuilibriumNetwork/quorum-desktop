@@ -4,7 +4,6 @@ import {
   Button,
   Modal,
   Container,
-  Text,
   Switch,
   Icon,
   Tooltip,
@@ -102,11 +101,9 @@ const NewDirectMessageModal: React.FunctionComponent<
             <Trans>You're offline. Looking up new users requires an internet connection.</Trans>
           </Callout>
         )}
-        <Container margin="none" className="mb-4">
-          <Text typography="body" variant="subtle">
-            {t`Enter a user's address to start messaging them.`}
-          </Text>
-        </Container>
+        <p className="text-body text-subtle mb-4">
+          {t`Enter a user's address to start messaging them.`}
+        </p>
         <Container margin="none">
           <Input
             className="w-full !text-xs sm:!text-sm"
@@ -153,7 +150,7 @@ const NewDirectMessageModal: React.FunctionComponent<
         <Container margin="none">
           <Flex className="items-center justify-between">
             <Flex className="items-center">
-              <Text typography="label-strong">{t`Always sign messages`}</Text>
+              <span className="text-label-strong">{t`Always sign messages`}</span>
               <Tooltip
                 id="dm-nonrepudiable-tip"
                 content={t`You can change this later for this conversation by clicking the lock icon in the Conversation view.`}

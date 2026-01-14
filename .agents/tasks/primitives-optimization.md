@@ -293,7 +293,7 @@ yarn build
 
 ---
 
-### Phase 4: Remove ResponsiveContainer
+### Phase 4: Remove ResponsiveContainer - DONE
 
 **Known usages:**
 - `src/components/Layout.tsx` - wraps main content area
@@ -323,25 +323,174 @@ Visual checks (ResponsiveContainer affects main layout):
 
 ---
 
-### Phase 5: Documentation & Cleanup
+### Phase 5: Remove Typography Prop - DONE
+
+**Problem Analysis**
+
+The `typography` prop was added to the Text primitive for modal text consistency. However, it's just a wrapper around CSS classes:
+
+```tsx
+// What typography prop does internally (Text.web.tsx line 67):
+const classes = clsx(
+  `text-${typography}`,  // Just adds "text-body" CSS class!
+  ...
+);
+```
+
+**Current situation: Two parallel systems doing the same thing:**
+
+| Approach | Usage Count | Example |
+|----------|-------------|---------|
+| CSS Classes | 70 usages | `<div className="text-body">` |
+| Typography Prop | 13 usages | `<Text typography="body">` |
+
+**Decision: Remove Typography Prop**
+
+The typography prop adds indirection without value. Remove it and use CSS classes directly.
+
+| Before | After |
+|--------|-------|
+| `<Text typography="body">` | `<p className="text-body">` or `<span className="text-body">` |
+| `<Text typography="body" variant="subtle">` | `<p className="text-body text-subtle">` |
+| `<Text typography="label-strong">` | `<span className="text-label-strong">` |
+| `<Text typography="small">` | `<span className="text-small">` |
+
+**Files to migrate (13 usages in 5 files):**
+
+| File | Usages | Status |
+|------|--------|--------|
+| `KickUserModal.tsx` | 3 | ✅ |
+| `MuteUserModal.tsx` | 6 | ✅ |
+| `LeaveSpaceModal.tsx` | 1 | ✅ |
+| `NewDirectMessageModal.tsx` | 2 | ✅ |
+| `ConfirmationModal.tsx` | 1 | ✅ |
+| **Total** | **13** | ✅ |
+
+#### Step 5.1: Migrate KickUserModal.tsx
+
+| Line | Before | After |
+|------|--------|-------|
+| 74 | `<Text typography="body" className="font-semibold truncate-user-name">` | `<span className="text-body font-semibold truncate-user-name">` |
+| 77 | `<Text typography="small">` | `<span className="text-small">` |
+| 85 | `<Text typography="body" variant="subtle">` | `<p className="text-body text-subtle">` |
+
+| Task | Status |
+|------|--------|
+| Replace typography usages with CSS classes | ✅ |
+| Remove Text import if no longer needed | ✅ |
+| Visual check: Open Kick User modal | ⬜ |
+
+#### Step 5.2: Migrate MuteUserModal.tsx
+
+| Line | Before | After |
+|------|--------|-------|
+| 80 | `<Text typography="body" className="font-semibold truncate-user-name">` | `<span className="text-body font-semibold truncate-user-name">` |
+| 83 | `<Text typography="small">` | `<span className="text-small">` |
+| 95 | `<Text typography="body" className="whitespace-nowrap">` | `<span className="text-body whitespace-nowrap">` |
+| 104 | `<Text typography="body">` | `<span className="text-body">` |
+| 106 | `<Text typography="small" variant="subtle" className="mt-1">` | `<span className="text-small text-subtle mt-1">` |
+| 113 | `<Text typography="body" variant="subtle">` | `<p className="text-body text-subtle">` |
+
+| Task | Status |
+|------|--------|
+| Replace typography usages with CSS classes | ✅ |
+| Remove Text import if no longer needed | ✅ |
+| Visual check: Open Mute User modal | ⬜ |
+
+#### Step 5.3: Migrate LeaveSpaceModal.tsx
+
+| Line | Before | After |
+|------|--------|-------|
+| 39 | `<Text typography="body" variant="subtle">` | `<p className="text-body text-subtle">` |
+
+| Task | Status |
+|------|--------|
+| Replace typography usage with CSS class | ✅ |
+| Remove Text import if no longer needed | ✅ |
+| Visual check: Open Leave Space modal | ⬜ |
+
+#### Step 5.4: Migrate NewDirectMessageModal.tsx
+
+| Line | Before | After |
+|------|--------|-------|
+| 106 | `<Text typography="body" variant="subtle">` | `<p className="text-body text-subtle">` |
+| 156 | `<Text typography="label-strong">` | `<span className="text-label-strong">` |
+
+| Task | Status |
+|------|--------|
+| Replace typography usages with CSS classes | ✅ |
+| Remove Text import if no longer needed | ✅ |
+| Visual check: Open New Direct Message modal | ⬜ |
+
+#### Step 5.5: Migrate ConfirmationModal.tsx
+
+| Line | Before | After |
+|------|--------|-------|
+| 55 | `<Text typography="body">` | `<p className="text-body">` |
+
+| Task | Status |
+|------|--------|
+| Replace typography usage with CSS class | ✅ |
+| Remove Text import if no longer needed | ✅ |
+| Visual check: Open any confirmation modal | ⬜ |
+
+**🛑 STOP: Step 5.5 Checkpoint**
+```bash
+npx tsc --noEmit --jsx react-jsx --skipLibCheck
+yarn build
+```
+Visual checks:
+- [ ] KickUserModal - text styling looks correct
+- [ ] MuteUserModal - text styling looks correct
+- [ ] LeaveSpaceModal - text styling looks correct
+- [ ] NewDirectMessageModal - text styling looks correct
+- [ ] ConfirmationModal - text styling looks correct
+
+#### Step 5.6: Remove Typography Prop from Text Primitive
+
+| Task | Status |
+|------|--------|
+| Remove `typography` prop from `Text/types.ts` | ✅ |
+| Remove typography handling from `Text.web.tsx` (lines 61-92) | ✅ |
+| Remove typography handling from `Text.native.tsx` | ✅ |
+| Update playground examples to remove typography demos | ✅ |
+| Run type check to confirm no remaining usages | ✅ |
+
+**🛑 STOP: Step 5.6 Checkpoint**
+```bash
+npx tsc --noEmit --jsx react-jsx --skipLibCheck  # ✅ Passed (pre-existing errors only)
+yarn build  # ✅ Passed
+yarn lint  # ✅ Passed (pre-existing warnings/errors only)
+```
+
+**Phase 5 Summary:**
+- ✅ 13 typography usages migrated to CSS classes
+- ✅ Typography prop removed from Text primitive
+
+---
+
+### Phase 6: Documentation & Cleanup
 
 Update all primitives documentation in `.agents/docs/features/primitives/`:
 
 | Task | File | Status |
 |------|------|--------|
 | Update API reference with Flex, remove FlexRow/FlexColumn/FlexCenter/FlexBetween | `API-REFERENCE.md` | ⬜ |
+| Remove typography prop from API reference | `API-REFERENCE.md` | ⬜ |
 | Update quick reference table | `02-primitives-quick-reference.md` | ⬜ |
-| Update "when to use primitives" decision tree | `03-when-to-use-primitives.md` | ⬜ |
+| Update "when to use primitives" decision tree (Text is optional for web) | `03-when-to-use-primitives.md` | ⬜ |
 | Update migration guide examples | `04-web-to-native-migration.md` | ⬜ |
 | Update introduction if it references old primitives | `01-introduction-and-concepts.md` | ⬜ |
 | Update styling guide if needed | `05-primitive-styling-guide.md` | ⬜ |
 | Update primitives index | `INDEX.md` | ⬜ |
 | Update playground examples | `src/dev/primitives-playground/` | ⬜ |
 | Remove old FlexRow/FlexColumn playground examples | `src/dev/primitives-playground/examples/` | ⬜ |
+| Archive `text-primitive-analysis.md` guidance about helpers | - | ⬜ |
+| Archive typography sections from `text-styling-consolidation-plan.md` | - | ⬜ |
 | Verify build passes | - | ⬜ |
 | Verify all tests pass | - | ⬜ |
 
-**🛑 STOP: Phase 5 Final Checkpoint**
+**🛑 STOP: Phase 6 Final Checkpoint**
 ```bash
 npx tsc --noEmit --jsx react-jsx --skipLibCheck
 yarn build
@@ -351,6 +500,7 @@ Final verification:
 - [ ] Playground shows new Flex primitive
 - [ ] Old FlexRow/FlexColumn examples removed from playground
 - [ ] Documentation is consistent and references only `Flex`
+- [ ] Typography prop removed from all docs
 - [ ] Full app walkthrough - check all major screens
 
 ---
@@ -447,173 +597,6 @@ The Text primitive was designed for cross-platform consistency. With separate re
 | **Risk** | Potential visual regressions |
 | **Value** | None - existing code works |
 | **Recommendation** | Leave as-is |
-
----
-
-## Typography Prop Removal
-
-### Problem Analysis
-
-The `typography` prop was added to the Text primitive for modal text consistency. However, it's just a wrapper around CSS classes:
-
-```tsx
-// What typography prop does internally (Text.web.tsx line 67):
-const classes = clsx(
-  `text-${typography}`,  // Just adds "text-body" CSS class!
-  ...
-);
-```
-
-**Current situation: Two parallel systems doing the same thing:**
-
-| Approach | Usage Count | Example |
-|----------|-------------|---------|
-| CSS Classes | 70 usages | `<div className="text-body">` |
-| Typography Prop | 13 usages | `<Text typography="body">` |
-
-### Decision: Remove Typography Prop
-
-The typography prop adds indirection without value. Remove it and use CSS classes directly.
-
-| Before | After |
-|--------|-------|
-| `<Text typography="body">` | `<p className="text-body">` or `<span className="text-body">` |
-| `<Text typography="body" variant="subtle">` | `<p className="text-body text-subtle">` |
-| `<Text typography="label-strong">` | `<span className="text-label-strong">` |
-| `<Text typography="small">` | `<span className="text-small">` |
-
-### Phase 6: Remove Typography Prop
-
-**Files to migrate (13 usages in 5 files):**
-
-| File | Usages | Status |
-|------|--------|--------|
-| `KickUserModal.tsx` | 3 | ⬜ |
-| `MuteUserModal.tsx` | 6 | ⬜ |
-| `LeaveSpaceModal.tsx` | 1 | ⬜ |
-| `NewDirectMessageModal.tsx` | 2 | ⬜ |
-| `ConfirmationModal.tsx` | 1 | ⬜ |
-| **Total** | **13** | |
-
-#### Step 6.1: Migrate KickUserModal.tsx
-
-| Line | Before | After |
-|------|--------|-------|
-| 74 | `<Text typography="body" className="font-semibold truncate-user-name">` | `<span className="text-body font-semibold truncate-user-name">` |
-| 77 | `<Text typography="small">` | `<span className="text-small">` |
-| 85 | `<Text typography="body" variant="subtle">` | `<p className="text-body text-subtle">` |
-
-| Task | Status |
-|------|--------|
-| Replace typography usages with CSS classes | ⬜ |
-| Remove Text import if no longer needed | ⬜ |
-| Visual check: Open Kick User modal | ⬜ |
-
-#### Step 6.2: Migrate MuteUserModal.tsx
-
-| Line | Before | After |
-|------|--------|-------|
-| 80 | `<Text typography="body" className="font-semibold truncate-user-name">` | `<span className="text-body font-semibold truncate-user-name">` |
-| 83 | `<Text typography="small">` | `<span className="text-small">` |
-| 95 | `<Text typography="body" className="whitespace-nowrap">` | `<span className="text-body whitespace-nowrap">` |
-| 104 | `<Text typography="body">` | `<span className="text-body">` |
-| 106 | `<Text typography="small" variant="subtle" className="mt-1">` | `<span className="text-small text-subtle mt-1">` |
-| 113 | `<Text typography="body" variant="subtle">` | `<p className="text-body text-subtle">` |
-
-| Task | Status |
-|------|--------|
-| Replace typography usages with CSS classes | ⬜ |
-| Remove Text import if no longer needed | ⬜ |
-| Visual check: Open Mute User modal | ⬜ |
-
-#### Step 6.3: Migrate LeaveSpaceModal.tsx
-
-| Line | Before | After |
-|------|--------|-------|
-| 39 | `<Text typography="body" variant="subtle">` | `<p className="text-body text-subtle">` |
-
-| Task | Status |
-|------|--------|
-| Replace typography usage with CSS class | ⬜ |
-| Remove Text import if no longer needed | ⬜ |
-| Visual check: Open Leave Space modal | ⬜ |
-
-#### Step 6.4: Migrate NewDirectMessageModal.tsx
-
-| Line | Before | After |
-|------|--------|-------|
-| 106 | `<Text typography="body" variant="subtle">` | `<p className="text-body text-subtle">` |
-| 156 | `<Text typography="label-strong">` | `<span className="text-label-strong">` |
-
-| Task | Status |
-|------|--------|
-| Replace typography usages with CSS classes | ⬜ |
-| Remove Text import if no longer needed | ⬜ |
-| Visual check: Open New Direct Message modal | ⬜ |
-
-#### Step 6.5: Migrate ConfirmationModal.tsx
-
-| Line | Before | After |
-|------|--------|-------|
-| 55 | `<Text typography="body">` | `<p className="text-body">` |
-
-| Task | Status |
-|------|--------|
-| Replace typography usage with CSS class | ⬜ |
-| Remove Text import if no longer needed | ⬜ |
-| Visual check: Open any confirmation modal | ⬜ |
-
-**🛑 STOP: Phase 6 Checkpoint**
-```bash
-npx tsc --noEmit --jsx react-jsx --skipLibCheck
-yarn build
-```
-Visual checks:
-- [ ] KickUserModal - text styling looks correct
-- [ ] MuteUserModal - text styling looks correct
-- [ ] LeaveSpaceModal - text styling looks correct
-- [ ] NewDirectMessageModal - text styling looks correct
-- [ ] ConfirmationModal - text styling looks correct
-
-#### Step 6.6: Remove Typography Prop from Text Primitive
-
-| Task | Status |
-|------|--------|
-| Remove `typography` prop from `Text/types.ts` | ⬜ |
-| Remove typography handling from `Text.web.tsx` (lines 61-92) | ⬜ |
-| Remove typography handling from `Text.native.tsx` | ⬜ |
-| Update playground examples to remove typography demos | ⬜ |
-| Run type check to confirm no remaining usages | ⬜ |
-
-**🛑 STOP: Step 6.6 Checkpoint**
-```bash
-npx tsc --noEmit --jsx react-jsx --skipLibCheck  # Must pass - confirms no typography usages remain
-yarn build
-yarn lint
-```
-
-#### Step 6.7: Update Documentation
-
-| Task | Status |
-|------|--------|
-| Remove typography prop from `API-REFERENCE.md` | ⬜ |
-| Update `02-primitives-quick-reference.md` | ⬜ |
-| Archive typography sections from `text-styling-consolidation-plan.md` | ⬜ |
-
-**Phase 6 Summary:**
-- 13 typography usages migrated to CSS classes
-- Typography prop removed from Text primitive
-- Documentation updated
-
----
-
-### Text Documentation Updates Needed
-
-| Task | Status |
-|------|--------|
-| Update `03-when-to-use-primitives.md` - Text is optional for web | ⬜ |
-| Archive `text-primitive-analysis.md` guidance about helpers | ⬜ |
-| Update API-REFERENCE.md to note Text is optional on web | ⬜ |
 
 ---
 
@@ -717,4 +700,4 @@ Most migrations are mechanical find-and-replace operations that can be done with
 
 ---
 
-*Last updated: 2026-01-14T15:30:00Z - Verified and corrected Flex usage counts (~222 actual vs 638 estimated)*
+*Last updated: 2026-01-14T18:00:00Z - Phase 5 complete: Typography prop removed from Text primitive*

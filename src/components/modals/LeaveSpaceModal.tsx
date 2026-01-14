@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Button, Modal, Container, Text, Flex, Spacer, Callout } from '../primitives';
+import { Button, Modal, Container, Flex, Spacer, Callout } from '../primitives';
 import { useSpace, useSpaceLeaving } from '../../hooks';
 import { Trans } from '@lingui/react/macro';
 import { t } from '@lingui/core/macro';
@@ -35,14 +35,12 @@ const LeaveSpaceModal: React.FunctionComponent<LeaveSpaceModalProps> = ({
       swipeToClose={true}
     >
       <Container>
-        <Container>
-          <Text typography="body" variant="subtle">
-            <Trans>
-              Are you sure you want to leave this Space? You won't be able to
-              rejoin unless you are re-invited.
-            </Trans>
-          </Text>
-        </Container>
+        <p className="text-body text-subtle">
+          <Trans>
+            Are you sure you want to leave this Space? You won't be able to
+            rejoin unless you are re-invited.
+          </Trans>
+        </p>
         {error && (
           <>
             <Spacer size="md"></Spacer>

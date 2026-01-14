@@ -41,7 +41,6 @@ const alignMap = {
 export const Text: React.FC<WebTextProps> = ({
   children,
   as: Component = 'span',
-  typography,
   variant = 'default',
   size = 'base',
   weight = 'normal',
@@ -57,41 +56,6 @@ export const Text: React.FC<WebTextProps> = ({
   referrerPolicy,
   ...rest
 }) => {
-  // NEW: If typography prop is used, apply semantic styling only
-  if (typography) {
-    // Allow variant prop to override typography's default color
-    const finalVariant =
-      Component === 'a' && variant === 'default' ? 'link' : variant;
-
-    const classes = clsx(
-      `text-${typography}`, // e.g., "text-body", "text-title", etc.
-      variant !== 'default' && variantMap[finalVariant], // Override color if variant specified
-      className
-    );
-
-    const textStyle = {
-      color, // Allow color override if needed
-      ...style,
-    };
-
-    return (
-      <Component
-        className={classes}
-        style={textStyle}
-        data-testid={testId}
-        onClick={onClick}
-        href={href}
-        target={target}
-        rel={rel}
-        referrerPolicy={referrerPolicy}
-        {...rest}
-      >
-        {children}
-      </Component>
-    );
-  }
-
-  // EXISTING: Backwards-compatible behavior when typography prop is NOT used
   // Auto-detect link variant when as="a" and no variant is specified
   const finalVariant =
     Component === 'a' && variant === 'default' ? 'link' : variant;

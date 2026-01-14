@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Button, Modal, Container, Text, Flex, Spacer } from '../primitives';
+import { Button, Modal, Container, Flex, Spacer } from '../primitives';
 import { UserAvatar } from '../user/UserAvatar';
 import { useUserKicking } from '../../hooks';
 import { useModalSaveState } from '../../hooks';
@@ -70,21 +70,21 @@ const KickUserModal: React.FunctionComponent<KickUserModalProps> = (props) => {
             address={props.userAddress}
             size={40}
           />
-          <Container className="flex-1 min-w-0 flex flex-col">
-            <Text typography="body" className="font-semibold truncate-user-name">
+          <div className="flex-1 min-w-0 flex flex-col">
+            <span className="text-body font-semibold truncate-user-name">
               {props.userName}
-            </Text>
-            <Text typography="small">
+            </span>
+            <span className="text-small">
               {getAddressSuffix(props.userAddress)}
-            </Text>
-          </Container>
+            </span>
+          </div>
         </Flex>
 
         <Spacer size="lg" />
 
-        <Text typography="body" variant="subtle">
+        <p className="text-body text-subtle">
           {t`This user will be removed from the Space.`}
-        </Text>
+        </p>
 
         <Spacer size="lg" />
 
