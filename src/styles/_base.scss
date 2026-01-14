@@ -311,3 +311,32 @@ html.dark .error-label {
   width: 6px;
   height: 6px;
 }
+
+/* === APP LAYOUT === */
+/* Main content area - offset from fixed NavMenu */
+.main-content {
+  position: fixed;
+  width: calc(100vw - $nav-header-width);
+  height: calc(100vh - 14px);
+  left: $nav-header-width;
+  top: 14px;
+  border-top-left-radius: 0.75rem;
+  background-color: var(--color-bg-sidebar);
+
+  .electron & {
+    top: 38px;
+    height: calc(100vh - 38px);
+  }
+
+  @media (max-width: 480px) {
+    width: calc(100vw - $nav-header-width-mobile);
+    left: $nav-header-width-mobile;
+  }
+
+  &.nav-hidden {
+    @media (max-width: 1023px) {
+      width: 100vw;
+      left: 0;
+    }
+  }
+}

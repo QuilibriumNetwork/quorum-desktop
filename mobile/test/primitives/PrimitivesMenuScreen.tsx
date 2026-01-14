@@ -30,7 +30,7 @@ export const PrimitivesMenuScreen: React.FC<PrimitivesMenuScreenProps> = ({
       id: 'basic',
       title: 'Layout',
       description:
-        'Container, FlexRow, FlexColumn, FlexBetween, FlexCenter, and ResponsiveContainer',
+        'Container, Flex, and Spacer primitives',
       icon: 'sliders',
       onPress: () => onSelectPrimitive('basic'),
     },

@@ -4,7 +4,6 @@ export { OverlayBackdrop } from './OverlayBackdrop';
 export { Portal } from './Portal';
 export { Container } from './Container';
 export { Flex } from './Flex';
-export { ResponsiveContainer } from './ResponsiveContainer';
 export { Spacer } from './Spacer';
 export { ScrollContainer } from './ScrollContainer';
 
@@ -35,7 +34,6 @@ export type {
   NativeContainerProps,
 } from './Container';
 export type { FlexProps } from './Flex';
-export type { ResponsiveContainerProps } from './ResponsiveContainer';
 export type { SpacerProps, SpacerSize, SpacerDirection } from './Spacer';
 export type {
   ScrollContainerProps,

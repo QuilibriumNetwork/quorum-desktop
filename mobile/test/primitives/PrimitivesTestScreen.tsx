@@ -5,7 +5,6 @@ import { useTheme } from '@/components/primitives/theme';
 
 // Import our primitives
 import { Flex } from '@/components/primitives/Flex';
-import { ResponsiveContainer } from '@/components/primitives/ResponsiveContainer';
 import { Spacer } from '@/components/primitives/Spacer';
 import Button from '@/components/primitives/Button';
 import { Text, Title } from '@/components/primitives/Text';
@@ -44,7 +43,7 @@ export const PrimitivesTestScreen: React.FC = () => {
           </Flex>
 
           <Text size="base" variant="default" align="center">
-            Testing Container, Flex components, and ResponsiveContainer
+            Testing Container, Flex, and Spacer components
           </Text>
         </Flex>
 
@@ -614,29 +613,6 @@ export const PrimitivesTestScreen: React.FC = () => {
           </View>
         </View>
 
-        {/* ResponsiveContainer Section */}
-        <View style={themedStyles.sectionCompact}>
-          <View style={{ marginBottom: 16 }}>
-            <Text size="lg" weight="semibold" variant="strong">
-              ResponsiveContainer
-            </Text>
-          </View>
-          <View
-            style={{
-              backgroundColor: theme.colors.utilities.warning + '20',
-              borderColor: theme.colors.utilities.warning,
-              borderWidth: 1,
-              borderRadius: 8,
-              padding: 12,
-            }}
-          >
-            <Text size="sm" color={theme.colors.utilities.warning}>
-              ResponsiveContainer is a layout primitive that works behind the
-              scenes. On mobile, it provides SafeAreaView integration and proper
-              content positioning.
-            </Text>
-          </View>
-        </View>
       </ScrollView>
     </SafeAreaView>
   );

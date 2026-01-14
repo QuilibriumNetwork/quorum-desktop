@@ -1,7 +1,8 @@
 import * as React from 'react';
 import NavMenu from './navbar/NavMenu';
 import { CloseButton } from './ui';
-import { ResponsiveContainer, Container, Callout, Portal } from './primitives';
+import { Container, Callout, Portal } from './primitives';
+import { useResponsiveLayoutContext } from './context/ResponsiveLayoutProvider';
 import CreateSpaceModal from './modals/CreateSpaceModal';
 import AddSpaceModal from './modals/AddSpaceModal';
 import ConfirmationModal from './modals/ConfirmationModal';
@@ -45,6 +46,7 @@ const Layout: React.FunctionComponent<{
   const { isElectron } = useElectronDetection();
   const { showRightSidebar, setShowRightSidebar, rightSidebarContent } =
     useSidebar();
+  const { navMenuOpen } = useResponsiveLayoutContext();
   useNavigationHotkeys();
 
   // Sync muted conversations to NotificationService for desktop notification filtering
@@ -197,7 +199,7 @@ const Layout: React.FunctionComponent<{
         <ImageModalProvider showImageModal={showImageModal}>
           <EditHistoryModalProvider showEditHistoryModal={showEditHistoryModal}>
             <ReactionsModalProvider showReactionsModal={showReactionsModal}>
-              <ResponsiveContainer>
+              <div className={`main-content${!navMenuOpen ? ' nav-hidden' : ''}`}>
             {props.children}
             {toast && (
               <Portal>
@@ -218,7 +220,7 @@ const Layout: React.FunctionComponent<{
                 </div>
               </Portal>
             )}
-              </ResponsiveContainer>
+              </div>
             </ReactionsModalProvider>
           </EditHistoryModalProvider>
         </ImageModalProvider>
