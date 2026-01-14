@@ -155,6 +155,8 @@ This is the main index for all documentation, bug reports, and task management.
 - [Implement Smart Context Extraction Around Mentions in NotificationPanel](tasks/notification-mention-context-extraction.md)
 - [Multi-User Invite Selection Enhancement](tasks/multi-user-invite-selection.md)
 - [Passkey Import UX Issue](tasks/passkey-import-ux-issue.md)
+- [Primitives System Optimization](tasks/primitives-optimization.md)
+- [Primitives Migration to quorum-shared](tasks/primitives-migration-to-quorum-shared.md)
 - [Public Space Directory Feature](tasks/public-space-directory.md)
 - [Remove Deprecated Enhanced Mention Format Backward Compatibility Code](tasks/remove-enhanced-mention-format-compat.md)
 - [SDK PasskeyModal Customization Props Enhancement](tasks/sdk-passkey-modal-customization-props.md)

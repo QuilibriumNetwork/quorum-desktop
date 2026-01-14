@@ -3,7 +3,7 @@ type: doc
 title: Quorum Ecosystem Architecture
 status: done
 created: 2026-01-09T00:00:00.000Z
-updated: 2026-01-09T00:00:00.000Z
+updated: 2026-01-14T00:00:00.000Z
 ---
 
 # Quorum Ecosystem Architecture
@@ -27,9 +27,10 @@ This document provides a comprehensive guide to the Quorum multi-repository ecos
 9. [Utilities](#utilities)
 10. [Crypto and Signing](#crypto-and-signing)
 11. [Transport Layer](#transport-layer)
-12. [Desktop Integration](#desktop-integration)
-13. [Usage Examples](#usage-examples)
-14. [Related Documentation](#related-documentation)
+12. [UI Primitives](#ui-primitives) *(planned)*
+13. [Desktop Integration](#desktop-integration)
+14. [Usage Examples](#usage-examples)
+15. [Related Documentation](#related-documentation)
 
 ---
 
@@ -526,6 +527,109 @@ import { RNWebSocketClient } from '@quilibrium/quorum-shared';
 
 ---
 
+## UI Primitives
+
+> **Status:** Planned migration. See [Primitives Migration Task](../tasks/primitives-migration-to-quorum-shared.md) for implementation details.
+
+UI Primitives are cross-platform building blocks (Button, Input, Modal, etc.) that will be shared between desktop and mobile apps.
+
+### Current State
+
+Currently, primitives exist **separately** in each repository:
+
+| Repository | Location | Count |
+|------------|----------|-------|
+| quorum-desktop | `src/components/primitives/` | 23 components |
+| quorum-mobile | `components/ui/` | 10 components |
+
+### Planned State
+
+Primitives will move to quorum-shared with platform-specific implementations:
+
+```
+@quilibrium/quorum-shared/src/primitives/
+├── Button/
+│   ├── Button.web.tsx      ← Web/Electron (uses <button>, CSS)
+│   ├── Button.native.tsx   ← React Native (uses <Pressable>, StyleSheet)
+│   ├── Button.types.ts     ← Shared TypeScript interface
+│   └── index.ts            ← Platform resolution
+├── Input/
+├── Modal/
+├── Text/
+└── ... (all primitives)
+```
+
+### How Platform Resolution Works
+
+Bundlers automatically select the correct file based on platform:
+
+```typescript
+// This import works on BOTH platforms
+import { Button } from '@quilibrium/quorum-shared/primitives';
+
+// Web bundler (Vite/Webpack) resolves to: Button.web.tsx
+// Metro bundler (React Native) resolves to: Button.native.tsx
+```
+
+### Primitive Categories
+
+| Category | Components | Description |
+|----------|------------|-------------|
+| **Core** | Button, Input, TextArea, Modal, Text | Most frequently used |
+| **Layout** | FlexRow, FlexColumn, Container, Spacer | Layout utilities |
+| **Form** | Select, Switch, RadioGroup, ColorSwatch | Form controls |
+| **UI** | Card, Avatar, Tooltip, Callout | Higher-level components |
+| **State** | EmptyState, ErrorState, LoadingState | Feedback components |
+
+### Usage After Migration
+
+```typescript
+// Import primitives from quorum-shared
+import { Button, Input, Modal, Text } from '@quilibrium/quorum-shared/primitives';
+
+// Use in any component (works on both platforms)
+function MyComponent() {
+  return (
+    <Modal visible={isOpen} onClose={handleClose}>
+      <Text variant="heading">Title</Text>
+      <Input value={name} onChange={setName} placeholder="Enter name" />
+      <Button variant="primary" onPress={handleSubmit}>
+        Submit
+      </Button>
+    </Modal>
+  );
+}
+```
+
+### Theme Integration
+
+Primitives consume theme values differently per platform but use the same color palette:
+
+**Web (CSS Variables):**
+```tsx
+// Button.web.tsx uses Tailwind/CSS variables
+<button className="bg-accent text-white hover:bg-accent-400">
+  {children}
+</button>
+```
+
+**Native (JS Context):**
+```tsx
+// Button.native.tsx uses theme context
+const { theme } = useTheme();
+<Pressable style={{ backgroundColor: theme.colors.accent }}>
+  <Text style={{ color: 'white' }}>{children}</Text>
+</Pressable>
+```
+
+### Related Documentation
+
+- [Primitives Migration Task](../tasks/primitives-migration-to-quorum-shared.md) - Step-by-step migration plan
+- [Gap Analysis Report](../reports/primitives-gap-analysis-quorum-shared_2026-01-14.md) - Desktop vs mobile comparison
+- [Component Architecture Masterplan](../tasks/mobile-dev/components-shared-arch-masterplan.md) - Architectural philosophy
+
+---
+
 ## Desktop Integration
 
 ### Storage Adapter Setup
@@ -629,5 +733,9 @@ function MyComponent() {
 - [Cryptographic Architecture](cryptographic-architecture.md) - Encryption protocols
 - [Config Sync System](config-sync-system.md) - User config synchronization
 - [quorum-shared Migration Analysis](../reports/quorum-shared-migration-analysis_2026-01-05.md) - Future migration planning and gap analysis
+- [Primitives Migration Task](../tasks/primitives-migration-to-quorum-shared.md) - UI primitives migration plan
+- [Primitives Gap Analysis](../reports/primitives-gap-analysis-quorum-shared_2026-01-14.md) - Desktop vs mobile comparison
 
 ---
+
+*Last updated: 2026-01-14*
