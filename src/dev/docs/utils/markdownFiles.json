@@ -744,7 +744,7 @@
         "title": "Quorum Ecosystem Architecture",
         "status": "done",
         "created": "2026-01-09T00:00:00.000Z",
-        "updated": "2026-01-09T00:00:00.000Z"
+        "updated": "2026-01-14T00:00:00.000Z"
       }
     },
     {
@@ -1719,6 +1719,24 @@
       }
     },
     {
+      "name": "layout-css-grid-refactor.md",
+      "path": ".agents/tasks/.done/layout-css-grid-refactor.md",
+      "folder": ".done",
+      "frontmatter": {
+        "type": "task",
+        "title": "Remove ResponsiveContainer Primitive and Inline Styles",
+        "status": "done",
+        "complexity": "low",
+        "ai_generated": true,
+        "reviewed_by": "feature-analyzer, security-analyst",
+        "created": "2025-01-14T00:00:00.000Z",
+        "updated": "2025-01-14T00:00:00.000Z",
+        "related_tasks": [
+          "primitives-optimization.md"
+        ]
+      }
+    },
+    {
       "name": "lazy-loading-implementation.md",
       "path": ".agents/tasks/.done/lazy-loading-implementation.md",
       "folder": ".done",
@@ -2194,6 +2212,19 @@
         "ai_generated": true,
         "created": "2025-12-12T00:00:00.000Z",
         "updated": "2025-12-12T00:00:00.000Z"
+      }
+    },
+    {
+      "name": "primitives-optimization.md",
+      "path": ".agents/tasks/.done/primitives-optimization.md",
+      "folder": ".done",
+      "frontmatter": {
+        "type": "task",
+        "title": "Primitives System Optimization",
+        "status": "done",
+        "priority": "high",
+        "created": "2026-01-14T00:00:00.000Z",
+        "updated": "2026-01-14T00:00:00.000Z"
       }
     },
     {
@@ -3231,6 +3262,19 @@
       }
     },
     {
+      "name": "primitives-migration-to-quorum-shared.md",
+      "path": ".agents/tasks/primitives-migration-to-quorum-shared.md",
+      "folder": "root",
+      "frontmatter": {
+        "type": "task",
+        "title": "Primitives Migration to quorum-shared",
+        "status": "planned",
+        "priority": "high",
+        "created": "2026-01-14T00:00:00.000Z",
+        "updated": "2026-01-14T00:00:00.000Z"
+      }
+    },
+    {
       "name": "public-space-directory.md",
       "path": ".agents/tasks/public-space-directory.md",
       "folder": "root",
@@ -3260,6 +3304,19 @@
           "mention-notification-system.md",
           "markdown-renderer.md"
         ]
+      }
+    },
+    {
+      "name": "remove-text-primitive-web.md",
+      "path": ".agents/tasks/remove-text-primitive-web.md",
+      "folder": "root",
+      "frontmatter": {
+        "type": "task",
+        "title": "Remove Text Primitive from Web App",
+        "status": "not-decided",
+        "priority": "low",
+        "created": "2026-01-14T18:00:00.000Z",
+        "updated": "2026-01-14T18:15:00.000Z"
       }
     },
     {
@@ -4369,6 +4426,18 @@
         "related_issues": [
           "#1"
         ]
+      }
+    },
+    {
+      "name": "primitives-gap-analysis-quorum-shared_2026-01-14.md",
+      "path": ".agents/reports/primitives-gap-analysis-quorum-shared_2026-01-14.md",
+      "folder": "root",
+      "frontmatter": {
+        "type": "report",
+        "title": "Primitives Gap Analysis - quorum-shared Migration",
+        "status": "complete",
+        "created": "2026-01-14T00:00:00.000Z",
+        "updated": "2026-01-14T00:00:00.000Z"
       }
     },
     {

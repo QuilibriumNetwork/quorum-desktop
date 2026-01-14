@@ -17,30 +17,6 @@ Fast lookup guide for all primitive components with essential props and examples
 
 ### Text (Cross-Platform)
 
-**NEW: Typography Prop (Recommended for Cross-Platform Modals)**
-```tsx
-<Text typography="title-large|title|subtitle|subtitle-2|body|label|label-strong|small|small-desktop">
-  Content
-</Text>
-
-// Color override with variant prop
-<Text typography="body" variant="subtle">
-  Body-sized text with subtle color
-</Text>
-```
-
-**Examples:**
-```tsx
-<Text typography="title">Modal Title</Text>                      // 20px, bold, strong color
-<Text typography="body">Main content text</Text>                 // 16px, normal, main color
-<Text typography="body" variant="subtle">Subtle text</Text>      // 16px, normal, subtle color
-<Text typography="label-strong">Form Label</Text>                // 14px, normal, main color
-<Text typography="subtitle-2">Section Header</Text>              // 14px, bold, subtle, uppercase
-```
-
-**Color Priority**: `color` prop > `variant` prop > `typography` default color
-
-**Legacy Props (Backwards Compatible, Web-Only)**
 ```tsx
 <Text
   variant="default|strong|subtle|muted|error|success|warning|link"
@@ -55,33 +31,41 @@ Fast lookup guide for all primitive components with essential props and examples
 </Text>
 ```
 
+**Examples:**
+```tsx
+<Text variant="strong" size="lg">Page Title</Text>
+<Text>Default body text</Text>
+<Text variant="subtle" size="sm">Helper text</Text>
+<Text variant="error">Error message</Text>
+```
+
+### Web Alternative: CSS Typography Classes
+
+For web-only code, prefer plain HTML with CSS classes:
+
+```tsx
+// Instead of Text primitive (simpler, no abstraction)
+<p className="text-body">Main content text</p>
+<span className="text-small text-subtle">Helper text</span>
+<h1 className="text-title">Page title</h1>
+
+// Available typography classes:
+// text-title-large, text-title, text-subtitle, text-subtitle-2
+// text-body, text-label, text-label-strong
+// text-small, text-small-desktop
+
+// Color classes: text-strong, text-subtle, text-muted, etc.
+```
+
 ### Semantic Typography Helpers (Native Only)
 
 ```tsx
 <Title>Page Title</Title>                    // size="lg" (24px), weight="bold" (default)
 <Title size="sm">Section Title</Title>       // size="sm" (18px), weight="bold"
-<Title size="xl" weight="normal">Hero</Title> // size="xl" (30px), normal weight
 <Paragraph>Content paragraph</Paragraph>     // marginBottom={16}, lineHeight="1.4x"
 <Label>Form label</Label>                    // size="sm", weight="strong", marginBottom={8}
 <Caption>Helper text</Caption>               // size="sm", variant="subtle", marginTop={8}
-<InlineText>No spacing</InlineText>          // No automatic margins
 ```
-
-### Typography Values Reference
-
-| Typography | Size | Weight | Default Color | Use Case |
-|------------|------|--------|---------------|----------|
-| `title-large` | 24px | bold | strong | Large page headers |
-| `title` | 20px | bold | strong | Modal/section titles |
-| `subtitle` | 18px | bold | main | Sub-headings |
-| `subtitle-2` | 14px | bold | subtle | Small headers (uppercase) |
-| `body` | 16px | normal | main | Main content (below title) |
-| `label` | 14px | normal | subtle | Subtle labels |
-| `label-strong` | 14px | normal | main | Form labels, emphasized text |
-| `small` | 14px/12px | normal | subtle | Small text (responsive) |
-| `small-desktop` | 12px | normal | subtle | Always small text |
-
-**Note**: Default color can be overridden with `variant` or `color` prop.
 
 ---
 
@@ -209,10 +193,13 @@ Fast lookup guide for all primitive components with essential props and examples
 
 ## 🔄 Layout Components
 
-### FlexRow
+### Flex
+
+Unified flex layout container (replaces FlexRow, FlexColumn, FlexCenter, FlexBetween).
 
 ```tsx
-<FlexRow
+<Flex
+  direction="row|column"        // Default: "row"
   gap="none|xs|sm|md|lg|xl"
   justify="start|end|center|between|around|evenly"
   align="start|end|center|stretch|baseline"
@@ -220,33 +207,33 @@ Fast lookup guide for all primitive components with essential props and examples
 >
   <Text>Item 1</Text>
   <Text>Item 2</Text>
-</FlexRow>
+</Flex>
 ```
 
-### FlexColumn
-
+**Common Patterns:**
 ```tsx
-<FlexColumn
-  gap="none|xs|sm|md|lg|xl"
-  justify="start|end|center|between|around|evenly"
-  align="start|end|center|stretch"
->
-  <Text>Item 1</Text>
-  <Text>Item 2</Text>
-</FlexColumn>
-```
-
-### FlexCenter & FlexBetween
-
-```tsx
-<FlexCenter>                    // justify="center", align="center"
-  <Text>Centered content</Text>
-</FlexCenter>
-
-<FlexBetween>                   // justify="between", align="center"
+// Horizontal row (default)
+<Flex gap="md">
   <Text>Left</Text>
   <Text>Right</Text>
-</FlexBetween>
+</Flex>
+
+// Vertical column
+<Flex direction="column" gap="md">
+  <Text>Top</Text>
+  <Text>Bottom</Text>
+</Flex>
+
+// Space between (like FlexBetween)
+<Flex justify="between">
+  <Text>Left</Text>
+  <Text>Right</Text>
+</Flex>
+
+// Centered (like FlexCenter)
+<Flex justify="center" align="center">
+  <Text>Centered</Text>
+</Flex>
 ```
 
 ### Container
@@ -287,14 +274,6 @@ Fast lookup guide for all primitive components with essential props and examples
   testId="spacer"
   className="css-classes" // Web only
 />
-```
-
-### ResponsiveContainer
-
-```tsx
-<ResponsiveContainer className="css-classes">
-  <Text>Responsive content that adapts to screen size</Text>
-</ResponsiveContainer>
 ```
 
 ### ScrollContainer
@@ -590,7 +569,7 @@ theme.colors.utilities.info; // Info
 ### Form Field Group
 
 ```tsx
-<FlexColumn gap="xs">
+<Flex direction="column" gap="xs">
   <Label>Email Address</Label>
   <Input
     type="email"
@@ -599,19 +578,19 @@ theme.colors.utilities.info; // Info
     error={!!emailError}
     errorMessage={emailError}
   />
-</FlexColumn>
+</Flex>
 ```
 
 ### Header with Icon and Action
 
 ```tsx
-<FlexRow justify="between" align="center">
-  <FlexRow gap="sm" align="center">
+<Flex justify="between" align="center">
+  <Flex gap="sm" align="center">
     <Icon name="settings" />
     <Text weight="semibold">Settings</Text>
-  </FlexRow>
+  </Flex>
   <Button type="subtle" iconName="close" iconOnly onClick={onClose} />
-</FlexRow>
+</Flex>
 ```
 
 ### Card Layout
@@ -622,11 +601,11 @@ theme.colors.utilities.info; // Info
   backgroundColor={theme.colors.bg.card}
   style={{ borderRadius: 12, marginBottom: 16 }}
 >
-  <FlexColumn gap="md">
-    <Title size="sm">Card Title</Title>
-    <Paragraph>Card content goes here</Paragraph>
+  <Flex direction="column" gap="md">
+    <Text variant="strong" size="lg">Card Title</Text>
+    <Text>Card content goes here</Text>
     <Button type="primary">Action</Button>
-  </FlexColumn>
+  </Flex>
 </Container>
 ```
 
@@ -635,15 +614,15 @@ theme.colors.utilities.info; // Info
 ```tsx
 {
   loading ? (
-    <FlexCenter style={{ padding: 20 }}>
+    <Flex justify="center" align="center" style={{ padding: 20 }}>
       <Text variant="subtle">Loading...</Text>
-    </FlexCenter>
+    </Flex>
   ) : (
-    <FlexColumn gap="md">
+    <Flex direction="column" gap="md">
       {data.map((item) => (
         <ItemComponent key={item.id} item={item} />
       ))}
-    </FlexColumn>
+    </Flex>
   );
 }
 ```
@@ -665,13 +644,13 @@ theme.colors.utilities.info; // Info
       textAlign: 'center',
     }}
   >
-    <FlexColumn gap="sm" align="center">
+    <Flex direction="column" gap="sm" align="center">
       <Icon name="upload" size="lg" />
       <Text>Drop files here or click to upload</Text>
       <Text variant="subtle" size="sm">
         Max 5MB per file
       </Text>
-    </FlexColumn>
+    </Flex>
   </Container>
 </FileUpload>
 ```
@@ -690,22 +669,22 @@ theme.colors.utilities.info; // Info
     padding="lg"
     style={{ borderRadius: 12, maxWidth: 400, width: '90vw' }}
   >
-    <FlexColumn gap="md">
-      <FlexBetween>
-        <Title size="sm">Confirmation</Title>
+    <Flex direction="column" gap="md">
+      <Flex justify="between">
+        <Text variant="strong" size="lg">Confirmation</Text>
         <Button type="subtle" iconName="close" iconOnly onClick={closeModal} />
-      </FlexBetween>
+      </Flex>
       <Spacer size="sm" />
       <Text>Are you sure you want to continue?</Text>
-      <FlexRow gap="sm" justify="end">
+      <Flex gap="sm" justify="end">
         <Button type="secondary" onClick={closeModal}>
           Cancel
         </Button>
         <Button type="danger" onClick={confirmAction}>
           Confirm
         </Button>
-      </FlexRow>
-    </FlexColumn>
+      </Flex>
+    </Flex>
   </Container>
 </ModalContainer>
 ```
@@ -713,25 +692,25 @@ theme.colors.utilities.info; // Info
 ### Status Message with Callout
 
 ```tsx
-<FlexColumn gap="md">
+<Flex direction="column" gap="md">
   <Callout variant="success" dismissible onClose={clearSuccessMessage}>
     Settings have been saved successfully!
   </Callout>
 
   <Callout variant="warning" layout="minimal">
-    <FlexColumn gap="xs">
+    <Flex direction="column" gap="xs">
       <Text weight="semibold">Connection Issues Detected</Text>
       <Text size="sm">Some features may not work properly until connection is restored.</Text>
-    </FlexColumn>
+    </Flex>
   </Callout>
 
   <Callout variant="info" size="xs">
-    <FlexRow gap="sm" align="center">
+    <Flex gap="sm" align="center">
       <Text>New version available</Text>
       <Button type="light" size="small" onClick={updateApp}>Update</Button>
-    </FlexRow>
+    </Flex>
   </Callout>
-</FlexColumn>
+</Flex>
 ```
 
 ---
@@ -740,9 +719,9 @@ theme.colors.utilities.info; // Info
 
 | ❌ Don't Do                               | ✅ Do Instead                                            |
 | ----------------------------------------- | -------------------------------------------------------- |
-| `<div className="flex">`                  | `<FlexRow>` or `<FlexColumn>`                            |
-| `<View style={{ flexDirection: 'row' }}>` | `<FlexRow>`                                              |
-| `<p>Text content</p>`                     | `<Text>Text content</Text>`                              |
+| `<div className="flex">`                  | `<Flex>` or `<Flex direction="column">`                  |
+| `<View style={{ flexDirection: 'row' }}>` | `<Flex>`                                                 |
+| `<p>Text content</p>` (mobile)            | `<Text>Text content</Text>`                              |
 | `<button onClick={}>`                     | `<Button onClick={}>`                                    |
 | `<input type="file" />`                   | `<FileUpload onFilesSelected={}>`                        |
 | `<div style={{ padding: 16 }}>`           | `<Container padding="md">`                               |
@@ -756,7 +735,7 @@ theme.colors.utilities.info; // Info
 | Custom alert/notification components      | `<Callout variant="info\|success\|warning\|error">`      |
 | Direct `createPortal()` usage             | Use `<Portal>` component for consistency                 |
 
-## 🏗️ **View vs Flex Usage Pattern**
+## 🏗️ **Container + Flex Usage Pattern**
 
 **Recommended Architecture**: Container + Layout separation
 
@@ -767,12 +746,12 @@ theme.colors.utilities.info; // Info
   padding="md"
   style={{ borderRadius: 8 }}
 >
-  <FlexColumn gap="md">
-    <FlexRow gap="sm" align="center">
+  <Flex direction="column" gap="md">
+    <Flex gap="sm" align="center">
       <Icon name="user" />
       <Text>Content</Text>
-    </FlexRow>
-  </FlexColumn>
+    </Flex>
+  </Flex>
 </Container>
 
 // ❌ AVOID: Manual flexbox in View/Container
@@ -787,7 +766,7 @@ theme.colors.utilities.info; // Info
 **When to use:**
 
 - **Container**: Styling containers (colors, borders, shadows, padding, accessibility)
-- **FlexRow/FlexColumn**: Layout, spacing, alignment, content organization
+- **Flex**: Layout, spacing, alignment, content organization
 - **Spacer**: Fixed spacing between non-flex elements
 
 ---
@@ -802,8 +781,7 @@ theme.colors.utilities.info; // Info
 
 ---
 
-_Last updated: 2026-01-11 - Tooltip: made border default, added noBorder prop, removed highlighted prop; Button: removed highlightedTooltip prop_
-_Verified: 2025-12-09 - All primitive components confirmed present_
+_Last updated: 2026-01-14 - Consolidated Flex primitives, removed typography prop from Text, added CSS class alternative for web_
 
 ---
 

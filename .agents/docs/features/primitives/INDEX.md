@@ -59,9 +59,9 @@ Check [05-primitive-styling-guide.md](./05-primitive-styling-guide.md) for color
 
 ### **Container + Layout Pattern**
 
-- **View**: Styling containers (colors, borders, shadows)
-- **Flex primitives**: Layout, spacing, alignment
-- **Text**: Enhanced with automatic spacing and line height
+- **Container**: Styling containers (colors, borders, shadows)
+- **Flex**: Layout, spacing, alignment (unified primitive)
+- **Text**: Required on mobile, optional on web (CSS classes alternative)
 
 ### **Design System Integration**
 
@@ -76,7 +76,7 @@ Check [05-primitive-styling-guide.md](./05-primitive-styling-guide.md) for color
 ### **Form Field Group**
 
 ```tsx
-<FlexColumn gap="xs">
+<Flex direction="column" gap="xs">
   <Label>Email Address</Label>
   <Input
     type="email"
@@ -85,43 +85,43 @@ Check [05-primitive-styling-guide.md](./05-primitive-styling-guide.md) for color
     error={!!emailError}
     errorMessage={emailError}
   />
-</FlexColumn>
+</Flex>
 ```
 
 ### **Card Layout**
 
 ```tsx
-<View
+<Container
   style={{
     backgroundColor: theme.colors.bg.card,
     padding: 16,
     borderRadius: 12,
   }}
 >
-  <FlexColumn gap="md">
-    <SectionHeading>Card Title</SectionHeading>
-    <Paragraph>Card content goes here</Paragraph>
+  <Flex direction="column" gap="md">
+    <Text variant="strong" size="lg">Card Title</Text>
+    <Text>Card content goes here</Text>
     <Button type="primary">Action</Button>
-  </FlexColumn>
-</View>
+  </Flex>
+</Container>
 ```
 
 ### **Header with Action**
 
 ```tsx
-<FlexRow justify="between" align="center">
-  <FlexRow gap="sm" align="center">
+<Flex justify="between" align="center">
+  <Flex gap="sm" align="center">
     <Icon name="settings" />
     <Text weight="semibold">Settings</Text>
-  </FlexRow>
+  </Flex>
   <Button type="subtle" iconName="close" iconOnly onClick={onClose} />
-</FlexRow>
+</Flex>
 ```
 
 ### **Status Messages**
 
 ```tsx
-<FlexColumn gap="sm">
+<Flex direction="column" gap="sm">
   <Callout variant="success" dismissible>
     Operation completed successfully!
   </Callout>
@@ -131,7 +131,7 @@ Check [05-primitive-styling-guide.md](./05-primitive-styling-guide.md) for color
   <Callout variant="info" size="xs">
     New version available
   </Callout>
-</FlexColumn>
+</Flex>
 ```
 
 ---
@@ -140,7 +140,7 @@ Check [05-primitive-styling-guide.md](./05-primitive-styling-guide.md) for color
 
 ### **Text & Typography**
 
-- Text, Paragraph, Title (with size & weight props), Label, Caption, InlineText
+- Text, Paragraph, Title, Label, Caption (helpers for native)
 
 ### **Interactive Elements**
 
@@ -148,7 +148,7 @@ Check [05-primitive-styling-guide.md](./05-primitive-styling-guide.md) for color
 
 ### **Layout Components**
 
-- FlexRow, FlexColumn, FlexCenter, FlexBetween, Container, ResponsiveContainer, ScrollContainer, Spacer
+- Flex, Container, ScrollContainer, Spacer
 
 ### **Modal & Overlay**
 
@@ -168,8 +168,8 @@ Check [05-primitive-styling-guide.md](./05-primitive-styling-guide.md) for color
 
 | ❌ Don't Do                       | ✅ Do Instead                             |
 | --------------------------------- | ----------------------------------------- |
-| `<div className="flex">`          | `<FlexRow>` or `<FlexColumn>`             |
-| `<p>Text content</p>`             | `<Text>Text content</Text>`               |
+| `<div className="flex">`          | `<Flex>` or `<Flex direction="column">`   |
+| `<p>Text content</p>` (mobile)    | `<Text>Text content</Text>`               |
 | `<button onClick={}>`             | `<Button onClick={}>`                     |
 | Manual margin/padding for spacing | Use Flex gap props or semantic components |
 | CSS classes in React Native       | Use component props                       |
@@ -190,8 +190,7 @@ Check [05-primitive-styling-guide.md](./05-primitive-styling-guide.md) for color
 
 ---
 
-_Last updated: 2025-10-14 - Added Portal primitive_
-_Verified: 2025-12-09_
+_Last updated: 2026-01-14 - Updated for unified Flex primitive and Text changes_
 
 ---
 

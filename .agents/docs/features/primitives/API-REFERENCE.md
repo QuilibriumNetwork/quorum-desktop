@@ -33,7 +33,6 @@ Complete API reference for all primitive components. Use this for quick prop loo
 **Location**: `src/components/primitives/Text/Text.tsx`
 
 **Props**:
-- `typography?: 'title-large' | 'title' | 'subtitle' | 'subtitle-2' | 'body' | 'label' | 'label-strong' | 'small' | 'small-desktop'` - **NEW** Semantic typography style (cross-platform, takes precedence over variant/size/weight)
 - `variant?: 'default' | 'strong' | 'subtle' | 'muted' | 'error' | 'success' | 'warning' | 'link'` - Text style variant
 - `size?: 'xs' | 'sm' | 'base' | 'lg' | 'xl' | '2xl' | '3xl'` - Font size
 - `weight?: 'normal' | 'medium' | 'semibold' | 'bold'` - Font weight
@@ -48,54 +47,35 @@ Complete API reference for all primitive components. Use this for quick prop loo
 - `numberOfLines?: number` - Text truncation (native only)
 - `selectable?: boolean` - Enable text selection (native only)
 
-**Typography Prop (Recommended for Cross-Platform)**:
-The `typography` prop provides semantic text styling that works identically on web and native:
-
+**Example**:
 ```tsx
-// ✅ Cross-platform semantic styling
-<Text typography="body">
-  This text looks the same on web and mobile
-</Text>
-
-<Text typography="title">Modal Title</Text>
-<Text typography="label-strong">Form Label</Text>
-
-// ✅ Color override with variant prop
-<Text typography="body" variant="subtle">
-  Body-sized text with subtle color
-</Text>
-```
-
-**Typography Values**:
-- `title-large` - Large headings (24px, bold, strong color)
-- `title` - Main section headers (20px, bold, strong color)
-- `subtitle` - Sub-headings (18px, bold, main color)
-- `subtitle-2` - Small headers (14px, bold, subtle color, uppercase)
-- `body` - Main content text (16px, normal, main color)
-- `label` - Labels (14px, normal, subtle color)
-- `label-strong` - Emphasized labels (14px, normal, main color)
-- `small` - Small text (14px on mobile, 12px on desktop, subtle color)
-- `small-desktop` - Small text (12px, subtle color)
-
-**Color Override**:
-The `variant` prop can override typography's default color:
-```tsx
-<Text typography="body" variant="subtle">    // body size + subtle color
-<Text typography="title" variant="subtle">   // title size + subtle color
-<Text typography="label-strong" color="#fff"> // custom color
-```
-
-**Color Priority**: `color` prop > `variant` prop > `typography` default color
-
-**Legacy Props (Backwards Compatible)**:
-```tsx
-// ❌ Old way - still works but not cross-platform
 <Text variant="strong" size="lg" weight="semibold">
   Important Text
 </Text>
+
+<Text variant="subtle" size="sm">
+  Secondary information
+</Text>
 ```
 
-**Note**: When `typography` is used, `size` and `weight` props are ignored, but `variant` works to override color.
+**Web Alternative - CSS Classes**:
+For web-only code, you can use plain HTML with CSS typography classes instead of the Text primitive:
+
+```tsx
+// Using Text primitive (cross-platform)
+<Text variant="subtle">Secondary text</Text>
+
+// Using CSS classes (web-only, simpler)
+<p className="text-body">Main content text</p>
+<span className="text-small text-subtle">Helper text</span>
+<h1 className="text-title">Page title</h1>
+```
+
+**Available CSS Typography Classes**:
+- `text-title-large`, `text-title`, `text-subtitle`, `text-subtitle-2`
+- `text-body`, `text-label`, `text-label-strong`
+- `text-small`, `text-small-desktop`
+- Color classes: `text-strong`, `text-subtle`, `text-muted`, etc.
 
 ---
 
@@ -443,81 +423,62 @@ The `variant` prop can override typography's default color:
 
 ## Layout Components
 
-### FlexRow
+### Flex
 
-**Location**: `src/components/primitives/FlexRow/FlexRow.tsx`
+**Location**: `src/components/primitives/Flex/Flex.tsx`
+
+Unified flex layout container that replaces the legacy FlexRow, FlexColumn, FlexCenter, and FlexBetween primitives.
 
 **Props**:
+- `direction?: 'row' | 'column'` - Flex direction (default: 'row')
 - `gap?: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl'` - Space between children
-- `justify?: 'start' | 'end' | 'center' | 'between' | 'around' | 'evenly'` - Horizontal distribution
-- `align?: 'start' | 'end' | 'center' | 'stretch' | 'baseline'` - Vertical alignment
+- `justify?: 'start' | 'end' | 'center' | 'between' | 'around' | 'evenly'` - Main axis distribution
+- `align?: 'start' | 'end' | 'center' | 'stretch' | 'baseline'` - Cross axis alignment
 - `wrap?: boolean` - Allow wrapping
 - `style?: CSSProperties | StyleProp<ViewStyle>` - Additional styles
 - `className?: string` - CSS classes (web only)
 - `testID?: string` - Test identifier
 
-**Example**:
+**Examples**:
 ```tsx
-<FlexRow gap="md" justify="between" align="center">
+// Horizontal layout (default)
+<Flex gap="md" justify="between" align="center">
   <Text>Left content</Text>
   <Button>Right action</Button>
-</FlexRow>
-```
+</Flex>
 
----
-
-### FlexColumn
-
-**Location**: `src/components/primitives/FlexColumn/FlexColumn.tsx`
-
-**Props**:
-- `gap?: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl'` - Space between children
-- `justify?: 'start' | 'end' | 'center' | 'between' | 'around' | 'evenly'` - Vertical distribution
-- `align?: 'start' | 'end' | 'center' | 'stretch'` - Horizontal alignment
-- `style?: CSSProperties | StyleProp<ViewStyle>` - Additional styles
-- `className?: string` - CSS classes (web only)
-- `testID?: string` - Test identifier
-
-**Example**:
-```tsx
-<FlexColumn gap="lg" align="center">
-  <Title>Heading</Title>
-  <Paragraph>Content</Paragraph>
+// Vertical layout
+<Flex direction="column" gap="lg" align="center">
+  <Text variant="strong">Heading</Text>
+  <Text>Content</Text>
   <Button>Action</Button>
-</FlexColumn>
-```
+</Flex>
 
----
-
-### FlexCenter
-
-**Location**: `src/components/primitives/FlexCenter/FlexCenter.tsx`
-
-**Props**:
-- Same as `FlexRow` with `justify="center"` and `align="center"` by default
-
-**Example**:
-```tsx
-<FlexCenter>
+// Centered content
+<Flex justify="center" align="center">
   <Text>Centered content</Text>
-</FlexCenter>
-```
+</Flex>
 
----
-
-### FlexBetween
-
-**Location**: `src/components/primitives/FlexBetween/FlexBetween.tsx`
-
-**Props**:
-- Same as `FlexRow` with `justify="between"` and `align="center"` by default
-
-**Example**:
-```tsx
-<FlexBetween>
+// Space between items
+<Flex justify="between">
   <Text>Left</Text>
   <Text>Right</Text>
-</FlexBetween>
+</Flex>
+```
+
+**Migration from Legacy Flex Primitives**:
+```tsx
+// FlexRow -> Flex (direction="row" is default)
+<FlexRow gap="md">       ->  <Flex gap="md">
+
+// FlexColumn -> Flex direction="column"
+<FlexColumn gap="md">    ->  <Flex direction="column" gap="md">
+
+// FlexBetween -> Flex justify="between"
+<FlexBetween>            ->  <Flex justify="between">
+
+// FlexCenter -> Flex justify="center" align="center"
+<FlexCenter>             ->  <Flex justify="center" align="center">
 ```
 
 ---
@@ -577,24 +538,6 @@ The `variant` prop can override typography's default color:
 ```tsx
 <Spacer size="md" />
 <Spacer size={20} direction="horizontal" />
-```
-
----
-
-### ResponsiveContainer
-
-**Location**: `src/components/primitives/ResponsiveContainer/ResponsiveContainer.tsx`
-
-**Props**:
-- `className?: string` - CSS classes (web only)
-- `style?: CSSProperties | StyleProp<ViewStyle>` - Additional styles
-- Adapts to screen size automatically
-
-**Example**:
-```tsx
-<ResponsiveContainer>
-  <Text>Content that adapts to screen size</Text>
-</ResponsiveContainer>
 ```
 
 ---
@@ -989,7 +932,7 @@ The `variant` prop can override typography's default color:
 ### Form Field with Label and Error
 
 ```tsx
-<FlexColumn gap="xs">
+<Flex direction="column" gap="xs">
   <Label>Email Address</Label>
   <Input
     type="email"
@@ -998,24 +941,24 @@ The `variant` prop can override typography's default color:
     error={!!emailError}
     errorMessage={emailError}
   />
-</FlexColumn>
+</Flex>
 ```
 
 ### Card with Header and Actions
 
 ```tsx
 <Container backgroundColor={theme.colors.bg.card} padding="md">
-  <FlexColumn gap="md">
-    <FlexBetween>
-      <Title size="sm">Card Title</Title>
+  <Flex direction="column" gap="md">
+    <Flex justify="between">
+      <Text variant="strong" size="lg">Card Title</Text>
       <Button type="subtle" iconName="close" iconOnly onClick={onClose} />
-    </FlexBetween>
-    <Paragraph>Card content</Paragraph>
-    <FlexRow gap="sm" justify="end">
+    </Flex>
+    <Text>Card content</Text>
+    <Flex gap="sm" justify="end">
       <Button type="secondary" onClick={onCancel}>Cancel</Button>
       <Button type="primary" onClick={onSave}>Save</Button>
-    </FlexRow>
-  </FlexColumn>
+    </Flex>
+  </Flex>
 </Container>
 ```
 
@@ -1033,14 +976,14 @@ The `variant` prop can override typography's default color:
     padding="lg"
     style={{ borderRadius: 12, maxWidth: 500 }}
   >
-    <FlexColumn gap="md">
-      <Title size="sm">Modal Title</Title>
+    <Flex direction="column" gap="md">
+      <Text variant="strong" size="lg">Modal Title</Text>
       <Text>Modal content</Text>
-      <FlexRow gap="sm" justify="end">
+      <Flex gap="sm" justify="end">
         <Button type="secondary" onClick={closeModal}>Cancel</Button>
         <Button type="primary" onClick={handleConfirm}>Confirm</Button>
-      </FlexRow>
-    </FlexColumn>
+      </Flex>
+    </Flex>
   </Container>
 </ModalContainer>
 ```
@@ -1058,5 +1001,4 @@ The `variant` prop can override typography's default color:
 ---
 
 
-_Last updated: 2026-01-11 - Tooltip: made border default, added noBorder prop, removed deprecated highlighted prop; Button: removed highlightedTooltip prop_
-_Verified: 2025-12-09 - All primitive components confirmed present_
+_Last updated: 2026-01-14 - Consolidated Flex primitives (FlexRow/FlexColumn/FlexCenter/FlexBetween -> Flex), removed typography prop from Text, removed ResponsiveContainer_

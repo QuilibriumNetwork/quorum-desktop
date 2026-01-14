@@ -85,7 +85,7 @@ Before migrating any component, the component logic **MUST** be extracted in a s
 
 | Web Element          | Native Primitive            | Key Differences                     |
 | -------------------- | --------------------------- | ----------------------------------- |
-| `<div>` with flexbox | `<FlexRow>`, `<FlexColumn>` | Use gap prop instead of margin      |
+| `<div>` with flexbox | `<Flex>`, `<Flex direction="column">` | Use gap prop instead of margin |
 | `<p>`, `<span>`      | `<Text>`, `<Paragraph>`     | All text must be wrapped            |
 | `<button>`           | `<Button>`                  | Use onClick instead of click events |
 | `<input>`            | `<Input>`                   | Different keyboard types available  |
@@ -112,17 +112,17 @@ Shows actual web → native migration from existing codebase:
 #### ✅ Native Version
 
 ```tsx
-<FlexColumn gap="sm" align="center">
+<Flex direction="column" gap="sm" align="center">
   <Icon name="tools" size="2xl" color="white" />
   <Title size="xl" align="center" color="white">
     {t`Maintenance in Progress`}
   </Title>
-</FlexColumn>
+</Flex>
 ```
 
 ### Key Migration Patterns
 
-- Replace `<div>` with `<Container>` or `<FlexRow>`/`<FlexColumn>`
+- Replace `<div>` with `<Container>` or `<Flex>`
 - Replace `<button>` with `<Button type="primary">`
 - Replace `<input>` with `<Input>`
 - Use component props instead of CSS classes
@@ -204,9 +204,9 @@ import { Title, Paragraph, Text } from '../components/primitives';
 ```tsx
 // This shows how the web input could be converted using primitives
 // (UserProfileEdit doesn't have a native version yet)
-import { Input, Text, FlexColumn } from '../primitives';
+import { Input, Text, Flex } from '../primitives';
 
-<FlexColumn gap="xs">
+<Flex direction="column" gap="xs">
   <Text size="sm" variant="subtle">
     Display Name
   </Text>
@@ -216,7 +216,7 @@ import { Input, Text, FlexColumn } from '../primitives';
     placeholder="Enter display name"
     error={displayNameError}
   />
-</FlexColumn>;
+</Flex>;
 ```
 
 ### Select/Dropdown Conversion
@@ -356,10 +356,10 @@ import { Container, Text } from '../primitives';
 #### ✅ Native Spacing
 
 ```tsx
-// Using FlexColumn gap
-<FlexColumn gap="sm" style={{ padding: 16, margin: 8 }}>
+// Using Flex gap
+<Flex direction="column" gap="sm" style={{ padding: 16, margin: 8 }}>
   <Paragraph>Content</Paragraph>
-</FlexColumn>
+</Flex>
 
 // Or using Text spacing props
 <Text marginBottom={16}>Content</Text>
@@ -383,10 +383,10 @@ import { Container, Text } from '../primitives';
 
 ```tsx
 // DO: Use primitive components
-<FlexColumn>
+<Flex direction="column">
   <Text>This works on mobile</Text>
   <Button onClick={handleClick}>Works everywhere</Button>
-</FlexColumn>
+</Flex>
 ```
 
 ### ❌ Pitfall 2: CSS Classes on Native
@@ -503,7 +503,7 @@ Key principles for successful web-to-native migration:
 1. **Replace HTML with Primitives** - Every HTML element has a primitive equivalent
 2. **Use Props Over Classes** - Component props replace CSS classes
 3. **Wrap All Text** - React Native requires all text in Text components
-4. **Layout with Flex** - Use FlexRow/FlexColumn instead of CSS Grid
+4. **Layout with Flex** - Use Flex instead of CSS Grid
 5. **Theme Colors** - Use theme system instead of hardcoded colors
 6. **Test Early** - Run mobile simulator frequently during migration
 7. **Accessibility First** - Include proper labels and keyboard navigation
@@ -512,8 +512,7 @@ Following these patterns will ensure your components work seamlessly across web 
 
 ---
 
-_Last updated: 2025-10-14_
-_Verified: 2025-12-09_
+_Last updated: 2026-01-14 - Updated to use unified Flex primitive_
 
 ---
 

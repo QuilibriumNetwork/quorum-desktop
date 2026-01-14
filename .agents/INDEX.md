@@ -155,10 +155,10 @@ This is the main index for all documentation, bug reports, and task management.
 - [Implement Smart Context Extraction Around Mentions in NotificationPanel](tasks/notification-mention-context-extraction.md)
 - [Multi-User Invite Selection Enhancement](tasks/multi-user-invite-selection.md)
 - [Passkey Import UX Issue](tasks/passkey-import-ux-issue.md)
-- [Primitives System Optimization](tasks/primitives-optimization.md)
 - [Primitives Migration to quorum-shared](tasks/primitives-migration-to-quorum-shared.md)
 - [Public Space Directory Feature](tasks/public-space-directory.md)
 - [Remove Deprecated Enhanced Mention Format Backward Compatibility Code](tasks/remove-enhanced-mention-format-compat.md)
+- [Remove Text Primitive from Web App](tasks/remove-text-primitive-web.md)
 - [SDK PasskeyModal Customization Props Enhancement](tasks/sdk-passkey-modal-customization-props.md)
 - [Service Worker for App Update Detection](tasks/service-worker-app-updates.md)
 - [Show Users Who Reacted (Tooltip + Modal)](tasks/show-reaction-users-tooltip.md)
@@ -328,12 +328,14 @@ This is the main index for all documentation, bug reports, and task management.
 - [Phase 1 Complete: Component Audit Infrastructure & Initial Analysis](tasks/.done/components-audit-dashboard.md)
 - [Pinned Messages Cross-Client Synchronization](tasks/.done/pinned-messages-sync.md)
 - [Pinned Messages Feature - Implementation Plan](tasks/.done/pinned-messages-feature.md)
+- [Primitives System Optimization](tasks/.done/primitives-optimization.md)
 - [Public Invite Links Improvement Task](tasks/.done/invite-links-improve.md)
 - [ReactTooltip Mobile Optimization](tasks/.done/reacttoolltip-mobile.md)
 - [Read-Only Channels with Role Managers](tasks/.done/read-only-channels-with-role-managers.md)
 - [Refactor Message Highlighting System](tasks/.done/message-highlight-system-refactor.md)
 - [Refactor Modal Placement in Layout.tsx](tasks/.done/refactor-modal-placement.md)
 - [Rehype-Raw Security Fix - Complete Recap](tasks/.done/rehype-raw-security-fix-recap-2025-11-07.md)
+- [Remove ResponsiveContainer Primitive and Inline Styles](tasks/.done/layout-css-grid-refactor.md)
 - [Rename .agents to .agents](tasks/.done/rename-readme-to-agents.md)
 - [Replace FontAwesome with Tabler Icons](tasks/.done/replace-fontawesome-with-tabler-icons.md)
 - [Reply Notification System](tasks/.done/reply-notification-system.md)
@@ -377,6 +379,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [dnd-kit Touch Drag-and-Drop Best Practices Research](reports/dnd-kit-touch-best-practices_2025-12-11.md)
 - [File Size & Service Extraction Best Practices](reports/file-size-best-practices_2025-12-20.md)
 - [Mention Pills Feature Research & Validation](reports/mention-pills-research.md)
+- [Primitives Gap Analysis: quorum-shared Migration](reports/primitives-gap-analysis-quorum-shared_2026-01-14.md)
 - [Quorum Privacy Analysis](reports/privacy-analysis-quorum-2025-12-03.md)
 - [quorum-shared Migration Analysis](reports/quorum-shared-migration-analysis_2026-01-05.md)
 - [Security Audit: Markdown Renderer & Mentions System](reports/security-audit-markdown-mentions-2025-11-18.md)
@@ -404,4 +407,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2026-01-11 15:05:52
+**Last Updated**: 2026-01-14 19:56:49

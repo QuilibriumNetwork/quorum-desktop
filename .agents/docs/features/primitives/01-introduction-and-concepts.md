@@ -132,10 +132,10 @@ gap: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl'
 // xs: 4px,  sm: 8px,  md: 16px,  lg: 24px,  xl: 32px
 
 // Real usage in UserProfile component:
-<FlexRow gap="sm" align="center">
+<Flex gap="sm" align="center">
   <Icon name="user" />
   <Text variant="strong">User Profile</Text>
-</FlexRow>
+</Flex>
 ```
 
 ### **Typography Hierarchy**
@@ -202,12 +202,12 @@ Our architecture separates **styling** from **layout** for maximum flexibility a
   className="user-profile"
   onClick={(e: React.MouseEvent) => e.stopPropagation()}
 >
-  <FlexRow gap="sm" align="center">
+  <Flex gap="sm" align="center">
     <Icon name="user" />
     <Text variant="strong">{user.name}</Text>
-  </FlexRow>
+  </Flex>
 
-  <FlexRow gap="xs" align="center">
+  <Flex gap="xs" align="center">
     <Text variant="subtle" size="sm">
       Address:
     </Text>
@@ -216,7 +216,7 @@ Our architecture separates **styling** from **layout** for maximum flexibility a
         {user.address.slice(0, 8)}...
       </Text>
     </ClickToCopyContent>
-  </FlexRow>
+  </Flex>
 </Container>
 ```
 
@@ -229,9 +229,10 @@ Our architecture separates **styling** from **layout** for maximum flexibility a
 - Background colors and themed styling
 - CSS classes and inline styles
 
-#### **FlexRow/FlexColumn Primitives (Layout)**
+#### **Flex Primitive (Layout)**
 
 - Content organization and spacing (gap: 'xs' | 'sm' | 'md' | 'lg' | 'xl')
+- Direction: direction="row" (default) | "column"
 - Alignment: align="center" | "start" | "end" | "stretch"
 - Justification: justify="start" | "center" | "between" | "around"
 - Responsive behavior and wrapping
@@ -338,7 +339,7 @@ React Native text handling is different from web. Our Text primitive solves comm
    - Web-only event handlers
 
 2. **Map to Primitive Equivalents**
-   - `<div>` → `<Container>` (styling) + `<FlexRow>`/`<FlexColumn>` (layout)
+   - `<div>` → `<Container>` (styling) + `<Flex>` (layout)
    - `<button>` → `<Button>` with type, size, and icon props
    - `<input>` → `<Input>` with error handling and mobile keyboard types
    - CSS classes → component props and semantic variants
@@ -363,19 +364,19 @@ You don't need to convert everything at once:
 <div className="user-profile-complex-layout">
   {' '}
   {/* Keep existing SCSS */}
-  <FlexRow gap="sm" align="center">
+  <Flex gap="sm" align="center">
     <Icon name="user" />
     <Text variant="strong">{user.name}</Text>
-  </FlexRow>
+  </Flex>
   {/* Use primitive buttons for consistency */}
-  <FlexRow gap="xs">
+  <Flex gap="xs">
     <Button type="secondary" size="small" onClick={() => kickUser(user)}>
       Remove User
     </Button>
     <Button type="primary" size="small" onClick={() => sendMessage(user)}>
       Send Message
     </Button>
-  </FlexRow>
+  </Flex>
 </div>
 ```
 
@@ -386,8 +387,8 @@ You don't need to convert everything at once:
 ### **Always Use For:**
 
 - **Interactive elements**: Button, Input, Select, Modal, Switch
-- **Layout containers**: FlexRow, FlexColumn for consistent spacing
-- **Design system elements**: Text with semantic colors, Icon
+- **Layout containers**: Flex for consistent spacing
+- **Design system elements**: Text (required on mobile), Icon
 
 ### **Consider For:**
 
@@ -420,8 +421,7 @@ You don't need to convert everything at once:
 
 ---
 
-_Last updated: 2025-10-14_
-_Verified: 2025-12-09 - File structure and architecture confirmed current_
+_Last updated: 2026-01-14 - Updated to use unified Flex primitive_
 
 ---
 

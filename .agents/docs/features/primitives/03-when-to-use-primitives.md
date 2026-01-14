@@ -45,8 +45,8 @@ Not every component needs to use primitives. This guide helps decide when primit
 ### ✅ **Always Use Primitives For:**
 
 - **Interactive elements**: Button, Input, Select, Modal, Switch
-- **Layout containers**: FlexRow, FlexColumn, FlexBetween, Container
-- **Design system elements**: Text (with semantic colors), Icon
+- **Layout containers**: Flex, Container
+- **Design system elements**: Text (mobile), Icon
 
 ### 🤔 **Evaluate Case-by-Case:**
 
@@ -212,63 +212,52 @@ Ask these questions:
 
 ## Text Component Decision Framework
 
-### Helper vs Text+as Choice
+### Web vs Mobile Text Usage
 
-**CRITICAL: Decision based on component type (file suffix):**
+**CRITICAL: Text primitive is OPTIONAL on web, REQUIRED on mobile.**
 
-#### ✅ **MUST Use Helpers: Shared Components (Component.tsx)**
-**Components used by both web and mobile platforms**
+#### ✅ **Web-Only Components (.web.tsx)**
+**For web-only code, prefer plain HTML with CSS typography classes:**
 ```tsx
-// Shared component - mobile needs automatic spacing
-<Title typography="title">Page Title</Title>        // MUST use helper
-<Paragraph typography="body">Content</Paragraph>    // MUST use helper
-<Label typography="label">Form Label</Label>        // MUST use helper
-<Caption typography="small">Help text</Caption>     // MUST use helper
+// Simpler, no abstraction layer
+<p className="text-body">Main content text</p>
+<span className="text-small text-subtle">Helper text</span>
+<h1 className="text-title">Page title</h1>
+
+// Available CSS classes:
+// text-title-large, text-title, text-subtitle, text-subtitle-2
+// text-body, text-label, text-label-strong
+// text-small, text-small-desktop
+// Color: text-strong, text-subtle, text-muted, etc.
 ```
 
-#### ❌ **DON'T Use Helpers: Web-Only Components (Component.web.tsx)**
-**Components with .web.tsx suffix - use Text + as prop**
+#### ✅ **Mobile-Only Components (.native.tsx)**
+**Must use Text primitive - HTML elements don't work in React Native:**
 ```tsx
-// Web-only component - semantic HTML better
-<Text as="h1" typography="title">Page Title</Text>     // DON'T use Title helper
-<Text as="p" typography="body">Content</Text>          // DON'T use Paragraph helper
-<Text as="span" typography="label">Label</Text>        // DON'T use Label helper
-<Text as="p" typography="small">Help text</Text>       // DON'T use Caption helper
+<Text variant="strong" size="lg">Page Title</Text>
+<Text>Body content</Text>
+<Text variant="subtle" size="sm">Helper text</Text>
 ```
 
-#### ✅ **PREFER Helpers: Mobile-Only Components (Component.native.tsx)**
-**Components with .native.tsx suffix - helpers provide optimal spacing**
+#### ✅ **Shared Components (Component.tsx)**
+**Use Text primitive for cross-platform compatibility:**
 ```tsx
-// Mobile-only component - helpers provide automatic spacing benefits
-<Title typography="title">Page Title</Title>
-<Paragraph typography="body">Content</Paragraph>
+// Works on both web and mobile
+<Text variant="strong" size="lg">Title</Text>
+<Text variant="subtle">Description</Text>
 ```
 
-### Typography vs Legacy Props Choice
+### When to Use Text Primitive on Web
 
-**Both approaches are valid long-term. NO deprecation planned for legacy props.**
+**Use Text primitive on web when:**
+- Component might be shared with mobile later
+- Need variant props for semantic styling
+- Want consistent API across codebase
 
-#### ✅ **Use Typography Prop When:**
-- Standard semantic text (titles, body, labels, captions)
-- Want cross-platform design consistency
-- Following established design system patterns
-- New components using modern patterns
-
-```tsx
-<Title typography="title">Standard Page Title</Title>
-<Text as="p" typography="body">Standard content</Text>
-```
-
-#### ✅ **Use Legacy Props When:**
-- Custom sizing not covered by typography scale
-- One-off design requirements
-- Need precise control over appearance
-- Existing components that work well
-
-```tsx
-<Text size="xs" weight="medium" variant="warning">Custom micro-text</Text>
-<Text size="2xl" weight="normal" color="rgba(255,255,255,0.7)">Hero subtitle</Text>
-```
+**Use CSS classes on web when:**
+- Simple, web-only components
+- Want to reduce abstraction
+- Migrating existing HTML code
 
 ## Best Practice
 
@@ -278,8 +267,7 @@ The goal is shared business logic with appropriate UI abstractions, not primitiv
 
 ---
 
-_Last updated: 2025-10-14_
-_Verified: 2025-12-09_
+_Last updated: 2026-01-14 - Updated Text decision framework (optional on web, CSS classes preferred)_
 
 ---
 
