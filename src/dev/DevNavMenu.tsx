@@ -43,6 +43,11 @@ const devNavItems: DevNavItem[] = [
     icon: 'chart-line',
     path: '/dev/audit',
   },
+  {
+    name: 'DB Inspector',
+    icon: 'database',
+    path: '/dev/db-inspector',
+  },
 ];
 
 interface DevNavMenuProps {

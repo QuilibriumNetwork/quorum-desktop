@@ -53,14 +53,33 @@ Comprehensive development suite for building and managing cross-platform compone
 
 ### 🗺️ Dependency Map
 
-**Path**: `components-audit/DependencyMapViewer.tsx`  
-**Access**: `/dev/dependencies` route during development  
+**Path**: `components-audit/DependencyMapViewer.tsx`
+**Access**: `/dev/dependencies` route during development
 **Purpose**: Visual roadmap for mobile component development strategy
 
 - `DependencyMapViewer.tsx` - Interactive dependency visualization
 - `dependency-map.json` - 6-level component hierarchy analysis
 - `mobile-roadmap.md` - Phase-by-phase mobile development plan
 - Build order recommendations (Level 0 primitives → Level 5 complex components)
+
+### 🗄️ DB Inspector
+
+**Path**: `db-inspector/`
+**Access**: `/dev/db-inspector` route during development
+**Purpose**: Browse IndexedDB contents with automatic redaction of sensitive data
+
+- `DbInspector.tsx` - Visual UI for browsing all database stores
+- `dbDumpUtil.ts` - Core dump logic with security redaction
+- Shows record counts for all 14 stores
+- Click any store to browse its records (with sensitive data redacted)
+- Copy buttons to export safe JSON for debugging
+- Console commands: `__dbDump()`, `__dbCounts()`, `__dbStore(name)`
+
+**Security Features**:
+- Private keys show as `[REDACTED:64chars]`
+- Public keys show truncated (first 8 + last 4 chars)
+- Encryption states show as `[ENCRYPTED_STATE:Xbytes]`
+- Safe to use with real accounts
 
 ### 🧭 Navigation System
 
@@ -99,6 +118,7 @@ yarn dev
 - **`/playground`** - Interactive primitives testing environment
 - **`/dev/audit`** - Component audit and mobile readiness tracker
 - **`/dev/dependencies`** - Visual dependency map and mobile roadmap
+- **`/dev/db-inspector`** - IndexedDB browser with redacted sensitive data
 
 ## Notes
 
@@ -108,4 +128,4 @@ yarn dev
 
 ---
 
-_Last updated: 2025-11-19_
+_Last updated: 2026-02-05_

@@ -49,6 +49,12 @@ export const DevMainPage: React.FC = () => {
       description: 'Detailed status of all components migration',
       path: '/dev/audit',
     },
+    {
+      name: 'DB Inspector',
+      icon: 'database',
+      description: 'Browse IndexedDB with redacted sensitive data',
+      path: '/dev/db-inspector',
+    },
   ];
 
   const handleNavigate = (path: string) => {

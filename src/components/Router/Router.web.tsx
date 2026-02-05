@@ -59,7 +59,7 @@ const lazyDevImport = (importFn: () => Promise<any>, exportName?: string) =>
       })
     : null;
 
-// Dev components - web playground still available alongside mobile playground
+// Dev components - only loaded in development
 const PrimitivesPlayground = lazyDevImport(
   () => import('@/dev/primitives-playground/PrimitivesPlayground'),
   'PrimitivesPlayground'
@@ -80,6 +80,10 @@ const Docs = lazyDevImport(() => import('@/dev/docs/Docs'), 'Docs');
 const Tasks = lazyDevImport(() => import('@/dev/docs/Tasks'), 'Tasks');
 const Bugs = lazyDevImport(() => import('@/dev/docs/Bugs'), 'Bugs');
 const Reports = lazyDevImport(() => import('@/dev/docs/Reports'), 'Reports');
+const DbInspector = lazyDevImport(
+  () => import('@/dev/db-inspector'),
+  'DbInspector'
+);
 
 interface RouterProps {
   user: {
@@ -225,6 +229,16 @@ export function Router({ user, setUser }: RouterProps) {
           element={
             <Suspense fallback={<div>Loading reports...</div>}>
               <Reports />
+            </Suspense>
+          }
+        />
+      )}
+      {process.env.NODE_ENV === 'development' && DbInspector && (
+        <Route
+          path="/dev/db-inspector"
+          element={
+            <Suspense fallback={<div>Loading DB inspector...</div>}>
+              <DbInspector />
             </Suspense>
           }
         />
