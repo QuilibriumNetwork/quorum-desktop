@@ -24,6 +24,7 @@ import Notifications from './Notifications';
 import Appearance from './Appearance';
 import Help from './Help';
 import Navigation from './Navigation';
+import DangerZone from './DangerZone';
 
 const UserSettingsModal: React.FunctionComponent<{
   dismiss: () => void;
@@ -244,6 +245,8 @@ const UserSettingsModal: React.FunctionComponent<{
                         onRestoreMissingSpaces={restoreMissingSpaces}
                       />
                     );
+                  case 'danger':
+                    return <DangerZone />;
                   default:
                     return null;
                 }

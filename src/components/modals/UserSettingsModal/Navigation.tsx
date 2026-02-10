@@ -17,6 +17,7 @@ const Navigation: React.FunctionComponent<NavigationProps> = ({
     { id: 'notifications', icon: 'bell', label: t`Notifications`, className: '' },
     { id: 'appearance', icon: 'palette', label: t`Appearance`, className: '' },
     { id: 'help', icon: 'support', label: t`Help`, className: '' },
+    { id: 'danger', icon: 'warning', label: t`Danger Zone`, className: 'text-danger' },
   ];
 
   return (
