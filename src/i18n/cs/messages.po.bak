@@ -41,7 +41,19 @@ msgid "Your profile image size must be {maxFileSize} or less and must be a PNG, 
 msgstr "Velikost vašeho profilového obrázku musí být {maxFileSize} nebo méně a musí mít příponu PNG, JPG nebo JPEG."
 
 #. js-lingui-explicit-id
-#: src/components/message/MessageComposer.tsx:646
+#: src/components/message/ReactionsList.tsx:92
+#: src/components/message/ReactionsList.tsx:106
+msgid "more"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/components/message/ReactionsList.tsx:94
+#: src/components/message/ReactionsList.tsx:99
+msgid "Reacted by"
+msgstr ""
+
+#. js-lingui-explicit-id
+#: src/components/message/MessageComposer.tsx:653
 msgid "Replying to"
 msgstr "Odpovídání na"
 
@@ -56,37 +68,37 @@ msgid "Replying to {user}"
 msgstr "Odpovídání {user}"
 
 #. js-lingui-explicit-id
-#: src/components/message/Message.tsx:337
+#: src/components/message/Message.tsx:327
 msgid "has joined"
 msgstr "se připojil"
 
 #. js-lingui-explicit-id
-#: src/components/message/Message.tsx:345
+#: src/components/message/Message.tsx:335
 msgid "has left"
 msgstr "odešel"
 
 #. js-lingui-explicit-id
-#: src/components/message/Message.tsx:353
+#: src/components/message/Message.tsx:343
 msgid "has been kicked"
 msgstr "byl vykopnut"
 
 #. js-lingui-explicit-id
-#: src/components/direct/DirectMessage.tsx:854
+#: src/components/direct/DirectMessage.tsx:852
 msgid "Send a message to {user}"
 msgstr "Odeslat zprávu {user}"
 
 #~ msgid " Default Space settings provide the most typical chat experience, but for higher privacy guarantees, review the Advanced Settings."
 #~ msgstr "Výchozí nastavení Prostor poskytují nejtypičtější zážitek z chatu, ale pro vyšší záruky soukromí si prohlédněte Pokročilé nastavení."
 
-#: src/components/Maintenance.native.tsx:62
+#: src/components/Maintenance.native.tsx:61
 msgid " for updates."
 msgstr "pro aktualizace."
 
 #~ msgid "'everyone' is a reserved name."
 #~ msgstr "'everyone' je rezervované jméno."
 
-#: src/components/message/Message.tsx:803
-#: src/components/message/Message.tsx:816
+#: src/components/message/Message.tsx:789
+#: src/components/message/Message.tsx:802
 msgid "(edited)"
 msgstr "(Upraveno)"
 
@@ -94,12 +106,12 @@ msgstr "(Upraveno)"
 msgid "(empty)"
 msgstr "(prázdný)"
 
-#: src/components/bookmarks/BookmarkItem.tsx:83
+#: src/components/bookmarks/BookmarkItem.tsx:81
 #: src/components/message/MessagePreview.tsx:206
 msgid "[Empty message]"
 msgstr "[Prázdná zpráva]"
 
-#: src/components/bookmarks/BookmarkItem.tsx:60
+#: src/components/bookmarks/BookmarkItem.tsx:58
 #: src/utils/clipboard.ts:28
 msgid "[Image]"
 msgstr "[Obrázek]"
@@ -122,7 +134,7 @@ msgstr "[Zpráva]"
 msgid "[Sticker: {0}]"
 msgstr "[Nálepka: {0}]"
 
-#: src/components/bookmarks/BookmarkItem.tsx:77
+#: src/components/bookmarks/BookmarkItem.tsx:75
 msgid "[Sticker]"
 msgstr "[Sticker]"
 
@@ -160,7 +172,7 @@ msgstr "{0} oznámení"
 #~ msgstr "{0} připnutá zpráva"
 
 #. placeholder {0}: pinnedMessages.length
-#: src/components/message/PinnedMessagesPanel.tsx:213
+#: src/components/message/PinnedMessagesPanel.tsx:210
 msgid "{0} pinned message in this Channel"
 msgstr "{0} připnutá zpráva v tomto kanálu"
 
@@ -168,7 +180,7 @@ msgstr "{0} připnutá zpráva v tomto kanálu"
 #~ msgstr "{0} připnuté zprávy"
 
 #. placeholder {0}: pinnedMessages.length
-#: src/components/message/PinnedMessagesPanel.tsx:214
+#: src/components/message/PinnedMessagesPanel.tsx:211
 msgid "{0} pinned messages in this Channel"
 msgstr "{0} připnuté zprávy v tomto kanálu"
 
@@ -193,11 +205,11 @@ msgstr "{0} výsledky"
 #~ msgid "{0} unread mentions"
 #~ msgstr "{0} nepřečtené zmínky"
 
-#: src/components/bookmarks/BookmarksPanel.tsx:276
+#: src/components/bookmarks/BookmarksPanel.tsx:274
 msgid "{bookmarkCount} bookmark"
 msgstr "{bookmarkCount} záložka"
 
-#: src/components/bookmarks/BookmarksPanel.tsx:277
+#: src/components/bookmarks/BookmarksPanel.tsx:275
 msgid "{bookmarkCount} bookmarks"
 msgstr "{bookmarkCount} záložek"
 
@@ -208,11 +220,11 @@ msgstr "{bookmarkCount} záložek"
 msgid "{count} new notifications"
 msgstr "{count} nových oznámení"
 
-#: src/utils/dateFormatting.ts:90
+#: src/utils/dateFormatting.ts:95
 msgid "{days} days"
 msgstr "{days} dní"
 
-#: src/utils/dateFormatting.ts:92
+#: src/utils/dateFormatting.ts:97
 msgid "{hours} hours"
 msgstr "{hours} hodin"
 
@@ -260,7 +272,7 @@ msgstr "@roles"
 msgid "@you"
 msgstr "@you"
 
-#: src/components/direct/DirectMessageContactsList.tsx:396
+#: src/components/direct/DirectMessageContactsList.tsx:394
 msgid "+ Add a friend"
 msgstr "Přidat přítele"
 
@@ -272,7 +284,7 @@ msgstr "0 = navždy"
 msgid "0 Bytes"
 msgstr "0 bajtů"
 
-#: src/utils/dateFormatting.ts:84
+#: src/utils/dateFormatting.ts:89
 msgid "0 hours"
 msgstr "0 hodin"
 
@@ -310,16 +322,16 @@ msgstr "Nastavení účtu"
 msgid "actions queued"
 msgstr "Akce ve frontě"
 
-#: src/components/direct/DirectMessageContactsList.tsx:328
+#: src/components/direct/DirectMessageContactsList.tsx:326
 msgid "Add a friend"
 msgstr "Přidat přítele"
 
-#: src/components/modals/AddSpaceModal.tsx:124
+#: src/components/modals/AddSpaceModal.tsx:122
 #: src/components/navbar/ExpandableNavMenu.tsx:30
 msgid "Add a Space"
 msgstr "Přidat Space"
 
-#: src/components/modals/ChannelEditorModal.tsx:83
+#: src/components/modals/ChannelEditorModal.tsx:82
 msgid "Add Channel"
 msgstr "Přidat kanál"
 
@@ -327,7 +339,7 @@ msgstr "Přidat kanál"
 msgid "Add friend"
 msgstr "Přidat přítele"
 
-#: src/components/modals/GroupEditorModal.tsx:60
+#: src/components/modals/GroupEditorModal.tsx:58
 #: src/components/space/ChannelList.tsx:184
 msgid "Add Group"
 msgstr "Přidat skupinu"
@@ -336,11 +348,11 @@ msgstr "Přidat skupinu"
 msgid "Add Role"
 msgstr "Přidat roli"
 
-#: src/components/message/MessageComposer.tsx:878
+#: src/components/message/MessageComposer.tsx:779
 msgid "add sticker"
 msgstr "přidat nálepku"
 
-#: src/components/direct/DirectMessageContactsList.tsx:235
+#: src/components/direct/DirectMessageContactsList.tsx:233
 msgid "Add to Favorites"
 msgstr "Přidat do Oblíbených"
 
@@ -374,20 +386,20 @@ msgstr "Nastavte bezpečnostní související nastavení, která mohou ovlivnit 
 msgid "Advanced Settings"
 msgstr "Pokročilé nastavení"
 
-#: src/components/direct/DirectMessageContactsList.tsx:293
+#: src/components/direct/DirectMessageContactsList.tsx:291
 #: src/components/modals/SpaceSettingsModal/Account.tsx:243
 #: src/components/primitives/Select/Select.native.tsx:38
 #: src/components/primitives/Select/Select.web.tsx:32
 msgid "All"
 msgstr "Vše"
 
-#: src/components/bookmarks/BookmarksPanel.tsx:58
+#: src/components/bookmarks/BookmarksPanel.tsx:56
 msgid "All Bookmarks"
 msgstr "Všechny záložky"
 
-#: src/components/bookmarks/BookmarksPanel.tsx:65
-#: src/components/bookmarks/BookmarksPanel.tsx:73
-#: src/components/bookmarks/BookmarksPanel.tsx:78
+#: src/components/bookmarks/BookmarksPanel.tsx:63
+#: src/components/bookmarks/BookmarksPanel.tsx:71
+#: src/components/bookmarks/BookmarksPanel.tsx:76
 msgid "All DMs"
 msgstr "Všechny DM"
 
@@ -395,9 +407,9 @@ msgstr "Všechny DM"
 msgid "All kick records are up to date."
 msgstr "Všechny záznamy o vyloučení jsou aktuální."
 
-#: src/components/bookmarks/BookmarksPanel.tsx:66
-#: src/components/bookmarks/BookmarksPanel.tsx:72
-#: src/components/bookmarks/BookmarksPanel.tsx:79
+#: src/components/bookmarks/BookmarksPanel.tsx:64
+#: src/components/bookmarks/BookmarksPanel.tsx:70
+#: src/components/bookmarks/BookmarksPanel.tsx:77
 msgid "All Spaces"
 msgstr "Všechny prostory"
 
@@ -405,7 +417,7 @@ msgstr "Všechny prostory"
 msgid "Almost done..."
 msgstr "Téměř hotovo..."
 
-#: src/components/modals/AddSpaceModal.tsx:267
+#: src/components/modals/AddSpaceModal.tsx:259
 msgid "Already Joined"
 msgstr "Již připojeno"
 
@@ -413,14 +425,18 @@ msgstr "Již připojeno"
 msgid "Always sign Direct Messages"
 msgstr "Vždy podepisovat přímé zprávy"
 
-#: src/components/modals/ConversationSettingsModal.tsx:201
-#: src/components/modals/NewDirectMessageModal.tsx:156
+#: src/components/modals/ConversationSettingsModal.tsx:199
+#: src/components/modals/NewDirectMessageModal.tsx:153
 msgid "Always sign messages"
 msgstr "Vždy podepisovat zprávy"
 
 #: src/components/modals/SpaceSettingsModal/Danger.tsx:43
 msgid "An error occurred while deleting the Space. Please try again."
 msgstr "Při odstraňování Space došlo k chybě. Zkuste to prosím znovu."
+
+#: src/components/modals/UserSettingsModal/DangerZone.tsx:59
+msgid "An error occurred while resetting app data. Please try again."
+msgstr ""
 
 #: src/utils/imageProcessing/errors.ts:23
 msgid "Animated emoji GIFs cannot be larger than 100KB. Please optimize your GIF for emoji use."
@@ -443,7 +459,7 @@ msgstr "Vzhled"
 msgid "Are you sure you want to delete this channel? All messages will be lost. This action cannot be undone."
 msgstr "Jste si jisti, že chcete smazat tento kanál? Všechny zprávy budou ztraceny. Tuto akci nelze vrátit."
 
-#: src/components/modals/ConversationSettingsModal.tsx:64
+#: src/components/modals/ConversationSettingsModal.tsx:62
 msgid ""
 "Are you sure you want to delete this conversation?\n"
 "\n"
@@ -460,7 +476,7 @@ msgstr "Jste si jisti, že chcete smazat tuto zprávu?"
 msgid "Are you sure you want to delete this role?"
 msgstr "Jste si jisti, že chcete smazat tuto roli?"
 
-#: src/components/modals/LeaveSpaceModal.tsx:40
+#: src/components/modals/LeaveSpaceModal.tsx:39
 msgid "Are you sure you want to leave this Space? You won't be able to rejoin unless you are re-invited."
 msgstr "Jste si jisti, že chcete opustit tento Prostor? Nebudete se moci znovu připojit, pokud nebudete znovu pozváni."
 
@@ -481,7 +497,7 @@ msgstr "Jste si jisti, že chcete zprávu odpinout?"
 #~ msgid "As a space owner, you need to assign yourself a role with delete permissions to delete other users' messages. <0><1>Learn more</1></0>"
 #~ msgstr "Jako vlastník prostoru si musíte přiřadit roli s oprávněním mazat, abyste mohli mazat zprávy ostatních uživatelů. <0><1>Zjistit více</1></0>"
 
-#: src/components/message/MessageComposer.tsx:830
+#: src/components/message/MessageComposer.tsx:731
 msgid "attach image"
 msgstr "připojit obrázek"
 
@@ -489,7 +505,7 @@ msgstr "připojit obrázek"
 msgid "Away"
 msgstr "Pracovní"
 
-#: src/components/modals/AddSpaceModal.tsx:219
+#: src/components/modals/AddSpaceModal.tsx:217
 msgid "Back to invite link"
 msgstr "Zpět na pozvánkový odkaz"
 
@@ -530,24 +546,24 @@ msgstr "Byl dosažen limit záložek! Odstraňte některé, abyste mohli přidat
 msgid "Bookmark message"
 msgstr "Zpráva o záložce"
 
-#: src/components/bookmarks/BookmarksPanel.tsx:191
+#: src/components/bookmarks/BookmarksPanel.tsx:189
 msgid "Bookmark messages to save them for later reference"
 msgstr "Zprávy o záložkách pro jejich uložení pro pozdější použití"
 
-#: src/components/message/Message.tsx:770
-#: src/components/message/Message.tsx:848
+#: src/components/message/Message.tsx:756
+#: src/components/message/Message.tsx:834
 msgid "Bookmarked"
 msgstr "Uloženo"
 
-#: src/components/bookmarks/BookmarkItem.tsx:53
+#: src/components/bookmarks/BookmarkItem.tsx:51
 msgid "Bookmarked image"
 msgstr "Uložený obrázek"
 
-#: src/components/bookmarks/BookmarkItem.tsx:70
+#: src/components/bookmarks/BookmarkItem.tsx:68
 msgid "Bookmarked sticker"
 msgstr "Uložený sticker"
 
-#: src/components/direct/DirectMessage.tsx:703
+#: src/components/direct/DirectMessage.tsx:701
 #: src/components/space/Channel.tsx:835
 msgid "Bookmarks"
 msgstr "Záložky"
@@ -567,7 +583,7 @@ msgstr "Kamera je vyžadována pro pořizování fotografií"
 
 #: src/components/modals/ConfirmationModal.native.tsx:27
 #: src/components/modals/ConfirmationModal.tsx:31
-#: src/components/modals/ConversationSettingsModal.tsx:67
+#: src/components/modals/ConversationSettingsModal.tsx:65
 #: src/components/modals/KickUserModal.tsx:98
 #: src/components/modals/MuteUserModal.tsx:129
 #: src/components/modals/UserSettingsModal/Privacy.tsx:292
@@ -580,9 +596,9 @@ msgstr "Kamera je vyžadována pro pořizování fotografií"
 msgid "Cancel"
 msgstr "Zrušit"
 
-#: src/components/message/MessageEditTextarea.tsx:813
+#: src/components/message/MessageEditTextarea.tsx:726
 msgid "CANCEL"
-msgstr ""
+msgstr "ZRUŠIT"
 
 #: src/components/modals/SpaceSettingsModal/Danger.tsx:41
 msgid "Cannot delete Space with channels. Please delete all channels first."
@@ -605,11 +621,11 @@ msgstr "Změňte svůj avatar a jméno pro tento Space"
 msgid "Changes are made automatically, but the active page may not be updated. Refresh the page to apply the new language."
 msgstr "Změny se provádějí automaticky, ale aktivní stránka nemusí být aktualizována. Obnovte stránku, abyste použili nový jazyk."
 
-#: src/components/modals/ChannelEditorModal.tsx:127
+#: src/components/modals/ChannelEditorModal.tsx:126
 msgid "Channel Icon"
 msgstr "Ikona kanálu"
 
-#: src/components/modals/ChannelEditorModal.tsx:170
+#: src/components/modals/ChannelEditorModal.tsx:169
 msgid "Channel Managers"
 msgstr "Správci kanálů"
 
@@ -617,7 +633,7 @@ msgstr "Správci kanálů"
 msgid "Channel members"
 msgstr "Členové kanálu"
 
-#: src/components/modals/ChannelEditorModal.tsx:100
+#: src/components/modals/ChannelEditorModal.tsx:99
 msgid "Channel Name"
 msgstr "Název kanálu"
 
@@ -640,7 +656,7 @@ msgstr "Název kanálu musí mít maximálně {MAX_NAME_LENGTH} znaků"
 msgid "Channel Settings"
 msgstr "Nastavení kanálu"
 
-#: src/components/modals/ChannelEditorModal.tsx:110
+#: src/components/modals/ChannelEditorModal.tsx:109
 msgid "Channel Topic"
 msgstr "Téma kanálu"
 
@@ -654,7 +670,7 @@ msgstr "Téma kanálu nemůže obsahovat speciální znaky"
 msgid "Channel topic must be {MAX_TOPIC_LENGTH} characters or less"
 msgstr "Téma kanálu musí mít maximálně {MAX_TOPIC_LENGTH} znaků"
 
-#: src/components/Maintenance.native.tsx:53
+#: src/components/Maintenance.native.tsx:52
 msgid "Check "
 msgstr "Zkontrolovat"
 
@@ -677,7 +693,7 @@ msgstr "Vyberte si svůj preferovaný motiv pro Quorum."
 msgid "Clear"
 msgstr "Vymazat"
 
-#: src/components/search/SearchBar.tsx:142
+#: src/components/search/SearchBar.tsx:140
 msgid "Clear search"
 msgstr "Vymazat hledání"
 
@@ -685,11 +701,11 @@ msgstr "Vymazat hledání"
 msgid "Clearing notifications with tag: {tag}"
 msgstr "Mazání oznámení s tagem: {tag}"
 
-#: src/components/modals/ChannelEditorModal.tsx:222
-#: src/components/modals/FolderEditorModal.tsx:133
-#: src/components/modals/GroupEditorModal.tsx:131
+#: src/components/modals/ChannelEditorModal.tsx:221
+#: src/components/modals/FolderEditorModal.tsx:130
+#: src/components/modals/GroupEditorModal.tsx:129
 #: src/components/modals/KickUserModal.tsx:107
-#: src/components/modals/LeaveSpaceModal.tsx:64
+#: src/components/modals/LeaveSpaceModal.tsx:62
 #: src/components/modals/SpaceSettingsModal/Account.tsx:319
 #: src/components/modals/SpaceSettingsModal/Danger.tsx:68
 msgid "Click again to confirm"
@@ -703,7 +719,7 @@ msgstr "Klikněte na název role a štítek pro jejich úpravu."
 msgid "Click the button below to create a backup of your key info, because once it's gone, it's gone  forever. You may be prompted to authenticate again."
 msgstr "Klikněte na tlačítko níže pro vytvoření zálohy vašich klíčových informací, protože jakmile to zmizí, zmizí to navždy. Můžete být vyzváni k opětovnému ověření."
 
-#: src/components/onboarding/Onboarding.native.tsx:260
+#: src/components/onboarding/Onboarding.native.tsx:259
 msgid "Click the button below to create a backup of your key info, because once it's gone, it's gone forever. You may be prompted to authenticate again."
 msgstr "Klikněte na tlačítko níže pro vytvoření zálohy vašich klíčových informací, protože jakmile zmizí, zmizí navždy. Můžete být vyzváni k opětovnému ověření."
 
@@ -715,14 +731,14 @@ msgstr "Klikněte pro zkopírování"
 msgid "Coming soon"
 msgstr "Brzy bude"
 
-#: src/components/modals/AddSpaceModal.tsx:184
+#: src/components/modals/AddSpaceModal.tsx:182
 msgid "Config Key"
 msgstr "Konfigurační klíč"
 
 #~ msgid "Confirm"
 #~ msgstr "Potvrdit"
 
-#: src/components/direct/DirectMessageContactsList.tsx:260
+#: src/components/direct/DirectMessageContactsList.tsx:258
 #: src/components/navbar/NavMenu.tsx:160
 msgid "Confirm Delete"
 msgstr "Potvrdit smazání"
@@ -731,16 +747,20 @@ msgstr "Potvrdit smazání"
 msgid "Confirm Leave"
 msgstr "Potvrdit odchod"
 
-#: src/components/Connecting.tsx:12
+#: src/components/modals/UserSettingsModal/DangerZone.tsx:78
+msgid "Confirm Reset"
+msgstr ""
+
+#: src/components/Connecting.tsx:14
 msgid "Connecting"
 msgstr "Připojuji se"
 
-#: src/components/direct/DirectMessage.tsx:686
+#: src/components/direct/DirectMessage.tsx:684
 msgid "Conversation settings"
 msgstr "Nastavení konverzace"
 
-#: src/components/direct/DirectMessageContactsList.tsx:251
-#: src/components/modals/ConversationSettingsModal.tsx:189
+#: src/components/direct/DirectMessageContactsList.tsx:249
+#: src/components/modals/ConversationSettingsModal.tsx:187
 msgid "Conversation Settings"
 msgstr "Nastavení konverzace"
 
@@ -751,13 +771,13 @@ msgstr "Nastavení konverzace"
 #: src/components/ui/ClickToCopyContent.native.tsx:203
 #: src/components/ui/ClickToCopyContent.native.tsx:275
 #: src/components/ui/ClickToCopyContent.tsx:153
-#: src/components/ui/ClickToCopyContent.tsx:201
+#: src/components/ui/ClickToCopyContent.tsx:209
 msgid "Copied!"
 msgstr "Zkopírováno!"
 
-#: src/components/direct/DirectMessage.tsx:668
-#: src/components/direct/DirectMessage.tsx:772
-#: src/components/direct/DirectMessage.tsx:790
+#: src/components/direct/DirectMessage.tsx:666
+#: src/components/direct/DirectMessage.tsx:770
+#: src/components/direct/DirectMessage.tsx:788
 #: src/components/modals/UserSettingsModal/General.tsx:163
 #: src/components/user/ExpandableUserAvatar.tsx:90
 #: src/components/user/UserProfile.tsx:123
@@ -819,17 +839,17 @@ msgstr "Nepodařilo se dešifrovat váš uložený profil. Prosím, zadejte znov
 msgid "Couldn't load your saved profile. Please re-enter your name and profile image."
 msgstr "Nepodařilo se načíst váš uložený profil. Prosím, zadejte znovu své jméno a profilový obrázek."
 
-#: src/components/modals/AddSpaceModal.tsx:302
+#: src/components/modals/AddSpaceModal.tsx:294
 #: src/components/modals/CreateSpaceModal.tsx:83
 msgid "Create a Space"
 msgstr "Vytvořit Prostor"
 
-#: src/components/onboarding/Login.native.tsx:106
+#: src/components/onboarding/Login.native.tsx:105
 #: src/components/onboarding/Login.tsx:62
 msgid "Create New Account"
 msgstr "Vytvořit nový účet"
 
-#: src/components/modals/ChannelEditorModal.tsx:164
+#: src/components/modals/ChannelEditorModal.tsx:163
 msgid "Create roles in Space Settings first."
 msgstr "Nejprve vytvořte role v Nastavení prostoru."
 
@@ -848,6 +868,10 @@ msgstr "Aktuální"
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:428
 msgid "Current Invite Link"
 msgstr "Aktuální pozvánkový odkaz"
+
+#: src/components/modals/UserSettingsModal/Navigation.tsx:20
+msgid "Danger Zone"
+msgstr ""
 
 #: src/components/ui/ThemeRadioGroup.tsx:24
 #: src/components/ui/ThemeRadioGroup.tsx:26
@@ -887,7 +911,7 @@ msgstr "smazat"
 #: src/components/message/MessageActionsMenu.tsx:282
 #: src/components/modals/ConfirmationModal.native.tsx:26
 #: src/components/modals/ConfirmationModal.tsx:30
-#: src/components/modals/ConversationSettingsModal.tsx:66
+#: src/components/modals/ConversationSettingsModal.tsx:64
 #: src/components/modals/SpaceSettingsModal/Emojis.tsx:103
 #: src/components/modals/SpaceSettingsModal/Stickers.tsx:105
 #: src/hooks/business/channels/useChannelManagement.ts:252
@@ -896,26 +920,26 @@ msgstr "smazat"
 msgid "Delete"
 msgstr "Smazat"
 
-#: src/components/modals/ChannelEditorModal.tsx:221
+#: src/components/modals/ChannelEditorModal.tsx:220
 #: src/hooks/business/channels/useChannelManagement.ts:246
 msgid "Delete Channel"
 msgstr "Smazat kanál"
 
-#: src/components/direct/DirectMessageContactsList.tsx:259
-#: src/components/modals/ConversationSettingsModal.tsx:63
-#: src/components/modals/ConversationSettingsModal.tsx:277
+#: src/components/direct/DirectMessageContactsList.tsx:257
+#: src/components/modals/ConversationSettingsModal.tsx:61
+#: src/components/modals/ConversationSettingsModal.tsx:275
 msgid "Delete Conversation"
 msgstr "Smazat konverzaci"
 
 #~ msgid "Delete Current Link"
 #~ msgstr "Smazat aktuální odkaz"
 
-#: src/components/modals/FolderEditorModal.tsx:132
+#: src/components/modals/FolderEditorModal.tsx:129
 #: src/components/navbar/NavMenu.tsx:159
 msgid "Delete Folder"
 msgstr "Smazat složku"
 
-#: src/components/modals/GroupEditorModal.tsx:130
+#: src/components/modals/GroupEditorModal.tsx:128
 msgid "Delete Group"
 msgstr "Smazat skupinu"
 
@@ -976,7 +1000,7 @@ msgstr "Smazat tuto oblast"
 msgid "Deleting Space..."
 msgstr "Mazání prostoru..."
 
-#: src/components/modals/ConversationSettingsModal.tsx:294
+#: src/components/modals/ConversationSettingsModal.tsx:292
 msgid "Deleting..."
 msgstr "Mazání..."
 
@@ -1020,9 +1044,9 @@ msgstr "Zařízení"
 msgid "Direct Message"
 msgstr "Přímá zpráva"
 
-#: src/components/direct/DirectMessageContactsList.tsx:316
-#: src/components/navbar/NavMenu.tsx:539
-#: src/components/navbar/NavMenu.tsx:717
+#: src/components/direct/DirectMessageContactsList.tsx:314
+#: src/components/navbar/NavMenu.tsx:540
+#: src/components/navbar/NavMenu.tsx:718
 msgid "Direct Messages"
 msgstr "Osobní zprávy"
 
@@ -1064,7 +1088,7 @@ msgstr "Dokumentace"
 msgid "Drawer"
 msgstr "Zásuvka"
 
-#: src/components/onboarding/Onboarding.native.tsx:178
+#: src/components/onboarding/Onboarding.native.tsx:177
 #: src/components/onboarding/Onboarding.tsx:131
 msgid "Drop your profile photo here"
 msgstr "Sem vložte svou profilovou fotografii"
@@ -1078,16 +1102,16 @@ msgstr "Upravit"
 msgid "Edit {0}"
 msgstr "Upravit {0}"
 
-#: src/components/modals/ChannelEditorModal.tsx:83
+#: src/components/modals/ChannelEditorModal.tsx:82
 msgid "Edit Channel"
 msgstr "Upravit kanál"
 
-#: src/components/modals/FolderEditorModal.tsx:71
+#: src/components/modals/FolderEditorModal.tsx:69
 #: src/components/navbar/NavMenu.tsx:153
 msgid "Edit Folder"
 msgstr "Upravit složku"
 
-#: src/components/modals/GroupEditorModal.tsx:60
+#: src/components/modals/GroupEditorModal.tsx:58
 msgid "Edit Group"
 msgstr "Upravit skupinu"
 
@@ -1140,7 +1164,7 @@ msgstr "Zadejte popis pro svůj Space (volitelné)"
 msgid "Enter a name for your Space"
 msgstr "Zadejte název pro svůj Space"
 
-#: src/components/modals/NewDirectMessageModal.tsx:107
+#: src/components/modals/NewDirectMessageModal.tsx:105
 msgid "Enter a user's address to start messaging them."
 msgstr "Zadejte adresu uživatele, abyste s ním mohli začít komunikovat."
 
@@ -1148,17 +1172,17 @@ msgstr "Zadejte adresu uživatele, abyste s ním mohli začít komunikovat."
 msgid "Enter Address Manually"
 msgstr "Zadat adresu ručně"
 
-#: src/components/modals/AddSpaceModal.tsx:171
+#: src/components/modals/AddSpaceModal.tsx:169
 msgid "Enter both Space ID and Config Key to validate"
 msgstr "Zadejte jak ID Space, tak konfigurační klíč pro ověření"
 
-#: src/components/modals/AddSpaceModal.tsx:163
+#: src/components/modals/AddSpaceModal.tsx:161
 msgid "Enter details manually"
 msgstr "Zadejte detaily ručně"
 
-#: src/components/message/MessageEditTextarea.tsx:815
+#: src/components/message/MessageEditTextarea.tsx:728
 msgid "Enter to"
-msgstr ""
+msgstr "Stiskněte Enter pro"
 
 #: src/components/context/WebsocketProvider.tsx:123
 msgid "Error processing inbound queue:"
@@ -1189,9 +1213,9 @@ msgstr "Chyba při žádosti o povolení oznámení:"
 msgid "Error showing notification:"
 msgstr "Chyba při zobrazování oznámení:"
 
-#: src/components/message/MessageEditTextarea.tsx:800
+#: src/components/message/MessageEditTextarea.tsx:713
 msgid "Esc to"
-msgstr ""
+msgstr "Stiskněte Esc pro"
 
 #: src/components/modals/SpaceSettingsModal/Invites.tsx:273
 msgid "Existing Conversations"
@@ -1238,7 +1262,7 @@ msgstr "Nepodařilo se vygenerovat pozvánkový odkaz. Zkuste to prosím znovu."
 msgid "Failed to kick user"
 msgstr "Nepodařilo se vykopnout uživatele"
 
-#: src/components/bookmarks/BookmarksPanel.tsx:180
+#: src/components/bookmarks/BookmarksPanel.tsx:178
 msgid "Failed to load bookmarks"
 msgstr "Nepodařilo se načíst záložky"
 
@@ -1283,7 +1307,7 @@ msgstr "Nepodařilo se vybrat dokument"
 msgid "Failed to send invite. Please try again."
 msgstr "Nepodařilo se odeslat pozvánku. Zkuste to prosím znovu."
 
-#: src/components/message/Message.tsx:1251
+#: src/components/message/Message.tsx:1208
 msgid "Failed to send."
 msgstr "Nepodařilo se odeslat."
 
@@ -1300,7 +1324,7 @@ msgstr "Nepodařilo se odpinout zprávu"
 msgid "Failed to update profile"
 msgstr "Nepodařilo se aktualizovat profil"
 
-#: src/components/direct/DirectMessageContactsList.tsx:295
+#: src/components/direct/DirectMessageContactsList.tsx:293
 msgid "Favorites"
 msgstr "Oblíbené"
 
@@ -1370,11 +1394,11 @@ msgstr "Opravy"
 msgid "Fixing..."
 msgstr "Opravuji..."
 
-#: src/components/modals/FolderEditorModal.tsx:101
+#: src/components/modals/FolderEditorModal.tsx:99
 msgid "Folder Icon & Color"
 msgstr "Ikona a barva složky"
 
-#: src/components/modals/FolderEditorModal.tsx:83
+#: src/components/modals/FolderEditorModal.tsx:81
 msgid "Folder Name"
 msgstr "Název složky"
 
@@ -1442,11 +1466,11 @@ msgstr "Přejít na konverzaci"
 msgid "Go to Home"
 msgstr "Přejít na domovskou stránku"
 
-#: src/components/modals/GroupEditorModal.tsx:88
+#: src/components/modals/GroupEditorModal.tsx:86
 msgid "Group Icon (optional)"
 msgstr "Ikona skupiny (volitelně)"
 
-#: src/components/modals/GroupEditorModal.tsx:72
+#: src/components/modals/GroupEditorModal.tsx:70
 msgid "Group Name"
 msgstr "Název skupiny"
 
@@ -1492,7 +1516,7 @@ msgstr "Skrýt ztlumené kanály"
 msgid "Hide muted channels in list"
 msgstr "Skrýt ztlumené kanály v seznamu"
 
-#: src/components/onboarding/Onboarding.native.tsx:291
+#: src/components/onboarding/Onboarding.native.tsx:290
 #: src/components/onboarding/Onboarding.tsx:198
 msgid "I already saved mine"
 msgstr "Už jsem si ten svůj uložil"
@@ -1513,22 +1537,22 @@ msgstr "Pokud přeskočíte, dostanete výchozí profilový obrázek a můžete 
 msgid "If you clear your browser storage or switch browsers, your old messages and keys may disappear."
 msgstr "Pokud vymažete úložiště prohlížeče nebo přepnete prohlížeče, vaše staré zprávy a klíče mohou zmizet."
 
-#: src/components/onboarding/Onboarding.native.tsx:255
+#: src/components/onboarding/Onboarding.native.tsx:254
 #: src/components/onboarding/Onboarding.tsx:172
 msgid "If you uninstall the app from your device, you will lose your old messages and keys."
 msgstr "Pokud aplikaci odinstalujete ze svého zařízení, ztratíte své staré zprávy a klíče."
 
-#: src/components/onboarding/Login.native.tsx:115
+#: src/components/onboarding/Login.native.tsx:114
 #: src/components/onboarding/Login.tsx:76
 msgid "Import Existing Key"
 msgstr "Importovat existující klíč"
 
-#: src/components/onboarding/Onboarding.native.tsx:245
+#: src/components/onboarding/Onboarding.native.tsx:244
 #: src/components/onboarding/Onboarding.tsx:154
 msgid "Important first-time user information:"
 msgstr "Důležité informace pro nové uživatele:"
 
-#: src/components/message/PinnedMessagesPanel.tsx:197
+#: src/components/message/PinnedMessagesPanel.tsx:194
 msgid "Important messages will be pinned here"
 msgstr "Důležité zprávy budou připnuty zde"
 
@@ -1600,34 +1624,34 @@ msgstr "Kurzíva"
 msgid "Join"
 msgstr "Připojit se"
 
-#: src/components/modals/AddSpaceModal.tsx:267
-#: src/components/modals/JoinSpaceModal.tsx:73
-#: src/components/modals/JoinSpaceModal.tsx:92
-#: src/components/modals/JoinSpaceModal.tsx:168
+#: src/components/modals/AddSpaceModal.tsx:259
+#: src/components/modals/JoinSpaceModal.tsx:72
+#: src/components/modals/JoinSpaceModal.tsx:91
+#: src/components/modals/JoinSpaceModal.tsx:167
 msgid "Join Space"
 msgstr "Vstoupit do Prostor"
 
-#: src/components/modals/JoinSpaceModal.tsx:72
+#: src/components/modals/JoinSpaceModal.tsx:71
 #: src/hooks/business/invites/useInviteUI.ts:31
 msgid "Joined"
 msgstr "Vstoupeno"
 
-#: src/components/modals/AddSpaceModal.tsx:133
-#: src/components/modals/JoinSpaceModal.tsx:102
+#: src/components/modals/AddSpaceModal.tsx:131
+#: src/components/modals/JoinSpaceModal.tsx:101
 msgid "Joining Space..."
 msgstr "Připojuji se k Space..."
 
-#: src/components/modals/JoinSpaceModal.tsx:71
+#: src/components/modals/JoinSpaceModal.tsx:70
 #: src/hooks/business/invites/useInviteUI.ts:29
 msgid "Joining..."
 msgstr "Připojuji se..."
 
-#: src/components/bookmarks/BookmarkItem.tsx:135
-#: src/components/message/PinnedMessagesPanel.tsx:95
+#: src/components/bookmarks/BookmarkItem.tsx:133
+#: src/components/message/PinnedMessagesPanel.tsx:92
 msgid "Jump"
 msgstr "Přeskočit"
 
-#: src/components/message/MessageList.tsx:598
+#: src/components/message/MessageList.tsx:590
 msgid "Jump to present"
 msgstr "Přejít na současnost"
 
@@ -1682,7 +1706,7 @@ msgstr "Jazyk"
 msgid "Leave {0}"
 msgstr "Opustit {0}"
 
-#: src/components/modals/LeaveSpaceModal.tsx:62
+#: src/components/modals/LeaveSpaceModal.tsx:60
 #: src/components/modals/SpaceSettingsModal/Account.tsx:317
 #: src/components/navbar/NavMenu.tsx:277
 msgid "Leave Space"
@@ -1692,12 +1716,12 @@ msgstr "Opuštění Prostor"
 msgid "Leave this space"
 msgstr "Opustit tento space"
 
-#: src/components/onboarding/Onboarding.native.tsx:313
+#: src/components/onboarding/Onboarding.native.tsx:312
 #: src/components/onboarding/Onboarding.tsx:212
 msgid "Let your friends know who you are! Pick a friendly name to display in your conversations, something easier to read than:"
 msgstr "Dej svým přátelům vědět, kdo jsi! Vyber si přátelské jméno, které se bude zobrazovat v tvých konverzacích, něco snadněji čitelného než:"
 
-#: src/components/onboarding/Onboarding.native.tsx:506
+#: src/components/onboarding/Onboarding.native.tsx:505
 #: src/components/onboarding/Onboarding.tsx:366
 msgid "Let's gooooooooo"
 msgstr "Jdeme na to"
@@ -1707,11 +1731,11 @@ msgstr "Jdeme na to"
 msgid "Light"
 msgstr "Světlo"
 
-#: src/components/bookmarks/BookmarksPanel.tsx:171
+#: src/components/bookmarks/BookmarksPanel.tsx:169
 msgid "Loading bookmarks..."
 msgstr "Načítání záložek..."
 
-#: src/components/message/MessageList.tsx:609
+#: src/components/message/MessageList.tsx:601
 msgid "Loading message..."
 msgstr "Načítání zprávy..."
 
@@ -1719,7 +1743,7 @@ msgstr "Načítání zprávy..."
 msgid "Loading notifications..."
 msgstr "Načítání oznámení..."
 
-#: src/components/message/PinnedMessagesPanel.tsx:185
+#: src/components/message/PinnedMessagesPanel.tsx:182
 msgid "Loading pinned messages..."
 msgstr "Načítání připnutých zpráv..."
 
@@ -1735,11 +1759,15 @@ msgstr "Načítání..."
 msgid "Looking up user..."
 msgstr "Hledám uživatele..."
 
-#: src/components/modals/AddSpaceModal.tsx:209
+#: src/components/modals/AddSpaceModal.tsx:207
 msgid "Lookup"
 msgstr "Hledání"
 
-#: src/components/Maintenance.native.tsx:43
+#: src/components/navbar/NavMenu.tsx:459
+msgid "Main navigation"
+msgstr ""
+
+#: src/components/Maintenance.native.tsx:42
 #: src/components/Maintenance.tsx:17
 msgid "Maintenance in Progress"
 msgstr "Údržba probíhá"
@@ -1752,7 +1780,7 @@ msgstr "Udělat roli neviditelnou"
 msgid "Make role public"
 msgstr "Udělat roli veřejnou"
 
-#: src/components/onboarding/Onboarding.native.tsx:365
+#: src/components/onboarding/Onboarding.native.tsx:364
 #: src/components/onboarding/Onboarding.tsx:261
 msgid "Make your account uniquely yours – set a contact photo. This information is only provided to the Spaces you join."
 msgstr "Udělej si svůj účet jedinečným – nastav si profilový obrázek. Tyto informace jsou poskytovány pouze pro Prostory, které navštěvuješ."
@@ -1796,7 +1824,7 @@ msgstr "Označit vše jako přečtené"
 msgid "Members List"
 msgstr "Seznam členů"
 
-#: src/components/modals/ChannelEditorModal.tsx:174
+#: src/components/modals/ChannelEditorModal.tsx:173
 msgid "Members of selected roles can post, delete, and pin messages in this read-only channel. Note: Space owners must also be in a manager role to post here."
 msgstr "Členové vybraných rolí mohou v tomto kanálu pouze pro čtení posílat, mazat a připínat zprávy. Poznámka: Vlastníci prostoru musí být také v roli manažera, aby zde mohli posílat zprávy."
 
@@ -1812,21 +1840,21 @@ msgstr "Akce zprávy"
 msgid "Message deleted"
 msgstr "Zpráva byla smazána"
 
-#: src/components/message/Message.tsx:729
-#: src/components/message/Message.tsx:786
-#: src/components/message/Message.tsx:864
+#: src/components/message/Message.tsx:715
+#: src/components/message/Message.tsx:772
+#: src/components/message/Message.tsx:850
 msgid "Message does not have a valid signature, this may not be from the sender"
 msgstr "Zpráva nemá platný podpis, to nemusí být od odesílatele"
 
-#: src/components/message/MessageComposer.tsx:153
+#: src/components/message/MessageComposer.tsx:154
 msgid "Message..."
 msgstr "Zpráva..."
 
-#: src/components/message/MessageComposer.tsx:895
+#: src/components/message/MessageComposer.tsx:796
 msgid "Messages are NOT signed!"
 msgstr "Zprávy NENÍ podepsané!"
 
-#: src/components/message/MessageComposer.tsx:896
+#: src/components/message/MessageComposer.tsx:797
 msgid "Messages are signed!"
 msgstr "Zprávy jsou podepsané!"
 
@@ -1850,11 +1878,11 @@ msgstr "Ztlumit všechny oznámení z tohoto prostoru"
 msgid "Mute Channel"
 msgstr "Ztlumit kanál"
 
-#: src/components/modals/ConversationSettingsModal.tsx:222
+#: src/components/modals/ConversationSettingsModal.tsx:220
 msgid "Mute conversation"
 msgstr "Ztlumit konverzaci"
 
-#: src/components/direct/DirectMessageContactsList.tsx:243
+#: src/components/direct/DirectMessageContactsList.tsx:241
 msgid "Mute Conversation"
 msgstr "Ztlumit konverzaci"
 
@@ -1886,7 +1914,7 @@ msgstr "Ztlumit uživatele"
 msgid "Mute Users"
 msgstr "Ztlumit uživatele"
 
-#: src/components/direct/DirectMessageContactsList.tsx:297
+#: src/components/direct/DirectMessageContactsList.tsx:295
 msgid "Muted"
 msgstr "Ztlumeno"
 
@@ -1894,7 +1922,7 @@ msgstr "Ztlumeno"
 msgid "My Account"
 msgstr "Můj účet"
 
-#: src/components/direct/DirectMessageContactsList.tsx:362
+#: src/components/direct/DirectMessageContactsList.tsx:360
 #: src/components/space/Channel.tsx:1035
 msgid "Name or Address"
 msgstr "Jméno nebo adresa"
@@ -1912,11 +1940,11 @@ msgstr "Chyba sítě"
 msgid "New"
 msgstr "Nový"
 
-#: src/components/modals/NewDirectMessageModal.tsx:91
+#: src/components/modals/NewDirectMessageModal.tsx:90
 msgid "New Direct Message"
 msgstr "Nová přímá zpráva"
 
-#: src/components/modals/FolderEditorModal.tsx:71
+#: src/components/modals/FolderEditorModal.tsx:69
 msgid "New Folder"
 msgstr "Nová složka"
 
@@ -1928,27 +1956,27 @@ msgstr "Nová zpráva od {0}"
 #~ msgid "New Messages"
 #~ msgstr "Nové zprávy"
 
-#: src/components/bookmarks/BookmarksPanel.tsx:208
+#: src/components/bookmarks/BookmarksPanel.tsx:206
 msgid "No bookmarks found"
 msgstr "Žádné záložky nenalezeny"
 
-#: src/components/bookmarks/BookmarksPanel.tsx:205
+#: src/components/bookmarks/BookmarksPanel.tsx:203
 msgid "No bookmarks in DMs"
 msgstr "Žádné záložky v DM"
 
-#: src/components/bookmarks/BookmarksPanel.tsx:203
+#: src/components/bookmarks/BookmarksPanel.tsx:201
 msgid "No bookmarks in spaces"
 msgstr "Žádné záložky v prostorech"
 
-#: src/components/bookmarks/BookmarksPanel.tsx:207
+#: src/components/bookmarks/BookmarksPanel.tsx:205
 msgid "No bookmarks in this space"
 msgstr "Žádné záložky v tomto prostoru"
 
-#: src/components/bookmarks/BookmarksPanel.tsx:189
+#: src/components/bookmarks/BookmarksPanel.tsx:187
 msgid "No bookmarks yet"
 msgstr "Žádné záložky zatím"
 
-#: src/components/direct/DirectMessageContactsList.tsx:378
+#: src/components/direct/DirectMessageContactsList.tsx:376
 msgid "No contacts found"
 msgstr "Žádní kontakty nenalezeny"
 
@@ -1960,7 +1988,7 @@ msgstr "Žádné konverzace nenalezeny"
 msgid "No encryption state found for this space. The space may need to be initialized or you may need to generate a public invite link first."
 msgstr "Nebyl nalezen žádný stav šifrování pro tento space. Space může být potřeba inicializovat nebo možná budete muset nejprve vygenerovat veřejný pozvánkový odkaz."
 
-#: src/components/direct/DirectMessageContactsList.tsx:372
+#: src/components/direct/DirectMessageContactsList.tsx:370
 msgid "No favorites yet"
 msgstr "Žádné oblíbené zatím"
 
@@ -1979,18 +2007,18 @@ msgstr "Žádné zprávy nenalezeny"
 msgid "No missing spaces found"
 msgstr "Žádné chybějící prostory nebyly nalezeny"
 
-#: src/components/direct/DirectMessageContactsList.tsx:376
+#: src/components/direct/DirectMessageContactsList.tsx:374
 msgid "No muted conversations"
 msgstr "Žádné ztlumené konverzace"
 
-#: src/components/message/PinnedMessagesPanel.tsx:193
+#: src/components/message/PinnedMessagesPanel.tsx:190
 msgid "No pinned messages yet"
 msgstr "Zatím žádné připnuté zprávy"
 
 #~ msgid "No topic"
 #~ msgstr "Žádné téma"
 
-#: src/components/direct/DirectMessageContactsList.tsx:374
+#: src/components/direct/DirectMessageContactsList.tsx:372
 msgid "No unknown contacts"
 msgstr "Žádné neznámé kontakty"
 
@@ -2030,7 +2058,7 @@ msgstr "Oznámení jsou blokována. Prosím, povol je v nastavení prohlížeče
 msgid "Notifications are not supported in this browser"
 msgstr "Oznámení nejsou v tomto prohlížeči podporována"
 
-#: src/components/message/MessageComposer.tsx:807
+#: src/components/message/MentionDropdown.tsx:257
 msgid "Notify all members"
 msgstr "Oznámit všem členům"
 
@@ -2044,7 +2072,7 @@ msgstr "Offline"
 msgid "OK"
 msgstr "OK"
 
-#: src/components/onboarding/Onboarding.native.tsx:223
+#: src/components/onboarding/Onboarding.native.tsx:222
 #: src/components/onboarding/Onboarding.tsx:120
 msgid "One of us, one of us!"
 msgstr "Jeden z nás, jeden z nás!"
@@ -2067,7 +2095,7 @@ msgstr "Operace vypršela. Zkuste to prosím znovu."
 #~ msgid "optional"
 #~ msgstr "volitelný"
 
-#: src/components/modals/AddSpaceModal.tsx:291
+#: src/components/modals/AddSpaceModal.tsx:283
 msgid "OR"
 msgstr "NEBO"
 
@@ -2079,7 +2107,7 @@ msgstr "Původní"
 msgid "Page Not Found"
 msgstr "Stránka nebyla nalezena"
 
-#: src/components/modals/AddSpaceModal.tsx:149
+#: src/components/modals/AddSpaceModal.tsx:147
 msgid "Paste an invite link"
 msgstr "Vložte pozvánkový odkaz"
 
@@ -2096,7 +2124,7 @@ msgstr "Čekající na odstranění - klikněte na Uložit pro potvrzení"
 msgid "Permissions:"
 msgstr "Oprávnění:"
 
-#: src/components/onboarding/Onboarding.native.tsx:224
+#: src/components/onboarding/Onboarding.native.tsx:223
 #: src/components/onboarding/Onboarding.tsx:121
 msgid "Personalize your account"
 msgstr "Personalizuj si svůj účet"
@@ -2128,11 +2156,11 @@ msgstr "Připnout"
 msgid "Pin Channel"
 msgstr "Připnout kanál"
 
-#: src/components/modals/ChannelEditorModal.tsx:138
+#: src/components/modals/ChannelEditorModal.tsx:137
 msgid "Pin channel to top"
 msgstr "Připnout kanál na vrchol"
 
-#: src/components/message/PinnedMessagesPanel.tsx:196
+#: src/components/message/PinnedMessagesPanel.tsx:193
 msgid "Pin important messages to keep them easily accessible"
 msgstr "Připnout důležité zprávy, aby byly snadno dostupné"
 
@@ -2154,7 +2182,7 @@ msgstr "Připnout zprávu"
 msgid "Pin Messages"
 msgstr "Připnout zprávy"
 
-#: src/components/modals/ChannelEditorModal.tsx:141
+#: src/components/modals/ChannelEditorModal.tsx:140
 msgid "Pin to top"
 msgstr "Připnout na vrchol"
 
@@ -2162,14 +2190,14 @@ msgstr "Připnout na vrchol"
 msgid "Pin/Unpin without confirmation"
 msgstr "Připnout/odepnout bez potvrzení"
 
-#: src/components/message/Message.tsx:754
-#: src/components/message/Message.tsx:832
+#: src/components/message/Message.tsx:740
+#: src/components/message/Message.tsx:818
 msgid "Pinned"
 msgstr "Připnuto"
 
 #. placeholder {0}: mapSenderToUser(message.pinnedBy)?.displayName || message.pinnedBy
-#: src/components/message/Message.tsx:753
-#: src/components/message/Message.tsx:831
+#: src/components/message/Message.tsx:739
+#: src/components/message/Message.tsx:817
 msgid "Pinned by {0}"
 msgstr "Připnul {0}"
 
@@ -2181,12 +2209,11 @@ msgstr "Připnuté zprávy"
 msgid "Pinned!"
 msgstr "Připnuto!"
 
-#: src/components/onboarding/Onboarding.native.tsx:181
+#: src/components/onboarding/Onboarding.native.tsx:180
 #: src/components/onboarding/Onboarding.tsx:133
 msgid "PNG, JPG or JPEG • Optimal ratio 1:1"
 msgstr "PNG, JPG nebo JPEG • Optimální poměr 1:1"
 
-#: src/components/message/MessageEditTextarea.tsx:376
 #~ msgid "Press Enter to save, Shift+Enter for new line, Esc to cancel"
 #~ msgstr "Stiskněte Enter pro uložení, Shift+Enter pro nový řádek, Esc pro zrušení"
 
@@ -2203,7 +2230,7 @@ msgstr "Ochrana soukromí/Bezpečnost"
 msgid "Private key saved to selected folder"
 msgstr "Soukromý klíč uložen do vybrané složky"
 
-#: src/components/message/MessageComposer.tsx:597
+#: src/components/message/MessageComposer.tsx:604
 msgid "Processing image... This may take a moment for large files."
 msgstr "Zpracovávám obrázek... Může to chvíli trvat u velkých souborů."
 
@@ -2226,11 +2253,11 @@ msgstr "QR kód se automaticky skryje za 60 sekund"
 msgid "Quorum infrastructure is being deployed at this time. Please try refreshing, and check <0>https://status.quilibrium.com/</0> for updates."
 msgstr "Quorum infrastruktura je v tuto chvíli nasazována. Zkus prosím obnovit stránku a zkontroluj <0>https://status.quilibrium.com/</0> pro aktualizace."
 
-#: src/components/Maintenance.native.tsx:48
+#: src/components/Maintenance.native.tsx:47
 msgid "Quorum infrastructure is being deployed at this time. Please try refreshing."
 msgstr "Quorum infrastruktura je v tuto chvíli nasazována. Zkuste prosím obnovit."
 
-#: src/components/onboarding/Onboarding.native.tsx:250
+#: src/components/onboarding/Onboarding.native.tsx:249
 #: src/components/onboarding/Onboarding.tsx:157
 msgid "Quorum is peer-to-peer and end-to-end encrypted. This means your messages stay private, but equally important, they only live on the network for the time required to reach you and your recipients."
 msgstr "Quorum je peer-to-peer a šifrované end-to-end. To znamená, že tvé zprávy zůstávají soukromé, ale stejně důležité je, že žijí v síti pouze po dobu potřebnou k tomu, aby se dostaly k tobě a tvým příjemcům."
@@ -2239,15 +2266,19 @@ msgstr "Quorum je peer-to-peer a šifrované end-to-end. To znamená, že tvé z
 msgid "Quorum was loaded while the browser was not in focus or a passkey request was rejected. Please reauthorize to access your messages."
 msgstr "Quorum bylo načteno, zatímco prohlížeč nebyl v ohnisku nebo byla odmítnuta žádost o klíč. Prosím, znovu autorizuj přístup k tvým zprávám."
 
-#: src/components/modals/ChannelEditorModal.tsx:155
+#: src/components/modals/ReactionsModal.tsx:73
+msgid "Reactions"
+msgstr ""
+
+#: src/components/modals/ChannelEditorModal.tsx:154
 msgid "Read only"
 msgstr "Pouze pro čtení"
 
-#: src/components/modals/ChannelEditorModal.tsx:152
+#: src/components/modals/ChannelEditorModal.tsx:151
 msgid "Read only channel"
 msgstr "Pouze pro čtení kanál"
 
-#: src/components/direct/DirectMessageContactsList.tsx:389
+#: src/components/direct/DirectMessageContactsList.tsx:387
 msgid "Ready to start a truly private conversation?"
 msgstr "Připraveni začít skutečně soukromou konverzaci?"
 
@@ -2264,7 +2295,7 @@ msgstr "obdržena konfigurace s neplatným podpisem!"
 msgid "Recipient has no devices"
 msgstr "Příjemce nemá žádná zařízení"
 
-#: src/components/Maintenance.native.tsx:74
+#: src/components/Maintenance.native.tsx:73
 #: src/components/Maintenance.tsx:46
 #: src/components/modals/UserSettingsModal/Appearance.tsx:87
 msgid "Refresh"
@@ -2274,14 +2305,14 @@ msgstr "Obnovit"
 msgid "Remove"
 msgstr "Odebrat"
 
-#: src/components/bookmarks/BookmarkItem.tsx:139
+#: src/components/bookmarks/BookmarkItem.tsx:137
 #: src/components/message/MessageActions.tsx:110
 #: src/components/message/MessageActionsDrawer.tsx:241
 #: src/components/message/MessageActionsMenu.tsx:265
 msgid "Remove bookmark"
 msgstr "Odstranit záložku"
 
-#: src/components/direct/DirectMessageContactsList.tsx:235
+#: src/components/direct/DirectMessageContactsList.tsx:233
 msgid "Remove from Favorites"
 msgstr "Odebrat z Oblíbených"
 
@@ -2312,9 +2343,13 @@ msgstr "Vyžadovat, aby zprávy zaslané v této Prostor byly podepsány odesíl
 #~ msgid "Requiring roles for moderation actions protects your identity as the space owner. However, if you're the only one with a specific role, your actions may reveal who you are. For better privacy, consider having multiple users (real or additional accounts) share the same role."
 #~ msgstr "Požadování rolí pro moderátorské akce chrání vaši identitu jako vlastníka prostoru. Pokud však jste jediný, kdo má konkrétní roli, vaše akce mohou odhalit, kdo jste. Pro lepší soukromí zvažte, že více uživatelů (skutečných nebo dalších účtů) sdílí stejnou roli."
 
-#: src/components/modals/AddSpaceModal.tsx:274
+#: src/components/modals/AddSpaceModal.tsx:266
 msgid "Reset"
 msgstr "Obnovit"
+
+#: src/components/modals/UserSettingsModal/DangerZone.tsx:46
+msgid "Reset App Data"
+msgstr ""
 
 #: src/components/modals/UserSettingsModal/Help.tsx:83
 msgid "Restore"
@@ -2336,7 +2371,7 @@ msgstr "Obnoven {0} prostor(y)"
 msgid "Restoring..."
 msgstr "Obnovuji..."
 
-#: src/components/message/Message.tsx:1262
+#: src/components/message/Message.tsx:1216
 msgid "Retry"
 msgstr "Zkusit znovu"
 
@@ -2345,35 +2380,35 @@ msgstr "Zkusit znovu"
 msgid "Roles"
 msgstr "Role"
 
-#: src/components/modals/ConversationSettingsModal.tsx:261
+#: src/components/modals/ConversationSettingsModal.tsx:259
 msgid "Save"
 msgstr "Uložit"
 
-#: src/components/message/MessageEditTextarea.tsx:834
+#: src/components/message/MessageEditTextarea.tsx:747
 msgid "SAVE"
-msgstr ""
+msgstr "ULOŽIT"
 
-#: src/components/modals/ChannelEditorModal.tsx:203
-#: src/components/modals/FolderEditorModal.tsx:113
-#: src/components/modals/GroupEditorModal.tsx:99
+#: src/components/modals/ChannelEditorModal.tsx:202
+#: src/components/modals/FolderEditorModal.tsx:111
+#: src/components/modals/GroupEditorModal.tsx:97
 #: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:617
-#: src/components/modals/UserSettingsModal/UserSettingsModal.tsx:280
+#: src/components/modals/UserSettingsModal/UserSettingsModal.tsx:283
 #: src/components/user/UserProfileEdit.tsx:158
 msgid "Save Changes"
 msgstr "Uložit změny"
 
-#: src/components/onboarding/Onboarding.native.tsx:474
+#: src/components/onboarding/Onboarding.native.tsx:473
 #: src/components/onboarding/Onboarding.tsx:322
 msgid "Save Contact Photo"
 msgstr "Uložit fotografii kontaktu"
 
-#: src/components/modals/ConversationSettingsModal.tsx:244
+#: src/components/modals/ConversationSettingsModal.tsx:242
 #: src/components/modals/SpaceSettingsModal/General.tsx:319
 msgid "Save Edit History"
 msgstr "Uložit historii úprav"
 
 #: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:602
-#: src/components/modals/UserSettingsModal/UserSettingsModal.tsx:269
+#: src/components/modals/UserSettingsModal/UserSettingsModal.tsx:272
 msgid "Save Failed"
 msgstr "Uložení se nezdařilo"
 
@@ -2381,7 +2416,7 @@ msgstr "Uložení se nezdařilo"
 msgid "Save Private Key"
 msgstr "Uložit soukromý klíč"
 
-#: src/components/onboarding/Onboarding.native.tsx:270
+#: src/components/onboarding/Onboarding.native.tsx:269
 #: src/components/onboarding/Onboarding.tsx:191
 msgid "Save User Key"
 msgstr "Uložit uživatelský klíč"
@@ -2391,9 +2426,9 @@ msgstr "Uložit uživatelský klíč"
 msgid "saved config is out of date"
 msgstr "uložená konfigurace je zastaralá"
 
-#: src/components/modals/ChannelEditorModal.tsx:93
-#: src/components/modals/FolderEditorModal.tsx:148
-#: src/components/modals/GroupEditorModal.tsx:139
+#: src/components/modals/ChannelEditorModal.tsx:92
+#: src/components/modals/FolderEditorModal.tsx:145
+#: src/components/modals/GroupEditorModal.tsx:137
 #: src/components/modals/ModalSaveOverlay.tsx:52
 msgid "Saving..."
 msgstr "Ukládání..."
@@ -2417,12 +2452,12 @@ msgstr "Hledat v tomto Prostor"
 msgid "Search in this Space..."
 msgstr "Hledat v tomto Space..."
 
-#: src/components/direct/DirectMessage.tsx:730
+#: src/components/direct/DirectMessage.tsx:728
 #: src/components/space/Channel.tsx:880
 msgid "Search Messages"
 msgstr "Hledat zprávy"
 
-#: src/components/search/SearchBar.tsx:36
+#: src/components/search/SearchBar.tsx:34
 msgid "Search messages..."
 msgstr "Hledat zprávy..."
 
@@ -2489,7 +2524,7 @@ msgstr "Vyberte oprávnění"
 msgid "Select Profile Image"
 msgstr "Vyberte profilový obrázek"
 
-#: src/components/modals/ChannelEditorModal.tsx:193
+#: src/components/modals/ChannelEditorModal.tsx:192
 msgid "Select Roles"
 msgstr "Vybrat role"
 
@@ -2529,7 +2564,7 @@ msgstr "Odeslat soukromou pozvánku"
 msgid "Send your public invite link directly to someone via DM."
 msgstr "Odeslat svůj veřejný pozvánkový odkaz přímo někomu prostřednictvím DM."
 
-#: src/components/message/Message.tsx:1244
+#: src/components/message/Message.tsx:1201
 msgid "Sending..."
 msgstr "Odesílání..."
 
@@ -2537,12 +2572,12 @@ msgstr "Odesílání..."
 msgid "Session Encrypted"
 msgstr "Relace zašifrována"
 
-#: src/components/onboarding/Onboarding.native.tsx:345
+#: src/components/onboarding/Onboarding.native.tsx:344
 #: src/components/onboarding/Onboarding.tsx:247
 msgid "Set Display Name"
 msgstr "Nastavit zobrazené jméno"
 
-#: src/components/modals/UserSettingsModal/Navigation.tsx:26
+#: src/components/modals/UserSettingsModal/Navigation.tsx:27
 msgid "Settings"
 msgstr "Nastavení"
 
@@ -2555,9 +2590,9 @@ msgstr "Sdílet veřejný odkaz"
 msgid "Shift + Click"
 msgstr "Shift + Klik"
 
-#: src/components/message/MessageEditTextarea.tsx:836
+#: src/components/message/MessageEditTextarea.tsx:749
 msgid "Shift+Enter for new line"
-msgstr ""
+msgstr "Shift+Enter pro nový řádek"
 
 #: src/components/modals/UserSettingsModal/Notifications.tsx:43
 msgid "Show desktop notifications when you receive new messages while Quorum is in the background. Your browser will ask for permission when you enable this feature."
@@ -2586,7 +2621,7 @@ msgstr "Zobrazit QR"
 msgid "Showing first 500 results. Refine your search for more specific results."
 msgstr "Zobrazuje se prvních 500 výsledků. Upřesněte svůj dotaz pro konkrétnější výsledky."
 
-#: src/components/onboarding/Onboarding.native.tsx:462
+#: src/components/onboarding/Onboarding.native.tsx:461
 #: src/components/onboarding/Onboarding.tsx:329
 msgid "Skip Adding Photo"
 msgstr "Přeskočit přidání fotografie"
@@ -2603,7 +2638,7 @@ msgstr "Banner Prostor"
 msgid "Space Description"
 msgstr "Popis Space"
 
-#: src/components/modals/AddSpaceModal.tsx:178
+#: src/components/modals/AddSpaceModal.tsx:176
 msgid "Space ID"
 msgstr "ID Space"
 
@@ -2634,6 +2669,10 @@ msgstr "Název Space musí mít maximálně {MAX_NAME_LENGTH} znaků"
 #: src/components/space/ChannelList.tsx:158
 msgid "Space Settings"
 msgstr "Nastavení Space"
+
+#: src/components/navbar/NavMenu.tsx:550
+msgid "Spaces"
+msgstr ""
 
 #: src/components/search/SearchResults.tsx:76
 msgid "Start typing to search messages..."
@@ -2684,16 +2723,16 @@ msgstr "Systém"
 msgid "Tap to copy"
 msgstr "Klepněte pro zkopírování"
 
-#: src/components/onboarding/Onboarding.native.tsx:444
+#: src/components/onboarding/Onboarding.native.tsx:443
 msgid "Tap to select"
 msgstr "Klepněte pro výběr"
 
-#: src/components/modals/UserSettingsModal/General.tsx:121
+#: src/components/modals/UserSettingsModal/General.tsx:127
 msgid "Tell us about yourself..."
 msgstr "Povězte nám o sobě..."
 
 #: src/components/message/InviteLink.tsx:34
-#: src/components/modals/AddSpaceModal.tsx:75
+#: src/components/modals/AddSpaceModal.tsx:73
 #: src/hooks/business/invites/useInviteProcessing.ts:44
 msgid "The invite link format is invalid."
 msgstr "Formát pozvánkového odkazu je neplatný."
@@ -2710,11 +2749,11 @@ msgstr "Stránka, kterou hledáte, neexistuje nebo byla přesunuta. Pojďme vás
 msgid "This action cannot be undone and will permanently remove all the Space settings. To delete the Space, you must first delete all Channels."
 msgstr "Tato akce nelze vrátit zpět a trvale odstraní všechna nastavení Space. Chcete-li odstranit Space, musíte nejprve odstranit všechny kanály."
 
-#: src/components/modals/UserSettingsModal/General.tsx:135
+#: src/components/modals/UserSettingsModal/General.tsx:119
 msgid "This bio will be visible to others when they view your profile."
 msgstr "Tento bio bude viditelný ostatním, když si prohlédnou váš profil."
 
-#: src/components/bookmarks/BookmarksPanel.tsx:64
+#: src/components/bookmarks/BookmarksPanel.tsx:62
 msgid "This conversation"
 msgstr "Tento rozhovor"
 
@@ -2727,7 +2766,7 @@ msgstr "Tento popis bude viditelný na pozvánkách a zobrazen lidem, když hled
 msgid "This device"
 msgstr "Toto zařízení"
 
-#: src/components/onboarding/Onboarding.native.tsx:319
+#: src/components/onboarding/Onboarding.native.tsx:318
 #: src/components/onboarding/Onboarding.tsx:221
 msgid "This information is only provided to the Spaces you join."
 msgstr "Tato informace je poskytována pouze pro Prostory, které se připojíte."
@@ -2761,7 +2800,7 @@ msgstr "Toto jméno koliduje s klíčovými slovy zmínky."
 msgid "This public invite link is no longer valid."
 msgstr "Tento veřejný pozvánkový odkaz již není platný."
 
-#: src/components/bookmarks/BookmarksPanel.tsx:71
+#: src/components/bookmarks/BookmarksPanel.tsx:69
 msgid "This Space"
 msgstr "Tento Space"
 
@@ -2789,6 +2828,10 @@ msgstr "Tento uživatel nebude moci posílat zprávy po dobu {days} dní."
 msgid "This will create a public invite link that anyone can use to join your Space. Consider who you share this link with."
 msgstr "Tímto vytvoříte veřejný pozvánkový odkaz, který může kdokoli použít k připojení k vašemu Space. Zvažte, s kým tento odkaz sdílíte."
 
+#: src/components/modals/UserSettingsModal/DangerZone.tsx:49
+msgid "This will delete all your data from this browser, including your private keys and all direct messages. Direct messages cannot be recovered. Make sure you have exported your private key from the Privacy/Security settings. This action cannot be undone."
+msgstr ""
+
 #: src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx:633
 msgid "This will generate a new public invite link and invalidate the current one. Anyone with the old link will no longer be able to use it."
 msgstr "Tímto vygenerujete nový veřejný pozvánkový odkaz a zneplatníte ten aktuální. Kdokoli s původním odkazem již nebude moci jej použít."
@@ -2801,7 +2844,7 @@ msgid "Timeout in 10 seconds anyway..."
 msgstr "Časový limit za 10 sekund stejně..."
 
 #: src/components/modals/ConfirmationModal.native.tsx:57
-#: src/components/modals/ConfirmationModal.tsx:82
+#: src/components/modals/ConfirmationModal.tsx:80
 msgid "TIP: Hold down shift when clicking {protipAction} to bypass this confirmation entirely."
 msgstr "TIP: Držte stisknutou klávesu shift při kliknutí na {protipAction}, abyste zcela obešli toto potvrzení."
 
@@ -2814,8 +2857,8 @@ msgid "Today"
 msgstr "Dnes"
 
 #: src/utils/dateFormatting.ts:37
-msgid "Today at {timeFormatted}"
-msgstr "Dnes v {timeFormatted}"
+#~ msgid "Today at {timeFormatted}"
+#~ msgstr "Dnes v {timeFormatted}"
 
 #: src/components/primitives/FileUpload/FileUpload.web.tsx:66
 msgid "Too many files selected. Please select fewer files."
@@ -2831,6 +2874,10 @@ msgstr "Zkuste jiná klíčová slova nebo zkontrolujte pravopis"
 
 #: src/components/modals/CreateSpaceModal.tsx:248
 msgid "Turn this on to let anyone with the invite link join automatically. Turn it off to preview and approve each person before they can join. Note: Public links give full read access to your Space while the link is active."
+msgstr "Povolte to, aby se kdokoli s pozvánkovým odkazem mohl automaticky připojit. Vypněte to, abyste mohli před připojením každou osobu zkontrolovat a schválit. Poznámka: Veřejné odkazy poskytují plný přístup ke čtení vašeho Space, dokud je odkaz aktivní."
+
+#: src/components/modals/UserSettingsModal/DangerZone.tsx:67
+msgid "Type RESET to confirm"
 msgstr ""
 
 #: src/hooks/business/ui/useCustomAssets.ts:195
@@ -2879,8 +2926,8 @@ msgstr "Nelze zpracovat samolepkový obrázek. Prosím, použijte menší obráz
 msgid "Unable to restore: not logged in"
 msgstr "Nepodařilo se obnovit: nejste přihlášeni"
 
-#: src/components/direct/DirectMessageContactsList.tsx:296
-#: src/components/modals/JoinSpaceModal.tsx:112
+#: src/components/direct/DirectMessageContactsList.tsx:294
+#: src/components/modals/JoinSpaceModal.tsx:111
 #: src/services/MessageService.ts:2091
 #: src/services/MessageService.ts:3583
 msgid "Unknown"
@@ -2896,31 +2943,29 @@ msgstr "Neznámý Prostor"
 msgid "Unknown time"
 msgstr "Neznámý čas"
 
-#: src/components/bookmarks/BookmarkItem.tsx:118
+#: src/components/bookmarks/BookmarkItem.tsx:116
 #: src/components/context/MessageDB.bak.tsx:962
 #: src/components/context/MessageDB.bak.tsx:981
 #: src/components/context/MessageDB.bak.tsx:3044
 #: src/components/context/MessageDB.bak.tsx:4123
 #: src/components/context/MessageDB.bak.tsx:5293
-#: src/components/direct/DirectMessage.tsx:169
-#: src/components/direct/DirectMessage.tsx:176
-#: src/components/direct/DirectMessage.tsx:183
-#: src/components/direct/DirectMessage.tsx:247
-#: src/components/direct/DirectMessage.tsx:553
-#: src/components/direct/DirectMessageContactsList.tsx:43
-#: src/components/message/MessageComposer.tsx:749
-#: src/components/message/MessageComposer.tsx:756
-#: src/components/message/MessageEditTextarea.tsx:516
-#: src/components/message/MessageEditTextarea.tsx:548
-#: src/components/message/MessageEditTextarea.tsx:555
-#: src/components/message/MessageEditTextarea.tsx:559
-#: src/components/message/MessageEditTextarea.tsx:565
-#: src/components/message/MessageEditTextarea.tsx:693
-#: src/components/message/MessageEditTextarea.tsx:700
+#: src/components/direct/DirectMessage.tsx:167
+#: src/components/direct/DirectMessage.tsx:174
+#: src/components/direct/DirectMessage.tsx:181
+#: src/components/direct/DirectMessage.tsx:245
+#: src/components/direct/DirectMessage.tsx:551
+#: src/components/direct/DirectMessageContactsList.tsx:41
+#: src/components/message/MentionDropdown.tsx:190
+#: src/components/message/MentionDropdown.tsx:197
+#: src/components/message/MessageEditTextarea.tsx:532
+#: src/components/message/MessageEditTextarea.tsx:564
+#: src/components/message/MessageEditTextarea.tsx:571
+#: src/components/message/MessageEditTextarea.tsx:575
+#: src/components/message/MessageEditTextarea.tsx:581
 #: src/components/message/MessagePreview.tsx:196
-#: src/components/message/PinnedMessagesPanel.tsx:78
-#: src/components/modals/ConversationSettingsModal.tsx:108
-#: src/components/modals/NewDirectMessageModal.tsx:74
+#: src/components/message/PinnedMessagesPanel.tsx:75
+#: src/components/modals/ConversationSettingsModal.tsx:106
+#: src/components/modals/NewDirectMessageModal.tsx:73
 #: src/components/notifications/NotificationPanel.tsx:256
 #: src/components/notifications/NotificationPanel.tsx:276
 #: src/hooks/business/channels/useChannelMessages.ts:156
@@ -2956,7 +3001,7 @@ msgstr "Zrušit ztlumení"
 msgid "Unmute Channel"
 msgstr "Zrušit ztlumení kanálu"
 
-#: src/components/direct/DirectMessageContactsList.tsx:243
+#: src/components/direct/DirectMessageContactsList.tsx:241
 msgid "Unmute Conversation"
 msgstr "Zrušit ztlumení konverzace"
 
@@ -2990,7 +3035,7 @@ msgstr "Odepnout zprávu"
 msgid "Unpin Message"
 msgstr "Odpnout zprávu"
 
-#: src/components/message/PinnedMessagesPanel.tsx:100
+#: src/components/message/PinnedMessagesPanel.tsx:97
 msgid "Unpin this post"
 msgstr "Odepnout tento příspěvek"
 
@@ -2998,7 +3043,7 @@ msgstr "Odepnout tento příspěvek"
 msgid "Unpinned!"
 msgstr "Odepnuto!"
 
-#: src/components/direct/DirectMessage.tsx:842
+#: src/components/direct/DirectMessage.tsx:840
 msgid "Until you reply, this sender will not see your display name or profile picture"
 msgstr "Dokud neodpovíte, tento odesílatel neuvidí vaše zobrazené jméno ani profilový obrázek"
 
@@ -3044,7 +3089,7 @@ msgstr "Použijte \"Uložit do souborů\" pro uložení vašeho soukromého klí
 #~ msgid "Use the below button to kick this user out of the Space"
 #~ msgstr "Použijte níže uvedené tlačítko k vyloučení tohoto uživatele ze Prostor"
 
-#: src/components/modals/NewDirectMessageModal.tsx:120
+#: src/components/modals/NewDirectMessageModal.tsx:117
 msgid "User address here"
 msgstr "Adresa uživatele zde"
 
@@ -3071,7 +3116,7 @@ msgstr "Uživatel není autentizován"
 msgid "useWebSocket must be used within a WebSocketProvider"
 msgstr "useWebSocket musí být používán v rámci WebSocketProvider"
 
-#: src/components/modals/AddSpaceModal.tsx:191
+#: src/components/modals/AddSpaceModal.tsx:189
 msgid "Validating invite..."
 msgstr "Ověřuji pozvánku..."
 
@@ -3080,7 +3125,7 @@ msgstr "Ověřuji pozvánku..."
 msgid "View edit history"
 msgstr "Zobrazit historii úprav"
 
-#: src/components/onboarding/Onboarding.native.tsx:240
+#: src/components/onboarding/Onboarding.native.tsx:239
 #: src/components/onboarding/Onboarding.tsx:117
 msgid "Welcome to Quorum!"
 msgstr "Vítejte v Quorum!"
@@ -3089,7 +3134,7 @@ msgstr "Vítejte v Quorum!"
 msgid "What's on your mind today?"
 msgstr "Co máte dnes na srdci?"
 
-#: src/components/modals/ConversationSettingsModal.tsx:248
+#: src/components/modals/ConversationSettingsModal.tsx:246
 #: src/components/modals/SpaceSettingsModal/General.tsx:323
 msgid "When enabled, all previous versions of edited messages will be saved. When disabled, only the current edited version is kept."
 msgstr "Když je povoleno, všechny předchozí verze upravených zpráv budou uloženy. Když je zakázáno, bude uchována pouze aktuální upravená verze."
@@ -3106,7 +3151,7 @@ msgstr "Když je toto nastavení povoleno, synchronizuje vaše uživatelská dat
 msgid "When messages are signed, senders confirm they come from their key. When messages aren't signed, senders have plausible deniability. This setting applies to all messages in this Space."
 msgstr "Když jsou zprávy podepsány, odesílatelé potvrzují, že pocházejí z jejich klíče. Když zprávy nejsou podepsány, odesílatelé mají rozumnou popření. Toto nastavení se vztahuje na všechny zprávy v tomto Space."
 
-#: src/components/modals/ConversationSettingsModal.tsx:226
+#: src/components/modals/ConversationSettingsModal.tsx:224
 msgid "When muted, new messages won't show unread indicators or desktop notifications."
 msgstr "Když je ztlumeno, nové zprávy nebudou zobrazovat indikátory nepřečtených zpráv nebo desktopová oznámení."
 
@@ -3129,7 +3174,6 @@ msgstr "Když vás někdo zmíní přímo"
 msgid "When someone replies to your messages"
 msgstr "Když někdo odpoví na vaše zprávy"
 
-#: src/components/modals/CreateSpaceModal.tsx:245
 #~ msgid "When this setting is enabled, invite links will automatically allow a user to join your Space. When it is not enabled, users following an invite link will send you a request to join your Space that you must manually approve. Public links require some key material to be present in the link – be aware that possession of a public Space link can allow anyone with the link to read messages on the Space for the duration of the link being valid."
 #~ msgstr "Když je toto nastavení povoleno, pozvánkové odkazy automaticky umožní uživateli připojit se k vašemu Prostor. Když není povoleno, uživatelé následující pozvánkový odkaz vám zašlou žádost o připojení k vašemu Prostor, kterou musíte ručně schválit. Veřejné odkazy vyžadují, aby v odkazu byly přítomny určité klíčové materiály – buďte si vědomi, že vlastnictví veřejného odkazu na Prostor může umožnit komukoli s odkazem číst zprávy ve Prostor po dobu platnosti odkazu."
 
@@ -3137,7 +3181,7 @@ msgstr "Když někdo odpoví na vaše zprávy"
 msgid "When using Quorum on a browser, your messages are saved locally to your browser."
 msgstr "Když používáte Quorum v prohlížeči, vaše zprávy jsou ukládány lokálně do vašeho prohlížeče."
 
-#: src/components/modals/ConversationSettingsModal.tsx:205
+#: src/components/modals/ConversationSettingsModal.tsx:203
 msgid "When you sign a message, you are confirming that it comes from your key. When you don't sign a message, you have plausible deniability. The default for all conversations can be changed in User Settings."
 msgstr "Když podepíšete zprávu, potvrzujete, že pochází z vašeho klíče. Když zprávu nepodepíšete, máte rozumnou popření. Výchozí nastavení pro všechny konverzace lze změnit v uživatelských nastaveních."
 
@@ -3146,11 +3190,10 @@ msgid "When you sign a message, you are confirming that it comes from your key. 
 msgstr "Když podepíšete zprávu, potvrzujete, že pochází z vašeho klíče. Když zprávu nepodepíšete, máte rozumnou popření. Toto nastavení můžete ovládat pro každou konverzaci a zprávu jednotlivě."
 
 #: src/utils/dateFormatting.ts:29
-#: src/utils/dateFormatting.ts:65
 msgid "Yesterday"
 msgstr "Včera"
 
-#: src/utils/dateFormatting.ts:40
+#: src/utils/dateFormatting.ts:38
 msgid "Yesterday at {timeFormatted}"
 msgstr "Včera v {timeFormatted}"
 
@@ -3158,7 +3201,7 @@ msgstr "Včera v {timeFormatted}"
 msgid "You"
 msgstr "Ty"
 
-#: src/components/modals/AddSpaceModal.tsx:120
+#: src/components/modals/AddSpaceModal.tsx:118
 msgid "You are already a member of this Space."
 msgstr "Již jste členem tohoto Space."
 
@@ -3167,7 +3210,7 @@ msgstr "Již jste členem tohoto Space."
 msgid "You are muted for {0}"
 msgstr "Jsi ztlumen na {0}"
 
-#: src/components/modals/NewDirectMessageModal.tsx:159
+#: src/components/modals/NewDirectMessageModal.tsx:156
 msgid "You can change this later for this conversation by clicking the lock icon in the Conversation view."
 msgstr "Toto můžete později změnit pro tuto konverzaci kliknutím na ikonu zámku ve zobrazení konverzace."
 
@@ -3175,11 +3218,11 @@ msgstr "Toto můžete později změnit pro tuto konverzaci kliknutím na ikonu z
 msgid "You can manage your Space mention notifications in each Space's settings."
 msgstr "Můžete spravovat oznámení o zmínkách ve vašem prostoru v nastavení každého prostoru."
 
-#: src/components/modals/GroupEditorModal.tsx:118
+#: src/components/modals/GroupEditorModal.tsx:116
 msgid "You cannot delete a group that contains channels. Delete all {channelCount} channels in this group first."
 msgstr "Nemůžete smazat skupinu, která obsahuje kanály. Nejprve smažte všech {channelCount} kanály v této skupině."
 
-#: src/components/message/MessageComposer.tsx:576
+#: src/components/message/MessageComposer.tsx:583
 #: src/components/space/Channel.tsx:1017
 msgid "You cannot post in this channel"
 msgstr "Nemůžete přispívat v tomto kanálu"
@@ -3213,7 +3256,7 @@ msgstr "Nebudete se moci znovu připojit, pokud nebudete znovu pozváni. Vaše s
 msgid "You're all caught up!"
 msgstr "Jste všichni v obraze!"
 
-#: src/components/onboarding/Onboarding.native.tsx:495
+#: src/components/onboarding/Onboarding.native.tsx:494
 #: src/components/onboarding/Onboarding.tsx:354
 msgid "You're all set. Welcome to Quorum!"
 msgstr "Jste připraveni. Vítejte v Quorum!"
@@ -3226,7 +3269,7 @@ msgstr "Nejsi uveden mezi členy tohoto Space. Oprava tohoto přidá tvůj profi
 msgid "You're offline"
 msgstr "Jste offline"
 
-#: src/components/modals/AddSpaceModal.tsx:140
+#: src/components/modals/AddSpaceModal.tsx:138
 msgid "You're offline. Adding or creating a Space requires an internet connection."
 msgstr "Jste offline. Přidání nebo vytvoření Space vyžaduje internetové připojení."
 
@@ -3234,7 +3277,7 @@ msgstr "Jste offline. Přidání nebo vytvoření Space vyžaduje internetové p
 msgid "You're offline. Creating a Space requires an internet connection."
 msgstr "Jste offline. Vytvoření Space vyžaduje internetové připojení."
 
-#: src/components/modals/NewDirectMessageModal.tsx:102
+#: src/components/modals/NewDirectMessageModal.tsx:101
 msgid "You're offline. Looking up new users requires an internet connection."
 msgstr "Jste offline. Vyhledávání nových uživatelů vyžaduje internetové připojení."
 
@@ -3264,7 +3307,7 @@ msgstr "Vaše údaje"
 msgid "Your profile image size must be {maxSize} or less and must be a PNG, JPG, or JPEG file extension."
 msgstr "Velikost vašeho profilového obrázku musí být {maxSize} nebo méně a musí mít příponu PNG, JPG nebo JPEG."
 
-#: src/components/onboarding/Onboarding.native.tsx:370
+#: src/components/onboarding/Onboarding.native.tsx:369
 msgid "Your profile image size must be 2MB or less and must be a PNG, JPG, or JPEG file extension."
 msgstr "Velikost vašeho profilového obrázku musí být 2 MB nebo méně a musí mít příponu PNG, JPG nebo JPEG."
 
@@ -3272,7 +3315,7 @@ msgstr "Velikost vašeho profilového obrázku musí být 2 MB nebo méně a mus
 msgid "Your Roles"
 msgstr "Vaše role"
 
-#: src/components/modals/FolderEditorModal.tsx:139
+#: src/components/modals/FolderEditorModal.tsx:136
 msgid "Your Spaces will NOT be deleted"
 msgstr "Vaše prostory NEBUDOU smazány"
 
