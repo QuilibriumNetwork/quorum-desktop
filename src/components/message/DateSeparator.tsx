@@ -1,5 +1,5 @@
 import React from 'react';
-import { Flex, Text } from '../primitives';
+import { Flex } from '../primitives';
 import * as moment from 'moment-timezone';
 
 interface DateSeparatorProps {
@@ -40,14 +40,12 @@ export const DateSeparator: React.FC<DateSeparatorProps> = ({
       <div className="flex-1 h-px border-t border-subtle" />
 
       {/* Date label */}
-      <Text
-        size="sm"
-        variant="muted"
-        className="mx-3 select-none"
-        testId="date-separator-label"
+      <span
+        className="text-label text-muted mx-3 select-none"
+        data-testid="date-separator-label"
       >
         {displayLabel}
-      </Text>
+      </span>
 
       {/* Right separator line */}
       <div className="flex-1 h-px border-t border-subtle" />

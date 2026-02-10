@@ -3,12 +3,12 @@ type: doc
 title: 'Complete Guide: Cross-Platform React Components for Web + Native'
 status: done
 created: 2026-01-09T00:00:00.000Z
-updated: 2025-08-14T00:00:00.000Z
+updated: 2026-02-10T00:00:00.000Z
 ---
 
 # Complete Guide: Cross-Platform React Components for Web + Native
 
-**Auto-reviewed and corrected against .agents/docs/component-management-guide.md - still needs human review : _Last review: 2025-08-14 10:45 UTC_**
+**Auto-reviewed and corrected against .agents/docs/component-management-guide.md - still needs human review : _Last review: 2026-02-10 UTC_**
 
 This guide provides architectural patterns and practical examples specific to this Quilibrium desktop/mobile app. All examples use our actual primitives, utilities, and file structure.
 
@@ -38,6 +38,18 @@ Building cross-platform React applications for both web and React Native require
 **📊 Code Sharing Reality**: We achieve ~90% code sharing by extracting business logic to hooks in `src/hooks/` and using shared primitives for UI consistency.
 
 **🏗️ Architecture Philosophy**: Three platform targets (web, desktop Electron, mobile React Native) share the same component architecture and business logic while adapting UI automatically through primitives.
+
+> **⚠️ Web vs Native Text Handling**
+>
+> The `Text` primitive is **native-only** (React Native). It is NOT used in web production code.
+>
+> | File type | Text usage | What to use instead |
+> |---|---|---|
+> | `.web.tsx` | **Do NOT use `Text`** | Plain HTML elements (`<span>`, `<p>`, `<h1>`) with CSS typography classes (`.text-strong`, `.text-subtle`, `.text-label`, `.text-small`) |
+> | `.native.tsx` | **Use `Text`** | `Text` from `../primitives` (required for React Native) |
+> | Shared files (no suffix, e.g. `Component.tsx`) | **`Text` is acceptable** | `Text` works cross-platform in shared components; the bundler resolves to the correct platform implementation |
+>
+> When writing a `.web.tsx` file, replace patterns like `<Text variant="heading" size="xl">` with `<span className="text-strong text-xl">` (or `<h1>`, `<p>`, etc. as semantically appropriate).
 
 ---
 
@@ -96,7 +108,10 @@ This framework aligns with the practical guidance in [Component Management Guide
 **📝 Example Structure:**
 
 ```tsx
-// UserProfile.tsx - Single component using our primitives
+// UserProfile.tsx - Single shared component using our primitives
+// NOTE: Text is used here because this is a shared component (no .web.tsx/.native.tsx suffix).
+// In .web.tsx files, replace Text with plain HTML elements + CSS typography classes.
+// In .native.tsx files, Text is required (React Native).
 import { FlexColumn, Container, Text, Button } from '../primitives';
 import { useResponsiveLayoutContext } from '../context/ResponsiveLayoutProvider';
 import { useUserProfile } from '../hooks/useUserProfile';
@@ -162,7 +177,8 @@ export function useSpaceHeader(spaceId: string) {
 }
 
 // SpaceHeader.web.tsx - Desktop layout using our primitives
-import { FlexBetween, Text, Button, Container } from '../primitives';
+// NOTE: No Text import — web files use plain HTML elements + CSS typography classes
+import { FlexBetween, Button, Container } from '../primitives';
 
 export function SpaceHeader({ spaceId }) {
   const { space, memberCount } = useSpaceHeader(spaceId);
@@ -173,9 +189,7 @@ export function SpaceHeader({ spaceId }) {
   return (
     <Container className="space-header-desktop">
       <FlexBetween>
-        <Text variant="heading" size="xl">
-          {space?.name}
-        </Text>
+        <span className="text-strong text-xl">{space?.name}</span>
         <Button variant="subtle" onClick={() => setShowDropdown(!showDropdown)}>
           Settings
         </Button>
@@ -1025,8 +1039,9 @@ export function useSpaceHeader(spaceId: string) {
   return { space, memberCount, userRole, canManageSpace };
 }
 
-// SpaceHeader.web.tsx - Desktop: Uses our primitives
-import { Container, FlexBetween, Text, Button } from '../primitives';
+// SpaceHeader.web.tsx - Desktop: Uses our primitives + plain HTML for text
+// NOTE: No Text import — web files use plain HTML elements + CSS typography classes
+import { Container, FlexBetween, Button } from '../primitives';
 
 export function SpaceHeader({ spaceId }) {
   const { space, memberCount, canManageSpace } = useSpaceHeader(spaceId);
@@ -1035,12 +1050,8 @@ export function SpaceHeader({ spaceId }) {
     <Container className="space-header-desktop bg-surface-0 border-b border-default">
       <FlexBetween className="p-4">
         <FlexColumn gap="xs">
-          <Text variant="heading" size="xl" className="text-strong">
-            {space?.name}
-          </Text>
-          <Text variant="subtle" size="sm">
-            {memberCount} members
-          </Text>
+          <span className="text-strong text-xl">{space?.name}</span>
+          <span className="text-subtle text-sm">{memberCount} members</span>
         </FlexColumn>
 
         {canManageSpace && (
@@ -1662,3 +1673,5 @@ The investment in proper architecture pays dividends in **maintainability**, **t
 ---
 
 _This guide provides architectural patterns specific to the Quilibrium desktop/mobile app. Continue refining these patterns based on user feedback and platform requirements._
+
+_Last updated: 2026-02-10_

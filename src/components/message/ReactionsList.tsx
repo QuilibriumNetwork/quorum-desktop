@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import { i18n } from '@lingui/core';
-import { Flex, Text, Tooltip } from '../primitives';
+import { Flex, Tooltip } from '../primitives';
 import { useReactionsModal } from '../context/ReactionsModalProvider';
 import { isTouchDevice } from '../../utils/platform';
 import type { Message as MessageType } from '../../api/quorumApi';
@@ -143,9 +143,9 @@ export const ReactionsList: React.FC<ReactionsListProps> = ({
                   src={customEmojis.find((e) => e.id === r.emojiName)?.imgUrl}
                 />
               ) : (
-                <Text className="mr-1">{r.emojiName}</Text>
+                <span className="mr-1">{r.emojiName}</span>
               )}
-              <Text className="text-sm">{r.count}</Text>
+              <span className="text-sm">{r.count}</span>
             </Flex>
           </Tooltip>
         );

@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { t } from '@lingui/core/macro';
-import { Modal, Text, Flex, ScrollContainer } from '../primitives';
+import { Modal, Flex, ScrollContainer } from '../primitives';
 import { UserAvatar } from '../user/UserAvatar';
 import type { Reaction } from '../../api/quorumApi';
 import type { CustomEmoji } from 'emoji-picker-react/dist/config/customEmojiConfig';
@@ -92,7 +92,7 @@ export const ReactionsModal: React.FC<ReactionsModalProps> = ({
                 onClick={() => setSelectedEmojiId(reaction.emojiId)}
               >
                 {getEmojiDisplay(reaction)}
-                <Text size="sm">{reaction.count}</Text>
+                <span className="text-label">{reaction.count}</span>
               </Flex>
             ))}
           </Flex>
@@ -112,7 +112,7 @@ export const ReactionsModal: React.FC<ReactionsModalProps> = ({
                   address={user.address}
                   size={24}
                 />
-                <Text className="truncate-user-name flex-1 min-w-0">{user.displayName}</Text>
+                <span className="truncate-user-name flex-1 min-w-0">{user.displayName}</span>
               </Flex>
             ))}
           </Flex>

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Flex, Text, Container, Button } from '@/components/primitives';
+import { Flex, Container, Button } from '@/components/primitives';
 import { Icon } from '@/components/primitives';
 import { InteractivePropsPanel } from './InteractivePropsPanel';
 
@@ -72,8 +72,8 @@ export const ExampleBox: React.FC<ExampleBoxProps> = ({
       {/* Header */}
       <Flex justify="between">
         <Flex direction="column" gap="xs">
-          <Text size="3xl">{title}</Text>
-          <Text variant="subtle">{description}</Text>
+          <span className="text-3xl font-bold">{title}</span>
+          <span className="text-subtle">{description}</span>
         </Flex>
 
         <Flex gap="xs">
@@ -110,12 +110,12 @@ export const ExampleBox: React.FC<ExampleBoxProps> = ({
       <Flex direction="column" gap="sm" className="border-t border-surface-4 pt-4">
         {/* Quick Tips */}
         <Flex direction="column" gap="xs">
-          <Text variant="strong" size="sm">Quick Tips:</Text>
+          <span className="text-sm font-semibold">Quick Tips:</span>
           <div className="space-y-1">
             {notes.quickTips.map((tip, index) => (
               <Flex key={index} gap="xs" align="start">
-                <Text variant="subtle" size="sm" className="mt-0.5">•</Text>
-                <Text variant="subtle" size="sm">{tip}</Text>
+                <span className="text-sm text-subtle mt-0.5">•</span>
+                <span className="text-sm text-subtle">{tip}</span>
               </Flex>
             ))}
           </div>
@@ -138,7 +138,7 @@ export const ExampleBox: React.FC<ExampleBoxProps> = ({
             {showCodeExample && (
               <div className="bg-surface-0 rounded-md border border-surface-4">
                 <Flex justify="between" className="px-3 py-2 border-b border-surface-4">
-                  <Text variant="subtle" size="sm">Code Example</Text>
+                  <span className="text-sm text-subtle">Code Example</span>
                   <Button
                     type="subtle"
                     size="small"

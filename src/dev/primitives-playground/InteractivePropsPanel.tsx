@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Flex, Text, Button, Select } from '@/components/primitives';
+import { Flex, Button, Select } from '@/components/primitives';
 
 interface PropConfig {
   type: 'select' | 'boolean' | 'number';
@@ -65,7 +65,7 @@ export const InteractivePropsPanel: React.FC<InteractivePropsPanelProps> = ({
   return (
     <Flex direction="column" gap="md">
       <Flex justify="between" align="center">
-        <Text variant="strong" size="sm">Interactive Properties</Text>
+        <span className="text-sm font-semibold">Interactive Properties</span>
         <Flex gap="xs">
           <Button type="subtle" size="small" onClick={copyCurrentProps}>
             {showCopied ? 'Copied!' : 'Copy Props'}
@@ -79,7 +79,7 @@ export const InteractivePropsPanel: React.FC<InteractivePropsPanelProps> = ({
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {Object.entries(dynamicProps).map(([propName, config]) => (
           <Flex direction="column" key={propName} gap="xs">
-            <Text variant="subtle" size="sm">{config.label}</Text>
+            <span className="text-sm text-subtle">{config.label}</span>
 
             {config.type === 'select' && config.options && (
               <Select
@@ -123,9 +123,9 @@ export const InteractivePropsPanel: React.FC<InteractivePropsPanelProps> = ({
                   onChange={(e) => handleValueChange(propName, Number(e.target.value))}
                   className="flex-1"
                 />
-                <Text variant="subtle" size="sm" className="w-8 text-center">
+                <span className="text-sm text-subtle w-8 text-center">
                   {currentValues[propName]}
-                </Text>
+                </span>
               </div>
             )}
           </Flex>

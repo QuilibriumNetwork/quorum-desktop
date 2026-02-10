@@ -3,7 +3,7 @@ import { Virtuoso } from 'react-virtuoso';
 import { t } from '@lingui/core/macro';
 import { SearchResult, SearchContext } from '../../db/messages';
 import { SearchResultItem } from './SearchResultItem';
-import { Icon, Flex, Container, Text, Callout, Input, Button } from '../primitives';
+import { Icon, Flex, Container, Callout, Input } from '../primitives';
 import { DropdownPanel } from '../ui';
 import { isTouchDevice } from '../../utils/platform';
 import {
@@ -73,7 +73,7 @@ export const SearchResults: React.FC<SearchResultsProps> = ({
       return (
         <Flex justify="center" align="center" className="search-empty-state">
           <Icon name="search" size="3xl" className="empty-icon" />
-          <Text className="empty-message">{t`Start typing to search messages...`}</Text>
+          <span className="empty-message">{t`Start typing to search messages...`}</span>
         </Flex>
       );
     }
@@ -82,7 +82,7 @@ export const SearchResults: React.FC<SearchResultsProps> = ({
       return (
         <Flex justify="center" align="center" className="search-loading-state">
           <Icon name="spinner" className="loading-icon icon-spin" />
-          <Text className="loading-message">{t`Searching...`}</Text>
+          <span className="loading-message">{t`Searching...`}</span>
         </Flex>
       );
     }
@@ -100,10 +100,10 @@ export const SearchResults: React.FC<SearchResultsProps> = ({
     return (
       <Flex justify="center" align="center" className="search-no-results">
         <Icon name="search" size="3xl" className="empty-icon" />
-        <Text className="empty-message">{t`No messages found`}</Text>
-        <Text className="empty-hint">
+        <span className="empty-message">{t`No messages found`}</span>
+        <span className="empty-hint">
           {t`Try different keywords or check your spelling`}
-        </Text>
+        </span>
       </Flex>
     );
   };
@@ -145,11 +145,11 @@ export const SearchResults: React.FC<SearchResultsProps> = ({
           </div>
           {query.trim() && !isLoading && !isError && (
             <div className="search-results-count">
-              <Text variant="subtle" size="sm">
+              <span className="text-label">
                 {results.length === 1
                   ? t`${results.length} result`
                   : t`${results.length} results`}
-              </Text>
+              </span>
             </div>
           )}
         </div>

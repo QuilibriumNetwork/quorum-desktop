@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
-import { Button, Container, Flex, Text, Icon } from '../primitives';
+import { Button, Container, Flex, Icon } from '../primitives';
 // import UserOnlineStateIndicator from './UserOnlineStateIndicator'; // TODO: Re-enable when online/offline status is implemented
 import { ClickToCopyContent } from '../ui';
 import './UserProfile.scss';
@@ -112,12 +112,12 @@ const UserProfile: React.FunctionComponent<{
         />
         <Container className="user-profile-text">
           <Container className="user-profile-username">
-            <Text>{props.user.displayName}</Text>
+            <span>{props.user.displayName}</span>
           </Container>
           <Flex className="py-1 text-subtle">
-            <Text className="text-xs text-subtle">
+            <span className="text-xs text-subtle">
               {getAddressSuffix(props.user.address)}
-            </Text>
+            </span>
             <ClickToCopyContent
               className="ml-2"
               tooltipText={t`Copy address`}
@@ -150,26 +150,26 @@ const UserProfile: React.FunctionComponent<{
             }
           >
             <Container className="user-profile-content-section-header">
-              <Text className="text-sm">Roles</Text>
+              <span className="text-sm">Roles</span>
             </Container>
             <Container className="user-profile-roles">
               {!props.canEditRoles &&
                 userRoles.map((r) => (
-                  <Text
+                  <span
                     key={'user-profile-role-' + r.roleId}
                     className={'user-profile-role-tag'}
                   >
                     {r.displayName}
-                  </Text>
+                  </span>
                 ))}
               {props.canEditRoles &&
                 userRoles.map((r) => (
-                  <Text
+                  <span
                     key={'user-profile-role-' + r.roleId}
                     className={'user-profile-role-tag'}
                   >
                     {loadingRoles.has(r.roleId) ? (
-                      <Text className="text-xs">{t`Removing...`}</Text>
+                      <span className="text-xs">{t`Removing...`}</span>
                     ) : (
                       <>
                         <Icon
@@ -177,10 +177,10 @@ const UserProfile: React.FunctionComponent<{
                           className="hover:bg-black hover:bg-opacity-30 rounded-full p-1 cursor-pointer mr-1 text-sm align-middle"
                           onClick={() => removeRole(props.user.address, r.roleId)}
                         />
-                        <Text className="text-xs inline">{r.displayName}</Text>
+                        <span className="text-xs inline">{r.displayName}</span>
                       </>
                     )}
-                  </Text>
+                  </span>
                 ))}
               {props.canEditRoles &&
                 availableRoles.map((r) => (

@@ -46,12 +46,12 @@ Not every component needs to use primitives. This guide helps decide when primit
 
 - **Interactive elements**: Button, Input, Select, Modal, Switch
 - **Layout containers**: Flex, Container
-- **Design system elements**: Text (mobile), Icon
+- **Design system elements**: Text (native only -- not used on web), Icon
 
 ### 🤔 **Evaluate Case-by-Case:**
 
 - **Simple containers**: Use Container for theme consistency
-- **Text elements**: Use Text if you need semantic colors (`text-strong`, `text-subtle`)
+- **Text elements (web)**: Use plain HTML (`<span>`, `<p>`) with CSS typography classes (`.text-label`, `.text-strong`, `.text-subtle`)
 - **Form elements**: Use primitives for consistent validation/error states
 
 ## Container vs div Decision Framework
@@ -116,11 +116,11 @@ Not every component needs to use primitives. This guide helps decide when primit
 <Button type="primary" onClick={handleSave}>Save</Button>
 <Input value={name} onChange={setName} error={nameError} />
 
-// Layout benefits from responsive patterns
-<FlexBetween className="header">
-  <Text variant="strong">Title</Text>
+// Web: Use HTML + CSS classes for text
+<Flex justify="between" className="header">
+  <span className="text-strong">Title</span>
   <Icon name="close" onClick={onClose} />
-</FlexBetween>
+</Flex>
 ```
 
 ### 🤔 Pragmatic Mixed Approach
@@ -128,7 +128,7 @@ Not every component needs to use primitives. This guide helps decide when primit
 ```tsx
 // Keep complex SCSS, but use primitive children
 <div className="complex-animation-container">
-  <Text variant="subtle">Loading...</Text>
+  <span className="text-subtle">Loading...</span>
   <Button size="small" onClick={onCancel}>
     Cancel
   </Button>
@@ -214,10 +214,10 @@ Ask these questions:
 
 ### Web vs Mobile Text Usage
 
-**CRITICAL: Text primitive is OPTIONAL on web, REQUIRED on mobile.**
+**CRITICAL: Text primitive is **NOT USED on web production code**. It is REQUIRED on native (React Native).**
 
 #### ✅ **Web-Only Components (.web.tsx)**
-**For web-only code, prefer plain HTML with CSS typography classes:**
+**For web code, always use plain HTML with CSS typography classes (mandatory -- Text primitive has been removed from all web production code):**
 ```tsx
 // Simpler, no abstraction layer
 <p className="text-body">Main content text</p>
@@ -247,17 +247,18 @@ Ask these questions:
 <Text variant="subtle">Description</Text>
 ```
 
-### When to Use Text Primitive on Web
+### When NOT to Use Text Primitive on Web
 
-**Use Text primitive on web when:**
-- Component might be shared with mobile later
-- Need variant props for semantic styling
-- Want consistent API across codebase
+**Don't use Text on web. It has been removed from all production web code.** The only exception is dev/playground files.
 
-**Use CSS classes on web when:**
-- Simple, web-only components
-- Want to reduce abstraction
-- Migrating existing HTML code
+**On web, always use CSS classes:**
+- All web-only components (`.web.tsx`)
+- All production web code without exception
+- Use `<span>`, `<p>`, `<h1>`-`<h6>` with CSS typography classes
+
+**The Text primitive is only for:**
+- Native-only components (`.native.tsx`) -- required, HTML elements don't work in React Native
+- Shared cross-platform components (`Component.tsx` without platform suffix) that must render on both web and native
 
 ## Best Practice
 
@@ -267,7 +268,7 @@ The goal is shared business logic with appropriate UI abstractions, not primitiv
 
 ---
 
-_Last updated: 2026-01-14 - Updated Text decision framework (optional on web, CSS classes preferred)_
+_Last updated: 2026-02-10 - Text primitive removed from web production code; now native-only_
 
 ---
 

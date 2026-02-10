@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { t } from '@lingui/core/macro';
-import { Container, Icon, Text, Tooltip } from '../primitives';
+import { Container, Icon, Tooltip } from '../primitives';
 import { useCopyToClipboard } from '../../hooks';
 import { isTouchDevice } from '../../utils/platform';
 
@@ -175,21 +175,29 @@ const ClickToCopyContent: React.FunctionComponent<ClickToCopyContentProps> = ({
       }}
     >
       {iconPosition === 'left' && icon}
-      <Text
-        variant={textVariant}
-        size={textSize}
-        className={className}
+      <span
+        className={[
+          className,
+          textVariant === 'strong' ? 'text-strong' :
+          textVariant === 'subtle' ? 'text-subtle' :
+          textVariant === 'muted' ? 'text-muted' :
+          textVariant === 'error' ? 'text-danger' :
+          textVariant === 'success' ? 'text-success' :
+          textVariant === 'warning' ? 'text-warning' : '',
+          textSize === 'xs' ? 'text-small' :
+          textSize === 'sm' ? 'text-label' :
+          textSize === 'lg' ? 'text-lg' :
+          textSize === 'xl' ? 'text-xl' :
+          textSize === '2xl' ? 'text-2xl' :
+          textSize === '3xl' ? 'text-3xl' : '',
+        ].filter(Boolean).join(' ') || undefined}
         style={{
           userSelect: !copyOnContentClick ? 'text' : 'none',
           flex: copyOnContentClick ? 1 : undefined,
-          // Use responsive text sizing for 'xs': 14px mobile → 12px desktop
-          fontSize: textSize === 'xs' ? 'var(--text-xs-responsive)' : undefined,
-          lineHeight:
-            textSize === 'xs' ? 'var(--text-xs-responsive-lh)' : undefined,
         }}
       >
         {children}
-      </Text>
+      </span>
       {iconPosition === 'right' && icon}
     </Container>
   );

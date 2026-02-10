@@ -1,6 +1,6 @@
 import { logger } from '@quilibrium/quorum-shared';
 import React, { useState } from 'react';
-import { FileUpload, Text, Icon } from '@/components/primitives';
+import { FileUpload, Icon } from '@/components/primitives';
 import { ExampleBox } from '../ExampleBox';
 
 const config = {
@@ -69,17 +69,17 @@ export const FileUploadExamples: React.FC = () => {
               <div className="border-2 border-dashed border-surface-4 rounded-lg p-6 text-center hover:border-accent-500 transition-colors cursor-pointer">
                 <div className="flex flex-col items-center gap-2">
                   <Icon name="upload" size="lg" className="text-subtle" />
-                  <Text size="sm" variant="subtle">
+                  <span className="text-sm text-subtle">
                     {example.children}
-                  </Text>
+                  </span>
                 </div>
               </div>
             </FileUpload>
             {uploadedFiles[index] && (
               <div className="mt-2">
-                <Text size="xs" variant="subtle">
+                <span className="text-xs text-subtle">
                   Uploaded: {uploadedFiles[index].join(', ')}
-                </Text>
+                </span>
               </div>
             )}
             <span className="text-xs text-subtle text-center">

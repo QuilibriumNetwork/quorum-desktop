@@ -157,7 +157,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Passkey Import UX Issue](tasks/passkey-import-ux-issue.md)
 - [Primitives Migration to quorum-shared](tasks/primitives-migration-to-quorum-shared.md)
 - [Public Space Directory Feature](tasks/public-space-directory.md)
-- [Remove Text Primitive from Web App](tasks/remove-text-primitive-web.md)
+- [Remove Text Primitive from Production Web Code](tasks/remove-text-primitive-web.md)
 - [SDK PasskeyModal Customization Props Enhancement](tasks/sdk-passkey-modal-customization-props.md)
 - [Service Worker for App Update Detection](tasks/service-worker-app-updates.md)
 - [Space Tags](tasks/space-tags.md)
@@ -384,6 +384,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [quorum-shared Migration Analysis](reports/quorum-shared-migration-analysis_2026-01-05.md)
 - [Security Audit: Markdown Renderer & Mentions System](reports/security-audit-markdown-mentions-2025-11-18.md)
 - [Sync Optimizations Report](reports/sync-optimizations_2025-12-19.md)
+- [Text Primitive Audit — Pre-Migration Analysis](reports/text-primitive-audit_2026-02-10.md)
 - [Web-to-Native Feature Sync Compatibility Analysis](reports/web-native-feature-sync-analysis_2025-12-04.md)
 
 ### Action Queue
@@ -407,4 +408,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2026-02-10 09:45:32
+**Last Updated**: 2026-02-10 10:20:03

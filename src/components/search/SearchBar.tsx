@@ -6,7 +6,6 @@ import {
   Icon,
   Flex,
   Container,
-  Text,
 } from '../primitives';
 import {
   useSearchSuggestions,
@@ -143,9 +142,9 @@ export const SearchBar: React.FC<SearchBarProps> = ({
           </Flex>
         )}
         {!query && (
-          <Text className="search-shortcut invisible">
+          <span className="search-shortcut invisible">
             {navigator.userAgent.toLowerCase().includes('mac') ? '⌘K' : 'Ctrl+K'}
-          </Text>
+          </span>
         )}
       </Flex>
 
@@ -168,7 +167,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
               aria-selected={index === selectedSuggestionIndex}
             >
               <Icon name="search" className="suggestion-icon" />
-              <Text>{suggestion}</Text>
+              <span>{suggestion}</span>
             </Flex>
           ))}
         </Container>

@@ -66,6 +66,10 @@ $text-sm-lh: 1.25rem;    /* line-height: 20px */
 /* Use this for text that would be too small to read on phones with text-xs */
 $text-xs-responsive: var(--text-xs-responsive);
 $text-xs-responsive-lh: var(--text-xs-responsive-lh);
+/* Responsive text size: text-base on mobile (<480px), text-sm on desktop (≥480px) */
+/* Use this for text that would benefit from a bump on phones with text-sm */
+$text-sm-responsive: var(--text-sm-responsive);
+$text-sm-responsive-lh: var(--text-sm-responsive-lh);
 
 $text-base: 1rem;        /* 16px */
 $text-base-lh: 1.5rem;   /* line-height: 24px */

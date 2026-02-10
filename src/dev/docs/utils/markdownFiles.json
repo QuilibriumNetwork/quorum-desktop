@@ -3327,11 +3327,16 @@
       "folder": "root",
       "frontmatter": {
         "type": "task",
-        "title": "Remove Text Primitive from Web App",
-        "status": "not-decided",
-        "priority": "low",
+        "title": "Remove Text Primitive from Production Web Code",
+        "status": "in-progress",
+        "complexity": "medium",
+        "ai_generated": true,
+        "reviewed_by": null,
         "created": "2026-01-14T18:00:00.000Z",
-        "updated": "2026-01-14T18:15:00.000Z"
+        "updated": "2026-02-10T00:00:00.000Z",
+        "related_docs": [
+          "text-primitive-audit_2026-02-10.md"
+        ]
       }
     },
     {
@@ -4500,6 +4505,22 @@
         "ai_generated": true,
         "created": "2026-01-09T00:00:00.000Z",
         "updated": "2026-01-09"
+      }
+    },
+    {
+      "name": "text-primitive-audit_2026-02-10.md",
+      "path": ".agents/reports/text-primitive-audit_2026-02-10.md",
+      "folder": "root",
+      "frontmatter": {
+        "type": "report",
+        "title": "Text Primitive Audit — Pre-Migration Analysis",
+        "ai_generated": true,
+        "reviewed_by": null,
+        "created": "2026-02-10T00:00:00.000Z",
+        "updated": "2026-02-10T00:00:00.000Z",
+        "related_tasks": [
+          "remove-text-primitive-web.md"
+        ]
       }
     },
     {

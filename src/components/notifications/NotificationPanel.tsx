@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { t } from '@lingui/core/macro';
-import { Container, Flex, Text, Icon, Button, Tooltip, Select } from '../primitives';
+import { Container, Flex, Icon, Button, Tooltip, Select } from '../primitives';
 import { DropdownPanel } from '../ui';
 import { isTouchDevice } from '../../utils/platform';
 import { NotificationItem } from './NotificationItem';
@@ -170,7 +170,7 @@ export const NotificationPanel: React.FC<NotificationPanelProps> = ({
       return (
         <Flex justify="center" align="center" className="notification-loading-state">
           <Icon name="spinner" className="loading-icon icon-spin" />
-          <Text className="loading-message">{t`Loading notifications...`}</Text>
+          <span className="loading-message">{t`Loading notifications...`}</span>
         </Flex>
       );
     }
@@ -178,10 +178,10 @@ export const NotificationPanel: React.FC<NotificationPanelProps> = ({
     return (
       <Flex justify="center" align="center" className="notification-empty-state">
         <Icon name="bell" size="3xl" className="empty-icon" />
-        <Text className="empty-message">{t`No unread notifications`}</Text>
-        <Text className="empty-hint">
+        <span className="empty-message">{t`No unread notifications`}</span>
+        <span className="empty-hint">
           {t`You're all caught up!`}
-        </Text>
+        </span>
       </Flex>
     );
   };

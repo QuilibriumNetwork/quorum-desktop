@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Modal, Button, Text, Flex } from '@/components/primitives';
+import { Modal, Button, Flex } from '@/components/primitives';
 import { ExampleBox } from '../ExampleBox';
 
 export const ModalExamples: React.FC = () => {
@@ -84,8 +84,8 @@ export const ModalExamples: React.FC = () => {
                 onClose={() => closeModal(modalKey)}
               >
                 <Flex direction="column" gap="md" className="p-4">
-                  <Text variant="strong">{example.name}</Text>
-                  <Text>{example.children}</Text>
+                  <span className="font-semibold">{example.name}</span>
+                  <p>{example.children}</p>
                   <Flex gap="sm" justify="end">
                     <Button
                       type="secondary"

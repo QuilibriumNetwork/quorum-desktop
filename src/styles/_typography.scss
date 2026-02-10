@@ -49,17 +49,17 @@
 }
 
 .text-label {
-  font-size: $text-sm;
+  font-size: $text-sm-responsive; // 16px mobile → 14px desktop
   font-weight: $font-normal;
-  line-height: $text-sm-lh;
+  line-height: $text-sm-responsive-lh;
   color: rgb(var(--color-text-subtle));
 }
 
-// Labels associates with toggles in Modals
+// Labels associated with toggles in Modals
 .text-label-strong {
-  font-size: $text-sm;
+  font-size: $text-sm-responsive; // 16px mobile → 14px desktop
   font-weight: $font-normal;
-  line-height: $text-sm-lh;
+  line-height: $text-sm-responsive-lh;
   color: rgb(var(--color-text-main)) !important;
 }
 

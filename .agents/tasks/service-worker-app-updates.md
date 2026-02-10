@@ -241,8 +241,6 @@ if (import.meta.env.DEV) {
 import { useState, useEffect } from 'react';
 import { Trans } from '@lingui/react/macro';
 import { Button } from '../primitives/Button';
-import { View } from '../primitives/View';
-import { Text } from '../primitives/Text';
 import { onUpdateAvailable } from '../../lib/serviceWorker';
 
 export function AppUpdatePrompt() {
@@ -259,18 +257,18 @@ export function AppUpdatePrompt() {
   };
 
   return (
-    <View className="app-update-prompt">
-      <Text className="app-update-prompt__text">
+    <div className="app-update-prompt">
+      <span className="app-update-prompt__text">
         <Trans>A new version is available</Trans>
-      </Text>
+      </span>
       <Button
-        variant="primary"
+        type="primary"
         size="small"
-        onPress={handleUpdate}
+        onClick={handleUpdate}
       >
         <Trans>Update</Trans>
       </Button>
-    </View>
+    </div>
   );
 }
 ```
@@ -470,3 +468,4 @@ yarn build:web
 
 
 _Reviewed: 2025-12-14 by feature-analyzer and security-analyst agents_
+_Updated: 2026-02-10 — Removed Text and View primitives from AppUpdatePrompt (web-only component uses plain HTML)_

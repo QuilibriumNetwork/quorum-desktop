@@ -1,3 +1,16 @@
+/**
+ * @deprecated — Do NOT use in web production code. Use plain HTML elements
+ * with CSS typography classes instead:
+ *
+ *   <span className="text-strong">Bold text</span>
+ *   <span className="text-subtle text-sm">Helper text</span>
+ *   <p className="text-body">Body content</p>
+ *
+ * This file exists as the web bundler resolution target for shared
+ * cross-platform components that import Text. Do not delete it.
+ *
+ * See: .agents/docs/features/primitives/03-when-to-use-primitives.md
+ */
 import React from 'react';
 import clsx from 'clsx';
 import { WebTextProps } from './types';

@@ -575,7 +575,7 @@ import { Button } from '@quilibrium/quorum-shared/primitives';
 
 | Category | Components | Description |
 |----------|------------|-------------|
-| **Core** | Button, Input, TextArea, Modal, Text | Most frequently used |
+| **Core** | Button, Input, TextArea, Modal, Text (native only) | Most frequently used |
 | **Layout** | FlexRow, FlexColumn, Container, Spacer | Layout utilities |
 | **Form** | Select, Switch, RadioGroup, ColorSwatch | Form controls |
 | **UI** | Card, Avatar, Tooltip, Callout | Higher-level components |
@@ -584,16 +584,30 @@ import { Button } from '@quilibrium/quorum-shared/primitives';
 ### Usage After Migration
 
 ```typescript
-// Import primitives from quorum-shared
+// Shared/Native component (works on both platforms)
 import { Button, Input, Modal, Text } from '@quilibrium/quorum-shared/primitives';
 
-// Use in any component (works on both platforms)
 function MyComponent() {
   return (
     <Modal visible={isOpen} onClose={handleClose}>
       <Text variant="heading">Title</Text>
       <Input value={name} onChange={setName} placeholder="Enter name" />
       <Button variant="primary" onPress={handleSubmit}>
+        Submit
+      </Button>
+    </Modal>
+  );
+}
+
+// Web-only component: use plain HTML for text instead of Text primitive
+import { Button, Input, Modal } from '@quilibrium/quorum-shared/primitives';
+
+function MyWebComponent() {
+  return (
+    <Modal visible={isOpen} onClose={handleClose}>
+      <span className="text-strong text-lg">Title</span>
+      <Input value={name} onChange={setName} placeholder="Enter name" />
+      <Button variant="primary" onClick={handleSubmit}>
         Submit
       </Button>
     </Modal>
@@ -738,4 +752,4 @@ function MyComponent() {
 
 ---
 
-*Last updated: 2026-01-14*
+*Last updated: 2026-02-10 -- Updated Text primitive status: native-only, web uses plain HTML with CSS typography classes*

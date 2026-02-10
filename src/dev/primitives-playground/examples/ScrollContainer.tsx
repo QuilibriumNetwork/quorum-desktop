@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ScrollContainer, Text } from '@/components/primitives';
+import { ScrollContainer } from '@/components/primitives';
 import { ExampleBox } from '../ExampleBox';
 
 const config = {
@@ -41,38 +41,38 @@ export const ScrollContainerExamples: React.FC = () => {
   const articleContent = (
     <div className="p-4 space-y-4">
       <div>
-        <Text size="lg" variant="strong">Understanding ScrollContainer</Text>
+        <h3 className="text-lg font-semibold">Understanding ScrollContainer</h3>
       </div>
-      <Text size="sm">
+      <p className="text-sm">
         The ScrollContainer component is designed to handle long content that exceeds the available space.
         It automatically provides scrollbars when content overflows, making it perfect for constrained layouts.
-      </Text>
-      <Text size="sm">
+      </p>
+      <p className="text-sm">
         This example demonstrates how text content flows within a ScrollContainer. You can adjust the height
         using the controls above to see how the scrolling behavior adapts to different container sizes.
-      </Text>
-      <Text size="sm">
+      </p>
+      <p className="text-sm">
         The component supports various height presets (xs, sm, md, lg, xl) and can also accept custom
         height values. It maintains consistent styling across both web and mobile platforms.
-      </Text>
-      <Text size="sm">
+      </p>
+      <p className="text-sm">
         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut
         labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco.
-      </Text>
-      <Text size="sm">
+      </p>
+      <p className="text-sm">
         Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
         Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-      </Text>
+      </p>
     </div>
   );
 
   // Second example: extensive list content for scrolling demonstration
   const extensiveListContent = Array.from({ length: 50 }, (_, i) => (
     <div key={i} className="py-3 px-4 border-b border-surface-3 last:border-b-0 hover:bg-surface-1 transition-colors">
-      <Text size="sm" variant="strong">Section {i + 1}</Text>
-      <Text size="xs" variant="subtle">
+      <span className="text-sm font-semibold">Section {i + 1}</span>
+      <span className="text-xs text-subtle">
         Detailed content for section {i + 1}. This demonstrates scrollable list behavior with many items.
-      </Text>
+      </span>
     </div>
   ));
 

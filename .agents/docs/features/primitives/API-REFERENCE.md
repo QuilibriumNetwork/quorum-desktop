@@ -28,7 +28,9 @@ Complete API reference for all primitive components. Use this for quick prop loo
 
 ## Text & Typography
 
-### Text
+### Text (Native Only)
+
+**Note:** The Text primitive is not used in web production code. On web, use plain HTML elements with CSS typography classes instead (see "Web Alternative" below).
 
 **Location**: `src/components/primitives/Text/Text.tsx`
 
@@ -59,7 +61,7 @@ Complete API reference for all primitive components. Use this for quick prop loo
 ```
 
 **Web Alternative - CSS Classes**:
-For web-only code, you can use plain HTML with CSS typography classes instead of the Text primitive:
+**This is now the standard for all web production code.** The Text primitive has been completely removed from web. Use:
 
 ```tsx
 // Using Text primitive (cross-platform)
@@ -415,7 +417,7 @@ For web-only code, you can use plain HTML with CSS typography classes instead of
   maxSize={5 * 1024 * 1024} // 5MB
   onError={handleError}
 >
-  <Text>Drop files here or click to upload</Text>
+  <span>Drop files here or click to upload</span>
 </FileUpload>
 ```
 
@@ -443,26 +445,26 @@ Unified flex layout container that replaces the legacy FlexRow, FlexColumn, Flex
 ```tsx
 // Horizontal layout (default)
 <Flex gap="md" justify="between" align="center">
-  <Text>Left content</Text>
+  <span>Left content</span>
   <Button>Right action</Button>
 </Flex>
 
 // Vertical layout
 <Flex direction="column" gap="lg" align="center">
-  <Text variant="strong">Heading</Text>
-  <Text>Content</Text>
+  <span className="text-strong">Heading</span>
+  <span>Content</span>
   <Button>Action</Button>
 </Flex>
 
 // Centered content
 <Flex justify="center" align="center">
-  <Text>Centered content</Text>
+  <span>Centered content</span>
 </Flex>
 
 // Space between items
 <Flex justify="between">
-  <Text>Left</Text>
-  <Text>Right</Text>
+  <span>Left</span>
+  <span>Right</span>
 </Flex>
 ```
 
@@ -518,7 +520,7 @@ Unified flex layout container that replaces the legacy FlexRow, FlexColumn, Flex
   padding="md"
   style={{ borderRadius: 12 }}
 >
-  <Text>Container content</Text>
+  <span>Container content</span>
 </Container>
 ```
 
@@ -587,7 +589,7 @@ Unified flex layout container that replaces the legacy FlexRow, FlexColumn, Flex
   borderColor="border-surface-3"
   borderRadius="md"
 >
-  <Text>Content with custom border</Text>
+  <span>Content with custom border</span>
 </ScrollContainer>
 
 // Custom border color (CSS variable)
@@ -596,12 +598,12 @@ Unified flex layout container that replaces the legacy FlexRow, FlexColumn, Flex
   borderColor="var(--color-border-subtle)"
   showBorder={true}
 >
-  <Text>Content with subtle border</Text>
+  <span>Content with subtle border</span>
 </ScrollContainer>
 
 // No border
 <ScrollContainer height="sm" showBorder={false}>
-  <Text>Content without border</Text>
+  <span>Content without border</span>
 </ScrollContainer>
 ```
 
@@ -679,7 +681,7 @@ Unified flex layout container that replaces the legacy FlexRow, FlexColumn, Flex
   size="medium"
   closeOnBackdrop
 >
-  <Text>Modal content</Text>
+  <span>Modal content</span>
 </Modal>
 ```
 
@@ -709,7 +711,7 @@ Unified flex layout container that replaces the legacy FlexRow, FlexColumn, Flex
   backdropBlur
 >
   <Container backgroundColor={theme.colors.bg.card} padding="lg">
-    <Text>Modal content</Text>
+    <span>Modal content</span>
   </Container>
 </ModalContainer>
 ```
@@ -950,10 +952,10 @@ Unified flex layout container that replaces the legacy FlexRow, FlexColumn, Flex
 <Container backgroundColor={theme.colors.bg.card} padding="md">
   <Flex direction="column" gap="md">
     <Flex justify="between">
-      <Text variant="strong" size="lg">Card Title</Text>
+      <span className="text-strong text-lg">Card Title</span>
       <Button type="subtle" iconName="close" iconOnly onClick={onClose} />
     </Flex>
-    <Text>Card content</Text>
+    <span>Card content</span>
     <Flex gap="sm" justify="end">
       <Button type="secondary" onClick={onCancel}>Cancel</Button>
       <Button type="primary" onClick={onSave}>Save</Button>
@@ -977,8 +979,8 @@ Unified flex layout container that replaces the legacy FlexRow, FlexColumn, Flex
     style={{ borderRadius: 12, maxWidth: 500 }}
   >
     <Flex direction="column" gap="md">
-      <Text variant="strong" size="lg">Modal Title</Text>
-      <Text>Modal content</Text>
+      <span className="text-strong text-lg">Modal Title</span>
+      <span>Modal content</span>
       <Flex gap="sm" justify="end">
         <Button type="secondary" onClick={closeModal}>Cancel</Button>
         <Button type="primary" onClick={handleConfirm}>Confirm</Button>
@@ -1001,4 +1003,4 @@ Unified flex layout container that replaces the legacy FlexRow, FlexColumn, Flex
 ---
 
 
-_Last updated: 2026-01-14 - Consolidated Flex primitives (FlexRow/FlexColumn/FlexCenter/FlexBetween -> Flex), removed typography prop from Text, removed ResponsiveContainer_
+_Last updated: 2026-02-10 - Text primitive removed from web production code; now native-only_

@@ -50,7 +50,7 @@ updated: 2025-07-29
 - **NO raw HTML elements** whatsoever (`<div>`, `<span>`, `<button>`, `<input>`, `<a>`, `<img>`, etc.)
 - **ALL layout must use Flex primitives**: FlexColumn, FlexRow, FlexCenter, FlexBetween, Container
 - **ALL interactive elements** must use primitives: Button, Input, Modal, Select, etc.
-- **ALL text must use Text primitive** (not raw text in divs)
+- **ALL text must use Text primitive on native** (on web, use plain HTML + CSS typography classes)
 
 ✅ **NO Web-Specific Code**:
 

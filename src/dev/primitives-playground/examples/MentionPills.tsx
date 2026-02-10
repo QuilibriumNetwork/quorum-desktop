@@ -1,6 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { ExampleBox } from '../ExampleBox';
-import { Text } from '@/components/primitives';
 
 /**
  * POC Demo: Mention Pills using contentEditable

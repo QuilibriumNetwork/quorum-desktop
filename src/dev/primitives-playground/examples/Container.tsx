@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Container, Text } from '@/components/primitives';
+import { Container } from '@/components/primitives';
 import { ExampleBox } from '../ExampleBox';
 
 const config = {
@@ -33,7 +33,7 @@ const config = {
   ],
   codeExample: {
     title: "Page Layout",
-    code: "import { Container, Text } from '@/components/primitives';\n\n<Container padding=\"lg\" maxWidth=\"md\" centered>\n  <Text variant=\"strong\" size=\"xl\">Page Title</Text>\n  <Text>Your page content goes here...</Text>\n</Container>"
+    code: "import { Container } from '@/components/primitives';\n\n<Container padding=\"lg\" maxWidth=\"md\" centered>\n  <h1 className=\"text-xl font-semibold\">Page Title</h1>\n  <p>Your page content goes here...</p>\n</Container>"
   }
 } as const;
 
@@ -64,7 +64,7 @@ export const ContainerExamples: React.FC = () => {
                 {...example.props}
                 {...dynamicProps}
               >
-                <Text size="sm">{example.children}</Text>
+                <p className="text-sm">{example.children}</p>
               </Container>
             </div>
             <span className="text-xs text-subtle text-center">

@@ -4,7 +4,6 @@ import {
   Button,
   Modal,
   Container,
-  Text,
   Spacer,
   Callout,
   Icon,
@@ -233,23 +232,17 @@ const AddSpaceModal: React.FunctionComponent<AddSpaceModalProps> = (props) => {
                 iconUrl={validatedSpace.iconUrl}
                 spaceId={validatedSpace.spaceId}
               />
-              <Text
-                variant="strong"
-                size="lg"
-                align="center"
-                className="sm:text-xl block w-full text-center"
+              <span
+                className="text-strong text-lg sm:text-xl block w-full text-center"
               >
                 {validatedSpace.spaceName}
-              </Text>
+              </span>
               {validatedSpace.description && (
-                <Text
-                  variant="default"
-                  size="sm"
-                  align="center"
-                  className="text-subtle mt-2 max-w-md mx-auto"
+                <span
+                  className="text-label text-center text-subtle mt-2 max-w-md mx-auto block"
                 >
                   {validatedSpace.description}
-                </Text>
+                </span>
               )}
             </Container>
           )}
@@ -287,7 +280,7 @@ const AddSpaceModal: React.FunctionComponent<AddSpaceModalProps> = (props) => {
             <>
               <Container className="relative flex items-center my-6">
                 <div className="flex-grow border-t border-default"></div>
-                <Text className="px-3 text-subtle text-sm">{t`OR`}</Text>
+                <span className="px-3 text-subtle text-sm">{t`OR`}</span>
                 <div className="flex-grow border-t border-default"></div>
               </Container>
 

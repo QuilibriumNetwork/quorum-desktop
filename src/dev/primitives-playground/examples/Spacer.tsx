@@ -29,7 +29,7 @@ const config = {
   ],
   codeExample: {
     title: "Layout Spacing",
-    code: "import { Spacer, Text, Button } from '@/components/primitives';\n\n<FlexColumn>\n  <Text>First section</Text>\n  <Spacer size=\"lg\" />\n  <Text>Second section</Text>\n  <Spacer size=\"md\" />\n  <Button type=\"primary\">Action</Button>\n</FlexColumn>\n\n// SPACER-BORDER-SPACER pattern\n<FlexColumn>\n  <Text>Section 1</Text>\n  <Spacer\n    spaceBefore=\"md\"\n    spaceAfter=\"md\"\n    border={true}\n    direction=\"vertical\"\n  />\n  <Text>Section 2</Text>\n</FlexColumn>"
+    code: "import { Spacer, Button } from '@/components/primitives';\n\n<FlexColumn>\n  <p>First section</p>\n  <Spacer size=\"lg\" />\n  <p>Second section</p>\n  <Spacer size=\"md\" />\n  <Button type=\"primary\">Action</Button>\n</FlexColumn>\n\n// SPACER-BORDER-SPACER pattern\n<FlexColumn>\n  <p>Section 1</p>\n  <Spacer\n    spaceBefore=\"md\"\n    spaceAfter=\"md\"\n    border={true}\n    direction=\"vertical\"\n  />\n  <p>Section 2</p>\n</FlexColumn>"
   }
 } as const;
 

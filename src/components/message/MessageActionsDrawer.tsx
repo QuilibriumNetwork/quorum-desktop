@@ -2,7 +2,7 @@ import React from 'react';
 import { t } from '@lingui/core/macro';
 import { Message as MessageType } from '../../api/quorumApi';
 import { MobileDrawer } from '../ui';
-import { Button, Icon, Text } from '../primitives';
+import { Button, Icon } from '../primitives';
 import './MessageActionsDrawer.scss';
 
 export interface MessageActionsDrawerProps {
@@ -183,7 +183,7 @@ const MessageActionsDrawer: React.FC<MessageActionsDrawerProps> = ({
           className="mobile-drawer__action-item"
         >
           <Icon name="reply" />
-          <Text>{t`Reply`}</Text>
+          <span>{t`Reply`}</span>
         </div>
 
         <div
@@ -191,7 +191,7 @@ const MessageActionsDrawer: React.FC<MessageActionsDrawerProps> = ({
           className="mobile-drawer__action-item"
         >
           <Icon name="link" />
-          <Text>{t`Copy message link`}</Text>
+          <span>{t`Copy message link`}</span>
         </div>
 
         <div
@@ -199,7 +199,7 @@ const MessageActionsDrawer: React.FC<MessageActionsDrawerProps> = ({
           className="mobile-drawer__action-item"
         >
           <Icon name="clipboard" />
-          <Text>{t`Copy message`}</Text>
+          <span>{t`Copy message`}</span>
         </div>
 
         {canEdit && onEdit && (
@@ -208,7 +208,7 @@ const MessageActionsDrawer: React.FC<MessageActionsDrawerProps> = ({
             className="mobile-drawer__action-item"
           >
             <Icon name="edit" />
-            <Text>{t`Edit message`}</Text>
+            <span>{t`Edit message`}</span>
           </div>
         )}
 
@@ -218,7 +218,7 @@ const MessageActionsDrawer: React.FC<MessageActionsDrawerProps> = ({
             className="mobile-drawer__action-item"
           >
             <Icon name="history" />
-            <Text>{t`View edit history`}</Text>
+            <span>{t`View edit history`}</span>
           </div>
         )}
 
@@ -228,7 +228,7 @@ const MessageActionsDrawer: React.FC<MessageActionsDrawerProps> = ({
             className="mobile-drawer__action-item"
           >
             <Icon name={message.isPinned ? "pin-off" : "pin"} />
-            <Text>{message.isPinned ? t`Unpin message` : t`Pin message`}</Text>
+            <span>{message.isPinned ? t`Unpin message` : t`Pin message`}</span>
           </div>
         )}
 
@@ -238,7 +238,7 @@ const MessageActionsDrawer: React.FC<MessageActionsDrawerProps> = ({
             className="mobile-drawer__action-item"
           >
             <Icon name={isBookmarked ? 'bookmark-off' : 'bookmark'} />
-            <Text>{isBookmarked ? t`Remove bookmark` : t`Bookmark message`}</Text>
+            <span>{isBookmarked ? t`Remove bookmark` : t`Bookmark message`}</span>
           </div>
         )}
 
@@ -249,7 +249,7 @@ const MessageActionsDrawer: React.FC<MessageActionsDrawerProps> = ({
             style={{ color: 'rgb(var(--danger))' }}
           >
             <Icon name="trash" />
-            <Text style={{ color: 'inherit' }}>{t`Delete message`}</Text>
+            <span style={{ color: 'inherit' }}>{t`Delete message`}</span>
           </div>
         )}
       </div>

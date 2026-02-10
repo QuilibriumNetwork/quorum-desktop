@@ -1,6 +1,6 @@
 import React from 'react';
 import { SearchResult } from '../../db/messages';
-import { Icon, Flex, Container, Text } from '../primitives';
+import { Icon, Flex, Container } from '../primitives';
 import { TouchAwareListItem } from '../ui';
 import {
   useSearchResultHighlight,
@@ -67,11 +67,11 @@ const DMSearchResultItem: React.FC<SearchResultItemProps> = ({
               style={{ backgroundImage: `url(${icon})` }}
             />
           )}
-          <Text className="result-channel mr-2 truncate-channel-name flex-shrink min-w-0">{channelName}</Text>
+          <span className="result-channel mr-2 truncate-channel-name flex-shrink min-w-0">{channelName}</span>
         </Flex>
         <Flex className="result-meta flex-shrink-0 whitespace-nowrap">
           <Icon name="calendar-alt" className="result-date-icon flex-shrink-0" />
-          <Text className="result-date">{formattedDate}</Text>
+          <span className="result-date">{formattedDate}</span>
         </Flex>
       </Flex>
 
@@ -131,13 +131,13 @@ const SpaceSearchResultItem: React.FC<SearchResultItemProps> = ({
       <Flex justify="between" className="result-header">
         <Flex className="result-meta min-w-0">
           <Icon name={messageTypeIcon} className="result-type-icon flex-shrink-0" />
-          <Text className="result-channel mr-2 truncate-channel-name flex-shrink min-w-0">{channelName}</Text>
+          <span className="result-channel mr-2 truncate-channel-name flex-shrink min-w-0">{channelName}</span>
           <Icon name="user" className="result-user-icon flex-shrink-0" />
-          <Text className="result-sender truncate-user-name flex-shrink min-w-0">{displayName}</Text>
+          <span className="result-sender truncate-user-name flex-shrink min-w-0">{displayName}</span>
         </Flex>
         <Flex className="result-meta flex-shrink-0 whitespace-nowrap">
           <Icon name="calendar-alt" className="result-date-icon flex-shrink-0" />
-          <Text className="result-date">{formattedDate}</Text>
+          <span className="result-date">{formattedDate}</span>
         </Flex>
       </Flex>
 

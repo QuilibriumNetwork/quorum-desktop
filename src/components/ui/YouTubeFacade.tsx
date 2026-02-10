@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useRef, useMemo, useEffect } from 'react';
-import { Icon, Text } from '../primitives';
+import { Icon } from '../primitives';
 import { t } from '@lingui/core/macro';
 import {
   extractYouTubeVideoId,

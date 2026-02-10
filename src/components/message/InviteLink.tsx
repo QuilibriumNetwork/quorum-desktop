@@ -1,4 +1,4 @@
-import { Button, Container, Text, Flex, Callout } from '../primitives';
+import { Button, Container, Flex, Callout } from '../primitives';
 import {
   useInviteProcessing,
   useInviteJoining,
@@ -56,9 +56,9 @@ export const InviteLink = ({
       {!displayError && isProcessing && (
         <Container className="font-bold flex flex-col items-center sm:items-start">
           <Container className="mb-2 text-center sm:text-left">
-            <Text>
+            <span>
               <Trans>You've been invited to join a Space</Trans>
-            </Text>
+            </span>
           </Container>
           <Flex className="flex-col lg:flex-row lg:items-center gap-2 lg:gap-3 w-full">
             <Flex className="items-center bg-surface-4 rounded-lg px-1 sm:px-2 py-1 sm:py-2 gap-1 sm:gap-2 lg:gap-3 w-full lg:flex-1 overflow-hidden">
@@ -78,9 +78,9 @@ export const InviteLink = ({
       {space && (
         <Container className="font-bold flex flex-col items-center sm:items-start">
           <Container className="mb-2 text-center sm:text-left">
-            <Text>
+            <span>
               <Trans>You've been invited to join a Space</Trans>
-            </Text>
+            </span>
           </Container>
           <Flex className="flex-col lg:flex-row lg:items-center gap-2 lg:gap-3 w-full">
             <Flex className="items-center bg-surface-4 rounded-lg px-1 sm:px-2 py-1 sm:py-2 gap-1 sm:gap-2 lg:gap-3 w-full lg:flex-1 overflow-hidden">
@@ -94,15 +94,15 @@ export const InviteLink = ({
                 }}
               />
               <Container className="flex-1 min-w-0 overflow-hidden">
-                <Text className="block truncate font-medium text-sm lg:text-base">
+                <span className="block truncate font-medium text-sm lg:text-base">
                   {space?.spaceName}
-                </Text>
+                </span>
                 {space?.description && (
-                  <Text className="block text-xs lg:text-sm text-subtle mt-1 break-words line-clamp-2">
+                  <span className="block text-xs lg:text-sm text-subtle mt-1 break-words line-clamp-2">
                     {space.description.length > 100
                       ? space.description.substring(0, 100) + '...'
                       : space.description}
-                  </Text>
+                  </span>
                 )}
               </Container>
             </Flex>

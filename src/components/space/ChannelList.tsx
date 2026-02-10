@@ -14,7 +14,7 @@ import { useChannelMentionCounts } from '../../hooks/business/mentions';
 import { useReplyNotificationCounts } from '../../hooks/business/replies';
 import { useChannelUnreadCounts } from '../../hooks/business/messages';
 import { t } from '@lingui/core/macro';
-import { Button, Container, Icon, Text, Tooltip } from '../primitives';
+import { Button, Container, Icon, Tooltip } from '../primitives';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
 import { getUserRoles } from '../../utils/permissions';
 import { Group } from '../../api/quorumApi';
@@ -145,9 +145,9 @@ const ChannelList: React.FC<ChannelListProps> = ({ spaceId }) => {
         )}
 
         <Container className="space-header-name truncate-space-name relative z-10 flex-1 min-w-0">
-          <Text weight="bold" color="strong" className="2xl:text-xl">
+          <span className="font-bold text-strong 2xl:text-xl">
             {spaceName}
-          </Text>
+          </span>
         </Container>
         <Container
           className="space-context-menu-toggle-button relative z-10"

@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import { t } from '@lingui/core/macro';
-import { Modal, Text, Container, Flex, ScrollContainer, Spacer } from '../primitives';
+import { Modal, Container, Flex, ScrollContainer, Spacer } from '../primitives';
 import { Message as MessageType } from '../../api/quorumApi';
 import { formatMessageDate } from '../../utils';
 
@@ -83,16 +83,16 @@ export const EditHistoryModal: React.FC<EditHistoryModalProps> = ({
               >
                 <Flex direction="column" gap="xs">
                   <Flex gap="sm" alignItems="center">
-                    <Text variant="subtle" size="sm" weight="medium">
+                    <span className="text-label font-medium">
                       {item.isCurrent
                         ? t`Current`
                         : isOriginal
                         ? t`Original`
                         : t`Edit ${index + 1}`}
-                    </Text>
-                    <Text variant="subtle" size="xs">
+                    </span>
+                    <span className="text-small">
                       {formatMessageDate(item.modifiedDate)}
-                    </Text>
+                    </span>
                   </Flex>
                   <Spacer
                     spaceBefore="xs"
@@ -100,9 +100,9 @@ export const EditHistoryModal: React.FC<EditHistoryModalProps> = ({
                     border={true}
                     direction="vertical"
                   />
-                  <Text variant="body" size="sm" className="whitespace-pre-wrap break-words">
+                  <span className="text-label-strong whitespace-pre-wrap break-words">
                     {text || t`(empty)`}
-                  </Text>
+                  </span>
                 </Flex>
               </Container>
             );

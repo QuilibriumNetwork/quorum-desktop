@@ -61,7 +61,7 @@ Check [05-primitive-styling-guide.md](./05-primitive-styling-guide.md) for color
 
 - **Container**: Styling containers (colors, borders, shadows)
 - **Flex**: Layout, spacing, alignment (unified primitive)
-- **Text**: Required on mobile, optional on web (CSS classes alternative)
+- **Text**: Required on mobile, **not used on web** (plain HTML + CSS typography classes)
 
 ### **Design System Integration**
 
@@ -88,7 +88,7 @@ Check [05-primitive-styling-guide.md](./05-primitive-styling-guide.md) for color
 </Flex>
 ```
 
-### **Card Layout**
+### **Card Layout (Web)**
 
 ```tsx
 <Container
@@ -99,6 +99,18 @@ Check [05-primitive-styling-guide.md](./05-primitive-styling-guide.md) for color
   }}
 >
   <Flex direction="column" gap="md">
+    <span className="text-strong text-lg">Card Title</span>
+    <span>Card content goes here</span>
+    <Button type="primary">Action</Button>
+  </Flex>
+</Container>
+```
+
+### **Card Layout (Native)**
+
+```tsx
+<Container style={{ backgroundColor: theme.colors.bg.card, padding: 16, borderRadius: 12 }}>
+  <Flex direction="column" gap="md">
     <Text variant="strong" size="lg">Card Title</Text>
     <Text>Card content goes here</Text>
     <Button type="primary">Action</Button>
@@ -106,13 +118,13 @@ Check [05-primitive-styling-guide.md](./05-primitive-styling-guide.md) for color
 </Container>
 ```
 
-### **Header with Action**
+### **Header with Action (Web)**
 
 ```tsx
 <Flex justify="between" align="center">
   <Flex gap="sm" align="center">
     <Icon name="settings" />
-    <Text weight="semibold">Settings</Text>
+    <span className="font-semibold">Settings</span>
   </Flex>
   <Button type="subtle" iconName="close" iconOnly onClick={onClose} />
 </Flex>
@@ -140,7 +152,8 @@ Check [05-primitive-styling-guide.md](./05-primitive-styling-guide.md) for color
 
 ### **Text & Typography**
 
-- Text, Paragraph, Title, Label, Caption (helpers for native)
+- **Web**: Plain HTML (`<span>`, `<p>`, `<h1>`) + CSS typography classes (`.text-label`, `.text-small`, `.text-strong`, etc.)
+- **Native**: Text, Paragraph, Title, Label, Caption (required — React Native has no HTML elements)
 
 ### **Interactive Elements**
 
@@ -190,7 +203,7 @@ Check [05-primitive-styling-guide.md](./05-primitive-styling-guide.md) for color
 
 ---
 
-_Last updated: 2026-01-14 - Updated for unified Flex primitive and Text changes_
+_Last updated: 2026-02-10 - Text primitive removed from web production code; now native-only_
 
 ---
 

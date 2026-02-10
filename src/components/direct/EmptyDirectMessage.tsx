@@ -2,7 +2,7 @@ import './DirectMessage.scss';
 // import { useShowHomeScreen } from '../../hooks';
 import { t } from '@lingui/core/macro';
 import { useResponsiveLayoutContext } from '../context/ResponsiveLayoutProvider';
-import { Container, Flex, Text, Icon } from '../primitives';
+import { Container, Flex, Icon } from '../primitives';
 
 export const EmptyDirectMessage = () => {
   const { isDesktop, toggleLeftSidebar } = useResponsiveLayoutContext();
@@ -66,7 +66,7 @@ export const EmptyDirectMessage = () => {
                 className="text-accent opacity-70 dark:text-accent mb-4 block mx-auto"
               />
               <Container className="text-lg sm:text-2xl text-center mb-8">
-                <Text className="text-lg sm:text-2xl" align="center">{t`What's on your mind today?`}</Text>
+                <span className="text-lg sm:text-2xl text-center">{t`What's on your mind today?`}</span>
               </Container>
               {/* Show home screen link - commented out for now
               <Flex className="justify-center w-full">

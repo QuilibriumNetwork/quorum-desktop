@@ -3,7 +3,6 @@ import { t } from '@lingui/core/macro';
 import type { Bookmark, Sticker } from '../../api/quorumApi';
 import {
   Flex,
-  Text,
   Button,
   Container,
   Tooltip,
@@ -56,7 +55,7 @@ export const BookmarkItem: React.FC<BookmarkItemProps> = ({
           </Container>
         );
       }
-      return <Text className="message-preview text-muted">{t`[Image]`}</Text>;
+      return <span className="message-preview text-muted">{t`[Image]`}</span>;
     }
 
     if (contentType === 'sticker') {
@@ -73,14 +72,14 @@ export const BookmarkItem: React.FC<BookmarkItemProps> = ({
           </Container>
         );
       }
-      return <Text className="message-preview text-muted">{t`[Sticker]`}</Text>;
+      return <span className="message-preview text-muted">{t`[Sticker]`}</span>;
     }
 
     // Default: text content
     return (
-      <Text className="message-preview">
+      <span className="message-preview">
         {cachedPreview.textSnippet || t`[Empty message]`}
-      </Text>
+      </span>
     );
   };
 
@@ -113,13 +112,13 @@ export const BookmarkItem: React.FC<BookmarkItemProps> = ({
         <Flex justify="between" className="result-meta-container">
           <Flex className="result-meta items-center min-w-0 flex-1 mr-2">
             <Icon name="user" className="result-user-icon flex-shrink-0" />
-            <Text className="result-sender mr-2 truncate flex-shrink min-w-0">
+            <span className="result-sender mr-2 truncate flex-shrink min-w-0">
               {cachedPreview.senderName || t`Unknown User`}
-            </Text>
+            </span>
             <Icon name="calendar-alt" className="result-date-icon flex-shrink-0 ml-1" />
-            <Text className="result-date flex-shrink-0 whitespace-nowrap ml-1">
+            <span className="result-date flex-shrink-0 whitespace-nowrap ml-1">
               {formatMessageDate(cachedPreview.messageDate, compactDate)}
-            </Text>
+            </span>
           </Flex>
           <Flex
             className={`message-actions items-center flex-shrink-0${isTouchDevice() ? ' always-visible' : ''}`}
@@ -161,9 +160,9 @@ export const BookmarkItem: React.FC<BookmarkItemProps> = ({
               name="hashtag"
               className="source-icon flex-shrink-0"
             />
-            <Text className="source-name truncate flex-1">
+            <span className="source-name truncate flex-1">
               {cachedPreview.sourceName}
-            </Text>
+            </span>
           </Flex>
         </Container>
       )}

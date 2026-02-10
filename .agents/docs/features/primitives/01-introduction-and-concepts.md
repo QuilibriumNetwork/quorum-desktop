@@ -134,24 +134,26 @@ gap: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl'
 // Real usage in UserProfile component:
 <Flex gap="sm" align="center">
   <Icon name="user" />
-  <Text variant="strong">User Profile</Text>
+  <span className="text-strong">User Profile</span>
 </Flex>
 ```
 
 ### **Typography Hierarchy**
 
 ```tsx
-// Semantic typography components in Quilibrium
+// Web: Plain HTML elements with CSS typography classes
+<h1 className="text-strong text-xl">Main page title</h1>
+<h2 className="text-strong text-lg">Section title</h2>
+<p className="text-default">Body content</p>
+<span className="text-subtle text-sm">Helper text</span>
+<span className="text-error">Error message</span>
+
+// Native (React Native): Text primitive is required
 <Text variant="strong" size="xl">Main page title</Text>
 <Text variant="strong" size="lg">Section title</Text>
 <Text variant="default">Body content</Text>
 <Text variant="subtle" size="sm">Helper text</Text>
 <Text variant="error">Error message</Text>
-
-// Real usage from SwitchTestScreen:
-<Text size="sm" variant="default">
-  Basic Switch ({basicSwitch ? 'ON' : 'OFF'})
-</Text>
 ```
 
 ---
@@ -197,24 +199,24 @@ gap: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl'
 Our architecture separates **styling** from **layout** for maximum flexibility and consistency:
 
 ```tsx
-// ✅ REAL EXAMPLE: From UserProfile component
+// ✅ REAL EXAMPLE: From UserProfile component (web)
 <Container
   className="user-profile"
   onClick={(e: React.MouseEvent) => e.stopPropagation()}
 >
   <Flex gap="sm" align="center">
     <Icon name="user" />
-    <Text variant="strong">{user.name}</Text>
+    <span className="text-strong">{user.name}</span>
   </Flex>
 
   <Flex gap="xs" align="center">
-    <Text variant="subtle" size="sm">
+    <span className="text-label">
       Address:
-    </Text>
+    </span>
     <ClickToCopyContent text={user.address} tooltipText="Copy address">
-      <Text variant="subtle" className="font-mono">
+      <span className="text-subtle font-mono">
         {user.address.slice(0, 8)}...
-      </Text>
+      </span>
     </ClickToCopyContent>
   </Flex>
 </Container>
@@ -237,11 +239,11 @@ Our architecture separates **styling** from **layout** for maximum flexibility a
 - Justification: justify="start" | "center" | "between" | "around"
 - Responsive behavior and wrapping
 
-#### **Text Components (Content)**
+#### **Text / Typography (Content)**
 
-- Typography and text rendering
-- Built-in spacing props for better mobile experience
-- Semantic variants (strong, subtle, error, etc.)
+- **Native (React Native):** Use the `Text` primitive -- it is required for all text rendering on mobile
+- **Web:** The Text primitive is **not used** on web production code. Instead, use plain HTML elements (`<span>`, `<p>`, `<h1>`, etc.) with CSS typography classes (`.text-strong`, `.text-subtle`, `.text-label`, `.text-small`, `.text-muted`, `.text-error`, etc.)
+- Semantic variants (strong, subtle, error, etc.) are available on both platforms through their respective approaches
 
 ### **Why This Pattern Works**
 
@@ -345,10 +347,16 @@ React Native text handling is different from web. Our Text primitive solves comm
    - CSS classes → component props and semantic variants
 
 3. **Use Semantic Components**
-   - `<p>` → `<Text variant="default">`
-   - `<h2>` → `<Text variant="strong" size="lg">`
-   - `<strong>` → `<Text variant="strong">`
-   - `<small>` → `<Text variant="subtle" size="sm">`
+   - **Web:** Keep plain HTML with CSS typography classes:
+     - `<p className="text-default">` for body text
+     - `<h2 className="text-strong text-lg">` for section titles
+     - `<span className="text-strong">` for bold/strong text
+     - `<span className="text-subtle text-sm">` for helper text
+   - **Native (React Native):** Use the Text primitive:
+     - `<p>` → `<Text variant="default">`
+     - `<h2>` → `<Text variant="strong" size="lg">`
+     - `<strong>` → `<Text variant="strong">`
+     - `<small>` → `<Text variant="subtle" size="sm">`
 
 4. **Test on Mobile**
    - Run in React Native simulator
@@ -360,13 +368,13 @@ React Native text handling is different from web. Our Text primitive solves comm
 You don't need to convert everything at once:
 
 ```tsx
-// ✅ Real example: Mix primitives with existing SCSS during migration
+// ✅ Real example: Mix primitives with existing SCSS during migration (web)
 <div className="user-profile-complex-layout">
   {' '}
   {/* Keep existing SCSS */}
   <Flex gap="sm" align="center">
     <Icon name="user" />
-    <Text variant="strong">{user.name}</Text>
+    <span className="text-strong">{user.name}</span>
   </Flex>
   {/* Use primitive buttons for consistency */}
   <Flex gap="xs">
@@ -388,7 +396,7 @@ You don't need to convert everything at once:
 
 - **Interactive elements**: Button, Input, Select, Modal, Switch
 - **Layout containers**: Flex for consistent spacing
-- **Design system elements**: Text (required on mobile), Icon
+- **Design system elements**: Text (native only -- not used on web), Icon
 
 ### **Consider For:**
 
@@ -421,7 +429,7 @@ You don't need to convert everything at once:
 
 ---
 
-_Last updated: 2026-01-14 - Updated to use unified Flex primitive_
+_Last updated: 2026-02-10 - Text primitive removed from web production code; now native-only_
 
 ---
 

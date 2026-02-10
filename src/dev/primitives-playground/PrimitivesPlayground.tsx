@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef } from 'react';
 import {
   Container,
   Flex,
-  Text,
   Spacer,
   Callout,
   Icon,
@@ -26,7 +25,6 @@ import {
   SelectExamples,
   SpacerExamples,
   SwitchExamples,
-  TextExamples,
   TextAreaExamples,
   ToastExample,
   TooltipExamples,
@@ -49,7 +47,6 @@ const navigationItems = [
   { id: 'select-primitive', label: 'Select', icon: 'chevron-down' },
   { id: 'spacer-primitive', label: 'Spacer', icon: 'minus' },
   { id: 'switch-primitive', label: 'Switch', icon: 'sliders' },
-  { id: 'text-primitive', label: 'Text', icon: 'pencil' },
   { id: 'textarea-primitive', label: 'TextArea', icon: 'memo' },
   { id: 'toast-primitive', label: 'Toast', icon: 'bell' },
   { id: 'tooltip-primitive', label: 'Tooltip', icon: 'message-dots' },
@@ -191,7 +188,6 @@ export const PrimitivesPlayground: React.FC = () => {
                 <SelectExamples />
                 <SpacerExamples />
                 <SwitchExamples />
-                <TextExamples />
                 <TextAreaExamples />
                 <section id="toast-primitive">
                   <ToastExample />

@@ -202,8 +202,8 @@ import { Title, Paragraph, Text } from '../components/primitives';
 #### ✅ How This Would Look With Primitives
 
 ```tsx
-// This shows how the web input could be converted using primitives
-// (UserProfileEdit doesn't have a native version yet)
+// Native equivalent using primitives (Text primitive is native-only)
+// Note: The web version above already uses plain HTML + CSS classes — no migration needed on web
 import { Input, Text, Flex } from '../primitives';
 
 <Flex direction="column" gap="xs">
@@ -313,10 +313,11 @@ import { Button, Icon, Container } from '../primitives';
 
 ### Color System Migration
 
-#### ❌ Web Tailwind Classes
+#### Web Code (Current Approach)
 
 ```tsx
-// From ChannelList component header styling
+// From ChannelList component header styling — this is how web code looks today
+// Web uses plain HTML elements with CSS typography/theme classes
 <div className="space-header bg-surface-1 border-default rounded">
   <div className="space-header-name truncate">
     <span className="font-bold text-strong">Space Name</span>
@@ -326,10 +327,10 @@ import { Button, Icon, Container } from '../primitives';
 </div>
 ```
 
-#### ✅ Native Theme Colors
+#### ✅ Native Equivalent
 
 ```tsx
-// Real examples using Quilibrium's theme system
+// Native version using Text primitive and theme system
 import { Container, Text } from '../primitives';
 
 <Container className="space-header" style={headerStyle}>
@@ -512,7 +513,7 @@ Following these patterns will ensure your components work seamlessly across web 
 
 ---
 
-_Last updated: 2026-01-14 - Updated to use unified Flex primitive_
+_Last updated: 2026-02-10 - Updated to reflect Text primitive removal from web code_
 
 ---
 

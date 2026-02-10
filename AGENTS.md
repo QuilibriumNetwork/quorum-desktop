@@ -118,14 +118,14 @@ if (someCondition) return <SomeComponent />;
 Use primitives for interactive elements:
 
 ```tsx
-import { Button, Input, Modal, Text } from 'src/components/primitives';
+import { Button, Input, Modal } from 'src/components/primitives';
 
 <Button onClick={save}>Save</Button>
 <Input value={name} onChange={setName} />
 <Modal isOpen={open} onClose={close}>...</Modal>
 ```
 
-**When to use primitives**: Always for interactive elements (Button, Input, Modal, Select, Switch). For layout and text, evaluate case-by-case.
+**When to use primitives**: Always for interactive elements (Button, Input, Modal, Select, Switch). For layout, use Flex/Container. For text on web, use plain HTML (`<span>`, `<p>`) with CSS typography classes (`.text-label`, `.text-strong`, `.text-subtle`). The Text primitive is **native-only** — not used in web production code.
 
 **Reference**: [Primitives Guide](.agents/docs/features/primitives/INDEX.md)
 

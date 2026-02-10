@@ -40,7 +40,6 @@ import {
   Button,
   Container,
   Flex,
-  Text,
   Tooltip,
 } from '../primitives';
 import { BookmarksPanel } from '../bookmarks/BookmarksPanel';
@@ -658,10 +657,10 @@ const DirectMessage: React.FC<{}> = () => {
                   />
                 </Flex>
                 <div className="pl-2 flex items-center gap-2 overflow-hidden min-w-0">
-                  <Text className="font-semibold truncate-user-name-chat flex-shrink min-w-0">
+                  <span className="font-semibold truncate-user-name-chat flex-shrink min-w-0">
                     {otherUser.displayName ?? otherUser.address}
-                  </Text>
-                  <Text className="text-subtle flex-shrink-0 hidden xs:block">|</Text>
+                  </span>
+                  <span className="text-subtle flex-shrink-0 hidden xs:block">|</span>
                   <ClickToCopyContent
                     text={address ?? ''}
                     tooltipText={t`Copy address`}
@@ -762,10 +761,10 @@ const DirectMessage: React.FC<{}> = () => {
               </Flex>
               {/* xs and up: horizontal layout with separator */}
               <div className="pl-2 hidden xs:flex items-center gap-2 overflow-hidden min-w-0">
-                <Text className="font-semibold truncate-user-name-chat">
+                <span className="font-semibold truncate-user-name-chat">
                   {otherUser.displayName ?? otherUser.address}
-                </Text>
-                <Text className="text-subtle flex-shrink-0">|</Text>
+                </span>
+                <span className="text-subtle flex-shrink-0">|</span>
                 <ClickToCopyContent
                   text={address ?? ''}
                   tooltipText={t`Copy address`}
@@ -781,9 +780,9 @@ const DirectMessage: React.FC<{}> = () => {
               </div>
               {/* Below xs: vertical layout - name above address */}
               <div className="pl-2 flex xs:hidden flex-col min-w-0">
-                <Text size="sm" className="font-semibold truncate">
+                <span className="text-label font-semibold truncate">
                   {otherUser.displayName ?? otherUser.address}
-                </Text>
+                </span>
                 <ClickToCopyContent
                   text={address ?? ''}
                   tooltipText={t`Copy address`}

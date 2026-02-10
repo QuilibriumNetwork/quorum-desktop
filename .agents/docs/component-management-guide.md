@@ -119,7 +119,8 @@ import { Button, Input, TextArea, Select } from '../primitives';
 import { Modal, Switch, RadioGroup } from '../primitives';
 
 // Display
-import { Text, Icon, ColorSwatch, Tooltip } from '../primitives';
+import { Icon, ColorSwatch, Tooltip } from '../primitives';
+// Note: Text primitive is native-only. On web, use <span>/<p> with CSS typography classes.
 ```
 
 ### Developer Guidelines by Approach
@@ -131,7 +132,7 @@ function UserCard({ user }) {
   return (
     <Container className="p-4 bg-surface-0 rounded-lg">
       <FlexBetween>
-        <Text variant="strong">{user.name}</Text>
+        <span className="text-strong">{user.name}</span>
         <Button size="small" onClick={onEdit}>
           Edit
         </Button>
@@ -149,7 +150,7 @@ function ComplexComponent() {
   return (
     <Container className="p-4">
       {/* Use primitives for interactive/theme elements */}
-      <Text variant="strong">Settings</Text>
+      <span className="text-strong">Settings</span>
       <Button onClick={onSave}>Save</Button>
 
       {/* Raw HTML for specialized needs */}
@@ -186,7 +187,7 @@ Follow the guidelines in [when-to-use-primitives.md](./when-to-use-primitives.md
 
 - **Always**: Interactive elements (Button, Input, Modal)
 - **Usually**: Layout containers with theme colors
-- **Sometimes**: Text elements needing semantic colors
+- **Never on web**: Text primitive (use plain HTML + CSS typography classes instead)
 - **Almost Never**: Complex animations, third-party wrappers, performance-critical sections
 
 ## Creating New Primitives

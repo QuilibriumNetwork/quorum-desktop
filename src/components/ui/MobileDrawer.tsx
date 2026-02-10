@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { t } from '@lingui/core/macro';
-import { Text, Button, OverlayBackdrop, Portal } from '../primitives';
+import { Button, OverlayBackdrop, Portal } from '../primitives';
 import './MobileDrawer.scss';
 
 export interface MobileDrawerProps {
@@ -158,12 +158,11 @@ const MobileDrawer: React.FC<MobileDrawerProps> = ({
           <div className="mobile-drawer__header-row">
             <div className="mobile-drawer__title-area">
               {title && (
-                <Text
-                  size="sm"
-                  className="mobile-drawer__title"
+                <span
+                  className="text-label mobile-drawer__title"
                 >
                   {title}
-                </Text>
+                </span>
               )}
             </div>
 

@@ -3,7 +3,7 @@ type: doc
 title: Primitives Quick Reference
 status: done
 created: 2026-01-09T00:00:00.000Z
-updated: 2025-10-14T00:00:00.000Z
+updated: 2026-02-10T00:00:00.000Z
 ---
 
 # Primitives Quick Reference
@@ -15,7 +15,9 @@ Fast lookup guide for all primitive components with essential props and examples
 
 ## 📝 Text & Typography
 
-### Text (Cross-Platform)
+### Text (Native Only)
+
+> **Note:** The Text primitive is for native (React Native) code only. On web, use plain HTML elements with CSS typography classes. See the [Web Alternative](#web-alternative-css-typography-classes) section below.
 
 ```tsx
 <Text
@@ -31,7 +33,7 @@ Fast lookup guide for all primitive components with essential props and examples
 </Text>
 ```
 
-**Examples:**
+**Examples (native only):**
 ```tsx
 <Text variant="strong" size="lg">Page Title</Text>
 <Text>Default body text</Text>
@@ -41,7 +43,9 @@ Fast lookup guide for all primitive components with essential props and examples
 
 ### Web Alternative: CSS Typography Classes
 
-For web-only code, prefer plain HTML with CSS classes:
+> **This is now the standard approach for web.** The Text primitive has been fully removed from web production code. All web code must use plain HTML elements (`<span>`, `<p>`, `<h1>`, `<a>`, etc.) with CSS typography classes.
+
+For web code, use plain HTML with CSS classes:
 
 ```tsx
 // Instead of Text primitive (simpler, no abstraction)
@@ -185,7 +189,7 @@ For web-only code, prefer plain HTML with CSS classes:
   imageQuality={number} // Native only (0-1)
   allowsEditing={boolean} // Native only
 >
-  <Text>Drop files here or click to upload</Text>
+  <span>Drop files here or click to upload</span>
 </FileUpload>
 ```
 
@@ -205,34 +209,34 @@ Unified flex layout container (replaces FlexRow, FlexColumn, FlexCenter, FlexBet
   align="start|end|center|stretch|baseline"
   wrap={boolean}
 >
-  <Text>Item 1</Text>
-  <Text>Item 2</Text>
+  <span>Item 1</span>
+  <span>Item 2</span>
 </Flex>
 ```
 
-**Common Patterns:**
+**Common Patterns (web):**
 ```tsx
 // Horizontal row (default)
 <Flex gap="md">
-  <Text>Left</Text>
-  <Text>Right</Text>
+  <span>Left</span>
+  <span>Right</span>
 </Flex>
 
 // Vertical column
 <Flex direction="column" gap="md">
-  <Text>Top</Text>
-  <Text>Bottom</Text>
+  <span>Top</span>
+  <span>Bottom</span>
 </Flex>
 
 // Space between (like FlexBetween)
 <Flex justify="between">
-  <Text>Left</Text>
-  <Text>Right</Text>
+  <span>Left</span>
+  <span>Right</span>
 </Flex>
 
 // Centered (like FlexCenter)
 <Flex justify="center" align="center">
-  <Text>Centered</Text>
+  <span>Centered</span>
 </Flex>
 ```
 
@@ -261,7 +265,7 @@ Unified flex layout container (replaces FlexRow, FlexColumn, FlexCenter, FlexBet
   accessibilityRole="button" // Native only
   accessibilityHint="hint" // Native only
 >
-  <Text>Container content</Text>
+  <span>Container content</span>
 </Container>
 ```
 
@@ -297,7 +301,7 @@ Unified flex layout container (replaces FlexRow, FlexColumn, FlexCenter, FlexBet
   onMomentumScrollEnd={() => {}} // Native only
   refreshControl={RefreshControl} // Native only
 >
-  <Text>Scrollable content</Text>
+  <span>Scrollable content</span>
 </ScrollContainer>
 ```
 
@@ -342,7 +346,7 @@ Unified flex layout container (replaces FlexRow, FlexColumn, FlexCenter, FlexBet
   closeOnBackdrop={boolean}
   showCloseButton={boolean}
 >
-  <Text>Modal content</Text>
+  <span>Modal content</span>
 </Modal>
 ```
 
@@ -360,7 +364,7 @@ Unified flex layout container (replaces FlexRow, FlexColumn, FlexCenter, FlexBet
   animationDuration={300} // ms
   closeOnEscape={boolean}
 >
-  <Text>Modal content</Text>
+  <span>Modal content</span>
 </ModalContainer>
 ```
 
@@ -376,7 +380,7 @@ Unified flex layout container (replaces FlexRow, FlexColumn, FlexCenter, FlexBet
   className="css-classes"
   closeOnBackdropClick={boolean} // Default: true
 >
-  <Text>Content rendered on top of backdrop</Text>
+  <span>Content rendered on top of backdrop</span>
 </OverlayBackdrop>
 ```
 
@@ -455,7 +459,7 @@ Unified flex layout container (replaces FlexRow, FlexColumn, FlexCenter, FlexBet
   className="css-classes" // Web only
   testID="test-id"
 >
-  <Text>Callout message content</Text>
+  Callout message content
 </Callout>
 ```
 
@@ -587,7 +591,7 @@ theme.colors.utilities.info; // Info
 <Flex justify="between" align="center">
   <Flex gap="sm" align="center">
     <Icon name="settings" />
-    <Text weight="semibold">Settings</Text>
+    <span className="font-semibold">Settings</span>
   </Flex>
   <Button type="subtle" iconName="close" iconOnly onClick={onClose} />
 </Flex>
@@ -602,8 +606,8 @@ theme.colors.utilities.info; // Info
   style={{ borderRadius: 12, marginBottom: 16 }}
 >
   <Flex direction="column" gap="md">
-    <Text variant="strong" size="lg">Card Title</Text>
-    <Text>Card content goes here</Text>
+    <span className="text-strong text-lg">Card Title</span>
+    <span>Card content goes here</span>
     <Button type="primary">Action</Button>
   </Flex>
 </Container>
@@ -615,7 +619,7 @@ theme.colors.utilities.info; // Info
 {
   loading ? (
     <Flex justify="center" align="center" style={{ padding: 20 }}>
-      <Text variant="subtle">Loading...</Text>
+      <span className="text-subtle">Loading...</span>
     </Flex>
   ) : (
     <Flex direction="column" gap="md">
@@ -646,10 +650,10 @@ theme.colors.utilities.info; // Info
   >
     <Flex direction="column" gap="sm" align="center">
       <Icon name="upload" size="lg" />
-      <Text>Drop files here or click to upload</Text>
-      <Text variant="subtle" size="sm">
+      <span>Drop files here or click to upload</span>
+      <span className="text-label">
         Max 5MB per file
-      </Text>
+      </span>
     </Flex>
   </Container>
 </FileUpload>
@@ -671,11 +675,11 @@ theme.colors.utilities.info; // Info
   >
     <Flex direction="column" gap="md">
       <Flex justify="between">
-        <Text variant="strong" size="lg">Confirmation</Text>
+        <span className="text-strong text-lg">Confirmation</span>
         <Button type="subtle" iconName="close" iconOnly onClick={closeModal} />
       </Flex>
       <Spacer size="sm" />
-      <Text>Are you sure you want to continue?</Text>
+      <span>Are you sure you want to continue?</span>
       <Flex gap="sm" justify="end">
         <Button type="secondary" onClick={closeModal}>
           Cancel
@@ -699,14 +703,14 @@ theme.colors.utilities.info; // Info
 
   <Callout variant="warning" layout="minimal">
     <Flex direction="column" gap="xs">
-      <Text weight="semibold">Connection Issues Detected</Text>
-      <Text size="sm">Some features may not work properly until connection is restored.</Text>
+      <span className="font-semibold">Connection Issues Detected</span>
+      <span className="text-label">Some features may not work properly until connection is restored.</span>
     </Flex>
   </Callout>
 
   <Callout variant="info" size="xs">
     <Flex gap="sm" align="center">
-      <Text>New version available</Text>
+      <span>New version available</span>
       <Button type="light" size="small" onClick={updateApp}>Update</Button>
     </Flex>
   </Callout>
@@ -722,16 +726,17 @@ theme.colors.utilities.info; // Info
 | `<div className="flex">`                  | `<Flex>` or `<Flex direction="column">`                  |
 | `<View style={{ flexDirection: 'row' }}>` | `<Flex>`                                                 |
 | `<p>Text content</p>` (mobile)            | `<Text>Text content</Text>`                              |
+| `<Text variant="subtle">label</Text>` (web) | `<span className="text-subtle">label</span>`          |
 | `<button onClick={}>`                     | `<Button onClick={}>`                                    |
 | `<input type="file" />`                   | `<FileUpload onFilesSelected={}>`                        |
 | `<div style={{ padding: 16 }}>`           | `<Container padding="md">`                               |
 | Manual margin spacing between elements    | `<Spacer size="md" />`                                   |
 | Custom modal backdrop implementation      | `<ModalContainer>` or `<OverlayBackdrop>`                |
 | Using Portal for modals                   | Use ModalProvider or Layout-Level rendering instead      |
-| `style={{ color: '#000' }}` on Text       | `variant="strong"` or `color={theme.colors.text.strong}` |
+| `style={{ color: '#000' }}` on Text       | Use CSS classes on web, `variant` prop on native         |
 | Manual margin/padding for spacing         | Use Flex gap props or semantic components                |
 | CSS classes in React Native               | Use component props                                      |
-| Raw text outside Text components          | Always wrap text in Text components                      |
+| Raw text outside Text components (mobile only) | Always wrap text in Text components on native       |
 | Custom alert/notification components      | `<Callout variant="info\|success\|warning\|error">`      |
 | Direct `createPortal()` usage             | Use `<Portal>` component for consistency                 |
 
@@ -749,7 +754,7 @@ theme.colors.utilities.info; // Info
   <Flex direction="column" gap="md">
     <Flex gap="sm" align="center">
       <Icon name="user" />
-      <Text>Content</Text>
+      <span>Content</span>
     </Flex>
   </Flex>
 </Container>
@@ -758,7 +763,7 @@ theme.colors.utilities.info; // Info
 <View style={{ flexDirection: 'column', gap: 16, backgroundColor: '...' }}>
   <View style={{ flexDirection: 'row', alignItems: 'center' }}>
     <Icon name="user" />
-    <Text>Content</Text>
+    <span>Content</span>
   </View>
 </View>
 ```
@@ -781,7 +786,7 @@ theme.colors.utilities.info; // Info
 
 ---
 
-_Last updated: 2026-01-14 - Consolidated Flex primitives, removed typography prop from Text, added CSS class alternative for web_
+_Last updated: 2026-02-10 - Text primitive removed from web production code; now native-only. All web examples updated to use plain HTML + CSS classes._
 
 ---
 

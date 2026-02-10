@@ -1,5 +1,5 @@
 import React from 'react';
-import { Container, Text, Flex, Icon } from '../components/primitives';
+import { Container, Flex, Icon } from '../components/primitives';
 
 interface DevNavItem {
   name: string;

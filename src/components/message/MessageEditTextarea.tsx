@@ -1,7 +1,7 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { InfiniteData } from '@tanstack/react-query';
-import { Container, Flex, Text } from '../primitives';
+import { Container, Flex } from '../primitives';
 import { MarkdownToolbar } from './MarkdownToolbar';
 import { MentionDropdown } from './MentionDropdown';
 import { calculateToolbarPosition } from '../../utils/toolbarPositioning';
@@ -709,7 +709,7 @@ export function MessageEditTextarea({
 
       {/* Action Links */}
       <Flex className="message-edit-actions" justify="start" align="start">
-        <Text variant="muted" size="sm" className="message-edit-hint">
+        <span className="text-label text-muted message-edit-hint">
           {t`Esc to`}{' '}
           <span
             className="link"
@@ -747,7 +747,7 @@ export function MessageEditTextarea({
             {t`SAVE`}
           </span>
           {' - '}{t`Shift+Enter for new line`}
-        </Text>
+        </span>
       </Flex>
     </Container>
   );

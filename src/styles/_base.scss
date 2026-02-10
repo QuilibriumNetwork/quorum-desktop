@@ -39,6 +39,9 @@
   /* Mobile-first: text-xs-responsive starts at text-sm for readability on phones */
   --text-xs-responsive: #{$text-sm}; /* 14px on mobile */
   --text-xs-responsive-lh: #{$text-sm-lh}; /* 20px line-height on mobile */
+  /* Mobile-first: text-sm-responsive starts at text-base for readability on phones */
+  --text-sm-responsive: #{$text-base}; /* 16px on mobile */
+  --text-sm-responsive-lh: #{$text-base-lh}; /* 24px line-height on mobile */
 
   /* === MEDIA QUERIES === */
   /* All nested rules grouped at the end to avoid Sass mixed-decls deprecation */
@@ -53,10 +56,12 @@
     font-size-adjust: 0.5;
   }
 
-  /* Desktop: scale down to text-xs above 480px */
+  /* Desktop: scale down responsive sizes above 480px */
   @media (min-width: $screen-xs) {
     --text-xs-responsive: #{$text-xs}; /* 12px on desktop */
     --text-xs-responsive-lh: #{$text-xs-lh}; /* 16px line-height on desktop */
+    --text-sm-responsive: #{$text-sm}; /* 14px on desktop */
+    --text-sm-responsive-lh: #{$text-sm-lh}; /* 20px line-height on desktop */
   }
 
   @media (max-width: 360px) {

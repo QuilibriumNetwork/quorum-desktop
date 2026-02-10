@@ -1,7 +1,6 @@
 import React from 'react';
 import {
   Container,
-  Text,
   Icon,
   Flex,
 } from '../primitives';
@@ -21,17 +20,17 @@ export const ChannelPreview: React.FC<ChannelPreviewProps> = ({
         {/* Channel name with icon */}
         <Flex align="center" gap="xs">
           <Icon name="hashtag" size="xs" />
-          <Text variant="main" size="sm">
+          <span className="text-label-strong">
             {channelName}
-          </Text>
+          </span>
         </Flex>
 
         {/* Message count */}
         <Flex align="center" gap="xs">
           <Icon name="message" size="xs" />
-          <Text variant="main" size="sm">
+          <span className="text-label-strong">
             {messageCount} message{messageCount !== 1 ? 's' : ''}
-          </Text>
+          </span>
         </Flex>
       </Flex>
     </Container>

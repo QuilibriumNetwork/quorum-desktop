@@ -5,7 +5,6 @@ import type { Message as MessageType, Channel, Sticker, Role } from '../../api/q
 import MessagePreview from './MessagePreview';
 import {
   Flex,
-  Text,
   Button,
   Container,
   Tooltip,
@@ -72,13 +71,13 @@ const PinnedMessageItem: React.FC<PinnedMessageItemProps> = ({
         <Flex justify="between" className="result-meta-container">
           <Flex className="result-meta items-center min-w-0 flex-1 mr-2">
             <Icon name="user" className="result-user-icon flex-shrink-0" />
-            <Text className="result-sender mr-2 truncate flex-shrink min-w-0">
+            <span className="result-sender mr-2 truncate flex-shrink min-w-0">
               {sender?.displayName || t`Unknown User`}
-            </Text>
+            </span>
             <Icon name="calendar-alt" className="result-date-icon flex-shrink-0 ml-1" />
-            <Text className="result-date flex-shrink-0 whitespace-nowrap ml-1">
+            <span className="result-date flex-shrink-0 whitespace-nowrap ml-1">
               {formatMessageDate(message.createdDate, compactDate)}
-            </Text>
+            </span>
           </Flex>
           <Flex
             className={`message-actions items-center flex-shrink-0${isTouchDevice() ? ' always-visible' : ''}`}
@@ -180,7 +179,7 @@ export const PinnedMessagesPanel: React.FC<PinnedMessagesPanelProps> = ({
       return (
         <Flex justify="center" align="center" className="pinned-loading-state">
           <Icon name="spinner" className="loading-icon icon-spin" />
-          <Text className="loading-message">{t`Loading pinned messages...`}</Text>
+          <span className="loading-message">{t`Loading pinned messages...`}</span>
         </Flex>
       );
     }
@@ -188,12 +187,12 @@ export const PinnedMessagesPanel: React.FC<PinnedMessagesPanelProps> = ({
     return (
       <Flex justify="center" align="center" className="pinned-empty-state">
         <Icon name="pin" size="3xl" className="empty-icon" />
-        <Text className="empty-message">{t`No pinned messages yet`}</Text>
-        <Text className="empty-hint">
+        <span className="empty-message">{t`No pinned messages yet`}</span>
+        <span className="empty-hint">
           {canPinMessages
             ? t`Pin important messages to keep them easily accessible`
             : t`Important messages will be pinned here`}
-        </Text>
+        </span>
       </Flex>
     );
   };

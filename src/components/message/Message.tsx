@@ -19,7 +19,6 @@ import { useParams } from 'react-router';
 import { InviteLink } from './InviteLink';
 import {
   Modal,
-  Text,
   Container,
   Flex,
   Icon,
@@ -510,12 +509,12 @@ export const Message = React.memo(
                     size={32}
                     className="message-reply-sender-icon flex-shrink-0"
                   />
-                  <Text className="message-reply-sender-name flex-shrink-0 truncate-user-name-chat">
+                  <span className="message-reply-sender-name flex-shrink-0 truncate-user-name-chat">
                     {mapSenderToUser(reply.content.senderId).displayName}
-                  </Text>
-                  <Text className="message-reply-text flex-1 min-w-0">
+                  </span>
+                  <span className="message-reply-text flex-1 min-w-0">
                     {replyTextWithNames}
-                  </Text>
+                  </span>
                 </Container>
               );
             } else {
@@ -525,12 +524,11 @@ export const Message = React.memo(
         })()}
         {['join', 'leave', 'kick'].includes(message.content.type) && (
           <Flex className="px-4 py-2 italic items-center min-w-0" align="center">
-            <Text
-              variant={message.content.type === 'kick' ? 'danger' : 'subtle'}
-              className="flex items-center min-w-0 flex-1"
+            <span
+              className={`flex items-center min-w-0 flex-1 ${message.content.type === 'kick' ? 'text-danger' : 'text-subtle'}`}
             >
               {formatEventMessage(sender.displayName, message.content.type)}
-            </Text>
+            </span>
           </Flex>
         )}
         {!['join', 'leave', 'kick'].includes(message.content.type) && (
@@ -730,9 +728,9 @@ export const Message = React.memo(
                 <>
                   {/* Desktop layout: horizontal row with username and timestamp */}
                   <Flex align="center" className="items-center min-w-0 hidden xs:flex">
-                    <Text className="message-sender-name truncate-user-name-chat flex-shrink min-w-0">
+                    <span className="message-sender-name truncate-user-name-chat flex-shrink min-w-0">
                       {sender.displayName}
-                    </Text>
+                    </span>
                     {message.isPinned && (
                       <Tooltip
                         id={`pin-indicator-${message.messageId}`}
@@ -767,7 +765,7 @@ export const Message = React.memo(
                         />
                       </Tooltip>
                     )}
-                    <Text className="pl-2">
+                    <span className="pl-2">
                       {!message.signature && (
                         <Tooltip
                           id={`signature-warning-${message.messageId}`}
@@ -783,13 +781,13 @@ export const Message = React.memo(
                           />
                         </Tooltip>
                       )}
-                    </Text>
+                    </span>
                     <Flex align="center" gap="xs" className="flex-shrink-0 min-w-20 mr-4">
-                      <Text className="message-timestamp">{displayedTimestmap}</Text>
+                      <span className="message-timestamp">{displayedTimestmap}</span>
                       {isEdited && (
-                        <Text variant="muted" size="xs">
+                        <span className="text-small text-muted">
                           {t`(edited)`}
-                        </Text>
+                        </span>
                       )}
                     </Flex>
                   </Flex>
@@ -798,19 +796,19 @@ export const Message = React.memo(
                   <Flex direction="column" className="xs:hidden items-start">
                     {/* Timestamp row on mobile - aligned to left edge */}
                     <Flex align="center" gap="xs" className="mb-1 flex-shrink-0 min-w-20 mr-4">
-                      <Text className="message-timestamp">{displayedTimestmap}</Text>
+                      <span className="message-timestamp">{displayedTimestmap}</span>
                       {isEdited && (
-                        <Text variant="muted" size="xs">
+                        <span className="text-small text-muted">
                           {t`(edited)`}
-                        </Text>
+                        </span>
                       )}
                     </Flex>
 
                     {/* Username row on mobile */}
                     <Flex align="center" className="items-center min-w-0">
-                      <Text className="message-sender-name truncate-user-name-chat flex-shrink min-w-0">
+                      <span className="message-sender-name truncate-user-name-chat flex-shrink min-w-0">
                         {sender.displayName}
-                      </Text>
+                      </span>
                       {message.isPinned && (
                         <Tooltip
                           id={`pin-indicator-mobile-${message.messageId}`}
@@ -845,7 +843,7 @@ export const Message = React.memo(
                           />
                         </Tooltip>
                       )}
-                      <Text className="pl-2">
+                      <span className="pl-2">
                         {!message.signature && (
                           <Tooltip
                             id={`signature-warning-mobile-${message.messageId}`}
@@ -861,7 +859,7 @@ export const Message = React.memo(
                             />
                           </Tooltip>
                         )}
-                      </Text>
+                      </span>
                     </Flex>
                   </Flex>
                 </>
@@ -974,9 +972,9 @@ export const Message = React.memo(
                                 : 'message-mentions-user';
                             return (
                               <React.Fragment key={tokenData.key}>
-                                <Text className={mentionClass}>
+                                <span className={mentionClass}>
                                   {tokenData.displayName}
-                                </Text>{' '}
+                                </span>{' '}
                               </React.Fragment>
                             );
                           }
@@ -1016,14 +1014,13 @@ export const Message = React.memo(
 
                             return (
                               <React.Fragment key={tokenData.key}>
-                                <Text
-                                  as="a"
+                                <a
                                   href={tokenData.url}
                                   target="_blank"
                                   referrerPolicy="no-referrer"
                                 >
                                   {truncatedText}
-                                </Text>{' '}
+                                </a>{' '}
                               </React.Fragment>
                             );
                           }
@@ -1031,8 +1028,7 @@ export const Message = React.memo(
                           if (tokenData.type === 'channel-mention') {
                             return (
                               <React.Fragment key={tokenData.key}>
-                                <Text
-                                  as="span"
+                                <span
                                   className={`message-mentions-channel ${tokenData.isInteractive ? 'interactive' : 'non-interactive'}`}
                                   onClick={tokenData.isInteractive ? () => {
                                     if (onChannelClick) {
@@ -1041,7 +1037,7 @@ export const Message = React.memo(
                                   } : undefined}
                                 >
                                   {tokenData.displayName}
-                                </Text>{' '}
+                                </span>{' '}
                               </React.Fragment>
                             );
                           }
@@ -1049,8 +1045,7 @@ export const Message = React.memo(
                           if (tokenData.type === 'message-link') {
                             return (
                               <React.Fragment key={tokenData.key}>
-                                <Text
-                                  as="span"
+                                <span
                                   className={`message-mentions-message-link ${tokenData.isInteractive ? 'interactive' : 'non-interactive'}`}
                                   onClick={tokenData.isInteractive ? () => {
                                     // Navigate to the message in the channel
@@ -1062,7 +1057,7 @@ export const Message = React.memo(
                                   #{tokenData.channelName}
                                   <span className="message-mentions-message-link__separator"> › </span>
                                   <Icon name="message" size="sm" variant="filled" className="message-mentions-message-link__icon" />
-                                </Text>{' '}
+                                </span>{' '}
                               </React.Fragment>
                             );
                           }
@@ -1203,18 +1198,15 @@ export const Message = React.memo(
               {message.sendStatus === 'sending' && (
                 <Flex align="center" gap="xs" className="message-status sending pt-1">
                   <Icon name="clock" size="xs" />
-                  <Text size="sm" variant="warning">{t`Sending...`}</Text>
+                  <span className="text-label text-warning">{t`Sending...`}</span>
                 </Flex>
               )}
               {message.sendStatus === 'failed' && (
                 <Flex align="center" gap="xs" className="message-status failed pt-1">
                   <Icon name="warning" size="xs" />
-                  <Text size="sm" variant="danger">
+                  <span className="text-label text-danger">
                     {t`Failed to send.`}{' '}
-                    <Text
-                      as="span"
-                      size="sm"
-                      variant="danger"
+                    <span
                       className="message-status__retry"
                       onClick={(e: React.MouseEvent) => {
                         e.stopPropagation();
@@ -1222,8 +1214,8 @@ export const Message = React.memo(
                       }}
                     >
                       {t`Retry`}
-                    </Text>
-                  </Text>
+                    </span>
+                  </span>
                   {message.sendError && (
                     <Tooltip
                       id={`send-error-${message.messageId}`}

@@ -5,7 +5,6 @@ import {
   Input,
   Container,
   Flex,
-  Text,
   Spacer,
 } from '../primitives';
 import { IconPicker } from '../space/IconPicker';
@@ -122,21 +121,20 @@ const FolderEditorModal: React.FC<FolderEditorModalProps> = ({
               direction="vertical"
             />
             <Flex justify="center" align="center">
-              <Text
-                variant="danger"
-                className="cursor-pointer hover:text-danger-hover"
+              <span
+                className="text-danger cursor-pointer hover:text-danger-hover"
                 onClick={handleDelete}
               >
                 {deleteConfirmationStep === 0
                   ? t`Delete Folder`
                   : t`Click again to confirm`}
-              </Text>
+              </span>
             </Flex>
             {spaceCount > 0 && deleteConfirmationStep === 0 && (
               <Flex justify="center" align="center" className="mt-2">
-                <Text variant="subtle" size="xs">
+                <span className="text-small">
                   <Trans>Your Spaces will NOT be deleted</Trans>
-                </Text>
+                </span>
               </Flex>
             )}
           </>

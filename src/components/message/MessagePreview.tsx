@@ -1,6 +1,6 @@
 import React from 'react';
 import { Message as MessageType, Sticker, Role, Channel } from '../../api/quorumApi';
-import { Container, Text, Flex, Spacer, Icon } from '../primitives';
+import { Container, Flex, Spacer, Icon } from '../primitives';
 import { t } from '@lingui/core/macro';
 import { useMessageFormatting } from '../../hooks/business/messages/useMessageFormatting';
 import { YouTubeEmbed } from '../ui/YouTubeEmbed';
@@ -110,7 +110,7 @@ const renderPreviewTextWithSpecialTokens = (
       } else if (tokenData.type === 'invite') {
         renderedTokens.push(
           <React.Fragment key={tokenData.key}>
-            <Text className="text-accent">[Invite Link]</Text>{' '}
+            <span className="text-accent">[Invite Link]</span>{' '}
           </React.Fragment>
         );
       } else if (tokenData.type === 'message-link') {
@@ -203,10 +203,10 @@ export const MessagePreview: React.FC<MessagePreviewProps> = ({
 
   // Render message content with actual images and stickers
   const renderMessageContent = () => {
-    if (!message.content) return <Text variant="subtle" size="sm">{t`[Empty message]`}</Text>;
+    if (!message.content) return <span className="text-label">{t`[Empty message]`}</span>;
 
     const contentData = formatting.getContentData();
-    if (!contentData) return <Text variant="subtle" size="sm">{t`[Message]`}</Text>;
+    if (!contentData) return <span className="text-label">{t`[Message]`}</span>;
 
     // Handle embed content (images/videos)
     if (contentData.type === 'embed') {
@@ -284,7 +284,7 @@ export const MessagePreview: React.FC<MessagePreviewProps> = ({
       );
     }
 
-    return <Text variant="subtle" size="sm">{t`[Message]`}</Text>;
+    return <span className="text-label">{t`[Message]`}</span>;
   };
 
   return (
@@ -297,9 +297,9 @@ export const MessagePreview: React.FC<MessagePreviewProps> = ({
         {!hideHeader && (
           <Flex align="center" className="dropdown-result-meta min-w-0">
             <Icon name="user" className="dropdown-result-user-icon flex-shrink-0" />
-            <Text className="dropdown-result-sender mr-4 truncate-user-name flex-shrink min-w-0">{getDisplayName()}</Text>
+            <span className="dropdown-result-sender mr-4 truncate-user-name flex-shrink min-w-0">{getDisplayName()}</span>
             <Icon name="calendar-alt" className="dropdown-result-date-icon flex-shrink-0" />
-            <Text className="dropdown-result-date">{formattedTimestamp}</Text>
+            <span className="dropdown-result-date">{formattedTimestamp}</span>
           </Flex>
         )}
 

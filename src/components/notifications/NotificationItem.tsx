@@ -1,5 +1,5 @@
 import React from 'react';
-import { Icon, Flex, Container, Text } from '../primitives';
+import { Icon, Flex, Container } from '../primitives';
 import { TouchAwareListItem } from '../ui';
 import { useSearchResultFormatting } from '../../hooks/business/search';
 import { useMessageFormatting } from '../../hooks/business/messages/useMessageFormatting';
@@ -128,13 +128,13 @@ export const NotificationItem: React.FC<NotificationItemProps> = ({
       <Flex justify="between" className="notification-header">
         <Flex className="notification-meta min-w-0">
           <Icon name="hashtag" className="notification-channel-icon flex-shrink-0" />
-          <Text className="notification-channel mr-2 truncate-channel-name flex-shrink min-w-0">{channelName}</Text>
+          <span className="notification-channel mr-2 truncate-channel-name flex-shrink min-w-0">{channelName}</span>
           <Icon name={notificationIcon} className="notification-mention-type-icon flex-shrink-0" />
-          <Text className="notification-sender truncate-user-name flex-shrink min-w-0">{displayName}</Text>
+          <span className="notification-sender truncate-user-name flex-shrink min-w-0">{displayName}</span>
         </Flex>
         <Flex className="notification-meta flex-shrink-0 whitespace-nowrap">
           <Icon name="calendar-alt" className="notification-date-icon flex-shrink-0" />
-          <Text className="notification-date">{formattedDate}</Text>
+          <span className="notification-date">{formattedDate}</span>
         </Flex>
       </Flex>
 
