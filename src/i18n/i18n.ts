@@ -17,6 +17,51 @@
 
 import { i18n } from '@lingui/core';
 import locales, { defaultLocale } from './locales';
+import dayjs from '../utils/dayjs';
+
+// Day.js locale loaders — dynamic import loads only the locale needed
+const dayjsLocaleLoaders: Record<string, () => Promise<unknown>> = {
+  ar: () => import('dayjs/locale/ar'),
+  cs: () => import('dayjs/locale/cs'),
+  da: () => import('dayjs/locale/da'),
+  de: () => import('dayjs/locale/de'),
+  el: () => import('dayjs/locale/el'),
+  es: () => import('dayjs/locale/es'),
+  fi: () => import('dayjs/locale/fi'),
+  fr: () => import('dayjs/locale/fr'),
+  he: () => import('dayjs/locale/he'),
+  id: () => import('dayjs/locale/id'),
+  it: () => import('dayjs/locale/it'),
+  ja: () => import('dayjs/locale/ja'),
+  ko: () => import('dayjs/locale/ko'),
+  nb: () => import('dayjs/locale/nb'),
+  nl: () => import('dayjs/locale/nl'),
+  pl: () => import('dayjs/locale/pl'),
+  pt: () => import('dayjs/locale/pt'),
+  ro: () => import('dayjs/locale/ro'),
+  ru: () => import('dayjs/locale/ru'),
+  sk: () => import('dayjs/locale/sk'),
+  sl: () => import('dayjs/locale/sl'),
+  sr: () => import('dayjs/locale/sr'),
+  sv: () => import('dayjs/locale/sv'),
+  th: () => import('dayjs/locale/th'),
+  tr: () => import('dayjs/locale/tr'),
+  uk: () => import('dayjs/locale/uk'),
+  vi: () => import('dayjs/locale/vi'),
+  'zh-cn': () => import('dayjs/locale/zh-cn'),
+  'zh-tw': () => import('dayjs/locale/zh-tw'),
+};
+
+/** Maps Lingui locale codes to Day.js locale codes */
+function mapToDayjsLocale(linguiLocale: string): string {
+  const map: Record<string, string> = {
+    'en-PI': 'en',
+    no: 'nb',
+    'zh-CN': 'zh-cn',
+    'zh-TW': 'zh-tw',
+  };
+  return map[linguiLocale] || linguiLocale.toLowerCase();
+}
 
 export function getUserLocale() {
   const storedLocale = localStorage.getItem('language');
@@ -47,4 +92,10 @@ export async function dynamicActivate(locale: string) {
   const { messages } = await import(`./${locale}/messages.ts`);
   i18n.load(locale, messages);
   i18n.activate(locale);
+
+  // Sync Day.js locale for translated date/time strings
+  const dayjsLocale = mapToDayjsLocale(locale);
+  const loader = dayjsLocaleLoaders[dayjsLocale];
+  if (loader) await loader();
+  dayjs.locale(dayjsLocale);
 }

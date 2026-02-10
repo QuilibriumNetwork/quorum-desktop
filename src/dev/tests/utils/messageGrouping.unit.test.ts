@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import * as moment from 'moment-timezone';
+import dayjs from '../../../utils/dayjs';
 import {
   shouldShowDateSeparator,
   getStartOfDay,
@@ -42,24 +42,19 @@ describe('messageGrouping utilities', () => {
     } as any);
   });
 
-  const now = moment.tz(
-    '2024-11-10 15:30:00',
-    'YYYY-MM-DD HH:mm:ss',
-    testTimezone
-  );
+  const now = dayjs.tz('2024-11-10 15:30:00', testTimezone);
   const today = now.valueOf();
-  const yesterday = now.clone().subtract(1, 'day').valueOf();
-  const twoDaysAgo = now.clone().subtract(2, 'days').valueOf();
-  const lastWeek = now.clone().subtract(6, 'days').valueOf();
-  const lastMonth = now.clone().subtract(1, 'month').valueOf();
+  const yesterday = now.subtract(1, 'day').valueOf();
+  const lastWeek = now.subtract(6, 'day').valueOf();
+  const lastMonth = now.subtract(1, 'month').valueOf();
 
   describe('getStartOfDay', () => {
     it('should return start of day timestamp', () => {
-      const timestamp = moment
-        .tz('2024-11-10 15:30:45', 'YYYY-MM-DD HH:mm:ss', testTimezone)
+      const timestamp = dayjs
+        .tz('2024-11-10 15:30:45', testTimezone)
         .valueOf();
-      const expected = moment
-        .tz('2024-11-10 00:00:00', 'YYYY-MM-DD HH:mm:ss', testTimezone)
+      const expected = dayjs
+        .tz('2024-11-10 00:00:00', testTimezone)
         .valueOf();
 
       expect(getStartOfDay(timestamp)).toBe(expected);
@@ -102,11 +97,11 @@ describe('messageGrouping utilities', () => {
     });
 
     it('should handle different timestamps correctly', () => {
-      const timestamp1 = moment
-        .tz('2024-01-15 12:00:00', 'YYYY-MM-DD HH:mm:ss', testTimezone)
+      const timestamp1 = dayjs
+        .tz('2024-01-15 12:00:00', testTimezone)
         .valueOf();
-      const timestamp2 = moment
-        .tz('2025-12-25 18:30:00', 'YYYY-MM-DD HH:mm:ss', testTimezone)
+      const timestamp2 = dayjs
+        .tz('2025-12-25 18:30:00', testTimezone)
         .valueOf();
 
       expect(getDateLabel(timestamp1)).toBe('January 15, 2024');

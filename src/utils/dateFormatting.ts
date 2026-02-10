@@ -1,4 +1,4 @@
-import moment from 'moment-timezone';
+import dayjs from './dayjs';
 import { t } from '@lingui/core/macro';
 
 /**
@@ -16,7 +16,7 @@ import { t } from '@lingui/core/macro';
  * @returns Formatted date string
  */
 export const formatMessageDate = (timestamp: number, compact = false): string => {
-  const time = moment.tz(
+  const time = dayjs.tz(
     timestamp,
     Intl.DateTimeFormat().resolvedOptions().timeZone
   );
@@ -28,19 +28,15 @@ export const formatMessageDate = (timestamp: number, compact = false): string =>
       sameDay: `[${t`Today`}]`,
       lastDay: `[${t`Yesterday`}]`,
       lastWeek: 'dddd',
-      sameElse: () => `[${fromNow}]`,
+      sameElse: `[${fromNow}]`,
     });
   }
 
   return time.calendar(null, {
-    sameDay: function () {
-      return `[${timeFormatted}]`;
-    },
+    sameDay: `[${timeFormatted}]`,
     lastWeek: 'dddd',
     lastDay: `[${t`Yesterday at ${timeFormatted}`}]`,
-    sameElse: function () {
-      return `[${fromNow}]`;
-    },
+    sameElse: `[${fromNow}]`,
   });
 };
 
@@ -58,9 +54,9 @@ export const formatMessageDate = (timestamp: number, compact = false): string =>
  * @returns Compact formatted time string
  */
 export const formatConversationTime = (timestamp: number): string => {
-  const time = moment.tz(timestamp, Intl.DateTimeFormat().resolvedOptions().timeZone);
-  const now = moment();
-  const daysDiff = now.startOf('day').diff(time.clone().startOf('day'), 'days');
+  const time = dayjs.tz(timestamp, Intl.DateTimeFormat().resolvedOptions().timeZone);
+  const now = dayjs();
+  const daysDiff = now.startOf('day').diff(time.startOf('day'), 'day');
 
   // Today: show time
   if (daysDiff === 0) return time.format('HH:mm');

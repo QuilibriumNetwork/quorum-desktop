@@ -129,6 +129,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Tooltip Flickering at Top-Left on Fast Mouse Movement](bugs/.solved/SOLVED_tooltip-flickering-top-left-on-fast-mouse-movement.md)
 - [Triple Ratchet State Save Destroys Template/Evals Fields](bugs/.solved/triple-ratchet-state-save-destroys-invite-fields.md)
 - [user:kick Role Permission is Non-Functional for Non-Owners](bugs/.solved/user-kick-role-permission-non-functional.md)
+- [Vite + moment-timezone dual-instance prevents locale loading](bugs/.solved/vite-moment-timezone-dual-instance-locale-bug.md)
 - [WebSocket processQueue Stuck - Blocking Outbound Messages](bugs/.solved/websocket-processqueue-stuck-blocking-outbound.md)
 
 ### .Archived
@@ -144,7 +145,6 @@ This is the main index for all documentation, bug reports, and task management.
 - [Accessibility Features — Remaining Work](tasks/accessibility-features-implementation.md)
 - [Add User Bio Field to UserSettingsModal General Tab](tasks/add-user-bio-field.md)
 - [Conversation Deletion State Synchronization](tasks/conversation-deletion-state-sync.md)
-- [Date Translation with Moment.js Locale Configuration](tasks/i18n-date-translation-moment-locale.md)
 - [Device Identification Improvement](tasks/device-identification-improvement.md)
 - [Fix Lingui "Uncompiled Message Detected" Warning](tasks/fix-lingui-uncompiled-message-warning.md)
 - [Full Markdown Support Inside Spoilers](tasks/spoiler-full-markdown-support.md)
@@ -197,6 +197,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Docusaurus Setup & Implementation Task](tasks/docusaurus/docusaurus-setup-implementation.md)
 
 ### Done
+- [Migrate moment-timezone to Day.js for i18n date translation](tasks/done/i18n-date-translation-moment-locale.md)
 - [Remove Text Primitive from Production Web Code](tasks/done/remove-text-primitive-web.md)
 - [WCAG 2.1 AA Remediation — Test-First Phased Implementation](tasks/done/accessibility-wcag-remediation.md)
 
@@ -415,4 +416,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2026-02-10 16:34:13
+**Last Updated**: 2026-02-10 17:23:30

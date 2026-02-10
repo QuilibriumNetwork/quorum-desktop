@@ -2893,6 +2893,24 @@
       }
     },
     {
+      "name": "i18n-date-translation-moment-locale.md",
+      "path": ".agents/tasks/done/i18n-date-translation-moment-locale.md",
+      "folder": "done",
+      "frontmatter": {
+        "type": "task",
+        "title": "Migrate moment-timezone to Day.js for i18n date translation",
+        "status": "completed",
+        "complexity": "medium",
+        "ai_generated": true,
+        "reviewed_by": null,
+        "created": "2025-01-14T00:00:00.000Z",
+        "updated": "2026-02-10",
+        "related_bugs": [
+          "vite-moment-timezone-dual-instance-locale-bug.md"
+        ]
+      }
+    },
+    {
       "name": "remove-text-primitive-web.md",
       "path": ".agents/tasks/done/remove-text-primitive-web.md",
       "folder": "done",
@@ -2927,19 +2945,6 @@
           "#834",
           "#839"
         ]
-      }
-    },
-    {
-      "name": "i18n-date-translation-moment-locale.md",
-      "path": ".agents/tasks/i18n-date-translation-moment-locale.md",
-      "folder": "root",
-      "frontmatter": {
-        "type": "task",
-        "title": "Date Translation with Moment.js Locale Configuration",
-        "status": "open",
-        "complexity": "low",
-        "created": "2025-01-14T00:00:00.000Z",
-        "updated": "2026-01-09"
       }
     },
     {
@@ -3987,6 +3992,24 @@
         "updated": "2026-01-09T00:00:00.000Z",
         "related_issues": [
           "#65"
+        ]
+      }
+    },
+    {
+      "name": "vite-moment-timezone-dual-instance-locale-bug.md",
+      "path": ".agents/bugs/.solved/vite-moment-timezone-dual-instance-locale-bug.md",
+      "folder": ".solved",
+      "frontmatter": {
+        "type": "bug",
+        "title": "Vite + moment-timezone dual-instance prevents locale loading",
+        "status": "solved",
+        "priority": "high",
+        "ai_generated": true,
+        "reviewed_by": null,
+        "created": "2026-02-10T00:00:00.000Z",
+        "updated": "2026-02-10T00:00:00.000Z",
+        "related_tasks": [
+          "i18n-date-translation-moment-locale.md"
         ]
       }
     },

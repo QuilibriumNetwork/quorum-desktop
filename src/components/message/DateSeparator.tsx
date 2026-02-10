@@ -1,6 +1,6 @@
 import React from 'react';
 import { Flex } from '../primitives';
-import * as moment from 'moment-timezone';
+import { getDateLabel } from '../../utils/messageGrouping';
 
 interface DateSeparatorProps {
   timestamp: number;
@@ -52,18 +52,3 @@ export const DateSeparator: React.FC<DateSeparatorProps> = ({
     </Flex>
   );
 };
-
-/**
- * Generates a human-readable date label based on timestamp
- * @param timestamp - Unix timestamp in milliseconds
- * @returns Formatted date string in "Month DD, YYYY" format (e.g. "October 15, 2025")
- */
-function getDateLabel(timestamp: number): string {
-  const time = moment.tz(
-    timestamp,
-    Intl.DateTimeFormat().resolvedOptions().timeZone
-  );
-
-  // Always use the full date format: "October 15, 2025"
-  return time.format('MMMM D, YYYY');
-}

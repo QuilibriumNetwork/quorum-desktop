@@ -1,4 +1,4 @@
-import * as moment from 'moment-timezone';
+import dayjs from './dayjs';
 import { Message } from '../api/quorumApi';
 
 export interface MessageGroup {
@@ -107,7 +107,7 @@ export function shouldShowCompactHeader(
  * @returns Start of day timestamp in milliseconds
  */
 export function getStartOfDay(timestamp: number): number {
-  return moment
+  return dayjs
     .tz(timestamp, Intl.DateTimeFormat().resolvedOptions().timeZone)
     .startOf('day')
     .valueOf();
@@ -120,7 +120,7 @@ export function getStartOfDay(timestamp: number): number {
  * @returns Formatted date string in "Month DD, YYYY" format (e.g. "October 15, 2025")
  */
 export function getDateLabel(timestamp: number): string {
-  const time = moment.tz(
+  const time = dayjs.tz(
     timestamp,
     Intl.DateTimeFormat().resolvedOptions().timeZone
   );
