@@ -93,7 +93,7 @@ const Privacy: React.FunctionComponent<PrivacyProps> = ({
         <Spacer size="md" direction="vertical" borderTop={true} />
         <div className="text-subtitle-2">{t`Security`}</div>
 
-        <div className="pt-2 text-label-strong mb-4">
+        <div className="pt-2 text-label mb-4">
           {t`Adjust security-related settings, which may impact user  experience but increase the security of your Quorum account.`}
         </div>
         <div className="modal-content-info">

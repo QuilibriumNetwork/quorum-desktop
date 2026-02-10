@@ -4,10 +4,21 @@
  * PURPOSE: Semantic typography classes for consistent text styling across the app
  * USAGE: Use these classes for common text patterns instead of combining multiple utilities
  *
+ * HIERARCHY (largest to smallest):
+ *   .text-title-large  - Page/dialog titles (24px bold, strongest color)
+ *   .text-title        - Tab/section page titles in modals (20px bold)
+ *   .text-subtitle     - Secondary headings (18px bold)
+ *   .text-subtitle-2   - Section headers in modals, uppercase (14px bold)
+ *   .text-body         - Tab/section descriptions in modals (16px normal)
+ *   .text-label-strong - Toggle/control labels, interactive element labels (14px, bright)
+ *   .text-label        - Section descriptions, help text, hints (14px, subtle)
+ *   .text-small        - Minor annotations, metadata (12px, subtle)
+ *   .text-small-desktop - Always-small annotations (12px, no mobile bump)
  */
 
 @use 'variables' as *;
 
+// Page/dialog titles - largest, strongest emphasis
 .text-title-large {
   font-size: $text-2xl;
   font-weight: $font-bold;
@@ -16,6 +27,7 @@
   color: rgb(var(--color-text-strong));
 }
 
+// Tab titles in complex modals (e.g. "Privacy/Security", "Account Settings")
 .text-title {
   font-size: $text-xl;
   font-weight: $font-bold;
@@ -24,6 +36,7 @@
   color: rgb(var(--color-text-main));
 }
 
+// Secondary headings
 .text-subtitle {
   font-size: $text-lg;
   font-weight: $font-bold;
@@ -32,15 +45,18 @@
   color: rgb(var(--color-text-main));
 }
 
+// Section headers in modals (e.g. "SECURITY", "DEVICES", "KEY EXPORT")
+// Uppercase, bold - visually distinct as section dividers
 .text-subtitle-2 {
   font-size: $text-sm;
   font-weight: $font-bold;
   line-height: $text-sm-lh;
   text-transform: uppercase;
   letter-spacing: $tracking-wider;
-  color: rgb(var(--color-text-subtle));
+  color: rgb(var(--color-text-main));
 }
 
+// Tab-level descriptions below .text-title (e.g. "Manage devices, and privacy conditions...")
 .text-body {
   font-size: $text-base;
   font-weight: $font-normal;
@@ -48,28 +64,33 @@
   color: rgb(var(--color-text-main));
 }
 
+// Section descriptions and help/hint text (subtle, supportive)
+// Used for: descriptions below section headers, textarea hints, explanatory text
 .text-label {
-  font-size: $text-sm-responsive; // 16px mobile → 14px desktop
+  font-size: $text-sm-responsive; // 16px mobile -> 14px desktop
   font-weight: $font-normal;
   line-height: $text-sm-responsive-lh;
   color: rgb(var(--color-text-subtle));
 }
 
-// Labels associated with toggles in Modals
+// Interactive element labels (bright, prominent)
+// Used for: toggle labels, control labels, inline labels next to switches/inputs
 .text-label-strong {
-  font-size: $text-sm-responsive; // 16px mobile → 14px desktop
+  font-size: $text-sm-responsive; // 16px mobile -> 14px desktop
   font-weight: $font-normal;
   line-height: $text-sm-responsive-lh;
   color: rgb(var(--color-text-main)) !important;
 }
 
+// Minor annotations, metadata
 .text-small {
-  font-size: $text-xs-responsive; // 14px mobile → 12px desktop
+  font-size: $text-xs-responsive; // 14px mobile -> 12px desktop
   font-weight: $font-normal;
   line-height: $text-xs-responsive-lh;
   color: rgb(var(--color-text-subtle));
 }
 
+// Always-small text (no mobile size bump)
 .text-small-desktop {
   font-size: $text-xs; // Always 12px
   font-weight: $font-normal;

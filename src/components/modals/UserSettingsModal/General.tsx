@@ -111,8 +111,14 @@ const General: React.FunctionComponent<GeneralProps> = ({
       </div>
       <div className="modal-content-section">
         <Spacer size="md" direction="vertical" borderTop={true} />
-        <div className="text-subtitle-2 mb-2">
+        <div className="text-subtitle-2">
           <Trans>Bio</Trans>
+        </div>
+        {/* Bio is local-only for now - not synced across devices. See .agents/tasks/add-user-bio-field.md for future sync work */}
+        <div className="pt-2 text-label mb-4">
+          <Trans>
+            This bio will be visible to others when they view your profile.
+          </Trans>
         </div>
         <div className="w-full mb-2">
           <TextArea
@@ -130,12 +136,6 @@ const General: React.FunctionComponent<GeneralProps> = ({
             }
           />
         </div>
-        {/* Bio is local-only for now - not synced across devices. See .agents/tasks/add-user-bio-field.md for future sync work */}
-        <div className="text-label mb-4">
-          <Trans>
-            This bio will be visible to others when they view your profile.
-          </Trans>
-        </div>
         <Spacer size="md" direction="vertical" borderTop={true} />
         {userIconFileError && (
           <div className="mb-4">
@@ -151,7 +151,7 @@ const General: React.FunctionComponent<GeneralProps> = ({
         )}
         <div className="modal-content-info">
           <div className="text-subtitle-2">{t`Account Address`}</div>
-          <div className="pt-2 mb-4 text-label-strong">
+          <div className="pt-2 mb-4 text-label">
             {t`This is your public address and is safe to share with anyone you want to interact with.`}
           </div>
           <div className="modal-input-display text-sm lg:text-base bg-field">

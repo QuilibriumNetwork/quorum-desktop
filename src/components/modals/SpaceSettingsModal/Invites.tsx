@@ -262,7 +262,7 @@ const Invites: React.FunctionComponent<InvitesProps> = ({
               <Trans>Send Private Invite</Trans>
             )}
           </div>
-          <div className="text-label-strong pt-1 mb-4 max-w-[500px]">
+          <div className="text-label pt-1 mb-4 max-w-[500px]">
             {space?.inviteUrl ? (
               <Trans>Send your public invite link directly to someone via DM.</Trans>
             ) : (
@@ -372,7 +372,7 @@ const Invites: React.FunctionComponent<InvitesProps> = ({
             <div className="text-subtitle-2 mb-1">
               <Trans>Public Invite Links</Trans>
             </div>
-            <div className="text-label-strong pt-1 mb-4 max-w-[500px]">
+            <div className="text-label pt-1 mb-4 max-w-[500px]">
               <Trans>
                 Public invite links allow anyone with access to the link to join your Space.
                 Consider who you share the link with and where you post it.

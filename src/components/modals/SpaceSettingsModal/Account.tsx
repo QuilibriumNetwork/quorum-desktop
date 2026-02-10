@@ -123,7 +123,7 @@ const Account: React.FunctionComponent<AccountProps> = ({
         <div className="text-subtitle-2">
           <Trans>Your Details</Trans>
         </div>
-        <div className="text-label-strong pt-1">
+        <div className="text-label pt-1">
           <Trans>Change your avatar and name for this Space</Trans>
         </div>
         <div className="flex items-start gap-4 pt-4">
@@ -226,7 +226,7 @@ const Account: React.FunctionComponent<AccountProps> = ({
           <div className="text-subtitle-2">
             <Trans>Notifications</Trans>
           </div>
-          <div className="text-label-strong pt-1">
+          <div className="text-label pt-1">
             <Trans>
               Select which types of notifications you want to receive
             </Trans>

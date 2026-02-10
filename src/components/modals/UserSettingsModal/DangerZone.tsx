@@ -45,7 +45,7 @@ const DangerZone: React.FunctionComponent = () => {
           <div className="text-title text-danger">
             <Trans>Reset App Data</Trans>
           </div>
-          <div className="pt-2 text-body">
+          <div className="pt-2 text-label">
             <Trans>This will delete all your data from this browser, including your private keys and all direct messages. Direct messages cannot be recovered. Make sure you have exported your private key from the Privacy/Security settings. This action cannot be undone.</Trans>
           </div>
           {resetError && (
@@ -61,9 +61,6 @@ const DangerZone: React.FunctionComponent = () => {
             </div>
           )}
           <div className="pt-6">
-            <div className="pb-2 text-body">
-              <Trans>Type <strong>RESET</strong> to confirm</Trans>
-            </div>
             <Input
               value={confirmInput}
               onChange={setConfirmInput}
