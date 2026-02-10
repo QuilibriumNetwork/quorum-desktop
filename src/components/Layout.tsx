@@ -199,11 +199,11 @@ const Layout: React.FunctionComponent<{
         <ImageModalProvider showImageModal={showImageModal}>
           <EditHistoryModalProvider showEditHistoryModal={showEditHistoryModal}>
             <ReactionsModalProvider showReactionsModal={showReactionsModal}>
-              <div className={`main-content${!navMenuOpen ? ' nav-hidden' : ''}`}>
+              <main className={`main-content${!navMenuOpen ? ' nav-hidden' : ''}`}>
             {props.children}
             {toast && (
               <Portal>
-                <div className={`toast-container${toast.bottomFixed ? ' bottom-fixed' : ''}`}>
+                <div className={`toast-container${toast.bottomFixed ? ' bottom-fixed' : ''}`} role="status" aria-live="polite">
                   <Callout
                     variant={toast.variant || 'info'}
                     size="sm"
@@ -220,7 +220,7 @@ const Layout: React.FunctionComponent<{
                 </div>
               </Portal>
             )}
-              </div>
+              </main>
             </ReactionsModalProvider>
           </EditHistoryModalProvider>
         </ImageModalProvider>

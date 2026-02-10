@@ -1,7 +1,23 @@
 // Button primitive styles
 @use '@/styles/variables' as *;
 
+%btn-reset {
+  appearance: none;
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  font: inherit;
+  color: inherit;
+  cursor: inherit;
+  line-height: inherit;
+  text-align: inherit;
+  text-decoration: none;
+  outline: inherit;
+}
+
 %btn-base {
+  @extend %btn-reset;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -123,10 +139,10 @@ html.dark .btn-secondary {
 }
 
 .btn-unstyled {
+  @extend %btn-reset;
   cursor: pointer;
   transition: opacity $duration-300 $ease-in-out;
   user-select: none;
-  border: none;
   // No padding, borders, or background - allows full className control
 
   // Compact variant for list-style layouts

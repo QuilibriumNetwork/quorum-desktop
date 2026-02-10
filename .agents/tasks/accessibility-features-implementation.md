@@ -1,288 +1,115 @@
 ---
 type: task
-title: Implement Comprehensive Accessibility Features
+title: Accessibility Features — Remaining Work
 status: open
-complexity: very-high
+complexity: high
 ai_generated: true
 created: 2026-01-06T00:00:00.000Z
-updated: '2026-01-09'
+updated: '2026-02-10'
+related_tasks:
+  - done/accessibility-wcag-remediation.md
 ---
 
-# Implement Comprehensive Accessibility Features
+# Accessibility Features — Remaining Work
 
 > **⚠️ AI-Generated**: May contain errors. Verify before use.
 
+## Current State (as of 2026-02-10)
 
-**Files**:
-- `src/styles/_variables.scss` (theme variables)
-- `src/components/context/ThemeProvider.tsx` (theme management)
-- `src/components/modals/UserSettingsModal/` (settings UI)
-- Multiple component files (ARIA attributes audit)
+**Estimated accessibility score: ~75/100 (up from ~50/100)**
 
-## What & Why
+The core WCAG 2.1 AA remediation is complete (see [done/accessibility-wcag-remediation.md](done/accessibility-wcag-remediation.md) for full details). Summary of what shipped:
 
-The web app needs comprehensive accessibility improvements to ensure all users can effectively use the application regardless of abilities. This includes a thorough audit of existing components for WCAG compliance, plus optional enhanced accessibility features (high-contrast theme, dyslexia-friendly fonts) that go beyond minimum requirements. With WCAG 2.2 now the baseline standard and accessibility lawsuits surging 37% in 2025, this is both a user experience and compliance priority.
-
-## Context
-- **Existing patterns**: Some components already support `prefers-reduced-motion` and `prefers-contrast: high` (see `_context-menu.scss:86-96`, `MobileDrawer.scss:258-277`)
-- **Theme system**: ThemeProvider already handles dark/light themes and listens to system preferences (`ThemeProvider.tsx:35`)
-- **Current ARIA usage**: 87 occurrences across 35 files - partial coverage needs audit
-- **Constraints**: Must work cross-platform (web + mobile), must not break existing functionality
+- **Button `<span>` → `<button>`** — 100+ instances now keyboard-accessible with native focus, Enter, Space
+- **Modal accessibility** — `role="dialog"`, `aria-modal`, `aria-labelledby`, focus trap, focus restoration, close button as `<button>`
+- **ARIA attributes** — Navigation labels, toast live region, loading announcements, image alt text
+- **Semantic landmarks** — `<main>`, `<header>`, `<nav>` with labels
+- **Keyboard focus indicators** — Global `:focus-visible` outline (keyboard-only, not mouse)
+- **Test coverage** — 45 component tests (30 Button, 15 Modal)
 
 ---
 
-## Research Summary: Nice-to-Have Features
+## Remaining Work
 
-### 1. High Contrast / Accessible Dark Theme
+### Quick Wins (low effort, low risk)
 
-**What browsers/OS handle vs what the app should handle:**
-- **OS/Browser level**: Users can enable system-wide high contrast mode (`prefers-contrast: high` media query)
-- **App level**: The app SHOULD respond to this preference AND offer an explicit high-contrast option in settings
-- **Best practice**: Offer both automatic detection AND manual toggle - some users want high contrast only in specific apps
+- [ ] **Form error associations**
+  - Add `aria-describedby` connecting error messages to their input fields
+  - Done when: screen readers announce error context when input is focused
 
-**Implementation approach:**
-- Create a high-contrast variant of the theme with:
-  - Minimum 7:1 contrast ratio (vs WCAG AA's 4.5:1)
-  - Stronger borders on interactive elements
-  - Reduced use of transparency/blur effects
-  - No information conveyed by color alone
-- Add "High Contrast" option to theme settings alongside Dark/Light/System
+- [ ] **Emoji picker focus fix**
+  - File: `src/styles/_emoji-picker.scss`
+  - Remove `outline: none !important` that kills focus indicators
+  - Replace with visible `:focus-visible` indicator
 
-**Sources:**
-- [WebAIM Contrast Guidelines](https://webaim.org/articles/contrast/)
-- [Section 508 Typography Requirements](https://www.section508.gov/develop/fonts-typography/)
+### Reduced Motion Support (medium effort)
 
-### 2. Dyslexia-Friendly Font Option
-
-**Research findings:**
-- **OpenDyslexic**: Free, open-source (SIL-OFL license), designed with weighted bottoms to help letter recognition
-- **Recommended alternatives**: Lexend, Comic Sans (yes, really), Verdana, Tahoma
-- **British Dyslexia Association** recommends sans-serif fonts with clear letter shapes
-
-**How other apps handle this:**
-- Browser extensions (OpenDyslexic for Chrome) override all fonts globally
-- Apps like Kindle, Kobo offer OpenDyslexic as a built-in font option
-- Helperbird extension offers 18+ font choices
-
-**Implementation approach:**
-- Add font family toggle in Accessibility settings: "Default" / "Dyslexia-friendly (OpenDyslexic)"
-- Self-host the font (it's free/open-source)
-- Apply via CSS variable: `--font-family-main`
-
-**Sources:**
-- [OpenDyslexic.org](https://opendyslexic.org/)
-- [British Dyslexia Association style guide](https://www.helperbird.com/blog/research-into-web-accessibility-for-dyslexics-and-dyslexia-focused-fonts-such-as-opendyslexia/)
-
-### 3. Font Size / Text Scaling
-
-**Research findings:**
-- WCAG requires text resizable to 200% without loss of functionality
-- Browsers have built-in zoom, but apps should also offer text-size settings
-- Base font should be minimum 16px
-
-**How Discord/Telegram handle this:**
-- **Discord**: Has "Chat Font Scaling" slider (12px-24px range) + Saturation slider in Accessibility settings
-- **Telegram**: Per-device font size slider in Chat Settings, doesn't sync across devices
-- Both respect system-level text size preferences
-
-**Implementation approach:**
-- Add font size slider in Accessibility settings (Small/Medium/Large/Extra Large)
-- Use relative units (rem) consistently
-- Ensure layouts don't break at 200% zoom
-
-### 4. Discord's Accessibility Features (for reference)
-
-Discord is considered a gold standard for web app accessibility:
-- **Saturation slider**: Reduces color intensity globally
-- **Reduced motion**: System preference detection + manual toggle
-- **Screen reader support**: Proper ARIA labels, keyboard navigation
-- **Role color contrast normalization**: Ensures user-defined colors remain readable
-- **WCAG 2.1 compliant**
-
-**Sources:**
-- [Discord Accessibility Settings](https://support.discord.com/hc/en-us/articles/1500010454681-Accessibility-Settings-Tab)
-- [Discord A11y Case Study](https://a11yup.com/articles/discord-accessibility-in-web-apps-done-right/)
-
----
-
-## Implementation
-
-### Phase 1: Accessibility Audit (MUST HAVE)
-
-This phase is required for basic accessibility compliance.
-
-- [ ] **Audit all interactive elements for keyboard navigation**
-    - Done when: All buttons, links, inputs navigable via Tab key
-    - Verify: Can complete full user flow (login → send message → navigate spaces) using only keyboard
-    - Check: Focus states visible on all interactive elements
-
-- [ ] **Audit ARIA attributes across components**
-    - Done when: All interactive elements have appropriate `aria-label`, `role`, `aria-expanded`, etc.
-    - Priority files: `NavMenu.tsx`, `SpaceButton.tsx`, `ChannelItem.tsx`, `MessageMarkdownRenderer.tsx`
-    - Reference: Existing patterns in `Select.web.tsx` (11 aria occurrences)
-
-- [ ] **Ensure color contrast compliance (WCAG AA: 4.5:1)**
-    - Done when: All text passes contrast checker
-    - Tool: Use axe DevTools or WAVE to audit
-    - Focus areas: Secondary text, disabled states, placeholder text
-
-- [ ] **Add skip-to-content link**
-    - Done when: First Tab press reveals "Skip to main content" link
-    - Verify: Link jumps focus to message area
-
-- [ ] **Audit form inputs for proper labels**
-    - Done when: All inputs have associated `<label>` or `aria-label`
-    - Verify: Screen reader announces field purpose
-
-- [ ] **Ensure all images have alt text**
-    - Done when: All `<img>` and image backgrounds have alt or aria-label
-    - Note: Decorative images should have `alt=""`
-
-### Phase 2: Reduced Motion Support (MUST HAVE)
-
-Expand existing reduced motion support to cover all animations.
-
-- [ ] **Audit all CSS animations for reduced-motion support**
-    - Done when: All `transition` and `animation` properties respect `prefers-reduced-motion`
-    - Existing: `_context-menu.scss:86`, `MobileDrawer.scss:277`, `MessageActionsMenu.scss:72`
-    - Create: Global mixin in `_variables.scss` for consistent application
+- [ ] **Audit all CSS animations for `prefers-reduced-motion`**
+  - Already supported in: `_context-menu.scss:86`, `MobileDrawer.scss:277`, `MessageActionsMenu.scss:72`
+  - Key targets: `Message.scss` mention highlight (61s), message highlight (8s), `ModalContainer` open/close
+  - Pattern: `@media (prefers-reduced-motion: reduce) { animation: none; transition-duration: 0.01ms; }`
+  - Consider: Global mixin in `_variables.scss` for consistent application
 
 - [ ] **Add manual reduced motion toggle in settings**
-    - Done when: User can enable reduced motion regardless of system setting
-    - Location: User Settings → Accessibility tab
-    - Reference: Discord's implementation
+  - Location: User Settings → Accessibility tab
+  - Reference: Discord's implementation
 
-### Phase 3: High Contrast Theme (NICE TO HAVE)
+### Color Contrast (design decision needed)
 
-- [ ] **Create high-contrast color palette**
-    - Done when: All colors achieve 7:1+ contrast ratio
-    - File: `src/styles/_variables.scss` - add `.high-contrast` variants
-    - Include: Stronger borders (2px), no transparency, bold focus indicators
+Current muted text (`--color-text-muted`) and disabled button colors are below WCAG AA 4.5:1 ratio but were kept per design review — they're intentional design choices. Options:
 
-- [ ] **Add high contrast toggle to theme settings**
-    - Done when: User can select "High Contrast" theme option
-    - File: `src/components/modals/UserSettingsModal/Appearance.tsx`
-    - Behavior: Works independently from dark/light preference
+- [ ] **Revisit with adjusted values** that satisfy both design and AA requirements
+- [ ] **Accept as-is** — document as known deviation
 
-- [ ] **Respond to `prefers-contrast: high` media query**
-    - Done when: System high contrast preference auto-enables high contrast theme
-    - File: `ThemeProvider.tsx` - add contrast media query listener
+### Nice-to-Have Features (significant effort)
 
-### Phase 4: Dyslexia-Friendly Font (NICE TO HAVE)
+These are enhancement features inspired by Discord's accessibility settings:
 
-- [ ] **Add OpenDyslexic font to project**
-    - Done when: Font files in `src/assets/fonts/` or loaded via CDN
-    - License: SIL-OFL (free for all uses)
-    - Variants needed: Regular, Bold, Italic
+#### High Contrast Theme
+- Create high-contrast color palette (7:1+ ratio, stronger borders, no transparency)
+- Add "High Contrast" toggle to theme settings (works independently from dark/light)
+- Respond to `prefers-contrast: high` media query
+- **Sources**: [WebAIM Contrast Guidelines](https://webaim.org/articles/contrast/), [Section 508 Typography](https://www.section508.gov/develop/fonts-typography/)
 
-- [ ] **Create font family CSS variable system**
-    - Done when: `--font-family-main` variable controls all text
-    - File: `_variables.scss`
+#### Dyslexia-Friendly Font
+- Add OpenDyslexic font (SIL-OFL license, free)
+- Font family toggle in Accessibility settings: "Default" / "OpenDyslexic"
+- Apply via CSS variable `--font-family-main`
+- **Sources**: [OpenDyslexic.org](https://opendyslexic.org/), [British Dyslexia Association](https://www.helperbird.com/blog/research-into-web-accessibility-for-dyslexics-and-dyslexia-focused-fonts-such-as-opendyslexia/)
 
-- [ ] **Add font toggle in Accessibility settings**
-    - Done when: User can switch between "Default" and "OpenDyslexic"
-    - Location: User Settings → Accessibility tab
-    - Persist: Save preference to localStorage
+#### Text Scaling
+- Font size slider in Accessibility settings (Small/Medium/Large/Extra Large)
+- Audit all font sizes to use rem units
+- Ensure layouts handle 200% browser zoom
+- Reference: Discord's "Chat Font Scaling" feature
 
-### Phase 5: Text Scaling (NICE TO HAVE)
-
-- [ ] **Audit all font sizes use rem units**
-    - Done when: No hardcoded `px` font sizes (except minimum boundaries)
-    - Tool: Search for `font-size:.*px`
-
-- [ ] **Add font size slider to Accessibility settings**
-    - Done when: Slider adjusts base font size (14px-20px range)
-    - Verify: UI doesn't break at maximum size
-    - Reference: Discord's "Chat Font Scaling" feature
-
-- [ ] **Ensure layouts handle 200% browser zoom**
-    - Done when: Full app usable at 200% zoom without horizontal scroll
-    - Test: Chrome DevTools device toolbar at various zoom levels
-
----
-
-## Subtasks (Standalone Implementation Tasks)
-
-These should be created as separate task files for focused implementation:
-
-1. **`.agents/tasks/accessibility-audit-wcag.md`** - Comprehensive WCAG 2.2 audit
-2. **`.agents/tasks/accessibility-keyboard-navigation.md`** - Full keyboard navigation implementation
-3. **`.agents/tasks/accessibility-screen-reader.md`** - Screen reader optimization
-4. **`.agents/tasks/accessibility-high-contrast-theme.md`** - High contrast theme implementation
-5. **`.agents/tasks/accessibility-dyslexia-font.md`** - OpenDyslexic font integration
-6. **`.agents/tasks/accessibility-text-scaling.md`** - Font size customization
-7. **`.agents/tasks/accessibility-reduced-motion.md`** - Complete reduced motion support
-8. **`.agents/tasks/accessibility-settings-panel.md`** - Accessibility settings UI
-
----
-
-## Verification
-
-✅ **Keyboard navigation complete**
-    - Test: Navigate entire app using Tab, Enter, Escape, Arrow keys
-    - Test: No focus traps, logical tab order
-
-✅ **Screen reader compatible**
-    - Test: Use NVDA/VoiceOver to navigate app
-    - Verify: All actions announced, no unlabeled buttons
-
-✅ **Color contrast passes**
-    - Run: axe DevTools audit
-    - Expect: Zero contrast violations
-
-✅ **Reduced motion respected**
-    - Test: Enable `prefers-reduced-motion` → animations disabled
-    - Test: Manual toggle works independently
-
-✅ **High contrast theme functional** (if implemented)
-    - Test: All text readable, borders visible, focus indicators prominent
-
-✅ **Dyslexia font works** (if implemented)
-    - Test: Toggle font → all text updates to OpenDyslexic
-    - Verify: Persists across page refresh
-
-✅ **Text scaling works** (if implemented)
-    - Test: Maximum font size → no layout breaks
-    - Test: 200% browser zoom → no horizontal scroll
+#### Accessibility Settings Panel
+- Required to house toggles for: reduced motion, high contrast, font choice, text scaling
+- Location: User Settings modal
+- Reference: [Discord Accessibility Settings](https://support.discord.com/hc/en-us/articles/1500010454681-Accessibility-Settings-Tab)
 
 ---
 
 ## Edge Cases
 
-| Scenario | Expected Behavior | Status | Priority | Risk |
-|----------|-------------------|--------|----------|------|
-| Custom emoji in messages | Alt text shows emoji name | 🔧 Needs handling | P1 | Medium |
-| Code blocks with syntax highlighting | Maintain readability in high contrast | 🔧 Needs handling | P2 | Low |
-| User avatars without images | Show initials with proper contrast | ✅ Already works | P0 | Low |
-| Dynamic content (new messages) | Announce via aria-live region | 🔧 Needs handling | P0 | High |
-| Modal dialogs | Trap focus, return focus on close | 🔍 Needs investigation | P0 | High |
-
----
-
-## Definition of Done
-
-- [ ] Phase 1 (Audit) complete - all WCAG AA violations fixed
-- [ ] Phase 2 (Reduced Motion) complete - all animations respect preference
-- [ ] At least one "nice to have" feature implemented
-- [ ] axe DevTools audit shows zero critical/serious issues
-- [ ] Manual keyboard navigation test passes
-- [ ] Screen reader test with NVDA or VoiceOver passes
-- [ ] No regressions in existing functionality
-- [ ] Documentation updated with accessibility features
+| Scenario | Expected Behavior | Status |
+|----------|-------------------|--------|
+| Custom emoji in messages | Alt text shows emoji name | Needs handling |
+| Code blocks in high contrast | Maintain readability | Needs handling (if high contrast implemented) |
+| Dynamic content (new messages) | Announce via aria-live region | Needs handling |
 
 ---
 
 ## Resources
 
 **Testing Tools:**
-- [axe DevTools](https://www.deque.com/axe/) - Automated accessibility testing
-- [WAVE](https://wave.webaim.org/) - Web accessibility evaluation
+- [axe DevTools](https://www.deque.com/axe/) — Automated accessibility testing
+- [WAVE](https://wave.webaim.org/) — Web accessibility evaluation
 - [Contrast Checker](https://webaim.org/resources/contrastchecker/)
-- NVDA (Windows) / VoiceOver (Mac) - Screen readers
+- NVDA (Windows) / VoiceOver (Mac) — Screen readers
 
 **Guidelines:**
 - [WCAG 2.2 Quick Reference](https://www.w3.org/WAI/WCAG22/quickref/)
-- [Discord Accessibility](https://discord.com/accessibility)
 - [WAI-ARIA Practices](https://www.w3.org/WAI/ARIA/apg/)
 
 **Fonts:**
@@ -293,4 +120,6 @@ These should be created as separate task files for focused implementation:
 
 ## Updates
 
-**2026-01-06 - Claude**: Initial task creation with research on high contrast themes, dyslexia-friendly fonts, Discord/Telegram accessibility features, and WCAG 2.2 requirements.
+**2026-01-06**: Initial task creation with research on high contrast themes, dyslexia-friendly fonts, Discord/Telegram accessibility features, and WCAG 2.2 requirements.
+
+**2026-02-10**: Core WCAG remediation completed and moved to `done/accessibility-wcag-remediation.md`. Restructured this task as the ongoing tracker for remaining accessibility work. Score improved from ~50/100 to ~75/100.

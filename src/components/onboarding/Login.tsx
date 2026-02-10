@@ -43,7 +43,7 @@ export const Login = ({
         <div className="flex flex-row grow font-light text-5xl">
           <div className="flex flex-col grow"></div>
           <div className="flex flex-col pt-8">
-            <img className="h-16" src="/quorum.png" />
+            <img className="h-16" src="/quorum.png" alt="Quorum" />
           </div>
           <div className="flex flex-col grow"></div>
         </div>

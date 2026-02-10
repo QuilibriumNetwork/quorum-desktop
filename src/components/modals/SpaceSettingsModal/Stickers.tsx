@@ -81,7 +81,7 @@ const Stickers: React.FunctionComponent<StickersProps> = ({
                 key={'space-editor-sticker-' + i}
                 className="modal-list-item text-main flex flex-row px-3 py-2 items-center"
               >
-                <img width="72" height="72" src={em.imgUrl} className="rounded-md" />
+                <img width="72" height="72" src={em.imgUrl} alt={em.name} className="rounded-md" />
                 <div className="flex flex-col justify-around font-mono font-medium mx-2">
                   <span>
                     <input

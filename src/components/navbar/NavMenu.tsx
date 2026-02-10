@@ -456,6 +456,7 @@ const NavMenuContent: React.FC<NavMenuProps> = (props) => {
         window.electron ? 'electron' : ''
       }
       style={navMenuStyle}
+      aria-label={t`Main navigation`}
     >
       {
         //@ts-ignore
@@ -546,7 +547,7 @@ const NavMenuContent: React.FC<NavMenuProps> = (props) => {
           );
         })()}
       </div>
-      <div className="nav-menu-spaces grow">
+      <nav className="nav-menu-spaces grow" aria-label={t`Spaces`}>
         <DndContext
           sensors={sensors}
           collisionDetection={closestCenter}
@@ -673,7 +674,7 @@ const NavMenuContent: React.FC<NavMenuProps> = (props) => {
             ) : null}
           </DragOverlay>
         </DndContext>
-      </div>
+      </nav>
       <div className="expanded-nav-buttons-container">
         <ExpandableNavMenu {...props} />
       </div>

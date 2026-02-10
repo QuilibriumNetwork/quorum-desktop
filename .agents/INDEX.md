@@ -141,6 +141,7 @@ This is the main index for all documentation, bug reports, and task management.
 
 ### Pending Tasks
 
+- [Accessibility Features — Remaining Work](tasks/accessibility-features-implementation.md)
 - [Add User Bio Field to UserSettingsModal General Tab](tasks/add-user-bio-field.md)
 - [Conversation Deletion State Synchronization](tasks/conversation-deletion-state-sync.md)
 - [Date Translation with Moment.js Locale Configuration](tasks/i18n-date-translation-moment-locale.md)
@@ -148,7 +149,6 @@ This is the main index for all documentation, bug reports, and task management.
 - [Fix Lingui "Uncompiled Message Detected" Warning](tasks/fix-lingui-uncompiled-message-warning.md)
 - [Full Markdown Support Inside Spoilers](tasks/spoiler-full-markdown-support.md)
 - [Implement Channel Ordering Feature](tasks/channel-ordering-feature.md)
-- [Implement Comprehensive Accessibility Features](tasks/accessibility-features-implementation.md)
 - [Implement Message Forwarding with Privacy Controls](tasks/message-forwarding-with-privacy-controls.md)
 - [Implement New Member Badge in Spaces](tasks/new-member-badge-spaces.md)
 - [Implement Role-Based Channel Visibility](tasks/channel-role-visibility.md)
@@ -157,7 +157,6 @@ This is the main index for all documentation, bug reports, and task management.
 - [Passkey Import UX Issue](tasks/passkey-import-ux-issue.md)
 - [Primitives Migration to quorum-shared](tasks/primitives-migration-to-quorum-shared.md)
 - [Public Space Directory Feature](tasks/public-space-directory.md)
-- [Remove Text Primitive from Production Web Code](tasks/remove-text-primitive-web.md)
 - [SDK PasskeyModal Customization Props Enhancement](tasks/sdk-passkey-modal-customization-props.md)
 - [Service Worker for App Update Detection](tasks/service-worker-app-updates.md)
 - [Space Tags](tasks/space-tags.md)
@@ -196,6 +195,10 @@ This is the main index for all documentation, bug reports, and task management.
 - [Docusaurus Developer Documentation Blueprint](tasks/docusaurus/docusaurus-blueprint-v2.md)
 - [Docusaurus Quorum Users Faq](tasks/docusaurus/docusaurus-quorum-users-faq.md)
 - [Docusaurus Setup & Implementation Task](tasks/docusaurus/docusaurus-setup-implementation.md)
+
+### Done
+- [Remove Text Primitive from Production Web Code](tasks/done/remove-text-primitive-web.md)
+- [WCAG 2.1 AA Remediation — Test-First Phased Implementation](tasks/done/accessibility-wcag-remediation.md)
 
 ### Messagedb
 - [High-Risk Optimization Opportunities](tasks/messagedb/messagedb-optimization-3.md)
@@ -335,6 +338,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Rehype-Raw Security Fix - Complete Recap](tasks/.done/rehype-raw-security-fix-recap-2025-11-07.md)
 - [Remove Deprecated Enhanced Mention Format Backward Compatibility Code](tasks/.done/remove-enhanced-mention-format-compat.md)
 - [Remove ResponsiveContainer Primitive and Inline Styles](tasks/.done/layout-css-grid-refactor.md)
+- [Remove Text Primitive from Production Web Code](tasks/.done/remove-text-primitive-web.md)
 - [Rename .agents to .agents](tasks/.done/rename-readme-to-agents.md)
 - [Replace FontAwesome with Tabler Icons](tasks/.done/replace-fontawesome-with-tabler-icons.md)
 - [Reply Notification System](tasks/.done/reply-notification-system.md)
@@ -375,6 +379,7 @@ This is the main index for all documentation, bug reports, and task management.
 
 - [Channel Ordering Feature Analysis](reports/channel-ordering-feature-analysis_2026-01-07.md)
 - [Comprehensive Privacy & Security Audit - All Features](reports/privacy-security-comprehensive-audit_2025-12-21.md)
+- [Comprehensive WCAG Accessibility Audit Report](reports/accessibility-wcag-audit_2026-02-10.md)
 - [Cryptographic Code Best Practices: Abstraction vs Duplication](reports/cryptographic-code-best-practices_2025-12-20.md)
 - [dnd-kit Touch Drag-and-Drop Best Practices Research](reports/dnd-kit-touch-best-practices_2025-12-11.md)
 - [File Size & Service Extraction Best Practices](reports/file-size-best-practices_2025-12-20.md)
@@ -384,8 +389,10 @@ This is the main index for all documentation, bug reports, and task management.
 - [quorum-shared Migration Analysis](reports/quorum-shared-migration-analysis_2026-01-05.md)
 - [Security Audit: Markdown Renderer & Mentions System](reports/security-audit-markdown-mentions-2025-11-18.md)
 - [Sync Optimizations Report](reports/sync-optimizations_2025-12-19.md)
-- [Text Primitive Audit — Pre-Migration Analysis](reports/text-primitive-audit_2026-02-10.md)
 - [Web-to-Native Feature Sync Compatibility Analysis](reports/web-native-feature-sync-analysis_2025-12-04.md)
+
+### .Archived
+- [Text Primitive Audit — Pre-Migration Analysis](reports/.archived/text-primitive-audit_2026-02-10.md)
 
 ### Action Queue
 - [Action Queue Summary](reports/action-queue/000-action-queue-summary.md)
@@ -408,4 +415,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2026-02-10 10:20:03
+**Last Updated**: 2026-02-10 16:34:13

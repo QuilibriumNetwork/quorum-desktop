@@ -25,6 +25,7 @@ export interface BaseButtonProps {
   iconVariant?: IconVariant; // Icon variant (outline or filled)
   iconOnly?: boolean; // If true, only show icon without text
   className?: string;
+  ariaLabel?: string;
   onClick: (event?: React.MouseEvent) => void;
   tooltip?: string;
   children?: React.ReactNode;

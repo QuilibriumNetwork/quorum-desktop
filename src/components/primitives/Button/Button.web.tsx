@@ -5,8 +5,11 @@ import { Icon } from '../Icon';
 import './Button.scss';
 
 const Button: React.FC<WebButtonProps> = (props) => {
+  const isDisabledOnboarding =
+    props.disabled && props.type === 'disabled-onboarding';
+
   const baseClass = props.disabled
-    ? props.type === 'disabled-onboarding'
+    ? isDisabledOnboarding
       ? 'btn-disabled-onboarding'
       : 'btn-disabled'
     : `btn-${props.type || 'primary'}`;
@@ -16,7 +19,8 @@ const Button: React.FC<WebButtonProps> = (props) => {
 
   return (
     <>
-      <span
+      <button
+        type="button"
         id={buttonId}
         className={
           baseClass +
@@ -31,8 +35,12 @@ const Button: React.FC<WebButtonProps> = (props) => {
           (props.fullWidth ? ' btn-full-width' : '') +
           (props.className ? ' ' + props.className : '')
         }
+        disabled={props.disabled && !isDisabledOnboarding}
+        aria-disabled={isDisabledOnboarding ? 'true' : undefined}
+        aria-label={props.ariaLabel}
         onClick={(e) => {
-          if (!props.disabled) props.onClick(e);
+          if (isDisabledOnboarding) return;
+          props.onClick(e);
         }}
       >
         {props.iconName && (
@@ -52,7 +60,7 @@ const Button: React.FC<WebButtonProps> = (props) => {
           />
         )}
         {!props.iconOnly && props.children}
-      </span>
+      </button>
       {props.tooltip && (
         <ReactTooltip
           id={`${buttonId}-tooltip`}

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useId } from 'react';
 import { WebModalProps } from './types';
 import { ModalContainer } from '../ModalContainer';
 import { Icon } from '../Icon';
@@ -17,6 +17,8 @@ const Modal: React.FC<WebModalProps> = ({
   noPadding = false,
   titleAlign = 'left',
 }) => {
+  const modalTitleId = useId();
+
   return (
     <ModalContainer
       visible={visible}
@@ -26,10 +28,15 @@ const Modal: React.FC<WebModalProps> = ({
       animationDuration={300}
     >
       <div
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby={title ? modalTitleId : undefined}
         className={`quorum-modal text-subtle relative pointer-events-auto quorum-modal-${size} ${noPadding ? 'quorum-modal-no-padding' : ''} ${className}`}
       >
         {!hideClose && (
-          <div
+          <button
+            type="button"
+            aria-label="Close dialog"
             className="quorum-modal-close select-none cursor-pointer"
             onClick={(e) => {
               e.stopPropagation();
@@ -39,11 +46,12 @@ const Modal: React.FC<WebModalProps> = ({
             }}
           >
             <Icon name="close" size="md" />
-          </div>
+          </button>
         )}
 
         {title && (
           <div
+            id={modalTitleId}
             className={`quorum-modal-title select-none cursor-default ${titleAlign === 'center' ? 'quorum-modal-title-center' : ''}`}
           >
             {title}

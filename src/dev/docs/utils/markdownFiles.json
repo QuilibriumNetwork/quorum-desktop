@@ -34,7 +34,7 @@
         "title": "Complete Guide: Cross-Platform React Components for Web + Native",
         "status": "done",
         "created": "2026-01-09T00:00:00.000Z",
-        "updated": "2025-08-14T00:00:00.000Z"
+        "updated": "2026-02-10T00:00:00.000Z"
       }
     },
     {
@@ -550,7 +550,7 @@
         "title": "Primitives Quick Reference",
         "status": "done",
         "created": "2026-01-09T00:00:00.000Z",
-        "updated": "2025-10-14T00:00:00.000Z"
+        "updated": "2026-02-10T00:00:00.000Z"
       }
     },
     {
@@ -2295,6 +2295,24 @@
       }
     },
     {
+      "name": "remove-text-primitive-web.md",
+      "path": ".agents/tasks/.done/remove-text-primitive-web.md",
+      "folder": ".done",
+      "frontmatter": {
+        "type": "task",
+        "title": "Remove Text Primitive from Production Web Code",
+        "status": "completed",
+        "complexity": "medium",
+        "ai_generated": true,
+        "reviewed_by": null,
+        "created": "2026-01-14T18:00:00.000Z",
+        "updated": "2026-02-10T00:00:00.000Z",
+        "related_docs": [
+          "text-primitive-audit_2026-02-10.md"
+        ]
+      }
+    },
+    {
       "name": "rename-readme-to-agents.md",
       "path": ".agents/tasks/.done/rename-readme-to-agents.md",
       "folder": ".done",
@@ -2719,12 +2737,15 @@
       "folder": "root",
       "frontmatter": {
         "type": "task",
-        "title": "Implement Comprehensive Accessibility Features",
+        "title": "Accessibility Features — Remaining Work",
         "status": "open",
-        "complexity": "very-high",
+        "complexity": "high",
         "ai_generated": true,
         "created": "2026-01-06T00:00:00.000Z",
-        "updated": "2026-01-09"
+        "updated": "2026-02-10",
+        "related_tasks": [
+          "done/accessibility-wcag-remediation.md"
+        ]
       }
     },
     {
@@ -2848,6 +2869,44 @@
         "related_issues": [
           "#87",
           "#0287"
+        ]
+      }
+    },
+    {
+      "name": "accessibility-wcag-remediation.md",
+      "path": ".agents/tasks/done/accessibility-wcag-remediation.md",
+      "folder": "done",
+      "frontmatter": {
+        "type": "task",
+        "title": "WCAG 2.1 AA Remediation — Test-First Phased Implementation",
+        "status": "completed",
+        "complexity": "very-high",
+        "ai_generated": true,
+        "reviewed_by": null,
+        "created": "2026-02-10T00:00:00.000Z",
+        "updated": "2026-02-10T00:00:00.000Z",
+        "related_tasks": [
+          "accessibility-features-implementation.md",
+          "test-suite-plan.md"
+        ],
+        "related_docs": []
+      }
+    },
+    {
+      "name": "remove-text-primitive-web.md",
+      "path": ".agents/tasks/done/remove-text-primitive-web.md",
+      "folder": "done",
+      "frontmatter": {
+        "type": "task",
+        "title": "Remove Text Primitive from Production Web Code",
+        "status": "complete",
+        "complexity": "medium",
+        "ai_generated": true,
+        "reviewed_by": null,
+        "created": "2026-01-14T18:00:00.000Z",
+        "updated": "2026-02-10T22:00:00.000Z",
+        "related_docs": [
+          "text-primitive-audit_2026-02-10.md"
         ]
       }
     },
@@ -3319,24 +3378,6 @@
         "ai_generated": true,
         "created": "2025-12-30T00:00:00.000Z",
         "updated": "2026-01-09"
-      }
-    },
-    {
-      "name": "remove-text-primitive-web.md",
-      "path": ".agents/tasks/remove-text-primitive-web.md",
-      "folder": "root",
-      "frontmatter": {
-        "type": "task",
-        "title": "Remove Text Primitive from Production Web Code",
-        "status": "in-progress",
-        "complexity": "medium",
-        "ai_generated": true,
-        "reviewed_by": null,
-        "created": "2026-01-14T18:00:00.000Z",
-        "updated": "2026-02-10T00:00:00.000Z",
-        "related_docs": [
-          "text-primitive-audit_2026-02-10.md"
-        ]
       }
     },
     {
@@ -4157,6 +4198,28 @@
   ],
   "reports": [
     {
+      "name": "text-primitive-audit_2026-02-10.md",
+      "path": ".agents/reports/.archived/text-primitive-audit_2026-02-10.md",
+      "folder": ".archived",
+      "frontmatter": {
+        "type": "report",
+        "title": "Text Primitive Audit — Pre-Migration Analysis",
+        "ai_generated": true,
+        "reviewed_by": null,
+        "created": "2026-02-10T00:00:00.000Z",
+        "updated": "2026-02-10T00:00:00.000Z",
+        "related_tasks": [
+          "remove-text-primitive-web.md - completed"
+        ]
+      }
+    },
+    {
+      "name": "accessibility-wcag-audit_2026-02-10.md",
+      "path": ".agents/reports/accessibility-wcag-audit_2026-02-10.md",
+      "folder": "root",
+      "frontmatter": {}
+    },
+    {
       "name": "000-action-queue-summary.md",
       "path": ".agents/reports/action-queue/000-action-queue-summary.md",
       "folder": "action-queue",
@@ -4505,22 +4568,6 @@
         "ai_generated": true,
         "created": "2026-01-09T00:00:00.000Z",
         "updated": "2026-01-09"
-      }
-    },
-    {
-      "name": "text-primitive-audit_2026-02-10.md",
-      "path": ".agents/reports/text-primitive-audit_2026-02-10.md",
-      "folder": "root",
-      "frontmatter": {
-        "type": "report",
-        "title": "Text Primitive Audit — Pre-Migration Analysis",
-        "ai_generated": true,
-        "reviewed_by": null,
-        "created": "2026-02-10T00:00:00.000Z",
-        "updated": "2026-02-10T00:00:00.000Z",
-        "related_tasks": [
-          "remove-text-primitive-web.md"
-        ]
       }
     },
     {

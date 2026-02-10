@@ -115,6 +115,15 @@
 }
 
 .quorum-modal-close {
+  // Reset UA button defaults
+  appearance: none;
+  border: none;
+  font: inherit;
+  cursor: inherit;
+  line-height: inherit;
+  text-decoration: none;
+  outline: inherit;
+
   position: absolute;
   right: $s-7;
   top: $s-7 !important; // Match the right margin for visual balance - !important needed due to .quorum-modal-no-padding specificity

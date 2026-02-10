@@ -81,7 +81,7 @@ const Emojis: React.FunctionComponent<EmojisProps> = ({
                 key={'space-editor-emoji-' + i}
                 className="modal-list-item text-main flex flex-row px-3 py-2 items-center"
               >
-                <img width="24" height="24" src={em.imgUrl} className="rounded-md" />
+                <img width="24" height="24" src={em.imgUrl} alt={em.name} className="rounded-md" />
                 <div className="flex flex-col justify-around font-mono font-medium mx-2">
                   <span>
                     <input

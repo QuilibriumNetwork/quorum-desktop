@@ -82,6 +82,19 @@
   -webkit-tap-highlight-color: transparent;
 }
 
+/* === KEYBOARD FOCUS INDICATORS === */
+/* Only visible on keyboard navigation (Tab), not mouse clicks */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: $rounded-sm;
+}
+
+/* Remove default outline since :focus-visible handles keyboard-only */
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
 /* === LINKS === */
 a,
 .link {
