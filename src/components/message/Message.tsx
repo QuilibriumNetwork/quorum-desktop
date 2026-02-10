@@ -927,9 +927,9 @@ export const Message = React.memo(
 
                   // Fall back to the original token-based rendering
                   return contentData.content.map((c, i) => {
-                    // Smart tokenization: preserve mention patterns (which may contain spaces in display names)
-                    // Matches: @[Display Name]<address> or #[Channel Name]<channelId> as single tokens
-                    const mentionPattern = /(@(?:\[[^\]]+\])?<[^>]+>|#(?:\[[^\]]+\])?<[^>]+>)/g;
+                    // Smart tokenization: preserve mention patterns as single tokens
+                    // Matches: @<address> or #<channelId>
+                    const mentionPattern = /(@<[^>]+>|#<[^>]+>)/g;
                     const tokens: string[] = [];
                     let lastIndex = 0;
                     let match;

@@ -1,7 +1,7 @@
 ---
 type: task
 title: "Show Users Who Reacted (Tooltip + Modal)"
-status: open
+status: done
 complexity: medium
 ai_generated: true
 reviewed_by: feature-analyzer

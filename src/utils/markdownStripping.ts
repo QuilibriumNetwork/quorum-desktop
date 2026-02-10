@@ -158,8 +158,8 @@ export function processMarkdownText(text: string, options: MarkdownProcessingOpt
       .replace(/@everyone\b/gi, '')
       // Role mentions: @roleName
       .replace(/@\w+/g, '')
-      // Channel mentions: #[Name]<id> or #<id>
-      .replace(/#(?:\[[^\]]+\])?<[^>]+>/g, '')
+      // Channel mentions: #<id>
+      .replace(/#<[^>]+>/g, '')
       // Internal tokens
       .replace(/<<<MENTION_USER:[^>]+>>>/g, '')
       .replace(/<<<MENTION_EVERYONE>>>/g, '')

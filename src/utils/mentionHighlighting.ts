@@ -67,10 +67,10 @@ const isInsideCodeBlock = (text: string, position: number): boolean => {
  * Highlight mentions in text and return HTML with highlight spans
  *
  * Supports all mention types with unified styling:
- * - User mentions: @<address> and @[Name]<address>
+ * - User mentions: @<address>
  * - Role mentions: @roleTag
  * - Everyone mentions: @everyone
- * - Channel mentions: #<id> and #[Name]<id>
+ * - Channel mentions: #<id>
  *
  * Edge case handling:
  * - No highlights inside code blocks (```code``` or `code`)
@@ -100,8 +100,8 @@ export const highlightMentions = (text: string): string => {
 
   const mentionMatches: MentionMatch[] = [];
 
-  // 1. User mentions: @<address> and @[Name]<address> (both formats)
-  const userMentionRegex = /@(?:\[([^\]]+)\])?<([^>]+)>/g;
+  // 1. User mentions: @<address>
+  const userMentionRegex = /@<([^>]+)>/g;
   let userMatch;
   while ((userMatch = userMentionRegex.exec(text)) !== null) {
     if (hasWordBoundaries(text, userMatch) && !isInsideCodeBlock(text, userMatch.index!)) {
@@ -141,8 +141,8 @@ export const highlightMentions = (text: string): string => {
     }
   }
 
-  // 4. Channel mentions: #<id> and #[Name]<id> (both formats)
-  const channelMentionRegex = /#(?:\[([^\]]+)\])?<([^>]+)>/g;
+  // 4. Channel mentions: #<id>
+  const channelMentionRegex = /#<([^>]+)>/g;
   let channelMatch;
   while ((channelMatch = channelMentionRegex.exec(text)) !== null) {
     if (hasWordBoundaries(text, channelMatch) && !isInsideCodeBlock(text, channelMatch.index!)) {

@@ -259,10 +259,10 @@ export function extractMentionsFromText(
     }
   }
 
-  // Count and extract user mentions: @<anything> OR @[Display Name]<anything>
+  // Count and extract user mentions: @<anything>
   // For rate limiting: count any @<...> syntax
   // For extraction: validate IPFS CID format
-  const userMentionSyntaxRegex = /@(?:\[[^\]]+\])?<[^>]+>/g;
+  const userMentionSyntaxRegex = /@<[^>]+>/g;
   const userSyntaxMatches = Array.from(text.matchAll(userMentionSyntaxRegex));
 
   // Count all @<...> syntax for rate limiting (stop at MAX+1 for efficiency)
@@ -275,11 +275,11 @@ export function extractMentionsFromText(
 
   // Extract valid user mentions (with IPFS CID validation)
   const cidPattern = createIPFSCIDRegex().source;
-  const validUserMentionRegex = new RegExp(`@(?:\\[([^\\]]+)\\])?<(${cidPattern})>`, 'g');
+  const validUserMentionRegex = new RegExp(`@<(${cidPattern})>`, 'g');
   const validUserMatches = Array.from(text.matchAll(validUserMentionRegex));
 
   for (const match of validUserMatches) {
-    const address = match[2];
+    const address = match[1];
     if (address && hasWordBoundaries(text, match)) {
       // Only add to array if not already included (for notification purposes)
       if (!mentions.memberIds.includes(address)) {
@@ -330,10 +330,10 @@ export function extractMentionsFromText(
     }
   }
 
-  // Count and extract channel mentions: #<anything> OR #[Channel Name]<anything>
+  // Count and extract channel mentions: #<anything>
   // For rate limiting: count any #<...> syntax
   // For extraction: validate against actual space channels
-  const channelMentionRegex = /#(?:\[([^\]]+)\])?<([^>]+)>/g;
+  const channelMentionRegex = /#<([^>]+)>/g;
   const channelMatches = Array.from(text.matchAll(channelMentionRegex));
 
   // Count all #<...> syntax for rate limiting (stop at MAX+1 for efficiency)
@@ -347,9 +347,7 @@ export function extractMentionsFromText(
   // Extract valid channel mentions (validate against actual space channels)
   if (options?.spaceChannels && options.spaceChannels.length > 0) {
     for (const match of channelMatches) {
-      // match[1] is the optional display name (could be undefined)
-      // match[2] is the channelId (always present)
-      const possibleChannelId = match[2];
+      const possibleChannelId = match[1];
 
       // Only process channel mentions that have proper word boundaries
       if (!hasWordBoundaries(text, match)) continue;

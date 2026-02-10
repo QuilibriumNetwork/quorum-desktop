@@ -19,10 +19,10 @@ const renderPreviewTextWithSpecialTokens = (
   const lines = text.split('\n');
 
   return lines.map((line, i) => {
-    // Smart tokenization: preserve mention patterns (which may contain spaces in display names)
-    // Matches: @[Display Name]<address> or #[Channel Name]<channelId> as single tokens
+    // Smart tokenization: preserve mention patterns as single tokens
+    // Matches: @<address> or #<channelId>
     // Falls back to space-delimited words for regular text
-    const mentionPattern = /(@(?:\[[^\]]+\])?<[^>]+>|#(?:\[[^\]]+\])?<[^>]+>)/g;
+    const mentionPattern = /(@<[^>]+>|#<[^>]+>)/g;
     const tokens: string[] = [];
     let lastIndex = 0;
     let match;

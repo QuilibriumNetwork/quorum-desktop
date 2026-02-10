@@ -140,8 +140,7 @@ export function extractStorageTextFromEditor(editorElement: HTMLElement): string
       if (el.dataset?.mentionType && el.dataset?.mentionAddress) {
         const prefix = el.dataset.mentionType === 'channel' ? '#' : '@';
 
-        // Always use legacy format for storage
-        // Pills provide the visual UX, so no need for enhanced format @[Name]<address>
+        // Use simple format for storage: @<address> or #<id>
         if (el.dataset.mentionType === 'role') {
           // Roles always use @roleTag format (no brackets)
           text += `@${el.dataset.mentionAddress}`;

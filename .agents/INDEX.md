@@ -157,11 +157,9 @@ This is the main index for all documentation, bug reports, and task management.
 - [Passkey Import UX Issue](tasks/passkey-import-ux-issue.md)
 - [Primitives Migration to quorum-shared](tasks/primitives-migration-to-quorum-shared.md)
 - [Public Space Directory Feature](tasks/public-space-directory.md)
-- [Remove Deprecated Enhanced Mention Format Backward Compatibility Code](tasks/remove-enhanced-mention-format-compat.md)
 - [Remove Text Primitive from Web App](tasks/remove-text-primitive-web.md)
 - [SDK PasskeyModal Customization Props Enhancement](tasks/sdk-passkey-modal-customization-props.md)
 - [Service Worker for App Update Detection](tasks/service-worker-app-updates.md)
-- [Show Users Who Reacted (Tooltip + Modal)](tasks/show-reaction-users-tooltip.md)
 - [Space Tags](tasks/space-tags.md)
 - [Task: Implement Delete Public Invite Link Feature](tasks/delete-public-invite-link.md)
 - [Test Suite Implementation Plan for Quorum Desktop](tasks/test-suite-plan.md)
@@ -335,6 +333,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Refactor Message Highlighting System](tasks/.done/message-highlight-system-refactor.md)
 - [Refactor Modal Placement in Layout.tsx](tasks/.done/refactor-modal-placement.md)
 - [Rehype-Raw Security Fix - Complete Recap](tasks/.done/rehype-raw-security-fix-recap-2025-11-07.md)
+- [Remove Deprecated Enhanced Mention Format Backward Compatibility Code](tasks/.done/remove-enhanced-mention-format-compat.md)
 - [Remove ResponsiveContainer Primitive and Inline Styles](tasks/.done/layout-css-grid-refactor.md)
 - [Rename .agents to .agents](tasks/.done/rename-readme-to-agents.md)
 - [Replace FontAwesome with Tabler Icons](tasks/.done/replace-fontawesome-with-tabler-icons.md)
@@ -345,6 +344,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Scroll Performance Optimization](tasks/.done/scroll-performance-optimization.md)
 - [Search Components Primitive Migration](tasks/.done/search-primitive-migration.md)
 - [Security Analysis: MessageMarkdownRenderer Component](tasks/.done/security-analysis-message-markdown-renderer-2025-11-07.md)
+- [Show Users Who Reacted (Tooltip + Modal)](tasks/.done/show-reaction-users-tooltip.md)
 - [Space Folders - Discord-Style Grouping Feature](tasks/.done/space-folders-discord-style.md)
 - [Space Folders: Toggle Indicator Fix for Spaces Inside Folders](tasks/.done/space-folders-toggle-indicator-fix.md)
 - [Space Icon Mention Bubbles](tasks/.done/space-icon-mention-bubbles.md)
@@ -407,4 +407,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2026-01-14 19:56:49
+**Last Updated**: 2026-02-10 09:45:32

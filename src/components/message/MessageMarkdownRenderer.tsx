@@ -276,18 +276,6 @@ export const MessageMarkdownRenderer: React.FC<MessageMarkdownRendererProps> = (
     return text;
   };
 
-  // Sanitize display names for safe token creation
-  const sanitizeDisplayName = useCallback((displayName: string | null | undefined): string => {
-    if (!displayName) return '';
-
-    // Remove >>> characters that could break token parsing
-    // Limit length to prevent performance issues (matches regex limits)
-    return displayName
-      .replace(/>>>/g, '') // Remove token-breaking characters
-      .substring(0, 200)   // Match regex limit of {0,200}
-      .trim();
-  }, []);
-
   // Process mentions to show displayNames with proper styling and click handling
   // Only process mentions that have word boundaries AND are not inside protected regions
   // Protected regions: code blocks, inline code, markdown links
@@ -320,11 +308,11 @@ export const MessageMarkdownRenderer: React.FC<MessageMarkdownRendererProps> = (
       }
     }
 
-    // Replace @<address> OR @[Display Name]<address> with safe placeholder token only if it has word boundaries
+    // Replace @<address> with safe placeholder token only if it has word boundaries
     // Using centralized IPFS CID validation pattern
     // NOTE: Must match against processedText (not original text) since @everyone replacements change indices
     const cidPattern = createIPFSCIDRegex().source; // Get the pattern without global flag
-    const userMentionRegex = new RegExp(`@(?:\\[([^\\]]+)\\])?<(${cidPattern})>`, 'g');
+    const userMentionRegex = new RegExp(`@<(${cidPattern})>`, 'g');
     const userMatches = Array.from(processedText.matchAll(userMentionRegex));
 
     // Process matches in reverse order to avoid index shifting issues
@@ -347,17 +335,14 @@ export const MessageMarkdownRenderer: React.FC<MessageMarkdownRendererProps> = (
     // Replace from end to beginning to avoid index shifting
     for (let i = validUserMatches.length - 1; i >= 0; i--) {
       const match = validUserMatches[i];
-      const inlineDisplayName = match[1]; // Optional display name from @[Name]<address>
-      const address = match[2]; // Address is now in match[2] due to optional group
+      const address = match[1];
       const beforeText = processedText.substring(0, match.index);
       const afterText = processedText.substring(match.index! + match[0].length);
-      // Include sanitized inline display name in token for rendering preference
-      const sanitizedDisplayName = sanitizeDisplayName(inlineDisplayName);
-      processedText = beforeText + `<<<MENTION_USER:${address}:${sanitizedDisplayName}>>>` + afterText;
+      processedText = beforeText + `<<<MENTION_USER:${address}>>>` + afterText;
     }
 
     return processedText;
-  }, [mapSenderToUser, hasEveryoneMention, sanitizeDisplayName]);
+  }, [mapSenderToUser, hasEveryoneMention]);
 
   // Process role mentions - only render if role exists
   // Only process mentions that have word boundaries AND are not inside protected regions
@@ -429,8 +414,7 @@ export const MessageMarkdownRenderer: React.FC<MessageMarkdownRendererProps> = (
       // Escape special regex characters in channel ID
       const escapedChannelId = channelId.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
-      // Support both formats: #<channelId> and #[Channel Name]<channelId>
-      const channelRegex = new RegExp(`#(?:\\[([^\\]]+)\\])?<${escapedChannelId}>`, 'g');
+      const channelRegex = new RegExp(`#<${escapedChannelId}>`, 'g');
       const matches = Array.from(processed.matchAll(channelRegex));
 
       // Collect valid matches (not in protected regions and has word boundaries)
@@ -444,17 +428,14 @@ export const MessageMarkdownRenderer: React.FC<MessageMarkdownRendererProps> = (
       // Replace from end to beginning to avoid index shifting
       for (let i = validMatches.length - 1; i >= 0; i--) {
         const match = validMatches[i];
-        const inlineDisplayName = match[1]; // Optional display name from #[Name]<channelId>
         const beforeText = processed.substring(0, match.index);
         const afterText = processed.substring(match.index! + match[0].length);
-        // Include sanitized inline display name in token for rendering preference
-        const sanitizedDisplayName = sanitizeDisplayName(inlineDisplayName);
-        processed = beforeText + `<<<MENTION_CHANNEL:${channelId}:${channelName}:${sanitizedDisplayName}>>>` + afterText;
+        processed = beforeText + `<<<MENTION_CHANNEL:${channelId}:${channelName}>>>` + afterText;
       }
     });
 
     return processed;
-  }, [channelMentions, spaceChannels, sanitizeDisplayName]);
+  }, [channelMentions, spaceChannels]);
 
   // Process message links to convert them to styled tokens (same-space only)
   // IMPORTANT: Skip processing inside code blocks and markdown link syntax
@@ -582,28 +563,25 @@ export const MessageMarkdownRenderer: React.FC<MessageMarkdownRendererProps> = (
     let lastIndex = 0;
 
     // Regex to find all mention tokens (everyone, user, role, channel), message link tokens, and spoilers
-    // Updated to support inline display names: USER:address:inlineDisplayName and CHANNEL:id:name:inlineDisplayName
     // Using centralized IPFS CID validation pattern
     // SECURITY: Added quantifier limits to prevent catastrophic backtracking attacks
     // Capture group mapping:
     // match[1] = Full token content (MENTION_..., MESSAGE_LINK:...)
     // match[2] = MENTION subtype (EVERYONE, USER:..., ROLE:..., CHANNEL:...)
     // match[3] = USER address
-    // match[4] = USER inline display name
-    // match[5] = ROLE roleTag
-    // match[6] = ROLE displayName
-    // match[7] = CHANNEL channelId
-    // match[8] = CHANNEL channelName
-    // match[9] = CHANNEL inline display name
-    // match[10] = MESSAGE_LINK channelId
-    // match[11] = MESSAGE_LINK messageId
-    // match[12] = MESSAGE_LINK channelName
-    // match[13] = SPOILER content (plain text inside ||...||)
+    // match[4] = ROLE roleTag
+    // match[5] = ROLE displayName
+    // match[6] = CHANNEL channelId
+    // match[7] = CHANNEL channelName
+    // match[8] = MESSAGE_LINK channelId
+    // match[9] = MESSAGE_LINK messageId
+    // match[10] = MESSAGE_LINK channelName
+    // match[11] = SPOILER content (plain text inside ||...||)
     const cidPattern = createIPFSCIDRegex().source; // Get the pattern without global flag
     // Combined regex for <<< >>> tokens and ||spoiler|| syntax
     const tokenRegex = new RegExp(
       `<<<(` +
-        `MENTION_(EVERYONE|USER:(${cidPattern}):([^>]{0,200})|ROLE:([^:]{1,50}):([^>]{1,200})|CHANNEL:([^:>]{1,50}):([^:>]{1,200}):([^>]{0,200}))|` +
+        `MENTION_(EVERYONE|USER:(${cidPattern})|ROLE:([^:]{1,50}):([^>]{1,200})|CHANNEL:([^:>]{1,50}):([^:>]{1,200}))|` +
         `MESSAGE_LINK:([^:>]{1,100}):([^:>]{1,100}):([^>]{0,200})` +
       `)>>>|` +
       `\\|\\|([^|]{1,500})\\|\\|`,
@@ -626,12 +604,10 @@ export const MessageMarkdownRenderer: React.FC<MessageMarkdownRendererProps> = (
           </span>
         );
       } else if (match[3]) {
-        // User mention: <<<MENTION_USER:address:inlineDisplayName>>>
+        // User mention: <<<MENTION_USER:address>>>
         const address = match[3];
-        // Note: match[4] contains inline display name but is intentionally ignored for security
         if (mapSenderToUser && onUserClick) {
           const user = mapSenderToUser(address);
-          // SECURITY: Only use actual user data - ignore inline display names to prevent impersonation
           const displayName = user?.displayName || address.substring(0, 8) + '...';
 
           parts.push(
@@ -649,10 +625,10 @@ export const MessageMarkdownRenderer: React.FC<MessageMarkdownRendererProps> = (
           // Fallback if handlers not available
           parts.push(match[0]);
         }
-      } else if (match[5] && match[6]) {
+      } else if (match[4] && match[5]) {
         // Role mention: <<<MENTION_ROLE:roleTag:displayName>>>
-        const roleTag = match[5];
-        const displayName = match[6];
+        const roleTag = match[4];
+        const displayName = match[5];
         parts.push(
           <span
             key={`mention-${match.index}`}
@@ -662,11 +638,10 @@ export const MessageMarkdownRenderer: React.FC<MessageMarkdownRendererProps> = (
             @{roleTag}
           </span>
         );
-      } else if (match[7] && match[8]) {
-        // Channel mention: <<<MENTION_CHANNEL:channelId:channelName:inlineDisplayName>>>
-        const channelId = match[7];
-        const channelName = match[8];
-        // Note: match[9] contains inline display name but is intentionally ignored for security
+      } else if (match[6] && match[7]) {
+        // Channel mention: <<<MENTION_CHANNEL:channelId:channelName>>>
+        const channelId = match[6];
+        const channelName = match[7];
         parts.push(
           <span
             key={`mention-${match.index}`}
@@ -676,11 +651,11 @@ export const MessageMarkdownRenderer: React.FC<MessageMarkdownRendererProps> = (
             #{channelName}
           </span>
         );
-      } else if (match[10] && match[11] && match[12]) {
+      } else if (match[8] && match[9] && match[10]) {
         // Message link: <<<MESSAGE_LINK:channelId:messageId:channelName>>>
-        const channelId = match[10];
-        const messageId = match[11];
-        const channelName = match[12];
+        const channelId = match[8];
+        const messageId = match[9];
+        const channelName = match[10];
 
         parts.push(
           <span
@@ -694,9 +669,9 @@ export const MessageMarkdownRenderer: React.FC<MessageMarkdownRendererProps> = (
             <Icon name="message" size="sm" variant="filled" className="message-mentions-message-link__icon" />
           </span>
         );
-      } else if (match[13]) {
+      } else if (match[11]) {
         // Spoiler: ||content|| - renders as plain text when revealed
-        const spoilerContent = match[13];
+        const spoilerContent = match[11];
         parts.push(
           <span
             key={`spoiler-${match.index}`}
