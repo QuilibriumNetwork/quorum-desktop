@@ -13,6 +13,11 @@
   border: none !important;
   outline: none;
   color: var(--color-text-main);
+
+  /* Override global :focus-visible — composer row provides visual context */
+  &:focus-visible {
+    outline: none;
+  }
   box-shadow: none !important;
   box-sizing: border-box !important; /* Height includes padding */
   min-height: auto !important; /* Override TextArea primitive's min-height: 72px */
@@ -60,6 +65,11 @@
   border: none !important;
   outline: none;
   color: var(--color-text-main);
+
+  /* Override global :focus-visible — composer row provides visual context */
+  &:focus-visible {
+    outline: none;
+  }
   box-shadow: none !important;
   box-sizing: border-box !important;
   min-height: auto !important;
