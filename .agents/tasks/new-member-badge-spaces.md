@@ -5,12 +5,13 @@ status: open
 complexity: medium
 ai_generated: true
 created: 2025-12-29T00:00:00.000Z
-updated: '2026-01-09'
+updated: '2026-02-16'
 ---
 
 # Implement New Member Badge in Spaces
 
 > **⚠️ AI-Generated**: May contain errors. Verify before use.
+> reviewed by Experts Panel agents. 
 
 
 **Files**:
@@ -26,7 +27,7 @@ Users who recently joined a Space are not visually distinguishable from long-tim
 ## Context
 
 - **Existing pattern**: Pin/bookmark badges in `Message.tsx:707-740` show icons next to usernames
-- **Privacy consideration**: Already acceptable - `JoinMessage` already exposes `user_address` joined a Space; we're just adding precise timestamp
+- **Privacy consideration**: The `joinedAt` timestamp is scoped entirely within the Space's encrypted channel — it is **not** a global user property. It only travels through the same encrypted channel as the existing "XYZ has joined" message, is stored per-Space in each member's local IndexedDB (`space_members` keyed by `[spaceId, user_address]`), and is invisible to anyone outside the Space. Members of Space A cannot see when a user joined Space B. Since the join event is already visible in the chat stream, `joinedAt` formalizes an implicit timestamp rather than introducing new metadata exposure.
 - **Current limitation**: `JoinMessage.createdDate` is unreliable - each client sets `Date.now()` when they process the join, not when user actually joined
 
 ---
@@ -34,6 +35,8 @@ Users who recently joined a Space are not visually distinguishable from long-tim
 ## Implementation
 
 ### Phase 1: Add `joinedAt` to Join Broadcast
+
+> **Recommended**: Extract signature payload building into a shared helper function used by both `InvitationService.ts` (signing) and `MessageService.ts` (verification) to prevent schema drift when fields are added/changed.
 
 - [ ] **Add `joinedAt` to participant object** (`src/services/InvitationService.ts:840-864`)
     - Done when: `participant` object includes `joinedAt: Date.now()` field
@@ -111,6 +114,24 @@ Users who recently joined a Space are not visually distinguishable from long-tim
     });
     ```
 
+- [ ] **Include `joinedAt` in query cache update** (`src/services/MessageService.ts:2471-2486`)
+    - Done when: `queryClient.setQueryData` includes `joinedAt` so the badge appears immediately without refetch
+    - Verify: Badge shows right away when a new member joins (no page refresh needed)
+    ```typescript
+    // Current cache update is missing joinedAt:
+    await queryClient.setQueryData(
+      buildSpaceMembersKey({ spaceId: conversationId.split('/')[0] }),
+      (oldData: secureChannel.UserProfile[]) => {
+        return [...(oldData ?? []), {
+          user_address: participant.address,
+          user_icon: participant.userIcon,
+          display_name: participant.displayName,
+          joinedAt: participant.joinedAt,  // ADD THIS
+        }];
+      }
+    );
+    ```
+
 ### Phase 3: Fix JoinMessage Timestamp (requires Phase 1)
 
 - [ ] **Use authoritative `joinedAt` for JoinMessage** (`src/services/MessageService.ts:2412`)
@@ -127,17 +148,31 @@ Users who recently joined a Space are not visually distinguishable from long-tim
 ### Phase 4: Display Seedling Badge (requires Phase 2)
 
 - [ ] **Add hook to check new member status** (`src/hooks/useIsNewMember.ts` - new file)
-    - Done when: `useIsNewMember(spaceId, userAddress)` returns boolean
+    - Done when: `useIsNewMember(memberMap, userAddress)` returns boolean
     - Verify: Returns `true` for members joined < 7 days ago
+    - **Note**: Uses a pre-built `Map` to avoid O(n) `.find()` per message render
     ```typescript
     const SEVEN_DAYS_MS = 7 * 24 * 60 * 60 * 1000;
 
-    export function useIsNewMember(spaceId: string, userAddress: string): boolean {
-      const { data: members } = useSpaceMembers({ spaceId });
-      const member = members?.find(m => m.user_address === userAddress);
+    export function useIsNewMember(
+      memberMap: Map<string, SpaceMember> | undefined,
+      userAddress: string
+    ): boolean {
+      const member = memberMap?.get(userAddress);
       if (!member?.joinedAt) return false;
       return Date.now() - member.joinedAt < SEVEN_DAYS_MS;
     }
+    ```
+
+- [ ] **Build memoized member lookup Map** (in message list parent component)
+    - Done when: `memberMap` is built once via `useMemo` and passed down to messages
+    - Verify: Map is only rebuilt when `members` data changes, not on every render
+    ```typescript
+    const { data: members } = useSpaceMembers({ spaceId });
+    const memberMap = useMemo(
+      () => new Map(members?.map(m => [m.user_address, m]) ?? []),
+      [members]
+    );
     ```
 
 - [ ] **Add seedling badge to Message.tsx** (`src/components/message/Message.tsx:740`)
@@ -222,3 +257,7 @@ _Updated during implementation_
 ## Updates
 
 **2025-12-29 - Claude**: Initial task creation
+**2026-02-16 - Claude**: Expert panel review (Arch 7/10, Impl 5/10, Pragmatism 8/10). Applied fixes:
+  - Phase 4: Replaced per-message `.find()` with memoized `Map` lookup to avoid O(n*m) perf cliff
+  - Phase 2: Added missing `joinedAt` to query cache update (badge shows immediately, no refetch needed)
+  - Phase 1: Added recommendation to extract shared signature payload builder

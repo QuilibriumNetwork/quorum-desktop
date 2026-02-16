@@ -145,6 +145,7 @@ This is the main index for all documentation, bug reports, and task management.
 
 - [Accessibility Features — Remaining Work](tasks/accessibility-features-implementation.md)
 - [Add User Bio Field to UserSettingsModal General Tab](tasks/add-user-bio-field.md)
+- [Auto-save settings modals — eliminate save buttons](tasks/auto-save-settings-modals.md)
 - [Conversation Deletion State Synchronization](tasks/conversation-deletion-state-sync.md)
 - [Device Identification Improvement](tasks/device-identification-improvement.md)
 - [Fix Lingui "Uncompiled Message Detected" Warning](tasks/fix-lingui-uncompiled-message-warning.md)
@@ -417,4 +418,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2026-02-16 11:13:11
+**Last Updated**: 2026-02-16 11:32:41
