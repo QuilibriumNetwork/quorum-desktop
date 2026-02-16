@@ -40,7 +40,7 @@ Following recent refactoring, core MessageDB functionalities have been extracted
 ### Key Components
 
 - **MessageDB Orchestrator**: Coordinates interactions with specialized services and IndexedDB (`src/db/messages.ts`, `src/components/context/MessageDB.tsx`)
-- **Specialized Services**: Encapsulate business logic for specific domains (`src/services/MessageService.ts`, `src/services/SpaceService.ts`, `src/services/EncryptionService.ts`, `src/services/SyncService.ts`, `src/services/InvitationService.ts`, `src/services/ConfigService.ts`, `src/services/SearchService.ts`, `src/services/NotificationService.ts`, `src/services/ActionQueueService.ts`, `src/services/ActionQueueHandlers.ts`)
+- **Specialized Services**: Encapsulate business logic for specific domains (`src/services/MessageService.ts`, `src/services/SpaceService.ts`, `src/services/EncryptionService.ts`, `src/services/SyncService.ts`, `src/services/InvitationService.ts`, `src/services/ConfigService.ts`, `src/services/SearchService.ts`, `src/services/NotificationService.ts`, `src/services/ActionQueueService.ts`, `src/services/ActionQueueHandlers.ts`, `src/services/BackupService.ts`)
 - **Context Providers**: Data management contexts (`src/components/context/`)
 - **Query System**: TanStack Query hooks (`src/hooks/queries/`)
 - **API Layer**: RESTful client (`src/api/`)
@@ -985,6 +985,7 @@ class ErrorBoundary extends React.Component {
   - `NotificationService.ts` - Manages application notifications.
   - `ActionQueueService.ts` - Persistent background task queue with retry logic.
   - `ActionQueueHandlers.ts` - Task handlers for each action type.
+  - `BackupService.ts` - Encrypted DM backup export/import with domain-separated AES-256-GCM encryption.
 - **`src/adapters/`** - Storage adapters for cross-platform compatibility:
   - `indexedDbAdapter.ts` - Wraps MessageDB to conform to `@quilibrium/quorum-shared` StorageAdapter interface.
 - **`src/components/context/WebsocketProvider.tsx`** - WebSocket management

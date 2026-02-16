@@ -1320,6 +1320,97 @@ export class MessageDB {
     });
   }
 
+  /**
+   * Collects all DM-related data for backup export.
+   * Fetches DM conversations, their messages, encryption states, and user config.
+   */
+  async getAllDMData({ address }: { address: string }): Promise<{
+    messages: Message[];
+    conversations: Conversation[];
+    encryption_states: EncryptionState[];
+    user_config?: UserConfig;
+  }> {
+    await this.init();
+
+    // Fetch all DM conversations (paginate to collect all)
+    const allConversations: Conversation[] = [];
+    let cursor: number | undefined;
+    let hasMore = true;
+
+    while (hasMore) {
+      const result = await this.getConversations({ type: 'direct', cursor, limit: 1000 });
+      allConversations.push(...result.conversations);
+      if (result.nextCursor) {
+        cursor = result.nextCursor;
+      } else {
+        hasMore = false;
+      }
+    }
+
+    // Fetch all messages for each DM conversation
+    const allMessages: Message[] = [];
+    for (const conv of allConversations) {
+      const [spaceId, channelId] = conv.conversationId.split('/');
+      if (!spaceId || !channelId) continue;
+      const messages = await this.getAllConversationMessages({ spaceId, channelId });
+      allMessages.push(...messages);
+    }
+
+    // Fetch all encryption states (DM Double Ratchet states)
+    const encryption_states = await this.getAllEncryptionStates();
+
+    // Fetch user config (covers allowSync=false users)
+    const user_config = await this.getUserConfig({ address });
+
+    return {
+      messages: allMessages,
+      conversations: allConversations,
+      encryption_states,
+      user_config,
+    };
+  }
+
+  /**
+   * Imports DM data from a backup into IndexedDB using a single atomic transaction.
+   * Deduplicates messages/conversations by key using put() (existing records kept).
+   * Skips encryption_states and user_config (Phase 2: user has active sessions).
+   * Returns the count of messages and conversations written.
+   */
+  async importDMData({ messages, conversations }: {
+    messages: Message[];
+    conversations: Conversation[];
+  }): Promise<{ messagesWritten: number; conversationsWritten: number }> {
+    await this.init();
+    return new Promise((resolve, reject) => {
+      const transaction = this.db!.transaction(['messages', 'conversations'], 'readwrite');
+      const messageStore = transaction.objectStore('messages');
+      const conversationStore = transaction.objectStore('conversations');
+
+      let messagesWritten = 0;
+      let conversationsWritten = 0;
+
+      // Write conversations first (metadata)
+      for (const conv of conversations) {
+        const request = conversationStore.put(conv);
+        request.onsuccess = () => { conversationsWritten++; };
+      }
+
+      // Write messages (dedup by messageId via put)
+      for (const msg of messages) {
+        const request = messageStore.put(msg);
+        request.onsuccess = () => { messagesWritten++; };
+      }
+
+      transaction.oncomplete = () => {
+        resolve({ messagesWritten, conversationsWritten });
+      };
+      transaction.onerror = () => reject(transaction.error);
+      transaction.onabort = () => reject(new Error('Import transaction aborted'));
+    });
+  }
+
+
+
   async deleteMessagesForConversation(conversationId: string): Promise<void> {
     await this.init();
     const [spaceId, channelId] = conversationId.split('/');

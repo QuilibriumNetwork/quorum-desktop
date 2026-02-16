@@ -45,6 +45,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Touch Interaction System](docs/features/touch-interaction-system.md)
 - [Unified Notification System (Mentions + Replies)](docs/features/mention-notification-system.md)
 - [User Config Sync on Existing Accounts](docs/features/user-config-sync.md)
+- [User Data Backup & Restore](docs/features/user-data-backup.md)
 - [🔍 Global Message Search - Implementation Guide & Documentation](docs/features/search-feature.md)
 
 ### Features / Messages
@@ -163,7 +164,6 @@ This is the main index for all documentation, bug reports, and task management.
 - [Task: Implement Delete Public Invite Link Feature](tasks/delete-public-invite-link.md)
 - [Test Suite Implementation Plan for Quorum Desktop](tasks/test-suite-plan.md)
 - [Tombstone Cleanup Strategy for Deleted Messages](tasks/tombstone-cleanup-strategy.md)
-- [User Data Backup & Restore Feature](tasks/user-data-backup-restore-feature.md)
 - [User Status Feature Implementation Plan](tasks/user-status.md)
 
 ### .Archived
@@ -199,6 +199,7 @@ This is the main index for all documentation, bug reports, and task management.
 ### Done
 - [Migrate moment-timezone to Day.js for i18n date translation](tasks/done/i18n-date-translation-moment-locale.md)
 - [Remove Text Primitive from Production Web Code](tasks/done/remove-text-primitive-web.md)
+- [User Data Backup & Restore Feature](tasks/done/user-data-backup-restore-feature.md)
 - [WCAG 2.1 AA Remediation — Test-First Phased Implementation](tasks/done/accessibility-wcag-remediation.md)
 
 ### Messagedb
@@ -416,4 +417,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2026-02-10 17:23:30
+**Last Updated**: 2026-02-16 11:13:11

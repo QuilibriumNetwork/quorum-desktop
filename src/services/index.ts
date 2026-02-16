@@ -13,6 +13,10 @@ export { ActionQueueService } from './ActionQueueService';
 export { ActionQueueHandlers } from './ActionQueueHandlers';
 export type { HandlerDependencies, TaskHandler } from './ActionQueueHandlers';
 
+// Backup
+export { BackupService, BackupError } from './BackupService';
+export type { BackupFile, BackupPayload, BackupErrorType } from './BackupService';
+
 // Utility services
 export { SearchService } from './SearchService';
 export { notificationService } from './NotificationService';

@@ -6,6 +6,7 @@ import { useMessageDB } from '../../../components/context/useMessageDB';
 import { UserConfig } from '../../../db/messages';
 import { DefaultImages } from '../../../utils';
 import { useUploadRegistration } from '../../mutations/useUploadRegistration';
+import { BackupService } from '../../../services/BackupService';
 
 export interface UseUserSettingsOptions {
   onSave?: () => void;
@@ -28,6 +29,8 @@ export interface UseUserSettingsReturn {
   setStagedRegistration: (registration: any) => void;
   removeDevice: (identityKey: string) => void;
   downloadKey: () => Promise<void>;
+  exportBackup: () => Promise<void>;
+  importBackup: (file: File) => Promise<{ messagesWritten: number; conversationsWritten: number }>;
   getPrivateKeyHex: () => Promise<string>;
   keyset: any;
   removedDevices: string[];
@@ -53,7 +56,7 @@ export const useUserSettings = (
     address: currentPasskeyInfo?.address!,
   });
   const { keyset } = useRegistrationContext();
-  const { actionQueueService, getConfig, updateUserProfile } = useMessageDB();
+  const { messageDB, actionQueueService, getConfig, updateUserProfile } = useMessageDB();
   const uploadRegistration = useUploadRegistration();
   const existingConfig = useRef<UserConfig | null>(null);
 
@@ -122,6 +125,44 @@ export const useUserSettings = (
   const getPrivateKeyHex = async (): Promise<string> => {
     if (!currentPasskeyInfo) throw new Error('No passkey info available');
     return await exportKey(currentPasskeyInfo.address);
+  };
+
+  const exportBackup = async () => {
+    if (!currentPasskeyInfo || !keyset?.userKeyset) return;
+
+    const backupService = new BackupService({ messageDB });
+    const blob = await backupService.exportBackup({
+      keyset: keyset.userKeyset,
+      address: currentPasskeyInfo.address,
+    });
+
+    // Generate filename: quorum_backup_YYYYMMDD_HHMMSS_XXXXXX.qmbak
+    const now = new Date();
+    const pad = (n: number) => String(n).padStart(2, '0');
+    const timestamp = `${now.getFullYear()}${pad(now.getMonth() + 1)}${pad(now.getDate())}_${pad(now.getHours())}${pad(now.getMinutes())}${pad(now.getSeconds())}`;
+    const addressSuffix = currentPasskeyInfo.address.slice(-6);
+    const filename = `quorum_backup_${timestamp}_${addressSuffix}.qmbak`;
+
+    // Download using same DOM pattern as downloadKey
+    const url = window.URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    window.URL.revokeObjectURL(url);
+  };
+
+  const importBackup = async (file: File): Promise<{ messagesWritten: number; conversationsWritten: number }> => {
+    if (!keyset?.userKeyset) throw new Error('No keyset available');
+
+    const fileContent = await file.text();
+    const backupService = new BackupService({ messageDB });
+    return backupService.importBackup({
+      keyset: keyset.userKeyset,
+      fileContent,
+    });
   };
 
   const saveChanges = async (fileData?: ArrayBuffer, currentFile?: File, markedForDeletion?: boolean) => {
@@ -212,6 +253,8 @@ export const useUserSettings = (
     setStagedRegistration,
     removeDevice,
     downloadKey,
+    exportBackup,
+    importBackup,
     getPrivateKeyHex,
     keyset,
     removedDevices,

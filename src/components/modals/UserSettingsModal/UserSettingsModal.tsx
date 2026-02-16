@@ -72,6 +72,8 @@ const UserSettingsModal: React.FunctionComponent<{
     setStagedRegistration,
     removeDevice,
     downloadKey,
+    exportBackup,
+    importBackup,
     getPrivateKeyHex,
     keyset,
     removedDevices,
@@ -211,6 +213,8 @@ const UserSettingsModal: React.FunctionComponent<{
                         keyset={keyset}
                         removeDevice={removeDevice}
                         downloadKey={downloadKey}
+                        exportBackup={exportBackup}
+                        importBackup={importBackup}
                         getPrivateKeyHex={getPrivateKeyHex}
                         onSave={saveChanges}
                         isSaving={isSaving}

@@ -4,7 +4,7 @@ title: Space Tags
 status: on-hold
 complexity: high
 created: 2025-12-30T00:00:00.000Z
-updated: '2026-01-09'
+updated: '2026-02-16'
 related_issues:
   - '#14'
   - '#15'
@@ -15,7 +15,7 @@ related_issues:
 https://github.com/QuilibriumNetwork/quorum-desktop/issues/14
 
 > **:warning: AI-Generated**: May contain errors. Verify before use.
-> Reviewd by feature-analyzer agent, security-analyst agent, cryptographer agent
+> Reviewd by feature-analyzer agent, security-analyst agent, cryptographer agent, experts panel
 > Soft-review by human
 
 
@@ -328,7 +328,8 @@ How spaceTag flows from user selection to message display:
     - Design: See Design Specifications → Visual Design
     - Props: `tag: BroadcastSpaceTag`, `size` ('sm' | 'md' | 'lg')
     - Component receives full tag data (no fetching needed)
-    - Fallback: Show letters on colored background if no image
+    - Fallback: Show letters on colored background if image fails to load (`onError`)
+    - Note: Image URLs are already sanitized by the upload pipeline (canvas re-encoding via compressorjs produces safe base64 data URIs)
 
 - [ ] **Add SpaceTag styles** (`src/components/space/SpaceTag.scss`)
     - Done when: Pill shape with sizes (sm/md/lg) renders correctly
@@ -391,10 +392,15 @@ How spaceTag flows from user selection to message display:
       // ... existing leave logic ...
 
       // Clear space tag if it was from this space
-      const userConfig = await getUserConfig();
-      if (userConfig.spaceTagId === spaceId) {
-        await saveUserConfig({ ...userConfig, spaceTagId: undefined });
-        await broadcastProfileUpdate({ spaceTag: undefined });
+      try {
+        const userConfig = await getUserConfig();
+        if (userConfig.spaceTagId === spaceId) {
+          await saveUserConfig({ ...userConfig, spaceTagId: undefined });
+          await broadcastProfileUpdate({ spaceTag: undefined });
+        }
+      } catch (error) {
+        logger.error('Failed to clear space tag on leave:', error);
+        // Non-blocking: tag will be cleared on next startup via auto-refresh
       }
     };
     ```
@@ -409,24 +415,34 @@ How spaceTag flows from user selection to message display:
     ```typescript
     // On app startup (after spaces loaded)
     const checkAndRefreshSpaceTag = async () => {
-      const userConfig = await getUserConfig();
-      if (!userConfig.spaceTagId) return; // No tag selected
+      try {
+        const userConfig = await getUserConfig();
+        if (!userConfig.spaceTagId) return; // No tag selected
 
-      const space = await getSpace(userConfig.spaceTagId);
-      if (!space?.spaceTag) {
-        // Space no longer has a tag - clear user's selection
-        await clearSpaceTag();
-        return;
-      }
+        const space = await getSpace(userConfig.spaceTagId);
+        if (!space?.spaceTag) {
+          // Space no longer has a tag - clear user's selection
+          await clearSpaceTag();
+          return;
+        }
 
-      const lastBroadcast = await getLastBroadcastedTag(); // From local storage
-      const currentTag = space.spaceTag;
+        const lastBroadcast = await getLastBroadcastedTag(); // From local storage
+        const currentTag = space.spaceTag;
 
-      // Compare tag data (letters, url, backgroundColor)
-      if (!tagsEqual(lastBroadcast, currentTag)) {
-        // Tag changed - re-broadcast with fresh data
-        await broadcastProfileUpdate({ spaceTag: { ...currentTag, spaceId: space.spaceId } });
-        await saveLastBroadcastedTag(currentTag);
+        // Compare tag data (letters, url, backgroundColor)
+        if (!tagsEqual(lastBroadcast, currentTag)) {
+          // Tag changed - re-broadcast with fresh data
+          try {
+            await broadcastProfileUpdate({ spaceTag: { ...currentTag, spaceId: space.spaceId } });
+            await saveLastBroadcastedTag(currentTag);
+          } catch (broadcastError) {
+            logger.error('Failed to broadcast tag update:', broadcastError);
+            // Will retry on next startup - no user impact
+          }
+        }
+      } catch (error) {
+        logger.error('Failed to refresh space tag on startup:', error);
+        // Non-fatal: user keeps existing tag, will retry on next startup
       }
     };
     ```
@@ -435,6 +451,7 @@ How spaceTag flows from user selection to message display:
     - Automatic - user never needs to manually refresh
     - Minimal network - only broadcasts when tag actually changed
     - Handles edge case: Space owner deletes tag → user's tag auto-clears
+    - Error-resilient: failures are logged and retried on next startup without user impact
 
 ---
 
@@ -494,12 +511,20 @@ type SpaceTagProps = {
 
 export const SpaceTag = React.memo<SpaceTagProps>(({ tag, size }) => {
   if (!tag?.letters) return null;
+  const [imageError, setImageError] = useState(false);
 
   const bgColor = getFolderColorHex(tag.backgroundColor, isDarkTheme);
 
   return (
     <div className={`space-tag space-tag--${size}`} style={{ backgroundColor: bgColor }}>
-      {tag.url && <img src={tag.url} className="space-tag__image" />}
+      {tag.url && !imageError && (
+        <img
+          src={tag.url}
+          className="space-tag__image"
+          alt=""
+          onError={() => setImageError(true)}
+        />
+      )}
       <span className="space-tag__letters">{tag.letters}</span>
     </div>
   );
@@ -507,6 +532,8 @@ export const SpaceTag = React.memo<SpaceTagProps>(({ tag, size }) => {
 
 SpaceTag.displayName = 'SpaceTag';
 ```
+
+**Note**: Image URLs are always safe base64 data URIs produced by the upload pipeline (canvas re-encoding via compressorjs). When an image fails to load, the component gracefully falls back to showing only the letters on the colored background — no broken image icon.
 
 **User Settings Validation (filters at selection time):**
 
@@ -607,6 +634,8 @@ Just the tag display next to sender name.
 - [ ] All user-facing strings wrapped in `<Trans>` from `@lingui/react/macro`
 - [ ] Performance verified: Message list scroll smooth with 100+ messages containing tags
 - [ ] SpaceTag component MUST be memoized with `React.memo` (tags render on every message)
+- [ ] SpaceTag `<img>` has `onError` handler with graceful fallback (letters-only display)
+- [ ] All async operations in auto-refresh and auto-clear wrapped in try/catch with logger.error
 
 ---
 
@@ -629,7 +658,8 @@ _Updated during implementation_
 **2026-01-08 - Claude**: Made SpaceTag memoization mandatory (renders on every message)
 **2026-01-08 - Claude**: Added auto-refresh stale tag on app startup - compares last broadcast with current Space tag, re-broadcasts only if different
 **2026-01-09 - Claude**: Added "Future Enhancements" section for space profile modal on tag hover/click - deferred until Public Space Directory is implemented due to decentralization constraints
+**2026-02-16 - Claude**: Expert panel review (arch 7/10, impl 7.5/10, pragmatism 6/10). Applied accepted recommendations: added `onError` handler on `<img>` with graceful fallback to letters-only display, wrapped all async operations in auto-refresh and auto-clear with try/catch + logger.error for error resilience. Auto-refresh on startup kept as-is (confirmed: must be fully automatic, no user action required). Image URL sanitization was initially added but removed after codebase analysis confirmed all image uploads go through canvas re-encoding (compressorjs), producing safe base64 data URIs — no raw user URLs reach `<img src>`.
 
 ---
 
-*Last Updated: 2026-01-09*
+*Last Updated: 2026-02-16*

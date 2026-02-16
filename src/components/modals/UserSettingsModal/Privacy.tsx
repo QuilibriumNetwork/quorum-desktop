@@ -13,6 +13,8 @@ interface PrivacyProps {
   keyset: any;
   removeDevice: (key: string) => void;
   downloadKey: () => void;
+  exportBackup: () => Promise<void>;
+  importBackup: (file: File) => Promise<{ messagesWritten: number; conversationsWritten: number }>;
   getPrivateKeyHex?: () => Promise<string>;
   onSave: () => void;
   isSaving: boolean;
@@ -29,6 +31,8 @@ const Privacy: React.FunctionComponent<PrivacyProps> = ({
   keyset,
   removeDevice,
   downloadKey,
+  exportBackup,
+  importBackup,
   getPrivateKeyHex,
   onSave,
   isSaving,
@@ -40,6 +44,13 @@ const Privacy: React.FunctionComponent<PrivacyProps> = ({
   const [showQRCode, setShowQRCode] = React.useState(false);
   const [privateKeyHex, setPrivateKeyHex] = React.useState<string | null>(null);
   const [isLoadingKey, setIsLoadingKey] = React.useState(false);
+
+  // Backup state
+  const [isExportingBackup, setIsExportingBackup] = React.useState(false);
+  const [isImportingBackup, setIsImportingBackup] = React.useState(false);
+  const [backupError, setBackupError] = React.useState<string | null>(null);
+  const [backupSuccess, setBackupSuccess] = React.useState<string | null>(null);
+  const fileInputRef = React.useRef<HTMLInputElement>(null);
 
   // Auto-hide QR code after 60 seconds for security
   React.useEffect(() => {
@@ -77,6 +88,45 @@ const Privacy: React.FunctionComponent<PrivacyProps> = ({
     setShowQRCode(false);
     setPrivateKeyHex(null);
     setShowQRConfirmation(false);
+  };
+
+  const isBackupBusy = isExportingBackup || isImportingBackup;
+
+  const handleExportBackup = async () => {
+    setIsExportingBackup(true);
+    setBackupError(null);
+    setBackupSuccess(null);
+    try {
+      await exportBackup();
+    } catch (error: any) {
+      console.error('Backup export failed:', error);
+      setBackupError(error.message || t`Failed to export backup`);
+    } finally {
+      setIsExportingBackup(false);
+    }
+  };
+
+  const handleImportBackup = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Reset the input so the same file can be selected again
+    e.target.value = '';
+
+    setIsImportingBackup(true);
+    setBackupError(null);
+    setBackupSuccess(null);
+    try {
+      const result = await importBackup(file);
+      setBackupSuccess(
+        t`Restored ${result.messagesWritten} messages and ${result.conversationsWritten} conversations.`
+      );
+    } catch (error: any) {
+      console.error('Backup import failed:', error);
+      setBackupError(error.message || t`Failed to import backup`);
+    } finally {
+      setIsImportingBackup(false);
+    }
   };
 
   return (
@@ -333,6 +383,54 @@ const Privacy: React.FunctionComponent<PrivacyProps> = ({
             </div>
           </>
         )}
+
+        <Spacer size="md" direction="vertical" borderTop={true} />
+        <div className="text-subtitle-2 mb-2">{t`Data Backup`}</div>
+        <div className="modal-content-info">
+          <div className="flex flex-col gap-2">
+            <div className="flex flex-col gap-2 p-3 rounded-md border">
+              <div className="flex items-start justify-between gap-3">
+                <div className="text-sm" style={{ lineHeight: 1.3 }}>
+                  {t`Export an encrypted backup of your direct messages to restore them if you lose access to this device.`}
+                </div>
+                <Button
+                  type="secondary"
+                  size="small"
+                  className="whitespace-nowrap"
+                  onClick={handleExportBackup}
+                  disabled={isBackupBusy}
+                >
+                  {isExportingBackup ? t`Exporting...` : t`Export`}
+                </Button>
+              </div>
+              <button
+                type="button"
+                className="text-sm sm:text-xs underline cursor-pointer bg-transparent border-none p-0 text-left"
+                onClick={() => fileInputRef.current?.click()}
+                disabled={isBackupBusy}
+              >
+                {isImportingBackup ? t`Importing...` : t`Import a backup instead`}
+              </button>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept=".qmbak"
+                className="hidden"
+                onChange={handleImportBackup}
+              />
+            </div>
+            {backupError && (
+              <Callout variant="error" size="sm">
+                <div className="text-sm">{backupError}</div>
+              </Callout>
+            )}
+            {backupSuccess && (
+              <Callout variant="success" size="sm">
+                <div className="text-sm">{backupSuccess}</div>
+              </Callout>
+            )}
+          </div>
+        </div>
 
       </div>
     </>
