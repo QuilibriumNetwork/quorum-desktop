@@ -633,7 +633,7 @@ export class MessageService {
       );
     } else if (decryptedContent.content.type === 'update-profile') {
       const participant = await messageDB.getSpaceMember(
-        decryptedContent.spaceId,
+        spaceId,
         decryptedContent.content.senderId
       );
       if (
@@ -649,17 +649,14 @@ export class MessageService {
       );
       const inboxAddress = base58btc.baseEncode(sh.bytes);
 
-      if (
-        participant.inbox_address &&
-        participant.inbox_address != inboxAddress
-      ) {
-        return;
-      }
-
+      // update-profile is itself a key rotation announcement — accept inbox address changes.
+      // Signature was already verified upstream; rejecting on mismatch would permanently
+      // block profile updates after any key rotation.
       participant.display_name = decryptedContent.content.displayName;
       participant.user_icon = decryptedContent.content.userIcon;
       participant.inbox_address = inboxAddress;
-      await messageDB.saveSpaceMember(decryptedContent.spaceId, participant);
+      participant.spaceTag = decryptedContent.content.spaceTag;
+      await messageDB.saveSpaceMember(spaceId, participant);
     } else {
       // Check tombstone before saving - prevents deleted messages from being re-added during sync
       if (await messageDB.isMessageDeleted(decryptedContent.messageId)) {
@@ -1091,7 +1088,7 @@ export class MessageService {
       });
     } else if (decryptedContent.content.type === 'update-profile') {
       const participant = await this.messageDB.getSpaceMember(
-        decryptedContent.spaceId,
+        spaceId,
         decryptedContent.content.senderId
       );
       if (
@@ -1107,18 +1104,16 @@ export class MessageService {
       );
       const inboxAddress = base58btc.baseEncode(sh.bytes);
 
-      if (
-        participant.inbox_address &&
-        participant.inbox_address != inboxAddress
-      ) {
-        return;
-      }
-
+      // update-profile is itself a key rotation announcement — accept inbox address changes.
+      // Signature was already verified upstream; rejecting on mismatch would permanently
+      // block profile updates after any key rotation.
       participant.display_name = decryptedContent.content.displayName;
       participant.user_icon = decryptedContent.content.userIcon;
       participant.inbox_address = inboxAddress;
+      participant.spaceTag = decryptedContent.content.spaceTag;
+      await this.messageDB.saveSpaceMember(spaceId, participant);
       await queryClient.setQueryData(
-        buildSpaceMembersKey({ spaceId: decryptedContent.spaceId }),
+        buildSpaceMembersKey({ spaceId }),
         (oldData: secureChannel.UserProfile[]) => {
           return [
             ...(oldData ?? []).filter(
@@ -2387,13 +2382,18 @@ export class MessageService {
                 'SHA-256',
                 Buffer.from(
                   decryptedContent.nonce +
-                    'post' +
+                    decryptedContent.content.type +
                     decryptedContent.content.senderId +
                     canonicalize(decryptedContent.content as any),
                   'utf-8'
                 )
               );
+              // For update-profile: inbox address changes are legitimate (key rotation).
+              // The message IS the key rotation announcement, so skip inbox mismatch check.
+              // For all other types: inbox mismatch invalidates the signature.
+              const isUpdateProfile = decryptedContent.content.type === 'update-profile';
               const inboxMismatch =
+                !isUpdateProfile &&
                 participant.inbox_address !== inboxAddress &&
                 participant.inbox_address;
               const messageIdMismatch =
@@ -2423,7 +2423,7 @@ export class MessageService {
               }
             }
 
-            if (
+          if (
               decryptedContent?.content.type === 'update-profile' &&
               (!decryptedContent?.publicKey || !decryptedContent?.signature)
             ) {
@@ -4209,6 +4209,7 @@ export class MessageService {
         if (participant) {
           participant.display_name = updateProfileMessage.displayName;
           participant.user_icon = updateProfileMessage.userIcon;
+          participant.spaceTag = updateProfileMessage.spaceTag;
           await this.messageDB.saveSpaceMember(spaceId, participant);
 
           // Update query cache for immediate UI refresh
@@ -4222,6 +4223,7 @@ export class MessageService {
                       ...member,
                       display_name: updateProfileMessage.displayName,
                       user_icon: updateProfileMessage.userIcon,
+                      spaceTag: updateProfileMessage.spaceTag,
                     }
                   : member
               );
