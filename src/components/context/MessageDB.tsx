@@ -48,6 +48,7 @@ import {
   Space,
   StickerMessage,
   UpdateProfileMessage,
+  BroadcastSpaceTag,
 } from '../../api/quorumApi';
 import { useQuorumApiClient } from './QuorumApiContext';
 import { QuorumApiClient } from '../../api/baseTypes';
@@ -225,7 +226,8 @@ type MessageDBContextValue = {
       displayName?: string;
       pfpUrl?: string;
       completedOnboarding: boolean;
-    }
+    },
+    spaceTag?: BroadcastSpaceTag
   ) => Promise<void>;
   requestSync: (spaceId: string) => Promise<void>;
   sendVerifyKickedStatuses: (spaceId: string) => Promise<number>;
@@ -412,7 +414,8 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
         displayName?: string;
         pfpUrl?: string;
         completedOnboarding: boolean;
-      }
+      },
+      spaceTag?: BroadcastSpaceTag
     ) => {
       const spaces = await messageDB.getSpaces();
       for (const space of spaces) {
@@ -424,6 +427,7 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
             displayName,
             userIcon,
             senderId: currentPasskeyInfo.address,
+            ...(spaceTag ? { spaceTag } : {}),
           } as UpdateProfileMessage,
           queryClient,
           currentPasskeyInfo,

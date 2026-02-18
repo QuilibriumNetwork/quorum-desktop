@@ -17,7 +17,12 @@ import {
   useModalSaveState,
   useSpaceRecovery,
 } from '../../../hooks';
+import { useQuery } from '@tanstack/react-query';
+import { buildSpacesFetcher } from '../../../hooks/queries/spaces/buildSpacesFetcher';
+import { buildSpacesKey } from '../../../hooks/queries/spaces/buildSpacesKey';
+import { useMessageDB } from '../../context/useMessageDB';
 import { validateDisplayName, validateUserBio } from '../../../hooks/business/validation';
+import { BroadcastSpaceTag } from '../../../api/quorumApi';
 import General from './General';
 import Privacy from './Privacy';
 import Notifications from './Notifications';
@@ -66,6 +71,8 @@ const UserSettingsModal: React.FunctionComponent<{
     setAllowSync,
     nonRepudiable,
     setNonRepudiable,
+    spaceTagId,
+    setSpaceTagId,
     saveChanges: saveUserChanges,
     currentPasskeyInfo,
     stagedRegistration,
@@ -79,6 +86,30 @@ const UserSettingsModal: React.FunctionComponent<{
     removedDevices,
     isConfigLoaded,
   } = useUserSettings();
+
+  // Spaces for Space Tag selector (using useQuery to avoid Suspense requirement)
+  const { messageDB } = useMessageDB();
+  const { data: spaces } = useQuery({
+    queryKey: buildSpacesKey({}),
+    queryFn: buildSpacesFetcher({ messageDB }),
+    networkMode: 'always',
+  });
+  const eligibleSpaceTags = React.useMemo(() => {
+    if (!spaces) return [];
+    return spaces
+      .filter(
+        (space) =>
+          space.isPublic &&
+          space.spaceTag?.letters &&
+          space.spaceTag.letters.length === 4
+      )
+      .map((space) => ({
+        spaceId: space.spaceId,
+        spaceName: space.spaceName,
+        iconUrl: space.iconUrl,
+        spaceTag: { ...space.spaceTag!, spaceId: space.spaceId } as BroadcastSpaceTag,
+      }));
+  }, [spaces]);
 
   const {
     fileData,
@@ -200,6 +231,9 @@ const UserSettingsModal: React.FunctionComponent<{
                         onSave={saveChanges}
                         isSaving={isSaving}
                         validationError={displayNameError}
+                        spaceTagId={spaceTagId}
+                        setSpaceTagId={setSpaceTagId}
+                        eligibleSpaceTags={eligibleSpaceTags}
                       />
                     );
                   case 'privacy':

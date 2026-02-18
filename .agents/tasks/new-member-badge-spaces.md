@@ -1,11 +1,12 @@
 ---
 type: task
 title: Implement New Member Badge in Spaces
-status: open
+status: blocked
 complexity: medium
 ai_generated: true
 created: 2025-12-29T00:00:00.000Z
-updated: '2026-02-16'
+updated: '2026-02-18'
+blocker: quorum-shared must add `joinedAt?: number` to SpaceMember type before implementation can proceed
 ---
 
 # Implement New Member Badge in Spaces
@@ -250,7 +251,23 @@ Users who recently joined a Space are not visually distinguishable from long-tim
 
 ## Implementation Notes
 
-_Updated during implementation_
+### 2026-02-18 — Blocker identified: `quorum-shared` type change required
+
+During implementation planning we determined that `joinedAt` must be added to the `SpaceMember` type in `@quilibrium/quorum-shared` **before** this feature can be implemented here.
+
+**Why**: The feature is needed on both `quorum-desktop` and `quorum-mobile`. If each app defines `joinedAt` via its own local type extension, there is no shared contract. The correct approach is a single optional field in the shared type.
+
+**What needs to happen in `quorum-shared`**:
+```typescript
+type SpaceMember = UserProfile & {
+    inbox_address: string;
+    isKicked?: boolean;
+    joinedAt?: number;  // ADD THIS — Unix timestamp (ms) of when user joined the Space
+};
+```
+
+
+Once `quorum-shared` is updated and a new version is published + bumped here, all phases below can proceed as written.
 
 ---
 
@@ -261,3 +278,4 @@ _Updated during implementation_
   - Phase 4: Replaced per-message `.find()` with memoized `Map` lookup to avoid O(n*m) perf cliff
   - Phase 2: Added missing `joinedAt` to query cache update (badge shows immediately, no refetch needed)
   - Phase 1: Added recommendation to extract shared signature payload builder
+**2026-02-18 - Claude**: Marked as blocked. `quorum-shared` needs `joinedAt?: number` on `SpaceMember` before implementation. 

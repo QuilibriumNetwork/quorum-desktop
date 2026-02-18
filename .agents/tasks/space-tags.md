@@ -1,10 +1,10 @@
 ---
 type: task
 title: Space Tags
-status: on-hold
+status: done
 complexity: high
 created: 2025-12-30T00:00:00.000Z
-updated: '2026-02-16'
+updated: '2026-02-18'
 related_issues:
   - '#14'
   - '#15'
@@ -22,17 +22,25 @@ https://github.com/QuilibriumNetwork/quorum-desktop/issues/14
 **Reference**: [GitHub Issue #14](https://github.com/QuilibriumNetwork/quorum-desktop/issues/14), [PR #15](https://github.com/QuilibriumNetwork/quorum-desktop/pull/15)
 **Prior Art**: `origin/feat/space-tags` branch (incomplete implementation)
 
-**Files**:
-- `src/api/quorumApi.ts` (SpaceTag type, Space.spaceTag field, UpdateProfileMessage.spaceTagId)
-- `src/db/messages.ts` (space_members schema + DB_VERSION increment)
-- `src/components/space/SpaceTag.tsx` (new)
-- `src/components/space/SpaceTag.scss` (new)
-- `src/components/modals/UserSettingsModal/General.tsx` (add Space Tag selector)
-- `src/components/message/Message.tsx` (display tag next to username)
-- `src/components/modals/SpaceSettingsModal/` (Space owner configures tag)
-- `src/hooks/business/user/useUserSettings.ts` (add spaceTagId to config)
-- `src/services/MessageService.ts` (update-profile handler)
-- `src/utils/validation.ts` (validateSpaceTagLetters)
+**Files** (implemented):
+- `src/api/quorumApi.ts` — SpaceTag, BroadcastSpaceTag types; Space.spaceTag field; UpdateProfileMessage.spaceTag
+- `src/db/messages.ts` — space_members schema + DB_VERSION 7→8
+- `src/utils/validation.ts` — validateSpaceTagLetters
+- `src/components/space/SpaceTag/SpaceTag.tsx` (new) — React.memo pill badge component
+- `src/components/space/SpaceTag/SpaceTag.scss` (new) — sm/md/lg size variants
+- `src/components/space/SpaceTag/index.ts` (new) — barrel export
+- `src/hooks/business/spaces/useSpaceTag.ts` (new) — tag editor state hook
+- `src/components/modals/SpaceSettingsModal/SpaceTagSettings.tsx` (new) — owner tag config UI
+- `src/components/modals/SpaceSettingsModal/Navigation.tsx` — added space-tag tab
+- `src/components/modals/SpaceSettingsModal/SpaceSettingsModal.tsx` — integrated useSpaceTag + SpaceTagSettings
+- `src/hooks/business/user/useUserSettings.ts` — spaceTagId state, resolves to BroadcastSpaceTag on save
+- `src/components/modals/UserSettingsModal/General.tsx` — Space Tag selector dropdown + preview
+- `src/components/modals/UserSettingsModal/UserSettingsModal.tsx` — eligibleSpaceTags memo, passes to General
+- `src/components/context/MessageDB.tsx` — updateUserProfile accepts optional spaceTag param
+- `src/services/MessageService.ts` — update-profile handler reads spaceTag from incoming profiles (3 locations)
+- `src/hooks/business/channels/useChannelData.ts` — passes spaceTag through members map
+- `src/components/message/Message.tsx` — renders SpaceTag next to username (desktop + mobile)
+- `src/hooks/business/spaces/useSpaceLeaving.ts` — auto-clears spaceTagId config on space leave
 
 ---
 
@@ -498,6 +506,7 @@ Since we embed full tag data in the profile broadcast, most edge cases are handl
 | User selects tag from space they're not member of | Prevented at selection time | `UserSettingsModal` | Dropdown filters by membership |
 | No tag data in sender profile | No tag shown | `Message.tsx` | `{sender.spaceTag && <SpaceTag ... />}` |
 | Tag owner changes tag design | User's tag auto-updates on next app startup | App startup hook | `checkAndRefreshSpaceTag()` compares and re-broadcasts if different |
+| Sender's inbox key rotated since receiver last saw them | Tag still delivered correctly | `MessageService.ts` saveMessage handler | Inbox mismatch guard removed for `update-profile` — key rotation is announced via this message type, signature already verified upstream |
 
 **SpaceTag Component (simple - receives full data):**
 
@@ -624,6 +633,105 @@ Just the tag display next to sender name.
 
 ---
 
+## quorum-shared Integration (Required for Mobile + Cross-Device Sync)
+
+**Current approach: Option B — implement desktop first, update quorum-shared later.**
+
+The desktop implementation is complete as a standalone feature. However, full cross-platform parity (mobile showing tags, cross-device config sync) requires a follow-up update to `quorum-shared` and `quorum-mobile`.
+
+### Why quorum-shared needs updating
+
+Three sync paths are affected:
+
+| Sync path | Used for | Current gap |
+|-----------|----------|-------------|
+| `update-profile` E2E message | Sending your tag to other users in a space | `UpdateProfileMessage` in quorum-shared has no `spaceTag` field — mobile ignores it |
+| Member sync (`MemberDelta`) | Syncing `space_members` records between your own devices | `SpaceMember` and `MemberDigest` don't know about `spaceTag` — sync won't detect tag changes |
+| Config sync (`UserConfig`) | Syncing `spaceTagId` preference across your own devices | `UserConfig` in quorum-shared has no `spaceTagId` field — preference doesn't sync to phone |
+
+### Changes needed in `quorum-shared`
+
+**New types to add:**
+```typescript
+// In types/space.ts (or equivalent)
+export type SpaceTag = {
+  letters: string;            // Exactly 4 uppercase alphanumeric (e.g., "GAME", "DEV1")
+  url: string;                // Tag image as data: URI
+  backgroundColor: IconColor; // From the standard color palette
+};
+
+export type BroadcastSpaceTag = SpaceTag & {
+  spaceId: string;            // Source space reference
+};
+```
+
+**Types to update:**
+```typescript
+// Space — add spaceTag field
+type Space = {
+  // ...existing fields...
+  spaceTag?: SpaceTag;
+};
+
+// UpdateProfileMessage — add spaceTag field
+type UpdateProfileMessage = {
+  // ...existing fields...
+  spaceTag?: BroadcastSpaceTag;
+};
+
+// SpaceMember — add spaceTag field
+type SpaceMember = UserProfile & {
+  inbox_address: string;
+  isKicked?: boolean;
+  spaceTag?: BroadcastSpaceTag; // NEW
+};
+
+// UserConfig — add spaceTagId field
+type UserConfig = {
+  // ...existing fields...
+  spaceTagId?: string; // spaceId of the Space whose tag to display
+};
+```
+
+**`computeMemberHash` / `MemberDigest` — include spaceTag in change detection:**
+
+The current `MemberDigest` only hashes `display_name` and `user_icon`. It needs to also hash `spaceTag` so the sync protocol detects when a user's tag changes and pushes the updated member to other devices.
+
+```typescript
+// Current MemberDigest
+interface MemberDigest {
+  address: string;
+  inboxAddress: string;
+  displayNameHash: string;
+  iconHash: string;
+  // NEW:
+  spaceTagHash: string;  // SHA-256 hash of JSON.stringify(spaceTag) or '' if none
+}
+
+// computeMemberHash needs to compute spaceTagHash
+function computeMemberHash(member: SpaceMember): { displayNameHash, iconHash, spaceTagHash }
+```
+
+### Changes needed back in this repo (after quorum-shared update)
+
+Minimal — just type import swaps:
+
+1. **`src/api/quorumApi.ts`** — Remove local `SpaceTag` and `BroadcastSpaceTag` definitions, import from `@quilibrium/quorum-shared`
+2. **`src/db/messages.ts`** — Update `BroadcastSpaceTag` import source
+3. **`src/adapters/indexedDbAdapter.ts`** — TypeScript cast for `SpaceMember` with `spaceTag` may need updating
+
+All feature logic (components, hooks, MessageService, UI) is unchanged.
+
+### Mobile implementation
+
+Once quorum-shared is updated, `quorum-mobile` needs to implement the display side:
+- Render `SpaceTag` component next to sender name in messages
+- Show `SpaceTag` selector in user settings
+- Space settings: allow owner to configure tag (if public space)
+- Handle `spaceTag` in incoming `update-profile` messages
+
+---
+
 ## Definition of Done
 
 - [ ] All Phase 1-4 checkboxes complete
@@ -641,7 +749,37 @@ Just the tag display next to sender name.
 
 ## Implementation Notes
 
-_Updated during implementation_
+### Post-Implementation Bug Fix: Tags Not Visible to Recipients (2026-02-18)
+
+After completing all phases, testing revealed that senders saw their own space tag but recipients did not. Debugging traced three bugs in `src/services/MessageService.ts`, all in the `update-profile` message receive path:
+
+**Bug 1 — Wrong spaceId source in `saveMessage` handler (~line 634)**
+
+Both `update-profile` handlers (the standalone `saveMessage` function and the class method handler) used `decryptedContent.spaceId` to look up and save the space member. But `decryptedContent.spaceId` is not reliably populated on the decrypted content object when arriving via the plaintext envelope path. The `spaceId` parameter passed into `saveMessage` is the authoritative value from `conversationId.split('/')[0]`.
+
+Fix: Changed `messageDB.getSpaceMember(decryptedContent.spaceId, ...)` → `messageDB.getSpaceMember(spaceId, ...)` and same for `saveSpaceMember`. Applied to both handler instances.
+
+**Bug 2 — Hardcoded `'post'` in non-repudiability message ID verification (~line 2416)**
+
+The outer non-repudiability check computed the expected message ID using:
+```
+nonce + 'post' + senderId + canonicalize(content)
+```
+…for **all** message types. But `update-profile` messages are signed on the send side with:
+```
+nonce + 'update-profile' + senderId + canonicalize(content)
+```
+This caused a guaranteed `messageIdMismatch`, which cleared `publicKey` and `signature` from `decryptedContent`. The subsequent guard `!publicKey || !signature` then dropped the message silently.
+
+Fix: Changed hardcoded `'post'` → `decryptedContent.content.type` so the hash uses the actual message type.
+
+**Bug 3 — Inbox address mismatch guard blocking key-rotated senders (~line 667)**
+
+After the sender's inbox key had rotated, the receiver had a stale inbox address stored for that user. The inbox mismatch guard rejected all subsequent `update-profile` messages permanently — meaning the sender's display name and tag could never be updated on the receiver again after any key rotation.
+
+`update-profile` is itself the mechanism for announcing a new inbox key. Since signature verification already happened in the outer non-repudiability block, rejecting based on inbox mismatch is both redundant and incorrect for this message type.
+
+Fix: Removed the inbox mismatch `return` guard from both `update-profile` handlers. The `inboxAddress` derived from `publicKey` is still written to `participant.inbox_address`, correctly updating the stale value.
 
 ---
 
@@ -659,7 +797,9 @@ _Updated during implementation_
 **2026-01-08 - Claude**: Added auto-refresh stale tag on app startup - compares last broadcast with current Space tag, re-broadcasts only if different
 **2026-01-09 - Claude**: Added "Future Enhancements" section for space profile modal on tag hover/click - deferred until Public Space Directory is implemented due to decentralization constraints
 **2026-02-16 - Claude**: Expert panel review (arch 7/10, impl 7.5/10, pragmatism 6/10). Applied accepted recommendations: added `onError` handler on `<img>` with graceful fallback to letters-only display, wrapped all async operations in auto-refresh and auto-clear with try/catch + logger.error for error resilience. Auto-refresh on startup kept as-is (confirmed: must be fully automatic, no user action required). Image URL sanitization was initially added but removed after codebase analysis confirmed all image uploads go through canvas re-encoding (compressorjs), producing safe base64 data URIs — no raw user URLs reach `<img src>`.
+**2026-02-18 - Claude**: Implementation started (Phase 1 complete). Discovered that full cross-platform sync requires quorum-shared updates. Decision: proceed with Option B — implement desktop fully now, update quorum-shared later. Added "quorum-shared Integration" section documenting all required changes to quorum-shared and what minimal changes this repo will need when that happens. Phase 1 done: `SpaceTag`/`BroadcastSpaceTag` types added to `quorumApi.ts`, `spaceTag` added to `Space` and `UpdateProfileMessage`, `spaceTagId` added to `UserConfig`, `spaceTag` added to `space_members` DB schema (DB_VERSION 7→8), `validateSpaceTagLetters` added to `validation.ts`.
+**2026-02-18 - Claude**: All phases complete. Post-implementation debug session found and fixed three bugs in `src/services/MessageService.ts` that prevented recipients from seeing space tags: (1) `decryptedContent.spaceId` used instead of `spaceId` parameter in both `update-profile` handlers causing `getSpaceMember` to fail; (2) hardcoded `'post'` in non-repudiability message ID hash caused guaranteed mismatch for `update-profile`, silently clearing `publicKey`/`signature` and dropping the message; (3) inbox address mismatch guard permanently blocked profile updates after any inbox key rotation — removed for `update-profile` since this message type is itself the key rotation announcement and signature is already verified upstream. Feature now confirmed working end-to-end.
 
 ---
 
-*Last Updated: 2026-02-16*
+*Last Updated: 2026-02-18*

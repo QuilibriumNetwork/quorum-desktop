@@ -359,6 +359,18 @@
     border: $border solid var(--color-border-default);
   }
 
+  // Smaller avatar for the trigger button
+  &__trigger-avatar {
+    width: $s-5;
+    height: $s-5;
+    border-radius: $rounded-full;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    margin-right: $s-1;
+    flex-shrink: 0;
+  }
+
   // Enhanced text layout for subtitles
   &__option-text {
     display: flex;

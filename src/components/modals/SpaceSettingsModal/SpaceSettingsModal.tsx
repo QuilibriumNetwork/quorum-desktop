@@ -28,9 +28,11 @@ import {
 } from '../../../hooks';
 import { useMentionNotificationSettings } from '../../../hooks/business/mentions';
 import { showToast } from '../../../utils/toast';
+import { useSpaceTag } from '../../../hooks/business/spaces/useSpaceTag';
 import Account from './Account';
 import General from './General';
 import Roles from './Roles';
+import SpaceTagSettings from './SpaceTagSettings';
 import Emojis from './Emojis';
 import Stickers from './Stickers';
 import Invites from './Invites';
@@ -193,6 +195,25 @@ const SpaceSettingsModal: React.FunctionComponent<{
     bannerMarkedForDeletion,
     markBannerForDeletion,
   } = useSpaceFileUploads();
+
+  // Space tag hook
+  const {
+    letters: spaceTagLetters,
+    setLetters: setSpaceTagLetters,
+    backgroundColor: spaceTagColor,
+    setBackgroundColor: setSpaceTagColor,
+    tagImageUrl: spaceTagImageUrl,
+    tagImageError: spaceTagImageError,
+    isTagImageUploading: isSpaceTagImageUploading,
+    isTagImageDragActive: isSpaceTagImageDragActive,
+    getTagImageRootProps: getSpaceTagImageRootProps,
+    getTagImageInputProps: getSpaceTagImageInputProps,
+    clearTagImageError: clearSpaceTagImageError,
+    removeTagImage: removeSpaceTagImage,
+    buildTag: buildSpaceTag,
+  } = useSpaceTag({
+    initialTag: space?.spaceTag,
+  });
 
   // Custom assets hook
   const {
@@ -365,6 +386,7 @@ const SpaceSettingsModal: React.FunctionComponent<{
         emojis,
         stickers,
         description,
+        spaceTag: buildSpaceTag(),
       });
     });
   }, [
@@ -385,10 +407,11 @@ const SpaceSettingsModal: React.FunctionComponent<{
     description,
     iconMarkedForDeletion,
     bannerMarkedForDeletion,
+    buildSpaceTag,
   ]);
 
   // Determine if current category needs save button
-  const categoryNeedsSave = ['account', 'general', 'roles', 'emojis', 'stickers'].includes(selectedCategory);
+  const categoryNeedsSave = ['account', 'general', 'roles', 'space-tag', 'emojis', 'stickers'].includes(selectedCategory);
 
   return (
     <>
@@ -513,6 +536,24 @@ const SpaceSettingsModal: React.FunctionComponent<{
                           roleValidationError={roleValidationError}
                           onSave={saveChanges}
                           isSaving={isSaving}
+                        />
+                      );
+                    case 'space-tag':
+                      return (
+                        <SpaceTagSettings
+                          spaceId={spaceId}
+                          letters={spaceTagLetters}
+                          setLetters={setSpaceTagLetters}
+                          backgroundColor={spaceTagColor}
+                          setBackgroundColor={setSpaceTagColor}
+                          tagImageUrl={spaceTagImageUrl}
+                          tagImageError={spaceTagImageError}
+                          isTagImageUploading={isSpaceTagImageUploading}
+                          isTagImageDragActive={isSpaceTagImageDragActive}
+                          getTagImageRootProps={getSpaceTagImageRootProps}
+                          getTagImageInputProps={getSpaceTagImageInputProps}
+                          clearTagImageError={clearSpaceTagImageError}
+                          removeTagImage={removeSpaceTagImage}
                         />
                       );
                     case 'emojis':

@@ -372,3 +372,31 @@ export const createIPFSCIDRegex = (precise = false): RegExp => {
 export const isValidChannelId = (channelId: string): boolean => {
   return isValidIPFSCID(channelId);
 };
+
+// ============================================
+// SPACE TAG VALIDATION
+// ============================================
+
+/**
+ * Required length for Space Tag letter codes.
+ */
+export const SPACE_TAG_LETTERS_LENGTH = 4;
+
+/**
+ * Validates Space Tag letter codes.
+ * Must be exactly 4 uppercase alphanumeric characters (A-Z, 0-9).
+ * Safe from XSS - alphanumeric only, no HTML patterns possible.
+ *
+ * @param letters - The letters to validate
+ * @returns true if valid, false otherwise
+ *
+ * @example
+ * validateSpaceTagLetters("GAME") // true
+ * validateSpaceTagLetters("DEV1") // true
+ * validateSpaceTagLetters("abc") // false (lowercase, wrong length)
+ * validateSpaceTagLetters("GAME!") // false (special char)
+ */
+export const validateSpaceTagLetters = (letters: string): boolean => {
+  if (letters.length !== SPACE_TAG_LETTERS_LENGTH) return false;
+  return /^[A-Z0-9]{4}$/.test(letters);
+};

@@ -1,0 +1,74 @@
+.space-tag {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  flex-shrink: 0;
+  overflow: hidden;
+  vertical-align: middle;
+  user-select: none;
+
+  &__image {
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
+  }
+
+  &__letters {
+    color: #ffffff;
+    font-weight: 700;
+    font-family: var(--font-mono, ui-monospace, monospace);
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+  }
+
+  // Size: sm — used in message headers
+  &--sm {
+    height: 20px;
+    padding: 2px 6px 2px 2px;
+    gap: 3px;
+
+    .space-tag__image {
+      width: 16px;
+      height: 16px;
+    }
+
+    .space-tag__letters {
+      font-size: 11px;
+      line-height: 16px;
+    }
+  }
+
+  // Size: md — used in settings previews and dropdowns
+  &--md {
+    height: 24px;
+    padding: 3px 7px 3px 3px;
+    gap: 4px;
+
+    .space-tag__image {
+      width: 18px;
+      height: 18px;
+    }
+
+    .space-tag__letters {
+      font-size: 11px;
+      line-height: 18px;
+    }
+  }
+
+  // Size: lg — used in Space Settings editor
+  &--lg {
+    height: 32px;
+    padding: 4px 10px 4px 4px;
+    gap: 5px;
+
+    .space-tag__image {
+      width: 24px;
+      height: 24px;
+    }
+
+    .space-tag__letters {
+      font-size: 13px;
+      line-height: 24px;
+    }
+  }
+}

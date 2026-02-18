@@ -3,6 +3,7 @@ import { useSpace } from '../../queries/space/useSpace';
 import { useSpaceMembers } from '../../queries/spaceMembers/useSpaceMembers';
 import { i18n } from '@lingui/core';
 import { DefaultImages } from '../../../utils';
+import { BroadcastSpaceTag } from '../../../api/quorumApi';
 
 // Safe development-only testing - automatically disabled in production
 const ENABLE_MOCK_USERS =
@@ -70,6 +71,7 @@ export function useChannelData({ spaceId, channelId }: UseChannelDataProps) {
               : curr.user_icon,
             displayName: curr.display_name,
             isKicked: curr.isKicked || false,
+            spaceTag: (curr as any).spaceTag as BroadcastSpaceTag | undefined,
           },
         }),
       {} as {
@@ -78,6 +80,7 @@ export function useChannelData({ spaceId, channelId }: UseChannelDataProps) {
           userIcon?: string;
           displayName?: string;
           isKicked?: boolean;
+          spaceTag?: BroadcastSpaceTag;
         };
       }
     );
