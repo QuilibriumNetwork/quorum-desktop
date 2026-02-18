@@ -3,7 +3,7 @@ type: doc
 title: Cryptographic Architecture
 status: done
 created: 2025-12-20T00:00:00.000Z
-updated: 2026-01-02T00:00:00.000Z
+updated: 2026-02-18T00:00:00.000Z
 ---
 
 # Cryptographic Architecture
@@ -14,7 +14,7 @@ updated: 2026-01-02T00:00:00.000Z
 This document explains the cryptographic protocols and key management used in Quorum. It focuses on the **mental model** needed to understand how encryption and signing work, rather than implementation details.
 
 
-**Last Updated**: 2026-01-02
+**Last Updated**: 2026-02-18
 
 ---
 
@@ -25,7 +25,8 @@ This document explains the cryptographic protocols and key management used in Qu
 3. [Message Signing vs Encryption](#message-signing-vs-encryption)
 4. [Key Storage Locations](#key-storage-locations)
 5. [Key Compromise Impact](#key-compromise-impact)
-6. [SDK Functions Reference](#sdk-functions-reference)
+6. [Inbox Key Rotation](#inbox-key-rotation)
+7. [SDK Functions Reference](#sdk-functions-reference)
 
 ---
 
@@ -238,6 +239,84 @@ Even if keys are compromised:
 
 ---
 
+## Inbox Key Rotation
+
+The **Space Inbox Key** is not permanent. It can change over the lifetime of a member's participation in a Space, and the rest of the system must handle this gracefully.
+
+### What the Inbox Key Is
+
+Each member's inbox key has a corresponding **inbox address** — a base58-encoded public key hash that other members use to identify "the key this member is currently signing with". This address is stored on the `space_members` record for each user.
+
+### When Rotation Happens
+
+A new inbox key (and therefore a new inbox address) is generated whenever:
+
+| Event | Reason |
+|-------|--------|
+| User leaves and rejoins a Space | Re-join creates a fresh keyset |
+| User adds a new device | Device sync may issue new space keys |
+| Key sync / recovery events | Backend or client-side key refresh |
+
+After rotation the old `inbox_address` stored in the receiver's `space_members` record is stale — it points to a key the sender no longer uses.
+
+### How Rotation Is Announced: `update-profile`
+
+The `update-profile` message type is a broadcast that every member sends to the Space when their profile data changes (display name, avatar, or space tag). Critically, **it also carries the sender's current inbox address** via the signed envelope header.
+
+This makes `update-profile` the key rotation announcement. When a receiver processes it:
+
+1. The message arrives sealed with the sender's **new** inbox key.
+2. The receiver extracts the new `inboxAddress` from the envelope.
+3. `saveSpaceMember` persists the new address, replacing the stale one.
+
+From that point on, signatures from the sender are verified against the new key.
+
+### Why the Inbox Mismatch Guard Must Be Skipped for `update-profile`
+
+The non-repudiability verification block in `MessageService` contains an inbox mismatch check:
+
+```typescript
+const inboxMismatch =
+  !isUpdateProfile &&            // ← skip for update-profile
+  participant.inbox_address !== inboxAddress &&
+  participant.inbox_address;
+```
+
+If this check were applied to `update-profile`, the very message that announces the new key would be rejected because the stored address is still the old one — a chicken-and-egg deadlock. The sender's profile update (and any space tag selection) would be silently dropped and could never be delivered after any rotation event.
+
+The same logic applies to the inner guard in the `saveMessage` handler path:
+
+```
+// update-profile is itself a key rotation announcement — accept inbox address changes.
+// Signature was already verified upstream; rejecting on mismatch would permanently
+// block profile updates after any key rotation.
+```
+
+For all other message types the mismatch check remains fully active: if a non-profile message arrives claiming to be from a sender but signed with an unexpected key, it is correctly rejected.
+
+### Security Properties Preserved
+
+Skipping the inbox mismatch check for `update-profile` does **not** weaken security:
+
+- The **outer envelope** is still unsealed using the space Hub Key — only legitimate Space members can produce a valid envelope.
+- The **message ID hash** is still verified (`messageIdMismatch` check) — the hash covers `nonce + message_type + senderId + content`, so a tampered message fails here.
+- The **ed448 signature** is still verified against the extracted public key — the message must be signed by whoever holds the private key matching the envelope's claimed sender.
+
+What changes is only that the receiver now accepts the *new* inbox address from the envelope rather than demanding it match the old stored one.
+
+### Summary
+
+```
+Normal message:   stored_inbox == envelope_inbox? → verify signature
+                  stored_inbox != envelope_inbox? → REJECT (mismatch)
+
+update-profile:   stored_inbox == envelope_inbox? → verify signature, update stored inbox
+                  stored_inbox != envelope_inbox? → verify signature, update stored inbox
+                  (mismatch is expected and legitimate — this IS the rotation)
+```
+
+---
+
 ## SDK Functions Reference
 
 ### Double Ratchet (DMs)
@@ -360,8 +439,9 @@ secureChannel.UnsealSyncEnvelope(
 - [Security Architecture](features/security.md) - Application security (XSS, permissions, etc.)
 - [Data Management Architecture](data-management-architecture-guide.md) - Storage patterns
 - [Action Queue](features/action-queue.md) - Background task processing
+- [Message Signing System](features/messages/message-signing-system.md) - Non-repudiability hierarchy and receive-side verification
 
 ---
 
 
-_Last Updated: 2026-01-02_
+_Last Updated: 2026-02-18_

@@ -41,6 +41,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Security Architecture](docs/features/security.md)
 - [Space Folders](docs/features/space-folders.md)
 - [Space Settings Modal - Fixes Section](docs/features/space-settings-fixes-section.md)
+- [Space Tags](docs/features/space-tags.md)
 - [Toast Notifications](docs/features/toast-notifications.md)
 - [Touch Interaction System](docs/features/touch-interaction-system.md)
 - [Unified Notification System (Mentions + Replies)](docs/features/mention-notification-system.md)
@@ -418,4 +419,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2026-02-16 11:32:41
+**Last Updated**: 2026-02-18 18:33:15
