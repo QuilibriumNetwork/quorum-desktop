@@ -33,6 +33,7 @@ import {
   useDirectMessageUnreadCount,
 } from '../../hooks/business/messages';
 import { useSpaceLeaving } from '../../hooks/business/spaces/useSpaceLeaving';
+import { useSpaceTagStartupRefresh } from '../../hooks/business/spaces/useSpaceTagStartupRefresh';
 import { useChannelMute } from '../../hooks/business/channels';
 import { useResponsiveLayoutContext } from '../context/ResponsiveLayoutProvider';
 import { useMessageDB } from '../context/useMessageDB';
@@ -97,6 +98,9 @@ const NavMenuContent: React.FC<NavMenuProps> = (props) => {
   const { messageDB } = useMessageDB();
   const { leaveSpace } = useSpaceLeaving();
   const queryClient = useQueryClient();
+
+  // On startup: re-broadcast profile if space tag changed, or clear if tag no longer exists
+  useSpaceTagStartupRefresh({ spaces, config });
 
   // DM read state context for immediate UI updates on "mark all as read"
   const { markAllAsRead } = useDmReadState();

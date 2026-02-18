@@ -10,7 +10,7 @@ export const useSpaceLeaving = () => {
     useState<NodeJS.Timeout | null>(null);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
-  const { deleteSpace, getConfig, actionQueueService } = useMessageDB();
+  const { deleteSpace, getConfig, actionQueueService, updateUserProfile } = useMessageDB();
   const { currentPasskeyInfo } = usePasskeysContext();
   const { keyset } = useRegistrationContext();
 
@@ -42,6 +42,13 @@ export const useSpaceLeaving = () => {
                 { config: newConfig },
                 `config:${currentPasskeyInfo.address}`
               );
+              // Broadcast profile update with no tag so other members stop seeing it
+              await updateUserProfile(
+                currentPasskeyInfo.displayName ?? '',
+                currentPasskeyInfo.pfpUrl ?? '',
+                currentPasskeyInfo,
+                undefined
+              );
             }
           }
         } catch (tagErr) {
@@ -60,7 +67,7 @@ export const useSpaceLeaving = () => {
         setConfirmationStep(0); // Reset confirmation state on error
       }
     },
-    [deleteSpace, navigate, getConfig, actionQueueService, currentPasskeyInfo, keyset]
+    [deleteSpace, navigate, getConfig, actionQueueService, updateUserProfile, currentPasskeyInfo, keyset]
   );
 
   const handleLeaveClick = useCallback(

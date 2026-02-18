@@ -87,6 +87,12 @@ export type UserConfig = {
   mutedConversations?: string[];
   // The spaceId of the Space whose tag this user has selected to display globally
   spaceTagId?: string;
+  // Snapshot of the last tag data broadcast so startup refresh can detect owner changes
+  lastBroadcastSpaceTag?: {
+    letters: string;
+    url: string;
+    backgroundColor: string;
+  };
 };
 
 export interface SearchableMessage {
