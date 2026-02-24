@@ -3,12 +3,12 @@ type: doc
 title: Message Signing System
 status: done
 created: 2026-01-09T00:00:00.000Z
-updated: 2026-01-09T00:00:00.000Z
+updated: 2026-02-18T00:00:00.000Z
 ---
 
 # Message Signing System
 
-**Last Updated:** December 9, 2025
+**Last Updated:** 2026-02-18
 
 ## Overview
 
@@ -301,6 +301,64 @@ To verify the feature works correctly:
 3. **Conversation Settings:** Change in ConversationSettingsModal → persists after sending messages
 4. **Per-message Toggle:** Click lock/unlock → applies to individual message
 5. **Hierarchy:** Verify more specific settings override general ones
+
+## Receive-Side Verification
+
+When a Space message arrives, `MessageService` verifies non-repudiability before persisting the message. Understanding this is important because bugs here can silently drop messages with no visible error.
+
+### Verification Steps (in order)
+
+```
+1. Unseal hub envelope → extract inboxAddress from envelope header
+2. Compute expected messageId:
+       SHA-256(nonce + content.type + senderId + canonicalize(content))
+3. Check inboxMismatch:
+       stored inbox_address != envelope inboxAddress  (AND stored address exists)
+4. Check messageIdMismatch:
+       decryptedContent.messageId != computed hash (hex)
+5. If either mismatch → clear publicKey + signature (treat as unsigned)
+6. If both match     → verify ed448 signature against messageId
+```
+
+### The Message ID Hash
+
+Step 2 must use `decryptedContent.content.type` — **not** a hardcoded message type string. The hash covers:
+
+```typescript
+SHA-256(
+  decryptedContent.nonce +
+  decryptedContent.content.type +   // e.g. 'post', 'update-profile', 'sticker'
+  decryptedContent.content.senderId +
+  canonicalize(decryptedContent.content)
+)
+```
+
+Using the wrong type string causes `messageIdMismatch = true`, which clears the signature and treats the message as unsigned — even if the signature is perfectly valid.
+
+### Inbox Mismatch and Key Rotation
+
+The inbox mismatch check compares the sender's stored inbox address against the one in the envelope. This check must be **skipped for `update-profile`** messages because that message type is itself the key rotation announcement — the whole point is to update the stored address to the new one. See [Inbox Key Rotation](../../cryptographic-architecture.md#inbox-key-rotation) for full details.
+
+```typescript
+const isUpdateProfile = decryptedContent.content.type === 'update-profile';
+const inboxMismatch =
+  !isUpdateProfile &&
+  participant.inbox_address !== inboxAddress &&
+  participant.inbox_address;
+```
+
+### What Happens When Verification Fails
+
+If `inboxMismatch || messageIdMismatch`:
+- `publicKey` and `signature` are cleared from the decrypted content
+- The message is still **saved** — it just appears as unsigned/unverified in the UI
+- No error is thrown; the failure is silent in normal operation
+
+If the ed448 signature itself fails:
+- The `nonRepudiable` flag on the saved message is set to `false`
+- Again silent — no rejection, just recorded as unsigned
+
+---
 
 ## Developer Notes
 

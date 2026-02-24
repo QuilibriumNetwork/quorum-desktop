@@ -4,6 +4,7 @@ import { useRegistration } from '../../queries';
 import { useRegistrationContext } from '../../../components/context/useRegistrationContext';
 import { useMessageDB } from '../../../components/context/useMessageDB';
 import { UserConfig } from '../../../db/messages';
+import { BroadcastSpaceTag } from '../../../api/quorumApi';
 import { DefaultImages } from '../../../utils';
 import { useUploadRegistration } from '../../mutations/useUploadRegistration';
 import { BackupService } from '../../../services/BackupService';
@@ -23,6 +24,8 @@ export interface UseUserSettingsReturn {
   setAllowSync: (allow: boolean) => void;
   nonRepudiable: boolean;
   setNonRepudiable: (repudiable: boolean) => void;
+  spaceTagId: string | undefined;
+  setSpaceTagId: (id: string | undefined) => void;
   saveChanges: (fileData?: ArrayBuffer, currentFile?: File, markedForDeletion?: boolean) => Promise<void>;
   currentPasskeyInfo: any;
   stagedRegistration: any;
@@ -49,6 +52,7 @@ export const useUserSettings = (
   const [selectedCategory, setSelectedCategory] = useState('general');
   const [allowSync, setAllowSync] = useState(false);
   const [nonRepudiable, setNonRepudiable] = useState(true);
+  const [spaceTagId, setSpaceTagId] = useState<string | undefined>(undefined);
   const [init, setInit] = useState(false);
   const [isConfigLoaded, setIsConfigLoaded] = useState(false);
 
@@ -85,6 +89,7 @@ export const useUserSettings = (
         setAllowSync(config?.allowSync ?? false);
         setNonRepudiable(config?.nonRepudiable ?? true);
         setBio(config?.bio ?? '');
+        setSpaceTagId(config?.spaceTagId ?? undefined);
         setIsConfigLoaded(true);
       })();
     }
@@ -192,11 +197,26 @@ export const useUserSettings = (
       completedOnboarding: true,
     });
 
+    // Resolve spaceTagId to full BroadcastSpaceTag for broadcast
+    let resolvedSpaceTag: BroadcastSpaceTag | undefined;
+    if (spaceTagId) {
+      try {
+        const spaces = await messageDB.getSpaces();
+        const tagSpace = spaces.find((s) => s.spaceId === spaceTagId);
+        if (tagSpace?.spaceTag?.letters) {
+          resolvedSpaceTag = { ...tagSpace.spaceTag, spaceId: tagSpace.spaceId };
+        }
+      } catch {
+        // Non-blocking: tag won't appear but profile still saves
+      }
+    }
+
     // Update user profile in message DB
     updateUserProfile(
       displayName,
       profileImageUrl ?? DefaultImages.UNKNOWN_USER,
-      currentPasskeyInfo
+      currentPasskeyInfo,
+      resolvedSpaceTag
     );
 
     // Queue config save in background - no more UI blocking!
@@ -207,6 +227,7 @@ export const useUserSettings = (
       name: displayName,
       profile_image: profileImageUrl,
       bio: bio.trim() || undefined,
+      spaceTagId: spaceTagId || undefined,
     };
     await actionQueueService.enqueue(
       'save-user-config',
@@ -247,6 +268,8 @@ export const useUserSettings = (
     setAllowSync,
     nonRepudiable,
     setNonRepudiable,
+    spaceTagId,
+    setSpaceTagId,
     saveChanges,
     currentPasskeyInfo,
     stagedRegistration,

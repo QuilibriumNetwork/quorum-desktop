@@ -41,6 +41,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Security Architecture](docs/features/security.md)
 - [Space Folders](docs/features/space-folders.md)
 - [Space Settings Modal - Fixes Section](docs/features/space-settings-fixes-section.md)
+- [Space Tags](docs/features/space-tags.md)
 - [Toast Notifications](docs/features/toast-notifications.md)
 - [Touch Interaction System](docs/features/touch-interaction-system.md)
 - [Unified Notification System (Mentions + Replies)](docs/features/mention-notification-system.md)
@@ -144,6 +145,7 @@ This is the main index for all documentation, bug reports, and task management.
 ### Pending Tasks
 
 - [Accessibility Features — Remaining Work](tasks/accessibility-features-implementation.md)
+- [Add Space Tag support to shared types](tasks/quorum-shared-space-tags.md)
 - [Add User Bio Field to UserSettingsModal General Tab](tasks/add-user-bio-field.md)
 - [Auto-save settings modals — eliminate save buttons](tasks/auto-save-settings-modals.md)
 - [Conversation Deletion State Synchronization](tasks/conversation-deletion-state-sync.md)
@@ -161,6 +163,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Public Space Directory Feature](tasks/public-space-directory.md)
 - [SDK PasskeyModal Customization Props Enhancement](tasks/sdk-passkey-modal-customization-props.md)
 - [Service Worker for App Update Detection](tasks/service-worker-app-updates.md)
+- [Space Tag Click — Space Info Modal](tasks/space-tag-info-modal.md)
 - [Space Tags](tasks/space-tags.md)
 - [Task: Implement Delete Public Invite Link Feature](tasks/delete-public-invite-link.md)
 - [Test Suite Implementation Plan for Quorum Desktop](tasks/test-suite-plan.md)
@@ -196,12 +199,6 @@ This is the main index for all documentation, bug reports, and task management.
 - [Docusaurus Developer Documentation Blueprint](tasks/docusaurus/docusaurus-blueprint-v2.md)
 - [Docusaurus Quorum Users Faq](tasks/docusaurus/docusaurus-quorum-users-faq.md)
 - [Docusaurus Setup & Implementation Task](tasks/docusaurus/docusaurus-setup-implementation.md)
-
-### Done
-- [Migrate moment-timezone to Day.js for i18n date translation](tasks/done/i18n-date-translation-moment-locale.md)
-- [Remove Text Primitive from Production Web Code](tasks/done/remove-text-primitive-web.md)
-- [User Data Backup & Restore Feature](tasks/done/user-data-backup-restore-feature.md)
-- [WCAG 2.1 AA Remediation — Test-First Phased Implementation](tasks/done/accessibility-wcag-remediation.md)
 
 ### Messagedb
 - [High-Risk Optimization Opportunities](tasks/messagedb/messagedb-optimization-3.md)
@@ -321,6 +318,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Message Rate Limiting with User Experience Feedback](tasks/.done/message-rate-limiting-with-ux-feedback.md)
 - [MessageDB Circular Dependency Status](tasks/.done/messagedb-circular-dependecy-status.md)
 - [MessageDB.tsx Refactoring Analysis and TAsk](tasks/.done/DONE_messagedb-refactoring.md)
+- [Migrate moment-timezone to Day.js for i18n date translation](tasks/.done/i18n-date-translation-moment-locale.md)
 - [Mobile Message Options UX Enhancement](tasks/.done/message-options-mobile.md)
 - [Modal Animation Consistency Implementation](tasks/.done/new-modals-effect.md)
 - [Modal Migration Analysis & Progress Report](tasks/.done/DONE_modal-migration-plan.md)
@@ -370,7 +368,9 @@ This is the main index for all documentation, bug reports, and task management.
 - [Unify Unread Message Indicators: Channels & DMs](tasks/.done/unify-unread-indicators-channels-dms.md)
 - [Unread Message Visual Indicators Implementation](tasks/.done/unread-message-visual-indicators.md)
 - [User Config Sync on Existing Accounts](tasks/.done/user-config-sync-on-existing-accounts.md)
+- [User Data Backup & Restore Feature](tasks/.done/user-data-backup-restore-feature.md)
 - [User Initials Avatars](tasks/.done/user-initials.md)
+- [WCAG 2.1 AA Remediation — Test-First Phased Implementation](tasks/.done/accessibility-wcag-remediation.md)
 - [XSS Prevention - Final Implementation](tasks/.done/xss-prevention-final-implementation-2025-11-08.md)
 - [🎯 Objective: Implement Global Message Search](tasks/.done/global-search-plan.md)
 - [🔍 Global Message Search Implementation Plan](tasks/.done/global-search.md)
@@ -418,4 +418,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2026-02-16 11:32:41
+**Last Updated**: 2026-02-24 10:37:18

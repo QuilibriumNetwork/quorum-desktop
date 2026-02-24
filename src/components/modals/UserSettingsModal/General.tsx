@@ -1,10 +1,20 @@
 import * as React from 'react';
-import { Input, Icon, Spacer, Tooltip, TextArea } from '../../primitives';
+import { Input, Icon, Spacer, Tooltip, TextArea, Select } from '../../primitives';
 import { t } from '@lingui/core/macro';
 import { Trans } from '@lingui/react/macro';
 import { ClickToCopyContent } from '../../ui';
 import { DefaultImages } from '../../../utils';
 import { ReactTooltip } from '../../ui';
+import { SpaceTag } from '../../space/SpaceTag';
+import { BroadcastSpaceTag } from '../../../api/quorumApi';
+import { SelectOption } from '../../primitives/Select/types';
+
+interface EligibleSpaceTag {
+  spaceId: string;
+  spaceName: string;
+  iconUrl?: string;
+  spaceTag: BroadcastSpaceTag;
+}
 
 interface GeneralProps {
   displayName: string;
@@ -30,6 +40,9 @@ interface GeneralProps {
   onSave: () => void;
   isSaving: boolean;
   validationError?: string;
+  spaceTagId: string | undefined;
+  setSpaceTagId: (id: string | undefined) => void;
+  eligibleSpaceTags: EligibleSpaceTag[];
 }
 
 const General: React.FunctionComponent<GeneralProps> = ({
@@ -53,6 +66,9 @@ const General: React.FunctionComponent<GeneralProps> = ({
   onSave,
   isSaving,
   validationError,
+  spaceTagId,
+  setSpaceTagId,
+  eligibleSpaceTags,
 }) => {
   // Determine if there's an image to display (new upload or existing, not marked for deletion)
   const hasImage = (() => {
@@ -169,6 +185,50 @@ const General: React.FunctionComponent<GeneralProps> = ({
             </ClickToCopyContent>
           </div>
         </div>
+        {/* Space Tag selector */}
+        {eligibleSpaceTags.length > 0 && (
+          <>
+            <Spacer size="md" direction="vertical" borderTop={true} />
+            <div className="text-subtitle-2">
+              <Trans>Space Tag</Trans>
+            </div>
+            <div className="pt-2 text-label mb-4">
+              <Trans>
+                Display a tag from one of your Spaces next to your username in messages.
+              </Trans>
+            </div>
+            <Select
+              value={spaceTagId ?? ''}
+              options={[
+                { value: '', label: t`None` },
+                ...eligibleSpaceTags.map((s): SelectOption => ({
+                  value: s.spaceId,
+                  label: s.spaceName,
+                  avatar: s.iconUrl,
+                  displayName: s.spaceName,
+                })),
+              ]}
+              onChange={(val) => {
+                const v = val as string;
+                setSpaceTagId(v === '' ? undefined : v);
+              }}
+              size="medium"
+              variant="bordered"
+              className="w-full md:w-80"
+            />
+            {spaceTagId && (() => {
+              const selected = eligibleSpaceTags.find(s => s.spaceId === spaceTagId);
+              return selected ? (
+                <div className="mt-3 flex items-center gap-2">
+                  <span className="text-label">
+                    <Trans>Preview:</Trans>
+                  </span>
+                  <SpaceTag tag={selected.spaceTag} size="md" />
+                </div>
+              ) : null;
+            })()}
+          </>
+        )}
       </div>
     </>
   );

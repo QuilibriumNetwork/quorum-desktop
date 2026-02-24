@@ -156,7 +156,7 @@ export const ICON_COLORS: ColorOption[] = [
   { value: 'red', label: 'Red', class: 'text-accent-red', hex: '#ef4444' },
 ];
 
-// Dimmed colors for folder backgrounds (25% less saturation, similar to UserInitials)
+// Dimmed colors for folder backgrounds — light theme (25% less saturation)
 export const FOLDER_COLORS: ColorOption[] = [
   { value: 'default', label: 'Default', class: 'text-subtle', hex: '#6b7280' },
   { value: 'blue', label: 'Blue', class: 'text-accent-blue', hex: '#5f8eeb' },

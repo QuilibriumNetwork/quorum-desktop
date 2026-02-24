@@ -286,7 +286,35 @@ const Select: React.FC<WebSelectProps> = ({
       );
       return selectedOption ? (
         <>
+          {(selectedOption.avatar || selectedOption.displayName) && (() => {
+            const hasValidAvatar = selectedOption.avatar &&
+              !selectedOption.avatar.includes(DefaultImages.UNKNOWN_USER);
+
+            if (hasValidAvatar) {
+              return (
+                <div
+                  className="quorum-select__trigger-avatar"
+                  style={{ backgroundImage: `url(${selectedOption.avatar})` }}
+                />
+              );
+            }
+
+            if (selectedOption.displayName) {
+              return (
+                <UserAvatar
+                  userIcon={null}
+                  displayName={selectedOption.displayName}
+                  address={selectedOption.userAddress || selectedOption.value}
+                  size={20}
+                  className="quorum-select__trigger-avatar"
+                />
+              );
+            }
+
+            return null;
+          })()}
           {selectedOption.icon &&
+            !selectedOption.avatar &&
             (isValidIconName(selectedOption.icon) ? (
               <Icon
                 name={selectedOption.icon}

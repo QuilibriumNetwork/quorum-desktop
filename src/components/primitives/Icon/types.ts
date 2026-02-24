@@ -147,6 +147,9 @@ export type IconName =
   | 'heading'
   | 'quote'
 
+  // Labels & Tags
+  | 'tag'
+
   // Miscellaneous
   | 'dollar-sign'
   | 'question-circle'

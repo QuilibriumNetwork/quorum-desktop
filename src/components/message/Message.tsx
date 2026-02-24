@@ -15,6 +15,7 @@ import EmojiPicker, {
   Theme,
 } from 'emoji-picker-react';
 import UserProfile from '../user/UserProfile';
+import { SpaceTag } from '../space/SpaceTag';
 import { useParams } from 'react-router';
 import { InviteLink } from './InviteLink';
 import {
@@ -731,6 +732,7 @@ export const Message = React.memo(
                     <span className="message-sender-name truncate-user-name-chat flex-shrink min-w-0">
                       {sender.displayName}
                     </span>
+                    {sender.spaceTag && <SpaceTag tag={sender.spaceTag} size="sm" className="ml-1.5" />}
                     {message.isPinned && (
                       <Tooltip
                         id={`pin-indicator-${message.messageId}`}
@@ -809,6 +811,7 @@ export const Message = React.memo(
                       <span className="message-sender-name truncate-user-name-chat flex-shrink min-w-0">
                         {sender.displayName}
                       </span>
+                      {sender.spaceTag && <SpaceTag tag={sender.spaceTag} size="sm" className="ml-1.5" />}
                       {message.isPinned && (
                         <Tooltip
                           id={`pin-indicator-mobile-${message.messageId}`}

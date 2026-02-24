@@ -1,6 +1,6 @@
 import { logger } from '@quilibrium/quorum-shared';
 import { channel } from '@quilibrium/quilibrium-js-sdk-channels';
-import { Conversation, Message, Space, Bookmark, BOOKMARKS_CONFIG } from '../api/quorumApi';
+import { Conversation, Message, Space, Bookmark, BOOKMARKS_CONFIG, BroadcastSpaceTag } from '../api/quorumApi';
 import type { NotificationSettings } from '../types/notifications';
 import type { IconColor } from '../components/space/IconPicker/types';
 import type { IconName } from '../components/primitives/Icon/types';
@@ -85,6 +85,13 @@ export type UserConfig = {
   favoriteDMs?: string[];
   // Muted DM conversation IDs (no unread indicators or notifications)
   mutedConversations?: string[];
+  // The spaceId of the Space whose tag this user has selected to display globally
+  spaceTagId?: string;
+  // Snapshot of the last tag data broadcast so startup refresh can detect owner changes
+  lastBroadcastSpaceTag?: {
+    letters: string;
+    url: string;
+  };
 };
 
 export interface SearchableMessage {
@@ -134,7 +141,7 @@ export interface SearchResult {
 export class MessageDB {
   private db: IDBDatabase | null = null;
   private readonly DB_NAME = 'quorum_db';
-  private readonly DB_VERSION = 7;
+  private readonly DB_VERSION = 8;
   private searchIndices: Map<string, MiniSearch<SearchableMessage>> = new Map();
   private indexInitialized = false;
 
@@ -250,6 +257,13 @@ export class MessageDB {
           });
           deletedMessagesStore.createIndex('by_space_channel', ['spaceId', 'channelId']);
           deletedMessagesStore.createIndex('by_deleted_at', 'deletedAt');
+        }
+
+        if (event.oldVersion < 8) {
+          // Add spaceTag field to space_members records (optional field, no data migration needed)
+          // space_members records now support: spaceTag?: BroadcastSpaceTag
+          // No schema changes required - IndexedDB is schemaless for object values.
+          // DB_VERSION bump ensures clients re-open the DB with the new version.
         }
       };
     });
@@ -668,6 +682,7 @@ export class MessageDB {
     userProfile: channel.UserProfile & {
       inbox_address: string;
       isKicked?: boolean;
+      spaceTag?: BroadcastSpaceTag;
     }
   ): Promise<void> {
     await this.init();
@@ -685,7 +700,7 @@ export class MessageDB {
     spaceId: string,
     user_address: string
   ): Promise<
-    channel.UserProfile & { inbox_address: string; isKicked?: boolean }
+    channel.UserProfile & { inbox_address: string; isKicked?: boolean; spaceTag?: BroadcastSpaceTag }
   > {
     await this.init();
     return new Promise((resolve, reject) => {
@@ -704,7 +719,7 @@ export class MessageDB {
   async getSpaceMembers(
     spaceId: string
   ): Promise<
-    (channel.UserProfile & { inbox_address: string; isKicked?: boolean })[]
+    (channel.UserProfile & { inbox_address: string; isKicked?: boolean; spaceTag?: BroadcastSpaceTag })[]
   > {
     await this.init();
     return new Promise((resolve, reject) => {

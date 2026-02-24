@@ -157,6 +157,9 @@ export const iconComponentMap: Record<IconName, string> = {
   heading: 'IconHeading',
   quote: 'IconQuote',
 
+  // Labels & Tags
+  tag: 'IconTag',
+
   // Miscellaneous
   'dollar-sign': 'IconCurrencyDollar',
   'question-circle': 'IconHelpCircle',
