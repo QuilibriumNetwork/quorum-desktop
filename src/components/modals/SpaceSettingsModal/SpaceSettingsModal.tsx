@@ -200,8 +200,6 @@ const SpaceSettingsModal: React.FunctionComponent<{
   const {
     letters: spaceTagLetters,
     setLetters: setSpaceTagLetters,
-    backgroundColor: spaceTagColor,
-    setBackgroundColor: setSpaceTagColor,
     tagImageUrl: spaceTagImageUrl,
     tagImageError: spaceTagImageError,
     isTagImageUploading: isSpaceTagImageUploading,
@@ -544,8 +542,6 @@ const SpaceSettingsModal: React.FunctionComponent<{
                           spaceId={spaceId}
                           letters={spaceTagLetters}
                           setLetters={setSpaceTagLetters}
-                          backgroundColor={spaceTagColor}
-                          setBackgroundColor={setSpaceTagColor}
                           tagImageUrl={spaceTagImageUrl}
                           tagImageError={spaceTagImageError}
                           isTagImageUploading={isSpaceTagImageUploading}

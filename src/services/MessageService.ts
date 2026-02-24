@@ -16,6 +16,7 @@ import {
   EditMessage,
   PinMessage,
   UpdateProfileMessage,
+  BroadcastSpaceTag,
 } from '../api/quorumApi';
 import { sha256, base58btc, hexToSpreadArray } from '../utils/crypto';
 import { int64ToBytes } from '../utils/bytes';
@@ -24,6 +25,7 @@ import {
   buildMessagesKey,
   buildSpaceMembersKey,
   buildSpaceKey,
+  buildSpacesKey,
   buildConfigKey,
   buildConversationsKey,
 } from '../hooks';
@@ -42,7 +44,7 @@ import {
   isMentionedWithSettings,
   MAX_MENTIONS_PER_MESSAGE,
 } from '../utils/mentionUtils';
-import { MAX_MESSAGE_LENGTH } from '../utils/validation';
+import { MAX_MESSAGE_LENGTH, validateSpaceTagLetters, isValidSpaceTagUrl } from '../utils/validation';
 import { hasPermission } from '../utils/permissions';
 import { showWarning, dismissToast, showPersistentToast } from '../utils/toast';
 import { notificationService } from './NotificationService';
@@ -139,6 +141,9 @@ export class MessageService {
   // ActionQueueService for persistent queue (optional, set via setter)
   private actionQueueService?: ActionQueueService;
 
+  // Cooldown guard: prevents rapid re-broadcasts when a space owner spam-updates their tag
+  private pendingTagRebroadcast = new Set<string>();
+
   constructor(dependencies: MessageServiceDependencies) {
     this.messageDB = dependencies.messageDB;
     this.enqueueOutbound = dependencies.enqueueOutbound;
@@ -184,6 +189,139 @@ export class MessageService {
     options?: { stripEphemeralFields?: boolean; saveStateAfterSend?: boolean }
   ) => Promise<string> {
     return this.encryptAndSendToSpace.bind(this);
+  }
+
+  /**
+   * Checks whether an incoming space-manifest changes the tag the current user
+   * has selected, and if so re-broadcasts update-profile to all spaces with
+   * the fresh tag data. Guarded by a per-spaceId cooldown to prevent
+   * amplification from a malicious owner spamming manifest updates.
+   */
+  private async rebroadcastTagIfChanged(
+    space: Space,
+    selfAddress: string,
+    keyset: {
+      userKeyset: secureChannel.UserKeyset;
+      deviceKeyset: secureChannel.DeviceKeyset;
+    },
+    queryClient: QueryClient
+  ): Promise<void> {
+    // 1. Read config — one IndexedDB read
+    const config = await this.messageDB.getUserConfig({ address: selfAddress });
+    if (!config?.spaceTagId) return;
+
+    // 2. Early return if this manifest isn't for the space whose tag we display
+    if (config.spaceTagId !== space.spaceId) return;
+
+    // 3. Cooldown guard — skip if we already re-broadcast for this space recently
+    if (this.pendingTagRebroadcast.has(space.spaceId)) return;
+
+    // 4. Compare tag data — only broadcast if something actually changed
+    const currentTag = space.spaceTag;
+    const lastTag = config.lastBroadcastSpaceTag;
+
+    if (currentTag?.letters) {
+      // Tag still exists — check if it changed
+      const tagChanged =
+        !lastTag ||
+        lastTag.letters !== currentTag.letters ||
+        lastTag.url !== currentTag.url;
+
+      if (!tagChanged) return;
+    } else if (!lastTag) {
+      // Tag was already absent and we had no previous tag — nothing to do
+      return;
+    }
+    // else: tag was deleted by owner (currentTag is undefined but lastTag exists) — need to clear
+
+    // 5. Set cooldown guard (60s) before starting async work
+    this.pendingTagRebroadcast.add(space.spaceId);
+    setTimeout(() => this.pendingTagRebroadcast.delete(space.spaceId), 60_000);
+
+    // 6. Build the resolved tag (or undefined if owner deleted it)
+    const resolvedTag: BroadcastSpaceTag | undefined = currentTag?.letters
+      ? { ...currentTag, spaceId: space.spaceId }
+      : undefined;
+
+    // 7. Read display name + icon from config
+    const displayName = config.name ?? '';
+    const userIcon = config.profile_image ?? DefaultImages.UNKNOWN_USER;
+
+    // 8. Broadcast update-profile to all spaces
+    const allSpaces = await this.messageDB.getSpaces();
+    this.enqueueOutbound(async () => {
+      const outbounds: string[] = [];
+
+      for (const s of allSpaces) {
+        try {
+          const nonce = crypto.randomUUID();
+          const updateProfileMessage: UpdateProfileMessage = {
+            type: 'update-profile',
+            displayName,
+            userIcon,
+            senderId: selfAddress,
+            ...(resolvedTag ? { spaceTag: resolvedTag } : {}),
+          };
+
+          const messageId = await crypto.subtle.digest(
+            'SHA-256',
+            Buffer.from(
+              nonce +
+                'update-profile' +
+                selfAddress +
+                canonicalize(updateProfileMessage),
+              'utf-8'
+            )
+          );
+
+          const message = {
+            spaceId: s.spaceId,
+            channelId: s.defaultChannelId,
+            messageId: Buffer.from(messageId).toString('hex'),
+            digestAlgorithm: 'SHA-256',
+            nonce,
+            createdDate: Date.now(),
+            modifiedDate: Date.now(),
+            lastModifiedHash: '',
+            content: updateProfileMessage,
+          } as Message;
+
+          // Sign (non-repudiable — required for profile updates)
+          const inboxKey = await this.messageDB.getSpaceKey(s.spaceId, 'inbox');
+          message.publicKey = inboxKey.publicKey;
+          message.signature = Buffer.from(
+            JSON.parse(
+              ch.js_sign_ed448(
+                Buffer.from(inboxKey.privateKey, 'hex').toString('base64'),
+                Buffer.from(messageId).toString('base64')
+              )
+            ),
+            'base64'
+          ).toString('hex');
+
+          outbounds.push(await this.encryptAndSendToSpace(s.spaceId, message));
+        } catch (err) {
+          logger.error(`Failed to re-broadcast tag to space ${s.spaceId}`, err);
+        }
+      }
+
+      return outbounds;
+    });
+
+    // 9. Persist updated lastBroadcastSpaceTag so we don't re-broadcast again
+    const updatedConfig = {
+      ...config,
+      lastBroadcastSpaceTag: currentTag?.letters
+        ? { letters: currentTag.letters, url: currentTag.url }
+        : undefined,
+      // If the owner deleted the tag, clear our selection too
+      ...(!currentTag?.letters ? { spaceTagId: undefined } : {}),
+    };
+    await this.saveConfig({ config: updatedConfig, keyset });
+    queryClient.setQueryData(
+      buildConfigKey({ userAddress: selfAddress }),
+      () => updatedConfig
+    );
   }
 
   /**
@@ -655,7 +793,14 @@ export class MessageService {
       participant.display_name = decryptedContent.content.displayName;
       participant.user_icon = decryptedContent.content.userIcon;
       participant.inbox_address = inboxAddress;
-      participant.spaceTag = decryptedContent.content.spaceTag;
+      // Validate inbound spaceTag — reject SVG data URIs (XSS) and oversized payloads
+      const inboundTag = decryptedContent.content.spaceTag;
+      participant.spaceTag =
+        inboundTag &&
+        validateSpaceTagLetters(inboundTag.letters) &&
+        isValidSpaceTagUrl(inboundTag.url)
+          ? inboundTag
+          : undefined;
       await messageDB.saveSpaceMember(spaceId, participant);
     } else {
       // Check tombstone before saving - prevents deleted messages from being re-added during sync
@@ -1110,7 +1255,14 @@ export class MessageService {
       participant.display_name = decryptedContent.content.displayName;
       participant.user_icon = decryptedContent.content.userIcon;
       participant.inbox_address = inboxAddress;
-      participant.spaceTag = decryptedContent.content.spaceTag;
+      // Validate inbound spaceTag — reject SVG data URIs (XSS) and oversized payloads
+      const inboundTag = decryptedContent.content.spaceTag;
+      participant.spaceTag =
+        inboundTag &&
+        validateSpaceTagLetters(inboundTag.letters) &&
+        isValidSpaceTagUrl(inboundTag.url)
+          ? inboundTag
+          : undefined;
       await this.messageDB.saveSpaceMember(spaceId, participant);
       await queryClient.setQueryData(
         buildSpaceMembersKey({ spaceId }),
@@ -2703,6 +2855,18 @@ export class MessageService {
                     )
                   ).toString('utf-8')
                 ) as Space;
+
+                // Validate inbound spaceTag before persisting (defense-in-depth)
+                // Rejects SVG data URIs (XSS vector) and oversized payloads
+                if (space.spaceTag) {
+                  if (
+                    !validateSpaceTagLetters(space.spaceTag.letters) ||
+                    !isValidSpaceTagUrl(space.spaceTag.url)
+                  ) {
+                    space.spaceTag = undefined;
+                  }
+                }
+
                 await this.messageDB.saveSpace(space);
                 await queryClient.setQueryData(
                   buildSpaceKey({ spaceId: conversationId.split('/')[0] }),
@@ -2710,6 +2874,29 @@ export class MessageService {
                     return space;
                   }
                 );
+                // Also update the spaces list cache so components using useSpaces/buildSpacesKey
+                // (e.g., UserSettingsModal tag preview) reflect the updated space data
+                queryClient.setQueryData(
+                  buildSpacesKey({}),
+                  (oldSpaces: Space[] | undefined) => {
+                    if (!oldSpaces) return oldSpaces;
+                    return oldSpaces.map((s) =>
+                      s.spaceId === space.spaceId ? space : s
+                    );
+                  }
+                );
+
+                // Auto re-broadcast profile if this space's tag is the one we display
+                try {
+                  await this.rebroadcastTagIfChanged(
+                    space,
+                    self_address,
+                    keyset,
+                    queryClient
+                  );
+                } catch (err) {
+                  logger.error('Failed to re-broadcast space tag on manifest update', err);
+                }
               }
             }
           } else if (envelope.message.type === 'leave') {

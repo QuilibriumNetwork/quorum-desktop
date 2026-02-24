@@ -168,30 +168,6 @@ export const FOLDER_COLORS: ColorOption[] = [
   { value: 'red', label: 'Red', class: 'text-accent-red', hex: '#e7615d' },
 ];
 
-// Space tag colors — light theme (soft/pastel tones for light backgrounds)
-export const SPACE_TAG_COLORS_LIGHT: ColorOption[] = [
-  { value: 'default', label: 'Default', class: 'text-subtle', hex: '#9ca3af' },
-  { value: 'blue', label: 'Blue', class: 'text-accent-blue', hex: '#7ea8e8' },
-  { value: 'purple', label: 'Purple', class: 'text-accent-purple', hex: '#a68de0' },
-  { value: 'fuchsia', label: 'Fuchsia', class: 'text-accent-fuchsia', hex: '#cc7acf' },
-  { value: 'green', label: 'Green', class: 'text-accent-green', hex: '#6bc4a0' },
-  { value: 'orange', label: 'Orange', class: 'text-accent-orange', hex: '#e8a07a' },
-  { value: 'yellow', label: 'Yellow', class: 'text-accent-yellow', hex: '#d4b44a' },
-  { value: 'red', label: 'Red', class: 'text-accent-red', hex: '#e08a88' },
-];
-
-// Space tag colors — dark theme (low saturation & brightness for dark backgrounds)
-export const SPACE_TAG_COLORS_DARK: ColorOption[] = [
-  { value: 'default', label: 'Default', class: 'text-subtle', hex: '#44444d' },
-  { value: 'blue', label: 'Blue', class: 'text-accent-blue', hex: '#2f4d7a' },
-  { value: 'purple', label: 'Purple', class: 'text-accent-purple', hex: '#543e7e' },
-  { value: 'fuchsia', label: 'Fuchsia', class: 'text-accent-fuchsia', hex: '#6e2e70' },
-  { value: 'green', label: 'Green', class: 'text-accent-green', hex: '#24634b' },
-  { value: 'orange', label: 'Orange', class: 'text-accent-orange', hex: '#854a2b' },
-  { value: 'yellow', label: 'Yellow', class: 'text-accent-yellow', hex: '#7a5c10' },
-  { value: 'red', label: 'Red', class: 'text-accent-red', hex: '#7e3535' },
-];
-
 // Helper function to get icon color hex value
 export const getIconColorHex = (iconColor?: IconColor): string => {
   if (!iconColor || iconColor === 'default') {
@@ -220,20 +196,6 @@ export const getFolderColorHex = (iconColor?: IconColor, isDarkTheme?: boolean):
 
   const colorOption = FOLDER_COLORS.find(color => color.value === iconColor);
   return colorOption?.hex ?? (isDarkTheme ? FOLDER_DEFAULT_DARK : FOLDER_DEFAULT_LIGHT);
-};
-
-// Helper function to get space tag background color
-// Uses dedicated palettes dimmed for both light and dark themes
-export const getSpaceTagColorHex = (iconColor?: IconColor, isDarkTheme?: boolean): string => {
-  const palette = isDarkTheme ? SPACE_TAG_COLORS_DARK : SPACE_TAG_COLORS_LIGHT;
-  const defaultColor = palette.find(c => c.value === 'default')!.hex;
-
-  if (!iconColor || iconColor === 'default') {
-    return defaultColor;
-  }
-
-  const colorOption = palette.find(color => color.value === iconColor);
-  return colorOption?.hex ?? defaultColor;
 };
 
 // Helper function to get icon color class (for fallback)

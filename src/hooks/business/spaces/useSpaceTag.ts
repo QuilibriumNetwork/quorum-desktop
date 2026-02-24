@@ -2,7 +2,6 @@ import { useState, useEffect, useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { t } from '@lingui/core/macro';
 import { SpaceTag } from '../../../api/quorumApi';
-import { IconColor } from '../../../components/space/IconPicker/types';
 import { processEmojiImage, FILE_SIZE_LIMITS } from '../../../utils/imageProcessing';
 
 export interface UseSpaceTagOptions {
@@ -12,8 +11,6 @@ export interface UseSpaceTagOptions {
 export interface UseSpaceTagReturn {
   letters: string;
   setLetters: (letters: string) => void;
-  backgroundColor: IconColor;
-  setBackgroundColor: (color: IconColor) => void;
   tagImageUrl: string;
   tagImageFile: File | undefined;
   tagImageError: string | null;
@@ -30,9 +27,6 @@ export const useSpaceTag = ({
   initialTag,
 }: UseSpaceTagOptions = {}): UseSpaceTagReturn => {
   const [letters, setLetters] = useState<string>(initialTag?.letters || '');
-  const [backgroundColor, setBackgroundColor] = useState<IconColor>(
-    initialTag?.backgroundColor || 'blue'
-  );
   const [tagImageUrl, setTagImageUrl] = useState<string>(initialTag?.url || '');
   const [tagImageFile, setTagImageFile] = useState<File | undefined>();
   const [tagImageError, setTagImageError] = useState<string | null>(null);
@@ -42,10 +36,9 @@ export const useSpaceTag = ({
   // Sync with initialTag changes (e.g., when space loads)
   useEffect(() => {
     setLetters(initialTag?.letters || '');
-    setBackgroundColor(initialTag?.backgroundColor || 'blue');
     setTagImageUrl(initialTag?.url || '');
     setTagImageFile(undefined);
-  }, [initialTag?.letters, initialTag?.backgroundColor, initialTag?.url]);
+  }, [initialTag?.letters, initialTag?.url]);
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     accept: {
@@ -116,15 +109,12 @@ export const useSpaceTag = ({
     return {
       letters,
       url: tagImageUrl,
-      backgroundColor,
     };
-  }, [letters, tagImageUrl, backgroundColor]);
+  }, [letters, tagImageUrl]);
 
   return {
     letters,
     setLetters,
-    backgroundColor,
-    setBackgroundColor,
     tagImageUrl,
     tagImageFile,
     tagImageError,

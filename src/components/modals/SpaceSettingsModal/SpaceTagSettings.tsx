@@ -1,17 +1,14 @@
 import * as React from 'react';
-import { Icon, Callout, ColorSwatch, Spacer, useTheme } from '../../primitives';
+import { Icon, Callout, Spacer } from '../../primitives';
 import { Trans } from '@lingui/react/macro';
 import { SpaceTag } from '../../space/SpaceTag';
 import { BroadcastSpaceTag } from '../../../api/quorumApi';
-import { SPACE_TAG_COLORS_LIGHT, SPACE_TAG_COLORS_DARK, getSpaceTagColorHex, IconColor } from '../../space/IconPicker/types';
 import { validateSpaceTagLetters } from '../../../utils/validation';
 
 interface SpaceTagSettingsProps {
   spaceId: string;
   letters: string;
   setLetters: (letters: string) => void;
-  backgroundColor: IconColor;
-  setBackgroundColor: (color: IconColor) => void;
   tagImageUrl: string;
   tagImageError: string | null;
   isTagImageUploading: boolean;
@@ -26,8 +23,6 @@ const SpaceTagSettings: React.FunctionComponent<SpaceTagSettingsProps> = ({
   spaceId,
   letters,
   setLetters,
-  backgroundColor,
-  setBackgroundColor,
   tagImageUrl,
   tagImageError,
   isTagImageUploading,
@@ -37,13 +32,11 @@ const SpaceTagSettings: React.FunctionComponent<SpaceTagSettingsProps> = ({
   clearTagImageError,
   removeTagImage,
 }) => {
-  const { resolvedTheme } = useTheme();
-  const isDarkTheme = resolvedTheme === 'dark';
   const lettersValid = validateSpaceTagLetters(letters);
 
   const previewTag: BroadcastSpaceTag | null =
     lettersValid
-      ? { letters, url: tagImageUrl, backgroundColor, spaceId }
+      ? { letters, url: tagImageUrl, spaceId }
       : null;
 
   const handleLettersChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -103,11 +96,7 @@ const SpaceTagSettings: React.FunctionComponent<SpaceTagSettingsProps> = ({
             <>
               <div
                 className="rounded-full overflow-hidden flex-shrink-0"
-                style={{
-                  width: 32,
-                  height: 32,
-                  backgroundColor: getSpaceTagColorHex(backgroundColor, isDarkTheme),
-                }}
+                style={{ width: 32, height: 32 }}
               >
                 <img
                   src={tagImageUrl}
@@ -168,25 +157,6 @@ const SpaceTagSettings: React.FunctionComponent<SpaceTagSettingsProps> = ({
           <Trans>Letters A–Z and numbers 0–9 only. Auto-uppercase.</Trans>
         </p>
 
-        <Spacer size="md" direction="vertical" borderTop={true} />
-
-        {/* Background color */}
-        <div className="text-subtitle-2 mb-2">
-          <Trans>Background Color</Trans>
-        </div>
-        <div className="flex flex-wrap gap-2">
-          {(isDarkTheme ? SPACE_TAG_COLORS_DARK : SPACE_TAG_COLORS_LIGHT).map((colorOption) => (
-            <ColorSwatch
-              key={colorOption.value}
-              color={colorOption.value === 'default' ? 'gray' : colorOption.value as any}
-              isActive={backgroundColor === colorOption.value}
-              onPress={() => setBackgroundColor(colorOption.value as IconColor)}
-              size="medium"
-              showCheckmark={true}
-              style={{ backgroundColor: colorOption.hex }}
-            />
-          ))}
-        </div>
       </div>
     </>
   );

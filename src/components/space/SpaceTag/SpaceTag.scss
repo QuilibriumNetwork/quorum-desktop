@@ -6,6 +6,7 @@
   overflow: hidden;
   vertical-align: middle;
   user-select: none;
+  background-color: var(--color-bg-space-tag);
 
   &__image {
     border-radius: 50%;
@@ -14,7 +15,7 @@
   }
 
   &__letters {
-    color: #ffffff;
+    color: rgb(var(--color-text-main));
     font-weight: 700;
     font-family: var(--font-mono, ui-monospace, monospace);
     letter-spacing: 0.04em;

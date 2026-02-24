@@ -91,7 +91,6 @@ export type UserConfig = {
   lastBroadcastSpaceTag?: {
     letters: string;
     url: string;
-    backgroundColor: string;
   };
 };
 

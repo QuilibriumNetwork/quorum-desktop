@@ -1,5 +1,4 @@
 import { getConfig } from '../config/config';
-import type { IconColor } from '../components/space/IconPicker/types';
 
 // Note: 'user:kick' was removed - kick requires owner's ED448 key, cannot be delegated via roles
 export type Permission = 'message:delete' | 'message:pin' | 'mention:everyone' | 'user:mute';
@@ -7,7 +6,6 @@ export type Permission = 'message:delete' | 'message:pin' | 'mention:everyone' |
 export type SpaceTag = {
   letters: string;          // Exactly 4 uppercase alphanumeric characters (e.g., "GAME", "DEV1")
   url: string;              // Tag image URL (data: URI from canvas re-encoding)
-  backgroundColor: IconColor; // Color from IconPicker palette
 };
 
 // Full tag data broadcast in profile updates - recipients don't need access to source Space

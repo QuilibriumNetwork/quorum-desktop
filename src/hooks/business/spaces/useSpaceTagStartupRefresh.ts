@@ -68,8 +68,7 @@ export const useSpaceTagStartupRefresh = ({
         const tagChanged =
           !lastBroadcastTag ||
           lastBroadcastTag.letters !== currentTag.letters ||
-          lastBroadcastTag.url !== currentTag.url ||
-          lastBroadcastTag.backgroundColor !== currentTag.backgroundColor;
+          lastBroadcastTag.url !== currentTag.url;
 
         if (tagChanged) {
           const broadcastTag = { ...currentTag, spaceId: tagSpace.spaceId };

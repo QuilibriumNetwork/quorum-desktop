@@ -383,6 +383,13 @@ export const isValidChannelId = (channelId: string): boolean => {
 export const SPACE_TAG_LETTERS_LENGTH = 4;
 
 /**
+ * Maximum byte length for space tag image data URIs.
+ * Expected: 3-6 KB for a compressed tag badge. Cap at 50 KB to reject abuse
+ * while allowing reasonable headroom for different image complexities.
+ */
+export const MAX_SPACE_TAG_URL_BYTES = 50_000;
+
+/**
  * Validates Space Tag letter codes.
  * Must be exactly 4 uppercase alphanumeric characters (A-Z, 0-9).
  * Safe from XSS - alphanumeric only, no HTML patterns possible.
@@ -399,4 +406,20 @@ export const SPACE_TAG_LETTERS_LENGTH = 4;
 export const validateSpaceTagLetters = (letters: string): boolean => {
   if (letters.length !== SPACE_TAG_LETTERS_LENGTH) return false;
   return /^[A-Z0-9]{4}$/.test(letters);
+};
+
+/**
+ * Validates a space tag image URL for safe rendering.
+ *
+ * Security checks:
+ * 1. Must be a base64-encoded PNG or JPEG data URI (rejects SVG to prevent XSS)
+ * 2. Must not exceed MAX_SPACE_TAG_URL_BYTES (prevents storage/bandwidth abuse)
+ *
+ * @param url - The data URI to validate
+ * @returns true if safe to render in an <img> tag, false otherwise
+ */
+export const isValidSpaceTagUrl = (url: string): boolean => {
+  if (!url) return false;
+  if (url.length > MAX_SPACE_TAG_URL_BYTES) return false;
+  return url.startsWith('data:image/png;base64,') || url.startsWith('data:image/jpeg;base64,');
 };
