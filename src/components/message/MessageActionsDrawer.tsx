@@ -1,8 +1,11 @@
 import React from 'react';
+import { parse as parseEmoji } from '@twemoji/parser';
 import { t } from '@lingui/core/macro';
 import { Message as MessageType } from '../../api/quorumApi';
 import { MobileDrawer } from '../ui';
 import { Button, Icon } from '../primitives';
+import { useFrequentEmojis } from '../../hooks/business/messages';
+import { emojiToUnified } from '../../utils/remarkTwemoji';
 import './MessageActionsDrawer.scss';
 
 export interface MessageActionsDrawerProps {
@@ -58,7 +61,8 @@ const MessageActionsDrawer: React.FC<MessageActionsDrawerProps> = ({
   isBookmarked = false,
   onBookmarkToggle,
 }) => {
-  const quickReactions = ['❤️', '👍', '🔥', '😂', '😢', '😮'];
+  // Dynamic frequent emojis from emoji picker usage history
+  const frequentEmojis = useFrequentEmojis(6);
 
   // Check if the user has reacted with a specific emoji
   const hasReacted = (emoji: string) => {
@@ -140,18 +144,40 @@ const MessageActionsDrawer: React.FC<MessageActionsDrawerProps> = ({
   const reactionsContent = (
     <div className="message-actions-drawer__reactions">
       <div className="message-actions-drawer__reactions-row">
-        {quickReactions.map((emoji) => (
-          <Button
-            key={emoji}
-            type="unstyled"
-            onClick={() => handleReaction(emoji)}
-            className={`quick-reaction-emoji ${
-              hasReacted(emoji) ? 'quick-reaction-emoji--active' : ''
-            }`}
-          >
-            {emoji}
-          </Button>
-        ))}
+        {frequentEmojis.map(({ emoji, unified }) => {
+          let twemojiSrc: string | null = null;
+          if (unified) {
+            twemojiSrc = `/twitter/64/${unified}.png`;
+          } else {
+            const entities = parseEmoji(emoji);
+            if (entities.length > 0) {
+              twemojiSrc = `/twitter/64/${emojiToUnified(entities[0].text)}.png`;
+            }
+          }
+
+          return (
+            <Button
+              key={emoji}
+              type="unstyled"
+              onClick={() => handleReaction(emoji)}
+              className={`quick-reaction-emoji ${
+                hasReacted(emoji) ? 'quick-reaction-emoji--active' : ''
+              }`}
+            >
+              {twemojiSrc ? (
+                <img
+                  src={twemojiSrc}
+                  alt={emoji}
+                  width={24}
+                  height={24}
+                  draggable={false}
+                />
+              ) : (
+                emoji
+              )}
+            </Button>
+          );
+        })}
         {/* More reactions button with dashed circle */}
         <div
           onClick={handleMoreReactions}

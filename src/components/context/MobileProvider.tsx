@@ -5,6 +5,7 @@ import React, {
   ReactNode,
   useState,
 } from 'react';
+import type { CustomEmoji } from 'emoji-picker-react/dist/config/customEmojiConfig';
 import MessageActionsDrawer from '../message/MessageActionsDrawer';
 import EmojiPickerDrawer from '../message/EmojiPickerDrawer';
 
@@ -13,6 +14,22 @@ const MOBILE_DRAWER_CONFIG = {
   MAX_WIDTH: '480px',
   ANIMATION_DURATION: 300,
 } as const;
+
+/** Sticker type for mobile drawer (matches quorumApi.Sticker) */
+interface DrawerSticker {
+  id: string;
+  name: string;
+  imgUrl: string;
+}
+
+/** Typed data for the mobile emoji drawer */
+export interface EmojiDrawerData {
+  onEmojiClick: (emoji: string) => void;
+  customEmojis: CustomEmoji[];
+  /** When provided, the drawer shows an Emojis/Stickers tab bar */
+  stickers?: DrawerSticker[];
+  onStickerClick?: (stickerId: string) => void;
+}
 
 // Mobile state interface
 interface MobileState {
@@ -23,7 +40,7 @@ interface MobileState {
   };
   emojiPickerDrawer: {
     isOpen: boolean;
-    data?: any;
+    data?: EmojiDrawerData;
     isClosing: boolean;
   };
 }
@@ -33,7 +50,7 @@ type MobileAction =
   | { type: 'OPEN_MESSAGE_ACTIONS'; data: any }
   | { type: 'CLOSE_MESSAGE_ACTIONS' }
   | { type: 'SET_MESSAGE_ACTIONS_CLOSING'; isClosing: boolean }
-  | { type: 'OPEN_EMOJI_PICKER'; data: any }
+  | { type: 'OPEN_EMOJI_PICKER'; data: EmojiDrawerData }
   | { type: 'CLOSE_EMOJI_PICKER' }
   | { type: 'SET_EMOJI_PICKER_CLOSING'; isClosing: boolean };
 
@@ -114,7 +131,7 @@ interface MobileContextType {
   state: MobileState;
   openMobileActionsDrawer: (messageData: any) => void;
   closeMobileActionsDrawer: () => void;
-  openMobileEmojiDrawer: (emojiData: any) => void;
+  openMobileEmojiDrawer: (emojiData: EmojiDrawerData) => void;
   closeMobileEmojiDrawer: () => void;
 }
 
@@ -160,7 +177,7 @@ export const MobileProvider: React.FC<MobileProviderProps> = ({ children }) => {
     openMobileActionsDrawer: (messageData: any) =>
       dispatch({ type: 'OPEN_MESSAGE_ACTIONS', data: messageData }),
     closeMobileActionsDrawer: handleCloseMessageActions,
-    openMobileEmojiDrawer: (emojiData: any) =>
+    openMobileEmojiDrawer: (emojiData: EmojiDrawerData) =>
       dispatch({ type: 'OPEN_EMOJI_PICKER', data: emojiData }),
     closeMobileEmojiDrawer: handleCloseEmojiPicker,
   };
@@ -210,6 +227,8 @@ export const MobileProvider: React.FC<MobileProviderProps> = ({ children }) => {
             onClose={handleCloseEmojiPicker}
             onEmojiClick={state.emojiPickerDrawer.data.onEmojiClick}
             customEmojis={state.emojiPickerDrawer.data.customEmojis}
+            stickers={state.emojiPickerDrawer.data.stickers}
+            onStickerClick={state.emojiPickerDrawer.data.onStickerClick}
           />
           <div
             className="fixed inset-0 -z-10"

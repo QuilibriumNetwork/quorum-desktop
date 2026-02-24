@@ -4,6 +4,7 @@ export * from './useEmojiPicker';
 export * from './useMessageInteractions';
 export * from './useMessageFormatting';
 export * from './useQuickReactions';
+export * from './useFrequentEmojis';
 export * from './usePinnedMessages';
 export * from './useMessageHighlight';
 export * from './useChannelUnreadCounts';

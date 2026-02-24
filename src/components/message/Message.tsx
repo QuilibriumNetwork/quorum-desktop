@@ -643,13 +643,14 @@ export const Message = React.memo(
                     suggestedEmojisMode={SuggestionMode.FREQUENT}
                     customEmojis={emojiPicker.customEmojis}
                     getEmojiUrl={(unified) => {
-                      return '/apple/64/' + unified + '.png';
+                      return '/twitter/64/' + unified + '.png';
                     }}
                     skinTonePickerLocation={SkinTonePickerLocation.PREVIEW}
                     theme={Theme.DARK}
                     onEmojiClick={(e) => {
                       emojiPicker.handleDesktopEmojiClick(e.emoji);
                     }}
+                    lazyLoadEmojis={true}
                   />
                 </Container>
               )}
@@ -669,7 +670,7 @@ export const Message = React.memo(
                       suggestedEmojisMode={SuggestionMode.FREQUENT}
                       customEmojis={emojiPicker.customEmojis}
                       getEmojiUrl={(unified) => {
-                        return '/apple/64/' + unified + '.png';
+                        return '/twitter/64/' + unified + '.png';
                       }}
                       skinTonePickerLocation={SkinTonePickerLocation.PREVIEW}
                       theme={Theme.DARK}
@@ -677,6 +678,7 @@ export const Message = React.memo(
                         emojiPicker.handleDesktopEmojiClick(e.emoji);
                         setEmojiPickerPosition(null);
                       }}
+                      lazyLoadEmojis={true}
                     />
                   </Container>
                 </Portal>
@@ -697,13 +699,14 @@ export const Message = React.memo(
                       suggestedEmojisMode={SuggestionMode.FREQUENT}
                       customEmojis={emojiPicker.customEmojis}
                       getEmojiUrl={(unified) => {
-                        return '/apple/64/' + unified + '.png';
+                        return '/twitter/64/' + unified + '.png';
                       }}
                       skinTonePickerLocation={SkinTonePickerLocation.PREVIEW}
                       theme={Theme.DARK}
                       onEmojiClick={(e) => {
                         emojiPicker.handleMobileEmojiClick(e.emoji);
                       }}
+                      lazyLoadEmojis={true}
                     />
                   </Modal>
                 )}

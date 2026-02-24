@@ -149,9 +149,12 @@ This is the main index for all documentation, bug reports, and task management.
 - [Add User Bio Field to UserSettingsModal General Tab](tasks/add-user-bio-field.md)
 - [Auto-save settings modals — eliminate save buttons](tasks/auto-save-settings-modals.md)
 - [Conversation Deletion State Synchronization](tasks/conversation-deletion-state-sync.md)
+- [Dependency Updates Audit](tasks/dependency-updates-audit.md)
 - [Device Identification Improvement](tasks/device-identification-improvement.md)
+- [Emoji Picker Performance Fix — Lazy Loading + Upgrade](tasks/emoji-picker-performance-fix.md)
 - [Fix Lingui "Uncompiled Message Detected" Warning](tasks/fix-lingui-uncompiled-message-warning.md)
 - [Full Markdown Support Inside Spoilers](tasks/spoiler-full-markdown-support.md)
+- [GIFs Library Integration](tasks/gifs-library-integration.md)
 - [Implement Channel Ordering Feature](tasks/channel-ordering-feature.md)
 - [Implement Message Forwarding with Privacy Controls](tasks/message-forwarding-with-privacy-controls.md)
 - [Implement New Member Badge in Spaces](tasks/new-member-badge-spaces.md)
@@ -168,6 +171,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Task: Implement Delete Public Invite Link Feature](tasks/delete-public-invite-link.md)
 - [Test Suite Implementation Plan for Quorum Desktop](tasks/test-suite-plan.md)
 - [Tombstone Cleanup Strategy for Deleted Messages](tasks/tombstone-cleanup-strategy.md)
+- [Twemoji Migration — Consistent Emoji Rendering Across App](tasks/twemoji-migration.md)
 - [User Status Feature Implementation Plan](tasks/user-status.md)
 
 ### .Archived
@@ -276,6 +280,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [DM Unread Indicators - Exclude Current User's Messages](tasks/.done/dm-unread-indicators-sender-filtering.md)
 - [Dropdown Panels Consolidation & Mobile Bottom Sheet Implementation](tasks/.done/dropdown-panels-consolidation.md)
 - [Edit Message Feature](tasks/.done/edit-message-feature.md)
+- [Emoji Picker in Message Composer](tasks/.done/emoji-picker-in-message-composer.md)
 - [Emoji Picker Responsive Design Improvement](tasks/.done/emojipicker-responsive.md)
 - [Enhance Markdown Renderer Fallback System](tasks/.done/markdown-renderer-fallback-system-enhancement.md)
 - [Enhanced Mention Format with CSS Highlighting for Message Composer](tasks/.done/mentions-improve-UX-in-messagecomposer.md)
@@ -355,6 +360,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Space Icon Mention Bubbles](tasks/.done/space-icon-mention-bubbles.md)
 - [Space Initials Fallback - Optional Space Images](tasks/.done/space-initials-fallback.md)
 - [Space Recovery Tool in UserSettingsModal](tasks/.done/space-recovery-tool.md)
+- [Space Tags](tasks/.done/space-tags.md)
 - [Sync Toast Notifications](tasks/.done/sync-toast-notifications.md)
 - [Tailwind @apply Conversion Audit](tasks/.done/tailwind-apply-conversion-audit.md)
 - [Task: Enhanced Direct Message Conversation List](tasks/.done/dm-conversation-list-preview.md)
@@ -385,6 +391,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Comprehensive WCAG Accessibility Audit Report](reports/accessibility-wcag-audit_2026-02-10.md)
 - [Cryptographic Code Best Practices: Abstraction vs Duplication](reports/cryptographic-code-best-practices_2025-12-20.md)
 - [dnd-kit Touch Drag-and-Drop Best Practices Research](reports/dnd-kit-touch-best-practices_2025-12-11.md)
+- [Emoji Picker Library Comparison: emoji-picker-react vs emoji-mart](reports/emoji-picker-library-comparison_2026-02-24.md)
 - [File Size & Service Extraction Best Practices](reports/file-size-best-practices_2025-12-20.md)
 - [Mention Pills Feature Research & Validation](reports/mention-pills-research.md)
 - [Primitives Gap Analysis: quorum-shared Migration](reports/primitives-gap-analysis-quorum-shared_2026-01-14.md)
@@ -418,4 +425,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2026-02-24 10:37:18
+**Last Updated**: 2026-02-24 14:30:20

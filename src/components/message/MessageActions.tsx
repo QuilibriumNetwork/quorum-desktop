@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
+import { parse as parseEmoji } from '@twemoji/parser';
 import { Message as MessageType } from '../../api/quorumApi';
 import { Tooltip, Icon } from '../primitives';
-import { useQuickReactions } from '../../hooks/business/messages';
+import { useQuickReactions, useFrequentEmojis } from '../../hooks/business/messages';
+import { emojiToUnified } from '../../utils/remarkTwemoji';
 import { t } from '@lingui/core/macro';
 
 // Configuration constants for message actions
@@ -67,6 +69,9 @@ export const MessageActions: React.FC<MessageActionsProps> = ({
     userAddress,
     onReaction,
   });
+
+  // Dynamic frequent emojis from emoji picker usage history
+  const frequentEmojis = useFrequentEmojis(3);
 
   // Handle pin action with confirmation modal
   const handlePinClick = (e: React.MouseEvent) => {
@@ -151,25 +156,40 @@ export const MessageActions: React.FC<MessageActionsProps> = ({
           onMouseLeave={() => setHoveredAction(null)}
           className="absolute flex flex-row right-4 top-[-10px] px-2 py-1 xl:px-3 xl:py-1.5 bg-tooltip select-none rounded-lg -m-1 border dark:border-0"
         >
-          {/* Quick reactions */}
-          <div
-            onClick={() => handleQuickReaction(message, '❤️')}
-            className={emojiButtonClass}
-          >
-            ❤️
-          </div>
-          <div
-            onClick={() => handleQuickReaction(message, '👍')}
-            className={emojiButtonClass}
-          >
-            👍
-          </div>
-          <div
-            onClick={() => handleQuickReaction(message, '🔥')}
-            className={emojiButtonClass}
-          >
-            🔥
-          </div>
+          {/* Quick reactions - top 3 most frequently used emojis */}
+          {frequentEmojis.map(({ emoji, unified }) => {
+            // Resolve Twemoji image path from unified codepoint or native emoji
+            let twemojiSrc: string | null = null;
+            if (unified) {
+              twemojiSrc = `/twitter/64/${unified}.png`;
+            } else {
+              const entities = parseEmoji(emoji);
+              if (entities.length > 0) {
+                twemojiSrc = `/twitter/64/${emojiToUnified(entities[0].text)}.png`;
+              }
+            }
+
+            return (
+              <div
+                key={emoji}
+                onClick={() => handleQuickReaction(message, emoji)}
+                className={emojiButtonClass}
+              >
+                {twemojiSrc ? (
+                  <img
+                    src={twemojiSrc}
+                    alt={emoji}
+                    width={16}
+                    height={16}
+                    draggable={false}
+                    className="xl:w-[18px] xl:h-[18px]"
+                  />
+                ) : (
+                  emoji
+                )}
+              </div>
+            );
+          })}
 
           {/* More reactions */}
           <div

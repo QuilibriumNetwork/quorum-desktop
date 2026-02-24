@@ -1,8 +1,11 @@
 import React, { useCallback, useRef, useEffect, useState } from 'react';
+import { parse as parseEmoji } from '@twemoji/parser';
 import { t } from '@lingui/core/macro';
 import { Message as MessageType } from '../../api/quorumApi';
 import { Portal, Button, Icon } from '../primitives';
 import { useClickOutside } from '../../hooks/useClickOutside';
+import { useFrequentEmojis } from '../../hooks/business/messages';
+import { emojiToUnified } from '../../utils/remarkTwemoji';
 import './MessageActionsMenu.scss';
 
 // Fixed dimensions for viewport edge detection
@@ -91,7 +94,8 @@ const MessageActionsMenu: React.FC<MessageActionsMenuProps> = ({
     [position.x, position.y]
   );
 
-  const quickReactions = ['❤️', '👍', '🔥'];
+  // Dynamic frequent emojis from emoji picker usage history
+  const frequentEmojis = useFrequentEmojis(3);
 
   // Click outside to close
   useClickOutside(menuRef, onClose, true);
@@ -204,18 +208,40 @@ const MessageActionsMenu: React.FC<MessageActionsMenuProps> = ({
       >
         {/* Quick reactions row */}
         <div className="message-actions-menu__reactions">
-          {quickReactions.map((emoji) => (
-            <Button
-              key={emoji}
-              type="unstyled"
-              onClick={() => handleReaction(emoji)}
-              className={`message-actions-menu__reaction ${
-                hasReacted(emoji) ? 'message-actions-menu__reaction--active' : ''
-              }`}
-            >
-              {emoji}
-            </Button>
-          ))}
+          {frequentEmojis.map(({ emoji, unified }) => {
+            let twemojiSrc: string | null = null;
+            if (unified) {
+              twemojiSrc = `/twitter/64/${unified}.png`;
+            } else {
+              const entities = parseEmoji(emoji);
+              if (entities.length > 0) {
+                twemojiSrc = `/twitter/64/${emojiToUnified(entities[0].text)}.png`;
+              }
+            }
+
+            return (
+              <Button
+                key={emoji}
+                type="unstyled"
+                onClick={() => handleReaction(emoji)}
+                className={`message-actions-menu__reaction ${
+                  hasReacted(emoji) ? 'message-actions-menu__reaction--active' : ''
+                }`}
+              >
+                {twemojiSrc ? (
+                  <img
+                    src={twemojiSrc}
+                    alt={emoji}
+                    width={16}
+                    height={16}
+                    draggable={false}
+                  />
+                ) : (
+                  emoji
+                )}
+              </Button>
+            );
+          })}
           <Button
             type="unstyled"
             onClick={handleMoreReactions}

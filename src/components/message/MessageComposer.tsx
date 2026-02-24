@@ -86,6 +86,7 @@ interface MessageComposerProps {
 
 export interface MessageComposerRef {
   focus: () => void;
+  insertEmoji: (emoji: string) => void;
 }
 
 export const MessageComposer = forwardRef<
@@ -167,6 +168,26 @@ export const MessageComposer = forwardRef<
           editorRef.current?.focus();
         } else {
           textareaRef.current?.focus();
+        }
+      },
+      insertEmoji: (emoji: string) => {
+        if (ENABLE_MENTION_PILLS && editorRef.current) {
+          // ContentEditable mode: use execCommand to preserve mention pills
+          editorRef.current.focus();
+          document.execCommand('insertText', false, emoji);
+          // Trigger input handler to sync state
+          const newText = extractStorageText();
+          onChange(newText);
+          setCursorPosition(getCursorPosition());
+        } else {
+          // TextArea mode: append emoji to current value
+          onChange(value + emoji);
+          // Focus and move cursor to end
+          setTimeout(() => {
+            const newPos = value.length + emoji.length;
+            textareaRef.current?.setSelectionRange(newPos, newPos);
+            textareaRef.current?.focus();
+          }, 0);
         }
       },
     }));
@@ -776,7 +797,7 @@ export const MessageComposer = forwardRef<
           </div>
 
           {hasStickers && (
-            <Tooltip id="add-sticker" content={t`add sticker`} place="top" showOnTouch={false}>
+            <Tooltip id="add-emoji" content={t`emoji & stickers`} place="top" showOnTouch={false}>
               <Button
                 type="unstyled"
                 className="message-composer-sticker-btn"
