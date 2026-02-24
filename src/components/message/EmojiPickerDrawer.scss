@@ -1,6 +1,48 @@
 // Mobile Emoji Picker Drawer Specific Styles
 @use '@/styles/variables' as *;
 
+// Tab bar for Emojis / Stickers switching
+.emoji-picker-drawer__tabs {
+  display: flex;
+  border-bottom: $border solid var(--color-border-default);
+  flex-shrink: 0;
+  padding: 0 $s-4;
+}
+
+.emoji-picker-drawer__tab {
+  flex: 1;
+  padding: $s-3;
+  font-size: $text-base;
+  font-weight: $font-medium;
+  color: var(--color-text-subtle);
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  transition: color $duration-200 $ease-in-out, border-color $duration-200 $ease-in-out;
+  min-height: 44px; // Touch target
+
+  &:hover {
+    color: var(--color-text-main);
+  }
+
+  &.active {
+    color: var(--color-text-main);
+    border-bottom-color: var(--accent);
+  }
+}
+
+// Sticker grid inside the mobile drawer
+.emoji-picker-drawer__stickers {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-auto-rows: min-content;
+  gap: $s-2;
+  padding: $s-4;
+  overflow-y: auto;
+  flex: 1;
+}
+
 .emoji-picker-drawer__content {
   flex: 1;
   overflow: hidden;
@@ -12,6 +54,10 @@
     border-radius: 0 !important;
     box-shadow: none !important;
     background: transparent !important;
+
+    // Match category label bg to drawer background (drawer uses surface-0, not surface-2)
+    --epr-category-label-bg-color: var(--color-bg-mobile-drawer) !important;
+    --epr-bg-color: var(--color-bg-mobile-drawer) !important;
 
     // Remove excessive header padding
     --epr-header-padding: 0 !important;
@@ -35,7 +81,9 @@
       border-radius: $rounded-xl;
     }
 
-    // Category navigation - basic spacing only (focus styling is global)
+    // Category navigation - smaller icons for mobile
+    --epr-category-navigation-button-size: 28px !important;
+
     .epr-category-nav {
       padding: $s-2 $s-1;
       gap: $s-1;

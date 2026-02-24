@@ -1,5 +1,5 @@
 import { logger } from '@quilibrium/quorum-shared';
-import React, { useEffect, useState, useCallback, useRef } from 'react';
+import React, { useEffect, useState, useCallback, useRef, useMemo, Suspense } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './Channel.scss';
 import { StickerMessage } from '../../api/quorumApi';
@@ -40,6 +40,16 @@ import { useUserProfileModal } from '../../hooks/business/ui/useUserProfileModal
 import type { Channel, Role } from '../../api/quorumApi';
 import { UserAvatar } from '../user/UserAvatar';
 import { getUserRoles, hasPermission } from '../../utils/permissions';
+import { useMobile } from '../context/MobileProvider';
+import type { CustomEmoji } from 'emoji-picker-react/dist/config/customEmojiConfig';
+import {
+  SkinTonePickerLocation,
+  SuggestionMode,
+  Theme,
+} from 'emoji-picker-react';
+
+// Lazy-load EmojiPicker to avoid bundling on every channel init
+const LazyEmojiPicker = React.lazy(() => import('emoji-picker-react'));
 
 // Helper function to check if user can post in read-only channel
 // NOTE: Space owners must explicitly join a manager role to post in read-only channels.
@@ -82,7 +92,7 @@ const Channel: React.FC<ChannelProps> = ({
   channelId,
 }) => {
   const navigate = useNavigate();
-  const { isDesktop, toggleLeftSidebar, navMenuOpen, toggleNavMenu } =
+  const { isMobile, isDesktop, toggleLeftSidebar, navMenuOpen, toggleNavMenu } =
     useResponsiveLayoutContext();
   const queryClient = useQueryClient();
   const user = usePasskeysContext();
@@ -97,6 +107,12 @@ const Channel: React.FC<ChannelProps> = ({
 
   // User profile modal state and logic
   const userProfileModal = useUserProfileModal({ showUsers });
+
+  // Emoji/stickers panel tab state
+  const [panelTab, setPanelTab] = useState<'emojis' | 'stickers'>('emojis');
+
+  // Mobile emoji drawer context
+  const { openMobileEmojiDrawer } = useMobile();
 
   // Search state
   const [searchInput, setSearchInput] = useState('');
@@ -592,6 +608,16 @@ const Channel: React.FC<ChannelProps> = ({
   // Compute responsive icon size for header icons (lg for desktop ≥1024px, sm for mobile/tablet)
   const headerIconSize = isDesktop ? 'lg' : 'lg';
 
+  // Transform custom emoji data for emoji-picker-react
+  const customEmojis: CustomEmoji[] = useMemo(() => {
+    if (!space?.emojis) return [];
+    return space.emojis.map((c) => ({
+      names: [c.name],
+      id: c.id,
+      imgUrl: c.imgUrl,
+    }));
+  }, [space?.emojis]);
+
   // Message composer hook
   const composer = useMessageComposer({
     type: 'channel',
@@ -605,6 +631,32 @@ const Channel: React.FC<ChannelProps> = ({
       setTimeout(() => setInit(true), 200);
     }
   }, []);
+
+  // Handle emoji selection from the panel — insert into composer
+  const handleComposerEmojiClick = useCallback((emojiData: any) => {
+    const emoji = emojiData.emoji || emojiData.imageUrl;
+    if (emoji) {
+      messageComposerRef.current?.insertEmoji(emoji);
+    }
+  }, []);
+
+  // Handle smiley button click — mobile uses drawer, desktop uses floating panel
+  const handleShowEmojiPanel = useCallback(() => {
+    if (isMobile) {
+      openMobileEmojiDrawer({
+        onEmojiClick: (emoji: string) => {
+          messageComposerRef.current?.insertEmoji(emoji);
+        },
+        customEmojis,
+        stickers: space?.stickers,
+        onStickerClick: (stickerId: string) => {
+          composer.submitSticker(stickerId);
+        },
+      });
+    } else {
+      composer.setShowStickers(true);
+    }
+  }, [isMobile, openMobileEmojiDrawer, customEmojis, space?.stickers, composer]);
 
   // Auto-focus textarea when replying
   useEffect(() => {
@@ -995,7 +1047,7 @@ const Channel: React.FC<ChannelProps> = ({
                 processedImage={composer.processedImage}
                 clearFile={composer.clearFile}
                 onSubmitMessage={composer.submitMessage}
-                onShowStickers={() => composer.setShowStickers(true)}
+                onShowStickers={handleShowEmojiPanel}
                 inReplyTo={composer.inReplyTo}
                 users={Object.values(members)}
                 roles={roles?.filter(role => role.isPublic !== false)}
@@ -1119,21 +1171,61 @@ const Channel: React.FC<ChannelProps> = ({
         place="top"
       />
 
-      {/* Stickers panel - positioned at top level to avoid stacking context issues */}
+      {/* Emoji & Stickers panel - positioned at top level to avoid stacking context issues */}
       {composer.showStickers && (
         <>
           <div
             className="stickers-backdrop"
             onClick={() => composer.setShowStickers(false)}
+            onKeyDown={(e) => {
+              if (e.key === 'Escape') composer.setShowStickers(false);
+            }}
           />
           <div
             className={`stickers-panel-wrapper ${showUsers ? 'with-sidebar' : 'without-sidebar'}`}
+            onKeyDown={(e) => {
+              if (e.key === 'Escape') {
+                composer.setShowStickers(false);
+                messageComposerRef.current?.focus();
+              }
+            }}
           >
             <div className="stickers-panel">
-              <div className="stickers-panel-header">Stickers</div>
-              <div className="stickers-panel-grid">
-                {space?.stickers.map((s) => {
-                  return (
+              {/* Tab navigation */}
+              <div className="stickers-panel-tabs">
+                <button
+                  className={`stickers-panel-tab ${panelTab === 'emojis' ? 'active' : ''}`}
+                  onClick={() => setPanelTab('emojis')}
+                >
+                  {t`Emojis`}
+                </button>
+                <button
+                  className={`stickers-panel-tab ${panelTab === 'stickers' ? 'active' : ''}`}
+                  onClick={() => setPanelTab('stickers')}
+                >
+                  {t`Stickers`}
+                </button>
+              </div>
+
+              {/* Tab content */}
+              {panelTab === 'emojis' ? (
+                <div className="stickers-panel-emoji-content">
+                  <Suspense fallback={<div className="emoji-picker-loading" />}>
+                    <LazyEmojiPicker
+                      width={300}
+                      height={358}
+                      suggestedEmojisMode={SuggestionMode.FREQUENT}
+                      customEmojis={customEmojis}
+                      getEmojiUrl={(unified) => '/apple/64/' + unified + '.png'}
+                      skinTonePickerLocation={SkinTonePickerLocation.PREVIEW}
+                      theme={Theme.DARK}
+                      onEmojiClick={handleComposerEmojiClick}
+                    />
+                  </Suspense>
+                </div>
+              ) : (
+                <div className="stickers-panel-grid">
+                  {space?.stickers.map((s) => (
                     <div
                       key={'sticker-' + s.id}
                       className="sticker-item"
@@ -1143,9 +1235,9 @@ const Channel: React.FC<ChannelProps> = ({
                     >
                       <img src={s.imgUrl} alt="sticker" />
                     </div>
-                  );
-                })}
-              </div>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
         </>

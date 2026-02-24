@@ -5,6 +5,7 @@ import React, {
   useCallback,
   useMemo,
   useState,
+  Suspense,
 } from 'react';
 import { useParams } from 'react-router';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
@@ -43,12 +44,25 @@ import {
   Tooltip,
 } from '../primitives';
 import { BookmarksPanel } from '../bookmarks/BookmarksPanel';
+import { useMobile } from '../context/MobileProvider';
+import {
+  SkinTonePickerLocation,
+  SuggestionMode,
+  Theme,
+} from 'emoji-picker-react';
+
+// Lazy-load EmojiPicker to avoid bundling on every DM init
+const LazyEmojiPicker = React.lazy(() => import('emoji-picker-react'));
 
 const DirectMessage: React.FC<{}> = () => {
   const { isMobile, isTablet, toggleLeftSidebar, navMenuOpen, toggleNavMenu } =
     useResponsiveLayoutContext();
 
   const { openConversationSettings } = useModalContext();
+  const { openMobileEmojiDrawer } = useMobile();
+
+  // Emoji panel state (desktop floating panel)
+  const [showEmojiPanel, setShowEmojiPanel] = useState(false);
 
   // Unified panel state for search - ensures only search panel can be open
   type ActivePanel = 'search' | 'bookmarks' | null;
@@ -339,6 +353,28 @@ const DirectMessage: React.FC<{}> = () => {
     hasStickers: false, // DirectMessage doesn't have stickers
   });
 
+
+  // Handle emoji selection from the panel — insert into composer
+  const handleComposerEmojiClick = useCallback((emojiData: any) => {
+    const emoji = emojiData.emoji || emojiData.imageUrl;
+    if (emoji) {
+      messageComposerRef.current?.insertEmoji(emoji);
+    }
+  }, []);
+
+  // Handle smiley button click — mobile uses drawer, desktop uses floating panel
+  const handleShowEmojiPanel = useCallback(() => {
+    if (isMobile) {
+      openMobileEmojiDrawer({
+        onEmojiClick: (emoji: string) => {
+          messageComposerRef.current?.insertEmoji(emoji);
+        },
+        customEmojis: [],
+      });
+    } else {
+      setShowEmojiPanel((prev) => !prev);
+    }
+  }, [isMobile, openMobileEmojiDrawer]);
 
   // Auto-focus textarea when replying (same logic as Channel.tsx)
   useEffect(() => {
@@ -842,6 +878,40 @@ const DirectMessage: React.FC<{}> = () => {
               </Flex>
             )}
 
+            {/* Emoji panel for DMs (emoji-only, no stickers tab) */}
+            {showEmojiPanel && (
+              <>
+                <div
+                  className="stickers-backdrop"
+                  onClick={() => setShowEmojiPanel(false)}
+                />
+                <div
+                  className="stickers-panel-wrapper without-sidebar"
+                  onKeyDown={(e) => {
+                    if (e.key === 'Escape') {
+                      setShowEmojiPanel(false);
+                      messageComposerRef.current?.focus();
+                    }
+                  }}
+                >
+                  <div className="stickers-panel stickers-panel--emoji-only">
+                    <Suspense fallback={<div className="emoji-picker-loading" />}>
+                      <LazyEmojiPicker
+                        width={300}
+                        height={400}
+                        suggestedEmojisMode={SuggestionMode.FREQUENT}
+                        customEmojis={[]}
+                        getEmojiUrl={(unified) => '/apple/64/' + unified + '.png'}
+                        skinTonePickerLocation={SkinTonePickerLocation.PREVIEW}
+                        theme={Theme.DARK}
+                        onEmojiClick={handleComposerEmojiClick}
+                      />
+                    </Suspense>
+                  </div>
+                </div>
+              </>
+            )}
+
             {/* Message Composer */}
             <div className="message-editor-container">
               <MessageComposer
@@ -858,8 +928,8 @@ const DirectMessage: React.FC<{}> = () => {
                 processedImage={composer.processedImage}
                 clearFile={composer.clearFile}
                 onSubmitMessage={composer.submitMessage}
-                onShowStickers={() => {}}
-                hasStickers={false}
+                onShowStickers={handleShowEmojiPanel}
+                hasStickers={true}
                 inReplyTo={composer.inReplyTo}
                 fileError={composer.fileError}
                 isProcessingImage={composer.isProcessingImage}

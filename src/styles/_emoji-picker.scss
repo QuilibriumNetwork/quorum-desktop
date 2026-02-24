@@ -95,6 +95,15 @@
     }
   }
 
+  // Category labels - smaller, uppercase for a cleaner look
+  .epr-emoji-category-label {
+    font-size: $text-xs !important;
+    font-weight: $font-medium !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.05em !important;
+    padding: $s-2 $s-3 !important;
+  }
+
   // Skin tone picker
   .epr-skin-tone-select button {
     &.epr-active,
