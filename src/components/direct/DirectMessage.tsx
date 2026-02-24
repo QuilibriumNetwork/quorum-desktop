@@ -901,10 +901,11 @@ const DirectMessage: React.FC<{}> = () => {
                         height={400}
                         suggestedEmojisMode={SuggestionMode.FREQUENT}
                         customEmojis={[]}
-                        getEmojiUrl={(unified) => '/apple/64/' + unified + '.png'}
+                        getEmojiUrl={(unified) => '/twitter/64/' + unified + '.png'}
                         skinTonePickerLocation={SkinTonePickerLocation.PREVIEW}
                         theme={Theme.DARK}
                         onEmojiClick={handleComposerEmojiClick}
+                        lazyLoadEmojis={true}
                       />
                     </Suspense>
                   </div>

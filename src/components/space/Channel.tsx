@@ -1216,10 +1216,11 @@ const Channel: React.FC<ChannelProps> = ({
                       height={358}
                       suggestedEmojisMode={SuggestionMode.FREQUENT}
                       customEmojis={customEmojis}
-                      getEmojiUrl={(unified) => '/apple/64/' + unified + '.png'}
+                      getEmojiUrl={(unified) => '/twitter/64/' + unified + '.png'}
                       skinTonePickerLocation={SkinTonePickerLocation.PREVIEW}
                       theme={Theme.DARK}
                       onEmojiClick={handleComposerEmojiClick}
+                      lazyLoadEmojis={true}
                     />
                   </Suspense>
                 </div>

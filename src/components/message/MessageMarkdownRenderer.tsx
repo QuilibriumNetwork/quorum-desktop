@@ -18,6 +18,7 @@ import {
 } from '../../utils/youtubeUtils';
 import { getValidInvitePrefixes } from '../../utils/inviteDomain';
 import { getValidMessageLinkPrefixes } from '../../utils/messageLinkUtils';
+import { remarkTwemoji } from '../../utils/remarkTwemoji';
 import { InviteLink } from './InviteLink';
 import { Icon } from '../primitives';
 import type { Role, Channel } from '../../api/quorumApi';
@@ -794,8 +795,21 @@ export const MessageMarkdownRenderer: React.FC<MessageMarkdownRendererProps> = (
       return <span>{children}</span>;
     },
 
-    // Handle images - catch YouTube embeds and invite cards marked with special alt text
+    // Handle images - catch YouTube embeds, invite cards, and Twemoji images
     img: ({ src, alt }: any) => {
+      // Handle Twemoji images — construct src from alt codepoint, never from AST src
+      if (typeof alt === 'string' && alt.startsWith('twemoji-')) {
+        const unified = alt.slice('twemoji-'.length);
+        return (
+          <img
+            src={`/twitter/64/${unified}.png`}
+            alt={alt}
+            className="twemoji"
+            draggable={false}
+          />
+        );
+      }
+
       // Handle YouTube embeds marked with special alt text
       if (alt === 'youtube-embed' && src) {
         return (
@@ -1041,7 +1055,7 @@ export const MessageMarkdownRenderer: React.FC<MessageMarkdownRendererProps> = (
   return (
     <div className={`break-words min-w-0 max-w-full overflow-hidden ${className || ''}`} onClick={handleClick}>
       <ReactMarkdown
-        remarkPlugins={[remarkGfm, remarkBreaks]}
+        remarkPlugins={[remarkGfm, remarkBreaks, remarkTwemoji]}
         rehypePlugins={[]}
         components={components}
       >

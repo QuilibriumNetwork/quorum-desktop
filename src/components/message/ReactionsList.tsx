@@ -1,11 +1,36 @@
 import React, { useMemo } from 'react';
 import { i18n } from '@lingui/core';
+import { parse as parseEmoji } from '@twemoji/parser';
 import { Flex, Tooltip } from '../primitives';
 import { useReactionsModal } from '../context/ReactionsModalProvider';
 import { isTouchDevice } from '../../utils/platform';
+import { emojiToUnified } from '../../utils/remarkTwemoji';
 import type { Message as MessageType } from '../../api/quorumApi';
 import type { CustomEmoji } from 'emoji-picker-react/dist/config/customEmojiConfig';
 import type { MemberInfo } from '../modals/ReactionsModal';
+
+/**
+ * Render a standard (non-custom) emoji as a Twemoji image.
+ * Validates via @twemoji/parser to ensure only real emojis produce image paths.
+ * Falls back to raw text if the parser doesn't recognize it.
+ */
+function renderTwemoji(emojiText: string, size: number, className?: string) {
+  const entities = parseEmoji(emojiText);
+  if (entities.length === 0) {
+    return <span style={{ fontSize: size }} className={className}>{emojiText}</span>;
+  }
+  const unified = emojiToUnified(entities[0].text);
+  return (
+    <img
+      src={`/twitter/64/${unified}.png`}
+      alt={emojiText}
+      width={size}
+      height={size}
+      className={className}
+      draggable={false}
+    />
+  );
+}
 
 interface ReactionsListProps {
   message: MessageType;
@@ -80,12 +105,12 @@ export const ReactionsList: React.FC<ReactionsListProps> = ({
         const remaining = r.memberIds.length - maxNames;
         const hasMore = remaining > 0;
 
-        // Get emoji display for tooltip (larger size)
+        // Look up custom emoji once and reuse for both tooltip and badge
         const customEmoji = customEmojis.find((e) => e.id === r.emojiName);
         const emojiElement = customEmoji ? (
           <img src={customEmoji.imgUrl} alt={r.emojiName} width={36} height={36} />
         ) : (
-          <span className="text-3xl">{r.emojiName}</span>
+          renderTwemoji(r.emojiName, 36)
         );
 
         // On desktop, make "+X more" clickable; on touch, just show text
@@ -127,7 +152,7 @@ export const ReactionsList: React.FC<ReactionsListProps> = ({
           >
             <Flex
               className={
-                'cursor-pointer items-center mr-1 mb-1 rounded-lg py-[1pt] px-2 whitespace-nowrap ' +
+                'cursor-pointer items-center mr-1 mb-1 rounded-lg py-1 px-2 whitespace-nowrap ' +
                 (r.memberIds.includes(userAddress)
                   ? 'bg-accent-rgb/30 hover:bg-accent-rgb/60 border border-accent'
                   : 'bg-surface-5 hover:bg-surface-00 border border-surface-5 hover:border-surface-00')
@@ -136,16 +161,18 @@ export const ReactionsList: React.FC<ReactionsListProps> = ({
                 onReactionClick(r.emojiId);
               }}
             >
-              {customEmojis.find((e) => e.id === r.emojiName) ? (
+              {customEmoji ? (
                 <img
-                  width="24"
+                  width="18"
+                  height="18"
                   className="mr-1"
-                  src={customEmojis.find((e) => e.id === r.emojiName)?.imgUrl}
+                  src={customEmoji.imgUrl}
+                  alt={r.emojiName}
                 />
               ) : (
-                <span className="mr-1">{r.emojiName}</span>
+                renderTwemoji(r.emojiName, 18, 'mr-1')
               )}
-              <span className="text-sm">{r.count}</span>
+              <span className="text-sm font-bold text-subtle">{r.count}</span>
             </Flex>
           </Tooltip>
         );

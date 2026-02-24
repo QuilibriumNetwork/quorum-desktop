@@ -134,8 +134,8 @@ export default defineConfig(({ command }) => ({
     viteStaticCopy({
       targets: [
         {
-          src: 'node_modules/emoji-datasource-apple/img/apple/*',
-          dest: 'apple',
+          src: 'node_modules/emoji-datasource-twitter/img/twitter/*',
+          dest: 'twitter',
         },
         {
           src: '../quilibrium-js-sdk-channels/src/wasm/channelwasm_bg.wasm',

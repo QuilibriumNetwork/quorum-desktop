@@ -86,10 +86,11 @@ const EmojiPickerDrawer: React.FC<EmojiPickerDrawerProps> = ({
             height={hasStickers ? 540 : 600}
             suggestedEmojisMode={SuggestionMode.FREQUENT}
             customEmojis={customEmojis}
-            getEmojiUrl={(unified) => '/apple/64/' + unified + '.png'}
+            getEmojiUrl={(unified) => '/twitter/64/' + unified + '.png'}
             skinTonePickerLocation={SkinTonePickerLocation.PREVIEW}
             theme={Theme.DARK}
             onEmojiClick={handleEmojiClick}
+            lazyLoadEmojis={true}
           />
         </div>
       )}

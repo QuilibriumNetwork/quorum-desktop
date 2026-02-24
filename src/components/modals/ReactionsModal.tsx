@@ -1,7 +1,9 @@
 import React, { useState, useMemo } from 'react';
 import { t } from '@lingui/core/macro';
+import { parse as parseEmoji } from '@twemoji/parser';
 import { Modal, Flex, ScrollContainer } from '../primitives';
 import { UserAvatar } from '../user/UserAvatar';
+import { emojiToUnified } from '../../utils/remarkTwemoji';
 import type { Reaction } from '../../api/quorumApi';
 import type { CustomEmoji } from 'emoji-picker-react/dist/config/customEmojiConfig';
 
@@ -53,7 +55,7 @@ export const ReactionsModal: React.FC<ReactionsModalProps> = ({
     return selectedReaction.memberIds.map((memberId) => getUserInfo(memberId));
   }, [selectedReaction, members]);
 
-  // Find custom emoji image URL
+  // Render emoji as Twemoji image or custom emoji
   const getEmojiDisplay = (reaction: Reaction) => {
     const customEmoji = customEmojis.find((e) => e.id === reaction.emojiName);
     if (customEmoji) {
@@ -62,6 +64,20 @@ export const ReactionsModal: React.FC<ReactionsModalProps> = ({
           src={customEmoji.imgUrl}
           alt={reaction.emojiName}
           className="w-6 h-6 object-contain"
+        />
+      );
+    }
+    const entities = parseEmoji(reaction.emojiName);
+    if (entities.length > 0) {
+      const unified = emojiToUnified(entities[0].text);
+      return (
+        <img
+          src={`/twitter/64/${unified}.png`}
+          alt={reaction.emojiName}
+          width={24}
+          height={24}
+          className="twemoji"
+          draggable={false}
         />
       );
     }

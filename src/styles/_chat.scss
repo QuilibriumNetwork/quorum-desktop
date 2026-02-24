@@ -209,6 +209,15 @@ html:not(.dark) .chat-container {
   }
 }
 
+// Twemoji inline images — consistent sizing across message contexts
+img.twemoji {
+  display: inline;
+  height: 1.2em;
+  width: auto;
+  vertical-align: -0.2em;
+  margin: 0 0.05em;
+}
+
 .message-list {
   flex: 1 1 auto;
   overflow-y: auto;

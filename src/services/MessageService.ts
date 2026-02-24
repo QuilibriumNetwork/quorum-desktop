@@ -409,18 +409,26 @@ export class MessageService {
         await messageDB.saveMessage(
           {
             ...target,
-            reactions: [
-              ...(target.reactions?.filter(
-                (r) => r.emojiId !== reaction.reaction
-              ) ?? []),
-              {
-                emojiId: reaction.reaction,
-                emojiName: reaction.reaction,
-                spaceId: spaceId != channelId ? spaceId : '',
-                count: modifiedSet.length,
-                memberIds: modifiedSet,
-              },
-            ],
+            reactions: existing
+              ? (target.reactions ?? []).map((r) =>
+                  r.emojiId === reaction.reaction
+                    ? {
+                        ...r,
+                        count: modifiedSet.length,
+                        memberIds: modifiedSet,
+                      }
+                    : r
+                )
+              : [
+                  ...(target.reactions ?? []),
+                  {
+                    emojiId: reaction.reaction,
+                    emojiName: reaction.reaction,
+                    spaceId: spaceId != channelId ? spaceId : '',
+                    count: modifiedSet.length,
+                    memberIds: modifiedSet,
+                  },
+                ],
           },
           0,
           spaceId,
@@ -449,21 +457,17 @@ export class MessageService {
               (e) => e !== reaction.senderId
             ),
           ];
-          let reactions =
-            target.reactions?.filter((r) => r.emojiId !== reaction.reaction) ??
-            [];
-          if (modifiedSet.length != 0) {
-            reactions = [
-              ...reactions,
-              {
-                emojiId: reaction.reaction,
-                emojiName: reaction.reaction,
-                spaceId: spaceId != channelId ? spaceId : '',
-                count: modifiedSet.length,
-                memberIds: modifiedSet,
-              },
-            ];
-          }
+          const reactions = modifiedSet.length === 0
+            ? (target.reactions ?? []).filter((r) => r.emojiId !== reaction.reaction)
+            : (target.reactions ?? []).map((r) =>
+                r.emojiId === reaction.reaction
+                  ? {
+                      ...r,
+                      count: modifiedSet.length,
+                      memberIds: modifiedSet,
+                    }
+                  : r
+              );
           await messageDB.saveMessage(
             {
               ...target,
@@ -904,18 +908,26 @@ export class MessageService {
                       ];
                       return {
                         ...m,
-                        reactions: [
-                          ...(m.reactions?.filter(
-                            (r) => r.emojiId !== reaction.reaction
-                          ) ?? []),
-                          {
-                            emojiId: reaction.reaction,
-                            emojiName: reaction.reaction,
-                            spaceId: spaceId !== channelId ? spaceId : '',
-                            count: modifiedSet.length,
-                            memberIds: modifiedSet,
-                          },
-                        ],
+                        reactions: existing
+                          ? (m.reactions ?? []).map((r) =>
+                              r.emojiId === reaction.reaction
+                                ? {
+                                    ...r,
+                                    count: modifiedSet.length,
+                                    memberIds: modifiedSet,
+                                  }
+                                : r
+                            )
+                          : [
+                              ...(m.reactions ?? []),
+                              {
+                                emojiId: reaction.reaction,
+                                emojiName: reaction.reaction,
+                                spaceId: spaceId !== channelId ? spaceId : '',
+                                count: modifiedSet.length,
+                                memberIds: modifiedSet,
+                              },
+                            ],
                       };
                     }
                     return m;
@@ -953,22 +965,17 @@ export class MessageService {
                             (e) => e !== reaction.senderId
                           ),
                         ];
-                        let reactions =
-                          m.reactions?.filter(
-                            (r) => r.emojiId !== reaction.reaction
-                          ) ?? [];
-                        if (modifiedSet.length != 0) {
-                          reactions = [
-                            ...reactions,
-                            {
-                              emojiId: reaction.reaction,
-                              emojiName: reaction.reaction,
-                              spaceId: spaceId != channelId ? spaceId : '',
-                              count: modifiedSet.length,
-                              memberIds: modifiedSet,
-                            },
-                          ];
-                        }
+                        const reactions = modifiedSet.length === 0
+                          ? (m.reactions ?? []).filter((r) => r.emojiId !== reaction.reaction)
+                          : (m.reactions ?? []).map((r) =>
+                              r.emojiId === reaction.reaction
+                                ? {
+                                    ...r,
+                                    count: modifiedSet.length,
+                                    memberIds: modifiedSet,
+                                  }
+                                : r
+                            );
                         return {
                           ...m,
                           reactions: reactions,
