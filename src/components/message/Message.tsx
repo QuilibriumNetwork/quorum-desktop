@@ -46,6 +46,7 @@ import { useMessageHighlight } from '../../hooks/business/messages/useMessageHig
 import { useViewportMentionHighlight } from '../../hooks/business/messages/useViewportMentionHighlight';
 import MessageActions from './MessageActions';
 import MessageActionsMenu from './MessageActionsMenu';
+import { ThreadIndicator } from '../thread/ThreadIndicator';
 import { MessageMarkdownRenderer } from './MessageMarkdownRenderer';
 import { isTouchDevice } from '../../utils/platform';
 import { hapticLight } from '../../utils/haptic';
@@ -114,6 +115,7 @@ type MessageProps = {
   roles?: Array<{ roleId: string; roleTag: string; displayName: string; color: string }>;
   groups?: Array<{ groupName: string; channels: Channel[]; icon?: string; iconColor?: string }>;
   canUseEveryone?: boolean;
+  onStartThread?: () => void;
 };
 
 export const Message = React.memo(
@@ -155,6 +157,7 @@ export const Message = React.memo(
     roles = [],
     groups = [],
     canUseEveryone = false,
+    onStartThread,
   }: MessageProps) => {
     const user = usePasskeysContext();
     const { spaceId } = useParams();
@@ -626,6 +629,9 @@ export const Message = React.memo(
                   // Bookmark props
                   isBookmarked={messageActions.isBookmarked}
                   onBookmarkToggle={messageActions.handleBookmarkToggle}
+                  // Thread props
+                  hasThread={!!message.threadMeta}
+                  onStartThread={onStartThread}
                 />
               )}
 
@@ -1199,6 +1205,16 @@ export const Message = React.memo(
                 mapSenderToUser={mapSenderToUser}
                 onReactionClick={messageActions.handleReaction}
               />
+
+              {/* Thread Indicator */}
+              {message.threadMeta && onStartThread && (
+                <ThreadIndicator
+                  spaceId={message.spaceId}
+                  channelId={message.channelId}
+                  threadId={message.threadMeta.threadId}
+                  onClick={onStartThread}
+                />
+              )}
 
               {/* Message Send Status Indicator */}
               {message.sendStatus === 'sending' && (

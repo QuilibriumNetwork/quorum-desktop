@@ -2,7 +2,7 @@ import { logger } from '@quilibrium/quorum-shared';
 import React, { useEffect, useState, useCallback, useRef, useMemo, Suspense } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './Channel.scss';
-import { StickerMessage } from '../../api/quorumApi';
+import { StickerMessage, Message as MessageType, ThreadMessage, ThreadMeta } from '../../api/quorumApi';
 import {
   useChannelData,
   useChannelMessages,
@@ -32,6 +32,7 @@ import MessageComposer, {
   MessageComposerRef,
 } from '../message/MessageComposer';
 import { PinnedMessagesPanel } from '../message/PinnedMessagesPanel';
+import { ThreadPanel } from '../thread/ThreadPanel';
 import { NotificationPanel } from '../notifications/NotificationPanel';
 import { BookmarksPanel } from '../bookmarks/BookmarksPanel';
 import { Virtuoso } from 'react-virtuoso';
@@ -102,8 +103,12 @@ const Channel: React.FC<ChannelProps> = ({
   const [skipSigning, setSkipSigning] = useState<boolean>(false);
 
   // Unified panel state - ensures only one panel can be open at a time
-  type ActivePanel = 'pinned' | 'notifications' | 'bookmarks' | 'search' | null;
+  type ActivePanel = 'pinned' | 'notifications' | 'bookmarks' | 'search' | 'thread' | null;
   const [activePanel, setActivePanel] = useState<ActivePanel>(null);
+
+  // Thread state
+  const [activeThreadId, setActiveThreadId] = useState<string | null>(null);
+  const [activeThreadRootMessage, setActiveThreadRootMessage] = useState<MessageType | null>(null);
 
   // User profile modal state and logic
   const userProfileModal = useUserProfileModal({ showUsers });
@@ -355,6 +360,78 @@ const Channel: React.FC<ChannelProps> = ({
       isSpaceOwner,
       messageDB,
     ]
+  );
+
+  // Handle opening a thread (create if needed, then open panel)
+  const handleOpenThread = useCallback(
+    async (message: MessageType) => {
+      if (spaceId === channelId) return; // No threads in DMs
+
+      let threadId: string;
+      if (message.threadMeta) {
+        // Thread already exists
+        threadId = message.threadMeta.threadId;
+      } else {
+        // Create thread — deterministic ID
+        const threadIdBuffer = await crypto.subtle.digest(
+          'SHA-256',
+          new TextEncoder().encode(message.messageId + ':thread')
+        );
+        threadId = Array.from(new Uint8Array(threadIdBuffer))
+          .map((b) => b.toString(16).padStart(2, '0'))
+          .join('');
+
+        const threadMeta: ThreadMeta = {
+          threadId,
+          createdBy: user.currentPasskeyInfo!.address,
+        };
+        const threadMessage: ThreadMessage = {
+          type: 'thread',
+          senderId: user.currentPasskeyInfo!.address,
+          targetMessageId: message.messageId,
+          action: 'create',
+          threadMeta,
+        };
+
+        const effectiveSkip = space?.isRepudiable ? skipSigning : false;
+        await submitChannelMessage(
+          spaceId,
+          channelId,
+          threadMessage,
+          queryClient,
+          user.currentPasskeyInfo!,
+          undefined,
+          effectiveSkip,
+          isSpaceOwner
+        );
+      }
+
+      setActiveThreadId(threadId);
+      setActiveThreadRootMessage(message);
+      setActivePanel('thread');
+    },
+    [spaceId, channelId, user.currentPasskeyInfo, submitChannelMessage, queryClient, space, skipSigning, isSpaceOwner]
+  );
+
+  // Handle submitting a reply in a thread
+  const handleSubmitThreadReply = useCallback(
+    async (text: string) => {
+      if (!activeThreadId) return;
+      const effectiveSkip = space?.isRepudiable ? skipSigning : false;
+      await submitChannelMessage(
+        spaceId,
+        channelId,
+        text,
+        queryClient,
+        user.currentPasskeyInfo!,
+        undefined,
+        effectiveSkip,
+        isSpaceOwner,
+        undefined,
+        activeThreadId
+      );
+    },
+    [activeThreadId, spaceId, channelId, submitChannelMessage, queryClient, user.currentPasskeyInfo, space, skipSigning, isSpaceOwner]
   );
 
   // Handle user profile modal close
@@ -1028,8 +1105,29 @@ const Channel: React.FC<ChannelProps> = ({
                 mentionRoles={roles?.filter(role => role.isPublic !== false)}
                 groups={spaceGroups}
                 canUseEveryone={canUseEveryone}
+                onStartThread={handleOpenThread}
               />
             </div>
+
+            {/* Thread Panel */}
+            <ThreadPanel
+              isOpen={activePanel === 'thread'}
+              onClose={() => {
+                setActivePanel(null);
+                setActiveThreadId(null);
+                setActiveThreadRootMessage(null);
+              }}
+              spaceId={spaceId}
+              channelId={channelId}
+              threadId={activeThreadId}
+              rootMessage={activeThreadRootMessage}
+              mapSenderToUser={mapSenderToUser}
+              onSubmitThreadReply={handleSubmitThreadReply}
+              stickers={stickers}
+              spaceRoles={roles}
+              spaceChannels={spaceChannels}
+              onChannelClick={handleChannelClick}
+            />
 
             <div className="message-editor-container">
               <MessageComposer

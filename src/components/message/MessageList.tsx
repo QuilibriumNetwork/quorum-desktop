@@ -85,6 +85,8 @@ interface MessageListProps {
   groups?: Array<{ groupName: string; channels: Channel[]; icon?: string; iconColor?: string }>;
   /** Whether @everyone is allowed in message edit mode */
   canUseEveryone?: boolean;
+  /** Thread action callback */
+  onStartThread?: (message: MessageType) => void;
 }
 
 function useWindowSize() {
@@ -146,6 +148,7 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
       mentionRoles = [],
       groups = [],
       canUseEveryone = false,
+      onStartThread,
     } = props;
 
     const [_width, height] = useWindowSize();
@@ -319,6 +322,7 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
               roles={mentionRoles}
               groups={groups}
               canUseEveryone={canUseEveryone}
+              onStartThread={onStartThread ? () => onStartThread(message) : undefined}
               onBeforeDelete={() => {
                 deletionInProgressRef.current = true;
                 // Clear after delay to allow for follow-up operations
