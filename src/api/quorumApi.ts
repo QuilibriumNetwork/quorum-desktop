@@ -125,7 +125,8 @@ export type Message = {
     | StickerMessage
     | PinMessage
     | DeleteConversationMessage
-    | EditMessage;
+    | EditMessage
+    | ThreadMessage;
   reactions: Reaction[];
   mentions: Mentions;
   replyMetadata?: {
@@ -146,6 +147,14 @@ export type Message = {
   sendStatus?: MessageSendStatus;
   /** Client-side ephemeral - sanitized error message for display */
   sendError?: string;
+  threadMeta?: ThreadMeta;
+  threadId?: string;
+  isThreadReply?: boolean;
+};
+
+export type ThreadMeta = {
+  threadId: string;
+  createdBy: string;
 };
 
 export type PostMessage = {
@@ -239,6 +248,14 @@ export type PinMessage = {
   type: 'pin';
   targetMessageId: string;
   action: 'pin' | 'unpin';
+};
+
+export type ThreadMessage = {
+  senderId: string;
+  type: 'thread';
+  targetMessageId: string;
+  action: 'create';
+  threadMeta: ThreadMeta;
 };
 
 export type DeleteConversationMessage = {
