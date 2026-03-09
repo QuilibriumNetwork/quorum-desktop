@@ -10,6 +10,7 @@ import type {
   EditMessage,
   PinMessage,
   MuteMessage,
+  ThreadMessage,
 } from '../api/quorumApi';
 
 /**
@@ -33,6 +34,7 @@ export function canonicalize(
     | EditMessage
     | PinMessage
     | MuteMessage
+    | ThreadMessage
 ): string {
   if (typeof pendingMessage === 'string') {
     return pendingMessage;
@@ -121,6 +123,15 @@ export function canonicalize(
       pendingMessage.timestamp +
       pendingMessage.action +
       (pendingMessage.duration ?? '')
+    );
+  }
+
+  if (pendingMessage.type === 'thread') {
+    return (
+      pendingMessage.type +
+      pendingMessage.targetMessageId +
+      pendingMessage.action +
+      pendingMessage.threadMeta.threadId
     );
   }
 

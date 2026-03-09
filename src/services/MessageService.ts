@@ -15,6 +15,8 @@ import {
   Space,
   EditMessage,
   PinMessage,
+  ThreadMessage,
+  ThreadMeta,
   UpdateProfileMessage,
   BroadcastSpaceTag,
 } from '../api/quorumApi';
@@ -3962,7 +3964,8 @@ export class MessageService {
     inReplyTo?: string,
     skipSigning?: boolean,
     isSpaceOwner?: boolean,
-    parentMessage?: Message
+    parentMessage?: Message,
+    threadId?: string
   ) {
     // Determine message type for optimistic update handling
     const isEditMessage =
@@ -3974,11 +3977,14 @@ export class MessageService {
     const isUpdateProfileMessage =
       typeof pendingMessage === 'object' &&
       (pendingMessage as any).type === 'update-profile';
+    const isThreadMessage =
+      typeof pendingMessage === 'object' &&
+      (pendingMessage as any).type === 'thread';
 
     // Post messages (regular text messages) use optimistic updates
     const isPostMessage =
       typeof pendingMessage === 'string' ||
-      (!isEditMessage && !isPinMessage && !isUpdateProfileMessage);
+      (!isEditMessage && !isPinMessage && !isUpdateProfileMessage && !isThreadMessage);
 
     // For post messages: prepare and show optimistically BEFORE enqueueing
     if (isPostMessage) {
@@ -4081,6 +4087,8 @@ export class MessageService {
             : undefined,
         replyMetadata,
         reactions: [],
+        // Thread fields
+        ...(threadId ? { threadId, isThreadReply: true } : {}),
       } as Message;
 
       // Sign message BEFORE optimistic display (non-repudiability requirement)
@@ -4344,6 +4352,113 @@ export class MessageService {
         return outbounds;
       }
 
+      // Handle thread-message type
+      if (
+        typeof pendingMessage === 'object' &&
+        (pendingMessage as any).type === 'thread'
+      ) {
+        const threadMsg = pendingMessage as ThreadMessage;
+
+        if (spaceId === channelId) return outbounds; // Reject DMs
+
+        const targetMessage = await this.messageDB.getMessage({
+          spaceId,
+          channelId,
+          messageId: threadMsg.targetMessageId,
+        });
+        if (!targetMessage) return outbounds;
+
+        // Idempotent — deterministic ID means duplicate creates are no-ops
+        if (targetMessage.threadMeta?.threadId === threadMsg.threadMeta.threadId) {
+          return outbounds;
+        }
+
+        const messageId = await crypto.subtle.digest(
+          'SHA-256',
+          Buffer.from(
+            nonce +
+              'thread' +
+              currentPasskeyInfo.address +
+              canonicalize(threadMsg),
+            'utf-8'
+          )
+        );
+
+        const message = {
+          spaceId: spaceId,
+          channelId: channelId,
+          messageId: Buffer.from(messageId).toString('hex'),
+          digestAlgorithm: 'SHA-256',
+          nonce: nonce,
+          createdDate: Date.now(),
+          modifiedDate: Date.now(),
+          lastModifiedHash: '',
+          content: {
+            ...threadMsg,
+            senderId: currentPasskeyInfo.address,
+          } as ThreadMessage,
+        } as Message;
+
+        // Sign (same pattern as pin messages)
+        if (!space?.isRepudiable || (space?.isRepudiable && !skipSigning)) {
+          const inboxKey = await this.messageDB.getSpaceKey(spaceId, 'inbox');
+          message.publicKey = inboxKey.publicKey;
+          message.signature = Buffer.from(
+            JSON.parse(
+              ch.js_sign_ed448(
+                Buffer.from(inboxKey.privateKey, 'hex').toString('base64'),
+                Buffer.from(messageId).toString('base64')
+              )
+            ),
+            'base64'
+          ).toString('hex');
+        }
+
+        outbounds.push(await this.encryptAndSendToSpace(spaceId, message));
+
+        // Update root message with threadMeta
+        const updatedTarget: Message = { ...targetMessage, threadMeta: threadMsg.threadMeta };
+        const conversationId = spaceId + '/' + channelId;
+        const conversation = await this.messageDB.getConversation({
+          conversationId,
+        });
+        await this.saveMessage(
+          updatedTarget,
+          this.messageDB,
+          spaceId,
+          channelId,
+          'group',
+          {
+            user_icon:
+              conversation.conversation?.icon ?? DefaultImages.UNKNOWN_USER,
+            display_name:
+              conversation.conversation?.displayName ?? t`Unknown User`,
+          },
+          currentPasskeyInfo.address
+        );
+
+        // Update React Query cache
+        queryClient.setQueryData(
+          buildMessagesKey({ spaceId, channelId }),
+          (oldData: InfiniteData<any>) => {
+            if (!oldData?.pages) return oldData;
+            return {
+              pageParams: oldData.pageParams,
+              pages: oldData.pages.map((page: any) => ({
+                ...page,
+                messages: page.messages.map((m: Message) =>
+                  m.messageId === threadMsg.targetMessageId
+                    ? { ...m, threadMeta: threadMsg.threadMeta }
+                    : m
+                ),
+              })),
+            };
+          }
+        );
+
+        return outbounds;
+      }
+
       // Handle update-profile type
       if (
         typeof pendingMessage === 'object' &&
@@ -4431,6 +4546,53 @@ export class MessageService {
       // No matching message type in this path
       return outbounds;
     });
+  }
+
+  async createThread(
+    spaceId: string,
+    channelId: string,
+    targetMessageId: string,
+    queryClient: QueryClient,
+    currentPasskeyInfo: {
+      credentialId: string;
+      address: string;
+      publicKey: string;
+      displayName?: string;
+      pfpUrl?: string;
+      completedOnboarding: boolean;
+    },
+    skipSigning?: boolean,
+    isSpaceOwner?: boolean
+  ) {
+    if (spaceId === channelId) return; // Reject DMs
+
+    const threadIdBuffer = await crypto.subtle.digest(
+      'SHA-256',
+      Buffer.from(targetMessageId + ':thread', 'utf-8')
+    );
+    const threadId = Buffer.from(threadIdBuffer).toString('hex');
+
+    const threadMeta: ThreadMeta = { threadId, createdBy: currentPasskeyInfo.address };
+    const threadMessage: ThreadMessage = {
+      type: 'thread',
+      senderId: currentPasskeyInfo.address,
+      targetMessageId,
+      action: 'create',
+      threadMeta,
+    };
+
+    await this.submitChannelMessage(
+      spaceId,
+      channelId,
+      threadMessage,
+      queryClient,
+      currentPasskeyInfo,
+      undefined,
+      skipSigning,
+      isSpaceOwner
+    );
+
+    return { threadId, threadMeta };
   }
 
   /**
