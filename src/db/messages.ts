@@ -436,6 +436,10 @@ export class MessageDB {
         const cursor = (event.target as IDBRequest).result;
 
         if (cursor && messages.length < limit) {
+          if (cursor.value.isThreadReply) {
+            cursor.continue();
+            return;
+          }
           messages.push(cursor.value);
           cursor.continue();
         } else {
