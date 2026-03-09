@@ -775,6 +775,30 @@ export class MessageService {
         updatedUserProfile.display_name!,
         currentUserAddress
       );
+    } else if (decryptedContent.content.type === 'thread') {
+      const threadMsg = decryptedContent.content as ThreadMessage;
+      if (spaceId === channelId) return; // Reject DMs
+
+      const targetMessage = await messageDB.getMessage({
+        spaceId,
+        channelId,
+        messageId: threadMsg.targetMessageId,
+      });
+      if (!targetMessage) return; // Root not found
+
+      // Idempotent
+      if (targetMessage.threadMeta?.threadId === threadMsg.threadMeta.threadId) return;
+
+      const updatedMessage: Message = { ...targetMessage, threadMeta: threadMsg.threadMeta };
+      await messageDB.saveMessage(
+        updatedMessage,
+        0,
+        spaceId,
+        conversationType,
+        updatedUserProfile.user_icon!,
+        updatedUserProfile.display_name!,
+        currentUserAddress
+      );
     } else if (decryptedContent.content.type === 'update-profile') {
       const participant = await messageDB.getSpaceMember(
         spaceId,
@@ -812,6 +836,11 @@ export class MessageService {
       // Check tombstone before saving - prevents deleted messages from being re-added during sync
       if (await messageDB.isMessageDeleted(decryptedContent.messageId)) {
         return;
+      }
+
+      // Ensure thread replies are marked for filtering
+      if (decryptedContent.threadId && !decryptedContent.isThreadReply) {
+        decryptedContent.isThreadReply = true;
       }
 
       await messageDB.saveMessage(
@@ -1240,6 +1269,27 @@ export class MessageService {
       queryClient.invalidateQueries({
         queryKey: ['pinnedMessageCount', spaceId, channelId],
       });
+    } else if (decryptedContent.content.type === 'thread') {
+      const threadMsg = decryptedContent.content as ThreadMessage;
+      if (spaceId === channelId) return;
+
+      queryClient.setQueryData(
+        buildMessagesKey({ spaceId, channelId }),
+        (oldData: InfiniteData<any>) => {
+          if (!oldData?.pages) return oldData;
+          return {
+            pageParams: oldData.pageParams,
+            pages: oldData.pages.map((page: any) => ({
+              ...page,
+              messages: page.messages.map((m: Message) =>
+                m.messageId === threadMsg.targetMessageId
+                  ? { ...m, threadMeta: threadMsg.threadMeta }
+                  : m
+              ),
+            })),
+          };
+        }
+      );
     } else if (decryptedContent.content.type === 'update-profile') {
       const participant = await this.messageDB.getSpaceMember(
         spaceId,
@@ -1346,6 +1396,17 @@ export class MessageService {
         queryKey: ['mutedUsers', spaceId],
       });
     } else {
+      // Thread replies go to thread cache, not main feed
+      if (decryptedContent.isThreadReply) {
+        queryClient.invalidateQueries({
+          queryKey: ['thread-messages', spaceId, channelId, decryptedContent.threadId],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ['thread-stats', spaceId, channelId, decryptedContent.threadId],
+        });
+        return;
+      }
+
       // Read-only channel validation - must validate BEFORE adding to cache
       // Note: edit-message is handled earlier in the if-else chain (line ~310)
       const isDM = spaceId === channelId;
