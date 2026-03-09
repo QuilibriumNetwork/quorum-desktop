@@ -364,6 +364,7 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
         spaceName,
         onRetryMessage,
         dmContext,
+        onStartThread,
       ]
     );
 
