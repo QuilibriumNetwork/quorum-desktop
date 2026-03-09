@@ -1,197 +1,224 @@
-import React, { useCallback, useRef, useState } from 'react';
-import { Virtuoso, VirtuosoHandle } from 'react-virtuoso';
-import type { Message as MessageType, Role, Channel, Sticker } from '../../api/quorumApi';
-import MessagePreview from '../message/MessagePreview';
-import {
-  Flex,
-  Button,
-  Icon,
-} from '../primitives';
-import { DropdownPanel } from '../ui';
+import React, { useRef, useMemo, useState, useCallback } from 'react';
+import type { PostMessage } from '../../api/quorumApi';
+import { Button, Icon } from '../primitives';
 import { t } from '@lingui/core/macro';
-import { useThreadMessages } from '../../hooks/business/threads';
-import { formatMessageDate } from '../../utils/dateFormatting';
+import { MessageList, MessageListRef } from '../message/MessageList';
+import MessageComposer, { MessageComposerRef } from '../message/MessageComposer';
+import { useMessageComposer } from '../../hooks';
+import { useThreadContext } from '../context/ThreadContext';
 import './ThreadPanel.scss';
 
-interface ThreadPanelProps {
-  isOpen: boolean;
-  onClose: () => void;
-  spaceId: string;
-  channelId: string;
-  threadId: string | null;
-  rootMessage: MessageType | null;
-  mapSenderToUser: (senderId: string) => any;
-  onSubmitThreadReply: (text: string) => void;
-  stickers?: { [key: string]: Sticker };
-  spaceRoles?: Role[];
-  spaceChannels?: Channel[];
-  onChannelClick?: (channelId: string) => void;
+/**
+ * Extract a title from the root message text.
+ * Falls back to "Thread" if no text content.
+ * CSS handles truncation via text-overflow: ellipsis based on available width.
+ */
+function getThreadTitle(rootMessage: { content?: any } | null): string {
+  if (!rootMessage?.content) return 'Thread';
+  const content = rootMessage.content as PostMessage;
+  if (!content.text) return 'Thread';
+  const text = Array.isArray(content.text) ? content.text.join(' ') : content.text;
+  // Strip markdown/formatting for a clean title
+  const clean = text.replace(/[*_~`#>\[\]()!]/g, '').trim();
+  return clean || 'Thread';
 }
 
-export const ThreadPanel: React.FC<ThreadPanelProps> = ({
-  isOpen,
-  onClose,
-  spaceId,
-  channelId,
-  threadId,
-  rootMessage,
-  mapSenderToUser,
-  onSubmitThreadReply,
-  stickers,
-  spaceRoles,
-  spaceChannels,
-  onChannelClick,
-}) => {
-  const { data, isLoading } = useThreadMessages({
-    spaceId,
-    channelId,
+export const ThreadPanel: React.FC = () => {
+  const {
+    isOpen,
     threadId,
-    enabled: isOpen && !!threadId,
-  });
-  const [replyText, setReplyText] = useState('');
-  const virtuosoRef = useRef<VirtuosoHandle>(null);
+    rootMessage,
+    threadMessages,
+    isLoading,
+    closeThread,
+    submitMessage,
+    submitSticker,
+    channelProps,
+  } = useThreadContext();
+
+  const messageListRef = useRef<MessageListRef>(null);
+  const composerRef = useRef<MessageComposerRef>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-  const messages = data?.messages ?? [];
+  const composer = useMessageComposer({
+    type: 'channel',
+    onSubmitMessage: submitMessage,
+    onSubmitSticker: submitSticker,
+    hasStickers: !!channelProps?.stickers && Object.keys(channelProps.stickers).length > 0,
+  });
 
-  const handleSubmit = useCallback(() => {
-    const trimmed = replyText.trim();
-    if (!trimmed) return;
-    onSubmitThreadReply(trimmed);
-    setReplyText('');
-  }, [replyText, onSubmitThreadReply]);
+  // Resize
+  const STORAGE_KEY = 'thread-panel-width';
+  const MIN_WIDTH = 300;
+  const MAX_WIDTH_VW = 50;
+  const DEFAULT_WIDTH = 400;
 
-  const handleKeyDown = useCallback(
-    (e: React.KeyboardEvent) => {
-      if (e.key === 'Enter' && !e.shiftKey) {
-        e.preventDefault();
-        handleSubmit();
+  const panelRef = useRef<HTMLDivElement>(null);
+  const isResizing = useRef(false);
+
+  const [panelWidth, setPanelWidth] = useState<number>(() => {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    if (stored) {
+      const parsed = parseInt(stored, 10);
+      if (!isNaN(parsed) && parsed >= MIN_WIDTH) return parsed;
+    }
+    return DEFAULT_WIDTH;
+  });
+
+  const handleResizeStart = useCallback((e: React.MouseEvent) => {
+    e.preventDefault();
+    isResizing.current = true;
+    document.body.style.cursor = 'col-resize';
+    document.body.style.userSelect = 'none';
+
+    const startX = e.clientX;
+    const startWidth = panelWidth;
+
+    const handleMouseMove = (moveEvent: MouseEvent) => {
+      if (!isResizing.current) return;
+      const delta = startX - moveEvent.clientX;
+      const maxWidth = window.innerWidth * (MAX_WIDTH_VW / 100);
+      const newWidth = Math.min(maxWidth, Math.max(MIN_WIDTH, startWidth + delta));
+      setPanelWidth(newWidth);
+    };
+
+    const handleMouseUp = () => {
+      isResizing.current = false;
+      document.body.style.cursor = '';
+      document.body.style.userSelect = '';
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseup', handleMouseUp);
+      const current = panelRef.current;
+      if (current) {
+        const width = current.getBoundingClientRect().width;
+        localStorage.setItem(STORAGE_KEY, String(Math.round(width)));
       }
-    },
-    [handleSubmit]
-  );
+    };
 
-  if (!isOpen || !threadId) return null;
+    document.addEventListener('mousemove', handleMouseMove);
+    document.addEventListener('mouseup', handleMouseUp);
+  }, [panelWidth]);
 
-  const rootSender = rootMessage
-    ? mapSenderToUser(rootMessage.content?.senderId)
-    : null;
+  // Prepend root message to thread replies so it appears first in the list
+  const allThreadMessages = useMemo(() => {
+    if (!rootMessage) return threadMessages;
+    return [rootMessage, ...threadMessages];
+  }, [rootMessage, threadMessages]);
 
-  const panelHeight = Math.min(window.innerHeight * 0.8, 600);
+  const threadTitle = useMemo(() => getThreadTitle(rootMessage), [rootMessage]);
+
+  const starterName = useMemo(() => {
+    if (!rootMessage?.content?.senderId || !channelProps) return null;
+    const user = channelProps.mapSenderToUser(rootMessage.content.senderId);
+    return user?.displayName || null;
+  }, [rootMessage, channelProps]);
+
+  if (!isOpen || !threadId || !channelProps) return null;
 
   return (
-    <DropdownPanel
-      isOpen={isOpen}
-      onClose={onClose}
-      position="absolute"
-      positionStyle="right-aligned"
-      maxWidth={480}
-      maxHeight={panelHeight}
-      title={t`Thread`}
-      className="thread-panel"
-      showCloseButton={true}
+    <div
+      className="thread-panel-wrapper"
+      ref={panelRef}
+      style={{ width: `${panelWidth}px` }}
     >
-      <div className="thread-panel__content">
-        {/* Root message */}
-        {rootMessage && (
-          <div className="thread-panel__root">
-            <div className="thread-panel__root-header">
-              <Icon name="user" className="thread-panel__user-icon" />
-              <span className="thread-panel__sender">
-                {rootSender?.displayName || t`Unknown User`}
-              </span>
-              <span className="thread-panel__date">
-                {formatMessageDate(rootMessage.createdDate, true)}
-              </span>
-            </div>
-            <MessagePreview
-              message={rootMessage}
-              mapSenderToUser={mapSenderToUser}
-              stickers={stickers}
-              showBackground={false}
-              hideHeader={true}
-              spaceRoles={spaceRoles}
-              spaceChannels={spaceChannels}
-              onChannelClick={onChannelClick}
-              disableMentionInteractivity={true}
-              currentSpaceId={spaceId}
-            />
-          </div>
-        )}
-
-        {/* Thread replies */}
-        <div className="thread-panel__replies">
-          {isLoading ? (
-            <Flex justify="center" align="center" className="thread-panel__loading">
-              <Icon name="spinner" className="loading-icon icon-spin" />
-              <span>{t`Loading thread...`}</span>
-            </Flex>
-          ) : messages.length === 0 ? (
-            <Flex justify="center" align="center" className="thread-panel__empty">
-              <span className="text-subtle text-sm">{t`No replies yet. Start the conversation!`}</span>
-            </Flex>
-          ) : (
-            <Virtuoso
-              ref={virtuosoRef}
-              data={messages}
-              style={{ height: Math.min(panelHeight - 200, 300) }}
-              className="thread-panel__message-list"
-              followOutput="smooth"
-              initialTopMostItemIndex={messages.length - 1}
-              itemContent={(_index, message) => {
-                const sender = mapSenderToUser(message.content?.senderId);
-                return (
-                  <div className="thread-panel__reply-item">
-                    <div className="thread-panel__reply-header">
-                      <Icon name="user" className="thread-panel__user-icon" />
-                      <span className="thread-panel__sender">
-                        {sender?.displayName || t`Unknown User`}
-                      </span>
-                      <span className="thread-panel__date">
-                        {formatMessageDate(message.createdDate, true)}
-                      </span>
-                    </div>
-                    <MessagePreview
-                      message={message}
-                      mapSenderToUser={mapSenderToUser}
-                      stickers={stickers}
-                      showBackground={false}
-                      hideHeader={true}
-                      spaceRoles={spaceRoles}
-                      spaceChannels={spaceChannels}
-                      onChannelClick={onChannelClick}
-                      disableMentionInteractivity={true}
-                      currentSpaceId={spaceId}
-                    />
-                  </div>
-                );
-              }}
-            />
+      {/* Resize handle — outside overflow:hidden panel so it stays visible */}
+      <div
+        className="thread-panel__resize-handle"
+        onMouseDown={handleResizeStart}
+      />
+      <div className="thread-panel">
+      {/* Header — Discord-style: title + "Started by X" + close */}
+      <div className="thread-panel__header">
+        <div className="thread-panel__header-content">
+          <h2 className="thread-panel__title">{threadTitle}</h2>
+          {starterName && (
+            <span className="thread-panel__started-by">
+              {t`Started by`} <strong>{starterName}</strong>
+            </span>
           )}
         </div>
-
-        {/* Composer */}
-        <div className="thread-panel__composer">
-          <textarea
-            ref={textareaRef}
-            className="thread-panel__input"
-            value={replyText}
-            onChange={(e) => setReplyText(e.target.value)}
-            onKeyDown={handleKeyDown}
-            placeholder={t`Reply in thread...`}
-            rows={1}
-          />
-          <Button
-            onClick={handleSubmit}
-            disabled={!replyText.trim()}
-            size="small"
-            className="thread-panel__send"
-          >
-            <Icon name="send" />
-          </Button>
-        </div>
+        <Button
+          type="unstyled"
+          onClick={closeThread}
+          className="thread-panel__close"
+        >
+          <Icon name="close" size="md" />
+        </Button>
       </div>
-    </DropdownPanel>
+
+      {/* Thread messages — uses the same MessageList as main chat */}
+      <div className="thread-panel__messages">
+        {isLoading ? (
+          <div className="thread-panel__loading">
+            <Icon name="spinner" className="loading-icon icon-spin" />
+            <span>{t`Loading thread...`}</span>
+          </div>
+        ) : (
+          <MessageList
+            ref={messageListRef}
+            stickers={channelProps.stickers}
+            roles={channelProps.roles}
+            canDeleteMessages={channelProps.canDeleteMessages}
+            canPinMessages={channelProps.canPinMessages}
+            channel={channelProps.channel}
+            isSpaceOwner={channelProps.isSpaceOwner}
+            editor={textareaRef}
+            messageList={allThreadMessages}
+            setInReplyTo={composer.setInReplyTo}
+            customEmoji={channelProps.customEmoji}
+            members={channelProps.members}
+            submitMessage={submitMessage}
+            onUserClick={channelProps.onUserClick}
+            lastReadTimestamp={undefined}
+            onChannelClick={channelProps.onChannelClick}
+            spaceChannels={channelProps.spaceChannels}
+            fetchPreviousPage={() => {}}
+            fetchNextPage={() => {}}
+            hasNextPage={false}
+            spaceName={channelProps.spaceName}
+            users={channelProps.users}
+            mentionRoles={channelProps.mentionRoles}
+            groups={channelProps.spaceGroups}
+            canUseEveryone={channelProps.canUseEveryone}
+            alignToTop={true}
+          />
+        )}
+      </div>
+
+      {/* Thread composer — uses the same MessageComposer as main chat */}
+      <div className="thread-panel__composer">
+        <MessageComposer
+          ref={composerRef}
+          canUseEveryone={channelProps.canUseEveryone}
+          value={composer.pendingMessage}
+          onChange={composer.setPendingMessage}
+          onKeyDown={composer.handleKeyDown}
+          placeholder={t`Reply in thread...`}
+          calculateRows={composer.calculateRows}
+          getRootProps={composer.getRootProps}
+          getInputProps={composer.getInputProps}
+          processedImage={composer.processedImage}
+          clearFile={composer.clearFile}
+          onSubmitMessage={composer.submitMessage}
+          onShowStickers={channelProps.onShowStickers || (() => {})}
+          inReplyTo={composer.inReplyTo}
+          setInReplyTo={composer.setInReplyTo}
+          mapSenderToUser={channelProps.mapSenderToUser}
+          users={channelProps.users}
+          roles={channelProps.mentionRoles}
+          groups={channelProps.spaceGroups}
+          fileError={composer.fileError}
+          isProcessingImage={composer.isProcessingImage}
+          mentionError={composer.mentionError}
+          messageValidation={composer.messageValidation}
+          characterCount={composer.characterCount}
+          showSigningToggle={channelProps.isRepudiable}
+          skipSigning={channelProps.skipSigning}
+          onSigningToggle={channelProps.onSigningToggle}
+        />
+      </div>
+      </div>
+    </div>
   );
 };
 

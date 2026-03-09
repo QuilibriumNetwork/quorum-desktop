@@ -95,11 +95,35 @@
   }
 }
 
-// Light theme only - add borders to chat-container on desktop
-html:not(.dark) .chat-container {
+// Both themes - add top border to chat-container on desktop
+.chat-container {
   @media (min-width: 1024px) {
     border-top: $border solid var(--color-border-subtle);
+  }
+}
+
+// Light theme only - add left border to chat-container on desktop
+html:not(.dark) .chat-container {
+  @media (min-width: 1024px) {
     border-left: $border solid var(--color-border-subtle);
+  }
+}
+
+// Both themes - add right border when thread panel is open
+.chat-container.thread-open {
+  @media (min-width: 1024px) {
+    border-right: $border solid var(--color-border-subtle);
+  }
+}
+
+// Dark theme - use more muted borders for external layout borders
+html.dark .chat-container {
+  @media (min-width: 1024px) {
+    border-top-color: var(--color-border-muted);
+  }
+
+  &.thread-open {
+    border-right-color: var(--color-border-muted);
   }
 }
 

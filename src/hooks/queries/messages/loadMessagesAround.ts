@@ -71,9 +71,11 @@ export async function loadMessagesAround({
   // beforeResponse.messages are already in chronological order (oldest to newest)
   // afterResponse.messages are also in chronological order
   // The target message itself is not included in either response (cursor is exclusive)
+  // Note: getMessages() already filters isThreadReply, but the target is fetched via
+  // getMessage() which doesn't filter — so exclude thread replies from the target
   const messages = [
     ...beforeResponse.messages,
-    targetMessage,
+    ...(targetMessage.isThreadReply ? [] : [targetMessage]),
     ...afterResponse.messages,
   ];
 

@@ -2016,6 +2016,11 @@ export class MessageDB {
 
         if (cursor) {
           const message = cursor.value as Message;
+          // Skip thread replies — they shouldn't trigger unread navigation
+          if (message.isThreadReply) {
+            cursor.continue();
+            return;
+          }
           // Return the first unread message
           resolve({
             messageId: message.messageId,

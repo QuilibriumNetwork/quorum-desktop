@@ -4187,10 +4187,29 @@ export class MessageService {
       }
 
       // Add to cache with 'sending' status (optimistic update)
-      await this.addMessage(queryClient, spaceId, channelId, {
-        ...message,
-        sendStatus: 'sending',
-      });
+      // Thread replies go to thread cache only, not main feed
+      if (threadId) {
+        queryClient.setQueryData(
+          ['thread-messages', spaceId, channelId, threadId],
+          (oldData: any) => {
+            if (!oldData) return oldData;
+            const optimisticMessage = { ...message, sendStatus: 'sending' as const };
+            return {
+              ...oldData,
+              messages: [
+                ...oldData.messages.filter((m: Message) => m.messageId !== message.messageId),
+                optimisticMessage,
+              ],
+              replyCount: oldData.replyCount + 1,
+            };
+          }
+        );
+      } else {
+        await this.addMessage(queryClient, spaceId, channelId, {
+          ...message,
+          sendStatus: 'sending',
+        });
+      }
 
       // Queue to ActionQueue for persistent, crash-resistant delivery
       if (!this.actionQueueService) {

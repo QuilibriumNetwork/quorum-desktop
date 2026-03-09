@@ -87,6 +87,8 @@ interface MessageListProps {
   canUseEveryone?: boolean;
   /** Thread action callback */
   onStartThread?: (message: MessageType) => void;
+  /** When true, messages align to top instead of bottom (used for thread panels) */
+  alignToTop?: boolean;
 }
 
 function useWindowSize() {
@@ -149,6 +151,7 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
       groups = [],
       canUseEveryone = false,
       onStartThread,
+      alignToTop = false,
     } = props;
 
     const [_width, height] = useWindowSize();
@@ -551,12 +554,14 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
           }}
           atBottomThreshold={5000}
           atBottomStateChange={handleBottomStateChange}
-          alignToBottom={true}
+          alignToBottom={!alignToTop}
           firstItemIndex={0}
           initialTopMostItemIndex={
-            window.location.hash && window.location.hash.startsWith('#msg-')
-              ? 0 // scroll to top initially, will override with scrollToIndex()
-              : messageList.length - 1
+            alignToTop
+              ? 0
+              : window.location.hash && window.location.hash.startsWith('#msg-')
+                ? 0 // scroll to top initially, will override with scrollToIndex()
+                : messageList.length - 1
           }
           followOutput={(isAtBottom: boolean) => {
             // Don't auto-scroll during deletions - use ref for synchronous check

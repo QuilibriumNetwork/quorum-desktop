@@ -11,8 +11,7 @@ import './MessageActionsMenu.scss';
 // Fixed dimensions for viewport edge detection
 const MENU_WIDTH = 240;
 const MENU_HEIGHT = 320;
-const PADDING = 8;
-const OFFSET_UP = 12; // Gap between cursor and menu bottom when flipped
+const PADDING = 16;
 
 // Delay for copy actions to show "Copied!" feedback
 const COPY_CLOSE_DELAY = 500;
@@ -39,20 +38,21 @@ export interface MessageActionsMenuProps {
   copiedMessageText: boolean;
   isBookmarked?: boolean;
   onBookmarkToggle?: () => void;
+  hasThread?: boolean;
+  onStartThread?: () => void;
 }
 
-function calculatePosition(clickX: number, clickY: number, actualHeight?: number) {
+function calculatePosition(clickX: number, clickY: number, actualHeight?: number, actualWidth?: number) {
   const viewportW = window.innerWidth;
   const viewportH = window.innerHeight;
 
+  const menuWidth = actualWidth || MENU_WIDTH;
   const menuHeight = actualHeight || MENU_HEIGHT;
-  const flipX = clickX + MENU_WIDTH + PADDING > viewportW;
-  const flipY = clickY + menuHeight + PADDING > viewportH;
-
+  const flipX = clickX + menuWidth + PADDING > viewportW;
   return {
-    x: flipX ? Math.max(PADDING, clickX - MENU_WIDTH) : clickX,
-    // When flipping Y, position menu bottom just above the cursor
-    y: flipY ? Math.max(PADDING, clickY - menuHeight - OFFSET_UP) : clickY,
+    x: flipX ? Math.max(PADDING, clickX - menuWidth) : clickX,
+    // Keep menu close to click point, but shift up the minimum needed to fit in viewport
+    y: Math.max(PADDING, Math.min(clickY, viewportH - menuHeight - PADDING)),
   };
 }
 
@@ -78,6 +78,8 @@ const MessageActionsMenu: React.FC<MessageActionsMenuProps> = ({
   copiedMessageText,
   isBookmarked = false,
   onBookmarkToggle,
+  hasThread = false,
+  onStartThread,
 }) => {
   const menuRef = useRef<HTMLDivElement | null>(null);
   const [adjustedPosition, setAdjustedPosition] = useState<{ x: number; y: number } | null>(null);
@@ -87,8 +89,8 @@ const MessageActionsMenu: React.FC<MessageActionsMenuProps> = ({
     (node: HTMLDivElement | null) => {
       menuRef.current = node;
       if (node) {
-        const actualHeight = node.getBoundingClientRect().height;
-        setAdjustedPosition(calculatePosition(position.x, position.y, actualHeight));
+        const rect = node.getBoundingClientRect();
+        setAdjustedPosition(calculatePosition(position.x, position.y, rect.height, rect.width));
       }
     },
     [position.x, position.y]
@@ -111,18 +113,6 @@ const MessageActionsMenu: React.FC<MessageActionsMenuProps> = ({
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, [onClose]);
 
-  // Close on scroll (any scroll in capture phase)
-  // Uses close-once guard to prevent onClose firing hundreds of times per scroll gesture
-  useEffect(() => {
-    let hasClosed = false;
-    const handleScroll = () => {
-      if (hasClosed) return;
-      hasClosed = true;
-      onClose();
-    };
-    window.addEventListener('scroll', handleScroll, { capture: true });
-    return () => window.removeEventListener('scroll', handleScroll, { capture: true });
-  }, [onClose]);
 
   // Check if the user has reacted with a specific emoji
   const hasReacted = (emoji: string) => {
@@ -180,6 +170,13 @@ const MessageActionsMenu: React.FC<MessageActionsMenuProps> = ({
   const handleBookmarkToggle = () => {
     if (onBookmarkToggle) {
       onBookmarkToggle();
+      onClose();
+    }
+  };
+
+  const handleStartThread = () => {
+    if (onStartThread) {
+      onStartThread();
       onClose();
     }
   };
@@ -260,6 +257,13 @@ const MessageActionsMenu: React.FC<MessageActionsMenuProps> = ({
             <Icon name="reply" size="sm" />
             {t`Reply`}
           </button>
+
+          {onStartThread && (
+            <button onClick={handleStartThread} className="message-actions-menu__item">
+              <Icon name="messages" size="sm" />
+              {hasThread ? t`View Thread` : t`Start Thread`}
+            </button>
+          )}
 
           <button onClick={handleCopyLink} className="message-actions-menu__item">
             <Icon name="link" size="sm" />

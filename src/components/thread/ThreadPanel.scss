@@ -1,104 +1,171 @@
 @use '../../styles/variables' as *;
 
+// Outer wrapper — holds resize handle + panel side by side
+// No overflow:hidden so the handle in the gap stays visible
+.thread-panel-wrapper {
+  position: relative;
+  flex-shrink: 0;
+  height: 100%;
+  margin-left: $s-2;
+
+  // Below SM: full-width overlay covering the main chat area
+  @media (max-width: $screen-md) {
+    position: absolute;
+    inset: 0;
+    margin-left: 0;
+    width: 100% !important; // Override inline style from resize
+    z-index: 20;
+  }
+
+  // Resize handle lives in the margin gap between chat and panel
+  .thread-panel__resize-handle {
+    position: absolute;
+    left: calc(-1 * $s-2);
+    top: 0;
+    bottom: 0;
+    width: $s-2;
+    cursor: col-resize;
+    z-index: 10;
+
+    // Hide resize handle on small screens (full-width mode)
+    @media (max-width: $screen-md) {
+      display: none;
+    }
+
+    // Visible indicator line centered in the gap
+    &::after {
+      content: '';
+      position: absolute;
+      left: 50%;
+      top: 0;
+      bottom: 0;
+      width: 2px;
+      transform: translateX(-50%);
+      background-color: transparent;
+      transition: background-color $duration-150 $ease-out;
+      border-radius: 1px;
+    }
+
+    &:hover::after,
+    &:active::after {
+      background-color: var(--text-link);
+    }
+  }
+}
+
 .thread-panel {
-  &__content {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  background: var(--color-bg-chat);
+  border-left: none;
+  position: relative;
+  border-top-left-radius: $rounded-xl;
+  overflow: hidden;
+
+  // Borders only on desktop (matches chat-container pattern from _chat.scss)
+  @media (min-width: 1024px) {
+    border-top: $border solid var(--color-border-subtle);
+    border-left: $border solid var(--color-border-subtle);
   }
 
-  &__root {
-    flex-shrink: 0;
-    padding: $s-3;
-    border-bottom: 1px solid var(--border-default);
+  // Phone: remove radius (matches chat-container phone pattern)
+  @media (max-width: $screen-xs) {
+    border-top-left-radius: 0;
   }
 
-  &__root-header,
-  &__reply-header {
+  // Dark theme: more muted external borders (desktop only)
+  html.dark & {
+    @media (min-width: 1024px) {
+      border-top-color: var(--color-border-muted);
+      border-left-color: var(--color-border-muted);
+    }
+  }
+
+  &__header {
     display: flex;
     align-items: center;
-    gap: $s-2;
-    margin-bottom: $s-1;
-  }
-
-  &__user-icon {
-    font-size: 0.75rem;
-    color: var(--text-subtle);
+    gap: $s-3;
+    padding: $s-3 $s-4;
+    border-bottom: 1px solid var(--border-default);
     flex-shrink: 0;
   }
 
-  &__sender {
-    font-weight: 600;
-    font-size: var(--font-size-sm);
+  &__header-content {
+    flex: 1;
+    min-width: 0;
+  }
+
+  h2#{&}__title {
+    font-weight: 700;
+    font-size: $text-xl;
     color: var(--text-primary);
-    white-space: nowrap;
+    margin: 0;
     overflow: hidden;
     text-overflow: ellipsis;
-  }
-
-  &__date {
-    font-size: var(--font-size-xs);
-    color: var(--text-subtle);
-    flex-shrink: 0;
     white-space: nowrap;
   }
 
-  &__replies {
+  &__started-by {
+    display: block;
+    font-size: $text-xs;
+    color: var(--text-subtle);
+    margin-top: 2px;
+
+    strong {
+      color: var(--text-primary);
+      font-weight: 600;
+    }
+  }
+
+  &__close {
+    color: var(--color-text-subtle);
+    background-color: var(--surface-00);
+    border-radius: $rounded-full;
+    cursor: pointer;
+    padding: $s-2;
+    flex-shrink: 0;
+    transition: color $duration-200 $ease-in-out,
+      background-color $duration-200 $ease-in-out;
+
+    &:hover {
+      color: var(--color-text-strong);
+      background-color: var(--color-field-bg-focus);
+    }
+  }
+
+  &__messages {
     flex: 1;
     min-height: 0;
     overflow: hidden;
-  }
+    position: relative;
 
-  &__loading,
-  &__empty {
-    padding: $s-8;
-    flex-direction: column;
-    gap: $s-2;
-  }
-
-  &__reply-item {
-    padding: $s-3;
-    border-bottom: 1px solid var(--border-subtle);
-
-    &:last-child {
-      border-bottom: none;
+    // The MessageList uses .message-list class internally
+    .message-list {
+      height: 100% !important;
     }
+  }
+
+  &__loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: $s-2;
+    padding: $s-8;
+    height: 100%;
+    color: var(--text-subtle);
+    font-size: $text-sm;
   }
 
   &__composer {
     flex-shrink: 0;
-    display: flex;
-    align-items: flex-end;
-    gap: $s-2;
-    padding: $s-3;
     border-top: 1px solid var(--border-default);
-  }
 
-  &__input {
-    flex: 1;
-    min-height: 36px;
-    max-height: 120px;
-    padding: $s-2 $s-3;
-    border: 1px solid var(--border-default);
-    border-radius: $rounded-md;
-    background: var(--surface-1);
-    color: var(--text-primary);
-    font-size: var(--font-size-sm);
-    font-family: inherit;
-    resize: none;
-    outline: none;
-    transition: border-color $duration-150 $ease-out;
-
-    &:focus {
-      border-color: var(--text-link);
+    .message-editor-container {
+      position: relative;
+      bottom: auto;
     }
-
-    &::placeholder {
-      color: var(--text-subtle);
-    }
-  }
-
-  &__send {
-    flex-shrink: 0;
   }
 }

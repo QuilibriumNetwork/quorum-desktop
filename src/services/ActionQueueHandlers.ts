@@ -412,66 +412,89 @@ export class ActionQueueHandlers {
         senderAddress
       );
 
-      // Ensure message is in React Query cache AND update status to 'sent' in a single atomic operation
-      // This prevents race conditions between two separate setQueryData calls
-      const messagesKey = buildMessagesKey({ spaceId, channelId });
-      this.deps.queryClient.setQueryData(
-        messagesKey,
-        (oldData: InfiniteData<{ messages: Message[]; nextCursor?: number; prevCursor?: number }> | undefined) => {
-          if (!oldData?.pages) return oldData;
-
-          // Check if message already exists in cache
-          const existingPageIndex = oldData.pages.findIndex((page) =>
-            page.messages.some((m) => m.messageId === messageId)
-          );
-
-          if (existingPageIndex !== -1) {
-            // Message exists - update its status to 'sent' (clear sendStatus/sendError)
+      // Thread replies: update thread cache, not main feed
+      if (signedMessage.isThreadReply && signedMessage.threadId) {
+        this.deps.queryClient.setQueryData(
+          ['thread-messages', spaceId, channelId, signedMessage.threadId],
+          (oldData: any) => {
+            if (!oldData) return oldData;
             return {
-              pageParams: oldData.pageParams,
-              pages: oldData.pages.map((page, index) => {
-                if (index !== existingPageIndex) return page;
-                return {
-                  ...page,
-                  messages: page.messages.map((msg) => {
-                    if (msg.messageId === messageId && msg.sendStatus !== undefined) {
-                      // Clear sendStatus to mark as sent
-                      const { sendStatus: _, sendError: __, ...rest } = msg;
-                      return rest as Message;
-                    }
-                    return msg;
-                  }),
-                  nextCursor: page.nextCursor,
-                  prevCursor: page.prevCursor,
-                };
+              ...oldData,
+              messages: oldData.messages.map((msg: Message) => {
+                if (msg.messageId === messageId && msg.sendStatus !== undefined) {
+                  const { sendStatus: _, sendError: __, ...rest } = msg;
+                  return rest as Message;
+                }
+                return msg;
               }),
             };
           }
+        );
+        this.deps.queryClient.invalidateQueries({
+          queryKey: ['thread-stats', spaceId, channelId, signedMessage.threadId],
+        });
+      } else {
+        // Ensure message is in React Query cache AND update status to 'sent' in a single atomic operation
+        // This prevents race conditions between two separate setQueryData calls
+        const messagesKey = buildMessagesKey({ spaceId, channelId });
+        this.deps.queryClient.setQueryData(
+          messagesKey,
+          (oldData: InfiniteData<{ messages: Message[]; nextCursor?: number; prevCursor?: number }> | undefined) => {
+            if (!oldData?.pages) return oldData;
 
-          // Message not in cache (likely removed by refetch) - re-add it
-          // Only re-add post messages to cache (not remove-message, reaction, etc.)
-          if (signedMessage.content.type !== 'post') {
-            return oldData;
+            // Check if message already exists in cache
+            const existingPageIndex = oldData.pages.findIndex((page) =>
+              page.messages.some((m) => m.messageId === messageId)
+            );
+
+            if (existingPageIndex !== -1) {
+              // Message exists - update its status to 'sent' (clear sendStatus/sendError)
+              return {
+                pageParams: oldData.pageParams,
+                pages: oldData.pages.map((page, index) => {
+                  if (index !== existingPageIndex) return page;
+                  return {
+                    ...page,
+                    messages: page.messages.map((msg) => {
+                      if (msg.messageId === messageId && msg.sendStatus !== undefined) {
+                        // Clear sendStatus to mark as sent
+                        const { sendStatus: _, sendError: __, ...rest } = msg;
+                        return rest as Message;
+                      }
+                      return msg;
+                    }),
+                    nextCursor: page.nextCursor,
+                    prevCursor: page.prevCursor,
+                  };
+                }),
+              };
+            }
+
+            // Message not in cache (likely removed by refetch) - re-add it
+            // Only re-add post messages to cache (not remove-message, reaction, etc.)
+            if (signedMessage.content.type !== 'post') {
+              return oldData;
+            }
+
+            return {
+              pageParams: oldData.pageParams,
+              pages: oldData.pages.map((page, index) => {
+                // Add to the last page (most recent messages)
+                if (index === oldData.pages.length - 1) {
+                  const newMessages = [...page.messages, messageToEncrypt as Message];
+                  // Sort by createdDate
+                  newMessages.sort((a, b) => a.createdDate - b.createdDate);
+                  return {
+                    ...page,
+                    messages: newMessages,
+                  };
+                }
+                return page;
+              }),
+            };
           }
-
-          return {
-            pageParams: oldData.pageParams,
-            pages: oldData.pages.map((page, index) => {
-              // Add to the last page (most recent messages)
-              if (index === oldData.pages.length - 1) {
-                const newMessages = [...page.messages, messageToEncrypt as Message];
-                // Sort by createdDate
-                newMessages.sort((a, b) => a.createdDate - b.createdDate);
-                return {
-                  ...page,
-                  messages: newMessages,
-                };
-              }
-              return page;
-            }),
-          };
-        }
-      );
+        );
+      }
 
       // Invalidate reply notification caches if this is a reply
       if ((context.replyMetadata as any)?.parentAuthor) {
@@ -496,19 +519,42 @@ export class ActionQueueHandlers {
       const spaceId = context.spaceId as string;
       const channelId = context.channelId as string;
       const messageId = context.messageId as string;
-      this.deps.messageService.updateMessageStatus(
-        this.deps.queryClient,
-        spaceId,
-        channelId,
-        messageId,
-        'failed',
-        this.sanitizeError(error)
-      );
+      const signedMessage = context.signedMessage as Message;
+      const sanitizedError = this.sanitizeError(error);
+
+      // Thread replies: update thread cache, not main feed
+      if (signedMessage?.isThreadReply && signedMessage?.threadId) {
+        this.deps.queryClient.setQueryData(
+          ['thread-messages', spaceId, channelId, signedMessage.threadId],
+          (oldData: any) => {
+            if (!oldData) return oldData;
+            return {
+              ...oldData,
+              messages: oldData.messages.map((msg: Message) => {
+                if (msg.messageId === messageId && msg.sendStatus !== undefined) {
+                  return { ...msg, sendStatus: 'failed' as const, sendError: sanitizedError };
+                }
+                return msg;
+              }),
+            };
+          }
+        );
+      } else {
+        this.deps.messageService.updateMessageStatus(
+          this.deps.queryClient,
+          spaceId,
+          channelId,
+          messageId,
+          'failed',
+          sanitizedError
+        );
+      }
     },
     // No toast - inline message indicator handles feedback
     successMessage: undefined,
     failureMessage: undefined,
   };
+
 
   /**
    * Send a direct message that's already signed.

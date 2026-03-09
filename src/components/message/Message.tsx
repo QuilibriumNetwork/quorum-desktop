@@ -1,5 +1,5 @@
 import { logger } from '@quilibrium/quorum-shared';
-import React, { useMemo, useState, useCallback } from 'react';
+import React, { useMemo, useState, useCallback, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
 import type {
@@ -169,6 +169,7 @@ export const Message = React.memo(
     const [showUserProfile, setShowUserProfile] = useState<boolean>(false);
     const [editingMessageId, setEditingMessageId] = useState<string | null>(null);
     const [contextMenu, setContextMenu] = useState<{ x: number; y: number } | null>(null);
+    const contextMenuClosedAt = useRef(0);
     const [isShowingGifAnimation, setIsShowingGifAnimation] = useState(false);
 
     // Modal contexts
@@ -602,36 +603,18 @@ export const Message = React.memo(
               />
             )}
             <Container className="message-content">
-              {interactions.shouldShowActions && (
+              {(interactions.shouldShowActions || contextMenu) && (
                 <MessageActions
                   message={message}
                   userAddress={user.currentPasskeyInfo!.address}
-                  canUserDelete={messageActions.canUserDelete}
-                  canUserEdit={messageActions.canUserEdit}
-                  canPinMessages={
-                    canPinMessages !== undefined
-                      ? canPinMessages
-                      : pinnedMessages.canPinMessages
-                  }
-                  height={height}
                   onReaction={messageActions.handleReaction}
                   onReply={messageActions.handleReply}
-                  onCopyLink={messageActions.handleCopyLink}
-                  onCopyMessageText={messageActions.handleCopyMessageText}
-                  onDelete={messageActions.handleDelete}
-                  onPin={(e) => pinnedMessages.togglePin(e, message)}
                   onMoreReactions={messageActions.handleMoreReactions}
-                  onEdit={messageActions.handleEdit}
-                  onViewEditHistory={messageActions.handleViewEditHistory}
-                  canViewEditHistory={messageActions.canViewEditHistory}
-                  copiedLinkId={messageActions.copiedLinkId}
-                  copiedMessageText={messageActions.copiedMessageText}
-                  // Bookmark props
-                  isBookmarked={messageActions.isBookmarked}
-                  onBookmarkToggle={messageActions.handleBookmarkToggle}
-                  // Thread props
-                  hasThread={!!message.threadMeta}
-                  onStartThread={onStartThread}
+                  onDotsClick={(position) => {
+                    // Skip if menu was just closed by click-outside (mousedown fires before click)
+                    if (Date.now() - contextMenuClosedAt.current < 200) return;
+                    setContextMenu((prev) => prev ? null : position);
+                  }}
                 />
               )}
 
@@ -1259,7 +1242,7 @@ export const Message = React.memo(
           <MessageActionsMenu
             message={message}
             position={contextMenu}
-            onClose={() => setContextMenu(null)}
+            onClose={() => { contextMenuClosedAt.current = Date.now(); setContextMenu(null); }}
             onReply={() => {
               messageActions.handleReply();
               setContextMenu(null);
@@ -1312,6 +1295,8 @@ export const Message = React.memo(
             copiedMessageText={messageActions.copiedMessageText}
             isBookmarked={messageActions.isBookmarked}
             onBookmarkToggle={messageActions.handleBookmarkToggle}
+            hasThread={!!message.threadMeta}
+            onStartThread={onStartThread}
           />
         )}
 

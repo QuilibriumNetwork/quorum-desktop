@@ -32,7 +32,8 @@ import MessageComposer, {
   MessageComposerRef,
 } from '../message/MessageComposer';
 import { PinnedMessagesPanel } from '../message/PinnedMessagesPanel';
-import { ThreadPanel } from '../thread/ThreadPanel';
+import { useThreadMessages } from '../../hooks/business/threads';
+import { useThreadContextStore } from '../context/ThreadContext';
 import { NotificationPanel } from '../notifications/NotificationPanel';
 import { BookmarksPanel } from '../bookmarks/BookmarksPanel';
 import { Virtuoso } from 'react-virtuoso';
@@ -109,6 +110,29 @@ const Channel: React.FC<ChannelProps> = ({
   // Thread state
   const [activeThreadId, setActiveThreadId] = useState<string | null>(null);
   const [activeThreadRootMessage, setActiveThreadRootMessage] = useState<MessageType | null>(null);
+
+  // Thread messages
+  const { data: threadData, isLoading: isLoadingThread } = useThreadMessages({
+    spaceId,
+    channelId,
+    threadId: activeThreadId,
+    enabled: activePanel === 'thread' && !!activeThreadId,
+  });
+  const threadMessages = threadData?.messages ?? [];
+
+  // Populate ThreadContext for ThreadPanel (rendered in Space.tsx)
+  // Uses the store hook (not subscribing) to avoid re-render loops
+  const threadCtx = useThreadContextStore();
+
+  React.useEffect(() => {
+    threadCtx.setThreadState({
+      isOpen: activePanel === 'thread',
+      threadId: activeThreadId,
+      rootMessage: activeThreadRootMessage,
+      threadMessages,
+      isLoading: isLoadingThread,
+    });
+  }, [activePanel, activeThreadId, activeThreadRootMessage, threadMessages, isLoadingThread]);
 
   // User profile modal state and logic
   const userProfileModal = useUserProfileModal({ showUsers });
@@ -413,26 +437,90 @@ const Channel: React.FC<ChannelProps> = ({
     [spaceId, channelId, user.currentPasskeyInfo, submitChannelMessage, queryClient, space, skipSigning, isSpaceOwner]
   );
 
-  // Handle submitting a reply in a thread
-  const handleSubmitThreadReply = useCallback(
-    async (text: string) => {
+  // Handle submitting a reply in a thread (matches onSubmitMessage signature for useMessageComposer)
+  const handleSubmitThreadMessage = useCallback(
+    async (message: string | object, inReplyTo?: string) => {
       if (!activeThreadId) return;
+      let parentMessage;
+      if (inReplyTo) {
+        try {
+          parentMessage = await messageDB.getMessage({
+            spaceId,
+            channelId,
+            messageId: inReplyTo,
+          });
+        } catch (error) {
+          console.error('[Channel] Failed to fetch parent message for thread reply:', error);
+        }
+      }
       const effectiveSkip = space?.isRepudiable ? skipSigning : false;
       await submitChannelMessage(
         spaceId,
         channelId,
-        text,
+        message,
         queryClient,
         user.currentPasskeyInfo!,
-        undefined,
+        inReplyTo,
         effectiveSkip,
         isSpaceOwner,
-        undefined,
+        parentMessage,
         activeThreadId
       );
     },
-    [activeThreadId, spaceId, channelId, submitChannelMessage, queryClient, user.currentPasskeyInfo, space, skipSigning, isSpaceOwner]
+    [activeThreadId, spaceId, channelId, submitChannelMessage, queryClient, user.currentPasskeyInfo, space, skipSigning, isSpaceOwner, messageDB]
   );
+
+  // Handle sticker submission in a thread
+  const handleSubmitThreadSticker = useCallback(
+    async (stickerId: string, inReplyTo?: string) => {
+      if (!activeThreadId) return;
+      let parentMessage;
+      if (inReplyTo) {
+        try {
+          parentMessage = await messageDB.getMessage({
+            spaceId,
+            channelId,
+            messageId: inReplyTo,
+          });
+        } catch (error) {
+          console.error('[Channel] Failed to fetch parent message for thread sticker:', error);
+        }
+      }
+      const effectiveSkip = space?.isRepudiable ? skipSigning : false;
+      const stickerMessage: StickerMessage = {
+        type: 'sticker',
+        senderId: user.currentPasskeyInfo!.address,
+        stickerId,
+      };
+      await submitChannelMessage(
+        spaceId,
+        channelId,
+        stickerMessage,
+        queryClient,
+        user.currentPasskeyInfo!,
+        inReplyTo,
+        effectiveSkip,
+        isSpaceOwner,
+        parentMessage,
+        activeThreadId
+      );
+    },
+    [activeThreadId, spaceId, channelId, submitChannelMessage, queryClient, user.currentPasskeyInfo, space, skipSigning, isSpaceOwner, messageDB]
+  );
+
+  // Sync thread actions to context
+  React.useEffect(() => {
+    threadCtx.setThreadActions({
+      openThread: handleOpenThread,
+      closeThread: () => {
+        setActivePanel(null);
+        setActiveThreadId(null);
+        setActiveThreadRootMessage(null);
+      },
+      submitMessage: handleSubmitThreadMessage,
+      submitSticker: handleSubmitThreadSticker,
+    });
+  }, [handleOpenThread, handleSubmitThreadMessage, handleSubmitThreadSticker]);
 
   // Handle user profile modal close
   const handleUserProfileClose = useCallback(() => {
@@ -735,6 +823,41 @@ const Channel: React.FC<ChannelProps> = ({
     }
   }, [isMobile, openMobileEmojiDrawer, customEmojis, space?.stickers, composer]);
 
+  // Sync channel props to context for ThreadPanel
+  React.useEffect(() => {
+    threadCtx.setChannelProps({
+      spaceId,
+      channelId,
+      members,
+      roles,
+      stickers,
+      customEmoji: space?.emojis,
+      mapSenderToUser,
+      isSpaceOwner,
+      canDeleteMessages,
+      canPinMessages,
+      channel,
+      spaceChannels,
+      onChannelClick: handleChannelClick,
+      onUserClick: userProfileModal.handleUserClick as any,
+      spaceName: space?.spaceName,
+      isRepudiable: space?.isRepudiable,
+      skipSigning,
+      onSigningToggle: () => setSkipSigning(!skipSigning),
+      users: Object.values(members),
+      mentionRoles: roles?.filter(role => role.isPublic !== false),
+      spaceGroups,
+      canUseEveryone,
+      onShowStickers: handleShowEmojiPanel,
+    });
+  }, [
+    spaceId, channelId, members, roles, stickers, space?.emojis,
+    mapSenderToUser, isSpaceOwner, canDeleteMessages, canPinMessages,
+    channel, spaceChannels, handleChannelClick, userProfileModal.handleUserClick,
+    space?.spaceName, space?.isRepudiable, skipSigning, spaceGroups,
+    canUseEveryone, handleShowEmojiPanel,
+  ]);
+
   // Auto-focus textarea when replying
   useEffect(() => {
     if (composer.inReplyTo) {
@@ -818,7 +941,7 @@ const Channel: React.FC<ChannelProps> = ({
   }, [updateReadTime]);
 
   return (
-    <div className="chat-container">
+    <div className={`chat-container${activePanel === 'thread' ? ' thread-open' : ''}`}>
       <div className="flex flex-col flex-1 min-w-0">
         {/* Header - full width at top */}
         <div
@@ -1108,26 +1231,6 @@ const Channel: React.FC<ChannelProps> = ({
                 onStartThread={handleOpenThread}
               />
             </div>
-
-            {/* Thread Panel */}
-            <ThreadPanel
-              isOpen={activePanel === 'thread'}
-              onClose={() => {
-                setActivePanel(null);
-                setActiveThreadId(null);
-                setActiveThreadRootMessage(null);
-              }}
-              spaceId={spaceId}
-              channelId={channelId}
-              threadId={activeThreadId}
-              rootMessage={activeThreadRootMessage}
-              mapSenderToUser={mapSenderToUser}
-              onSubmitThreadReply={handleSubmitThreadReply}
-              stickers={stickers}
-              spaceRoles={roles}
-              spaceChannels={spaceChannels}
-              onChannelClick={handleChannelClick}
-            />
 
             <div className="message-editor-container">
               <MessageComposer

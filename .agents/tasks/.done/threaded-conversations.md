@@ -19,20 +19,21 @@ related_tasks:
 > **⚠️ AI-Generated**: May contain errors. Verify before use.
 > **Expert Panel Review**: Revised after architecture/implementation/pragmatism review (5.3/10 → revised).
 
-**Files**:
-- `src/api/quorumApi.ts:104` (Message type)
-- `src/db/messages.ts:144` (IndexedDB schema, DB_VERSION = 8)
-- `src/services/MessageService.ts:3949` (submitChannelMessage)
-- `src/services/MessageService.ts:699` (saveMessage — pin handler pattern)
-- `src/services/MessageService.ts:1144` (addMessage — pin cache update pattern)
-- `src/components/message/MessageActions.tsx:38`
-- `src/components/message/PinnedMessagesPanel.tsx:1` (pattern reference for ThreadPanel)
-- `src/components/ui/DropdownPanel.tsx` (panel wrapper — desktop/mobile)
-- `src/components/message/MessageList.tsx:115`
-- `src/components/message/Message.tsx:119`
-- `src/components/space/Channel.tsx:104` (ActivePanel state)
-- `src/hooks/queries/messages/useMessages.ts:7`
-- `src/hooks/business/messages/useMessageComposer.ts`
+**Files** (modified/created):
+- `src/api/quorumApi.ts` — ThreadMeta, ThreadMessage types, thread fields on Message
+- `src/db/messages.ts` — DB_VERSION 9, `by_thread` index, getThreadMessages/getThreadStats queries
+- `src/services/MessageService.ts` — thread creation handler, thread reply support in submitChannelMessage, incoming thread processing, soft-delete for root messages
+- `src/components/thread/ThreadPanel.tsx` — Full right sidebar using MessageList + MessageComposer (Discord-style)
+- `src/components/thread/ThreadPanel.scss` — Sidebar layout (400px width, border-left, flex column)
+- `src/components/thread/ThreadIndicator.tsx` — Inline indicator on root messages showing reply count
+- `src/components/thread/ThreadIndicator.scss`
+- `src/components/message/MessageActions.tsx` — Thread button (right after Reply icon)
+- `src/components/message/MessageActionsMenu.tsx` — "Start Thread" / "View Thread" in right-click context menu
+- `src/components/message/MessageList.tsx` — Added `alignToTop` prop for thread panel (disables alignToBottom, initialTopMostItemIndex=0)
+- `src/components/message/Message.tsx` — ThreadIndicator rendering, thread props to MessageActions/MessageActionsMenu
+- `src/components/space/Channel.tsx` — ActivePanel 'thread', thread state, handleOpenThread, handleSubmitThreadMessage/Sticker, useThreadMessages hook, ThreadPanel sidebar integration
+- `src/hooks/business/threads/useThreadMessages.ts` — useThreadMessages and useThreadStats React Query hooks
+- `src/hooks/business/threads/index.ts`
 
 ## What & Why
 
@@ -45,9 +46,9 @@ This task implements flat threads: any message in a space channel can become a t
 ## Context
 
 - **Existing pattern**: Pinned messages feature (`tasks/.done/pinned-messages-feature.md`) — uses broadcast → validate → store → UI update flow with `PinMessage` content type. Thread creation follows the same pattern.
-- **Existing pattern**: `PinnedMessagesPanel.tsx` — uses `DropdownPanel` wrapper (desktop: positioned dropdown, mobile: `MobileDrawer` bottom sheet).
-- **Existing pattern**: `Channel.tsx:104` — unified `ActivePanel` state (`'pinned' | 'notifications' | 'bookmarks' | 'search' | null`). Only one panel open at a time.
-- **Constraints**: All thread data must be E2E encrypted via Triple Ratchet. Must work offline via action queue. Must be responsive (DropdownPanel handles this automatically).
+- **Existing pattern**: `Channel.tsx:106` — unified `ActivePanel` state (`'pinned' | 'notifications' | 'bookmarks' | 'search' | 'thread' | null`). Only one panel open at a time.
+- **UI pattern**: Thread sidebar is a full right-side panel (Discord-style), not a DropdownPanel. Uses the same `MessageList` and `MessageComposer` as the main chat for consistent UX.
+- **Constraints**: All thread data must be E2E encrypted via Triple Ratchet. Must work offline via action queue.
 - **Dependencies**: No external dependencies. Uses existing encryption, sync, and broadcast infrastructure.
 
 ## Design Decisions
@@ -59,11 +60,13 @@ This task implements flat threads: any message in a space channel can become a t
 | Thread ID generation | Deterministic: `SHA-256(targetMessageId + ':thread')` | Prevents race condition when two users create a thread on the same message simultaneously — both produce the same ID. |
 | Thread metadata | Minimal `threadMeta` on root message, reply stats derived client-side | Avoids metadata broadcast storm on every reply. `replyCount`/`lastReplyAt`/`lastReplyBy` computed from `by_thread` index. |
 | Main feed filtering | Client-side filter in `getMessages()` cursor iteration | Modifying `by_conversation_time` compound index would break all existing queries. Client-side skip during cursor iteration is efficient since thread replies are a small fraction of messages. |
-| UI | `DropdownPanel` (desktop: right-aligned dropdown, mobile: bottom sheet) | Reuses existing panel infrastructure. Same pattern as PinnedMessagesPanel. |
+| UI | Full right sidebar (Discord-style) | Initially planned as `DropdownPanel`, but upgraded to a full sidebar for more space. Uses real `MessageList` + `MessageComposer` components for identical UX to main chat. |
 | Panel state | Extend existing `ActivePanel` union in `Channel.tsx` | Channel already manages unified panel state. No separate context needed — avoids unnecessary abstraction. |
-| Discovery | Inline `ThreadIndicator` on root messages | Single discovery mechanism for v1. ThreadsList/header button deferred to v2. |
-| Thread composer | Reuse `MessageComposer` with `threadId` prop | No separate ThreadComposer needed. |
+| Discovery | Inline `ThreadIndicator` on root messages + hover actions + context menu | Thread button in MessageActions (right after Reply), also in right-click MessageActionsMenu. ThreadIndicator on root messages shows reply count. |
+| Thread composer | Reuse `MessageComposer` via `useMessageComposer` hook | Full-featured composer with mentions, file uploads, stickers, signing toggle — identical to main chat. |
 | Thread replies | Reuse `submitChannelMessage` with optional `threadId` | No separate `sendThreadReply` method needed. |
+| Thread messages | Reuse `MessageList` with `alignToTop` prop | Same Message components, hover states, avatars, reactions, actions as main chat. Messages align to top (not bottom like main chat). |
+| Thread header | Discord-style: title + "Started by" | Title derived from first ~50 chars of root message text (truncated at word boundary). Subtitle shows "Started by **Username**". Close button on right. |
 | Who can create | Anyone who can post in the channel | Simple. Permission gating (`thread:create`) deferred. |
 | Thread replies in main feed | Hidden — only indicator on root message | Clean main feed. Thread conversation stays contained. |
 | Root message deletion | Soft-delete: root message shows "[deleted]" placeholder, thread remains accessible | Prevents orphaned thread replies with no UI access. |
@@ -777,109 +780,82 @@ export const ThreadIndicator: React.FC<ThreadIndicatorProps> = ({
 
 ---
 
-### Task 9: ThreadPanel Component
+### Task 9: ThreadPanel Component (Revised — Full Sidebar)
 
-- [x] **Create ThreadPanel** (`src/components/thread/`)
+- [x] **Create ThreadPanel as Discord-style right sidebar** (`src/components/thread/`)
 
 **Files:**
 - Create: `src/components/thread/ThreadPanel.tsx`
 - Create: `src/components/thread/ThreadPanel.scss`
 
-**Steps:**
+**What was built:**
 
-1. Create `src/components/thread/ThreadPanel.tsx` — side panel using `DropdownPanel`, showing root message (read-only), thread replies (Virtuoso), and `MessageComposer`. See `PinnedMessagesPanel.tsx` for the pattern.
+ThreadPanel is a full-height right sidebar (400px wide, max 50vw) — NOT a DropdownPanel. It reuses the real `MessageList` and `MessageComposer` components for identical UX to the main chat area.
 
-Key props: `isOpen`, `onClose`, `spaceId`, `channelId`, `threadId`, `rootMessage`, `mapSenderToUser`, `onSubmitThreadReply`, plus composer dependencies (members, roles, groups, etc.)
+**Layout:**
+1. **Header**: Discord-style — thread title (first ~50 chars of root message, truncated at word boundary) + "Started by **Username**" + close (X) button
+2. **Messages**: `MessageList` with `alignToTop={true}` — full message rendering with avatars, hover states, reactions, context menus, same as main chat
+3. **Composer**: Full `MessageComposer` via `useMessageComposer` hook — mentions, file uploads, stickers, signing toggle
 
-Uses `useThreadMessages` hook for message data. Uses `useMessageComposer` for the thread composer. Renders via `DropdownPanel` with `position="absolute"`, `positionStyle="right-aligned"`, `maxWidth={480}`, `maxHeight={600}`.
+**Key props:** Receives all channel data from Channel.tsx (members, roles, stickers, customEmoji, mapSenderToUser, canDeleteMessages, canPinMessages, etc.) plus `threadMessages` and `isLoadingThread` (from `useThreadMessages` called in Channel.tsx).
 
-2. Create `src/components/thread/ThreadPanel.scss` — flex column layout: root message (shrink-0, border-bottom), messages (flex-1, scrollable), composer (shrink-0, border-top).
-
-3. Run: `npx tsc --noEmit --jsx react-jsx --skipLibCheck`
-4. Commit: `feat: add ThreadPanel component with message list and composer`
+**SCSS:** Uses SCSS variables (`$text-xl`, `$text-xs`, `$text-sm`) not CSS custom properties. `h2#{&}__title` selector for specificity over global h2 reset.
 
 ---
 
-### Task 10: Add "Start Thread" to MessageActions
+### Task 10: Add "Start Thread" to MessageActions & MessageActionsMenu
 
-- [x] **Add thread button to MessageActions** (`src/components/message/MessageActions.tsx`)
+- [x] **Add thread button to hover toolbar and right-click context menu**
 
 **Files:**
-- Modify: `src/components/message/MessageActions.tsx:14` (props)
-- Modify: `src/components/message/MessageActions.tsx:38` (component body)
+- Modify: `src/components/message/MessageActions.tsx` — hover toolbar
+- Modify: `src/components/message/MessageActionsMenu.tsx` — right-click context menu
+- Modify: `src/components/message/Message.tsx` — pass thread props to both
 
-**Steps:**
+**What was built:**
 
-1. Add to `MessageActionsProps`:
+1. **MessageActions (hover toolbar)**: Thread button placed **right after Reply** (not after Bookmark as originally planned). Uses `<Icon name="messages">` icon. Shows "Start Thread" or "View Thread" tooltip based on `hasThread` prop.
 
-```typescript
-  hasThread?: boolean;
-  onStartThread?: () => void;
-```
+2. **MessageActionsMenu (right-click context menu)**: Added `hasThread`/`onStartThread` props. "Start Thread" / "View Thread" menu item right after Reply, with `handleStartThread` handler that calls `onStartThread` and closes menu.
 
-2. Destructure in component (with defaults `hasThread = false`).
-
-3. Add to `getTooltipContent()` switch (around line 95):
-
-```typescript
-      case 'thread':
-        return hasThread ? t`View Thread` : t`Start Thread`;
-```
-
-4. Add action div in JSX (after bookmark, before edit/history separator). Uses the same `<div>` + `iconButtonClass` + shared `Tooltip` pattern as all existing actions (reply, copy, pin, bookmark, etc.):
-
-```tsx
-{onStartThread && (
-  <div
-    onClick={onStartThread}
-    onMouseEnter={() => setHoveredAction('thread')}
-    className={iconButtonClassMr}
-  >
-    <Icon name="comments" size="md" className="xl:hidden" />
-    <Icon name="comments" size="lg" className="hidden xl:block" />
-  </div>
-)}
-```
-
-4. Run: `npx tsc --noEmit --jsx react-jsx --skipLibCheck`
-5. Commit: `feat: add Start Thread / View Thread button to MessageActions`
+3. **Message.tsx**: Passes `hasThread={!!message.threadMeta}` and `onStartThread={onStartThread}` to both MessageActions and MessageActionsMenu.
 
 ---
 
 ### Task 11: Layout Integration — Wire Everything into Channel.tsx
 
-- [x] **Integrate ThreadPanel, ThreadIndicator, and thread actions into Channel.tsx**
+- [x] **Integrate ThreadPanel as sidebar, ThreadIndicator, and thread actions into Channel.tsx**
 
 **Files:**
-- Modify: `src/components/space/Channel.tsx` (ActivePanel, state, handlers, JSX)
+- Modify: `src/components/space/Channel.tsx` (ActivePanel, state, handlers, JSX layout)
 - Modify: `src/components/message/Message.tsx` (thread props, ThreadIndicator)
-- Modify: `src/components/message/MessageList.tsx` (pass through thread props)
+- Modify: `src/components/message/MessageList.tsx` (pass through thread props, `alignToTop` prop)
 
-**Steps:**
+**What was built:**
 
-1. Update `ActivePanel` (line 105): add `'thread'` to union.
+1. `ActivePanel` union extended with `'thread'`.
 
-2. Add state after `activePanel`:
+2. Thread state: `activeThreadId`, `activeThreadRootMessage`, plus `useThreadMessages` hook called in Channel (data passed down to ThreadPanel, not fetched inside ThreadPanel).
 
-```typescript
-const [activeThreadId, setActiveThreadId] = useState<string | null>(null);
-const [activeThreadRootMessage, setActiveThreadRootMessage] = useState<MessageType | null>(null);
+3. `handleOpenThread` callback — checks for existing `threadMeta`, creates thread with deterministic SHA-256 ID if needed, sets state and opens panel.
+
+4. `handleSubmitThreadMessage` — matches `useMessageComposer`'s `onSubmitMessage` signature (`string | object` + optional `inReplyTo`). Fetches parent message for reply notifications. Passes `activeThreadId` to `submitChannelMessage`.
+
+5. `handleSubmitThreadSticker` — separate handler for sticker submission in threads.
+
+6. **Layout**: ThreadPanel rendered as a **sibling column** in the flex layout (between messages+composer and users sidebar). NOT inside the messages column. The main chat area shrinks to accommodate it.
+
+```
+<div class="flex flex-1 relative">
+  <div class="flex flex-col flex-1">  ← messages + composer
+  <ThreadPanel ... />                  ← thread sidebar (400px)
+  <div class="channel-users-sidebar">  ← users sidebar (260px, optional)
+</div>
 ```
 
-3. Add `handleOpenThread` callback — checks for existing `threadMeta`, creates thread if needed via `messageService.createThread`, sets state and opens panel.
+7. ThreadPanel receives all channel data: members, roles, stickers, customEmoji, permissions, mentions, signing config, etc.
 
-4. Add `handleSubmitThreadReply` callback — calls `submitChannelMessage` with `activeThreadId` as the `threadId` param.
-
-5. Pass `onStartThread={handleOpenThread}` through `MessageList` → `Message` → `MessageActions`.
-
-6. In `Message.tsx`, render `ThreadIndicator` below message content when `message.threadMeta` exists.
-
-7. Add `<ThreadPanel>` to Channel.tsx layout after existing panels, with `isOpen={activePanel === 'thread'}` and all required props.
-
-8. Add imports for `ThreadPanel`, `ThreadIndicator`.
-
-9. Run: `npx tsc --noEmit --jsx react-jsx --skipLibCheck`
-10. Commit: `feat: integrate ThreadPanel into Channel layout with thread state management`
+8. `MessageList` gained `alignToTop` prop — when true, sets `alignToBottom={false}` and `initialTopMostItemIndex={0}` on Virtuoso. Used by ThreadPanel to show messages from top.
 
 ---
 
@@ -953,7 +929,7 @@ const [activeThreadRootMessage, setActiveThreadRootMessage] = useState<MessageTy
    - Test: User A creates thread → User B sees thread indicator → User B opens thread and replies → User A sees the reply
 
 ✅ **Responsive layout**
-   - Test: DropdownPanel renders as right-aligned dropdown on desktop, MobileDrawer on mobile
+   - Test: Thread sidebar renders as full right-side panel (400px, border-left) alongside main chat
 
 ✅ **Root message deletion**
    - Test: Delete root message → thread still accessible → root shows "[deleted message]"
@@ -971,7 +947,7 @@ const [activeThreadRootMessage, setActiveThreadRootMessage] = useState<MessageTy
 - [ ] All tasks complete
 - [ ] TypeScript passes
 - [ ] Thread creation, reply, and display work end-to-end
-- [ ] Thread panel responsive (DropdownPanel handles desktop/mobile)
+- [ ] Thread sidebar renders correctly as full right-side panel
 - [ ] Sync works across devices
 - [ ] No regressions in existing features
 - [ ] No console errors

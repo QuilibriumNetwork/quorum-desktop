@@ -65,6 +65,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Mobile Message Actions Implementation](docs/features/messages/message-actions-mobile.md)
 - [New Messages Separator](docs/features/messages/new-messages-separator.md)
 - [Pinned Messages Feature](docs/features/messages/pinned-messages.md)
+- [Thread Panel (Discord-Style Layout)](docs/features/messages/thread-panel.md)
 - [YouTube Facade Optimization](docs/features/messages/youtube-facade-optimization.md)
 
 ### Features / Primitives
@@ -97,6 +98,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Public Invite Link Intermittent Expiration Bug](bugs/public-invite-link-intermittent-expiration.md)
 - [Safari Passkey Session Loss - Random Logout on Browser Restart](bugs/safari-passkey-session-loss-random-logout.md)
 - [Space Owner Privacy Limitation](bugs/space-owner-privacy-limitation.md)
+- [Thread replies leak into main chat feed on page reload](bugs/thread-replies-leak-into-main-feed-on-reload.md)
 - [UserProfile Modal Positioning - Viewport Boundary Detection](bugs/userprofile-modal-positioning-viewport-boundary.md)
 
 ### Solved Issues
@@ -144,6 +146,8 @@ This is the main index for all documentation, bug reports, and task management.
 
 ### Pending Tasks
 
+- [Design: Discord-style Thread Panel Layout with Resize](tasks/2025-03-09-thread-panel-discord-layout-design.md)
+- [Discord-style Thread Panel Layout Implementation Plan](tasks/2025-03-09-thread-panel-discord-layout.md)
 - [Accessibility Features — Remaining Work](tasks/accessibility-features-implementation.md)
 - [Add Space Tag support to shared types](tasks/quorum-shared-space-tags.md)
 - [Add User Bio Field to UserSettingsModal General Tab](tasks/add-user-bio-field.md)
@@ -197,11 +201,6 @@ This is the main index for all documentation, bug reports, and task management.
 - [CSS Inventory - Complete Codebase Analysis](tasks/.archived/css-refactor/css-inventory.md)
 - [CSS Refactor Analysis Report](tasks/.archived/css-refactor/analysis.md)
 - [CSS Refactor Plan - Claude Code Execution Strategy](tasks/.archived/css-refactor/css-refactor-plan.md)
-
-### Docusaurus
-- [Docusaurus Developer Documentation Blueprint v3](tasks/docusaurus/docusaurus-blueprint-v3.md)
-- [Docusaurus Quorum Users Faq](tasks/docusaurus/docusaurus-quorum-users-faq.md)
-- [Docusaurus Setup & Implementation Task](tasks/docusaurus/docusaurus-setup-implementation.md)
 
 ### Messagedb
 - [High-Risk Optimization Opportunities](tasks/messagedb/messagedb-optimization-3.md)
@@ -426,4 +425,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2026-03-09 12:40:24
+**Last Updated**: 2026-03-09 18:39:06
