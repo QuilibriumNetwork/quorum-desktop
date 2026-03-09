@@ -33,6 +33,9 @@ interface MessageActionsProps {
   // Bookmark props
   isBookmarked?: boolean;
   onBookmarkToggle?: () => void;
+  // Thread props
+  hasThread?: boolean;
+  onStartThread?: () => void;
 }
 
 export const MessageActions: React.FC<MessageActionsProps> = ({
@@ -56,6 +59,9 @@ export const MessageActions: React.FC<MessageActionsProps> = ({
   // Bookmark props
   isBookmarked = false,
   onBookmarkToggle,
+  // Thread props
+  hasThread = false,
+  onStartThread,
 }) => {
   // State for tracking which action is currently hovered
   const [hoveredAction, setHoveredAction] = useState<string | null>(null);
@@ -113,6 +119,8 @@ export const MessageActions: React.FC<MessageActionsProps> = ({
         return message.isPinned ? t`Unpin message` : t`Pin message`;
       case 'bookmark':
         return isBookmarked ? t`Remove bookmark` : t`Bookmark message`;
+      case 'thread':
+        return hasThread ? t`View Thread` : t`Start Thread`;
       case 'delete':
         return t`Delete message`;
       default:
@@ -256,6 +264,21 @@ export const MessageActions: React.FC<MessageActionsProps> = ({
                 size="lg"
                 className="hidden xl:block"
               />
+            </div>
+          )}
+
+          {/* Thread */}
+          {onStartThread && (
+            <div
+              onClick={(e) => {
+                e.stopPropagation();
+                onStartThread();
+              }}
+              onMouseEnter={() => setHoveredAction('thread')}
+              className={iconButtonClassMr}
+            >
+              <Icon name="messages" size="md" className="xl:hidden" />
+              <Icon name="messages" size="lg" className="hidden xl:block" />
             </div>
           )}
 
