@@ -1,0 +1,104 @@
+@use '../../styles/variables' as *;
+
+.thread-panel {
+  &__content {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+
+  &__root {
+    flex-shrink: 0;
+    padding: $s-3;
+    border-bottom: 1px solid var(--border-default);
+  }
+
+  &__root-header,
+  &__reply-header {
+    display: flex;
+    align-items: center;
+    gap: $s-2;
+    margin-bottom: $s-1;
+  }
+
+  &__user-icon {
+    font-size: 0.75rem;
+    color: var(--text-subtle);
+    flex-shrink: 0;
+  }
+
+  &__sender {
+    font-weight: 600;
+    font-size: var(--font-size-sm);
+    color: var(--text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  &__date {
+    font-size: var(--font-size-xs);
+    color: var(--text-subtle);
+    flex-shrink: 0;
+    white-space: nowrap;
+  }
+
+  &__replies {
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  &__loading,
+  &__empty {
+    padding: $s-8;
+    flex-direction: column;
+    gap: $s-2;
+  }
+
+  &__reply-item {
+    padding: $s-3;
+    border-bottom: 1px solid var(--border-subtle);
+
+    &:last-child {
+      border-bottom: none;
+    }
+  }
+
+  &__composer {
+    flex-shrink: 0;
+    display: flex;
+    align-items: flex-end;
+    gap: $s-2;
+    padding: $s-3;
+    border-top: 1px solid var(--border-default);
+  }
+
+  &__input {
+    flex: 1;
+    min-height: 36px;
+    max-height: 120px;
+    padding: $s-2 $s-3;
+    border: 1px solid var(--border-default);
+    border-radius: $rounded-md;
+    background: var(--surface-1);
+    color: var(--text-primary);
+    font-size: var(--font-size-sm);
+    font-family: inherit;
+    resize: none;
+    outline: none;
+    transition: border-color $duration-150 $ease-out;
+
+    &:focus {
+      border-color: var(--text-link);
+    }
+
+    &::placeholder {
+      color: var(--text-subtle);
+    }
+  }
+
+  &__send {
+    flex-shrink: 0;
+  }
+}
