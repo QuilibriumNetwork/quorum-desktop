@@ -471,6 +471,106 @@ export class MessageDB {
     });
   }
 
+  async getThreadMessages({
+    spaceId,
+    channelId,
+    threadId,
+  }: {
+    spaceId: string;
+    channelId: string;
+    threadId: string;
+  }): Promise<{
+    messages: Message[];
+    replyCount: number;
+    lastReplyAt: number | null;
+    lastReplyBy: string | null;
+  }> {
+    await this.init();
+    return new Promise((resolve, reject) => {
+      const transaction = this.db!.transaction('messages', 'readonly');
+      const store = transaction.objectStore('messages');
+      const index = store.index('by_thread');
+
+      const range = IDBKeyRange.bound(
+        [spaceId, channelId, threadId, 0],
+        [spaceId, channelId, threadId, Number.MAX_VALUE]
+      );
+
+      const request = index.openCursor(range, 'next');
+      const messages: Message[] = [];
+
+      request.onsuccess = (event) => {
+        const cursor = (event.target as IDBRequest).result;
+        if (cursor) {
+          messages.push(cursor.value);
+          cursor.continue();
+        } else {
+          const lastMessage = messages.length > 0 ? messages[messages.length - 1] : null;
+          resolve({
+            messages,
+            replyCount: messages.length,
+            lastReplyAt: lastMessage?.createdDate ?? null,
+            lastReplyBy: lastMessage?.content?.senderId ?? null,
+          });
+        }
+      };
+      request.onerror = () => reject(request.error);
+    });
+  }
+
+  async getThreadStats({
+    spaceId,
+    channelId,
+    threadId,
+  }: {
+    spaceId: string;
+    channelId: string;
+    threadId: string;
+  }): Promise<{
+    replyCount: number;
+    lastReplyAt: number | null;
+    lastReplyBy: string | null;
+  }> {
+    await this.init();
+    return new Promise((resolve, reject) => {
+      const transaction = this.db!.transaction('messages', 'readonly');
+      const store = transaction.objectStore('messages');
+      const index = store.index('by_thread');
+
+      const range = IDBKeyRange.bound(
+        [spaceId, channelId, threadId, 0],
+        [spaceId, channelId, threadId, Number.MAX_VALUE]
+      );
+
+      const countRequest = index.count(range);
+
+      countRequest.onsuccess = () => {
+        const count = countRequest.result;
+        if (count === 0) {
+          resolve({ replyCount: 0, lastReplyAt: null, lastReplyBy: null });
+          return;
+        }
+
+        const cursorRequest = index.openCursor(range, 'prev');
+        cursorRequest.onsuccess = () => {
+          const cursor = (cursorRequest as IDBRequest).result;
+          if (cursor) {
+            const msg = cursor.value as Message;
+            resolve({
+              replyCount: count,
+              lastReplyAt: msg.createdDate,
+              lastReplyBy: msg.content?.senderId ?? null,
+            });
+          } else {
+            resolve({ replyCount: count, lastReplyAt: null, lastReplyBy: null });
+          }
+        };
+        cursorRequest.onerror = () => reject(cursorRequest.error);
+      };
+      countRequest.onerror = () => reject(countRequest.error);
+    });
+  }
+
   async getUser({
     address,
   }: {
