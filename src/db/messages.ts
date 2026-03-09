@@ -141,7 +141,7 @@ export interface SearchResult {
 export class MessageDB {
   private db: IDBDatabase | null = null;
   private readonly DB_NAME = 'quorum_db';
-  private readonly DB_VERSION = 8;
+  private readonly DB_VERSION = 9;
   private searchIndices: Map<string, MiniSearch<SearchableMessage>> = new Map();
   private indexInitialized = false;
 
@@ -264,6 +264,19 @@ export class MessageDB {
           // space_members records now support: spaceTag?: BroadcastSpaceTag
           // No schema changes required - IndexedDB is schemaless for object values.
           // DB_VERSION bump ensures clients re-open the DB with the new version.
+        }
+
+        if (event.oldVersion < 9) {
+          const transaction = (event.target as IDBOpenDBRequest).transaction;
+          if (transaction) {
+            const messageStore = transaction.objectStore('messages');
+            messageStore.createIndex('by_thread', [
+              'spaceId',
+              'channelId',
+              'threadId',
+              'createdDate',
+            ]);
+          }
         }
       };
     });
