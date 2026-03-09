@@ -513,11 +513,34 @@ export class MessageService {
         return;
       }
 
+      // Helper: soft-delete if message has a thread, hard-delete otherwise
+      const deleteOrSoftDelete = async (msgId: string) => {
+        if (targetMessage.threadMeta) {
+          // Soft-delete: preserve threadMeta so thread remains accessible
+          const softDeleted: Message = {
+            ...targetMessage,
+            content: {
+              type: 'post',
+              senderId: targetMessage.content.senderId,
+              text: '',
+            } as PostMessage,
+            threadMeta: targetMessage.threadMeta,
+          };
+          await messageDB.saveMessage(
+            softDeleted, 0, spaceId, conversationType,
+            updatedUserProfile.user_icon!, updatedUserProfile.display_name!,
+            currentUserAddress
+          );
+        } else {
+          await messageDB.deleteMessage(msgId);
+        }
+      };
+
       // For DMs (spaceId == channelId): Always honor deletion if sender owns the target message
       if (
         targetMessage.content.senderId === decryptedContent.content.senderId
       ) {
-        await messageDB.deleteMessage(decryptedContent.content.removeMessageId);
+        await deleteOrSoftDelete(decryptedContent.content.removeMessageId);
         // Don't return early - allow addMessage() to update React Query cache
       } else if (spaceId != channelId) {
         // For Spaces: Check role-based permissions
@@ -538,9 +561,7 @@ export class MessageService {
             )
           );
           if (isManager) {
-            await messageDB.deleteMessage(
-              decryptedContent.content.removeMessageId
-            );
+            await deleteOrSoftDelete(decryptedContent.content.removeMessageId);
             // Don't return early - allow addMessage() to update React Query cache
           } else {
             // For read-only channels, if not a manager, deny delete (even if user has traditional roles)
@@ -557,9 +578,7 @@ export class MessageService {
           ) {
             return;
           }
-          await messageDB.deleteMessage(
-            decryptedContent.content.removeMessageId
-          );
+          await deleteOrSoftDelete(decryptedContent.content.removeMessageId);
           // Don't return early - allow addMessage() to update React Query cache
         }
       }
