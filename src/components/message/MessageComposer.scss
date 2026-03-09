@@ -92,7 +92,7 @@
   /* Placeholder for empty contentEditable */
   &:empty:before {
     content: attr(data-placeholder);
-    color: var(--color-text-subtle);
+    color: var(--color-field-placeholder);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -232,15 +232,23 @@ html:not(.dark) .message-composer-row {
   width: $s-8;
   height: $s-8;
   border-radius: $rounded-full;
-  background-color: var(--accent);
+  background-color: var(--surface-6);
   background-position: center;
   background-repeat: no-repeat;
   background-image: url('/send.png');
   background-size: 60%;
   flex-shrink: 0;
+  transition: background-color 0.15s ease, opacity 0.15s ease;
+  opacity: 0.7;
 
-  &:hover {
-    background-color: var(--accent-400);
+  /* Active state when user is typing */
+  .message-composer-row.typing & {
+    background-color: var(--accent);
+    opacity: 1;
+
+    &:hover {
+      background-color: var(--accent-400);
+    }
   }
 
   /* Disabled state */
