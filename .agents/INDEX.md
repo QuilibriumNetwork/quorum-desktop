@@ -149,17 +149,17 @@ This is the main index for all documentation, bug reports, and task management.
 - [Add User Bio Field to UserSettingsModal General Tab](tasks/add-user-bio-field.md)
 - [Auto-save settings modals — eliminate save buttons](tasks/auto-save-settings-modals.md)
 - [Conversation Deletion State Synchronization](tasks/conversation-deletion-state-sync.md)
+- [Decentralized GIF Library on Quilibrium](tasks/gifs-library-integration.md)
 - [Dependency Updates Audit](tasks/dependency-updates-audit.md)
 - [Device Identification Improvement](tasks/device-identification-improvement.md)
-- [Emoji Picker Performance Fix — Lazy Loading + Upgrade](tasks/emoji-picker-performance-fix.md)
 - [Fix Lingui "Uncompiled Message Detected" Warning](tasks/fix-lingui-uncompiled-message-warning.md)
 - [Full Markdown Support Inside Spoilers](tasks/spoiler-full-markdown-support.md)
-- [GIFs Library Integration](tasks/gifs-library-integration.md)
 - [Implement Channel Ordering Feature](tasks/channel-ordering-feature.md)
 - [Implement Message Forwarding with Privacy Controls](tasks/message-forwarding-with-privacy-controls.md)
 - [Implement New Member Badge in Spaces](tasks/new-member-badge-spaces.md)
 - [Implement Role-Based Channel Visibility](tasks/channel-role-visibility.md)
 - [Implement Smart Context Extraction Around Mentions in NotificationPanel](tasks/notification-mention-context-extraction.md)
+- [Implement Threaded Conversations for Space Channels](tasks/threaded-conversations.md)
 - [Multi-User Invite Selection Enhancement](tasks/multi-user-invite-selection.md)
 - [Passkey Import UX Issue](tasks/passkey-import-ux-issue.md)
 - [Primitives Migration to quorum-shared](tasks/primitives-migration-to-quorum-shared.md)
@@ -171,7 +171,6 @@ This is the main index for all documentation, bug reports, and task management.
 - [Task: Implement Delete Public Invite Link Feature](tasks/delete-public-invite-link.md)
 - [Test Suite Implementation Plan for Quorum Desktop](tasks/test-suite-plan.md)
 - [Tombstone Cleanup Strategy for Deleted Messages](tasks/tombstone-cleanup-strategy.md)
-- [Twemoji Migration — Consistent Emoji Rendering Across App](tasks/twemoji-migration.md)
 - [User Status Feature Implementation Plan](tasks/user-status.md)
 
 ### .Archived
@@ -200,7 +199,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [CSS Refactor Plan - Claude Code Execution Strategy](tasks/.archived/css-refactor/css-refactor-plan.md)
 
 ### Docusaurus
-- [Docusaurus Developer Documentation Blueprint](tasks/docusaurus/docusaurus-blueprint-v2.md)
+- [Docusaurus Developer Documentation Blueprint v3](tasks/docusaurus/docusaurus-blueprint-v3.md)
 - [Docusaurus Quorum Users Faq](tasks/docusaurus/docusaurus-quorum-users-faq.md)
 - [Docusaurus Setup & Implementation Task](tasks/docusaurus/docusaurus-setup-implementation.md)
 
@@ -281,6 +280,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Dropdown Panels Consolidation & Mobile Bottom Sheet Implementation](tasks/.done/dropdown-panels-consolidation.md)
 - [Edit Message Feature](tasks/.done/edit-message-feature.md)
 - [Emoji Picker in Message Composer](tasks/.done/emoji-picker-in-message-composer.md)
+- [Emoji Picker Performance Fix — Lazy Loading + Upgrade](tasks/.done/emoji-picker-performance-fix.md)
 - [Emoji Picker Responsive Design Improvement](tasks/.done/emojipicker-responsive.md)
 - [Enhance Markdown Renderer Fallback System](tasks/.done/markdown-renderer-fallback-system-enhancement.md)
 - [Enhanced Mention Format with CSS Highlighting for Message Composer](tasks/.done/mentions-improve-UX-in-messagecomposer.md)
@@ -370,6 +370,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Text Styling Consolidation](tasks/.done/text-styling-consolidation-plan.md)
 - [Toast System - Simple Bug Fixes](tasks/.done/toast-system-simple-fix.md)
 - [Toast System Refactoring](tasks/.done/toast-system-refactoring.md)
+- [Twemoji Migration — Consistent Emoji Rendering Across App](tasks/.done/twemoji-migration.md)
 - [UI Folder Reorganization Task](tasks/.done/ui-folder-reorganization.md)
 - [Unify Unread Message Indicators: Channels & DMs](tasks/.done/unify-unread-indicators-channels-dms.md)
 - [Unread Message Visual Indicators Implementation](tasks/.done/unread-message-visual-indicators.md)
@@ -425,4 +426,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2026-02-24 14:30:20
+**Last Updated**: 2026-03-09 12:40:24
