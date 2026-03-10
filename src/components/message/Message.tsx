@@ -523,6 +523,16 @@ export const Message = React.memo(
                   </span>
                 </Container>
               );
+            } else if (message.content.repliesToMessageId) {
+              // Original message was deleted — show placeholder so it's still clear this is a reply
+              return (
+                <Container className="message-reply-heading flex items-center min-w-0">
+                  <Container className="message-reply-curve flex-shrink-0" />
+                  <span className="message-reply-text flex-1 min-w-0 italic text-subtle">
+                    {t`[Original message was deleted]`}
+                  </span>
+                </Container>
+              );
             } else {
               return <></>;
             }
