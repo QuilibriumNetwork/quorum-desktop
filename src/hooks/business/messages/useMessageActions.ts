@@ -1,7 +1,7 @@
 import { logger } from '@quilibrium/quorum-shared';
 import { useCallback, useState } from 'react';
 import React from 'react';
-import { Message as MessageType, Role, Channel, ReactionMessage, RemoveReactionMessage, RemoveMessage } from '../../../api/quorumApi';
+import { Message as MessageType, Role, Channel, ReactionMessage, RemoveReactionMessage, RemoveMessage, PostMessage } from '../../../api/quorumApi';
 import { useConfirmationModal } from '../../../components/context/ConfirmationModalProvider';
 import { useMessageDB } from '../../../components/context/useMessageDB';
 import { usePasskeysContext, channel as secureChannel } from '@quilibrium/quilibrium-js-sdk-channels';
@@ -303,24 +303,56 @@ export function useMessageActions(options: UseMessageActionsOptions) {
       // This prevents Virtuoso's followOutput from auto-scrolling
       onBeforeDelete?.();
 
-      // Optimistic update: Remove message from React Query cache immediately
+      // Optimistic update: soft-delete thread roots (preserve threadMeta), hard-delete others
+      const isThreadRoot = !!message.threadMeta;
       const messagesKey = buildMessagesKey({ spaceId, channelId });
-      queryClient.setQueryData(
-        messagesKey,
-        (oldData: InfiniteData<{ messages: MessageType[]; prevCursor?: number; nextCursor?: number }> | undefined) => {
-          if (!oldData?.pages) return oldData;
-          return {
-            pageParams: oldData.pageParams,
-            pages: oldData.pages.map((page) => ({
-              ...page,
-              messages: page.messages.filter((msg) => msg.messageId !== message.messageId),
-            })),
-          };
-        }
-      );
 
-      // Also delete from local DB for persistence
-      await messageDB.deleteMessage(message.messageId);
+      if (isThreadRoot) {
+        // Soft-delete: replace content but keep message in feed for thread access
+        const softDeletedContent: PostMessage = {
+          type: 'post',
+          senderId: message.content.senderId,
+          text: '',
+        };
+        queryClient.setQueryData(
+          messagesKey,
+          (oldData: InfiniteData<{ messages: MessageType[]; prevCursor?: number; nextCursor?: number }> | undefined) => {
+            if (!oldData?.pages) return oldData;
+            return {
+              pageParams: oldData.pageParams,
+              pages: oldData.pages.map((page) => ({
+                ...page,
+                messages: page.messages.map((msg) =>
+                  msg.messageId === message.messageId
+                    ? { ...msg, content: softDeletedContent }
+                    : msg
+                ),
+              })),
+            };
+          }
+        );
+        // Persist soft-deleted message to IndexedDB
+        await messageDB.updateMessage({
+          ...message,
+          content: softDeletedContent,
+        });
+      } else {
+        // Hard-delete: remove from cache and DB
+        queryClient.setQueryData(
+          messagesKey,
+          (oldData: InfiniteData<{ messages: MessageType[]; prevCursor?: number; nextCursor?: number }> | undefined) => {
+            if (!oldData?.pages) return oldData;
+            return {
+              pageParams: oldData.pageParams,
+              pages: oldData.pages.map((page) => ({
+                ...page,
+                messages: page.messages.filter((msg) => msg.messageId !== message.messageId),
+              })),
+            };
+          }
+        );
+        await messageDB.deleteMessage(message.messageId);
+      }
 
       // Create the delete message
       const deleteMessage: RemoveMessage = {

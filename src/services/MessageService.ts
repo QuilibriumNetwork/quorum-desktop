@@ -1177,11 +1177,24 @@ export class MessageService {
               pages: oldData.pages.map((page, _index) => {
                 return {
                   ...page,
-                  messages: [
-                    ...page.messages.filter(
-                      (m: Message) => m.messageId !== targetId
-                    ),
-                  ],
+                  messages: page.messages
+                    .map((m: Message) => {
+                      if (m.messageId !== targetId) return m;
+                      // Soft-delete thread roots: preserve message with empty content
+                      if (m.threadMeta) {
+                        return {
+                          ...m,
+                          content: {
+                            type: 'post',
+                            senderId: m.content.senderId,
+                            text: '',
+                          } as PostMessage,
+                        };
+                      }
+                      // Hard-delete non-thread messages
+                      return null;
+                    })
+                    .filter((m: Message | null): m is Message => m !== null),
                   // Preserve any cursors or other pagination metadata
                   nextCursor: page.nextCursor,
                   prevCursor: page.prevCursor,

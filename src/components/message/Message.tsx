@@ -5,6 +5,7 @@ import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
 import type {
   Emoji,
   Message as MessageType,
+  PostMessage,
   Role,
   Sticker,
   Channel,
@@ -891,6 +892,18 @@ export const Message = React.memo(
                 }
 
                 if (contentData.type === 'post') {
+                  // Soft-deleted thread root: render placeholder
+                  const postContent = message.content as PostMessage;
+                  const isSoftDeleted = message.threadMeta && (
+                    !postContent.text ||
+                    (Array.isArray(postContent.text) && postContent.text.every(s => !s))
+                  );
+                  if (isSoftDeleted) {
+                    return (
+                      <div className="text-subtle italic">{t`[Original message was deleted]`}</div>
+                    );
+                  }
+
                   // Check if we should use markdown rendering (disabled for security review)
                   if (ENABLE_MARKDOWN && formatting.shouldUseMarkdown()) {
                     return (
@@ -1319,7 +1332,8 @@ export const Message = React.memo(
       JSON.stringify(prevProps.message.reactions) !==
         JSON.stringify(nextProps.message.reactions) ||
       prevProps.message.isPinned !== nextProps.message.isPinned ||
-      prevProps.message.sendStatus !== nextProps.message.sendStatus;
+      prevProps.message.sendStatus !== nextProps.message.sendStatus ||
+      JSON.stringify(prevProps.message.threadMeta) !== JSON.stringify(nextProps.message.threadMeta);
 
     return !shouldRerender;
   }

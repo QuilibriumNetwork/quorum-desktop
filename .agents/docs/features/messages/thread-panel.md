@@ -110,33 +110,43 @@ Channel.tsx owns all thread state (`activePanel`, `activeThreadId`, `activeThrea
 
 ### Layout & Gap
 
-The `space-container` has `background-color: var(--color-bg-app)` — the darkest background tier. ThreadPanel uses `margin-left: $s-2` (8px), creating a visible gap that exposes the dark app background, visually separating the main chat area from the thread sidebar.
+The `space-container` has `background-color: var(--color-bg-app)` — the darkest background tier and `position: relative` to anchor the thread panel overlay on small screens. On desktop, ThreadPanel uses `margin-left: $s-2` (8px), creating a visible gap that exposes the dark app background, visually separating the main chat area from the thread sidebar.
 
 **Background color hierarchy:**
-- `--color-bg-app` — darkest, visible in the 8px gap
+- `--color-bg-app` — darkest, visible in the 8px gap (desktop only)
 - `--color-bg-sidebar` — channel list sidebar
 - `--color-bg-chat` — main chat area and thread panel
 
+### Responsive Behavior
+
+The thread panel adapts to screen size following the same patterns as the chat-container:
+
+- **Desktop (≥1024px):** Side-by-side panel with 8px gap, resize handle, top + left borders
+- **Below MD (≤768px):** Full-width absolute overlay (`position: absolute; inset: 0`) covering the main chat area. Resize handle hidden, margin removed, inline width overridden with `!important`. The `.thread-open` top-right radius on chat-container is also disabled since the thread covers it entirely.
+- **Below XS (≤480px):** Same as above, plus `border-top-left-radius` removed (matches chat-container phone pattern)
+
 ### Border Radius
 
-When a thread is open, `Channel.tsx` adds the `.thread-open` class to the `chat-container` div. This triggers:
+When a thread is open, `Channel.tsx` adds the `.thread-open` class to the `chat-container` div. On desktop and above MD (≥768px), this triggers:
 - **Chat area**: `border-top-right-radius: $rounded-xl` (top-right corner rounds to visually separate from thread)
 - **Thread panel**: `border-top-left-radius: $rounded-xl` (top-left corner rounds to match)
 - **Channel list**: `border-top-left-radius: $rounded-xl` on desktop (matches `main-content`'s rounded corner)
 
+Below MD, the `.thread-open` radius is not applied since the thread panel is a full-width overlay.
+
 ### Border System
 
-Borders use a theme-aware system with a muted variant for dark mode:
+Borders use a theme-aware system with a muted variant for dark mode. **All thread panel borders are desktop-only (≥1024px)**, matching the chat-container pattern from `_chat.scss`:
 
 **Light theme** (`--color-border-subtle` = `var(--surface-4)`):
 - Channel list sidebar: `border-top` on desktop
 - Chat container: `border-top` + `border-left` on desktop; `border-right` when thread open
-- Thread panel: `border-top` + `border-left`
+- Thread panel: `border-top` + `border-left` on desktop
 
 **Dark theme** (`--color-border-muted` = `var(--surface-3)`):
 - Channel list sidebar: `border-top` + `border-left` (muted) on desktop
 - Chat container: `border-top` (muted) on desktop; no `border-left`; `border-right` (muted) when thread open
-- Thread panel: `border-top` + `border-left` (muted)
+- Thread panel: `border-top` + `border-left` (muted) on desktop
 
 The `--color-border-muted` semantic variable was added to `_colors.scss` specifically for these external layout borders, sitting below `--color-border-subtle` in the border color scale:
 ```
@@ -164,7 +174,7 @@ The close button uses a modal-style circular design (`border-radius: $rounded-fu
 ### Header
 
 Discord-style header with:
-- **Title:** First ~50 characters of the root message text, truncated at word boundary with ellipsis
+- **Title:** Derived at runtime via `getThreadTitle()` in `ThreadPanel.tsx`. Resolution order: (1) `threadMeta.customTitle` if set (future), (2) root message text (markdown stripped, CSS-truncated via `text-overflow: ellipsis`), (3) `"Thread"` fallback (used when root is soft-deleted or empty). Auto-extracted titles are NOT persisted or broadcast — deleting a root message deletes the title too.
 - **Subtitle:** "Started by **Username**" showing thread creator
 - **Close button:** Right-aligned circular button
 
@@ -197,7 +207,7 @@ Discord-style header with:
 - **ThreadIndicator** (`src/components/thread/ThreadIndicator.tsx`) — Inline component on root messages showing reply count and last reply time
 - **MessageActions** — Thread button in hover toolbar (right after Reply icon)
 - **MessageActionsMenu** — "Start Thread" / "View Thread" in right-click context menu
-- **Root message deletion** — Soft-delete preserves `threadMeta` so the thread remains accessible; root shows "[deleted message]" placeholder
+- **Root message deletion** — Soft-delete preserves `threadMeta` so the thread remains accessible; root shows italicized "[Original message was deleted]" placeholder (i18n). Both local and remote deletion paths handle this: local via `useMessageActions.ts` (map + `messageDB.updateMessage`), remote via `MessageService.ts` `processMessage()` (IndexedDB soft-delete) and `addMessage()` (React Query cache map instead of filter)
 
 ## Technical Decisions
 
@@ -219,8 +229,10 @@ Discord-style header with:
 - **No ThreadsList panel** — No browsable list of all threads in a channel
 - **No permission gating** — Anyone who can post in the channel can create threads; no `thread:create` permission
 - **No thread search** — Thread replies are not included in global search results
-- **Desktop only** — Resize handle uses mouse events; no touch support for mobile drag-to-resize
+- **Resize desktop only** — Resize handle uses mouse events and is hidden below MD; no touch support for drag-to-resize
 - **No auto-archive** — Threads remain open indefinitely; no `autoArchiveDuration` mechanism
+- **Thread replies invisible on mobile** — Thread replies are filtered from the main feed at three layers (DB cursor in `getMessages()`, DB unread in `getFirstUnreadMessage()`, React hook in `useChannelMessages()`). Since mobile won't have a thread panel initially, thread replies are completely hidden for mobile users with no way to view them. Needs a platform-aware flag so replies stay in the main feed on platforms without thread panel support.
+- **No thread-aware navigation** — Bookmarks, search results, and pinned messages that point to thread replies silently fail: they navigate to the channel but the reply isn't in the main feed. Needs compound hash navigation (`#thread-{threadId}-msg-{messageId}`) so Channel.tsx can open the thread panel and scroll to the specific reply.
 
 ## Future Work
 
@@ -234,10 +246,10 @@ These items are planned but not yet implemented:
 - **Permission gating** — Add `thread:create` permission to role system for per-role thread creation control.
 - **"Also send to channel"** — Option to post a thread reply to the main feed simultaneously (Slack-style behavior).
 - **Thread search** — Include thread replies in global search results.
-- **DM threading** — Extend threads to direct message conversations.
-- **Thread titles** — Optional user-set titles on threads (low priority; root message text provides context).
+- **Custom thread titles** — Add `customTitle` field to `ThreadMeta`, set explicitly by the user and broadcast with consent. Overrides the auto-extracted title in `getThreadTitle()` resolution. Unlike auto-extracted titles, custom titles survive root deletion since they're stored in `threadMeta`.
 - **Extract ThreadService** — If MessageService grows further, extract thread handling to a dedicated service class.
-- **Mobile resize** — Touch-based drag-to-resize for the thread panel on mobile/tablet.
+- **Mobile thread reply visibility** — Add a platform-aware flag to the three `isThreadReply` filter points (DB cursor, DB unread query, React hook). On platforms without thread panel support (mobile), skip the filter so thread replies appear inline in the main feed as regular messages. This prevents data loss while threads are desktop-only.
+- **Thread-aware navigation** — Extend hash navigation to support `#thread-{threadId}-msg-{messageId}`. Channel.tsx detects the compound hash, opens the thread panel for the given threadId, and the thread's MessageList scrolls to and highlights the target reply. Consumers (bookmarks, search, pins) build the compound hash when the message has `isThreadReply: true`. Includes bookmark migration for existing bookmarks without thread info.
 
 ## Related Documentation
 
@@ -249,4 +261,4 @@ These items are planned but not yet implemented:
 ---
 
 _Created: 2026-03-09_
-_Updated: 2026-03-09 (added 3-layer feed filtering documentation)_
+_Updated: 2026-03-10 (thread root soft-delete: local + remote paths, deleted placeholder rendering, title fallback behavior; known limitations: mobile thread reply visibility gap, thread-aware navigation gap)_
