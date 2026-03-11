@@ -19,7 +19,7 @@ function getThreadTitle(rootMessage: { content?: any } | null): string {
   if (!content.text) return 'Thread';
   const text = Array.isArray(content.text) ? content.text.join(' ') : content.text;
   // Strip markdown/formatting for a clean title
-  const clean = text.replace(/[*_~`#>\[\]()!]/g, '').trim();
+  const clean = text.replace(/[*_~`#>[\]()!]/g, '').trim();
   return clean || 'Thread';
 }
 
