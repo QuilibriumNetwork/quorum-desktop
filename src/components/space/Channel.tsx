@@ -954,13 +954,14 @@ const Channel: React.FC<ChannelProps> = ({
       spaceGroups,
       canUseEveryone,
       onShowStickers: handleShowEmojiPanel,
+      currentUserAddress: user.currentPasskeyInfo?.address,
     });
   }, [
     spaceId, channelId, members, roles, stickers, space?.emojis,
     mapSenderToUser, isSpaceOwner, canDeleteMessages, canPinMessages,
     channel, spaceChannels, handleChannelClick, userProfileModal.handleUserClick,
     space?.spaceName, space?.isRepudiable, skipSigning, spaceGroups,
-    canUseEveryone, handleShowEmojiPanel,
+    canUseEveryone, handleShowEmojiPanel, user.currentPasskeyInfo?.address,
   ]);
 
   // Auto-focus textarea when replying

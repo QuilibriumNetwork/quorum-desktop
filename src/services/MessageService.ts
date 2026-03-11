@@ -808,8 +808,10 @@ export class MessageService {
       if (threadMsg.action === 'create') {
         // Idempotent — skip if threadId already set
         if (targetMessage.threadMeta?.threadId === threadMsg.threadMeta.threadId) return;
+      } else if (threadMsg.action === 'updateTitle') {
+        // Only the thread creator may rename the thread
+        if (threadMsg.senderId !== targetMessage.threadMeta?.createdBy) return;
       }
-      // For 'updateTitle': always apply the patch (title can change multiple times)
 
       const updatedMessage: Message = {
         ...targetMessage,
@@ -1310,6 +1312,12 @@ export class MessageService {
     } else if (decryptedContent.content.type === 'thread') {
       const threadMsg = decryptedContent.content as ThreadMessage;
       if (spaceId === channelId) return;
+
+      // For updateTitle: verify sender is thread creator before patching cache
+      if (threadMsg.action === 'updateTitle') {
+        const targetMessage = await this.messageDB.getMessage({ spaceId, channelId, messageId: threadMsg.targetMessageId });
+        if (!targetMessage || threadMsg.senderId !== targetMessage.threadMeta?.createdBy) return;
+      }
 
       queryClient.setQueryData(
         buildMessagesKey({ spaceId, channelId }),

@@ -100,13 +100,6 @@
   &__title-area {
     display: flex;
     flex-direction: column;
-    gap: 2px;
-  }
-
-  &__title-label {
-    font-size: $text-xs;
-    color: var(--text-subtle);
-    font-weight: 500;
   }
 
   &__title {
@@ -123,13 +116,20 @@
     &:hover {
       background-color: var(--color-field-bg-focus);
     }
+
+    &--readonly {
+      cursor: default;
+
+      &:hover {
+        background-color: transparent;
+      }
+    }
   }
 
   &__title-input {
-    font-weight: 700;
-    font-size: $text-xl;
-
     .quorum-input--minimal {
+      font-weight: 700;
+      font-size: $text-xl;
       padding: 2px 4px;
       margin-left: -4px;
     }

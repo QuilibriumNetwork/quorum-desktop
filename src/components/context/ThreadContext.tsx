@@ -32,6 +32,7 @@ export interface ThreadChannelProps {
   spaceGroups?: Array<{ groupName: string; channels: Channel[]; icon?: string; iconColor?: string }>;
   canUseEveryone?: boolean;
   onShowStickers?: () => void;
+  currentUserAddress?: string;
 }
 
 interface ThreadState {

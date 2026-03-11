@@ -74,6 +74,7 @@ export const ThreadPanel: React.FC = () => {
 
   const [isEditingTitle, setIsEditingTitle] = useState(false);
   const [titleDraft, setTitleDraft] = useState('');
+  const isSavingTitle = useRef(false);
 
   const handleTitleClick = useCallback(() => {
     setTitleDraft(rootMessage?.threadMeta?.customTitle ?? '');
@@ -82,6 +83,8 @@ export const ThreadPanel: React.FC = () => {
 
   const handleTitleSave = useCallback(() => {
     if (!rootMessage) return;
+    if (isSavingTitle.current) return;
+    isSavingTitle.current = true;
     const trimmed = titleDraft.trim();
     // Only broadcast if value actually changed
     const current = rootMessage.threadMeta?.customTitle ?? '';
@@ -91,6 +94,8 @@ export const ThreadPanel: React.FC = () => {
       updateTitle(rootMessage.messageId, rootMessage.threadMeta, trimmed);
     }
     setIsEditingTitle(false);
+    // Reset guard after blur fires (browser queues blur after keydown handler returns)
+    setTimeout(() => { isSavingTitle.current = false; }, 0);
   }, [titleDraft, rootMessage, updateTitle]);
 
   const handleTitleKeyDown = useCallback((e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -98,7 +103,9 @@ export const ThreadPanel: React.FC = () => {
       e.preventDefault();
       handleTitleSave();
     } else if (e.key === 'Escape') {
+      isSavingTitle.current = true; // Suppress the blur save on Escape
       setIsEditingTitle(false);
+      setTimeout(() => { isSavingTitle.current = false; }, 0);
     }
   }, [handleTitleSave]);
 
@@ -150,6 +157,11 @@ export const ThreadPanel: React.FC = () => {
     return user?.displayName || null;
   }, [rootMessage, channelProps]);
 
+  const isThreadAuthor = useMemo(() => {
+    if (!rootMessage?.threadMeta?.createdBy || !channelProps?.currentUserAddress) return false;
+    return rootMessage.threadMeta.createdBy === channelProps.currentUserAddress;
+  }, [rootMessage, channelProps?.currentUserAddress]);
+
   // Access store to clear targetMessageId after scroll processing
   const threadStore = useThreadContextStore();
 
@@ -187,7 +199,6 @@ export const ThreadPanel: React.FC = () => {
       <div className="thread-panel__header">
         <div className="thread-panel__header-content">
           <div className="thread-panel__title-area">
-              <label className="thread-panel__title-label">{t`Thread Title`}</label>
               {isEditingTitle ? (
                 <Input
                   variant="minimal"
@@ -199,7 +210,7 @@ export const ThreadPanel: React.FC = () => {
                   autoFocus
                   className="thread-panel__title-input"
                 />
-              ) : (
+              ) : isThreadAuthor ? (
                 <div
                   className="thread-panel__title"
                   onClick={handleTitleClick}
@@ -208,6 +219,10 @@ export const ThreadPanel: React.FC = () => {
                   onKeyDown={(e) => e.key === 'Enter' && handleTitleClick()}
                   aria-label={t`Edit thread title`}
                 >
+                  {threadTitle}
+                </div>
+              ) : (
+                <div className="thread-panel__title thread-panel__title--readonly">
                   {threadTitle}
                 </div>
               )}
