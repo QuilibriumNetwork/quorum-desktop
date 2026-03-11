@@ -220,4 +220,5 @@ export const platformFeatures = {
   hasTouch: typeof window !== 'undefined' ? isTouchDevice() : false,
   supportsSmoothScrolling:
     typeof window !== 'undefined' ? supportsSmoothScrolling() : false,
+  supportsThreadPanel: !isMobile(),
 };
