@@ -1,7 +1,7 @@
 ---
 type: bug
 title: "Thread-Aware Navigation: Panel Doesn't Open and Message Not Highlighted"
-status: open
+status: done
 priority: high
 ai_generated: true
 created: 2026-03-11

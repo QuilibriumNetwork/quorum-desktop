@@ -104,7 +104,9 @@ Channel.tsx                          ThreadPanel.tsx
          roles, stickers, permissions...)
 ```
 
-Channel.tsx owns all thread state (`activePanel`, `activeThreadId`, `activeThreadRootMessage`) and business logic (`handleOpenThread`, `handleSubmitThreadMessage`, `handleSubmitThreadSticker`). The `useThreadMessages` React Query hook is called in Channel and its results flow through the context to ThreadPanel.
+Channel.tsx owns all thread state (`activePanel`, `activeThreadId`, `activeThreadRootMessage`) and business logic (`handleOpenThread`, `handleSubmitThreadMessage`, `handleSubmitThreadSticker`, `handleUpdateThreadTitle`). The `useThreadMessages` React Query hook is called in Channel and its results flow through the context to ThreadPanel.
+
+**Stale snapshot pitfall:** `activeThreadRootMessage` is a React state variable set once when a thread opens and not derived from any query. Any mutation to the root message (e.g., title update) must explicitly call `setActiveThreadRootMessage` — otherwise the displayed root message in ThreadPanel stays stale even after the DB and React Query cache are updated. The `invalidateQueries` call for `thread-messages` only refreshes the replies list, not this snapshot.
 
 ## Visual Design
 
@@ -174,7 +176,7 @@ The close button uses a modal-style circular design (`border-radius: $rounded-fu
 ### Header
 
 Discord-style header with:
-- **Title:** Derived at runtime via `getThreadTitle()` in `ThreadPanel.tsx`. Resolution order: (1) `threadMeta.customTitle` if set (future), (2) root message text (markdown stripped, CSS-truncated via `text-overflow: ellipsis`), (3) `"Thread"` fallback (used when root is soft-deleted or empty). Auto-extracted titles are NOT persisted or broadcast — deleting a root message deletes the title too.
+- **Title:** Derived at runtime via `getThreadTitle()` in `ThreadPanel.tsx`. Resolution order: (1) `threadMeta.customTitle` if set, (2) first 100 chars of root message text (markdown stripped), (3) `"Thread"` fallback (used when root is soft-deleted or empty). Auto-extracted titles are NOT persisted or broadcast — deleting a root message loses the auto-derived title. Custom titles survive root deletion since they live in `threadMeta`. Only the thread author (`threadMeta.createdBy === currentUserAddress`) sees an editable title; others see it read-only.
 - **Subtitle:** "Started by **Username**" showing thread creator
 - **Close button:** Right-aligned circular button
 
@@ -182,8 +184,8 @@ Discord-style header with:
 
 ### Types (`src/api/quorumApi.ts`)
 
-- **`ThreadMeta`** — Set on root messages: `{ threadId: string, createdBy: string }`
-- **`ThreadMessage`** — Broadcast content: `{ type: 'thread', senderId, targetMessageId, action: 'create', threadMeta }`
+- **`ThreadMeta`** — Set on root messages: `{ threadId: string, createdBy: string, customTitle?: string }`
+- **`ThreadMessage`** — Broadcast content: `{ type: 'thread', senderId, targetMessageId, action: 'create' | 'updateTitle', threadMeta }`
 - **Message fields:** `threadMeta?` (root messages), `threadId?` (reply messages), `isThreadReply?` (filtering sentinel)
 
 ### Database (`src/db/messages.ts`)
@@ -208,6 +210,45 @@ Discord-style header with:
 - **MessageActions** — Thread button in hover toolbar (right after Reply icon)
 - **MessageActionsMenu** — "Start Thread" / "View Thread" in right-click context menu
 - **Root message deletion** — Soft-delete preserves `threadMeta` so the thread remains accessible; root shows italicized "[Original message was deleted]" placeholder (i18n). Both local and remote deletion paths handle this: local via `useMessageActions.ts` (map + `messageDB.updateMessage`), remote via `MessageService.ts` `processMessage()` (IndexedDB soft-delete) and `addMessage()` (React Query cache map instead of filter)
+
+## Thread Title Editing
+
+The thread author can edit the title inline in the panel header. Clicking the title enters edit mode (an `<Input variant="minimal">`). Pressing Enter or blurring the input saves; Escape cancels. Non-authors see the title as read-only text.
+
+### Author Gate
+
+`isThreadAuthor` in `ThreadPanel.tsx` compares `rootMessage.threadMeta.createdBy` against `channelProps.currentUserAddress`. Only authors see the editable title. The server-side paths enforce this too: both `processMessage` (IndexedDB) and `addMessage` (React Query cache) reject `updateTitle` broadcasts where `senderId !== targetMessage.threadMeta.createdBy`.
+
+### updateTitle Broadcast Flow
+
+```
+ThreadPanel: Enter key / blur
+  → handleTitleSave() — isSavingTitle ref prevents double-fire on blur-after-Enter
+  → updateTitle(messageId, threadMeta, newTitle)   ← from ThreadContext actions
+  → handleUpdateThreadTitle() in Channel.tsx
+      → builds updatedMeta: { threadId, createdBy, customTitle }
+      → submitChannelMessage(..., { type:'thread', action:'updateTitle', threadMeta: updatedMeta })
+          → MessageService.submitChannelMessage (send path)
+              → idempotency guard: gated to action==='create' only (updateTitle passes through)
+              → auth check: senderId must === targetMessage.threadMeta.createdBy
+              → saves updatedTarget to IndexedDB (spread-merge: {...existing.threadMeta, ...updatedMeta})
+              → updates main channel React Query cache (spread-merge)
+              → invalidates ['thread-messages', ...] query
+              → broadcasts encrypted message to space
+      → setActiveThreadRootMessage(prev => {...prev, threadMeta: {...prev.threadMeta, ...updatedMeta}})
+          ← local sender: updates stale snapshot so ThreadPanel re-renders immediately
+
+Peers (via addMessage):
+  → auth check: senderId must === targetMessage.threadMeta.createdBy
+  → updates main channel React Query cache (spread-merge)
+  → invalidates ['thread-messages', ...] query
+```
+
+The local sender path and the peer path are separate. The `addMessage` path handles incoming broadcasts; `setActiveThreadRootMessage` handles the sender's own immediate display update since the sender's broadcast doesn't loop back through `addMessage`.
+
+### Double-Save Guard
+
+`isSavingTitle` is a `useRef` (not state) in `ThreadPanel.tsx`. When Enter fires `handleTitleSave`, it sets `isEditingTitle(false)`, which unmounts the input and fires blur synchronously. Without the guard, blur would call `handleTitleSave` a second time, sending the broadcast twice. The ref is reset via `setTimeout(..., 0)` so it clears after the blur handler runs.
 
 ## Thread-Aware Navigation
 
@@ -317,7 +358,6 @@ These items are planned but not yet implemented:
 - **Permission gating** — Add `thread:create` permission to role system for per-role thread creation control.
 - **"Also send to channel"** — Option to post a thread reply to the main feed simultaneously (Slack-style behavior).
 - **Thread search** — Include thread replies in global search results.
-- **Custom thread titles** — Add `customTitle` field to `ThreadMeta`, set explicitly by the user and broadcast with consent. Overrides the auto-extracted title in `getThreadTitle()` resolution. Unlike auto-extracted titles, custom titles survive root deletion since they're stored in `threadMeta`.
 - **Extract ThreadService** — If MessageService grows further, extract thread handling to a dedicated service class.
 - **Mobile thread reply visibility** — Add a platform-aware flag to the three `isThreadReply` filter points (DB cursor, DB unread query, React hook). On platforms without thread panel support (mobile), skip the filter so thread replies appear inline in the main feed as regular messages. This prevents data loss while threads are desktop-only.
 - **Bookmark migration** — Existing bookmarks don't store `threadId`, so clicking them won't open the thread panel for thread replies. A migration could backfill `threadId` by scanning messages at read time, but the impact is limited to bookmarks created before this feature shipped.
@@ -332,4 +372,4 @@ These items are planned but not yet implemented:
 ---
 
 _Created: 2026-03-09_
-_Updated: 2026-03-11 (thread-aware navigation: added navigation flow, hash format, cross-component highlight pattern, same-channel hash re-detection, threadId propagation in search; updated known limitations and future work to reflect implementation)_
+_Updated: 2026-03-11 (thread-aware navigation, thread title editing: added updateTitle flow, author gate, double-save guard, stale snapshot pitfall; updated types, header description, future work)_

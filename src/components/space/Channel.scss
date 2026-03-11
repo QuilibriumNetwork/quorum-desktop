@@ -26,6 +26,14 @@
       border-top-right-radius: $rounded-xl;
       overflow: hidden;
     }
+
+    // Hide search field when thread panel is a full-width overlay (≤md)
+    // The thread panel covers the chat area entirely, so the search is irrelevant
+    @media (max-width: $screen-md) {
+      .channel-search {
+        display: none;
+      }
+    }
   }
 }
 
