@@ -1,26 +1,21 @@
 #!/usr/bin/env python3
 """
-Comprehensive Documentation Update Script for .agents directory
+Documentation Index Update Script for .agents directory
 
-This script performs complete documentation synchronization by:
-1. Running 'yarn scan-docs' to update the project's markdown files scan
-2. Scanning all markdown files in .agents directory
-3. Extracting titles from files
-4. Organizing files by folder structure (docs -> bugs -> tasks -> reports)
-5. Maintaining proper subfolder groupings
-6. Updating the "Last Updated" timestamp in INDEX.md
-
-The script ensures both the project's documentation system and the .agents
-index are synchronized and up-to-date.
+This script performs documentation index synchronization by:
+1. Scanning all markdown files in .agents directory
+2. Extracting titles from files
+3. Organizing files by folder structure (docs -> bugs -> tasks -> reports)
+4. Maintaining proper subfolder groupings
+5. Updating the "Last Updated" timestamp in INDEX.md
 
 Usage: python3 update-index.py
 
-Cross-platform compatible: Works on both WSL and native Windows.
+Cross-platform compatible: Works on Windows, macOS, and Linux.
 """
 
 import os
 import re
-import subprocess
 import sys
 from datetime import datetime
 
@@ -99,67 +94,43 @@ def sort_files_smart(file_list):
     return sorted(file_list, key=get_file_sort_key)
 
 
-def run_yarn_scan_docs():
-    """Run yarn scan-docs to update the documentation scan"""
-    try:
-        # Navigate to project root from skill directory
-        script_dir = os.path.dirname(os.path.abspath(__file__))
-        project_root = os.path.join(script_dir, '..', '..', '..')
-        project_root = os.path.abspath(project_root)
-
-        print('[YARN] Running yarn scan-docs...')
-
-        # Determine execution environment
-        is_wsl = os.name == 'posix' and '/mnt/' in project_root
-        is_native_windows = sys.platform == 'win32'
-
-        if is_wsl:
-            # WSL environment - use cmd.exe to run yarn
-            # Convert WSL path to Windows path (handles /mnt/c/, /mnt/d/, etc.)
-            windows_path = re.sub(r'^/mnt/([a-z])/', lambda m: m.group(1).upper() + ':\\', project_root)
-            windows_path = windows_path.replace('/', '\\')
-            cmd = f'cmd.exe /c "cd /d {windows_path} && yarn scan-docs"'
-            result = subprocess.run(cmd, shell=True, capture_output=True, text=True, cwd=project_root)
-        elif is_native_windows:
-            # Native Windows - use shell=True to find yarn via PATH
-            result = subprocess.run(
-                'yarn scan-docs',
-                shell=True,
-                capture_output=True,
-                text=True,
-                cwd=project_root,
-                encoding='utf-8',
-                errors='replace'
-            )
-        else:
-            # Linux/macOS - direct yarn execution
-            result = subprocess.run(['yarn', 'scan-docs'], capture_output=True, text=True, cwd=project_root)
-
-        if result.returncode == 0:
-            print(f'[YARN] {SYMBOLS["check"]} yarn scan-docs completed successfully')
-            return True
-        else:
-            print(f'[YARN] {SYMBOLS["warning"]} yarn scan-docs failed with return code {result.returncode}')
-            if result.stdout:
-                print(f'[YARN] stdout: {result.stdout}')
-            if result.stderr:
-                print(f'[YARN] stderr: {result.stderr}')
-            return False
-
-    except Exception as e:
-        print(f'[YARN] {SYMBOLS["cross"]} Error running yarn scan-docs: {e}')
-        return False
-
-def scan_readme_directory():
-    """Scan .agents directory and build file structure"""
-    # Navigate from skill directory to .agents directory
+def find_agents_directory():
+    """Find the .agents directory relative to the script or current working directory"""
+    # First, try relative to script location (for when script is in .claude/skills/docs-manager/)
     script_dir = os.path.dirname(os.path.abspath(__file__))
-    # From .claude/skills/docs-manager/ go to project root, then to .agents
-    readme_root = os.path.join(script_dir, '..', '..', '..', '.agents')
-    readme_root = os.path.abspath(readme_root)
 
-    if not os.path.exists(readme_root):
-        raise FileNotFoundError(f".agents directory not found at: {readme_root}")
+    # Try going up 3 levels from skill directory to project root
+    agents_from_skill = os.path.join(script_dir, '..', '..', '..', '.agents')
+    agents_from_skill = os.path.abspath(agents_from_skill)
+
+    if os.path.exists(agents_from_skill):
+        return agents_from_skill
+
+    # Try current working directory
+    agents_from_cwd = os.path.join(os.getcwd(), '.agents')
+    if os.path.exists(agents_from_cwd):
+        return agents_from_cwd
+
+    # Try going up from current working directory
+    parent_dir = os.path.dirname(os.getcwd())
+    agents_from_parent = os.path.join(parent_dir, '.agents')
+    if os.path.exists(agents_from_parent):
+        return agents_from_parent
+
+    return None
+
+
+def scan_agents_directory():
+    """Scan .agents directory and build file structure"""
+    agents_root = find_agents_directory()
+
+    if not agents_root:
+        raise FileNotFoundError(
+            ".agents directory not found. Please run this script from your project root "
+            "or ensure the .agents folder exists."
+        )
+
+    print(f'[INFO] Found .agents directory at: {agents_root}')
 
     # Organize by structure - DOCS FIRST, BUGS SECOND, TASKS THIRD, REPORTS FOURTH
     docs_root = []
@@ -179,11 +150,11 @@ def scan_readme_directory():
     reports_done = []  # Reports in reports/.done/
     reports_done_subfolders = {}  # Subfolders in reports/.done/
 
-    for root, _, files in os.walk(readme_root):
+    for root, _, files in os.walk(agents_root):
         for file in files:
             if file.endswith('.md') and file != 'INDEX.md':
                 file_path = os.path.join(root, file)
-                relative_path = os.path.relpath(file_path, readme_root)
+                relative_path = os.path.relpath(file_path, agents_root)
                 # Normalize path separators for cross-platform compatibility
                 relative_path_normalized = relative_path.replace('\\', '/')
 
@@ -445,7 +416,7 @@ def scan_readme_directory():
     index_content.append(f'**Last Updated**: {current_date}')
 
     # Write INDEX.md
-    index_path = os.path.join(readme_root, 'INDEX.md')
+    index_path = os.path.join(agents_root, 'INDEX.md')
     with open(index_path, 'w', encoding='utf-8') as f:
         f.write('\n'.join(index_content))
 
@@ -457,7 +428,7 @@ def scan_readme_directory():
                    len(reports_active) + sum(len(files) for files in reports_subfolders.values()) +
                    len(reports_done) + sum(len(files) for files in reports_done_subfolders.values()))
 
-    print(f'[OK] Updated {index_path}')
+    print(f'{SYMBOLS["check"]} Updated {index_path}')
     print(f'[FILES] Processed {total_files} markdown files')
     print(f'[DOCS] Docs: {len(docs_root) + sum(len(files) for files in docs_subfolders.values())} files')
     print(f'[BUGS] Bugs: {len(bugs_active) + len(bugs_solved) + sum(len(files) for files in bugs_subfolders.values())} files')
@@ -468,18 +439,8 @@ def scan_readme_directory():
 
 if __name__ == '__main__':
     try:
-        # Step 1: Run yarn scan-docs first
-        yarn_success = run_yarn_scan_docs()
-
-        # Step 2: Update INDEX.md regardless of yarn result (INDEX.md is still useful)
-        scan_readme_directory()
-
-        # Final status report
-        if yarn_success:
-            print(f'\n{SYMBOLS["success"]} {SYMBOLS["check"]} Both yarn scan-docs and index update completed successfully!')
-        else:
-            print(f'\n{SYMBOLS["partial"]} {SYMBOLS["warning"]} Index update completed, but yarn scan-docs had issues. Check output above.')
-
+        scan_agents_directory()
+        print(f'\n{SYMBOLS["success"]} {SYMBOLS["check"]} Index update completed successfully!')
     except Exception as e:
         print(f'\n{SYMBOLS["error"]} {SYMBOLS["cross"]} Error during execution: {e}')
         exit(1)

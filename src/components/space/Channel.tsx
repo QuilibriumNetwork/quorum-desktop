@@ -1,6 +1,6 @@
 import { logger } from '@quilibrium/quorum-shared';
 import React, { useEffect, useState, useCallback, useRef, useMemo, Suspense } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import './Channel.scss';
 import { StickerMessage, Message as MessageType, ThreadMessage, ThreadMeta } from '../../api/quorumApi';
 import {
@@ -95,6 +95,7 @@ const Channel: React.FC<ChannelProps> = ({
   channelId,
 }) => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { isMobile, isDesktop, toggleLeftSidebar, navMenuOpen, toggleNavMenu } =
     useResponsiveLayoutContext();
   const queryClient = useQueryClient();
@@ -761,7 +762,7 @@ const Channel: React.FC<ChannelProps> = ({
 
     openThreadFromHash();
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [spaceId, channelId]);
+  }, [spaceId, channelId, location.hash]);
 
   // Get current user's role IDs for role mention filtering
   const userRoleIds = React.useMemo(() => {

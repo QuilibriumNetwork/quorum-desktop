@@ -202,6 +202,7 @@ export const ThreadPanel: React.FC = () => {
             canUseEveryone={channelProps.canUseEveryone}
             alignToTop={true}
             scrollToMessageId={targetMessageId ?? undefined}
+            highlightOnScroll={true}
           />
         )}
       </div>

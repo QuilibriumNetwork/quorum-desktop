@@ -6,16 +6,16 @@
   gap: $s-2;
   padding: $s-1 $s-3;
   margin-top: $s-1;
-  border: none;
+  border: 1px solid var(--color-border-default);
   border-radius: $rounded-md;
   background: transparent;
   color: var(--text-link);
   font-size: $text-xs;
   cursor: pointer;
-  transition: background-color $duration-150 $ease-out;
+  transition: border-color $duration-150 $ease-out;
 
   &:hover {
-    background: var(--surface-2);
+    border-color: var(--color-border-strong);
   }
 
   &__icon {

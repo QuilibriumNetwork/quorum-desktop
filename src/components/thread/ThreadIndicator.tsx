@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, Icon } from '../primitives';
+import { Icon } from '../primitives';
 import { useThreadStats } from '../../hooks/business/threads';
 import { formatMessageDate } from '../../utils/dateFormatting';
 import { t } from '@lingui/core/macro';
@@ -22,10 +22,10 @@ export const ThreadIndicator: React.FC<ThreadIndicatorProps> = ({
   const replyCount = stats?.replyCount ?? 0;
 
   return (
-    <Button
+    <button
+      type="button"
       className="thread-indicator"
       onClick={onClick}
-      variant="ghost"
     >
       <Icon name="messages" className="thread-indicator__icon" />
       <span className="thread-indicator__count">
@@ -40,6 +40,6 @@ export const ThreadIndicator: React.FC<ThreadIndicatorProps> = ({
           {formatMessageDate(stats.lastReplyAt, true)}
         </span>
       )}
-    </Button>
+    </button>
   );
 };

@@ -84,6 +84,7 @@ This is the main index for all documentation, bug reports, and task management.
 ## 🐛 Bug Reports
 
 ### Active Issues
+- [Thread-Aware Navigation: Panel Doesn't Open and Message Not Highlighted](bugs/2026-03-11-thread-aware-navigation-broken.md)
 - [Config Sync Space Loss Race Condition](bugs/config-sync-space-loss-race-condition.md)
 - [DirectMessage Invite Loading Performance Issue](bugs/directmessage-invite-loading-performance.md)
 - [Encryption State Evals Causing Config Sync Bloat](bugs/encryption-state-evals-bloat.md)
@@ -98,7 +99,6 @@ This is the main index for all documentation, bug reports, and task management.
 - [Public Invite Link Intermittent Expiration Bug](bugs/public-invite-link-intermittent-expiration.md)
 - [Safari Passkey Session Loss - Random Logout on Browser Restart](bugs/safari-passkey-session-loss-random-logout.md)
 - [Space Owner Privacy Limitation](bugs/space-owner-privacy-limitation.md)
-- [Thread replies leak into main chat feed on page reload](bugs/thread-replies-leak-into-main-feed-on-reload.md)
 - [UserProfile Modal Positioning - Viewport Boundary Detection](bugs/userprofile-modal-positioning-viewport-boundary.md)
 
 ### Solved Issues
@@ -130,6 +130,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [SOLVED: Modal NavMenu Z-Index Stacking Issue](bugs/.solved/SOLVED_modal-navmenu-zindex-stacking.md)
 - [SOLVED: Right Sidebar Overlay Issue - Navbar Still Visible](bugs/.solved/SOLVED_right-sidebar-overlay.md)
 - [Space Creation Config Save Race Condition](bugs/.solved/space-creation-config-save-race-condition.md)
+- [Thread replies leak into main chat feed on page reload](bugs/.solved/SOLVED_thread-replies-leak-into-main-feed-on-reload.md)
 - [Tooltip Flickering at Top-Left on Fast Mouse Movement](bugs/.solved/SOLVED_tooltip-flickering-top-left-on-fast-mouse-movement.md)
 - [Triple Ratchet State Save Destroys Template/Evals Fields](bugs/.solved/triple-ratchet-state-save-destroys-invite-fields.md)
 - [user:kick Role Permission is Non-Functional for Non-Owners](bugs/.solved/user-kick-role-permission-non-functional.md)
@@ -146,8 +147,9 @@ This is the main index for all documentation, bug reports, and task management.
 
 ### Pending Tasks
 
-- [Design: Discord-style Thread Panel Layout with Resize](tasks/2025-03-09-thread-panel-discord-layout-design.md)
-- [Discord-style Thread Panel Layout Implementation Plan](tasks/2025-03-09-thread-panel-discord-layout.md)
+- [Thread-Aware Navigation for Bookmarks, Search & Pins](tasks/2026-03-10-thread-aware-navigation-design.md)
+- [Thread-Aware Navigation Implementation Plan](tasks/2026-03-10-thread-aware-navigation.md)
+- [Thread Title Editing Implementation Plan](tasks/2026-03-11-thread-title-editing.md)
 - [Accessibility Features — Remaining Work](tasks/accessibility-features-implementation.md)
 - [Add Space Tag support to shared types](tasks/quorum-shared-space-tags.md)
 - [Add User Bio Field to UserSettingsModal General Tab](tasks/add-user-bio-field.md)
@@ -163,7 +165,6 @@ This is the main index for all documentation, bug reports, and task management.
 - [Implement New Member Badge in Spaces](tasks/new-member-badge-spaces.md)
 - [Implement Role-Based Channel Visibility](tasks/channel-role-visibility.md)
 - [Implement Smart Context Extraction Around Mentions in NotificationPanel](tasks/notification-mention-context-extraction.md)
-- [Implement Threaded Conversations for Space Channels](tasks/threaded-conversations.md)
 - [Multi-User Invite Selection Enhancement](tasks/multi-user-invite-selection.md)
 - [Passkey Import UX Issue](tasks/passkey-import-ux-issue.md)
 - [Primitives Migration to quorum-shared](tasks/primitives-migration-to-quorum-shared.md)
@@ -248,6 +249,11 @@ This is the main index for all documentation, bug reports, and task management.
 
 ## 📋 Completed Tasks
 
+- [Design: Discord-style Thread Panel Layout with Resize](tasks/.done/2025-03-09-thread-panel-discord-layout-design.md)
+- [Discord-style Thread Panel Layout Implementation Plan](tasks/.done/2025-03-09-thread-panel-discord-layout.md)
+- [Simplified Message Actions Toolbar](tasks/.done/2026-03-09-simplified-message-actions-design.md)
+- [Simplified Message Actions Toolbar — Implementation Plan](tasks/.done/2026-03-09-simplified-message-actions-plan.md)
+- [Thread Root Soft-Delete Fix and Deleted Message Placeholder](tasks/.done/2026-03-10-thread-soft-delete-and-persisted-titles.md)
 - [AccentColorSwitcher Cross-Platform Migration + Persistence](tasks/.done/accent-color-switcher-cross-platform-migration.md)
 - [Add Context to Desktop Notifications](tasks/.done/rich-desktop-notifications-context.md)
 - [Add DM-Specific Action Queue Handlers](tasks/.done/dm-action-queue-handlers.md)
@@ -301,6 +307,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Implement Message Sending Indicator](tasks/.done/message-sending-indicator.md)
 - [Implement Per-Space Display Names and Avatars with Account Section](tasks/.done/per-space-display-name-avatar.md)
 - [Implement Spoiler Syntax (||text||) in Markdown Renderer](tasks/.done/spoiler-syntax-markdown-renderer.md)
+- [Implement Threaded Conversations for Space Channels](tasks/.done/threaded-conversations.md)
 - [Implement User Mute Feature](tasks/.done/implement-mute-feature.md)
 - [Implementation Plan: Repository Restructure for Cross-Platform Development](tasks/.done/implementation-plan-repo-restructure.md)
 - [Improve Mention Dropdown UX - Show Immediately on @ or #](tasks/.done/mention-dropdown-immediate-display.md)
@@ -425,4 +432,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2026-03-09 18:39:06
+**Last Updated**: 2026-03-11 17:42:05

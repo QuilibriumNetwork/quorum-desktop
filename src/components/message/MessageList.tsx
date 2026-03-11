@@ -69,6 +69,7 @@ interface MessageListProps {
   onHashMessageNotFound?: (messageId: string) => Promise<void>;
   isLoadingHashMessage?: boolean;
   scrollToMessageId?: string; // For programmatic scrolling (e.g., auto-jump to first unread)
+  highlightOnScroll?: boolean; // If true, also highlight the message when scrolling to it
   newMessagesSeparator?: {
     firstUnreadMessageId: string;
     initialUnreadCount: number;
@@ -141,6 +142,7 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
       onHashMessageNotFound,
       isLoadingHashMessage,
       scrollToMessageId,
+      highlightOnScroll = false,
       newMessagesSeparator,
       onDismissSeparator,
       spaceName,
@@ -450,9 +452,13 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
           setHasProcessedScrollTo(true);
           setHasJumpedToOldMessage(true); // Disable auto-scroll during pagination
 
-          // Scroll to the message (no highlight - unread line is shown via lastReadTimestamp)
           setTimeout(() => {
             scrollToMessage(scrollToMessageId, virtuoso.current, messageList);
+            if (highlightOnScroll) {
+              // Set URL hash to trigger Message component's hash-based highlight mechanism.
+              // Each Message listens to location.hash === `#msg-{id}` and highlights itself.
+              window.location.hash = `#msg-${scrollToMessageId}`;
+            }
           }, 200);
         }
       }
@@ -460,6 +466,7 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
       init,
       messageList,
       scrollToMessageId,
+      highlightOnScroll,
       hasProcessedScrollTo,
       scrollToMessage,
     ]);

@@ -8,7 +8,7 @@ export interface UseSearchResultsStateProps {
   isError: boolean;
   error?: Error | null;
   query: string;
-  onNavigate: (spaceId: string, channelId: string, messageId: string) => void;
+  onNavigate: (spaceId: string, channelId: string, messageId: string, threadId?: string) => void;
   onClose?: () => void;
 }
 
@@ -17,7 +17,8 @@ export interface UseSearchResultsStateReturn {
   handleNavigate: (
     spaceId: string,
     channelId: string,
-    messageId: string
+    messageId: string,
+    threadId?: string
   ) => void;
 }
 
@@ -44,8 +45,8 @@ export const useSearchResultsState = ({
 
   // Handle navigation and close
   const handleNavigate = useCallback(
-    (spaceId: string, channelId: string, messageId: string) => {
-      onNavigate(spaceId, channelId, messageId);
+    (spaceId: string, channelId: string, messageId: string, threadId?: string) => {
+      onNavigate(spaceId, channelId, messageId, threadId);
       onClose?.();
     },
     [onNavigate, onClose]

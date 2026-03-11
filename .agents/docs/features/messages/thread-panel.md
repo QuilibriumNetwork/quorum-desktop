@@ -209,6 +209,75 @@ Discord-style header with:
 - **MessageActionsMenu** — "Start Thread" / "View Thread" in right-click context menu
 - **Root message deletion** — Soft-delete preserves `threadMeta` so the thread remains accessible; root shows italicized "[Original message was deleted]" placeholder (i18n). Both local and remote deletion paths handle this: local via `useMessageActions.ts` (map + `messageDB.updateMessage`), remote via `MessageService.ts` `processMessage()` (IndexedDB soft-delete) and `addMessage()` (React Query cache map instead of filter)
 
+## Thread-Aware Navigation
+
+Bookmarks, search results, and pinned messages can navigate directly into a thread reply — opening the thread panel and scrolling to the target message. This uses a compound URL hash format.
+
+### Hash Format
+
+```
+#thread-{threadId}-msg-{messageId}    ← thread reply (opens thread panel + scrolls)
+#msg-{messageId}                      ← regular message (scrolls in main feed)
+```
+
+`buildMessageHash(messageId, threadId?)` and `parseMessageHash(hash)` in `src/utils/messageHashNavigation.ts` handle encoding/decoding.
+
+### Navigation Flow
+
+```
+Entry point (BookmarksPanel / PinnedMessagesPanel / Search)
+  → buildMessageHash(messageId, threadId)  // #thread-{threadId}-msg-{msgId}
+  → navigate('/spaces/spaceId/channelId#thread-...-msg-...')
+
+Cross-channel: Channel remounts (key: spaceId-channelId)
+Same-channel:  location.hash changes → useEffect([spaceId, channelId, location.hash]) re-fires
+
+  → parseMessageHash(window.location.hash) detects thread hash
+  → messageDB.getMessageById(identifier) OR getRootMessageByThreadId()
+  → setActiveThreadId(), setActivePanel('thread')
+  → queueMicrotask: threadCtx.setThreadState({ targetMessageId: messageId })
+  → ThreadPanel renders with scrollToMessageId={targetMessageId}
+  → MessageList scrollToMessageId effect fires → scrollToMessage()
+  → window.location.hash = '#msg-{id}' → Message self-highlights via location.hash check
+```
+
+### Critical Pattern: Hash-Based Cross-Component Highlighting
+
+`Message.tsx` calls `useMessageHighlight()` independently — each instance is **isolated**. Calling `highlightMessage()` from a `MessageList` hook instance has no effect on Message components rendered elsewhere in the tree.
+
+The only cross-component highlight signal that works is `location.hash === '#msg-{id}'`. When a component needs to trigger highlighting on a Message it doesn't directly control, it must set `window.location.hash = '#msg-{id}'` — not call any hook method.
+
+This applies to:
+- `MessageList.tsx` when `highlightOnScroll={true}` — sets `window.location.hash` after scrolling
+- Any future component that needs to highlight a specific Message
+
+### Same-Channel Navigation
+
+React Router doesn't remount `Channel` when navigating to the same channel (the component key `spaceId-channelId` doesn't change). To ensure thread hash changes are processed even when already on the target channel, `Channel.tsx` includes `location.hash` in the thread detection effect's dependency array:
+
+```typescript
+useEffect(() => {
+  // parse window.location.hash, open thread, set targetMessageId
+}, [spaceId, channelId, location.hash]);
+```
+
+Without `location.hash` in deps, clicking "Jump" in PinnedMessagesPanel or navigating from a bookmark while already on the target channel would do nothing.
+
+### threadId Propagation in Search
+
+Search returns root messages (the message that started a thread), not replies. Root messages have `threadMeta.threadId`, not a top-level `threadId`. When building the hash for search navigation:
+
+```typescript
+const threadId = message.threadId ?? message.threadMeta?.threadId;
+```
+
+`message.threadId` handles reply messages; `message.threadMeta?.threadId` handles root messages. Both cases use the same hash format — Channel.tsx resolves the root message from the threadId via `getRootMessageByThreadId()`.
+
+The `threadId` must flow through the entire search chain without being dropped:
+- `useSearchResultFormatting.ts` → `onNavigate(spaceId, channelId, messageId, threadId)`
+- `useSearchResultsState.ts` → `handleNavigate(spaceId, channelId, messageId, threadId?)` (must include the 4th param)
+- `useGlobalSearchNavigation.ts` → `buildMessageHash(messageId, threadId)`
+
 ## Technical Decisions
 
 | Decision | Choice | Rationale |
@@ -221,6 +290,8 @@ Discord-style header with:
 | Panel rendering | Full MessageList + Composer | Identical UX to main chat with no feature disparity |
 | Resize persistence | localStorage | Simple, synchronous, no server dependency |
 | Dark mode borders | `--color-border-muted` | More subtle external layout borders without affecting general UI borders |
+| Cross-component highlight | URL hash | `useMessageHighlight()` is isolated per instance; `window.location.hash = '#msg-{id}'` is the only cross-component signal Message.tsx responds to |
+| Same-channel hash re-detection | `location.hash` in effect deps | React Router doesn't remount Channel on same-channel navigation; hash dep ensures the thread detection effect re-fires |
 
 ## Known Limitations
 
@@ -232,7 +303,7 @@ Discord-style header with:
 - **Resize desktop only** — Resize handle uses mouse events and is hidden below MD; no touch support for drag-to-resize
 - **No auto-archive** — Threads remain open indefinitely; no `autoArchiveDuration` mechanism
 - **Thread replies invisible on mobile** — Thread replies are filtered from the main feed at three layers (DB cursor in `getMessages()`, DB unread in `getFirstUnreadMessage()`, React hook in `useChannelMessages()`). Since mobile won't have a thread panel initially, thread replies are completely hidden for mobile users with no way to view them. Needs a platform-aware flag so replies stay in the main feed on platforms without thread panel support.
-- **No thread-aware navigation** — Bookmarks, search results, and pinned messages that point to thread replies silently fail: they navigate to the channel but the reply isn't in the main feed. Needs compound hash navigation (`#thread-{threadId}-msg-{messageId}`) so Channel.tsx can open the thread panel and scroll to the specific reply.
+- **Thread-aware navigation for new bookmarks only** — Existing bookmarks created before this feature was added don't store a `threadId`, so they fall back to `#msg-{id}` navigation and silently fail to open the thread panel. New bookmarks capture `threadId` at creation time. No migration path for legacy bookmarks.
 
 ## Future Work
 
@@ -249,7 +320,7 @@ These items are planned but not yet implemented:
 - **Custom thread titles** — Add `customTitle` field to `ThreadMeta`, set explicitly by the user and broadcast with consent. Overrides the auto-extracted title in `getThreadTitle()` resolution. Unlike auto-extracted titles, custom titles survive root deletion since they're stored in `threadMeta`.
 - **Extract ThreadService** — If MessageService grows further, extract thread handling to a dedicated service class.
 - **Mobile thread reply visibility** — Add a platform-aware flag to the three `isThreadReply` filter points (DB cursor, DB unread query, React hook). On platforms without thread panel support (mobile), skip the filter so thread replies appear inline in the main feed as regular messages. This prevents data loss while threads are desktop-only.
-- **Thread-aware navigation** — Extend hash navigation to support `#thread-{threadId}-msg-{messageId}`. Channel.tsx detects the compound hash, opens the thread panel for the given threadId, and the thread's MessageList scrolls to and highlights the target reply. Consumers (bookmarks, search, pins) build the compound hash when the message has `isThreadReply: true`. Includes bookmark migration for existing bookmarks without thread info.
+- **Bookmark migration** — Existing bookmarks don't store `threadId`, so clicking them won't open the thread panel for thread replies. A migration could backfill `threadId` by scanning messages at read time, but the impact is limited to bookmarks created before this feature shipped.
 
 ## Related Documentation
 
@@ -261,4 +332,4 @@ These items are planned but not yet implemented:
 ---
 
 _Created: 2026-03-09_
-_Updated: 2026-03-10 (thread root soft-delete: local + remote paths, deleted placeholder rendering, title fallback behavior; known limitations: mobile thread reply visibility gap, thread-aware navigation gap)_
+_Updated: 2026-03-11 (thread-aware navigation: added navigation flow, hash format, cross-component highlight pattern, same-channel hash re-detection, threadId propagation in search; updated known limitations and future work to reflect implementation)_
