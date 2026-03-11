@@ -155,6 +155,7 @@ export type Message = {
 export type ThreadMeta = {
   threadId: string;
   createdBy: string;
+  customTitle?: string;  // User-set title, overrides auto-derived
 };
 
 export type PostMessage = {
@@ -254,7 +255,7 @@ export type ThreadMessage = {
   senderId: string;
   type: 'thread';
   targetMessageId: string;
-  action: 'create';
+  action: 'create' | 'updateTitle';
   threadMeta: ThreadMeta;
 };
 
