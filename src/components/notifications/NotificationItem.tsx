@@ -9,7 +9,7 @@ import './NotificationItem.scss';
 
 interface NotificationItemProps {
   notification: MentionNotification | ReplyNotification;
-  onNavigate: (spaceId: string, channelId: string, messageId: string) => void;
+  onNavigate: (spaceId: string, channelId: string, messageId: string, threadId?: string) => void;
   displayName: string; // Message author display name
   mapSenderToUser: (senderId: string) => any; // For rendering mentions with display names
   className?: string;

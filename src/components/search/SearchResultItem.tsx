@@ -12,7 +12,7 @@ import './SearchResultItem.scss';
 
 interface SearchResultItemProps {
   result: SearchResult;
-  onNavigate: (spaceId: string, channelId: string, messageId: string) => void;
+  onNavigate: (spaceId: string, channelId: string, messageId: string, threadId?: string) => void;
   highlightTerms: (text: string) => string;
   className?: string;
   searchTerms: string[];
