@@ -1,11 +1,11 @@
-import React, { useRef, useMemo, useState, useCallback } from 'react';
+import React, { useRef, useMemo, useState, useCallback, useEffect } from 'react';
 import type { PostMessage } from '../../api/quorumApi';
 import { Button, Icon } from '../primitives';
 import { t } from '@lingui/core/macro';
 import { MessageList, MessageListRef } from '../message/MessageList';
 import MessageComposer, { MessageComposerRef } from '../message/MessageComposer';
 import { useMessageComposer } from '../../hooks';
-import { useThreadContext } from '../context/ThreadContext';
+import { useThreadContext, useThreadContextStore } from '../context/ThreadContext';
 import './ThreadPanel.scss';
 
 /**
@@ -34,6 +34,7 @@ export const ThreadPanel: React.FC = () => {
     submitMessage,
     submitSticker,
     channelProps,
+    targetMessageId,
   } = useThreadContext();
 
   const messageListRef = useRef<MessageListRef>(null);
@@ -113,6 +114,25 @@ export const ThreadPanel: React.FC = () => {
     return user?.displayName || null;
   }, [rootMessage, channelProps]);
 
+  // Access store to clear targetMessageId after scroll processing
+  const threadStore = useThreadContextStore();
+
+  // Clear targetMessageId after thread messages load and scroll is triggered.
+  // MessageList internally tracks "hasProcessedScrollTo" so it only scrolls once per value,
+  // but we clear the context to keep state clean.
+  useEffect(() => {
+    if (targetMessageId && threadMessages.length > 0) {
+      // Delay to let MessageList detect and process scrollToMessageId
+      const timer = setTimeout(() => {
+        const currentState = threadStore.getThreadState();
+        if (currentState.targetMessageId) {
+          threadStore.setThreadState({ ...currentState, targetMessageId: null });
+        }
+      }, 2000);
+      return () => clearTimeout(timer);
+    }
+  }, [targetMessageId, threadMessages.length, threadStore]);
+
   if (!isOpen || !threadId || !channelProps) return null;
 
   return (
@@ -181,6 +201,7 @@ export const ThreadPanel: React.FC = () => {
             groups={channelProps.spaceGroups}
             canUseEveryone={channelProps.canUseEveryone}
             alignToTop={true}
+            scrollToMessageId={targetMessageId ?? undefined}
           />
         )}
       </div>

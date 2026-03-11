@@ -125,7 +125,9 @@ const Channel: React.FC<ChannelProps> = ({
   const threadCtx = useThreadContextStore();
 
   React.useEffect(() => {
+    const current = threadCtx.getThreadState();
     threadCtx.setThreadState({
+      ...current,
       isOpen: activePanel === 'thread',
       threadId: activeThreadId,
       rootMessage: activeThreadRootMessage,
