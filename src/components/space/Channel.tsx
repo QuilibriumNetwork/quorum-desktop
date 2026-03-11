@@ -28,6 +28,7 @@ import { Button, Tooltip, Icon } from '../primitives';
 import { MobileDrawer, ListSearchInput, TouchAwareListItem } from '../ui';
 import { getIconColorHex } from './IconPicker/types';
 import { isTouchDevice } from '../../utils/platform';
+import { parseMessageHash } from '../../utils/messageHashNavigation';
 import MessageComposer, {
   MessageComposerRef,
 } from '../message/MessageComposer';
@@ -579,7 +580,7 @@ const Channel: React.FC<ChannelProps> = ({
   // Auto-jump to first unread message on channel entry
   useEffect(() => {
     // Skip if there's a hash navigation in progress
-    if (window.location.hash.startsWith('#msg-')) {
+    if (window.location.hash.startsWith('#msg-') || window.location.hash.startsWith('#thread-')) {
       return;
     }
 
@@ -699,6 +700,61 @@ const Channel: React.FC<ChannelProps> = ({
     setScrollToMessageId(undefined);
     setNewMessagesSeparator(null);
   }, [channelId]);
+
+  // Handle thread hash navigation: #thread-{rootMessageId}-msg-{replyMessageId}
+  useEffect(() => {
+    const hash = window.location.hash;
+    const parsed = parseMessageHash(hash);
+    if (!parsed || parsed.type !== 'threadMessage') return;
+
+    const { rootMessageId, messageId } = parsed;
+
+    const openThreadFromHash = async () => {
+      try {
+        // Fetch the root message directly by ID
+        const rootMessage = await messageDB.getMessageById(rootMessageId);
+
+        if (!rootMessage || !rootMessage.threadMeta) {
+          console.warn('Thread root message not found:', rootMessageId);
+          history.replaceState(null, '', window.location.pathname + window.location.search);
+          return;
+        }
+
+        const threadId = rootMessage.threadMeta.threadId;
+
+        // Check if this thread is already open
+        if (activeThreadId === threadId) {
+          // Same thread — just set targetMessageId for scroll
+          const currentState = threadCtx.getThreadState();
+          threadCtx.setThreadState({ ...currentState, targetMessageId: messageId });
+        } else {
+          // Different thread or no thread open — open the thread panel
+          setActiveThreadId(threadId);
+          setActiveThreadRootMessage(rootMessage);
+          setActivePanel('thread');
+
+          // Set the target message for scroll-to in the thread panel.
+          // Use a microtask delay to ensure the state setters above have been processed
+          // by the existing state sync useEffect first.
+          queueMicrotask(() => {
+            const currentState = threadCtx.getThreadState();
+            threadCtx.setThreadState({ ...currentState, targetMessageId: messageId });
+          });
+        }
+
+        // Clean up hash after highlight animation
+        setTimeout(() => {
+          history.replaceState(null, '', window.location.pathname + window.location.search);
+        }, 8000);
+      } catch (error) {
+        console.error('Failed to open thread from hash:', error);
+        history.replaceState(null, '', window.location.pathname + window.location.search);
+      }
+    };
+
+    openThreadFromHash();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [spaceId, channelId]);
 
   // Get current user's role IDs for role mention filtering
   const userRoleIds = React.useMemo(() => {

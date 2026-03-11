@@ -298,6 +298,7 @@ export type Bookmark = {
   conversationId?: string;      // For DM messages (undefined for channels)
   sourceType: 'channel' | 'dm';
   createdAt: number;            // Timestamp for sorting
+  threadId?: string;              // Thread ID if bookmarked message is a thread reply
 
   // Cached preview - avoids cross-context message resolution
   // Stored at bookmark creation time, acceptable if slightly stale
