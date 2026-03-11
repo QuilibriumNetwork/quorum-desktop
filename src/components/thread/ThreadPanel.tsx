@@ -8,19 +8,24 @@ import { useMessageComposer } from '../../hooks';
 import { useThreadContext, useThreadContextStore } from '../context/ThreadContext';
 import './ThreadPanel.scss';
 
+const THREAD_TITLE_MAX_CHARS = 100;
+
 /**
- * Extract a title from the root message text.
- * Falls back to "Thread" if no text content.
- * CSS handles truncation via text-overflow: ellipsis based on available width.
+ * Derive display title from root message.
+ * Resolution order: customTitle → first 100 chars of message text → "Thread" fallback.
  */
-function getThreadTitle(rootMessage: { content?: any } | null): string {
+function getThreadTitle(rootMessage: { content?: any; threadMeta?: { customTitle?: string } } | null): string {
+  if (!rootMessage) return 'Thread';
+  if (rootMessage.threadMeta?.customTitle) return rootMessage.threadMeta.customTitle;
   if (!rootMessage?.content) return 'Thread';
   const content = rootMessage.content as PostMessage;
   if (!content.text) return 'Thread';
   const text = Array.isArray(content.text) ? content.text.join(' ') : content.text;
-  // Strip markdown/formatting for a clean title
   const clean = text.replace(/[*_~`#>[\]()!]/g, '').trim();
-  return clean || 'Thread';
+  if (!clean) return 'Thread';
+  return clean.length > THREAD_TITLE_MAX_CHARS
+    ? clean.substring(0, THREAD_TITLE_MAX_CHARS)
+    : clean;
 }
 
 export const ThreadPanel: React.FC = () => {
