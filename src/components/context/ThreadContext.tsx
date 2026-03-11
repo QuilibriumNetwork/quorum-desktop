@@ -5,6 +5,7 @@ import type {
   Channel,
   Sticker,
   Emoji,
+  ThreadMeta,
 } from '../../api/quorumApi';
 
 export interface ThreadChannelProps {
@@ -47,6 +48,7 @@ interface ThreadActions {
   closeThread: () => void;
   submitMessage: (message: string | object, inReplyTo?: string) => Promise<void>;
   submitSticker?: (stickerId: string, inReplyTo?: string) => Promise<void>;
+  updateTitle: (targetMessageId: string, threadMeta: ThreadMeta | undefined, newTitle: string) => Promise<void>;
 }
 
 export interface ThreadContextValue {
@@ -80,6 +82,7 @@ const defaultActions: ThreadActions = {
   openThread: noop,
   closeThread: noop,
   submitMessage: noopAsync,
+  updateTitle: noopAsync,
 };
 
 const defaultValue: ThreadContextValue = {

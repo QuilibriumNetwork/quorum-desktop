@@ -513,6 +513,43 @@ const Channel: React.FC<ChannelProps> = ({
     [activeThreadId, spaceId, channelId, submitChannelMessage, queryClient, user.currentPasskeyInfo, space, skipSigning, isSpaceOwner, messageDB]
   );
 
+  // Handle updating the thread title and broadcasting to peers
+  const handleUpdateThreadTitle = useCallback(
+    async (targetMessageId: string, threadMeta: ThreadMeta | undefined, newTitle: string) => {
+      if (spaceId === channelId) return; // No threads in DMs
+      if (!activeThreadId) return; // Need threadId to construct updatedMeta
+
+      const trimmed = newTitle.trim();
+      // Build updated threadMeta — merge with existing or construct from activeThreadId
+      const updatedMeta: ThreadMeta = {
+        threadId: threadMeta?.threadId ?? activeThreadId,
+        createdBy: threadMeta?.createdBy ?? user.currentPasskeyInfo!.address,
+        customTitle: trimmed || undefined,
+      };
+
+      const threadMessage: ThreadMessage = {
+        type: 'thread',
+        senderId: user.currentPasskeyInfo!.address,
+        targetMessageId,
+        action: 'updateTitle',
+        threadMeta: updatedMeta,
+      };
+
+      const effectiveSkip = space?.isRepudiable ? skipSigning : false;
+      await submitChannelMessage(
+        spaceId,
+        channelId,
+        threadMessage,
+        queryClient,
+        user.currentPasskeyInfo!,
+        undefined,        // inReplyTo
+        effectiveSkip,
+        isSpaceOwner
+      );
+    },
+    [spaceId, channelId, activeThreadId, user.currentPasskeyInfo, submitChannelMessage, queryClient, space, skipSigning, isSpaceOwner]
+  );
+
   // Sync thread actions to context
   React.useEffect(() => {
     threadCtx.setThreadActions({
@@ -524,8 +561,9 @@ const Channel: React.FC<ChannelProps> = ({
       },
       submitMessage: handleSubmitThreadMessage,
       submitSticker: handleSubmitThreadSticker,
+      updateTitle: handleUpdateThreadTitle,
     });
-  }, [handleOpenThread, handleSubmitThreadMessage, handleSubmitThreadSticker]);
+  }, [handleOpenThread, handleSubmitThreadMessage, handleSubmitThreadSticker, handleUpdateThreadTitle]);
 
   // Handle user profile modal close
   const handleUserProfileClose = useCallback(() => {
