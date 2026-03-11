@@ -97,14 +97,42 @@
     min-width: 0;
   }
 
-  h2#{&}__title {
+  &__title-area {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  &__title-label {
+    font-size: $text-xs;
+    color: var(--text-subtle);
+    font-weight: 500;
+  }
+
+  &__title {
     font-weight: 700;
     font-size: $text-xl;
     color: var(--text-primary);
     margin: 0;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
+    word-break: break-word;
+    cursor: pointer;
+    border-radius: $rounded-sm;
+    padding: 2px 4px;
+    margin-left: -4px;
+
+    &:hover {
+      background-color: var(--color-field-bg-focus);
+    }
+  }
+
+  &__title-input {
+    font-weight: 700;
+    font-size: $text-xl;
+
+    .quorum-input--minimal {
+      padding: 2px 4px;
+      margin-left: -4px;
+    }
   }
 
   &__started-by {

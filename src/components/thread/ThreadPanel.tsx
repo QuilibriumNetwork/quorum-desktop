@@ -1,6 +1,6 @@
 import React, { useRef, useMemo, useState, useCallback, useEffect } from 'react';
 import type { PostMessage } from '../../api/quorumApi';
-import { Button, Icon } from '../primitives';
+import { Button, Icon, Input } from '../primitives';
 import { t } from '@lingui/core/macro';
 import { MessageList, MessageListRef } from '../message/MessageList';
 import MessageComposer, { MessageComposerRef } from '../message/MessageComposer';
@@ -40,6 +40,7 @@ export const ThreadPanel: React.FC = () => {
     submitSticker,
     channelProps,
     targetMessageId,
+    updateTitle,
   } = useThreadContext();
 
   const messageListRef = useRef<MessageListRef>(null);
@@ -70,6 +71,36 @@ export const ThreadPanel: React.FC = () => {
     }
     return DEFAULT_WIDTH;
   });
+
+  const [isEditingTitle, setIsEditingTitle] = useState(false);
+  const [titleDraft, setTitleDraft] = useState('');
+
+  const handleTitleClick = useCallback(() => {
+    setTitleDraft(rootMessage?.threadMeta?.customTitle ?? '');
+    setIsEditingTitle(true);
+  }, [rootMessage]);
+
+  const handleTitleSave = useCallback(() => {
+    if (!rootMessage) return;
+    const trimmed = titleDraft.trim();
+    // Only broadcast if value actually changed
+    const current = rootMessage.threadMeta?.customTitle ?? '';
+    if (trimmed !== current) {
+      // threadMeta may be undefined in a race (message arrived before thread 'create' broadcast)
+      // updateTitle in Channel.tsx constructs updatedMeta from scratch, so passing undefined is safe
+      updateTitle(rootMessage.messageId, rootMessage.threadMeta, trimmed);
+    }
+    setIsEditingTitle(false);
+  }, [titleDraft, rootMessage, updateTitle]);
+
+  const handleTitleKeyDown = useCallback((e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      handleTitleSave();
+    } else if (e.key === 'Escape') {
+      setIsEditingTitle(false);
+    }
+  }, [handleTitleSave]);
 
   const handleResizeStart = useCallback((e: React.MouseEvent) => {
     e.preventDefault();
@@ -155,7 +186,32 @@ export const ThreadPanel: React.FC = () => {
       {/* Header — Discord-style: title + "Started by X" + close */}
       <div className="thread-panel__header">
         <div className="thread-panel__header-content">
-          <h2 className="thread-panel__title">{threadTitle}</h2>
+          <div className="thread-panel__title-area">
+              <label className="thread-panel__title-label">{t`Thread Title`}</label>
+              {isEditingTitle ? (
+                <Input
+                  variant="minimal"
+                  value={titleDraft}
+                  onChange={(val: string) => setTitleDraft(val.slice(0, 100))}
+                  onBlur={handleTitleSave}
+                  onKeyDown={handleTitleKeyDown}
+                  placeholder={threadTitle}
+                  autoFocus
+                  className="thread-panel__title-input"
+                />
+              ) : (
+                <div
+                  className="thread-panel__title"
+                  onClick={handleTitleClick}
+                  role="button"
+                  tabIndex={0}
+                  onKeyDown={(e) => e.key === 'Enter' && handleTitleClick()}
+                  aria-label={t`Edit thread title`}
+                >
+                  {threadTitle}
+                </div>
+              )}
+            </div>
           {starterName && (
             <span className="thread-panel__started-by">
               {t`Started by`} <strong>{starterName}</strong>
