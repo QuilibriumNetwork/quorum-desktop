@@ -546,6 +546,11 @@ const Channel: React.FC<ChannelProps> = ({
         effectiveSkip,
         isSpaceOwner
       );
+
+      // Update the local root message snapshot so ThreadPanel re-renders with the new title
+      setActiveThreadRootMessage((prev) =>
+        prev ? { ...prev, threadMeta: { ...prev.threadMeta, ...updatedMeta } } : prev
+      );
     },
     [spaceId, channelId, activeThreadId, user.currentPasskeyInfo, submitChannelMessage, queryClient, space, skipSigning, isSpaceOwner]
   );
