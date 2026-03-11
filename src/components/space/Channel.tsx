@@ -707,35 +707,42 @@ const Channel: React.FC<ChannelProps> = ({
     const parsed = parseMessageHash(hash);
     if (!parsed || parsed.type !== 'threadMessage') return;
 
-    const { rootMessageId, messageId } = parsed;
-
     const openThreadFromHash = async () => {
       try {
-        // Fetch the root message directly by ID
-        const rootMessage = await messageDB.getMessageById(rootMessageId);
+        const { rootMessageId: identifier, messageId } = parsed;
 
-        if (!rootMessage || !rootMessage.threadMeta) {
-          console.warn('Thread root message not found:', rootMessageId);
+        // Try to fetch as a direct message ID first (pins/search pass root message ID)
+        let rootMessage = await messageDB.getMessageById(identifier);
+        let threadId: string | undefined;
+
+        if (rootMessage?.threadMeta) {
+          // Found root message directly
+          threadId = rootMessage.threadMeta.threadId;
+        } else {
+          // Identifier might be a threadId (bookmarks store threadId)
+          rootMessage = await messageDB.getRootMessageByThreadId({
+            spaceId,
+            channelId,
+            threadId: identifier,
+          });
+          threadId = identifier;
+        }
+
+        if (!rootMessage || !threadId) {
+          console.warn('Thread not found for identifier:', identifier);
           history.replaceState(null, '', window.location.pathname + window.location.search);
           return;
         }
 
-        const threadId = rootMessage.threadMeta.threadId;
-
         // Check if this thread is already open
         if (activeThreadId === threadId) {
-          // Same thread — just set targetMessageId for scroll
           const currentState = threadCtx.getThreadState();
           threadCtx.setThreadState({ ...currentState, targetMessageId: messageId });
         } else {
-          // Different thread or no thread open — open the thread panel
           setActiveThreadId(threadId);
           setActiveThreadRootMessage(rootMessage);
           setActivePanel('thread');
 
-          // Set the target message for scroll-to in the thread panel.
-          // Use a microtask delay to ensure the state setters above have been processed
-          // by the existing state sync useEffect first.
           queueMicrotask(() => {
             const currentState = threadCtx.getThreadState();
             threadCtx.setThreadState({ ...currentState, targetMessageId: messageId });
