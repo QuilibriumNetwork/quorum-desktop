@@ -39,6 +39,7 @@ interface ThreadState {
   rootMessage: MessageType | null;
   threadMessages: MessageType[];
   isLoading: boolean;
+  targetMessageId: string | null;
 }
 
 interface ThreadActions {
@@ -72,6 +73,7 @@ const defaultState: ThreadState = {
   rootMessage: null,
   threadMessages: [],
   isLoading: false,
+  targetMessageId: null,
 };
 
 const defaultActions: ThreadActions = {
