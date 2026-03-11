@@ -805,10 +805,16 @@ export class MessageService {
       });
       if (!targetMessage) return; // Root not found
 
-      // Idempotent
-      if (targetMessage.threadMeta?.threadId === threadMsg.threadMeta.threadId) return;
+      if (threadMsg.action === 'create') {
+        // Idempotent — skip if threadId already set
+        if (targetMessage.threadMeta?.threadId === threadMsg.threadMeta.threadId) return;
+      }
+      // For 'updateTitle': always apply the patch (title can change multiple times)
 
-      const updatedMessage: Message = { ...targetMessage, threadMeta: threadMsg.threadMeta };
+      const updatedMessage: Message = {
+        ...targetMessage,
+        threadMeta: { ...targetMessage.threadMeta, ...threadMsg.threadMeta },
+      };
       await messageDB.saveMessage(
         updatedMessage,
         0,
@@ -1315,13 +1321,18 @@ export class MessageService {
               ...page,
               messages: page.messages.map((m: Message) =>
                 m.messageId === threadMsg.targetMessageId
-                  ? { ...m, threadMeta: threadMsg.threadMeta }
+                  ? { ...m, threadMeta: { ...m.threadMeta, ...threadMsg.threadMeta } }
                   : m
               ),
             })),
           };
         }
       );
+      // Invalidate thread messages so the open panel re-reads the updated root.
+      // Applies to both 'create' and 'updateTitle' actions (harmless for 'create').
+      queryClient.invalidateQueries({
+        queryKey: ['thread-messages', spaceId, channelId, threadMsg.threadMeta.threadId],
+      });
     } else if (decryptedContent.content.type === 'update-profile') {
       const participant = await this.messageDB.getSpaceMember(
         spaceId,
