@@ -133,6 +133,7 @@ const Channel: React.FC<ChannelProps> = ({
       rootMessage: activeThreadRootMessage,
       threadMessages,
       isLoading: isLoadingThread,
+      targetMessageId: current.targetMessageId,
     });
   }, [activePanel, activeThreadId, activeThreadRootMessage, threadMessages, isLoadingThread]);
 
