@@ -64,7 +64,6 @@ export const platformFeatures = {
   hasCamera: true,
   hasDeepLinking: true,
   hasPushNotifications: true,
-  supportsThreadPanel: false,
 };
 
 // React Native specific exports
