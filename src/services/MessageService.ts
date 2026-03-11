@@ -4499,8 +4499,13 @@ export class MessageService {
         });
         if (!targetMessage) return outbounds;
 
-        // Idempotent — deterministic ID means duplicate creates are no-ops
-        if (targetMessage.threadMeta?.threadId === threadMsg.threadMeta.threadId) {
+        // Idempotent for 'create' only — skip if threadId already set
+        if (threadMsg.action === 'create' && targetMessage.threadMeta?.threadId === threadMsg.threadMeta.threadId) {
+          return outbounds;
+        }
+
+        // For 'updateTitle': only the thread creator may rename
+        if (threadMsg.action === 'updateTitle' && threadMsg.senderId !== targetMessage.threadMeta?.createdBy) {
           return outbounds;
         }
 
@@ -4547,8 +4552,11 @@ export class MessageService {
 
         outbounds.push(await this.encryptAndSendToSpace(spaceId, message));
 
-        // Update root message with threadMeta
-        const updatedTarget: Message = { ...targetMessage, threadMeta: threadMsg.threadMeta };
+        // Update root message with threadMeta (merge for updateTitle, replace for create)
+        const mergedMeta = threadMsg.action === 'updateTitle'
+          ? { ...targetMessage.threadMeta, ...threadMsg.threadMeta }
+          : threadMsg.threadMeta;
+        const updatedTarget: Message = { ...targetMessage, threadMeta: mergedMeta };
         const conversationId = spaceId + '/' + channelId;
         const conversation = await this.messageDB.getConversation({
           conversationId,
@@ -4579,13 +4587,22 @@ export class MessageService {
                 ...page,
                 messages: page.messages.map((m: Message) =>
                   m.messageId === threadMsg.targetMessageId
-                    ? { ...m, threadMeta: threadMsg.threadMeta }
+                    ? { ...m, threadMeta: threadMsg.action === 'updateTitle'
+                        ? { ...m.threadMeta, ...threadMsg.threadMeta }
+                        : threadMsg.threadMeta }
                     : m
                 ),
               })),
             };
           }
         );
+
+        // Invalidate thread messages so the open panel re-reads the updated root (for updateTitle)
+        if (threadMsg.action === 'updateTitle') {
+          queryClient.invalidateQueries({
+            queryKey: ['thread-messages', spaceId, channelId, threadMsg.threadMeta.threadId],
+          });
+        }
 
         return outbounds;
       }
