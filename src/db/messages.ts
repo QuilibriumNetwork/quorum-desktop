@@ -522,6 +522,51 @@ export class MessageDB {
     });
   }
 
+  /**
+   * Find the root message for a thread by scanning channel messages.
+   * Root messages have threadMeta.threadId but NOT a top-level threadId field,
+   * so they are NOT in the by_thread index. This scans the by_conversation_time
+   * index instead. Only called on user-initiated navigation (bookmark/pin/search click).
+   */
+  async getRootMessageByThreadId({
+    spaceId,
+    channelId,
+    threadId,
+  }: {
+    spaceId: string;
+    channelId: string;
+    threadId: string;
+  }): Promise<Message | undefined> {
+    await this.init();
+    return new Promise((resolve, reject) => {
+      const transaction = this.db!.transaction('messages', 'readonly');
+      const store = transaction.objectStore('messages');
+      const index = store.index('by_conversation_time');
+
+      const range = IDBKeyRange.bound(
+        [spaceId, channelId, 0],
+        [spaceId, channelId, Number.MAX_VALUE]
+      );
+
+      const request = index.openCursor(range, 'next');
+
+      request.onsuccess = (event) => {
+        const cursor = (event.target as IDBRequest).result;
+        if (cursor) {
+          const message = cursor.value as Message;
+          if (message.threadMeta?.threadId === threadId) {
+            resolve(message);
+            return;
+          }
+          cursor.continue();
+        } else {
+          resolve(undefined);
+        }
+      };
+      request.onerror = () => reject(request.error);
+    });
+  }
+
   async getThreadStats({
     spaceId,
     channelId,
