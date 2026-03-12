@@ -10,6 +10,7 @@ interface ThreadIndicatorProps {
   channelId: string;
   threadId: string;
   onClick: () => void;
+  isClosed?: boolean;
 }
 
 export const ThreadIndicator: React.FC<ThreadIndicatorProps> = ({
@@ -17,6 +18,7 @@ export const ThreadIndicator: React.FC<ThreadIndicatorProps> = ({
   channelId,
   threadId,
   onClick,
+  isClosed,
 }) => {
   const { data: stats } = useThreadStats({ spaceId, channelId, threadId });
   const replyCount = stats?.replyCount ?? 0;
@@ -24,7 +26,7 @@ export const ThreadIndicator: React.FC<ThreadIndicatorProps> = ({
   return (
     <button
       type="button"
-      className="thread-indicator"
+      className={`thread-indicator ${isClosed ? 'thread-indicator--closed' : ''}`}
       onClick={onClick}
     >
       <Icon name="messages" className="thread-indicator__icon" />
@@ -35,6 +37,7 @@ export const ThreadIndicator: React.FC<ThreadIndicatorProps> = ({
             ? t`1 reply`
             : t`${replyCount} replies`}
       </span>
+      {isClosed && <Icon name="lock" className="thread-indicator__lock-icon" size="xs" />}
       {stats?.lastReplyAt && (
         <span className="thread-indicator__time">
           {formatMessageDate(stats.lastReplyAt, true)}

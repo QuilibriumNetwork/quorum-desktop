@@ -31,4 +31,14 @@
     color: var(--text-subtle);
     font-weight: 400;
   }
+
+  &--closed {
+    .thread-indicator__count {
+      color: var(--text-subtle);
+    }
+  }
+
+  &__lock-icon {
+    color: var(--text-subtle);
+  }
 }

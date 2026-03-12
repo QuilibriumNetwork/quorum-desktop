@@ -1219,6 +1219,7 @@ export const Message = React.memo(
                   channelId={message.channelId}
                   threadId={message.threadMeta.threadId}
                   onClick={onStartThread}
+                  isClosed={message.threadMeta?.isClosed}
                 />
               )}
 
