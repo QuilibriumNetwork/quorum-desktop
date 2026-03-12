@@ -50,6 +50,9 @@ interface ThreadActions {
   submitMessage: (message: string | object, inReplyTo?: string) => Promise<void>;
   submitSticker?: (stickerId: string, inReplyTo?: string) => Promise<void>;
   updateTitle: (targetMessageId: string, threadMeta: ThreadMeta | undefined, newTitle: string) => Promise<void>;
+  setThreadClosed: (threadId: string, close: boolean) => Promise<void>;
+  updateThreadSettings: (threadId: string, autoCloseAfter: number | undefined) => Promise<void>;
+  removeThread: (threadId: string) => Promise<void>;
 }
 
 export interface ThreadContextValue {
@@ -84,6 +87,9 @@ const defaultActions: ThreadActions = {
   closeThread: noop,
   submitMessage: noopAsync,
   updateTitle: noopAsync,
+  setThreadClosed: noopAsync,
+  updateThreadSettings: noopAsync,
+  removeThread: noopAsync,
 };
 
 const defaultValue: ThreadContextValue = {
