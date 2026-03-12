@@ -439,6 +439,10 @@ const Channel: React.FC<ChannelProps> = ({
           effectiveSkip,
           isSpaceOwner
         );
+
+        // Attach the newly created threadMeta to the root message snapshot
+        // so ThreadPanel sees the correct createdBy (the current user).
+        message = { ...message, threadMeta };
       }
 
       setActiveThreadId(threadId);

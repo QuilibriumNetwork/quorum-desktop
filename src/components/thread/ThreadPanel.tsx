@@ -202,8 +202,11 @@ export const ThreadPanel: React.FC = () => {
   const threadTitle = useMemo(() => getThreadTitle(rootMessage), [rootMessage]);
 
   const starterName = useMemo(() => {
-    if (!rootMessage?.content?.senderId || !channelProps) return null;
-    const user = channelProps.mapSenderToUser(rootMessage.content.senderId);
+    if (!channelProps) return null;
+    // Use thread creator (createdBy) rather than original message author (senderId)
+    const creatorId = rootMessage?.threadMeta?.createdBy;
+    if (!creatorId) return null;
+    const user = channelProps.mapSenderToUser(creatorId);
     return user?.displayName || null;
   }, [rootMessage, channelProps]);
 
