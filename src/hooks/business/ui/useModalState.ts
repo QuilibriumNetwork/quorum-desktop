@@ -1,4 +1,5 @@
 import { useReducer, useCallback } from 'react';
+import type { Message as MessageType } from '../../../api/quorumApi';
 
 // Mute target interface
 export interface MuteUserTarget {
@@ -59,6 +60,11 @@ export interface ModalState {
     isOpen: boolean;
     folderId?: string;
   };
+  threadSettings: {
+    isOpen: boolean;
+    threadId?: string;
+    rootMessage?: MessageType;
+  };
 }
 
 // Modal actions
@@ -87,7 +93,9 @@ type ModalAction =
   | { type: 'OPEN_CONVERSATION_SETTINGS'; conversationId: string }
   | { type: 'CLOSE_CONVERSATION_SETTINGS' }
   | { type: 'OPEN_FOLDER_EDITOR'; folderId?: string }
-  | { type: 'CLOSE_FOLDER_EDITOR' };
+  | { type: 'CLOSE_FOLDER_EDITOR' }
+  | { type: 'OPEN_THREAD_SETTINGS'; threadId: string; rootMessage: MessageType }
+  | { type: 'CLOSE_THREAD_SETTINGS' };
 
 // Initial state
 const initialModalState: ModalState = {
@@ -101,6 +109,7 @@ const initialModalState: ModalState = {
   muteUser: { isOpen: false },
   conversationSettings: { isOpen: false },
   folderEditor: { isOpen: false },
+  threadSettings: { isOpen: false },
 };
 
 // Modal reducer
@@ -191,6 +200,11 @@ function modalReducer(state: ModalState, action: ModalAction): ModalState {
       };
     case 'CLOSE_FOLDER_EDITOR':
       return { ...state, folderEditor: { isOpen: false } };
+
+    case 'OPEN_THREAD_SETTINGS':
+      return { ...state, threadSettings: { isOpen: true, threadId: action.threadId, rootMessage: action.rootMessage } };
+    case 'CLOSE_THREAD_SETTINGS':
+      return { ...state, threadSettings: { isOpen: false } };
 
     default:
       return state;
@@ -298,6 +312,17 @@ export const useModalState = () => {
     dispatch({ type: 'CLOSE_FOLDER_EDITOR' });
   }, []);
 
+  // Thread Settings Modal
+  const openThreadSettings = useCallback(
+    (threadId: string, rootMessage: MessageType) =>
+      dispatch({ type: 'OPEN_THREAD_SETTINGS', threadId, rootMessage }),
+    []
+  );
+  const closeThreadSettings = useCallback(
+    () => dispatch({ type: 'CLOSE_THREAD_SETTINGS' }),
+    []
+  );
+
   return {
     // State
     state,
@@ -341,6 +366,10 @@ export const useModalState = () => {
     // Folder Editor
     openFolderEditor,
     closeFolderEditor,
+
+    // Thread Settings
+    openThreadSettings,
+    closeThreadSettings,
 
     // Legacy compatibility
     isNewDirectMessageOpen: state.newDirectMessage.isOpen,
