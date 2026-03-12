@@ -7,10 +7,10 @@ import {
   Button,
   Spacer,
   Text,
+  Select,
 } from '../primitives';
-import { useThreadContext } from '../context/ThreadContext';
-import { useModals } from '../context/ModalProvider';
 import type { Message as MessageType } from '../../api/quorumApi';
+import type { ThreadChannelProps } from '../context/ThreadContext';
 
 // Auto-close preset options
 const AUTO_CLOSE_OPTIONS = [
@@ -19,11 +19,16 @@ const AUTO_CLOSE_OPTIONS = [
   { value: String(24 * 60 * 60 * 1000), label: '24 hours' },
   { value: String(3 * 24 * 60 * 60 * 1000), label: '3 days' },
   { value: String(7 * 24 * 60 * 60 * 1000), label: '1 week' },
-] as const;
+];
 
 interface ThreadSettingsModalProps {
   threadId: string;
   rootMessage: MessageType;
+  threadMessages: MessageType[];
+  channelProps: ThreadChannelProps | null;
+  setThreadClosed?: (threadId: string, close: boolean) => Promise<void>;
+  updateThreadSettings?: (threadId: string, autoCloseAfter: number | undefined) => Promise<void>;
+  removeThread?: (threadId: string) => Promise<void>;
   visible: boolean;
   onClose: () => void;
 }
@@ -31,20 +36,19 @@ interface ThreadSettingsModalProps {
 export const ThreadSettingsModal: React.FC<ThreadSettingsModalProps> = ({
   threadId,
   rootMessage,
+  threadMessages,
+  channelProps,
+  setThreadClosed,
+  updateThreadSettings,
+  removeThread,
   visible,
   onClose,
 }) => {
-  const threadCtx = useThreadContext();
-  const { closeThreadSettings } = useModals();
-
   const [removeConfirmStep, setRemoveConfirmStep] = React.useState(0);
 
   const threadMeta = rootMessage.threadMeta;
   const isClosed = threadMeta?.isClosed ?? false;
   const currentAutoClose = threadMeta?.autoCloseAfter;
-
-  // Actions are spread directly on threadCtx from getThreadActions()
-  const { setThreadClosed, updateThreadSettings, removeThread, channelProps, threadMessages } = threadCtx;
 
   const currentUserAddress = channelProps?.currentUserAddress;
 
@@ -79,7 +83,7 @@ export const ThreadSettingsModal: React.FC<ThreadSettingsModalProps> = ({
       return;
     }
     await removeThread?.(threadId);
-    closeThreadSettings();
+    onClose();
   };
 
   if (!canManage) return null;
@@ -96,17 +100,13 @@ export const ThreadSettingsModal: React.FC<ThreadSettingsModalProps> = ({
           {/* Auto-close section */}
           <Flex direction="column" gap="sm" className="mb-3">
             <div className="text-label-strong">{t`Auto-close after`}</div>
-            <select
+            <Select
               value={autoCloseValue}
-              onChange={(e) => handleAutoCloseChange(e.target.value)}
-              className="w-full rounded border border-border bg-surface px-2 py-1 text-sm text-text"
-            >
-              {AUTO_CLOSE_OPTIONS.map((opt) => (
-                <option key={opt.value} value={opt.value}>
-                  {opt.label}
-                </option>
-              ))}
-            </select>
+              options={AUTO_CLOSE_OPTIONS}
+              onChange={(val: string | string[]) => handleAutoCloseChange(Array.isArray(val) ? val[0] : val)}
+              fullWidth
+              variant="bordered"
+            />
           </Flex>
 
           <Spacer spaceBefore="md" spaceAfter="md" border direction="vertical" />

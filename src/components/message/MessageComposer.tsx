@@ -598,8 +598,15 @@ export const MessageComposer = forwardRef<
     if (disabled) {
       return (
         <div className="message-composer-container">
-          <div className="message-composer-disabled">
-            <Icon name="lock" size="sm" className="message-composer-disabled-icon" />
+          <div className="message-composer-row">
+            <Button
+              type="unstyled"
+              iconName="lock"
+              iconSize="lg"
+              iconOnly
+              className="message-composer-upload-btn message-composer-disabled-icon"
+              style={{ pointerEvents: 'none' }}
+            />
             <span className="message-composer-disabled-text">
               {disabledMessage || t`You cannot post in this channel`}
             </span>

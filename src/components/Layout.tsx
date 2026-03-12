@@ -9,10 +9,12 @@ import ConfirmationModal from './modals/ConfirmationModal';
 import ImageModal from './modals/ImageModal';
 import { EditHistoryModal } from './modals/EditHistoryModal';
 import { ReactionsModal } from './modals/ReactionsModal';
+import { ThreadSettingsModal } from './modals/ThreadSettingsModal';
 import { ConfirmationModalProvider } from './context/ConfirmationModalProvider';
 import { ImageModalProvider } from './context/ImageModalProvider';
 import { EditHistoryModalProvider } from './context/EditHistoryModalProvider';
 import { ReactionsModalProvider } from './context/ReactionsModalProvider';
+import { ThreadSettingsModalProvider } from './context/ThreadSettingsModalProvider';
 import Connecting from './Connecting';
 import { useModalManagement, useElectronDetection } from '../hooks';
 import { useNavigationHotkeys } from '@/hooks/platform/interactions/useNavigationHotkeys';
@@ -42,6 +44,9 @@ const Layout: React.FunctionComponent<{
     reactionsModal,
     showReactionsModal,
     hideReactionsModal,
+    threadSettingsModal,
+    showThreadSettingsModal,
+    hideThreadSettingsModal,
   } = useModalManagement();
   const { isElectron } = useElectronDetection();
   const { showRightSidebar, setShowRightSidebar, rightSidebarContent } =
@@ -188,6 +193,21 @@ const Layout: React.FunctionComponent<{
         />
       )}
 
+      {/* Thread Settings Modal */}
+      {threadSettingsModal.visible && threadSettingsModal.config && (
+        <ThreadSettingsModal
+          visible={threadSettingsModal.visible}
+          threadId={threadSettingsModal.config.threadId}
+          rootMessage={threadSettingsModal.config.rootMessage}
+          threadMessages={threadSettingsModal.config.threadMessages}
+          channelProps={threadSettingsModal.config.channelProps}
+          setThreadClosed={threadSettingsModal.config.setThreadClosed}
+          updateThreadSettings={threadSettingsModal.config.updateThreadSettings}
+          removeThread={threadSettingsModal.config.removeThread}
+          onClose={hideThreadSettingsModal}
+        />
+      )}
+
       {/* {joinSpaceVisible && <JoinSpaceModal visible={joinSpaceVisible} onClose={() => setJoinSpaceVisible(false)}/>} */}
       <OfflineBanner />
       <NavMenu
@@ -195,6 +215,7 @@ const Layout: React.FunctionComponent<{
         showJoinSpaceModal={() => {}}
       />
       <Container>{isElectron && <CloseButton />}</Container>
+      <ThreadSettingsModalProvider openThreadSettings={showThreadSettingsModal}>
       <ConfirmationModalProvider showConfirmationModal={showConfirmationModal}>
         <ImageModalProvider showImageModal={showImageModal}>
           <EditHistoryModalProvider showEditHistoryModal={showEditHistoryModal}>
@@ -225,6 +246,7 @@ const Layout: React.FunctionComponent<{
           </EditHistoryModalProvider>
         </ImageModalProvider>
       </ConfirmationModalProvider>
+      </ThreadSettingsModalProvider>
     </React.Suspense>
   );
 };

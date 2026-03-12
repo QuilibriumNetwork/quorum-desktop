@@ -9,14 +9,12 @@ import MuteUserModal from '../modals/MuteUserModal';
 import NewDirectMessageModal from '../modals/NewDirectMessageModal';
 import ConversationSettingsModal from '../modals/ConversationSettingsModal';
 import FolderEditorModal from '../modals/FolderEditorModal';
-import { ThreadSettingsModal } from '../modals/ThreadSettingsModal';
 import {
   useModalState,
   type ModalState,
   type MuteUserTarget,
   type KickUserTarget,
 } from '../../hooks/business/ui/useModalState';
-import type { Message as MessageType } from '../../api/quorumApi';
 import { useUserMuting } from '../../hooks/business/user/useUserMuting';
 
 // Context interface
@@ -46,8 +44,6 @@ interface ModalContextType {
   closeConversationSettings: () => void;
   openFolderEditor: (folderId?: string) => void;
   closeFolderEditor: () => void;
-  openThreadSettings: (threadId: string, rootMessage: MessageType) => void;
-  closeThreadSettings: () => void;
   // Legacy compatibility with existing useModalContext
   isNewDirectMessageOpen: boolean;
 }
@@ -110,8 +106,6 @@ export const ModalProvider: React.FC<ModalProviderProps> = ({
     closeConversationSettings: modalState.closeConversationSettings,
     openFolderEditor: modalState.openFolderEditor,
     closeFolderEditor: modalState.closeFolderEditor,
-    openThreadSettings: modalState.openThreadSettings,
-    closeThreadSettings: modalState.closeThreadSettings,
     // Legacy compatibility
     isNewDirectMessageOpen: modalState.isNewDirectMessageOpen,
   };
@@ -216,17 +210,6 @@ export const ModalProvider: React.FC<ModalProviderProps> = ({
           onClose={modalState.closeFolderEditor}
         />
       )}
-
-      {modalState.state.threadSettings.isOpen &&
-        modalState.state.threadSettings.threadId &&
-        modalState.state.threadSettings.rootMessage && (
-          <ThreadSettingsModal
-            threadId={modalState.state.threadSettings.threadId}
-            rootMessage={modalState.state.threadSettings.rootMessage}
-            visible={true}
-            onClose={modalState.closeThreadSettings}
-          />
-        )}
 
       {children}
     </ModalContext.Provider>

@@ -6,7 +6,7 @@ import { MessageList, MessageListRef } from '../message/MessageList';
 import MessageComposer, { MessageComposerRef } from '../message/MessageComposer';
 import { useMessageComposer } from '../../hooks';
 import { useThreadContext, useThreadContextStore } from '../context/ThreadContext';
-import { useModals } from '../context/ModalProvider';
+import { useThreadSettingsModal } from '../context/ThreadSettingsModalProvider';
 import { useMobile } from '../context/MobileProvider';
 import { useResponsiveLayoutContext } from '../context/ResponsiveLayoutProvider';
 import {
@@ -50,6 +50,8 @@ export const ThreadPanel: React.FC = () => {
     submitMessage,
     submitSticker,
     setThreadClosed,
+    updateThreadSettings,
+    removeThread,
     channelProps,
     targetMessageId,
     updateTitle,
@@ -66,7 +68,7 @@ export const ThreadPanel: React.FC = () => {
     hasStickers: !!channelProps?.stickers && Object.keys(channelProps.stickers).length > 0,
   });
 
-  const { openThreadSettings } = useModals();
+  const { openThreadSettings } = useThreadSettingsModal();
   const { openMobileEmojiDrawer } = useMobile();
   const { isMobile } = useResponsiveLayoutContext();
   const [panelTab, setPanelTab] = useState<'emojis' | 'stickers'>('emojis');
@@ -299,7 +301,15 @@ export const ThreadPanel: React.FC = () => {
         {canManage && rootMessage && (
           <Button
             type="unstyled"
-            onClick={() => openThreadSettings(threadId!, rootMessage)}
+            onClick={() => openThreadSettings({
+              threadId: threadId!,
+              rootMessage,
+              threadMessages,
+              channelProps,
+              setThreadClosed,
+              updateThreadSettings,
+              removeThread,
+            })}
             className="thread-panel__settings"
             aria-label={t`Thread settings`}
           >
@@ -359,17 +369,29 @@ export const ThreadPanel: React.FC = () => {
       {/* Thread composer — uses the same MessageComposer as main chat, or closed notice */}
       <div className="thread-panel__composer">
         {isClosed ? (
-          <div className="thread-panel__closed-notice">
-            <span>{t`This thread has been closed`}</span>
-            {canReopen && (
-              <button
-                type="button"
-                className="thread-panel__reopen-link"
-                onClick={() => setThreadClosed(threadId!, false)}
-              >
-                {t`Reopen`}
-              </button>
-            )}
+          <div className="message-composer-container">
+            <div className="message-composer-row">
+              <Button
+                type="unstyled"
+                iconName="lock"
+                iconSize="lg"
+                iconOnly
+                className="message-composer-upload-btn message-composer-disabled-icon"
+                style={{ pointerEvents: 'none' }}
+              />
+              <span className="message-composer-disabled-text">{t`This thread has been closed`}</span>
+              {canReopen && (
+                <span
+                  role="button"
+                  tabIndex={0}
+                  className="message-composer-disabled-action"
+                  onClick={() => setThreadClosed(threadId!, false)}
+                  onKeyDown={(e) => e.key === 'Enter' || e.key === ' ' ? setThreadClosed(threadId!, false) : undefined}
+                >
+                  {t`Reopen`}
+                </span>
+              )}
+            </div>
           </div>
         ) : (
           <MessageComposer
