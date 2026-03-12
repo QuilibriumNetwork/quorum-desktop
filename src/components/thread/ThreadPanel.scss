@@ -85,7 +85,7 @@
 
   &__header {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     gap: $s-3;
     padding: $s-3 $s-4;
     border-bottom: 1px solid var(--border-default);
@@ -108,32 +108,8 @@
     color: var(--text-primary);
     margin: 0;
     word-break: break-word;
-    cursor: pointer;
-    border-radius: $rounded-sm;
-    padding: 2px 4px;
-    margin-left: -4px;
-
-    &:hover {
-      background-color: var(--color-field-bg-focus);
-    }
-
-    &--readonly {
-      cursor: default;
-
-      &:hover {
-        background-color: transparent;
-      }
-    }
   }
 
-  &__title-input {
-    .quorum-input--minimal {
-      font-weight: 700;
-      font-size: $text-xl;
-      padding: 2px 4px;
-      margin-left: -4px;
-    }
-  }
 
   &__started-by {
     display: block;
@@ -147,37 +123,6 @@
     }
   }
 
-  &__settings {
-    color: var(--color-text-subtle);
-    background-color: var(--surface-00);
-    border-radius: $rounded-full;
-    cursor: pointer;
-    padding: $s-2;
-    flex-shrink: 0;
-    transition: color $duration-200 $ease-in-out,
-      background-color $duration-200 $ease-in-out;
-
-    &:hover {
-      color: var(--color-text-strong);
-      background-color: var(--color-field-bg-focus);
-    }
-  }
-
-  &__close {
-    color: var(--color-text-subtle);
-    background-color: var(--surface-00);
-    border-radius: $rounded-full;
-    cursor: pointer;
-    padding: $s-2;
-    flex-shrink: 0;
-    transition: color $duration-200 $ease-in-out,
-      background-color $duration-200 $ease-in-out;
-
-    &:hover {
-      color: var(--color-text-strong);
-      background-color: var(--color-field-bg-focus);
-    }
-  }
 
   &__messages {
     flex: 1;

@@ -12,6 +12,7 @@ import {
 } from '../primitives';
 import type { Message as MessageType } from '../../api/quorumApi';
 import type { ThreadChannelProps } from '../context/ThreadContext';
+import { validateNameForXSS } from '../../utils/validation';
 
 const THREAD_TITLE_MAX_CHARS = 100;
 
@@ -75,6 +76,8 @@ export const ThreadSettingsModal: React.FC<ThreadSettingsModalProps> = ({
   const [pendingAutoClose, setPendingAutoClose] = React.useState(initialAutoClose);
   const [pendingClosed, setPendingClosed] = React.useState(isClosed);
 
+  const titleXssError = !validateNameForXSS(pendingTitle);
+
   const isDirty =
     pendingTitle !== initialTitle ||
     pendingAutoClose !== initialAutoClose ||
@@ -126,9 +129,9 @@ export const ThreadSettingsModal: React.FC<ThreadSettingsModalProps> = ({
               value={pendingTitle}
               onChange={(val: string) => setPendingTitle(val.slice(0, THREAD_TITLE_MAX_CHARS))}
               placeholder={t`Thread title`}
-              variant="bordered"
-              error={pendingTitle.length >= THREAD_TITLE_MAX_CHARS}
-              errorMessage={t`Title cannot exceed ${THREAD_TITLE_MAX_CHARS} characters`}
+              variant="filled"
+              error={pendingTitle.length >= THREAD_TITLE_MAX_CHARS || titleXssError}
+              errorMessage={titleXssError ? t`Title cannot contain HTML tags` : t`Title cannot exceed ${THREAD_TITLE_MAX_CHARS} characters`}
               className="w-full"
             />
           </Container>
@@ -142,7 +145,7 @@ export const ThreadSettingsModal: React.FC<ThreadSettingsModalProps> = ({
             options={AUTO_CLOSE_OPTIONS}
             onChange={(val: string | string[]) => setPendingAutoClose(Array.isArray(val) ? val[0] : val)}
             fullWidth
-            variant="bordered"
+            variant="filled"
           />
         </Container>
 
@@ -162,7 +165,7 @@ export const ThreadSettingsModal: React.FC<ThreadSettingsModalProps> = ({
           <Button
             type="primary"
             onClick={handleSave}
-            disabled={!isDirty}
+            disabled={!isDirty || titleXssError}
             className="max-sm:w-full"
           >
             {t`Save Changes`}

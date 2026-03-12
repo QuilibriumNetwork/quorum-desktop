@@ -1,6 +1,6 @@
 import React, { Suspense, useRef, useMemo, useState, useCallback, useEffect } from 'react';
 import type { PostMessage } from '../../api/quorumApi';
-import { Button, Icon, Input } from '../primitives';
+import { Button, Icon, Tooltip } from '../primitives';
 import { t } from '@lingui/core/macro';
 import { MessageList, MessageListRef } from '../message/MessageList';
 import MessageComposer, { MessageComposerRef } from '../message/MessageComposer';
@@ -127,43 +127,6 @@ export const ThreadPanel: React.FC = () => {
     return DEFAULT_WIDTH;
   });
 
-  const [isEditingTitle, setIsEditingTitle] = useState(false);
-  const [titleDraft, setTitleDraft] = useState('');
-  const isSavingTitle = useRef(false);
-
-  const handleTitleClick = useCallback(() => {
-    setTitleDraft(rootMessage?.threadMeta?.customTitle ?? '');
-    setIsEditingTitle(true);
-  }, [rootMessage]);
-
-  const handleTitleSave = useCallback(() => {
-    if (!rootMessage) return;
-    if (isSavingTitle.current) return;
-    isSavingTitle.current = true;
-    const trimmed = titleDraft.trim();
-    // Only broadcast if value actually changed
-    const current = rootMessage.threadMeta?.customTitle ?? '';
-    if (trimmed !== current) {
-      // threadMeta may be undefined in a race (message arrived before thread 'create' broadcast)
-      // updateTitle in Channel.tsx constructs updatedMeta from scratch, so passing undefined is safe
-      updateTitle(rootMessage.messageId, rootMessage.threadMeta, trimmed);
-    }
-    setIsEditingTitle(false);
-    // Reset guard after blur fires (browser queues blur after keydown handler returns)
-    setTimeout(() => { isSavingTitle.current = false; }, 0);
-  }, [titleDraft, rootMessage, updateTitle]);
-
-  const handleTitleKeyDown = useCallback((e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') {
-      e.preventDefault();
-      handleTitleSave();
-    } else if (e.key === 'Escape') {
-      isSavingTitle.current = true; // Suppress the blur save on Escape
-      setIsEditingTitle(false);
-      setTimeout(() => { isSavingTitle.current = false; }, 0);
-    }
-  }, [handleTitleSave]);
-
   const handleResizeStart = useCallback((e: React.MouseEvent) => {
     e.preventDefault();
     isResizing.current = true;
@@ -264,33 +227,9 @@ export const ThreadPanel: React.FC = () => {
       <div className="thread-panel__header">
         <div className="thread-panel__header-content">
           <div className="thread-panel__title-area">
-              {isEditingTitle ? (
-                <Input
-                  variant="minimal"
-                  value={titleDraft}
-                  onChange={(val: string) => setTitleDraft(val.slice(0, 100))}
-                  onBlur={handleTitleSave}
-                  onKeyDown={handleTitleKeyDown}
-                  placeholder={threadTitle}
-                  autoFocus
-                  className="thread-panel__title-input"
-                />
-              ) : isThreadAuthor ? (
-                <div
-                  className="thread-panel__title"
-                  onClick={handleTitleClick}
-                  role="button"
-                  tabIndex={0}
-                  onKeyDown={(e) => e.key === 'Enter' && handleTitleClick()}
-                  aria-label={t`Edit thread title`}
-                >
-                  {threadTitle}
-                </div>
-              ) : (
-                <div className="thread-panel__title thread-panel__title--readonly">
-                  {threadTitle}
-                </div>
-              )}
+              <div className="thread-panel__title">
+                {threadTitle}
+              </div>
             </div>
           {starterName && (
             <span className="thread-panel__started-by">
@@ -299,31 +238,35 @@ export const ThreadPanel: React.FC = () => {
           )}
         </div>
         {canManage && rootMessage && (
-          <Button
-            type="unstyled"
-            onClick={() => openThreadSettings({
-              threadId: threadId!,
-              rootMessage,
-              threadMessages,
-              channelProps,
-              updateTitle,
-              setThreadClosed,
-              updateThreadSettings,
-              removeThread,
-            })}
-            className="thread-panel__settings"
-            aria-label={t`Thread settings`}
-          >
-            <Icon name="settings" size="sm" />
-          </Button>
+          <Tooltip id="thread-settings-tooltip" content={t`Thread settings`} place="bottom" showOnTouch={false}>
+            <Button
+              type="unstyled"
+              onClick={() => openThreadSettings({
+                threadId: threadId!,
+                rootMessage,
+                threadMessages,
+                channelProps,
+                updateTitle,
+                setThreadClosed,
+                updateThreadSettings,
+                removeThread,
+              })}
+              className="header-icon-button"
+              aria-label={t`Thread settings`}
+              iconName="settings"
+              iconSize="lg"
+              iconOnly
+            />
+          </Tooltip>
         )}
         <Button
           type="unstyled"
           onClick={closeThread}
-          className="thread-panel__close"
-        >
-          <Icon name="close" size="md" />
-        </Button>
+          className="header-icon-button"
+          iconName="close"
+          iconSize="lg"
+          iconOnly
+        />
       </div>
 
       {/* Thread messages — uses the same MessageList as main chat */}
