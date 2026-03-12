@@ -1357,14 +1357,15 @@ export class MessageService {
       const threadMsg = decryptedContent.content as ThreadMessage;
       if (spaceId === channelId) return;
 
+      // Hoist getMessage fetch to avoid duplicate calls
+      const targetMessage = await this.messageDB.getMessage({ spaceId, channelId, messageId: threadMsg.targetMessageId });
+
       // For updateTitle: verify sender is thread creator before patching cache
       if (threadMsg.action === 'updateTitle') {
-        const targetMessage = await this.messageDB.getMessage({ spaceId, channelId, messageId: threadMsg.targetMessageId });
         if (!targetMessage || threadMsg.senderId !== targetMessage.threadMeta?.createdBy) return;
       }
 
       if (threadMsg.action === 'close' || threadMsg.action === 'reopen' || threadMsg.action === 'updateSettings') {
-        const targetMessage = await this.messageDB.getMessage({ spaceId, channelId, messageId: threadMsg.targetMessageId });
         if (!targetMessage) return;
         const isAuthor = threadMsg.senderId === targetMessage.threadMeta?.createdBy;
         const space = await this.messageDB.getSpace(spaceId);
@@ -1378,7 +1379,6 @@ export class MessageService {
       }
 
       if (threadMsg.action === 'remove') {
-        const targetMessage = await this.messageDB.getMessage({ spaceId, channelId, messageId: threadMsg.targetMessageId });
         if (!targetMessage) return;
         const isAuthor = threadMsg.senderId === targetMessage.threadMeta?.createdBy;
         const isRootSender = threadMsg.senderId === targetMessage.content.senderId;
@@ -1404,7 +1404,7 @@ export class MessageService {
                     return null;
                   }
                   return m;
-                }).filter(Boolean),
+                }).filter((m): m is Message => m !== null),
               })),
             };
           }
