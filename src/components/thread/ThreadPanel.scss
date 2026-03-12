@@ -147,6 +147,22 @@
     }
   }
 
+  &__settings {
+    color: var(--color-text-subtle);
+    background-color: var(--surface-00);
+    border-radius: $rounded-full;
+    cursor: pointer;
+    padding: $s-2;
+    flex-shrink: 0;
+    transition: color $duration-200 $ease-in-out,
+      background-color $duration-200 $ease-in-out;
+
+    &:hover {
+      color: var(--color-text-strong);
+      background-color: var(--color-field-bg-focus);
+    }
+  }
+
   &__close {
     color: var(--color-text-subtle);
     background-color: var(--surface-00);

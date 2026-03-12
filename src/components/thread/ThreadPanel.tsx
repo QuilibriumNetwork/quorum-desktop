@@ -6,6 +6,7 @@ import { MessageList, MessageListRef } from '../message/MessageList';
 import MessageComposer, { MessageComposerRef } from '../message/MessageComposer';
 import { useMessageComposer } from '../../hooks';
 import { useThreadContext, useThreadContextStore } from '../context/ThreadContext';
+import { useModals } from '../context/ModalProvider';
 import { useMobile } from '../context/MobileProvider';
 import { useResponsiveLayoutContext } from '../context/ResponsiveLayoutProvider';
 import {
@@ -64,6 +65,7 @@ export const ThreadPanel: React.FC = () => {
     hasStickers: !!channelProps?.stickers && Object.keys(channelProps.stickers).length > 0,
   });
 
+  const { openThreadSettings } = useModals();
   const { openMobileEmojiDrawer } = useMobile();
   const { isMobile } = useResponsiveLayoutContext();
   const [panelTab, setPanelTab] = useState<'emojis' | 'stickers'>('emojis');
@@ -215,6 +217,9 @@ export const ThreadPanel: React.FC = () => {
     return rootMessage.threadMeta.createdBy === channelProps.currentUserAddress;
   }, [rootMessage, channelProps?.currentUserAddress]);
 
+  const canManage =
+    isThreadAuthor || (rootMessage ? (channelProps?.canDeleteMessages?.(rootMessage) ?? false) : false);
+
   // Access store to clear targetMessageId after scroll processing
   const threadStore = useThreadContextStore();
 
@@ -286,6 +291,16 @@ export const ThreadPanel: React.FC = () => {
             </span>
           )}
         </div>
+        {canManage && rootMessage && (
+          <Button
+            type="unstyled"
+            onClick={() => openThreadSettings(threadId!, rootMessage)}
+            className="thread-panel__settings"
+            aria-label={t`Thread settings`}
+          >
+            <Icon name="settings" size="sm" />
+          </Button>
+        )}
         <Button
           type="unstyled"
           onClick={closeThread}
