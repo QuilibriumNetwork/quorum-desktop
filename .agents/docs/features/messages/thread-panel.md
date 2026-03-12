@@ -1,10 +1,10 @@
 ---
 type: doc
-title: "Thread Panel (Discord-Style Layout)"
+title: "Thread Panel"
 status: done
 ai_generated: true
 created: 2026-03-09
-updated: 2026-03-09
+updated: 2026-03-12
 related_docs:
   - "docs/features/messages/pinned-messages.md"
   - "docs/features/dropdown-panels.md"
@@ -12,16 +12,16 @@ related_docs:
   - "docs/styling-guidelines.md"
 related_tasks:
   - "tasks/threaded-conversations.md"
-  - "tasks/2025-03-09-thread-panel-discord-layout.md"
+  - "tasks/2025-03-09-thread-panel-layout.md"
 ---
 
-# Thread Panel (Discord-Style Layout)
+# Thread Panel
 
 > **AI-Generated**: May contain errors. Verify before use.
 
 ## Overview
 
-The Thread Panel provides threaded conversations within Space channels, rendered as a Discord-style sidebar column alongside the main chat area. When a user opens a thread, the panel appears as a sibling element to the Channel component at the Space layout level, preserving the full width of the main chat area. The panel supports drag-to-resize with localStorage persistence.
+The Thread Panel provides threaded conversations within Space channels, rendered as a sidebar column alongside the main chat area. When a user opens a thread, the panel appears as a sibling element to the Channel component at the Space layout level, preserving the full width of the main chat area. The panel supports drag-to-resize with localStorage persistence.
 
 **Key Characteristics:**
 - Flat threading model: replies to root message only, no nested threads
@@ -54,14 +54,17 @@ The ThreadPanel renders at the `Space.tsx` level as a flex sibling of `Channel`,
 | File | Purpose |
 |------|---------|
 | `src/components/context/ThreadContext.tsx` | Ref-based store with dual-hook API |
+| `src/components/context/ThreadSettingsModalProvider.tsx` | `openThreadSettings()` hook + modal registration |
 | `src/components/thread/ThreadPanel.tsx` | Panel component with resize handle |
 | `src/components/thread/ThreadPanel.scss` | Panel styles, borders, resize handle |
+| `src/components/modals/ThreadSettingsModal.tsx` | Thread settings modal (title, auto-close, close toggle, delete) |
 | `src/components/space/Space.tsx` | ThreadProvider wrapper, ThreadPanel sibling rendering |
 | `src/components/space/Space.scss` | Container background, channel list borders/radius |
 | `src/components/space/Channel.tsx` | Context store population via useEffects |
 | `src/components/space/Channel.scss` | `.thread-open` border-radius rule |
 | `src/styles/_chat.scss` | External layout borders (top, left, right) |
 | `src/styles/_colors.scss` | `--color-border-muted` semantic variable |
+| `src/styles/_components.scss` | Shared `.header-icon-button` class used by thread panel icons |
 
 ### ThreadContext — Ref-Based Store Pattern
 
@@ -169,23 +172,37 @@ A 4px-wide invisible handle is positioned on the left edge of the thread panel (
 - **Persistence:** `localStorage` key `thread-panel-width`
 - **Drag direction:** Dragging left increases width, dragging right decreases it
 
-### Close Button
-
-The close button uses a modal-style circular design (`border-radius: $rounded-full`) with subtle background color transitions on hover. It renders an `<Icon name="close" size="md" />` inside an unstyled `<Button>`.
-
 ### Header
 
-Discord-style header with:
-- **Title:** Derived at runtime via `getThreadTitle()` in `ThreadPanel.tsx`. Resolution order: (1) `threadMeta.customTitle` if set, (2) first 100 chars of root message text (markdown stripped), (3) `"Thread"` fallback (used when root is soft-deleted or empty). Auto-extracted titles are NOT persisted or broadcast — deleting a root message loses the auto-derived title. Custom titles survive root deletion since they live in `threadMeta`. Only the thread author (`threadMeta.createdBy === currentUserAddress`) sees an editable title; others see it read-only.
+Header layout:
+- **Title:** Derived at runtime via `getThreadTitle()` in `ThreadPanel.tsx`. Resolution order: (1) `threadMeta.customTitle` if set, (2) first 100 chars of root message text (markdown stripped), (3) `"Thread"` fallback (used when root is soft-deleted or empty). Auto-extracted titles are NOT persisted or broadcast. Custom titles survive root deletion since they live in `threadMeta`. The title is **read-only** in the panel header — editing is done via the Thread Settings Modal.
 - **Subtitle:** "Started by **Username**" showing thread creator
-- **Close button:** Right-aligned circular button
+- **Settings icon (cog):** Visible only to thread managers (author or users with `message:delete` permission). Opens the Thread Settings Modal. Uses the shared `header-icon-button` class with a bottom-anchored tooltip ("Thread settings"). Hidden for non-managers.
+- **Close icon (X):** Closes the thread panel. Also uses `header-icon-button`. Both icons use `iconSize="lg"` to match the main channel header icons.
+- **Alignment:** Header uses `align-items: flex-start` so icons align to the top of the header area (title + subtitle make the content taller than a single-line header).
+
+## Thread Management
+
+### Thread Settings Modal (`ThreadSettingsModal.tsx`)
+
+Opened via the cog icon in the panel header. Accessible to thread managers (author or users with `message:delete` permission).
+
+**Features:**
+- **Title editing** (author only) — Freetext input, 100-char limit, XSS validation via `validateNameForXSS`. Saves via `updateTitle` → `handleUpdateThreadTitle` in Channel.tsx → `submitChannelMessage` broadcast (same flow as inline title editing previously was). Save button disabled if title has XSS content or no changes.
+- **Auto-close** — Select preset (Never / 1h / 24h / 3 days / 1 week). Stored as `autoCloseAfter` ms in `ThreadMeta`. "Never" = field omitted.
+- **Close thread toggle** — Marks thread as `isClosed`. Closed threads are read-only for all users.
+- **Delete thread** — Author-only, two-click confirm. Only shown if thread has no replies from other users. Removes all thread replies from IndexedDB and strips `threadMeta` from root message.
+
+**Auth:** Modal only renders if `canManage` is true. Server-side auth checks in `MessageService.saveMessage` and `addMessage` enforce the same rules independently.
+
+**Provider:** `ThreadSettingsModalProvider` wraps the Space and exposes `useThreadSettingsModal()` → `openThreadSettings(props)`. ThreadPanel calls this from the cog button click handler.
 
 ## Thread Data Model
 
 ### Types (`src/api/quorumApi.ts`)
 
-- **`ThreadMeta`** — Set on root messages: `{ threadId: string, createdBy: string, customTitle?: string }`
-- **`ThreadMessage`** — Broadcast content: `{ type: 'thread', senderId, targetMessageId, action: 'create' | 'updateTitle', threadMeta }`
+- **`ThreadMeta`** — Set on root messages: `{ threadId, createdBy, customTitle?, isClosed?, closedBy?, autoCloseAfter?, lastActivityAt? }`
+- **`ThreadMessage`** — Broadcast content: `{ type: 'thread', senderId, targetMessageId, action: 'create' | 'updateTitle' | 'close' | 'reopen' | 'updateSettings' | 'remove', threadMeta }`
 - **Message fields:** `threadMeta?` (root messages), `threadId?` (reply messages), `isThreadReply?` (filtering sentinel)
 
 ### Database (`src/db/messages.ts`)
@@ -213,18 +230,13 @@ Discord-style header with:
 
 ## Thread Title Editing
 
-The thread author can edit the title inline in the panel header. Clicking the title enters edit mode (an `<Input variant="minimal">`). Pressing Enter or blurring the input saves; Escape cancels. Non-authors see the title as read-only text.
-
-### Author Gate
-
-`isThreadAuthor` in `ThreadPanel.tsx` compares `rootMessage.threadMeta.createdBy` against `channelProps.currentUserAddress`. Only authors see the editable title. The server-side paths enforce this too: both `processMessage` (IndexedDB) and `addMessage` (React Query cache) reject `updateTitle` broadcasts where `senderId !== targetMessage.threadMeta.createdBy`.
+Title editing was moved from inline panel header interaction to the Thread Settings Modal. The title in the panel header is now always read-only.
 
 ### updateTitle Broadcast Flow
 
 ```
-ThreadPanel: Enter key / blur
-  → handleTitleSave() — isSavingTitle ref prevents double-fire on blur-after-Enter
-  → updateTitle(messageId, threadMeta, newTitle)   ← from ThreadContext actions
+ThreadSettingsModal: Save button
+  → handleSave() → updateTitle(messageId, threadMeta, newTitle)  ← from ThreadContext actions
   → handleUpdateThreadTitle() in Channel.tsx
       → builds updatedMeta: { threadId, createdBy, customTitle }
       → submitChannelMessage(..., { type:'thread', action:'updateTitle', threadMeta: updatedMeta })
@@ -245,10 +257,6 @@ Peers (via addMessage):
 ```
 
 The local sender path and the peer path are separate. The `addMessage` path handles incoming broadcasts; `setActiveThreadRootMessage` handles the sender's own immediate display update since the sender's broadcast doesn't loop back through `addMessage`.
-
-### Double-Save Guard
-
-`isSavingTitle` is a `useRef` (not state) in `ThreadPanel.tsx`. When Enter fires `handleTitleSave`, it sets `isEditingTitle(false)`, which unmounts the input and fires blur synchronously. Without the guard, blur would call `handleTitleSave` a second time, sending the broadcast twice. The ref is reset via `setTimeout(..., 0)` so it clears after the blur handler runs.
 
 ## Thread-Aware Navigation
 
@@ -342,7 +350,6 @@ The `threadId` must flow through the entire search chain without being dropped:
 - **No permission gating** — Anyone who can post in the channel can create threads; no `thread:create` permission
 - **No thread search** — Thread replies are not included in global search results
 - **Resize desktop only** — Resize handle uses mouse events and is hidden below MD; no touch support for drag-to-resize
-- **No auto-archive** — Threads remain open indefinitely; no `autoArchiveDuration` mechanism
 - **Thread replies invisible on mobile** — Thread replies are filtered from the main feed at three layers (DB cursor in `getMessages()`, DB unread in `getFirstUnreadMessage()`, React hook in `useChannelMessages()`). Since mobile won't have a thread panel initially, thread replies are completely hidden for mobile users with no way to view them. Needs a platform-aware flag so replies stay in the main feed on platforms without thread panel support.
 - **Thread-aware navigation for new bookmarks only** — Existing bookmarks created before this feature was added don't store a `threadId`, so they fall back to `#msg-{id}` navigation and silently fail to open the thread panel. New bookmarks capture `threadId` at creation time. No migration path for legacy bookmarks.
 
@@ -353,13 +360,11 @@ These items are planned but not yet implemented:
 - **Thread notifications** — Participation tracking, auto-follow, unread indicators per-thread. Store thread follows in a separate IndexedDB store (NOT UserConfig due to unbounded growth). Separate task.
 - **ThreadsList & channel header button** — Browsable list of all threads in a channel, accessible from the channel header.
 - **Migrate thread types to `quorum-shared`** — Move types and hooks to the shared package for cross-platform (mobile) compatibility.
-- **Auto-archive** — Add `isArchived` and `autoArchiveDuration` to ThreadMeta for automatic thread archival.
-- **Close/delete threads** — Author and moderators can close threads (read-only) or delete them entirely.
 - **Permission gating** — Add `thread:create` permission to role system for per-role thread creation control.
-- **"Also send to channel"** — Option to post a thread reply to the main feed simultaneously (Slack-style behavior).
+- **"Also send to channel"** — Option to post a thread reply to the main feed simultaneously.
 - **Thread search** — Include thread replies in global search results.
 - **Extract ThreadService** — If MessageService grows further, extract thread handling to a dedicated service class.
-- **Mobile thread reply visibility** — Add a platform-aware flag to the three `isThreadReply` filter points (DB cursor, DB unread query, React hook). On platforms without thread panel support (mobile), skip the filter so thread replies appear inline in the main feed as regular messages. This prevents data loss while threads are desktop-only.
+- **Mobile thread reply visibility** — Add a platform-aware flag to the three `isThreadReply` filter points (DB cursor, DB unread query, React hook). On platforms without thread panel support (mobile), skip the filter so thread replies appear inline in the main feed as regular messages.
 - **Bookmark migration** — Existing bookmarks don't store `threadId`, so clicking them won't open the thread panel for thread replies. A migration could backfill `threadId` by scanning messages at read time, but the impact is limited to bookmarks created before this feature shipped.
 
 ## Related Documentation
@@ -372,4 +377,5 @@ These items are planned but not yet implemented:
 ---
 
 _Created: 2026-03-09_
-_Updated: 2026-03-11 (thread-aware navigation, thread title editing: added updateTitle flow, author gate, double-save guard, stale snapshot pitfall; updated types, header description, future work)_
+_Updated: 2026-03-12 (thread management: added Thread Settings Modal section, close/reopen/auto-close/remove actions, updated types, header description, title editing flow, known limitations, future work; removed Discord references)_
+_Previously: 2026-03-11 (thread-aware navigation, thread title editing: updateTitle flow, author gate, double-save guard, stale snapshot pitfall)_
