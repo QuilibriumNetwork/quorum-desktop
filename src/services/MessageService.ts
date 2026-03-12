@@ -1404,7 +1404,7 @@ export class MessageService {
                     return null;
                   }
                   return m;
-                }).filter((m): m is Message => m !== null),
+                }).filter((m: Message | null): m is Message => m !== null),
               })),
             };
           }
