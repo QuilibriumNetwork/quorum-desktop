@@ -507,6 +507,7 @@ const Channel: React.FC<ChannelProps> = ({
   // Handle submitting a reply in a thread (matches onSubmitMessage signature for useMessageComposer)
   const handleSubmitThreadMessage = useCallback(
     async (message: string | object, inReplyTo?: string) => {
+      if (activeThreadRootMessage?.threadMeta?.isClosed) return;
       if (!activeThreadId) return;
       let parentMessage;
       if (inReplyTo) {
@@ -710,6 +711,15 @@ const Channel: React.FC<ChannelProps> = ({
       removeThread: handleRemoveThread,
     });
   }, [handleOpenThread, handleSubmitThreadMessage, handleSubmitThreadSticker, handleUpdateThreadTitle, handleSetThreadClosed, handleUpdateThreadSettings, handleRemoveThread]);
+
+  // Auto-close the thread panel when the root message has its threadMeta stripped (remove action)
+  React.useEffect(() => {
+    if (activePanel === 'thread' && activeThreadRootMessage && !activeThreadRootMessage.threadMeta) {
+      setActivePanel(null);
+      setActiveThreadId(null);
+      setActiveThreadRootMessage(null);
+    }
+  }, [activeThreadRootMessage, activePanel]);
 
   // Handle user profile modal close
   const handleUserProfileClose = useCallback(() => {

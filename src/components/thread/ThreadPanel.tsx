@@ -49,6 +49,7 @@ export const ThreadPanel: React.FC = () => {
     closeThread,
     submitMessage,
     submitSticker,
+    setThreadClosed,
     channelProps,
     targetMessageId,
     updateTitle,
@@ -220,6 +221,10 @@ export const ThreadPanel: React.FC = () => {
   const canManage =
     isThreadAuthor || (rootMessage ? (channelProps?.canDeleteMessages?.(rootMessage) ?? false) : false);
 
+  const isClosed = rootMessage?.threadMeta?.isClosed ?? false;
+  const canReopen =
+    isThreadAuthor || (rootMessage ? (channelProps?.canDeleteMessages?.(rootMessage) ?? false) : false);
+
   // Access store to clear targetMessageId after scroll processing
   const threadStore = useThreadContextStore();
 
@@ -351,37 +356,52 @@ export const ThreadPanel: React.FC = () => {
         )}
       </div>
 
-      {/* Thread composer — uses the same MessageComposer as main chat */}
+      {/* Thread composer — uses the same MessageComposer as main chat, or closed notice */}
       <div className="thread-panel__composer">
-        <MessageComposer
-          ref={composerRef}
-          canUseEveryone={channelProps.canUseEveryone}
-          value={composer.pendingMessage}
-          onChange={composer.setPendingMessage}
-          onKeyDown={composer.handleKeyDown}
-          placeholder={t`Reply in thread...`}
-          calculateRows={composer.calculateRows}
-          getRootProps={composer.getRootProps}
-          getInputProps={composer.getInputProps}
-          processedImage={composer.processedImage}
-          clearFile={composer.clearFile}
-          onSubmitMessage={composer.submitMessage}
-          onShowStickers={handleShowEmojiPanel}
-          inReplyTo={composer.inReplyTo}
-          setInReplyTo={composer.setInReplyTo}
-          mapSenderToUser={channelProps.mapSenderToUser}
-          users={channelProps.users}
-          roles={channelProps.mentionRoles}
-          groups={channelProps.spaceGroups}
-          fileError={composer.fileError}
-          isProcessingImage={composer.isProcessingImage}
-          mentionError={composer.mentionError}
-          messageValidation={composer.messageValidation}
-          characterCount={composer.characterCount}
-          showSigningToggle={channelProps.isRepudiable}
-          skipSigning={channelProps.skipSigning}
-          onSigningToggle={channelProps.onSigningToggle}
-        />
+        {isClosed ? (
+          <div className="thread-panel__closed-notice">
+            <span>{t`This thread has been closed`}</span>
+            {canReopen && (
+              <button
+                type="button"
+                className="thread-panel__reopen-link"
+                onClick={() => setThreadClosed(threadId!, false)}
+              >
+                {t`Reopen`}
+              </button>
+            )}
+          </div>
+        ) : (
+          <MessageComposer
+            ref={composerRef}
+            canUseEveryone={channelProps.canUseEveryone}
+            value={composer.pendingMessage}
+            onChange={composer.setPendingMessage}
+            onKeyDown={composer.handleKeyDown}
+            placeholder={t`Reply in thread...`}
+            calculateRows={composer.calculateRows}
+            getRootProps={composer.getRootProps}
+            getInputProps={composer.getInputProps}
+            processedImage={composer.processedImage}
+            clearFile={composer.clearFile}
+            onSubmitMessage={composer.submitMessage}
+            onShowStickers={handleShowEmojiPanel}
+            inReplyTo={composer.inReplyTo}
+            setInReplyTo={composer.setInReplyTo}
+            mapSenderToUser={channelProps.mapSenderToUser}
+            users={channelProps.users}
+            roles={channelProps.mentionRoles}
+            groups={channelProps.spaceGroups}
+            fileError={composer.fileError}
+            isProcessingImage={composer.isProcessingImage}
+            mentionError={composer.mentionError}
+            messageValidation={composer.messageValidation}
+            characterCount={composer.characterCount}
+            showSigningToggle={channelProps.isRepudiable}
+            skipSigning={channelProps.skipSigning}
+            onSigningToggle={channelProps.onSigningToggle}
+          />
+        )}
       </div>
 
       </div>
