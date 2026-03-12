@@ -6,7 +6,6 @@ import {
   Icon,
   Container,
   Flex,
-  Text,
   Spacer,
   Switch,
   Select,
@@ -211,15 +210,15 @@ const ChannelEditorModal: React.FunctionComponent<{
               direction="vertical"
             />
             <Flex justify="center" align="center">
-              <Text
-                variant="danger"
-                className="cursor-pointer hover:text-danger-hover"
+              <Button
+                type="unstyled"
+                className="text-danger hover:text-danger-hover"
                 onClick={(e: React.MouseEvent) => handleDeleteClick(e)}
               >
                 {deleteConfirmation.confirmationStep === 0
                   ? t`Delete Channel`
                   : t`Click again to confirm`}
-              </Text>
+              </Button>
             </Flex>
           </>
         )}

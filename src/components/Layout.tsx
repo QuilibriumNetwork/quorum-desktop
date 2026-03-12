@@ -201,6 +201,7 @@ const Layout: React.FunctionComponent<{
           rootMessage={threadSettingsModal.config.rootMessage}
           threadMessages={threadSettingsModal.config.threadMessages}
           channelProps={threadSettingsModal.config.channelProps}
+          updateTitle={threadSettingsModal.config.updateTitle}
           setThreadClosed={threadSettingsModal.config.setThreadClosed}
           updateThreadSettings={threadSettingsModal.config.updateThreadSettings}
           removeThread={threadSettingsModal.config.removeThread}

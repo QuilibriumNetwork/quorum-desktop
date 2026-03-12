@@ -121,14 +121,15 @@ const FolderEditorModal: React.FC<FolderEditorModalProps> = ({
               direction="vertical"
             />
             <Flex justify="center" align="center">
-              <span
-                className="text-danger cursor-pointer hover:text-danger-hover"
+              <Button
+                type="unstyled"
+                className="text-danger hover:text-danger-hover"
                 onClick={handleDelete}
               >
                 {deleteConfirmationStep === 0
                   ? t`Delete Folder`
                   : t`Click again to confirm`}
-              </span>
+              </Button>
             </Flex>
             {spaceCount > 0 && deleteConfirmationStep === 0 && (
               <Flex justify="center" align="center" className="mt-2">

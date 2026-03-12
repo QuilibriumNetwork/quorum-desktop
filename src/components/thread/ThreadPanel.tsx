@@ -306,6 +306,7 @@ export const ThreadPanel: React.FC = () => {
               rootMessage,
               threadMessages,
               channelProps,
+              updateTitle,
               setThreadClosed,
               updateThreadSettings,
               removeThread,

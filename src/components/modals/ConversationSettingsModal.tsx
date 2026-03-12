@@ -15,7 +15,6 @@ import {
   Icon,
   Tooltip,
   Spacer,
-  Text,
 } from '../primitives';
 import { useQueryClient } from '@tanstack/react-query';
 import { buildConversationKey } from '../../hooks/queries/conversation/buildConversationKey';
@@ -265,15 +264,15 @@ const ConversationSettingsModal: React.FC<ConversationSettingsModalProps> = ({
 
         {/* Delete Section */}
         <Flex justify="center" align="center">
-          <Text
-            variant="danger"
-            className="cursor-pointer hover:text-danger-hover"
+          <Button
+            type="unstyled"
+            className="text-danger hover:text-danger-hover"
             onClick={(e: React.MouseEvent) => {
               if (!deleteConfirmation.isConfirming) handleDeleteClick(e);
             }}
           >
             {t`Delete Conversation`}
-          </Text>
+          </Button>
         </Flex>
       </Container>
 

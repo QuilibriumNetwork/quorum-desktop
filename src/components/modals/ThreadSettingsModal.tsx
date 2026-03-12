@@ -6,11 +6,14 @@ import {
   Flex,
   Button,
   Spacer,
-  Text,
   Select,
+  Switch,
+  Input,
 } from '../primitives';
 import type { Message as MessageType } from '../../api/quorumApi';
 import type { ThreadChannelProps } from '../context/ThreadContext';
+
+const THREAD_TITLE_MAX_CHARS = 100;
 
 // Auto-close preset options
 const AUTO_CLOSE_OPTIONS = [
@@ -26,6 +29,7 @@ interface ThreadSettingsModalProps {
   rootMessage: MessageType;
   threadMessages: MessageType[];
   channelProps: ThreadChannelProps | null;
+  updateTitle?: (targetMessageId: string, threadMeta: any, newTitle: string) => Promise<void>;
   setThreadClosed?: (threadId: string, close: boolean) => Promise<void>;
   updateThreadSettings?: (threadId: string, autoCloseAfter: number | undefined) => Promise<void>;
   removeThread?: (threadId: string) => Promise<void>;
@@ -38,18 +42,18 @@ export const ThreadSettingsModal: React.FC<ThreadSettingsModalProps> = ({
   rootMessage,
   threadMessages,
   channelProps,
+  updateTitle,
   setThreadClosed,
   updateThreadSettings,
   removeThread,
   visible,
   onClose,
 }) => {
-  const [removeConfirmStep, setRemoveConfirmStep] = React.useState(0);
+  const [deleteConfirmStep, setDeleteConfirmStep] = React.useState(0);
 
   const threadMeta = rootMessage.threadMeta;
   const isClosed = threadMeta?.isClosed ?? false;
   const currentAutoClose = threadMeta?.autoCloseAfter;
-
   const currentUserAddress = channelProps?.currentUserAddress;
 
   const isThreadAuthor = threadMeta?.createdBy === currentUserAddress;
@@ -64,22 +68,40 @@ export const ThreadSettingsModal: React.FC<ThreadSettingsModalProps> = ({
     [threadMessages, currentUserAddress]
   );
 
-  const autoCloseValue = currentAutoClose ? String(currentAutoClose) : '0';
+  // Pending state for all settings
+  const initialTitle = threadMeta?.customTitle ?? '';
+  const initialAutoClose = currentAutoClose ? String(currentAutoClose) : '0';
+  const [pendingTitle, setPendingTitle] = React.useState(initialTitle);
+  const [pendingAutoClose, setPendingAutoClose] = React.useState(initialAutoClose);
+  const [pendingClosed, setPendingClosed] = React.useState(isClosed);
 
-  const handleAutoCloseChange = async (value: string) => {
-    const ms = parseInt(value, 10);
-    await updateThreadSettings?.(threadId, ms === 0 ? undefined : ms);
-  };
+  const isDirty =
+    pendingTitle !== initialTitle ||
+    pendingAutoClose !== initialAutoClose ||
+    pendingClosed !== isClosed;
 
-  const handleToggleClosed = async () => {
-    await setThreadClosed?.(threadId, !isClosed);
+  const handleSave = async () => {
+    const titleChanged = pendingTitle !== initialTitle;
+    const autoCloseChanged = pendingAutoClose !== initialAutoClose;
+    const closedChanged = pendingClosed !== isClosed;
+
+    if (titleChanged && updateTitle) {
+      await updateTitle(rootMessage.messageId, threadMeta, pendingTitle.trim());
+    }
+    if (autoCloseChanged) {
+      const ms = parseInt(pendingAutoClose, 10);
+      await updateThreadSettings?.(threadId, ms === 0 ? undefined : ms);
+    }
+    if (closedChanged) {
+      await setThreadClosed?.(threadId, pendingClosed);
+    }
     onClose();
   };
 
-  const handleRemoveClick = async () => {
-    if (removeConfirmStep === 0) {
-      setRemoveConfirmStep(1);
-      setTimeout(() => setRemoveConfirmStep(0), 5000);
+  const handleDeleteClick = async () => {
+    if (deleteConfirmStep === 0) {
+      setDeleteConfirmStep(1);
+      setTimeout(() => setDeleteConfirmStep(0), 5000);
       return;
     }
     await removeThread?.(threadId);
@@ -95,45 +117,79 @@ export const ThreadSettingsModal: React.FC<ThreadSettingsModalProps> = ({
       title={t`Thread Settings`}
       size="small"
     >
-      <Container>
-        <Flex direction="column">
-          {/* Auto-close section */}
-          <Flex direction="column" gap="sm" className="mb-3">
-            <div className="text-label-strong">{t`Auto-close after`}</div>
-            <Select
-              value={autoCloseValue}
-              options={AUTO_CLOSE_OPTIONS}
-              onChange={(val: string | string[]) => handleAutoCloseChange(Array.isArray(val) ? val[0] : val)}
-              fullWidth
+      <Container style={{ textAlign: 'left' }}>
+        {/* Title — author only */}
+        {isThreadAuthor && (
+          <Container className="mb-4">
+            <div className="text-label-strong mb-1">{t`Title`}</div>
+            <Input
+              value={pendingTitle}
+              onChange={(val: string) => setPendingTitle(val.slice(0, THREAD_TITLE_MAX_CHARS))}
+              placeholder={t`Thread title`}
               variant="bordered"
+              error={pendingTitle.length >= THREAD_TITLE_MAX_CHARS}
+              errorMessage={t`Title cannot exceed ${THREAD_TITLE_MAX_CHARS} characters`}
+              className="w-full"
             />
+          </Container>
+        )}
+
+        {/* Auto-close */}
+        <Container className="mb-4">
+          <div className="text-label-strong mb-1">{t`Auto-close after`}</div>
+          <Select
+            value={pendingAutoClose}
+            options={AUTO_CLOSE_OPTIONS}
+            onChange={(val: string | string[]) => setPendingAutoClose(Array.isArray(val) ? val[0] : val)}
+            fullWidth
+            variant="bordered"
+          />
+        </Container>
+
+        {/* Close thread toggle */}
+        <Container className="mb-4">
+          <Flex align="center" gap="sm">
+            <Switch
+              value={pendingClosed}
+              onChange={(val: boolean) => setPendingClosed(val)}
+            />
+            <span className="text-label">{t`Close thread`}</span>
           </Flex>
+        </Container>
 
-          <Spacer spaceBefore="md" spaceAfter="md" border direction="vertical" />
-
-          {/* Close / Reopen section */}
-          <Flex justify="center" align="center" className="mb-3">
-            <Button type="primary" onClick={handleToggleClosed}>
-              {isClosed ? t`Reopen Thread` : t`Close Thread`}
-            </Button>
-          </Flex>
-
-          {/* Remove section — author only */}
-          {isThreadAuthor && (
-            <>
-              <Spacer spaceBefore="md" spaceAfter="md" border direction="vertical" />
-              <Flex justify="center" align="center">
-                <Text
-                  variant="danger"
-                  className={`cursor-pointer hover:text-danger-hover${hasOtherReplies ? ' opacity-50 pointer-events-none' : ''}`}
-                  onClick={hasOtherReplies ? undefined : handleRemoveClick}
-                >
-                  {removeConfirmStep === 0 ? t`Remove Thread` : t`Click again to confirm`}
-                </Text>
-              </Flex>
-            </>
-          )}
+        {/* Save button */}
+        <Flex className="justify-end gap-2 mt-6">
+          <Button
+            type="primary"
+            onClick={handleSave}
+            disabled={!isDirty}
+            className="max-sm:w-full"
+          >
+            {t`Save Changes`}
+          </Button>
         </Flex>
+
+        {/* Delete section — show explanation to all managers, delete link to author only */}
+        {(hasOtherReplies || isThreadAuthor) && (
+          <>
+            <Spacer spaceBefore="lg" spaceAfter="md" border direction="vertical" />
+            <Flex justify="center" align="center">
+              {hasOtherReplies ? (
+                <span className="text-small text-center">
+                  {t`This thread cannot be deleted because it contains messages from other users.`}
+                </span>
+              ) : (
+                <Button
+                  type="unstyled"
+                  className="text-danger hover:text-danger-hover"
+                  onClick={handleDeleteClick}
+                >
+                  {deleteConfirmStep === 0 ? t`Delete Thread` : t`Click again to confirm`}
+                </Button>
+              )}
+            </Flex>
+          </>
+        )}
       </Container>
     </Modal>
   );

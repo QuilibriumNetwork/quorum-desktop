@@ -7,6 +7,7 @@ export interface ThreadSettingsModalConfig {
   rootMessage: MessageType;
   threadMessages: MessageType[];
   channelProps: ThreadChannelProps | null;
+  updateTitle?: (targetMessageId: string, threadMeta: any, newTitle: string) => Promise<void>;
   setThreadClosed?: (threadId: string, close: boolean) => Promise<void>;
   updateThreadSettings?: (threadId: string, autoCloseAfter: number | undefined) => Promise<void>;
   removeThread?: (threadId: string) => Promise<void>;

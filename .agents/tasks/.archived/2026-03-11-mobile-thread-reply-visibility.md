@@ -1,5 +1,7 @@
 # Mobile Thread Reply Visibility — Design Spec
 
+not applicable
+
 **Date:** 2026-03-11
 **Status:** Approved
 **Branch:** feat/message-threads
