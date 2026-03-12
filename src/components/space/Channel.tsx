@@ -397,6 +397,42 @@ const Channel: React.FC<ChannelProps> = ({
     ]
   );
 
+  const handleSetThreadClosed = useCallback(
+    async (_threadId: string, close: boolean) => {
+      if (spaceId === channelId) return;
+      if (!activeThreadRootMessage) return;
+
+      const threadMeta = activeThreadRootMessage.threadMeta;
+      if (!threadMeta) return;
+
+      const updatedMeta: ThreadMeta = close
+        ? { ...threadMeta, isClosed: true, closedBy: user.currentPasskeyInfo!.address }
+        : { ...threadMeta, isClosed: false };
+      if (!close) {
+        delete (updatedMeta as any).closedBy;
+      }
+
+      const threadMessage: ThreadMessage = {
+        type: 'thread',
+        senderId: user.currentPasskeyInfo!.address,
+        targetMessageId: activeThreadRootMessage.messageId,
+        action: close ? 'close' : 'reopen',
+        threadMeta: updatedMeta,
+      };
+
+      const effectiveSkip = space?.isRepudiable ? skipSigning : false;
+      await submitChannelMessage(
+        spaceId, channelId, threadMessage, queryClient,
+        user.currentPasskeyInfo!, undefined, effectiveSkip, isSpaceOwner
+      );
+
+      setActiveThreadRootMessage((prev) =>
+        prev ? { ...prev, threadMeta: { ...prev.threadMeta, ...updatedMeta } } : prev
+      );
+    },
+    [spaceId, channelId, activeThreadRootMessage, user.currentPasskeyInfo, submitChannelMessage, queryClient, space, skipSigning, isSpaceOwner]
+  );
+
   // Handle opening a thread (create if needed, then open panel)
   const handleOpenThread = useCallback(
     async (message: MessageType) => {
@@ -565,6 +601,74 @@ const Channel: React.FC<ChannelProps> = ({
     [spaceId, channelId, activeThreadId, user.currentPasskeyInfo, submitChannelMessage, queryClient, space, skipSigning, isSpaceOwner]
   );
 
+  const handleUpdateThreadSettings = useCallback(
+    async (_threadId: string, autoCloseAfter: number | undefined) => {
+      if (spaceId === channelId) return;
+      if (!activeThreadRootMessage) return;
+
+      const threadMeta = activeThreadRootMessage.threadMeta;
+      if (!threadMeta) return;
+
+      const updatedMeta: ThreadMeta = { ...threadMeta };
+      if (autoCloseAfter === undefined) {
+        delete (updatedMeta as any).autoCloseAfter;
+      } else {
+        updatedMeta.autoCloseAfter = autoCloseAfter;
+        if (!updatedMeta.lastActivityAt) {
+          updatedMeta.lastActivityAt = Date.now();
+        }
+      }
+
+      const threadMessage: ThreadMessage = {
+        type: 'thread',
+        senderId: user.currentPasskeyInfo!.address,
+        targetMessageId: activeThreadRootMessage.messageId,
+        action: 'updateSettings',
+        threadMeta: updatedMeta,
+      };
+
+      const effectiveSkip = space?.isRepudiable ? skipSigning : false;
+      await submitChannelMessage(
+        spaceId, channelId, threadMessage, queryClient,
+        user.currentPasskeyInfo!, undefined, effectiveSkip, isSpaceOwner
+      );
+
+      setActiveThreadRootMessage((prev) =>
+        prev ? { ...prev, threadMeta: { ...prev.threadMeta, ...updatedMeta } } : prev
+      );
+    },
+    [spaceId, channelId, activeThreadRootMessage, user.currentPasskeyInfo, submitChannelMessage, queryClient, space, skipSigning, isSpaceOwner]
+  );
+
+  const handleRemoveThread = useCallback(
+    async (_threadId: string) => {
+      if (spaceId === channelId) return;
+      if (!activeThreadRootMessage) return;
+
+      const threadMeta = activeThreadRootMessage.threadMeta;
+      if (!threadMeta) return;
+
+      const threadMessage: ThreadMessage = {
+        type: 'thread',
+        senderId: user.currentPasskeyInfo!.address,
+        targetMessageId: activeThreadRootMessage.messageId,
+        action: 'remove',
+        threadMeta: { threadId: threadMeta.threadId, createdBy: threadMeta.createdBy },
+      };
+
+      const effectiveSkip = space?.isRepudiable ? skipSigning : false;
+      await submitChannelMessage(
+        spaceId, channelId, threadMessage, queryClient,
+        user.currentPasskeyInfo!, undefined, effectiveSkip, isSpaceOwner
+      );
+
+      setActivePanel(null);
+      setActiveThreadId(null);
+      setActiveThreadRootMessage(null);
+    },
+    [spaceId, channelId, activeThreadRootMessage, user.currentPasskeyInfo, submitChannelMessage, queryClient, space, skipSigning, isSpaceOwner, setActivePanel]
+  );
+
   // Sync thread actions to context
   React.useEffect(() => {
     threadCtx.setThreadActions({
@@ -577,8 +681,11 @@ const Channel: React.FC<ChannelProps> = ({
       submitMessage: handleSubmitThreadMessage,
       submitSticker: handleSubmitThreadSticker,
       updateTitle: handleUpdateThreadTitle,
+      setThreadClosed: handleSetThreadClosed,
+      updateThreadSettings: handleUpdateThreadSettings,
+      removeThread: handleRemoveThread,
     });
-  }, [handleOpenThread, handleSubmitThreadMessage, handleSubmitThreadSticker, handleUpdateThreadTitle]);
+  }, [handleOpenThread, handleSubmitThreadMessage, handleSubmitThreadSticker, handleUpdateThreadTitle, handleSetThreadClosed, handleUpdateThreadSettings, handleRemoveThread]);
 
   // Handle user profile modal close
   const handleUserProfileClose = useCallback(() => {
