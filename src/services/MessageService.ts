@@ -811,6 +811,50 @@ export class MessageService {
       } else if (threadMsg.action === 'updateTitle') {
         // Only the thread creator may rename the thread
         if (threadMsg.senderId !== targetMessage.threadMeta?.createdBy) return;
+      } else if (
+        threadMsg.action === 'close' ||
+        threadMsg.action === 'reopen' ||
+        threadMsg.action === 'updateSettings'
+      ) {
+        // Thread creator OR anyone with message:delete permission may close/reopen/updateSettings
+        const isAuthor = threadMsg.senderId === targetMessage.threadMeta?.createdBy;
+        const space = await messageDB.getSpace(spaceId);
+        const hasDeletePermission =
+          space?.roles?.some(
+            (role) =>
+              role.members.includes(threadMsg.senderId) &&
+              role.permissions.includes('message:delete')
+          ) ?? false;
+        if (!isAuthor && !hasDeletePermission) return;
+        // Falls through to the existing spread-merge + saveMessage below
+      } else if (threadMsg.action === 'remove') {
+        // Only the thread creator who is also the root message sender may remove a thread
+        const isAuthor = threadMsg.senderId === targetMessage.threadMeta?.createdBy;
+        const isRootSender = threadMsg.senderId === targetMessage.content.senderId;
+        if (!isAuthor || !isRootSender) return;
+
+        // Strip threadMeta from root message and persist
+        const { threadMeta: _stripped, ...rootWithoutThread } = targetMessage;
+        await messageDB.saveMessage(
+          rootWithoutThread as Message,
+          0,
+          spaceId,
+          conversationType,
+          updatedUserProfile.user_icon!,
+          updatedUserProfile.display_name!,
+          currentUserAddress
+        );
+
+        // Hard-delete all thread replies
+        const { messages: threadReplies } = await messageDB.getThreadMessages({
+          spaceId,
+          channelId,
+          threadId: threadMsg.threadMeta.threadId,
+        });
+        for (const reply of threadReplies) {
+          await messageDB.deleteMessage(reply.messageId);
+        }
+        return; // Do not fall through to generic save
       }
 
       const updatedMessage: Message = {
@@ -1319,6 +1363,58 @@ export class MessageService {
         if (!targetMessage || threadMsg.senderId !== targetMessage.threadMeta?.createdBy) return;
       }
 
+      if (threadMsg.action === 'close' || threadMsg.action === 'reopen' || threadMsg.action === 'updateSettings') {
+        const targetMessage = await this.messageDB.getMessage({ spaceId, channelId, messageId: threadMsg.targetMessageId });
+        if (!targetMessage) return;
+        const isAuthor = threadMsg.senderId === targetMessage.threadMeta?.createdBy;
+        const space = await this.messageDB.getSpace(spaceId);
+        const hasDeletePermission =
+          space?.roles?.some(
+            (role) =>
+              role.members.includes(threadMsg.senderId) &&
+              role.permissions.includes('message:delete')
+          ) ?? false;
+        if (!isAuthor && !hasDeletePermission) return;
+      }
+
+      if (threadMsg.action === 'remove') {
+        const targetMessage = await this.messageDB.getMessage({ spaceId, channelId, messageId: threadMsg.targetMessageId });
+        if (!targetMessage) return;
+        const isAuthor = threadMsg.senderId === targetMessage.threadMeta?.createdBy;
+        const isRootSender = threadMsg.senderId === targetMessage.content.senderId;
+        if (!isAuthor || !isRootSender) return;
+      }
+
+      if (threadMsg.action === 'remove') {
+        const threadId = threadMsg.threadMeta.threadId;
+        queryClient.setQueryData(
+          buildMessagesKey({ spaceId, channelId }),
+          (oldData: InfiniteData<any>) => {
+            if (!oldData?.pages) return oldData;
+            return {
+              pageParams: oldData.pageParams,
+              pages: oldData.pages.map((page: any) => ({
+                ...page,
+                messages: page.messages.map((m: Message) => {
+                  if (m.messageId === threadMsg.targetMessageId) {
+                    const { threadMeta: _stripped, ...rest } = m;
+                    return rest as Message;
+                  }
+                  if (m.threadId === threadId) {
+                    return null;
+                  }
+                  return m;
+                }).filter(Boolean),
+              })),
+            };
+          }
+        );
+        queryClient.invalidateQueries({
+          queryKey: ['thread-messages', spaceId, channelId, threadId],
+        });
+        return;
+      }
+
       queryClient.setQueryData(
         buildMessagesKey({ spaceId, channelId }),
         (oldData: InfiniteData<any>) => {
@@ -1455,6 +1551,33 @@ export class MessageService {
         queryClient.invalidateQueries({
           queryKey: ['thread-stats', spaceId, channelId, decryptedContent.threadId],
         });
+
+        // Update lastActivityAt on the root message in the main feed cache
+        if (decryptedContent.threadId) {
+          const now = decryptedContent.createdDate ?? Date.now();
+          queryClient.setQueryData(
+            buildMessagesKey({ spaceId, channelId }),
+            (oldData: InfiniteData<any>) => {
+              if (!oldData?.pages) return oldData;
+              return {
+                pageParams: oldData.pageParams,
+                pages: oldData.pages.map((page: any) => ({
+                  ...page,
+                  messages: page.messages.map((m: Message) => {
+                    if (m.threadMeta?.threadId === decryptedContent.threadId) {
+                      return {
+                        ...m,
+                        threadMeta: { ...m.threadMeta, lastActivityAt: now },
+                      };
+                    }
+                    return m;
+                  }),
+                })),
+              };
+            }
+          );
+        }
+
         return;
       }
 
