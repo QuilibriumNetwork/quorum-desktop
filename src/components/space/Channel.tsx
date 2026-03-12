@@ -54,6 +54,12 @@ import {
 // Lazy-load EmojiPicker to avoid bundling on every channel init
 const LazyEmojiPicker = React.lazy(() => import('emoji-picker-react'));
 
+/** Read --sidebar-right-width from :root (defined in _base.scss). Fallback 260px. */
+function getSidebarRightWidth(): number {
+  const val = getComputedStyle(document.documentElement).getPropertyValue('--sidebar-right-width');
+  return parseInt(val, 10) || 260;
+}
+
 // Helper function to check if user can post in read-only channel
 // NOTE: Space owners must explicitly join a manager role to post in read-only channels.
 // This is intentional - the receiving side cannot verify space ownership (privacy requirement).
@@ -1390,7 +1396,7 @@ const Channel: React.FC<ChannelProps> = ({
 
           {/* Desktop sidebar only - mobile uses MobileDrawer below */}
           {showUsers && (
-            <div className="channel-users-sidebar list-bottom-fade-chat hidden lg:block w-[260px] bg-chat border-l border-default flex-shrink-0">
+            <div className="channel-users-sidebar list-bottom-fade-chat hidden lg:block w-[var(--sidebar-right-width)] bg-chat border-l border-default flex-shrink-0">
               {/* Search Input */}
               <div className="px-4 pt-4 bg-chat sticky top-0 z-10">
                 <ListSearchInput
@@ -1483,7 +1489,7 @@ const Channel: React.FC<ChannelProps> = ({
         place="top"
       />
 
-      {/* Emoji & Stickers panel - positioned at top level to avoid stacking context issues */}
+      {/* Emoji & Stickers panel - fixed position, offset by sidebar width */}
       {composer.showStickers && (
         <>
           <div
@@ -1494,7 +1500,16 @@ const Channel: React.FC<ChannelProps> = ({
             }}
           />
           <div
-            className={`stickers-panel-wrapper ${showUsers ? 'with-sidebar' : 'without-sidebar'}`}
+            className="stickers-panel-wrapper"
+            style={{
+              right: (() => {
+                let offset = 24; // base padding
+                if (showUsers) offset += getSidebarRightWidth();
+                const threadEl = document.querySelector('.thread-panel-wrapper') as HTMLElement | null;
+                if (threadEl) offset += threadEl.offsetWidth + 8; // thread panel + gap
+                return `${offset}px`;
+              })(),
+            }}
             onKeyDown={(e) => {
               if (e.key === 'Escape') {
                 composer.setShowStickers(false);
@@ -1566,7 +1581,7 @@ const Channel: React.FC<ChannelProps> = ({
             <div
               className="fixed inset-0 z-[9990]"
               style={{
-                right: showUsers ? '260px' : '0px',
+                right: showUsers ? `${getSidebarRightWidth()}px` : '0px',
               }}
               onClick={handleUserProfileClose}
             />
@@ -1578,7 +1593,7 @@ const Channel: React.FC<ChannelProps> = ({
                   userProfileModal.modalPosition.left !== undefined
                     ? `${userProfileModal.modalPosition.left}px`
                     : showUsers
-                      ? `calc(100vw - 260px - 320px)`
+                      ? `calc(100vw - ${getSidebarRightWidth()}px - 320px)`
                       : `calc(100vw - 320px)`,
               }}
             >

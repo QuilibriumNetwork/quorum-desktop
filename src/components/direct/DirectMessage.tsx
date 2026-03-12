@@ -886,7 +886,7 @@ const DirectMessage: React.FC<{}> = () => {
                   onClick={() => setShowEmojiPanel(false)}
                 />
                 <div
-                  className="stickers-panel-wrapper without-sidebar"
+                  className="stickers-panel-wrapper"
                   onKeyDown={(e) => {
                     if (e.key === 'Escape') {
                       setShowEmojiPanel(false);

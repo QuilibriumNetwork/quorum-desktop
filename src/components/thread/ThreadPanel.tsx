@@ -1,4 +1,4 @@
-import React, { useRef, useMemo, useState, useCallback, useEffect } from 'react';
+import React, { Suspense, useRef, useMemo, useState, useCallback, useEffect } from 'react';
 import type { PostMessage } from '../../api/quorumApi';
 import { Button, Icon, Input } from '../primitives';
 import { t } from '@lingui/core/macro';
@@ -6,7 +6,17 @@ import { MessageList, MessageListRef } from '../message/MessageList';
 import MessageComposer, { MessageComposerRef } from '../message/MessageComposer';
 import { useMessageComposer } from '../../hooks';
 import { useThreadContext, useThreadContextStore } from '../context/ThreadContext';
+import { useMobile } from '../context/MobileProvider';
+import { useResponsiveLayoutContext } from '../context/ResponsiveLayoutProvider';
+import {
+  SkinTonePickerLocation,
+  SuggestionMode,
+  Theme,
+} from 'emoji-picker-react';
+import type { CustomEmoji } from 'emoji-picker-react/dist/config/customEmojiConfig';
 import './ThreadPanel.scss';
+
+const LazyEmojiPicker = React.lazy(() => import('emoji-picker-react'));
 
 const THREAD_TITLE_MAX_CHARS = 100;
 
@@ -53,6 +63,46 @@ export const ThreadPanel: React.FC = () => {
     onSubmitSticker: submitSticker,
     hasStickers: !!channelProps?.stickers && Object.keys(channelProps.stickers).length > 0,
   });
+
+  const { openMobileEmojiDrawer } = useMobile();
+  const { isMobile } = useResponsiveLayoutContext();
+  const [panelTab, setPanelTab] = useState<'emojis' | 'stickers'>('emojis');
+
+  // Transform custom emoji data for emoji-picker-react
+  const customEmojis: CustomEmoji[] = useMemo(() => {
+    if (!channelProps?.customEmoji) return [];
+    return channelProps.customEmoji.map((c) => ({
+      names: [c.name],
+      id: c.id,
+      imgUrl: c.imgUrl,
+    }));
+  }, [channelProps?.customEmoji]);
+
+  // Handle emoji selection — insert into thread composer
+  const handleComposerEmojiClick = useCallback((emojiData: any) => {
+    const emoji = emojiData.emoji || emojiData.imageUrl;
+    if (emoji) {
+      composerRef.current?.insertEmoji(emoji);
+    }
+  }, []);
+
+  // Handle smiley button click — thread-specific handler
+  const handleShowEmojiPanel = useCallback(() => {
+    if (isMobile) {
+      openMobileEmojiDrawer({
+        onEmojiClick: (emoji: string) => {
+          composerRef.current?.insertEmoji(emoji);
+        },
+        customEmojis,
+        stickers: channelProps?.stickers ? Object.values(channelProps.stickers) as any : undefined,
+        onStickerClick: (stickerId: string) => {
+          composer.submitSticker(stickerId);
+        },
+      });
+    } else {
+      composer.setShowStickers(true);
+    }
+  }, [isMobile, openMobileEmojiDrawer, customEmojis, channelProps?.stickers, composer]);
 
   // Resize
   const STORAGE_KEY = 'thread-panel-width';
@@ -298,7 +348,7 @@ export const ThreadPanel: React.FC = () => {
           processedImage={composer.processedImage}
           clearFile={composer.clearFile}
           onSubmitMessage={composer.submitMessage}
-          onShowStickers={channelProps.onShowStickers || (() => {})}
+          onShowStickers={handleShowEmojiPanel}
           inReplyTo={composer.inReplyTo}
           setInReplyTo={composer.setInReplyTo}
           mapSenderToUser={channelProps.mapSenderToUser}
@@ -315,7 +365,79 @@ export const ThreadPanel: React.FC = () => {
           onSigningToggle={channelProps.onSigningToggle}
         />
       </div>
+
       </div>
+
+      {/* Emoji & Stickers panel for thread — rendered in wrapper to avoid overflow:hidden clipping */}
+      {composer.showStickers && (
+        <>
+          <div
+            className="stickers-backdrop"
+            onClick={() => composer.setShowStickers(false)}
+            onKeyDown={(e) => {
+              if (e.key === 'Escape') composer.setShowStickers(false);
+            }}
+          />
+          <div
+            className="stickers-panel-wrapper thread-panel__stickers-panel-wrapper"
+            onKeyDown={(e) => {
+              if (e.key === 'Escape') {
+                composer.setShowStickers(false);
+                composerRef.current?.focus();
+              }
+            }}
+          >
+            <div className="stickers-panel">
+              <div className="stickers-panel-tabs">
+                <button
+                  className={`stickers-panel-tab ${panelTab === 'emojis' ? 'active' : ''}`}
+                  onClick={() => setPanelTab('emojis')}
+                >
+                  {t`Emojis`}
+                </button>
+                <button
+                  className={`stickers-panel-tab ${panelTab === 'stickers' ? 'active' : ''}`}
+                  onClick={() => setPanelTab('stickers')}
+                >
+                  {t`Stickers`}
+                </button>
+              </div>
+
+              {panelTab === 'emojis' ? (
+                <div className="stickers-panel-emoji-content">
+                  <Suspense fallback={<div className="emoji-picker-loading" />}>
+                    <LazyEmojiPicker
+                      width={300}
+                      height={358}
+                      suggestedEmojisMode={SuggestionMode.FREQUENT}
+                      customEmojis={customEmojis}
+                      getEmojiUrl={(unified) => '/twitter/64/' + unified + '.png'}
+                      skinTonePickerLocation={SkinTonePickerLocation.PREVIEW}
+                      theme={Theme.DARK}
+                      onEmojiClick={handleComposerEmojiClick}
+                      lazyLoadEmojis={true}
+                    />
+                  </Suspense>
+                </div>
+              ) : (
+                <div className="stickers-panel-grid">
+                  {channelProps.stickers && Object.values(channelProps.stickers).map((s) => (
+                    <div
+                      key={'sticker-' + s.id}
+                      className="sticker-item"
+                      onClick={() => {
+                        composer.submitSticker(s.id);
+                      }}
+                    >
+                      <img src={s.imgUrl} alt="sticker" />
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        </>
+      )}
     </div>
   );
 };

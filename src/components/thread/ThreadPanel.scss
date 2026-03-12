@@ -197,3 +197,11 @@
     }
   }
 }
+
+// Thread-specific sticker panel positioning — inside .thread-panel-wrapper
+// (outside .thread-panel to avoid overflow:hidden clipping).
+// Overrides the shared fixed positioning to use absolute within the wrapper.
+.thread-panel__stickers-panel-wrapper {
+  position: absolute;
+  right: $s-4;
+}

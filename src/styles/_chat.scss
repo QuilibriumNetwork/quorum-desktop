@@ -413,21 +413,14 @@ img.twemoji {
 }
 
 // Main panel container
+// Channel.tsx sets `right` via inline style to account for sidebar + thread panel.
+// Other contexts (DM, ThreadPanel) override position/right as needed.
 .stickers-panel-wrapper {
   position: fixed;
   bottom: $s-20; // bottom-20 (80px)
+  right: $s-6; // default right-6 (24px), overridden by inline style when needed
   z-index: 9999;
   pointer-events: none;
-  transition: all $duration-300 $ease-in-out;
-
-  // Dynamic right positioning based on users sidebar state
-  &.with-sidebar {
-    right: 300px;
-  }
-
-  &.without-sidebar {
-    right: $s-6; // right-6 (24px)
-  }
 }
 
 // Panel content
