@@ -455,6 +455,7 @@ const Channel: React.FC<ChannelProps> = ({
         const threadMeta: ThreadMeta = {
           threadId,
           createdBy: user.currentPasskeyInfo!.address,
+          lastActivityAt: Date.now(),
         };
         const threadMessage: ThreadMessage = {
           type: 'thread',
@@ -481,11 +482,26 @@ const Channel: React.FC<ChannelProps> = ({
         message = { ...message, threadMeta };
       }
 
+      // Auto-close check: evaluate expiry on open (check-on-read pattern)
+      if (message.threadMeta?.autoCloseAfter && message.threadMeta?.lastActivityAt) {
+        const isExpired =
+          message.threadMeta.lastActivityAt + message.threadMeta.autoCloseAfter <= Date.now();
+        if (isExpired && !message.threadMeta.isClosed) {
+          queueMicrotask(() => {
+            handleSetThreadClosed(message.threadMeta!.threadId, true);
+          });
+          message = {
+            ...message,
+            threadMeta: { ...message.threadMeta, isClosed: true, closedBy: user.currentPasskeyInfo!.address },
+          };
+        }
+      }
+
       setActiveThreadId(threadId);
       setActiveThreadRootMessage(message);
       setActivePanel('thread');
     },
-    [spaceId, channelId, user.currentPasskeyInfo, submitChannelMessage, queryClient, space, skipSigning, isSpaceOwner]
+    [spaceId, channelId, user.currentPasskeyInfo, submitChannelMessage, queryClient, space, skipSigning, isSpaceOwner, handleSetThreadClosed]
   );
 
   // Handle submitting a reply in a thread (matches onSubmitMessage signature for useMessageComposer)
@@ -517,8 +533,16 @@ const Channel: React.FC<ChannelProps> = ({
         parentMessage,
         activeThreadId
       );
+
+      // Update lastActivityAt on root message stale snapshot after sending a reply
+      if (activeThreadRootMessage?.threadMeta) {
+        const now = Date.now();
+        setActiveThreadRootMessage((prev) =>
+          prev?.threadMeta ? { ...prev, threadMeta: { ...prev.threadMeta, lastActivityAt: now } } : prev
+        );
+      }
     },
-    [activeThreadId, spaceId, channelId, submitChannelMessage, queryClient, user.currentPasskeyInfo, space, skipSigning, isSpaceOwner, messageDB]
+    [activeThreadId, spaceId, channelId, submitChannelMessage, queryClient, user.currentPasskeyInfo, space, skipSigning, isSpaceOwner, messageDB, activeThreadRootMessage]
   );
 
   // Handle sticker submission in a thread
