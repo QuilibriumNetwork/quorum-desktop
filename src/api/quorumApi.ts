@@ -156,6 +156,10 @@ export type ThreadMeta = {
   threadId: string;
   createdBy: string;
   customTitle?: string;  // User-set title, overrides auto-derived
+  isClosed?: boolean;
+  closedBy?: string;
+  autoCloseAfter?: number;   // Duration in ms (preset-derived). "Never" = field omitted entirely
+  lastActivityAt?: number;   // Timestamp of last reply; used for auto-close check
 };
 
 export type PostMessage = {
@@ -255,7 +259,7 @@ export type ThreadMessage = {
   senderId: string;
   type: 'thread';
   targetMessageId: string;
-  action: 'create' | 'updateTitle';
+  action: 'create' | 'updateTitle' | 'close' | 'reopen' | 'updateSettings' | 'remove';
   threadMeta: ThreadMeta;
 };
 
