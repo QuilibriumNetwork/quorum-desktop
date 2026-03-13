@@ -27,6 +27,11 @@
   transition: transform $duration-200 ease-in-out;
   background-color: transparent;
 
+  // Suppress keyboard focus outline — context menu is mouse-driven
+  &:focus-visible {
+    outline: none;
+  }
+
   &:hover {
     transform: scale(1.5);
   }

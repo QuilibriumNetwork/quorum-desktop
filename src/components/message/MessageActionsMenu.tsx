@@ -23,8 +23,8 @@ export interface MessageActionsMenuProps {
   onReply: () => void;
   onCopyLink: () => void;
   onCopyMessageText: () => void;
-  onDelete?: () => void;
-  onPin?: () => void;
+  onDelete?: (e: React.MouseEvent) => void;
+  onPin?: (e: React.MouseEvent) => void;
   onReaction: (emoji: string) => void;
   onMoreReactions: () => void;
   onEdit?: () => void;
@@ -160,9 +160,9 @@ const MessageActionsMenu: React.FC<MessageActionsMenuProps> = ({
     }
   };
 
-  const handlePin = () => {
+  const handlePin = (e: React.MouseEvent) => {
     if (onPin) {
-      onPin();
+      onPin(e);
       onClose();
     }
   };
@@ -181,9 +181,9 @@ const MessageActionsMenu: React.FC<MessageActionsMenuProps> = ({
     }
   };
 
-  const handleDelete = () => {
+  const handleDelete = (e: React.MouseEvent) => {
     if (onDelete) {
-      onDelete();
+      onDelete(e);
       onClose();
     }
   };

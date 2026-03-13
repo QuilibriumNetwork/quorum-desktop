@@ -1275,19 +1275,14 @@ export const Message = React.memo(
             onCopyMessageText={messageActions.handleCopyMessageText}
             onDelete={
               messageActions.canUserDelete
-                ? () =>
-                    messageActions.handleDelete({
-                      shiftKey: false,
-                    } as React.MouseEvent)
+                ? (e: React.MouseEvent) =>
+                    messageActions.handleDelete(e)
                 : undefined
             }
             onPin={
               pinnedMessages.canPinMessages
-                ? () =>
-                    pinnedMessages.togglePin(
-                      { shiftKey: false } as React.MouseEvent,
-                      message
-                    )
+                ? (e: React.MouseEvent) =>
+                    pinnedMessages.togglePin(e, message)
                 : undefined
             }
             onReaction={messageActions.handleReaction}
