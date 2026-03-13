@@ -57,6 +57,7 @@ import {
   buildChannelThreadFromCreate,
   updateChannelThreadOnReply,
 } from './channelThreadHelpers';
+import { ThreadService } from './ThreadService';
 
 // Timer for dismissing sync toast after inactivity
 let syncDismissTimer: NodeJS.Timeout | undefined;
@@ -141,6 +142,8 @@ export class MessageService {
   private handleSyncInitiateV2: (spaceId: string, message: any) => Promise<void>;
   private handleSyncManifest: (spaceId: string, targetInbox: string, payload: any) => Promise<void>;
 
+  private threadService: ThreadService;
+
   // Per-sender rate limiters (receiving-side defense-in-depth)
   private receivingRateLimiters = new Map<string, SimpleRateLimiter>();
 
@@ -152,6 +155,7 @@ export class MessageService {
 
   constructor(dependencies: MessageServiceDependencies) {
     this.messageDB = dependencies.messageDB;
+    this.threadService = new ThreadService(this.messageDB);
     this.enqueueOutbound = dependencies.enqueueOutbound;
     this.addOrUpdateConversation = dependencies.addOrUpdateConversation;
     this.apiClient = dependencies.apiClient;
