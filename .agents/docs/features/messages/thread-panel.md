@@ -196,9 +196,9 @@ Opened via the cog icon in the panel header. Accessible to thread managers (auth
 - **Title editing** (author only) — Freetext input, 100-char limit, XSS validation via `validateNameForXSS`. Saves via `updateTitle` → `handleUpdateThreadTitle` in Channel.tsx → `submitChannelMessage` broadcast (same flow as inline title editing previously was). Save button disabled if title has XSS content or no changes.
 - **Auto-close** — Select preset (Never / 1h / 24h / 3 days / 1 week). Stored as `autoCloseAfter` ms in `ThreadMeta`. "Never" = field omitted.
 - **Close thread toggle** — Marks thread as `isClosed`. Closed threads are read-only for all users.
-- **Delete thread** — Author-only, two-click confirm. Only shown if thread has no replies from other users. Removes all thread replies from IndexedDB and strips `threadMeta` from root message.
+- **Delete thread** — Author-only, two-click confirm. Only shown if thread has no replies from other users. Removes all thread replies from IndexedDB, removes `channel_threads` registry entry, and handles root message based on ownership: hard-deletes if author owns root or root was soft-deleted; strips `threadMeta` otherwise (keeping the other user's message intact).
 
-**Auth:** Modal only renders if `canManage` is true. Server-side auth checks in `MessageService.saveMessage` and `addMessage` enforce the same rules independently.
+**Auth:** Modal only renders if `canManage` is true. Server-side auth in `MessageService` requires only that the sender is the thread creator (`createdBy`). The old `isRootSender` requirement was removed — the thread creator can always delete their thread even if the root message belongs to another user. When the root message is missing from DB (already hard-deleted), authorization falls back to the `channel_threads` registry which independently stores `createdBy`.
 
 **Provider:** `ThreadSettingsModalProvider` wraps the Space and exposes `useThreadSettingsModal()` → `openThreadSettings(props)`. ThreadPanel calls this from the cog button click handler.
 
@@ -238,6 +238,7 @@ Opened via the cog icon in the panel header. Accessible to thread managers (auth
 - **MessageActionsMenu** — "Start Thread" / "View Thread" in right-click context menu
 - **ThreadsListPanel** (`src/components/thread/ThreadsListPanel.tsx`) — Channel-scoped panel listing all threads, accessible via a "Threads" button (icon: `messages`) in the channel header (`Channel.tsx`). Uses `DropdownPanel` with custom `headerContent`. Groups threads into three sections: **Joined Threads** (user has participated), **Other Active Threads** (activity within 7 days), **Older Threads**. Includes in-memory search filtering by title (case-insensitive). Clicking a thread fetches the root message via `messageDB.getMessageById()` and opens it via `openThread()` from ThreadContext. The panel toggle uses `activePanel === 'threads'` on Channel's `ActivePanel` union type (which now includes `'threads'`)
 - **Root message deletion** — Soft-delete preserves `threadMeta` so the thread remains accessible; root shows italicized "[Original message was deleted]" placeholder (i18n). Both local and remote deletion paths handle this: local via `useMessageActions.ts` (map + `messageDB.updateMessage`), remote via `MessageService.ts` `processMessage()` (IndexedDB soft-delete) and `addMessage()` (React Query cache map instead of filter)
+- **Thread deletion with deleted root** — When a thread is deleted and its root message was already soft-deleted (empty text), the root is hard-deleted from IndexedDB (not just stripped of `threadMeta`). This prevents ghost messages (avatar + username with no content) that would appear if `threadMeta` were stripped from a soft-deleted message — the "[Original message was deleted]" placeholder depends on `threadMeta` being present
 
 ## Thread Title Editing
 
@@ -352,6 +353,8 @@ The `threadId` must flow through the entire search chain without being dropped:
 | Dark mode borders | `--color-border-muted` | More subtle external layout borders without affecting general UI borders |
 | Cross-component highlight | URL hash | `useMessageHighlight()` is isolated per instance; `window.location.hash = '#msg-{id}'` is the only cross-component signal Message.tsx responds to |
 | Same-channel hash re-detection | `location.hash` in effect deps | React Router doesn't remount Channel on same-channel navigation; hash dep ensures the thread detection effect re-fires |
+| Thread removal cache strategy | `removeQueries` + `setQueryData` (not `invalidateQueries`) | `invalidateQueries` triggers a DB refetch that races against the persistent handler's cleanup — the refetch restores deleted data into the cache, undoing the optimistic removal. Direct cache manipulation avoids this race |
+| Thread deletion auth | Thread creator only (no `isRootSender` check) | Thread creator may start threads on other users' messages; requiring root authorship blocked deletion in this common case. Root message ownership only affects whether the root is hard-deleted or just stripped of `threadMeta` |
 
 ## Known Limitations
 
@@ -386,5 +389,5 @@ These items are planned but not yet implemented:
 ---
 
 _Created: 2026-03-09_
-_Updated: 2026-03-13 (ThreadsListPanel: added ChannelThread type, DB v10 channel_threads store, useChannelThreads hook, channelThreadHelpers, ThreadListItem, ThreadsListPanel components, thread discovery section; moved ThreadsList from future work to implemented; removed "No ThreadsList panel" limitation)_
+_Updated: 2026-03-13 (thread deletion fixes: relaxed auth to thread-creator-only, handle deleted root messages via channel_threads fallback, hard-delete soft-deleted roots on thread removal to prevent ghost messages, optimistic cache update in handleRemoveThread, use removeQueries/setQueryData instead of invalidateQueries to avoid refetch race; added getChannelThread DB method)_
 _Previously: 2026-03-12 (thread management: added Thread Settings Modal section, close/reopen/auto-close/remove actions, updated types, header description, title editing flow, known limitations, future work; removed Discord references)_

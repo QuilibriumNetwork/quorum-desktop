@@ -104,6 +104,8 @@ This is the main index for all documentation, bug reports, and task management.
 ### Solved Issues
 - [Thread-Aware Navigation: Panel Doesn't Open and Message Not Highlighted](bugs/.solved/2026-03-11-thread-aware-navigation-broken.md)
 - [Thread title not updating in UI after pressing Enter](bugs/.solved/2026-03-11-thread-title-enter-not-saving.md)
+- [Moderator thread deletion resurfaces after optimistic removal](bugs/.solved/2026-03-13-moderator-thread-delete-resurfaces.md)
+- [Thread delete button hidden even when all replies are from thread author](bugs/.solved/2026-03-13-thread-delete-button-hidden-when-all-replies-own.md)
 - [Action Queue Bypasses SDK Encryption for Identity Keys](bugs/.solved/action-queue-plaintext-private-keys.md)
 - [Android 7.0 File Download Fix - Implementation Plan](bugs/.solved/SOLVED_android-file-download-huawei-p9-lite.md)
 - [Bug: Auto-Jump to First Unread Message - Blocked by Virtuoso Scroll Positioning](bugs/.solved/auto-jump-unread-virtuoso-scroll-conflict.md)
@@ -151,8 +153,6 @@ This is the main index for all documentation, bug reports, and task management.
 
 - [Embedded Media + YouTube Facade Privacy Fix — Implementation Plan](tasks/2026-03-12-embedded-media-plan.md)
 - [Embedded Media in PostMessage + YouTube Facade Privacy Fix](tasks/2026-03-12-embedded-media-spec.md)
-- [Threads List Panel Implementation Plan](tasks/2026-03-12-threads-list-panel-plan.md)
-- [Threads List Panel — Design Spec](tasks/2026-03-12-threads-list-panel-spec.md)
 - [Accessibility Features — Remaining Work](tasks/accessibility-features-implementation.md)
 - [Add Space Tag support to shared types](tasks/quorum-shared-space-tags.md)
 - [Add User Bio Field to UserSettingsModal General Tab](tasks/add-user-bio-field.md)
@@ -264,6 +264,8 @@ This is the main index for all documentation, bug reports, and task management.
 - [Thread Title Editing Implementation Plan](tasks/.done/2026-03-11-thread-title-editing.md)
 - [Thread Management: Close, Auto-Close, and Remove — Implementation Plan](tasks/.done/2026-03-12-thread-management-plan.md)
 - [Thread Management: Close, Auto-Close, and Remove](tasks/.done/2026-03-12-thread-management-spec.md)
+- [Threads List Panel Implementation Plan](tasks/.done/2026-03-12-threads-list-panel-plan.md)
+- [Threads List Panel — Design Spec](tasks/.done/2026-03-12-threads-list-panel-spec.md)
 - [AccentColorSwitcher Cross-Platform Migration + Persistence](tasks/.done/accent-color-switcher-cross-platform-migration.md)
 - [Add Context to Desktop Notifications](tasks/.done/rich-desktop-notifications-context.md)
 - [Add DM-Specific Action Queue Handlers](tasks/.done/dm-action-queue-handlers.md)
@@ -442,4 +444,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2026-03-13 14:52:40
+**Last Updated**: 2026-03-13 17:41:28

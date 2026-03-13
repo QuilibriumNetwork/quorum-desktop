@@ -657,6 +657,17 @@ export class MessageDB {
     });
   }
 
+  async getChannelThread(threadId: string): Promise<ChannelThread | undefined> {
+    await this.init();
+    return new Promise((resolve, reject) => {
+      const transaction = this.db!.transaction('channel_threads', 'readonly');
+      const store = transaction.objectStore('channel_threads');
+      const request = store.get(threadId);
+      request.onsuccess = () => resolve(request.result as ChannelThread | undefined);
+      request.onerror = () => reject(request.error);
+    });
+  }
+
   async deleteChannelThread(threadId: string): Promise<void> {
     await this.init();
     return new Promise((resolve, reject) => {
