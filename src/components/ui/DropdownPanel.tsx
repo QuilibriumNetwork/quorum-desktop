@@ -158,6 +158,14 @@ export const DropdownPanel: React.FC<DropdownPanelProps> = ({
   // Use fixed positioning for right-aligned panels to escape relative containers
   const finalPosition = positionStyle === 'right-aligned' ? 'fixed' : position;
 
+  // For right-aligned panels, account for thread panel width so they don't overlap it
+  const rightAlignedStyle = positionStyle === 'right-aligned' ? (() => {
+    let rightOffset = 20; // base padding ($s-5)
+    const threadEl = document.querySelector('.thread-panel-wrapper') as HTMLElement | null;
+    if (threadEl) rightOffset += threadEl.offsetWidth + 8; // thread panel + gap
+    return { right: `${rightOffset}px` };
+  })() : {};
+
   return (
     <Container
       ref={panelRef}
@@ -165,6 +173,7 @@ export const DropdownPanel: React.FC<DropdownPanelProps> = ({
       style={{
         position: finalPosition,
         ...positionStyleObject,
+        ...rightAlignedStyle,
         ...style, // Apply custom style prop last to allow overrides
       }}
     >

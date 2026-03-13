@@ -112,9 +112,12 @@ const Channel: React.FC<ChannelProps> = ({
   const [init, setInit] = useState(false);
   const [skipSigning, setSkipSigning] = useState<boolean>(false);
 
-  // Unified panel state - ensures only one panel can be open at a time
-  type ActivePanel = 'pinned' | 'threads' | 'notifications' | 'bookmarks' | 'search' | 'thread' | null;
-  const [activePanel, setActivePanel] = useState<ActivePanel>(null);
+  // Utility panel state - only one utility panel open at a time (header dropdowns)
+  type UtilityPanel = 'pinned' | 'threads' | 'notifications' | 'bookmarks' | 'search' | null;
+  const [activePanel, setActivePanel] = useState<UtilityPanel>(null);
+
+  // Thread panel state - independent from utility panels so both can coexist
+  const [isThreadOpen, setIsThreadOpen] = useState(false);
 
   // Thread state
   const [activeThreadId, setActiveThreadId] = useState<string | null>(null);
@@ -125,7 +128,7 @@ const Channel: React.FC<ChannelProps> = ({
     spaceId,
     channelId,
     threadId: activeThreadId,
-    enabled: activePanel === 'thread' && !!activeThreadId,
+    enabled: isThreadOpen && !!activeThreadId,
   });
   const threadMessages = threadData?.messages ?? [];
 
@@ -137,14 +140,14 @@ const Channel: React.FC<ChannelProps> = ({
     const current = threadCtx.getThreadState();
     threadCtx.setThreadState({
       ...current,
-      isOpen: activePanel === 'thread',
+      isOpen: isThreadOpen,
       threadId: activeThreadId,
       rootMessage: activeThreadRootMessage,
       threadMessages,
       isLoading: isLoadingThread,
       targetMessageId: current.targetMessageId,
     });
-  }, [activePanel, activeThreadId, activeThreadRootMessage, threadMessages, isLoadingThread]);
+  }, [isThreadOpen, activeThreadId, activeThreadRootMessage, threadMessages, isLoadingThread]);
 
   // User profile modal state and logic
   const userProfileModal = useUserProfileModal({ showUsers });
@@ -500,7 +503,7 @@ const Channel: React.FC<ChannelProps> = ({
 
       setActiveThreadId(threadId);
       setActiveThreadRootMessage(message);
-      setActivePanel('thread');
+      setIsThreadOpen(true);
     },
     [spaceId, channelId, user.currentPasskeyInfo, submitChannelMessage, queryClient, space, skipSigning, isSpaceOwner, handleSetThreadClosed]
   );
@@ -728,11 +731,11 @@ const Channel: React.FC<ChannelProps> = ({
         user.currentPasskeyInfo!, undefined, effectiveSkip, isSpaceOwner
       );
 
-      setActivePanel(null);
+      setIsThreadOpen(false);
       setActiveThreadId(null);
       setActiveThreadRootMessage(null);
     },
-    [spaceId, channelId, activeThreadRootMessage, user.currentPasskeyInfo, submitChannelMessage, queryClient, space, skipSigning, isSpaceOwner, setActivePanel]
+    [spaceId, channelId, activeThreadRootMessage, user.currentPasskeyInfo, submitChannelMessage, queryClient, space, skipSigning, isSpaceOwner]
   );
 
   // Sync thread actions to context
@@ -740,7 +743,7 @@ const Channel: React.FC<ChannelProps> = ({
     threadCtx.setThreadActions({
       openThread: handleOpenThread,
       closeThread: () => {
-        setActivePanel(null);
+        setIsThreadOpen(false);
         setActiveThreadId(null);
         setActiveThreadRootMessage(null);
       },
@@ -757,7 +760,7 @@ const Channel: React.FC<ChannelProps> = ({
   // When the root message is soft-deleted (content cleared), update the thread panel's copy
   // so the deletion is visible immediately without needing to close/reopen the thread.
   React.useEffect(() => {
-    if (activePanel !== 'thread' || !activeThreadRootMessage) return;
+    if (!isThreadOpen || !activeThreadRootMessage) return;
     const updated = messageList.find((m) => m.messageId === activeThreadRootMessage.messageId);
     if (!updated) return;
     // Only sync if content actually changed (e.g. soft-delete cleared the text)
@@ -766,16 +769,16 @@ const Channel: React.FC<ChannelProps> = ({
     if (currentText !== updatedText) {
       setActiveThreadRootMessage((prev) => prev ? { ...prev, content: updated.content } : prev);
     }
-  }, [activePanel, activeThreadRootMessage, messageList]);
+  }, [isThreadOpen, activeThreadRootMessage, messageList]);
 
   // Auto-close the thread panel when the root message has its threadMeta stripped (remove action)
   React.useEffect(() => {
-    if (activePanel === 'thread' && activeThreadRootMessage && !activeThreadRootMessage.threadMeta) {
-      setActivePanel(null);
+    if (isThreadOpen && activeThreadRootMessage && !activeThreadRootMessage.threadMeta) {
+      setIsThreadOpen(false);
       setActiveThreadId(null);
       setActiveThreadRootMessage(null);
     }
-  }, [activeThreadRootMessage, activePanel]);
+  }, [activeThreadRootMessage, isThreadOpen]);
 
   // Handle user profile modal close
   const handleUserProfileClose = useCallback(() => {
@@ -992,7 +995,7 @@ const Channel: React.FC<ChannelProps> = ({
         } else {
           setActiveThreadId(threadId);
           setActiveThreadRootMessage(rootMessage);
-          setActivePanel('thread');
+          setIsThreadOpen(true);
 
           queueMicrotask(() => {
             const currentState = threadCtx.getThreadState();
@@ -1259,7 +1262,7 @@ const Channel: React.FC<ChannelProps> = ({
   }, [updateReadTime]);
 
   return (
-    <div className={`chat-container${activePanel === 'thread' ? ' thread-open' : ''}`}>
+    <div className={`chat-container${isThreadOpen ? ' thread-open' : ''}`}>
       <div className="flex flex-col flex-1 min-w-0">
         {/* Header - full width at top */}
         <div
