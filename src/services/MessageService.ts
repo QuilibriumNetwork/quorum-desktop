@@ -53,10 +53,6 @@ import { notificationService } from './NotificationService';
 import { SimpleRateLimiter, RATE_LIMITS } from '../utils/rateLimit';
 import type { ActionQueueService } from './ActionQueueService';
 import { ENABLE_DM_ACTION_QUEUE } from '../config/features';
-import {
-  buildChannelThreadFromCreate,
-  updateChannelThreadOnReply,
-} from './channelThreadHelpers';
 import { ThreadService } from './ThreadService';
 
 // Timer for dismissing sync toast after inactivity
