@@ -162,6 +162,21 @@ export type ThreadMeta = {
   lastActivityAt?: number;   // Timestamp of last reply; used for auto-close check
 };
 
+export type ChannelThread = {
+  threadId: string;
+  spaceId: string;
+  channelId: string;
+  rootMessageId: string;
+  createdBy: string;
+  createdAt: number;
+  lastActivityAt: number;
+  replyCount: number;
+  isClosed: boolean;
+  customTitle?: string;
+  titleSnapshot?: string;
+  hasParticipated: boolean;
+};
+
 export type PostMessage = {
   senderId: string;
   type: 'post';

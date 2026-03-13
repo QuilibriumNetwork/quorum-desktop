@@ -1,6 +1,6 @@
 import { logger } from '@quilibrium/quorum-shared';
 import { channel } from '@quilibrium/quilibrium-js-sdk-channels';
-import { Conversation, Message, Space, Bookmark, BOOKMARKS_CONFIG, BroadcastSpaceTag } from '../api/quorumApi';
+import { Conversation, Message, Space, Bookmark, BOOKMARKS_CONFIG, BroadcastSpaceTag, ChannelThread } from '../api/quorumApi';
 import type { NotificationSettings } from '../types/notifications';
 import type { IconColor } from '../components/space/IconPicker/types';
 import type { IconName } from '../components/primitives/Icon/types';
@@ -141,7 +141,7 @@ export interface SearchResult {
 export class MessageDB {
   private db: IDBDatabase | null = null;
   private readonly DB_NAME = 'quorum_db';
-  private readonly DB_VERSION = 9;
+  private readonly DB_VERSION = 10;
   private searchIndices: Map<string, MiniSearch<SearchableMessage>> = new Map();
   private indexInitialized = false;
 
@@ -277,6 +277,13 @@ export class MessageDB {
               'createdDate',
             ]);
           }
+        }
+
+        if (event.oldVersion < 10) {
+          const channelThreadsStore = db.createObjectStore('channel_threads', {
+            keyPath: 'threadId',
+          });
+          channelThreadsStore.createIndex('by_channel', ['spaceId', 'channelId']);
         }
       };
     });
@@ -617,6 +624,47 @@ export class MessageDB {
         cursorRequest.onerror = () => reject(cursorRequest.error);
       };
       countRequest.onerror = () => reject(countRequest.error);
+    });
+  }
+
+  async saveChannelThread(thread: ChannelThread): Promise<void> {
+    await this.init();
+    return new Promise((resolve, reject) => {
+      const transaction = this.db!.transaction('channel_threads', 'readwrite');
+      const store = transaction.objectStore('channel_threads');
+      const request = store.put(thread);
+      request.onsuccess = () => resolve();
+      request.onerror = () => reject(request.error);
+    });
+  }
+
+  async getChannelThreads({
+    spaceId,
+    channelId,
+  }: {
+    spaceId: string;
+    channelId: string;
+  }): Promise<ChannelThread[]> {
+    await this.init();
+    return new Promise((resolve, reject) => {
+      const transaction = this.db!.transaction('channel_threads', 'readonly');
+      const store = transaction.objectStore('channel_threads');
+      const index = store.index('by_channel');
+      const range = IDBKeyRange.only([spaceId, channelId]);
+      const request = index.getAll(range);
+      request.onsuccess = () => resolve(request.result as ChannelThread[]);
+      request.onerror = () => reject(request.error);
+    });
+  }
+
+  async deleteChannelThread(threadId: string): Promise<void> {
+    await this.init();
+    return new Promise((resolve, reject) => {
+      const transaction = this.db!.transaction('channel_threads', 'readwrite');
+      const store = transaction.objectStore('channel_threads');
+      const request = store.delete(threadId);
+      request.onsuccess = () => resolve();
+      request.onerror = () => reject(request.error);
     });
   }
 

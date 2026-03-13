@@ -223,7 +223,7 @@ export const ThreadPanel: React.FC = () => {
         onMouseDown={handleResizeStart}
       />
       <div className="thread-panel">
-      {/* Header — Discord-style: title + "Started by X" + close */}
+      {/* Header: title + "Started by X" + close */}
       <div className="thread-panel__header">
         <div className="thread-panel__header-content">
           <div className="thread-panel__title-area">

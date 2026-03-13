@@ -53,6 +53,10 @@ import { notificationService } from './NotificationService';
 import { SimpleRateLimiter, RATE_LIMITS } from '../utils/rateLimit';
 import type { ActionQueueService } from './ActionQueueService';
 import { ENABLE_DM_ACTION_QUEUE } from '../config/features';
+import {
+  buildChannelThreadFromCreate,
+  updateChannelThreadOnReply,
+} from './channelThreadHelpers';
 
 // Timer for dismissing sync toast after inactivity
 let syncDismissTimer: NodeJS.Timeout | undefined;
@@ -808,6 +812,20 @@ export class MessageService {
       if (threadMsg.action === 'create') {
         // Idempotent — skip if threadId already set
         if (targetMessage.threadMeta?.threadId === threadMsg.threadMeta.threadId) return;
+
+        // Write to channel_threads registry
+        const rootText =
+          (targetMessage.content as { text?: string })?.text ?? '';
+        const newThread = buildChannelThreadFromCreate({
+          spaceId,
+          channelId,
+          rootMessageId: threadMsg.targetMessageId,
+          threadMeta: threadMsg.threadMeta,
+          rootMessageText: typeof rootText === 'string' ? rootText : '',
+          currentUserAddress: currentUserAddress ?? '',
+          now: Date.now(),
+        });
+        await messageDB.saveChannelThread(newThread);
       } else if (threadMsg.action === 'updateTitle') {
         // Only the thread creator may rename the thread
         if (threadMsg.senderId !== targetMessage.threadMeta?.createdBy) return;
@@ -854,6 +872,9 @@ export class MessageService {
         for (const reply of threadReplies) {
           await messageDB.deleteMessage(reply.messageId);
         }
+
+        // Remove from channel_threads registry
+        await messageDB.deleteChannelThread(threadMsg.threadMeta.threadId);
         return; // Do not fall through to generic save
       }
 
@@ -870,6 +891,27 @@ export class MessageService {
         updatedUserProfile.display_name!,
         currentUserAddress
       );
+
+      // Sync channel_threads registry for settings/close/reopen actions
+      if (
+        threadMsg.action === 'close' ||
+        threadMsg.action === 'reopen' ||
+        threadMsg.action === 'updateSettings'
+      ) {
+        const threads = await messageDB.getChannelThreads({ spaceId, channelId });
+        const entry = threads.find(t => t.threadId === threadMsg.threadMeta.threadId);
+        if (entry) {
+          await messageDB.saveChannelThread({
+            ...entry,
+            isClosed: threadMsg.action === 'close'
+              ? true
+              : threadMsg.action === 'reopen'
+                ? false
+                : entry.isClosed,
+            customTitle: threadMsg.threadMeta.customTitle ?? entry.customTitle,
+          });
+        }
+      }
     } else if (decryptedContent.content.type === 'update-profile') {
       const participant = await messageDB.getSpaceMember(
         spaceId,
@@ -923,6 +965,24 @@ export class MessageService {
         updatedUserProfile.display_name!,
         currentUserAddress
       );
+
+      // Update channel_threads registry for thread replies
+      if (decryptedContent.isThreadReply && decryptedContent.threadId) {
+        const existingThreadEntry = await messageDB.getChannelThreads({
+          spaceId,
+          channelId,
+        }).then(list => list.find(t => t.threadId === decryptedContent.threadId));
+
+        if (existingThreadEntry) {
+          const updated = updateChannelThreadOnReply({
+            existing: existingThreadEntry,
+            replySenderId: decryptedContent.content.senderId,
+            replyTimestamp: decryptedContent.createdDate,
+            currentUserAddress: currentUserAddress ?? '',
+          });
+          await messageDB.saveChannelThread(updated);
+        }
+      }
     }
   }
 
@@ -1412,6 +1472,9 @@ export class MessageService {
         queryClient.invalidateQueries({
           queryKey: ['thread-messages', spaceId, channelId, threadId],
         });
+        queryClient.invalidateQueries({
+          queryKey: ['channel-threads', spaceId, channelId],
+        });
         return;
       }
 
@@ -1436,6 +1499,9 @@ export class MessageService {
       // Applies to both 'create' and 'updateTitle' actions (harmless for 'create').
       queryClient.invalidateQueries({
         queryKey: ['thread-messages', spaceId, channelId, threadMsg.threadMeta.threadId],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ['channel-threads', spaceId, channelId],
       });
     } else if (decryptedContent.content.type === 'update-profile') {
       const participant = await this.messageDB.getSpaceMember(
@@ -1576,6 +1642,9 @@ export class MessageService {
               };
             }
           );
+          queryClient.invalidateQueries({
+            queryKey: ['channel-threads', spaceId, channelId],
+          });
         }
 
         return;
@@ -4719,6 +4788,25 @@ export class MessageService {
             };
           }
         );
+
+        // For 'create': write to channel_threads registry so ThreadsListPanel picks it up
+        if (threadMsg.action === 'create') {
+          const rootText =
+            (targetMessage.content as { text?: string })?.text ?? '';
+          const newThread = buildChannelThreadFromCreate({
+            spaceId,
+            channelId,
+            rootMessageId: threadMsg.targetMessageId,
+            threadMeta: threadMsg.threadMeta,
+            rootMessageText: typeof rootText === 'string' ? rootText : '',
+            currentUserAddress: currentPasskeyInfo.address,
+            now: Date.now(),
+          });
+          await this.messageDB.saveChannelThread(newThread);
+          queryClient.invalidateQueries({
+            queryKey: ['channel-threads', spaceId, channelId],
+          });
+        }
 
         // Invalidate thread messages so the open panel re-reads the updated root (for updateTitle)
         if (threadMsg.action === 'updateTitle') {

@@ -4,7 +4,7 @@ title: "Thread Panel"
 status: done
 ai_generated: true
 created: 2026-03-09
-updated: 2026-03-12
+updated: 2026-03-13
 related_docs:
   - "docs/features/messages/pinned-messages.md"
   - "docs/features/dropdown-panels.md"
@@ -65,6 +65,11 @@ The ThreadPanel renders at the `Space.tsx` level as a flex sibling of `Channel`,
 | `src/styles/_chat.scss` | External layout borders (top, left, right) |
 | `src/styles/_colors.scss` | `--color-border-muted` semantic variable |
 | `src/styles/_components.scss` | Shared `.header-icon-button` class used by thread panel icons |
+| `src/components/thread/ThreadsListPanel.tsx` | Channel threads list panel (search, grouping, open) |
+| `src/components/thread/ThreadsListPanel.scss` | Styles for threads list panel, items, empty states |
+| `src/components/thread/ThreadListItem.tsx` | Single thread row (title, meta, lock icon) |
+| `src/services/channelThreadHelpers.ts` | Pure helpers: `buildChannelThreadFromCreate`, `updateChannelThreadOnReply` |
+| `src/hooks/business/threads/useChannelThreads.ts` | React Query hook for channel thread list |
 
 ### ThreadContext — Ref-Based Store Pattern
 
@@ -203,13 +208,17 @@ Opened via the cog icon in the panel header. Accessible to thread managers (auth
 
 - **`ThreadMeta`** — Set on root messages: `{ threadId, createdBy, customTitle?, isClosed?, closedBy?, autoCloseAfter?, lastActivityAt? }`
 - **`ThreadMessage`** — Broadcast content: `{ type: 'thread', senderId, targetMessageId, action: 'create' | 'updateTitle' | 'close' | 'reopen' | 'updateSettings' | 'remove', threadMeta }`
+- **`ChannelThread`** — Denormalized thread summary for the threads list panel: `{ threadId, spaceId, channelId, rootMessageId, createdBy, createdAt, lastActivityAt, replyCount, isClosed, customTitle?, titleSnapshot?, hasParticipated }`
 - **Message fields:** `threadMeta?` (root messages), `threadId?` (reply messages), `isThreadReply?` (filtering sentinel)
 
 ### Database (`src/db/messages.ts`)
 
-- **Schema:** DB version 9 adds `by_thread` compound index: `[spaceId, channelId, threadId, createdDate]`
+- **Schema:** DB version 9 adds `by_thread` compound index: `[spaceId, channelId, threadId, createdDate]`. DB version 10 adds `channel_threads` object store (keyPath: `threadId`) with `by_channel` compound index on `[spaceId, channelId]`
 - **`getThreadMessages()`** — Returns all messages in a thread plus derived stats (replyCount, lastReplyAt, lastReplyBy)
 - **`getThreadStats()`** — Lightweight count + last reply info for ThreadIndicator
+- **`saveChannelThread()`** — Upserts a `ChannelThread` entry (used by `MessageService` on thread create/reply/settings events)
+- **`getChannelThreads()`** — Returns all threads for a channel via `by_channel` index (`IDBKeyRange.only([spaceId, channelId])`)
+- **`deleteChannelThread()`** — Removes a `ChannelThread` entry by `threadId` (used on thread removal)
 - **Main feed filtering:** Thread replies (`isThreadReply: true`) are filtered at three layers:
   1. **DB cursor** — `getMessages()` skips `isThreadReply` during cursor iteration
   2. **DB unread query** — `getFirstUnreadMessage()` skips `isThreadReply` so thread replies don't trigger unread navigation to the main feed
@@ -220,12 +229,14 @@ Opened via the cog icon in the panel header. Accessible to thread managers (auth
 
 - **`useThreadMessages()`** — React Query hook for thread messages with 30s staleTime
 - **`useThreadStats()`** — React Query hook for thread statistics (used by ThreadIndicator)
+- **`useChannelThreads()`** — React Query hook (`['channel-threads', spaceId, channelId]`) returning all threads for a channel sorted by `lastActivityAt` descending. 30s staleTime, `networkMode: 'always'`. Invalidated by `MessageService.addMessage()` on thread lifecycle events
 
 ### Thread Discovery
 
 - **ThreadIndicator** (`src/components/thread/ThreadIndicator.tsx`) — Inline component on root messages showing reply count and last reply time
 - **MessageActions** — Thread button in hover toolbar (right after Reply icon)
 - **MessageActionsMenu** — "Start Thread" / "View Thread" in right-click context menu
+- **ThreadsListPanel** (`src/components/thread/ThreadsListPanel.tsx`) — Channel-scoped panel listing all threads, accessible via a "Threads" button (icon: `messages`) in the channel header (`Channel.tsx`). Uses `DropdownPanel` with custom `headerContent`. Groups threads into three sections: **Joined Threads** (user has participated), **Other Active Threads** (activity within 7 days), **Older Threads**. Includes in-memory search filtering by title (case-insensitive). Clicking a thread fetches the root message via `messageDB.getMessageById()` and opens it via `openThread()` from ThreadContext. The panel toggle uses `activePanel === 'threads'` on Channel's `ActivePanel` union type (which now includes `'threads'`)
 - **Root message deletion** — Soft-delete preserves `threadMeta` so the thread remains accessible; root shows italicized "[Original message was deleted]" placeholder (i18n). Both local and remote deletion paths handle this: local via `useMessageActions.ts` (map + `messageDB.updateMessage`), remote via `MessageService.ts` `processMessage()` (IndexedDB soft-delete) and `addMessage()` (React Query cache map instead of filter)
 
 ## Thread Title Editing
@@ -346,7 +357,6 @@ The `threadId` must flow through the entire search chain without being dropped:
 
 - **Space channels only** — Thread feature is not available in DM conversations
 - **No thread notifications** — No participation tracking, auto-follow, or unread indicators per-thread
-- **No ThreadsList panel** — No browsable list of all threads in a channel
 - **No permission gating** — Anyone who can post in the channel can create threads; no `thread:create` permission
 - **No thread search** — Thread replies are not included in global search results
 - **Resize desktop only** — Resize handle uses mouse events and is hidden below MD; no touch support for drag-to-resize
@@ -358,7 +368,6 @@ The `threadId` must flow through the entire search chain without being dropped:
 These items are planned but not yet implemented:
 
 - **Thread notifications** — Participation tracking, auto-follow, unread indicators per-thread. Store thread follows in a separate IndexedDB store (NOT UserConfig due to unbounded growth). Separate task.
-- **ThreadsList & channel header button** — Browsable list of all threads in a channel, accessible from the channel header.
 - **Migrate thread types to `quorum-shared`** — Move types and hooks to the shared package for cross-platform (mobile) compatibility.
 - **Permission gating** — Add `thread:create` permission to role system for per-role thread creation control.
 - **"Also send to channel"** — Option to post a thread reply to the main feed simultaneously.
@@ -377,5 +386,5 @@ These items are planned but not yet implemented:
 ---
 
 _Created: 2026-03-09_
-_Updated: 2026-03-12 (thread management: added Thread Settings Modal section, close/reopen/auto-close/remove actions, updated types, header description, title editing flow, known limitations, future work; removed Discord references)_
-_Previously: 2026-03-11 (thread-aware navigation, thread title editing: updateTitle flow, author gate, double-save guard, stale snapshot pitfall)_
+_Updated: 2026-03-13 (ThreadsListPanel: added ChannelThread type, DB v10 channel_threads store, useChannelThreads hook, channelThreadHelpers, ThreadListItem, ThreadsListPanel components, thread discovery section; moved ThreadsList from future work to implemented; removed "No ThreadsList panel" limitation)_
+_Previously: 2026-03-12 (thread management: added Thread Settings Modal section, close/reopen/auto-close/remove actions, updated types, header description, title editing flow, known limitations, future work; removed Discord references)_

@@ -18,6 +18,7 @@ export interface DropdownPanelProps {
   showCloseButton?: boolean;
   resultsCount?: number;
   useMobileBottomSheet?: boolean; // Default: true (use bottom sheet on touch devices)
+  headerContent?: React.ReactNode;
 }
 
 export const DropdownPanel: React.FC<DropdownPanelProps> = ({
@@ -34,6 +35,7 @@ export const DropdownPanel: React.FC<DropdownPanelProps> = ({
   showCloseButton = true,
   resultsCount,
   useMobileBottomSheet = true, // Default to mobile bottom sheet
+  headerContent,
 }) => {
   const isTouch = isTouchDevice();
 
@@ -53,6 +55,7 @@ export const DropdownPanel: React.FC<DropdownPanelProps> = ({
         }
         showCloseButton={false} // No close button on mobile - use swipe or backdrop tap
         enableSwipeToClose={true}
+        headerContent={headerContent}
       >
         {children}
       </MobileDrawer>
@@ -165,15 +168,17 @@ export const DropdownPanel: React.FC<DropdownPanelProps> = ({
         ...style, // Apply custom style prop last to allow overrides
       }}
     >
-      {(title || resultsCount !== undefined) && (
+      {(title || resultsCount !== undefined || headerContent) && (
         <Container className="dropdown-panel__header">
           <Flex className="items-center justify-between">
-            <span className="dropdown-panel__title">
-              {title ||
-                (resultsCount === 1
-                  ? `${resultsCount} result`
-                  : `${resultsCount} results`)}
-            </span>
+            {headerContent ?? (
+              <span className="dropdown-panel__title">
+                {title ||
+                  (resultsCount === 1
+                    ? `${resultsCount} result`
+                    : `${resultsCount} results`)}
+              </span>
+            )}
             {showCloseButton && (
               <Button
                 type="unstyled"

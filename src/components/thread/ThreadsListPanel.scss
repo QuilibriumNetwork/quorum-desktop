@@ -1,0 +1,95 @@
+@use '../../styles/dropdown-result-item';
+@use '@/styles/variables' as *;
+
+// Threads list panel specific styling
+.threads-list-panel {
+  // Bordered search input fills available header space, compact size
+  .dropdown-panel__header .quorum-input--bordered {
+    flex: 1;
+    min-width: 0;
+    height: auto;
+    padding: $s-1 $s-3;
+    font-size: $text-sm;
+    line-height: $leading-normal;
+  }
+}
+
+// Use shared list styling
+.threads-results-list {
+  @extend .dropdown-results-list;
+  padding: 0 0 $s-3 0 !important;
+}
+
+// Section headers — match dropdown-panel__title styling
+.threads-section-header {
+  padding: $s-2 $s-5 $s-1;
+  font-size: $text-xs-responsive;
+  font-weight: $font-bold;
+  color: var(--color-text-subtle);
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+// Thread items — extend shared dropdown result item styles
+.thread-list-item {
+  @extend .dropdown-result-item;
+
+  &__title-row {
+    display: flex;
+    align-items: center;
+    gap: $s-1-5;
+    min-width: 0;
+    margin-bottom: $s-1;
+  }
+
+  &__title {
+    font-weight: $font-medium;
+    color: var(--color-text-main);
+    font-size: $text-sm;
+    line-height: $leading-snug;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    flex: 1;
+  }
+
+  &__lock {
+    flex-shrink: 0;
+    color: var(--color-text-subtle);
+    width: $s-3-5;
+    height: $s-3-5;
+  }
+
+  &__meta {
+    display: flex;
+    align-items: center;
+    gap: $s-1;
+    font-size: $text-xs-responsive;
+    color: var(--color-text-subtle);
+  }
+
+  &__dot {
+    opacity: 0.5;
+  }
+}
+
+// Empty/loading states — use shared styles
+.threads-empty-state {
+  @extend .dropdown-empty-state;
+}
+
+.threads-empty-state .empty-icon {
+  @extend .dropdown-empty-icon;
+}
+
+.threads-empty-state .loading-icon {
+  @extend .dropdown-loading-icon;
+}
+
+.threads-empty-state .empty-message {
+  @extend .dropdown-empty-message;
+}
+
+.threads-empty-state .empty-hint {
+  @extend .dropdown-empty-hint;
+}

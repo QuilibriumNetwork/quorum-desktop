@@ -33,6 +33,7 @@ import MessageComposer, {
   MessageComposerRef,
 } from '../message/MessageComposer';
 import { PinnedMessagesPanel } from '../message/PinnedMessagesPanel';
+import { ThreadsListPanel } from '../thread/ThreadsListPanel';
 import { useThreadMessages } from '../../hooks/business/threads';
 import { useThreadContextStore } from '../context/ThreadContext';
 import { NotificationPanel } from '../notifications/NotificationPanel';
@@ -112,7 +113,7 @@ const Channel: React.FC<ChannelProps> = ({
   const [skipSigning, setSkipSigning] = useState<boolean>(false);
 
   // Unified panel state - ensures only one panel can be open at a time
-  type ActivePanel = 'pinned' | 'notifications' | 'bookmarks' | 'search' | 'thread' | null;
+  type ActivePanel = 'pinned' | 'threads' | 'notifications' | 'bookmarks' | 'search' | 'thread' | null;
   const [activePanel, setActivePanel] = useState<ActivePanel>(null);
 
   // Thread state
@@ -1306,6 +1307,32 @@ const Channel: React.FC<ChannelProps> = ({
                   />
                 </div>
               )}
+
+              {/* Threads */}
+              <div className="relative">
+                <Tooltip
+                  id={`threads-${channelId}`}
+                  content={t`Threads`}
+                  showOnTouch={false}
+                >
+                  <Button
+                    type="unstyled"
+                    onClick={() => setActivePanel(p => p === 'threads' ? null : 'threads')}
+                    className={`header-icon-button ${activePanel === 'threads' ? 'active' : ''}`}
+                    iconName="messages"
+                    iconSize={headerIconSize}
+                    iconVariant={activePanel === 'threads' ? 'filled' : 'outline'}
+                    iconOnly
+                  />
+                </Tooltip>
+                <ThreadsListPanel
+                  isOpen={activePanel === 'threads'}
+                  onClose={() => setActivePanel(null)}
+                  spaceId={spaceId}
+                  channelId={channelId}
+                  mapSenderToUser={mapSenderToUser}
+                />
+              </div>
 
               {/* Notification Bell */}
               <div className="relative">
