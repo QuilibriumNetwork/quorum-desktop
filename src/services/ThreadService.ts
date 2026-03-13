@@ -205,4 +205,44 @@ export class ThreadService {
     await this.messageDB.deleteChannelThread(threadMsg.threadMeta.threadId);
     return true;
   }
+
+  /**
+   * Marks incoming thread replies with isThreadReply flag and updates
+   * the channel_threads registry. Called before the reply is saved to DB.
+   *
+   * Mutates the message object in place (sets isThreadReply).
+   *
+   * @returns true if the message was a thread reply and registry was updated.
+   */
+  async handleThreadReplyReceive(params: {
+    message: Message;
+    spaceId: string;
+    channelId: string;
+    currentUserAddress: string;
+  }): Promise<boolean> {
+    const { message, spaceId, channelId, currentUserAddress } = params;
+
+    // Ensure thread replies are marked for filtering
+    if (message.threadId && !message.isThreadReply) {
+      message.isThreadReply = true;
+    }
+
+    if (!message.isThreadReply || !message.threadId) return false;
+
+    // Update channel_threads registry
+    const threads = await this.messageDB.getChannelThreads({ spaceId, channelId });
+    const existingEntry = threads.find((t: ChannelThread) => t.threadId === message.threadId);
+
+    if (existingEntry) {
+      const updated = updateChannelThreadOnReply({
+        existing: existingEntry,
+        replySenderId: message.content.senderId,
+        replyTimestamp: message.createdDate,
+        currentUserAddress: currentUserAddress ?? '',
+      });
+      await this.messageDB.saveChannelThread(updated);
+    }
+
+    return true;
+  }
 }

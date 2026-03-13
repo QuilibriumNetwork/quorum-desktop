@@ -336,4 +336,47 @@ describe('ThreadService', () => {
       expect(savedMsg.threadMeta).toBeUndefined();
     });
   });
+
+  describe('handleThreadReplyReceive', () => {
+    it('marks message as isThreadReply and updates channel_threads registry', async () => {
+      const existingThread: ChannelThread = {
+        threadId: 'thread-1', spaceId: 'space-1', channelId: 'channel-1',
+        rootMessageId: 'msg-1', createdBy: 'user-a', createdAt: 1000,
+        lastActivityAt: 1000, replyCount: 1, isClosed: false,
+        hasParticipated: false,
+      };
+      (mockDB.getChannelThreads as any).mockResolvedValue([existingThread]);
+
+      const message = {
+        threadId: 'thread-1',
+        isThreadReply: false,
+        content: { senderId: 'user-b' },
+        createdDate: 5000,
+      } as any;
+
+      const result = await threadService.handleThreadReplyReceive({
+        message,
+        spaceId: 'space-1',
+        channelId: 'channel-1',
+        currentUserAddress: 'user-local',
+      });
+      expect(result).toBe(true);
+      expect(message.isThreadReply).toBe(true);
+      expect(mockDB.saveChannelThread).toHaveBeenCalledOnce();
+      const saved = (mockDB.saveChannelThread as any).mock.calls[0][0];
+      expect(saved.replyCount).toBe(2);
+      expect(saved.lastActivityAt).toBe(5000);
+    });
+
+    it('does nothing for non-thread messages', async () => {
+      const message = { content: { senderId: 'user-a' } } as any;
+      const result = await threadService.handleThreadReplyReceive({
+        message,
+        spaceId: 'space-1',
+        channelId: 'channel-1',
+        currentUserAddress: 'user-a',
+      });
+      expect(result).toBe(false);
+    });
+  });
 });
