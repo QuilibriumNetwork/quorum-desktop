@@ -450,4 +450,149 @@ export class ThreadService {
       };
     });
   }
+
+  /**
+   * Pre-send validation for thread messages. Performs DM check, idempotency,
+   * and auth checks. Returns the targetMessage so the caller doesn't need
+   * to fetch it again.
+   *
+   * Returns { shouldProceed: false } if the message should not be sent.
+   * Returns { shouldProceed: true, targetMessage } for valid messages.
+   *
+   * Extracted from MessageService.submitChannelMessage lines 4740–4764.
+   */
+  async handleThreadSend(params: {
+    threadMsg: ThreadMessage;
+    spaceId: string;
+    channelId: string;
+    queryClient: QueryClient;
+    currentUserAddress: string;
+  }): Promise<{ shouldProceed: boolean; targetMessage?: Message }> {
+    const { threadMsg, spaceId, channelId } = params;
+
+    if (spaceId === channelId) return { shouldProceed: false };
+
+    const targetMessage = await this.messageDB.getMessage({
+      spaceId, channelId, messageId: threadMsg.targetMessageId,
+    });
+    if (!targetMessage) return { shouldProceed: false };
+
+    // Idempotent for 'create'
+    if (threadMsg.action === 'create' && targetMessage.threadMeta?.threadId === threadMsg.threadMeta.threadId) {
+      return { shouldProceed: false };
+    }
+
+    // updateTitle: only creator
+    if (threadMsg.action === 'updateTitle' && threadMsg.senderId !== targetMessage.threadMeta?.createdBy) {
+      return { shouldProceed: false };
+    }
+
+    return { shouldProceed: true, targetMessage };
+  }
+
+  /**
+   * Post-send DB and cache operations for thread messages.
+   * Called AFTER the message has been encrypted and sent.
+   *
+   * For 'remove': performs DB cleanup (root handling, reply deletion, registry removal).
+   * For 'create'/'updateTitle'/etc: saves updated root message and updates caches.
+   *
+   * The `conversationProfile` parameter is resolved by the caller (MessageService)
+   * since it depends on DefaultImages and i18n which ThreadService shouldn't import.
+   */
+  async handleThreadSendPostBroadcast(params: {
+    threadMsg: ThreadMessage;
+    targetMessage: Message;
+    spaceId: string;
+    channelId: string;
+    queryClient: QueryClient;
+    currentUserAddress: string;
+    conversationProfile: { user_icon: string; display_name: string };
+  }): Promise<{ earlyReturn: boolean }> {
+    const { threadMsg, targetMessage, spaceId, channelId, queryClient, currentUserAddress, conversationProfile } = params;
+
+    // Remove action: full cleanup
+    if (threadMsg.action === 'remove') {
+      const isRootSender = threadMsg.senderId === targetMessage.content.senderId;
+      const rootText = (targetMessage.content as { text?: string })?.text;
+      const isSoftDeleted = !rootText || (Array.isArray(rootText) && (rootText as string[]).every(s => !s));
+
+      if (isRootSender || isSoftDeleted) {
+        await this.messageDB.deleteMessage(targetMessage.messageId);
+      } else {
+        const stripped: Message = { ...targetMessage };
+        delete stripped.threadMeta;
+        await this.messageDB.saveMessage(
+          stripped, 0, spaceId, 'group',
+          conversationProfile.user_icon, conversationProfile.display_name,
+          currentUserAddress
+        );
+      }
+
+      const { messages: threadReplies } = await this.messageDB.getThreadMessages({
+        spaceId, channelId, threadId: threadMsg.threadMeta.threadId,
+      });
+      for (const reply of threadReplies) {
+        await this.messageDB.deleteMessage(reply.messageId);
+      }
+      await this.messageDB.deleteChannelThread(threadMsg.threadMeta.threadId);
+      return { earlyReturn: true };
+    }
+
+    // Non-remove: save updated root
+    const mergedMeta = threadMsg.action === 'updateTitle'
+      ? { ...targetMessage.threadMeta, ...threadMsg.threadMeta }
+      : threadMsg.threadMeta;
+    const updatedTarget: Message = { ...targetMessage, threadMeta: mergedMeta };
+    await this.messageDB.saveMessage(
+      updatedTarget, 0, spaceId, 'group',
+      conversationProfile.user_icon, conversationProfile.display_name,
+      currentUserAddress
+    );
+
+    // Update main feed cache
+    queryClient.setQueryData(
+      buildMessagesKey({ spaceId, channelId }),
+      (oldData: InfiniteData<any> | undefined) => {
+        if (!oldData?.pages) return oldData;
+        return {
+          pageParams: oldData.pageParams,
+          pages: oldData.pages.map((page: any) => ({
+            ...page,
+            messages: page.messages.map((m: Message) =>
+              m.messageId === threadMsg.targetMessageId
+                ? { ...m, threadMeta: threadMsg.action === 'updateTitle'
+                    ? { ...m.threadMeta, ...threadMsg.threadMeta }
+                    : threadMsg.threadMeta }
+                : m
+            ),
+          })),
+        };
+      }
+    );
+
+    // Create: save to channel_threads registry
+    if (threadMsg.action === 'create') {
+      const rootText = (targetMessage.content as { text?: string })?.text ?? '';
+      const newThread = buildChannelThreadFromCreate({
+        spaceId, channelId,
+        rootMessageId: threadMsg.targetMessageId,
+        threadMeta: threadMsg.threadMeta,
+        rootMessageText: typeof rootText === 'string' ? rootText : '',
+        currentUserAddress,
+        now: Date.now(),
+      });
+      await this.messageDB.saveChannelThread(newThread);
+      queryClient.invalidateQueries({ queryKey: ['channel-threads', spaceId, channelId] });
+    }
+
+    // updateTitle: invalidate thread-messages
+    if (threadMsg.action === 'updateTitle') {
+      queryClient.invalidateQueries({
+        queryKey: ['thread-messages', spaceId, channelId, threadMsg.threadMeta.threadId],
+      });
+    }
+
+    return { earlyReturn: false };
+  }
 }
