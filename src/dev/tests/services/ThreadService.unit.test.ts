@@ -1,4 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { QueryClient } from '@tanstack/react-query';
 import { ThreadService } from '@/services/ThreadService';
 import type { MessageDB } from '@/db/messages';
 import type { ThreadMessage, ChannelThread } from '@/api/quorumApi';
@@ -377,6 +378,88 @@ describe('ThreadService', () => {
         currentUserAddress: 'user-a',
       });
       expect(result).toBe(false);
+    });
+  });
+
+  describe('handleThreadCache', () => {
+    let queryClient: QueryClient;
+
+    beforeEach(() => {
+      queryClient = new QueryClient({
+        defaultOptions: { queries: { retry: false } },
+      });
+    });
+
+    it('rejects DMs', async () => {
+      const threadMsg = {
+        type: 'thread' as const,
+        senderId: 'user-a',
+        targetMessageId: 'msg-1',
+        action: 'create' as const,
+        threadMeta: { threadId: 'thread-1', createdBy: 'user-a' },
+      };
+      const result = await threadService.handleThreadCache({
+        threadMsg,
+        spaceId: 'same',
+        channelId: 'same',
+        queryClient,
+      });
+      expect(result).toBe(false);
+    });
+
+    it('updateTitle: rejects non-creator', async () => {
+      (mockDB.getMessage as any).mockResolvedValue({
+        messageId: 'msg-1',
+        content: { senderId: 'user-a' },
+        threadMeta: { threadId: 'thread-1', createdBy: 'user-a' },
+      });
+      const threadMsg = {
+        type: 'thread' as const,
+        senderId: 'user-intruder',
+        targetMessageId: 'msg-1',
+        action: 'updateTitle' as const,
+        threadMeta: { threadId: 'thread-1', createdBy: 'user-a', customTitle: 'Hacked' },
+      };
+      const result = await threadService.handleThreadCache({
+        threadMsg,
+        spaceId: 'space-1',
+        channelId: 'channel-1',
+        queryClient,
+      });
+      expect(result).toBe(false);
+    });
+
+    it('remove: removes thread from channel-threads cache', async () => {
+      (mockDB.getMessage as any).mockResolvedValue({
+        messageId: 'msg-1',
+        content: { senderId: 'user-a', text: 'Hello' },
+        threadMeta: { threadId: 'thread-1', createdBy: 'user-a' },
+      });
+      (mockDB.getSpace as any).mockResolvedValue({ roles: [] });
+
+      // Seed channel-threads cache
+      queryClient.setQueryData(['channel-threads', 'space-1', 'channel-1'], [
+        { threadId: 'thread-1' },
+        { threadId: 'thread-2' },
+      ]);
+
+      const threadMsg = {
+        type: 'thread' as const,
+        senderId: 'user-a',
+        targetMessageId: 'msg-1',
+        action: 'remove' as const,
+        threadMeta: { threadId: 'thread-1', createdBy: 'user-a' },
+      };
+      const result = await threadService.handleThreadCache({
+        threadMsg,
+        spaceId: 'space-1',
+        channelId: 'channel-1',
+        queryClient,
+      });
+      expect(result).toBe(true);
+      const threads = queryClient.getQueryData(['channel-threads', 'space-1', 'channel-1']) as any[];
+      expect(threads).toHaveLength(1);
+      expect(threads[0].threadId).toBe('thread-2');
     });
   });
 });

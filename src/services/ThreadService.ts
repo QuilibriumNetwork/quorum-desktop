@@ -1,15 +1,15 @@
-import { logger } from '@quilibrium/quorum-shared';
+import type { QueryClient, InfiniteData } from '@tanstack/react-query';
 import type { MessageDB } from '../db/messages';
 import type {
   Message,
   ThreadMessage,
-  ThreadMeta,
   ChannelThread,
 } from '../api/quorumApi';
 import {
   buildChannelThreadFromCreate,
   updateChannelThreadOnReply,
 } from './channelThreadHelpers';
+import { buildMessagesKey } from '../hooks/queries/messages/buildMessagesKey';
 
 export class ThreadService {
   constructor(private messageDB: MessageDB) {}
@@ -149,7 +149,7 @@ export class ThreadService {
    */
   private async handleThreadRemoveReceive(params: {
     threadMsg: ThreadMessage;
-    targetMessage: Message | null;
+    targetMessage: Message | undefined;
     spaceId: string;
     channelId: string;
     currentUserAddress: string;
@@ -243,6 +243,136 @@ export class ThreadService {
       await this.messageDB.saveChannelThread(updated);
     }
 
+    return true;
+  }
+
+  /**
+   * Handles thread-type messages on the cache path (React Query updates).
+   * Extracted from MessageService.addMessage lines 1458–1567.
+   *
+   * @returns true if processed, false if rejected.
+   */
+  async handleThreadCache(params: {
+    threadMsg: ThreadMessage;
+    spaceId: string;
+    channelId: string;
+    queryClient: QueryClient;
+  }): Promise<boolean> {
+    const { threadMsg, spaceId, channelId, queryClient } = params;
+
+    if (spaceId === channelId) return false;
+
+    const targetMessage = await this.messageDB.getMessage({
+      spaceId, channelId, messageId: threadMsg.targetMessageId,
+    });
+
+    // Auth checks per action
+    if (threadMsg.action === 'updateTitle') {
+      if (!targetMessage || threadMsg.senderId !== targetMessage.threadMeta?.createdBy) return false;
+    }
+
+    if (threadMsg.action === 'close' || threadMsg.action === 'reopen' || threadMsg.action === 'updateSettings') {
+      if (!targetMessage) return false;
+      const authorized = await this.isThreadAuthorized({
+        senderId: threadMsg.senderId,
+        createdBy: targetMessage.threadMeta?.createdBy,
+        spaceId,
+      });
+      if (!authorized) return false;
+    }
+
+    if (threadMsg.action === 'remove') {
+      return this.handleThreadRemoveCache({
+        threadMsg, targetMessage, spaceId, channelId, queryClient,
+      });
+    }
+
+    // Non-remove: merge threadMeta into main feed cache
+    queryClient.setQueryData(
+      buildMessagesKey({ spaceId, channelId }),
+      (oldData: InfiniteData<any> | undefined) => {
+        if (!oldData?.pages) return oldData;
+        return {
+          pageParams: oldData.pageParams,
+          pages: oldData.pages.map((page: any) => ({
+            ...page,
+            messages: page.messages.map((m: Message) =>
+              m.messageId === threadMsg.targetMessageId
+                ? { ...m, threadMeta: { ...m.threadMeta, ...threadMsg.threadMeta } }
+                : m
+            ),
+          })),
+        };
+      }
+    );
+    queryClient.invalidateQueries({
+      queryKey: ['thread-messages', spaceId, channelId, threadMsg.threadMeta.threadId],
+    });
+    queryClient.invalidateQueries({
+      queryKey: ['channel-threads', spaceId, channelId],
+    });
+    return true;
+  }
+
+  /**
+   * Handles thread removal cache updates.
+   */
+  private async handleThreadRemoveCache(params: {
+    threadMsg: ThreadMessage;
+    targetMessage: Message | undefined;
+    spaceId: string;
+    channelId: string;
+    queryClient: QueryClient;
+  }): Promise<boolean> {
+    const { threadMsg, targetMessage, spaceId, channelId, queryClient } = params;
+    const threadId = threadMsg.threadMeta.threadId;
+
+    // Auth
+    const threadRecord = !targetMessage
+      ? await this.messageDB.getChannelThread(threadId)
+      : undefined;
+    const createdBy = targetMessage?.threadMeta?.createdBy ?? threadRecord?.createdBy;
+    const authorized = await this.isThreadAuthorized({
+      senderId: threadMsg.senderId, createdBy, spaceId,
+    });
+    if (!authorized) return false;
+
+    const isRootSender = targetMessage
+      ? threadMsg.senderId === targetMessage.content.senderId
+      : false;
+
+    // Update main feed cache
+    queryClient.setQueryData(
+      buildMessagesKey({ spaceId, channelId }),
+      (oldData: InfiniteData<any> | undefined) => {
+        if (!oldData?.pages) return oldData;
+        return {
+          pageParams: oldData.pageParams,
+          pages: oldData.pages.map((page: any) => ({
+            ...page,
+            messages: page.messages.map((m: Message) => {
+              if (m.messageId === threadMsg.targetMessageId) {
+                const text = (m.content as { text?: string })?.text;
+                if (!text || isRootSender) return null;
+                const { threadMeta: _stripped, ...rest } = m;
+                return rest as Message;
+              }
+              if (m.threadId === threadId) return null;
+              return m;
+            }).filter((m: Message | null): m is Message => m !== null),
+          })),
+        };
+      }
+    );
+
+    queryClient.removeQueries({
+      queryKey: ['thread-messages', spaceId, channelId, threadId],
+    });
+    queryClient.setQueryData(
+      ['channel-threads', spaceId, channelId],
+      (old: any[] | undefined) =>
+        old ? old.filter((t: any) => t.threadId !== threadId) : old,
+    );
     return true;
   }
 }
