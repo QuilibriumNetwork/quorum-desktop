@@ -375,4 +375,79 @@ export class ThreadService {
     );
     return true;
   }
+
+  /**
+   * Handles thread reply cache updates (invalidations + lastActivityAt bump).
+   * Extracted from MessageService.addMessage lines 1673–1712.
+   *
+   * @returns true if the message was a thread reply.
+   */
+  handleThreadReplyCache(params: {
+    message: Message;
+    spaceId: string;
+    channelId: string;
+    queryClient: QueryClient;
+  }): boolean {
+    const { message, spaceId, channelId, queryClient } = params;
+
+    if (!message.isThreadReply || !message.threadId) return false;
+
+    queryClient.invalidateQueries({
+      queryKey: ['thread-messages', spaceId, channelId, message.threadId],
+    });
+    queryClient.invalidateQueries({
+      queryKey: ['thread-stats', spaceId, channelId, message.threadId],
+    });
+
+    // Update lastActivityAt on root message in main feed cache
+    const now = message.createdDate ?? Date.now();
+    queryClient.setQueryData(
+      buildMessagesKey({ spaceId, channelId }),
+      (oldData: InfiniteData<any> | undefined) => {
+        if (!oldData?.pages) return oldData;
+        return {
+          pageParams: oldData.pageParams,
+          pages: oldData.pages.map((page: any) => ({
+            ...page,
+            messages: page.messages.map((m: Message) => {
+              if (m.threadMeta?.threadId === message.threadId) {
+                return { ...m, threadMeta: { ...m.threadMeta, lastActivityAt: now } };
+              }
+              return m;
+            }),
+          })),
+        };
+      }
+    );
+    queryClient.invalidateQueries({
+      queryKey: ['channel-threads', spaceId, channelId],
+    });
+
+    return true;
+  }
+
+  /**
+   * Updates thread-messages cache when a thread reply is deleted.
+   * Extracted from MessageService.addMessage lines 1345–1359.
+   */
+  handleThreadDeletedMessageCache(params: {
+    targetMessage: Message | undefined;
+    spaceId: string;
+    channelId: string;
+    queryClient: QueryClient;
+  }): void {
+    const { targetMessage, spaceId, channelId, queryClient } = params;
+
+    if (!targetMessage?.isThreadReply || !targetMessage.threadId) return;
+
+    const threadKey = ['thread-messages', spaceId, channelId, targetMessage.threadId];
+    queryClient.setQueryData(threadKey, (oldData: any) => {
+      if (!oldData?.messages) return oldData;
+      return {
+        ...oldData,
+        messages: oldData.messages.filter((m: Message) => m.messageId !== targetMessage.messageId),
+        replyCount: Math.max(0, (oldData.replyCount || 0) - 1),
+      };
+    });
+  }
 }

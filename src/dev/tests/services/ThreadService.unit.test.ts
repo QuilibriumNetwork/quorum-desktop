@@ -462,4 +462,86 @@ describe('ThreadService', () => {
       expect(threads[0].threadId).toBe('thread-2');
     });
   });
+
+  describe('handleThreadReplyCache', () => {
+    let queryClient: QueryClient;
+
+    beforeEach(() => {
+      queryClient = new QueryClient({
+        defaultOptions: { queries: { retry: false } },
+      });
+    });
+
+    it('invalidates thread-messages and thread-stats queries', () => {
+      const spy = vi.spyOn(queryClient, 'invalidateQueries');
+
+      threadService.handleThreadReplyCache({
+        message: { threadId: 'thread-1', isThreadReply: true, createdDate: 5000 } as any,
+        spaceId: 'space-1',
+        channelId: 'channel-1',
+        queryClient,
+      });
+
+      expect(spy).toHaveBeenCalledWith({
+        queryKey: ['thread-messages', 'space-1', 'channel-1', 'thread-1'],
+      });
+      expect(spy).toHaveBeenCalledWith({
+        queryKey: ['thread-stats', 'space-1', 'channel-1', 'thread-1'],
+      });
+      expect(spy).toHaveBeenCalledWith({
+        queryKey: ['channel-threads', 'space-1', 'channel-1'],
+      });
+    });
+
+    it('returns false for non-thread-reply messages', () => {
+      const result = threadService.handleThreadReplyCache({
+        message: { content: { senderId: 'user-a' } } as any,
+        spaceId: 'space-1',
+        channelId: 'channel-1',
+        queryClient,
+      });
+      expect(result).toBe(false);
+    });
+  });
+
+  describe('handleThreadDeletedMessageCache', () => {
+    let queryClient: QueryClient;
+
+    beforeEach(() => {
+      queryClient = new QueryClient({
+        defaultOptions: { queries: { retry: false } },
+      });
+    });
+
+    it('updates thread-messages cache when a thread reply is deleted', () => {
+      // Seed thread-messages cache
+      queryClient.setQueryData(
+        ['thread-messages', 'space-1', 'channel-1', 'thread-1'],
+        { messages: [{ messageId: 'reply-1' }, { messageId: 'reply-2' }], replyCount: 2 }
+      );
+
+      threadService.handleThreadDeletedMessageCache({
+        targetMessage: { messageId: 'reply-1', isThreadReply: true, threadId: 'thread-1' } as any,
+        spaceId: 'space-1',
+        channelId: 'channel-1',
+        queryClient,
+      });
+
+      const data = queryClient.getQueryData(['thread-messages', 'space-1', 'channel-1', 'thread-1']) as any;
+      expect(data.messages).toHaveLength(1);
+      expect(data.replyCount).toBe(1);
+    });
+
+    it('does nothing for non-thread messages', () => {
+      const spy = vi.spyOn(queryClient, 'setQueryData');
+      threadService.handleThreadDeletedMessageCache({
+        targetMessage: { messageId: 'msg-1' } as any,
+        spaceId: 'space-1',
+        channelId: 'channel-1',
+        queryClient,
+      });
+      // Only called if targetMessage is a thread reply
+      expect(spy).not.toHaveBeenCalled();
+    });
+  });
 });
