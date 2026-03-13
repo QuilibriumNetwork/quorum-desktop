@@ -851,17 +851,10 @@ export class MessageService {
         const isRootSender = threadMsg.senderId === targetMessage.content.senderId;
         if (!isAuthor || !isRootSender) return;
 
-        // Strip threadMeta from root message and persist
-        const { threadMeta: _stripped, ...rootWithoutThread } = targetMessage;
-        await messageDB.saveMessage(
-          rootWithoutThread as Message,
-          0,
-          spaceId,
-          conversationType,
-          updatedUserProfile.user_icon!,
-          updatedUserProfile.display_name!,
-          currentUserAddress
-        );
+        // Delete the root message that started the thread.
+        // TODO: When standalone threads (created from scratch) are introduced,
+        // add a condition here — standalone threads may not need root message deletion.
+        await messageDB.deleteMessage(targetMessage.messageId);
 
         // Hard-delete all thread replies
         const { messages: threadReplies } = await messageDB.getThreadMessages({
@@ -1315,6 +1308,22 @@ export class MessageService {
             };
           }
         );
+
+        // For thread replies: also update the thread-messages cache
+        if (targetMessage?.isThreadReply && targetMessage.threadId) {
+          const threadKey = ['thread-messages', spaceId, channelId, targetMessage.threadId];
+          queryClient.setQueryData(
+            threadKey,
+            (oldData: any) => {
+              if (!oldData?.messages) return oldData;
+              return {
+                ...oldData,
+                messages: oldData.messages.filter((m: Message) => m.messageId !== targetId),
+                replyCount: Math.max(0, (oldData.replyCount || 0) - 1),
+              };
+            }
+          );
+        }
       }
     } else if (decryptedContent.content.type === 'pin') {
       const pinMessage = decryptedContent.content as PinMessage;

@@ -354,6 +354,22 @@ export function useMessageActions(options: UseMessageActionsOptions) {
         await messageDB.deleteMessage(message.messageId);
       }
 
+      // For thread replies: also remove from the thread-messages cache so ThreadPanel updates
+      if (message.isThreadReply && message.threadId) {
+        const threadKey = ['thread-messages', spaceId, channelId, message.threadId];
+        queryClient.setQueryData(
+          threadKey,
+          (oldData: { messages: MessageType[]; replyCount: number; lastReplyAt: number | null; lastReplyBy: string | null } | undefined) => {
+            if (!oldData) return oldData;
+            return {
+              ...oldData,
+              messages: oldData.messages.filter((msg) => msg.messageId !== message.messageId),
+              replyCount: Math.max(0, oldData.replyCount - 1),
+            };
+          }
+        );
+      }
+
       // Create the delete message
       const deleteMessage: RemoveMessage = {
         type: 'remove-message',
