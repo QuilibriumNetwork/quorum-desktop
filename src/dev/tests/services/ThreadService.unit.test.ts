@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { ThreadService } from '@/services/ThreadService';
 import type { MessageDB } from '@/db/messages';
+import type { ThreadMessage, ChannelThread } from '@/api/quorumApi';
 
 // Minimal mock for MessageDB
 function createMockMessageDB(overrides: Partial<MessageDB> = {}): MessageDB {
@@ -78,6 +79,261 @@ describe('ThreadService', () => {
         spaceId: 'space-1',
       });
       expect(result).toBe(false);
+    });
+  });
+
+  describe('handleThreadReceive', () => {
+    it('rejects DMs (spaceId === channelId)', async () => {
+      const threadMsg: ThreadMessage = {
+        type: 'thread',
+        senderId: 'user-a',
+        targetMessageId: 'msg-1',
+        action: 'create',
+        threadMeta: { threadId: 'thread-1', createdBy: 'user-a' },
+      };
+      const result = await threadService.handleThreadReceive({
+        threadMsg,
+        spaceId: 'same-id',
+        channelId: 'same-id',
+        currentUserAddress: 'user-a',
+        conversationType: 'group',
+        updatedUserProfile: { user_icon: '', display_name: '' },
+      });
+      expect(result).toBe(false);
+    });
+
+    it('creates thread and saves to channel_threads registry', async () => {
+      const rootMessage = {
+        messageId: 'msg-1',
+        content: { type: 'post', senderId: 'user-a', text: 'Hello world' },
+        threadMeta: undefined,
+      };
+      (mockDB.getMessage as any).mockResolvedValue(rootMessage);
+
+      const threadMsg: ThreadMessage = {
+        type: 'thread',
+        senderId: 'user-a',
+        targetMessageId: 'msg-1',
+        action: 'create',
+        threadMeta: { threadId: 'thread-1', createdBy: 'user-a' },
+      };
+      const result = await threadService.handleThreadReceive({
+        threadMsg,
+        spaceId: 'space-1',
+        channelId: 'channel-1',
+        currentUserAddress: 'user-a',
+        conversationType: 'group',
+        updatedUserProfile: { user_icon: '', display_name: '' },
+      });
+      expect(result).toBe(true);
+      expect(mockDB.saveChannelThread).toHaveBeenCalledOnce();
+      expect(mockDB.saveMessage).toHaveBeenCalledOnce();
+    });
+
+    it('skips create when threadId already set (idempotent)', async () => {
+      const rootMessage = {
+        messageId: 'msg-1',
+        content: { type: 'post', senderId: 'user-a', text: 'Hello' },
+        threadMeta: { threadId: 'thread-1', createdBy: 'user-a' },
+      };
+      (mockDB.getMessage as any).mockResolvedValue(rootMessage);
+
+      const threadMsg: ThreadMessage = {
+        type: 'thread',
+        senderId: 'user-a',
+        targetMessageId: 'msg-1',
+        action: 'create',
+        threadMeta: { threadId: 'thread-1', createdBy: 'user-a' },
+      };
+      const result = await threadService.handleThreadReceive({
+        threadMsg,
+        spaceId: 'space-1',
+        channelId: 'channel-1',
+        currentUserAddress: 'user-a',
+        conversationType: 'group',
+        updatedUserProfile: { user_icon: '', display_name: '' },
+      });
+      expect(result).toBe(false); // Idempotent skip
+      expect(mockDB.saveChannelThread).not.toHaveBeenCalled();
+    });
+
+    it('rejects updateTitle from non-creator', async () => {
+      const rootMessage = {
+        messageId: 'msg-1',
+        content: { type: 'post', senderId: 'user-a', text: 'Hello' },
+        threadMeta: { threadId: 'thread-1', createdBy: 'user-a' },
+      };
+      (mockDB.getMessage as any).mockResolvedValue(rootMessage);
+
+      const threadMsg: ThreadMessage = {
+        type: 'thread',
+        senderId: 'user-intruder',
+        targetMessageId: 'msg-1',
+        action: 'updateTitle',
+        threadMeta: { threadId: 'thread-1', createdBy: 'user-a', customTitle: 'Hacked' },
+      };
+      const result = await threadService.handleThreadReceive({
+        threadMsg,
+        spaceId: 'space-1',
+        channelId: 'channel-1',
+        currentUserAddress: 'user-a',
+        conversationType: 'group',
+        updatedUserProfile: { user_icon: '', display_name: '' },
+      });
+      expect(result).toBe(false);
+      expect(mockDB.saveMessage).not.toHaveBeenCalled();
+    });
+
+    it('remove action: hard-deletes root if sender is root author', async () => {
+      const rootMessage = {
+        messageId: 'msg-1',
+        content: { type: 'post', senderId: 'user-a', text: 'Hello' },
+        threadMeta: { threadId: 'thread-1', createdBy: 'user-a' },
+      };
+      (mockDB.getMessage as any).mockResolvedValue(rootMessage);
+      (mockDB.getSpace as any).mockResolvedValue({ roles: [] });
+      (mockDB.getThreadMessages as any).mockResolvedValue({ messages: [{ messageId: 'reply-1' }] });
+
+      const threadMsg: ThreadMessage = {
+        type: 'thread',
+        senderId: 'user-a',
+        targetMessageId: 'msg-1',
+        action: 'remove',
+        threadMeta: { threadId: 'thread-1', createdBy: 'user-a' },
+      };
+      const result = await threadService.handleThreadReceive({
+        threadMsg,
+        spaceId: 'space-1',
+        channelId: 'channel-1',
+        currentUserAddress: 'user-a',
+        conversationType: 'group',
+        updatedUserProfile: { user_icon: '', display_name: '' },
+      });
+      expect(result).toBe(true);
+      // Root hard-deleted + 1 reply hard-deleted
+      expect(mockDB.deleteMessage).toHaveBeenCalledTimes(2);
+      expect(mockDB.deleteChannelThread).toHaveBeenCalledWith('thread-1');
+    });
+
+    it('close action: authorized by thread creator', async () => {
+      const rootMessage = {
+        messageId: 'msg-1',
+        content: { type: 'post', senderId: 'user-a', text: 'Hello' },
+        threadMeta: { threadId: 'thread-1', createdBy: 'user-a' },
+      };
+      (mockDB.getMessage as any).mockResolvedValue(rootMessage);
+      (mockDB.getChannelThreads as any).mockResolvedValue([
+        { threadId: 'thread-1', isClosed: false },
+      ]);
+
+      const threadMsg: ThreadMessage = {
+        type: 'thread',
+        senderId: 'user-a',
+        targetMessageId: 'msg-1',
+        action: 'close',
+        threadMeta: { threadId: 'thread-1', createdBy: 'user-a', isClosed: true },
+      };
+      const result = await threadService.handleThreadReceive({
+        threadMsg,
+        spaceId: 'space-1',
+        channelId: 'channel-1',
+        currentUserAddress: 'user-a',
+        conversationType: 'group',
+        updatedUserProfile: { user_icon: '', display_name: '' },
+      });
+      expect(result).toBe(true);
+      expect(mockDB.saveChannelThread).toHaveBeenCalledOnce();
+      const saved = (mockDB.saveChannelThread as any).mock.calls[0][0];
+      expect(saved.isClosed).toBe(true);
+    });
+
+    it('close action: rejected for unauthorized user', async () => {
+      const rootMessage = {
+        messageId: 'msg-1',
+        content: { type: 'post', senderId: 'user-a', text: 'Hello' },
+        threadMeta: { threadId: 'thread-1', createdBy: 'user-a' },
+      };
+      (mockDB.getMessage as any).mockResolvedValue(rootMessage);
+      (mockDB.getSpace as any).mockResolvedValue({ roles: [] });
+
+      const threadMsg: ThreadMessage = {
+        type: 'thread',
+        senderId: 'user-random',
+        targetMessageId: 'msg-1',
+        action: 'close',
+        threadMeta: { threadId: 'thread-1', createdBy: 'user-a', isClosed: true },
+      };
+      const result = await threadService.handleThreadReceive({
+        threadMsg,
+        spaceId: 'space-1',
+        channelId: 'channel-1',
+        currentUserAddress: 'user-a',
+        conversationType: 'group',
+        updatedUserProfile: { user_icon: '', display_name: '' },
+      });
+      expect(result).toBe(false);
+    });
+
+    it('remove action: falls back to channel_threads registry when root is null', async () => {
+      (mockDB.getMessage as any).mockResolvedValue(null);
+      (mockDB.getChannelThread as any).mockResolvedValue({
+        threadId: 'thread-1',
+        createdBy: 'user-a',
+      });
+      (mockDB.getSpace as any).mockResolvedValue({ roles: [] });
+      (mockDB.getThreadMessages as any).mockResolvedValue({ messages: [] });
+
+      const threadMsg: ThreadMessage = {
+        type: 'thread',
+        senderId: 'user-a',
+        targetMessageId: 'msg-1',
+        action: 'remove',
+        threadMeta: { threadId: 'thread-1', createdBy: 'user-a' },
+      };
+      const result = await threadService.handleThreadReceive({
+        threadMsg,
+        spaceId: 'space-1',
+        channelId: 'channel-1',
+        currentUserAddress: 'user-a',
+        conversationType: 'group',
+        updatedUserProfile: { user_icon: '', display_name: '' },
+      });
+      expect(result).toBe(true);
+      expect(mockDB.getChannelThread).toHaveBeenCalledWith('thread-1');
+      expect(mockDB.deleteChannelThread).toHaveBeenCalledWith('thread-1');
+    });
+
+    it('remove action: strips threadMeta when root belongs to another user', async () => {
+      const rootMessage = {
+        messageId: 'msg-1',
+        content: { type: 'post', senderId: 'user-b', text: 'Their message' },
+        threadMeta: { threadId: 'thread-1', createdBy: 'user-a' },
+      };
+      (mockDB.getMessage as any).mockResolvedValue(rootMessage);
+      (mockDB.getSpace as any).mockResolvedValue({ roles: [] });
+      (mockDB.getThreadMessages as any).mockResolvedValue({ messages: [] });
+
+      const threadMsg: ThreadMessage = {
+        type: 'thread',
+        senderId: 'user-a',
+        targetMessageId: 'msg-1',
+        action: 'remove',
+        threadMeta: { threadId: 'thread-1', createdBy: 'user-a' },
+      };
+      const result = await threadService.handleThreadReceive({
+        threadMsg,
+        spaceId: 'space-1',
+        channelId: 'channel-1',
+        currentUserAddress: 'user-a',
+        conversationType: 'group',
+        updatedUserProfile: { user_icon: '', display_name: '' },
+      });
+      expect(result).toBe(true);
+      // Root NOT hard-deleted — saved with threadMeta stripped
+      expect(mockDB.deleteMessage).not.toHaveBeenCalled();
+      expect(mockDB.saveMessage).toHaveBeenCalledOnce();
+      const savedMsg = (mockDB.saveMessage as any).mock.calls[0][0];
+      expect(savedMsg.threadMeta).toBeUndefined();
     });
   });
 });
