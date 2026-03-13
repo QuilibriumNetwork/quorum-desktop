@@ -804,144 +804,17 @@ export class MessageService {
       );
     } else if (decryptedContent.content.type === 'thread') {
       const threadMsg = decryptedContent.content as ThreadMessage;
-      if (spaceId === channelId) return; // Reject DMs
-
-      const targetMessage = await messageDB.getMessage({
+      await this.threadService.handleThreadReceive({
+        threadMsg,
         spaceId,
         channelId,
-        messageId: threadMsg.targetMessageId,
-      });
-
-      // For 'remove' action, allow proceeding even if root message was already deleted —
-      // fall back to channel_threads registry for authorization.
-      if (!targetMessage && threadMsg.action !== 'remove') return;
-
-      if (threadMsg.action === 'create') {
-        // Idempotent — skip if threadId already set
-        if (targetMessage!.threadMeta?.threadId === threadMsg.threadMeta.threadId) return;
-
-        // Write to channel_threads registry
-        const rootText =
-          (targetMessage!.content as { text?: string })?.text ?? '';
-        const newThread = buildChannelThreadFromCreate({
-          spaceId,
-          channelId,
-          rootMessageId: threadMsg.targetMessageId,
-          threadMeta: threadMsg.threadMeta,
-          rootMessageText: typeof rootText === 'string' ? rootText : '',
-          currentUserAddress: currentUserAddress ?? '',
-          now: Date.now(),
-        });
-        await messageDB.saveChannelThread(newThread);
-      } else if (threadMsg.action === 'updateTitle') {
-        // Only the thread creator may rename the thread
-        if (threadMsg.senderId !== targetMessage!.threadMeta?.createdBy) return;
-      } else if (
-        threadMsg.action === 'close' ||
-        threadMsg.action === 'reopen' ||
-        threadMsg.action === 'updateSettings'
-      ) {
-        // Thread creator OR anyone with message:delete permission may close/reopen/updateSettings
-        const isAuthor = threadMsg.senderId === targetMessage!.threadMeta?.createdBy;
-        const space = await messageDB.getSpace(spaceId);
-        const hasDeletePermission =
-          space?.roles?.some(
-            (role) =>
-              role.members.includes(threadMsg.senderId) &&
-              role.permissions.includes('message:delete')
-          ) ?? false;
-        if (!isAuthor && !hasDeletePermission) return;
-        // Falls through to the existing spread-merge + saveMessage below
-      } else if (threadMsg.action === 'remove') {
-        // Authorize via targetMessage if available, otherwise fall back to channel_threads registry
-        const threadRecord = !targetMessage
-          ? await messageDB.getChannelThread(threadMsg.threadMeta.threadId)
-          : undefined;
-        const createdBy = targetMessage?.threadMeta?.createdBy ?? threadRecord?.createdBy;
-
-        // Thread creator OR anyone with message:delete permission may delete the thread
-        const isRemoveAuthor = threadMsg.senderId === createdBy;
-        const removeSpace = await messageDB.getSpace(spaceId);
-        const hasRemovePermission =
-          removeSpace?.roles?.some(
-            (role) =>
-              role.members.includes(threadMsg.senderId) &&
-              role.permissions.includes('message:delete')
-          ) ?? false;
-        if (!isRemoveAuthor && !hasRemovePermission) return;
-
-        if (targetMessage) {
-          const isRootSender = threadMsg.senderId === targetMessage.content.senderId;
-          const rootText = (targetMessage.content as { text?: string })?.text;
-          const isSoftDeleted = !rootText || (Array.isArray(rootText) && (rootText as string[]).every(s => !s));
-
-          if (isRootSender || isSoftDeleted) {
-            // Root was authored by thread creator OR already soft-deleted — hard-delete it
-            await messageDB.deleteMessage(targetMessage.messageId);
-          } else {
-            // Root belongs to another user and has real content — just strip threadMeta
-            const stripped: Message = { ...targetMessage };
-            delete stripped.threadMeta;
-            await messageDB.saveMessage(
-              stripped, 0, spaceId, conversationType,
-              updatedUserProfile.user_icon!, updatedUserProfile.display_name!,
-              currentUserAddress
-            );
-          }
-        }
-
-        // Hard-delete all thread replies
-        const { messages: threadReplies } = await messageDB.getThreadMessages({
-          spaceId,
-          channelId,
-          threadId: threadMsg.threadMeta.threadId,
-        });
-        for (const reply of threadReplies) {
-          await messageDB.deleteMessage(reply.messageId);
-        }
-
-        // Remove from channel_threads registry
-        await messageDB.deleteChannelThread(threadMsg.threadMeta.threadId);
-        return; // Do not fall through to generic save
-      }
-
-      // All non-remove actions require targetMessage (guaranteed by the early return above)
-      if (!targetMessage) return;
-
-      const updatedMessage: Message = {
-        ...targetMessage,
-        threadMeta: { ...targetMessage.threadMeta, ...threadMsg.threadMeta },
-      };
-      await messageDB.saveMessage(
-        updatedMessage,
-        0,
-        spaceId,
+        currentUserAddress: currentUserAddress ?? '',
         conversationType,
-        updatedUserProfile.user_icon!,
-        updatedUserProfile.display_name!,
-        currentUserAddress
-      );
-
-      // Sync channel_threads registry for settings/close/reopen actions
-      if (
-        threadMsg.action === 'close' ||
-        threadMsg.action === 'reopen' ||
-        threadMsg.action === 'updateSettings'
-      ) {
-        const threads = await messageDB.getChannelThreads({ spaceId, channelId });
-        const entry = threads.find(t => t.threadId === threadMsg.threadMeta.threadId);
-        if (entry) {
-          await messageDB.saveChannelThread({
-            ...entry,
-            isClosed: threadMsg.action === 'close'
-              ? true
-              : threadMsg.action === 'reopen'
-                ? false
-                : entry.isClosed,
-            customTitle: threadMsg.threadMeta.customTitle ?? entry.customTitle,
-          });
-        }
-      }
+        updatedUserProfile: {
+          user_icon: updatedUserProfile.user_icon!,
+          display_name: updatedUserProfile.display_name!,
+        },
+      });
     } else if (decryptedContent.content.type === 'update-profile') {
       const participant = await messageDB.getSpaceMember(
         spaceId,
@@ -981,10 +854,13 @@ export class MessageService {
         return;
       }
 
-      // Ensure thread replies are marked for filtering
-      if (decryptedContent.threadId && !decryptedContent.isThreadReply) {
-        decryptedContent.isThreadReply = true;
-      }
+      // Mark thread replies and update channel_threads registry
+      await this.threadService.handleThreadReplyReceive({
+        message: decryptedContent,
+        spaceId,
+        channelId,
+        currentUserAddress: currentUserAddress ?? '',
+      });
 
       await messageDB.saveMessage(
         { ...decryptedContent, channelId: channelId, spaceId: spaceId },
@@ -995,24 +871,6 @@ export class MessageService {
         updatedUserProfile.display_name!,
         currentUserAddress
       );
-
-      // Update channel_threads registry for thread replies
-      if (decryptedContent.isThreadReply && decryptedContent.threadId) {
-        const existingThreadEntry = await messageDB.getChannelThreads({
-          spaceId,
-          channelId,
-        }).then(list => list.find(t => t.threadId === decryptedContent.threadId));
-
-        if (existingThreadEntry) {
-          const updated = updateChannelThreadOnReply({
-            existing: existingThreadEntry,
-            replySenderId: decryptedContent.content.senderId,
-            replyTimestamp: decryptedContent.createdDate,
-            currentUserAddress: currentUserAddress ?? '',
-          });
-          await messageDB.saveChannelThread(updated);
-        }
-      }
     }
   }
 
@@ -1347,20 +1205,12 @@ export class MessageService {
         );
 
         // For thread replies: also update the thread-messages cache
-        if (targetMessage?.isThreadReply && targetMessage.threadId) {
-          const threadKey = ['thread-messages', spaceId, channelId, targetMessage.threadId];
-          queryClient.setQueryData(
-            threadKey,
-            (oldData: any) => {
-              if (!oldData?.messages) return oldData;
-              return {
-                ...oldData,
-                messages: oldData.messages.filter((m: Message) => m.messageId !== targetId),
-                replyCount: Math.max(0, (oldData.replyCount || 0) - 1),
-              };
-            }
-          );
-        }
+        this.threadService.handleThreadDeletedMessageCache({
+          targetMessage: targetMessage ?? undefined,
+          spaceId,
+          channelId,
+          queryClient,
+        });
       }
     } else if (decryptedContent.content.type === 'pin') {
       const pinMessage = decryptedContent.content as PinMessage;
@@ -1461,113 +1311,11 @@ export class MessageService {
       });
     } else if (decryptedContent.content.type === 'thread') {
       const threadMsg = decryptedContent.content as ThreadMessage;
-      if (spaceId === channelId) return;
-
-      // Hoist getMessage fetch to avoid duplicate calls
-      const targetMessage = await this.messageDB.getMessage({ spaceId, channelId, messageId: threadMsg.targetMessageId });
-
-      // For updateTitle: verify sender is thread creator before patching cache
-      if (threadMsg.action === 'updateTitle') {
-        if (!targetMessage || threadMsg.senderId !== targetMessage.threadMeta?.createdBy) return;
-      }
-
-      if (threadMsg.action === 'close' || threadMsg.action === 'reopen' || threadMsg.action === 'updateSettings') {
-        if (!targetMessage) return;
-        const isAuthor = threadMsg.senderId === targetMessage.threadMeta?.createdBy;
-        const space = await this.messageDB.getSpace(spaceId);
-        const hasDeletePermission =
-          space?.roles?.some(
-            (role) =>
-              role.members.includes(threadMsg.senderId) &&
-              role.permissions.includes('message:delete')
-          ) ?? false;
-        if (!isAuthor && !hasDeletePermission) return;
-      }
-
-      if (threadMsg.action === 'remove') {
-        // Authorize via targetMessage if available, otherwise fall back to channel_threads registry
-        const threadRecord = !targetMessage
-          ? await this.messageDB.getChannelThread(threadMsg.threadMeta.threadId)
-          : undefined;
-        const createdBy = targetMessage?.threadMeta?.createdBy ?? threadRecord?.createdBy;
-
-        // Thread creator OR anyone with message:delete permission may delete the thread
-        const isRemoveAuthor = threadMsg.senderId === createdBy;
-        const removeSpace = await this.messageDB.getSpace(spaceId);
-        const hasRemovePermission =
-          removeSpace?.roles?.some(
-            (role) =>
-              role.members.includes(threadMsg.senderId) &&
-              role.permissions.includes('message:delete')
-          ) ?? false;
-        if (!isRemoveAuthor && !hasRemovePermission) return;
-
-        const threadId = threadMsg.threadMeta.threadId;
-        const isRootSender = targetMessage
-          ? threadMsg.senderId === targetMessage.content.senderId
-          : false;
-
-        queryClient.setQueryData(
-          buildMessagesKey({ spaceId, channelId }),
-          (oldData: InfiniteData<any>) => {
-            if (!oldData?.pages) return oldData;
-            return {
-              pageParams: oldData.pageParams,
-              pages: oldData.pages.map((page: any) => ({
-                ...page,
-                messages: page.messages.map((m: Message) => {
-                  if (m.messageId === threadMsg.targetMessageId) {
-                    // If root was soft-deleted (empty text) or thread creator owns it, remove entirely
-                    const text = (m.content as { text?: string })?.text;
-                    if (!text || isRootSender) return null;
-                    // Otherwise just strip threadMeta — keep the other user's message
-                    const { threadMeta: _stripped, ...rest } = m;
-                    return rest as Message;
-                  }
-                  if (m.threadId === threadId) {
-                    return null;
-                  }
-                  return m;
-                }).filter((m: Message | null): m is Message => m !== null),
-              })),
-            };
-          }
-        );
-        queryClient.removeQueries({
-          queryKey: ['thread-messages', spaceId, channelId, threadId],
-        });
-        queryClient.setQueryData(
-          ['channel-threads', spaceId, channelId],
-          (old: any[] | undefined) =>
-            old ? old.filter((t: any) => t.threadId !== threadId) : old,
-        );
-        return;
-      }
-
-      queryClient.setQueryData(
-        buildMessagesKey({ spaceId, channelId }),
-        (oldData: InfiniteData<any>) => {
-          if (!oldData?.pages) return oldData;
-          return {
-            pageParams: oldData.pageParams,
-            pages: oldData.pages.map((page: any) => ({
-              ...page,
-              messages: page.messages.map((m: Message) =>
-                m.messageId === threadMsg.targetMessageId
-                  ? { ...m, threadMeta: { ...m.threadMeta, ...threadMsg.threadMeta } }
-                  : m
-              ),
-            })),
-          };
-        }
-      );
-      // Invalidate thread messages so the open panel re-reads the updated root.
-      // Applies to both 'create' and 'updateTitle' actions (harmless for 'create').
-      queryClient.invalidateQueries({
-        queryKey: ['thread-messages', spaceId, channelId, threadMsg.threadMeta.threadId],
-      });
-      queryClient.invalidateQueries({
-        queryKey: ['channel-threads', spaceId, channelId],
+      await this.threadService.handleThreadCache({
+        threadMsg,
+        spaceId,
+        channelId,
+        queryClient,
       });
     } else if (decryptedContent.content.type === 'update-profile') {
       const participant = await this.messageDB.getSpaceMember(
@@ -1677,42 +1425,12 @@ export class MessageService {
     } else {
       // Thread replies go to thread cache, not main feed
       if (decryptedContent.isThreadReply) {
-        queryClient.invalidateQueries({
-          queryKey: ['thread-messages', spaceId, channelId, decryptedContent.threadId],
+        this.threadService.handleThreadReplyCache({
+          message: decryptedContent,
+          spaceId,
+          channelId,
+          queryClient,
         });
-        queryClient.invalidateQueries({
-          queryKey: ['thread-stats', spaceId, channelId, decryptedContent.threadId],
-        });
-
-        // Update lastActivityAt on the root message in the main feed cache
-        if (decryptedContent.threadId) {
-          const now = decryptedContent.createdDate ?? Date.now();
-          queryClient.setQueryData(
-            buildMessagesKey({ spaceId, channelId }),
-            (oldData: InfiniteData<any>) => {
-              if (!oldData?.pages) return oldData;
-              return {
-                pageParams: oldData.pageParams,
-                pages: oldData.pages.map((page: any) => ({
-                  ...page,
-                  messages: page.messages.map((m: Message) => {
-                    if (m.threadMeta?.threadId === decryptedContent.threadId) {
-                      return {
-                        ...m,
-                        threadMeta: { ...m.threadMeta, lastActivityAt: now },
-                      };
-                    }
-                    return m;
-                  }),
-                })),
-              };
-            }
-          );
-          queryClient.invalidateQueries({
-            queryKey: ['channel-threads', spaceId, channelId],
-          });
-        }
-
         return;
       }
 
@@ -4748,24 +4466,17 @@ export class MessageService {
       ) {
         const threadMsg = pendingMessage as ThreadMessage;
 
-        if (spaceId === channelId) return outbounds; // Reject DMs
-
-        const targetMessage = await this.messageDB.getMessage({
+        // Pre-send validation (DM check, idempotency, auth)
+        // Returns targetMessage to avoid a second DB fetch
+        const preCheck = await this.threadService.handleThreadSend({
+          threadMsg,
           spaceId,
           channelId,
-          messageId: threadMsg.targetMessageId,
+          queryClient,
+          currentUserAddress: currentPasskeyInfo.address,
         });
-        if (!targetMessage) return outbounds;
-
-        // Idempotent for 'create' only — skip if threadId already set
-        if (threadMsg.action === 'create' && targetMessage.threadMeta?.threadId === threadMsg.threadMeta.threadId) {
-          return outbounds;
-        }
-
-        // For 'updateTitle': only the thread creator may rename
-        if (threadMsg.action === 'updateTitle' && threadMsg.senderId !== targetMessage.threadMeta?.createdBy) {
-          return outbounds;
-        }
+        if (!preCheck.shouldProceed || !preCheck.targetMessage) return outbounds;
+        const targetMessage = preCheck.targetMessage;
 
         const messageId = await crypto.subtle.digest(
           'SHA-256',
@@ -4810,115 +4521,24 @@ export class MessageService {
 
         outbounds.push(await this.encryptAndSendToSpace(spaceId, message));
 
-        // For 'remove': perform local DB deletion matching processMessage logic
-        if (threadMsg.action === 'remove') {
-          const isRootSender = threadMsg.senderId === targetMessage.content.senderId;
-          const rootText = (targetMessage.content as { text?: string })?.text;
-          const isSoftDeleted = !rootText || (Array.isArray(rootText) && (rootText as string[]).every(s => !s));
-
-          if (isRootSender || isSoftDeleted) {
-            await this.messageDB.deleteMessage(targetMessage.messageId);
-          } else {
-            const stripped: Message = { ...targetMessage };
-            delete stripped.threadMeta;
-            const conversationId = spaceId + '/' + channelId;
-            const conversation = await this.messageDB.getConversation({ conversationId });
-            await this.saveMessage(
-              stripped, this.messageDB, spaceId, channelId, 'group',
-              {
-                user_icon: conversation.conversation?.icon ?? DefaultImages.UNKNOWN_USER,
-                display_name: conversation.conversation?.displayName ?? t`Unknown User`,
-              },
-              currentPasskeyInfo.address
-            );
-          }
-
-          // Hard-delete all thread replies
-          const { messages: threadReplies } = await this.messageDB.getThreadMessages({
-            spaceId,
-            channelId,
-            threadId: threadMsg.threadMeta.threadId,
-          });
-          for (const reply of threadReplies) {
-            await this.messageDB.deleteMessage(reply.messageId);
-          }
-
-          // Remove from channel_threads registry
-          await this.messageDB.deleteChannelThread(threadMsg.threadMeta.threadId);
-
-          return outbounds;
-        }
-
-        // Update root message with threadMeta (merge for updateTitle, replace for create)
-        const mergedMeta = threadMsg.action === 'updateTitle'
-          ? { ...targetMessage.threadMeta, ...threadMsg.threadMeta }
-          : threadMsg.threadMeta;
-        const updatedTarget: Message = { ...targetMessage, threadMeta: mergedMeta };
+        // Resolve conversation profile for DB saves (uses DefaultImages + i18n)
         const conversationId = spaceId + '/' + channelId;
-        const conversation = await this.messageDB.getConversation({
-          conversationId,
-        });
-        await this.saveMessage(
-          updatedTarget,
-          this.messageDB,
+        const conversation = await this.messageDB.getConversation({ conversationId });
+
+        // Post-broadcast: DB writes and cache updates
+        const { earlyReturn } = await this.threadService.handleThreadSendPostBroadcast({
+          threadMsg,
+          targetMessage,
           spaceId,
           channelId,
-          'group',
-          {
-            user_icon:
-              conversation.conversation?.icon ?? DefaultImages.UNKNOWN_USER,
-            display_name:
-              conversation.conversation?.displayName ?? t`Unknown User`,
+          queryClient,
+          currentUserAddress: currentPasskeyInfo.address,
+          conversationProfile: {
+            user_icon: conversation.conversation?.icon ?? DefaultImages.UNKNOWN_USER,
+            display_name: conversation.conversation?.displayName ?? t`Unknown User`,
           },
-          currentPasskeyInfo.address
-        );
-
-        // Update React Query cache
-        queryClient.setQueryData(
-          buildMessagesKey({ spaceId, channelId }),
-          (oldData: InfiniteData<any>) => {
-            if (!oldData?.pages) return oldData;
-            return {
-              pageParams: oldData.pageParams,
-              pages: oldData.pages.map((page: any) => ({
-                ...page,
-                messages: page.messages.map((m: Message) =>
-                  m.messageId === threadMsg.targetMessageId
-                    ? { ...m, threadMeta: threadMsg.action === 'updateTitle'
-                        ? { ...m.threadMeta, ...threadMsg.threadMeta }
-                        : threadMsg.threadMeta }
-                    : m
-                ),
-              })),
-            };
-          }
-        );
-
-        // For 'create': write to channel_threads registry so ThreadsListPanel picks it up
-        if (threadMsg.action === 'create') {
-          const rootText =
-            (targetMessage.content as { text?: string })?.text ?? '';
-          const newThread = buildChannelThreadFromCreate({
-            spaceId,
-            channelId,
-            rootMessageId: threadMsg.targetMessageId,
-            threadMeta: threadMsg.threadMeta,
-            rootMessageText: typeof rootText === 'string' ? rootText : '',
-            currentUserAddress: currentPasskeyInfo.address,
-            now: Date.now(),
-          });
-          await this.messageDB.saveChannelThread(newThread);
-          queryClient.invalidateQueries({
-            queryKey: ['channel-threads', spaceId, channelId],
-          });
-        }
-
-        // Invalidate thread messages so the open panel re-reads the updated root (for updateTitle)
-        if (threadMsg.action === 'updateTitle') {
-          queryClient.invalidateQueries({
-            queryKey: ['thread-messages', spaceId, channelId, threadMsg.threadMeta.threadId],
-          });
-        }
+        });
+        if (earlyReturn) return outbounds;
 
         return outbounds;
       }
