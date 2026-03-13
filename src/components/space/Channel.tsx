@@ -674,10 +674,50 @@ const Channel: React.FC<ChannelProps> = ({
       const threadMeta = activeThreadRootMessage.threadMeta;
       if (!threadMeta) return;
 
+      const threadId = threadMeta.threadId;
+      const rootMessageId = activeThreadRootMessage.messageId;
+      const rootText = (activeThreadRootMessage.content as { text?: string })?.text;
+      const isSoftDeleted = !rootText || (Array.isArray(rootText) && (rootText as string[]).every(s => !s));
+      const isRootSender = user.currentPasskeyInfo!.address === activeThreadRootMessage.content.senderId;
+
+      // Optimistic update: remove thread from UI immediately
+      queryClient.setQueryData(
+        buildMessagesKey({ spaceId, channelId }),
+        (oldData: any) => {
+          if (!oldData?.pages) return oldData;
+          return {
+            pageParams: oldData.pageParams,
+            pages: oldData.pages.map((page: any) => ({
+              ...page,
+              messages: page.messages.map((m: MessageType) => {
+                if (m.messageId === rootMessageId) {
+                  if (isSoftDeleted || isRootSender) return null;
+                  const { threadMeta: _stripped, ...rest } = m;
+                  return rest as MessageType;
+                }
+                if (m.threadId === threadId) return null;
+                return m;
+              }).filter(Boolean),
+            })),
+          };
+        }
+      );
+      // Clear thread panel cache; don't invalidate main messages —
+      // the optimistic setQueryData above handles it, and invalidation
+      // would refetch from DB before the persistent handler deletes the data.
+      queryClient.removeQueries({
+        queryKey: ['thread-messages', spaceId, channelId, threadId],
+      });
+      queryClient.setQueryData(
+        ['channel-threads', spaceId, channelId],
+        (old: any[] | undefined) =>
+          old ? old.filter((t: any) => t.threadId !== threadId) : old,
+      );
+
       const threadMessage: ThreadMessage = {
         type: 'thread',
         senderId: user.currentPasskeyInfo!.address,
-        targetMessageId: activeThreadRootMessage.messageId,
+        targetMessageId: rootMessageId,
         action: 'remove',
         threadMeta: { threadId: threadMeta.threadId, createdBy: threadMeta.createdBy },
       };
@@ -712,6 +752,21 @@ const Channel: React.FC<ChannelProps> = ({
       removeThread: handleRemoveThread,
     });
   }, [handleOpenThread, handleSubmitThreadMessage, handleSubmitThreadSticker, handleUpdateThreadTitle, handleSetThreadClosed, handleUpdateThreadSettings, handleRemoveThread]);
+
+  // Keep thread root message snapshot in sync with main messages cache.
+  // When the root message is soft-deleted (content cleared), update the thread panel's copy
+  // so the deletion is visible immediately without needing to close/reopen the thread.
+  React.useEffect(() => {
+    if (activePanel !== 'thread' || !activeThreadRootMessage) return;
+    const updated = messageList.find((m) => m.messageId === activeThreadRootMessage.messageId);
+    if (!updated) return;
+    // Only sync if content actually changed (e.g. soft-delete cleared the text)
+    const currentText = (activeThreadRootMessage.content as { text?: string })?.text;
+    const updatedText = (updated.content as { text?: string })?.text;
+    if (currentText !== updatedText) {
+      setActiveThreadRootMessage((prev) => prev ? { ...prev, content: updated.content } : prev);
+    }
+  }, [activePanel, activeThreadRootMessage, messageList]);
 
   // Auto-close the thread panel when the root message has its threadMeta stripped (remove action)
   React.useEffect(() => {

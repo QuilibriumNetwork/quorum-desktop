@@ -58,14 +58,13 @@ export const ThreadSettingsModal: React.FC<ThreadSettingsModalProps> = ({
   const currentUserAddress = channelProps?.currentUserAddress;
 
   const isThreadAuthor = threadMeta?.createdBy === currentUserAddress;
-  const canManage =
-    isThreadAuthor ||
-    (rootMessage && channelProps?.canDeleteMessages
-      ? channelProps.canDeleteMessages(rootMessage)
-      : false);
+  const hasDeletePermission = rootMessage && channelProps?.canDeleteMessages
+    ? channelProps.canDeleteMessages(rootMessage)
+    : false;
+  const canManage = isThreadAuthor || hasDeletePermission;
 
   const hasOtherReplies = React.useMemo(
-    () => (threadMessages ?? []).some((m: MessageType) => (m.content as any).senderId !== currentUserAddress),
+    () => (threadMessages ?? []).some((m) => (m.content as any).senderId !== currentUserAddress),
     [threadMessages, currentUserAddress]
   );
 
@@ -172,8 +171,9 @@ export const ThreadSettingsModal: React.FC<ThreadSettingsModalProps> = ({
           </Button>
         </Flex>
 
-        {/* Delete section — show explanation to all managers, delete link to author only */}
-        {(hasOtherReplies || isThreadAuthor) && (
+        {/* Delete section — managers with delete permission can always delete,
+            thread authors can only delete if no other replies */}
+        {(isThreadAuthor || hasDeletePermission) && (
           <>
             <Spacer spaceBefore="lg" spaceAfter="md" border direction="vertical" />
             <Flex justify="center" align="center">

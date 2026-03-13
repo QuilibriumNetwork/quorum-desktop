@@ -807,15 +807,18 @@ export class MessageService {
         channelId,
         messageId: threadMsg.targetMessageId,
       });
-      if (!targetMessage) return; // Root not found
+
+      // For 'remove' action, allow proceeding even if root message was already deleted —
+      // fall back to channel_threads registry for authorization.
+      if (!targetMessage && threadMsg.action !== 'remove') return;
 
       if (threadMsg.action === 'create') {
         // Idempotent — skip if threadId already set
-        if (targetMessage.threadMeta?.threadId === threadMsg.threadMeta.threadId) return;
+        if (targetMessage!.threadMeta?.threadId === threadMsg.threadMeta.threadId) return;
 
         // Write to channel_threads registry
         const rootText =
-          (targetMessage.content as { text?: string })?.text ?? '';
+          (targetMessage!.content as { text?: string })?.text ?? '';
         const newThread = buildChannelThreadFromCreate({
           spaceId,
           channelId,
@@ -828,14 +831,14 @@ export class MessageService {
         await messageDB.saveChannelThread(newThread);
       } else if (threadMsg.action === 'updateTitle') {
         // Only the thread creator may rename the thread
-        if (threadMsg.senderId !== targetMessage.threadMeta?.createdBy) return;
+        if (threadMsg.senderId !== targetMessage!.threadMeta?.createdBy) return;
       } else if (
         threadMsg.action === 'close' ||
         threadMsg.action === 'reopen' ||
         threadMsg.action === 'updateSettings'
       ) {
         // Thread creator OR anyone with message:delete permission may close/reopen/updateSettings
-        const isAuthor = threadMsg.senderId === targetMessage.threadMeta?.createdBy;
+        const isAuthor = threadMsg.senderId === targetMessage!.threadMeta?.createdBy;
         const space = await messageDB.getSpace(spaceId);
         const hasDeletePermission =
           space?.roles?.some(
@@ -846,15 +849,42 @@ export class MessageService {
         if (!isAuthor && !hasDeletePermission) return;
         // Falls through to the existing spread-merge + saveMessage below
       } else if (threadMsg.action === 'remove') {
-        // Only the thread creator who is also the root message sender may remove a thread
-        const isAuthor = threadMsg.senderId === targetMessage.threadMeta?.createdBy;
-        const isRootSender = threadMsg.senderId === targetMessage.content.senderId;
-        if (!isAuthor || !isRootSender) return;
+        // Authorize via targetMessage if available, otherwise fall back to channel_threads registry
+        const threadRecord = !targetMessage
+          ? await messageDB.getChannelThread(threadMsg.threadMeta.threadId)
+          : undefined;
+        const createdBy = targetMessage?.threadMeta?.createdBy ?? threadRecord?.createdBy;
 
-        // Delete the root message that started the thread.
-        // TODO: When standalone threads (created from scratch) are introduced,
-        // add a condition here — standalone threads may not need root message deletion.
-        await messageDB.deleteMessage(targetMessage.messageId);
+        // Thread creator OR anyone with message:delete permission may delete the thread
+        const isRemoveAuthor = threadMsg.senderId === createdBy;
+        const removeSpace = await messageDB.getSpace(spaceId);
+        const hasRemovePermission =
+          removeSpace?.roles?.some(
+            (role) =>
+              role.members.includes(threadMsg.senderId) &&
+              role.permissions.includes('message:delete')
+          ) ?? false;
+        if (!isRemoveAuthor && !hasRemovePermission) return;
+
+        if (targetMessage) {
+          const isRootSender = threadMsg.senderId === targetMessage.content.senderId;
+          const rootText = (targetMessage.content as { text?: string })?.text;
+          const isSoftDeleted = !rootText || (Array.isArray(rootText) && (rootText as string[]).every(s => !s));
+
+          if (isRootSender || isSoftDeleted) {
+            // Root was authored by thread creator OR already soft-deleted — hard-delete it
+            await messageDB.deleteMessage(targetMessage.messageId);
+          } else {
+            // Root belongs to another user and has real content — just strip threadMeta
+            const stripped: Message = { ...targetMessage };
+            delete stripped.threadMeta;
+            await messageDB.saveMessage(
+              stripped, 0, spaceId, conversationType,
+              updatedUserProfile.user_icon!, updatedUserProfile.display_name!,
+              currentUserAddress
+            );
+          }
+        }
 
         // Hard-delete all thread replies
         const { messages: threadReplies } = await messageDB.getThreadMessages({
@@ -870,6 +900,9 @@ export class MessageService {
         await messageDB.deleteChannelThread(threadMsg.threadMeta.threadId);
         return; // Do not fall through to generic save
       }
+
+      // All non-remove actions require targetMessage (guaranteed by the early return above)
+      if (!targetMessage) return;
 
       const updatedMessage: Message = {
         ...targetMessage,
@@ -1448,14 +1481,28 @@ export class MessageService {
       }
 
       if (threadMsg.action === 'remove') {
-        if (!targetMessage) return;
-        const isAuthor = threadMsg.senderId === targetMessage.threadMeta?.createdBy;
-        const isRootSender = threadMsg.senderId === targetMessage.content.senderId;
-        if (!isAuthor || !isRootSender) return;
-      }
+        // Authorize via targetMessage if available, otherwise fall back to channel_threads registry
+        const threadRecord = !targetMessage
+          ? await this.messageDB.getChannelThread(threadMsg.threadMeta.threadId)
+          : undefined;
+        const createdBy = targetMessage?.threadMeta?.createdBy ?? threadRecord?.createdBy;
 
-      if (threadMsg.action === 'remove') {
+        // Thread creator OR anyone with message:delete permission may delete the thread
+        const isRemoveAuthor = threadMsg.senderId === createdBy;
+        const removeSpace = await this.messageDB.getSpace(spaceId);
+        const hasRemovePermission =
+          removeSpace?.roles?.some(
+            (role) =>
+              role.members.includes(threadMsg.senderId) &&
+              role.permissions.includes('message:delete')
+          ) ?? false;
+        if (!isRemoveAuthor && !hasRemovePermission) return;
+
         const threadId = threadMsg.threadMeta.threadId;
+        const isRootSender = targetMessage
+          ? threadMsg.senderId === targetMessage.content.senderId
+          : false;
+
         queryClient.setQueryData(
           buildMessagesKey({ spaceId, channelId }),
           (oldData: InfiniteData<any>) => {
@@ -1466,6 +1513,10 @@ export class MessageService {
                 ...page,
                 messages: page.messages.map((m: Message) => {
                   if (m.messageId === threadMsg.targetMessageId) {
+                    // If root was soft-deleted (empty text) or thread creator owns it, remove entirely
+                    const text = (m.content as { text?: string })?.text;
+                    if (!text || isRootSender) return null;
+                    // Otherwise just strip threadMeta — keep the other user's message
                     const { threadMeta: _stripped, ...rest } = m;
                     return rest as Message;
                   }
@@ -1478,12 +1529,14 @@ export class MessageService {
             };
           }
         );
-        queryClient.invalidateQueries({
+        queryClient.removeQueries({
           queryKey: ['thread-messages', spaceId, channelId, threadId],
         });
-        queryClient.invalidateQueries({
-          queryKey: ['channel-threads', spaceId, channelId],
-        });
+        queryClient.setQueryData(
+          ['channel-threads', spaceId, channelId],
+          (old: any[] | undefined) =>
+            old ? old.filter((t: any) => t.threadId !== threadId) : old,
+        );
         return;
       }
 
@@ -4752,6 +4805,45 @@ export class MessageService {
         }
 
         outbounds.push(await this.encryptAndSendToSpace(spaceId, message));
+
+        // For 'remove': perform local DB deletion matching processMessage logic
+        if (threadMsg.action === 'remove') {
+          const isRootSender = threadMsg.senderId === targetMessage.content.senderId;
+          const rootText = (targetMessage.content as { text?: string })?.text;
+          const isSoftDeleted = !rootText || (Array.isArray(rootText) && (rootText as string[]).every(s => !s));
+
+          if (isRootSender || isSoftDeleted) {
+            await this.messageDB.deleteMessage(targetMessage.messageId);
+          } else {
+            const stripped: Message = { ...targetMessage };
+            delete stripped.threadMeta;
+            const conversationId = spaceId + '/' + channelId;
+            const conversation = await this.messageDB.getConversation({ conversationId });
+            await this.saveMessage(
+              stripped, this.messageDB, spaceId, channelId, 'group',
+              {
+                user_icon: conversation.conversation?.icon ?? DefaultImages.UNKNOWN_USER,
+                display_name: conversation.conversation?.displayName ?? t`Unknown User`,
+              },
+              currentPasskeyInfo.address
+            );
+          }
+
+          // Hard-delete all thread replies
+          const { messages: threadReplies } = await this.messageDB.getThreadMessages({
+            spaceId,
+            channelId,
+            threadId: threadMsg.threadMeta.threadId,
+          });
+          for (const reply of threadReplies) {
+            await this.messageDB.deleteMessage(reply.messageId);
+          }
+
+          // Remove from channel_threads registry
+          await this.messageDB.deleteChannelThread(threadMsg.threadMeta.threadId);
+
+          return outbounds;
+        }
 
         // Update root message with threadMeta (merge for updateTitle, replace for create)
         const mergedMeta = threadMsg.action === 'updateTitle'
