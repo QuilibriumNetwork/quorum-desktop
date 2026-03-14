@@ -79,6 +79,19 @@
   @extend .dropdown-result-text;
 }
 
+.notification-thread-chevron {
+  color: var(--text-3);
+  font-size: $text-xs;
+  margin: 0 $s-1;
+  flex-shrink: 0;
+}
+
+.notification-thread-label {
+  color: var(--text-3);
+  font-size: $text-xs;
+  flex-shrink: 0;
+}
+
 // Mobile drawer responsive layout: Let date flow naturally to second row when needed
 .mobile-drawer__item-box {
   .notification-item {
