@@ -78,7 +78,7 @@ export function useChannelMessages({
       seen.add(msg.messageId);
       return true;
     });
-  }, [messages]);
+  }, [messages, threadsEnabled]);
 
   const canDeleteMessages = useCallback(
     (message: MessageType) => {
