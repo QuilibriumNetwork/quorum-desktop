@@ -361,7 +361,7 @@ The `threadId` must flow through the entire search chain without being dropped:
 - **Space channels only** — Thread feature is not available in DM conversations
 - **Thread notifications (partial)** — Basic @mention notifications in thread replies are implemented (see [mention-notification-system.md](../mention-notification-system.md#thread-mentions)). Participation tracking, auto-follow, and per-thread unread indicators are not yet implemented.
 - **No permission gating** — Anyone who can post in the channel can create threads; no `thread:create` permission
-- **No thread search** — Thread replies are not included in global search results
+- **Thread search indicator** — Thread replies appear in global search with a `› Thread` chevron label (matching notification panel pattern). Navigation opens the thread panel and scrolls to the result
 - **Resize desktop only** — Resize handle uses mouse events and is hidden below MD; no touch support for drag-to-resize
 - **Thread replies invisible on mobile** — Thread replies are filtered from the main feed at three layers (DB cursor in `getMessages()`, DB unread in `getFirstUnreadMessage()`, React hook in `useChannelMessages()`). Since mobile won't have a thread panel initially, thread replies are completely hidden for mobile users with no way to view them. Needs a platform-aware flag so replies stay in the main feed on platforms without thread panel support.
 
@@ -374,7 +374,6 @@ These items are planned but not yet implemented:
 - **Migrate thread types to `quorum-shared`** — Move types and hooks to the shared package for cross-platform (mobile) compatibility.
 - **Permission gating** — Add `thread:create` permission to role system for per-role thread creation control.
 - **Space/Channel thread toggle** — Two-level toggle system: a space-level "Allow threads" setting acts as a master gate (default: off). When enabled, threads become available in all channels by default. Each channel then has its own "Allow threads" toggle (default: on) to opt out individually. Logic: `threadsEnabled = space.allowThreads && channel.allowThreads`. The space toggle is the prerequisite — channel toggles are irrelevant when the space disables threads globally. Settings live in SpaceSettings and ChannelSettings respectively, managed via their existing settings modals.
-- **Thread search** — Include thread replies in global search results.
 - **Mobile thread reply visibility** — Add a platform-aware flag to the three `isThreadReply` filter points (DB cursor, DB unread query, React hook). On platforms without thread panel support (mobile), skip the filter so thread replies appear inline in the main feed as regular messages.
 
 

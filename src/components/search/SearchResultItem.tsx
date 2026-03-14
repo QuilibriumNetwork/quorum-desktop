@@ -1,4 +1,5 @@
 import React from 'react';
+import { t } from '@lingui/core/macro';
 import { SearchResult } from '../../db/messages';
 import { Icon, Flex, Container } from '../primitives';
 import { TouchAwareListItem } from '../ui';
@@ -98,6 +99,7 @@ const SpaceSearchResultItem: React.FC<SearchResultItemProps> = ({
   compactDate = false,
 }) => {
   const { message } = result;
+  const isThread = !!(message.threadId || message.isThreadReply);
 
   // Use batch-loaded display data instead of individual hooks
   const displayName =
@@ -132,6 +134,12 @@ const SpaceSearchResultItem: React.FC<SearchResultItemProps> = ({
         <Flex className="result-meta min-w-0">
           <Icon name={messageTypeIcon} className="result-type-icon flex-shrink-0" />
           <span className="result-channel mr-2 truncate-channel-name flex-shrink min-w-0">{channelName}</span>
+          {isThread && (
+            <>
+              <span className="result-thread-chevron">›</span>
+              <span className="result-thread-label mr-2">{t`Thread`}</span>
+            </>
+          )}
           <Icon name="user" className="result-user-icon flex-shrink-0" />
           <span className="result-sender truncate-user-name flex-shrink min-w-0">{displayName}</span>
         </Flex>

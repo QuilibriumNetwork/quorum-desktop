@@ -53,6 +53,19 @@
   @extend .dropdown-result-sender;
 }
 
+.result-thread-chevron {
+  color: var(--text-3);
+  font-size: $text-xs;
+  margin: 0 $s-1;
+  flex-shrink: 0;
+}
+
+.result-thread-label {
+  color: var(--text-3);
+  font-size: $text-xs;
+  flex-shrink: 0;
+}
+
 .result-content {
   @extend .dropdown-result-content;
 }
