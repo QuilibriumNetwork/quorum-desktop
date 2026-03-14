@@ -93,6 +93,12 @@ export function useChannelMentionCounts({
 
           const lastReadTimestamp = conversation?.lastReadTimestamp || 0;
 
+          // Fetch thread read times for this channel
+          const threadReadTimes = await messageDB.getThreadReadTimesForChannel({
+            spaceId,
+            channelId,
+          });
+
           // Use optimized database query to get only unread messages with mentions
           // This is much faster than fetching all 10k messages
           const messages = await messageDB.getUnreadMentions({
@@ -105,6 +111,14 @@ export function useChannelMentionCounts({
           // Count mentions with per-message early exit
           let channelMentionCount = 0;
           for (const message of messages) {
+            // Thread replies: check against thread read time instead of channel read time
+            if (message.isThreadReply && message.threadId) {
+              const threadReadTime = threadReadTimes[message.threadId];
+              if (threadReadTime !== undefined && message.createdDate <= threadReadTime) {
+                continue; // Already read in thread
+              }
+            }
+
             // Use settings-aware mention check with unified notification format
             if (isMentionedWithSettings(message, {
               userAddress,
