@@ -141,7 +141,7 @@ export interface SearchResult {
 export class MessageDB {
   private db: IDBDatabase | null = null;
   private readonly DB_NAME = 'quorum_db';
-  private readonly DB_VERSION = 10;
+  private readonly DB_VERSION = 11;
   private searchIndices: Map<string, MiniSearch<SearchableMessage>> = new Map();
   private indexInitialized = false;
 
@@ -284,6 +284,13 @@ export class MessageDB {
             keyPath: 'threadId',
           });
           channelThreadsStore.createIndex('by_channel', ['spaceId', 'channelId']);
+        }
+
+        if (event.oldVersion < 11) {
+          const threadReadTimesStore = db.createObjectStore('thread_read_times', {
+            keyPath: 'threadId',
+          });
+          threadReadTimesStore.createIndex('by_channel', ['spaceId', 'channelId']);
         }
       };
     });
