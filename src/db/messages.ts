@@ -2192,10 +2192,12 @@ export class MessageDB {
     spaceId,
     channelId,
     afterTimestamp,
+    includeThreadReplies = false,
   }: {
     spaceId: string;
     channelId: string;
     afterTimestamp: number;
+    includeThreadReplies?: boolean;
   }): Promise<{ messageId: string; timestamp: number } | null> {
     await this.init();
     return new Promise((resolve, reject) => {
@@ -2219,7 +2221,7 @@ export class MessageDB {
         if (cursor) {
           const message = cursor.value as Message;
           // Skip thread replies — they shouldn't trigger unread navigation
-          if (message.isThreadReply) {
+          if (!includeThreadReplies && message.isThreadReply) {
             cursor.continue();
             return;
           }
