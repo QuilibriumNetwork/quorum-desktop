@@ -427,18 +427,20 @@ const NavMenuContent: React.FC<NavMenuProps> = (props) => {
     }
 
     // Also save thread read times for all threads in this space
+    const threadEntries: Array<{ threadId: string; spaceId: string; channelId: string; lastReadTimestamp: number }> = [];
     for (const channelId of channelIds) {
       const threads = await messageDB.getChannelThreads({ spaceId, channelId });
-      if (threads.length > 0) {
-        await messageDB.bulkSaveThreadReadTimes(
-          threads.map((thread) => ({
-            threadId: thread.threadId,
-            spaceId,
-            channelId,
-            lastReadTimestamp: now,
-          }))
-        );
+      for (const thread of threads) {
+        threadEntries.push({
+          threadId: thread.threadId,
+          spaceId,
+          channelId,
+          lastReadTimestamp: now,
+        });
       }
+    }
+    if (threadEntries.length > 0) {
+      await messageDB.bulkSaveThreadReadTimes(threadEntries);
     }
 
     // Invalidate caches to trigger refetch

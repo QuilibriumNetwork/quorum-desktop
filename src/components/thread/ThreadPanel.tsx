@@ -202,8 +202,8 @@ export const ThreadPanel: React.FC = () => {
   // Track latest message timestamp
   useEffect(() => {
     if (threadMessages.length > 0) {
-      latestThreadTimestampRef.current = Math.max(
-        ...threadMessages.map((msg) => msg.createdDate || 0)
+      latestThreadTimestampRef.current = threadMessages.reduce(
+        (max, msg) => Math.max(max, msg.createdDate || 0), 0
       );
     }
   }, [threadMessages]);
