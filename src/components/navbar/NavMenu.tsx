@@ -426,6 +426,21 @@ const NavMenuContent: React.FC<NavMenuProps> = (props) => {
       });
     }
 
+    // Also save thread read times for all threads in this space
+    for (const channelId of channelIds) {
+      const threads = await messageDB.getChannelThreads({ spaceId, channelId });
+      if (threads.length > 0) {
+        await messageDB.bulkSaveThreadReadTimes(
+          threads.map((thread) => ({
+            threadId: thread.threadId,
+            spaceId,
+            channelId,
+            lastReadTimestamp: now,
+          }))
+        );
+      }
+    }
+
     // Invalidate caches to trigger refetch
     // Space-level counts (for SpaceIcon indicators)
     queryClient.invalidateQueries({ queryKey: ['mention-counts', 'space'] });
