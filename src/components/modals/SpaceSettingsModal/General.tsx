@@ -58,6 +58,8 @@ interface GeneralProps {
   setIsRepudiable: (value: boolean) => void;
   saveEditHistory: boolean;
   setSaveEditHistory: (value: boolean) => void;
+  allowThreads: boolean;
+  setAllowThreads: (value: boolean) => void;
   onSave: () => void;
   isSaving: boolean;
   hasValidationError: boolean;
@@ -99,6 +101,8 @@ const General: React.FunctionComponent<GeneralProps> = ({
   setIsRepudiable,
   saveEditHistory,
   setSaveEditHistory,
+  allowThreads,
+  setAllowThreads,
   onSave,
   isSaving,
   hasValidationError,
@@ -281,7 +285,7 @@ const General: React.FunctionComponent<GeneralProps> = ({
         </div>
         <Spacer size="md" direction="vertical" borderTop={true} />
         <div className="text-subtitle-2 mb-2">
-          <Trans>Privacy Settings</Trans>
+          <Trans>Features</Trans>
         </div>
         <div className="modal-content-info">
           <div className="flex flex-row items-center gap-3 mb-3">
@@ -334,6 +338,29 @@ const General: React.FunctionComponent<GeneralProps> = ({
             </div>
             </>
           )}
+          <div className="flex flex-row items-center gap-3 mt-3">
+            <Switch
+              onChange={() => setAllowThreads(!allowThreads)}
+              value={allowThreads}
+            />
+            <div className="flex flex-row items-center">
+              <div className="text-label-strong">
+                <Trans>Allow Threads</Trans>
+              </div>
+              <Tooltip
+                id="allow-threads-tooltip"
+                content={t`Enable threaded conversations in channels`}
+                place="bottom"
+                className="!w-[400px]"
+                maxWidth={400}
+              >
+                <Icon
+                  name="info-circle"
+                  className="text-main hover:text-strong cursor-pointer ml-2"
+                />
+              </Tooltip>
+            </div>
+          </div>
         </div>
         {/* Fixes section (hidden if none) */}
         {fixes && fixes.length > 0 && (
