@@ -16,6 +16,21 @@ import { validateNameForXSS } from '../../utils/validation';
 
 const THREAD_TITLE_MAX_CHARS = 100;
 
+/**
+ * Derive the effective display title from the root message's content,
+ * mirroring ThreadPanel's getThreadTitle logic.
+ */
+function getDerivedTitle(rootMessage: MessageType): string {
+  const customTitle = rootMessage.threadMeta?.customTitle;
+  if (customTitle) return customTitle;
+  const content = rootMessage.content as any;
+  if (!content?.text) return '';
+  const text = Array.isArray(content.text) ? content.text.join(' ') : content.text;
+  const clean = text.replace(/[*_~`#>[\]()!]/g, '').trim();
+  if (!clean) return '';
+  return clean.length > THREAD_TITLE_MAX_CHARS ? clean.substring(0, THREAD_TITLE_MAX_CHARS) : clean;
+}
+
 // Auto-close preset options
 const AUTO_CLOSE_OPTIONS = [
   { value: '0', label: 'Never' },
@@ -127,7 +142,7 @@ export const ThreadSettingsModal: React.FC<ThreadSettingsModalProps> = ({
             <Input
               value={pendingTitle}
               onChange={(val: string) => setPendingTitle(val.slice(0, THREAD_TITLE_MAX_CHARS))}
-              placeholder={t`Thread title`}
+              placeholder={getDerivedTitle(rootMessage) || t`Thread title`}
               variant="filled"
               error={pendingTitle.length >= THREAD_TITLE_MAX_CHARS || titleXssError}
               errorMessage={titleXssError ? t`Title cannot contain HTML tags` : t`Title cannot exceed ${THREAD_TITLE_MAX_CHARS} characters`}

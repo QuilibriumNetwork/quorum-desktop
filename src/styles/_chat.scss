@@ -65,23 +65,22 @@
   font-size: $text-base;
   user-select: none;
   border-bottom: $border solid var(--color-border-default);
+  // Guaranteed minimum height so all single-row headers (channel, DM, thread)
+  // are pixel-identical. Channel header may grow taller on mobile via flex-wrap.
+  min-height: $header-height;
+  display: flex;
+  align-items: center;
 
-  // Spacing to match original: mt-[8px] pb-[8px] mx-[11px] lg:mx-4
-  margin-top: $s-2; // 8px (was mt-[8px])
-  padding-bottom: $s-2; // 8px (was pb-[8px])
-  margin-left: 11px; // 11px (was mx-[11px])
-  margin-right: 11px; // 11px (was mx-[11px])
+  padding: $s-2 11px; // 8px top/bottom, 11px left/right
 
   // Desktop spacing
   @media (min-width: 1024px) {
-    margin-left: $s-4; // 16px (was lg:mx-4)
-    margin-right: $s-4; // 16px (was lg:mx-4)
+    padding: $s-2 $s-4; // 8px top/bottom, 16px left/right
   }
 
-  // Phone: move header down slightly as requested
+  // Phone: extra top padding to push content down slightly
   @media (max-width: $screen-xs) {
-    margin-top: 0; // Remove top margin
-    padding-top: $s-3; // 12px - move header down slightly
+    padding-top: $s-3; // 12px top on phone
   }
 
   // Responsive layout for mobile/tablet

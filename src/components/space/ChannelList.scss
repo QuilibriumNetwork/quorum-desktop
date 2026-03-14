@@ -61,7 +61,7 @@ html:not(.dark) {
 }
 
 .space-header {
-  padding: $s-2 $s-6 $s-2 $s-4;
+  padding: $s-3 $s-6 $s-2 $s-4; // 12px top centers text-lg in $header-height when collapsed
   font-weight: $font-bold;
   font-size: $text-lg;
   border-top-left-radius: $rounded-xl;
@@ -101,10 +101,11 @@ html:not(.dark) {
   }
 }
 
-// More space below name when no banner image
+// No-banner: match chat-header height ($header-height) for visual alignment
 .space-header.space-header-no-banner {
-  height: auto !important;
-  padding-bottom: $s-3;
+  height: $header-height !important;
+  align-items: center;
+  border-bottom: $border solid var(--color-border-muted);
 }
 
 .space-context-menu-toggle-button {
@@ -112,7 +113,6 @@ html:not(.dark) {
   font-size: $text-sm;
   filter: drop-shadow(0px 2px 3px rgba(0, 0, 0, 0.3));
   flex-shrink: 0;
-  margin-top: $s-1;
 
   // Remove browser focus artifacts on this specific element
   &,

@@ -84,42 +84,71 @@
   }
 
   &__header {
+    // Spacing, border, typography, and responsive margins come from .chat-header (_chat.scss).
+    // Only thread-panel-specific flex layout defined here.
     display: flex;
-    align-items: flex-start;
-    gap: $s-3;
-    padding: $s-3 $s-4;
-    border-bottom: 1px solid var(--border-default);
+    align-items: center;
+    justify-content: space-between;
+    gap: $s-2;
     flex-shrink: 0;
   }
 
-  &__header-content {
+  &__header-left {
+    display: flex;
+    align-items: center;
+    gap: $s-2;
+    min-width: 0;
+    flex: 1;
+  }
+
+  &__header-icon {
+    flex-shrink: 0;
+    color: var(--color-text-subtle);
+  }
+
+  &__header-title {
     flex: 1;
     min-width: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    // font-size and font-weight inherited from .chat-header
   }
 
-  &__title-area {
+  &__header-actions {
     display: flex;
-    flex-direction: column;
+    align-items: center;
+    gap: $s-1;
+    flex-shrink: 0;
   }
 
-  &__title {
+  &__list-header {
+    padding: $s-6 $s-4 $s-4;
+    border-bottom: 1px solid var(--border-default);
+    margin-bottom: $s-2;
+    background: var(--color-bg-chat);
+  }
+
+  &__list-title {
     font-weight: 700;
-    font-size: $text-xl;
+    font-size: $text-2xl;
     color: var(--text-primary);
-    margin: 0;
     word-break: break-word;
   }
 
+  &__list-started-by {
+    font-size: $text-base;
+    color: var(--color-text-subtle);
+    margin-top: $s-1;
+  }
 
-  &__started-by {
-    display: block;
-    font-size: $text-sm;
-    color: var(--text-subtle);
-    margin-top: 2px;
+  &__list-starter-name {
+    color: var(--text-primary);
+    font-weight: 600;
+    cursor: pointer;
 
-    strong {
-      color: var(--text-primary);
-      font-weight: 600;
+    &:hover {
+      text-decoration: underline;
     }
   }
 

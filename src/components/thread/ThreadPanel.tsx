@@ -114,7 +114,8 @@ export const ThreadPanel: React.FC = () => {
   const STORAGE_KEY = 'thread-panel-width';
   const MIN_WIDTH = 300;
   const MAX_WIDTH_VW = 50;
-  const DEFAULT_WIDTH = 400;
+  const XL_BREAKPOINT = 1280;
+  const DEFAULT_WIDTH = window.innerWidth >= XL_BREAKPOINT ? 500 : 400;
 
   const panelRef = useRef<HTMLDivElement>(null);
   const isResizing = useRef(false);
@@ -170,14 +171,17 @@ export const ThreadPanel: React.FC = () => {
 
   const threadTitle = useMemo(() => getThreadTitle(rootMessage), [rootMessage]);
 
-  const starterName = useMemo(() => {
+  const starterUser = useMemo(() => {
     if (!channelProps) return null;
     // Use thread creator (createdBy) rather than original message author (senderId)
     const creatorId = rootMessage?.threadMeta?.createdBy;
     if (!creatorId) return null;
     const user = channelProps.mapSenderToUser(creatorId);
-    return user?.displayName || null;
+    if (!user) return null;
+    return { address: creatorId, displayName: user.displayName, userIcon: user.userIcon };
   }, [rootMessage, channelProps]);
+
+  const starterName = starterUser?.displayName || null;
 
   const isThreadAuthor = useMemo(() => {
     if (!rootMessage?.threadMeta?.createdBy || !channelProps?.currentUserAddress) return false;
@@ -268,6 +272,35 @@ export const ThreadPanel: React.FC = () => {
     }
   }, [targetMessageId, threadMessages.length, threadStore]);
 
+  const handleStarterClick = useCallback((e: React.MouseEvent) => {
+    if (starterUser && channelProps?.onUserClick) {
+      channelProps.onUserClick(starterUser, e, {
+        type: 'message-avatar',
+        element: e.currentTarget as HTMLElement,
+      });
+    }
+  }, [starterUser, channelProps]);
+
+  const listHeaderContent = useMemo(() => (
+    <div className="thread-panel__list-header">
+      <div className="thread-panel__list-title">{threadTitle}</div>
+      {starterName && (
+        <div className="thread-panel__list-started-by">
+          {t`Started by`}{' '}
+          <span
+            role="button"
+            tabIndex={0}
+            className="thread-panel__list-starter-name"
+            onClick={handleStarterClick}
+            onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') handleStarterClick(e as any); }}
+          >
+            {starterName}
+          </span>
+        </div>
+      )}
+    </div>
+  ), [threadTitle, starterName, handleStarterClick]);
+
   if (!isOpen || !threadId || !channelProps) return null;
 
   return (
@@ -282,50 +315,48 @@ export const ThreadPanel: React.FC = () => {
         onMouseDown={handleResizeStart}
       />
       <div className="thread-panel">
-      {/* Header: title + "Started by X" + close */}
-      <div className="thread-panel__header">
-        <div className="thread-panel__header-content">
-          <div className="thread-panel__title-area">
-              <div className="thread-panel__title">
-                {threadTitle}
-              </div>
-            </div>
-          {starterName && (
-            <span className="thread-panel__started-by">
-              {t`Started by`} <strong>{starterName}</strong>
-            </span>
-          )}
+      {/* Header: compact icon + title + actions */}
+      <div className="thread-panel__header chat-header">
+        <div className="thread-panel__header-left">
+          <Icon
+            name="messages"
+            size="lg"
+            className="thread-panel__header-icon"
+          />
+          <span className="thread-panel__header-title">{threadTitle}</span>
         </div>
-        {canManage && rootMessage && (
-          <Tooltip id="thread-settings-tooltip" content={t`Thread settings`} place="bottom" showOnTouch={false}>
-            <Button
-              type="unstyled"
-              onClick={() => openThreadSettings({
-                threadId: threadId!,
-                rootMessage,
-                threadMessages,
-                channelProps,
-                updateTitle,
-                setThreadClosed,
-                updateThreadSettings,
-                removeThread,
-              })}
-              className="header-icon-button"
-              aria-label={t`Thread settings`}
-              iconName="settings"
-              iconSize="lg"
-              iconOnly
-            />
-          </Tooltip>
-        )}
-        <Button
-          type="unstyled"
-          onClick={closeThread}
-          className="header-icon-button"
-          iconName="close"
-          iconSize="lg"
-          iconOnly
-        />
+        <div className="thread-panel__header-actions">
+          {canManage && rootMessage && (
+            <Tooltip id="thread-settings-tooltip" content={t`Thread settings`} place="bottom" showOnTouch={false}>
+              <Button
+                type="unstyled"
+                onClick={() => openThreadSettings({
+                  threadId: threadId!,
+                  rootMessage,
+                  threadMessages,
+                  channelProps,
+                  updateTitle,
+                  setThreadClosed,
+                  updateThreadSettings,
+                  removeThread,
+                })}
+                className="header-icon-button"
+                aria-label={t`Thread settings`}
+                iconName="settings"
+                iconSize="lg"
+                iconOnly
+              />
+            </Tooltip>
+          )}
+          <Button
+            type="unstyled"
+            onClick={closeThread}
+            className="header-icon-button"
+            iconName="close"
+            iconSize="lg"
+            iconOnly
+          />
+        </div>
       </div>
 
       {/* Thread messages — uses the same MessageList as main chat */}
@@ -362,7 +393,8 @@ export const ThreadPanel: React.FC = () => {
             mentionRoles={channelProps.mentionRoles}
             groups={channelProps.spaceGroups}
             canUseEveryone={channelProps.canUseEveryone}
-            alignToTop={true}
+            alignToTop={false}
+            headerContent={listHeaderContent}
             scrollToMessageId={targetMessageId ?? undefined}
             highlightOnScroll={true}
           />

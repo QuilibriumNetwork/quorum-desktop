@@ -90,6 +90,8 @@ interface MessageListProps {
   onStartThread?: (message: MessageType) => void;
   /** When true, messages align to top instead of bottom (used for thread panels) */
   alignToTop?: boolean;
+  /** Optional content rendered above the first message inside the scrollable list (bottom-anchored with messages) */
+  headerContent?: React.ReactNode;
 }
 
 function useWindowSize() {
@@ -154,6 +156,7 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
       canUseEveryone = false,
       onStartThread,
       alignToTop = false,
+      headerContent,
     } = props;
 
     const [_width, height] = useWindowSize();
@@ -281,6 +284,7 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
 
         return (
           <div className={gapClass}>
+            {index === 0 && headerContent}
             {displayInfo.needsDateSeparator && (
               <DateSeparator
                 timestamp={message.createdDate}
@@ -370,6 +374,7 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
         onRetryMessage,
         dmContext,
         onStartThread,
+        headerContent,
       ]
     );
 

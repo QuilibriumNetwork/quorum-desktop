@@ -1,9 +1,9 @@
 import { useMemo, useState, useCallback, useEffect, useRef } from 'react'
 
-// Header height constants
+// Header height constants — HEADER_MIN_HEIGHT must match $header-height in _variables.scss
 const HEADER_MAX_HEIGHT = 132
 const HEADER_MAX_HEIGHT_2XL = 144
-const HEADER_MIN_HEIGHT = 44
+const HEADER_MIN_HEIGHT = 48
 const SCREEN_2XL = 1536 // Very large screens
 
 /**
@@ -17,7 +17,7 @@ export const useSpaceHeader = (space: any) => {
     const baseClasses = 'space-header relative flex flex-row justify-between'
     const bannerClasses = hasBanner
       ? ''
-      : ' !h-[41px] border-b space-header-no-banner'
+      : ' space-header-no-banner'
     return baseClasses + bannerClasses
   }, [hasBanner])
 
