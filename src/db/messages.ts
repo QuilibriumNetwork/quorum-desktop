@@ -686,6 +686,95 @@ export class MessageDB {
     });
   }
 
+  /**
+   * Save or update thread read time.
+   * Used when user opens a thread panel (2s delay) or marks all as read.
+   */
+  async saveThreadReadTime({
+    threadId,
+    spaceId,
+    channelId,
+    lastReadTimestamp,
+  }: {
+    threadId: string;
+    spaceId: string;
+    channelId: string;
+    lastReadTimestamp: number;
+  }): Promise<void> {
+    await this.init();
+    return new Promise((resolve, reject) => {
+      const transaction = this.db!.transaction('thread_read_times', 'readwrite');
+      const store = transaction.objectStore('thread_read_times');
+      const request = store.put({ threadId, spaceId, channelId, lastReadTimestamp });
+      request.onsuccess = () => resolve();
+      request.onerror = () => reject(request.error);
+    });
+  }
+
+  /**
+   * Get read time for a single thread.
+   */
+  async getThreadReadTime(threadId: string): Promise<{ threadId: string; spaceId: string; channelId: string; lastReadTimestamp: number } | undefined> {
+    await this.init();
+    return new Promise((resolve, reject) => {
+      const transaction = this.db!.transaction('thread_read_times', 'readonly');
+      const store = transaction.objectStore('thread_read_times');
+      const request = store.get(threadId);
+      request.onsuccess = () => resolve(request.result);
+      request.onerror = () => reject(request.error);
+    });
+  }
+
+  /**
+   * Get all thread read times for a channel.
+   * Returns a map of threadId → lastReadTimestamp for efficient lookup.
+   * Uses the by_channel compound index.
+   */
+  async getThreadReadTimesForChannel({
+    spaceId,
+    channelId,
+  }: {
+    spaceId: string;
+    channelId: string;
+  }): Promise<Record<string, number>> {
+    await this.init();
+    return new Promise((resolve, reject) => {
+      const transaction = this.db!.transaction('thread_read_times', 'readonly');
+      const store = transaction.objectStore('thread_read_times');
+      const index = store.index('by_channel');
+      const range = IDBKeyRange.only([spaceId, channelId]);
+      const request = index.getAll(range);
+      request.onsuccess = () => {
+        const map: Record<string, number> = {};
+        for (const entry of request.result) {
+          map[entry.threadId] = entry.lastReadTimestamp;
+        }
+        resolve(map);
+      };
+      request.onerror = () => reject(request.error);
+    });
+  }
+
+  /**
+   * Save thread read times in bulk (for "Mark All as Read").
+   * Uses a single transaction for efficiency.
+   */
+  async bulkSaveThreadReadTimes(
+    entries: Array<{ threadId: string; spaceId: string; channelId: string; lastReadTimestamp: number }>
+  ): Promise<void> {
+    if (entries.length === 0) return;
+    await this.init();
+    return new Promise((resolve, reject) => {
+      const transaction = this.db!.transaction('thread_read_times', 'readwrite');
+      const store = transaction.objectStore('thread_read_times');
+      for (const entry of entries) {
+        store.put(entry);
+      }
+      transaction.oncomplete = () => resolve();
+      transaction.onerror = () => reject(transaction.error);
+    });
+  }
+
   async getUser({
     address,
   }: {
