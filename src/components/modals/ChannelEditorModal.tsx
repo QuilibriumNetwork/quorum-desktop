@@ -15,7 +15,7 @@ import { IconPicker } from '../space/IconPicker';
 import ConfirmationModal from './ConfirmationModal';
 import ModalSaveOverlay from './ModalSaveOverlay';
 import '../../styles/_modal_common.scss';
-import { useChannelManagement, useModalSaveState } from '../../hooks';
+import { useChannelManagement, useModalSaveState, useSpace } from '../../hooks';
 import { Trans } from '@lingui/react/macro';
 import { t } from '@lingui/core/macro';
 
@@ -26,6 +26,8 @@ const ChannelEditorModal: React.FunctionComponent<{
   dismiss: () => void;
   onEditModeClick?: () => void;
 }> = ({ spaceId, groupName, channelId, dismiss }) => {
+
+  const { data: space } = useSpace({ spaceId });
 
   // Modal save state for save operations only
   const { isSaving, saveUntilComplete } = useModalSaveState({
@@ -55,6 +57,8 @@ const ChannelEditorModal: React.FunctionComponent<{
     handleReadOnlyChange,
     handleManagerRolesChange,
     handlePinChange,
+    handleAllowThreadsChange,
+    allowThreads,
     handleIconChange,
     saveChanges,
     handleDeleteClick: originalHandleDeleteClick,
@@ -154,6 +158,21 @@ const ChannelEditorModal: React.FunctionComponent<{
             </div>
           </Flex>
         </Container>
+
+        {space?.allowThreads && (
+          <Container className="mb-3">
+            <Flex className="items-center gap-3">
+              <Switch
+                value={allowThreads !== false}
+                onChange={() => handleAllowThreadsChange(allowThreads === false ? undefined : false)}
+                accessibilityLabel={t`Allow threads in this channel`}
+              />
+              <div className="text-label-strong">
+                <Trans>Allow Threads</Trans>
+              </div>
+            </Flex>
+          </Container>
+        )}
 
         {isReadOnly && (
           <Container className="mb-4 max-sm:mb-1">
