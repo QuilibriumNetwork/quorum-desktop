@@ -12,17 +12,22 @@
 // Message editor styles moved to MessageComposer.scss
 
 .message-reply-curve {
-  width: $s-8;
-  height: $s-5;
-  border-radius: $rounded 0 0 0;
+  // Connector from main avatar (below) curving right to reply avatar
+  border-left: 2px solid var(--color-border-strong);
+  border-top: 2px solid var(--color-border-strong);
   border-right: 0;
   border-bottom: 0;
-  border-left: $border;
-  border-top: $border;
-  border-color: var(--color-border-strong);
-  border-style: solid;
-  margin-left: $s-9;
-  margin-top: $s-2;
+  border-top-left-radius: $rounded-md;
+  // Horizontal: center on main avatar (body padding + half avatar)
+  margin-left: calc(#{$s-4} + #{$message-avatar-size} / 2 - 1px);
+  width: $s-8;
+  flex-shrink: 0;
+  // Use stretch + margin-top to start the top border at the reply avatar center.
+  // The reply avatar row is ~32px tall (28px avatar + 4px margins), center at ~16px.
+  align-self: stretch;
+  margin-top: $s-4;
+  // Extend below the heading to reach the main avatar (bridge 8px gap)
+  margin-bottom: -$s-2;
 }
 
 .message-reply-heading {
@@ -32,6 +37,7 @@
   vertical-align: middle;
   cursor: pointer;
   padding-bottom: $s-1;
+  overflow: visible;
 }
 
 // Ensure the composer stays visible at bottom and doesn't get pushed off-screen

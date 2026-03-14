@@ -90,6 +90,12 @@ export function useAllReplies({
 
           const lastReadTimestamp = conversation?.lastReadTimestamp || 0;
 
+          // Fetch thread read times for this channel
+          const threadReadTimes = await messageDB.getThreadReadTimesForChannel({
+            spaceId,
+            channelId,
+          });
+
           // Use optimized database query to get unread replies
           const messages = await messageDB.getUnreadReplies({
             spaceId,
@@ -106,6 +112,14 @@ export function useAllReplies({
 
           // Add to results with metadata
           messages.forEach((message) => {
+            // Thread replies: check against thread read time
+            if (message.isThreadReply && message.threadId) {
+              const threadReadTime = threadReadTimes[message.threadId];
+              if (threadReadTime !== undefined && message.createdDate <= threadReadTime) {
+                return; // Already read in thread, skip
+              }
+            }
+
             allReplies.push({
               message,
               channelId,

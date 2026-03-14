@@ -55,6 +55,7 @@ export type Space = {
   emojis: Emoji[];
   stickers: Sticker[];
   spaceTag?: SpaceTag;      // Owner-defined tag (only for public spaces)
+  allowThreads?: boolean; // Master gate: threads enabled in this space (default: off)
 };
 
 export type Group = {
@@ -82,6 +83,7 @@ export type Channel = {
   icon?: string; // Custom icon name
   iconColor?: string; // Custom icon color
   iconVariant?: 'outline' | 'filled'; // Icon style variant
+  allowThreads?: boolean; // Per-channel override (default: on when space enables threads)
 };
 
 export type Conversation = {
@@ -125,7 +127,8 @@ export type Message = {
     | StickerMessage
     | PinMessage
     | DeleteConversationMessage
-    | EditMessage;
+    | EditMessage
+    | ThreadMessage;
   reactions: Reaction[];
   mentions: Mentions;
   replyMetadata?: {
@@ -146,6 +149,34 @@ export type Message = {
   sendStatus?: MessageSendStatus;
   /** Client-side ephemeral - sanitized error message for display */
   sendError?: string;
+  threadMeta?: ThreadMeta;
+  threadId?: string;
+  isThreadReply?: boolean;
+};
+
+export type ThreadMeta = {
+  threadId: string;
+  createdBy: string;
+  customTitle?: string;  // User-set title, overrides auto-derived
+  isClosed?: boolean;
+  closedBy?: string;
+  autoCloseAfter?: number;   // Duration in ms (preset-derived). "Never" = field omitted entirely
+  lastActivityAt?: number;   // Timestamp of last reply; used for auto-close check
+};
+
+export type ChannelThread = {
+  threadId: string;
+  spaceId: string;
+  channelId: string;
+  rootMessageId: string;
+  createdBy: string;
+  createdAt: number;
+  lastActivityAt: number;
+  replyCount: number;
+  isClosed: boolean;
+  customTitle?: string;
+  titleSnapshot?: string;
+  hasParticipated: boolean;
 };
 
 export type PostMessage = {
@@ -241,6 +272,14 @@ export type PinMessage = {
   action: 'pin' | 'unpin';
 };
 
+export type ThreadMessage = {
+  senderId: string;
+  type: 'thread';
+  targetMessageId: string;
+  action: 'create' | 'updateTitle' | 'close' | 'reopen' | 'updateSettings' | 'remove';
+  threadMeta: ThreadMeta;
+};
+
 export type DeleteConversationMessage = {
   senderId: string;
   type: 'delete-conversation';
@@ -281,6 +320,7 @@ export type Bookmark = {
   conversationId?: string;      // For DM messages (undefined for channels)
   sourceType: 'channel' | 'dm';
   createdAt: number;            // Timestamp for sorting
+  threadId?: string;              // Thread ID if bookmarked message is a thread reply
 
   // Cached preview - avoids cross-context message resolution
   // Stored at bookmark creation time, acceptable if slightly stale

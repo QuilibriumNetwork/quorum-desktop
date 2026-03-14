@@ -1,0 +1,198 @@
+@use '../../styles/variables' as *;
+
+// Outer wrapper — holds resize handle + panel side by side
+// No overflow:hidden so the handle in the gap stays visible
+.thread-panel-wrapper {
+  position: relative;
+  flex-shrink: 0;
+  height: 100%;
+  margin-left: $s-2;
+
+  // Below SM: full-width overlay covering the main chat area
+  @media (max-width: $screen-md) {
+    position: absolute;
+    inset: 0;
+    margin-left: 0;
+    width: 100% !important; // Override inline style from resize
+    z-index: 20;
+  }
+
+  // Resize handle lives in the margin gap between chat and panel
+  .thread-panel__resize-handle {
+    position: absolute;
+    left: calc(-1 * $s-2);
+    top: 0;
+    bottom: 0;
+    width: $s-2;
+    cursor: col-resize;
+    z-index: 10;
+
+    // Hide resize handle on small screens (full-width mode)
+    @media (max-width: $screen-md) {
+      display: none;
+    }
+
+    // Visible indicator line centered in the gap
+    &::after {
+      content: '';
+      position: absolute;
+      left: 50%;
+      top: 0;
+      bottom: 0;
+      width: 2px;
+      transform: translateX(-50%);
+      background-color: transparent;
+      transition: background-color $duration-150 $ease-out;
+      border-radius: 1px;
+    }
+
+    &:hover::after,
+    &:active::after {
+      background-color: var(--text-link);
+    }
+  }
+}
+
+.thread-panel {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  background: var(--color-bg-chat);
+  border-left: none;
+  position: relative;
+  border-top-left-radius: $rounded-xl;
+  overflow: hidden;
+
+  // Borders only on desktop (matches chat-container pattern from _chat.scss)
+  @media (min-width: 1024px) {
+    border-top: $border solid var(--color-border-subtle);
+    border-left: $border solid var(--color-border-subtle);
+  }
+
+  // Phone: remove radius (matches chat-container phone pattern)
+  @media (max-width: $screen-xs) {
+    border-top-left-radius: 0;
+  }
+
+  // Dark theme: more muted external borders (desktop only)
+  html.dark & {
+    @media (min-width: 1024px) {
+      border-top-color: var(--color-border-muted);
+      border-left-color: var(--color-border-muted);
+    }
+  }
+
+  &__header {
+    // Spacing, border, typography, and responsive margins come from .chat-header (_chat.scss).
+    // Only thread-panel-specific flex layout defined here.
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: $s-2;
+    flex-shrink: 0;
+  }
+
+  &__header-left {
+    display: flex;
+    align-items: center;
+    gap: $s-2;
+    min-width: 0;
+    flex: 1;
+  }
+
+  &__header-icon {
+    flex-shrink: 0;
+    color: var(--color-text-subtle);
+  }
+
+  &__header-title {
+    flex: 1;
+    min-width: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    // font-size and font-weight inherited from .chat-header
+  }
+
+  &__header-actions {
+    display: flex;
+    align-items: center;
+    gap: $s-1;
+    flex-shrink: 0;
+  }
+
+  &__list-header {
+    padding: $s-6 $s-4 $s-4;
+    border-bottom: 1px solid var(--border-default);
+    margin-bottom: $s-2;
+    background: var(--color-bg-chat);
+  }
+
+  &__list-title {
+    font-weight: 700;
+    font-size: $text-2xl;
+    color: var(--text-primary);
+    word-break: break-word;
+  }
+
+  &__list-started-by {
+    font-size: $text-base;
+    color: var(--color-text-subtle);
+    margin-top: $s-1;
+  }
+
+  &__list-starter-name {
+    color: var(--text-primary);
+    font-weight: 600;
+    cursor: pointer;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+
+  &__messages {
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+    position: relative;
+
+    // The MessageList uses .message-list class internally
+    .message-list {
+      height: 100% !important;
+    }
+  }
+
+  &__loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: $s-2;
+    padding: $s-8;
+    height: 100%;
+    color: var(--text-subtle);
+    font-size: $text-sm;
+  }
+
+  &__composer {
+    flex-shrink: 0;
+    border-top: 1px solid var(--border-default);
+
+    .message-editor-container {
+      position: relative;
+      bottom: auto;
+    }
+  }
+
+}
+
+// Thread-specific sticker panel positioning — inside .thread-panel-wrapper
+// (outside .thread-panel to avoid overflow:hidden clipping).
+// Overrides the shared fixed positioning to use absolute within the wrapper.
+.thread-panel__stickers-panel-wrapper {
+  position: absolute;
+  right: $s-4;
+}

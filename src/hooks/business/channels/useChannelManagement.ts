@@ -21,6 +21,7 @@ export interface ChannelData {
   icon: IconName;  // Channels always have an icon (defaults to hashtag)
   iconColor?: IconColor;
   iconVariant?: IconVariant;
+  allowThreads?: boolean;
 }
 
 export function useChannelManagement({
@@ -55,6 +56,7 @@ export function useChannelManagement({
     icon: (currentChannel?.icon || 'hashtag') as IconName,
     iconColor: (currentChannel?.iconColor as IconColor) || 'default',
     iconVariant: (currentChannel?.iconVariant as IconVariant) || 'outline',
+    allowThreads: currentChannel?.allowThreads,
   });
 
   // State for deletion flow
@@ -84,6 +86,7 @@ export function useChannelManagement({
           icon: (channel.icon || 'hashtag') as IconName,
           iconColor: (channel.iconColor as IconColor) || 'default',
           iconVariant: (channel.iconVariant as IconVariant) || 'outline',
+          allowThreads: channel.allowThreads,
         });
       }
     }
@@ -149,6 +152,11 @@ export function useChannelManagement({
     }));
   }, []);
 
+  // Handle allow threads toggle (undefined = on/default, false = off)
+  const handleAllowThreadsChange = useCallback((value: boolean | undefined) => {
+    setChannelData((prev) => ({ ...prev, allowThreads: value }));
+  }, []);
+
   // Handle icon change
   const handleIconChange = useCallback((iconName: IconName | null, iconColor: IconColor = 'default', iconVariant: IconVariant = 'outline') => {
     const newIcon = iconName || 'hashtag'; // Channels always have an icon, default to hashtag
@@ -186,6 +194,7 @@ export function useChannelManagement({
                           icon: channelData.icon,
                           iconColor: channelData.iconColor,
                           iconVariant: channelData.iconVariant,
+                          allowThreads: channelData.allowThreads,
                           modifiedDate: Date.now(),
                         }
                       : c
@@ -218,6 +227,7 @@ export function useChannelManagement({
                       icon: channelData.icon,
                       iconColor: channelData.iconColor,
                       iconVariant: channelData.iconVariant,
+                      allowThreads: channelData.allowThreads,
                       createdDate: Date.now(),
                       modifiedDate: Date.now(),
                     } as Channel,
@@ -360,6 +370,7 @@ export function useChannelManagement({
     icon: channelData.icon,
     iconColor: channelData.iconColor,
     iconVariant: channelData.iconVariant,
+    allowThreads: channelData.allowThreads,
     hasMessages,
     messageCount,
     deleteConfirmationStep,
@@ -375,6 +386,7 @@ export function useChannelManagement({
     handleReadOnlyChange,
     handleManagerRolesChange,
     handlePinChange,
+    handleAllowThreadsChange,
     handleIconChange,
     saveChanges,
     handleDeleteClick,

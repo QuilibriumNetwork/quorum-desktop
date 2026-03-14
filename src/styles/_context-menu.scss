@@ -45,6 +45,13 @@
   font-weight: $font-normal;
   line-height: $text-sm-lh;
 
+  // Suppress keyboard focus outline on context menu items — they are
+  // mouse/touch-driven so the accent ring from :focus-visible is unwanted
+  // and interferes with Shift+click quick actions.
+  &:focus-visible {
+    outline: none;
+  }
+
   &:hover {
     background-color: var(--color-bg-contextmenu-hover);
   }

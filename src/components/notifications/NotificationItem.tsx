@@ -1,4 +1,5 @@
 import React from 'react';
+import { t } from '@lingui/core/macro';
 import { Icon, Flex, Container } from '../primitives';
 import { TouchAwareListItem } from '../ui';
 import { useSearchResultFormatting } from '../../hooks/business/search';
@@ -9,7 +10,7 @@ import './NotificationItem.scss';
 
 interface NotificationItemProps {
   notification: MentionNotification | ReplyNotification;
-  onNavigate: (spaceId: string, channelId: string, messageId: string) => void;
+  onNavigate: (spaceId: string, channelId: string, messageId: string, threadId?: string) => void;
   displayName: string; // Message author display name
   mapSenderToUser: (senderId: string) => any; // For rendering mentions with display names
   className?: string;
@@ -119,6 +120,9 @@ export const NotificationItem: React.FC<NotificationItemProps> = ({
   // Render message content with proper mention formatting
   const renderedContent = renderMessageContent(message, formatting, 200);
 
+  // Detect if this notification came from a thread
+  const isThread = !!(message.threadId || message.isThreadReply);
+
   return (
     <TouchAwareListItem
       className={`notification-item ${className || ''}`}
@@ -128,7 +132,13 @@ export const NotificationItem: React.FC<NotificationItemProps> = ({
       <Flex justify="between" className="notification-header">
         <Flex className="notification-meta min-w-0">
           <Icon name="hashtag" className="notification-channel-icon flex-shrink-0" />
-          <span className="notification-channel mr-2 truncate-channel-name flex-shrink min-w-0">{channelName}</span>
+          <span className={`notification-channel ${isThread ? '' : 'mr-2'} truncate-channel-name flex-shrink min-w-0`}>{channelName}</span>
+          {isThread && (
+            <>
+              <span className="notification-thread-chevron">›</span>
+              <span className="notification-thread-label mr-2">{t`Thread`}</span>
+            </>
+          )}
           <Icon name={notificationIcon} className="notification-mention-type-icon flex-shrink-0" />
           <span className="notification-sender truncate-user-name flex-shrink min-w-0">{displayName}</span>
         </Flex>

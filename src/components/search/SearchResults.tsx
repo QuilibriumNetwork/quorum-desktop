@@ -18,7 +18,7 @@ interface SearchResultsProps {
   isError: boolean;
   error?: Error | null;
   query: string;
-  onNavigate: (spaceId: string, channelId: string, messageId: string) => void;
+  onNavigate: (spaceId: string, channelId: string, messageId: string, threadId?: string) => void;
   highlightTerms: (text: string) => string;
   onClose?: () => void;
   className?: string;

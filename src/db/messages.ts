@@ -1,6 +1,6 @@
 import { logger } from '@quilibrium/quorum-shared';
 import { channel } from '@quilibrium/quilibrium-js-sdk-channels';
-import { Conversation, Message, Space, Bookmark, BOOKMARKS_CONFIG, BroadcastSpaceTag } from '../api/quorumApi';
+import { Conversation, Message, Space, Bookmark, BOOKMARKS_CONFIG, BroadcastSpaceTag, ChannelThread } from '../api/quorumApi';
 import type { NotificationSettings } from '../types/notifications';
 import type { IconColor } from '../components/space/IconPicker/types';
 import type { IconName } from '../components/primitives/Icon/types';
@@ -141,7 +141,7 @@ export interface SearchResult {
 export class MessageDB {
   private db: IDBDatabase | null = null;
   private readonly DB_NAME = 'quorum_db';
-  private readonly DB_VERSION = 8;
+  private readonly DB_VERSION = 11;
   private searchIndices: Map<string, MiniSearch<SearchableMessage>> = new Map();
   private indexInitialized = false;
 
@@ -265,6 +265,33 @@ export class MessageDB {
           // No schema changes required - IndexedDB is schemaless for object values.
           // DB_VERSION bump ensures clients re-open the DB with the new version.
         }
+
+        if (event.oldVersion < 9) {
+          const transaction = (event.target as IDBOpenDBRequest).transaction;
+          if (transaction) {
+            const messageStore = transaction.objectStore('messages');
+            messageStore.createIndex('by_thread', [
+              'spaceId',
+              'channelId',
+              'threadId',
+              'createdDate',
+            ]);
+          }
+        }
+
+        if (event.oldVersion < 10) {
+          const channelThreadsStore = db.createObjectStore('channel_threads', {
+            keyPath: 'threadId',
+          });
+          channelThreadsStore.createIndex('by_channel', ['spaceId', 'channelId']);
+        }
+
+        if (event.oldVersion < 11) {
+          const threadReadTimesStore = db.createObjectStore('thread_read_times', {
+            keyPath: 'threadId',
+          });
+          threadReadTimesStore.createIndex('by_channel', ['spaceId', 'channelId']);
+        }
       };
     });
   }
@@ -370,12 +397,14 @@ export class MessageDB {
     cursor,
     direction = 'backward',
     limit = 100,
+    includeThreadReplies = false,
   }: {
     spaceId: string;
     channelId: string;
     cursor?: number;
     direction?: 'forward' | 'backward';
     limit?: number;
+    includeThreadReplies?: boolean;
   }): Promise<{
     messages: Message[];
     nextCursor: number | null;
@@ -423,6 +452,10 @@ export class MessageDB {
         const cursor = (event.target as IDBRequest).result;
 
         if (cursor && messages.length < limit) {
+          if (!includeThreadReplies && cursor.value.isThreadReply) {
+            cursor.continue();
+            return;
+          }
           messages.push(cursor.value);
           cursor.continue();
         } else {
@@ -455,6 +488,292 @@ export class MessageDB {
         }
       };
       request.onerror = () => reject(request.error);
+    });
+  }
+
+  async getThreadMessages({
+    spaceId,
+    channelId,
+    threadId,
+  }: {
+    spaceId: string;
+    channelId: string;
+    threadId: string;
+  }): Promise<{
+    messages: Message[];
+    replyCount: number;
+    lastReplyAt: number | null;
+    lastReplyBy: string | null;
+  }> {
+    await this.init();
+    return new Promise((resolve, reject) => {
+      const transaction = this.db!.transaction('messages', 'readonly');
+      const store = transaction.objectStore('messages');
+      const index = store.index('by_thread');
+
+      const range = IDBKeyRange.bound(
+        [spaceId, channelId, threadId, 0],
+        [spaceId, channelId, threadId, Number.MAX_VALUE]
+      );
+
+      const request = index.openCursor(range, 'next');
+      const messages: Message[] = [];
+
+      request.onsuccess = (event) => {
+        const cursor = (event.target as IDBRequest).result;
+        if (cursor) {
+          messages.push(cursor.value);
+          cursor.continue();
+        } else {
+          const lastMessage = messages.length > 0 ? messages[messages.length - 1] : null;
+          resolve({
+            messages,
+            replyCount: messages.length,
+            lastReplyAt: lastMessage?.createdDate ?? null,
+            lastReplyBy: lastMessage?.content?.senderId ?? null,
+          });
+        }
+      };
+      request.onerror = () => reject(request.error);
+    });
+  }
+
+  /**
+   * Find the root message for a thread by scanning channel messages.
+   * Root messages have threadMeta.threadId but NOT a top-level threadId field,
+   * so they are NOT in the by_thread index. This scans the by_conversation_time
+   * index instead. Only called on user-initiated navigation (bookmark/pin/search click).
+   */
+  async getRootMessageByThreadId({
+    spaceId,
+    channelId,
+    threadId,
+  }: {
+    spaceId: string;
+    channelId: string;
+    threadId: string;
+  }): Promise<Message | undefined> {
+    await this.init();
+    return new Promise((resolve, reject) => {
+      const transaction = this.db!.transaction('messages', 'readonly');
+      const store = transaction.objectStore('messages');
+      const index = store.index('by_conversation_time');
+
+      const range = IDBKeyRange.bound(
+        [spaceId, channelId, 0],
+        [spaceId, channelId, Number.MAX_VALUE]
+      );
+
+      const request = index.openCursor(range, 'next');
+
+      request.onsuccess = (event) => {
+        const cursor = (event.target as IDBRequest).result;
+        if (cursor) {
+          const message = cursor.value as Message;
+          if (message.threadMeta?.threadId === threadId) {
+            resolve(message);
+            return;
+          }
+          cursor.continue();
+        } else {
+          resolve(undefined);
+        }
+      };
+      request.onerror = () => reject(request.error);
+    });
+  }
+
+  async getThreadStats({
+    spaceId,
+    channelId,
+    threadId,
+  }: {
+    spaceId: string;
+    channelId: string;
+    threadId: string;
+  }): Promise<{
+    replyCount: number;
+    lastReplyAt: number | null;
+    lastReplyBy: string | null;
+  }> {
+    await this.init();
+    return new Promise((resolve, reject) => {
+      const transaction = this.db!.transaction('messages', 'readonly');
+      const store = transaction.objectStore('messages');
+      const index = store.index('by_thread');
+
+      const range = IDBKeyRange.bound(
+        [spaceId, channelId, threadId, 0],
+        [spaceId, channelId, threadId, Number.MAX_VALUE]
+      );
+
+      const countRequest = index.count(range);
+
+      countRequest.onsuccess = () => {
+        const count = countRequest.result;
+        if (count === 0) {
+          resolve({ replyCount: 0, lastReplyAt: null, lastReplyBy: null });
+          return;
+        }
+
+        const cursorRequest = index.openCursor(range, 'prev');
+        cursorRequest.onsuccess = () => {
+          const cursor = (cursorRequest as IDBRequest).result;
+          if (cursor) {
+            const msg = cursor.value as Message;
+            resolve({
+              replyCount: count,
+              lastReplyAt: msg.createdDate,
+              lastReplyBy: msg.content?.senderId ?? null,
+            });
+          } else {
+            resolve({ replyCount: count, lastReplyAt: null, lastReplyBy: null });
+          }
+        };
+        cursorRequest.onerror = () => reject(cursorRequest.error);
+      };
+      countRequest.onerror = () => reject(countRequest.error);
+    });
+  }
+
+  async saveChannelThread(thread: ChannelThread): Promise<void> {
+    await this.init();
+    return new Promise((resolve, reject) => {
+      const transaction = this.db!.transaction('channel_threads', 'readwrite');
+      const store = transaction.objectStore('channel_threads');
+      const request = store.put(thread);
+      request.onsuccess = () => resolve();
+      request.onerror = () => reject(request.error);
+    });
+  }
+
+  async getChannelThreads({
+    spaceId,
+    channelId,
+  }: {
+    spaceId: string;
+    channelId: string;
+  }): Promise<ChannelThread[]> {
+    await this.init();
+    return new Promise((resolve, reject) => {
+      const transaction = this.db!.transaction('channel_threads', 'readonly');
+      const store = transaction.objectStore('channel_threads');
+      const index = store.index('by_channel');
+      const range = IDBKeyRange.only([spaceId, channelId]);
+      const request = index.getAll(range);
+      request.onsuccess = () => resolve(request.result as ChannelThread[]);
+      request.onerror = () => reject(request.error);
+    });
+  }
+
+  async getChannelThread(threadId: string): Promise<ChannelThread | undefined> {
+    await this.init();
+    return new Promise((resolve, reject) => {
+      const transaction = this.db!.transaction('channel_threads', 'readonly');
+      const store = transaction.objectStore('channel_threads');
+      const request = store.get(threadId);
+      request.onsuccess = () => resolve(request.result as ChannelThread | undefined);
+      request.onerror = () => reject(request.error);
+    });
+  }
+
+  async deleteChannelThread(threadId: string): Promise<void> {
+    await this.init();
+    return new Promise((resolve, reject) => {
+      const transaction = this.db!.transaction('channel_threads', 'readwrite');
+      const store = transaction.objectStore('channel_threads');
+      const request = store.delete(threadId);
+      request.onsuccess = () => resolve();
+      request.onerror = () => reject(request.error);
+    });
+  }
+
+  /**
+   * Save or update thread read time.
+   * Used when user opens a thread panel (2s delay) or marks all as read.
+   */
+  async saveThreadReadTime({
+    threadId,
+    spaceId,
+    channelId,
+    lastReadTimestamp,
+  }: {
+    threadId: string;
+    spaceId: string;
+    channelId: string;
+    lastReadTimestamp: number;
+  }): Promise<void> {
+    await this.init();
+    return new Promise((resolve, reject) => {
+      const transaction = this.db!.transaction('thread_read_times', 'readwrite');
+      const store = transaction.objectStore('thread_read_times');
+      const request = store.put({ threadId, spaceId, channelId, lastReadTimestamp });
+      request.onsuccess = () => resolve();
+      request.onerror = () => reject(request.error);
+    });
+  }
+
+  /**
+   * Get read time for a single thread.
+   */
+  async getThreadReadTime(threadId: string): Promise<{ threadId: string; spaceId: string; channelId: string; lastReadTimestamp: number } | undefined> {
+    await this.init();
+    return new Promise((resolve, reject) => {
+      const transaction = this.db!.transaction('thread_read_times', 'readonly');
+      const store = transaction.objectStore('thread_read_times');
+      const request = store.get(threadId);
+      request.onsuccess = () => resolve(request.result);
+      request.onerror = () => reject(request.error);
+    });
+  }
+
+  /**
+   * Get all thread read times for a channel.
+   * Returns a map of threadId → lastReadTimestamp for efficient lookup.
+   * Uses the by_channel compound index.
+   */
+  async getThreadReadTimesForChannel({
+    spaceId,
+    channelId,
+  }: {
+    spaceId: string;
+    channelId: string;
+  }): Promise<Record<string, number>> {
+    await this.init();
+    return new Promise((resolve, reject) => {
+      const transaction = this.db!.transaction('thread_read_times', 'readonly');
+      const store = transaction.objectStore('thread_read_times');
+      const index = store.index('by_channel');
+      const range = IDBKeyRange.only([spaceId, channelId]);
+      const request = index.getAll(range);
+      request.onsuccess = () => {
+        const map: Record<string, number> = {};
+        for (const entry of request.result) {
+          map[entry.threadId] = entry.lastReadTimestamp;
+        }
+        resolve(map);
+      };
+      request.onerror = () => reject(request.error);
+    });
+  }
+
+  /**
+   * Save thread read times in bulk (for "Mark All as Read").
+   * Uses a single transaction for efficiency.
+   */
+  async bulkSaveThreadReadTimes(
+    entries: Array<{ threadId: string; spaceId: string; channelId: string; lastReadTimestamp: number }>
+  ): Promise<void> {
+    if (entries.length === 0) return;
+    await this.init();
+    return new Promise((resolve, reject) => {
+      const transaction = this.db!.transaction('thread_read_times', 'readwrite');
+      const store = transaction.objectStore('thread_read_times');
+      for (const entry of entries) {
+        store.put(entry);
+      }
+      transaction.oncomplete = () => resolve();
+      transaction.onerror = () => reject(transaction.error);
     });
   }
 
@@ -1873,10 +2192,12 @@ export class MessageDB {
     spaceId,
     channelId,
     afterTimestamp,
+    includeThreadReplies = false,
   }: {
     spaceId: string;
     channelId: string;
     afterTimestamp: number;
+    includeThreadReplies?: boolean;
   }): Promise<{ messageId: string; timestamp: number } | null> {
     await this.init();
     return new Promise((resolve, reject) => {
@@ -1899,6 +2220,11 @@ export class MessageDB {
 
         if (cursor) {
           const message = cursor.value as Message;
+          // Skip thread replies — they shouldn't trigger unread navigation
+          if (!includeThreadReplies && message.isThreadReply) {
+            cursor.continue();
+            return;
+          }
           // Return the first unread message
           resolve({
             messageId: message.messageId,

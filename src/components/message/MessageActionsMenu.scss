@@ -3,6 +3,7 @@
 
 .message-actions-menu {
   @include contextMenu.base;
+  width: 200px;
   padding-top: 0; // Reactions row handles top padding
 }
 
@@ -25,6 +26,11 @@
   font-size: $text-base;
   transition: transform $duration-200 ease-in-out;
   background-color: transparent;
+
+  // Suppress keyboard focus outline — context menu is mouse-driven
+  &:focus-visible {
+    outline: none;
+  }
 
   &:hover {
     transform: scale(1.5);

@@ -1,7 +1,7 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { useCallback } from 'react';
 
-import { buildMessagesKey } from './buildMessagesKey';
+import { buildMessagesKeyPrefix } from './buildMessagesKey';
 
 const useInvalidateMessages = () => {
   const queryClient = useQueryClient();
@@ -9,7 +9,7 @@ const useInvalidateMessages = () => {
   return useCallback(
     ({ spaceId, channelId }: { spaceId: string; channelId: string }) => {
       return queryClient.invalidateQueries({
-        queryKey: buildMessagesKey({ spaceId, channelId }),
+        queryKey: buildMessagesKeyPrefix({ spaceId, channelId }),
       });
     },
     [queryClient]

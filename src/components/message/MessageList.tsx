@@ -69,6 +69,7 @@ interface MessageListProps {
   onHashMessageNotFound?: (messageId: string) => Promise<void>;
   isLoadingHashMessage?: boolean;
   scrollToMessageId?: string; // For programmatic scrolling (e.g., auto-jump to first unread)
+  highlightOnScroll?: boolean; // If true, also highlight the message when scrolling to it
   newMessagesSeparator?: {
     firstUnreadMessageId: string;
     initialUnreadCount: number;
@@ -85,6 +86,12 @@ interface MessageListProps {
   groups?: Array<{ groupName: string; channels: Channel[]; icon?: string; iconColor?: string }>;
   /** Whether @everyone is allowed in message edit mode */
   canUseEveryone?: boolean;
+  /** Thread action callback */
+  onStartThread?: (message: MessageType) => void;
+  /** When true, messages align to top instead of bottom (used for thread panels) */
+  alignToTop?: boolean;
+  /** Optional content rendered above the first message inside the scrollable list (bottom-anchored with messages) */
+  headerContent?: React.ReactNode;
 }
 
 function useWindowSize() {
@@ -137,6 +144,7 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
       onHashMessageNotFound,
       isLoadingHashMessage,
       scrollToMessageId,
+      highlightOnScroll = false,
       newMessagesSeparator,
       onDismissSeparator,
       spaceName,
@@ -146,6 +154,9 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
       mentionRoles = [],
       groups = [],
       canUseEveryone = false,
+      onStartThread,
+      alignToTop = false,
+      headerContent,
     } = props;
 
     const [_width, height] = useWindowSize();
@@ -273,6 +284,7 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
 
         return (
           <div className={gapClass}>
+            {index === 0 && headerContent}
             {displayInfo.needsDateSeparator && (
               <DateSeparator
                 timestamp={message.createdDate}
@@ -319,6 +331,7 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
               roles={mentionRoles}
               groups={groups}
               canUseEveryone={canUseEveryone}
+              onStartThread={onStartThread ? () => onStartThread(message) : undefined}
               onBeforeDelete={() => {
                 deletionInProgressRef.current = true;
                 // Clear after delay to allow for follow-up operations
@@ -360,6 +373,8 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
         spaceName,
         onRetryMessage,
         dmContext,
+        onStartThread,
+        headerContent,
       ]
     );
 
@@ -442,9 +457,13 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
           setHasProcessedScrollTo(true);
           setHasJumpedToOldMessage(true); // Disable auto-scroll during pagination
 
-          // Scroll to the message (no highlight - unread line is shown via lastReadTimestamp)
           setTimeout(() => {
             scrollToMessage(scrollToMessageId, virtuoso.current, messageList);
+            if (highlightOnScroll) {
+              // Set URL hash to trigger Message component's hash-based highlight mechanism.
+              // Each Message listens to location.hash === `#msg-{id}` and highlights itself.
+              window.location.hash = `#msg-${scrollToMessageId}`;
+            }
           }, 200);
         }
       }
@@ -452,6 +471,7 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
       init,
       messageList,
       scrollToMessageId,
+      highlightOnScroll,
       hasProcessedScrollTo,
       scrollToMessage,
     ]);
@@ -546,12 +566,14 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
           }}
           atBottomThreshold={5000}
           atBottomStateChange={handleBottomStateChange}
-          alignToBottom={true}
+          alignToBottom={!alignToTop}
           firstItemIndex={0}
           initialTopMostItemIndex={
-            window.location.hash && window.location.hash.startsWith('#msg-')
-              ? 0 // scroll to top initially, will override with scrollToIndex()
-              : messageList.length - 1
+            alignToTop
+              ? 0
+              : window.location.hash && window.location.hash.startsWith('#msg-')
+                ? 0 // scroll to top initially, will override with scrollToIndex()
+                : messageList.length - 1
           }
           followOutput={(isAtBottom: boolean) => {
             // Don't auto-scroll during deletions - use ref for synchronous check

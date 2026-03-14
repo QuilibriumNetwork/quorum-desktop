@@ -1,7 +1,6 @@
 ---
 name: "docs-manager"
 description: "Automatically manages bugs, tasks, documentation, and reports in the .agents/ folder following project conventions. Activates when creating bug reports, documenting features, tracking tasks, generating reports, audits, researches, analyses, updating existing documentation, or organizing work in the established .agents workflow structure."
-allowed-tools: ["Read", "Write", "Edit", "Glob", "Grep", "TodoWrite", "Bash"]
 ---
 
 # Documentation Manager
@@ -104,6 +103,8 @@ This skill focuses on **document creation and content management** within the `.
 
 When the user requests documentation management, follow this workflow:
 
+**Prerequisites**: If the `.agents/` folder does not exist in the project, prompt the user to run `/init-agents` first before creating any documents.
+
 **🔄 IMPORTANT**: Always run the index update script after any file operation to keep INDEX.md synchronized with the current state of the .agents directory.
 
 ### Step 1: Determine Document Type
@@ -118,8 +119,7 @@ Analyze the request to identify:
 **IMPORTANT**:
 - Never include time estimates or schedules in tasks (e.g., "1 hour", "1 day", "30 minutes"). Tasks will primarily be completed by AI agents which work much faster than human estimates. Use complexity levels only: Trivial, Low, Medium, High, Critical.
 - For complex tasks (Medium/High/Critical), Claude should first review the entire .agents folder context including INDEX.md, AGENTS.md, agents-workflow.md, existing tasks, and related documentation to understand established patterns and avoid duplicating solutions.
-- Complex tasks (Medium/High/Critical complexity) should always be analyzed by the feature-analyzer agent before implementation to avoid over-engineering and ensure best practices.
-- Tasks involving security considerations (authentication, encryption, user data, network communications, permissions) should be analyzed by the security-analyst agent before implementation.
+- Do NOT automatically launch specialized review agents after creating documents. Only run agent reviews if the user explicitly requests it.
 
 **Status System** (applies to all file types):
 - **`open`**: Not started yet, ready to work on (**ALWAYS the default for new tasks/bugs**)
@@ -135,6 +135,7 @@ Analyze the request to identify:
 - When **completed** → use `status: done` and move to `.done/` folder
 - When **archiving** (no longer relevant, superseded, abandoned) → use `status: archived` and move to `.archived/` folder
 - **Never** create a new task with `status: in-progress` unless you are immediately implementing it
+- **Never** move a bug to `.solved/` unless the fix has been **verified**. If you can test the fix yourself (e.g., TypeScript compiles, lint passes, unit tests pass), do so and then mark it solved. If verification requires manual/browser/runtime testing you cannot perform, provide the user with specific test instructions and only mark it solved after they confirm the fix works.
 - **Note**: You rarely need to set `archived` status unless explicitly asked to archive a task/bug
 
 **Complexity System** (tasks only):
@@ -174,16 +175,6 @@ When moving files between folders, the status MUST be updated to match the folde
 - Files in root bug folders → `status: open`
 - Files in docs folders → `status: done`
 
-**Agent Review Notation**:
-- **Initially**: Create documents with only the basic AI warning: `> **⚠️ AI-Generated**: May contain errors. Verify before use.`
-- **After specialized agent review**: Add the review line: `> **Reviewed by**: [agent-name] agent`
-- **Common reviewing agents**:
-  - `feature-analyzer` - for implementation quality, best practices, over-engineering analysis
-  - `security-analyst` - for security implications, vulnerabilities, privacy concerns
-  - `frontend-style-validator` - for React component styling and cross-platform compliance
-  - Other specialized agents as appropriate
-- **Only add review notation** after the agent has completed its analysis AND any recommended changes have been implemented
-
 #### For Bug Reports (`.agents/bugs/`):
 ```markdown
 ---
@@ -192,7 +183,6 @@ title: "[Clear Bug Description]"
 status: open
 priority: medium
 ai_generated: true
-reviewed_by: null
 created: YYYY-MM-DD
 updated: YYYY-MM-DD
 ---
@@ -200,7 +190,6 @@ updated: YYYY-MM-DD
 # [Clear Bug Description]
 
 > **⚠️ AI-Generated**: May contain errors. Verify before use.
-> **Reviewed by**: [agent-name] agent *(add only after agent review and implementation - also update frontmatter)*
 
 ## Symptoms
 [What goes wrong - observable behavior]
@@ -228,7 +217,6 @@ title: "[Action-Oriented Title]"
 status: open
 complexity: low
 ai_generated: true
-reviewed_by: null
 created: YYYY-MM-DD
 updated: YYYY-MM-DD
 ---
@@ -236,7 +224,6 @@ updated: YYYY-MM-DD
 # [Action-Oriented Title]
 
 > **⚠️ AI-Generated**: May contain errors. Verify before use.
-> **Reviewed by**: [agent-name] agent *(add only after agent review and implementation - also update frontmatter)*
 
 **Files**:
 - `src/path/to/file.ts:123`
@@ -267,6 +254,68 @@ updated: YYYY-MM-DD
 - [ ] No console errors
 ```
 
+**Medium Complexity:**
+```markdown
+---
+type: task
+title: "[Feature Title]"
+status: open
+complexity: medium
+ai_generated: true
+created: YYYY-MM-DD
+updated: YYYY-MM-DD
+related_docs: []    # Add if applicable
+related_tasks: []   # Add if applicable
+---
+
+# [Feature Title]
+
+> **⚠️ AI-Generated**: May contain errors. Verify before use.
+
+**Files**:
+- `src/path/to/file.ts:123`
+- `src/path/to/other-file.ts:45`
+
+## What & Why
+[Detailed description: current state → desired state → value delivered]
+
+## Context
+- **Existing pattern**: [reference similar implementation]
+- **Constraints**: [technical limitations to consider]
+
+## Implementation
+
+### Phase 1: [Core Changes]
+1. **[Specific task]** (`src/path/file.tsx:123`)
+   - Change description
+   - Reference: Follow pattern from `existing-file.tsx:123`
+
+2. **[Related task]** (`src/path/other.ts:45`)
+   - Change description
+
+### Phase 2: [Integration & Polish]
+1. **[Integration task]** (`src/path/file.tsx:200`)
+   - Wire up with existing components
+   - Update imports and exports
+
+## Verification
+✅ **Feature works as expected**
+   - Test: [specific action] → [expected result]
+
+✅ **TypeScript compiles**
+   - Run: `npx tsc --noEmit`
+
+✅ **No regressions**
+   - Test: [existing functionality still works]
+
+## Definition of Done
+- [ ] All phases complete
+- [ ] TypeScript passes
+- [ ] Manual testing successful
+- [ ] No console errors
+- [ ] Related docs updated if needed
+```
+
 **High Complexity:**
 ```markdown
 ---
@@ -275,7 +324,6 @@ title: "[Complex Feature Title]"
 status: open
 complexity: high
 ai_generated: true
-reviewed_by: null
 created: YYYY-MM-DD
 updated: YYYY-MM-DD
 related_issues: []  # Add if applicable, e.g., ["#14", "#15"]
@@ -286,7 +334,6 @@ related_tasks: []   # Add if applicable
 # [Complex Feature Title]
 
 > **⚠️ AI-Generated**: May contain errors. Verify before use.
-> **Reviewed by**: [agent-name] agent *(add only after agent review and implementation - also update frontmatter)*
 
 **Files**: [list of all affected files with line numbers]
 
@@ -302,8 +349,6 @@ related_tasks: []   # Add if applicable
 - [ ] Review .agents documentation: INDEX.md, AGENTS.md, and agents-workflow.md for context
 - [ ] Check existing tasks in .agents/tasks/ for similar patterns and solutions
 - [ ] Review related documentation in .agents/docs/ for architectural context
-- [ ] Feature analyzed by feature-analyzer agent for complexity and best practices
-- [ ] Security analysis by security-analyst agent (if task involves auth, crypto, user data, or network operations)
 - [ ] [Required setup/dependencies]
 - [ ] Branch created from `develop`
 - [ ] No conflicting PRs
@@ -363,7 +408,6 @@ type: doc
 title: "[Feature Name]"
 status: done
 ai_generated: true
-reviewed_by: null
 created: YYYY-MM-DD
 updated: YYYY-MM-DD
 related_docs: []    # Add if applicable
@@ -373,7 +417,6 @@ related_tasks: []   # Add if applicable
 # [Feature Name]
 
 > **⚠️ AI-Generated**: May contain errors. Verify before use.
-> **Reviewed by**: [agent-name] agent *(add only after agent review and implementation - also update frontmatter)*
 
 ## Overview
 [What the feature does and why it exists - written as current state, not history]
@@ -409,7 +452,6 @@ related_tasks: []   # Add if applicable
 type: report
 title: "[Report Title]"
 ai_generated: true
-reviewed_by: null
 created: YYYY-MM-DD
 updated: YYYY-MM-DD
 related_tasks: []  # Add if applicable
@@ -419,7 +461,6 @@ related_docs: []   # Add if applicable
 # [Report Title]
 
 > **⚠️ AI-Generated**: May contain errors. Verify before use.
-> **Reviewed by**: [agent-name] agent *(add only after agent review and implementation - also update frontmatter)*
 
 ## Executive Summary
 [Brief overview of key findings and recommendations]
@@ -473,15 +514,17 @@ _Report Type: [Audit/Research/Analysis/Assessment]_
 ```
 
 ### Step 3: File Placement and Naming
-- **General naming**: Use kebab-case: `feature-specific-descriptive-name.md`
-- **Reports naming**: Use date format: `report-name_YYYY-MM-DD.md` (e.g., `auth-security-audit_2025-11-19.md`)
+- **All files**: Always prefix with the creation date: `YYYY-MM-DD-feature-specific-descriptive-name.md`
+  - Use today's actual date (e.g., `2026-03-10-modal-zindex-stacking-issue.md`)
+  - Follow the date with a kebab-case descriptive name
+  - This applies to bugs, tasks, docs, and reports — no exceptions
 - Place in appropriate folder:
   - Active bugs: `.agents/bugs/`
   - Solved bugs: `.agents/bugs/.solved/`
   - Active tasks: `.agents/tasks/`
   - Completed tasks: `.agents/tasks/.done/`
   - Feature docs: `.agents/docs/features/`
-  - Reports/audits: `.agents/reports/` (use date format: `report-name_YYYY-MM-DD.md`)
+  - Reports/audits: `.agents/reports/`
   - Completed reports: `.agents/reports/.done/`
   - Archived items: respective `.archived/` folders
 
@@ -492,6 +535,51 @@ _Report Type: [Audit/Research/Analysis/Assessment]_
 - Reference specific file:line locations when relevant
 
 ### Step 5: Lifecycle Management
+
+**CRITICAL - Keep Tasks in Sync While Working:**
+
+When actively implementing a task, the task file is the **source of truth** for progress. It must stay current so that future sessions (or post-compaction context) can pick up exactly where you left off.
+
+**Use `task-sync.py`** for all task file updates during implementation. This script performs edits deterministically, avoiding markdown corruption or wrong-line matches:
+
+```bash
+TASK=".agents/tasks/my-task.md"
+SYNC="$HOME/.config/.claude/skills/docs-manager/task-sync.py"
+
+# After completing a step:
+python "$SYNC" "$TASK" check "Add login endpoint"
+
+# When starting work:
+python "$SYNC" "$TASK" status in-progress
+
+# When something unexpected happens:
+python "$SYNC" "$TASK" note "bcrypt unavailable in edge, switched to @noble/hashes"
+
+# At session start or after compaction — see what's left:
+python "$SYNC" "$TASK" summary
+
+# Before ending a session — check for stale references:
+python "$SYNC" "$TASK" validate-paths
+```
+
+**Commands reference:**
+| Command | What it does |
+|---|---|
+| `check "text"` | Finds `- [ ]` line containing text, flips to `- [x]`. Errors on 0 or multiple matches. |
+| `uncheck "text"` | Reverse of check |
+| `status <value>` | Updates frontmatter `status` and `updated` date. Valid: open, in-progress, on-hold, done, archived |
+| `note "message"` | Appends timestamped entry to `## Updates` section (creates it if missing) |
+| `remaining` | Shows all unchecked items with section context and progress count |
+| `validate-paths` | Checks if backtick file references (e.g. \`src/file.ts:42\`) exist |
+| `summary` | Status + progress bar + remaining items — ideal for session start |
+
+**When to call task-sync.py:**
+- **After each implementation step** — `check` the completed box immediately, don't batch
+- **When deviating from the plan** — `note` what actually happened vs. what was planned
+- **When starting work on a task** — `status in-progress`
+- **When blocked** — `status on-hold` + `note` describing the blocker
+- **At session start or after compaction** — `summary` to see current state
+- **Before ending a session** — `validate-paths` + `remaining` to capture what's left
 
 **For Task Updates (using task-update.md pattern):**
 1. **Read and verify** - Check all file paths exist, note current status
@@ -508,31 +596,15 @@ _Report Type: [Audit/Research/Analysis/Assessment]_
 - Updating cross-references when files move
 - **ALWAYS update the `updated` date when changing status**
 
-### Step 6: Agent Review Integration
-When creating or updating documents that would benefit from specialized review:
-
-1. **Create initial document** with basic AI warning
-2. **Identify review needs**:
-   - Complex tasks (Medium/High/Critical) → `feature-analyzer` agent
-   - Security-related content → `security-analyst` agent
-   - Frontend components → `frontend-style-validator` agent
-3. **Launch appropriate specialized agent** using Task tool
-4. **Implement agent recommendations** in the document
-5. **Add review notation** to document header: `> **Reviewed by**: [agent-name] agent`
-6. **Update index** to reflect any changes
-
-### Step 7: Index Management
+### Step 6: Index Management
 **CRITICAL: Always update the .agents index after any file operation**
 
 After creating, editing, moving, renaming, or deleting any bug report, task, or documentation file:
 
 1. **Run the index update script**:
    ```bash
-   # From WSL:
-   python3 /mnt/d/GitHub/Quilibrium/quorum-desktop/.claude/skills/docs-manager/update-index.py
-
-   # From native Windows (PowerShell or cmd):
-   python .claude/skills/docs-manager/update-index.py
+   # The script lives in the global skills folder:
+   python "$HOME/.config/.claude/skills/docs-manager/update-index.py"
    ```
 
 2. **Verify the INDEX.md was updated**:
@@ -548,7 +620,6 @@ After creating, editing, moving, renaming, or deleting any bug report, task, or 
 - ✅ After editing titles (# headings) in existing files
 
 The script automatically:
-- **Runs yarn scan-docs** to sync project-wide documentation scanning
 - Scans all .md files in .agents/ directory
 - Extracts titles from first # heading
 - Organizes by folder structure (docs → bugs → tasks → reports)
@@ -556,7 +627,7 @@ The script automatically:
 - Updates "Last Updated" timestamp
 - Handles numeric prefixes for ordering (01-file.md, 02-file.md)
 
-### Step 8: Commit Guidelines
+### Step 7: Commit Guidelines
 - Create descriptive commit message following project conventions
 - Never mention "Claude" or "Anthropic" in commit messages
 - Focus on the "why" rather than the "what"
@@ -567,22 +638,22 @@ The script automatically:
 ### Bug Report Example
 **User says**: "There's an issue with the modal stacking order"
 
-**Skill response**: Creates `.agents/bugs/modal-zindex-stacking-issue.md` with proper template, analyzes the z-index conflict, documents the CSS fix needed, and includes prevention strategies.
+**Skill response**: Creates `.agents/bugs/2026-03-10-modal-zindex-stacking-issue.md` with proper template, analyzes the z-index conflict, documents the CSS fix needed, and includes prevention strategies.
 
 ### Task Creation Example
 **User says**: "I need to implement user authentication"
 
-**Skill response**: Creates `.agents/tasks/user-authentication.md` with High complexity template, breaks down into phases (setup, UI components, backend integration), includes verification steps for security testing.
+**Skill response**: Creates `.agents/tasks/2026-03-10-user-authentication.md` with High complexity template, breaks down into phases (setup, UI components, backend integration), includes verification steps for security testing.
 
 ### Documentation Example
 **User says**: "Document the new search feature we just built"
 
-**Skill response**: Creates `.agents/docs/features/search-feature.md` describing the search feature as it currently exists - architecture, integration with MessageDB, performance characteristics, and usage examples. Uses present tense throughout ("The search feature provides...", "Messages are indexed using...") - NOT implementation history ("We added...", "Phase 1 implemented..."). Does NOT include status sections, verification checklists, or phase tracking.
+**Skill response**: Creates `.agents/docs/features/2026-03-10-search-feature.md` describing the search feature as it currently exists - architecture, integration with MessageDB, performance characteristics, and usage examples. Uses present tense throughout ("The search feature provides...", "Messages are indexed using...") - NOT implementation history ("We added...", "Phase 1 implemented..."). Does NOT include status sections, verification checklists, or phase tracking.
 
 ### Report Creation Example
 **User says**: "Create a security audit of our authentication system"
 
-**Skill response**: Creates `.agents/reports/auth-security-audit_2025-11-19.md` with structured audit template, analyzes authentication flows, identifies potential vulnerabilities, provides actionable recommendations with priority levels, and includes specific file references and remediation steps.
+**Skill response**: Creates `.agents/reports/2026-03-10-auth-security-audit.md` with structured audit template, analyzes authentication flows, identifies potential vulnerabilities, provides actionable recommendations with priority levels, and includes specific file references and remediation steps.
 
 ### Task Update Example
 **User says**: "Update the authentication task - some file paths have changed"
@@ -593,82 +664,15 @@ The script automatically:
 **User says**: "Move the completed auth task to the .done folder"
 
 **Skill response**:
-1. Moves `.agents/tasks/user-authentication.md` to `.agents/tasks/.done/user-authentication.md`
-2. Runs the comprehensive update script: `python3 update-index.py`
-   - Executes `yarn scan-docs` for project-wide documentation sync
+1. Moves `.agents/tasks/2026-03-10-user-authentication.md` to `.agents/tasks/.done/2026-03-10-user-authentication.md`
+2. Runs the index update script: `python3 update-index.py`
    - Updates INDEX.md with new file location
 3. Verifies the task now appears under "📋 Completed Tasks" instead of "📋 Tasks" in INDEX.md
-4. Reports successful completion with full documentation synchronization
-
-### Agent Review Workflow Examples
-
-#### Example 1: Security-Critical Task
-**User says**: "Create a task for implementing end-to-end encryption"
-
-**Initial creation**:
-```markdown
-# Implement End-to-End Encryption
-
-> **⚠️ AI-Generated**: May contain errors. Verify before use.
-
-**Status**: Pending
-**Complexity**: Critical
-```
-
-**After security-analyst review and implementation**:
-```markdown
-# Implement End-to-End Encryption
-
-> **⚠️ AI-Generated**: May contain errors. Verify before use.
-> **Reviewed by**: security-analyst agent
-
-**Status**: Pending
-**Complexity**: Critical
-```
-
-#### Example 2: Complex Feature Analysis
-**User says**: "Document the new modal system we built"
-
-**After feature-analyzer review**:
-```markdown
-# Modal System Architecture
-
-> **⚠️ AI-Generated**: May contain errors. Verify before use.
-> **Reviewed by**: feature-analyzer agent
-
-## Overview
-[Documentation refined based on agent analysis...]
-```
-
-#### Example 3: Frontend Component Validation
-**User says**: "Create task for new cross-platform Button component"
-
-**After frontend-style-validator review**:
-```markdown
-# Cross-Platform Button Component
-
-> **⚠️ AI-Generated**: May contain errors. Verify before use.
-> **Reviewed by**: frontend-style-validator agent
-
-**Status**: Pending
-**Complexity**: Medium
-```
+4. Reports successful completion
 
 ## Workflow Integration
 
-This skill integrates seamlessly with your existing workflow:
-
-1. **Respects established patterns** from `agents-workflow.md`
-2. **Uses existing templates** enhanced with automation
-3. **Maintains folder structure** and naming conventions
-4. **Preserves manual work** - never overwrites completed sections
-5. **Cross-references properly** - links to related docs and code
-6. **Follows commit guidelines** - proper messages, no AI mentions
-7. **Updates systematically** - tracks changes and maintains history
-8. **🆕 Comprehensive documentation sync** - runs both yarn scan-docs and update-index.py for complete project-wide synchronization
-9. **🆕 Quality assurance through agent reviews** - integrates specialized agents for enhanced quality and best practices
-
-The skill essentially automates what you would do manually following your `agents-workflow.md`, but with intelligent context awareness, consistent application of your established patterns, **comprehensive documentation synchronization** (both project-wide and .agents-specific), and **integrated quality reviews by specialized agents** to ensure the entire documentation ecosystem is well-maintained and synchronized.
+This skill automates what you would do manually following `agents-workflow.md`: respects established patterns, maintains folder structure and naming conventions, preserves manual work, cross-references properly, and keeps the index synchronized.
 
 ## Utility Scripts
 
@@ -684,10 +688,10 @@ Adds YAML frontmatter metadata to markdown files in `.agents/` folder.
 **Usage:**
 ```bash
 # Preview changes
-node .claude/skills/docs-manager/add-yaml-frontmatter.cjs --dry-run
+node "$HOME/.config/.claude/skills/docs-manager/add-yaml-frontmatter.cjs" --dry-run
 
 # Apply changes
-node .claude/skills/docs-manager/add-yaml-frontmatter.cjs --apply
+node "$HOME/.config/.claude/skills/docs-manager/add-yaml-frontmatter.cjs" --apply
 ```
 
 **What it extracts:**
@@ -698,4 +702,4 @@ node .claude/skills/docs-manager/add-yaml-frontmatter.cjs --apply
 
 ---
 
-_Updated: 2026-01-09 18:48_
+_Updated: 2026-03-10_

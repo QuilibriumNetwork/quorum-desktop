@@ -97,11 +97,19 @@ export function useAllMentions({
 
           const lastReadTimestamp = conversation?.lastReadTimestamp || 0;
 
-          // Get all messages after last read (up to 10k for safety)
-          const { messages } = await messageDB.getMessages({
+          // Fetch thread read times for this channel
+          const threadReadTimes = await messageDB.getThreadReadTimesForChannel({
             spaceId,
             channelId,
-            limit: 10000,
+          });
+
+          // Use optimized query that returns messages with mentions
+          // (includes thread replies, unlike getMessages which filters them)
+          const messages = await messageDB.getUnreadMentions({
+            spaceId,
+            channelId,
+            afterTimestamp: lastReadTimestamp,
+            limit: 1000,
           });
 
           // Get channel name from space data
@@ -110,8 +118,20 @@ export function useAllMentions({
             ?.find(c => c.channelId === channelId);
 
           // Filter messages that mention the user and are unread
+          // Thread replies check against thread read time, not channel read time
           const unreadMentions = messages.filter((message: Message) => {
-            if (message.createdDate <= lastReadTimestamp) return false;
+            // Determine the effective read timestamp for this message
+            if (message.isThreadReply && message.threadId) {
+              const threadReadTime = threadReadTimes[message.threadId];
+              // If thread has been read and message is older, skip it
+              if (threadReadTime !== undefined && message.createdDate <= threadReadTime) {
+                return false;
+              }
+              // If no thread read time exists, message is unread (fall through to mention check)
+            } else {
+              // Regular channel message — use channel read time (already filtered by afterTimestamp)
+              if (message.createdDate <= lastReadTimestamp) return false;
+            }
 
             return isMentionedWithSettings(message, {
               userAddress,

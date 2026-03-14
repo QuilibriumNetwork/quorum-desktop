@@ -5,7 +5,6 @@ import {
   Input,
   Container,
   Flex,
-  Text,
   Spacer,
   Callout,
 } from '../primitives';
@@ -119,15 +118,15 @@ const GroupEditorModal: React.FunctionComponent<{
               </Callout>
             )}
             <Flex justify="center" align="center">
-              <Text
-                variant="danger"
-                className="cursor-pointer hover:text-danger-hover"
+              <Button
+                type="unstyled"
+                className="text-danger hover:text-danger-hover"
                 onClick={handleDeleteClick}
               >
                 {deleteConfirmationStep === 0
                   ? t`Delete Group`
                   : t`Click again to confirm`}
-              </Text>
+              </Button>
             </Flex>
           </>
         )}

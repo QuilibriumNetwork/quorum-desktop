@@ -6,6 +6,8 @@
   justify-content: stretch;
   height: 100%;
   width: 100%;
+  background-color: var(--color-bg-app);
+  position: relative; // Anchor for thread panel full-width overlay on small screens
 
   // Mobile layout - ensure main content expands when sidebar is hidden
   @media (max-width: 1023px) {
@@ -24,6 +26,22 @@
   height: 100%;
   overflow: hidden; // Ensure the container itself doesn't scroll
   position: relative;
+  background-color: var(--color-bg-sidebar);
+
+  // Match main-content's top-left radius so background doesn't cover the rounded corner
+  // Also add top border for visual separation
+  @media (min-width: 1024px) {
+    border-top-left-radius: $rounded-xl;
+    border-top: $border solid var(--color-border-subtle);
+  }
+
+  // Dark theme: muted borders (left + top override)
+  html.dark & {
+    @media (min-width: 1024px) {
+      border-left: $border solid var(--color-border-muted);
+      border-top-color: var(--color-border-muted);
+    }
+  }
 
   // Mobile responsive behavior - smooth slide animation with proper hiding
   @media (max-width: 1023px) {

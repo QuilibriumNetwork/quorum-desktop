@@ -25,6 +25,7 @@ This document provides a quick reference for all input and textarea validations 
 | **Display Names** | 40 chars | N/A | `MAX_NAME_LENGTH` | `validation.ts:35`<br>`useDisplayNameValidation.ts`<br>Onboarding, User Settings & Space Settings modals |
 | **Space Names** | 40 chars | N/A | `MAX_NAME_LENGTH` | `validation.ts:35`<br>`useSpaceNameValidation.ts`<br>`CreateSpaceModal.tsx` |
 | **Topics/Descriptions** | 80 chars | N/A | `MAX_TOPIC_LENGTH` | `validation.ts:41`<br>Channel & Space settings |
+| **Thread Titles** | 100 chars | N/A | `THREAD_TITLE_MAX_CHARS` | `ThreadSettingsModal.tsx` |
 | **Mention Display Names** | 200 chars | N/A | Hardcoded | `MessageMarkdownRenderer.tsx:203` |
 
 ### Content Security Validation
@@ -147,6 +148,14 @@ src/hooks/business/validation/
 - **Files**: `CreateSpaceModal.tsx`, `SpaceSettingsModal.tsx`, `useSpaceCreation.ts`
 - **Validations**: Space name XSS + length (40 chars)
 - **UX**: Validation on blur and submit
+
+#### Thread Settings Modal
+- **Files**: `ThreadSettingsModal.tsx`
+- **Validations**:
+  - XSS protection (`validateNameForXSS` — blocks `<tag` patterns)
+  - Length limit (100 chars, enforced per-keystroke via `slice`)
+- **UX**: Error shown on input, Save button disabled when invalid
+- **Note**: XSS check added proactively — thread titles may appear in future search results / threads list panels that use `dangerouslySetInnerHTML`
 
 #### Channel & Topic Fields
 - **Files**: Various channel and space settings components
@@ -328,5 +337,6 @@ const isValidAddress = isValidIPFSCID(address);
 ---
 
 
-_Last Updated: 2025-11-23 (Pattern-based XSS validation; allows emoticons, arrows, quotes; fixed SearchService XSS)_
+_Last Updated: 2026-03-12 (Added thread title validation: 100 char limit + XSS check in ThreadSettingsModal)_
+_Previously: 2025-11-23 (Pattern-based XSS validation; allows emoticons, arrows, quotes; fixed SearchService XSS)_
 _Verified: 2025-12-09 - File paths confirmed current_

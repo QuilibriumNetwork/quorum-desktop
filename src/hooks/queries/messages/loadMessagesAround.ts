@@ -23,6 +23,7 @@ export async function loadMessagesAround({
   targetMessageId,
   beforeLimit = 40,
   afterLimit = 40,
+  includeThreadReplies = false,
 }: {
   messageDB: MessageDB;
   spaceId: string;
@@ -30,6 +31,7 @@ export async function loadMessagesAround({
   targetMessageId: string;
   beforeLimit?: number;
   afterLimit?: number;
+  includeThreadReplies?: boolean;
 }): Promise<{
   messages: Message[];
   targetMessage: Message;
@@ -56,6 +58,7 @@ export async function loadMessagesAround({
     cursor: targetTimestamp,
     direction: 'backward',
     limit: beforeLimit,
+    includeThreadReplies,
   });
 
   // Load messages after target (newer messages)
@@ -65,15 +68,18 @@ export async function loadMessagesAround({
     cursor: targetTimestamp,
     direction: 'forward',
     limit: afterLimit,
+    includeThreadReplies,
   });
 
   // Combine messages: before (chronological) + target + after (chronological)
   // beforeResponse.messages are already in chronological order (oldest to newest)
   // afterResponse.messages are also in chronological order
   // The target message itself is not included in either response (cursor is exclusive)
+  // Note: getMessages() already filters isThreadReply, but the target is fetched via
+  // getMessage() which doesn't filter — so exclude thread replies from the target
   const messages = [
     ...beforeResponse.messages,
-    targetMessage,
+    ...(targetMessage.isThreadReply && !includeThreadReplies ? [] : [targetMessage]),
     ...afterResponse.messages,
   ];
 

@@ -1,0 +1,446 @@
+---
+type: doc
+title: "Thread Panel"
+status: done
+ai_generated: true
+created: 2026-03-09
+updated: 2026-03-14
+related_docs:
+  - "docs/features/messages/pinned-messages.md"
+  - "docs/features/dropdown-panels.md"
+  - "docs/features/responsive-layout.md"
+  - "docs/styling-guidelines.md"
+related_tasks:
+  - "tasks/threaded-conversations.md"
+  - "tasks/2025-03-09-thread-panel-layout.md"
+---
+
+# Thread Panel
+
+> **AI-Generated**: May contain errors. Verify before use.
+
+## Overview
+
+The Thread Panel provides threaded conversations within Space channels, rendered as a sidebar column alongside the main chat area. When a user opens a thread, the panel appears as a sibling element to the Channel component at the Space layout level, preserving the full width of the main chat area. The panel supports drag-to-resize with localStorage persistence.
+
+**Key Characteristics:**
+- Flat threading model: replies to root message only, no nested threads
+- Thread replies are hidden from the main channel feed when threads are enabled; shown inline when disabled
+- Full `MessageList` + `MessageComposer` reuse for identical UX to main chat
+- Resizable panel width (300px min, 50vw max, 400px default)
+- Deterministic thread IDs via `SHA-256(targetMessageId + ':thread')`
+- Space channels only (no DM threading)
+
+## Architecture
+
+### Component Hierarchy
+
+```
+<ThreadProvider>                           ← wraps entire Space
+  <div class="space-container">            ← flex row
+    <div class="space-container-channels"> ← channel list sidebar
+      <ChannelList />
+    </div>
+    <Channel />                            ← main chat (adds .thread-open class when active)
+    <ThreadPanel />                        ← thread sidebar (sibling, not nested)
+  </div>
+</ThreadProvider>
+```
+
+The ThreadPanel renders at the `Space.tsx` level as a flex sibling of `Channel`, not inside it. This is the key architectural difference from the initial implementation where ThreadPanel was nested within Channel. The sibling layout means the main chat area width remains unchanged when the thread opens — only the overall flex container accommodates the additional panel.
+
+### Key Files
+
+| File | Purpose |
+|------|---------|
+| `src/components/context/ThreadContext.tsx` | Ref-based store with dual-hook API |
+| `src/components/context/ThreadSettingsModalProvider.tsx` | `openThreadSettings()` hook + modal registration |
+| `src/components/thread/ThreadPanel.tsx` | Panel component with resize handle |
+| `src/components/thread/ThreadPanel.scss` | Panel styles, borders, resize handle |
+| `src/components/modals/ThreadSettingsModal.tsx` | Thread settings modal (title, auto-close, close toggle, delete) |
+| `src/components/space/Space.tsx` | ThreadProvider wrapper, ThreadPanel sibling rendering |
+| `src/components/space/Space.scss` | Container background, channel list borders/radius |
+| `src/components/space/Channel.tsx` | Context store population via useEffects |
+| `src/components/space/Channel.scss` | `.thread-open` border-radius rule |
+| `src/styles/_chat.scss` | External layout borders (top, left, right) |
+| `src/styles/_colors.scss` | `--color-border-muted` semantic variable |
+| `src/styles/_components.scss` | Shared `.header-icon-button` class used by thread panel icons |
+| `src/components/thread/ThreadsListPanel.tsx` | Channel threads list panel (search, grouping, open) |
+| `src/components/thread/ThreadsListPanel.scss` | Styles for threads list panel, items, empty states |
+| `src/components/thread/ThreadListItem.tsx` | Single thread row (title, meta, lock icon) |
+| `src/services/channelThreadHelpers.ts` | Pure helpers: `buildChannelThreadFromCreate`, `updateChannelThreadOnReply` |
+| `src/hooks/business/threads/useChannelThreads.ts` | React Query hook for channel thread list |
+
+### ThreadContext — Ref-Based Store Pattern
+
+The ThreadContext uses a ref-based store instead of `useState` to prevent infinite re-render loops. The problem: if the provider used `useState`, calling setters would re-render the provider, which re-renders Channel (a child), which fires useEffects that call setters again — an infinite loop.
+
+**Solution:** All state lives in `useRef` objects. Setters mutate refs directly and notify subscribers via a listener set. The context value itself is also a ref, so the provider never re-renders.
+
+```
+ThreadProvider
+  ├── stateRef      (ThreadState)
+  ├── actionsRef    (ThreadActions)
+  ├── channelPropsRef (ThreadChannelProps)
+  └── listenersRef  (Set<() => void>)
+```
+
+**Dual-hook API:**
+
+- **`useThreadContextStore()`** — Non-subscribing. Returns the raw store object with getters/setters. Used by `Channel.tsx` to push data without triggering its own re-renders. Channel calls `setThreadState()`, `setThreadActions()`, and `setChannelProps()` from three separate `useEffect` hooks.
+
+- **`useThreadContext()`** — Subscribing. Returns a flattened snapshot of state + actions + channelProps. Internally uses `useReducer` as a forceRender mechanism, subscribing to the store's listener set. Used by `ThreadPanel.tsx` to consume data and re-render when it changes.
+
+### Data Flow
+
+```
+Channel.tsx                          ThreadPanel.tsx
+    │                                      │
+    ├─ useThreadContextStore()             ├─ useThreadContext()
+    │  (non-subscribing)                   │  (subscribing via forceRender)
+    │                                      │
+    ├─ useEffect → setThreadState()  ───►  ├─ reads: isOpen, threadId, rootMessage,
+    │   (isOpen, threadId, rootMessage,    │         threadMessages, isLoading
+    │    threadMessages, isLoading)         │
+    │                                      │
+    ├─ useEffect → setThreadActions() ──►  ├─ reads: openThread, closeThread,
+    │   (openThread, closeThread,          │         submitMessage, submitSticker
+    │    submitMessage, submitSticker)      │
+    │                                      │
+    └─ useEffect → setChannelProps() ───►  └─ reads: channelProps (members, roles,
+        (spaceId, channelId, members,             stickers, permissions, etc.)
+         roles, stickers, permissions...)
+```
+
+Channel.tsx owns all thread state (`activePanel`, `activeThreadId`, `activeThreadRootMessage`) and business logic (`handleOpenThread`, `handleSubmitThreadMessage`, `handleSubmitThreadSticker`, `handleUpdateThreadTitle`). The `useThreadMessages` React Query hook is called in Channel and its results flow through the context to ThreadPanel.
+
+**Stale snapshot pitfall:** `activeThreadRootMessage` is a React state variable set once when a thread opens and not derived from any query. Any mutation to the root message (e.g., title update) must explicitly call `setActiveThreadRootMessage` — otherwise the displayed root message in ThreadPanel stays stale even after the DB and React Query cache are updated. The `invalidateQueries` call for `thread-messages` only refreshes the replies list, not this snapshot. A sync effect in Channel.tsx watches `messageList` and propagates content changes (e.g., soft-deletion) to the snapshot, so that root message deletion is visible immediately in the thread panel without closing/reopening.
+
+## Visual Design
+
+### Layout & Gap
+
+The `space-container` has `background-color: var(--color-bg-app)` — the darkest background tier and `position: relative` to anchor the thread panel overlay on small screens. On desktop, ThreadPanel uses `margin-left: $s-2` (8px), creating a visible gap that exposes the dark app background, visually separating the main chat area from the thread sidebar.
+
+**Background color hierarchy:**
+- `--color-bg-app` — darkest, visible in the 8px gap (desktop only)
+- `--color-bg-sidebar` — channel list sidebar
+- `--color-bg-chat` — main chat area and thread panel
+
+### Responsive Behavior
+
+The thread panel adapts to screen size following the same patterns as the chat-container:
+
+- **Desktop (≥1024px):** Side-by-side panel with 8px gap, resize handle, top + left borders
+- **Below MD (≤768px):** Full-width absolute overlay (`position: absolute; inset: 0`) covering the main chat area. Resize handle hidden, margin removed, inline width overridden with `!important`. The `.thread-open` top-right radius on chat-container is also disabled since the thread covers it entirely.
+- **Below XS (≤480px):** Same as above, plus `border-top-left-radius` removed (matches chat-container phone pattern)
+
+### Border Radius
+
+When a thread is open, `Channel.tsx` adds the `.thread-open` class to the `chat-container` div. On desktop and above MD (≥768px), this triggers:
+- **Chat area**: `border-top-right-radius: $rounded-xl` (top-right corner rounds to visually separate from thread)
+- **Thread panel**: `border-top-left-radius: $rounded-xl` (top-left corner rounds to match)
+- **Channel list**: `border-top-left-radius: $rounded-xl` on desktop (matches `main-content`'s rounded corner)
+
+Below MD, the `.thread-open` radius is not applied since the thread panel is a full-width overlay.
+
+### Border System
+
+Borders use a theme-aware system with a muted variant for dark mode. **All thread panel borders are desktop-only (≥1024px)**, matching the chat-container pattern from `_chat.scss`:
+
+**Light theme** (`--color-border-subtle` = `var(--surface-4)`):
+- Channel list sidebar: `border-top` on desktop
+- Chat container: `border-top` + `border-left` on desktop; `border-right` when thread open
+- Thread panel: `border-top` + `border-left` on desktop
+
+**Dark theme** (`--color-border-muted` = `var(--surface-3)`):
+- Channel list sidebar: `border-top` + `border-left` (muted) on desktop
+- Chat container: `border-top` (muted) on desktop; no `border-left`; `border-right` (muted) when thread open
+- Thread panel: `border-top` + `border-left` (muted) on desktop
+
+The `--color-border-muted` semantic variable was added to `_colors.scss` specifically for these external layout borders, sitting below `--color-border-subtle` in the border color scale:
+```
+--color-border-muted:    var(--surface-3)  ← layout borders (dark mode)
+--color-border-subtle:   var(--surface-4)  ← layout borders (light mode)
+--color-border-default:  var(--surface-5)  ← general UI borders
+--color-border-strong:   var(--surface-6)  ← emphasis borders
+--color-border-stronger: var(--surface-7)  ← high-contrast borders
+```
+
+### Resize Handle
+
+A 4px-wide invisible handle is positioned on the left edge of the thread panel (`left: -2px`). On hover or drag, it highlights with `var(--text-link)` color. The resize uses `mousedown`/`mousemove`/`mouseup` events on the document to track drag distance.
+
+- **Minimum width:** 300px
+- **Maximum width:** 50vw
+- **Default width:** 400px
+- **Persistence:** `localStorage` key `thread-panel-width`
+- **Drag direction:** Dragging left increases width, dragging right decreases it
+
+### Header
+
+Header layout:
+- **Title:** Derived at runtime via `getThreadTitle()` in `ThreadPanel.tsx`. Resolution order: (1) `threadMeta.customTitle` if set, (2) first 100 chars of root message text (markdown stripped), (3) `"Thread"` fallback (used when root is soft-deleted or empty). Auto-extracted titles are NOT persisted or broadcast. Custom titles survive root deletion since they live in `threadMeta`. The title is **read-only** in the panel header — editing is done via the Thread Settings Modal.
+- **Subtitle:** "Started by **Username**" showing thread creator
+- **Settings icon (cog):** Visible only to thread managers (author or users with `message:delete` permission). Opens the Thread Settings Modal. Uses the shared `header-icon-button` class with a bottom-anchored tooltip ("Thread settings"). Hidden for non-managers.
+- **Close icon (X):** Closes the thread panel. Also uses `header-icon-button`. Both icons use `iconSize="lg"` to match the main channel header icons.
+- **Alignment:** Header uses `align-items: flex-start` so icons align to the top of the header area (title + subtitle make the content taller than a single-line header).
+
+## Thread Management
+
+### Thread Settings Modal (`ThreadSettingsModal.tsx`)
+
+Opened via the cog icon in the panel header. Accessible to thread managers (author or users with `message:delete` permission).
+
+**Features:**
+- **Title editing** (author only) — Freetext input, 100-char limit, XSS validation via `validateNameForXSS`. Saves via `updateTitle` → `handleUpdateThreadTitle` in Channel.tsx → `submitChannelMessage` broadcast (same flow as inline title editing previously was). Save button disabled if title has XSS content or no changes.
+- **Auto-close** — Select preset (Never / 1h / 24h / 3 days / 1 week). Stored as `autoCloseAfter` ms in `ThreadMeta`. "Never" = field omitted.
+- **Close thread toggle** — Marks thread as `isClosed`. Closed threads are read-only for all users.
+- **Delete thread** — Two-click confirm. Available to thread authors and users with `message:delete` permission. Only shown if thread has no replies from other users (moderators must delete those messages individually first). Removes all thread replies from IndexedDB, removes `channel_threads` registry entry, and handles root message based on ownership: hard-deletes if sender owns root or root was soft-deleted; strips `threadMeta` otherwise (keeping the other user's message intact).
+
+**Auth:** Modal only renders if `canManage` is true. Server-side auth in `MessageService` (`processMessage`, `addMessage`, and `submitChannelMessage`) allows both the thread creator (`createdBy`) and users with `message:delete` role permission — matching the pattern used for close/reopen/updateSettings. When the root message is missing from DB (already hard-deleted), authorization falls back to the `channel_threads` registry which independently stores `createdBy`.
+
+**Provider:** `ThreadSettingsModalProvider` wraps the Space and exposes `useThreadSettingsModal()` → `openThreadSettings(props)`. ThreadPanel calls this from the cog button click handler.
+
+## Thread Data Model
+
+### Types (`src/api/quorumApi.ts`)
+
+- **`ThreadMeta`** — Set on root messages: `{ threadId, createdBy, customTitle?, isClosed?, closedBy?, autoCloseAfter?, lastActivityAt? }`
+- **`ThreadMessage`** — Broadcast content: `{ type: 'thread', senderId, targetMessageId, action: 'create' | 'updateTitle' | 'close' | 'reopen' | 'updateSettings' | 'remove', threadMeta }`
+- **`ChannelThread`** — Denormalized thread summary for the threads list panel: `{ threadId, spaceId, channelId, rootMessageId, createdBy, createdAt, lastActivityAt, replyCount, isClosed, customTitle?, titleSnapshot?, hasParticipated }`
+- **Message fields:** `threadMeta?` (root messages), `threadId?` (reply messages), `isThreadReply?` (filtering sentinel)
+
+### Database (`src/db/messages.ts`)
+
+- **Schema:** DB version 9 adds `by_thread` compound index: `[spaceId, channelId, threadId, createdDate]`. DB version 10 adds `channel_threads` object store (keyPath: `threadId`) with `by_channel` compound index on `[spaceId, channelId]`
+- **`getThreadMessages()`** — Returns all messages in a thread plus derived stats (replyCount, lastReplyAt, lastReplyBy)
+- **`getThreadStats()`** — Lightweight count + last reply info for ThreadIndicator
+- **`saveChannelThread()`** — Upserts a `ChannelThread` entry (used by `MessageService` on thread create/reply/settings events)
+- **`getChannelThreads()`** — Returns all threads for a channel via `by_channel` index (`IDBKeyRange.only([spaceId, channelId])`)
+- **`deleteChannelThread()`** — Removes a `ChannelThread` entry by `threadId` (used on thread removal)
+- **Main feed filtering:** Thread replies (`isThreadReply: true`) are conditionally filtered at three layers based on the `includeThreadReplies` parameter (derived from `threadsEnabled` — see [Space/Channel Thread Toggle](#spacechannel-thread-toggle)):
+  1. **DB cursor** — `getMessages({ includeThreadReplies })` skips `isThreadReply` during cursor iteration when `includeThreadReplies` is false
+  2. **DB unread query** — `getFirstUnreadMessage({ includeThreadReplies })` skips `isThreadReply` so thread replies don't trigger unread navigation to the main feed (when filtering is active)
+  3. **React layer** — `useChannelMessages({ threadsEnabled })` filters `isThreadReply` as defense-in-depth against any code path that sets raw data into the React Query cache (e.g., `loadMessagesAround` via `setQueryData`). Only active when `threadsEnabled` is true.
+  When threads are disabled at the space or channel level, all three layers pass thread replies through, making them appear inline in the main feed.
+- **`loadMessagesAround()`** — Accepts `includeThreadReplies` parameter. When filtering is active, excludes thread replies from the target message injection (target fetched via `getMessage()` bypasses cursor filtering)
+- **React Query key strategy:** Message queries use a 4-element key: `['Messages', spaceId, channelId, 'with-threads' | 'no-threads']` so React Query treats thread-filtered and unfiltered datasets as distinct caches. A 3-element prefix key (`buildMessagesKeyPrefix`) is used by services for `setQueriesData` prefix matching, ensuring optimistic cache updates hit both key variants regardless of which thread mode the UI is viewing.
+
+### Hooks (`src/hooks/business/threads/`)
+
+- **`useThreadMessages()`** — React Query hook for thread messages with 30s staleTime
+- **`useThreadStats()`** — React Query hook for thread statistics (used by ThreadIndicator)
+- **`useChannelThreads()`** — React Query hook (`['channel-threads', spaceId, channelId]`) returning all threads for a channel sorted by `lastActivityAt` descending. 30s staleTime, `networkMode: 'always'`. Invalidated by `MessageService.addMessage()` on thread lifecycle events
+
+### Thread Discovery
+
+- **ThreadIndicator** (`src/components/thread/ThreadIndicator.tsx`) — Inline component on root messages showing reply count and last reply time
+- **MessageActions** — Thread button in hover toolbar (right after Reply icon)
+- **MessageActionsMenu** — "Start Thread" / "View Thread" in right-click context menu
+- **ThreadsListPanel** (`src/components/thread/ThreadsListPanel.tsx`) — Channel-scoped panel listing all threads, accessible via a "Threads" button (icon: `messages`) in the channel header (`Channel.tsx`). Uses `DropdownPanel` with custom `headerContent`. Groups threads into three sections: **Joined Threads** (user has participated), **Other Active Threads** (activity within 7 days), **Older Threads**. Includes in-memory search filtering by title (case-insensitive). Clicking a thread fetches the root message via `messageDB.getMessageById()` and opens it via `openThread()` from ThreadContext. The panel toggle uses `activePanel === 'threads'` on Channel's `ActivePanel` union type (which now includes `'threads'`)
+- **Root message deletion** — Soft-delete preserves `threadMeta` so the thread remains accessible; root shows italicized "[Original message was deleted]" placeholder (i18n). Both local and remote deletion paths handle this: local via `useMessageActions.ts` (map + `messageDB.updateMessage`), remote via `MessageService.ts` `processMessage()` (IndexedDB soft-delete) and `addMessage()` (React Query cache map instead of filter)
+- **Thread deletion with deleted root** — When a thread is deleted and its root message was already soft-deleted (empty text), the root is hard-deleted from IndexedDB (not just stripped of `threadMeta`). This prevents ghost messages (avatar + username with no content) that would appear if `threadMeta` were stripped from a soft-deleted message — the "[Original message was deleted]" placeholder depends on `threadMeta` being present
+
+## Thread Title Editing
+
+Title editing was moved from inline panel header interaction to the Thread Settings Modal. The title in the panel header is now always read-only.
+
+### updateTitle Broadcast Flow
+
+```
+ThreadSettingsModal: Save button
+  → handleSave() → updateTitle(messageId, threadMeta, newTitle)  ← from ThreadContext actions
+  → handleUpdateThreadTitle() in Channel.tsx
+      → builds updatedMeta: { threadId, createdBy, customTitle }
+      → submitChannelMessage(..., { type:'thread', action:'updateTitle', threadMeta: updatedMeta })
+          → MessageService.submitChannelMessage (send path)
+              → idempotency guard: gated to action==='create' only (updateTitle passes through)
+              → auth check: senderId must === targetMessage.threadMeta.createdBy
+              → saves updatedTarget to IndexedDB (spread-merge: {...existing.threadMeta, ...updatedMeta})
+              → updates main channel React Query cache (spread-merge)
+              → invalidates ['thread-messages', ...] query
+              → broadcasts encrypted message to space
+      → setActiveThreadRootMessage(prev => {...prev, threadMeta: {...prev.threadMeta, ...updatedMeta}})
+          ← local sender: updates stale snapshot so ThreadPanel re-renders immediately
+
+Peers (via addMessage):
+  → auth check: senderId must === targetMessage.threadMeta.createdBy
+  → updates main channel React Query cache (spread-merge)
+  → invalidates ['thread-messages', ...] query
+```
+
+The local sender path and the peer path are separate. The `addMessage` path handles incoming broadcasts; `setActiveThreadRootMessage` handles the sender's own immediate display update since the sender's broadcast doesn't loop back through `addMessage`.
+
+## Thread-Aware Navigation
+
+Bookmarks, search results, and pinned messages can navigate directly into a thread reply — opening the thread panel and scrolling to the target message. This uses a compound URL hash format.
+
+### Hash Format
+
+```
+#thread-{threadId}-msg-{messageId}    ← thread reply (opens thread panel + scrolls)
+#msg-{messageId}                      ← regular message (scrolls in main feed)
+```
+
+`buildMessageHash(messageId, threadId?)` and `parseMessageHash(hash)` in `src/utils/messageHashNavigation.ts` handle encoding/decoding.
+
+### Navigation Flow
+
+```
+Entry point (BookmarksPanel / PinnedMessagesPanel / Search)
+  → buildMessageHash(messageId, threadId)  // #thread-{threadId}-msg-{msgId}
+  → navigate('/spaces/spaceId/channelId#thread-...-msg-...')
+
+Cross-channel: Channel remounts (key: spaceId-channelId)
+Same-channel:  location.hash changes → useEffect([spaceId, channelId, location.hash]) re-fires
+
+  → parseMessageHash(window.location.hash) detects thread hash
+  → messageDB.getMessageById(identifier) OR getRootMessageByThreadId()
+  → setActiveThreadId(), setActivePanel('thread')
+  → queueMicrotask: threadCtx.setThreadState({ targetMessageId: messageId })
+  → ThreadPanel renders with scrollToMessageId={targetMessageId}
+  → MessageList scrollToMessageId effect fires → scrollToMessage()
+  → window.location.hash = '#msg-{id}' → Message self-highlights via location.hash check
+```
+
+### Critical Pattern: Hash-Based Cross-Component Highlighting
+
+`Message.tsx` calls `useMessageHighlight()` independently — each instance is **isolated**. Calling `highlightMessage()` from a `MessageList` hook instance has no effect on Message components rendered elsewhere in the tree.
+
+The only cross-component highlight signal that works is `location.hash === '#msg-{id}'`. When a component needs to trigger highlighting on a Message it doesn't directly control, it must set `window.location.hash = '#msg-{id}'` — not call any hook method.
+
+This applies to:
+- `MessageList.tsx` when `highlightOnScroll={true}` — sets `window.location.hash` after scrolling
+- Any future component that needs to highlight a specific Message
+
+### Same-Channel Navigation
+
+React Router doesn't remount `Channel` when navigating to the same channel (the component key `spaceId-channelId` doesn't change). To ensure thread hash changes are processed even when already on the target channel, `Channel.tsx` includes `location.hash` in the thread detection effect's dependency array:
+
+```typescript
+useEffect(() => {
+  // parse window.location.hash, open thread, set targetMessageId
+}, [spaceId, channelId, location.hash]);
+```
+
+Without `location.hash` in deps, clicking "Jump" in PinnedMessagesPanel or navigating from a bookmark while already on the target channel would do nothing.
+
+### threadId Propagation in Search
+
+Search returns root messages (the message that started a thread), not replies. Root messages have `threadMeta.threadId`, not a top-level `threadId`. When building the hash for search navigation:
+
+```typescript
+const threadId = message.threadId ?? message.threadMeta?.threadId;
+```
+
+`message.threadId` handles reply messages; `message.threadMeta?.threadId` handles root messages. Both cases use the same hash format — Channel.tsx resolves the root message from the threadId via `getRootMessageByThreadId()`.
+
+The `threadId` must flow through the entire search chain without being dropped:
+- `useSearchResultFormatting.ts` → `onNavigate(spaceId, channelId, messageId, threadId)`
+- `useSearchResultsState.ts` → `handleNavigate(spaceId, channelId, messageId, threadId?)` (must include the 4th param)
+- `useGlobalSearchNavigation.ts` → `buildMessageHash(messageId, threadId)`
+
+## Technical Decisions
+
+| Decision | Choice | Rationale |
+|----------|--------|-----------|
+| Panel placement | Space.tsx sibling | Main chat width stays unchanged when thread opens |
+| Context pattern | Ref-based store | Prevents infinite re-render loops from useState + child useEffects |
+| Dual-hook API | Store vs subscribing | Channel pushes data without re-rendering; ThreadPanel subscribes and re-renders |
+| Thread ID | SHA-256 deterministic | Race-safe: two users creating a thread on the same message produce the same ID |
+| Feed filtering | 3-layer defense-in-depth | DB cursor + DB unread query + React hook filter; all conditional on `includeThreadReplies`/`threadsEnabled`. Avoids breaking existing `by_conversation_time` compound index |
+| Thread toggle query keys | 4-element key + 3-element prefix | `['Messages', spaceId, channelId, 'with-threads' \| 'no-threads']` keeps filtered/unfiltered caches separate. Services use `buildMessagesKeyPrefix` (3-element) with `setQueriesData` for prefix matching across both variants |
+| Panel rendering | Full MessageList + Composer | Identical UX to main chat with no feature disparity |
+| Resize persistence | localStorage | Simple, synchronous, no server dependency |
+| Dark mode borders | `--color-border-muted` | More subtle external layout borders without affecting general UI borders |
+| Cross-component highlight | URL hash | `useMessageHighlight()` is isolated per instance; `window.location.hash = '#msg-{id}'` is the only cross-component signal Message.tsx responds to |
+| Same-channel hash re-detection | `location.hash` in effect deps | React Router doesn't remount Channel on same-channel navigation; hash dep ensures the thread detection effect re-fires |
+| Thread removal cache strategy | `removeQueries` + `setQueryData` (not `invalidateQueries`) | `invalidateQueries` triggers a DB refetch that races against the persistent handler's cleanup — the refetch restores deleted data into the cache, undoing the optimistic removal. Direct cache manipulation avoids this race |
+| Thread deletion auth | Thread creator OR `message:delete` permission | Matches close/reopen/updateSettings auth pattern. Moderators must first delete other users' replies before deleting the thread itself (UI enforced via `hasOtherReplies` guard). Root message ownership only affects whether the root is hard-deleted or just stripped of `threadMeta` |
+
+## Known Limitations
+
+- **Space channels only** — Thread feature is not available in DM conversations
+- **Thread notifications (partial)** — Basic @mention notifications in thread replies are implemented (see [mention-notification-system.md](../mention-notification-system.md#thread-mentions)). Participation tracking, auto-follow, and per-thread unread indicators are not yet implemented.
+- **No permission gating** — Anyone who can post in the channel can create threads; no `thread:create` permission
+- **Thread search indicator** — Thread replies appear in global search with a `› Thread` chevron label (matching notification panel pattern). Navigation opens the thread panel and scrolls to the result
+- **Resize desktop only** — Resize handle uses mouse events and is hidden below MD; no touch support for drag-to-resize
+- **Thread replies invisible on mobile** — Thread replies are filtered from the main feed when threads are enabled. Since mobile won't have a thread panel initially, thread replies would be completely hidden for mobile users with no way to view them. The `includeThreadReplies` infrastructure now exists at all three filter layers (DB cursor, DB unread, React hook), which makes it straightforward to pass `includeThreadReplies: true` on platforms without thread panel support. The space/channel thread toggle can also be used to disable threads entirely, which unfilters all replies into the main feed.
+
+
+## Space/Channel Thread Toggle
+
+A two-level toggle system controls whether threads are available in a space and its channels. Threads are off by default and must be explicitly enabled.
+
+### Data Model
+
+Two new optional boolean fields in `src/api/quorumApi.ts`:
+- **`Space.allowThreads?: boolean`** — Master gate. Default: `false` (off). Threads are unavailable across the entire space unless this is `true`.
+- **`Channel.allowThreads?: boolean`** — Per-channel override. Default: `undefined` (on, inherits from space). Set to `false` to disable threads in a specific channel even when the space enables them.
+
+### Resolution Logic
+
+```typescript
+const threadsEnabled = !!space?.allowThreads && (channel?.allowThreads !== false);
+```
+
+Computed in `Channel.tsx`. The space toggle is the prerequisite — channel toggles are irrelevant when the space disables threads globally.
+
+### Non-Destructive Disable
+
+Disabling threads does **not** delete any data. Thread metadata (`threadMeta`, `threadId`, `isThreadReply`) remains intact on all messages. When threads are disabled:
+- The three `isThreadReply` filter layers pass thread replies through (`includeThreadReplies: true`), so they appear inline in the main feed as regular messages
+- Thread UI elements are hidden: "Start Thread" in message actions, Threads header button, ThreadsListPanel, ThreadPanel
+- Thread hash navigation is short-circuited (early return when `!threadsEnabled`)
+
+Re-enabling threads restores full thread functionality with all existing thread data.
+
+### Settings UI
+
+- **Space level:** "Allow Threads" switch in Space Settings → General → Features section (`SpaceSettingsModal/General.tsx`). Managed by `useSpaceManagement` hook.
+- **Channel level:** "Allow Threads" switch in Channel Editor Modal (`ChannelEditorModal.tsx`). Only visible when `space?.allowThreads` is `true`. Managed by `useChannelManagement` hook with tri-state semantics (`undefined` = on/default, `false` = off).
+
+### Key Files
+
+| File | Change |
+|------|--------|
+| `src/api/quorumApi.ts` | `allowThreads?: boolean` on Space and Channel types |
+| `src/db/messages.ts` | `includeThreadReplies` param on `getMessages()` and `getFirstUnreadMessage()` |
+| `src/hooks/queries/messages/buildMessagesKey.ts` | 4-element key with thread variant + `buildMessagesKeyPrefix` |
+| `src/hooks/queries/messages/useMessages.ts` | Accepts and passes `includeThreadReplies` |
+| `src/hooks/business/channels/useChannelMessages.ts` | `threadsEnabled` prop, conditional filtering |
+| `src/components/space/Channel.tsx` | Computes `threadsEnabled`, gates all thread UI |
+| `src/components/modals/SpaceSettingsModal/General.tsx` | Space-level toggle |
+| `src/components/modals/ChannelEditorModal.tsx` | Channel-level toggle (conditional on space) |
+| `src/hooks/business/spaces/useSpaceManagement.ts` | `allowThreads` state + save |
+| `src/hooks/business/channels/useChannelManagement.ts` | `allowThreads` + `handleAllowThreadsChange` |
+| `src/services/MessageService.ts` | `setQueriesData` with prefix key for cache updates |
+| `src/services/ThreadService.ts` | `setQueriesData` with prefix key for cache updates |
+| `src/services/ActionQueueHandlers.ts` | `setQueriesData` with prefix key for cache updates |
+
+## Future Work
+
+These items are planned but not yet implemented:
+
+- **Advanced thread notifications** — Participation tracking, auto-follow, and per-thread unread indicators. Basic @mention notifications in thread replies are implemented. Store thread follows in a separate IndexedDB store (NOT UserConfig due to unbounded growth). Separate task.
+- **Migrate thread types to `quorum-shared`** — Move types and hooks to the shared package for cross-platform (mobile) compatibility.
+- **Permission gating** — Add `thread:create` permission to role system for per-role thread creation control.
+- **Mobile thread reply visibility** — Add a platform-aware flag so mobile clients pass `includeThreadReplies: true` on platforms without thread panel support, ensuring thread replies appear inline in the main feed. The `includeThreadReplies` infrastructure is already in place at all three filter layers.
+
+
+## Related Documentation
+
+- [Pinned Messages](pinned-messages.md) — Similar broadcast pattern for cross-client sync
+- [Dropdown Panels](../dropdown-panels.md) — Panel UI patterns (ThreadPanel uses a full sidebar instead)
+- [Responsive Layout](../responsive-layout.md) — Mobile layout considerations
+- [Threaded Conversations Task](../../tasks/threaded-conversations.md) — Original implementation task with full dependency chain
+
+---
+
+_Created: 2026-03-09_
+_Updated: 2026-03-14 (documented implemented Space/Channel Thread Toggle: new section with data model, resolution logic, non-destructive disable behavior, settings UI, key files; updated main feed filtering to document conditional `includeThreadReplies`/`threadsEnabled` behavior and 4-element React Query key strategy; added query key technical decision; updated Known Limitations mobile visibility note; moved thread toggle from Future Work to implemented section)_
+_Previously: 2026-03-14 (updated Known Limitations and Future Work to reflect that basic thread mention notifications are implemented; advanced items like participation tracking, auto-follow, and per-thread unread indicators remain as future work)_
+_Previously: 2026-03-13 (removed outdated bookmark migration notes from Known Limitations and Future Work — bookmarks already store threadId at creation time and thread-aware navigation works end-to-end; added space/channel thread toggle to Future Work — Option C two-level permission model)_
+_Previously: 2026-03-13 (moderator thread deletion: extended remove auth to include message:delete permission across all three MessageService handlers, added submitChannelMessage remove handler for DB cleanup, added Channel.tsx sync effect for root message soft-delete visibility in thread panel, updated ThreadSettingsModal to show delete section for moderators)_
+_Previously: 2026-03-12 (thread management: added Thread Settings Modal section, close/reopen/auto-close/remove actions, updated types, header description, title editing flow, known limitations, future work; removed Discord references)_

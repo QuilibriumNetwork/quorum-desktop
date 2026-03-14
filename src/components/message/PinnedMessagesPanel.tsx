@@ -15,6 +15,7 @@ import { t } from '@lingui/core/macro';
 import { usePinnedMessages } from '../../hooks';
 import { isTouchDevice } from '../../utils/platform';
 import { formatMessageDate } from '../../utils';
+import { buildMessageHash } from '../../utils/messageHashNavigation';
 import './PinnedMessagesPanel.scss';
 
 interface PinnedMessagesPanelProps {
@@ -35,7 +36,7 @@ interface PinnedMessagesPanelProps {
 interface PinnedMessageItemProps {
   message: MessageType;
   mapSenderToUser: (senderId: string) => any;
-  onJumpToMessage: (messageId: string) => void;
+  onJumpToMessage: (messageId: string, threadId?: string) => void;
   canPinMessages: boolean;
   togglePin: (e: React.MouseEvent, message: MessageType) => void;
   stickers?: { [key: string]: Sticker };
@@ -84,7 +85,7 @@ const PinnedMessageItem: React.FC<PinnedMessageItemProps> = ({
           >
             <Button
               type="secondary"
-              onClick={() => onJumpToMessage(message.messageId)}
+              onClick={() => onJumpToMessage(message.messageId, message.threadId)}
               iconName="arrow-right"
               size="small"
               className="gap-1"
@@ -150,14 +151,12 @@ export const PinnedMessagesPanel: React.FC<PinnedMessagesPanelProps> = ({
     usePinnedMessages(spaceId, channelId, channel, mapSenderToUser, stickers, spaceRoles, spaceChannels, onChannelClick);
 
   const handleJumpToMessage = useCallback(
-    (messageId: string) => {
-      // Close the panel
+    (messageId: string, threadId?: string) => {
       onClose();
 
-      // Navigate with hash - MessageList handles scroll and Message detects hash for highlighting
-      // This is the cross-component communication pattern via URL state
       const currentPath = window.location.pathname;
-      navigate(`${currentPath}#msg-${messageId}`);
+      const hash = buildMessageHash(messageId, threadId);
+      navigate(`${currentPath}${hash}`);
 
       // Clean up hash after highlight animation completes (8s matches CSS animation)
       setTimeout(() => {

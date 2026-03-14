@@ -103,6 +103,12 @@ export function useSpaceMentionCounts({
 
             const lastReadTimestamp = conversation?.lastReadTimestamp || 0;
 
+            // Fetch thread read times for this channel
+            const threadReadTimes = await messageDB.getThreadReadTimesForChannel({
+              spaceId: space.spaceId,
+              channelId,
+            });
+
             // Use optimized database query to get only unread messages with mentions
             // This is much faster than fetching all 10k messages
             const remainingLimit = DISPLAY_THRESHOLD - spaceTotal;
@@ -115,6 +121,14 @@ export function useSpaceMentionCounts({
 
             // Count mentions that are for the current user
             for (const message of messages) {
+              // Thread replies: check against thread read time
+              if (message.isThreadReply && message.threadId) {
+                const threadReadTime = threadReadTimes[message.threadId];
+                if (threadReadTime !== undefined && message.createdDate <= threadReadTime) {
+                  continue;
+                }
+              }
+
               if (isMentionedWithSettings(message, {
                 userAddress,
                 enabledTypes: mentionTypes,

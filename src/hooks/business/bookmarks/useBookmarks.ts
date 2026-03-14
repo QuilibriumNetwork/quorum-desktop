@@ -91,6 +91,7 @@ export const useBookmarks = ({ userAddress }: UseBookmarksOptions) => {
       conversationId: context.conversationId,
       sourceType,
       createdAt: Date.now(),
+      threadId: message.threadId,
       cachedPreview: {
         senderName,
         textSnippet,

@@ -128,7 +128,8 @@ type MessageDBContextValue = {
     inReplyTo?: string,
     skipSigning?: boolean,
     isSpaceOwner?: boolean,
-    parentMessage?: Message
+    parentMessage?: Message,
+    threadId?: string
   ) => Promise<void>;
   retryMessage: (
     spaceId: string,
@@ -1053,7 +1054,8 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
       inReplyTo?: string,
       skipSigning?: boolean,
       isSpaceOwner?: boolean,
-      parentMessage?: Message
+      parentMessage?: Message,
+      threadId?: string
     ) => {
       return messageService.submitChannelMessage(
         spaceId,
@@ -1064,7 +1066,8 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
         inReplyTo,
         skipSigning,
         isSpaceOwner,
-        parentMessage
+        parentMessage,
+        threadId
       );
     },
     [messageService]

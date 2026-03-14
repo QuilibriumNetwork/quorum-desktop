@@ -15,6 +15,8 @@ import {
   Space,
   EditMessage,
   PinMessage,
+  ThreadMessage,
+  ThreadMeta,
   UpdateProfileMessage,
   BroadcastSpaceTag,
 } from '../api/quorumApi';
@@ -23,6 +25,7 @@ import { int64ToBytes } from '../utils/bytes';
 import { QueryClient, InfiniteData } from '@tanstack/react-query';
 import {
   buildMessagesKey,
+  buildMessagesKeyPrefix,
   buildSpaceMembersKey,
   buildSpaceKey,
   buildSpacesKey,
@@ -51,6 +54,7 @@ import { notificationService } from './NotificationService';
 import { SimpleRateLimiter, RATE_LIMITS } from '../utils/rateLimit';
 import type { ActionQueueService } from './ActionQueueService';
 import { ENABLE_DM_ACTION_QUEUE } from '../config/features';
+import { ThreadService } from './ThreadService';
 
 // Timer for dismissing sync toast after inactivity
 let syncDismissTimer: NodeJS.Timeout | undefined;
@@ -135,6 +139,8 @@ export class MessageService {
   private handleSyncInitiateV2: (spaceId: string, message: any) => Promise<void>;
   private handleSyncManifest: (spaceId: string, targetInbox: string, payload: any) => Promise<void>;
 
+  private threadService: ThreadService;
+
   // Per-sender rate limiters (receiving-side defense-in-depth)
   private receivingRateLimiters = new Map<string, SimpleRateLimiter>();
 
@@ -146,6 +152,7 @@ export class MessageService {
 
   constructor(dependencies: MessageServiceDependencies) {
     this.messageDB = dependencies.messageDB;
+    this.threadService = new ThreadService(this.messageDB);
     this.enqueueOutbound = dependencies.enqueueOutbound;
     this.addOrUpdateConversation = dependencies.addOrUpdateConversation;
     this.apiClient = dependencies.apiClient;
@@ -511,11 +518,34 @@ export class MessageService {
         return;
       }
 
+      // Helper: soft-delete if message has a thread, hard-delete otherwise
+      const deleteOrSoftDelete = async (msgId: string) => {
+        if (targetMessage.threadMeta) {
+          // Soft-delete: preserve threadMeta so thread remains accessible
+          const softDeleted: Message = {
+            ...targetMessage,
+            content: {
+              type: 'post',
+              senderId: targetMessage.content.senderId,
+              text: '',
+            } as PostMessage,
+            threadMeta: targetMessage.threadMeta,
+          };
+          await messageDB.saveMessage(
+            softDeleted, 0, spaceId, conversationType,
+            updatedUserProfile.user_icon!, updatedUserProfile.display_name!,
+            currentUserAddress
+          );
+        } else {
+          await messageDB.deleteMessage(msgId);
+        }
+      };
+
       // For DMs (spaceId == channelId): Always honor deletion if sender owns the target message
       if (
         targetMessage.content.senderId === decryptedContent.content.senderId
       ) {
-        await messageDB.deleteMessage(decryptedContent.content.removeMessageId);
+        await deleteOrSoftDelete(decryptedContent.content.removeMessageId);
         // Don't return early - allow addMessage() to update React Query cache
       } else if (spaceId != channelId) {
         // For Spaces: Check role-based permissions
@@ -536,9 +566,7 @@ export class MessageService {
             )
           );
           if (isManager) {
-            await messageDB.deleteMessage(
-              decryptedContent.content.removeMessageId
-            );
+            await deleteOrSoftDelete(decryptedContent.content.removeMessageId);
             // Don't return early - allow addMessage() to update React Query cache
           } else {
             // For read-only channels, if not a manager, deny delete (even if user has traditional roles)
@@ -555,9 +583,7 @@ export class MessageService {
           ) {
             return;
           }
-          await messageDB.deleteMessage(
-            decryptedContent.content.removeMessageId
-          );
+          await deleteOrSoftDelete(decryptedContent.content.removeMessageId);
           // Don't return early - allow addMessage() to update React Query cache
         }
       }
@@ -773,6 +799,19 @@ export class MessageService {
         updatedUserProfile.display_name!,
         currentUserAddress
       );
+    } else if (decryptedContent.content.type === 'thread') {
+      const threadMsg = decryptedContent.content as ThreadMessage;
+      await this.threadService.handleThreadReceive({
+        threadMsg,
+        spaceId,
+        channelId,
+        currentUserAddress: currentUserAddress ?? '',
+        conversationType,
+        updatedUserProfile: {
+          user_icon: updatedUserProfile.user_icon!,
+          display_name: updatedUserProfile.display_name!,
+        },
+      });
     } else if (decryptedContent.content.type === 'update-profile') {
       const participant = await messageDB.getSpaceMember(
         spaceId,
@@ -812,6 +851,14 @@ export class MessageService {
         return;
       }
 
+      // Mark thread replies and update channel_threads registry
+      await this.threadService.handleThreadReplyReceive({
+        message: decryptedContent,
+        spaceId,
+        channelId,
+        currentUserAddress: currentUserAddress ?? '',
+      });
+
       await messageDB.saveMessage(
         { ...decryptedContent, channelId: channelId, spaceId: spaceId },
         0,
@@ -838,10 +885,10 @@ export class MessageService {
     status: 'sent' | 'failed',
     error?: string
   ) {
-    const queryKey = buildMessagesKey({ spaceId, channelId });
+    const queryKey = buildMessagesKeyPrefix({ spaceId, channelId });
 
-    queryClient.setQueryData(
-      queryKey,
+    queryClient.setQueriesData(
+      { queryKey },
       (oldData: InfiniteData<any>) => {
         if (!oldData?.pages) return oldData;
 
@@ -884,8 +931,8 @@ export class MessageService {
   ) {
     if (decryptedContent.content.type === 'reaction') {
       const reaction = decryptedContent.content as ReactionMessage;
-      queryClient.setQueryData(
-        buildMessagesKey({ spaceId: spaceId, channelId: channelId }),
+      queryClient.setQueriesData(
+        { queryKey: buildMessagesKeyPrefix({ spaceId: spaceId, channelId: channelId }) },
         (oldData: InfiniteData<any>) => {
           if (!oldData?.pages) return oldData;
 
@@ -943,8 +990,8 @@ export class MessageService {
       );
     } else if (decryptedContent.content.type === 'remove-reaction') {
       const reaction = decryptedContent.content as RemoveReactionMessage;
-      queryClient.setQueryData(
-        buildMessagesKey({ spaceId: spaceId, channelId: channelId }),
+      queryClient.setQueriesData(
+        { queryKey: buildMessagesKeyPrefix({ spaceId: spaceId, channelId: channelId }) },
         (oldData: InfiniteData<any>) => {
           if (!oldData?.pages) return oldData;
 
@@ -997,8 +1044,8 @@ export class MessageService {
     } else if (decryptedContent.content.type === 'edit-message') {
       const editMessage = decryptedContent.content as EditMessage;
 
-      queryClient.setQueryData(
-        buildMessagesKey({ spaceId: spaceId, channelId: channelId }),
+      queryClient.setQueriesData(
+        { queryKey: buildMessagesKeyPrefix({ spaceId: spaceId, channelId: channelId }) },
         (oldData: InfiniteData<any>) => {
           if (!oldData?.pages) return oldData;
 
@@ -1117,8 +1164,8 @@ export class MessageService {
 
       if (shouldHonorDelete) {
         const targetId = decryptedContent.content.removeMessageId;
-        queryClient.setQueryData(
-          buildMessagesKey({ spaceId: spaceId, channelId: channelId }),
+        queryClient.setQueriesData(
+          { queryKey: buildMessagesKeyPrefix({ spaceId: spaceId, channelId: channelId }) },
           (oldData: InfiniteData<any>) => {
             if (!oldData?.pages) return oldData;
 
@@ -1127,11 +1174,24 @@ export class MessageService {
               pages: oldData.pages.map((page, _index) => {
                 return {
                   ...page,
-                  messages: [
-                    ...page.messages.filter(
-                      (m: Message) => m.messageId !== targetId
-                    ),
-                  ],
+                  messages: page.messages
+                    .map((m: Message) => {
+                      if (m.messageId !== targetId) return m;
+                      // Soft-delete thread roots: preserve message with empty content
+                      if (m.threadMeta) {
+                        return {
+                          ...m,
+                          content: {
+                            type: 'post',
+                            senderId: m.content.senderId,
+                            text: '',
+                          } as PostMessage,
+                        };
+                      }
+                      // Hard-delete non-thread messages
+                      return null;
+                    })
+                    .filter((m: Message | null): m is Message => m !== null),
                   // Preserve any cursors or other pagination metadata
                   nextCursor: page.nextCursor,
                   prevCursor: page.prevCursor,
@@ -1140,6 +1200,14 @@ export class MessageService {
             };
           }
         );
+
+        // For thread replies: also update the thread-messages cache
+        this.threadService.handleThreadDeletedMessageCache({
+          targetMessage: targetMessage ?? undefined,
+          spaceId,
+          channelId,
+          queryClient,
+        });
       }
     } else if (decryptedContent.content.type === 'pin') {
       const pinMessage = decryptedContent.content as PinMessage;
@@ -1197,8 +1265,8 @@ export class MessageService {
       }
 
       // Update React Query cache
-      queryClient.setQueryData(
-        buildMessagesKey({ spaceId: spaceId, channelId: channelId }),
+      queryClient.setQueriesData(
+        { queryKey: buildMessagesKeyPrefix({ spaceId: spaceId, channelId: channelId }) },
         (oldData: InfiniteData<any>) => {
           if (!oldData?.pages) return oldData;
 
@@ -1237,6 +1305,14 @@ export class MessageService {
       });
       queryClient.invalidateQueries({
         queryKey: ['pinnedMessageCount', spaceId, channelId],
+      });
+    } else if (decryptedContent.content.type === 'thread') {
+      const threadMsg = decryptedContent.content as ThreadMessage;
+      await this.threadService.handleThreadCache({
+        threadMsg,
+        spaceId,
+        channelId,
+        queryClient,
       });
     } else if (decryptedContent.content.type === 'update-profile') {
       const participant = await this.messageDB.getSpaceMember(
@@ -1344,6 +1420,17 @@ export class MessageService {
         queryKey: ['mutedUsers', spaceId],
       });
     } else {
+      // Thread replies go to thread cache, not main feed
+      if (decryptedContent.isThreadReply) {
+        this.threadService.handleThreadReplyCache({
+          message: decryptedContent,
+          spaceId,
+          channelId,
+          queryClient,
+        });
+        return;
+      }
+
       // Read-only channel validation - must validate BEFORE adding to cache
       // Note: edit-message is handled earlier in the if-else chain (line ~310)
       const isDM = spaceId === channelId;
@@ -1456,8 +1543,8 @@ export class MessageService {
       }
 
       // Authorized - add to cache
-      queryClient.setQueryData(
-        buildMessagesKey({ spaceId: spaceId, channelId: channelId }),
+      queryClient.setQueriesData(
+        { queryKey: buildMessagesKeyPrefix({ spaceId: spaceId, channelId: channelId }) },
         (oldData: InfiniteData<any>) => {
           if (!oldData?.pages) return oldData;
 
@@ -3962,7 +4049,8 @@ export class MessageService {
     inReplyTo?: string,
     skipSigning?: boolean,
     isSpaceOwner?: boolean,
-    parentMessage?: Message
+    parentMessage?: Message,
+    threadId?: string
   ) {
     // Determine message type for optimistic update handling
     const isEditMessage =
@@ -3974,11 +4062,14 @@ export class MessageService {
     const isUpdateProfileMessage =
       typeof pendingMessage === 'object' &&
       (pendingMessage as any).type === 'update-profile';
+    const isThreadMessage =
+      typeof pendingMessage === 'object' &&
+      (pendingMessage as any).type === 'thread';
 
     // Post messages (regular text messages) use optimistic updates
     const isPostMessage =
       typeof pendingMessage === 'string' ||
-      (!isEditMessage && !isPinMessage && !isUpdateProfileMessage);
+      (!isEditMessage && !isPinMessage && !isUpdateProfileMessage && !isThreadMessage);
 
     // For post messages: prepare and show optimistically BEFORE enqueueing
     if (isPostMessage) {
@@ -4081,6 +4172,8 @@ export class MessageService {
             : undefined,
         replyMetadata,
         reactions: [],
+        // Thread fields
+        ...(threadId ? { threadId, isThreadReply: true } : {}),
       } as Message;
 
       // Sign message BEFORE optimistic display (non-repudiability requirement)
@@ -4099,10 +4192,29 @@ export class MessageService {
       }
 
       // Add to cache with 'sending' status (optimistic update)
-      await this.addMessage(queryClient, spaceId, channelId, {
-        ...message,
-        sendStatus: 'sending',
-      });
+      // Thread replies go to thread cache only, not main feed
+      if (threadId) {
+        queryClient.setQueryData(
+          ['thread-messages', spaceId, channelId, threadId],
+          (oldData: any) => {
+            if (!oldData) return oldData;
+            const optimisticMessage = { ...message, sendStatus: 'sending' as const };
+            return {
+              ...oldData,
+              messages: [
+                ...oldData.messages.filter((m: Message) => m.messageId !== message.messageId),
+                optimisticMessage,
+              ],
+              replyCount: oldData.replyCount + 1,
+            };
+          }
+        );
+      } else {
+        await this.addMessage(queryClient, spaceId, channelId, {
+          ...message,
+          sendStatus: 'sending',
+        });
+      }
 
       // Queue to ActionQueue for persistent, crash-resistant delivery
       if (!this.actionQueueService) {
@@ -4344,6 +4456,90 @@ export class MessageService {
         return outbounds;
       }
 
+      // Handle thread-message type
+      if (
+        typeof pendingMessage === 'object' &&
+        (pendingMessage as any).type === 'thread'
+      ) {
+        const threadMsg = pendingMessage as ThreadMessage;
+
+        // Pre-send validation (DM check, idempotency, auth)
+        // Returns targetMessage to avoid a second DB fetch
+        const preCheck = await this.threadService.handleThreadSend({
+          threadMsg,
+          spaceId,
+          channelId,
+          queryClient,
+          currentUserAddress: currentPasskeyInfo.address,
+        });
+        if (!preCheck.shouldProceed || !preCheck.targetMessage) return outbounds;
+        const targetMessage = preCheck.targetMessage;
+
+        const messageId = await crypto.subtle.digest(
+          'SHA-256',
+          Buffer.from(
+            nonce +
+              'thread' +
+              currentPasskeyInfo.address +
+              canonicalize(threadMsg),
+            'utf-8'
+          )
+        );
+
+        const message = {
+          spaceId: spaceId,
+          channelId: channelId,
+          messageId: Buffer.from(messageId).toString('hex'),
+          digestAlgorithm: 'SHA-256',
+          nonce: nonce,
+          createdDate: Date.now(),
+          modifiedDate: Date.now(),
+          lastModifiedHash: '',
+          content: {
+            ...threadMsg,
+            senderId: currentPasskeyInfo.address,
+          } as ThreadMessage,
+        } as Message;
+
+        // Sign (same pattern as pin messages)
+        if (!space?.isRepudiable || (space?.isRepudiable && !skipSigning)) {
+          const inboxKey = await this.messageDB.getSpaceKey(spaceId, 'inbox');
+          message.publicKey = inboxKey.publicKey;
+          message.signature = Buffer.from(
+            JSON.parse(
+              ch.js_sign_ed448(
+                Buffer.from(inboxKey.privateKey, 'hex').toString('base64'),
+                Buffer.from(messageId).toString('base64')
+              )
+            ),
+            'base64'
+          ).toString('hex');
+        }
+
+        outbounds.push(await this.encryptAndSendToSpace(spaceId, message));
+
+        // Resolve conversation profile for DB saves (uses DefaultImages + i18n)
+        const conversationId = spaceId + '/' + channelId;
+        const conversation = await this.messageDB.getConversation({ conversationId });
+
+        // Post-broadcast: DB writes and cache updates
+        const { earlyReturn } = await this.threadService.handleThreadSendPostBroadcast({
+          threadMsg,
+          targetMessage,
+          spaceId,
+          channelId,
+          queryClient,
+          currentUserAddress: currentPasskeyInfo.address,
+          conversationProfile: {
+            user_icon: conversation.conversation?.icon ?? DefaultImages.UNKNOWN_USER,
+            display_name: conversation.conversation?.displayName ?? t`Unknown User`,
+          },
+        });
+        if (earlyReturn) return outbounds;
+
+        return outbounds;
+      }
+
       // Handle update-profile type
       if (
         typeof pendingMessage === 'object' &&
@@ -4433,6 +4629,53 @@ export class MessageService {
     });
   }
 
+  async createThread(
+    spaceId: string,
+    channelId: string,
+    targetMessageId: string,
+    queryClient: QueryClient,
+    currentPasskeyInfo: {
+      credentialId: string;
+      address: string;
+      publicKey: string;
+      displayName?: string;
+      pfpUrl?: string;
+      completedOnboarding: boolean;
+    },
+    skipSigning?: boolean,
+    isSpaceOwner?: boolean
+  ) {
+    if (spaceId === channelId) return; // Reject DMs
+
+    const threadIdBuffer = await crypto.subtle.digest(
+      'SHA-256',
+      Buffer.from(targetMessageId + ':thread', 'utf-8')
+    );
+    const threadId = Buffer.from(threadIdBuffer).toString('hex');
+
+    const threadMeta: ThreadMeta = { threadId, createdBy: currentPasskeyInfo.address };
+    const threadMessage: ThreadMessage = {
+      type: 'thread',
+      senderId: currentPasskeyInfo.address,
+      targetMessageId,
+      action: 'create',
+      threadMeta,
+    };
+
+    await this.submitChannelMessage(
+      spaceId,
+      channelId,
+      threadMessage,
+      queryClient,
+      currentPasskeyInfo,
+      undefined,
+      skipSigning,
+      isSpaceOwner
+    );
+
+    return { threadId, threadMeta };
+  }
+
   /**
    * Retries sending a failed message.
    * Re-uses the same signed message (messageId preserved) with fresh encryption.
@@ -4450,8 +4693,8 @@ export class MessageService {
     }
 
     // Update status to 'sending' (optimistic)
-    queryClient.setQueryData(
-      buildMessagesKey({ spaceId, channelId }),
+    queryClient.setQueriesData(
+      { queryKey: buildMessagesKeyPrefix({ spaceId, channelId }) },
       (oldData: InfiniteData<any>) => {
         if (!oldData?.pages) return oldData;
         return {
@@ -4567,8 +4810,8 @@ export class MessageService {
     }
 
     // Update status to 'sending' (optimistic)
-    queryClient.setQueryData(
-      buildMessagesKey({ spaceId: address, channelId: address }),
+    queryClient.setQueriesData(
+      { queryKey: buildMessagesKeyPrefix({ spaceId: address, channelId: address }) },
       (oldData: InfiniteData<any>) => {
         if (!oldData?.pages) return oldData;
         return {

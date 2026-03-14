@@ -146,6 +146,8 @@ const SpaceSettingsModal: React.FunctionComponent<{
     setIsRepudiable,
     saveEditHistory,
     setSaveEditHistory,
+    allowThreads,
+    setAllowThreads,
     handleDeleteSpace,
     deleteError,
     clearDeleteError,
@@ -378,6 +380,7 @@ const SpaceSettingsModal: React.FunctionComponent<{
         defaultChannelId: defaultChannel?.channelId || space.defaultChannelId,
         isRepudiable,
         saveEditHistory,
+        allowThreads,
         iconUrl,
         bannerUrl,
         roles,
@@ -395,6 +398,7 @@ const SpaceSettingsModal: React.FunctionComponent<{
     defaultChannel,
     isRepudiable,
     saveEditHistory,
+    allowThreads,
     roles,
     emojis,
     stickers,
@@ -516,6 +520,8 @@ const SpaceSettingsModal: React.FunctionComponent<{
                           setIsRepudiable={setIsRepudiable}
                           saveEditHistory={saveEditHistory}
                           setSaveEditHistory={setSaveEditHistory}
+                          allowThreads={allowThreads}
+                          setAllowThreads={setAllowThreads}
                           onSave={saveChanges}
                           isSaving={isSaving}
                           hasValidationError={!!validateSpaceName(spaceName)}

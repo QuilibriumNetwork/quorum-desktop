@@ -5,7 +5,7 @@ import { formatMessageDate } from '../../../utils';
 
 export interface UseSearchResultFormattingProps {
   message: Message;
-  onNavigate: (spaceId: string, channelId: string, messageId: string) => void;
+  onNavigate: (spaceId: string, channelId: string, messageId: string, threadId?: string) => void;
   compactDate?: boolean;
 }
 
@@ -38,8 +38,11 @@ export const useSearchResultFormatting = ({
 
   // Handle click navigation
   const handleClick = useCallback(() => {
-    onNavigate(message.spaceId, message.channelId, message.messageId);
-  }, [message.spaceId, message.channelId, message.messageId, onNavigate]);
+    // Use threadId (reply) or threadMeta.threadId (root message) so clicking a root
+    // message also opens the thread panel.
+    const threadId = message.threadId ?? message.threadMeta?.threadId;
+    onNavigate(message.spaceId, message.channelId, message.messageId, threadId);
+  }, [message.spaceId, message.channelId, message.messageId, message.threadId, message.threadMeta?.threadId, onNavigate]);
 
   // Handle keyboard navigation
   const handleKeyDown = useCallback(

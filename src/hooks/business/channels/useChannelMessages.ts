@@ -20,6 +20,7 @@ interface UseChannelMessagesProps {
     };
   };
   channel?: Channel;
+  threadsEnabled?: boolean;
 }
 
 export function useChannelMessages({
@@ -28,11 +29,13 @@ export function useChannelMessages({
   roles,
   members,
   channel,
+  threadsEnabled = false,
 }: UseChannelMessagesProps) {
   const user = usePasskeysContext();
   const { data: messages, fetchPreviousPage, fetchNextPage, hasNextPage } = useMessages({
     spaceId,
     channelId,
+    includeThreadReplies: !threadsEnabled,
   });
   const { data: isSpaceOwner } = useSpaceOwner({ spaceId });
   const { data: space } = useSpace({ spaceId });
@@ -65,16 +68,17 @@ export function useChannelMessages({
     const allMessages = messages.pages.flatMap(
       (p) => (p as { messages: MessageType[] }).messages as MessageType[]
     );
-    // Deduplicate by messageId to prevent React key warnings
-    // This can happen when the same message is added from multiple sources
-    // (e.g., kick message created in SpaceService and MessageService rekey handler)
+    // Deduplicate by messageId and filter out thread replies (defense-in-depth)
+    // Thread replies should be filtered at the DB layer, but this guards against
+    // any code path that bypasses getMessages() (e.g., setQueryData with raw data)
     const seen = new Set<string>();
     return allMessages.filter((msg) => {
       if (seen.has(msg.messageId)) return false;
+      if (msg.isThreadReply && threadsEnabled) return false;
       seen.add(msg.messageId);
       return true;
     });
-  }, [messages]);
+  }, [messages, threadsEnabled]);
 
   const canDeleteMessages = useCallback(
     (message: MessageType) => {

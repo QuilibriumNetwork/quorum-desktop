@@ -1,0 +1,44 @@
+@use '../../styles/variables' as *;
+
+.thread-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: $s-2;
+  padding: $s-1 $s-3;
+  margin-top: $s-1;
+  border: 1px solid var(--color-border-default);
+  border-radius: $rounded-md;
+  background: transparent;
+  color: var(--text-link);
+  font-size: $text-xs;
+  cursor: pointer;
+  transition: border-color $duration-150 $ease-out;
+
+  &:hover {
+    border-color: var(--color-border-strong);
+  }
+
+  &__icon {
+    font-size: 0.75rem;
+    color: var(--text-link);
+  }
+
+  &__count {
+    font-weight: 600;
+  }
+
+  &__time {
+    color: var(--text-subtle);
+    font-weight: 400;
+  }
+
+  &--closed {
+    .thread-indicator__count {
+      color: var(--text-subtle);
+    }
+  }
+
+  &__lock-icon {
+    color: var(--text-subtle);
+  }
+}

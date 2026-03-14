@@ -4,6 +4,7 @@ import { t } from '@lingui/core/macro';
 import { Container, Flex, Icon, Button, Tooltip, Select } from '../primitives';
 import { DropdownPanel } from '../ui';
 import { isTouchDevice } from '../../utils/platform';
+import { buildMessageHash } from '../../utils/messageHashNavigation';
 import { NotificationItem } from './NotificationItem';
 import { useAllMentions, useMentionNotificationSettings } from '../../hooks/business/mentions';
 import { useAllReplies } from '../../hooks/business/replies';
@@ -108,12 +109,12 @@ export const NotificationPanel: React.FC<NotificationPanelProps> = ({
   }, []);
 
   // Handle navigation to message - uses hash-based highlighting (cross-component communication)
-  const handleNavigate = useCallback((spaceId: string, channelId: string, messageId: string) => {
-    // Close the dropdown
+  const handleNavigate = useCallback((spaceId: string, channelId: string, messageId: string, threadId?: string) => {
     onClose();
 
-    // Navigate with hash - MessageList handles scroll and Message detects hash for highlighting
-    navigate(`/spaces/${spaceId}/${channelId}#msg-${messageId}`);
+    // buildMessageHash returns #msg-{id} or #thread-{threadId}-msg-{id}
+    const hash = buildMessageHash(messageId, threadId);
+    navigate(`/spaces/${spaceId}/${channelId}${hash}`);
 
     // Clean up hash after highlight animation completes (8s matches CSS animation)
     setTimeout(() => {
@@ -140,6 +141,25 @@ export const NotificationPanel: React.FC<NotificationPanelProps> = ({
           conversationId,
           lastMessageTimestamp: now,
         });
+      }
+
+      // Also save thread read times for all threads in channels that have notifications.
+      const threadEntries: Array<{ threadId: string; spaceId: string; channelId: string; lastReadTimestamp: number }> = [];
+
+      for (const channelId of channelsWithNotifications) {
+        const threads = await messageDB.getChannelThreads({ spaceId, channelId });
+        for (const thread of threads) {
+          threadEntries.push({
+            threadId: thread.threadId,
+            spaceId,
+            channelId,
+            lastReadTimestamp: now,
+          });
+        }
+      }
+
+      if (threadEntries.length > 0) {
+        await messageDB.bulkSaveThreadReadTimes(threadEntries);
       }
 
       // Invalidate all notification-related caches

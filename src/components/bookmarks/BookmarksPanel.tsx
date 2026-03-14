@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Virtuoso } from 'react-virtuoso';
 import { t } from '@lingui/core/macro';
 import type { Bookmark, Sticker } from '../../api/quorumApi';
+import { buildMessageHash } from '../../utils/messageHashNavigation';
 import { BookmarkItem } from './BookmarkItem';
 import {
   Flex,
@@ -110,13 +111,16 @@ export const BookmarksPanel: React.FC<BookmarksPanelProps> = ({
     // Close the panel first
     onClose();
 
+    // Build compound hash for thread-aware navigation
+    const hash = buildMessageHash(bookmark.messageId, bookmark.threadId);
+
     // Navigate with hash - destination MessageList handles scroll and Message detects hash for highlighting
     if (bookmark.sourceType === 'channel') {
-      navigate(`/spaces/${bookmark.spaceId}/${bookmark.channelId}#msg-${bookmark.messageId}`);
+      navigate(`/spaces/${bookmark.spaceId}/${bookmark.channelId}${hash}`);
     } else {
       // For DMs: extract address from conversationId (format: "address/address")
       const dmAddress = bookmark.conversationId?.split('/')[0];
-      navigate(`/messages/${dmAddress}#msg-${bookmark.messageId}`);
+      navigate(`/messages/${dmAddress}${hash}`);
     }
 
     // Clean up hash after highlight animation completes (8s matches CSS animation)

@@ -18,6 +18,23 @@
   @media (max-width: 1023px) {
     border-top-left-radius: $rounded-xl;
   }
+
+  // When thread panel is open, add top-right radius to visually separate from thread sidebar
+  // Desktop only — on small screens the thread is a full-width overlay
+  &.thread-open {
+    @media (min-width: $screen-md) {
+      border-top-right-radius: $rounded-xl;
+      overflow: hidden;
+    }
+
+    // Hide search field when thread panel is a full-width overlay (≤md)
+    // The thread panel covers the chat area entirely, so the search is irrelevant
+    @media (max-width: $screen-md) {
+      .channel-search {
+        display: none;
+      }
+    }
+  }
 }
 
 .message {

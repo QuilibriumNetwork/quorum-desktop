@@ -98,8 +98,8 @@ export const usePinnedMessages = (
 
       // Optimistic update: Update React Query caches immediately for instant UI feedback
       // Update Messages cache to show isPinned = true
-      queryClient.setQueryData(
-        ['Messages', spaceId, channelId],
+      queryClient.setQueriesData(
+        { queryKey: ['Messages', spaceId, channelId] },
         (oldData: any) => {
           if (!oldData?.pages) return oldData;
           return {
@@ -179,8 +179,8 @@ export const usePinnedMessages = (
 
       // Optimistic update: Update React Query caches immediately for instant UI feedback
       // Update Messages cache to show isPinned = false
-      queryClient.setQueryData(
-        ['Messages', spaceId, channelId],
+      queryClient.setQueriesData(
+        { queryKey: ['Messages', spaceId, channelId] },
         (oldData: any) => {
           if (!oldData?.pages) return oldData;
           return {

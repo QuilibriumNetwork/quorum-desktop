@@ -2,6 +2,7 @@ import { useState, useCallback } from 'react';
 import type { Message as MessageType, Reaction } from '../../../api/quorumApi';
 import type { CustomEmoji } from 'emoji-picker-react/dist/config/customEmojiConfig';
 import type { MemberInfo } from '../../../components/modals/ReactionsModal';
+import type { ThreadSettingsModalConfig } from '../../../components/context/ThreadSettingsModalProvider';
 
 interface UseModalManagementReturn {
   addSpaceVisible: boolean;
@@ -59,6 +60,12 @@ interface UseModalManagementReturn {
     members: Record<string, MemberInfo>;
   }) => void;
   hideReactionsModal: () => void;
+  threadSettingsModal: {
+    visible: boolean;
+    config: ThreadSettingsModalConfig | null;
+  };
+  showThreadSettingsModal: (config: ThreadSettingsModalConfig) => void;
+  hideThreadSettingsModal: () => void;
 }
 
 export const useModalManagement = (): UseModalManagementReturn => {
@@ -95,6 +102,14 @@ export const useModalManagement = (): UseModalManagementReturn => {
     visible: false,
     message: null,
   });
+  const [threadSettingsModal, setThreadSettingsModal] = useState<{
+    visible: boolean;
+    config: ThreadSettingsModalConfig | null;
+  }>({
+    visible: false,
+    config: null,
+  });
+
   const [reactionsModal, setReactionsModal] = useState<{
     visible: boolean;
     reactions: Reaction[];
@@ -184,6 +199,14 @@ export const useModalManagement = (): UseModalManagementReturn => {
     });
   }, []);
 
+  const showThreadSettingsModal = useCallback((config: ThreadSettingsModalConfig) => {
+    setThreadSettingsModal({ visible: true, config });
+  }, []);
+
+  const hideThreadSettingsModal = useCallback(() => {
+    setThreadSettingsModal({ visible: false, config: null });
+  }, []);
+
   return {
     addSpaceVisible,
     showAddSpaceModal,
@@ -203,5 +226,8 @@ export const useModalManagement = (): UseModalManagementReturn => {
     reactionsModal,
     showReactionsModal,
     hideReactionsModal,
+    threadSettingsModal,
+    showThreadSettingsModal,
+    hideThreadSettingsModal,
   };
 };

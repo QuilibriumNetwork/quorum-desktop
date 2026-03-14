@@ -1,10 +1,11 @@
 import { logger } from '@quilibrium/quorum-shared';
-import React, { useMemo, useState, useCallback } from 'react';
+import React, { useMemo, useState, useCallback, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
 import type {
   Emoji,
   Message as MessageType,
+  PostMessage,
   Role,
   Sticker,
   Channel,
@@ -46,6 +47,7 @@ import { useMessageHighlight } from '../../hooks/business/messages/useMessageHig
 import { useViewportMentionHighlight } from '../../hooks/business/messages/useViewportMentionHighlight';
 import MessageActions from './MessageActions';
 import MessageActionsMenu from './MessageActionsMenu';
+import { ThreadIndicator } from '../thread/ThreadIndicator';
 import { MessageMarkdownRenderer } from './MessageMarkdownRenderer';
 import { isTouchDevice } from '../../utils/platform';
 import { hapticLight } from '../../utils/haptic';
@@ -114,6 +116,7 @@ type MessageProps = {
   roles?: Array<{ roleId: string; roleTag: string; displayName: string; color: string }>;
   groups?: Array<{ groupName: string; channels: Channel[]; icon?: string; iconColor?: string }>;
   canUseEveryone?: boolean;
+  onStartThread?: () => void;
 };
 
 export const Message = React.memo(
@@ -155,6 +158,7 @@ export const Message = React.memo(
     roles = [],
     groups = [],
     canUseEveryone = false,
+    onStartThread,
   }: MessageProps) => {
     const user = usePasskeysContext();
     const { spaceId } = useParams();
@@ -166,6 +170,7 @@ export const Message = React.memo(
     const [showUserProfile, setShowUserProfile] = useState<boolean>(false);
     const [editingMessageId, setEditingMessageId] = useState<string | null>(null);
     const [contextMenu, setContextMenu] = useState<{ x: number; y: number } | null>(null);
+    const contextMenuClosedAt = useRef(0);
     const [isShowingGifAnimation, setIsShowingGifAnimation] = useState(false);
 
     // Modal contexts
@@ -518,6 +523,16 @@ export const Message = React.memo(
                   </span>
                 </Container>
               );
+            } else if (message.content.repliesToMessageId) {
+              // Original message was deleted — show placeholder so it's still clear this is a reply
+              return (
+                <Container className="message-reply-heading flex items-center min-w-0">
+                  <Container className="message-reply-curve flex-shrink-0" />
+                  <span className="message-reply-text flex-1 min-w-0 italic text-subtle">
+                    {t`[Original message was deleted]`}
+                  </span>
+                </Container>
+              );
             } else {
               return <></>;
             }
@@ -599,33 +614,18 @@ export const Message = React.memo(
               />
             )}
             <Container className="message-content">
-              {interactions.shouldShowActions && (
+              {(interactions.shouldShowActions || contextMenu) && (
                 <MessageActions
                   message={message}
                   userAddress={user.currentPasskeyInfo!.address}
-                  canUserDelete={messageActions.canUserDelete}
-                  canUserEdit={messageActions.canUserEdit}
-                  canPinMessages={
-                    canPinMessages !== undefined
-                      ? canPinMessages
-                      : pinnedMessages.canPinMessages
-                  }
-                  height={height}
                   onReaction={messageActions.handleReaction}
                   onReply={messageActions.handleReply}
-                  onCopyLink={messageActions.handleCopyLink}
-                  onCopyMessageText={messageActions.handleCopyMessageText}
-                  onDelete={messageActions.handleDelete}
-                  onPin={(e) => pinnedMessages.togglePin(e, message)}
                   onMoreReactions={messageActions.handleMoreReactions}
-                  onEdit={messageActions.handleEdit}
-                  onViewEditHistory={messageActions.handleViewEditHistory}
-                  canViewEditHistory={messageActions.canViewEditHistory}
-                  copiedLinkId={messageActions.copiedLinkId}
-                  copiedMessageText={messageActions.copiedMessageText}
-                  // Bookmark props
-                  isBookmarked={messageActions.isBookmarked}
-                  onBookmarkToggle={messageActions.handleBookmarkToggle}
+                  onDotsClick={(position) => {
+                    // Skip if menu was just closed by click-outside (mousedown fires before click)
+                    if (Date.now() - contextMenuClosedAt.current < 200) return;
+                    setContextMenu((prev) => prev ? null : position);
+                  }}
                 />
               )}
 
@@ -902,6 +902,18 @@ export const Message = React.memo(
                 }
 
                 if (contentData.type === 'post') {
+                  // Soft-deleted thread root: render placeholder
+                  const postContent = message.content as PostMessage;
+                  const isSoftDeleted = message.threadMeta && (
+                    !postContent.text ||
+                    (Array.isArray(postContent.text) && postContent.text.every(s => !s))
+                  );
+                  if (isSoftDeleted) {
+                    return (
+                      <div className="text-subtle italic">{t`[Original message was deleted]`}</div>
+                    );
+                  }
+
                   // Check if we should use markdown rendering (disabled for security review)
                   if (ENABLE_MARKDOWN && formatting.shouldUseMarkdown()) {
                     return (
@@ -1200,6 +1212,17 @@ export const Message = React.memo(
                 onReactionClick={messageActions.handleReaction}
               />
 
+              {/* Thread Indicator */}
+              {message.threadMeta && onStartThread && (
+                <ThreadIndicator
+                  spaceId={message.spaceId}
+                  channelId={message.channelId}
+                  threadId={message.threadMeta.threadId}
+                  onClick={onStartThread}
+                  isClosed={message.threadMeta?.isClosed}
+                />
+              )}
+
               {/* Message Send Status Indicator */}
               {message.sendStatus === 'sending' && (
                 <Flex align="center" gap="xs" className="message-status sending pt-1">
@@ -1243,7 +1266,7 @@ export const Message = React.memo(
           <MessageActionsMenu
             message={message}
             position={contextMenu}
-            onClose={() => setContextMenu(null)}
+            onClose={() => { contextMenuClosedAt.current = Date.now(); setContextMenu(null); }}
             onReply={() => {
               messageActions.handleReply();
               setContextMenu(null);
@@ -1252,19 +1275,14 @@ export const Message = React.memo(
             onCopyMessageText={messageActions.handleCopyMessageText}
             onDelete={
               messageActions.canUserDelete
-                ? () =>
-                    messageActions.handleDelete({
-                      shiftKey: false,
-                    } as React.MouseEvent)
+                ? (e: React.MouseEvent) =>
+                    messageActions.handleDelete(e)
                 : undefined
             }
             onPin={
               pinnedMessages.canPinMessages
-                ? () =>
-                    pinnedMessages.togglePin(
-                      { shiftKey: false } as React.MouseEvent,
-                      message
-                    )
+                ? (e: React.MouseEvent) =>
+                    pinnedMessages.togglePin(e, message)
                 : undefined
             }
             onReaction={messageActions.handleReaction}
@@ -1296,6 +1314,8 @@ export const Message = React.memo(
             copiedMessageText={messageActions.copiedMessageText}
             isBookmarked={messageActions.isBookmarked}
             onBookmarkToggle={messageActions.handleBookmarkToggle}
+            hasThread={!!message.threadMeta}
+            onStartThread={onStartThread}
           />
         )}
 
@@ -1318,7 +1338,8 @@ export const Message = React.memo(
       JSON.stringify(prevProps.message.reactions) !==
         JSON.stringify(nextProps.message.reactions) ||
       prevProps.message.isPinned !== nextProps.message.isPinned ||
-      prevProps.message.sendStatus !== nextProps.message.sendStatus;
+      prevProps.message.sendStatus !== nextProps.message.sendStatus ||
+      JSON.stringify(prevProps.message.threadMeta) !== JSON.stringify(nextProps.message.threadMeta);
 
     return !shouldRerender;
   }

@@ -1,8 +1,8 @@
 import { logger } from '@quilibrium/quorum-shared';
 import React, { useEffect, useState, useCallback, useRef, useMemo, Suspense } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import './Channel.scss';
-import { StickerMessage } from '../../api/quorumApi';
+import { StickerMessage, Message as MessageType, ThreadMessage, ThreadMeta } from '../../api/quorumApi';
 import {
   useChannelData,
   useChannelMessages,
@@ -28,10 +28,14 @@ import { Button, Tooltip, Icon } from '../primitives';
 import { MobileDrawer, ListSearchInput, TouchAwareListItem } from '../ui';
 import { getIconColorHex } from './IconPicker/types';
 import { isTouchDevice } from '../../utils/platform';
+import { parseMessageHash } from '../../utils/messageHashNavigation';
 import MessageComposer, {
   MessageComposerRef,
 } from '../message/MessageComposer';
 import { PinnedMessagesPanel } from '../message/PinnedMessagesPanel';
+import { ThreadsListPanel } from '../thread/ThreadsListPanel';
+import { useThreadMessages } from '../../hooks/business/threads';
+import { useThreadContextStore } from '../context/ThreadContext';
 import { NotificationPanel } from '../notifications/NotificationPanel';
 import { BookmarksPanel } from '../bookmarks/BookmarksPanel';
 import { Virtuoso } from 'react-virtuoso';
@@ -50,6 +54,12 @@ import {
 
 // Lazy-load EmojiPicker to avoid bundling on every channel init
 const LazyEmojiPicker = React.lazy(() => import('emoji-picker-react'));
+
+/** Read --sidebar-right-width from :root (defined in _base.scss). Fallback 260px. */
+function getSidebarRightWidth(): number {
+  const val = getComputedStyle(document.documentElement).getPropertyValue('--sidebar-right-width');
+  return parseInt(val, 10) || 260;
+}
 
 // Helper function to check if user can post in read-only channel
 // NOTE: Space owners must explicitly join a manager role to post in read-only channels.
@@ -92,6 +102,7 @@ const Channel: React.FC<ChannelProps> = ({
   channelId,
 }) => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { isMobile, isDesktop, toggleLeftSidebar, navMenuOpen, toggleNavMenu } =
     useResponsiveLayoutContext();
   const queryClient = useQueryClient();
@@ -101,9 +112,42 @@ const Channel: React.FC<ChannelProps> = ({
   const [init, setInit] = useState(false);
   const [skipSigning, setSkipSigning] = useState<boolean>(false);
 
-  // Unified panel state - ensures only one panel can be open at a time
-  type ActivePanel = 'pinned' | 'notifications' | 'bookmarks' | 'search' | null;
-  const [activePanel, setActivePanel] = useState<ActivePanel>(null);
+  // Utility panel state - only one utility panel open at a time (header dropdowns)
+  type UtilityPanel = 'pinned' | 'threads' | 'notifications' | 'bookmarks' | 'search' | null;
+  const [activePanel, setActivePanel] = useState<UtilityPanel>(null);
+
+  // Thread panel state - independent from utility panels so both can coexist
+  const [isThreadOpen, setIsThreadOpen] = useState(false);
+
+  // Thread state
+  const [activeThreadId, setActiveThreadId] = useState<string | null>(null);
+  const [activeThreadRootMessage, setActiveThreadRootMessage] = useState<MessageType | null>(null);
+
+  // Thread messages
+  const { data: threadData, isLoading: isLoadingThread } = useThreadMessages({
+    spaceId,
+    channelId,
+    threadId: activeThreadId,
+    enabled: isThreadOpen && !!activeThreadId,
+  });
+  const threadMessages = threadData?.messages ?? [];
+
+  // Populate ThreadContext for ThreadPanel (rendered in Space.tsx)
+  // Uses the store hook (not subscribing) to avoid re-render loops
+  const threadCtx = useThreadContextStore();
+
+  React.useEffect(() => {
+    const current = threadCtx.getThreadState();
+    threadCtx.setThreadState({
+      ...current,
+      isOpen: isThreadOpen,
+      threadId: activeThreadId,
+      rootMessage: activeThreadRootMessage,
+      threadMessages,
+      isLoading: isLoadingThread,
+      targetMessageId: current.targetMessageId,
+    });
+  }, [isThreadOpen, activeThreadId, activeThreadRootMessage, threadMessages, isLoadingThread]);
 
   // User profile modal state and logic
   const userProfileModal = useUserProfileModal({ showUsers });
@@ -195,6 +239,9 @@ const Channel: React.FC<ChannelProps> = ({
     generateVirtualizedUserList,
   } = useChannelData({ spaceId, channelId });
 
+  // Thread toggle: space-level master gate + channel-level override
+  const threadsEnabled = !!space?.allowThreads && (channel?.allowThreads !== false);
+
   // Get message handling
   const {
     messageList,
@@ -205,7 +252,7 @@ const Channel: React.FC<ChannelProps> = ({
     canPinMessages,
     mapSenderToUser,
     isSpaceOwner,
-  } = useChannelMessages({ spaceId, channelId, roles, members, channel });
+  } = useChannelMessages({ spaceId, channelId, roles, members, channel, threadsEnabled });
 
   // Get pinned messages
   const { pinnedCount } = usePinnedMessages(spaceId, channelId, channel);
@@ -357,6 +404,385 @@ const Channel: React.FC<ChannelProps> = ({
     ]
   );
 
+  const handleSetThreadClosed = useCallback(
+    async (_threadId: string, close: boolean) => {
+      if (spaceId === channelId) return;
+      if (!activeThreadRootMessage) return;
+
+      const threadMeta = activeThreadRootMessage.threadMeta;
+      if (!threadMeta) return;
+
+      const updatedMeta: ThreadMeta = close
+        ? { ...threadMeta, isClosed: true, closedBy: user.currentPasskeyInfo!.address }
+        : { ...threadMeta, isClosed: false };
+      if (!close) {
+        delete (updatedMeta as any).closedBy;
+      }
+
+      const threadMessage: ThreadMessage = {
+        type: 'thread',
+        senderId: user.currentPasskeyInfo!.address,
+        targetMessageId: activeThreadRootMessage.messageId,
+        action: close ? 'close' : 'reopen',
+        threadMeta: updatedMeta,
+      };
+
+      const effectiveSkip = space?.isRepudiable ? skipSigning : false;
+      await submitChannelMessage(
+        spaceId, channelId, threadMessage, queryClient,
+        user.currentPasskeyInfo!, undefined, effectiveSkip, isSpaceOwner
+      );
+
+      setActiveThreadRootMessage((prev) =>
+        prev ? { ...prev, threadMeta: { ...prev.threadMeta, ...updatedMeta } } : prev
+      );
+    },
+    [spaceId, channelId, activeThreadRootMessage, user.currentPasskeyInfo, submitChannelMessage, queryClient, space, skipSigning, isSpaceOwner]
+  );
+
+  // Handle opening a thread (create if needed, then open panel)
+  const handleOpenThread = useCallback(
+    async (message: MessageType) => {
+      if (spaceId === channelId) return; // No threads in DMs
+
+      let threadId: string;
+      if (message.threadMeta) {
+        // Thread already exists
+        threadId = message.threadMeta.threadId;
+      } else {
+        // Create thread — deterministic ID
+        const threadIdBuffer = await crypto.subtle.digest(
+          'SHA-256',
+          new TextEncoder().encode(message.messageId + ':thread')
+        );
+        threadId = Array.from(new Uint8Array(threadIdBuffer))
+          .map((b) => b.toString(16).padStart(2, '0'))
+          .join('');
+
+        const threadMeta: ThreadMeta = {
+          threadId,
+          createdBy: user.currentPasskeyInfo!.address,
+          lastActivityAt: Date.now(),
+        };
+        const threadMessage: ThreadMessage = {
+          type: 'thread',
+          senderId: user.currentPasskeyInfo!.address,
+          targetMessageId: message.messageId,
+          action: 'create',
+          threadMeta,
+        };
+
+        const effectiveSkip = space?.isRepudiable ? skipSigning : false;
+        await submitChannelMessage(
+          spaceId,
+          channelId,
+          threadMessage,
+          queryClient,
+          user.currentPasskeyInfo!,
+          undefined,
+          effectiveSkip,
+          isSpaceOwner
+        );
+
+        // Attach the newly created threadMeta to the root message snapshot
+        // so ThreadPanel sees the correct createdBy (the current user).
+        message = { ...message, threadMeta };
+      }
+
+      // Auto-close check: evaluate expiry on open (check-on-read pattern)
+      if (message.threadMeta?.autoCloseAfter && message.threadMeta?.lastActivityAt) {
+        const isExpired =
+          message.threadMeta.lastActivityAt + message.threadMeta.autoCloseAfter <= Date.now();
+        if (isExpired && !message.threadMeta.isClosed) {
+          queueMicrotask(() => {
+            handleSetThreadClosed(message.threadMeta!.threadId, true);
+          });
+          message = {
+            ...message,
+            threadMeta: { ...message.threadMeta, isClosed: true, closedBy: user.currentPasskeyInfo!.address },
+          };
+        }
+      }
+
+      setActiveThreadId(threadId);
+      setActiveThreadRootMessage(message);
+      setIsThreadOpen(true);
+    },
+    [spaceId, channelId, user.currentPasskeyInfo, submitChannelMessage, queryClient, space, skipSigning, isSpaceOwner, handleSetThreadClosed]
+  );
+
+  // Handle submitting a reply in a thread (matches onSubmitMessage signature for useMessageComposer)
+  const handleSubmitThreadMessage = useCallback(
+    async (message: string | object, inReplyTo?: string) => {
+      if (activeThreadRootMessage?.threadMeta?.isClosed) return;
+      if (!activeThreadId) return;
+      let parentMessage;
+      if (inReplyTo) {
+        try {
+          parentMessage = await messageDB.getMessage({
+            spaceId,
+            channelId,
+            messageId: inReplyTo,
+          });
+        } catch (error) {
+          console.error('[Channel] Failed to fetch parent message for thread reply:', error);
+        }
+      }
+      const effectiveSkip = space?.isRepudiable ? skipSigning : false;
+      await submitChannelMessage(
+        spaceId,
+        channelId,
+        message,
+        queryClient,
+        user.currentPasskeyInfo!,
+        inReplyTo,
+        effectiveSkip,
+        isSpaceOwner,
+        parentMessage,
+        activeThreadId
+      );
+
+      // Update lastActivityAt on root message stale snapshot after sending a reply
+      if (activeThreadRootMessage?.threadMeta) {
+        const now = Date.now();
+        setActiveThreadRootMessage((prev) =>
+          prev?.threadMeta ? { ...prev, threadMeta: { ...prev.threadMeta, lastActivityAt: now } } : prev
+        );
+      }
+    },
+    [activeThreadId, spaceId, channelId, submitChannelMessage, queryClient, user.currentPasskeyInfo, space, skipSigning, isSpaceOwner, messageDB, activeThreadRootMessage]
+  );
+
+  // Handle sticker submission in a thread
+  const handleSubmitThreadSticker = useCallback(
+    async (stickerId: string, inReplyTo?: string) => {
+      if (!activeThreadId) return;
+      let parentMessage;
+      if (inReplyTo) {
+        try {
+          parentMessage = await messageDB.getMessage({
+            spaceId,
+            channelId,
+            messageId: inReplyTo,
+          });
+        } catch (error) {
+          console.error('[Channel] Failed to fetch parent message for thread sticker:', error);
+        }
+      }
+      const effectiveSkip = space?.isRepudiable ? skipSigning : false;
+      const stickerMessage: StickerMessage = {
+        type: 'sticker',
+        senderId: user.currentPasskeyInfo!.address,
+        stickerId,
+      };
+      await submitChannelMessage(
+        spaceId,
+        channelId,
+        stickerMessage,
+        queryClient,
+        user.currentPasskeyInfo!,
+        inReplyTo,
+        effectiveSkip,
+        isSpaceOwner,
+        parentMessage,
+        activeThreadId
+      );
+    },
+    [activeThreadId, spaceId, channelId, submitChannelMessage, queryClient, user.currentPasskeyInfo, space, skipSigning, isSpaceOwner, messageDB]
+  );
+
+  // Handle updating the thread title and broadcasting to peers
+  const handleUpdateThreadTitle = useCallback(
+    async (targetMessageId: string, threadMeta: ThreadMeta | undefined, newTitle: string) => {
+      if (spaceId === channelId) return; // No threads in DMs
+      if (!activeThreadId) return; // Need threadId to construct updatedMeta
+
+      const trimmed = newTitle.trim();
+      // Build updated threadMeta — merge with existing or construct from activeThreadId
+      const updatedMeta: ThreadMeta = {
+        threadId: threadMeta?.threadId ?? activeThreadId,
+        createdBy: threadMeta?.createdBy ?? user.currentPasskeyInfo!.address,
+        customTitle: trimmed || undefined,
+      };
+
+      const threadMessage: ThreadMessage = {
+        type: 'thread',
+        senderId: user.currentPasskeyInfo!.address,
+        targetMessageId,
+        action: 'updateTitle',
+        threadMeta: updatedMeta,
+      };
+
+      const effectiveSkip = space?.isRepudiable ? skipSigning : false;
+      await submitChannelMessage(
+        spaceId,
+        channelId,
+        threadMessage,
+        queryClient,
+        user.currentPasskeyInfo!,
+        undefined,        // inReplyTo
+        effectiveSkip,
+        isSpaceOwner
+      );
+
+      // Update the local root message snapshot so ThreadPanel re-renders with the new title
+      setActiveThreadRootMessage((prev) =>
+        prev ? { ...prev, threadMeta: { ...prev.threadMeta, ...updatedMeta } } : prev
+      );
+    },
+    [spaceId, channelId, activeThreadId, user.currentPasskeyInfo, submitChannelMessage, queryClient, space, skipSigning, isSpaceOwner]
+  );
+
+  const handleUpdateThreadSettings = useCallback(
+    async (_threadId: string, autoCloseAfter: number | undefined) => {
+      if (spaceId === channelId) return;
+      if (!activeThreadRootMessage) return;
+
+      const threadMeta = activeThreadRootMessage.threadMeta;
+      if (!threadMeta) return;
+
+      const updatedMeta: ThreadMeta = { ...threadMeta };
+      if (autoCloseAfter === undefined) {
+        delete (updatedMeta as any).autoCloseAfter;
+      } else {
+        updatedMeta.autoCloseAfter = autoCloseAfter;
+        if (!updatedMeta.lastActivityAt) {
+          updatedMeta.lastActivityAt = Date.now();
+        }
+      }
+
+      const threadMessage: ThreadMessage = {
+        type: 'thread',
+        senderId: user.currentPasskeyInfo!.address,
+        targetMessageId: activeThreadRootMessage.messageId,
+        action: 'updateSettings',
+        threadMeta: updatedMeta,
+      };
+
+      const effectiveSkip = space?.isRepudiable ? skipSigning : false;
+      await submitChannelMessage(
+        spaceId, channelId, threadMessage, queryClient,
+        user.currentPasskeyInfo!, undefined, effectiveSkip, isSpaceOwner
+      );
+
+      setActiveThreadRootMessage((prev) =>
+        prev ? { ...prev, threadMeta: { ...prev.threadMeta, ...updatedMeta } } : prev
+      );
+    },
+    [spaceId, channelId, activeThreadRootMessage, user.currentPasskeyInfo, submitChannelMessage, queryClient, space, skipSigning, isSpaceOwner]
+  );
+
+  const handleRemoveThread = useCallback(
+    async (_threadId: string) => {
+      if (spaceId === channelId) return;
+      if (!activeThreadRootMessage) return;
+
+      const threadMeta = activeThreadRootMessage.threadMeta;
+      if (!threadMeta) return;
+
+      const threadId = threadMeta.threadId;
+      const rootMessageId = activeThreadRootMessage.messageId;
+      const rootText = (activeThreadRootMessage.content as { text?: string })?.text;
+      const isSoftDeleted = !rootText || (Array.isArray(rootText) && (rootText as string[]).every(s => !s));
+      const isRootSender = user.currentPasskeyInfo!.address === activeThreadRootMessage.content.senderId;
+
+      // Optimistic update: remove thread from UI immediately
+      queryClient.setQueryData(
+        buildMessagesKey({ spaceId, channelId }),
+        (oldData: any) => {
+          if (!oldData?.pages) return oldData;
+          return {
+            pageParams: oldData.pageParams,
+            pages: oldData.pages.map((page: any) => ({
+              ...page,
+              messages: page.messages.map((m: MessageType) => {
+                if (m.messageId === rootMessageId) {
+                  if (isSoftDeleted || isRootSender) return null;
+                  const { threadMeta: _stripped, ...rest } = m;
+                  return rest as MessageType;
+                }
+                if (m.threadId === threadId) return null;
+                return m;
+              }).filter(Boolean),
+            })),
+          };
+        }
+      );
+      // Clear thread panel cache; don't invalidate main messages —
+      // the optimistic setQueryData above handles it, and invalidation
+      // would refetch from DB before the persistent handler deletes the data.
+      queryClient.removeQueries({
+        queryKey: ['thread-messages', spaceId, channelId, threadId],
+      });
+      queryClient.setQueryData(
+        ['channel-threads', spaceId, channelId],
+        (old: any[] | undefined) =>
+          old ? old.filter((t: any) => t.threadId !== threadId) : old,
+      );
+
+      const threadMessage: ThreadMessage = {
+        type: 'thread',
+        senderId: user.currentPasskeyInfo!.address,
+        targetMessageId: rootMessageId,
+        action: 'remove',
+        threadMeta: { threadId: threadMeta.threadId, createdBy: threadMeta.createdBy },
+      };
+
+      const effectiveSkip = space?.isRepudiable ? skipSigning : false;
+      await submitChannelMessage(
+        spaceId, channelId, threadMessage, queryClient,
+        user.currentPasskeyInfo!, undefined, effectiveSkip, isSpaceOwner
+      );
+
+      setIsThreadOpen(false);
+      setActiveThreadId(null);
+      setActiveThreadRootMessage(null);
+    },
+    [spaceId, channelId, activeThreadRootMessage, user.currentPasskeyInfo, submitChannelMessage, queryClient, space, skipSigning, isSpaceOwner]
+  );
+
+  // Sync thread actions to context
+  React.useEffect(() => {
+    threadCtx.setThreadActions({
+      openThread: handleOpenThread,
+      closeThread: () => {
+        setIsThreadOpen(false);
+        setActiveThreadId(null);
+        setActiveThreadRootMessage(null);
+      },
+      submitMessage: handleSubmitThreadMessage,
+      submitSticker: handleSubmitThreadSticker,
+      updateTitle: handleUpdateThreadTitle,
+      setThreadClosed: handleSetThreadClosed,
+      updateThreadSettings: handleUpdateThreadSettings,
+      removeThread: handleRemoveThread,
+    });
+  }, [handleOpenThread, handleSubmitThreadMessage, handleSubmitThreadSticker, handleUpdateThreadTitle, handleSetThreadClosed, handleUpdateThreadSettings, handleRemoveThread]);
+
+  // Keep thread root message snapshot in sync with main messages cache.
+  // When the root message is soft-deleted (content cleared), update the thread panel's copy
+  // so the deletion is visible immediately without needing to close/reopen the thread.
+  React.useEffect(() => {
+    if (!isThreadOpen || !activeThreadRootMessage) return;
+    const updated = messageList.find((m) => m.messageId === activeThreadRootMessage.messageId);
+    if (!updated) return;
+    // Only sync if content actually changed (e.g. soft-delete cleared the text)
+    const currentText = (activeThreadRootMessage.content as { text?: string })?.text;
+    const updatedText = (updated.content as { text?: string })?.text;
+    if (currentText !== updatedText) {
+      setActiveThreadRootMessage((prev) => prev ? { ...prev, content: updated.content } : prev);
+    }
+  }, [isThreadOpen, activeThreadRootMessage, messageList]);
+
+  // Auto-close the thread panel when the root message has its threadMeta stripped (remove action)
+  React.useEffect(() => {
+    if (isThreadOpen && activeThreadRootMessage && !activeThreadRootMessage.threadMeta) {
+      setIsThreadOpen(false);
+      setActiveThreadId(null);
+      setActiveThreadRootMessage(null);
+    }
+  }, [activeThreadRootMessage, isThreadOpen]);
+
   // Handle user profile modal close
   const handleUserProfileClose = useCallback(() => {
     userProfileModal.handleClose();
@@ -376,12 +802,13 @@ const Channel: React.FC<ChannelProps> = ({
           targetMessageId: messageId,
           beforeLimit: 40,
           afterLimit: 40,
+          includeThreadReplies: !threadsEnabled,
         });
 
         // Update React Query cache to replace current pages with new data
         // This creates a single page centered around the target message
         queryClient.setQueryData(
-          buildMessagesKey({ spaceId, channelId }),
+          buildMessagesKey({ spaceId, channelId, includeThreadReplies: !threadsEnabled }),
           {
             pages: [{ messages, prevCursor, nextCursor }],
             pageParams: [undefined],
@@ -405,13 +832,13 @@ const Channel: React.FC<ChannelProps> = ({
         setIsLoadingHashMessage(false);
       }
     },
-    [messageDB, spaceId, channelId, queryClient]
+    [messageDB, spaceId, channelId, queryClient, threadsEnabled]
   );
 
   // Auto-jump to first unread message on channel entry
   useEffect(() => {
     // Skip if there's a hash navigation in progress
-    if (window.location.hash.startsWith('#msg-')) {
+    if (window.location.hash.startsWith('#msg-') || window.location.hash.startsWith('#thread-')) {
       return;
     }
 
@@ -477,11 +904,12 @@ const Channel: React.FC<ChannelProps> = ({
           targetMessageId: firstUnread.messageId,
           beforeLimit: 40,
           afterLimit: 40,
+          includeThreadReplies: !threadsEnabled,
         });
 
         // Update React Query cache to replace current pages with new data
         queryClient.setQueryData(
-          buildMessagesKey({ spaceId, channelId }),
+          buildMessagesKey({ spaceId, channelId, includeThreadReplies: !threadsEnabled }),
           {
             pages: [{ messages, prevCursor, nextCursor }],
             pageParams: [undefined],
@@ -524,13 +952,81 @@ const Channel: React.FC<ChannelProps> = ({
     }, 100);
 
     return () => clearTimeout(timer);
-  }, [channelId, spaceId, lastReadTimestamp, messageDB, messageList, queryClient]);
+  }, [channelId, spaceId, lastReadTimestamp, messageDB, messageList, queryClient, threadsEnabled]);
 
   // Reset scrollToMessageId and separator when channel changes
   useEffect(() => {
     setScrollToMessageId(undefined);
     setNewMessagesSeparator(null);
   }, [channelId]);
+
+  // Handle thread hash navigation: #thread-{rootMessageId}-msg-{replyMessageId}
+  useEffect(() => {
+    const hash = window.location.hash;
+    const parsed = parseMessageHash(hash);
+    if (!parsed || parsed.type !== 'threadMessage') return;
+
+    if (!threadsEnabled) {
+      // Threads disabled — fall through to regular message navigation
+      // Thread replies are visible inline, so the message can be found in the main feed
+      return;
+    }
+
+    const openThreadFromHash = async () => {
+      try {
+        const { rootMessageId: identifier, messageId } = parsed;
+
+        // Try to fetch as a direct message ID first (pins/search pass root message ID)
+        let rootMessage = await messageDB.getMessageById(identifier);
+        let threadId: string | undefined;
+
+        if (rootMessage?.threadMeta) {
+          // Found root message directly
+          threadId = rootMessage.threadMeta.threadId;
+        } else {
+          // Identifier might be a threadId (bookmarks store threadId)
+          rootMessage = await messageDB.getRootMessageByThreadId({
+            spaceId,
+            channelId,
+            threadId: identifier,
+          });
+          threadId = identifier;
+        }
+
+        if (!rootMessage || !threadId) {
+          console.warn('Thread not found for identifier:', identifier);
+          history.replaceState(null, '', window.location.pathname + window.location.search);
+          return;
+        }
+
+        // Check if this thread is already open
+        if (activeThreadId === threadId) {
+          const currentState = threadCtx.getThreadState();
+          threadCtx.setThreadState({ ...currentState, targetMessageId: messageId });
+        } else {
+          setActiveThreadId(threadId);
+          setActiveThreadRootMessage(rootMessage);
+          setIsThreadOpen(true);
+
+          queueMicrotask(() => {
+            const currentState = threadCtx.getThreadState();
+            threadCtx.setThreadState({ ...currentState, targetMessageId: messageId });
+          });
+        }
+
+        // Clean up hash after highlight animation
+        setTimeout(() => {
+          history.replaceState(null, '', window.location.pathname + window.location.search);
+        }, 8000);
+      } catch (error) {
+        console.error('Failed to open thread from hash:', error);
+        history.replaceState(null, '', window.location.pathname + window.location.search);
+      }
+    };
+
+    openThreadFromHash();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [spaceId, channelId, location.hash, threadsEnabled]);
 
   // Get current user's role IDs for role mention filtering
   const userRoleIds = React.useMemo(() => {
@@ -658,6 +1154,42 @@ const Channel: React.FC<ChannelProps> = ({
     }
   }, [isMobile, openMobileEmojiDrawer, customEmojis, space?.stickers, composer]);
 
+  // Sync channel props to context for ThreadPanel
+  React.useEffect(() => {
+    threadCtx.setChannelProps({
+      spaceId,
+      channelId,
+      members,
+      roles,
+      stickers,
+      customEmoji: space?.emojis,
+      mapSenderToUser,
+      isSpaceOwner,
+      canDeleteMessages,
+      canPinMessages,
+      channel,
+      spaceChannels,
+      onChannelClick: handleChannelClick,
+      onUserClick: userProfileModal.handleUserClick as any,
+      spaceName: space?.spaceName,
+      isRepudiable: space?.isRepudiable,
+      skipSigning,
+      onSigningToggle: () => setSkipSigning(!skipSigning),
+      users: Object.values(members),
+      mentionRoles: roles?.filter(role => role.isPublic !== false),
+      spaceGroups,
+      canUseEveryone,
+      onShowStickers: handleShowEmojiPanel,
+      currentUserAddress: user.currentPasskeyInfo?.address,
+    });
+  }, [
+    spaceId, channelId, members, roles, stickers, space?.emojis,
+    mapSenderToUser, isSpaceOwner, canDeleteMessages, canPinMessages,
+    channel, spaceChannels, handleChannelClick, userProfileModal.handleUserClick,
+    space?.spaceName, space?.isRepudiable, skipSigning, spaceGroups,
+    canUseEveryone, handleShowEmojiPanel, user.currentPasskeyInfo?.address,
+  ]);
+
   // Auto-focus textarea when replying
   useEffect(() => {
     if (composer.inReplyTo) {
@@ -741,7 +1273,7 @@ const Channel: React.FC<ChannelProps> = ({
   }, [updateReadTime]);
 
   return (
-    <div className="chat-container">
+    <div className={`chat-container${isThreadOpen ? ' thread-open' : ''}`}>
       <div className="flex flex-col flex-1 min-w-0">
         {/* Header - full width at top */}
         <div
@@ -843,6 +1375,34 @@ const Channel: React.FC<ChannelProps> = ({
                     onChannelClick={handleChannelClick}
                   />
                 </div>
+              )}
+
+              {/* Threads */}
+              {threadsEnabled && (
+              <div className="relative">
+                <Tooltip
+                  id={`threads-${channelId}`}
+                  content={t`Threads`}
+                  showOnTouch={false}
+                >
+                  <Button
+                    type="unstyled"
+                    onClick={() => setActivePanel(p => p === 'threads' ? null : 'threads')}
+                    className={`header-icon-button ${activePanel === 'threads' ? 'active' : ''}`}
+                    iconName="messages"
+                    iconSize={headerIconSize}
+                    iconVariant={activePanel === 'threads' ? 'filled' : 'outline'}
+                    iconOnly
+                  />
+                </Tooltip>
+                <ThreadsListPanel
+                  isOpen={activePanel === 'threads'}
+                  onClose={() => setActivePanel(null)}
+                  spaceId={spaceId}
+                  channelId={channelId}
+                  mapSenderToUser={mapSenderToUser}
+                />
+              </div>
               )}
 
               {/* Notification Bell */}
@@ -1028,6 +1588,7 @@ const Channel: React.FC<ChannelProps> = ({
                 mentionRoles={roles?.filter(role => role.isPublic !== false)}
                 groups={spaceGroups}
                 canUseEveryone={canUseEveryone}
+                onStartThread={threadsEnabled ? handleOpenThread : undefined}
               />
             </div>
 
@@ -1078,7 +1639,7 @@ const Channel: React.FC<ChannelProps> = ({
 
           {/* Desktop sidebar only - mobile uses MobileDrawer below */}
           {showUsers && (
-            <div className="channel-users-sidebar list-bottom-fade-chat hidden lg:block w-[260px] bg-chat border-l border-default flex-shrink-0">
+            <div className="channel-users-sidebar list-bottom-fade-chat hidden lg:block w-[var(--sidebar-right-width)] bg-chat border-l border-default flex-shrink-0">
               {/* Search Input */}
               <div className="px-4 pt-4 bg-chat sticky top-0 z-10">
                 <ListSearchInput
@@ -1171,7 +1732,7 @@ const Channel: React.FC<ChannelProps> = ({
         place="top"
       />
 
-      {/* Emoji & Stickers panel - positioned at top level to avoid stacking context issues */}
+      {/* Emoji & Stickers panel - fixed position, offset by sidebar width */}
       {composer.showStickers && (
         <>
           <div
@@ -1182,7 +1743,16 @@ const Channel: React.FC<ChannelProps> = ({
             }}
           />
           <div
-            className={`stickers-panel-wrapper ${showUsers ? 'with-sidebar' : 'without-sidebar'}`}
+            className="stickers-panel-wrapper"
+            style={{
+              right: (() => {
+                let offset = 24; // base padding
+                if (showUsers) offset += getSidebarRightWidth();
+                const threadEl = document.querySelector('.thread-panel-wrapper') as HTMLElement | null;
+                if (threadEl) offset += threadEl.offsetWidth + 8; // thread panel + gap
+                return `${offset}px`;
+              })(),
+            }}
             onKeyDown={(e) => {
               if (e.key === 'Escape') {
                 composer.setShowStickers(false);
@@ -1254,7 +1824,7 @@ const Channel: React.FC<ChannelProps> = ({
             <div
               className="fixed inset-0 z-[9990]"
               style={{
-                right: showUsers ? '260px' : '0px',
+                right: showUsers ? `${getSidebarRightWidth()}px` : '0px',
               }}
               onClick={handleUserProfileClose}
             />
@@ -1266,7 +1836,7 @@ const Channel: React.FC<ChannelProps> = ({
                   userProfileModal.modalPosition.left !== undefined
                     ? `${userProfileModal.modalPosition.left}px`
                     : showUsers
-                      ? `calc(100vw - 260px - 320px)`
+                      ? `calc(100vw - ${getSidebarRightWidth()}px - 320px)`
                       : `calc(100vw - 320px)`,
               }}
             >

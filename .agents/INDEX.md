@@ -36,6 +36,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Mute User System Documentation](docs/features/mute-user-system.md)
 - [Notification Indicators System](docs/features/notification-indicators-system.md)
 - [Offline Support](docs/features/offline-support.md)
+- [Profile Sync on Returning User Login](docs/features/profile-sync-returning-user-login.md)
 - [ReactTooltip Mobile Support Documentation](docs/features/reacttooltip-mobile.md)
 - [Responsive Layout System Documentation](docs/features/responsive-layout.md)
 - [Security Architecture](docs/features/security.md)
@@ -65,6 +66,8 @@ This is the main index for all documentation, bug reports, and task management.
 - [Mobile Message Actions Implementation](docs/features/messages/message-actions-mobile.md)
 - [New Messages Separator](docs/features/messages/new-messages-separator.md)
 - [Pinned Messages Feature](docs/features/messages/pinned-messages.md)
+- [Thread Panel](docs/features/messages/thread-panel.md)
+- [Thread Visibility on Mobile — Guidance for quorum-mobile](docs/features/messages/thread-mobile-visibility-guidance.md)
 - [YouTube Facade Optimization](docs/features/messages/youtube-facade-optimization.md)
 
 ### Features / Primitives
@@ -100,6 +103,11 @@ This is the main index for all documentation, bug reports, and task management.
 - [UserProfile Modal Positioning - Viewport Boundary Detection](bugs/userprofile-modal-positioning-viewport-boundary.md)
 
 ### Solved Issues
+- [Thread-Aware Navigation: Panel Doesn't Open and Message Not Highlighted](bugs/.solved/2026-03-11-thread-aware-navigation-broken.md)
+- [Thread title not updating in UI after pressing Enter](bugs/.solved/2026-03-11-thread-title-enter-not-saving.md)
+- [Moderator thread deletion resurfaces after optimistic removal](bugs/.solved/2026-03-13-moderator-thread-delete-resurfaces.md)
+- [Thread delete button hidden even when all replies are from thread author](bugs/.solved/2026-03-13-thread-delete-button-hidden-when-all-replies-own.md)
+- [Profile Sync Not Working on Returning User Key Import](bugs/.solved/2026-03-14-profile-sync-not-working-on-key-import.md)
 - [Action Queue Bypasses SDK Encryption for Identity Keys](bugs/.solved/action-queue-plaintext-private-keys.md)
 - [Android 7.0 File Download Fix - Implementation Plan](bugs/.solved/SOLVED_android-file-download-huawei-p9-lite.md)
 - [Bug: Auto-Jump to First Unread Message - Blocked by Virtuoso Scroll Positioning](bugs/.solved/auto-jump-unread-virtuoso-scroll-conflict.md)
@@ -128,6 +136,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [SOLVED: Modal NavMenu Z-Index Stacking Issue](bugs/.solved/SOLVED_modal-navmenu-zindex-stacking.md)
 - [SOLVED: Right Sidebar Overlay Issue - Navbar Still Visible](bugs/.solved/SOLVED_right-sidebar-overlay.md)
 - [Space Creation Config Save Race Condition](bugs/.solved/space-creation-config-save-race-condition.md)
+- [Thread replies leak into main chat feed on page reload](bugs/.solved/SOLVED_thread-replies-leak-into-main-feed-on-reload.md)
 - [Tooltip Flickering at Top-Left on Fast Mouse Movement](bugs/.solved/SOLVED_tooltip-flickering-top-left-on-fast-mouse-movement.md)
 - [Triple Ratchet State Save Destroys Template/Evals Fields](bugs/.solved/triple-ratchet-state-save-destroys-invite-fields.md)
 - [user:kick Role Permission is Non-Functional for Non-Owners](bugs/.solved/user-kick-role-permission-non-functional.md)
@@ -144,17 +153,21 @@ This is the main index for all documentation, bug reports, and task management.
 
 ### Pending Tasks
 
+- [Embedded Media + YouTube Facade Privacy Fix — Implementation Plan](tasks/2026-03-12-embedded-media-plan.md)
+- [Embedded Media in PostMessage + YouTube Facade Privacy Fix](tasks/2026-03-12-embedded-media-spec.md)
+- [Audit & Migrate All Desktop Types to quorum-shared](tasks/2026-03-14-audit-types-for-quorum-shared-migration.md)
+- [Migrate Thread Types to quorum-shared](tasks/2026-03-14-migrate-thread-types-to-quorum-shared.md)
+- [Thread List Panel: "Created by me" Filter](tasks/2026-03-14-thread-list-created-filter.md)
 - [Accessibility Features — Remaining Work](tasks/accessibility-features-implementation.md)
 - [Add Space Tag support to shared types](tasks/quorum-shared-space-tags.md)
 - [Add User Bio Field to UserSettingsModal General Tab](tasks/add-user-bio-field.md)
 - [Auto-save settings modals — eliminate save buttons](tasks/auto-save-settings-modals.md)
 - [Conversation Deletion State Synchronization](tasks/conversation-deletion-state-sync.md)
+- [Decentralized GIF Library on Quilibrium](tasks/gifs-library-integration.md)
 - [Dependency Updates Audit](tasks/dependency-updates-audit.md)
 - [Device Identification Improvement](tasks/device-identification-improvement.md)
-- [Emoji Picker Performance Fix — Lazy Loading + Upgrade](tasks/emoji-picker-performance-fix.md)
 - [Fix Lingui "Uncompiled Message Detected" Warning](tasks/fix-lingui-uncompiled-message-warning.md)
 - [Full Markdown Support Inside Spoilers](tasks/spoiler-full-markdown-support.md)
-- [GIFs Library Integration](tasks/gifs-library-integration.md)
 - [Implement Channel Ordering Feature](tasks/channel-ordering-feature.md)
 - [Implement Message Forwarding with Privacy Controls](tasks/message-forwarding-with-privacy-controls.md)
 - [Implement New Member Badge in Spaces](tasks/new-member-badge-spaces.md)
@@ -171,11 +184,12 @@ This is the main index for all documentation, bug reports, and task management.
 - [Task: Implement Delete Public Invite Link Feature](tasks/delete-public-invite-link.md)
 - [Test Suite Implementation Plan for Quorum Desktop](tasks/test-suite-plan.md)
 - [Tombstone Cleanup Strategy for Deleted Messages](tasks/tombstone-cleanup-strategy.md)
-- [Twemoji Migration — Consistent Emoji Rendering Across App](tasks/twemoji-migration.md)
 - [User Status Feature Implementation Plan](tasks/user-status.md)
 
 ### .Archived
 - [🚀 Search Performance Optimization - Revised Implementation Plan](tasks/.archived/2025-11-12-search-performance-optimization-original.md)
+- [Mobile Thread Reply Visibility Implementation Plan](tasks/.archived/2026-03-11-mobile-thread-reply-visibility-plan.md)
+- [Mobile Thread Reply Visibility — Design Spec](tasks/.archived/2026-03-11-mobile-thread-reply-visibility.md)
 - [Auto-Jump to First Unread Message + Fix Hash Navigation](tasks/.archived/auto-jump-first-unread.md)
 - [Background Action Queue with Web Worker Crypto](tasks/.archived/background-action-queue-with-worker-crypto.md)
 - [Cache Space Key Metadata to Reduce Config Save Overhead](tasks/.archived/config-save-space-key-caching.md)
@@ -198,11 +212,6 @@ This is the main index for all documentation, bug reports, and task management.
 - [CSS Inventory - Complete Codebase Analysis](tasks/.archived/css-refactor/css-inventory.md)
 - [CSS Refactor Analysis Report](tasks/.archived/css-refactor/analysis.md)
 - [CSS Refactor Plan - Claude Code Execution Strategy](tasks/.archived/css-refactor/css-refactor-plan.md)
-
-### Docusaurus
-- [Docusaurus Developer Documentation Blueprint](tasks/docusaurus/docusaurus-blueprint-v2.md)
-- [Docusaurus Quorum Users Faq](tasks/docusaurus/docusaurus-quorum-users-faq.md)
-- [Docusaurus Setup & Implementation Task](tasks/docusaurus/docusaurus-setup-implementation.md)
 
 ### Messagedb
 - [High-Risk Optimization Opportunities](tasks/messagedb/messagedb-optimization-3.md)
@@ -250,6 +259,26 @@ This is the main index for all documentation, bug reports, and task management.
 
 ## 📋 Completed Tasks
 
+- [Design: Discord-style Thread Panel Layout with Resize](tasks/.done/2025-03-09-thread-panel-discord-layout-design.md)
+- [Discord-style Thread Panel Layout Implementation Plan](tasks/.done/2025-03-09-thread-panel-discord-layout.md)
+- [Simplified Message Actions Toolbar](tasks/.done/2026-03-09-simplified-message-actions-design.md)
+- [Simplified Message Actions Toolbar — Implementation Plan](tasks/.done/2026-03-09-simplified-message-actions-plan.md)
+- [Thread-Aware Navigation for Bookmarks, Search & Pins](tasks/.done/2026-03-10-thread-aware-navigation-design.md)
+- [Thread-Aware Navigation Implementation Plan](tasks/.done/2026-03-10-thread-aware-navigation.md)
+- [Thread Root Soft-Delete Fix and Deleted Message Placeholder](tasks/.done/2026-03-10-thread-soft-delete-and-persisted-titles.md)
+- [Thread Title Editing Implementation Plan](tasks/.done/2026-03-11-thread-title-editing.md)
+- [Thread Management: Close, Auto-Close, and Remove — Implementation Plan](tasks/.done/2026-03-12-thread-management-plan.md)
+- [Thread Management: Close, Auto-Close, and Remove](tasks/.done/2026-03-12-thread-management-spec.md)
+- [Threads List Panel Implementation Plan](tasks/.done/2026-03-12-threads-list-panel-plan.md)
+- [Threads List Panel — Design Spec](tasks/.done/2026-03-12-threads-list-panel-spec.md)
+- [Extract ThreadService Implementation Plan](tasks/.done/2026-03-13-extract-thread-service.md)
+- [Complete i18n Translation Quality Audit](tasks/.done/2026-03-14-i18n-complete-translation-quality-audit.md)
+- [Space/Channel Thread Toggle — Design Spec](tasks/.done/2026-03-14-space-channel-thread-toggle-design.md)
+- [Space/Channel Thread Toggle Implementation Plan](tasks/.done/2026-03-14-space-channel-thread-toggle-plan.md)
+- [Test thread mention notifications feature](tasks/.done/2026-03-14-test-thread-mention-notifications.md)
+- [Thread Mention Notifications — Implementation Plan](tasks/.done/2026-03-14-thread-mention-notifications-plan.md)
+- [Thread Mention Notifications](tasks/.done/2026-03-14-thread-mention-notifications.md)
+- [Thread Panel: Bottom-Anchored Title Implementation Plan](tasks/.done/2026-03-14-thread-panel-bottom-anchored-title.md)
 - [AccentColorSwitcher Cross-Platform Migration + Persistence](tasks/.done/accent-color-switcher-cross-platform-migration.md)
 - [Add Context to Desktop Notifications](tasks/.done/rich-desktop-notifications-context.md)
 - [Add DM-Specific Action Queue Handlers](tasks/.done/dm-action-queue-handlers.md)
@@ -281,6 +310,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Dropdown Panels Consolidation & Mobile Bottom Sheet Implementation](tasks/.done/dropdown-panels-consolidation.md)
 - [Edit Message Feature](tasks/.done/edit-message-feature.md)
 - [Emoji Picker in Message Composer](tasks/.done/emoji-picker-in-message-composer.md)
+- [Emoji Picker Performance Fix — Lazy Loading + Upgrade](tasks/.done/emoji-picker-performance-fix.md)
 - [Emoji Picker Responsive Design Improvement](tasks/.done/emojipicker-responsive.md)
 - [Enhance Markdown Renderer Fallback System](tasks/.done/markdown-renderer-fallback-system-enhancement.md)
 - [Enhanced Mention Format with CSS Highlighting for Message Composer](tasks/.done/mentions-improve-UX-in-messagecomposer.md)
@@ -302,6 +332,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Implement Message Sending Indicator](tasks/.done/message-sending-indicator.md)
 - [Implement Per-Space Display Names and Avatars with Account Section](tasks/.done/per-space-display-name-avatar.md)
 - [Implement Spoiler Syntax (||text||) in Markdown Renderer](tasks/.done/spoiler-syntax-markdown-renderer.md)
+- [Implement Threaded Conversations for Space Channels](tasks/.done/threaded-conversations.md)
 - [Implement User Mute Feature](tasks/.done/implement-mute-feature.md)
 - [Implementation Plan: Repository Restructure for Cross-Platform Development](tasks/.done/implementation-plan-repo-restructure.md)
 - [Improve Mention Dropdown UX - Show Immediately on @ or #](tasks/.done/mention-dropdown-immediate-display.md)
@@ -370,6 +401,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Text Styling Consolidation](tasks/.done/text-styling-consolidation-plan.md)
 - [Toast System - Simple Bug Fixes](tasks/.done/toast-system-simple-fix.md)
 - [Toast System Refactoring](tasks/.done/toast-system-refactoring.md)
+- [Twemoji Migration — Consistent Emoji Rendering Across App](tasks/.done/twemoji-migration.md)
 - [UI Folder Reorganization Task](tasks/.done/ui-folder-reorganization.md)
 - [Unify Unread Message Indicators: Channels & DMs](tasks/.done/unify-unread-indicators-channels-dms.md)
 - [Unread Message Visual Indicators Implementation](tasks/.done/unread-message-visual-indicators.md)
@@ -402,6 +434,8 @@ This is the main index for all documentation, bug reports, and task management.
 - [Web-to-Native Feature Sync Compatibility Analysis](reports/web-native-feature-sync-analysis_2025-12-04.md)
 
 ### .Archived
+- [Complete i18n Translation Quality Audit](reports/.archived/i18n-complete-translation-quality-audit_2026-03-14.md)
+- [i18n Translation Quality Audit](reports/.archived/i18n-translation-quality-audit_2026-03-14.md)
 - [Text Primitive Audit — Pre-Migration Analysis](reports/.archived/text-primitive-audit_2026-02-10.md)
 
 ### Action Queue
@@ -425,4 +459,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2026-02-24 14:30:20
+**Last Updated**: 2026-03-14 18:44:45
