@@ -91,6 +91,12 @@ export function useSpaceReplyCounts({
 
             const lastReadTimestamp = conversation?.lastReadTimestamp || 0;
 
+            // Fetch thread read times for this channel
+            const threadReadTimes = await messageDB.getThreadReadTimesForChannel({
+              spaceId: space.spaceId,
+              channelId,
+            });
+
             // Use optimized database query to get only unread replies
             const remainingLimit = DISPLAY_THRESHOLD - spaceTotal;
             const messages = await messageDB.getUnreadReplies({
@@ -101,12 +107,16 @@ export function useSpaceReplyCounts({
               limit: remainingLimit, // Only fetch what we need
             });
 
-            // Add to space total
-            spaceTotal += messages.length;
-
-            // Early exit if we've hit the display threshold
-            if (spaceTotal >= DISPLAY_THRESHOLD) {
-              break; // Stop scanning channels
+            // Add to space total, excluding thread replies already read
+            for (const message of messages) {
+              if (message.isThreadReply && message.threadId) {
+                const threadReadTime = threadReadTimes[message.threadId];
+                if (threadReadTime !== undefined && message.createdDate <= threadReadTime) {
+                  continue;
+                }
+              }
+              spaceTotal++;
+              if (spaceTotal >= DISPLAY_THRESHOLD) break;
             }
           }
 
