@@ -55,6 +55,7 @@ export type Space = {
   emojis: Emoji[];
   stickers: Sticker[];
   spaceTag?: SpaceTag;      // Owner-defined tag (only for public spaces)
+  allowThreads?: boolean; // Master gate: threads enabled in this space (default: off)
 };
 
 export type Group = {
@@ -82,6 +83,7 @@ export type Channel = {
   icon?: string; // Custom icon name
   iconColor?: string; // Custom icon color
   iconVariant?: 'outline' | 'filled'; // Icon style variant
+  allowThreads?: boolean; // Per-channel override (default: on when space enables threads)
 };
 
 export type Conversation = {
