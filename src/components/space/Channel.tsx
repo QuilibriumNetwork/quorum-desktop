@@ -239,6 +239,9 @@ const Channel: React.FC<ChannelProps> = ({
     generateVirtualizedUserList,
   } = useChannelData({ spaceId, channelId });
 
+  // Thread toggle: space-level master gate + channel-level override
+  const threadsEnabled = !!space?.allowThreads && (channel?.allowThreads !== false);
+
   // Get message handling
   const {
     messageList,
@@ -249,7 +252,7 @@ const Channel: React.FC<ChannelProps> = ({
     canPinMessages,
     mapSenderToUser,
     isSpaceOwner,
-  } = useChannelMessages({ spaceId, channelId, roles, members, channel });
+  } = useChannelMessages({ spaceId, channelId, roles, members, channel, threadsEnabled });
 
   // Get pinned messages
   const { pinnedCount } = usePinnedMessages(spaceId, channelId, channel);
@@ -799,6 +802,7 @@ const Channel: React.FC<ChannelProps> = ({
           targetMessageId: messageId,
           beforeLimit: 40,
           afterLimit: 40,
+          includeThreadReplies: !threadsEnabled,
         });
 
         // Update React Query cache to replace current pages with new data
@@ -900,6 +904,7 @@ const Channel: React.FC<ChannelProps> = ({
           targetMessageId: firstUnread.messageId,
           beforeLimit: 40,
           afterLimit: 40,
+          includeThreadReplies: !threadsEnabled,
         });
 
         // Update React Query cache to replace current pages with new data
@@ -961,6 +966,12 @@ const Channel: React.FC<ChannelProps> = ({
     const parsed = parseMessageHash(hash);
     if (!parsed || parsed.type !== 'threadMessage') return;
 
+    if (!threadsEnabled) {
+      // Threads disabled — fall through to regular message navigation
+      // Thread replies are visible inline, so the message can be found in the main feed
+      return;
+    }
+
     const openThreadFromHash = async () => {
       try {
         const { rootMessageId: identifier, messageId } = parsed;
@@ -1015,7 +1026,7 @@ const Channel: React.FC<ChannelProps> = ({
 
     openThreadFromHash();
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [spaceId, channelId, location.hash]);
+  }, [spaceId, channelId, location.hash, threadsEnabled]);
 
   // Get current user's role IDs for role mention filtering
   const userRoleIds = React.useMemo(() => {
@@ -1367,6 +1378,7 @@ const Channel: React.FC<ChannelProps> = ({
               )}
 
               {/* Threads */}
+              {threadsEnabled && (
               <div className="relative">
                 <Tooltip
                   id={`threads-${channelId}`}
@@ -1391,6 +1403,7 @@ const Channel: React.FC<ChannelProps> = ({
                   mapSenderToUser={mapSenderToUser}
                 />
               </div>
+              )}
 
               {/* Notification Bell */}
               <div className="relative">
@@ -1575,7 +1588,7 @@ const Channel: React.FC<ChannelProps> = ({
                 mentionRoles={roles?.filter(role => role.isPublic !== false)}
                 groups={spaceGroups}
                 canUseEveryone={canUseEveryone}
-                onStartThread={handleOpenThread}
+                onStartThread={threadsEnabled ? handleOpenThread : undefined}
               />
             </div>
 
