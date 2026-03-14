@@ -155,8 +155,6 @@ This is the main index for all documentation, bug reports, and task management.
 
 - [Embedded Media + YouTube Facade Privacy Fix — Implementation Plan](tasks/2026-03-12-embedded-media-plan.md)
 - [Embedded Media in PostMessage + YouTube Facade Privacy Fix](tasks/2026-03-12-embedded-media-spec.md)
-- [Complete i18n Translation Quality Audit](tasks/2026-03-14-i18n-complete-translation-quality-audit.md)
-- [Test thread mention notifications feature](tasks/2026-03-14-test-thread-mention-notifications.md)
 - [Accessibility Features — Remaining Work](tasks/accessibility-features-implementation.md)
 - [Add Space Tag support to shared types](tasks/quorum-shared-space-tags.md)
 - [Add User Bio Field to UserSettingsModal General Tab](tasks/add-user-bio-field.md)
@@ -271,8 +269,13 @@ This is the main index for all documentation, bug reports, and task management.
 - [Threads List Panel Implementation Plan](tasks/.done/2026-03-12-threads-list-panel-plan.md)
 - [Threads List Panel — Design Spec](tasks/.done/2026-03-12-threads-list-panel-spec.md)
 - [Extract ThreadService Implementation Plan](tasks/.done/2026-03-13-extract-thread-service.md)
+- [Complete i18n Translation Quality Audit](tasks/.done/2026-03-14-i18n-complete-translation-quality-audit.md)
+- [Space/Channel Thread Toggle — Design Spec](tasks/.done/2026-03-14-space-channel-thread-toggle-design.md)
+- [Space/Channel Thread Toggle Implementation Plan](tasks/.done/2026-03-14-space-channel-thread-toggle-plan.md)
+- [Test thread mention notifications feature](tasks/.done/2026-03-14-test-thread-mention-notifications.md)
 - [Thread Mention Notifications — Implementation Plan](tasks/.done/2026-03-14-thread-mention-notifications-plan.md)
 - [Thread Mention Notifications](tasks/.done/2026-03-14-thread-mention-notifications.md)
+- [Thread Panel: Bottom-Anchored Title Implementation Plan](tasks/.done/2026-03-14-thread-panel-bottom-anchored-title.md)
 - [AccentColorSwitcher Cross-Platform Migration + Persistence](tasks/.done/accent-color-switcher-cross-platform-migration.md)
 - [Add Context to Desktop Notifications](tasks/.done/rich-desktop-notifications-context.md)
 - [Add DM-Specific Action Queue Handlers](tasks/.done/dm-action-queue-handlers.md)
@@ -413,7 +416,6 @@ This is the main index for all documentation, bug reports, and task management.
 ### Active Reports
 
 - [Channel Ordering Feature Analysis](reports/channel-ordering-feature-analysis_2026-01-07.md)
-- [Complete i18n Translation Quality Audit](reports/i18n-complete-translation-quality-audit_2026-03-14.md)
 - [Comprehensive Privacy & Security Audit - All Features](reports/privacy-security-comprehensive-audit_2025-12-21.md)
 - [Comprehensive WCAG Accessibility Audit Report](reports/accessibility-wcag-audit_2026-02-10.md)
 - [Cryptographic Code Best Practices: Abstraction vs Duplication](reports/cryptographic-code-best-practices_2025-12-20.md)
@@ -429,6 +431,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Web-to-Native Feature Sync Compatibility Analysis](reports/web-native-feature-sync-analysis_2025-12-04.md)
 
 ### .Archived
+- [Complete i18n Translation Quality Audit](reports/.archived/i18n-complete-translation-quality-audit_2026-03-14.md)
 - [i18n Translation Quality Audit](reports/.archived/i18n-translation-quality-audit_2026-03-14.md)
 - [Text Primitive Audit — Pre-Migration Analysis](reports/.archived/text-primitive-audit_2026-02-10.md)
 
@@ -453,4 +456,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2026-03-14 13:43:10
+**Last Updated**: 2026-03-14 17:31:00

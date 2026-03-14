@@ -4,7 +4,7 @@ title: "Thread Panel"
 status: done
 ai_generated: true
 created: 2026-03-09
-updated: 2026-03-13
+updated: 2026-03-14
 related_docs:
   - "docs/features/messages/pinned-messages.md"
   - "docs/features/dropdown-panels.md"
@@ -25,7 +25,7 @@ The Thread Panel provides threaded conversations within Space channels, rendered
 
 **Key Characteristics:**
 - Flat threading model: replies to root message only, no nested threads
-- Thread replies are hidden from the main channel feed
+- Thread replies are hidden from the main channel feed when threads are enabled; shown inline when disabled
 - Full `MessageList` + `MessageComposer` reuse for identical UX to main chat
 - Resizable panel width (300px min, 50vw max, 400px default)
 - Deterministic thread IDs via `SHA-256(targetMessageId + ':thread')`
@@ -219,11 +219,13 @@ Opened via the cog icon in the panel header. Accessible to thread managers (auth
 - **`saveChannelThread()`** — Upserts a `ChannelThread` entry (used by `MessageService` on thread create/reply/settings events)
 - **`getChannelThreads()`** — Returns all threads for a channel via `by_channel` index (`IDBKeyRange.only([spaceId, channelId])`)
 - **`deleteChannelThread()`** — Removes a `ChannelThread` entry by `threadId` (used on thread removal)
-- **Main feed filtering:** Thread replies (`isThreadReply: true`) are filtered at three layers:
-  1. **DB cursor** — `getMessages()` skips `isThreadReply` during cursor iteration
-  2. **DB unread query** — `getFirstUnreadMessage()` skips `isThreadReply` so thread replies don't trigger unread navigation to the main feed
-  3. **React layer** — `useChannelMessages()` filters `isThreadReply` as defense-in-depth against any code path that sets raw data into the React Query cache (e.g., `loadMessagesAround` via `setQueryData`)
-- **`loadMessagesAround()`** — Excludes thread replies from the target message injection (target fetched via `getMessage()` bypasses cursor filtering)
+- **Main feed filtering:** Thread replies (`isThreadReply: true`) are conditionally filtered at three layers based on the `includeThreadReplies` parameter (derived from `threadsEnabled` — see [Space/Channel Thread Toggle](#spacechannel-thread-toggle)):
+  1. **DB cursor** — `getMessages({ includeThreadReplies })` skips `isThreadReply` during cursor iteration when `includeThreadReplies` is false
+  2. **DB unread query** — `getFirstUnreadMessage({ includeThreadReplies })` skips `isThreadReply` so thread replies don't trigger unread navigation to the main feed (when filtering is active)
+  3. **React layer** — `useChannelMessages({ threadsEnabled })` filters `isThreadReply` as defense-in-depth against any code path that sets raw data into the React Query cache (e.g., `loadMessagesAround` via `setQueryData`). Only active when `threadsEnabled` is true.
+  When threads are disabled at the space or channel level, all three layers pass thread replies through, making them appear inline in the main feed.
+- **`loadMessagesAround()`** — Accepts `includeThreadReplies` parameter. When filtering is active, excludes thread replies from the target message injection (target fetched via `getMessage()` bypasses cursor filtering)
+- **React Query key strategy:** Message queries use a 4-element key: `['Messages', spaceId, channelId, 'with-threads' | 'no-threads']` so React Query treats thread-filtered and unfiltered datasets as distinct caches. A 3-element prefix key (`buildMessagesKeyPrefix`) is used by services for `setQueriesData` prefix matching, ensuring optimistic cache updates hit both key variants regardless of which thread mode the UI is viewing.
 
 ### Hooks (`src/hooks/business/threads/`)
 
@@ -347,7 +349,8 @@ The `threadId` must flow through the entire search chain without being dropped:
 | Context pattern | Ref-based store | Prevents infinite re-render loops from useState + child useEffects |
 | Dual-hook API | Store vs subscribing | Channel pushes data without re-rendering; ThreadPanel subscribes and re-renders |
 | Thread ID | SHA-256 deterministic | Race-safe: two users creating a thread on the same message produce the same ID |
-| Feed filtering | 3-layer defense-in-depth | DB cursor + DB unread query + React hook filter; avoids breaking existing `by_conversation_time` compound index |
+| Feed filtering | 3-layer defense-in-depth | DB cursor + DB unread query + React hook filter; all conditional on `includeThreadReplies`/`threadsEnabled`. Avoids breaking existing `by_conversation_time` compound index |
+| Thread toggle query keys | 4-element key + 3-element prefix | `['Messages', spaceId, channelId, 'with-threads' \| 'no-threads']` keeps filtered/unfiltered caches separate. Services use `buildMessagesKeyPrefix` (3-element) with `setQueriesData` for prefix matching across both variants |
 | Panel rendering | Full MessageList + Composer | Identical UX to main chat with no feature disparity |
 | Resize persistence | localStorage | Simple, synchronous, no server dependency |
 | Dark mode borders | `--color-border-muted` | More subtle external layout borders without affecting general UI borders |
@@ -363,8 +366,58 @@ The `threadId` must flow through the entire search chain without being dropped:
 - **No permission gating** — Anyone who can post in the channel can create threads; no `thread:create` permission
 - **Thread search indicator** — Thread replies appear in global search with a `› Thread` chevron label (matching notification panel pattern). Navigation opens the thread panel and scrolls to the result
 - **Resize desktop only** — Resize handle uses mouse events and is hidden below MD; no touch support for drag-to-resize
-- **Thread replies invisible on mobile** — Thread replies are filtered from the main feed at three layers (DB cursor in `getMessages()`, DB unread in `getFirstUnreadMessage()`, React hook in `useChannelMessages()`). Since mobile won't have a thread panel initially, thread replies are completely hidden for mobile users with no way to view them. Needs a platform-aware flag so replies stay in the main feed on platforms without thread panel support.
+- **Thread replies invisible on mobile** — Thread replies are filtered from the main feed when threads are enabled. Since mobile won't have a thread panel initially, thread replies would be completely hidden for mobile users with no way to view them. The `includeThreadReplies` infrastructure now exists at all three filter layers (DB cursor, DB unread, React hook), which makes it straightforward to pass `includeThreadReplies: true` on platforms without thread panel support. The space/channel thread toggle can also be used to disable threads entirely, which unfilters all replies into the main feed.
 
+
+## Space/Channel Thread Toggle
+
+A two-level toggle system controls whether threads are available in a space and its channels. Threads are off by default and must be explicitly enabled.
+
+### Data Model
+
+Two new optional boolean fields in `src/api/quorumApi.ts`:
+- **`Space.allowThreads?: boolean`** — Master gate. Default: `false` (off). Threads are unavailable across the entire space unless this is `true`.
+- **`Channel.allowThreads?: boolean`** — Per-channel override. Default: `undefined` (on, inherits from space). Set to `false` to disable threads in a specific channel even when the space enables them.
+
+### Resolution Logic
+
+```typescript
+const threadsEnabled = !!space?.allowThreads && (channel?.allowThreads !== false);
+```
+
+Computed in `Channel.tsx`. The space toggle is the prerequisite — channel toggles are irrelevant when the space disables threads globally.
+
+### Non-Destructive Disable
+
+Disabling threads does **not** delete any data. Thread metadata (`threadMeta`, `threadId`, `isThreadReply`) remains intact on all messages. When threads are disabled:
+- The three `isThreadReply` filter layers pass thread replies through (`includeThreadReplies: true`), so they appear inline in the main feed as regular messages
+- Thread UI elements are hidden: "Start Thread" in message actions, Threads header button, ThreadsListPanel, ThreadPanel
+- Thread hash navigation is short-circuited (early return when `!threadsEnabled`)
+
+Re-enabling threads restores full thread functionality with all existing thread data.
+
+### Settings UI
+
+- **Space level:** "Allow Threads" switch in Space Settings → General → Features section (`SpaceSettingsModal/General.tsx`). Managed by `useSpaceManagement` hook.
+- **Channel level:** "Allow Threads" switch in Channel Editor Modal (`ChannelEditorModal.tsx`). Only visible when `space?.allowThreads` is `true`. Managed by `useChannelManagement` hook with tri-state semantics (`undefined` = on/default, `false` = off).
+
+### Key Files
+
+| File | Change |
+|------|--------|
+| `src/api/quorumApi.ts` | `allowThreads?: boolean` on Space and Channel types |
+| `src/db/messages.ts` | `includeThreadReplies` param on `getMessages()` and `getFirstUnreadMessage()` |
+| `src/hooks/queries/messages/buildMessagesKey.ts` | 4-element key with thread variant + `buildMessagesKeyPrefix` |
+| `src/hooks/queries/messages/useMessages.ts` | Accepts and passes `includeThreadReplies` |
+| `src/hooks/business/channels/useChannelMessages.ts` | `threadsEnabled` prop, conditional filtering |
+| `src/components/space/Channel.tsx` | Computes `threadsEnabled`, gates all thread UI |
+| `src/components/modals/SpaceSettingsModal/General.tsx` | Space-level toggle |
+| `src/components/modals/ChannelEditorModal.tsx` | Channel-level toggle (conditional on space) |
+| `src/hooks/business/spaces/useSpaceManagement.ts` | `allowThreads` state + save |
+| `src/hooks/business/channels/useChannelManagement.ts` | `allowThreads` + `handleAllowThreadsChange` |
+| `src/services/MessageService.ts` | `setQueriesData` with prefix key for cache updates |
+| `src/services/ThreadService.ts` | `setQueriesData` with prefix key for cache updates |
+| `src/services/ActionQueueHandlers.ts` | `setQueriesData` with prefix key for cache updates |
 
 ## Future Work
 
@@ -373,8 +426,7 @@ These items are planned but not yet implemented:
 - **Advanced thread notifications** — Participation tracking, auto-follow, and per-thread unread indicators. Basic @mention notifications in thread replies are implemented. Store thread follows in a separate IndexedDB store (NOT UserConfig due to unbounded growth). Separate task.
 - **Migrate thread types to `quorum-shared`** — Move types and hooks to the shared package for cross-platform (mobile) compatibility.
 - **Permission gating** — Add `thread:create` permission to role system for per-role thread creation control.
-- **Space/Channel thread toggle** — Two-level toggle system: a space-level "Allow threads" setting acts as a master gate (default: off). When enabled, threads become available in all channels by default. Each channel then has its own "Allow threads" toggle (default: on) to opt out individually. Logic: `threadsEnabled = space.allowThreads && channel.allowThreads`. The space toggle is the prerequisite — channel toggles are irrelevant when the space disables threads globally. Settings live in SpaceSettings and ChannelSettings respectively, managed via their existing settings modals.
-- **Mobile thread reply visibility** — Add a platform-aware flag to the three `isThreadReply` filter points (DB cursor, DB unread query, React hook). On platforms without thread panel support (mobile), skip the filter so thread replies appear inline in the main feed as regular messages.
+- **Mobile thread reply visibility** — Add a platform-aware flag so mobile clients pass `includeThreadReplies: true` on platforms without thread panel support, ensuring thread replies appear inline in the main feed. The `includeThreadReplies` infrastructure is already in place at all three filter layers.
 
 
 ## Related Documentation
@@ -387,7 +439,8 @@ These items are planned but not yet implemented:
 ---
 
 _Created: 2026-03-09_
-_Updated: 2026-03-14 (updated Known Limitations and Future Work to reflect that basic thread mention notifications are implemented; advanced items like participation tracking, auto-follow, and per-thread unread indicators remain as future work)_
+_Updated: 2026-03-14 (documented implemented Space/Channel Thread Toggle: new section with data model, resolution logic, non-destructive disable behavior, settings UI, key files; updated main feed filtering to document conditional `includeThreadReplies`/`threadsEnabled` behavior and 4-element React Query key strategy; added query key technical decision; updated Known Limitations mobile visibility note; moved thread toggle from Future Work to implemented section)_
+_Previously: 2026-03-14 (updated Known Limitations and Future Work to reflect that basic thread mention notifications are implemented; advanced items like participation tracking, auto-follow, and per-thread unread indicators remain as future work)_
 _Previously: 2026-03-13 (removed outdated bookmark migration notes from Known Limitations and Future Work — bookmarks already store threadId at creation time and thread-aware navigation works end-to-end; added space/channel thread toggle to Future Work — Option C two-level permission model)_
 _Previously: 2026-03-13 (moderator thread deletion: extended remove auth to include message:delete permission across all three MessageService handlers, added submitChannelMessage remove handler for DB cleanup, added Channel.tsx sync effect for root message soft-delete visibility in thread panel, updated ThreadSettingsModal to show delete section for moderators)_
 _Previously: 2026-03-12 (thread management: added Thread Settings Modal section, close/reopen/auto-close/remove actions, updated types, header description, title editing flow, known limitations, future work; removed Discord references)_
