@@ -36,6 +36,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Mute User System Documentation](docs/features/mute-user-system.md)
 - [Notification Indicators System](docs/features/notification-indicators-system.md)
 - [Offline Support](docs/features/offline-support.md)
+- [Profile Sync on Returning User Login](docs/features/profile-sync-returning-user-login.md)
 - [ReactTooltip Mobile Support Documentation](docs/features/reacttooltip-mobile.md)
 - [Responsive Layout System Documentation](docs/features/responsive-layout.md)
 - [Security Architecture](docs/features/security.md)
@@ -106,6 +107,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Thread title not updating in UI after pressing Enter](bugs/.solved/2026-03-11-thread-title-enter-not-saving.md)
 - [Moderator thread deletion resurfaces after optimistic removal](bugs/.solved/2026-03-13-moderator-thread-delete-resurfaces.md)
 - [Thread delete button hidden even when all replies are from thread author](bugs/.solved/2026-03-13-thread-delete-button-hidden-when-all-replies-own.md)
+- [Profile Sync Not Working on Returning User Key Import](bugs/.solved/2026-03-14-profile-sync-not-working-on-key-import.md)
 - [Action Queue Bypasses SDK Encryption for Identity Keys](bugs/.solved/action-queue-plaintext-private-keys.md)
 - [Android 7.0 File Download Fix - Implementation Plan](bugs/.solved/SOLVED_android-file-download-huawei-p9-lite.md)
 - [Bug: Auto-Jump to First Unread Message - Blocked by Virtuoso Scroll Positioning](bugs/.solved/auto-jump-unread-virtuoso-scroll-conflict.md)
@@ -153,6 +155,8 @@ This is the main index for all documentation, bug reports, and task management.
 
 - [Embedded Media + YouTube Facade Privacy Fix — Implementation Plan](tasks/2026-03-12-embedded-media-plan.md)
 - [Embedded Media in PostMessage + YouTube Facade Privacy Fix](tasks/2026-03-12-embedded-media-spec.md)
+- [Complete i18n Translation Quality Audit](tasks/2026-03-14-i18n-complete-translation-quality-audit.md)
+- [Test thread mention notifications feature](tasks/2026-03-14-test-thread-mention-notifications.md)
 - [Accessibility Features — Remaining Work](tasks/accessibility-features-implementation.md)
 - [Add Space Tag support to shared types](tasks/quorum-shared-space-tags.md)
 - [Add User Bio Field to UserSettingsModal General Tab](tasks/add-user-bio-field.md)
@@ -266,6 +270,9 @@ This is the main index for all documentation, bug reports, and task management.
 - [Thread Management: Close, Auto-Close, and Remove](tasks/.done/2026-03-12-thread-management-spec.md)
 - [Threads List Panel Implementation Plan](tasks/.done/2026-03-12-threads-list-panel-plan.md)
 - [Threads List Panel — Design Spec](tasks/.done/2026-03-12-threads-list-panel-spec.md)
+- [Extract ThreadService Implementation Plan](tasks/.done/2026-03-13-extract-thread-service.md)
+- [Thread Mention Notifications — Implementation Plan](tasks/.done/2026-03-14-thread-mention-notifications-plan.md)
+- [Thread Mention Notifications](tasks/.done/2026-03-14-thread-mention-notifications.md)
 - [AccentColorSwitcher Cross-Platform Migration + Persistence](tasks/.done/accent-color-switcher-cross-platform-migration.md)
 - [Add Context to Desktop Notifications](tasks/.done/rich-desktop-notifications-context.md)
 - [Add DM-Specific Action Queue Handlers](tasks/.done/dm-action-queue-handlers.md)
@@ -406,6 +413,7 @@ This is the main index for all documentation, bug reports, and task management.
 ### Active Reports
 
 - [Channel Ordering Feature Analysis](reports/channel-ordering-feature-analysis_2026-01-07.md)
+- [Complete i18n Translation Quality Audit](reports/i18n-complete-translation-quality-audit_2026-03-14.md)
 - [Comprehensive Privacy & Security Audit - All Features](reports/privacy-security-comprehensive-audit_2025-12-21.md)
 - [Comprehensive WCAG Accessibility Audit Report](reports/accessibility-wcag-audit_2026-02-10.md)
 - [Cryptographic Code Best Practices: Abstraction vs Duplication](reports/cryptographic-code-best-practices_2025-12-20.md)
@@ -421,6 +429,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Web-to-Native Feature Sync Compatibility Analysis](reports/web-native-feature-sync-analysis_2025-12-04.md)
 
 ### .Archived
+- [i18n Translation Quality Audit](reports/.archived/i18n-translation-quality-audit_2026-03-14.md)
 - [Text Primitive Audit — Pre-Migration Analysis](reports/.archived/text-primitive-audit_2026-02-10.md)
 
 ### Action Queue
@@ -444,4 +453,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2026-03-13 17:41:28
+**Last Updated**: 2026-03-14 13:43:10
