@@ -25,6 +25,7 @@ import { int64ToBytes } from '../utils/bytes';
 import { QueryClient, InfiniteData } from '@tanstack/react-query';
 import {
   buildMessagesKey,
+  buildMessagesKeyPrefix,
   buildSpaceMembersKey,
   buildSpaceKey,
   buildSpacesKey,
@@ -884,10 +885,10 @@ export class MessageService {
     status: 'sent' | 'failed',
     error?: string
   ) {
-    const queryKey = buildMessagesKey({ spaceId, channelId });
+    const queryKey = buildMessagesKeyPrefix({ spaceId, channelId });
 
-    queryClient.setQueryData(
-      queryKey,
+    queryClient.setQueriesData(
+      { queryKey },
       (oldData: InfiniteData<any>) => {
         if (!oldData?.pages) return oldData;
 
@@ -930,8 +931,8 @@ export class MessageService {
   ) {
     if (decryptedContent.content.type === 'reaction') {
       const reaction = decryptedContent.content as ReactionMessage;
-      queryClient.setQueryData(
-        buildMessagesKey({ spaceId: spaceId, channelId: channelId }),
+      queryClient.setQueriesData(
+        { queryKey: buildMessagesKeyPrefix({ spaceId: spaceId, channelId: channelId }) },
         (oldData: InfiniteData<any>) => {
           if (!oldData?.pages) return oldData;
 
@@ -989,8 +990,8 @@ export class MessageService {
       );
     } else if (decryptedContent.content.type === 'remove-reaction') {
       const reaction = decryptedContent.content as RemoveReactionMessage;
-      queryClient.setQueryData(
-        buildMessagesKey({ spaceId: spaceId, channelId: channelId }),
+      queryClient.setQueriesData(
+        { queryKey: buildMessagesKeyPrefix({ spaceId: spaceId, channelId: channelId }) },
         (oldData: InfiniteData<any>) => {
           if (!oldData?.pages) return oldData;
 
@@ -1043,8 +1044,8 @@ export class MessageService {
     } else if (decryptedContent.content.type === 'edit-message') {
       const editMessage = decryptedContent.content as EditMessage;
 
-      queryClient.setQueryData(
-        buildMessagesKey({ spaceId: spaceId, channelId: channelId }),
+      queryClient.setQueriesData(
+        { queryKey: buildMessagesKeyPrefix({ spaceId: spaceId, channelId: channelId }) },
         (oldData: InfiniteData<any>) => {
           if (!oldData?.pages) return oldData;
 
@@ -1163,8 +1164,8 @@ export class MessageService {
 
       if (shouldHonorDelete) {
         const targetId = decryptedContent.content.removeMessageId;
-        queryClient.setQueryData(
-          buildMessagesKey({ spaceId: spaceId, channelId: channelId }),
+        queryClient.setQueriesData(
+          { queryKey: buildMessagesKeyPrefix({ spaceId: spaceId, channelId: channelId }) },
           (oldData: InfiniteData<any>) => {
             if (!oldData?.pages) return oldData;
 
@@ -1264,8 +1265,8 @@ export class MessageService {
       }
 
       // Update React Query cache
-      queryClient.setQueryData(
-        buildMessagesKey({ spaceId: spaceId, channelId: channelId }),
+      queryClient.setQueriesData(
+        { queryKey: buildMessagesKeyPrefix({ spaceId: spaceId, channelId: channelId }) },
         (oldData: InfiniteData<any>) => {
           if (!oldData?.pages) return oldData;
 
@@ -1542,8 +1543,8 @@ export class MessageService {
       }
 
       // Authorized - add to cache
-      queryClient.setQueryData(
-        buildMessagesKey({ spaceId: spaceId, channelId: channelId }),
+      queryClient.setQueriesData(
+        { queryKey: buildMessagesKeyPrefix({ spaceId: spaceId, channelId: channelId }) },
         (oldData: InfiniteData<any>) => {
           if (!oldData?.pages) return oldData;
 
@@ -4692,8 +4693,8 @@ export class MessageService {
     }
 
     // Update status to 'sending' (optimistic)
-    queryClient.setQueryData(
-      buildMessagesKey({ spaceId, channelId }),
+    queryClient.setQueriesData(
+      { queryKey: buildMessagesKeyPrefix({ spaceId, channelId }) },
       (oldData: InfiniteData<any>) => {
         if (!oldData?.pages) return oldData;
         return {
@@ -4809,8 +4810,8 @@ export class MessageService {
     }
 
     // Update status to 'sending' (optimistic)
-    queryClient.setQueryData(
-      buildMessagesKey({ spaceId: address, channelId: address }),
+    queryClient.setQueriesData(
+      { queryKey: buildMessagesKeyPrefix({ spaceId: address, channelId: address }) },
       (oldData: InfiniteData<any>) => {
         if (!oldData?.pages) return oldData;
         return {

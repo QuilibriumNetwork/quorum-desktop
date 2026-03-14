@@ -23,7 +23,7 @@ import type { ConfigService } from './ConfigService';
 import type { SpaceService } from './SpaceService';
 import type { QueryClient, InfiniteData } from '@tanstack/react-query';
 import type { ActionType } from '../types/actionQueue';
-import { buildMessagesKey } from '../hooks/queries/messages/buildMessagesKey';
+import { buildMessagesKeyPrefix } from '../hooks/queries/messages/buildMessagesKey';
 import { channel as secureChannel } from '@quilibrium/quilibrium-js-sdk-channels';
 import type { Message } from '../api/quorumApi';
 import { DefaultImages } from '../utils';
@@ -436,9 +436,9 @@ export class ActionQueueHandlers {
       } else {
         // Ensure message is in React Query cache AND update status to 'sent' in a single atomic operation
         // This prevents race conditions between two separate setQueryData calls
-        const messagesKey = buildMessagesKey({ spaceId, channelId });
-        this.deps.queryClient.setQueryData(
-          messagesKey,
+        const messagesKey = buildMessagesKeyPrefix({ spaceId, channelId });
+        this.deps.queryClient.setQueriesData(
+          { queryKey: messagesKey },
           (oldData: InfiniteData<{ messages: Message[]; nextCursor?: number; prevCursor?: number }> | undefined) => {
             if (!oldData?.pages) return oldData;
 
@@ -711,9 +711,9 @@ export class ActionQueueHandlers {
 
       // Ensure message is in React Query cache AND update status to 'sent' in a single atomic operation
       // This prevents race conditions between two separate setQueryData calls
-      const messagesKey = buildMessagesKey({ spaceId: address, channelId: address });
-      this.deps.queryClient.setQueryData(
-        messagesKey,
+      const messagesKey = buildMessagesKeyPrefix({ spaceId: address, channelId: address });
+      this.deps.queryClient.setQueriesData(
+        { queryKey: messagesKey },
         (oldData: InfiniteData<{ messages: Message[]; nextCursor?: number; prevCursor?: number }> | undefined) => {
           if (!oldData?.pages) return oldData;
 

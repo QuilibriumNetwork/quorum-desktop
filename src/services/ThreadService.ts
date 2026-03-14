@@ -9,7 +9,7 @@ import {
   buildChannelThreadFromCreate,
   updateChannelThreadOnReply,
 } from './channelThreadHelpers';
-import { buildMessagesKey } from '../hooks/queries/messages/buildMessagesKey';
+import { buildMessagesKeyPrefix } from '../hooks/queries/messages/buildMessagesKey';
 
 export class ThreadService {
   constructor(private messageDB: MessageDB) {}
@@ -288,8 +288,8 @@ export class ThreadService {
     }
 
     // Non-remove: merge threadMeta into main feed cache
-    queryClient.setQueryData(
-      buildMessagesKey({ spaceId, channelId }),
+    queryClient.setQueriesData(
+      { queryKey: buildMessagesKeyPrefix({ spaceId, channelId }) },
       (oldData: InfiniteData<any> | undefined) => {
         if (!oldData?.pages) return oldData;
         return {
@@ -342,8 +342,8 @@ export class ThreadService {
       : false;
 
     // Update main feed cache
-    queryClient.setQueryData(
-      buildMessagesKey({ spaceId, channelId }),
+    queryClient.setQueriesData(
+      { queryKey: buildMessagesKeyPrefix({ spaceId, channelId }) },
       (oldData: InfiniteData<any> | undefined) => {
         if (!oldData?.pages) return oldData;
         return {
@@ -401,8 +401,8 @@ export class ThreadService {
 
     // Update lastActivityAt on root message in main feed cache
     const now = message.createdDate ?? Date.now();
-    queryClient.setQueryData(
-      buildMessagesKey({ spaceId, channelId }),
+    queryClient.setQueriesData(
+      { queryKey: buildMessagesKeyPrefix({ spaceId, channelId }) },
       (oldData: InfiniteData<any> | undefined) => {
         if (!oldData?.pages) return oldData;
         return {
@@ -551,8 +551,8 @@ export class ThreadService {
     );
 
     // Update main feed cache
-    queryClient.setQueryData(
-      buildMessagesKey({ spaceId, channelId }),
+    queryClient.setQueriesData(
+      { queryKey: buildMessagesKeyPrefix({ spaceId, channelId }) },
       (oldData: InfiniteData<any> | undefined) => {
         if (!oldData?.pages) return oldData;
         return {
