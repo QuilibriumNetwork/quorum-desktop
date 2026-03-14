@@ -525,6 +525,24 @@ mentions = extractMentionsFromText(messageText, {
 
 ---
 
+## Thread Mentions
+
+Thread reply messages can contain @mentions that trigger notifications just like regular channel messages. The notification system is fully thread-aware as of DB schema v11.
+
+### How Thread Mention Notifications Work
+
+- **NotificationPanel display** — Thread reply mentions appear in the NotificationPanel with a `channel › Thread` breadcrumb (e.g., `#general › Thread`) to distinguish them from main-feed mentions.
+- **Per-thread read tracking** — A dedicated `thread_read_times` IndexedDB store (added in DB v11 migration) records when each thread was last opened, keyed by `threadId`. All 6 notification hooks check this store for thread replies: a thread reply is "unread" if its `createdDate` is after the stored `thread_read_times` entry.
+- **Persistence** — Thread mention notifications persist until the thread is opened (ThreadPanel saves the current read time on a 2-second interval) or "Mark All as Read" is used (which writes read times for all threads with unread mentions).
+- **Navigation** — Clicking a thread mention notification navigates using the compound hash format `#thread-{threadId}-msg-{messageId}`, which opens the ThreadPanel and scrolls to the target reply.
+
+### Scope and Limitations
+
+- Thread mention notifications cover @you, @everyone, and @role mentions within thread replies. They respect the same per-space notification settings as regular mentions.
+- Participation tracking (auto-follow threads you reply to), auto-follow, and per-thread unread indicators (outside the NotificationPanel) are not yet implemented.
+
+---
+
 ## Key Design Decisions
 
 ### 1. Unified Notification Type System
@@ -730,3 +748,5 @@ All mention components use `tokenData.isInteractive` flag to determine CSS class
 *Last updated: 2026-01-09*
 *Reviewed by Claude Code: 2026-01-09*
 *Verified: 2026-01-09 - Removed references to unsupported enhanced mention formats*
+
+_Updated: 2026-03-14 (added Thread Mentions section documenting thread-aware notification behavior: `thread_read_times` IndexedDB store, `channel › Thread` breadcrumb in NotificationPanel, navigation hash format, and persistence rules)_

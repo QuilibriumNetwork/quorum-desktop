@@ -114,7 +114,7 @@ Channel.tsx                          ThreadPanel.tsx
 
 Channel.tsx owns all thread state (`activePanel`, `activeThreadId`, `activeThreadRootMessage`) and business logic (`handleOpenThread`, `handleSubmitThreadMessage`, `handleSubmitThreadSticker`, `handleUpdateThreadTitle`). The `useThreadMessages` React Query hook is called in Channel and its results flow through the context to ThreadPanel.
 
-**Stale snapshot pitfall:** `activeThreadRootMessage` is a React state variable set once when a thread opens and not derived from any query. Any mutation to the root message (e.g., title update) must explicitly call `setActiveThreadRootMessage` — otherwise the displayed root message in ThreadPanel stays stale even after the DB and React Query cache are updated. The `invalidateQueries` call for `thread-messages` only refreshes the replies list, not this snapshot.
+**Stale snapshot pitfall:** `activeThreadRootMessage` is a React state variable set once when a thread opens and not derived from any query. Any mutation to the root message (e.g., title update) must explicitly call `setActiveThreadRootMessage` — otherwise the displayed root message in ThreadPanel stays stale even after the DB and React Query cache are updated. The `invalidateQueries` call for `thread-messages` only refreshes the replies list, not this snapshot. A sync effect in Channel.tsx watches `messageList` and propagates content changes (e.g., soft-deletion) to the snapshot, so that root message deletion is visible immediately in the thread panel without closing/reopening.
 
 ## Visual Design
 
@@ -196,9 +196,9 @@ Opened via the cog icon in the panel header. Accessible to thread managers (auth
 - **Title editing** (author only) — Freetext input, 100-char limit, XSS validation via `validateNameForXSS`. Saves via `updateTitle` → `handleUpdateThreadTitle` in Channel.tsx → `submitChannelMessage` broadcast (same flow as inline title editing previously was). Save button disabled if title has XSS content or no changes.
 - **Auto-close** — Select preset (Never / 1h / 24h / 3 days / 1 week). Stored as `autoCloseAfter` ms in `ThreadMeta`. "Never" = field omitted.
 - **Close thread toggle** — Marks thread as `isClosed`. Closed threads are read-only for all users.
-- **Delete thread** — Author-only, two-click confirm. Only shown if thread has no replies from other users. Removes all thread replies from IndexedDB, removes `channel_threads` registry entry, and handles root message based on ownership: hard-deletes if author owns root or root was soft-deleted; strips `threadMeta` otherwise (keeping the other user's message intact).
+- **Delete thread** — Two-click confirm. Available to thread authors and users with `message:delete` permission. Only shown if thread has no replies from other users (moderators must delete those messages individually first). Removes all thread replies from IndexedDB, removes `channel_threads` registry entry, and handles root message based on ownership: hard-deletes if sender owns root or root was soft-deleted; strips `threadMeta` otherwise (keeping the other user's message intact).
 
-**Auth:** Modal only renders if `canManage` is true. Server-side auth in `MessageService` requires only that the sender is the thread creator (`createdBy`). The old `isRootSender` requirement was removed — the thread creator can always delete their thread even if the root message belongs to another user. When the root message is missing from DB (already hard-deleted), authorization falls back to the `channel_threads` registry which independently stores `createdBy`.
+**Auth:** Modal only renders if `canManage` is true. Server-side auth in `MessageService` (`processMessage`, `addMessage`, and `submitChannelMessage`) allows both the thread creator (`createdBy`) and users with `message:delete` role permission — matching the pattern used for close/reopen/updateSettings. When the root message is missing from DB (already hard-deleted), authorization falls back to the `channel_threads` registry which independently stores `createdBy`.
 
 **Provider:** `ThreadSettingsModalProvider` wraps the Space and exposes `useThreadSettingsModal()` → `openThreadSettings(props)`. ThreadPanel calls this from the cog button click handler.
 
@@ -354,30 +354,29 @@ The `threadId` must flow through the entire search chain without being dropped:
 | Cross-component highlight | URL hash | `useMessageHighlight()` is isolated per instance; `window.location.hash = '#msg-{id}'` is the only cross-component signal Message.tsx responds to |
 | Same-channel hash re-detection | `location.hash` in effect deps | React Router doesn't remount Channel on same-channel navigation; hash dep ensures the thread detection effect re-fires |
 | Thread removal cache strategy | `removeQueries` + `setQueryData` (not `invalidateQueries`) | `invalidateQueries` triggers a DB refetch that races against the persistent handler's cleanup — the refetch restores deleted data into the cache, undoing the optimistic removal. Direct cache manipulation avoids this race |
-| Thread deletion auth | Thread creator only (no `isRootSender` check) | Thread creator may start threads on other users' messages; requiring root authorship blocked deletion in this common case. Root message ownership only affects whether the root is hard-deleted or just stripped of `threadMeta` |
+| Thread deletion auth | Thread creator OR `message:delete` permission | Matches close/reopen/updateSettings auth pattern. Moderators must first delete other users' replies before deleting the thread itself (UI enforced via `hasOtherReplies` guard). Root message ownership only affects whether the root is hard-deleted or just stripped of `threadMeta` |
 
 ## Known Limitations
 
 - **Space channels only** — Thread feature is not available in DM conversations
-- **No thread notifications** — No participation tracking, auto-follow, or unread indicators per-thread
+- **Thread notifications (partial)** — Basic @mention notifications in thread replies are implemented (see [mention-notification-system.md](../mention-notification-system.md#thread-mentions)). Participation tracking, auto-follow, and per-thread unread indicators are not yet implemented.
 - **No permission gating** — Anyone who can post in the channel can create threads; no `thread:create` permission
 - **No thread search** — Thread replies are not included in global search results
 - **Resize desktop only** — Resize handle uses mouse events and is hidden below MD; no touch support for drag-to-resize
 - **Thread replies invisible on mobile** — Thread replies are filtered from the main feed at three layers (DB cursor in `getMessages()`, DB unread in `getFirstUnreadMessage()`, React hook in `useChannelMessages()`). Since mobile won't have a thread panel initially, thread replies are completely hidden for mobile users with no way to view them. Needs a platform-aware flag so replies stay in the main feed on platforms without thread panel support.
-- **Thread-aware navigation for new bookmarks only** — Existing bookmarks created before this feature was added don't store a `threadId`, so they fall back to `#msg-{id}` navigation and silently fail to open the thread panel. New bookmarks capture `threadId` at creation time. No migration path for legacy bookmarks.
+
 
 ## Future Work
 
 These items are planned but not yet implemented:
 
-- **Thread notifications** — Participation tracking, auto-follow, unread indicators per-thread. Store thread follows in a separate IndexedDB store (NOT UserConfig due to unbounded growth). Separate task.
+- **Advanced thread notifications** — Participation tracking, auto-follow, and per-thread unread indicators. Basic @mention notifications in thread replies are implemented. Store thread follows in a separate IndexedDB store (NOT UserConfig due to unbounded growth). Separate task.
 - **Migrate thread types to `quorum-shared`** — Move types and hooks to the shared package for cross-platform (mobile) compatibility.
 - **Permission gating** — Add `thread:create` permission to role system for per-role thread creation control.
-- **"Also send to channel"** — Option to post a thread reply to the main feed simultaneously.
+- **Space/Channel thread toggle** — Two-level toggle system: a space-level "Allow threads" setting acts as a master gate (default: off). When enabled, threads become available in all channels by default. Each channel then has its own "Allow threads" toggle (default: on) to opt out individually. Logic: `threadsEnabled = space.allowThreads && channel.allowThreads`. The space toggle is the prerequisite — channel toggles are irrelevant when the space disables threads globally. Settings live in SpaceSettings and ChannelSettings respectively, managed via their existing settings modals.
 - **Thread search** — Include thread replies in global search results.
-- **Extract ThreadService** — If MessageService grows further, extract thread handling to a dedicated service class.
 - **Mobile thread reply visibility** — Add a platform-aware flag to the three `isThreadReply` filter points (DB cursor, DB unread query, React hook). On platforms without thread panel support (mobile), skip the filter so thread replies appear inline in the main feed as regular messages.
-- **Bookmark migration** — Existing bookmarks don't store `threadId`, so clicking them won't open the thread panel for thread replies. A migration could backfill `threadId` by scanning messages at read time, but the impact is limited to bookmarks created before this feature shipped.
+
 
 ## Related Documentation
 
@@ -389,5 +388,7 @@ These items are planned but not yet implemented:
 ---
 
 _Created: 2026-03-09_
-_Updated: 2026-03-13 (thread deletion fixes: relaxed auth to thread-creator-only, handle deleted root messages via channel_threads fallback, hard-delete soft-deleted roots on thread removal to prevent ghost messages, optimistic cache update in handleRemoveThread, use removeQueries/setQueryData instead of invalidateQueries to avoid refetch race; added getChannelThread DB method)_
+_Updated: 2026-03-14 (updated Known Limitations and Future Work to reflect that basic thread mention notifications are implemented; advanced items like participation tracking, auto-follow, and per-thread unread indicators remain as future work)_
+_Previously: 2026-03-13 (removed outdated bookmark migration notes from Known Limitations and Future Work — bookmarks already store threadId at creation time and thread-aware navigation works end-to-end; added space/channel thread toggle to Future Work — Option C two-level permission model)_
+_Previously: 2026-03-13 (moderator thread deletion: extended remove auth to include message:delete permission across all three MessageService handlers, added submitChannelMessage remove handler for DB cleanup, added Channel.tsx sync effect for root message soft-delete visibility in thread panel, updated ThreadSettingsModal to show delete section for moderators)_
 _Previously: 2026-03-12 (thread management: added Thread Settings Modal section, close/reopen/auto-close/remove actions, updated types, header description, title editing flow, known limitations, future work; removed Discord references)_
