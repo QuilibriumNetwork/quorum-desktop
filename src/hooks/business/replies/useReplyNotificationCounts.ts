@@ -84,6 +84,12 @@ export function useReplyNotificationCounts({
 
           const lastReadTimestamp = conversation?.lastReadTimestamp || 0;
 
+          // Fetch thread read times for this channel
+          const threadReadTimes = await messageDB.getThreadReadTimesForChannel({
+            spaceId,
+            channelId,
+          });
+
           // Use optimized database query to get only unread replies
           // This is much faster than fetching all messages
           const messages = await messageDB.getUnreadReplies({
@@ -94,8 +100,18 @@ export function useReplyNotificationCounts({
             limit: DISPLAY_THRESHOLD, // Only fetch what we need for display
           });
 
-          // Count replies (getUnreadReplies already filters by replyMetadata.parentAuthor)
-          const channelReplyCount = Math.min(messages.length, DISPLAY_THRESHOLD);
+          // Count replies, excluding those already read in threads
+          let channelReplyCount = 0;
+          for (const message of messages) {
+            if (message.isThreadReply && message.threadId) {
+              const threadReadTime = threadReadTimes[message.threadId];
+              if (threadReadTime !== undefined && message.createdDate <= threadReadTime) {
+                continue; // Already read in thread
+              }
+            }
+            channelReplyCount++;
+            if (channelReplyCount >= DISPLAY_THRESHOLD) break;
+          }
 
           // Only include channels with replies
           if (channelReplyCount > 0) {
