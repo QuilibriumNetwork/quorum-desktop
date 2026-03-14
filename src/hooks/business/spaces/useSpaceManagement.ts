@@ -22,6 +22,8 @@ export interface UseSpaceManagementReturn {
   setIsRepudiable: (isRepudiable: boolean) => void;
   saveEditHistory: boolean;
   setSaveEditHistory: (saveEditHistory: boolean) => void;
+  allowThreads: boolean;
+  setAllowThreads: (allowThreads: boolean) => void;
   selectedCategory: string;
   setSelectedCategory: (category: string) => void;
   saveChanges: (
@@ -47,6 +49,7 @@ export const useSpaceManagement = (
   const [isPublic, setIsPublic] = useState(true);
   const [isRepudiable, setIsRepudiable] = useState(false);
   const [saveEditHistory, setSaveEditHistory] = useState(false);
+  const [allowThreads, setAllowThreads] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState(initialCategory || 'general');
   const [deleteError, setDeleteError] = useState<string | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -64,6 +67,7 @@ export const useSpaceManagement = (
       setSpaceName(space.spaceName || '');
       setIsRepudiable(space.isRepudiable || false);
       setSaveEditHistory(space.saveEditHistory ?? false);
+      setAllowThreads(space.allowThreads ?? false);
     }
   }, [space?.spaceId]); // Only run when space ID changes, not when state changes
 
@@ -99,6 +103,7 @@ export const useSpaceManagement = (
         bannerUrl,
         isRepudiable,
         saveEditHistory,
+        allowThreads,
       };
 
       // Optimistic update: Update local DB and React Query cache immediately
@@ -115,7 +120,7 @@ export const useSpaceManagement = (
       // Close modal immediately (optimistic)
       onClose?.();
     },
-    [spaceName, space, isRepudiable, saveEditHistory, spaceId, messageDB, queryClient, actionQueueService, onClose]
+    [spaceName, space, isRepudiable, saveEditHistory, allowThreads, spaceId, messageDB, queryClient, actionQueueService, onClose]
   );
 
   const handleDeleteSpace = useCallback(async () => {
@@ -178,6 +183,8 @@ export const useSpaceManagement = (
     setIsRepudiable,
     saveEditHistory,
     setSaveEditHistory,
+    allowThreads,
+    setAllowThreads,
     selectedCategory,
     setSelectedCategory,
     saveChanges,
