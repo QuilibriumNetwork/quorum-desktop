@@ -586,8 +586,17 @@ export class ThreadService {
       queryClient.invalidateQueries({ queryKey: ['channel-threads', spaceId, channelId] });
     }
 
-    // updateTitle: invalidate thread-messages
+    // updateTitle: update channel_threads registry and invalidate thread-messages
     if (threadMsg.action === 'updateTitle') {
+      const threads = await this.messageDB.getChannelThreads({ spaceId, channelId });
+      const entry = threads.find((t: ChannelThread) => t.threadId === threadMsg.threadMeta.threadId);
+      if (entry) {
+        await this.messageDB.saveChannelThread({
+          ...entry,
+          customTitle: threadMsg.threadMeta.customTitle ?? entry.customTitle,
+        });
+      }
+      queryClient.invalidateQueries({ queryKey: ['channel-threads', spaceId, channelId] });
       queryClient.invalidateQueries({
         queryKey: ['thread-messages', spaceId, channelId, threadMsg.threadMeta.threadId],
       });
