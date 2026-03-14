@@ -397,12 +397,14 @@ export class MessageDB {
     cursor,
     direction = 'backward',
     limit = 100,
+    includeThreadReplies = false,
   }: {
     spaceId: string;
     channelId: string;
     cursor?: number;
     direction?: 'forward' | 'backward';
     limit?: number;
+    includeThreadReplies?: boolean;
   }): Promise<{
     messages: Message[];
     nextCursor: number | null;
@@ -450,7 +452,7 @@ export class MessageDB {
         const cursor = (event.target as IDBRequest).result;
 
         if (cursor && messages.length < limit) {
-          if (cursor.value.isThreadReply) {
+          if (!includeThreadReplies && cursor.value.isThreadReply) {
             cursor.continue();
             return;
           }
