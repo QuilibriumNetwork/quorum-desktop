@@ -48,7 +48,7 @@ export const Login = ({
           <div className="flex flex-col grow"></div>
         </div>
         <div className="flex flex-row justify-center">
-          <div className="flex flex-col justify-center py-8 w-full max-w-sm px-4">
+          <div className="flex flex-col items-center justify-center py-8 w-full max-w-sm px-4">
             <Button
               type="primary-white"
               className="w-full sm:w-80 mt-2"

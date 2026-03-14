@@ -182,7 +182,7 @@ export const Onboarding = ({
             </div>
             <div className="flex flex-row justify-center">
               <div className="grow"></div>
-              <div className="w-full max-w-[460px] px-4 pt-4 text-center">
+              <div className="w-full max-w-[460px] px-4 pt-4 flex flex-col items-center">
                 <Button
                   type="primary-white"
                   className="px-8 mb-4 w-full sm:w-auto"
@@ -312,7 +312,7 @@ export const Onboarding = ({
             </div>
             <div className="flex flex-row justify-center">
               <div className="grow"></div>
-              <div className="flex flex-col justify-around pl-2 pt-4">
+              <div className="flex flex-col items-center pt-4">
                 <Button
                   type="primary-white"
                   disabled={!canSaveFile}
@@ -357,7 +357,7 @@ export const Onboarding = ({
             </div>
             <div className="flex flex-row justify-center">
               <div className="grow"></div>
-              <div className="flex flex-col justify-around pl-2">
+              <div className="flex flex-col items-center">
                 <Button
                   type="primary-white"
                   className="px-8 w-full sm:w-auto"
