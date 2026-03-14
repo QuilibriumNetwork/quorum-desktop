@@ -808,7 +808,7 @@ const Channel: React.FC<ChannelProps> = ({
         // Update React Query cache to replace current pages with new data
         // This creates a single page centered around the target message
         queryClient.setQueryData(
-          buildMessagesKey({ spaceId, channelId }),
+          buildMessagesKey({ spaceId, channelId, includeThreadReplies: !threadsEnabled }),
           {
             pages: [{ messages, prevCursor, nextCursor }],
             pageParams: [undefined],
@@ -832,7 +832,7 @@ const Channel: React.FC<ChannelProps> = ({
         setIsLoadingHashMessage(false);
       }
     },
-    [messageDB, spaceId, channelId, queryClient]
+    [messageDB, spaceId, channelId, queryClient, threadsEnabled]
   );
 
   // Auto-jump to first unread message on channel entry
@@ -909,7 +909,7 @@ const Channel: React.FC<ChannelProps> = ({
 
         // Update React Query cache to replace current pages with new data
         queryClient.setQueryData(
-          buildMessagesKey({ spaceId, channelId }),
+          buildMessagesKey({ spaceId, channelId, includeThreadReplies: !threadsEnabled }),
           {
             pages: [{ messages, prevCursor, nextCursor }],
             pageParams: [undefined],
@@ -952,7 +952,7 @@ const Channel: React.FC<ChannelProps> = ({
     }, 100);
 
     return () => clearTimeout(timer);
-  }, [channelId, spaceId, lastReadTimestamp, messageDB, messageList, queryClient]);
+  }, [channelId, spaceId, lastReadTimestamp, messageDB, messageList, queryClient, threadsEnabled]);
 
   // Reset scrollToMessageId and separator when channel changes
   useEffect(() => {
