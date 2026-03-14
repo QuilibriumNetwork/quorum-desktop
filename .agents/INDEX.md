@@ -155,6 +155,9 @@ This is the main index for all documentation, bug reports, and task management.
 
 - [Embedded Media + YouTube Facade Privacy Fix — Implementation Plan](tasks/2026-03-12-embedded-media-plan.md)
 - [Embedded Media in PostMessage + YouTube Facade Privacy Fix](tasks/2026-03-12-embedded-media-spec.md)
+- [Audit & Migrate All Desktop Types to quorum-shared](tasks/2026-03-14-audit-types-for-quorum-shared-migration.md)
+- [Migrate Thread Types to quorum-shared](tasks/2026-03-14-migrate-thread-types-to-quorum-shared.md)
+- [Thread List Panel: "Created by me" Filter](tasks/2026-03-14-thread-list-created-filter.md)
 - [Accessibility Features — Remaining Work](tasks/accessibility-features-implementation.md)
 - [Add Space Tag support to shared types](tasks/quorum-shared-space-tags.md)
 - [Add User Bio Field to UserSettingsModal General Tab](tasks/add-user-bio-field.md)
@@ -456,4 +459,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2026-03-14 17:31:00
+**Last Updated**: 2026-03-14 18:44:45
