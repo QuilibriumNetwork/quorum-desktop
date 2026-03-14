@@ -16,10 +16,12 @@ async function determineInitialCursor({
   messageDB,
   spaceId,
   channelId,
+  includeThreadReplies = false,
 }: {
   messageDB: MessageDB;
   spaceId: string;
   channelId: string;
+  includeThreadReplies?: boolean;
 }): Promise<number | null> {
   // Check if there's a hash navigation (web only)
   // Skip auto-jump if URL has a message hash target
@@ -42,6 +44,7 @@ async function determineInitialCursor({
     spaceId,
     channelId,
     afterTimestamp: lastReadTimestamp,
+    includeThreadReplies,
   });
 
   // Jump to first unread, or load from bottom if none
@@ -53,10 +56,12 @@ const buildMessagesFetcher = ({
   messageDB,
   spaceId,
   channelId,
+  includeThreadReplies = false,
 }: {
   messageDB: MessageDB;
   spaceId: string;
   channelId: string;
+  includeThreadReplies?: boolean;
 }) =>
   wrapPaginatedFetcher(async ({ pageParam: cursor }) => {
     // On initial load (no cursor), determine where to start
@@ -66,6 +71,7 @@ const buildMessagesFetcher = ({
         messageDB,
         spaceId,
         channelId,
+        includeThreadReplies,
       });
     }
 
@@ -74,6 +80,7 @@ const buildMessagesFetcher = ({
       channelId,
       cursor: effectiveCursor,
       direction: cursor?.direction,
+      includeThreadReplies,
     });
 
     return response;

@@ -20,6 +20,7 @@ interface UseChannelMessagesProps {
     };
   };
   channel?: Channel;
+  threadsEnabled?: boolean;
 }
 
 export function useChannelMessages({
@@ -28,11 +29,13 @@ export function useChannelMessages({
   roles,
   members,
   channel,
+  threadsEnabled = false,
 }: UseChannelMessagesProps) {
   const user = usePasskeysContext();
   const { data: messages, fetchPreviousPage, fetchNextPage, hasNextPage } = useMessages({
     spaceId,
     channelId,
+    includeThreadReplies: !threadsEnabled,
   });
   const { data: isSpaceOwner } = useSpaceOwner({ spaceId });
   const { data: space } = useSpace({ spaceId });
@@ -71,7 +74,7 @@ export function useChannelMessages({
     const seen = new Set<string>();
     return allMessages.filter((msg) => {
       if (seen.has(msg.messageId)) return false;
-      if (msg.isThreadReply) return false;
+      if (msg.isThreadReply && threadsEnabled) return false;
       seen.add(msg.messageId);
       return true;
     });

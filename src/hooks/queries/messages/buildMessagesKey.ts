@@ -1,9 +1,11 @@
 const buildMessagesKey = ({
   spaceId,
   channelId,
+  includeThreadReplies = false,
 }: {
   spaceId: string;
   channelId: string;
-}) => ['Messages', spaceId, channelId];
+  includeThreadReplies?: boolean;
+}) => ['Messages', spaceId, channelId, includeThreadReplies ? 'with-threads' : 'no-threads'];
 
 export { buildMessagesKey };
