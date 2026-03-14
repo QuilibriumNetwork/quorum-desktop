@@ -6,6 +6,7 @@ import { MessageList, MessageListRef } from '../message/MessageList';
 import MessageComposer, { MessageComposerRef } from '../message/MessageComposer';
 import { useMessageComposer } from '../../hooks';
 import { useThreadContext, useThreadContextStore } from '../context/ThreadContext';
+import { useUpdateThreadReadTime } from '../../hooks/business/conversations/useUpdateThreadReadTime';
 import { useThreadSettingsModal } from '../context/ThreadSettingsModalProvider';
 import { useMobile } from '../context/MobileProvider';
 import { useResponsiveLayoutContext } from '../context/ResponsiveLayoutProvider';
@@ -189,6 +190,64 @@ export const ThreadPanel: React.FC = () => {
   const isClosed = rootMessage?.threadMeta?.isClosed ?? false;
   const canReopen =
     isThreadAuthor || (rootMessage ? (channelProps?.canDeleteMessages?.(rootMessage) ?? false) : false);
+
+  // Thread read time tracking — same 2s interval pattern as Channel.tsx
+  const latestThreadTimestampRef = useRef<number>(0);
+  const lastSavedThreadTimestampRef = useRef<number>(0);
+
+  const { mutate: updateThreadReadTime } = useUpdateThreadReadTime({
+    spaceId: channelProps?.spaceId || '',
+  });
+
+  // Track latest message timestamp
+  useEffect(() => {
+    if (threadMessages.length > 0) {
+      latestThreadTimestampRef.current = Math.max(
+        ...threadMessages.map((msg) => msg.createdDate || 0)
+      );
+    }
+  }, [threadMessages]);
+
+  // Periodic save every 2 seconds
+  useEffect(() => {
+    if (!threadId || !channelProps?.channelId) return;
+
+    const intervalId = setInterval(() => {
+      if (
+        latestThreadTimestampRef.current > 0 &&
+        latestThreadTimestampRef.current > lastSavedThreadTimestampRef.current
+      ) {
+        updateThreadReadTime({
+          threadId,
+          channelId: channelProps.channelId,
+          timestamp: latestThreadTimestampRef.current,
+        });
+        lastSavedThreadTimestampRef.current = latestThreadTimestampRef.current;
+      }
+    }, 2000);
+
+    return () => clearInterval(intervalId);
+  }, [threadId, channelProps?.channelId, updateThreadReadTime]);
+
+  // Save immediately when closing thread (component unmount or thread change)
+  useEffect(() => {
+    const currentThreadId = threadId;
+    const currentChannelId = channelProps?.channelId;
+
+    return () => {
+      if (
+        currentThreadId &&
+        currentChannelId &&
+        latestThreadTimestampRef.current > lastSavedThreadTimestampRef.current
+      ) {
+        updateThreadReadTime({
+          threadId: currentThreadId,
+          channelId: currentChannelId,
+          timestamp: latestThreadTimestampRef.current,
+        });
+      }
+    };
+  }, [threadId, channelProps?.channelId, updateThreadReadTime]);
 
   // Access store to clear targetMessageId after scroll processing
   const threadStore = useThreadContextStore();
