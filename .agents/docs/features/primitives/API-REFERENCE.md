@@ -485,47 +485,6 @@ Unified flex layout container that replaces the legacy FlexRow, FlexColumn, Flex
 
 ---
 
-### Container
-
-**Location**: `src/components/primitives/Container/Container.tsx`
-
-**Props**:
-- `width?: 'auto' | 'full' | 'fit' | string | number` - Container width
-- `maxWidth?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | 'full' | string | number` - Maximum width
-- `padding?: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | string | number` - Padding
-- `margin?: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'auto' | string | number` - Margin
-- `backgroundColor?: string` - Background color
-- `className?: string` - CSS classes (web only)
-- `style?: CSSProperties | StyleProp<ViewStyle>` - Additional styles
-- `testId?: string` - Test identifier
-
-**Web-specific props**:
-- `onClick?: (event: MouseEvent) => void` - Click handler (web only)
-- `onMouseEnter?: (event: MouseEvent) => void` - Mouse enter handler (web only)
-- `onMouseLeave?: (event: MouseEvent) => void` - Mouse leave handler (web only)
-- `role?: string` - ARIA role (web only)
-- `aria-label?: string` - ARIA label (web only)
-
-**Native-specific props**:
-- `onPress?: () => void` - Press handler (native only)
-- `accessible?: boolean` - Enable accessibility (native only)
-- `accessibilityLabel?: string` - Accessibility label (native only)
-- `accessibilityRole?: string` - Accessibility role (native only)
-- `accessibilityHint?: string` - Accessibility hint (native only)
-
-**Example**:
-```tsx
-<Container
-  backgroundColor={theme.colors.bg.card}
-  padding="md"
-  style={{ borderRadius: 12 }}
->
-  <span>Container content</span>
-</Container>
-```
-
----
-
 ### Spacer
 
 **Location**: `src/components/primitives/Spacer/Spacer.tsx`
@@ -688,37 +647,6 @@ Unified flex layout container that replaces the legacy FlexRow, FlexColumn, Flex
 
 ---
 
-### ModalContainer
-
-**Location**: `src/components/primitives/ModalContainer/ModalContainer.tsx`
-
-**Props**:
-- `visible: boolean` - Modal visibility (required)
-- `onClose: () => void` - Close handler (required)
-- `closeOnBackdropClick?: boolean` - Close on backdrop click
-- `showBackdrop?: boolean` - Show backdrop
-- `backdropBlur?: boolean` - Blur backdrop
-- `zIndex?: string | number` - Z-index value
-- `className?: string` - CSS classes (web only)
-- `animationDuration?: number` - Animation duration in ms
-- `closeOnEscape?: boolean` - Close on Escape key (web only)
-
-**Example**:
-```tsx
-<ModalContainer
-  visible={showModal}
-  onClose={closeModal}
-  closeOnBackdropClick
-  backdropBlur
->
-  <Container backgroundColor={theme.colors.bg.card} padding="lg">
-    <span>Modal content</span>
-  </Container>
-</ModalContainer>
-```
-
----
-
 ### OverlayBackdrop
 
 **Location**: `src/components/primitives/OverlayBackdrop/OverlayBackdrop.tsx`
@@ -740,7 +668,7 @@ Unified flex layout container that replaces the legacy FlexRow, FlexColumn, Flex
   blur
   opacity={0.7}
 >
-  <Container>Overlay content</Container>
+  <div>Overlay content</div>
 </OverlayBackdrop>
 ```
 
@@ -952,7 +880,7 @@ Unified flex layout container that replaces the legacy FlexRow, FlexColumn, Flex
 ### Card with Header and Actions
 
 ```tsx
-<Container backgroundColor={theme.colors.bg.card} padding="md">
+<div style={{ backgroundColor: theme.colors.bg.card, padding: 16 }}>
   <Flex direction="column" gap="md">
     <Flex justify="between">
       <span className="text-strong text-lg">Card Title</span>
@@ -964,33 +892,27 @@ Unified flex layout container that replaces the legacy FlexRow, FlexColumn, Flex
       <Button type="primary" onClick={onSave}>Save</Button>
     </Flex>
   </Flex>
-</Container>
+</div>
 ```
 
-### Modal with Backdrop
+### Modal Dialog
 
 ```tsx
-<ModalContainer
-  visible={showModal}
+<Modal
+  isOpen={showModal}
   onClose={closeModal}
-  closeOnBackdropClick
-  backdropBlur
+  size="medium"
+  closeOnBackdrop
 >
-  <Container
-    backgroundColor={theme.colors.bg.card}
-    padding="lg"
-    style={{ borderRadius: 12, maxWidth: 500 }}
-  >
-    <Flex direction="column" gap="md">
-      <span className="text-strong text-lg">Modal Title</span>
-      <span>Modal content</span>
-      <Flex gap="sm" justify="end">
-        <Button type="secondary" onClick={closeModal}>Cancel</Button>
-        <Button type="primary" onClick={handleConfirm}>Confirm</Button>
-      </Flex>
+  <Flex direction="column" gap="md">
+    <span className="text-strong text-lg">Modal Title</span>
+    <span>Modal content</span>
+    <Flex gap="sm" justify="end">
+      <Button type="secondary" onClick={closeModal}>Cancel</Button>
+      <Button type="primary" onClick={handleConfirm}>Confirm</Button>
     </Flex>
-  </Container>
-</ModalContainer>
+  </Flex>
+</Modal>
 ```
 
 ---
@@ -1006,4 +928,4 @@ Unified flex layout container that replaces the legacy FlexRow, FlexColumn, Flex
 ---
 
 
-_Last updated: 2026-03-15 - Updated Button types/sizes, Switch haptic default, Tooltip platform split, Input variants, Select web-specific props_
+_Last updated: 2026-03-15 - Removed Container and ModalContainer sections (Container dropped; ModalContainer now internal to Modal)_

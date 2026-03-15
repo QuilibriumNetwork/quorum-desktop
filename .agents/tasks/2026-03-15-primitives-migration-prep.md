@@ -61,21 +61,20 @@ When migrating to `quorum-shared`, primitives will be organized by platform:
 
 ## Action Items
 
-### 1. Drop Container Primitive
-- [ ] Refactor `UserProfile.tsx` — replace `<Container>` with `<div>`
-- [ ] Refactor `Layout.tsx` — replace `<Container>` with `<div>`
-- [ ] Refactor `DevNavMenu.tsx` — replace `<Container>` with `<div>`
-- [ ] Remove `Container/` from primitives folder
-- [ ] Remove Container exports from primitives barrel (`index.ts`)
-- [ ] Remove Container playground example
-- [ ] Remove Container mobile test if exists
-- [ ] Update docs to remove Container references
+### 1. Drop Container Primitive — DONE
+- [x] Replaced Container with `<div>` across 45+ web files
+- [x] Replaced Container with `<View>` across 5 native files
+- [x] Converted Container-specific props (padding, backgroundColor) to className/style
+- [x] Removed `Container/` folder from primitives
+- [x] Removed Container exports from primitives barrel
+- [x] Removed Container playground example
+- [x] Fixed RolePreview text hierarchy after Container swap
 
-### 2. Make ModalContainer Internal
-- [ ] Move `ModalContainer/` folder into `Modal/` folder (as `Modal/ModalContainer/` or inline)
-- [ ] Update `Modal.web.tsx` import path
-- [ ] Remove ModalContainer from primitives barrel export
-- [ ] Update docs
+### 2. Make ModalContainer Internal — DONE
+- [x] Moved `ModalContainer/` into `Modal/ModalContainer/`
+- [x] Updated `Modal.web.tsx` import path
+- [x] Removed ModalContainer from primitives barrel export
+- [x] Updated test mock paths
 
 ### 3. RadioGroup — Bordered Variant Review (Deferred from Audit)
 - [ ] Check if the web bordered variant is visually useful on mobile
@@ -89,7 +88,7 @@ When migrating to `quorum-shared`, primitives will be organized by platform:
 
 ### 5. Documentation
 - [x] Updated all 6 primitives doc files to reflect audit changes
-- [ ] May need another pass after Container removal and ModalContainer reorganization
+- [ ] Update docs to remove Container references and reflect ModalContainer reorganization
 
 ---
 
