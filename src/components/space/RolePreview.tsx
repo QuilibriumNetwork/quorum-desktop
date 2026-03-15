@@ -18,19 +18,19 @@ export const RolePreview: React.FC<RolePreviewProps> = ({ role }) => {
             {role.displayName}
           </span>
         </Flex>
-        
+
         {/* Member count */}
         <Flex align="center" gap="xs">
           <Icon name="users" size="xs" />
-          <span className="text-label-strong">
-            {role.members?.length || 0} member{role.members?.length !== 1 ? 's' : ''}
+          <span className="text-label text-subtle">
+            {role.members?.length || 0} {role.members?.length !== 1 ? t`members` : t`member`}
           </span>
         </Flex>
 
         {/* Permissions */}
         <Flex align="start" gap="xs">
-          <Icon name="shield" size="xs" style={{ marginTop: 2 }} />
-          <span className="text-label-strong">
+          <Icon name="shield" size="sm" style={{ marginTop: 1 }} />
+          <span className="text-label text-subtle">
             {t`Permissions:`}{' '}
             {role.permissions && role.permissions.length > 0 ?
               role.permissions.map(permission =>
