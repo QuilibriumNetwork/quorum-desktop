@@ -1,7 +1,7 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { InfiniteData } from '@tanstack/react-query';
-import { Container, Flex } from '../primitives';
+import { Flex } from '../primitives';
 import { MarkdownToolbar } from './MarkdownToolbar';
 import { MentionDropdown } from './MentionDropdown';
 import { calculateToolbarPosition } from '../../utils/toolbarPositioning';
@@ -649,7 +649,7 @@ export function MessageEditTextarea({
   };
 
   return (
-    <Container ref={containerRef} className="message-edit-container">
+    <div ref={containerRef} className="message-edit-container">
       {/* Markdown Toolbar */}
       <MarkdownToolbar
         visible={showMarkdownToolbar}
@@ -749,6 +749,6 @@ export function MessageEditTextarea({
           {' - '}{t`Shift+Enter for new line`}
         </span>
       </Flex>
-    </Container>
+    </div>
   );
 }

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Button, Modal, Container, Flex, Spacer } from '../primitives';
+import { Button, Modal, Flex, Spacer } from '../primitives';
 import { UserAvatar } from '../user/UserAvatar';
 import { t } from '@lingui/core/macro';
 import { getAddressSuffix } from '../../utils';
@@ -68,7 +68,7 @@ const MuteUserModal: React.FunctionComponent<MuteUserModalProps> = ({
       size="small"
       swipeToClose={true}
     >
-      <Container>
+      <div>
         <Flex gap="md" align="center">
           <UserAvatar
             userIcon={userIcon}
@@ -141,7 +141,7 @@ const MuteUserModal: React.FunctionComponent<MuteUserModalProps> = ({
                 : t`Mute for ${days} days`}
           </Button>
         </Flex>
-      </Container>
+      </div>
     </Modal>
   );
 };

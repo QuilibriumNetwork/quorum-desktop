@@ -4,7 +4,6 @@ import {
   Modal,
   Input,
   Icon,
-  Container,
   Flex,
   Spacer,
   Switch,
@@ -94,8 +93,8 @@ const ChannelEditorModal: React.FunctionComponent<{
         visible={isSaving}
         message={t`Saving...`}
       />
-      <Container style={{ textAlign: 'left' }}>
-        <Container className="mb-4 max-sm:mb-1">
+      <div style={{ textAlign: 'left' }}>
+        <div className="mb-4 max-sm:mb-1">
           <Input
             value={channelName}
             onChange={handleChannelNameChange}
@@ -104,8 +103,8 @@ const ChannelEditorModal: React.FunctionComponent<{
             error={!!channelNameValidationError}
             errorMessage={channelNameValidationError}
           />
-        </Container>
-        <Container className="mb-4">
+        </div>
+        <div className="mb-4">
           <Input
             value={channelTopic}
             onChange={handleChannelTopicChange}
@@ -114,9 +113,9 @@ const ChannelEditorModal: React.FunctionComponent<{
             error={!!channelTopicValidationError}
             errorMessage={channelTopicValidationError}
           />
-        </Container>
+        </div>
 
-        <Container className="mb-4">
+        <div className="mb-4">
           <Flex className="items-center gap-2">
             <IconPicker
               selectedIcon={icon}
@@ -129,10 +128,10 @@ const ChannelEditorModal: React.FunctionComponent<{
               <Trans>Channel Icon</Trans>
             </div>
           </Flex>
-        </Container>
+        </div>
 
         {isEditMode && (
-          <Container className="mb-3">
+          <div className="mb-3">
             <Flex className="items-center gap-3">
               <Switch
                 value={isPinned}
@@ -143,10 +142,10 @@ const ChannelEditorModal: React.FunctionComponent<{
                 <Trans>Pin to top</Trans>
               </div>
             </Flex>
-          </Container>
+          </div>
         )}
 
-        <Container className="mb-3">
+        <div className="mb-3">
           <Flex className="items-center gap-3">
             <Switch
               value={isReadOnly}
@@ -157,10 +156,10 @@ const ChannelEditorModal: React.FunctionComponent<{
               <Trans>Read only</Trans>
             </div>
           </Flex>
-        </Container>
+        </div>
 
         {space?.allowThreads && (
-          <Container className="mb-3">
+          <div className="mb-3">
             <Flex className="items-center gap-3">
               <Switch
                 value={allowThreads !== false}
@@ -171,11 +170,11 @@ const ChannelEditorModal: React.FunctionComponent<{
                 <Trans>Allow Threads</Trans>
               </div>
             </Flex>
-          </Container>
+          </div>
         )}
 
         {isReadOnly && (
-          <Container className="mb-4 max-sm:mb-1">
+          <div className="mb-4 max-sm:mb-1">
             {availableRoles.length === 0 && (
               <div className="text-danger text-sm mb-2">
                 <Trans>Create roles in Space Settings first.</Trans>
@@ -212,7 +211,7 @@ const ChannelEditorModal: React.FunctionComponent<{
                 className="flex-1 max-w-xs max-sm:max-w-full"
               />
             </Flex>
-          </Container>
+          </div>
         )}
 
         <Flex className="justify-end gap-2 mt-6 max-sm:flex-col max-sm:gap-4">
@@ -241,7 +240,7 @@ const ChannelEditorModal: React.FunctionComponent<{
             </Flex>
           </>
         )}
-      </Container>
+      </div>
       
       {/* Channel delete confirmation modal (for channels with messages) */}
       {deleteConfirmation?.modalConfig && (

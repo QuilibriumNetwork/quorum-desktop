@@ -13,7 +13,7 @@ vi.mock('@/components/primitives/Icon', () => ({
 }));
 
 // Mock ModalContainer to render children directly for unit testing Modal
-vi.mock('@/components/primitives/ModalContainer', () => ({
+vi.mock('@/components/primitives/Modal/ModalContainer', () => ({
   ModalContainer: ({
     visible,
     children,

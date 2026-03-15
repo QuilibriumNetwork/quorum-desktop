@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { t } from '@lingui/core/macro';
-import { Container, Flex, Icon, Button, Tooltip, Select } from '../primitives';
+import { Flex, Icon, Button, Tooltip, Select } from '../primitives';
 import { DropdownPanel } from '../ui';
 import { isTouchDevice } from '../../utils/platform';
 import { buildMessageHash } from '../../utils/messageHashNavigation';
@@ -224,7 +224,7 @@ export const NotificationPanel: React.FC<NotificationPanelProps> = ({
     >
       {/* Filter controls - only show when there are notifications */}
       {!isLoading && allNotifications.length > 0 && (
-        <Container className="notification-panel__controls">
+        <div className="notification-panel__controls">
           <Flex className="items-center justify-between gap-2">
             <Select
               value={selectedTypes}
@@ -252,7 +252,7 @@ export const NotificationPanel: React.FC<NotificationPanelProps> = ({
               />
             </Tooltip>
           </Flex>
-        </Container>
+        </div>
       )}
 
       {/* Notification list */}
@@ -285,7 +285,7 @@ export const NotificationPanel: React.FC<NotificationPanelProps> = ({
             </div>
           ) : (
             /* Desktop: Keep existing layout */
-            <Container className="notification-panel__list">
+            <div className="notification-panel__list">
               {allNotifications.map((notification) => {
                 const sender = mapSenderToUser(notification.message.content?.senderId);
                 return (
@@ -300,7 +300,7 @@ export const NotificationPanel: React.FC<NotificationPanelProps> = ({
                   />
                 );
               })}
-            </Container>
+            </div>
           )}
         </>
       )}

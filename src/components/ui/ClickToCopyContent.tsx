@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { t } from '@lingui/core/macro';
-import { Container, Icon, Tooltip } from '../primitives';
+import { Icon, Tooltip } from '../primitives';
 import { useCopyToClipboard } from '../../hooks';
 import { isTouchDevice } from '../../utils/platform';
 
@@ -164,7 +164,7 @@ const ClickToCopyContent: React.FunctionComponent<ClickToCopyContentProps> = ({
   );
 
   const containerContent = (
-    <Container
+    <div
       className={className}
       onClick={copyOnContentClick ? handleCopy : undefined}
       style={{
@@ -199,7 +199,7 @@ const ClickToCopyContent: React.FunctionComponent<ClickToCopyContentProps> = ({
         {children}
       </span>
       {iconPosition === 'right' && icon}
-    </Container>
+    </div>
   );
 
   // Wrap entire container with tooltip if copyOnContentClick

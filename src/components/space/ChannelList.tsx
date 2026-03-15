@@ -14,7 +14,7 @@ import { useChannelMentionCounts } from '../../hooks/business/mentions';
 import { useReplyNotificationCounts } from '../../hooks/business/replies';
 import { useChannelUnreadCounts } from '../../hooks/business/messages';
 import { t } from '@lingui/core/macro';
-import { Button, Container, Icon, Tooltip } from '../primitives';
+import { Button, Icon, Tooltip } from '../primitives';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
 import { getUserRoles } from '../../utils/permissions';
 import type { Group } from '@quilibrium/quorum-shared';
@@ -129,27 +129,27 @@ const ChannelList: React.FC<ChannelListProps> = ({ spaceId }) => {
   }, [groupsWithMentionCounts, showMutedChannels, getMutedChannelIds]);
 
   return (
-    <Container className="channels-list-wrapper list-bottom-fade">
-      <Container className={headerClassName} style={collapsingHeaderStyle}>
+    <div className="channels-list-wrapper list-bottom-fade">
+      <div className={headerClassName} style={collapsingHeaderStyle}>
         {hasBanner && (
           <>
-            <Container
+            <div
               className="space-header-bg absolute inset-x-0 top-0 pointer-events-none z-0"
               style={combinedBackgroundStyle}
             />
-            <Container
+            <div
               className="absolute inset-x-0 top-0 pointer-events-none z-1"
               style={{ ...gradientOverlayStyle, ...backgroundLayerStyle }}
             />
           </>
         )}
 
-        <Container className="space-header-name truncate-space-name relative z-10 flex-1 min-w-0">
+        <div className="space-header-name truncate-space-name relative z-10 flex-1 min-w-0">
           <span className="font-bold text-strong 2xl:text-xl">
             {spaceName}
           </span>
-        </Container>
-        <Container
+        </div>
+        <div
           className="space-context-menu-toggle-button relative z-10"
           onClick={handleSpaceContextAction}
         >
@@ -162,9 +162,9 @@ const ChannelList: React.FC<ChannelListProps> = ({ spaceId }) => {
           >
             <Icon name={getContextIcon()} />
           </Tooltip>
-        </Container>
-      </Container>
-      <Container className="channels-list list-fade-content" onScroll={handleScroll}>
+        </div>
+      </div>
+      <div className="channels-list list-fade-content" onScroll={handleScroll}>
         {visibleGroups.map((group: GroupWithMentionCounts) => (
           <ChannelGroup
             onEditGroup={openEditGroupEditor}
@@ -173,7 +173,7 @@ const ChannelList: React.FC<ChannelListProps> = ({ spaceId }) => {
           />
         ))}
         {canAddGroups && (
-          <Container className="px-4 py-2">
+          <div className="px-4 py-2">
             <Button
               type="subtle-outline"
               size="small"
@@ -183,10 +183,10 @@ const ChannelList: React.FC<ChannelListProps> = ({ spaceId }) => {
               <Icon name="plus" size="sm" className="mr-2" />
               {t`Add Group`}
             </Button>
-          </Container>
+          </div>
         )}
-      </Container>
-    </Container>
+      </div>
+    </div>
   );
 };
 

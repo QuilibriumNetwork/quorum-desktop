@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Button, Modal, Container, Flex, Spacer } from '../primitives';
+import { Button, Modal, Flex, Spacer } from '../primitives';
 import { UserAvatar } from '../user/UserAvatar';
 import { useUserKicking } from '../../hooks';
 import { useModalSaveState } from '../../hooks';
@@ -62,7 +62,7 @@ const KickUserModal: React.FunctionComponent<KickUserModalProps> = (props) => {
     >
       <ModalSaveOverlay visible={isSaving} message={t`Kicking...`} />
 
-      <Container>
+      <div>
         <Flex gap="md" align="center">
           <UserAvatar
             userIcon={props.userIcon}
@@ -107,7 +107,7 @@ const KickUserModal: React.FunctionComponent<KickUserModalProps> = (props) => {
             {confirmationStep === 0 ? t`Kick` : t`Click again to confirm`}
           </Button>
         </Flex>
-      </Container>
+      </div>
     </Modal>
   );
 };

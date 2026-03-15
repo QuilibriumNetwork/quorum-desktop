@@ -1,8 +1,6 @@
 // Layout Primitives
-export { ModalContainer } from './ModalContainer';
 export { OverlayBackdrop } from './OverlayBackdrop';
 export { Portal } from './Portal';
-export { Container } from './Container';
 export { Flex } from './Flex';
 export { Spacer } from './Spacer';
 export { ScrollContainer } from './ScrollContainer';
@@ -26,13 +24,7 @@ export { default as Callout } from './Callout';
 export { ThemeProvider, useTheme } from './theme';
 
 // Types
-export type { ModalContainerProps } from './ModalContainer';
 export type { OverlayBackdropProps } from './OverlayBackdrop';
-export type {
-  ContainerProps,
-  WebContainerProps,
-  NativeContainerProps,
-} from './Container';
 export type { FlexProps } from './Flex';
 export type { SpacerProps, SpacerSize, SpacerDirection } from './Spacer';
 export type {
@@ -64,7 +56,7 @@ export type {
   RadioOption,
 } from './RadioGroup';
 export type {
-  TooltipProps,
+  BaseTooltipProps as TooltipProps,
   TooltipWebProps,
   TooltipNativeProps,
   TooltipPlacement,

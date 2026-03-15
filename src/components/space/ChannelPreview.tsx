@@ -1,6 +1,5 @@
 import React from 'react';
 import {
-  Container,
   Icon,
   Flex,
 } from '../primitives';
@@ -15,7 +14,7 @@ export const ChannelPreview: React.FC<ChannelPreviewProps> = ({
   messageCount,
 }) => {
   return (
-    <Container padding="sm" backgroundColor="var(--color-bg-chat)">
+    <div style={{ padding: 'var(--space-sm)', backgroundColor: 'var(--color-bg-chat)' }}>
       <Flex direction="column" gap="sm">
         {/* Channel name with icon */}
         <Flex align="center" gap="xs">
@@ -33,7 +32,7 @@ export const ChannelPreview: React.FC<ChannelPreviewProps> = ({
           </span>
         </Flex>
       </Flex>
-    </Container>
+    </div>
   );
 };
 

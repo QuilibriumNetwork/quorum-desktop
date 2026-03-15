@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import {
   Flex,
-  Container,
   Text,
   Icon,
 } from '../../components/primitives';
@@ -50,9 +49,9 @@ export const Docs: React.FC = () => {
   }
 
   return (
-    <Container className="min-h-screen bg-app">
+    <div className="min-h-screen bg-app">
       <DevNavMenu currentPath={window.location.pathname} />
-      <Container padding="lg" className="mx-auto max-w-6xl">
+      <div className="p-6 mx-auto max-w-6xl">
         <div className="text-center mb-8">
           <Flex justify="center" gap="sm" className="mb-4">
             <Icon name="book" size="2xl" className="text-strong" />
@@ -105,7 +104,7 @@ export const Docs: React.FC = () => {
         {!loading && (
           <FilterableList files={docFiles} type="docs" basePath="/dev/docs" />
         )}
-      </Container>
-    </Container>
+      </div>
+    </div>
   );
 };

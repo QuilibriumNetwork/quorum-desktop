@@ -3,7 +3,6 @@ import {
   Input,
   Button,
   Modal,
-  Container,
   Spacer,
   Callout,
   Icon,
@@ -132,13 +131,13 @@ const AddSpaceModal: React.FunctionComponent<AddSpaceModalProps> = (props) => {
         className="!z-[9999]"
       />
 
-      <Container>
+      <div>
         {!isOnline && (
           <Callout variant="warning" size="sm" className="mb-4">
             <Trans>You're offline. Adding or creating a Space requires an internet connection.</Trans>
           </Callout>
         )}
-        <Container className="flex flex-col gap-3">
+        <div className="flex flex-col gap-3">
           {!manualMode && !validatedSpace && (
             <Input
               className="w-full !text-sm"
@@ -152,7 +151,7 @@ const AddSpaceModal: React.FunctionComponent<AddSpaceModalProps> = (props) => {
           )}
 
           {!manualMode && !validatedSpace && (
-            <Container className="flex justify-center">
+            <div className="flex justify-center">
               <Button
                 type="unstyled"
                 className="link text-sm"
@@ -160,7 +159,7 @@ const AddSpaceModal: React.FunctionComponent<AddSpaceModalProps> = (props) => {
               >
                 {t`Enter details manually`}
               </Button>
-            </Container>
+            </div>
           )}
 
           {manualMode && !validatedSpace && (
@@ -197,7 +196,7 @@ const AddSpaceModal: React.FunctionComponent<AddSpaceModalProps> = (props) => {
                 </Callout>
               )}
               <Spacer size="sm"></Spacer>
-              <Container className="modal-join-space-actions !pt-0">
+              <div className="modal-join-space-actions !pt-0">
                 <Button
                   className="w-full sm:w-auto sm:inline-block sm:px-8"
                   type="primary"
@@ -206,9 +205,9 @@ const AddSpaceModal: React.FunctionComponent<AddSpaceModalProps> = (props) => {
                 >
                   {t`Lookup`}
                 </Button>
-              </Container>
+              </div>
               <Spacer size="md"></Spacer>
-              <Container className="flex justify-center">
+              <div className="flex justify-center">
                 <Button
                   type="unstyled"
                   className="link text-sm"
@@ -216,12 +215,12 @@ const AddSpaceModal: React.FunctionComponent<AddSpaceModalProps> = (props) => {
                 >
                   {t`Back to invite link`}
                 </Button>
-              </Container>
+              </div>
             </>
           )}
 
           {validatedSpace && !isValidating && (
-            <Container className="modal-join-space-icon justify-center">
+            <div className="modal-join-space-icon justify-center">
               <SpaceIcon
                 noToggle={true}
                 noTooltip={true}
@@ -244,11 +243,11 @@ const AddSpaceModal: React.FunctionComponent<AddSpaceModalProps> = (props) => {
                   {validatedSpace.description}
                 </span>
               )}
-            </Container>
+            </div>
           )}
 
           {validatedSpace && !isValidating && (
-            <Container className="modal-join-space-actions flex justify-center gap-3">
+            <div className="modal-join-space-actions flex justify-center gap-3">
               <>
                 <Button
                   className="w-full sm:w-auto sm:inline-block sm:px-8"
@@ -266,7 +265,7 @@ const AddSpaceModal: React.FunctionComponent<AddSpaceModalProps> = (props) => {
                   {t`Reset`}
                 </Button>
               </>
-            </Container>
+            </div>
           )}
 
           {!(
@@ -278,13 +277,13 @@ const AddSpaceModal: React.FunctionComponent<AddSpaceModalProps> = (props) => {
             validatedSpace
           ) && (
             <>
-              <Container className="relative flex items-center my-6">
+              <div className="relative flex items-center my-6">
                 <div className="flex-grow border-t border-default"></div>
                 <span className="px-3 text-subtle text-sm">{t`OR`}</span>
                 <div className="flex-grow border-t border-default"></div>
-              </Container>
+              </div>
 
-              <Container className="modal-join-space-actions !pt-0">
+              <div className="modal-join-space-actions !pt-0">
                 <Button
                   type="primary"
                   className="w-full sm:w-auto sm:inline-block sm:px-8"
@@ -293,11 +292,11 @@ const AddSpaceModal: React.FunctionComponent<AddSpaceModalProps> = (props) => {
                 >
                   {t`Create a Space`}
                 </Button>
-              </Container>
+              </div>
             </>
           )}
-        </Container>
-      </Container>
+        </div>
+      </div>
     </Modal>
   );
 };

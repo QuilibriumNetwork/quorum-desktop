@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import clsx from 'clsx';
 import { ModalContainerProps } from './types';
-import { OverlayBackdrop } from '../OverlayBackdrop';
+import { OverlayBackdrop } from '../../OverlayBackdrop';
 
 const FOCUSABLE_SELECTOR =
   'a[href], button:not([disabled]), textarea:not([disabled]), input:not([disabled]), select:not([disabled]), [tabindex]:not([tabindex="-1"])';

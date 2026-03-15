@@ -1,6 +1,6 @@
 import React, { useId } from 'react';
 import { WebModalProps } from './types';
-import { ModalContainer } from '../ModalContainer';
+import { ModalContainer } from './ModalContainer';
 import { Icon } from '../Icon';
 import './Modal.scss';
 

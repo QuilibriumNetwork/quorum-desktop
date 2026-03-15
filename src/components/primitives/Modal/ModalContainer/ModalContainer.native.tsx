@@ -9,7 +9,7 @@ import {
   Dimensions,
 } from 'react-native';
 import { ModalContainerProps } from './types';
-import { useTheme } from '../theme';
+import { useTheme } from '../../theme';
 
 const { height: screenHeight } = Dimensions.get('window');
 

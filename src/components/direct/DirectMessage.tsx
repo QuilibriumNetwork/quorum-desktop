@@ -39,7 +39,6 @@ import { useModalContext } from '../context/ModalProvider';
 import { UserAvatar } from '../user/UserAvatar';
 import {
   Button,
-  Container,
   Flex,
   Tooltip,
 } from '../primitives';
@@ -653,7 +652,7 @@ const DirectMessage: React.FC<{}> = () => {
     <div className="chat-container">
       <Flex direction="column">
         {/* Header - full width at top */}
-        <Container
+        <div
           ref={headerRef}
           className="chat-header text-main flex flex-wrap lg:flex-nowrap lg:justify-between lg:items-center"
         >
@@ -682,7 +681,7 @@ const DirectMessage: React.FC<{}> = () => {
             )}
 
             {/* User info - hidden on mobile first row, shown on desktop */}
-            <Container className="hidden lg:flex flex-1 min-w-0">
+            <div className="hidden lg:flex flex-1 min-w-0">
               <Flex className="items-center min-w-0">
                 <Flex direction="column" className="justify-around flex-shrink-0">
                   <UserAvatar
@@ -711,7 +710,7 @@ const DirectMessage: React.FC<{}> = () => {
                   </ClickToCopyContent>
                 </div>
               </Flex>
-            </Container>
+            </div>
 
             {/* Controls - right side on both mobile and desktop */}
             <Flex className="items-center gap-3 sm:gap-2">
@@ -785,7 +784,7 @@ const DirectMessage: React.FC<{}> = () => {
           </div>
 
           {/* Second row on mobile: user info / Hidden on desktop (shown above) */}
-          <Container className="w-full lg:hidden mt-3">
+          <div className="w-full lg:hidden mt-3">
             <Flex className="items-center min-w-0">
               <Flex direction="column" className="justify-around flex-shrink-0">
                 <UserAvatar
@@ -832,14 +831,14 @@ const DirectMessage: React.FC<{}> = () => {
                 </ClickToCopyContent>
               </div>
             </Flex>
-          </Container>
-        </Container>
+          </div>
+        </div>
 
         {/* Content area - flex container for messages and sidebar */}
         <div className="flex flex-1 min-w-0">
           {/* Messages and composer area */}
           <div className="flex flex-col flex-1 min-w-0">
-            <Container className="message-list message-list-expanded relative">
+            <div className="message-list message-list-expanded relative">
               <MessageList
                 ref={messageListRef}
                 roles={[]}
@@ -868,13 +867,13 @@ const DirectMessage: React.FC<{}> = () => {
                     : undefined
                 }
               />
-            </Container>
+            </div>
             {/* Accept chat warning */}
             {!acceptChat && (
               <Flex className="justify-center">
-                <Container className="w-auto mx-4 p-2 sm:px-4 mb-2 text-sm text-center rounded-lg bg-surface-4 text-subtle">
+                <div className="w-auto mx-4 p-2 sm:px-4 mb-2 text-sm text-center rounded-lg bg-surface-4 text-subtle">
                   {t`Until you reply, this sender will not see your display name or profile picture`}
-                </Container>
+                </div>
               </Flex>
             )}
 

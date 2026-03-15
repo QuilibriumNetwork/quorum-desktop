@@ -1,7 +1,7 @@
 import * as React from 'react';
 import NavMenu from './navbar/NavMenu';
 import { CloseButton } from './ui';
-import { Container, Callout, Portal } from './primitives';
+import { Callout, Portal } from './primitives';
 import { useResponsiveLayoutContext } from './context/ResponsiveLayoutProvider';
 import CreateSpaceModal from './modals/CreateSpaceModal';
 import AddSpaceModal from './modals/AddSpaceModal';
@@ -215,7 +215,7 @@ const Layout: React.FunctionComponent<{
         showCreateSpaceModal={showAddSpaceModal}
         showJoinSpaceModal={() => {}}
       />
-      <Container>{isElectron && <CloseButton />}</Container>
+      <div>{isElectron && <CloseButton />}</div>
       <ThreadSettingsModalProvider openThreadSettings={showThreadSettingsModal}>
       <ConfirmationModalProvider showConfirmationModal={showConfirmationModal}>
         <ImageModalProvider showImageModal={showImageModal}>

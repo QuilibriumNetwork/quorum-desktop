@@ -2,7 +2,7 @@ import './DirectMessage.scss';
 // import { useShowHomeScreen } from '../../hooks';
 import { t } from '@lingui/core/macro';
 import { useResponsiveLayoutContext } from '../context/ResponsiveLayoutProvider';
-import { Container, Flex, Icon } from '../primitives';
+import { Flex, Icon } from '../primitives';
 
 export const EmptyDirectMessage = () => {
   const { isDesktop, toggleLeftSidebar } = useResponsiveLayoutContext();
@@ -11,10 +11,10 @@ export const EmptyDirectMessage = () => {
   //   useShowHomeScreen();
 
   return (
-    <Container className="chat-container">
+    <div className="chat-container">
       <Flex direction="column">
         {/* Header with hamburger menu for mobile */}
-        <Container className="mt-[8px] pb-[8px] mx-[11px] text-main flex flex-col lg:flex-row lg:justify-between lg:items-center">
+        <div className="mt-[8px] pb-[8px] mx-[11px] text-main flex flex-col lg:flex-row lg:justify-between lg:items-center">
           <Flex className="items-center gap-2">
             {!isDesktop && (
               <Icon
@@ -24,11 +24,11 @@ export const EmptyDirectMessage = () => {
               />
             )}
           </Flex>
-        </Container>
+        </div>
 
         {/* Main content */}
-        <Container className="flex w-full flex-col justify-around flex-1">
-          <Container className="w-full">
+        <div className="flex w-full flex-col justify-around flex-1">
+          <div className="w-full">
             {/* Home screen with animated gif - commented out for now
             {showHomeScreen ? (
               <>
@@ -40,9 +40,9 @@ export const EmptyDirectMessage = () => {
                   />
                 </Flex>
                 <Flex className="justify-center text-lg sm:text-2xl pt-4">
-                  <Container className="max-w-[500px] text-center mt-8">
+                  <div className="max-w-[500px] text-center mt-8">
                     <Text className="text-lg sm:text-2xl">{t`Stay Connected, Stay Invisible`}</Text>
-                  </Container>
+                  </div>
                 </Flex>
                 <Flex className="justify-center pt-8">
                   <Flex
@@ -65,9 +65,9 @@ export const EmptyDirectMessage = () => {
                 size={128}
                 className="text-accent opacity-70 dark:text-accent mb-4 block mx-auto"
               />
-              <Container className="text-lg sm:text-2xl text-center mb-8">
+              <div className="text-lg sm:text-2xl text-center mb-8">
                 <span className="text-lg sm:text-2xl text-center">{t`What's on your mind today?`}</span>
-              </Container>
+              </div>
               {/* Show home screen link - commented out for now
               <Flex className="justify-center w-full">
                 <Flex
@@ -84,9 +84,9 @@ export const EmptyDirectMessage = () => {
               */}
             </Flex>
             {/* End of home screen conditional */}
-          </Container>
-        </Container>
+          </div>
+        </div>
       </Flex>
-    </Container>
+    </div>
   );
 };

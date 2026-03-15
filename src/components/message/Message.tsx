@@ -21,7 +21,6 @@ import { useParams } from 'react-router';
 import { InviteLink } from './InviteLink';
 import {
   Modal,
-  Container,
   Flex,
   Icon,
   Tooltip,
@@ -442,7 +441,7 @@ export const Message = React.memo(
       >
         {/* 3-Dots Menu Button for Touch Devices - Top Right Corner */}
         {isTouchDevice() && (
-          <Container
+          <div
             onClick={handle3DotsMenuClick}
             className="absolute top-2 right-2 p-2 cursor-pointer rounded z-10"
             style={{ minWidth: '32px', minHeight: '32px' }}
@@ -452,7 +451,7 @@ export const Message = React.memo(
               size="sm"
               className="text-muted hover:text-main transition-colors"
             />
-          </Container>
+          </div>
         )}
 
         {(() => {
@@ -478,7 +477,7 @@ export const Message = React.memo(
               );
 
               return (
-                <Container
+                <div
                   key={reply.messageId + 'rplyhd'}
                   className={`message-reply-heading flex items-center min-w-0 ${
                     isTouchDevice() ? 'pr-12' : ''
@@ -505,7 +504,7 @@ export const Message = React.memo(
                     }, 8000);
                   }}
                 >
-                  <Container className="message-reply-curve flex-shrink-0" />
+                  <div className="message-reply-curve flex-shrink-0" />
                   <UserAvatar
                     userIcon={mapSenderToUser(reply.content.senderId).userIcon}
                     displayName={
@@ -521,17 +520,17 @@ export const Message = React.memo(
                   <span className="message-reply-text flex-1 min-w-0">
                     {replyTextWithNames}
                   </span>
-                </Container>
+                </div>
               );
             } else if (message.content.repliesToMessageId) {
               // Original message was deleted — show placeholder so it's still clear this is a reply
               return (
-                <Container className="message-reply-heading flex items-center min-w-0">
-                  <Container className="message-reply-curve flex-shrink-0" />
+                <div className="message-reply-heading flex items-center min-w-0">
+                  <div className="message-reply-curve flex-shrink-0" />
                   <span className="message-reply-text flex-1 min-w-0 italic text-subtle">
                     {t`[Original message was deleted]`}
                   </span>
-                </Container>
+                </div>
               );
             } else {
               return <></>;
@@ -558,7 +557,7 @@ export const Message = React.memo(
                   'absolute left-0 top-0 w-full mt-[-1000px] pb-[200px] pt-[1000px] z-[1000]'
                 }
               >
-                <Container
+                <div
                   className={
                     emojiPickerOpenDirection == 'upwards'
                       ? 'ml-[10px] mt-[-220px]'
@@ -574,7 +573,7 @@ export const Message = React.memo(
                       setShowUserProfile(false);
                     }}
                   />
-                </Container>
+                </div>
               </Flex>
             )}
             {isCompact ? (
@@ -613,7 +612,7 @@ export const Message = React.memo(
                 }
               />
             )}
-            <Container className="message-content">
+            <div className="message-content">
               {(interactions.shouldShowActions || contextMenu) && (
                 <MessageActions
                   message={message}
@@ -630,7 +629,7 @@ export const Message = React.memo(
               )}
 
               {emojiPickerOpen === message.messageId && !emojiPickerPosition && (
-                <Container
+                <div
                   onClick={(e: React.MouseEvent) => e.stopPropagation()}
                   className={
                     'absolute right-4 z-[9999] ' +
@@ -652,13 +651,13 @@ export const Message = React.memo(
                     }}
                     lazyLoadEmojis={true}
                   />
-                </Container>
+                </div>
               )}
 
               {/* Fixed position emoji picker (opened from context menu) */}
               {emojiPickerOpen === message.messageId && emojiPickerPosition && (
                 <Portal>
-                  <Container
+                  <div
                     onClick={(e: React.MouseEvent) => e.stopPropagation()}
                     className="fixed z-[10002]"
                     style={{
@@ -680,7 +679,7 @@ export const Message = React.memo(
                       }}
                       lazyLoadEmojis={true}
                     />
-                  </Container>
+                  </div>
                 </Portal>
               )}
 
@@ -917,7 +916,7 @@ export const Message = React.memo(
                   // Check if we should use markdown rendering (disabled for security review)
                   if (ENABLE_MARKDOWN && formatting.shouldUseMarkdown()) {
                     return (
-                      <Container className="message-post-content break-words">
+                      <div className="message-post-content break-words">
                         <MessageMarkdownRenderer
                           content={contentData.fullText}
                           mapSenderToUser={mapSenderToUser}
@@ -937,7 +936,7 @@ export const Message = React.memo(
                           currentUserAddress={user.currentPasskeyInfo?.address}
                           currentSpaceId={spaceId}
                         />
-                      </Container>
+                      </div>
                     );
                   }
 
@@ -967,7 +966,7 @@ export const Message = React.memo(
                     }
 
                     return (
-                      <Container
+                      <div
                         key={contentData.messageId + '-' + i}
                         className="message-post-content break-words"
                       >
@@ -999,7 +998,7 @@ export const Message = React.memo(
 
                           if (tokenData.type === 'youtube') {
                             return (
-                              <Container
+                              <div
                                 key={tokenData.key}
                                 className="message-post-content"
                               >
@@ -1011,7 +1010,7 @@ export const Message = React.memo(
                                   allow="autoplay; encrypted-media"
                                   className="rounded-lg youtube-embed"
                                 />
-                              </Container>
+                              </div>
                             );
                           }
 
@@ -1086,12 +1085,12 @@ export const Message = React.memo(
                             </React.Fragment>
                           );
                         })}
-                      </Container>
+                      </div>
                     );
                   });
                 } else if (contentData.type === 'embed') {
                   return (
-                    <Container
+                    <div
                       key={contentData.messageId}
                       className="message-post-content"
                     >
@@ -1193,7 +1192,7 @@ export const Message = React.memo(
                             </div>
                           );
                         })()}
-                    </Container>
+                    </div>
                   );
                 } else if (contentData.type === 'sticker') {
                   return (
@@ -1257,7 +1256,7 @@ export const Message = React.memo(
                   )}
                 </Flex>
               )}
-            </Container>
+            </div>
           </Flex>
         )}
 

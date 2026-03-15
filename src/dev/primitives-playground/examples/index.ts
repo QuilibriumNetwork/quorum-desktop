@@ -2,7 +2,6 @@
 export { ButtonExamples } from './Button';
 export { CalloutExamples } from './Callout';
 export { ColorSwatchExamples } from './ColorSwatch';
-export { ContainerExamples } from './Container';
 export { FileUploadExamples } from './FileUpload';
 export { FlexExamples } from './Flex';
 export { IconExamples } from './Icon';
@@ -24,7 +23,6 @@ export const navigationItems = [
   { id: 'button-primitive', label: 'Button', component: 'ButtonExamples' },
   { id: 'callout-primitive', label: 'Callout', component: 'CalloutExamples' },
   { id: 'colorswatch-primitive', label: 'ColorSwatch', component: 'ColorSwatchExamples' },
-  { id: 'container-primitive', label: 'Container', component: 'ContainerExamples' },
   { id: 'fileupload-primitive', label: 'FileUpload', component: 'FileUploadExamples' },
   { id: 'flex-primitive', label: 'Flex', component: 'FlexExamples' },
   { id: 'icon-primitive', label: 'Icon', component: 'IconExamples' },
@@ -45,7 +43,6 @@ export const componentRegistry = {
   ButtonExamples: () => import('./Button').then(m => m.ButtonExamples),
   CalloutExamples: () => import('./Callout').then(m => m.CalloutExamples),
   ColorSwatchExamples: () => import('./ColorSwatch').then(m => m.ColorSwatchExamples),
-  ContainerExamples: () => import('./Container').then(m => m.ContainerExamples),
   FileUploadExamples: () => import('./FileUpload').then(m => m.FileUploadExamples),
   FlexExamples: () => import('./Flex').then(m => m.FlexExamples),
   IconExamples: () => import('./Icon').then(m => m.IconExamples),

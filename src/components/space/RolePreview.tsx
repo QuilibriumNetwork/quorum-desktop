@@ -1,6 +1,6 @@
 import React from 'react';
 import type { Role } from '@quilibrium/quorum-shared';
-import { Container, Icon, Flex } from '../primitives';
+import { Icon, Flex } from '../primitives';
 import { t } from '@lingui/core/macro';
 
 interface RolePreviewProps {
@@ -9,7 +9,7 @@ interface RolePreviewProps {
 
 export const RolePreview: React.FC<RolePreviewProps> = ({ role }) => {
   return (
-    <Container padding="sm" backgroundColor="var(--color-bg-chat)">
+    <div className="p-2" style={{ backgroundColor: 'var(--color-bg-chat)' }}>
       <Flex direction="column" gap="sm">
         {/* Role name with icon */}
         <Flex align="center" gap="xs">
@@ -41,7 +41,7 @@ export const RolePreview: React.FC<RolePreviewProps> = ({ role }) => {
           </span>
         </Flex>
       </Flex>
-    </Container>
+    </div>
   );
 };
 

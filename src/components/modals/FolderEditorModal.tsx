@@ -3,7 +3,6 @@ import {
   Button,
   Modal,
   Input,
-  Container,
   Flex,
   Spacer,
 } from '../primitives';
@@ -73,8 +72,8 @@ const FolderEditorModal: React.FC<FolderEditorModalProps> = ({
       closeOnEscape={!isSaving}
       size="small"
     >
-      <Container style={{ textAlign: 'left' }}>
-        <Container className="mb-4 max-sm:mb-1">
+      <div style={{ textAlign: 'left' }}>
+        <div className="mb-4 max-sm:mb-1">
           <Input
             value={name}
             onChange={handleNameChange}
@@ -84,9 +83,9 @@ const FolderEditorModal: React.FC<FolderEditorModalProps> = ({
             errorMessage={validationError}
             maxLength={40}
           />
-        </Container>
+        </div>
 
-        <Container className="mb-4">
+        <div className="mb-4">
           <Flex className="items-center gap-2">
             <IconPicker
               selectedIcon={icon}
@@ -99,7 +98,7 @@ const FolderEditorModal: React.FC<FolderEditorModalProps> = ({
               <Trans>Folder Icon & Color</Trans>
             </div>
           </Flex>
-        </Container>
+        </div>
 
         <Flex className="justify-end gap-2 mt-6 max-sm:flex-col max-sm:gap-4">
           <Button
@@ -140,7 +139,7 @@ const FolderEditorModal: React.FC<FolderEditorModalProps> = ({
             )}
           </>
         )}
-      </Container>
+      </div>
 
       {/* Modal save overlay */}
       <ModalSaveOverlay visible={isSaving} message={t`Saving...`} />

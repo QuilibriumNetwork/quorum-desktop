@@ -1,7 +1,7 @@
 import React from 'react';
 import { t } from '@lingui/core/macro';
 import { SearchResult } from '../../db/messages';
-import { Icon, Flex, Container } from '../primitives';
+import { Icon, Flex } from '../primitives';
 import { TouchAwareListItem } from '../ui';
 import {
   useSearchResultHighlight,
@@ -63,7 +63,7 @@ const DMSearchResultItem: React.FC<SearchResultItemProps> = ({
       <Flex justify="between" className="result-header">
         <Flex className="result-meta min-w-0">
           {icon && (
-            <Container
+            <div
               className="result-user-profile-image flex-shrink-0"
               style={{ backgroundImage: `url(${icon})` }}
             />
@@ -76,14 +76,14 @@ const DMSearchResultItem: React.FC<SearchResultItemProps> = ({
         </Flex>
       </Flex>
 
-      <Container className="result-content">
-        <Container
+      <div className="result-content">
+        <div
           className="result-text"
           dangerouslySetInnerHTML={{
             __html: highlightTerms(cleanSnippet),
           }}
         />
-      </Container>
+      </div>
     </TouchAwareListItem>
   );
 };
@@ -149,14 +149,14 @@ const SpaceSearchResultItem: React.FC<SearchResultItemProps> = ({
         </Flex>
       </Flex>
 
-      <Container className="result-content">
-        <Container
+      <div className="result-content">
+        <div
           className="result-text"
           dangerouslySetInnerHTML={{
             __html: highlightTerms(cleanSnippet),
           }}
         />
-      </Container>
+      </div>
     </TouchAwareListItem>
   );
 };

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
-import { Button, Container, Flex, Icon } from '../primitives';
+import { Button, Flex, Icon } from '../primitives';
 // import UserOnlineStateIndicator from './UserOnlineStateIndicator'; // TODO: Re-enable when online/offline status is implemented
 import { ClickToCopyContent } from '../ui';
 import './UserProfile.scss';
@@ -81,19 +81,19 @@ const UserProfile: React.FunctionComponent<{
   const isOwnProfile = currentPasskeyInfo?.address === props.user.address;
 
   return (
-    <Container
+    <div
       className="user-profile"
       onClick={(e: React.MouseEvent) => e.stopPropagation()}
     >
       {props.dismiss && (
-        <Container
+        <div
           className="absolute right-3 top-3 cursor-pointer text-subtle hover:text-main z-10"
           onClick={props.dismiss}
         >
           <Icon name="close" />
-        </Container>
+        </div>
       )}
-      <Container
+      <div
         className={
           'user-profile-header ' +
           (currentPasskeyInfo!.address === props.user.address &&
@@ -110,10 +110,10 @@ const UserProfile: React.FunctionComponent<{
           size={44}
           className="user-profile-icon"
         />
-        <Container className="user-profile-text">
-          <Container className="user-profile-username">
+        <div className="user-profile-text">
+          <div className="user-profile-username">
             <span>{props.user.displayName}</span>
-          </Container>
+          </div>
           <Flex className="py-1 text-subtle">
             <span className="text-xs text-subtle">
               {getAddressSuffix(props.user.address)}
@@ -128,20 +128,20 @@ const UserProfile: React.FunctionComponent<{
               <></>
             </ClickToCopyContent>
           </Flex>
-          <Container className="user-profile-state">
+          <div className="user-profile-state">
             {/* TODO: Re-enable when online/offline status is implemented
                 See .agents/tasks/todo/user-status.md for implementation plan
                 Phase 1: Show current user's connection state
                 Phase 2: Show all users' online/offline status via presence system
             <UserOnlineStateIndicator user={props.user} />
             */}
-          </Container>
-        </Container>
-      </Container>
+          </div>
+        </div>
+      </div>
 
-      <Container>
+      <div>
         {(userRoles.length > 0 || props.canEditRoles) && (
-          <Container
+          <div
             className={
               'p-2 pb-4 ' +
               (currentPasskeyInfo!.address !== props.user.address
@@ -149,10 +149,10 @@ const UserProfile: React.FunctionComponent<{
                 : 'rounded-b-xl')
             }
           >
-            <Container className="user-profile-content-section-header">
+            <div className="user-profile-content-section-header">
               <span className="text-sm">Roles</span>
-            </Container>
-            <Container className="user-profile-roles">
+            </div>
+            <div className="user-profile-roles">
               {!props.canEditRoles &&
                 userRoles.map((r) => (
                   <span
@@ -184,7 +184,7 @@ const UserProfile: React.FunctionComponent<{
                 ))}
               {props.canEditRoles &&
                 availableRoles.map((r) => (
-                  <Container
+                  <div
                     key={'user-profile-add-role-' + r.roleId}
                   >
                     <Button
@@ -199,14 +199,14 @@ const UserProfile: React.FunctionComponent<{
                     >
                       {loadingRoles.has(r.roleId) ? t`Adding...` : r.roleTag}
                     </Button>
-                  </Container>
+                  </div>
                 ))}
-            </Container>
-          </Container>
+            </div>
+          </div>
         )}
         {/* Action buttons section - shown when viewing others OR when you have moderation permissions */}
         {(!isOwnProfile || canMuteUsers || canKickUsers) && (
-          <Container className="bg-surface-3 rounded-b-xl p-3">
+          <div className="bg-surface-3 rounded-b-xl p-3">
             {/* Send Message - only when viewing others' profiles */}
             {!isOwnProfile && (
               <Button
@@ -222,7 +222,7 @@ const UserProfile: React.FunctionComponent<{
             {/* Moderation buttons - based on permissions */}
             {/* Mute: on own profile only show Unmute if muted (prevent self-muting), Kick: hidden on own profile */}
             {((canMuteUsers && (!isOwnProfile || isUserMuted)) || (canKickUsers && !isOwnProfile)) && (
-              <Container className={`${!isOwnProfile ? 'mt-2 ' : ''}grid gap-1 sm:gap-2 ${
+              <div className={`${!isOwnProfile ? 'mt-2 ' : ''}grid gap-1 sm:gap-2 ${
                 canMuteUsers && (!isOwnProfile || isUserMuted) && canKickUsers && !isOwnProfile
                   ? 'grid-cols-1 sm:grid-cols-2'
                   : 'grid-cols-1'
@@ -265,12 +265,12 @@ const UserProfile: React.FunctionComponent<{
                     {props.user.isKicked ? t`Kicked!` : t`Kick`}
                   </Button>
                 )}
-              </Container>
+              </div>
             )}
-          </Container>
+          </div>
         )}
-      </Container>
-    </Container>
+      </div>
+    </div>
   );
 };
 

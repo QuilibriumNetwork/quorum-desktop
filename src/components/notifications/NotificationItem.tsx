@@ -1,6 +1,6 @@
 import React from 'react';
 import { t } from '@lingui/core/macro';
-import { Icon, Flex, Container } from '../primitives';
+import { Icon, Flex } from '../primitives';
 import { TouchAwareListItem } from '../ui';
 import { useSearchResultFormatting } from '../../hooks/business/search';
 import { useMessageFormatting } from '../../hooks/business/messages/useMessageFormatting';
@@ -148,11 +148,11 @@ export const NotificationItem: React.FC<NotificationItemProps> = ({
         </Flex>
       </Flex>
 
-      <Container className="notification-content">
-        <Container className="notification-text">
+      <div className="notification-content">
+        <div className="notification-text">
           {renderedContent}
-        </Container>
-      </Container>
+        </div>
+      </div>
     </TouchAwareListItem>
   );
 };

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Button, Modal, Container, Flex, Spacer, Callout } from '../primitives';
+import { Button, Modal, Flex, Spacer, Callout } from '../primitives';
 import { useSpace, useSpaceLeaving } from '../../hooks';
 import { Trans } from '@lingui/react/macro';
 import { t } from '@lingui/core/macro';
@@ -34,7 +34,7 @@ const LeaveSpaceModal: React.FunctionComponent<LeaveSpaceModalProps> = ({
       size="small"
       swipeToClose={true}
     >
-      <Container>
+      <div>
         <p className="text-body text-subtle">
           <Trans>
             Are you sure you want to leave this Space? You won't be able to
@@ -63,7 +63,7 @@ const LeaveSpaceModal: React.FunctionComponent<LeaveSpaceModalProps> = ({
             )}
           </Button>
         </Flex>
-      </Container>
+      </div>
     </Modal>
   );
 };

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Button, Modal, Container, Flex, Spacer, ScrollContainer, Callout } from '../primitives';
+import { Button, Modal, Flex, Spacer, ScrollContainer, Callout } from '../primitives';
 import { Trans } from '@lingui/react/macro';
 import { t } from '@lingui/core/macro';
 import { isTouchDevice } from '../../utils/platform';
@@ -49,7 +49,7 @@ const ConfirmationModal: React.FunctionComponent<ConfirmationModalProps> = ({
       swipeToClose={false} // Keep swipe disabled for consistency
     >
       {busyMessage && <ModalSaveOverlay visible={busy} message={busyMessage} />}
-      <Container>
+      <div>
         {/* Main message */}
         <p className="text-body">
           {message}
@@ -60,7 +60,7 @@ const ConfirmationModal: React.FunctionComponent<ConfirmationModalProps> = ({
         {/* Preview content in scrollable container */}
         {preview && (
           <>
-            <Container>
+            <div>
               <ScrollContainer
                 height="sm"
                 showBorder={true}
@@ -68,7 +68,7 @@ const ConfirmationModal: React.FunctionComponent<ConfirmationModalProps> = ({
               >
                 {preview}
               </ScrollContainer>
-            </Container>
+            </div>
             <Spacer size="md" />
           </>
         )}
@@ -104,7 +104,7 @@ const ConfirmationModal: React.FunctionComponent<ConfirmationModalProps> = ({
             {confirmText}
           </Button>
         </Flex>
-      </Container>
+      </div>
     </Modal>
   );
 };

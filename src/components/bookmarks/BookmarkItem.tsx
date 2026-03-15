@@ -4,7 +4,6 @@ import type { Bookmark, Sticker } from '@quilibrium/quorum-shared';
 import {
   Flex,
   Button,
-  Container,
   Tooltip,
   Icon,
 } from '../primitives';
@@ -45,14 +44,14 @@ export const BookmarkItem: React.FC<BookmarkItemProps> = ({
       const imgSrc = cachedPreview.thumbnailUrl || cachedPreview.imageUrl;
       if (imgSrc) {
         return (
-          <Container className="bookmark-media-preview">
+          <div className="bookmark-media-preview">
             <img
               src={imgSrc}
               alt={t`Bookmarked image`}
               className="bookmark-image rounded-lg"
               style={{ maxWidth: 200, maxHeight: 120, width: 'auto' }}
             />
-          </Container>
+          </div>
         );
       }
       return <span className="message-preview text-muted">{t`[Image]`}</span>;
@@ -62,14 +61,14 @@ export const BookmarkItem: React.FC<BookmarkItemProps> = ({
       const sticker = cachedPreview.stickerId ? stickers?.[cachedPreview.stickerId] : undefined;
       if (sticker && typeof sticker === 'object' && sticker.imgUrl) {
         return (
-          <Container className="bookmark-media-preview">
+          <div className="bookmark-media-preview">
             <img
               src={sticker.imgUrl}
               alt={t`Bookmarked sticker`}
               className="bookmark-sticker rounded-lg"
               style={{ maxWidth: 80, maxHeight: 80 }}
             />
-          </Container>
+          </div>
         );
       }
       return <span className="message-preview text-muted">{t`[Sticker]`}</span>;
@@ -104,11 +103,11 @@ export const BookmarkItem: React.FC<BookmarkItemProps> = ({
   };
 
   return (
-    <Container
+    <div
       key={bookmark.bookmarkId}
       className="bookmark-item"
     >
-      <Container className="result-header">
+      <div className="result-header">
         <Flex justify="between" className="result-meta-container">
           <Flex className="result-meta items-center min-w-0 flex-1 mr-2">
             <Icon name="user" className="result-user-icon flex-shrink-0" />
@@ -150,11 +149,11 @@ export const BookmarkItem: React.FC<BookmarkItemProps> = ({
             </Tooltip>
           </Flex>
         </Flex>
-      </Container>
+      </div>
 
       {/* Source context line - only show for channels, not DMs */}
       {bookmark.sourceType === 'channel' && (
-        <Container className="result-source">
+        <div className="result-source">
           <Flex className="items-center">
             <Icon
               name="hashtag"
@@ -164,13 +163,13 @@ export const BookmarkItem: React.FC<BookmarkItemProps> = ({
               {cachedPreview.sourceName}
             </span>
           </Flex>
-        </Container>
+        </div>
       )}
 
       {/* Message preview */}
-      <Container className="result-content">
+      <div className="result-content">
         {renderContent()}
-      </Container>
-    </Container>
+      </div>
+    </div>
   );
 };

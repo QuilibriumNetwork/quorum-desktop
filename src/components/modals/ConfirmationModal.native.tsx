@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { Button, Modal, Container, Text, Flex, Spacer, ScrollContainer, Icon, Callout } from '../primitives';
+import { View } from 'react-native';
+import { Button, Modal, Text, Flex, Spacer, ScrollContainer, Icon, Callout } from '../primitives';
 import { Trans } from '@lingui/react/macro';
 import { t } from '@lingui/core/macro';
 
@@ -43,13 +44,13 @@ const ConfirmationModal: React.FunctionComponent<ConfirmationModalProps> = ({
       closeOnEscape={false} // Disable ESC key
       swipeToClose={false} // Disable swipe to close
     >
-      <Container className="space-y-4">
+      <View style={{ gap: 16 }}>
         {/* Main message */}
-        <Container>
+        <View>
           <Text variant="main">
             {message}
           </Text>
-        </Container>
+        </View>
 
         {/* PROTIP section - rarely shown on mobile since no shift key */}
         {showProtip && protipAction && (
@@ -62,26 +63,25 @@ const ConfirmationModal: React.FunctionComponent<ConfirmationModalProps> = ({
 
         {/* Preview content in scrollable container */}
         {preview && (
-          <Container>
-            <ScrollContainer 
-              height="sm" 
-              className="p-3 bg-surface-1 rounded-lg"
+          <View>
+            <ScrollContainer
+              height="sm"
               showBorder={true}
             >
               {preview}
             </ScrollContainer>
-          </Container>
+          </View>
         )}
 
         <Spacer size="lg" />
 
         {/* Action buttons */}
-        <Flex className="gap-3">
+        <Flex gap="sm">
           <Button
             type="subtle"
             onClick={onCancel}
             hapticFeedback={true}
-            className="flex-1"
+            style={{ flex: 1 }}
           >
             {cancelText}
           </Button>
@@ -89,12 +89,12 @@ const ConfirmationModal: React.FunctionComponent<ConfirmationModalProps> = ({
             type={variant}
             onClick={onConfirm}
             hapticFeedback={true}
-            className="flex-1"
+            style={{ flex: 1 }}
           >
             {confirmText}
           </Button>
         </Flex>
-      </Container>
+      </View>
     </Modal>
   );
 };

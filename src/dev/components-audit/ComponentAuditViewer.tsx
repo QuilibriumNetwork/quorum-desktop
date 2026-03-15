@@ -5,7 +5,6 @@ import {
   Select,
   Button,
   Flex,
-  Container,
   Text,
 } from '../../components/primitives';
 import { DevNavMenu } from '../DevNavMenu';
@@ -410,9 +409,9 @@ export const ComponentAuditViewer: React.FC = () => {
   };
 
   return (
-    <Container className="min-h-screen bg-app overflow-y-auto">
+    <div className="min-h-screen bg-app overflow-y-auto">
       <DevNavMenu currentPath={window.location.pathname} />
-      <Container padding="lg" className="w-full">
+      <div className="p-6 w-full">
         <Text
           as="h1"
           variant="strong"
@@ -1450,11 +1449,11 @@ export const ComponentAuditViewer: React.FC = () => {
         )}
 
         {/* Metadata Footer */}
-        <Container className="mt-6 text-xs text-subtle">
+        <div className="mt-6 text-xs text-subtle">
           <p>Audit Version: {data.metadata.audit_version}</p>
           <p>Last Updated: {data.stats.last_updated}</p>
           <p>Scan Scope: {data.metadata.scan_scope.join(', ')}</p>
-        </Container>
+        </div>
 
         {/* Back to Top Link */}
         <Flex justify="center" className="mt-8">
@@ -1469,7 +1468,7 @@ export const ComponentAuditViewer: React.FC = () => {
             Back to Top
           </a>
         </Flex>
-      </Container>
-    </Container>
+      </div>
+    </div>
   );
 };

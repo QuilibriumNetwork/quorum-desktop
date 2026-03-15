@@ -2,6 +2,7 @@ import { logger } from '@quilibrium/quorum-shared';
 import React, { useState, useCallback } from 'react';
 import {
   Pressable,
+  View,
   // @ts-ignore - TypeScript config doesn't recognize React Native modules in this environment
   KeyboardAvoidingView,
   // @ts-ignore - TypeScript config doesn't recognize React Native modules in this environment
@@ -11,7 +12,6 @@ import {
 } from 'react-native';
 import { Image } from 'expo-image';
 import {
-  Container,
   Text,
   Title,
   Paragraph,
@@ -166,8 +166,8 @@ export const Onboarding: React.FC<OnboardingProps> = ({ setUser }) => {
 
   // Drag overlay component
   const dragOverlay = isDragActive ? (
-    <Container style={AUTH_CONTAINER_STYLES.dragOverlay}>
-      <Container style={AUTH_CONTAINER_STYLES.dragContent}>
+    <View style={AUTH_CONTAINER_STYLES.dragOverlay}>
+      <View style={AUTH_CONTAINER_STYLES.dragContent}>
         <Icon
           name="image"
           size="5xl"
@@ -179,8 +179,8 @@ export const Onboarding: React.FC<OnboardingProps> = ({ setUser }) => {
         <Text size="sm" style={{ color: '#6b7280', marginTop: 8 }}>
           {t`PNG, JPG or JPEG • Optimal ratio 1:1`}
         </Text>
-      </Container>
-    </Container>
+      </View>
+    </View>
   ) : null;
 
   return (
@@ -228,10 +228,8 @@ export const Onboarding: React.FC<OnboardingProps> = ({ setUser }) => {
             {onboardingFlow.currentStep === 'key-backup' && (
               <>
                 <Flex justify="center">
-                  <Container
-                    width="full"
-                    maxWidth={AUTH_LAYOUT.MAX_CONTENT_WIDTH}
-                    padding={AUTH_LAYOUT.PADDING}
+                  <View
+                    style={{ width: '100%', maxWidth: AUTH_LAYOUT.MAX_CONTENT_WIDTH, padding: AUTH_LAYOUT.PADDING }}
                   >
                     <Flex direction="column" gap="md" align="center">
                       {/* Title using Title helper */}
@@ -292,7 +290,7 @@ export const Onboarding: React.FC<OnboardingProps> = ({ setUser }) => {
                         <Spacer size="lg" />
                       </Pressable>
                     </Flex>
-                  </Container>
+                  </View>
                 </Flex>
               </>
             )}
@@ -301,10 +299,8 @@ export const Onboarding: React.FC<OnboardingProps> = ({ setUser }) => {
             {onboardingFlow.currentStep === 'display-name' && (
               <>
                 <Flex justify="center">
-                  <Container
-                    width="full"
-                    maxWidth={AUTH_LAYOUT.MAX_CONTENT_WIDTH}
-                    padding={AUTH_LAYOUT.PADDING}
+                  <View
+                    style={{ width: '100%', maxWidth: AUTH_LAYOUT.MAX_CONTENT_WIDTH, padding: AUTH_LAYOUT.PADDING }}
                   >
                     <Flex direction="column" gap="md" align="center">
                       {/* Instruction paragraph */}
@@ -319,7 +315,7 @@ export const Onboarding: React.FC<OnboardingProps> = ({ setUser }) => {
                       </Paragraph>
 
                       {/* Input field with onboarding variant - pill shape, white bg */}
-                      <Container
+                      <View
                         style={{ width: '100%', paddingHorizontal: 40 }}
                       >
                         <Input
@@ -328,7 +324,7 @@ export const Onboarding: React.FC<OnboardingProps> = ({ setUser }) => {
                           onChange={onboardingFlow.setDisplayName}
                           placeholder="Bongocat"
                         />
-                      </Container>
+                      </View>
 
                       {/* Button with proper disabled state for onboarding */}
                       <Button
@@ -344,7 +340,7 @@ export const Onboarding: React.FC<OnboardingProps> = ({ setUser }) => {
                         {t`Set Display Name`}
                       </Button>
                     </Flex>
-                  </Container>
+                  </View>
                 </Flex>
               </>
             )}
@@ -353,10 +349,8 @@ export const Onboarding: React.FC<OnboardingProps> = ({ setUser }) => {
             {onboardingFlow.currentStep === 'profile-photo' && (
               <>
                 <Flex justify="center">
-                  <Container
-                    width="full"
-                    maxWidth={AUTH_LAYOUT.MAX_CONTENT_WIDTH}
-                    padding={AUTH_LAYOUT.PADDING}
+                  <View
+                    style={{ width: '100%', maxWidth: AUTH_LAYOUT.MAX_CONTENT_WIDTH, padding: AUTH_LAYOUT.PADDING }}
                   >
                     <Flex direction="column" gap="md" align="center">
                       {/* Instruction paragraph */}
@@ -372,11 +366,11 @@ export const Onboarding: React.FC<OnboardingProps> = ({ setUser }) => {
 
                       {/* Error display */}
                       {fileError && (
-                        <Container style={AUTH_CONTAINER_STYLES.errorContainer}>
+                        <View style={AUTH_CONTAINER_STYLES.errorContainer}>
                           <Paragraph size="sm" color="#ef4444" align="center">
                             {fileError}
                           </Paragraph>
-                        </Container>
+                        </View>
                       )}
 
                       <FileUpload
@@ -390,7 +384,7 @@ export const Onboarding: React.FC<OnboardingProps> = ({ setUser }) => {
                         multiple={false}
                         {...({ onDragActiveChange: setIsDragActive } as any)}
                       >
-                        <Container
+                        <View
                           style={{
                             width: 160,
                             height: 160,
@@ -416,7 +410,7 @@ export const Onboarding: React.FC<OnboardingProps> = ({ setUser }) => {
 
                           {/* Tap overlay when no image selected */}
                           {!hasValidFile && (
-                            <Container
+                            <View
                               style={{
                                 position: 'absolute',
                                 top: 0,
@@ -443,9 +437,9 @@ export const Onboarding: React.FC<OnboardingProps> = ({ setUser }) => {
                                   {t`Tap to select`}
                                 </Paragraph>
                               </Flex>
-                            </Container>
+                            </View>
                           )}
-                        </Container>
+                        </View>
                       </FileUpload>
 
                       {/* Space between upload area and buttons */}
@@ -474,7 +468,7 @@ export const Onboarding: React.FC<OnboardingProps> = ({ setUser }) => {
                         </Button>
                       )}
                     </Flex>
-                  </Container>
+                  </View>
                 </Flex>
               </>
             )}
@@ -483,10 +477,8 @@ export const Onboarding: React.FC<OnboardingProps> = ({ setUser }) => {
             {onboardingFlow.currentStep === 'complete' && (
               <>
                 <Flex justify="center">
-                  <Container
-                    width="full"
-                    maxWidth={AUTH_LAYOUT.MAX_CONTENT_WIDTH}
-                    padding={AUTH_LAYOUT.PADDING}
+                  <View
+                    style={{ width: '100%', maxWidth: AUTH_LAYOUT.MAX_CONTENT_WIDTH, padding: AUTH_LAYOUT.PADDING }}
                   >
                     <Flex direction="column" gap="md" align="center">
                       {/* Welcome message */}
@@ -505,7 +497,7 @@ export const Onboarding: React.FC<OnboardingProps> = ({ setUser }) => {
                         {t`Let's gooooooooo`}
                       </Button>
                     </Flex>
-                  </Container>
+                  </View>
                 </Flex>
               </>
             )}

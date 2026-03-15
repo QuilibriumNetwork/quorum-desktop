@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react';
 import {
-  Container,
   Text,
   Flex,
   Button,
@@ -261,9 +260,9 @@ export const MarkdownViewer: React.FC<MarkdownViewerProps> = ({
   };
 
   return (
-    <Container className="min-h-screen bg-app">
+    <div className="min-h-screen bg-app">
       <DevNavMenu currentPath={window.location.pathname} />
-      <Container padding="lg" className="mx-auto max-w-4xl">
+      <div className="p-6 mx-auto max-w-4xl">
         <Flex gap="md" align="center" className="mb-6">
           <Button type="subtle" size="small" onClick={onBack}>
             <Icon name="arrow-left" size="sm" />
@@ -363,7 +362,7 @@ export const MarkdownViewer: React.FC<MarkdownViewerProps> = ({
             <Text variant="subtle">No content found</Text>
           </div>
         )}
-      </Container>
-    </Container>
+      </div>
+    </div>
   );
 };
