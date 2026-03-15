@@ -1,5 +1,5 @@
 // Re-export shared types and colors
-export { getColors, getColor, themeColors, accentColors } from './colors';
+export { getColors, themeColors, accentColors } from './colors';
 export type { Theme, AccentColor } from './colors';
 export type {
   ThemeContextType,

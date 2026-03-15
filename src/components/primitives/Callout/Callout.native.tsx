@@ -115,7 +115,6 @@ const Callout: React.FC<CalloutNativeProps> = ({
   const variantStyle = getVariantStyles(variant, layout, theme.colors);
   const textSize = sizeStyles[size];
   const iconSize = iconSizes[size];
-  const isBase = layout === 'base';
 
   return (
     <Animated.View

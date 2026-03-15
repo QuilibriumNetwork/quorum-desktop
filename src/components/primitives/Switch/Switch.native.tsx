@@ -1,5 +1,5 @@
 import React from 'react';
-import { Pressable, View, Animated } from 'react-native';
+import { Pressable, Animated } from 'react-native';
 import * as Haptics from 'expo-haptics';
 import { NativeSwitchProps } from './types';
 import { useTheme } from '../theme';

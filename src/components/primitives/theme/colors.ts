@@ -1,8 +1,20 @@
-import { logger } from '@quilibrium/quorum-shared';
+/**
+ * Cross-Platform Theme Color System
+ *
+ * Two-layer architecture:
+ *   Layer 1 — Palette: raw color values (surfaces, accents, utility colors)
+ *   Layer 2 — Semantics: purpose-based tokens that reference palette values
+ *
+ * Semantic tokens are split into:
+ *   - "Shared" — mirrors web CSS variables from _colors.scss
+ *   - "Mobile-specific" — optimized for mobile (field colors, etc.)
+ *
+ * Components access colors via useTheme().colors (the getColors() output).
+ */
 
-// Cross-platform shared theme system
-// These values EXACTLY match the CSS variables in _colors.scss
-// DO NOT modify without updating CSS variables accordingly
+// ---------------------------------------------------------------------------
+// Types
+// ---------------------------------------------------------------------------
 
 export type Theme = 'light' | 'dark' | 'system';
 export type AccentColor =
@@ -13,224 +25,43 @@ export type AccentColor =
   | 'green'
   | 'yellow';
 
-// Base theme definitions that mirror _colors.scss exactly
-export const themeColors = {
+// ---------------------------------------------------------------------------
+// Layer 1 — Palette
+// ---------------------------------------------------------------------------
+
+/** Surface colors — raw palette, matches CSS --surface-* exactly */
+const surfaces = {
   light: {
-    // Raw surface colors (matches CSS --surface-* variables)
-    surface: {
-      '00': '#ffffff',
-      '0': '#fefeff',
-      '1': '#f6f6f9',
-      '2': '#eeeef3',
-      '3': '#e6e6eb',
-      '4': '#dedee3',
-      '5': '#d5d5db',
-      '6': '#cdccd3',
-      '7': '#c4c4cb',
-      '8': '#bbbbc3',
-      '9': '#a2a2aa',
-      '10': '#939399',
-    },
-
-    // Text colors (matches CSS --color-text-* variables)
-    text: {
-      strong: '#3b3b3b',
-      main: '#363636', // rgb(54 54 54) from CSS
-      subtle: '#818181',
-      muted: '#b6b6b6',
-      danger: '#e74a4a', // matches --color-text-danger in light theme
-    },
-
-    // Link colors (matches CSS link styles)
-    link: {
-      default: '#0287f2', // var(--accent) - will be overridden by getColors()
-      hover: '#3aa9f8', // var(--accent-400) for light theme
-    },
-
-    // Semantic background colors (matches CSS --color-bg-* variables)
-    bg: {
-      app: '#ffffff', // var(--surface-00)
-      sidebar: '#f6f6f9', // var(--surface-1)
-      'sidebar-hover': '#dedee3', // var(--surface-4)
-      'sidebar-active': '#e6e6eb', // var(--surface-3)
-      chat: '#eeeef3', // var(--surface-2)
-      'chat-hover': '#e6e6eb', // var(--surface-3)
-      'chat-input': '#fefeff', // var(--surface-0)
-      modal: '#d5d5db', // var(--surface-5)
-      'modal-cat-hover': '#cdccd3', // var(--surface-6)
-      'modal-cat-active': '#d5d5db', // var(--surface-5)
-      overlay: 'rgba(0, 0, 0, 0.6)',
-      tooltip: '#ffffff', // var(--surface-00)
-      icon: '#ffffff', // var(--surface-00)
-      input: '#e6e6eb', // var(--surface-3)
-      card: '#fefeff', // var(--surface-0) - lighter background for better field contrast
-    },
-
-    // Border colors (matches CSS --color-border-* variables)
-    border: {
-      default: '#cdccd3', // var(--surface-6)
-      strong: '#c4c4cb', // var(--surface-7)
-      stronger: '#bbbbc3', // var(--surface-8)
-    },
-
-    // Utility colors (matches CSS --* variables)
-    utilities: {
-      danger: '#e74a4a',
-      'danger-hover': '#ec3333',
-      warning: '#e7b04a',
-      success: '#46c236',
-      info: '#3095bd',
-    },
-
-    // Utility colors with RGB values for opacity (matches CSS --* variables)
-    utilitiesRgb: {
-      danger: 'rgb(231, 74, 74)',
-      'danger-hover': 'rgb(236, 51, 51)',
-      warning: 'rgb(231, 176, 74)',
-      success: 'rgb(70, 194, 54)',
-      info: 'rgb(48, 149, 189)',
-    },
-
-    // === MOBILE-SPECIFIC FIELD COLORS (DO NOT SYNC WITH WEB APP COLORS) ===
-    // Optimized for mobile modal backgrounds (surface-1: #f6f6f9)
-    field: {
-      // Background colors - need good contrast on surface-1
-      bg: '#eeeef3', // surface-2 - provides visible contrast on surface-1
-      bgFocus: '#f6f6f9', // surface-1 - lighter focus state
-      bgError: '#eeeef3', // surface-2 - same as default
-
-      // Border colors - lighter borders for surface-1 background
-      border: '#cdccd3', // surface-6 - visible but not too strong
-      borderHover: '#c4c4cb', // surface-7 - slightly stronger on hover
-      borderFocus: '#0287f2', // accent blue - focus state
-      borderError: '#e74a4a', // danger color
-
-      // Text colors
-      text: '#363636', // same as text.main
-      placeholder: '#818181', // same as text.subtle
-
-      // Focus shadows (using rgba for opacity)
-      focusShadow: 'rgba(2, 135, 242, 0.1)', // accent with opacity
-      errorFocusShadow: 'rgba(231, 74, 74, 0.1)', // danger with opacity
-
-      // Dropdown/options colors (for Select component)
-      optionsBg: '#ffffff', // surface-00 - clean white dropdown
-      optionHover: '#e6e6eb', // surface-3 - hover state
-      optionSelected: '#eeeef3', // surface-2 - selected state
-      optionText: '#363636', // text.main
-      optionTextSelected: '#0287f2', // will be overridden by getColors() with dynamic accent
-    },
+    '00': '#ffffff',
+    '0': '#fefeff',
+    '1': '#f6f6f9',
+    '2': '#eeeef3',
+    '3': '#e6e6eb',
+    '4': '#dedee3',
+    '5': '#d5d5db',
+    '6': '#cdccd3',
+    '7': '#c4c4cb',
+    '8': '#bbbbc3',
+    '9': '#a2a2aa',
+    '10': '#939399',
   },
-
   dark: {
-    // Dark theme surface colors (matches CSS html.dark --surface-* variables)
-    surface: {
-      '00': '#100f11',
-      '0': '#1d1a21',
-      '1': '#241f27',
-      '2': '#2c252e',
-      '3': '#312935',
-      '4': '#3a313f',
-      '5': '#443b49',
-      '6': '#584d5e',
-      '7': '#716379',
-      '8': '#92829b',
-      '9': '#a999b3',
-      '10': '#bfadca',
-    },
-
-    // Dark theme text colors (matches CSS html.dark --color-text-* variables)
-    text: {
-      strong: '#f8f7fa',
-      main: '#f4f1f6', // rgb(244 241 246) from CSS
-      subtle: '#bfb5c8',
-      muted: '#84788b',
-      danger: '#d46767', // matches --color-text-danger in dark theme
-    },
-
-    // Dark theme link colors (matches CSS html.dark link styles)
-    link: {
-      default: '#0287f2', // var(--accent) - will be overridden by getColors()
-      hover: '#6fc3ff', // var(--accent-200) for dark theme
-    },
-
-    // Dark theme semantic backgrounds
-    bg: {
-      app: '#100f11', // var(--surface-00)
-      sidebar: '#241f27', // var(--surface-1)
-      'sidebar-hover': '#443b49', // var(--surface-5)
-      'sidebar-active': '#3a313f', // var(--surface-4)
-      chat: '#2c252e', // var(--surface-2)
-      'chat-hover': '#312935', // var(--surface-3)
-      'chat-input': '#1d1a21', // var(--surface-0)
-      modal: '#443b49', // var(--surface-5)
-      'modal-cat-hover': '#584d5e', // var(--surface-6)
-      'modal-cat-active': '#443b49', // var(--surface-5)
-      overlay: 'rgba(0, 0, 0, 0.6)',
-      tooltip: '#100f11', // var(--surface-00)
-      icon: '#100f11', // var(--surface-00)
-      input: '#312935', // var(--surface-3)
-      card: '#1d1a21', // var(--surface-0) - lighter background for better field contrast
-    },
-
-    // Dark theme border colors
-    border: {
-      default: '#584d5e', // var(--surface-6)
-      strong: '#716379', // var(--surface-7)
-      stronger: '#92829b', // var(--surface-8)
-    },
-
-    // Dark theme utility colors (matches CSS html.dark --* variables)
-    utilities: {
-      danger: '#c73737',
-      'danger-hover': '#b83030',
-      warning: '#d09a3d',
-      success: '#379e2b',
-      info: '#267b9e',
-    },
-
-    // Dark theme utility colors with RGB values
-    utilitiesRgb: {
-      danger: 'rgb(199, 55, 55)',
-      'danger-hover': 'rgb(184, 48, 48)',
-      warning: 'rgb(208, 154, 61)',
-      success: 'rgb(55, 158, 43)',
-      info: 'rgb(38, 123, 158)',
-    },
-
-    // === MOBILE-SPECIFIC FIELD COLORS (DO NOT SYNC) ===
-    // Optimized for mobile modal backgrounds (surface-1: #241f27)
-    field: {
-      // Background colors - need good contrast on dark surface-1
-      bg: '#2c252e', // surface-2 - provides visible contrast on dark surface-1
-      bgFocus: '#241f27', // surface-1 - lighter focus state
-      bgError: '#2c252e', // surface-2 - same as default
-
-      // Border colors - need visibility on dark surface-1 background
-      border: '#584d5e', // surface-6 - visible on dark background
-      borderHover: '#716379', // surface-7 - stronger on hover
-      borderFocus: '#0287f2', // accent blue - same as light
-      borderError: '#c73737', // danger color for dark theme
-
-      // Text colors
-      text: '#f4f1f6', // same as text.main
-      placeholder: '#bfb5c8', // same as text.subtle
-
-      // Focus shadows (using rgba for opacity)
-      focusShadow: 'rgba(2, 135, 242, 0.1)', // accent with opacity
-      errorFocusShadow: 'rgba(199, 55, 55, 0.1)', // dark danger with opacity
-
-      // Dropdown/options colors (for Select component)
-      optionsBg: '#100f11', // surface-00 - dark dropdown background
-      optionHover: '#312935', // surface-3 - hover state
-      optionSelected: '#2c252e', // surface-2 - selected state
-      optionText: '#f4f1f6', // text.main
-      optionTextSelected: '#0287f2', // will be overridden by getColors() with dynamic accent
-    },
+    '00': '#100f11',
+    '0': '#1d1a21',
+    '1': '#241f27',
+    '2': '#2c252e',
+    '3': '#312935',
+    '4': '#3a313f',
+    '5': '#443b49',
+    '6': '#584d5e',
+    '7': '#716379',
+    '8': '#92829b',
+    '9': '#a999b3',
+    '10': '#bfadca',
   },
-};
+} as const;
 
-// Accent color definitions (matches CSS .accent-* classes exactly)
+/** Accent color palettes — matches CSS .accent-* classes exactly */
 export const accentColors: Record<AccentColor, any> = {
   blue: {
     50: '#eef7ff',
@@ -321,67 +152,218 @@ export const accentColors: Record<AccentColor, any> = {
   },
 };
 
-// Common colors used across themes
+/** Utility colors — matches CSS --danger/--warning/--success/--info */
+const utilityColors = {
+  light: {
+    danger: '#e74a4a',
+    'danger-hover': '#ec3333',
+    warning: '#e7b04a',
+    success: '#46c236',
+    info: '#3095bd',
+  },
+  dark: {
+    danger: '#c73737',
+    'danger-hover': '#b83030',
+    warning: '#d09a3d',
+    success: '#379e2b',
+    info: '#267b9e',
+  },
+} as const;
+
 export const commonColors = {
   white: '#ffffff',
   transparent: 'transparent',
   black: '#000000',
 };
 
+// ---------------------------------------------------------------------------
+// Layer 2 — Semantic Tokens
+// ---------------------------------------------------------------------------
+
 /**
- * Get colors for a specific theme and accent combination
- * This is the main function React Native components should use
+ * Build semantic color tokens for a given theme.
+ *
+ * Shared tokens mirror web CSS variables from _colors.scss.
+ * Where mobile intentionally diverges (e.g. stronger borders for visibility),
+ * the comment explains why.
+ */
+const buildSemanticColors = (theme: 'light' | 'dark') => {
+  const s = surfaces[theme];
+  const u = utilityColors[theme];
+
+  return {
+    // Raw palette access (for direct surface usage)
+    surface: s,
+
+    // --- Text colors (matches CSS --color-text-*) ---
+    text: {
+      strong: theme === 'light' ? '#3b3b3b' : '#f8f7fa',
+      main: theme === 'light' ? '#363636' : '#f4f1f6',
+      subtle: theme === 'light' ? '#818181' : '#bfb5c8',
+      muted: theme === 'light' ? '#b6b6b6' : '#84788b',
+      danger: theme === 'light' ? '#e74a4a' : '#e15151',
+    },
+
+    // --- Link colors (matches CSS --color-link-*) ---
+    // Overridden by getColors() with dynamic accent
+    link: {
+      default: theme === 'light' ? '#0287f2' : '#3aa9f8', // light: accent-500, dark: accent-400
+      hover: theme === 'light' ? '#48adf5' : '#6fc3ff', // light: accent-300, dark: accent-200
+    },
+
+    // --- Background colors (matches CSS --color-bg-*) ---
+    // Mobile uses slightly different surface levels for better mobile aesthetics
+    bg: {
+      app: s['00'],
+      sidebar: s['1'],
+      'sidebar-hover': theme === 'light' ? s['4'] : s['5'],
+      'sidebar-active': theme === 'light' ? s['3'] : s['4'],
+      chat: s['2'],
+      'chat-hover': s['3'],
+      'chat-input': theme === 'light' ? s['0'] : s['0'],
+      modal: s['5'], // mobile uses surface-5 for modals (darker than web)
+      'modal-cat-hover': s['6'],
+      'modal-cat-active': s['5'],
+      overlay: 'rgba(0, 0, 0, 0.6)',
+      tooltip: s['00'],
+      icon: s['00'],
+      input: s['3'],
+      card: s['0'],
+    },
+
+    // --- Border colors ---
+    // Mobile uses one step stronger borders for better visibility on mobile
+    border: {
+      muted: s['3'],
+      subtle: s['4'],
+      default: s['6'], // intentionally darker than web CSS (surface-5)
+      strong: s['7'],
+      stronger: s['8'],
+    },
+
+    // --- Utility colors (matches CSS --danger/--warning/--success/--info) ---
+    utilities: u,
+
+    // --- Context menu colors ---
+    contextMenu: {
+      bg: s['00'],
+      hover: s['1'],
+    },
+
+    // --- Space tag colors ---
+    spaceTag: {
+      bg: s['4'],
+      bgHover: s['5'],
+    },
+
+    // --- Sidebar accent colors ---
+    // Overridden by getColors() with dynamic accent
+    sidebarAccent: {
+      activeBg: 'rgba(2, 135, 242, 0.25)',
+      dmIcon: theme === 'light' ? s['9'] : s['5'],
+    },
+
+    // --- Mention colors ---
+    // Overridden by getColors() with dynamic accent
+    mention: {
+      bg: 'rgba(2, 135, 242, 0.2)',
+      bgHover: theme === 'light' ? 'rgba(2, 135, 242, 0.4)' : 'rgba(2, 135, 242, 0.5)',
+      link: theme === 'light' ? '#0287f2' : '#3aa9f8',
+      linkHover: theme === 'light' ? '#025ead' : '#a6d9ff',
+    },
+
+    // === MOBILE-SPECIFIC FIELD COLORS ===
+    // Optimized for contrast on mobile modal backgrounds — DO NOT sync with web CSS
+    field: {
+      bg: s['2'], // darker than web (surface-0) for contrast on mobile surface-1
+      bgFocus: s['1'],
+      bgError: s['2'],
+
+      border: s['6'], // stronger than web for mobile visibility
+      borderHover: s['7'],
+      borderFocus: '#0287f2', // overridden by getColors() with dynamic accent
+      borderError: u.danger,
+
+      text: theme === 'light' ? '#363636' : '#f4f1f6',
+      placeholder: theme === 'light' ? '#818181' : '#bfb5c8', // text.subtle (more visible than text.muted)
+
+      focusShadow: 'rgba(2, 135, 242, 0.1)',
+      errorFocusShadow: theme === 'light' ? 'rgba(231, 74, 74, 0.1)' : 'rgba(199, 55, 55, 0.1)',
+
+      // Dropdown/options (for Select component)
+      optionsBg: s['00'],
+      optionHover: s['3'],
+      optionSelected: s['2'],
+      optionText: theme === 'light' ? '#363636' : '#f4f1f6',
+      optionTextSelected: '#0287f2', // overridden by getColors() with dynamic accent
+    },
+  };
+};
+
+// Pre-built semantic tokens (used as base by getColors)
+const semanticColors = {
+  light: buildSemanticColors('light'),
+  dark: buildSemanticColors('dark'),
+};
+
+// Keep themeColors export for backwards compatibility (barrel export)
+export const themeColors = semanticColors;
+
+// ---------------------------------------------------------------------------
+// getColors() — main entry point for components
+// ---------------------------------------------------------------------------
+
+/**
+ * Get the complete color object for a theme + accent combination.
+ * This is what components access via useTheme().colors.
+ *
+ * Accent-dependent colors (links, mentions, field focus, sidebar accent)
+ * are computed here so they update when the user changes their accent color.
  */
 export const getColors = (
   theme: 'light' | 'dark' = 'light',
   accent: AccentColor = 'blue'
 ) => {
-  const baseColors = {
-    ...themeColors[theme],
-    accent: accentColors[accent],
-    ...commonColors,
-  };
+  const base = semanticColors[theme];
+  const ac = accentColors[accent];
 
-  // Override dynamic colors to use the current accent
-  const accentDefault = accentColors[accent].DEFAULT;
-  const accentHover =
-    theme === 'light' ? accentColors[accent][400] : accentColors[accent][200];
+  // Extract RGB components for opacity-based colors
+  const rgbMatch = ac.rgb.match(/rgb\((\d+),\s*(\d+),\s*(\d+)\)/);
+  const [r, g, b] = rgbMatch
+    ? [rgbMatch[1], rgbMatch[2], rgbMatch[3]]
+    : ['2', '135', '242'];
+
+  // Accent-derived values
+  const accentDefault = ac.DEFAULT;
+  const linkDefault = theme === 'light' ? ac[500] : ac[400];
+  const linkHover = theme === 'light' ? ac[300] : ac[200];
+  const mentionLink = theme === 'light' ? ac[500] : ac[400];
+  const mentionLinkHover = theme === 'light' ? ac[600] : ac[150];
 
   return {
-    ...baseColors,
-    field: {
-      ...baseColors.field,
-      borderFocus: accentDefault,
-      bgFocus: baseColors.field.bgFocus, // Keep existing bgFocus
-      optionTextSelected: accentDefault, // Dynamic accent for selected options
-    },
+    ...base,
+    accent: ac,
+    ...commonColors,
+
+    // Accent-aware overrides
     link: {
-      default: accentDefault, // Use current accent color
-      hover: accentHover, // Use appropriate hover color for theme
+      default: linkDefault,
+      hover: linkHover,
+    },
+    field: {
+      ...base.field,
+      borderFocus: accentDefault,
+      optionTextSelected: accentDefault,
+    },
+    mention: {
+      bg: `rgba(${r}, ${g}, ${b}, 0.2)`,
+      bgHover: `rgba(${r}, ${g}, ${b}, ${theme === 'light' ? '0.4' : '0.5'})`,
+      link: mentionLink,
+      linkHover: mentionLinkHover,
+    },
+    sidebarAccent: {
+      ...base.sidebarAccent,
+      activeBg: `rgba(${r}, ${g}, ${b}, 0.25)`,
     },
   };
-};
-
-/**
- * Get a specific color value with dot notation
- * Example: getColor('surface.3', 'dark') returns '#312935'
- */
-export const getColor = (
-  colorPath: string,
-  theme: Theme = 'light',
-  accent: AccentColor = 'blue'
-): string => {
-  const colors = getColors(theme, accent);
-  const path = colorPath.split('.');
-
-  let current: any = colors;
-  for (const key of path) {
-    current = current[key];
-    if (current === undefined) {
-      logger.warn(`Color path "${colorPath}" not found in theme "${theme}"`);
-      return colors.accent.DEFAULT; // Fallback
-    }
-  }
-
-  return current;
 };
