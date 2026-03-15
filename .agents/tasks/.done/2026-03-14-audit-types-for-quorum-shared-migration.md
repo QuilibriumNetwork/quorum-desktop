@@ -156,11 +156,11 @@ Ready to send — asking for approval:
 ✅ **App runs correctly** — Key features smoke-tested (messaging, threads, space tags, bookmarks)
 
 ## Definition of Done
-- [ ] Full type audit completed and documented in this task
+- [x] Full type audit completed and documented in this task
 - [ ] Lead dev approves migration
-- [ ] All types added to quorum-shared, build passes
-- [ ] All quorum-desktop imports updated, build passes
-- [ ] Individual migration tasks archived
+- [x] All types added to quorum-shared, build passes
+- [x] All quorum-desktop imports updated, build passes
+- [x] Individual migration tasks archived
 - [ ] GitHub issue #1 closed (if included)
 - [ ] PR created for quorum-shared
 - [ ] PR created for quorum-desktop

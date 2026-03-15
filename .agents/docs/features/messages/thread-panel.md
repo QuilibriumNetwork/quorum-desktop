@@ -424,7 +424,7 @@ Re-enabling threads restores full thread functionality with all existing thread 
 These items are planned but not yet implemented:
 
 - **Advanced thread notifications** — Participation tracking, auto-follow, and per-thread unread indicators. Basic @mention notifications in thread replies are implemented. Store thread follows in a separate IndexedDB store (NOT UserConfig due to unbounded growth). Separate task.
-- **Migrate thread types to `quorum-shared`** — Move types and hooks to the shared package for cross-platform (mobile) compatibility.
+- ~~**Migrate thread types to `quorum-shared`**~~ — DONE: Types migrated in `feat/shared-types-migration` branch.
 - **Permission gating** — Add `thread:create` permission to role system for per-role thread creation control.
 - **Mobile thread reply visibility** — Add a platform-aware flag so mobile clients pass `includeThreadReplies: true` on platforms without thread panel support, ensuring thread replies appear inline in the main feed. The `includeThreadReplies` infrastructure is already in place at all three filter layers.
 
