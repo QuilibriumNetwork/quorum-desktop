@@ -3,7 +3,7 @@ type: doc
 title: Primitives Quick Reference
 status: done
 created: 2026-01-09T00:00:00.000Z
-updated: 2026-02-10T00:00:00.000Z
+updated: 2026-03-15T00:00:00.000Z
 ---
 
 # Primitives Quick Reference
@@ -79,15 +79,15 @@ For web code, use plain HTML with CSS classes:
 
 ```tsx
 <Button
-  type="primary|secondary|light|light-outline|subtle|subtle-outline|danger|primary-white|secondary-white|light-white|light-outline-white|disabled-onboarding|unstyled"
-  size="small|normal|large"
+  type="primary|secondary|light|light-outline|subtle|subtle-outline|danger|primary-white|secondary-white|light-outline-white|unstyled"
+  size="compact|small|normal|large"
   onClick={() => {}}
   disabled={boolean}
   fullWidth={boolean}
   fullWidthWithMargin={boolean} // Native only
   iconName="icon-name"
   iconOnly={boolean}
-  hapticFeedback={boolean} // Native only
+  hapticFeedback={boolean} // Native only, default: true
   accessibilityLabel="description" // Native only
   tooltip="tooltip text"
   className="css-classes" // Web only
@@ -103,7 +103,7 @@ For web code, use plain HTML with CSS classes:
 <Button type="secondary" iconName="plus" onClick={add}>Add</Button>
 <Button type="light" iconName="settings" iconOnly onClick={settings} />
 <Button type="primary" fullWidth onClick={submit}>Full Width Button</Button>
-<Button type="light-white" onClick={onWhiteBackground}>White Variant</Button>
+<Button type="light-outline-white" onClick={onWhiteBackground}>White Variant</Button>
 ```
 
 ---
@@ -118,7 +118,7 @@ For web code, use plain HTML with CSS classes:
   onChange={(value) => {}}
   placeholder="placeholder text"
   type="text|email|password|number|tel|url|search"
-  variant="filled|bordered|onboarding"
+  variant="filled|bordered"
   error={boolean}
   errorMessage="error text"
   disabled={boolean}
@@ -316,7 +316,7 @@ Unified flex layout container (replaces FlexRow, FlexColumn, FlexCenter, FlexBet
   value={boolean}
   onChange={(value) => {}}
   disabled={boolean}
-  size="small|normal|large"
+  size="small|normal|large" // Web only
   label="Switch label"
 />
 ```
@@ -547,6 +547,12 @@ theme.colors.text.muted; // Disabled text
 theme.colors.accent[500]; // Accent color variations
 theme.colors.surface[1 - 10]; // Surface color levels
 theme.colors.border.default; // Border color
+theme.colors.border.muted;     // Very subtle borders
+theme.colors.border.subtle;    // Light borders
+theme.colors.mention.bg;       // Mention highlight background
+theme.colors.mention.link;     // Mention link color
+theme.colors.contextMenu.bg;   // Context menu background
+theme.colors.spaceTag.bg;      // Space tag background
 theme.colors.utilities.danger; // Error/danger
 theme.colors.utilities.success; // Success
 theme.colors.utilities.warning; // Warning
@@ -786,7 +792,7 @@ theme.colors.utilities.info; // Info
 
 ---
 
-_Last updated: 2026-02-10 - Text primitive removed from web production code; now native-only. All web examples updated to use plain HTML + CSS classes._
+_Last updated: 2026-03-15 - Text primitive removed from web production code; now native-only. All web examples updated to use plain HTML + CSS classes._
 
 ---
 

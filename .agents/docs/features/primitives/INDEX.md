@@ -203,7 +203,7 @@ Check [05-primitive-styling-guide.md](./05-primitive-styling-guide.md) for color
 
 ---
 
-_Last updated: 2026-02-10 - Text primitive removed from web production code; now native-only_
+_Last updated: 2026-03-15 - Theme system uses two-layer architecture; updated semantic color examples_
 
 ---
 

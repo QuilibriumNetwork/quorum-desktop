@@ -119,7 +119,7 @@ Instead of hardcoded colors, use semantic variables that automatically adapt to 
 <Container className="bg-surface-1 border-default">
 
 // ✅ Or with theme variables
-<Container style={{ backgroundColor: theme.colors.bg.surface1 }}>
+<Container style={{ backgroundColor: theme.colors.bg.card }}>
 ```
 
 ### **Consistent Spacing System**
@@ -429,7 +429,7 @@ You don't need to convert everything at once:
 
 ---
 
-_Last updated: 2026-02-10 - Text primitive removed from web production code; now native-only_
+_Last updated: 2026-03-15 - Theme system uses two-layer architecture; updated semantic color examples_
 
 ---
 

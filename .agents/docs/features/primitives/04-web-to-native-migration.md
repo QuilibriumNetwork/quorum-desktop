@@ -19,7 +19,7 @@ Complete guide for converting web components to React Native using our cross-pla
    - [Component Logic Extraction](#️-important-component-logic-extraction)
    - [Step-by-Step Process](#step-by-step-process)
    - [Native Component Styling Guidelines](#-native-component-styling-guidelines)
-2. [Common Patterns](#common-patterns)
+2. [Common Migration Patterns](#common-migration-patterns)
 3. [Text & Typography](#text--typography)
 4. [Layout Conversion](#layout-conversion)
 5. [Form Elements](#form-elements)
@@ -71,7 +71,7 @@ Before migrating any component, the component logic **MUST** be extracted in a s
    // ✅ Good - Use props
    <Title size="lg" weight="bold" color="white" align="center">
    <Paragraph size="sm" color="subtle" align="center">
-   <Button type="primary-white" size="large">
+   <Button type="primary" size="large">
 
    // ❌ Bad - Hardcoded styles
    <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#ffffff' }}>
@@ -94,31 +94,7 @@ Before migrating any component, the component logic **MUST** be extracted in a s
 
 ---
 
-## Real Migration Examples
-
-### Example: Maintenance Component
-
-Shows actual web → native migration from existing codebase:
-
-#### ❌ Web Version
-
-```tsx
-<div className="flex flex-col text-white">
-  <Icon name="tools" className="text-4xl" />
-  <Trans>Maintenance in Progress</Trans>
-</div>
-```
-
-#### ✅ Native Version
-
-```tsx
-<Flex direction="column" gap="sm" align="center">
-  <Icon name="tools" size="2xl" color="white" />
-  <Title size="xl" align="center" color="white">
-    {t`Maintenance in Progress`}
-  </Title>
-</Flex>
-```
+## Common Migration Patterns
 
 ### Key Migration Patterns
 
@@ -401,7 +377,7 @@ import { Container, Text } from '../primitives';
 ### ✅ Solution: Use Props
 
 ```tsx
-// DO: Use component props (real examples from OnboardingTestScreen)
+// DO: Use component props
 <Text variant="strong" weight="bold">User Name</Text>
 <Text variant="subtle" size="xs">User address</Text>
 <Text
@@ -513,7 +489,7 @@ Following these patterns will ensure your components work seamlessly across web 
 
 ---
 
-_Last updated: 2026-02-10 - Updated to reflect Text primitive removal from web code_
+_Last updated: 2026-03-15 - Removed legacy Maintenance example, removed -white button variants, cleaned up references_
 
 ---
 

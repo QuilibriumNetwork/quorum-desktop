@@ -83,16 +83,22 @@ borderColor: colors.field.borderError;
 ### **TypeScript Colors:** `/src/components/primitives/theme/colors.ts`
 
 ```typescript
+// colors.ts uses two-layer architecture:
+// Layer 1 — Palette: surfaces, accentColors, utilityColors
+// Layer 2 — Semantics: buildSemanticColors() references palette values
+
+// Field colors (mobile-specific, DO NOT sync with web CSS)
 field: {
-  bg: '#e6e6eb',        // surface-3
-  bgFocus: '#eeeef3',   // surface-2
-  border: '#cdccd3',    // surface-6
-  borderHover: '#c4c4cb', // surface-7
-  borderFocus: '#0287f2', // accent
-  borderError: '#e74a4a', // danger
-  // ... more properties
+  bg: s['2'],           // surface-2 (darker than web for mobile contrast)
+  bgFocus: s['1'],      // surface-1
+  border: s['6'],       // surface-6 (stronger than web for mobile visibility)
+  borderHover: s['7'],  // surface-7
+  borderFocus: accentDefault, // dynamic accent color
+  borderError: u.danger,
 }
 ```
+
+> **Note:** `getColors()` combines semantics + accent overrides into the final color object consumed by components.
 
 ## General Styling Consistency Rules
 
@@ -116,10 +122,14 @@ field: {
 
 ```scss
 // Use semantic border classes
---color-border-default  // Standard borders
---color-border-strong   // Form field borders
---color-border-stronger // Hover states
+--color-border-muted    // Very subtle borders (surface-3)
+--color-border-subtle   // Light borders (surface-4)
+--color-border-default  // Standard borders (surface-6 on mobile)
+--color-border-strong   // Form field borders (surface-7)
+--color-border-stronger // Hover states (surface-8)
 ```
+
+> **Mobile vs Web:** Mobile intentionally uses one step stronger borders than web for better visibility on smaller screens. Do not attempt to synchronize mobile border values to match web exactly.
 
 ### **4. Creating New Semantic Classes**
 
@@ -180,5 +190,5 @@ When creating or updating primitives:
 
 **⚠️ Remember:** Visual consistency is crucial for user experience. When in doubt, use existing semantic classes rather than creating one-off styles.
 
-_Last updated: 2025-10-14_
-_Verified: 2025-12-09 - File paths confirmed current_
+_Last updated: 2026-03-15_
+_Verified: 2026-03-15 - Updated for two-layer color architecture and border hierarchy_
