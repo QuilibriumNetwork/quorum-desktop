@@ -17,7 +17,7 @@ import { t } from '@lingui/core/macro';
 import { Button, Container, Icon, Tooltip } from '../primitives';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
 import { getUserRoles } from '../../utils/permissions';
-import { Group } from '../../api/quorumApi';
+import type { Group } from '@quilibrium/quorum-shared';
 
 type ChannelListProps = { spaceId: string };
 

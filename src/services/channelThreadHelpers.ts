@@ -1,4 +1,4 @@
-import type { ChannelThread, ThreadMeta } from '../api/quorumApi';
+import type { ChannelThread, ThreadMeta } from '@quilibrium/quorum-shared';
 import { stripMarkdown } from '../utils/markdownStripping';
 
 export function buildChannelThreadFromCreate({

@@ -3,7 +3,7 @@ import { useMessages } from '../../queries/messages/useMessages';
 import { useSpaceOwner } from '../../queries/spaceOwner/useSpaceOwner';
 import { useSpace } from '../../queries/space/useSpace';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
-import { Message as MessageType, Channel, Role } from '../../../api/quorumApi';
+import type { Message as MessageType, Channel, Role } from '@quilibrium/quorum-shared';
 import { hasPermission } from '../../../utils/permissions';
 import { t } from '@lingui/core/macro';
 import { DefaultImages } from '../../../utils';

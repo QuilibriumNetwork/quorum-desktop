@@ -1,5 +1,5 @@
 import React from 'react';
-import { Role } from '../../api/quorumApi';
+import type { Role } from '@quilibrium/quorum-shared';
 import { Container, Icon, Flex } from '../primitives';
 import { t } from '@lingui/core/macro';
 

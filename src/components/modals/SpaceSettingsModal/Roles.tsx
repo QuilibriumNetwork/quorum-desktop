@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Button, Select, Icon, Tooltip, ScrollContainer, Callout } from '../../primitives';
 import { Trans } from '@lingui/react/macro';
 import { t } from '@lingui/core/macro';
-import { Permission } from '../../../api/quorumApi';
+import type { Permission } from '@quilibrium/quorum-shared';
 
 interface Role {
   roleTag: string;

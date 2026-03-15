@@ -4,7 +4,7 @@ import { Button, Container, Flex, Icon } from '../primitives';
 // import UserOnlineStateIndicator from './UserOnlineStateIndicator'; // TODO: Re-enable when online/offline status is implemented
 import { ClickToCopyContent } from '../ui';
 import './UserProfile.scss';
-import { Role } from '../../api/quorumApi';
+import type { Role } from '@quilibrium/quorum-shared';
 import {
   useUserRoleManagement,
   useUserProfileActions,

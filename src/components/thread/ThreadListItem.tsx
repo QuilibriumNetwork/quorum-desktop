@@ -1,6 +1,6 @@
 import { formatRelativeTime } from '@quilibrium/quorum-shared';
 import { Icon } from '../primitives';
-import type { ChannelThread } from '../../api/quorumApi';
+import type { ChannelThread } from '@quilibrium/quorum-shared';
 
 interface ThreadListItemProps {
   thread: ChannelThread;

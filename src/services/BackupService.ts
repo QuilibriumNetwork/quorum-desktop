@@ -1,7 +1,7 @@
 import { logger } from '@quilibrium/quorum-shared';
 import { channel as secureChannel } from '@quilibrium/quilibrium-js-sdk-channels';
 import { MessageDB, UserConfig, EncryptionState } from '../db/messages';
-import { Message, Conversation } from '../api/quorumApi';
+import type { Message, Conversation } from '@quilibrium/quorum-shared';
 
 /** Encrypted backup file structure (written to .qmbak) */
 export interface BackupFile {

@@ -1,4 +1,4 @@
-import { Message } from '../api/quorumApi';
+import type { Message } from '@quilibrium/quorum-shared';
 import { t } from '@lingui/core/macro';
 import { stripMarkdown } from './markdownStripping';
 

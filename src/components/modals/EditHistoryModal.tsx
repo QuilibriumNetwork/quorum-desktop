@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import { t } from '@lingui/core/macro';
 import { Modal, Container, Flex, ScrollContainer, Spacer } from '../primitives';
-import { Message as MessageType } from '../../api/quorumApi';
+import type { Message as MessageType } from '@quilibrium/quorum-shared';
 import { formatMessageDate } from '../../utils';
 
 interface EditHistoryModalProps {

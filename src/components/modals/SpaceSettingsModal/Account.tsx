@@ -19,7 +19,7 @@ import { useSpaceLeaving } from '../../../hooks/business/spaces/useSpaceLeaving'
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
 import { useUserRoleDisplay } from '../../../hooks/business/user/useUserRoleDisplay';
 import { useChannelMute } from '../../../hooks/business/channels';
-import { Role } from '../../../api/quorumApi';
+import type { Role } from '@quilibrium/quorum-shared';
 import type { NotificationTypeId } from '../../../types/notifications';
 import { ReactTooltip } from '../../ui';
 

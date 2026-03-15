@@ -1,5 +1,5 @@
 import { useMemo, useCallback } from 'react';
-import { Message } from '../../../api/quorumApi';
+import type { Message } from '@quilibrium/quorum-shared';
 import { IconName } from '../../../components/primitives/Icon/types';
 import { formatMessageDate } from '../../../utils';
 

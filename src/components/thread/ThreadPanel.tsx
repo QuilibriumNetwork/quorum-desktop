@@ -1,5 +1,5 @@
 import React, { Suspense, useRef, useMemo, useState, useCallback, useEffect } from 'react';
-import type { PostMessage } from '../../api/quorumApi';
+import type { PostMessage } from '@quilibrium/quorum-shared';
 import { Button, Icon, Tooltip } from '../primitives';
 import { t } from '@lingui/core/macro';
 import { MessageList, MessageListRef } from '../message/MessageList';

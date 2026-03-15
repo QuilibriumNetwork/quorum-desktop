@@ -4,8 +4,8 @@
 import { logger } from '@quilibrium/quorum-shared';
 import { MessageDB } from '../db/messages';
 import { channel as secureChannel } from '@quilibrium/quilibrium-js-sdk-channels';
-import { Message } from '../api/quorumApi';
 import { hexToSpreadArray } from '../utils/crypto';
+import type { Message } from '@quilibrium/quorum-shared';
 import {
   SyncService as SharedSyncService,
   SyncSummary,

@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { useMessageDB } from '../../../components/context/useMessageDB';
-import type { ChannelThread } from '../../../api/quorumApi';
+import type { ChannelThread } from '@quilibrium/quorum-shared';
 
 export function useChannelThreads({
   spaceId,

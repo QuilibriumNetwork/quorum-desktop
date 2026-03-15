@@ -1,10 +1,10 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
 import { FileWithPath, useDropzone } from 'react-dropzone';
-import {
+import type {
   Message as MessageType,
   EmbedMessage,
   StickerMessage,
-} from '../../../api/quorumApi';
+} from '@quilibrium/quorum-shared';
 import { t } from '@lingui/core/macro';
 import { processAttachmentImage, FILE_SIZE_LIMITS } from '../../../utils/imageProcessing';
 import type { AttachmentProcessingResult } from '../../../utils/imageProcessing';

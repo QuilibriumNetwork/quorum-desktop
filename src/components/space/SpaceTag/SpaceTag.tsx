@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { BroadcastSpaceTag } from '../../../api/quorumApi';
+import type { BroadcastSpaceTag } from '@quilibrium/quorum-shared';
 import { isValidSpaceTagUrl } from '../../../utils/validation';
 import './SpaceTag.scss';
 

@@ -9,7 +9,7 @@ import type {
   Role,
   Sticker,
   Channel,
-} from '../../api/quorumApi';
+} from '@quilibrium/quorum-shared';
 import EmojiPicker, {
   SkinTonePickerLocation,
   SuggestionMode,

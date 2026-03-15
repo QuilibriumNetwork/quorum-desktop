@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { QueryClient } from '@tanstack/react-query';
 import { ThreadService } from '@/services/ThreadService';
 import type { MessageDB } from '@/db/messages';
-import type { ThreadMessage, ChannelThread } from '@/api/quorumApi';
+import type { ThreadMessage, ChannelThread } from '@quilibrium/quorum-shared';
 
 // Minimal mock for MessageDB
 function createMockMessageDB(overrides: Partial<MessageDB> = {}): MessageDB {

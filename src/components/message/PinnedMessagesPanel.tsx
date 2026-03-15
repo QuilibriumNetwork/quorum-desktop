@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Virtuoso } from 'react-virtuoso';
-import type { Message as MessageType, Channel, Sticker, Role } from '../../api/quorumApi';
+import type { Message as MessageType, Channel, Sticker, Role } from '@quilibrium/quorum-shared';
 import MessagePreview from './MessagePreview';
 import {
   Flex,

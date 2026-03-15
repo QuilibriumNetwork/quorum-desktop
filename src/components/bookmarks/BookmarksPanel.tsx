@@ -2,7 +2,7 @@ import React, { useState, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Virtuoso } from 'react-virtuoso';
 import { t } from '@lingui/core/macro';
-import type { Bookmark, Sticker } from '../../api/quorumApi';
+import type { Bookmark, Sticker } from '@quilibrium/quorum-shared';
 import { buildMessageHash } from '../../utils/messageHashNavigation';
 import { BookmarkItem } from './BookmarkItem';
 import {

@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect, useMemo } from 'react';
-import { Message as MessageType } from '../../../api/quorumApi';
+import type { Message as MessageType } from '@quilibrium/quorum-shared';
 import { useResponsiveLayout } from '../../useResponsiveLayout';
 import { useLongPress } from '../../useLongPress';
 import { isTouchDevice as detectTouchDevice } from '../../../utils/platform';

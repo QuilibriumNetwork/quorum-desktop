@@ -1,7 +1,7 @@
 import { logger } from '@quilibrium/quorum-shared';
 import { useCallback, useState } from 'react';
 import React from 'react';
-import { Message as MessageType, Role, Channel, ReactionMessage, RemoveReactionMessage, RemoveMessage, PostMessage } from '../../../api/quorumApi';
+import type { Message as MessageType, Role, Channel, ReactionMessage, RemoveReactionMessage, RemoveMessage, PostMessage } from '@quilibrium/quorum-shared';
 import { useConfirmationModal } from '../../../components/context/ConfirmationModalProvider';
 import { useMessageDB } from '../../../components/context/useMessageDB';
 import { usePasskeysContext, channel as secureChannel } from '@quilibrium/quilibrium-js-sdk-channels';

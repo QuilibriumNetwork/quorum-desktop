@@ -37,7 +37,7 @@ import {
   channel_raw as ch,
   channel as secureChannel,
 } from '@quilibrium/quilibrium-js-sdk-channels';
-import {
+import type {
   Conversation,
   EmbedMessage,
   Message,
@@ -49,7 +49,7 @@ import {
   StickerMessage,
   UpdateProfileMessage,
   BroadcastSpaceTag,
-} from '../../api/quorumApi';
+} from '@quilibrium/quorum-shared';
 import { useQuorumApiClient } from './QuorumApiContext';
 import { QuorumApiClient } from '../../api/baseTypes';
 import { useWebSocket } from './WebsocketProvider';

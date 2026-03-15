@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import type { Bookmark, Message } from '../../../api/quorumApi';
+import type { Bookmark, Message } from '@quilibrium/quorum-shared';
 import { useMessageDB } from '../../../components/context/useMessageDB';
 
 /**

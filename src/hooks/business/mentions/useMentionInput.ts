@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
-import type { Channel, Group } from '../../../api/quorumApi';
+import type { Channel, Group } from '@quilibrium/quorum-shared';
 
 interface User {
   address: string;

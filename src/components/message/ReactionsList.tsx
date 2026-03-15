@@ -5,7 +5,7 @@ import { Flex, Tooltip } from '../primitives';
 import { useReactionsModal } from '../context/ReactionsModalProvider';
 import { isTouchDevice } from '../../utils/platform';
 import { emojiToUnified } from '../../utils/remarkTwemoji';
-import type { Message as MessageType } from '../../api/quorumApi';
+import type { Message as MessageType } from '@quilibrium/quorum-shared';
 import type { CustomEmoji } from 'emoji-picker-react/dist/config/customEmojiConfig';
 import type { MemberInfo } from '../modals/ReactionsModal';
 

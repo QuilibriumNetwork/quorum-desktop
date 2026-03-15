@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import React from 'react';
 import { useNavigate, useParams } from 'react-router';
-import { Channel } from '../../../api/quorumApi';
+import type { Channel } from '@quilibrium/quorum-shared';
 import { useSpace } from '../../queries';
 import { useMessageDB } from '../../../components/context/useMessageDB';
 import { useConfirmation } from '../../ui/useConfirmation';

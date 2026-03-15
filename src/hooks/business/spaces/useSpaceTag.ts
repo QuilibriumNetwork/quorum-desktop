@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { t } from '@lingui/core/macro';
-import { SpaceTag } from '../../../api/quorumApi';
+import type { SpaceTag } from '@quilibrium/quorum-shared';
 import { processEmojiImage, FILE_SIZE_LIMITS } from '../../../utils/imageProcessing';
 
 export interface UseSpaceTagOptions {

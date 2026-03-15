@@ -9,7 +9,7 @@ import React, {
 } from 'react';
 import { useParams } from 'react-router';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
-import { EmbedMessage } from '../../api/quorumApi';
+import type { EmbedMessage } from '@quilibrium/quorum-shared';
 import './DirectMessage.scss';
 import {
   useMessageComposer,
@@ -328,7 +328,7 @@ const DirectMessage: React.FC<{}> = () => {
 
   // Handle retrying a failed message
   const handleRetryMessage = useCallback(
-    async (message: import('../../api/quorumApi').Message) => {
+    async (message: import('@quilibrium/quorum-shared').Message) => {
       if (!self?.registration || !registration?.registration) {
         console.error('Cannot retry: missing registration data');
         return;

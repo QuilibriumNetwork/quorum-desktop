@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { parse as parseEmoji } from '@twemoji/parser';
-import { Message as MessageType } from '../../api/quorumApi';
+import type { Message as MessageType } from '@quilibrium/quorum-shared';
 import { Tooltip, Icon } from '../primitives';
 import { useQuickReactions, useFrequentEmojis } from '../../hooks/business/messages';
 import { emojiToUnified } from '../../utils/remarkTwemoji';

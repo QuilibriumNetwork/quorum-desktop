@@ -1,4 +1,4 @@
-import { Message as MessageType, PostMessage, EmbedMessage, StickerMessage } from '../api/quorumApi';
+import type { Message as MessageType, PostMessage, EmbedMessage, StickerMessage } from '@quilibrium/quorum-shared';
 import { t } from '@lingui/core/macro';
 
 /**

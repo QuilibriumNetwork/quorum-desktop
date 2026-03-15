@@ -6,7 +6,7 @@ import { MarkdownToolbar } from './MarkdownToolbar';
 import { MentionDropdown } from './MentionDropdown';
 import { calculateToolbarPosition } from '../../utils/toolbarPositioning';
 import type { FormatFunction } from '../../utils/markdownFormatting';
-import type { Message as MessageType, PostMessage, Role, Channel } from '../../api/quorumApi';
+import type { Message as MessageType, PostMessage, Role, Channel } from '@quilibrium/quorum-shared';
 import { t } from '@lingui/core/macro';
 import { buildMessagesKey } from '../../hooks/queries/messages/buildMessagesKey';
 import { useMessageDB } from '../context/useMessageDB';

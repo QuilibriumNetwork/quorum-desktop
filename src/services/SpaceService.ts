@@ -2,7 +2,7 @@
 // This service handles space creation, management, and member operations
 
 import { MessageDB, NavItem } from '../db/messages';
-import { Space, Message, KickMessage } from '../api/quorumApi';
+import type { Space, Message, KickMessage } from '@quilibrium/quorum-shared';
 import { sha256, base58btc, hexToSpreadArray } from '../utils/crypto';
 import { int64ToBytes } from '../utils/bytes';
 import { QueryClient } from '@tanstack/react-query';

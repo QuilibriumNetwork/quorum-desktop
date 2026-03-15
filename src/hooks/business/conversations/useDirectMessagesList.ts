@@ -4,7 +4,7 @@ import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
 import { useMessages } from '../../queries/messages/useMessages';
 import { useInvalidateConversation } from '../../queries/conversation/useInvalidateConversation';
 import { useMessageDB } from '../../../components/context/useMessageDB';
-import { Message as MessageType } from '../../../api/quorumApi';
+import type { Message as MessageType } from '@quilibrium/quorum-shared';
 
 export interface UseDirectMessagesListReturn {
   messageList: MessageType[];

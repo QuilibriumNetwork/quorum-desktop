@@ -1,6 +1,6 @@
 import React from 'react';
 import { t } from '@lingui/core/macro';
-import type { Bookmark, Sticker } from '../../api/quorumApi';
+import type { Bookmark, Sticker } from '@quilibrium/quorum-shared';
 import {
   Flex,
   Button,

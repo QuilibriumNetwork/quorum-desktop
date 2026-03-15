@@ -9,7 +9,7 @@
  * @see .agents/docs/features/mention-notification-system.md
  */
 
-import { Message } from '../api/quorumApi';
+import type { Message } from '@quilibrium/quorum-shared';
 
 /**
  * Types of notifications that can be enabled/disabled

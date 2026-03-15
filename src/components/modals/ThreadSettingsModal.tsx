@@ -10,7 +10,7 @@ import {
   Switch,
   Input,
 } from '../primitives';
-import type { Message as MessageType } from '../../api/quorumApi';
+import type { Message as MessageType } from '@quilibrium/quorum-shared';
 import type { ThreadChannelProps } from '../context/ThreadContext';
 import { validateNameForXSS } from '../../utils/validation';
 

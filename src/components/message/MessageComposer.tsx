@@ -4,7 +4,7 @@ import { t } from '@lingui/core/macro';
 import { i18n } from '@lingui/core';
 import type { AttachmentProcessingResult } from '../../utils/imageProcessing';
 import { useMentionInput, type MentionOption, useMentionPillEditor } from '../../hooks/business/mentions';
-import type { Group } from '../../api/quorumApi';
+import type { Group } from '@quilibrium/quorum-shared';
 import { useResponsiveLayout } from '../../hooks/useResponsiveLayout';
 import { isTouchDevice } from '../../utils/platform';
 import './MessageComposer.scss';

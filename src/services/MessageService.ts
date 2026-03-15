@@ -3,7 +3,7 @@
 
 import { logger } from '@quilibrium/quorum-shared';
 import { MessageDB, EncryptionState, EncryptedMessage } from '../db/messages';
-import {
+import type {
   Message,
   ReactionMessage,
   RemoveReactionMessage,
@@ -19,7 +19,7 @@ import {
   ThreadMeta,
   UpdateProfileMessage,
   BroadcastSpaceTag,
-} from '../api/quorumApi';
+} from '@quilibrium/quorum-shared';
 import { sha256, base58btc, hexToSpreadArray } from '../utils/crypto';
 import { int64ToBytes } from '../utils/bytes';
 import { QueryClient, InfiniteData } from '@tanstack/react-query';

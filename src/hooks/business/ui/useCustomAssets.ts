@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { t } from '@lingui/core/macro';
-import { Emoji, Sticker } from '../../../api/quorumApi';
+import type { Emoji, Sticker } from '@quilibrium/quorum-shared';
 import { processEmojiImage, processStickerImage, FILE_SIZE_LIMITS } from '../../../utils/imageProcessing';
 
 export interface UseCustomAssetsOptions {

@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { Space } from '../../../api/quorumApi';
+import type { Space } from '@quilibrium/quorum-shared';
 import { useSpaces } from '../../../hooks';
 import { t } from '@lingui/core/macro';
 

@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect } from 'react';
 import React from 'react';
-import { Role, Permission } from '../../../api/quorumApi';
+import type { Role, Permission } from '@quilibrium/quorum-shared';
 import { useConfirmation } from '../../ui/useConfirmation';
 import RolePreview from '../../../components/space/RolePreview';
 import { t } from '@lingui/core/macro';

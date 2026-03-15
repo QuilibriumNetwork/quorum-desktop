@@ -4,7 +4,7 @@ import { useMessageDB } from '../../../components/context/useMessageDB';
 import { isMentionedWithSettings } from '../../../utils/mentionUtils';
 import { getDefaultNotificationSettings } from '../../../utils/notificationSettingsUtils';
 import { getUserRoles } from '../../../utils/permissions';
-import type { Space } from '../../../api/quorumApi';
+import type { Space } from '@quilibrium/quorum-shared';
 
 interface UseSpaceMentionCountsProps {
   spaces: Space[];

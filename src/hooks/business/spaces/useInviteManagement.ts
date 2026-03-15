@@ -8,7 +8,7 @@ import { useMessageDB } from '../../../components/context/useMessageDB';
 import { useRegistrationContext } from '../../../components/context/useRegistrationContext';
 import { useQuorumApiClient } from '../../../components/context/QuorumApiContext';
 import { useConversations, useRegistration } from '../../queries';
-import { Conversation, Channel } from '../../../api/quorumApi';
+import type { Conversation, Channel } from '@quilibrium/quorum-shared';
 import { getAddressSuffix } from '../../../utils';
 import { t } from '@lingui/core/macro';
 

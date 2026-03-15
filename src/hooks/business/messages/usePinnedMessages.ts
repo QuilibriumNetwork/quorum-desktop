@@ -2,7 +2,7 @@ import { logger } from '@quilibrium/quorum-shared';
 import { useCallback } from 'react';
 import React from 'react';
 import { useQueryClient, useQuery } from '@tanstack/react-query';
-import type { Message, Channel, Role, PinMessage } from '../../../api/quorumApi';
+import type { Message, Channel, Role, PinMessage } from '@quilibrium/quorum-shared';
 import { useMessageDB } from '../../../components/context/useMessageDB';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
 import { hasPermission } from '../../../utils/permissions';

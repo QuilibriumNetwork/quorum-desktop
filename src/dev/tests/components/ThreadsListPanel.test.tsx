@@ -5,7 +5,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { createElement } from 'react';
 import { i18n } from '@lingui/core';
 import { messages } from '@/i18n/en/messages';
-import type { ChannelThread } from '../../../api/quorumApi';
+import type { ChannelThread } from '@quilibrium/quorum-shared';
 
 // Initialize Lingui before tests
 beforeAll(() => {

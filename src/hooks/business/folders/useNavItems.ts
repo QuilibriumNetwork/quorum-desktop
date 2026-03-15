@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo } from 'react';
-import { Space } from '../../../api/quorumApi';
+import type { Space } from '@quilibrium/quorum-shared';
 import { NavItem, UserConfig } from '../../../db/messages';
 import { migrateToItems } from '../../../utils/folderUtils';
 

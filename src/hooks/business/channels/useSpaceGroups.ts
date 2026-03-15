@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { Space, Group } from '../../../api/quorumApi';
+import type { Space, Group } from '@quilibrium/quorum-shared';
 
 /**
  * Custom hook for space groups data processing and rendering logic

@@ -1,5 +1,5 @@
 import dayjs from './dayjs';
-import { Message } from '../api/quorumApi';
+import type { Message } from '@quilibrium/quorum-shared';
 
 export interface MessageGroup {
   date: number; // Start of day timestamp

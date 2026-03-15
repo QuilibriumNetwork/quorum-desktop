@@ -7,7 +7,7 @@ import {
   groupMessagesByDay,
   generateListWithSeparators,
 } from '../../../utils/messageGrouping';
-import { Message } from '../../../api/quorumApi';
+import type { Message } from '@quilibrium/quorum-shared';
 
 // Mock message helper
 const createMockMessage = (timestamp: number, messageId: string): Message => ({

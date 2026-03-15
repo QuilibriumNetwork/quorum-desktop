@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { Message } from '../../../api/quorumApi';
+import type { Message } from '@quilibrium/quorum-shared';
 
 export interface UseSearchResultHighlightProps {
   message: Message;

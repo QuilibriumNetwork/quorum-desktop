@@ -3,7 +3,7 @@ import { useSpace } from '../../queries/space/useSpace';
 import { useSpaceMembers } from '../../queries/spaceMembers/useSpaceMembers';
 import { i18n } from '@lingui/core';
 import { DefaultImages } from '../../../utils';
-import { BroadcastSpaceTag } from '../../../api/quorumApi';
+import type { BroadcastSpaceTag } from '@quilibrium/quorum-shared';
 
 // Safe development-only testing - automatically disabled in production
 const ENABLE_MOCK_USERS =

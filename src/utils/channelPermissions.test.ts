@@ -9,7 +9,7 @@ import {
   UnifiedPermissionSystem,
   PermissionContext,
 } from './channelPermissions';
-import { Space, Channel, Role, Message as MessageType } from '../api/quorumApi';
+import type { Space, Channel, Role, Message as MessageType } from '@quilibrium/quorum-shared';
 
 // Test data setup
 const mockSpace: Space = {

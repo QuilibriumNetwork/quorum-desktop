@@ -4,7 +4,7 @@ import { parse as parseEmoji } from '@twemoji/parser';
 import { Modal, Flex, ScrollContainer } from '../primitives';
 import { UserAvatar } from '../user/UserAvatar';
 import { emojiToUnified } from '../../utils/remarkTwemoji';
-import type { Reaction } from '../../api/quorumApi';
+import type { Reaction } from '@quilibrium/quorum-shared';
 import type { CustomEmoji } from 'emoji-picker-react/dist/config/customEmojiConfig';
 
 export interface MemberInfo {

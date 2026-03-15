@@ -11,7 +11,7 @@ import ModalSaveOverlay from '../ModalSaveOverlay';
 import { useSpace } from '../../../hooks';
 import { useMessageDB } from '../../context/useMessageDB';
 import { useSpaceOwner } from '../../../hooks/queries/spaceOwner/useSpaceOwner';
-import { Channel } from '../../../api/quorumApi';
+import type { Channel } from '@quilibrium/quorum-shared';
 import { t } from '@lingui/core/macro';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
 import { useQueryClient } from '@tanstack/react-query';

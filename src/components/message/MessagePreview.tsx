@@ -1,5 +1,5 @@
 import React from 'react';
-import { Message as MessageType, Sticker, Role, Channel } from '../../api/quorumApi';
+import type { Message as MessageType, Sticker, Role, Channel } from '@quilibrium/quorum-shared';
 import { Container, Flex, Spacer, Icon } from '../primitives';
 import { t } from '@lingui/core/macro';
 import { useMessageFormatting } from '../../hooks/business/messages/useMessageFormatting';
