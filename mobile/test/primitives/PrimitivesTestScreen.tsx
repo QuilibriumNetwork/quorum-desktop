@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { View, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useTheme } from '@/components/primitives/theme';
@@ -46,66 +46,6 @@ export const PrimitivesTestScreen: React.FC = () => {
             Testing Container, Flex, and Spacer components
           </Text>
         </Flex>
-
-        {/* Button Primitive Section */}
-        <View style={themedStyles.sectionCompact}>
-          <View style={{ marginBottom: 16 }}>
-            <Text size="lg" weight="semibold" variant="strong">
-              Button Primitive
-            </Text>
-          </View>
-
-          <View style={commonTestStyles.inputGroup}>
-            <View style={{ marginBottom: 8 }}>
-              <Text size="sm" weight="medium" variant="default">
-                Button Types:
-              </Text>
-            </View>
-            <Flex gap="md" wrap style={{ paddingVertical: 8 }}>
-              <Button type="primary" onClick={() => {}}>
-                Primary
-              </Button>
-              <Button type="secondary" onClick={() => {}}>
-                Secondary
-              </Button>
-              <Button type="light" onClick={() => {}}>
-                Light
-              </Button>
-            </Flex>
-          </View>
-
-          <View style={commonTestStyles.inputGroup}>
-            <View style={{ marginBottom: 8 }}>
-              <Text size="sm" weight="medium" variant="default">
-                Button Sizes:
-              </Text>
-            </View>
-            <Flex gap="md" align="center" style={{ paddingVertical: 8 }}>
-              <Button type="primary" size="normal" onClick={() => {}}>
-                Normal Size
-              </Button>
-              <Button type="primary" size="small" onClick={() => {}}>
-                Small Size
-              </Button>
-            </Flex>
-          </View>
-
-          <View style={commonTestStyles.inputGroup}>
-            <View style={{ marginBottom: 8 }}>
-              <Text size="sm" weight="medium" variant="default">
-                Disabled State:
-              </Text>
-            </View>
-            <Flex gap="md" style={{ paddingVertical: 8 }}>
-              <Button type="primary" disabled onClick={() => {}}>
-                Disabled Primary
-              </Button>
-              <Button type="secondary" disabled onClick={() => {}}>
-                Disabled Secondary
-              </Button>
-            </Flex>
-          </View>
-        </View>
 
         {/* View Styling Section */}
         <View style={themedStyles.sectionCompact}>

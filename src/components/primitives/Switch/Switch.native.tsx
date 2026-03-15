@@ -1,5 +1,6 @@
 import React from 'react';
-import { Pressable, View, Animated, Platform } from 'react-native';
+import { Pressable, View, Animated } from 'react-native';
+import * as Haptics from 'expo-haptics';
 import { NativeSwitchProps } from './types';
 import { useTheme } from '../theme';
 
@@ -7,7 +8,7 @@ export const Switch: React.FC<NativeSwitchProps> = ({
   value,
   onChange,
   disabled = false,
-  hapticFeedback = false,
+  hapticFeedback = true,
   accessibilityLabel,
   style,
   testID,
@@ -28,10 +29,8 @@ export const Switch: React.FC<NativeSwitchProps> = ({
 
   const handlePress = () => {
     if (!disabled) {
-      // Add haptic feedback on iOS if enabled
-      if (hapticFeedback && Platform.OS === 'ios') {
-        // Note: Would require expo-haptics for actual implementation
-        // HapticFeedback.impactAsync(HapticFeedback.ImpactFeedbackStyle.Light);
+      if (hapticFeedback) {
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
       }
       onChange(!value);
     }

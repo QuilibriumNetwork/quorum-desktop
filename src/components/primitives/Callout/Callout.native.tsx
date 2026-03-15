@@ -9,68 +9,48 @@ import {
 import { CalloutNativeProps } from './types';
 import { Icon } from '../Icon';
 import { IconName } from '../Icon/types';
+import { useTheme } from '../theme';
 
 const variantIcons: Record<string, IconName> = {
-  info: 'info',
+  info: 'info-circle',
   success: 'check',
   warning: 'warning',
   error: 'warning',
 };
 
-// Callout colors with solid backgrounds for better readability
-const variantColors = {
-  info: {
-    text: '#3B82F6',
-    bg: '#2D3346',
-    border: '#3F5B85',
-  },
-  success: {
-    text: '#10B981',
-    bg: '#293632',
-    border: '#33694A',
-  },
-  warning: {
-    text: '#F59E0B',
-    bg: '#3F3226',
-    border: '#775D26',
-  },
-  error: {
-    text: '#EF4444',
-    bg: '#3E2930',
-    border: '#763F44',
-  },
-};
+const getVariantStyles = (
+  variant: string,
+  layout: string,
+  colors: any
+) => {
+  const variantColorMap: Record<string, string> = {
+    info: colors.utilities.info,
+    success: colors.utilities.success,
+    warning: colors.utilities.warning,
+    error: colors.utilities.danger,
+  };
 
-const getVariantStyles = (variant: string, layout: string) => {
-  const colors = variantColors[variant as keyof typeof variantColors];
+  const textColor = variantColorMap[variant] || colors.utilities.info;
 
   if (layout === 'base') {
     return {
       container: {
-        borderColor: colors.border,
-        backgroundColor: colors.bg,
+        borderColor: textColor + '4D',
+        backgroundColor: textColor + '1A',
         borderWidth: 1,
         borderRadius: 8,
         paddingHorizontal: 12,
         paddingVertical: 8,
       },
-      text: {
-        color: colors.text,
-      },
-      icon: {
-        color: colors.text,
-      },
+      text: { color: textColor },
+      icon: { color: textColor },
     };
   }
 
   return {
     container: {},
-    text: {
-      color: colors.text,
-    },
-    icon: {
-      color: colors.text,
-    },
+    text: { color: textColor },
+    icon: { color: textColor },
   };
 };
 
@@ -105,6 +85,7 @@ const Callout: React.FC<CalloutNativeProps> = ({
   onClose,
   testID,
 }) => {
+  const theme = useTheme();
   const [isVisible, setIsVisible] = useState(true);
   const fadeAnim = useRef(new Animated.Value(1)).current;
 
@@ -131,7 +112,7 @@ const Callout: React.FC<CalloutNativeProps> = ({
 
   if (!isVisible) return null;
 
-  const variantStyle = getVariantStyles(variant, layout);
+  const variantStyle = getVariantStyles(variant, layout, theme.colors);
   const textSize = sizeStyles[size];
   const iconSize = iconSizes[size];
   const isBase = layout === 'base';

@@ -1,6 +1,7 @@
 import React from 'react';
 import { View } from 'react-native';
 import { NativeSpacerProps } from './types';
+import { useTheme } from '../theme';
 
 // Spacing values with clean progression
 const SPACING_MAP = {
@@ -16,12 +17,15 @@ export const Spacer: React.FC<NativeSpacerProps> = ({
   direction = 'vertical',
   borderTop,
   borderBottom,
-  borderColor = '#e5e7eb', // Default border color
+  borderColor,
   spaceBefore,
   spaceAfter,
   border,
   testId,
 }) => {
+  const theme = useTheme();
+  const resolvedBorderColor = borderColor || theme.colors.border.default;
+
   // Compound spacer mode: SPACE-BORDER-SPACE
   if ((spaceBefore || spaceAfter) && border) {
     const beforeValue = spaceBefore
@@ -56,13 +60,13 @@ export const Spacer: React.FC<NativeSpacerProps> = ({
                   height: 0,
                   width: '100%',
                   borderTopWidth: 1,
-                  borderTopColor: borderColor,
+                  borderTopColor: resolvedBorderColor,
                 }
               : {
                   width: 0,
                   height: '100%',
                   borderLeftWidth: 1,
-                  borderLeftColor: borderColor,
+                  borderLeftColor: resolvedBorderColor,
                 }),
           }}
         />
@@ -88,11 +92,11 @@ export const Spacer: React.FC<NativeSpacerProps> = ({
   const borderStyle: any = {
     ...(borderTop && {
       borderTopWidth: 1,
-      borderTopColor: borderColor,
+      borderTopColor: resolvedBorderColor,
     }),
     ...(borderBottom && {
       borderBottomWidth: 1,
-      borderBottomColor: borderColor,
+      borderBottomColor: resolvedBorderColor,
     }),
   };
 

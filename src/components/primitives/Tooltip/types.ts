@@ -15,17 +15,22 @@ export type TooltipPlacement =
   | 'left-start'
   | 'left-end';
 
-export interface TooltipProps {
-  id: string;
+// Shared props between web and native
+export interface BaseTooltipProps {
   content: ReactNode;
   children: ReactNode;
   place?: TooltipPlacement;
-  noArrow?: boolean;
-  className?: string;
-  noBorder?: boolean;
   showCloseButton?: boolean;
   maxWidth?: number;
   disabled?: boolean;
+}
+
+// Web-specific props
+export interface TooltipWebProps extends BaseTooltipProps {
+  id: string;
+  noArrow?: boolean;
+  className?: string;
+  noBorder?: boolean;
   touchTrigger?: 'click' | 'long-press';
   longPressDuration?: number;
   showOnTouch?: boolean;
@@ -34,11 +39,8 @@ export interface TooltipProps {
   variant?: 'simple' | 'rich';
 }
 
-export interface TooltipWebProps extends TooltipProps {
-  // Web-specific props can be added here
-}
-
-export interface TooltipNativeProps extends TooltipProps {
+// Native-specific props
+export interface TooltipNativeProps extends BaseTooltipProps {
   // Native-specific props can be added here
 }
 

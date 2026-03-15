@@ -22,5 +22,4 @@ export interface NativeModalProps extends BaseModalProps {
   // Native-specific props
   swipeToClose?: boolean;
   swipeUpToOpen?: boolean;
-  keyboardAvoidingView?: boolean;
 }

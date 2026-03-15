@@ -110,6 +110,7 @@ export type IconName =
   | 'bookmark'
   | 'bookmark-off'
   | 'paperclip'
+  | 'at'
   | 'hashtag'
   | 'calendar-alt'
   | 'history'

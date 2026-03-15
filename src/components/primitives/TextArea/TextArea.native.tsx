@@ -51,16 +51,13 @@ export const TextArea = forwardRef<TextInput, TextAreaNativeProps>(
     const getBorderColor = () => {
       if (error) return colors.utilities.danger;
       if (isFocused && !noFocusStyle) {
-        if (variant === 'onboarding') return '#3aa9f8'; // Hardcoded brand blue-400
         return colors.field.borderFocus;
       }
       if (variant === 'bordered') return colors.field.border;
-      return 'transparent'; // filled and onboarding variants have transparent border by default
+      return 'transparent'; // filled variant has transparent border by default
     };
 
     const getBackgroundColor = () => {
-      if (variant === 'onboarding') return '#ffffff'; // Always white for onboarding
-      // All variants use the same background colors
       if (isFocused && !disabled) return colors.field.bgFocus;
       return colors.field.bg;
     };
@@ -91,21 +88,6 @@ export const TextArea = forwardRef<TextInput, TextAreaNativeProps>(
         ? textAreaHeight
         : Math.max(rows || 3, 1) * 20 + 20; // 20px line height + padding
 
-      if (variant === 'onboarding') {
-        return [
-          ...baseStyles,
-          styles.textAreaOnboarding,
-          {
-            backgroundColor: getBackgroundColor(),
-            color: '#034081', // Hardcoded brand blue-700
-            borderColor: getBorderColor(),
-            height: calculatedHeight,
-          },
-          error && styles.textAreaError,
-          disabled && styles.textAreaDisabled,
-        ];
-      }
-
       return [
         ...baseStyles,
         {
@@ -130,11 +112,7 @@ export const TextArea = forwardRef<TextInput, TextAreaNativeProps>(
           style={textAreaStyle}
           value={value}
           placeholder={placeholder}
-          placeholderTextColor={
-            variant === 'onboarding'
-              ? '#6fc3ff' // Hardcoded brand blue-200
-              : colors.field.placeholder
-          }
+          placeholderTextColor={colors.field.placeholder}
           onChangeText={onChange}
           onBlur={() => {
             setIsFocused(false);
@@ -180,9 +158,6 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: 'transparent',
     textAlignVertical: 'top',
-  },
-  textAreaOnboarding: {
-    borderRadius: 16, // More rounded for onboarding
   },
   textAreaError: {
     borderWidth: 1,

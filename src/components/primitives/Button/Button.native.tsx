@@ -75,28 +75,6 @@ const Button: React.FC<NativeButtonProps> = (props) => {
           borderColor: 'transparent',
         });
         break;
-      case 'primary-white':
-        style.push({
-          backgroundColor: colors.white,
-          borderColor: colors.white,
-        });
-        break;
-      case 'secondary-white':
-        style.push({
-          backgroundColor: 'transparent',
-          borderColor: colors.white,
-          shadowOpacity: 0,
-          elevation: 0,
-        });
-        break;
-      case 'light-outline-white':
-        style.push({
-          backgroundColor: 'transparent',
-          borderColor: 'rgba(255, 255, 255, 0.8)',
-          shadowOpacity: 0,
-          elevation: 0,
-        });
-        break;
       case 'unstyled':
         style.push({
           backgroundColor: 'transparent',
@@ -136,12 +114,7 @@ const Button: React.FC<NativeButtonProps> = (props) => {
     }
 
     // Remove shadows for transparent background types (must come after size styles)
-    if (
-      type === 'subtle-outline' ||
-      type === 'secondary-white' ||
-      type === 'light-outline-white' ||
-      type === 'unstyled'
-    ) {
+    if (type === 'subtle-outline' || type === 'unstyled') {
       style.push({
         shadowOpacity: 0,
         shadowRadius: 0,
@@ -151,23 +124,12 @@ const Button: React.FC<NativeButtonProps> = (props) => {
 
     // Add disabled styles
     if (props.disabled) {
-      if (type === 'disabled-onboarding') {
-        // Special onboarding disabled style: semi-transparent white
-        style.push({
-          backgroundColor: 'rgba(255, 255, 255, 0.3)', // bg-white/30
-          borderColor: 'transparent',
-          shadowOpacity: 0,
-          elevation: 0,
-        });
-      } else {
-        // Regular disabled style
-        style.push({
-          backgroundColor: colors.surface[3],
-          borderColor: colors.transparent,
-          shadowOpacity: 0,
-          elevation: 0,
-        });
-      }
+      style.push({
+        backgroundColor: colors.surface[3],
+        borderColor: colors.transparent,
+        shadowOpacity: 0,
+        elevation: 0,
+      });
     }
 
     return style;
@@ -177,9 +139,6 @@ const Button: React.FC<NativeButtonProps> = (props) => {
     const type = props.type || 'primary';
 
     if (props.disabled) {
-      if (type === 'disabled-onboarding') {
-        return '#ffffff'; // White text for onboarding disabled state
-      }
       return colors.surface[8]; // Darker grey for disabled text
     }
 
@@ -192,11 +151,6 @@ const Button: React.FC<NativeButtonProps> = (props) => {
         return colors.text.main;
       case 'subtle-outline':
         return colors.text.subtle;
-      case 'primary-white':
-        return '#0287f2'; // Hardcoded blue as in CSS
-      case 'secondary-white':
-      case 'light-outline-white':
-        return colors.white;
       case 'unstyled':
         return 'inherit'; // Let the parent control text color
       default:

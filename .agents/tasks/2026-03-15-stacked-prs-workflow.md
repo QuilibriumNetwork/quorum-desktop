@@ -15,13 +15,13 @@ depends_on:
 ```
 quorum-shared:
   feat/shared-types-migration          ← PR #1 (open, waiting for merge)
-    └── feat/primitives-migration      ← PR #2 (base: types branch)
-          └── feat/hooks-utils-migration  ← PR #3 (base: primitives branch)
+    └── feat/shared-primitives-migration      ← PR #2 (base: types branch)
+          └── feat/shared-hooks-utils-migration  ← PR #3 (base: primitives branch)
 
 quorum-desktop:
   feat/shared-types-migration          ← PR #1 (open, waiting for merge)
-    └── feat/primitives-migration      ← PR #2 (base: types branch)
-          └── feat/hooks-utils-migration  ← PR #3 (base: primitives branch)
+    └── feat/shared-primitives-migration      ← PR #2 (base: types branch)
+          └── feat/shared-hooks-utils-migration  ← PR #3 (base: primitives branch)
 ```
 
 ## How to Create Each Branch
@@ -31,19 +31,19 @@ quorum-desktop:
 # quorum-shared
 cd d:/GitHub/Quilibrium/quorum-shared
 git checkout feat/shared-types-migration
-git checkout -b feat/primitives-migration
+git checkout -b feat/shared-primitives-migration
 
 # quorum-desktop
 cd d:/GitHub/Quilibrium/quorum-desktop
 git checkout feat/shared-types-migration
-git checkout -b feat/primitives-migration
+git checkout -b feat/shared-primitives-migration
 ```
 
 ### Hooks/utils migration (after primitives)
 ```bash
 # Branch off primitives in both repos
-git checkout feat/primitives-migration
-git checkout -b feat/hooks-utils-migration
+git checkout feat/shared-primitives-migration
+git checkout -b feat/shared-hooks-utils-migration
 ```
 
 ## PR Creation Rules
@@ -56,7 +56,7 @@ git checkout -b feat/hooks-utils-migration
 
 When types PR merges:
 ```bash
-git checkout feat/primitives-migration
+git checkout feat/shared-primitives-migration
 git rebase develop
 git push --force-with-lease
 # Then change PR base to develop on GitHub

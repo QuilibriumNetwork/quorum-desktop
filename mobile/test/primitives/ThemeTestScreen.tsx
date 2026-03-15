@@ -15,7 +15,6 @@ import {
   useTheme,
 } from '@/components/primitives';
 import ThemeRadioGroup from '@/components/ui/ThemeRadioGroup';
-import AccentColorSwitcher from '@/components/ui/AccentColorSwitcher';
 import {
   commonTestStyles,
   createThemedStyles,
@@ -70,15 +69,6 @@ export const ThemeTestScreen: React.FC = () => {
             </Flex>
 
             <ThemeRadioGroup horizontal />
-          </Flex>
-        </View>
-
-        {/* Accent Colors */}
-        <View style={themedStyles.section}>
-          <Flex direction="column" gap="md">
-            <Title size="sm">Accent Colors</Title>
-
-            <AccentColorSwitcher />
           </Flex>
         </View>
 

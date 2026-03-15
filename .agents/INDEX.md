@@ -16,6 +16,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Styling Guidelines](docs/styling-guidelines.md)
 
 ### Development
+- [Android Build Workflow](docs/development/android-build-workflow.md)
 - [Unused Dependencies Analysis](docs/development/unused-dependencies-analysis.md)
 
 ### Features
@@ -86,6 +87,7 @@ This is the main index for all documentation, bug reports, and task management.
 ## 🐛 Bug Reports
 
 ### Active Issues
+- [Mobile Metro bundling fails at 99.9% — unable to resolve ./index from root](bugs/2026-03-15-mobile-metro-bundling-failure.md)
 - [Config Sync Space Loss Race Condition](bugs/config-sync-space-loss-race-condition.md)
 - [DirectMessage Invite Loading Performance Issue](bugs/directmessage-invite-loading-performance.md)
 - [Encryption State Evals Causing Config Sync Bloat](bugs/encryption-state-evals-bloat.md)
@@ -155,11 +157,10 @@ This is the main index for all documentation, bug reports, and task management.
 
 - [Embedded Media + YouTube Facade Privacy Fix — Implementation Plan](tasks/2026-03-12-embedded-media-plan.md)
 - [Embedded Media in PostMessage + YouTube Facade Privacy Fix](tasks/2026-03-12-embedded-media-spec.md)
-- [Audit & Migrate All Desktop Types to quorum-shared](tasks/2026-03-14-audit-types-for-quorum-shared-migration.md)
-- [Migrate Thread Types to quorum-shared](tasks/2026-03-14-migrate-thread-types-to-quorum-shared.md)
 - [Thread List Panel: "Created by me" Filter](tasks/2026-03-14-thread-list-created-filter.md)
+- [Get npm Publish Access for @quilibrium/quorum-shared](tasks/2026-03-15-npm-publish-access-quorum-shared.md)
+- [Stacked PRs Workflow](tasks/2026-03-15-stacked-prs-workflow.md)
 - [Accessibility Features — Remaining Work](tasks/accessibility-features-implementation.md)
-- [Add Space Tag support to shared types](tasks/quorum-shared-space-tags.md)
 - [Add User Bio Field to UserSettingsModal General Tab](tasks/add-user-bio-field.md)
 - [Auto-save settings modals — eliminate save buttons](tasks/auto-save-settings-modals.md)
 - [Conversation Deletion State Synchronization](tasks/conversation-deletion-state-sync.md)
@@ -272,16 +273,20 @@ This is the main index for all documentation, bug reports, and task management.
 - [Threads List Panel Implementation Plan](tasks/.done/2026-03-12-threads-list-panel-plan.md)
 - [Threads List Panel — Design Spec](tasks/.done/2026-03-12-threads-list-panel-spec.md)
 - [Extract ThreadService Implementation Plan](tasks/.done/2026-03-13-extract-thread-service.md)
+- [Audit & Migrate All Desktop Types to quorum-shared](tasks/.done/2026-03-14-audit-types-for-quorum-shared-migration.md)
 - [Complete i18n Translation Quality Audit](tasks/.done/2026-03-14-i18n-complete-translation-quality-audit.md)
+- [Migrate Thread Types to quorum-shared](tasks/.done/2026-03-14-migrate-thread-types-to-quorum-shared.md)
 - [Space/Channel Thread Toggle — Design Spec](tasks/.done/2026-03-14-space-channel-thread-toggle-design.md)
 - [Space/Channel Thread Toggle Implementation Plan](tasks/.done/2026-03-14-space-channel-thread-toggle-plan.md)
 - [Test thread mention notifications feature](tasks/.done/2026-03-14-test-thread-mention-notifications.md)
 - [Thread Mention Notifications — Implementation Plan](tasks/.done/2026-03-14-thread-mention-notifications-plan.md)
 - [Thread Mention Notifications](tasks/.done/2026-03-14-thread-mention-notifications.md)
 - [Thread Panel: Bottom-Anchored Title Implementation Plan](tasks/.done/2026-03-14-thread-panel-bottom-anchored-title.md)
+- [Shared Types Migration Implementation Plan](tasks/.done/2026-03-15-shared-types-migration-plan.md)
 - [AccentColorSwitcher Cross-Platform Migration + Persistence](tasks/.done/accent-color-switcher-cross-platform-migration.md)
 - [Add Context to Desktop Notifications](tasks/.done/rich-desktop-notifications-context.md)
 - [Add DM-Specific Action Queue Handlers](tasks/.done/dm-action-queue-handlers.md)
+- [Add Space Tag support to shared types](tasks/.done/quorum-shared-space-tags.md)
 - [Add Unified Context Menu System for Sidebar Items](tasks/.done/dm-conversation-context-menu.md)
 - [Add YAML Frontmatter to Knowledge Base System](tasks/.done/yaml-frontmatter-knowledge-base.md)
 - [Analysis Report & Implementation Plan: Strategic Portal Integration for Overlay Components (v7)](tasks/.done/modal-portal-refactor-analysis.md)
@@ -459,4 +464,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2026-03-14 18:44:45
+**Last Updated**: 2026-03-15 15:57:59

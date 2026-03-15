@@ -29,7 +29,6 @@ export interface BaseSelectProps {
   variant?: 'filled' | 'bordered';
   fullWidth?: boolean;
   width?: string | number; // Custom width (CSS value for web, number for RN)
-  dropdownPlacement?: 'top' | 'bottom' | 'auto'; // Dropdown positioning
 
   // Multiselect specific props
   multiple?: boolean; // Enable multiselect mode
@@ -54,6 +53,7 @@ export interface WebSelectProps extends BaseSelectProps {
   name?: string;
   id?: string;
   autoFocus?: boolean;
+  dropdownPlacement?: 'top' | 'bottom' | 'auto'; // Dropdown positioning
 }
 
 export interface NativeSelectProps extends BaseSelectProps {

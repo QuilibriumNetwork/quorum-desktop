@@ -35,15 +35,12 @@ import {
   CalloutTestScreen,
   FileUploadTestScreen,
   ScrollContainerTestScreen,
+  ThemeTestScreen,
 } from '@/test/primitives';
 
 // Import business component test screens
 import {
   BusinessMenuScreen,
-  AuthenticationTestScreen,
-  OnboardingTestScreen,
-  LoginTestScreen,
-  MaintenanceTestScreen,
   ClickToCopyTestScreen,
   ModalsTestScreen,
   MessageComposerTestScreen,
@@ -66,14 +63,12 @@ type PrimitiveScreen =
   | 'radiogroup'
   | 'tooltip'
   | 'icon'
+  | 'callout'
   | 'fileupload'
-  | 'scrollcontainer';
+  | 'scrollcontainer'
+  | 'theme';
 type BusinessScreen =
   | 'list'
-  | 'onboarding'
-  | 'auth'
-  | 'login'
-  | 'maintenance'
   | 'copy'
   | 'modals'
   | 'spaces'
@@ -190,6 +185,8 @@ function ThemedAppContent() {
           return <CalloutTestScreen />;
         case 'fileupload':
           return <FileUploadTestScreen />;
+        case 'theme':
+          return <ThemeTestScreen />;
         default:
           return (
             <PrimitivesMenuScreen onSelectPrimitive={handleSelectPrimitive} />
@@ -202,14 +199,6 @@ function ThemedAppContent() {
       switch (currentBusinessScreen) {
         case 'list':
           return <BusinessMenuScreen onSelectFeature={handleSelectBusiness} />;
-        case 'onboarding':
-          return <OnboardingTestScreen />;
-        case 'auth':
-          return <AuthenticationTestScreen />;
-        case 'login':
-          return <LoginTestScreen />;
-        case 'maintenance':
-          return <MaintenanceTestScreen />;
         case 'copy':
           return <ClickToCopyTestScreen />;
         case 'modals':

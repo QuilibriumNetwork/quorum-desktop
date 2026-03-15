@@ -67,18 +67,15 @@ export const Input: React.FC<InputNativeProps> = ({
   const getBorderColor = () => {
     if (error) return colors.utilities.danger;
     if (isFocused && !noFocusStyle) {
-      if (variant === 'onboarding') return '#3aa9f8'; // Hardcoded brand blue-400
       return colors.field.borderFocus;
     }
     if (variant === 'bordered') return colors.field.border;
     if (variant === 'minimal') return 'transparent'; // minimal variant has transparent border (bottom border is handled separately)
-    return 'transparent'; // filled and onboarding variants have transparent border by default
+    return 'transparent'; // filled variant has transparent border by default
   };
 
   const getBackgroundColor = () => {
-    if (variant === 'onboarding') return '#ffffff'; // Always white for onboarding
     if (variant === 'minimal') return 'transparent'; // Minimal variant has transparent background
-    // All other variants use the same background colors
     if (isFocused && !disabled) return colors.field.bgFocus;
     return colors.field.bg;
   };
@@ -108,20 +105,6 @@ export const Input: React.FC<InputNativeProps> = ({
     // Add padding for floating label
     if (showFloatingLabel) {
       baseStyles.push(styles.inputWithFloatingLabel);
-    }
-
-    if (variant === 'onboarding') {
-      return [
-        ...baseStyles,
-        styles.inputOnboarding,
-        {
-          backgroundColor: getBackgroundColor(),
-          color: '#034081', // Hardcoded brand blue-700
-          borderColor: getBorderColor(),
-        },
-        error && styles.inputError,
-        disabled && styles.inputDisabled,
-      ];
     }
 
     if (variant === 'minimal') {
@@ -185,11 +168,7 @@ export const Input: React.FC<InputNativeProps> = ({
                 : label // Use label as placeholder when inactive
               : placeholder // Normal placeholder for non-floating inputs
           }
-          placeholderTextColor={
-            variant === 'onboarding'
-              ? '#6fc3ff' // Hardcoded brand blue-200
-              : colors.field.placeholder
-          }
+          placeholderTextColor={colors.field.placeholder}
           onChangeText={onChange}
           onBlur={handleBlur}
           onFocus={handleFocus}
@@ -266,9 +245,6 @@ const styles = StyleSheet.create({
   inputWithFloatingLabel: {
     // Keep same padding as normal input
     // Floating label positions itself over the border
-  },
-  inputOnboarding: {
-    borderRadius: 9999, // full pill shape like CSS border-radius: 9999px
   },
   inputMinimal: {
     borderRadius: 0,

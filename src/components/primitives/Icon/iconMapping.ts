@@ -120,6 +120,7 @@ export const iconComponentMap: Record<IconName, string> = {
   bookmark: 'IconBookmark',
   'bookmark-off': 'IconBookmarkOff',
   paperclip: 'IconPaperclip',
+  at: 'IconAt',
   hashtag: 'IconHash',
   'calendar-alt': 'IconCalendar',
   history: 'IconHistory',

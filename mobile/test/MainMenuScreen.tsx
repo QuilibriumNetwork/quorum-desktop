@@ -9,7 +9,6 @@ import {
   createThemedStyles,
 } from '@/styles/commonTestStyles';
 import ThemeRadioGroup from '@/components/ui/ThemeRadioGroup';
-import AccentColorSwitcher from '@/components/ui/AccentColorSwitcher';
 
 interface MenuOption {
   id: string;
@@ -127,7 +126,6 @@ export const MainMenuScreen: React.FC<MainMenuScreenProps> = ({
         >
           <Flex direction="column" gap="md" align="center">
             <ThemeRadioGroup horizontal />
-            <AccentColorSwitcher />
           </Flex>
         </View>
       </ScrollView>
