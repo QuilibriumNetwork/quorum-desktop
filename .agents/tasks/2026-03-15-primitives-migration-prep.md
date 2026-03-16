@@ -124,28 +124,30 @@ When migrating to `quorum-shared`, primitives will be organized by platform:
 #### Step 4: Update quorum-desktop to use shared primitives
 **Approach**: Direct migration — no intermediate re-export layer.
 
-**4a. Rework `primitives/index.ts`**
-- [ ] Replace the barrel file with: SCSS imports + re-exports from `@quilibrium/quorum-shared`
-- [ ] All 12 SCSS files stay in their current folders (web bundler needs them)
-- [ ] The barrel imports them all, so they're loaded when any primitive is used
-- [ ] Re-exports only primitive components/types from `@quilibrium/quorum-shared`
-- This preserves all existing `import { X } from '../primitives'` paths — zero changes needed across the codebase
+**4a. Rework `primitives/index.ts`** — DONE
+- [x] Replaced barrel with: SCSS imports + re-exports from `@quilibrium/quorum-shared`
+- [x] All 12 SCSS files stay in their current folders (web bundler needs them)
+- [x] Updated 14+ files importing from primitive subfolders to use barrel
+- [x] Fixed main.tsx, Titlebar.jsx theme imports
+- [x] Added Vite `optimizeDeps.exclude` for quorum-shared (source needs .web.tsx resolution)
+- [x] Switched package.json from `file:` to `link:` for live development
 
-**4b. Delete local primitive source files**
-- [ ] Remove all `.web.tsx`, `.native.tsx`, `types.ts`, `index.ts` from each primitive subfolder
-- [ ] Keep only `.scss` files in each subfolder
-- [ ] Keep `theme/` folder locally only if web app has custom ThemeProvider setup, otherwise delete
-- [ ] Keep `Icon/iconMapping.ts` and `Icon/icons/` if referenced directly by non-primitive code
+**4b. Delete local primitive source files** — DONE
+- [x] Removed 64 .tsx/.ts source files from local primitives (-8,437 lines)
+- [x] Kept only 12 .scss files + barrel index.ts
+- [x] Deleted theme/, Icon/iconMapping.ts, Icon/icons/ (now in quorum-shared)
+- [x] Updated IconGallery dev file to use `iconNames` from barrel
 
-**4c. Fix Lingui translation defaults**
-Since quorum-shared primitives no longer use `t` macros, the web app must provide translated strings explicitly:
-- [ ] Audit all Select usages (~10) — add `placeholder={t\`Select an option\`}` where relying on default
-- [ ] Audit all FileUpload usages — add explicit error message props if needed
-- [ ] Audit `selectAllLabel` / `clearAllLabel` — add `t` wrapped props where multi-select is used
+**4c. Fix Lingui translation defaults** — DONE
+- [x] Audited all Select usages — most use compactMode (no visible placeholder)
+- [x] SpaceSettingsModal/Account already had explicit `t` props
+- [x] Added `selectAllLabel={t\`All\`}` and `clearAllLabel={t\`Clear\`}` to 3 multi-select usages (ChannelEditor, NotificationPanel, Roles)
+- [x] FileUpload error messages: no action needed (errors shown via app-level error handling, not default labels)
 
 **4d. Update mobile test screen imports**
 - [ ] Update imports in `mobile/test/primitives/` to reference `@quilibrium/quorum-shared`
 - [ ] These bypass the barrel file, so they need direct import updates
+- Note: deferred — will test mobile screens later
 
 **4e. Verify**
 - [ ] Run `npx tsc --noEmit` — zero new errors
@@ -185,6 +187,39 @@ Primitives in a shared library should not depend on a specific i18n framework.
 - **Approach**: Consuming apps provide translated strings via props (e.g., `<Select placeholder={t\`Select an option\`} />`)
 - **Pattern**: Follows industry standard (shadcn/ui, Radix, MUI) — library uses English defaults, apps override with translations
 - **Action for consuming apps**: When using Select or FileUpload, pass `t\`...\`` wrapped props for any user-facing strings that need translation
+
+### Follow-up: Proper Build Setup for Published Package (REQUIRED before merge)
+Currently quorum-shared points `module`/`import` to source (`src/index.ts`) because tsup can't resolve `.web.tsx`/`.native.tsx` platform files. This works for local `file:` development but is NOT publishable to npm.
+
+**Before merging the quorum-shared PR**, we need one of these approaches:
+
+**Option A: Dual platform builds (recommended for cross-platform libraries)**
+- Build two separate entry points: `dist/web/index.mjs` and `dist/native/index.mjs`
+- Use `exports` conditions in package.json:
+  ```json
+  "exports": {
+    ".": {
+      "react-native": "./src/index.ts",
+      "import": "./dist/web/index.mjs",
+      "require": "./dist/web/index.js"
+    }
+  }
+  ```
+- Metro (React Native) uses the `react-native` condition and resolves `.native.tsx` from source
+- Vite/webpack uses `import` condition and gets pre-built web code
+- Used by: `react-native-web`, `tamagui`, `nativewind`
+
+**Option B: Ship source only**
+- Set `"main": "src/index.ts"` and require consuming apps to compile
+- Add `"sideEffects": false` for tree-shaking
+- Used by: many private/monorepo packages, `@radix-ui/react-*`
+
+**Option C: Single build with externalized platform files**
+- Build only shared code (types, theme, utils)
+- Ship `.web.tsx` and `.native.tsx` as source alongside the build
+- Consumer's bundler resolves platform files from source
+
+**Current state**: Using Option B (source-only) during development. Must resolve before publishing.
 
 ### Stacked PRs Workflow
 ```
