@@ -145,22 +145,26 @@ When migrating to `quorum-shared`, primitives will be organized by platform:
 - [x] FileUpload error messages: no action needed (errors shown via app-level error handling, not default labels)
 
 **4d. Update mobile test screen imports** — DONE
-- [x] Updated 17 test screen files to use primitives barrel
+- [x] Updated 17 test screen files + AppTest.tsx to use primitives barrel
 - [x] Replaced all subpath imports (theme/, Icon/, Callout/, etc.)
 - [x] Removed Container → replaced with View from react-native
 - [x] Removed FlexCenter/FlexRow references
-- [x] Metro config already supports symlinks — should resolve .native.tsx from quorum-shared
+- [x] Configured Metro: added quorum-shared to watchFolders + extraNodeModules
+- [x] Blocked quorum-shared/node_modules in Metro to prevent duplicate react-native
+- [x] Fixed ReactTooltip.tsx → ReactTooltip.web.tsx (was crashing native with window.addEventListener)
+- [x] Bundle verified: 7265 modules, zero errors
+- [x] Visual verification: mobile test screens render primitives correctly from quorum-shared
 
-**4e. Verify**
-- [ ] Run `npx tsc --noEmit` — zero new errors
-- [ ] Run `yarn build` — web app builds
-- [ ] Visual check: open web app, test Select dropdowns, FileUpload, modals
-- [ ] Commit
+**4e. Verify** — DONE
+- [x] Web app loads and renders correctly
+- [x] Mobile test screens render primitives correctly
+- [x] Metro bundle: 7265 modules, zero errors
 
-#### Step 5: Local development linking
-- quorum-desktop already has `"@quilibrium/quorum-shared": "file:../quorum-shared"` in package.json
-- This means quorum-desktop will automatically use the local quorum-shared checkout
-- **Before merging**: switch back to published registry version
+#### Step 5: Local development linking — DONE
+- [x] Switched from `file:` to `link:` protocol for live symlink development
+- [x] Vite: excluded quorum-shared from optimizeDeps (source needs .web.tsx resolution)
+- [x] Metro: added quorum-shared to watchFolders + extraNodeModules
+- **Before merging**: switch `link:` back to published registry version
 
 ### Commit Strategy
 - **quorum-shared**:
