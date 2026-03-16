@@ -2,15 +2,14 @@ import React, { useState } from 'react';
 import { ScrollView, View, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import {
-  Container,
   Flex,
   Text,
   Button,
   Icon,
   FileUpload,
   FileUploadFile,
+  useTheme,
 } from '@/components/primitives';
-import { useTheme } from '@/components/primitives/theme';
 import { commonTestStyles } from '@/styles/commonTestStyles';
 
 export const FileUploadTestScreen: React.FC = () => {
@@ -69,9 +68,9 @@ export const FileUploadTestScreen: React.FC = () => {
         </View>
 
         {/* Image Upload Test */}
-        <Container
-          padding="lg"
+        <View
           style={{
+            padding: 24,
             backgroundColor: theme.colors.surface[2],
             marginBottom: 16,
           }}
@@ -128,12 +127,12 @@ export const FileUploadTestScreen: React.FC = () => {
               </View>
             </FileUpload>
           </Flex>
-        </Container>
+        </View>
 
         {/* Document Upload Test */}
-        <Container
-          padding="lg"
+        <View
           style={{
+            padding: 24,
             backgroundColor: theme.colors.surface[2],
             marginBottom: 16,
           }}
@@ -185,12 +184,12 @@ export const FileUploadTestScreen: React.FC = () => {
               </View>
             </FileUpload>
           </Flex>
-        </Container>
+        </View>
 
         {/* Upload Results */}
-        <Container
-          padding="lg"
+        <View
           style={{
+            padding: 24,
             backgroundColor: theme.colors.surface[2],
             marginBottom: 16,
           }}
@@ -208,9 +207,9 @@ export const FileUploadTestScreen: React.FC = () => {
             </Flex>
 
             {uploadError && (
-              <Container
-                padding="md"
+              <View
                 style={{
+                  padding: 16,
                   backgroundColor: theme.colors.utilities.danger + '20',
                   borderColor: theme.colors.utilities.danger,
                   borderWidth: 1,
@@ -222,7 +221,7 @@ export const FileUploadTestScreen: React.FC = () => {
                     {uploadError}
                   </Text>
                 </Flex>
-              </Container>
+              </View>
             )}
 
             {uploadedFiles.length > 0 ? (
@@ -231,10 +230,10 @@ export const FileUploadTestScreen: React.FC = () => {
                   {uploadedFiles.length} file(s) selected:
                 </Text>
                 {uploadedFiles.map((file, index) => (
-                  <Container
+                  <View
                     key={index}
-                    padding="md"
                     style={{
+                      padding: 16,
                       backgroundColor: theme.colors.surface[3],
                       borderRadius: 8,
                     }}
@@ -263,13 +262,13 @@ export const FileUploadTestScreen: React.FC = () => {
                         </Text>
                       </Flex>
                     </Flex>
-                  </Container>
+                  </View>
                 ))}
               </Flex>
             ) : (
-              <Container
-                padding="lg"
+              <View
                 style={{
+                  padding: 24,
                   backgroundColor: theme.colors.surface[1],
                   alignItems: 'center',
                 }}
@@ -286,15 +285,15 @@ export const FileUploadTestScreen: React.FC = () => {
                 <Text size="sm" variant="muted" align="center">
                   Use the upload areas above to test file selection
                 </Text>
-              </Container>
+              </View>
             )}
           </Flex>
-        </Container>
+        </View>
 
         {/* Test Information */}
-        <Container
-          padding="lg"
+        <View
           style={{
+            padding: 24,
             backgroundColor: theme.colors.surface[3],
           }}
         >
@@ -335,7 +334,7 @@ export const FileUploadTestScreen: React.FC = () => {
               </Flex>
             </Flex>
           </Flex>
-        </Container>
+        </View>
       </ScrollView>
     </SafeAreaView>
   );

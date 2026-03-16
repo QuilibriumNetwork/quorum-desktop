@@ -2,15 +2,13 @@ import React, { useState } from 'react';
 import { ScrollView, View, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import {
-  Container,
   Flex,
-  FlexRow,
   Text,
   Title,
   Paragraph,
   Button,
+  useTheme,
 } from '@/components/primitives';
-import { useTheme } from '@/components/primitives/theme';
 import {
   commonTestStyles,
   createThemedStyles,

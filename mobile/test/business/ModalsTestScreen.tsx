@@ -2,14 +2,13 @@ import React, { useState } from 'react';
 import { ScrollView, View, TouchableOpacity, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import {
-  Container,
   Flex,
   Text,
   Icon,
   Title,
+  useTheme,
 } from '@/components/primitives';
-import { useTheme } from '@/components/primitives/theme';
-import { IconName } from '@/components/primitives/Icon/types';
+import type { IconName } from '@/components/primitives';
 import {
   commonTestStyles,
   createThemedStyles,

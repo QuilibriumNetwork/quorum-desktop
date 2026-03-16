@@ -1,9 +1,8 @@
 import React from 'react';
 import { ScrollView, View, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Container, Flex, Text, Icon } from '@/components/primitives';
-import { useTheme } from '@/components/primitives/theme';
-import { IconName } from '@/components/primitives/Icon/types';
+import { Flex, Text, Icon, useTheme } from '@/components/primitives';
+import type { IconName } from '@/components/primitives';
 import {
   commonTestStyles,
   createThemedStyles,

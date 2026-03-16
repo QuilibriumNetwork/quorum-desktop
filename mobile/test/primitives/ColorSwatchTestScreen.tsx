@@ -1,10 +1,6 @@
 import React, { useState } from 'react';
 import { ScrollView, View, SafeAreaView, StatusBar } from 'react-native';
-import { useTheme } from '@/components/primitives/theme';
-import { ColorSwatch } from '@/components/primitives/ColorSwatch';
-import { Icon } from '@/components/primitives/Icon';
-import { Text, Paragraph, Label, Caption, Title } from '@/components/primitives';
-import { Flex, FlexCenter } from '@/components/primitives';
+import { useTheme, ColorSwatch, Icon, Text, Paragraph, Label, Caption, Title, Flex } from '@/components/primitives';
 import {
   commonTestStyles,
   createThemedStyles,

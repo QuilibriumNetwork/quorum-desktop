@@ -1,14 +1,7 @@
 import React from 'react';
 import { View, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useTheme } from '@/components/primitives/theme';
-
-// Import our primitives
-import { Flex } from '@/components/primitives/Flex';
-import { Spacer } from '@/components/primitives/Spacer';
-import Button from '@/components/primitives/Button';
-import { Text, Title } from '@/components/primitives/Text';
-import { Icon } from '@/components/primitives/Icon';
+import { Flex, Spacer, Button, Text, Title, Icon, useTheme } from '@/components/primitives';
 import {
   commonTestStyles,
   createThemedStyles,

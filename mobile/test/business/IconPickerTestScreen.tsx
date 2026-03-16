@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { ScrollView, View, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import {
-  Container,
   Flex,
   Text,
   Title,
@@ -11,11 +10,11 @@ import {
   Icon,
   Modal,
   Input,
+  useTheme,
 } from '@/components/primitives';
-import { useTheme } from '@/components/primitives/theme';
 import { commonTestStyles, createThemedStyles } from '@/styles/commonTestStyles';
 import { IconPicker } from '@/components/space/IconPicker/IconPicker.native';
-import type { IconName } from '@/components/primitives/Icon/types';
+import type { IconName } from '@/components/primitives';
 import type { IconColor } from '@/components/space/IconPicker/types';
 
 export const IconPickerTestScreen: React.FC = () => {

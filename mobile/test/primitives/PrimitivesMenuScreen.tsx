@@ -1,11 +1,9 @@
 import React from 'react';
 import { ScrollView, View, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useTheme } from '@/components/primitives/theme';
+import { Flex, Text, Title, Icon, useTheme } from '@/components/primitives';
+import type { IconName } from '@/components/primitives';
 import ThemeRadioGroup from '@/components/ui/ThemeRadioGroup';
-import { Icon } from '@/components/primitives/Icon';
-import { IconName } from '@/components/primitives/Icon/types';
-import { Flex, Text, Title } from '@/components/primitives';
 import { commonTestStyles } from '@/styles/commonTestStyles';
 
 interface PrimitiveItem {

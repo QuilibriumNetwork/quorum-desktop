@@ -1,10 +1,7 @@
 import React from 'react';
 import { ScrollView, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useTheme } from '@/components/primitives/theme';
-import { ScrollContainer } from '@/components/primitives';
-import { Icon } from '@/components/primitives/Icon';
-import { Text, Paragraph, Title, Flex } from '@/components/primitives';
+import { useTheme, ScrollContainer, Icon, Text, Paragraph, Title, Flex } from '@/components/primitives';
 import {
   commonTestStyles,
   createThemedStyles,
