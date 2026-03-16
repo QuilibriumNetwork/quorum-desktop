@@ -1,5 +1,4 @@
-import { Icon } from './primitives';
-import { useTheme } from './primitives/theme';
+import { Icon, useTheme } from './primitives';
 import { useEffect } from 'react';
 
 const CustomTitlebar = () => {
