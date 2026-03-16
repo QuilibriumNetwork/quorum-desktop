@@ -12,7 +12,7 @@ Quorum is built as a **multi-repo ecosystem**. This repo is one of three:
 |------------|---------|
 | **[quorum-desktop](https://github.com/QuilibriumNetwork/quorum-desktop)** | Web + Electron desktop app (this repo) |
 | **[quorum-mobile](https://github.com/QuilibriumNetwork/quorum-mobile)** | React Native + Expo mobile app |
-| **[quorum-shared](https://github.com/QuilibriumNetwork/quorum-shared)** | Shared types, hooks, sync protocol |
+| **[quorum-shared](https://github.com/QuilibriumNetwork/quorum-shared)** | Shared types, UI primitives, hooks, sync protocol |
 
 All clients sync data via `@quilibrium/quorum-shared`. When implementing features, check if mobile has it and use shared types for sync compatibility.
 
@@ -36,7 +36,7 @@ All clients sync data via `@quilibrium/quorum-shared`. When implementing feature
 quorum-desktop/
 ├── src/                          # Application source code
 │   ├── components/              # React components
-│   │   ├── primitives/         # UI primitives (Button, Input, Modal, etc.)
+│   │   ├── primitives/         # SCSS styles + barrel re-exports from @quilibrium/quorum-shared
 │   │   └── Router/             # Routing components
 │   ├── hooks/                  # Custom React hooks
 │   ├── api/                    # API layer
