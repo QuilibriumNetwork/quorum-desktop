@@ -186,6 +186,7 @@ export default defineConfig(({ command }) => ({
   },
   optimizeDeps: {
     include: ['@quilibrium/quilibrium-js-sdk-channels'], // Force Vite to pre-bundle or app doesn't load (WSL)
+    exclude: ['@quilibrium/quorum-shared'], // Don't pre-bundle — source files need .web.tsx resolution
   },
   css: {
     preprocessorOptions: {
