@@ -144,10 +144,12 @@ When migrating to `quorum-shared`, primitives will be organized by platform:
 - [x] Added `selectAllLabel={t\`All\`}` and `clearAllLabel={t\`Clear\`}` to 3 multi-select usages (ChannelEditor, NotificationPanel, Roles)
 - [x] FileUpload error messages: no action needed (errors shown via app-level error handling, not default labels)
 
-**4d. Update mobile test screen imports**
-- [ ] Update imports in `mobile/test/primitives/` to reference `@quilibrium/quorum-shared`
-- [ ] These bypass the barrel file, so they need direct import updates
-- Note: deferred — will test mobile screens later
+**4d. Update mobile test screen imports** — DONE
+- [x] Updated 17 test screen files to use primitives barrel
+- [x] Replaced all subpath imports (theme/, Icon/, Callout/, etc.)
+- [x] Removed Container → replaced with View from react-native
+- [x] Removed FlexCenter/FlexRow references
+- [x] Metro config already supports symlinks — should resolve .native.tsx from quorum-shared
 
 **4e. Verify**
 - [ ] Run `npx tsc --noEmit` — zero new errors
