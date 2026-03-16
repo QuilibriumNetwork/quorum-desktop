@@ -9,7 +9,10 @@ const projectRoot = __dirname;
 const monorepoRoot = path.resolve(projectRoot, '..');
 
 // Watch shared source folders
-config.watchFolders = [path.resolve(monorepoRoot, 'src')];
+config.watchFolders = [
+  path.resolve(monorepoRoot, 'src'),
+  path.resolve(monorepoRoot, '..', 'quorum-shared'), // Symlinked @quilibrium/quorum-shared
+];
 
 // Empty module used to satisfy root package resolution (see resolveRequest below)
 const emptyModulePath = path.resolve(projectRoot, '__empty.js');
@@ -38,6 +41,8 @@ config.resolver = {
     ),
     /.*[/\\]node_modules[/\\]electron[/\\].*/,
     /.*[/\\]node_modules[/\\]electron-builder[/\\].*/,
+    // Block quorum-shared's own node_modules — use quorum-desktop's deps instead
+    /.*[/\\]quorum-shared[/\\]node_modules[/\\].*/,
   ]),
   // TEMPORARY: Redirect SDK to mock implementation for mobile
   // TODO: Remove this when proper SDK integration is implemented
@@ -46,6 +51,10 @@ config.resolver = {
     '@quilibrium/quilibrium-js-sdk-channels': path.resolve(
       monorepoRoot,
       'src/shims/quilibrium-sdk-channels.native.tsx'
+    ),
+    '@quilibrium/quorum-shared': path.resolve(
+      monorepoRoot,
+      '..', 'quorum-shared'
     ),
   },
   resolveRequest: (context, moduleName, platform) => {
