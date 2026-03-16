@@ -76,9 +76,9 @@ When migrating to `quorum-shared`, primitives will be organized by platform:
 - [x] Removed ModalContainer from primitives barrel export
 - [x] Updated test mock paths
 
-### 3. RadioGroup — Bordered Variant Review (Deferred from Audit)
-- [ ] Check if the web bordered variant is visually useful on mobile
-- [ ] Decision: implement on native, or remove `variant` from types entirely
+### 3. RadioGroup — Bordered Variant Review — DONE
+- [x] Checked web usage: bordered variant only used in playground, not in production
+- [x] Moved `variant` prop to web-only types (`RadioGroupWebProps`), removed from shared `RadioGroupProps`
 
 ### 4. Colors System
 - [x] Fixed 3 color mismatches (dark text.danger, link colors)

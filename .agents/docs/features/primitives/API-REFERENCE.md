@@ -167,7 +167,7 @@ Complete API reference for all primitive components. Use this for quick prop loo
 **Location**: `src/components/primitives/Button/Button.tsx`
 
 **Props**:
-- `type?: 'primary' | 'secondary' | 'light' | 'light-outline' | 'subtle' | 'subtle-outline' | 'danger' | 'primary-white' | 'secondary-white' | 'light-outline-white' | 'unstyled'` - Button style variant
+- `type?: 'primary' | 'secondary' | 'subtle' | 'subtle-outline' | 'danger' | 'unstyled'` - Button style variant
 - `size?: 'small' | 'normal' | 'large' | 'compact'` - Button size
 - `onClick?: () => void` - Click handler
 - `disabled?: boolean` - Disable button interaction

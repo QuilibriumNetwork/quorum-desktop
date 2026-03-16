@@ -15,12 +15,6 @@ const config = {
       default: "vertical",
       label: "Direction"
     },
-    variant: {
-      type: "select",
-      options: ["default", "bordered"],
-      default: "default",
-      label: "Variant"
-    }
   },
   staticExamples: [
     { name: "Theme Icons", props: { options: [{ label: "Light", value: "light", icon: "sun" }, { label: "Dark", value: "dark", icon: "moon" }, { label: "System", value: "system", icon: "desktop" }] }, children: null },
@@ -30,14 +24,12 @@ const config = {
   quickTips: [
     "Height and text size match Input primitive (42px, 16px)",
     "Border radius matches Input primitive (0.5rem)",
-    "Use variant='default' for no border (like Input default)",
-    "Use variant='bordered' for explicit border",
     "Use iconOnly=true for circular icon buttons",
     "Add icons for visual context"
   ],
   codeExample: {
     title: "Theme RadioGroup Example",
-    code: "import { RadioGroup } from '@/components/primitives';\n\n// Theme options using Icon primitive names\nconst themeOptions = [\n  { label: 'Light', value: 'light', icon: 'sun' },\n  { label: 'Dark', value: 'dark', icon: 'moon' },\n  { label: 'System', value: 'system', icon: 'desktop' }\n];\n\n// Default variant (no border)\n<RadioGroup\n  options={themeOptions}\n  value={theme}\n  onChange={setTheme}\n  variant=\"default\"\n  direction=\"vertical\"\n/>\n\n// Bordered variant\n<RadioGroup\n  options={themeOptions}\n  value={theme}\n  onChange={setTheme}\n  variant=\"bordered\"\n  direction=\"vertical\"\n/>\n\n// Icon-only circular buttons\n<RadioGroup\n  options={themeOptions}\n  value={theme}\n  onChange={setTheme}\n  iconOnly={true}\n  variant=\"default\"\n  direction=\"horizontal\"\n/>"
+    code: "import { RadioGroup } from '@/components/primitives';\n\n// Theme options using Icon primitive names\nconst themeOptions = [\n  { label: 'Light', value: 'light', icon: 'sun' },\n  { label: 'Dark', value: 'dark', icon: 'moon' },\n  { label: 'System', value: 'system', icon: 'desktop' }\n];\n\n// Standard radio group\n<RadioGroup\n  options={themeOptions}\n  value={theme}\n  onChange={setTheme}\n  direction=\"vertical\"\n/>\n\n// Icon-only circular buttons\n<RadioGroup\n  options={themeOptions}\n  value={theme}\n  onChange={setTheme}\n  iconOnly={true}\n  direction=\"horizontal\"\n/>"
   }
 } as const;
 

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { View } from 'react-native';
-import { Button, Modal, Text, Flex, Spacer, ScrollContainer, Icon, Callout } from '../primitives';
+import { Button, Modal, Text, Flex, Spacer, ScrollContainer, Callout } from '../primitives';
 import { Trans } from '@lingui/react/macro';
 import { t } from '@lingui/core/macro';
 

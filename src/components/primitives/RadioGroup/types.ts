@@ -17,7 +17,6 @@ export interface RadioGroupProps<T = string> {
   direction?: 'horizontal' | 'vertical';
   disabled?: boolean;
   iconOnly?: boolean; // Show only icons, hide text labels
-  variant?: 'default' | 'bordered'; // Default has no border, bordered has border
   testID?: string;
 }
 

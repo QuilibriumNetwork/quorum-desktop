@@ -12,7 +12,6 @@ export function RadioGroup<T extends string = string>({
   direction = 'vertical',
   disabled = false,
   iconOnly = false,
-  variant = 'default',
   className = '',
   style,
   name = 'radio-group',
@@ -29,7 +28,6 @@ export function RadioGroup<T extends string = string>({
       className={`
         radio-group
         radio-group--${direction}
-        radio-group--${variant}
         ${iconOnly ? 'radio-group--icon-only' : ''}
         ${disabled ? 'radio-group--disabled' : ''}
         ${className}
