@@ -209,19 +209,20 @@ Implemented dual platform build following industry standard (tamagui, react-nati
 - [x] **RESOLVED**: Modals were rendering in DOM but invisible — `z-[10100]` CSS class missing
 - Root cause: Tailwind `content` config excluded `node_modules/`, so arbitrary z-index classes from `dist/index.mjs` were never generated
 - Fix: Added `./node_modules/@quilibrium/quorum-shared/dist/**/*.mjs` to Tailwind `content` in `tailwind.config.js`
-- See bug: `.agents/bugs/2026-03-16-quorum-shared-pre-built-dist-modal-broken.md` (resolved)
+- See bug: `.agents/bugs/.solved/2026-03-16-quorum-shared-pre-built-dist-modal-broken.md` (resolved)
 - [x] **Web verified (2026-03-16)**: Modals, tooltips, select dropdowns, all primitives working with tarball
 - [x] **Mobile verified (2026-03-16)**: Metro bundles and mobile test screens render correctly with tarball
 - [x] **link: verified (2026-03-16)**: Web and mobile both working with `link:../quorum-shared`
 
-### 9. Write README for quorum-shared — TODO
-- [ ] Architecture overview (types, hooks, utils, crypto, primitives)
-- [ ] Setup instructions for consuming apps (web + React Native)
-- [ ] Platform-specific file resolution explained
-- [ ] CSS/SCSS requirements for web consumers (primitives are unstyled on web)
-- [ ] Lingui/i18n: how to provide translated strings via props
-- [ ] Required Vite/webpack config (optimizeDeps, react aliases)
-- [ ] Pull context from `.agents/docs/` architecture docs in quorum-desktop
+### 9. Write README for quorum-shared — DONE
+- [x] Architecture overview (package structure, modules)
+- [x] Setup instructions for web (Vite config, react aliases, Tailwind content)
+- [x] Setup instructions for React Native (Metro config for monorepo)
+- [x] CSS/SCSS requirements explained (unstyled by default)
+- [x] i18n: how to provide translated strings via props
+- [x] Peer dependencies table (web vs native)
+- [x] Build output documentation
+- [ ] Will expand as hooks/utils are migrated
 
 ### Stacked PRs Workflow
 ```
