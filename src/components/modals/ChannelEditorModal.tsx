@@ -208,6 +208,8 @@ const ChannelEditorModal: React.FunctionComponent<{
                 onChange={handleManagerRolesChange}
                 placeholder={t`Select Roles`}
                 multiple={true}
+                selectAllLabel={t`All`}
+                clearAllLabel={t`Clear`}
                 className="flex-1 max-w-xs max-sm:max-w-full"
               />
             </Flex>

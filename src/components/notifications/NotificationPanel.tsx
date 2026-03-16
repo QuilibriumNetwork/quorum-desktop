@@ -235,6 +235,8 @@ export const NotificationPanel: React.FC<NotificationPanelProps> = ({
               compactIcon="filter"
               showSelectionCount={false}
               showSelectAllOption={false}
+              selectAllLabel={t`All`}
+              clearAllLabel={t`Clear`}
               size="medium"
             />
 

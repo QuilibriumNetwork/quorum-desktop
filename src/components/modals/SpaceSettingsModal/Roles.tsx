@@ -155,6 +155,8 @@ const Roles: React.FunctionComponent<RolesProps> = ({
                           )
                         }
                         placeholder={t`Select permissions`}
+                        selectAllLabel={t`All`}
+                        clearAllLabel={t`Clear`}
                         width="200px"
                         options={[
                           {
