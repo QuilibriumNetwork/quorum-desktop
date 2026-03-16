@@ -202,15 +202,17 @@ Implemented dual platform build following industry standard (tamagui, react-nati
 - [x] Added `ReactTooltip.d.ts` type stub for declaration generation
 - [x] react/react-dom properly externalized as bare imports in dist output
 
-### 8. npm Pack Test — BLOCKED
+### 8. npm Pack Test — DONE
 - [x] Built quorum-shared (tsup dual build + tsc types) — all 3 bundles succeed
 - [x] npm pack creates tarball — react/react-dom properly externalized in dist
-- [x] Installed tarball in quorum-desktop — UI loads, most primitives render
-- [ ] **BLOCKED**: Modals don't work when installed from tarball (duplicate React instance)
-- Tested with AND without `optimizeDeps.exclude` + react aliases — both fail
-- Works only with `link:` (source resolution mode)
-- See bug: `.agents/bugs/2026-03-16-quorum-shared-pre-built-dist-modal-broken.md`
-- **Must be resolved before publishing to npm**
+- [x] Installed tarball in quorum-desktop — UI loads, all primitives render
+- [x] **RESOLVED**: Modals were rendering in DOM but invisible — `z-[10100]` CSS class missing
+- Root cause: Tailwind `content` config excluded `node_modules/`, so arbitrary z-index classes from `dist/index.mjs` were never generated
+- Fix: Added `./node_modules/@quilibrium/quorum-shared/dist/**/*.mjs` to Tailwind `content` in `tailwind.config.js`
+- See bug: `.agents/bugs/2026-03-16-quorum-shared-pre-built-dist-modal-broken.md` (resolved)
+- [x] **Web verified (2026-03-16)**: Modals, tooltips, select dropdowns, all primitives working with tarball
+- [x] **Mobile verified (2026-03-16)**: Metro bundles and mobile test screens render correctly with tarball
+- [x] **link: verified (2026-03-16)**: Web and mobile both working with `link:../quorum-shared`
 
 ### 9. Write README for quorum-shared — TODO
 - [ ] Architecture overview (types, hooks, utils, crypto, primitives)
