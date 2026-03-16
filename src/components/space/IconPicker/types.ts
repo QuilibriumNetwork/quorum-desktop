@@ -1,5 +1,5 @@
 import { logger } from '@quilibrium/quorum-shared';
-import { IconName, IconVariant } from '../../primitives/Icon/types';
+import type { IconName, IconVariant } from '../../primitives';
 
 export type IconColor = 'default' | 'blue' | 'purple' | 'fuchsia' | 'green' | 'orange' | 'yellow' | 'red';
 

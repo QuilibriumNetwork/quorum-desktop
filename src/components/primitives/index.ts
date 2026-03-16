@@ -1,73 +1,109 @@
-// Layout Primitives
-export { OverlayBackdrop } from './OverlayBackdrop';
-export { Portal } from './Portal';
-export { Flex } from './Flex';
-export { Spacer } from './Spacer';
-export { ScrollContainer } from './ScrollContainer';
+/**
+ * Primitives barrel export
+ *
+ * Components and types are provided by @quilibrium/quorum-shared.
+ * SCSS styles remain local — imported here so the web bundler picks them up.
+ */
 
-// UI Primitives
-export { default as Button } from './Button';
-export { default as Modal } from './Modal';
-export { Input } from './Input';
-export { TextArea } from './TextArea';
-export { default as Select } from './Select';
-export { Switch } from './Switch';
-export { ColorSwatch } from './ColorSwatch';
-export { RadioGroup } from './RadioGroup';
-export { Tooltip } from './Tooltip';
-export { Icon } from './Icon';
-export { Text, Paragraph, Label, Caption, Title, InlineText } from './Text';
-export { FileUpload } from './FileUpload';
-export { default as Callout } from './Callout';
+// SCSS imports (web only — bundler handles these, ignored on native)
+import './Button/Button.scss';
+import './Callout/Callout.scss';
+import './ColorSwatch/ColorSwatch.scss';
+import './Icon/Icon.scss';
+import './Input/Input.scss';
+import './Modal/Modal.scss';
+import './RadioGroup/RadioGroup.scss';
+import './Select/Select.scss';
+import './Switch/Switch.scss';
+import './Text/Text.scss';
+import './TextArea/TextArea.scss';
 
-// Theme System - Platform-specific exports
-export { ThemeProvider, useTheme } from './theme';
+// Re-export all primitives from quorum-shared
+export {
+  // Layout
+  OverlayBackdrop,
+  Portal,
+  Flex,
+  Spacer,
+  ScrollContainer,
+  // UI
+  Button,
+  Modal,
+  Input,
+  TextArea,
+  Select,
+  Switch,
+  ColorSwatch,
+  RadioGroup,
+  Tooltip,
+  Icon,
+  Text,
+  Paragraph,
+  Label,
+  Caption,
+  Title,
+  InlineText,
+  FileUpload,
+  Callout,
+  // Theme
+  ThemeProvider,
+  useTheme,
+} from '@quilibrium/quorum-shared';
 
-// Types
-export type { OverlayBackdropProps } from './OverlayBackdrop';
-export type { FlexProps } from './Flex';
-export type { SpacerProps, SpacerSize, SpacerDirection } from './Spacer';
+// Re-export all types from quorum-shared
 export type {
+  // Layout types
+  OverlayBackdropProps,
+  FlexProps,
+  SpacerProps,
+  SpacerSize,
+  SpacerDirection,
   ScrollContainerProps,
   WebScrollContainerProps,
   NativeScrollContainerProps,
   ScrollContainerHeight,
   ScrollContainerBorderRadius,
-} from './ScrollContainer';
-export type { ButtonProps } from './Button';
-export type { ModalProps } from './Modal';
-export type { InputProps, InputNativeProps } from './Input';
-export type { TextAreaProps, TextAreaNativeProps } from './TextArea';
-export type {
-  BaseSelectProps as SelectProps,
+  // UI types
+  ButtonProps,
+  ModalProps,
+  InputProps,
+  InputNativeProps,
+  TextAreaProps,
+  TextAreaNativeProps,
+  SelectProps,
   WebSelectProps,
   NativeSelectProps,
-} from './Select';
-export type { SwitchProps, BaseSwitchProps } from './Switch';
-export type {
+  SelectOption,
+  SelectOptionGroup,
+  SwitchProps,
+  BaseSwitchProps,
   ColorSwatchProps,
   ColorSwatchWebProps,
   ColorSwatchNativeProps,
-} from './ColorSwatch';
-export type {
   RadioGroupProps,
   RadioGroupWebProps,
   RadioGroupNativeProps,
   RadioOption,
-} from './RadioGroup';
-export type {
-  BaseTooltipProps as TooltipProps,
+  TooltipProps,
   TooltipWebProps,
   TooltipNativeProps,
   TooltipPlacement,
-} from './Tooltip';
-export type {
   IconProps,
   IconWebProps,
   IconNativeProps,
   IconName,
   IconSize,
-} from './Icon';
-export type { TextProps, WebTextProps, NativeTextProps } from './Text';
-export type { FileUploadProps, FileUploadFile } from './FileUpload';
-export type { CalloutProps, CalloutVariant, CalloutSize, CalloutLayout } from './Callout';
+  IconVariant,
+  TextProps,
+  WebTextProps,
+  NativeTextProps,
+  FileUploadProps,
+  FileUploadFile,
+  CalloutProps,
+  CalloutVariant,
+  CalloutSize,
+  CalloutLayout,
+  // Theme types
+  Theme,
+  AccentColor,
+} from '@quilibrium/quorum-shared';

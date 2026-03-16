@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { View, TouchableOpacity, Animated } from 'react-native';
 import { Button, Icon, Flex, ColorSwatch, ScrollContainer, Spacer, useTheme } from '../../primitives';
 import { IconPickerProps, ICON_OPTIONS, ICON_COLORS, FILLED_ICONS, getIconColorHex, IconColor } from './types';
-import { IconName, IconVariant } from '../../primitives/Icon/types';
+import type { IconName, IconVariant } from '../../primitives';
 import { createIconPickerStyles } from './IconPicker.native.styles';
 
 export const IconPicker: React.FC<IconPickerProps> = ({

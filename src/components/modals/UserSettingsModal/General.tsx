@@ -7,7 +7,7 @@ import { DefaultImages } from '../../../utils';
 import { ReactTooltip } from '../../ui';
 import { SpaceTag } from '../../space/SpaceTag';
 import type { BroadcastSpaceTag } from '@quilibrium/quorum-shared';
-import { SelectOption } from '../../primitives/Select/types';
+import type { SelectOption } from '../../primitives';
 
 interface EligibleSpaceTag {
   spaceId: string;

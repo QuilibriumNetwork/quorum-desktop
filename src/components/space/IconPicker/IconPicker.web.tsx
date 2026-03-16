@@ -11,7 +11,7 @@ import {
   getFolderColorHex,
   IconColor,
 } from './types';
-import { IconName, IconVariant } from '../../primitives/Icon/types';
+import type { IconName, IconVariant } from '../../primitives';
 import { Trans } from '@lingui/react/macro';
 import './IconPicker.scss';
 
