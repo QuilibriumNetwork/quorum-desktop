@@ -10,8 +10,7 @@ import {
   // @ts-ignore - TypeScript config doesn't recognize React Native modules in this environment
   Dimensions,
 } from 'react-native';
-import { Icon, Text, FileUpload } from '../primitives';
-import { useTheme } from '../primitives/theme';
+import { Icon, Text, FileUpload, useTheme } from '../primitives';
 import { MessageTextInput } from './MessageTextInput.native';
 import { i18n } from '@lingui/core';
 import { Image } from 'expo-image';

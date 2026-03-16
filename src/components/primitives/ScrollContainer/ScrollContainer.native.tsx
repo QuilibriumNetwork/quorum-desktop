@@ -1,6 +1,7 @@
 import React from 'react';
 import { ScrollView, ViewStyle } from 'react-native';
 import { NativeScrollContainerProps, ScrollContainerHeight } from './types';
+import { useTheme } from '../theme';
 
 const heightMap: Record<ScrollContainerHeight, number> = {
   xs: 200,
@@ -39,6 +40,7 @@ export const ScrollContainer: React.FC<NativeScrollContainerProps> = ({
   onContentSizeChange,
   ...rest
 }) => {
+  const theme = useTheme();
   // Handle height prop
   const containerHeight = React.useMemo(() => {
     if (typeof height === 'string' && height in heightMap) {
@@ -87,7 +89,7 @@ export const ScrollContainer: React.FC<NativeScrollContainerProps> = ({
   const containerStyle: ViewStyle = {
     height: containerMaxHeight || containerHeight,
     borderWidth: showBorder ? 1 : 0,
-    borderColor: showBorder ? (borderColor || 'rgba(255, 255, 255, 0.1)') : 'transparent', // Use borderColor prop or default
+    borderColor: showBorder ? (borderColor || theme.colors.border.default) : 'transparent',
     borderRadius: borderRadiusValue,
     ...style,
   };

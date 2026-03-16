@@ -1,6 +1,6 @@
 import { useMemo, useCallback } from 'react';
 import type { Message } from '@quilibrium/quorum-shared';
-import { IconName } from '../../../components/primitives/Icon/types';
+import type { IconName } from '../../../components/primitives';
 import { formatMessageDate } from '../../../utils';
 
 export interface UseSearchResultFormattingProps {

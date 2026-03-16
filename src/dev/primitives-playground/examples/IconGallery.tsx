@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Icon } from '@/components/primitives';
 import { iconComponentMap } from '@/components/primitives/Icon/iconMapping';
-import { IconName } from '@/components/primitives/Icon/types';
+import type { IconName } from '@/components/primitives';
 
 export const IconGallery: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');

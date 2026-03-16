@@ -7,7 +7,7 @@ import {
   Icon,
 } from '../../../components/primitives';
 import { type MarkdownFile } from '../hooks/useMarkdownFiles';
-import { type IconName } from '../../../components/primitives/Icon/types';
+import type { IconName } from '../../../components/primitives';
 
 interface FilterOption {
   label: string;

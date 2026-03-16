@@ -6,7 +6,7 @@ import React, {
 } from 'react';
 // @ts-ignore - TypeScript config doesn't recognize React Native modules in this environment
 import { TextInput } from 'react-native';
-import { useTheme } from '../primitives/theme';
+import { useTheme } from '../primitives';
 
 interface MessageTextInputProps {
   value: string;

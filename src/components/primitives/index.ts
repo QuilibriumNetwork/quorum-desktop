@@ -48,6 +48,7 @@ export {
   // Theme
   ThemeProvider,
   useTheme,
+  getColors,
 } from '@quilibrium/quorum-shared';
 
 // Re-export all types from quorum-shared

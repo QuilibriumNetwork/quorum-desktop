@@ -4,7 +4,7 @@ import type { Conversation, Message, Space, Bookmark, BroadcastSpaceTag, Channel
 import { BOOKMARKS_CONFIG } from '@quilibrium/quorum-shared';
 import type { NotificationSettings } from '../types/notifications';
 import type { IconColor } from '../components/space/IconPicker/types';
-import type { IconName } from '../components/primitives/Icon/types';
+import type { IconName } from '../components/primitives';
 import type { QueueTask, TaskStatus, QueueStats } from '../types/actionQueue';
 import MiniSearch from 'minisearch';
 

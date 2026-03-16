@@ -1,5 +1,5 @@
 import { NavItem, UserConfig, FolderColor } from '../db/messages';
-import { IconName } from '../components/primitives/Icon/types';
+import type { IconName } from '../components/primitives';
 
 /**
  * Folder utility functions for managing space folders in the navbar

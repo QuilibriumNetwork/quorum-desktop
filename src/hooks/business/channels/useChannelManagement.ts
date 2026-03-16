@@ -7,7 +7,7 @@ import { useMessageDB } from '../../../components/context/useMessageDB';
 import { useConfirmation } from '../../ui/useConfirmation';
 import ChannelPreview from '../../../components/space/ChannelPreview';
 import { t } from '@lingui/core/macro';
-import { IconName, IconVariant } from '../../../components/primitives/Icon/types';
+import type { IconName, IconVariant } from '../../../components/primitives';
 import { IconColor } from '../../../components/space/IconPicker';
 import { validateChannelName, validateChannelTopic } from '../validation';
 

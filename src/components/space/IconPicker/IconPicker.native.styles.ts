@@ -1,5 +1,5 @@
 import { StyleSheet } from 'react-native';
-import type { getColors } from '../../primitives/theme/colors';
+import type { getColors } from '../../primitives';
 
 type ColorPalette = ReturnType<typeof getColors>;
 
