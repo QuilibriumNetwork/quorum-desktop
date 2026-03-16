@@ -1,12 +1,11 @@
 import React, { useState } from 'react';
-import { Icon } from '@/components/primitives';
-import { iconComponentMap } from '@/components/primitives/Icon/iconMapping';
+import { Icon, iconNames } from '@/components/primitives';
 import type { IconName } from '@/components/primitives';
 
 export const IconGallery: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
 
-  const iconEntries = Object.keys(iconComponentMap) as IconName[];
+  const iconEntries = Object.keys(iconNames) as IconName[];
 
   const filteredIcons = iconEntries.filter(iconName =>
     iconName.toLowerCase().includes(searchQuery.toLowerCase())

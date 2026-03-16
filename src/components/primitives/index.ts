@@ -37,6 +37,8 @@ export {
   RadioGroup,
   Tooltip,
   Icon,
+  iconNames,
+  isValidIconName,
   Text,
   Paragraph,
   Label,
