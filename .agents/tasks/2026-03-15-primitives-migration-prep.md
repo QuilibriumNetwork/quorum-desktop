@@ -181,9 +181,9 @@ Some native primitives still use hardcoded hex/rgba values instead of `useTheme(
 
 Still need review:
 - [ ] ColorSwatch — accent color map uses hardcoded hex values + check icon `color="#ffffff"`
-- [ ] Select.native — `color: '#fff'` (line 915) — white text, wrong in light mode
+- [x] Select.native — `color: '#fff'` — reviewed: badge text on accent bg, white is correct for contrast
 - [ ] Tooltip.native — overlay `backgroundColor: 'rgba(0, 0, 0, 0.1)'`
-- Note: `shadowColor: '#000'` and modal backdrop `rgba(0, 0, 0, 0.5)` are OK to keep hardcoded (always dark)
+- Note: `shadowColor: '#000'`, modal backdrop `rgba(0, 0, 0, 0.5)`, and badge text `#fff` on accent bg are OK to keep hardcoded
 
 ### 6. Remove Lingui from Shared Primitives — DONE
 Primitives in a shared library should not depend on a specific i18n framework.
@@ -194,38 +194,32 @@ Primitives in a shared library should not depend on a specific i18n framework.
 - **Pattern**: Follows industry standard (shadcn/ui, Radix, MUI) — library uses English defaults, apps override with translations
 - **Action for consuming apps**: When using Select or FileUpload, pass `t\`...\`` wrapped props for any user-facing strings that need translation
 
-### Follow-up: Proper Build Setup for Published Package (REQUIRED before merge)
-Currently quorum-shared points `module`/`import` to source (`src/index.ts`) because tsup can't resolve `.web.tsx`/`.native.tsx` platform files. This works for local `file:` development but is NOT publishable to npm.
+### 7. Dual Platform Build Setup — DONE
+Implemented dual platform build following industry standard (tamagui, react-native-safe-area-context pattern):
+- [x] tsup produces 3 outputs: `index.mjs` (web ESM), `index.js` (web CJS), `index.native.js` (native CJS)
+- [x] tsc generates `.d.ts` types via `tsconfig.build.json` (excludes `.native` files)
+- [x] `package.json` exports use `react-native` condition for Metro, `import`/`require` for web bundlers
+- [x] Added `ReactTooltip.d.ts` type stub for declaration generation
+- [x] react/react-dom properly externalized as bare imports in dist output
 
-**Before merging the quorum-shared PR**, we need one of these approaches:
+### 8. npm Pack Test — BLOCKED
+- [x] Built quorum-shared (tsup dual build + tsc types) — all 3 bundles succeed
+- [x] npm pack creates tarball — react/react-dom properly externalized in dist
+- [x] Installed tarball in quorum-desktop — UI loads, most primitives render
+- [ ] **BLOCKED**: Modals don't work when installed from tarball (duplicate React instance)
+- Tested with AND without `optimizeDeps.exclude` + react aliases — both fail
+- Works only with `link:` (source resolution mode)
+- See bug: `.agents/bugs/2026-03-16-quorum-shared-pre-built-dist-modal-broken.md`
+- **Must be resolved before publishing to npm**
 
-**Option A: Dual platform builds (recommended for cross-platform libraries)**
-- Build two separate entry points: `dist/web/index.mjs` and `dist/native/index.mjs`
-- Use `exports` conditions in package.json:
-  ```json
-  "exports": {
-    ".": {
-      "react-native": "./src/index.ts",
-      "import": "./dist/web/index.mjs",
-      "require": "./dist/web/index.js"
-    }
-  }
-  ```
-- Metro (React Native) uses the `react-native` condition and resolves `.native.tsx` from source
-- Vite/webpack uses `import` condition and gets pre-built web code
-- Used by: `react-native-web`, `tamagui`, `nativewind`
-
-**Option B: Ship source only**
-- Set `"main": "src/index.ts"` and require consuming apps to compile
-- Add `"sideEffects": false` for tree-shaking
-- Used by: many private/monorepo packages, `@radix-ui/react-*`
-
-**Option C: Single build with externalized platform files**
-- Build only shared code (types, theme, utils)
-- Ship `.web.tsx` and `.native.tsx` as source alongside the build
-- Consumer's bundler resolves platform files from source
-
-**Current state**: Using Option B (source-only) during development. Must resolve before publishing.
+### 9. Write README for quorum-shared — TODO
+- [ ] Architecture overview (types, hooks, utils, crypto, primitives)
+- [ ] Setup instructions for consuming apps (web + React Native)
+- [ ] Platform-specific file resolution explained
+- [ ] CSS/SCSS requirements for web consumers (primitives are unstyled on web)
+- [ ] Lingui/i18n: how to provide translated strings via props
+- [ ] Required Vite/webpack config (optimizeDeps, react aliases)
+- [ ] Pull context from `.agents/docs/` architecture docs in quorum-desktop
 
 ### Stacked PRs Workflow
 ```
