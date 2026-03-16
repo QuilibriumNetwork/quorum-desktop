@@ -165,6 +165,12 @@ export default defineConfig(({ command }) => ({
     alias: {
       '@': resolve(__dirname, '../src'),
       crypto: 'crypto-browserify',
+      // Force single React/ReactDOM instance — prevents duplicate instances when
+      // quorum-shared (excluded from pre-bundling) resolves its own node_modules
+      react: resolve(__dirname, '../node_modules/react'),
+      'react-dom': resolve(__dirname, '../node_modules/react-dom'),
+      'react/jsx-runtime': resolve(__dirname, '../node_modules/react/jsx-runtime'),
+      'react/jsx-dev-runtime': resolve(__dirname, '../node_modules/react/jsx-dev-runtime'),
       '@quilibrium/quilibrium-js-sdk-channels': resolve(
         __dirname,
         '../node_modules/@quilibrium/quilibrium-js-sdk-channels/dist/index.esm.js'
