@@ -59,7 +59,7 @@
 
 **Files:** None (git operations only)
 
-- [ ] **Step 1: Create branch on quorum-shared**
+- [x] **Step 1: Create branch on quorum-shared**
 
 ```bash
 cd d:/GitHub/Quilibrium/quorum-shared
@@ -68,7 +68,7 @@ git pull origin feat/shared-primitives-migration
 git checkout -b feat/shared-utils-migration
 ```
 
-- [ ] **Step 2: Create branch on quorum-desktop**
+- [x] **Step 2: Create branch on quorum-desktop**
 
 ```bash
 cd d:/GitHub/Quilibrium/quorum-desktop
@@ -77,7 +77,7 @@ git pull origin feat/shared-primitives-migration
 git checkout -b feat/shared-utils-migration
 ```
 
-- [ ] **Step 3: Verify link: dependency is active**
+- [x] **Step 3: Verify link: dependency is active**
 
 In `d:/GitHub/Quilibrium/quorum-desktop/package.json`, confirm `"@quilibrium/quorum-shared": "link:../quorum-shared"` is set. If not, set it and run `yarn install`.
 
@@ -88,7 +88,7 @@ In `d:/GitHub/Quilibrium/quorum-desktop/package.json`, confirm `"@quilibrium/quo
 **Files:**
 - Modify: `d:/GitHub/Quilibrium/quorum-shared/package.json`
 
-- [ ] **Step 1: Add new dependencies**
+- [x] **Step 1: Add new dependencies**
 
 Add to `dependencies`:
 ```json
@@ -105,14 +105,14 @@ Add to `dependencies`:
 
 Check the exact versions used in `d:/GitHub/Quilibrium/quorum-desktop/package.json` and match them.
 
-- [ ] **Step 2: Install dependencies**
+- [x] **Step 2: Install dependencies**
 
 ```bash
 cd d:/GitHub/Quilibrium/quorum-shared
 yarn install
 ```
 
-- [ ] **Step 3: Verify build still works**
+- [x] **Step 3: Verify build still works**
 
 ```bash
 yarn build
@@ -136,17 +136,17 @@ These files have zero imports from desktop modules, no @lingui, no DOM APIs. Str
 - `avatar.ts` — copy from `d:/GitHub/Quilibrium/quorum-desktop/src/utils/avatar.ts`
 - `youtubeUtils.ts` — copy from `d:/GitHub/Quilibrium/quorum-desktop/src/utils/youtubeUtils.ts`
 
-- [ ] **Step 1: Copy all 8 files**
+- [x] **Step 1: Copy all 8 files**
 
 Copy each file from desktop to shared. All imports reference `@quilibrium/quorum-shared` types (already available) or have no imports at all.
 
-- [ ] **Step 2: Verify type imports resolve**
+- [x] **Step 2: Verify type imports resolve**
 
 `permissions.ts` and `channelPermissions.ts` import from `@quilibrium/quorum-shared`. In shared, change these to relative imports:
 - `import type { Permission, Role, Space } from '@quilibrium/quorum-shared'` → `import type { Permission, Role, Space } from '../types'`
 - Same pattern for all shared type imports
 
-- [ ] **Step 3: Verify build**
+- [x] **Step 3: Verify build**
 
 ```bash
 cd d:/GitHub/Quilibrium/quorum-shared
@@ -165,14 +165,14 @@ These files use `@lingui/core/macro` `t` function. Replace with plain English st
 - Create: `d:/GitHub/Quilibrium/quorum-shared/src/utils/canonicalize.ts`
 - Create: `d:/GitHub/Quilibrium/quorum-shared/src/utils/clipboard.ts`
 
-- [ ] **Step 1: Copy canonicalize.ts**
+- [x] **Step 1: Copy canonicalize.ts**
 
 Copy from desktop. Remove `import { t } from '@lingui/core/macro'`. Replace:
 - `t\`invalid message type\`` → `'invalid message type'`
 
 Update `@quilibrium/quorum-shared` type imports to relative paths.
 
-- [ ] **Step 2: Copy clipboard.ts**
+- [x] **Step 2: Copy clipboard.ts**
 
 Copy from desktop. Remove `import { t } from '@lingui/core/macro'`. Replace all `t` tagged template literals with plain English strings:
 - `t\`[Image]\`` → `'[Image]'`
@@ -181,7 +181,7 @@ Copy from desktop. Remove `import { t } from '@lingui/core/macro'`. Replace all 
 
 Update type imports to relative paths.
 
-- [ ] **Step 3: Verify build**
+- [x] **Step 3: Verify build**
 
 ```bash
 cd d:/GitHub/Quilibrium/quorum-shared
@@ -201,19 +201,19 @@ These files import from npm packages that need to be available in shared.
 - Create: `d:/GitHub/Quilibrium/quorum-shared/src/utils/dayjs.ts`
 - Create: `d:/GitHub/Quilibrium/quorum-shared/src/utils/messageGrouping.ts`
 
-- [ ] **Step 1: Replace validation.ts**
+- [x] **Step 1: Replace validation.ts**
 
 Replace shared's existing `validation.ts` with desktop's version. Desktop imports `multiformats/bases/base58` (added in Task 2). Check if shared's current version has a `sanitizeContent` function not present in desktop's version — if so, append it to the new file. Set `MAX_MESSAGE_LENGTH` to `2500`.
 
-- [ ] **Step 2: Copy markdownStripping.ts**
+- [x] **Step 2: Copy markdownStripping.ts**
 
 Copy from desktop. Imports `unified`, `remark-parse`, `remark-gfm`, `remark-stringify`, `strip-markdown` (added in Task 2). Also imports `logger` from `@quilibrium/quorum-shared` — change to relative: `import { logger } from './logger'`.
 
-- [ ] **Step 3: Copy messagePreview.ts**
+- [x] **Step 3: Copy messagePreview.ts**
 
 Copy from desktop. Remove `import { t } from '@lingui/core/macro'`. Replace `t` strings with plain English. Update type imports to relative paths. This file imports `./markdownStripping` — it resolves to the file created in Step 2 above.
 
-- [ ] **Step 4: Create dayjs.ts**
+- [x] **Step 4: Create dayjs.ts**
 
 Create `d:/GitHub/Quilibrium/quorum-shared/src/utils/dayjs.ts`. This is a new file in shared (desktop's `dayjs.ts` also stays local — both repos have their own copy of this config):
 
@@ -232,11 +232,11 @@ dayjs.extend(calendar);
 export default dayjs;
 ```
 
-- [ ] **Step 5: Copy messageGrouping.ts**
+- [x] **Step 5: Copy messageGrouping.ts**
 
 Copy from desktop. Change `import dayjs from './dayjs'` — this now resolves to the shared dayjs.ts created above. Update type imports to relative paths.
 
-- [ ] **Step 6: Verify build**
+- [x] **Step 6: Verify build**
 
 ```bash
 cd d:/GitHub/Quilibrium/quorum-shared
@@ -250,7 +250,7 @@ yarn build
 **Files:**
 - Modify: `d:/GitHub/Quilibrium/quorum-shared/src/utils/mentions.ts` (replace + merge)
 
-- [ ] **Step 1: Replace mentions.ts**
+- [x] **Step 1: Replace mentions.ts**
 
 Replace shared's `mentions.ts` with desktop's `mentionUtils.ts` content. Then add back shared's existing `parseMentions`, `formatMention`, `MENTION_PATTERNS`, and `ParsedMention` type that desktop doesn't have.
 
@@ -258,7 +258,7 @@ Desktop's file imports:
 - `@quilibrium/quorum-shared` types → change to relative `../types`
 - `./validation` (createIPFSCIDRegex) → resolves to the new validation.ts from Task 5
 
-- [ ] **Step 2: Verify build**
+- [x] **Step 2: Verify build**
 
 ```bash
 cd d:/GitHub/Quilibrium/quorum-shared
@@ -273,21 +273,21 @@ yarn build
 - Create: `d:/GitHub/Quilibrium/quorum-shared/src/utils/environmentDomains.ts`
 - Create: `d:/GitHub/Quilibrium/quorum-shared/src/utils/inviteDomain.ts`
 
-- [ ] **Step 1: Copy environmentDomains.ts**
+- [x] **Step 1: Copy environmentDomains.ts**
 
 Copy from desktop. This file already has a `typeof window === 'undefined'` guard that returns production defaults for non-browser environments (line 20-26). This is sufficient for React Native — mobile will get production domain defaults, which is correct behavior. No refactoring needed.
 
-- [ ] **Step 2: Copy inviteDomain.ts**
+- [x] **Step 2: Copy inviteDomain.ts**
 
 Copy from desktop. This file also has `typeof window !== 'undefined'` guards (line 15). Update imports:
 - `import { logger } from '@quilibrium/quorum-shared'` → `import { logger } from './logger'`
 - `import { buildValidPrefixes, getEnvironmentInfo } from './environmentDomains'` — resolves locally
 
-- [ ] **Step 3: Copy messageLinkUtils.ts**
+- [x] **Step 3: Copy messageLinkUtils.ts**
 
 Copy from desktop. Imports `./environmentDomains` — resolves locally now.
 
-- [ ] **Step 4: Verify build**
+- [x] **Step 4: Verify build**
 
 ```bash
 cd d:/GitHub/Quilibrium/quorum-shared
@@ -301,7 +301,7 @@ yarn build
 **Files:**
 - Create: `d:/GitHub/Quilibrium/quorum-shared/src/utils/notificationSettingsUtils.ts`
 
-- [ ] **Step 1: Move notification types to shared**
+- [x] **Step 1: Move notification types to shared**
 
 Desktop's `src/types/notifications.ts` defines `NotificationTypeId`, `NotificationSettings`, `NotificationSettingOption`, `ReplyNotification`. These are simple interfaces with only a `Message` import from shared.
 
@@ -312,11 +312,11 @@ Choose Option A if these types are used elsewhere in desktop (check imports). Ch
 
 Check: `grep -r "NotificationTypeId\|NotificationSettings\|NotificationSettingOption\|ReplyNotification" d:/GitHub/Quilibrium/quorum-desktop/src/ --include="*.ts" --include="*.tsx" -l`
 
-- [ ] **Step 2: Copy notificationSettingsUtils.ts**
+- [x] **Step 2: Copy notificationSettingsUtils.ts**
 
 Copy from desktop. Update the import to use the shared types (from Step 1).
 
-- [ ] **Step 3: Verify build**
+- [x] **Step 3: Verify build**
 
 ```bash
 cd d:/GitHub/Quilibrium/quorum-shared
@@ -330,13 +330,13 @@ yarn build
 **Files:**
 - Create: `d:/GitHub/Quilibrium/quorum-shared/src/utils/channelUtils.ts`
 
-- [ ] **Step 1: Copy findChannelByName only**
+- [x] **Step 1: Copy findChannelByName only**
 
 Create the file with only the `findChannelByName` function from desktop's `channelUtils.ts`. Import `Channel` type from relative path. Import `logger` from `./logger`.
 
 Do NOT include `isChannelMuted` or `getMutedChannelsForSpace` — they depend on `UserConfig` from desktop's DB layer.
 
-- [ ] **Step 2: Verify build**
+- [x] **Step 2: Verify build**
 
 ```bash
 cd d:/GitHub/Quilibrium/quorum-shared
@@ -350,16 +350,20 @@ yarn build
 **Files:**
 - Modify: `d:/GitHub/Quilibrium/quorum-shared/src/utils/formatting.ts`
 
-- [ ] **Step 1: Replace formatting.ts**
+- [x] **Step 1: Replace formatting.ts**
 
-Remove all date formatting functions (`formatTime`, `formatDate`, `formatDateTime`, `formatRelativeTime`, `formatMessageDate`, `isSameDay`). Keep:
+Remove i18n-dependent date formatting functions (`formatTime`, `formatDateTime`, `formatMessageDate`, `isSameDay`). Keep:
 - `truncateText`
 - `formatFileSize`
 - `formatMemberCount`
+- `formatDate` (pure, no i18n — used by `formatRelativeTime`)
+- `formatRelativeTime` (pure, no i18n — used by `ThreadListItem` and potentially other consumers)
+
+> **Note:** `formatRelativeTime` and `formatDate` were initially removed but had to be restored — `ThreadListItem.tsx` imports `formatRelativeTime` from shared, causing a blank page when missing. These are pure functions with no i18n/DOM dependencies, so they belong in shared.
 
 `formatMentionCount` is already a separate file (copied in Task 3) — do not duplicate it here. It's exported via the barrel.
 
-- [ ] **Step 2: Verify build**
+- [x] **Step 2: Verify build**
 
 ```bash
 cd d:/GitHub/Quilibrium/quorum-shared
@@ -373,7 +377,7 @@ yarn build
 **Files:**
 - Modify: `d:/GitHub/Quilibrium/quorum-shared/src/utils/index.ts`
 
-- [ ] **Step 1: Add all new modules to barrel**
+- [x] **Step 1: Add all new modules to barrel**
 
 Add re-exports for every new file:
 
@@ -404,7 +408,7 @@ export * from './youtubeUtils';
 export { default as dayjs } from './dayjs';
 ```
 
-- [ ] **Step 2: Check for export name collisions**
+- [x] **Step 2: Check for export name collisions**
 
 Multiple files may export identically-named types or functions. Run build and check for conflicts:
 
@@ -415,7 +419,7 @@ yarn build
 
 Resolve any collisions by renaming or using named re-exports.
 
-- [ ] **Step 3: Full build verification**
+- [x] **Step 3: Full build verification**
 
 ```bash
 yarn build
@@ -429,7 +433,7 @@ Expected: 0 errors. All 3 outputs (index.mjs, index.js, index.native.js) generat
 
 **Files:** All changes from Tasks 2-11
 
-- [ ] **Step 1: Commit dependencies separately**
+- [x] **Step 1: Commit dependencies separately**
 
 ```bash
 cd d:/GitHub/Quilibrium/quorum-shared
@@ -437,28 +441,20 @@ git add package.json yarn.lock
 git commit -m "Add dependencies for utils migration (dayjs, multiformats, unified, remark)"
 ```
 
-- [ ] **Step 2: Commit all utility files as one atomic commit**
+Committed as `691287a`.
+
+- [x] **Step 2: Commit all utility files as one atomic commit**
 
 ```bash
 git add src/utils/
 git commit -m "Migrate utility functions from quorum-desktop
-
-Replaces basic validation/mentions/formatting with desktop's production versions.
-Adds 17 new utility modules: permissions, channelPermissions, messageGrouping,
-markdownFormatting, markdownStripping, codeFormatting, rateLimit, avatar,
-canonicalize, clipboard, messagePreview, messageLinkUtils, environmentDomains,
-inviteDomain, notificationSettingsUtils, channelUtils, youtubeUtils.
-
-Strips @lingui from canonicalize, clipboard, messagePreview (plain English defaults).
-MAX_MESSAGE_LENGTH set to 2500."
 ```
 
-- [ ] **Step 3: If notification types were moved to shared types (Task 8), commit separately**
+Committed as `831dc29`.
 
-```bash
-git add src/types/
-git commit -m "Add notification settings types for utils migration"
-```
+- [x] **Step 3: If notification types were moved to shared types (Task 8), commit separately**
+
+Committed as `e9ef224` — notification types added to shared types module.
 
 ---
 
@@ -468,33 +464,11 @@ git commit -m "Add notification settings types for utils migration"
 - Create: `d:/GitHub/Quilibrium/quorum-desktop/src/utils/index.ts`
 - Modify: Various component/hook files that import from utils subpaths
 
-- [ ] **Step 1: Create utils barrel export**
+- [ ] **Step 1: Create utils barrel export** _(skipped — imports use `@quilibrium/quorum-shared` directly)_
 
-Create `d:/GitHub/Quilibrium/quorum-desktop/src/utils/index.ts` that re-exports utils from shared. Do NOT use `export * from '@quilibrium/quorum-shared'` — that would re-export everything (types, primitives, hooks, etc.), causing collisions. Instead, re-export specific utils modules:
+> **Note:** This step was skipped during implementation. Imports in desktop components were updated to import directly from `@quilibrium/quorum-shared` rather than through a local barrel file. The existing `src/utils.ts` (not `src/utils/index.ts`) continues to serve as the barrel for desktop-specific exports like `DefaultImages`, `getDefaultUserConfig`, and `formatMessageDate`.
 
-```typescript
-// Re-export shared utilities
-export * from '@quilibrium/quorum-shared/utils';
-```
-
-If the above doesn't work with the package's export map, use named imports instead — list each util module explicitly. The primitives migration barrel can serve as a reference for the pattern used there.
-
-Also re-export local-only utilities:
-
-```typescript
-// Local-only utilities (DOM-specific, stay in desktop)
-export * from './dateFormatting';
-export * from './mentionPillDom';
-export * from './mentionHighlighting';
-export * from './modalPositioning';
-export * from './toolbarPositioning';
-export * from './caretCoordinates';
-export * from './cursor';
-export * from './messageHashNavigation';
-export * from './toast';
-```
-
-- [ ] **Step 2: Find all files importing from migrated utils**
+- [x] **Step 2: Find all files importing from migrated utils**
 
 Search for imports from each migrated file:
 
@@ -502,26 +476,13 @@ Search for imports from each migrated file:
 grep -r "from.*utils/validation\|from.*utils/mentionUtils\|from.*utils/permissions\|from.*utils/channelPermissions\|from.*utils/messageGrouping\|from.*utils/messageLinkUtils\|from.*utils/messagePreview\|from.*utils/markdownFormatting\|from.*utils/markdownStripping\|from.*utils/codeFormatting\|from.*utils/formatMentionCount\|from.*utils/rateLimit\|from.*utils/avatar\|from.*utils/canonicalize\|from.*utils/clipboard\|from.*utils/notificationSettingsUtils\|from.*utils/inviteDomain\|from.*utils/environmentDomains\|from.*utils/youtubeUtils\|from.*utils/bytes" d:/GitHub/Quilibrium/quorum-desktop/src/ --include="*.ts" --include="*.tsx" -l
 ```
 
-- [ ] **Step 3: Update imports to use barrel or @quilibrium/quorum-shared**
+- [x] **Step 3: Update imports to use barrel or @quilibrium/quorum-shared**
 
-For each file found in Step 2, update the import to either:
-- `import { functionName } from '@quilibrium/quorum-shared'` (direct from shared)
-- `import { functionName } from '../utils'` (via barrel)
+54 component/hook files updated to import from `@quilibrium/quorum-shared` directly.
 
-Follow whichever pattern is more consistent with the codebase.
+- [x] **Step 4: Update channelUtils.ts**
 
-- [ ] **Step 4: Update channelUtils.ts**
-
-Desktop's `channelUtils.ts` keeps `isChannelMuted` and `getMutedChannelsForSpace` but loses `findChannelByName`. Update to re-export `findChannelByName` from shared:
-
-```typescript
-// Re-export from shared
-export { findChannelByName } from '@quilibrium/quorum-shared';
-
-// Desktop-only (depends on UserConfig from db/messages)
-import type { UserConfig } from '../db/messages';
-// ... keep isChannelMuted and getMutedChannelsForSpace
-```
+Desktop's `channelUtils.ts` updated: `findChannelByName` re-exported from shared, `isChannelMuted` and `getMutedChannelsForSpace` kept local.
 
 ---
 
@@ -529,40 +490,13 @@ import type { UserConfig } from '../db/messages';
 
 **Files to delete:**
 
-- [ ] **Step 1: Delete migrated source files**
+- [x] **Step 1: Delete migrated source files**
 
-Delete these files from `d:/GitHub/Quilibrium/quorum-desktop/src/utils/`:
-- `validation.ts`
-- `mentionUtils.ts`
-- `permissions.ts`
-- `channelPermissions.ts`
-- `messageGrouping.ts`
-- `messageLinkUtils.ts`
-- `messagePreview.ts`
-- `markdownFormatting.ts`
-- `markdownStripping.ts`
-- `codeFormatting.ts`
-- `formatMentionCount.ts`
-- `rateLimit.ts`
-- `avatar.ts`
-- `canonicalize.ts`
-- `clipboard.ts`
-- `notificationSettingsUtils.ts`
-- `inviteDomain.ts`
-- `environmentDomains.ts`
-- `youtubeUtils.ts`
-- `bytes.ts`
-
-Do NOT delete: `channelUtils.ts` (partial migration — still has local functions), `dateFormatting.ts`, `dayjs.ts`, DOM-specific files, `mock/`, `imageProcessing/`.
+All 20 files deleted from `d:/GitHub/Quilibrium/quorum-desktop/src/utils/` plus `channelPermissions.test.ts`.
 
 - [ ] **Step 2: Verify web app builds and loads**
 
-```bash
-cd d:/GitHub/Quilibrium/quorum-desktop
-yarn build
-```
-
-Then start dev server and verify the app loads correctly.
+> **Blocker found:** `formatRelativeTime` was removed from shared's `formatting.ts` but `ThreadListItem.tsx` still imports it, causing a blank page at runtime (no console errors because ESM import failures are silent in the browser). Fixed by restoring `formatRelativeTime` and `formatDate` to shared's `formatting.ts` — they are pure functions with no i18n/DOM dependencies.
 
 ---
 
@@ -593,23 +527,13 @@ Any hits (except in `environmentDomains.ts` and `inviteDomain.ts` which have gua
 
 ## Task 16: Commit on quorum-desktop
 
-- [ ] **Step 1: Commit import updates**
+- [x] **Step 1: Commit import updates**
 
-```bash
-cd d:/GitHub/Quilibrium/quorum-desktop
-git add -A
-git commit -m "Update imports to use shared utilities from @quilibrium/quorum-shared"
-```
+Import updates and file deletions committed together as `b283b607` ("feat: migrate utility imports to @quilibrium/quorum-shared").
 
-- [ ] **Step 2: Commit file deletions**
+- [x] **Step 2: Commit file deletions**
 
-```bash
-git add -A
-git commit -m "Remove local utility source files (now in quorum-shared)
-
-Deleted 20 utility files (-X,XXX lines). Utilities are now imported
-from @quilibrium/quorum-shared. DOM-specific utils remain local."
-```
+Combined with Step 1 into single commit `b283b607`.
 
 ---
 
@@ -621,14 +545,14 @@ from @quilibrium/quorum-shared. DOM-specific utils remain local."
 - `d:/GitHub/Quilibrium/quorum-desktop/src/dev/tests/utils/reservedNames.test.ts`
 - `d:/GitHub/Quilibrium/quorum-desktop/src/dev/tests/utils/messageGrouping.unit.test.ts`
 
-- [ ] **Step 1: Update test imports**
+- [x] **Step 1: Update test imports**
 
 Each test file imports from local utils paths. Update to import from shared:
 - `from '../../utils/validation'` → `from '@quilibrium/quorum-shared'`
 - `from '../../utils/mentionUtils'` → `from '@quilibrium/quorum-shared'`
 - etc.
 
-- [ ] **Step 2: Handle dayjs dependency in messageGrouping test**
+- [x] **Step 2: Handle dayjs dependency in messageGrouping test**
 
 `messageGrouping.unit.test.ts` imports `dayjs` from desktop's local `./dayjs`. Update to import from `@quilibrium/quorum-shared` (which now exports `dayjs`).
 
@@ -652,12 +576,14 @@ git commit -m "Update test imports for shared utils migration"
 
 ## Task 18: Final Verification
 
-- [ ] **Step 1: Full build on quorum-shared**
+- [x] **Step 1: Full build on quorum-shared**
 
 ```bash
 cd d:/GitHub/Quilibrium/quorum-shared
 yarn build
 ```
+
+Build succeeds: CJS 222.55 KB, ESM 207.84 KB, Native 253.28 KB.
 
 - [ ] **Step 2: Full build on quorum-desktop**
 
@@ -665,6 +591,8 @@ yarn build
 cd d:/GitHub/Quilibrium/quorum-desktop
 yarn build
 ```
+
+> **Note:** Production build fails on `vite-plugin-favicons-inject` (NO_FILES_FOUND) — this is a pre-existing issue unrelated to the utils migration. The 7733 modules transform successfully.
 
 - [ ] **Step 3: Run linting**
 
@@ -693,4 +621,18 @@ Start the dev server and verify:
 
 ---
 
+## Updates
+
+**2026-03-18 — Claude**: Updated checkboxes to reflect actual completion state
+- Checked all completed tasks (1-12, most of 13-14, 16-17 partial)
+- Task 10: Updated to note `formatRelativeTime` and `formatDate` must stay in shared (pure functions used by `ThreadListItem.tsx`) — removing them caused a blank page
+- Task 13 Step 1: Marked as skipped — barrel file not created, imports go directly to `@quilibrium/quorum-shared`
+- Task 14 Step 2: Documented the `formatRelativeTime` blocker and fix
+- Task 16: Noted commits were combined into single commit `b283b607`
+- Task 12: Added actual commit hashes (`691287a`, `831dc29`, `e9ef224`)
+- Task 18 Step 1: Marked complete with build output stats
+
+---
+
 _Created: 2026-03-18_
+_Updated: 2026-03-18_
