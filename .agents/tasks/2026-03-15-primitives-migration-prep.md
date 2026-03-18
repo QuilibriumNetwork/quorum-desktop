@@ -222,13 +222,14 @@ Implemented dual platform build following industry standard (tamagui, react-nati
 - [x] i18n: how to provide translated strings via props
 - [x] Peer dependencies table (web vs native)
 - [x] Build output documentation
-- [ ] Will expand as hooks/utils are migrated
+- [ ] Will expand as utils (PR #3) and hooks (PR #4) are migrated
 
 ### Stacked PRs Workflow
 ```
 feat/shared-types-migration          ← PR #1
   └── feat/shared-primitives-migration      ← PR #2 (this work)
-        └── feat/shared-hooks-utils-migration  ← PR #3
+        └── feat/shared-utils-migration       ← PR #3 (pure functions, easy)
+              └── feat/shared-hooks-migration    ← PR #4 (complex, needs discussion)
 ```
 
 This prep task feeds into the actual migration plan at `tasks/2026-03-15-stacked-prs-workflow.md` → Plan 1.
@@ -236,4 +237,4 @@ This prep task feeds into the actual migration plan at `tasks/2026-03-15-stacked
 ---
 
 _Created: 2026-03-15_
-_Updated: 2026-03-16_
+_Updated: 2026-03-18_

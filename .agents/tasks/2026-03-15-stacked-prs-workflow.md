@@ -16,12 +16,14 @@ depends_on:
 quorum-shared:
   feat/shared-types-migration          ← PR #1 (open, waiting for merge)
     └── feat/shared-primitives-migration      ← PR #2 (base: types branch)
-          └── feat/shared-hooks-utils-migration  ← PR #3 (base: primitives branch)
+          └── feat/shared-utils-migration       ← PR #3 (base: primitives branch)
+                └── feat/shared-hooks-migration    ← PR #4 (base: utils branch)
 
 quorum-desktop:
   feat/shared-types-migration          ← PR #1 (open, waiting for merge)
     └── feat/shared-primitives-migration      ← PR #2 (base: types branch)
-          └── feat/shared-hooks-utils-migration  ← PR #3 (base: primitives branch)
+          └── feat/shared-utils-migration       ← PR #3 (base: primitives branch)
+                └── feat/shared-hooks-migration    ← PR #4 (base: utils branch)
 ```
 
 ## How to Create Each Branch
@@ -39,11 +41,18 @@ git checkout feat/shared-types-migration
 git checkout -b feat/shared-primitives-migration
 ```
 
-### Hooks/utils migration (after primitives)
+### Utils migration (after primitives)
 ```bash
 # Branch off primitives in both repos
 git checkout feat/shared-primitives-migration
-git checkout -b feat/shared-hooks-utils-migration
+git checkout -b feat/shared-utils-migration
+```
+
+### Hooks migration (after utils)
+```bash
+# Branch off utils in both repos
+git checkout feat/shared-utils-migration
+git checkout -b feat/shared-hooks-migration
 ```
 
 ## PR Creation Rules
@@ -90,17 +99,27 @@ Only switch to published npm version right before final merge of each PR.
 
 **Needs detailed plan** — create with `writing-plans` skill in fresh session.
 
-## Plan 2: Hooks & Utils Migration
+## Plan 2: Utils Migration
 
-**Separate plan file:** TBD (may need multiple plans)
+**Separate plan file:** TBD (brainstorming session needed)
 
-**Scope:** Migrate shared-compatible hooks and utils from desktop to quorum-shared.
+**Scope:** Migrate platform-agnostic utility functions from desktop to quorum-shared.
 
-**This is the biggest effort** — many hooks will need refactoring to be platform-agnostic.
-Stay generic until primitives migration is complete. Will likely split into:
-- Utils migration (simpler — pure functions)
-- Hooks migration (harder — may need platform abstractions)
+**Rationale for splitting from hooks:** Utils are mostly pure functions with zero platform dependencies — straightforward copy → export → re-import, same pattern as types migration. Low risk, fast PR, easy to review. Hooks depend on many of these utils, so having them in quorum-shared first simplifies hook imports later.
+
+**Candidates:** `dateFormatting.ts`, `messageGrouping.ts`, `mentionUtils.ts`, `validation.ts`, `permissions.ts`, `channelUtils.ts`, `bytes.ts`, `avatar.ts`, `markdownFormatting.ts`, `rateLimit.ts`, and other pure functions.
+
+**Excluded (stay in desktop):** DOM-specific utils (`modalPositioning.ts`, `caretCoordinates.ts`, `cursor.ts`, `mentionPillDom.ts`, `mentionHighlighting.ts`), image processing (Web File APIs), and platform-specific utils that already have `.web`/`.native` splits (like `crypto`).
+
+## Plan 3: Hooks Migration
+
+**Separate plan file:** TBD (requires dedicated discussion)
+
+**Scope:** Migrate shared-compatible hooks from desktop to quorum-shared.
+
+**This is the biggest effort** — 230+ hook files, many with deep dependency chains. Hooks need careful evaluation for platform dependencies. Many business logic hooks were already extracted to `business/` folders during Phase 1 of the business logic extraction plan, making them good candidates. DOM-coupled hooks (drag/drop, scroll tracking, mention pills, search DOM manipulation) stay in desktop with native equivalents written fresh for mobile.
 
 ---
 
 _Created: 2026-03-15_
+_Updated: 2026-03-18_
