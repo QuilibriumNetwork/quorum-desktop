@@ -1,7 +1,7 @@
 ---
 name: "Test Manager"
 description: "Automatically creates, organizes, and maintains tests following project standards. Activates when implementing features, fixing bugs, or refactoring code to ensure proper test coverage and documentation."
-version: "1.0.0"
+version: "1.1.0"
 dependencies:
   - "vitest"
   - "@testing-library/react"
@@ -12,6 +12,14 @@ dependencies:
 
 This skill automatically handles test creation, organization, and maintenance for the Quorum Desktop project.
 
+## Source of Truth
+
+**For current test inventory, counts, and detailed descriptions, always read:**
+- `src/dev/tests/README.md` — main index with all test files, counts, and detailed descriptions
+- `src/dev/tests/[category]/README.md` — category-specific inventory and guidelines
+
+These files are kept up-to-date and are the single source of truth. This skill defines the *process* — the READMEs define the *inventory*.
+
 ## When to Activate
 
 **Automatically activate when:**
@@ -21,48 +29,44 @@ This skill automatically handles test creation, organization, and maintenance fo
 - Modifying existing functionality that affects behavior
 - Adding new hooks or React components
 
-**Key trigger phrases:**
-- "Add/implement/create [feature/component/service/utility]"
-- "Fix [bug/issue] in [component/service]"
-- "Refactor [code/component/service]"
-- "Update [functionality/behavior]"
-
 ## Testing Philosophy
 
 **What we test:**
-- ✅ Service construction and method signatures
-- ✅ Business logic and early return conditions
-- ✅ Error handling and validation
-- ✅ Component rendering and user interactions
-- ✅ Utility function behavior and edge cases
-- ✅ Hook return values and state updates
+- Service construction and method signatures
+- Business logic and early return conditions
+- Error handling and validation
+- Component rendering and user interactions
+- Utility function behavior and edge cases
+- Hook return values and state updates
+- Database store CRUD operations
 
 **What we DON'T test:**
-- ❌ Implementation details
-- ❌ Third-party library functionality
-- ❌ Real database/API operations (use mocks)
-- ❌ Browser-specific behavior
+- Implementation details
+- Third-party library functionality
+- Real database/API operations (use mocks)
+- Browser-specific behavior
 
-## Test Organization Structure
+## Test Organization
 
-```
-src/dev/tests/
-├── services/                    # Service unit tests
-├── utils/                       # Utility function tests
-├── components/                  # React component tests
-├── hooks/                       # React hooks tests
-├── integration/                 # Integration tests
-├── e2e/                         # End-to-end tests
-├── docs/                        # Manual testing guides
-├── setup.ts                     # Global test setup
-└── README.md                    # Main documentation
-```
+All tests live in `src/dev/tests/` organized by category:
+
+| Directory | Purpose |
+|-----------|---------|
+| `services/` | Service unit tests with mocked dependencies |
+| `utils/` | Utility function tests (pure functions) |
+| `components/` | React component rendering and accessibility |
+| `db/` | Database store operations (IndexedDB) |
+| `hooks/` | Custom React hooks |
+| `integration/` | Multi-component workflows |
+| `e2e/` | Full user journeys |
+| `docs/` | Manual testing guides |
 
 ## Naming Conventions
 
 - **Service tests**: `ServiceName.unit.test.tsx`
 - **Utility tests**: `utilityName.test.ts` or `utilityName.unit.test.ts`
 - **Component tests**: `ComponentName.test.tsx`
+- **Database tests**: `storeName.test.ts`
 - **Hook tests**: `useHookName.test.ts`
 - **Integration tests**: `featureName.integration.test.tsx`
 - **E2E tests**: `userFlow.e2e.test.ts`
@@ -87,6 +91,12 @@ src/dev/tests/
 - Test error conditions
 - Performance tests for critical functions
 
+### New Database Store/Schema → ALWAYS create db tests
+- Test save and retrieve operations
+- Test filtering and querying
+- Test deletion
+- Place in `src/dev/tests/db/`
+
 ### Bug Fix → CREATE tests if none exist
 - Test the bug condition
 - Test the fix
@@ -99,44 +109,27 @@ src/dev/tests/
 
 ## Running Tests
 
-### All Tests
 ```bash
+# All tests
 yarn vitest src/dev/tests/ --run
-```
 
-### By Category
-```bash
-yarn vitest src/dev/tests/services/ --run      # Service tests
-yarn vitest src/dev/tests/utils/ --run         # Utility tests
-yarn vitest src/dev/tests/components/ --run    # Component tests
-yarn vitest src/dev/tests/hooks/ --run         # Hook tests
-yarn vitest src/dev/tests/integration/ --run   # Integration tests
-```
+# By category
+yarn vitest src/dev/tests/services/ --run
+yarn vitest src/dev/tests/utils/ --run
+yarn vitest src/dev/tests/components/ --run
+yarn vitest src/dev/tests/db/ --run
+yarn vitest src/dev/tests/hooks/ --run
+yarn vitest src/dev/tests/integration/ --run
 
-### Development (Watch Mode)
-```bash
+# Watch mode
 yarn vitest src/dev/tests/ --watch
 ```
 
 ## Documentation Updates
 
-**When to update README files:**
-- After adding new test categories or files
-- When changing test organization
-- After adding new testing patterns or tools
-- When test coverage changes significantly
-
-**Files to update:**
-- `src/dev/tests/README.md` - Main documentation
-- `src/dev/tests/[category]/README.md` - Category-specific docs
-
-## Integration with Development Workflow
-
-1. **Before implementing**: Consider what tests will be needed
-2. **During implementation**: Create tests alongside code
-3. **After implementation**: Run tests to verify functionality
-4. **Before committing**: Ensure all tests pass
-5. **Documentation**: Update README files if test structure changed
+**After adding or removing test files, update:**
+- `src/dev/tests/README.md` — add/remove from directory tree, update counts, add detailed section
+- `src/dev/tests/[category]/README.md` — update category inventory table
 
 ## Templates and Examples
 
@@ -153,14 +146,4 @@ See the `examples/` directory for test templates:
 - **Assertions**: Be specific about expected behavior
 - **Setup**: Use beforeEach for common test setup
 - **Cleanup**: Tests should not affect each other
-
-## Performance Considerations
-
-- Keep test files focused (one service/component per file)
-- Use appropriate timeouts for async operations
-- Mock expensive operations
-- Consider parallelization for large test suites
-
----
-
-_This skill ensures consistent testing practices across the Quorum Desktop project._
+- **One file per unit**: Keep test files focused (one service/component per file)

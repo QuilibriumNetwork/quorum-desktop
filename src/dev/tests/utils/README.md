@@ -2,6 +2,17 @@
 
 Tests for utility functions and helper modules.
 
+## Current Tests
+
+| File | Tests | Description |
+|------|-------|-------------|
+| `reservedNames.test.ts` | 42 | Homoglyph normalization, mention keywords, impersonation detection, name classification |
+| `mentionUtils.enhanced.test.ts` | 31 | Mention extraction (user/channel/role/@everyone), backward compat, rate limiting |
+| `mentionHighlighting.test.ts` | 20 | Mention detection, HTML highlighting, code block exclusion, performance |
+| `messageGrouping.unit.test.ts` | 13 | Day boundaries, date separators, date labels, message grouping |
+
+**Total: 106 tests**
+
 ## Naming Convention
 - `utilityName.test.ts` - Standard utility tests
 - `utilityName.unit.test.ts` - Pure unit tests with mocks
@@ -26,15 +37,10 @@ describe('utilityName', () => {
 ```
 
 ## What to Test
-- ✅ Function return values
-- ✅ Input validation
-- ✅ Edge cases (null, empty, undefined)
-- ✅ Error handling
-- ✅ Performance (for critical utils)
+- Function return values
+- Input validation
+- Edge cases (null, empty, undefined)
+- Error handling
+- Performance (for critical utils)
 
-## Current Tests
-- `messageGrouping.unit.test.ts` - Message grouping utilities
-- `mentionHighlighting.test.ts` - Mention highlighting functionality
-- `mentionUtils.enhanced.test.ts` - Mention extraction utilities
-
-_Created: 2025-11-18_
+_Last updated: 2026-03-18_
