@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { UserInitials } from '../UserInitials';
 import { DefaultImages } from '../../../utils';
-import { getColorFromDisplayName } from '../../../utils/avatar';
+import { getColorFromDisplayName } from '@quilibrium/quorum-shared';
 
 interface UserAvatarProps {
   userIcon?: string;

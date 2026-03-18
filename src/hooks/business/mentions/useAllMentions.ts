@@ -1,8 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
 import { useMessageDB } from '../../../components/context/useMessageDB';
-import { isMentionedWithSettings } from '../../../utils/mentionUtils';
-import { getDefaultNotificationSettings } from '../../../utils/notificationSettingsUtils';
+import { isMentionedWithSettings, getDefaultNotificationSettings } from '@quilibrium/quorum-shared';
 import { getMutedChannelsForSpace } from '../../../utils/channelUtils';
 import type { Message } from '@quilibrium/quorum-shared';
 

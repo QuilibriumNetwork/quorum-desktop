@@ -1,7 +1,21 @@
 // MessageService.ts - Extracted from MessageDB.tsx with ZERO modifications
 // This service handles message CRUD operations, encryption/decryption, and reactions
 
-import { logger } from '@quilibrium/quorum-shared';
+import {
+  logger,
+  int64ToBytes,
+  getInviteUrlBase,
+  canonicalize,
+  extractMentionsFromText,
+  isMentionedWithSettings,
+  MAX_MENTIONS_PER_MESSAGE,
+  MAX_MESSAGE_LENGTH,
+  validateSpaceTagLetters,
+  isValidSpaceTagUrl,
+  hasPermission,
+  SimpleRateLimiter,
+  RATE_LIMITS,
+} from '@quilibrium/quorum-shared';
 import { MessageDB, EncryptionState, EncryptedMessage } from '../db/messages';
 import type {
   Message,
@@ -21,7 +35,6 @@ import type {
   BroadcastSpaceTag,
 } from '@quilibrium/quorum-shared';
 import { sha256, base58btc, hexToSpreadArray } from '../utils/crypto';
-import { int64ToBytes } from '../utils/bytes';
 import { QueryClient, InfiniteData } from '@tanstack/react-query';
 import {
   buildMessagesKey,
@@ -39,19 +52,9 @@ import {
 } from '@quilibrium/quilibrium-js-sdk-channels';
 import { t } from '@lingui/core/macro';
 import { DefaultImages } from '../utils';
-import { getInviteUrlBase } from '../utils/inviteDomain';
-import { canonicalize } from '../utils/canonicalize';
 import { QuorumApiClient } from '../api/baseTypes';
-import {
-  extractMentionsFromText,
-  isMentionedWithSettings,
-  MAX_MENTIONS_PER_MESSAGE,
-} from '../utils/mentionUtils';
-import { MAX_MESSAGE_LENGTH, validateSpaceTagLetters, isValidSpaceTagUrl } from '../utils/validation';
-import { hasPermission } from '../utils/permissions';
 import { showWarning, dismissToast, showPersistentToast } from '../utils/toast';
 import { notificationService } from './NotificationService';
-import { SimpleRateLimiter, RATE_LIMITS } from '../utils/rateLimit';
 import type { ActionQueueService } from './ActionQueueService';
 import { ENABLE_DM_ACTION_QUEUE } from '../config/features';
 import { ThreadService } from './ThreadService';

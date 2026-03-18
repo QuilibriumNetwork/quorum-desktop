@@ -13,7 +13,7 @@ import { useLocation } from 'react-router';
 import { t } from '@lingui/core/macro';
 import { useSpaceJoining, useInviteValidation, useSpaces } from '../../hooks';
 import { useModalSaveState } from '../../hooks/business/ui/useModalSaveState';
-import { getInviteDisplayDomain } from '@/utils/inviteDomain';
+import { getInviteDisplayDomain } from '@quilibrium/quorum-shared';
 
 type JoinSpaceModalProps = {
   visible: boolean;

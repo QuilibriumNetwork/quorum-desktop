@@ -29,7 +29,7 @@ import {
   QueryClient,
   useQueryClient,
 } from '@tanstack/react-query';
-import { getInviteUrlBase, parseInviteParams } from '@/utils/inviteDomain';
+import { getInviteUrlBase, parseInviteParams } from '@quilibrium/quorum-shared';
 import {
   channel_raw as ch,
   channel as secureChannel,
@@ -62,7 +62,8 @@ import { buildConfigKey } from '../../hooks/queries/config/buildConfigKey';
 import { t } from '@lingui/core/macro';
 import { Callout } from '../primitives';
 import { DefaultImages, getDefaultUserConfig } from '../../utils';
-import { canKickUser } from '../../utils/permissions';
+// canKickUser was removed - it's now part of ChannelPermissionChecker from @quilibrium/quorum-shared
+// import { canKickUser } from '@quilibrium/quorum-shared';
 
 type MessageDBContextValue = {
   messageDB: MessageDB;

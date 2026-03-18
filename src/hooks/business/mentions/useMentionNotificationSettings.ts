@@ -13,7 +13,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useMessageDB } from '../../../components/context/useMessageDB';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
 import type { NotificationSettings, NotificationTypeId } from '../../../types/notifications';
-import { getDefaultNotificationSettings } from '../../../utils/notificationSettingsUtils';
+import { getDefaultNotificationSettings } from '@quilibrium/quorum-shared';
 
 interface UseMentionNotificationSettingsProps {
   spaceId: string;

@@ -4,8 +4,8 @@ import { t } from '@lingui/core/macro';
 import {
   extractYouTubeVideoId,
   isValidYouTubeVideoId,
-  getYouTubeThumbnailURL
-} from '../../utils/youtubeUtils';
+  getYouTubeThumbnailURL,
+} from '@quilibrium/quorum-shared';
 
 interface YouTubeFacadeProps {
   videoId: string;
@@ -16,7 +16,7 @@ interface YouTubeFacadeProps {
 }
 
 // Re-export for backward compatibility
-export { extractYouTubeVideoId } from '../../utils/youtubeUtils';
+export { extractYouTubeVideoId } from '@quilibrium/quorum-shared';
 
 // DOM persistence cache - tracks which videos are currently loaded as iframes
 const iframeStateCache = new Map<string, boolean>();

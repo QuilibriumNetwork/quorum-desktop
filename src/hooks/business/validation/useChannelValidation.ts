@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { t } from '@lingui/core/macro';
-import { validateNameForXSS, MAX_NAME_LENGTH, MAX_TOPIC_LENGTH } from '../../../utils/validation';
+import { validateNameForXSS, MAX_NAME_LENGTH, MAX_TOPIC_LENGTH } from '@quilibrium/quorum-shared';
 
 /**
  * Centralized channel name validation logic

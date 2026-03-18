@@ -24,7 +24,7 @@ import type { VirtuosoHandle } from 'react-virtuoso';
 import React from 'react';
 import { DefaultImages } from '../../utils';
 import { useMessageHighlight } from '../../hooks/business/messages/useMessageHighlight';
-import { shouldShowDateSeparator, shouldShowCompactHeader } from '../../utils/messageGrouping';
+import { shouldShowDateSeparator, shouldShowCompactHeader } from '@quilibrium/quorum-shared';
 import { useScrollTracking } from '../../hooks/ui/useScrollTracking';
 import { Button } from '../primitives';
 import { Trans } from '@lingui/react/macro';

@@ -4,6 +4,7 @@ import { Button, Flex, Icon } from '../primitives';
 // import UserOnlineStateIndicator from './UserOnlineStateIndicator'; // TODO: Re-enable when online/offline status is implemented
 import { ClickToCopyContent } from '../ui';
 import './UserProfile.scss';
+import { createChannelPermissionChecker } from '@quilibrium/quorum-shared';
 import type { Role } from '@quilibrium/quorum-shared';
 import {
   useUserRoleManagement,
@@ -14,7 +15,6 @@ import { useSpaceOwner } from '../../hooks/queries/spaceOwner';
 import { useQuery } from '@tanstack/react-query';
 import { useMessageDB } from '../context/useMessageDB';
 import { useModals } from '../context/ModalProvider';
-import { createChannelPermissionChecker } from '../../utils/channelPermissions';
 import { useMutedUsers } from '../../hooks/queries/mutedUsers';
 import { t } from '@lingui/core/macro';
 import { getAddressSuffix } from '../../utils';

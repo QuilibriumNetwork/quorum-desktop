@@ -11,7 +11,7 @@ import {
 } from '../primitives';
 import type { Message as MessageType } from '@quilibrium/quorum-shared';
 import type { ThreadChannelProps } from '../context/ThreadContext';
-import { validateNameForXSS } from '../../utils/validation';
+import { validateNameForXSS } from '@quilibrium/quorum-shared';
 
 const THREAD_TITLE_MAX_CHARS = 100;
 

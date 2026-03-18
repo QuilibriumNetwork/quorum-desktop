@@ -4,7 +4,7 @@ import { getFolderColorHex } from '../space/IconPicker/types';
 import { NavItem } from '../../db/messages';
 import { isTouchDevice } from '../../utils/platform';
 import { useDragStateContext } from '../../context/DragStateContext';
-import { formatMentionCount } from '../../utils/formatMentionCount';
+import { formatMentionCount } from '@quilibrium/quorum-shared';
 import './Folder.scss';
 import './SpaceIcon.scss';
 

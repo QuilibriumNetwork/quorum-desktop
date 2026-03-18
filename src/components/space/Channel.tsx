@@ -42,7 +42,7 @@ import { Virtuoso } from 'react-virtuoso';
 import UserProfile from '../user/UserProfile';
 import { useUserProfileModal } from '../../hooks/business/ui/useUserProfileModal';
 import { UserAvatar } from '../user/UserAvatar';
-import { getUserRoles, hasPermission } from '../../utils/permissions';
+import { getUserRoles, hasPermission } from '@quilibrium/quorum-shared';
 import { useMobile } from '../context/MobileProvider';
 import type { CustomEmoji } from 'emoji-picker-react/dist/config/customEmojiConfig';
 import {

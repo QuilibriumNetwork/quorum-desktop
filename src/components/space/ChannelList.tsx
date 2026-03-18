@@ -16,7 +16,7 @@ import { useChannelUnreadCounts } from '../../hooks/business/messages';
 import { t } from '@lingui/core/macro';
 import { Button, Icon, Tooltip } from '../primitives';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
-import { getUserRoles } from '../../utils/permissions';
+import { getUserRoles } from '@quilibrium/quorum-shared';
 import type { Group } from '@quilibrium/quorum-shared';
 
 type ChannelListProps = { spaceId: string };

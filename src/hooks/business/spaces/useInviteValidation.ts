@@ -1,9 +1,9 @@
 import { useState, useEffect, useCallback } from 'react';
 import { channel_raw as ch } from '@quilibrium/quilibrium-js-sdk-channels';
 import { useQuorumApiClient } from '../../../components/context/QuorumApiContext';
+import { getValidInvitePrefixes } from '@quilibrium/quorum-shared';
 import type { Space } from '@quilibrium/quorum-shared';
 import { t } from '@lingui/core/macro';
-import { getValidInvitePrefixes } from '@/utils/inviteDomain';
 import { hexToSpreadArray } from '@/utils/crypto';
 
 interface ValidatedSpace {

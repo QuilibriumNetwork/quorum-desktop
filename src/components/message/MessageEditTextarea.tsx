@@ -5,7 +5,7 @@ import { Flex } from '../primitives';
 import { MarkdownToolbar } from './MarkdownToolbar';
 import { MentionDropdown } from './MentionDropdown';
 import { calculateToolbarPosition } from '../../utils/toolbarPositioning';
-import type { FormatFunction } from '../../utils/markdownFormatting';
+import type { FormatFunction } from '@quilibrium/quorum-shared';
 import type { Message as MessageType, PostMessage, Role, Channel } from '@quilibrium/quorum-shared';
 import { t } from '@lingui/core/macro';
 import { buildMessagesKey } from '../../hooks/queries/messages/buildMessagesKey';
@@ -14,9 +14,8 @@ import { usePasskeysContext, channel as secureChannel } from '@quilibrium/quilib
 import { DefaultImages } from '../../utils';
 import { isTouchDevice } from '../../utils/platform';
 import { ENABLE_MARKDOWN, ENABLE_DM_ACTION_QUEUE, ENABLE_MENTION_PILLS } from '../../config/features';
-import { createIPFSCIDRegex } from '../../utils/validation';
+import { createIPFSCIDRegex, extractMentionsFromText } from '@quilibrium/quorum-shared';
 import { useMentionInput, type MentionOption, useMentionPillEditor } from '../../hooks/business/mentions';
-import { extractMentionsFromText } from '../../utils/mentionUtils';
 import { getCaretCoordinates, type CaretCoordinates } from '../../utils/caretCoordinates';
 
 /**

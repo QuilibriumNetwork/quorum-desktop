@@ -1,6 +1,6 @@
 import React from 'react';
 import { Flex } from '../primitives';
-import { getDateLabel } from '../../utils/messageGrouping';
+import { getDateLabel } from '@quilibrium/quorum-shared';
 
 interface DateSeparatorProps {
   timestamp: number;

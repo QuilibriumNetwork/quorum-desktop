@@ -1,17 +1,15 @@
 // InvitationService.ts - Extracted from MessageDB.tsx with ZERO modifications
 // This service handles space invitation operations
 
-import { logger } from '@quilibrium/quorum-shared';
+import { logger, int64ToBytes, parseInviteParams, getInviteUrlBase } from '@quilibrium/quorum-shared';
 import { MessageDB, NavItem } from '../db/messages';
 import { QuorumApiClient } from '../api/baseTypes';
 import { channel as secureChannel, channel_raw as ch } from '@quilibrium/quilibrium-js-sdk-channels';
 import { sha256, base58btc, hexToSpreadArray } from '../utils/crypto';
-import { int64ToBytes } from '../utils/bytes';
 import { t } from '@lingui/core/macro';
 import { QueryClient } from '@tanstack/react-query';
 import { buildSpacesKey, buildConfigKey, buildSpaceKey } from '../hooks';
 import type { Space } from '@quilibrium/quorum-shared';
-import { parseInviteParams, getInviteUrlBase } from '../utils/inviteDomain';
 import { isQuorumApiError } from '../api/baseTypes';
 
 export class InvitationService {

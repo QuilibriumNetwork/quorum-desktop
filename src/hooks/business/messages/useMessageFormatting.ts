@@ -1,10 +1,14 @@
 import { useCallback } from 'react';
 import * as linkify from 'linkifyjs';
+import {
+  isYouTubeURL,
+  extractYouTubeVideoId,
+  YOUTUBE_URL_REGEX,
+  getValidInvitePrefixes,
+  parseMessageLink,
+  createIPFSCIDRegex,
+} from '@quilibrium/quorum-shared';
 import type { Message as MessageType, Sticker, Role, Channel } from '@quilibrium/quorum-shared';
-import { isYouTubeURL, extractYouTubeVideoId, YOUTUBE_URL_REGEX } from '../../../utils/youtubeUtils';
-import { getValidInvitePrefixes } from '../../../utils/inviteDomain';
-import { parseMessageLink } from '../../../utils/messageLinkUtils';
-import { createIPFSCIDRegex } from '../../../utils/validation';
 
 // Legacy export for backward compatibility
 export const YTRegex = YOUTUBE_URL_REGEX;

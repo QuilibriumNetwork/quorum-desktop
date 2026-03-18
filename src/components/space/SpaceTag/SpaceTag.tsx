@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
+import { isValidSpaceTagUrl } from '@quilibrium/quorum-shared';
 import type { BroadcastSpaceTag } from '@quilibrium/quorum-shared';
-import { isValidSpaceTagUrl } from '../../../utils/validation';
 import './SpaceTag.scss';
 
 interface SpaceTagProps {

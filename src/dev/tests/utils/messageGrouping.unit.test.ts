@@ -6,7 +6,7 @@ import {
   getDateLabel,
   groupMessagesByDay,
   generateListWithSeparators,
-} from '../../../utils/messageGrouping';
+} from '@quilibrium/quorum-shared';
 import type { Message } from '@quilibrium/quorum-shared';
 
 // Mock message helper

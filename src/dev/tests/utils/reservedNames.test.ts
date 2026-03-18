@@ -6,7 +6,7 @@ import {
   isMentionReserved,
   getReservedNameType,
   isReservedName,
-} from '../../../utils/validation';
+} from '@quilibrium/quorum-shared';
 
 describe('Reserved Name Validation', () => {
   describe('normalizeHomoglyphs', () => {

@@ -1,12 +1,10 @@
-import { logger } from '@quilibrium/quorum-shared';
+import { logger, BOOKMARKS_CONFIG, stripMarkdownAndMentions } from '@quilibrium/quorum-shared';
 import { useState, useCallback, useMemo } from 'react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useBookmarks as useBookmarksQuery } from '../../queries/bookmarks/useBookmarks';
 import { useInvalidateBookmarks } from '../../queries/bookmarks/useInvalidateBookmarks';
 import { useMessageDB } from '../../../components/context/useMessageDB';
 import type { Bookmark, Message } from '@quilibrium/quorum-shared';
-import { BOOKMARKS_CONFIG } from '@quilibrium/quorum-shared';
-import { stripMarkdownAndMentions } from '../../../utils/markdownStripping';
 import { showWarning } from '../../../utils/toast';
 import { t } from '@lingui/core/macro';
 

@@ -59,7 +59,6 @@ import { useNavigate } from 'react-router';
 // Web: uses multiformats directly
 // Native: uses React Native compatible implementations
 import { sha256, base58btc } from '../../utils/crypto';
-import { canonicalize } from '../../utils/canonicalize';
 import { t } from '@lingui/core/macro';
 
 type MessageDBContextValue = {

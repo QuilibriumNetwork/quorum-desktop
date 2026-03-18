@@ -4,7 +4,7 @@
  * Tests backward compatibility and new mention formats
  */
 
-import { extractMentionsFromText } from '../../../utils/mentionUtils';
+import { extractMentionsFromText } from '@quilibrium/quorum-shared';
 
 describe('Enhanced mentionUtils', () => {
   describe('extractMentionsFromText - User Mentions', () => {

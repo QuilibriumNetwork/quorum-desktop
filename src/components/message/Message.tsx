@@ -54,7 +54,7 @@ import { formatMessageDate } from '../../utils';
 import { useEditHistoryModal } from '../context/EditHistoryModalProvider';
 import { MessageEditTextarea } from './MessageEditTextarea';
 import { ENABLE_MARKDOWN } from '../../config/features';
-import { replaceMentionsWithDisplayNames } from '../../utils/markdownStripping';
+import { replaceMentionsWithDisplayNames } from '@quilibrium/quorum-shared';
 
 // Utility function for robust GIF detection
 const createGifDetector = (url: string, isLargeGif?: boolean) => {
