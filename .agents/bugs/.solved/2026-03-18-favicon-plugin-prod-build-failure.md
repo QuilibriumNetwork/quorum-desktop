@@ -1,7 +1,7 @@
 ---
 type: bug
 title: "vite-plugin-favicons-inject fails with NO_FILES_FOUND during production build"
-status: open
+status: solved
 priority: medium
 ai_generated: true
 created: 2026-03-18
@@ -47,10 +47,13 @@ vitePluginFaviconsInject('public/quorumicon-blue.svg', {
 
 ## Solution
 
-Not yet fixed. Possible approaches:
-1. Use absolute path for the favicon source: `resolve(__dirname, '../public/quorumicon-blue.svg')`
-2. Check if `outDir` resolution conflicts with the plugin's asset lookup
-3. Consider replacing `vite-plugin-favicons-inject` with a simpler favicon setup if the plugin doesn't support custom root/outDir configurations
+Removed `vite-plugin-favicons-inject` entirely and replaced with static `<link>` tags in all HTML files (`index.html`, `web/index.html`, `public/404.html`):
+```html
+<link rel="icon" type="image/svg+xml" href="/quorumicon-blue.svg" />
+<link rel="icon" type="image/png" href="/quorumicon-blue.png" />
+<link rel="apple-touch-icon" href="/quorumicon-blue.png" />
+```
+Also removed the `injectFaviconsInto404` Vite plugin (no longer needed) and the package dependency.
 
 ## Prevention
 

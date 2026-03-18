@@ -31,7 +31,7 @@ export class NotificationService {
   private static instance: NotificationService;
   private isSupported: boolean;
   private permission: NotificationPermission;
-  private readonly quorumIcon = '/quorumicon-blue.png';
+  private readonly quorumIcon = '/quorum-symbol.png';
   private pendingNotificationCount = 0;
   private latestNotification: NotificationMetadata | null = null;
   private mutedConversations: Set<string> = new Set();
