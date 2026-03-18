@@ -87,7 +87,8 @@ This is the main index for all documentation, bug reports, and task management.
 ## 🐛 Bug Reports
 
 ### Active Issues
-- [vite-plugin-favicons-inject fails with NO_FILES_FOUND during production build](bugs/2026-03-18-favicon-plugin-prod-build-failure.md)
+- [Leave Space - No Loading Feedback and UI Not Refreshing](bugs/2026-03-18-leave-space-no-feedback.md)
+- [Offline Banner Overlays Content Instead of Pushing Down](bugs/2026-03-18-offline-banner-overlay.md)
 - [Config Sync Space Loss Race Condition](bugs/config-sync-space-loss-race-condition.md)
 - [DirectMessage Invite Loading Performance Issue](bugs/directmessage-invite-loading-performance.md)
 - [Encryption State Evals Causing Config Sync Bloat](bugs/encryption-state-evals-bloat.md)
@@ -112,6 +113,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Profile Sync Not Working on Returning User Key Import](bugs/.solved/2026-03-14-profile-sync-not-working-on-key-import.md)
 - [Mobile Metro bundling fails at 99.9% — unable to resolve ./index from root](bugs/.solved/2026-03-15-mobile-metro-bundling-failure.md)
 - [Modals break when consuming quorum-shared from pre-built dist](bugs/.solved/2026-03-16-quorum-shared-pre-built-dist-modal-broken.md)
+- [vite-plugin-favicons-inject fails with NO_FILES_FOUND during production build](bugs/.solved/2026-03-18-favicon-plugin-prod-build-failure.md)
 - [Action Queue Bypasses SDK Encryption for Identity Keys](bugs/.solved/action-queue-plaintext-private-keys.md)
 - [Android 7.0 File Download Fix - Implementation Plan](bugs/.solved/SOLVED_android-file-download-huawei-p9-lite.md)
 - [Bug: Auto-Jump to First Unread Message - Blocked by Virtuoso Scroll Positioning](bugs/.solved/auto-jump-unread-virtuoso-scroll-conflict.md)
@@ -163,6 +165,8 @@ This is the main index for all documentation, bug reports, and task management.
 - [Get npm Publish Access for @quilibrium/quorum-shared](tasks/2026-03-15-npm-publish-access-quorum-shared.md)
 - [Primitives Migration Prep](tasks/2026-03-15-primitives-migration-prep.md)
 - [Stacked PRs Workflow](tasks/2026-03-15-stacked-prs-workflow.md)
+- [DM Delivery Receipts — Design Spec](tasks/2026-03-18-dm-delivery-receipts-design.md)
+- [DM Delivery Receipts Implementation Plan](tasks/2026-03-18-dm-delivery-receipts-plan.md)
 - [Utilities Migration Design](tasks/2026-03-18-utils-migration-design.md)
 - [Utilities Migration Implementation Plan](tasks/2026-03-18-utils-migration-plan.md)
 - [Accessibility Features — Remaining Work](tasks/accessibility-features-implementation.md)
@@ -472,4 +476,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2026-03-18 14:44:32
+**Last Updated**: 2026-03-18 17:07:11
