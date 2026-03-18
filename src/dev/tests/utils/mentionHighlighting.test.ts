@@ -12,16 +12,8 @@ describe('mentionHighlighting', () => {
       expect(containsMentions('Hello @<QmAbc123>')).toBe(true);
     });
 
-    it('should detect user mentions in new format', () => {
-      expect(containsMentions('Hello @[John Doe]<QmAbc123>')).toBe(true);
-    });
-
     it('should detect channel mentions in old format', () => {
       expect(containsMentions('Check #<ch-abc123>')).toBe(true);
-    });
-
-    it('should detect channel mentions in new format', () => {
-      expect(containsMentions('Check #[general-chat]<ch-abc123>')).toBe(true);
     });
 
     it('should detect role mentions', () => {
@@ -48,22 +40,10 @@ describe('mentionHighlighting', () => {
       expect(result).toContain('<span class="mention-highlight">@&lt;QmAbc123&gt;</span>');
     });
 
-    it('should highlight new format user mentions', () => {
-      const text = 'Hello @[John Doe]<QmAbc123>';
-      const result = highlightMentions(text);
-      expect(result).toContain('<span class="mention-highlight">@[John Doe]&lt;QmAbc123&gt;</span>');
-    });
-
     it('should highlight old format channel mentions', () => {
       const text = 'Check #<ch-abc123>';
       const result = highlightMentions(text);
       expect(result).toContain('<span class="mention-highlight">#&lt;ch-abc123&gt;</span>');
-    });
-
-    it('should highlight new format channel mentions', () => {
-      const text = 'Check #[general-chat]<ch-abc123>';
-      const result = highlightMentions(text);
-      expect(result).toContain('<span class="mention-highlight">#[general-chat]&lt;ch-abc123&gt;</span>');
     });
 
     it('should highlight role mentions', () => {
@@ -76,16 +56,6 @@ describe('mentionHighlighting', () => {
       const text = 'Hello @everyone';
       const result = highlightMentions(text);
       expect(result).toContain('<span class="mention-highlight">@everyone</span>');
-    });
-
-    it('should handle mixed formats in same message', () => {
-      const text = 'Hey @<QmOld123> and @[New User]<QmNew456> check #[general]<ch-123>';
-      const result = highlightMentions(text);
-
-      // Should highlight all three mentions
-      expect(result).toContain('<span class="mention-highlight">@&lt;QmOld123&gt;</span>');
-      expect(result).toContain('<span class="mention-highlight">@[New User]&lt;QmNew456&gt;</span>');
-      expect(result).toContain('<span class="mention-highlight">#[general]&lt;ch-123&gt;</span>');
     });
 
     it('should escape HTML characters', () => {

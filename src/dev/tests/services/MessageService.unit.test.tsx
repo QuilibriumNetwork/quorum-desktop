@@ -339,7 +339,7 @@ describe('MessageService - Unit Tests', () => {
         },
       };
 
-      const spy = vi.spyOn(queryClient, 'setQueryData');
+      const spy = vi.spyOn(queryClient, 'setQueriesData');
 
       await messageService.addMessage(
         queryClient,
@@ -387,7 +387,7 @@ describe('MessageService - Unit Tests', () => {
         },
       };
 
-      const spy = vi.spyOn(queryClient, 'setQueryData');
+      const spy = vi.spyOn(queryClient, 'setQueriesData');
 
       await messageService.addMessage(
         queryClient,
@@ -421,7 +421,7 @@ describe('MessageService - Unit Tests', () => {
         },
       };
 
-      const spy = vi.spyOn(queryClient, 'setQueryData');
+      const spy = vi.spyOn(queryClient, 'setQueriesData');
 
       await messageService.addMessage(
         queryClient,
@@ -659,19 +659,7 @@ describe('MessageService - Unit Tests', () => {
     });
   });
 
-  describe('7. encryptAndSendToSpace() - Triple Ratchet Encryption Helper', () => {
-    const mockEncryptionState = {
-      state: JSON.stringify({
-        state: {
-          /* mock ratchet state */
-        },
-      }),
-      timestamp: Date.now(),
-      inboxId: 'space-123',
-      conversationId: 'space-123/space-123',
-      sentAccept: false,
-    };
-
+  describe('7. encryptAndSendToSpace() - Hub Message Helper', () => {
     const createTestMessage = () =>
       ({
         messageId: 'msg-123',
@@ -689,74 +677,19 @@ describe('MessageService - Unit Tests', () => {
         },
       }) as any;
 
-    beforeEach(() => {
-      // Setup encryption state mock
-      mockDeps.messageDB.getEncryptionStates = vi
-        .fn()
-        .mockResolvedValue([mockEncryptionState]);
-      mockDeps.messageDB.saveEncryptionState = vi.fn().mockResolvedValue(undefined);
-    });
-
-    it('should save encryption state BEFORE sending by default', async () => {
+    it('should call sendHubMessage and enqueueOutbound', async () => {
       const message = createTestMessage();
-      const saveStateCalls: number[] = [];
-      const sendHubCalls: number[] = [];
-      let callOrder = 0;
-
-      mockDeps.messageDB.saveEncryptionState = vi.fn().mockImplementation(() => {
-        saveStateCalls.push(++callOrder);
-        return Promise.resolve();
-      });
-      mockDeps.sendHubMessage = vi.fn().mockImplementation(() => {
-        sendHubCalls.push(++callOrder);
-        return Promise.resolve('outbound-id');
-      });
-
-      // Recreate service with updated mocks
-      messageService = new MessageService(mockDeps);
 
       await messageService.encryptAndSendToSpace('space-123', message);
 
-      // ✅ VERIFY: saveEncryptionState was called
-      expect(mockDeps.messageDB.saveEncryptionState).toHaveBeenCalled();
+      // ✅ VERIFY: sendHubMessage was called with spaceId and message payload
+      expect(mockDeps.sendHubMessage).toHaveBeenCalledWith(
+        'space-123',
+        expect.stringContaining('"type":"message"')
+      );
 
-      // ✅ VERIFY: sendHubMessage was called
-      expect(mockDeps.sendHubMessage).toHaveBeenCalled();
-
-      // ✅ VERIFY: State saved BEFORE sending (default behavior)
-      expect(saveStateCalls[0]).toBeLessThan(sendHubCalls[0]);
-    });
-
-    it('should save encryption state AFTER sending when saveStateAfterSend is true', async () => {
-      const message = createTestMessage();
-      const saveStateCalls: number[] = [];
-      const sendHubCalls: number[] = [];
-      let callOrder = 0;
-
-      mockDeps.messageDB.saveEncryptionState = vi.fn().mockImplementation(() => {
-        saveStateCalls.push(++callOrder);
-        return Promise.resolve();
-      });
-      mockDeps.sendHubMessage = vi.fn().mockImplementation(() => {
-        sendHubCalls.push(++callOrder);
-        return Promise.resolve('outbound-id');
-      });
-
-      // Recreate service with updated mocks
-      messageService = new MessageService(mockDeps);
-
-      await messageService.encryptAndSendToSpace('space-123', message, {
-        saveStateAfterSend: true,
-      });
-
-      // ✅ VERIFY: saveEncryptionState was called
-      expect(mockDeps.messageDB.saveEncryptionState).toHaveBeenCalled();
-
-      // ✅ VERIFY: sendHubMessage was called
-      expect(mockDeps.sendHubMessage).toHaveBeenCalled();
-
-      // ✅ VERIFY: State saved AFTER sending (ActionQueue behavior)
-      expect(sendHubCalls[0]).toBeLessThan(saveStateCalls[0]);
+      // ✅ VERIFY: enqueueOutbound was called to send via WebSocket
+      expect(mockDeps.enqueueOutbound).toHaveBeenCalled();
     });
 
     it('should strip ephemeral fields when stripEphemeralFields is true', async () => {
@@ -766,37 +699,17 @@ describe('MessageService - Unit Tests', () => {
         sendError: 'Network error',
       };
 
-      // We can't easily test the encrypted payload, but we verify no errors
-      // and the method handles the stripping without throwing
-      await expect(
-        messageService.encryptAndSendToSpace('space-123', messageWithEphemeral, {
-          stripEphemeralFields: true,
-        })
-      ).resolves.toBeDefined();
-
-      // ✅ VERIFY: Method completed successfully with ephemeral fields
-      expect(mockDeps.sendHubMessage).toHaveBeenCalled();
-    });
-
-    it('should use correct conversationId format for Space encryption', async () => {
-      const message = createTestMessage();
-      const spaceId = 'space-xyz';
-
-      await messageService.encryptAndSendToSpace(spaceId, message);
-
-      // ✅ VERIFY: getEncryptionStates called with correct conversationId
-      expect(mockDeps.messageDB.getEncryptionStates).toHaveBeenCalledWith({
-        conversationId: `${spaceId}/${spaceId}`,
+      await messageService.encryptAndSendToSpace('space-123', messageWithEphemeral, {
+        stripEphemeralFields: true,
       });
 
-      // ✅ VERIFY: saveEncryptionState called with correct conversationId
-      expect(mockDeps.messageDB.saveEncryptionState).toHaveBeenCalledWith(
-        expect.objectContaining({
-          conversationId: `${spaceId}/${spaceId}`,
-          inboxId: spaceId,
-        }),
-        true
-      );
+      // ✅ VERIFY: sendHubMessage was called
+      expect(mockDeps.sendHubMessage).toHaveBeenCalled();
+
+      // ✅ VERIFY: The payload should NOT contain ephemeral fields
+      const payload = JSON.parse(mockDeps.sendHubMessage.mock.calls[0][1]);
+      expect(payload.message.sendStatus).toBeUndefined();
+      expect(payload.message.sendError).toBeUndefined();
     });
 
     it('should call sendHubMessage with correct message format', async () => {

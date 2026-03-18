@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import Modal from '@/components/primitives/Modal/Modal.web';
+import { Modal } from '@/components/primitives';
 
 // Mock the Icon component
 vi.mock('@/components/primitives/Icon', () => ({
@@ -52,14 +52,14 @@ describe('Modal (baseline)', () => {
     expect(screen.queryByText('Modal content')).not.toBeInTheDocument();
   });
 
-  // 3. Renders close button (Icon with name="close") by default
+  // 3. Renders close button by default
   it('renders close button with close icon by default', () => {
     render(
       <Modal {...defaultProps}>
         <p>Content</p>
       </Modal>
     );
-    expect(screen.getByTestId('icon-close')).toBeInTheDocument();
+    expect(screen.getByLabelText('Close dialog')).toBeInTheDocument();
   });
 
   // 4. Hides close button when hideClose=true
@@ -69,7 +69,7 @@ describe('Modal (baseline)', () => {
         <p>Content</p>
       </Modal>
     );
-    expect(screen.queryByTestId('icon-close')).not.toBeInTheDocument();
+    expect(screen.queryByLabelText('Close dialog')).not.toBeInTheDocument();
   });
 
   // 5. Applies size class
@@ -83,7 +83,7 @@ describe('Modal (baseline)', () => {
         <p>Content</p>
       </Modal>
     );
-    const modal = screen.getByTestId('modal-container').firstElementChild!;
+    const modal = screen.getByRole('dialog');
     expect(modal.className).toContain(expectedClass);
   });
 
@@ -94,7 +94,7 @@ describe('Modal (baseline)', () => {
         <p>Content</p>
       </Modal>
     );
-    const modal = screen.getByTestId('modal-container').firstElementChild!;
+    const modal = screen.getByRole('dialog');
     expect(modal.className).toContain('quorum-modal-no-padding');
   });
 
