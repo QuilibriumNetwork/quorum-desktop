@@ -1047,6 +1047,7 @@ export class ActionQueueHandlers {
     execute: async (context) => {
       const keyset = this.deps.getUserKeyset();
       if (!keyset) {
+        logger.error('[ActionQueue:sendDeliveryAck] Keyset not available');
         throw new Error('Keyset not available');
       }
 
@@ -1054,7 +1055,16 @@ export class ActionQueueHandlers {
       const messageIds = context.messageIds as string[];
       const selfUserAddress = context.selfUserAddress as string;
 
-      if (!messageIds || messageIds.length === 0) return;
+      if (!messageIds || messageIds.length === 0) {
+        logger.log('[ActionQueue:sendDeliveryAck] Empty messageIds, skipping');
+        return;
+      }
+
+      logger.log('[ActionQueue:sendDeliveryAck] Sending standalone ack', {
+        address: address?.slice(0, 16),
+        messageIds,
+        selfUserAddress: selfUserAddress?.slice(0, 16),
+      });
 
       const ackMessage = {
         senderId: selfUserAddress,
@@ -1062,7 +1072,13 @@ export class ActionQueueHandlers {
         messageIds,
       };
 
-      await this.encryptAndSendDm(address, ackMessage, selfUserAddress, keyset);
+      try {
+        await this.encryptAndSendDm(address, ackMessage, selfUserAddress, keyset);
+        logger.log('[ActionQueue:sendDeliveryAck] Ack sent successfully');
+      } catch (err: any) {
+        logger.error('[ActionQueue:sendDeliveryAck] Failed to send ack', err.message);
+        throw err;
+      }
     },
     isPermanentError: (error: Error) => {
       const message = error.message || '';

@@ -37,7 +37,7 @@
 - Modify: `src/types/actionQueue.ts`
 - Modify: `src/db/messages.ts`
 
-- [ ] **Step 1: Create delivery receipt types file**
+- [x] **Step 1: Create delivery receipt types file**
 
 ```typescript
 // src/types/deliveryReceipt.ts
@@ -77,7 +77,7 @@ import type { Message } from '@quilibrium/quorum-shared';
 export type MessageWithDelivery = Message & DeliveryReceiptMessageExtensions;
 ```
 
-- [ ] **Step 2: Add `send-delivery-ack` to ActionType union**
+- [x] **Step 2: Add `send-delivery-ack` to ActionType union**
 
 In `src/types/actionQueue.ts`, add to the `ActionType` union after the existing DM actions:
 
@@ -91,7 +91,7 @@ In `src/types/actionQueue.ts`, add to the `ActionType` union after the existing 
   | 'send-delivery-ack';
 ```
 
-- [ ] **Step 3: Add `deliveryReceipts` to UserConfig**
+- [x] **Step 3: Add `deliveryReceipts` to UserConfig**
 
 In `src/db/messages.ts`, add to the `UserConfig` type (after `mutedConversations`):
 
@@ -101,7 +101,7 @@ In `src/db/messages.ts`, add to the `UserConfig` type (after `mutedConversations
   deliveryReceipts?: boolean;
 ```
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```bash
 git add src/types/deliveryReceipt.ts src/types/actionQueue.ts src/db/messages.ts
@@ -123,7 +123,7 @@ EOF
 - Create: `src/services/DeliveryReceiptService.ts`
 - Create: `src/dev/tests/services/DeliveryReceiptService.unit.test.ts`
 
-- [ ] **Step 1: Write failing tests for DeliveryReceiptService**
+- [x] **Step 1: Write failing tests for DeliveryReceiptService**
 
 Create `src/dev/tests/services/DeliveryReceiptService.unit.test.ts`:
 
@@ -249,12 +249,12 @@ describe('DeliveryReceiptService', () => {
 });
 ```
 
-- [ ] **Step 2: Run tests to verify they fail**
+- [x] **Step 2: Run tests to verify they fail**
 
 Run: `yarn vitest src/dev/tests/services/DeliveryReceiptService.unit.test.ts --run`
 Expected: FAIL — module not found
 
-- [ ] **Step 3: Implement DeliveryReceiptService**
+- [x] **Step 3: Implement DeliveryReceiptService**
 
 Create `src/services/DeliveryReceiptService.ts`:
 
@@ -397,12 +397,12 @@ export class DeliveryReceiptService {
 }
 ```
 
-- [ ] **Step 4: Run tests to verify they pass**
+- [x] **Step 4: Run tests to verify they pass**
 
 Run: `yarn vitest src/dev/tests/services/DeliveryReceiptService.unit.test.ts --run`
 Expected: All PASS
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add src/services/DeliveryReceiptService.ts src/dev/tests/services/DeliveryReceiptService.unit.test.ts
@@ -424,7 +424,7 @@ EOF
 - Modify: `src/services/ActionQueueHandlers.ts`
 - Modify: `src/dev/tests/services/ActionQueueHandlers.unit.test.ts`
 
-- [ ] **Step 1: Write failing tests for send-delivery-ack handler**
+- [x] **Step 1: Write failing tests for send-delivery-ack handler**
 
 Add to `src/dev/tests/services/ActionQueueHandlers.unit.test.ts`, in a new `describe` block:
 
@@ -467,12 +467,12 @@ describe('send-delivery-ack handler', () => {
 });
 ```
 
-- [ ] **Step 2: Run tests to verify they fail**
+- [x] **Step 2: Run tests to verify they fail**
 
 Run: `yarn vitest src/dev/tests/services/ActionQueueHandlers.unit.test.ts --run`
 Expected: FAIL — handler not found
 
-- [ ] **Step 3: Implement send-delivery-ack handler**
+- [x] **Step 3: Implement send-delivery-ack handler**
 
 In `src/services/ActionQueueHandlers.ts`, add the handler (near the other DM handlers, after `editDm`):
 
@@ -518,12 +518,12 @@ const handlers: Record<string, TaskHandler> = {
 };
 ```
 
-- [ ] **Step 4: Run tests to verify they pass**
+- [x] **Step 4: Run tests to verify they pass**
 
 Run: `yarn vitest src/dev/tests/services/ActionQueueHandlers.unit.test.ts --run`
 Expected: All PASS (existing + new tests)
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add src/services/ActionQueueHandlers.ts src/dev/tests/services/ActionQueueHandlers.unit.test.ts
@@ -545,7 +545,7 @@ EOF
 
 This task wires DeliveryReceiptService into the DM receive flow.
 
-- [ ] **Step 1: Add DeliveryReceiptService dependency to MessageService**
+- [x] **Step 1: Add DeliveryReceiptService dependency to MessageService**
 
 In the MessageService constructor/initialization, accept and store a `DeliveryReceiptService` instance. The service will be instantiated by the context provider (same pattern as ActionQueueService).
 
@@ -559,7 +559,7 @@ setDeliveryReceiptService(service: DeliveryReceiptService): void {
 }
 ```
 
-- [ ] **Step 2: Hook into handleNewMessage() to buffer acks**
+- [x] **Step 2: Hook into handleNewMessage() to buffer acks**
 
 In `MessageService.ts`, in the `handleNewMessage()` method (around line 2313 where `saveMessage` is called), after successful decryption and before/after saving the message, add:
 
@@ -605,7 +605,7 @@ The delivery receipt interception MUST be implemented at BOTH sites. The same th
 
 Consider extracting a shared helper function (e.g., `processDeliveryReceiptData(decryptedContent, senderAddress)`) to avoid duplicating this logic at both call sites.
 
-- [ ] **Step 3: Commit**
+- [x] **Step 3: Commit**
 
 ```bash
 git add src/services/MessageService.ts
@@ -627,7 +627,7 @@ EOF
 - Modify: `src/services/MessageService.ts`
 - Modify: `src/db/messages.ts`
 
-- [ ] **Step 1: Add piggyback hook to DM send flow**
+- [x] **Step 1: Add piggyback hook to DM send flow**
 
 In `MessageService.ts`, in the `submitMessage()` method (around lines 1778-1812 where the DM is about to be sent), before the message is encrypted, call `flushForPiggyback`:
 
@@ -643,7 +643,7 @@ if (this.deliveryReceiptService) {
 
 **Note**: This must also be done in the legacy (online) send path, not just the Action Queue path. The implementer should find all DM send paths (submitMessage for posts, and the reaction/edit/delete flows in `useMessageActions.ts` and `MessageEditTextarea.tsx`) and add piggyback at each. Alternatively, add it in a single place that all DM sends pass through — consult the codebase at implementation time for the cleanest integration point.
 
-- [ ] **Step 2: Implement ack processing — update deliveredAt on messages**
+- [x] **Step 2: Implement ack processing — update deliveredAt on messages**
 
 The `onAckProcessed` callback (passed to DeliveryReceiptService) should update messages in both React Query cache and IndexedDB:
 
@@ -662,7 +662,7 @@ const handleAckProcessed = (messageIds: string[]) => {
 };
 ```
 
-- [ ] **Step 3: Add updateMessageDeliveredAt to message DB**
+- [x] **Step 3: Add updateMessageDeliveredAt to message DB**
 
 In `src/db/messages.ts`, add a method to update `deliveredAt` on a persisted message:
 
@@ -687,7 +687,7 @@ async updateMessageDeliveredAt(messageId: string, deliveredAt: number): Promise<
 }
 ```
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```bash
 git add src/services/MessageService.ts src/db/messages.ts
@@ -707,7 +707,7 @@ EOF
 **Files:**
 - Modify: `src/components/context/MessageDB.tsx` (or wherever services are initialized)
 
-- [ ] **Step 1: Instantiate DeliveryReceiptService and wire to MessageService + ActionQueue**
+- [x] **Step 1: Instantiate DeliveryReceiptService and wire to MessageService + ActionQueue**
 
 Follow the existing service initialization pattern (see `.agents/docs/features/action-queue.md`, "Service Initialization" section). The DeliveryReceiptService is created after MessageService and ActionQueueService:
 
@@ -741,7 +741,7 @@ messageService.setDeliveryReceiptService(deliveryReceiptService);
 
 **Note**: The implementer should read the existing initialization flow in `MessageDB.tsx` (or its equivalent context provider) carefully. The exact wiring depends on what's available in scope (queryClient, userAddress, messageDB, etc.).
 
-- [ ] **Step 2: Commit**
+- [x] **Step 2: Commit**
 
 ```bash
 git add src/components/context/MessageDB.tsx
@@ -762,7 +762,7 @@ EOF
 - Modify: `src/components/message/Message.tsx`
 - Modify: `src/components/message/Message.scss`
 
-- [ ] **Step 1: Add delivered indicator to Message.tsx**
+- [x] **Step 1: Add delivered indicator to Message.tsx**
 
 In `src/components/message/Message.tsx`, after the existing "Sending..." indicator block (line ~1231, between the `sending` and `failed` blocks), add:
 
@@ -779,7 +779,7 @@ In `src/components/message/Message.tsx`, after the existing "Sending..." indicat
 
 **Important**: The ✓ should only render if the user's `deliveryReceipts` setting is ON. Add a `showDeliveryReceipts?: boolean` prop to `MessageProps`, threaded from the parent component (Channel.tsx / DirectMessage.tsx → MessageList.tsx → Message.tsx). The parent already has access to UserConfig via `useUserSettings` or the messageDB context. This follows the existing prop-threading pattern used for `onRetryMessage` and `dmContext`.
 
-- [ ] **Step 2: Add `deliveredAt` to React.memo comparison**
+- [x] **Step 2: Add `deliveredAt` to React.memo comparison**
 
 In the memo comparison function (line ~1324-1344), add:
 
@@ -789,7 +789,7 @@ prevProps.message.deliveredAt !== nextProps.message.deliveredAt ||
 
 After the existing `sendStatus` check (line 1340).
 
-- [ ] **Step 3: Add delivered styles to Message.scss**
+- [x] **Step 3: Add delivered styles to Message.scss**
 
 In `src/components/message/Message.scss`, add to the `.message-status` block (after the `&.failed` rule, around line 282):
 
@@ -799,7 +799,7 @@ In `src/components/message/Message.scss`, add to the `.message-status` block (af
 }
 ```
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```bash
 git add src/components/message/Message.tsx src/components/message/Message.scss
@@ -819,7 +819,7 @@ EOF
 **Files:**
 - Modify: `src/components/modals/UserSettingsModal/Privacy.tsx`
 
-- [ ] **Step 1: Add deliveryReceipts prop to PrivacyProps interface**
+- [x] **Step 1: Add deliveryReceipts prop to PrivacyProps interface**
 
 ```typescript
 interface PrivacyProps {
@@ -829,7 +829,7 @@ interface PrivacyProps {
 }
 ```
 
-- [ ] **Step 2: Add the toggle in the Security section**
+- [x] **Step 2: Add the toggle in the Security section**
 
 In the Privacy component JSX, after the "Show Online Status" toggle (line ~206), add:
 
@@ -855,11 +855,11 @@ In the Privacy component JSX, after the "Show Online Status" toggle (line ~206),
 </div>
 ```
 
-- [ ] **Step 3: Wire the prop from the parent component**
+- [x] **Step 3: Wire the prop from the parent component**
 
 The implementer should find where `Privacy` is rendered (likely in `UserSettingsModal.tsx` or similar parent) and wire the `deliveryReceipts`/`setDeliveryReceipts` props using the same pattern as `allowSync`/`setAllowSync` and `nonRepudiable`/`setNonRepudiable`. The value comes from UserConfig and is saved via the `save-user-config` Action Queue task.
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```bash
 git add src/components/modals/UserSettingsModal/Privacy.tsx
@@ -879,12 +879,12 @@ EOF
 **Files:**
 - No new files — manual testing checklist
 
-- [ ] **Step 1: Run all existing tests to verify no regressions**
+- [x] **Step 1: Run all existing tests to verify no regressions**
 
 Run: `yarn vitest --run`
 Expected: All existing tests pass + new delivery receipt tests pass
 
-- [ ] **Step 2: Manual testing checklist**
+- [x] **Step 2: Manual testing checklist**
 
 Test each scenario with the dev build (`yarn dev`):
 
@@ -898,7 +898,7 @@ Test each scenario with the dev build (`yarn dev`):
 8. **Toggle OFF mid-conversation**: Turn setting OFF — buffer is discarded, no more acks sent
 9. **App restart**: Send DM, recipient acks — close and reopen app — ✓ still shows (persisted `deliveredAt`)
 
-- [ ] **Step 3: Commit any fixes from integration testing**
+- [x] **Step 3: Commit any fixes from integration testing**
 
 ---
 
@@ -907,7 +907,7 @@ Test each scenario with the dev build (`yarn dev`):
 **Files:**
 - Modify: `.agents/docs/features/messages/message-sending-indicator.md`
 
-- [ ] **Step 1: Update the existing message sending indicator doc**
+- [x] **Step 1: Update the existing message sending indicator doc**
 
 Add a new section "Delivery Receipts" to the existing doc at `.agents/docs/features/messages/message-sending-indicator.md`. Cover:
 - The new `deliveredAt` field and ✓ indicator
@@ -915,7 +915,7 @@ Add a new section "Delivery Receipts" to the existing doc at `.agents/docs/featu
 - Privacy setting behavior
 - Link to the design spec
 
-- [ ] **Step 2: Commit**
+- [x] **Step 2: Commit**
 
 ```bash
 git add .agents/docs/features/messages/message-sending-indicator.md
