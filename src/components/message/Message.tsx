@@ -164,6 +164,15 @@ export const Message = React.memo(
     const user = usePasskeysContext();
     const { spaceId } = useParams();
     const location = useLocation();
+
+    // DEBUG: trace deliveredAt on own DM messages
+    if (message.content?.senderId === user.currentPasskeyInfo?.address && message.content?.type === 'post' && !spaceId) {
+      console.log('[DeliveryReceipt:Message] own msg', {
+        id: message.messageId?.slice(0, 12),
+        deliveredAt: (message as any).deliveredAt,
+        sendStatus: message.sendStatus,
+      });
+    }
     const navigate = useNavigate();
     const { openMobileActionsDrawer, openMobileEmojiDrawer } = useMobile();
 
@@ -916,6 +925,13 @@ export const Message = React.memo(
                   }
 
                   // Check if we should use markdown rendering (disabled for security review)
+                  // Inline delivered checkmark — show if deliveredAt is persisted on own messages
+                  // Once deliveredAt is set, always show it (don't gate on async setting load)
+                  const deliveredIndicator = !message.sendStatus && (message as any).deliveredAt &&
+                    message.content?.senderId === user.currentPasskeyInfo?.address
+                    ? <span className="message-status delivered"><Icon name="check" size="xs" /></span>
+                    : null;
+
                   if (ENABLE_MARKDOWN && formatting.shouldUseMarkdown()) {
                     return (
                       <div className="message-post-content break-words">
@@ -937,6 +953,7 @@ export const Message = React.memo(
                           messageSenderId={message.content?.senderId}
                           currentUserAddress={user.currentPasskeyInfo?.address}
                           currentSpaceId={spaceId}
+                          suffix={deliveredIndicator}
                         />
                       </div>
                     );
@@ -1087,6 +1104,7 @@ export const Message = React.memo(
                             </React.Fragment>
                           );
                         })}
+                        {i === contentData.content.length - 1 && deliveredIndicator}
                       </div>
                     );
                   });
@@ -1258,13 +1276,7 @@ export const Message = React.memo(
                   )}
                 </Flex>
               )}
-              {/* Delivered indicator — only on own messages when deliveredAt is set and setting is ON */}
-              {!message.sendStatus && (message as any).deliveredAt && showDeliveryReceipts &&
-                message.content?.senderId === user.currentPasskeyInfo?.address && (
-                <Flex align="center" gap="xs" className="message-status delivered pt-1">
-                  <Icon name="check" size="xs" />
-                </Flex>
-              )}
+              {/* Delivered indicator is rendered inline inside message-post-content */}
             </div>
           </Flex>
         )}

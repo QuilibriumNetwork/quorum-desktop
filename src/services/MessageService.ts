@@ -210,20 +210,28 @@ export class MessageService {
     selfAddress: string,
     deliveryReceiptsEnabled: boolean,
   ): boolean {
+    const raw = decryptedContent as any;
+
     // 1. Intercept delivery-ack control messages — never save, never display
-    if ((decryptedContent as any).content?.type === 'delivery-ack') {
+    // The ack message is a flat object { type: 'delivery-ack', senderId, messageIds }
+    // (not nested under .content like regular Message objects)
+    const isDeliveryAck = raw.type === 'delivery-ack' || raw.content?.type === 'delivery-ack';
+    if (isDeliveryAck) {
       if (this.deliveryReceiptService && deliveryReceiptsEnabled) {
-        this.deliveryReceiptService.onAckReceived((decryptedContent as any).content.messageIds ?? []);
+        const ackIds = raw.messageIds ?? raw.content?.messageIds ?? [];
+        logger.log('[DeliveryReceipt] Processing incoming ack', { ackIds, from: senderAddress });
+        this.deliveryReceiptService.onAckReceived(ackIds);
       }
       return true; // Signal: intercept this message
     }
 
     // 2. Extract piggybacked ackMessageIds, process, then strip
-    const ackMessageIds = (decryptedContent as any).ackMessageIds;
+    const ackMessageIds = raw.ackMessageIds;
     if (ackMessageIds && this.deliveryReceiptService && deliveryReceiptsEnabled) {
+      logger.log('[DeliveryReceipt] Processing piggybacked acks', { ackMessageIds, from: senderAddress });
       this.deliveryReceiptService.onAckReceived(ackMessageIds);
     }
-    delete (decryptedContent as any).ackMessageIds;
+    delete raw.ackMessageIds;
 
     // 3. Buffer this message's ID for acking (only for post messages from others)
     // DEFENSE IN DEPTH: explicitly exclude delivery-ack to prevent infinite ack loops
@@ -233,6 +241,7 @@ export class MessageService {
       decryptedContent.content?.type === 'post' &&
       decryptedContent.content?.senderId !== selfAddress
     ) {
+      logger.log('[DeliveryReceipt] Buffering messageId for ack', { messageId: decryptedContent.messageId, sender: senderAddress });
       this.deliveryReceiptService.onMessageReceived(senderAddress, decryptedContent.messageId);
     }
 

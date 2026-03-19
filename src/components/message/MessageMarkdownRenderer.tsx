@@ -40,6 +40,8 @@ interface MessageMarkdownRendererProps {
   messageSenderId?: string;
   currentUserAddress?: string;
   currentSpaceId?: string;
+  /** Inline element appended after the last paragraph (e.g. delivery receipt checkmark) */
+  suffix?: React.ReactNode;
 }
 
 
@@ -232,6 +234,7 @@ export const MessageMarkdownRenderer: React.FC<MessageMarkdownRendererProps> = (
   messageSenderId,
   currentUserAddress,
   currentSpaceId,
+  suffix,
 }) => {
 
   // Convert H1 and H2 headers to H3 since only H3 is allowed
@@ -1051,7 +1054,7 @@ export const MessageMarkdownRenderer: React.FC<MessageMarkdownRendererProps> = (
   }, [onUserClick, onChannelClick, onMessageLinkClick, mapSenderToUser]);
 
   return (
-    <div className={`break-words min-w-0 max-w-full overflow-hidden ${className || ''}`} onClick={handleClick}>
+    <div className={`break-words min-w-0 max-w-full overflow-hidden ${suffix ? 'has-inline-suffix' : ''} ${className || ''}`} onClick={handleClick}>
       <ReactMarkdown
         remarkPlugins={[remarkGfm, remarkBreaks, remarkTwemoji]}
         rehypePlugins={[]}
@@ -1059,6 +1062,7 @@ export const MessageMarkdownRenderer: React.FC<MessageMarkdownRendererProps> = (
       >
         {processedContent}
       </ReactMarkdown>
+      {suffix}
     </div>
   );
 };

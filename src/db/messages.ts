@@ -360,6 +360,9 @@ export class MessageDB {
         if (msg && !msg.deliveredAt) {
           msg.deliveredAt = deliveredAt;
           store.put(msg);
+          console.log('[DeliveryReceipt:DB] Persisted deliveredAt', { messageId: messageId.slice(0, 12), deliveredAt });
+        } else if (!msg) {
+          console.warn('[DeliveryReceipt:DB] Message not found in IndexedDB', { messageId: messageId.slice(0, 12) });
         }
         resolve();
       };
