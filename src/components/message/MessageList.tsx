@@ -581,20 +581,22 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
                 : messageList.length - 1
           }
           followOutput={(isAtBottom: boolean) => {
-            // Don't auto-scroll during deletions - use ref for synchronous check
-            // (props update async and may not be ready when Virtuoso calls followOutput)
+            // Don't auto-scroll during deletions
             if (deletionInProgressRef.current) {
+              console.log('[SCROLLBUG] followOutput: skip (deletion)');
               return false;
             }
-            // Don't auto-scroll after jumping to old message (prevents scroll during manual pagination)
-            // Only auto-scroll when at the true present (hasNextPage === false)
+            // Don't auto-scroll after jumping to old message
             if (hasJumpedToOldMessage) {
+              console.log('[SCROLLBUG] followOutput: skip (jumped)');
               return false;
             }
-            // Only auto-scroll if we're at bottom AND at the true present (no more pages to load)
+            // Only auto-scroll if at bottom and at the true present
             if (isAtBottom && hasNextPage === false) {
-              return 'smooth';
+              console.log('[SCROLLBUG] followOutput: auto');
+              return 'auto';
             }
+            console.log(`[SCROLLBUG] followOutput: skip (isAtBottom:${isAtBottom} hasNextPage:${hasNextPage})`);
             return false;
           }}
           totalCount={messageList.length}
