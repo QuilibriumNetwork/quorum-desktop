@@ -86,6 +86,8 @@ export type UserConfig = {
   favoriteDMs?: string[];
   // Muted DM conversation IDs (no unread indicators or notifications)
   mutedConversations?: string[];
+  // Delivery receipts: when ON, sends acks to senders and displays ✓ on own messages
+  deliveryReceipts?: boolean;
   // The spaceId of the Space whose tag this user has selected to display globally
   spaceTagId?: string;
   // Snapshot of the last tag data broadcast so startup refresh can detect owner changes
