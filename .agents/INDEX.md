@@ -169,6 +169,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [DM Delivery Receipts Implementation Plan](tasks/2026-03-18-dm-delivery-receipts-plan.md)
 - [Utilities Migration Design](tasks/2026-03-18-utils-migration-design.md)
 - [Utilities Migration Implementation Plan](tasks/2026-03-18-utils-migration-plan.md)
+- [Move Utility Tests to quorum-shared](tasks/2026-03-19-move-tests-to-quorum-shared.md)
 - [Accessibility Features — Remaining Work](tasks/accessibility-features-implementation.md)
 - [Add User Bio Field to UserSettingsModal General Tab](tasks/add-user-bio-field.md)
 - [Auto-save settings modals — eliminate save buttons](tasks/auto-save-settings-modals.md)
@@ -476,4 +477,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2026-03-18 17:07:11
+**Last Updated**: 2026-03-19 14:34:33
