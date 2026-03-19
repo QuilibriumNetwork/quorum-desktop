@@ -1035,6 +1035,45 @@ export class ActionQueueHandlers {
   };
 
   /**
+   * Send batched delivery receipt ack via Double Ratchet.
+   * Best-effort — no onFailure callback (we don't update UI on ack failure).
+   *
+   * Context expected:
+   * - address: string (DM conversation address)
+   * - messageIds: string[] (acked message IDs)
+   * - selfUserAddress: string (user's address for identity in envelope)
+   */
+  private sendDeliveryAck: TaskHandler = {
+    execute: async (context) => {
+      const keyset = this.deps.getUserKeyset();
+      if (!keyset) {
+        throw new Error('Keyset not available');
+      }
+
+      const address = context.address as string;
+      const messageIds = context.messageIds as string[];
+      const selfUserAddress = context.selfUserAddress as string;
+
+      if (!messageIds || messageIds.length === 0) return;
+
+      const ackMessage = {
+        senderId: selfUserAddress,
+        type: 'delivery-ack' as const,
+        messageIds,
+      };
+
+      await this.encryptAndSendDm(address, ackMessage, selfUserAddress, keyset);
+    },
+    isPermanentError: (error: Error) => {
+      const message = error.message || '';
+      return message.includes('400') || message.includes('403');
+    },
+    // No onFailure — delivery acks are best-effort
+    successMessage: undefined,
+    failureMessage: undefined,
+  };
+
+  /**
    * Sanitize error messages to avoid exposing internal details to the user
    */
   private sanitizeError(error: Error): string {
@@ -1073,6 +1112,8 @@ export class ActionQueueHandlers {
       'reaction-dm': this.reactionDm,
       'delete-dm': this.deleteDm,
       'edit-dm': this.editDm,
+      // Delivery receipts (Double Ratchet)
+      'send-delivery-ack': this.sendDeliveryAck,
     };
     return handlers[taskType];
   }
