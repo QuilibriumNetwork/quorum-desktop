@@ -56,6 +56,7 @@ import { QuorumApiClient } from '../api/baseTypes';
 import { showWarning, dismissToast, showPersistentToast } from '../utils/toast';
 import { notificationService } from './NotificationService';
 import type { ActionQueueService } from './ActionQueueService';
+import type { DeliveryReceiptService } from './DeliveryReceiptService';
 import { ENABLE_DM_ACTION_QUEUE } from '../config/features';
 import { ThreadService } from './ThreadService';
 
@@ -150,6 +151,9 @@ export class MessageService {
   // ActionQueueService for persistent queue (optional, set via setter)
   private actionQueueService?: ActionQueueService;
 
+  // DeliveryReceiptService for DM delivery receipts (optional, set via setter)
+  private deliveryReceiptService: DeliveryReceiptService | null = null;
+
   // Cooldown guard: prevents rapid re-broadcasts when a space owner spam-updates their tag
   private pendingTagRebroadcast = new Set<string>();
 
@@ -180,6 +184,59 @@ export class MessageService {
    */
   setActionQueueService(service: ActionQueueService): void {
     this.actionQueueService = service;
+  }
+
+  /**
+   * Set the DeliveryReceiptService for DM delivery receipts.
+   * Call this after MessageService is created to avoid circular dependencies.
+   */
+  setDeliveryReceiptService(service: DeliveryReceiptService): void {
+    this.deliveryReceiptService = service;
+  }
+
+  /**
+   * Process delivery receipt data from a decrypted DM message.
+   * Returns true if the message is a delivery-ack control message (should be intercepted, not saved).
+   * Returns false if the message is a normal message (continue with saveMessage pipeline).
+   *
+   * Three-step logic applied at both DM decrypt paths:
+   * 1. Intercept delivery-ack type BEFORE saveMessage — return true (early exit)
+   * 2. Extract + process ackMessageIds from any message — then strip before saveMessage
+   * 3. Buffer the received message's ID for acking — after decryption succeeds
+   */
+  private processDeliveryReceiptData(
+    decryptedContent: Message,
+    senderAddress: string,
+    selfAddress: string,
+    deliveryReceiptsEnabled: boolean,
+  ): boolean {
+    // 1. Intercept delivery-ack control messages — never save, never display
+    if ((decryptedContent as any).content?.type === 'delivery-ack') {
+      if (this.deliveryReceiptService && deliveryReceiptsEnabled) {
+        this.deliveryReceiptService.onAckReceived((decryptedContent as any).content.messageIds ?? []);
+      }
+      return true; // Signal: intercept this message
+    }
+
+    // 2. Extract piggybacked ackMessageIds, process, then strip
+    const ackMessageIds = (decryptedContent as any).ackMessageIds;
+    if (ackMessageIds && this.deliveryReceiptService && deliveryReceiptsEnabled) {
+      this.deliveryReceiptService.onAckReceived(ackMessageIds);
+    }
+    delete (decryptedContent as any).ackMessageIds;
+
+    // 3. Buffer this message's ID for acking (only for post messages from others)
+    // DEFENSE IN DEPTH: explicitly exclude delivery-ack to prevent infinite ack loops
+    if (
+      this.deliveryReceiptService &&
+      deliveryReceiptsEnabled &&
+      decryptedContent.content?.type === 'post' &&
+      decryptedContent.content?.senderId !== selfAddress
+    ) {
+      this.deliveryReceiptService.onMessageReceived(senderAddress, decryptedContent.messageId);
+    }
+
+    return false; // Signal: continue with normal saveMessage pipeline
   }
 
   /**
@@ -2307,6 +2364,14 @@ export class MessageService {
           };
 
           await this.messageDB.saveEncryptionState(newEncryptionState, true);
+
+          // Process delivery receipt data (intercept ack control messages, extract piggybacked acks, buffer for acking)
+          const userConfig = await this.messageDB.getUserConfig({ address: self_address });
+          if (this.processDeliveryReceiptData(decryptedContent, session.user_address, self_address, !!userConfig?.deliveryReceipts)) {
+            // delivery-ack control message — encryption state saved, but don't save/display the message
+            return;
+          }
+
           const conversation = await this.messageDB.getConversation({
             conversationId,
           });
@@ -3845,6 +3910,14 @@ export class MessageService {
 
     if (decryptedContent) {
       if (keys.sending_inbox) {
+        // Process delivery receipt data (intercept ack control messages, extract piggybacked acks, buffer for acking)
+        const userConfig = await this.messageDB.getUserConfig({ address: self_address });
+        const senderAddress = conversationId.split('/')[0];
+        if (this.processDeliveryReceiptData(decryptedContent, senderAddress, self_address, !!userConfig?.deliveryReceipts)) {
+          // delivery-ack control message — encryption state saved, but don't save/display the message
+          return;
+        }
+
         const profileToUse = updatedUserProfile ?? {
           user_icon: conversation.conversation?.icon,
           display_name: conversation.conversation?.displayName,
