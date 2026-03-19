@@ -1,7 +1,7 @@
 ---
 type: bug
 title: "Standalone delivery receipt acks not reliably delivered"
-status: open
+status: done
 priority: medium
 ai_generated: true
 created: 2026-03-19
@@ -25,7 +25,11 @@ Observable behavior:
 
 ## Root Cause
 
-Not yet identified. Possible causes to investigate:
+**Same as the piggybacked ack bug**: the ack message structure mismatch. The `processDeliveryReceiptData` method was checking `decryptedContent.content?.type === 'delivery-ack'` (nested under `.content`), but standalone ack messages are flat objects `{ type: 'delivery-ack', senderId, messageIds }` — the `type` is at the top level. The fix was already applied in the earlier commit (checking both `raw.type` and `raw.content?.type`).
+
+The standalone acks appeared more broken than piggybacked acks because piggybacked acks ride on the `ackMessageIds` envelope field (which was checked correctly), while standalone acks rely on the `type` field detection (which was broken).
+
+**Previously investigated possible causes (all ruled out):**
 
 1. **Action Queue processing timing**: The `send-delivery-ack` task may not be processed before the page interaction ends, or may be stuck behind other tasks in the queue.
 

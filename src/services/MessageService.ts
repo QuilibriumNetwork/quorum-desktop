@@ -2518,7 +2518,8 @@ export class MessageService {
             );
             return;
           }
-        } catch {
+        } catch (decryptError) {
+          logger.error('[MessageService] DM decrypt failed (ConfirmDoubleRatchetSenderSession)', decryptError);
           await this.deleteInboxMessages(
             keys.receiving_inbox,
             [message.timestamp],
@@ -2570,7 +2571,8 @@ export class MessageService {
             );
             return;
           }
-        } catch {
+        } catch (decryptError) {
+          logger.error('[MessageService] DM decrypt failed (DoubleRatchetInboxDecrypt)', decryptError);
           await this.deleteInboxMessages(
             keys.receiving_inbox,
             [message.timestamp],
