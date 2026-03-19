@@ -20,6 +20,8 @@ interface PrivacyProps {
   isSaving: boolean;
   removedDevices?: string[];
   isConfigLoaded?: boolean;
+  deliveryReceipts: boolean;
+  setDeliveryReceipts: (value: boolean) => void;
 }
 
 const Privacy: React.FunctionComponent<PrivacyProps> = ({
@@ -38,6 +40,8 @@ const Privacy: React.FunctionComponent<PrivacyProps> = ({
   isSaving,
   removedDevices = [],
   isConfigLoaded = true,
+  deliveryReceipts,
+  setDeliveryReceipts,
 }) => {
   // QR code display state - requires explicit user confirmation
   const [showQRConfirmation, setShowQRConfirmation] = React.useState(false);
@@ -194,6 +198,25 @@ const Privacy: React.FunctionComponent<PrivacyProps> = ({
               <Tooltip
                 id="settings-show-online-status-tooltip"
                 content={t`When enabled, other users can see when you are active. This feature is not yet available.`}
+                place="bottom"
+              >
+                <Icon
+                  name="info-circle"
+                  className="text-main hover:text-strong cursor-pointer ml-2"
+                  size="sm"
+                />
+              </Tooltip>
+            </div>
+          </div>
+          <div className="flex flex-row items-center gap-3 mt-3">
+            <Switch value={deliveryReceipts} onChange={setDeliveryReceipts} disabled={!isConfigLoaded} />
+            <div className="flex flex-row items-center">
+              <div className="text-label-strong">
+                {t`Delivery receipts`}
+              </div>
+              <Tooltip
+                id="settings-delivery-receipts-tooltip"
+                content={t`When on, senders see when their messages reach your device, and you see when yours reach theirs.`}
                 place="bottom"
               >
                 <Icon

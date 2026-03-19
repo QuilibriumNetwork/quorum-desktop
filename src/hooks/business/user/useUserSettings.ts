@@ -24,6 +24,8 @@ export interface UseUserSettingsReturn {
   setAllowSync: (allow: boolean) => void;
   nonRepudiable: boolean;
   setNonRepudiable: (repudiable: boolean) => void;
+  deliveryReceipts: boolean;
+  setDeliveryReceipts: (value: boolean) => void;
   spaceTagId: string | undefined;
   setSpaceTagId: (id: string | undefined) => void;
   saveChanges: (fileData?: ArrayBuffer, currentFile?: File, markedForDeletion?: boolean) => Promise<void>;
@@ -52,6 +54,7 @@ export const useUserSettings = (
   const [selectedCategory, setSelectedCategory] = useState('general');
   const [allowSync, setAllowSync] = useState(false);
   const [nonRepudiable, setNonRepudiable] = useState(true);
+  const [deliveryReceipts, setDeliveryReceipts] = useState(false);
   const [spaceTagId, setSpaceTagId] = useState<string | undefined>(undefined);
   const [init, setInit] = useState(false);
   const [isConfigLoaded, setIsConfigLoaded] = useState(false);
@@ -88,6 +91,7 @@ export const useUserSettings = (
         existingConfig.current = config;
         setAllowSync(config?.allowSync ?? false);
         setNonRepudiable(config?.nonRepudiable ?? true);
+        setDeliveryReceipts(config?.deliveryReceipts ?? false);
         setBio(config?.bio ?? '');
         setSpaceTagId(config?.spaceTagId ?? undefined);
         setIsConfigLoaded(true);
@@ -224,6 +228,7 @@ export const useUserSettings = (
       ...existingConfig.current!,
       allowSync,
       nonRepudiable: nonRepudiable,
+      deliveryReceipts,
       name: displayName,
       profile_image: profileImageUrl,
       bio: bio.trim() || undefined,
@@ -268,6 +273,8 @@ export const useUserSettings = (
     setAllowSync,
     nonRepudiable,
     setNonRepudiable,
+    deliveryReceipts,
+    setDeliveryReceipts,
     spaceTagId,
     setSpaceTagId,
     saveChanges,

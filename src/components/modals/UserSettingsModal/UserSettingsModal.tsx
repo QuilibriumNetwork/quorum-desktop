@@ -71,6 +71,8 @@ const UserSettingsModal: React.FunctionComponent<{
     setAllowSync,
     nonRepudiable,
     setNonRepudiable,
+    deliveryReceipts,
+    setDeliveryReceipts,
     spaceTagId,
     setSpaceTagId,
     saveChanges: saveUserChanges,
@@ -254,6 +256,8 @@ const UserSettingsModal: React.FunctionComponent<{
                         isSaving={isSaving}
                         removedDevices={removedDevices}
                         isConfigLoaded={isConfigLoaded}
+                        deliveryReceipts={deliveryReceipts}
+                        setDeliveryReceipts={setDeliveryReceipts}
                       />
                     );
                   case 'notifications':
