@@ -1,5 +1,5 @@
+import { stripMarkdown } from '@quilibrium/quorum-shared';
 import type { ChannelThread, ThreadMeta } from '@quilibrium/quorum-shared';
-import { stripMarkdown } from '../utils/markdownStripping';
 
 export function buildChannelThreadFromCreate({
   spaceId,

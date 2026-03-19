@@ -7,7 +7,7 @@ import { useMessageDB } from '../../../components/context/useMessageDB';
 import { usePasskeysContext, channel as secureChannel } from '@quilibrium/quilibrium-js-sdk-channels';
 import { useQueryClient, InfiniteData } from '@tanstack/react-query';
 import MessagePreview from '../../../components/message/MessagePreview';
-import { extractMessageRawText } from '../../../utils/clipboard';
+import { extractMessageRawText } from '@quilibrium/quorum-shared';
 import { useCopyToClipboard } from '../ui';
 import { useBookmarks } from '../bookmarks';
 import { buildMessagesKey } from '../../queries/messages/buildMessagesKey';

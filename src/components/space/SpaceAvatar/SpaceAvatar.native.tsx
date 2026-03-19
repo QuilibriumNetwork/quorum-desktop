@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 import { Image } from 'react-native';
 import { UserInitials } from '../../user/UserInitials';
 import { DefaultImages } from '../../../utils';
-import { getColorFromDisplayName } from '../../../utils/avatar';
+import { getColorFromDisplayName } from '@quilibrium/quorum-shared';
 import { SpaceAvatarProps } from './SpaceAvatar.types';
 
 export function SpaceAvatar({

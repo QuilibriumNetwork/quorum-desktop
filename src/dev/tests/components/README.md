@@ -2,6 +2,17 @@
 
 React component unit and integration tests.
 
+## Current Tests
+
+| File | Tests | Description |
+|------|-------|-------------|
+| `Button.test.tsx` | 27 | Type/size variants, disabled state, icons, tooltips, click handling, a11y |
+| `Modal.test.tsx` | 14 | Visibility, sizing, close/escape handling, a11y (role, aria-modal) |
+| `ThreadListItem.test.tsx` | 6 | Title rendering, closed thread icon, click handling, reply counts |
+| `ThreadsListPanel.test.tsx` | 5 | Section headers, empty state, search filtering, no-results |
+
+**Total: 52 tests**
+
 ## Naming Convention
 - `ComponentName.test.tsx` - Standard component tests
 - `ComponentName.integration.test.tsx` - Integration tests with context/providers
@@ -20,16 +31,16 @@ describe('ComponentName', () => {
 ```
 
 ## What to Test
-- ✅ Component rendering
-- ✅ User interactions (clicks, typing, etc.)
-- ✅ Props handling
-- ✅ Accessibility (a11y)
-- ✅ Component state changes
-- ✅ Event handlers
+- Component rendering
+- User interactions (clicks, typing, etc.)
+- Props handling
+- Accessibility (a11y)
+- Component state changes
+- Event handlers
 
 ## What NOT to Test
-- ❌ Implementation details
-- ❌ Third-party library functionality
-- ❌ CSS styling (unless functional)
+- Implementation details
+- Third-party library functionality
+- CSS styling (unless functional)
 
-_Created: 2025-11-18_
+_Last updated: 2026-03-18_

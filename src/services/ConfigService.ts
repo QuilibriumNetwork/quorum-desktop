@@ -1,13 +1,12 @@
 // ConfigService.ts - Extracted from MessageDB.tsx with ZERO modifications
 // This service handles user configuration management
 
-import { logger } from '@quilibrium/quorum-shared';
+import { logger, int64ToBytes } from '@quilibrium/quorum-shared';
 import { MessageDB, UserConfig } from '../db/messages';
 import { QuorumApiClient } from '../api/baseTypes';
 import type { Bookmark, Space } from '@quilibrium/quorum-shared';
 import { channel as secureChannel, channel_raw as ch } from '@quilibrium/quilibrium-js-sdk-channels';
 import { sha256, base58btc } from '../utils/crypto';
-import { int64ToBytes } from '../utils/bytes';
 import { getDefaultUserConfig } from '../utils';
 import { t } from '@lingui/core/macro';
 import { QueryClient } from '@tanstack/react-query';

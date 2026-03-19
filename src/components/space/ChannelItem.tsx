@@ -5,7 +5,7 @@ import { getIconColorHex, IconColor } from './IconPicker/types';
 import { useLongPressWithDefaults } from '../../hooks/useLongPress';
 import { hapticLight, hapticMedium } from '../../utils/haptic';
 import { TOUCH_INTERACTION_TYPES } from '../../constants/touchInteraction';
-import { formatMentionCount } from '../../utils/formatMentionCount';
+import { formatMentionCount } from '@quilibrium/quorum-shared';
 import ContextMenu, { MenuItem, HeaderConfig } from '../ui/ContextMenu';
 import { t } from '@lingui/core/macro';
 

@@ -8,9 +8,8 @@ import type {
 import { t } from '@lingui/core/macro';
 import { processAttachmentImage, FILE_SIZE_LIMITS } from '../../../utils/imageProcessing';
 import type { AttachmentProcessingResult } from '../../../utils/imageProcessing';
-import { extractMentionsFromText, MAX_MENTIONS_PER_MESSAGE } from '../../../utils/mentionUtils';
+import { extractMentionsFromText, MAX_MENTIONS_PER_MESSAGE, SimpleRateLimiter, RATE_LIMITS } from '@quilibrium/quorum-shared';
 import { useMessageValidation, getMessageCounterText } from '../validation';
-import { SimpleRateLimiter, RATE_LIMITS } from '../../../utils/rateLimit';
 import { showWarning } from '../../../utils/toast';
 
 interface UseMessageComposerOptions {

@@ -18,11 +18,18 @@ export default defineConfig({
     css: false,
     include: ['src/dev/tests/**/*.{test,spec}.{js,ts,jsx,tsx}'],
     exclude: ['node_modules', 'dist'],
+    server: {
+      deps: {
+        inline: [
+          '@quilibrium/quilibrium-js-sdk-channels',
+        ],
+      },
+    },
   },
   resolve: {
     alias: {
       '@': resolve(__dirname, 'src'),
-      crypto: 'crypto-browserify',
+      crypto: resolve(__dirname, 'node_modules/crypto-browserify/index.js'),
     },
     extensions: ['.web.tsx', '.web.ts', '.web.jsx', '.web.js', '.tsx', '.ts', '.jsx', '.js'],
   },

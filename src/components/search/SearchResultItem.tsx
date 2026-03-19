@@ -8,7 +8,7 @@ import {
   useSearchResultFormatting,
   BatchSearchResultDisplayData,
 } from '../../hooks';
-import { stripMarkdownAndMentions } from '../../utils/markdownStripping';
+import { stripMarkdownAndMentions } from '@quilibrium/quorum-shared';
 import './SearchResultItem.scss';
 
 interface SearchResultItemProps {

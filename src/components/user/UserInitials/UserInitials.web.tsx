@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { UserInitialsProps } from './UserInitials.types';
-import { getInitials, lightenColor, darkenColor } from '../../../utils/avatar';
+import { getInitials, lightenColor, darkenColor } from '@quilibrium/quorum-shared';
 import './UserInitials.scss';
 
 export function UserInitials({

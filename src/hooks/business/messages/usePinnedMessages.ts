@@ -5,7 +5,7 @@ import { useQueryClient, useQuery } from '@tanstack/react-query';
 import type { Message, Channel, Role, PinMessage } from '@quilibrium/quorum-shared';
 import { useMessageDB } from '../../../components/context/useMessageDB';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
-import { hasPermission } from '../../../utils/permissions';
+import { hasPermission } from '@quilibrium/quorum-shared';
 import { useConfirmationModal } from '../../../components/context/ConfirmationModalProvider';
 import MessagePreview from '../../../components/message/MessagePreview';
 import { t } from '@lingui/core/macro';

@@ -1,7 +1,6 @@
-import { logger } from '@quilibrium/quorum-shared';
+import { logger, extractYouTubeVideoId } from '@quilibrium/quorum-shared';
 import React from 'react';
 import { YouTubeFacade } from './YouTubeFacade';
-import { extractYouTubeVideoId } from '../../utils/youtubeUtils';
 
 interface YouTubeEmbedProps {
   src: string;

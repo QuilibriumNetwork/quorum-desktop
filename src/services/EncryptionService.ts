@@ -2,9 +2,9 @@
 // This service handles encryption state management and key operations
 
 import { MessageDB, EncryptionState } from '../db/messages';
+import { int64ToBytes } from '@quilibrium/quorum-shared';
 import type { Space } from '@quilibrium/quorum-shared';
 import { sha256, base58btc, hexToSpreadArray } from '../utils/crypto';
-import { int64ToBytes } from '../utils/bytes';
 import { QueryClient } from '@tanstack/react-query';
 import { buildSpacesKey, buildConfigKey } from '../hooks';
 import { channel as secureChannel, channel_raw as ch } from '@quilibrium/quilibrium-js-sdk-channels';

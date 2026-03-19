@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 import { Image, StyleSheet, ViewStyle } from 'react-native';
 import { UserInitials } from '../UserInitials';
 import { DefaultImages } from '../../../utils';
-import { getColorFromDisplayName } from '../../../utils/avatar';
+import { getColorFromDisplayName } from '@quilibrium/quorum-shared';
 
 interface UserAvatarProps {
   userIcon?: string;

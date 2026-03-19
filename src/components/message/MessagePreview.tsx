@@ -5,7 +5,7 @@ import { t } from '@lingui/core/macro';
 import { useMessageFormatting } from '../../hooks/business/messages/useMessageFormatting';
 import { YouTubeEmbed } from '../ui/YouTubeEmbed';
 import { formatMessageDate } from '../../utils';
-import { processMarkdownText } from '../../utils/markdownStripping';
+import { processMarkdownText } from '@quilibrium/quorum-shared';
 
 // Helper function to process text with mentions and special tokens after smart markdown stripping
 const renderPreviewTextWithSpecialTokens = (

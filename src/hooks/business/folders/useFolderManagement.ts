@@ -8,7 +8,7 @@ import { NavItem, UserConfig } from '../../../db/messages';
 import type { IconName, IconVariant } from '../../../components/primitives';
 import { IconColor } from '../../../components/space/IconPicker/types';
 import { createFolder, deriveSpaceIds } from '../../../utils/folderUtils';
-import { validateNameForXSS, MAX_NAME_LENGTH } from '../../../utils/validation';
+import { validateNameForXSS, MAX_NAME_LENGTH } from '@quilibrium/quorum-shared';
 import { useDeleteFolder } from './useDeleteFolder';
 
 interface UseFolderManagementProps {

@@ -9,15 +9,13 @@ import {
   extractCodeContent,
   shouldUseScrollContainer,
   getScrollContainerMaxHeight,
-} from '../../utils/codeFormatting';
-import { hasWordBoundaries } from '../../utils/mentionUtils';
-import { createIPFSCIDRegex } from '../../utils/validation';
-import {
+  hasWordBoundaries,
+  createIPFSCIDRegex,
   replaceYouTubeURLsInText,
   extractYouTubeVideoId,
-} from '../../utils/youtubeUtils';
-import { getValidInvitePrefixes } from '../../utils/inviteDomain';
-import { getValidMessageLinkPrefixes } from '../../utils/messageLinkUtils';
+  getValidInvitePrefixes,
+  getValidMessageLinkPrefixes,
+} from '@quilibrium/quorum-shared';
 import { remarkTwemoji } from '../../utils/remarkTwemoji';
 import { InviteLink } from './InviteLink';
 import { Icon } from '../primitives';

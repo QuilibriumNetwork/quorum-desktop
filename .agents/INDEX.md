@@ -87,7 +87,8 @@ This is the main index for all documentation, bug reports, and task management.
 ## 🐛 Bug Reports
 
 ### Active Issues
-- [Mobile Metro bundling fails at 99.9% — unable to resolve ./index from root](bugs/2026-03-15-mobile-metro-bundling-failure.md)
+- [Leave Space - No Loading Feedback and UI Not Refreshing](bugs/2026-03-18-leave-space-no-feedback.md)
+- [Offline Banner Overlays Content Instead of Pushing Down](bugs/2026-03-18-offline-banner-overlay.md)
 - [Config Sync Space Loss Race Condition](bugs/config-sync-space-loss-race-condition.md)
 - [DirectMessage Invite Loading Performance Issue](bugs/directmessage-invite-loading-performance.md)
 - [Encryption State Evals Causing Config Sync Bloat](bugs/encryption-state-evals-bloat.md)
@@ -110,6 +111,9 @@ This is the main index for all documentation, bug reports, and task management.
 - [Moderator thread deletion resurfaces after optimistic removal](bugs/.solved/2026-03-13-moderator-thread-delete-resurfaces.md)
 - [Thread delete button hidden even when all replies are from thread author](bugs/.solved/2026-03-13-thread-delete-button-hidden-when-all-replies-own.md)
 - [Profile Sync Not Working on Returning User Key Import](bugs/.solved/2026-03-14-profile-sync-not-working-on-key-import.md)
+- [Mobile Metro bundling fails at 99.9% — unable to resolve ./index from root](bugs/.solved/2026-03-15-mobile-metro-bundling-failure.md)
+- [Modals break when consuming quorum-shared from pre-built dist](bugs/.solved/2026-03-16-quorum-shared-pre-built-dist-modal-broken.md)
+- [vite-plugin-favicons-inject fails with NO_FILES_FOUND during production build](bugs/.solved/2026-03-18-favicon-plugin-prod-build-failure.md)
 - [Action Queue Bypasses SDK Encryption for Identity Keys](bugs/.solved/action-queue-plaintext-private-keys.md)
 - [Android 7.0 File Download Fix - Implementation Plan](bugs/.solved/SOLVED_android-file-download-huawei-p9-lite.md)
 - [Bug: Auto-Jump to First Unread Message - Blocked by Virtuoso Scroll Positioning](bugs/.solved/auto-jump-unread-virtuoso-scroll-conflict.md)
@@ -159,7 +163,13 @@ This is the main index for all documentation, bug reports, and task management.
 - [Embedded Media in PostMessage + YouTube Facade Privacy Fix](tasks/2026-03-12-embedded-media-spec.md)
 - [Thread List Panel: "Created by me" Filter](tasks/2026-03-14-thread-list-created-filter.md)
 - [Get npm Publish Access for @quilibrium/quorum-shared](tasks/2026-03-15-npm-publish-access-quorum-shared.md)
+- [Primitives Migration Prep](tasks/2026-03-15-primitives-migration-prep.md)
 - [Stacked PRs Workflow](tasks/2026-03-15-stacked-prs-workflow.md)
+- [DM Delivery Receipts — Design Spec](tasks/2026-03-18-dm-delivery-receipts-design.md)
+- [DM Delivery Receipts Implementation Plan](tasks/2026-03-18-dm-delivery-receipts-plan.md)
+- [Utilities Migration Design](tasks/2026-03-18-utils-migration-design.md)
+- [Utilities Migration Implementation Plan](tasks/2026-03-18-utils-migration-plan.md)
+- [Move Utility Tests to quorum-shared](tasks/2026-03-19-move-tests-to-quorum-shared.md)
 - [Accessibility Features — Remaining Work](tasks/accessibility-features-implementation.md)
 - [Add User Bio Field to UserSettingsModal General Tab](tasks/add-user-bio-field.md)
 - [Auto-save settings modals — eliminate save buttons](tasks/auto-save-settings-modals.md)
@@ -282,7 +292,10 @@ This is the main index for all documentation, bug reports, and task management.
 - [Thread Mention Notifications — Implementation Plan](tasks/.done/2026-03-14-thread-mention-notifications-plan.md)
 - [Thread Mention Notifications](tasks/.done/2026-03-14-thread-mention-notifications.md)
 - [Thread Panel: Bottom-Anchored Title Implementation Plan](tasks/.done/2026-03-14-thread-panel-bottom-anchored-title.md)
+- [Mobile Primitives Audit](tasks/.done/2026-03-15-mobile-primitives-audit.md)
+- [Mobile Primitives Fixes Implementation Plan](tasks/.done/2026-03-15-mobile-primitives-fixes-plan.md)
 - [Shared Types Migration Implementation Plan](tasks/.done/2026-03-15-shared-types-migration-plan.md)
+- [Fix Modal CSS for Tarball/npm Install](tasks/.done/2026-03-16-fix-modal-css-tarball.md)
 - [AccentColorSwitcher Cross-Platform Migration + Persistence](tasks/.done/accent-color-switcher-cross-platform-migration.md)
 - [Add Context to Desktop Notifications](tasks/.done/rich-desktop-notifications-context.md)
 - [Add DM-Specific Action Queue Handlers](tasks/.done/dm-action-queue-handlers.md)
@@ -464,4 +477,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2026-03-15 15:57:59
+**Last Updated**: 2026-03-19 14:34:33

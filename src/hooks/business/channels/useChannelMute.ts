@@ -15,7 +15,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { useMessageDB } from '../../../components/context/useMessageDB';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
 import { isChannelMuted, getMutedChannelsForSpace } from '../../../utils/channelUtils';
-import { getDefaultNotificationSettings } from '../../../utils/notificationSettingsUtils';
+import { getDefaultNotificationSettings } from '@quilibrium/quorum-shared';
 import { useConfig, buildConfigKey } from '../../queries/config';
 
 interface UseChannelMuteProps {

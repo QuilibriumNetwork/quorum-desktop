@@ -1,9 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
 import { useMessageDB } from '../../../components/context/useMessageDB';
-import { isMentionedWithSettings } from '../../../utils/mentionUtils';
-import { getDefaultNotificationSettings } from '../../../utils/notificationSettingsUtils';
-import { getUserRoles } from '../../../utils/permissions';
+import { isMentionedWithSettings, getDefaultNotificationSettings, getUserRoles } from '@quilibrium/quorum-shared';
 import type { Space } from '@quilibrium/quorum-shared';
 
 interface UseSpaceMentionCountsProps {

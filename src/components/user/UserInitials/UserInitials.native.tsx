@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { UserInitialsProps } from './UserInitials.types';
-import { getInitials, lightenColor, darkenColor } from '../../../utils/avatar';
+import { getInitials, lightenColor, darkenColor } from '@quilibrium/quorum-shared';
 
 // Unknown user gradient colors (light theme - matches web CSS)
 // Light theme: surface-10 base (#939399) with +5% / -10% lightness

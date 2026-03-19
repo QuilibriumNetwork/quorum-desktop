@@ -31,6 +31,7 @@ describe('SyncService - Unit Tests', () => {
     // Setup mocks for all SyncService dependencies
     mockDeps = {
       messageDB: {
+        getSpace: vi.fn().mockResolvedValue({ defaultChannelId: 'channel-123' }),
         getSpaceKey: vi.fn().mockResolvedValue({
           keyId: 'test-key',
           publicKey: 'pubkey-hex',
@@ -109,8 +110,8 @@ describe('SyncService - Unit Tests', () => {
     });
 
     it('should have correct parameter count for informSyncData', () => {
-      // ✅ VERIFY: informSyncData has 4 parameters
-      expect(syncService.informSyncData.length).toBe(4);
+      // ✅ VERIFY: informSyncData has 5 parameters (spaceId, inboxAddress, messageCount, memberCount, theirSummary?)
+      expect(syncService.informSyncData.length).toBe(5);
     });
   });
 

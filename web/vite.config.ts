@@ -4,8 +4,6 @@ import { nodePolyfills } from 'vite-plugin-node-polyfills';
 import react from '@vitejs/plugin-react';
 import { resolve } from 'path';
 import { lingui } from '@lingui/vite-plugin';
-import vitePluginFaviconsInject from 'vite-plugin-favicons-inject';
-import { readFileSync, writeFileSync, existsSync } from 'fs';
 
 /**
  * Plugin to resolve vite-plugin-node-polyfills shims for linked packages outside node_modules.
@@ -40,51 +38,6 @@ function resolvePolyfillShims(): Plugin {
   };
 }
 
-/**
- * Plugin to inject favicons into 404.html after favicon plugin processes main HTML
- */
-function injectFaviconsInto404(): Plugin {
-  let faviconHtml = '';
-
-  return {
-    name: 'inject-favicons-into-404',
-    enforce: 'post', // Run after other plugins
-    transformIndexHtml: {
-      order: 'post',
-      handler(html) {
-        // Extract favicon HTML from the processed main HTML
-        // The favicon plugin injects HTML right after <!-- FAVICONS -->
-        const faviconStart = html.indexOf('<!-- FAVICONS -->');
-        if (faviconStart !== -1) {
-          const afterComment = html.substring(faviconStart + '<!-- FAVICONS -->'.length);
-          // Extract everything until the next HTML comment, script tag, or closing head tag
-          const endMatch = afterComment.match(/^([\s\S]*?)(?=<!--|<\/head>|<\/script>)/i);
-          if (endMatch) {
-            faviconHtml = endMatch[1].trim();
-          }
-        }
-        return html;
-      },
-    },
-    closeBundle() {
-      // After bundle is complete, inject favicons into 404.html
-      if (!faviconHtml) return;
-
-      const output404Path = resolve(__dirname, '..', 'dist/web/404.html');
-      if (!existsSync(output404Path)) return;
-
-      try {
-        let content = readFileSync(output404Path, 'utf-8');
-        if (content.includes('<!-- FAVICONS -->')) {
-          content = content.replace('<!-- FAVICONS -->', `<!-- FAVICONS -->\n${faviconHtml}`);
-          writeFileSync(output404Path, content, 'utf-8');
-        }
-      } catch (error) {
-        console.warn('Failed to inject favicons into 404.html:', error);
-      }
-    },
-  };
-}
 
 // https://vite.dev/config/
 export default defineConfig(({ command }): UserConfig => ({
@@ -118,11 +71,6 @@ export default defineConfig(({ command }): UserConfig => ({
   plugins: [
     resolvePolyfillShims(),
     lingui(),
-    vitePluginFaviconsInject('public/quorumicon-blue.svg', {
-      appName: 'Quorum',
-      appDescription: 'Quorum is a decentralized social media platform.',
-    }),
-    injectFaviconsInto404(),
     nodePolyfills({
       target: 'esnext',
     } as any),

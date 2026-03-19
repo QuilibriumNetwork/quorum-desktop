@@ -7,8 +7,8 @@ import {
   wrapCode,
   toggleStrikethrough,
   toggleSpoiler,
-  FormatFunction,
-} from '../../utils/markdownFormatting';
+} from '@quilibrium/quorum-shared';
+import type { FormatFunction } from '@quilibrium/quorum-shared';
 import './MarkdownToolbar.scss';
 
 export interface MarkdownToolbarProps {

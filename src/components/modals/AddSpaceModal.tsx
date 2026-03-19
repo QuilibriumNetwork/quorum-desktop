@@ -19,7 +19,7 @@ import { useActionQueue } from '../context/ActionQueueContext';
 import {
   getValidInvitePrefixes,
   parseInviteParams,
-} from '@/utils/inviteDomain';
+} from '@quilibrium/quorum-shared';
 
 type AddSpaceModalProps = {
   visible: boolean;

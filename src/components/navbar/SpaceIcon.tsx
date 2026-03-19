@@ -3,9 +3,8 @@ import './SpaceIcon.scss';
 import { Tooltip } from '../primitives';
 import { useImageLoading } from '../../hooks';
 import { useDragStateContext } from '../../context/DragStateContext';
-import { formatMentionCount } from '../../utils/formatMentionCount';
+import { formatMentionCount, getColorFromDisplayName } from '@quilibrium/quorum-shared';
 import { UserInitials } from '../user/UserInitials';
-import { getColorFromDisplayName } from '../../utils/avatar';
 import { DefaultImages } from '../../utils';
 
 type SpaceIconProps = {

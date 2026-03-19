@@ -2,15 +2,14 @@
 // This service handles space creation, management, and member operations
 
 import { MessageDB, NavItem } from '../db/messages';
+import { int64ToBytes, getInviteUrlBase } from '@quilibrium/quorum-shared';
 import type { Space, Message, KickMessage } from '@quilibrium/quorum-shared';
 import { sha256, base58btc, hexToSpreadArray } from '../utils/crypto';
-import { int64ToBytes } from '../utils/bytes';
 import { QueryClient } from '@tanstack/react-query';
 import { buildSpacesKey, buildSpaceKey, buildSpaceMembersKey, buildConfigKey } from '../hooks';
 import { channel as secureChannel, channel_raw as ch } from '@quilibrium/quilibrium-js-sdk-channels';
 import { t } from '@lingui/core/macro';
 import { QuorumApiClient } from '../api/baseTypes';
-import { getInviteUrlBase } from '@/utils/inviteDomain';
 
 // Type definitions for the service
 export interface SpaceServiceDependencies {

@@ -4,7 +4,7 @@ import {
   validateNameForXSS,
   MAX_NAME_LENGTH,
   getReservedNameType,
-} from '../../../utils/validation';
+} from '@quilibrium/quorum-shared';
 
 /**
  * Centralized display name validation logic
