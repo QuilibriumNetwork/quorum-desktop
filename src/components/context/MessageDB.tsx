@@ -972,7 +972,6 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
     const service = new DeliveryReceiptService({
       onFlush: (address: string, messageIds: string[]) => {
         // Queue standalone ack via Action Queue
-        console.log('[DeliveryReceipt] onFlush - sending standalone ack', { address: address.slice(0, 16), messageIds });
         actionQueueService.enqueue(
           'send-delivery-ack',
           {
@@ -985,7 +984,6 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
       },
       onAckProcessed: (messageIds: string[]) => {
         // Update deliveredAt on sender's messages in React Query cache + IndexedDB
-        console.log('[DeliveryReceipt] onAckProcessed called', { messageIds });
         const now = Date.now();
         for (const messageId of messageIds) {
           // Update React Query cache — use 'Messages' prefix (capital M) to match all conversations
@@ -999,7 +997,6 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
                 const newMessages = page.messages.map((msg) => {
                   if (msg.messageId === messageId && !(msg as any).deliveredAt) {
                     changed = true;
-                    console.log('[DeliveryReceipt] Setting deliveredAt on message', { messageId: messageId.slice(0, 16) });
                     return { ...msg, deliveredAt: now } as Message;
                   }
                   return msg;

@@ -164,15 +164,6 @@ export const Message = React.memo(
     const user = usePasskeysContext();
     const { spaceId } = useParams();
     const location = useLocation();
-
-    // DEBUG: trace deliveredAt on own DM messages
-    if (message.content?.senderId === user.currentPasskeyInfo?.address && message.content?.type === 'post' && !spaceId) {
-      console.log('[DeliveryReceipt:Message] own msg', {
-        id: message.messageId?.slice(0, 12),
-        deliveredAt: (message as any).deliveredAt,
-        sendStatus: message.sendStatus,
-      });
-    }
     const navigate = useNavigate();
     const { openMobileActionsDrawer, openMobileEmojiDrawer } = useMobile();
 
