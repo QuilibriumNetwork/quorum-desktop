@@ -23,11 +23,13 @@ import {
   InvitationService,
   ActionQueueService,
   ActionQueueHandlers,
+  DeliveryReceiptService,
 } from '../../services';
 import { ActionQueueProvider } from './ActionQueueContext';
 import {
   buildConversationsKey,
 } from '../../hooks';
+import { buildMessagesKeyPrefix } from '../../hooks/queries/messages/buildMessagesKey';
 import {
   InfiniteData,
   QueryClient,
@@ -962,6 +964,68 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
       actionQueueService.setUserKeyset(keyset);
     }
   }, [keyset, actionQueueService]);
+
+  // DeliveryReceiptService — batched ack buffer with piggyback + standalone flush
+  const deliveryReceiptService = useMemo(() => {
+    if (!selfAddress) return null;
+
+    const service = new DeliveryReceiptService({
+      onFlush: (address: string, messageIds: string[]) => {
+        // Queue standalone ack via Action Queue
+        actionQueueService.enqueue(
+          'send-delivery-ack',
+          {
+            address,
+            messageIds,
+            selfUserAddress: selfAddress,
+          },
+          `delivery-ack:${address}` // dedup key: one pending ack per address
+        );
+      },
+      onAckProcessed: (messageIds: string[]) => {
+        // Update deliveredAt on sender's messages in React Query cache + IndexedDB
+        const now = Date.now();
+        for (const messageId of messageIds) {
+          // Update React Query cache — find in any DM conversation
+          queryClient.setQueriesData(
+            { queryKey: ['messages'] },
+            (oldData: InfiniteData<{ messages: Message[]; nextCursor?: number; prevCursor?: number }> | undefined) => {
+              if (!oldData?.pages) return oldData;
+
+              let changed = false;
+              const newPages = oldData.pages.map((page) => {
+                const newMessages = page.messages.map((msg) => {
+                  if (msg.messageId === messageId && !(msg as any).deliveredAt) {
+                    changed = true;
+                    return { ...msg, deliveredAt: now } as Message;
+                  }
+                  return msg;
+                });
+                return changed ? { ...page, messages: newMessages } : page;
+              });
+
+              return changed ? { ...oldData, pages: newPages } : oldData;
+            }
+          );
+
+          // Persist to IndexedDB
+          messageDB.updateMessageDeliveredAt(messageId, now);
+        }
+      },
+    });
+
+    return service;
+  }, [selfAddress, actionQueueService, queryClient, messageDB]);
+
+  // Wire DeliveryReceiptService to MessageService
+  useEffect(() => {
+    if (deliveryReceiptService) {
+      messageService.setDeliveryReceiptService(deliveryReceiptService);
+    }
+    return () => {
+      deliveryReceiptService?.destroy();
+    };
+  }, [deliveryReceiptService, messageService]);
 
   const createSpace = React.useCallback(
     async (
