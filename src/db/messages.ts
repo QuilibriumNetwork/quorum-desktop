@@ -348,6 +348,25 @@ export class MessageDB {
     });
   }
 
+  async updateMessageDeliveredAt(messageId: string, deliveredAt: number): Promise<void> {
+    await this.init();
+    return new Promise((resolve, reject) => {
+      const tx = this.db!.transaction('messages', 'readwrite');
+      const store = tx.objectStore('messages');
+      const request = store.get(messageId);
+
+      request.onsuccess = () => {
+        const msg = request.result;
+        if (msg && !msg.deliveredAt) {
+          msg.deliveredAt = deliveredAt;
+          store.put(msg);
+        }
+        resolve();
+      };
+      request.onerror = () => reject(request.error);
+    });
+  }
+
   async getAllSpaceMessages({
     spaceId,
   }: {

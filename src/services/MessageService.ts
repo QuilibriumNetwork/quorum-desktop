@@ -1840,6 +1840,14 @@ export class MessageService {
       const isOnline = navigator.onLine;
 
       if (ENABLE_DM_ACTION_QUEUE && hasEstablishedSessions && !isOnline) {
+        // Piggyback pending delivery receipt acks on outgoing DM
+        if (this.deliveryReceiptService) {
+          const pendingAcks = this.deliveryReceiptService.flushForPiggyback(address);
+          if (pendingAcks.length > 0) {
+            (message as any).ackMessageIds = pendingAcks;
+          }
+        }
+
         // Add to cache with 'sending' status (optimistic update)
         await this.addMessage(queryClient, address, address, {
           ...message,
@@ -2149,6 +2157,14 @@ export class MessageService {
         } catch { /* Signature optional - continue without it */ }
       }
 
+      // Piggyback pending delivery receipt acks on outgoing DM
+      if (this.deliveryReceiptService) {
+        const pendingAcks = this.deliveryReceiptService.flushForPiggyback(address);
+        if (pendingAcks.length > 0) {
+          (message as any).ackMessageIds = pendingAcks;
+        }
+      }
+
       for (const inbox of inboxes.filter(
         (i) => i !== keyset.deviceKeyset.inbox_keyset.inbox_address
       )) {
@@ -2195,6 +2211,9 @@ export class MessageService {
           ];
         }
       }
+
+      // Strip piggybacked acks before persisting
+      delete (message as any).ackMessageIds;
 
       for (const session of sessions) {
         const newEncryptionState: EncryptionState = {
