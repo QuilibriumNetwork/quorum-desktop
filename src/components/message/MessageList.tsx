@@ -92,6 +92,8 @@ interface MessageListProps {
   alignToTop?: boolean;
   /** Optional content rendered above the first message inside the scrollable list (bottom-anchored with messages) */
   headerContent?: React.ReactNode;
+  /** Show delivery receipt checkmarks on own DM messages */
+  showDeliveryReceipts?: boolean;
 }
 
 function useWindowSize() {
@@ -157,6 +159,7 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
       onStartThread,
       alignToTop = false,
       headerContent,
+      showDeliveryReceipts,
     } = props;
 
     const [_width, height] = useWindowSize();
@@ -327,6 +330,7 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
               onRetryMessage={onRetryMessage}
               dmContext={dmContext}
               isCompact={displayInfo.isCompact}
+              showDeliveryReceipts={showDeliveryReceipts}
               users={users}
               roles={mentionRoles}
               groups={groups}
@@ -375,6 +379,7 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
         dmContext,
         onStartThread,
         headerContent,
+        showDeliveryReceipts,
       ]
     );
 

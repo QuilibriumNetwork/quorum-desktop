@@ -276,6 +276,10 @@
     color: rgb(var(--danger));
   }
 
+  &.delivered {
+    color: rgb(var(--text-subtle));
+  }
+
   &__retry {
     text-decoration: underline;
     cursor: pointer;

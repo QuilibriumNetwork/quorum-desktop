@@ -73,6 +73,8 @@ const DirectMessage: React.FC<{}> = () => {
   // State for message signing
   const [skipSigning, setSkipSigning] = useState<boolean>(false);
   const [nonRepudiable, setNonRepudiable] = useState<boolean>(true);
+  // Delivery receipts setting (OFF by default)
+  const [deliveryReceipts, setDeliveryReceipts] = useState<boolean>(false);
   const headerRef = useRef<HTMLDivElement>(null);
 
   // Auto-jump to first unread state
@@ -134,6 +136,7 @@ const DirectMessage: React.FC<{}> = () => {
           userKey: keyset.userKeyset,
         });
         const userNonRepudiable = cfg?.nonRepudiable ?? true;
+        setDeliveryReceipts(cfg?.deliveryReceipts ?? false);
         if (typeof convIsRepudiable !== 'undefined') {
           const convNonRepudiable = !convIsRepudiable;
           setNonRepudiable(convNonRepudiable);
@@ -866,6 +869,7 @@ const DirectMessage: React.FC<{}> = () => {
                     ? { self: self.registration, counterparty: registration.registration }
                     : undefined
                 }
+                showDeliveryReceipts={deliveryReceipts}
               />
             </div>
             {/* Accept chat warning */}

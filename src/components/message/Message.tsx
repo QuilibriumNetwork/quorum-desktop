@@ -116,6 +116,7 @@ type MessageProps = {
   groups?: Array<{ groupName: string; channels: Channel[]; icon?: string; iconColor?: string }>;
   canUseEveryone?: boolean;
   onStartThread?: () => void;
+  showDeliveryReceipts?: boolean;
 };
 
 export const Message = React.memo(
@@ -158,6 +159,7 @@ export const Message = React.memo(
     groups = [],
     canUseEveryone = false,
     onStartThread,
+    showDeliveryReceipts,
   }: MessageProps) => {
     const user = usePasskeysContext();
     const { spaceId } = useParams();
@@ -1256,6 +1258,13 @@ export const Message = React.memo(
                   )}
                 </Flex>
               )}
+              {/* Delivered indicator — only on own messages when deliveredAt is set and setting is ON */}
+              {!message.sendStatus && (message as any).deliveredAt && showDeliveryReceipts &&
+                message.content?.senderId === user.currentPasskeyInfo?.address && (
+                <Flex align="center" gap="xs" className="message-status delivered pt-1">
+                  <Icon name="check" size="xs" />
+                </Flex>
+              )}
             </div>
           </Flex>
         )}
@@ -1338,6 +1347,7 @@ export const Message = React.memo(
         JSON.stringify(nextProps.message.reactions) ||
       prevProps.message.isPinned !== nextProps.message.isPinned ||
       prevProps.message.sendStatus !== nextProps.message.sendStatus ||
+      (prevProps.message as any).deliveredAt !== (nextProps.message as any).deliveredAt ||
       JSON.stringify(prevProps.message.threadMeta) !== JSON.stringify(nextProps.message.threadMeta);
 
     return !shouldRerender;
