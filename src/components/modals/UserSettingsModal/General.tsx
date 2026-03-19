@@ -6,8 +6,8 @@ import { ClickToCopyContent } from '../../ui';
 import { DefaultImages } from '../../../utils';
 import { ReactTooltip } from '../../ui';
 import { SpaceTag } from '../../space/SpaceTag';
-import { BroadcastSpaceTag } from '../../../api/quorumApi';
-import { SelectOption } from '../../primitives/Select/types';
+import type { BroadcastSpaceTag } from '@quilibrium/quorum-shared';
+import type { SelectOption } from '../../primitives';
 
 interface EligibleSpaceTag {
   spaceId: string;

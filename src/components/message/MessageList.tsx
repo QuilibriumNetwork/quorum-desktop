@@ -12,13 +12,13 @@ import { useLocation } from 'react-router-dom';
 import { Message } from './Message';
 import { DateSeparator } from './DateSeparator';
 import { NewMessagesSeparator } from './NewMessagesSeparator';
-import {
+import type {
   Emoji,
   Message as MessageType,
   Role,
   Sticker,
   Channel,
-} from '../../api/quorumApi';
+} from '@quilibrium/quorum-shared';
 import { Virtuoso } from 'react-virtuoso';
 import type { VirtuosoHandle } from 'react-virtuoso';
 import React from 'react';

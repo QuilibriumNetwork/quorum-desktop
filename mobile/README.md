@@ -13,11 +13,13 @@ For complete environment setup, see: [Expo Dev Testing Guide](../.agents/docs/ex
 **First-Time Setup:**
 
 ```bash
-# Install dev client on device/emulator (first time only, ~30 min)
+# Install dev client on device/emulator (first time only, ~20-25 min)
 cd mobile
-yarn expo run:android  # Android
-yarn expo run:ios      # iOS (macOS only)
+node_modules/.bin/expo run:android  # Android (npx has path issues in Yarn workspaces)
+node_modules/.bin/expo run:ios      # iOS (macOS only)
 ```
+
+> **Windows note**: Requires `ANDROID_HOME`, `JAVA_HOME`, and `GRADLE_USER_HOME` environment variables. See [Android Build Workflow](../.agents/docs/development/android-build-workflow.md) for details.
 
 **Daily Development:**
 
@@ -55,7 +57,8 @@ From the project root:
 ### Build issues?
 
 - Clean Android build: `cd mobile/android && ./gradlew clean`
-- Ensure Android SDK environment variables are set
+- Ensure environment variables are set: `ANDROID_HOME`, `JAVA_HOME`, `GRADLE_USER_HOME`
+- **Windows accented username**: Use NTFS junctions + `GRADLE_USER_HOME` on an accent-free path (see [Android Build Workflow](../.agents/docs/development/android-build-workflow.md))
 
 ### Network issues?
 
@@ -89,4 +92,4 @@ The playground includes test screens for Primtives and Business Components.
 
 ---
 
-_Updated: 2025-09-03_
+_Updated: 2026-03-15_

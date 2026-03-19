@@ -1,6 +1,5 @@
 import React from 'react';
 import {
-  Container,
   Text,
   Flex,
   FlexColumn,
@@ -62,9 +61,9 @@ export const DevMainPage: React.FC = () => {
   };
 
   return (
-    <Container className="min-h-screen bg-app">
+    <div className="min-h-screen bg-app">
       <DevNavMenu currentPath="/dev" />
-      <Container padding="lg" className="mx-auto max-w-2xl">
+      <div className="p-6 mx-auto max-w-2xl">
         <div className="text-center my-12">
           <Flex justify="center" gap="sm" className="mb-4">
             <Icon name="tools" size="2xl" className="text-strong" />
@@ -94,7 +93,7 @@ export const DevMainPage: React.FC = () => {
             </div>
           ))}
         </div>
-      </Container>
-    </Container>
+      </div>
+    </div>
   );
 };

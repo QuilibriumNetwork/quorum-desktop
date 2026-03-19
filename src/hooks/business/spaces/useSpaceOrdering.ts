@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Space } from '../../../api/quorumApi';
+import type { Space } from '@quilibrium/quorum-shared';
 
 interface UseSpaceOrderingReturn {
   mappedSpaces: (Space & { id: string })[];

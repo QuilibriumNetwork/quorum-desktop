@@ -4,11 +4,10 @@ import { View } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { ThemeProvider, useTheme } from '@/components/primitives/theme';
+import { ThemeProvider, useTheme, Button } from '@/components/primitives';
 import { I18nProvider } from '@lingui/react';
 import { i18n, initializeMobileI18n } from './i18n';
 import { PasskeysProvider } from '@quilibrium/quilibrium-js-sdk-channels';
-import { default as Button } from '@/components/primitives/Button';
 import {
   commonTestStyles,
   createThemedStyles,
@@ -35,15 +34,12 @@ import {
   CalloutTestScreen,
   FileUploadTestScreen,
   ScrollContainerTestScreen,
+  ThemeTestScreen,
 } from '@/test/primitives';
 
 // Import business component test screens
 import {
   BusinessMenuScreen,
-  AuthenticationTestScreen,
-  OnboardingTestScreen,
-  LoginTestScreen,
-  MaintenanceTestScreen,
   ClickToCopyTestScreen,
   ModalsTestScreen,
   MessageComposerTestScreen,
@@ -66,14 +62,12 @@ type PrimitiveScreen =
   | 'radiogroup'
   | 'tooltip'
   | 'icon'
+  | 'callout'
   | 'fileupload'
-  | 'scrollcontainer';
+  | 'scrollcontainer'
+  | 'theme';
 type BusinessScreen =
   | 'list'
-  | 'onboarding'
-  | 'auth'
-  | 'login'
-  | 'maintenance'
   | 'copy'
   | 'modals'
   | 'spaces'
@@ -190,6 +184,8 @@ function ThemedAppContent() {
           return <CalloutTestScreen />;
         case 'fileupload':
           return <FileUploadTestScreen />;
+        case 'theme':
+          return <ThemeTestScreen />;
         default:
           return (
             <PrimitivesMenuScreen onSelectPrimitive={handleSelectPrimitive} />
@@ -202,14 +198,6 @@ function ThemedAppContent() {
       switch (currentBusinessScreen) {
         case 'list':
           return <BusinessMenuScreen onSelectFeature={handleSelectBusiness} />;
-        case 'onboarding':
-          return <OnboardingTestScreen />;
-        case 'auth':
-          return <AuthenticationTestScreen />;
-        case 'login':
-          return <LoginTestScreen />;
-        case 'maintenance':
-          return <MaintenanceTestScreen />;
         case 'copy':
           return <ClickToCopyTestScreen />;
         case 'modals':

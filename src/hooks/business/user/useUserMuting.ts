@@ -3,7 +3,7 @@ import { useParams } from 'react-router';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
 import { useMessageDB } from '../../../components/context/useMessageDB';
 import { useInvalidateMutedUsers } from '../../queries/mutedUsers';
-import type { MuteMessage } from '../../../api/quorumApi';
+import type { MuteMessage } from '@quilibrium/quorum-shared';
 
 export const useUserMuting = () => {
   const { messageDB, actionQueueService } = useMessageDB();

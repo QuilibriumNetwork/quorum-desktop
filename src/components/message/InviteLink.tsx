@@ -1,4 +1,4 @@
-import { Button, Container, Flex, Callout } from '../primitives';
+import { Button, Flex, Callout } from '../primitives';
 import {
   useInviteProcessing,
   useInviteJoining,
@@ -47,44 +47,44 @@ export const InviteLink = ({
   })();
 
   return (
-    <Container className="w-full !max-w-[250px] sm:!max-w-[400px] lg:!max-w-[500px] lg:min-w-[500px] rounded-md p-2 sm:p-3 bg-surface-5 border border-surface-6">
+    <div className="w-full !max-w-[250px] sm:!max-w-[400px] lg:!max-w-[500px] lg:min-w-[500px] rounded-md p-2 sm:p-3 bg-surface-5 border border-surface-6">
       {displayError && (
         <Callout variant="error" size="sm" className="mb-2">
           {displayError}
         </Callout>
       )}
       {!displayError && isProcessing && (
-        <Container className="font-bold flex flex-col items-center sm:items-start">
-          <Container className="mb-2 text-center sm:text-left">
+        <div className="font-bold flex flex-col items-center sm:items-start">
+          <div className="mb-2 text-center sm:text-left">
             <span>
               <Trans>You've been invited to join a Space</Trans>
             </span>
-          </Container>
+          </div>
           <Flex className="flex-col lg:flex-row lg:items-center gap-2 lg:gap-3 w-full">
             <Flex className="items-center bg-surface-4 rounded-lg px-1 sm:px-2 py-1 sm:py-2 gap-1 sm:gap-2 lg:gap-3 w-full lg:flex-1 overflow-hidden">
-              <Container
+              <div
                 className="w-8 sm:w-10 lg:w-12 h-8 sm:h-10 lg:h-12 rounded-md sm:rounded-lg overflow-hidden flex-shrink-0 bg-surface-3"
               />
-              <Container className="flex-1 min-w-0 overflow-hidden">
-                <Container className="h-4 bg-surface-3 rounded w-3/4 sm:w-1/2" />
-              </Container>
+              <div className="flex-1 min-w-0 overflow-hidden">
+                <div className="h-4 bg-surface-3 rounded w-3/4 sm:w-1/2" />
+              </div>
             </Flex>
-            <Container className="flex justify-center w-full lg:w-auto lg:flex-shrink-0">
-              <Container className="h-9 sm:h-10 bg-surface-4 rounded w-full lg:w-[110px]" />
-            </Container>
+            <div className="flex justify-center w-full lg:w-auto lg:flex-shrink-0">
+              <div className="h-9 sm:h-10 bg-surface-4 rounded w-full lg:w-[110px]" />
+            </div>
           </Flex>
-        </Container>
+        </div>
       )}
       {space && (
-        <Container className="font-bold flex flex-col items-center sm:items-start">
-          <Container className="mb-2 text-center sm:text-left">
+        <div className="font-bold flex flex-col items-center sm:items-start">
+          <div className="mb-2 text-center sm:text-left">
             <span>
               <Trans>You've been invited to join a Space</Trans>
             </span>
-          </Container>
+          </div>
           <Flex className="flex-col lg:flex-row lg:items-center gap-2 lg:gap-3 w-full">
             <Flex className="items-center bg-surface-4 rounded-lg px-1 sm:px-2 py-1 sm:py-2 gap-1 sm:gap-2 lg:gap-3 w-full lg:flex-1 overflow-hidden">
-              <Container
+              <div
                 className="w-8 sm:w-10 lg:w-12 h-8 sm:h-10 lg:h-12 rounded-md sm:rounded-lg overflow-hidden flex-shrink-0"
                 style={{
                   backgroundImage: space.iconUrl ? `url(${space.iconUrl})` : '',
@@ -93,7 +93,7 @@ export const InviteLink = ({
                   backgroundColor: 'var(--surface-2)',
                 }}
               />
-              <Container className="flex-1 min-w-0 overflow-hidden">
+              <div className="flex-1 min-w-0 overflow-hidden">
                 <span className="block truncate font-medium text-sm lg:text-base">
                   {space?.spaceName}
                 </span>
@@ -104,9 +104,9 @@ export const InviteLink = ({
                       : space.description}
                   </span>
                 )}
-              </Container>
+              </div>
             </Flex>
-            <Container className="flex justify-center w-full lg:w-auto lg:flex-shrink-0">
+            <div className="flex justify-center w-full lg:w-auto lg:flex-shrink-0">
               <Button
                 className="px-4 sm:px-6 whitespace-nowrap text-sm w-full lg:w-auto"
                 onClick={joinSpace}
@@ -115,10 +115,10 @@ export const InviteLink = ({
               >
                 {buttonText}
               </Button>
-            </Container>
+            </div>
           </Flex>
-        </Container>
+        </div>
       )}
-    </Container>
+    </div>
   );
 };

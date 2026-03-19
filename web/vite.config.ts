@@ -1,4 +1,4 @@
-import { defineConfig, Plugin } from 'vite';
+import { defineConfig, Plugin, UserConfig } from 'vite';
 import { viteStaticCopy } from 'vite-plugin-static-copy';
 import { nodePolyfills } from 'vite-plugin-node-polyfills';
 import react from '@vitejs/plugin-react';
@@ -87,7 +87,7 @@ function injectFaviconsInto404(): Plugin {
 }
 
 // https://vite.dev/config/
-export default defineConfig(({ command }) => ({
+export default defineConfig(({ command }): UserConfig => ({
   root: resolve(__dirname, '..'), // Project root for dependency resolution
   publicDir: 'public', // Use shared public directory from project root
   base: '/', // Use absolute paths for SPA routing compatibility
@@ -165,6 +165,13 @@ export default defineConfig(({ command }) => ({
     alias: {
       '@': resolve(__dirname, '../src'),
       crypto: 'crypto-browserify',
+      // Force single React instance — excluded packages (quorum-shared) resolve
+      // bare 'react' imports outside Vite's pre-bundle graph, so aliases ensure
+      // they hit the same instance as the rest of the app
+      react: resolve(__dirname, '../node_modules/react'),
+      'react-dom': resolve(__dirname, '../node_modules/react-dom'),
+      'react/jsx-runtime': resolve(__dirname, '../node_modules/react/jsx-runtime'),
+      'react/jsx-dev-runtime': resolve(__dirname, '../node_modules/react/jsx-dev-runtime'),
       '@quilibrium/quilibrium-js-sdk-channels': resolve(
         __dirname,
         '../node_modules/@quilibrium/quilibrium-js-sdk-channels/dist/index.esm.js'
@@ -181,18 +188,18 @@ export default defineConfig(({ command }) => ({
       '.jsx',
       '.js',
     ],
-    // Deduplicate React instances (critical for monorepo)
     dedupe: ['react', 'react-dom'],
   },
   optimizeDeps: {
     include: ['@quilibrium/quilibrium-js-sdk-channels'], // Force Vite to pre-bundle or app doesn't load (WSL)
+    exclude: ['@quilibrium/quorum-shared'], // Don't pre-bundle — source files need .web.tsx resolution
   },
   css: {
     preprocessorOptions: {
       scss: {
         // Tell SCSS to resolve @ alias (pointing to src/) - same as JS imports
         includePaths: [resolve(__dirname, '../src')],
-      },
+      } as any,
     },
   },
 }));

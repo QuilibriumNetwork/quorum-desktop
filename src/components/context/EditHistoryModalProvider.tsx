@@ -1,5 +1,5 @@
 import React, { createContext, useContext, ReactNode } from 'react';
-import type { Message as MessageType } from '../../api/quorumApi';
+import type { Message as MessageType } from '@quilibrium/quorum-shared';
 
 // Context interface
 interface EditHistoryModalContextType {

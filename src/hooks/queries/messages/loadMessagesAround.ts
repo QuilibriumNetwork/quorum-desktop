@@ -1,5 +1,5 @@
 import { MessageDB } from '../../../db/messages';
-import { Message } from '../../../api/quorumApi';
+import type { Message } from '@quilibrium/quorum-shared';
 
 /**
  * Loads messages around a specific target message using bidirectional pagination.

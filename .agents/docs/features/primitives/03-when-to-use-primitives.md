@@ -45,60 +45,14 @@ Not every component needs to use primitives. This guide helps decide when primit
 ### ✅ **Always Use Primitives For:**
 
 - **Interactive elements**: Button, Input, Select, Modal, Switch
-- **Layout containers**: Flex, Container
+- **Layout**: Flex for consistent spacing and alignment
 - **Design system elements**: Text (native only -- not used on web), Icon
 
 ### 🤔 **Evaluate Case-by-Case:**
 
-- **Simple containers**: Use Container for theme consistency
+- **Styling containers**: Use `<div>` (web) or `<View>` (native) with theme classes/styles
 - **Text elements (web)**: Use plain HTML (`<span>`, `<p>`) with CSS typography classes (`.text-label`, `.text-strong`, `.text-subtle`)
 - **Form elements**: Use primitives for consistent validation/error states
-
-## Container vs div Decision Framework
-
-### **Use Container when:**
-
-- **Interactive containers**: Need `onClick` (web) / `onPress` (native) support
-- **Semantic spacing**: Using `padding="md"` instead of hardcoded `p-4`
-- **Cross-platform components**: Component will be used on mobile
-- **Theme integration**: Need theme background colors or consistent styling
-
-### **Use div when:**
-
-- **Simple static wrappers**: Pure layout containers with no interaction
-- **Complex SCSS patterns**: Heavy animations or specialized styling
-- **Performance-critical sections**: Where extra component abstraction matters
-- **One-off layouts**: Unique styling that won't be reused
-
-### **Examples:**
-
-```tsx
-// ✅ Good Container usage
-<Container
-  padding="md"
-  onClick={handleClick}
-  backgroundColor="var(--surface-1)"
->
-  Interactive themed container
-</Container>
-
-// ✅ Good div usage
-<div className="complex-animation-wrapper scroll-container">
-  <div className="fade-in-effect">Static content</div>
-</div>
-
-// ❌ Over-engineering with Container
-<Container>
-  <Container className="simple-wrapper">
-    <Container>Static text</Container>
-  </Container>
-</Container>
-
-// ✅ Better approach
-<div className="simple-wrapper">
-  <span>Static text</span>
-</div>
-```
 
 ### ❌ **Don't Force Primitives For:**
 
@@ -139,22 +93,22 @@ Not every component needs to use primitives. This guide helps decide when primit
 
 ```tsx
 // Complex table layout forced into primitives creates unnecessary complexity
-<Container className="table-container">
-  <FlexRow className="table-header">
-    <Container className="col-name"><Text>Name</Text></Container>
-    <Container className="col-status"><Text>Status</Text></Container>
-    <Container className="col-actions"><Text>Actions</Text></Container>
-  </FlexRow>
+<div className="table-container">
+  <Flex className="table-header">
+    <div className="col-name"><Text>Name</Text></div>
+    <div className="col-status"><Text>Status</Text></div>
+    <div className="col-actions"><Text>Actions</Text></div>
+  </Flex>
   {data.map(item => (
-    <FlexRow key={item.id} className="table-row">
-      <Container className="col-name"><Text>{item.name}</Text></Container>
-      <Container className="col-status"><Text>{item.status}</Text></Container>
-      <Container className="col-actions">
+    <Flex key={item.id} className="table-row">
+      <div className="col-name"><Text>{item.name}</Text></div>
+      <div className="col-status"><Text>{item.status}</Text></div>
+      <div className="col-actions">
         <Button size="small" onClick={() => edit(item)}>Edit</Button>
-      </Container>
-    </FlexRow>
+      </div>
+    </Flex>
   ))}
-</Container>
+</div>
 
 // vs proper HTML table with primitive buttons:
 <table className="data-table">
@@ -268,7 +222,7 @@ The goal is shared business logic with appropriate UI abstractions, not primitiv
 
 ---
 
-_Last updated: 2026-02-10 - Text primitive removed from web production code; now native-only_
+_Last updated: 2026-03-15 - Removed Container primitive references and Container vs div framework (Container dropped from primitives)_
 
 ---
 

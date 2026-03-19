@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { Button, Modal, Container, Text, Flex, Spacer } from '@/components/primitives';
+import { View } from 'react-native';
+import { Button, Modal, Text, Flex, Spacer } from '@/components/primitives';
 import { t } from '@lingui/core/macro';
 import { useState, useCallback, useEffect } from 'react';
 
@@ -103,12 +104,12 @@ const TestKickUserModal: React.FunctionComponent<TestKickUserModalProps> = (
       swipeToClose={true}
       hideClose={true}
     >
-      <Container>
-        <Container>
+      <View>
+        <View>
           <Text variant="subtle">
             {t`Use the below button to kick this user out of the Space`}
           </Text>
-        </Container>
+        </View>
         <Spacer size="lg"></Spacer>
         <Flex>
           <Button
@@ -120,7 +121,7 @@ const TestKickUserModal: React.FunctionComponent<TestKickUserModalProps> = (
             {confirmationStep === 0 ? t`Kick!` : t`Click again to confirm`}
           </Button>
         </Flex>
-      </Container>
+      </View>
     </Modal>
   );
 };

@@ -1,12 +1,9 @@
 import React from 'react';
 import { ScrollView, View, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useTheme } from '@/components/primitives/theme';
+import { Flex, Text, Title, Icon, useTheme } from '@/components/primitives';
+import type { IconName } from '@/components/primitives';
 import ThemeRadioGroup from '@/components/ui/ThemeRadioGroup';
-import AccentColorSwitcher from '@/components/ui/AccentColorSwitcher';
-import { Icon } from '@/components/primitives/Icon';
-import { IconName } from '@/components/primitives/Icon/types';
-import { Flex, Text, Title } from '@/components/primitives';
 import { commonTestStyles } from '@/styles/commonTestStyles';
 
 interface PrimitiveItem {
@@ -141,6 +138,13 @@ export const PrimitivesMenuScreen: React.FC<PrimitivesMenuScreenProps> = ({
       icon: 'upload',
       onPress: () => onSelectPrimitive('fileupload'),
     },
+    {
+      id: 'theme',
+      title: 'Theme',
+      description: 'Light/dark theme switching and color system validation',
+      icon: 'palette',
+      onPress: () => onSelectPrimitive('theme'),
+    },
   ];
 
   const renderPrimitiveCard = (primitive: PrimitiveItem) => (
@@ -207,7 +211,6 @@ export const PrimitivesMenuScreen: React.FC<PrimitivesMenuScreenProps> = ({
           >
             <Flex direction="column" gap="md" align="center">
               <ThemeRadioGroup horizontal />
-              <AccentColorSwitcher />
             </Flex>
           </View>
         </View>

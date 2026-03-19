@@ -3,7 +3,7 @@ type: doc
 title: Primitives Quick Reference
 status: done
 created: 2026-01-09T00:00:00.000Z
-updated: 2026-02-10T00:00:00.000Z
+updated: 2026-03-15T00:00:00.000Z
 ---
 
 # Primitives Quick Reference
@@ -79,15 +79,15 @@ For web code, use plain HTML with CSS classes:
 
 ```tsx
 <Button
-  type="primary|secondary|light|light-outline|subtle|subtle-outline|danger|primary-white|secondary-white|light-white|light-outline-white|disabled-onboarding|unstyled"
-  size="small|normal|large"
+  type="primary|secondary|light|light-outline|subtle|subtle-outline|danger|primary-white|secondary-white|light-outline-white|unstyled"
+  size="compact|small|normal|large"
   onClick={() => {}}
   disabled={boolean}
   fullWidth={boolean}
   fullWidthWithMargin={boolean} // Native only
   iconName="icon-name"
   iconOnly={boolean}
-  hapticFeedback={boolean} // Native only
+  hapticFeedback={boolean} // Native only, default: true
   accessibilityLabel="description" // Native only
   tooltip="tooltip text"
   className="css-classes" // Web only
@@ -103,7 +103,7 @@ For web code, use plain HTML with CSS classes:
 <Button type="secondary" iconName="plus" onClick={add}>Add</Button>
 <Button type="light" iconName="settings" iconOnly onClick={settings} />
 <Button type="primary" fullWidth onClick={submit}>Full Width Button</Button>
-<Button type="light-white" onClick={onWhiteBackground}>White Variant</Button>
+<Button type="light-outline-white" onClick={onWhiteBackground}>White Variant</Button>
 ```
 
 ---
@@ -118,7 +118,7 @@ For web code, use plain HTML with CSS classes:
   onChange={(value) => {}}
   placeholder="placeholder text"
   type="text|email|password|number|tel|url|search"
-  variant="filled|bordered|onboarding"
+  variant="filled|bordered"
   error={boolean}
   errorMessage="error text"
   disabled={boolean}
@@ -240,35 +240,6 @@ Unified flex layout container (replaces FlexRow, FlexColumn, FlexCenter, FlexBet
 </Flex>
 ```
 
-### Container
-
-```tsx
-<Container
-  width="auto|full|fit|custom-value"
-  maxWidth="xs|sm|md|lg|xl|2xl|full|custom-value"
-  padding="none|xs|sm|md|lg|xl|custom-value"
-  margin="none|xs|sm|md|lg|xl|auto|custom-value"
-  backgroundColor="hex-color"
-  className="css-classes" // Web only
-  style={CSSProperties}
-  testId="container"
-  // Web-specific props:
-  onClick={(event) => {}} // Web only
-  onMouseEnter={(event) => {}} // Web only
-  onMouseLeave={(event) => {}} // Web only
-  role="button" // Web only
-  aria-label="description" // Web only
-  // Native-specific props:
-  onPress={() => {}} // Native only
-  accessible={boolean} // Native only
-  accessibilityLabel="description" // Native only
-  accessibilityRole="button" // Native only
-  accessibilityHint="hint" // Native only
->
-  <span>Container content</span>
-</Container>
-```
-
 ### Spacer
 
 ```tsx
@@ -316,7 +287,7 @@ Unified flex layout container (replaces FlexRow, FlexColumn, FlexCenter, FlexBet
   value={boolean}
   onChange={(value) => {}}
   disabled={boolean}
-  size="small|normal|large"
+  size="small|normal|large" // Web only
   label="Switch label"
 />
 ```
@@ -348,24 +319,6 @@ Unified flex layout container (replaces FlexRow, FlexColumn, FlexCenter, FlexBet
 >
   <span>Modal content</span>
 </Modal>
-```
-
-### ModalContainer
-
-```tsx
-<ModalContainer
-  visible={boolean}
-  onClose={() => {}}
-  closeOnBackdropClick={boolean}
-  showBackdrop={boolean}
-  backdropBlur={boolean}
-  zIndex="9999"
-  className="css-classes"
-  animationDuration={300} // ms
-  closeOnEscape={boolean}
->
-  <span>Modal content</span>
-</ModalContainer>
 ```
 
 ### OverlayBackdrop
@@ -547,6 +500,12 @@ theme.colors.text.muted; // Disabled text
 theme.colors.accent[500]; // Accent color variations
 theme.colors.surface[1 - 10]; // Surface color levels
 theme.colors.border.default; // Border color
+theme.colors.border.muted;     // Very subtle borders
+theme.colors.border.subtle;    // Light borders
+theme.colors.mention.bg;       // Mention highlight background
+theme.colors.mention.link;     // Mention link color
+theme.colors.contextMenu.bg;   // Context menu background
+theme.colors.spaceTag.bg;      // Space tag background
 theme.colors.utilities.danger; // Error/danger
 theme.colors.utilities.success; // Success
 theme.colors.utilities.warning; // Warning
@@ -600,17 +559,20 @@ theme.colors.utilities.info; // Info
 ### Card Layout
 
 ```tsx
-<Container
-  padding="md"
-  backgroundColor={theme.colors.bg.card}
-  style={{ borderRadius: 12, marginBottom: 16 }}
+<div
+  style={{
+    backgroundColor: theme.colors.bg.card,
+    padding: 16,
+    borderRadius: 12,
+    marginBottom: 16,
+  }}
 >
   <Flex direction="column" gap="md">
     <span className="text-strong text-lg">Card Title</span>
     <span>Card content goes here</span>
     <Button type="primary">Action</Button>
   </Flex>
-</Container>
+</div>
 ```
 
 ### Loading State
@@ -640,12 +602,12 @@ theme.colors.utilities.info; // Info
   multiple
   maxSize={5 * 1024 * 1024} // 5MB
 >
-  <Container
-    padding="xl"
+  <div
     style={{
       border: '2px dashed #ccc',
       borderRadius: 8,
       textAlign: 'center',
+      padding: 32,
     }}
   >
     <Flex direction="column" gap="sm" align="center">
@@ -655,42 +617,36 @@ theme.colors.utilities.info; // Info
         Max 5MB per file
       </span>
     </Flex>
-  </Container>
+  </div>
 </FileUpload>
 ```
 
-### Modal with Backdrop
+### Modal Dialog
 
 ```tsx
-<ModalContainer
-  visible={showModal}
+<Modal
+  isOpen={showModal}
   onClose={closeModal}
-  closeOnBackdropClick
-  backdropBlur
+  size="small"
+  closeOnBackdrop
 >
-  <Container
-    backgroundColor={theme.colors.bg.card}
-    padding="lg"
-    style={{ borderRadius: 12, maxWidth: 400, width: '90vw' }}
-  >
-    <Flex direction="column" gap="md">
-      <Flex justify="between">
-        <span className="text-strong text-lg">Confirmation</span>
-        <Button type="subtle" iconName="close" iconOnly onClick={closeModal} />
-      </Flex>
-      <Spacer size="sm" />
-      <span>Are you sure you want to continue?</span>
-      <Flex gap="sm" justify="end">
-        <Button type="secondary" onClick={closeModal}>
-          Cancel
-        </Button>
-        <Button type="danger" onClick={confirmAction}>
-          Confirm
-        </Button>
-      </Flex>
+  <Flex direction="column" gap="md">
+    <Flex justify="between">
+      <span className="text-strong text-lg">Confirmation</span>
+      <Button type="subtle" iconName="close" iconOnly onClick={closeModal} />
     </Flex>
-  </Container>
-</ModalContainer>
+    <Spacer size="sm" />
+    <span>Are you sure you want to continue?</span>
+    <Flex gap="sm" justify="end">
+      <Button type="secondary" onClick={closeModal}>
+        Cancel
+      </Button>
+      <Button type="danger" onClick={confirmAction}>
+        Confirm
+      </Button>
+    </Flex>
+  </Flex>
+</Modal>
 ```
 
 ### Status Message with Callout
@@ -729,9 +685,8 @@ theme.colors.utilities.info; // Info
 | `<Text variant="subtle">label</Text>` (web) | `<span className="text-subtle">label</span>`          |
 | `<button onClick={}>`                     | `<Button onClick={}>`                                    |
 | `<input type="file" />`                   | `<FileUpload onFilesSelected={}>`                        |
-| `<div style={{ padding: 16 }}>`           | `<Container padding="md">`                               |
 | Manual margin spacing between elements    | `<Spacer size="md" />`                                   |
-| Custom modal backdrop implementation      | `<ModalContainer>` or `<OverlayBackdrop>`                |
+| Custom modal backdrop implementation      | `<Modal>` or `<OverlayBackdrop>`                         |
 | Using Portal for modals                   | Use ModalProvider or Layout-Level rendering instead      |
 | `style={{ color: '#000' }}` on Text       | Use CSS classes on web, `variant` prop on native         |
 | Manual margin/padding for spacing         | Use Flex gap props or semantic components                |
@@ -740,16 +695,18 @@ theme.colors.utilities.info; // Info
 | Custom alert/notification components      | `<Callout variant="info\|success\|warning\|error">`      |
 | Direct `createPortal()` usage             | Use `<Portal>` component for consistency                 |
 
-## 🏗️ **Container + Flex Usage Pattern**
+## 🏗️ **Styling + Flex Layout Pattern**
 
-**Recommended Architecture**: Container + Layout separation
+**Recommended Architecture**: Platform elements for styling, Flex for layout
 
 ```tsx
-// ✅ BEST PRACTICE: Container for styling, Flex for layout
-<Container
-  backgroundColor={theme.colors.bg.card}
-  padding="md"
-  style={{ borderRadius: 8 }}
+// ✅ BEST PRACTICE: div/View for styling, Flex for layout
+<div
+  style={{
+    backgroundColor: theme.colors.bg.card,
+    padding: 16,
+    borderRadius: 8,
+  }}
 >
   <Flex direction="column" gap="md">
     <Flex gap="sm" align="center">
@@ -757,9 +714,9 @@ theme.colors.utilities.info; // Info
       <span>Content</span>
     </Flex>
   </Flex>
-</Container>
+</div>
 
-// ❌ AVOID: Manual flexbox in View/Container
+// ❌ AVOID: Manual flexbox in View/div
 <View style={{ flexDirection: 'column', gap: 16, backgroundColor: '...' }}>
   <View style={{ flexDirection: 'row', alignItems: 'center' }}>
     <Icon name="user" />
@@ -770,7 +727,7 @@ theme.colors.utilities.info; // Info
 
 **When to use:**
 
-- **Container**: Styling containers (colors, borders, shadows, padding, accessibility)
+- **`<div>` (web) / `<View>` (native)**: Styling containers (colors, borders, shadows, padding, accessibility)
 - **Flex**: Layout, spacing, alignment, content organization
 - **Spacer**: Fixed spacing between non-flex elements
 
@@ -786,7 +743,7 @@ theme.colors.utilities.info; // Info
 
 ---
 
-_Last updated: 2026-02-10 - Text primitive removed from web production code; now native-only. All web examples updated to use plain HTML + CSS classes._
+_Last updated: 2026-03-15 - Removed Container and ModalContainer sections (Container dropped; ModalContainer now internal to Modal)_
 
 ---
 

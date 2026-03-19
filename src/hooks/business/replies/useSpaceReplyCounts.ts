@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
 import { useMessageDB } from '../../../components/context/useMessageDB';
 import { isNotificationTypeEnabled } from '../../../utils/notificationSettingsUtils';
-import type { Space } from '../../../api/quorumApi';
+import type { Space } from '@quilibrium/quorum-shared';
 
 interface UseSpaceReplyCountsProps {
   spaces: Space[];

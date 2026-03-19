@@ -4,7 +4,7 @@ import { useRegistration } from '../../queries';
 import { useRegistrationContext } from '../../../components/context/useRegistrationContext';
 import { useMessageDB } from '../../../components/context/useMessageDB';
 import { UserConfig } from '../../../db/messages';
-import { BroadcastSpaceTag } from '../../../api/quorumApi';
+import type { BroadcastSpaceTag } from '@quilibrium/quorum-shared';
 import { DefaultImages } from '../../../utils';
 import { useUploadRegistration } from '../../mutations/useUploadRegistration';
 import { BackupService } from '../../../services/BackupService';

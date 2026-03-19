@@ -3,7 +3,7 @@ import { Virtuoso } from 'react-virtuoso';
 import { t } from '@lingui/core/macro';
 import { SearchResult, SearchContext } from '../../db/messages';
 import { SearchResultItem } from './SearchResultItem';
-import { Icon, Flex, Container, Callout, Input } from '../primitives';
+import { Icon, Flex, Callout, Input } from '../primitives';
 import { DropdownPanel } from '../ui';
 import { isTouchDevice } from '../../utils/platform';
 import {
@@ -89,11 +89,11 @@ export const SearchResults: React.FC<SearchResultsProps> = ({
 
     if (isError) {
       return (
-        <Container className="p-3">
+        <div className="p-3">
           <Callout variant="error" className="w-full">
             {t`Search failed: ${error?.message || 'Unknown error'}`}
           </Callout>
-        </Container>
+        </div>
       );
     }
 
@@ -209,11 +209,11 @@ export const SearchResults: React.FC<SearchResultsProps> = ({
                 )}
               />
               {results.length >= 500 && (
-                <Container className="p-3 border-top">
+                <div className="p-3 border-top">
                   <Callout variant="info" className="w-full">
                     {t`Showing first 500 results. Refine your search for more specific results.`}
                   </Callout>
-                </Container>
+                </div>
               )}
             </>
           )}

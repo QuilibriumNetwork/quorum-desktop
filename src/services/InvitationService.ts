@@ -10,7 +10,7 @@ import { int64ToBytes } from '../utils/bytes';
 import { t } from '@lingui/core/macro';
 import { QueryClient } from '@tanstack/react-query';
 import { buildSpacesKey, buildConfigKey, buildSpaceKey } from '../hooks';
-import { Space } from '../api/quorumApi';
+import type { Space } from '@quilibrium/quorum-shared';
 import { parseInviteParams, getInviteUrlBase } from '../utils/inviteDomain';
 import { isQuorumApiError } from '../api/baseTypes';
 

@@ -5,7 +5,6 @@ import {
   Button,
   Icon,
   Flex,
-  Container,
 } from '../primitives';
 import {
   useSearchSuggestions,
@@ -108,7 +107,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
   };
 
   return (
-    <Container className={`search-bar ${className || ''}`}>
+    <div className={`search-bar ${className || ''}`}>
       <Flex
         ref={inputContainerRef}
         className={`search-input-container ${isFocused ? 'focused' : ''}`}
@@ -149,7 +148,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({
       </Flex>
 
       {showSuggestions && suggestions.length > 0 && (
-        <Container
+        <div
           ref={suggestionsRef}
           className="search-suggestions"
           role="listbox"
@@ -170,8 +169,8 @@ export const SearchBar: React.FC<SearchBarProps> = ({
               <span>{suggestion}</span>
             </Flex>
           ))}
-        </Container>
+        </div>
       )}
-    </Container>
+    </div>
   );
 };

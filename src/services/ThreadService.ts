@@ -4,7 +4,7 @@ import type {
   Message,
   ThreadMessage,
   ChannelThread,
-} from '../api/quorumApi';
+} from '@quilibrium/quorum-shared';
 import {
   buildChannelThreadFromCreate,
   updateChannelThreadOnReply,

@@ -1,10 +1,10 @@
-import {
+import type {
   Permission,
   Role,
   Space,
   Channel,
   Message as MessageType,
-} from '../api/quorumApi';
+} from '@quilibrium/quorum-shared';
 
 /**
  * Consolidated Channel Permission System

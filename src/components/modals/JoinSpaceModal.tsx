@@ -3,7 +3,6 @@ import {
   Input,
   Button,
   Modal,
-  Container,
   Text,
   Spacer,
 } from '../primitives';
@@ -102,8 +101,8 @@ const JoinSpaceModal: React.FunctionComponent<JoinSpaceModalProps> = (
         className="!z-[9999]"
       />
 
-      <Container className="modal-join-space">
-        <Container className="modal-join-space-icon">
+      <div className="modal-join-space">
+        <div className="modal-join-space-icon">
           {!validatedSpace ? (
             <SpaceIcon
               noTooltip={true}
@@ -148,8 +147,8 @@ const JoinSpaceModal: React.FunctionComponent<JoinSpaceModalProps> = (
               )}
             </>
           )}
-        </Container>
-        <Container className="modal-join-space-actions !-mt-2">
+        </div>
+        <div className="modal-join-space-actions !-mt-2">
           <Button
             className="w-full sm:w-auto sm:inline-block sm:px-8"
             type="primary"
@@ -158,7 +157,7 @@ const JoinSpaceModal: React.FunctionComponent<JoinSpaceModalProps> = (
           >
             {buttonText}
           </Button>
-        </Container>
+        </div>
         <Spacer size="xl" />
         <Input
           className="w-full !text-sm"
@@ -168,7 +167,7 @@ const JoinSpaceModal: React.FunctionComponent<JoinSpaceModalProps> = (
           error={!!error}
           errorMessage={error}
         />
-      </Container>
+      </div>
     </Modal>
   );
 };

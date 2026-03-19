@@ -8,7 +8,7 @@ import { MessageDBProvider } from '../src/components/context/MessageDB';
 import '../src/index.scss';
 import App from '../src/App';
 import { WebSocketProvider } from '../src/components/context/WebsocketProvider';
-import { ThemeProvider } from '../src/components/primitives/theme';
+import { ThemeProvider } from '../src/components/primitives';
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 import { dynamicActivate, getUserLocale } from '../src/i18n/i18n';

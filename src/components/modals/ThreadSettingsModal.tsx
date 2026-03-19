@@ -2,7 +2,6 @@ import * as React from 'react';
 import { t } from '@lingui/core/macro';
 import {
   Modal,
-  Container,
   Flex,
   Button,
   Spacer,
@@ -10,7 +9,7 @@ import {
   Switch,
   Input,
 } from '../primitives';
-import type { Message as MessageType } from '../../api/quorumApi';
+import type { Message as MessageType } from '@quilibrium/quorum-shared';
 import type { ThreadChannelProps } from '../context/ThreadContext';
 import { validateNameForXSS } from '../../utils/validation';
 
@@ -134,10 +133,10 @@ export const ThreadSettingsModal: React.FC<ThreadSettingsModalProps> = ({
       title={t`Thread Settings`}
       size="small"
     >
-      <Container style={{ textAlign: 'left' }}>
+      <div style={{ textAlign: 'left' }}>
         {/* Title — author only */}
         {isThreadAuthor && (
-          <Container className="mb-4">
+          <div className="mb-4">
             <div className="text-label-strong mb-1">{t`Title`}</div>
             <Input
               value={pendingTitle}
@@ -148,11 +147,11 @@ export const ThreadSettingsModal: React.FC<ThreadSettingsModalProps> = ({
               errorMessage={titleXssError ? t`Title cannot contain HTML tags` : t`Title cannot exceed ${THREAD_TITLE_MAX_CHARS} characters`}
               className="w-full"
             />
-          </Container>
+          </div>
         )}
 
         {/* Auto-close */}
-        <Container className="mb-4">
+        <div className="mb-4">
           <div className="text-label-strong mb-1">{t`Auto-close after`}</div>
           <Select
             value={pendingAutoClose}
@@ -161,10 +160,10 @@ export const ThreadSettingsModal: React.FC<ThreadSettingsModalProps> = ({
             fullWidth
             variant="filled"
           />
-        </Container>
+        </div>
 
         {/* Close thread toggle */}
-        <Container className="mb-4">
+        <div className="mb-4">
           <Flex align="center" gap="sm">
             <Switch
               value={pendingClosed}
@@ -172,7 +171,7 @@ export const ThreadSettingsModal: React.FC<ThreadSettingsModalProps> = ({
             />
             <span className="text-label">{t`Close thread`}</span>
           </Flex>
-        </Container>
+        </div>
 
         {/* Save button */}
         <Flex className="justify-end gap-2 mt-6">
@@ -208,7 +207,7 @@ export const ThreadSettingsModal: React.FC<ThreadSettingsModalProps> = ({
             </Flex>
           </>
         )}
-      </Container>
+      </div>
     </Modal>
   );
 };

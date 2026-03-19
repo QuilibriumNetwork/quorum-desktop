@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { Role } from '../../../api/quorumApi';
+import type { Role } from '@quilibrium/quorum-shared';
 
 export const useUserRoleDisplay = (
   userAddress: string,

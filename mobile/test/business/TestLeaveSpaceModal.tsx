@@ -1,5 +1,6 @@
 import * as React from 'react';
-import { Button, Modal, Container, Text, Flex, Spacer } from '@/components/primitives';
+import { View } from 'react-native';
+import { Button, Modal, Text, Flex, Spacer } from '@/components/primitives';
 import { Trans } from '@lingui/react/macro';
 import { t } from '@lingui/core/macro';
 import { useState, useCallback, useEffect } from 'react';
@@ -98,15 +99,15 @@ const TestLeaveSpaceModal: React.FunctionComponent<
       swipeToClose={true}
       hideClose={true}
     >
-      <Container>
-        <Container>
+      <View>
+        <View>
           <Text variant="subtle">
             <Trans>
               Are you sure you want to leave this Space? You won't be able to
               rejoin unless you are re-invited.
             </Trans>
           </Text>
-        </Container>
+        </View>
         <Spacer size="lg"></Spacer>
         <Flex>
           <Button
@@ -121,7 +122,7 @@ const TestLeaveSpaceModal: React.FunctionComponent<
             )}
           </Button>
         </Flex>
-      </Container>
+      </View>
     </Modal>
   );
 };

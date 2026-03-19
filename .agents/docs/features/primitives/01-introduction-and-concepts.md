@@ -113,13 +113,13 @@ Instead of hardcoded colors, use semantic variables that automatically adapt to 
 
 ```tsx
 // ❌ Hardcoded colors
-<Container style={{ backgroundColor: '#ffffff', borderColor: '#e5e7eb' }}>
+<div style={{ backgroundColor: '#ffffff', borderColor: '#e5e7eb' }}>
 
 // ✅ Semantic colors (Quilibrium system)
-<Container className="bg-surface-1 border-default">
+<div className="bg-surface-1 border-default">
 
 // ✅ Or with theme variables
-<Container style={{ backgroundColor: theme.colors.bg.surface1 }}>
+<div style={{ backgroundColor: theme.colors.bg.card }}>
 ```
 
 ### **Consistent Spacing System**
@@ -192,15 +192,15 @@ gap: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl'
 
 ---
 
-## 🎯 **Container + Layout Architecture**
+## 🎯 **Layout Architecture**
 
-### **Core Pattern: Separation of Concerns**
+### **Core Pattern: Flex-Based Layout**
 
-Our architecture separates **styling** from **layout** for maximum flexibility and consistency:
+Our architecture uses **Flex** for layout and standard platform elements for styling containers:
 
 ```tsx
 // ✅ REAL EXAMPLE: From UserProfile component (web)
-<Container
+<div
   className="user-profile"
   onClick={(e: React.MouseEvent) => e.stopPropagation()}
 >
@@ -219,17 +219,15 @@ Our architecture separates **styling** from **layout** for maximum flexibility a
       </span>
     </ClickToCopyContent>
   </Flex>
-</Container>
+</div>
 ```
 
 ### **Component Responsibilities**
 
-#### **Container (Styling Container)**
+#### **Styling Containers**
 
-- Visual styling: colors, borders, shadows, border radius
-- Click/press handlers that work cross-platform
-- Background colors and themed styling
-- CSS classes and inline styles
+- **Web:** Use `<div>` with CSS classes or inline styles for visual styling (colors, borders, shadows, border radius)
+- **Native:** Use `<View>` with style props for the same purpose
 
 #### **Flex Primitive (Layout)**
 
@@ -250,7 +248,7 @@ Our architecture separates **styling** from **layout** for maximum flexibility a
 1. **Predictable Spacing**: Gap system eliminates margin calculation issues
 2. **Platform Consistency**: Flex primitives handle platform differences automatically
 3. **Maintainable**: Clear separation between styling and layout concerns
-4. **Flexible**: Mix and match containers with different layout patterns
+4. **Flexible**: Mix and match styling containers with different layout patterns
 
 ---
 
@@ -341,7 +339,7 @@ React Native text handling is different from web. Our Text primitive solves comm
    - Web-only event handlers
 
 2. **Map to Primitive Equivalents**
-   - `<div>` → `<Container>` (styling) + `<Flex>` (layout)
+   - `<div>` with flexbox → `<Flex>` (layout); for styling wrappers, keep `<div>` (web) or use `<View>` (native)
    - `<button>` → `<Button>` with type, size, and icon props
    - `<input>` → `<Input>` with error handling and mobile keyboard types
    - CSS classes → component props and semantic variants
@@ -395,12 +393,12 @@ You don't need to convert everything at once:
 ### **Always Use For:**
 
 - **Interactive elements**: Button, Input, Select, Modal, Switch
-- **Layout containers**: Flex for consistent spacing
+- **Layout**: Flex for consistent spacing and alignment
 - **Design system elements**: Text (native only -- not used on web), Icon
 
 ### **Consider For:**
 
-- **Simple containers**: Use View if you need theme consistency
+- **Simple containers**: Use `<div>` (web) or `<View>` (native) with theme classes/styles
 - **Form elements**: Primitives provide consistent validation/error states
 
 ### **Don't Force For:**
@@ -429,7 +427,7 @@ You don't need to convert everything at once:
 
 ---
 
-_Last updated: 2026-02-10 - Text primitive removed from web production code; now native-only_
+_Last updated: 2026-03-15 - Removed Container primitive references (dropped); use div/View for styling containers_
 
 ---
 

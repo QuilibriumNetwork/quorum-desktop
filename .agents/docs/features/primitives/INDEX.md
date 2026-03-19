@@ -57,11 +57,11 @@ Check [05-primitive-styling-guide.md](./05-primitive-styling-guide.md) for color
 - Platform-specific implementations (.web.tsx, .native.tsx)
 - Unified API with platform optimizations
 
-### **Container + Layout Pattern**
+### **Layout Pattern**
 
-- **Container**: Styling containers (colors, borders, shadows)
 - **Flex**: Layout, spacing, alignment (unified primitive)
 - **Text**: Required on mobile, **not used on web** (plain HTML + CSS typography classes)
+- For styling containers on web, use plain `<div>` with CSS classes; on native, use `<View>` with style props
 
 ### **Design System Integration**
 
@@ -91,7 +91,7 @@ Check [05-primitive-styling-guide.md](./05-primitive-styling-guide.md) for color
 ### **Card Layout (Web)**
 
 ```tsx
-<Container
+<div
   style={{
     backgroundColor: theme.colors.bg.card,
     padding: 16,
@@ -103,19 +103,19 @@ Check [05-primitive-styling-guide.md](./05-primitive-styling-guide.md) for color
     <span>Card content goes here</span>
     <Button type="primary">Action</Button>
   </Flex>
-</Container>
+</div>
 ```
 
 ### **Card Layout (Native)**
 
 ```tsx
-<Container style={{ backgroundColor: theme.colors.bg.card, padding: 16, borderRadius: 12 }}>
+<View style={{ backgroundColor: theme.colors.bg.card, padding: 16, borderRadius: 12 }}>
   <Flex direction="column" gap="md">
     <Text variant="strong" size="lg">Card Title</Text>
     <Text>Card content goes here</Text>
     <Button type="primary">Action</Button>
   </Flex>
-</Container>
+</View>
 ```
 
 ### **Header with Action (Web)**
@@ -161,11 +161,11 @@ Check [05-primitive-styling-guide.md](./05-primitive-styling-guide.md) for color
 
 ### **Layout Components**
 
-- Flex, Container, ScrollContainer, Spacer
+- Flex, ScrollContainer, Spacer
 
 ### **Modal & Overlay**
 
-- Modal, ModalContainer, OverlayBackdrop, Portal, Tooltip
+- Modal, OverlayBackdrop, Portal, Tooltip
 
 ### **Messaging Components**
 
@@ -203,7 +203,7 @@ Check [05-primitive-styling-guide.md](./05-primitive-styling-guide.md) for color
 
 ---
 
-_Last updated: 2026-02-10 - Text primitive removed from web production code; now native-only_
+_Last updated: 2026-03-15 - Removed Container and ModalContainer references (Container dropped; ModalContainer now internal to Modal)_
 
 ---
 

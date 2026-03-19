@@ -27,7 +27,7 @@ This document provides a comprehensive guide to the Quorum multi-repository ecos
 9. [Utilities](#utilities)
 10. [Crypto and Signing](#crypto-and-signing)
 11. [Transport Layer](#transport-layer)
-12. [UI Primitives](#ui-primitives) *(planned)*
+12. [UI Primitives](#ui-primitives)
 13. [Desktop Integration](#desktop-integration)
 14. [Usage Examples](#usage-examples)
 15. [Related Documentation](#related-documentation)
@@ -48,6 +48,7 @@ Quorum is built as a **multi-repository ecosystem** where shared functionality l
 │                    │         shared           │                          │
 │                    │                          │                          │
 │                    │  • Types & Interfaces    │                          │
+│                    │  • UI Primitives         │                          │
 │                    │  • Sync Protocol         │                          │
 │                    │  • React Query Hooks     │                          │
 │                    │  • Storage Adapter       │                          │
@@ -99,8 +100,9 @@ All clients (desktop, web, mobile) sync data via the **same protocol** defined i
 | **Sync protocol** | `quorum-shared` | Hash-based delta sync |
 | **Storage interface** | `quorum-shared` | `StorageAdapter` interface |
 | **Storage implementation** | Each app | IndexedDB (desktop) / MMKV (mobile) |
-| **UI primitives** | Each app | Platform-specific (.web.tsx / .native.tsx) |
-| **Business components** | Each app | Built on shared hooks + local primitives |
+| **UI primitives** | `quorum-shared` | Cross-platform (.web.tsx / .native.tsx) |
+| **SCSS styles** | Each app | Web styling for primitives (quorum-desktop keeps SCSS locally) |
+| **Business components** | Each app | Built on shared hooks + shared primitives |
 
 ---
 
@@ -529,91 +531,48 @@ import { RNWebSocketClient } from '@quilibrium/quorum-shared';
 
 ## UI Primitives
 
-> **Status:** Planned migration. See [Primitives Migration Task](../tasks/primitives-migration-to-quorum-shared.md) for implementation details.
+> **Status:** Migrated to quorum-shared. See [Migration Prep Task](../tasks/2026-03-15-primitives-migration-prep.md) for details.
 
-UI Primitives are cross-platform building blocks (Button, Input, Modal, etc.) that will be shared between desktop and mobile apps.
+18 cross-platform UI components with `.web.tsx` and `.native.tsx` implementations, plus a theme system with colors and ThemeProvider.
 
-### Current State
+### Location
 
-Currently, primitives exist **separately** in each repository:
-
-| Repository | Location | Count |
-|------------|----------|-------|
-| quorum-desktop | `src/components/primitives/` | 23 components |
-| quorum-mobile | `components/ui/` | 10 components |
-
-### Planned State
-
-Primitives will move to quorum-shared with platform-specific implementations:
-
-```
-@quilibrium/quorum-shared/src/primitives/
-├── Button/
-│   ├── Button.web.tsx      ← Web/Electron (uses <button>, CSS)
-│   ├── Button.native.tsx   ← React Native (uses <Pressable>, StyleSheet)
-│   ├── Button.types.ts     ← Shared TypeScript interface
-│   └── index.ts            ← Platform resolution
-├── Input/
-├── Modal/
-├── Text/
-└── ... (all primitives)
-```
-
-### How Platform Resolution Works
-
-Bundlers automatically select the correct file based on platform:
+Primitives live in `@quilibrium/quorum-shared/src/primitives/`. Consuming apps import from `@quilibrium/quorum-shared`:
 
 ```typescript
-// This import works on BOTH platforms
-import { Button } from '@quilibrium/quorum-shared/primitives';
-
-// Web bundler (Vite/Webpack) resolves to: Button.web.tsx
-// Metro bundler (React Native) resolves to: Button.native.tsx
+import { Button, Modal, Input, useTheme } from '@quilibrium/quorum-shared';
 ```
 
-### Primitive Categories
+In quorum-desktop, a local barrel (`src/components/primitives/index.ts`) re-exports from quorum-shared and imports SCSS styles. Existing imports (`from '../primitives'`) continue to work unchanged.
 
-| Category | Components | Description |
-|----------|------------|-------------|
-| **Core** | Button, Input, TextArea, Modal, Text (native only) | Most frequently used |
-| **Layout** | FlexRow, FlexColumn, Container, Spacer | Layout utilities |
-| **Form** | Select, Switch, RadioGroup, ColorSwatch | Form controls |
-| **UI** | Card, Avatar, Tooltip, Callout | Higher-level components |
-| **State** | EmptyState, ErrorState, LoadingState | Feedback components |
+### Platform Resolution
 
-### Usage After Migration
+The package ships pre-built bundles for each platform via `package.json` exports:
 
-```typescript
-// Shared/Native component (works on both platforms)
-import { Button, Input, Modal, Text } from '@quilibrium/quorum-shared/primitives';
+- **Web (Vite/webpack):** `dist/index.mjs` — resolves `.web.tsx` at build time
+- **React Native (Metro):** `dist/index.native.js` — resolves `.native.tsx` at build time
 
-function MyComponent() {
-  return (
-    <Modal visible={isOpen} onClose={handleClose}>
-      <Text variant="heading">Title</Text>
-      <Input value={name} onChange={setName} placeholder="Enter name" />
-      <Button variant="primary" onPress={handleSubmit}>
-        Submit
-      </Button>
-    </Modal>
-  );
-}
+### Components
 
-// Web-only component: use plain HTML for text instead of Text primitive
-import { Button, Input, Modal } from '@quilibrium/quorum-shared/primitives';
+| Category | Components |
+|----------|------------|
+| **Layout** | Flex, Spacer, ScrollContainer, OverlayBackdrop, Portal (web-only) |
+| **Form** | Button, Input, TextArea, Select, Switch, RadioGroup, ColorSwatch, FileUpload |
+| **Feedback** | Modal, Tooltip, Callout |
+| **Content** | Icon, Text, Paragraph, Label, Caption, Title, InlineText |
+| **Theme** | ThemeProvider, useTheme, getColors |
 
-function MyWebComponent() {
-  return (
-    <Modal visible={isOpen} onClose={handleClose}>
-      <span className="text-strong text-lg">Title</span>
-      <Input value={name} onChange={setName} placeholder="Enter name" />
-      <Button variant="primary" onClick={handleSubmit}>
-        Submit
-      </Button>
-    </Modal>
-  );
-}
-```
+### Key Design Decisions
+
+- **Web primitives are unstyled** — consuming apps provide CSS (SCSS files stay in quorum-desktop)
+- **Native primitives are self-contained** — styles via React Native StyleSheet
+- **No i18n dependency** — plain English defaults, apps pass translated strings via props
+- **ModalContainer is internal** to Modal (not a public export)
+- **Container primitive was dropped** — replaced with `<div>` (web) / `<View>` (native)
+
+### Consumer Setup
+
+See the [quorum-shared README](https://github.com/QuilibriumNetwork/quorum-shared#readme) for Vite, Metro, and Tailwind configuration requirements.
 
 ### Theme Integration
 

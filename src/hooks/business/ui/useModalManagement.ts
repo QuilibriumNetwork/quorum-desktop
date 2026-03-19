@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import type { Message as MessageType, Reaction } from '../../../api/quorumApi';
+import type { Message as MessageType, Reaction } from '@quilibrium/quorum-shared';
 import type { CustomEmoji } from 'emoji-picker-react/dist/config/customEmojiConfig';
 import type { MemberInfo } from '../../../components/modals/ReactionsModal';
 import type { ThreadSettingsModalConfig } from '../../../components/context/ThreadSettingsModalProvider';

@@ -2,7 +2,6 @@ import React from 'react';
 import { SearchBar } from './SearchBar';
 import { SearchResults } from './SearchResults';
 import { useMessageDB } from '../context/useMessageDB';
-import { Container } from '../primitives';
 import { isTouchDevice } from '../../utils/platform';
 import {
   useGlobalSearch,
@@ -99,7 +98,7 @@ export const GlobalSearch: React.FC<GlobalSearchProps> = ({
   }
 
   return (
-    <Container className={`global-search ${className || ''}`}>
+    <div className={`global-search ${className || ''}`}>
       {/* Desktop: Show search bar inline */}
       {!isTouch && (
         <SearchBar
@@ -133,6 +132,6 @@ export const GlobalSearch: React.FC<GlobalSearchProps> = ({
         searchContext={searchContext}
         placeholder={placeholder}
       />
-    </Container>
+    </div>
   );
 };

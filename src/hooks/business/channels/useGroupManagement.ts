@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router';
 import { useSpace } from '../../queries';
 import { useMessageDB } from '../../../components/context/useMessageDB';
-import { IconName, IconVariant } from '../../../components/primitives/Icon/types';
+import type { IconName, IconVariant } from '../../../components/primitives';
 import { IconColor } from '../../../components/space/IconPicker';
 import { validateGroupName } from '../validation';
 

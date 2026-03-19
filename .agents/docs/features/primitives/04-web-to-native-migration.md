@@ -19,7 +19,7 @@ Complete guide for converting web components to React Native using our cross-pla
    - [Component Logic Extraction](#️-important-component-logic-extraction)
    - [Step-by-Step Process](#step-by-step-process)
    - [Native Component Styling Guidelines](#-native-component-styling-guidelines)
-2. [Common Patterns](#common-patterns)
+2. [Common Migration Patterns](#common-migration-patterns)
 3. [Text & Typography](#text--typography)
 4. [Layout Conversion](#layout-conversion)
 5. [Form Elements](#form-elements)
@@ -71,7 +71,7 @@ Before migrating any component, the component logic **MUST** be extracted in a s
    // ✅ Good - Use props
    <Title size="lg" weight="bold" color="white" align="center">
    <Paragraph size="sm" color="subtle" align="center">
-   <Button type="primary-white" size="large">
+   <Button type="primary" size="large">
 
    // ❌ Bad - Hardcoded styles
    <Text style={{ fontSize: 24, fontWeight: 'bold', color: '#ffffff' }}>
@@ -94,35 +94,11 @@ Before migrating any component, the component logic **MUST** be extracted in a s
 
 ---
 
-## Real Migration Examples
-
-### Example: Maintenance Component
-
-Shows actual web → native migration from existing codebase:
-
-#### ❌ Web Version
-
-```tsx
-<div className="flex flex-col text-white">
-  <Icon name="tools" className="text-4xl" />
-  <Trans>Maintenance in Progress</Trans>
-</div>
-```
-
-#### ✅ Native Version
-
-```tsx
-<Flex direction="column" gap="sm" align="center">
-  <Icon name="tools" size="2xl" color="white" />
-  <Title size="xl" align="center" color="white">
-    {t`Maintenance in Progress`}
-  </Title>
-</Flex>
-```
+## Common Migration Patterns
 
 ### Key Migration Patterns
 
-- Replace `<div>` with `<Container>` or `<Flex>`
+- Replace `<div>` with flexbox layout → `<Flex>`; for styling wrappers → `<View>` (native)
 - Replace `<button>` with `<Button type="primary">`
 - Replace `<input>` with `<Input>`
 - Use component props instead of CSS classes
@@ -280,7 +256,8 @@ import { Select } from '../components/primitives';
 
 ```tsx
 // Using primitives for button patterns
-import { Button, Icon, Container } from '../primitives';
+import { Button, Icon } from '../primitives';
+import { TouchableOpacity } from 'react-native';
 
 // Primary action button
 <Button
@@ -302,9 +279,9 @@ import { Button, Icon, Container } from '../primitives';
 </Button>
 
 // Icon-only button pattern
-<Container onClick={handleMenuAction}>
+<TouchableOpacity onPress={handleMenuAction}>
   <Icon name="ellipsis-vertical" />
-</Container>
+</TouchableOpacity>
 ```
 
 ---
@@ -331,17 +308,18 @@ import { Button, Icon, Container } from '../primitives';
 
 ```tsx
 // Native version using Text primitive and theme system
-import { Container, Text } from '../primitives';
+import { Text } from '../primitives';
+import { View } from 'react-native';
 
-<Container className="space-header" style={headerStyle}>
-  <Container className="space-header-name truncate relative z-10">
+<View style={headerStyle}>
+  <View style={styles.spaceName}>
     <Text weight="bold" variant="strong">
       Space Name
     </Text>
-  </Container>
+  </View>
   <Text variant="subtle">Space description</Text>
   <Text variant="link">Online users: 5</Text>
-</Container>;
+</View>;
 ```
 
 ### Spacing System
@@ -401,7 +379,7 @@ import { Container, Text } from '../primitives';
 ### ✅ Solution: Use Props
 
 ```tsx
-// DO: Use component props (real examples from OnboardingTestScreen)
+// DO: Use component props
 <Text variant="strong" weight="bold">User Name</Text>
 <Text variant="subtle" size="xs">User address</Text>
 <Text
@@ -417,17 +395,17 @@ import { Container, Text } from '../primitives';
 
 ```tsx
 // DON'T: Naked text will crash React Native (common in ChannelList)
-<Container>
+<View>
   Space Name
   <Icon name="users" />5 members
-</Container>
+</View>
 ```
 
 ### ✅ Solution: Wrap All Text (ChannelList)
 
 ```tsx
 // DO: All text must be in Text components (real pattern from Quilibrium)
-<Container className="space-header-name truncate relative z-10">
+<View style={styles.spaceHeaderName}>
   <Text weight="bold" variant="strong">
     {spaceName}
   </Text>
@@ -435,7 +413,7 @@ import { Container, Text } from '../primitives';
   <Text variant="subtle" size="sm">
     5 members
   </Text>
-</Container>
+</View>
 ```
 
 ---
@@ -501,7 +479,7 @@ From mobile onboarding implementation, we learned:
 
 Key principles for successful web-to-native migration:
 
-1. **Replace HTML with Primitives** - Every HTML element has a primitive equivalent
+1. **Replace HTML with Primitives** - Interactive and layout elements have primitive equivalents; use `<View>` for styling containers
 2. **Use Props Over Classes** - Component props replace CSS classes
 3. **Wrap All Text** - React Native requires all text in Text components
 4. **Layout with Flex** - Use Flex instead of CSS Grid
@@ -513,7 +491,7 @@ Following these patterns will ensure your components work seamlessly across web 
 
 ---
 
-_Last updated: 2026-02-10 - Updated to reflect Text primitive removal from web code_
+_Last updated: 2026-03-15 - Removed Container references (dropped); replaced with div (web) / View (native) in examples_
 
 ---
 

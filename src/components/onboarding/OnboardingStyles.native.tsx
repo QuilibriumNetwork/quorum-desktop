@@ -1,7 +1,8 @@
 import React from 'react';
 import { LinearGradient } from 'expo-linear-gradient';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Container, Flex, Text } from '@/components/primitives';
+import { View } from 'react-native';
+import { Flex, Text } from '@/components/primitives';
 
 // Shared gradient colors matching web version (bg-radial--accent-noise) - EXACT WEB COLORS
 // Using the exact bright colors from the web: #034081, #0287f2, #b4e235
@@ -140,7 +141,7 @@ export const AuthContent: React.FC<AuthContentProps> = ({
 }) => (
   <Flex style={{ justifyContent: 'center' }}>
     <Flex direction="column" style={{ flex: 1 }} />
-    <Container
+    <View
       style={{
         width: '100%',
         maxWidth: AUTH_LAYOUT.MAX_CONTENT_WIDTH,
@@ -150,7 +151,7 @@ export const AuthContent: React.FC<AuthContentProps> = ({
       }}
     >
       {children}
-    </Container>
+    </View>
     <Flex direction="column" style={{ flex: 1 }} />
   </Flex>
 );
@@ -171,7 +172,7 @@ export const StepIndicator: React.FC<StepIndicatorProps> = ({
   <Flex justify="center" style={{ marginBottom: 24, marginTop: 16 }}>
     <Flex gap="sm">
       {Array.from({ length: totalSteps }, (_, index) => (
-        <Container
+        <View
           key={index}
           style={{
             width: 8,

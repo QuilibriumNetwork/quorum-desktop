@@ -1,7 +1,7 @@
 import React, { useCallback, useRef, useEffect, useState } from 'react';
 import { parse as parseEmoji } from '@twemoji/parser';
 import { t } from '@lingui/core/macro';
-import { Message as MessageType } from '../../api/quorumApi';
+import type { Message as MessageType } from '@quilibrium/quorum-shared';
 import { Portal, Button, Icon } from '../primitives';
 import { useClickOutside } from '../../hooks/useClickOutside';
 import { useFrequentEmojis } from '../../hooks/business/messages';

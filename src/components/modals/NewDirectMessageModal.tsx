@@ -3,7 +3,6 @@ import {
   Input,
   Button,
   Modal,
-  Container,
   Switch,
   Icon,
   Tooltip,
@@ -90,11 +89,9 @@ const NewDirectMessageModal: React.FunctionComponent<
       title={t`New Direct Message`}
       size="small"
     >
-      <Container
-        className="modal-new-direct-message"
-        width="full"
-        maxWidth="500px"
-        margin="auto"
+      <div
+        className="modal-new-direct-message w-full mx-auto"
+        style={{ maxWidth: '500px' }}
       >
         {!isOnline && address && !existingConversation && (
           <Callout variant="warning" size="sm" className="mb-4 text-left">
@@ -104,7 +101,7 @@ const NewDirectMessageModal: React.FunctionComponent<
         <p className="text-body text-subtle mb-4">
           {t`Enter a user's address to start messaging them.`}
         </p>
-        <Container margin="none">
+        <div>
           <Input
             className="w-full !text-xs sm:!text-sm"
             onChange={(value: string) => handleAddressChange(value)}
@@ -119,10 +116,10 @@ const NewDirectMessageModal: React.FunctionComponent<
             errorMessage={error || undefined}
             autoFocus={true}
           />
-        </Container>
+        </div>
         <React.Suspense
           fallback={
-            <Container className="modal-new-direct-message-actions">
+            <div className="modal-new-direct-message-actions">
               <Button
                 className="w-full sm:max-w-32 sm:inline-block"
                 type="primary"
@@ -131,10 +128,10 @@ const NewDirectMessageModal: React.FunctionComponent<
               >
                 {buttonText}
               </Button>
-            </Container>
+            </div>
           }
         >
-          <Container className="modal-new-direct-message-actions">
+          <div className="modal-new-direct-message-actions">
             <Button
               className="w-full sm:inline-block"
               type="primary"
@@ -143,11 +140,11 @@ const NewDirectMessageModal: React.FunctionComponent<
             >
               {buttonText}
             </Button>
-          </Container>
+          </div>
         </React.Suspense>
 
         <Spacer spaceBefore="lg" spaceAfter="md" border={true} direction="vertical" />
-        <Container margin="none">
+        <div>
           <Flex className="items-center justify-between">
             <Flex className="items-center">
               <span className="text-label-strong">{t`Always sign messages`}</span>
@@ -170,8 +167,8 @@ const NewDirectMessageModal: React.FunctionComponent<
               onChange={() => setNonRepudiable(!nonRepudiable)}
             />
           </Flex>
-        </Container>
-      </Container>
+        </div>
+      </div>
     </Modal>
   );
 };

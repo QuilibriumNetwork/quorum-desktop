@@ -1,4 +1,4 @@
-import { Permission, Role, Space } from '../api/quorumApi';
+import type { Permission, Role, Space } from '@quilibrium/quorum-shared';
 
 /**
  * Utility functions for checking user permissions in spaces

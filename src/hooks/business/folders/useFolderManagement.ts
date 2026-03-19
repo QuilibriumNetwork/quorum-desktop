@@ -5,7 +5,7 @@ import { t } from '@lingui/core/macro';
 import { useConfig, buildConfigKey } from '../../queries';
 import { useMessageDB } from '../../../components/context/useMessageDB';
 import { NavItem, UserConfig } from '../../../db/messages';
-import { IconName, IconVariant } from '../../../components/primitives/Icon/types';
+import type { IconName, IconVariant } from '../../../components/primitives';
 import { IconColor } from '../../../components/space/IconPicker/types';
 import { createFolder, deriveSpaceIds } from '../../../utils/folderUtils';
 import { validateNameForXSS, MAX_NAME_LENGTH } from '../../../utils/validation';

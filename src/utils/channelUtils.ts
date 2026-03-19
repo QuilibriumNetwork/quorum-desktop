@@ -3,7 +3,7 @@
  */
 
 import { logger } from '@quilibrium/quorum-shared';
-import type { Channel } from '../api/quorumApi';
+import type { Channel } from '@quilibrium/quorum-shared';
 import type { UserConfig } from '../db/messages';
 
 /**

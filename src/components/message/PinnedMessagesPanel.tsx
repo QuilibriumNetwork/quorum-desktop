@@ -1,12 +1,11 @@
 import React, { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Virtuoso } from 'react-virtuoso';
-import type { Message as MessageType, Channel, Sticker, Role } from '../../api/quorumApi';
+import type { Message as MessageType, Channel, Sticker, Role } from '@quilibrium/quorum-shared';
 import MessagePreview from './MessagePreview';
 import {
   Flex,
   Button,
-  Container,
   Tooltip,
   Icon,
 } from '../primitives';
@@ -64,11 +63,11 @@ const PinnedMessageItem: React.FC<PinnedMessageItemProps> = ({
   const sender = mapSenderToUser(message.content?.senderId);
 
   return (
-    <Container
+    <div
       key={message.messageId}
       className="pinned-message-item"
     >
-      <Container className="result-header">
+      <div className="result-header">
         <Flex justify="between" className="result-meta-container">
           <Flex className="result-meta items-center min-w-0 flex-1 mr-2">
             <Icon name="user" className="result-user-icon flex-shrink-0" />
@@ -112,9 +111,9 @@ const PinnedMessageItem: React.FC<PinnedMessageItemProps> = ({
             )}
           </Flex>
         </Flex>
-      </Container>
+      </div>
 
-      <Container className="result-content">
+      <div className="result-content">
         <MessagePreview
           message={message}
           mapSenderToUser={mapSenderToUser}
@@ -127,8 +126,8 @@ const PinnedMessageItem: React.FC<PinnedMessageItemProps> = ({
           disableMentionInteractivity={true}
           currentSpaceId={spaceId}
         />
-      </Container>
-    </Container>
+      </div>
+    </div>
   );
 };
 

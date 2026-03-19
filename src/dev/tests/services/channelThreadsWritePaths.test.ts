@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import type { ChannelThread } from '../../../api/quorumApi';
+import type { ChannelThread } from '@quilibrium/quorum-shared';
 import {
   buildChannelThreadFromCreate,
   updateChannelThreadOnReply,

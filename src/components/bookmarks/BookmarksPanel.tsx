@@ -2,12 +2,11 @@ import React, { useState, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Virtuoso } from 'react-virtuoso';
 import { t } from '@lingui/core/macro';
-import type { Bookmark, Sticker } from '../../api/quorumApi';
+import type { Bookmark, Sticker } from '@quilibrium/quorum-shared';
 import { buildMessageHash } from '../../utils/messageHashNavigation';
 import { BookmarkItem } from './BookmarkItem';
 import {
   Flex,
-  Container,
   Icon,
   Select,
 } from '../primitives';
@@ -148,7 +147,7 @@ export const BookmarksPanel: React.FC<BookmarksPanelProps> = ({
     if (bookmarkCount === 0) return null;
 
     return (
-      <Container className="bookmarks-panel__controls">
+      <div className="bookmarks-panel__controls">
         <Flex className="items-center justify-between gap-2">
           <Select
             value={selectedFilter}
@@ -160,7 +159,7 @@ export const BookmarksPanel: React.FC<BookmarksPanelProps> = ({
             size="medium"
           />
         </Flex>
-      </Container>
+      </div>
     );
   }, [bookmarkCount, selectedFilter, handleFilterChange, filterOptions]);
 

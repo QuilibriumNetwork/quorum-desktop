@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Icon, Callout, Spacer } from '../../primitives';
 import { Trans } from '@lingui/react/macro';
 import { SpaceTag } from '../../space/SpaceTag';
-import { BroadcastSpaceTag } from '../../../api/quorumApi';
+import type { BroadcastSpaceTag } from '@quilibrium/quorum-shared';
 import { validateSpaceTagLetters } from '../../../utils/validation';
 
 interface SpaceTagSettingsProps {

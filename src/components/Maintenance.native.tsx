@@ -1,7 +1,7 @@
 import { logger } from '@quilibrium/quorum-shared';
 import React from 'react';
+import { View } from 'react-native';
 import {
-  Container,
   Text,
   Button,
   Icon,
@@ -28,10 +28,8 @@ export const Maintenance = () => {
 
       {/* Content Container with reduced gaps */}
       <Flex justify="center">
-        <Container
-          width="full"
-          maxWidth={AUTH_LAYOUT.MAX_CONTENT_WIDTH}
-          padding={AUTH_LAYOUT.PADDING}
+        <View
+          style={{ width: '100%', maxWidth: AUTH_LAYOUT.MAX_CONTENT_WIDTH, padding: AUTH_LAYOUT.PADDING }}
         >
           <Flex direction="column" gap="sm" align="center">
             {/* Icon Section - large and above title */}
@@ -62,7 +60,7 @@ export const Maintenance = () => {
             </Paragraph>
 
             {/* Space before button */}
-            <Container style={{ height: 16 }} />
+            <View style={{ height: 16 }} />
 
             {/* Refresh Button Section */}
             <Button
@@ -73,7 +71,7 @@ export const Maintenance = () => {
               {t`Refresh`}
             </Button>
           </Flex>
-        </Container>
+        </View>
       </Flex>
 
       <AuthSpacer />

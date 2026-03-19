@@ -20,93 +20,6 @@
     cursor: not-allowed;
   }
 
-  // Default variant (no border, matches Input default style)
-  &--default {
-    .radio-group__item {
-      cursor: pointer;
-      // Use exact Input primitive styling for consistency
-      background-color: var(--color-field-bg);
-      border: $border solid transparent;
-      border-radius: $rounded-lg;
-      padding: $s-2-5 $s-4;
-      height: 42px;
-      font-size: $text-sm;
-      margin: 0;
-      color: var(--color-field-text);
-      outline: none;
-      width: 100%;
-      box-sizing: border-box;
-      transition: border-color $duration-150 $ease-in-out, box-shadow $duration-150 $ease-in-out;
-
-      &:hover:not(.radio-group__item--disabled) {
-        background-color: var(--color-field-bg-focus);
-        border-color: transparent;
-      }
-
-      &.radio-group__item--selected {
-        outline: none;
-        border-color: var(--color-field-border-focus) !important;
-        background-color: var(--color-field-bg-focus);
-        box-shadow: 0 0 0 3px var(--color-field-focus-shadow);
-      }
-
-      &.radio-group__item--disabled {
-        opacity: 0.6;
-        cursor: not-allowed;
-        background-color: var(--color-field-bg) !important;
-        border-color: transparent !important;
-
-        &:hover {
-          background-color: var(--color-field-bg) !important;
-          border-color: transparent !important;
-        }
-      }
-    }
-  }
-
-  // Bordered variant (explicit border, matches Input bordered style)
-  &--bordered {
-    .radio-group__item {
-      cursor: pointer;
-      // Use exact Input primitive bordered styling for consistency
-      background-color: var(--color-field-bg);
-      border: $border solid var(--color-field-border);
-      border-radius: $rounded-lg;
-      padding: $s-2-5 $s-4;
-      height: 42px;
-      font-size: $text-base;
-      margin: 0;
-      color: var(--color-field-text);
-      outline: none;
-      width: 100%;
-      box-sizing: border-box;
-      transition: border-color $duration-150 $ease-in-out, box-shadow $duration-150 $ease-in-out;
-
-      &:hover:not(.radio-group__item--disabled) {
-        border-color: var(--color-field-border-hover);
-        background-color: var(--color-field-bg-focus);
-      }
-
-      &.radio-group__item--selected {
-        border-color: var(--color-field-border-focus) !important;
-        background-color: var(--color-field-bg-focus);
-        box-shadow: 0 0 0 3px var(--color-field-focus-shadow);
-      }
-
-      &.radio-group__item--disabled {
-        opacity: 0.6;
-        cursor: not-allowed;
-        border-color: var(--color-field-border) !important;
-        background-color: var(--color-field-bg) !important;
-
-        &:hover {
-          border-color: var(--color-field-border) !important;
-          background-color: var(--color-field-bg) !important;
-        }
-      }
-    }
-  }
-
   // Icon-only variant (circular items with icons)
   &--icon-only {
     .radio-group__item {
@@ -157,33 +70,49 @@
       }
     }
 
-    // For bordered icon-only variant
-    &.radio-group--bordered .radio-group__item {
-      border: $border solid var(--color-field-border);
-
-      &:hover:not(.radio-group__item--disabled) {
-        border-color: var(--color-field-border-hover);
-        background-color: var(--color-field-bg-focus);
-      }
-
-      &.radio-group__item--disabled {
-        border-color: var(--color-field-border) !important;
-        background-color: var(--color-field-bg) !important;
-
-        &:hover {
-          border-color: var(--color-field-border) !important;
-          background-color: var(--color-field-bg) !important;
-        }
-      }
-    }
   }
 
-  // Radio item (label container) - base styles
+  // Radio item (label container) - base styles matching Input primitive
   &__item {
     display: flex;
     align-items: center;
     justify-content: space-between;
     cursor: pointer;
+    background-color: var(--color-field-bg);
+    border: $border solid transparent;
+    border-radius: $rounded-lg;
+    padding: $s-2-5 $s-4;
+    height: 42px;
+    font-size: $text-sm;
+    margin: 0;
+    color: var(--color-field-text);
+    outline: none;
+    width: 100%;
+    box-sizing: border-box;
+    transition: border-color $duration-150 $ease-in-out, box-shadow $duration-150 $ease-in-out;
+
+    &:hover:not(.radio-group__item--disabled) {
+      background-color: var(--color-field-bg-focus);
+    }
+
+    &--selected {
+      outline: none;
+      border-color: var(--color-field-border-focus) !important;
+      background-color: var(--color-field-bg-focus);
+      box-shadow: 0 0 0 3px var(--color-field-focus-shadow);
+    }
+
+    &--disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      background-color: var(--color-field-bg) !important;
+      border-color: transparent !important;
+
+      &:hover {
+        background-color: var(--color-field-bg) !important;
+        border-color: transparent !important;
+      }
+    }
   }
 
   // Content wrapper (icon + label)

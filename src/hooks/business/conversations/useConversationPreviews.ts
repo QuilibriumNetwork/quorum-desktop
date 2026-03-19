@@ -1,7 +1,7 @@
 import { logger } from '@quilibrium/quorum-shared';
 import { useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
-import { Conversation } from '../../../api/quorumApi';
+import type { Conversation } from '@quilibrium/quorum-shared';
 import { useMessageDB } from '../../../components/context/useMessageDB';
 import { generateMessagePreview } from '../../../utils/messagePreview';
 

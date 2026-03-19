@@ -2,14 +2,13 @@ import React from 'react';
 import { ScrollView, View, TouchableOpacity, Alert } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import {
-  Container,
   Flex,
   Text,
   Icon,
   Title,
+  useTheme,
 } from '@/components/primitives';
-import { useTheme } from '@/components/primitives/theme';
-import { IconName } from '@/components/primitives/Icon/types';
+import type { IconName } from '@/components/primitives';
 import {
   commonTestStyles,
   createThemedStyles,
@@ -43,24 +42,7 @@ export const BusinessMenuScreen: React.FC<BusinessMenuScreenProps> = ({
   };
 
   const features: BusinessFeature[] = [
-    {
-      id: 'auth',
-      title: 'Authentication Flow',
-      description:
-        'Complete Login → Onboarding flow with step indicator and responsive design',
-      icon: 'shield',
-      status: 'ready',
-      onPress: () => onSelectFeature('auth'),
-    },
-    {
-      id: 'maintenance',
-      title: 'Maintenance Screen',
-      description: 'Maintenance screen with consistent auth layout and styling',
-      icon: 'tools',
-      status: 'ready',
-      onPress: () => onSelectFeature('maintenance'),
-    },
-    {
+{
       id: 'spaces',
       title: 'Space Navigation',
       description: 'Space list and navigation using useSpaceOrdering hook',

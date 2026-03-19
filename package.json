@@ -31,12 +31,12 @@
     "test": "vitest",
     "test:run": "vitest --run",
     "mobile": "cd mobile && expo start --dev-client",
-    "mobile:tunnel": "cd mobile && expo start --dev-client --tunnel",
     "mobile:clear": "cd mobile && expo start --dev-client --clear",
-    "mobile:android": "cd mobile && expo start --dev-client --android",
-    "mobile:ios": "cd mobile && expo start --ios",
-    "mobile:web": "cd mobile && expo start --web",
-    "mobile:build": "cd mobile && expo run:android"
+    "mobile:tunnel": "cd mobile && expo start --dev-client --tunnel",
+    "mobile:connect": "adb shell am force-stop com.quorum && adb shell am start -n com.quorum/.MainActivity -a android.intent.action.VIEW -d \"exp+quorum://expo-development-client/?url=http%3A%2F%2Flocalhost%3A8081\"",
+    "mobile:android": "cd mobile && expo run:android",
+    "mobile:ios": "cd mobile && expo run:ios",
+    "mobile:web": "cd mobile && expo start --web"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",
@@ -49,7 +49,7 @@
     "@lingui/react": "^5.3.3",
     "@lingui/vite-plugin": "^5.3.3",
     "@quilibrium/quilibrium-js-sdk-channels": "^2.1.0-2",
-    "@quilibrium/quorum-shared": "2.1.0-2",
+    "@quilibrium/quorum-shared": "link:../quorum-shared",
     "@tabler/icons-react": "^3.40.0",
     "@tanstack/react-query": "^5.62.7",
     "@twemoji/parser": "^17.0.1",

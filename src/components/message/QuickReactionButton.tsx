@@ -1,5 +1,5 @@
 import React from 'react';
-import { Message as MessageType } from '../../api/quorumApi';
+import type { Message as MessageType } from '@quilibrium/quorum-shared';
 
 export interface QuickReactionButtonProps {
   emoji: string;

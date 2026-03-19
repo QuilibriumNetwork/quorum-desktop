@@ -4,7 +4,7 @@ import { useMessageDB } from '../../../components/context/useMessageDB';
 import { isMentionedWithSettings } from '../../../utils/mentionUtils';
 import { getDefaultNotificationSettings } from '../../../utils/notificationSettingsUtils';
 import { getMutedChannelsForSpace } from '../../../utils/channelUtils';
-import type { Message } from '../../../api/quorumApi';
+import type { Message } from '@quilibrium/quorum-shared';
 
 export interface MentionNotification {
   message: Message;

@@ -6,7 +6,7 @@ import type {
   Sticker,
   Emoji,
   ThreadMeta,
-} from '../../api/quorumApi';
+} from '@quilibrium/quorum-shared';
 
 export interface ThreadChannelProps {
   spaceId: string;

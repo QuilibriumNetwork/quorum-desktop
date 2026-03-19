@@ -9,7 +9,6 @@ import { ListSearchInput } from '../ui';
 import './DirectMessageContactsList.scss';
 import {
   Button,
-  Container,
   Flex,
   Select,
   Tooltip,
@@ -308,11 +307,11 @@ const DirectMessageContactsList: React.FC = () => {
   }, [filter, hasMuted, hasFavorites, hasUnknown]);
 
   return (
-    <Container className="direct-messages-list-wrapper list-bottom-fade flex flex-col h-full z-0 flex-grow select-none">
+    <div className="direct-messages-list-wrapper list-bottom-fade flex flex-col h-full z-0 flex-grow select-none">
       <Flex justify="between" className="direct-messages-header px-4 pt-4 pb-2 lg:py-2 font-semibold flex-shrink-0">
-        <Container>
+        <div>
           <Trans>Direct Messages</Trans>
-        </Container>
+        </div>
         <Flex className="gap-1">
             <Button
               type="unstyled"
@@ -341,7 +340,7 @@ const DirectMessageContactsList: React.FC = () => {
 
       {/* Search row */}
       {searchOpen && (
-        <Container className="px-4 pt-2 pb-3">
+        <div className="px-4 pt-2 pb-3">
           <Flex className="dm-search-row items-center">
             {hasAnyFilter && (
               <Select
@@ -353,7 +352,7 @@ const DirectMessageContactsList: React.FC = () => {
                 size="small"
               />
             )}
-            <Container className="flex-1">
+            <div className="flex-1">
               <ListSearchInput
                 value={searchInput}
                 onChange={setSearchInput}
@@ -361,11 +360,11 @@ const DirectMessageContactsList: React.FC = () => {
                 variant="minimal"
                 showSearchIcon={false}
               />
-            </Container>
+            </div>
           </Flex>
           {/* No results message */}
           {filteredConversations.length === 0 && (filter !== 'all' || searchInput) && (
-            <Container className="text-xs text-subtle mt-2">
+            <div className="text-xs text-subtle mt-2">
               {filter === 'favorites' ? (
                 <Trans>No favorites yet</Trans>
               ) : filter === 'unknown' ? (
@@ -375,17 +374,17 @@ const DirectMessageContactsList: React.FC = () => {
               ) : (
                 <Trans>No contacts found</Trans>
               )}
-            </Container>
+            </div>
           )}
-        </Container>
+        </div>
       )}
 
-      <Container className="direct-messages-list list-fade-content flex flex-col h-full overflow-y-auto overflow-x-hidden">
+      <div className="direct-messages-list list-fade-content flex flex-col h-full overflow-y-auto overflow-x-hidden">
         {conversationsList.length === 0 && !ENABLE_MOCK_CONVERSATIONS ? (
           <Flex direction="column" className="justify-center items-center flex-1 px-4">
-            <Container className="w-full text-center mb-4 text-subtle">
+            <div className="w-full text-center mb-4 text-subtle">
               <Trans>Ready to start a truly private conversation?</Trans>
-            </Container>
+            </div>
             <Button
               type="primary"
               className="max-w-full"
@@ -420,7 +419,7 @@ const DirectMessageContactsList: React.FC = () => {
             })}
           </>
         )}
-      </Container>
+      </div>
 
       {/* Context menu */}
       {contextMenu && contextMenuContact && (
@@ -436,7 +435,7 @@ const DirectMessageContactsList: React.FC = () => {
           onClose={handleCloseContextMenu}
         />
       )}
-    </Container>
+    </div>
   );
 };
 

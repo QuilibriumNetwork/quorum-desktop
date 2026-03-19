@@ -8,7 +8,7 @@ import { useChannelThreads } from '../../hooks/business/threads/useChannelThread
 import { useMessageDB } from '../context/useMessageDB';
 import { useThreadContext } from '../context/ThreadContext';
 import { isTouchDevice } from '../../utils/platform';
-import type { ChannelThread } from '../../api/quorumApi';
+import type { ChannelThread } from '@quilibrium/quorum-shared';
 import './ThreadsListPanel.scss';
 
 const SEVEN_DAYS_MS = 7 * 24 * 60 * 60 * 1000;

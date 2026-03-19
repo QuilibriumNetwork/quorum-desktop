@@ -4,7 +4,7 @@ import { useClickOutside } from '../../hooks/useClickOutside';
 import { UserAvatar } from '../user/UserAvatar';
 import SpaceIcon from '../navbar/SpaceIcon';
 import { getFolderColorHex, IconColor } from '../space/IconPicker/types';
-import { IconName, IconVariant } from '../primitives/Icon/types';
+import type { IconName, IconVariant } from '../primitives';
 import './ContextMenu.scss';
 
 // Fixed dimensions for viewport edge detection

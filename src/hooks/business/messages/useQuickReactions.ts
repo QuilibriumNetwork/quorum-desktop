@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import { Message as MessageType } from '../../../api/quorumApi';
+import type { Message as MessageType } from '@quilibrium/quorum-shared';
 
 interface UseQuickReactionsProps {
   userAddress: string;

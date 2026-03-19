@@ -22,7 +22,7 @@ import { buildSpacesFetcher } from '../../../hooks/queries/spaces/buildSpacesFet
 import { buildSpacesKey } from '../../../hooks/queries/spaces/buildSpacesKey';
 import { useMessageDB } from '../../context/useMessageDB';
 import { validateDisplayName, validateUserBio } from '../../../hooks/business/validation';
-import { BroadcastSpaceTag } from '../../../api/quorumApi';
+import type { BroadcastSpaceTag } from '@quilibrium/quorum-shared';
 import General from './General';
 import Privacy from './Privacy';
 import Notifications from './Notifications';

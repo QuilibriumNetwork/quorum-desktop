@@ -167,15 +167,15 @@ Complete API reference for all primitive components. Use this for quick prop loo
 **Location**: `src/components/primitives/Button/Button.tsx`
 
 **Props**:
-- `type?: 'primary' | 'secondary' | 'light' | 'light-outline' | 'subtle' | 'subtle-outline' | 'danger' | 'primary-white' | 'secondary-white' | 'light-white' | 'light-outline-white' | 'disabled-onboarding' | 'unstyled'` - Button style variant
-- `size?: 'small' | 'normal' | 'large'` - Button size
+- `type?: 'primary' | 'secondary' | 'subtle' | 'subtle-outline' | 'danger' | 'unstyled'` - Button style variant
+- `size?: 'small' | 'normal' | 'large' | 'compact'` - Button size
 - `onClick?: () => void` - Click handler
 - `disabled?: boolean` - Disable button interaction
 - `fullWidth?: boolean` - Make button full width
 - `fullWidthWithMargin?: boolean` - Full width with horizontal margin (native only)
 - `iconName?: string` - Icon name to display
 - `iconOnly?: boolean` - Show only icon, hide text
-- `hapticFeedback?: boolean` - Enable haptic feedback on press (native only)
+- `hapticFeedback?: boolean` - Enable haptic feedback on press (native only, default: true)
 - `accessibilityLabel?: string` - Accessibility label (native only)
 - `tooltip?: string` - Tooltip text
 - `className?: string` - CSS classes (web only)
@@ -203,7 +203,7 @@ Complete API reference for all primitive components. Use this for quick prop loo
 - `onChange: (value: string) => void` - Change handler (required)
 - `placeholder?: string` - Placeholder text
 - `type?: 'text' | 'email' | 'password' | 'number' | 'tel' | 'url' | 'search'` - Input type
-- `variant?: 'filled' | 'bordered' | 'onboarding'` - Input style variant
+- `variant?: 'filled' | 'bordered' | 'minimal'` - Input style variant
 - `error?: boolean` - Show error state
 - `errorMessage?: string` - Error message to display
 - `disabled?: boolean` - Disable input
@@ -485,47 +485,6 @@ Unified flex layout container that replaces the legacy FlexRow, FlexColumn, Flex
 
 ---
 
-### Container
-
-**Location**: `src/components/primitives/Container/Container.tsx`
-
-**Props**:
-- `width?: 'auto' | 'full' | 'fit' | string | number` - Container width
-- `maxWidth?: 'xs' | 'sm' | 'md' | 'lg' | 'xl' | '2xl' | 'full' | string | number` - Maximum width
-- `padding?: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | string | number` - Padding
-- `margin?: 'none' | 'xs' | 'sm' | 'md' | 'lg' | 'xl' | 'auto' | string | number` - Margin
-- `backgroundColor?: string` - Background color
-- `className?: string` - CSS classes (web only)
-- `style?: CSSProperties | StyleProp<ViewStyle>` - Additional styles
-- `testId?: string` - Test identifier
-
-**Web-specific props**:
-- `onClick?: (event: MouseEvent) => void` - Click handler (web only)
-- `onMouseEnter?: (event: MouseEvent) => void` - Mouse enter handler (web only)
-- `onMouseLeave?: (event: MouseEvent) => void` - Mouse leave handler (web only)
-- `role?: string` - ARIA role (web only)
-- `aria-label?: string` - ARIA label (web only)
-
-**Native-specific props**:
-- `onPress?: () => void` - Press handler (native only)
-- `accessible?: boolean` - Enable accessibility (native only)
-- `accessibilityLabel?: string` - Accessibility label (native only)
-- `accessibilityRole?: string` - Accessibility role (native only)
-- `accessibilityHint?: string` - Accessibility hint (native only)
-
-**Example**:
-```tsx
-<Container
-  backgroundColor={theme.colors.bg.card}
-  padding="md"
-  style={{ borderRadius: 12 }}
->
-  <span>Container content</span>
-</Container>
-```
-
----
-
 ### Spacer
 
 **Location**: `src/components/primitives/Spacer/Spacer.tsx`
@@ -619,8 +578,9 @@ Unified flex layout container that replaces the legacy FlexRow, FlexColumn, Flex
 - `value: boolean` - Switch state (required)
 - `onChange: (value: boolean) => void` - Change handler (required)
 - `disabled?: boolean` - Disable switch
-- `size?: 'small' | 'normal' | 'large'` - Switch size
+- `size?: 'small' | 'normal' | 'large'` - Switch size (web only)
 - `label?: string` - Label text
+- `hapticFeedback?: boolean` - Enable haptic feedback on press (native only, default: true)
 - `testID?: string` - Test identifier
 
 **Example**:
@@ -687,37 +647,6 @@ Unified flex layout container that replaces the legacy FlexRow, FlexColumn, Flex
 
 ---
 
-### ModalContainer
-
-**Location**: `src/components/primitives/ModalContainer/ModalContainer.tsx`
-
-**Props**:
-- `visible: boolean` - Modal visibility (required)
-- `onClose: () => void` - Close handler (required)
-- `closeOnBackdropClick?: boolean` - Close on backdrop click
-- `showBackdrop?: boolean` - Show backdrop
-- `backdropBlur?: boolean` - Blur backdrop
-- `zIndex?: string | number` - Z-index value
-- `className?: string` - CSS classes (web only)
-- `animationDuration?: number` - Animation duration in ms
-- `closeOnEscape?: boolean` - Close on Escape key (web only)
-
-**Example**:
-```tsx
-<ModalContainer
-  visible={showModal}
-  onClose={closeModal}
-  closeOnBackdropClick
-  backdropBlur
->
-  <Container backgroundColor={theme.colors.bg.card} padding="lg">
-    <span>Modal content</span>
-  </Container>
-</ModalContainer>
-```
-
----
-
 ### OverlayBackdrop
 
 **Location**: `src/components/primitives/OverlayBackdrop/OverlayBackdrop.tsx`
@@ -739,7 +668,7 @@ Unified flex layout container that replaces the legacy FlexRow, FlexColumn, Flex
   blur
   opacity={0.7}
 >
-  <Container>Overlay content</Container>
+  <div>Overlay content</div>
 </OverlayBackdrop>
 ```
 
@@ -787,17 +716,19 @@ Unified flex layout container that replaces the legacy FlexRow, FlexColumn, Flex
 
 **Location**: `src/components/primitives/Tooltip/Tooltip.tsx`
 
-**Props**:
-- `id: string` - Unique identifier (required)
+**Cross-platform Props**:
 - `content: ReactNode` - Tooltip content (required)
 - `children: ReactNode` - Element to attach tooltip to (required)
 - `place?: 'top' | 'top-start' | 'top-end' | 'right' | 'right-start' | 'right-end' | 'bottom' | 'bottom-start' | 'bottom-end' | 'left' | 'left-start' | 'left-end'` - Tooltip placement (default: 'top')
-- `noArrow?: boolean` - Hide tooltip arrow
-- `className?: string` - CSS classes
-- `noBorder?: boolean` - Remove border (border is shown by default)
 - `showCloseButton?: boolean` - Show close button (native only)
 - `maxWidth?: number` - Maximum tooltip width (default: 400)
 - `disabled?: boolean` - Disable tooltip
+
+**Web-only Props**:
+- `id: string` - Unique identifier (required on web)
+- `noArrow?: boolean` - Hide tooltip arrow
+- `className?: string` - CSS classes
+- `noBorder?: boolean` - Remove border (border is shown by default)
 - `touchTrigger?: 'click' | 'long-press'` - Touch trigger type (default: 'click')
 - `longPressDuration?: number` - Long press duration in ms (default: 700)
 - `showOnTouch?: boolean` - Show tooltip on touch devices (default: true)
@@ -949,7 +880,7 @@ Unified flex layout container that replaces the legacy FlexRow, FlexColumn, Flex
 ### Card with Header and Actions
 
 ```tsx
-<Container backgroundColor={theme.colors.bg.card} padding="md">
+<div style={{ backgroundColor: theme.colors.bg.card, padding: 16 }}>
   <Flex direction="column" gap="md">
     <Flex justify="between">
       <span className="text-strong text-lg">Card Title</span>
@@ -961,33 +892,27 @@ Unified flex layout container that replaces the legacy FlexRow, FlexColumn, Flex
       <Button type="primary" onClick={onSave}>Save</Button>
     </Flex>
   </Flex>
-</Container>
+</div>
 ```
 
-### Modal with Backdrop
+### Modal Dialog
 
 ```tsx
-<ModalContainer
-  visible={showModal}
+<Modal
+  isOpen={showModal}
   onClose={closeModal}
-  closeOnBackdropClick
-  backdropBlur
+  size="medium"
+  closeOnBackdrop
 >
-  <Container
-    backgroundColor={theme.colors.bg.card}
-    padding="lg"
-    style={{ borderRadius: 12, maxWidth: 500 }}
-  >
-    <Flex direction="column" gap="md">
-      <span className="text-strong text-lg">Modal Title</span>
-      <span>Modal content</span>
-      <Flex gap="sm" justify="end">
-        <Button type="secondary" onClick={closeModal}>Cancel</Button>
-        <Button type="primary" onClick={handleConfirm}>Confirm</Button>
-      </Flex>
+  <Flex direction="column" gap="md">
+    <span className="text-strong text-lg">Modal Title</span>
+    <span>Modal content</span>
+    <Flex gap="sm" justify="end">
+      <Button type="secondary" onClick={closeModal}>Cancel</Button>
+      <Button type="primary" onClick={handleConfirm}>Confirm</Button>
     </Flex>
-  </Container>
-</ModalContainer>
+  </Flex>
+</Modal>
 ```
 
 ---
@@ -1003,4 +928,4 @@ Unified flex layout container that replaces the legacy FlexRow, FlexColumn, Flex
 ---
 
 
-_Last updated: 2026-02-10 - Text primitive removed from web production code; now native-only_
+_Last updated: 2026-03-15 - Removed Container and ModalContainer sections (Container dropped; ModalContainer now internal to Modal)_

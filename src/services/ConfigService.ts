@@ -4,7 +4,7 @@
 import { logger } from '@quilibrium/quorum-shared';
 import { MessageDB, UserConfig } from '../db/messages';
 import { QuorumApiClient } from '../api/baseTypes';
-import { Bookmark } from '../api/quorumApi';
+import type { Bookmark, Space } from '@quilibrium/quorum-shared';
 import { channel as secureChannel, channel_raw as ch } from '@quilibrium/quilibrium-js-sdk-channels';
 import { sha256, base58btc } from '../utils/crypto';
 import { int64ToBytes } from '../utils/bytes';
@@ -12,7 +12,6 @@ import { getDefaultUserConfig } from '../utils';
 import { t } from '@lingui/core/macro';
 import { QueryClient } from '@tanstack/react-query';
 import { buildSpacesKey, buildConfigKey } from '../hooks';
-import { Space } from '../api/quorumApi';
 import { validateItems } from '../utils/folderUtils';
 
 export class ConfigService {

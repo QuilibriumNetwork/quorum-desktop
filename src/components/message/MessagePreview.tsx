@@ -1,6 +1,6 @@
 import React from 'react';
-import { Message as MessageType, Sticker, Role, Channel } from '../../api/quorumApi';
-import { Container, Flex, Spacer, Icon } from '../primitives';
+import type { Message as MessageType, Sticker, Role, Channel } from '@quilibrium/quorum-shared';
+import { Flex, Spacer, Icon } from '../primitives';
 import { t } from '@lingui/core/macro';
 import { useMessageFormatting } from '../../hooks/business/messages/useMessageFormatting';
 import { YouTubeEmbed } from '../ui/YouTubeEmbed';
@@ -93,7 +93,7 @@ const renderPreviewTextWithSpecialTokens = (
         );
       } else if (tokenData.type === 'youtube') {
         renderedTokens.push(
-          <Container key={tokenData.key} className="message-preview-youtube">
+          <div key={tokenData.key} className="message-preview-youtube">
             <YouTubeEmbed
               src={'https://www.youtube.com/embed/' + tokenData.videoId}
               allow="autoplay; encrypted-media"
@@ -105,7 +105,7 @@ const renderPreviewTextWithSpecialTokens = (
               }}
               previewOnly={true}
             />
-          </Container>
+          </div>
         );
       } else if (tokenData.type === 'invite') {
         renderedTokens.push(
@@ -211,7 +211,7 @@ export const MessagePreview: React.FC<MessagePreviewProps> = ({
     // Handle embed content (images/videos)
     if (contentData.type === 'embed') {
       return (
-        <Container className="message-preview-embed">
+        <div className="message-preview-embed">
           {contentData.content.imageUrl && (
             <img
               src={contentData.content.thumbnailUrl || contentData.content.imageUrl}
@@ -238,20 +238,20 @@ export const MessagePreview: React.FC<MessagePreviewProps> = ({
               previewOnly={true}
             />
           )}
-        </Container>
+        </div>
       );
     }
 
     // Handle sticker content
     if (contentData.type === 'sticker') {
       return (
-        <Container className="message-preview-sticker">
+        <div className="message-preview-sticker">
           <img
             src={contentData.sticker?.imgUrl}
             style={{ maxWidth: 120, maxHeight: 120 }}
             className="rounded-lg"
           />
-        </Container>
+        </div>
       );
     }
 
@@ -278,9 +278,9 @@ export const MessagePreview: React.FC<MessagePreviewProps> = ({
       );
 
       return (
-        <Container className="message-preview-post text-sm font-normal">
+        <div className="message-preview-post text-sm font-normal">
           {processedContent}
-        </Container>
+        </div>
       );
     }
 
@@ -288,9 +288,9 @@ export const MessagePreview: React.FC<MessagePreviewProps> = ({
   };
 
   return (
-    <Container
-      padding="sm"
-      backgroundColor={showBackground ? "var(--color-bg-chat)" : undefined}
+    <div
+      className="p-2"
+      style={{ backgroundColor: showBackground ? "var(--color-bg-chat)" : undefined }}
     >
       <Flex direction="column" gap="sm">
         {/* Message header */}
@@ -314,7 +314,7 @@ export const MessagePreview: React.FC<MessagePreviewProps> = ({
         {/* Message content */}
         {renderMessageContent()}
       </Flex>
-    </Container>
+    </div>
   );
 };
 

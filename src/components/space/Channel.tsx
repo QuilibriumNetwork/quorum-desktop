@@ -2,7 +2,7 @@ import { logger } from '@quilibrium/quorum-shared';
 import React, { useEffect, useState, useCallback, useRef, useMemo, Suspense } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import './Channel.scss';
-import { StickerMessage, Message as MessageType, ThreadMessage, ThreadMeta } from '../../api/quorumApi';
+import type { StickerMessage, Message as MessageType, ThreadMessage, ThreadMeta, Channel, Role } from '@quilibrium/quorum-shared';
 import {
   useChannelData,
   useChannelMessages,
@@ -41,7 +41,6 @@ import { BookmarksPanel } from '../bookmarks/BookmarksPanel';
 import { Virtuoso } from 'react-virtuoso';
 import UserProfile from '../user/UserProfile';
 import { useUserProfileModal } from '../../hooks/business/ui/useUserProfileModal';
-import type { Channel, Role } from '../../api/quorumApi';
 import { UserAvatar } from '../user/UserAvatar';
 import { getUserRoles, hasPermission } from '../../utils/permissions';
 import { useMobile } from '../context/MobileProvider';
@@ -352,7 +351,7 @@ const Channel: React.FC<ChannelProps> = ({
 
   // Handle retrying a failed message
   const handleRetryMessage = useCallback(
-    async (message: import('../../api/quorumApi').Message) => {
+    async (message: import('@quilibrium/quorum-shared').Message) => {
       await retryMessage(spaceId, channelId, message, queryClient);
     },
     [spaceId, channelId, retryMessage, queryClient]

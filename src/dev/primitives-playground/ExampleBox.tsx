@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Flex, Container, Button } from '@/components/primitives';
+import { Flex, Button } from '@/components/primitives';
 import { Icon } from '@/components/primitives';
 import { InteractivePropsPanel } from './InteractivePropsPanel';
 
@@ -68,7 +68,7 @@ export const ExampleBox: React.FC<ExampleBoxProps> = ({
   };
 
   return (
-    <Container className={`space-y-4 ${className}`}>
+    <div className={`space-y-4 ${className}`}>
       {/* Header */}
       <Flex justify="between">
         <Flex direction="column" gap="xs">
@@ -157,6 +157,6 @@ export const ExampleBox: React.FC<ExampleBoxProps> = ({
         )}
 
       </Flex>
-    </Container>
+    </div>
   );
 };

@@ -8,7 +8,6 @@ import { DefaultImages } from '../../utils';
 import { isFeatureEnabled } from '../../utils/platform';
 import {
   Modal,
-  Container,
   Flex,
   Button,
   Switch,
@@ -186,7 +185,7 @@ const ConversationSettingsModal: React.FC<ConversationSettingsModalProps> = ({
       title={t`Conversation Settings`}
       size="small"
     >
-      <Container>
+      <div>
         <Flex direction="column">
           <Flex gap="sm" align="center" className="mb-3">
             <Switch
@@ -274,7 +273,7 @@ const ConversationSettingsModal: React.FC<ConversationSettingsModalProps> = ({
             {t`Delete Conversation`}
           </Button>
         </Flex>
-      </Container>
+      </div>
 
       {/* Delete confirmation modal */}
       {deleteConfirmation?.modalConfig && (

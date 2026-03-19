@@ -21,7 +21,7 @@ import { getValidMessageLinkPrefixes } from '../../utils/messageLinkUtils';
 import { remarkTwemoji } from '../../utils/remarkTwemoji';
 import { InviteLink } from './InviteLink';
 import { Icon } from '../primitives';
-import type { Role, Channel } from '../../api/quorumApi';
+import type { Role, Channel } from '@quilibrium/quorum-shared';
 
 interface MessageMarkdownRendererProps {
   content: string;

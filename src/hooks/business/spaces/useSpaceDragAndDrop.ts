@@ -7,7 +7,7 @@ import {
   useSensors,
 } from '@dnd-kit/core';
 import { arrayMove } from '@dnd-kit/sortable';
-import { Space } from '../../../api/quorumApi';
+import type { Space } from '@quilibrium/quorum-shared';
 import { useDragStateContext } from '../../../context/DragStateContext';
 import { useMessageDB } from '../../../components/context/useMessageDB';
 

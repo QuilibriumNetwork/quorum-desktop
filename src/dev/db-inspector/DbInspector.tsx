@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import {
-  Container,
   Text,
   Flex,
   Button,
@@ -92,10 +91,10 @@ export const DbInspector: React.FC = () => {
     : 0;
 
   return (
-    <Container className="min-h-screen bg-app">
+    <div className="min-h-screen bg-app">
       <DevNavMenu currentPath="/dev/db-inspector" sticky />
 
-      <Container padding="lg" className="mx-auto max-w-6xl">
+      <div className="p-6 mx-auto max-w-6xl">
         {/* Header */}
         <Flex justify="between" align="center" className="mb-6">
           <Flex gap="sm" align="center">
@@ -306,7 +305,7 @@ export const DbInspector: React.FC = () => {
             <div><span className="text-accent">__dbStore('action_queue')</span> - Dump specific store</div>
           </div>
         </div>
-      </Container>
-    </Container>
+      </div>
+    </div>
   );
 };

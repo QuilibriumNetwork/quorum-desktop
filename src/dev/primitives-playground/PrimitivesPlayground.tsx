@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
 import {
-  Container,
   Flex,
   Spacer,
   Callout,
@@ -13,7 +12,6 @@ import {
   ButtonExamples,
   CalloutExamples,
   ColorSwatchExamples,
-  ContainerExamples,
   FileUploadExamples,
   FlexExamples,
   IconExamples,
@@ -176,7 +174,6 @@ export const PrimitivesPlayground: React.FC = () => {
                 <ButtonExamples />
                 <CalloutExamples />
                 <ColorSwatchExamples />
-                <ContainerExamples />
                 <FileUploadExamples />
                 <FlexExamples />
                 <IconExamples />

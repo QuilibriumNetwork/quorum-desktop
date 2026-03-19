@@ -11,7 +11,7 @@ import type {
   PinMessage,
   MuteMessage,
   ThreadMessage,
-} from '../api/quorumApi';
+} from '@quilibrium/quorum-shared';
 
 /**
  * Converts a message object to its canonical string representation.

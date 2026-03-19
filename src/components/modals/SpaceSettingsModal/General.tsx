@@ -11,7 +11,7 @@ import {
 } from '../../primitives';
 import { Trans } from '@lingui/react/macro';
 import { t } from '@lingui/core/macro';
-import { Channel, Group } from '../../../api/quorumApi';
+import type { Channel, Group } from '@quilibrium/quorum-shared';
 import { isFeatureEnabled } from '../../../utils/platform';
 import { validateSpaceName } from '../../../hooks/business/validation';
 import { ReactTooltip } from '../../ui';

@@ -1,9 +1,8 @@
 import React from 'react';
-import { Pressable } from 'react-native';
+import { Pressable, View } from 'react-native';
 import { Image } from 'expo-image';
 import {
   Button,
-  Container,
   Flex,
   Spacer,
 } from '@/components/primitives';
@@ -90,10 +89,8 @@ export const Login: React.FC<LoginProps> = ({
 
       {/* Buttons Section - using FlexRow and Container with props */}
       <Flex justify="center">
-        <Container
-          width="full"
-          maxWidth={AUTH_LAYOUT.MAX_CONTENT_WIDTH}
-          padding={AUTH_LAYOUT.PADDING}
+        <View
+          style={{ width: '100%', maxWidth: AUTH_LAYOUT.MAX_CONTENT_WIDTH, padding: AUTH_LAYOUT.PADDING }}
         >
           <Flex direction="column" gap="lg">
             {/* Create New Account Button */}
@@ -114,7 +111,7 @@ export const Login: React.FC<LoginProps> = ({
               {t`Import Existing Key`}
             </Button>
           </Flex>
-        </Container>
+        </View>
       </Flex>
 
       <AuthSpacer />

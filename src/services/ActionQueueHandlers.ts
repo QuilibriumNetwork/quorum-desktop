@@ -25,7 +25,7 @@ import type { QueryClient, InfiniteData } from '@tanstack/react-query';
 import type { ActionType } from '../types/actionQueue';
 import { buildMessagesKeyPrefix } from '../hooks/queries/messages/buildMessagesKey';
 import { channel as secureChannel } from '@quilibrium/quilibrium-js-sdk-channels';
-import type { Message } from '../api/quorumApi';
+import type { Message } from '@quilibrium/quorum-shared';
 import { DefaultImages } from '../utils';
 
 export interface HandlerDependencies {

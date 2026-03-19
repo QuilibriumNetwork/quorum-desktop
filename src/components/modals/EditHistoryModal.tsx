@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import { t } from '@lingui/core/macro';
-import { Modal, Container, Flex, ScrollContainer, Spacer } from '../primitives';
-import { Message as MessageType } from '../../api/quorumApi';
+import { Modal, Flex, ScrollContainer, Spacer } from '../primitives';
+import type { Message as MessageType } from '@quilibrium/quorum-shared';
 import { formatMessageDate } from '../../utils';
 
 interface EditHistoryModalProps {
@@ -69,7 +69,7 @@ export const EditHistoryModal: React.FC<EditHistoryModalProps> = ({
             const isOriginal = item.modifiedDate === message.createdDate;
 
             return (
-              <Container
+              <div
                 key={index}
                 className={`
                   py-3 px-4
@@ -104,7 +104,7 @@ export const EditHistoryModal: React.FC<EditHistoryModalProps> = ({
                     {text || t`(empty)`}
                   </span>
                 </Flex>
-              </Container>
+              </div>
             );
           })}
         </Flex>

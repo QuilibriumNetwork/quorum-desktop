@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Icon, Tooltip, Flex, Container } from '../primitives';
+import { Icon, Tooltip, Flex } from '../primitives';
 import './ExpandableNavMenu.scss';
 import { t } from '@lingui/core/macro';
 import { useModalContext } from '../context/ModalProvider';
@@ -31,20 +31,20 @@ const ExpandableNavMenu: React.FunctionComponent<ExpandableNavMenuProps> = (
           place="right"
           className="tooltip-text-large"
         >
-          <Container
+          <div
             className="expanded-nav-button-primary"
             onClick={() => props.showCreateSpaceModal()}
           >
             <Icon name="plus" />
-          </Container>
+          </div>
         </Tooltip>
       ) : (
-        <Container
+        <div
           className="expanded-nav-button-primary"
           onClick={() => props.showCreateSpaceModal()}
         >
           <Icon name="plus" />
-        </Container>
+        </div>
       )}
       <ExpandableUserAvatar
         userIcon={user?.currentPasskeyInfo?.pfpUrl}

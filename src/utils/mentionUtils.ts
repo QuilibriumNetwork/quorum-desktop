@@ -1,4 +1,4 @@
-import type { Message, Mentions } from '../api/quorumApi';
+import type { Message, Mentions } from '@quilibrium/quorum-shared';
 import { createIPFSCIDRegex } from './validation';
 
 /**

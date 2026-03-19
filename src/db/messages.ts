@@ -1,9 +1,10 @@
 import { logger } from '@quilibrium/quorum-shared';
 import { channel } from '@quilibrium/quilibrium-js-sdk-channels';
-import { Conversation, Message, Space, Bookmark, BOOKMARKS_CONFIG, BroadcastSpaceTag, ChannelThread } from '../api/quorumApi';
+import type { Conversation, Message, Space, Bookmark, BroadcastSpaceTag, ChannelThread } from '@quilibrium/quorum-shared';
+import { BOOKMARKS_CONFIG } from '@quilibrium/quorum-shared';
 import type { NotificationSettings } from '../types/notifications';
 import type { IconColor } from '../components/space/IconPicker/types';
-import type { IconName } from '../components/primitives/Icon/types';
+import type { IconName } from '../components/primitives';
 import type { QueueTask, TaskStatus, QueueStats } from '../types/actionQueue';
 import MiniSearch from 'minisearch';
 

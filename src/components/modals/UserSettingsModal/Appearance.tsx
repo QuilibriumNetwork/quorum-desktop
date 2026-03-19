@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { Select, Button, Tooltip, Spacer, ColorSwatch, Flex } from '../../primitives';
+import { Select, Button, Tooltip, Spacer, ColorSwatch, Flex, useTheme } from '../../primitives';
+import type { AccentColor } from '../../primitives';
 import { t } from '@lingui/core/macro';
 import { ThemeRadioGroup } from '../../ui';
-import { useTheme, type AccentColor } from '../../primitives/theme';
 import { useResponsiveLayout } from '../../../hooks/useResponsiveLayout';
 
 const ACCENT_COLORS: AccentColor[] = [

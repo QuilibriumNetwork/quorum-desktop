@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import * as linkify from 'linkifyjs';
-import { Message as MessageType, Sticker, Role, Channel } from '../../../api/quorumApi';
+import type { Message as MessageType, Sticker, Role, Channel } from '@quilibrium/quorum-shared';
 import { isYouTubeURL, extractYouTubeVideoId, YOUTUBE_URL_REGEX } from '../../../utils/youtubeUtils';
 import { getValidInvitePrefixes } from '../../../utils/inviteDomain';
 import { parseMessageLink } from '../../../utils/messageLinkUtils';

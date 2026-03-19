@@ -202,7 +202,7 @@ const MentionPillInputDemo: React.FC<{
               key={index}
               type="secondary"
               size="small"
-              onPress={() => insertPill(mention)}
+              onClick={() => insertPill(mention)}
             >
               {mention.type === 'channel' ? '#' : '@'}{mention.displayName}
             </Button>

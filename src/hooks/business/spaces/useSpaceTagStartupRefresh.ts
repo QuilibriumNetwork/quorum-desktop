@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import { logger } from '@quilibrium/quorum-shared';
-import { Space } from '../../../api/quorumApi';
+import type { Space } from '@quilibrium/quorum-shared';
 import { UserConfig } from '../../../db/messages';
 import { useMessageDB } from '../../../components/context/useMessageDB';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';

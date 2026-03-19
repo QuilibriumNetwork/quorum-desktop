@@ -2,7 +2,7 @@
 // This service handles encryption state management and key operations
 
 import { MessageDB, EncryptionState } from '../db/messages';
-import { Space } from '../api/quorumApi';
+import type { Space } from '@quilibrium/quorum-shared';
 import { sha256, base58btc, hexToSpreadArray } from '../utils/crypto';
 import { int64ToBytes } from '../utils/bytes';
 import { QueryClient } from '@tanstack/react-query';

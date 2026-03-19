@@ -1,7 +1,7 @@
 import React from 'react';
 import { parse as parseEmoji } from '@twemoji/parser';
 import { t } from '@lingui/core/macro';
-import { Message as MessageType } from '../../api/quorumApi';
+import type { Message as MessageType } from '@quilibrium/quorum-shared';
 import { MobileDrawer } from '../ui';
 import { Button, Icon } from '../primitives';
 import { useFrequentEmojis } from '../../hooks/business/messages';

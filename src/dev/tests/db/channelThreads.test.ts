@@ -1,7 +1,7 @@
 import 'fake-indexeddb/auto';
 import { describe, it, expect, beforeEach } from 'vitest';
 import { MessageDB } from '../../../db/messages';
-import type { ChannelThread } from '../../../api/quorumApi';
+import type { ChannelThread } from '@quilibrium/quorum-shared';
 
 describe('MessageDB - channel_threads store', () => {
   let db: MessageDB;

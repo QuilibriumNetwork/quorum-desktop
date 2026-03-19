@@ -4,7 +4,7 @@
  */
 
 import { getMockName } from './mockNames';
-import type { Conversation } from '../../api/quorumApi';
+import type { Conversation } from '@quilibrium/quorum-shared';
 
 // Sample message previews for realistic mock data
 const MOCK_PREVIEWS = [

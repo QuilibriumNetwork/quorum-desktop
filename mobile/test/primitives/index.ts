@@ -16,3 +16,4 @@ export { IconTestScreen } from './IconTestScreen';
 export { CalloutTestScreen } from './CalloutTestScreen';
 export { FileUploadTestScreen } from './FileUploadTestScreen';
 export { ScrollContainerTestScreen } from './ScrollContainerTestScreen';
+export { ThemeTestScreen } from './ThemeTestScreen';
