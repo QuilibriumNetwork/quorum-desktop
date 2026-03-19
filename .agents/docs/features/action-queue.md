@@ -384,6 +384,14 @@ The same pattern applies to `edit-dm` in [MessageEditTextarea.tsx](src/component
   // NOTE: counterparty NOT stored (security - uses existing encryption states)
   // See: 007-plaintext-private-keys-fix.md, 009-dm-offline-registration-persistence-fix.md
 }
+
+// send-delivery-ack (delivery receipts - best effort, no onFailure)
+{
+  address: string;              // Counterparty wallet address (same as other DM tasks)
+  messageIds: string[];         // Message IDs being acknowledged (opaque hashes, no content)
+  selfUserAddress: string;      // Sender's user address
+  // NOTE: less sensitive than send-dm (no message content, only opaque IDs)
+}
 ```
 
 ---
@@ -402,6 +410,7 @@ Each action type uses a unique deduplication key to prevent duplicate actions:
 | `delete-dm` | `delete-dm:${address}:${messageId}` |
 | `edit-message` | `edit:${spaceId}:${channelId}:${messageId}` |
 | `edit-dm` | `edit-dm:${address}:${messageId}` |
+| `send-delivery-ack` | `delivery-ack:${address}` |
 
 ---
 
