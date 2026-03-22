@@ -14,9 +14,11 @@
 |---|---|---|
 | Privacy model | Two separate toggles (`deliveryReceipts` + `readReceipts`) | Users may want delivery confirmation without revealing read status. Matches WhatsApp/Signal. |
 | "Read" definition | Message 50%+ visible in viewport for 1 second, tab focused | Industry standard. Existing IntersectionObserver pattern in codebase (`useViewportMentionHighlight`). |
-| Visual indicator | ✓ → ✓✓, same muted color (`--color-text-muted`, 12px) | Unobtrusive. Icon-only distinction, no color change. |
+| Visual indicator | ✓ → ✓✓, same muted color (`--color-text-muted`, 12px) | Unobtrusive. Icon-only distinction, no color change. *Departs from Phase 1's placeholder note of "distinct color" — deliberate simplification.* |
 | Ack buffering | Extend existing `DeliveryReceiptService` | Same buffer/flush/piggyback logic. No new service needed. |
 | Ack granularity | High-water mark ("read up to message X") | DM reading is linear. One ack covers all messages up to a point. Much lighter than individual IDs. |
+| Toggle independence | `readReceipts` ON + `deliveryReceipts` OFF is valid | Read acks are sent independently. Receiving a read ack sets both `deliveredAt` and `readAt` (reading implies delivery). The toggles are fully independent. |
+| Ack persistence vs display | Read acks are always persisted; display is gated on setting | `readAt` is written to IndexedDB regardless of sender's `readReceipts` setting. UI rendering is gated. Toggling ON later reveals historical read status. |
 
 ---
 
@@ -35,7 +37,7 @@ type ReadAckMessage = {
 };
 ```
 
-Like `DeliveryAckMessage`, this is a control message — intercepted at the decrypt layer before `saveMessage`. Never stored or displayed.
+Like `DeliveryAckMessage`, this is a control message — intercepted at the decrypt layer before `saveMessage`. Never stored or displayed. **No-ack rule:** `read-ack` messages must never trigger delivery acks or read acks (same as `delivery-ack`). The intercept-before-save pattern prevents this — control messages are returned early before any ack buffering occurs. Extend the existing defense-in-depth check in `processDeliveryReceiptData` to also exclude `read-ack`.
 
 ### Extended Message Fields
 
@@ -120,7 +122,7 @@ private readTimers = new Map<string, ReturnType<typeof setTimeout>>();
 
 ### New Methods
 
-- **`onMessageRead(address, messageId, timestamp)`** — Called by `useReadReceipt` hook's `reportRead` callback. Updates the high-water mark if the new timestamp is higher than the current one. Resets a 5-second debounce timer (longer than delivery's 10s because the user is actively reading — more reads likely incoming).
+- **`onMessageRead(address, messageId, timestamp)`** — Called by `useReadReceipt` hook's `reportRead` callback. Updates the high-water mark if the new timestamp is higher than the current one. Resets a 5-second debounce timer (shorter than delivery's 10s because the user is actively reading — more reads likely incoming, so flush sooner).
 - **`flushReadForPiggyback(address)`** — Drains the current read high-water mark for piggybacking on outgoing DMs. Returns `{ messageId, timestamp } | null`.
 - **`flushAll()`** — Extended to also flush read high-water marks (app backgrounding).
 
@@ -174,7 +176,7 @@ When piggybacked: extract `readAckUpTo` from envelope, process, then strip.
 Uses `upToTimestamp` to mark all own sent messages in that conversation up to that timestamp:
 
 1. **React Query cache** — iterate messages in the conversation's query data, set `readAt = now` on all own messages where `timestamp <= upToTimestamp` and `readAt` is not already set
-2. **IndexedDB** — new `updateMessagesReadAt(conversationId, upToTimestamp, readAt)` method. Opens a cursor on the conversation+time index, walks own messages up to the timestamp, sets `readAt` on each
+2. **IndexedDB** — new `updateMessagesReadAt(conversationId, senderAddress, upToTimestamp, readAt)` method. Opens a cursor on the conversation+time index, walks own messages (filtered by `senderAddress`) up to the timestamp, sets `readAt` on each
 
 **Important:** If a read ack arrives before a delivery ack (unlikely but possible), set both `deliveredAt` and `readAt` — reading implies delivery. UI shows ✓✓ directly.
 
@@ -208,7 +210,7 @@ In `Privacy.tsx`, below the existing "Delivery receipts" toggle:
 | Sender turns off read receipts after receiving some | Existing `readAt` values stay persisted but ✓✓ downgrades to ✓ in UI. |
 | Read ack arrives before delivery ack | Set both `deliveredAt` and `readAt` — reading implies delivery. Show ✓✓ directly. |
 | App crashes before read ack flush | Lost for those messages. Not critical — next time user opens the conversation and scrolls, new high-water mark is established. |
-| Virtuoso unmounts message element during 1s timer | `useEffect` cleanup cancels observer + timer. Message re-observed when scrolled back into view. |
+| Virtuoso unmounts message element during 1s timer | `useEffect` cleanup cancels observer + timer. Message re-observed when scrolled back into view. Duplicate `reportRead` calls are harmless — the high-water mark in `DeliveryReceiptService` makes them no-ops if the timestamp is <= current mark. |
 | Offline recipient comes back, scrolls through messages | Read acks buffer normally, flush via piggyback or standalone. |
 
 ---
