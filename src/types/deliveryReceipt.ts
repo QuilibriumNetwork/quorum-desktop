@@ -1,8 +1,9 @@
 /**
- * Delivery Receipt Types
+ * Delivery & Read Receipt Types
  *
- * DeliveryAckMessage is a CONTROL message — NOT part of the MessageContent union.
- * Intercepted at the decrypt layer before saveMessage/addMessage pipeline.
+ * DeliveryAckMessage and ReadAckMessage are CONTROL messages — NOT part of the
+ * MessageContent union. Intercepted at the decrypt layer before
+ * saveMessage/addMessage pipeline.
  * Lives here locally; migrates to quorum-shared once stable.
  */
 
@@ -12,22 +13,26 @@ export type DeliveryAckMessage = {
   messageIds: string[];
 };
 
+export type ReadAckMessage = {
+  senderId: string;
+  type: 'read-ack';
+  upToMessageId: string;
+  upToTimestamp: number;
+};
+
 /**
- * Extended message fields for delivery receipts.
- * ackMessageIds: envelope-level piggybacked ack data (stripped before persistence)
- * deliveredAt: timestamp when sender processed the incoming ack (persisted to IndexedDB)
+ * Extended message fields for delivery and read receipts.
+ * ackMessageIds: envelope-level piggybacked delivery ack data (stripped before persistence)
+ * readAckUpTo: envelope-level piggybacked read ack data (stripped before persistence)
+ * deliveredAt: timestamp when sender processed the incoming delivery ack (persisted)
+ * readAt: timestamp when sender processed the incoming read ack (persisted)
  */
 export type DeliveryReceiptMessageExtensions = {
   ackMessageIds?: string[];
   deliveredAt?: number;
+  readAckUpTo?: { messageId: string; timestamp: number };
+  readAt?: number;
 };
 
-/**
- * Local extended Message type with delivery receipt fields.
- * quorum-shared's Message is a `type` alias (not an interface), so declaration
- * merging won't work. Instead, we create a local intersection type and use it
- * wherever delivery receipt fields are accessed (DB method, UI component, ack
- * processing). Once stable, these fields migrate into quorum-shared's Message.
- */
 import type { Message } from '@quilibrium/quorum-shared';
 export type MessageWithDelivery = Message & DeliveryReceiptMessageExtensions;

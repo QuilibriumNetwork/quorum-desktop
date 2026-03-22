@@ -88,6 +88,8 @@ export type UserConfig = {
   mutedConversations?: string[];
   // Delivery receipts: when ON, sends acks to senders and displays ✓ on own messages
   deliveryReceipts?: boolean;
+  // Read receipts: when ON, sends read acks and displays ✓✓ on own messages
+  readReceipts?: boolean;
   // The spaceId of the Space whose tag this user has selected to display globally
   spaceTagId?: string;
   // Snapshot of the last tag data broadcast so startup refresh can detect owner changes
@@ -362,6 +364,44 @@ export class MessageDB {
           store.put(msg);
         }
         resolve();
+      };
+      request.onerror = () => reject(request.error);
+    });
+  }
+
+  async updateMessagesReadAt(
+    conversationId: string,
+    ownAddress: string,
+    upToTimestamp: number,
+    readAt: number
+  ): Promise<void> {
+    await this.init();
+    return new Promise((resolve, reject) => {
+      const tx = this.db!.transaction('messages', 'readwrite');
+      const store = tx.objectStore('messages');
+      const index = store.index('by_conversation_time');
+      const range = IDBKeyRange.bound(
+        [conversationId, 0],
+        [conversationId, upToTimestamp]
+      );
+      const request = index.openCursor(range);
+
+      request.onsuccess = () => {
+        const cursor = request.result;
+        if (cursor) {
+          const msg = cursor.value;
+          if (msg.content?.senderId === ownAddress && !msg.readAt) {
+            msg.readAt = readAt;
+            // Reading implies delivery
+            if (!msg.deliveredAt) {
+              msg.deliveredAt = readAt;
+            }
+            cursor.update(msg);
+          }
+          cursor.continue();
+        } else {
+          resolve();
+        }
       };
       request.onerror = () => reject(request.error);
     });

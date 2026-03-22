@@ -30,7 +30,10 @@ export type ActionType =
   | 'edit-dm'
 
   // Delivery receipts (Double Ratchet)
-  | 'send-delivery-ack';
+  | 'send-delivery-ack'
+
+  // Read receipts (Double Ratchet)
+  | 'send-read-ack';
 
 export type TaskStatus = 'pending' | 'processing' | 'completed' | 'failed';
 
