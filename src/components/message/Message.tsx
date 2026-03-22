@@ -174,10 +174,10 @@ export const Message = React.memo(
 
     // Read receipt visibility tracking — only for unread incoming messages from others
     const isOtherPersonMessage = message.content?.senderId !== user.currentPasskeyInfo?.address;
-    const isUnreadMessage = !lastReadTimestamp || message.timestamp > lastReadTimestamp;
+    const isUnreadMessage = !lastReadTimestamp || message.createdDate > lastReadTimestamp;
     const readReceiptRef = useReadReceipt(
       message.messageId,
-      message.timestamp,
+      message.createdDate,
       !!(showReadReceipts && isOtherPersonMessage && isUnreadMessage && reportRead),
       reportRead
     );
