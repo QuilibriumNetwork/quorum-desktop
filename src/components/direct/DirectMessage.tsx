@@ -316,8 +316,18 @@ const DirectMessage: React.FC<{}> = () => {
         );
       }
 
-      // Scroll is handled by Virtuoso's followOutput - no manual scroll needed
-      // Deletion flag is set via onBeforeDelete callback in MessageList
+      // Jump to bottom after sending. Virtuoso's followOutput handles this for
+      // channels, but in DMs its internal measurement callback resets scrollTop.
+      // Delayed direct scrollTop correction works around this.
+      const scroller = document.querySelector('[data-virtuoso-scroller]') as HTMLElement | null;
+      if (scroller) {
+        const snap = () => {
+          scroller.scrollTop = scroller.scrollHeight - scroller.clientHeight;
+        };
+        setTimeout(snap, 100);
+        setTimeout(snap, 300);
+        setTimeout(snap, 600);
+      }
     },
     [
       address,

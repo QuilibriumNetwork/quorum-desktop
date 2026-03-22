@@ -26,7 +26,9 @@ import { DefaultImages } from '../../utils';
 import { useMessageHighlight } from '../../hooks/business/messages/useMessageHighlight';
 import { shouldShowDateSeparator, shouldShowCompactHeader } from '@quilibrium/quorum-shared';
 import { useScrollTracking } from '../../hooks/ui/useScrollTracking';
-import { Button } from '../primitives';
+import { Button as ButtonBase } from '../primitives';
+// Cast to work around React type version mismatch between quorum-shared and quorum-desktop
+const Button = ButtonBase as React.FC<any>;
 import { Trans } from '@lingui/react/macro';
 import type { DmContext } from '../../hooks/business/messages/useMessageActions';
 
@@ -583,7 +585,29 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
           followOutput={(isAtBottom: boolean) => {
             if (deletionInProgressRef.current) return false;
             if (hasJumpedToOldMessage) return false;
-            if (isAtBottom && hasNextPage === false) return 'auto';
+            if (isAtBottom && hasNextPage === false) {
+              // Return 'auto' for Virtuoso's native scroll (works in channels).
+              // Additionally schedule a delayed correction for DMs where Virtuoso's
+              // internal measurement callback incorrectly resets scrollTop.
+              const scroller = document.querySelector('[data-virtuoso-scroller]') as HTMLElement | null;
+              // Don't let Virtuoso scroll (its measurement callback resets
+              // scrollTop incorrectly in DMs). Snap to bottom every frame.
+              if (scroller) {
+                const s = scroller;
+                const snap = () => {
+                  s.scrollTop = s.scrollHeight - s.clientHeight;
+                };
+                let frameCount = 0;
+                const frameSnap = () => {
+                  snap();
+                  if (++frameCount < 10) requestAnimationFrame(frameSnap);
+                };
+                requestAnimationFrame(frameSnap);
+                setTimeout(snap, 300);
+                setTimeout(snap, 600);
+              }
+              return false;
+            }
             return false;
           }}
           totalCount={messageList.length}

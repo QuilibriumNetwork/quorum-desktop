@@ -40,6 +40,34 @@ Channels have a leaner component tree — fewer hooks, fewer intermediate re-ren
 
 **Key evidence**: Removing the major DM effects (`setAcceptChat`, `invalidateConversation`, auto-jump) did NOT fix the scroll. Other hooks in the DM tree still cause enough re-renders to trigger the bug.
 
+### Re-renders disproven as cause (Phases 16-18)
+
+- **Phase 16**: `React.memo` on MessageList — no effect. Parent re-renders aren't the cause.
+- **Phase 17**: Disabling `showDeliveryReceipts` — no effect.
+- **Phase 18**: Replacing `<Flex>` wrapper with exact same `<div>` as channels — no effect. DOM structure compared via parent chain dumps shows identical flex/overflow/height properties.
+
+### DOM structure comparison (Phase 18)
+
+Parent chain dumps show both DM and Channel have **identical layout properties**: same `flex: 1 1 0%`, same `overflow: auto` on scroller and `.message-list`, same hierarchy depths. The only difference is class names (`min-w-0` vs `relative`, `justify-start` vs not) — but computed styles are the same.
+
+### New observation
+
+On page refresh in DMs, initial scroll position is 2-3 message lines above the bottom. This suggests the issue affects initial layout too, not just `followOutput`.
+
+### Most likely remaining cause: `sendStatus` height change
+
+DM messages added via optimistic update have `sendStatus: 'sending'`, which renders a "Sending..." indicator (`Message.tsx:1237-1241`). When the `enqueueOutbound` completes and calls `addMessage` again (without `sendStatus`), the indicator disappears and the **message height changes**. This height change triggers Virtuoso's re-measurement callback, which recalculates and resets `scrollTop` incorrectly.
+
+Channel optimistic updates also have `sendStatus: 'sending'` but resolve via ActionQueue which may complete faster or differently. This needs verification.
+
+**However**, this doesn't fully explain why the initial page load scroll position is also wrong in DMs. There may be multiple contributing issues.
+
+### What hasn't been tried
+
+1. **Disable the "Sending..." indicator entirely** — test if removing the visual `sendStatus` indicator (Message.tsx:1237-1241) prevents the height change that triggers re-measurement
+2. **Reserve space for the indicator** — give the message a fixed min-height that accounts for the indicator, preventing height change when it disappears
+3. **Profile React renders** with React DevTools Profiler to see exactly which components re-render between "followOutput fires" and "+16ms scrollTop reset"
+
 ## Committed Changes (2026-03-22 baseline)
 
 These changes are committed and confirmed not to regress channels:
@@ -59,11 +87,20 @@ Added synchronous optimistic `addMessage` before `enqueueOutbound` in the online
 - Removed `messageList` from dependency array (this is a mount-only effect)
 - Added `messageListLatestRef` to read current messages without triggering re-runs
 
-### 4. followOutput cleanup (MessageList.tsx) — SIMPLIFIED
-- Removed `[SCROLLBUG]` debug console.log statements
-- Same logic, cleaner code
+### 4. followOutput workaround (MessageList.tsx)
+- `followOutput` returns `false` when `isAtBottom && hasNextPage === false` (bypasses Virtuoso's broken scroll)
+- Schedules aggressive rAF-based `scrollTop` correction (10 frames + delayed catches at 300ms/600ms)
+- Works around Virtuoso's internal measurement callback that resets `scrollTop` at +16ms
+- **Known limitation**: minor visual flash (scroll-up-then-snap-back ~1 frame) still visible
 
-### Virtuoso config — UNCHANGED (reverted)
+### 5. Post-send scroll-to-bottom (DirectMessage.tsx)
+- `handleSubmitMessage` schedules delayed `scrollTop` corrections after sending
+- Handles the case where user sends a message while scrolled up (where `followOutput` doesn't fire)
+
+### 6. Button type fix (MessageList.tsx)
+- Cast `Button` import to `React.FC<any>` to fix React version mismatch between quorum-shared and quorum-desktop
+
+### Virtuoso config — UNCHANGED
 All Virtuoso props remain at original values (`atBottomThreshold=5000`, `overscan=height`, `alignToBottom={!alignToTop}`, etc.). Changing these caused channel regression.
 
 ## Recommended Next Step: Refactor DM component tree
@@ -114,9 +151,16 @@ Key principle: **the path from "message added to cache" → "Virtuoso renders" m
 | 13 | Defer DM effects + `followOutput(() => false)` | No movement (alignToBottom is layout-only) |
 | 14 | Fix atBottomThreshold/overscan + skipAnimationFrame | Still reset by Virtuoso internally |
 | 14b | Same + `alignToBottom={false}` | Same — measurement callback resets scrollTop |
-| 15 | Manual rAF scrollTop correction after send | Partial — from-bottom mostly works, jittery |
+| 15 | Manual rAF scrollTop correction | Partial — from-bottom mostly works, jittery |
+| 16 | React.memo on MessageList + stable callbacks | No effect — re-renders aren't from parent |
+| 17 | Disable showDeliveryReceipts | No effect |
+| 18 | Replace `<Flex>` with exact same `<div>` as channels | No effect — DOM structure is not the cause |
 
-**Key discovery (Phase 14)**: Changing `atBottomThreshold` from 5000→50 and `overscan` from viewport→200 broke channels. These Virtuoso config values are load-bearing and must stay at original values. The fix must be structural (component refactor), not config.
+**Key discoveries:**
+- **(Phase 14)**: Changing Virtuoso config values (`atBottomThreshold`, `overscan`) broke channels. These are load-bearing.
+- **(Phase 16)**: React.memo didn't help — the re-renders causing the bug are NOT from the parent component.
+- **(Phase 18)**: DOM parent chain is identical between DM and channel (same flex, same overflow, same heights). DOM structure is not the cause.
+- **The remaining untested hypothesis**: the `sendStatus: 'sending'` indicator causes message height to change when it appears then disappears, triggering Virtuoso's buggy re-measurement callback.
 
 ## Research Sources
 
