@@ -120,7 +120,6 @@ type MessageProps = {
   showDeliveryReceipts?: boolean;
   showReadReceipts?: boolean;
   reportRead?: (messageId: string, timestamp: number) => void;
-  lastReadTimestamp?: number;
 };
 
 export const Message = React.memo(
@@ -166,7 +165,6 @@ export const Message = React.memo(
     showDeliveryReceipts,
     showReadReceipts,
     reportRead,
-    lastReadTimestamp,
   }: MessageProps) => {
     const user = usePasskeysContext();
     const { spaceId } = useParams();
