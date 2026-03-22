@@ -68,13 +68,14 @@ const DirectMessage: React.FC<{}> = () => {
   const [activePanel, setActivePanel] = useState<ActivePanel>(null);
   const user = usePasskeysContext();
   const queryClient = useQueryClient();
-  const { submitMessage, retryDirectMessage, keyset, getConfig, messageDB } = useMessageDB();
+  const { submitMessage, retryDirectMessage, keyset, getConfig, messageDB, deliveryReceiptService } = useMessageDB();
 
   // State for message signing
   const [skipSigning, setSkipSigning] = useState<boolean>(false);
   const [nonRepudiable, setNonRepudiable] = useState<boolean>(true);
   // Delivery receipts setting (OFF by default)
   const [deliveryReceipts, setDeliveryReceipts] = useState<boolean>(false);
+  const [readReceipts, setReadReceipts] = useState<boolean>(false);
   const headerRef = useRef<HTMLDivElement>(null);
 
   // Auto-jump to first unread state
@@ -137,6 +138,7 @@ const DirectMessage: React.FC<{}> = () => {
         });
         const userNonRepudiable = cfg?.nonRepudiable ?? true;
         setDeliveryReceipts(cfg?.deliveryReceipts ?? false);
+        setReadReceipts(cfg?.readReceipts ?? false);
         if (typeof convIsRepudiable !== 'undefined') {
           const convNonRepudiable = !convIsRepudiable;
           setNonRepudiable(convNonRepudiable);
@@ -274,6 +276,20 @@ const DirectMessage: React.FC<{}> = () => {
   // Ref to hold latest messageList for effects that shouldn't re-run on every message change
   const messageListLatestRef = useRef(messageList);
   messageListLatestRef.current = messageList;
+
+  // Discard pending read buffer when readReceipts is toggled OFF
+  const prevReadReceipts = useRef(readReceipts);
+  useEffect(() => {
+    if (prevReadReceipts.current && !readReceipts && deliveryReceiptService) {
+      deliveryReceiptService.clearReadBuffer();
+    }
+    prevReadReceipts.current = readReceipts;
+  }, [readReceipts, deliveryReceiptService]);
+
+  const reportRead = useCallback((messageId: string, timestamp: number) => {
+    if (!readReceipts || !deliveryReceiptService) return;
+    deliveryReceiptService.onMessageRead(address!, messageId, timestamp);
+  }, [readReceipts, deliveryReceiptService, address]);
 
   // Submit message function for MessageComposer
   const handleSubmitMessage = useCallback(
@@ -888,6 +904,8 @@ const DirectMessage: React.FC<{}> = () => {
                     : undefined
                 }
                 showDeliveryReceipts={deliveryReceipts}
+                showReadReceipts={readReceipts}
+                reportRead={reportRead}
               />
             </div>
             {/* Accept chat warning */}

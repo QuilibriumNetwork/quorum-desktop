@@ -96,6 +96,10 @@ interface MessageListProps {
   headerContent?: React.ReactNode;
   /** Show delivery receipt checkmarks on own DM messages */
   showDeliveryReceipts?: boolean;
+  /** Show read receipt checkmarks on own DM messages */
+  showReadReceipts?: boolean;
+  /** Callback to report a message as read */
+  reportRead?: (messageId: string, timestamp: number) => void;
 }
 
 function useWindowSize() {
@@ -162,6 +166,8 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
       alignToTop = false,
       headerContent,
       showDeliveryReceipts,
+      showReadReceipts,
+      reportRead,
     } = props;
 
     const [_width, height] = useWindowSize();
@@ -333,6 +339,8 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
               dmContext={dmContext}
               isCompact={displayInfo.isCompact}
               showDeliveryReceipts={showDeliveryReceipts}
+              showReadReceipts={showReadReceipts}
+              reportRead={reportRead}
               users={users}
               roles={mentionRoles}
               groups={groups}
@@ -382,6 +390,8 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
         onStartThread,
         headerContent,
         showDeliveryReceipts,
+        showReadReceipts,
+        reportRead,
       ]
     );
 
