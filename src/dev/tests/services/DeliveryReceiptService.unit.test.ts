@@ -117,3 +117,128 @@ describe('DeliveryReceiptService', () => {
     });
   });
 });
+
+describe('Read receipt buffering', () => {
+  let service: DeliveryReceiptService;
+  let mockFlushCallback: ReturnType<typeof vi.fn>;
+  let mockReadFlushCallback: ReturnType<typeof vi.fn>;
+
+  beforeEach(() => {
+    vi.useFakeTimers();
+    mockFlushCallback = vi.fn();
+    mockReadFlushCallback = vi.fn();
+    service = new DeliveryReceiptService({
+      onFlush: mockFlushCallback,
+      onReadFlush: mockReadFlushCallback,
+    });
+  });
+
+  afterEach(() => {
+    service.destroy();
+    vi.useRealTimers();
+  });
+
+  describe('onMessageRead', () => {
+    it('stores high-water mark for an address', () => {
+      service.onMessageRead('alice', 'msg-1', 1000);
+      const result = service.flushReadForPiggyback('alice');
+      expect(result).toEqual({ messageId: 'msg-1', timestamp: 1000 });
+    });
+
+    it('updates high-water mark when higher timestamp arrives', () => {
+      service.onMessageRead('alice', 'msg-1', 1000);
+      service.onMessageRead('alice', 'msg-2', 2000);
+      const result = service.flushReadForPiggyback('alice');
+      expect(result).toEqual({ messageId: 'msg-2', timestamp: 2000 });
+    });
+
+    it('ignores lower timestamp than current high-water mark', () => {
+      service.onMessageRead('alice', 'msg-2', 2000);
+      service.onMessageRead('alice', 'msg-1', 1000);
+      const result = service.flushReadForPiggyback('alice');
+      expect(result).toEqual({ messageId: 'msg-2', timestamp: 2000 });
+    });
+
+    it('tracks separately per address', () => {
+      service.onMessageRead('alice', 'msg-1', 1000);
+      service.onMessageRead('bob', 'msg-2', 2000);
+      expect(service.flushReadForPiggyback('alice')).toEqual({ messageId: 'msg-1', timestamp: 1000 });
+      expect(service.flushReadForPiggyback('bob')).toEqual({ messageId: 'msg-2', timestamp: 2000 });
+    });
+  });
+
+  describe('flushReadForPiggyback', () => {
+    it('clears the high-water mark and cancels timer', () => {
+      service.onMessageRead('alice', 'msg-1', 1000);
+      service.flushReadForPiggyback('alice');
+      expect(service.flushReadForPiggyback('alice')).toBeNull();
+      vi.advanceTimersByTime(10000);
+      expect(mockReadFlushCallback).not.toHaveBeenCalled();
+    });
+
+    it('returns null if no pending read ack', () => {
+      expect(service.flushReadForPiggyback('alice')).toBeNull();
+    });
+  });
+
+  describe('read ack timer-based flush', () => {
+    it('calls onReadFlush after 5 seconds if no piggyback', () => {
+      service.onMessageRead('alice', 'msg-1', 1000);
+      vi.advanceTimersByTime(5000);
+      expect(mockReadFlushCallback).toHaveBeenCalledWith('alice', { messageId: 'msg-1', timestamp: 1000 });
+    });
+
+    it('does not call onReadFlush before 5 seconds', () => {
+      service.onMessageRead('alice', 'msg-1', 1000);
+      vi.advanceTimersByTime(4999);
+      expect(mockReadFlushCallback).not.toHaveBeenCalled();
+    });
+
+    it('resets timer when higher timestamp arrives', () => {
+      service.onMessageRead('alice', 'msg-1', 1000);
+      vi.advanceTimersByTime(3000);
+      service.onMessageRead('alice', 'msg-2', 2000);
+      vi.advanceTimersByTime(3000);
+      expect(mockReadFlushCallback).not.toHaveBeenCalled();
+      vi.advanceTimersByTime(2000);
+      expect(mockReadFlushCallback).toHaveBeenCalledWith('alice', { messageId: 'msg-2', timestamp: 2000 });
+    });
+
+    it('does NOT reset timer when lower timestamp arrives', () => {
+      service.onMessageRead('alice', 'msg-2', 2000);
+      vi.advanceTimersByTime(3000);
+      service.onMessageRead('alice', 'msg-1', 1000);
+      vi.advanceTimersByTime(2000);
+      expect(mockReadFlushCallback).toHaveBeenCalledWith('alice', { messageId: 'msg-2', timestamp: 2000 });
+    });
+  });
+
+  describe('flushAll with read acks', () => {
+    it('flushes both delivery and read buffers', () => {
+      service.onMessageReceived('alice', 'msg-1');
+      service.onMessageRead('alice', 'msg-2', 2000);
+      service.onMessageRead('bob', 'msg-3', 3000);
+      service.flushAll();
+      expect(mockFlushCallback).toHaveBeenCalledWith('alice', ['msg-1']);
+      expect(mockReadFlushCallback).toHaveBeenCalledWith('alice', { messageId: 'msg-2', timestamp: 2000 });
+      expect(mockReadFlushCallback).toHaveBeenCalledWith('bob', { messageId: 'msg-3', timestamp: 3000 });
+    });
+
+    it('clears read timers after flushAll', () => {
+      service.onMessageRead('alice', 'msg-1', 1000);
+      service.flushAll();
+      vi.advanceTimersByTime(10000);
+      expect(mockReadFlushCallback).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe('clearReadBuffer', () => {
+    it('discards pending read buffer without flushing', () => {
+      service.onMessageRead('alice', 'msg-1', 1000);
+      service.clearReadBuffer();
+      expect(service.flushReadForPiggyback('alice')).toBeNull();
+      vi.advanceTimersByTime(10000);
+      expect(mockReadFlushCallback).not.toHaveBeenCalled();
+    });
+  });
+});
