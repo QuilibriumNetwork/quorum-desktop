@@ -73,6 +73,8 @@ const UserSettingsModal: React.FunctionComponent<{
     setNonRepudiable,
     deliveryReceipts,
     setDeliveryReceipts,
+    readReceipts,
+    setReadReceipts,
     spaceTagId,
     setSpaceTagId,
     saveChanges: saveUserChanges,
@@ -258,6 +260,8 @@ const UserSettingsModal: React.FunctionComponent<{
                         isConfigLoaded={isConfigLoaded}
                         deliveryReceipts={deliveryReceipts}
                         setDeliveryReceipts={setDeliveryReceipts}
+                        readReceipts={readReceipts}
+                        setReadReceipts={setReadReceipts}
                       />
                     );
                   case 'notifications':
