@@ -662,6 +662,9 @@ After the `isDeliveryAck` block (~line 226), add a `read-ack` intercept block:
 
 ```typescript
     // 1b. Intercept read-ack control messages — never save, never display
+    // NOTE: Unlike delivery acks, read acks are processed unconditionally (no readReceiptsEnabled check).
+    // Per spec: "Read acks are always persisted; display is gated on setting."
+    // This allows toggling readReceipts ON later to reveal historical read status.
     const isReadAck = raw.type === 'read-ack' || raw.content?.type === 'read-ack';
     if (isReadAck) {
       if (this.deliveryReceiptService) {
@@ -919,9 +922,10 @@ In `src/components/context/MessageDB.tsx`, update the `DeliveryReceiptService` c
         // DM conversationId is "address/address"
         const conversationId = `${conversationAddress}/${conversationAddress}`;
 
-        // Update React Query cache
+        // Update React Query cache — scope to this conversation only (not all conversations)
+        const conversationKey = buildMessagesKeyPrefix({ spaceId: conversationAddress, channelId: conversationAddress });
         queryClient.setQueriesData(
-          { queryKey: ['Messages'] },
+          { queryKey: conversationKey },
           (oldData: InfiniteData<{ messages: Message[]; nextCursor?: number; prevCursor?: number }> | undefined) => {
             if (!oldData?.pages) return oldData;
 
@@ -1027,6 +1031,7 @@ In the `MessageProps` type (~line 119), add after `showDeliveryReceipts`:
   showDeliveryReceipts?: boolean;
   showReadReceipts?: boolean;
   reportRead?: (messageId: string, timestamp: number) => void;
+  lastReadTimestamp?: number;
 ```
 
 Destructure in the component function (~line 162):
@@ -1035,6 +1040,7 @@ Destructure in the component function (~line 162):
     showDeliveryReceipts,
     showReadReceipts,
     reportRead,
+    lastReadTimestamp,
 ```
 
 - [ ] **Step 3: Add `readAt` to React.memo comparison**
@@ -1051,12 +1057,13 @@ In the memo comparison (~line 1353), after the `deliveredAt` check, add:
 Inside the Message component, after the props destructuring, add the hook:
 
 ```typescript
-    // Read receipt visibility tracking — only for incoming messages from others
+    // Read receipt visibility tracking — only for unread incoming messages from others
     const isOtherPersonMessage = message.content?.senderId !== user.currentPasskeyInfo?.address;
+    const isUnreadMessage = !lastReadTimestamp || message.timestamp > lastReadTimestamp;
     const readReceiptRef = useReadReceipt(
       message.messageId,
       message.timestamp,
-      !!(showReadReceipts && isOtherPersonMessage && reportRead),
+      !!(showReadReceipts && isOtherPersonMessage && isUnreadMessage && reportRead),
       reportRead
     );
 ```
@@ -1112,7 +1119,7 @@ EOF
 - Modify: `src/components/message/MessageList.tsx`
 - Modify: `src/components/direct/DirectMessage.tsx`
 
-- [ ] **Step 1: Add `showReadReceipts` and `reportRead` to MessageList props**
+- [ ] **Step 1: Add `showReadReceipts`, `reportRead`, and `lastReadTimestamp` to MessageList props**
 
 In `src/components/message/MessageList.tsx`, add to the props interface (~line 98):
 
@@ -1120,6 +1127,7 @@ In `src/components/message/MessageList.tsx`, add to the props interface (~line 9
   showDeliveryReceipts?: boolean;
   showReadReceipts?: boolean;
   reportRead?: (messageId: string, timestamp: number) => void;
+  lastReadTimestamp?: number;
 ```
 
 Destructure in the component (~line 164) and pass to `<Message>` (~line 335):
@@ -1128,9 +1136,10 @@ Destructure in the component (~line 164) and pass to `<Message>` (~line 335):
               showDeliveryReceipts={showDeliveryReceipts}
               showReadReceipts={showReadReceipts}
               reportRead={reportRead}
+              lastReadTimestamp={lastReadTimestamp}
 ```
 
-Add `showReadReceipts` and `reportRead` to the `useMemo` dependency array (~line 384).
+Add `showReadReceipts`, `reportRead`, and `lastReadTimestamp` to the `useMemo` dependency array (~line 384).
 
 - [ ] **Step 2: Add readReceipts state and reportRead callback to DirectMessage**
 
@@ -1146,10 +1155,19 @@ Load from config (~line 139), after `setDeliveryReceipts`:
         setReadReceipts(cfg?.readReceipts ?? false);
 ```
 
-Create the `reportRead` callback:
+Create the `reportRead` callback and handle toggle-off buffer discard:
 
 ```typescript
   const { deliveryReceiptService } = useMessageDB();
+
+  // Discard pending read buffer when readReceipts is toggled OFF
+  const prevReadReceipts = useRef(readReceipts);
+  useEffect(() => {
+    if (prevReadReceipts.current && !readReceipts && deliveryReceiptService) {
+      deliveryReceiptService.clearReadBuffer();
+    }
+    prevReadReceipts.current = readReceipts;
+  }, [readReceipts, deliveryReceiptService]);
 
   const reportRead = useCallback((messageId: string, timestamp: number) => {
     if (!readReceipts || !deliveryReceiptService) return;
@@ -1162,6 +1180,7 @@ Pass to MessageList (~line 890):
                 showDeliveryReceipts={deliveryReceipts}
                 showReadReceipts={readReceipts}
                 reportRead={reportRead}
+                lastReadTimestamp={lastReadTimestamp}
 ```
 
 - [ ] **Step 3: Commit**
