@@ -89,6 +89,7 @@ This is the main index for all documentation, bug reports, and task management.
 ### Active Issues
 - [Message list scroll jank on send — Virtuoso scroll position drift](bugs/2026-03-19-message-list-scroll-jank-on-send.md)
 - [Standalone delivery receipt acks not reliably delivered](bugs/2026-03-19-standalone-delivery-ack-unreliable.md)
+- [Read receipts (Phase 2) untested — sync issues prevent DM delivery](bugs/2026-03-22-read-receipts-testing-blocked.md)
 - [Config Sync Space Loss Race Condition](bugs/config-sync-space-loss-race-condition.md)
 - [DirectMessage Invite Loading Performance Issue](bugs/directmessage-invite-loading-performance.md)
 - [Encryption State Evals Causing Config Sync Bloat](bugs/encryption-state-evals-bloat.md)
@@ -166,6 +167,8 @@ This is the main index for all documentation, bug reports, and task management.
 - [Thread List Panel: "Created by me" Filter](tasks/2026-03-14-thread-list-created-filter.md)
 - [DM Delivery Receipts — Design Spec](tasks/2026-03-18-dm-delivery-receipts-design.md)
 - [DM Delivery Receipts Implementation Plan](tasks/2026-03-18-dm-delivery-receipts-plan.md)
+- [DM Read Receipts Design — Phase 2](tasks/2026-03-22-dm-read-receipts-design.md)
+- [DM Read Receipts (Phase 2) Implementation Plan](tasks/2026-03-22-dm-read-receipts-plan.md)
 - [Accessibility Features — Remaining Work](tasks/accessibility-features-implementation.md)
 - [Add User Bio Field to UserSettingsModal General Tab](tasks/add-user-bio-field.md)
 - [Auto-save settings modals — eliminate save buttons](tasks/auto-save-settings-modals.md)
@@ -482,4 +485,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2026-03-19 18:32:18
+**Last Updated**: 2026-03-22 17:51:40
