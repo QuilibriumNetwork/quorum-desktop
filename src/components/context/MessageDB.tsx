@@ -1044,7 +1044,7 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
               const newMessages = page.messages.map((msg) => {
                 if (
                   msg.content?.senderId === selfAddress &&
-                  msg.timestamp <= upToTimestamp &&
+                  msg.createdDate <= upToTimestamp &&
                   !(msg as any).readAt
                 ) {
                   changed = true;
@@ -1063,8 +1063,8 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
           }
         );
 
-        // Persist to IndexedDB
-        messageDB.updateMessagesReadAt(conversationId, selfAddress, upToTimestamp, now).catch(() => {
+        // Persist to IndexedDB — DM spaceId and channelId are both the address
+        messageDB.updateMessagesReadAt(conversationAddress, conversationAddress, selfAddress, upToTimestamp, now).catch(() => {
           // Best effort — React Query cache is already updated
         });
       },

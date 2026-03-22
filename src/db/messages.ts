@@ -370,7 +370,8 @@ export class MessageDB {
   }
 
   async updateMessagesReadAt(
-    conversationId: string,
+    spaceId: string,
+    channelId: string,
     ownAddress: string,
     upToTimestamp: number,
     readAt: number
@@ -381,8 +382,8 @@ export class MessageDB {
       const store = tx.objectStore('messages');
       const index = store.index('by_conversation_time');
       const range = IDBKeyRange.bound(
-        [conversationId, 0],
-        [conversationId, upToTimestamp]
+        [spaceId, channelId, 0],
+        [spaceId, channelId, upToTimestamp]
       );
       const request = index.openCursor(range);
 

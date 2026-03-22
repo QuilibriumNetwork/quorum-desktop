@@ -906,6 +906,7 @@ const DirectMessage: React.FC<{}> = () => {
                 showDeliveryReceipts={deliveryReceipts}
                 showReadReceipts={readReceipts}
                 reportRead={reportRead}
+                lastReadTimestamp={lastReadTimestamp}
               />
             </div>
             {/* Accept chat warning */}
