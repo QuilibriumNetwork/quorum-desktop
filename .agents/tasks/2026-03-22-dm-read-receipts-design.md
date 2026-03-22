@@ -79,6 +79,7 @@ On own sent messages:
 - `readAt` takes precedence — if both set, show ✓✓ only
 - Icon: `check-check` (verify availability at implementation time; fallback: two adjacent `check` icons)
 - `readAt` display is gated on sender's `readReceipts` setting. If turned off, existing `readAt` values remain persisted but ✓✓ downgrades to ✓ (delivery only).
+- When `readReceipts` is ON, the ✓✓ indicator is shown regardless of the `deliveryReceipts` setting — read status subsumes delivery. The display logic is: if `readReceipts` ON and `readAt` set → ✓✓; else if `deliveredAt` set and (`deliveryReceipts` ON or `readReceipts` ON) → ✓; else → nothing.
 
 ---
 
@@ -99,7 +100,7 @@ Per-message IntersectionObserver hook, following the existing `useViewportMentio
 ### Who Gets Observed
 
 - Only messages from the other person (not your own)
-- Only messages newer than `lastReadTimestamp` (unread)
+- Only messages newer than the conversation's `lastReadTimestamp` (the existing unread tracking timestamp from the `Conversation` model in IndexedDB, already used for the "New Messages" separator and unread counts — persisted across sessions)
 - Once a message triggers `reportRead`, its observer disconnects permanently
 - When Virtuoso unmounts the element, `useEffect` cleanup handles teardown
 
@@ -175,8 +176,8 @@ When piggybacked: extract `readAckUpTo` from envelope, process, then strip.
 
 Uses `upToTimestamp` to mark all own sent messages in that conversation up to that timestamp:
 
-1. **React Query cache** — iterate messages in the conversation's query data, set `readAt = now` on all own messages where `timestamp <= upToTimestamp` and `readAt` is not already set
-2. **IndexedDB** — new `updateMessagesReadAt(conversationId, senderAddress, upToTimestamp, readAt)` method. Opens a cursor on the conversation+time index, walks own messages (filtered by `senderAddress`) up to the timestamp, sets `readAt` on each
+1. **React Query cache** — iterate messages in the conversation's query data, set `readAt = now` on all messages where `content.senderId === ownAddress` (the local user's address) AND `timestamp <= upToTimestamp` AND `readAt` is not already set
+2. **IndexedDB** — new `updateMessagesReadAt(conversationId, ownAddress, upToTimestamp, readAt)` method. `ownAddress` is the **local user's address** (the original message author, NOT the address of the person who sent the read-ack). Opens a cursor on the conversation+time index, filters to messages where `content.senderId === ownAddress`, walks up to the timestamp, sets `readAt` on each
 
 **Important:** If a read ack arrives before a delivery ack (unlikely but possible), set both `deliveredAt` and `readAt` — reading implies delivery. UI shows ✓✓ directly.
 
@@ -212,6 +213,7 @@ In `Privacy.tsx`, below the existing "Delivery receipts" toggle:
 | App crashes before read ack flush | Lost for those messages. Not critical — next time user opens the conversation and scrolls, new high-water mark is established. |
 | Virtuoso unmounts message element during 1s timer | `useEffect` cleanup cancels observer + timer. Message re-observed when scrolled back into view. Duplicate `reportRead` calls are harmless — the high-water mark in `DeliveryReceiptService` makes them no-ops if the timestamp is <= current mark. |
 | Offline recipient comes back, scrolls through messages | Read acks buffer normally, flush via piggyback or standalone. |
+| User toggles `readReceipts` OFF with pending read buffer | Read high-water mark buffer is discarded, timers cancelled. No read acks sent. Mirrors Phase 1 behavior for delivery acks. |
 
 ---
 
