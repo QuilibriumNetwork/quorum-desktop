@@ -245,6 +245,7 @@ type MessageDBContextValue = {
     }
   ) => Promise<void>;
   actionQueueService: ActionQueueService;
+  deliveryReceiptService: DeliveryReceiptService | null;
 };
 
 type MessageDBContextProps = {
@@ -1012,6 +1013,61 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
           messageDB.updateMessageDeliveredAt(messageId, now);
         }
       },
+      onReadFlush: (address: string, highWaterMark: { messageId: string; timestamp: number }) => {
+        // Queue standalone read ack via Action Queue
+        actionQueueService.enqueue(
+          'send-read-ack',
+          {
+            address,
+            upToMessageId: highWaterMark.messageId,
+            upToTimestamp: highWaterMark.timestamp,
+            selfUserAddress: selfAddress,
+          },
+          `read-ack:${address}` // dedup key: one pending read ack per address
+        );
+      },
+      onReadAckProcessed: (upToMessageId: string, upToTimestamp: number, conversationAddress: string) => {
+        // Update readAt (and deliveredAt if missing) on own messages up to timestamp
+        const now = Date.now();
+        // DM conversationId is "address/address"
+        const conversationId = `${conversationAddress}/${conversationAddress}`;
+
+        // Update React Query cache — scope to this conversation only (not all conversations)
+        const conversationKey = buildMessagesKeyPrefix({ spaceId: conversationAddress, channelId: conversationAddress });
+        queryClient.setQueriesData(
+          { queryKey: conversationKey },
+          (oldData: InfiniteData<{ messages: Message[]; nextCursor?: number; prevCursor?: number }> | undefined) => {
+            if (!oldData?.pages) return oldData;
+
+            let changed = false;
+            const newPages = oldData.pages.map((page) => {
+              const newMessages = page.messages.map((msg) => {
+                if (
+                  msg.content?.senderId === selfAddress &&
+                  msg.timestamp <= upToTimestamp &&
+                  !(msg as any).readAt
+                ) {
+                  changed = true;
+                  return {
+                    ...msg,
+                    readAt: now,
+                    deliveredAt: (msg as any).deliveredAt || now,
+                  } as Message;
+                }
+                return msg;
+              });
+              return changed ? { ...page, messages: newMessages } : page;
+            });
+
+            return changed ? { ...oldData, pages: newPages } : oldData;
+          }
+        );
+
+        // Persist to IndexedDB
+        messageDB.updateMessagesReadAt(conversationId, selfAddress, upToTimestamp, now).catch(() => {
+          // Best effort — React Query cache is already updated
+        });
+      },
     });
 
     return service;
@@ -1245,6 +1301,7 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
         sendVerifyKickedStatuses,
         deleteConversation,
         actionQueueService,
+        deliveryReceiptService,
       }}
     >
       <ActionQueueProvider actionQueueService={actionQueueService}>
@@ -1281,6 +1338,7 @@ const MessageDBContext = createContext<MessageDBContextValue>({
   sendVerifyKickedStatuses: () => undefined as never,
   deleteConversation: () => undefined as never,
   actionQueueService: undefined as never,
+  deliveryReceiptService: null,
 });
 
 export { MessageDBProvider, MessageDBContext };
