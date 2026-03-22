@@ -581,22 +581,9 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
                 : messageList.length - 1
           }
           followOutput={(isAtBottom: boolean) => {
-            // Don't auto-scroll during deletions
-            if (deletionInProgressRef.current) {
-              console.log('[SCROLLBUG] followOutput: skip (deletion)');
-              return false;
-            }
-            // Don't auto-scroll after jumping to old message
-            if (hasJumpedToOldMessage) {
-              console.log('[SCROLLBUG] followOutput: skip (jumped)');
-              return false;
-            }
-            // Only auto-scroll if at bottom and at the true present
-            if (isAtBottom && hasNextPage === false) {
-              console.log('[SCROLLBUG] followOutput: auto');
-              return 'auto';
-            }
-            console.log(`[SCROLLBUG] followOutput: skip (isAtBottom:${isAtBottom} hasNextPage:${hasNextPage})`);
+            if (deletionInProgressRef.current) return false;
+            if (hasJumpedToOldMessage) return false;
+            if (isAtBottom && hasNextPage === false) return 'auto';
             return false;
           }}
           totalCount={messageList.length}

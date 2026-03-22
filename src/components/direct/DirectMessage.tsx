@@ -271,6 +271,10 @@ const DirectMessage: React.FC<{}> = () => {
   const messageComposerRef = useRef<MessageComposerRef>(null);
   const messageListRef = useRef<MessageListRef>(null);
 
+  // Ref to hold latest messageList for effects that shouldn't re-run on every message change
+  const messageListLatestRef = useRef(messageList);
+  messageListLatestRef.current = messageList;
+
   // Submit message function for MessageComposer
   const handleSubmitMessage = useCallback(
     async (message: string | object, inReplyTo?: string) => {
@@ -445,14 +449,15 @@ const DirectMessage: React.FC<{}> = () => {
         }
 
         // Check if the first unread is already in the loaded messages
-        const isAlreadyLoaded = messageList.some(
+        const currentMessages = messageListLatestRef.current;
+        const isAlreadyLoaded = currentMessages.some(
           (m) => m.messageId === firstUnread.messageId
         );
 
         if (isAlreadyLoaded) {
           // Calculate initial unread count (only count messages from the other party)
           const currentUserId = user.currentPasskeyInfo!.address;
-          const unreadCount = messageList.filter(
+          const unreadCount = currentMessages.filter(
             (m) => m.createdDate > lastReadTimestamp &&
                    m.content.senderId !== currentUserId
           ).length;
@@ -532,7 +537,9 @@ const DirectMessage: React.FC<{}> = () => {
     }, 100);
 
     return () => clearTimeout(timer);
-  }, [address, lastReadTimestamp, messageDB, messageList, queryClient, user.currentPasskeyInfo]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- intentionally omitting messageList:
+  // this effect should only run on conversation mount, not on every new message
+  }, [address, lastReadTimestamp, messageDB, queryClient, user.currentPasskeyInfo]);
 
   // Reset scrollToMessageId, separator, and timestamp refs when conversation changes
   useEffect(() => {
@@ -601,6 +608,7 @@ const DirectMessage: React.FC<{}> = () => {
     },
     [handleSubmitMessage]
   );
+
 
   // Update latest timestamp ref whenever messageList or conversation changes
   // Use the max of: last message in list OR conversation.timestamp

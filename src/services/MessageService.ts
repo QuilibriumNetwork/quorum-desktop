@@ -1780,6 +1780,11 @@ export class MessageService {
         !isRemoveMessage &&
         (pendingMessage as any).type !== 'remove-message');
 
+    // Pre-built message for optimistic display (set inside isPostMessage block,
+    // reused by legacy enqueueOutbound path to ensure same messageId)
+    let preBuiltMessage: Message | null = null;
+    let preBuiltMessageIdBuffer: ArrayBuffer | null = null;
+
     // For post messages: prepare and show optimistically BEFORE enqueueing
     if (isPostMessage) {
       // Generate nonce and calculate messageId
@@ -1885,14 +1890,23 @@ export class MessageService {
         return; // Post message handling complete via action queue
       }
 
-      // No established sessions - fall through to legacy path below
-      // which will create new sessions using full self/counterparty data
+      // No established sessions or online - fall through to legacy path below
+      // which will create new sessions using full self/counterparty data.
+      // Still show the message optimistically so followOutput fires before composer resize.
+      // Store the pre-built message so the legacy path can reuse it (same messageId).
+      preBuiltMessage = message;
+      preBuiltMessageIdBuffer = messageIdBuffer;
+      await this.addMessage(queryClient, address, address, {
+        ...message,
+        sendStatus: 'sending',
+      });
     }
 
-    // For edit-message, delete-conversation, reactions: use existing flow (no optimistic update)
+    // Legacy path: used for edit-message, delete-conversation, reactions (no optimistic update),
+    // and for post messages falling through from isPostMessage (optimistic update already done above)
     this.enqueueOutbound(async () => {
       const outbounds: string[] = [];
-      const nonce = crypto.randomUUID();
+      const nonce = preBuiltMessage ? preBuiltMessage.nonce : crypto.randomUUID();
 
       // Handle edit-message type
       if (
@@ -2089,40 +2103,49 @@ export class MessageService {
         return outbounds;
       }
 
-      const messageId = await crypto.subtle.digest(
-        'SHA-256',
-        Buffer.from(
-          nonce +
-            'post' +
-            currentPasskeyInfo.address +
-            (typeof pendingMessage === 'string'
-              ? pendingMessage
-              : JSON.stringify(pendingMessage)),
-          'utf-8'
-        )
-      );
-      const message = {
-        channelId: address!,
-        spaceId: address!,
-        messageId: Buffer.from(messageId).toString('hex'),
-        digestAlgorithm: 'SHA-256',
-        nonce: nonce,
-        createdDate: Date.now(),
-        modifiedDate: Date.now(),
-        lastModifiedHash: '',
-        content:
-          typeof pendingMessage === 'string'
-            ? ({
-                type: 'post',
-                senderId: currentPasskeyInfo.address,
-                text: pendingMessage,
-                repliesToMessageId: inReplyTo,
-              } as PostMessage)
-            : {
-                ...(pendingMessage as any),
-                senderId: currentPasskeyInfo.address,
-              },
-      } as Message;
+      // Reuse pre-built message if available (optimistic update already displayed),
+      // otherwise create a new one (non-post messages won't have a pre-built message)
+      let messageId: ArrayBuffer;
+      let message: Message;
+      if (preBuiltMessage && preBuiltMessageIdBuffer) {
+        message = preBuiltMessage;
+        messageId = preBuiltMessageIdBuffer;
+      } else {
+        messageId = await crypto.subtle.digest(
+          'SHA-256',
+          Buffer.from(
+            nonce +
+              'post' +
+              currentPasskeyInfo.address +
+              (typeof pendingMessage === 'string'
+                ? pendingMessage
+                : JSON.stringify(pendingMessage)),
+            'utf-8'
+          )
+        );
+        message = {
+          channelId: address!,
+          spaceId: address!,
+          messageId: Buffer.from(messageId).toString('hex'),
+          digestAlgorithm: 'SHA-256',
+          nonce: nonce,
+          createdDate: Date.now(),
+          modifiedDate: Date.now(),
+          lastModifiedHash: '',
+          content:
+            typeof pendingMessage === 'string'
+              ? ({
+                  type: 'post',
+                  senderId: currentPasskeyInfo.address,
+                  text: pendingMessage,
+                  repliesToMessageId: inReplyTo,
+                } as PostMessage)
+              : {
+                  ...(pendingMessage as any),
+                  senderId: currentPasskeyInfo.address,
+                },
+        } as Message;
+      }
       const conversationId = address + '/' + address;
       const conversation = await this.messageDB.getConversation({
         conversationId,
@@ -2148,8 +2171,8 @@ export class MessageService {
       const sets = response.map((e) => JSON.parse(e.state));
 
       let sessions: secureChannel.SealedMessageAndMetadata[] = [];
-      // Sign DM unless explicitly skipped
-      if (!skipSigning) {
+      // Sign DM unless explicitly skipped (skip if already signed via preBuiltMessage)
+      if (!skipSigning && !preBuiltMessage) {
         try {
           const sig = ch.js_sign_ed448(
             Buffer.from(
