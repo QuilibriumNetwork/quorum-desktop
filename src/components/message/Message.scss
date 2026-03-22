@@ -276,16 +276,24 @@
     color: rgb(var(--danger));
   }
 
-  &.delivered {
+  &.delivered,
+  &.read {
     display: inline-flex;
     align-items: center;
     vertical-align: text-bottom;
     margin-left: 4px;
-    color: var(--accent-400);
+    color: var(--color-text-muted);
 
     svg {
-      width: 16px;
-      height: 16px;
+      width: 12px;
+      height: 12px;
+    }
+  }
+
+  &.read {
+    gap: 0;
+    svg + svg {
+      margin-left: -4px;
     }
   }
 
