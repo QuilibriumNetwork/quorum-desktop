@@ -225,6 +225,23 @@ export class MessageService {
       return true; // Signal: intercept this message
     }
 
+    // 1b. Intercept read-ack control messages — never save, never display
+    // NOTE: Unlike delivery acks, read acks are processed unconditionally (no readReceiptsEnabled check).
+    // Per spec: "Read acks are always persisted; display is gated on setting."
+    // This allows toggling readReceipts ON later to reveal historical read status.
+    const isReadAck = raw.type === 'read-ack' || raw.content?.type === 'read-ack';
+    if (isReadAck) {
+      if (this.deliveryReceiptService) {
+        const upToMessageId = raw.upToMessageId ?? raw.content?.upToMessageId;
+        const upToTimestamp = raw.upToTimestamp ?? raw.content?.upToTimestamp;
+        if (upToMessageId && upToTimestamp) {
+          logger.log('[ReadReceipt] Processing incoming read ack', { upToMessageId, upToTimestamp, from: senderAddress });
+          this.deliveryReceiptService.onReadAckReceived(upToMessageId, upToTimestamp, senderAddress);
+        }
+      }
+      return true; // Signal: intercept this message
+    }
+
     // 2. Extract piggybacked ackMessageIds, process, then strip
     const ackMessageIds = raw.ackMessageIds;
     if (ackMessageIds && this.deliveryReceiptService && deliveryReceiptsEnabled) {
@@ -233,8 +250,16 @@ export class MessageService {
     }
     delete raw.ackMessageIds;
 
+    // 2b. Extract piggybacked readAckUpTo, process, then strip
+    const readAckUpTo = raw.readAckUpTo;
+    if (readAckUpTo && this.deliveryReceiptService) {
+      logger.log('[ReadReceipt] Processing piggybacked read ack', { readAckUpTo, from: senderAddress });
+      this.deliveryReceiptService.onReadAckReceived(readAckUpTo.messageId, readAckUpTo.timestamp, senderAddress);
+    }
+    delete raw.readAckUpTo;
+
     // 3. Buffer this message's ID for acking (only for post messages from others)
-    // DEFENSE IN DEPTH: explicitly exclude delivery-ack to prevent infinite ack loops
+    // DEFENSE IN DEPTH: explicitly exclude delivery-ack and read-ack to prevent infinite ack loops
     if (
       this.deliveryReceiptService &&
       deliveryReceiptsEnabled &&
@@ -1862,6 +1887,14 @@ export class MessageService {
           }
         }
 
+        // Piggyback pending read receipt ack on outgoing DM
+        if (this.deliveryReceiptService) {
+          const pendingReadAck = this.deliveryReceiptService.flushReadForPiggyback(address);
+          if (pendingReadAck) {
+            (message as any).readAckUpTo = pendingReadAck;
+          }
+        }
+
         // Add to cache with 'sending' status (optimistic update)
         await this.addMessage(queryClient, address, address, {
           ...message,
@@ -2194,6 +2227,14 @@ export class MessageService {
         const pendingAcks = this.deliveryReceiptService.flushForPiggyback(address);
         if (pendingAcks.length > 0) {
           (message as any).ackMessageIds = pendingAcks;
+        }
+      }
+
+      // Piggyback pending read receipt ack on outgoing DM
+      if (this.deliveryReceiptService) {
+        const pendingReadAck = this.deliveryReceiptService.flushReadForPiggyback(address);
+        if (pendingReadAck) {
+          (message as any).readAckUpTo = pendingReadAck;
         }
       }
 
