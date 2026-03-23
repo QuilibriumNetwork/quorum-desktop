@@ -1,11 +1,11 @@
 ---
 type: bug
 title: "Read receipts (Phase 2) untested — sync issues prevent DM delivery"
-status: open
+status: in-progress
 priority: medium
 ai_generated: true
 created: 2026-03-22
-updated: 2026-03-22
+updated: 2026-03-23
 ---
 
 # Read receipts (Phase 2) untested — sync issues prevent DM delivery
@@ -16,22 +16,23 @@ updated: 2026-03-22
 
 Read receipts (Phase 2 — double checkmark ✓✓) implementation is complete but cannot be fully end-to-end tested because DM messages are intermittently failing to deliver between users. The sync/message delivery infrastructure is unreliable during testing, making it impossible to verify the read receipt flow works correctly.
 
-**What we confirmed works:**
+**What we confirmed works (2026-03-23):**
 - Settings toggle saves and loads correctly (both Delivery receipts and Read receipts)
-- `useReadReceipt` hook mounts IntersectionObservers on unread incoming messages
+- `useReadReceipt` hook mounts IntersectionObservers on incoming messages
 - Observers fire when messages are 50%+ visible in viewport
 - `reportRead` callback is called with correct messageId and `createdDate` timestamp
 - `DeliveryReceiptService.onMessageRead()` buffers the high-water mark
 - 25/25 unit tests pass for the service layer
+- **End-to-end flow confirmed working** (2026-03-23): Brave Light reads Gattopardo's message → `reportRead` fires → read ack sent → Gattopardo receives `[ReadReceipt] Processing incoming read ack` → ✓✓ appears on sender's messages
+- Read ack interception in `processDeliveryReceiptData` works correctly
+- Both standalone and piggybacked read ack paths confirmed via console logs
 
-**What we could NOT test due to sync issues:**
-- Standalone read ack sent after 5s debounce → received by sender
-- Piggybacked read ack on outgoing DM → received by sender
-- `processDeliveryReceiptData` intercepting `read-ack` control message
-- `onReadAckProcessed` updating React Query cache with `readAt`
-- `updateMessagesReadAt` persisting to IndexedDB
-- ✓ upgrading to ✓✓ in the sender's UI
+**Still needs testing (blocked by intermittent sync issues):**
+- Piggyback-only path (verify no standalone ack when replying within 5s)
 - Privacy toggle enforcement (OFF = no acks sent, no ✓✓ displayed)
+- Toggle OFF mid-conversation (buffer discard)
+- Persistence across app restart (close and reopen → ✓✓ still shows)
+- Both users sending rapidly (read acks piggyback on replies)
 
 ## Root Cause
 
@@ -45,7 +46,7 @@ This suggests occasional Double Ratchet state desync between devices.
 
 ## Bugs Found and Fixed During Implementation
 
-Three critical bugs were found via code review and fixed before testing:
+Six bugs were found and fixed during implementation and debugging:
 
 1. **`message.timestamp` → `message.createdDate`** (2 locations)
    - `src/components/message/Message.tsx:177,180` — hook received `undefined` timestamp
@@ -61,6 +62,15 @@ Three critical bugs were found via code review and fixed before testing:
    - Added `lastReadTimestamp={lastReadTimestamp}` to MessageList JSX
 
 4. **Duplicate `lastReadTimestamp` in Message.tsx** props — appeared twice in type and destructuring, causing Babel "Argument name clash" build error.
+
+5. **`lastReadTimestamp` filter disabled all read receipt observers** (found 2026-03-23)
+   - `lastReadTimestamp` updates every 2 seconds while the conversation is open, so ALL messages appeared "already read" by the time the hook evaluated
+   - `isEnabled` was always `false` — no observers were ever mounted
+   - Fixed by removing the `lastReadTimestamp` filter entirely. The high-water mark in `DeliveryReceiptService` already deduplicates redundant `reportRead` calls, making the filter unnecessary.
+
+6. **`msg.timestamp` → `msg.createdDate` in MessageDB.tsx** (found in code review, same class as bug #1)
+   - React Query cache update in `onReadAckProcessed` used `msg.timestamp` which doesn't exist
+   - Fixed to use `msg.createdDate`
 
 ## Testing Instructions
 
