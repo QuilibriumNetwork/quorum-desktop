@@ -287,6 +287,10 @@
       width: 12px;
       height: 12px;
     }
+
+    &.read svg + svg {
+      margin-left: -6px;
+    }
   }
 
   &__retry {
