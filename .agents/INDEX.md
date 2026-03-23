@@ -56,6 +56,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Bookmarks Feature](docs/features/messages/bookmarks.md)
 - [Client-Side Image Compression & Thumbnail System](docs/features/messages/client-side-image-compression.md)
 - [DM Conversation List Previews](docs/features/messages/dm-conversation-list-previews.md)
+- [DM Read Receipts](docs/features/messages/dm-read-receipts.md)
 - [Emoji Picker React - Styling & Customization](docs/features/messages/emoji-picker-react-customization.md)
 - [Hash Navigation to Old Messages](docs/features/messages/hash-navigation-to-old-messages.md)
 - [Markdown Renderer](docs/features/messages/markdown-renderer.md)
@@ -88,7 +89,6 @@ This is the main index for all documentation, bug reports, and task management.
 
 ### Active Issues
 - [Message list scroll jank on send — Virtuoso scroll position drift](bugs/2026-03-19-message-list-scroll-jank-on-send.md)
-- [Standalone delivery receipt acks not reliably delivered](bugs/2026-03-19-standalone-delivery-ack-unreliable.md)
 - [Read receipts (Phase 2) untested — sync issues prevent DM delivery](bugs/2026-03-22-read-receipts-testing-blocked.md)
 - [Config Sync Space Loss Race Condition](bugs/config-sync-space-loss-race-condition.md)
 - [DirectMessage Invite Loading Performance Issue](bugs/directmessage-invite-loading-performance.md)
@@ -116,6 +116,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Modals break when consuming quorum-shared from pre-built dist](bugs/.solved/2026-03-16-quorum-shared-pre-built-dist-modal-broken.md)
 - [vite-plugin-favicons-inject fails with NO_FILES_FOUND during production build](bugs/.solved/2026-03-18-favicon-plugin-prod-build-failure.md)
 - [Offline Banner Overlays Content Instead of Pushing Down](bugs/.solved/2026-03-18-offline-banner-overlay.md)
+- [Standalone delivery receipt acks not reliably delivered](bugs/.solved/2026-03-19-standalone-delivery-ack-unreliable.md)
 - [Receipt checkmarks disappear on page refresh and conversation navigation](bugs/.solved/2026-03-22-receipt-checkmarks-not-persisting-across-navigation.md)
 - [Action Queue Bypasses SDK Encryption for Identity Keys](bugs/.solved/action-queue-plaintext-private-keys.md)
 - [Android 7.0 File Download Fix - Implementation Plan](bugs/.solved/SOLVED_android-file-download-huawei-p9-lite.md)
@@ -486,4 +487,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2026-03-23 16:24:54
+**Last Updated**: 2026-03-23 16:49:19

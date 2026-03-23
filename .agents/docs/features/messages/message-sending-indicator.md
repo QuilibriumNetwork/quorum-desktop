@@ -300,67 +300,16 @@ Full design specification: `.agents/tasks/2026-03-18-dm-delivery-receipts-design
 
 ## Read Receipts (Phase 2)
 
-### Overview
-
-DM read receipts show a double checkmark (✓✓) on sent messages, confirming the recipient has visually seen the message. This builds on Phase 1 (delivery receipts with ✓) and uses the same high-water mark and privacy architecture.
-
-### Privacy Setting
-
-- **Location**: User Settings → Privacy → "Read receipts"
-- **Default**: OFF (hard privacy boundary — no read status leaves the device when OFF)
-- **Independent toggle**: Separate from delivery receipts. You can have read receipts ON and delivery receipts OFF, or vice versa.
-- **Reciprocal**: Both parties must have the setting ON. Each client independently enforces its own setting.
-
-### Message States with Read Receipts
+DM read receipts show a double checkmark (✓✓) on sent messages, confirming the recipient has visually seen the message (50%+ visible in viewport for 1+ second, tab focused). This builds on Phase 1 delivery receipts and uses the same ack pipeline with a high-water mark approach.
 
 | State | Indicator | When |
 |---|---|---|
-| Delivered | ✓ (single check, muted color) | Ack received; recipient has not yet read |
-| Read | ✓✓ (double check, muted color) | Recipient has had message 50%+ visible in viewport for 1+ second with tab focused |
+| Delivered | ✓ (single check, muted color) | Delivery ack received |
+| Read | ✓✓ (double check, muted color) | Read ack received |
 
-**Note:** The ✓✓ indicator uses the same subtle, muted color as ✓ — visual distinction is icon-only (two checks vs. one).
+Separate privacy toggle (OFF by default, independent from delivery receipts).
 
-### High-Water Mark Approach
-
-Instead of sending an ack for each read message, read receipts use a high-water mark: "the recipient has read up to message X (timestamp Y)". This means:
-
-- All messages up to that timestamp are implicitly marked as read
-- A single ack covers a potentially large batch of messages
-- Much lighter network footprint and UI state
-- DM reading is linear, so one mark-up-to is sufficient
-
-### How Read Acks Flow
-
-```
-Recipient scrolls message into view (50%+ visible)
-     ↓
-Message visible for 1+ second AND tab is focused
-     ↓
-readReceipts ON? → buffer high-water mark (timestamp)
-     ↓
-Piggyback on next outgoing DM (zero extra messages)
-  OR standalone ack after 5s debounce via Action Queue
-     ↓
-Sender receives ack → readReceipts ON? → set readAt on all messages up to timestamp
-     ↓
-✓✓ appears on sent messages (persisted to IndexedDB, survives restart)
-```
-
-### Key Files
-
-| File | Role |
-|---|---|
-| `src/hooks/business/messages/useReadReceipt.ts` | IntersectionObserver hook, 1-second dwell time, tab focus check |
-| `src/services/DeliveryReceiptService.ts` | Extended: read high-water mark buffer, 5s debounce timers |
-| `src/services/ActionQueueHandlers.ts` | `send-read-ack` handler for standalone acks |
-| `src/services/MessageService.ts` | Intercept read acks, mark messages up to timestamp |
-| `src/db/messages.ts` | `readReceipts` in UserConfig, `updateMessagesReadAt()` method |
-| `src/components/message/Message.tsx` | ✓✓ indicator rendering, `readAt` field check |
-| `src/components/modals/UserSettingsModal/Privacy.tsx` | Second toggle UI |
-
-### Design Spec
-
-Full design specification: `.agents/tasks/2026-03-22-dm-read-receipts-design.md`
+**Full documentation**: [DM Read Receipts](dm-read-receipts.md) — covers architecture, the useReadReceipt hook, baseline snapshot, high-water mark buffering, sender-side processing, UI rendering, privacy model, and technical decisions.
 
 ## Related Documentation
 
@@ -368,8 +317,9 @@ Full design specification: `.agents/tasks/2026-03-22-dm-read-receipts-design.md`
 - **Action Queue**: [Action Queue](../action-queue.md) - Persistent queue with retry and offline support
 - **Delivery Receipts Design**: `.agents/tasks/2026-03-18-dm-delivery-receipts-design.md` - Full design spec
 - **Delivery Receipts Plan**: `.agents/tasks/2026-03-18-dm-delivery-receipts-plan.md` - Implementation plan
+- **Read Receipts Feature Doc**: [DM Read Receipts](dm-read-receipts.md) - Comprehensive read receipts documentation
 - **Read Receipts Design**: `.agents/tasks/2026-03-22-dm-read-receipts-design.md` - Full read receipts design spec
 
 ---
 
-*Updated: 2026-03-22*
+*Updated: 2026-03-23*
