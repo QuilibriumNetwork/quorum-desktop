@@ -996,7 +996,7 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
               let changed = false;
               const newPages = oldData.pages.map((page) => {
                 const newMessages = page.messages.map((msg) => {
-                  if (msg.messageId === messageId && !(msg as any).deliveredAt) {
+                  if (msg.messageId === messageId && !msg.deliveredAt) {
                     changed = true;
                     return { ...msg, deliveredAt: now } as Message;
                   }
@@ -1045,13 +1045,13 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
                 if (
                   msg.content?.senderId === selfAddress &&
                   msg.createdDate <= upToTimestamp &&
-                  !(msg as any).readAt
+                  !msg.readAt
                 ) {
                   changed = true;
                   return {
                     ...msg,
                     readAt: now,
-                    deliveredAt: (msg as any).deliveredAt || now,
+                    deliveredAt: msg.deliveredAt || now,
                   } as Message;
                 }
                 return msg;

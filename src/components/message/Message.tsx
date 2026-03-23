@@ -944,17 +944,16 @@ export const Message = React.memo(
                   // - otherwise -> nothing
                   // Privacy setting controls SENDING acks, not displaying already-received ones.
                   const isOwnMessage = message.content?.senderId === user.currentPasskeyInfo?.address;
-                  const msgAny = message as any;
                   let receiptIndicator: React.ReactNode = null;
                   if (!message.sendStatus && isOwnMessage) {
-                    if (msgAny.readAt) {
+                    if (message.readAt) {
                       receiptIndicator = (
                         <span className="message-status delivered read">
                           <Icon name="check" size="xs" />
                           <Icon name="check" size="xs" />
                         </span>
                       );
-                    } else if (msgAny.deliveredAt) {
+                    } else if (message.deliveredAt) {
                       receiptIndicator = (
                         <span className="message-status delivered">
                           <Icon name="check" size="xs" />
@@ -1390,8 +1389,8 @@ export const Message = React.memo(
         JSON.stringify(nextProps.message.reactions) ||
       prevProps.message.isPinned !== nextProps.message.isPinned ||
       prevProps.message.sendStatus !== nextProps.message.sendStatus ||
-      (prevProps.message as any).deliveredAt !== (nextProps.message as any).deliveredAt ||
-      (prevProps.message as any).readAt !== (nextProps.message as any).readAt ||
+      prevProps.message.deliveredAt !== nextProps.message.deliveredAt ||
+      prevProps.message.readAt !== nextProps.message.readAt ||
       prevProps.showDeliveryReceipts !== nextProps.showDeliveryReceipts ||
       prevProps.showReadReceipts !== nextProps.showReadReceipts ||
       JSON.stringify(prevProps.message.threadMeta) !== JSON.stringify(nextProps.message.threadMeta);
