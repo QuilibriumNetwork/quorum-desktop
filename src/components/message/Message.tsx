@@ -172,13 +172,15 @@ export const Message = React.memo(
     const navigate = useNavigate();
     const { openMobileActionsDrawer, openMobileEmojiDrawer } = useMobile();
 
-    // Read receipt visibility tracking — only for unread incoming messages from others
+    // Read receipt visibility tracking — only for incoming messages from others
+    // No lastReadTimestamp filter: it updates every 2s while the conversation is open,
+    // which would make all messages appear "already read". The high-water mark in
+    // DeliveryReceiptService deduplicates, so redundant reportRead calls are harmless.
     const isOtherPersonMessage = message.content?.senderId !== user.currentPasskeyInfo?.address;
-    const isUnreadMessage = !lastReadTimestamp || message.createdDate > lastReadTimestamp;
     const readReceiptRef = useReadReceipt(
       message.messageId,
       message.createdDate,
-      !!(showReadReceipts && isOtherPersonMessage && isUnreadMessage && reportRead),
+      !!(showReadReceipts && isOtherPersonMessage && reportRead),
       reportRead
     );
 
