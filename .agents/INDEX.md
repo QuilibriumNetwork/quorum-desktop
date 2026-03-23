@@ -116,6 +116,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Modals break when consuming quorum-shared from pre-built dist](bugs/.solved/2026-03-16-quorum-shared-pre-built-dist-modal-broken.md)
 - [vite-plugin-favicons-inject fails with NO_FILES_FOUND during production build](bugs/.solved/2026-03-18-favicon-plugin-prod-build-failure.md)
 - [Offline Banner Overlays Content Instead of Pushing Down](bugs/.solved/2026-03-18-offline-banner-overlay.md)
+- [Receipt checkmarks disappear on page refresh and conversation navigation](bugs/.solved/2026-03-22-receipt-checkmarks-not-persisting-across-navigation.md)
 - [Action Queue Bypasses SDK Encryption for Identity Keys](bugs/.solved/action-queue-plaintext-private-keys.md)
 - [Android 7.0 File Download Fix - Implementation Plan](bugs/.solved/SOLVED_android-file-download-huawei-p9-lite.md)
 - [Bug: Auto-Jump to First Unread Message - Blocked by Virtuoso Scroll Positioning](bugs/.solved/auto-jump-unread-virtuoso-scroll-conflict.md)
@@ -485,4 +486,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2026-03-22 17:51:40
+**Last Updated**: 2026-03-23 16:24:54

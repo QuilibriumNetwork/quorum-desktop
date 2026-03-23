@@ -937,21 +937,22 @@ export const Message = React.memo(
 
                   // Message receipt indicator: check (delivered) or check-check (read)
                   // Display logic:
-                  // - readReceipts ON and readAt set -> check-check
-                  // - deliveredAt set and (deliveryReceipts ON or readReceipts ON) -> check
+                  // - readAt set -> check-check (once received, always shown)
+                  // - deliveredAt set -> check (once received, always shown)
                   // - otherwise -> nothing
+                  // Privacy setting controls SENDING acks, not displaying already-received ones.
                   const isOwnMessage = message.content?.senderId === user.currentPasskeyInfo?.address;
                   const msgAny = message as any;
                   let receiptIndicator: React.ReactNode = null;
                   if (!message.sendStatus && isOwnMessage) {
-                    if (showReadReceipts && msgAny.readAt) {
+                    if (msgAny.readAt) {
                       receiptIndicator = (
                         <span className="message-status delivered read">
                           <Icon name="check" size="xs" />
                           <Icon name="check" size="xs" />
                         </span>
                       );
-                    } else if (msgAny.deliveredAt && (showDeliveryReceipts || showReadReceipts)) {
+                    } else if (msgAny.deliveredAt) {
                       receiptIndicator = (
                         <span className="message-status delivered">
                           <Icon name="check" size="xs" />
@@ -1389,6 +1390,8 @@ export const Message = React.memo(
       prevProps.message.sendStatus !== nextProps.message.sendStatus ||
       (prevProps.message as any).deliveredAt !== (nextProps.message as any).deliveredAt ||
       (prevProps.message as any).readAt !== (nextProps.message as any).readAt ||
+      prevProps.showDeliveryReceipts !== nextProps.showDeliveryReceipts ||
+      prevProps.showReadReceipts !== nextProps.showReadReceipts ||
       JSON.stringify(prevProps.message.threadMeta) !== JSON.stringify(nextProps.message.threadMeta);
 
     return !shouldRerender;
