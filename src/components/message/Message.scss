@@ -276,8 +276,7 @@
     color: rgb(var(--danger));
   }
 
-  &.delivered,
-  &.read {
+  &.delivered {
     display: inline-flex;
     align-items: center;
     vertical-align: text-bottom;
@@ -287,13 +286,6 @@
     svg {
       width: 12px;
       height: 12px;
-    }
-  }
-
-  &.read {
-    gap: 0;
-    svg + svg {
-      margin-left: -4px;
     }
   }
 

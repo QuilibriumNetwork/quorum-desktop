@@ -944,9 +944,8 @@ export const Message = React.memo(
                   if (!message.sendStatus && isOwnMessage) {
                     if (showReadReceipts && msgAny.readAt) {
                       receiptIndicator = (
-                        <span className="message-status read">
-                          <Icon name="check" size="xs" />
-                          <Icon name="check" size="xs" />
+                        <span className="message-status delivered">
+                          <Icon name="checks" size="xs" />
                         </span>
                       );
                     } else if (msgAny.deliveredAt && (showDeliveryReceipts || showReadReceipts)) {
