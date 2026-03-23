@@ -120,6 +120,7 @@ type MessageProps = {
   showDeliveryReceipts?: boolean;
   showReadReceipts?: boolean;
   reportRead?: (messageId: string, timestamp: number) => void;
+  readReceiptBaseline?: number;
 };
 
 export const Message = React.memo(
@@ -165,6 +166,7 @@ export const Message = React.memo(
     showDeliveryReceipts,
     showReadReceipts,
     reportRead,
+    readReceiptBaseline,
   }: MessageProps) => {
     const user = usePasskeysContext();
     const { spaceId } = useParams();
@@ -173,14 +175,14 @@ export const Message = React.memo(
     const { openMobileActionsDrawer, openMobileEmojiDrawer } = useMobile();
 
     // Read receipt visibility tracking — only for incoming messages from others
-    // No lastReadTimestamp filter: it updates every 2s while the conversation is open,
-    // which would make all messages appear "already read". The high-water mark in
-    // DeliveryReceiptService deduplicates, so redundant reportRead calls are harmless.
+    // Uses readReceiptBaseline (snapshot of lastReadTimestamp at conversation load)
+    // instead of the live lastReadTimestamp which updates every 2s.
     const isOtherPersonMessage = message.content?.senderId !== user.currentPasskeyInfo?.address;
+    const isNewMessage = !readReceiptBaseline || message.createdDate > readReceiptBaseline;
     const readReceiptRef = useReadReceipt(
       message.messageId,
       message.createdDate,
-      !!(showReadReceipts && isOtherPersonMessage && reportRead),
+      !!(showReadReceipts && isOtherPersonMessage && isNewMessage && reportRead),
       reportRead
     );
 

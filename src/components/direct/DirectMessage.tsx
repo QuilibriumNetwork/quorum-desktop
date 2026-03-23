@@ -114,6 +114,15 @@ const DirectMessage: React.FC<{}> = () => {
   // Get last read timestamp from conversation
   const lastReadTimestamp = conversation?.conversation?.lastReadTimestamp || 0;
 
+  // Snapshot of lastReadTimestamp at conversation load — used for read receipt filtering.
+  // The live lastReadTimestamp updates every 2s while the conversation is open, which
+  // would make all messages appear "already read". The snapshot captures what was read
+  // BEFORE this session, so only new messages get IntersectionObservers.
+  const readReceiptBaselineRef = useRef<number>(0);
+  if (readReceiptBaselineRef.current === 0 && lastReadTimestamp > 0) {
+    readReceiptBaselineRef.current = lastReadTimestamp;
+  }
+
   // Mutation for updating read time with proper cache invalidation
   const { mutate: updateReadTime } = useUpdateReadTime({
     spaceId: address!,
@@ -139,6 +148,7 @@ const DirectMessage: React.FC<{}> = () => {
         const userNonRepudiable = cfg?.nonRepudiable ?? true;
         setDeliveryReceipts(cfg?.deliveryReceipts ?? false);
         setReadReceipts(cfg?.readReceipts ?? false);
+        logger.log('[ReadReceipt:Config]', { deliveryReceipts: cfg?.deliveryReceipts, readReceipts: cfg?.readReceipts });
         if (typeof convIsRepudiable !== 'undefined') {
           const convNonRepudiable = !convIsRepudiable;
           setNonRepudiable(convNonRepudiable);
@@ -288,6 +298,7 @@ const DirectMessage: React.FC<{}> = () => {
 
   const reportRead = useCallback((messageId: string, timestamp: number) => {
     if (!readReceipts || !deliveryReceiptService) return;
+    logger.log('[ReadReceipt] reportRead', { messageId: messageId.slice(0, 8), timestamp });
     deliveryReceiptService.onMessageRead(address!, messageId, timestamp);
   }, [readReceipts, deliveryReceiptService, address]);
 
@@ -907,6 +918,7 @@ const DirectMessage: React.FC<{}> = () => {
                 showReadReceipts={readReceipts}
                 reportRead={reportRead}
                 lastReadTimestamp={lastReadTimestamp}
+                readReceiptBaseline={readReceiptBaselineRef.current}
               />
             </div>
             {/* Accept chat warning */}

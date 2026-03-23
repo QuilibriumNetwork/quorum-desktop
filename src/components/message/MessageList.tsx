@@ -100,6 +100,8 @@ interface MessageListProps {
   showReadReceipts?: boolean;
   /** Callback to report a message as read */
   reportRead?: (messageId: string, timestamp: number) => void;
+  /** Snapshot of lastReadTimestamp at conversation load — for read receipt observer filtering */
+  readReceiptBaseline?: number;
 }
 
 function useWindowSize() {
@@ -168,6 +170,7 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
       showDeliveryReceipts,
       showReadReceipts,
       reportRead,
+      readReceiptBaseline,
     } = props;
 
     const [_width, height] = useWindowSize();
@@ -341,6 +344,7 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
               showDeliveryReceipts={showDeliveryReceipts}
               showReadReceipts={showReadReceipts}
               reportRead={reportRead}
+              readReceiptBaseline={readReceiptBaseline}
               users={users}
               roles={mentionRoles}
               groups={groups}
@@ -392,6 +396,7 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
         showDeliveryReceipts,
         showReadReceipts,
         reportRead,
+        readReceiptBaseline,
       ]
     );
 
