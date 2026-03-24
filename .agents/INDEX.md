@@ -89,7 +89,6 @@ This is the main index for all documentation, bug reports, and task management.
 
 ### Active Issues
 - [Message list scroll jank on send — Virtuoso scroll position drift](bugs/2026-03-19-message-list-scroll-jank-on-send.md)
-- [Read receipts (Phase 2) untested — sync issues prevent DM delivery](bugs/2026-03-22-read-receipts-testing-blocked.md)
 - [Config Sync Space Loss Race Condition](bugs/config-sync-space-loss-race-condition.md)
 - [DirectMessage Invite Loading Performance Issue](bugs/directmessage-invite-loading-performance.md)
 - [Encryption State Evals Causing Config Sync Bloat](bugs/encryption-state-evals-bloat.md)
@@ -117,6 +116,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [vite-plugin-favicons-inject fails with NO_FILES_FOUND during production build](bugs/.solved/2026-03-18-favicon-plugin-prod-build-failure.md)
 - [Offline Banner Overlays Content Instead of Pushing Down](bugs/.solved/2026-03-18-offline-banner-overlay.md)
 - [Standalone delivery receipt acks not reliably delivered](bugs/.solved/2026-03-19-standalone-delivery-ack-unreliable.md)
+- [Read receipts (Phase 2) untested — sync issues prevent DM delivery](bugs/.solved/2026-03-22-read-receipts-testing-blocked.md)
 - [Receipt checkmarks disappear on page refresh and conversation navigation](bugs/.solved/2026-03-22-receipt-checkmarks-not-persisting-across-navigation.md)
 - [Action Queue Bypasses SDK Encryption for Identity Keys](bugs/.solved/action-queue-plaintext-private-keys.md)
 - [Android 7.0 File Download Fix - Implementation Plan](bugs/.solved/SOLVED_android-file-download-huawei-p9-lite.md)
@@ -167,11 +167,6 @@ This is the main index for all documentation, bug reports, and task management.
 - [Embedded Media + YouTube Facade Privacy Fix — Implementation Plan](tasks/2026-03-12-embedded-media-plan.md)
 - [Embedded Media in PostMessage + YouTube Facade Privacy Fix](tasks/2026-03-12-embedded-media-spec.md)
 - [Thread List Panel: "Created by me" Filter](tasks/2026-03-14-thread-list-created-filter.md)
-- [DM Delivery Receipts — Design Spec](tasks/2026-03-18-dm-delivery-receipts-design.md)
-- [DM Delivery Receipts Implementation Plan](tasks/2026-03-18-dm-delivery-receipts-plan.md)
-- [DM Read Receipts Design — Phase 2](tasks/2026-03-22-dm-read-receipts-design.md)
-- [DM Read Receipts (Phase 2) Implementation Plan](tasks/2026-03-22-dm-read-receipts-plan.md)
-- [Hierarchical receipt toggle UX — nest read under delivery](tasks/2026-03-24-hierarchical-receipt-toggles.md)
 - [Accessibility Features — Remaining Work](tasks/accessibility-features-implementation.md)
 - [Add User Bio Field to UserSettingsModal General Tab](tasks/add-user-bio-field.md)
 - [Auto-save settings modals — eliminate save buttons](tasks/auto-save-settings-modals.md)
@@ -307,6 +302,11 @@ This is the main index for all documentation, bug reports, and task management.
 - [Mobile Primitives Fixes Implementation Plan](tasks/.done/2026-03-15-mobile-primitives-fixes-plan.md)
 - [Shared Types Migration Implementation Plan](tasks/.done/2026-03-15-shared-types-migration-plan.md)
 - [Fix Modal CSS for Tarball/npm Install](tasks/.done/2026-03-16-fix-modal-css-tarball.md)
+- [DM Delivery Receipts — Design Spec](tasks/.done/2026-03-18-dm-delivery-receipts-design.md)
+- [DM Delivery Receipts Implementation Plan](tasks/.done/2026-03-18-dm-delivery-receipts-plan.md)
+- [DM Read Receipts Design — Phase 2](tasks/.done/2026-03-22-dm-read-receipts-design.md)
+- [DM Read Receipts (Phase 2) Implementation Plan](tasks/.done/2026-03-22-dm-read-receipts-plan.md)
+- [Hierarchical receipt toggle UX — nest read under delivery](tasks/.done/2026-03-24-hierarchical-receipt-toggles.md)
 - [AccentColorSwitcher Cross-Platform Migration + Persistence](tasks/.done/accent-color-switcher-cross-platform-migration.md)
 - [Add Context to Desktop Notifications](tasks/.done/rich-desktop-notifications-context.md)
 - [Add DM-Specific Action Queue Handlers](tasks/.done/dm-action-queue-handlers.md)
@@ -463,6 +463,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Web-to-Native Feature Sync Compatibility Analysis](reports/web-native-feature-sync-analysis_2025-12-04.md)
 
 ### .Archived
+- [Expert Panel Analysis: DM Receipts (Delivery & Read)](reports/.archived/2026-03-24-dm-receipts-expert-panel-analysis.md)
 - [Complete i18n Translation Quality Audit](reports/.archived/i18n-complete-translation-quality-audit_2026-03-14.md)
 - [i18n Translation Quality Audit](reports/.archived/i18n-translation-quality-audit_2026-03-14.md)
 - [Text Primitive Audit — Pre-Migration Analysis](reports/.archived/text-primitive-audit_2026-02-10.md)
@@ -488,4 +489,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2026-03-24 11:26:28
+**Last Updated**: 2026-03-24 11:56:31

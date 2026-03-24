@@ -68,7 +68,7 @@ const DirectMessage: React.FC<{}> = () => {
   const [activePanel, setActivePanel] = useState<ActivePanel>(null);
   const user = usePasskeysContext();
   const queryClient = useQueryClient();
-  const { submitMessage, retryDirectMessage, keyset, getConfig, messageDB, deliveryReceiptService } = useMessageDB();
+  const { submitMessage, retryDirectMessage, keyset, getConfig, messageDB, receiptService } = useMessageDB();
 
   // State for message signing
   const [skipSigning, setSkipSigning] = useState<boolean>(false);
@@ -296,17 +296,17 @@ const DirectMessage: React.FC<{}> = () => {
   // Discard pending read buffer when readReceipts is toggled OFF
   const prevReadReceipts = useRef(readReceipts);
   useEffect(() => {
-    if (prevReadReceipts.current && !readReceipts && deliveryReceiptService) {
-      deliveryReceiptService.clearReadBuffer();
+    if (prevReadReceipts.current && !readReceipts && receiptService) {
+      receiptService.clearReadBuffer();
     }
     prevReadReceipts.current = readReceipts;
-  }, [readReceipts, deliveryReceiptService]);
+  }, [readReceipts, receiptService]);
 
   const reportRead = useCallback((messageId: string, timestamp: number) => {
-    if (!readReceipts || !deliveryReceiptService) return;
+    if (!readReceipts || !receiptService) return;
     logger.log('[ReadReceipt] reportRead', { messageId: messageId.slice(0, 8), timestamp });
-    deliveryReceiptService.onMessageRead(address!, messageId, timestamp);
-  }, [readReceipts, deliveryReceiptService, address]);
+    receiptService.onMessageRead(address!, messageId, timestamp);
+  }, [readReceipts, receiptService, address]);
 
   // Submit message function for MessageComposer
   const handleSubmitMessage = useCallback(

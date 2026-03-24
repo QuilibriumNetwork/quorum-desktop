@@ -7,7 +7,7 @@ import { useEffect, useRef } from 'react';
  * Follows the same IntersectionObserver pattern as useViewportMentionHighlight.
  *
  * Duplicate reportRead calls are harmless — the high-water mark in
- * DeliveryReceiptService makes them no-ops if the timestamp is <= current mark.
+ * ReceiptService makes them no-ops if the timestamp is <= current mark.
  *
  * @param messageId - Unique identifier for the message
  * @param messageTimestamp - Creation timestamp of the message

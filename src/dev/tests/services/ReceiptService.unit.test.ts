@@ -1,14 +1,14 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { DeliveryReceiptService } from '@/services/DeliveryReceiptService';
+import { ReceiptService } from '@/services/ReceiptService';
 
-describe('DeliveryReceiptService', () => {
-  let service: DeliveryReceiptService;
+describe('ReceiptService', () => {
+  let service: ReceiptService;
   let mockFlushCallback: ReturnType<typeof vi.fn>;
 
   beforeEach(() => {
     vi.useFakeTimers();
     mockFlushCallback = vi.fn();
-    service = new DeliveryReceiptService({ onFlush: mockFlushCallback });
+    service = new ReceiptService({ onFlush: mockFlushCallback });
   });
 
   afterEach(() => {
@@ -108,7 +108,7 @@ describe('DeliveryReceiptService', () => {
   describe('onAckReceived', () => {
     it('calls onAckProcessed for each messageId', () => {
       const mockAckProcessed = vi.fn();
-      service = new DeliveryReceiptService({
+      service = new ReceiptService({
         onFlush: mockFlushCallback,
         onAckProcessed: mockAckProcessed,
       });
@@ -118,7 +118,7 @@ describe('DeliveryReceiptService', () => {
 
     it('does not call onAckProcessed when empty array', () => {
       const mockAckProcessed = vi.fn();
-      service = new DeliveryReceiptService({
+      service = new ReceiptService({
         onFlush: mockFlushCallback,
         onAckProcessed: mockAckProcessed,
       });
@@ -130,7 +130,7 @@ describe('DeliveryReceiptService', () => {
   describe('onReadAckReceived', () => {
     it('calls onReadAckProcessed with correct arguments', () => {
       const mockReadAckProcessed = vi.fn();
-      service = new DeliveryReceiptService({
+      service = new ReceiptService({
         onFlush: mockFlushCallback,
         onReadAckProcessed: mockReadAckProcessed,
       });
@@ -139,7 +139,7 @@ describe('DeliveryReceiptService', () => {
     });
 
     it('does not throw when onReadAckProcessed is not provided', () => {
-      service = new DeliveryReceiptService({
+      service = new ReceiptService({
         onFlush: mockFlushCallback,
       });
       expect(() => service.onReadAckReceived('msg-5', 5000, 'alice')).not.toThrow();
@@ -148,7 +148,7 @@ describe('DeliveryReceiptService', () => {
 });
 
 describe('Read receipt buffering', () => {
-  let service: DeliveryReceiptService;
+  let service: ReceiptService;
   let mockFlushCallback: ReturnType<typeof vi.fn>;
   let mockReadFlushCallback: ReturnType<typeof vi.fn>;
 
@@ -156,7 +156,7 @@ describe('Read receipt buffering', () => {
     vi.useFakeTimers();
     mockFlushCallback = vi.fn();
     mockReadFlushCallback = vi.fn();
-    service = new DeliveryReceiptService({
+    service = new ReceiptService({
       onFlush: mockFlushCallback,
       onReadFlush: mockReadFlushCallback,
     });

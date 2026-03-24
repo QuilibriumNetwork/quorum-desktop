@@ -1,5 +1,5 @@
 /**
- * DeliveryReceiptService
+ * ReceiptService
  *
  * Manages the ack buffer for delivery receipts and read receipts. Coordinates:
  * - Buffering messageIds when DMs are decrypted (delivery acks)
@@ -14,7 +14,7 @@ const READ_FLUSH_TIMEOUT_MS = 5_000;
 
 type ReadHighWaterMark = { messageId: string; timestamp: number };
 
-interface DeliveryReceiptServiceOptions {
+interface ReceiptServiceOptions {
   /** Called when delivery ack buffer needs to be flushed */
   onFlush: (address: string, messageIds: string[]) => void;
   /** Called when incoming delivery acks are received */
@@ -25,15 +25,15 @@ interface DeliveryReceiptServiceOptions {
   onReadAckProcessed?: (upToMessageId: string, upToTimestamp: number, conversationAddress: string) => void;
 }
 
-export class DeliveryReceiptService {
+export class ReceiptService {
   private buffers = new Map<string, Set<string>>();
   private timers = new Map<string, ReturnType<typeof setTimeout>>();
   private readHighWaterMarks = new Map<string, ReadHighWaterMark>();
   private readTimers = new Map<string, ReturnType<typeof setTimeout>>();
-  private options: DeliveryReceiptServiceOptions;
+  private options: ReceiptServiceOptions;
   private visibilityHandler: (() => void) | null = null;
 
-  constructor(options: DeliveryReceiptServiceOptions) {
+  constructor(options: ReceiptServiceOptions) {
     this.options = options;
     this.setupVisibilityListener();
   }

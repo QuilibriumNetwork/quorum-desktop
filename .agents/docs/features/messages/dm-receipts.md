@@ -44,7 +44,7 @@ RECIPIENT SIDE (sending delivery acks):
 1. MessageService decrypts incoming DM
    └─ processDeliveryReceiptData(): deliveryReceipts ON? → buffer messageId
 
-2. DeliveryReceiptService.onMessageReceived(address, messageId)
+2. ReceiptService.onMessageReceived(address, messageId)
    └─ Adds to Set<string> buffer per address, resets 10s timer
 
 3. Ack leaves the device (one of three paths):
@@ -61,7 +61,7 @@ SENDER SIDE (receiving delivery acks):
    └─ Also extracts piggybacked ackMessageIds from regular messages
    └─ deliveryReceipts ON? → process; OFF? → silently drop
 
-5. DeliveryReceiptService.onAckReceived() → onAckProcessed callback
+5. ReceiptService.onAckReceived() → onAckProcessed callback
 
 6. React Query cache updated (deliveredAt on matching messageIds)
    └─ MessageDB.tsx: setQueriesData across all ['Messages'] queries
@@ -86,10 +86,10 @@ RECIPIENT SIDE (sending read acks):
 
 3. Dwell timer fires (message still visible, tab still focused)
    └─ useReadReceipt.ts: calls reportRead(messageId, createdDate)
-   └─ DirectMessage.tsx: reportRead callback → deliveryReceiptService.onMessageRead()
+   └─ DirectMessage.tsx: reportRead callback → receiptService.onMessageRead()
 
 4. Service buffers high-water mark (keeps only highest timestamp per address)
-   └─ DeliveryReceiptService.ts: resetReadTimer() → 5-second debounce
+   └─ ReceiptService.ts: resetReadTimer() → 5-second debounce
 
 5. Ack leaves the device (one of two paths):
    a. PIGGYBACK: Recipient sends a DM → readAckUpTo attached to envelope
@@ -104,7 +104,7 @@ SENDER SIDE (receiving read acks):
    └─ Also extracts piggybacked readAckUpTo from regular messages
    └─ readReceipts ON? → process; OFF? → silently drop
 
-7. DeliveryReceiptService.onReadAckReceived() → onReadAckProcessed callback
+7. ReceiptService.onReadAckReceived() → onReadAckProcessed callback
 
 8. React Query cache updated (readAt + deliveredAt on own messages up to timestamp)
    └─ MessageDB.tsx: scoped to specific conversation key
@@ -121,7 +121,7 @@ SENDER SIDE (receiving read acks):
 | File | Responsibility |
 |---|---|
 | `src/types/deliveryReceipt.ts` | `DeliveryAckMessage`, `ReadAckMessage` control types, `MessageWithDelivery` intersection type |
-| `src/services/DeliveryReceiptService.ts` | Delivery ack buffer (Set per address, 10s timer) + read high-water mark (per address, 5s debounce) + piggyback coordination |
+| `src/services/ReceiptService.ts` | Delivery ack buffer (Set per address, 10s timer) + read high-water mark (per address, 5s debounce) + piggyback coordination |
 | `src/services/MessageService.ts` | `processDeliveryReceiptData()` — intercepts both delivery-ack and read-ack at both DM decrypt paths, piggybacks on outgoing DMs |
 | `src/services/ActionQueueHandlers.ts` | `send-delivery-ack` and `send-read-ack` handlers for standalone acks via Double Ratchet |
 | `src/components/context/MessageDB.tsx` | Wires all callbacks (`onFlush`, `onAckProcessed`, `onReadFlush`, `onReadAckProcessed`), updates React Query cache + IndexedDB |
@@ -200,7 +200,7 @@ if (readReceiptBaselineRef.current === 0 && lastReadTimestamp > 0) {
 
 ## High-Water Mark Buffering
 
-The `DeliveryReceiptService` tracks one high-water mark per address (conversation partner). Each `onMessageRead()` call either replaces (higher timestamp) or is ignored (lower/equal). This is fundamentally different from delivery acks, which buffer a `Set<string>` of individual message IDs.
+The `ReceiptService` tracks one high-water mark per address (conversation partner). Each `onMessageRead()` call either replaces (higher timestamp) or is ignored (lower/equal). This is fundamentally different from delivery acks, which buffer a `Set<string>` of individual message IDs.
 
 **Debounce**: 5 seconds (vs 10s for delivery acks). Shorter because the user is actively reading — more reads are likely incoming, so flush sooner.
 
@@ -291,4 +291,4 @@ Both toggles are also available as per-conversation overrides in Conversation Se
 
 ---
 
-*Updated: 2026-03-24*
+*Updated: 2026-03-24 — Renamed DeliveryReceiptService → ReceiptService*

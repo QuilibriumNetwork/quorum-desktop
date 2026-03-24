@@ -29,19 +29,23 @@ After completing quick wins (code cleanup, hex utilities, JSDoc), this document 
 
 ---
 
-## Current State (Dec 2025)
+## Current State (Mar 2026)
 
-**Service Sizes** (updated Dec 2025):
-| Service | Oct 2025 | Dec 2025 | Change |
-|---------|----------|----------|--------|
-| MessageService | 2,311 | **4,337** | +87% |
-| SpaceService | 1,144 | 1,175 | +3% |
-| InvitationService | 887 | 902 | +2% |
-| ConfigService | 394 | 531 | +35% |
-| SyncService | 565 | 512 | -9% |
-| EncryptionService | 262 | 264 | +1% |
+**Service Sizes** (updated Mar 2026):
+| Service | Oct 2025 | Dec 2025 | Mar 2026 | Change (total) |
+|---------|----------|----------|----------|----------------|
+| MessageService | 2,311 | 4,337 | **5,261** | +128% |
+| SpaceService | 1,144 | 1,175 | 1,222 | +7% |
+| InvitationService | 887 | 902 | 906 | +2% |
+| ConfigService | 394 | 531 | 544 | +38% |
+| SyncService | 565 | 512 | 1,000 | +77% |
+| EncryptionService | 262 | 264 | 264 | +1% |
+| ReceiptService | — | — | **204** | new |
+| SearchService | — | — | **290** | new |
+| ActionQueueHandlers | — | 738 | 1,196 | +62% |
+| ActionQueueService | — | 292 | 401 | +37% |
 
-*Note: MessageService growth is from feature additions (sending indicator, retry logic), not code degradation.*
+*Note: MessageService growth since Dec 2025 is from delivery/read receipts, threads, tag rebroadcast. SyncService growth from sync v2 protocol. ActionQueueHandlers growth from receipt ack + thread handlers.*
 
 **Remaining Code Quality Opportunities**:
 - ⚠️ Many `any` types (poor type safety)
@@ -263,5 +267,5 @@ export class SpaceService extends BaseService {
 
 ---
 
-_Last updated: 2025-12-16_
+_Last updated: 2026-03-24_
 _Status: ⏸️ ON HOLD - Quick Wins completed, remaining items deprioritized_

@@ -56,7 +56,7 @@ import { QuorumApiClient } from '../api/baseTypes';
 import { showWarning, dismissToast, showPersistentToast } from '../utils/toast';
 import { notificationService } from './NotificationService';
 import type { ActionQueueService } from './ActionQueueService';
-import type { DeliveryReceiptService } from './DeliveryReceiptService';
+import type { ReceiptService } from './ReceiptService';
 import { ENABLE_DM_ACTION_QUEUE } from '../config/features';
 import { ThreadService } from './ThreadService';
 
@@ -151,8 +151,8 @@ export class MessageService {
   // ActionQueueService for persistent queue (optional, set via setter)
   private actionQueueService?: ActionQueueService;
 
-  // DeliveryReceiptService for DM delivery receipts (optional, set via setter)
-  private deliveryReceiptService: DeliveryReceiptService | null = null;
+  // ReceiptService for DM delivery + read receipts (optional, set via setter)
+  private receiptService: ReceiptService | null = null;
 
   // Cooldown guard: prevents rapid re-broadcasts when a space owner spam-updates their tag
   private pendingTagRebroadcast = new Set<string>();
@@ -187,11 +187,39 @@ export class MessageService {
   }
 
   /**
-   * Set the DeliveryReceiptService for DM delivery receipts.
+   * Set the ReceiptService for DM delivery + read receipts.
    * Call this after MessageService is created to avoid circular dependencies.
    */
-  setDeliveryReceiptService(service: DeliveryReceiptService): void {
-    this.deliveryReceiptService = service;
+  setReceiptService(service: ReceiptService): void {
+    this.receiptService = service;
+  }
+
+  /**
+   * Attach piggybacked delivery + read receipt acks to an outgoing DM message.
+   * Called before encryption so the ack data is included in the encrypted payload.
+   * After encryption, call stripPiggybackedAcks() to remove transient fields before persisting.
+   */
+  private attachPiggybackedAcks(address: string, message: Message): void {
+    if (!this.receiptService) return;
+
+    const pendingAcks = this.receiptService.flushForPiggyback(address);
+    if (pendingAcks.length > 0) {
+      (message as any).ackMessageIds = pendingAcks;
+    }
+
+    const pendingReadAck = this.receiptService.flushReadForPiggyback(address);
+    if (pendingReadAck) {
+      (message as any).readAckUpTo = pendingReadAck;
+    }
+  }
+
+  /**
+   * Strip piggybacked ack fields from a message before persisting to IndexedDB.
+   * These fields are transient wire-format data that should not be stored locally.
+   */
+  private stripPiggybackedAcks(message: Message): void {
+    delete (message as any).ackMessageIds;
+    delete (message as any).readAckUpTo;
   }
 
   /**
@@ -218,10 +246,10 @@ export class MessageService {
     // (not nested under .content like regular Message objects)
     const isDeliveryAck = raw.type === 'delivery-ack' || raw.content?.type === 'delivery-ack';
     if (isDeliveryAck) {
-      if (this.deliveryReceiptService && deliveryReceiptsEnabled) {
+      if (this.receiptService && deliveryReceiptsEnabled) {
         const ackIds = raw.messageIds ?? raw.content?.messageIds ?? [];
         logger.log('[DeliveryReceipt] Processing incoming ack', { ackIds, from: senderAddress });
-        this.deliveryReceiptService.onAckReceived(ackIds);
+        this.receiptService.onAckReceived(ackIds);
       }
       return true; // Signal: intercept this message
     }
@@ -232,12 +260,12 @@ export class MessageService {
     // remain visible (settings gate persistence, display is unconditional).
     const isReadAck = raw.type === 'read-ack' || raw.content?.type === 'read-ack';
     if (isReadAck) {
-      if (this.deliveryReceiptService && readReceiptsEnabled) {
+      if (this.receiptService && readReceiptsEnabled) {
         const upToMessageId = raw.upToMessageId ?? raw.content?.upToMessageId;
         const upToTimestamp = raw.upToTimestamp ?? raw.content?.upToTimestamp;
         if (upToMessageId && upToTimestamp) {
           logger.log('[ReadReceipt] Processing incoming read ack', { upToMessageId, upToTimestamp, from: senderAddress });
-          this.deliveryReceiptService.onReadAckReceived(upToMessageId, upToTimestamp, senderAddress);
+          this.receiptService.onReadAckReceived(upToMessageId, upToTimestamp, senderAddress);
         }
       }
       return true; // Signal: intercept this message
@@ -245,30 +273,30 @@ export class MessageService {
 
     // 2. Extract piggybacked ackMessageIds, process, then strip
     const ackMessageIds = raw.ackMessageIds;
-    if (ackMessageIds && this.deliveryReceiptService && deliveryReceiptsEnabled) {
+    if (ackMessageIds && this.receiptService && deliveryReceiptsEnabled) {
       logger.log('[DeliveryReceipt] Processing piggybacked acks', { ackMessageIds, from: senderAddress });
-      this.deliveryReceiptService.onAckReceived(ackMessageIds);
+      this.receiptService.onAckReceived(ackMessageIds);
     }
     delete raw.ackMessageIds;
 
     // 2b. Extract piggybacked readAckUpTo, process, then strip
     const readAckUpTo = raw.readAckUpTo;
-    if (readAckUpTo && this.deliveryReceiptService && readReceiptsEnabled) {
+    if (readAckUpTo && this.receiptService && readReceiptsEnabled) {
       logger.log('[ReadReceipt] Processing piggybacked read ack', { readAckUpTo, from: senderAddress });
-      this.deliveryReceiptService.onReadAckReceived(readAckUpTo.messageId, readAckUpTo.timestamp, senderAddress);
+      this.receiptService.onReadAckReceived(readAckUpTo.messageId, readAckUpTo.timestamp, senderAddress);
     }
     delete raw.readAckUpTo;
 
     // 3. Buffer this message's ID for acking (only for post messages from others)
     // DEFENSE IN DEPTH: explicitly exclude delivery-ack and read-ack to prevent infinite ack loops
     if (
-      this.deliveryReceiptService &&
+      this.receiptService &&
       deliveryReceiptsEnabled &&
       decryptedContent.content?.type === 'post' &&
       decryptedContent.content?.senderId !== selfAddress
     ) {
       logger.log('[DeliveryReceipt] Buffering messageId for ack', { messageId: decryptedContent.messageId, sender: senderAddress });
-      this.deliveryReceiptService.onMessageReceived(senderAddress, decryptedContent.messageId);
+      this.receiptService.onMessageReceived(senderAddress, decryptedContent.messageId);
     }
 
     return false; // Signal: continue with normal saveMessage pipeline
@@ -1880,21 +1908,8 @@ export class MessageService {
       const isOnline = navigator.onLine;
 
       if (ENABLE_DM_ACTION_QUEUE && hasEstablishedSessions && !isOnline) {
-        // Piggyback pending delivery receipt acks on outgoing DM
-        if (this.deliveryReceiptService) {
-          const pendingAcks = this.deliveryReceiptService.flushForPiggyback(address);
-          if (pendingAcks.length > 0) {
-            (message as any).ackMessageIds = pendingAcks;
-          }
-        }
-
-        // Piggyback pending read receipt ack on outgoing DM
-        if (this.deliveryReceiptService) {
-          const pendingReadAck = this.deliveryReceiptService.flushReadForPiggyback(address);
-          if (pendingReadAck) {
-            (message as any).readAckUpTo = pendingReadAck;
-          }
-        }
+        // Piggyback pending delivery + read receipt acks on outgoing DM
+        this.attachPiggybackedAcks(address, message);
 
         // Add to cache with 'sending' status (optimistic update)
         await this.addMessage(queryClient, address, address, {
@@ -2223,21 +2238,8 @@ export class MessageService {
         } catch { /* Signature optional - continue without it */ }
       }
 
-      // Piggyback pending delivery receipt acks on outgoing DM
-      if (this.deliveryReceiptService) {
-        const pendingAcks = this.deliveryReceiptService.flushForPiggyback(address);
-        if (pendingAcks.length > 0) {
-          (message as any).ackMessageIds = pendingAcks;
-        }
-      }
-
-      // Piggyback pending read receipt ack on outgoing DM
-      if (this.deliveryReceiptService) {
-        const pendingReadAck = this.deliveryReceiptService.flushReadForPiggyback(address);
-        if (pendingReadAck) {
-          (message as any).readAckUpTo = pendingReadAck;
-        }
-      }
+      // Piggyback pending delivery + read receipt acks on outgoing DM
+      this.attachPiggybackedAcks(address, message);
 
       for (const inbox of inboxes.filter(
         (i) => i !== keyset.deviceKeyset.inbox_keyset.inbox_address
@@ -2287,7 +2289,7 @@ export class MessageService {
       }
 
       // Strip piggybacked acks before persisting
-      delete (message as any).ackMessageIds;
+      this.stripPiggybackedAcks(message);
 
       for (const session of sessions) {
         const newEncryptionState: EncryptionState = {

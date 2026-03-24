@@ -386,13 +386,14 @@ These are **opportunistic refactorings** — do them when you're already working
 
 ```bash
 # After each method extraction
-yarn vitest src/dev/refactoring/tests/ --run
+yarn vitest src/dev/tests/services/ --run
 
-# Must pass all tests (75+ total):
+# Must pass all tests (100+ total):
 # - ConfigService: 2 tests
 # - EncryptionService: 2 tests
 # - InvitationService: 15 tests
 # - MessageService: 27 tests
+# - ReceiptService: 28 tests
 # - SpaceService: 13 tests
 # - SyncService: 16 tests
 ```
@@ -421,6 +422,6 @@ yarn vitest src/dev/refactoring/tests/ --run  # Verify tests pass
 
 ---
 
-_Last updated: 2025-12-20_
-_Status: 📋 Future Reference - Opportunistic refactorings_
+_Last updated: 2026-03-24_
+_Status: ⏸️ Future Reference - Opportunistic refactorings_
 _Targets: SpaceService (kickUser, createSpace), InvitationService (joinInviteLink)_

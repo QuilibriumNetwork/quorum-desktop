@@ -23,7 +23,7 @@ import {
   InvitationService,
   ActionQueueService,
   ActionQueueHandlers,
-  DeliveryReceiptService,
+  ReceiptService,
 } from '../../services';
 import { ActionQueueProvider } from './ActionQueueContext';
 import {
@@ -245,7 +245,7 @@ type MessageDBContextValue = {
     }
   ) => Promise<void>;
   actionQueueService: ActionQueueService;
-  deliveryReceiptService: DeliveryReceiptService | null;
+  receiptService: ReceiptService | null;
 };
 
 type MessageDBContextProps = {
@@ -966,11 +966,11 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
     }
   }, [keyset, actionQueueService]);
 
-  // DeliveryReceiptService — batched ack buffer with piggyback + standalone flush
-  const deliveryReceiptService = useMemo(() => {
+  // ReceiptService — batched ack buffer with piggyback + standalone flush
+  const receiptService = useMemo(() => {
     if (!selfAddress) return null;
 
-    const service = new DeliveryReceiptService({
+    const service = new ReceiptService({
       onFlush: (address: string, messageIds: string[]) => {
         // Queue standalone ack via Action Queue
         actionQueueService.enqueue(
@@ -1073,15 +1073,15 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
     return service;
   }, [selfAddress, actionQueueService, queryClient, messageDB]);
 
-  // Wire DeliveryReceiptService to MessageService
+  // Wire ReceiptService to MessageService
   useEffect(() => {
-    if (deliveryReceiptService) {
-      messageService.setDeliveryReceiptService(deliveryReceiptService);
+    if (receiptService) {
+      messageService.setReceiptService(receiptService);
     }
     return () => {
-      deliveryReceiptService?.destroy();
+      receiptService?.destroy();
     };
-  }, [deliveryReceiptService, messageService]);
+  }, [receiptService, messageService]);
 
   const createSpace = React.useCallback(
     async (
@@ -1301,7 +1301,7 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
         sendVerifyKickedStatuses,
         deleteConversation,
         actionQueueService,
-        deliveryReceiptService,
+        receiptService,
       }}
     >
       <ActionQueueProvider actionQueueService={actionQueueService}>
@@ -1338,7 +1338,7 @@ const MessageDBContext = createContext<MessageDBContextValue>({
   sendVerifyKickedStatuses: () => undefined as never,
   deleteConversation: () => undefined as never,
   actionQueueService: undefined as never,
-  deliveryReceiptService: null,
+  receiptService: null,
 });
 
 export { MessageDBProvider, MessageDBContext };

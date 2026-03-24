@@ -17,8 +17,8 @@ export type { HandlerDependencies, TaskHandler } from './ActionQueueHandlers';
 export { BackupService, BackupError } from './BackupService';
 export type { BackupFile, BackupPayload, BackupErrorType } from './BackupService';
 
-// Delivery Receipts
-export { DeliveryReceiptService } from './DeliveryReceiptService';
+// Receipts (Delivery + Read)
+export { ReceiptService } from './ReceiptService';
 
 // Utility services
 export { SearchService } from './SearchService';
