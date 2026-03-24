@@ -1,5 +1,5 @@
-# Updates for Quorum Development
-## {{DATE_RANGE}}
+**Updates for Quorum Development**
+{{DATE_RANGE}}
 
 This list is for the web app, these changes are not yet live but you can test them on https://test.quorummessenger.com/
 
@@ -42,7 +42,7 @@ Quorum links: https://iri.quest/quorum
 
 ---
 
-## Subcategory Emoji Reference
+**Subcategory Emoji Reference**
 
 Use these emojis for subcategory headings:
 

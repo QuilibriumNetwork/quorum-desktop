@@ -3,13 +3,13 @@ type: doc
 title: Unused Dependencies Analysis
 status: done
 created: 2026-01-09
-updated: 2026-03-18
+updated: 2026-03-24
 ---
 
 # Unused Dependencies Analysis
 
-Full audit of `package.json` after the primitives migration to `@quilibrium/quorum-shared`.
-Method: source code import search (`src/`, configs, scripts) + Vite/build config analysis.
+Full audit of root `package.json` and `mobile/package.json` dependencies.
+Method: source code import search (`src/`, `mobile/`, configs, scripts) + Vite/build config analysis + Dependabot alert cross-reference.
 
 ---
 
@@ -74,20 +74,20 @@ These have no direct `import` statements in source code. `vite-plugin-node-polyf
 
 ---
 
-## Phase 3 — Misplaced Dependencies (Confidence: MEDIUM)
+## Phase 3 — Misplaced Dependencies (Confidence: HIGH)
 
 These are build-time/tooling deps incorrectly in `dependencies` instead of `devDependencies`.
 
-**Why not 100% confidence:** `electron-builder` may use the `dependencies` field to determine what to bundle into the Electron app. Moving things out could break Electron packaging. Needs verification of `electron-builder` config behavior before acting.
+**Verified safe:** `electron-builder.json` only bundles `dist/**/*` and `web/electron/**/*` — the pre-built Vite output. It does NOT read from `dependencies` to decide what to include, and does NOT bundle `node_modules`. All JS is self-contained after `vite build`. Moving these packages to `devDependencies` has zero effect on Electron packaging.
 
 | Package | Confidence | Used In |
 |---|---|---|
-| `typescript-eslint` | **90%** | `eslint.config.js` only |
-| `sass` | **85%** | Vite SCSS compilation (build-time) |
-| `@lingui/babel-plugin-lingui-macro` | **85%** | Babel plugin in `web/vite.config.ts` |
-| `@lingui/cli` | **90%** | CLI tool for `lingui:extract` / `lingui:compile` scripts |
-| `@lingui/vite-plugin` | **85%** | Vite plugin in `web/vite.config.ts` |
-| `vite-plugin-static-copy` | **85%** | Vite plugin in `web/vite.config.ts` |
+| `typescript-eslint` | **95%** | `eslint.config.js` only |
+| `sass` | **95%** | Vite SCSS compilation (build-time) |
+| `@lingui/babel-plugin-lingui-macro` | **95%** | Babel plugin in `web/vite.config.ts` |
+| `@lingui/cli` | **95%** | CLI tool for `lingui:extract` / `lingui:compile` scripts |
+| `@lingui/vite-plugin` | **95%** | Vite plugin in `web/vite.config.ts` |
+| `vite-plugin-static-copy` | **95%** | Vite plugin in `web/vite.config.ts` |
 
 ---
 
@@ -153,6 +153,77 @@ These are build-time/tooling deps incorrectly in `dependencies` instead of `devD
 
 ---
 
+## Phase 4 — Mobile Workspace (`mobile/package.json`)
+
+Audit of all dependencies in the mobile workspace.
+
+**Context:** The `mobile/` workspace in this repo is a **test harness only** — it exists for testing shared cross-platform code (`.native.ts` files) via test screens. The production mobile app lives in a standalone repo (`quorum-mobile`). Feature-oriented dependencies (navigation, icons, crypto polyfills) installed here in anticipation of "future features" are misplaced — those features will be built in the standalone repo, not here. This workspace only needs what the test screens actually import.
+
+### Safe to Remove (Confidence: HIGH)
+
+Not imported in any source file or config.
+
+| Package | Confidence | Reason Unused |
+|---|---|---|
+| `expo-media-library` | **90%** | Not imported anywhere. |
+| `expo-device` | **90%** | Not imported anywhere. |
+| `react-native-crypto` | **90%** | Not imported. Installed for SDK integration that will happen in the standalone mobile repo. |
+| `react-native-randombytes` | **90%** | Not imported. Peer dep of `react-native-crypto`. Pulls in vulnerable `sjcl` (HIGH severity Dependabot alert: missing ECC point-on-curve validation). |
+| `react-native-get-random-values` | **90%** | Not imported. Polyfill for `crypto.getRandomValues()` — no side-effect import exists at app startup. |
+| `@react-navigation/bottom-tabs` | **90%** | Not imported. Navigation will be built in the standalone repo. |
+| `@react-navigation/native` | **90%** | Not imported. Navigation will be built in the standalone repo. |
+| `@react-navigation/stack` | **90%** | Not imported. Navigation will be built in the standalone repo. |
+| `react-native-screens` | **90%** | Not imported. Only needed as peer dep of `@react-navigation/*`. |
+| `react-native-reanimated` | **90%** | Not imported. Babel plugin not configured either. Peer dep of navigation. |
+**Security note:** Removing `react-native-randombytes` eliminates `sjcl@1.0.8` from the lockfile, resolving the HIGH severity Dependabot alert.
+
+### Implicit/Runtime Dependencies — Keep
+
+| Package | Status | Note |
+|---|---|---|
+| `expo-constants` | Implicit | No direct imports, but commonly required by Expo internals and other Expo packages at runtime. High risk to remove. |
+| `@tabler/icons-react-native` | Transitive | Not imported in this repo's source, but required by `@quilibrium/quorum-shared` native build (`dist/index.native.js`). Removing breaks Metro bundling. |
+| `expo-document-picker` | Transitive | Not imported in this repo's source, but required by `quorum-shared` native build. Removing breaks Metro bundling. |
+| `expo-image-picker` | Transitive | Not imported in this repo's source, but required by `quorum-shared` native build. Removing breaks Metro bundling. |
+
+### Mobile — Verified USED
+
+| Package | Evidence |
+|---|---|
+| `@react-native-async-storage/async-storage` | `src/i18n/i18n.native.ts` |
+| `expo` | `mobile/index.ts`, `metro.config.js` |
+| `expo-dev-client` | `mobile/app.json` plugins |
+| `expo-file-system` | `useFileDownload.native.ts` |
+| `expo-haptics` | `ClickToCopyContent.native.tsx`, `MessageComposer.native.tsx` |
+| `expo-image` | `MessageComposer.native.tsx`, `Login.native.tsx`, `Onboarding.native.tsx` |
+| `expo-linear-gradient` | `UserInitials.native.tsx`, `OnboardingStyles.native.tsx` |
+| `expo-sharing` | `useFileDownload.native.ts` |
+| `expo-status-bar` | `mobile/AppTest.tsx` |
+| `react-native` | Extensive use across `mobile/` and `src/**/*.native.tsx` |
+| `react-native-crypto-js` | `src/utils/crypto.native.ts` (independent of the crypto polyfill chain) |
+| `react-native-gesture-handler` | `mobile/AppTest.tsx` |
+| `react-native-image-picker` | `useFileUpload.native.ts` |
+| `react-native-safe-area-context` | `mobile/App.tsx`, `AppTest.tsx`, 20+ test screens |
+| `react-native-svg` | `MessageComposer.native.tsx` |
+| `react` | Core framework |
+| `@babel/core` (dev) | Required by Metro/Babel pipeline |
+| `babel-plugin-module-resolver` (dev) | `mobile/babel.config.js` path aliases |
+
+### Mobile Cleanup Commands
+
+```bash
+# Phase 4 — All mobile unused deps (single pass, test harness only needs what's actually imported)
+cd mobile
+yarn remove expo-media-library expo-device \
+  react-native-crypto react-native-randombytes react-native-get-random-values \
+  @react-navigation/bottom-tabs @react-navigation/native @react-navigation/stack \
+  react-native-screens react-native-reanimated
+# NOTE: Do NOT remove @tabler/icons-react-native, expo-document-picker, expo-image-picker
+# — they are transitive deps of quorum-shared's native build (dist/index.native.js)
+```
+
+---
+
 ## Edge Cases / Notes
 
 | Package | Status | Note |
@@ -211,6 +282,6 @@ yarn add -D typescript-eslint sass @lingui/babel-plugin-lingui-macro @lingui/cli
 
 ---
 
-_Analysis Date: 2026-03-18_
-_Method: Source import search + config file analysis (grep across src/, web/, mobile/, configs)_
-_Previous analysis: 2025-01-11 (fully superseded)_
+_Analysis Date: 2026-03-24_
+_Method: Source import search + config file analysis (grep across src/, web/, mobile/, configs) + Dependabot alert cross-reference_
+_Previous analysis: 2026-03-18 (root package.json only), 2025-01-11 (fully superseded)_
