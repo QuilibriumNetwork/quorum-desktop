@@ -1,34 +1,79 @@
 ---
 type: doc
-title: "DM Read Receipts"
+title: "DM Receipts (Delivery & Read)"
 status: done
 ai_generated: true
 created: 2026-03-23
-updated: 2026-03-23
+updated: 2026-03-24
 related_docs:
   - .agents/docs/features/messages/message-sending-indicator.md
-  - .agents/docs/features/messages/dm-delivery-receipts-design.md
 related_tasks:
+  - .agents/tasks/2026-03-18-dm-delivery-receipts-design.md
+  - .agents/tasks/2026-03-18-dm-delivery-receipts-plan.md
   - .agents/tasks/2026-03-22-dm-read-receipts-design.md
   - .agents/tasks/2026-03-22-dm-read-receipts-plan.md
   - .agents/bugs/2026-03-22-read-receipts-testing-blocked.md
 ---
 
-# DM Read Receipts
+# DM Receipts (Delivery & Read)
 
 > **⚠️ AI-Generated**: May contain errors. Verify before use.
 
 ## Overview
 
-Read receipts show a double checkmark (✓✓) on DM messages when the recipient has visually seen the message. This extends Phase 1 delivery receipts (single ✓ = message decrypted by recipient's device) with a stronger signal: the recipient actually scrolled to the message, had it visible in their viewport for at least 1 second, and had the browser tab focused.
+DM receipts provide two levels of confirmation for sent messages:
 
-The feature uses a **high-water mark** approach — instead of acking individual messages, it sends "I've read up to message X (timestamp Y)". One ack can mark dozens of messages as read.
+| Receipt | Indicator | Meaning |
+|---|---|---|
+| **Delivery** (Phase 1) | ✓ | Recipient's device received and decrypted the message |
+| **Read** (Phase 2) | ✓✓ | Recipient visually saw the message (50%+ visible, 1s dwell, tab focused) |
 
-Both delivery receipts and read receipts have separate privacy toggles (OFF by default). The toggles are fully independent — read receipts ON with delivery receipts OFF is valid.
+Both have separate privacy toggles (OFF by default), with read receipts nested under delivery receipts (read requires delivery to be enabled).
+
+**Delivery receipts** buffer individual message IDs and ack them in batches — piggybacking on outgoing DMs when possible, or sending standalone acks after a 10-second timeout via the Action Queue.
+
+**Read receipts** use a **high-water mark** approach — instead of acking individual messages, they send "I've read up to message X (timestamp Y)". One ack can mark dozens of messages as read. Uses a 5-second debounce.
 
 ## Architecture
 
-### End-to-End Flow
+### End-to-End Flow — Delivery Receipts (✓)
+
+```
+RECIPIENT SIDE (sending delivery acks):
+
+1. MessageService decrypts incoming DM
+   └─ processDeliveryReceiptData(): deliveryReceipts ON? → buffer messageId
+
+2. DeliveryReceiptService.onMessageReceived(address, messageId)
+   └─ Adds to Set<string> buffer per address, resets 10s timer
+
+3. Ack leaves the device (one of three paths):
+   a. PIGGYBACK: Recipient sends a DM → ackMessageIds attached to envelope
+      └─ MessageService: flushForPiggyback() before encryption
+   b. STANDALONE: 10s timer fires → Action Queue → encrypt → send
+      └─ ActionQueueHandlers.ts: sendDeliveryAck handler
+   c. BACKGROUND: Tab hide / beforeunload → flushAll()
+
+SENDER SIDE (receiving delivery acks):
+
+4. MessageService decrypts incoming message
+   └─ processDeliveryReceiptData(): intercepts type === 'delivery-ack'
+   └─ Also extracts piggybacked ackMessageIds from regular messages
+   └─ deliveryReceipts ON? → process; OFF? → silently drop
+
+5. DeliveryReceiptService.onAckReceived() → onAckProcessed callback
+
+6. React Query cache updated (deliveredAt on matching messageIds)
+   └─ MessageDB.tsx: setQueriesData across all ['Messages'] queries
+
+7. IndexedDB persisted (survives app restart)
+   └─ messages.ts: updateMessageDeliveredAt() per messageId
+
+8. UI re-renders: ✓ appears
+   └─ Message.tsx: receiptIndicator checks deliveredAt
+```
+
+### End-to-End Flow — Read Receipts (✓✓)
 
 ```
 RECIPIENT SIDE (sending read acks):
@@ -57,6 +102,7 @@ SENDER SIDE (receiving read acks):
 6. MessageService decrypts incoming message
    └─ processDeliveryReceiptData(): intercepts type === 'read-ack'
    └─ Also extracts piggybacked readAckUpTo from regular messages
+   └─ readReceipts ON? → process; OFF? → silently drop
 
 7. DeliveryReceiptService.onReadAckReceived() → onReadAckProcessed callback
 
@@ -74,15 +120,18 @@ SENDER SIDE (receiving read acks):
 
 | File | Responsibility |
 |---|---|
-| `src/hooks/business/messages/useReadReceipt.ts` | Per-message IntersectionObserver with 1s dwell timer and tab focus check |
-| `src/services/DeliveryReceiptService.ts` | High-water mark buffer per address, 5s debounce timer, piggyback coordination |
-| `src/services/MessageService.ts` | Intercepts `read-ack` control messages at decrypt layer, piggybacks on outgoing DMs |
-| `src/services/ActionQueueHandlers.ts` | `send-read-ack` handler for standalone acks via Double Ratchet |
-| `src/components/context/MessageDB.tsx` | Wires `onReadFlush` and `onReadAckProcessed` callbacks, updates React Query cache + IndexedDB |
-| `src/components/message/Message.tsx` | ✓ vs ✓✓ display logic, hook wiring, ref attachment |
+| `src/types/deliveryReceipt.ts` | `DeliveryAckMessage`, `ReadAckMessage` control types, `MessageWithDelivery` intersection type |
+| `src/services/DeliveryReceiptService.ts` | Delivery ack buffer (Set per address, 10s timer) + read high-water mark (per address, 5s debounce) + piggyback coordination |
+| `src/services/MessageService.ts` | `processDeliveryReceiptData()` — intercepts both delivery-ack and read-ack at both DM decrypt paths, piggybacks on outgoing DMs |
+| `src/services/ActionQueueHandlers.ts` | `send-delivery-ack` and `send-read-ack` handlers for standalone acks via Double Ratchet |
+| `src/components/context/MessageDB.tsx` | Wires all callbacks (`onFlush`, `onAckProcessed`, `onReadFlush`, `onReadAckProcessed`), updates React Query cache + IndexedDB |
+| `src/hooks/business/messages/useReadReceipt.ts` | Per-message IntersectionObserver with 1s dwell timer and tab focus check (read receipts only) |
+| `src/components/message/Message.tsx` | ✓ vs ✓✓ display logic, useReadReceipt hook wiring, ref attachment |
 | `src/components/direct/DirectMessage.tsx` | Config loading, `reportRead` callback, baseline snapshot |
-| `src/components/message/MessageList.tsx` | Threads `showReadReceipts`, `reportRead`, `readReceiptBaseline` to Message |
-| `src/db/messages.ts` | `updateMessagesReadAt()` — range cursor on `by_conversation_time` index |
+| `src/components/message/MessageList.tsx` | Threads `showDeliveryReceipts`, `showReadReceipts`, `reportRead`, `readReceiptBaseline` to Message |
+| `src/db/messages.ts` | `updateMessageDeliveredAt()`, `updateMessagesReadAt()`, `deliveryReceipts`/`readReceipts` in UserConfig |
+| `src/types/actionQueue.ts` | `send-delivery-ack` and `send-read-ack` action types |
+| `src/components/modals/UserSettingsModal/Privacy.tsx` | Delivery + Read receipts toggle UI |
 | `src/types/deliveryReceipt.ts` | `ReadAckMessage` control type, `readAt`/`readAckUpTo` extensions |
 | `src/types/actionQueue.ts` | `send-read-ack` action type |
 | `src/components/modals/UserSettingsModal/Privacy.tsx` | Read receipts toggle UI |
@@ -165,7 +214,7 @@ The `DeliveryReceiptService` tracks one high-water mark per address (conversatio
 
 When the sender receives a read ack (standalone or piggybacked), `processDeliveryReceiptData()` intercepts it at the decrypt layer — the same method that handles delivery acks, at both DM decrypt paths.
 
-**Key difference from delivery acks**: Read acks are processed **unconditionally** (no `readReceiptsEnabled` check). Per spec, `readAt` is always persisted; only the UI display is gated on the sender's setting. This allows toggling read receipts ON later to reveal historical read status.
+**Key difference from delivery acks**: Read ack processing is gated on the sender's `readReceipts` setting — if OFF, incoming read acks are silently dropped (not persisted). This ensures users who opt out never accumulate `readAt` data. However, `readAt` values that were persisted while the setting was ON are **never retroactively removed** — toggling OFF only affects future acks, not historical ones.
 
 **Cache update**: The `onReadAckProcessed` callback in MessageDB.tsx updates the React Query cache scoped to the specific conversation (using `buildMessagesKeyPrefix`), not all conversations. It sets `readAt` and backfills `deliveredAt` (reading implies delivery) on all own messages where `createdDate <= upToTimestamp`.
 
@@ -177,28 +226,36 @@ The receipt indicator in `Message.tsx` follows this priority:
 
 | Condition | Display |
 |---|---|
-| `readReceipts` ON and `readAt` set | ✓✓ (two `<Icon name="check">` with `-6px` margin overlap) |
-| `deliveredAt` set and (`deliveryReceipts` ON or `readReceipts` ON) | ✓ (single `<Icon name="check">`) |
+| `readAt` set | ✓✓ (two `<Icon name="check">` with `-6px` margin overlap) |
+| `deliveredAt` set | ✓ (single `<Icon name="check">`) |
 | Otherwise | Nothing |
+
+**Settings gate persistence, not display.** Once `deliveredAt` or `readAt` is persisted to IndexedDB, the checkmark is always visible — even if the user later turns the setting OFF. This means past receipts (received while the setting was ON) remain visible. Turning the setting OFF only stops new acks from being processed and persisted.
 
 Both ✓ and ✓✓ use the same `.delivered` CSS class with `color: var(--color-text-muted)` and 12px icons. The `.read` modifier adds the negative margin to overlap the two check icons.
 
-`readAt` is included in the `React.memo` comparison to trigger re-renders when the field changes.
+`readAt`, `deliveredAt`, `showDeliveryReceipts`, and `showReadReceipts` are all included in the `React.memo` comparison to trigger re-renders when they change.
 
 ## Privacy Model
 
-Two independent toggles in Settings > Privacy:
+Two toggles in Settings > Privacy, with read receipts nested under delivery receipts:
 
 | Toggle | Default | Controls |
 |---|---|---|
-| Delivery receipts | OFF | Sending delivery acks + displaying ✓ |
-| Read receipts | OFF | Sending read acks + displaying ✓✓ |
+| Delivery receipts | OFF | Sending delivery acks + persisting incoming `deliveredAt` |
+| └ Read receipts | OFF | Sending read acks + persisting incoming `readAt` (requires delivery receipts ON) |
 
-**Hard boundary**: OFF = no data leaves the device. The `useReadReceipt` hook doesn't mount observers, `reportRead` is a no-op, no acks are buffered or sent.
+Both toggles are also available as per-conversation overrides in Conversation Settings.
 
-**Reciprocal**: You only see ✓✓ on your own messages if *you* have read receipts ON (display gating). The other person must also have it ON for acks to be sent (sending gating).
+**Hard boundary**: OFF = no data leaves the device, and no incoming ack data is persisted. The `useReadReceipt` hook doesn't mount observers, `reportRead` is a no-op, no acks are buffered or sent. Incoming acks from the other party are silently dropped at the `processDeliveryReceiptData` layer.
 
-**Toggle independence**: `readReceipts` ON + `deliveryReceipts` OFF is valid. A read ack sets both `readAt` and `deliveredAt` — reading implies delivery.
+**Settings gate persistence, not display**: Once `deliveredAt`/`readAt` is written (while the setting was ON), the checkmark is permanently visible even if the setting is later turned OFF. This provides a natural UX: the setting controls *future* behavior, not retroactive erasure of already-received data.
+
+**Reciprocal sending**: The other person must also have their setting ON for acks to be sent (sending gating). Neither party learns the other's preference — reciprocity emerges from independent local enforcement.
+
+**Hierarchical dependency**: Read receipts requires delivery receipts to be enabled. The UI enforces this: the read toggle is disabled and dimmed when delivery is OFF. Turning delivery OFF auto-cascades read to OFF. The service layer also enforces this: `DirectMessage.tsx` forces `effectiveReadReceipts = false` when delivery is OFF, regardless of stored config. The *protocol* still tolerates `readReceipts ON + deliveryReceipts OFF` (a read ack backfills `deliveredAt`), but this combination cannot be reached through the UI.
+
+**Known privacy limitation**: The privacy model is a social contract between cooperating clients, not a cryptographic enforcement. A user with a modified client could set their own receipts OFF (preventing ack sending) while still processing incoming acks from the other party. This is an inherent limitation of client-side settings in E2E encrypted messaging — the same trade-off exists in Signal, WhatsApp, etc. The impact is low: the "attacker" only gains delivery/read timing for messages they themselves sent, and the other party already opted in to sharing that data.
 
 ## Technical Decisions
 
@@ -208,7 +265,7 @@ Two independent toggles in Settings > Privacy:
 
 - **Baseline snapshot instead of live lastReadTimestamp**: The live timestamp updates every 2s while the conversation is open, making all messages appear "already read". A one-time snapshot captures what was read before the session.
 
-- **Always persist readAt, gate display**: Read acks are persisted to IndexedDB regardless of the sender's `readReceipts` setting. Only the UI is gated. Toggling ON later reveals historical status.
+- **Gate persistence, not display**: Both delivery and read acks are only persisted when the user's respective setting is ON. Once persisted, checkmarks are always visible (even after toggling OFF). This preserves the user's past receipts while preventing new ones from accumulating when the setting is OFF.
 
 - **Two check icons instead of IconChecks**: The `IconChecks` Tabler icon exists in quorum-shared's icon map but renders too small at `xs` size. Two adjacent `<Icon name="check">` with `-6px` margin overlap gives better visual clarity.
 
@@ -223,13 +280,15 @@ Two independent toggles in Settings > Privacy:
 
 ## Related Documentation
 
-- [Message Sending Indicator](.agents/docs/features/messages/message-sending-indicator.md) — Parent doc covering the full message status lifecycle (Sending → Sent → ✓ → ✓✓ → Failed)
+- [Message Sending Indicator](.agents/docs/features/messages/message-sending-indicator.md) — Message status lifecycle (Sending → Sent → ✓ → ✓✓ → Failed)
 - [Delivery Receipts Design Spec](.agents/tasks/2026-03-18-dm-delivery-receipts-design.md) — Phase 1 design
+- [Delivery Receipts Implementation Plan](.agents/tasks/2026-03-18-dm-delivery-receipts-plan.md) — Phase 1 task breakdown
 - [Read Receipts Design Spec](.agents/tasks/2026-03-22-dm-read-receipts-design.md) — Phase 2 design
-- [Read Receipts Implementation Plan](.agents/tasks/2026-03-22-dm-read-receipts-plan.md) — Task breakdown
+- [Read Receipts Implementation Plan](.agents/tasks/2026-03-22-dm-read-receipts-plan.md) — Phase 2 task breakdown
 - [Read Receipts Testing Bug](.agents/bugs/2026-03-22-read-receipts-testing-blocked.md) — Testing progress and bugs found
+- [Receipt Persistence Bug](.agents/bugs/.solved/2026-03-22-receipt-checkmarks-not-persisting-across-navigation.md) — Fixed: checkmarks disappearing on refresh
 - [Action Queue](.agents/docs/features/action-queue.md) — Persistent queue used for standalone acks
 
 ---
 
-*Updated: 2026-03-23*
+*Updated: 2026-03-24*

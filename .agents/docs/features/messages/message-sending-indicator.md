@@ -247,79 +247,23 @@ Message sending is now integrated with the [Action Queue](../action-queue.md), p
 
 The signing/encryption separation described above enables safe retries - the same signed message can be re-encrypted and sent without creating duplicates.
 
-## Delivery Receipts
+## Delivery & Read Receipts
 
-### Overview
-
-DM delivery receipts show a single checkmark (✓) on sent messages, confirming the recipient's device received and decrypted the message. This is Phase 1 — Phase 2 (read receipts, ✓✓) is designed for but not implemented.
-
-### Privacy Setting
-
-- **Location**: User Settings → Privacy → "Delivery receipts"
-- **Default**: OFF (hard privacy boundary — no ack data leaves the device when OFF)
-- **Reciprocal**: Both parties must have the setting ON. No setting exchange — each client independently enforces its own setting.
-
-### Message States with Delivery Receipts
-
-| State | Indicator | When |
-|---|---|---|
-| In flight | "Sending..." + clock icon | Message queued, not yet accepted |
-| Sent to network | No indicator | Network accepted; no ack yet |
-| Delivered | ✓ (check icon, subtle color) | Ack received from recipient's device |
-| Failed | "Failed to send" + Retry | Network error |
-
-### How Acks Flow
-
-```
-Recipient decrypts DM → deliveryReceipts ON? → buffer messageId
-     ↓
-Piggyback on next outgoing DM (zero extra messages)
-  OR standalone ack after 10s timeout via Action Queue
-  OR flush all on app backgrounding
-     ↓
-Sender receives ack → deliveryReceipts ON? → set deliveredAt on message
-     ↓
-✓ appears on sent message (persisted to IndexedDB, survives restart)
-```
-
-### Key Files
-
-| File | Role |
-|---|---|
-| `src/types/deliveryReceipt.ts` | `DeliveryAckMessage` control type, `MessageWithDelivery` intersection type |
-| `src/services/DeliveryReceiptService.ts` | Ack buffer, flush timers, piggyback coordination |
-| `src/services/ActionQueueHandlers.ts` | `send-delivery-ack` handler for standalone acks |
-| `src/services/MessageService.ts` | `processDeliveryReceiptData()` at both DM decrypt paths |
-| `src/db/messages.ts` | `updateMessageDeliveredAt()`, `deliveryReceipts` in UserConfig |
-| `src/components/message/Message.tsx` | ✓ indicator rendering |
-| `src/components/modals/UserSettingsModal/Privacy.tsx` | Toggle UI |
-
-### Design Spec
-
-Full design specification: `.agents/tasks/2026-03-18-dm-delivery-receipts-design.md`
-
-## Read Receipts (Phase 2)
-
-DM read receipts show a double checkmark (✓✓) on sent messages, confirming the recipient has visually seen the message (50%+ visible in viewport for 1+ second, tab focused). This builds on Phase 1 delivery receipts and uses the same ack pipeline with a high-water mark approach.
+DM receipts are documented in their own feature doc: **[DM Receipts](dm-receipts.md)** — covers delivery receipts (✓), read receipts (✓✓), ack pipeline, privacy model, and all technical details.
 
 | State | Indicator | When |
 |---|---|---|
 | Delivered | ✓ (single check, muted color) | Delivery ack received |
 | Read | ✓✓ (double check, muted color) | Read ack received |
 
-Separate privacy toggle (OFF by default, independent from delivery receipts).
-
-**Full documentation**: [DM Read Receipts](dm-read-receipts.md) — covers architecture, the useReadReceipt hook, baseline snapshot, high-water mark buffering, sender-side processing, UI rendering, privacy model, and technical decisions.
-
 ## Related Documentation
 
 - **Implementation Task**: `.agents/tasks/.done/message-sending-indicator.md` - Full implementation plan with phases
 - **Action Queue**: [Action Queue](../action-queue.md) - Persistent queue with retry and offline support
-- **Delivery Receipts Design**: `.agents/tasks/2026-03-18-dm-delivery-receipts-design.md` - Full design spec
-- **Delivery Receipts Plan**: `.agents/tasks/2026-03-18-dm-delivery-receipts-plan.md` - Implementation plan
-- **Read Receipts Feature Doc**: [DM Read Receipts](dm-read-receipts.md) - Comprehensive read receipts documentation
-- **Read Receipts Design**: `.agents/tasks/2026-03-22-dm-read-receipts-design.md` - Full read receipts design spec
+- **DM Receipts**: [DM Receipts](dm-receipts.md) - Delivery and read receipts feature doc
+- **Delivery Receipts Design**: `.agents/tasks/2026-03-18-dm-delivery-receipts-design.md` - Phase 1 design spec
+- **Read Receipts Design**: `.agents/tasks/2026-03-22-dm-read-receipts-design.md` - Phase 2 design spec
 
 ---
 
-*Updated: 2026-03-23*
+*Updated: 2026-03-24*

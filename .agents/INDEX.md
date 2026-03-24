@@ -56,7 +56,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Bookmarks Feature](docs/features/messages/bookmarks.md)
 - [Client-Side Image Compression & Thumbnail System](docs/features/messages/client-side-image-compression.md)
 - [DM Conversation List Previews](docs/features/messages/dm-conversation-list-previews.md)
-- [DM Read Receipts](docs/features/messages/dm-read-receipts.md)
+- [DM Receipts (Delivery & Read)](docs/features/messages/dm-receipts.md)
 - [Emoji Picker React - Styling & Customization](docs/features/messages/emoji-picker-react-customization.md)
 - [Hash Navigation to Old Messages](docs/features/messages/hash-navigation-to-old-messages.md)
 - [Markdown Renderer](docs/features/messages/markdown-renderer.md)
@@ -171,6 +171,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [DM Delivery Receipts Implementation Plan](tasks/2026-03-18-dm-delivery-receipts-plan.md)
 - [DM Read Receipts Design — Phase 2](tasks/2026-03-22-dm-read-receipts-design.md)
 - [DM Read Receipts (Phase 2) Implementation Plan](tasks/2026-03-22-dm-read-receipts-plan.md)
+- [Hierarchical receipt toggle UX — nest read under delivery](tasks/2026-03-24-hierarchical-receipt-toggles.md)
 - [Accessibility Features — Remaining Work](tasks/accessibility-features-implementation.md)
 - [Add User Bio Field to UserSettingsModal General Tab](tasks/add-user-bio-field.md)
 - [Auto-save settings modals — eliminate save buttons](tasks/auto-save-settings-modals.md)
@@ -487,4 +488,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2026-03-23 16:49:19
+**Last Updated**: 2026-03-24 11:26:28
