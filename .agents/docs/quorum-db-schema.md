@@ -15,7 +15,7 @@ Quick reference for debugging and creating console snippets.
 | Property | Value |
 |----------|-------|
 | **Database Name** | `quorum_db` |
-| **Current Version** | 7 |
+| **Current Version** | 11 |
 | **Schema Location** | `src/db/messages.ts` |
 
 ---

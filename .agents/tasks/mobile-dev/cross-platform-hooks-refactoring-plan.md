@@ -1,12 +1,14 @@
 ---
 type: task
 title: Cross-Platform Hooks Refactoring Plan
-status: in-progress
+status: superseded
 created: 2026-01-09T00:00:00.000Z
-updated: '2026-01-09'
+updated: '2026-03-19'
 ---
 
 # Cross-Platform Hooks Refactoring Plan
+
+> **Superseded (2026-03-19)**: This plan was written for a single cross-platform repo architecture. The project has since moved to a multi-repo setup (quorum-desktop, quorum-mobile, quorum-shared). For the current hooks migration plan, see [hooks-migration-design.md](../quorum-shared-migration/2026-03-19-hooks-migration-design.md). **Still-valuable sections**: The adapter pattern examples (useFileUpload before/after), barrel export contamination discovery, platform resolution vs adapter pattern decision matrix, and SDK integration strategy remain useful reference material.
 
 **Priority: High | Type: Architecture**
 

@@ -1035,6 +1035,119 @@ export class ActionQueueHandlers {
   };
 
   /**
+   * Send batched delivery receipt ack via Double Ratchet.
+   * Best-effort — no onFailure callback (we don't update UI on ack failure).
+   *
+   * Context expected:
+   * - address: string (DM conversation address)
+   * - messageIds: string[] (acked message IDs)
+   * - selfUserAddress: string (user's address for identity in envelope)
+   */
+  private sendDeliveryAck: TaskHandler = {
+    execute: async (context) => {
+      const keyset = this.deps.getUserKeyset();
+      if (!keyset) {
+        logger.error('[ActionQueue:sendDeliveryAck] Keyset not available');
+        throw new Error('Keyset not available');
+      }
+
+      const address = context.address as string;
+      const messageIds = context.messageIds as string[];
+      const selfUserAddress = context.selfUserAddress as string;
+
+      if (!messageIds || messageIds.length === 0) {
+        logger.log('[ActionQueue:sendDeliveryAck] Empty messageIds, skipping');
+        return;
+      }
+
+      logger.log('[ActionQueue:sendDeliveryAck] Sending standalone ack', {
+        address: address?.slice(0, 16),
+        messageIds,
+        selfUserAddress: selfUserAddress?.slice(0, 16),
+      });
+
+      const ackMessage = {
+        senderId: selfUserAddress,
+        type: 'delivery-ack' as const,
+        messageIds,
+      };
+
+      try {
+        await this.encryptAndSendDm(address, ackMessage, selfUserAddress, keyset);
+        logger.log('[ActionQueue:sendDeliveryAck] Ack sent successfully');
+      } catch (err: any) {
+        logger.error('[ActionQueue:sendDeliveryAck] Failed to send ack', err.message);
+        throw err;
+      }
+    },
+    isPermanentError: (error: Error) => {
+      const message = error.message || '';
+      return message.includes('400') || message.includes('403');
+    },
+    // No onFailure — delivery acks are best-effort
+    successMessage: undefined,
+    failureMessage: undefined,
+  };
+
+  /**
+   * send-read-ack: Send read receipt ack via Double Ratchet.
+   * Best-effort — no onFailure callback (we don't update UI on ack failure).
+   *
+   * Context expected:
+   * - address: string (DM conversation address)
+   * - upToMessageId: string (high-water mark message ID)
+   * - upToTimestamp: number (high-water mark timestamp)
+   * - selfUserAddress: string (user's address for identity in envelope)
+   */
+  private sendReadAck: TaskHandler = {
+    execute: async (context) => {
+      const keyset = this.deps.getUserKeyset();
+      if (!keyset) {
+        logger.error('[ActionQueue:sendReadAck] Keyset not available');
+        throw new Error('Keyset not available');
+      }
+
+      const address = context.address as string;
+      const upToMessageId = context.upToMessageId as string;
+      const upToTimestamp = context.upToTimestamp as number;
+      const selfUserAddress = context.selfUserAddress as string;
+
+      if (!upToMessageId) {
+        logger.log('[ActionQueue:sendReadAck] No upToMessageId, skipping');
+        return;
+      }
+
+      logger.log('[ActionQueue:sendReadAck] Sending standalone read ack', {
+        address: address?.slice(0, 16),
+        upToMessageId,
+        upToTimestamp,
+      });
+
+      const ackMessage = {
+        senderId: selfUserAddress,
+        type: 'read-ack' as const,
+        upToMessageId,
+        upToTimestamp,
+      };
+
+      try {
+        await this.encryptAndSendDm(address, ackMessage, selfUserAddress, keyset);
+        logger.log('[ActionQueue:sendReadAck] Read ack sent successfully');
+      } catch (err: any) {
+        logger.error('[ActionQueue:sendReadAck] Failed to send read ack', err.message);
+        throw err;
+      }
+    },
+    isPermanentError: (error: Error) => {
+      const message = error.message || '';
+      return message.includes('400') || message.includes('403');
+    },
+    // No onFailure — read acks are best-effort
+    successMessage: undefined,
+    failureMessage: undefined,
+  };
+
+  /**
    * Sanitize error messages to avoid exposing internal details to the user
    */
   private sanitizeError(error: Error): string {
@@ -1073,6 +1186,10 @@ export class ActionQueueHandlers {
       'reaction-dm': this.reactionDm,
       'delete-dm': this.deleteDm,
       'edit-dm': this.editDm,
+      // Delivery receipts (Double Ratchet)
+      'send-delivery-ack': this.sendDeliveryAck,
+      // Read receipts (Double Ratchet)
+      'send-read-ack': this.sendReadAck,
     };
     return handlers[taskType];
   }

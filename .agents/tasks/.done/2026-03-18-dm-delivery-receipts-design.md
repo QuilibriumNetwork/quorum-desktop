@@ -47,10 +47,12 @@ Both parties must have the setting ON for the feature to work:
 
 **Setting OFF means:**
 1. Your client does NOT send acks when you receive messages
-2. Your client does NOT display ✓ on your sent messages
-3. Your client ignores any incoming acks
+2. Your client does NOT persist incoming acks (silently dropped at decrypt layer)
+3. Already-persisted checkmarks (from when the setting was ON) remain visible
 
-**How reciprocity works**: Each client independently enforces its own setting. There is no setting exchange between users — neither party learns the other's preference. If the recipient's setting is OFF, no ack is sent, so the sender never receives one regardless of their own setting. If the sender's setting is OFF, any arriving acks are ignored. The reciprocal behavior emerges from independent local enforcement, not from a negotiation protocol.
+**How reciprocity works**: Each client independently enforces its own setting. There is no setting exchange between users — neither party learns the other's preference. If the recipient's setting is OFF, no ack is sent, so the sender never receives one regardless of their own setting. If the sender's setting is OFF, any arriving acks are dropped before persistence. The reciprocal behavior emerges from independent local enforcement, not from a negotiation protocol.
+
+**Privacy limitation**: The privacy model is a social contract between cooperating clients. A modified client could bypass the local drop-on-receive check and still process incoming acks while not sending its own. This is inherent to client-side settings in E2E encrypted messaging (same limitation as Signal/WhatsApp). Impact is low — the attacker only gains delivery timing for their own sent messages.
 
 ---
 

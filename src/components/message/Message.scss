@@ -276,6 +276,23 @@
     color: rgb(var(--danger));
   }
 
+  &.delivered {
+    display: inline-flex;
+    align-items: center;
+    vertical-align: text-bottom;
+    margin-left: 4px;
+    color: var(--color-text-muted);
+
+    svg {
+      width: 12px;
+      height: 12px;
+    }
+
+    &.read svg + svg {
+      margin-left: -6px;
+    }
+  }
+
   &__retry {
     text-decoration: underline;
     cursor: pointer;
@@ -292,6 +309,13 @@
   }
   to {
     opacity: 1;
+  }
+}
+
+// Make the last paragraph inline when a delivery checkmark suffix follows it
+.has-inline-suffix {
+  > p:last-of-type {
+    display: inline;
   }
 }
 

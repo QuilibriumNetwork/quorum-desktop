@@ -1,14 +1,16 @@
 ---
 type: task
 title: Business Logic Extraction & Native Preparation Plan
-status: in-progress
+status: completed
 created: 2025-08-01T00:00:00.000Z
-updated: '2026-01-09'
+updated: '2026-03-19'
 related_issues:
   - '#1'
 ---
 
 # Business Logic Extraction & Native Preparation Plan
+
+> **Status Note (2026-03-19)**: Phase 1 (business logic extraction) is complete. The migration strategy in this doc assumed a single cross-platform repo — architecture has since shifted to a multi-repo setup (quorum-desktop, quorum-mobile, quorum-shared). For the current hooks migration plan, see [hooks-migration-design.md](../quorum-shared-migration/2026-03-19-hooks-migration-design.md). The **Lessons Learned section below remains current and valuable** — patterns for extraction, when NOT to extract, platform-specific component strategies, and the hook sharing principles all still apply.
 
 ## Overview
 

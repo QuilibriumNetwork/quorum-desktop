@@ -44,16 +44,16 @@ export function useDirectMessagesList(): UseDirectMessagesListReturn {
   }, [messages]);
 
   // Determine if user has sent messages (auto-accept chat)
+  // Only check once on mount — no need to re-check on every message
   useEffect(() => {
     const userMessages = messageList.filter(
       (m) => m.content.senderId === user.currentPasskeyInfo!.address
     );
-
-    // If the user has sent any messages, auto-accept the chat
     if (userMessages.length > 0) {
       setAcceptChat(true);
     }
-  }, [messageList, user.currentPasskeyInfo]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- mount-only check
+  }, []);
 
   // Initial message loading
   useEffect(() => {
@@ -63,19 +63,9 @@ export function useDirectMessagesList(): UseDirectMessagesListReturn {
     }
   }, []);
 
-  // Save read time when messages change
-  useEffect(() => {
-    if (messageList.length > 0) {
-      const latestTimestamp = Math.max(
-        ...messageList.map((msg) => msg.createdDate || 0)
-      );
-      messageDB.saveReadTime({
-        conversationId,
-        lastMessageTimestamp: latestTimestamp,
-      });
-      invalidateConversation({ conversationId });
-    }
-  }, [messageList, messageDB, conversationId, invalidateConversation]);
+  // Save read time is handled by DirectMessage.tsx's periodic interval + unmount save.
+  // Removed the messageList-triggered effect here because it caused cascading re-renders
+  // (invalidateConversation) that disrupted Virtuoso's scroll measurement cycle.
 
   const saveReadTime = () => {
     if (messageList.length > 0) {

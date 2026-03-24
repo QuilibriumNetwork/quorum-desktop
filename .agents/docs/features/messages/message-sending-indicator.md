@@ -247,9 +247,23 @@ Message sending is now integrated with the [Action Queue](../action-queue.md), p
 
 The signing/encryption separation described above enables safe retries - the same signed message can be re-encrypted and sent without creating duplicates.
 
+## Delivery & Read Receipts
+
+DM receipts are documented in their own feature doc: **[DM Receipts](dm-receipts.md)** — covers delivery receipts (✓), read receipts (✓✓), ack pipeline, privacy model, and all technical details.
+
+| State | Indicator | When |
+|---|---|---|
+| Delivered | ✓ (single check, muted color) | Delivery ack received |
+| Read | ✓✓ (double check, muted color) | Read ack received |
+
 ## Related Documentation
 
 - **Implementation Task**: `.agents/tasks/.done/message-sending-indicator.md` - Full implementation plan with phases
 - **Action Queue**: [Action Queue](../action-queue.md) - Persistent queue with retry and offline support
+- **DM Receipts**: [DM Receipts](dm-receipts.md) - Delivery and read receipts feature doc
+- **Delivery Receipts Design**: `.agents/tasks/2026-03-18-dm-delivery-receipts-design.md` - Phase 1 design spec
+- **Read Receipts Design**: `.agents/tasks/2026-03-22-dm-read-receipts-design.md` - Phase 2 design spec
 
 ---
+
+*Updated: 2026-03-24*

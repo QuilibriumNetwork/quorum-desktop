@@ -68,11 +68,14 @@ const DirectMessage: React.FC<{}> = () => {
   const [activePanel, setActivePanel] = useState<ActivePanel>(null);
   const user = usePasskeysContext();
   const queryClient = useQueryClient();
-  const { submitMessage, retryDirectMessage, keyset, getConfig, messageDB } = useMessageDB();
+  const { submitMessage, retryDirectMessage, keyset, getConfig, messageDB, receiptService } = useMessageDB();
 
   // State for message signing
   const [skipSigning, setSkipSigning] = useState<boolean>(false);
   const [nonRepudiable, setNonRepudiable] = useState<boolean>(true);
+  // Delivery receipts setting (OFF by default)
+  const [deliveryReceipts, setDeliveryReceipts] = useState<boolean>(false);
+  const [readReceipts, setReadReceipts] = useState<boolean>(false);
   const headerRef = useRef<HTMLDivElement>(null);
 
   // Auto-jump to first unread state
@@ -111,6 +114,15 @@ const DirectMessage: React.FC<{}> = () => {
   // Get last read timestamp from conversation
   const lastReadTimestamp = conversation?.conversation?.lastReadTimestamp || 0;
 
+  // Snapshot of lastReadTimestamp at conversation load — used for read receipt filtering.
+  // The live lastReadTimestamp updates every 2s while the conversation is open, which
+  // would make all messages appear "already read". The snapshot captures what was read
+  // BEFORE this session, so only new messages get IntersectionObservers.
+  const readReceiptBaselineRef = useRef<number>(0);
+  if (readReceiptBaselineRef.current === 0 && lastReadTimestamp > 0) {
+    readReceiptBaselineRef.current = lastReadTimestamp;
+  }
+
   // Mutation for updating read time with proper cache invalidation
   const { mutate: updateReadTime } = useUpdateReadTime({
     spaceId: address!,
@@ -134,6 +146,13 @@ const DirectMessage: React.FC<{}> = () => {
           userKey: keyset.userKeyset,
         });
         const userNonRepudiable = cfg?.nonRepudiable ?? true;
+        const effectiveDeliveryReceipts = conversation?.conversation?.deliveryReceipts ?? cfg?.deliveryReceipts ?? false;
+        const effectiveReadReceipts = effectiveDeliveryReceipts
+          ? (conversation?.conversation?.readReceipts ?? cfg?.readReceipts ?? false)
+          : false;
+        setDeliveryReceipts(effectiveDeliveryReceipts);
+        setReadReceipts(effectiveReadReceipts);
+        logger.log('[ReadReceipt:Config]', { deliveryReceipts: effectiveDeliveryReceipts, readReceipts: effectiveReadReceipts, convOverride: { delivery: conversation?.conversation?.deliveryReceipts, read: conversation?.conversation?.readReceipts } });
         if (typeof convIsRepudiable !== 'undefined') {
           const convNonRepudiable = !convIsRepudiable;
           setNonRepudiable(convNonRepudiable);
@@ -149,6 +168,8 @@ const DirectMessage: React.FC<{}> = () => {
     })();
   }, [
     conversation?.conversation?.isRepudiable,
+    conversation?.conversation?.deliveryReceipts,
+    conversation?.conversation?.readReceipts,
     keyset.userKeyset,
     getConfig,
     user.currentPasskeyInfo,
@@ -268,6 +289,25 @@ const DirectMessage: React.FC<{}> = () => {
   const messageComposerRef = useRef<MessageComposerRef>(null);
   const messageListRef = useRef<MessageListRef>(null);
 
+  // Ref to hold latest messageList for effects that shouldn't re-run on every message change
+  const messageListLatestRef = useRef(messageList);
+  messageListLatestRef.current = messageList;
+
+  // Discard pending read buffer when readReceipts is toggled OFF
+  const prevReadReceipts = useRef(readReceipts);
+  useEffect(() => {
+    if (prevReadReceipts.current && !readReceipts && receiptService) {
+      receiptService.clearReadBuffer();
+    }
+    prevReadReceipts.current = readReceipts;
+  }, [readReceipts, receiptService]);
+
+  const reportRead = useCallback((messageId: string, timestamp: number) => {
+    if (!readReceipts || !receiptService) return;
+    logger.log('[ReadReceipt] reportRead', { messageId: messageId.slice(0, 8), timestamp });
+    receiptService.onMessageRead(address!, messageId, timestamp);
+  }, [readReceipts, receiptService, address]);
+
   // Submit message function for MessageComposer
   const handleSubmitMessage = useCallback(
     async (message: string | object, inReplyTo?: string) => {
@@ -309,8 +349,18 @@ const DirectMessage: React.FC<{}> = () => {
         );
       }
 
-      // Scroll is handled by Virtuoso's followOutput - no manual scroll needed
-      // Deletion flag is set via onBeforeDelete callback in MessageList
+      // Jump to bottom after sending. Virtuoso's followOutput handles this for
+      // channels, but in DMs its internal measurement callback resets scrollTop.
+      // Delayed direct scrollTop correction works around this.
+      const scroller = document.querySelector('[data-virtuoso-scroller]') as HTMLElement | null;
+      if (scroller) {
+        const snap = () => {
+          scroller.scrollTop = scroller.scrollHeight - scroller.clientHeight;
+        };
+        setTimeout(snap, 100);
+        setTimeout(snap, 300);
+        setTimeout(snap, 600);
+      }
     },
     [
       address,
@@ -442,14 +492,15 @@ const DirectMessage: React.FC<{}> = () => {
         }
 
         // Check if the first unread is already in the loaded messages
-        const isAlreadyLoaded = messageList.some(
+        const currentMessages = messageListLatestRef.current;
+        const isAlreadyLoaded = currentMessages.some(
           (m) => m.messageId === firstUnread.messageId
         );
 
         if (isAlreadyLoaded) {
           // Calculate initial unread count (only count messages from the other party)
           const currentUserId = user.currentPasskeyInfo!.address;
-          const unreadCount = messageList.filter(
+          const unreadCount = currentMessages.filter(
             (m) => m.createdDate > lastReadTimestamp &&
                    m.content.senderId !== currentUserId
           ).length;
@@ -529,7 +580,9 @@ const DirectMessage: React.FC<{}> = () => {
     }, 100);
 
     return () => clearTimeout(timer);
-  }, [address, lastReadTimestamp, messageDB, messageList, queryClient, user.currentPasskeyInfo]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- intentionally omitting messageList:
+  // this effect should only run on conversation mount, not on every new message
+  }, [address, lastReadTimestamp, messageDB, queryClient, user.currentPasskeyInfo]);
 
   // Reset scrollToMessageId, separator, and timestamp refs when conversation changes
   useEffect(() => {
@@ -598,6 +651,7 @@ const DirectMessage: React.FC<{}> = () => {
     },
     [handleSubmitMessage]
   );
+
 
   // Update latest timestamp ref whenever messageList or conversation changes
   // Use the max of: last message in list OR conversation.timestamp
@@ -866,6 +920,11 @@ const DirectMessage: React.FC<{}> = () => {
                     ? { self: self.registration, counterparty: registration.registration }
                     : undefined
                 }
+                showDeliveryReceipts={deliveryReceipts}
+                showReadReceipts={readReceipts}
+                reportRead={reportRead}
+                lastReadTimestamp={lastReadTimestamp}
+                readReceiptBaseline={readReceiptBaselineRef.current}
               />
             </div>
             {/* Accept chat warning */}

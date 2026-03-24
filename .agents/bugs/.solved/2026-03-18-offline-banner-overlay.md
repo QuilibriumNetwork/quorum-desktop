@@ -1,7 +1,7 @@
 ---
 type: bug
 title: "Offline Banner Overlays Content Instead of Pushing Down"
-status: open
+status: solved
 priority: low
 tags: [UX, layout, offline]
 ai_generated: true

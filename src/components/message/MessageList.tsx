@@ -26,7 +26,9 @@ import { DefaultImages } from '../../utils';
 import { useMessageHighlight } from '../../hooks/business/messages/useMessageHighlight';
 import { shouldShowDateSeparator, shouldShowCompactHeader } from '@quilibrium/quorum-shared';
 import { useScrollTracking } from '../../hooks/ui/useScrollTracking';
-import { Button } from '../primitives';
+import { Button as ButtonBase } from '../primitives';
+// Cast to work around React type version mismatch between quorum-shared and quorum-desktop
+const Button = ButtonBase as React.FC<any>;
 import { Trans } from '@lingui/react/macro';
 import type { DmContext } from '../../hooks/business/messages/useMessageActions';
 
@@ -92,6 +94,14 @@ interface MessageListProps {
   alignToTop?: boolean;
   /** Optional content rendered above the first message inside the scrollable list (bottom-anchored with messages) */
   headerContent?: React.ReactNode;
+  /** Show delivery receipt checkmarks on own DM messages */
+  showDeliveryReceipts?: boolean;
+  /** Show read receipt checkmarks on own DM messages */
+  showReadReceipts?: boolean;
+  /** Callback to report a message as read */
+  reportRead?: (messageId: string, timestamp: number) => void;
+  /** Snapshot of lastReadTimestamp at conversation load — for read receipt observer filtering */
+  readReceiptBaseline?: number;
 }
 
 function useWindowSize() {
@@ -157,6 +167,10 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
       onStartThread,
       alignToTop = false,
       headerContent,
+      showDeliveryReceipts,
+      showReadReceipts,
+      reportRead,
+      readReceiptBaseline,
     } = props;
 
     const [_width, height] = useWindowSize();
@@ -327,6 +341,10 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
               onRetryMessage={onRetryMessage}
               dmContext={dmContext}
               isCompact={displayInfo.isCompact}
+              showDeliveryReceipts={showDeliveryReceipts}
+              showReadReceipts={showReadReceipts}
+              reportRead={reportRead}
+              readReceiptBaseline={readReceiptBaseline}
               users={users}
               roles={mentionRoles}
               groups={groups}
@@ -375,6 +393,10 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
         dmContext,
         onStartThread,
         headerContent,
+        showDeliveryReceipts,
+        showReadReceipts,
+        reportRead,
+        readReceiptBaseline,
       ]
     );
 
@@ -576,19 +598,30 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
                 : messageList.length - 1
           }
           followOutput={(isAtBottom: boolean) => {
-            // Don't auto-scroll during deletions - use ref for synchronous check
-            // (props update async and may not be ready when Virtuoso calls followOutput)
-            if (deletionInProgressRef.current) {
-              return false;
-            }
-            // Don't auto-scroll after jumping to old message (prevents scroll during manual pagination)
-            // Only auto-scroll when at the true present (hasNextPage === false)
-            if (hasJumpedToOldMessage) {
-              return false;
-            }
-            // Only auto-scroll if we're at bottom AND at the true present (no more pages to load)
+            if (deletionInProgressRef.current) return false;
+            if (hasJumpedToOldMessage) return false;
             if (isAtBottom && hasNextPage === false) {
-              return 'smooth';
+              // Return 'auto' for Virtuoso's native scroll (works in channels).
+              // Additionally schedule a delayed correction for DMs where Virtuoso's
+              // internal measurement callback incorrectly resets scrollTop.
+              const scroller = document.querySelector('[data-virtuoso-scroller]') as HTMLElement | null;
+              // Don't let Virtuoso scroll (its measurement callback resets
+              // scrollTop incorrectly in DMs). Snap to bottom every frame.
+              if (scroller) {
+                const s = scroller;
+                const snap = () => {
+                  s.scrollTop = s.scrollHeight - s.clientHeight;
+                };
+                let frameCount = 0;
+                const frameSnap = () => {
+                  snap();
+                  if (++frameCount < 10) requestAnimationFrame(frameSnap);
+                };
+                requestAnimationFrame(frameSnap);
+                setTimeout(snap, 300);
+                setTimeout(snap, 600);
+              }
+              return false;
             }
             return false;
           }}

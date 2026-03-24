@@ -56,6 +56,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Bookmarks Feature](docs/features/messages/bookmarks.md)
 - [Client-Side Image Compression & Thumbnail System](docs/features/messages/client-side-image-compression.md)
 - [DM Conversation List Previews](docs/features/messages/dm-conversation-list-previews.md)
+- [DM Receipts (Delivery & Read)](docs/features/messages/dm-receipts.md)
 - [Emoji Picker React - Styling & Customization](docs/features/messages/emoji-picker-react-customization.md)
 - [Hash Navigation to Old Messages](docs/features/messages/hash-navigation-to-old-messages.md)
 - [Markdown Renderer](docs/features/messages/markdown-renderer.md)
@@ -87,8 +88,7 @@ This is the main index for all documentation, bug reports, and task management.
 ## 🐛 Bug Reports
 
 ### Active Issues
-- [Leave Space - No Loading Feedback and UI Not Refreshing](bugs/2026-03-18-leave-space-no-feedback.md)
-- [Offline Banner Overlays Content Instead of Pushing Down](bugs/2026-03-18-offline-banner-overlay.md)
+- [Message list scroll jank on send — Virtuoso scroll position drift](bugs/2026-03-19-message-list-scroll-jank-on-send.md)
 - [Config Sync Space Loss Race Condition](bugs/config-sync-space-loss-race-condition.md)
 - [DirectMessage Invite Loading Performance Issue](bugs/directmessage-invite-loading-performance.md)
 - [Encryption State Evals Causing Config Sync Bloat](bugs/encryption-state-evals-bloat.md)
@@ -114,6 +114,10 @@ This is the main index for all documentation, bug reports, and task management.
 - [Mobile Metro bundling fails at 99.9% — unable to resolve ./index from root](bugs/.solved/2026-03-15-mobile-metro-bundling-failure.md)
 - [Modals break when consuming quorum-shared from pre-built dist](bugs/.solved/2026-03-16-quorum-shared-pre-built-dist-modal-broken.md)
 - [vite-plugin-favicons-inject fails with NO_FILES_FOUND during production build](bugs/.solved/2026-03-18-favicon-plugin-prod-build-failure.md)
+- [Offline Banner Overlays Content Instead of Pushing Down](bugs/.solved/2026-03-18-offline-banner-overlay.md)
+- [Standalone delivery receipt acks not reliably delivered](bugs/.solved/2026-03-19-standalone-delivery-ack-unreliable.md)
+- [Read receipts (Phase 2) untested — sync issues prevent DM delivery](bugs/.solved/2026-03-22-read-receipts-testing-blocked.md)
+- [Receipt checkmarks disappear on page refresh and conversation navigation](bugs/.solved/2026-03-22-receipt-checkmarks-not-persisting-across-navigation.md)
 - [Action Queue Bypasses SDK Encryption for Identity Keys](bugs/.solved/action-queue-plaintext-private-keys.md)
 - [Android 7.0 File Download Fix - Implementation Plan](bugs/.solved/SOLVED_android-file-download-huawei-p9-lite.md)
 - [Bug: Auto-Jump to First Unread Message - Blocked by Virtuoso Scroll Positioning](bugs/.solved/auto-jump-unread-virtuoso-scroll-conflict.md)
@@ -150,6 +154,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [WebSocket processQueue Stuck - Blocking Outbound Messages](bugs/.solved/websocket-processqueue-stuck-blocking-outbound.md)
 
 ### .Archived
+- [Leave Space - No Loading Feedback and UI Not Refreshing](bugs/.archived/2026-03-18-leave-space-no-feedback.md)
 - [Brave Browser React Hook Errors - ONGOING INVESTIGATION](bugs/.archived/brave-browser-react-hook-errors.md)
 - [Bug: Auto-jump to First Unread Breaks Initial Message Sync](bugs/.archived/auto-jump-unread-breaks-message-sync.md)
 - [Role with message:delete permission can delete space owner's messages](bugs/.archived/message-delete-owner-vulnerability.md)
@@ -162,14 +167,6 @@ This is the main index for all documentation, bug reports, and task management.
 - [Embedded Media + YouTube Facade Privacy Fix — Implementation Plan](tasks/2026-03-12-embedded-media-plan.md)
 - [Embedded Media in PostMessage + YouTube Facade Privacy Fix](tasks/2026-03-12-embedded-media-spec.md)
 - [Thread List Panel: "Created by me" Filter](tasks/2026-03-14-thread-list-created-filter.md)
-- [Get npm Publish Access for @quilibrium/quorum-shared](tasks/2026-03-15-npm-publish-access-quorum-shared.md)
-- [Primitives Migration Prep](tasks/2026-03-15-primitives-migration-prep.md)
-- [Stacked PRs Workflow](tasks/2026-03-15-stacked-prs-workflow.md)
-- [DM Delivery Receipts — Design Spec](tasks/2026-03-18-dm-delivery-receipts-design.md)
-- [DM Delivery Receipts Implementation Plan](tasks/2026-03-18-dm-delivery-receipts-plan.md)
-- [Utilities Migration Design](tasks/2026-03-18-utils-migration-design.md)
-- [Utilities Migration Implementation Plan](tasks/2026-03-18-utils-migration-plan.md)
-- [Move Utility Tests to quorum-shared](tasks/2026-03-19-move-tests-to-quorum-shared.md)
 - [Accessibility Features — Remaining Work](tasks/accessibility-features-implementation.md)
 - [Add User Bio Field to UserSettingsModal General Tab](tasks/add-user-bio-field.md)
 - [Auto-save settings modals — eliminate save buttons](tasks/auto-save-settings-modals.md)
@@ -262,6 +259,15 @@ This is the main index for all documentation, bug reports, and task management.
 - [Third-Party Component Migration Report](tasks/mobile-dev/docs/third-party-component-migration-report.md)
 - [Web/Native Repository Structure](tasks/mobile-dev/docs/web-and-native-repo-structure.md)
 
+### Quorum Shared Migration
+- [Get npm Publish Access for @quilibrium/quorum-shared](tasks/quorum-shared-migration/2026-03-15-npm-publish-access-quorum-shared.md)
+- [Primitives Migration Prep](tasks/quorum-shared-migration/2026-03-15-primitives-migration-prep.md)
+- [Stacked PRs Workflow](tasks/quorum-shared-migration/2026-03-15-stacked-prs-workflow.md)
+- [Utilities Migration Design](tasks/quorum-shared-migration/2026-03-18-utils-migration-design.md)
+- [Utilities Migration Implementation Plan](tasks/quorum-shared-migration/2026-03-18-utils-migration-plan.md)
+- [Hooks Migration to quorum-shared — Design & Inventory](tasks/quorum-shared-migration/2026-03-19-hooks-migration-design.md)
+- [Move Utility Tests to quorum-shared](tasks/quorum-shared-migration/2026-03-19-move-tests-to-quorum-shared.md)
+
 ### Search Optimization
 - [Design Decisions & Rationale](tasks/search-optimization/decisions.md)
 - [Future Search Optimization Phases](tasks/search-optimization/future-phases.md)
@@ -296,6 +302,11 @@ This is the main index for all documentation, bug reports, and task management.
 - [Mobile Primitives Fixes Implementation Plan](tasks/.done/2026-03-15-mobile-primitives-fixes-plan.md)
 - [Shared Types Migration Implementation Plan](tasks/.done/2026-03-15-shared-types-migration-plan.md)
 - [Fix Modal CSS for Tarball/npm Install](tasks/.done/2026-03-16-fix-modal-css-tarball.md)
+- [DM Delivery Receipts — Design Spec](tasks/.done/2026-03-18-dm-delivery-receipts-design.md)
+- [DM Delivery Receipts Implementation Plan](tasks/.done/2026-03-18-dm-delivery-receipts-plan.md)
+- [DM Read Receipts Design — Phase 2](tasks/.done/2026-03-22-dm-read-receipts-design.md)
+- [DM Read Receipts (Phase 2) Implementation Plan](tasks/.done/2026-03-22-dm-read-receipts-plan.md)
+- [Hierarchical receipt toggle UX — nest read under delivery](tasks/.done/2026-03-24-hierarchical-receipt-toggles.md)
 - [AccentColorSwitcher Cross-Platform Migration + Persistence](tasks/.done/accent-color-switcher-cross-platform-migration.md)
 - [Add Context to Desktop Notifications](tasks/.done/rich-desktop-notifications-context.md)
 - [Add DM-Specific Action Queue Handlers](tasks/.done/dm-action-queue-handlers.md)
@@ -452,6 +463,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Web-to-Native Feature Sync Compatibility Analysis](reports/web-native-feature-sync-analysis_2025-12-04.md)
 
 ### .Archived
+- [Expert Panel Analysis: DM Receipts (Delivery & Read)](reports/.archived/2026-03-24-dm-receipts-expert-panel-analysis.md)
 - [Complete i18n Translation Quality Audit](reports/.archived/i18n-complete-translation-quality-audit_2026-03-14.md)
 - [i18n Translation Quality Audit](reports/.archived/i18n-translation-quality-audit_2026-03-14.md)
 - [Text Primitive Audit — Pre-Migration Analysis](reports/.archived/text-primitive-audit_2026-02-10.md)
@@ -477,4 +489,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2026-03-19 14:34:33
+**Last Updated**: 2026-03-24 11:56:31

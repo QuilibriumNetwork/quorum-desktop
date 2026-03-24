@@ -163,6 +163,8 @@ describe('ActionQueueHandlers - Unit Tests', () => {
         'reaction-dm',
         'delete-dm',
         'edit-dm',
+        'send-delivery-ack',
+        'send-read-ack',
       ];
 
       for (const type of actionTypes) {
@@ -771,6 +773,96 @@ describe('ActionQueueHandlers - Unit Tests', () => {
 
       expect(handler.isPermanentError(new Error('404 Not Found'))).toBe(true);
       expect(handler.isPermanentError(new Error('network error'))).toBe(false);
+    });
+  });
+
+  describe('16b. send-delivery-ack Handler', () => {
+    it('should be registered in getHandler', () => {
+      const handler = handlers.getHandler('send-delivery-ack');
+      expect(handler).toBeDefined();
+    });
+
+    it('should encrypt and send ack via encryptAndSendDm pattern', async () => {
+      const handler = handlers.getHandler('send-delivery-ack')!;
+      const context = {
+        address: 'recipient-address',
+        messageIds: ['msg-1', 'msg-2'],
+        selfUserAddress: 'self-address',
+      };
+
+      await handler.execute(context);
+
+      expect(mockDeps.messageService.sendDirectMessages).toHaveBeenCalled();
+    });
+
+    it('should skip when messageIds is empty', async () => {
+      const handler = handlers.getHandler('send-delivery-ack')!;
+      const context = {
+        address: 'recipient-address',
+        messageIds: [],
+        selfUserAddress: 'self-address',
+      };
+
+      await handler.execute(context);
+
+      expect(mockDeps.messageService.sendDirectMessages).not.toHaveBeenCalled();
+    });
+
+    it('should classify 400/403 as permanent errors', () => {
+      const handler = handlers.getHandler('send-delivery-ack')!;
+      expect(handler.isPermanentError(new Error('400'))).toBe(true);
+      expect(handler.isPermanentError(new Error('403'))).toBe(true);
+      expect(handler.isPermanentError(new Error('500'))).toBe(false);
+    });
+
+    it('should NOT have onFailure callback (best effort)', () => {
+      const handler = handlers.getHandler('send-delivery-ack')!;
+      expect(handler.onFailure).toBeUndefined();
+    });
+
+    it('should NOT have toast messages (silent)', () => {
+      const handler = handlers.getHandler('send-delivery-ack')!;
+      expect(handler.successMessage).toBeUndefined();
+      expect(handler.failureMessage).toBeUndefined();
+    });
+  });
+
+  describe('16c. send-read-ack Handler', () => {
+    it('should be registered in getHandler', () => {
+      const handler = handlers.getHandler('send-read-ack');
+      expect(handler).toBeDefined();
+    });
+
+    it('should encrypt and send read ack via encryptAndSendDm pattern', async () => {
+      const handler = handlers.getHandler('send-read-ack')!;
+      const context = {
+        address: 'recipient-address',
+        upToMessageId: 'msg-5',
+        upToTimestamp: 5000,
+        selfUserAddress: 'self-address',
+      };
+
+      await handler.execute(context);
+
+      expect(mockDeps.messageService.sendDirectMessages).toHaveBeenCalled();
+    });
+
+    it('should classify 400/403 as permanent errors', () => {
+      const handler = handlers.getHandler('send-read-ack')!;
+      expect(handler.isPermanentError(new Error('400'))).toBe(true);
+      expect(handler.isPermanentError(new Error('403'))).toBe(true);
+      expect(handler.isPermanentError(new Error('500'))).toBe(false);
+    });
+
+    it('should NOT have onFailure callback (best effort)', () => {
+      const handler = handlers.getHandler('send-read-ack')!;
+      expect(handler.onFailure).toBeUndefined();
+    });
+
+    it('should NOT have toast messages (silent)', () => {
+      const handler = handlers.getHandler('send-read-ack')!;
+      expect(handler.successMessage).toBeUndefined();
+      expect(handler.failureMessage).toBeUndefined();
     });
   });
 

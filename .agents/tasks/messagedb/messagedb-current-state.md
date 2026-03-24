@@ -33,39 +33,49 @@ The MessageDB refactoring successfully extracted 6 services from the original 5,
 - **File**: `src/components/context/MessageDB.tsx`
 - **Size**: 5,650 lines
 
-### Current State (Dec 2025)
-- **MessageDB.tsx**: 1,020 lines (82% reduction)
-- **6 Original Services**: ~7,500 lines total
-- **2 ActionQueue Services**: ~1,030 lines total
+### Current State (Mar 2026)
+- **MessageDB.tsx**: 1,344 lines (76% reduction from original)
+- **8 Original + Derived Services**: ~10,350 lines total
+- **2 ActionQueue Services**: ~1,600 lines total
 
 ---
 
 ## Service Breakdown
 
-| Service | Lines | Status |
-|---------|-------|--------|
-| **MessageService** | ~4,150 | ⚠️ Large — extraction recommended |
-| SpaceService | 1,178 | ✅ Complete |
-| InvitationService | 902 | ✅ Complete |
-| ConfigService | 531 | ✅ Complete |
-| SyncService | 512 | ✅ Complete |
-| EncryptionService | 264 | ✅ Complete |
-| ActionQueueService | 292 | ✅ Complete |
-| ActionQueueHandlers | 738 | ✅ Complete |
+| Service | Dec 2025 | Mar 2026 | Change | Status |
+|---------|----------|----------|--------|--------|
+| **MessageService** | ~4,150 | **~5,261** | +27% | ⚠️ Large — extraction still recommended |
+| SpaceService | 1,178 | 1,222 | +4% | ✅ Complete |
+| InvitationService | 902 | 906 | +0.4% | ✅ Complete |
+| ConfigService | 531 | 544 | +2% | ✅ Complete |
+| SyncService | 512 | 1,000 | +95% | ✅ (sync v2 additions) |
+| EncryptionService | 264 | 264 | 0% | ✅ Complete |
+| **ReceiptService** | — | **204** | new | ✅ New (delivery + read receipts) |
+| **SearchService** | — | **290** | new | ✅ New (global message search) |
+| ActionQueueService | 292 | 401 | +37% | ✅ Complete |
+| ActionQueueHandlers | 738 | 1,196 | +62% | ✅ (receipt + thread handlers) |
+
+**Key growth areas since Dec 2025:**
+- MessageService: +1,100 lines from delivery/read receipts integration, threads, tag rebroadcast, DM handling
+- SyncService: +488 lines from sync v2 protocol
+- ActionQueueHandlers: +458 lines from receipt ack handlers and thread handlers
+- Two new services added: ReceiptService, SearchService
 
 ---
 
 ## Next Steps: Service Extraction
 
-Per [MessageService Analysis](./messageservice-analysis.md), the file has 5 distinct concerns:
+Per [MessageService Analysis](./messageservice-analysis.md), the file now has 7 distinct concerns:
 
 | Concern | Lines | Extraction Target |
 |---------|-------|-------------------|
 | Cache operations | ~800 | `MessageCacheService` ← **Priority 1** |
-| DM submission | ~520 | `DirectMessageService` |
-| Channel submission | ~470 | `ChannelMessageService` |
-| Incoming messages | ~1,350 | Keep in MessageService (too coupled) |
-| Retry/cleanup | ~390 | Keep in MessageService |
+| DM submission | ~560 | `DirectMessageService` |
+| Channel submission | ~590 | `ChannelMessageService` |
+| Incoming messages | ~1,850 | Keep in MessageService (too coupled) |
+| Receipts integration | ~90 | Keep in MessageService (pipeline-coupled; bulk logic already in ReceiptService) |
+| Tags | ~130 | Keep in MessageService (or move to SpaceService if it grows) |
+| Retry/cleanup | ~400 | Keep in MessageService |
 
 **Recommended first extraction**: `MessageCacheService` — pure React Query logic, zero crypto, highly testable.
 
@@ -75,6 +85,9 @@ Per [MessageService Analysis](./messageservice-analysis.md), the file has 5 dist
 
 | Date | What | Impact |
 |------|------|--------|
+| Mar 2026 | Created `ReceiptService` (204 lines) | New service for delivery + read receipt buffering |
+| Mar 2026 | Created `SearchService` (290 lines) | New service for global message search |
+| Mar 24, 2026 | Extracted piggyback helpers in MessageService | DRY'd duplicated code, fixed readAckUpTo strip bug |
 | Dec 20, 2025 | Extracted `encryptAndSendToSpace()` helper | -200 lines, 7 unit tests |
 | Dec 18, 2025 | Removed dead fallback code | -249 lines |
 | Oct 2025 | Extracted 6 services from MessageDB | -82% reduction |
@@ -108,4 +121,4 @@ Archived files in `.archived/`:
 
 ---
 
-_Last updated: 2025-12-20_
+_Last updated: 2026-03-24_

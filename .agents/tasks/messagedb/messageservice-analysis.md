@@ -48,39 +48,52 @@ MessageService.ts is large (~4,150 lines) but handles 4-5 distinct concerns that
 | Dec 18, 2025 (AM) | 4,397 | +1.4% | Action Queue integration |
 | Dec 18, 2025 (PM) | 4,148 | -5.7% | Removed dead fallback code |
 | Dec 19, 2025 | 4,350 | +4.9% | Restored update-profile handler |
-| Dec 20, 2025 | **~4,150** | **-4.6%** | Extracted `encryptAndSendToSpace()` helper |
+| Dec 20, 2025 | ~4,150 | -4.6% | Extracted `encryptAndSendToSpace()` helper |
+| Mar 2026 | **~5,261** | **+27%** | Delivery/read receipts, threads, tag rebroadcast, DM handling growth |
 
-**Growth rate**: +79% since initial extraction (Oct 2025)
+**Growth rate**: +127% since initial extraction (Oct 2025)
 
-### Method Breakdown (13 methods)
+### Method Breakdown (19 methods)
 
 | Method | Lines | Concern | Description |
 |--------|-------|---------|-------------|
-| `addMessage()` | 750 | Cache | React Query cache updates |
-| `updateMessageStatus()` | 44 | Cache | Optimistic status updates |
-| `submitMessage()` | 521 | DM Submission | DM submission via Action Queue |
-| `submitChannelMessage()` | ~470 | Channel Submission | Space/channel message submission |
-| `handleNewMessage()` | 1,354 | Incoming | Incoming message handler (decryption + dispatch) |
-| `saveMessage()` | 472 | Persistence | Save message to DB (7 message types) |
-| `retryMessage()` | ~95 | Retry | Retry failed channel messages |
-| `retryDirectMessage()` | 196 | Retry | Retry failed direct messages |
-| `deleteConversation()` | 101 | Cleanup | Cleanup operations |
-| `encryptAndSendToSpace()` | 70 | Crypto | Triple Ratchet encryption helper |
-| `getEncryptAndSendToSpace()` | 10 | Crypto | Getter for ActionQueueHandlers |
-| `sanitizeError()` | 20 | Utility | Error message sanitization |
-| `setActionQueueService()` | 7 | DI | ActionQueue dependency injection |
+| `addMessage()` | ~750 | Cache | React Query cache updates |
+| `updateMessageStatus()` | ~44 | Cache | Optimistic status updates |
+| `submitMessage()` | ~560 | DM Submission | DM submission via Action Queue |
+| `submitChannelMessage()` | ~590 | Channel Submission | Space/channel message submission |
+| `handleNewMessage()` | ~1,850 | Incoming | Incoming message handler (decryption + dispatch) |
+| `saveMessage()` | ~530 | Persistence | Save message to DB (7 message types) |
+| `createThread()` | ~50 | Threads | Thread creation |
+| `retryMessage()` | ~100 | Retry | Retry failed channel messages |
+| `retryDirectMessage()` | ~200 | Retry | Retry failed direct messages |
+| `deleteConversation()` | ~100 | Cleanup | Cleanup operations |
+| `encryptAndSendToSpace()` | ~70 | Crypto | Triple Ratchet encryption helper |
+| `getEncryptAndSendToSpace()` | ~10 | Crypto | Getter for ActionQueueHandlers |
+| `getSendHubMessage()` | ~10 | Crypto | Getter for ActionQueueHandlers |
+| `sendDirectMessages()` | ~10 | Transport | Direct message WebSocket send |
+| `processDeliveryReceiptData()` | ~70 | Receipts | Intercept ack control messages at decrypt layer |
+| `attachPiggybackedAcks()` | ~15 | Receipts | Attach acks to outgoing DMs before encryption |
+| `stripPiggybackedAcks()` | ~5 | Receipts | Strip transient ack fields before persist |
+| `rebroadcastTagIfChanged()` | ~130 | Tags | Space tag rebroadcast with cooldown |
+| `setReceiptService()` | ~5 | DI | ReceiptService dependency injection |
+| `setActionQueueService()` | ~5 | DI | ActionQueue dependency injection |
+| `sanitizeError()` | ~20 | Utility | Error message sanitization |
 
 ### Concerns Analysis
 
-The file handles **5 distinct concerns** (different "reasons to change"):
+The file handles **7 distinct concerns** (different "reasons to change"):
 
 | Concern | Methods | Lines | Changes When... |
 |---------|---------|-------|-----------------|
 | **Cache** | `addMessage`, `updateMessageStatus` | ~800 | React Query patterns change |
-| **DM Submission** | `submitMessage` | ~520 | DM encryption/ActionQueue changes |
-| **Channel Submission** | `submitChannelMessage` | ~470 | Space permissions/Triple Ratchet changes |
-| **Incoming Messages** | `handleNewMessage` | ~1,350 | New message types added |
-| **Retry/Cleanup** | `retryMessage`, `retryDirectMessage`, `deleteConversation` | ~390 | Error handling strategy changes |
+| **DM Submission** | `submitMessage` | ~560 | DM encryption/ActionQueue changes |
+| **Channel Submission** | `submitChannelMessage` | ~590 | Space permissions/Triple Ratchet changes |
+| **Incoming Messages** | `handleNewMessage` | ~1,850 | New message types added |
+| **Receipts** | `processDeliveryReceiptData`, `attachPiggybackedAcks`, `stripPiggybackedAcks` | ~90 | Receipt protocol changes |
+| **Tags** | `rebroadcastTagIfChanged` | ~130 | Tag broadcast logic changes |
+| **Retry/Cleanup** | `retryMessage`, `retryDirectMessage`, `deleteConversation` | ~400 | Error handling strategy changes |
+
+> **Note on Receipts**: The bulk of receipt logic lives in `ReceiptService` (204 lines, separate file). The ~90 lines in MessageService are integration points (intercept at decrypt, attach/strip at send) that are tightly coupled to the message pipeline and cannot easily move out.
 
 ---
 
@@ -133,13 +146,20 @@ export class MessageCacheService {
 | **Reason to extract** | Clear boundary, uses already-extracted `encryptAndSendToSpace` |
 | **Complication** | Needs access to messageDB, queryClient, encryptAndSendToSpace |
 
+### Already Extracted
+
+| Service | Lines | Date | Notes |
+|---------|-------|------|-------|
+| `ReceiptService` | 204 | Mar 2026 | Delivery + read receipt buffering, timers, piggyback coordination. Created as new service (not extracted from MessageService). ~90 lines of integration code remain in MessageService. |
+
 ### Not Recommended
 
 | What | Why Not |
 |------|---------|
-| `handleNewMessage()` | Too tightly coupled to decryption + 7 injected callbacks |
+| `handleNewMessage()` | Too tightly coupled to decryption + 7 injected callbacks. Now ~1,850 lines. |
 | Decryption logic | High risk of crypto bugs, complex error handling |
 | `submitMessage()` | Tied to ActionQueue initialization flow |
+| Receipt integration methods | `processDeliveryReceiptData`, `attachPiggybackedAcks`, `stripPiggybackedAcks` — only ~90 lines and tightly coupled to the decrypt/send pipeline |
 
 ---
 
@@ -201,16 +221,10 @@ private async signMessage(
 
 | Date | What | Lines Saved | Details |
 |------|------|-------------|---------|
+| Mar 24, 2026 | Extracted `attachPiggybackedAcks()` / `stripPiggybackedAcks()` helpers | ~20 (DRY) | Eliminated duplicated piggyback code across two send paths. Fixed `readAckUpTo` strip bug. |
+| Mar 2026 | Created `ReceiptService` (204 lines) | N/A (new) | Delivery + read receipt service. Not extracted from MessageService — created as new service with ~90 lines of integration in MessageService. |
 | Dec 20, 2025 | Extracted `encryptAndSendToSpace()` | ~200 | [Task file](./messageservice-extract-encrypt-helper.md) |
 | Dec 18, 2025 | Removed dead fallback code | 249 | Cleaned up `enqueueOutbound` paths |
-
-### encryptAndSendToSpace() Details
-
-Centralized Triple Ratchet encryption pattern with options:
-- `stripEphemeralFields` — For retry scenarios
-- `saveStateAfterSend` — For ActionQueue (saves state after send)
-
-**Unit tests added**: 7 tests in `MessageService.unit.test.tsx`
 
 ---
 
@@ -249,4 +263,4 @@ Centralized Triple Ratchet encryption pattern with options:
 
 ---
 
-_Last updated: 2025-12-20_
+_Last updated: 2026-03-24_

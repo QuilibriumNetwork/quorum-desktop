@@ -44,6 +44,7 @@ import {
 import type { DmContext } from '../../hooks/business/messages/useMessageActions';
 import { useMessageHighlight } from '../../hooks/business/messages/useMessageHighlight';
 import { useViewportMentionHighlight } from '../../hooks/business/messages/useViewportMentionHighlight';
+import { useReadReceipt } from '../../hooks/business/messages/useReadReceipt';
 import MessageActions from './MessageActions';
 import MessageActionsMenu from './MessageActionsMenu';
 import { ThreadIndicator } from '../thread/ThreadIndicator';
@@ -116,6 +117,10 @@ type MessageProps = {
   groups?: Array<{ groupName: string; channels: Channel[]; icon?: string; iconColor?: string }>;
   canUseEveryone?: boolean;
   onStartThread?: () => void;
+  showDeliveryReceipts?: boolean;
+  showReadReceipts?: boolean;
+  reportRead?: (messageId: string, timestamp: number) => void;
+  readReceiptBaseline?: number;
 };
 
 export const Message = React.memo(
@@ -158,12 +163,28 @@ export const Message = React.memo(
     groups = [],
     canUseEveryone = false,
     onStartThread,
+    showDeliveryReceipts,
+    showReadReceipts,
+    reportRead,
+    readReceiptBaseline,
   }: MessageProps) => {
     const user = usePasskeysContext();
     const { spaceId } = useParams();
     const location = useLocation();
     const navigate = useNavigate();
     const { openMobileActionsDrawer, openMobileEmojiDrawer } = useMobile();
+
+    // Read receipt visibility tracking — only for incoming messages from others
+    // Uses readReceiptBaseline (snapshot of lastReadTimestamp at conversation load)
+    // instead of the live lastReadTimestamp which updates every 2s.
+    const isOtherPersonMessage = message.content?.senderId !== user.currentPasskeyInfo?.address;
+    const isNewMessage = !readReceiptBaseline || message.createdDate > readReceiptBaseline;
+    const readReceiptRef = useReadReceipt(
+      message.messageId,
+      message.createdDate,
+      !!(showReadReceipts && isOtherPersonMessage && isNewMessage && reportRead),
+      reportRead
+    );
 
     // Component state that needs to be available to hooks
     const [showUserProfile, setShowUserProfile] = useState<boolean>(false);
@@ -423,7 +444,10 @@ export const Message = React.memo(
     return (
       <Flex
         direction="column"
-        ref={mentionRef}
+        ref={(el) => {
+          (mentionRef as React.MutableRefObject<HTMLDivElement | null>).current = el;
+          (readReceiptRef as React.MutableRefObject<HTMLDivElement | null>).current = el;
+        }}
         id={`msg-${message.messageId}`}
         className={
           'message-container text-base relative ' +
@@ -913,7 +937,33 @@ export const Message = React.memo(
                     );
                   }
 
-                  // Check if we should use markdown rendering (disabled for security review)
+                  // Message receipt indicator: check (delivered) or check-check (read)
+                  // Display logic:
+                  // - readAt set -> check-check (always shown — readAt is only persisted
+                  //   when the user's readReceipts setting was ON at receive time)
+                  // - deliveredAt set -> check (always shown once persisted)
+                  // - otherwise -> nothing
+                  // Privacy settings gate PERSISTENCE, not display. Once persisted,
+                  // checkmarks remain visible even if the setting is later turned off.
+                  const isOwnMessage = message.content?.senderId === user.currentPasskeyInfo?.address;
+                  let receiptIndicator: React.ReactNode = null;
+                  if (!message.sendStatus && isOwnMessage) {
+                    if (message.readAt) {
+                      receiptIndicator = (
+                        <span className="message-status delivered read">
+                          <Icon name="check" size="xs" />
+                          <Icon name="check" size="xs" />
+                        </span>
+                      );
+                    } else if (message.deliveredAt) {
+                      receiptIndicator = (
+                        <span className="message-status delivered">
+                          <Icon name="check" size="xs" />
+                        </span>
+                      );
+                    }
+                  }
+
                   if (ENABLE_MARKDOWN && formatting.shouldUseMarkdown()) {
                     return (
                       <div className="message-post-content break-words">
@@ -935,6 +985,7 @@ export const Message = React.memo(
                           messageSenderId={message.content?.senderId}
                           currentUserAddress={user.currentPasskeyInfo?.address}
                           currentSpaceId={spaceId}
+                          suffix={receiptIndicator}
                         />
                       </div>
                     );
@@ -1085,6 +1136,7 @@ export const Message = React.memo(
                             </React.Fragment>
                           );
                         })}
+                        {i === contentData.content.length - 1 && receiptIndicator}
                       </div>
                     );
                   });
@@ -1256,6 +1308,7 @@ export const Message = React.memo(
                   )}
                 </Flex>
               )}
+              {/* Delivered indicator is rendered inline inside message-post-content */}
             </div>
           </Flex>
         )}
@@ -1338,6 +1391,10 @@ export const Message = React.memo(
         JSON.stringify(nextProps.message.reactions) ||
       prevProps.message.isPinned !== nextProps.message.isPinned ||
       prevProps.message.sendStatus !== nextProps.message.sendStatus ||
+      prevProps.message.deliveredAt !== nextProps.message.deliveredAt ||
+      prevProps.message.readAt !== nextProps.message.readAt ||
+      prevProps.showDeliveryReceipts !== nextProps.showDeliveryReceipts ||
+      prevProps.showReadReceipts !== nextProps.showReadReceipts ||
       JSON.stringify(prevProps.message.threadMeta) !== JSON.stringify(nextProps.message.threadMeta);
 
     return !shouldRerender;

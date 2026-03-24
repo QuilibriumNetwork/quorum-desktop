@@ -27,7 +27,13 @@ export type ActionType =
   // DM actions (Double Ratchet)
   | 'reaction-dm'
   | 'delete-dm'
-  | 'edit-dm';
+  | 'edit-dm'
+
+  // Delivery receipts (Double Ratchet)
+  | 'send-delivery-ack'
+
+  // Read receipts (Double Ratchet)
+  | 'send-read-ack';
 
 export type TaskStatus = 'pending' | 'processing' | 'completed' | 'failed';
 

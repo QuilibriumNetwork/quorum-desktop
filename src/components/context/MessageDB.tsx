@@ -23,11 +23,13 @@ import {
   InvitationService,
   ActionQueueService,
   ActionQueueHandlers,
+  ReceiptService,
 } from '../../services';
 import { ActionQueueProvider } from './ActionQueueContext';
 import {
   buildConversationsKey,
 } from '../../hooks';
+import { buildMessagesKeyPrefix } from '../../hooks/queries/messages/buildMessagesKey';
 import {
   InfiniteData,
   QueryClient,
@@ -243,6 +245,7 @@ type MessageDBContextValue = {
     }
   ) => Promise<void>;
   actionQueueService: ActionQueueService;
+  receiptService: ReceiptService | null;
 };
 
 type MessageDBContextProps = {
@@ -963,6 +966,123 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
     }
   }, [keyset, actionQueueService]);
 
+  // ReceiptService — batched ack buffer with piggyback + standalone flush
+  const receiptService = useMemo(() => {
+    if (!selfAddress) return null;
+
+    const service = new ReceiptService({
+      onFlush: (address: string, messageIds: string[]) => {
+        // Queue standalone ack via Action Queue
+        actionQueueService.enqueue(
+          'send-delivery-ack',
+          {
+            address,
+            messageIds,
+            selfUserAddress: selfAddress,
+          },
+          `delivery-ack:${address}` // dedup key: one pending ack per address
+        );
+      },
+      onAckProcessed: (messageIds: string[]) => {
+        // Update deliveredAt on sender's messages in React Query cache + IndexedDB
+        const now = Date.now();
+        for (const messageId of messageIds) {
+          // Update React Query cache — use 'Messages' prefix (capital M) to match all conversations
+          queryClient.setQueriesData(
+            { queryKey: ['Messages'] },
+            (oldData: InfiniteData<{ messages: Message[]; nextCursor?: number; prevCursor?: number }> | undefined) => {
+              if (!oldData?.pages) return oldData;
+
+              let changed = false;
+              const newPages = oldData.pages.map((page) => {
+                const newMessages = page.messages.map((msg) => {
+                  if (msg.messageId === messageId && !msg.deliveredAt) {
+                    changed = true;
+                    return { ...msg, deliveredAt: now } as Message;
+                  }
+                  return msg;
+                });
+                return changed ? { ...page, messages: newMessages } : page;
+              });
+
+              return changed ? { ...oldData, pages: newPages } : oldData;
+            }
+          );
+
+          // Persist to IndexedDB
+          messageDB.updateMessageDeliveredAt(messageId, now);
+        }
+      },
+      onReadFlush: (address: string, highWaterMark: { messageId: string; timestamp: number }) => {
+        // Queue standalone read ack via Action Queue
+        actionQueueService.enqueue(
+          'send-read-ack',
+          {
+            address,
+            upToMessageId: highWaterMark.messageId,
+            upToTimestamp: highWaterMark.timestamp,
+            selfUserAddress: selfAddress,
+          },
+          `read-ack:${address}` // dedup key: one pending read ack per address
+        );
+      },
+      onReadAckProcessed: (upToMessageId: string, upToTimestamp: number, conversationAddress: string) => {
+        // Update readAt (and deliveredAt if missing) on own messages up to timestamp
+        const now = Date.now();
+        // DM conversationId is "address/address"
+        const conversationId = `${conversationAddress}/${conversationAddress}`;
+
+        // Update React Query cache — scope to this conversation only (not all conversations)
+        const conversationKey = buildMessagesKeyPrefix({ spaceId: conversationAddress, channelId: conversationAddress });
+        queryClient.setQueriesData(
+          { queryKey: conversationKey },
+          (oldData: InfiniteData<{ messages: Message[]; nextCursor?: number; prevCursor?: number }> | undefined) => {
+            if (!oldData?.pages) return oldData;
+
+            let changed = false;
+            const newPages = oldData.pages.map((page) => {
+              const newMessages = page.messages.map((msg) => {
+                if (
+                  msg.content?.senderId === selfAddress &&
+                  msg.createdDate <= upToTimestamp &&
+                  !msg.readAt
+                ) {
+                  changed = true;
+                  return {
+                    ...msg,
+                    readAt: now,
+                    deliveredAt: msg.deliveredAt || now,
+                  } as Message;
+                }
+                return msg;
+              });
+              return changed ? { ...page, messages: newMessages } : page;
+            });
+
+            return changed ? { ...oldData, pages: newPages } : oldData;
+          }
+        );
+
+        // Persist to IndexedDB — DM spaceId and channelId are both the address
+        messageDB.updateMessagesReadAt(conversationAddress, conversationAddress, selfAddress, upToTimestamp, now).catch(() => {
+          // Best effort — React Query cache is already updated
+        });
+      },
+    });
+
+    return service;
+  }, [selfAddress, actionQueueService, queryClient, messageDB]);
+
+  // Wire ReceiptService to MessageService
+  useEffect(() => {
+    if (receiptService) {
+      messageService.setReceiptService(receiptService);
+    }
+    return () => {
+      receiptService?.destroy();
+    };
+  }, [receiptService, messageService]);
+
   const createSpace = React.useCallback(
     async (
       spaceName: string,
@@ -1181,6 +1301,7 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
         sendVerifyKickedStatuses,
         deleteConversation,
         actionQueueService,
+        receiptService,
       }}
     >
       <ActionQueueProvider actionQueueService={actionQueueService}>
@@ -1217,6 +1338,7 @@ const MessageDBContext = createContext<MessageDBContextValue>({
   sendVerifyKickedStatuses: () => undefined as never,
   deleteConversation: () => undefined as never,
   actionQueueService: undefined as never,
+  receiptService: null,
 });
 
 export { MessageDBProvider, MessageDBContext };

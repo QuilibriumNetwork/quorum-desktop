@@ -20,7 +20,7 @@ const useMessages = ({
     queryKey: buildMessagesKey({ spaceId, channelId, includeThreadReplies }),
     queryFn: buildMessagesFetcher({ messageDB, spaceId, channelId, includeThreadReplies }),
     networkMode: 'always', // This query uses IndexedDB, not network
-    staleTime: 5 * 60 * 1000, // 5 minutes - keep optimistic messages during navigation
+    staleTime: 0, // Always re-fetch from IndexedDB on mount — local reads are fast
     gcTime: 10 * 60 * 1000, // 10 minutes - prevent cache eviction while offline
     getNextPageParam: (
       lastPage: unknown

@@ -20,6 +20,10 @@ interface PrivacyProps {
   isSaving: boolean;
   removedDevices?: string[];
   isConfigLoaded?: boolean;
+  deliveryReceipts: boolean;
+  setDeliveryReceipts: (value: boolean) => void;
+  readReceipts: boolean;
+  setReadReceipts: (value: boolean) => void;
 }
 
 const Privacy: React.FunctionComponent<PrivacyProps> = ({
@@ -38,6 +42,10 @@ const Privacy: React.FunctionComponent<PrivacyProps> = ({
   isSaving,
   removedDevices = [],
   isConfigLoaded = true,
+  deliveryReceipts,
+  setDeliveryReceipts,
+  readReceipts,
+  setReadReceipts,
 }) => {
   // QR code display state - requires explicit user confirmation
   const [showQRConfirmation, setShowQRConfirmation] = React.useState(false);
@@ -204,6 +212,58 @@ const Privacy: React.FunctionComponent<PrivacyProps> = ({
               </Tooltip>
             </div>
           </div>
+          <div className="flex flex-row items-center gap-3 mt-3">
+            <Switch
+              value={deliveryReceipts}
+              onChange={(value: boolean) => {
+                setDeliveryReceipts(value);
+                // Cascade: turning delivery OFF also turns read OFF
+                if (!value) setReadReceipts(false);
+              }}
+              disabled={!isConfigLoaded}
+            />
+            <div className="flex flex-row items-center">
+              <div className="text-label-strong">
+                {t`Delivery receipts`}
+              </div>
+              <Tooltip
+                id="settings-delivery-receipts-tooltip"
+                content={t`When on, senders see when their messages reach your device, and you see when yours reach theirs.`}
+                place="bottom"
+              >
+                <Icon
+                  name="info-circle"
+                  className="text-main hover:text-strong cursor-pointer ml-2"
+                  size="sm"
+                />
+              </Tooltip>
+            </div>
+          </div>
+          {deliveryReceipts && (
+          <div className="flex flex-row items-center gap-3 mt-3 ml-6">
+            <Switch
+              value={readReceipts}
+              onChange={setReadReceipts}
+              disabled={!isConfigLoaded}
+            />
+            <div className="flex flex-row items-center">
+              <div className="text-label-strong">
+                {t`Read receipts`}
+              </div>
+              <Tooltip
+                id="settings-read-receipts-tooltip"
+                content={t`When on, senders see when you've read their messages, and you see when yours are read.`}
+                place="bottom"
+              >
+                <Icon
+                  name="info-circle"
+                  className="text-main hover:text-strong cursor-pointer ml-2"
+                  size="sm"
+                />
+              </Tooltip>
+            </div>
+          </div>
+          )}
         </div>
 
         <Spacer size="md" direction="vertical" borderTop={true} />
