@@ -42,6 +42,10 @@ const ConversationSettingsModal: React.FC<ConversationSettingsModalProps> = ({
 
   const [nonRepudiable, setNonRepudiable] = React.useState<boolean>(true);
   const [saveEditHistory, setSaveEditHistory] = React.useState<boolean>(false);
+  const [convDeliveryReceipts, setConvDeliveryReceipts] = React.useState<boolean | undefined>(undefined);
+  const [convReadReceipts, setConvReadReceipts] = React.useState<boolean | undefined>(undefined);
+  const [globalDeliveryReceipts, setGlobalDeliveryReceipts] = React.useState<boolean>(false);
+  const [globalReadReceipts, setGlobalReadReceipts] = React.useState<boolean>(false);
 
   // DM mute hook
   const { isMuted, toggleMute } = useDMMute();
@@ -68,19 +72,26 @@ const ConversationSettingsModal: React.FC<ConversationSettingsModalProps> = ({
   React.useEffect(() => {
     (async () => {
       try {
+        if (!currentPasskeyInfo) return;
+        const cfg = await getConfig({
+          address: currentPasskeyInfo.address,
+          userKey: keyset.userKeyset,
+        });
+
         const convIsRepudiable = conversation?.conversation?.isRepudiable;
         if (typeof convIsRepudiable !== 'undefined') {
           setNonRepudiable(!convIsRepudiable);
         } else {
-          const [spaceId] = conversationId.split('/');
-          const cfg = await getConfig({
-            address: spaceId,
-            userKey: keyset.userKeyset,
-          });
           setNonRepudiable(cfg?.nonRepudiable ?? true);
         }
         // Load saveEditHistory setting (defaults to false)
         setSaveEditHistory(conversation?.conversation?.saveEditHistory ?? false);
+        // Load per-conversation receipt overrides (undefined = use global)
+        setConvDeliveryReceipts(conversation?.conversation?.deliveryReceipts);
+        setConvReadReceipts(conversation?.conversation?.readReceipts);
+        // Load global receipt settings for display
+        setGlobalDeliveryReceipts(cfg?.deliveryReceipts ?? false);
+        setGlobalReadReceipts(cfg?.readReceipts ?? false);
       } catch {
         setNonRepudiable(true);
         setSaveEditHistory(false);
@@ -89,7 +100,10 @@ const ConversationSettingsModal: React.FC<ConversationSettingsModalProps> = ({
   }, [
     conversation?.conversation?.isRepudiable,
     conversation?.conversation?.saveEditHistory,
+    conversation?.conversation?.deliveryReceipts,
+    conversation?.conversation?.readReceipts,
     conversationId,
+    currentPasskeyInfo,
     getConfig,
     keyset.userKeyset,
   ]);
@@ -110,7 +124,13 @@ const ConversationSettingsModal: React.FC<ConversationSettingsModalProps> = ({
         ...baseConv,
         isRepudiable: !nonRepudiable,
         saveEditHistory: saveEditHistory,
+        deliveryReceipts: convDeliveryReceipts,
+        readReceipts: convReadReceipts,
       };
+
+      // Remove undefined receipt keys so IndexedDB doesn't store them
+      if (updatedConv.deliveryReceipts === undefined) delete updatedConv.deliveryReceipts;
+      if (updatedConv.readReceipts === undefined) delete updatedConv.readReceipts;
 
       await messageDB.saveConversation(updatedConv);
 
@@ -121,12 +141,14 @@ const ConversationSettingsModal: React.FC<ConversationSettingsModalProps> = ({
 
       onClose();
     } catch (error) {
-      console.error('Failed to update conversation repudiability:', error);
+      console.error('Failed to update conversation settings:', error);
       onClose();
     }
   }, [
     nonRepudiable,
     saveEditHistory,
+    convDeliveryReceipts,
+    convReadReceipts,
     conversationId,
     messageDB,
     conversation,
@@ -220,6 +242,82 @@ const ConversationSettingsModal: React.FC<ConversationSettingsModalProps> = ({
               <Tooltip
                 id="conv-mute-tooltip"
                 content={t`When muted, new messages won't show unread indicators or desktop notifications.`}
+                maxWidth={260}
+                className="!text-left !max-w-[260px]"
+                place="top"
+              >
+                <Icon name="info-circle" size="sm" />
+              </Tooltip>
+            </Flex>
+          </Flex>
+
+          <Flex gap="sm" align="center" className="mb-3">
+            <Switch
+              value={convDeliveryReceipts ?? globalDeliveryReceipts}
+              onChange={() =>
+                setConvDeliveryReceipts((prev) => {
+                  const effective = prev ?? globalDeliveryReceipts;
+                  return !effective;
+                })
+              }
+            />
+            <Flex gap="sm" align="center">
+              <div className="text-label-strong">
+                {t`Delivery receipts`}
+              </div>
+              {convDeliveryReceipts !== undefined && (
+                <button
+                  className="text-xs text-subtle hover:text-main cursor-pointer"
+                  onClick={() => setConvDeliveryReceipts(undefined)}
+                >
+                  {t`Reset to global`}
+                </button>
+              )}
+              <Tooltip
+                id="conv-delivery-receipts-tooltip"
+                content={
+                  convDeliveryReceipts !== undefined
+                    ? t`This conversation overrides your global setting. Click "Reset to global" to use your global preference.`
+                    : t`Uses your global setting. Toggle to override for this conversation only.`
+                }
+                maxWidth={260}
+                className="!text-left !max-w-[260px]"
+                place="top"
+              >
+                <Icon name="info-circle" size="sm" />
+              </Tooltip>
+            </Flex>
+          </Flex>
+
+          <Flex gap="sm" align="center" className="mb-3">
+            <Switch
+              value={convReadReceipts ?? globalReadReceipts}
+              onChange={() =>
+                setConvReadReceipts((prev) => {
+                  const effective = prev ?? globalReadReceipts;
+                  return !effective;
+                })
+              }
+            />
+            <Flex gap="sm" align="center">
+              <div className="text-label-strong">
+                {t`Read receipts`}
+              </div>
+              {convReadReceipts !== undefined && (
+                <button
+                  className="text-xs text-subtle hover:text-main cursor-pointer"
+                  onClick={() => setConvReadReceipts(undefined)}
+                >
+                  {t`Reset to global`}
+                </button>
+              )}
+              <Tooltip
+                id="conv-read-receipts-tooltip"
+                content={
+                  convReadReceipts !== undefined
+                    ? t`This conversation overrides your global setting. Click "Reset to global" to use your global preference.`
+                    : t`Uses your global setting. Toggle to override for this conversation only.`
+                }
                 maxWidth={260}
                 className="!text-left !max-w-[260px]"
                 place="top"

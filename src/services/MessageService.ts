@@ -2459,14 +2459,14 @@ export class MessageService {
 
           // Process delivery receipt data (intercept ack control messages, extract piggybacked acks, buffer for acking)
           const userConfig = await this.messageDB.getUserConfig({ address: self_address });
-          if (this.processDeliveryReceiptData(decryptedContent, session.user_address, self_address, !!userConfig?.deliveryReceipts)) {
-            // delivery-ack control message — encryption state saved, but don't save/display the message
-            return;
-          }
-
           const conversation = await this.messageDB.getConversation({
             conversationId,
           });
+          const effectiveDeliveryReceipts = conversation.conversation?.deliveryReceipts ?? !!userConfig?.deliveryReceipts;
+          if (this.processDeliveryReceiptData(decryptedContent, session.user_address, self_address, effectiveDeliveryReceipts)) {
+            // delivery-ack control message — encryption state saved, but don't save/display the message
+            return;
+          }
           await this.saveMessage(
             decryptedContent,
             this.messageDB,
@@ -4007,7 +4007,8 @@ export class MessageService {
         // Process delivery receipt data (intercept ack control messages, extract piggybacked acks, buffer for acking)
         const userConfig = await this.messageDB.getUserConfig({ address: self_address });
         const senderAddress = conversationId.split('/')[0];
-        if (this.processDeliveryReceiptData(decryptedContent, senderAddress, self_address, !!userConfig?.deliveryReceipts)) {
+        const effectiveDeliveryReceipts = conversation.conversation?.deliveryReceipts ?? !!userConfig?.deliveryReceipts;
+        if (this.processDeliveryReceiptData(decryptedContent, senderAddress, self_address, effectiveDeliveryReceipts)) {
           // delivery-ack control message — encryption state saved, but don't save/display the message
           return;
         }

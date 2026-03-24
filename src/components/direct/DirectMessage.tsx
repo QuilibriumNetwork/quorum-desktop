@@ -146,9 +146,11 @@ const DirectMessage: React.FC<{}> = () => {
           userKey: keyset.userKeyset,
         });
         const userNonRepudiable = cfg?.nonRepudiable ?? true;
-        setDeliveryReceipts(cfg?.deliveryReceipts ?? false);
-        setReadReceipts(cfg?.readReceipts ?? false);
-        logger.log('[ReadReceipt:Config]', { deliveryReceipts: cfg?.deliveryReceipts, readReceipts: cfg?.readReceipts });
+        const effectiveDeliveryReceipts = conversation?.conversation?.deliveryReceipts ?? cfg?.deliveryReceipts ?? false;
+        const effectiveReadReceipts = conversation?.conversation?.readReceipts ?? cfg?.readReceipts ?? false;
+        setDeliveryReceipts(effectiveDeliveryReceipts);
+        setReadReceipts(effectiveReadReceipts);
+        logger.log('[ReadReceipt:Config]', { deliveryReceipts: effectiveDeliveryReceipts, readReceipts: effectiveReadReceipts, convOverride: { delivery: conversation?.conversation?.deliveryReceipts, read: conversation?.conversation?.readReceipts } });
         if (typeof convIsRepudiable !== 'undefined') {
           const convNonRepudiable = !convIsRepudiable;
           setNonRepudiable(convNonRepudiable);
@@ -164,6 +166,8 @@ const DirectMessage: React.FC<{}> = () => {
     })();
   }, [
     conversation?.conversation?.isRepudiable,
+    conversation?.conversation?.deliveryReceipts,
+    conversation?.conversation?.readReceipts,
     keyset.userKeyset,
     getConfig,
     user.currentPasskeyInfo,
