@@ -213,7 +213,15 @@ const Privacy: React.FunctionComponent<PrivacyProps> = ({
             </div>
           </div>
           <div className="flex flex-row items-center gap-3 mt-3">
-            <Switch value={deliveryReceipts} onChange={setDeliveryReceipts} disabled={!isConfigLoaded} />
+            <Switch
+              value={deliveryReceipts}
+              onChange={(value: boolean) => {
+                setDeliveryReceipts(value);
+                // Cascade: turning delivery OFF also turns read OFF
+                if (!value) setReadReceipts(false);
+              }}
+              disabled={!isConfigLoaded}
+            />
             <div className="flex flex-row items-center">
               <div className="text-label-strong">
                 {t`Delivery receipts`}
@@ -231,8 +239,13 @@ const Privacy: React.FunctionComponent<PrivacyProps> = ({
               </Tooltip>
             </div>
           </div>
-          <div className="flex flex-row items-center gap-3 mt-3">
-            <Switch value={readReceipts} onChange={setReadReceipts} disabled={!isConfigLoaded} />
+          {deliveryReceipts && (
+          <div className="flex flex-row items-center gap-3 mt-3 ml-6">
+            <Switch
+              value={readReceipts}
+              onChange={setReadReceipts}
+              disabled={!isConfigLoaded}
+            />
             <div className="flex flex-row items-center">
               <div className="text-label-strong">
                 {t`Read receipts`}
@@ -250,6 +263,7 @@ const Privacy: React.FunctionComponent<PrivacyProps> = ({
               </Tooltip>
             </div>
           </div>
+          )}
         </div>
 
         <Spacer size="md" direction="vertical" borderTop={true} />

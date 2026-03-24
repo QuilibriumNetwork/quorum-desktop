@@ -115,6 +115,35 @@ describe('DeliveryReceiptService', () => {
       service.onAckReceived(['msg-1', 'msg-2']);
       expect(mockAckProcessed).toHaveBeenCalledWith(['msg-1', 'msg-2']);
     });
+
+    it('does not call onAckProcessed when empty array', () => {
+      const mockAckProcessed = vi.fn();
+      service = new DeliveryReceiptService({
+        onFlush: mockFlushCallback,
+        onAckProcessed: mockAckProcessed,
+      });
+      service.onAckReceived([]);
+      expect(mockAckProcessed).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('onReadAckReceived', () => {
+    it('calls onReadAckProcessed with correct arguments', () => {
+      const mockReadAckProcessed = vi.fn();
+      service = new DeliveryReceiptService({
+        onFlush: mockFlushCallback,
+        onReadAckProcessed: mockReadAckProcessed,
+      });
+      service.onReadAckReceived('msg-5', 5000, 'alice');
+      expect(mockReadAckProcessed).toHaveBeenCalledWith('msg-5', 5000, 'alice');
+    });
+
+    it('does not throw when onReadAckProcessed is not provided', () => {
+      service = new DeliveryReceiptService({
+        onFlush: mockFlushCallback,
+      });
+      expect(() => service.onReadAckReceived('msg-5', 5000, 'alice')).not.toThrow();
+    });
   });
 });
 

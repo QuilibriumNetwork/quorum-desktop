@@ -209,6 +209,7 @@ export class MessageService {
     senderAddress: string,
     selfAddress: string,
     deliveryReceiptsEnabled: boolean,
+    readReceiptsEnabled: boolean,
   ): boolean {
     const raw = decryptedContent as any;
 
@@ -226,12 +227,12 @@ export class MessageService {
     }
 
     // 1b. Intercept read-ack control messages — never save, never display
-    // NOTE: Unlike delivery acks, read acks are processed unconditionally (no readReceiptsEnabled check).
-    // Per spec: "Read acks are always persisted; display is gated on setting."
-    // This allows toggling readReceipts ON later to reveal historical read status.
+    // Only persist readAt when user's readReceipts setting is ON. This way toggling
+    // OFF stops new read receipts from being written, but already-persisted ones
+    // remain visible (settings gate persistence, display is unconditional).
     const isReadAck = raw.type === 'read-ack' || raw.content?.type === 'read-ack';
     if (isReadAck) {
-      if (this.deliveryReceiptService) {
+      if (this.deliveryReceiptService && readReceiptsEnabled) {
         const upToMessageId = raw.upToMessageId ?? raw.content?.upToMessageId;
         const upToTimestamp = raw.upToTimestamp ?? raw.content?.upToTimestamp;
         if (upToMessageId && upToTimestamp) {
@@ -252,7 +253,7 @@ export class MessageService {
 
     // 2b. Extract piggybacked readAckUpTo, process, then strip
     const readAckUpTo = raw.readAckUpTo;
-    if (readAckUpTo && this.deliveryReceiptService) {
+    if (readAckUpTo && this.deliveryReceiptService && readReceiptsEnabled) {
       logger.log('[ReadReceipt] Processing piggybacked read ack', { readAckUpTo, from: senderAddress });
       this.deliveryReceiptService.onReadAckReceived(readAckUpTo.messageId, readAckUpTo.timestamp, senderAddress);
     }
@@ -2463,7 +2464,8 @@ export class MessageService {
             conversationId,
           });
           const effectiveDeliveryReceipts = conversation.conversation?.deliveryReceipts ?? !!userConfig?.deliveryReceipts;
-          if (this.processDeliveryReceiptData(decryptedContent, session.user_address, self_address, effectiveDeliveryReceipts)) {
+          const effectiveReadReceipts = conversation.conversation?.readReceipts ?? !!userConfig?.readReceipts;
+          if (this.processDeliveryReceiptData(decryptedContent, session.user_address, self_address, effectiveDeliveryReceipts, effectiveReadReceipts)) {
             // delivery-ack control message — encryption state saved, but don't save/display the message
             return;
           }
@@ -4008,7 +4010,8 @@ export class MessageService {
         const userConfig = await this.messageDB.getUserConfig({ address: self_address });
         const senderAddress = conversationId.split('/')[0];
         const effectiveDeliveryReceipts = conversation.conversation?.deliveryReceipts ?? !!userConfig?.deliveryReceipts;
-        if (this.processDeliveryReceiptData(decryptedContent, senderAddress, self_address, effectiveDeliveryReceipts)) {
+        const effectiveReadReceipts = conversation.conversation?.readReceipts ?? !!userConfig?.readReceipts;
+        if (this.processDeliveryReceiptData(decryptedContent, senderAddress, self_address, effectiveDeliveryReceipts, effectiveReadReceipts)) {
           // delivery-ack control message — encryption state saved, but don't save/display the message
           return;
         }

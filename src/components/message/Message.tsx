@@ -939,10 +939,12 @@ export const Message = React.memo(
 
                   // Message receipt indicator: check (delivered) or check-check (read)
                   // Display logic:
-                  // - readAt set -> check-check (once received, always shown)
-                  // - deliveredAt set -> check (once received, always shown)
+                  // - readAt set -> check-check (always shown — readAt is only persisted
+                  //   when the user's readReceipts setting was ON at receive time)
+                  // - deliveredAt set -> check (always shown once persisted)
                   // - otherwise -> nothing
-                  // Privacy setting controls SENDING acks, not displaying already-received ones.
+                  // Privacy settings gate PERSISTENCE, not display. Once persisted,
+                  // checkmarks remain visible even if the setting is later turned off.
                   const isOwnMessage = message.content?.senderId === user.currentPasskeyInfo?.address;
                   let receiptIndicator: React.ReactNode = null;
                   if (!message.sendStatus && isOwnMessage) {

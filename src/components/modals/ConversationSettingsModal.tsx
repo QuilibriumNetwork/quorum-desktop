@@ -257,7 +257,10 @@ const ConversationSettingsModal: React.FC<ConversationSettingsModalProps> = ({
               onChange={() =>
                 setConvDeliveryReceipts((prev) => {
                   const effective = prev ?? globalDeliveryReceipts;
-                  return !effective;
+                  const newValue = !effective;
+                  // Cascade: turning delivery OFF also turns read OFF
+                  if (!newValue) setConvReadReceipts(false);
+                  return newValue;
                 })
               }
             />
@@ -268,7 +271,11 @@ const ConversationSettingsModal: React.FC<ConversationSettingsModalProps> = ({
               {convDeliveryReceipts !== undefined && (
                 <button
                   className="text-xs text-subtle hover:text-main cursor-pointer"
-                  onClick={() => setConvDeliveryReceipts(undefined)}
+                  onClick={() => {
+                    setConvDeliveryReceipts(undefined);
+                    // Cascade: resetting delivery also resets read to global
+                    setConvReadReceipts(undefined);
+                  }}
                 >
                   {t`Reset to global`}
                 </button>
@@ -289,7 +296,8 @@ const ConversationSettingsModal: React.FC<ConversationSettingsModalProps> = ({
             </Flex>
           </Flex>
 
-          <Flex gap="sm" align="center" className="mb-3">
+          {(convDeliveryReceipts ?? globalDeliveryReceipts) && (
+          <Flex gap="sm" align="center" className="mb-3 ml-6">
             <Switch
               value={convReadReceipts ?? globalReadReceipts}
               onChange={() =>
@@ -326,6 +334,7 @@ const ConversationSettingsModal: React.FC<ConversationSettingsModalProps> = ({
               </Tooltip>
             </Flex>
           </Flex>
+          )}
 
           {showEditHistoryToggle && (
             <Flex gap="sm" align="center" className="mb-3">

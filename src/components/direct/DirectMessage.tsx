@@ -147,7 +147,9 @@ const DirectMessage: React.FC<{}> = () => {
         });
         const userNonRepudiable = cfg?.nonRepudiable ?? true;
         const effectiveDeliveryReceipts = conversation?.conversation?.deliveryReceipts ?? cfg?.deliveryReceipts ?? false;
-        const effectiveReadReceipts = conversation?.conversation?.readReceipts ?? cfg?.readReceipts ?? false;
+        const effectiveReadReceipts = effectiveDeliveryReceipts
+          ? (conversation?.conversation?.readReceipts ?? cfg?.readReceipts ?? false)
+          : false;
         setDeliveryReceipts(effectiveDeliveryReceipts);
         setReadReceipts(effectiveReadReceipts);
         logger.log('[ReadReceipt:Config]', { deliveryReceipts: effectiveDeliveryReceipts, readReceipts: effectiveReadReceipts, convOverride: { delivery: conversation?.conversation?.deliveryReceipts, read: conversation?.conversation?.readReceipts } });
