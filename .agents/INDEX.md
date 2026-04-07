@@ -89,6 +89,7 @@ This is the main index for all documentation, bug reports, and task management.
 
 ### Active Issues
 - [Message list scroll jank on send — Virtuoso scroll position drift](bugs/2026-03-19-message-list-scroll-jank-on-send.md)
+- [No visual feedback when dragging files onto dropzone areas](bugs/2026-04-07-missing-drag-feedback-file-uploads.md)
 - [Config Sync Space Loss Race Condition](bugs/config-sync-space-loss-race-condition.md)
 - [DirectMessage Invite Loading Performance Issue](bugs/directmessage-invite-loading-performance.md)
 - [Encryption State Evals Causing Config Sync Bloat](bugs/encryption-state-evals-bloat.md)
@@ -491,4 +492,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2026-04-07 11:21:24
+**Last Updated**: 2026-04-07 11:44:27
