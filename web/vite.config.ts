@@ -6,38 +6,51 @@ import { resolve } from 'path';
 import { lingui } from '@lingui/vite-plugin';
 
 /**
- * Plugin to resolve vite-plugin-node-polyfills shims for linked packages outside node_modules.
- * The nodePolyfills plugin injects bare specifiers like 'vite-plugin-node-polyfills/shims/global'
- * which Rollup can't resolve when the importer is outside the project's node_modules tree.
+ * Absolute paths for vite-plugin-node-polyfills shim specifiers.
+ *
+ * The nodePolyfills plugin rewrites Node built-in imports (e.g. 'buffer') to bare
+ * specifiers like 'vite-plugin-node-polyfills/shims/buffer'. For linked packages
+ * outside node_modules (e.g. quorum-shared, quilibrium-js-sdk-channels), these
+ * bare specifiers can't be resolved by standard module resolution.
+ *
+ * Used in two places:
+ * 1. Build phase: via resolvePolyfillShims() plugin (resolveId hook for Rolldown)
+ * 2. Optimizer phase: via resolve.alias (Rolldown optimizer doesn't run Vite
+ *    plugin hooks, but does apply Vite-level aliases before bundling)
+ */
+const polyfillShimAliases: Record<string, string> = {
+  'vite-plugin-node-polyfills/shims/buffer': resolve(
+    __dirname,
+    '../node_modules/vite-plugin-node-polyfills/shims/buffer/dist/index.js'
+  ),
+  'vite-plugin-node-polyfills/shims/global': resolve(
+    __dirname,
+    '../node_modules/vite-plugin-node-polyfills/shims/global/dist/index.js'
+  ),
+  'vite-plugin-node-polyfills/shims/process': resolve(
+    __dirname,
+    '../node_modules/vite-plugin-node-polyfills/shims/process/dist/index.js'
+  ),
+};
+
+/**
+ * Plugin to resolve polyfill shim specifiers during the build phase.
+ * Vite's resolve.alias handles initial resolution but doesn't catch specifiers
+ * produced by other plugins mid-pipeline (e.g. nodePolyfills rewriting 'buffer').
+ * This resolveId hook catches those second-pass resolutions.
  */
 function resolvePolyfillShims(): Plugin {
-  const shimMap: Record<string, string> = {
-    'vite-plugin-node-polyfills/shims/buffer': resolve(
-      __dirname,
-      '../node_modules/vite-plugin-node-polyfills/shims/buffer/dist/index.js'
-    ),
-    'vite-plugin-node-polyfills/shims/global': resolve(
-      __dirname,
-      '../node_modules/vite-plugin-node-polyfills/shims/global/dist/index.js'
-    ),
-    'vite-plugin-node-polyfills/shims/process': resolve(
-      __dirname,
-      '../node_modules/vite-plugin-node-polyfills/shims/process/dist/index.js'
-    ),
-  };
-
   return {
     name: 'resolve-polyfill-shims',
     enforce: 'pre',
-    resolveId(id) {
-      if (id in shimMap) {
-        return shimMap[id];
+    resolveId(id: string) {
+      if (id in polyfillShimAliases) {
+        return polyfillShimAliases[id];
       }
       return null;
     },
   };
 }
-
 
 // https://vite.dev/config/
 export default defineConfig(({ command }): UserConfig => ({
@@ -124,6 +137,9 @@ export default defineConfig(({ command }): UserConfig => ({
         __dirname,
         '../node_modules/@quilibrium/quilibrium-js-sdk-channels/dist/index.esm.js'
       ),
+      // Polyfill shim aliases for the dependency optimizer (which doesn't run
+      // Vite plugin hooks). The build phase uses resolvePolyfillShims() instead.
+      ...polyfillShimAliases,
     },
     // Platform-specific resolution - prioritize .web files over .native files
     extensions: [
