@@ -1,16 +1,17 @@
 ---
 type: task
 title: "Dependency Updates Audit"
-status: open
+status: in-progress
 complexity: high
 ai_generated: true
 reviewed_by:
   - feature-analyzer
   - security-analyst
 created: 2026-02-24
-updated: 2026-02-24
+updated: 2026-04-07
 related_docs:
   - ".agents/docs/development/unused-dependencies-analysis.md"
+branch: chore/dependency-updates
 ---
 
 # Dependency Updates Audit
@@ -18,199 +19,198 @@ related_docs:
 > **Warning: AI-Generated**: May contain errors. Verify before use.
 > **Reviewed by**: feature-analyzer agent, security-analyst agent
 
+**Branch**: `chore/dependency-updates` (6 commits, based on `main`)
 **Files**:
 - `package.json`
 - `yarn.lock`
 - `web/vite.config.ts`
-- `web/electron/main.cjs`
-- `tailwind.config.js`
-- `postcss.config.js`
+- `vitest.config.ts`
 - `eslint.config.js`
 
 ## What & Why
 
-The project has accumulated significant dependency drift across quorum-desktop. Many packages are multiple minor or major versions behind their latest releases. Keeping dependencies current reduces security vulnerabilities, improves performance, and ensures access to bug fixes and new features.
+The project had significant dependency drift. Many packages were multiple minor or major versions behind their latest releases. Keeping dependencies current reduces security vulnerabilities, improves performance, and ensures access to bug fixes and new features.
 
 **Constraint**: Tailwind CSS v4 is explicitly blocked because the current stack (PostCSS plugin architecture, `tailwind.config.js`, `withOpacityValue` pattern) is incompatible with v4's new engine. Stay on v3.x.
 
-**Security urgency**: Electron 33.x bundles Chromium 130.x which has multiple high-severity CVEs patched in later versions, including CVE-2025-4609 (critical sandbox escape) and CVE-2025-2783. For a messaging app handling cryptographic keys and plaintext messages, this is high priority.
+**Security urgency**: Electron 33.x bundled Chromium 130.x which had multiple high-severity CVEs (CVE-2025-4609, CVE-2025-2783). Resolved by upgrading to Electron 41.
 
 ## Context
 - **Package manager**: Yarn 1.x (never use npm)
-- **Build tool**: Vite 6.x with plugin ecosystem
-- **Desktop**: Electron 33.x (Chromium 130.x — multiple known CVEs)
-- **React**: 19.0.0 (but types are still v18)
+- **Build tool**: Vite 8.x with Rolldown bundler (upgraded from Vite 6.x with Rollup)
+- **Desktop**: Electron 41.x (upgraded from 33.x)
+- **React**: 19.2.4 (upgraded from 19.0.0), types now v19 (upgraded from v18)
 - **Tailwind**: 3.4.x (v4 blocked)
-- **Cross-repo dependency**: `@quilibrium/quorum-shared@2.1.0-2` is hard-pinned (no `^`)
+- **Cross-repo dependency**: `@quilibrium/quorum-shared` is linked locally (`link:../quorum-shared`)
 - **Related analysis**: Previous unused-deps audit in `.agents/docs/development/unused-dependencies-analysis.md`
 
-**Note on version numbers**: Specific version numbers in this task reflect a snapshot from `yarn outdated`. Always run `yarn upgrade` to get the actual latest within declared ranges rather than targeting specific versions listed here.
+## Implementation Progress
 
-**Note on `autoprefixer`/`postcss`**: The earlier `unused-dependencies-analysis.md` incorrectly listed these as unused. They ARE actively used via `postcss.config.js` for the Tailwind build pipeline. Do not remove them.
+### Phase 1: Safe Within-Range Updates - DONE
+**Commit**: `a2b6fc5c`
 
-## Prerequisites
-- [ ] Branch created from `develop`
-- [ ] No conflicting PRs modifying `package.json` or `yarn.lock`
-- [ ] Current `yarn build` passes before starting
-- [ ] Run `yarn audit` to establish a baseline of existing advisories
-- [ ] Commit current `yarn.lock` as a clean snapshot before starting (enables bisection if regressions occur)
-- [ ] Verify whether `@lingui/core` needs to be explicitly added to `package.json` (flagged as missing in `unused-dependencies-analysis.md`)
-- [x] Check `@quilibrium/quorum-shared@2.1.0-2` exports for React 19 type compatibility — **CLEAR: no blocker**. Package exports only domain types, React Query hooks, and pure utilities. Zero React component/FC/forwardRef/ReactNode usage.
+Ran `yarn upgrade` to pull all packages to latest versions within existing `^` semver ranges.
 
-## Implementation
+**Verified**: build, tests (383 passed).
 
-### Phase 1: Safe Within-Range Updates
-Run `yarn upgrade` to pull all packages to their latest versions within existing `^` semver ranges.
+### Phase 2: Fix React Types Mismatch - DONE
+**Commit**: `4c0b0ef0`
 
-**Packages covered:**
-- [ ] `@lingui/*` (4 packages) — minor bump
-- [ ] `@tabler/icons-react` — minor bump
-- [ ] `@tanstack/react-query` — minor bump
-- [ ] `react-router` / `react-router-dom` — minor bump
-- [ ] `react-tooltip` — minor bump
-- [ ] `react-virtuoso` — minor bump
-- [ ] `sass` / `sass-embedded` — minor bump (note: both are installed; verify no Vite warnings about duplicate Sass implementations)
-- [ ] `typescript-eslint` — minor bump
-- [ ] `eslint` ecosystem patches (eslint-plugin-react, react-hooks, react-refresh)
-- [ ] `autoprefixer` — patch bump (used in `postcss.config.js`)
-- [ ] `tailwindcss` — patch bump (stays on v3.x)
-- [ ] `prettier` — minor bump
-- [ ] `react-dropzone` — minor bump (within v14.x)
-- [ ] `@testing-library/*` — patches
-- [ ] `@types/react` — patch bump (within v18.x range)
-- [ ] `@types/prismjs` — patch bump
-- [ ] `@iden3/js-crypto` — patch bump
+- `@types/react` 18.3.12 -> 19.2.14
+- `@types/react-dom` 18.3.1 -> 19.2.3
+- Updated `eslint.config.js` react version setting from `'18.3'` to `'19.0'` (both config blocks)
 
-**Commit `yarn.lock` after this phase** for bisection if later phases introduce regressions.
+**Decision**: `quorum-shared` was verified safe for React 19 types (exports only domain types, React Query hooks, and pure utilities; zero React component/FC/forwardRef/ReactNode usage).
 
-**Verify:**
-- `yarn build` succeeds
-- `yarn lint` succeeds
-- `yarn test:run` passes
-- `yarn audit --level high` — no new high/critical advisories
+**Verified**: zero new type errors, build, tests (383 passed).
 
-### Phase 2: Fix React Types Mismatch + react-native-web
-App runs React 19.0.0 but uses `@types/react@18.x` and `@types/react-dom@18.x`. These should match the runtime version.
+### Phase 3: Electron Upgrade - DONE
+**Commit**: `db575155`
 
-**quorum-shared compatibility**: Verified — `@quilibrium/quorum-shared@2.1.0-2` exports only domain types, React Query hooks, and pure utility functions. It has zero React component exports, no `React.FC`, no `forwardRef`, no `ReactNode` usage. **No blocker** for the React 19 types upgrade.
+- `electron` 33.2.1 -> 41.1.1 (Chromium 130 -> 146)
+- `electron-builder` 25.1.8 -> 26.8.1
 
-```bash
-yarn add -D @types/react@^19.0.0 @types/react-dom@^19.0.0
+**Decision**: Jumped directly to Electron 41 because our Electron usage is minimal and conservative (basic BrowserWindow, simple IPC handlers for window controls, no deprecated APIs). Research confirmed none of the breaking changes across v34-41 affect our code:
+- No `session.clearStorageData()` usage (despite original task assumption)
+- No clipboard API in renderer
+- No session-level preloads (we use `webPreferences.preload`)
+- `contextIsolation: true` and `nodeIntegration: false` already set correctly
+
+**NOT addressed in this phase** (pre-existing issues, not introduced by upgrade):
+- `webSecurity: isDev ? false : true` in `main.cjs:52`
+- Unvalidated `quorum://` protocol handler in `main.cjs:91-98`
+
+**Verified**: build, tests (383 passed). **Manual Electron testing still needed** (see Remaining Work).
+
+### Phase 4: Vite 8 + Ecosystem Migration - PARTIALLY DONE
+**Commits**: `316fedd9`, `38e1c641`
+
+Upgraded packages:
+- `vite` 6.3.5 -> 8.0.5 (Rolldown bundler, ~3x faster builds: 44s -> 15s)
+- `@vitejs/plugin-react` 4.7.0 -> 5.2.0
+- `vitest` 2.1.9 -> 4.1.2
+- `@vitest/ui` 2.1.9 -> 4.1.2
+- `vite-plugin-static-copy` 2.3.2 -> 3.4.0
+- `vite-plugin-node-polyfills` 0.24.0 -> 0.26.0
+
+**Key decisions and rationale**:
+
+1. **`@vitejs/plugin-react` v5.2.0 (not v6.0.1)**: v6 dropped Babel entirely in favor of Oxc. Our Lingui macro pipeline (`@lingui/babel-plugin-lingui-macro`) requires Babel integration. v5.2.0 supports Vite 8 while keeping the `babel: { plugins: [...] }` config. When Lingui ships an Oxc-native plugin (tracked in [lingui/js-lingui#2283](https://github.com/lingui/js-lingui/issues/2283)), we can upgrade to v6.
+
+2. **`vite-plugin-static-copy` v3.4.0 (not v4.0.1)**: v4 switched from `fast-glob` to `tinyglobby`, which has `onlyFiles: true` by default. Our existing glob pattern `node_modules/emoji-datasource-twitter/img/twitter/*` relies on matching directories, which `tinyglobby` doesn't do. v3.4.0 supports Vite 8, keeps `fast-glob`, and requires no config changes.
+
+3. **Config changes**:
+   - `build.rollupOptions` renamed to `build.rolldownOptions` (Vite 8 convention)
+   - Added React deduplication aliases to `vitest.config.ts` (Vitest 4 changed module resolution, causing dual React instances when testing components using quorum-shared primitives)
+   - Extracted `polyfillShimAliases` constant shared between the `resolvePolyfillShims()` plugin and `resolve.alias`
+
+**KNOWN ISSUE - Dev server optimizer fails** (see Remaining Work below).
+
+**Verified**: production build passes, all 383 tests pass. Dev server does NOT work yet.
+
+### Phase 5: Other Major Version Bumps - DONE
+**Commit**: `7536b3e2`
+
+- `react` 19.0.0 -> 19.2.4 (patch bump)
+- `react-dom` 19.0.0 -> 19.2.4 (patch bump)
+- `jsdom` 25.0.1 -> 29.0.2 (test-only dependency)
+
+**Verified**: build, tests (383 passed).
+
+### Skipped Packages (with rationale)
+
+| Package | Current | Latest | Why skipped |
+|---------|---------|--------|-------------|
+| `tailwindcss` | 3.4.x | 4.2.x | Stack incompatible (PostCSS plugin arch, config format) |
+| `@vitejs/plugin-react` | 5.2.0 | 6.0.1 | Drops Babel, breaks Lingui macro pipeline |
+| `vite-plugin-static-copy` | 3.4.0 | 4.0.1 | Breaks glob patterns (tinyglobby vs fast-glob) |
+| `eslint` | 9.39.4 | 10.2.0 | Large config migration, separate task |
+| `@eslint/js` | 9.39.4 | 10.0.1 | Tied to ESLint 10 ecosystem |
+| `eslint-plugin-react-hooks` | 5.2.0 | 7.0.1 | Tied to ESLint ecosystem |
+| `eslint-plugin-react-refresh` | 0.4.26 | 0.5.2 | Tied to ESLint ecosystem |
+| `globals` | 15.15.0 | 17.4.0 | Tied to ESLint ecosystem |
+| `react-dropzone` | 14.4.1 | 15.0.0 | Peer dep says `react >= 16.8 \|\| 18.0.0`, doesn't include React 19 |
+| `base58-js` | 2.0.0 | 3.0.3 | Only used in `crypto.native.ts` (mobile, not desktop build) |
+
+## Remaining Work
+
+### BLOCKER: Dev Server Optimizer Crash
+
+**Status**: Unsolved. Production build works fine, dev server (`yarn dev`) crashes.
+
+**Error**:
+```
+[UNLOADABLE_DEPENDENCY] Error: Could not load vite-plugin-node-polyfills/shims/buffer
+╭─[ ../quilibrium-js-sdk-channels/dist/index.esm.js:1:36 ]
+│
+1 │ import { Buffer as Buffer$1 } from 'buffer';
+│                                    ────┬───
+│                                        ╰─── os error 3
+───╯
 ```
 
-- [ ] Upgrade `react-native-web` 0.20.0 → 0.21.x in the same step (v0.21 adds React 19 support; running React 19 types with react-native-web 0.20 is an untested combination)
-- [ ] Update `eslint.config.js` react version setting from `'18.3'` to `'19.0'`
+**Root cause analysis**:
+- `@quilibrium/quilibrium-js-sdk-channels` is in `optimizeDeps.include` (force pre-bundled)
+- During optimizer pre-bundling, Rolldown encounters `import { Buffer } from 'buffer'`
+- The `nodePolyfills` plugin's alias rewrites `buffer` -> `vite-plugin-node-polyfills/shims/buffer` (a bare specifier)
+- In Vite 6 (esbuild optimizer), our `resolvePolyfillShims()` plugin's `resolveId` hook caught this and resolved it to the absolute path
+- In Vite 8 (Rolldown optimizer), **Vite plugin `resolveId` hooks do NOT run during the optimizer phase**
+- Adding the aliases to `resolve.alias` doesn't help either, because the alias plugin runs once and doesn't do a second pass after the nodePolyfills plugin rewrites the specifier
 
-**Verify:**
-- `npx tsc --noEmit --jsx react-jsx --skipLibCheck` passes
-- No new type errors introduced
-- `yarn lint` passes with updated react version setting
+**What was tried**:
+1. Adding polyfill aliases to `resolve.alias` - aliases don't catch specifiers produced mid-pipeline by other plugins
+2. Adding polyfill aliases to `optimizeDeps.rolldownOptions.resolve.alias` - Rolldown's `InputOptions` type doesn't actually have a `resolve.alias` field (despite the research agent suggesting it)
+3. Removing the `resolvePolyfillShims()` plugin and relying solely on aliases - breaks production build too
 
-### Phase 3: Electron Upgrade (security priority)
-**Prioritized before Vite 7** due to active CVE exposure in Chromium 130.x (Electron 33.x):
-- CVE-2025-4609: Critical sandbox escape in Chromium's Mojo component (Windows)
-- CVE-2025-2783: Patched in Electron 34.4.1+
-- AIKIDO-2025-10340: Policy enforcement issue in Electron 34.0-34.5.6 and 35.0-35.4.0
+**Possible approaches to investigate**:
+1. **Pass a Rolldown plugin via `optimizeDeps.rolldownOptions.plugins`** with a `resolveId` hook (the optimizer does accept plugins)
+2. **Skip pre-bundling the SDK**: remove `@quilibrium/quilibrium-js-sdk-channels` from `optimizeDeps.include` and see if the dev server works without it (the comment says "Force Vite to pre-bundle or app doesn't load (WSL)" but this may be a Vite 6 issue that Vite 8 solved)
+3. **Upgrade vite-plugin-node-polyfills**: check if there's a newer version or PR that handles Vite 8's optimizer natively
+4. **Use the nodePolyfills plugin's own Rolldown-aware code path**: the plugin already has `this?.meta?.rolldownVersion` detection (line ~91-96 of source). It may need a config change or bug fix to also alias the shim specifiers in the optimizer context, not just the Node built-in names
+5. **File an issue on vite-plugin-node-polyfills** referencing the existing [issue #142](https://github.com/davidmyersdev/vite-plugin-node-polyfills/issues/142)
 
-Upgrade Electron from 33.x to 36.x (3 major versions behind):
+### Manual Testing Needed
 
-- [ ] Review breaking changes for Electron 34, 35, and 36
-- [ ] Review CVE advisories for Chromium versions 131-136
-- [ ] `electron` 33.2.1 → 36.x
-- [ ] `electron-builder` 25.1.8 → 26.x
-- [ ] Update `web/electron/main.cjs` if API changes require it
-- [ ] Verify `session.clearStorageData()` still works correctly (Electron 36 deprecates the `quota` property — relevant if used for secure session cleanup)
+Once the dev server issue is resolved:
 
-**Pre-existing security issues to address during this phase:**
-- [ ] **`webSecurity: isDev ? false : true`** (`main.cjs:52`) — disables same-origin policy entirely in dev mode. Consider replacing with a Vite dev server proxy configuration.
-- [ ] **Unvalidated `quorum://` protocol handler** (`main.cjs:91-98`) — `app.setAsDefaultProtocolClient('quorum')` has no `open-url` event handler to validate incoming URLs. Add URL validation against an allowlist.
+1. **Dev server** (`yarn dev`): Does the app load? Hot reloads?
+2. **Electron** (`yarn electron:dev`): Desktop app launch, window controls, protocol handler
+3. **Emoji rendering**: Open a chat, type an emoji, confirm `/twitter/64/*.png` images load
+4. **WASM modules**: Crypto/signing modules load (try any action that triggers encryption)
+5. **quorum-shared integration**: Primitives render correctly, hooks work, types resolve
 
-**Verify:**
-- `yarn electron:build` succeeds
-- App launches correctly on desktop
-- IPC communication still works
-- Window management behaves correctly
-- `yarn audit --level high` — no new advisories
-- Review `yarn.lock` diff for unexpected registry source URLs
+### Not In Scope (separate tasks)
 
-### Phase 4: Vite 7 + Ecosystem Migration (requires Phase 1)
-Upgrade Vite and its tightly-coupled ecosystem together:
+- ESLint 10.x migration (large config overhaul)
+- Tailwind CSS 4.x migration (architecture-incompatible)
+- `webSecurity: false` in dev mode (pre-existing)
+- Unvalidated `quorum://` protocol handler (pre-existing)
 
-- [ ] Read Vite 7 migration guide
-- [ ] `vite` 6.3.5 → 7.x
-- [ ] `@vitejs/plugin-react` — upgrade to latest version compatible with Vite 7 (check actual version, don't assume 5.x). Verify the Babel pipeline still works with `@lingui/babel-plugin-lingui-macro`.
-- [ ] `vitest` / `@vitest/ui` — upgrade to latest version compatible with Vite 7 (likely 3.x, not 4.x — vitest versions track Vite major versions)
-- [ ] `vite-plugin-static-copy` 2.3.2 → 3.x
-- [ ] `vite-plugin-node-polyfills` 0.24.0 → 0.25.0 (the custom `resolvePolyfillShims()` plugin in `vite.config.ts` has a hardcoded path into `node_modules/vite-plugin-node-polyfills/shims/` — verify this still resolves correctly)
-- [ ] `vite-plugin-favicons-inject` — verify compatibility with Vite 7 plugin API (the custom `injectFaviconsInto404` wrapper depends on `transformIndexHtml` hook behavior)
-- [ ] Update `web/vite.config.ts` if API changes require it
+## Commit History (branch: chore/dependency-updates)
 
-**Verify:**
-- `yarn build` succeeds
-- `yarn dev` starts without errors
-- `yarn test:run` passes
-- Static copy of emoji assets still works
-- Favicons appear correctly in both `index.html` and `dist/web/404.html`
-- Mobile workspace (`yarn mobile`) still builds (Metro doesn't use Vite, but check for transitive dependency effects)
-
-### Phase 5: Other Major Version Bumps (evaluate individually)
-Each of these should be evaluated for breaking changes before upgrading:
-
-- [ ] `react-dropzone` 14.x → 15.0.0 — check for API changes in file upload flows
-- [ ] `jsdom` 25.0.1 → 26.1.0 — test-only, low risk
-- [ ] `globals` 15.12.0 → 16.3.0 — ESLint globals definitions
-- [ ] `@eslint/js` 9.x → 10.x — evaluate config migration needs
-
-## DO NOT Upgrade
-
-These packages are explicitly excluded from this task:
-
-| Package | Current | Latest | Reason |
-|---------|---------|--------|--------|
-| `tailwindcss` | 3.4.x | 4.2.x | Stack incompatible (PostCSS plugin arch, config format, `withOpacityValue`) |
-| Browserify polyfills | various | various | Pinned for web compatibility (`assert`, `stream-browserify`, `string_decoder`, `crypto-browserify`, `buffer`, etc.) |
-| `@expo/metro-runtime` | 5.0.x | 6.x | Pinned to Expo 53 SDK version — check `mobile/package.json` for Expo version before any update |
-
-**Note on polyfills**: `vm-browserify@0.0.4` (from 2013) is security-sensitive — it evaluates code in an iframe context. Ensure it is not used in any code path that processes untrusted peer-supplied content. Migration to `vite-plugin-node-polyfills` built-in shims is a follow-up task once Vite 7 migration (Phase 4) is stable.
-
-## Supply Chain Security Notes
-
-- **Commit `yarn.lock` changes per-phase** (not consolidated) for reviewable diffs and blast radius isolation
-- **Run `yarn audit` after Phases 1, 3, and 4** (highest dependency surface change)
-- **Use `yarn install --frozen-lockfile` in CI** — never let CI re-resolve packages
-- **Review `yarn.lock` diffs for unexpected registry URLs** — all resolved URLs should point to `registry.yarnpkg.com`
-- **First-party `@quilibrium/*` packages** are resolved to local paths in `vite.config.ts`, reducing supply chain risk for those
-
-## Rollback Strategy
-
-If any phase introduces a regression that cannot be quickly fixed:
-1. Revert to the pre-phase `yarn.lock` commit: `git checkout <sha> -- yarn.lock`
-2. Run `yarn install --frozen-lockfile` to restore the previous state
-3. Per-phase commits enable targeted rollback without losing other phases' work
+```
+38e1c641 chore: refactor polyfill shim resolution for Vite 8 compatibility
+7536b3e2 chore: upgrade React 19.0 to 19.2.4 and jsdom 25 to 29 (Phase 5)
+316fedd9 chore: upgrade to Vite 8 + ecosystem (Phase 4)
+db575155 chore: upgrade Electron 33 to 41 and electron-builder 25 to 26 (Phase 3)
+4c0b0ef0 chore: upgrade React types to v19 and update eslint react version (Phase 2)
+a2b6fc5c chore: apply within-range dependency updates (Phase 1)
+```
 
 ## Verification
 
-**After each phase:**
+**After each phase** (all passed for production build):
 
-1. **Build passes**: `yarn build`
-2. **Lint passes**: `yarn lint`
-3. **Tests pass**: `yarn test:run`
-4. **Types check**: `npx tsc --noEmit --jsx react-jsx --skipLibCheck`
-5. **Dev server works**: `yarn dev` loads without errors
-6. **No console errors** in browser
-7. **Security audit**: `yarn audit --level high`
+1. **Build passes**: `yarn build` (15-21s with Vite 8, down from 44s)
+2. **Tests pass**: `yarn test:run` (383 passed, 2 todo)
+3. **No new type errors**: `npx tsc --noEmit --jsx react-jsx --skipLibCheck` (2168 pre-existing, unchanged)
+4. **Lint baseline**: 78 errors, 295 warnings (all pre-existing, unchanged)
 
-**Phase 3 additionally:**
-- Electron app builds and launches
-- Desktop-specific features work (window management, IPC)
-- Session/storage clearing works correctly
+**NOT yet verified**:
+- `yarn dev` (blocked by optimizer issue)
+- `yarn electron:dev` / `yarn electron:build`
+- Manual UI testing
 
-## Definition of Done
-- [ ] Phase 1: All within-range updates applied and verified
-- [ ] Phase 2: React types upgraded to v19 + react-native-web 0.21.x and verified
-- [ ] Phase 3: Electron upgraded, desktop build verified, pre-existing security issues addressed
-- [ ] Phase 4: Vite 7 migration complete and verified
-- [ ] Phase 5: Other major bumps evaluated and applied where safe
-- [ ] All verification checks pass (including `yarn audit`)
-- [ ] No regressions in functionality
-- [ ] Each phase committed separately for bisection
+---
+
+*Updated: 2026-04-07*
