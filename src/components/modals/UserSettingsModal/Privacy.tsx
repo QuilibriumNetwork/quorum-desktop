@@ -278,7 +278,7 @@ const Privacy: React.FunctionComponent<PrivacyProps> = ({
         )}
         <ScrollContainer height="xs">
           {stagedRegistration?.device_registrations
-            .sort((a, b) => {
+            .sort((a: secureChannel.DeviceRegistration, b: secureChannel.DeviceRegistration) => {
               // Sort so "this device" appears first
               const aIsThisDevice = keyset.deviceKeyset.inbox_keyset.inbox_address === a.inbox_registration.inbox_address;
               const bIsThisDevice = keyset.deviceKeyset.inbox_keyset.inbox_address === b.inbox_registration.inbox_address;

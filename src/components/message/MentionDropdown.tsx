@@ -21,7 +21,7 @@ interface MentionDropdownProps {
   /** Render via Portal with fixed positioning (for use in MessageEditTextarea) */
   usePortal?: boolean;
   /** Element to position relative to when usePortal is true */
-  portalTargetRef?: React.RefObject<HTMLElement>;
+  portalTargetRef?: React.RefObject<HTMLElement | null>;
   /** Caret position for positioning dropdown near where user is typing */
   caretPosition?: CaretPosition | null;
   /** Show "Notify all members" subtitle for @everyone (default: true) */

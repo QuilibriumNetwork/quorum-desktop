@@ -1,3 +1,3 @@
-const buildSpacesKey = ({}: {}) => ['Spaces'];
+const buildSpacesKey = (_args: Record<string, never> = {}) => ['Spaces'];
 
 export { buildSpacesKey };

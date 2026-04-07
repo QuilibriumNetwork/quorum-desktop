@@ -1,7 +1,7 @@
 import { useRef, useCallback, useEffect } from 'react';
 
 export interface UseSearchFocusManagerProps {
-  searchInputRef?: React.RefObject<HTMLInputElement>;
+  searchInputRef?: React.RefObject<HTMLInputElement | null>;
   isResultsVisible: boolean;
 }
 
@@ -18,7 +18,7 @@ export const useSearchFocusManager = ({
   searchInputRef,
   isResultsVisible,
 }: UseSearchFocusManagerProps): UseSearchFocusManagerReturn => {
-  const focusTimeoutRef = useRef<NodeJS.Timeout>();
+  const focusTimeoutRef = useRef<NodeJS.Timeout | undefined>(undefined);
   const isUserInteracting = useRef(false);
   const focusScheduled = useRef(false);
 

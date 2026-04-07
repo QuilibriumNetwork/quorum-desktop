@@ -66,7 +66,7 @@ export const RadioGroupExamples: React.FC = () => {
               {...example.props}
               {...dynamicProps}
               value={radioValues[index] || ''}
-              onChange={(value) => handleRadioChange(index, value)}
+              onChange={(value: string) => handleRadioChange(index, value)}
             />
             <span className="text-xs text-subtle">
               {example.name}

@@ -33,7 +33,6 @@ const SpaceIcon: React.FunctionComponent<SpaceIconProps> = (props) => {
     shouldHideTooltip = dragContext.isDragging || dragContext.isContextMenuOpen;
   } catch {
     // Not in drag context, tooltips should work normally
-    shouldHideTooltip = false;
   }
 
   // Check if there's a valid image

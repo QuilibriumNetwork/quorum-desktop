@@ -25,6 +25,13 @@ export default [
       'src/i18n/**', // Auto-generated translation files
     ],
   },
+  // Node.js CJS files (Metro shim etc.)
+  {
+    files: ['mobile/__empty.js'],
+    languageOptions: {
+      globals: globals.node,
+    },
+  },
   // JavaScript/JSX files
   {
     files: ['**/*.{js,jsx}'],
@@ -49,10 +56,20 @@ export default [
       ...react.configs['jsx-runtime'].rules,
       ...reactHooks.configs.recommended.rules,
       'react/jsx-no-target-blank': 'off',
+      'react/prop-types': 'off', // TypeScript already validates prop types
       'react-refresh/only-export-components': [
         'warn',
         { allowConstantExport: true },
       ],
+      // ESLint 10 new rules - deferred for follow-up
+      'preserve-caught-error': 'warn',
+      // React Compiler rules (react-hooks@7) - disabled pending React Compiler adoption
+      'react-hooks/immutability': 'off',
+      'react-hooks/set-state-in-effect': 'off',
+      'react-hooks/preserve-manual-memoization': 'off',
+      'react-hooks/purity': 'off',
+      'react-hooks/refs': 'off',
+      'react-hooks/use-memo': 'off',
     },
   },
   // TypeScript/TSX files
@@ -95,6 +112,17 @@ export default [
       'no-unused-vars': 'off', // Turn off base rule (use TS version instead)
       'react/display-name': 'off', // Allow anonymous components (forwardRef, memo)
       'react/no-unescaped-entities': 'off', // Allow quotes/apostrophes in JSX (needed for i18n)
+      'react/prop-types': 'off', // TypeScript already validates prop types
+      'func-params-args/func-args': 'off', // Plugin not installed
+      // ESLint 10 new rules - deferred for follow-up
+      'preserve-caught-error': 'warn',
+      // React Compiler rules (react-hooks@7) - disabled pending React Compiler adoption
+      'react-hooks/immutability': 'off',
+      'react-hooks/set-state-in-effect': 'off',
+      'react-hooks/preserve-manual-memoization': 'off',
+      'react-hooks/purity': 'off',
+      'react-hooks/refs': 'off',
+      'react-hooks/use-memo': 'off',
     },
   },
 ];

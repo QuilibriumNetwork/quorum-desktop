@@ -62,7 +62,7 @@ const UserStatus: React.FunctionComponent<UserStatusProps> = (props) => {
           <Icon
             name="settings"
             variant="filled"
-            onClick={(e) => {
+            onClick={(e: React.MouseEvent) => {
               props.setIsUserSettingsOpen(true);
               e.stopPropagation();
             }}

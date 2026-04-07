@@ -164,9 +164,10 @@ abstract class AbstractQuorumApiClient {
     }: FetchOptions
   ): Promise<FetchResponse<T>> {
     let response: Response | undefined;
+    // eslint-disable-next-line no-unassigned-vars -- captured by buildErrorParams closure for error reporting
     let responseData: T | undefined;
 
-    const stringifiedParams = qs.stringify(params);
+    const stringifiedParams = qs.stringify(params ?? {});
     const url = `${baseUrl || this.options.baseUrl}${relativeUrl}${
       stringifiedParams ? `?${stringifiedParams}` : ''
     }`;
@@ -670,7 +671,6 @@ export class UnhandledFetchError extends QuorumError {
   isOffline: boolean;
 
   constructor(options: QuorumErrorOptions<FetchErrorOptions>) {
-    // eslint-disable-next-line func-params-args/func-args
     super(options.message, options);
     this.name = 'Quorum API Error';
     this.absoluteUrl = options.absoluteUrl;

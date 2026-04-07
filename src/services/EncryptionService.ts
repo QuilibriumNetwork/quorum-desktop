@@ -56,13 +56,13 @@ export class EncryptionService {
         if (state.inboxId) {
           try {
             await this.messageDB.deleteInboxMapping(state.inboxId);
-          } catch {}
+          } catch { /* ignore */ }
         }
       }
       try {
         await this.messageDB.deleteLatestState(conversationId);
-      } catch {}
-    } catch {}
+      } catch { /* ignore */ }
+    } catch { /* ignore */ }
   }
 
   /**
@@ -80,7 +80,7 @@ export class EncryptionService {
       | undefined = undefined;
     try {
       spaceKey = await this.messageDB.getSpaceKey(space.spaceId, space.spaceId);
-    } catch {}
+    } catch { /* ignore - spaceKey remains undefined */ }
     if (spaceKey) {
       return space.spaceId;
     }

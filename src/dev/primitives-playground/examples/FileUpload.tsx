@@ -62,7 +62,7 @@ export const FileUploadExamples: React.FC = () => {
         {config.staticExamples.map((example, index) => (
           <div key={index} className="flex flex-col gap-2 p-3">
             <FileUpload
-              {...example.props}
+              {...(example.props as any)}
               multiple={index === 1 ? true : dynamicProps.multiple}
               onFilesSelected={(files) => handleFilesSelected(index, files)}
             >

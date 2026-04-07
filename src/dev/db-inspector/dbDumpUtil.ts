@@ -341,21 +341,21 @@ export async function quickDump(includeMessages = false): Promise<string> {
 
 // Expose to window in development
 if (typeof window !== 'undefined' && import.meta.env?.DEV) {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   
   (window as any).__dbDump = async (includeMessages = false) => {
     const json = await quickDump(includeMessages);
     console.log(json);
     return json;
   };
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   
   (window as any).__dbCounts = async () => {
     const counts = await getStoreCounts();
     console.table(counts);
     return counts;
   };
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   
   (window as any).__dbStore = async (storeName: string, maxRecords = 50) => {
     const dump = await dumpStore(storeName as StoreName, maxRecords);
     console.log(JSON.stringify(dump, null, 2));

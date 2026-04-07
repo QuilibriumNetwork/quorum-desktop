@@ -45,9 +45,40 @@ v4 switches from `fast-glob` to `tinyglobby`, which defaults to `onlyFiles: true
 - v3.x supports Vite 8 and uses `fast-glob` which handles directories
 - **Unblock condition**: Adjust glob patterns to work with `tinyglobby`, or pass `onlyFiles: false` if v4 exposes that option
 
-### ESLint ecosystem (stay on 9.x)
+### ESLint ecosystem (completed: now on 10.x)
 
-ESLint 10.x is a major config overhaul. All ecosystem plugins (`eslint-plugin-react-hooks`, `eslint-plugin-react-refresh`, `globals`, `@eslint/js`) are version-tied. This is a separate migration task.
+ESLint 10 migration is complete. Packages upgraded:
+
+| Package | Old | New |
+|---------|-----|-----|
+| `eslint` | 9.x | 10.2.0 |
+| `@eslint/js` | 9.x | 10.0.1 |
+| `eslint-plugin-react-hooks` | 5.x | 7.0.1 |
+| `eslint-plugin-react-refresh` | 0.4.x | 0.5.2 |
+| `globals` | 15.x | 17.4.0 |
+
+**Config format**: Already on flat config (`eslint.config.js`), no migration needed.
+
+**Breaking changes handled**:
+- `eslint-env` inline comments removed in ESLint 10; use flat config `languageOptions.globals` instead
+- `eslint-plugin-react-hooks@7` enables React Compiler lint rules by default; all disabled pending React Compiler adoption
+- ESLint 10 adds new built-in rules (`preserve-caught-error`, `no-useless-assignment`, `no-unassigned-vars`)
+
+**Rule triage decisions**:
+
+| Rule | Decision | Rationale |
+|------|----------|-----------|
+| `preserve-caught-error` | warn | 13 violations, deferred — real but non-trivial |
+| `no-useless-assignment` | fix | Removed redundant initializers |
+| `react-hooks/immutability` | off | Requires React Compiler adoption |
+| `react-hooks/set-state-in-effect` | off | Requires React Compiler adoption |
+| `react-hooks/preserve-manual-memoization` | off | Requires React Compiler adoption |
+| `react-hooks/purity` | off | Requires React Compiler adoption |
+| `react-hooks/refs` | off | Requires React Compiler adoption |
+| `react-hooks/use-memo` | off | Requires React Compiler adoption |
+| `react/prop-types` | off | TypeScript already validates prop types |
+
+**Result**: 0 errors, ~265 warnings (all acknowledged). `yarn build` and `yarn test:run` pass.
 
 ## Vite 8 (Rolldown) Architecture
 
@@ -149,4 +180,4 @@ If adding new Node built-in polyfills:
 
 ---
 
-*Created: 2026-04-07*
+*Created: 2026-04-07 | Updated: 2026-04-07*

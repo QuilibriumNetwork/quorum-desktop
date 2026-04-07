@@ -101,7 +101,7 @@ const UserProfileEdit: React.FunctionComponent<{
           <Input
             placeholder={t`Status goes here`}
             value={status}
-            onChange={(e) => setStatus(e.target.value)}
+            onChange={(e: string) => setStatus(e)}
           />
         </div>
         <div className="user-profile-editor-actions">

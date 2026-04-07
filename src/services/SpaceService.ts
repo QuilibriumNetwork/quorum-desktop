@@ -117,7 +117,7 @@ export class SpaceService {
         );
         return [JSON.stringify({ type: 'group', ...envelope })];
       });
-    } catch {}
+    } catch { /* ignore */ }
   }
 
   /**
@@ -1060,7 +1060,7 @@ export class SpaceService {
             }
           );
         }
-      } catch {}
+      } catch { /* ignore */ }
 
       const space_evals = [] as string[];
       for (

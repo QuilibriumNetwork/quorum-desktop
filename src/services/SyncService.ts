@@ -210,7 +210,7 @@ export class SyncService {
           return outbounds;
         });
       }
-    } catch {}
+    } catch { /* ignore */ }
   }
 
   /**

@@ -3,12 +3,12 @@ import { useLocation, useParams } from 'react-router-dom';
 import { t } from '@lingui/core/macro';
 import { SearchContext } from '../db/messages';
 
-interface RouteParams {
+type RouteParams = {
   spaceId?: string;
   channelId?: string;
   conversationId?: string;
   address?: string; // For DM routes
-}
+};
 
 export const useSearchContext = (): SearchContext => {
   const location = useLocation();
@@ -36,7 +36,7 @@ export const useSearchContext = (): SearchContext => {
       }
 
       // Try to extract from pathname
-      const dmMatch = pathname.match(/\/messages\/([^\/]+)/);
+      const dmMatch = pathname.match(/\/messages\/([^/]+)/);
       if (dmMatch) {
         const address = dmMatch[1];
         const conversationId = `${address}/${address}`;
@@ -64,9 +64,9 @@ export const useSearchContext = (): SearchContext => {
       }
 
       // Try to extract from pathname
-      const spaceMatch = pathname.match(/\/spaces?\/([^\/]+)/);
+      const spaceMatch = pathname.match(/\/spaces?\/([^/]+)/);
       if (spaceMatch) {
-        const channelMatch = pathname.match(/\/([^\/]+)$/); // Last segment is likely the channel
+        const channelMatch = pathname.match(/\/([^/]+)$/); // Last segment is likely the channel
         const context = {
           type: 'space' as const,
           spaceId: spaceMatch[1],

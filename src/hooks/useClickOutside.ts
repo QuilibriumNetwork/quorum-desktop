@@ -7,7 +7,7 @@ import { useEffect, RefObject } from 'react';
  * @param enabled - Whether the hook is active (default: true)
  */
 export function useClickOutside(
-  ref: RefObject<HTMLElement>,
+  ref: RefObject<HTMLElement | null>,
   onClickOutside: () => void,
   enabled: boolean = true
 ): void {

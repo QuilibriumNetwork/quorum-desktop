@@ -38,7 +38,6 @@ const FolderButton: React.FC<FolderButtonProps> = ({
     shouldHideTooltip = dragContext.isDragging || dragContext.isContextMenuOpen;
   } catch {
     // Not in drag context, tooltips should work normally
-    shouldHideTooltip = false;
   }
 
   // Hide indicators when folder is expanded (spaces inside show their own indicators)

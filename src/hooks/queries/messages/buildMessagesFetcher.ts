@@ -65,14 +65,15 @@ const buildMessagesFetcher = ({
 }) =>
   wrapPaginatedFetcher(async ({ pageParam: cursor }) => {
     // On initial load (no cursor), determine where to start
-    let effectiveCursor = cursor?.cursor;
+    let effectiveCursor: number | undefined = cursor?.cursor;
     if (!cursor) {
-      effectiveCursor = await determineInitialCursor({
+      const initialCursor = await determineInitialCursor({
         messageDB,
         spaceId,
         channelId,
         includeThreadReplies,
       });
+      effectiveCursor = initialCursor ?? undefined;
     }
 
     const response = await messageDB.getMessages({

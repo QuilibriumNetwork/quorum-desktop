@@ -53,7 +53,7 @@ const NewDirectMessageModal: React.FunctionComponent<
           userKey: keyset.userKeyset,
         });
         setNonRepudiable(cfg?.nonRepudiable ?? true);
-      } catch {}
+      } catch { /* ignore */ }
     })();
   }, [user.currentPasskeyInfo, keyset, getConfig]);
 

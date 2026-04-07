@@ -1,5 +1,6 @@
 import { QuorumApiClient } from '../../../api/baseTypes';
-import { SealedMessage } from '../../../channel/channel';
+import { channel } from '@quilibrium/quilibrium-js-sdk-channels';
+type SealedMessage = channel.SealedMessage;
 
 const buildInboxFetcher =
   ({
@@ -17,7 +18,7 @@ const buildInboxFetcher =
 
       return response;
     } catch (e) {
-      if (e.status === 404) {
+      if ((e as any).status === 404) {
         return [] as (SealedMessage & {
           timestamp: number;
         })[];

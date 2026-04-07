@@ -81,15 +81,15 @@ export const MarkdownViewer: React.FC<MarkdownViewerProps> = ({
         const placeholder = `__TABLE_${tablePlaceholders.length}__`;
         
         // Parse header row
-        const headerCells = header.trim().split('|').filter(cell => cell.trim());
-        const headerRow = headerCells.map(cell => 
+        const headerCells = header.trim().split('|').filter((cell: string) => cell.trim());
+        const headerRow = headerCells.map((cell: string) =>
           `<th class="border border-default px-3 py-2 text-left font-semibold bg-surface-2">${processInlineMarkdown(cell.trim())}</th>`
         ).join('');
         
         // Parse body rows
-        const bodyRows = body.trim().split('\n').map(row => {
-          const cells = row.split('|').filter(cell => cell.trim());
-          const rowCells = cells.map(cell => 
+        const bodyRows = body.trim().split('\n').map((row: string) => {
+          const cells = row.split('|').filter((cell: string) => cell.trim());
+          const rowCells = cells.map((cell: string) =>
             `<td class="border border-default px-3 py-2">${processInlineMarkdown(cell.trim())}</td>`
           ).join('');
           return `<tr class="hover:bg-surface-1">${rowCells}</tr>`;
@@ -201,13 +201,13 @@ export const MarkdownViewer: React.FC<MarkdownViewerProps> = ({
         (match, num, text) => `<li class="ml-6 mb-1 list-decimal">${text}</li>`
       )
       .replace(
-        /^[\-\*\+] (.*$)/gm,
+        /^[-*+] (.*$)/gm,
         (match, text) => `<li class="ml-6 mb-1 list-disc">${text}</li>`
       )
 
       // Blockquotes
       .replace(
-        /^\> (.*$)/gm,
+        /^> (.*$)/gm,
         (match, text) =>
           `<blockquote class="border-l-4 border-accent/50 pl-4 py-2 my-4 bg-accent/5 italic text-subtle rounded-r-lg">${text}</blockquote>`
       )

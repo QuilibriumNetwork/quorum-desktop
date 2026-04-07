@@ -11,7 +11,7 @@ const buildRegistrationFetcher =
         registered: true,
       };
     } catch (e) {
-      if (e.status === 404) {
+      if ((e as any).status === 404) {
         return { registered: false };
       } else {
         throw e;

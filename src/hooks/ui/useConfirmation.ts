@@ -52,7 +52,7 @@ export function useConfirmation(options: UseConfirmationOptions): UseConfirmatio
   const [showModal, setShowModal] = useState(false);
   const [blockedError, setBlockedError] = useState('');
   const [isConfirming, setIsConfirming] = useState(false);
-  const timeoutRef = useRef<NodeJS.Timeout>();
+  const timeoutRef = useRef<NodeJS.Timeout | undefined>(undefined);
   const onConfirmRef = useRef<(() => void | Promise<void>) | null>(null);
 
   // Clean up timeout on unmount

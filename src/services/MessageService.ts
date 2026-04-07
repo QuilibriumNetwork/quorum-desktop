@@ -757,7 +757,7 @@ export class MessageService {
 
       // Check if saveEditHistory is enabled for this conversation/space
       const isDM = spaceId === channelId;
-      let saveEditHistoryEnabled = false;
+      let saveEditHistoryEnabled: boolean;
 
       if (isDM) {
         // For DMs, check conversation setting
@@ -1344,7 +1344,7 @@ export class MessageService {
       const senderId = pinMessage.senderId;
 
       // Check permissions (same logic as saveMessage)
-      let hasPermission = false;
+      let hasPermission: boolean;
 
       // For read-only channels: check manager privileges FIRST
       const channel = space?.groups
@@ -3858,7 +3858,6 @@ export class MessageService {
                 envelope.message.inboxAddress,
                 envelope.message
               );
-            } else {
             }
           } else if (envelope.message.type === 'sync-delta') {
             // NEW PROTOCOL: Received delta from peer - apply to local storage
@@ -4533,7 +4532,7 @@ export class MessageService {
         }
 
         // Validate permissions (same logic as saveMessage/addMessage)
-        let hasPermission = false;
+        let hasPermission: boolean;
 
         // For read-only channels: check manager privileges FIRST
         const channel = space?.groups

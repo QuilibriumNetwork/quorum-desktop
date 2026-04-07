@@ -414,41 +414,35 @@ export class MessageDB {
     spaceId: string;
   }): Promise<Message[]> {
     await this.init();
-    return new Promise(async (resolve, reject) => {
-      const space = await this.getSpace(spaceId);
 
-      if (!space || !space.groups || space.groups.length === 0) {
-        resolve([]);
-        return;
-      }
+    const space = await this.getSpace(spaceId);
+    if (!space || !space.groups || space.groups.length === 0) {
+      return [];
+    }
 
-      const channelIds = space.groups
-        .flatMap((g) => g.channels.map((c) => c.channelId))
-        .sort();
+    const channelIds = space.groups
+      .flatMap((g) => g.channels.map((c) => c.channelId))
+      .sort();
 
-      if (channelIds.length === 0) {
-        resolve([]);
-        return;
-      }
+    if (channelIds.length === 0) {
+      return [];
+    }
 
+    return new Promise((resolve, reject) => {
       const transaction = this.db!.transaction('messages', 'readonly');
       const store = transaction.objectStore('messages');
       const index = store.index('by_conversation_time');
 
-      let range: IDBKeyRange;
-
       // Initial load - get latest messages
-      range = IDBKeyRange.bound(
+      const range = IDBKeyRange.bound(
         [spaceId, channelIds[0], 0],
         [spaceId, channelIds[channelIds.length - 1], Number.MAX_VALUE]
       );
 
       const request = index.getAll(range);
 
-      request.onsuccess = (event) => {
-        const messages = request.result;
-
-        resolve(messages);
+      request.onsuccess = () => {
+        resolve(request.result);
       };
       request.onerror = () => reject(request.error);
     });
@@ -1841,7 +1835,7 @@ export class MessageDB {
             const dmIndexKey = `dm:${msg.spaceId}/${msg.channelId}`;
             const dmIndex = this.searchIndices.get(dmIndexKey);
             if (dmIndex) dmIndex.discard(msg.messageId);
-          } catch {}
+          } catch { /* ignore */ }
 
           // Cascade delete: Remove any bookmark pointing to this message
           const bookmarkRequest = bookmarkIndex.get(msg.messageId);

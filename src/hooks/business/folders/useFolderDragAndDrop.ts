@@ -295,7 +295,7 @@ export const useFolderDragAndDrop = ({
 
       const scenario = detectScenario(activeInfo, overInfo, items, currentDropIntent);
 
-      let newItems: NavItem[] = items;
+      let newItems: NavItem[];
       let createdFolderId: string | null = null;
 
       switch (scenario) {

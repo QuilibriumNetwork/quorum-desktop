@@ -54,7 +54,7 @@ export const TextAreaExamples: React.FC = () => {
             <TextArea
               {...example.props}
               value={textAreaValues[index] || ('value' in example.props ? example.props.value : '') || ''}
-              onChange={(value) => handleTextAreaChange(index, value)}
+              onChange={(value: string) => handleTextAreaChange(index, value)}
             />
             <span className="text-xs text-subtle">
               {example.name}

@@ -59,7 +59,7 @@ export interface UseMentionPillEditorOptions {
  */
 export interface UseMentionPillEditorReturn {
   /** Ref to attach to contentEditable div */
-  editorRef: React.RefObject<HTMLDivElement>;
+  editorRef: React.RefObject<HTMLDivElement | null>;
 
   /** Extract visual text (what user sees) for mention detection */
   extractVisualText: () => string;

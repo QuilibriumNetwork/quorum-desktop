@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import { useQueries } from '@tanstack/react-query';
 import { t } from '@lingui/core/macro';
 import { SearchResult } from '../../../db/messages';
+import type { Group, Channel } from '@quilibrium/quorum-shared';
 import { useMessageDB } from '../../../components/context/useMessageDB';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
 import { DefaultImages } from '../../../utils';
@@ -27,6 +28,7 @@ export interface UseBatchSearchResultsDisplayProps {
 export interface UseBatchSearchResultsDisplayReturn {
   resultsData: Map<string, BatchSearchResultDisplayData>;
   isAnyLoading: boolean;
+  triggerFocusMaintenance: number;
 }
 
 /**
@@ -131,7 +133,7 @@ export const useBatchSearchResultsDisplay = ({
       if (isDM) {
         // Handle DM display logic
         let displayName = t`Unknown User`;
-        let icon = DefaultImages.UNKNOWN_USER;
+        let icon: string = DefaultImages.UNKNOWN_USER as string;
         let isLoading = false;
 
         if (message.content.senderId === currentPasskeyInfo?.address) {
@@ -172,10 +174,10 @@ export const useBatchSearchResultsDisplay = ({
         let channelName = message.channelId;
         if (spaceInfo) {
           const channel = spaceInfo.groups
-            ?.find((g) =>
-              g.channels?.find((c) => c.channelId === message.channelId)
+            ?.find((g: Group) =>
+              g.channels?.find((c: Channel) => c.channelId === message.channelId)
             )
-            ?.channels?.find((c) => c.channelId === message.channelId);
+            ?.channels?.find((c: Channel) => c.channelId === message.channelId);
           if (channel) {
             channelName = channel.channelName;
           }
