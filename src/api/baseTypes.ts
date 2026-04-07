@@ -671,7 +671,6 @@ export class UnhandledFetchError extends QuorumError {
   isOffline: boolean;
 
   constructor(options: QuorumErrorOptions<FetchErrorOptions>) {
-    // eslint-disable-next-line func-params-args/func-args
     super(options.message, options);
     this.name = 'Quorum API Error';
     this.absoluteUrl = options.absoluteUrl;

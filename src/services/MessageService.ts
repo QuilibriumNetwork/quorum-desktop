@@ -3858,7 +3858,6 @@ export class MessageService {
                 envelope.message.inboxAddress,
                 envelope.message
               );
-            } else {
             }
           } else if (envelope.message.type === 'sync-delta') {
             // NEW PROTOCOL: Received delta from peer - apply to local storage

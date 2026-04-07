@@ -50,7 +50,7 @@ export class ConfigService {
     let savedConfig: secureChannel.UserConfig | undefined;
     try {
       savedConfig = (await this.apiClient.getUserSettings(address)).data;
-    } catch {}
+    } catch { /* ignore - proceed with stored config */ }
 
     const storedConfig = await this.messageDB.getUserConfig({ address });
     if (!savedConfig) {

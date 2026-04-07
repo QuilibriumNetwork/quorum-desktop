@@ -39,30 +39,20 @@ export const useSearchResultDisplay = ({
   const [dmIcon, setDmIcon] = useState<string>(DefaultImages.UNKNOWN_USER);
   const [dmDisplayName, setDmDisplayName] = useState<string>(t`Unknown User`);
 
-  // Space-specific data fetching (conditionally called based on isDM)
-  // For DM messages, we'll skip these hooks entirely
-  let userInfo, userLoading, spaceInfo, spaceLoading;
+  // Space-specific data fetching — always called to satisfy rules of hooks, skipped when isDM
+  const userQuery = useUserInfo({
+    address: message.content.senderId,
+    enabled: !isDM,
+  });
+  const spaceQuery = useSpace({
+    spaceId: message.spaceId,
+    enabled: !isDM,
+  });
 
-  if (isDM) {
-    // For DMs, don't call the hooks that cause issues
-    userInfo = null;
-    userLoading = false;
-    spaceInfo = null;
-    spaceLoading = false;
-  } else {
-    // For Space messages, call the hooks normally
-    const userQuery = useUserInfo({
-      address: message.content.senderId,
-    });
-    userInfo = userQuery.data;
-    userLoading = userQuery.isLoading;
-
-    const spaceQuery = useSpace({
-      spaceId: message.spaceId,
-    });
-    spaceInfo = spaceQuery.data;
-    spaceLoading = spaceQuery.isLoading;
-  }
+  const userInfo = isDM ? null : userQuery.data;
+  const userLoading = isDM ? false : userQuery.isLoading;
+  const spaceInfo = isDM ? null : spaceQuery.data;
+  const spaceLoading = isDM ? false : spaceQuery.isLoading;
 
   // DM user info fetching
   useEffect(() => {

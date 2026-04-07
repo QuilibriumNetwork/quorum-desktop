@@ -90,7 +90,7 @@ const RegistrationProvider: FC<RegistrationContextProps> = ({ children }) => {
                   existing = (
                     await apiClient.getUser(currentPasskeyInfo!.address)
                   )?.data;
-                } catch {}
+                } catch { /* ignore */ }
 
                 const senderRegistration =
                   await secureChannel.ConstructUserRegistration(
@@ -118,7 +118,7 @@ const RegistrationProvider: FC<RegistrationContextProps> = ({ children }) => {
                   existing = (
                     await apiClient.getUser(currentPasskeyInfo!.address)
                   )?.data;
-                } catch {}
+                } catch { /* ignore */ }
 
                 const senderRegistration =
                   await secureChannel.ConstructUserRegistration(
@@ -196,7 +196,7 @@ const RegistrationProvider: FC<RegistrationContextProps> = ({ children }) => {
                     existing = (
                       await apiClient.getUser(currentPasskeyInfo!.address)
                     )?.data;
-                  } catch {}
+                  } catch { /* ignore */ }
                   const senderRegistration =
                     await secureChannel.ConstructUserRegistration(
                       senderIdent,

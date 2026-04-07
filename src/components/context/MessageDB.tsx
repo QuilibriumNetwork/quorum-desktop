@@ -457,7 +457,7 @@ const MessageDBProvider: FC<MessageDBContextProps> = ({ children }) => {
           );
           setSelfAddress(base58btc.baseEncode(sh.bytes));
         }
-      } catch {}
+      } catch { /* ignore */ }
     })();
   }, [selfAddress, keyset]);
 

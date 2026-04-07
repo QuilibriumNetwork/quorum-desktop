@@ -201,13 +201,13 @@ export const MarkdownViewer: React.FC<MarkdownViewerProps> = ({
         (match, num, text) => `<li class="ml-6 mb-1 list-decimal">${text}</li>`
       )
       .replace(
-        /^[\-\*\+] (.*$)/gm,
+        /^[-*+] (.*$)/gm,
         (match, text) => `<li class="ml-6 mb-1 list-disc">${text}</li>`
       )
 
       // Blockquotes
       .replace(
-        /^\> (.*$)/gm,
+        /^> (.*$)/gm,
         (match, text) =>
           `<blockquote class="border-l-4 border-accent/50 pl-4 py-2 my-4 bg-accent/5 italic text-subtle rounded-r-lg">${text}</blockquote>`
       )

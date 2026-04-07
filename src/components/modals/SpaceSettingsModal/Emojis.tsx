@@ -90,7 +90,7 @@ const Emojis: React.FunctionComponent<EmojisProps> = ({
                       onChange={(e) => {
                         const sanitizedName = e.target.value
                           .toLowerCase()
-                          .replace(/[^a-z0-9\_]/gi, '');
+                          .replace(/[^a-z0-9_]/gi, '');
                         updateEmoji(i, { name: sanitizedName });
                       }}
                       value={em.name}

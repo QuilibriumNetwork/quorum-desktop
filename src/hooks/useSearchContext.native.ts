@@ -43,7 +43,7 @@ export const useSearchContext = (): SearchContext => {
       }
 
       // Try to extract from pathname - same logic as web
-      const dmMatch = pathname.match(/\/messages\/([^\/]+)/);
+      const dmMatch = pathname.match(/\/messages\/([^/]+)/);
       if (dmMatch) {
         const address = dmMatch[1];
         const conversationId = `${address}/${address}`;
@@ -71,9 +71,9 @@ export const useSearchContext = (): SearchContext => {
       }
 
       // Try to extract from pathname - same logic as web
-      const spaceMatch = pathname.match(/\/spaces?\/([^\/]+)/);
+      const spaceMatch = pathname.match(/\/spaces?\/([^/]+)/);
       if (spaceMatch) {
-        const channelMatch = pathname.match(/\/([^\/]+)$/); // Last segment is likely the channel
+        const channelMatch = pathname.match(/\/([^/]+)$/); // Last segment is likely the channel
         const context = {
           type: 'space' as const,
           spaceId: spaceMatch[1],

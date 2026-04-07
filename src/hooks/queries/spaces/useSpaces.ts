@@ -4,7 +4,7 @@ import { buildSpacesFetcher } from './buildSpacesFetcher';
 import { buildSpacesKey } from './buildSpacesKey';
 import { useMessageDB } from '../../../components/context/useMessageDB';
 
-const useSpaces = ({}: {}) => {
+const useSpaces = (_args: Record<string, never> = {}) => {
   const { messageDB } = useMessageDB();
 
   return useSuspenseQuery({

@@ -39,30 +39,7 @@ export const DropdownPanel: React.FC<DropdownPanelProps> = ({
 }) => {
   const isTouch = isTouchDevice();
 
-  // Mobile bottom sheet mode (touch devices with useMobileBottomSheet=true)
-  if (isTouch && useMobileBottomSheet) {
-    return (
-      <MobileDrawer
-        isOpen={isOpen}
-        onClose={onClose}
-        title={
-          title ||
-          (resultsCount !== undefined
-            ? resultsCount === 1
-              ? `${resultsCount} result`
-              : `${resultsCount} results`
-            : undefined)
-        }
-        showCloseButton={false} // No close button on mobile - use swipe or backdrop tap
-        enableSwipeToClose={true}
-        headerContent={headerContent}
-      >
-        {children}
-      </MobileDrawer>
-    );
-  }
-
-  // Desktop dropdown mode (existing implementation)
+  // Desktop dropdown mode refs/effects — must be declared before any conditional returns
   const panelRef = useRef<HTMLDivElement>(null);
 
   // Handle outside clicks and escape key
@@ -122,6 +99,29 @@ export const DropdownPanel: React.FC<DropdownPanelProps> = ({
       };
     }
   }, [isOpen, onClose]);
+
+  // Mobile bottom sheet mode (touch devices with useMobileBottomSheet=true)
+  if (isTouch && useMobileBottomSheet) {
+    return (
+      <MobileDrawer
+        isOpen={isOpen}
+        onClose={onClose}
+        title={
+          title ||
+          (resultsCount !== undefined
+            ? resultsCount === 1
+              ? `${resultsCount} result`
+              : `${resultsCount} results`
+            : undefined)
+        }
+        showCloseButton={false} // No close button on mobile - use swipe or backdrop tap
+        enableSwipeToClose={true}
+        headerContent={headerContent}
+      >
+        {children}
+      </MobileDrawer>
+    );
+  }
 
   if (!isOpen) return null;
 

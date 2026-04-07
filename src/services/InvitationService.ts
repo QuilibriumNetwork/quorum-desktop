@@ -531,32 +531,28 @@ export class InvitationService {
       associated_data: string;
     };
 
-    try {
-      const decrypted = ch.js_decrypt_inbox_message(
-        JSON.stringify({
-          inbox_private_key: hexToSpreadArray(info.configKey),
-          ephemeral_public_key: hexToSpreadArray(
-            manifest.data.ephemeral_public_key
-          ),
-          ciphertext: ciphertext,
-        })
-      );
+    const decrypted = ch.js_decrypt_inbox_message(
+      JSON.stringify({
+        inbox_private_key: hexToSpreadArray(info.configKey),
+        ephemeral_public_key: hexToSpreadArray(
+          manifest.data.ephemeral_public_key
+        ),
+        ciphertext: ciphertext,
+      })
+    );
 
-      const space = JSON.parse(
-        Buffer.from(JSON.parse(decrypted)).toString('utf-8')
-      ) as Space;
+    const space = JSON.parse(
+      Buffer.from(JSON.parse(decrypted)).toString('utf-8')
+    ) as Space;
 
-      if (
-        (space.inviteUrl == '' || !space.inviteUrl) &&
-        (!info.secret || !info.template || !info.hubKey)
-      ) {
-        throw new Error(t`invalid link`);
-      }
-
-      return space;
-    } catch (decryptErr: any) {
-      throw decryptErr;
+    if (
+      (space.inviteUrl == '' || !space.inviteUrl) &&
+      (!info.secret || !info.template || !info.hubKey)
+    ) {
+      throw new Error(t`invalid link`);
     }
+
+    return space;
   }
 
   /**

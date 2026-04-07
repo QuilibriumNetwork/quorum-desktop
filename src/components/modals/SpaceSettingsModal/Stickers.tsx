@@ -90,7 +90,7 @@ const Stickers: React.FunctionComponent<StickersProps> = ({
                       onChange={(e) => {
                         const sanitizedName = e.target.value
                           .toLowerCase()
-                          .replace(/[^a-z0-9\_]/gi, '');
+                          .replace(/[^a-z0-9_]/gi, '');
                         updateSticker(i, {
                           name: sanitizedName,
                         });

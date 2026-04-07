@@ -178,7 +178,7 @@ export const useCustomAssets = (
                 name: file.name
                   .split('.')[0]
                   .toLowerCase()
-                  .replace(/[^a-z0-9\-]/gi, ''),
+                  .replace(/[^a-z0-9-]/gi, ''),
                 imgUrl:
                   'data:' +
                   result.file.type +
@@ -217,7 +217,7 @@ export const useCustomAssets = (
                 name: file.name
                   .split('.')[0]
                   .toLowerCase()
-                  .replace(/[^a-z0-9\-]/gi, ''),
+                  .replace(/[^a-z0-9-]/gi, ''),
                 imgUrl:
                   'data:' +
                   result.file.type +
