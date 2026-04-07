@@ -39,6 +39,8 @@ branch: chore/dependency-updates
 | `react` | 19.0.0 | 19.2.4 | Phase 5: patch bump |
 | `react-dom` | 19.0.0 | 19.2.4 | Phase 5: patch bump |
 | `jsdom` | 25.0.1 | 29.0.2 | Phase 5: test-only |
+| `react-dropzone` | 14.4.1 | 15.0.0 | Peer dep actually covers React 19 |
+| `typescript` | (transitive) | 5.9.3 | Made explicit dev dep (hoisting fix) |
 | `cross-env` | (new) | 10.1.0 | Fix: Windows-compatible npm scripts |
 
 ## Summary: What Was Skipped (and Why)
@@ -156,7 +158,6 @@ Upgraded packages:
 | `eslint-plugin-react-hooks` | 5.2.0 | 7.0.1 | Tied to ESLint ecosystem |
 | `eslint-plugin-react-refresh` | 0.4.26 | 0.5.2 | Tied to ESLint ecosystem |
 | `globals` | 15.15.0 | 17.4.0 | Tied to ESLint ecosystem |
-| `react-dropzone` | 14.4.1 | 15.0.0 | Peer dep says `react >= 16.8 \|\| 18.0.0`, doesn't include React 19 |
 | `base58-js` | 2.0.0 | 3.0.3 | Only used in `crypto.native.ts` (mobile, not desktop build) |
 
 ## Remaining Work
