@@ -280,7 +280,7 @@ const ComplexityBadge: React.FC<{
 };
 
 export const ComponentAuditViewer: React.FC = () => {
-  const data = auditData as AuditData;
+  const data = auditData as unknown as AuditData;
   const [searchTerm, setSearchTerm] = useState('');
   const [categoryFilter, setCategoryFilter] = useState<
     ComponentCategory | 'all'

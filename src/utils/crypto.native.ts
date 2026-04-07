@@ -54,7 +54,7 @@ export const sha256 = {
 
       // Convert hex string back to Uint8Array to match multiformats interface
       const bytes = new Uint8Array(
-        hashHex.match(/.{1,2}/g)!.map((byte) => parseInt(byte, 16))
+        hashHex.match(/.{1,2}/g)!.map((byte: string) => parseInt(byte, 16))
       );
 
       return { bytes };

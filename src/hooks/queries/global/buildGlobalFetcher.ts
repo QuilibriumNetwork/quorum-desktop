@@ -8,7 +8,7 @@ const buildGlobalFetcher =
 
       return response.data;
     } catch (e) {
-      if (e.status === 404) {
+      if ((e as any).status === 404) {
         return {};
       } else {
         throw e;

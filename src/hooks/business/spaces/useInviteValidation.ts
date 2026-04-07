@@ -55,7 +55,7 @@ export const useInviteValidation = () => {
         .reduce((prev, curr) => Object.assign(prev, curr), {});
 
       if (params && params.spaceId && params.configKey) {
-        return params as InviteInfo;
+        return params as unknown as InviteInfo;
       }
 
       return null;

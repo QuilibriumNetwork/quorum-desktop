@@ -213,7 +213,7 @@ const Roles: React.FunctionComponent<RolesProps> = ({
                         <Icon
                           name="trash"
                           className="cursor-pointer text-danger hover:text-danger-hover"
-                          onClick={(e) => deleteRole(e, i)}
+                          onClick={(e: React.MouseEvent) => deleteRole(e, i)}
                         />
                       </Tooltip>
                     </div>

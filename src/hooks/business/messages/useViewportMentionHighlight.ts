@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react';
+import type { HighlightOptions } from './useMessageHighlight';
 
 /**
  * Hook to auto-highlight mentioned messages when they enter viewport
@@ -29,7 +30,7 @@ export function useViewportMentionHighlight(
   messageId: string,
   isMentioned: boolean,
   isUnread: boolean,
-  highlightMessage: (messageId: string, options?: { duration?: number }) => void
+  highlightMessage: (messageId: string, options?: HighlightOptions) => void
 ) {
   const elementRef = useRef<HTMLDivElement>(null);
   const hasTriggeredRef = useRef(false);

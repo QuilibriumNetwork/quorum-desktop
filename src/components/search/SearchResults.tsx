@@ -130,7 +130,7 @@ export const SearchResults: React.FC<SearchResultsProps> = ({
               variant="bordered"
               placeholder={placeholder || t`Search in this Space...`}
               value={query}
-              onChange={(value) => {
+              onChange={(value: string) => {
                 if (value === '') {
                   onClear?.();
                 } else {

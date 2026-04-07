@@ -17,7 +17,7 @@ import { useEffect, useRef, useCallback, useState } from 'react';
  * ```
  */
 export function useWindowResize(callback: () => void, delay = 150): void {
-  const timeoutRef = useRef<ReturnType<typeof setTimeout>>();
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
   // Memoize the debounced handler
   const debouncedCallback = useCallback(() => {

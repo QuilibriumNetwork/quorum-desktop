@@ -167,7 +167,7 @@ abstract class AbstractQuorumApiClient {
     // eslint-disable-next-line no-unassigned-vars -- captured by buildErrorParams closure for error reporting
     let responseData: T | undefined;
 
-    const stringifiedParams = qs.stringify(params);
+    const stringifiedParams = qs.stringify(params ?? {});
     const url = `${baseUrl || this.options.baseUrl}${relativeUrl}${
       stringifiedParams ? `?${stringifiedParams}` : ''
     }`;

@@ -127,23 +127,23 @@ export class IndexedDBAdapter implements StorageAdapter {
   // ============ User Config ============
 
   async getUserConfig(address: string): Promise<UserConfig | undefined> {
-    return this.db.getUserConfig({ address });
+    return this.db.getUserConfig({ address }) as unknown as Promise<UserConfig | undefined>;
   }
 
   async saveUserConfig(userConfig: UserConfig): Promise<void> {
-    return this.db.saveUserConfig(userConfig);
+    return this.db.saveUserConfig(userConfig as unknown as Parameters<typeof this.db.saveUserConfig>[0]);
   }
 
   // ============ Space Members ============
 
   async getSpaceMembers(spaceId: string): Promise<SpaceMember[]> {
     const members = await this.db.getSpaceMembers(spaceId);
-    return members as SpaceMember[];
+    return members as unknown as SpaceMember[];
   }
 
   async getSpaceMember(spaceId: string, address: string): Promise<SpaceMember | undefined> {
     const member = await this.db.getSpaceMember(spaceId, address);
-    return member as SpaceMember | undefined;
+    return member as unknown as SpaceMember | undefined;
   }
 
   async saveSpaceMember(spaceId: string, member: SpaceMember): Promise<void> {

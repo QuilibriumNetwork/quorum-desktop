@@ -77,7 +77,7 @@ export const InputExamples: React.FC = () => {
                   <Input
                     {...example.props}
                     value={inputValues[index] || ''}
-                    onChange={(value) => handleInputChange(index, value)}
+                    onChange={(value: string) => handleInputChange(index, value)}
                     onFocus={() => setFocusedIndex(index)}
                     onBlur={() => setFocusedIndex(null)}
                     className="flex-1"
@@ -97,7 +97,7 @@ export const InputExamples: React.FC = () => {
               <Input
                 {...example.props}
                 value={inputValues[index] || ''}
-                onChange={(value) => handleInputChange(index, value)}
+                onChange={(value: string) => handleInputChange(index, value)}
               />
               <span className="text-xs text-subtle">
                 {example.name}

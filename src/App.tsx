@@ -114,7 +114,7 @@ const App = () => {
           {isDevRoute ? (
             <div className="bg-app flex flex-col min-h-screen text-main">
               {isWeb() && isElectron() && <CustomTitlebar />}
-              <Router user={user} setUser={setUser} />
+              <Router user={user!} setUser={setUser} />
             </div>
           ) : user && currentPasskeyInfo ? (
             <div className="bg-app flex flex-col min-h-screen text-main">

@@ -54,7 +54,7 @@ export const useSpaceHeader = (space: any) => {
 export const useCollapsingHeader = (hasBanner: boolean) => {
   const [scrollTop, setScrollTop] = useState(0)
   const [maxHeight, setMaxHeight] = useState(HEADER_MAX_HEIGHT)
-  const rafRef = useRef<number>()
+  const rafRef = useRef<number | undefined>(undefined)
 
   // Detect screen size for responsive max height
   // Debounced to avoid excessive recalculations during window drag

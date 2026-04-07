@@ -154,7 +154,7 @@ export const SelectExamples: React.FC = () => {
     size: config.dynamicProps.size?.default || 'medium',
   });
 
-  const handleSelectChange = (index: number, value: string) => {
+  const handleSelectChange = (index: number, value: string | string[]) => {
     setSelectValues(prev => ({
       ...prev,
       [index]: value
@@ -181,7 +181,7 @@ export const SelectExamples: React.FC = () => {
               {...example.props}
               {...dynamicProps}
               value={selectValues[index] || ''}
-              onChange={(value) => handleSelectChange(index, value)}
+              onChange={(value: string | string[]) => handleSelectChange(index, value)}
             />
             <span className="text-xs text-subtle">
               {example.name}

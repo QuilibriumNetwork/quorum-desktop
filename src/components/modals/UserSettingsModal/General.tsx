@@ -208,7 +208,7 @@ const General: React.FunctionComponent<GeneralProps> = ({
                   displayName: s.spaceName,
                 })),
               ]}
-              onChange={(val) => {
+              onChange={(val: string | string[]) => {
                 const v = val as string;
                 setSpaceTagId(v === '' ? undefined : v);
               }}

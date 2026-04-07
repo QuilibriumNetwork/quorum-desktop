@@ -11,7 +11,7 @@ const buildConversationsFetcher = ({
   wrapPaginatedFetcher(async ({ pageParam: cursor }) => {
     const response = await messageDB.getConversations({
       type,
-      cursor,
+      cursor: cursor?.cursor,
     });
 
     return response;

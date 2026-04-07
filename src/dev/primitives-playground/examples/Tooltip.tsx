@@ -42,8 +42,8 @@ export const TooltipExamples: React.FC = () => {
         description={config.description}
         columns={config.columns as 1 | 2 | 3 | 4}
         background={config.background as any}
-        dynamicProps={null}
-        onDynamicPropsChange={null}
+        dynamicProps={undefined}
+        onDynamicPropsChange={undefined}
         notes={{
           quickTips: config.quickTips,
           codeExample: config.codeExample,

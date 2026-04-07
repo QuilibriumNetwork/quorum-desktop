@@ -66,7 +66,7 @@ const Layout: React.FunctionComponent<{
   } | null>(null);
 
   // Store timer ref for cleanup (prevents memory leak)
-  const toastTimerRef = React.useRef<NodeJS.Timeout>();
+  const toastTimerRef = React.useRef<NodeJS.Timeout | undefined>(undefined);
 
   React.useEffect(() => {
     const showToast = (

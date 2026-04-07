@@ -98,7 +98,7 @@ export const SwitchExamples: React.FC = () => {
               {...example.props}
               {...dynamicProps}
               value={switchStates[index] ?? example.props.defaultValue}
-              onChange={(value) => handleSwitchChange(index, value)}
+              onChange={(value: boolean) => handleSwitchChange(index, value)}
             />
             <span className="text-xs text-subtle">
               {example.name}

@@ -63,7 +63,7 @@ export const PrimitivesPlayground: React.FC = () => {
     message: string;
     variant?: 'info' | 'success' | 'warning' | 'error';
   } | null>(null);
-  const toastTimerRef = useRef<NodeJS.Timeout>();
+  const toastTimerRef = useRef<NodeJS.Timeout | undefined>(undefined);
 
   // Scroll to section with offset
   const scrollToSection = (sectionId: string) => {

@@ -444,7 +444,7 @@ export const Message = React.memo(
     return (
       <Flex
         direction="column"
-        ref={(el) => {
+        ref={(el: HTMLDivElement | null) => {
           (mentionRef as React.MutableRefObject<HTMLDivElement | null>).current = el;
           (readReceiptRef as React.MutableRefObject<HTMLDivElement | null>).current = el;
         }}

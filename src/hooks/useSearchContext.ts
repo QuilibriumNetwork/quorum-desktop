@@ -3,12 +3,12 @@ import { useLocation, useParams } from 'react-router-dom';
 import { t } from '@lingui/core/macro';
 import { SearchContext } from '../db/messages';
 
-interface RouteParams {
+type RouteParams = {
   spaceId?: string;
   channelId?: string;
   conversationId?: string;
   address?: string; // For DM routes
-}
+};
 
 export const useSearchContext = (): SearchContext => {
   const location = useLocation();

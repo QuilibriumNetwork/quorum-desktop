@@ -23,7 +23,7 @@ export const useAccentColor = (): UseAccentColorReturn => {
 
   // Load accent color from storage on mount
   useEffect(() => {
-    if (isWeb && typeof window !== 'undefined') {
+    if (isWeb() && typeof window !== 'undefined') {
       const currentAccent =
         (localStorage.getItem('accent-color') as AccentColor) || 'blue';
       setActiveAccent(currentAccent);
@@ -33,7 +33,7 @@ export const useAccentColor = (): UseAccentColorReturn => {
 
   // Set accent color function
   const setAccent = useCallback((color: AccentColor) => {
-    if (isWeb && typeof document !== 'undefined') {
+    if (isWeb() && typeof document !== 'undefined') {
       // Web: Update CSS classes
       ACCENT_COLORS.forEach((c) => {
         document.documentElement.classList.remove(`accent-${c}`);

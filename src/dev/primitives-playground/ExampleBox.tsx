@@ -4,7 +4,7 @@ import { Icon } from '@/components/primitives';
 import { InteractivePropsPanel } from './InteractivePropsPanel';
 
 interface ExampleNote {
-  quickTips: string[];
+  quickTips: readonly string[];
   codeExample?: {
     title: string;
     code: string;
