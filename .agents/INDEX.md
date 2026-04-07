@@ -168,7 +168,6 @@ This is the main index for all documentation, bug reports, and task management.
 - [Embedded Media + YouTube Facade Privacy Fix — Implementation Plan](tasks/2026-03-12-embedded-media-plan.md)
 - [Embedded Media in PostMessage + YouTube Facade Privacy Fix](tasks/2026-03-12-embedded-media-spec.md)
 - [Thread List Panel: "Created by me" Filter](tasks/2026-03-14-thread-list-created-filter.md)
-- [ESLint 10 + React Compiler Lint Migration](tasks/2026-04-07-eslint-10-migration.md)
 - [Accessibility Features — Remaining Work](tasks/accessibility-features-implementation.md)
 - [Add User Bio Field to UserSettingsModal General Tab](tasks/add-user-bio-field.md)
 - [Auto-save settings modals — eliminate save buttons](tasks/auto-save-settings-modals.md)
@@ -310,6 +309,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [DM Read Receipts (Phase 2) Implementation Plan](tasks/.done/2026-03-22-dm-read-receipts-plan.md)
 - [Dependency Cleanup Implementation Plan](tasks/.done/2026-03-24-dependency-cleanup.md)
 - [Hierarchical receipt toggle UX — nest read under delivery](tasks/.done/2026-03-24-hierarchical-receipt-toggles.md)
+- [ESLint 10 + React Compiler Lint Migration](tasks/.done/2026-04-07-eslint-10-migration.md)
 - [AccentColorSwitcher Cross-Platform Migration + Persistence](tasks/.done/accent-color-switcher-cross-platform-migration.md)
 - [Add Context to Desktop Notifications](tasks/.done/rich-desktop-notifications-context.md)
 - [Add DM-Specific Action Queue Handlers](tasks/.done/dm-action-queue-handlers.md)
@@ -450,6 +450,7 @@ This is the main index for all documentation, bug reports, and task management.
 
 ### Active Reports
 
+- [TypeScript Errors Audit](reports/2026-04-07-typescript-errors-audit.md)
 - [Channel Ordering Feature Analysis](reports/channel-ordering-feature-analysis_2026-01-07.md)
 - [Comprehensive Privacy & Security Audit - All Features](reports/privacy-security-comprehensive-audit_2025-12-21.md)
 - [Comprehensive WCAG Accessibility Audit Report](reports/accessibility-wcag-audit_2026-02-10.md)
@@ -493,4 +494,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2026-04-07 11:53:50
+**Last Updated**: 2026-04-07 15:41:27

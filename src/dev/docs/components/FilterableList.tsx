@@ -180,7 +180,7 @@ export const FilterableList: React.FC<FilterableListProps> = ({
     };
 
     filteredFiles.forEach((file) => {
-      let folder = file.folder || 'root';
+      const folder = file.folder || 'root';
 
       if (folder === 'root') {
         // File belongs to root

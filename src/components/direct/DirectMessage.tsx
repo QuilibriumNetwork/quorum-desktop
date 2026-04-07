@@ -580,7 +580,7 @@ const DirectMessage: React.FC<{}> = () => {
     }, 100);
 
     return () => clearTimeout(timer);
-  // eslint-disable-next-line react-hooks/exhaustive-deps -- intentionally omitting messageList:
+   
   // this effect should only run on conversation mount, not on every new message
   }, [address, lastReadTimestamp, messageDB, queryClient, user.currentPasskeyInfo]);
 
