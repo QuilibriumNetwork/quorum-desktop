@@ -15,8 +15,7 @@ import { lingui } from '@lingui/vite-plugin';
  *
  * Used in two places:
  * 1. Build phase: via resolvePolyfillShims() plugin (resolveId hook for Rolldown)
- * 2. Optimizer phase: via resolve.alias (Rolldown optimizer doesn't run Vite
- *    plugin hooks, but does apply Vite-level aliases before bundling)
+ * 2. Dev server: via resolve.alias (catches shim specifiers during on-demand transforms)
  */
 const polyfillShimAliases: Record<string, string> = {
   'vite-plugin-node-polyfills/shims/buffer': resolve(
@@ -137,8 +136,8 @@ export default defineConfig(({ command }): UserConfig => ({
         __dirname,
         '../node_modules/@quilibrium/quilibrium-js-sdk-channels/dist/index.esm.js'
       ),
-      // Polyfill shim aliases for the dependency optimizer (which doesn't run
-      // Vite plugin hooks). The build phase uses resolvePolyfillShims() instead.
+      // Polyfill shim aliases for the dev server (catches shim specifiers during
+      // on-demand transforms). The build phase uses resolvePolyfillShims() instead.
       ...polyfillShimAliases,
     },
     // Platform-specific resolution - prioritize .web files over .native files
@@ -155,7 +154,22 @@ export default defineConfig(({ command }): UserConfig => ({
     dedupe: ['react', 'react-dom'],
   },
   optimizeDeps: {
-    include: ['@quilibrium/quilibrium-js-sdk-channels'], // Force Vite to pre-bundle or app doesn't load (WSL)
+    // Pre-include deps the optimizer discovers late during page load.
+    // Without this, the optimizer re-bundles mid-request, producing stale chunk hashes
+    // (e.g. core.esm-B-qWGNUm.js) that cause Pre-transform errors and blank pages.
+    include: [
+      '@dnd-kit/core',
+      '@dnd-kit/sortable',
+      '@noble/hashes/sha2',
+      '@quilibrium/quorum-shared > @tabler/icons-react',
+      'remark-parse',
+      'remark-stringify',
+      'strip-markdown',
+      'unified',
+      'vite-plugin-node-polyfills/shims/buffer',
+      'vite-plugin-node-polyfills/shims/global',
+      'vite-plugin-node-polyfills/shims/process',
+    ],
     exclude: ['@quilibrium/quorum-shared'], // Don't pre-bundle — source files need .web.tsx resolution
   },
   css: {

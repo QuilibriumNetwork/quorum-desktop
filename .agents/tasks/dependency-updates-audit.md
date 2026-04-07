@@ -82,8 +82,8 @@ Ran `yarn upgrade` to pull all packages to latest versions within existing `^` s
 
 **Verified**: build, tests (383 passed). **Manual Electron testing still needed** (see Remaining Work).
 
-### Phase 4: Vite 8 + Ecosystem Migration - PARTIALLY DONE
-**Commits**: `316fedd9`, `38e1c641`
+### Phase 4: Vite 8 + Ecosystem Migration - DONE
+**Commits**: `316fedd9`, `38e1c641`, pending commit (dev server fix)
 
 Upgraded packages:
 - `vite` 6.3.5 -> 8.0.5 (Rolldown bundler, ~3x faster builds: 44s -> 15s)
@@ -104,9 +104,7 @@ Upgraded packages:
    - Added React deduplication aliases to `vitest.config.ts` (Vitest 4 changed module resolution, causing dual React instances when testing components using quorum-shared primitives)
    - Extracted `polyfillShimAliases` constant shared between the `resolvePolyfillShims()` plugin and `resolve.alias`
 
-**KNOWN ISSUE - Dev server optimizer fails** (see Remaining Work below).
-
-**Verified**: production build passes, all 383 tests pass. Dev server does NOT work yet.
+**Verified**: production build passes (15s), all 383 tests pass, dev server works.
 
 ### Phase 5: Other Major Version Bumps - DONE
 **Commit**: `7536b3e2`
@@ -134,40 +132,13 @@ Upgraded packages:
 
 ## Remaining Work
 
-### BLOCKER: Dev Server Optimizer Crash
+### RESOLVED: Dev Server Optimizer Issues
 
-**Status**: Unsolved. Production build works fine, dev server (`yarn dev`) crashes.
+**Issue 1 - Optimizer crash**: `@quilibrium/quilibrium-js-sdk-channels` was in `optimizeDeps.include` (a Vite 6 workaround). In Vite 8's Rolldown optimizer, plugin `resolveId` hooks don't run during pre-bundling, so `buffer` -> `vite-plugin-node-polyfills/shims/buffer` rewrite couldn't resolve. **Fix**: Removed the SDK from `optimizeDeps.include`. Vite 8 serves it as a native ES module.
 
-**Error**:
-```
-[UNLOADABLE_DEPENDENCY] Error: Could not load vite-plugin-node-polyfills/shims/buffer
-╭─[ ../quilibrium-js-sdk-channels/dist/index.esm.js:1:36 ]
-│
-1 │ import { Buffer as Buffer$1 } from 'buffer';
-│                                    ────┬───
-│                                        ╰─── os error 3
-───╯
-```
+**Issue 2 - Stale hash / blank page**: The optimizer discovered deps in waves during page load (`@dnd-kit/core`, `@noble/hashes/sha2`, `@tabler/icons-react`, remark plugins, polyfill shims), causing re-bundling (x2, x3). Intermediate chunks got stale hashes (e.g. `core.esm-B-qWGNUm.js`) leading to Pre-transform errors and blank pages. **Fix**: Added all late-discovered deps to `optimizeDeps.include` so the optimizer bundles everything in a single pass. Used `@quilibrium/quorum-shared > @tabler/icons-react` syntax for the linked package's transitive dep.
 
-**Root cause analysis**:
-- `@quilibrium/quilibrium-js-sdk-channels` is in `optimizeDeps.include` (force pre-bundled)
-- During optimizer pre-bundling, Rolldown encounters `import { Buffer } from 'buffer'`
-- The `nodePolyfills` plugin's alias rewrites `buffer` -> `vite-plugin-node-polyfills/shims/buffer` (a bare specifier)
-- In Vite 6 (esbuild optimizer), our `resolvePolyfillShims()` plugin's `resolveId` hook caught this and resolved it to the absolute path
-- In Vite 8 (Rolldown optimizer), **Vite plugin `resolveId` hooks do NOT run during the optimizer phase**
-- Adding the aliases to `resolve.alias` doesn't help either, because the alias plugin runs once and doesn't do a second pass after the nodePolyfills plugin rewrites the specifier
-
-**What was tried**:
-1. Adding polyfill aliases to `resolve.alias` - aliases don't catch specifiers produced mid-pipeline by other plugins
-2. Adding polyfill aliases to `optimizeDeps.rolldownOptions.resolve.alias` - Rolldown's `InputOptions` type doesn't actually have a `resolve.alias` field (despite the research agent suggesting it)
-3. Removing the `resolvePolyfillShims()` plugin and relying solely on aliases - breaks production build too
-
-**Possible approaches to investigate**:
-1. **Pass a Rolldown plugin via `optimizeDeps.rolldownOptions.plugins`** with a `resolveId` hook (the optimizer does accept plugins)
-2. **Skip pre-bundling the SDK**: remove `@quilibrium/quilibrium-js-sdk-channels` from `optimizeDeps.include` and see if the dev server works without it (the comment says "Force Vite to pre-bundle or app doesn't load (WSL)" but this may be a Vite 6 issue that Vite 8 solved)
-3. **Upgrade vite-plugin-node-polyfills**: check if there's a newer version or PR that handles Vite 8's optimizer natively
-4. **Use the nodePolyfills plugin's own Rolldown-aware code path**: the plugin already has `this?.meta?.rolldownVersion` detection (line ~91-96 of source). It may need a config change or bug fix to also alias the shim specifiers in the optimizer context, not just the Node built-in names
-5. **File an issue on vite-plugin-node-polyfills** referencing the existing [issue #142](https://github.com/davidmyersdev/vite-plugin-node-polyfills/issues/142)
+**Also added**: `yarn dev:clean` script (clears `.vite` cache and starts dev server).
 
 ### Manual Testing Needed
 
@@ -207,9 +178,8 @@ a2b6fc5c chore: apply within-range dependency updates (Phase 1)
 4. **Lint baseline**: 78 errors, 295 warnings (all pre-existing, unchanged)
 
 **NOT yet verified**:
-- `yarn dev` (blocked by optimizer issue)
 - `yarn electron:dev` / `yarn electron:build`
-- Manual UI testing
+- Manual UI testing (emoji rendering, WASM modules, quorum-shared integration)
 
 ---
 
