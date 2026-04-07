@@ -45,11 +45,6 @@ v4 switches from `fast-glob` to `tinyglobby`, which defaults to `onlyFiles: true
 - v3.x supports Vite 8 and uses `fast-glob` which handles directories
 - **Unblock condition**: Adjust glob patterns to work with `tinyglobby`, or pass `onlyFiles: false` if v4 exposes that option
 
-### react-dropzone (stay on 14.x)
-
-v15's peer dependency declares `react >= 16.8 || 18.0.0`, which does not include React 19. Upgrading causes unmet peer dependency warnings and potential runtime issues.
-- **Unblock condition**: `react-dropzone` updates its peer dep to include React 19
-
 ### ESLint ecosystem (stay on 9.x)
 
 ESLint 10.x is a major config overhaul. All ecosystem plugins (`eslint-plugin-react-hooks`, `eslint-plugin-react-refresh`, `globals`, `@eslint/js`) are version-tied. This is a separate migration task.
