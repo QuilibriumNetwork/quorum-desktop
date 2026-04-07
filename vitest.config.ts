@@ -30,7 +30,12 @@ export default defineConfig({
     alias: {
       '@': resolve(__dirname, 'src'),
       crypto: resolve(__dirname, 'node_modules/crypto-browserify/index.js'),
+      react: resolve(__dirname, 'node_modules/react'),
+      'react-dom': resolve(__dirname, 'node_modules/react-dom'),
+      'react/jsx-runtime': resolve(__dirname, 'node_modules/react/jsx-runtime'),
+      'react/jsx-dev-runtime': resolve(__dirname, 'node_modules/react/jsx-dev-runtime'),
     },
     extensions: ['.web.tsx', '.web.ts', '.web.jsx', '.web.js', '.tsx', '.ts', '.jsx', '.js'],
+    dedupe: ['react', 'react-dom'],
   },
 });

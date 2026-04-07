@@ -48,7 +48,7 @@ export default defineConfig(({ command }): UserConfig => ({
     target: 'es2022', // Support top-level await or error on build for i18n
     outDir: 'dist/web', // Output to dist/web folder from project root
     emptyOutDir: true,
-    rollupOptions: {
+    rolldownOptions: {
       external: (id) => {
         // Exclude dev folder from production builds
         // Only match src/dev/ or relative imports containing /dev/, not absolute system paths
