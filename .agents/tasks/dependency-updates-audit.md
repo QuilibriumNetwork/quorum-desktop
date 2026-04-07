@@ -51,7 +51,6 @@ branch: chore/dependency-updates
 | `@vitejs/plugin-react` | 5.2.0 | 6.0.1 | v6 drops Babel; breaks our Lingui macro pipeline |
 | `vite-plugin-static-copy` | 3.4.0 | 4.0.1 | v4's tinyglobby breaks our emoji glob patterns |
 | `eslint` + ecosystem | 9.x | 10.x | Large config migration, separate task |
-| `react-dropzone` | 14.4.1 | 15.0.0 | v15 peer dep doesn't declare React 19 support |
 | `base58-js` | 2.0.0 | 3.0.3 | Only used in mobile build, not desktop |
 
 ## Summary: Config Changes
