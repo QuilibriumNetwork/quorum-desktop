@@ -185,7 +185,7 @@ const NavMenuContent: React.FC<NavMenuProps> = (props) => {
         const ownerKey = await messageDB.getSpaceKey(spaceId, 'owner');
         isOwner = !!ownerKey;
       } catch {
-        isOwner = false;
+        // isOwner remains false if lookup fails
       }
       setSpaceContextMenu({
         spaceId,

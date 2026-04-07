@@ -164,6 +164,7 @@ abstract class AbstractQuorumApiClient {
     }: FetchOptions
   ): Promise<FetchResponse<T>> {
     let response: Response | undefined;
+    // eslint-disable-next-line no-unassigned-vars -- captured by buildErrorParams closure for error reporting
     let responseData: T | undefined;
 
     const stringifiedParams = qs.stringify(params);

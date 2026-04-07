@@ -150,7 +150,7 @@ export const useOnboardingFlowLogic = (adapter: OnboardingAdapter) => {
     if (!address || !adapter.exportKey) return;
 
     setIsFetchingUser(true);
-    let isRegisteredUser = false;
+    let isRegisteredUser: boolean;
     let hasRemoteConfig = false;
     try {
       // Check if user is already registered
