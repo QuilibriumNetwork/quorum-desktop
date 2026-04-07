@@ -6,38 +6,50 @@ import { resolve } from 'path';
 import { lingui } from '@lingui/vite-plugin';
 
 /**
- * Plugin to resolve vite-plugin-node-polyfills shims for linked packages outside node_modules.
- * The nodePolyfills plugin injects bare specifiers like 'vite-plugin-node-polyfills/shims/global'
- * which Rollup can't resolve when the importer is outside the project's node_modules tree.
+ * Absolute paths for vite-plugin-node-polyfills shim specifiers.
+ *
+ * The nodePolyfills plugin rewrites Node built-in imports (e.g. 'buffer') to bare
+ * specifiers like 'vite-plugin-node-polyfills/shims/buffer'. For linked packages
+ * outside node_modules (e.g. quorum-shared, quilibrium-js-sdk-channels), these
+ * bare specifiers can't be resolved by standard module resolution.
+ *
+ * Used in two places:
+ * 1. Build phase: via resolvePolyfillShims() plugin (resolveId hook for Rolldown)
+ * 2. Dev server: via resolve.alias (catches shim specifiers during on-demand transforms)
+ */
+const polyfillShimAliases: Record<string, string> = {
+  'vite-plugin-node-polyfills/shims/buffer': resolve(
+    __dirname,
+    '../node_modules/vite-plugin-node-polyfills/shims/buffer/dist/index.js'
+  ),
+  'vite-plugin-node-polyfills/shims/global': resolve(
+    __dirname,
+    '../node_modules/vite-plugin-node-polyfills/shims/global/dist/index.js'
+  ),
+  'vite-plugin-node-polyfills/shims/process': resolve(
+    __dirname,
+    '../node_modules/vite-plugin-node-polyfills/shims/process/dist/index.js'
+  ),
+};
+
+/**
+ * Plugin to resolve polyfill shim specifiers during the build phase.
+ * Vite's resolve.alias handles initial resolution but doesn't catch specifiers
+ * produced by other plugins mid-pipeline (e.g. nodePolyfills rewriting 'buffer').
+ * This resolveId hook catches those second-pass resolutions.
  */
 function resolvePolyfillShims(): Plugin {
-  const shimMap: Record<string, string> = {
-    'vite-plugin-node-polyfills/shims/buffer': resolve(
-      __dirname,
-      '../node_modules/vite-plugin-node-polyfills/shims/buffer/dist/index.js'
-    ),
-    'vite-plugin-node-polyfills/shims/global': resolve(
-      __dirname,
-      '../node_modules/vite-plugin-node-polyfills/shims/global/dist/index.js'
-    ),
-    'vite-plugin-node-polyfills/shims/process': resolve(
-      __dirname,
-      '../node_modules/vite-plugin-node-polyfills/shims/process/dist/index.js'
-    ),
-  };
-
   return {
     name: 'resolve-polyfill-shims',
     enforce: 'pre',
-    resolveId(id) {
-      if (id in shimMap) {
-        return shimMap[id];
+    resolveId(id: string) {
+      if (id in polyfillShimAliases) {
+        return polyfillShimAliases[id];
       }
       return null;
     },
   };
 }
-
 
 // https://vite.dev/config/
 export default defineConfig(({ command }): UserConfig => ({
@@ -48,7 +60,7 @@ export default defineConfig(({ command }): UserConfig => ({
     target: 'es2022', // Support top-level await or error on build for i18n
     outDir: 'dist/web', // Output to dist/web folder from project root
     emptyOutDir: true,
-    rollupOptions: {
+    rolldownOptions: {
       external: (id) => {
         // Exclude dev folder from production builds
         // Only match src/dev/ or relative imports containing /dev/, not absolute system paths
@@ -124,6 +136,9 @@ export default defineConfig(({ command }): UserConfig => ({
         __dirname,
         '../node_modules/@quilibrium/quilibrium-js-sdk-channels/dist/index.esm.js'
       ),
+      // Polyfill shim aliases for the dev server (catches shim specifiers during
+      // on-demand transforms). The build phase uses resolvePolyfillShims() instead.
+      ...polyfillShimAliases,
     },
     // Platform-specific resolution - prioritize .web files over .native files
     extensions: [
@@ -139,7 +154,22 @@ export default defineConfig(({ command }): UserConfig => ({
     dedupe: ['react', 'react-dom'],
   },
   optimizeDeps: {
-    include: ['@quilibrium/quilibrium-js-sdk-channels'], // Force Vite to pre-bundle or app doesn't load (WSL)
+    // Pre-include deps the optimizer discovers late during page load.
+    // Without this, the optimizer re-bundles mid-request, producing stale chunk hashes
+    // (e.g. core.esm-B-qWGNUm.js) that cause Pre-transform errors and blank pages.
+    include: [
+      '@dnd-kit/core',
+      '@dnd-kit/sortable',
+      '@noble/hashes/sha2',
+      '@quilibrium/quorum-shared > @tabler/icons-react',
+      'remark-parse',
+      'remark-stringify',
+      'strip-markdown',
+      'unified',
+      'vite-plugin-node-polyfills/shims/buffer',
+      'vite-plugin-node-polyfills/shims/global',
+      'vite-plugin-node-polyfills/shims/process',
+    ],
     exclude: ['@quilibrium/quorum-shared'], // Don't pre-bundle — source files need .web.tsx resolution
   },
   css: {

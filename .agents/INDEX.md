@@ -17,7 +17,7 @@ This is the main index for all documentation, bug reports, and task management.
 
 ### Development
 - [Android Build Workflow](docs/development/android-build-workflow.md)
-- [Unused Dependencies Analysis](docs/development/unused-dependencies-analysis.md)
+- [Dependency Upgrade Guide](docs/development/dependency-upgrade-guide.md)
 
 ### Features
 - [Action Queue](docs/features/action-queue.md)
@@ -89,6 +89,7 @@ This is the main index for all documentation, bug reports, and task management.
 
 ### Active Issues
 - [Message list scroll jank on send — Virtuoso scroll position drift](bugs/2026-03-19-message-list-scroll-jank-on-send.md)
+- [No visual feedback when dragging files onto dropzone areas](bugs/2026-04-07-missing-drag-feedback-file-uploads.md)
 - [Config Sync Space Loss Race Condition](bugs/config-sync-space-loss-race-condition.md)
 - [DirectMessage Invite Loading Performance Issue](bugs/directmessage-invite-loading-performance.md)
 - [Encryption State Evals Causing Config Sync Bloat](bugs/encryption-state-evals-bloat.md)
@@ -167,6 +168,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Embedded Media + YouTube Facade Privacy Fix — Implementation Plan](tasks/2026-03-12-embedded-media-plan.md)
 - [Embedded Media in PostMessage + YouTube Facade Privacy Fix](tasks/2026-03-12-embedded-media-spec.md)
 - [Thread List Panel: "Created by me" Filter](tasks/2026-03-14-thread-list-created-filter.md)
+- [ESLint 10 + React Compiler Lint Migration](tasks/2026-04-07-eslint-10-migration.md)
 - [Accessibility Features — Remaining Work](tasks/accessibility-features-implementation.md)
 - [Add User Bio Field to UserSettingsModal General Tab](tasks/add-user-bio-field.md)
 - [Auto-save settings modals — eliminate save buttons](tasks/auto-save-settings-modals.md)
@@ -306,6 +308,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [DM Delivery Receipts Implementation Plan](tasks/.done/2026-03-18-dm-delivery-receipts-plan.md)
 - [DM Read Receipts Design — Phase 2](tasks/.done/2026-03-22-dm-read-receipts-design.md)
 - [DM Read Receipts (Phase 2) Implementation Plan](tasks/.done/2026-03-22-dm-read-receipts-plan.md)
+- [Dependency Cleanup Implementation Plan](tasks/.done/2026-03-24-dependency-cleanup.md)
 - [Hierarchical receipt toggle UX — nest read under delivery](tasks/.done/2026-03-24-hierarchical-receipt-toggles.md)
 - [AccentColorSwitcher Cross-Platform Migration + Persistence](tasks/.done/accent-color-switcher-cross-platform-migration.md)
 - [Add Context to Desktop Notifications](tasks/.done/rich-desktop-notifications-context.md)
@@ -460,6 +463,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [quorum-shared Migration Analysis](reports/quorum-shared-migration-analysis_2026-01-05.md)
 - [Security Audit: Markdown Renderer & Mentions System](reports/security-audit-markdown-mentions-2025-11-18.md)
 - [Sync Optimizations Report](reports/sync-optimizations_2025-12-19.md)
+- [Unused Dependencies Analysis](reports/unused-dependencies-analysis_2026-03-24.md)
 - [Web-to-Native Feature Sync Compatibility Analysis](reports/web-native-feature-sync-analysis_2025-12-04.md)
 
 ### .Archived
@@ -489,4 +493,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2026-03-24 11:56:31
+**Last Updated**: 2026-04-07 11:53:50
