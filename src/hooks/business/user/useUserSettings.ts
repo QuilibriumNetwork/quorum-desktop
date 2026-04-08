@@ -1,9 +1,8 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { usePasskeysContext, channel as secureChannel } from '@quilibrium/quilibrium-js-sdk-channels';
 import { useRegistration } from '../../queries';
 import { useRegistrationContext } from '../../../components/context/useRegistrationContext';
 import { useMessageDB } from '../../../components/context/useMessageDB';
-import { UserConfig } from '../../../db/messages';
 import type { BroadcastSpaceTag } from '@quilibrium/quorum-shared';
 import { DefaultImages } from '../../../utils';
 import { useUploadRegistration } from '../../mutations/useUploadRegistration';
@@ -71,7 +70,6 @@ export const useUserSettings = (
   const { keyset } = useRegistrationContext();
   const { messageDB, actionQueueService, getConfig, updateUserProfile } = useMessageDB();
   const uploadRegistration = useUploadRegistration();
-  const existingConfig = useRef<UserConfig | null>(null);
 
   const [stagedRegistration, setStagedRegistration] = useState(
     registration?.registration
@@ -96,7 +94,6 @@ export const useUserSettings = (
           address: currentPasskeyInfo.address,
           userKey: keyset.userKeyset,
         });
-        existingConfig.current = config;
         setAllowSync(config?.allowSync ?? false);
         setNonRepudiable(config?.nonRepudiable ?? true);
         setDeliveryReceipts(config?.deliveryReceipts ?? false);
@@ -302,6 +299,11 @@ export const useUserSettings = (
       profile_image: profileImageUrl,
       bio: bio.trim() || undefined,
       spaceTagId: spaceTagId || undefined,
+      // Merge local device names (includes any recent renames not yet in DB)
+      deviceNames: {
+        ...(freshConfig?.deviceNames ?? {}),
+        ...deviceNames,
+      },
       // Merge pending tombstones with any existing ones
       deletedDeviceNameAddresses: [
         ...(freshConfig?.deletedDeviceNameAddresses ?? []),

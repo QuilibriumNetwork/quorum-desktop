@@ -116,11 +116,20 @@ const Privacy: React.FunctionComponent<PrivacyProps> = ({
     setEditingDevice(inboxAddress);
   };
 
+  const [isSavingName, setIsSavingName] = React.useState(false);
+
   const confirmEdit = async () => {
     if (!nameIsValid || !editingDevice || !saveDeviceName) return;
-    await saveDeviceName(editValue.trim());
-    setEditingDevice(null);
-    setEditValue('');
+    setIsSavingName(true);
+    try {
+      await saveDeviceName(editValue.trim());
+      setEditingDevice(null);
+      setEditValue('');
+    } catch (error) {
+      console.error('Failed to save device name:', error);
+    } finally {
+      setIsSavingName(false);
+    }
   };
 
   const cancelEdit = () => {
@@ -357,8 +366,8 @@ const Privacy: React.FunctionComponent<PrivacyProps> = ({
                         <Icon
                           name="check"
                           size="sm"
-                          className={`cursor-pointer flex-shrink-0 ${nameIsValid ? 'text-success hover:text-success' : 'text-muted cursor-not-allowed'}`}
-                          onClick={nameIsValid ? confirmEdit : undefined}
+                          className={`flex-shrink-0 ${nameIsValid && !isSavingName ? 'cursor-pointer text-success hover:text-success' : 'text-muted cursor-not-allowed'}`}
+                          onClick={nameIsValid && !isSavingName ? confirmEdit : undefined}
                         />
                         <Icon
                           name="close"
