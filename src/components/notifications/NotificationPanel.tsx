@@ -286,20 +286,24 @@ export const NotificationPanel: React.FC<NotificationPanelProps> = ({
               })}
             </div>
           ) : (
-            /* Desktop: Keep existing layout */
+            /* Desktop: card item layout */
             <div className="notification-panel__list">
               {allNotifications.map((notification) => {
                 const sender = mapSenderToUser(notification.message.content?.senderId);
                 return (
-                  <NotificationItem
+                  <div
                     key={`${notification.message.messageId}-${notification.channelId}`}
-                    notification={notification}
-                    onNavigate={handleNavigate}
-                    displayName={sender?.displayName || t`Unknown User`}
-                    mapSenderToUser={mapSenderToUser}
-                    spaceRoles={spaceRoles}
-                    spaceChannels={spaceChannels}
-                  />
+                    className="panel-item-box panel-item-box--interactive"
+                  >
+                    <NotificationItem
+                      notification={notification}
+                      onNavigate={handleNavigate}
+                      displayName={sender?.displayName || t`Unknown User`}
+                      mapSenderToUser={mapSenderToUser}
+                      spaceRoles={spaceRoles}
+                      spaceChannels={spaceChannels}
+                    />
+                  </div>
                 );
               })}
             </div>
