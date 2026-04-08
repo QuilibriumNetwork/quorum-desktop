@@ -39,10 +39,8 @@
   padding: $s-0 $s-1;
 }
 
-// Use shared list styling with zero horizontal padding for full-width borders
 .search-results-list {
   @extend .dropdown-results-list;
-  padding: $s-0 $s-0 $s-4 $s-0 !important; // Override to ensure zero horizontal padding
 
   // On desktop, handle own scrolling with slightly different height
   @media (hover: hover) and (pointer: fine) {

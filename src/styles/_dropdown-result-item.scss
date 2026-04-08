@@ -1,6 +1,50 @@
 // Shared styles for dropdown panel result items (search results, pinned messages, etc.)
 @use 'variables' as *;
 
+// Any item rendered directly inside a panel card should be transparent —
+// the card itself handles background and hover state.
+.panel-item-box > * {
+  background-color: transparent !important;
+
+  &:hover,
+  &:focus {
+    background-color: transparent !important;
+  }
+
+  // Remove separators — each card is already visually separated
+  border-bottom: none !important;
+}
+
+// Card box for desktop panel items — mirrors mobile-drawer__item-box pattern
+.panel-item-box {
+  background: var(--color-bg-panel-item);
+  border-radius: $rounded-lg;
+  border: $border solid var(--color-border-panel);
+  margin: 0 $s-4 $s-4 $s-4;
+  overflow: hidden;
+  transition: background-color $duration-150 $ease-in-out;
+
+  // Fully clickable card — whole box is interactive
+  &--interactive {
+    cursor: pointer;
+
+    &:hover {
+      background: var(--color-bg-panel-item-hover);
+    }
+
+    &:active {
+      background: var(--color-bg-panel-item-hover);
+    }
+  }
+
+  // Hoverable but not fully clickable — contains interactive children (buttons etc.)
+  &--hoverable {
+    &:hover {
+      background: var(--color-bg-panel-item-hover);
+    }
+  }
+}
+
 // Common result item container
 .dropdown-result-item {
   padding: $s-4 $s-5;
@@ -25,6 +69,7 @@
       background-color: transparent !important;
     }
   }
+
 
   // Note: :last-child removed as it doesn't work properly with virtualized lists
 }
@@ -164,15 +209,12 @@
 
 // Common list container
 .dropdown-results-list {
-  background: var(--surface-0);
-  padding-bottom: $s-3;
-
-  // On desktop, handle own scrolling and limit height
+  // Desktop only: panel background, top gap, and scroll cap
   @media (hover: hover) and (pointer: fine) {
+    background: var(--color-bg-panel);
+    padding-top: $s-4;
+    padding-bottom: 0;
     overflow-y: auto;
     max-height: $s-80 + $s-7; // 350px
   }
-
-  // On mobile (touch devices in MobileDrawer), no overflow handling
-  // MobileDrawer__content handles scrolling, this just grows naturally
 }

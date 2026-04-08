@@ -11,7 +11,7 @@
 .bookmarks-panel .bookmarks-panel__controls,
 .mobile-drawer .bookmarks-panel__controls {
   padding: $s-1 $s-4;
-  border-bottom: $border solid var(--surface-3);
+  border-bottom: $border solid var(--color-border-panel);
 
   // Ensure filter icon (Select in compact mode) is centered
   .select-container {
@@ -23,10 +23,8 @@
   }
 }
 
-// Use shared list styling with zero horizontal padding for full-width borders
 .bookmarks-list {
   @extend .dropdown-results-list;
-  padding: 0 0 $s-4 0 !important; // Override to ensure zero horizontal padding
 }
 
 // Use shared item styling with bookmark-specific class name
@@ -35,7 +33,7 @@
   cursor: default; // Override cursor - only show pointer on specific interactive elements
 
   &:hover {
-    background-color: var(--surface-2);
+    background-color: var(--color-bg-panel-item-hover);
   }
 }
 

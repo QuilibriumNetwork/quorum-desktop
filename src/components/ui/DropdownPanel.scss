@@ -2,13 +2,38 @@
 
 // Shared dropdown panel styles for search results, pinned messages, etc.
 .dropdown-panel {
-  background: var(--surface-0);
+  background: var(--color-bg-panel);
   border-radius: $rounded-lg;
   box-shadow: $shadow-lg;
+  border: $border solid var(--color-border-panel);
   z-index: 10001; /* Higher than flex layout containers */
   overflow: hidden;
   font-weight: normal;
   animation: dropdownPanelOpen $duration-200 $ease-out;
+
+  // Input/Select fields inside panels blend with the panel background
+  --color-field-bg: var(--color-bg-panel-item);
+  --color-field-bg-focus: var(--color-bg-panel-item-hover);
+  --color-field-bg-filled: var(--color-bg-panel-item);
+  --color-field-bg-filled-focus: var(--color-bg-panel-item-hover);
+  // Subtle border on focus — stronger than resting but no accent color or glow
+  --color-field-border-focus: var(--color-border-stronger);
+  --color-field-focus-shadow: transparent;
+}
+
+// Select dropdown styled for panel context (applied via dropdownClassName prop)
+.panel-select-dropdown {
+  background-color: var(--color-bg-panel) !important;
+  border: $border solid var(--color-border-panel) !important;
+
+  .quorum-select__option:hover {
+    background-color: var(--color-bg-panel-item-hover);
+  }
+
+  // Selected items already show accent text color — no bg change needed
+  .quorum-select__option--selected {
+    background-color: transparent;
+  }
 }
 
 // Search results positioning (relative to parent)
@@ -39,8 +64,8 @@
 
 .dropdown-panel__header {
   padding: $s-3 $s-4;
-  border-bottom: $border solid var(--surface-3);
-  background: var(--surface-00);
+  border-bottom: $border solid var(--color-border-panel);
+  background: var(--color-bg-panel);
 }
 
 .dropdown-panel__title {
@@ -54,19 +79,19 @@
 .dropdown-panel__close {
   padding: $s-1;
   border-radius: $rounded;
-  color: var(--color-text-muted);
+  color: var(--color-text-subtle);
   transition: all $duration-200 ease;
   background: transparent;
 
   &:hover {
     background: transparent;
-    color: var(--color-text-main);
+    color: var(--color-text-strong);
   }
 }
 
 .dropdown-panel__content {
   overflow-y: auto;
-  background: var(--surface-0);
+  background: var(--color-bg-panel);
   max-height: calc(100% - 40px); /* Account for header */
 }
 

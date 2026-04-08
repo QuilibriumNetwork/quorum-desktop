@@ -109,13 +109,15 @@ export const BookmarkItem: React.FC<BookmarkItemProps> = ({
     >
       <div className="result-header">
         <Flex justify="between" className="result-meta-container">
-          <Flex className="result-meta items-center min-w-0 flex-1 mr-2">
+          <Flex className="result-meta items-center min-w-0">
             <Icon name="user" className="result-user-icon flex-shrink-0" />
             <span className="result-sender mr-2 truncate flex-shrink min-w-0">
               {cachedPreview.senderName || t`Unknown User`}
             </span>
-            <Icon name="calendar-alt" className="result-date-icon flex-shrink-0 ml-1" />
-            <span className="result-date flex-shrink-0 whitespace-nowrap ml-1">
+          </Flex>
+          <Flex className="result-meta items-center flex-shrink-0 whitespace-nowrap">
+            <Icon name="calendar-alt" className="result-date-icon flex-shrink-0" />
+            <span className="result-date ml-1">
               {formatMessageDate(cachedPreview.messageDate, compactDate)}
             </span>
           </Flex>

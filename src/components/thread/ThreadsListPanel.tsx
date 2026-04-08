@@ -166,12 +166,13 @@ export function ThreadsListPanel({
               {item.label}
             </div>
           ) : (
-            <ThreadListItem
-              key={item.thread.threadId}
-              thread={item.thread}
-              onOpen={handleOpen}
-              resolveDisplayName={resolveDisplayName}
-            />
+            <div key={item.thread.threadId} className="panel-item-box panel-item-box--interactive">
+              <ThreadListItem
+                thread={item.thread}
+                onOpen={handleOpen}
+                resolveDisplayName={resolveDisplayName}
+              />
+            </div>
           )
         )}
       </div>

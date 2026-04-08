@@ -14,20 +14,26 @@
   }
 }
 
-// Use shared list styling
 .threads-results-list {
   @extend .dropdown-results-list;
-  padding: 0 0 $s-3 0 !important;
 }
 
 // Section headers — match dropdown-panel__title styling
 .threads-section-header {
-  padding: $s-2 $s-5 $s-1;
-  font-size: $text-xs-responsive;
+  position: sticky;
+  top: 0;
+  background: var(--color-bg-mobile-drawer); // Mobile default; desktop overrides below
+  padding: $s-3 $s-4 $s-1;
+  font-size: $text-xs;
   font-weight: $font-bold;
   color: var(--color-text-subtle);
   letter-spacing: 0.5px;
   text-transform: uppercase;
+}
+
+// Desktop: section headers sit inside the panel, use panel background
+.threads-results-list .threads-section-header {
+  background: var(--color-bg-panel);
 }
 
 // Thread items — extend shared dropdown result item styles
@@ -69,7 +75,7 @@
   }
 
   &__dot {
-    opacity: 0.5;
+    opacity: 1;
   }
 }
 

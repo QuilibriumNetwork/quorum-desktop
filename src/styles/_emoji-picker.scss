@@ -6,18 +6,18 @@
   /* Panel styling */
   box-shadow: $shadow-lg !important;
 
-  /* Backgrounds */
-  --epr-bg-color: var(--color-bg-modal) !important;
-  --epr-category-label-bg-color: var(--color-bg-modal) !important;
+  /* Backgrounds — uses panel tokens so emoji picker stays in sync with dropdown panels */
+  --epr-bg-color: var(--color-bg-panel) !important;
+  --epr-category-label-bg-color: var(--color-bg-panel) !important;
   --epr-search-input-bg-color: var(--color-field-bg) !important;
   --epr-hover-bg-color: var(--surface-3) !important;
   --epr-focus-bg-color: var(--surface-3) !important;
   --epr-search-input-bg-color-active: var(--color-field-bg) !important;
   --epr-search-input-focus-bg-color: var(--color-field-bg-focus) !important;
 
-  /* Borders */
-  --epr-picker-border-color: var(--color-border-default) !important;
-  --epr-search-input-border-color: var(--color-border-default) !important;
+  /* Borders — uses panel tokens so emoji picker stays in sync with dropdown panels */
+  --epr-picker-border-color: var(--color-border-panel) !important;
+  --epr-search-input-border-color: var(--color-border-panel) !important;
   --epr-search-border-color: var(--accent) !important;
 
   /* Text */

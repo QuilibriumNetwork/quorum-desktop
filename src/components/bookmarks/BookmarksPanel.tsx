@@ -157,6 +157,7 @@ export const BookmarksPanel: React.FC<BookmarksPanelProps> = ({
             compactIcon="filter"
             showSelectionCount={false}
             size="medium"
+            dropdownClassName="panel-select-dropdown"
           />
         </Flex>
       </div>
@@ -248,15 +249,16 @@ export const BookmarksPanel: React.FC<BookmarksPanelProps> = ({
         <Virtuoso
           data={filteredBookmarks}
           itemContent={(index, bookmark) => (
-            <BookmarkItem
-              key={bookmark.bookmarkId}
-              bookmark={bookmark}
-              onJumpToMessage={handleJumpToMessage}
-              onRemoveBookmark={handleRemoveBookmark}
-              stickers={stickers}
-              mapSenderToUser={mapSenderToUser}
-              compactDate={isTouchDevice()}
-            />
+            <div className="panel-item-box panel-item-box--hoverable">
+              <BookmarkItem
+                bookmark={bookmark}
+                onJumpToMessage={handleJumpToMessage}
+                onRemoveBookmark={handleRemoveBookmark}
+                stickers={stickers}
+                mapSenderToUser={mapSenderToUser}
+                compactDate={isTouchDevice()}
+              />
+            </div>
           )}
           style={{ height: '100%' }}
         />

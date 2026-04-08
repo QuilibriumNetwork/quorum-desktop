@@ -5,7 +5,7 @@
 
 .notification-panel__header {
   padding: $s-4;
-  border-bottom: $border solid var(--color-border-default);
+  border-bottom: $border solid var(--color-border-panel);
 }
 
 .notification-panel__title {
@@ -15,7 +15,7 @@
 
 .notification-panel__controls {
   padding: $s-1 $s-4;
-  border-bottom: $border solid var(--surface-3);
+  border-bottom: $border solid var(--color-border-panel);
 
   // Ensure filter icon (Select in compact mode) is centered
   .select-container {
@@ -39,16 +39,11 @@
 }
 
 .notification-panel__list {
-  padding: 0 0 $s-4 0; // Zero horizontal padding for full-width borders, bottom padding for spacing
+  @extend .dropdown-results-list;
 
-  // On desktop, handle own scrolling and limit height
   @media (hover: hover) and (pointer: fine) {
-    overflow-y: auto;
     max-height: 350px;
   }
-
-  // On mobile (touch devices in MobileDrawer), no overflow handling
-  // MobileDrawer__content handles scrolling, this just grows naturally
 }
 
 .notification-loading-state {
