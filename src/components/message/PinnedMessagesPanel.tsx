@@ -249,7 +249,7 @@ export const PinnedMessagesPanel: React.FC<PinnedMessagesPanelProps> = ({
               className="pinned-messages-list"
               components={{ Header: () => <div style={{ height: '8px' }} /> }}
               itemContent={(index) => (
-                <div className="panel-item-box panel-item-box--interactive">
+                <div className="panel-item-box panel-item-box--hoverable">
                   <PinnedMessageItem
                     message={pinnedMessages[index]}
                     mapSenderToUser={mapSenderToUser}

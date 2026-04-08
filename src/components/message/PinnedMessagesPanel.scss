@@ -23,7 +23,7 @@
 // Use shared list styling with zero horizontal padding for full-width borders
 .pinned-messages-list {
   @extend .dropdown-results-list;
-  padding: $s-2 0 $s-4 0 !important; // Top gap, zero horizontal padding, bottom padding
+  padding: $s-2 0 $s-2 0 !important;
 }
 
 // Use shared item styling with pinned-specific class name

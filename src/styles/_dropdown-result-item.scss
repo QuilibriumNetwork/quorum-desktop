@@ -5,14 +5,27 @@
 .panel-item-box {
   background: var(--color-bg-panel-item);
   border-radius: $rounded-lg;
-  margin: $s-1 $s-3;
+  border: $border solid var(--color-border-muted);
+  margin: $s-2 $s-4;
   overflow: hidden;
   transition: background-color $duration-150 $ease-in-out;
 
+  // Fully clickable card — whole box is interactive
   &--interactive {
     cursor: pointer;
 
+    &:hover {
+      background: var(--color-bg-panel-item-hover);
+    }
+
     &:active {
+      background: var(--color-bg-panel-item-hover);
+    }
+  }
+
+  // Hoverable but not fully clickable — contains interactive children (buttons etc.)
+  &--hoverable {
+    &:hover {
       background: var(--color-bg-panel-item-hover);
     }
   }

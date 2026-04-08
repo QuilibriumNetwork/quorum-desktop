@@ -248,7 +248,7 @@ export const BookmarksPanel: React.FC<BookmarksPanelProps> = ({
         <Virtuoso
           data={filteredBookmarks}
           itemContent={(index, bookmark) => (
-            <div className="panel-item-box panel-item-box--interactive">
+            <div className="panel-item-box panel-item-box--hoverable">
               <BookmarkItem
                 bookmark={bookmark}
                 onJumpToMessage={handleJumpToMessage}
