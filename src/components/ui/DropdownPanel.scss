@@ -79,13 +79,13 @@
 .dropdown-panel__close {
   padding: $s-1;
   border-radius: $rounded;
-  color: var(--color-text-muted);
+  color: var(--color-text-subtle);
   transition: all $duration-200 ease;
   background: transparent;
 
   &:hover {
     background: transparent;
-    color: var(--color-text-main);
+    color: var(--color-text-strong);
   }
 }
 
