@@ -3660,6 +3660,7 @@ export class MessageService {
                       {
                         ...(member as any),
                         isKicked: existing?.isKicked ?? false,
+                        joinedAt: (member as any).joinedAt ?? existing?.joinedAt,
                       } as any
                     );
                   } catch {
@@ -3949,11 +3950,14 @@ export class MessageService {
                 if (!userAddress) {
                   continue;
                 }
+                const existing = await this.messageDB.getSpaceMember(spaceId, userAddress);
                 const dbMember = {
                   ...member,
                   user_address: userAddress,
                   // Map profile_image to user_icon (desktop DB format)
                   user_icon: member.profile_image || member.user_icon,
+                  // Preserve joinedAt from local DB if sync data doesn't have it
+                  joinedAt: member.joinedAt ?? existing?.joinedAt,
                 };
                 await this.messageDB.saveSpaceMember(spaceId, dbMember);
               }
