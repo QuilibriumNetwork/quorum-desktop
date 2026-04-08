@@ -192,10 +192,11 @@ export const SearchResults: React.FC<SearchResultsProps> = ({
           ) : (
             /* Desktop: card item layout */
             <>
-              <div className="search-results-list">
               <Virtuoso
                 data={results}
                 style={{ height: Math.min(window.innerHeight * 0.8, 600) - 100 }}
+                className="search-results-list"
+                components={{ Header: () => <div style={{ height: '4px' }} /> }}
                 itemContent={(index, result) => (
                   <div className="panel-item-box panel-item-box--interactive">
                     <SearchResultItem
@@ -210,7 +211,6 @@ export const SearchResults: React.FC<SearchResultsProps> = ({
                   </div>
                 )}
               />
-              </div>
               {results.length >= 500 && (
                 <div className="p-3 border-top">
                   <Callout variant="info" className="w-full">
