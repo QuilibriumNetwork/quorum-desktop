@@ -72,6 +72,7 @@ export function useChannelData({ spaceId, channelId }: UseChannelDataProps) {
             displayName: curr.display_name,
             isKicked: curr.isKicked || false,
             spaceTag: (curr as any).spaceTag as BroadcastSpaceTag | undefined,
+            joinedAt: curr.joinedAt,
           },
         }),
       {} as {
@@ -81,6 +82,7 @@ export function useChannelData({ spaceId, channelId }: UseChannelDataProps) {
           displayName?: string;
           isKicked?: boolean;
           spaceTag?: BroadcastSpaceTag;
+          joinedAt?: number;
         };
       }
     );
@@ -186,7 +188,7 @@ export function useChannelData({ spaceId, channelId }: UseChannelDataProps) {
       // Flatten pre-computed sections into virtualization format
       const flattenedItems: Array<
         | { type: 'header'; title: string; isCollapsed: boolean }
-        | { type: 'user'; address: string; userIcon?: string; displayName?: string }
+        | { type: 'user'; address: string; userIcon?: string; displayName?: string; joinedAt?: number }
       > = [];
 
       // When searching (3+ chars), ignore collapsed state to show all matches
@@ -208,6 +210,7 @@ export function useChannelData({ spaceId, channelId }: UseChannelDataProps) {
                 address: member.address,
                 userIcon: member.userIcon,
                 displayName: member.displayName,
+                joinedAt: member.joinedAt,
               });
             });
           }
@@ -239,6 +242,7 @@ export function useChannelData({ spaceId, channelId }: UseChannelDataProps) {
                 address: member.address,
                 userIcon: member.userIcon,
                 displayName: member.displayName,
+                joinedAt: member.joinedAt,
               });
             });
           }

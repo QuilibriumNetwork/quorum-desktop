@@ -91,6 +91,7 @@ This is the main index for all documentation, bug reports, and task management.
 ### Active Issues
 - [Message list scroll jank on send — Virtuoso scroll position drift](bugs/2026-03-19-message-list-scroll-jank-on-send.md)
 - [No visual feedback when dragging files onto dropzone areas](bugs/2026-04-07-missing-drag-feedback-file-uploads.md)
+- [SpaceMember field name mismatch between MessageDB and quorum-shared](bugs/2026-04-08-spacemember-type-mismatch-db-vs-shared.md)
 - [Config Sync Space Loss Race Condition](bugs/config-sync-space-loss-race-condition.md)
 - [DirectMessage Invite Loading Performance Issue](bugs/directmessage-invite-loading-performance.md)
 - [Encryption State Evals Causing Config Sync Bloat](bugs/encryption-state-evals-bloat.md)
@@ -169,8 +170,6 @@ This is the main index for all documentation, bug reports, and task management.
 - [Embedded Media + YouTube Facade Privacy Fix — Implementation Plan](tasks/2026-03-12-embedded-media-plan.md)
 - [Embedded Media in PostMessage + YouTube Facade Privacy Fix](tasks/2026-03-12-embedded-media-spec.md)
 - [Thread List Panel: "Created by me" Filter](tasks/2026-03-14-thread-list-created-filter.md)
-- [Panel Card Style — Design Spec](tasks/2026-04-08-panel-card-style-design.md)
-- [Panel Card Style Implementation Plan](tasks/2026-04-08-panel-card-style-plan.md)
 - [Accessibility Features — Remaining Work](tasks/accessibility-features-implementation.md)
 - [Add User Bio Field to UserSettingsModal General Tab](tasks/add-user-bio-field.md)
 - [Auto-save settings modals — eliminate save buttons](tasks/auto-save-settings-modals.md)
@@ -181,7 +180,6 @@ This is the main index for all documentation, bug reports, and task management.
 - [Full Markdown Support Inside Spoilers](tasks/spoiler-full-markdown-support.md)
 - [Implement Channel Ordering Feature](tasks/channel-ordering-feature.md)
 - [Implement Message Forwarding with Privacy Controls](tasks/message-forwarding-with-privacy-controls.md)
-- [Implement New Member Badge in Spaces](tasks/new-member-badge-spaces.md)
 - [Implement Role-Based Channel Visibility](tasks/channel-role-visibility.md)
 - [Implement Smart Context Extraction Around Mentions in NotificationPanel](tasks/notification-mention-context-extraction.md)
 - [Multi-User Invite Selection Enhancement](tasks/multi-user-invite-selection.md)
@@ -314,6 +312,9 @@ This is the main index for all documentation, bug reports, and task management.
 - [ESLint 10 + React Compiler Lint Migration](tasks/.done/2026-04-07-eslint-10-migration.md)
 - [Device Naming Feature — Design Spec](tasks/.done/2026-04-08-device-naming-design.md)
 - [Device Naming Implementation Plan](tasks/.done/2026-04-08-device-naming-plan.md)
+- [Implement New Member Badge in Spaces](tasks/.done/2026-04-08-new-member-badge-spaces.md)
+- [Panel Card Style — Design Spec](tasks/.done/2026-04-08-panel-card-style-design.md)
+- [Panel Card Style Implementation Plan](tasks/.done/2026-04-08-panel-card-style-plan.md)
 - [AccentColorSwitcher Cross-Platform Migration + Persistence](tasks/.done/accent-color-switcher-cross-platform-migration.md)
 - [Add Context to Desktop Notifications](tasks/.done/rich-desktop-notifications-context.md)
 - [Add DM-Specific Action Queue Handlers](tasks/.done/dm-action-queue-handlers.md)
@@ -499,4 +500,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2026-04-08 15:20:49
+**Last Updated**: 2026-04-08 15:52:14

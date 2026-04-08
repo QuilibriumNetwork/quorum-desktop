@@ -2864,7 +2864,8 @@ export class MessageService {
                   participant.identityKey +
                   participant.preKey +
                   participant.userIcon +
-                  participant.displayName,
+                  participant.displayName +
+                  participant.joinedAt,
                 'utf-8'
               ).toString('base64');
               const result = ch.js_verify_ed448(
@@ -2879,19 +2880,20 @@ export class MessageService {
                   display_name: participant.displayName,
                   inbox_address: participant.inboxAddress,
                   isKicked: false,
+                  joinedAt: participant.joinedAt,
                 });
                 await queryClient.setQueryData(
                   buildSpaceMembersKey({
                     spaceId: conversationId.split('/')[0],
                   }),
-                  (oldData: secureChannel.UserProfile[]) => {
+                  (oldData: (secureChannel.UserProfile & { joinedAt?: number })[]) => {
                     return [
                       ...(oldData ?? []),
                       {
                         user_address: participant.address,
                         user_icon: participant.userIcon,
                         display_name: participant.displayName,
-                        // isKicked intentionally omitted here (defaults to false on fetch)
+                        joinedAt: participant.joinedAt,
                       },
                     ];
                   }
@@ -2936,8 +2938,8 @@ export class MessageService {
                   messageId: Buffer.from(messageId).toString('hex'),
                   digestAlgorithm: 'SHA-256',
                   nonce: Buffer.from(messageId).toString('hex'),
-                  createdDate: Date.now(),
-                  modifiedDate: Date.now(),
+                  createdDate: participant.joinedAt ?? Date.now(),
+                  modifiedDate: participant.joinedAt ?? Date.now(),
                   lastModifiedHash: '',
                   content: {
                     senderId: participant.address,
