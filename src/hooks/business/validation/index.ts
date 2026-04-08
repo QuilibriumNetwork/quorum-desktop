@@ -5,3 +5,4 @@ export * from './useGroupNameValidation';
 export * from './useChannelValidation';
 export * from './useMessageValidation';
 export * from './useProfileValidation';
+export * from './useDeviceNameValidation';

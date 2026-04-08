@@ -291,7 +291,17 @@ export class ConfigService {
       }
     }
 
-    // Merge bookmarks from remote 
+    // Merge deviceNames: additive union so names from all devices survive concurrent saves
+    const deviceNamesMerge = this.mergeDeviceNames(
+      storedConfig?.deviceNames,
+      config.deviceNames,
+      storedConfig?.deletedDeviceNameAddresses,
+      config.deletedDeviceNameAddresses
+    );
+    config.deviceNames = deviceNamesMerge.deviceNames;
+    config.deletedDeviceNameAddresses = deviceNamesMerge.deletedDeviceNameAddresses;
+
+    // Merge bookmarks from remote
     if (config.bookmarks && config.bookmarks.length > 0) {
       const localBookmarks = await this.messageDB.getBookmarks();
       const mergedBookmarks = this.mergeBookmarks(
@@ -500,6 +510,26 @@ export class ConfigService {
       buildConfigKey({ userAddress: config.address! }),
       config
     );
+  }
+
+  private mergeDeviceNames(
+    localNames: Record<string, string> | undefined,
+    remoteNames: Record<string, string> | undefined,
+    localTombstones: string[] | undefined,
+    remoteTombstones: string[] | undefined
+  ): { deviceNames: Record<string, string>; deletedDeviceNameAddresses: string[] } {
+    const allTombstones = [...new Set([
+      ...(localTombstones ?? []),
+      ...(remoteTombstones ?? []),
+    ])];
+    const merged: Record<string, string> = {
+      ...(localNames ?? {}),
+      ...(remoteNames ?? {}),
+    };
+    for (const addr of allTombstones) {
+      delete merged[addr];
+    }
+    return { deviceNames: merged, deletedDeviceNameAddresses: allTombstones };
   }
 
   /**
