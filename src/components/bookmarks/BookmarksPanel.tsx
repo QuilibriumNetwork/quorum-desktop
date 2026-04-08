@@ -248,15 +248,16 @@ export const BookmarksPanel: React.FC<BookmarksPanelProps> = ({
         <Virtuoso
           data={filteredBookmarks}
           itemContent={(index, bookmark) => (
-            <BookmarkItem
-              key={bookmark.bookmarkId}
-              bookmark={bookmark}
-              onJumpToMessage={handleJumpToMessage}
-              onRemoveBookmark={handleRemoveBookmark}
-              stickers={stickers}
-              mapSenderToUser={mapSenderToUser}
-              compactDate={isTouchDevice()}
-            />
+            <div className="panel-item-box panel-item-box--interactive">
+              <BookmarkItem
+                bookmark={bookmark}
+                onJumpToMessage={handleJumpToMessage}
+                onRemoveBookmark={handleRemoveBookmark}
+                stickers={stickers}
+                mapSenderToUser={mapSenderToUser}
+                compactDate={isTouchDevice()}
+              />
+            </div>
           )}
           style={{ height: '100%' }}
         />
