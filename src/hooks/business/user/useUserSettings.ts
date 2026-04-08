@@ -8,6 +8,7 @@ import type { BroadcastSpaceTag } from '@quilibrium/quorum-shared';
 import { DefaultImages } from '../../../utils';
 import { useUploadRegistration } from '../../mutations/useUploadRegistration';
 import { BackupService } from '../../../services/BackupService';
+import { getDeviceName } from '../../../utils/deviceInfo';
 
 export interface UseUserSettingsOptions {
   onSave?: () => void;
@@ -102,11 +103,26 @@ export const useUserSettings = (
         setReadReceipts(config?.readReceipts ?? false);
         setBio(config?.bio ?? '');
         setSpaceTagId(config?.spaceTagId ?? undefined);
-        setDeviceNames(config?.deviceNames ?? {});
+        const loadedNames = config?.deviceNames ?? {};
+        setDeviceNames(loadedNames);
         setIsConfigLoaded(true);
+
+        // Auto-name this device if it doesn't have a name yet
+        const inboxAddress = keyset.deviceKeyset?.inbox_keyset?.inbox_address;
+        if (inboxAddress && !loadedNames[inboxAddress]) {
+          const autoName = await getDeviceName();
+          const updatedNames = { ...loadedNames, [inboxAddress]: autoName };
+          const updatedConfig = { ...config, deviceNames: updatedNames };
+          setDeviceNames(updatedNames);
+          actionQueueService.enqueue(
+            'save-user-config',
+            { config: updatedConfig },
+            `config:${currentPasskeyInfo.address}`
+          );
+        }
       })();
     }
-  }, [init, currentPasskeyInfo, getConfig, keyset]);
+  }, [init, currentPasskeyInfo, getConfig, keyset, actionQueueService]);
 
   const removeDevice = (identityKey: string) => {
     // Find inbox address before removing from staged registration

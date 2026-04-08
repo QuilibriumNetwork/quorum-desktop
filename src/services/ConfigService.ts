@@ -518,10 +518,10 @@ export class ConfigService {
     localTombstones: string[] | undefined,
     remoteTombstones: string[] | undefined
   ): { deviceNames: Record<string, string>; deletedDeviceNameAddresses: string[] } {
-    const allTombstones = [
+    const allTombstones = [...new Set([
       ...(localTombstones ?? []),
       ...(remoteTombstones ?? []),
-    ];
+    ])];
     const merged: Record<string, string> = {
       ...(localNames ?? {}),
       ...(remoteNames ?? {}),
