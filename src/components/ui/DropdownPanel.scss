@@ -2,7 +2,7 @@
 
 // Shared dropdown panel styles for search results, pinned messages, etc.
 .dropdown-panel {
-  background: var(--surface-0);
+  background: var(--color-bg-panel);
   border-radius: $rounded-lg;
   box-shadow: $shadow-lg;
   border: $border solid var(--color-border-muted);
@@ -40,8 +40,8 @@
 
 .dropdown-panel__header {
   padding: $s-3 $s-4;
-  border-bottom: $border solid var(--surface-3);
-  background: var(--surface-0);
+  border-bottom: $border solid var(--color-border-muted);
+  background: var(--color-bg-panel);
 }
 
 .dropdown-panel__title {
