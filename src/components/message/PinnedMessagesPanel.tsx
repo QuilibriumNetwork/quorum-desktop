@@ -247,7 +247,7 @@ export const PinnedMessagesPanel: React.FC<PinnedMessagesPanelProps> = ({
               style={{ height: '350px' }} // Desktop: fixed height with own scrolling
               totalCount={pinnedMessages.length}
               className="pinned-messages-list"
-              components={{ Header: () => <div style={{ height: '4px' }} /> }}
+              components={{ Header: () => <div style={{ height: '8px' }} /> }}
               itemContent={(index) => (
                 <div className="panel-item-box panel-item-box--interactive">
                   <PinnedMessageItem
