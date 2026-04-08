@@ -1,16 +1,34 @@
 ---
 type: task
 title: Device Identification Improvement
-status: on-hold
+status: completed
 created: 2026-01-09T00:00:00.000Z
-updated: '2026-01-09'
+updated: '2026-04-08'
 ---
 
 # Device Identification Improvement
 
-**Status:** Pending
+**Status:** Completed (April 2026)
 **Priority:** Medium
 **Complexity:** Medium
+
+## Resolution (April 2026)
+
+This task was resolved in April 2026 via the `feat/device-naming` branch. The solution uses manual and auto device naming via the existing `UserConfig` sync system, with additive merge logic that prevents the race conditions that caused the previous attempt to fail.
+
+### Key differences from the September 2025 attempt
+
+1. **Additive `mergeDeviceNames` in ConfigService.getConfig**: Instead of last-write-wins, the merge unions local and remote `deviceNames` maps. Each device only ever writes its own `inboxAddress` key, so two devices can never conflict on the same key.
+2. **`saveChanges` fetches fresh config before saving**: The root cause of the original failure was `existingConfig.current` being captured once at startup and never refreshed. The fix fetches a fresh config inside `saveChanges` before building `newConfig`, so names set by other devices are never silently overwritten.
+3. **Tombstone system for deleted device names**: `deletedDeviceNameAddresses` is an additive array that prevents names from resurrecting after a device is removed.
+4. **Auto-naming triggers on first Settings open, not during registration**: The auto-detected name (e.g. "Chrome (Windows)") is suggested when the user opens the edit field on an unnamed device, rather than being captured during the registration flow.
+5. **Simpler browser detection**: approximately 10 browsers (Edge, Opera, Vivaldi, Yandex, Samsung Internet, UC Browser, Firefox, Chrome, Safari, Brave) rather than 45+. The regional browser variants (QQ, Baidu, etc.) were dropped as unnecessary complexity.
+
+The SDK modification approach (Option 3 in this document) was NOT needed. The client-side UserConfig approach works correctly once the stale-ref bug is fixed and the merge logic is made additive.
+
+See `.agents/docs/device-naming.md` for full feature documentation.
+
+---
 
 ## Problem
 
