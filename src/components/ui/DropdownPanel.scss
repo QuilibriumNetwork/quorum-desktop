@@ -5,7 +5,7 @@
   background: var(--surface-0);
   border-radius: $rounded-lg;
   box-shadow: $shadow-lg;
-  border: $border solid var(--color-border-default);
+  border: $border solid var(--color-border-muted);
   z-index: 10001; /* Higher than flex layout containers */
   overflow: hidden;
   font-weight: normal;
@@ -41,7 +41,7 @@
 .dropdown-panel__header {
   padding: $s-3 $s-4;
   border-bottom: $border solid var(--surface-3);
-  background: var(--surface-00);
+  background: var(--surface-0);
 }
 
 .dropdown-panel__title {
