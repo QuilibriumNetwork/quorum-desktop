@@ -23,10 +23,8 @@
   }
 }
 
-// Use shared list styling with zero horizontal padding for full-width borders
 .bookmarks-list {
   @extend .dropdown-results-list;
-  padding: $s-4 0 0 0 !important;
 }
 
 // Use shared item styling with bookmark-specific class name

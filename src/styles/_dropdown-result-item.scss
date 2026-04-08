@@ -206,7 +206,8 @@
 // Common list container
 .dropdown-results-list {
   background: var(--color-bg-panel);
-  padding-bottom: $s-3;
+  padding-top: $s-4;
+  padding-bottom: 0;
 
   // On desktop, handle own scrolling and limit height
   @media (hover: hover) and (pointer: fine) {
