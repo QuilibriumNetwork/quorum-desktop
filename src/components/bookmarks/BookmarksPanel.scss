@@ -11,7 +11,7 @@
 .bookmarks-panel .bookmarks-panel__controls,
 .mobile-drawer .bookmarks-panel__controls {
   padding: $s-1 $s-4;
-  border-bottom: $border solid var(--surface-3);
+  border-bottom: $border solid var(--color-border-panel);
 
   // Ensure filter icon (Select in compact mode) is centered
   .select-container {
@@ -33,7 +33,7 @@
   cursor: default; // Override cursor - only show pointer on specific interactive elements
 
   &:hover {
-    background-color: var(--surface-2);
+    background-color: var(--color-bg-panel-item-hover);
   }
 }
 

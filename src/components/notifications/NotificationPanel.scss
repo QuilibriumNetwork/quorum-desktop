@@ -5,7 +5,7 @@
 
 .notification-panel__header {
   padding: $s-4;
-  border-bottom: $border solid var(--color-border-default);
+  border-bottom: $border solid var(--color-border-panel);
 }
 
 .notification-panel__title {
@@ -15,7 +15,7 @@
 
 .notification-panel__controls {
   padding: $s-1 $s-4;
-  border-bottom: $border solid var(--surface-3);
+  border-bottom: $border solid var(--color-border-panel);
 
   // Ensure filter icon (Select in compact mode) is centered
   .select-container {

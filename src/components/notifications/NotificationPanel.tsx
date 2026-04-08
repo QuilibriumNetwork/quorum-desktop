@@ -238,6 +238,7 @@ export const NotificationPanel: React.FC<NotificationPanelProps> = ({
               selectAllLabel={t`All`}
               clearAllLabel={t`Clear`}
               size="medium"
+              dropdownClassName="panel-select-dropdown"
             />
 
             <Tooltip

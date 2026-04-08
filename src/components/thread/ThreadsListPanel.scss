@@ -22,13 +22,18 @@
 .threads-section-header {
   position: sticky;
   top: 0;
-  background: var(--surface-0);
+  background: var(--color-bg-mobile-drawer); // Mobile default; desktop overrides below
   padding: $s-3 $s-4 $s-1;
   font-size: $text-xs;
   font-weight: $font-bold;
   color: var(--color-text-subtle);
   letter-spacing: 0.5px;
   text-transform: uppercase;
+}
+
+// Desktop: section headers sit inside the panel, use panel background
+.threads-results-list .threads-section-header {
+  background: var(--color-bg-panel);
 }
 
 // Thread items — extend shared dropdown result item styles

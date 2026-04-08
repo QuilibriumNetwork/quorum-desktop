@@ -157,6 +157,7 @@ export const BookmarksPanel: React.FC<BookmarksPanelProps> = ({
             compactIcon="filter"
             showSelectionCount={false}
             size="medium"
+            dropdownClassName="panel-select-dropdown"
           />
         </Flex>
       </div>
