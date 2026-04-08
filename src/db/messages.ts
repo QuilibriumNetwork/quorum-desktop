@@ -97,6 +97,10 @@ export type UserConfig = {
     letters: string;
     url: string;
   };
+  // Device names: maps inbox_address → user-given label, synced across devices
+  deviceNames?: { [inboxAddress: string]: string };
+  // Tombstones for removed devices so names don't resurrect on sync
+  deletedDeviceNameAddresses?: string[];
 };
 
 export interface SearchableMessage {
