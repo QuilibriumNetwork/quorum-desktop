@@ -39,6 +39,8 @@ export interface UseUserSettingsReturn {
   exportBackup: () => Promise<void>;
   importBackup: (file: File) => Promise<{ messagesWritten: number; conversationsWritten: number }>;
   getPrivateKeyHex: () => Promise<string>;
+  saveDeviceName: (name: string) => Promise<void>;
+  deviceNames: { [inboxAddress: string]: string };
   keyset: any;
   removedDevices: string[];
   isConfigLoaded: boolean;
@@ -74,6 +76,8 @@ export const useUserSettings = (
     registration?.registration
   );
   const [removedDevices, setRemovedDevices] = useState<string[]>([]);
+  const [pendingTombstones, setPendingTombstones] = useState<string[]>([]);
+  const [deviceNames, setDeviceNames] = useState<{ [inboxAddress: string]: string }>({});
 
   // Update staged registration when registration data becomes available
   useEffect(() => {
@@ -98,12 +102,21 @@ export const useUserSettings = (
         setReadReceipts(config?.readReceipts ?? false);
         setBio(config?.bio ?? '');
         setSpaceTagId(config?.spaceTagId ?? undefined);
+        setDeviceNames(config?.deviceNames ?? {});
         setIsConfigLoaded(true);
       })();
     }
   }, [init, currentPasskeyInfo, getConfig, keyset]);
 
   const removeDevice = (identityKey: string) => {
+    // Find inbox address before removing from staged registration
+    const device = stagedRegistration?.device_registrations?.find(
+      (d: any) => d.identity_public_key === identityKey
+    );
+    if (device?.inbox_registration?.inbox_address) {
+      setPendingTombstones(prev => [...prev, device.inbox_registration.inbox_address]);
+    }
+
     setStagedRegistration((reg: any) => {
       return {
         ...reg!,
@@ -114,6 +127,37 @@ export const useUserSettings = (
     });
 
     setRemovedDevices(prev => [...prev, identityKey]);
+  };
+
+  const saveDeviceName = async (name: string) => {
+    if (!currentPasskeyInfo || !keyset?.userKeyset) return;
+
+    const inboxAddress = keyset.deviceKeyset?.inbox_keyset?.inbox_address;
+    if (!inboxAddress) return;
+
+    const freshConfig = await getConfig({
+      address: currentPasskeyInfo.address,
+      userKey: keyset.userKeyset,
+    });
+
+    const updatedNames = {
+      ...(freshConfig?.deviceNames ?? {}),
+      [inboxAddress]: name,
+    };
+
+    const updatedConfig = {
+      ...freshConfig,
+      deviceNames: updatedNames,
+    };
+
+    await actionQueueService.enqueue(
+      'save-user-config',
+      { config: updatedConfig },
+      `config:${currentPasskeyInfo.address}`
+    );
+
+    // Update local state immediately
+    setDeviceNames(updatedNames);
   };
 
   const downloadKey = async () => {
@@ -227,9 +271,13 @@ export const useUserSettings = (
       resolvedSpaceTag
     );
 
-    // Queue config save in background - no more UI blocking!
+    // Fetch fresh config to avoid overwriting changes from other devices
+    const freshConfig = await getConfig({
+      address: currentPasskeyInfo.address,
+      userKey: keyset.userKeyset,
+    });
     const newConfig = {
-      ...existingConfig.current!,
+      ...freshConfig,
       allowSync,
       nonRepudiable: nonRepudiable,
       deliveryReceipts,
@@ -238,6 +286,11 @@ export const useUserSettings = (
       profile_image: profileImageUrl,
       bio: bio.trim() || undefined,
       spaceTagId: spaceTagId || undefined,
+      // Merge pending tombstones with any existing ones
+      deletedDeviceNameAddresses: [
+        ...(freshConfig?.deletedDeviceNameAddresses ?? []),
+        ...pendingTombstones,
+      ],
     };
     await actionQueueService.enqueue(
       'save-user-config',
@@ -264,6 +317,8 @@ export const useUserSettings = (
       setRemovedDevices([]);
     }
 
+    setPendingTombstones([]);
+
     options.onSave?.();
   };
 
@@ -289,6 +344,8 @@ export const useUserSettings = (
     stagedRegistration,
     setStagedRegistration,
     removeDevice,
+    saveDeviceName,
+    deviceNames,
     downloadKey,
     exportBackup,
     importBackup,
