@@ -86,6 +86,8 @@ const UserSettingsModal: React.FunctionComponent<{
     exportBackup,
     importBackup,
     getPrivateKeyHex,
+    saveDeviceName,
+    deviceNames,
     keyset,
     removedDevices,
     isConfigLoaded,
@@ -258,6 +260,8 @@ const UserSettingsModal: React.FunctionComponent<{
                         isSaving={isSaving}
                         removedDevices={removedDevices}
                         isConfigLoaded={isConfigLoaded}
+                        deviceNames={deviceNames}
+                        saveDeviceName={saveDeviceName}
                         deliveryReceipts={deliveryReceipts}
                         setDeliveryReceipts={setDeliveryReceipts}
                         readReceipts={readReceipts}
