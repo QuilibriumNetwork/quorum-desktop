@@ -17,14 +17,18 @@
 // Use shared list styling
 .threads-results-list {
   @extend .dropdown-results-list;
-  padding: 0 0 $s-3 0 !important;
+  padding: $s-1 0 $s-3 0 !important;
 }
 
 // Section headers — match dropdown-panel__title styling
 .threads-section-header {
-  padding: $s-2 $s-5 $s-1;
-  font-size: $text-xs-responsive;
-  font-weight: $font-bold;
+  position: sticky;
+  top: 0;
+  background: var(--surface-0);
+  border-bottom: $border solid var(--color-border-muted);
+  padding: $s-3 $s-4 $s-1;
+  font-size: $text-xs;
+  font-weight: $font-semibold;
   color: var(--color-text-subtle);
   letter-spacing: 0.5px;
   text-transform: uppercase;
