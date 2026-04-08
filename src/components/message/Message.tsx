@@ -341,7 +341,8 @@ export const Message = React.memo(
 
     const sender = mapSenderToUser(message.content?.senderId);
     const isNewMember = sender?.joinedAt != null &&
-      Date.now() - sender.joinedAt < 7 * 24 * 60 * 60 * 1000;
+      message.createdDate >= sender.joinedAt &&
+      message.createdDate - sender.joinedAt < 7 * 24 * 60 * 60 * 1000;
     const displayedTimestmap = formatMessageDate(message.createdDate);
     const isEdited = message.modifiedDate !== message.createdDate;
 
