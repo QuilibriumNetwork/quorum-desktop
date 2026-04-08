@@ -194,8 +194,9 @@ export const SearchResults: React.FC<SearchResultsProps> = ({
             <>
               <Virtuoso
                 data={results}
-                style={{ height: Math.min(window.innerHeight * 0.8, 600) - 100, paddingTop: '4px' }}
+                style={{ height: Math.min(window.innerHeight * 0.8, 600) - 100 }}
                 className="search-results-list"
+                components={{ Header: () => <div style={{ height: '4px' }} /> }}
                 itemContent={(index, result) => (
                   <div className="panel-item-box panel-item-box--interactive">
                     <SearchResultItem

@@ -244,8 +244,9 @@ export const PinnedMessagesPanel: React.FC<PinnedMessagesPanelProps> = ({
           ) : (
             /* Desktop: card item layout */
             <Virtuoso
-              style={{ height: '350px', paddingTop: '4px' }} // Desktop: fixed height with own scrolling
+              style={{ height: '350px' }} // Desktop: fixed height with own scrolling
               totalCount={pinnedMessages.length}
+              components={{ Header: () => <div style={{ height: '4px' }} /> }}
               itemContent={(index) => (
                 <div className="panel-item-box panel-item-box--interactive">
                   <PinnedMessageItem
