@@ -43,10 +43,9 @@
     }
   }
 
-  // Remove padding/border when inside desktop panel item box
-  // The wrapper provides the card background and border
+  // Remove border when inside desktop panel item box
+  // Each card is its own box — no separator needed
   .panel-item-box & {
-    padding: 0;
     border-bottom: none;
     background-color: transparent !important;
 
