@@ -3,6 +3,9 @@ import { Button, Switch, Icon, Tooltip, Spacer, ScrollContainer, Callout } from 
 import { t } from '@lingui/core/macro';
 import { channel as secureChannel } from '@quilibrium/quilibrium-js-sdk-channels';
 import { QRCodeSVG } from 'qrcode.react';
+import { truncateAddress, getDeviceName } from '../../../utils/deviceInfo';
+import { useDeviceNameValidation } from '../../../hooks/business/validation';
+import { ClickToCopyContent } from '../../ui';
 
 interface PrivacyProps {
   allowSync: boolean;
@@ -20,6 +23,8 @@ interface PrivacyProps {
   isSaving: boolean;
   removedDevices?: string[];
   isConfigLoaded?: boolean;
+  deviceNames?: { [inboxAddress: string]: string };
+  saveDeviceName?: (name: string) => Promise<void>;
   deliveryReceipts: boolean;
   setDeliveryReceipts: (value: boolean) => void;
   readReceipts: boolean;
@@ -42,6 +47,8 @@ const Privacy: React.FunctionComponent<PrivacyProps> = ({
   isSaving,
   removedDevices = [],
   isConfigLoaded = true,
+  deviceNames = {},
+  saveDeviceName,
   deliveryReceipts,
   setDeliveryReceipts,
   readReceipts,
@@ -96,6 +103,34 @@ const Privacy: React.FunctionComponent<PrivacyProps> = ({
     setShowQRCode(false);
     setPrivateKeyHex(null);
     setShowQRConfirmation(false);
+  };
+
+  // Device rename state
+  const [editingDevice, setEditingDevice] = React.useState<string | null>(null);
+  const [editValue, setEditValue] = React.useState('');
+  const { error: nameError, isValid: nameIsValid } = useDeviceNameValidation(editValue);
+
+  const startEdit = async (inboxAddress: string, currentName: string | undefined) => {
+    const suggested = currentName ?? await getDeviceName();
+    setEditValue(suggested);
+    setEditingDevice(inboxAddress);
+  };
+
+  const confirmEdit = async () => {
+    if (!nameIsValid || !editingDevice || !saveDeviceName) return;
+    await saveDeviceName(editValue.trim());
+    setEditingDevice(null);
+    setEditValue('');
+  };
+
+  const cancelEdit = () => {
+    setEditingDevice(null);
+    setEditValue('');
+  };
+
+  const handleEditKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') { e.preventDefault(); confirmEdit(); }
+    if (e.key === 'Escape') { cancelEdit(); }
   };
 
   const isBackupBusy = isExportingBackup || isImportingBackup;
@@ -292,34 +327,89 @@ const Privacy: React.FunctionComponent<PrivacyProps> = ({
               d: secureChannel.DeviceRegistration,
               index: number
             ) => {
+              const inboxAddress = d.inbox_registration.inbox_address;
               const isRemoved = removedDevices.includes(d.identity_public_key);
-              const isThisDevice = keyset.deviceKeyset?.inbox_keyset?.inbox_address === d.inbox_registration.inbox_address;
+              const isThisDevice = keyset.deviceKeyset?.inbox_keyset?.inbox_address === inboxAddress;
+              const deviceName = deviceNames?.[inboxAddress];
+              const isEditing = editingDevice === inboxAddress;
 
               return (
                 <div
-                  key={d.inbox_registration.inbox_address}
+                  key={inboxAddress}
                   className={`flex flex-row justify-between items-center py-3 px-3 ${
                     index > 0
                       ? 'border-t border-dashed border-surface-7'
                       : ''
                   } ${isRemoved ? 'opacity-50' : ''}`}
                 >
-                  <div className="flex flex-col justify-around flex-1 mr-2">
-                    <div className="font-light break-all text-sm">
-                      {d.inbox_registration.inbox_address}
-                    </div>
+                  {/* Left section */}
+                  <div className="flex flex-1 flex-wrap items-center gap-x-2 gap-y-1 mr-2 min-w-0">
+                    {isEditing ? (
+                      <>
+                        <input
+                          autoFocus
+                          className="flex-1 min-w-0 bg-transparent border border-subtle rounded px-2 py-0.5 text-sm text-main outline-none focus:border-primary"
+                          value={editValue}
+                          onChange={e => setEditValue(e.target.value)}
+                          onKeyDown={handleEditKeyDown}
+                          maxLength={40}
+                        />
+                        <Icon
+                          name="check"
+                          size="sm"
+                          className={`cursor-pointer flex-shrink-0 ${nameIsValid ? 'text-success hover:text-success' : 'text-muted cursor-not-allowed'}`}
+                          onClick={nameIsValid ? confirmEdit : undefined}
+                        />
+                        <Icon
+                          name="close"
+                          size="sm"
+                          className="cursor-pointer flex-shrink-0 text-subtle hover:text-main"
+                          onClick={cancelEdit}
+                        />
+                        {nameError && (
+                          <div className="w-full text-xs text-danger mt-0.5">{nameError}</div>
+                        )}
+                      </>
+                    ) : (
+                      <>
+                        {deviceName && (
+                          <span className="text-sm text-main font-medium truncate max-w-[120px] sm:max-w-none">
+                            {deviceName}
+                          </span>
+                        )}
+                        <ClickToCopyContent
+                          text={inboxAddress}
+                          iconPosition="right"
+                          textVariant="subtle"
+                          textSize="sm"
+                          iconSize="xs"
+                          tooltipText={t`Copy full address`}
+                          tooltipLocation="top"
+                        >
+                          {truncateAddress(inboxAddress)}
+                        </ClickToCopyContent>
+                        {isThisDevice && saveDeviceName && (
+                          <Icon
+                            name="edit"
+                            size="xs"
+                            className="cursor-pointer text-subtle hover:text-main flex-shrink-0"
+                            onClick={() => startEdit(inboxAddress, deviceName)}
+                          />
+                        )}
+                      </>
+                    )}
                     {isRemoved && (
-                      <div className="text-xs text-danger mt-1">
+                      <div className="w-full text-xs text-danger">
                         {t`Pending removal - click Save to confirm`}
                       </div>
                     )}
                   </div>
+
+                  {/* Right section */}
                   <div className="flex-shrink-0">
                     {!isThisDevice && (
                       <Button
-                        onClick={() => {
-                          removeDevice(d.identity_public_key);
-                        }}
+                        onClick={() => removeDevice(d.identity_public_key)}
                         type="danger-outline"
                         size="small"
                         disabled={isRemoved}
