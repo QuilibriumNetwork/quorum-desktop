@@ -64,13 +64,13 @@ The `inbox_address` is used as the key because it is stable and already used els
 - The result is the union of local and remote maps
 - Remote wins when the same key exists in both (handles the case where a user renames a device from another device)
 - Any address in either tombstone list is removed from the result
-- Both tombstone lists are unioned into a single list
+- Both tombstone lists are unioned and deduplicated into a single list
 
 This is race-condition-safe because each device only ever writes its own `inboxAddress` key. Two devices can never conflict on the same key.
 
-### Stale-ref fix in useUserSettings
+### Fresh config fetch in saveChanges
 
-The root cause of the original September 2025 failure was `existingConfig.current` being captured once at hook startup and never refreshed. `saveChanges` in `src/hooks/business/user/useUserSettings.ts` now fetches a fresh config from the server before building `newConfig`, so names set by other devices since startup are never silently overwritten.
+The root cause of the original September 2025 failure was `existingConfig.current` being captured once at hook startup and never refreshed. `saveChanges` in `src/hooks/business/user/useUserSettings.ts` now fetches a fresh config from the server before building `newConfig`, so names set by other devices since startup are never silently overwritten. Additionally, `saveChanges` merges the local `deviceNames` React state into the config it saves, ensuring that a rename followed immediately by "Save Changes" is not lost due to action queue deduplication.
 
 ### Auto-naming in useUserSettings init
 
@@ -98,7 +98,7 @@ When `removeDevice` is called in `useUserSettings`, the device's `inbox_address`
 |------|--------|
 | `src/db/messages.ts` | Added `deviceNames` and `deletedDeviceNameAddresses` to `UserConfig` type |
 | `src/services/ConfigService.ts` | Added private `mergeDeviceNames` method; called it in `getConfig` after remote config decryption |
-| `src/hooks/business/user/useUserSettings.ts` | Fixed stale `existingConfig.current` ref in `saveChanges`; added `saveDeviceName` action; added auto-naming in init; added tombstone tracking in `removeDevice` |
+| `src/hooks/business/user/useUserSettings.ts` | Fresh config fetch in `saveChanges` with local `deviceNames` merge; `saveDeviceName` action; auto-naming in init; tombstone tracking in `removeDevice` |
 | `src/utils/deviceInfo.ts` | New utility: `getDeviceName()` for auto-detection, `truncateAddress()` for display |
 | `src/hooks/business/validation/useDeviceNameValidation.ts` | New validation hook: `validateDeviceName()` (non-hook) and `useDeviceNameValidation()` (React hook) |
 | `src/hooks/business/validation/index.ts` | Exports the new validation hook |
