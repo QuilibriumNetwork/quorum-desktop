@@ -9,6 +9,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Config Sync System](docs/config-sync-system.md)
 - [Cross-Platform Repository Implementation](docs/cross-platform-repository-implementation.md)
 - [Cryptographic Architecture](docs/cryptographic-architecture.md)
+- [Device Naming](docs/device-naming.md)
 - [Expo Dev Testing Guide](docs/expo-dev-testing-guide.md)
 - [IndexedDB Schema Reference: `quorum_db`](docs/quorum-db-schema.md)
 - [Quorum Data Management Architecture](docs/data-management-architecture-guide.md)
@@ -168,13 +169,14 @@ This is the main index for all documentation, bug reports, and task management.
 - [Embedded Media + YouTube Facade Privacy Fix — Implementation Plan](tasks/2026-03-12-embedded-media-plan.md)
 - [Embedded Media in PostMessage + YouTube Facade Privacy Fix](tasks/2026-03-12-embedded-media-spec.md)
 - [Thread List Panel: "Created by me" Filter](tasks/2026-03-14-thread-list-created-filter.md)
+- [Panel Card Style — Design Spec](tasks/2026-04-08-panel-card-style-design.md)
+- [Panel Card Style Implementation Plan](tasks/2026-04-08-panel-card-style-plan.md)
 - [Accessibility Features — Remaining Work](tasks/accessibility-features-implementation.md)
 - [Add User Bio Field to UserSettingsModal General Tab](tasks/add-user-bio-field.md)
 - [Auto-save settings modals — eliminate save buttons](tasks/auto-save-settings-modals.md)
 - [Conversation Deletion State Synchronization](tasks/conversation-deletion-state-sync.md)
 - [Decentralized GIF Library on Quilibrium](tasks/gifs-library-integration.md)
 - [Dependency Updates Audit](tasks/dependency-updates-audit.md)
-- [Device Identification Improvement](tasks/device-identification-improvement.md)
 - [Fix Lingui "Uncompiled Message Detected" Warning](tasks/fix-lingui-uncompiled-message-warning.md)
 - [Full Markdown Support Inside Spoilers](tasks/spoiler-full-markdown-support.md)
 - [Implement Channel Ordering Feature](tasks/channel-ordering-feature.md)
@@ -310,6 +312,8 @@ This is the main index for all documentation, bug reports, and task management.
 - [Dependency Cleanup Implementation Plan](tasks/.done/2026-03-24-dependency-cleanup.md)
 - [Hierarchical receipt toggle UX — nest read under delivery](tasks/.done/2026-03-24-hierarchical-receipt-toggles.md)
 - [ESLint 10 + React Compiler Lint Migration](tasks/.done/2026-04-07-eslint-10-migration.md)
+- [Device Naming Feature — Design Spec](tasks/.done/2026-04-08-device-naming-design.md)
+- [Device Naming Implementation Plan](tasks/.done/2026-04-08-device-naming-plan.md)
 - [AccentColorSwitcher Cross-Platform Migration + Persistence](tasks/.done/accent-color-switcher-cross-platform-migration.md)
 - [Add Context to Desktop Notifications](tasks/.done/rich-desktop-notifications-context.md)
 - [Add DM-Specific Action Queue Handlers](tasks/.done/dm-action-queue-handlers.md)
@@ -334,6 +338,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Custom ContentEditable Mention Pills for Message Composer](tasks/.done/mention-pills-in-message-textarea.md)
 - [Date Separators UI Enhancement](tasks/.done/date-separators-messages-list.md)
 - [Delete Confirmation System Implementation](tasks/.done/delete-confirmation-system.md)
+- [Device Identification Improvement](tasks/.done/device-identification-improvement.md)
 - [Direct Message Deletion Feature](tasks/.done/dm-message-deletion.md)
 - [Direct Message Features Comparison Analysis](tasks/.done/direct-message-features-comparison.md)
 - [DirectMessage Navigation State Persistence](tasks/.done/dm-navigation-state-persistence.md)
@@ -450,7 +455,6 @@ This is the main index for all documentation, bug reports, and task management.
 
 ### Active Reports
 
-- [TypeScript Errors Audit](reports/2026-04-07-typescript-errors-audit.md)
 - [Channel Ordering Feature Analysis](reports/channel-ordering-feature-analysis_2026-01-07.md)
 - [Comprehensive Privacy & Security Audit - All Features](reports/privacy-security-comprehensive-audit_2025-12-21.md)
 - [Comprehensive WCAG Accessibility Audit Report](reports/accessibility-wcag-audit_2026-02-10.md)
@@ -469,6 +473,7 @@ This is the main index for all documentation, bug reports, and task management.
 
 ### .Archived
 - [Expert Panel Analysis: DM Receipts (Delivery & Read)](reports/.archived/2026-03-24-dm-receipts-expert-panel-analysis.md)
+- [TypeScript Errors Audit](reports/.archived/2026-04-07-typescript-errors-audit.md)
 - [Complete i18n Translation Quality Audit](reports/.archived/i18n-complete-translation-quality-audit_2026-03-14.md)
 - [i18n Translation Quality Audit](reports/.archived/i18n-translation-quality-audit_2026-03-14.md)
 - [Text Primitive Audit — Pre-Migration Analysis](reports/.archived/text-primitive-audit_2026-02-10.md)
@@ -494,4 +499,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2026-04-07 16:23:19
+**Last Updated**: 2026-04-08 15:20:49
