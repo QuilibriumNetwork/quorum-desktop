@@ -340,6 +340,10 @@ export const Message = React.memo(
     );
 
     const sender = mapSenderToUser(message.content?.senderId);
+    const SEVEN_DAYS_MS = 7 * 24 * 60 * 60 * 1000;
+    const isNewMember = sender?.joinedAt != null &&
+      Date.now() - sender.joinedAt < SEVEN_DAYS_MS &&
+      message.createdDate >= sender.joinedAt - 60_000;
     const displayedTimestmap = formatMessageDate(message.createdDate);
     const isEdited = message.modifiedDate !== message.createdDate;
 
@@ -793,6 +797,21 @@ export const Message = React.memo(
                         />
                       </Tooltip>
                     )}
+                    {isNewMember && (
+                      <Tooltip
+                        id={`new-member-${message.messageId}`}
+                        content={t`I'm new!`}
+                        showOnTouch={true}
+                        autoHideAfter={3000}
+                      >
+                        <Icon
+                          name="seedling"
+                          size="sm"
+                          variant="filled"
+                          className="ml-2 text-success"
+                        />
+                      </Tooltip>
+                    )}
                     <span className="pl-2">
                       {!message.signature && (
                         <Tooltip
@@ -869,6 +888,21 @@ export const Message = React.memo(
                             size="sm"
                             variant="filled"
                             className="ml-2 text-accent"
+                          />
+                        </Tooltip>
+                      )}
+                      {isNewMember && (
+                        <Tooltip
+                          id={`new-member-mobile-${message.messageId}`}
+                          content={t`I'm new!`}
+                          showOnTouch={true}
+                          autoHideAfter={3000}
+                        >
+                          <Icon
+                            name="seedling"
+                            size="sm"
+                            variant="filled"
+                            className="ml-2 text-success"
                           />
                         </Tooltip>
                       )}

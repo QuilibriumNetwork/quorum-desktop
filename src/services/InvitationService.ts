@@ -860,6 +860,7 @@ export class InvitationService {
         ).toString('hex'),
         userIcon: currentPasskeyInfo!.pfpUrl,
         displayName: currentPasskeyInfo!.displayName,
+        joinedAt: Date.now(),
         signature: '',
       };
       const msg = Buffer.from(
@@ -871,7 +872,8 @@ export class InvitationService {
           participant.identityKey +
           participant.preKey +
           participant.userIcon +
-          participant.displayName,
+          participant.displayName +
+          participant.joinedAt,
         'utf-8'
       ).toString('base64');
       const sig = ch.js_sign_ed448(

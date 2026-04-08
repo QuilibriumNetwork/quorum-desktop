@@ -1063,6 +1063,7 @@ export class MessageDB {
       inbox_address: string;
       isKicked?: boolean;
       spaceTag?: BroadcastSpaceTag;
+      joinedAt?: number;
     }
   ): Promise<void> {
     await this.init();
@@ -1080,7 +1081,7 @@ export class MessageDB {
     spaceId: string,
     user_address: string
   ): Promise<
-    channel.UserProfile & { inbox_address: string; isKicked?: boolean; spaceTag?: BroadcastSpaceTag }
+    channel.UserProfile & { inbox_address: string; isKicked?: boolean; spaceTag?: BroadcastSpaceTag; joinedAt?: number }
   > {
     await this.init();
     return new Promise((resolve, reject) => {
@@ -1099,7 +1100,7 @@ export class MessageDB {
   async getSpaceMembers(
     spaceId: string
   ): Promise<
-    (channel.UserProfile & { inbox_address: string; isKicked?: boolean; spaceTag?: BroadcastSpaceTag })[]
+    (channel.UserProfile & { inbox_address: string; isKicked?: boolean; spaceTag?: BroadcastSpaceTag; joinedAt?: number })[]
   > {
     await this.init();
     return new Promise((resolve, reject) => {

@@ -1704,10 +1704,18 @@ const Channel: React.FC<ChannelProps> = ({
                             size={30}
                             className="opacity-80 group-hover:opacity-100 transition-opacity duration-150 flex-shrink-0"
                           />
-                          <div className="flex flex-col ml-2 text-subtle group-hover:text-main transition-colors duration-150 min-w-0 flex-1">
+                          <div className="flex flex-row items-center ml-2 text-subtle group-hover:text-main transition-colors duration-150 min-w-0 flex-1">
                             <span className="text-md font-bold truncate-user-name">
                               {item.displayName ?? item.address}
                             </span>
+                            {item.joinedAt != null && Date.now() - item.joinedAt < 7 * 24 * 60 * 60 * 1000 && (
+                              <Icon
+                                name="seedling"
+                                size="sm"
+                                variant="filled"
+                                className="ml-1.5 text-success flex-shrink-0"
+                              />
+                            )}
                           </div>
                         </div>
                       </div>
@@ -1931,10 +1939,18 @@ const Channel: React.FC<ChannelProps> = ({
                     size={30}
                     className="opacity-80 flex-shrink-0"
                   />
-                  <div className="flex flex-col ml-2 text-subtle min-w-0 flex-1">
+                  <div className="flex flex-row items-center ml-2 text-subtle min-w-0 flex-1">
                     <span className="text-md font-bold truncate-user-name">
                       {item.displayName ?? item.address}
                     </span>
+                    {item.joinedAt != null && Date.now() - item.joinedAt < 7 * 24 * 60 * 60 * 1000 && (
+                      <Icon
+                        name="seedling"
+                        size="sm"
+                        variant="filled"
+                        className="ml-1.5 text-success flex-shrink-0"
+                      />
+                    )}
                   </div>
                 </TouchAwareListItem>
               );

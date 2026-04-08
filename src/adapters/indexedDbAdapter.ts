@@ -135,19 +135,48 @@ export class IndexedDBAdapter implements StorageAdapter {
   }
 
   // ============ Space Members ============
+  // Desktop IndexedDB stores members with SDK field names (user_address, user_icon)
+  // while quorum-shared SpaceMember uses (address, profile_image).
+  // This adapter maps between the two conventions.
+
+  private dbMemberToShared(dbMember: any): SpaceMember {
+    return {
+      address: dbMember.user_address ?? dbMember.address ?? '',
+      display_name: dbMember.display_name,
+      profile_image: dbMember.user_icon ?? dbMember.profile_image,
+      user_address: dbMember.user_address ?? dbMember.address ?? '',
+      user_icon: dbMember.user_icon ?? dbMember.profile_image,
+      inbox_address: dbMember.inbox_address ?? '',
+      isKicked: dbMember.isKicked,
+      joinedAt: dbMember.joinedAt,
+      spaceTag: dbMember.spaceTag,
+    };
+  }
+
+  private sharedMemberToDb(member: SpaceMember) {
+    return {
+      user_address: member.user_address ?? member.address,
+      user_icon: member.user_icon ?? member.profile_image,
+      display_name: member.display_name,
+      inbox_address: member.inbox_address,
+      isKicked: member.isKicked,
+      joinedAt: member.joinedAt,
+      spaceTag: member.spaceTag,
+    };
+  }
 
   async getSpaceMembers(spaceId: string): Promise<SpaceMember[]> {
     const members = await this.db.getSpaceMembers(spaceId);
-    return members as unknown as SpaceMember[];
+    return members.map((m) => this.dbMemberToShared(m));
   }
 
   async getSpaceMember(spaceId: string, address: string): Promise<SpaceMember | undefined> {
     const member = await this.db.getSpaceMember(spaceId, address);
-    return member as unknown as SpaceMember | undefined;
+    return member ? this.dbMemberToShared(member) : undefined;
   }
 
   async saveSpaceMember(spaceId: string, member: SpaceMember): Promise<void> {
-    return this.db.saveSpaceMember(spaceId, member as any);
+    return this.db.saveSpaceMember(spaceId, this.sharedMemberToDb(member));
   }
 
   // ============ Sync Metadata ============
