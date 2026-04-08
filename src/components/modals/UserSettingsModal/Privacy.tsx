@@ -389,12 +389,18 @@ const Privacy: React.FunctionComponent<PrivacyProps> = ({
                           {truncateAddress(inboxAddress)}
                         </ClickToCopyContent>
                         {isThisDevice && saveDeviceName && (
-                          <Icon
-                            name="edit"
-                            size="xs"
-                            className="cursor-pointer text-subtle hover:text-main flex-shrink-0"
-                            onClick={() => startEdit(inboxAddress, deviceName)}
-                          />
+                          <Tooltip
+                            id={`rename-device-${inboxAddress}`}
+                            content={t`Rename this device`}
+                            place="top"
+                          >
+                            <Icon
+                              name="edit"
+                              size="sm"
+                              className="cursor-pointer text-subtle hover:text-main flex-shrink-0"
+                              onClick={() => startEdit(inboxAddress, deviceName)}
+                            />
+                          </Tooltip>
                         )}
                       </>
                     )}
