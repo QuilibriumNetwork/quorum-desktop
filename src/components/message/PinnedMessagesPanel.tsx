@@ -242,23 +242,25 @@ export const PinnedMessagesPanel: React.FC<PinnedMessagesPanelProps> = ({
               />
             </div>
           ) : (
-            /* Desktop: Keep existing layout */
+            /* Desktop: card item layout */
             <Virtuoso
               style={{ height: '350px' }} // Desktop: fixed height with own scrolling
               totalCount={pinnedMessages.length}
               itemContent={(index) => (
-                <PinnedMessageItem
-                  message={pinnedMessages[index]}
-                  mapSenderToUser={mapSenderToUser}
-                  onJumpToMessage={handleJumpToMessage}
-                  canPinMessages={canPinMessages}
-                  togglePin={togglePin}
-                  stickers={stickers}
-                  spaceRoles={spaceRoles}
-                  spaceChannels={spaceChannels}
-                  onChannelClick={onChannelClick}
-                  spaceId={spaceId}
-                />
+                <div className="panel-item-box panel-item-box--interactive">
+                  <PinnedMessageItem
+                    message={pinnedMessages[index]}
+                    mapSenderToUser={mapSenderToUser}
+                    onJumpToMessage={handleJumpToMessage}
+                    canPinMessages={canPinMessages}
+                    togglePin={togglePin}
+                    stickers={stickers}
+                    spaceRoles={spaceRoles}
+                    spaceChannels={spaceChannels}
+                    onChannelClick={onChannelClick}
+                    spaceId={spaceId}
+                  />
+                </div>
               )}
               className="pinned-messages-list"
             />
