@@ -1,12 +1,17 @@
 ---
 type: task
 title: Mobile/Touch Implementation Transition Plan
-status: in-progress
+status: reference
 created: 2026-01-09T00:00:00.000Z
-updated: '2026-01-09'
+updated: '2026-04-09'
 ---
 
 # Mobile/Touch Implementation Transition Plan
+
+> **Status (2026-04-09)**: The `quorum-mobile` native app now exists as a separate repo. The "Phase 2: When Native App is Ready" phase described below has begun. Key decisions from this doc have been validated:
+> - All mobile browser components in this repo (`MobileDrawer`, `MessageActionsDrawer`, `EmojiPickerDrawer`) are **kept** — they serve mobile browser users and remain correct
+> - Native equivalents are being built in `quorum-mobile` using these as templates
+> - The "Template Usage Strategy" section at the bottom remains a useful reference for `quorum-mobile` devs
 
 ## Executive Summary
 

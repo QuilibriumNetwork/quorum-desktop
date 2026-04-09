@@ -1,18 +1,27 @@
 ---
 type: task
 title: Component Architecture Masterplan - Desktop/Mobile Unification
-status: in-progress
+status: reference
 created: 2026-01-09T00:00:00.000Z
-updated: '2026-01-09'
+updated: '2026-04-09'
 ---
 
 # Component Architecture Masterplan - Desktop/Mobile Unification
+
+> **Architecture Status (2026-04-09)**: The project now uses a **multi-repo model**:
+> - `quorum-desktop` — web + Electron app (this repo)
+> - `quorum-mobile` — React Native + Expo app (separate repo)
+> - `quorum-shared` — shared types, hooks, sync protocol, and UI primitives (npm package)
+>
+> **Primitives** live in `quorum-shared` (not in `src/components/primitives/` here). Both repos consume them via `import { Button, Modal, ... } from '@quilibrium/quorum-shared'`. In `quorum-desktop`, a local barrel at `src/components/primitives/index.ts` re-exports from `quorum-shared` and imports SCSS styles.
+>
+> The **architectural philosophy** in this document remains current and valid. File path examples and "create primitives here" instructions refer to `quorum-shared`, not this repo.
 
 ## Executive Summary
 
 This masterplan defines the **architectural philosophy and technical approach** for creating a unified codebase that supports both desktop and mobile platforms. The approach extracts only the "raw HTML portion" into platform-specific primitives while keeping 90%+ of the codebase shared.
 
-**For step-by-step implementation**, see [`mobile-dev-plan.md`](./mobile-dev-plan.md).
+**For current architecture details**, see [quorum-shared-architecture.md](../../docs/quorum-shared-architecture.md).
 **For detailed development workflows**, see [`component-dev-guidelines.md`](../../docs/component-dev-guidelines.md).
 
 ## Current State Analysis
@@ -450,65 +459,58 @@ This ensures optimal UX across all device sizes:
 4. **Scrollable Content**: Ensure content is scrollable within drawer
 5. **Safe Areas**: Account for device notches and home indicators
 
-## File Structure Reorganization
+## File Structure (Current Multi-Repo Model)
 
+Primitives live in `quorum-shared`, not in this repo. Both `quorum-desktop` and `quorum-mobile` consume them as a package.
+
+**quorum-shared** (primitives source):
+```
+@quilibrium/quorum-shared/src/primitives/
+├── Button/         (Button.web.tsx + Button.native.tsx)
+├── Input/
+├── Modal/
+├── Select/
+├── ...etc
+└── theme/          (ThemeProvider, colors, useTheme)
+```
+
+**quorum-desktop** (this repo):
 ```
 src/
 ├── components/
-│   ├── primitives/           # NEW: Platform-specific implementations
-│   │   ├── Button/
-│   │   ├── Input/
-│   │   ├── TextArea/
-│   │   ├── Select/
-│   │   ├── Container/
-│   │   ├── IconButton/
-│   │   ├── Modal/
-│   │   └── Card/
-│   │
-│   ├── channel/             # UNCHANGED: Complex business components
-│   ├── direct/              # UNCHANGED: Complex business components
-│   ├── message/             # UNCHANGED: Complex business components
-│   ├── modals/              # REFACTORED: Use Modal primitive
-│   ├── search/              # REFACTORED: Use Input/Button primitives
-│   └── user/                # UNCHANGED: Mostly business logic
+│   ├── primitives/index.ts  # Re-exports from quorum-shared + imports SCSS
+│   ├── channel/             # Business components (use primitives)
+│   ├── direct/
+│   ├── message/
+│   ├── modals/
+│   ├── search/
+│   └── user/
 │
-├── hooks/                   # UNCHANGED: 100% shared
-├── api/                     # UNCHANGED: 100% shared
-├── services/                # UNCHANGED: 100% shared
-└── utils/                   # UNCHANGED: 100% shared
+├── hooks/                   # Business hooks (many migrated to quorum-shared)
+├── api/
+├── services/
+└── utils/
 ```
 
-## Migration Strategy
+**quorum-mobile** (separate repo):
+```
+src/
+├── components/              # Native business components
+├── screens/                 # Screen-level components
+└── ...                      # Consumes quorum-shared primitives + hooks
+```
 
-### Phase 1: Create Core Primitives (Week 1)
+## Migration Status (2026-04-09)
 
-1. Button (already exists, just reorganize)
-2. Input
-3. TextArea
-4. Container/Box
-5. IconButton
+All phases below are **complete**:
 
-### Phase 2: Create UI Primitives (Week 2)
+- ✅ Core primitives built (Button, Input, TextArea, Select, Modal, etc.) — now live in `quorum-shared`
+- ✅ Web components refactored to use primitives
+- ✅ Business logic extracted into shared hooks (many migrated to `quorum-shared`)
+- ✅ `.native.tsx` primitive implementations in `quorum-shared`
+- ✅ `quorum-mobile` repo created and consuming `quorum-shared`
 
-1. Select/Dropdown
-2. Modal
-3. Card
-4. Tooltip wrapper
-5. Drawer (for mobile)
-
-### Phase 3: Refactor Components (Week 3-4)
-
-1. Replace all raw HTML with primitives
-2. Start with simple components (SearchBar)
-3. Move to complex components (Message actions)
-4. Test thoroughly on web first
-
-### Phase 4: Mobile Implementation (Week 5-6)
-
-1. Implement .native.tsx versions
-2. Test with React Native
-3. Adjust styling for mobile
-4. Handle platform differences
+Current work happens in `quorum-mobile` (native business components, screens) and `quorum-shared` (new primitives, hooks).
 
 ## Step-by-Step Guide for New Component Development
 
@@ -530,36 +532,44 @@ src/
 
 ### 2. For NEW Primitives
 
-```bash
-# Create structure
-mkdir -p src/components/primitives/MyPrimitive
-cd src/components/primitives/MyPrimitive
-```
+New primitives go in **`quorum-shared`** (not this repo). See the `update-shared` skill for the workflow.
 
-Create these files:
-
+Structure in `quorum-shared`:
 1. **MyPrimitive.types.ts** - Define the interface
 2. **MyPrimitive.web.tsx** - Web implementation
-3. **MyPrimitive.native.tsx** - Mobile implementation
-4. **MyPrimitive.scss** - Web styles (if needed)
-5. **index.ts** - Export with platform resolution
+3. **MyPrimitive.native.tsx** - React Native implementation
+4. **index.ts** - Export with platform resolution
+
+SCSS styles for web stay in **`quorum-desktop`** at `src/components/primitives/`.
 
 ### 3. For NEW Business Components
 
+**In quorum-desktop** (web):
 ```tsx
-// MyFeature.tsx - Works on BOTH platforms
-import { Button } from '../primitives/Button';
-import { Input } from '../primitives/Input';
-import { Container } from '../primitives/Container';
+// MyFeature.tsx
+import { Button, Input } from '../primitives'; // re-exports from quorum-shared
 
 export function MyFeature() {
-  // Complex business logic here
-
   return (
-    <Container>
+    <>
       <Input value={value} onChange={setValue} />
       <Button onClick={handleSubmit}>Submit</Button>
-    </Container>
+    </>
+  );
+}
+```
+
+**In quorum-mobile** (native):
+```tsx
+// MyFeature.tsx — same primitives, different repo
+import { Button, Input } from '@quilibrium/quorum-shared';
+
+export function MyFeature() {
+  return (
+    <>
+      <Input value={value} onChangeText={setValue} />
+      <Button onPress={handleSubmit}>Submit</Button>
+    </>
   );
 }
 ```
@@ -613,15 +623,10 @@ export function MyFeature() {
 
 ### Related Documentation
 
-**For Step-by-Step Implementation**:
-
-- [`mobile-dev-plan.md`](./mobile-dev-plan.md) - Detailed phase-by-phase execution plan
+- [quorum-shared-architecture.md](../../docs/quorum-shared-architecture.md) - Current multi-repo architecture overview
+- [cross-platform-components-guide.md](../../docs/cross-platform-components-guide.md) - Component classification and cross-platform patterns
+- [primitives docs](../../docs/features/primitives/) - Primitives quick reference and styling guide
 - [`component-dev-guidelines.md`](../../docs/component-dev-guidelines.md) - Development workflows and code examples
-
-**For Understanding the Architecture**:
-
-- This document provides the conceptual foundation and reasoning
-- Implementation documents reference this for architectural context
 
 ## Key Architectural Insights
 

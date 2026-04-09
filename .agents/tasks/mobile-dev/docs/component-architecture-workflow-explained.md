@@ -1,12 +1,19 @@
 ---
 type: task
 title: Component Architecture Workflow - Detailed Explanation
-status: in-progress
+status: reference
 created: 2026-01-09T00:00:00.000Z
-updated: '2026-01-09'
+updated: '2026-04-09'
 ---
 
 # Component Architecture Workflow - Detailed Explanation
+
+> **Architecture Status (2026-04-09)**: The project now uses a **multi-repo model**:
+> - `quorum-desktop` — web + Electron app (this repo)
+> - `quorum-mobile` — React Native + Expo app (separate repo)
+> - `quorum-shared` — shared types, hooks, sync protocol, and UI primitives (npm package)
+>
+> Primitives (`.web.tsx` / `.native.tsx`) live in `quorum-shared`. Business components are built separately in each repo, consuming shared primitives and hooks via `@quilibrium/quorum-shared`. The three-layer architecture described below remains the correct mental model.
 
 ## Overview
 
@@ -14,53 +21,42 @@ This document explains the complete workflow from primitive creation to complex 
 
 ---
 
-## Current State vs Future State
+## Current State (Multi-Repo, 2026)
 
-### **Current State (Desktop Only)**
+The architecture is now split across three repos:
 
+**quorum-shared** — primitives + hooks:
+```
+@quilibrium/quorum-shared/src/
+├── primitives/
+│   ├── Button/  (Button.web.tsx + Button.native.tsx)
+│   ├── Modal/
+│   ├── Input/
+│   └── ...
+└── hooks/       # Shared React Query hooks (useSpaces, useMessages, etc.)
+```
+
+**quorum-desktop** (this repo) — web business components:
 ```
 src/components/
 ├── message/
-│   ├── Message.tsx                    # Complex component with many features
-│   ├── MessageActions.tsx             # Message-specific actions
-│   └── MessageReactions.tsx           # Reaction system
+│   ├── Message.tsx              # Web component, uses shared primitives
+│   ├── MessageActions.tsx       # Hover-based desktop actions
+│   └── hooks/                   # Business logic hooks
 ├── channel/
-│   ├── Channel.tsx                    # Channel view with message list
-│   ├── ChannelHeader.tsx              # Channel header with controls
-│   └── MessageInput.tsx               # Input form for sending messages
 ├── space/
-│   ├── Space.tsx                      # Space layout and navigation
-│   └── SpaceSettings.tsx              # Space configuration
-└── primitives/                        # ✅ Our new primitives
-    ├── Button/
-    ├── Modal/
-    ├── Input/
-    └── VirtualList/
+└── primitives/index.ts          # Re-exports from quorum-shared + SCSS
 ```
 
-### **Future State (Cross-Platform)**
-
+**quorum-mobile** (separate repo) — native business components:
 ```
-src/components/
-├── message/
-│   ├── Message.web.tsx                # Web-specific message layout
-│   ├── Message.native.tsx             # Mobile-specific message layout
-│   ├── MessageActions.web.tsx         # Hover actions for desktop
-│   ├── MessageActions.native.tsx      # Touch actions for mobile
-│   ├── MessageReactions.tsx           # Shared logic (no UI differences)
-│   └── hooks/
-│       ├── useMessageActions.ts       # ✅ Shared business logic
-│       └── useMessageReactions.ts     # ✅ Shared business logic
-├── channel/
-│   ├── Channel.tsx                    # ✅ Shared (uses primitives only)
-│   ├── ChannelHeader.web.tsx          # Desktop header layout
-│   ├── ChannelHeader.native.tsx       # Mobile header layout
-│   └── MessageInput.tsx               # ✅ Shared (uses Input primitive)
-└── primitives/                        # ✅ Cross-platform primitives
-    ├── Button/
-    ├── Modal/
-    ├── Input/
-    └── VirtualList/
+src/
+├── components/
+│   ├── message/
+│   │   ├── Message.tsx          # Native component, uses shared primitives
+│   │   └── MessageActions.tsx   # Long-press / drawer-based mobile actions
+│   └── ...
+└── screens/                     # Screen-level navigation components
 ```
 
 ---
@@ -665,5 +661,5 @@ This approach gives us the best of both worlds: **code reuse for efficiency** an
 
 ---
 
-_Last updated: 2025-07-25_
-_For questions about specific components, see the masterplan or create a GitHub issue._
+_Last updated: 2026-04-09_
+_For questions about specific components, see [components-shared-arch-masterplan.md](../components-shared-arch-masterplan.md) or [quorum-shared-architecture.md](../../../docs/quorum-shared-architecture.md)._
