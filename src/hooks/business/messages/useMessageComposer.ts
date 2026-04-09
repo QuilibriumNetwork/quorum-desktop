@@ -8,7 +8,7 @@ import type {
 import { t } from '@lingui/core/macro';
 import { processAttachmentImage, FILE_SIZE_LIMITS } from '../../../utils/imageProcessing';
 import type { AttachmentProcessingResult } from '../../../utils/imageProcessing';
-import { extractMentionsFromText, MAX_MENTIONS_PER_MESSAGE, SimpleRateLimiter, RATE_LIMITS } from '@quilibrium/quorum-shared';
+import { extractMentionsFromText, MAX_MENTIONS_PER_MESSAGE, SimpleRateLimiter, RATE_LIMITS, extractStandaloneYouTubeVideoIds, fetchYouTubeThumbnailAsBase64 } from '@quilibrium/quorum-shared';
 import { useMessageValidation, getMessageCounterText } from '../validation';
 import { showWarning } from '../../../utils/toast';
 
@@ -173,7 +173,34 @@ export function useMessageComposer(options: UseMessageComposerOptions) {
       setIsSubmitting(true);
       try {
         if (pendingMessage) {
-          await onSubmitMessage(pendingMessage, inReplyTo?.messageId);
+          const videoIds = extractStandaloneYouTubeVideoIds(pendingMessage);
+          if (videoIds.length > 0) {
+            const results = await Promise.all(
+              videoIds.map(async (videoId) => {
+                const data = await fetchYouTubeThumbnailAsBase64(videoId);
+                if (!data) return null;
+                return {
+                  type: 'youtube-thumbnail',
+                  key: videoId,
+                  data,
+                  mimeType: 'image/jpeg',
+                };
+              })
+            );
+            const embeddedMedia = results.filter(
+              (r): r is NonNullable<typeof r> => r !== null
+            );
+            if (embeddedMedia.length > 0) {
+              await onSubmitMessage(
+                { type: 'post' as const, text: pendingMessage, embeddedMedia },
+                inReplyTo?.messageId
+              );
+            } else {
+              await onSubmitMessage(pendingMessage, inReplyTo?.messageId);
+            }
+          } else {
+            await onSubmitMessage(pendingMessage, inReplyTo?.messageId);
+          }
         }
         if (processedImage) {
           // Create base64 URLs for both thumbnail and full image
