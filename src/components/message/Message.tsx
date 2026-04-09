@@ -1094,6 +1094,7 @@ export const Message = React.memo(
                                   }
                                   allow="autoplay; encrypted-media"
                                   className="rounded-lg youtube-embed"
+                                  thumbnailSrc={tokenData.thumbnailSrc}
                                 />
                               </div>
                             );
@@ -1187,6 +1188,7 @@ export const Message = React.memo(
                           src={contentData.content.videoUrl}
                           allow="autoplay; encrypted-media"
                           className="rounded-lg youtube-embed"
+                          thumbnailSrc={null}
                         />
                       )}
                       {contentData.content.imageUrl && (() => {
