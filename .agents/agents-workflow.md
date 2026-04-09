@@ -145,18 +145,20 @@ Before implementing, read relevant docs:
 
 ### Adding Primitives
 
-**Steps**:
-1. ✅ Create folder in `src/components/primitives/ComponentName/`
-2. ✅ Add `.web.tsx` and `.native.tsx` versions
-3. ✅ Create shared `types.ts` interface
-4. ✅ Export from `src/components/primitives/index.ts`
+> **Primitives now live in quorum-shared**, not in this repo. `src/components/primitives/` is a SCSS-only shim that re-exports from `@quilibrium/quorum-shared`.
+
+**Steps** (for new primitives):
+1. ✅ Add the primitive to `quorum-shared/src/primitives/` (`.web.tsx` + `.native.tsx` + `types.ts`)
+2. ✅ Export from `quorum-shared/src/index.ts`
+3. ✅ Add SCSS file to `src/components/primitives/ComponentName/` in this repo (web styles only)
+4. ✅ Re-export from `src/components/primitives/index.ts`
 5. ✅ Update [API Reference](docs/features/primitives/API-REFERENCE.md)
-6. ✅ Add examples to [Quick Reference](docs/features/primitives/02-primitives-AGENTS.md)
 
 **Key Resources**:
 - [Primitives Introduction](docs/features/primitives/01-introduction-and-concepts.md)
 - [When to Use Primitives](docs/features/primitives/03-when-to-use-primitives.md)
 - [API Reference Template](docs/features/primitives/API-REFERENCE.md)
+- [quorum-shared migration overview](tasks/quorum-shared-migration/2026-03-15-stacked-prs-workflow.md)
 
 ---
 
@@ -499,27 +501,6 @@ yarn add package-name
 
 ---
 
-#### 6. Forgetting WSL/Windows Commands
-
-**Bad** (in WSL with Windows Node.js):
-```bash
-npx tsc --noEmit
-yarn lint
-```
-
-**Good**:
-```bash
-# Convert current path to Windows format and run commands
-WINDOWS_PATH=$(pwd | sed 's|^/mnt/\([a-z]\)/|\U\1:/|' | sed 's|/|\\|g')
-cmd.exe /c "cd /d $WINDOWS_PATH && npx tsc --noEmit"
-cmd.exe /c "cd /d $WINDOWS_PATH && yarn lint"
-```
-
-**Why**: Node.js is installed on Windows, not WSL
-
-**Reference**: [AGENTS.md - Development Commands](../AGENTS.md#development-commands-wslwindows)
-
----
 
 ## Workflow Checklist
 
@@ -587,4 +568,4 @@ cmd.exe /c "cd /d $WINDOWS_PATH && yarn lint"
 
 ---
 
-_Created: 2025-10-08 | Last updated: 2025-11-19_
+_Created: 2025-10-08 | Last updated: 2026-04-09_

@@ -1,13 +1,15 @@
 ---
 type: task
 title: Primitives Migration to quorum-shared
-status: planned
+status: superseded
 priority: high
 created: 2026-01-14T00:00:00.000Z
-updated: 2026-01-14T00:00:00.000Z
+updated: 2026-04-09
 ---
 
 # Primitives Migration to quorum-shared
+
+> **⚠️ SUPERSEDED** — This was the original January 2026 planning doc. The actual migration was designed and executed in March 2026. See the completed task at `tasks/quorum-shared-migration/.done/2026-03-15-primitives-migration-prep.md`. Primitives are now live in quorum-shared.
 
 > **Purpose:** Step-by-step plan to migrate UI primitives from both quorum-desktop and quorum-mobile into the shared `@quilibrium/quorum-shared` package.
 

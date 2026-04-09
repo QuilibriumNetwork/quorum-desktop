@@ -91,7 +91,6 @@ This is the main index for all documentation, bug reports, and task management.
 ### Active Issues
 - [Message list scroll jank on send — Virtuoso scroll position drift](bugs/2026-03-19-message-list-scroll-jank-on-send.md)
 - [No visual feedback when dragging files onto dropzone areas](bugs/2026-04-07-missing-drag-feedback-file-uploads.md)
-- [SpaceMember field name mismatch between MessageDB and quorum-shared](bugs/2026-04-08-spacemember-type-mismatch-db-vs-shared.md)
 - [Config Sync Space Loss Race Condition](bugs/config-sync-space-loss-race-condition.md)
 - [DirectMessage Invite Loading Performance Issue](bugs/directmessage-invite-loading-performance.md)
 - [Encryption State Evals Causing Config Sync Bloat](bugs/encryption-state-evals-bloat.md)
@@ -121,6 +120,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Standalone delivery receipt acks not reliably delivered](bugs/.solved/2026-03-19-standalone-delivery-ack-unreliable.md)
 - [Read receipts (Phase 2) untested — sync issues prevent DM delivery](bugs/.solved/2026-03-22-read-receipts-testing-blocked.md)
 - [Receipt checkmarks disappear on page refresh and conversation navigation](bugs/.solved/2026-03-22-receipt-checkmarks-not-persisting-across-navigation.md)
+- [SpaceMember field name mismatch between MessageDB and quorum-shared](bugs/.solved/2026-04-08-spacemember-type-mismatch-db-vs-shared.md)
 - [Action Queue Bypasses SDK Encryption for Identity Keys](bugs/.solved/action-queue-plaintext-private-keys.md)
 - [Android 7.0 File Download Fix - Implementation Plan](bugs/.solved/SOLVED_android-file-download-huawei-p9-lite.md)
 - [Bug: Auto-Jump to First Unread Message - Blocked by Virtuoso Scroll Positioning](bugs/.solved/auto-jump-unread-virtuoso-scroll-conflict.md)
@@ -170,6 +170,8 @@ This is the main index for all documentation, bug reports, and task management.
 - [Embedded Media + YouTube Facade Privacy Fix — Implementation Plan](tasks/2026-03-12-embedded-media-plan.md)
 - [Embedded Media in PostMessage + YouTube Facade Privacy Fix](tasks/2026-03-12-embedded-media-spec.md)
 - [Thread List Panel: "Created by me" Filter](tasks/2026-03-14-thread-list-created-filter.md)
+- [Dropzone Visual Feedback & Style Redesign](tasks/2026-04-09-dropzone-visual-feedback-design.md)
+- [Dropzone Visual Feedback & Style Redesign — Implementation Plan](tasks/2026-04-09-dropzone-visual-feedback-plan.md)
 - [Accessibility Features — Remaining Work](tasks/accessibility-features-implementation.md)
 - [Add User Bio Field to UserSettingsModal General Tab](tasks/add-user-bio-field.md)
 - [Auto-save settings modals — eliminate save buttons](tasks/auto-save-settings-modals.md)
@@ -262,12 +264,14 @@ This is the main index for all documentation, bug reports, and task management.
 
 ### Quorum Shared Migration
 - [Get npm Publish Access for @quilibrium/quorum-shared](tasks/quorum-shared-migration/2026-03-15-npm-publish-access-quorum-shared.md)
-- [Primitives Migration Prep](tasks/quorum-shared-migration/2026-03-15-primitives-migration-prep.md)
 - [Stacked PRs Workflow](tasks/quorum-shared-migration/2026-03-15-stacked-prs-workflow.md)
 - [Utilities Migration Design](tasks/quorum-shared-migration/2026-03-18-utils-migration-design.md)
-- [Utilities Migration Implementation Plan](tasks/quorum-shared-migration/2026-03-18-utils-migration-plan.md)
 - [Hooks Migration to quorum-shared — Design & Inventory](tasks/quorum-shared-migration/2026-03-19-hooks-migration-design.md)
 - [Move Utility Tests to quorum-shared](tasks/quorum-shared-migration/2026-03-19-move-tests-to-quorum-shared.md)
+
+### Quorum Shared Migration .Done
+- [Primitives Migration Prep](tasks/quorum-shared-migration/.done/2026-03-15-primitives-migration-prep.md)
+- [Utilities Migration Implementation Plan](tasks/quorum-shared-migration/.done/2026-03-18-utils-migration-plan.md)
 
 ### Search Optimization
 - [Design Decisions & Rationale](tasks/search-optimization/decisions.md)
@@ -500,4 +504,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2026-04-08 15:52:14
+**Last Updated**: 2026-04-09 09:53:36
