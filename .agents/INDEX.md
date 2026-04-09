@@ -126,7 +126,6 @@ This is the main index for all documentation, bug reports, and task management.
 - [Bug: Auto-Jump to First Unread Message - Blocked by Virtuoso Scroll Positioning](bugs/.solved/auto-jump-unread-virtuoso-scroll-conflict.md)
 - [Bug: Mention Dropdown Not Showing When Typing Just `@` or `#`](bugs/.solved/mention-dropdown-not-showing-on-empty-query.md)
 - [Bug: Message Scroll Issues - Send Jank & Delete Auto-Scroll](bugs/.solved/message-scroll-jank-on-send.md)
-- [Bug: Tabler Icon Overlapping Stroke Artifact in Dropzone Circles](bugs/.solved/tabler-icon-overlapping-stroke-artifact.md)
 - [Channel/Group Save Race Condition](bugs/.solved/channel-group-save-race-condition.md)
 - [Config Save Missing React Query Cache Update Causes Stale allowSync](bugs/.solved/config-save-stale-cache-allowsync.md)
 - [Deleted Messages Reappear After Peer Sync](bugs/.solved/deleted-messages-reappear-via-sync.md)
@@ -161,6 +160,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Leave Space - No Loading Feedback and UI Not Refreshing](bugs/.archived/2026-03-18-leave-space-no-feedback.md)
 - [Brave Browser React Hook Errors - ONGOING INVESTIGATION](bugs/.archived/brave-browser-react-hook-errors.md)
 - [Bug: Auto-jump to First Unread Breaks Initial Message Sync](bugs/.archived/auto-jump-unread-breaks-message-sync.md)
+- [Bug: Tabler Icon Overlapping Stroke Artifact in Dropzone Circles](bugs/.archived/tabler-icon-overlapping-stroke-artifact.md)
 - [Role with message:delete permission can delete space owner's messages](bugs/.archived/message-delete-owner-vulnerability.md)
 - [Space Owner Delete Permissions Bug](bugs/.archived/space-owner-delete-permissions-bug.md)
 
@@ -505,4 +505,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2026-04-09 10:39:48
+**Last Updated**: 2026-04-09 10:44:38
