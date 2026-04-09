@@ -19,7 +19,8 @@ import {
 import { remarkTwemoji } from '../../utils/remarkTwemoji';
 import { InviteLink } from './InviteLink';
 import { Icon } from '../primitives';
-import type { Role, Channel } from '@quilibrium/quorum-shared';
+import type { Role, Channel, PostMessage } from '@quilibrium/quorum-shared';
+import { getEmbeddedMediaSrc } from '../../utils/embeddedMedia';
 
 interface MessageMarkdownRendererProps {
   content: string;
@@ -42,6 +43,7 @@ interface MessageMarkdownRendererProps {
   currentSpaceId?: string;
   /** Inline element appended after the last paragraph (e.g. delivery receipt checkmark) */
   suffix?: React.ReactNode;
+  embeddedMedia?: PostMessage['embeddedMedia'];
 }
 
 
@@ -235,6 +237,7 @@ export const MessageMarkdownRenderer: React.FC<MessageMarkdownRendererProps> = (
   currentUserAddress,
   currentSpaceId,
   suffix,
+  embeddedMedia,
 }) => {
 
   // Convert H1 and H2 headers to H3 since only H3 is allowed
@@ -813,10 +816,16 @@ export const MessageMarkdownRenderer: React.FC<MessageMarkdownRendererProps> = (
 
       // Handle YouTube embeds marked with special alt text
       if (alt === 'youtube-embed' && src) {
+        const thumbnailSrc = getEmbeddedMediaSrc(
+          { embeddedMedia },
+          'youtube-thumbnail',
+          src
+        );
         return (
           <div className="my-2">
             <YouTubeFacade
               videoId={src}
+              thumbnailSrc={thumbnailSrc}
               className="rounded-lg youtube-embed"
               style={{
                 width: '100%',

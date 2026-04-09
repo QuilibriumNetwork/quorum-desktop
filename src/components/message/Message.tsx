@@ -999,6 +999,10 @@ export const Message = React.memo(
                   }
 
                   if (ENABLE_MARKDOWN && formatting.shouldUseMarkdown()) {
+                    const embeddedMedia =
+                      message.content?.type === 'post'
+                        ? message.content.embeddedMedia
+                        : undefined;
                     return (
                       <div className="message-post-content break-words">
                         <MessageMarkdownRenderer
@@ -1020,6 +1024,7 @@ export const Message = React.memo(
                           currentUserAddress={user.currentPasskeyInfo?.address}
                           currentSpaceId={spaceId}
                           suffix={receiptIndicator}
+                          embeddedMedia={embeddedMedia}
                         />
                       </div>
                     );
