@@ -9,6 +9,7 @@ interface YouTubeEmbedProps {
   style?: React.CSSProperties;
   className?: string;
   previewOnly?: boolean; // If true, shows only thumbnail without click-to-play functionality
+  thumbnailSrc?: string | null;
 }
 
 /**
@@ -23,6 +24,7 @@ export const YouTubeEmbed: React.FC<YouTubeEmbedProps> = ({
   style,
   className = '',
   previewOnly = false,
+  thumbnailSrc,
 }) => {
   // Extract YouTube video ID from the embed URL
   const youtubeVideoId = extractYouTubeVideoId(src);
@@ -48,6 +50,7 @@ export const YouTubeEmbed: React.FC<YouTubeEmbedProps> = ({
     >
       <YouTubeFacade
         videoId={youtubeVideoId}
+        thumbnailSrc={thumbnailSrc ?? null}
         className={className}
         style={style}
         title={title}

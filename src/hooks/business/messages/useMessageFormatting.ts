@@ -9,6 +9,7 @@ import {
   createIPFSCIDRegex,
 } from '@quilibrium/quorum-shared';
 import type { Message as MessageType, Sticker, Role, Channel } from '@quilibrium/quorum-shared';
+import { getEmbeddedMediaSrc } from '../../../utils/embeddedMedia';
 
 // Legacy export for backward compatibility
 export const YTRegex = YOUTUBE_URL_REGEX;
@@ -243,10 +244,16 @@ export function useMessageFormatting(options: UseMessageFormattingOptions) {
       if (isYouTubeURL(token)) {
         const videoId = extractYouTubeVideoId(token);
         if (videoId) {
+          const thumbnailSrc = getEmbeddedMediaSrc(
+            message.content as { embeddedMedia?: Array<{ type: string; key: string; data: string; mimeType: string }> },
+            'youtube-thumbnail',
+            videoId
+          );
           return {
             type: 'youtube' as const,
             key: `${messageId}-${lineIndex}-${tokenIndex}`,
             videoId: videoId,
+            thumbnailSrc,
           };
         }
       }

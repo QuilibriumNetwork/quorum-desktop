@@ -1,14 +1,14 @@
 import React, { useState, useCallback, useRef, useMemo, useEffect } from 'react';
-import { Icon } from '../primitives';
 import { t } from '@lingui/core/macro';
 import {
   extractYouTubeVideoId,
   isValidYouTubeVideoId,
-  getYouTubeThumbnailURL,
 } from '@quilibrium/quorum-shared';
 
 interface YouTubeFacadeProps {
   videoId: string;
+  /** Pre-resolved data URI for the thumbnail, or null to show plain link. */
+  thumbnailSrc: string | null;
   className?: string;
   style?: React.CSSProperties;
   title?: string;
@@ -26,6 +26,7 @@ const autoplayBlockCache = new Set<string>();
 
 export const YouTubeFacade: React.FC<YouTubeFacadeProps> = ({
   videoId,
+  thumbnailSrc,
   className = '',
   style,
   title,
@@ -33,7 +34,6 @@ export const YouTubeFacade: React.FC<YouTubeFacadeProps> = ({
 }) => {
   const [isLoaded, setIsLoaded] = useState(() => iframeStateCache.get(videoId) || false);
   const [thumbnailError, setThumbnailError] = useState(false);
-  const [thumbnailQuality, setThumbnailQuality] = useState<'maxres' | 'hq' | 'mq' | 'default'>('maxres');
   const iframeRef = useRef<HTMLIFrameElement>(null);
 
   // Handle facade click to load iframe
@@ -43,21 +43,6 @@ export const YouTubeFacade: React.FC<YouTubeFacadeProps> = ({
     // Remove from autoplay block cache since user explicitly clicked
     autoplayBlockCache.delete(videoId);
   }, [videoId]);
-
-  // Handle thumbnail load error with fallback strategy
-  const handleThumbnailError = useCallback(() => {
-    if (thumbnailQuality === 'maxres') {
-      setThumbnailQuality('hq');
-    } else if (thumbnailQuality === 'hq') {
-      setThumbnailQuality('mq');
-    } else if (thumbnailQuality === 'mq') {
-      setThumbnailQuality('default');
-    } else {
-      setThumbnailError(true);
-    }
-  }, [thumbnailQuality]);
-
-  const thumbnailUrl = getYouTubeThumbnailURL(videoId, thumbnailQuality);
 
   // Generate stable embed URL
   const embedUrl = useMemo(() => {
@@ -100,7 +85,22 @@ export const YouTubeFacade: React.FC<YouTubeFacadeProps> = ({
     );
   }
 
-  // Render facade with thumbnail
+  // No embedded data → plain link, no external request
+  if (thumbnailSrc === null || thumbnailError) {
+    const videoUrl = `https://www.youtube.com/watch?v=${videoId}`;
+    return (
+      <a
+        href={videoUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="text-sm text-subtle hover:text-main transition-colors"
+      >
+        {videoUrl}
+      </a>
+    );
+  }
+
+  // Render facade with embedded thumbnail
   return (
     <div className="flex flex-col gap-1">
       <div
@@ -108,21 +108,14 @@ export const YouTubeFacade: React.FC<YouTubeFacadeProps> = ({
         style={style}
         onClick={previewOnly ? undefined : handleFacadeClick}
       >
-        {/* Thumbnail Background */}
-        {!thumbnailError ? (
-          <img
-            src={thumbnailUrl}
-            alt={title || t`YouTube Video Thumbnail`}
-            className="w-full h-full object-cover rounded-lg"
-            onError={handleThumbnailError}
-            loading="lazy"
-          />
-        ) : (
-          // Fallback when thumbnail fails to load
-          <div className="w-full h-full bg-surface-4 rounded-lg flex items-center justify-center">
-            <Icon name="video" size="xl" className="text-subtle" />
-          </div>
-        )}
+        {/* Thumbnail from embedded data — no external request */}
+        <img
+          src={thumbnailSrc}
+          alt={title || t`YouTube Video Thumbnail`}
+          className="w-full h-full object-cover rounded-lg"
+          onError={() => setThumbnailError(true)}
+          loading="lazy"
+        />
 
         {/* Play Button Overlay - always show, but interactive only if not preview-only */}
         <div className="absolute inset-0 flex items-center justify-center">
@@ -148,7 +141,7 @@ export const YouTubeFacade: React.FC<YouTubeFacadeProps> = ({
           </div>
         </div>
 
-        {/* YouTube logo badge (optional) */}
+        {/* YouTube logo badge */}
         <div className="absolute bottom-2 right-2 bg-red-600 text-white px-2 py-1 rounded text-xs font-semibold">
           YouTube
         </div>
