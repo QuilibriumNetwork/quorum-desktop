@@ -92,7 +92,7 @@ const CreateSpaceModal: React.FunctionComponent<CreateSpaceModalProps> = (
           <div className="flex justify-center">
             <div
               id="space-icon-tooltip-target"
-              className={`avatar-upload ${!fileData ? 'empty' : ''}`}
+              className={`avatar-upload${!fileData ? ' empty' : ''}${isDragActive ? ' drag-active' : ''}`}
               style={
                 fileData && currentFile
                   ? {
@@ -103,8 +103,12 @@ const CreateSpaceModal: React.FunctionComponent<CreateSpaceModalProps> = (
               {...getRootProps()}
             >
               <input {...getInputProps()} />
-              {!fileData && <Icon name="image" size="2xl" className="icon" />}
-              {fileData && (
+              {isDragActive ? (
+                <Icon name="upload" size="2xl" className="icon" />
+              ) : (
+                !fileData && <Icon name="image" size="2xl" className="icon" />
+              )}
+              {fileData && !isDragActive && (
                 <Tooltip id="create-space-icon-delete" content={t`Delete this image`} place="bottom">
                   <button
                     type="button"

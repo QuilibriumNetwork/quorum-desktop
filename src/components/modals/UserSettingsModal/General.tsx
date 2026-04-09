@@ -82,13 +82,17 @@ const General: React.FunctionComponent<GeneralProps> = ({
       <div className="modal-content-header-avatar">
         <div
           id="user-icon-tooltip-target"
-          className={`avatar-upload ${!hasImage ? 'empty' : ''}`}
+          className={`avatar-upload${!hasImage ? ' empty' : ''}${isUserIconDragActive ? ' drag-active' : ''}`}
           style={hasImage ? { backgroundImage: `url(${getProfileImageUrl()})` } : {}}
           {...getRootProps()}
         >
           <input {...getInputProps()} />
-          {!hasImage && <Icon name="image" size="2xl" className="icon" />}
-          {hasImage && (
+          {isUserIconDragActive ? (
+            <Icon name="upload" size="2xl" className="icon" />
+          ) : (
+            !hasImage && <Icon name="image" size="2xl" className="icon" />
+          )}
+          {hasImage && !isUserIconDragActive && (
             <Tooltip id="user-avatar-delete" content={t`Delete this image`} place="bottom">
               <button
                 type="button"

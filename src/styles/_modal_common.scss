@@ -650,26 +650,66 @@
 
   // Empty state styling
   &.empty {
-    border: $s-1 dashed var(--accent-100);
-    background-color: var(--accent);
+    border: 2px dashed var(--surface-8);
+    background-color: transparent;
     display: flex;
     align-items: center;
     justify-content: center;
-    color: rgba(255, 255, 255, 0.6);
+    color: var(--surface-8);
+    transition: border-color 150ms ease, color 150ms ease, background-color 150ms ease;
 
     .icon {
       font-size: $s-8;
     }
 
     &:hover {
-      background-color: var(--accent-400);
-      color: white;
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    &.drag-active {
+      border-color: var(--accent);
+      background-color: rgb(var(--accent-rgb) / 0.12);
+      color: var(--accent);
     }
   }
 
   // Filled state hover
   &:not(.empty):hover {
     opacity: 0.8;
+  }
+
+  // Drag-active on filled state: force flex centering + dark overlay so icon pops
+  &:not(.empty).drag-active {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+
+    &::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-color: rgba(0, 0, 0, 0.5);
+      border-radius: inherit;
+      z-index: 0;
+    }
+
+    > * {
+      position: relative;
+      z-index: 1;
+    }
+  }
+
+  // Onboarding override — dark gradient background needs white border + icon
+  &.onboarding-avatar.empty {
+    border-color: rgba(255, 255, 255, 0.5);
+    color: rgba(255, 255, 255, 0.6);
+
+    &:hover {
+      border-color: rgba(255, 255, 255, 0.85);
+      color: rgba(255, 255, 255, 0.9);
+    }
   }
 
   @media (max-width: $screen-md) {
@@ -703,9 +743,54 @@
 .modal-banner-editable {
   cursor: pointer;
   position: relative;
+  transition: border-color 150ms ease, color 150ms ease, background-color 150ms ease;
 
   &:hover {
     opacity: 0.8;
+  }
+
+  &.empty {
+    border: 2px dashed var(--surface-8);
+    background-color: transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--surface-8);
+
+    &:hover {
+      opacity: 1;
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    &.drag-active {
+      border-color: var(--accent);
+      background-color: rgb(var(--accent-rgb) / 0.12);
+      color: var(--accent);
+      opacity: 1;
+    }
+  }
+
+  // Drag-active on filled state: force flex centering + dark overlay so icon pops
+  &:not(.empty).drag-active {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+
+    &::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-color: rgba(0, 0, 0, 0.5);
+      border-radius: inherit;
+      z-index: 0;
+    }
+
+    > * {
+      position: relative;
+      z-index: 1;
+    }
   }
 }
 
