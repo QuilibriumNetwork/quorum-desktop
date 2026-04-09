@@ -153,6 +153,9 @@ export function useMessageComposer(options: UseMessageComposerOptions) {
   // Submit message
   const submitMessage = useCallback(async () => {
     if ((pendingMessage || processedImage) && !isSubmitting) {
+      // Block send while image is still being processed
+      if (isProcessingImage) return;
+
       // Validate mentions before submission
       if (pendingMessage && !validateMentions(pendingMessage)) {
         return; // Block submission if mentions are invalid
@@ -172,7 +175,60 @@ export function useMessageComposer(options: UseMessageComposerOptions) {
 
       setIsSubmitting(true);
       try {
-        if (pendingMessage) {
+        if (pendingMessage && processedImage) {
+          // --- Combined: text + image → single PostMessage ---
+          const key = crypto.randomUUID();
+
+          // Encode full image
+          const fullBuffer = await processedImage.full.file.arrayBuffer();
+          const fullData = Buffer.from(fullBuffer).toString('base64');
+
+          // Build media entries: thumbnail first, then full image
+          const mediaEntries: Array<{ type: string; key: string; data: string; mimeType: string }> = [];
+          if (processedImage.thumbnail) {
+            const thumbBuffer = await processedImage.thumbnail.file.arrayBuffer();
+            const thumbData = Buffer.from(thumbBuffer).toString('base64');
+            mediaEntries.push({
+              type: 'image-thumbnail',
+              key,
+              data: thumbData,
+              mimeType: processedImage.thumbnail.file.type,
+            });
+          }
+          mediaEntries.push({
+            type: 'image',
+            key,
+            data: fullData,
+            mimeType: processedImage.full.file.type,
+          });
+
+          // Also fetch YouTube thumbnails if text has standalone YouTube URLs
+          const videoIds = extractStandaloneYouTubeVideoIds(pendingMessage);
+          if (videoIds.length > 0) {
+            const results = await Promise.all(
+              videoIds.map(async (videoId) => {
+                const data = await fetchYouTubeThumbnailAsBase64(videoId);
+                if (!data) return null;
+                return {
+                  type: 'youtube-thumbnail',
+                  key: videoId,
+                  data,
+                  mimeType: 'image/jpeg',
+                };
+              })
+            );
+            const youtubeEntries = results.filter(
+              (r): r is NonNullable<typeof r> => r !== null
+            );
+            mediaEntries.push(...youtubeEntries);
+          }
+
+          await onSubmitMessage(
+            { type: 'post' as const, text: pendingMessage, embeddedMedia: mediaEntries },
+            inReplyTo?.messageId
+          );
+        } else if (pendingMessage) {
+          // --- Text only ---
           const videoIds = extractStandaloneYouTubeVideoIds(pendingMessage);
           if (videoIds.length > 0) {
             const results = await Promise.all(
@@ -201,9 +257,8 @@ export function useMessageComposer(options: UseMessageComposerOptions) {
           } else {
             await onSubmitMessage(pendingMessage, inReplyTo?.messageId);
           }
-        }
-        if (processedImage) {
-          // Create base64 URLs for both thumbnail and full image
+        } else if (processedImage) {
+          // --- Image only (EmbedMessage path) ---
           const fullImageBuffer = await processedImage.full.file.arrayBuffer();
           const fullImageUrl = `data:${processedImage.full.file.type};base64,${Buffer.from(fullImageBuffer).toString('base64')}`;
 
@@ -221,6 +276,7 @@ export function useMessageComposer(options: UseMessageComposerOptions) {
           } as EmbedMessage;
           await onSubmitMessage(embedMessage, inReplyTo?.messageId);
         }
+
         // Clear state after successful submission
         setPendingMessage('');
         setProcessedImage(undefined);
@@ -233,6 +289,7 @@ export function useMessageComposer(options: UseMessageComposerOptions) {
     pendingMessage,
     processedImage,
     isSubmitting,
+    isProcessingImage,
     onSubmitMessage,
     inReplyTo,
     validateMentions,

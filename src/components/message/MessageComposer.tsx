@@ -843,8 +843,8 @@ export const MessageComposer = forwardRef<
 
           <Button
             type="unstyled"
-            onClick={messageValidation?.isOverLimit ? undefined : onSubmitMessage}
-            className={`message-composer-send-btn ${messageValidation?.isOverLimit ? 'disabled' : ''}`}
+            onClick={messageValidation?.isOverLimit || isProcessingImage ? undefined : onSubmitMessage}
+            className={`message-composer-send-btn ${messageValidation?.isOverLimit || isProcessingImage ? 'disabled' : ''}`}
           >
             <svg width="18" height="14" viewBox="0 0 100 80" fill="none">
               <path d="M0 80L25 40.4181L0 0L100 40.4181L0 80Z" fill="white" />

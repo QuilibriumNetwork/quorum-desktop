@@ -5,6 +5,7 @@ import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
 import type {
   Emoji,
   Message as MessageType,
+  MessageContent,
   PostMessage,
   Role,
   Sticker,
@@ -52,6 +53,7 @@ import { MessageMarkdownRenderer } from './MessageMarkdownRenderer';
 import { isTouchDevice } from '../../utils/platform';
 import { hapticLight } from '../../utils/haptic';
 import { formatMessageDate } from '../../utils';
+import { getEmbeddedMediaSrc } from '../../utils/embeddedMedia';
 import { useEditHistoryModal } from '../context/EditHistoryModalProvider';
 import { MessageEditTextarea } from './MessageEditTextarea';
 import { ENABLE_MARKDOWN } from '../../config/features';
@@ -444,6 +446,18 @@ export const Message = React.memo(
       },
       []
     );
+
+    // Returns unique keys for embedded image entries (combined text+image messages)
+    const getEmbeddedImageKeys = (content: MessageContent | undefined): string[] => {
+      if (content?.type !== 'post' || !content.embeddedMedia) return [];
+      const keys: string[] = [];
+      for (const entry of content.embeddedMedia) {
+        if ((entry.type === 'image' || entry.type === 'image-thumbnail') && !keys.includes(entry.key)) {
+          keys.push(entry.key);
+        }
+      }
+      return keys;
+    };
 
     return (
       <Flex
@@ -1003,6 +1017,7 @@ export const Message = React.memo(
                       message.content?.type === 'post'
                         ? message.content.embeddedMedia
                         : undefined;
+                    const imageKeys = getEmbeddedImageKeys(message.content);
                     return (
                       <div className="message-post-content break-words">
                         <MessageMarkdownRenderer
@@ -1026,12 +1041,34 @@ export const Message = React.memo(
                           suffix={receiptIndicator}
                           embeddedMedia={embeddedMedia}
                         />
+                        {imageKeys.map((key) => {
+                          const thumbnailSrc =
+                            getEmbeddedMediaSrc(message.content as any, 'image-thumbnail', key) ??
+                            getEmbeddedMediaSrc(message.content as any, 'image', key);
+                          const fullSrc = getEmbeddedMediaSrc(message.content as any, 'image', key);
+                          if (!thumbnailSrc || !fullSrc) return null;
+                          return (
+                            <div key={key} className="relative inline-block mt-1">
+                              <img
+                                src={thumbnailSrc}
+                                className="message-image rounded-lg cursor-pointer hover:opacity-80"
+                                onClick={() => showImageModal(fullSrc)}
+                                onError={(e) => {
+                                  (e.currentTarget.parentElement as HTMLElement).style.display = 'none';
+                                }}
+                              />
+                            </div>
+                          );
+                        })}
                       </div>
                     );
                   }
 
                   // Fall back to the original token-based rendering
-                  return contentData.content.map((c, i) => {
+                  const imageKeys = getEmbeddedImageKeys(message.content);
+                  return (
+                    <>
+                    {contentData.content.map((c, i) => {
                     // Smart tokenization: preserve mention patterns as single tokens
                     // Matches: @<address> or #<channelId>
                     const mentionPattern = /(@<[^>]+>|#<[^>]+>)/g;
@@ -1179,7 +1216,28 @@ export const Message = React.memo(
                         {i === contentData.content.length - 1 && receiptIndicator}
                       </div>
                     );
-                  });
+                  })}
+                  {imageKeys.map((key) => {
+                    const thumbnailSrc =
+                      getEmbeddedMediaSrc(message.content as any, 'image-thumbnail', key) ??
+                      getEmbeddedMediaSrc(message.content as any, 'image', key);
+                    const fullSrc = getEmbeddedMediaSrc(message.content as any, 'image', key);
+                    if (!thumbnailSrc || !fullSrc) return null;
+                    return (
+                      <div key={key} className="relative inline-block mt-1">
+                        <img
+                          src={thumbnailSrc}
+                          className="message-image rounded-lg cursor-pointer hover:opacity-80"
+                          onClick={() => showImageModal(fullSrc)}
+                          onError={(e) => {
+                            (e.currentTarget.parentElement as HTMLElement).style.display = 'none';
+                          }}
+                        />
+                      </div>
+                    );
+                  })}
+                  </>
+                  );
                 } else if (contentData.type === 'embed') {
                   return (
                     <div
