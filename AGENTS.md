@@ -125,7 +125,9 @@ import { Button, Input, Modal } from 'src/components/primitives';
 <Modal isOpen={open} onClose={close}>...</Modal>
 ```
 
-**When to use primitives**: Always for interactive elements (Button, Input, Modal, Select, Switch). For layout, use Flex/Container. For text on web, use plain HTML (`<span>`, `<p>`) with CSS typography classes (`.text-label`, `.text-strong`, `.text-subtle`). The Text primitive is **native-only** — not used in web production code.
+**When to use primitives**: Always for interactive elements (Button, Input, Modal, Select, Switch). For layout, use Flex (not Container — removed). For text on web, use plain HTML (`<span>`, `<p>`) with CSS typography classes (`.text-label`, `.text-strong`, `.text-subtle`). The Text primitive is **native-only** — not used in web production code.
+
+**Source**: All primitives live in `@quilibrium/quorum-shared` and are re-exported from `src/components/primitives/` (SCSS-only shim). Do not add primitive source files to quorum-desktop.
 
 **Reference**: [Primitives Guide](.agents/docs/features/primitives/INDEX.md)
 
@@ -147,6 +149,26 @@ The `.agents/` folder contains all development context:
 
 ---
 
+## quorum-shared Migration — Active & Ongoing
+
+**Status (as of 2026-04-09):** Types ✅ | Primitives ✅ | Utils ✅ | Hooks ⏳ (blocked)
+
+quorum-shared is not just a dependency — it's the migration destination for this repo's code. PRs 1–3 are complete. PR 4 (hooks) is next but requires access to the latest quorum-mobile codebase first.
+
+**Rules to follow while this migration is ongoing:**
+
+- **New utility functions**: If a new util is platform-agnostic (no DOM APIs, no desktop-specific imports), it should either go directly into quorum-shared or be flagged as a migration candidate. Ask: "Would mobile need this?"
+- **New hooks**: Classify immediately (Pure / Context-dependent / Platform-specific — see `quorum-shared-migration/2026-03-19-hooks-migration-design.md`). Pure business hooks belong in shared eventually.
+- **New types**: Add to quorum-shared directly (`src/types/`), not just locally.
+- **Import pattern**: Always import migrated utils and primitives from `@quilibrium/quorum-shared`, not from local paths.
+
+**Key reference docs:**
+- [Migration status overview](.agents/tasks/quorum-shared-migration/2026-03-15-stacked-prs-workflow.md)
+- [Hooks migration design + hook classification](.agents/tasks/quorum-shared-migration/2026-03-19-hooks-migration-design.md)
+- [quorum-shared architecture](.agents/docs/quorum-shared-architecture.md)
+
+---
+
 ## Development Checklist
 
 - ✅ Read AGENTS.md for relevant patterns
@@ -154,7 +176,8 @@ The `.agents/` folder contains all development context:
 - ✅ Use primitives for interactive elements
 - ✅ Follow React Hooks rules
 - ✅ Use Yarn (never npm)
+- ✅ New utils/hooks: consider if they belong in quorum-shared
 
 ---
 
-_Last updated: 2026-01-06_
+_Last updated: 2026-04-09_

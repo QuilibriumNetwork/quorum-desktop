@@ -12,6 +12,7 @@ interface EmojisProps {
   emojis: Emoji[];
   canAddMoreEmojis: boolean;
   emojiFileError: string | null;
+  isEmojiDragActive: boolean;
   getEmojiRootProps: () => any;
   getEmojiInputProps: () => any;
   clearEmojiFileError: () => void;
@@ -25,6 +26,7 @@ const Emojis: React.FunctionComponent<EmojisProps> = ({
   emojis,
   canAddMoreEmojis,
   emojiFileError,
+  isEmojiDragActive,
   getEmojiRootProps,
   getEmojiInputProps,
   clearEmojiFileError,
@@ -53,7 +55,7 @@ const Emojis: React.FunctionComponent<EmojisProps> = ({
         <div className="flex">
           {canAddMoreEmojis && (
             <div
-              className="btn-secondary"
+              className={`btn-secondary${isEmojiDragActive ? ' opacity-70' : ''}`}
               {...getEmojiRootProps()}
             >
               <Trans>Upload Emoji</Trans>

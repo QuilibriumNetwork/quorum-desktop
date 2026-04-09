@@ -18,6 +18,7 @@ export interface UseCustomAssetsReturn {
   currentEmojiFiles: File[] | undefined;
   emojiFileError: string | null;
   isProcessingEmojis: boolean;
+  isEmojiDragActive: boolean;
   getEmojiRootProps: () => any;
   getEmojiInputProps: () => any;
   clearEmojiFileError: () => void;
@@ -31,6 +32,7 @@ export interface UseCustomAssetsReturn {
   currentStickerFiles: File[] | undefined;
   stickerFileError: string | null;
   isProcessingStickers: boolean;
+  isStickerDragActive: boolean;
   getStickerRootProps: () => any;
   getStickerInputProps: () => any;
   clearStickerFileError: () => void;
@@ -76,7 +78,7 @@ export const useCustomAssets = (
   const canAddMoreStickers = stickers.length < 50;
 
   // Emoji dropzone
-  const { getRootProps: getEmojiRootProps, getInputProps: getEmojiInputProps } =
+  const { getRootProps: getEmojiRootProps, getInputProps: getEmojiInputProps, isDragActive: isEmojiDragActive } =
     useDropzone({
       accept: {
         'image/png': ['.png'],
@@ -122,6 +124,7 @@ export const useCustomAssets = (
   const {
     getRootProps: getStickerRootProps,
     getInputProps: getStickerInputProps,
+    isDragActive: isStickerDragActive,
   } = useDropzone({
     accept: {
       'image/png': ['.png'],
@@ -280,6 +283,7 @@ export const useCustomAssets = (
     currentEmojiFiles,
     emojiFileError,
     isProcessingEmojis,
+    isEmojiDragActive,
     getEmojiRootProps,
     getEmojiInputProps,
     clearEmojiFileError,
@@ -292,6 +296,7 @@ export const useCustomAssets = (
     currentStickerFiles,
     stickerFileError,
     isProcessingStickers,
+    isStickerDragActive,
     getStickerRootProps,
     getStickerInputProps,
     clearStickerFileError,

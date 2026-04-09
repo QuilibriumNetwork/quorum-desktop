@@ -12,6 +12,7 @@ interface StickersProps {
   stickers: Sticker[];
   canAddMoreStickers: boolean;
   stickerFileError: string | null;
+  isStickerDragActive: boolean;
   getStickerRootProps: () => any;
   getStickerInputProps: () => any;
   clearStickerFileError: () => void;
@@ -25,6 +26,7 @@ const Stickers: React.FunctionComponent<StickersProps> = ({
   stickers,
   canAddMoreStickers,
   stickerFileError,
+  isStickerDragActive,
   getStickerRootProps,
   getStickerInputProps,
   clearStickerFileError,
@@ -53,7 +55,7 @@ const Stickers: React.FunctionComponent<StickersProps> = ({
         <div className="flex">
           {canAddMoreStickers && (
             <div
-              className="btn-secondary"
+              className={`btn-secondary${isStickerDragActive ? ' opacity-70' : ''}`}
               {...getStickerRootProps()}
             >
               <Trans>Upload Sticker</Trans>

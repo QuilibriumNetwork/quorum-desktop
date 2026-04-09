@@ -1,14 +1,18 @@
 ---
-type: task
+type: reference
 title: "Stacked PRs Workflow: Primitives + Hooks/Utils Migration"
-status: open
+status: partial
 complexity: medium
 created: 2026-03-15
+updated: 2026-04-09
 depends_on:
   - "tasks/2026-03-15-shared-types-migration-plan.md"
+note: "PRs 1 (types), 2 (primitives), 3 (utils) complete. PR 4 (hooks) blocked pending mobile access."
 ---
 
 # Stacked PRs Workflow
+
+> **Status as of 2026-04-09**: PRs 1 (types), 2 (primitives), 3 (utils) — **complete**. PR 4 (hooks) — **blocked** pending access to quorum-mobile. See `2026-03-19-hooks-migration-design.md` for details.
 
 ## Branch Strategy
 

@@ -127,15 +127,17 @@ const General: React.FunctionComponent<GeneralProps> = ({
       <div className="modal-content-header-avatar">
         <div
           id="space-icon-tooltip-target"
-          className={`avatar-upload ${!hasIcon ? 'empty' : ''}`}
+          className={`avatar-upload${!hasIcon ? ' empty' : ''}${isIconDragActive ? ' drag-active' : ''}`}
           style={hasIcon ? { backgroundImage: iconImageUrl } : {}}
           {...getIconRootProps()}
         >
           <input {...getIconInputProps()} />
-          {!hasIcon && (
-            <Icon name="image" size="2xl" className="icon" />
+          {isIconDragActive ? (
+            <Icon name="upload" size="2xl" className="icon" />
+          ) : (
+            !hasIcon && <Icon name="image" size="2xl" className="icon" />
           )}
-          {hasIcon && (
+          {hasIcon && !isIconDragActive && (
             <Tooltip id="space-icon-delete" content={t`Delete this image`} place="bottom">
               <button
                 type="button"
@@ -204,15 +206,21 @@ const General: React.FunctionComponent<GeneralProps> = ({
         <div className="modal-content-info">
           <div
             id="space-banner-tooltip-target"
-            className={
-              'modal-banner-editable ' +
-              (hasBanner ? '' : 'border-2 border-dashed border-accent-200')
-            }
+            className={`modal-banner-editable${!hasBanner ? ' empty' : ''}${isBannerDragActive ? ' drag-active' : ''}`}
             style={hasBanner ? { backgroundImage: bannerImageUrl } : {}}
             {...getBannerRootProps()}
           >
             <input {...getBannerInputProps()} />
-            {hasBanner && (
+            {isBannerDragActive && (
+              <div className="flex flex-col items-center gap-1 pointer-events-none">
+                <Icon name="upload" size="xl" />
+                <span className="text-xs font-medium">{t`Drop here`}</span>
+              </div>
+            )}
+            {!hasBanner && !isBannerDragActive && (
+              <Icon name="image" size="2xl" />
+            )}
+            {hasBanner && !isBannerDragActive && (
               <Tooltip id="space-banner-delete" content={t`Delete this image`} place="top">
                 <button
                   type="button"

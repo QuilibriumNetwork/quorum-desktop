@@ -1,3 +1,14 @@
+---
+type: task
+title: "Utilities Migration Implementation Plan"
+status: done
+complexity: high
+created: 2026-03-18
+completed: 2026-04-09
+depends_on:
+  - "tasks/quorum-shared-migration/.done/2026-03-15-primitives-migration-prep.md"
+---
+
 # Utilities Migration Implementation Plan
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
@@ -553,12 +564,7 @@ Each test file imports from local utils paths. Update to import from shared:
 
 Tests ran: 9 passed, 10 failed. All failures are pre-existing (confirmed by running against previous commit). No new failures introduced by the migration.
 
-- [ ] **Step 4: Commit**
-
-```bash
-git add -A
-git commit -m "Update test imports for shared utils migration"
-```
+- [x] **Step 4: Commit** _(combined with Task 16 commit `b283b607`)_
 
 ---
 
@@ -620,3 +626,5 @@ Dev server verified: app loads on web. Mobile verified: Metro bundles and app lo
 
 _Created: 2026-03-18_
 _Updated: 2026-03-18 15:30_
+
+*Completed: 2026-04-09 — All 18 tasks fully executed. Key commits: deps `691287a`, utils files `831dc29`, notification types `e9ef224`, desktop imports `b283b607`, formatRelativeTime fix `4137bff`. Web and mobile both verified working.*

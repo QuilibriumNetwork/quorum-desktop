@@ -1,14 +1,17 @@
 ---
 type: spec
 title: "Utilities Migration: quorum-desktop → quorum-shared"
-status: draft
+status: done
 created: 2026-03-18
+completed: 2026-04-09
 depends_on:
-  - "tasks/2026-03-15-primitives-migration-prep.md"
-  - "tasks/2026-03-15-stacked-prs-workflow.md"
+  - "tasks/quorum-shared-migration/.done/2026-03-15-primitives-migration-prep.md"
+  - "tasks/quorum-shared-migration/2026-03-15-stacked-prs-workflow.md"
 ---
 
 # Utilities Migration Design
+
+> **✅ COMPLETED** — Migration executed March 2026. This doc is now a reference/archive. Implementation plan: `quorum-shared-migration/.done/2026-03-18-utils-migration-plan.md`.
 
 Migrate platform-agnostic utility functions from quorum-desktop to quorum-shared so that all Quorum apps (desktop, mobile, future apps) share a single source of truth for business logic and pure utility functions.
 

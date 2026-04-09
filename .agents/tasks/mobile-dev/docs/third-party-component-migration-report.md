@@ -1,12 +1,14 @@
 ---
 type: task
 title: Third-Party Component Migration Report
-status: in-progress
+status: reference
 created: 2026-01-09T00:00:00.000Z
-updated: '2026-01-09'
+updated: '2026-04-09'
 ---
 
 # Third-Party Component Migration Report
+
+> **Architecture Status (2026-04-09)**: The project now uses a **multi-repo model** (`quorum-desktop`, `quorum-mobile`, `quorum-shared`). The primitive wrapper strategy described here remains valid. However, the implementations belong in `quorum-shared` (for cross-platform wrappers) or directly in `quorum-mobile` (for native-only solutions) — **not** in `src/components/primitives/` of this repo. Items marked "DONE" below have been implemented in `quorum-shared`.
 
 ## Executive Summary
 
@@ -46,10 +48,10 @@ This report analyzes all third-party UI components in the Quorum Desktop app tha
 
 #### Recommended Solution: VirtualList Primitive
 
-**Implementation Strategy**:
+**Implementation Strategy** (lives in `quorum-shared`):
 
 ```
-VirtualList/
+@quilibrium/quorum-shared/src/primitives/VirtualList/
 ├── VirtualList.web.tsx      # Continue using react-virtuoso
 ├── VirtualList.native.tsx   # Use React Native FlatList/VirtualizedList
 ├── types.ts                # Shared interface
@@ -127,10 +129,10 @@ export const VirtualList = ({ data, renderItem, ...props }) => (
 
 #### Recommended Solution: EmojiPicker Primitive
 
-**Implementation Strategy**:
+**Implementation Strategy** (lives in `quorum-shared` or `quorum-mobile`):
 
 ```
-EmojiPicker/
+@quilibrium/quorum-shared/src/primitives/EmojiPicker/
 ├── EmojiPicker.web.tsx      # Continue using emoji-picker-react
 ├── EmojiPicker.native.tsx   # Custom React Native implementation
 ├── types.ts                # Shared interface
@@ -215,10 +217,10 @@ export const EmojiPicker = ({ onEmojiClick, ...props }) => (
 
 #### Recommended Solution: FileUpload Primitive
 
-**Implementation Strategy**:
+**Implementation Strategy** (lives in `quorum-shared`):
 
 ```
-FileUpload/
+@quilibrium/quorum-shared/src/primitives/FileUpload/
 ├── FileUpload.web.tsx       # Continue using react-dropzone
 ├── FileUpload.native.tsx    # Use React Native document/image pickers
 ├── types.ts                # Shared interface
@@ -317,12 +319,12 @@ export const FileUpload = ({ onFilesSelected, accept, children }) => {
 
 #### Recommended Solution: Icon Primitive
 
-**Implementation Strategy**:
+**Implementation Strategy** (lives in `quorum-shared` — already done):
 
 ```
-Icon/
-├── Icon.web.tsx             # Continue using FontAwesome
-├── Icon.native.tsx          # Use react-native-vector-icons
+@quilibrium/quorum-shared/src/primitives/Icon/
+├── Icon.web.tsx             # Uses FontAwesome
+├── Icon.native.tsx          # Uses react-native-vector-icons
 ├── types.ts                # Shared interface with icon mapping
 └── index.ts               # Platform resolution
 ```
@@ -405,11 +407,11 @@ export const Icon = ({ icon, size = 16, color = '#666', ...props }) => (
 
 #### Recommended Solution: Tooltip Primitive
 
-**Implementation Strategy**:
+**Implementation Strategy** (lives in `quorum-shared` — already done):
 
 ```
-Tooltip/
-├── Tooltip.web.tsx          # Continue using react-tooltip
+@quilibrium/quorum-shared/src/primitives/Tooltip/
+├── Tooltip.web.tsx          # Uses react-tooltip
 ├── Tooltip.native.tsx       # Custom long-press implementation
 ├── types.ts                # Shared interface
 └── index.ts               # Platform resolution
@@ -613,5 +615,5 @@ The biggest challenge will be the React Router → React Navigation migration in
 ---
 
 _Report generated: 2025-07-23 02:15 UTC_
-_Next review: After Phase 1C completion_
-_Status: Ready for Phase 2 implementation_
+_Last updated: 2026-04-09 — updated to reflect multi-repo model (quorum-desktop / quorum-mobile / quorum-shared)_
+_For current primitives status, see [quorum-shared-architecture.md](../../../docs/quorum-shared-architecture.md)_

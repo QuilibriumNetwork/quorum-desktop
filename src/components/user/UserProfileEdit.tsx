@@ -64,7 +64,7 @@ const UserProfileEdit: React.FunctionComponent<{
       )}
       <div className="user-profile-header">
         <div
-          className="user-profile-icon-editable"
+          className={`user-profile-icon-editable${isDragActive ? ' drag-active' : ''}`}
           {...getRootProps()}
         >
           <input {...getInputProps()} />

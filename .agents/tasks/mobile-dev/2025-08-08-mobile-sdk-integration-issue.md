@@ -1,13 +1,16 @@
 ---
 type: task
 title: Quilibrium SDK Mobile Integration Issue
-status: in-progress
+status: reference
 created: 2025-08-08T00:00:00.000Z
-updated: '2026-01-09'
+updated: '2026-04-09'
 ---
 
 # Quilibrium SDK Mobile Integration Issue
 
+> **Architecture Status (2026-04-09)**: This doc was written during early exploration in this repo. The mobile app now lives in the separate `quorum-mobile` repo. The SDK incompatibility findings and recommended solutions documented here are still accurate and relevant for `quorum-mobile` development.
+>
+> The SDK shim referenced below (`sdk-shim-temporary-solutions.md`) has been archived — see `quorum-mobile` repo for current shim implementation.
 
 **Priority**: High
 
@@ -229,18 +232,19 @@ A temporary shim implementation is currently in place that provides mock functio
 
 ## Files Modified During Testing
 
-### Configuration Files:
+> Note: These files were in an early mobile test environment inside `quorum-desktop`. They no longer exist here — equivalent files now live in the `quorum-mobile` repo.
 
-- `mobile/metro.config.js` - Added Node.js module aliasing
-- `mobile/babel.config.js` - Enabled import.meta transformation
-- `mobile/polyfills.js` - Comprehensive polyfill setup
-- `mobile/shim.js` - Node.js compatibility layer
-- `mobile/index.ts` - Import polyfills before app
+### Configuration Files (now in quorum-mobile):
+
+- `metro.config.js` - Added Node.js module aliasing
+- `babel.config.js` - Enabled import.meta transformation
+- `polyfills.js` - Comprehensive polyfill setup
+- `shim.js` - Node.js compatibility layer
+- `index.ts` - Import polyfills before app
 
 ### Test Integration Files:
 
 - `src/shims/quilibrium-sdk-channels.native.tsx` - Smart shim with real SDK fallback
-- `.agents/tasks/todo/mobile-dev/sdk-integration-test-results.md` - Detailed test log
 
 ## Related Documentation
 
@@ -257,4 +261,4 @@ A temporary shim implementation is currently in place that provides mock functio
 
 ---
 
-_Last updated: 2025-01-07_
+_Last updated: 2026-04-09 — updated to reflect multi-repo model; findings remain current_

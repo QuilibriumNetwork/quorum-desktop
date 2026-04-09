@@ -80,12 +80,6 @@ yarn lint             # Lint only
 yarn format           # Format (run on modified files)
 ```
 
-### WSL/Windows
-```bash
-# Get current Windows path and run commands
-WINDOWS_PATH=$(pwd | sed 's|^/mnt/\([a-z]\)/|\U\1:/|' | sed 's|/|\\|g')
-cmd.exe /c "cd /d $WINDOWS_PATH && yarn validate"
-```
 
 ## 📦 Package Management
 **Use `yarn` only** - never `npm` (creates conflicts)
@@ -107,14 +101,15 @@ Shared package providing types, hooks, and utilities for Quorum apps (web + mobi
 
 ## 🎯 Quick Component Lookup
 
+All primitives live in `@quilibrium/quorum-shared`, re-exported from `src/components/primitives/`.
+
 | Component | Use For |
 |-----------|---------|
 | `Button` | Interactive buttons |
 | `Input` | Text inputs |
 | `Modal` | Modal dialogs |
-| `Text` / `Title` / `Paragraph` | Text content |
-| `FlexRow` / `FlexColumn` | Simple layouts |
-| `Container` | Styled wrappers |
+| `Text` / `Title` / `Paragraph` | Text content (native-first) |
+| `FlexRow` / `FlexColumn` / `Flex` | Simple layouts |
 
 → **Full API**: `docs/features/primitives/API-REFERENCE.md`
 

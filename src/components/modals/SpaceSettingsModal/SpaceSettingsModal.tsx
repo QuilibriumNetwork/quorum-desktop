@@ -219,6 +219,7 @@ const SpaceSettingsModal: React.FunctionComponent<{
   const {
     emojis,
     emojiFileError,
+    isEmojiDragActive,
     getEmojiRootProps,
     getEmojiInputProps,
     clearEmojiFileError,
@@ -228,6 +229,7 @@ const SpaceSettingsModal: React.FunctionComponent<{
 
     stickers,
     stickerFileError,
+    isStickerDragActive,
     getStickerRootProps,
     getStickerInputProps,
     clearStickerFileError,
@@ -564,6 +566,7 @@ const SpaceSettingsModal: React.FunctionComponent<{
                           emojis={emojis}
                           canAddMoreEmojis={canAddMoreEmojis}
                           emojiFileError={emojiFileError}
+                          isEmojiDragActive={isEmojiDragActive}
                           getEmojiRootProps={getEmojiRootProps}
                           getEmojiInputProps={getEmojiInputProps}
                           clearEmojiFileError={clearEmojiFileError}
@@ -579,6 +582,7 @@ const SpaceSettingsModal: React.FunctionComponent<{
                           stickers={stickers}
                           canAddMoreStickers={canAddMoreStickers}
                           stickerFileError={stickerFileError}
+                          isStickerDragActive={isStickerDragActive}
                           getStickerRootProps={getStickerRootProps}
                           getStickerInputProps={getStickerInputProps}
                           clearStickerFileError={clearStickerFileError}

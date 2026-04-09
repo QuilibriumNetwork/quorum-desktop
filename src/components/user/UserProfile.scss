@@ -78,6 +78,11 @@
   flex-shrink: 0;
 }
 
+.user-profile-icon-editable.drag-active {
+  outline: 2px dashed var(--accent);
+  outline-offset: 2px;
+}
+
 .user-profile-icon-editable::after {
   width: $s-6;
   height: $s-6;

@@ -122,14 +122,14 @@ export const Onboarding = ({
           </div>
         </div>
         {isDragActive && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-60 pointer-events-none backdrop-blur-sm">
-            <div className="flex flex-col p-12 border-2 border-dashed border-accent-500 rounded-2xl bg-white/90 shadow-2xl items-center transform scale-110 transition-all duration-200">
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 pointer-events-none backdrop-blur-sm">
+            <div className="flex flex-col p-12 border-2 border-dashed border-white/60 rounded-2xl bg-white/10 shadow-md items-center transform scale-110 transition-all duration-200">
               <Icon
                 name="image"
-                className="text-5xl text-accent-500 mb-6"
+                className="text-5xl text-white mb-6"
               />
-              <p className="text-xl">{t`Drop your profile photo here`}</p>
-              <p className="text-sm text-subtle mt-2">
+              <p className="text-xl text-white font-medium">{t`Drop your profile photo here`}</p>
+              <p className="text-sm text-white/70 mt-2">
                 {t`PNG, JPG or JPEG • Optimal ratio 1:1`}
               </p>
             </div>
@@ -294,7 +294,7 @@ export const Onboarding = ({
                   {...({ onDragActiveChange: setIsDragActive } as any)}
                 >
                   <div
-                    className={`avatar-upload ${!hasValidFile ? 'empty' : ''}`}
+                    className={`avatar-upload onboarding-avatar ${!hasValidFile ? 'empty' : ''}`}
                     style={
                       hasValidFile
                         ? {

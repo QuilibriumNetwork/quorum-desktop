@@ -1,9 +1,10 @@
 ---
 type: task
 title: "Primitives Migration Prep: Decisions & Cleanup Before Moving to quorum-shared"
-status: open
+status: done
 complexity: medium
 created: 2026-03-15
+completed: 2026-03-18
 depends_on:
   - "tasks/.done/2026-03-15-mobile-primitives-audit.md"
 ---
@@ -238,3 +239,5 @@ This prep task feeds into the actual migration plan at `tasks/2026-03-15-stacked
 
 _Created: 2026-03-15_
 _Updated: 2026-03-18_
+
+*Completed: 2026-04-09 — All migration steps executed and verified. Primitives live in quorum-shared, desktop re-exports from shared, npm pack tested, README written. Two unchecked items are ongoing tuning notes (hardcoded colors in native, README expansion) — not blockers.*
