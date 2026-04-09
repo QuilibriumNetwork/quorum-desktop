@@ -16,12 +16,14 @@
     "noUnusedLocals": false,
     "noUnusedParameters": false,
     "noFallthroughCasesInSwitch": true,
+    "ignoreDeprecations": "6.0",
     "baseUrl": ".",
     "paths": {
       "@/*": ["src/*"]
-    }
+    },
+    "types": ["node"]
   },
   "include": ["src"],
-  "exclude": ["src/dev/tests"],
+  "exclude": ["src/dev/tests", "src/**/*.native.tsx", "src/**/*.native.ts"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }
