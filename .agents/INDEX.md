@@ -90,7 +90,6 @@ This is the main index for all documentation, bug reports, and task management.
 
 ### Active Issues
 - [Message list scroll jank on send — Virtuoso scroll position drift](bugs/2026-03-19-message-list-scroll-jank-on-send.md)
-- [No visual feedback when dragging files onto dropzone areas](bugs/2026-04-07-missing-drag-feedback-file-uploads.md)
 - [Config Sync Space Loss Race Condition](bugs/config-sync-space-loss-race-condition.md)
 - [DirectMessage Invite Loading Performance Issue](bugs/directmessage-invite-loading-performance.md)
 - [Encryption State Evals Causing Config Sync Bloat](bugs/encryption-state-evals-bloat.md)
@@ -120,12 +119,14 @@ This is the main index for all documentation, bug reports, and task management.
 - [Standalone delivery receipt acks not reliably delivered](bugs/.solved/2026-03-19-standalone-delivery-ack-unreliable.md)
 - [Read receipts (Phase 2) untested — sync issues prevent DM delivery](bugs/.solved/2026-03-22-read-receipts-testing-blocked.md)
 - [Receipt checkmarks disappear on page refresh and conversation navigation](bugs/.solved/2026-03-22-receipt-checkmarks-not-persisting-across-navigation.md)
+- [No visual feedback when dragging files onto dropzone areas](bugs/.solved/2026-04-07-missing-drag-feedback-file-uploads.md)
 - [SpaceMember field name mismatch between MessageDB and quorum-shared](bugs/.solved/2026-04-08-spacemember-type-mismatch-db-vs-shared.md)
 - [Action Queue Bypasses SDK Encryption for Identity Keys](bugs/.solved/action-queue-plaintext-private-keys.md)
 - [Android 7.0 File Download Fix - Implementation Plan](bugs/.solved/SOLVED_android-file-download-huawei-p9-lite.md)
 - [Bug: Auto-Jump to First Unread Message - Blocked by Virtuoso Scroll Positioning](bugs/.solved/auto-jump-unread-virtuoso-scroll-conflict.md)
 - [Bug: Mention Dropdown Not Showing When Typing Just `@` or `#`](bugs/.solved/mention-dropdown-not-showing-on-empty-query.md)
 - [Bug: Message Scroll Issues - Send Jank & Delete Auto-Scroll](bugs/.solved/message-scroll-jank-on-send.md)
+- [Bug: Tabler Icon Overlapping Stroke Artifact in Dropzone Circles](bugs/.solved/tabler-icon-overlapping-stroke-artifact.md)
 - [Channel/Group Save Race Condition](bugs/.solved/channel-group-save-race-condition.md)
 - [Config Save Missing React Query Cache Update Causes Stale allowSync](bugs/.solved/config-save-stale-cache-allowsync.md)
 - [Deleted Messages Reappear After Peer Sync](bugs/.solved/deleted-messages-reappear-via-sync.md)
@@ -188,14 +189,11 @@ This is the main index for all documentation, bug reports, and task management.
 - [Test Suite Implementation Plan for Quorum Desktop](tasks/2026-01-09-test-suite-plan.md)
 - [Primitives Migration to quorum-shared](tasks/2026-01-14-primitives-migration-to-quorum-shared.md)
 - [Auto-save settings modals — eliminate save buttons](tasks/2026-02-16-auto-save-settings-modals.md)
-- [Dependency Updates Audit](tasks/2026-02-24-dependency-updates-audit.md)
 - [Decentralized GIF Library on Quilibrium](tasks/2026-02-24-gifs-library-integration.md)
 - [Space Tag Click — Space Info Modal](tasks/2026-02-24-space-tag-info-modal.md)
 - [Embedded Media + YouTube Facade Privacy Fix — Implementation Plan](tasks/2026-03-12-embedded-media-plan.md)
 - [Embedded Media in PostMessage + YouTube Facade Privacy Fix](tasks/2026-03-12-embedded-media-spec.md)
 - [Thread List Panel: "Created by me" Filter](tasks/2026-03-14-thread-list-created-filter.md)
-- [Dropzone Visual Feedback & Style Redesign](tasks/2026-04-09-dropzone-visual-feedback-design.md)
-- [Dropzone Visual Feedback & Style Redesign — Implementation Plan](tasks/2026-04-09-dropzone-visual-feedback-plan.md)
 
 ### .Archived
 - [🚀 Search Performance Optimization - Revised Implementation Plan](tasks/.archived/2025-11-12-search-performance-optimization-original.md)
@@ -283,6 +281,7 @@ This is the main index for all documentation, bug reports, and task management.
 
 - [Design: Discord-style Thread Panel Layout with Resize](tasks/.done/2025-03-09-thread-panel-discord-layout-design.md)
 - [Discord-style Thread Panel Layout Implementation Plan](tasks/.done/2025-03-09-thread-panel-discord-layout.md)
+- [Dependency Updates Audit](tasks/.done/2026-02-24-dependency-updates-audit.md)
 - [Simplified Message Actions Toolbar](tasks/.done/2026-03-09-simplified-message-actions-design.md)
 - [Simplified Message Actions Toolbar — Implementation Plan](tasks/.done/2026-03-09-simplified-message-actions-plan.md)
 - [Thread-Aware Navigation for Bookmarks, Search & Pins](tasks/.done/2026-03-10-thread-aware-navigation-design.md)
@@ -319,6 +318,8 @@ This is the main index for all documentation, bug reports, and task management.
 - [Implement New Member Badge in Spaces](tasks/.done/2026-04-08-new-member-badge-spaces.md)
 - [Panel Card Style — Design Spec](tasks/.done/2026-04-08-panel-card-style-design.md)
 - [Panel Card Style Implementation Plan](tasks/.done/2026-04-08-panel-card-style-plan.md)
+- [Dropzone Visual Feedback & Style Redesign](tasks/.done/2026-04-09-dropzone-visual-feedback-design.md)
+- [Dropzone Visual Feedback & Style Redesign — Implementation Plan](tasks/.done/2026-04-09-dropzone-visual-feedback-plan.md)
 - [AccentColorSwitcher Cross-Platform Migration + Persistence](tasks/.done/accent-color-switcher-cross-platform-migration.md)
 - [Add Context to Desktop Notifications](tasks/.done/rich-desktop-notifications-context.md)
 - [Add DM-Specific Action Queue Handlers](tasks/.done/dm-action-queue-handlers.md)
@@ -504,4 +505,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2026-04-09 10:16:31
+**Last Updated**: 2026-04-09 10:39:48
