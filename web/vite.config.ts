@@ -85,6 +85,7 @@ export default defineConfig(({ command }): UserConfig => ({
     lingui(),
     nodePolyfills({
       target: 'esnext',
+      exclude: ['vm'],
     } as any),
     react({
       babel: {

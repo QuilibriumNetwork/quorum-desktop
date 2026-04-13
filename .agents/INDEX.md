@@ -173,7 +173,8 @@ This is the main index for all documentation, bug reports, and task management.
 - [Passkey Import UX Issue](tasks/2025-11-13-passkey-import-ux-issue.md)
 - [Implement Message Forwarding with Privacy Controls](tasks/2025-11-16-message-forwarding-with-privacy-controls.md)
 - [Implement Smart Context Extraction Around Mentions in NotificationPanel](tasks/2025-11-19-notification-mention-context-extraction.md)
-- [SDK PasskeyModal Customization Props Enhancement](tasks/2025-11-21-sdk-passkey-modal-customization-props.md)
+- SDK PasskeyModal Hook Extraction - Design & Plan *(moved to SDK repo: `quilibrium-js-sdk-channels/.agents/tasks/`)*
+- ~~[SDK PasskeyModal Customization Props Enhancement](tasks/.archived/2025-11-21-sdk-passkey-modal-customization-props.md)~~ *(archived: superseded by hook extraction design)*
 - [Service Worker for App Update Detection](tasks/2025-12-14-service-worker-app-updates.md)
 - [Tombstone Cleanup Strategy for Deleted Messages](tasks/2025-12-18-tombstone-cleanup-strategy.md)
 - [Implement Role-Based Channel Visibility](tasks/2025-12-26-channel-role-visibility.md)
@@ -187,16 +188,14 @@ This is the main index for all documentation, bug reports, and task management.
 - [Task: Implement Delete Public Invite Link Feature](tasks/2026-01-09-delete-public-invite-link.md)
 - [Multi-User Invite Selection Enhancement](tasks/2026-01-09-multi-user-invite-selection.md)
 - [Test Suite Implementation Plan for Quorum Desktop](tasks/2026-01-09-test-suite-plan.md)
-- [Primitives Migration to quorum-shared](tasks/2026-01-14-primitives-migration-to-quorum-shared.md)
 - [Auto-save settings modals — eliminate save buttons](tasks/2026-02-16-auto-save-settings-modals.md)
 - [Decentralized GIF Library on Quilibrium](tasks/2026-02-24-gifs-library-integration.md)
 - [Space Tag Click — Space Info Modal](tasks/2026-02-24-space-tag-info-modal.md)
-- [Embedded Media + YouTube Facade Privacy Fix — Implementation Plan](tasks/2026-03-12-embedded-media-plan.md)
-- [Embedded Media in PostMessage + YouTube Facade Privacy Fix](tasks/2026-03-12-embedded-media-spec.md)
 - [Thread List Panel: "Created by me" Filter](tasks/2026-03-14-thread-list-created-filter.md)
 
 ### .Archived
 - [🚀 Search Performance Optimization - Revised Implementation Plan](tasks/.archived/2025-11-12-search-performance-optimization-original.md)
+- [Primitives Migration to quorum-shared](tasks/.archived/2026-01-14-primitives-migration-to-quorum-shared.md)
 - [Mobile Thread Reply Visibility Implementation Plan](tasks/.archived/2026-03-11-mobile-thread-reply-visibility-plan.md)
 - [Mobile Thread Reply Visibility — Design Spec](tasks/.archived/2026-03-11-mobile-thread-reply-visibility.md)
 - [Auto-Jump to First Unread Message + Fix Hash Navigation](tasks/.archived/auto-jump-first-unread.md)
@@ -288,6 +287,8 @@ This is the main index for all documentation, bug reports, and task management.
 - [Thread-Aware Navigation Implementation Plan](tasks/.done/2026-03-10-thread-aware-navigation.md)
 - [Thread Root Soft-Delete Fix and Deleted Message Placeholder](tasks/.done/2026-03-10-thread-soft-delete-and-persisted-titles.md)
 - [Thread Title Editing Implementation Plan](tasks/.done/2026-03-11-thread-title-editing.md)
+- [Embedded Media + YouTube Facade Privacy Fix — Implementation Plan](tasks/.done/2026-03-12-embedded-media-plan.md)
+- [Embedded Media in PostMessage + YouTube Facade Privacy Fix](tasks/.done/2026-03-12-embedded-media-spec.md)
 - [Thread Management: Close, Auto-Close, and Remove — Implementation Plan](tasks/.done/2026-03-12-thread-management-plan.md)
 - [Thread Management: Close, Auto-Close, and Remove](tasks/.done/2026-03-12-thread-management-spec.md)
 - [Threads List Panel Implementation Plan](tasks/.done/2026-03-12-threads-list-panel-plan.md)
@@ -320,6 +321,8 @@ This is the main index for all documentation, bug reports, and task management.
 - [Panel Card Style Implementation Plan](tasks/.done/2026-04-08-panel-card-style-plan.md)
 - [Dropzone Visual Feedback & Style Redesign](tasks/.done/2026-04-09-dropzone-visual-feedback-design.md)
 - [Dropzone Visual Feedback & Style Redesign — Implementation Plan](tasks/.done/2026-04-09-dropzone-visual-feedback-plan.md)
+- [Text + Image Combined Message — Implementation Plan](tasks/.done/2026-04-09-text-image-combined-message-plan.md)
+- [Text + Image Combined Message](tasks/.done/2026-04-09-text-image-combined-message-spec.md)
 - [AccentColorSwitcher Cross-Platform Migration + Persistence](tasks/.done/accent-color-switcher-cross-platform-migration.md)
 - [Add Context to Desktop Notifications](tasks/.done/rich-desktop-notifications-context.md)
 - [Add DM-Specific Action Queue Handlers](tasks/.done/dm-action-queue-handlers.md)
@@ -505,4 +508,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2026-04-09 10:44:38
+**Last Updated**: 2026-04-09 12:04:40
