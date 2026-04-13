@@ -12,3 +12,9 @@ export * from './useKeyBackup';
 export * from './useFileUpload';
 export * from './useAuthenticationFlow';
 export * from './useSpaceRecovery';
+export {
+  useUnifiedOnboardingFlow,
+  type OnboardingStep,
+  type OnboardingUser,
+  type UseUnifiedOnboardingFlowReturn,
+} from './useUnifiedOnboardingFlow';
