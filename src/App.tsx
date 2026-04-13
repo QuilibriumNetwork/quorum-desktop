@@ -5,6 +5,7 @@ import { useState, useEffect } from 'react';
 import {
   channel_raw,
   usePasskeysContext,
+  PasskeysProvider,
 } from '@quilibrium/quilibrium-js-sdk-channels';
 
 import Connecting from './components/Connecting';
@@ -132,7 +133,9 @@ const App = () => {
           ) : landing && !user ? (
             <div className="bg-onboarding flex flex-col min-h-screen text-main">
               {isWeb() && isElectron() && <CustomTitlebar />}
-              <OnboardingFlow setUser={setUser} />
+              <PasskeysProvider fqAppPrefix="Quorum">
+                <OnboardingFlow setUser={setUser} />
+              </PasskeysProvider>
             </div>
           ) : (
             <Connecting />

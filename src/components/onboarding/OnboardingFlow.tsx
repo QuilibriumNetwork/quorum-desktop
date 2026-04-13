@@ -56,7 +56,7 @@ export const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ setUser }) => {
       {/* Small top-left logo on all steps except welcome and loading */}
       {showSmallLogo && (
         <div className="absolute top-6 left-6">
-          <Logo className="onboarding-icon h-6" />
+          <Logo className="onboarding-icon h-8" />
         </div>
       )}
 

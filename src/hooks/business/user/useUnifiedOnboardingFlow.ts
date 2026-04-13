@@ -353,7 +353,6 @@ export function useUnifiedOnboardingFlow(
     setImportError(null);
     try {
       await passkeyFlow.importKeyFile(file);
-      // onStepChange will fire with 'ready_with_keypair' → setStep('create-passkey-1a')
     } catch (err) {
       setImportError(err instanceof Error ? err.message : String(err));
     }
