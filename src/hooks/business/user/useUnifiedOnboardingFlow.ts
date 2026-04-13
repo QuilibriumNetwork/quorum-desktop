@@ -152,7 +152,14 @@ export function useUnifiedOnboardingFlow(
         setStep('save-key-to-passkey');
       }
       if (sdkStep === 'success') {
-        setStep('backup-key');
+        // If in import mode, hold on 'loading' while we attempt remote profile sync.
+        // The syncImportedProfile effect will advance to 'backup-key' if no profile found,
+        // or call setUser() directly if a profile is found.
+        if (!importMode) {
+          setStep('backup-key');
+        } else {
+          setStep('loading');
+        }
       }
       if (sdkStep === 'ready_with_keypair') {
         setStep('create-passkey-1a');
@@ -170,9 +177,109 @@ export function useUnifiedOnboardingFlow(
     },
   });
 
-  // --- Returning user detection ---
+  // --- Profile sync after key import ---
+  // When an imported key completes registration (SDK 'success'), credentials are now stored.
+  // We set step back to 'loading' to show a spinner while we check for a remote profile.
+  // This effect watches step + importMode so it fires when we re-enter 'loading' in import mode.
   useEffect(() => {
-    if (step !== 'loading') return;
+    if (step !== 'loading' || !importMode || passkeyFlow.step !== 'success') return;
+
+    const syncImportedProfile = async () => {
+      const info = adapter.currentPasskeyInfo;
+      if (!info?.address || !adapter.exportKey) return;
+
+      setIsFetchingUser(true);
+      try {
+        const userKeyHex = await adapter.exportKey(info.address);
+        const userKey = new Uint8Array(Buffer.from(userKeyHex, 'hex'));
+
+        const passkeyData = await passkey.loadKeyDecryptData(2);
+        const envelope = JSON.parse(Buffer.from(passkeyData).toString('utf-8'));
+        const key = await passkey.createKeyFromBuffer(userKey as unknown as ArrayBuffer);
+        const decryptedKeyset = await passkey.decrypt(
+          new Uint8Array(envelope.ciphertext),
+          new Uint8Array(envelope.iv),
+          key
+        );
+        const inner = JSON.parse(Buffer.from(decryptedKeyset).toString('utf-8'));
+
+        let savedConfig;
+        try {
+          savedConfig = (await apiClient.getUserSettings(info.address)).data;
+        } catch {
+          setStep('backup-key');
+          return;
+        }
+
+        if (!savedConfig?.user_config) {
+          setStep('backup-key');
+          return;
+        }
+
+        const derived = await crypto.subtle.digest(
+          'SHA-512',
+          Buffer.from(new Uint8Array(inner.identity.user_key.private_key))
+        );
+        const subtleKey = await window.crypto.subtle.importKey(
+          'raw',
+          derived.slice(0, 32),
+          { name: 'AES-GCM', length: 256 },
+          false,
+          ['decrypt']
+        );
+
+        const iv = savedConfig.user_config.substring(savedConfig.user_config.length - 24);
+        const ciphertext = savedConfig.user_config.substring(0, savedConfig.user_config.length - 24);
+
+        const decryptedConfig = JSON.parse(
+          Buffer.from(
+            await window.crypto.subtle.decrypt(
+              { name: 'AES-GCM', iv: Buffer.from(iv, 'hex') },
+              subtleKey,
+              Buffer.from(ciphertext, 'hex')
+            )
+          ).toString('utf-8')
+        );
+
+        const rawName = decryptedConfig?.name;
+        const nameError = rawName ? validateDisplayName(rawName) : 'empty';
+        const validatedName = nameError ? undefined : rawName;
+
+        if (validatedName) {
+          const finalProfileImage = decryptedConfig?.profile_image ?? DefaultImages.UNKNOWN_USER;
+          adapter.updateStoredPasskey(info.credentialId, {
+            credentialId: info.credentialId,
+            address: info.address,
+            publicKey: info.publicKey,
+            displayName: validatedName,
+            pfpUrl: finalProfileImage,
+            completedOnboarding: true,
+          });
+          setUser({
+            displayName: validatedName,
+            state: 'online',
+            status: '',
+            userIcon: finalProfileImage,
+            address: info.address,
+          });
+        }
+        if (!validatedName) {
+          setStep('backup-key');
+        }
+      } catch {
+        setStep('backup-key');
+      } finally {
+        setIsFetchingUser(false);
+      }
+    };
+
+    syncImportedProfile();
+  }, [step, importMode, passkeyFlow.step]);
+
+  // --- Returning user detection (initial mount only, not post-import) ---
+  useEffect(() => {
+    // Skip if we're in post-import profile sync (handled by the effect above)
+    if (step !== 'loading' || (importMode && passkeyFlow.step === 'success')) return;
 
     const checkReturningUser = async () => {
       const info = adapter.currentPasskeyInfo;
