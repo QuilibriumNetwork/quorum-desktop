@@ -110,3 +110,205 @@ function getDotIndex(step: OnboardingStep): number | null {
       return 5;
   }
 }
+
+export function useUnifiedOnboardingFlow(
+  options: UseUnifiedOnboardingFlowOptions
+): UseUnifiedOnboardingFlowReturn {
+  const { setUser } = options;
+
+  // --- Composed hooks ---
+  const adapter = usePasskeyAdapter();
+  const { apiClient } = useQuorumApiClient();
+  const uploadRegistration = useUploadRegistration();
+  const keyBackup = useKeyBackup();
+
+  // --- Internal state ---
+  const [step, setStep] = useState<OnboardingStep>('loading');
+  const [importMode, setImportMode] = useState(false);
+  const [importError, setImportError] = useState<string | null>(null);
+  const [displayName, setDisplayName] = useState('');
+  const [profileImagePreview, setProfileImagePreview] = useState<string | null>(null);
+  const [isFetchingUser, setIsFetchingUser] = useState(false);
+
+  // Ref to track current step inside callbacks (avoids stale closures)
+  const stepRef = useRef<OnboardingStep>(step);
+  stepRef.current = step;
+
+  // --- API callbacks for usePasskeyFlow ---
+  const getUserRegistration = useCallback(
+    async (address: string) => {
+      const response = await apiClient.getUser(address);
+      return response.data;
+    },
+    [apiClient]
+  );
+
+  // --- usePasskeyFlow from SDK ---
+  const passkeyFlow = usePasskeyFlow({
+    fqAppPrefix: 'Quorum',
+    getUserRegistration,
+    uploadRegistration,
+    onStepChange: (sdkStep: PasskeyFlowStep) => {
+      if (sdkStep === 'awaiting_completion') {
+        setStep('save-key-to-passkey');
+      }
+      if (sdkStep === 'success') {
+        setStep('backup-key');
+      }
+      if (sdkStep === 'ready_with_keypair') {
+        setStep('create-passkey-1a');
+      }
+    },
+    onError: (error: PasskeyFlowError) => {
+      // If we were completing (step 1b), auto-fallback to backup
+      if (stepRef.current === 'save-key-to-passkey') {
+        setStep('backup-key');
+      }
+      // If registering (step 1a), stay on same step — inline error shows
+    },
+    onComplete: () => {
+      // Handled by onStepChange 'success' → setStep('backup-key')
+    },
+  });
+
+  // --- Returning user detection ---
+  useEffect(() => {
+    if (step !== 'loading') return;
+
+    const checkReturningUser = async () => {
+      const info = adapter.currentPasskeyInfo;
+
+      // No stored credentials — new user
+      if (!info || !info.address) {
+        setStep('welcome');
+        return;
+      }
+
+      // Has credentials with completedOnboarding — App.tsx useEffect handles this case
+      // before the orchestrator mounts. But as a safety net:
+      if (info.completedOnboarding) {
+        setUser({
+          displayName: info.displayName ?? info.address,
+          state: 'online',
+          status: '',
+          userIcon: info.pfpUrl ?? DefaultImages.UNKNOWN_USER,
+          address: info.address,
+        });
+        return;
+      }
+
+      // Has credentials but onboarding not complete — try to fetch remote profile
+      if (!adapter.exportKey) {
+        setStep('welcome');
+        return;
+      }
+
+      setIsFetchingUser(true);
+      try {
+        const userKeyHex = await adapter.exportKey(info.address);
+        const userKey = new Uint8Array(Buffer.from(userKeyHex, 'hex'));
+
+        const passkeyData = await passkey.loadKeyDecryptData(2);
+        const envelope = JSON.parse(Buffer.from(passkeyData).toString('utf-8'));
+        const key = await passkey.createKeyFromBuffer(userKey as unknown as ArrayBuffer);
+        const decryptedKeyset = await passkey.decrypt(
+          new Uint8Array(envelope.ciphertext),
+          new Uint8Array(envelope.iv),
+          key
+        );
+        const inner = JSON.parse(Buffer.from(decryptedKeyset).toString('utf-8'));
+
+        // Fetch encrypted config
+        let savedConfig;
+        try {
+          savedConfig = (await apiClient.getUserSettings(info.address)).data;
+        } catch {
+          setStep('welcome');
+          return;
+        }
+
+        if (!savedConfig?.user_config) {
+          setStep('welcome');
+          return;
+        }
+
+        // Derive decryption key
+        const derived = await crypto.subtle.digest(
+          'SHA-512',
+          Buffer.from(new Uint8Array(inner.identity.user_key.private_key))
+        );
+        const subtleKey = await window.crypto.subtle.importKey(
+          'raw',
+          derived.slice(0, 32),
+          { name: 'AES-GCM', length: 256 },
+          false,
+          ['decrypt']
+        );
+
+        // Decrypt config
+        const iv = savedConfig.user_config.substring(
+          savedConfig.user_config.length - 24
+        );
+        const ciphertext = savedConfig.user_config.substring(
+          0,
+          savedConfig.user_config.length - 24
+        );
+
+        const decryptedConfig = JSON.parse(
+          Buffer.from(
+            await window.crypto.subtle.decrypt(
+              { name: 'AES-GCM', iv: Buffer.from(iv, 'hex') },
+              subtleKey,
+              Buffer.from(ciphertext, 'hex')
+            )
+          ).toString('utf-8')
+        );
+
+        // Validate remote profile
+        const rawName = decryptedConfig?.name;
+        const nameError = rawName ? validateDisplayName(rawName) : 'empty';
+        const validatedName = nameError ? undefined : rawName;
+
+        if (validatedName) {
+          const finalProfileImage = decryptedConfig?.profile_image ?? DefaultImages.UNKNOWN_USER;
+
+          adapter.updateStoredPasskey(info.credentialId, {
+            credentialId: info.credentialId,
+            address: info.address,
+            publicKey: info.publicKey,
+            displayName: validatedName,
+            pfpUrl: finalProfileImage,
+            completedOnboarding: true,
+          });
+
+          setUser({
+            displayName: validatedName,
+            state: 'online',
+            status: '',
+            userIcon: finalProfileImage,
+            address: info.address,
+          });
+          return;
+        }
+
+        // Has credentials but no valid remote profile — continue onboarding
+        setStep('welcome');
+      } catch {
+        showWarning(
+          t`Couldn't load your saved profile. Please re-enter your name and profile image.`
+        );
+        setStep('welcome');
+      } finally {
+        setIsFetchingUser(false);
+      }
+    };
+
+    checkReturningUser();
+  }, [step, adapter.currentPasskeyInfo?.address]);
+
+  // Computed values
+  const dotIndex = getDotIndex(step);
+  const canProceedWithName = !validateDisplayName(displayName);
+
+  // (Actions are defined in next task)
+}
