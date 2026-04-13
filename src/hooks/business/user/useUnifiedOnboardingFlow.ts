@@ -310,5 +310,165 @@ export function useUnifiedOnboardingFlow(
   const dotIndex = getDotIndex(step);
   const canProceedWithName = !validateDisplayName(displayName);
 
-  // (Actions are defined in next task)
+  // --- Actions: Welcome ---
+
+  const startNewAccount = useCallback(async () => {
+    setImportMode(false);
+    setImportError(null);
+
+    if (!passkeyFlow.isPasskeySupported) {
+      // Electron / unsupported browser: skip passkey steps entirely
+      await passkeyFlow.proceedWithoutPasskey();
+      setStep('backup-key');
+    } else {
+      setStep('create-passkey-1a');
+    }
+  }, [passkeyFlow.isPasskeySupported, passkeyFlow.proceedWithoutPasskey]);
+
+  const startImportAccount = useCallback(() => {
+    setImportMode(true);
+    setImportError(null);
+    setStep('import-key');
+  }, []);
+
+  // --- Actions: Passkey ---
+
+  const createPasskey = useCallback(async () => {
+    await passkeyFlow.startRegistration();
+  }, [passkeyFlow.startRegistration]);
+
+  const saveToPasskey = useCallback(async () => {
+    await passkeyFlow.completeRegistration();
+  }, [passkeyFlow.completeRegistration]);
+
+  const continueWithoutPasskey = useCallback(async () => {
+    await passkeyFlow.proceedWithoutPasskey();
+    setStep('backup-key');
+  }, [passkeyFlow.proceedWithoutPasskey]);
+
+  const retryPasskey = useCallback(() => {
+    passkeyFlow.retry();
+  }, [passkeyFlow.retry]);
+
+  const handleImportKeyFile = useCallback(async (file: File) => {
+    setImportError(null);
+    try {
+      await passkeyFlow.importKeyFile(file);
+      // onStepChange will fire with 'ready_with_keypair' → setStep('create-passkey-1a')
+    } catch (err) {
+      setImportError(err instanceof Error ? err.message : String(err));
+    }
+  }, [passkeyFlow.importKeyFile]);
+
+  // --- Actions: Onboarding ---
+
+  const handleDownloadKey = useCallback(async () => {
+    try {
+      await keyBackup.downloadKey();
+      setStep('security-warning');
+    } catch (error) {
+      // downloadKey handles its own error display; stay on backup-key step
+      console.error('Key download failed:', error);
+    }
+  }, [keyBackup.downloadKey]);
+
+  const skipKeyBackup = useCallback(() => {
+    setStep('display-name');
+  }, []);
+
+  const acknowledgeSecurityWarning = useCallback(() => {
+    setStep('display-name');
+  }, []);
+
+  const saveDisplayNameAction = useCallback(() => {
+    if (!adapter.currentPasskeyInfo || !canProceedWithName) return;
+
+    adapter.updateStoredPasskey(adapter.currentPasskeyInfo.credentialId, {
+      credentialId: adapter.currentPasskeyInfo.credentialId,
+      address: adapter.currentPasskeyInfo.address,
+      publicKey: adapter.currentPasskeyInfo.publicKey,
+      displayName,
+      completedOnboarding: false,
+      pfpUrl: undefined,
+    });
+    setStep('profile-photo');
+  }, [adapter, displayName, canProceedWithName]);
+
+  const saveProfilePhoto = useCallback(
+    (url?: string) => {
+      if (!adapter.currentPasskeyInfo) return;
+
+      const finalPfpUrl = url ?? DefaultImages.UNKNOWN_USER;
+      adapter.updateStoredPasskey(adapter.currentPasskeyInfo.credentialId, {
+        credentialId: adapter.currentPasskeyInfo.credentialId,
+        address: adapter.currentPasskeyInfo.address,
+        publicKey: adapter.currentPasskeyInfo.publicKey,
+        displayName,
+        pfpUrl: finalPfpUrl,
+        completedOnboarding: false,
+      });
+      setStep('complete');
+    },
+    [adapter, displayName]
+  );
+
+  const handleCompleteOnboarding = useCallback(() => {
+    if (!adapter.currentPasskeyInfo) return;
+
+    adapter.updateStoredPasskey(adapter.currentPasskeyInfo.credentialId, {
+      credentialId: adapter.currentPasskeyInfo.credentialId,
+      address: adapter.currentPasskeyInfo.address,
+      publicKey: adapter.currentPasskeyInfo.publicKey,
+      displayName,
+      pfpUrl: adapter.currentPasskeyInfo.pfpUrl ?? DefaultImages.UNKNOWN_USER,
+      completedOnboarding: true,
+    });
+
+    setUser({
+      displayName,
+      state: 'online',
+      status: '',
+      userIcon: adapter.currentPasskeyInfo.pfpUrl ?? DefaultImages.UNKNOWN_USER,
+      address: adapter.currentPasskeyInfo.address,
+    });
+  }, [adapter, displayName, setUser]);
+
+  // --- Return ---
+
+  return {
+    step,
+    dotIndex,
+
+    passkeyStep: passkeyFlow.step,
+    passkeyError: passkeyFlow.error,
+    isImportMode: importMode,
+    isPasskeySupported: passkeyFlow.isPasskeySupported,
+    canRetry: passkeyFlow.canRetry,
+
+    importError,
+
+    address: passkeyFlow.address,
+    displayName,
+    profileImagePreview,
+
+    startNewAccount,
+    startImportAccount,
+
+    createPasskey,
+    saveToPasskey,
+    continueWithoutPasskey,
+    retryPasskey,
+    importKeyFile: handleImportKeyFile,
+
+    downloadKey: handleDownloadKey,
+    skipKeyBackup,
+    acknowledgeSecurityWarning,
+    setDisplayName,
+    saveDisplayName: saveDisplayNameAction,
+    saveProfilePhoto,
+    setProfileImagePreview,
+    completeOnboarding: handleCompleteOnboarding,
+
+    canProceedWithName,
+  };
 }
