@@ -1,4 +1,6 @@
-// Onboarding flow styles
+@use 'variables' as *;
+
+/* === ONBOARDING FLOW STYLES === */
 
 .bg-onboarding {
   background-color: var(--surface-2);
@@ -17,12 +19,12 @@
 // Progress bar
 .onboarding-progress-bar {
   display: flex;
-  gap: 8px;
+  gap: $s-2;
   justify-content: center;
 
   &__segment {
-    width: 32px;
-    height: 6px;
+    width: $s-8;
+    height: $s-1-5;
     border-radius: 3px;
     background-color: var(--surface-5);
     transition: background-color 200ms ease;
@@ -36,8 +38,8 @@
 // File dropzone for import step
 .onboarding-dropzone {
   border: 2px dashed var(--surface-6);
-  border-radius: 12px;
-  padding: 2rem;
+  border-radius: $rounded-xl;
+  padding: $s-8;
   text-align: center;
   cursor: pointer;
   transition: border-color 200ms ease, background-color 200ms ease;
@@ -45,6 +47,6 @@
   &:hover,
   &--active {
     border-color: var(--accent);
-    background-color: rgba(var(--accent-rgb), 0.05);
+    background-color: rgb(var(--accent-rgb) / 0.05);
   }
 }
