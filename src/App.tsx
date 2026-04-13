@@ -2,7 +2,6 @@ import { logger } from '@quilibrium/quorum-shared';
 import React, { Suspense } from 'react';
 import { Buffer } from 'buffer';
 import { useState, useEffect } from 'react';
-import { Routes, Route, Navigate } from 'react-router';
 import {
   channel_raw,
   usePasskeysContext,
@@ -10,8 +9,7 @@ import {
 
 import Connecting from './components/Connecting';
 import CustomTitlebar from './components/Titlebar';
-import { Login } from './components/onboarding/Login';
-import { Onboarding } from './components/onboarding/Onboarding';
+import { OnboardingFlow } from './components/onboarding/OnboardingFlow';
 import { Maintenance } from './components/Maintenance';
 import { RegistrationProvider } from './components/context/RegistrationPersister';
 import { ResponsiveLayoutProvider } from './components/context/ResponsiveLayoutProvider';
@@ -131,21 +129,10 @@ const App = () => {
                 </RegistrationProvider>
               </Suspense>
             </div>
-          ) : landing && !currentPasskeyInfo ? (
-            <div className="bg-radial--accent-noise flex flex-col min-h-screen text-main">
+          ) : landing && !user ? (
+            <div className="bg-onboarding flex flex-col min-h-screen text-main">
               {isWeb() && isElectron() && <CustomTitlebar />}
-              <Routes>
-                <Route path="/" element={<Login setUser={setUser} />} />
-                <Route path="/*" element={<Navigate to="/" replace />} />
-              </Routes>
-            </div>
-          ) : landing ? (
-            <div className="bg-radial--accent-noise flex flex-col min-h-screen text-main">
-              {isWeb() && isElectron() && <CustomTitlebar />}
-              <Routes>
-                <Route path="/" element={<Onboarding setUser={setUser} />} />
-                <Route path="/*" element={<Navigate to="/" replace />} />
-              </Routes>
+              <OnboardingFlow setUser={setUser} />
             </div>
           ) : (
             <Connecting />
