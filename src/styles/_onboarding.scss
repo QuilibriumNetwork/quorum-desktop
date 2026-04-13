@@ -1,0 +1,50 @@
+// Onboarding flow styles
+
+.bg-onboarding {
+  background-color: var(--surface-2);
+}
+
+// Step transition animation
+@keyframes onboarding-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.onboarding-step {
+  animation: onboarding-fade-in 200ms ease-in;
+}
+
+// Progress bar
+.onboarding-progress-bar {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+
+  &__segment {
+    width: 32px;
+    height: 6px;
+    border-radius: 3px;
+    background-color: var(--surface-5);
+    transition: background-color 200ms ease;
+
+    &--filled {
+      background-color: var(--accent);
+    }
+  }
+}
+
+// File dropzone for import step
+.onboarding-dropzone {
+  border: 2px dashed var(--surface-6);
+  border-radius: 12px;
+  padding: 2rem;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color 200ms ease, background-color 200ms ease;
+
+  &:hover,
+  &--active {
+    border-color: var(--accent);
+    background-color: rgba(var(--accent-rgb), 0.05);
+  }
+}
