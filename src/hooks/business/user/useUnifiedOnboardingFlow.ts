@@ -106,7 +106,7 @@ function getDotIndex(step: OnboardingStep): number | null {
     case 'profile-photo':
       return 4;
     case 'complete':
-      return 5;
+      return null;
   }
 }
 
@@ -387,7 +387,7 @@ export function useUnifiedOnboardingFlow(
       publicKey: adapter.currentPasskeyInfo.publicKey,
       displayName,
       completedOnboarding: false,
-      pfpUrl: undefined,
+      pfpUrl: adapter.currentPasskeyInfo.pfpUrl,
     });
     setStep('profile-photo');
   }, [adapter, displayName, canProceedWithName]);
@@ -413,12 +413,14 @@ export function useUnifiedOnboardingFlow(
   const handleCompleteOnboarding = useCallback(() => {
     if (!adapter.currentPasskeyInfo) return;
 
+    const finalPfpUrl = profileImagePreview ?? adapter.currentPasskeyInfo.pfpUrl ?? DefaultImages.UNKNOWN_USER;
+
     adapter.updateStoredPasskey(adapter.currentPasskeyInfo.credentialId, {
       credentialId: adapter.currentPasskeyInfo.credentialId,
       address: adapter.currentPasskeyInfo.address,
       publicKey: adapter.currentPasskeyInfo.publicKey,
       displayName,
-      pfpUrl: adapter.currentPasskeyInfo.pfpUrl ?? DefaultImages.UNKNOWN_USER,
+      pfpUrl: finalPfpUrl,
       completedOnboarding: true,
     });
 
@@ -426,10 +428,10 @@ export function useUnifiedOnboardingFlow(
       displayName,
       state: 'online',
       status: '',
-      userIcon: adapter.currentPasskeyInfo.pfpUrl ?? DefaultImages.UNKNOWN_USER,
+      userIcon: finalPfpUrl,
       address: adapter.currentPasskeyInfo.address,
     });
-  }, [adapter, displayName, setUser]);
+  }, [adapter, displayName, profileImagePreview, setUser]);
 
   // --- Return ---
 

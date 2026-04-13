@@ -51,6 +51,7 @@
   color: var(--surface-8);
   text-decoration: underline;
   cursor: pointer;
+  margin-top: $s-2;
 }
 
 // Decorative icons (upload, camera, lock, logo mark)
@@ -85,6 +86,30 @@ html.dark .bg-onboarding .btn-secondary {
   }
 }
 
+// Input field overrides for onboarding context
+// --color-field-bg = --surface-0 and --color-field-bg-focus = --surface-1
+// which is the same as the page bg, making hover/focus invisible.
+// Override to use a slightly elevated surface so fields are always visible.
+.bg-onboarding .quorum-input {
+  background-color: var(--surface-2);
+  height: $s-11;
+  border-radius: $rounded-xl;
+
+  &:hover:not(:disabled):not(:focus) {
+    background-color: var(--surface-3);
+  }
+
+  &:focus {
+    background-color: var(--surface-3);
+  }
+
+  &:disabled {
+    background-color: var(--surface-2) !important;
+    opacity: 1;
+    color: var(--color-text-muted);
+  }
+}
+
 // Action buttons: fit content, grow with translations, capped at max
 .onboarding-action {
   min-width: 17rem;
@@ -92,6 +117,47 @@ html.dark .bg-onboarding .btn-secondary {
   width: fit-content;
   padding-left: $s-8;
   padding-right: $s-8;
+  margin-bottom: $s-5;
+}
+
+// Input wrapper: same min/max as buttons, but stretches to fill that space
+.onboarding-input-wrapper {
+  min-width: 17rem;
+  max-width: 22rem;
+  width: fit-content;
+  margin-bottom: $s-5;
+
+  // Force the input-container chain to fill the wrapper, not expand beyond it
+  .input-container,
+  .input-wrapper,
+  .quorum-input {
+    width: 100%;
+  }
+}
+
+// Step icon: circle with icon inside
+// Usage: <div class="onboarding-step-icon [onboarding-step-icon--error]"><Icon .../></div>
+.onboarding-step-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: $s-14;
+  height: $s-14;
+  border-radius: 50%;
+  background-color: var(--surface-4);
+  color: var(--surface-8);
+  margin-bottom: $s-6;
+  flex-shrink: 0;
+
+  &--error {
+    background-color: rgb(var(--danger));
+    color: white;
+  }
+
+  &--large {
+    width: $s-24;
+    height: $s-24;
+  }
 }
 
 // Step transition animation
@@ -120,6 +186,27 @@ html.dark .bg-onboarding .btn-secondary {
     &--filled {
       background-color: var(--accent);
     }
+  }
+}
+
+// Avatar dropzone for profile photo step
+.onboarding-avatar-dropzone {
+  width: $s-24;
+  height: $s-24;
+  border-radius: 50%;
+  border: 2px dashed var(--surface-6);
+  background-color: var(--surface-3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  cursor: pointer;
+  transition: border-color 200ms ease, background-color 200ms ease;
+
+  &:hover,
+  &.onboarding-dropzone--active {
+    border-color: var(--accent);
+    background-color: rgb(var(--accent-rgb) / 0.08);
   }
 }
 

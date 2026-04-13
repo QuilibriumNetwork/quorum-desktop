@@ -19,14 +19,14 @@ export const WelcomeStep: React.FC<StepProps> = ({ flow }) => {
       </p>
       <Button
         type="primary"
-        className="onboarding-action mb-5"
+        className="onboarding-action"
         onClick={flow.startNewAccount}
       >
         {t`Create New Account`}
       </Button>
       <Button
         type="secondary"
-        className="onboarding-action mb-6"
+        className="onboarding-action"
         onClick={flow.startImportAccount}
       >
         {t`I already have an account`}

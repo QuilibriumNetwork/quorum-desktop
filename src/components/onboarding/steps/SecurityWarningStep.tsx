@@ -10,7 +10,9 @@ interface StepProps {
 export const SecurityWarningStep: React.FC<StepProps> = ({ flow }) => {
   return (
     <div className="onboarding-step-body">
-      <Icon name="lock" size="3xl" className="onboarding-icon mb-4" />
+      <div className="onboarding-step-icon">
+        <Icon name="lock" size="2xl" />
+      </div>
       <h1 className="onboarding-title">{t`Keep your Key Safe!`}</h1>
       <p className="onboarding-description">
         {t`Keep the file you downloaded safe and private! Anyone with this file can access your account.`}

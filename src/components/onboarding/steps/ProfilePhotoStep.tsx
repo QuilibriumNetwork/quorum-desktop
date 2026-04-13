@@ -1,6 +1,7 @@
 import React, { useState, useCallback } from 'react';
 import { Button, Icon, FileUpload } from '../../primitives';
 import { t } from '@lingui/core/macro';
+import { processAvatarImage, FILE_SIZE_LIMITS } from '../../../utils/imageProcessing';
 import type { UseUnifiedOnboardingFlowReturn } from '../../../hooks/business/user/useUnifiedOnboardingFlow';
 import type { FileUploadFile } from '@quilibrium/quorum-shared';
 
@@ -12,7 +13,10 @@ export const ProfilePhotoStep: React.FC<StepProps> = ({ flow }) => {
   const [fileError, setFileError] = useState<string | null>(null);
   const [isDragActive, setIsDragActive] = useState(false);
 
-  const maxImageSize = 25 * 1024 * 1024; // 25MB
+  const handleProcessImage = useCallback(async (file: File): Promise<File> => {
+    const result = await processAvatarImage(file);
+    return result.file;
+  }, []);
 
   const handleFilesSelected = useCallback(
     (files: FileUploadFile[]) => {
@@ -47,20 +51,25 @@ export const ProfilePhotoStep: React.FC<StepProps> = ({ flow }) => {
         {t`Help others recognize you with a profile picture.`}
       </p>
 
-      <div className="mb-6">
+      <div className="mb-8">
         <FileUpload
           onFilesSelected={handleFilesSelected}
           onError={handleFileError}
           accept={{
             'image/png': ['.png'],
             'image/jpeg': ['.jpg', '.jpeg'],
+            'image/webp': ['.webp'],
+            'image/gif': ['.gif'],
+            'image/heic': ['.heic'],
+            'image/heif': ['.heif'],
           }}
-          maxSize={maxImageSize}
+          maxSize={FILE_SIZE_LIMITS.MAX_INPUT_SIZE}
           multiple={false}
+          onProcessImage={handleProcessImage}
           {...({ onDragActiveChange: setIsDragActive } as any)}
         >
           <div
-            className={`onboarding-dropzone w-32 h-32 rounded-full flex items-center justify-center overflow-hidden${isDragActive ? ' onboarding-dropzone--active' : ''}`}
+            className={`onboarding-avatar-dropzone${isDragActive ? ' onboarding-dropzone--active' : ''}`}
             style={
               flow.profileImagePreview
                 ? {
@@ -72,7 +81,7 @@ export const ProfilePhotoStep: React.FC<StepProps> = ({ flow }) => {
             }
           >
             {!flow.profileImagePreview && (
-              <Icon name="camera" size="2xl" className="onboarding-icon" />
+              <Icon name={isDragActive ? 'upload' : 'image'} size="2xl" className="onboarding-icon" />
             )}
           </div>
         </FileUpload>
@@ -84,18 +93,19 @@ export const ProfilePhotoStep: React.FC<StepProps> = ({ flow }) => {
 
       <Button
         type="primary"
-        className="onboarding-action mb-3"
+        className="onboarding-action"
         onClick={handleContinue}
       >
         {t`Continue`}
       </Button>
 
-      <span
-        className="onboarding-link"
+      <Button
+        type="secondary"
+        className="onboarding-action"
         onClick={handleSkip}
       >
         {t`Skip for now`}
-      </span>
+      </Button>
     </div>
   );
 };

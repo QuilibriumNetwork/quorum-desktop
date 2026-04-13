@@ -21,12 +21,9 @@ export const DisplayNameStep: React.FC<StepProps> = ({ flow }) => {
         {t`This is how others will see you in Quorum. You can change this anytime in Settings.`}
       </p>
 
-      <div className="w-full max-w-xs mb-4">
+      <div className="onboarding-input-wrapper">
         <Input
           variant="filled"
-          label={t`User Name`}
-          labelType="static"
-          className="w-full"
           value={flow.displayName}
           onChange={flow.setDisplayName}
           placeholder={t`Enter your name`}
@@ -36,15 +33,15 @@ export const DisplayNameStep: React.FC<StepProps> = ({ flow }) => {
       </div>
 
       {flow.address && (
-        <div className="w-full max-w-xs mb-6">
+        <div className="onboarding-input-wrapper">
           <div className="flex items-center gap-1 mb-1">
-            <span className="text-xs onboarding-label-muted">{t`Account Address`}</span>
             <Icon
-              name="help-circle"
+              name="question-circle"
               size="xs"
               className="onboarding-label-muted cursor-pointer"
               onClick={() => setAddressInfoExpanded(v => !v)}
             />
+            <span className="text-xs onboarding-label-muted">{t`Account Address`}</span>
           </div>
           {addressInfoExpanded && (
             <p className="onboarding-read-more mb-2">
@@ -53,12 +50,12 @@ export const DisplayNameStep: React.FC<StepProps> = ({ flow }) => {
           )}
           <Input
             variant="filled"
-            className="w-full"
             value={
               flow.address.length > 20
                 ? `${flow.address.slice(0, 10)}...${flow.address.slice(-8)}`
                 : flow.address
             }
+            placeholder={t`Account address`}
             disabled
           />
         </div>

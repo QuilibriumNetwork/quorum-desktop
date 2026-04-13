@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button } from '../../primitives';
+import { Button, Icon } from '../../primitives';
 import { OnboardingInfoLink } from '../OnboardingInfoLink';
 import { t } from '@lingui/core/macro';
 import type { UseUnifiedOnboardingFlowReturn } from '../../../hooks/business/user/useUnifiedOnboardingFlow';
@@ -13,6 +13,9 @@ export const SaveKeyToPasskeyStep: React.FC<StepProps> = ({ flow }) => {
 
   return (
     <div className="onboarding-step-body">
+      <div className="onboarding-step-icon">
+        <Icon name="device-floppy" size="2xl" />
+      </div>
       <h1 className="onboarding-title">{t`Save Your Account Key`}</h1>
       <p className="onboarding-description">
         {t`Now let's store your account key inside your passkey. One more confirmation needed.`}
@@ -20,7 +23,7 @@ export const SaveKeyToPasskeyStep: React.FC<StepProps> = ({ flow }) => {
 
       <Button
         type="primary"
-        className="onboarding-action mb-6"
+        className="onboarding-action"
         onClick={flow.saveToPasskey}
         disabled={isCompleting}
         iconName={isCompleting ? 'spinner' : undefined}

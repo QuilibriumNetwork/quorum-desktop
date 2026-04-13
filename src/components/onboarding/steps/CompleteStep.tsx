@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button } from '../../primitives';
+import { Button, Icon } from '../../primitives';
 import { t } from '@lingui/core/macro';
 import { i18n } from '@lingui/core';
 import type { UseUnifiedOnboardingFlowReturn } from '../../../hooks/business/user/useUnifiedOnboardingFlow';
@@ -11,6 +11,9 @@ interface StepProps {
 export const CompleteStep: React.FC<StepProps> = ({ flow }) => {
   return (
     <div className="onboarding-step-body">
+      <div className="onboarding-step-icon onboarding-step-icon--large">
+        <Icon name="hand-rock" size="3xl" />
+      </div>
       <h1 className="onboarding-title">{t`You're all set!`}</h1>
       <p className="onboarding-description">
         {i18n._(
