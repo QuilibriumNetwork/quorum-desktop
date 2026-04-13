@@ -3,7 +3,95 @@
 /* === ONBOARDING FLOW STYLES === */
 
 .bg-onboarding {
+  background-color: var(--surface-1);
+}
+
+// Shared step layout
+.onboarding-step-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+// Step heading
+.onboarding-title {
+  font-size: $text-3xl;
+  line-height: $text-3xl-lh;
+  font-weight: $font-medium;
+  margin-bottom: $s-2;
+}
+
+// Step description paragraph
+.onboarding-description {
+  font-size: $text-base;
+  line-height: $text-base-lh;
+  color: var(--color-text-subtle);
+  margin-bottom: $s-8;
+  max-width: 20rem; // max-w-xs
+}
+
+// Inline expandable info text (appears below onboarding-link on click)
+.onboarding-read-more {
+  font-size: $text-sm;
+  line-height: $text-sm-lh;
+  color: var(--color-text-subtle);
   background-color: var(--surface-2);
+  border-radius: $rounded-xl;
+  padding: $s-4;
+  margin-top: $s-3;
+  max-width: 20rem;
+  animation: onboarding-fade-in 150ms ease-in;
+}
+
+// Inline text links (skip, read more, etc.)
+.onboarding-link {
+  font-size: $text-sm;
+  line-height: $text-sm-lh;
+  color: var(--surface-8);
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+// Decorative icons (upload, camera, lock, logo mark)
+.onboarding-icon {
+  color: var(--surface-7);
+}
+
+// Muted label text (account address label, help icon, error detail)
+.onboarding-label-muted {
+  color: var(--color-text-muted);
+}
+
+// Secondary/neutral button override for onboarding context
+// Overrides btn-secondary's accent tint with a neutral surface tone
+.bg-onboarding .btn-secondary {
+  background-color: var(--surface-4);
+  border-color: transparent;
+  color: rgb(var(--color-text-main));
+
+  &:hover {
+    background-color: var(--surface-5);
+    border-color: transparent;
+    color: rgb(var(--color-text-main));
+  }
+}
+
+html.dark .bg-onboarding .btn-secondary {
+  color: rgb(var(--color-text-main));
+
+  &:hover {
+    color: rgb(var(--color-text-main));
+  }
+}
+
+// Action buttons: fit content, grow with translations, capped at max
+.onboarding-action {
+  min-width: 17rem;
+  max-width: 22rem;
+  width: fit-content;
+  padding-left: $s-8;
+  padding-right: $s-8;
 }
 
 // Step transition animation

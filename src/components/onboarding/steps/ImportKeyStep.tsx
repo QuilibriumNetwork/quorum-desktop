@@ -25,9 +25,9 @@ export const ImportKeyStep: React.FC<StepProps> = ({ flow }) => {
   }, []);
 
   return (
-    <div className="flex flex-col items-center text-center">
-      <h1 className="text-2xl font-bold mb-2">{t`Import your account key`}</h1>
-      <p className="text-sm opacity-60 mb-8 max-w-xs">
+    <div className="onboarding-step-body">
+      <h1 className="onboarding-title">{t`Import your account key`}</h1>
+      <p className="onboarding-description">
         {t`Select or drag your account key file to restore your account.`}
       </p>
 
@@ -42,7 +42,7 @@ export const ImportKeyStep: React.FC<StepProps> = ({ flow }) => {
           <div
             className={`onboarding-dropzone${isDragActive ? ' onboarding-dropzone--active' : ''}`}
           >
-            <Icon name="upload" size="xl" className="mb-2 opacity-40" />
+            <Icon name="upload" size="xl" className="onboarding-icon mb-2" />
             <p className="text-sm">
               {t`Drag and drop or`}{' '}
               <span className="text-accent underline cursor-pointer">
@@ -59,12 +59,12 @@ export const ImportKeyStep: React.FC<StepProps> = ({ flow }) => {
             <Icon name="alert-circle" className="text-danger shrink-0" />
             <p className="text-sm text-danger">{t`Invalid Key File`}</p>
           </div>
-          <p className="text-xs opacity-50">{flow.importError}</p>
+          <p className="text-xs onboarding-label-muted">{flow.importError}</p>
         </div>
       )}
 
       <span
-        className="text-sm opacity-50 underline cursor-pointer"
+        className="onboarding-link"
         onClick={flow.startNewAccount}
       >
         {t`Create new account instead`}

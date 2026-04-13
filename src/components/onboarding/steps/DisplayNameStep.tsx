@@ -1,5 +1,5 @@
-import React from 'react';
-import { Button, Input, Tooltip, Icon } from '../../primitives';
+import React, { useState } from 'react';
+import { Button, Input, Icon } from '../../primitives';
 import { t } from '@lingui/core/macro';
 import { validateDisplayName } from '../../../hooks/business/validation';
 import type { UseUnifiedOnboardingFlowReturn } from '../../../hooks/business/user/useUnifiedOnboardingFlow';
@@ -9,14 +9,15 @@ interface StepProps {
 }
 
 export const DisplayNameStep: React.FC<StepProps> = ({ flow }) => {
+  const [addressInfoExpanded, setAddressInfoExpanded] = useState(false);
   const nameError = flow.displayName.trim()
     ? validateDisplayName(flow.displayName)
     : undefined;
 
   return (
-    <div className="flex flex-col items-center text-center">
-      <h1 className="text-2xl font-bold mb-2">{t`What should we call you?`}</h1>
-      <p className="text-sm opacity-60 mb-8 max-w-xs">
+    <div className="onboarding-step-body">
+      <h1 className="onboarding-title">{t`What should we call you?`}</h1>
+      <p className="onboarding-description">
         {t`This is how others will see you in Quorum. You can change this anytime in Settings.`}
       </p>
 
@@ -37,20 +38,19 @@ export const DisplayNameStep: React.FC<StepProps> = ({ flow }) => {
       {flow.address && (
         <div className="w-full max-w-xs mb-6">
           <div className="flex items-center gap-1 mb-1">
-            <span className="text-xs opacity-50">{t`Account Address`}</span>
-            <Tooltip
-              id="account-address-info"
-              content={t`Your account address is a unique public identifier derived from your account key. Others can use it to find and message you. Think of it like a username that can never change.`}
-              place="bottom"
-              maxWidth={300}
-            >
-              <Icon
-                name="help-circle"
-                size="xs"
-                className="opacity-40 cursor-pointer"
-              />
-            </Tooltip>
+            <span className="text-xs onboarding-label-muted">{t`Account Address`}</span>
+            <Icon
+              name="help-circle"
+              size="xs"
+              className="onboarding-label-muted cursor-pointer"
+              onClick={() => setAddressInfoExpanded(v => !v)}
+            />
           </div>
+          {addressInfoExpanded && (
+            <p className="onboarding-read-more mb-2">
+              {t`Your account address is a unique public identifier derived from your account key. Others can use it to find and message you. Think of it like a username that can never change.`}
+            </p>
+          )}
           <Input
             variant="filled"
             className="w-full"
@@ -66,7 +66,7 @@ export const DisplayNameStep: React.FC<StepProps> = ({ flow }) => {
 
       <Button
         type="primary"
-        className="w-full max-w-xs"
+        className="onboarding-action"
         disabled={!flow.canProceedWithName}
         onClick={flow.saveDisplayName}
       >

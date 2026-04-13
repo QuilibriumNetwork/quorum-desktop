@@ -9,7 +9,7 @@ interface StepProps {
 
 export const LoadingStep: React.FC<StepProps> = () => {
   return (
-    <div className="flex flex-col items-center text-center">
+    <div className="onboarding-step-body">
       <Icon name="spinner" size="2xl" className="icon-spin mb-4" />
       <p className="text-lg">{t`Loading your profile...`}</p>
     </div>

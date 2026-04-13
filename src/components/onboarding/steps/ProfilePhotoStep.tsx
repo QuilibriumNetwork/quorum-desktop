@@ -41,9 +41,9 @@ export const ProfilePhotoStep: React.FC<StepProps> = ({ flow }) => {
   }, [flow.saveProfilePhoto]);
 
   return (
-    <div className="flex flex-col items-center text-center">
-      <h1 className="text-2xl font-bold mb-2">{t`Add a profile photo`}</h1>
-      <p className="text-sm opacity-60 mb-8 max-w-xs">
+    <div className="onboarding-step-body">
+      <h1 className="onboarding-title">{t`Add a profile photo`}</h1>
+      <p className="onboarding-description">
         {t`Help others recognize you with a profile picture.`}
       </p>
 
@@ -72,7 +72,7 @@ export const ProfilePhotoStep: React.FC<StepProps> = ({ flow }) => {
             }
           >
             {!flow.profileImagePreview && (
-              <Icon name="camera" size="2xl" className="opacity-40" />
+              <Icon name="camera" size="2xl" className="onboarding-icon" />
             )}
           </div>
         </FileUpload>
@@ -84,14 +84,14 @@ export const ProfilePhotoStep: React.FC<StepProps> = ({ flow }) => {
 
       <Button
         type="primary"
-        className="w-full max-w-xs mb-3"
+        className="onboarding-action mb-3"
         onClick={handleContinue}
       >
         {t`Continue`}
       </Button>
 
       <span
-        className="text-sm opacity-50 underline cursor-pointer"
+        className="onboarding-link"
         onClick={handleSkip}
       >
         {t`Skip for now`}

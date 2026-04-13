@@ -10,9 +10,9 @@ interface StepProps {
 
 export const CompleteStep: React.FC<StepProps> = ({ flow }) => {
   return (
-    <div className="flex flex-col items-center text-center">
-      <h1 className="text-2xl font-bold mb-2">{t`You're all set!`}</h1>
-      <p className="text-sm opacity-60 mb-8 max-w-xs">
+    <div className="onboarding-step-body">
+      <h1 className="onboarding-title">{t`You're all set!`}</h1>
+      <p className="onboarding-description">
         {i18n._(
           'Welcome to Quorum, {name}! Your account is secured and ready to go.',
           { name: flow.displayName }
@@ -21,7 +21,7 @@ export const CompleteStep: React.FC<StepProps> = ({ flow }) => {
 
       <Button
         type="primary"
-        className="w-full max-w-xs"
+        className="onboarding-action"
         onClick={flow.completeOnboarding}
       >
         {t`Enter Quorum`}
