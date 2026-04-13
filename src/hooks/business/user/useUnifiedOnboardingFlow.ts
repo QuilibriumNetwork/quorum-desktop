@@ -1,7 +1,6 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
 import {
   usePasskeyFlow,
-  usePasskeysContext,
   passkey,
 } from '@quilibrium/quilibrium-js-sdk-channels';
 import type {
@@ -159,7 +158,7 @@ export function useUnifiedOnboardingFlow(
         setStep('create-passkey-1a');
       }
     },
-    onError: (error: PasskeyFlowError) => {
+    onError: (_error: PasskeyFlowError) => {
       // If we were completing (step 1b), auto-fallback to backup
       if (stepRef.current === 'save-key-to-passkey') {
         setStep('backup-key');
