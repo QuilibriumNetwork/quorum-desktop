@@ -3,7 +3,6 @@ import React, { useState, useCallback, useMemo, useRef, useEffect } from 'react'
 import { Virtuoso, VirtuosoHandle } from 'react-virtuoso';
 import type { ListRange } from 'react-virtuoso';
 import { t } from '@lingui/core/macro';
-import { Button } from '../primitives';
 import ListSearchInput from '../ui/ListSearchInput';
 import EmojiSprite from './EmojiSprite';
 import {
@@ -208,9 +207,9 @@ const EmojiPicker: React.FC<EmojiPickerProps> = ({
         return (
           <div className="emoji-picker__emoji-row">
             {row.emojis.map((ce) => (
-              <Button
+              <button
                 key={ce.id}
-                type="unstyled"
+                type="button"
                 className="emoji-picker__emoji-btn"
                 onClick={() => handleCustomEmojiClick(ce)}
                 onMouseEnter={() => setHoveredEmoji({ shortName: `:${ce.names[0]}:`, sheetX: -1, sheetY: -1, isCustom: true, customImgUrl: ce.imgUrl })}
@@ -218,7 +217,7 @@ const EmojiPicker: React.FC<EmojiPickerProps> = ({
                 title={ce.names[0]}
               >
                 <img src={ce.imgUrl} alt={ce.names[0]} className="emoji-picker__custom-emoji-img" />
-              </Button>
+              </button>
             ))}
           </div>
         );
@@ -237,9 +236,9 @@ const EmojiPicker: React.FC<EmojiPickerProps> = ({
             }
 
             return (
-              <Button
+              <button
                 key={item.unified}
-                type="unstyled"
+                type="button"
                 className="emoji-picker__emoji-btn"
                 onClick={() => handleEmojiClick(item)}
                 onMouseEnter={() => setHoveredEmoji({ shortName: `:${item.shortName}:`, sheetX, sheetY })}
@@ -247,7 +246,7 @@ const EmojiPicker: React.FC<EmojiPickerProps> = ({
                 title={item.shortName}
               >
                 <EmojiSprite sheetX={sheetX} sheetY={sheetY} label={item.shortName} />
-              </Button>
+              </button>
             );
           })}
         </div>
@@ -307,9 +306,9 @@ const EmojiPicker: React.FC<EmojiPickerProps> = ({
         {!isSearching && (
           <div className="emoji-picker__sidebar">
             {availableCategories.map((cat) => (
-              <Button
+              <button
                 key={cat}
-                type="unstyled"
+                type="button"
                 className={`emoji-picker__category-btn${activeCategory === cat ? ' emoji-picker__category-btn--active' : ''}`}
                 onClick={() => handleCategoryClick(cat)}
                 title={cat}
@@ -323,7 +322,7 @@ const EmojiPicker: React.FC<EmojiPickerProps> = ({
                 ) : (
                   <span style={{ fontSize: '1.125rem' }}>📁</span>
                 )}
-              </Button>
+              </button>
             ))}
           </div>
         )}
