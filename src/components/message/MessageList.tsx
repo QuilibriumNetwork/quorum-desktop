@@ -176,8 +176,6 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
     const [_width, height] = useWindowSize();
     const [hoverTarget, setHoverTarget] = useState<string>();
     const [emojiPickerOpen, setEmojiPickerOpen] = useState<string>();
-    const [emojiPickerOpenDirection, setEmojiPickerOpenDirection] =
-      useState<string>();
     const [emojiPickerPosition, setEmojiPickerPosition] = useState<{ x: number; y: number } | null>(null);
 
     // Reset emoji picker position when picker closes
@@ -337,8 +335,6 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
               stickers={stickers}
               emojiPickerOpen={emojiPickerOpen}
               setEmojiPickerOpen={setEmojiPickerOpen}
-              emojiPickerOpenDirection={emojiPickerOpenDirection}
-              setEmojiPickerOpenDirection={setEmojiPickerOpenDirection}
               emojiPickerPosition={emojiPickerPosition}
               setEmojiPickerPosition={setEmojiPickerPosition}
               message={message}
@@ -393,8 +389,6 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
         stickers,
         emojiPickerOpen,
         setEmojiPickerOpen,
-        emojiPickerOpenDirection,
-        setEmojiPickerOpenDirection,
         emojiPickerPosition,
         setEmojiPickerPosition,
         customEmoji,
