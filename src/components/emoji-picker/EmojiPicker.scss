@@ -3,135 +3,215 @@
 // Parent containers provide the visual frame.
 @use '@/styles/variables' as *;
 
+// Root: responsive size via clamp so it shrinks on narrow viewports (mobile web)
 .emoji-picker {
   display: flex;
   flex-direction: column;
   overflow: hidden;
   font-family: Sen, sans-serif;
+  // 380px wide, shrinks to 92vw on narrow screens; 480px tall, shrinks to 80vh
+  width: clamp(280px, 92vw, 380px);
+  height: clamp(340px, 80vh, 480px);
+}
 
-  &__header {
-    display: flex;
-    align-items: center;
-    padding: $s-1 $s-2;
-    gap: $s-0-5;
-    border-bottom: $border solid var(--color-border-default);
-    overflow-x: auto;
-    scrollbar-width: none;
-    &::-webkit-scrollbar { display: none; }
+// ── Top bar: search field + skin tone trigger ──────────────────────────────
+.emoji-picker__topbar {
+  display: flex;
+  align-items: center;
+  gap: $s-2;
+  padding: $s-2;
+  border-bottom: 1px solid var(--color-border-default);
+  flex-shrink: 0;
+}
+
+.emoji-picker__search-wrap {
+  flex: 1;
+  min-width: 0;
+}
+
+// ── Skin tone trigger (single dot, right of search) ───────────────────────
+.emoji-picker__skin-trigger {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.emoji-picker__skin-dot {
+  width: $s-6;
+  height: $s-6;
+  border-radius: $rounded-full;
+  border: 2px solid transparent;
+  cursor: pointer;
+  transition: border-color $duration-150 ease-in-out,
+              transform $duration-150 ease-in-out;
+
+  &:hover {
+    transform: scale(1.15);
   }
 
-  &__category-btn {
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: $s-8;
-    height: $s-8;
-    border-radius: $rounded-md;
-    flex-shrink: 0;
-    opacity: 0.5;
-    transition: opacity $duration-150 $ease-in-out,
-                background-color $duration-150 $ease-in-out;
+  &--open {
+    border-color: var(--accent);
+  }
+}
 
-    &:hover {
-      background-color: var(--surface-3);
-      opacity: 0.8;
-    }
+// Floating popover with 6 tone dots
+.emoji-picker__skin-popover {
+  position: absolute;
+  top: calc(100% + #{$s-1-5});
+  right: 0;
+  display: flex;
+  gap: $s-1-5;
+  padding: $s-1-5 $s-2;
+  background: var(--color-bg-modal);
+  border: 1px solid var(--color-border-default);
+  border-radius: $rounded-lg;
+  box-shadow: $shadow-lg;
+  z-index: 10;
 
-    &--active {
-      opacity: 1;
-      background-color: var(--surface-3);
-    }
+}
+
+.emoji-picker__skin-popover .emoji-picker__skin-dot--active {
+  border-color: var(--accent);
+}
+
+// ── Body: sidebar + grid ───────────────────────────────────────────────────
+.emoji-picker__body {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+// Left sidebar: category icon list, vertically scrollable
+.emoji-picker__sidebar {
+  width: $s-12; // 48px
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  overflow-x: hidden;
+  border-right: 1px solid var(--color-border-default);
+  scrollbar-width: none;
+  padding: $s-1 0;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+.emoji-picker__category-btn {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: $s-10; // 40px touch target
+  flex-shrink: 0;
+  opacity: 0.45;
+  transition: opacity $duration-150 ease-in-out,
+              background-color $duration-150 ease-in-out;
+
+  &:hover {
+    background-color: var(--surface-3);
+    opacity: 0.75;
   }
 
-  &__skin-tones {
-    display: flex;
-    gap: $s-1;
-    margin-left: auto;
-    padding-left: $s-2;
-    flex-shrink: 0;
-  }
+  &--active {
+    opacity: 1;
+    background-color: var(--surface-3);
 
-  &__skin-tone-dot {
-    width: $s-4;
-    height: $s-4;
-    border-radius: $rounded-full;
-    border: $border-2 solid transparent;
-    transition: border-color $duration-150 $ease-in-out;
-    cursor: pointer;
-
-    // Fitzpatrick scale colors — fixed values, not theme-dependent
-    &[data-tone='default'] { background-color: #ffcc4d; }
-    &[data-tone='1F3FB']   { background-color: #f7dece; }
-    &[data-tone='1F3FC']   { background-color: #e0bb95; }
-    &[data-tone='1F3FD']   { background-color: #bf8f68; }
-    &[data-tone='1F3FE']   { background-color: #9b643d; }
-    &[data-tone='1F3FF']   { background-color: #594539; }
-
-    &--active {
-      border-color: var(--accent);
-    }
-  }
-
-  &__search {
-    padding: $s-2;
-    border-bottom: $border solid var(--color-border-default);
-  }
-
-  &__grid-container {
-    flex: 1;
-    min-height: 0;
-    overflow: hidden;
-  }
-
-  &__row-header {
-    padding: $s-1-5 $s-1 $s-1;
-    font-size: $text-xs;
-    font-weight: $font-bold;
-    color: var(--color-text-subtle);
-    text-transform: uppercase;
-    letter-spacing: $tracking-wide;
-  }
-
-  &__emoji-row {
-    display: flex;
-    gap: $s-0-5;
-    padding: 0 $s-2;
-  }
-
-  &__emoji-btn {
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: $s-9;
-    height: $s-9;
-    border-radius: $rounded-md;
-    transition: background-color $duration-150 $ease-in-out;
-
-    &:hover {
-      background-color: var(--surface-3);
-    }
-
-    &::after {
+    // Left accent bar
+    &::before {
       content: '';
       position: absolute;
-      inset: -$s-1;
+      left: 0;
+      top: 25%;
+      bottom: 25%;
+      width: 3px;
+      border-radius: 0 $rounded-sm $rounded-sm 0;
+      background: var(--accent);
     }
   }
+}
 
-  &__custom-emoji-img {
-    width: $s-7;
-    height: $s-7;
-    object-fit: contain;
-  }
+// ── Emoji grid (right of sidebar) ─────────────────────────────────────────
+.emoji-picker__grid-container {
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+}
 
-  &__no-results {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: $s-8;
-    color: var(--color-text-subtle);
-    font-size: $text-sm;
+.emoji-picker__row-header {
+  padding: $s-1-5 $s-2 $s-1;
+  font-size: $text-xs;
+  font-weight: $font-bold;
+  color: var(--color-text-subtle);
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.emoji-picker__emoji-row {
+  display: flex;
+  gap: $s-0-5;
+  padding: 0 $s-1-5;
+}
+
+.emoji-picker__emoji-btn {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: $s-9;
+  height: $s-9;
+  border-radius: $rounded-md;
+  transition: background-color $duration-150 ease-in-out;
+  flex-shrink: 0;
+
+  &:hover {
+    background-color: var(--surface-3);
   }
+}
+
+.emoji-picker__custom-emoji-img {
+  width: $s-7;
+  height: $s-7;
+  object-fit: contain;
+}
+
+.emoji-picker__no-results {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: $s-8;
+  color: var(--color-text-subtle);
+  font-size: $text-sm;
+}
+
+// ── Bottom preview bar ─────────────────────────────────────────────────────
+.emoji-picker__preview {
+  display: flex;
+  align-items: center;
+  gap: $s-3;
+  padding: $s-2 $s-3;
+  border-top: 1px solid var(--color-border-default);
+  flex-shrink: 0;
+  min-height: $s-12; // 48px — reserve space even when empty
+}
+
+.emoji-picker__preview-sprite {
+  flex-shrink: 0;
+}
+
+.emoji-picker__preview-name {
+  font-size: $text-sm;
+  color: var(--color-text-subtle);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.emoji-picker__preview-empty {
+  font-size: $text-xs;
+  color: var(--color-text-subtle);
+  opacity: 0.5;
 }
