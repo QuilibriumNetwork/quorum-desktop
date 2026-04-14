@@ -38,6 +38,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Mute User System Documentation](docs/features/mute-user-system.md)
 - [Notification Indicators System](docs/features/notification-indicators-system.md)
 - [Offline Support](docs/features/offline-support.md)
+- [Onboarding Flow](docs/features/onboarding-flow.md)
 - [Profile Sync on Returning User Login](docs/features/profile-sync-returning-user-login.md)
 - [ReactTooltip Mobile Support Documentation](docs/features/reacttooltip-mobile.md)
 - [Responsive Layout System Documentation](docs/features/responsive-layout.md)
@@ -90,6 +91,7 @@ This is the main index for all documentation, bug reports, and task management.
 
 ### Active Issues
 - [Message list scroll jank on send — Virtuoso scroll position drift](bugs/2026-03-19-message-list-scroll-jank-on-send.md)
+- [Bug: Display Name Input Grows Wider When Validation Error Appears](bugs/display-name-input-layout-shift-on-error.md)
 - [Config Sync Space Loss Race Condition](bugs/config-sync-space-loss-race-condition.md)
 - [DirectMessage Invite Loading Performance Issue](bugs/directmessage-invite-loading-performance.md)
 - [Encryption State Evals Causing Config Sync Bloat](bugs/encryption-state-evals-bloat.md)
@@ -121,6 +123,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Receipt checkmarks disappear on page refresh and conversation navigation](bugs/.solved/2026-03-22-receipt-checkmarks-not-persisting-across-navigation.md)
 - [No visual feedback when dragging files onto dropzone areas](bugs/.solved/2026-04-07-missing-drag-feedback-file-uploads.md)
 - [SpaceMember field name mismatch between MessageDB and quorum-shared](bugs/.solved/2026-04-08-spacemember-type-mismatch-db-vs-shared.md)
+- [Profile sync not triggered after key import in new onboarding flow](bugs/.solved/2026-04-13-profile-sync-not-triggered-after-key-import.md)
 - [Action Queue Bypasses SDK Encryption for Identity Keys](bugs/.solved/action-queue-plaintext-private-keys.md)
 - [Android 7.0 File Download Fix - Implementation Plan](bugs/.solved/SOLVED_android-file-download-huawei-p9-lite.md)
 - [Bug: Auto-Jump to First Unread Message - Blocked by Virtuoso Scroll Positioning](bugs/.solved/auto-jump-unread-virtuoso-scroll-conflict.md)
@@ -170,10 +173,8 @@ This is the main index for all documentation, bug reports, and task management.
 
 - [Add User Bio Field to UserSettingsModal General Tab](tasks/2025-01-06-add-user-bio-field.md)
 - [User Status Feature Implementation Plan](tasks/2025-01-20-user-status.md)
-- [Passkey Import UX Issue](tasks/2025-11-13-passkey-import-ux-issue.md)
 - [Implement Message Forwarding with Privacy Controls](tasks/2025-11-16-message-forwarding-with-privacy-controls.md)
 - [Implement Smart Context Extraction Around Mentions in NotificationPanel](tasks/2025-11-19-notification-mention-context-extraction.md)
-- [SDK PasskeyModal Customization Props Enhancement](tasks/2025-11-21-sdk-passkey-modal-customization-props.md)
 - [Service Worker for App Update Detection](tasks/2025-12-14-service-worker-app-updates.md)
 - [Tombstone Cleanup Strategy for Deleted Messages](tasks/2025-12-18-tombstone-cleanup-strategy.md)
 - [Implement Role-Based Channel Visibility](tasks/2025-12-26-channel-role-visibility.md)
@@ -187,16 +188,16 @@ This is the main index for all documentation, bug reports, and task management.
 - [Task: Implement Delete Public Invite Link Feature](tasks/2026-01-09-delete-public-invite-link.md)
 - [Multi-User Invite Selection Enhancement](tasks/2026-01-09-multi-user-invite-selection.md)
 - [Test Suite Implementation Plan for Quorum Desktop](tasks/2026-01-09-test-suite-plan.md)
-- [Primitives Migration to quorum-shared](tasks/2026-01-14-primitives-migration-to-quorum-shared.md)
 - [Auto-save settings modals — eliminate save buttons](tasks/2026-02-16-auto-save-settings-modals.md)
 - [Decentralized GIF Library on Quilibrium](tasks/2026-02-24-gifs-library-integration.md)
 - [Space Tag Click — Space Info Modal](tasks/2026-02-24-space-tag-info-modal.md)
-- [Embedded Media + YouTube Facade Privacy Fix — Implementation Plan](tasks/2026-03-12-embedded-media-plan.md)
-- [Embedded Media in PostMessage + YouTube Facade Privacy Fix](tasks/2026-03-12-embedded-media-spec.md)
 - [Thread List Panel: "Created by me" Filter](tasks/2026-03-14-thread-list-created-filter.md)
 
 ### .Archived
 - [🚀 Search Performance Optimization - Revised Implementation Plan](tasks/.archived/2025-11-12-search-performance-optimization-original.md)
+- [Passkey Import UX Issue](tasks/.archived/2025-11-13-passkey-import-ux-issue.md)
+- [SDK PasskeyModal Customization Props Enhancement](tasks/.archived/2025-11-21-sdk-passkey-modal-customization-props.md)
+- [Primitives Migration to quorum-shared](tasks/.archived/2026-01-14-primitives-migration-to-quorum-shared.md)
 - [Mobile Thread Reply Visibility Implementation Plan](tasks/.archived/2026-03-11-mobile-thread-reply-visibility-plan.md)
 - [Mobile Thread Reply Visibility — Design Spec](tasks/.archived/2026-03-11-mobile-thread-reply-visibility.md)
 - [Auto-Jump to First Unread Message + Fix Hash Navigation](tasks/.archived/auto-jump-first-unread.md)
@@ -288,6 +289,8 @@ This is the main index for all documentation, bug reports, and task management.
 - [Thread-Aware Navigation Implementation Plan](tasks/.done/2026-03-10-thread-aware-navigation.md)
 - [Thread Root Soft-Delete Fix and Deleted Message Placeholder](tasks/.done/2026-03-10-thread-soft-delete-and-persisted-titles.md)
 - [Thread Title Editing Implementation Plan](tasks/.done/2026-03-11-thread-title-editing.md)
+- [Embedded Media + YouTube Facade Privacy Fix — Implementation Plan](tasks/.done/2026-03-12-embedded-media-plan.md)
+- [Embedded Media in PostMessage + YouTube Facade Privacy Fix](tasks/.done/2026-03-12-embedded-media-spec.md)
 - [Thread Management: Close, Auto-Close, and Remove — Implementation Plan](tasks/.done/2026-03-12-thread-management-plan.md)
 - [Thread Management: Close, Auto-Close, and Remove](tasks/.done/2026-03-12-thread-management-spec.md)
 - [Threads List Panel Implementation Plan](tasks/.done/2026-03-12-threads-list-panel-plan.md)
@@ -320,6 +323,12 @@ This is the main index for all documentation, bug reports, and task management.
 - [Panel Card Style Implementation Plan](tasks/.done/2026-04-08-panel-card-style-plan.md)
 - [Dropzone Visual Feedback & Style Redesign](tasks/.done/2026-04-09-dropzone-visual-feedback-design.md)
 - [Dropzone Visual Feedback & Style Redesign — Implementation Plan](tasks/.done/2026-04-09-dropzone-visual-feedback-plan.md)
+- [Text + Image Combined Message — Implementation Plan](tasks/.done/2026-04-09-text-image-combined-message-plan.md)
+- [Text + Image Combined Message](tasks/.done/2026-04-09-text-image-combined-message-spec.md)
+- [New Onboarding UI/UX - Design Spec](tasks/.done/2026-04-13-new-onboarding-ui-ux-design.md)
+- [New Onboarding UI/UX - Implementation Plan](tasks/.done/2026-04-13-new-onboarding-ui-ux-plan.md)
+- [Old Onboarding Cleanup & Maintenance Restyling - Implementation Plan](tasks/.done/2026-04-14-old-onboarding-cleanup-plan.md)
+- [Old Onboarding Cleanup & Maintenance Restyling](tasks/.done/2026-04-14-old-onboarding-cleanup.md)
 - [AccentColorSwitcher Cross-Platform Migration + Persistence](tasks/.done/accent-color-switcher-cross-platform-migration.md)
 - [Add Context to Desktop Notifications](tasks/.done/rich-desktop-notifications-context.md)
 - [Add DM-Specific Action Queue Handlers](tasks/.done/dm-action-queue-handlers.md)
@@ -461,6 +470,7 @@ This is the main index for all documentation, bug reports, and task management.
 
 ### Active Reports
 
+- [i18n Onboarding Translation Audit — April 2026](reports/2026-04-14-i18n-onboarding-translation-audit.md)
 - [Channel Ordering Feature Analysis](reports/channel-ordering-feature-analysis_2026-01-07.md)
 - [Comprehensive Privacy & Security Audit - All Features](reports/privacy-security-comprehensive-audit_2025-12-21.md)
 - [Comprehensive WCAG Accessibility Audit Report](reports/accessibility-wcag-audit_2026-02-10.md)
@@ -484,6 +494,11 @@ This is the main index for all documentation, bug reports, and task management.
 - [i18n Translation Quality Audit](reports/.archived/i18n-translation-quality-audit_2026-03-14.md)
 - [Text Primitive Audit — Pre-Migration Analysis](reports/.archived/text-primitive-audit_2026-02-10.md)
 
+### .Archived Onboarding Flow .Done
+- [Passkey Authentication Flow Analysis](reports/.archived/onboarding-flow/.done/passkey-authentication-flow-analysis-2025-11-23.md)
+- [Passkey Flow - Simplified User Journey](reports/.archived/onboarding-flow/.done/passkey-flow-simplified-2025-11-23.md)
+- [Quorum Authentication Flows](reports/.archived/onboarding-flow/.done/new-onboarding-flow-inline-passkey-2025-12-08.md)
+
 ### Action Queue
 - [Action Queue Summary](reports/action-queue/000-action-queue-summary.md)
 - [DM "Sending..." Indicator Hangs Indefinitely](reports/action-queue/001-dm-sending-indicator-hang.md)
@@ -498,11 +513,6 @@ This is the main index for all documentation, bug reports, and task management.
 - [DM Messages Not Delivered - Device Registration Inbox Mismatch](reports/action-queue/010-dm-registration-inbox-mismatch-fix.md)
 - [DM Debug Console Snippets](reports/action-queue/011-dm-debug-console-snippets.md)
 
-### Onboarding Flow
-- [Passkey Authentication Flow Analysis](reports/onboarding-flow/passkey-authentication-flow-analysis-2025-11-23.md)
-- [Passkey Flow - Simplified User Journey](reports/onboarding-flow/passkey-flow-simplified-2025-11-23.md)
-- [Quorum Authentication Flows](reports/onboarding-flow/new-onboarding-flow-inline-passkey-2025-12-08.md)
-
 ---
 
-**Last Updated**: 2026-04-09 10:44:38
+**Last Updated**: 2026-04-14 12:56:36

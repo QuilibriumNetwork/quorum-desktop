@@ -1,0 +1,293 @@
+@use 'variables' as *;
+
+/* === ONBOARDING FLOW STYLES === */
+
+// Onboarding is always dark regardless of system theme
+.bg-onboarding {
+  position: relative;
+
+  // Force dark surface + text tokens so light-theme users get the dark experience
+  --surface-00: #100f11;
+  --surface-0: #1d1a21;
+  --surface-1: #241f27;
+  --surface-1: #241f27;
+  --surface-2: #2c252e;
+  --surface-3: #312935;
+  --surface-4: #3a313f;
+  --surface-5: #443b49;
+  --surface-6: #584d5e;
+  --surface-7: #716379;
+  --surface-8: #92829b;
+  --surface-9: #a999b3;
+  --surface-10: #bfadca;
+  --color-text-main: 244 241 246;
+  --color-text-subtle: #bfb5c8;
+  --color-text-muted: #84788b;
+  --color-field-bg: var(--surface-1);
+  --color-field-bg-focus: var(--surface-3);
+  --color-field-text: var(--surface-9);
+  --color-field-placeholder: var(--surface-9);
+
+  background-color: var(--surface-1);
+  background-image:
+    radial-gradient(ellipse 80% 60% at 50% 50%, rgb(var(--accent-rgb) / 0.18) 0%, transparent 70%);
+  background-repeat: no-repeat;
+  background-size: cover;
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: url('/otis-redding.png');
+    background-repeat: repeat;
+    background-size: auto;
+    mix-blend-mode: screen;
+    opacity: 0.4;
+    pointer-events: none;
+  }
+}
+
+// Shared step layout
+.onboarding-step-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+// Step heading
+.onboarding-title {
+  font-size: $text-3xl;
+  line-height: $text-3xl-lh;
+  font-weight: $font-medium;
+  margin-bottom: $s-2;
+}
+
+// Step description paragraph
+.onboarding-description {
+  font-size: $text-base;
+  line-height: $text-base-lh;
+  color: var(--color-text-subtle);
+  margin-bottom: $s-8;
+  max-width: 20rem; // max-w-xs
+}
+
+// Inline expandable info text (appears below onboarding-link on click)
+.onboarding-read-more {
+  font-size: $text-sm;
+  line-height: $text-sm-lh;
+  color: var(--color-text-subtle);
+  background-color: var(--surface-4);
+  border-radius: $rounded-xl;
+  padding: $s-4;
+  margin-top: $s-3;
+  max-width: 20rem;
+  animation: onboarding-fade-in 150ms ease-in;
+}
+
+// Inline text links (skip, read more, etc.)
+.onboarding-link {
+  font-size: $text-sm;
+  line-height: $text-sm-lh;
+  color: var(--surface-8);
+  text-decoration: underline;
+  cursor: pointer;
+  margin-top: $s-2;
+}
+
+// Decorative icons (upload, camera, lock, logo mark)
+.onboarding-icon {
+  color: var(--surface-7);
+}
+
+// Logo mark: one step darker than generic icons
+.onboarding-logo {
+  color: var(--surface-6);
+}
+
+// Muted label text (account address label, help icon, error detail)
+.onboarding-label-muted {
+  display: block;
+  text-align: left;
+  color: var(--surface-9);
+}
+
+// Secondary/neutral button override for onboarding context
+// Overrides btn-secondary's accent tint with a neutral surface tone
+.bg-onboarding .btn-secondary {
+  background-color: var(--surface-5);
+  border-color: transparent;
+  color: rgb(var(--color-text-main));
+
+  &:hover {
+    background-color: var(--surface-6);
+    border-color: transparent;
+    color: rgb(var(--color-text-main));
+  }
+}
+
+html.dark .bg-onboarding .btn-secondary {
+  color: rgb(var(--color-text-main));
+
+  &:hover {
+    color: rgb(var(--color-text-main));
+  }
+}
+
+// Input field overrides for onboarding context
+// --color-field-bg = --surface-0 and --color-field-bg-focus = --surface-1
+// which is the same as the page bg, making hover/focus invisible.
+// Override to use a slightly elevated surface so fields are always visible.
+.bg-onboarding .quorum-input {
+  height: $s-11;
+  border-radius: $rounded-xl;
+
+  &:not(:disabled) {
+    color: rgb(var(--color-text-main));
+  }
+
+  &:disabled {
+    opacity: 1 !important;
+  }
+}
+
+// Action buttons: fit content, grow with translations, capped at max
+.onboarding-action {
+  min-width: 17rem;
+  max-width: 22rem;
+  width: fit-content;
+  padding-left: $s-8;
+  padding-right: $s-8;
+  margin-bottom: $s-5;
+}
+
+// Input wrapper: same min/max as buttons, but stretches to fill that space
+.onboarding-input-wrapper {
+  min-width: 17rem;
+  max-width: 22rem;
+  width: fit-content;
+  margin-bottom: $s-5;
+
+  // Force the input-container chain to fill the wrapper, not expand beyond it
+  .input-container,
+  .input-wrapper,
+  .quorum-input {
+    width: 100%;
+  }
+
+  // Prevent error message from contributing to fit-content intrinsic width
+  .input-error-message {
+    width: 0;
+    min-width: 100%;
+  }
+}
+
+// Step icon: circle with icon inside
+// Usage: <div class="onboarding-step-icon [onboarding-step-icon--error]"><Icon .../></div>
+.onboarding-step-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: $s-14;
+  height: $s-14;
+  border-radius: 50%;
+  background-color: var(--surface-6);
+  color: var(--surface-10);
+  margin-bottom: $s-6;
+  flex-shrink: 0;
+
+  &--error {
+    background-color: rgb(var(--danger));
+    color: white;
+  }
+
+  &--large {
+    width: $s-24;
+    height: $s-24;
+  }
+}
+
+// Step transition animation
+@keyframes onboarding-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.onboarding-step {
+  animation: onboarding-fade-in 200ms ease-in;
+}
+
+// Progress bar
+.onboarding-progress-bar {
+  display: flex;
+  gap: $s-2;
+  justify-content: center;
+
+  &__segment {
+    width: $s-8;
+    height: $s-1-5;
+    border-radius: 3px;
+    background-color: var(--surface-7);
+    transition: background-color 200ms ease;
+
+    &--filled {
+      background-color: var(--accent);
+    }
+  }
+}
+
+// Avatar dropzone for profile photo step
+.onboarding-avatar-dropzone {
+  width: $s-24;
+  height: $s-24;
+  border-radius: 50%;
+  border: 2px dashed var(--surface-6);
+  background-color: var(--surface-3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  cursor: pointer;
+  transition: border-color 200ms ease, background-color 200ms ease;
+
+  &:hover,
+  &.onboarding-dropzone--active {
+    border-color: var(--accent);
+    background-color: rgb(var(--accent-rgb) / 0.08);
+  }
+}
+
+// File dropzone for import step
+.onboarding-dropzone {
+  border: 2px dashed var(--surface-6);
+  border-radius: $rounded-xl;
+  padding: $s-8;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color 200ms ease, background-color 200ms ease;
+
+  &:hover,
+  &--active {
+    border-color: var(--accent);
+    background-color: rgb(var(--accent-rgb) / 0.05);
+  }
+}
+
+// Light theme only: bump muted elements for better visibility
+html:not(.dark) {
+  .onboarding-icon {
+    color: var(--surface-9);
+  }
+
+  .onboarding-logo {
+    color: var(--surface-8);
+  }
+
+  .onboarding-link {
+    color: var(--surface-9);
+  }
+
+  .onboarding-step-icon:not(.onboarding-step-icon--error) {
+    color: var(--surface-10);
+  }
+}

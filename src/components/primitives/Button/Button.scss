@@ -28,7 +28,7 @@
   font-size: $text-sm;
   text-align: center;
   user-select: none;
-  transition: border-color $duration-300 $ease-in-out, box-shadow $duration-300 $ease-in-out, opacity $duration-300 $ease-in-out;
+  transition: background-color $duration-300 $ease-in-out, border-color $duration-300 $ease-in-out, box-shadow $duration-300 $ease-in-out, opacity $duration-300 $ease-in-out;
   color: white;
 }
 
@@ -129,15 +129,6 @@ html.dark .btn-secondary {
   pointer-events: none;
 }
 
-.btn-disabled-onboarding {
-  @extend %btn-base;
-  border: $border-2 solid transparent;
-  color: white;
-  cursor: default;
-  pointer-events: none;
-  background-color: rgba(255, 255, 255, 0.3);
-}
-
 .btn-unstyled {
   @extend %btn-reset;
   cursor: pointer;
@@ -148,66 +139,6 @@ html.dark .btn-secondary {
   // Compact variant for list-style layouts
   &.btn-list-item {
     padding: $s-2 $s-3; // Reduced padding for list items
-  }
-}
-
-/* === WHITE BUTTON VARIANTS === */
-/* These buttons use white backgrounds with opacity and hardcoded accent colors */
-/* Used in Onboarding.tsx and Maintenance.tsx - no dark mode variants needed */
-
-.btn-light-white {
-  @extend %btn-base;
-  background-color: rgba(255, 255, 255, 0.2);
-  border: $border-2 solid transparent;
-  cursor: pointer;
-  color: white;
-
-  &:hover {
-    background-color: #d6ee93;
-    border: $border-2 solid #d6ee93;
-    color: #025ead;
-  }
-}
-
-.btn-primary-white {
-  @extend %btn-base;
-  background-color: white;
-  border: $border-2 solid white;
-  cursor: pointer;
-  color: #0287f2;
-
-  &:hover {
-    border: $border-2 solid #d6ee93;
-    background-color: #d6ee93;
-    color: #025ead;
-  }
-}
-
-.btn-secondary-white {
-  @extend %btn-base;
-  background-color: transparent;
-  border: $border-2 solid white;
-  cursor: pointer;
-  color: white;
-
-  &:hover {
-    border: $border-2 solid #d6ee93;
-    background-color: #d6ee93;
-    color: #025ead;
-  }
-}
-
-.btn-light-outline-white {
-  @extend %btn-base;
-  background-color: transparent;
-  border: $border-2 solid rgba(255, 255, 255, 0.8);
-  cursor: pointer;
-  color: rgba(255, 255, 255, 0.8);
-
-  &:hover {
-    border: $border-2 solid #d6ee93;
-    background-color: #d6ee93;
-    color: #025ead;
   }
 }
 

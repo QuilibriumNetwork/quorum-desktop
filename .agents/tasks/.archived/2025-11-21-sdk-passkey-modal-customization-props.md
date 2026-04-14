@@ -1,11 +1,13 @@
 ---
 type: task
 title: SDK PasskeyModal Customization Props Enhancement
-status: open
+status: archived
 complexity: high
 ai_generated: true
 created: 2025-11-21T00:00:00.000Z
-updated: '2026-01-09'
+updated: '2026-04-13'
+archived: 2026-04-13
+archived_reason: "Superseded by 2026-04-13-sdk-passkey-hook-extraction-design.md - headless hook approach replaces label/className props approach"
 ---
 
 # SDK PasskeyModal Customization Props Enhancement

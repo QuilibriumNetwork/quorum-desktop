@@ -1,10 +1,21 @@
 ---
 type: report
 title: Passkey Authentication Flow Analysis
-status: done
+status: archived
 created: 2026-01-09T00:00:00.000Z
-updated: '2026-01-09'
+updated: '2026-04-14'
+superseded_by: .agents/docs/features/onboarding-flow.md
 ---
+
+> **SUPERSEDED** — This report was written before the inline passkey redesign. The architecture it describes (separate PasskeyModal, `useAuthenticationFlow.ts`, `useOnboardingFlowLogic.ts`) no longer exists. See the current documentation at [.agents/docs/features/onboarding-flow.md](../../docs/features/onboarding-flow.md).
+>
+> Key differences:
+> - No separate `PasskeyModal` — passkey creation is now inline steps within `useUnifiedOnboardingFlow`
+> - Code references (`Login.tsx`, `Onboarding.tsx`, `useAuthenticationFlow.ts`, `useOnboardingFlowLogic.ts`) all point to deleted/renamed files
+> - "Current UX Issues" list — several are now resolved (single-click passkey, better error messages, Try Again button)
+> - Import flow profile sync is fully implemented (was listed as a future improvement)
+
+
 
 # Passkey Authentication Flow Analysis
 

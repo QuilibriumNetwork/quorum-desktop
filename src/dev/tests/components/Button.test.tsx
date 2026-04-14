@@ -35,10 +35,6 @@ describe('Button (baseline)', () => {
     ['danger', 'btn-danger'],
     ['danger-outline', 'btn-danger-outline'],
     ['unstyled', 'btn-unstyled'],
-    ['light-white', 'btn-light-white'],
-    ['primary-white', 'btn-primary-white'],
-    ['secondary-white', 'btn-secondary-white'],
-    ['light-outline-white', 'btn-light-outline-white'],
   ] as const)('renders correct CSS class for type="%s"', (type, expectedClass) => {
     render(
       <Button type={type} onClick={() => {}}>
@@ -150,17 +146,6 @@ describe('Button (baseline)', () => {
     expect(btn).toBeInTheDocument();
     expect(screen.getByText('Help')).toBeInTheDocument();
   });
-
-  // 11. Uses btn-disabled-onboarding class for that variant
-  it('applies btn-disabled-onboarding class for disabled-onboarding type', () => {
-    render(
-      <Button onClick={() => {}} disabled type="disabled-onboarding">
-        Onboarding
-      </Button>
-    );
-    const btn = screen.getByText('Onboarding');
-    expect(btn.className).toContain('btn-disabled-onboarding');
-  });
 });
 
 describe('Button (accessibility)', () => {
@@ -200,18 +185,6 @@ describe('Button (accessibility)', () => {
     render(<Button onClick={() => {}} disabled>Disabled</Button>);
     await user.tab();
     expect(screen.getByText('Disabled')).not.toHaveFocus();
-  });
-
-  // A5. disabled-onboarding button IS focusable (uses aria-disabled)
-  it('disabled-onboarding button is still focusable', async () => {
-    const user = userEvent.setup();
-    render(
-      <Button onClick={() => {}} disabled type="disabled-onboarding">
-        Onboarding
-      </Button>
-    );
-    await user.tab();
-    expect(screen.getByRole('button', { name: 'Onboarding' })).toHaveFocus();
   });
 
   // A6. ariaLabel renders as aria-label on icon-only buttons

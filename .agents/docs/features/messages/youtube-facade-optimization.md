@@ -3,7 +3,7 @@ type: doc
 title: YouTube Facade Optimization
 status: done
 created: 2026-01-09T00:00:00.000Z
-updated: 2026-01-09T00:00:00.000Z
+updated: 2026-04-09T00:00:00.000Z
 ---
 
 # YouTube Facade Optimization
@@ -34,27 +34,30 @@ The facade pattern replaces heavy YouTube iframes with lightweight thumbnail ima
 ### Architecture
 
 ```
-src/
+quorum-shared/src/utils/youtubeUtils.ts   # All YouTube URL utilities + thumbnail fetch
+
+quorum-desktop/src/
 ├── utils/
-│   └── youtubeUtils.ts           # Centralized YouTube URL utilities
+│   └── embeddedMedia.ts          # getEmbeddedMediaSrc() helper (added 2026-04-09)
 ├── components/
 │   ├── ui/
-│   │   ├── YouTubeEmbed.tsx      # Main wrapper component
-│   │   └── YouTubeFacade.tsx     # Thumbnail facade implementation
+│   │   ├── YouTubeEmbed.tsx      # Main wrapper, threads thumbnailSrc through
+│   │   └── YouTubeFacade.tsx     # Renders from embedded data, no CDN fetch
 │   └── message/
-│       ├── Message.tsx           # Uses YouTubeEmbed for videos
+│       ├── Message.tsx           # Passes thumbnailSrc + embeddedMedia to renderers
 │       ├── MessagePreview.tsx    # Uses YouTubeEmbed with previewOnly mode
-│       └── MessageMarkdownRenderer.tsx # Handles YouTube URLs in markdown
+│       └── MessageMarkdownRenderer.tsx # Receives embeddedMedia prop, resolves thumbnailSrc
 └── hooks/
     └── business/messages/
-        └── useMessageFormatting.ts # Uses centralized utilities
+        ├── useMessageComposer.ts   # Fetches + attaches embeddedMedia before send
+        └── useMessageFormatting.ts # Extends youtube token with thumbnailSrc
 ```
 
 ## Implementation Details
 
-### Centralized YouTube Utilities (`src/utils/youtubeUtils.ts`)
+### Centralized YouTube Utilities (`@quilibrium/quorum-shared`)
 
-All YouTube URL operations are centralized to eliminate code duplication:
+All YouTube URL operations are in `quorum-shared/src/utils/youtubeUtils.ts`:
 
 ```typescript
 // Comprehensive YouTube URL regex
@@ -65,6 +68,10 @@ export const isYouTubeURL = (url: string): boolean;
 export const extractYouTubeVideoId = (url: string): string | null;
 export const convertToYouTubeEmbedURL = (url: string): string | null;
 export const getYouTubeThumbnailURL = (videoId: string, quality: 'maxres' | 'hq' | 'mq' | 'default'): string;
+
+// Added 2026-04-09: embedded media support
+export const extractStandaloneYouTubeVideoIds = (text: string): string[]; // up to 3
+export const fetchYouTubeThumbnailAsBase64 = (videoId: string): Promise<string | null>;
 ```
 
 ### YouTubeEmbed Component (`src/components/ui/YouTubeEmbed.tsx`)
@@ -100,64 +107,45 @@ export const YouTubeEmbed: React.FC<YouTubeEmbedProps> = ({
 
 ### YouTubeFacade Component (`src/components/ui/YouTubeFacade.tsx`)
 
-Enhanced facade implementation with anti-restart protection:
+Updated 2026-04-09: no longer fetches thumbnails from YouTube's CDN. Accepts a pre-resolved `thumbnailSrc` prop instead.
 
 ```tsx
-// Dual cache system for optimal state management
-const iframeStateCache = new Map<string, boolean>(); // Tracks loaded videos
-const autoplayBlockCache = new Set<string>(); // Prevents unwanted autoplay
+interface YouTubeFacadeProps {
+  videoId: string;
+  thumbnailSrc: string | null; // data URI, or null to show plain link
+  previewOnly?: boolean;
+  className?: string;
+  style?: React.CSSProperties;
+  title?: string;
+}
 
 export const YouTubeFacade: React.FC<YouTubeFacadeProps> = ({
   videoId,
-  previewOnly = false
+  thumbnailSrc,
+  previewOnly = false,
 }) => {
-  const [isLoaded, setIsLoaded] = useState(() => iframeStateCache.get(videoId) || false);
-  const [thumbnailQuality, setThumbnailQuality] = useState<'maxres' | 'hq' | 'mq' | 'default'>('maxres');
+  // No embedded data → plain link, no external request
+  if (thumbnailSrc === null || thumbnailError) {
+    return <a href={`https://www.youtube.com/watch?v=${videoId}`}>...</a>;
+  }
 
-  // Smart autoplay: only on first click, prevents restart on re-renders
-  const embedUrl = useMemo(() => {
-    const baseUrl = `https://www.youtube.com/embed/${videoId}`;
-    if (isLoaded && !autoplayBlockCache.has(videoId)) {
-      return `${baseUrl}?autoplay=1`;
-    }
-    return baseUrl;
-  }, [videoId, isLoaded]);
-
-  // Anti-restart protection: block autoplay after initial load
-  useEffect(() => {
-    if (isLoaded) {
-      const timer = setTimeout(() => {
-        autoplayBlockCache.add(videoId);
-      }, 3000);
-      return () => clearTimeout(timer);
-    }
-  }, [isLoaded, videoId]);
-
-  // Preview mode: show thumbnail only (no click functionality)
-  if (previewOnly || !isLoaded) {
+  // Has embedded data → facade, no external request
+  if (!isLoaded) {
     return (
-      <div
-        className={`relative ${previewOnly ? '' : 'cursor-pointer group'}`}
-        onClick={previewOnly ? undefined : () => {
-          setIsLoaded(true);
-          iframeStateCache.set(videoId, true);
-          autoplayBlockCache.delete(videoId); // Allow autoplay on fresh click
-        }}
-      >
-        <img
-          src={getYouTubeThumbnailURL(videoId, thumbnailQuality)}
-          className="w-full h-full object-cover rounded-lg"
-          onError={() => {/* Quality fallback logic */}}
-        />
-        {!previewOnly && <PlayButtonOverlay />}
+      <div onClick={handleFacadeClick}>
+        <img src={thumbnailSrc} onError={() => setThumbnailError(true)} />
+        <PlayButtonOverlay />
         <YouTubeBadge />
       </div>
     );
   }
 
-  return <iframe src={embedUrl} /* ...iframe props */ />;
+  // Loaded → iframe (unchanged)
+  return <iframe src={embedUrl} />;
 };
 ```
+
+The quality-fallback waterfall (`maxres → hq → mq → default`) and `getYouTubeThumbnailURL` call have been removed entirely.
 
 ### Markdown Integration (`src/components/message/MessageMarkdownRenderer.tsx`) - Updated 2025-11-07
 
@@ -316,26 +304,42 @@ YouTube embeds maintain responsive design with hardware acceleration:
 
 **Note from Cassie (Q Founder) - 2025-09-21**
 
-The current YouTube facade implementation is acceptable for now, but we should be aware of potential privacy risks. Remote images (including YouTube thumbnails) can potentially be used for deanonymization attacks.
+The original facade fetched thumbnails from YouTube's CDN on every receiver's client, leaking their IP address to YouTube without consent.
 
-**Long-term Security Approach:**
+**Resolved 2026-04-09 — embeddedMedia system:**
 
-For enhanced privacy protection, we should consider implementing a Signal-like approach:
-1. **Client-side metadata fetching**: The sending client fetches OpenGraph data (preview images and text) from the link
-2. **Content encryption**: The fetched image data is encrypted and sent to recipients
-3. **No direct external requests**: Recipients never need to make requests to external URLs
+The privacy leak has been eliminated via the `embeddedMedia` field on `PostMessage`:
 
-**Future Safety Gradient:**
+| Action | Who contacts YouTube | User's choice? |
+|--------|---------------------|----------------|
+| Thumbnail displayed | Sender (at send time) | Yes — they shared the link |
+| Video plays | Receiver (on click) | Yes — they clicked play |
+| Thumbnail displayed (old behavior) | Receiver (automatically) | No |
 
-We should implement user preference levels for external content:
-- **Paranoid mode**: Refuse to load external images/embeds entirely
-- **Permissive mode**: Allow external content with proper privacy protections
-- **Default mode**: Load with `no-referrer` behaviors and other privacy safeguards
+The sender fetches `hqdefault` (~27-55KB JPEG) at send time and embeds it as base64 in the message payload. Receivers render from the embedded data — no external requests. Old messages (no `embeddedMedia`) show plain clickable links instead of a facade.
 
-**Current Status**: The facade feature works well for performance, but we should evaluate whether we're properly implementing `no-referrer` policies to minimize tracking potential.
+**Still future work:**
+- "Paranoid mode" setting to disable all external content (including the iframe on click)
+- Server-side thumbnail proxy/cache to avoid duplicate fetches when many users share the same video
 
 ---
 
-**Last Updated**: 2025-11-07
-**Recent Changes**: Inline vs standalone URL detection, security hardening (rehype-raw removal)
-**Verified**: 2025-12-09 - File paths confirmed current
+## Text + Image Combined Messages (2026-04-09)
+
+The `embeddedMedia` field is also used for user-attached images when text and an image are sent together. Instead of two separate messages, the send path produces a single `PostMessage` with `type: 'image'` and `type: 'image-thumbnail'` entries alongside any YouTube entries.
+
+**Send path** (`useMessageComposer.ts`): when both `pendingMessage` and `processedImage` are set, the combined branch encodes full + thumbnail as raw base64 (no `data:` URI prefix — `getEmbeddedMediaSrc` adds the prefix at read time). Image-only sends continue to use the `EmbedMessage` path unchanged.
+
+**Render path** (`Message.tsx`): after the text content, both the markdown path and token path check for `image`/`image-thumbnail` keys via `getEmbeddedImageKeys` and render them with the existing lightbox (`showImageModal`) on click.
+
+**entry types in `embeddedMedia`:**
+| type | purpose |
+|------|---------|
+| `youtube-thumbnail` | YouTube facade thumbnail, keyed by videoId |
+| `image-thumbnail` | Compressed thumbnail of user-attached image |
+| `image` | Full-size user-attached image |
+
+---
+
+**Last Updated**: 2026-04-09
+**Recent Changes**: text+image combined PostMessage; embeddedMedia now carries user-attached images in addition to YouTube thumbnails

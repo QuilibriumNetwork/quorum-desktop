@@ -24,10 +24,6 @@ const config = {
     { name: 'Subtle Outline', props: { type: 'subtle-outline' }, children: 'Subtle Outline' },
     { name: 'Danger', props: { type: 'danger' }, children: 'Danger Button' },
     { name: 'Danger Outline', props: { type: 'danger-outline' }, children: 'Danger Outline' },
-    { name: 'Primary White', props: { type: 'primary-white' }, children: 'Primary White' },
-    { name: 'Secondary White', props: { type: 'secondary-white' }, children: 'Secondary White' },
-    { name: 'Light White', props: { type: 'light-white' }, children: 'Light White' },
-    { name: 'Light Outline White', props: { type: 'light-outline-white' }, children: 'Light Outline White' },
     { name: 'Unstyled', props: { type: 'unstyled' }, children: 'Unstyled Button' },
     { name: 'With Icon', props: { type: 'primary', iconName: 'plus' }, children: 'Add Item' },
     { name: 'Icon Only', props: { type: 'subtle', iconName: 'settings', iconOnly: true }, children: null },
@@ -50,7 +46,7 @@ const config = {
   children="Button Text"
 
   // Button types (choose one)
-  type="primary" // 'primary' | 'secondary' | 'light' | 'light-outline' | 'subtle' | 'subtle-outline' | 'danger' | 'primary-white' | 'secondary-white' | 'light-white' | 'light-outline-white' | 'disabled-onboarding' | 'unstyled'
+  type="primary" // 'primary' | 'secondary' | 'subtle' | 'subtle-outline' | 'danger' | 'danger-outline' | 'unstyled'
 
   // Sizes
   size="normal" // 'compact' | 'small' | 'normal' | 'large'

@@ -1,11 +1,12 @@
 ---
 type: task
 title: Passkey Import UX Issue
-status: open
+status: archived
 created: 2025-11-13T00:00:00.000Z
-updated: '2026-01-09'
+updated: '2026-04-13'
 related_issues:
   - '#99'
+superseded_by: 2026-04-13-sdk-passkey-hook-extraction-design.md
 ---
 
 # Passkey Import UX Issue
@@ -194,6 +195,17 @@ If the passkey API is required for security reasons, consider:
 ---
 
 
-**Last Updated**: 2025-11-13
+## Resolution
+
+**Archived 2026-04-13** - This issue is fully addressed by the
+[SDK PasskeyModal Hook Extraction design](2026-04-13-sdk-passkey-hook-extraction-design.md).
+The new `usePasskeyFlow` hook gives the consumer (quorum-desktop) full control over the
+registration flow. For import mode, the consumer calls `importKeyFile()` to parse the key,
+then decides whether to call `startRegistration()` or `proceedWithoutPasskey()`, so unwanted
+passkey prompts are structurally impossible. No targeted patch is needed.
+
+---
+
+**Last Updated**: 2026-04-13
 **Assigned To**: SDK Team
-**Related Issues**: None yet
+**Related Issues**: #99

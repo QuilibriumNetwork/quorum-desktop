@@ -1,12 +1,15 @@
 ---
 type: report
 title: Passkey Flow - Simplified User Journey
-status: done
+status: archived
 created: 2026-01-09T00:00:00.000Z
-updated: '2026-01-09'
-related_issues:
-  - '#1'
+updated: '2026-04-14'
+superseded_by: .agents/docs/features/onboarding-flow.md
 ---
+
+> **SUPERSEDED** — ASCII flow diagrams and browser support matrix from the original modal-based design. The current implementation uses inline steps; see [.agents/docs/features/onboarding-flow.md](../../docs/features/onboarding-flow.md) for up-to-date flows and tables.
+
+
 
 # Passkey Flow - Simplified User Journey
 
