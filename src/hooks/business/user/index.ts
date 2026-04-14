@@ -7,7 +7,6 @@ export * from './useUserMuting';
 export * from './useUserRoleManagement';
 export * from './useUserProfileActions';
 export * from './useUserRoleDisplay';
-export * from './useOnboardingFlow';
 export * from './useKeyBackup';
 export * from './useFileUpload';
 export * from './useAuthenticationFlow';
