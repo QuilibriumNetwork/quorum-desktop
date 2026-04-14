@@ -187,6 +187,13 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
       }
     }, [emojiPickerOpen]);
 
+    // Close emoji picker when stickers panel opens
+    useEffect(() => {
+      const handleClose = () => setEmojiPickerOpen(undefined);
+      document.addEventListener('quorum:close-emoji-picker', handleClose);
+      return () => document.removeEventListener('quorum:close-emoji-picker', handleClose);
+    }, [setEmojiPickerOpen]);
+
     const virtuoso = useRef<VirtuosoHandle>(null);
     const [init, setInit] = useState(false);
     const location = useLocation();

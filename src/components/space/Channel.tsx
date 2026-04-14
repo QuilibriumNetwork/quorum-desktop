@@ -1146,6 +1146,7 @@ const Channel: React.FC<ChannelProps> = ({
       });
     } else {
       composer.setShowStickers(true);
+      document.dispatchEvent(new CustomEvent('quorum:close-emoji-picker'));
     }
   }, [isMobile, openMobileEmojiDrawer, customEmojis, space?.stickers, composer]);
 
