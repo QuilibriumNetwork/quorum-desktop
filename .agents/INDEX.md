@@ -470,6 +470,7 @@ This is the main index for all documentation, bug reports, and task management.
 
 ### Active Reports
 
+- [i18n Onboarding Translation Audit — April 2026](reports/2026-04-14-i18n-onboarding-translation-audit.md)
 - [Channel Ordering Feature Analysis](reports/channel-ordering-feature-analysis_2026-01-07.md)
 - [Comprehensive Privacy & Security Audit - All Features](reports/privacy-security-comprehensive-audit_2025-12-21.md)
 - [Comprehensive WCAG Accessibility Audit Report](reports/accessibility-wcag-audit_2026-02-10.md)
@@ -514,4 +515,4 @@ This is the main index for all documentation, bug reports, and task management.
 
 ---
 
-**Last Updated**: 2026-04-14 12:32:41
+**Last Updated**: 2026-04-14 12:56:36
