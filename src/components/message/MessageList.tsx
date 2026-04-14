@@ -194,6 +194,22 @@ export const MessageList = forwardRef<MessageListRef, MessageListProps>(
       return () => document.removeEventListener('quorum:close-emoji-picker', handleClose);
     }, [setEmojiPickerOpen]);
 
+    // Close emoji picker when focus moves to the message composer (textarea or contenteditable)
+    useEffect(() => {
+      const handleFocusIn = (e: FocusEvent) => {
+        const target = e.target as HTMLElement;
+        if (
+          target.tagName === 'TEXTAREA' ||
+          target.tagName === 'INPUT' ||
+          target.getAttribute('contenteditable') === 'true'
+        ) {
+          setEmojiPickerOpen(undefined);
+        }
+      };
+      document.addEventListener('focusin', handleFocusIn);
+      return () => document.removeEventListener('focusin', handleFocusIn);
+    }, [setEmojiPickerOpen]);
+
     const virtuoso = useRef<VirtuosoHandle>(null);
     const [init, setInit] = useState(false);
     const location = useLocation();

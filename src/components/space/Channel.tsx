@@ -1193,6 +1193,7 @@ const Channel: React.FC<ChannelProps> = ({
     }
   }, [composer.inReplyTo]);
 
+
   // Calculate header height for mobile sidebar positioning
   // Debounced to avoid excessive recalculations during window drag
   useEffect(() => {
