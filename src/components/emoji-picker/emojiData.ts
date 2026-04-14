@@ -24,14 +24,16 @@ interface RawEmoji {
 
 // Representative emoji unified codes for each category tab icon
 const CATEGORY_ICON_CODES: Record<string, string> = {
+  'Frequently Used': '1F552',   // 🕒 clock three
+  'Custom': '2B50',             // ⭐ white medium star
   'Smileys & Emotion': '1F600',
   'People & Body': '1F44B',
-  'Animals & Nature': '1F43B',
+  'Animals & Nature': '1F43A',  // 🐺 wolf (was 1F43B bear)
   'Food & Drink': '1F354',
   'Travel & Places': '2708-FE0F',
   'Activities': '26BD',
-  'Objects': '1F4A1',
-  'Symbols': '1F49B',
+  'Objects': '1F4BC',           // 💼 briefcase (was 1F4A1 light bulb)
+  'Symbols': '2049-FE0F',       // ‼️❓ interrobang (was 1F49B yellow heart)
   'Flags': '1F3C1',
 };
 

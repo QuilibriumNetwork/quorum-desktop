@@ -320,7 +320,7 @@ const EmojiPicker: React.FC<EmojiPickerProps> = ({
                     size={18}
                   />
                 ) : (
-                  <span style={{ fontSize: '1.125rem' }}>📁</span>
+                  <span style={{ fontSize: '1rem', lineHeight: 1 }}>●</span>
                 )}
               </button>
             ))}
