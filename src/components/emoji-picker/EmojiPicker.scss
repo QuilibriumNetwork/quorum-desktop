@@ -19,7 +19,7 @@
   display: flex;
   align-items: center;
   gap: $s-2;
-  padding: $s-2;
+  padding: $s-3 $s-4; // CHANGED: was $s-2 — more breathing room around search
   border-bottom: 1px solid var(--color-border-default);
   flex-shrink: 0;
 }
@@ -27,6 +27,11 @@
 .emoji-picker__search-wrap {
   flex: 1;
   min-width: 0;
+
+  // CHANGED: shrink search field font and input height
+  input {
+    font-size: $text-xs;
+  }
 }
 
 // ── Skin tone trigger (single dot, right of search) ───────────────────────
@@ -53,20 +58,20 @@
   }
 }
 
-// Floating popover with 6 tone dots
+// Floating popover with 6 tone dots — CHANGED: vertical column layout
 .emoji-picker__skin-popover {
   position: absolute;
   top: calc(100% + #{$s-1-5});
   right: 0;
   display: flex;
+  flex-direction: column; // CHANGED: was row, now vertical stack
   gap: $s-1-5;
-  padding: $s-1-5 $s-2;
+  padding: $s-2 $s-1-5;
   background: var(--color-bg-modal);
   border: 1px solid var(--color-border-default);
   border-radius: $rounded-lg;
   box-shadow: $shadow-lg;
   z-index: 10;
-
 }
 
 .emoji-picker__skin-popover .emoji-picker__skin-dot--active {
@@ -107,27 +112,31 @@
   height: $s-10; // 40px touch target
   flex-shrink: 0;
   opacity: 0.45;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
   transition: opacity $duration-150 ease-in-out,
               background-color $duration-150 ease-in-out;
 
   &:hover {
-    background-color: var(--surface-3);
-    opacity: 0.75;
+    background-color: var(--surface-5); // CHANGED: was surface-3, stronger contrast
+    opacity: 0.85;                       // CHANGED: was 0.75
   }
 
   &--active {
     opacity: 1;
-    background-color: var(--surface-3);
+    background-color: var(--surface-4); // CHANGED: was surface-3
 
-    // Left accent bar
+    // Left accent bar — CHANGED: full height (top:0 bottom:0), no border-radius
     &::before {
       content: '';
       position: absolute;
       left: 0;
-      top: 25%;
-      bottom: 25%;
+      top: 0;    // CHANGED: was 25%
+      bottom: 0; // CHANGED: was 25%
       width: 3px;
-      border-radius: 0 $rounded-sm $rounded-sm 0;
+      border-radius: 0; // CHANGED: was rounded-sm
       background: var(--accent);
     }
   }
@@ -164,11 +173,15 @@
   width: $s-9;
   height: $s-9;
   border-radius: $rounded-md;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
   transition: background-color $duration-150 ease-in-out;
   flex-shrink: 0;
 
   &:hover {
-    background-color: var(--surface-3);
+    background-color: var(--surface-5); // CHANGED: was surface-3, stronger contrast
   }
 }
 
