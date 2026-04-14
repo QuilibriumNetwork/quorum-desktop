@@ -71,8 +71,6 @@ export const SPRITE_SHEET = {
   displaySize: 28,
   /** Scale factor: displaySize / cellSize */
   scale: 28 / 32,    // 0.875
-  /** Scaled total sheet dimension */
-  backgroundSize: Math.round((62 * 34 + 1) * (28 / 32)),  // ~1845
 } as const;
 
 /** Category icon emojis -- their sheet coordinates for rendering as EmojiSprite */

@@ -402,8 +402,7 @@ const DirectMessage: React.FC<{}> = () => {
 
 
   // Handle emoji selection from the panel — insert into composer
-  const handleComposerEmojiClick = useCallback((emojiData: any) => {
-    const emoji = emojiData.emoji || emojiData.imageUrl;
+  const handleComposerEmojiClick = useCallback((emoji: string) => {
     if (emoji) {
       messageComposerRef.current?.insertEmoji(emoji);
     }

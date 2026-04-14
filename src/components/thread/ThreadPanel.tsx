@@ -71,7 +71,7 @@ export const ThreadPanel: React.FC = () => {
   const { isMobile } = useResponsiveLayoutContext();
   const [panelTab, setPanelTab] = useState<'emojis' | 'stickers'>('emojis');
 
-  // Transform custom emoji data for emoji-picker-react
+  // Build custom emoji list for the picker
   const customEmojis: CustomEmoji[] = useMemo(() => {
     if (!channelProps?.customEmoji) return [];
     return channelProps.customEmoji.map((c) => ({
@@ -82,8 +82,7 @@ export const ThreadPanel: React.FC = () => {
   }, [channelProps?.customEmoji]);
 
   // Handle emoji selection — insert into thread composer
-  const handleComposerEmojiClick = useCallback((emojiData: any) => {
-    const emoji = emojiData.emoji || emojiData.imageUrl;
+  const handleComposerEmojiClick = useCallback((emoji: string) => {
     if (emoji) {
       composerRef.current?.insertEmoji(emoji);
     }

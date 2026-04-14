@@ -1,5 +1,5 @@
 import { logger } from '@quilibrium/quorum-shared';
-import React, { useMemo, useState, useCallback, useRef } from 'react';
+import React, { useMemo, useState, useCallback, useRef, Suspense } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { usePasskeysContext } from '@quilibrium/quilibrium-js-sdk-channels';
 import type {
@@ -11,7 +11,10 @@ import type {
   Sticker,
   Channel,
 } from '@quilibrium/quorum-shared';
-import { EmojiPicker } from '../emoji-picker';
+// Lazy-load EmojiPicker — Message renders for every visible chat item; eager import parses the full emoji dataset on page load
+const EmojiPicker = React.lazy(() =>
+  import('../emoji-picker/EmojiPicker').then((m) => ({ default: m.default }))
+);
 import type { EmojiData } from '../emoji-picker/types';
 import UserProfile from '../user/UserProfile';
 import { SpaceTag } from '../space/SpaceTag';
@@ -671,16 +674,18 @@ export const Message = React.memo(
                 <div
                   onClick={(e: React.MouseEvent) => e.stopPropagation()}
                   className={
-                    'absolute right-4 z-[9999] ' +
+                    'absolute right-4 z-[9999] bg-modal border border-default rounded-lg shadow-lg overflow-hidden ' +
                     (emojiPickerOpenDirection == 'upwards'
                       ? 'bottom-6'
                       : 'top-0')
                   }
                 >
-                  <EmojiPicker
-                    customEmojis={emojiPicker.customEmojis}
-                    onEmojiClick={(e: EmojiData) => emojiPicker.handleDesktopEmojiClick(e.emoji)}
-                  />
+                  <Suspense fallback={<div className="emoji-picker-loading" />}>
+                    <EmojiPicker
+                      customEmojis={emojiPicker.customEmojis}
+                      onEmojiClick={(e: EmojiData) => emojiPicker.handleDesktopEmojiClick(e.emoji)}
+                    />
+                  </Suspense>
                 </div>
               )}
 
@@ -689,19 +694,21 @@ export const Message = React.memo(
                 <Portal>
                   <div
                     onClick={(e: React.MouseEvent) => e.stopPropagation()}
-                    className="fixed z-[10002]"
+                    className="fixed z-[10002] bg-modal border border-default rounded-lg shadow-lg overflow-hidden"
                     style={{
                       left: Math.min(emojiPickerPosition.x, window.innerWidth - 352),
                       top: Math.min(emojiPickerPosition.y, window.innerHeight - 435),
                     }}
                   >
-                    <EmojiPicker
-                      customEmojis={emojiPicker.customEmojis}
-                      onEmojiClick={(e: EmojiData) => {
-                        emojiPicker.handleDesktopEmojiClick(e.emoji);
-                        setEmojiPickerPosition(null);
-                      }}
-                    />
+                    <Suspense fallback={<div className="emoji-picker-loading" />}>
+                      <EmojiPicker
+                        customEmojis={emojiPicker.customEmojis}
+                        onEmojiClick={(e: EmojiData) => {
+                          emojiPicker.handleDesktopEmojiClick(e.emoji);
+                          setEmojiPickerPosition(null);
+                        }}
+                      />
+                    </Suspense>
                   </div>
                 </Portal>
               )}
@@ -715,10 +722,12 @@ export const Message = React.memo(
                     onClose={emojiPicker.closeMobileEmojiDrawer}
                     hideClose={false}
                   >
-                    <EmojiPicker
-                      customEmojis={emojiPicker.customEmojis}
-                      onEmojiClick={(e: EmojiData) => emojiPicker.handleMobileEmojiClick(e.emoji)}
-                    />
+                    <Suspense fallback={<div className="emoji-picker-loading" />}>
+                      <EmojiPicker
+                        customEmojis={emojiPicker.customEmojis}
+                        onEmojiClick={(e: EmojiData) => emojiPicker.handleMobileEmojiClick(e.emoji)}
+                      />
+                    </Suspense>
                   </Modal>
                 )}
 

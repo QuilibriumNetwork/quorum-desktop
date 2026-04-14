@@ -190,16 +190,3 @@ export function buildSearchRows(query: string, columnsCount: number, customEmoji
   return rows;
 }
 
-/** Get the sprite background-position for a given sheet_x, sheet_y */
-export function getSpritePosition(sheetX: number, sheetY: number): { x: number; y: number } {
-  const { stride, padding, scale } = SPRITE_SHEET;
-  return {
-    x: (sheetX * stride + padding) * scale,
-    y: (sheetY * stride + padding) * scale,
-  };
-}
-
-/** Get all emojis (for external use) */
-export function getAllEmojis(): EmojiItem[] {
-  return buildEmojiIndex();
-}

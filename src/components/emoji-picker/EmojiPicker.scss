@@ -14,7 +14,7 @@
     align-items: center;
     padding: $s-1 $s-2;
     gap: $s-0-5;
-    border-bottom: 1px solid var(--color-border-default);
+    border-bottom: $border solid var(--color-border-default);
     overflow-x: auto;
     scrollbar-width: none;
     &::-webkit-scrollbar { display: none; }
@@ -56,8 +56,17 @@
     width: $s-4;
     height: $s-4;
     border-radius: $rounded-full;
-    border: 2px solid transparent;
+    border: $border-2 solid transparent;
     transition: border-color $duration-150 $ease-in-out;
+    cursor: pointer;
+
+    // Fitzpatrick scale colors — fixed values, not theme-dependent
+    &[data-tone='default'] { background-color: #ffcc4d; }
+    &[data-tone='1F3FB']   { background-color: #f7dece; }
+    &[data-tone='1F3FC']   { background-color: #e0bb95; }
+    &[data-tone='1F3FD']   { background-color: #bf8f68; }
+    &[data-tone='1F3FE']   { background-color: #9b643d; }
+    &[data-tone='1F3FF']   { background-color: #594539; }
 
     &--active {
       border-color: var(--accent);
@@ -66,7 +75,7 @@
 
   &__search {
     padding: $s-2;
-    border-bottom: 1px solid var(--color-border-default);
+    border-bottom: $border solid var(--color-border-default);
   }
 
   &__grid-container {
@@ -81,7 +90,7 @@
     font-weight: $font-bold;
     color: var(--color-text-subtle);
     text-transform: uppercase;
-    letter-spacing: 0.3px;
+    letter-spacing: $tracking-wide;
   }
 
   &__emoji-row {

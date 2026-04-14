@@ -192,6 +192,9 @@ This is the main index for all documentation, bug reports, and task management.
 - [Decentralized GIF Library on Quilibrium](tasks/2026-02-24-gifs-library-integration.md)
 - [Space Tag Click — Space Info Modal](tasks/2026-02-24-space-tag-info-modal.md)
 - [Thread List Panel: "Created by me" Filter](tasks/2026-03-14-thread-list-created-filter.md)
+- [Watch: emoji-picker-react virtualization PR #439](tasks/2026-04-14-emoji-picker-virtualization-watch.md)
+- [Custom Emoji Picker with Sprite Sheet Rendering](tasks/2026-04-14-custom-emoji-picker-design.md)
+- [Custom Emoji Picker — Implementation Plan](tasks/2026-04-14-custom-emoji-picker-plan.md)
 
 ### .Archived
 - [🚀 Search Performance Optimization - Revised Implementation Plan](tasks/.archived/2025-11-12-search-performance-optimization-original.md)

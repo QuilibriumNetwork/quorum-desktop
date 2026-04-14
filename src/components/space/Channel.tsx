@@ -1100,7 +1100,7 @@ const Channel: React.FC<ChannelProps> = ({
   // Compute responsive icon size for header icons (lg for desktop ≥1024px, sm for mobile/tablet)
   const headerIconSize = isDesktop ? 'lg' : 'lg';
 
-  // Transform custom emoji data for emoji-picker-react
+  // Build custom emoji list for the picker
   const customEmojis: CustomEmoji[] = useMemo(() => {
     if (!space?.emojis) return [];
     return space.emojis.map((c) => ({
@@ -1125,8 +1125,7 @@ const Channel: React.FC<ChannelProps> = ({
   }, []);
 
   // Handle emoji selection from the panel — insert into composer
-  const handleComposerEmojiClick = useCallback((emojiData: any) => {
-    const emoji = emojiData.emoji || emojiData.imageUrl;
+  const handleComposerEmojiClick = useCallback((emoji: string) => {
     if (emoji) {
       messageComposerRef.current?.insertEmoji(emoji);
     }

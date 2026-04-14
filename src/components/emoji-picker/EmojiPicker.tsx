@@ -29,6 +29,15 @@ const DEFAULT_COLUMNS = 8;
 const CELL_SIZE = 36; // px, matches $s-9 (2.25rem)
 const H_PADDING = 16; // px, $s-2 * 2 sides
 
+const SKIN_TONE_LABELS: Record<string, string> = {
+  default: 'Default skin tone',
+  '1F3FB': 'Light skin tone',
+  '1F3FC': 'Medium-light skin tone',
+  '1F3FD': 'Medium skin tone',
+  '1F3FE': 'Medium-dark skin tone',
+  '1F3FF': 'Dark skin tone',
+};
+
 const EmojiPicker: React.FC<EmojiPickerProps> = ({
   onEmojiClick,
   customEmojis = [],
@@ -37,7 +46,7 @@ const EmojiPicker: React.FC<EmojiPickerProps> = ({
 }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [debouncedQuery, setDebouncedQuery] = useState('');
-  const [activeCategory, setActiveCategory] = useState<string>('Frequently Used');
+  const [activeCategory, setActiveCategory] = useState<string>('');
   const [columnsCount, setColumnsCount] = useState(DEFAULT_COLUMNS);
 
   const virtuosoRef = useRef<VirtuosoHandle>(null);
@@ -65,6 +74,14 @@ const EmojiPicker: React.FC<EmojiPickerProps> = ({
     () => buildRowData(columnsCount, frequentUnifieds, customEmojis),
     [columnsCount, frequentUnifieds, customEmojis]
   );
+
+  // Sync active category — ensure it always points to a real category
+  useEffect(() => {
+    if (!categoryRowIndices.has(activeCategory)) {
+      const first = categoryRowIndices.keys().next().value;
+      if (first !== undefined) setActiveCategory(first);
+    }
+  }, [categoryRowIndices, activeCategory]);
 
   // Search results as rows
   const searchRows = useMemo(() => {
@@ -252,19 +269,13 @@ const EmojiPicker: React.FC<EmojiPickerProps> = ({
           {/* Skin tone selector */}
           <div className="emoji-picker__skin-tones">
             {SKIN_TONES.map((tone) => (
-              <button
+              <Button
                 key={tone ?? 'default'}
+                type="unstyled"
                 className={`emoji-picker__skin-tone-dot${skinTone === tone ? ' emoji-picker__skin-tone-dot--active' : ''}`}
                 onClick={() => setSkinTone(tone)}
-                type="button"
-                style={{
-                  backgroundColor: tone === null ? '#ffcc4d'
-                    : tone === '1F3FB' ? '#f7dece'
-                    : tone === '1F3FC' ? '#e0bb95'
-                    : tone === '1F3FD' ? '#bf8f68'
-                    : tone === '1F3FE' ? '#9b643d'
-                    : '#594539',
-                }}
+                aria-label={SKIN_TONE_LABELS[tone ?? 'default']}
+                data-tone={tone ?? 'default'}
               />
             ))}
           </div>
