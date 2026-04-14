@@ -38,6 +38,7 @@ const CATEGORY_ICON_CODES: Record<string, string> = {
 };
 
 let cachedEmojis: EmojiItem[] | null = null;
+let cachedRockHand: EmojiItem | null = null;
 
 /** Convert unified codepoint string to native emoji character */
 export function unifiedToEmoji(unified: string): string {
@@ -54,8 +55,9 @@ export function getEmojiImageUrl(unified: string): string {
 
 /** Sheet coordinates for 🤘 (1F918) at the given skin tone (or default) */
 export function getRockHandSprite(skinTone?: string | null): { sheetX: number; sheetY: number } {
-  const emojis = buildEmojiIndex();
-  const rock = emojis.find((e) => e.unified === '1F918');
+  // cachedRockHand is populated inside buildEmojiIndex() — same pattern as CATEGORY_ICONS
+  if (!cachedRockHand) buildEmojiIndex();
+  const rock = cachedRockHand;
   if (!rock) return { sheetX: 0, sheetY: 0 };
   if (skinTone && rock.skinVariations?.[skinTone]) {
     return rock.skinVariations[skinTone];
@@ -104,6 +106,9 @@ function buildEmojiIndex(): EmojiItem[] {
       CATEGORY_ICONS[cat] = { unified: emoji.unified, sheetX: emoji.sheetX, sheetY: emoji.sheetY };
     }
   }
+
+  // Cache rock-hand emoji for getRockHandSprite (unified is uppercase in emoji-datasource-twitter)
+  cachedRockHand = cachedEmojis.find((e) => e.unified === '1F918') ?? null;
 
   return cachedEmojis;
 }
