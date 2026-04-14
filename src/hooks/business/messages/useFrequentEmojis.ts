@@ -1,17 +1,16 @@
 import { useMemo, useSyncExternalStore } from 'react';
 
 /**
- * localStorage key used by emoji-picker-react to store suggested/frequent emojis.
- * Each entry has: { unified: string, original: string, count: number }
+ * localStorage key written by the custom emoji picker.
+ * Format: Record<unified_codepoint_string, { count: number, lastUsed: number }>
  */
-const EPR_SUGGESTED_KEY = 'epr_suggested';
+const FREQUENT_KEY = 'emoji-picker-frequently-used';
 
 const DEFAULT_QUICK_EMOJIS = ['❤️', '👍', '🔥', '😂', '😢', '😮'];
 
-interface SuggestedItem {
-  unified: string;
-  original: string;
+interface FrequentEntry {
   count: number;
+  lastUsed: number;
 }
 
 /** Convert unified codepoint string (e.g. "1f60d") to native emoji character. */
@@ -25,32 +24,32 @@ function unifiedToNative(unified: string): string {
 /** Read the raw JSON string from localStorage for snapshot comparison. */
 function getSnapshot(): string {
   try {
-    return window.localStorage.getItem(EPR_SUGGESTED_KEY) ?? '[]';
+    return window.localStorage.getItem(FREQUENT_KEY) ?? '{}';
   } catch {
-    return '[]';
+    return '{}';
   }
 }
 
 function getServerSnapshot(): string {
-  return '[]';
+  return '{}';
 }
 
 /**
  * Subscribe to storage events so the hook re-renders when another tab
- * or the emoji picker updates the suggested list.
+ * or the emoji picker updates the frequent-emoji map.
  */
 function subscribe(callback: () => void): () => void {
   const handler = (e: StorageEvent) => {
-    if (e.key === EPR_SUGGESTED_KEY) callback();
+    if (e.key === FREQUENT_KEY) callback();
   };
   window.addEventListener('storage', handler);
   return () => window.removeEventListener('storage', handler);
 }
 
 /**
- * Returns the top 3 most frequently used emojis from emoji-picker-react's
- * localStorage data, falling back to defaults (❤️, 👍, 🔥) when there
- * aren't enough entries.
+ * Returns the top N most frequently used emojis from the custom emoji picker's
+ * localStorage data (key: "emoji-picker-frequently-used"), falling back to
+ * defaults (❤️, 👍, 🔥) when there aren't enough entries.
  *
  * Each item includes the native emoji string and the unified codepoint
  * (for rendering as a Twemoji image).
@@ -60,11 +59,13 @@ export function useFrequentEmojis(count = 3) {
 
   return useMemo(() => {
     try {
-      const items: SuggestedItem[] = JSON.parse(raw);
-      const sorted = [...items].sort((a, b) => b.count - a.count);
-      const frequent = sorted.slice(0, count).map((item) => ({
-        emoji: unifiedToNative(item.unified),
-        unified: item.unified,
+      const map = JSON.parse(raw) as Record<string, FrequentEntry>;
+      const sorted = Object.entries(map).sort(
+        ([, a], [, b]) => b.count - a.count || b.lastUsed - a.lastUsed,
+      );
+      const frequent = sorted.slice(0, count).map(([unified]) => ({
+        emoji: unifiedToNative(unified),
+        unified,
       }));
 
       // Fill remaining slots with defaults (skip any already present)

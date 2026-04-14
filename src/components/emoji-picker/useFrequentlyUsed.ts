@@ -32,7 +32,6 @@ function migrateLegacy(): FrequentMap | null {
     }
 
     localStorage.setItem(STORAGE_KEY, JSON.stringify(migrated));
-    // Do NOT remove LEGACY_KEY — useFrequentEmojis still reads from it for quick-reactions
     return migrated;
   } catch {
     return null;
