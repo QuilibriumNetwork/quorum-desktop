@@ -1,7 +1,7 @@
 // src/components/emoji-picker/emojiData.ts
 import emojiDataRaw from 'emoji-datasource-twitter/emoji.json';
 import type { EmojiItem, VirtualRow, CustomEmoji } from './types';
-import { EMOJI_CATEGORIES, CATEGORY_ICONS } from './types';
+import { EMOJI_CATEGORIES, CATEGORY_ICONS, SPRITE_SHEET } from './types';
 
 /** Raw entry shape from emoji-datasource-twitter */
 interface RawEmoji {
@@ -59,13 +59,14 @@ function buildEmojiIndex(): EmojiItem[] {
   cachedEmojis = raw
     .filter((e) => e.has_img_twitter && e.category !== 'Component')
     .map((e): EmojiItem => {
-      const skinVariations = e.skin_variations
+      const filtered = e.skin_variations
         ? Object.fromEntries(
             Object.entries(e.skin_variations)
               .filter(([key, v]) => v.has_img_twitter && !key.includes('-'))
               .map(([key, v]) => [key, { sheetX: v.sheet_x, sheetY: v.sheet_y, unified: v.unified }])
           )
-        : undefined;
+        : null;
+      const skinVariations = filtered && Object.keys(filtered).length > 0 ? filtered : undefined;
 
       return {
         unified: e.unified,
@@ -103,20 +104,21 @@ export function buildRowData(
   frequentUnifieds: string[],
   customEmojis: CustomEmoji[],
 ): { rows: VirtualRow[]; categoryRowIndices: Map<string, number> } {
+  const cols = Math.max(1, columnsCount);
   const emojis = buildEmojiIndex();
   const rows: VirtualRow[] = [];
   const categoryRowIndices = new Map<string, number>();
 
   // Helper: chunk an array into rows of N
   const chunkEmojis = (items: EmojiItem[]) => {
-    for (let i = 0; i < items.length; i += columnsCount) {
-      rows.push({ type: 'emoji-row', emojis: items.slice(i, i + columnsCount) });
+    for (let i = 0; i < items.length; i += cols) {
+      rows.push({ type: 'emoji-row', emojis: items.slice(i, i + cols) });
     }
   };
 
   const chunkCustom = (items: CustomEmoji[]) => {
-    for (let i = 0; i < items.length; i += columnsCount) {
-      rows.push({ type: 'custom-row', emojis: items.slice(i, i + columnsCount) });
+    for (let i = 0; i < items.length; i += cols) {
+      rows.push({ type: 'custom-row', emojis: items.slice(i, i + cols) });
     }
   };
 
@@ -163,25 +165,26 @@ export function searchEmojis(query: string): EmojiItem[] {
 
 /** Build search result rows from a query */
 export function buildSearchRows(query: string, columnsCount: number, customEmojis: CustomEmoji[]): VirtualRow[] {
+  const cols = Math.max(1, columnsCount);
   const results = searchEmojis(query);
   const rows: VirtualRow[] = [];
 
   // Search custom emojis too
   if (customEmojis.length > 0) {
-    const q = query.toLowerCase();
+    const q = query.toLowerCase().trim();
     const matching = customEmojis.filter((ce) =>
       ce.names.some((n) => n.toLowerCase().includes(q))
     );
     if (matching.length > 0) {
-      for (let i = 0; i < matching.length; i += columnsCount) {
-        rows.push({ type: 'custom-row', emojis: matching.slice(i, i + columnsCount) });
+      for (let i = 0; i < matching.length; i += cols) {
+        rows.push({ type: 'custom-row', emojis: matching.slice(i, i + cols) });
       }
     }
   }
 
   // Standard emoji results
-  for (let i = 0; i < results.length; i += columnsCount) {
-    rows.push({ type: 'emoji-row', emojis: results.slice(i, i + columnsCount) });
+  for (let i = 0; i < results.length; i += cols) {
+    rows.push({ type: 'emoji-row', emojis: results.slice(i, i + cols) });
   }
 
   return rows;
@@ -189,9 +192,7 @@ export function buildSearchRows(query: string, columnsCount: number, customEmoji
 
 /** Get the sprite background-position for a given sheet_x, sheet_y */
 export function getSpritePosition(sheetX: number, sheetY: number): { x: number; y: number } {
-  const stride = 34;
-  const padding = 1;
-  const scale = 28 / 32;
+  const { stride, padding, scale } = SPRITE_SHEET;
   return {
     x: (sheetX * stride + padding) * scale,
     y: (sheetY * stride + padding) * scale,
