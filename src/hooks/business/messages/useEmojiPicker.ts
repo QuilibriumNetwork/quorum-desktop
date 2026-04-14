@@ -4,19 +4,17 @@ import type { CustomEmoji } from '../../../components/emoji-picker/types';
 
 interface UseEmojiPickerOptions {
   customEmoji?: Emoji[];
-  height: number;
   onEmojiClick: (emoji: string) => void;
   onSetEmojiPickerOpen: (messageId: string | undefined) => void;
-  onSetEmojiPickerDirection: (direction: string) => void;
+  onSetEmojiPickerPosition: (pos: { x: number; y: number } | null) => void;
 }
 
 export function useEmojiPicker(options: UseEmojiPickerOptions) {
   const {
     customEmoji,
-    height,
     onEmojiClick,
     onSetEmojiPickerOpen,
-    onSetEmojiPickerDirection,
+    onSetEmojiPickerPosition,
   } = options;
 
   // State for mobile emoji drawer (separate from desktop picker)
@@ -54,15 +52,20 @@ export function useEmojiPicker(options: UseEmojiPickerOptions) {
     [onEmojiClick]
   );
 
-  // Open desktop emoji picker with direction calculation
+  // Open desktop emoji picker with fixed position calculation from DOMRect
   const openDesktopEmojiPicker = useCallback(
-    (messageId: string, clientY: number) => {
+    (messageId: string, rect: DOMRect) => {
       onSetEmojiPickerOpen(messageId);
-      onSetEmojiPickerDirection(
-        clientY / height > 0.5 ? 'upwards' : 'downwards'
-      );
+      const pickerHeight = 480;
+      const pickerWidth = 380;
+      const spaceBelow = window.innerHeight - rect.bottom;
+      const y = spaceBelow < pickerHeight + 16
+        ? rect.top - pickerHeight - 4   // flip upward — not enough room below
+        : rect.bottom + 4;              // open downward
+      const x = Math.max(8, Math.min(rect.left, window.innerWidth - pickerWidth - 8));
+      onSetEmojiPickerPosition({ x, y });
     },
-    [height, onSetEmojiPickerOpen, onSetEmojiPickerDirection]
+    [onSetEmojiPickerOpen, onSetEmojiPickerPosition]
   );
 
   // Open mobile emoji drawer
@@ -81,15 +84,12 @@ export function useEmojiPicker(options: UseEmojiPickerOptions) {
     setShowMobileEmojiDrawer(false);
   }, []);
 
-  // Handle user profile click that also sets emoji picker direction
+  // Handle user profile click
   const handleUserProfileClick = useCallback(
-    (clientY: number, onProfileClick: () => void) => {
+    (_clientY: number, onProfileClick: () => void) => {
       onProfileClick();
-      onSetEmojiPickerDirection(
-        clientY / height > 0.5 ? 'upwards' : 'downwards'
-      );
     },
-    [height, onSetEmojiPickerDirection]
+    []
   );
 
   return {
