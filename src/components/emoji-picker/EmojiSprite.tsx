@@ -14,9 +14,10 @@ interface EmojiSpriteProps {
 const EmojiSprite: React.FC<EmojiSpriteProps> = memo(({ sheetX, sheetY, size, label }) => {
   const displaySize = size ?? SPRITE_SHEET.displaySize;
   const scale = displaySize / SPRITE_SHEET.cellSize;
-  const bgSize = Math.round((SPRITE_SHEET.cols * SPRITE_SHEET.stride + SPRITE_SHEET.padding) * scale);
-  const posX = (sheetX * SPRITE_SHEET.stride + SPRITE_SHEET.padding) * scale;
-  const posY = (sheetY * SPRITE_SHEET.stride + SPRITE_SHEET.padding) * scale;
+  const bgW = Math.round((SPRITE_SHEET.cols * SPRITE_SHEET.stride + SPRITE_SHEET.padding) * scale);
+  const bgH = Math.round((SPRITE_SHEET.rows * SPRITE_SHEET.stride + SPRITE_SHEET.padding) * scale);
+  const posX = Math.round((sheetX * SPRITE_SHEET.stride + SPRITE_SHEET.padding) * scale);
+  const posY = Math.round((sheetY * SPRITE_SHEET.stride + SPRITE_SHEET.padding) * scale);
 
   return (
     <div
@@ -26,7 +27,7 @@ const EmojiSprite: React.FC<EmojiSpriteProps> = memo(({ sheetX, sheetY, size, la
         width: displaySize,
         height: displaySize,
         backgroundImage: `url(${SPRITE_SHEET.url})`,
-        backgroundSize: `${bgSize}px ${bgSize}px`,
+        backgroundSize: `${bgW}px ${bgH}px`,
         backgroundPosition: `-${posX}px -${posY}px`,
         backgroundRepeat: 'no-repeat',
       }}
