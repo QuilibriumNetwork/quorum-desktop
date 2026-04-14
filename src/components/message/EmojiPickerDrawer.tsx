@@ -2,12 +2,8 @@
 
 import React, { useState } from 'react';
 import { t } from '@lingui/core/macro';
-import EmojiPicker, {
-  SkinTonePickerLocation,
-  SuggestionMode,
-  Theme,
-} from 'emoji-picker-react';
-import { CustomEmoji } from 'emoji-picker-react/dist/config/customEmojiConfig';
+import { EmojiPicker } from '../emoji-picker';
+import type { CustomEmoji, EmojiData } from '../emoji-picker/types';
 import { MobileDrawer } from '../ui';
 import './EmojiPickerDrawer.scss';
 
@@ -43,7 +39,7 @@ const EmojiPickerDrawer: React.FC<EmojiPickerDrawerProps> = ({
   const hasStickers = stickers && stickers.length > 0 && onStickerClick;
   const [activeTab, setActiveTab] = useState<'emojis' | 'stickers'>('emojis');
 
-  const handleEmojiClick = (emojiData: any) => {
+  const handleEmojiClick = (emojiData: EmojiData) => {
     onEmojiClick(emojiData.emoji);
     onClose();
   };
@@ -84,13 +80,8 @@ const EmojiPickerDrawer: React.FC<EmojiPickerDrawerProps> = ({
           <EmojiPicker
             width="100%"
             height={hasStickers ? 540 : 600}
-            suggestedEmojisMode={SuggestionMode.FREQUENT}
             customEmojis={customEmojis}
-            getEmojiUrl={(unified) => '/twitter/64/' + unified + '.png'}
-            skinTonePickerLocation={SkinTonePickerLocation.PREVIEW}
-            theme={Theme.DARK}
             onEmojiClick={handleEmojiClick}
-            lazyLoadEmojis={true}
           />
         </div>
       )}

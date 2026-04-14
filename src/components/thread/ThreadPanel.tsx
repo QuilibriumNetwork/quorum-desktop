@@ -10,15 +10,12 @@ import { useUpdateThreadReadTime } from '../../hooks/business/conversations/useU
 import { useThreadSettingsModal } from '../context/ThreadSettingsModalProvider';
 import { useMobile } from '../context/MobileProvider';
 import { useResponsiveLayoutContext } from '../context/ResponsiveLayoutProvider';
-import {
-  SkinTonePickerLocation,
-  SuggestionMode,
-  Theme,
-} from 'emoji-picker-react';
-import type { CustomEmoji } from 'emoji-picker-react/dist/config/customEmojiConfig';
+import type { CustomEmoji, EmojiData } from '../emoji-picker/types';
 import './ThreadPanel.scss';
 
-const LazyEmojiPicker = React.lazy(() => import('emoji-picker-react'));
+const LazyEmojiPicker = React.lazy(() =>
+  import('../emoji-picker/EmojiPicker').then((m) => ({ default: m.default }))
+);
 
 const THREAD_TITLE_MAX_CHARS = 100;
 
@@ -504,13 +501,8 @@ export const ThreadPanel: React.FC = () => {
                     <LazyEmojiPicker
                       width={300}
                       height={358}
-                      suggestedEmojisMode={SuggestionMode.FREQUENT}
                       customEmojis={customEmojis}
-                      getEmojiUrl={(unified) => '/twitter/64/' + unified + '.png'}
-                      skinTonePickerLocation={SkinTonePickerLocation.PREVIEW}
-                      theme={Theme.DARK}
-                      onEmojiClick={handleComposerEmojiClick}
-                      lazyLoadEmojis={true}
+                      onEmojiClick={(e: EmojiData) => handleComposerEmojiClick(e)}
                     />
                   </Suspense>
                 </div>

@@ -44,14 +44,12 @@ import {
 } from '../primitives';
 import { BookmarksPanel } from '../bookmarks/BookmarksPanel';
 import { useMobile } from '../context/MobileProvider';
-import {
-  SkinTonePickerLocation,
-  SuggestionMode,
-  Theme,
-} from 'emoji-picker-react';
+import type { EmojiData } from '../emoji-picker/types';
 
 // Lazy-load EmojiPicker to avoid bundling on every DM init
-const LazyEmojiPicker = React.lazy(() => import('emoji-picker-react'));
+const LazyEmojiPicker = React.lazy(() =>
+  import('../emoji-picker/EmojiPicker').then((m) => ({ default: m.default }))
+);
 
 const DirectMessage: React.FC<{}> = () => {
   const { isMobile, isTablet, toggleLeftSidebar, navMenuOpen, toggleNavMenu } =
@@ -957,13 +955,7 @@ const DirectMessage: React.FC<{}> = () => {
                       <LazyEmojiPicker
                         width={300}
                         height={400}
-                        suggestedEmojisMode={SuggestionMode.FREQUENT}
-                        customEmojis={[]}
-                        getEmojiUrl={(unified) => '/twitter/64/' + unified + '.png'}
-                        skinTonePickerLocation={SkinTonePickerLocation.PREVIEW}
-                        theme={Theme.DARK}
-                        onEmojiClick={handleComposerEmojiClick}
-                        lazyLoadEmojis={true}
+                        onEmojiClick={(e: EmojiData) => handleComposerEmojiClick(e)}
                       />
                     </Suspense>
                   </div>

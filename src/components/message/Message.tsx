@@ -11,11 +11,8 @@ import type {
   Sticker,
   Channel,
 } from '@quilibrium/quorum-shared';
-import EmojiPicker, {
-  SkinTonePickerLocation,
-  SuggestionMode,
-  Theme,
-} from 'emoji-picker-react';
+import { EmojiPicker } from '../emoji-picker';
+import type { EmojiData } from '../emoji-picker/types';
 import UserProfile from '../user/UserProfile';
 import { SpaceTag } from '../space/SpaceTag';
 import { useParams } from 'react-router';
@@ -681,17 +678,8 @@ export const Message = React.memo(
                   }
                 >
                   <EmojiPicker
-                    suggestedEmojisMode={SuggestionMode.FREQUENT}
                     customEmojis={emojiPicker.customEmojis}
-                    getEmojiUrl={(unified) => {
-                      return '/twitter/64/' + unified + '.png';
-                    }}
-                    skinTonePickerLocation={SkinTonePickerLocation.PREVIEW}
-                    theme={Theme.DARK}
-                    onEmojiClick={(e) => {
-                      emojiPicker.handleDesktopEmojiClick(e.emoji);
-                    }}
-                    lazyLoadEmojis={true}
+                    onEmojiClick={(e: EmojiData) => emojiPicker.handleDesktopEmojiClick(e.emoji)}
                   />
                 </div>
               )}
@@ -708,18 +696,11 @@ export const Message = React.memo(
                     }}
                   >
                     <EmojiPicker
-                      suggestedEmojisMode={SuggestionMode.FREQUENT}
                       customEmojis={emojiPicker.customEmojis}
-                      getEmojiUrl={(unified) => {
-                        return '/twitter/64/' + unified + '.png';
-                      }}
-                      skinTonePickerLocation={SkinTonePickerLocation.PREVIEW}
-                      theme={Theme.DARK}
-                      onEmojiClick={(e) => {
+                      onEmojiClick={(e: EmojiData) => {
                         emojiPicker.handleDesktopEmojiClick(e.emoji);
                         setEmojiPickerPosition(null);
                       }}
-                      lazyLoadEmojis={true}
                     />
                   </div>
                 </Portal>
@@ -735,19 +716,8 @@ export const Message = React.memo(
                     hideClose={false}
                   >
                     <EmojiPicker
-                      width="100%"
-                      height={300}
-                      suggestedEmojisMode={SuggestionMode.FREQUENT}
                       customEmojis={emojiPicker.customEmojis}
-                      getEmojiUrl={(unified) => {
-                        return '/twitter/64/' + unified + '.png';
-                      }}
-                      skinTonePickerLocation={SkinTonePickerLocation.PREVIEW}
-                      theme={Theme.DARK}
-                      onEmojiClick={(e) => {
-                        emojiPicker.handleMobileEmojiClick(e.emoji);
-                      }}
-                      lazyLoadEmojis={true}
+                      onEmojiClick={(e: EmojiData) => emojiPicker.handleMobileEmojiClick(e.emoji)}
                     />
                   </Modal>
                 )}

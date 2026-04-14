@@ -1,6 +1,6 @@
 import { useState, useCallback, useMemo } from 'react';
 import type { Emoji } from '@quilibrium/quorum-shared';
-import { CustomEmoji } from 'emoji-picker-react/dist/config/customEmojiConfig';
+import type { CustomEmoji } from '../../../components/emoji-picker/types';
 
 interface UseEmojiPickerOptions {
   customEmoji?: Emoji[];

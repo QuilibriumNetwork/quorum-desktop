@@ -5,7 +5,7 @@ import React, {
   ReactNode,
   useState,
 } from 'react';
-import type { CustomEmoji } from 'emoji-picker-react/dist/config/customEmojiConfig';
+import type { CustomEmoji } from '../emoji-picker/types';
 import MessageActionsDrawer from '../message/MessageActionsDrawer';
 import EmojiPickerDrawer from '../message/EmojiPickerDrawer';
 

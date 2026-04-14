@@ -44,15 +44,12 @@ import { useUserProfileModal } from '../../hooks/business/ui/useUserProfileModal
 import { UserAvatar } from '../user/UserAvatar';
 import { getUserRoles, hasPermission } from '@quilibrium/quorum-shared';
 import { useMobile } from '../context/MobileProvider';
-import type { CustomEmoji } from 'emoji-picker-react/dist/config/customEmojiConfig';
-import {
-  SkinTonePickerLocation,
-  SuggestionMode,
-  Theme,
-} from 'emoji-picker-react';
+import type { CustomEmoji, EmojiData } from '../emoji-picker/types';
 
 // Lazy-load EmojiPicker to avoid bundling on every channel init
-const LazyEmojiPicker = React.lazy(() => import('emoji-picker-react'));
+const LazyEmojiPicker = React.lazy(() =>
+  import('../emoji-picker/EmojiPicker').then((m) => ({ default: m.default }))
+);
 
 /** Read --sidebar-right-width from :root (defined in _base.scss). Fallback 260px. */
 function getSidebarRightWidth(): number {
@@ -1791,13 +1788,8 @@ const Channel: React.FC<ChannelProps> = ({
                     <LazyEmojiPicker
                       width={300}
                       height={358}
-                      suggestedEmojisMode={SuggestionMode.FREQUENT}
                       customEmojis={customEmojis}
-                      getEmojiUrl={(unified) => '/twitter/64/' + unified + '.png'}
-                      skinTonePickerLocation={SkinTonePickerLocation.PREVIEW}
-                      theme={Theme.DARK}
-                      onEmojiClick={handleComposerEmojiClick}
-                      lazyLoadEmojis={true}
+                      onEmojiClick={(e: EmojiData) => handleComposerEmojiClick(e)}
                     />
                   </Suspense>
                 </div>
