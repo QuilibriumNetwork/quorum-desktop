@@ -952,8 +952,6 @@ const DirectMessage: React.FC<{}> = () => {
                   <div className="stickers-panel stickers-panel--emoji-only">
                     <Suspense fallback={<div className="emoji-picker-loading" />}>
                       <LazyEmojiPicker
-                        width={300}
-                        height={400}
                         onEmojiClick={(e: EmojiData) => handleComposerEmojiClick(e.emoji)}
                       />
                     </Suspense>

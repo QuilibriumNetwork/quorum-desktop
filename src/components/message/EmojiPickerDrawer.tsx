@@ -78,8 +78,6 @@ const EmojiPickerDrawer: React.FC<EmojiPickerDrawerProps> = ({
       {(!hasStickers || activeTab === 'emojis') && (
         <div className="emoji-picker-drawer__content">
           <EmojiPicker
-            width="100%"
-            height={hasStickers ? 540 : 600}
             customEmojis={customEmojis}
             onEmojiClick={handleEmojiClick}
           />

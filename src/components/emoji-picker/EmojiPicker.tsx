@@ -21,8 +21,6 @@ import './EmojiPicker.scss';
 interface EmojiPickerProps {
   onEmojiClick: (emoji: EmojiData) => void;
   customEmojis?: CustomEmoji[];
-  width?: number | string;
-  height?: number | string;
 }
 
 const DEFAULT_COLUMNS = 8;
@@ -41,13 +39,14 @@ const SKIN_TONE_LABELS: Record<string, string> = {
 const EmojiPicker: React.FC<EmojiPickerProps> = ({
   onEmojiClick,
   customEmojis = [],
-  width = 300,
-  height = 400,
 }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [debouncedQuery, setDebouncedQuery] = useState('');
   const [activeCategory, setActiveCategory] = useState<string>('');
   const [columnsCount, setColumnsCount] = useState(DEFAULT_COLUMNS);
+  const [hoveredEmoji, setHoveredEmoji] = useState<{ shortName: string; sheetX: number; sheetY: number; isCustom?: boolean; customImgUrl?: string } | null>(null);
+  const [skinPopoverOpen, setSkinPopoverOpen] = useState(false);
+  const skinTriggerRef = useRef<HTMLDivElement>(null);
 
   const virtuosoRef = useRef<VirtuosoHandle>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -102,6 +101,17 @@ const EmojiPicker: React.FC<EmojiPickerProps> = ({
   useEffect(() => {
     return () => { if (searchTimeoutRef.current) clearTimeout(searchTimeoutRef.current); };
   }, []);
+
+  useEffect(() => {
+    if (!skinPopoverOpen) return;
+    const handleClickOutside = (e: MouseEvent) => {
+      if (skinTriggerRef.current && !skinTriggerRef.current.contains(e.target as Node)) {
+        setSkinPopoverOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [skinPopoverOpen]);
 
   // Handle emoji click
   const handleEmojiClick = useCallback(
@@ -192,6 +202,8 @@ const EmojiPicker: React.FC<EmojiPickerProps> = ({
                 type="unstyled"
                 className="emoji-picker__emoji-btn"
                 onClick={() => handleCustomEmojiClick(ce)}
+                onMouseEnter={() => setHoveredEmoji({ shortName: `:${ce.names[0]}:`, sheetX: -1, sheetY: -1, isCustom: true, customImgUrl: ce.imgUrl })}
+                onMouseLeave={() => setHoveredEmoji(null)}
                 title={ce.names[0]}
               >
                 <img src={ce.imgUrl} alt={ce.names[0]} className="emoji-picker__custom-emoji-img" />
@@ -219,6 +231,8 @@ const EmojiPicker: React.FC<EmojiPickerProps> = ({
                 type="unstyled"
                 className="emoji-picker__emoji-btn"
                 onClick={() => handleEmojiClick(item)}
+                onMouseEnter={() => setHoveredEmoji({ shortName: `:${item.shortName}:`, sheetX, sheetY })}
+                onMouseLeave={() => setHoveredEmoji(null)}
                 title={item.shortName}
               >
                 <EmojiSprite sheetX={sheetX} sheetY={sheetY} label={item.shortName} />
@@ -231,69 +245,116 @@ const EmojiPicker: React.FC<EmojiPickerProps> = ({
     [displayRows, skinTone, handleEmojiClick, handleCustomEmojiClick]
   );
 
+  const SKIN_TONE_COLORS: Record<string, string> = {
+    default: '#FFCC22',
+    '1F3FB': '#F7D7C4',
+    '1F3FC': '#E8B88A',
+    '1F3FD': '#C68642',
+    '1F3FE': '#8D5524',
+    '1F3FF': '#4A2912',
+  };
+
+  const currentToneColor = SKIN_TONE_COLORS[skinTone ?? 'default'];
+
   return (
-    <div className="emoji-picker" style={{ width, height }} ref={containerRef}>
-      {/* Search */}
-      <div className="emoji-picker__search">
-        <ListSearchInput
-          value={searchQuery}
-          onChange={handleSearchChange}
-          placeholder={t`Search emoji...`}
-          variant="bordered"
-        />
+    <div className="emoji-picker" ref={containerRef}>
+      {/* Top bar: search + skin tone */}
+      <div className="emoji-picker__topbar">
+        <div className="emoji-picker__search-wrap">
+          <ListSearchInput
+            value={searchQuery}
+            onChange={handleSearchChange}
+            placeholder={t`Search emoji...`}
+            variant="bordered"
+          />
+        </div>
+
+        {/* Skin tone trigger */}
+        <div className="emoji-picker__skin-trigger" ref={skinTriggerRef}>
+          <div
+            className={`emoji-picker__skin-dot${skinPopoverOpen ? ' emoji-picker__skin-dot--open' : ''}`}
+            style={{ backgroundColor: currentToneColor }}
+            onClick={() => setSkinPopoverOpen((v) => !v)}
+            role="button"
+            aria-label={t`Select skin tone`}
+            aria-expanded={skinPopoverOpen}
+          />
+
+          {skinPopoverOpen && (
+            <div className="emoji-picker__skin-popover">
+              {SKIN_TONES.map((tone) => (
+                <div
+                  key={tone ?? 'default'}
+                  className={`emoji-picker__skin-dot${skinTone === tone ? ' emoji-picker__skin-dot--active' : ''}`}
+                  style={{ backgroundColor: SKIN_TONE_COLORS[tone ?? 'default'] }}
+                  onClick={() => { setSkinTone(tone); setSkinPopoverOpen(false); }}
+                  role="button"
+                  aria-label={SKIN_TONE_LABELS[tone ?? 'default']}
+                />
+              ))}
+            </div>
+          )}
+        </div>
       </div>
 
-      {/* Header: category tabs + skin tone dots */}
-      {!isSearching && (
-        <div className="emoji-picker__header">
-          {availableCategories.map((cat) => (
-            <Button
-              key={cat}
-              type="unstyled"
-              className={`emoji-picker__category-btn${activeCategory === cat ? ' emoji-picker__category-btn--active' : ''}`}
-              onClick={() => handleCategoryClick(cat)}
-              title={cat}
-            >
-              {CATEGORY_ICONS[cat] ? (
-                <EmojiSprite
-                  sheetX={CATEGORY_ICONS[cat].sheetX}
-                  sheetY={CATEGORY_ICONS[cat].sheetY}
-                  size={18}
-                />
-              ) : (
-                <span style={{ fontSize: '1.125rem' }}>📁</span>
-              )}
-            </Button>
-          ))}
-
-          {/* Skin tone selector */}
-          <div className="emoji-picker__skin-tones">
-            {SKIN_TONES.map((tone) => (
+      {/* Body: sidebar + grid */}
+      <div className="emoji-picker__body">
+        {/* Left sidebar — hidden during search */}
+        {!isSearching && (
+          <div className="emoji-picker__sidebar">
+            {availableCategories.map((cat) => (
               <Button
-                key={tone ?? 'default'}
+                key={cat}
                 type="unstyled"
-                className={`emoji-picker__skin-tone-dot${skinTone === tone ? ' emoji-picker__skin-tone-dot--active' : ''}`}
-                onClick={() => setSkinTone(tone)}
-                aria-label={SKIN_TONE_LABELS[tone ?? 'default']}
-                data-tone={tone ?? 'default'}
-              />
+                className={`emoji-picker__category-btn${activeCategory === cat ? ' emoji-picker__category-btn--active' : ''}`}
+                onClick={() => handleCategoryClick(cat)}
+                title={cat}
+              >
+                {CATEGORY_ICONS[cat] ? (
+                  <EmojiSprite
+                    sheetX={CATEGORY_ICONS[cat].sheetX}
+                    sheetY={CATEGORY_ICONS[cat].sheetY}
+                    size={18}
+                  />
+                ) : (
+                  <span style={{ fontSize: '1.125rem' }}>📁</span>
+                )}
+              </Button>
             ))}
           </div>
-        </div>
-      )}
+        )}
 
-      {/* Emoji grid */}
-      <div className="emoji-picker__grid-container">
-        {displayRows.length === 0 && isSearching ? (
-          <div className="emoji-picker__no-results">{t`No emoji found`}</div>
+        {/* Emoji grid */}
+        <div className="emoji-picker__grid-container">
+          {displayRows.length === 0 && isSearching ? (
+            <div className="emoji-picker__no-results">{t`No emoji found`}</div>
+          ) : (
+            <Virtuoso
+              ref={virtuosoRef}
+              totalCount={displayRows.length}
+              overscan={200}
+              itemContent={renderRow}
+              rangeChanged={handleRangeChanged}
+            />
+          )}
+        </div>
+      </div>
+
+      {/* Bottom preview bar */}
+      <div className="emoji-picker__preview">
+        {hoveredEmoji ? (
+          <>
+            <div className="emoji-picker__preview-sprite">
+              {hoveredEmoji.isCustom && hoveredEmoji.customImgUrl ? (
+                <img src={hoveredEmoji.customImgUrl} alt={hoveredEmoji.shortName} style={{ width: 32, height: 32, objectFit: 'contain' }} />
+              ) : (
+                <EmojiSprite sheetX={hoveredEmoji.sheetX} sheetY={hoveredEmoji.sheetY} size={32} label={hoveredEmoji.shortName} />
+              )}
+            </div>
+            <span className="emoji-picker__preview-name">{hoveredEmoji.shortName}</span>
+          </>
         ) : (
-          <Virtuoso
-            ref={virtuosoRef}
-            totalCount={displayRows.length}
-            overscan={200}
-            itemContent={renderRow}
-            rangeChanged={handleRangeChanged}
-          />
+          <span className="emoji-picker__preview-empty">{t`Hover an emoji to preview`}</span>
         )}
       </div>
     </div>

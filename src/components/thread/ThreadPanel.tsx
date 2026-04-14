@@ -498,8 +498,6 @@ export const ThreadPanel: React.FC = () => {
                 <div className="stickers-panel-emoji-content">
                   <Suspense fallback={<div className="emoji-picker-loading" />}>
                     <LazyEmojiPicker
-                      width={300}
-                      height={358}
                       customEmojis={customEmojis}
                       onEmojiClick={(e: EmojiData) => handleComposerEmojiClick(e.emoji)}
                     />
