@@ -10,6 +10,7 @@ import {
   buildSearchRows,
   unifiedToEmoji,
   getEmojiImageUrl,
+  getRockHandSprite,
 } from './emojiData';
 import { useSkinTone, SKIN_TONES } from './useSkinTone';
 import { useFrequentlyUsed } from './useFrequentlyUsed';
@@ -37,14 +38,6 @@ const SKIN_TONE_LABELS: Record<string, string> = {
   '1F3FF': 'Dark skin tone',
 };
 
-const SKIN_TONE_COLORS: Record<string, string> = {
-  default: '#FFCC22',
-  '1F3FB': '#F7D7C4',
-  '1F3FC': '#E8B88A',
-  '1F3FD': '#C68642',
-  '1F3FE': '#8D5524',
-  '1F3FF': '#4A2912',
-};
 
 const EmojiPicker: React.FC<EmojiPickerProps> = ({
   onEmojiClick,
@@ -263,7 +256,6 @@ const EmojiPicker: React.FC<EmojiPickerProps> = ({
     [displayRows, skinTone, handleEmojiClick, handleCustomEmojiClick]
   );
 
-  const currentToneColor = SKIN_TONE_COLORS[skinTone ?? 'default'];
 
   return (
     <div className="emoji-picker" ref={containerRef}>
@@ -281,27 +273,37 @@ const EmojiPicker: React.FC<EmojiPickerProps> = ({
         {/* Skin tone trigger */}
         <div className="emoji-picker__skin-trigger" ref={skinTriggerRef}>
           <div
-            className={`emoji-picker__skin-dot${skinPopoverOpen ? ' emoji-picker__skin-dot--open' : ''}`}
-            style={{ backgroundColor: currentToneColor }}
+            className={`emoji-picker__skin-rock${skinPopoverOpen ? ' emoji-picker__skin-rock--open' : ''}`}
             onClick={() => setSkinPopoverOpen((v) => !v)}
             role="button"
             tabIndex={0}
             aria-label={t`Select skin tone`}
             aria-expanded={skinPopoverOpen}
-          />
+          >
+            <EmojiSprite
+              {...getRockHandSprite(skinTone)}
+              size={24}
+              label="rock on hand"
+            />
+          </div>
 
           {skinPopoverOpen && (
             <div className="emoji-picker__skin-popover">
               {SKIN_TONES.map((tone) => (
                 <div
                   key={tone ?? 'default'}
-                  className={`emoji-picker__skin-dot${skinTone === tone ? ' emoji-picker__skin-dot--active' : ''}`}
-                  style={{ backgroundColor: SKIN_TONE_COLORS[tone ?? 'default'] }}
+                  className={`emoji-picker__skin-rock${skinTone === tone ? ' emoji-picker__skin-rock--active' : ''}`}
                   onClick={() => { setSkinTone(tone); setSkinPopoverOpen(false); }}
                   role="button"
                   tabIndex={0}
                   aria-label={SKIN_TONE_LABELS[tone ?? 'default']}
-                />
+                >
+                  <EmojiSprite
+                    {...getRockHandSprite(tone)}
+                    size={24}
+                    label={SKIN_TONE_LABELS[tone ?? 'default']}
+                  />
+                </div>
               ))}
             </div>
           )}
