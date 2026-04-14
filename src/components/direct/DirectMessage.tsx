@@ -955,7 +955,7 @@ const DirectMessage: React.FC<{}> = () => {
                       <LazyEmojiPicker
                         width={300}
                         height={400}
-                        onEmojiClick={(e: EmojiData) => handleComposerEmojiClick(e)}
+                        onEmojiClick={(e: EmojiData) => handleComposerEmojiClick(e.emoji)}
                       />
                     </Suspense>
                   </div>

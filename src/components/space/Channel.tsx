@@ -1789,7 +1789,7 @@ const Channel: React.FC<ChannelProps> = ({
                       width={300}
                       height={358}
                       customEmojis={customEmojis}
-                      onEmojiClick={(e: EmojiData) => handleComposerEmojiClick(e)}
+                      onEmojiClick={(e: EmojiData) => handleComposerEmojiClick(e.emoji)}
                     />
                   </Suspense>
                 </div>
