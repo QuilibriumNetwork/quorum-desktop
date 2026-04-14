@@ -422,11 +422,11 @@ img.twemoji {
   pointer-events: none;
 }
 
-// Panel content — size driven by the emoji picker's own clamp() dimensions
+// Panel content — width matches emoji picker (380px), height wraps content
 .stickers-panel {
   display: flex;
   flex-direction: column;
-  width: fit-content;
+  width: clamp(280px, 92vw, 380px); // matches .emoji-picker width
   height: fit-content;
   border: $border solid var(--color-border-default);
   border-radius: $rounded-lg;
