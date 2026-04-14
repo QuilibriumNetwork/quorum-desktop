@@ -1,5 +1,5 @@
 // src/components/emoji-picker/useFrequentlyUsed.ts
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 
 const STORAGE_KEY = 'emoji-picker-frequently-used';
 const LEGACY_KEY = 'epr_suggested'; // emoji-picker-react's key
@@ -79,7 +79,7 @@ export function useFrequentlyUsed() {
     });
   }, []);
 
-  const frequentUnifieds = getTopFrequent(frequentMap);
+  const frequentUnifieds = useMemo(() => getTopFrequent(frequentMap), [frequentMap]);
 
   return { frequentUnifieds, recordUsage };
 }
