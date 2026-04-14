@@ -256,7 +256,6 @@ const EmojiPicker: React.FC<EmojiPickerProps> = ({
     [displayRows, skinTone, handleEmojiClick, handleCustomEmojiClick]
   );
 
-
   return (
     <div className="emoji-picker" ref={containerRef}>
       {/* Top bar: search + skin tone */}
@@ -283,7 +282,7 @@ const EmojiPicker: React.FC<EmojiPickerProps> = ({
             <EmojiSprite
               {...getRockHandSprite(skinTone)}
               size={24}
-              label="rock on hand"
+              label={SKIN_TONE_LABELS[skinTone ?? 'default']}
             />
           </div>
 
