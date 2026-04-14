@@ -53,7 +53,7 @@ export function getEmojiImageUrl(unified: string): string {
   return `/twitter/64/${unified.toLowerCase()}.png`;
 }
 
-/** Sheet coordinates for 🤘 (1F918) at the given skin tone (or default) */
+/** Sheet coordinates for 🤟 (1F91F, "I love you" hand sign) at the given skin tone (or default) */
 export function getRockHandSprite(skinTone?: string | null): { sheetX: number; sheetY: number } {
   // cachedRockHand is populated inside buildEmojiIndex() — same pattern as CATEGORY_ICONS
   if (!cachedRockHand) buildEmojiIndex();
@@ -107,8 +107,8 @@ function buildEmojiIndex(): EmojiItem[] {
     }
   }
 
-  // Cache rock-hand emoji for getRockHandSprite (unified is uppercase in emoji-datasource-twitter)
-  cachedRockHand = cachedEmojis.find((e) => e.unified === '1F918') ?? null;
+  // Cache "I love you" hand emoji for getRockHandSprite (unified is uppercase in emoji-datasource-twitter)
+  cachedRockHand = cachedEmojis.find((e) => e.unified === '1F91F') ?? null;
 
   return cachedEmojis;
 }
