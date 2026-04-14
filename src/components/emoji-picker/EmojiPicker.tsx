@@ -214,7 +214,7 @@ const EmojiPicker: React.FC<EmojiPickerProps> = ({
                 onClick={() => handleCustomEmojiClick(ce)}
                 onMouseEnter={() => setHoveredEmoji({ shortName: `:${ce.names[0]}:`, sheetX: -1, sheetY: -1, isCustom: true, customImgUrl: ce.imgUrl })}
                 onMouseLeave={() => setHoveredEmoji(null)}
-                title={ce.names[0]}
+                aria-label={ce.names[0]}
               >
                 <img src={ce.imgUrl} alt={ce.names[0]} className="emoji-picker__custom-emoji-img" />
               </button>
@@ -243,7 +243,7 @@ const EmojiPicker: React.FC<EmojiPickerProps> = ({
                 onClick={() => handleEmojiClick(item)}
                 onMouseEnter={() => setHoveredEmoji({ shortName: `:${item.shortName}:`, sheetX, sheetY })}
                 onMouseLeave={() => setHoveredEmoji(null)}
-                title={item.shortName}
+                aria-label={item.shortName}
               >
                 <EmojiSprite sheetX={sheetX} sheetY={sheetY} label={item.shortName} />
               </button>
@@ -311,7 +311,7 @@ const EmojiPicker: React.FC<EmojiPickerProps> = ({
                 type="button"
                 className={`emoji-picker__category-btn${activeCategory === cat ? ' emoji-picker__category-btn--active' : ''}`}
                 onClick={() => handleCategoryClick(cat)}
-                title={cat}
+                aria-label={cat}
               >
                 {CATEGORY_ICONS[cat] ? (
                   <EmojiSprite
@@ -327,38 +327,40 @@ const EmojiPicker: React.FC<EmojiPickerProps> = ({
           </div>
         )}
 
-        {/* Emoji grid */}
-        <div className="emoji-picker__grid-container">
-          {displayRows.length === 0 && isSearching ? (
-            <div className="emoji-picker__no-results">{t`No emoji found`}</div>
-          ) : (
-            <Virtuoso
-              ref={virtuosoRef}
-              totalCount={displayRows.length}
-              overscan={200}
-              itemContent={renderRow}
-              rangeChanged={handleRangeChanged}
-            />
-          )}
-        </div>
-      </div>
+        {/* Grid + preview (column) — sidebar does not extend behind preview */}
+        <div className="emoji-picker__grid-col">
+          <div className="emoji-picker__grid-container">
+            {displayRows.length === 0 && isSearching ? (
+              <div className="emoji-picker__no-results">{t`No emoji found`}</div>
+            ) : (
+              <Virtuoso
+                ref={virtuosoRef}
+                totalCount={displayRows.length}
+                overscan={200}
+                itemContent={renderRow}
+                rangeChanged={handleRangeChanged}
+              />
+            )}
+          </div>
 
-      {/* Bottom preview bar */}
-      <div className="emoji-picker__preview">
-        {hoveredEmoji ? (
-          <>
-            <div className="emoji-picker__preview-sprite">
-              {hoveredEmoji.isCustom && hoveredEmoji.customImgUrl ? (
-                <img src={hoveredEmoji.customImgUrl} alt={hoveredEmoji.shortName} style={{ width: 32, height: 32, objectFit: 'contain' }} />
-              ) : (
-                <EmojiSprite sheetX={hoveredEmoji.sheetX} sheetY={hoveredEmoji.sheetY} size={32} label={hoveredEmoji.shortName} />
-              )}
-            </div>
-            <span className="emoji-picker__preview-name">{hoveredEmoji.shortName}</span>
-          </>
-        ) : (
-          <span className="emoji-picker__preview-empty">{t`Hover an emoji to preview`}</span>
-        )}
+          {/* Preview bar — right of sidebar only */}
+          <div className="emoji-picker__preview">
+            {hoveredEmoji ? (
+              <>
+                <div className="emoji-picker__preview-sprite">
+                  {hoveredEmoji.isCustom && hoveredEmoji.customImgUrl ? (
+                    <img src={hoveredEmoji.customImgUrl} alt={hoveredEmoji.shortName} style={{ width: 32, height: 32, objectFit: 'contain' }} />
+                  ) : (
+                    <EmojiSprite sheetX={hoveredEmoji.sheetX} sheetY={hoveredEmoji.sheetY} size={32} label={hoveredEmoji.shortName} />
+                  )}
+                </div>
+                <span className="emoji-picker__preview-name">{hoveredEmoji.shortName}</span>
+              </>
+            ) : (
+              <span className="emoji-picker__preview-empty">{t`Hover an emoji to preview`}</span>
+            )}
+          </div>
+        </div>
       </div>
     </div>
   );
