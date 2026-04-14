@@ -59,7 +59,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Client-Side Image Compression & Thumbnail System](docs/features/messages/client-side-image-compression.md)
 - [DM Conversation List Previews](docs/features/messages/dm-conversation-list-previews.md)
 - [DM Receipts (Delivery & Read)](docs/features/messages/dm-receipts.md)
-- [Emoji Picker React - Styling & Customization](docs/features/messages/emoji-picker-react-customization.md)
+- [Custom Emoji Picker](docs/features/messages/custom-emoji-picker.md)
 - [Hash Navigation to Old Messages](docs/features/messages/hash-navigation-to-old-messages.md)
 - [Markdown Renderer](docs/features/messages/markdown-renderer.md)
 - [Markdown Stripping](docs/features/messages/markdown-stripping.md)
@@ -479,7 +479,7 @@ This is the main index for all documentation, bug reports, and task management.
 - [Comprehensive WCAG Accessibility Audit Report](reports/accessibility-wcag-audit_2026-02-10.md)
 - [Cryptographic Code Best Practices: Abstraction vs Duplication](reports/cryptographic-code-best-practices_2025-12-20.md)
 - [dnd-kit Touch Drag-and-Drop Best Practices Research](reports/dnd-kit-touch-best-practices_2025-12-11.md)
-- [Emoji Picker Library Comparison: emoji-picker-react vs emoji-mart](reports/emoji-picker-library-comparison_2026-02-24.md)
+- [Emoji Picker Library Comparison: emoji-picker-react vs emoji-mart](reports/.archived/emoji-picker-library-comparison_2026-02-24.md) *(archived — superseded by custom picker)*
 - [File Size & Service Extraction Best Practices](reports/file-size-best-practices_2025-12-20.md)
 - [Mention Pills Feature Research & Validation](reports/mention-pills-research.md)
 - [Primitives Gap Analysis: quorum-shared Migration](reports/primitives-gap-analysis-quorum-shared_2026-01-14.md)
