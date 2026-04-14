@@ -33,48 +33,53 @@
   }
 }
 
-// ── Skin tone trigger (single dot, right of search) ───────────────────────
+// ── Skin tone trigger (hand emoji, right of search) ───────────────────────
 .emoji-picker__skin-trigger {
   position: relative;
   flex-shrink: 0;
 }
 
-.emoji-picker__skin-dot {
-  width: $s-6;
-  height: $s-6;
-  border-radius: $rounded-full;
+.emoji-picker__skin-rock {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: $s-8;
+  height: $s-8;
+  border-radius: $rounded-md;
   border: 2px solid transparent;
   cursor: pointer;
   transition: border-color $duration-150 ease-in-out,
-              transform $duration-150 ease-in-out;
+              transform $duration-150 ease-in-out,
+              background-color $duration-150 ease-in-out;
 
   &:hover {
-    transform: scale(1.15);
+    transform: scale(1.1);
+    background-color: var(--surface-5);
   }
 
   &--open {
     border-color: var(--accent);
   }
+
+  &--active {
+    border-color: var(--accent);
+  }
 }
 
-// Floating popover with 6 tone dots — CHANGED: vertical column layout
+// Floating popover — vertical column of hand emoji per tone
 .emoji-picker__skin-popover {
   position: absolute;
   top: calc(100% + #{$s-1-5});
   right: 0;
   display: flex;
-  flex-direction: column; // CHANGED: was row, now vertical stack
-  gap: $s-1-5;
-  padding: $s-2 $s-1-5;
+  flex-direction: column;
+  gap: $s-1;
+  padding: $s-1-5;
   background: var(--color-bg-modal);
   border: 1px solid var(--color-border-default);
   border-radius: $rounded-lg;
   box-shadow: $shadow-lg;
   z-index: 10;
-}
-
-.emoji-picker__skin-popover .emoji-picker__skin-dot--active {
-  border-color: var(--accent);
 }
 
 // ── Body: sidebar + grid ───────────────────────────────────────────────────
