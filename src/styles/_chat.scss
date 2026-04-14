@@ -435,14 +435,6 @@ img.twemoji {
   pointer-events: auto;
   overflow: hidden;
 
-  // Emoji-only variant (DMs) — no tabs header
-  &--emoji-only {
-    .EmojiPickerReact {
-      border: none !important;
-      border-radius: 0 !important;
-      --epr-category-navigation-button-size: 28px !important;
-    }
-  }
 }
 
 // Tab navigation bar
@@ -480,14 +472,6 @@ img.twemoji {
   flex: 1;
   overflow: hidden;
 
-  // Remove emoji picker's own border/shadow since the parent panel provides it
-  // Shrink category nav icons to fit the 300px-wide panel (global is 38px for wider pickers)
-  .EmojiPickerReact {
-    border: none !important;
-    border-radius: 0 !important;
-    box-shadow: none !important;
-    --epr-category-navigation-button-size: 28px !important;
-  }
 }
 
 // Sticker panel header (legacy — kept for backwards compat, replaced by tabs in Channel)
