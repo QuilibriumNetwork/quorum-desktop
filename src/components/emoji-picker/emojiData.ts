@@ -52,6 +52,17 @@ export function getEmojiImageUrl(unified: string): string {
   return `/twitter/64/${unified.toLowerCase()}.png`;
 }
 
+/** Sheet coordinates for 🤘 (1F918) at the given skin tone (or default) */
+export function getRockHandSprite(skinTone?: string | null): { sheetX: number; sheetY: number } {
+  const emojis = buildEmojiIndex();
+  const rock = emojis.find((e) => e.unified === '1F918');
+  if (!rock) return { sheetX: 0, sheetY: 0 };
+  if (skinTone && rock.skinVariations?.[skinTone]) {
+    return rock.skinVariations[skinTone];
+  }
+  return { sheetX: rock.sheetX, sheetY: rock.sheetY };
+}
+
 /** Parse and index all emojis. Called once on first picker open. */
 function buildEmojiIndex(): EmojiItem[] {
   if (cachedEmojis) return cachedEmojis;
