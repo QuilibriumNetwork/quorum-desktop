@@ -62,8 +62,8 @@ export function useEmojiPicker(options: UseEmojiPickerOptions) {
       const pickerWidth = 380;
       const spaceBelow = window.innerHeight - rect.bottom;
       const y = spaceBelow < pickerHeight + 16
-        ? rect.top - pickerHeight - 4   // flip upward — not enough room below
-        : rect.bottom + 4;              // open downward
+        ? Math.max(8, rect.top - pickerHeight - 4) // flip upward, clamp to viewport top
+        : rect.bottom + 4;                          // open downward
       const x = Math.max(8, Math.min(rect.left, window.innerWidth - pickerWidth - 8));
       onSetEmojiPickerPosition({ x, y });
     },
