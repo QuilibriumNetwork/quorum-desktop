@@ -36,6 +36,15 @@ const SKIN_TONE_LABELS: Record<string, string> = {
   '1F3FF': 'Dark skin tone',
 };
 
+const SKIN_TONE_COLORS: Record<string, string> = {
+  default: '#FFCC22',
+  '1F3FB': '#F7D7C4',
+  '1F3FC': '#E8B88A',
+  '1F3FD': '#C68642',
+  '1F3FE': '#8D5524',
+  '1F3FF': '#4A2912',
+};
+
 const EmojiPicker: React.FC<EmojiPickerProps> = ({
   onEmojiClick,
   customEmojis = [],
@@ -245,15 +254,6 @@ const EmojiPicker: React.FC<EmojiPickerProps> = ({
     [displayRows, skinTone, handleEmojiClick, handleCustomEmojiClick]
   );
 
-  const SKIN_TONE_COLORS: Record<string, string> = {
-    default: '#FFCC22',
-    '1F3FB': '#F7D7C4',
-    '1F3FC': '#E8B88A',
-    '1F3FD': '#C68642',
-    '1F3FE': '#8D5524',
-    '1F3FF': '#4A2912',
-  };
-
   const currentToneColor = SKIN_TONE_COLORS[skinTone ?? 'default'];
 
   return (
@@ -276,6 +276,7 @@ const EmojiPicker: React.FC<EmojiPickerProps> = ({
             style={{ backgroundColor: currentToneColor }}
             onClick={() => setSkinPopoverOpen((v) => !v)}
             role="button"
+            tabIndex={0}
             aria-label={t`Select skin tone`}
             aria-expanded={skinPopoverOpen}
           />
@@ -289,6 +290,7 @@ const EmojiPicker: React.FC<EmojiPickerProps> = ({
                   style={{ backgroundColor: SKIN_TONE_COLORS[tone ?? 'default'] }}
                   onClick={() => { setSkinTone(tone); setSkinPopoverOpen(false); }}
                   role="button"
+                  tabIndex={0}
                   aria-label={SKIN_TONE_LABELS[tone ?? 'default']}
                 />
               ))}
