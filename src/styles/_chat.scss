@@ -422,19 +422,18 @@ img.twemoji {
   pointer-events: none;
 }
 
-// Panel content
+// Panel content — size driven by the emoji picker's own clamp() dimensions
 .stickers-panel {
   display: flex;
   flex-direction: column;
-  width: 420px;
-  height: 560px;
+  width: fit-content;
+  height: fit-content;
   border: $border solid var(--color-border-default);
   border-radius: $rounded-lg;
   background-color: var(--color-bg-modal);
   box-shadow: $shadow-lg;
   pointer-events: auto;
   overflow: hidden;
-
 }
 
 // Tab navigation bar
@@ -492,6 +491,8 @@ img.twemoji {
   padding: $s-4;
   overflow-y: auto;
   flex: 1;
+  // Cap height so the panel doesn't exceed the emoji picker's max height
+  max-height: clamp(300px, 76vh, 436px); // 480px picker - 44px tabs
 }
 
 // Individual sticker item
