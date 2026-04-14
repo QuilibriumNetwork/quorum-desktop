@@ -103,7 +103,7 @@ const App = () => {
       <I18nProvider i18n={i18n}>
         <ErrorBoundary
           fallback={
-            <div className="bg-radial--accent-noise flex flex-col min-h-screen text-main">
+            <div className="bg-surface-1 flex flex-col min-h-screen text-main">
               {isWeb() && isElectron() && <CustomTitlebar />}
               <Maintenance />
             </div>
