@@ -56,6 +56,8 @@ export function useEmojiPicker(options: UseEmojiPickerOptions) {
   const openDesktopEmojiPicker = useCallback(
     (messageId: string, rect: DOMRect) => {
       onSetEmojiPickerOpen(messageId);
+      // These match .emoji-picker max dimensions in EmojiPicker.scss (clamp values)
+      // Update here if the SCSS clamp values change
       const pickerHeight = 480;
       const pickerWidth = 380;
       const spaceBelow = window.innerHeight - rect.bottom;
