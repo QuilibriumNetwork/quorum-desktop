@@ -1,0 +1,128 @@
+// src/components/emoji-picker/EmojiPicker.scss
+// Chromeless picker -- no border, shadow, or radius.
+// Parent containers provide the visual frame.
+@use '@/styles/variables' as *;
+
+.emoji-picker {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  font-family: Sen, sans-serif;
+
+  &__header {
+    display: flex;
+    align-items: center;
+    padding: $s-1 $s-2;
+    gap: $s-0-5;
+    border-bottom: 1px solid var(--color-border-default);
+    overflow-x: auto;
+    scrollbar-width: none;
+    &::-webkit-scrollbar { display: none; }
+  }
+
+  &__category-btn {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: $s-8;
+    height: $s-8;
+    border-radius: $rounded-md;
+    flex-shrink: 0;
+    opacity: 0.5;
+    transition: opacity $duration-150 $ease-in-out,
+                background-color $duration-150 $ease-in-out;
+
+    &:hover {
+      background-color: var(--surface-3);
+      opacity: 0.8;
+    }
+
+    &--active {
+      opacity: 1;
+      background-color: var(--surface-3);
+    }
+  }
+
+  &__skin-tones {
+    display: flex;
+    gap: $s-1;
+    margin-left: auto;
+    padding-left: $s-2;
+    flex-shrink: 0;
+  }
+
+  &__skin-tone-dot {
+    width: $s-4;
+    height: $s-4;
+    border-radius: $rounded-full;
+    border: 2px solid transparent;
+    transition: border-color $duration-150 $ease-in-out;
+
+    &--active {
+      border-color: var(--accent);
+    }
+  }
+
+  &__search {
+    padding: $s-2;
+    border-bottom: 1px solid var(--color-border-default);
+  }
+
+  &__grid-container {
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  &__row-header {
+    padding: $s-1-5 $s-1 $s-1;
+    font-size: $text-xs;
+    font-weight: $font-semibold;
+    color: var(--color-text-subtle);
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+  }
+
+  &__emoji-row {
+    display: flex;
+    gap: $s-0-5;
+    padding: 0 $s-2;
+  }
+
+  &__emoji-btn {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: $s-9;
+    height: $s-9;
+    border-radius: $rounded-md;
+    transition: background-color $duration-150 $ease-in-out;
+
+    &:hover {
+      background-color: var(--surface-3);
+    }
+
+    &::after {
+      content: '';
+      position: absolute;
+      inset: -#{$s-1};
+    }
+  }
+
+  &__custom-emoji-img {
+    width: $s-7;
+    height: $s-7;
+    object-fit: contain;
+  }
+
+  &__no-results {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: $s-8;
+    color: var(--color-text-subtle);
+    font-size: $text-sm;
+  }
+}
