@@ -1,10 +1,20 @@
 ---
 type: report
 title: Quorum Authentication Flows
-status: done
+status: archived
 created: 2026-01-09T00:00:00.000Z
-updated: '2026-01-09'
+updated: '2026-04-14'
+superseded_by: .agents/docs/features/onboarding-flow.md
 ---
+
+> **SUPERSEDED** — This report described the onboarding flow as designed during the Dec 2025 redesign. The flow has since been fully implemented and refactored into `useUnifiedOnboardingFlow`. See the current documentation at [.agents/docs/features/onboarding-flow.md](../../docs/features/onboarding-flow.md).
+>
+> Key differences from what was described here:
+> - "Import Step 1a & 1b" note "users must re-enter name and photo" — **no longer true**: `syncImportedProfile` now auto-recovers the remote profile and skips profile setup entirely for returning users.
+> - The "SDK Change Required" note about the Try Again button — **now implemented**.
+> - Progress dot index is controlled by `getDotIndex()` in the hook, not hardcoded in step components.
+
+
 
 # Quorum Authentication Flows
 
