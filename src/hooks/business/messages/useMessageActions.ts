@@ -27,11 +27,9 @@ interface UseMessageActionsOptions {
   message: MessageType;
   userAddress: string;
   canDeleteMessages?: boolean;
-  height: number;
   onSubmitMessage: (message: any) => Promise<void>;
   onSetInReplyTo: (message: MessageType) => void;
   onSetEmojiPickerOpen: (messageId: string) => void;
-  onSetEmojiPickerDirection: (direction: string) => void;
   editorRef?: any;
   mapSenderToUser?: (senderId: string) => any;
   stickers?: { [key: string]: any };
@@ -56,11 +54,9 @@ export function useMessageActions(options: UseMessageActionsOptions) {
     message,
     userAddress,
     canDeleteMessages,
-    height,
     onSubmitMessage,
     onSetInReplyTo,
     onSetEmojiPickerOpen,
-    onSetEmojiPickerDirection,
     editorRef,
     mapSenderToUser,
     stickers,
@@ -445,13 +441,10 @@ export function useMessageActions(options: UseMessageActionsOptions) {
 
   // Handle more reactions (emoji picker)
   const handleMoreReactions = useCallback(
-    (clientY: number) => {
+    () => {
       onSetEmojiPickerOpen(message.messageId);
-      onSetEmojiPickerDirection(
-        clientY / height > 0.5 ? 'upwards' : 'downwards'
-      );
     },
-    [message.messageId, height, onSetEmojiPickerOpen, onSetEmojiPickerDirection]
+    [message.messageId, onSetEmojiPickerOpen]
   );
 
   // Handle edit action
