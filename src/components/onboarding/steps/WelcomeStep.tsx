@@ -12,7 +12,7 @@ interface StepProps {
 export const WelcomeStep: React.FC<StepProps> = ({ flow }) => {
   return (
     <div className="onboarding-step-body">
-      <Logo className="onboarding-icon h-8 mb-8" />
+      <Logo className="onboarding-logo h-8 mb-8" />
       <h1 className="onboarding-title">{t`Sign in into Quorum`}</h1>
       <p className="onboarding-description">
         {t`Your communities, your rules - no platform can ban you.`}

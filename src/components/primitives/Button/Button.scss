@@ -132,10 +132,10 @@ html.dark .btn-secondary {
 .btn-disabled-onboarding {
   @extend %btn-base;
   border: $border-2 solid transparent;
-  color: white;
+  color: var(--color-text-muted);
   cursor: default;
   pointer-events: none;
-  background-color: rgba(255, 255, 255, 0.3);
+  background-color: var(--surface-4);
 }
 
 .btn-unstyled {

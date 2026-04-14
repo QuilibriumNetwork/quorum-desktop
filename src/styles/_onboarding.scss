@@ -2,8 +2,49 @@
 
 /* === ONBOARDING FLOW STYLES === */
 
+// Onboarding is always dark regardless of system theme
 .bg-onboarding {
+  position: relative;
+
+  // Force dark surface + text tokens so light-theme users get the dark experience
+  --surface-00: #100f11;
+  --surface-0: #1d1a21;
+  --surface-1: #241f27;
+  --surface-1: #241f27;
+  --surface-2: #2c252e;
+  --surface-3: #312935;
+  --surface-4: #3a313f;
+  --surface-5: #443b49;
+  --surface-6: #584d5e;
+  --surface-7: #716379;
+  --surface-8: #92829b;
+  --surface-9: #a999b3;
+  --surface-10: #bfadca;
+  --color-text-main: 244 241 246;
+  --color-text-subtle: #bfb5c8;
+  --color-text-muted: #84788b;
+  --color-field-bg: var(--surface-0);
+  --color-field-bg-focus: var(--surface-2);
+  --color-field-text: var(--surface-8);
+  --color-field-placeholder: var(--surface-8);
+
   background-color: var(--surface-1);
+  background-image:
+    radial-gradient(ellipse 80% 60% at 50% 50%, rgb(var(--accent-rgb) / 0.18) 0%, transparent 70%);
+  background-repeat: no-repeat;
+  background-size: cover;
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: url('/otis-redding.png');
+    background-repeat: repeat;
+    background-size: auto;
+    mix-blend-mode: screen;
+    opacity: 0.4;
+    pointer-events: none;
+  }
 }
 
 // Shared step layout
@@ -36,7 +77,7 @@
   font-size: $text-sm;
   line-height: $text-sm-lh;
   color: var(--color-text-subtle);
-  background-color: var(--surface-2);
+  background-color: var(--surface-4);
   border-radius: $rounded-xl;
   padding: $s-4;
   margin-top: $s-3;
@@ -59,20 +100,27 @@
   color: var(--surface-7);
 }
 
+// Logo mark: one step darker than generic icons
+.onboarding-logo {
+  color: var(--surface-6);
+}
+
 // Muted label text (account address label, help icon, error detail)
 .onboarding-label-muted {
-  color: var(--color-text-muted);
+  display: block;
+  text-align: left;
+  color: var(--surface-9);
 }
 
 // Secondary/neutral button override for onboarding context
 // Overrides btn-secondary's accent tint with a neutral surface tone
 .bg-onboarding .btn-secondary {
-  background-color: var(--surface-4);
+  background-color: var(--surface-5);
   border-color: transparent;
   color: rgb(var(--color-text-main));
 
   &:hover {
-    background-color: var(--surface-5);
+    background-color: var(--surface-6);
     border-color: transparent;
     color: rgb(var(--color-text-main));
   }
@@ -91,22 +139,15 @@ html.dark .bg-onboarding .btn-secondary {
 // which is the same as the page bg, making hover/focus invisible.
 // Override to use a slightly elevated surface so fields are always visible.
 .bg-onboarding .quorum-input {
-  background-color: var(--surface-2);
   height: $s-11;
   border-radius: $rounded-xl;
 
-  &:hover:not(:disabled):not(:focus) {
-    background-color: var(--surface-3);
-  }
-
-  &:focus {
-    background-color: var(--surface-3);
+  &:not(:disabled) {
+    color: rgb(var(--color-text-main));
   }
 
   &:disabled {
-    background-color: var(--surface-2) !important;
-    opacity: 1;
-    color: var(--color-text-muted);
+    opacity: 1 !important;
   }
 }
 
@@ -133,6 +174,12 @@ html.dark .bg-onboarding .btn-secondary {
   .quorum-input {
     width: 100%;
   }
+
+  // Prevent error message from contributing to fit-content intrinsic width
+  .input-error-message {
+    width: 0;
+    min-width: 100%;
+  }
 }
 
 // Step icon: circle with icon inside
@@ -144,8 +191,8 @@ html.dark .bg-onboarding .btn-secondary {
   width: $s-14;
   height: $s-14;
   border-radius: 50%;
-  background-color: var(--surface-4);
-  color: var(--surface-8);
+  background-color: var(--surface-6);
+  color: var(--surface-10);
   margin-bottom: $s-6;
   flex-shrink: 0;
 
@@ -180,7 +227,7 @@ html.dark .bg-onboarding .btn-secondary {
     width: $s-8;
     height: $s-1-5;
     border-radius: 3px;
-    background-color: var(--surface-5);
+    background-color: var(--surface-7);
     transition: background-color 200ms ease;
 
     &--filled {
@@ -223,5 +270,24 @@ html.dark .bg-onboarding .btn-secondary {
   &--active {
     border-color: var(--accent);
     background-color: rgb(var(--accent-rgb) / 0.05);
+  }
+}
+
+// Light theme only: bump muted elements for better visibility
+html:not(.dark) {
+  .onboarding-icon {
+    color: var(--surface-9);
+  }
+
+  .onboarding-logo {
+    color: var(--surface-8);
+  }
+
+  .onboarding-link {
+    color: var(--surface-9);
+  }
+
+  .onboarding-step-icon:not(.onboarding-step-icon--error) {
+    color: var(--surface-10);
   }
 }
