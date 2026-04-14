@@ -1,15 +1,15 @@
-import React, { useState } from 'react';
-import { Button, Input, Icon } from '../../primitives';
+import React from 'react';
+import { Button, Input } from '../../primitives';
 import { t } from '@lingui/core/macro';
 import { validateDisplayName } from '../../../hooks/business/validation';
 import type { UseUnifiedOnboardingFlowReturn } from '../../../hooks/business/user/useUnifiedOnboardingFlow';
+import { OnboardingInfoLink } from '../OnboardingInfoLink';
 
 interface StepProps {
   flow: UseUnifiedOnboardingFlowReturn;
 }
 
 export const DisplayNameStep: React.FC<StepProps> = ({ flow }) => {
-  const [addressInfoExpanded, setAddressInfoExpanded] = useState(false);
   const nameError = flow.displayName.trim()
     ? validateDisplayName(flow.displayName)
     : undefined;
@@ -34,20 +34,7 @@ export const DisplayNameStep: React.FC<StepProps> = ({ flow }) => {
 
       {flow.address && (
         <div className="onboarding-input-wrapper">
-          <div className="flex items-center gap-1 mb-1">
-            <Icon
-              name="question-circle"
-              size="xs"
-              className="onboarding-label-muted cursor-pointer"
-              onClick={() => setAddressInfoExpanded(v => !v)}
-            />
-            <span className="text-xs onboarding-label-muted">{t`Account Address`}</span>
-          </div>
-          {addressInfoExpanded && (
-            <p className="onboarding-read-more mb-2">
-              {t`Your account address is a unique public identifier derived from your account key. Others can use it to find and message you. Think of it like a username that can never change.`}
-            </p>
-          )}
+          <span className="text-xs onboarding-label-muted mb-1">{t`Account Address`}</span>
           <Input
             variant="filled"
             value={
@@ -69,6 +56,13 @@ export const DisplayNameStep: React.FC<StepProps> = ({ flow }) => {
       >
         {t`Continue`}
       </Button>
+
+      {flow.address && (
+        <OnboardingInfoLink
+          label={t`What is the account address?`}
+          content={t`Your account address is a unique public identifier derived from your account key. Others can use it to find and message you. Think of it like a username that can never change.`}
+        />
+      )}
     </div>
   );
 };

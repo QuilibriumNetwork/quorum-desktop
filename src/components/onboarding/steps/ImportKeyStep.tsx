@@ -1,5 +1,6 @@
 import React, { useState, useCallback } from 'react';
 import { Button, Icon, FileUpload } from '../../primitives';
+import { OnboardingInfoLink } from '../OnboardingInfoLink';
 import { t } from '@lingui/core/macro';
 import type { UseUnifiedOnboardingFlowReturn } from '../../../hooks/business/user/useUnifiedOnboardingFlow';
 import type { FileUploadFile } from '@quilibrium/quorum-shared';
@@ -57,6 +58,11 @@ export const ImportKeyStep: React.FC<StepProps> = ({ flow }) => {
           </div>
         </FileUpload>
       </div>
+
+      <OnboardingInfoLink
+        label={t`What is an account key?`}
+        content={t`Your account key is a private key file (.key) that proves ownership of your account. You can download it from your account settings. Keep it safe — whoever has it can access your account.`}
+      />
 
       {(flow.importError || dropError) && (
         <div className="mb-4 max-w-xs">
