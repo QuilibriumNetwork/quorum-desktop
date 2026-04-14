@@ -14,7 +14,7 @@ import {
 } from './emojiData';
 import { useSkinTone, SKIN_TONES } from './useSkinTone';
 import { useFrequentlyUsed } from './useFrequentlyUsed';
-import type { CustomEmoji, EmojiData, EmojiItem, VirtualRow } from './types';
+import type { CustomEmoji, EmojiData, EmojiItem } from './types';
 import { CATEGORY_ICONS } from './types';
 import './EmojiPicker.scss';
 
@@ -120,19 +120,22 @@ const EmojiPicker: React.FC<EmojiPickerProps> = ({
     [onEmojiClick]
   );
 
-  // Active category tracking via rangeChanged
+  // Active category tracking via rangeChanged.
+  // Finds the nearest header at or before startIndex using categoryRowIndices (O(n) over categories, not rows).
   const handleRangeChanged = useCallback(
     (range: ListRange) => {
       if (isSearching) return;
-      for (let i = range.startIndex; i >= 0; i--) {
-        const row = rows[i];
-        if (row?.type === 'header') {
-          setActiveCategory(row.category);
-          return;
+      let best: string | undefined;
+      let bestIndex = -1;
+      for (const [category, idx] of categoryRowIndices) {
+        if (idx <= range.startIndex && idx > bestIndex) {
+          bestIndex = idx;
+          best = category;
         }
       }
+      if (best !== undefined) setActiveCategory(best);
     },
-    [rows, isSearching]
+    [categoryRowIndices, isSearching]
   );
 
   // Scroll to category on tab click
@@ -153,9 +156,12 @@ const EmojiPicker: React.FC<EmojiPickerProps> = ({
     [categoryRowIndices]
   );
 
-  // Render a row
+  // Render a row — passed directly to Virtuoso itemContent for stable reference
   const renderRow = useCallback(
-    (_index: number, row: VirtualRow) => {
+    (index: number) => {
+      const row = displayRows[index];
+      if (!row) return null;
+
       if (row.type === 'header') {
         return <div className="emoji-picker__row-header">{row.label}</div>;
       }
@@ -205,7 +211,7 @@ const EmojiPicker: React.FC<EmojiPickerProps> = ({
         </div>
       );
     },
-    [skinTone, handleEmojiClick, handleCustomEmojiClick]
+    [displayRows, skinTone, handleEmojiClick, handleCustomEmojiClick]
   );
 
   return (
@@ -274,11 +280,7 @@ const EmojiPicker: React.FC<EmojiPickerProps> = ({
             ref={virtuosoRef}
             totalCount={displayRows.length}
             overscan={200}
-            itemContent={(index) => {
-              const row = displayRows[index];
-              if (!row) return null;
-              return renderRow(index, row);
-            }}
+            itemContent={renderRow}
             rangeChanged={handleRangeChanged}
           />
         )}

@@ -78,7 +78,7 @@
   &__row-header {
     padding: $s-1-5 $s-1 $s-1;
     font-size: $text-xs;
-    font-weight: $font-semibold;
+    font-weight: $font-bold;
     color: var(--color-text-subtle);
     text-transform: uppercase;
     letter-spacing: 0.3px;
@@ -107,7 +107,7 @@
     &::after {
       content: '';
       position: absolute;
-      inset: -#{$s-1};
+      inset: -$s-1;
     }
   }
 
