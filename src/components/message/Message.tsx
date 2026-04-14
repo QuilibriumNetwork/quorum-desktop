@@ -677,7 +677,7 @@ export const Message = React.memo(
                     'absolute right-10 z-[9999] bg-modal border border-default rounded-lg shadow-lg overflow-hidden ' +
                     (emojiPickerOpenDirection == 'upwards'
                       ? 'bottom-full mb-1'
-                      : 'top-full mt-1')
+                      : 'top-0')
                   }
                 >
                   <Suspense fallback={<div className="emoji-picker-loading" />}>
