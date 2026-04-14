@@ -674,10 +674,10 @@ export const Message = React.memo(
                 <div
                   onClick={(e: React.MouseEvent) => e.stopPropagation()}
                   className={
-                    'absolute right-4 z-[9999] bg-modal border border-default rounded-lg shadow-lg overflow-hidden ' +
+                    'absolute right-10 z-[9999] bg-modal border border-default rounded-lg shadow-lg overflow-hidden ' +
                     (emojiPickerOpenDirection == 'upwards'
-                      ? 'bottom-6'
-                      : 'top-0')
+                      ? 'bottom-full mb-1'
+                      : 'top-full mt-1')
                   }
                 >
                   <Suspense fallback={<div className="emoji-picker-loading" />}>
@@ -696,8 +696,8 @@ export const Message = React.memo(
                     onClick={(e: React.MouseEvent) => e.stopPropagation()}
                     className="fixed z-[10002] bg-modal border border-default rounded-lg shadow-lg overflow-hidden"
                     style={{
-                      left: Math.min(emojiPickerPosition.x, window.innerWidth - 352),
-                      top: Math.min(emojiPickerPosition.y, window.innerHeight - 435),
+                      left: Math.min(emojiPickerPosition.x, window.innerWidth - 400),
+                      top: Math.min(emojiPickerPosition.y, window.innerHeight - 500),
                     }}
                   >
                     <Suspense fallback={<div className="emoji-picker-loading" />}>
