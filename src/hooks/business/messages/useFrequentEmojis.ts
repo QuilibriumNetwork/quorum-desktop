@@ -1,10 +1,8 @@
 import { useMemo, useSyncExternalStore } from 'react';
-
-/**
- * localStorage key written by the custom emoji picker.
- * Format: Record<unified_codepoint_string, { count: number, lastUsed: number }>
- */
-const FREQUENT_KEY = 'emoji-picker-frequently-used';
+import {
+  FREQUENT_EMOJIS_KEY,
+  subscribeFrequentEmojis,
+} from '../../../components/emoji-picker/useFrequentlyUsed';
 
 const DEFAULT_QUICK_EMOJIS = ['❤️', '👍', '🔥', '😂', '😢', '😮'];
 
@@ -24,7 +22,7 @@ function unifiedToNative(unified: string): string {
 /** Read the raw JSON string from localStorage for snapshot comparison. */
 function getSnapshot(): string {
   try {
-    return window.localStorage.getItem(FREQUENT_KEY) ?? '{}';
+    return window.localStorage.getItem(FREQUENT_EMOJIS_KEY) ?? '{}';
   } catch {
     return '{}';
   }
@@ -35,21 +33,28 @@ function getServerSnapshot(): string {
 }
 
 /**
- * Subscribe to storage events so the hook re-renders when another tab
- * or the emoji picker updates the frequent-emoji map.
+ * Subscribe to both same-tab writes (via module-level channel) and
+ * cross-tab StorageEvents so the hook re-renders whenever the emoji
+ * picker records a new usage.
  */
 function subscribe(callback: () => void): () => void {
+  const unsubSameTab = subscribeFrequentEmojis(callback);
+
   const handler = (e: StorageEvent) => {
-    if (e.key === FREQUENT_KEY) callback();
+    if (e.key === FREQUENT_EMOJIS_KEY) callback();
   };
   window.addEventListener('storage', handler);
-  return () => window.removeEventListener('storage', handler);
+
+  return () => {
+    unsubSameTab();
+    window.removeEventListener('storage', handler);
+  };
 }
 
 /**
  * Returns the top N most frequently used emojis from the custom emoji picker's
- * localStorage data (key: "emoji-picker-frequently-used"), falling back to
- * defaults (❤️, 👍, 🔥) when there aren't enough entries.
+ * localStorage data, falling back to defaults (❤️, 👍, 🔥) when there
+ * aren't enough entries.
  *
  * Each item includes the native emoji string and the unified codepoint
  * (for rendering as a Twemoji image).
@@ -61,7 +66,7 @@ export function useFrequentEmojis(count = 3) {
     try {
       const map = JSON.parse(raw) as Record<string, FrequentEntry>;
       const sorted = Object.entries(map).sort(
-        ([, a], [, b]) => b.count - a.count || b.lastUsed - a.lastUsed,
+        ([, a], [, b]) => b.lastUsed - a.lastUsed,
       );
       const frequent = sorted.slice(0, count).map(([unified]) => ({
         emoji: unifiedToNative(unified),

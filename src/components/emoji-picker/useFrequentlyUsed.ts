@@ -1,9 +1,24 @@
 // src/components/emoji-picker/useFrequentlyUsed.ts
 import { useState, useCallback, useMemo } from 'react';
 
-const STORAGE_KEY = 'emoji-picker-frequently-used';
+export const FREQUENT_EMOJIS_KEY = 'emoji-picker-frequently-used';
 const LEGACY_KEY = 'epr_suggested'; // emoji-picker-react's key
 const MAX_FREQUENT = 24;
+
+/**
+ * Module-level listeners notified on same-tab writes, since StorageEvent
+ * only fires for cross-tab changes.
+ */
+const sameTabListeners = new Set<() => void>();
+
+export function notifyFrequentEmojiListeners(): void {
+  sameTabListeners.forEach((fn) => fn());
+}
+
+export function subscribeFrequentEmojis(callback: () => void): () => void {
+  sameTabListeners.add(callback);
+  return () => sameTabListeners.delete(callback);
+}
 
 interface FrequentEntry {
   count: number;
@@ -31,7 +46,7 @@ function migrateLegacy(): FrequentMap | null {
       }
     }
 
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(migrated));
+    localStorage.setItem(FREQUENT_EMOJIS_KEY, JSON.stringify(migrated));
     return migrated;
   } catch {
     return null;
@@ -40,7 +55,7 @@ function migrateLegacy(): FrequentMap | null {
 
 function loadFrequent(): FrequentMap {
   try {
-    const stored = localStorage.getItem(STORAGE_KEY);
+    const stored = localStorage.getItem(FREQUENT_EMOJIS_KEY);
     if (stored) return JSON.parse(stored) as FrequentMap;
     const migrated = migrateLegacy();
     if (migrated) return migrated;
@@ -70,7 +85,8 @@ export function useFrequentlyUsed() {
         },
       };
       try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+        localStorage.setItem(FREQUENT_EMOJIS_KEY, JSON.stringify(updated));
+        notifyFrequentEmojiListeners();
       } catch {
         // Storage full
       }
