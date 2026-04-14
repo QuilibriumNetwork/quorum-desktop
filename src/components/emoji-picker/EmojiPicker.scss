@@ -156,6 +156,12 @@
   min-width: 0;
   min-height: 0;
   overflow: hidden;
+
+  // Hide Virtuoso's scrollbar — the grid scrolls but no gutter shown
+  & > div {
+    scrollbar-width: none;
+    &::-webkit-scrollbar { display: none; }
+  }
 }
 
 .emoji-picker__row-header {
@@ -169,8 +175,8 @@
 
 .emoji-picker__emoji-row {
   display: flex;
-  gap: $s-0-5;
-  padding: 0 $s-1-5;
+  gap: $s-1;
+  padding: 0 $s-2;
 }
 
 .emoji-picker__emoji-btn {

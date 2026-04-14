@@ -24,7 +24,8 @@ interface EmojiPickerProps {
 
 const DEFAULT_COLUMNS = 8;
 const CELL_SIZE = 36; // px, matches $s-9 (2.25rem)
-const H_PADDING = 16; // px, $s-2 * 2 sides
+const CELL_GAP = 4;   // px, matches $s-1 gap between emoji buttons
+const H_PADDING = 16; // px, $s-2 * 2 sides (row horizontal padding)
 
 const SKIN_TONE_LABELS: Record<string, string> = {
   default: 'Default skin tone',
@@ -73,7 +74,7 @@ const EmojiPicker: React.FC<EmojiPickerProps> = ({
     const measure = () => {
       const w = containerRef.current?.clientWidth ?? 380;
       const gridWidth = w - SIDEBAR_WIDTH - H_PADDING;
-      setColumnsCount(Math.max(1, Math.floor(gridWidth / CELL_SIZE)));
+      setColumnsCount(Math.max(1, Math.floor((gridWidth + CELL_GAP) / (CELL_SIZE + CELL_GAP))));
     };
     measure();
     const observer = new ResizeObserver(measure);
